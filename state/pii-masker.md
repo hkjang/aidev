@@ -13,3 +13,10 @@
 - 요약: `MaskValue`가 `TrimSpace`한 값을 마스킹해 반환하고 `maskAddress`가 `strings.Fields`+`Join(" ")`로 공백을 뭉개는 바람에, 마스킹 결과가 원본과 룬 수·위치가 어긋나 `ComputeMaskedRuneSpans`가 엉뚱한 구간을 돌려주고 문서에 잘못된 위치가 검게 칠해지던 실제 PII 노출 버그를 고쳤습니다(예: `" 800901-1234567"` → 스팬 `[7,14)`, 마지막 자리 `7`이 그대로 노출 / 이중 공백 주소는 번지 대신 도로명 일부를 가림). 마스킹은 트림된 값에 적용하되 앞뒤 공백을 복원하는 `restoreSurroundingSpace`를 추가하고, 주소는 토큰 시작 오프셋을 보존해 원본 구분자를 그대로 재조립하도록 바꿨으며, 안전망으로 `ComputeMaskedRuneSpans`가 룬 길이 불일치 시 `nil`을 반환해 호출부가 필드 전체를 덮도록 했습니다. 모든 규칙이 룬 수·공백 위치를 보존하는지 검사하는 테이블 테스트 15케이스와 회귀 케이스 4개를 추가했고, `gofmt -l`(무출력), `go vet ./...`, `go test -count=1 ./...`, `go test -race -count=1 ./...` 통과 및 수정 전 코드로 되돌려 새 테스트가 실제로 실패하는 것까지 확인했습니다.
 - 보류 아이디어: `/v1/history`의 `limit` 상한 없음(과도한 값 요청 시 전체 목록 직렬화) / job 파일 보존·정리 정책 부재로 저장소 무한 증가 / `CreateJob`의 `go runJob` 동시 실행 개수 제한 없음 / `internal/jobs`, `internal/config` 패키지 단위 테스트 전무 / `maskAllVisible` 등이 `isWhitespaceRune`(ASCII 한정)만 보므로 U+00A0 같은 유니코드 공백 처리 불일치
 - 릴리즈: v1.0.5 (2026-09-02)
+
+## 2026-09-03
+- 선택: 업로드 요청 본문 크기 상한 적용 (가치 4 / 위험 2 / 작업량 S)
+- 결과: 성공
+- 요약: `POST /v1/mask`, `POST /v1/jobs`가 `r.Body`에 아무 상한 없이 `ParseMultipartForm(MaxFileSizeBytes + 1MB)`를 호출해, 클라이언트가 임의 크기(수 GB) 본문을 흘려보내면 서버가 51MB를 메모리에 버퍼링하고 나머지는 temp 파일로 흘린 뒤에야 `validateAttachment`에서 거절하던 메모리·디스크 DoS 경로를 막았습니다. `http.MaxBytesReader`로 본문을 `MaxFileSizeBytes + 64KB`(멀티파트 프레이밍 여유분)에서 자르고, 잘린 요청은 새 `payloadTooLargeError` → `413 payload_too_large`로 응답하며, `maxMemory`를 8MB 고정으로 낮춰 큰 파트가 RAM에 이중으로 남지 않고 temp 파일로 넘어가게 했습니다. 상한 초과 시 413을 받는 통합 테스트 2개(`/v1/mask`, `/v1/jobs` + job 미생성 확인)와 한도에 딱 맞는 업로드가 여전히 200으로 처리되는 회귀 테스트 1개를 추가했고, `gofmt -l`(무출력)·`go vet ./...`·`go test -count=1 ./...`·`go test -race -count=1 ./...` 전부 통과, `-count=5`로 새 테스트 플래키 여부 확인, 수정 전 코드로 되돌려 새 테스트 2개가 실제로 실패(본문 512KB를 끝까지 읽고 400 반환)하는 것까지 확인했습니다.
+- 보류 아이디어: `/v1/history`의 `limit` 상한 없음(과도한 값 요청 시 전체 목록 직렬화) / job 파일 보존·정리 정책 부재로 저장소 무한 증가 / `CreateJob`의 `go runJob` 동시 실행 개수 제한 없음 / `internal/jobs`, `internal/config` 패키지 단위 테스트 전무 / 마스킹 결과가 원본과 동일할 때(예: 숫자 없는 주민등록번호 필드) 스팬이 비어 필드 전체를 덮는 과잉 마스킹
+- 릴리즈: v1.0.6 (2026-09-03)
