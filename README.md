@@ -119,10 +119,11 @@ bin/run.sh --count 2 --no-merge          # 2개, PR만 열고 머지는 사람�
 
 DB가 필요한 테스트는 DSN이 없으면 **조용히 SKIP**된다. 자동 머지가 켜져 있으므로 반드시 등록할 것. 이 파일은 git에 올라가지 않으므로 로컬에서만 관리한다.
 ```
-# state/weekly.env
-WEEKLY_TEST_POSTGRES_DSN=postgres://umm:umm@localhost:15433/umm?sslmode=disable
+# state/weekly.env  — CI(ci.yaml services.postgres)와 같은 이미지·계정
+WEEKLY_TEST_POSTGRES_DSN=postgres://postgres:weekly@localhost:15434/weeklytest?sslmode=disable
 ```
-로컬 테스트용 Postgres: `umm-test-pg`(15433), `kanpic-test-pg`(55444).
+로컬 테스트용 Postgres 컨테이너: `weekly-test-pg`(pgvector/pgvector:pg16, 15434, `--restart unless-stopped`), `umm-test-pg`(15433), `kanpic-test-pg`(55444).
+DSN은 **그 프로젝트 CI가 쓰는 것과 같은 이미지**를 가리켜야 한다 — weekly를 pgvector 없는 umm DB에 붙였더니 테스트가 무더기로 실패해 릴리즈 에이전트가 직접 컨테이너를 띄워야 했다.
 
 ## 8. 지금까지의 결과
 
@@ -130,6 +131,10 @@ WEEKLY_TEST_POSTGRES_DSN=postgres://umm:umm@localhost:15433/umm?sslmode=disable
 |---|---|---|
 | 2026-09-02 #1 | weekly | [PR #1](https://github.com/hkjang/weekly/pull/1) 머지. 주 시작 요일 변경 후 이미 제출한 팀원에게 작성 권고 메일이 가던 버그. `weekCoveringDays()`로 기간 겹침 판정 통일, 회귀 테스트 2개. 실제 DB로 테스트 8개 통과 확인 |
 | 2026-09-02 #2 | AgentHub | [PR #1](https://github.com/hkjang/AgentHub/pull/1) 머지. 관리자 로그 검색이 structured field를 못 찾던 버그(`Ring.Entries`→`matches()`), `internal/logging` 첫 테스트 9개. go vet/test -race/web lint+build 통과. 보류 아이디어 4개 원장에 기록 |
+| 2026-09-02 #3 | Clustara | [PR #1](https://github.com/hkjang/clustara/pull/1) 머지. 스캔/SBOM 정규화기가 버리던 필드 4가지(Grype CVSS·EPSS, SBOM generated_at, CycloneDX 1.4 generator) 복구 + 첫 단위 테스트 |
+| 2026-09-02 #4 | ReSSO | [PR #2](https://github.com/hkjang/ReSSO/pull/2) 머지. JWKS `Cache-Control`이 `writeJSON`의 `no-store`에 덮어써지던 문제. max-age를 `SigningKeyTTL`에 맞추고 `Vary: Origin` 상시 부착. 테스트 2개 추가, go/lint/govulncheck/web 전부 통과 |
+| 2026-09-02 릴리즈 | weekly | **v0.281.0** — `chore: v0.281.0 을 냅니다` + `.github/release-notes/v0.281.0.md`, 이전 릴리즈와 동일 양식. 워크플로가 GitHub Release·Offline Docker Release 생성(성공). 릴리즈 에이전트가 CI와 같은 pgvector 컨테이너로 121개 테스트·guard-check 276개 통과, 도중에 발견한 테스트 경쟁 조건(`awaitReminderQueueEmpty`)도 수정 |
+| 2026-09-02 릴리즈 | AgentHub | **v0.226.0** — `chore(release): 0.226.0`, 이전 릴리즈 커밋과 동일한 10개 파일 14줄(VERSION, Helm, kustomize, offline compose, docs). release-catalog-images validate/check-versions/kustomize/compose config 통과. Offline Image Release 워크플로가 Release 생성 |
 
 이후 회차는 `state/*.md`(원장)와 `logs/<날짜>.log`, 그리고 이 저장소의 커밋 이력(`run(날짜): 프로젝트 — 결과`)으로 추적한다.
 
@@ -143,6 +148,9 @@ WEEKLY_TEST_POSTGRES_DSN=postgres://umm:umm@localhost:15433/umm?sslmode=disable
 | DB 테스트 SKIP | DSN 없음 | `state/<프로젝트>.env` 주입 |
 | `schtasks /Change` 암호 요구 | 비대화 세션 | `/Create /F` 재생성으로 대체 |
 | 관리 지점 분산 | 러너는 `.claude/`, 원장은 `~/.auto-improve/` | 전부 `hkjang/aidev` 저장소로 통합, 러너가 회차마다 자동 커밋·푸시 |
+| `aidev sync FAILED: empty ident name` | 스케줄러 셸에 git user.name/email 없음 | aidev 체크아웃에 `git config user.name hkjang`, `user.email` 설정 (저장소 로컬 설정) |
+| 로컬 태그가 오래돼 "이전 릴리즈"를 잘못 봄 | 로컬 체크아웃은 태그를 안 받아옴 (kanpic 로컬 v0.194 vs 실제 v0.221) | 릴리즈 워크트리 생성 전 `git fetch --tags` |
+| 머지는 됐는데 릴리즈 안 됨 (ReSSO, Clustara) | 릴리즈 단계 도입 전 회차 | `bin/run.sh --release-only <프로젝트>`로 사후 릴리즈 |
 
 ## 10. 점검 루틴
 
