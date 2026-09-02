@@ -16,7 +16,8 @@ WT_BASE="${WT_BASE:-$HOME/.cache/auto-improve-wt}"
 DAYS=30; COUNT=1; BUDGET=8; DRY=0; ONLY=""; MERGE=1; SYNC=1
 MODEL="${MODEL:-claude-opus-5}"
 # aidev 자신은 후보에서 뺀다 — 에이전트가 자기 러너를 고치게 두지 않는다
-EXCLUDE_RE='^(aidev|sqlpad|_tmp.*|visitflow-node-modules.*|새 폴더)$'
+# Naviq 는 사용자 요청으로 제외 (2026-09-02)
+EXCLUDE_RE='^(aidev|Naviq|sqlpad|_tmp.*|visitflow-node-modules.*|새 폴더)$'
 
 while [ $# -gt 0 ]; do case "$1" in
   --dry-run) DRY=1;; --count) COUNT=$2; shift;; --project) ONLY=$2; shift;;

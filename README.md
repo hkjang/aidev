@@ -31,7 +31,8 @@
 bin/daily.sh (Windows 작업 스케줄러 → wsl.exe)
  ├─ git pull --ff-only          이 저장소의 최신 러너·프롬프트·원장을 반영
  └─ bin/run.sh
-     1. 후보 선정   최근 30일 커밋 有 + 작업트리 깨끗 + origin 원격 有 (aidev 자신은 제외)
+     1. 후보 선정   최근 30일 커밋 有 + 작업트리 깨끗 + origin 원격 有
+                    (제외 목록 EXCLUDE_RE: aidev 자신, Naviq, sqlpad, _tmp*, 임시 폴더)
      2. 선택        라운드로빈 커서로 --count 개
      3. 워크트리    ~/.cache/auto-improve-wt/<프로젝트> 에 auto/<날짜>-<시각> 브랜치
      4. 에이전트    claude -p (prompt.md + 원장) --permission-mode acceptEdits
