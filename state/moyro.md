@@ -20,3 +20,10 @@
 - 요약: `ratelimit.Limiter.Middleware`가 JSON 문자열을 `http.Error`로 내보내 Content-Type이 text/plain으로 나갔고, 버킷 속도와 무관하게 `Retry-After: 1`을 고정 반환했다. 회원가입 버킷은 5초에 토큰 하나를 채우므로 거절된 클라이언트가 4초 일찍 재시도해 헛된 거절을 네 번 더 받는 구조였다. `take()`가 판정과 함께 버킷 상태를 돌려주도록 나눠 남은 토큰과 설정된 rate 기반 대기 시간을 계산하고, 응답에 공용 API 오류 봉투와 Mattermost 호환 `X-Ratelimit-Limit/Remaining/Reset` 헤더를 실었다. 또 버킷 정리(GC)를 판정보다 앞으로 옮겨 계속 throttle 상태인 키가 다른 버킷을 메모리에 붙잡아두지 못하게 했다. 미들웨어·봉투·재시도 지연·빈 키 우회·정리 테스트 6건을 추가했고 `go vet ./...`, `go test -race ./...`(전 패키지 통과), `scripts/check-source-sizes.sh`로 검증했다. 웹 변경이 없어 webapp 빌드는 손대지 않았다.
 - 보류 아이디어: (1) 테스트가 전혀 없는 `invites`/`sidebar`/`userstatus`/`postacks` 패키지의 단위 테스트 보강 — 대부분 DB 경로라 PostgreSQL 통합 환경 필요. (2) `invites.normalizeChannelIDs` 같은 순수 함수만 골라 단위 테스트 추가. (3) 로드맵의 create-post 인가·멤버십 2회 쿼리를 단일 쿼리로 병합. (4) 로드맵의 메시지 목록 가상화 — 작업량 L이라 단일 세션 범위 초과.
 - 릴리즈: v0.2.12 (2026-09-02)
+
+## 2026-09-03
+- 선택: 커스텀 이모지 검색 누락·`emoji/names` N+1·삭제된 이름 재사용 불가 수정 (가치 4 / 위험 2 / 작업량 M)
+- 결과: 성공
+- 요약: `writeEmojiSearch`가 최신 200개만 가져와 Go에서 `strings.Contains`로 걸러서, 커스텀 이모지가 한 페이지를 넘는 워크스페이스에서는 오래된 이모지가 자동완성·검색 양쪽에서 영구히 사라졌다. 매칭을 DB로 옮기고 `LIKE` 대신 `strpos`를 써서 사용자가 입력한 `%`·`_`가 와일드카드로 새지 않게 했으며, 요청당 최대 200회 순차 쿼리를 돌던 `POST /emoji/names`는 `= ANY($1::text[])` 단일 쿼리로 바꾸고 요청 순서를 유지했다. 또 v0.1 베이스라인이 `emojis.name`에 테이블 전역 UNIQUE를 걸어둔 탓에 소프트 삭제된 이모지 이름을 다시 등록하면 라이브 전용 충돌 검사는 통과하고 업로드까지 끝난 뒤 INSERT만 실패해 이름이 영구히 잠기고 매 시도마다 고아 파일이 남았으므로, 마이그레이션 000017로 제약을 `delete_at=0` 부분 유니크 인덱스로 교체했다. 테스트가 없던 `emojis` 패키지에 통합 테스트 5건과 `store`에 마이그레이션 업그레이드 테스트 1건을 추가하고 CI PostgreSQL 잡 대상에 `./internal/emojis`를 넣었다. 로컬 postgres:16 컨테이너를 띄워 `go vet ./...`, `MOYRO_TEST_POSTGRES_DSN` 설정 후 `go test -race -p 1 ./...`(전 패키지 통과), `scripts/check-source-sizes.sh`로 검증했다. 웹 변경이 없어 webapp 빌드는 손대지 않았다.
+- 보류 아이디어: (1) `emojis.Create`가 크기 초과 파일을 업로드한 뒤에야 거절해 고아 file_infos 행을 남기는 문제 — files.Service에 정리 경로가 필요. (2) 테스트가 전혀 없는 `invites`/`sidebar`/`userstatus`/`postacks` 패키지의 통합 테스트 보강. (3) 로드맵의 create-post 인가·멤버십 2회 쿼리를 단일 쿼리로 병합. (4) 로드맵의 메시지 목록 가상화 — 작업량 L이라 단일 세션 범위 초과.
+- 릴리즈: v0.2.13 (2026-09-03)
