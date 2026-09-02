@@ -21,3 +21,14 @@
   - A-206 추천 질문 캐시 무한 append → 원자적 교체·중복 제거 — 가치 3 / 위험 2 / S
   - `pipeline/law/library/xml_parser_core.py`, `json_formatter.py` 단위 테스트 (fixture 필요) — 가치 3 / 위험 1 / M
   - `util/extract_minor.py` 의 `except Exception: return e` (예외 객체 반환) 정리 및 테스트 — 가치 3 / 위험 2 / S
+
+## 2026-09-03
+- 선택: 외부 HTTP 호출 timeout 누락 일괄 수정 (감사 A-107) (가치 4 / 위험 2 / 작업량 M)
+- 결과: 성공
+- 요약: `requests` 는 timeout 이 없으면 무한 대기하는데, FastAPI 라우트와 LangGraph 노드가 이 호출을 동기로 하므로 상대 서비스가 멈추면 worker 가 그대로 묶인다. 설정 모듈에 의존하지 않는 `util/http_timeouts.py`(DEFAULT 5/30s, LLM 5/300s, FILE 5/600s, 환경변수로 조정 가능)를 추가하고 timeout 이 없던 호출 53곳(api.py, service/*, util/*, pipeline/*, config/eval_class.py)에 용도별 값을 지정했다. AST 로 저장소 전체의 `requests`/`Session` 호출을 검사해 timeout 누락·`timeout=None` 재발을 막는 `tests/unit/test_http_timeouts.py` 를 추가했고, `python -m pytest` 450 passed(기존 352 → 450), `python -m pyflakes .` undefined name 0건 확인. docs 3종(CURRENT_STATE_AUDIT/TESTING/CONFIGURATION) 갱신. 커밋 `be6f163`.
+- 보류 아이디어:
+  - A-104 Milvus filter 표현식 직접 조립 → 안전한 expression builder + 입력 검증 — 가치 4 / 위험 3 / M
+  - A-002 startup 무기한 대기(policy token) 에 timeout/backoff 추가 — 가치 4 / 위험 3 / M
+  - `collection_script/*` 의 import-time collection create/drop 부작용 제거 (감사 A-006) — 가치 4 / 위험 3 / M
+  - A-206 추천 질문 캐시 무한 append → 원자적 교체·중복 제거 — 가치 3 / 위험 2 / S
+  - A-107 후속: 재시도·circuit breaker·공용 requests.Session 도입 — 가치 3 / 위험 3 / M
