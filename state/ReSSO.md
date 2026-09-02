@@ -22,3 +22,15 @@
   - `login`에서 `prompt=login` 재인증 시 기존 Session을 정리하지 않아 한 사용자에게 Session이 둘 남는 문제 (가치 2 / 위험 2 / M)
   - Discovery에 `prompt_values_supported`·`claim_types_supported` 등 남은 선택 메타데이터 추가 검토 (가치 1 / 위험 1 / S)
   - `scripts/test-services.sh`가 PostgreSQL 포트 충돌 시 컨테이너를 Created 상태로 남기고 다음 실행에서 인증 실패로만 드러난다 — 포트 점유를 감지해 알려주기 (가치 2 / 위험 1 / S)
+
+## 2026-09-03
+- 선택: userinfo가 Role을 못 읽었을 때 "Role 없음"으로 답하던 문제 수정 (가치 4 / 위험 1 / 작업량 S)
+- 결과: 성공 (커밋 c5fb7b4)
+- 요약: `roles` 스코프 뒤의 두 조회(`RealmRolesForUser`, `ClientRolesForUser`)가 에러를 `_`로 버려서, 조회 실패가 `realm_access.roles: []` + 200으로 나갔다 — 서비스가 "이 계정은 아무 Role도 없다"고 **단언**하는 것이고, 관리자가 Role을 전부 회수한 경우와 글자 그대로 구별되지 않는다. 같은 스코프의 같은 두 호출이 토큰 발급(`IssueUserTokens`)에서는 이미 요청을 실패시키므로, userinfo만 못 읽은 Role을 에러가 아닌 claim으로 바꾸고 있었다. 이제 500 `server_error`로 거절하고 어느 조회가 실패했는지 로그에 남긴다 — 여기의 다른 거절이 쓰는 401을 일부러 쓰지 않았다. 토큰은 멀쩡한데 invalid_token이라 하면 RP가 멀쩡한 자격증명을 버리고 사용자를 로그아웃시킨다. `/api/v1/me`도 같은 에러를 버리고 있어 함께 고쳤다. 검증: 새 연동 테스트가 두 Role 테이블을 차례로 치우며(테스트마다 전용 스키마라 안전) 수정 전 코드에서 실제로 두 건 모두 실패함을 확인했다(`answered 200 and map[realm_access:map[roles:[]]...]`). `make test` 전체 통과 — `go test -race ./...` 전 패키지 ok, 연동 테스트 SKIP 0건(httpserver 76s / store 77s), `go vet`, `golangci-lint`(0 issues), `govulncheck`(0), `npm run lint`, `npm run test`(22파일/104테스트), `npm run build`. 빌드가 만든 `webui/dist/index.html` 변경은 되돌렸다.
+- 보류 아이디어:
+  - UserInfo POST에서 form-encoded `access_token` 파라미터 수용 (RFC 6750 §2.2). 현재는 Authorization 헤더만 읽는다 (가치 2 / 위험 1 / S)
+  - `SessionByToken`이 `locked_until`을 보지 않는 것은 **의도로 보인다** — 잠금은 무차별 대입 방어이고, 이를 세션 종료로 확장하면 공격자가 남의 비밀번호를 틀리는 것만으로 피해자를 계속 로그아웃시키는 DoS가 된다. 막지 말고 문서화하는 쪽으로 결론낼 것 (가치 2 / 위험 1 / S)
+  - `authorization`이 `id_token_hint`·`max_age`를 `AuthorizationRequest`에 저장하지 않아, 로그인 폼을 거친 뒤에는 hint가 지목한 계정과 다른 계정으로 로그인해도 코드가 나간다 (가치 2 / 위험 2 / M)
+  - `oidcLogout`이 `id_token_hint`의 토큰 타입(`Extra.Type`)을 확인하지 않아 Access Token도 hint로 받아들인다 (가치 2 / 위험 1 / S)
+  - `scripts/test-services.sh`가 PostgreSQL 포트 충돌 시 컨테이너를 Created 상태로 남기고 다음 실행에서 인증 실패로만 드러난다 — 포트 점유를 감지해 알려주기 (가치 2 / 위험 1 / S)
+- 릴리즈: v0.9.67 (2026-09-03)
