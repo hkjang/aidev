@@ -23,3 +23,15 @@
   - `Makefile`의 VERSION(0.6.21)이 README의 릴리스 예시(0.7.26)와 어긋남 — 릴리스 문서 정합성 (가치 2 / 위험 1 / S)
   - 문자열 길이 상한(maxIdentifierLen)이 공급업체·리스크·문서에만 적용됨 — 업무 객체 제목·통화 등은 미적용 (가치 3 / 위험 1 / M)
 - 릴리즈: v0.7.36 (2026-09-02)
+
+## 2026-09-03
+- 선택: 요청 본문의 짧은 자유 텍스트(레코드 이름·제목·코드)를 길이 검사 없이 text 컬럼에 넣던 쓰기 경로 전부 수정 (가치 4 / 위험 1 / 작업량 M)
+- 결과: 성공 (commit ba6e366)
+- 요약: 날짜·숫자 스윕과 같은 기준(철자가 아니라 연산 — 요청 본문의 짧은 문자열이 레코드를 표시하는 text 컬럼에 도달)으로 훑었다. maxIdentifierLen은 공급업체 10개 필드, 리스크 유형, 문서 이름에만 걸려 있었고 나머지는 전부 무방비였다. text에는 길이가 없어 20,000자 계약 제목이 그대로 저장된 뒤 레코드를 열지도 않은 사람의 목록·드롭다운·내보내기·감사 로그를 전부 밀어냈고, 구매 원장의 품목명·분류는 Spend 차트의 그룹 키라 범례가 그 길이에 맞춰졌으며, 표시 이름은 그 계정이 남기는 모든 감사 줄과 결재 단계의 서명이었다. 특히 포털 자가등록은 createSupplier가 처음부터 검사해 온 suppliers.name 컬럼을 아무도 재지 않은 두 번째 문으로 썼는데, 그 문이 바로 외부인이 지나는 문이다. rows.go에 validDateFields·validNumberFields 옆에 validTextFields를 두어 거절이 고칠 입력란을 지목하게 했고, 호출자가 하나뿐이던 overlongField를 대체했다. 검증: docker postgres:16-alpine으로 CI와 동일한 세 DSN을 걸고 `go test ./internal/... ./cmd/...` 전체 통과, gofmt·go vet 무결. 패키지를 파싱하는 TestEveryRequestLabelIsBounded(검사를 뺀 필드의 사유는 unboundedByDesign에 명시)와 17개 엔드포인트를 실제로 호출하는 TestEveryLabelOnAWriteIsBounded를 추가했고, 포털 프로필 가드를 되돌리면 둘 다 실패하는 것까지 확인했다.
+- 보류 아이디어:
+  - CI의 go job이 `go test ./internal/...`만 돌려 `./cmd/...`를 빼놓음 — Makefile/README와 불일치 (가치 2 / 위험 1 / S)
+  - `web` 프론트엔드 테스트 커버리지가 9개 파일뿐 — Sourcing/Objects/Admin 페이지에 테스트 없음 (가치 3 / 위험 1 / L)
+  - 업무 객체의 data jsonb 블롭에는 어떤 검증도 없음 — 폼이 쓰는 키(품목·수량·단가)가 API로는 무제한 (가치 3 / 위험 2 / M)
+  - `Makefile`의 VERSION(0.6.21)이 README의 릴리스 예시(0.7.26)와 어긋남 — 릴리스 문서 정합성 (가치 2 / 위험 1 / S)
+  - 공급업체 수정(PATCH /suppliers/{id})은 tradingSince·annualSpend·businessNumber를 갱신하지 않음 — 편집 폼이 보내지 않으므로 의도로 보이나 API 전용 클라이언트에는 무응답 (가치 2 / 위험 2 / S)
+- 릴리즈: v0.7.37 (2026-09-03)
