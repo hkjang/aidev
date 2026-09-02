@@ -14,3 +14,11 @@
 - 보류 아이디어: ① `.github`에 CI 워크플로 없음 — build/vet/test 게이트 추가 (가치 3 / 위험 1 / S) ② `detectScanner` 가 못 맞히면 `scanner="unknown"` 저장 후 trivy 파서 실행 — 저장값과 실제 파서 불일치 (가치 2 / 위험 1 / S) ③ Grype `Negligible` 심각도가 `Unknown` 으로 접혀 Low 미만 등급 정보 소실 (가치 2 / 위험 2 / S) ④ `collectBenchmarkResults` 의 Section 귀속 — 바깥 노드 라벨이 먼저 이겨 kube-bench Section 이 "1.1" 대신 상위 control 설명으로 채워짐 (가치 2 / 위험 2 / S) ⑤ `internal/servicecatalog` 테스트 0개 — 커버리지 공백 (가치 3 / 위험 1 / M)
 - 릴리즈: v0.9.263 (2026-09-02)
 - 릴리즈: v0.9.263 (2026-09-02)
+
+## 2026-09-03
+- 선택: 셀프서비스 카탈로그 검증 게이트의 구멍 4개 수정 + `internal/servicecatalog` 첫 단위 테스트 (가치 4 / 위험 1 / 작업량 M)
+- 결과: 성공
+- 요약: `internal/servicecatalog`(158줄, 단위 테스트 0개)의 `ValidateInput` 은 셀프서비스 요청 본문의 `values`(전부 사용자 입력)가 운영자가 승인·apply 하는 manifest 로 바뀌는 사이의 유일한 게이트인데 4가지가 그냥 통과했다 — ① `port` 미검증(그대로 `containerPort:` 에 렌더 → 0·-1·70000 이 검증·정책 미리보기·승인을 다 통과하고 apply 시점에만 거절) ② 태그 없는 이미지가 `Contains(":latest")` 가드 우회(k8s 는 무태그를 latest 로 해석), 게다가 호출부 운영 digest 게이트도 `Contains(image, ":")` 전제 때문에 콜론 없는 이미지는 digest 요구 자체를 건너뜀 ③ 같은 substring 검사가 `tomcat:latest-jdk21` 같은 고정 태그와 digest 로 고정된 `repo:latest@sha256:...` 을 오탐 거절 ④ `0`·`0Gi` 가 유효 수량(storage 0 은 PVC 검증기가 거절, memory limit 0 은 첫 할당에서 OOM). 참조를 `[registry[:port]/]repo[:tag][@digest]` 로 분해하는 방식으로 바꾸고 port 범위·0 초과 수량을 추가했으며, 호출부(`admin_k8s_services.go`)의 운영 digest 게이트에서 콜론 전제를 제거했다. 검증: 신규 테스트 7개를 고치기 전 코드에 되돌려 붙여 4개가 각 결함을 지목하며 실패함을 확인했고 `go build ./...`·`go vet ./...`·`go test ./...` 전부 통과(21 패키지). 저장소 관례대로 AppVersion·changelog·docs 버전 마커를 v0.9.264 로 올렸다(release gate 테스트가 강제).
+- 보류 아이디어: ① `.github` 에 CI 워크플로 없음 — build/vet/test 게이트 추가 (가치 3 / 위험 1 / S) ② `detectScanner` 가 못 맞히면 `scanner="unknown"` 저장 후 trivy 파서 실행 — 저장값과 실제 파서 불일치 (가치 2 / 위험 1 / S) ③ Grype `Negligible` 심각도가 `Unknown` 으로 접혀 Low 미만 등급 정보 소실 (가치 2 / 위험 2 / S) ④ `collectBenchmarkResults` 의 Section 귀속 — 바깥 노드 라벨이 먼저 이겨 kube-bench Section 이 "1.1" 대신 상위 control 설명으로 채워짐 (가치 2 / 위험 2 / S) ⑤ 카탈로그 caller 의 `num()` 헬퍼가 문자열 `"0"`·비숫자를 조용히 기본값으로 되돌림 — 잘못된 입력이 기본값으로 성공 (가치 2 / 위험 1 / S)
+- 릴리즈: v0.9.264 (2026-09-03)
+- 릴리즈: v0.9.264 (2026-09-03)
