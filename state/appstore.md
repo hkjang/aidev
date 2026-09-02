@@ -23,3 +23,15 @@
   - `httpapi.validHTTPURL` 강화(호스트의 공백·제어문자 거부, 포트 검증). 가치 2 / 위험 2 / S
   - `ai.sanitizeProviderError`가 512 byte로 자를 때 UTF-8 rune 경계를 무시해 한국어 provider 오류 메시지 끝이 깨짐. 가치 2 / 위험 1 / S
 - 릴리즈: v2.1.2 (2026-09-02)
+
+## 2026-09-03
+- 선택: maxOutputTokens 미설정 provider의 `max_tokens: 0` 전송 버그 수정 (가치 4 / 위험 1 / 작업량 S)
+- 결과: 성공
+- 요약: `store.validateAIProvider`와 `httpapi.minimumPositive`는 `maxOutputTokens = 0`을 "AppStore 측 출력 제한 없음"으로 취급하는데, `ai.Stream`은 그 값을 그대로 upstream payload의 `"max_tokens"`에 넣어 OpenAI 호환 서버가 거부하는 `max_tokens: 0`을 보냈다(해당 provider로는 모든 AI 요청이 HTTP 400). `input.MaxTokens > 0`일 때만 필드를 포함하도록 고쳤고, 함께 미뤄 뒀던 `sanitizeProviderError`의 512 byte 절단이 UTF-8 rune 경계를 깨뜨리던 문제도 마지막 불완전 rune을 잘라내도록 수정했다. 검증: payload를 캡처하는 httptest 기반 테이블 테스트와 rune 경계 테스트를 추가해 수정 전 코드에서 두 테스트가 모두 실패하는 것을 확인한 뒤 `go test -race`(전체 패키지), `go vet ./...`, `gofmt -l`, `go build ./cmd/server`, `check-env-contract.sh`, `check-docs.sh` 통과. Frontend는 변경하지 않아 npm 검사는 생략. 커밋 4450a58.
+- 보류 아이디어:
+  - `internal/httpapi` 커버리지 5.5% — DB 없이 테스트 가능한 `SPAHandler`, middleware, `DecodeJSON`, `parseID` 등에 단위 테스트 추가. 가치 3 / 위험 1 / M
+  - `ai.consumeOpenAIStream`이 SSE 다중 `data:` 줄을 이어 붙이지 않아 한 이벤트를 여러 줄로 쪼개 보내는 provider에서 JSON 디코드 실패. 가치 3 / 위험 2 / M
+  - rate limiter의 `Retry-After: 60` 고정값을 현재 분 윈도우 잔여 시간으로 계산. 가치 2 / 위험 1 / S
+  - `httpapi.validHTTPURL` 강화(호스트의 공백·제어문자 거부, 포트 검증). 가치 2 / 위험 2 / S
+  - `httpapi.SPAHandler.fmtInt`는 `strconv.Itoa` 재구현 — 표준 라이브러리로 교체. 가치 1 / 위험 1 / S
+- 릴리즈: v2.1.3 (2026-09-03)
