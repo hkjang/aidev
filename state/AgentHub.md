@@ -30,3 +30,14 @@
   - captureHandler.WithGroup이 그룹 이름을 버려 서로 다른 그룹의 같은 키가 충돌 (2/1/S)
   - runInfoCommand가 version 외 인자를 run()으로 흘려보내 `agenthub --help`가 DB 오류로 실패 (2/1/S)
 - 릴리즈: v0.228.0 (2026-09-03)
+
+## 2026-09-03 (2차)
+- 선택: DLP redaction이 검출하지 않은 텍스트까지 함께 지우던 문제 수정 (가치 4 / 위험 2 / 작업량 S)
+- 결과: 성공 — 커밋 14ee633 (auto/2026-09-03-0610)
+- 요약: `Scan`은 값을 위치로 찾아 놓고 치환은 `strings.ReplaceAll`로 값 단위로 했습니다. 숫자 모양이 서로 포개지기 때문에 같은 편집이 아닙니다 — 계좌번호 111-1111-1111은 카드번호 4111-1111-1111-1111의 부분 문자열이라, 둘이 함께 있는 페이로드가 "카드 4[계좌번호 삭제됨]-1111 이고 사번 [계좌번호 삭제됨]"로 나갔습니다. 카드는 audit(그대로 통과)로 설정돼 있었는데도 반토막이 났고, 감사 기록은 "계좌번호 1건"이라고 맞는 말을 하는 동안 텍스트는 두 곳이 바뀌어 있었습니다 — 어느 쪽이 틀렸는지 화면에 아무 표시가 없는 불일치입니다. 이제 redact 대상 매치의 바이트 구간을 (이미 있는 claim과 함께) 기록해 한 번의 좌→우 패스로 치환합니다(검출기 실행 순서가 페이로드 순서와 달라 정렬은 필요). 검증: 중첩 케이스·다중 등급 in-place 치환 테스트 2개 추가, go vet ./..., go test -race ./cmd/... ./internal/..., web npm ci+lint+build, `scripts/release-catalog-images.sh check-versions` 모두 통과. internal/dlp는 런타임 base 이미지 소스라 BASE_VERSION 0.18.0으로 상향(5곳).
+- 보류 아이디어:
+  - MaxBytes 절단이 민감값 한가운데를 자르면 양쪽 다 매치되지 않아 조용히 새어나감 (3/2/S)
+  - korean.EndsInConsonant가 괄호·따옴표로 끝나는 값에서 조사를 잘못 고름 (2/2/S)
+  - captureHandler.WithGroup이 그룹 이름을 버려 서로 다른 그룹의 같은 키가 충돌 (2/1/S)
+  - runInfoCommand가 version 외 인자를 run()으로 흘려보내 `agenthub --help`가 DB 오류로 실패 (2/1/S)
+- 릴리즈: v0.229.0 (2026-09-03)
