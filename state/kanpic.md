@@ -24,3 +24,16 @@
   - `TRUNC` 이 `math.Pow`/이진 실수로 자리를 잘라 `TRUNC(2.29,1)` 같은 값에서 어긋날 수 있다. ROUND·CEILING 이 쓰는 `decimalRound` 로 통일할 것.
 - 릴리즈: v0.229.0 (2026-09-02)
 - 릴리즈: v0.229.0 (2026-09-02)
+
+## 2026-09-03
+- 선택: 외부 호출 캐시가 정책 검사를 가로막지 않고 상한을 지킨다 (가치 4 / 위험 1 / 작업량 M)
+- 결과: 성공
+- 요약: `internal/external/fetcher.go` 의 답 캐시에 겹쳐 있던 세 가지를 함께 고쳤다 — (1) 허용 목록·https·주소 형식을 보는 정책 검사(`CheckURL`)를 `fetch` 에서 `one` 의 맨 앞으로 올려 캐시 바깥에 두어, 관리자가 `external.allowed_hosts` 를 고치면 `cache_seconds`(기본 5분)를 기다리지 않고 곧바로 통하고 목록에서 뺀 호스트의 지난 답도 캐시에서 나오지 않는다, (2) 만료 항목을 지우는 자리가 없어 무한히 자라던 지도에 `store()` 를 두어 새 답이 들어올 때 만료분을 쓸고 512개 상한에서 가장 먼저 만료될 항목을 내보낸다, (3) `short()` 가 160바이트에서 잘라 한글을 반 글자로 남기던 것을 160글자·글자 경계로 고쳤다. 검증: 새 테스트 3개(`TestPolicyIsNotCachedInEitherDirection`, `TestCacheSweepsExpiredAndStaysBounded`, `TestShortKeepsKoreanLettersWhole`)와 `gofmt -l`, `go vet`, `go build ./...`, `go test ./...`(전체 통과), `scripts/check-release-docs.sh`, `scripts/check-commit-identities.sh`. 커밋 1개(1266384), 릴리즈 노트 v0.230.0 과 README VERSION 갱신. 웹 변경이 없어 npm 검사는 돌리지 않았다.
+- 보류 아이디어:
+  - `NUMBERVALUE` 미구현(#NAME?), `VALUE("12:00")` 이 시각을 읽지 못한다.
+  - `TRUNC` 이 `math.Pow`/이진 실수로 자리를 잘라 `TRUNC(2.29,1)` 같은 값에서 어긋날 수 있다. ROUND·CEILING 이 쓰는 `decimalRound` 로 통일할 것.
+  - `csvNumber` 가 IMPORTDATA 의 `"1,200"`·`"12%"`·앞뒤 통화 기호를 글자로 남긴다. 시트가 읽는 수의 범위와 맞출지 검토할 것.
+  - 외부 호출 캐시 키가 함수·주소만 담아, `external.max_kb` 를 올려도 캐시가 남아 있는 동안은 "크기를 넘습니다" 가 그대로다(정책 값도 키에 넣거나 크기 오류는 담지 않기).
+  - `internal/external` 의 동시 접근에 `-race` 시험이 없다. 한 번의 재계산이 여러 주소를 동시에 부르는 길을 시험으로 고정할 것.
+- 릴리즈: v0.230.0 (2026-09-03)
+- 릴리즈: v0.230.0 (2026-09-03)
