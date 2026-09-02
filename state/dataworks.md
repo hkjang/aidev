@@ -19,3 +19,10 @@
 - 요약: `internal/proxy/admin_analytics.go` 의 `parseWindow` 가 `time.ParseDuration` 결과를 부호 검사 없이 적용해 `?window=-24h`·`?window=0s` 같은 값이 since 를 현재 시각 이후로 밀어냈고, 이 함수를 쓰는 70여 개 호출부(analytics·cost·MCP·personalization·xview 등)가 기본 윈도우로 폴백하는 대신 빈 데이터를 반환했다. 양수 lookback 만 허용하고 그 외에는 호출부 fallback 을 쓰도록 고쳤으며, 유일하게 fallback 0("무제한" 의도)을 넘기는 `mcpFilterFromQuery` 를 위해 비양수 결과는 store 계층 관례대로 zero time 을 반환하게 했다. 검증: 단위 테스트 2개 + `/admin/timeseries?window=-24h` HTTP 회귀 테스트를 추가하고 옛 코드로 되돌려 3개 모두 실제 실패하는 것을 확인, `go build ./...`·`go vet ./...`·`go test ./...` 전체 통과, `go run ./cmd/api-surface-audit` gap 0.
 - 보류 아이디어: `gofmt -l` 미정렬 64개 파일 일괄 포맷(현재 CI 게이트 제외) / `internal/dataworks` 패키지 테스트 커버리지 보강 / Playwright e2e 를 서비스 컨테이너 기반 CI 잡으로 편입 / `npm run build` 가 추적 파일 `web/dist/.gitkeep` 을 삭제하는 문제를 vite 설정으로 해결 / `parseWindow` 의 미사용 `bucket` 인자 제거(호출부 70곳 일괄 정리)
 - 릴리즈: v0.9.38 (2026-09-03)
+
+## 2026-09-03 (3)
+- 선택: `tokenSet` 이 한글 단어를 전부 구분자로 버려 한국어 제품의 고객 적합도 점수가 낮게 나오는 버그 수정 (가치 4 / 위험 2 / 작업량 S)
+- 결과: 성공
+- 요약: `internal/dataworks/domain.go` 의 `tokenSet` 이 `[a-z0-9_]` 이외 모든 룬을 구분자로 취급해, 한글로 작성된 `name_ko`·`description`·`pain_points` 는 토큰이 하나도 생성되지 않았다(실측 `tokenSet("여신 승인 신용 위험 스코어") == map[]`). 그 결과 `ComputeCustomerFitScore` 의 "shared positioning terms" 항목(최대 +35 및 `product_positioning`·`segment_pain_points` evidence ref)이 한국어 우선 제품에서는 세그먼트 pain point 가 글자 그대로 일치해도 절대 발동하지 않았고, 동일 내용의 영어 제품은 70+, 한국어 제품은 66 을 받았다. 구분자 판정을 `unicode.IsLetter`/`IsDigit` 기반으로 바꾸고 최소 토큰 길이를 바이트가 아닌 룬 수로 세도록 해(1음절 조사·단일 ASCII 문자를 동일하게 제외) ASCII 동작은 그대로 유지했다. 검증: 한국어 적합도 회귀 테스트(무관한 세그먼트는 여전히 더 낮게 나오는지 포함)와 `tokenSet` 단위 테스트를 추가하고 옛 코드로 되돌려 둘 다 실제 실패하는 것을 확인, `go build ./...`·`go vet ./...`(0건)·`go test ./...` 전체 통과, `gofmt -l internal/dataworks` 클린, `go run ./cmd/api-surface-audit` gap 0.
+- 보류 아이디어: `gofmt -l` 미정렬 64개 파일 일괄 포맷(현재 CI 게이트 제외) / Playwright e2e 를 서비스 컨테이너 기반 CI 잡으로 편입 / `npm run build` 가 추적 파일 `web/dist/.gitkeep` 을 삭제하는 문제를 vite 설정으로 해결 / `parseWindow` 의 미사용 `bucket` 인자 제거(호출부 70곳 일괄 정리) / `bestApprovalStatus` 는 `ExpiresAt` 파싱 실패를 expired 로, `expiredAt` 은 not-expired 로 처리하는 불일치 정리
+- 릴리즈: v0.9.39 (2026-09-03)
