@@ -15,3 +15,14 @@
   - `currentIncludedMaterials` 도 같은 전환 주 문제를 갖는지 확인 (가치 2 / 위험 2 / 작업량 S)
   - `outlookForDueDate` 의 AT_RISK 문구가 low==high 일 때 최근 속도를 빼고 전체 평균만 말합니다 (가치 1 / 위험 1 / 작업량 S)
 - 릴리즈: v0.282.0 (2026-09-02)
+
+## 2026-09-02 (3회차)
+- 선택: 주 격자가 옮겨진 전환 주에 포함한 팀원 주간보고가 "미작성"으로 보이는 버그 수정 (가치 4 / 위험 1 / 작업량 S)
+- 결과: 성공
+- 요약: `includedMaterialsFor` 가 팀원 보고서를 `report.week_start=$2::date` 정확일치로만 붙여, 주 시작 요일 변경 후 전환 주에는 이미 작성한(그리고 weekIsFree 때문에 새 날짜로 다시 쓸 수도 없는) 팀원이 보고서 없음으로 돌아왔습니다. PPTX 는 그것을 이름 옆 "주간보고 미작성 / 해당 주차 주간보고가 없습니다" 로 바꿔 경영 보고 자리에 올립니다. 조회를 `weekCoveringDays` 기준 LATERAL 조인(겹치는 것 중 `week_start DESC` 하나)으로 바꿔 currentReport·weekIsFree 와 규칙을 통일했고, `currentIncludedMaterials` 와 `loadReport` 두 경로가 같은 함수를 쓰므로 한 번에 고쳐집니다. 회귀 테스트 1개(`currentweekgrid_test.go`, guards: includedMaterialsFor/weekCoveringDays)를 추가했고, 안 쓴 주가 다른 주 보고서로 채워지지 않는 것도 같이 확인합니다. 검증: 수정 전 코드에서 새 테스트가 실패하는 것을 확인 → 실제 DB(WEEKLY_TEST_POSTGRES_DSN)로 `go test ./...` 전체 통과, `go vet`, guard-check(새 가드가 두 대상 모두 도달), modal-close/version/openapi-check 통과, frontend lint·build·test(121개) 통과. mutation-check 잔존 변이 4건은 모두 기존 권한 분기(294·333·334행)로 예산 초과로 건너뛴 기존 가드가 담당하며 이번 변경분이 아닙니다. backup-check 는 로컬에 psql 이 없어 건너뛰었습니다(CI 에서 실행).
+- 보류 아이디어:
+  - 격자 이동 후 `runAutomaticCloneForUser` 의 원본 조회가 `week-7` 정확일치라 자동 복제가 한 주 조용히 건너뜁니다 (가치 3 / 위험 2 / 작업량 S)
+  - `buildMailMessage` 의 From 표시이름이 순수 ASCII면 인코딩되지 않아 `,`·`<` 가 든 이름이 From 헤더를 깨뜨립니다 (가치 2 / 위험 1 / 작업량 S)
+  - `meeting.go` 의 지난주 조회(`AddDate(0,0,-7)`)도 같은 전환 주 정확일치 문제를 갖는지 확인 (가치 2 / 위험 2 / 작업량 S)
+  - `outlookForDueDate` 의 AT_RISK 문구가 low==high 일 때 최근 속도를 빼고 전체 평균만 말합니다 (가치 1 / 위험 1 / 작업량 S)
+- 릴리즈: v0.283.0 (2026-09-02)
