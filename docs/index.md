@@ -1,7 +1,7 @@
 ---
 title: "aidev 자율 개선 대시보드"
-description: "Claude Code 자율 개선 에이전트가 hkjang 의 프로젝트를 개선·테스트·머지·릴리즈한 일일 보고. 오늘 48회차·릴리즈 26건, 누적 48회차·릴리즈 26건."
-last_modified_at: 2026-09-02 23:03:42 +0900
+description: "Claude Code 자율 개선 에이전트가 hkjang 의 프로젝트를 개선·테스트·머지·릴리즈한 일일 보고. 오늘 49회차·릴리즈 27건, 누적 49회차·릴리즈 27건."
+last_modified_at: 2026-09-02 23:18:01 +0900
 ---
 
 <script type="application/ld+json">
@@ -10,14 +10,14 @@ last_modified_at: 2026-09-02 23:03:42 +0900
  "@type": "WebSite",
  "name": "aidev 자율 개선 대시보드",
  "url": "https://hkjang.github.io/aidev/",
- "description": "Claude Code 자율 개선 에이전트가 hkjang 의 프로젝트를 개선·테스트·머지·릴리즈한 일일 보고. 오늘 48회차·릴리즈 26건, 누적 48회차·릴리즈 26건.",
+ "description": "Claude Code 자율 개선 에이전트가 hkjang 의 프로젝트를 개선·테스트·머지·릴리즈한 일일 보고. 오늘 49회차·릴리즈 27건, 누적 49회차·릴리즈 27건.",
  "inLanguage": "ko",
  "author": {
   "@type": "Person",
   "name": "hkjang",
   "url": "https://github.com/hkjang"
  },
- "dateModified": "2026-09-02T23:03:42"
+ "dateModified": "2026-09-02T23:18:01"
 }
 </script>
 
@@ -121,19 +121,18 @@ last_modified_at: 2026-09-02 23:03:42 +0900
 
 # aidev 자율 개선 대시보드
 
-<p class="tldr"><strong>한 줄 요약.</strong> Claude Code 자율 개선 에이전트가 hkjang 의 프로젝트를 개선·테스트·머지·릴리즈한 일일 보고. 오늘 48회차·릴리즈 26건, 누적 48회차·릴리즈 26건. 회차가 끝날 때마다 자동 갱신됩니다 (마지막 갱신 2026-09-02 23:03).</p>
+<p class="tldr"><strong>한 줄 요약.</strong> Claude Code 자율 개선 에이전트가 hkjang 의 프로젝트를 개선·테스트·머지·릴리즈한 일일 보고. 오늘 49회차·릴리즈 27건, 누적 49회차·릴리즈 27건. 회차가 끝날 때마다 자동 갱신됩니다 (마지막 갱신 2026-09-02 23:18).</p>
 
 [운영 문서](https://github.com/hkjang/aidev#readme) · [원장](https://github.com/hkjang/aidev/tree/main/state) · [실행 이력](https://github.com/hkjang/aidev/commits/main) · [원본 데이터](https://hkjang.github.io/aidev/data/runs.jsonl)
 
 ## 오늘 (2026-09-02)
 
-<ul class="stats"><li><b>48</b><span>회차</span></li><li><b>27</b><span>프로젝트</span></li><li><b>26</b><span>릴리즈</span></li><li><b>16</b><span>머지(릴리즈 없음)</span></li><li><b>3</b><span>변경 없음</span></li><li><b>0</b><span>실패</span></li></ul>
+<ul class="stats"><li><b>49</b><span>회차</span></li><li><b>27</b><span>프로젝트</span></li><li><b>27</b><span>릴리즈</span></li><li><b>16</b><span>머지(릴리즈 없음)</span></li><li><b>3</b><span>변경 없음</span></li><li><b>0</b><span>실패</span></li></ul>
 
 [2026-09-02 보고 자세히 보기 →](https://hkjang.github.io/aidev/reports/2026-09-02/)
 
 | 시각 | 프로젝트 | 결과 |
 |---|---|---|
-| 20:47 | igame | ✅ 머지 merged [PR #1](https://github.com/hkjang/igame/pull/1), release missing |
 | 20:56 | kanpic | 🚀 릴리즈 merged [PR #2](https://github.com/hkjang/kanpic/pull/2), released [v0.229.0](https://github.com/hkjang/kanpic/releases/tag/v0.229.0) |
 | 21:08 | moina | 🚀 릴리즈 merged [PR #2](https://github.com/hkjang/moina/pull/2), released [v0.1.17](https://github.com/hkjang/moina/releases/tag/v0.1.17) |
 | 21:20 | moyro | 🚀 릴리즈 merged [PR #2](https://github.com/hkjang/moyro/pull/2), released [v0.2.11](https://github.com/hkjang/moyro/releases/tag/v0.2.11) |
@@ -145,12 +144,13 @@ last_modified_at: 2026-09-02 23:03:42 +0900
 | 22:29 | relio | 🚀 릴리즈 merged [PR #2](https://github.com/hkjang/relio/pull/2), released [v1.11.9](https://github.com/hkjang/relio/releases/tag/v1.11.9) |
 | 22:44 | umm | 🚀 릴리즈 merged [PR #132](https://github.com/hkjang/umm/pull/132), released [v0.66.0](https://github.com/hkjang/umm/releases/tag/v0.66.0) |
 | 23:03 | vibe-coders | • PR  |
+| 23:18 | visitflow | 🚀 릴리즈 merged [PR #2](https://github.com/hkjang/visitflow/pull/2), released [v2.6.1](https://github.com/hkjang/visitflow/releases/tag/v2.6.1) |
 
 ## 일일 보고
 
 | 날짜 | 회차 | 릴리즈 | 머지 | 변경 없음 | 실패 |
 |---|---|---|---|---|---|
-| [2026-09-02](https://hkjang.github.io/aidev/reports/2026-09-02/) | 48 | 26 | 16 | 3 | 0 |
+| [2026-09-02](https://hkjang.github.io/aidev/reports/2026-09-02/) | 49 | 27 | 16 | 3 | 0 |
 
 ## 프로젝트별 현황
 
@@ -181,7 +181,7 @@ last_modified_at: 2026-09-02 23:03:42 +0900
 | [Vendra](https://github.com/hkjang/Vendra) | 2026-09-02 13:08 | ✅ 머지 merged [PR #101](https://github.com/hkjang/Vendra/pull/101), release released | [v0.7.36](https://github.com/hkjang/Vendra/releases/tag/v0.7.36) |
 | [Vendra/ai-admin/pii-masker/ptium](https://github.com/hkjang/Vendra/ai-admin/pii-masker/ptium) | 2026-09-02 16:32 | • 태그 사후 푸시 및 Release 생성 |  |
 | [vibe-coders](https://github.com/hkjang/vibe-coders) | 2026-09-02 23:03 | • PR  |  |
-| [visitflow](https://github.com/hkjang/visitflow) | 2026-09-02 17:02 | ✅ 머지 merged [PR #1](https://github.com/hkjang/visitflow/pull/1), release missing |  |
+| [visitflow](https://github.com/hkjang/visitflow) | 2026-09-02 17:02 | ✅ 머지 merged [PR #1](https://github.com/hkjang/visitflow/pull/1), release missing | [v2.6.1](https://github.com/hkjang/visitflow/releases/tag/v2.6.1) |
 | [weekly](https://github.com/hkjang/weekly) | 2026-09-02 17:27 | 🚀 릴리즈 merged [PR #2](https://github.com/hkjang/weekly/pull/2), released [v0.282.0](https://github.com/hkjang/weekly/releases/tag/v0.282.0) | [v0.282.0](https://github.com/hkjang/weekly/releases/tag/v0.282.0) |
 
 ## FAQ
