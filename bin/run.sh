@@ -12,7 +12,8 @@
 set -euo pipefail
 
 ROOT="${ROOT:-/mnt/c/Users/USER/projects}"
-HERE="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+# daily.sh 는 실행 중 파일이 바뀌어도 안전하도록 이 스크립트를 임시 경로에 복사해 돌린다 — 그때는 AIDEV_BIN 으로 위치를 받는다
+HERE="${AIDEV_BIN:-$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)}"
 REPO_DIR="$(cd "$HERE/.." && pwd)"
 STATE="$REPO_DIR/state"; LOGS="$REPO_DIR/logs"
 WT_BASE="${WT_BASE:-$HOME/.cache/auto-improve-wt}"

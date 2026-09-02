@@ -11,4 +11,7 @@ exec >>"$REPO_DIR/logs/cron.log" 2>&1
 echo "===== $(date '+%F %T') start (args: ${*:---count 1})"
 # 러너·프롬프트·원장이 원격에서 바뀌었을 수 있으니 먼저 따라간다
 git -C "$REPO_DIR" pull -q --ff-only origin main || echo "warn: aidev pull failed, running with local copy"
-exec flock -n "$HOME/.auto-improve/run.lock" "$HERE/run.sh" "${@:---count 1}"
+# bash 는 스크립트를 실행하면서 읽으므로, 회차 도중 git pull 로 run.sh 가 바뀌면 깨질 수 있다 → 복사본으로 실행
+export AIDEV_BIN="$HERE"
+tmp=$(mktemp /tmp/aidev-run.XXXXXX.sh) && cp "$HERE/run.sh" "$tmp"
+exec flock -n "$HOME/.auto-improve/run.lock" bash -c 'trap "rm -f $0" EXIT; bash "$0" "$@"' "$tmp" "${@:---count 1}"
