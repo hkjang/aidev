@@ -40,3 +40,26 @@
   - 마지막 scope를 제거하면 scope가 하나도 없는 키가 남음(생성은 1개 이상을 요구) (가치 2 / 위험 2 / S)
   - `attributes.*` 경로의 숫자 비교가 텍스트 비교로 처리되는 문제 (가치 2 / 위험 3 / M)
 - 릴리즈: v0.2.19 (2026-09-02)
+
+## 2026-09-03
+- 선택: 속성 조회가 찾으려는 키를 소문자로 바꿔버리던 문제 (가치 4 / 위험 1 / 작업량 S)
+- 결과: 성공
+- 요약: `querydsl.Parse`가 컬럼을 대소문자 구분 없이 받으려고 필드명 전체를
+  `strings.ToLower`로 접었다. 그런데 `attributes.` 뒤는 컬럼이 아니라 저장된 JSON
+  문서의 키이고 JSON 키는 대소문자를 구분한다. 자산 API·MCP 도구·타 시스템 임포트로
+  만든 자산은 호출자가 쓴 키를 그대로 갖고 있어 대문자가 흔한데,
+  `attributes.assetTag`는 `'{assettag}'`(PostgreSQL `#>>`)와 `'$.assettag'`(SQLite
+  `json_extract`)로 컴파일되어 어느 문서에도 없는 경로를 물었다. 결과는 오류 없는
+  HTTP 200 빈 목록이었고 `/query/validate`는 그 표현식을 이미 valid라고 답한 뒤였다.
+  이제 `attributes.` 접두사만 접고 키는 입력된 대소문자를 유지하며(컬럼명은 그대로
+  대소문자 무시), 콘솔이 렌더링하는 문법 참조에도 대소문자 구분을 명시했다. 검증:
+  querydsl 단위 테스트 2개와 `/api/v1/query/execute`·`/validate` 통합 테스트 2개를
+  추가해 수정 전 실패·수정 후 통과를 확인하고, `go test ./...`를 SQLite fallback과
+  실제 PostgreSQL(`scripts/test-postgres.sh`) 양쪽에서 통과, `go vet`, `go build`,
+  `gofmt` 통과.
+- 보류 아이디어:
+  - `attributes.*` 경로의 숫자 비교가 텍스트 비교로 처리되는 문제 (가치 3 / 위험 3 / M)
+  - 잘못된 scope로 키를 만들면 400 INVALID_SCOPES가 아니라 403 SCOPE_ESCALATION이 반환됨 (가치 2 / 위험 1 / S)
+  - 마지막 scope를 제거하면 scope가 하나도 없는 키가 남음(생성은 1개 이상을 요구) (가치 2 / 위험 2 / S)
+  - `/api/v1/external/query/*` API key 경로의 한도·감사 로그 커버리지 (가치 3 / 위험 2 / M)
+- 릴리즈: v0.2.20 (2026-09-03)
