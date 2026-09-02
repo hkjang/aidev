@@ -47,3 +47,14 @@
   - `LIMIT #{pageSize}` 에 음수/0 pageSize 가 그대로 전달되는 경로 보정 (가치 2 / 위험 2 / 작업량 S)
   - `ValidUtil`, `ApiCallUtil` 단위 테스트 공백 보강 (가치 2 / 위험 1 / 작업량 S)
   - `AuditUtil.getUserInfo()` 외 `TransferManagementServiceImpl` 63행도 `CurrentUserUtil` 로 통일 (가치 2 / 위험 1 / 작업량 S)
+
+## 2026-09-03
+- 선택: IAM introspect 응답 형식 미검증으로 인한 필터 500 오류 수정 (가치 4 / 위험 1 / 작업량 S)
+- 결과: 성공
+- 요약: `JwtAuthenticationFilter` 80행이 `(boolean) dataMap.get("active")` 로 IAM introspect 응답을 검증 없이 꺼내고 있어, `getDataMap` 이 null 을 반환하는 경로(`jsonToVo` 파싱 실패 → null, 또는 code 200 인데 data 없음)에서 NPE 가, `active`/`ext`/`email` 타입이 다르면 ClassCastException 이 필터 밖으로 전파됐습니다. 필터에서 새어 나간 예외는 `@ControllerAdvice` 인 `GlobalExceptionHandler` 가 잡지 못해 CORS 헤더도 에러 본문도 없는 컨테이너 500 이 나가고, 브라우저는 재로그인 안내 대신 CORS 오류만 보게 됩니다. 네 가지 형식 오류를 모두 `AthenaJwtException(ATHENA_JWT_PARSING)` 으로 바꿔 필터의 기존 인증 실패 응답 경로(상태 400 + JSON 본문 + CORS 헤더)를 타게 했고, `ext` 는 있는데 `email` 이 없어 인증 없이 체인을 통과시키던 경로도 명시적 실패로 정리했습니다. `ext` 가 null 이면 M2M 으로 취급하는 기존 동작은 유지했습니다. 검증은 `JwtAuthenticationFilterIntrospectTest`(8: 형식 오류 6 + 정상 사용자 인증 / M2M 인증 회귀 가드) 추가 후 `sh gradlew check build` 실행으로 했고 18개 테스트 클래스 69개 테스트 전부 통과했습니다. 커밋 e373af9.
+- 보류 아이디어:
+  - `JwtAuthenticationFilter` 의 CORS 허용 Origin 30여 개 하드코딩을 설정(yaml)으로 외부화 (가치 3 / 위험 3 / 작업량 M) — catch 블록 안에서 요청마다 Set.of 를 새로 만드는 문제도 함께 해소됨
+  - 필터 내 `BusinessException("사용자 정보가 없습니다.")` 도 catch 되지 않아 500 + CORS 헤더 누락 (가치 3 / 위험 2 / 작업량 S) — 상태코드 변경이라 프론트 영향 확인 필요
+  - `LIMIT #{pageSize}` 에 음수/0 pageSize 가 그대로 전달되는 경로 보정 (가치 2 / 위험 2 / 작업량 S)
+  - `ValidUtil`, `ApiCallUtil` 단위 테스트 공백 보강 (가치 2 / 위험 1 / 작업량 S)
+  - `TransferManagementServiceImpl` 63행도 `CurrentUserUtil` 로 통일 (가치 2 / 위험 1 / 작업량 S)
