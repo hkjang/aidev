@@ -22,3 +22,11 @@
 - 보류 아이디어: ① `.github` 에 CI 워크플로 없음 — build/vet/test 게이트 추가 (가치 3 / 위험 1 / S) ② `detectScanner` 가 못 맞히면 `scanner="unknown"` 저장 후 trivy 파서 실행 — 저장값과 실제 파서 불일치 (가치 2 / 위험 1 / S) ③ Grype `Negligible` 심각도가 `Unknown` 으로 접혀 Low 미만 등급 정보 소실 (가치 2 / 위험 2 / S) ④ `collectBenchmarkResults` 의 Section 귀속 — 바깥 노드 라벨이 먼저 이겨 kube-bench Section 이 "1.1" 대신 상위 control 설명으로 채워짐 (가치 2 / 위험 2 / S) ⑤ 카탈로그 caller 의 `num()` 헬퍼가 문자열 `"0"`·비숫자를 조용히 기본값으로 되돌림 — 잘못된 입력이 기본값으로 성공 (가치 2 / 위험 1 / S)
 - 릴리즈: v0.9.264 (2026-09-03)
 - 릴리즈: v0.9.264 (2026-09-03)
+
+## 2026-09-03
+- 선택: 액션 영향도 산출기의 승인 게이트 결함 4개 수정 + `internal/action` 테스트 보강 (가치 4 / 위험 1 / 작업량 M)
+- 결과: 성공
+- 요약: `internal/action/impact.go`(272줄, 테스트 4개)는 클러스터를 바꾸는 모든 액션이 승인 전에 통과하는 유일한 영향도 산출기이고 그 결과가 `DryRunDiff`로 저장돼 운영자는 그 텍스트만 보고 승인한다. 넷이 잘못돼 있었다 — ① preview 의 `num()` 은 float/int 만 읽는데 실행기의 `intFromParams` 는 JSON 문자열도 `Atoi` 로 파싱해서, `{"replicas":"5"}` 요청이 승인기록·감사로그에 `replicas 2 → 0 (-2)` 로 남고 실제로는 5로 스케일됐다(승인한 값 ≠ 실행된 값) ② `replicas` 부재·음수도 똑같이 "0으로 축소"로 렌더 — 실행기가 거절할 요청에 전면 중단 diff 가 남았다 ③ replica 0 축소에 승인 게이트가 없음: `scale` 은 `Classify` 가 유일하게 `RequiresApproval:false` 로 두는 액션인데 0 은 워크로드 전면 중단이고, 서비스 플랫폼 stop 경로는 같은 요청을 이미 `approval_required` 로 기록 중이라 `POST /admin/k8s/actions` 만 `pending` 으로 통과시키고 있었다 ④ `cordon`/`uncordon` 이 한 `case` 를 공유해 uncordon 승인자가 "cordon은 신규 스케줄만 차단합니다" 라는 반대 동작 설명을 읽었다. 덤으로 patch 미허용 필드 목록이 map 순회 순서라 같은 요청이 매번 다른 승인 문구를 만들던 것도 정렬했다. 검증: 신규 테스트 5개를 고치기 전 코드에 되돌려 붙여 다섯 개가 각 결함을 지목하며 실패함을 확인했고 `go build ./...`·`go vet ./...`·`go test ./...` 전부 통과(20 패키지). 저장소 관례대로 AppVersion·changelog·docs 버전 마커를 v0.9.265 로 올렸다(release gate 테스트가 강제).
+- 보류 아이디어: ① `.github` 에 CI 워크플로 없음 — build/vet/test 게이트 추가 (가치 3 / 위험 1 / S) ② `detectScanner` 가 못 맞히면 `scanner="unknown"` 저장 후 trivy 파서 실행 — 저장값과 실제 파서 불일치 (가치 2 / 위험 1 / S) ③ Grype `Negligible` 심각도가 `Unknown` 으로 접혀 Low 미만 등급 정보 소실 (가치 2 / 위험 2 / S) ④ `collectBenchmarkResults` 의 Section 귀속 — 바깥 노드 라벨이 먼저 이겨 kube-bench Section 이 "1.1" 대신 상위 control 설명으로 채워짐 (가치 2 / 위험 2 / S) ⑤ `AssessImpact` 가 인벤토리에 없는 대상을 zero value 로 받아 "replicas 0 → N" 처럼 현재 상태를 아는 척함 — 미관측 대상임을 표시해야 함 (가치 3 / 위험 1 / S)
+- 릴리즈: v0.9.265 (2026-09-03)
+- 릴리즈: v0.9.265 (2026-09-03)
