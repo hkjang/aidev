@@ -26,3 +26,14 @@
   - `meeting.go` 의 지난주 조회(`AddDate(0,0,-7)`)도 같은 전환 주 정확일치 문제를 갖는지 확인 (가치 2 / 위험 2 / 작업량 S)
   - `outlookForDueDate` 의 AT_RISK 문구가 low==high 일 때 최근 속도를 빼고 전체 평균만 말합니다 (가치 1 / 위험 1 / 작업량 S)
 - 릴리즈: v0.283.0 (2026-09-02)
+
+## 2026-09-03
+- 선택: 주 격자를 옮긴 다음 주에 지난주 자동 복제가 조용히 건너뛰던 버그 수정 (가치 3 / 위험 2 / 작업량 S)
+- 결과: 성공
+- 요약: `runAutomaticCloneForUser` 는 이번 주 충돌은 이미 날짜 겹침으로 묻고 있었는데 원본만 `week-7` 정확일치로 찾아, 주 시작 요일을 바꾼 다음 주에는 작성자가 이어 쓰던 전환 주 보고서(옛 격자 날짜)를 못 찾고 그 주를 processed 로 표시한 뒤 초안을 만들지 않았습니다. 원본 조회를 `weekCoveringDays` 겹침 + `week_start DESC LIMIT 1` 로 바꿔 두 반쪽의 규칙을 통일했고, 회귀 테스트 1개(`currentweekgrid_test.go`, guards: runAutomaticCloneForUser/weekCoveringDays)를 더했습니다. 전환 주 자체에는 겹치는 보고서가 있으므로 여전히 복제하지 않는다는 것도 같은 테스트가 확인합니다. 관리자 안내서의 "정확히 한 주 전 보고서" 문장과 자동화 표를 제품에 맞게 고치고 HTML·PDF 를 다시 만들었습니다. 검증: 수정 전 코드에서 새 테스트가 실패하는 것을 확인 → 실제 DB(WEEKLY_TEST_POSTGRES_DSN)로 `go test ./...` 전체 통과, `go vet`, guard-check 279개 도달, version·openapi·modal-close 검사 통과, frontend lint·build·test(121개) 통과. mutation-check 는 새 가드에서 잔존 변이 3건(287·304·330행)인데 모두 이번에 바꾸지 않은 "쓸 것이 없는" 분기(설정 꺼짐/이미 처리/커밋 생략)이고, 바꾼 조회 경로의 변이 3건은 모두 잡혔습니다. backup-check 는 로컬에 psql 이 없어 건너뛰었습니다(CI 에서 실행).
+- 보류 아이디어:
+  - `buildMailMessage` 의 From 표시이름이 순수 ASCII면 인코딩되지 않아 `,`·`<` 가 든 이름이 From 헤더를 깨뜨립니다 (가치 2 / 위험 1 / 작업량 S)
+  - 전환 주에는 `previousWeekPlan` 이 `week_start < target` 로 물어 작성자가 지금 쓰고 있는 그 보고서를 "지난주 계획" 으로 되돌려 줍니다 (가치 3 / 위험 2 / 작업량 S)
+  - `meeting.go` 의 지난주 조회(`weekBefore`)도 같은 전환 주 정확일치 문제를 갖는지 확인 (가치 2 / 위험 2 / 작업량 S)
+  - `outlookForDueDate` 의 AT_RISK 문구가 low==high 일 때 최근 속도를 빼고 전체 평균만 말합니다 (가치 1 / 위험 1 / 작업량 S)
+- 릴리즈: v0.284.0 (2026-09-03)
