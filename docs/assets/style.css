@@ -1,0 +1,64 @@
+/* aidev 대시보드 — 모바일 우선, 시스템 글꼴, 다크 모드 대응 */
+:root {
+  --bg: #ffffff; --fg: #111827; --muted: #6b7280; --line: #e5e7eb;
+  --accent: #0f766e; --accent-bg: #ecfdf5; --card: #f9fafb;
+  --ok: #047857; --warn: #b45309; --bad: #b91c1c;
+  --w: 60rem;
+}
+@media (prefers-color-scheme: dark) {
+  :root { --bg: #0b1220; --fg: #e5e7eb; --muted: #9ca3af; --line: #1f2937;
+          --accent: #2dd4bf; --accent-bg: #0f2a2a; --card: #111827; }
+}
+* { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; scroll-behavior: smooth; }
+body { margin: 0; background: var(--bg); color: var(--fg); line-height: 1.6;
+  font: 16px/1.6 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Apple SD Gothic Neo", "Noto Sans KR", "Malgun Gothic", sans-serif; }
+a { color: var(--accent); text-decoration: none; }
+a:hover, a:focus { text-decoration: underline; }
+.skip { position: absolute; left: -999px; top: 0; background: var(--accent); color: #fff; padding: .5rem 1rem; z-index: 10; }
+.skip:focus { left: .5rem; top: .5rem; }
+
+.site-header { border-bottom: 1px solid var(--line); background: var(--bg); position: sticky; top: 0; z-index: 5; }
+.site-nav { max-width: var(--w); margin: 0 auto; padding: .5rem 1rem; display: flex; gap: .25rem 1rem; flex-wrap: wrap; align-items: center;
+  overflow-x: auto; -webkit-overflow-scrolling: touch; white-space: nowrap; }
+.site-nav a { padding: .35rem 0; min-height: 44px; display: inline-flex; align-items: center; }
+.site-nav .brand { font-weight: 700; color: var(--fg); margin-right: .5rem; }
+
+.content { max-width: var(--w); margin: 0 auto; padding: 1rem 1rem 3rem; }
+.crumbs { color: var(--muted); font-size: .9rem; margin-bottom: .5rem; }
+h1 { font-size: clamp(1.5rem, 4.5vw, 2.1rem); line-height: 1.25; margin: .5rem 0 .75rem; }
+h2 { font-size: clamp(1.2rem, 3.5vw, 1.5rem); margin: 2rem 0 .75rem; padding-top: .25rem; border-top: 1px solid var(--line); }
+h3 { font-size: 1.05rem; margin: 1.25rem 0 .5rem; }
+p, li { overflow-wrap: anywhere; }
+code { background: var(--card); padding: .1em .35em; border-radius: 4px; font-size: .9em; }
+pre { overflow-x: auto; background: var(--card); padding: .75rem; border-radius: 6px; }
+blockquote { margin: 0; padding: .5rem 1rem; border-left: 4px solid var(--accent); background: var(--accent-bg); border-radius: 0 6px 6px 0; }
+
+/* 요약 카드 */
+.tldr { background: var(--accent-bg); border: 1px solid var(--line); border-radius: 8px; padding: .75rem 1rem; margin: 0 0 1rem; }
+.stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(7.5rem, 1fr)); gap: .5rem; margin: .75rem 0 1rem; padding: 0; list-style: none; }
+.stats li { background: var(--card); border: 1px solid var(--line); border-radius: 8px; padding: .6rem .75rem; }
+.stats b { display: block; font-size: 1.5rem; line-height: 1.2; }
+.stats span { color: var(--muted); font-size: .85rem; }
+
+/* 표: 좁은 화면에서는 가로 스크롤, 줄바꿈 허용 */
+.table-wrap, .content table { display: block; width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+table { border-collapse: collapse; font-size: .95rem; margin: .5rem 0 1rem; }
+th, td { border: 1px solid var(--line); padding: .45rem .6rem; text-align: left; vertical-align: top; min-width: 5rem; }
+th { background: var(--card); position: sticky; top: 0; }
+td:last-child { min-width: 14rem; }
+tr:nth-child(even) td { background: color-mix(in srgb, var(--card) 60%, transparent); }
+
+/* FAQ */
+details { border: 1px solid var(--line); border-radius: 8px; padding: .5rem .9rem; margin: .5rem 0; background: var(--card); }
+summary { cursor: pointer; font-weight: 600; padding: .25rem 0; min-height: 44px; display: flex; align-items: center; }
+
+.site-footer { border-top: 1px solid var(--line); color: var(--muted); font-size: .85rem; max-width: var(--w); margin: 0 auto; padding: 1rem; }
+
+@media (max-width: 640px) {
+  body { font-size: 15px; }
+  .content { padding: .75rem .75rem 2.5rem; }
+  th, td { padding: .4rem .5rem; }
+  .stats b { font-size: 1.3rem; }
+}
+@media print { .site-header, .site-footer, .skip { display: none; } .content { max-width: none; } a { color: inherit; } }
