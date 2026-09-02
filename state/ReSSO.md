@@ -34,3 +34,15 @@
   - `oidcLogout`이 `id_token_hint`의 토큰 타입(`Extra.Type`)을 확인하지 않아 Access Token도 hint로 받아들인다 (가치 2 / 위험 1 / S)
   - `scripts/test-services.sh`가 PostgreSQL 포트 충돌 시 컨테이너를 Created 상태로 남기고 다음 실행에서 인증 실패로만 드러난다 — 포트 점유를 감지해 알려주기 (가치 2 / 위험 1 / S)
 - 릴리즈: v0.9.67 (2026-09-03)
+
+## 2026-09-03 (2회차)
+- 선택: RP-initiated logout이 만료된 `id_token_hint`를 거절하던 문제 수정 (가치 4 / 위험 1 / 작업량 S)
+- 결과: 성공 (커밋 0044bd0)
+- 요약: `oidcLogout`이 hint를 `Verify`(만료 검사 포함)로 통과시켜서, 로그아웃 시점에 RP가 들고 있는 **보통 상태인 만료된 ID Token**을 거절했다. 거절이 거절로 보이지도 않았다 — `client`가 nil로 남아 `post_logout_redirect_uri`가 말없이 버려지고 브라우저는 `/login?logged_out=1`에 남았다(세션은 끝나고 쿠키도 지워진 채). RP 입장에선 사람이 그냥 돌아오지 않는다. 만료를 보지 않는 이유는 같은 저장소의 `SubjectFromIDTokenHint`에 이미 적혀 있었고(인가 엔드포인트의 같은 파라미터), RP-Initiated Logout 1.0 §4도 같은 것을 요구한다 — logout만 따르지 않고 있었다. 새 `IDTokenHint`로 서명·issuer는 그대로 확인하고 만료만 빼며, 덤으로 `typ != "ID"`를 확인해 Access Token이 hint로 통하던 것도 막았다(azp·iss·sub가 같아 그대로 통과하고 있었다). 리다이렉트 대상은 여전히 등록 목록과 대조하므로 open redirect가 되지 않고, 꺼진 Client도 여전히 거절된다. 검증: 새 연동 테스트가 수정 전 코드에서 두 건 모두 실제로 실패함을 확인했다(만료 hint → `/login?logged_out=1`, Access Token → 수락). Realm TTL 하한이 60초라 만료 토큰은 Realm 키로 직접 서명했다. `make test` 전체 통과 — `go test -race ./...` 전 패키지 ok, 연동 테스트 SKIP 0건(httpserver 75s / store 76s), `go vet`, `golangci-lint`(0 issues), `govulncheck`(0), `npm run lint`, `npm run test`(22파일/104테스트), `npm run build`. 빌드가 만든 `webui/dist/index.html` 변경은 되돌렸다.
+- 보류 아이디어:
+  - UserInfo POST에서 form-encoded `access_token` 파라미터 수용 (RFC 6750 §2.2). 현재는 Authorization 헤더만 읽는다 (가치 2 / 위험 1 / S)
+  - `authorization`이 `id_token_hint`·`max_age`를 `AuthorizationRequest`에 저장하지 않아, 로그인 폼을 거친 뒤에는 hint가 지목한 계정과 다른 계정으로 로그인해도 코드가 나간다 (가치 3 / 위험 2 / M)
+  - `oidcLogout`이 hint의 `sub`를 쿠키 세션의 사용자와 대조하지 않아, 다른 사람의 ID Token을 hint로 줘도 지금 로그인한 사람이 로그아웃된다 (스펙상 SHOULD, CSRF성 성가심 수준) (가치 2 / 위험 2 / M)
+  - `SessionByToken`이 `locked_until`을 보지 않는 것은 의도로 보인다 — 막지 말고 문서화하는 쪽으로 결론낼 것 (가치 2 / 위험 1 / S)
+  - `scripts/test-services.sh`가 PostgreSQL 포트 충돌 시 컨테이너를 Created 상태로 남기고 다음 실행에서 인증 실패로만 드러난다 — 포트 점유를 감지해 알려주기 (가치 2 / 위험 1 / S)
+- 릴리즈: v0.9.68 (2026-09-03)
