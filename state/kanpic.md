@@ -37,3 +37,16 @@
   - `internal/external` 의 동시 접근에 `-race` 시험이 없다. 한 번의 재계산이 여러 주소를 동시에 부르는 길을 시험으로 고정할 것.
 - 릴리즈: v0.230.0 (2026-09-03)
 - 릴리즈: v0.230.0 (2026-09-03)
+
+## 2026-09-03
+- 선택: 자리를 잘라 내는 셈의 십진화와 자릿수 상한 (가치 4 / 위험 1 / 작업량 S)
+- 결과: 성공
+- 요약: ROUND·ROUNDUP·ROUNDDOWN 은 이미 `decimalRound` 로 십진 셈을 하는데 `TRUNC`(functions_math.go)와 `PERCENTRANK`(functions_distribution.go)만 `math.Pow(10,d)` 로 자리를 밀고 있어, `TRUNC(0.29,2)`=0.28, `TRUNC(1.001,3)`=1, `PERCENTRANK({0..8},4.6,5)`=0.57499 처럼 이미 그 자리에 맞는 값의 마지막 자리를 깎았다(같은 값을 ROUNDDOWN 에 물으면 제대로 나왔다). 둘 다 `decimalRound(..., roundTowardZero)` 로 옮겼고, 함께 발견한 자릿수 인수의 구멍도 막았다 — `=ROUND(1.5,999999999)` 한 칸이 10^999999999 을 만드느라 수백 MB·수 초를 물고 `=FIXED(1.5,999999999)` 는 기가바이트짜리 글자를 내던 것을, 값을 바꾸지 못하는 `maxDecimalPlaces=400` 으로 들이고(`boundedDecimalPlaces`) float→int 변환이 정의되지 않는 `1E+300` 도 `decimalPlaces` 가 받게 했다. 검증: 새 테스트 2개(`TestTruncCutsDecimalDigitsLikeRoundDown` — 3000개 값×자릿수 -2..4 를 ROUNDDOWN 과 맞대 봄, `TestOutlandishDigitCountsDoNotStallRounding` — 20초 시한)와 PERCENTRANK 표 항목 1개, `gofmt -l`, `go vet ./...`, `go build ./...`, `go test ./...`(전체 통과), `scripts/check-release-docs.sh`, `scripts/check-commit-identities.sh`. 커밋 2개(d4db8a1, 018ea0b), 릴리즈 노트 v0.231.0 과 README VERSION 갱신. 웹에는 TRUNC 구현이 없어 npm 검사는 돌리지 않았다.
+- 보류 아이디어:
+  - `NUMBERVALUE` 미구현(#NAME?), `VALUE("12:00")` 이 시각을 읽지 못한다.
+  - `csvNumber` 가 IMPORTDATA 의 `"1,200"`·`"12%"`·앞뒤 통화 기호를 글자로 남긴다. 시트가 읽는 수의 범위와 맞출지 검토할 것.
+  - 외부 호출 캐시 키가 함수·주소만 담아, `external.max_kb` 를 올려도 캐시가 남아 있는 동안은 "크기를 넘습니다" 가 그대로다(정책 값도 키에 넣거나 크기 오류는 담지 않기).
+  - `internal/external` 의 동시 접근에 `-race` 시험이 없다. 한 번의 재계산이 여러 주소를 동시에 부르는 길을 시험으로 고정할 것.
+  - `DOLLARDE`·`DOLLARFR` 도 `math.Pow(10, ceil(log10(fraction)))` 로 자리를 밀어 이진 실수 어긋남이 남아 있다. 십진 셈으로 맞출지 검토할 것.
+- 릴리즈: v0.231.0 (2026-09-03)
+- 릴리즈: v0.231.0 (2026-09-03)
