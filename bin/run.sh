@@ -39,10 +39,18 @@ RUN_DATE=$(date +%Y-%m-%d)
 LOG="$LOGS/$RUN_DATE.log"
 log(){ echo "[$(date +%H:%M:%S)] $*" | tee -a "$LOG"; }
 
-# 원장·로그를 aidev 저장소에 남긴다. 실패해도 회차는 계속한다.
+# 회차 기록 한 줄을 docs/data/runs.jsonl 에 남기고 GitHub Pages 일일 보고를 다시 만든다
+record_run(){ # $1=프로젝트 $2=결과
+  mkdir -p "$REPO_DIR/docs/data"
+  jq -cn --arg ts "$(date -Iseconds)" --arg d "$RUN_DATE" --arg p "$1" --arg r "$2" \
+     '{ts:$ts,date:$d,project:$p,result:$r}' >> "$REPO_DIR/docs/data/runs.jsonl"
+  python3 "$HERE/report.py" >>"$LOG" 2>&1 || log "report.py FAILED"
+}
+
+# 원장·로그·보고를 aidev 저장소에 남긴다. 실패해도 회차는 계속한다.
 sync_repo(){
   [ "$SYNC" -eq 1 ] || return 0
-  ( cd "$REPO_DIR" && git add -A state logs >/dev/null 2>&1 \
+  ( cd "$REPO_DIR" && git add -A state logs docs >/dev/null 2>&1 \
     && { git diff --cached --quiet || git commit -qm "$1"; } \
     && git push -q origin HEAD ) >>"$LOG" 2>&1 && log "aidev synced: $1" || log "aidev sync FAILED: $1"
 }
@@ -106,6 +114,7 @@ if [ -n "${RELEASE_ONLY:-}" ]; then
   base=$(git -C "$repo" symbolic-ref --short HEAD)
   log "=== $n release-only (base=$base)"
   release_project "$n" "$base" "$(tail -n 8 "$ledger" 2>/dev/null)"
+  record_run "$n" "$result"
   sync_repo "run($RUN_DATE): $n — $result"
   log "done"; exit 0
 fi
@@ -191,6 +200,7 @@ for n in "${picked[@]}"; do
     git -C "$repo" branch -D "$slug" >>"$LOG" 2>&1 || true
   fi
   git -C "$repo" worktree remove --force "$wt" >>"$LOG" 2>&1 || true
+  record_run "$n" "$result"
   sync_repo "run($RUN_DATE): $n — $result"
 done
 log "done"

@@ -153,7 +153,20 @@ DSN은 **그 프로젝트 CI가 쓰는 것과 같은 이미지**를 가리켜야
 | 로컬 태그가 오래돼 "이전 릴리즈"를 잘못 봄 | 로컬 체크아웃은 태그를 안 받아옴 (kanpic 로컬 v0.194 vs 실제 v0.221) | 릴리즈 워크트리 생성 전 `git fetch --tags` |
 | 머지는 됐는데 릴리즈 안 됨 (ReSSO, Clustara) | 릴리즈 단계 도입 전 회차 | `bin/run.sh --release-only <프로젝트>`로 사후 릴리즈 |
 
-## 10. 점검 루틴
+## 10. 일일 보고 (GitHub Pages)
+
+**https://hkjang.github.io/aidev/** — 회차가 끝날 때마다 러너가 다시 만드는 대시보드.
+
+| 페이지 | 내용 |
+|---|---|
+| `/` (`docs/index.md`) | 오늘 요약(회차·릴리즈·머지·변경 없음·실패), 최근 14일 표, 프로젝트별 마지막 회차와 최근 릴리즈 |
+| `/reports/<날짜>` (`docs/reports/<날짜>.md`) | 그날 회차 표 + 각 프로젝트 원장에서 "무엇을 왜 바꿨나" 발췌 |
+| `docs/data/runs.jsonl` | 회차 원본 기록 한 줄씩 `{ts, date, project, result}` — 다른 도구에서 읽기 좋음 |
+
+동작: `run.sh` → 회차 끝 `record_run()` 이 `runs.jsonl` 에 한 줄 추가 → `bin/report.py` 가 `docs/` 전체 재생성 → `sync_repo()` 가 `state logs docs` 를 커밋·푸시 → GitHub Pages(Jekyll, cayman 테마)가 1~2분 안에 반영.
+매일 아침 대시보드의 "일일 보고" 표에서 어제 날짜를 누르면 된다. 수동 재생성은 `python3 bin/report.py`.
+
+## 11. 점검 루틴
 
 - **매일**: `tail -50 logs/cron.log` — `merge FAILED`, `claude exited non-zero`(사용량 한도 가능성), `aidev sync FAILED` 확인
 - **주간**: `state/*.md` — "변경없음"·"실패" 비율이 오르면 간격을 늦추거나(`/MO 30`) 후보 기준(`--days`) 조정
