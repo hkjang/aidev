@@ -1,7 +1,7 @@
 ---
 title: "aidev 자율 개선 대시보드"
-description: "Claude Code 자율 개선 에이전트가 hkjang 의 프로젝트를 개선·테스트·머지·릴리즈한 일일 보고. 오늘 35회차·릴리즈 17건, 누적 35회차·릴리즈 17건."
-last_modified_at: 2026-09-02 20:11:45 +0900
+description: "Claude Code 자율 개선 에이전트가 hkjang 의 프로젝트를 개선·테스트·머지·릴리즈한 일일 보고. 오늘 36회차·릴리즈 17건, 누적 36회차·릴리즈 17건."
+last_modified_at: 2026-09-02 20:32:28 +0900
 ---
 
 <script type="application/ld+json">
@@ -10,14 +10,14 @@ last_modified_at: 2026-09-02 20:11:45 +0900
  "@type": "WebSite",
  "name": "aidev 자율 개선 대시보드",
  "url": "https://hkjang.github.io/aidev/",
- "description": "Claude Code 자율 개선 에이전트가 hkjang 의 프로젝트를 개선·테스트·머지·릴리즈한 일일 보고. 오늘 35회차·릴리즈 17건, 누적 35회차·릴리즈 17건.",
+ "description": "Claude Code 자율 개선 에이전트가 hkjang 의 프로젝트를 개선·테스트·머지·릴리즈한 일일 보고. 오늘 36회차·릴리즈 17건, 누적 36회차·릴리즈 17건.",
  "inLanguage": "ko",
  "author": {
   "@type": "Person",
   "name": "hkjang",
   "url": "https://github.com/hkjang"
  },
- "dateModified": "2026-09-02T20:11:45"
+ "dateModified": "2026-09-02T20:32:28"
 }
 </script>
 
@@ -121,19 +121,18 @@ last_modified_at: 2026-09-02 20:11:45 +0900
 
 # aidev 자율 개선 대시보드
 
-<p class="tldr"><strong>한 줄 요약.</strong> Claude Code 자율 개선 에이전트가 hkjang 의 프로젝트를 개선·테스트·머지·릴리즈한 일일 보고. 오늘 35회차·릴리즈 17건, 누적 35회차·릴리즈 17건. 회차가 끝날 때마다 자동 갱신됩니다 (마지막 갱신 2026-09-02 20:11).</p>
+<p class="tldr"><strong>한 줄 요약.</strong> Claude Code 자율 개선 에이전트가 hkjang 의 프로젝트를 개선·테스트·머지·릴리즈한 일일 보고. 오늘 36회차·릴리즈 17건, 누적 36회차·릴리즈 17건. 회차가 끝날 때마다 자동 갱신됩니다 (마지막 갱신 2026-09-02 20:32).</p>
 
 [운영 문서](https://github.com/hkjang/aidev#readme) · [원장](https://github.com/hkjang/aidev/tree/main/state) · [실행 이력](https://github.com/hkjang/aidev/commits/main) · [원본 데이터](https://hkjang.github.io/aidev/data/runs.jsonl)
 
 ## 오늘 (2026-09-02)
 
-<ul class="stats"><li><b>35</b><span>회차</span></li><li><b>26</b><span>프로젝트</span></li><li><b>17</b><span>릴리즈</span></li><li><b>13</b><span>머지(릴리즈 없음)</span></li><li><b>3</b><span>변경 없음</span></li><li><b>0</b><span>실패</span></li></ul>
+<ul class="stats"><li><b>36</b><span>회차</span></li><li><b>26</b><span>프로젝트</span></li><li><b>17</b><span>릴리즈</span></li><li><b>14</b><span>머지(릴리즈 없음)</span></li><li><b>3</b><span>변경 없음</span></li><li><b>0</b><span>실패</span></li></ul>
 
 [2026-09-02 보고 자세히 보기 →](https://hkjang.github.io/aidev/reports/2026-09-02/)
 
 | 시각 | 프로젝트 | 결과 |
 |---|---|---|
-| 17:02 | visitflow | ✅ 머지 merged [PR #1](https://github.com/hkjang/visitflow/pull/1), release missing |
 | 17:27 | weekly | 🚀 릴리즈 merged [PR #2](https://github.com/hkjang/weekly/pull/2), released [v0.282.0](https://github.com/hkjang/weekly/releases/tag/v0.282.0) |
 | 17:38 | AgentHub | 🚀 릴리즈 merged [PR #2](https://github.com/hkjang/AgentHub/pull/2), released [v0.227.0](https://github.com/hkjang/AgentHub/releases/tag/v0.227.0) |
 | 17:41 | Clustara | 🚀 릴리즈 release-only, released [v0.9.262](https://github.com/hkjang/clustara/releases/tag/v0.9.262) |
@@ -145,12 +144,13 @@ last_modified_at: 2026-09-02 20:11:45 +0900
 | 19:35 | aiportal-java | ✅ 머지 merged [PR #2](https://github.com/hkjang/aiportal-java/pull/2), release skipped |
 | 19:48 | aiportal-py | ✅ 머지 merged [PR #2](https://github.com/hkjang/aiportal-py/pull/2), release skipped |
 | 19:56 | appstore | 🚀 릴리즈 merged [PR #2](https://github.com/hkjang/appstore/pull/2), released [v2.1.2](https://github.com/hkjang/appstore/releases/tag/v2.1.2) |
+| 20:32 | git-ctx | ✅ 머지 merged [PR #14](https://github.com/hkjang/git-ctx/pull/14), release missing |
 
 ## 일일 보고
 
 | 날짜 | 회차 | 릴리즈 | 머지 | 변경 없음 | 실패 |
 |---|---|---|---|---|---|
-| [2026-09-02](https://hkjang.github.io/aidev/reports/2026-09-02/) | 35 | 17 | 13 | 3 | 0 |
+| [2026-09-02](https://hkjang.github.io/aidev/reports/2026-09-02/) | 36 | 17 | 14 | 3 | 0 |
 
 ## 프로젝트별 현황
 

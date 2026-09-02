@@ -1,0 +1,7 @@
+# git-ctx 자율 개선 기록
+
+## 2026-09-02
+- 선택: MCP 도구 인자의 JSON 타입 불일치 처리 — 따옴표 친 숫자·문자열 리스트를 읽고, 읽은 방식을 응답에 기록 (가치 4 / 위험 2 / 작업량 M)
+- 결과: 성공 (commit b9ffcac)
+- 요약: `additionalProperties:false` 위반(오탈자 인자)은 이미 응답에 기록되고 있었지만, 이름은 맞고 타입만 다른 인자는 조용히 버려지고 기본값으로 응답했습니다. `"startLine":"400"`을 보낸 read-file은 파일 전체를 예산까지 잘라 돌려주면서 무시한 줄 범위를 언급하지 않았고, export-context는 배열이 아닌 단일 문자열 libraryIds를 거부했으며, 숫자로 온 query는 ""로 검색됐습니다. `internal/mcp/args.go`의 `stringArg`/`intArg`/`stringSliceArg`가 선언된 타입을 철자하는 값을 그 타입으로 읽도록 하고(float→int 변환 범위도 정의되게 제한), `internal/mcp/dispatch.go`에 기존 `unknownArgumentNote` 옆에 `argumentTypeNote`를 추가해 "read as declared / ignored"를 응답에 남깁니다. 검증: 새 테스트 `internal/mcp/argument_type_test.go` 4건(read-file 줄 범위 동등성, export-context 문자열 리스트, 해석 불가 값 보고, 디코딩 단위표) + `gofmt -l`, `go vet ./...`, `go build -tags sqlite_fts5 ./...`, `go test -tags sqlite_fts5 ./...` 전체 통과, `-race`는 mcp·search 패키지에서 통과.
+- 보류 아이디어: (1) `clampResponse`가 "예산에 맞춰 잘랐다"고 말하면서 실제로는 예산을 최대 ~330바이트 초과할 수 있음 (가치 2 / 위험 2 / S). (2) `netclient.JoinAPIPath`가 base URL이 다른 리소스 경로로 끝날 때 경로를 중복 연결 (가치 2 / 위험 3 / S). (3) `netclient.resetHint`의 RateLimit-Reset·Retry-After 조합에 대한 테스트 보강 (가치 2 / 위험 1 / S). (4) `mcp.filterLibraries`가 호출자 슬라이스를 `items[:0]`로 제자리 변경 — 지금은 안전하지만 캐시된 슬라이스가 들어오면 ACL 오염 위험 (가치 2 / 위험 1 / S).
