@@ -35,3 +35,15 @@
   - `httpapi.validHTTPURL` 강화(호스트의 공백·제어문자 거부, 포트 검증). 가치 2 / 위험 2 / S
   - `httpapi.SPAHandler.fmtInt`는 `strconv.Itoa` 재구현 — 표준 라이브러리로 교체. 가치 1 / 위험 1 / S
 - 릴리즈: v2.1.3 (2026-09-03)
+
+## 2026-09-03
+- 선택: AI provider 응답을 줄 단위가 아닌 SSE 이벤트 단위로 파싱 (가치 3 / 위험 2 / 작업량 M)
+- 결과: 성공
+- 요약: `ai.consumeOpenAIStream`이 `data:` 줄 하나를 곧바로 하나의 JSON 문서로 디코드해서, 긴 청크를 여러 `data:` 줄에 나눠 보내는(SSE 규격상 정상) OpenAI 호환 provider에서는 첫 청크부터 "decode AI stream chunk" 오류가 나며 채팅 요청 전체가 중단됐다. 이제 빈 줄이 이벤트를 끝낼 때까지 `data` 필드를 모아 개행으로 이어 붙이고 나머지 필드(`event:`, `id:`, 주석 `:`)는 무시하며, 종료 빈 줄 없이 연결이 끊긴 마지막 이벤트도 EOF에서 처리한다. 검증: 멀티라인 `data`·CRLF·빈 줄 없는 마지막 이벤트·finish 누락·비 JSON 청크를 다루는 `consumeOpenAIStream` 단위 테스트 3개를 추가(멀티라인 테스트는 수정 전 코드에서 반드시 실패)한 뒤 `go test -race`(전체 패키지), `go vet ./...`, `gofmt -l`, `go build ./cmd/server`, `check-env-contract.sh`, `check-docs.sh` 통과. 프런트엔드는 이미 블록 단위로 SSE를 파싱하고 있어 변경하지 않았고 npm 검사는 생략. 커밋 60969eb.
+- 보류 아이디어:
+  - `internal/httpapi` 커버리지 5.5% — DB 없이 테스트 가능한 `SPAHandler`, middleware, `DecodeJSON`, `parseID` 등에 단위 테스트 추가. 가치 3 / 위험 1 / M
+  - rate limiter의 `Retry-After: 60` 고정값을 현재 분 윈도우 잔여 시간으로 계산. 가치 2 / 위험 1 / S
+  - `httpapi.validHTTPURL` 강화(호스트의 공백·제어문자 거부, 포트 검증). 가치 2 / 위험 2 / S
+  - 프런트엔드 `streamAiChat`이 스트림 종료 시 `TextDecoder` 플러시와 잔여 버퍼 처리를 하지 않아, 마지막 이벤트가 종료 빈 줄 없이 끝나면 유실됨. 가치 2 / 위험 1 / S
+  - `httpapi.SPAHandler.fmtInt`는 `strconv.Itoa` 재구현 — 표준 라이브러리로 교체. 가치 1 / 위험 1 / S
+- 릴리즈: v2.1.4 (2026-09-03)
