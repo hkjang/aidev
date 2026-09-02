@@ -49,7 +49,8 @@ release_project(){
   local rwt="$WT_BASE/$n-release" rfile="$STATE/$n.release.json" envfile="$STATE/$n.env"
   rm -f "$rfile"
   # 로컬엔 옛 태그만 있는 저장소가 많다 — 원격 태그를 먼저 받아야 "이전 릴리즈"가 맞는다
-  git -C "$repo" fetch -q --tags origin "$base" >>"$LOG" 2>&1
+  # --force: 로컬에 같은 이름의 다른 태그가 있으면 fetch 가 실패한다(Clustara v0.9.5). 원격이 기준이다.
+  git -C "$repo" fetch -q --force --tags origin "$base" >>"$LOG" 2>&1 || log "$n: tag fetch had errors (continuing)"
   git -C "$repo" worktree remove --force "$rwt" 2>/dev/null || true
   git -C "$repo" worktree add --detach "$rwt" "origin/$base" >>"$LOG" 2>&1
   local rprompt
