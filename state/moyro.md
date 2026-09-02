@@ -13,3 +13,10 @@
 - 요약: `postcommand.ExtractMentions`가 정규식 `@([a-zA-Z0-9._-]+)` 결과를 그대로 사용자명 조회에 넘겨서, 문장 끝 멘션(`cc @alice.`)은 "alice."로 조회돼 아무도 알림을 받지 못했고 `@Alice` 같은 대소문자 차이도 registration이 소문자로 저장하는 사용자명과 어긋나 실패했다. 반대로 이메일 주소(`ops@example.com`)는 "example.com"이라는 유령 후보를 만들어 매 게시마다 불필요한 조회를 유발했다. 정규식 앞에 `\B`와 영숫자 시작 조건을 추가해 단어 중간 `@`를 제외하고, 후보에 뒤쪽 `._-`를 제거한 형태와 소문자 형태를 함께 실어 보내며 후보 수를 200개로 제한했다. `mentions_test.go`에 표 기반 테스트 8건과 상한 테스트를, `service_test.go`에 종단 해석 테스트 1건을 추가했고 `go vet ./...`, `go test -race ./...`(전 패키지 통과), `scripts/check-source-sizes.sh`로 검증했다. 웹 변경이 없어 webapp 빌드는 손대지 않았다.
 - 보류 아이디어: (1) `ratelimit.Limiter.Middleware`가 JSON 본문을 `http.Error`로 써서 Content-Type이 text/plain으로 나가는 문제. (2) 테스트가 전혀 없는 `invites`/`sidebar`/`userstatus`/`postacks` 패키지의 단위 테스트 보강 — PostgreSQL 통합 환경 필요. (3) 로드맵의 create-post 인가·멤버십 2회 쿼리를 단일 쿼리로 병합. (4) 로드맵의 메시지 목록 가상화 — 작업량 L이라 단일 세션 범위 초과.
 - 릴리즈: v0.2.11 (2026-09-02)
+
+## 2026-09-02
+- 선택: 429 응답을 JSON Content-Type과 실제 대기 시간으로 교정 (가치 4 / 위험 1 / 작업량 S)
+- 결과: 성공
+- 요약: `ratelimit.Limiter.Middleware`가 JSON 문자열을 `http.Error`로 내보내 Content-Type이 text/plain으로 나갔고, 버킷 속도와 무관하게 `Retry-After: 1`을 고정 반환했다. 회원가입 버킷은 5초에 토큰 하나를 채우므로 거절된 클라이언트가 4초 일찍 재시도해 헛된 거절을 네 번 더 받는 구조였다. `take()`가 판정과 함께 버킷 상태를 돌려주도록 나눠 남은 토큰과 설정된 rate 기반 대기 시간을 계산하고, 응답에 공용 API 오류 봉투와 Mattermost 호환 `X-Ratelimit-Limit/Remaining/Reset` 헤더를 실었다. 또 버킷 정리(GC)를 판정보다 앞으로 옮겨 계속 throttle 상태인 키가 다른 버킷을 메모리에 붙잡아두지 못하게 했다. 미들웨어·봉투·재시도 지연·빈 키 우회·정리 테스트 6건을 추가했고 `go vet ./...`, `go test -race ./...`(전 패키지 통과), `scripts/check-source-sizes.sh`로 검증했다. 웹 변경이 없어 webapp 빌드는 손대지 않았다.
+- 보류 아이디어: (1) 테스트가 전혀 없는 `invites`/`sidebar`/`userstatus`/`postacks` 패키지의 단위 테스트 보강 — 대부분 DB 경로라 PostgreSQL 통합 환경 필요. (2) `invites.normalizeChannelIDs` 같은 순수 함수만 골라 단위 테스트 추가. (3) 로드맵의 create-post 인가·멤버십 2회 쿼리를 단일 쿼리로 병합. (4) 로드맵의 메시지 목록 가상화 — 작업량 L이라 단일 세션 범위 초과.
+- 릴리즈: v0.2.12 (2026-09-02)
