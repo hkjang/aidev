@@ -36,3 +36,14 @@
   - `JwtAuthenticationFilter`의 CORS 허용 Origin 30여 개 하드코딩을 설정(yaml)으로 외부화 (가치 3 / 위험 3 / 작업량 M)
   - `LIMIT #{pageSize}` 에 음수/0 pageSize 가 그대로 전달되는 경로 보정 (가치 2 / 위험 2 / 작업량 S) — setter 보정 시 pageSize 복사 경로 영향 확인 필요
   - `ValidUtil`, `ApiCallUtil` 단위 테스트 공백 보강 (가치 2 / 위험 1 / 작업량 S)
+
+## 2026-09-03
+- 선택: 감사 로그 실패가 성공한 CUD 요청을 500 으로 뒤집는 문제 수정 (가치 4 / 위험 1 / 작업량 M)
+- 결과: 성공
+- 요약: `ControllerLogAspect.logControllerCud` 는 `@AfterReturning` 이라 컨트롤러가 성공하고 트랜잭션이 커밋된 뒤 실행되는데 본문 전체에 예외 처리가 없어, activity_log insert 실패·관리자 계정 조회 실패·인증정보 부재 NPE 가 그대로 전파되면 `GlobalExceptionHandler` 가 500 을 반환해 클라이언트가 이미 성공한 생성/수정/삭제를 실패로 인식하고 재시도하게 됩니다. 감사 로그 기록 전체를 try/catch 로 감싸고, `currentRequestAttributes()` 를 `getRequestAttributes()` + null 체크로 바꿨습니다. 또 `getAuthentication().getPrincipal().equals("anonymousUser")` 후 캐스팅하는 동일 패턴이 `ControllerLogAspect`, `GlobalExceptionHandler`, `AuditUtil` 3곳에 복사돼 있어 `CurrentUserUtil` 로 모으고 authentication null / principal null / CustomUserDetails 아닌 principal 을 모두 null 로 처리해 각 호출부의 기존 fallback(관리자 계정 조회 또는 BusinessException)을 타게 했습니다. `AuditUtil` 이 principal 객체 전체를 INFO 로 남기던 로그는 userId 만 DEBUG 로 축소했습니다. 검증은 `CurrentUserUtilTest`(5) + `AuditUtilTest`(4) + `ControllerLogAspectTest`(5) 추가 후 `sh gradlew check build` 실행으로 했고 17개 테스트 클래스 61개 테스트 전부 통과했습니다. 커밋 c115e68.
+- 보류 아이디어:
+  - `JwtAuthenticationFilter` 80행 `(boolean) dataMap.get("active")` — Athena 장애로 `getDataMap` 이 null 을 반환하면 NPE, 명시적 인증 실패로 정리 (가치 3 / 위험 2 / 작업량 S)
+  - `JwtAuthenticationFilter` 의 CORS 허용 Origin 30여 개 하드코딩을 설정(yaml)으로 외부화 (가치 3 / 위험 3 / 작업량 M)
+  - `LIMIT #{pageSize}` 에 음수/0 pageSize 가 그대로 전달되는 경로 보정 (가치 2 / 위험 2 / 작업량 S)
+  - `ValidUtil`, `ApiCallUtil` 단위 테스트 공백 보강 (가치 2 / 위험 1 / 작업량 S)
+  - `AuditUtil.getUserInfo()` 외 `TransferManagementServiceImpl` 63행도 `CurrentUserUtil` 로 통일 (가치 2 / 위험 1 / 작업량 S)
