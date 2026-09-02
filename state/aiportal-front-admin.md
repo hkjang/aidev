@@ -32,3 +32,14 @@
   - `monitoringParser.findRows` 재귀에 깊이 제한 추가 및 테스트 (가치 2 / 위험 1 / S)
   - `shared/format.ts` 단위 테스트 공백 보강 (가치 2 / 위험 1 / S)
   - 루트 앱의 `crypto-js` local tarball 의존성 제거로 clean install 복구 — 현재 `npm ci` 자체가 불가해 검증 비용 큼 (가치 4 / 위험 4 / M)
+
+## 2026-09-03
+- 선택: 세션 확인 실패 시 SSO 무한 왕복 차단 (가치 4 / 위험 2 / 작업량 S)
+- 결과: 성공
+- 요약: router guard가 `ensureAdminSession()` 실패를 (관리자 권한 없음 메시지를 뺀) 전부 `redirectToSso()`로 처리해, backend `/sso/ssologin`이 장애이거나 네트워크가 끊기면 SSO가 앱으로 돌려보낼 때마다 다시 SSO로 나가는 무한 왕복이 생기고 사용자는 오류 화면조차 볼 수 없었다. 새 `auth/ssoRedirect.ts`에 sessionStorage 기반 사용량 기록을 두어 60초 창에서 자동 이동을 2회로 제한하고(초과 시 access-denied 화면 + 수동 SSO 버튼), 세션 확보 시 사용량을 비우며, 저장소를 못 쓰거나 예외를 던지면 왕복 감지가 불가하므로 자동 이동을 막도록 했다. 검증은 `npm run verify`(typecheck + vitest 46개 통과, 기존 35개 + 신규 11개로 한도·창 만료·시계 역행·저장소 장애 시나리오 포함)와 `npm run build`(build → runtime-config 검증 → offline 검사 → integrity manifest 19개) 전체 통과. 커밋 74f26a1.
+- 보류 아이디어:
+  - `unwrapPageEnvelope`가 서버 pageInfo 누락 시 요청한 pageNum/pageSize를 잃고 1/10·totalCount 0으로 되돌려 페이지 이동 버튼이 잠기는 문제 (가치 3 / 위험 1 / S)
+  - `ensureAdminSession(force=true)`가 진행 중인 비강제 요청 promise를 그대로 반환하는 재진입 버그 (가치 3 / 위험 2 / S)
+  - `monitoringParser.toPod`이 `restarts`에 비숫자 문자열이 오면 NaN을 그대로 노출하는 문제 (가치 2 / 위험 1 / S)
+  - `shared/format.ts` 단위 테스트 공백 보강 (가치 2 / 위험 1 / S)
+  - 루트 앱의 `crypto-js` local tarball 의존성 제거로 clean install 복구 — 현재 `npm ci` 자체가 불가해 검증 비용 큼 (가치 4 / 위험 4 / M)
