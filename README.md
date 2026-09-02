@@ -43,8 +43,20 @@ bin/daily.sh (Windows 작업 스케줄러 → wsl.exe)
                     → 로컬 main pull --ff-only
         커밋 없음   브랜치 삭제
      7. 원장        에이전트가 못 남겼으면 러너가 커밋 제목으로 대체 기록
-     8. 동기화      state/ + logs/*.log 를 aidev 에 커밋·푸시  ("run(날짜): 프로젝트 — 결과")
+     8. 릴리즈      (머지된 경우) release-prompt.md 로 릴리즈 에이전트를 한 번 더 실행 — 아래 참조
+     9. 동기화      state/ + logs/*.log 를 aidev 에 커밋·푸시  ("run(날짜): 프로젝트 — 결과")
 ```
+
+### 릴리즈 단계 (`release-prompt.md`, `release_project()`)
+머지가 성공한 프로젝트는 **그 저장소가 지금까지 해 온 방식 그대로** 릴리즈한다.
+1. 러너가 `git fetch --tags` 후 `origin/<base>`에서 detached 워크트리를 만든다 (로컬엔 옛 태그만 있는 저장소가 많다)
+2. 릴리즈 에이전트가 실제로 확인: 최근 태그 3개와 그 커밋, 릴리즈 커밋 메시지 양식, 버전 파일(여러 곳이면 전부), CHANGELOG/릴리즈 노트 양식·언어, 태그에 반응하는 워크플로가 무엇을 자동으로 하는지, `gh release list` 양식, 릴리즈 전 검사 스크립트
+3. 최근 릴리즈들의 증가 패턴대로 다음 버전을 정하고(패치↔마이너), 같은 양식으로 버전 갱신·노트·릴리즈 커밋·태그를 만든다. 이전 릴리즈가 밟던 검증을 똑같이 통과해야 한다
+4. 결과를 `state/<프로젝트>.release.json`에 남긴다: `status`(released/skipped/failed), `version`, `tag`, `title`, `notes_file`, `github_release`, `reason`
+5. 러너가 `HEAD:<base>`와 태그를 푸시하고, `github_release=true`(이전에 GitHub Release를 썼고 워크플로가 자동 생성하지 않는 경우)면 `gh release create`
+6. 원장에 `- 릴리즈: vX.Y.Z (날짜)` 추가
+
+릴리즈 이력이 전혀 없는 저장소는 **skipped** — 관례를 새로 정하는 건 사람의 일이다. 에이전트는 원격에 아무것도 보내지 않으며(push/tag push/gh release/npm publish 금지), 패키지 배포는 CI 또는 사람이 한다. 옵션: `--no-release`, `--release-budget USD(기본 6)`.
 
 ### 에이전트 지시문 요약 (`prompt.md`)
 1. 파악 — CLAUDE.md/README/docs/로드맵/TODO/`git log -30`/테스트·CI

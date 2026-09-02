@@ -1,6 +1,9 @@
 #!/usr/bin/env bash
 # 자율 개선 에이전트 러너 — https://github.com/hkjang/aidev
 #   사용법: bin/run.sh [--dry-run] [--count N] [--project NAME] [--days 30] [--budget 8] [--no-merge] [--no-sync]
+#                     [--no-release] [--release-budget 6]
+#   - 머지가 되면 릴리즈 에이전트를 한 번 더 돌린다: 그 저장소의 이전 릴리즈 방식(태그·버전 파일·CHANGELOG·워크플로·
+#     GitHub Release)을 확인해 같은 방식으로 다음 버전을 만들고, 러너가 커밋·태그를 푸시하고 필요하면 GitHub Release 를 만든다
 #   - 최근 N일 내 커밋이 있고, 작업트리가 깨끗하며, origin 원격이 있는 저장소를 후보로 삼는다
 #   - 라운드로빈으로 하나(또는 N개)씩 골라 임시 worktree에서 claude -p 를 돌린다
 #   - 커밋이 생기면 브랜치를 푸시하고 gh 로 PR을 연 뒤 바로 base 브랜치에 머지한다 (--no-merge 로 끔)
@@ -13,7 +16,7 @@ HERE="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 REPO_DIR="$(cd "$HERE/.." && pwd)"
 STATE="$REPO_DIR/state"; LOGS="$REPO_DIR/logs"
 WT_BASE="${WT_BASE:-$HOME/.cache/auto-improve-wt}"
-DAYS=30; COUNT=1; BUDGET=8; DRY=0; ONLY=""; MERGE=1; SYNC=1
+DAYS=30; COUNT=1; BUDGET=8; DRY=0; ONLY=""; MERGE=1; SYNC=1; RELEASE=1; RBUDGET=6
 MODEL="${MODEL:-claude-opus-5}"
 # aidev 자신은 후보에서 뺀다 — 에이전트가 자기 러너를 고치게 두지 않는다
 # Naviq 는 사용자 요청으로 제외 (2026-09-02)
@@ -22,6 +25,8 @@ EXCLUDE_RE='^(aidev|Naviq|sqlpad|_tmp.*|visitflow-node-modules.*|새 폴더)$'
 while [ $# -gt 0 ]; do case "$1" in
   --dry-run) DRY=1;; --count) COUNT=$2; shift;; --project) ONLY=$2; shift;;
   --days) DAYS=$2; shift;; --budget) BUDGET=$2; shift;; --no-merge) MERGE=0;; --no-sync) SYNC=0;;
+  --no-release) RELEASE=0;; --release-budget) RBUDGET=$2; shift;;
+  --release-only) RELEASE_ONLY=$2; shift;;
   *) echo "unknown arg $1"; exit 2;; esac; shift; done
 
 mkdir -p "$STATE" "$LOGS" "$WT_BASE"
@@ -36,6 +41,64 @@ sync_repo(){
     && { git diff --cached --quiet || git commit -qm "$1"; } \
     && git push -q origin HEAD ) >>"$LOG" 2>&1 && log "aidev synced: $1" || log "aidev sync FAILED: $1"
 }
+
+# 머지된 뒤 그 저장소의 관례대로 릴리즈한다. 에이전트는 detached worktree 에서 커밋·태그만 만들고,
+# 푸시와 GitHub Release 는 여기서 한다. 사용: release_project <프로젝트> <base> <변경 요약>
+release_project(){
+  local n=$1 base=$2 summary=$3
+  local rwt="$WT_BASE/$n-release" rfile="$STATE/$n.release.json" envfile="$STATE/$n.env"
+  rm -f "$rfile"
+  # 로컬엔 옛 태그만 있는 저장소가 많다 — 원격 태그를 먼저 받아야 "이전 릴리즈"가 맞는다
+  git -C "$repo" fetch -q --tags origin "$base" >>"$LOG" 2>&1
+  git -C "$repo" worktree remove --force "$rwt" 2>/dev/null || true
+  git -C "$repo" worktree add --detach "$rwt" "origin/$base" >>"$LOG" 2>&1
+  local rprompt
+  rprompt=$(RELEASE_FILE="$rfile" CHANGE_SUMMARY="$summary" \
+            envsubst '$RELEASE_FILE $CHANGE_SUMMARY' < "$REPO_DIR/release-prompt.md")
+  ( cd "$rwt" && { [ -f "$envfile" ] && set -a && . "$envfile" && set +a; } ; claude -p "$rprompt" \
+      --model "$MODEL" \
+      --permission-mode acceptEdits \
+      --allowedTools "Bash,Read,Edit,Write,Glob,Grep" \
+      --add-dir "$STATE" \
+      --max-budget-usd "$RBUDGET" \
+      --output-format text ) > "$LOGS/$RUN_DATE-$n-release.txt" 2>&1 || log "$n: release agent exited non-zero"
+
+  local status ahead tag title notes ghrel
+  status=$(jq -r '.status // "missing"' "$rfile" 2>/dev/null || echo missing)
+  ahead=$(git -C "$rwt" rev-list --count "origin/$base..HEAD")
+  if [ "$status" = released ] && [ "$ahead" -gt 0 ]; then
+    tag=$(jq -r '.tag // ""' "$rfile"); title=$(jq -r '.title // ""' "$rfile")
+    notes=$(jq -r '.notes_file // ""' "$rfile"); ghrel=$(jq -r '.github_release // false' "$rfile")
+    if git -C "$rwt" push origin "HEAD:$base" >>"$LOG" 2>&1 \
+       && { [ -z "$tag" ] || git -C "$rwt" push origin "refs/tags/$tag" >>"$LOG" 2>&1; }; then
+      log "$n: released ${tag:-(no tag)}"; result="$result, released ${tag:-$(jq -r .version "$rfile")}"
+      if [ "$ghrel" = true ] && [ -n "$tag" ]; then
+        local -a nargs=(--generate-notes)
+        [ -n "$notes" ] && [ -f "$notes" ] && nargs=(--notes-file "$notes")
+        (cd "$rwt" && gh release create "$tag" --title "${title:-$tag}" "${nargs[@]}" >>"$LOG" 2>&1) \
+          && log "$n: GitHub Release $tag created" \
+          || log "$n: GitHub Release create FAILED (CI 가 이미 만들었을 수 있음)"
+      fi
+      git -C "$repo" pull --ff-only origin "$base" >>"$LOG" 2>&1 || true
+      printf -- '- 릴리즈: %s (%s)\n' "${tag:-$(jq -r .version "$rfile")}" "$RUN_DATE" >> "$ledger"
+    else
+      log "$n: release push FAILED — 로컬 커밋·태그는 버려짐"; result="$result, release push failed"
+    fi
+  else
+    log "$n: release $status ($(jq -r '.reason // ""' "$rfile" 2>/dev/null))"; result="$result, release $status"
+  fi
+  git -C "$repo" worktree remove --force "$rwt" >>"$LOG" 2>&1 || true
+}
+
+# ---- 릴리즈만 (이미 머지된 프로젝트를 관례대로 릴리즈) ---------------------------
+if [ -n "${RELEASE_ONLY:-}" ]; then
+  n=$RELEASE_ONLY; repo="$ROOT/$n"; ledger="$STATE/$n.md"; result="release-only"
+  base=$(git -C "$repo" symbolic-ref --short HEAD)
+  log "=== $n release-only (base=$base)"
+  release_project "$n" "$base" "$(tail -n 8 "$ledger" 2>/dev/null)"
+  sync_repo "run($RUN_DATE): $n — $result"
+  log "done"; exit 0
+fi
 
 # ---- 후보 선정 ---------------------------------------------------------------
 candidates=()
@@ -107,6 +170,7 @@ for n in "${picked[@]}"; do
         log "$n: merged into $base"; result="merged $url"
         git -C "$repo" pull --ff-only origin "$base" >>"$LOG" 2>&1 && log "$n: local $base fast-forwarded" \
           || log "$n: local $base not updated (pull --ff-only failed)"
+        [ "$RELEASE" -eq 1 ] && release_project "$n" "$base" "$(tail -n 8 "$ledger" 2>/dev/null)"
       else
         log "$n: merge FAILED — PR left open for review"; result="merge failed $url"
       fi
