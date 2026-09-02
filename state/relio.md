@@ -25,3 +25,15 @@
   - MCP 요청 본문이 1MB 를 넘으면 조용히 잘려 "Parse error" 가 되므로 413 으로 구분 (가치 3 / 위험 1 / S)
   - CI 에 `gofmt -l` 검사 추가 — 지금은 포맷 위반이 통과함 (가치 2 / 위험 1 / S)
 - 릴리즈: v1.11.9 (2026-09-02)
+
+## 2026-09-03
+- 선택: intelligence 단건 조회를 상위 200건 선형 탐색이 아닌 SQL id 조건으로 (가치 5 / 위험 2 / 작업량 M)
+- 결과: 성공
+- 요약: `GetSignal`/`GetRisk`/`GetInsight`/`GetRecommendation` 이 `List*(Limit: 200)` 을 부른 뒤 Go 에서 ID 를 훑었습니다. 목록은 심각도·점수 순 정렬이라 레코드가 200건을 넘는 계정에서는 그 뒤의 항목이 조회뿐 아니라 `IgnoreSignal`·`AcceptRisk`·`AcceptRecommendation`·`DismissRecommendation` (모두 쓰기 전에 단건 조회를 함) 까지 "not found" 로 실패했습니다 — 분석이 가장 많이 쌓이는 바쁜 계정에서 정확히 그 조언들을 처리할 수 없었습니다. 네 필터에 `ID` 를 추가하고 각 질의에 `($n='' OR x.id::text=$n)` 선택 조건을 넣어 목록과 단건이 같은 문장(같은 Data Scope 조인)을 쓰게 했고, 단건은 `Limit: 1` 로 받습니다. 테스트를 위해 각 목록 질의를 `(sql, args)` 를 돌려주는 순수 빌더로 분리했습니다. 검증은 새 테스트 3개(단건 질의의 id 플레이스홀더와 인자 대응, 빈/공백 id 는 무필터, 모든 `$n` 이 인자와 1:1 인지 검사하는 회귀 가드)와 id 조건을 지우면 실제로 실패하는지 확인, 그리고 `go test -race ./...`, `go vet ./...`, `gofmt -l`, web typecheck·build, `check-env-contract.sh`, `check-static-assets.sh` 전체 통과. 커밋 cee08a9.
+- 보류 아이디어:
+  - `internal/server/today.go:87` 의 `time.Now().Truncate(24*time.Hour)` 는 UTC 자정이라 KST 배포에서 하루 지난 연체 건이 HIGH 대신 WARNING 으로 분류됨 (가치 4 / 위험 2 / S)
+  - `internal/approval/service.go:214` 의 `CONTAINS` 는 양쪽이 숫자처럼 보이면 숫자 분기 default 로 빠져 `==` 로 평가됨 → 승인 정책이 조용히 무시되고 결재가 우회됨 (가치 4 / 위험 2 / M)
+  - `internal/intelligence/engine.go:333` 계약 만료 `D-N` 라벨이 정수 절삭 탓에 하루 짧고, D-90 창이 실제로는 D-91 까지 걸림 (가치 3 / 위험 2 / S)
+  - 네 intelligence 필터의 `Cursor` 필드는 어떤 질의도 쓰지 않는 죽은 코드 — 실제 커서 페이징을 붙이거나 제거 (가치 3 / 위험 1 / M)
+  - MCP 요청 본문이 1MB 를 넘으면 조용히 잘려 "Parse error" 가 되므로 413 으로 구분 (가치 3 / 위험 1 / S)
+- 릴리즈: v1.11.10 (2026-09-03)
