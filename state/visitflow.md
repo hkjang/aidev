@@ -12,3 +12,9 @@
 - 요약: 감사 로그·방문 이력·통계 CSV가 셀 값을 그대로 기록해, 셀프 사전등록 방문자가 회사명이나 이름에 `=cmd|'/c calc'!A0` 같은 값을 넣으면 관리자가 내려받아 Excel로 열 때 수식으로 실행될 수 있었다. `internal/app/exports.go`에 `csvCell`(값이 `=`,`+`,`-`,`@`,tab,CR로 시작하면 작은따옴표를 앞에 붙임)과 `writeCSVRow`를 추가하고 세 내보내기의 모든 행을 이를 거쳐 쓰도록 바꿨다. 검증은 `go vet ./...`와 docker postgres:16-alpine으로 띄운 `VISITFLOW_TEST_DSN` 전체 테스트 통과, 신규 단위 테스트 2개와 방문 이력 CSV에 위험 문자열이 중화되어 나오는 통합 테스트 1개를 추가한 뒤 수정을 임시로 무력화해 세 테스트가 실제로 실패하는 것까지 확인했다. ADMIN_GUIDE에 한 문장 안내를 덧붙였다.
 - 보류 아이디어: 감사 로그 CSV 내보내기가 화면의 행위자·기간 필터를 무시하고 `action`만 반영하는 문제(프런트 `exportQuery`와 서버 파라미터 불일치) / `bestAcceptLanguage`의 `q=0`·잘못된 `q` 값 처리 정정 / CSV·XLSX 가져오기 파서(`visitorInputsFromRows`) 엣지케이스 단위 테스트 보강 / 설정 내보내기 JSON을 되돌려 넣는 가져오기 경로와 스키마 검증 / 방문 이력 CSV의 50,000행 상한 초과 시 사용자에게 잘렸음을 알리는 표시
 - 릴리즈: v2.6.1 (2026-09-02)
+
+## 2026-09-03
+- 선택: 감사 로그 CSV 내보내기가 화면의 행위자·기간 필터를 무시하는 문제 수정 (가치 4 / 위험 1 / 작업량 S)
+- 결과: 성공
+- 요약: 관리자 → 감사 로그 화면은 이벤트 접두어·행위자·시작·종료로 필터링하지만 `exportAuditLogsCSV`는 `action`만 읽었고 프런트의 `exportQuery`도 `action`만 실어 보내, 특정 담당자나 기간으로 좁혀 내려받아도 최근 10,000행 전체가 담기는 잘못된 근거 자료가 만들어졌다. `internal/app/admin.go`에 `auditLogFilters`와 `parseAuditLogFilters`를 두어 목록과 내보내기가 같은 파라미터를 같은 규칙으로 파싱하게 하고, 내보내기 쿼리에 행위자·기간 조건과 목록과 동일한 `a.id DESC` 정렬을 적용했으며, `audit.export` 감사 기록에 실제 적용된 범위를 남기고 `AdminPage.tsx`의 다운로드 링크가 `buildQuery()`를 재사용하도록 했다. 검증은 `go vet ./...`, `npm ci && npm run build`, docker postgres:16-alpine을 띄운 `VISITFLOW_TEST_DSN` 전체 테스트 통과이며, 신규 통합 테스트 1개(행위자·from·to 필터 각각)와 단위 테스트 2개를 추가한 뒤 수정을 임시로 되돌려 통합 테스트가 실제로 실패하는 것까지 확인했다. API_AND_MCP 문서에 한 줄 안내를 덧붙였다.
+- 보류 아이디어: `bestAcceptLanguage`의 `q=0`·`q>1`·잘못된 `q` 값 처리 정정 / CSV·XLSX 가져오기 파서(`visitorInputsFromRows`) 엣지케이스 단위 테스트 보강 / `/metrics` 토큰 상수시간 비교와 요청 한도 적용 검토 / 설정 내보내기 JSON을 되돌려 넣는 가져오기 경로와 스키마 검증 / 방문 이력 CSV의 50,000행 상한 초과 시 사용자에게 잘렸음을 알리는 표시
