@@ -10,3 +10,4 @@
   - 공급업체 수정(PATCH /suppliers/{id})은 tradingSince·annualSpend를 아예 갱신하지 않음 — 의도인지 누락인지 확인 필요 (가치 3 / 위험 2 / S)
   - `POST /spend/transactions`의 quantity·unitPrice·amount에 상한이 없음 — 폼에만 존재하는 제약 (가치 3 / 위험 2 / M)
   - `Makefile`의 VERSION(0.6.21)이 README의 릴리스 예시(0.7.26)와 어긋남 — 릴리스 문서 정합성 (가치 2 / 위험 1 / S)
+- 릴리즈: v0.7.35 (2026-09-02, 태그 사후 푸시)
