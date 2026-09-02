@@ -18,6 +18,11 @@ STATE="$REPO_DIR/state"; LOGS="$REPO_DIR/logs"
 WT_BASE="${WT_BASE:-$HOME/.cache/auto-improve-wt}"
 DAYS=30; COUNT=1; BUDGET=8; DRY=0; ONLY=""; MERGE=1; SYNC=1; RELEASE=1; RBUDGET=6
 MODEL="${MODEL:-claude-opus-5}"
+# 모든 커밋(에이전트·러너)은 hkjang 명의로 — 저장소별 git 설정과 무관하게 강제한다
+export GIT_AUTHOR_NAME=hkjang GIT_AUTHOR_EMAIL=gagagiga@naver.com
+export GIT_COMMITTER_NAME=hkjang GIT_COMMITTER_EMAIL=gagagiga@naver.com
+# 에이전트 세션이 커밋/PR 에 Claude 공동 작성자 트레일러를 붙이지 않게 한다
+CLAUDE_SETTINGS='{"attribution":{"commit":"","pr":""}}'
 # aidev 자신은 후보에서 뺀다 — 에이전트가 자기 러너를 고치게 두지 않는다
 # Naviq 는 사용자 요청으로 제외 (2026-09-02)
 EXCLUDE_RE='^(aidev|Naviq|sqlpad|_tmp.*|visitflow-node-modules.*|새 폴더)$'
@@ -58,6 +63,7 @@ release_project(){
             envsubst '$RELEASE_FILE $CHANGE_SUMMARY' < "$REPO_DIR/release-prompt.md")
   ( cd "$rwt" && { [ -f "$envfile" ] && set -a && . "$envfile" && set +a; } ; claude -p "$rprompt" \
       --model "$MODEL" \
+      --settings "$CLAUDE_SETTINGS" \
       --permission-mode acceptEdits \
       --allowedTools "Bash,Read,Edit,Write,Glob,Grep" \
       --add-dir "$STATE" \
@@ -146,6 +152,7 @@ for n in "${picked[@]}"; do
   envfile="$STATE/$n.env"
   ( cd "$wt" && { [ -f "$envfile" ] && set -a && . "$envfile" && set +a; } ; claude -p "$prompt" \
       --model "$MODEL" \
+      --settings "$CLAUDE_SETTINGS" \
       --permission-mode acceptEdits \
       --allowedTools "Bash,Read,Edit,Write,Glob,Grep,WebFetch,WebSearch" \
       --add-dir "$STATE" \

@@ -80,6 +80,7 @@ bin/daily.sh (Windows 작업 스케줄러 → wsl.exe)
 - **예산 상한**: `--max-budget-usd`
 - **겹침 방지**: `flock -n`
 - **머지 실패 시**: PR을 열어둔 채 로그에 `merge FAILED` 기록
+- **커밋 명의**: 러너가 `GIT_AUTHOR_*`/`GIT_COMMITTER_*`를 `hkjang <gagagiga@naver.com>`으로 강제하고, 에이전트 세션에 `--settings '{"attribution":{"commit":"","pr":""}}'`를 줘 Claude 공동 작성자 트레일러를 붙이지 않는다. 전역 git 설정도 hkjang. GitHub 머지 커밋은 gh 로그인 계정(hkjang) 명의
 
 주의: `--allowedTools`에 `Bash`가 통째로 열려 있다(테스트·빌드에 필요). 워크트리 격리와 규칙으로 막지만 완전한 샌드박스는 아니다.
 

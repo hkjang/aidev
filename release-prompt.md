@@ -24,5 +24,6 @@ $CHANGE_SUMMARY
 ## 절대 규칙
 - `git push`, 태그 푸시, `gh release create`, npm publish / pypi / docker push / helm push 등 **원격에 무엇도 보내지 마세요**. 외부 스크립트가 커밋과 태그를 푸시하고 GitHub Release 를 만듭니다. 패키지 배포는 CI 가 하거나 사람이 합니다.
 - 현재 체크아웃(detached HEAD)에서 커밋하고 태그하세요. 브랜치를 만들거나 옮기지 마세요.
+- 커밋·태그 작성자는 환경에 설정된 hkjang 그대로 두고, `Co-Authored-By` 등 어떤 트레일러도 붙이지 마세요.
 - 비밀값·토큰을 만들거나 수정하거나 출력하지 마세요.
 - 기능 변경을 끼워 넣지 마세요. 이 세션은 릴리즈 절차만 수행합니다.
