@@ -35,3 +35,15 @@
   - `Makefile`의 VERSION(0.6.21)이 README의 릴리스 예시(0.7.26)와 어긋남 — 릴리스 문서 정합성 (가치 2 / 위험 1 / S)
   - 공급업체 수정(PATCH /suppliers/{id})은 tradingSince·annualSpend·businessNumber를 갱신하지 않음 — 편집 폼이 보내지 않으므로 의도로 보이나 API 전용 클라이언트에는 무응답 (가치 2 / 위험 2 / S)
 - 릴리즈: v0.7.37 (2026-09-03)
+
+## 2026-09-03
+- 선택: 요청 값이 리스크 등급(LOW/MEDIUM/HIGH/CRITICAL)으로 들어가는 모든 쓰기 경로에 어휘 검사 추가 (가치 4 / 위험 1 / 작업량 M)
+- 결과: 성공 (commit d36cc9f)
+- 요약: 날짜·숫자·문자열 스윕과 같은 기준(철자가 아니라 연산 — 요청 값이 리스크 등급 컬럼이나 그 등급으로 라우팅하는 결재 규칙에 도달)으로 훑었다. 여섯 개 문 중 검사하던 곳은 createRisk의 severity 하나뿐이었다. 등급은 자유 텍스트가 아니라 질의가 분기하는 단어다 — 낙찰 계산은 `CASE risk_level WHEN 'LOW' THEN 100 … ELSE 0`이라 "high"로 저장된 업체는 고위험이 아니라 CRITICAL보다 나쁜 값으로 읽혀 입찰에서 지고, 대시보드의 `IN('HIGH','CRITICAL')` 집계에서는 빠지며, `NOT IN('CRITICAL')` 추천 목록에는 남는다. 업무 객체 쪽이 더 나쁘다: "High"는 HIGH를 요구하는 결재 규칙과 매칭되지 않아 matchingWorkflow가 아무것도 찾지 못하고, 제출은 결재자 없이 그 자리에서 승인된다(no_matching_workflow). 워크플로 조건은 등급과 함께 형태도 검사한다 — workflowConditions로 파싱되지 않는 조건 하나가 저장되면 그 객체 유형의 모든 제출이 영구히 500이 된다. rows.go에 riskGrades/enumField/validEnumFields를 두고 createRisk의 switch를 대체했다. 검증: docker postgres:16-alpine으로 CI와 동일한 세 DSN을 걸고 `go test ./internal/... ./cmd/...` 전체 통과, gofmt·go vet 무결. 패키지를 파싱하는 TestEveryRiskGradeIsInTheVocabulary와 여섯 엔드포인트를 실제로 호출하는 TestEveryRiskGradeOnAWriteIsInTheVocabulary를 추가했고, updateSupplier 가드와 updateWorkflow 가드를 각각 되돌리면 둘 다 실패하는 것까지 확인했다.
+- 보류 아이디어:
+  - CI의 go job이 `go test ./internal/...`만 돌려 `./cmd/...`를 빼놓음 — Makefile/README와 불일치 (가치 2 / 위험 1 / S)
+  - 업무 객체의 status는 여전히 임의 문자열 — `status IN('completed','accepted','closed')` 같은 집계가 오타 하나로 조용히 빠짐(유형별 어휘가 어디에도 정의돼 있지 않아 위험은 큼) (가치 3 / 위험 3 / M)
+  - 업무 객체의 data jsonb 블롭에는 어떤 검증도 없음 — 폼이 쓰는 키(품목·수량·단가)가 API로는 무제한이고 목록 응답이 블롭 전체를 반환 (가치 3 / 위험 2 / M)
+  - 워크플로 조건 폼 라벨은 "공급업체 Risk 조건"인데 실제로는 업무 객체의 risk_level과 매칭됨 — 라벨과 동작 불일치 (가치 3 / 위험 2 / S)
+  - `Makefile`의 VERSION(0.6.21)이 README의 릴리스 예시(0.7.26)와 어긋남 — 릴리스 문서 정합성 (가치 2 / 위험 1 / S)
+- 릴리즈: v0.7.38 (2026-09-03)
