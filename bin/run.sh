@@ -63,14 +63,17 @@ release_project(){
       --max-budget-usd "$RBUDGET" \
       --output-format text ) > "$LOGS/$RUN_DATE-$n-release.txt" 2>&1 || log "$n: release agent exited non-zero"
 
-  local status ahead tag title notes ghrel
+  local status ahead tag title notes ghrel tagged
   status=$(jq -r '.status // "missing"' "$rfile" 2>/dev/null || echo missing)
   ahead=$(git -C "$rwt" rev-list --count "origin/$base..HEAD")
-  if [ "$status" = released ] && [ "$ahead" -gt 0 ]; then
-    tag=$(jq -r '.tag // ""' "$rfile"); title=$(jq -r '.title // ""' "$rfile")
+  tag=$(jq -r '.tag // ""' "$rfile" 2>/dev/null || true)
+  tagged=0; [ -n "$tag" ] && git -C "$rwt" rev-parse -q --verify "refs/tags/$tag" >/dev/null 2>&1 && tagged=1
+  # 태그만 찍는 관례(버전 커밋 없음)도 릴리즈다 — 커밋이 없어도 새 태그가 있으면 내보낸다
+  if [ "$status" = released ] && { [ "$ahead" -gt 0 ] || [ "$tagged" -eq 1 ]; }; then
+    title=$(jq -r '.title // ""' "$rfile")
     notes=$(jq -r '.notes_file // ""' "$rfile"); ghrel=$(jq -r '.github_release // false' "$rfile")
-    if git -C "$rwt" push origin "HEAD:$base" >>"$LOG" 2>&1 \
-       && { [ -z "$tag" ] || git -C "$rwt" push origin "refs/tags/$tag" >>"$LOG" 2>&1; }; then
+    if { [ "$ahead" -eq 0 ] || git -C "$rwt" push origin "HEAD:$base" >>"$LOG" 2>&1; } \
+       && { [ "$tagged" -eq 0 ] || git -C "$rwt" push origin "refs/tags/$tag" >>"$LOG" 2>&1; }; then
       log "$n: released ${tag:-(no tag)}"; result="$result, released ${tag:-$(jq -r .version "$rfile")}"
       if [ "$ghrel" = true ] && [ -n "$tag" ]; then
         local -a nargs=(--generate-notes)
