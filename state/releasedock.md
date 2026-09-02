@@ -25,3 +25,16 @@
   - (기각) 직전 기록의 `listSimpleRuns` actor UUID 검증 아이디어는 무효입니다. `simple_runs.actor_id` 는 TEXT 이므로 잘못된 값이 와도 500 이 나지 않습니다.
 - 릴리즈: v0.5.2 (2026-09-02)
 - 릴리즈: v0.5.2 (2026-09-02)
+
+## 2026-09-03
+- 선택: 배포 후 단계 설정을 읽지 못한 실행이 SUCCESS 로 남는 문제 수정 (가치 4 / 위험 2 / 작업량 S)
+- 결과: 성공
+- 요약: `executeSimpleRun` 은 긴 배포 중의 설정 변경을 반영하려고 명령이 끝난 뒤 `loadSimpleSettings` 를 호출하는데, 이 읽기가 실패하면 복제·앱 배포를 통째로 건너뛴 채 실행이 SUCCESS 로 기록됐습니다. 두 단계가 켜져 있었는지 여부 자체가 그 설정에 들어 있으므로, 미러링되지 않은 이미지와 교체되지 않은 앱이 초록색으로 보이는 것은 단계 순서가 막으려던 바로 그 상태입니다. 순수 함수 `outcomeWithoutStageSettings` 를 추가해 명령이 성공한 경우에만 FAILED 로 뒤집고(이미 실패한 실행은 자기 사유 유지) 로그에 `[post-deploy]` 줄을 남기도록 했습니다. 단위 테스트 1건을 추가했고 backend/runner `go vet`·`go test ./...`, `npm test -- --run`(72건), `npm run build` 를 모두 통과했습니다. docs/simple-mode.md 에 절을 추가하고 VERSION 을 0.5.3 으로 올렸습니다(저장소 관례).
+- 보류 아이디어:
+  - CI 와 Makefile 에 `go vet` (또는 golangci-lint) 단계가 없어 정적 검사가 수동입니다 (가치 3 / 위험 1 / S).
+  - `simpleRunLogger` 는 로그 한도 도달 후 `system()` 출력까지 버려서 `exit=... status=...` 마지막 줄과 복제/앱 배포·설정 오류 안내가 사라집니다 (가치 3 / 위험 2 / S).
+  - `readUploadBatch` 의 batchId/batchLast 파싱에 단위 테스트가 없습니다 (가치 2 / 위험 1 / S).
+  - `web/dist/assets/vendor` 청크가 617KB 로 커서 폐쇄망 초기 로딩 최적화 여지가 있습니다 (가치 2 / 위험 3 / M).
+  - 실행 상세 화면에서 `건너뜀`/`없음` 단계 상태 표기가 사용자에게 구분되는지 UI 문구 점검 (가치 2 / 위험 1 / S).
+- 릴리즈: v0.5.3 (2026-09-03)
+- 릴리즈: v0.5.3 (2026-09-03)
