@@ -1,7 +1,7 @@
 ---
 title: "aidev 자율 개선 대시보드"
-description: "Claude Code 자율 개선 에이전트가 hkjang 의 프로젝트를 개선·테스트·머지·릴리즈한 일일 보고. 오늘 22회차·릴리즈 17건, 누적 72회차·릴리즈 45건."
-last_modified_at: 2026-09-03 04:47:28 +0900
+description: "Claude Code 자율 개선 에이전트가 hkjang 의 프로젝트를 개선·테스트·머지·릴리즈한 일일 보고. 오늘 23회차·릴리즈 18건, 누적 73회차·릴리즈 46건."
+last_modified_at: 2026-09-03 05:00:56 +0900
 ---
 
 <script type="application/ld+json">
@@ -10,14 +10,14 @@ last_modified_at: 2026-09-03 04:47:28 +0900
  "@type": "WebSite",
  "name": "aidev 자율 개선 대시보드",
  "url": "https://hkjang.github.io/aidev/",
- "description": "Claude Code 자율 개선 에이전트가 hkjang 의 프로젝트를 개선·테스트·머지·릴리즈한 일일 보고. 오늘 22회차·릴리즈 17건, 누적 72회차·릴리즈 45건.",
+ "description": "Claude Code 자율 개선 에이전트가 hkjang 의 프로젝트를 개선·테스트·머지·릴리즈한 일일 보고. 오늘 23회차·릴리즈 18건, 누적 73회차·릴리즈 46건.",
  "inLanguage": "ko",
  "author": {
   "@type": "Person",
   "name": "hkjang",
   "url": "https://github.com/hkjang"
  },
- "dateModified": "2026-09-03T04:47:28"
+ "dateModified": "2026-09-03T05:00:56"
 }
 </script>
 
@@ -127,19 +127,18 @@ last_modified_at: 2026-09-03 04:47:28 +0900
 
 # aidev 자율 개선 대시보드
 
-<p class="tldr"><strong>한 줄 요약.</strong> Claude Code 자율 개선 에이전트가 hkjang 의 프로젝트를 개선·테스트·머지·릴리즈한 일일 보고. 오늘 22회차·릴리즈 17건, 누적 72회차·릴리즈 45건. 회차가 끝날 때마다 자동 갱신됩니다 (마지막 갱신 2026-09-03 04:47).</p>
+<p class="tldr"><strong>한 줄 요약.</strong> Claude Code 자율 개선 에이전트가 hkjang 의 프로젝트를 개선·테스트·머지·릴리즈한 일일 보고. 오늘 23회차·릴리즈 18건, 누적 73회차·릴리즈 46건. 회차가 끝날 때마다 자동 갱신됩니다 (마지막 갱신 2026-09-03 05:00).</p>
 
 [운영 문서](https://github.com/hkjang/aidev#readme) · [원장](https://github.com/hkjang/aidev/tree/main/state) · [실행 이력](https://github.com/hkjang/aidev/commits/main) · [원본 데이터](https://hkjang.github.io/aidev/data/runs.jsonl)
 
 ## 오늘 (2026-09-03)
 
-<ul class="stats"><li><b>22</b><span>회차</span></li><li><b>22</b><span>프로젝트</span></li><li><b>17</b><span>릴리즈</span></li><li><b>5</b><span>머지(릴리즈 없음)</span></li><li><b>0</b><span>변경 없음</span></li><li><b>0</b><span>실패</span></li></ul>
+<ul class="stats"><li><b>23</b><span>회차</span></li><li><b>23</b><span>프로젝트</span></li><li><b>18</b><span>릴리즈</span></li><li><b>5</b><span>머지(릴리즈 없음)</span></li><li><b>0</b><span>변경 없음</span></li><li><b>0</b><span>실패</span></li></ul>
 
 [2026-09-03 보고 자세히 보기 →](https://hkjang.github.io/aidev/reports/2026-09-03/)
 
 | 시각 | 프로젝트 | 결과 |
 |---|---|---|
-| 02:16 | appstore | 🚀 릴리즈 merged [PR #3](https://github.com/hkjang/appstore/pull/3), released [v2.1.3](https://github.com/hkjang/appstore/releases/tag/v2.1.3) |
 | 02:29 | dataworks | 🚀 릴리즈 merged [PR #2](https://github.com/hkjang/dataworks/pull/2), released [v0.9.37](https://github.com/hkjang/dataworks/releases/tag/v0.9.37) |
 | 02:40 | git-ctx | ✅ 머지 merged [PR #15](https://github.com/hkjang/git-ctx/pull/15), release missing |
 | 02:56 | igame | 🚀 릴리즈 merged [PR #2](https://github.com/hkjang/igame/pull/2), released [v0.7.2](https://github.com/hkjang/igame/releases/tag/v0.7.2) |
@@ -151,12 +150,13 @@ last_modified_at: 2026-09-03 04:47:28 +0900
 | 04:28 | ptium | 🚀 릴리즈 merged [PR #3](https://github.com/hkjang/ptium/pull/3), released [v1.69.21](https://github.com/hkjang/ptium/releases/tag/v1.69.21) |
 | 04:36 | releasedock | 🚀 릴리즈 merged [PR #3](https://github.com/hkjang/releasedock/pull/3), released [v0.5.3](https://github.com/hkjang/releasedock/releases/tag/v0.5.3) |
 | 04:47 | relio | 🚀 릴리즈 merged [PR #3](https://github.com/hkjang/relio/pull/3), released [v1.11.10](https://github.com/hkjang/relio/releases/tag/v1.11.10) |
+| 05:00 | umm | 🚀 릴리즈 merged [PR #133](https://github.com/hkjang/umm/pull/133), released [v0.66.1](https://github.com/hkjang/umm/releases/tag/v0.66.1) |
 
 ## 일일 보고
 
 | 날짜 | 회차 | 릴리즈 | 머지 | 변경 없음 | 실패 |
 |---|---|---|---|---|---|
-| [2026-09-03](https://hkjang.github.io/aidev/reports/2026-09-03/) | 22 | 17 | 5 | 0 | 0 |
+| [2026-09-03](https://hkjang.github.io/aidev/reports/2026-09-03/) | 23 | 18 | 5 | 0 | 0 |
 | [2026-09-02](https://hkjang.github.io/aidev/reports/2026-09-02/) | 50 | 28 | 16 | 3 | 0 |
 
 ## 프로젝트별 현황
@@ -185,7 +185,7 @@ last_modified_at: 2026-09-03 04:47:28 +0900
 | [relio](https://github.com/hkjang/relio) | 2026-09-03 04:47 | 🚀 릴리즈 merged [PR #3](https://github.com/hkjang/relio/pull/3), released [v1.11.10](https://github.com/hkjang/relio/releases/tag/v1.11.10) | [v1.11.10](https://github.com/hkjang/relio/releases/tag/v1.11.10) |
 | [ReSSO](https://github.com/hkjang/ReSSO) | 2026-09-03 01:04 | 🚀 릴리즈 merged [PR #4](https://github.com/hkjang/ReSSO/pull/4), released [v0.9.67](https://github.com/hkjang/ReSSO/releases/tag/v0.9.67) | [v0.9.67](https://github.com/hkjang/ReSSO/releases/tag/v0.9.67) |
 | [ReSSO merged PR #2; weekly released v0.281.0 (수동 동기화](https://github.com/hkjang/ReSSO merged PR #2; weekly released v0.281.0 (수동 동기화) | 2026-09-02 12:43 | • 러너 git 식별자 미설정 수정) |  |
-| [umm](https://github.com/hkjang/umm) | 2026-09-02 16:30 | ✅ 머지 merged [PR #131](https://github.com/hkjang/umm/pull/131), release released | [v0.66.0](https://github.com/hkjang/umm/releases/tag/v0.66.0) |
+| [umm](https://github.com/hkjang/umm) | 2026-09-03 05:00 | 🚀 릴리즈 merged [PR #133](https://github.com/hkjang/umm/pull/133), released [v0.66.1](https://github.com/hkjang/umm/releases/tag/v0.66.1) | [v0.66.1](https://github.com/hkjang/umm/releases/tag/v0.66.1) |
 | [Vendra](https://github.com/hkjang/Vendra) | 2026-09-03 01:22 | 🚀 릴리즈 merged [PR #103](https://github.com/hkjang/Vendra/pull/103), released [v0.7.37](https://github.com/hkjang/Vendra/releases/tag/v0.7.37) | [v0.7.37](https://github.com/hkjang/Vendra/releases/tag/v0.7.37) |
 | [Vendra/ai-admin/pii-masker/ptium](https://github.com/hkjang/Vendra/ai-admin/pii-masker/ptium) | 2026-09-02 16:32 | • 태그 사후 푸시 및 Release 생성 |  |
 | [vibe-coders](https://github.com/hkjang/vibe-coders) | 2026-09-02 23:03 | • PR  |  |
