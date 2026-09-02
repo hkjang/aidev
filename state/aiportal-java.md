@@ -25,3 +25,14 @@
   - `getDataMap`이 null 반환 시 `dataMap.get("active")` NPE — 명시적 예외 처리로 정리 (가치 3 / 위험 2 / 작업량 S)
   - 공통 util(`ValidUtil`, `PagingUtil`, `ApiCallUtil`) 단위 테스트 공백 보강 (가치 2 / 위험 1 / 작업량 S)
   - SEC-003: SSO 토큰 교환의 `is_skip_jwt=true` 운영 우회 제거 (가치 5 / 위험 4 / 작업량 M) — IAM 담당자 계약 확인 필요라 자율 진행 부적합
+
+## 2026-09-03
+- 선택: 페이징 파라미터 하한 미보정으로 인한 목록 조회 오류 수정 (가치 4 / 위험 1 / 작업량 S)
+- 결과: 성공
+- 요약: `PageVo.pageNum` 기본값이 0 이라 `pageNum` 을 생략한 요청에서 `getOffset()` 이 `-pageSize` 를 반환해 `OFFSET` 을 쓰는 20여 개 매퍼 쿼리가 PostgreSQL "OFFSET must not be negative" 로 실패하고, `PagingUtil.paginate()` 는 음수 `fromIndex` 로 `subList` IndexOutOfBoundsException 을 던졌습니다(예: `GET /app/chat/list`, `/tools` OCR·STT 목록). 이미 `QuestionLogServiceImpl`, `StorageBoxServiceImpl`, `ToolsServiceImpl`, `AppStatisticsServiceImpl` 4곳에 같은 보정이 개별 복사돼 있어 중앙화가 맞다고 판단했습니다. `getOffset()` 과 `paginate()` 에서 pageNum/pageSize 를 1 이상으로 보정하고 long 연산으로 오버플로를 막았으며, `ToolsMapper` 의 인라인 `((#{pageNum} - 1) * #{pageSize})` 2건을 다른 매퍼와 동일하게 `#{offset}` 로 통일했습니다. `AthenaServiceImpl` 의 `getPageNum() != 0` 센티널 의미를 깨지 않으려고 필드 기본값과 getter 는 건드리지 않았습니다. 검증은 `PageVoTest`(5) + `PagingUtilTest`(7) 추가 후 `sh gradlew check build` 실행으로 했고 47개 테스트 전부 통과했습니다. 커밋 44052f5.
+- 보류 아이디어:
+  - `ControllerLogAspect.logControllerCud`가 `getAuthentication()` null 일 때 NPE — @AfterReturning 이라 성공 응답이 500 으로 바뀜 (가치 3 / 위험 1 / 작업량 S)
+  - `getDataMap`이 null 반환 시 `dataMap.get("active")` NPE — 명시적 예외 처리로 정리 (가치 3 / 위험 2 / 작업량 S)
+  - `JwtAuthenticationFilter`의 CORS 허용 Origin 30여 개 하드코딩을 설정(yaml)으로 외부화 (가치 3 / 위험 3 / 작업량 M)
+  - `LIMIT #{pageSize}` 에 음수/0 pageSize 가 그대로 전달되는 경로 보정 (가치 2 / 위험 2 / 작업량 S) — setter 보정 시 pageSize 복사 경로 영향 확인 필요
+  - `ValidUtil`, `ApiCallUtil` 단위 테스트 공백 보강 (가치 2 / 위험 1 / 작업량 S)
