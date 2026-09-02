@@ -11,3 +11,14 @@
   - 잠긴(locked) 계정의 기존 SSO Session이 계속 새 인가 코드를 받는 동작을 의도된 것으로 문서화할지 검토 (가치 2 / 위험 2 / S)
   - `login`에서 `prompt=login` 재인증 시 기존 Session을 정리하지 않아 한 사용자에게 Session이 둘 남는 문제 (가치 2 / 위험 2 / M)
 - 릴리즈: v0.9.66 (2026-09-02)
+
+## 2026-09-02 (2회차)
+- 선택: Discovery에 `authorization_response_iss_parameter_supported: true` 추가 (가치 3 / 위험 1 / 작업량 S)
+- 결과: 성공 (커밋 1876209)
+- 요약: 서버는 인가 응답 네 갈래(세션 조회 전 오류, 기존 SSO Session에서 발급한 코드, 로그인 폼이 JSON으로 돌려주는 redirect_to, `prompt=none` 미로그인)에 모두 RFC 9207 `iss`를 넣고 있었는데 메타데이터로 알리지 않았다. RFC 9207상 클라이언트는 메타데이터가 약속할 때만 `iss` 없는 응답을 거절하므로, 플래그가 없으면 라이브러리는 계속 `iss` 없는 응답을 받아들인다 — 즉 방어가 꺼진 상태였다. 겸해서 discovery만 `strings.TrimRight(realm.IssuerURL, "/")`로 자기 사본의 끝 슬래시를 떼고 있던 것을 제거해, 발행되는 `issuer`와 모든 응답·토큰의 `iss`가 같은 한 문자열이 되게 했다(store가 v0.1.0부터 입력 시 트림·검증하므로 API로 만든 Realm에는 슬래시가 없다. 그 트림은 불일치를 고쳐주지 못하고 가장 먼저 확인할 곳에서 숨기기만 했다). `docs/compatibility.md`에 한 줄 추가. 검증: 새 연동 테스트가 수정 전 코드에서 실제로 실패함을 확인했고(`discovery advertises <nil>`), `make test` 전체 통과 — `go test -race ./...` 전 패키지 ok, 연동 테스트 SKIP 0건, `go vet`, `golangci-lint`(0 issues), `govulncheck`(0), `npm run lint`, `npm run test`(22파일/104테스트, 디스크 파일 수와 일치), `npm run build`. 빌드가 만든 `webui/dist/index.html` 변경은 되돌렸다.
+- 보류 아이디어:
+  - UserInfo POST에서 form-encoded `access_token` 파라미터 수용 (RFC 6750 §2.2). 현재는 Authorization 헤더만 읽는다 (가치 2 / 위험 1 / S)
+  - `SessionByToken`이 `u.enabled=true`만 보고 `locked_until`은 보지 않아 잠긴 계정의 기존 SSO Session이 계속 새 인가 코드를 받는다 — 의도인지 결정하고 문서화하거나 막을 것 (가치 3 / 위험 2 / M)
+  - `login`에서 `prompt=login` 재인증 시 기존 Session을 정리하지 않아 한 사용자에게 Session이 둘 남는 문제 (가치 2 / 위험 2 / M)
+  - Discovery에 `prompt_values_supported`·`claim_types_supported` 등 남은 선택 메타데이터 추가 검토 (가치 1 / 위험 1 / S)
+  - `scripts/test-services.sh`가 PostgreSQL 포트 충돌 시 컨테이너를 Created 상태로 남기고 다음 실행에서 인증 실패로만 드러난다 — 포트 점유를 감지해 알려주기 (가치 2 / 위험 1 / S)
