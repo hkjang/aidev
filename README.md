@@ -163,7 +163,14 @@ DSN은 **그 프로젝트 CI가 쓰는 것과 같은 이미지**를 가리켜야
 | `/reports/<날짜>` (`docs/reports/<날짜>.md`) | 그날 회차 표 + 각 프로젝트 원장에서 "무엇을 왜 바꿨나" 발췌 |
 | `docs/data/runs.jsonl` | 회차 원본 기록 한 줄씩 `{ts, date, project, result}` — 다른 도구에서 읽기 좋음 |
 
-동작: `run.sh` → 회차 끝 `record_run()` 이 `runs.jsonl` 에 한 줄 추가 → `bin/report.py` 가 `docs/` 전체 재생성 → `sync_repo()` 가 `state logs docs` 를 커밋·푸시 → GitHub Pages(Jekyll, cayman 테마)가 1~2분 안에 반영.
+동작: `run.sh` → 회차 끝 `record_run()` 이 `runs.jsonl` 에 한 줄 추가 → `bin/report.py` 가 `docs/` 전체 재생성 → `sync_repo()` 가 `state logs docs` 를 커밋·푸시 → GitHub Pages(Jekyll)가 1~2분 안에 반영.
+
+SEO / AEO / 모바일:
+- `docs/_layouts/default.html` + `docs/assets/style.css` 자체 레이아웃 — viewport, `lang=ko`, 시스템 글꼴, 다크 모드, 44px 터치 타깃, 표는 좁은 화면에서 가로 스크롤, 스킵 링크·빵부스러기·`<main>` 시맨틱
+- `jekyll-seo-tag`(title·description·canonical·OG·Twitter 카드·WebPage JSON-LD) + `jekyll-sitemap`(`/sitemap.xml`) + `robots.txt` + `assets/og.png` 공유 이미지
+- 페이지마다 front matter `title/description/date/last_modified_at` 과 본문 첫 문장 요약(TL;DR) — 검색·답변 엔진이 그대로 인용할 수 있는 한 문장
+- 구조화 데이터: 대시보드에 `WebSite`·`FAQPage`(FAQ 6문항)·`ItemList`(일일 보고 목록)·`Dataset`(runs.jsonl), 일일 보고에 `Report`·`BreadcrumbList`
+- 검증: `curl -s https://hkjang.github.io/aidev/ | grep -c 'application/ld+json'` (5), Google Rich Results Test 에 URL 입력
 매일 아침 대시보드의 "일일 보고" 표에서 어제 날짜를 누르면 된다. 수동 재생성은 `python3 bin/report.py`.
 
 ## 11. 점검 루틴
