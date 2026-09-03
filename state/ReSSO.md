@@ -68,3 +68,15 @@
   - UserInfo POST에서 form-encoded `access_token` 파라미터 수용 (RFC 6750 §2.2). 현재는 Authorization 헤더만 읽는다 (가치 2 / 위험 1 / S)
   - `oidcLogout`이 hint의 `sub`를 쿠키 세션의 사용자와 대조하지 않아, 다른 사람의 ID Token을 hint로 줘도 지금 로그인한 사람이 로그아웃된다 (스펙상 SHOULD) (가치 2 / 위험 2 / M)
   - `docs/operations.md`의 `resso_introspection_errors_total` 항목에 stage 라벨 값 목록을 적어, 어느 조회가 멈췄는지 대시보드에서 바로 읽게 하기 (가치 1 / 위험 1 / S)
+
+## 2026-09-04
+- 선택: `scripts/test-services.sh`가 재사용 컨테이너의 실제 포트가 아니라 요청한 포트를 출력하던 문제 수정 (가치 3 / 위험 1 / 작업량 S)
+- 결과: 성공 (커밋 b6d30b9)
+- 요약: 스크립트 상단의 세 포트는 **요청**이지 사실이 아니다 — 이번 실행이 만든 컨테이너에만 적용되고, 이전 실행에서 남은 컨테이너는 처음 기동된 포트를 그대로 유지하는데 스크립트의 모든 경로가 기존 컨테이너를 보지도 않고 재사용한다. 그래서 출력된 환경은 요청을, 테스트는 현실을 가리켰다(이번 세션에서 실제로 재현: DSN은 55439, 컨테이너는 55450). 스크립트가 이걸 잡을 수 없었던 이유는 모든 준비 확인이 `docker exec`로 컨테이너 **안에서** 서비스에 닿기 때문이다 — 발행된 포트를 지나는 확인이 하나도 없어서, 아무 데도 닿지 않는 주소가 통합 테스트 예순 개가 한꺼번에 실패하는 것으로 처음 드러났다. 이제 출력 전에 `docker port`로 실제 매핑을 읽고, 출력할 주소를 호스트에서 한 번 열어본다. 같은 독해에서 이웃 둘이 떨어졌다: 포트 충돌로 기동에 실패한 컨테이너는 Created로 남아 다음 실행이 "재사용"하므로 이제 `docker start`로 살리거나 이유를 말하고 멈추며, `--stop` 분기가 부르는 `log`가 그 아래에 정의돼 있어 인증서 디렉터리를 못 지웠다고 말하려던 유일한 경로가 `log: command not found`로 답하던 것도 고쳤다. 검증: 새 Go 테스트 2개가 docker 스텁과 실제 리스너로 스크립트를 그대로 실행해, 수정 전 코드에서 두 건 모두 실제로 실패함을 확인했다(요청 포트 55439/13890/13636을 그대로 출력, 아무도 듣지 않는 포트를 정상 환경으로 출력). `make test` 전체 통과 — `go test -race ./...` 전 패키지 ok(httpserver 82s / store 81s), 연동 테스트 SKIP 0건, `go vet`, `golangci-lint`(0 issues), `govulncheck`(0), `npm run lint`, `npm run test`, `npm run build`. 빌드가 만든 `webui/dist/index.html` 변경은 되돌렸다.
+- 보류 아이디어:
+  - `authorization`이 `id_token_hint`를 `AuthorizationRequest`에 저장하지 않아, 로그인 폼을 거친 뒤에는 hint가 지목한 계정과 다른 계정으로 로그인해도 코드가 나간다 (컬럼 추가 마이그레이션 필요) (가치 3 / 위험 2 / M)
+  - UserInfo POST에서 form-encoded `access_token` 파라미터 수용 (RFC 6750 §2.2). 현재는 Authorization 헤더만 읽는다 (가치 2 / 위험 1 / S)
+  - `oidcLogout`이 hint의 `sub`를 쿠키 세션의 사용자와 대조하지 않아, 다른 사람의 ID Token을 hint로 줘도 지금 로그인한 사람이 로그아웃된다 (스펙상 SHOULD) (가치 2 / 위험 2 / M)
+  - `docs/operations.md`의 `resso_introspection_errors_total` 항목에 stage 라벨 값 목록을 적어, 어느 조회가 멈췄는지 대시보드에서 바로 읽게 하기 (가치 1 / 위험 1 / S)
+  - `SessionByToken`이 `locked_until`을 보지 않는 것은 의도(잠금은 무차별 대입 방어이고 세션 종료로 확장하면 DoS가 된다) — 막지 말고 문서화하는 쪽으로 결론낼 것 (가치 2 / 위험 1 / S)
+- 릴리즈: v0.9.69 (2026-09-04)
