@@ -24,3 +24,10 @@
 - 결과: 성공
 - 요약: 관리자 → 방문·방문자 관리 화면은 방문번호·회사·담당자·방문자 이름/전화로 목록을 좁히지만 `exportVisitsCSV`는 `days`만 읽었고 화면의 다운로드 버튼도 `?days=90`으로 고정돼 있어, 한 회사만 조회한 상태로 내려받아도 90일치 전체 방문이 담겨 잘못된 근거 자료가 되고 조회하지 않은 방문자의 개인정보까지 함께 내보내졌다. `internal/app/exports.go`에 `visitExportFilters`/`parseVisitExportFilters`(days 검증, 알 수 없는 status는 무시, q 트림)를 두고 내보내기 쿼리에 목록과 같은 검색 조건을 참가자 EXISTS 서브쿼리로 적용해 필터에 걸린 방문은 참가자 전원이 온전히 나오게 했으며, `visit.export` 감사 기록에 실제 적용 범위를 남기고 `AdminPage.tsx`의 링크가 현재 검색어를 싣도록 했다. 검증은 `go vet ./...`, docker postgres:16-alpine을 띄운 `VISITFLOW_TEST_DSN` 전체 테스트 통과, `npm ci && npm run build`이며, 신규 통합 테스트 1개(회사·이름·전화·상태·잘못된 상태)와 단위 테스트 2개를 추가한 뒤 필터를 임시로 무력화해 통합 테스트가 실제로 실패하는 것까지 확인했다. API_AND_MCP 문서에 한 줄 안내를 덧붙였다.
 - 보류 아이디어: `bestAcceptLanguage`의 `q=0`(수용 불가)·`q>1` 처리 정정 / CSV·XLSX 가져오기 파서(`visitorInputsFromRows`) 엣지케이스 단위 테스트 보강 / 방문 이력 CSV의 50,000행 상한 초과 시 잘렸음을 사용자에게 알리는 표시 / 설정 내보내기 JSON을 되돌려 넣는 가져오기 경로와 스키마 검증 / 통계 CSV가 사업장 타임존 버킷과 DB `CURRENT_DATE` 기준 날짜 축을 섞어 쓰는 문제 점검
+
+## 2026-09-03
+- 선택: 통계 추이 그래프·CSV가 사업장 타임존 버킷과 DB `CURRENT_DATE` 날짜 축을 섞어 써 "오늘"이 통째로 누락되는 문제 수정 (가치 4 / 위험 2 / 작업량 M)
+- 결과: 성공
+- 요약: `statistics`와 `exportStatisticsCSV`는 방문을 `(v.start_at AT TIME ZONE si.timezone)::date`로 버킷팅하면서 날짜 축은 DB 세션 기준 `CURRENT_DATE`(배포 컨테이너에서는 UTC)로 만들어, 기본값인 Asia/Seoul 사업장에서는 축이 9시간 모자랐다. 그 결과 매일 자정~09:00 사이에는 대시보드 타일이 "오늘"로 세는 날의 열이 축에 아예 없어 그날 예약된 방문이 그래프와 통계 CSV에서 함께 사라졌다. `admin.go`에 공용 `statisticsTodayCTE`(모든 사업장의 현지 오늘 중 가장 늦은 날짜, 사업장이 없으면 `CURRENT_DATE`)를 두고 화면 쿼리와 내보내기 쿼리가 축과 버킷 조회 구간을 함께 이 기준으로 잡도록 바꿨다. 검증은 `go vet ./...`, docker postgres:16-alpine을 띄운 `VISITFLOW_TEST_DSN` 전체 테스트 통과, `npm ci && npm run build`이며, 세션 날짜와 다른 ±12시간 존을 골라 사업장 시간대를 바꾸고 그 사업장의 현지 오늘 정오에 방문을 만든 뒤 축의 마지막 날짜와 CSV 행을 확인하는 통합 테스트 1개를 추가한 뒤 수정을 임시로 되돌려 실제로 실패하는 것까지 확인했다. API_AND_MCP 문서에 한 줄 안내를 덧붙였다.
+- 보류 아이디어: `bestAcceptLanguage`의 `q=0`(수용 불가)·`q>1`·잘못된 `q` 값 처리 정정 / CSV·XLSX 가져오기 파서(`visitorInputsFromRows`) 엣지케이스 단위 테스트 보강 / 방문 이력 CSV의 50,000행 상한 초과 시 잘렸음을 사용자에게 알리는 표시 / 설정 내보내기 JSON을 되돌려 넣는 가져오기 경로와 스키마 검증 / 통계 요약·부문별 집계도 `CURRENT_DATE-days` 대신 사업장 시간대 기준 구간을 쓰도록 통일
+- 릴리즈: v2.6.2 (2026-09-03)
