@@ -27,3 +27,10 @@
 - 결과: 성공
 - 보류 아이디어: `pagination()`이 `limit=abc`를 조용히 기본값으로 바꾸고 `offset`이 100만을 넘으면 0으로 되돌려 1페이지로 순환(가치 3 / 위험 2 / S) · `updatePost`가 DB 오류를 409 `not_editable`("본인의 공개 Moin만 수정할 수 있습니다")로 보고해 원인을 감춤(가치 2 / 위험 1 / S) · Makefile `test`가 CI와 달리 `-race` 미사용(가치 2 / 위험 1 / S) · 조용한 시간·Digest가 사용자별 시간대가 아닌 인스턴스 기본 시간대만 사용(가치 3 / 위험 3 / L)
 - 릴리즈: v0.1.19 (2026-09-03)
+
+## 2026-09-03
+- 선택: 문서 범위 밖 `limit`·`offset`을 400으로 거절하고 상한 넘는 `nextCursor` 미발급 (가치 3 / 위험 2 / 작업량 S)
+- 결과: 성공
+- 요약: `api/openapi.yaml`은 `limit` 1~100, `offset` 0~1,000,000을 공표하는데 `pagination()`은 범위 밖 값을 조용히 기본값으로 바꿔 200을 반환해, `limit=abc`·`limit=0`을 보낸 client가 자기 요청이 그대로 실행되지 않았음을 알 수 없었습니다. 더 나쁜 건 목록 collection이 다음 `offset`을 `nextCursor`로 발급하므로 긴 목록을 따라가다 `offset=1000030`에 닿으면 0으로 접혀 1페이지가 다시 나왔고, cursor를 계속 따라가는 client는 끝에 닿지 못한 채 1페이지를 무한 반복했습니다. `pagination(w, r)`이 `decodeJSON`과 같은 모양으로 400 `invalid_pagination`을 직접 쓰도록 바꾸고(값이 없으면 기본값 유지, 숫자가 아닌 `cursor`는 Flow의 opaque 값이라 그대로 통과), `listEnvelope`가 상한을 넘는 다음 page의 cursor를 발급하지 않게 했으며, 호출 14곳과 OpenAPI 응답·설명, `docs/api-mcp.md`를 함께 고쳤습니다. MCP는 `intArgument`가 이미 1~100으로 제한해 영향이 없고 web app이 보내는 limit도 모두 범위 안입니다. 검증은 새 테스트 4개 포함 로컬 PostgreSQL에 `moina_ci` DB를 만들어 `MOINA_TEST_POSTGRES_DSN`으로 integration test 포함 `go test -race ./...` 전체 통과, `make fmt`·`make check`·`go vet`·staticcheck 모두 통과(frontend 무변경으로 실행 생략).
+- 보류 아이디어: `updatePost`가 DB 오류를 409 `not_editable`("본인의 공개 Moin만 수정할 수 있습니다")로 보고해 원인을 감춤(가치 2 / 위험 1 / S) · Makefile `test`가 CI와 달리 `-race` 미사용(가치 2 / 위험 1 / S) · MCP `intArgument`가 범위 밖 limit을 조용히 30으로 대체해 REST와 계약이 어긋남(가치 2 / 위험 2 / S) · 조용한 시간·Digest가 사용자별 시간대가 아닌 인스턴스 기본 시간대만 사용(가치 3 / 위험 3 / L)
+- 릴리즈: v0.1.20 (2026-09-03)
