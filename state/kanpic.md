@@ -76,3 +76,15 @@
   - `DOLLARDE`·`DOLLARFR` 이 `math.Pow(10, ceil(log10(fraction)))` 로 자리를 밀어 이진 실수 어긋남이 남아 있다.
 - 릴리즈: v0.233.0 (2026-09-03)
 - 릴리즈: v0.233.0 (2026-09-03)
+
+## 2026-09-03
+- 선택: 분수 서식(`# ?/?`)이 값을 분수로 그린다 (가치 4 / 위험 2 / 작업량 M)
+- 결과: 성공
+- 요약: 엑셀 기본 표시 형식 12·13 번(`# ?/?`, `# ??/??`)은 값을 분수로 적으라는 뜻인데, 표시 형식을 그리는 두 곳(`internal/formula` 의 `formatValue`, `web/src/lib/cellFormat.ts` 의 `formatCellValue`)이 자리 기호만 세고 빗금을 글자로 흘려 보내 `0.5` 가 `1/2` 가 아니라 `1/`, `2.75` 가 `3/`, `0.3125` 가 `0/` 로 보였다(XLSX 로 그냥 들어오는 서식이다). 새 파일 `internal/formula/format_fraction.go` 와 `cellFormat.ts` 에 같은 규칙으로 `parseFractionFormat`·`renderFraction`·`bestFraction` 을 두었다 — 자리 기호 개수가 분모의 상한(`?`=9, `??`=99, `???`=999)이고 가장 덜 어긋나는 분모를 고르되 같으면 작은 쪽, 빈칸으로 가른 정수 자리가 있으면 대분수·없으면 가분수(`#/#` 은 5.25 를 21/4), 분모를 숫자로 못 박으면 약분하지 않음(`?/8` → 4/8), 분자가 분모까지 올라가면 정수로 올림(`0.99` → 1), `#` 은 0 인 정수 자리를 감추고 `0` 은 적음. 날짜 서식의 빗금은 자리 기호 사이에 없어 걸리지 않는다(`m/d/yyyy` 그대로). 검증: `testdata/cell-formats.json` 에 17줄 추가(격자와 서버가 함께 읽는다), 새 테스트 `TestFractionFormatsFollowExcel`(18가지)와 웹 `the grid draws fraction formats as fractions`(3 it), `gofmt -l`, `go vet ./...`, `go build ./...`, `go test ./...`(전체 통과), `npm ci && npm test`(485개 통과)·`npm run lint`·`npm run build`, `scripts/check-release-docs.sh`, `scripts/check-commit-identities.sh`. 커밋 1개(5ca15fc), 릴리즈 노트 v0.234.0 과 README VERSION·USER_GUIDE 갱신.
+- 보류 아이디어:
+  - 넷째 구역(글자 구역)을 쓰지 않는다. `#,##0;;;"["@"]"` 처럼 글자에 서식을 준 칸이 그대로 나온다.
+  - `?` 의 자리 맞추기 빈칸을 그리지 않는다. 엑셀은 `# ??/??` 의 한 자리 분자를 빈칸으로 채워 자릿수를 맞춘다(단조 글꼴 표에서 눈에 띈다).
+  - `csvNumber` 가 IMPORTDATA 의 `"1,200"`·`"12%"`·앞뒤 통화 기호를 글자로 남긴다. `valueOfText` 가 그 규칙을 한 곳에 담고 있으니 맞출지 검토할 것.
+  - 외부 호출 캐시 키가 함수·주소만 담아, `external.max_kb` 를 올려도 캐시가 남아 있는 동안은 "크기를 넘습니다" 가 그대로다.
+  - `DOLLARDE`·`DOLLARFR` 이 `math.Pow(10, ceil(log10(fraction)))` 로 자리를 밀어 이진 실수 어긋남이 남아 있다.
+- 릴리즈: v0.234.0 (2026-09-03)
