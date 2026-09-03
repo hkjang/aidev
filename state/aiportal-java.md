@@ -69,3 +69,14 @@
   - `FileServiceImpl.ocrUpload` 의 하드코딩 경로 `E:\KCB\doc\ocr` — 호출부가 없는 사실상 죽은 코드라 설정화 또는 제거 판단 필요 (가치 2 / 위험 2 / 작업량 S)
   - `LIMIT #{pageSize}` 에 음수/0 pageSize 가 그대로 전달되는 경로 보정 (가치 2 / 위험 2 / 작업량 S)
   - 필터 내 `BusinessException("사용자 정보가 없습니다.")` 도 catch 되지 않아 500 + CORS 헤더 누락 (가치 3 / 위험 2 / 작업량 S)
+
+## 2026-09-03
+- 선택: 파일 다운로드 500 오류 및 삭제 후 잔존 파일 정보 수정 (가치 4 / 위험 1 / 작업량 M)
+- 결과: 성공
+- 요약: `ResponseHandController.downloadFile` 이 `MediaTypeFactory.getMediaType(realName).orElseThrow(IllegalArgumentException)` 로 되어 있어 확장자를 모르는 저장 파일(hwp/hwpx, 그리고 직전 세션에서 허용하게 된 확장자 없는 업로드 → UUID 만 남는 저장명)의 다운로드가 404 대신 500 으로 실패했고, `FileController.down` 은 `fileService.get(fileId)` 가 null 을 반환하는 삭제된 파일 아이디에 NPE 로 500 을 냈습니다. 같은 클래스의 `downFile` 이 이미 `CUSTOM_MEDIA_TYPES(hwp) → MediaTypeFactory → octet-stream` 폴백을 갖고 있어 이를 `resolveMediaType` 으로 추출해 두 경로가 같은 규칙을 쓰도록 통일하고, MIME 결정을 `Files.newInputStream` 이전으로 옮겨 예외 시 열린 스트림이 남지 않게 했습니다. Content-Length 는 DB 값 대신 실제 파일 크기를 쓰고, `fileName` 이 null 이면 저장명으로 대체합니다. 추가로 `FileServiceImpl.delete` 가 `Files.deleteIfExists` 가 false 일 때 DB 행을 남겨 목록에 계속 노출되고 재삭제가 영원히 실패하던 문제(게시판/자료실 첨부 교체 경로에서 발생)와 `ToolsServiceImpl.deleteImgHistory` 의 이력/파일 정보 null NPE 를 고쳤고, `FileController.uploadDrm` 의 디버그 `System.out.println` 을 제거했습니다. 검증은 `ResponseHandControllerDownloadTest`(8) + `FileServiceImplTest` 삭제 케이스(4) 추가 후 `sh gradlew check build` 실행으로 했고 21개 테스트 클래스 94개 테스트 전부 통과했습니다. 커밋 cfa5c48.
+- 보류 아이디어:
+  - `JwtAuthenticationFilter` 의 CORS 허용 Origin 30여 개 하드코딩을 설정(yaml)으로 외부화 (가치 3 / 위험 3 / 작업량 M)
+  - 필터 내 `BusinessException("사용자 정보가 없습니다.")` 도 catch 되지 않아 500 + CORS 헤더 누락 (가치 3 / 위험 2 / 작업량 S)
+  - `FileServiceImpl.ocrUpload` 의 하드코딩 경로 `E:\KCB\doc\ocr` — 호출부가 없는 사실상 죽은 코드라 설정화 또는 제거 판단 필요 (가치 2 / 위험 2 / 작업량 S)
+  - `LIMIT #{pageSize}` 에 음수/0 pageSize 가 그대로 전달되는 경로 보정 (가치 2 / 위험 2 / 작업량 S)
+  - `ValidUtil`, `ApiCallUtil` 단위 테스트 공백 보강 (가치 2 / 위험 1 / 작업량 S)
