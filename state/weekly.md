@@ -49,3 +49,15 @@
   - `previousWeekPlan` 의 `weekStart` 질의 인자 파싱 400 분기에 가드가 없습니다 (가치 1 / 위험 1 / 작업량 S)
   - `outlookForDueDate` 의 AT_RISK 문구가 low==high 일 때 최근 속도를 빼고 전체 평균만 말합니다 (가치 1 / 위험 1 / 작업량 S)
 - 릴리즈: v0.285.0 (2026-09-03)
+
+## 2026-09-03 (3회차)
+- 선택: 보내는 이름에 쉼표·꺾쇠가 들어가면 메일 From 헤더가 깨지던 버그 수정 (가치 3 / 위험 1 / 작업량 S)
+- 결과: 성공
+- 요약: `buildMailMessage` 는 보내는 이름(mail.from_name)을 `mime.BEncoding.Encode` 로 감싸고 있었는데, 그 함수는 순수 ASCII 를 그대로 돌려줍니다 — 옳은 동작이지만, 그래서 영문 이름은 관리자가 적은 그대로 From 에 실리고 RFC 5322 는 쉼표를 주소의 끝으로 읽습니다. `Weekly, Inc.` 는 보낸사람이 `Weekly` 하나인 주소 목록이 되고, 꺾쇠가 든 이름은 자기 angle-addr 를 스스로 달아 진짜 보내는 주소를 두 번째 주소로 남깁니다. 한글 이름만 쓰던 배포에서는 전부 base64 안에 들어가 보이지 않던 결함입니다. 인코딩이 필요하면 지금처럼 인코딩하고, 아니면 RFC 5322 특수문자가 든 이름만 따옴표 문자열(`\`·`"` 이스케이프)로 쓰는 `mailDisplayName` 을 더했고, 빈칸만 남은 설정 칸은 지운 것과 같게 다룹니다. 회귀 테스트 2개(`mailsendername_test.go`) — 이름 8종을 실제로 `net/mail` 로 다시 읽어 보낸사람이 한 명인지·주소가 그대로인지·이름이 그대로 도착하는지 봅니다. 검증: 수정 전 코드에서 새 테스트가 4가지 이름에 대해 실패하는 것을 확인 → 실제 DB(WEEKLY_TEST_POSTGRES_DSN)로 `go test ./...` 전체 통과, `go vet`, `gofmt`, guard-check --changed(19개 모두 도달; 처음엔 빈 이름 가드가 `mailDisplayName` 에 닿지 않는다고 잡아 가드 목록을 바로잡았습니다), version·openapi·modal-close 검사 통과, frontend lint·build·test(121개) 통과. mutation-check --changed 잔존 변이 3건은 모두 이번에 건드리지 않은 `mailMessageID`(166·172행)이고, 바꾼 경로의 변이는 모두 잡혔습니다. backup-check 는 로컬에 psql 이 없어 건너뛰었습니다(CI 에서 실행). 한 가지 사고: mutation-check 가 아직 돌고 있는 동안 커밋하는 바람에 그 순간 소스에 얹혀 있던 변이(`mailMessageID` 166행의 `&&`→`||`)가 커밋에 딸려 들어갔습니다. 발견 즉시 amend 로 걷어 내고 `go vet`·`go test` 를 다시 돌려 확인했습니다 — **mutation-check 가 끝나기 전에는 `git add` 를 하지 말 것**.
+- 보류 아이디어:
+  - `meeting.go` 의 `snapshotFor` 가 주차를 정확일치로 찾아, 격자를 옮긴 전환 주에는 회의 자료가 통째로 비어 보입니다 (가치 3 / 위험 3 / 작업량 M)
+  - `issueoutcome.go` 의 `r.week_start < $2` 도 전환 주에 같은 주 보고서를 "이전 결과"로 셈하는지 확인 (가치 1 / 위험 2 / 작업량 S)
+  - `previousWeekPlan` 의 `weekStart` 질의 인자 파싱 400 분기에 가드가 없습니다 (가치 1 / 위험 1 / 작업량 S)
+  - `mailMessageID` 의 도메인 추출(`@` 위치·randfail) 분기에 잔존 변이 3건이 있습니다 (가치 1 / 위험 1 / 작업량 S)
+  - `outlookForDueDate` 의 AT_RISK 문구가 low==high 일 때 최근 속도를 빼고 전체 평균만 말합니다 (가치 1 / 위험 1 / 작업량 S)
+- 릴리즈: v0.286.0 (2026-09-03)
