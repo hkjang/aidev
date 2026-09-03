@@ -90,3 +90,29 @@
   - `/api/v1/external/query/*` API key 경로의 한도·감사 로그 커버리지 (가치 3 / 위험 2 / M)
   - Query DSL에 OR/괄호 지원 추가 (가치 3 / 위험 4 / L)
 - 릴리즈: v0.2.21 (2026-09-03)
+
+## 2026-09-03
+- 선택: `id` 절이 입력된 값을 그대로 DB에 넘기던 문제 (가치 4 / 위험 1 / 작업량 S)
+- 결과: 성공
+- 요약: `assets.id`는 PostgreSQL에서 `UUID` 컬럼인데 `querydsl`은 `id` 절의 값을
+  타이핑된 그대로 파라미터로 넘겼다. `id = "web-01"`은 statement 자체를 실패시켜
+  HTTP 500(실제로 재현 확인)이 되고 값이 무엇이었는지는 응답 어디에도 남지
+  않았으며, SQLite fallback에서는 텍스트 비교라 오류 없이 200 + 빈 목록이라
+  "그런 자산이 없다"처럼 보였다. 두 모드는 표기만 다른 UUID에서도 갈렸다.
+  PostgreSQL은 대문자·하이픈 없는 표기를 같은 값으로 읽고 fallback의 텍스트
+  비교는 그렇지 않아서, UUID를 대문자로 출력하는 보고서에서 복사한 식별자가
+  운영에서는 자산을 찾고 fallback에서는 아무것도 찾지 못했다. 이제 `id` 절은
+  컴파일 시점에 `uuid.Parse`로 해석해 UUID가 아니면 값을 인용한 400
+  `INVALID_QUERY`로 거절하고, UUID면 저장된 정규 표기로 접어서 두 모드가 같은
+  답을 준다. 콘솔이 렌더링하는 문법 참조의 `id` 항목도 거절 대상이던 생략형
+  예시(`"0d0f…"`) 대신 완전한 UUID 예시와 `uuid` 종류로 바꿨다. 검증: querydsl
+  단위 테스트 2개와 `/api/v1/query/execute`·`/validate` 통합 테스트 2개를 추가해
+  수정 전 실패(PostgreSQL 500, SQLite 빈 목록)·수정 후 통과를 확인하고,
+  `go test ./...`를 SQLite fallback과 실제 PostgreSQL 양쪽에서 전 패키지 통과,
+  `go vet`, `go build`, `gofmt` 통과.
+- 보류 아이디어:
+  - `/api/v1/external/query/*` API key 경로의 한도·감사 로그 커버리지 (가치 3 / 위험 2 / M)
+  - 잘못된 scope로 키를 만들면 400 INVALID_SCOPES가 아니라 403 SCOPE_ESCALATION이 반환됨(생성·추가 경로만 검증 순서가 PATCH와 다름) (가치 2 / 위험 1 / S)
+  - `attributes.*`에 대한 `!=`가 해당 키가 아예 없는 자산을 제외함(SQL NULL 의미) (가치 2 / 위험 3 / M)
+  - `/api/v1/admin/api-keys` HTTP 계층에 테스트가 전무함(서비스 계층에만 존재) (가치 3 / 위험 1 / M)
+- 릴리즈: v0.2.22 (2026-09-03)
