@@ -20,3 +20,10 @@
 - 요약: `POST /v1/mask`, `POST /v1/jobs`가 `r.Body`에 아무 상한 없이 `ParseMultipartForm(MaxFileSizeBytes + 1MB)`를 호출해, 클라이언트가 임의 크기(수 GB) 본문을 흘려보내면 서버가 51MB를 메모리에 버퍼링하고 나머지는 temp 파일로 흘린 뒤에야 `validateAttachment`에서 거절하던 메모리·디스크 DoS 경로를 막았습니다. `http.MaxBytesReader`로 본문을 `MaxFileSizeBytes + 64KB`(멀티파트 프레이밍 여유분)에서 자르고, 잘린 요청은 새 `payloadTooLargeError` → `413 payload_too_large`로 응답하며, `maxMemory`를 8MB 고정으로 낮춰 큰 파트가 RAM에 이중으로 남지 않고 temp 파일로 넘어가게 했습니다. 상한 초과 시 413을 받는 통합 테스트 2개(`/v1/mask`, `/v1/jobs` + job 미생성 확인)와 한도에 딱 맞는 업로드가 여전히 200으로 처리되는 회귀 테스트 1개를 추가했고, `gofmt -l`(무출력)·`go vet ./...`·`go test -count=1 ./...`·`go test -race -count=1 ./...` 전부 통과, `-count=5`로 새 테스트 플래키 여부 확인, 수정 전 코드로 되돌려 새 테스트 2개가 실제로 실패(본문 512KB를 끝까지 읽고 400 반환)하는 것까지 확인했습니다.
 - 보류 아이디어: `/v1/history`의 `limit` 상한 없음(과도한 값 요청 시 전체 목록 직렬화) / job 파일 보존·정리 정책 부재로 저장소 무한 증가 / `CreateJob`의 `go runJob` 동시 실행 개수 제한 없음 / `internal/jobs`, `internal/config` 패키지 단위 테스트 전무 / 마스킹 결과가 원본과 동일할 때(예: 숫자 없는 주민등록번호 필드) 스팬이 비어 필드 전체를 덮는 과잉 마스킹
 - 릴리즈: v1.0.6 (2026-09-03)
+
+## 2026-09-03 (2회차)
+- 선택: 이미지 압축 폭탄(선언 해상도) 디코딩 상한 적용 (가치 4 / 위험 2 / 작업량 S)
+- 결과: 성공
+- 요약: 업로드 크기 상한은 있었지만 디코딩 후 픽셀 수에는 아무 제한이 없어, 헤더에 40000x40000을 선언한 수백 KB짜리 PNG 한 장으로 `image.Decode`가 6GB 이상을 할당하게 만드는 메모리 고갈 경로가 남아 있었습니다(`masking.MaskImageFile`, `upstage.prepareUpstreamAttachment` 두 곳). 새 `document.ValidateImageDimensions`/`DecodeImage`가 `image.DecodeConfig`로 헤더만 먼저 읽어 5천만 픽셀(600dpi A4 스캔 이상) 초과를 거절하고, `service.validateAttachment`에서 이미지 MIME일 때 이를 호출해 동기·비동기 경로 모두 픽셀 버퍼 할당이나 job 저장 전에 400으로 실패하게 했으며, 두 디코딩 지점도 같은 가드를 거치도록 방어를 이중화했습니다. IHDR을 조작한 초소형 폭탄 PNG로 단위 테스트 4개와 통합 테스트 2개(`/v1/mask` 오류 메시지 확인, `/v1/jobs` 400 + job 미생성)를 추가했고, `gofmt -l`(무출력)·`go vet ./...`·`go test -count=1 ./...`·`go test -race -count=1 ./...` 전부 통과, 가드를 임시로 제거해 새 테스트 3개가 실제로 실패(각각 미거절 / 202 반환 / "not enough pixel data" 디코드 오류)하는 것까지 확인했습니다.
+- 보류 아이디어: `/v1/history`의 `limit` 상한 없음(과도한 값 요청 시 전체 목록 직렬화) / job 파일 보존·정리 정책 부재로 저장소 무한 증가 / `CreateJob`의 `go runJob` 동시 실행 개수 제한 없음(고루틴마다 원본 바이트를 메모리에 유지) / `internal/jobs`, `internal/config` 패키지 단위 테스트 전무 / 마스킹 결과가 원본과 동일할 때 스팬이 비어 필드 전체를 덮는 과잉 마스킹
+- 릴리즈: v1.0.7 (2026-09-03)
