@@ -37,3 +37,15 @@
   - 네 intelligence 필터의 `Cursor` 필드는 어떤 질의도 쓰지 않는 죽은 코드 — 실제 커서 페이징을 붙이거나 제거 (가치 3 / 위험 1 / M)
   - MCP 요청 본문이 1MB 를 넘으면 조용히 잘려 "Parse error" 가 되므로 413 으로 구분 (가치 3 / 위험 1 / S)
 - 릴리즈: v1.11.10 (2026-09-03)
+
+## 2026-09-03
+- 선택: 승인 정책의 문자 조건이 조용히 무시되던 문제 (가치 4 / 위험 2 / 작업량 M)
+- 결과: 성공
+- 요약: `internal/approval/service.go` 의 `matches` 가 양쪽이 숫자로 파싱되면 무조건 숫자 분기로 갔습니다. `amount CONTAINS 50` 은 500000000 과 50 을 숫자로 비교해 절대 일치하지 않았고, 그 정책이 지키던 결재가 흔적 없이 건너뛰어졌습니다. CONTAINS 를 항상 텍스트 비교로 두고, 스냅샷의 float64 를 `fmt.Sprint` 의 "5e+08" 대신 온전한 자릿수로 렌더링하는 `conditionText` 를 넣었습니다. 문자에 대한 GT/LT 도 기존에는 동등 비교로 떨어져 `status GT OPEN` 이 배제해야 할 바로 그 값에서 발동했는데, 이제 사전순으로 비교합니다. 관리자 화면은 조건 항목으로 `status` 를 제시하면서 값 입력은 `type=number` + `Number(value)` 라 저장 가능한 값이 null 뿐이었고 null 은 어떤 것과도 일치하지 않아 정책이 무력화됐습니다 — 값을 텍스트로 받아 숫자로 읽힐 때만 숫자로 보내고, 서버가 지원하는 LT·NE·CONTAINS 를 연산자 목록에 추가했습니다. 검증은 `matches` 20케이스·`conditionText` 6케이스 단위 테스트(옛 동작이면 실패하는 케이스 포함)와 `go test -race ./...`, `go vet ./...`, `gofmt -l`, web typecheck·build, `check-env-contract.sh`, `check-static-assets.sh` 전체 통과. 커밋 c06d8dd.
+- 보류 아이디어:
+  - `internal/server/today.go:87` 의 `time.Now().Truncate(24*time.Hour)` 는 UTC 자정이라 KST 배포에서 하루 지난 연체 건이 HIGH 대신 WARNING 으로 분류됨 (가치 4 / 위험 2 / S)
+  - `internal/intelligence/engine.go:333` 계약 만료 `D-N` 라벨이 정수 절삭 탓에 하루 짧고, D-90 창이 실제로는 D-91 까지 걸림 (가치 3 / 위험 2 / S)
+  - 네 intelligence 필터의 `Cursor` 필드는 어떤 질의도 쓰지 않는 죽은 코드 — 실제 커서 페이징을 붙이거나 제거 (가치 3 / 위험 1 / M)
+  - MCP 요청 본문이 1MB 를 넘으면 조용히 잘려 "Parse error" 가 되므로 413 으로 구분 (가치 3 / 위험 1 / S)
+  - `internal/audit`, `internal/job` 은 테스트가 하나도 없음 (가치 3 / 위험 1 / M)
+- 릴리즈: v1.11.11 (2026-09-03)
