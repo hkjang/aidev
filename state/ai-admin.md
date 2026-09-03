@@ -62,3 +62,16 @@
   - CI에 정적 분석 단계(`go vet`, `golangci-lint`, eslint)가 없어 회귀를 테스트로만 잡고 있음 (가치 3 / 위험 1 / M)
 - 릴리즈: v1.2.5 (2026-09-03)
 - 릴리즈: v1.2.5 (2026-09-03)
+
+## 2026-09-04
+- 선택: 상태 확인·메타 endpoint의 HEAD 요청 지원 (가치 3 / 위험 1 / 작업량 S)
+- 결과: 성공
+- 요약: chi는 GET 라우트에서 HEAD를 유도하지 않으므로 `/health/live`·`/health/ready`·두 API alias·`/api/v1/meta`·`/api/v1/openapi.json`이 HEAD 요청에 405 `method_not_allowed`를 반환했다. 로드 밸런서·가동 감시 도구는 흔히 HEAD로 확인하므로, 실제로 존재하고 부작용도 없는 경로가 없는 것처럼 보였다. `getWithHead` 헬퍼로 이 여섯 경로를 GET·HEAD에 함께 등록해 같은 상태 코드와 header를 반환하게 했고(본문은 net/http가 HTTP 규격대로 비운다), OpenAPI 문서에 `head` operation을 추가해 라우터-문서 양방향 일치를 검사하는 기존 `TestOpenAPIMatchesImplementedRoutesAndPathParameters`를 통과시켰다. 인증이 필요한 나머지 GET 경로는 감사 CSV export·OIDC callback 등 부작용 때문에 기존 계약을 유지했다. HEAD 응답 상태·Content-Type과 `Allow: GET, HEAD`를 검증하는 테스트를 추가했고, 기존 테이블 테스트의 `DELETE /health/live` 기대값이 `GET`에서 `GET, HEAD`로 바뀌는 것으로 수정 전 동작을 확인했다. `scripts/verify-version.sh`·`go vet`·`go build ./...`·`go test -count=1 ./...`·`go test -race ./internal/server`·`npm ci && npm test`(55개)·`npm run build`를 모두 통과시켰다. 저장소 관례에 따라 VERSION을 1.2.6으로 올리고 CHANGELOG·README·docs·web 버전 메타데이터를 맞췄으며 `docs/api.md`·`docs/operations.md`에 HEAD 계약을 명시했다(직전 릴리즈 커밋들과 동일하게 `internal/ui/dist`는 재빌드하지 않음).
+- 보류 아이디어:
+  - `safeCSVCell`이 OWASP가 함께 권고하는 tab(0x09)·CR(0x0D) 선행 문자를 중화하지 않음. 다만 표시 이름 등 주요 필드가 이미 TrimSpace되어 실제 도달 경로는 좁음 (가치 2 / 위험 1 / S)
+  - `auth.truncate`가 user agent를 1000바이트로 자르면서 UTF-8 경계를 지키지 않아, 다국어 UA가 잘린 자리에서 깨지면 PostgreSQL이 세션 INSERT를 거부해 로그인이 401로 실패할 수 있음 (가치 2 / 위험 1 / S)
+  - `listKeys`·`listKeyScopes`가 `rows.Scan` 실패한 행을 조용히 건너뛰고 200을 반환해, 관리자가 불완전한 API 키 목록을 완전한 목록으로 오인할 수 있음(감사 CSV 잘림과 같은 부류) (가치 3 / 위험 2 / S)
+  - `clearSessionCookies`가 `setSessionCookies`와 달리 `Secure`를 설정하지 않고 CSRF 쿠키의 `SameSite`도 Strict가 아닌 Lax로 지움 (가치 2 / 위험 2 / S)
+  - CI에 정적 분석 단계(`go vet`, `golangci-lint`, eslint)가 없어 회귀를 테스트로만 잡고 있음. web에는 eslint 설정 자체가 없음 (가치 3 / 위험 1 / M)
+- 릴리즈: v1.2.6 (2026-09-04)
+- 릴리즈: v1.2.6 (2026-09-04)
