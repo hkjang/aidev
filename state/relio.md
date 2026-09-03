@@ -49,3 +49,14 @@
   - MCP 요청 본문이 1MB 를 넘으면 조용히 잘려 "Parse error" 가 되므로 413 으로 구분 (가치 3 / 위험 1 / S)
   - `internal/audit`, `internal/job` 은 테스트가 하나도 없음 (가치 3 / 위험 1 / M)
 - 릴리즈: v1.11.11 (2026-09-03)
+
+## 2026-09-03
+- 선택: 계약 만료·예상 종료일 신호의 날짜 계산을 달력 기준으로 (가치 4 / 위험 2 / 작업량 M)
+- 결과: 성공
+- 요약: `end_date`·`expected_close_date` 는 DATE 컬럼이라 pgx 가 자정으로 돌려주는데, 엔진의 `now` 는 시각을 갖습니다. 두 값을 빼서 24 로 나누면 하루의 대부분이 사라지고 나머지는 0 방향으로 잘려, 날짜 기반 신호가 전부 하루씩 밀렸습니다 — 내일 만료되는 계약이 "만료 D-0" 으로, 91일 남은 계약이 "D-90" 으로(공지 창 밖이어야 하는데 안으로) 나왔고, 열린 영업기회는 예상 종료일 당일 자정부터 "예상 종료일이 0일 지났습니다" 로 CLOSE_DATE_PASSED 오탐이 떴습니다. `calendarDays` 가 경과 시간이 아니라 두 날짜를 비교하도록 바꿨고, 경과 시간 질문(단계 정체 일수 등)은 기존 `daysSince` 를 그대로 씁니다. 기존 테스트가 이를 놓친 이유는 `now.AddDate` 로 날짜를 만들어 시각이 보존돼 뺄셈이 정확히 24h 배수가 됐기 때문이라, 새 케이스는 DB 처럼 자정 날짜를 만듭니다. 검증은 새 테스트 3개(`calendarDays` 5케이스, 계약 만료 D-1/D-0/만료됨/D-90/D-91, 종료일 당일 무신호·1일 초과 신호)를 옛 구현으로 되돌리면 실제로 실패하는지 확인한 뒤 `go test -race ./...`, `go vet ./...`, `gofmt -l`, web typecheck·build, `check-env-contract.sh`, `check-static-assets.sh` 전체 통과. 커밋 95f247a.
+- 보류 아이디어:
+  - `internal/server/today.go:87` 의 `time.Now().Truncate(24*time.Hour)` 는 UTC 자정 — 로직 자체는 UTC 기준으로 맞으나 `system.timezone`(기본 Asia/Seoul) 설정을 무시하므로 KST 00~09시 사이에는 하루 지난 건이 HIGH 대신 WARNING (가치 3 / 위험 3 / M, 타임존 배선 필요)
+  - 네 intelligence 필터의 `Cursor` 필드는 어떤 질의도 쓰지 않는 죽은 코드 — 실제 커서 페이징을 붙이거나 제거 (가치 3 / 위험 1 / M)
+  - MCP 요청 본문이 1MB 를 넘으면 조용히 잘려 "Parse error" 가 되므로 413 으로 구분 (가치 3 / 위험 1 / S)
+  - `internal/audit`, `internal/job` 은 테스트가 하나도 없음 (가치 3 / 위험 1 / M)
+- 릴리즈: v1.11.12 (2026-09-03)
