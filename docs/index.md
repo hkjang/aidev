@@ -1,7 +1,7 @@
 ---
 title: "aidev 자율 개선 대시보드"
-description: "Claude Code 자율 개선 에이전트가 hkjang 의 프로젝트를 개선·테스트·머지·릴리즈한 일일 보고. 오늘 70회차·릴리즈 52건, 누적 120회차·릴리즈 80건."
-last_modified_at: 2026-09-03 16:38:37 +0900
+description: "Claude Code 자율 개선 에이전트가 hkjang 의 프로젝트를 개선·테스트·머지·릴리즈한 일일 보고. 오늘 71회차·릴리즈 53건, 누적 121회차·릴리즈 81건."
+last_modified_at: 2026-09-03 16:46:28 +0900
 ---
 
 <script type="application/ld+json">
@@ -10,14 +10,14 @@ last_modified_at: 2026-09-03 16:38:37 +0900
  "@type": "WebSite",
  "name": "aidev 자율 개선 대시보드",
  "url": "https://hkjang.github.io/aidev/",
- "description": "Claude Code 자율 개선 에이전트가 hkjang 의 프로젝트를 개선·테스트·머지·릴리즈한 일일 보고. 오늘 70회차·릴리즈 52건, 누적 120회차·릴리즈 80건.",
+ "description": "Claude Code 자율 개선 에이전트가 hkjang 의 프로젝트를 개선·테스트·머지·릴리즈한 일일 보고. 오늘 71회차·릴리즈 53건, 누적 121회차·릴리즈 81건.",
  "inLanguage": "ko",
  "author": {
   "@type": "Person",
   "name": "hkjang",
   "url": "https://github.com/hkjang"
  },
- "dateModified": "2026-09-03T16:38:37"
+ "dateModified": "2026-09-03T16:46:28"
 }
 </script>
 
@@ -127,19 +127,18 @@ last_modified_at: 2026-09-03 16:38:37 +0900
 
 # aidev 자율 개선 대시보드
 
-<p class="tldr"><strong>한 줄 요약.</strong> Claude Code 자율 개선 에이전트가 hkjang 의 프로젝트를 개선·테스트·머지·릴리즈한 일일 보고. 오늘 70회차·릴리즈 52건, 누적 120회차·릴리즈 80건. 회차가 끝날 때마다 자동 갱신됩니다 (마지막 갱신 2026-09-03 16:38).</p>
+<p class="tldr"><strong>한 줄 요약.</strong> Claude Code 자율 개선 에이전트가 hkjang 의 프로젝트를 개선·테스트·머지·릴리즈한 일일 보고. 오늘 71회차·릴리즈 53건, 누적 121회차·릴리즈 81건. 회차가 끝날 때마다 자동 갱신됩니다 (마지막 갱신 2026-09-03 16:46).</p>
 
 [운영 문서](https://github.com/hkjang/aidev#readme) · [원장](https://github.com/hkjang/aidev/tree/main/state) · [실행 이력](https://github.com/hkjang/aidev/commits/main) · [원본 데이터](https://hkjang.github.io/aidev/data/runs.jsonl)
 
 ## 오늘 (2026-09-03)
 
-<ul class="stats"><li><b>70</b><span>회차</span></li><li><b>28</b><span>프로젝트</span></li><li><b>52</b><span>릴리즈</span></li><li><b>18</b><span>머지(릴리즈 없음)</span></li><li><b>0</b><span>변경 없음</span></li><li><b>0</b><span>실패</span></li></ul>
+<ul class="stats"><li><b>71</b><span>회차</span></li><li><b>28</b><span>프로젝트</span></li><li><b>53</b><span>릴리즈</span></li><li><b>18</b><span>머지(릴리즈 없음)</span></li><li><b>0</b><span>변경 없음</span></li><li><b>0</b><span>실패</span></li></ul>
 
 [2026-09-03 보고 자세히 보기 →](https://hkjang.github.io/aidev/reports/2026-09-03/)
 
 | 시각 | 프로젝트 | 결과 |
 |---|---|---|
-| 13:56 | aiportal-java | ✅ 머지 merged [PR #6](https://github.com/hkjang/aiportal-java/pull/6), release skipped |
 | 14:06 | aiportal-py | ✅ 머지 merged [PR #4](https://github.com/hkjang/aiportal-py/pull/4), release skipped |
 | 14:18 | dataworks | 🚀 릴리즈 merged [PR #5](https://github.com/hkjang/dataworks/pull/5), released [v0.9.40](https://github.com/hkjang/dataworks/releases/tag/v0.9.40) |
 | 14:30 | git-ctx | 🚀 릴리즈 merged [PR #16](https://github.com/hkjang/git-ctx/pull/16), released [v0.77.3](https://github.com/hkjang/git-ctx/releases/tag/v0.77.3) |
@@ -151,12 +150,13 @@ last_modified_at: 2026-09-03 16:38:37 +0900
 | 16:10 | moyro | ✅ 머지 merged [PR #6](https://github.com/hkjang/moyro/pull/6), release missing |
 | 16:29 | muni | 🚀 릴리즈 merged [PR #5](https://github.com/hkjang/muni/pull/5), released [v0.26.0](https://github.com/hkjang/muni/releases/tag/v0.26.0) |
 | 16:38 | pii-masker | 🚀 릴리즈 merged [PR #5](https://github.com/hkjang/pii-masker/pull/5), released [v1.0.8](https://github.com/hkjang/pii-masker/releases/tag/v1.0.8) |
+| 16:46 | ptium | 🚀 릴리즈 merged [PR #5](https://github.com/hkjang/ptium/pull/5), released [v1.69.23](https://github.com/hkjang/ptium/releases/tag/v1.69.23) |
 
 ## 일일 보고
 
 | 날짜 | 회차 | 릴리즈 | 머지 | 변경 없음 | 실패 |
 |---|---|---|---|---|---|
-| [2026-09-03](https://hkjang.github.io/aidev/reports/2026-09-03/) | 70 | 52 | 18 | 0 | 0 |
+| [2026-09-03](https://hkjang.github.io/aidev/reports/2026-09-03/) | 71 | 53 | 18 | 0 | 0 |
 | [2026-09-02](https://hkjang.github.io/aidev/reports/2026-09-02/) | 50 | 28 | 16 | 3 | 0 |
 
 ## 프로젝트별 현황
@@ -181,7 +181,7 @@ last_modified_at: 2026-09-03 16:38:37 +0900
 | [moyro](https://github.com/hkjang/moyro) | 2026-09-03 03:44 | 🚀 릴리즈 merged [PR #4](https://github.com/hkjang/moyro/pull/4), released [v0.2.13](https://github.com/hkjang/moyro/releases/tag/v0.2.13) |  |
 | [muni](https://github.com/hkjang/muni) | 2026-09-03 04:00 | 🚀 릴리즈 merged [PR #3](https://github.com/hkjang/muni/pull/3), released [v0.24.0](https://github.com/hkjang/muni/releases/tag/v0.24.0) | [v0.26.0](https://github.com/hkjang/muni/releases/tag/v0.26.0) |
 | [pii-masker](https://github.com/hkjang/pii-masker) | 2026-09-03 04:16 | 🚀 릴리즈 merged [PR #3](https://github.com/hkjang/pii-masker/pull/3), released [v1.0.6](https://github.com/hkjang/pii-masker/releases/tag/v1.0.6) | [v1.0.8](https://github.com/hkjang/pii-masker/releases/tag/v1.0.8) |
-| [ptium](https://github.com/hkjang/ptium) | 2026-09-03 04:28 | 🚀 릴리즈 merged [PR #3](https://github.com/hkjang/ptium/pull/3), released [v1.69.21](https://github.com/hkjang/ptium/releases/tag/v1.69.21) | [v1.69.22](https://github.com/hkjang/ptium/releases/tag/v1.69.22) |
+| [ptium](https://github.com/hkjang/ptium) | 2026-09-03 04:28 | 🚀 릴리즈 merged [PR #3](https://github.com/hkjang/ptium/pull/3), released [v1.69.21](https://github.com/hkjang/ptium/releases/tag/v1.69.21) | [v1.69.23](https://github.com/hkjang/ptium/releases/tag/v1.69.23) |
 | [Quantoss](https://github.com/hkjang/Quantoss) | 2026-09-03 00:46 | ✅ 머지 merged [PR #1](https://github.com/hkjang/Quantoss/pull/1), release skipped | skipped |
 | [releasedock](https://github.com/hkjang/releasedock) | 2026-09-03 04:36 | 🚀 릴리즈 merged [PR #3](https://github.com/hkjang/releasedock/pull/3), released [v0.5.3](https://github.com/hkjang/releasedock/releases/tag/v0.5.3) |  |
 | [relio](https://github.com/hkjang/relio) | 2026-09-03 04:47 | 🚀 릴리즈 merged [PR #3](https://github.com/hkjang/relio/pull/3), released [v1.11.10](https://github.com/hkjang/relio/releases/tag/v1.11.10) | [v1.11.11](https://github.com/hkjang/relio/releases/tag/v1.11.11) |
