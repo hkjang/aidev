@@ -4854,3 +4854,46 @@ HEAD is now at b30c0af Merge pull request #6 from hkjang/auto/2026-09-03-2150
 [21:58:41] aiportal-front-admin: release skipped (저장소에 릴리즈 관례가 전혀 없음: git tag 0개, GitHub Release 0개(gh release list 빈 결과), CHANGELOG.md/docs/RELEASE*.md 등 릴리즈 노트 없음, .github/workflows 디렉터리 자체가 없음. 유일한 CI인 .gitlab-ci.yml은 main/develop 브랜치 push에 반응해 npm run build:* 후 dist를 PVC 경로로 rsync/cp 하는 브랜치 기반 연속 배포이며 태그나 릴리즈에 반응하는 job이 없다. 버전 필드는 root package.json 0.0.0, upgrade/admin-v2/package.json 0.1.0 이지만 git log -p 확인 결과 두 값 모두 최초 생성 커밋 이후 한 번도 증가한 적이 없어 따를 증가 패턴이 없다(둘 다 private: true 라 레지스트리 배포도 없음). 릴리즈 자산을 만드는 스크립트도 없다(upgrade/admin-v2/scripts는 build 검증용, deploy/create-offline-cache.sh는 npm cache 반입용, deploy-changed.sh는 rsync 배포용). 태그 형식·버전 증가 단위·릴리즈 노트 양식을 새로 정하는 것은 사람의 몫이므로 아무 변경도 만들지 않았다. worktree는 b30c0af 상태 그대로 clean.)
 fatal: '/home/hkjang/.cache/auto-improve-wt/aiportal-front-admin' is not a working tree
 reports: 2 day(s), 135 run(s)
+[osc] Running Open Code Review...
+[21:58:45] aidev synced: run(2026-09-03): aiportal-front-admin — merged https://github.com/hkjang/aiportal-front-admin/pull/6, release skipped
+[21:58:45] done
+[22:00:05] skip DartFly: dirty working tree
+[22:00:07] skip Kkiit: dirty working tree
+[22:00:08] skip Momento: dirty working tree
+[22:00:09] skip SecCheck: dirty working tree
+[22:00:16] skip appstore: dirty working tree
+[22:00:17] skip cutover: dirty working tree
+[22:00:29] skip postra: dirty working tree
+[22:00:32] skip seaton: dirty working tree
+[22:00:37] candidates(27): AgentHub Clustara Invenqor Quantoss ReSSO Vendra ai-admin aiportal-front-admin aiportal-front aiportal-java aiportal-py dataworks git-ctx igame jupiq kanpic moina moyro muni pii-masker ptium releasedock relio umm vibe-coders visitflow weekly
+[22:00:37] picked: aiportal-front
+[22:00:37] === aiportal-front (base=main, branch=auto/2026-09-03-2200)
+Preparing worktree (new branch 'auto/2026-09-03-2200')
+HEAD is now at d7f9ff2 Merge pull request #1 from hkjang/auto/2026-09-03-1340
+remote: 
+remote: Create a pull request for 'auto/2026-09-03-2200' on GitHub by visiting:        
+remote:      https://github.com/hkjang/aiportal-front/pull/new/auto/2026-09-03-2200        
+remote: 
+To https://github.com/hkjang/aiportal-front.git
+ * [new branch]      auto/2026-09-03-2200 -> auto/2026-09-03-2200
+branch 'auto/2026-09-03-2200' set up to track 'origin/auto/2026-09-03-2200'.
+[22:03:44] aiportal-front: 1 commit(s) → PR https://github.com/hkjang/aiportal-front/pull/2
+[22:03:50] aiportal-front: merged into main
+From https://github.com/hkjang/aiportal-front
+ * branch            main       -> FETCH_HEAD
+   d7f9ff2..0bb171a  main       -> origin/main
+Updating d7f9ff2..0bb171a
+Fast-forward
+ .../common/popup/Global/PopSimpleBot.vue           |   4 +-
+ .../common/popup/Global/PopSimpleBotUpdate.vue     |   4 +-
+ src/utils/useFileAccept.js                         | 116 ++++++++++++-----
+ src/views/Support/Ocr/SupportOcr.vue               |   4 +-
+ tests/unit/useFileAccept.spec.js                   | 141 +++++++++++++++++++++
+ 5 files changed, 229 insertions(+), 40 deletions(-)
+ create mode 100644 tests/unit/useFileAccept.spec.js
+[22:03:53] aiportal-front: local main fast-forwarded
+Preparing worktree (detached HEAD 0bb171a)
+HEAD is now at 0bb171a Merge pull request #2 from hkjang/auto/2026-09-03-2200
+[22:04:51] aiportal-front: release skipped (저장소에 릴리즈 관례가 전혀 없음: git 태그 0개(refs/tags 비어 있음), GitHub Release 0개(gh release list 결과 없음), CHANGELOG.md/docs/RELEASE* 등 릴리즈 노트 파일 없음, package.json 의 version 은 first commit 이후 Vite 스캐폴드 기본값 "0.0.0" 그대로이며 private:true. 배포는 .gitlab-ci.yml 의 브랜치 기반 파이프라인(main/develop 푸시 시 npm run build:* 후 PVC 디렉터리로 복사)이라 태그·버전과 무관하고, 릴리즈 자산 생성 스크립트(scripts/, Makefile)도 없음. docs/01-시작하기.md 와 README.md 의 '버전 기록' 표에 0.0.1(2025-01-01 초기 릴리스) 항목이 있으나 package.json(0.0.0)과 불일치하는 문서 보일러플레이트로, 실제 릴리즈 이력으로 볼 수 없음. 새 버저닝·태그 관례를 정하는 것은 사람의 판단이 필요하므로 아무것도 만들지 않고 중단함.)
+fatal: '/home/hkjang/.cache/auto-improve-wt/aiportal-front' is not a working tree
+reports: 2 day(s), 136 run(s)
