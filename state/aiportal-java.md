@@ -80,3 +80,14 @@
   - `FileServiceImpl.ocrUpload` 의 하드코딩 경로 `E:\KCB\doc\ocr` — 호출부가 없는 사실상 죽은 코드라 설정화 또는 제거 판단 필요 (가치 2 / 위험 2 / 작업량 S)
   - `LIMIT #{pageSize}` 에 음수/0 pageSize 가 그대로 전달되는 경로 보정 (가치 2 / 위험 2 / 작업량 S)
   - `ValidUtil`, `ApiCallUtil` 단위 테스트 공백 보강 (가치 2 / 위험 1 / 작업량 S)
+
+## 2026-09-04
+- 선택: 페이지 크기 하한 미보정으로 인한 목록 조회 500 오류 수정 (가치 4 / 위험 1 / 작업량 M)
+- 결과: 성공
+- 요약: 이전 세션에서 `getOffset()` 만 보정했고 `LIMIT #{pageSize}` 는 그대로 남아 있어, 20개 매퍼 쿼리(게시판·자료실·권한검색·통계·앱관리·로그·툴 목록 등)에서 `?pageSize=-1` 이 PostgreSQL "LIMIT must not be negative" 로 500 을 냈고 `pageSize=0` 은 totalCount 가 있는데도 항상 빈 목록을 돌려주었습니다. `PageVo.getLimit()` 을 추가해 1 이상으로 보정하고 매퍼 20곳을 `#{limit}` 으로 통일했으며, `DeptStatisticsController` 등 4개 컨트롤러가 전체 내려받기 용도로 `setPageSize(Integer.MAX_VALUE)` 를 쓰고 있어 기존 세 서비스의 100 상한을 전역으로 올리지는 않고 하한만 보정했습니다. 별도 패턴이던 `AppDirectMapper` 의 `LIMIT #{params.size} OFFSET #{params.page} * #{params.size}` 도 `getLimit()`/`getOffset()` 으로 옮겨 null(빈 문자열 바인딩)·음수 page/size 를 함께 막았습니다. 검증은 `PageVoTest` 4건 추가 + `AppDirectSearchParamsTest`(6) + 매퍼 XML 의 LIMIT/OFFSET 바인딩이 보정된 프로퍼티만 쓰는지 확인하는 `MapperLimitBindingTest`(3) 추가 후 `sh gradlew check build` 실행으로 했고 23개 테스트 클래스 107개 테스트 전부 통과했습니다. 커밋 60ac379.
+- 보류 아이디어:
+  - `JwtAuthenticationFilter` 의 CORS 허용 Origin 30여 개 하드코딩을 설정(yaml)으로 외부화 (가치 3 / 위험 3 / 작업량 M)
+  - 필터 내 `BusinessException("사용자 정보가 없습니다.")` 도 catch 되지 않아 500 + CORS 헤더 누락 (가치 3 / 위험 2 / 작업량 S)
+  - `AthenaServiceImpl` 1629·2294행 등 Athena 응답의 `get(0)` / `getEmail().split("@")[0]` 무검증 접근 — 빈 배열·null 이메일에 NPE (가치 3 / 위험 2 / 작업량 S)
+  - `FileServiceImpl.ocrUpload` 의 하드코딩 경로 `E:\KCB\doc\ocr` — 호출부가 없는 사실상 죽은 코드라 설정화 또는 제거 판단 필요 (가치 2 / 위험 2 / 작업량 S)
+  - `ValidUtil`, `ApiCallUtil` 단위 테스트 공백 보강 (가치 2 / 위험 1 / 작업량 S)
