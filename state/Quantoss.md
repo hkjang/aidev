@@ -21,3 +21,14 @@
   - `journal.Summary` 가 PnL==0 인 거래를 패배로 집계 (`t.PnL > 0` else) — 승률이 미세하게 왜곡 (가치 2 / 위험 1 / S)
   - README "알려진 한계" 가 stale — WebSocket 미사용이라 적혀 있으나 이미 구현됨 (가치 2 / 위험 1 / S)
   - `market.FetchCandles` 종료 조건 `page[0].TS.Before(cutoff) || !page[0].TS.After(cutoff)` 가 중복 — 단순화 + 페이지네이션 테스트 (가치 2 / 위험 1 / S)
+
+## 2026-09-03
+- 선택: 청산 실패 시 포지션이 보호 없이 남던 버그 수정 (서버 손절 예약 복구 + 절반 익절 재시도) (가치 5 / 위험 2 / 작업량 M)
+- 결과: 성공
+- 요약: `Live.Sell` 은 이중 매도를 막으려 서버 손절 예약(조건주문)을 먼저 취소하는데, 그 뒤 주문 접수 실패·판매가능수량 0·미체결로 빠져나가는 경로에서 예약을 되살리지 않았다. `GuardID` 가 비어 `UpdateStop` 도 갱신을 건너뛰므로 실거래 포지션이 장 끝까지 **서버측 손절 없이** 남는 안전 결함이다. 실패 경로마다 `restoreGuard` 로 복구하고, 살아 있는 미체결 매도 주문은 매수와 동일하게 취소 후 최종 상태를 재확인하도록 했다(취소 후에도 주문이 살아 있으면 이중 매도 위험이라 예약은 복구하지 않고 ERROR 로그). `cancelGuard` 는 취소가 확인된 경우에만 `GuardID` 를 비우고 성공 여부를 반환하게 바꿔, 취소 실패 시 살아 있는 예약을 잊고 `placeGuard` 가 하나 더 만드는 이중 예약도 막았다(`placeGuard` 에도 `GuardID != ""` 조기 반환 추가, `UpdateStop` 은 취소 실패 시 교체 보류). 함께 엔진의 같은 계열 버그도 고쳤다 — 절반 익절 매도가 실패해도 `pos.ScaledOut = true` 를 먼저 세워, 절반 익절이 영영 재시도되지 않고 `structureExit`(잔량 청산)·`timeStop` 이 아직 전량인 포지션에 잘못 적용됐다. 이제 체결된 뒤에만 세운다(목표 도달 시 본전 손절 상향은 실패해도 유지). 검증: httptest 기반 `internal/broker/live_test.go` 신규(매도 실패 4종 + `UpdateStop` 취소 실패)와 엔진 절반 익절 재시도 테스트를 추가하고, 수정을 각각 되돌리면 새 테스트가 실제로 실패함을 확인했다. `gofmt -l`(clean)·`go vet ./...`·`go build ./...`·`go test -count=1 ./...` 전부 통과. 커밋 e0d05fa.
+- 보류 아이디어:
+  - GitHub Actions CI 없음 — `go build`/`go vet`/`go test`/`gofmt -l` 워크플로 추가 (가치 4 / 위험 1 / S)
+  - `internal/journal`·`internal/notify` 테스트 0건 — Summary/MaxDrawdown, Load 날짜 필터, Notifier httptest 테스트 (가치 3 / 위험 1 / S)
+  - `toss.Client` 를 구조체 리터럴로 만들면 `limiter.tokens` 가 nil 이라 첫 요청에서 패닉 — `acquire` 에 지연 초기화 (가치 3 / 위험 1 / S)
+  - `journal.Summary` 가 PnL==0 인 거래를 패배로 집계 (`t.PnL > 0` else) — 승률이 미세하게 왜곡 (가치 2 / 위험 1 / S)
+  - README "알려진 한계" 가 stale — WebSocket 미사용이라 적혀 있으나 이미 구현됨 (가치 2 / 위험 1 / S)
