@@ -59,3 +59,15 @@
   - 이메일 형식은 어디서도 검사되지 않음 — 초대·사용자 생성·공급업체 담당자가 "김구매"를 이메일로 저장하고, 그 주소로 알림이 나감 (가치 3 / 위험 1 / M)
   - `Makefile`의 VERSION(0.6.21)이 README의 릴리스 예시(0.7.26)와 어긋남 — 릴리스 문서 정합성 (가치 2 / 위험 1 / S)
 - 릴리즈: v0.7.39 (2026-09-03)
+
+## 2026-09-03
+- 선택: 요청이 실어 나르는 이메일 주소를 형식·정규화 없이 email 컬럼에 넣던 쓰기 경로 전부 수정 (가치 4 / 위험 1 / 작업량 M)
+- 결과: 성공 (commit 6e88674)
+- 요약: 날짜·숫자·문자열·어휘·레코드id 스윕과 같은 기준(철자가 아니라 연산 — 요청 값이 email 컬럼에 도달)으로 훑었고, 이메일은 애플리케이션 어디에서도 검사된 적이 없었다. 일곱 개 문이 무방비였다: 공급업체 등록·수정(대표 이메일과 taxInfo에 중첩된 세금계산서 이메일), 담당자 두 문, 포털 프로필·담당자, 관리자 계정 생성, 초대. 결함은 두 갈래다. (1) 형식 미검사 — "김구매"가 모든 표면에 주소로 저장됐고 폼의 type="email" 말고는 아무도 막지 않아, 포털·API·붙여넣기는 그냥 통과했다. 거절이 없으니 보고도 없고, 메일이 안 온 뒤에야 알게 된다. (2) 정규화 미적용 — users.email은 계정의 필드가 아니라 정체성인데 INSERT는 lower만 하고 trim은 하지 않고 login은 `WHERE email=$1`을 자기가 trim한 값으로 조회한다. 스프레드시트 셀에서 공백째 붙여넣은 주소는 어떤 비밀번호로도 열리지 않는 계정이 되고 증상은 영원히 "자격 증명이 올바르지 않습니다"뿐이며, 같은 공백이 ON CONFLICT(email)을 빗나가게 해 Keycloak 로그인이 두 번째 계정을 조용히 만든다. 초대 주소는 가입이 공급업체 레코드와 포털 계정 양쪽에 복사하는 값이라 오타 하나가 연락 안 되는 업체와 못 들어가는 계정 둘 다가 된다. rows.go에 validEmailFields/validEmail/isEmailAddress를 기존 다섯 검사 옆에 두었고, 로컬 파트는 의도적으로 ASCII로 제한했다(한글 로컬 파트는 한 칸 아래 상자에 들어간 이름이다). 검증: docker postgres:16-alpine으로 CI와 동일한 세 DSN을 걸고 `go test ./internal/... ./cmd/...` 전체 통과, gofmt·go vet 무결. 패키지를 파싱하되 요청 필드명이 아니라 statement의 컬럼 목록을 읽는 TestEveryStoredEmailIsAnAddress(주소 출처가 설정·로그인 잠금 키·OIDC 클레임·담당자 레코드·초대장인 다섯 문은 notFromTheCaller에 사유 명시)와, 엔드포인트를 실제로 호출하고 붙여넣은 주소로 만든 계정으로 로그인까지 해보는 TestEveryEmailOnAWriteIsAnAddress·TestAPortalWriteNamesAMalformedEmail을 추가했다. updateSupplier와 portalCreateContact 가드를 각각 되돌리면 셋 다 실패하는 것까지 확인했다. 덤으로 기존 TestInvitationExpiryStaysWithinTheWindowTheFormOffers가 케이스 라벨(공백 포함)을 그대로 로컬 파트에 넣던 것을 슬러그로 바꿨다.
+- 보류 아이디어:
+  - CI의 go job이 `go test ./internal/...`만 돌려 `./cmd/...`를 빼놓음 — Makefile/README와 불일치 (가치 2 / 위험 1 / S)
+  - 업무 객체의 status는 여전히 임의 문자열 — `status IN('completed','accepted','closed')` 같은 집계가 오타 하나로 조용히 빠짐(유형별 어휘가 어디에도 정의돼 있지 않아 위험은 큼) (가치 3 / 위험 3 / M)
+  - 업무 객체의 data jsonb 블롭에는 어떤 검증도 없음 — 폼이 쓰는 키(품목·수량·단가)가 API로는 무제한이고 목록 응답이 블롭 전체를 반환 (가치 3 / 위험 2 / M)
+  - 전화번호·웹사이트도 형식 검사가 없음 — 길이만 볼 뿐이라 "내선 3번"이 전화번호로, 사내 위키 제목이 웹사이트로 저장됨 (가치 3 / 위험 1 / M)
+  - `Makefile`의 VERSION(0.6.21)이 README의 릴리스 예시(0.7.26)와 어긋남 — 릴리스 문서 정합성 (가치 2 / 위험 1 / S)
+- 릴리즈: v0.7.40 (2026-09-03)
