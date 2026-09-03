@@ -1,0 +1,26 @@
+v0.67.2 a count of headings the deck no longer holds
+
+umm says how much of a deck is not the person's with two counts: how many group
+headings a model named, and how many parts it divided the talk into. They are the
+only way to check what reading the slides cannot show — the sentences are the
+person's own words either way, but whether a heading is theirs can only be
+counted. One of them was counting the wrong thing.
+
+Asking for parts and asking for a length together applies the cap a second time
+over the finished deck, because part headings are slides too. v0.65.1 saw that
+this second pass can cut a part heading and had `Sections` recounted from the
+deck. The same pass also cuts slides a model named, and `NamedHeadings` was set
+once, right after the model answered, and never looked at again — so it reported
+the labels that came back rather than the ones still on screen. Sixteen huddles,
+a cap of fifteen, three parts, and the deck said a model named fifteen headings
+while holding twelve.
+
+`Storyline.named()` now recounts from the finished deck beside `parts()`, both
+in the same place after the second `fit`. The cut does not adjust the numbers
+itself: it does not know which of the slides it dropped a model had touched, and
+teaching it would put the model's traces into a length decision that is meant to
+be pure graph arithmetic. The two field comments say so now — these are counts
+of the deck as delivered, not of what a model was asked for or answered.
+
+Removing the recount fails the new test: `the deck says a model named 15
+headings and holds 12`.
