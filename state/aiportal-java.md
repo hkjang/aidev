@@ -58,3 +58,14 @@
   - `LIMIT #{pageSize}` 에 음수/0 pageSize 가 그대로 전달되는 경로 보정 (가치 2 / 위험 2 / 작업량 S)
   - `ValidUtil`, `ApiCallUtil` 단위 테스트 공백 보강 (가치 2 / 위험 1 / 작업량 S)
   - `TransferManagementServiceImpl` 63행도 `CurrentUserUtil` 로 통일 (가치 2 / 위험 1 / 작업량 S)
+
+## 2026-09-03
+- 선택: 업로드 파일명 경로 조작 및 확장자 없는 파일명 500 오류 수정 (가치 5 / 위험 2 / 작업량 M)
+- 결과: 성공
+- 요약: `MultipartFile#getOriginalFilename()` 은 클라이언트가 보낸 값을 그대로 돌려주는데 6개 업로드 경로(`FileServiceImpl.upload/ocrUpload/uploadDrm`, `ToolsServiceImpl.parse/parse2/decFileDrm`, `AthenaServiceImpl.decFileDrm`, `SampleDrmServiceImpl.decFileDrm`)가 이 값을 `Path#resolve` / `File#createTempFile` 에 검증 없이 넘겨 `../../` 이 포함된 파일명으로 업로드 기준 디렉토리 밖에 파일을 쓸 수 있었고, `FileServiceImpl` 의 두 업로드 메소드는 `substring(lastIndexOf("."))` 로 확장자를 뽑아 확장자 없는 파일명(예: `README`)에 StringIndexOutOfBoundsException → 500 이 났습니다. 이미 `ToolsServiceImpl` 에 private 으로 `safeOriginalFilename`/`fileExtension` 이 있었지만 STT 경로에서만 쓰여, 이를 `FileNameUtil`(`safeFileName` / `extension` / `storedFileName`)로 옮겨 모든 업로드 경로가 같은 규칙을 쓰도록 통일했습니다. 덤으로 `ocrUpload` 가 저장은 원본 파일명으로 하면서 `realName` 에는 `savedFilename` 을 기록해 이후 다운로드·삭제가 항상 실패하던 문제도 고쳤습니다. 검증은 `FileNameUtilTest`(10) + `FileServiceImplTest`(3, @TempDir 로 실제 저장 위치 확인) 추가 후 `sh gradlew check build` 실행으로 했고 20개 테스트 클래스 82개 테스트 전부 통과했습니다. 커밋 eba85d7.
+- 보류 아이디어:
+  - `JwtAuthenticationFilter` 의 CORS 허용 Origin 30여 개 하드코딩을 설정(yaml)으로 외부화 (가치 3 / 위험 3 / 작업량 M)
+  - `FileController.down` 이 `fileService.get(fileId)` null 일 때 NPE, `uploadDrm` 에 `System.out.println` 디버그 잔존 (가치 2 / 위험 1 / 작업량 S)
+  - `FileServiceImpl.ocrUpload` 의 하드코딩 경로 `E:\KCB\doc\ocr` — 호출부가 없는 사실상 죽은 코드라 설정화 또는 제거 판단 필요 (가치 2 / 위험 2 / 작업량 S)
+  - `LIMIT #{pageSize}` 에 음수/0 pageSize 가 그대로 전달되는 경로 보정 (가치 2 / 위험 2 / 작업량 S)
+  - 필터 내 `BusinessException("사용자 정보가 없습니다.")` 도 catch 되지 않아 500 + CORS 헤더 누락 (가치 3 / 위험 2 / 작업량 S)
