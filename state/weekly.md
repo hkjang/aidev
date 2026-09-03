@@ -37,3 +37,15 @@
   - `meeting.go` 의 지난주 조회(`weekBefore`)도 같은 전환 주 정확일치 문제를 갖는지 확인 (가치 2 / 위험 2 / 작업량 S)
   - `outlookForDueDate` 의 AT_RISK 문구가 low==high 일 때 최근 속도를 빼고 전체 평균만 말합니다 (가치 1 / 위험 1 / 작업량 S)
 - 릴리즈: v0.284.0 (2026-09-03)
+
+## 2026-09-03 (2회차)
+- 선택: 전환 주에 `previousWeekPlan` 이 지금 쓰고 있는 보고서를 "지난주 계획"으로 되돌려 주던 버그 수정 (가치 3 / 위험 2 / 작업량 S)
+- 결과: 성공
+- 요약: 작성 화면 옆 "지난주 계획" 패널이 `week_start < target` 로 물어, 주 시작 요일을 바꾼 전환 주에는 작성자가 이어 쓰는 바로 그 보고서(옛 격자의 이른 날짜)를 지난주 계획으로 돌려줬습니다 — 눈앞의 업무가 자기 자신과 짝지어지고, 이미 100% 로 보고한 것까지 아직 남은 일로 다시 제안됩니다. 정작 한 주 전 계획은 한 줄 아래에 있어 닿지 않았습니다. "이전"을 날짜가 이른 것이 아니라 이번 주가 시작하기 전에 일곱 날이 끝난 것으로 바꾸고(`weekCoveringDays` 의 나머지 반쪽인 `weekEndedBefore` 를 `weekstart.go` 에 추가), 회귀 테스트 1개(`currentweekgrid_test.go`, guards: previousWeekPlan/weekEndedBefore)를 더했습니다. 이 끝점에는 그동안 통합 테스트가 하나도 없었습니다. 검증: 수정 전 코드에서 새 테스트가 실패하는 것을 확인 → 실제 DB(WEEKLY_TEST_POSTGRES_DSN)로 `go test ./...` 전체 통과, `go vet`, guard-check(두 대상 모두 도달), version·openapi·modal-close 검사 통과, frontend lint·build·test(121개, 두 시간대) 통과. mutation-check 는 바꾼 조회 경로의 변이를 모두 잡았고 잔존 1건은 이번에 건드리지 않은 `weekStart` 질의 인자 파싱의 400 분기(80행)입니다. backup-check 는 로컬에 psql 이 없어 건너뛰었습니다(CI 에서 실행).
+- 보류 아이디어:
+  - `buildMailMessage` 의 From 표시이름이 순수 ASCII면 인코딩되지 않아 `,`·`<` 가 든 이름이 From 헤더를 깨뜨립니다 (가치 2 / 위험 1 / 작업량 S)
+  - `meeting.go` 의 지난주 조회(`weekBefore`)도 같은 전환 주 정확일치 문제를 갖는지 확인 (가치 2 / 위험 2 / 작업량 S)
+  - `issueoutcome.go` 의 `r.week_start < $2` 도 전환 주에 같은 주 보고서를 "이전 결과"로 셈하는지 확인 (가치 2 / 위험 2 / 작업량 S)
+  - `previousWeekPlan` 의 `weekStart` 질의 인자 파싱 400 분기에 가드가 없습니다 (가치 1 / 위험 1 / 작업량 S)
+  - `outlookForDueDate` 의 AT_RISK 문구가 low==high 일 때 최근 속도를 빼고 전체 평균만 말합니다 (가치 1 / 위험 1 / 작업량 S)
+- 릴리즈: v0.285.0 (2026-09-03)
