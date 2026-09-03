@@ -49,3 +49,16 @@
   - 공급자 HTTP 통합 테스트가 없어 `POST/PATCH /api/v1/ai/providers`의 낙관적 잠금·검증 경로가 단위 테스트로만 검증됨 (가치 3 / 위험 1 / M)
   - CI에 정적 분석 단계(`go vet`, `golangci-lint`, eslint)가 없어 회귀를 테스트로만 잡고 있음 (가치 3 / 위험 1 / M)
 - 릴리즈: v1.2.4 (2026-09-03)
+
+## 2026-09-03
+- 선택: 감사 CSV export가 중간에 실패해도 200 OK로 잘린 파일을 내려주던 문제 수정 (가치 4 / 위험 2 / 작업량 S)
+- 결과: 성공
+- 요약: `exportAuditEvents`는 200과 BOM·header를 먼저 내보낸 뒤 최대 50,000행을 스트리밍하는데, 30초 조회 제한 시간 초과나 `rows.Scan` 실패가 나면 `return`으로 조용히 끝나 운영자에게 완전한 파일처럼 보이는 잘린 감사 기록을 남겼다(성공 감사 이벤트만 생략되고 클라이언트는 정상 다운로드로 판단). 행 쓰기 루프를 `streamAuditCSV`로 분리해 기록한 행 수와 중단 사유(`row_scan_failed`, `row_stream_failed`→제한 시간 초과 시 `export_timeout`, `client_write_failed`)를 반환하게 하고, 중단 시 `audit.export`를 `failure`+`reason`+`rows`로 남긴 뒤(스트리밍 실패를 감사에 남기는 `chatCompletions`의 기존 관례와 동일) `panic(http.ErrAbortHandler)`로 응답을 끊어 브라우저 다운로드가 실패하도록 했다. 이를 위해 `recoverer`가 chi Recoverer처럼 `http.ErrAbortHandler`는 다시 panic하도록 하고, `accessLog`의 로그 기록을 defer로 옮겨 panic·중단으로 끝난 요청도 접근 로그에 남게 했다. pgx.Rows를 흉내내는 stub으로 DB 없이 잘림 보고를 검증하는 단위 테스트와 중단 신호 전달·중단 요청 접근 로그 테스트를 추가했고(수정 전 recoverer/accessLog 동작에서는 실패), `go vet`·`go build ./...`·`go test -count=1 ./...`·`go test -race ./internal/server`·`scripts/verify-version.sh`·`npm ci && npm test`(55개)·`npm run build`를 모두 통과시켰다. 저장소 관례에 따라 VERSION을 1.2.5로 올리고 CHANGELOG·README·docs·web 버전 메타데이터를 맞췄으며 `docs/api.md`에 중단 계약을 명시했다(직전 릴리즈 커밋들과 동일하게 `internal/ui/dist`는 재빌드하지 않음).
+- 보류 아이디어:
+  - `safeCSVCell`이 OWASP가 함께 권고하는 tab(0x09)·CR(0x0D) 선행 문자를 중화하지 않음. 다만 표시 이름 등 주요 필드가 이미 TrimSpace되어 실제 도달 경로는 좁음 (가치 2 / 위험 1 / S)
+  - HEAD 요청이 모든 GET 라우트에서 405. 헬스 체크·업타임 모니터가 흔히 HEAD를 쓰므로 최소한 `/health/*`, `/api/v1/meta`에는 HEAD를 등록할 가치가 있음. 전체 GET에 HEAD→GET 재라우팅은 OIDC callback·감사 export 부작용 때문에 위험 (가치 3 / 위험 3 / M)
+  - `clearSessionCookies`가 `setSessionCookies`와 달리 `Secure`를 설정하지 않고 CSRF 쿠키의 `SameSite`도 Strict가 아닌 Lax로 지움 (가치 2 / 위험 2 / S)
+  - 공급자 HTTP 통합 테스트가 없어 `POST/PATCH /api/v1/ai/providers`의 낙관적 잠금·검증 경로가 단위 테스트로만 검증됨 (가치 3 / 위험 1 / M)
+  - CI에 정적 분석 단계(`go vet`, `golangci-lint`, eslint)가 없어 회귀를 테스트로만 잡고 있음 (가치 3 / 위험 1 / M)
+- 릴리즈: v1.2.5 (2026-09-03)
+- 릴리즈: v1.2.5 (2026-09-03)
