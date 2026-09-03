@@ -32,3 +32,14 @@
   - `collection_script/*` 의 import-time collection create/drop 부작용 제거 (감사 A-006) — 가치 4 / 위험 3 / M
   - A-206 추천 질문 캐시 무한 append → 원자적 교체·중복 제거 — 가치 3 / 위험 2 / S
   - A-107 후속: 재시도·circuit breaker·공용 requests.Session 도입 — 가치 3 / 위험 3 / M
+
+## 2026-09-03 (2회차)
+- 선택: Milvus filter 표현식 주입 방지용 expression builder (감사 A-104) (가치 4 / 위험 2 / 작업량 M)
+- 결과: 성공
+- 요약: session id, filename, page, doc id, space key 등 외부 입력이 f-string 으로 Milvus 표현식에 그대로 들어가, filename 이 `a' or session_id != '` 이면 다른 세션 파일까지 삭제되는 구조였다. field 이름을 식별자로 제한하는 `field()` 와 `\`/`'`/`"`/개행을 escape 하는 `quote()`, `eq/ne/lt/in_/and_` 를 가진 `util/milvus_expr.py` 를 추가하고 조립 지점 전부(util/search_module, milvus_collection, milvus_confluence, milvus_batch, pipeline/kai·kcb·law)를 교체했다. 요청 body 의 `req.key_field` 가 field 이름 자리에 들어가던 경로와, `f"...'{a}'" + f"and ..."` 로 이어 붙여 `'value'and` 처럼 공백이 빠지던 버그 2곳도 함께 고쳤다. 기존 코드가 모두 문자열 literal 비교였으므로 builder 도 값을 항상 문자열로 인용해 의미를 바꾸지 않는다. 단위 테스트(`test_milvus_expr.py`)와 저장소 전체 AST 회귀 테스트(`test_milvus_expr_usage.py`)를 추가해 `python -m pytest` 574 passed(기존 450), `python -m pyflakes .` undefined name 0건 확인. docs 4종(CURRENT_STATE_AUDIT/TESTING/MILVUS_SEARCH/SQL_SECURITY) 갱신. 커밋 `53ce1f7`.
+- 보류 아이디어:
+  - A-002 startup 무기한 대기(policy token) 에 timeout/backoff 추가 — 가치 4 / 위험 3 / M
+  - `collection_script/*` 의 import-time collection create/drop 부작용 제거 (감사 A-006) — 가치 4 / 위험 3 / M
+  - A-105 오류 응답 계약 통일 (except block 의 미할당 `response` 포함) — 가치 4 / 위험 3 / L
+  - A-206 추천 질문 캐시 무한 append → 원자적 교체·중복 제거 — 가치 3 / 위험 2 / S
+  - A-104 후속: collection name allowlist 와 field별 타입 검증 — 가치 3 / 위험 2 / M
