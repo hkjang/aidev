@@ -46,3 +46,14 @@
   - `SessionByToken`이 `locked_until`을 보지 않는 것은 의도로 보인다 — 막지 말고 문서화하는 쪽으로 결론낼 것 (가치 2 / 위험 1 / S)
   - `scripts/test-services.sh`가 PostgreSQL 포트 충돌 시 컨테이너를 Created 상태로 남기고 다음 실행에서 인증 실패로만 드러난다 — 포트 점유를 감지해 알려주기 (가치 2 / 위험 1 / S)
 - 릴리즈: v0.9.68 (2026-09-03)
+
+## 2026-09-03 (3회차)
+- 선택: userinfo가 이쪽 장애를 `invalid_token`으로 답하던 문제 수정 (가치 4 / 위험 1 / 작업량 S)
+- 결과: 성공 (커밋 8ab04c0)
+- 요약: userinfo가 claim을 읽기 전에 하는 조회 넷(`realmFromPath`, `Verify`의 폐기 여부 확인, `UserByID`, `SessionAuthTime`)이 "없어서 실패"와 "조회 자체가 실패"를 모두 401 `invalid_token`으로 답하고 있었다. 그 답은 지시다 — RP는 invalid_token을 받으면 자격증명을 버리고 사용자를 로그아웃시키며, 그게 올바른 처리다. 그래서 DB 장애가 이 엔드포인트를 저하시키는 게 아니라 Realm의 모든 토큰을 한꺼번에 무효화했고, 401은 여기서 평범한 응답(만료)이라 요청 카운터·액세스 로그에는 조용한 시간대로 보였다. 같은 파일이 이미 두 번 이 구분을 하고 있었는데(`writeUserInfoUnavailable`의 Role, `recordUnjudgedIntrospection`) 이 넷은 그보다 **앞에서** 돌아 장애가 먼저 여기 닿았고 뒤쪽 배려는 실행되지 않았다. 이제 `store.ErrNotFound`만 401로 두고 나머지는 500 `server_error` + 어느 단계인지 로그에 남긴다. 폐기 여부를 못 읽은 토큰은 `ErrTokenStateUnavailable`(revoke 엔드포인트가 이미 구분하던 것)로 판정 불가 취급한다. 꺼진 Realm은 여전히 401이라 테넌트 정지 동작은 그대로다. 검증: 새 연동 테스트가 네 테이블(`realms`·`revoked_access_tokens`·`users`·`sso_sessions`)을 차례로 RENAME으로 숨기며, 수정 전 코드에서 네 건 모두 401로 실패함을 확인했다(테스트마다 전용 스키마라 안전). `make test` 전체 통과 — `go test -race ./...` 전 패키지 ok(httpserver 94s / store 93s), 연동 테스트 SKIP 0건, `go vet`, `golangci-lint`(0 issues), `govulncheck`(0), `npm run lint`, `npm run test`(22파일/104테스트, 디스크 파일 수와 일치), `npm run build`. 빌드가 만든 `webui/dist/index.html` 변경은 되돌렸다.
+- 보류 아이디어:
+  - `introspect`의 `Verify` 단계만 `recordUnjudgedIntrospection`을 부르지 않아, 폐기 여부를 못 읽은 경우가 카운터·로그 없이 `active=false`로 나간다 (가치 3 / 위험 1 / S)
+  - `authorization`이 `id_token_hint`를 `AuthorizationRequest`에 저장하지 않아, 로그인 폼을 거친 뒤에는 hint가 지목한 계정과 다른 계정으로 로그인해도 코드가 나간다 (컬럼 추가 마이그레이션 필요) (가치 3 / 위험 2 / M)
+  - UserInfo POST에서 form-encoded `access_token` 파라미터 수용 (RFC 6750 §2.2). 현재는 Authorization 헤더만 읽는다 (가치 2 / 위험 1 / S)
+  - `oidcLogout`이 hint의 `sub`를 쿠키 세션의 사용자와 대조하지 않아, 다른 사람의 ID Token을 hint로 줘도 지금 로그인한 사람이 로그아웃된다 (스펙상 SHOULD) (가치 2 / 위험 2 / M)
+  - `scripts/test-services.sh`가 PostgreSQL 포트 충돌 시 컨테이너를 Created 상태로 남기고 다음 실행에서 인증 실패로만 드러난다 — 포트 점유를 감지해 알려주기 (가치 2 / 위험 1 / S)
