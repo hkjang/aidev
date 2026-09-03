@@ -63,3 +63,14 @@
   - captureHandler.WithGroup이 그룹 이름을 버려 서로 다른 그룹의 같은 키가 충돌 (2/1/S)
   - runInfoCommand가 version 외 인자를 run()으로 흘려보내 `agenthub --help`가 DB 오류로 실패 (2/1/S)
 - 릴리즈: v0.231.0 (2026-09-03)
+
+## 2026-09-04
+- 선택: GPU Quota가 저장·표시되지만 실제로는 한 번도 적용되지 않던 문제 수정 (가치 5 / 위험 1 / 작업량 S)
+- 결과: 성공 — 커밋 3479d73 (auto/2026-09-04-0300)
+- 요약: `MaxGPUs`는 프로파일의 GPU 수가 Pod까지 도달하면서 `Limits`에 추가됐는데, 정작 중요한 루프 하나에만 들어가지 않았습니다 — `quota.Resolve`는 플랫폼·부서·개인 세 단계를 필드 단위로 병합하고, 그 목록에 GPU가 없어서 사용자 범위의 `CheckHeld`에 넘어가는 한도의 GPU는 항상 0이었습니다. 이 패키지에서 0은 '무제한'입니다. 겉으로는 아무것도 고장나지 않았습니다: 관리자가 설정 화면에 숫자를 넣으면 저장되고, store가 Platform으로 읽어 오고, CheckHeld에는 멀쩡한 검사가 기다리고 있었습니다. 다른 차원은 전부 제대로 거절했고, 하룻밤에 더 사올 수 없는 가장 희소한 자원 — 이 필드가 추가된 이유 그 자체 — 만 한 사람이 클러스터의 카드를 전부 차지할 수 있었습니다. 콘솔도 자기 목록에서 같은 식으로 한 차원 모자랐습니다: `LIMIT_FIELDS`에 행이 없어 부서·개인에 GPU 상한을 아예 설정할 수 없었고, "실제 적용되는 한도" 표와 사용자 본인의 사용량 패널에도 나오지 않았습니다(부서 총량은 Resolve를 거치지 않고 Total을 직접 읽어 강제되고 있었으므로, 요약 화면 어디에도 보이지 않으면서 강제되는 상태였습니다). 차원별로 나열해 쓴 `quotaComplaint`도 음수 GPU를 통과시켰는데, 그 값은 깨끗하게 저장된 뒤 무제한으로 읽힙니다. Resolve가 MaxGPUs를 옮기고, LIMIT_FIELDS가 GPU 행을 그리고, 검증기가 음수와 비상식적인 값을 거절하도록 고쳤습니다. 이 버그를 통과시킨 기존 테스트들은 CheckHeld를 직접 불렀으므로 새 테스트는 Resolve를 거치게 했고, reflection으로 Limits 구조체를 순회하는 sweep 두 개(모든 필드가 resolve를 살아남을 것, 모든 필드가 음수일 때 거절될 것)와 콘솔 목록이 서버보다 뒤처지면 실패하는 크로스티어 테스트를 추가했습니다. `internal/quota`·`internal/api`는 런타임 base 이미지 소스가 아니라 BASE_VERSION 상향은 불필요합니다. 검증: 수정 전 새 테스트 3개가 실패하는 것 확인, go vet ./..., go test -race ./cmd/... ./internal/..., web npm ci+lint+build, `scripts/release-catalog-images.sh check-versions`·`validate` 모두 통과.
+- 보류 아이디어:
+  - scrubDecision이 record.Agent 등 남은 자유 텍스트를 검사하지 않아 에이전트 이름으로는 무엇이든 나갈 수 있음 (2/2/S)
+  - korean.EndsInConsonant가 괄호·따옴표로 끝나는 값에서 조사를 잘못 고름 (2/2/S)
+  - captureHandler.WithGroup이 그룹 이름을 버려 서로 다른 그룹의 같은 키가 충돌 (2/1/S)
+  - runInfoCommand가 version 외 인자를 run()으로 흘려보내 `agenthub --help`가 DB 오류로 실패 (2/1/S)
+- 릴리즈: v0.232.0 (2026-09-04)
