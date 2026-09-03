@@ -47,3 +47,15 @@
   - 워크플로 조건 폼 라벨은 "공급업체 Risk 조건"인데 실제로는 업무 객체의 risk_level과 매칭됨 — 라벨과 동작 불일치 (가치 3 / 위험 2 / S)
   - `Makefile`의 VERSION(0.6.21)이 README의 릴리스 예시(0.7.26)와 어긋남 — 릴리스 문서 정합성 (가치 2 / 위험 1 / S)
 - 릴리즈: v0.7.38 (2026-09-03)
+
+## 2026-09-03
+- 선택: 요청 본문이 실어 나르는 레코드 id를 형식 검사 없이 `$n::uuid`로 넘기던 쓰기 경로 전부 수정 (가치 4 / 위험 1 / 작업량 M)
+- 결과: 성공 (commit 5cdf29e)
+- 요약: 날짜·숫자·문자열·어휘 스윕과 같은 기준(철자가 아니라 연산 — 호출자가 준 id가 uuid 컬럼에 쓰이거나 그 id로 레코드를 조회)으로 훑었다. id가 들어오는 문은 셋인데 둘만 지키고 있었다 — 경로 id는 app.go의 라우터가, 질의 필터는 uuidParam이. 본문이 실어 나르는 id는 그냥 통과했고 열여섯 개 핸들러가 무방비였다. 문제는 메시지만이 아니라 답이 사람마다 달랐다는 것이다: 조회를 먼저 하는 핸들러는 실패한 질의를 거부로 읽어(supplierScopeAllowed는 어떤 오류든 false) 공급업체 번호를 붙여넣은 요청에 403 "데이터 접근 범위를 벗어났습니다"라고 답했고 — 존재하지도 않는 레코드를 볼 권한이 없다고 말한 셈 — company 스코프 계정은 그 조회를 건너뛰고 캐스트에 닿아 필드를 지목하지 않는 400을 받았다. 문서 업로드는 파일을 이미 디스크에 스트리밍·해싱한 뒤 insert가 도는 자리라 재시도마다 업로드를 다시 쓰게 했고, 포털의 납품·인보이스 등록(공급업체가 메일에서 id를 복사해 붙이는 곳)이 외부인이 지나는 문이다. rows.go에 validDateFields·validNumberFields·validTextFields·validEnumFields 옆에 validUUIDFields/validRecordID를 두고 스코프 검사보다 앞에 놓았다. MCP의 mcpObjects와 compare_suppliers도 캐스트 실패를 로그로 남기고 "도구를 실행하지 못했습니다"를 모델에 돌려주는 대신 도구 오류로 답한다. 검증: docker postgres:16-alpine으로 CI와 동일한 세 DSN을 걸고 `go test ./internal/... ./cmd/...` 전체 통과, gofmt·go vet 무결. 패키지를 파싱하는 TestEveryRequestRecordIDIsChecked(검사에서 뺀 erpVendorId의 사유는 notARecordID에 명시)와 열여섯 엔드포인트를 실제로 호출하는 TestEveryRecordIDOnAWriteIsChecked, 포털 쪽 TestAPortalWriteNamesAMalformedRecordID를 추가했고, createObject 가드와 uploadDocument 가드를 각각 되돌리면 셋 다 실패하는 것까지 확인했다. 덤으로 newPortalFixture가 감사 로그보다 계정을 먼저 지워 정리가 조용히 실패하고 다음 실행이 공급업체 번호 중복으로 죽던 것을 고쳤다(같은 정리 순서 함정이 세 번째다).
+- 보류 아이디어:
+  - CI의 go job이 `go test ./internal/...`만 돌려 `./cmd/...`를 빼놓음 — Makefile/README와 불일치 (가치 2 / 위험 1 / S)
+  - 업무 객체의 status는 여전히 임의 문자열 — `status IN('completed','accepted','closed')` 같은 집계가 오타 하나로 조용히 빠짐(유형별 어휘가 어디에도 정의돼 있지 않아 위험은 큼) (가치 3 / 위험 3 / M)
+  - 업무 객체의 data jsonb 블롭에는 어떤 검증도 없음 — 폼이 쓰는 키(품목·수량·단가)가 API로는 무제한이고 목록 응답이 블롭 전체를 반환 (가치 3 / 위험 2 / M)
+  - 이메일 형식은 어디서도 검사되지 않음 — 초대·사용자 생성·공급업체 담당자가 "김구매"를 이메일로 저장하고, 그 주소로 알림이 나감 (가치 3 / 위험 1 / M)
+  - `Makefile`의 VERSION(0.6.21)이 README의 릴리스 예시(0.7.26)와 어긋남 — 릴리스 문서 정합성 (가치 2 / 위험 1 / S)
+- 릴리즈: v0.7.39 (2026-09-03)
