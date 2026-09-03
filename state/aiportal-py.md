@@ -43,3 +43,13 @@
   - A-105 오류 응답 계약 통일 (except block 의 미할당 `response` 포함) — 가치 4 / 위험 3 / L
   - A-206 추천 질문 캐시 무한 append → 원자적 교체·중복 제거 — 가치 3 / 위험 2 / S
   - A-104 후속: collection name allowlist 와 field별 타입 검증 — 가치 3 / 위험 2 / M
+
+## 2026-09-04
+- 선택: collection_script 의 import-time 컬렉션 생성·삭제 제거 (감사 A-006) (가치 4 / 위험 2 / 작업량 M)
+- 결과: 성공
+- 요약: `collection_script/` 의 여러 스크립트가 모듈 최상위에서 Milvus 에 연결하고 컬렉션을 만들거나 지웠다. 특히 `api.py` 의 `/create_filestorage_collection` 이 라우트 안에서 `create_collection_FILE_STORAGE` 를 import 하므로 라우트 호출만으로 최상위 `create("FILE_STORAGE")` 가 실행됐고, `delete_collection.py` 는 import 시점에 `KCBLAW_VIEW_BOX` 를 drop 했다. 호출 시점에만 연결하는 `connect()` 와 파괴적 작업 확인용 `confirm()` 을 가진 `collection_script/common.py` 를 추가하고, 최상위 실행(FILE_STORAGE·CONFLUENCE·KAI·KCBLAWVIEW·delete_collection)을 argparse 기반 `main()` 과 `__main__` 가드로 옮겼다. 하드코딩된 Milvus 주소 3곳(192.168.120.99×2, 192.168.116.99)을 `connect()` 로 교체하고, KAI 스크립트에 중복 정의된 컬렉션 목록을 `configs.local_variable.COLLECTION_LIST_KAI` 로 통일했으며, `delete_collection` 은 컬렉션 이름을 CLI 인자로 받고 `--yes` 없이는 확인을 요구한다. `api.py` 가 쓰는 `create`/`create_law_detail`/`create_law_viewer` signature 는 유지했다. AST 만 쓰는 `tests/unit/test_collection_script_side_effects.py`(import 시점 부작용 호출·최상위 실행 구문·하드코딩 주소·삭제 확인 절차)를 추가했고, 옛 코드를 되돌려 넣어 실제로 실패하는지 확인했다. `python -m pytest` 611 passed(기존 574), `python -m pyflakes .` undefined name 0건. docs 5종(CURRENT_STATE_AUDIT/CODEBASE_MAP/INSTALL/TROUBLESHOOTING/TESTING) 갱신. 커밋 `8ae2a04`.
+- 보류 아이디어:
+  - A-002 startup 무기한 대기(policy token) 에 timeout/backoff 추가 — 가치 4 / 위험 3 / M
+  - A-101 워크플로 모듈 전역 `original_question` 제거 → GraphState 로 전달 (동시 요청 간 질문 오염) — 가치 4 / 위험 3 / M
+  - A-105 오류 응답 계약 통일 (except block 의 미할당 `response` 포함) — 가치 4 / 위험 3 / L
+  - A-206 추천 질문 캐시 무한 append → 원자적 교체·중복 제거 — 가치 3 / 위험 2 / S
