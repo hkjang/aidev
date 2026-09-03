@@ -21,3 +21,14 @@
   - `parseUtcToKstDate` 가 로컬 타임존이 KST 일 때 +9h 를 이중 적용하는 문제 정리 (운영 표시값 영향 커서 보류) (가치 3 / 위험 4 / S)
   - `buttonSettingPolicy.buildSettingActions` 모드별 액션 구성 단위 테스트 보강 (가치 2 / 위험 1 / S)
   - 빌드 산출물 단일 청크 6.2MB 문제(manualChunks 코드 스플리팅) 개선 (가치 3 / 위험 3 / M)
+
+## 2026-09-04
+- 선택: 앱 정보 조회(getAppInfo) 캐시/재조회 경로 오류 수정 (가치 5 / 위험 2 / 작업량 M)
+- 결과: 성공
+- 요약: `src/utils/appList.js` 의 `getAppInfo` 에서 실사용 버그 3건을 고쳤다 — (1) 사이드메뉴 캐시 미존재 시 기본값이 `{}` 라 `appList.length === 0` 이 항상 false 가 되어 API 재조회를 건너뛰고 `{}.find` 에서 TypeError 가 나 `{}` 를 반환하던 문제(딥링크로 /chatmain?appId= 진입 시 앱 정보 유실), (2) `serviceMenu === 'all'` 재조회가 `serviceCode === 'all'` 로 필터링돼 항상 빈 목록을 반환, 사이드메뉴 상위 30개에 없는 앱은 절대 찾지 못하던 문제, (3) 재조회로 찾은 앱은 `writeOpenApp`/simple 모드 후처리를 건너뛰던 경로 불일치. 순수 함수(`toAppArray`, `pickServiceRows`, `flattenAppList`, `findAppInfo`)로 분리하고 `findAppInfo` 의 app_id 문자열 비교·빈 키·비배열 입력 방어를 추가했다. 검증은 `npm test`(총 100건 통과, 신규 21건)와 `npm run build:dev`(빌드 성공)로 수행했다.
+- 보류 아이디어:
+  - markdown.js 의 DOMPurify 설정/onclick 파싱 경로 XSS 하드닝 검토 (가치 4 / 위험 3 / M)
+  - `useFileAttach` 의 알림 문구가 옵션(maxFileSize/maxTotalSize)을 무시하고 20MB/100MB 로 하드코딩된 문제 수정 (가치 3 / 위험 1 / S)
+  - `useAppList.getFormattedAppList` 의 `String(app?.knowledge_info?.status) ?? ''` 가 문자열 "undefined" 를 만드는 문제 정리 (Sidemenu.vue 에도 동일 코드 중복) (가치 2 / 위험 1 / S)
+  - `mitt` 이 `src/utils/eventBus.js` 에서 직접 import 되는데 package.json 직접 의존성에 없어 전이 의존성에 기대고 있는 문제 (가치 3 / 위험 1 / S)
+  - 빌드 산출물 단일 청크 6.2MB 문제(manualChunks 코드 스플리팅) 개선 (가치 3 / 위험 3 / M)
