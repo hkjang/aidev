@@ -57,3 +57,14 @@
   - UserInfo POST에서 form-encoded `access_token` 파라미터 수용 (RFC 6750 §2.2). 현재는 Authorization 헤더만 읽는다 (가치 2 / 위험 1 / S)
   - `oidcLogout`이 hint의 `sub`를 쿠키 세션의 사용자와 대조하지 않아, 다른 사람의 ID Token을 hint로 줘도 지금 로그인한 사람이 로그아웃된다 (스펙상 SHOULD) (가치 2 / 위험 2 / M)
   - `scripts/test-services.sh`가 PostgreSQL 포트 충돌 시 컨테이너를 Created 상태로 남기고 다음 실행에서 인증 실패로만 드러난다 — 포트 점유를 감지해 알려주기 (가치 2 / 위험 1 / S)
+
+## 2026-09-03 (4회차)
+- 선택: introspect가 답을 못 낸 조회를 세지 않던 문제 수정 (가치 3 / 위험 1 / 작업량 S)
+- 결과: 성공 (커밋 26d21d5)
+- 요약: `recordUnjudgedIntrospection`은 "죽었다고 판정한 토큰"과 "판정하지 못한 토큰"이 둘 다 200 `active=false`로 나가 서비스가 내보내는 모든 신호에서 같은 호출로 보이기 때문에 만들어졌는데, 핸들러 맨 아래 두 조회(`session`·`user`)만 그것을 부르고 있었다. 그 앞에서 도는 조회 셋 — `realmFromPath`, `Verify`의 폐기 여부 확인(`ErrTokenStateUnavailable`), `InspectRefreshToken` — 은 "없다"와 "못 읽었다"를 똑같이 `active=false`로 답했다. 즉 장애는 이 셋에 먼저 닿았고 아래쪽 배려는 실행되지 않았다: store 에러는 그 자리에서 버려지고, 응답은 200이라 요청 카운터에도 정상 호출로 잡히며, 운영 문서가 보라고 지목한 계열은 평평한 채로 모든 Resource Server가 모든 요청을 거절했다. 응답은 일부러 그대로 뒀다(5xx를 받은 RS가 fail-open할 수 있어 fail-closed가 맞는 방향이고, 이 판단은 함수 주석에 이미 적혀 있다). 바뀐 것은 실행되지 못한 조회를 stage 라벨과 함께 세고 로그에 남긴다는 것뿐이며, 없는 Realm·세션·Refresh Token은 진짜 답이므로 여전히 세지 않는다. 덤으로 폐기 여부를 못 읽은 토큰은 Refresh Token 조회로 흘러가지 않고 거기서 멈춘다 — 서명과 클레임이 이미 통과했으니 Refresh Token일 수 없고(불투명 문자열이라 파싱 단계를 넘지 못한다), 그대로 가면 같은 store에 두 번째로 실패할 뿐이었다. 검증: 새 연동 테스트가 세 테이블(`realms`·`revoked_access_tokens`·`refresh_tokens`)을 차례로 RENAME으로 숨기며 수정 전 코드에서 세 건 모두 실패함을 확인했다(`said so nowhere: no resso_introspection_errors_total{stage="realm"} 1` 등). 정상 토큰과 아무 토큰도 아닌 문자열이 카운터를 건드리지 않는 것도 같은 테스트가 확인한다. `make test` 전체 통과 — `go test -race ./...` 전 패키지 ok(httpserver 82s / store 81s), 연동 테스트 SKIP 0건, `go vet`, `golangci-lint`(0 issues), `govulncheck`(0), `npm run lint`, `npm run test`, `npm run build`. 빌드가 만든 `webui/dist/index.html` 변경은 되돌렸다.
+- 보류 아이디어:
+  - `scripts/test-services.sh`가 이미 떠 있는 컨테이너를 재사용할 때 그 컨테이너의 **실제 매핑 포트**가 아니라 기본값(55439)을 DSN으로 출력한다 — 이번 세션에서 실제로 걸렸다(컨테이너는 55450, 스크립트는 55439를 출력 → `connection refused`). `docker port`로 읽어 출력할 것 (가치 3 / 위험 1 / S)
+  - `authorization`이 `id_token_hint`를 `AuthorizationRequest`에 저장하지 않아, 로그인 폼을 거친 뒤에는 hint가 지목한 계정과 다른 계정으로 로그인해도 코드가 나간다 (컬럼 추가 마이그레이션 필요) (가치 3 / 위험 2 / M)
+  - UserInfo POST에서 form-encoded `access_token` 파라미터 수용 (RFC 6750 §2.2). 현재는 Authorization 헤더만 읽는다 (가치 2 / 위험 1 / S)
+  - `oidcLogout`이 hint의 `sub`를 쿠키 세션의 사용자와 대조하지 않아, 다른 사람의 ID Token을 hint로 줘도 지금 로그인한 사람이 로그아웃된다 (스펙상 SHOULD) (가치 2 / 위험 2 / M)
+  - `docs/operations.md`의 `resso_introspection_errors_total` 항목에 stage 라벨 값 목록을 적어, 어느 조회가 멈췄는지 대시보드에서 바로 읽게 하기 (가치 1 / 위험 1 / S)
