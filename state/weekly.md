@@ -61,3 +61,15 @@
   - `mailMessageID` 의 도메인 추출(`@` 위치·randfail) 분기에 잔존 변이 3건이 있습니다 (가치 1 / 위험 1 / 작업량 S)
   - `outlookForDueDate` 의 AT_RISK 문구가 low==high 일 때 최근 속도를 빼고 전체 평균만 말합니다 (가치 1 / 위험 1 / 작업량 S)
 - 릴리즈: v0.286.0 (2026-09-03)
+
+## 2026-09-04
+- 선택: 주 격자를 옮긴 전환 주에 분석 화면이 그 주의 보고서를 세지 못하던 버그 수정 (가치 3 / 위험 2 / 작업량 S)
+- 결과: 성공
+- 요약: `analyticsOverviewContext` 는 제출률·상태별 분포·미해결 이슈·평균 진행률을 모두 `week_start` 정확일치로 물었습니다. 주차 시작 요일을 바꾸면 격자만 옮겨지고 보고서는 그 자리에 남으므로, 전환되는 한 주 동안 팀이 이미 쓴 보고서는 같은 7일을 다른 날짜로 덮습니다 — 그래서 팀장의 분석 화면은 모두가 보고한 주를 제출률 0%, 빈 상태 분포, 이슈 0건, 진행률 0 으로 답했고 `weekIsFree` 때문에 누가 다시 써서 되살릴 수도 없었습니다. 같은 함수를 MCP 주간 요약도 읽으므로 화면 없이 숫자만 받는 AI 클라이언트에게는 이상함을 알아챌 자리조차 없었습니다. 세 질의를 `weekCoveringDays` 겹침으로 바꾸고 사람마다 `DISTINCT ON` 으로 한 건만 세도록 묶어, 한 화면의 네 숫자가 서로 다른 사람들을 설명하지 않게 했습니다. 회귀 테스트 1개(`currentweekgrid_test.go`, guards: analyticsOverviewContext/weekCoveringDays)를 더했고, 다른 조직 사람을 한 명 두어 날짜를 기간으로 넓히면서 보이는 사람까지 넓히지 않았는지도 봅니다. 검증: 수정 전 코드에서 새 테스트가 네 숫자 모두에서 실패하는 것을 확인 → 실제 DB(WEEKLY_TEST_POSTGRES_DSN)로 `go test ./...` 전체 통과, `go vet`, `gofmt`, guard-check --changed(20개 도달), version·openapi·modal-close 검사 통과, frontend lint·build·test(121개) 통과. mutation-check --changed 의 첫 회차에서 이슈·진행률 질의의 조직 필터를 지우는 변이가 살아남아 그 다른 조직 사람을 시험에 더했고, 그 변이를 손으로 다시 넣어 이제 실패하는 것을 확인했습니다. 커밋 뒤 다시 돌린 mutation-check 에서는 바꾼 함수의 변이 6건이 모두 잡혔고(3건은 다른 시험이 잡는 기존 조직 분기), 잔존 변이 3건은 이번에 건드리지 않은 `runAutomaticCloneForUser`(287·304·330행)입니다. backup-check 는 로컬에 psql 이 없어 건너뛰었습니다(CI 에서 실행). 커밋은 mutation-check 가 돌지 않는 동안에만 했습니다.
+- 보류 아이디어:
+  - `meeting.go` 의 `snapshotFor` 가 주차를 정확일치로 찾아, 격자를 옮긴 전환 주에는 회의 자료가 통째로 비어 보입니다 (가치 3 / 위험 3 / 작업량 M)
+  - `analyticsParticipation`(`r.week_start BETWEEN`)과 `weekIsOwed` 의 주별 격자도 전환 주를 미제출로 세는지 확인 (가치 3 / 위험 3 / 작업량 M)
+  - `issueoutcome.go` 의 `r.week_start < $2` 도 전환 주에 같은 주 보고서를 "이전 결과"로 셈하는지 확인 (가치 1 / 위험 2 / 작업량 S)
+  - `mailMessageID` 의 도메인 추출(`@` 위치·randfail) 분기에 잔존 변이 3건이 있습니다 (가치 1 / 위험 1 / 작업량 S)
+  - `outlookForDueDate` 의 AT_RISK 문구가 low==high 일 때 최근 속도를 빼고 전체 평균만 말합니다 (가치 1 / 위험 1 / 작업량 S)
+- 릴리즈: v0.287.0 (2026-09-04)
