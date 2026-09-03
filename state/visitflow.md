@@ -18,3 +18,9 @@
 - 결과: 성공
 - 요약: 관리자 → 감사 로그 화면은 이벤트 접두어·행위자·시작·종료로 필터링하지만 `exportAuditLogsCSV`는 `action`만 읽었고 프런트의 `exportQuery`도 `action`만 실어 보내, 특정 담당자나 기간으로 좁혀 내려받아도 최근 10,000행 전체가 담기는 잘못된 근거 자료가 만들어졌다. `internal/app/admin.go`에 `auditLogFilters`와 `parseAuditLogFilters`를 두어 목록과 내보내기가 같은 파라미터를 같은 규칙으로 파싱하게 하고, 내보내기 쿼리에 행위자·기간 조건과 목록과 동일한 `a.id DESC` 정렬을 적용했으며, `audit.export` 감사 기록에 실제 적용된 범위를 남기고 `AdminPage.tsx`의 다운로드 링크가 `buildQuery()`를 재사용하도록 했다. 검증은 `go vet ./...`, `npm ci && npm run build`, docker postgres:16-alpine을 띄운 `VISITFLOW_TEST_DSN` 전체 테스트 통과이며, 신규 통합 테스트 1개(행위자·from·to 필터 각각)와 단위 테스트 2개를 추가한 뒤 수정을 임시로 되돌려 통합 테스트가 실제로 실패하는 것까지 확인했다. API_AND_MCP 문서에 한 줄 안내를 덧붙였다.
 - 보류 아이디어: `bestAcceptLanguage`의 `q=0`·`q>1`·잘못된 `q` 값 처리 정정 / CSV·XLSX 가져오기 파서(`visitorInputsFromRows`) 엣지케이스 단위 테스트 보강 / `/metrics` 토큰 상수시간 비교와 요청 한도 적용 검토 / 설정 내보내기 JSON을 되돌려 넣는 가져오기 경로와 스키마 검증 / 방문 이력 CSV의 50,000행 상한 초과 시 사용자에게 잘렸음을 알리는 표시
+
+## 2026-09-03
+- 선택: 방문 이력 CSV 내보내기가 방문 목록의 검색·상태 필터를 무시하는 문제 수정 (가치 4 / 위험 1 / 작업량 S)
+- 결과: 성공
+- 요약: 관리자 → 방문·방문자 관리 화면은 방문번호·회사·담당자·방문자 이름/전화로 목록을 좁히지만 `exportVisitsCSV`는 `days`만 읽었고 화면의 다운로드 버튼도 `?days=90`으로 고정돼 있어, 한 회사만 조회한 상태로 내려받아도 90일치 전체 방문이 담겨 잘못된 근거 자료가 되고 조회하지 않은 방문자의 개인정보까지 함께 내보내졌다. `internal/app/exports.go`에 `visitExportFilters`/`parseVisitExportFilters`(days 검증, 알 수 없는 status는 무시, q 트림)를 두고 내보내기 쿼리에 목록과 같은 검색 조건을 참가자 EXISTS 서브쿼리로 적용해 필터에 걸린 방문은 참가자 전원이 온전히 나오게 했으며, `visit.export` 감사 기록에 실제 적용 범위를 남기고 `AdminPage.tsx`의 링크가 현재 검색어를 싣도록 했다. 검증은 `go vet ./...`, docker postgres:16-alpine을 띄운 `VISITFLOW_TEST_DSN` 전체 테스트 통과, `npm ci && npm run build`이며, 신규 통합 테스트 1개(회사·이름·전화·상태·잘못된 상태)와 단위 테스트 2개를 추가한 뒤 필터를 임시로 무력화해 통합 테스트가 실제로 실패하는 것까지 확인했다. API_AND_MCP 문서에 한 줄 안내를 덧붙였다.
+- 보류 아이디어: `bestAcceptLanguage`의 `q=0`(수용 불가)·`q>1` 처리 정정 / CSV·XLSX 가져오기 파서(`visitorInputsFromRows`) 엣지케이스 단위 테스트 보강 / 방문 이력 CSV의 50,000행 상한 초과 시 잘렸음을 사용자에게 알리는 표시 / 설정 내보내기 JSON을 되돌려 넣는 가져오기 경로와 스키마 검증 / 통계 CSV가 사업장 타임존 버킷과 DB `CURRENT_DATE` 기준 날짜 축을 섞어 쓰는 문제 점검
