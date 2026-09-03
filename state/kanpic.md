@@ -50,3 +50,16 @@
   - `DOLLARDE`·`DOLLARFR` 도 `math.Pow(10, ceil(log10(fraction)))` 로 자리를 밀어 이진 실수 어긋남이 남아 있다. 십진 셈으로 맞출지 검토할 것.
 - 릴리즈: v0.231.0 (2026-09-03)
 - 릴리즈: v0.231.0 (2026-09-03)
+
+## 2026-09-03
+- 선택: VALUE 가 사람이 적는 수의 겉모양을 읽고 NUMBERVALUE 를 더한다 (가치 4 / 위험 1 / 작업량 M)
+- 결과: 성공
+- 요약: VALUE 가 `toNumber` 만 써서 `1000` 같은 맨숫자 글자만 읽고 `"1,000"`·`"$1,000"`·`"(1,000)"`·`"12%"`·`"12:00"`·`"2026-01-05"` 을 모두 #VALUE! 로 냈다 — 가져온 표의 금액 칸이 다 그 꼴인데 달리 쓸 함수가 없었다. 새 파일 `internal/formula/text_to_number.go` 에 `valueOfText`(자릿점·앞뒤 통화 기호·회계 서식 괄호·백분율, 시각·날짜는 `parseTime`·`DateSerial` 을 그대로 써 TIMEVALUE·DATEVALUE 와 답이 갈리지 않게)와 `numberValueOfText`(엑셀 도움말 규칙대로 NUMBERVALUE 새로 구현: 가운데 빈칸 무시, % 하나마다 100 으로 나눔, 빈 글자는 0, 소수 구분 기호 중복·그 뒤의 자릿수 구분 기호·같은 두 기호는 오류)를 두고, 카탈로그·`_xlfn.` 접두사·USER_GUIDE 를 함께 채웠다. 셈에 끼어드는 칸의 값(`numberFromText`)은 일부러 좁은 채로 두었다. 시험을 쓰다 `DateSerial` 이 두 날짜 사이를 `time.Duration` 으로 세어 292 년에서 넘치는 것을 발견해(9999-12-31 이 2958465 가 아니라 106751) 초로 세도록 함께 고쳤다. 검증: 새 테스트 6개(`TestValueReadsTheShapesPeopleTypeIntoCells` 외)와 `TestDateSerialRoundTripsWithSerialDate` 에 먼 날짜 2개 추가, `gofmt -l`, `go vet`, `go build ./...`, `go test ./...`(전체 통과), `scripts/check-release-docs.sh`, `scripts/check-commit-identities.sh`. 커밋 2개(9e72a86, c8f8f27), 릴리즈 노트 v0.232.0 과 README VERSION 갱신. 웹은 함수 목록을 API 에서 받아 오고 VALUE 구현도 없어 npm 검사는 돌리지 않았다.
+- 보류 아이디어:
+  - `csvNumber` 가 IMPORTDATA 의 `"1,200"`·`"12%"`·앞뒤 통화 기호를 글자로 남긴다. 이제 `valueOfText` 가 그 규칙을 한 곳에 담고 있으니 맞출지 검토할 것.
+  - 외부 호출 캐시 키가 함수·주소만 담아, `external.max_kb` 를 올려도 캐시가 남아 있는 동안은 "크기를 넘습니다" 가 그대로다(정책 값도 키에 넣거나 크기 오류는 담지 않기).
+  - `internal/external` 의 동시 접근에 `-race` 시험이 없다. 한 번의 재계산이 여러 주소를 동시에 부르는 길을 시험으로 고정할 것.
+  - `DOLLARDE`·`DOLLARFR` 도 `math.Pow(10, ceil(log10(fraction)))` 로 자리를 밀어 이진 실수 어긋남이 남아 있다. 십진 셈으로 맞출지 검토할 것.
+  - `docs/USER_GUIDE.html`·`.pdf` 가 `.md` 와 함께 갱신되지 않아 오래되었다(마지막 갱신이 11aa6d8). `scripts/generate_pdf.js` 를 릴리즈 절차나 CI 에 묶을지 검토할 것.
+- 릴리즈: v0.232.0 (2026-09-03)
+- 릴리즈: v0.232.0 (2026-09-03)
