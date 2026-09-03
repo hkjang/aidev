@@ -32,3 +32,14 @@
   - `toss.Client` 를 구조체 리터럴로 만들면 `limiter.tokens` 가 nil 이라 첫 요청에서 패닉 — `acquire` 에 지연 초기화 (가치 3 / 위험 1 / S)
   - `journal.Summary` 가 PnL==0 인 거래를 패배로 집계 (`t.PnL > 0` else) — 승률이 미세하게 왜곡 (가치 2 / 위험 1 / S)
   - README "알려진 한계" 가 stale — WebSocket 미사용이라 적혀 있으나 이미 구현됨 (가치 2 / 위험 1 / S)
+
+## 2026-09-04
+- 선택: 미국 종목 트레일링 손절이 KRX 호가단위로 뭉개지던 버그 수정 (가치 4 / 위험 1 / 작업량 S)
+- 결과: 성공
+- 요약: `engine.manage` 의 트레일링 손절 한 줄만 국내 전용 `market.RoundToTick`(KRX 호가 계단)을 쓰고 있었고, 나머지 가격 계산은 모두 시장별 `market.RoundTick(Country, ...)` 를 쓰고 있었다. 미국 종목은 전 가격대가 KRX 기준 "2,000 미만 → 호가 1" 에 걸려 트레일 손절이 **달러 단위로 내림**됐다 — $150 종목이면 의도보다 최대 $1(0.7%) 느슨해지고, $1 미만 종목은 내림 결과가 0 이라 트레일링이 아예 발동하지 않았다. `RoundTick(e.Cfg.Country, ...)` 로 교체하고, 같은 실수가 반복되지 않도록 이제 자기 테스트에서만 쓰이던 국내 전용 `RoundToTick` 을 제거(호출부는 `RoundTick("KR", ...)` 로 대체)했다. 검증: `internal/engine/trail_test.go` 신규 3케이스(US $0.01 호가 → 154.37, US $1 미만 → 0.9032, KR 계단 호가 → 10,350) 추가 후 수정을 되돌리면 US 두 케이스가 실제로 실패(154, 0.8=미갱신)함을 확인. `gofmt -l`(clean)·`go vet ./...`·`go build ./...`·`go test -count=1 ./...` 전부 통과. 커밋 3f86050.
+- 보류 아이디어:
+  - GitHub Actions CI 없음 — `go build`/`go vet`/`go test`/`gofmt -l` 워크플로 추가 (가치 4 / 위험 1 / S)
+  - `internal/journal`·`internal/notify` 테스트 0건 — Summary/MaxDrawdown, Load 날짜 필터, Notifier httptest 테스트 (가치 3 / 위험 1 / S)
+  - `notify.Notifier` 를 구조체 리터럴로 만들면 `http` 가 nil (toss.Client 의 limiter nil 패닉과 같은 계열) — 지연 초기화 (가치 3 / 위험 1 / S)
+  - `journal.Summary` 가 PnL==0 인 거래를 패배로 집계 (`t.PnL > 0` else) — 승률이 미세하게 왜곡 (가치 2 / 위험 1 / S)
+  - 진입 알림/로그가 손절·목표가를 `%.0f` 로 출력 — 미국 종목은 $3.45 가 "3" 으로 보임, `market.FormatPrice(Country, ...)` 사용 (가치 2 / 위험 1 / S)
