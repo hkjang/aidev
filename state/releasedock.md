@@ -50,3 +50,16 @@
   - `web/dist/assets/vendor` 청크가 617KB 로 커서 폐쇄망 초기 로딩 최적화 여지가 있습니다 (가치 2 / 위험 3 / M).
   - `web/package-lock.json` 의 version 필드가 0.5.1 에 멈춰 있어 릴리즈 버전 bump 대상에서 빠져 있습니다 (가치 1 / 위험 1 / S).
 - 릴리즈: v0.5.4 (2026-09-03)
+
+## 2026-09-03
+- 선택: 거부된 업로드가 실행 중인 명령의 패키지를 덮어쓰는 문제 수정 (가치 4 / 위험 2 / 작업량 M)
+- 결과: 성공
+- 요약: `createSimpleRun` 이 업로드를 대상 디렉터리에 **원래 이름으로 먼저 확정**한 뒤 실행 기록을 INSERT 해서, 대상당 1건 유니크 인덱스에 걸려 409 로 거부된 업로드도 이미 그 경로의 파일을 교체한 상태였습니다. 같은 이름 재업로드는 정상적인 재배포이므로 rename 이 기존 파일을 덮는 것이 의도지만, 그 파일이 지금 실행 중인 명령이 `$ARTIFACT` 로 받은 패키지일 수 있어 스크립트가 뒤늦게 다른 이미지를 로드할 수 있었습니다(앞선 세션들이 막아 온 "요청하지 않은 것이 배포되는" 상태와 같은 계열). `storeSimpleArtifact` 를 `stagedArtifact` 타입과 `stageSimpleArtifact`/`commit`/`discard` 로 분리해, 고유 임시 이름까지만 쓰고 INSERT 가 대상을 확보한 뒤에야 원래 이름으로 확정하도록 했습니다. 확정에 실패하면 `failSimpleRun` 으로 PENDING 행을 FAILED 로 마감해 대상이 잠기지 않게 했습니다. 파일시스템 단위 테스트 3건(`simple_artifact_test.go`)을 추가했고 backend/runner `go vet`·`go test ./...`, `npm ci`, `npm test -- --run`(72건), `npm run build` 를 모두 통과했습니다. docs/simple-mode.md 동시성 절에 한 줄 추가하고 VERSION 을 0.5.5 로 올렸으며, 그동안 0.5.1 에 멈춰 있던 `web/package-lock.json` 의 version 필드도 함께 맞췄습니다(`npm ci` 로 검증).
+- 보류 아이디어:
+  - CI 와 Makefile 에 `go vet` (또는 golangci-lint) 단계가 없어 정적 검사가 수동입니다 (가치 3 / 위험 1 / S).
+  - `downloadSimpleRunLog` 이 조회한 `original_filename`·`status` 를 쓰지 않아 다운로드 파일명이 run id 뿐입니다 (가치 2 / 위험 1 / S).
+  - 심플 배포 화면의 `waitForTerminal` 에 상한이 없어 종료 상태에 도달하지 못하는 실행이 화면을 영구히 잠급니다 (가치 2 / 위험 3 / M).
+  - `web/dist/assets/vendor` 청크가 617KB 로 커서 폐쇄망 초기 로딩 최적화 여지가 있습니다 (가치 2 / 위험 3 / M).
+  - (완료 확인) `readUploadBatch` 단위 테스트는 `http_helpers_test.go` 에 이미 있어 무효입니다.
+- 릴리즈: v0.5.5 (2026-09-03)
+- 릴리즈: v0.5.5 (2026-09-03)
