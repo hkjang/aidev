@@ -41,3 +41,14 @@
   - captureHandler.WithGroup이 그룹 이름을 버려 서로 다른 그룹의 같은 키가 충돌 (2/1/S)
   - runInfoCommand가 version 외 인자를 run()으로 흘려보내 `agenthub --help`가 DB 오류로 실패 (2/1/S)
 - 릴리즈: v0.229.0 (2026-09-03)
+
+## 2026-09-03 (3차)
+- 선택: DLP 감사 기록이 아무것도 지우지 않은 건까지 "redacted"로 남기던 문제 수정 (가치 4 / 위험 1 / 작업량 S)
+- 결과: 성공 — 커밋 4766b0d (auto/2026-09-03-1130)
+- 요약: 세 boundary(모델·흐름 검사기, 컨트롤 플레인의 Pod 게이트웨이 보고 엔드포인트, 게이트웨이 자체 로그)가 모두 `outcome := "redacted"; if blocked { "blocked" }`로 시작해, 차단하지 않은 모든 findings를 '가림 처리'로 기록했습니다 — 등급이 `기록만`이라 페이로드가 손대지 않고 그대로 나간 건까지 포함해서. `기록만`은 "차단을 켜기 전에 우리 에이전트가 실제로 무엇을 다루는지 배우는 방법"으로 문서에 적힌 온보딩 경로라, 그 안내를 따른 사이트일수록 감사 기록의 모든 줄이 "플랫폼이 트래픽을 고쳤다"고 거짓말했습니다. 그 기록이 바로 등급을 `기록만`→`가리고 전송`으로 올릴지 결정할 때 읽는 자료입니다. `Result.Outcome()`이 실제로 한 일에서 단어를 뽑도록 하고(blocked / Redact 건이 하나라도 있으면 redacted / 그 외 audited), 정책 차단은 여전히 우선하게 두었습니다. 게이트웨이는 처음부터 finding마다 action을 함께 보내므로 옛 base 이미지의 Pod도 올바로 분류됩니다. 콘솔에는 두 단어의 한국어 라벨이 없어 감사 표에 영문이 그대로 찍혔으므로 라벨을 추가하고 결과 필터에 차단됨·가림 처리됨·기록만을 넣었습니다. 검증: dlp 4케이스 테이블 테스트 + 게이트웨이 통합 테스트(감사 전용 호출이 원문 그대로 나가고 로그는 audited) + guard 소스 가드, go vet ./..., go test -race ./cmd/... ./internal/..., web npm ci+lint+build, `release-catalog-images.sh validate`·`check-versions` 모두 통과. internal/dlp·cmd/runtime-proxy가 base 이미지 소스라 BASE_VERSION 0.19.0으로 상향(5곳).
+- 보류 아이디어:
+  - MaxBytes 절단이 민감값 한가운데를 자르면 양쪽 다 매치되지 않아 조용히 새어나감 (3/2/S)
+  - korean.EndsInConsonant가 괄호·따옴표로 끝나는 값에서 조사를 잘못 고름 (2/2/S)
+  - captureHandler.WithGroup이 그룹 이름을 버려 서로 다른 그룹의 같은 키가 충돌 (2/1/S)
+  - runInfoCommand가 version 외 인자를 run()으로 흘려보내 `agenthub --help`가 DB 오류로 실패 (2/1/S)
+- 릴리즈: v0.230.0 (2026-09-03)
