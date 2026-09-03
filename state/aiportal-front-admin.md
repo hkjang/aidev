@@ -43,3 +43,14 @@
   - `monitoringParser.toPod`이 `restarts`에 비숫자 문자열이 오면 NaN을 그대로 노출하는 문제 (가치 2 / 위험 1 / S)
   - `shared/format.ts` 단위 테스트 공백 보강 (가치 2 / 위험 1 / S)
   - 루트 앱의 `crypto-js` local tarball 의존성 제거로 clean install 복구 — 현재 `npm ci` 자체가 불가해 검증 비용 큼 (가치 4 / 위험 4 / M)
+
+## 2026-09-03
+- 선택: 서버가 pageInfo의 pageNum/pageSize를 생략할 때 요청 페이지 유지 (가치 4 / 위험 1 / 작업량 S)
+- 결과: 성공
+- 요약: `docs/BACKEND_API_REFERENCE.md`·`docs/API_GUIDE.md`에 기록된 기존 backend 공통 목록 계약은 `pageInfo: { totalCount }`만 반환하는데, `unwrapPageEnvelope`가 pageNum/pageSize를 서버 값에서만 읽어 매 요청마다 1/10으로 되돌렸다. 그래서 실제 backend에서는 Catalog·Directory 목록이 2페이지 데이터를 받고도 1페이지로 표시되고 다음 버튼이 같은 페이지를 반복 요청해 페이지 이동이 사실상 막혔다(mock의 `paginate`는 요청 페이지를 그대로 돌려주므로 드러나지 않았다). 서버 값이 없거나 유효하지 않으면 요청에 사용한 값을 유지하도록 하고 `apiGetPage`가 요청 params에서 그 값을 읽어 넘기게 했으며, QUICK_WINS 문서에 계약을 명시했다. 검증은 `npm run verify`(typecheck + vitest 52개 통과, 기존 46개 + 신규 6개로 totalCount만 오는 응답·유효하지 않은 서버 값·서버 값 우선·params 파싱, 그리고 axios adapter로 `apiGetPage` 전체 경로 포함)와 `npm run build`(build → runtime-config 검증 → offline 검사 → integrity manifest 19개) 전체 통과. 커밋 e05b613.
+- 보류 아이디어:
+  - `ensureAdminSession(force=true)`가 진행 중인 비강제 요청 promise를 그대로 반환하는 재진입 버그 (가치 3 / 위험 2 / S)
+  - `monitoringParser.toPod`이 `restarts`에 비숫자 문자열이 오면 NaN을 그대로 표에 노출하는 문제 (가치 2 / 위험 1 / S)
+  - `monitoringParser.findRows` 재귀에 깊이 제한·순환 참조 방어 추가 (가치 2 / 위험 1 / S)
+  - `shared/format.ts` 단위 테스트 공백 보강 (가치 2 / 위험 1 / S)
+  - 루트 앱의 `crypto-js` local tarball 의존성 제거로 clean install 복구 — 현재 `npm ci` 자체가 불가해 검증 비용 큼 (가치 4 / 위험 4 / M)
