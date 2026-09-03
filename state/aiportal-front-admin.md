@@ -54,3 +54,14 @@
   - `monitoringParser.findRows` 재귀에 깊이 제한·순환 참조 방어 추가 (가치 2 / 위험 1 / S)
   - `shared/format.ts` 단위 테스트 공백 보강 (가치 2 / 위험 1 / S)
   - 루트 앱의 `crypto-js` local tarball 의존성 제거로 clean install 복구 — 현재 `npm ci` 자체가 불가해 검증 비용 큼 (가치 4 / 위험 4 / M)
+
+## 2026-09-03
+- 선택: API 401 응답에서 캐시된 관리자 세션 무효화 (가치 4 / 위험 1 / 작업량 S)
+- 결과: 성공
+- 요약: 쿠키 세션이 만료돼 API가 401을 돌려줘도 `ensureAdminSession()`이 `state.initialized && is_admin === 'Y'` 캐시를 그대로 신뢰해 라우트를 옮겨도 `/sso/ssologin`을 다시 호출하지 않았고, 사용자는 전체 새로고침 전까지 모든 조회가 "API 요청에 실패했습니다."로 끝나는 화면에 갇혔다(router guard는 navigation 때만 돌고 http layer에는 401 처리가 전혀 없었다). `http.ts`에 `setUnauthorizedHandler` 등록 지점을 두어 401에서만(403은 인가 실패이므로 제외) handler를 호출하고, `session.ts`가 localStorage와 reactive 상태를 비우는 `invalidateAdminSession()`을 module scope에서 등록하도록 했다(session→http 단방향 import라 순환 없음). 서버가 message를 주지 않는 401·403·네트워크 단절에는 다음 행동을 알 수 있는 문구를 쓰도록 `fallbackErrorMessage`를 분리했다. 검증은 `npm run verify`(typecheck + vitest 60개 통과, 기존 52개 + 신규 8개로 axios adapter가 던지는 401/403/서버 message 우선/handler 예외 격리, 그리고 `vi.mock('@/api/http')` + `vi.resetModules()`로 세션 캐시 재사용·무효화 후 재요청 시나리오 포함)와 `npm run build`(build → runtime-config 검증 → offline 검사 → integrity manifest 19개) 전체 통과. 커밋 0f98a0a.
+- 보류 아이디어:
+  - `ensureAdminSession(force=true)`가 진행 중인 비강제 요청 promise를 그대로 반환하는 재진입 버그 (가치 3 / 위험 2 / S)
+  - CatalogView·ContentAccessView가 route query를 onMounted에서만 읽어 같은 경로의 query 변경(딥링크 재진입)에 반응하지 않는 문제 (가치 3 / 위험 2 / M)
+  - `monitoringParser.toPod`이 kubectl 스타일 `restarts`(`"3 (5d ago)"`)에서 NaN을 표에 노출하는 문제 (가치 2 / 위험 1 / S)
+  - AdvancedPolicyView가 `snapshot.extensions`를 v-model로 직접 변형해 저장 실패 시 화면과 서버 상태가 어긋나는 문제 (가치 2 / 위험 2 / S)
+  - 루트 앱의 `crypto-js` local tarball 의존성 제거로 clean install 복구 — 현재 `npm ci` 자체가 불가해 검증 비용 큼 (가치 4 / 위험 4 / M)
