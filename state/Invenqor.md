@@ -143,3 +143,35 @@
   - `/api/v1/admin/api-keys` HTTP 계층에 테스트가 전무함(서비스 계층에만 존재) (가치 3 / 위험 1 / M)
   - `attributes.*`에 대한 `!=`가 해당 키가 아예 없는 자산을 제외함(SQL NULL 의미) (가치 2 / 위험 3 / M)
 - 릴리즈: v0.2.23 (2026-09-03)
+
+## 2026-09-04
+- 선택: scope가 하나도 없는 API 키가 남을 수 있던 문제 (가치 3 / 위험 2 / 작업량 M)
+- 결과: 성공
+- 요약: 키 생성은 처음부터 scope를 1개 이상 요구했다. scope가 없는 키는 폐기된
+  키가 아니라 인증에 성공해 `last_used_at`을 남기고 한도 검사를 통과한 뒤 모든
+  엔드포인트의 scope 검사에서 거절되는 키이기 때문이다. 그런데 기존 키를 바꾸는
+  두 경로가 그 규칙을 건너뛰었다. `PATCH {"scopes":[]}`는 목록을 빈 배열로
+  바꾸고 200을, 마지막 남은 scope에 대한 `DELETE .../scopes/{scope}`도 마찬가지로
+  200을 돌려주었다(실제로 `"scopes":[]` 재현 확인). 콘솔은 scope마다 체크박스
+  하나를 그리고 그 DELETE로 토글하므로, 마지막 체크를 해제하는 클릭 한 번이면
+  생성 폼이 거부하는 상태에 도달했고 키 목록에는 그대로 활성으로 표시되었다.
+  이제 목록 전체를 다루는 호출자가 `RequireScopes` 하나를 공유해 빈 결과를
+  거절하며(`Create`·`Update`·낙관적 scope 변경 모두), `AddScopes`·`RemoveScope`는
+  결과가 아니라 조각을 넘기므로 `ValidScopes`는 그대로 빈 목록을 허용한다. 세
+  경로 모두 400 `INVALID_SCOPES`로 답해 클라이언트가 한 규칙에 대한 세 가지
+  응답을 구분할 필요가 없다. 검증: apikeys 서비스 테스트 1개와 `/api/v1/admin/
+  api-keys` HTTP 통합 테스트 1개(이 엔드포인트에 HTTP 계층 테스트가 전무했음)를
+  추가해 수정 전 실패·수정 후 통과를 확인하고, `go test ./...`를 SQLite fallback과
+  실제 PostgreSQL(`scripts/test-postgres.sh`) 양쪽에서 전 패키지 통과,
+  `go vet`, `go build`, `gofmt`, `redocly lint openapi.yaml` 통과.
+- 보류 아이디어:
+  - `/api/v1/external/query/*` API key 경로의 한도·감사 로그 커버리지 (가치 3 / 위험 2 / M)
+  - `attributes.*`에 대한 `!=`가 해당 키가 아예 없는 자산을 제외함(SQL NULL 의미) (가치 2 / 위험 3 / M)
+  - 콘솔이 마지막 scope 체크박스를 비활성화하지 않아 이제 400을 받고서야 알게 됨(web 변경 시 `webui/dist` 재빌드 필요) (가치 2 / 위험 2 / S)
+  - Query DSL에 OR/괄호 지원 추가 (가치 3 / 위험 4 / L)
+- 기각: "잘못된 scope 이름이 403 SCOPE_ESCALATION으로 돌아옴"은 실제로 도달
+  불가능하다. `api_keys.manage`는 마이그레이션에서 super_admin 역할에만 부여되고
+  역할 생성 API가 없으므로(`/api/v1/admin/roles`는 조회 전용), 이 핸들러에
+  도달하는 호출자는 항상 super admin이고 `HasPermission`이 무조건 true를 돌려준다.
+  즉 오타 난 scope는 이미 400을 받는다.
+- 릴리즈: v0.2.24 (2026-09-04)
