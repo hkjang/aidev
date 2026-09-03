@@ -116,3 +116,30 @@
   - `attributes.*`에 대한 `!=`가 해당 키가 아예 없는 자산을 제외함(SQL NULL 의미) (가치 2 / 위험 3 / M)
   - `/api/v1/admin/api-keys` HTTP 계층에 테스트가 전무함(서비스 계층에만 존재) (가치 3 / 위험 1 / M)
 - 릴리즈: v0.2.22 (2026-09-03)
+
+## 2026-09-03
+- 선택: 입력된 검색어를 DB에 패턴으로 넘기던 문제 (가치 4 / 위험 2 / 작업량 M)
+- 결과: 성공
+- 요약: 운영자가 타이핑하는 것은 호스트명·패키지명·이벤트 코드지 패턴이 아닌데,
+  모든 검색이 그 문자열을 그대로 `%`로 감싸 LIKE에 넘겼다. `_`는 임의의 한 글자와
+  맞으므로 자산 목록에서 `db_prod`를 찾으면 `db-prod`도 나왔고, 감사 로그에서
+  `api_key.create`를 찾으면 다른 action이 남긴 행도 함께 나왔다. `%`는 모든 행과
+  맞아서 아무것도 없어야 할 검색이 전체 인벤토리·전체 감사 로그를 돌려주었고
+  응답 어디에도 그런 표시가 없었다. 역슬래시는 두 엔진이 서로 다르게 읽어
+  (PostgreSQL은 LIKE 기본 escape, SQLite fallback은 기본 escape 자체가 없음)
+  `C:\Program` 검색이 한 모드에서는 호스트를 찾고 다른 모드에서는 아무것도 찾지
+  못했다 — PostgreSQL에서 실제로 빈 목록을 재현 확인. 소프트웨어 인벤토리 검색만
+  이미 escape와 `ESCAPE '!'`를 쓰고 있었으므로 그 규칙을
+  `storage.LikePattern`/`LikeContains`/`LikeEscapeClause`로 올리고, 빠져 있던 여섯
+  곳(자산 목록 검색과 owner 필터 — 콘솔·REST·API key 경로·CSV export가 공유,
+  MCP `asset_search`, 감사 actor·전문 검색, 서버 로그 검색)에 적용했다. 검증:
+  storage 단위 테스트 2개와 통합 테스트 6개(`_`·`%`·역슬래시·owner 필터·MCP·감사·
+  서버 로그)를 추가해 escape를 무력화하면 전부 실패하고 수정 후 통과함을 확인,
+  `go test ./...`를 SQLite fallback과 실제 PostgreSQL(`scripts/test-postgres.sh`)
+  양쪽에서 전 패키지 통과, `go vet`, `go build`, `gofmt` 통과.
+- 보류 아이디어:
+  - `PATCH {"scopes":[]}`나 마지막 scope 삭제로 scope가 하나도 없는 키가 남음(생성은 1개 이상을 요구) (가치 2 / 위험 2 / S)
+  - 잘못된 scope 이름이 400 INVALID_SCOPES가 아니라 403 SCOPE_ESCALATION으로 돌아옴(super admin과 일반 admin의 응답이 갈림) (가치 2 / 위험 1 / S)
+  - `/api/v1/admin/api-keys` HTTP 계층에 테스트가 전무함(서비스 계층에만 존재) (가치 3 / 위험 1 / M)
+  - `attributes.*`에 대한 `!=`가 해당 키가 아예 없는 자산을 제외함(SQL NULL 의미) (가치 2 / 위험 3 / M)
+- 릴리즈: v0.2.23 (2026-09-03)

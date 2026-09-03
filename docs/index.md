@@ -1,7 +1,7 @@
 ---
 title: "aidev 자율 개선 대시보드"
-description: "Claude Code 자율 개선 에이전트가 hkjang 의 프로젝트를 개선·테스트·머지·릴리즈한 일일 보고. 오늘 79회차·릴리즈 60건, 누적 129회차·릴리즈 88건."
-last_modified_at: 2026-09-03 20:00:28 +0900
+description: "Claude Code 자율 개선 에이전트가 hkjang 의 프로젝트를 개선·테스트·머지·릴리즈한 일일 보고. 오늘 80회차·릴리즈 61건, 누적 130회차·릴리즈 89건."
+last_modified_at: 2026-09-03 20:22:16 +0900
 ---
 
 <script type="application/ld+json">
@@ -10,14 +10,14 @@ last_modified_at: 2026-09-03 20:00:28 +0900
  "@type": "WebSite",
  "name": "aidev 자율 개선 대시보드",
  "url": "https://hkjang.github.io/aidev/",
- "description": "Claude Code 자율 개선 에이전트가 hkjang 의 프로젝트를 개선·테스트·머지·릴리즈한 일일 보고. 오늘 79회차·릴리즈 60건, 누적 129회차·릴리즈 88건.",
+ "description": "Claude Code 자율 개선 에이전트가 hkjang 의 프로젝트를 개선·테스트·머지·릴리즈한 일일 보고. 오늘 80회차·릴리즈 61건, 누적 130회차·릴리즈 89건.",
  "inLanguage": "ko",
  "author": {
   "@type": "Person",
   "name": "hkjang",
   "url": "https://github.com/hkjang"
  },
- "dateModified": "2026-09-03T20:00:28"
+ "dateModified": "2026-09-03T20:22:16"
 }
 </script>
 
@@ -127,19 +127,18 @@ last_modified_at: 2026-09-03 20:00:28 +0900
 
 # aidev 자율 개선 대시보드
 
-<p class="tldr"><strong>한 줄 요약.</strong> Claude Code 자율 개선 에이전트가 hkjang 의 프로젝트를 개선·테스트·머지·릴리즈한 일일 보고. 오늘 79회차·릴리즈 60건, 누적 129회차·릴리즈 88건. 회차가 끝날 때마다 자동 갱신됩니다 (마지막 갱신 2026-09-03 20:00).</p>
+<p class="tldr"><strong>한 줄 요약.</strong> Claude Code 자율 개선 에이전트가 hkjang 의 프로젝트를 개선·테스트·머지·릴리즈한 일일 보고. 오늘 80회차·릴리즈 61건, 누적 130회차·릴리즈 89건. 회차가 끝날 때마다 자동 갱신됩니다 (마지막 갱신 2026-09-03 20:22).</p>
 
 [운영 문서](https://github.com/hkjang/aidev#readme) · [원장](https://github.com/hkjang/aidev/tree/main/state) · [실행 이력](https://github.com/hkjang/aidev/commits/main) · [원본 데이터](https://hkjang.github.io/aidev/data/runs.jsonl)
 
 ## 오늘 (2026-09-03)
 
-<ul class="stats"><li><b>79</b><span>회차</span></li><li><b>28</b><span>프로젝트</span></li><li><b>60</b><span>릴리즈</span></li><li><b>19</b><span>머지(릴리즈 없음)</span></li><li><b>0</b><span>변경 없음</span></li><li><b>0</b><span>실패</span></li></ul>
+<ul class="stats"><li><b>80</b><span>회차</span></li><li><b>28</b><span>프로젝트</span></li><li><b>61</b><span>릴리즈</span></li><li><b>19</b><span>머지(릴리즈 없음)</span></li><li><b>0</b><span>변경 없음</span></li><li><b>0</b><span>실패</span></li></ul>
 
 [2026-09-03 보고 자세히 보기 →](https://hkjang.github.io/aidev/reports/2026-09-03/)
 
 | 시각 | 프로젝트 | 결과 |
 |---|---|---|
-| 16:10 | moyro | ✅ 머지 merged [PR #6](https://github.com/hkjang/moyro/pull/6), release missing |
 | 16:29 | muni | 🚀 릴리즈 merged [PR #5](https://github.com/hkjang/muni/pull/5), released [v0.26.0](https://github.com/hkjang/muni/releases/tag/v0.26.0) |
 | 16:38 | pii-masker | 🚀 릴리즈 merged [PR #5](https://github.com/hkjang/pii-masker/pull/5), released [v1.0.8](https://github.com/hkjang/pii-masker/releases/tag/v1.0.8) |
 | 16:46 | ptium | 🚀 릴리즈 merged [PR #5](https://github.com/hkjang/ptium/pull/5), released [v1.69.23](https://github.com/hkjang/ptium/releases/tag/v1.69.23) |
@@ -151,12 +150,13 @@ last_modified_at: 2026-09-03 20:00:28 +0900
 | 19:17 | weekly | 🚀 릴리즈 merged [PR #6](https://github.com/hkjang/weekly/pull/6), released [v0.286.0](https://github.com/hkjang/weekly/releases/tag/v0.286.0) |
 | 19:47 | AgentHub | 🚀 릴리즈 merged [PR #6](https://github.com/hkjang/AgentHub/pull/6), released [v0.231.0](https://github.com/hkjang/AgentHub/releases/tag/v0.231.0) |
 | 20:00 | Clustara | 🚀 릴리즈 merged [PR #6](https://github.com/hkjang/clustara/pull/6), released [v0.9.267](https://github.com/hkjang/clustara/releases/tag/v0.9.267) |
+| 20:22 | Invenqor | 🚀 릴리즈 merged [PR #6](https://github.com/hkjang/invenqor/pull/6), released [v0.2.23](https://github.com/hkjang/invenqor/releases/tag/v0.2.23) |
 
 ## 일일 보고
 
 | 날짜 | 회차 | 릴리즈 | 머지 | 변경 없음 | 실패 |
 |---|---|---|---|---|---|
-| [2026-09-03](https://hkjang.github.io/aidev/reports/2026-09-03/) | 79 | 60 | 19 | 0 | 0 |
+| [2026-09-03](https://hkjang.github.io/aidev/reports/2026-09-03/) | 80 | 61 | 19 | 0 | 0 |
 | [2026-09-02](https://hkjang.github.io/aidev/reports/2026-09-02/) | 50 | 28 | 16 | 3 | 0 |
 
 ## 프로젝트별 현황
@@ -174,7 +174,7 @@ last_modified_at: 2026-09-03 20:00:28 +0900
 | [dataworks](https://github.com/hkjang/dataworks) | 2026-09-03 02:29 | 🚀 릴리즈 merged [PR #2](https://github.com/hkjang/dataworks/pull/2), released [v0.9.37](https://github.com/hkjang/dataworks/releases/tag/v0.9.37) | [v0.9.40](https://github.com/hkjang/dataworks/releases/tag/v0.9.40) |
 | [git-ctx](https://github.com/hkjang/git-ctx) | 2026-09-03 02:40 | ✅ 머지 merged [PR #15](https://github.com/hkjang/git-ctx/pull/15), release missing | [v0.77.3](https://github.com/hkjang/git-ctx/releases/tag/v0.77.3) |
 | [igame](https://github.com/hkjang/igame) | 2026-09-03 02:56 | 🚀 릴리즈 merged [PR #2](https://github.com/hkjang/igame/pull/2), released [v0.7.2](https://github.com/hkjang/igame/releases/tag/v0.7.2) | [v0.7.4](https://github.com/hkjang/igame/releases/tag/v0.7.4) |
-| [Invenqor](https://github.com/hkjang/invenqor) | 2026-09-03 00:39 | 🚀 릴리즈 merged [PR #3](https://github.com/hkjang/invenqor/pull/3), released [v0.2.20](https://github.com/hkjang/invenqor/releases/tag/v0.2.20) | [v0.2.22](https://github.com/hkjang/invenqor/releases/tag/v0.2.22) |
+| [Invenqor](https://github.com/hkjang/invenqor) | 2026-09-03 00:39 | 🚀 릴리즈 merged [PR #3](https://github.com/hkjang/invenqor/pull/3), released [v0.2.20](https://github.com/hkjang/invenqor/releases/tag/v0.2.20) | [v0.2.23](https://github.com/hkjang/invenqor/releases/tag/v0.2.23) |
 | [jupiq](https://github.com/hkjang/jupiq) | 2026-09-03 14:58 | 🚀 릴리즈 merged [PR #1](https://github.com/hkjang/jupiq/pull/1), released [v1.3.0](https://github.com/hkjang/jupiq/releases/tag/v1.3.0) | [v1.3.0](https://github.com/hkjang/jupiq/releases/tag/v1.3.0) |
 | [kanpic](https://github.com/hkjang/kanpic) | 2026-09-03 03:06 | 🚀 릴리즈 merged [PR #3](https://github.com/hkjang/kanpic/pull/3), released [v0.230.0](https://github.com/hkjang/kanpic/releases/tag/v0.230.0) | [v0.233.0](https://github.com/hkjang/kanpic/releases/tag/v0.233.0) |
 | [moina](https://github.com/hkjang/moina) | 2026-09-03 03:22 | 🚀 릴리즈 merged [PR #3](https://github.com/hkjang/moina/pull/3), released [v0.1.18](https://github.com/hkjang/moina/releases/tag/v0.1.18) | [v0.1.20](https://github.com/hkjang/moina/releases/tag/v0.1.20) |
