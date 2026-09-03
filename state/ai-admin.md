@@ -37,3 +37,15 @@
   - 공급자 HTTP 통합 테스트가 없어 `POST/PATCH /api/v1/ai/providers`의 낙관적 잠금·검증 경로가 단위 테스트로만 검증됨 (가치 3 / 위험 1 / M)
 - 릴리즈: v1.2.3 (2026-09-03, 태그 사후 푸시)
 - 릴리즈: v1.2.3 (2026-09-03)
+
+## 2026-09-03
+- 선택: 지원하지 않는 HTTP 메서드 응답을 JSON 오류 봉투로 통일하고 SPA fallback의 메서드 제한 (가치 4 / 위험 1 / 작업량 S)
+- 결과: 성공
+- 요약: `Handler()`가 chi 기본 methodNotAllowed responder를 그대로 써서 `PUT /api/v1/settings`나 `DELETE /health/live`가 본문·Content-Type 없는 405를 반환했다. 저장소가 `docs/api.md`에 문서화한 `{"error":{"code","message"}}` 봉투를 파싱하는 클라이언트(프런트엔드 `parseResponse` 포함)는 이 응답을 읽지 못했고, chi가 내려주던 `Allow` header는 같은 경로의 다른 메서드를 빠뜨려 `PUT /api/v1/settings`에 `Allow: GET`만 주고 `PATCH`를 누락했다. 또 `r.NotFound(s.spa)`가 메서드를 가리지 않아 `POST /dashboard` 같은 알 수 없는 경로로의 쓰기 요청이 200 + `index.html`을 받아 성공한 것처럼 보였다. chi는 커스텀 handler 등록 시 `Allow`를 직접 설정하지 않고 `methodsAllowed`를 export하지 않으므로, `chi.Routes.Match`로 7개 메서드를 라우터에 직접 질의해 `Allow`를 계산하는 `s.methodNotAllowed`를 등록했고, `spa`는 GET·HEAD만 화면을 제공하고 나머지에 405를 반환하도록 했다(`/api/`·`/v1/` 알 수 없는 경로는 기존대로 메서드 무관 404 `not_found` 유지). 실제 라우터를 세워 405 상태·`Allow`·JSON 봉투·SPA 화면 제공을 검증하는 테이블 테스트를 추가하고, 수정 전 코드에서 4개 케이스가 실패하는 것을 직접 확인했다. `go vet`·`go build ./...`·`go test -count=1 ./...`·`go test -race`·`scripts/verify-version.sh`·`npm ci && npm test`(55개)·`npm run build`를 모두 통과시켰다. 저장소 관례에 따라 VERSION을 1.2.4로 올리고 CHANGELOG·README·docs·web 버전 메타데이터를 맞췄으며 `docs/api.md`에 405 계약을 명시했다(직전 릴리즈 커밋들과 동일하게 `internal/ui/dist`는 재빌드하지 않음).
+- 보류 아이디어:
+  - `safeCSVCell`이 OWASP가 함께 권고하는 tab(0x09)·CR(0x0D) 선행 문자를 중화하지 않음. `docs/api.md`는 "formula injection 위험 문자를 중화합니다"라고 명시하고 있어 문서와 구현이 어긋남 (가치 3 / 위험 1 / S)
+  - HEAD 요청이 모든 GET 라우트에서 405. `apiScopeForPermission`이 `http.MethodHead` 분기를 갖고 있으나 chi가 GET에서 HEAD를 유도하지 않아 사문화됨. 미들웨어로 HEAD→GET 재라우팅 시 OIDC callback 등 부작용 검토 필요 (가치 3 / 위험 3 / M)
+  - `clearSessionCookies`가 `setSessionCookies`와 달리 `Secure`를 설정하지 않고 CSRF 쿠키의 `SameSite`도 Strict가 아닌 Lax로 지움 (가치 2 / 위험 2 / S)
+  - 공급자 HTTP 통합 테스트가 없어 `POST/PATCH /api/v1/ai/providers`의 낙관적 잠금·검증 경로가 단위 테스트로만 검증됨 (가치 3 / 위험 1 / M)
+  - CI에 정적 분석 단계(`go vet`, `golangci-lint`, eslint)가 없어 회귀를 테스트로만 잡고 있음 (가치 3 / 위험 1 / M)
+- 릴리즈: v1.2.4 (2026-09-03)
