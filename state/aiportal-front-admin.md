@@ -65,3 +65,14 @@
   - `monitoringParser.toPod`이 kubectl 스타일 `restarts`(`"3 (5d ago)"`)에서 NaN을 표에 노출하는 문제 (가치 2 / 위험 1 / S)
   - AdvancedPolicyView가 `snapshot.extensions`를 v-model로 직접 변형해 저장 실패 시 화면과 서버 상태가 어긋나는 문제 (가치 2 / 위험 2 / S)
   - 루트 앱의 `crypto-js` local tarball 의존성 제거로 clean install 복구 — 현재 `npm ci` 자체가 불가해 검증 비용 큼 (가치 4 / 위험 4 / M)
+
+## 2026-09-04
+- 선택: 뒤늦게 도착한 401이 방금 확보한 세션을 지우는 문제 수정 (가치 4 / 위험 2 / 작업량 S)
+- 결과: 성공
+- 요약: 목록 화면은 한 번에 여러 요청을 보내므로 세션 만료 시 401도 여러 개 돌아오는데, 첫 401이 세션을 버리고 router guard가 `/sso/ssologin`으로 세션을 다시 확보한 뒤 남은 401이 도착하면 방금 저장한 user와 access token을 다시 지웠다(직전 세션에서 도입한 401 handler가 무조건 `invalidateAdminSession()`을 부른 탓). 그러면 이후 요청이 `access_token` 헤더 없이 나가 또 401을 받는 악순환이 생긴다. `http.ts`가 요청 interceptor에서 세션 세대를 config에 새겨 401 handler에 넘기고, `session.ts`가 그 세대가 현재 세대와 같을 때만 캐시를 버리도록 했다(확보·무효화·로그아웃·다른 탭 storage 변경마다 세대 증가 → 같은 세대의 중복 401도 한 번만 처리). 로드맵 P2가 요구하는 "단일 상태기계" 방향으로 `ensureAdminSession(force=true)`가 진행 중인 비강제 promise를 재사용하던 재진입 결함도 함께 고쳤다. 검증은 `npm run verify`(typecheck + vitest 64개 통과, 기존 60개 + 신규 4개)와 `npm run build`(build → runtime-config 검증 → offline 검사 → integrity manifest 19개) 전체 통과, 그리고 두 수정을 각각 되돌려 신규 테스트가 실제로 실패하는지 직접 확인했다. 커밋 f02fb08.
+- 보류 아이디어:
+  - CatalogView·ContentAccessView가 route query를 onMounted에서만 읽어 같은 경로의 query 변경(딥링크 재진입)에 반응하지 않는 문제 — 컴포넌트 테스트 환경(jsdom, @vue/test-utils) 선행 정비 필요 (가치 3 / 위험 3 / M)
+  - `monitoringParser.toPod`이 kubectl 스타일 `restarts`(`"3 (5d ago)"`)나 boolean `ready`에서 NaN·"true"를 표에 그대로 노출하는 문제 (가치 2 / 위험 1 / S)
+  - AdvancedPolicyView가 `snapshot.extensions`를 v-model로 직접 변형해 저장 실패 시 화면과 서버 상태가 어긋나는 문제 (가치 2 / 위험 2 / S)
+  - `shared/format.ts` 단위 테스트 공백 보강 + `formatDateTime`이 epoch millis를 날짜로 해석하지 못하고 원시 숫자 문자열을 그대로 보여주는 문제 (가치 2 / 위험 1 / S)
+  - 루트 앱의 `crypto-js` local tarball 의존성 제거로 clean install 복구 — 현재 `npm ci` 자체가 불가해 검증 비용 큼 (가치 4 / 위험 4 / M)
