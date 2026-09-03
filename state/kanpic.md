@@ -63,3 +63,16 @@
   - `docs/USER_GUIDE.html`·`.pdf` 가 `.md` 와 함께 갱신되지 않아 오래되었다(마지막 갱신이 11aa6d8). `scripts/generate_pdf.js` 를 릴리즈 절차나 CI 에 묶을지 검토할 것.
 - 릴리즈: v0.232.0 (2026-09-03)
 - 릴리즈: v0.232.0 (2026-09-03)
+
+## 2026-09-03
+- 선택: 표시 형식의 구역 규칙과 천 단위 축약을 엑셀에 맞춘다 (가치 4 / 위험 2 / 작업량 M)
+- 결과: 성공
+- 요약: 표시 형식을 그리는 두 곳(`internal/formula` 의 `formatValue`, `web/src/lib/cellFormat.ts` 의 `formatCellValue`)에 같은 구멍이 셋 있었다 — (1) 쉼표가 있기만 하면 자릿점으로 보아, 자리 기호 **뒤** 의 쉼표로 천 단위를 줄여 적는 `#,##0,,`(재무 자료의 "백만 원 단위")가 `1234567` 을 그대로 `1,234,567` 로 그렸다, (2) 구역이 둘뿐인 줄 알고 0 을 늘 양수 구역으로 보내 회계 서식 `#,##0;(#,##0);"-"` 의 0 이 `-` 가 아니라 `0` 이었고 자리 기호가 없는 글자 구역(`"판매"`)도 수로 그렸다, (3) 비워 둔 구역을 감추지 않아 `0;;` 이 음수를 부호도 없이 `5` 로 그렸다. 새 헬퍼 `formatSections`(따옴표·대괄호 안의 `;` 는 구역을 가르지 않는다)·`sectionForNumber`·`thousandsScale` 을 양쪽에 같은 규칙으로 두었고, `0.0,,` 의 뒤쪽 쉼표를 소수 자리로 세던 것도 함께 고쳤다. 분수 서식(`# ?/?`)은 손대지 않으려고 `?` 를 자리 기호로 세어 지금 동작을 그대로 두었다. 검증: 격자와 서버가 함께 읽는 `testdata/cell-formats.json` 에 16줄 추가, 새 테스트 `TestFormatSectionsAndThousandsScaleFollowExcel`(18가지)와 웹 `the grid picks the format section…`·`shrinks by a thousand…`, `gofmt -l`, `go vet ./...`, `go build ./...`, `go test ./...`(전체 통과), `cd web && npm test`(482개 통과)·`npm run build`·`npm run lint`, `scripts/check-release-docs.sh`, `scripts/check-commit-identities.sh`. 커밋 2개(ccb2f92, 50edaf4), 릴리즈 노트 v0.233.0 과 README VERSION·USER_GUIDE 갱신.
+- 보류 아이디어:
+  - 분수 서식(`# ?/?`, `?/8`, `#/#`)을 그리지 못한다. `TEXT(0.5,"# ?/?")` 이 `1/2` 가 아니라 `1/` 이다. 엑셀 기본 서식 12·13번이라 XLSX 로 들어온다.
+  - 넷째 구역(글자 구역)을 쓰지 않는다. `#,##0;;;"["@"]"` 처럼 글자에 서식을 준 칸이 그대로 나온다.
+  - `csvNumber` 가 IMPORTDATA 의 `"1,200"`·`"12%"`·앞뒤 통화 기호를 글자로 남긴다. `valueOfText` 가 그 규칙을 한 곳에 담고 있으니 맞출지 검토할 것.
+  - 외부 호출 캐시 키가 함수·주소만 담아, `external.max_kb` 를 올려도 캐시가 남아 있는 동안은 "크기를 넘습니다" 가 그대로다.
+  - `DOLLARDE`·`DOLLARFR` 이 `math.Pow(10, ceil(log10(fraction)))` 로 자리를 밀어 이진 실수 어긋남이 남아 있다.
+- 릴리즈: v0.233.0 (2026-09-03)
+- 릴리즈: v0.233.0 (2026-09-03)
