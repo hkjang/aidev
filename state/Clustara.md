@@ -30,3 +30,11 @@
 - 보류 아이디어: ① `.github` 에 CI 워크플로 없음 — build/vet/test 게이트 추가 (가치 3 / 위험 1 / S) ② `detectScanner` 가 못 맞히면 `scanner="unknown"` 저장 후 trivy 파서 실행 — 저장값과 실제 파서 불일치 (가치 2 / 위험 1 / S) ③ Grype `Negligible` 심각도가 `Unknown` 으로 접혀 Low 미만 등급 정보 소실 (가치 2 / 위험 2 / S) ④ `collectBenchmarkResults` 의 Section 귀속 — 바깥 노드 라벨이 먼저 이겨 kube-bench Section 이 "1.1" 대신 상위 control 설명으로 채워짐 (가치 2 / 위험 2 / S) ⑤ `AssessImpact` 가 인벤토리에 없는 대상을 zero value 로 받아 "replicas 0 → N" 처럼 현재 상태를 아는 척함 — 미관측 대상임을 표시해야 함 (가치 3 / 위험 1 / S)
 - 릴리즈: v0.9.265 (2026-09-03)
 - 릴리즈: v0.9.265 (2026-09-03)
+
+## 2026-09-03
+- 선택: kubectl 의 last-applied 주석이 Secret 값을 저장·응답으로 실어나르던 경로 차단 + 마스킹 3곳 정합 (가치 5 / 위험 1 / 작업량 M)
+- 결과: 성공
+- 요약: 수집기(`internal/kube/client.go`)는 Secret 의 `data` 를 절대 저장하지 않고 `tls.key` 조차 버리는데, `metadata.annotations` 는 그대로 저장돼 `kubectl apply` 가 남긴 `kubectl.kubernetes.io/last-applied-configuration`(적용 객체 전체 = Secret 의 base64 `data`, 워크로드의 모든 env 값)이 그 정책을 우회하고 있었다. 그 주석은 `GET /admin/k8s/inventory` 가 가공 없이 돌려주고 Manifest Viewer 는 `"masked": true` 라고 말하면서 함께 내보냈다. 수집 경로 셋(실시간·에이전트 push·스냅샷 import)이 전부 `UpsertK8sInventory` 로 모이므로 저장 시점에 떨어내고, 기존 행 때문에 읽기 시점(`scanK8sInventory`)에서도 떨어낸다. 같은 테마로 둘 더 고쳤다 — Manifest Viewer 의 `maskStringMap` 이 주석을 키 이름으로만 판단해 값(토큰 붙은 webhook URL·DSN)을 그대로 복사하던 것을 Pod 지문 경로와 동일하게 `analyzer.MaskSensitive` 로 맞췄고, `DetectStackFieldDrift` 가 `DB_PASSWORD=...` 를 선언/실제 양쪽 평문으로 관리자 UI 에 렌더하던 것을 비교는 원본·출력은 마스킹으로 바꿨다(드리프트 검출은 그대로, 이름은 남김). 검증: 신규 테스트 5개를 고치기 전 코드에 되돌려 붙여 넷이 각 결함을 지목하며 실패함을 확인했고 `go build ./...`·`go vet ./...`·`go test ./...` 전부 통과(21 패키지). 저장소 관례대로 AppVersion·changelog·docs 버전 마커를 v0.9.266 으로 올렸다(release gate 테스트가 강제).
+- 보류 아이디어: ① `.github` 에 CI 워크플로 없음 — build/vet/test 게이트 추가 (가치 3 / 위험 1 / S) ② `analyzer.MaskSensitive`(Pod 로그 마스킹)가 `Authorization: Basic <base64>` 를 못 잡음 — audit redactor 는 잡는데 로그 경로만 구멍 (가치 3 / 위험 1 / S) ③ `isSensitivePath` 가 substring 매칭이라 `imagePullSecrets`·`volumes[].secret.secretName` 같은 참조 이름까지 `***` 로 덮어 manifest 원장 diff 에 잡음이 생김 (가치 2 / 위험 2 / S) ④ `detectScanner` 가 못 맞히면 `scanner="unknown"` 저장 후 trivy 파서 실행 — 저장값과 실제 파서 불일치 (가치 2 / 위험 1 / S) ⑤ `AssessImpact` 가 인벤토리에 없는 대상을 zero value 로 받아 "replicas 0 → N" 처럼 현재 상태를 아는 척함 (가치 3 / 위험 1 / S)
+- 릴리즈: v0.9.266 (2026-09-03)
+- 릴리즈: v0.9.266 (2026-09-03)
