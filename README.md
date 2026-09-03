@@ -58,6 +58,14 @@ bin/daily.sh (Windows 작업 스케줄러 → wsl.exe)
 
 릴리즈 이력이 전혀 없는 저장소는 **skipped** — 관례를 새로 정하는 건 사람의 일이다. 에이전트는 원격에 아무것도 보내지 않으며(push/tag push/gh release/npm publish 금지), 패키지 배포는 CI 또는 사람이 한다. 옵션: `--no-release`, `--release-budget USD(기본 6)`.
 
+### 릴리즈 자산 (도커 이미지 tar.gz 등)
+여러 저장소(Clustara, dataworks, ptium, pii-masker, Invenqor …)는 워크플로가 아니라 **사람이 로컬 스크립트**(`scripts/release.sh`, `scripts/build-offline.sh`, `docker save | gzip`)로 이미지 압축본·sha256·compose/k8s 파일·로드 스크립트를 만들어 GitHub Release 에 올려 왔다. 그래서 릴리즈 에이전트는
+1. `gh release view <이전 태그> --json assets` 로 **이전 릴리즈 자산 목록**을 확인하고
+2. 자산이 있는데 워크플로가 만들지 않으면 저장소의 스크립트로 **같은 이름 규칙의 파일을 이 기계에서 빌드**해(업로드·푸시 단계는 제외) `release.json` 의 `assets` 배열에 절대경로로 적는다.
+3. 러너 `publish_release()` 가 Release 존재를 보장하고(직접 생성 또는 워크플로 생성을 최대 15분 대기) `gh release upload --clobber` 로 올린 뒤, **이전 릴리즈엔 자산이 있는데 이번엔 없으면** `ASSETS MISSING` 을 로그·결과에 남긴다.
+
+이미 나간 릴리즈에 자산이 빠졌으면 `bin/run.sh --assets-only <프로젝트>` — 최신 태그를 체크아웃해 자산만 만들어 올린다(버전·커밋·태그 변경 없음). 도커 빌드가 있으므로 릴리즈 예산은 `--release-budget 10` 이상을 권한다.
+
 ### 에이전트 지시문 요약 (`prompt.md`)
 1. 파악 — CLAUDE.md/README/docs/로드맵/TODO/`git log -30`/테스트·CI
 2. 과거 기록 확인 — 원장에 있는 시도·실패 반복 금지

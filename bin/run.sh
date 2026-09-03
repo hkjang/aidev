@@ -1,7 +1,8 @@
 #!/usr/bin/env bash
 # 자율 개선 에이전트 러너 — https://github.com/hkjang/aidev
 #   사용법: bin/run.sh [--dry-run] [--count N] [--project NAME] [--days 30] [--budget 8] [--no-merge] [--no-sync]
-#                     [--no-release] [--release-budget 6]
+#                     [--no-release] [--release-budget 10] [--release-only NAME] [--assets-only NAME]
+#   - --assets-only NAME: 이미 나간 최신 릴리즈에 이전 릴리즈와 같은 자산(도커 이미지 tar.gz 등)을 만들어 올린다
 #   - 머지가 되면 릴리즈 에이전트를 한 번 더 돌린다: 그 저장소의 이전 릴리즈 방식(태그·버전 파일·CHANGELOG·워크플로·
 #     GitHub Release)을 확인해 같은 방식으로 다음 버전을 만들고, 러너가 커밋·태그를 푸시하고 필요하면 GitHub Release 를 만든다
 #   - 최근 N일 내 커밋이 있고, 작업트리가 깨끗하며, origin 원격이 있는 저장소를 후보로 삼는다
@@ -17,7 +18,7 @@ HERE="${AIDEV_BIN:-$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)}"
 REPO_DIR="$(cd "$HERE/.." && pwd)"
 STATE="$REPO_DIR/state"; LOGS="$REPO_DIR/logs"
 WT_BASE="${WT_BASE:-$HOME/.cache/auto-improve-wt}"
-DAYS=30; COUNT=1; BUDGET=8; DRY=0; ONLY=""; MERGE=1; SYNC=1; RELEASE=1; RBUDGET=6
+DAYS=30; COUNT=1; BUDGET=8; DRY=0; ONLY=""; MERGE=1; SYNC=1; RELEASE=1; RBUDGET=10
 MODEL="${MODEL:-claude-opus-5}"
 # 모든 커밋(에이전트·러너)은 hkjang 명의로 — 저장소별 git 설정과 무관하게 강제한다
 export GIT_AUTHOR_NAME=hkjang GIT_AUTHOR_EMAIL=gagagiga@naver.com
@@ -33,6 +34,7 @@ while [ $# -gt 0 ]; do case "$1" in
   --days) DAYS=$2; shift;; --budget) BUDGET=$2; shift;; --no-merge) MERGE=0;; --no-sync) SYNC=0;;
   --no-release) RELEASE=0;; --release-budget) RBUDGET=$2; shift;;
   --release-only) RELEASE_ONLY=$2; shift;;
+  --assets-only) ASSETS_ONLY=$2; shift;;
   *) echo "unknown arg $1"; exit 2;; esac; shift; done
 
 mkdir -p "$STATE" "$LOGS" "$WT_BASE"
@@ -58,18 +60,73 @@ sync_repo(){
 
 # 머지된 뒤 그 저장소의 관례대로 릴리즈한다. 에이전트는 detached worktree 에서 커밋·태그만 만들고,
 # 푸시와 GitHub Release 는 여기서 한다. 사용: release_project <프로젝트> <base> <변경 요약>
+# GitHub Release 를 보장하고 자산을 올린다. 사용: publish_release <프로젝트> <태그> <제목> <노트파일> <ghrel(true/false)> <release.json>
+publish_release(){
+  local n=$1 tag=$2 title=$3 notes=$4 ghrel=$5 rfile=$6 i
+  [ -n "$tag" ] || return 0
+  local -a assets=()
+  while IFS= read -r a; do [ -n "$a" ] && [ -f "$a" ] && assets+=("$a"); done < <(jq -r '.assets[]? // empty' "$rfile" 2>/dev/null)
+  # 릴리즈가 있어야 자산을 올릴 수 있다: 직접 만들거나(ghrel=true), 워크플로가 만들 때까지 기다린다
+  if ! (cd "$repo" && gh release view "$tag" >/dev/null 2>&1); then
+    if [ "$ghrel" = true ]; then
+      local -a nargs=(--generate-notes)
+      [ -n "$notes" ] && [ -f "$notes" ] && nargs=(--notes-file "$notes")
+      (cd "$repo" && gh release create "$tag" --title "${title:-$tag}" "${nargs[@]}" >>"$LOG" 2>&1) \
+        && log "$n: GitHub Release $tag created" || log "$n: GitHub Release create FAILED"
+    elif [ ${#assets[@]} -gt 0 ]; then
+      for i in $(seq 1 30); do (cd "$repo" && gh release view "$tag" >/dev/null 2>&1) && break; sleep 30; done
+      (cd "$repo" && gh release view "$tag" >/dev/null 2>&1) || {
+        log "$n: 워크플로가 15분 안에 Release 를 만들지 않음 — 직접 만든다"
+        (cd "$repo" && gh release create "$tag" --title "${title:-$tag}" --generate-notes >>"$LOG" 2>&1) || true; }
+    fi
+  fi
+  if [ ${#assets[@]} -gt 0 ]; then
+    if (cd "$repo" && gh release upload "$tag" "${assets[@]}" --clobber >>"$LOG" 2>&1); then
+      log "$n: uploaded ${#assets[@]} asset(s) to $tag: $(printf '%s ' "${assets[@]##*/}")"
+      result="$result +${#assets[@]} assets"
+    else
+      log "$n: asset upload FAILED for $tag"; result="$result, asset upload failed"
+    fi
+    rm -f "${assets[@]}" 2>/dev/null || true
+  fi
+  # 이전 릴리즈엔 자산이 있었는데 이번엔 없으면 경고 — 워크플로가 만드는 경우는 잠시 기다려 본다
+  local prev prev_n new_n
+  prev=$(cd "$repo" && gh release list --limit 10 --json tagName --jq "[.[].tagName] | map(select(. != \"$tag\")) | .[0] // empty" 2>/dev/null)
+  if [ -n "$prev" ]; then
+    prev_n=$(cd "$repo" && gh release view "$prev" --json assets --jq '.assets | length' 2>/dev/null || echo 0)
+    if [ "${prev_n:-0}" -gt 0 ]; then
+      for i in $(seq 1 30); do
+        new_n=$(cd "$repo" && gh release view "$tag" --json assets --jq '.assets | length' 2>/dev/null || echo 0)
+        [ "${new_n:-0}" -gt 0 ] && break; sleep 30
+      done
+      [ "${new_n:-0}" -gt 0 ] && log "$n: $tag has $new_n asset(s) (prev $prev: $prev_n)" \
+        || { log "$n: ASSETS MISSING on $tag (prev $prev had $prev_n)"; result="$result, ASSETS MISSING"; }
+    fi
+  fi
+}
+
+# 머지된 뒤 그 저장소의 관례대로 릴리즈한다. 에이전트는 detached worktree 에서 커밋·태그·자산만 만들고,
+# 푸시·GitHub Release·자산 업로드는 여기서 한다. 사용: release_project <프로젝트> <base> <변경 요약> [assets]
+#   mode=assets: 이미 나간 최신 태그를 체크아웃해 자산만 만들어 올린다 (버전·커밋·태그 변경 없음)
 release_project(){
-  local n=$1 base=$2 summary=$3
+  local n=$1 base=$2 summary=$3 mode=${4:-release}
   local rwt="$WT_BASE/$n-release" rfile="$STATE/$n.release.json" envfile="$STATE/$n.env"
   rm -f "$rfile"
-  # 로컬엔 옛 태그만 있는 저장소가 많다 — 원격 태그를 먼저 받아야 "이전 릴리즈"가 맞는다
   # --force: 로컬에 같은 이름의 다른 태그가 있으면 fetch 가 실패한다(Clustara v0.9.5). 원격이 기준이다.
   git -C "$repo" fetch -q --force --tags origin "$base" >>"$LOG" 2>&1 || log "$n: tag fetch had errors (continuing)"
+  local ref="origin/$base" mode_note="" latest=""
+  if [ "$mode" = assets ]; then
+    latest=$(cd "$repo" && gh release list --limit 1 --json tagName --jq '.[0].tagName' 2>/dev/null)
+    [ -n "$latest" ] || { log "$n: no GitHub Release to attach assets to"; return 0; }
+    ref="refs/tags/$latest"
+    mode_note="## 이번 세션은 자산만 만든다
+이미 태그 \`$latest\` 와 GitHub Release 가 나가 있지만 이전 릴리즈에 있던 자산이 빠졌다. **버전을 올리거나 커밋·태그를 만들지 말고**, 체크아웃된 \`$latest\` 로 이전 릴리즈와 같은 자산을 같은 방법·같은 이름 규칙으로 만들어 \`assets\` 에 적기만 하라. JSON 의 \`status\` 는 \`released\`, \`tag\` 는 \`$latest\`, \`github_release\` 는 \`false\`."
+  fi
   git -C "$repo" worktree remove --force "$rwt" 2>/dev/null || true
-  git -C "$repo" worktree add --detach "$rwt" "origin/$base" >>"$LOG" 2>&1
+  git -C "$repo" worktree add --detach "$rwt" "$ref" >>"$LOG" 2>&1
   local rprompt
-  rprompt=$(RELEASE_FILE="$rfile" CHANGE_SUMMARY="$summary" \
-            envsubst '$RELEASE_FILE $CHANGE_SUMMARY' < "$REPO_DIR/release-prompt.md")
+  rprompt=$(RELEASE_FILE="$rfile" CHANGE_SUMMARY="$summary" MODE_NOTE="$mode_note" \
+            envsubst '$RELEASE_FILE $CHANGE_SUMMARY $MODE_NOTE' < "$REPO_DIR/release-prompt.md")
   ( cd "$rwt" && { [ -f "$envfile" ] && set -a && . "$envfile" && set +a; } ; claude -p "$rprompt" \
       --model "$MODEL" \
       --settings "$CLAUDE_SETTINGS" \
@@ -81,25 +138,29 @@ release_project(){
 
   local status ahead tag title notes ghrel tagged
   status=$(jq -r '.status // "missing"' "$rfile" 2>/dev/null || echo missing)
-  ahead=$(git -C "$rwt" rev-list --count "origin/$base..HEAD")
   tag=$(jq -r '.tag // ""' "$rfile" 2>/dev/null || true)
+  title=$(jq -r '.title // ""' "$rfile" 2>/dev/null || true)
+  notes=$(jq -r '.notes_file // ""' "$rfile" 2>/dev/null || true)
+  ghrel=$(jq -r '.github_release // false' "$rfile" 2>/dev/null || echo false)
+  if [ "$mode" = assets ]; then
+    if [ "$status" = released ]; then
+      result="$result, assets for $latest"; publish_release "$n" "$latest" "$title" "$notes" false "$rfile"
+    else
+      log "$n: assets $status ($(jq -r '.reason // ""' "$rfile" 2>/dev/null))"; result="$result, assets $status"
+    fi
+    git -C "$repo" worktree remove --force "$rwt" >>"$LOG" 2>&1 || true
+    return 0
+  fi
+  ahead=$(git -C "$rwt" rev-list --count "origin/$base..HEAD")
   tagged=0; [ -n "$tag" ] && git -C "$rwt" rev-parse -q --verify "refs/tags/$tag" >/dev/null 2>&1 && tagged=1
   # 태그만 찍는 관례(버전 커밋 없음)도 릴리즈다 — 커밋이 없어도 새 태그가 있으면 내보낸다
   if [ "$status" = released ] && { [ "$ahead" -gt 0 ] || [ "$tagged" -eq 1 ]; }; then
-    title=$(jq -r '.title // ""' "$rfile")
-    notes=$(jq -r '.notes_file // ""' "$rfile"); ghrel=$(jq -r '.github_release // false' "$rfile")
     if { [ "$ahead" -eq 0 ] || git -C "$rwt" push origin "HEAD:$base" >>"$LOG" 2>&1; } \
        && { [ "$tagged" -eq 0 ] || git -C "$rwt" push origin "refs/tags/$tag" >>"$LOG" 2>&1; }; then
       log "$n: released ${tag:-(no tag)}"; result="$result, released ${tag:-$(jq -r .version "$rfile")}"
-      if [ "$ghrel" = true ] && [ -n "$tag" ]; then
-        local -a nargs=(--generate-notes)
-        [ -n "$notes" ] && [ -f "$notes" ] && nargs=(--notes-file "$notes")
-        (cd "$rwt" && gh release create "$tag" --title "${title:-$tag}" "${nargs[@]}" >>"$LOG" 2>&1) \
-          && log "$n: GitHub Release $tag created" \
-          || log "$n: GitHub Release create FAILED (CI 가 이미 만들었을 수 있음)"
-      fi
       git -C "$repo" pull --ff-only origin "$base" >>"$LOG" 2>&1 || true
       printf -- '- 릴리즈: %s (%s)\n' "${tag:-$(jq -r .version "$rfile")}" "$RUN_DATE" >> "$ledger"
+      publish_release "$n" "$tag" "$title" "$notes" "$ghrel" "$rfile"
     else
       log "$n: release push FAILED — 로컬 커밋·태그는 버려짐"; result="$result, release push failed"
     fi
@@ -108,6 +169,17 @@ release_project(){
   fi
   git -C "$repo" worktree remove --force "$rwt" >>"$LOG" 2>&1 || true
 }
+
+# ---- 자산만 (이미 나간 최신 릴리즈에 이전 릴리즈와 같은 자산을 만들어 올림) -------------
+if [ -n "${ASSETS_ONLY:-}" ]; then
+  n=$ASSETS_ONLY; repo="$ROOT/$n"; ledger="$STATE/$n.md"; result="assets-only"
+  base=$(git -C "$repo" symbolic-ref --short HEAD)
+  log "=== $n assets-only (base=$base)"
+  release_project "$n" "$base" "(자산 보충)" assets
+  record_run "$n" "$result"
+  sync_repo "run($RUN_DATE): $n — $result"
+  log "done"; exit 0
+fi
 
 # ---- 릴리즈만 (이미 머지된 프로젝트를 관례대로 릴리즈) ---------------------------
 if [ -n "${RELEASE_ONLY:-}" ]; then
