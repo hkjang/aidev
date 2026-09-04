@@ -43,3 +43,14 @@
   - `notify.Notifier` 를 구조체 리터럴로 만들면 `http` 가 nil (toss.Client 의 limiter nil 패닉과 같은 계열) — 지연 초기화 (가치 3 / 위험 1 / S)
   - `journal.Summary` 가 PnL==0 인 거래를 패배로 집계 (`t.PnL > 0` else) — 승률이 미세하게 왜곡 (가치 2 / 위험 1 / S)
   - 진입 알림/로그가 손절·목표가를 `%.0f` 로 출력 — 미국 종목은 $3.45 가 "3" 으로 보임, `market.FormatPrice(Country, ...)` 사용 (가치 2 / 위험 1 / S)
+
+## 2026-09-04
+- 선택: 주간·누적 수익률이 외부 입출금을 수익률로 잡던 버그 수정 (가치 4 / 위험 1 / 작업량 S)
+- 결과: 성공
+- 요약: 직전 커밋 038e412 가 **일일** 수익률만 `실현손익/시작자산` 으로 고쳤고, 주간 리뷰(`weekly.go`)·리포트 인덱스(`IndexMarkdown`)·대시보드 타일(`docs/index.html` 누적 수익률)은 그대로 자산 곡선 양 끝 `(EndEquity/StartEquity - 1)` 로 계산하고 있었다. 입금·배당세·환전이 그대로 수익률이 되어, 100,000원 입금이 낀 주는 `+10101.00%` 로 표시된다(실제 +2.01%) — 봇이 되는지 판단하는 헤드라인 숫자가 망가지는 문제. 일별 `ReturnPct` 를 복리로 합성하는 `report.CumulativeReturnPct(days)` 를 추가해 세 곳을 통일했다(곱셈이라 정렬 순서 무관 — 인덱스는 내림차순, 주간은 오름차순이라 중요). 검증: `internal/report/cumulative_test.go` 신규 3테스트(복리/순서무관/빈 슬라이스 + 입금 주의 주간·인덱스 마크다운) 추가 후, 두 호출부를 옛 계산식으로 되돌리면 실제로 `+10101.00%` 를 출력하며 실패함을 확인. `gofmt -l`(clean)·`go vet ./...`·`go build ./...`·`go test -count=1 ./...` 전부 통과. 커밋 967e9b8.
+- 보류 아이디어:
+  - GitHub Actions CI 없음 — `go build`/`go vet`/`go test`/`gofmt -l` 워크플로 추가 (가치 4 / 위험 1 / S)
+  - `internal/journal`·`internal/notify` 테스트 0건 — Summary/MaxDrawdown, Load 날짜 필터, Notifier httptest 테스트 (가치 3 / 위험 1 / S)
+  - `notify.Notifier` 를 구조체 리터럴로 만들면 `http` 가 nil (toss.Client 의 limiter nil 패닉과 같은 계열) — 지연 초기화 (가치 3 / 위험 1 / S)
+  - `agent/github.go` 상태 표(평균가·현재가·손절·목표)가 `%.0f` — 미국 종목 $150.32 가 "150", $0.90 이 "1" 로 보임, `market.FormatPrice(Country, ...)` 사용 (가치 3 / 위험 1 / S)
+  - `journal.Summary` 가 PnL==0 인 거래를 패배로 집계 (`t.PnL > 0` else) — 승률·평균손실이 미세하게 왜곡 (가치 2 / 위험 1 / S)
