@@ -25,6 +25,10 @@ $CHANGE_SUMMARY
    ```
    `github_release` 는 이전 릴리즈들이 GitHub Release 를 썼고 **워크플로가 태그 푸시로 자동 생성하지 않을 때만** true. 태그를 쓰지 않는 저장소면 `tag` 는 빈 문자열. `notes_file` 과 `assets` 는 worktree 밖(예: `$RELEASE_FILE` 과 같은 디렉터리)에 두어도 됩니다 — worktree 는 곧 지워집니다.
 
+## 시간이 오래 걸리는 빌드
+- 도커 빌드·크로스 컴파일·PDF 생성은 **포그라운드에서 끝날 때까지 기다리세요.** 이 세션은 당신이 답을 끝내는 순간 종료되며 백그라운드 프로세스는 버려집니다. "백그라운드에서 돌고 있으니 나중에 보고하겠다"는 실패입니다.
+- 한 명령이 10분을 넘길 수 있으면 `timeout 1800 <명령>` 처럼 상한을 두고, 로그를 파일로 남기며 기다리세요. 클러스터·원격 서비스가 필요한 단계는 이 기계에서 할 수 없으면 건너뛰고 사유를 `reason` 에 적으세요.
+
 ## 절대 규칙
 - `git push`, 태그 푸시, `gh release create/upload`, npm publish / pypi / docker push / helm push 등 **원격에 무엇도 보내지 마세요**. 외부 스크립트가 커밋과 태그를 푸시하고 GitHub Release 를 만들고 `assets` 를 올립니다. 패키지 레지스트리 배포는 CI 가 하거나 사람이 합니다.
 - 현재 체크아웃(detached HEAD)에서 커밋하고 태그하세요. 브랜치를 만들거나 옮기지 마세요.

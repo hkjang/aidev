@@ -60,6 +60,23 @@ sync_repo(){
 
 # 머지된 뒤 그 저장소의 관례대로 릴리즈한다. 에이전트는 detached worktree 에서 커밋·태그만 만들고,
 # 푸시와 GitHub Release 는 여기서 한다. 사용: release_project <프로젝트> <base> <변경 요약>
+# 릴리즈 커밋의 CI 가 끝날 때까지 기다린 뒤 태그를 민다 — moina 처럼 릴리즈 워크플로가
+# "정확히 그 커밋의 CI 성공"을 요구하는 저장소는 커밋과 태그를 같이 밀면 매번 실패했다. 실패해도 태그는 민다.
+wait_for_checks(){
+  local n=$1 sha=$2 i total pending failed
+  for i in $(seq 1 40); do
+    read -r total pending failed < <(cd "$repo" && gh api "repos/{owner}/{repo}/commits/$sha/check-runs" \
+      --jq '[.check_runs|length, ([.check_runs[]|select(.status!="completed")]|length), ([.check_runs[]|select(.conclusion=="failure")]|length)] | @tsv' 2>/dev/null || echo "0 0 0")
+    if [ "${total:-0}" -gt 0 ] && [ "${pending:-0}" -eq 0 ]; then
+      [ "${failed:-0}" -eq 0 ] && log "$n: CI on $sha passed ($total checks)" || log "$n: CI on $sha has $failed failed check(s) — pushing tag anyway"
+      return 0
+    fi
+    [ "$i" -eq 1 ] && log "$n: waiting for CI on ${sha:0:7} (checks: ${total:-0}, pending: ${pending:-0})"
+    sleep 30
+  done
+  log "$n: CI on ${sha:0:7} still pending after 20 min — pushing tag anyway"; return 0
+}
+
 # GitHub Release 를 보장하고 자산을 올린다. 사용: publish_release <프로젝트> <태그> <제목> <노트파일> <ghrel(true/false)> <release.json>
 publish_release(){
   local n=$1 tag=$2 title=$3 notes=$4 ghrel=$5 rfile=$6 i
@@ -156,6 +173,7 @@ release_project(){
   # 태그만 찍는 관례(버전 커밋 없음)도 릴리즈다 — 커밋이 없어도 새 태그가 있으면 내보낸다
   if [ "$status" = released ] && { [ "$ahead" -gt 0 ] || [ "$tagged" -eq 1 ]; }; then
     if { [ "$ahead" -eq 0 ] || git -C "$rwt" push origin "HEAD:$base" >>"$LOG" 2>&1; } \
+       && { [ "$ahead" -eq 0 ] || [ "$tagged" -eq 0 ] || wait_for_checks "$n" "$(git -C "$rwt" rev-parse HEAD)"; } \
        && { [ "$tagged" -eq 0 ] || git -C "$rwt" push origin "refs/tags/$tag" >>"$LOG" 2>&1; }; then
       log "$n: released ${tag:-(no tag)}"; result="$result, released ${tag:-$(jq -r .version "$rfile")}"
       git -C "$repo" pull --ff-only origin "$base" >>"$LOG" 2>&1 || true
