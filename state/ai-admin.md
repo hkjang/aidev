@@ -75,3 +75,16 @@
   - CI에 정적 분석 단계(`go vet`, `golangci-lint`, eslint)가 없어 회귀를 테스트로만 잡고 있음. web에는 eslint 설정 자체가 없음 (가치 3 / 위험 1 / M)
 - 릴리즈: v1.2.6 (2026-09-04)
 - 릴리즈: v1.2.6 (2026-09-04)
+
+## 2026-09-04
+- 선택: 목록 조회가 읽지 못한 행을 건너뛰고 200을 반환하던 문제 수정 (가치 4 / 위험 2 / 작업량 M)
+- 결과: 성공
+- 요약: `internal/server`의 29개 `rows.Next()` 루프 중 절반 이상이 `rows.Scan` 실패 행을 `continue`로 넘기고 `rows.Err()`도 확인하지 않아, API 키·키 권한·사용자·역할·권한·세션·AI 공급자·모델·승인 정책/요청·레거시 테이블/컬럼 목록이 짧아진 결과를 200으로 반환했다. 관리자는 짧은 목록을 완전한 목록과 구별할 수 없어 실제로 남아 있는 고권한 API 키나 대기 중인 승인 요청을 없는 것으로 판단할 수 있었고, 이는 v1.2.5에서 고친 감사 CSV 잘림과 같은 부류다. 행 단위 목록 생성을 제네릭 헬퍼 `collectRows`(scan 실패 즉시 중단 + `rows.Err()` 확인)로 모아 13개 지점을 옮기고, 1행→N항목이라 헬퍼가 맞지 않는 `/v1/models`는 저장소가 이미 쓰던 명시적 형태로 고쳤다. MCP 도구 3곳도 `toolFailure`로 실패를 알린다. 대시보드 위젯 3곳은 조회 실패 자체를 빈 값으로 처리하는 기존 degradation 계약이라 그대로 두었다. `collectRows`의 정상·scan 실패·stream 실패 동작을 기존 `stubAuditRows`를 재사용한 단위 테스트로 검증(수정 전 동작에서는 실패)하고, 열 개 목록 endpoint 응답을 통합 테스트에 추가했다. Docker로 PostgreSQL 16을 띄워 `TEST_POSTGRES_DSN`을 설정한 뒤 `go test -race -count=1 ./...`(통합 테스트 포함)을 실제로 통과시켰고 `gofmt -l`·`go vet`·`go build ./...`·`scripts/verify-version.sh`·`npm ci && npm test`(62개)·`npm run build`도 모두 통과했다. 저장소 관례에 따라 VERSION을 1.2.9로 올리고 CHANGELOG·README·docs·web 버전 메타데이터를 맞췄으며 `docs/api.md`에 목록 완전성 계약을 명시했다(직전 릴리즈 커밋들과 동일하게 `internal/ui/dist`는 재빌드하지 않음).
+- 보류 아이디어:
+  - `safeCSVCell`이 OWASP가 함께 권고하는 tab(0x09)·CR(0x0D) 선행 문자를 중화하지 않음. `docs/api.md`의 "formula injection 위험 문자를 중화합니다"와 어긋나지만 주요 필드가 TrimSpace되어 실제 도달 경로는 좁음 (가치 2 / 위험 1 / S)
+  - `auth.truncate`가 user agent를 1000바이트로 자르면서 UTF-8 경계를 지키지 않아, 다국어 UA가 잘린 자리에서 깨지면 PostgreSQL이 세션 INSERT를 거부해 로그인이 401로 실패할 수 있음 (가치 2 / 위험 1 / S)
+  - `clearSessionCookies`가 `setSessionCookies`와 달리 `Secure`를 설정하지 않고 CSRF 쿠키의 `SameSite`도 Strict가 아닌 Lax로 지움 (가치 2 / 위험 2 / S)
+  - 대시보드 위젯 3개 조회가 실패를 빈 배열로 감춰, 통계·최근 활동이 0건인지 조회 실패인지 화면에서 구분할 수 없음 (가치 2 / 위험 2 / S)
+  - CI에 정적 분석 단계(`go vet`, `golangci-lint`, eslint)가 없어 회귀를 테스트로만 잡고 있음. web에는 eslint 설정 자체가 없음 (가치 3 / 위험 1 / M)
+- 릴리즈: v1.2.9 (2026-09-04)
+- 릴리즈: v1.2.9 (2026-09-04)
