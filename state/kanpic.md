@@ -101,3 +101,16 @@
   - 서버의 `formatValue` 는 글자 "123" 을 `toNumber` 로 수로 읽고 격자는 글자로 보아, 숫자처럼 생긴 글자 값에서 두 곳의 답이 갈릴 수 있다(TEXT 의 강제 변환과 칸 그리기의 차이). 어느 쪽에 맞출지 정할 것.
 - 릴리즈: v0.235.0 (2026-09-04)
 - 릴리즈: v0.235.0 (2026-09-04)
+
+## 2026-09-05
+- 선택: 가져오기가 스프레드시트의 수만 수로 읽는다 (가치 4 / 위험 1 / 작업량 S)
+- 결과: 성공
+- 요약: 값을 수로 읽는 자가 두 벌이었다 — 수식 엔진(`decimalText`)과 격자(`spreadsheetNumber`)는 스프레드시트가 수라고 부르는 것만 읽는데, 파일을 읽어 들이는 자리(`internal/importexport` 의 `parseScalar`·`parseXLSXValue`, `internal/external` 의 `csvNumber`)만 Go 의 `ParseFloat` 를 그대로 써 `NaN`·`Inf`·`Infinity`·`1_000`·`0x1p4` 까지 수로 받았다. pandas·R 이 내보낸 CSV 의 빠진 값이 바로 `NaN` 이라 그 한 칸이 부동소수점 NaN 이 되었고, 그 값은 `json.Marshal` 이 거부하므로 `parseDelimited` 가 통째로 실패했다(사람이 본 것은 "json: unsupported value: NaN" 뿐). `1_000` 은 조용히 1000 이 되어 파일에 적힌 것과 다른 값을 칸에 남겼다. 엔진의 자를 `formula.DecimalNumber` 로 내어 세 곳이 함께 쓰게 하고 `csvNumber` 중복은 지웠다(앞뒤 빈칸 다듬기는 부르는 쪽에 남겨 가져오기가 파일에 적힌 대로 두게 했다). 검증: 새 테스트 3개(`TestParseScalarKeepsGoOnlyNumbersAsText`, `TestOneExportedNaNDoesNotStopTheWholeImport`, `TestParseXLSXValueKeepsGoOnlyNumbersAsText`)와 `gofmt -l`, `go vet ./...`, `go build ./...`, `go test ./...`(전체 통과), `scripts/check-release-docs.sh`, `scripts/check-commit-identities.sh`. 커밋 2개(fb0151d, 5eda9c8), 릴리즈 노트 v0.236.0 과 README VERSION·USER_GUIDE 갱신. 웹은 이미 같은 자를 쓰고 있어 손대지 않았고 npm 검사도 돌리지 않았다.
+- 보류 아이디어:
+  - `?` 의 자리 맞추기 빈칸을 그리지 않는다. 엑셀은 `# ??/??` 의 한 자리 분자를 빈칸으로 채워 자릿수를 맞춘다.
+  - `csvNumber` 가 IMPORTDATA 의 `"1,200"`·`"12%"`·앞뒤 통화 기호를 글자로 남긴다(이제 `formula.DecimalNumber`). 가져오기 미리보기의 "글자로 담긴 숫자" 경고와 같은 자리에 놓을지 검토할 것.
+  - 외부 호출 캐시 키가 함수·주소만 담아, `external.max_kb` 를 올려도 캐시가 남아 있는 동안은 "크기를 넘습니다" 가 그대로다.
+  - `DOLLARDE`·`DOLLARFR` 이 `math.Pow(10, ceil(log10(fraction)))` 로 자리를 밀어 이진 실수 어긋남이 남아 있다(`DOLLARDE(1.02,16)` 이 1.125 가 아니라 1.1250000000000002).
+  - 서버의 `formatValue` 는 글자 "123" 을 `toNumber` 로 수로 읽고 격자는 글자로 보아, 숫자처럼 생긴 글자 값에서 두 곳의 답이 갈릴 수 있다.
+- 릴리즈: v0.236.0 (2026-09-05)
+- 릴리즈: v0.236.0 (2026-09-05)
