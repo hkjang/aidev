@@ -80,3 +80,15 @@
   - `docs/operations.md`의 `resso_introspection_errors_total` 항목에 stage 라벨 값 목록을 적어, 어느 조회가 멈췄는지 대시보드에서 바로 읽게 하기 (가치 1 / 위험 1 / S)
   - `SessionByToken`이 `locked_until`을 보지 않는 것은 의도(잠금은 무차별 대입 방어이고 세션 종료로 확장하면 DoS가 된다) — 막지 말고 문서화하는 쪽으로 결론낼 것 (가치 2 / 위험 1 / S)
 - 릴리즈: v0.9.69 (2026-09-04)
+
+## 2026-09-04 (2회차)
+- 선택: SSO 세션을 **못 읽은 것**을 세션이 **없는 것**으로 답하던 두 곳 수정 (가치 4 / 위험 1 / 작업량 M)
+- 결과: 성공 (커밋 bcc6f60)
+- 요약: 브라우저의 SSO 세션을 읽는 OIDC 엔드포인트 둘(`authorization`·`oidcLogout`)이 `SessionByToken`의 에러를 "없음"과 같이 취급했고, 그 결과 나가는 두 답이 모두 RP가 **행동으로 옮기는 단언**이었다. (1) `authorization`에서 `prompt=none`의 답인 `login_required`는 "세션이 없다"는 말이고, 조용한 갱신을 하는 RP는 이를 "사용자가 로그아웃했다"로 읽고 **자기 세션도 끝낸다** — 올바른 처리다. 그래서 이쪽 장애가 저하가 아니라 **전 RP 일괄 로그아웃**이 됐다. 바로 한 줄 아래 `SessionAuthenticatedRecently`는 이미 못 돌면 `server_error`를 내는데, 이 조회가 그보다 먼저 돌아 장애가 여기 먼저 닿았다. (2) `oidcLogout`에서는 `endSession` 주석이 "이 서비스가 가진 가장 오해를 부르는 실패"라고 이미 적어둔 그 결과 — 세션은 살아 있고, 거기 묶인 Refresh Token은 계속 갱신되며, 폐기가 곧 통지이므로 back-channel logout도 나가지 않는다 — 가 **한 단계 앞에서** 벌어지는데 감사 기록이 **아예 없었다**. 로그인 안 한 브라우저의 로그아웃과 글자 그대로 같은 모습이었고, 쿠키는 지워지고 RP는 post-logout 페이지로 리다이렉트되어 다 끝난 것처럼 보였다. 이제 `store.ErrNotFound`만 "로그인 안 함"이고, 나머지는 각각 `server_error`와 `PARTIAL` LOGOUT 기록(+ Realm을 적은 로그)이다. 로그아웃 응답은 일부러 그대로 뒀다(`endSession` 위에 이미 적힌 판단 — 그 시점엔 쿠키가 이미 지워졌고 사람이 할 수 있는 게 없다). 기록이 세션을 지목하지 못하는 이유(조회가 실패한 것이므로)와 IP·시각으로 찾으라는 안내를 `docs/operations.md`에, `prompt=none`의 새 구분을 `docs/compatibility.md`에 적었다. 검증: 새 연동 테스트가 `sso_sessions`를 RENAME으로 숨기고(테스트마다 전용 스키마) 수정 전 코드에서 세 건 모두 실제로 실패함을 확인했다(`prompt=none answered error="login_required"`, 인가 요청 `error=""`, `logout ... was not audited at all`). 쿠키 없는 로그아웃이 새 기록을 만들지 않는 것과 정상 상태에서 `prompt=none`이 코드를 받는 것도 같은 테스트가 확인한다. `make test` 전체 통과(exit 0) — `go test -race ./...` 전 패키지 ok(httpserver 85s / store 85s), 연동 테스트 SKIP 0건, `go vet`, `golangci-lint`(0 issues), `govulncheck`(0), `npm run lint`, `npm run test`, `npm run build`. 빌드가 만든 `webui/dist/index.html` 변경은 되돌렸다.
+- 보류 아이디어:
+  - `requireSession` 미들웨어도 저장소 장애를 401 `authentication_required`로 답해, DB 순단이 콘솔 사용자 전원을 로그인 화면으로 보낸다 — 프런트엔드 처리까지 봐야 해 이번엔 뺐다 (가치 3 / 위험 2 / M)
+  - `authorization`이 `id_token_hint`를 `AuthorizationRequest`에 저장하지 않아, 로그인 폼을 거친 뒤에는 hint가 지목한 계정과 다른 계정으로 로그인해도 코드가 나간다 (컬럼 추가 마이그레이션 필요) (가치 3 / 위험 2 / M)
+  - UserInfo POST에서 form-encoded `access_token` 파라미터 수용 (RFC 6750 §2.2). 현재는 Authorization 헤더만 읽는다 (가치 2 / 위험 1 / S)
+  - `oidcLogout`이 hint의 `sub`를 쿠키 세션의 사용자와 대조하지 않아, 다른 사람의 ID Token을 hint로 줘도 지금 로그인한 사람이 로그아웃된다 (스펙상 SHOULD) (가치 2 / 위험 2 / M)
+  - `docs/operations.md`의 `resso_introspection_errors_total` 항목에 stage 라벨 값 목록을 적어, 어느 조회가 멈췄는지 대시보드에서 바로 읽게 하기 (가치 1 / 위험 1 / S)
+- 릴리즈: v0.9.70 (2026-09-04)
