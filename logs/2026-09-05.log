@@ -119,3 +119,54 @@ HEAD is now at 3ffa5ca Merge pull request #9 from hkjang/auto/2026-09-05-0040
 [00:51:46] aiportal-java: release skipped (릴리즈 이력이 전혀 없는 저장소. git tag 0개(전체 이력 23커밋), GitHub Release 0개(gh 인증 정상, release list 비어 있음), CHANGELOG/RELEASE/VERSION 파일 및 릴리즈 노트 양식 없음, docs/ 25개 문서에도 릴리즈 절차 없음. 유일한 버전 문자열인 build.gradle:9 version='0.0.1-SNAPSHOT' 은 Spring Initializr 기본값으로 first commit 이후 한 번도 변경된 적 없음. .github/workflows 부재이며 .gitlab-ci.yml 은 전적으로 브랜치 트리거(main/develop -> gradlew clean build -> app.war 복사 -> k8s rollout/podman restart)로 태그에 반응하는 워크플로나 버전별 산출물이 없음. deploy/offline/change-package.sh 는 폐쇄망 GitLab clone 으로 변경분을 옮기는 base->target diff 전송 도구로 릴리즈 패키징이 아님. 태그 형식/버전 체계/노트 위치를 새로 정하는 것은 사람의 판단이라 아무것도 만들지 않음. 저장소 변경 없음(커밋·태그 없음, worktree clean).)
 fatal: '/home/hkjang/.cache/auto-improve-wt/aiportal-java' is not a working tree
 reports: 4 day(s), 226 run(s)
+[osc] Running Open Code Review...
+[00:51:50] aidev synced: run(2026-09-05): aiportal-java — merged https://github.com/hkjang/aiportal-java/pull/9, release skipped
+[00:51:50] done
+[01:00:05] skip DartFly: dirty working tree
+[01:00:06] skip Kkiit: dirty working tree
+[01:00:07] skip Momento: dirty working tree
+[01:00:08] skip SecCheck: dirty working tree
+[01:00:16] skip cutover: dirty working tree
+[01:00:30] skip postra: dirty working tree
+[01:00:33] skip seaton: dirty working tree
+[01:00:37] candidates(29): AgentHub Clustara Invenqor Quantoss ReSSO Vendra ai-admin aiportal-front-admin aiportal-front aiportal-java aiportal-py appstore dataworks git-ctx igame jikim jupiq kanpic moina moyro muni pii-masker ptium releasedock relio umm vibe-coders visitflow weekly
+[01:00:37] picked: aiportal-py
+[01:00:37] === aiportal-py (base=main, branch=auto/2026-09-05-0100)
+Preparing worktree (new branch 'auto/2026-09-05-0100')
+HEAD is now at d0525ab Merge pull request #5 from hkjang/auto/2026-09-04-0600
+remote: 
+remote: Create a pull request for 'auto/2026-09-05-0100' on GitHub by visiting:        
+remote:      https://github.com/hkjang/aiportal-py/pull/new/auto/2026-09-05-0100        
+remote: 
+To https://github.com/hkjang/aiportal-py.git
+ * [new branch]      auto/2026-09-05-0100 -> auto/2026-09-05-0100
+branch 'auto/2026-09-05-0100' set up to track 'origin/auto/2026-09-05-0100'.
+[01:04:36] aiportal-py: 1 commit(s) → PR https://github.com/hkjang/aiportal-py/pull/6
+[01:04:37] aiportal-py: waiting for CI on f4fb71b (checks: 0, pending: 0)
+[01:09:12] aiportal-py: no CI checks on f4fb71b after 5 min — continuing
+[01:09:16] aiportal-py: merged into main
+From https://github.com/hkjang/aiportal-py
+ * branch            main       -> FETCH_HEAD
+   d0525ab..12d7a47  main       -> origin/main
+Updating d0525ab..12d7a47
+Fast-forward
+ docs/CURRENT_STATE_AUDIT.md         |   6 +-
+ docs/LANGGRAPH_WORKFLOW.md          |   5 +-
+ docs/TESTING.md                     |   1 +
+ tests/unit/test_workflow_globals.py | 148 ++++++++++++++++++++++++++++++++++++
+ tests/unit/test_workflow_state.py   |  94 +++++++++++++++++++++++
+ util/cf_workflow.py                 |  13 ++--
+ util/kai_workflow.py                |  13 ++--
+ util/kcb_workflow.py                |  13 ++--
+ util/law_workflow.py                |  19 +++--
+ util/workflow_state.py              |  29 +++++++
+ 10 files changed, 313 insertions(+), 28 deletions(-)
+ create mode 100644 tests/unit/test_workflow_globals.py
+ create mode 100644 tests/unit/test_workflow_state.py
+ create mode 100644 util/workflow_state.py
+[01:09:18] aiportal-py: local main fast-forwarded
+Preparing worktree (detached HEAD 12d7a47)
+HEAD is now at 12d7a47 Merge pull request #6 from hkjang/auto/2026-09-05-0100
+[01:10:24] aiportal-py: release skipped (릴리즈 이력이 전혀 없는 저장소입니다. 확인 결과: git tag 0개(로컬·origin ls-remote 모두 없음), gh release list 결과 없음, CHANGELOG.md/docs/RELEASE*.md 등 릴리즈 노트 없음, 버전 파일 없음(pyproject.toml/setup.py/setup.cfg/package.json/VERSION/Chart.yaml/Cargo.toml 모두 부재), .github/workflows 디렉터리 자체가 없어 태그·릴리즈에 반응하는 워크플로 없음, scripts/ 나 Makefile 등 릴리즈·오프라인 패키징 스크립트 없음, git log 전체 14개 커밋에 릴리즈/버전 형식 커밋 없음(first commit, docs, fix, merge PR 뿐). 배포는 .gitlab-ci.yml 이 main/develop 브랜치 푸시에 반응해 배포 디렉터리에서 git reset --hard 후 k8s rollout restart/podman restart 하는 방식이라 버전·태그 개념을 쓰지 않습니다. api.py:106 의 FastAPI version="1.0.0" 은 첫 커밋 이후 한 번도 변경된 적 없는 앱 메타데이터이며 릴리즈 절차와 무관합니다. docs/ROADMAP.md 의 R0~R5 는 버전이 아니라 로드맵 단계 표기입니다. 따를 기존 관례가 없어 새 관례를 만들지 않고 건너뜁니다(관례 수립은 사람의 결정 사항). 커밋·태그·파일 변경 없음.)
+fatal: '/home/hkjang/.cache/auto-improve-wt/aiportal-py' is not a working tree
+reports: 4 day(s), 227 run(s)

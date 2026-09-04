@@ -53,3 +53,13 @@
   - A-101 워크플로 모듈 전역 `original_question` 제거 → GraphState 로 전달 (동시 요청 간 질문 오염) — 가치 4 / 위험 3 / M
   - A-105 오류 응답 계약 통일 (except block 의 미할당 `response` 포함) — 가치 4 / 위험 3 / L
   - A-206 추천 질문 캐시 무한 append → 원자적 교체·중복 제거 — 가치 3 / 위험 2 / S
+
+## 2026-09-05
+- 선택: 워크플로 전역 `original_question` 제거 → GraphState 로 전달 (감사 A-101) (가치 4 / 위험 2 / 작업량 M)
+- 결과: 성공
+- 요약: KAI·KCB·법률·Confluence 4개 LangGraph 워크플로의 entry function 이 모듈 전역 `original_question` 을 요청마다 덮어쓰고 노드들이 그 전역을 읽고 있었다. 같은 프로세스에서 요청이 겹치면 A 사용자의 질문이 B 사용자의 `guard_rail`/`query_extension`/`eval_weight_search`/`intro`/`check_search` 에서 쓰여 가드레일 분기·검색 가중치·조항 조회가 엉뚱한 질문 기준으로 수행된다. `retrieve` 이후 노드가 `question` 을 확장 질의로 덮어쓰기 때문에 기존 `question` 필드만으로는 원본 질문을 보관할 수 없어, `original_question` 전용 필드를 각 `GraphState` 에 추가하고 helper `util/workflow_state.py`(`with_original_question()` 으로 inputs 에 주입, `get_original_question(state)` 로 읽되 없으면 `question` 으로 fallback)를 도입했다. `global` 선언 4곳과 전역 읽기 8곳을 전부 교체하고, `kai_workflow` 의 미사용 전역 `original_question`·`last_rewritten` 도 제거했다. 진입점이 `*_langgraph` 4개뿐임을 확인해 호출 계약은 그대로다. `langgraph` 가 설치돼 있지 않아 워크플로 모듈은 import 할 수 없으므로, helper 는 실제 동시 실행(asyncio.gather) 테스트로(`tests/unit/test_workflow_state.py`), 워크플로 모듈은 AST 검사로(`tests/unit/test_workflow_globals.py`: `global` 선언 금지, 모듈 전역 요청 상태 금지, 노드의 전역 읽기 금지, 진입점의 `with_original_question()` 호출, `GraphState` 필드 선언) 검증했다. 옛 `law_workflow.py` 를 되돌려 넣어 신규 테스트 4건이 실제로 실패하는지 확인했다. `python -m pytest` 654 passed(기존 611), `python -m pyflakes .` undefined name 0건. docs 3종(CURRENT_STATE_AUDIT/LANGGRAPH_WORKFLOW/TESTING) 갱신. 커밋 `f4fb71b`.
+- 보류 아이디어:
+  - A-002 startup 무기한 대기(policy token) 에 timeout/backoff 추가 — 가치 4 / 위험 3 / M
+  - A-105 오류 응답 계약 통일 (except block 의 미할당 `response` 포함) — 가치 4 / 위험 3 / L
+  - A-206 추천 질문 캐시 무한 append → 원자적 교체·중복 제거·최대 크기 — 가치 3 / 위험 2 / S
+  - A-108 Confluence 그래프의 `retrieve → llm_response → END` 명시적 edge 추가 — 가치 3 / 위험 3 / S (LangGraph 실행 확인 필요)
