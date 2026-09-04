@@ -73,3 +73,16 @@
   - `mailMessageID` 의 도메인 추출(`@` 위치·randfail) 분기에 잔존 변이 3건이 있습니다 (가치 1 / 위험 1 / 작업량 S)
   - `outlookForDueDate` 의 AT_RISK 문구가 low==high 일 때 최근 속도를 빼고 전체 평균만 말합니다 (가치 1 / 위험 1 / 작업량 S)
 - 릴리즈: v0.287.0 (2026-09-04)
+
+## 2026-09-04 (2회차)
+- 선택: 주 격자를 옮긴 전환 주에 회의 안건과 주간 변화 요약이 그 주의 보고서를 읽지 못하던 버그 수정 (가치 3 / 위험 2 / 작업량 M)
+- 결과: 성공
+- 요약: `snapshotFor` 는 스냅샷을 `WeekStart == week` 로 골랐고 지난주는 `weekBefore(week)` 정확일치였습니다. 요일을 바꾸면 격자만 옮겨지고 보고서는 그 자리에 남으므로, 전환 주의 회의 자료가 통째로 비었습니다 — "논의할 것이 없다" 가 아니라 업무 0건·인원 0명·이슈 0건, 팀 전원이 보고를 마친 주에 나오는 화면입니다. 그다음 주에는 반대로 비교 대상을 못 찾아 몇 달째 이어지던 업무가 `신규`·`재개` 로 올라왔습니다. 회의 모드와 주간 변화 요약이 `classifyWeeklyChange` 를 공유하므로 둘이 함께 틀렸습니다. SQL 쪽 `weekCoveringDays`·`weekEndedBefore` 와 같은 규칙을 Go 에서 묻는 `snapshotFor`(겹침, 둘이면 늦은 `week_start`)·`snapshotPrior`(바로 앞 7일에 끝난 것)로 바꾸고, `신규` 판정의 `item.FirstWeek == week` 를 `== current.WeekStart` 로 고쳤습니다. 비교 창을 한 주로 묶은 이유는 "지난주에 없었다" 가 `재개` 판정의 근거이기 때문입니다 — 여기를 다 열면 다섯 주 전 업무가 평범한 `진척` 이 됩니다. 회귀 시험 2개(`weeklychange_test.go` 8가지, `meeting_test.go`; guards: classifyWeeklyChange/snapshotFor/snapshotPrior, buildMeeting). 검증: 수정 전 코드에서 전환 주 2건·다음 주 2건이 `ABSENT`·`ABSENT`·`RESUMED`·`ABSENT` 로 실패하고 회의 안건은 0건인 것을 확인 → 실제 DB(WEEKLY_TEST_POSTGRES_DSN)로 `go test ./...` 전체 통과, `go vet`, `gofmt`, guard-check(세 가드 모두 도달), version·openapi·modal-close 통과, frontend lint·build·test(121개) 통과. mutation-check 첫 회차에서 `snapshotFor`·`snapshotPrior` 의 겹침 동점 처리(늦은 것 고르기) 변이가 살아남아 격자가 뒤로 옮겨진 사례 2개를 더했고, 이제 두 함수의 변이 12건이 모두 잡힙니다. `classifyWeeklyChange` 의 정체 경계 변이(`StallWeeks` 는 넘어야 하는 수가 아니라 세는 수)는 아무 시험도 잡지 못했는데, 모든 분기를 이미 걸어 보던 기존 `TestClassifyWeeklyChange` 에 가드 표시가 없어 변이 검사가 세지 않고 있었습니다 — 표시를 달고 경계 사례를 하나 더해 닫았습니다. 커밋은 mutation-check 가 돌지 않는 동안에만 했습니다. backup-check 는 로컬에 psql 이 없어 건너뛰었습니다(CI 에서 실행).
+- 보류 아이디어:
+  - `analyticsParticipation`(`r.week_start BETWEEN`)과 `weekIsOwed` 의 주별 격자도 전환 주를 미제출로 세는지 확인 (가치 3 / 위험 3 / 작업량 M)
+  - `issueoutcome.go` 의 `r.week_start < $2` 도 전환 주에 같은 주 보고서를 "이전 결과"로 셈하는지 확인 (가치 1 / 위험 2 / 작업량 S)
+  - `mailMessageID` 의 도메인 추출(`@` 위치·randfail) 분기에 잔존 변이 3건이 있습니다 (가치 1 / 위험 1 / 작업량 S)
+  - `summarizeWorkItem` 의 `AgeWeeks`·`SilentWeeks` 도 7일 등간격을 전제하므로 격자를 옮긴 주가 한 주 더 세지는지 확인 (가치 2 / 위험 2 / 작업량 S)
+  - `outlookForDueDate` 의 AT_RISK 문구가 low==high 일 때 최근 속도를 빼고 전체 평균만 말합니다 (가치 1 / 위험 1 / 작업량 S)
+- 릴리즈: v0.289.0 (2026-09-04)
+- 릴리즈: v0.289.0 (2026-09-04)
