@@ -32,3 +32,14 @@
   - `useAppList.getFormattedAppList` 의 `String(app?.knowledge_info?.status) ?? ''` 가 문자열 "undefined" 를 만드는 문제 정리 (Sidemenu.vue 에도 동일 코드 중복) (가치 2 / 위험 1 / S)
   - `mitt` 이 `src/utils/eventBus.js` 에서 직접 import 되는데 package.json 직접 의존성에 없어 전이 의존성에 기대고 있는 문제 (가치 3 / 위험 1 / S)
   - 빌드 산출물 단일 청크 6.2MB 문제(manualChunks 코드 스플리팅) 개선 (가치 3 / 위험 3 / M)
+
+## 2026-09-05
+- 선택: 앱 이동(updateLogAndGo) 쿼리 유실·외부 링크 취약점 수정 (가치 4 / 위험 2 / 작업량 M)
+- 결과: 성공
+- 요약: 모든 앱 카드 클릭이 거치는 공통 네비게이션 경로 `src/utils/appUpdateLog.js` 에서 5건을 고쳤다 — (1) `buildTo` 가 `to` 를 문자열로 받으면 `extraQuery` 를 그대로 버려 img 모드 앱의 `?mode=img` 가 유실되던 문제(문자열도 `{path, query, hash}` 로 병합하도록 변경), (2) 같은 이유로 `nextTo.path` 가 undefined 라 `/chatmain` 판별에 실패해 `writeOpenApp` 이 호출되지 않고 챗 화면이 앱 컨텍스트를 잃던 문제(`toRoutePath` 도입), (3) `mode === 'link'` 의 `window.open(urlLink, '_blank')` 이 `noopener` 없이 열려 reverse tabnabbing 이 가능하고 `javascript:`/`data:` url_link 가 그대로 실행되던 문제(`isSafeExternalLink`/`openExternalLink` 로 http·https·mailto 만 허용, 차단 시 일반 이동으로 폴백), (4) iframe 모드도 동일하게 검증해 위험한 값은 빈 문자열로 넘기도록(ChatFrame 은 빈 값이면 "불러올 메신저가 없습니다" 표시) 처리, (5) `url_link` 가 문자열이 아닐 때 `.replace` 로 예외가 나던 문제. 순수 헬퍼(`toRoutePath`, `buildTo`, `resolveUserIdFromEmail`, `applyUserIdTemplate`, `isSafeExternalLink`, `openExternalLink`)로 분리하고 회귀 테스트 30건을 추가했다. 검증은 `npm test`(총 130건 통과, 신규 30건)와 `npm run build:dev`(빌드 성공)로 수행했다.
+- 보류 아이디어:
+  - markdown.js 의 DOMPurify 설정/onclick 파싱 경로 XSS 하드닝 검토 (transformAppAnchors 가 `&lt;` 를 실태그로 되돌림) (가치 4 / 위험 3 / M)
+  - `useFileAttach` 알림 문구 하드코딩(20MB/100MB) 및 `msg.includes('10')` 로 서버 오류를 용량초과로 오판하는 문제 수정 (가치 3 / 위험 1 / S)
+  - `useTableUtils.sortData` 가 모든 값을 `getNum` 으로 숫자 변환해 텍스트·날짜 컬럼 정렬이 동작하지 않는 문제 (현재 .vue 에서 미사용) (가치 2 / 위험 2 / S)
+  - `mapAppToCard(item, idx, 'prompt')` 결과에 `to` 가 없어 GlobalSearch 프롬프트 카드 클릭이 무반응인 문제 (의도 확인 필요) (가치 3 / 위험 3 / S)
+  - 빌드 산출물 단일 청크 6.2MB 문제(manualChunks 코드 스플리팅) 개선 (가치 3 / 위험 3 / M)
