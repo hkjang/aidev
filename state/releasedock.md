@@ -63,3 +63,16 @@
   - (완료 확인) `readUploadBatch` 단위 테스트는 `http_helpers_test.go` 에 이미 있어 무효입니다.
 - 릴리즈: v0.5.5 (2026-09-03)
 - 릴리즈: v0.5.5 (2026-09-03)
+
+## 2026-09-04
+- 선택: 묶음 중간 파일이 배포되지 않았는데도 마지막 파일에서 복제·앱 배포가 실행되는 문제 수정 (가치 5 / 위험 2 / 작업량 M)
+- 결과: 성공
+- 요약: `업로드당 한 번` 으로 미뤄 둔 단계는 파일 하나가 아니라 업로드 전체를 대상으로 동작합니다(복제는 그 시점 레지스트리를 미러링하고, 앱 배포는 애플리케이션을 한 번 교체). 그런데 묶음 중간 파일의 업로드가 거부되거나 배포 명령이 실패해도 마지막 파일의 실행은 두 단계를 그대로 실행하고 SUCCESS 로 끝나, 실패한 파일의 이미지가 빠진 채 앱이 교체되고 초록색으로 보고됐습니다. 지금까지 세션들이 막아 온 "일부만 갖춰진 상태가 배포된 것으로 보이는" 불변식이 묶음의 반대편에서 뚫려 있었습니다. `uploadHasFailedPackages` 로 같은 `batch_id` 의 다른 실행이 모두 SUCCESS 인지 확인하고(기존 `simple_runs_batch_idx` 부분 인덱스 사용), 아니면 두 단계를 `SKIPPED` 로 남기고 순수 함수 `stageHeldForIncompleteUpload`/`outcomeWithHeldStages` 로 실행을 FAILED 로 뒤집습니다. 확인 자체가 실패하면 단계를 실행하지 않는 쪽을 택합니다(`outcomeWithoutStageSettings` 선례). 순수 단위 테스트 2건과 스키마 격리 통합 테스트 1건(`simple_batch_test.go`)을 추가했고, 로컬 도커 PostgreSQL 16 으로 `TEST_POSTGRES_DSN` 을 채워 backend/runner `go vet`·`go test ./...`(통합 테스트 포함), `npm ci`, `npm test -- --run`(72건), `npm run build` 를 모두 통과했습니다. docs/simple-mode.md 에 절을 추가하고 VERSION 을 0.5.6 으로 올렸습니다(저장소 관례).
+- 보류 아이디어:
+  - 심플 배포 화면의 `waitForTerminal` 이 읽기 실패를 무한히 삼켜, 세션 만료·네트워크 단절 시 화면이 영구히 잠기고 안내도 없습니다 (가치 3 / 위험 3 / M).
+  - CI 와 Makefile 에 `go vet` (또는 golangci-lint) 단계가 없어 정적 검사가 수동입니다 (가치 3 / 위험 1 / S).
+  - 실행 상세 화면이 `appDeployError` 는 표시하면서 `replicationError` 는 표시하지 않아 복제 실패 사유가 단계 행에 없습니다 (가치 2 / 위험 1 / S).
+  - `simpleRunLogger.append` 가 빈 payload 를 저장하지 않아 스크립트 출력의 빈 줄(문단 구분)이 로그에서 사라집니다 (가치 2 / 위험 1 / S).
+  - `downloadSimpleRunLog` 이 조회한 `original_filename`·`status` 를 쓰지 않아 다운로드 파일명이 run id 뿐입니다 (가치 2 / 위험 1 / S).
+- 릴리즈: v0.5.6 (2026-09-04)
+- 릴리즈: v0.5.6 (2026-09-04)
