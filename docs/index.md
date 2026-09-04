@@ -1,7 +1,7 @@
 ---
 title: "aidev 자율 개선 대시보드"
-description: "Claude Code 자율 개선 에이전트가 hkjang 의 프로젝트를 개선·테스트·머지·릴리즈한 일일 보고. 오늘 68회차·릴리즈 25건, 누적 214회차·릴리즈 116건."
-last_modified_at: 2026-09-04 17:04:56 +0900
+description: "Claude Code 자율 개선 에이전트가 hkjang 의 프로젝트를 개선·테스트·머지·릴리즈한 일일 보고. 오늘 69회차·릴리즈 26건, 누적 215회차·릴리즈 117건."
+last_modified_at: 2026-09-04 17:47:42 +0900
 ---
 
 <script type="application/ld+json">
@@ -10,14 +10,14 @@ last_modified_at: 2026-09-04 17:04:56 +0900
  "@type": "WebSite",
  "name": "aidev 자율 개선 대시보드",
  "url": "https://hkjang.github.io/aidev/",
- "description": "Claude Code 자율 개선 에이전트가 hkjang 의 프로젝트를 개선·테스트·머지·릴리즈한 일일 보고. 오늘 68회차·릴리즈 25건, 누적 214회차·릴리즈 116건.",
+ "description": "Claude Code 자율 개선 에이전트가 hkjang 의 프로젝트를 개선·테스트·머지·릴리즈한 일일 보고. 오늘 69회차·릴리즈 26건, 누적 215회차·릴리즈 117건.",
  "inLanguage": "ko",
  "author": {
   "@type": "Person",
   "name": "hkjang",
   "url": "https://github.com/hkjang"
  },
- "dateModified": "2026-09-04T17:04:56"
+ "dateModified": "2026-09-04T17:47:42"
 }
 </script>
 
@@ -133,19 +133,18 @@ last_modified_at: 2026-09-04 17:04:56 +0900
 
 # aidev 자율 개선 대시보드
 
-<p class="tldr"><strong>한 줄 요약.</strong> Claude Code 자율 개선 에이전트가 hkjang 의 프로젝트를 개선·테스트·머지·릴리즈한 일일 보고. 오늘 68회차·릴리즈 25건, 누적 214회차·릴리즈 116건. 회차가 끝날 때마다 자동 갱신됩니다 (마지막 갱신 2026-09-04 17:04).</p>
+<p class="tldr"><strong>한 줄 요약.</strong> Claude Code 자율 개선 에이전트가 hkjang 의 프로젝트를 개선·테스트·머지·릴리즈한 일일 보고. 오늘 69회차·릴리즈 26건, 누적 215회차·릴리즈 117건. 회차가 끝날 때마다 자동 갱신됩니다 (마지막 갱신 2026-09-04 17:47).</p>
 
 [운영 문서](https://github.com/hkjang/aidev#readme) · [원장](https://github.com/hkjang/aidev/tree/main/state) · [실행 이력](https://github.com/hkjang/aidev/commits/main) · [원본 데이터](https://hkjang.github.io/aidev/data/runs.jsonl)
 
 ## 오늘 (2026-09-04)
 
-<ul class="stats"><li><b>68</b><span>회차</span></li><li><b>25</b><span>프로젝트</span></li><li><b>25</b><span>릴리즈</span></li><li><b>8</b><span>머지(릴리즈 없음)</span></li><li><b>1</b><span>변경 없음</span></li><li><b>0</b><span>실패</span></li></ul>
+<ul class="stats"><li><b>69</b><span>회차</span></li><li><b>25</b><span>프로젝트</span></li><li><b>26</b><span>릴리즈</span></li><li><b>8</b><span>머지(릴리즈 없음)</span></li><li><b>1</b><span>변경 없음</span></li><li><b>0</b><span>실패</span></li></ul>
 
 [2026-09-04 보고 자세히 보기 →](https://hkjang.github.io/aidev/reports/2026-09-04/)
 
 | 시각 | 프로젝트 | 결과 |
 |---|---|---|
-| 11:36 | ptium | • assets-only v1.69.19, assets for v1.69.19 +7 assets |
 | 11:43 | Invenqor | • assets-only v0.2.23, assets for v0.2.23 +25 assets |
 | 11:57 | Invenqor | • assets-only v0.2.22, assets for v0.2.22 +25 assets |
 | 12:27 | Invenqor | • assets-only v0.2.21, assets for v0.2.21 +25 assets |
@@ -157,12 +156,13 @@ last_modified_at: 2026-09-04 17:04:56 +0900
 | 15:28 | relio | 🚀 릴리즈 merged [PR #7](https://github.com/hkjang/relio/pull/7), released [v1.11.14](https://github.com/hkjang/relio/releases/tag/v1.11.14) |
 | 16:19 | relio | 🚀 릴리즈 merged [PR #8](https://github.com/hkjang/relio/pull/8), released [v1.11.15](https://github.com/hkjang/relio/releases/tag/v1.11.15), ASSETS MISSING |
 | 17:04 | umm | 🚀 릴리즈 merged [PR #143](https://github.com/hkjang/umm/pull/143), released [v0.71.1](https://github.com/hkjang/umm/releases/tag/v0.71.1) |
+| 17:47 | visitflow | 🚀 릴리즈 merged [PR #7](https://github.com/hkjang/visitflow/pull/7), released [v2.6.4](https://github.com/hkjang/visitflow/releases/tag/v2.6.4) |
 
 ## 일일 보고
 
 | 날짜 | 회차 | 릴리즈 | 머지 | 변경 없음 | 실패 |
 |---|---|---|---|---|---|
-| [2026-09-04](https://hkjang.github.io/aidev/reports/2026-09-04/) | 68 | 25 | 8 | 1 | 0 |
+| [2026-09-04](https://hkjang.github.io/aidev/reports/2026-09-04/) | 69 | 26 | 8 | 1 | 0 |
 | [2026-09-03](https://hkjang.github.io/aidev/reports/2026-09-03/) | 96 | 63 | 25 | 8 | 0 |
 | [2026-09-02](https://hkjang.github.io/aidev/reports/2026-09-02/) | 50 | 28 | 16 | 3 | 0 |
 
@@ -198,7 +198,7 @@ last_modified_at: 2026-09-04 17:04:56 +0900
 | [Vendra](https://github.com/hkjang/Vendra) | 2026-09-03 01:22 | 🚀 릴리즈 merged [PR #103](https://github.com/hkjang/Vendra/pull/103), released [v0.7.37](https://github.com/hkjang/Vendra/releases/tag/v0.7.37) | [v0.7.40](https://github.com/hkjang/Vendra/releases/tag/v0.7.40) |
 | [Vendra/ai-admin/pii-masker/ptium](https://github.com/hkjang/Vendra/ai-admin/pii-masker/ptium) | 2026-09-02 16:32 | • 태그 사후 푸시 및 Release 생성 |  |
 | [vibe-coders](https://github.com/hkjang/vibe-coders) | 2026-09-04 01:51 | 🚀 릴리즈 merged [PR #12](https://github.com/hkjang/vibe-coders/pull/12), released [v0.82.2](https://github.com/hkjang/vibe-coders/releases/tag/v0.82.2) +7 assets | [v0.82.2](https://github.com/hkjang/vibe-coders/releases/tag/v0.82.2) |
-| [visitflow](https://github.com/hkjang/visitflow) | 2026-09-04 02:09 | 🚀 릴리즈 merged [PR #6](https://github.com/hkjang/visitflow/pull/6), released [v2.6.3](https://github.com/hkjang/visitflow/releases/tag/v2.6.3) | [v2.6.3](https://github.com/hkjang/visitflow/releases/tag/v2.6.3) |
+| [visitflow](https://github.com/hkjang/visitflow) | 2026-09-04 02:09 | 🚀 릴리즈 merged [PR #6](https://github.com/hkjang/visitflow/pull/6), released [v2.6.3](https://github.com/hkjang/visitflow/releases/tag/v2.6.3) | [v2.6.4](https://github.com/hkjang/visitflow/releases/tag/v2.6.4) |
 | [weekly](https://github.com/hkjang/weekly) | 2026-09-04 02:53 | ✅ 머지 merged [PR #7](https://github.com/hkjang/weekly/pull/7), release missing |  |
 
 ## FAQ
