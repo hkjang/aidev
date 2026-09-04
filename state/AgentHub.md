@@ -74,3 +74,14 @@
   - captureHandler.WithGroup이 그룹 이름을 버려 서로 다른 그룹의 같은 키가 충돌 (2/1/S)
   - runInfoCommand가 version 외 인자를 run()으로 흘려보내 `agenthub --help`가 DB 오류로 실패 (2/1/S)
 - 릴리즈: v0.232.0 (2026-09-04)
+
+## 2026-09-04 (2차)
+- 선택: 중앙 정책의 "이 서버의 모든 도구는 승인 필요" 규칙이 Pod까지 전달되지 않던 문제 수정 (가치 5 / 위험 2 / 작업량 M)
+- 결과: 성공 — 커밋 f477267 (auto/2026-09-04-2120)
+- 요약: 도구를 지정하지 않은 `require_approval` 규칙은 아직 아무도 선언하지 않은 도구까지 덮는 유일한 형태이고, 옆에 있는 서버 전체 차단(`DenyAll`)과 같은 모양입니다. `CompileServer`는 이것을 `ServerRules.GateAll`로 정확히 계산했지만 그 값을 받아 가는 코드가 아무 데도 없었습니다 — Pod에 도달하는 binding에는 PolicyDenied·PolicyGated·PolicyDenyAll 세 개만 있었고 네 번째는 어디에도 대입되지 않았습니다. 화면은 전부 켜져 있다고 말했습니다: 시뮬레이터는 문서를 평가해 require_approval을 답하고, 감사 로그에 규칙이 남고, task.create·runtime.start는 API에서 판정되므로 실제로 지켜졌습니다. 오직 tool.call만 Pod 안에서 판정되는데, 에이전트가 우회할 수 없는 그 게이트웨이 — 규칙을 조회가 아니라 컴파일하는 이유 그 자체 — 는 이 서버에 아무 정책도 없는 것처럼 프로비저닝됐습니다. `gatesApproval`도 이 플래그를 보지 못해 컨트롤 플레인으로 나가는 egress NetworkPolicy가 닫힌 채였으므로, 플래그가 도착했더라도 물어볼 곳이 없었습니다. MCPBinding.PolicyGateAll → CRD 스키마(선언하지 않은 필드는 API 서버가 잘라냅니다) → 오퍼레이터의 게이트웨이 설정·승인 egress → 게이트웨이 needsApproval까지 연결했습니다. 논리가 아니라 누락으로 생긴 버그라 가드를 두 개 넣었습니다: 대입을 `applyServerRules`로 모아 reflection으로 순회하는 sweep(ServerRules에 필드가 늘었는데 binding에 짝이 없으면 클러스터가 아니라 여기서 실패)과, 스포너가 쓰는 toolPolicy 필드를 CRD가 전부 선언하는지 읽어 확인하는 테스트입니다. 덤으로 `CompileServer`에서 restriction 아래에 쓴 포괄 allow가 빈 ServerRules를 반환해 위에서 이미 컴파일된 것을 버리던 문제도 고쳤습니다(호출 시점에는 위 규칙이 먼저 매치해 결정하므로, Pod만 순서가 다르게 동작했습니다). 검증: 수정 전 새 테스트 6개가 전부 실패하는 것을 각 계층에서 확인, go vet ./..., go test -race ./cmd/... ./internal/..., web npm ci+lint+build, `scripts/release-catalog-images.sh check-versions`·`validate` 모두 통과. cmd/runtime-proxy가 런타임 base 이미지 소스라 BASE_VERSION 0.21.0으로 상향(5곳).
+- 보류 아이디어:
+  - CompileServer의 좁은 allow(도구 지정)가 게이트웨이에 전달되지 않아, 아래의 deny가 그 도구까지 막음 — 문서가 광고하는 "좁은 예외를 넓은 차단 위에" 패턴이 Pod에서만 깨짐 (4/3/M)
+  - scrubDecision이 record.Agent 등 남은 자유 텍스트를 검사하지 않아 에이전트 이름으로는 무엇이든 나갈 수 있음 (2/2/S)
+  - korean.EndsInConsonant가 괄호·따옴표로 끝나는 값에서 조사를 잘못 고름 (2/2/S)
+  - captureHandler.WithGroup이 그룹 이름을 버려 서로 다른 그룹의 같은 키가 충돌 (2/1/S)
+- 릴리즈: v0.233.0 (2026-09-04)
