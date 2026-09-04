@@ -68,13 +68,15 @@ wait_for_checks(){
     read -r total pending failed < <(cd "$repo" && gh api "repos/{owner}/{repo}/commits/$sha/check-runs" \
       --jq '[.check_runs|length, ([.check_runs[]|select(.status!="completed")]|length), ([.check_runs[]|select(.conclusion=="failure")]|length)] | @tsv' 2>/dev/null || echo "0 0 0")
     if [ "${total:-0}" -gt 0 ] && [ "${pending:-0}" -eq 0 ]; then
-      [ "${failed:-0}" -eq 0 ] && log "$n: CI on $sha passed ($total checks)" || log "$n: CI on $sha has $failed failed check(s) — pushing tag anyway"
+      CHECKS_FAILED=${failed:-0}
+      [ "${failed:-0}" -eq 0 ] && log "$n: CI on ${sha:0:7} passed ($total checks)" || log "$n: CI on ${sha:0:7} has $failed failed check(s)"
       return 0
     fi
     [ "$i" -eq 1 ] && log "$n: waiting for CI on ${sha:0:7} (checks: ${total:-0}, pending: ${pending:-0})"
+    [ "${total:-0}" -eq 0 ] && [ "$i" -ge 10 ] && { CHECKS_FAILED=0; log "$n: no CI checks on ${sha:0:7} after 5 min — continuing"; return 0; }
     sleep 30
   done
-  log "$n: CI on ${sha:0:7} still pending after 20 min — pushing tag anyway"; return 0
+  CHECKS_FAILED=0; log "$n: CI on ${sha:0:7} still pending after 20 min — continuing"; return 0
 }
 
 # GitHub Release 를 보장하고 자산을 올린다. 사용: publish_release <프로젝트> <태그> <제목> <노트파일> <ghrel(true/false)> <release.json>
@@ -173,7 +175,7 @@ release_project(){
   # 태그만 찍는 관례(버전 커밋 없음)도 릴리즈다 — 커밋이 없어도 새 태그가 있으면 내보낸다
   if [ "$status" = released ] && { [ "$ahead" -gt 0 ] || [ "$tagged" -eq 1 ]; }; then
     if { [ "$ahead" -eq 0 ] || git -C "$rwt" push origin "HEAD:$base" >>"$LOG" 2>&1; } \
-       && { [ "$ahead" -eq 0 ] || [ "$tagged" -eq 0 ] || wait_for_checks "$n" "$(git -C "$rwt" rev-parse HEAD)"; } \
+       && { [ "$ahead" -eq 0 ] || [ "$tagged" -eq 0 ] || { wait_for_checks "$n" "$(git -C "$rwt" rev-parse HEAD)" && [ "${CHECKS_FAILED:-0}" -eq 0 ]; }; } \
        && { [ "$tagged" -eq 0 ] || git -C "$rwt" push origin "refs/tags/$tag" >>"$LOG" 2>&1; }; then
       log "$n: released ${tag:-(no tag)}"; result="$result, released ${tag:-$(jq -r .version "$rfile")}"
       git -C "$repo" pull --ff-only origin "$base" >>"$LOG" 2>&1 || true
@@ -276,7 +278,15 @@ for n in "${picked[@]}"; do
            --title "auto-improve: $(git -C "$wt" log -1 --format=%s)" --body "$body" 2>>"$LOG" || true)
     log "$n: $ahead commit(s) → PR $url"
     result="PR $url"
+    # PR 의 CI 가 끝나고 실패가 없을 때만 머지한다 — moina v0.1.18 은 이미지 빌드가 깨진 채 머지·릴리즈됐다
+    ci_ok=1
     if [ "$MERGE" -eq 1 ] && [ -n "$url" ]; then
+      wait_for_checks "$n" "$(git -C "$wt" rev-parse HEAD)"
+      if [ "${CHECKS_FAILED:-0}" -gt 0 ]; then
+        ci_ok=0; log "$n: CI FAILED on PR — not merging, PR left open"; result="CI failed, PR open $url"
+      fi
+    fi
+    if [ "$MERGE" -eq 1 ] && [ -n "$url" ] && [ "$ci_ok" -eq 1 ]; then
       # gh 는 머지 뒤 로컬 브랜치를 지우고 base 로 옮기려 하므로, worktree 를 먼저 걷어내고 main 체크아웃에서 돌린다
       git -C "$repo" worktree remove --force "$wt" >>"$LOG" 2>&1 || true
       if (cd "$repo" && gh pr merge "$url" --merge --delete-branch >>"$LOG" 2>&1); then
