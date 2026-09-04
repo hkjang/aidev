@@ -86,3 +86,15 @@
   - CI 에 `gofmt -l` 검사 추가 — 지금은 포맷 위반이 통과함 (가치 2 / 위험 1 / S)
 - 릴리즈: v1.11.14 (2026-09-04)
 - 릴리즈: v1.11.14 (2026-09-04)
+
+## 2026-09-04
+- 선택: MCP 목록 도구에 커서 인자 노출 + 발급하지 않은 커서 거절 (가치 4 / 위험 2 / 작업량 M)
+- 결과: 성공
+- 요약: `search_customers` 와 `list_opportunities` 는 응답에 `hasMore` 와 `nextCursor` 를 담아 "뒤에 더 있다"고 알려주면서 정작 `cursor` 인자를 스키마에 선언하지 않았고 핸들러도 빈 커서를 넘겼습니다. 두 스키마 모두 `additionalProperties:false` 라 클라이언트가 임의로 보낼 수도 없어, 기본 50건·최대 200건을 넘는 계정에서는 첫 페이지 뒤가 MCP 로는 아예 보이지 않았습니다. 두 도구에 `cursor` 를 넣고, 인자→서비스 필터 변환을 `customerSearchArgs`·`opportunityFilterArgs` 로 한곳에 모아 선언한 인자가 질의로 가는 길에 누락될 수 없게 했습니다. 같은 함수에서 `status` 를 대문자로 정규화해, 산문에서 읽은 대로 `"open"` 을 보낸 모델이 빈 목록 대신 실제 결과를 받도록 했습니다. 또 `pageOffset` 을 `parseCursor` 로 바꿔 이 서버가 발급하지 않은 커서를 offset 0 으로 해석하지 않고 거절합니다 — 조용히 1페이지로 되돌리면 `nextCursor` 와 함께 첫 페이지를 계속 돌려주는 끝나지 않는 목록이 됩니다. 메시지는 `serviceError` 의 substring 분류를 타고 REST 에서 400 이 됩니다. 검증은 새 테스트 8개(커서 왕복·빈 커서·위조 커서 7종 거절·오류 문구가 404/403/409 로 오분류되지 않는지, 두 도구의 cursor 선언·스키마가 광고한 모든 인자가 필터에 전달되는지·status 정규화·기본 limit)를 옛 구현으로 되돌리면 실제로 실패하는지 4가지 방식으로 확인한 뒤 `go test -race ./...`, `go vet ./...`, `gofmt -l`, web typecheck·build, `check-env-contract.sh`, `check-static-assets.sh` 전체 통과. 커밋 b217c85.
+- 보류 아이디어:
+  - 네 intelligence 필터의 `Cursor` 필드는 어떤 질의도 쓰지 않는 죽은 코드 — 실제 커서 페이징을 붙이거나 제거 (가치 3 / 위험 1 / M)
+  - `internal/audit` 는 테스트가 하나도 없음 — `Record` 는 `Log` 가 nil 이면 패닉하고 `nullableJSON` 은 marshal 오류를 버림 (가치 3 / 위험 1 / M)
+  - `list_activities`, `get_contracts`, `list_quotations` 등 나머지 MCP 목록 도구는 서비스가 슬라이스만 돌려주어 페이징 자체가 없음 — 상위 N건 뒤는 여전히 안 보임 (가치 3 / 위험 2 / M)
+  - `internal/api/openapi.go` 는 경로와 요약만 담고 query parameter 를 전혀 문서화하지 않음 — `cursor`·`limit`·`sort` 가 계약에 없음 (가치 3 / 위험 1 / M)
+  - CI 에 `gofmt -l` 검사 추가 — 지금은 포맷 위반이 통과함 (가치 2 / 위험 1 / S)
+- 릴리즈: v1.11.15 (2026-09-04)
