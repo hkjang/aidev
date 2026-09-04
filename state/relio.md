@@ -98,3 +98,16 @@
   - `internal/api/openapi.go` 는 경로와 요약만 담고 query parameter 를 전혀 문서화하지 않음 — `cursor`·`limit`·`sort` 가 계약에 없음 (가치 3 / 위험 1 / M)
   - CI 에 `gofmt -l` 검사 추가 — 지금은 포맷 위반이 통과함 (가치 2 / 위험 1 / S)
 - 릴리즈: v1.11.15 (2026-09-04)
+
+## 2026-09-05
+- 선택: OpenAPI 문서에 경로·질의 파라미터를 넣고 핸들러와 양방향으로 묶기 (가치 4 / 위험 1 / 작업량 M)
+- 결과: 성공
+- 요약: `/api/openapi.json` 은 경로와 요약만 담고 있어서, 클라이언트가 스스로 알아낼 수 없는 두 가지가 비어 있었습니다. 하나는 사양 위반입니다 — OpenAPI 는 경로의 모든 `{id}` 에 대응하는 path parameter 를 요구하는데 약 50개 경로 중 선언한 곳이 하나도 없어, 생성기는 id 를 넣을 인자가 없는 메서드를 만들고 린터는 문서를 거절합니다. 다른 하나는 질의 문자열 전체입니다 — `/customers` 의 `cursor`·`sort`, `/opportunities` 의 다섯 필터, 엔드포인트별 `limit` 상한, 인증된 GET 이 모두 받는 `fields` 가 어디에도 없어 Go 소스를 읽어야만 알 수 있었습니다. 특히 `sort` 는 화이트리스트 밖의 값을 오류가 아니라 조용히 기본 정렬로 되돌리므로, 값 목록을 모르는 클라이언트는 정렬이 무시된 사실조차 알 수 없었습니다. 경로 파라미터는 템플릿에서 직접 파생시켜 나중에 추가되는 경로가 빠뜨릴 수 없게 했고, 질의 파라미터는 enum 을 DB CHECK 제약에서·정수 범위와 기본값을 그 값을 읽는 `httpx.IntQuery` 호출에서 가져와 표로 적었습니다. `fields` 는 `requireAuth` 가 핸들러 실행 전에 적용하므로 `components.parameters` 공유 항목으로 두고 인증된 GET 마다 `$ref` 로 붙입니다. 검증은 새 테스트 4개(경로 `{var}`↔path parameter 양방향, 문서의 질의 파라미터↔라우터가 그 경로에 연결한 핸들러가 실제로 읽는 질의 키 양방향, `fields` 가 인증된 GET 에만·전부에 붙었는지, `sort` enum 이 `internal/crm` 정렬 화이트리스트와 값·개수까지 일치하는지)를 문서를 6가지로 어긋나게 만들어 실제로 실패하는지 확인한 뒤 `go test -race ./...`, `go vet ./...`, `gofmt -l`, web typecheck·build, `check-env-contract.sh`, `check-static-assets.sh` 전체 통과. 커밋 edb6ed3.
+- 보류 아이디어:
+  - 네 intelligence 필터의 `Cursor` 필드는 어떤 질의도 쓰지 않는 죽은 코드 — 실제 커서 페이징을 붙이거나 제거 (가치 3 / 위험 1 / M)
+  - `internal/audit` 는 테스트가 하나도 없음 — `Record` 는 `Log` 가 nil 이면 패닉하고 `nullableJSON` 은 marshal 오류를 버려 감사 데이터를 조용히 NULL 로 만듦 (가치 3 / 위험 1 / M)
+  - `list_activities`, `get_contracts`, `list_quotations` 등 나머지 MCP 목록 도구는 서비스가 슬라이스만 돌려주어 페이징 자체가 없음 — 상위 N건 뒤는 여전히 안 보임 (가치 3 / 위험 2 / M)
+  - `internal/server/today.go:87` 의 `time.Now().Truncate(24*time.Hour)` 는 `system.timezone`(기본 Asia/Seoul) 설정을 무시 (가치 3 / 위험 3 / M, 타임존 배선 필요)
+  - CI 에 `gofmt -l` 검사 추가 — 지금은 포맷 위반이 통과함 (가치 2 / 위험 1 / S)
+- 릴리즈: v1.11.16 (2026-09-05)
+- 릴리즈: v1.11.16 (2026-09-05)
