@@ -88,3 +88,16 @@
   - 외부 호출 캐시 키가 함수·주소만 담아, `external.max_kb` 를 올려도 캐시가 남아 있는 동안은 "크기를 넘습니다" 가 그대로다.
   - `DOLLARDE`·`DOLLARFR` 이 `math.Pow(10, ceil(log10(fraction)))` 로 자리를 밀어 이진 실수 어긋남이 남아 있다.
 - 릴리즈: v0.234.0 (2026-09-03)
+
+## 2026-09-04
+- 선택: 표시 형식의 넷째 구역(글자 구역)을 그린다 (가치 4 / 위험 2 / 작업량 M)
+- 결과: 성공
+- 요약: 엑셀 표시 형식은 `;` 로 나눈 네 구역(양수 ; 음수 ; 0 ; 글자)까지 담고 넷째 구역은 글자가 담긴 칸에만 걸리는데, 서식을 그리는 두 곳(`internal/formula` 의 `formatValue`, `web/src/lib/cellFormat.ts` 의 `formatCellValue`)이 그 구역을 아예 읽지 않아 `#,##0;(#,##0);"-";"["@"]"` 가 걸린 `미정` 칸이 `[미정]` 이 아니라 그대로 나왔다. 엑셀 기본 회계 서식의 마지막 토막 `_-@_-` 가 그 꼴이라 XLSX 로 그냥 들어온다. 함께 `@` 를 자리 기호가 아닌 그냥 글자로 흘려 보내 `@" 님"` 이 "@ 님" 으로 그려지던 것도 고쳤다(`@` 는 "값을 있는 그대로" 라는 뜻이라 수에도 걸려 `5` 는 "5 님"). 규칙: 구역이 넷이면 넷째가 글자를 그리고, 비워 두면 감추며, 셋 이하면 글자를 손대지 않고, 구역이 하나뿐인데 `@` 가 있으면 그것이 곧 글자 구역이다. 양쪽에 같은 규칙으로 `textSection`·`hasTextPlaceholder`·`renderTextSection`·`scanFormatSection` 을 두었다. 검증: 격자와 서버가 함께 읽는 `testdata/cell-formats.json` 이 이제 수뿐 아니라 글자 값도 담도록 양쪽 시험의 값 타입을 넓히고 12줄 추가, 새 테스트 `TestTextSectionsFollowExcel`(12가지)와 웹 `the grid draws text with the fourth section`(3 it), `gofmt -l`, `go vet ./...`, `go build ./...`, `go test ./...`(전체 통과), `cd web && npm ci && npm test`(488개 통과)·`npm run lint`·`npm run build`, `scripts/check-release-docs.sh`, `scripts/check-commit-identities.sh`. 커밋 1개(4ec3778), 릴리즈 노트 v0.235.0 과 README VERSION·USER_GUIDE 갱신.
+- 보류 아이디어:
+  - `?` 의 자리 맞추기 빈칸을 그리지 않는다. 엑셀은 `# ??/??` 의 한 자리 분자를 빈칸으로 채워 자릿수를 맞춘다.
+  - `csvNumber` 가 IMPORTDATA 의 `"1,200"`·`"12%"`·앞뒤 통화 기호를 글자로 남긴다. `valueOfText` 가 그 규칙을 한 곳에 담고 있으니 맞출지 검토할 것.
+  - 외부 호출 캐시 키가 함수·주소만 담아, `external.max_kb` 를 올려도 캐시가 남아 있는 동안은 "크기를 넘습니다" 가 그대로다.
+  - `DOLLARDE`·`DOLLARFR` 이 `math.Pow(10, ceil(log10(fraction)))` 로 자리를 밀어 이진 실수 어긋남이 남아 있다.
+  - 서버의 `formatValue` 는 글자 "123" 을 `toNumber` 로 수로 읽고 격자는 글자로 보아, 숫자처럼 생긴 글자 값에서 두 곳의 답이 갈릴 수 있다(TEXT 의 강제 변환과 칸 그리기의 차이). 어느 쪽에 맞출지 정할 것.
+- 릴리즈: v0.235.0 (2026-09-04)
+- 릴리즈: v0.235.0 (2026-09-04)
