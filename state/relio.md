@@ -73,3 +73,16 @@
   - CI 에 `gofmt -l` 검사 추가 — 지금은 포맷 위반이 통과함 (가치 2 / 위험 1 / S)
 - 릴리즈: v1.11.13 (2026-09-04)
 - 릴리즈: v1.11.13 (2026-09-04)
+
+## 2026-09-04
+- 선택: 1MB 를 넘는 MCP 요청 본문을 413 으로 구분 (가치 3 / 위험 1 / 작업량 S)
+- 결과: 성공
+- 요약: `internal/mcp/server.go` 가 본문을 `io.ReadAll(io.LimitReader(r.Body, 1<<20))` 로 읽었는데, `io.LimitReader` 는 초과 입력을 오류로 만들지 않고 상한에서 잘라 EOF 를 돌려줍니다. 그래서 1MB 를 넘는 메시지는 닫히지 않은 JSON 으로 잘려 `parseRequests` 에서 실패했고, 클라이언트는 자기가 올바르게 만든 메시지에 대해 400 "Parse error" 를 받았습니다 — 크기가 원인이라는 단서가 응답 어디에도 없어 긴 노트나 큰 `arguments` 를 담은 `tools/call` 이 재시도해도 똑같이 실패했습니다. REST 쪽은 `httpx.DecodeJSON` 의 `MaxBytesReader` 와 `serveIdempotent` 의 `(2<<20)+1` 로 이미 이 상황을 413 으로 구분하고 있었으므로 같은 방식을 따랐습니다: `readRequestBody` 가 상한보다 한 바이트 더 읽어 초과를 판별하고, 초과면 413 + JSON-RPC 오류(`data.maxBytes`), 읽기 오류는 기존대로 400 Parse error. 상한 값 1MB 자체는 그대로입니다. 검증은 새 테스트 2개(상한 정확히 통과·한 바이트 초과 거절·초과 `tools/call` 판정·자른 본문이 실제로 파싱 실패하는지·읽기 오류 구분, 그리고 413 응답이 JSON-RPC 형식과 `data.maxBytes` 를 유지하는지)를 옛 구현으로 되돌리면 실제로 실패하는지 확인한 뒤 `go test -race ./...`, `go vet ./...`, `gofmt -l`, web typecheck·build, `check-env-contract.sh`, `check-static-assets.sh` 전체 통과. 커밋 ab833e1.
+- 보류 아이디어:
+  - 네 intelligence 필터의 `Cursor` 필드는 어떤 질의도 쓰지 않는 죽은 코드 — 실제 커서 페이징을 붙이거나 제거 (가치 3 / 위험 1 / M)
+  - MCP 목록 도구에는 커서 인자가 전혀 없어 에이전트가 상위 N건 뒤를 볼 수 없음 — `crm.Page` 의 `nextCursor` 를 도구 스키마에 노출 (가치 3 / 위험 2 / M)
+  - `internal/audit` 는 테스트가 하나도 없음 — 감사 로그 기록 실패가 조용히 무시되는지 포함해 확인 (가치 3 / 위험 1 / M)
+  - `internal/server/today.go:87` 의 `time.Now().Truncate(24*time.Hour)` 는 `system.timezone`(기본 Asia/Seoul) 설정을 무시 (가치 3 / 위험 3 / M, 타임존 배선 필요)
+  - CI 에 `gofmt -l` 검사 추가 — 지금은 포맷 위반이 통과함 (가치 2 / 위험 1 / S)
+- 릴리즈: v1.11.14 (2026-09-04)
+- 릴리즈: v1.11.14 (2026-09-04)
