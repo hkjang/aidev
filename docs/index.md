@@ -1,7 +1,7 @@
 ---
 title: "aidev 자율 개선 대시보드"
-description: "Claude Code 자율 개선 에이전트가 hkjang 의 프로젝트를 개선·테스트·머지·릴리즈한 일일 보고. 오늘 12회차·릴리즈 8건, 누적 235회차·릴리즈 132건."
-last_modified_at: 2026-09-05 05:15:28 +0900
+description: "Claude Code 자율 개선 에이전트가 hkjang 의 프로젝트를 개선·테스트·머지·릴리즈한 일일 보고. 오늘 13회차·릴리즈 9건, 누적 236회차·릴리즈 133건."
+last_modified_at: 2026-09-05 05:43:00 +0900
 ---
 
 <script type="application/ld+json">
@@ -10,14 +10,14 @@ last_modified_at: 2026-09-05 05:15:28 +0900
  "@type": "WebSite",
  "name": "aidev 자율 개선 대시보드",
  "url": "https://hkjang.github.io/aidev/",
- "description": "Claude Code 자율 개선 에이전트가 hkjang 의 프로젝트를 개선·테스트·머지·릴리즈한 일일 보고. 오늘 12회차·릴리즈 8건, 누적 235회차·릴리즈 132건.",
+ "description": "Claude Code 자율 개선 에이전트가 hkjang 의 프로젝트를 개선·테스트·머지·릴리즈한 일일 보고. 오늘 13회차·릴리즈 9건, 누적 236회차·릴리즈 133건.",
  "inLanguage": "ko",
  "author": {
   "@type": "Person",
   "name": "hkjang",
   "url": "https://github.com/hkjang"
  },
- "dateModified": "2026-09-05T05:15:28"
+ "dateModified": "2026-09-05T05:43:00"
 }
 </script>
 
@@ -139,19 +139,18 @@ last_modified_at: 2026-09-05 05:15:28 +0900
 
 # aidev 자율 개선 대시보드
 
-<p class="tldr"><strong>한 줄 요약.</strong> Claude Code 자율 개선 에이전트가 hkjang 의 프로젝트를 개선·테스트·머지·릴리즈한 일일 보고. 오늘 12회차·릴리즈 8건, 누적 235회차·릴리즈 132건. 회차가 끝날 때마다 자동 갱신됩니다 (마지막 갱신 2026-09-05 05:15).</p>
+<p class="tldr"><strong>한 줄 요약.</strong> Claude Code 자율 개선 에이전트가 hkjang 의 프로젝트를 개선·테스트·머지·릴리즈한 일일 보고. 오늘 13회차·릴리즈 9건, 누적 236회차·릴리즈 133건. 회차가 끝날 때마다 자동 갱신됩니다 (마지막 갱신 2026-09-05 05:43).</p>
 
 [운영 문서](https://github.com/hkjang/aidev#readme) · [원장](https://github.com/hkjang/aidev/tree/main/state) · [실행 이력](https://github.com/hkjang/aidev/commits/main) · [원본 데이터](https://hkjang.github.io/aidev/data/runs.jsonl)
 
 ## 오늘 (2026-09-05)
 
-<ul class="stats"><li><b>12</b><span>회차</span></li><li><b>12</b><span>프로젝트</span></li><li><b>8</b><span>릴리즈</span></li><li><b>4</b><span>머지(릴리즈 없음)</span></li><li><b>0</b><span>변경 없음</span></li><li><b>0</b><span>실패</span></li></ul>
+<ul class="stats"><li><b>13</b><span>회차</span></li><li><b>13</b><span>프로젝트</span></li><li><b>9</b><span>릴리즈</span></li><li><b>4</b><span>머지(릴리즈 없음)</span></li><li><b>0</b><span>변경 없음</span></li><li><b>0</b><span>실패</span></li></ul>
 
 [2026-09-05 보고 자세히 보기 →](https://hkjang.github.io/aidev/reports/2026-09-05/)
 
 | 시각 | 프로젝트 | 결과 |
 |---|---|---|
-| 00:10 | aiportal-front-admin | ✅ 머지 merged [PR #8](https://github.com/hkjang/aiportal-front-admin/pull/8), release skipped |
 | 00:31 | aiportal-front | ✅ 머지 merged [PR #4](https://github.com/hkjang/aiportal-front/pull/4), release skipped |
 | 00:51 | aiportal-java | ✅ 머지 merged [PR #9](https://github.com/hkjang/aiportal-java/pull/9), release skipped |
 | 01:10 | aiportal-py | ✅ 머지 merged [PR #6](https://github.com/hkjang/aiportal-py/pull/6), release skipped |
@@ -163,12 +162,13 @@ last_modified_at: 2026-09-05 05:15:28 +0900
 | 04:17 | jupiq | 🚀 릴리즈 merged [PR #3](https://github.com/hkjang/jupiq/pull/3), released [v1.4.4](https://github.com/hkjang/jupiq/releases/tag/v1.4.4) |
 | 04:35 | kanpic | 🚀 릴리즈 merged [PR #9](https://github.com/hkjang/kanpic/pull/9), released [v0.236.0](https://github.com/hkjang/kanpic/releases/tag/v0.236.0) |
 | 05:15 | moina | 🚀 릴리즈 merged [PR #7](https://github.com/hkjang/moina/pull/7), released [v0.1.21](https://github.com/hkjang/moina/releases/tag/v0.1.21), ASSETS MISSING |
+| 05:43 | muni | 🚀 릴리즈 merged [PR #6](https://github.com/hkjang/muni/pull/6), released [v0.27.0](https://github.com/hkjang/muni/releases/tag/v0.27.0) |
 
 ## 일일 보고
 
 | 날짜 | 회차 | 릴리즈 | 머지 | 변경 없음 | 실패 |
 |---|---|---|---|---|---|
-| [2026-09-05](https://hkjang.github.io/aidev/reports/2026-09-05/) | 12 | 8 | 4 | 0 | 0 |
+| [2026-09-05](https://hkjang.github.io/aidev/reports/2026-09-05/) | 13 | 9 | 4 | 0 | 0 |
 | [2026-09-04](https://hkjang.github.io/aidev/reports/2026-09-04/) | 77 | 33 | 9 | 1 | 0 |
 | [2026-09-03](https://hkjang.github.io/aidev/reports/2026-09-03/) | 96 | 63 | 25 | 8 | 0 |
 | [2026-09-02](https://hkjang.github.io/aidev/reports/2026-09-02/) | 50 | 28 | 16 | 3 | 0 |
@@ -194,7 +194,7 @@ last_modified_at: 2026-09-05 05:15:28 +0900
 | [kanpic](https://github.com/hkjang/kanpic) | 2026-09-05 04:35 | 🚀 릴리즈 merged [PR #9](https://github.com/hkjang/kanpic/pull/9), released [v0.236.0](https://github.com/hkjang/kanpic/releases/tag/v0.236.0) | [v0.236.0](https://github.com/hkjang/kanpic/releases/tag/v0.236.0) |
 | [moina](https://github.com/hkjang/moina) | 2026-09-05 05:15 | 🚀 릴리즈 merged [PR #7](https://github.com/hkjang/moina/pull/7), released [v0.1.21](https://github.com/hkjang/moina/releases/tag/v0.1.21), ASSETS MISSING | [v0.1.21](https://github.com/hkjang/moina/releases/tag/v0.1.21) |
 | [moyro](https://github.com/hkjang/moyro) | 2026-09-04 10:01 | 🚀 릴리즈 merged [PR #7](https://github.com/hkjang/moyro/pull/7), released [v0.2.15](https://github.com/hkjang/moyro/releases/tag/v0.2.15), ASSETS MISSING | [v0.2.15](https://github.com/hkjang/moyro/releases/tag/v0.2.15) |
-| [muni](https://github.com/hkjang/muni) | 2026-09-03 04:00 | 🚀 릴리즈 merged [PR #3](https://github.com/hkjang/muni/pull/3), released [v0.24.0](https://github.com/hkjang/muni/releases/tag/v0.24.0) | [v0.26.0](https://github.com/hkjang/muni/releases/tag/v0.26.0) |
+| [muni](https://github.com/hkjang/muni) | 2026-09-05 05:43 | 🚀 릴리즈 merged [PR #6](https://github.com/hkjang/muni/pull/6), released [v0.27.0](https://github.com/hkjang/muni/releases/tag/v0.27.0) | [v0.27.0](https://github.com/hkjang/muni/releases/tag/v0.27.0) |
 | [pii-masker](https://github.com/hkjang/pii-masker) | 2026-09-04 00:11 | 🚀 릴리즈 merged [PR #6](https://github.com/hkjang/pii-masker/pull/6), released [v1.0.9](https://github.com/hkjang/pii-masker/releases/tag/v1.0.9) | [v1.0.10](https://github.com/hkjang/pii-masker/releases/tag/v1.0.10) |
 | [ptium](https://github.com/hkjang/ptium) | 2026-09-04 00:28 | 🚀 릴리즈 merged [PR #6](https://github.com/hkjang/ptium/pull/6), released [v1.69.24](https://github.com/hkjang/ptium/releases/tag/v1.69.24) | [v1.69.19](https://github.com/hkjang/ptium/releases/tag/v1.69.19) |
 | [Quantoss](https://github.com/hkjang/Quantoss) | 2026-09-04 04:14 | ✅ 머지 merged [PR #6](https://github.com/hkjang/Quantoss/pull/6), release skipped | skipped |
