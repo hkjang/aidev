@@ -91,3 +91,14 @@
   - `AthenaServiceImpl` 1629·2294행 등 Athena 응답의 `get(0)` / `getEmail().split("@")[0]` 무검증 접근 — 빈 배열·null 이메일에 NPE (가치 3 / 위험 2 / 작업량 S)
   - `FileServiceImpl.ocrUpload` 의 하드코딩 경로 `E:\KCB\doc\ocr` — 호출부가 없는 사실상 죽은 코드라 설정화 또는 제거 판단 필요 (가치 2 / 위험 2 / 작업량 S)
   - `ValidUtil`, `ApiCallUtil` 단위 테스트 공백 보강 (가치 2 / 위험 1 / 작업량 S)
+
+## 2026-09-05
+- 선택: 인증 필터 예외가 컨테이너 500 으로 새어 나가는 문제 수정 (가치 4 / 위험 2 / 작업량 M)
+- 결과: 성공
+- 요약: `JwtAuthenticationFilter` 는 `AthenaJwtException` 만 catch 하고 있어, IAM introspect 가 active=true 로 응답했지만 포털 DB 에 사용자 행이 없을 때 던지는 `BusinessException("사용자 정보가 없습니다.")` 과 `userInfoService.getUserInfoByEmail` 이 실패할 때의 예외가 필터 밖으로 전파됐습니다. 필터는 `@ControllerAdvice` 인 `GlobalExceptionHandler` 의 처리 대상이 아니라 이 경우 클라이언트가 약속된 `ResponseDto{code,message}` 대신 컨테이너 기본 오류 응답을 받아, IAM 계정은 있지만 포털에 미등록된 사용자가 원인을 알 수 없는 500 을 보게 됩니다. 인증 로직을 `authenticate()` 로 분리하고 `filterChain.doFilter` 를 try 밖으로 옮겨 인증 단계 예외만 응답으로 변환하도록 했습니다(컨트롤러에서 올라온 예외는 삼키지 않음). `BusinessException` 은 `GlobalExceptionHandler` 와 동일한 형식으로, 그 외 예외는 `INTERNAL_SERVER_ERROR` 형식으로 내려줍니다. 덤으로 catch 블록 안에서 요청마다 새로 만들던 30여 개 Origin `Set.of` 와 `ObjectMapper` 를 static 상수로 올리고 응답 기록을 `writeErrorResponse()` 로 추출했으며, `Origin` 헤더는 항상 스킴을 포함해 절대 매칭될 수 없던 `"sso.kcb4u.com"` 항목을 `WebConfig` 와 같은 `"https://sso.kcb4u.com"` 으로 고쳤습니다. 검증은 `JwtAuthenticationFilterErrorResponseTest`(6: 사용자 미등록 / 조회 실패 / CORS 허용·비허용 Origin / sso Origin / 다운스트림 예외 비삼킴 회귀 가드) 추가 후 `sh gradlew check build` 실행으로 했고 24개 테스트 클래스 113개 테스트 전부 통과했습니다. 커밋 ff2d4a6.
+- 보류 아이디어:
+  - `JwtAuthenticationFilter` 와 `WebConfig` 의 허용 Origin 목록 이중 관리를 설정(yaml)으로 일원화 — 현재 두 목록이 서로 다르게 드리프트 중 (가치 3 / 위험 3 / 작업량 M)
+  - `AthenaServiceImpl` 1629·2294행, `UserInfoAthenaServiceImpl` 215·362행의 JsonNode `.get(0)` 무검증 접근 — 빈 items 배열에 NPE (가치 3 / 위험 2 / 작업량 S)
+  - `AthenaServiceImpl` 1790행 `userInfoVo.getEmail().split("@")[0]` — email null 에 NPE (가치 3 / 위험 1 / 작업량 S)
+  - `FileServiceImpl.ocrUpload` 의 하드코딩 경로 `E:\KCB\doc\ocr` — 호출부가 없는 사실상 죽은 코드라 설정화 또는 제거 판단 필요 (가치 2 / 위험 2 / 작업량 S)
+  - `ValidUtil`, `ApiCallUtil` 단위 테스트 공백 보강 (가치 2 / 위험 1 / 작업량 S)
