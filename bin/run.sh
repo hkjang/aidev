@@ -2,7 +2,7 @@
 # 자율 개선 에이전트 러너 — https://github.com/hkjang/aidev
 #   사용법: bin/run.sh [--dry-run] [--count N] [--project NAME] [--days 30] [--budget 8] [--no-merge] [--no-sync]
 #                     [--no-release] [--release-budget 10] [--release-only NAME] [--assets-only NAME]
-#   - --assets-only NAME: 이미 나간 최신 릴리즈에 이전 릴리즈와 같은 자산(도커 이미지 tar.gz 등)을 만들어 올린다
+#   - --assets-only NAME[:TAG]: 이미 나간 최신(또는 지정) 릴리즈에 이전 릴리즈와 같은 자산(도커 이미지 tar.gz 등)을 만들어 올린다
 #   - 머지가 되면 릴리즈 에이전트를 한 번 더 돌린다: 그 저장소의 이전 릴리즈 방식(태그·버전 파일·CHANGELOG·워크플로·
 #     GitHub Release)을 확인해 같은 방식으로 다음 버전을 만들고, 러너가 커밋·태그를 푸시하고 필요하면 GitHub Release 를 만든다
 #   - 최근 N일 내 커밋이 있고, 작업트리가 깨끗하며, origin 원격이 있는 저장소를 후보로 삼는다
@@ -116,7 +116,7 @@ release_project(){
   git -C "$repo" fetch -q --force --tags origin "$base" >>"$LOG" 2>&1 || log "$n: tag fetch had errors (continuing)"
   local ref="origin/$base" mode_note="" latest=""
   if [ "$mode" = assets ]; then
-    latest=$(cd "$repo" && gh release list --limit 1 --json tagName --jq '.[0].tagName' 2>/dev/null)
+    latest=${ASSETS_TAG:-$(cd "$repo" && gh release list --limit 1 --json tagName --jq '.[0].tagName' 2>/dev/null)}
     [ -n "$latest" ] || { log "$n: no GitHub Release to attach assets to"; return 0; }
     ref="refs/tags/$latest"
     mode_note="## 이번 세션은 자산만 만든다
@@ -172,7 +172,9 @@ release_project(){
 
 # ---- 자산만 (이미 나간 최신 릴리즈에 이전 릴리즈와 같은 자산을 만들어 올림) -------------
 if [ -n "${ASSETS_ONLY:-}" ]; then
-  n=$ASSETS_ONLY; repo="$ROOT/$n"; ledger="$STATE/$n.md"; result="assets-only"
+  # NAME 또는 NAME:TAG — 태그를 주면 최신 릴리즈 대신 그 태그에 자산을 붙인다
+  n=${ASSETS_ONLY%%:*}; ASSETS_TAG=""; [[ "$ASSETS_ONLY" == *:* ]] && ASSETS_TAG=${ASSETS_ONLY#*:}
+  repo="$ROOT/$n"; ledger="$STATE/$n.md"; result="assets-only${ASSETS_TAG:+ $ASSETS_TAG}"
   base=$(git -C "$repo" symbolic-ref --short HEAD)
   log "=== $n assets-only (base=$base)"
   release_project "$n" "$base" "(자산 보충)" assets
