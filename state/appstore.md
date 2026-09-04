@@ -47,3 +47,15 @@
   - 프런트엔드 `streamAiChat`이 스트림 종료 시 `TextDecoder` 플러시와 잔여 버퍼 처리를 하지 않아, 마지막 이벤트가 종료 빈 줄 없이 끝나면 유실됨. 가치 2 / 위험 1 / S
   - `httpapi.SPAHandler.fmtInt`는 `strconv.Itoa` 재구현 — 표준 라이브러리로 교체. 가치 1 / 위험 1 / S
 - 릴리즈: v2.1.4 (2026-09-03)
+
+## 2026-09-05
+- 선택: 앱 입력의 단일행 필드 길이 상한과 제어문자 거부 (가치 3 / 위험 1 / 작업량 S)
+- 결과: 성공
+- 요약: `httpapi.ValidateAppInput`이 name·slug·summary·description만 검사하고 icon·gradient·serviceUrl·language·framework·team·version은 전혀 검사하지 않아, 2MB 본문 한도까지의 문자열이 그대로 저장되어 앱을 나열하는 모든 진열대에 렌더링됐다. 각 필드에 폼의 maxLength와 같은 상한을 넣고(누락됐던 serviceUrl·language·framework·version·team의 maxLength도 폼에 추가), 단일행 필드의 탭·개행·제어문자를 거부했으며(tags·screenshots는 `cleanStrings`가 기존처럼 조용히 버림), description의 NUL은 PostgreSQL text 컬럼이 저장할 수 없어 INSERT 실패 → 불투명한 500이 되던 것을 422 필드 오류로 바꿨다. OpenAPI `AppInput` 스키마에도 실제 강제되는 상한을 모두 문서화했다. 검증: 필드별 테이블 테스트 2개 추가 후 `go test ./...`, `go test -race ./internal/httpapi ./openapi`, `go vet ./...`, `gofmt -l`, `npm run lint`, `npm test`, `npm run build`, prettier check, `check-env-contract.sh`·`check-docs.sh`·`check-offline-assets.sh` 모두 통과. 커밋 3a21896.
+- 보류 아이디어:
+  - MCP `featured_apps` tool이 `Sort: "updated"`를 강제해 v2.5.0의 featured_rank 편집 순서를 무시함(REST `/api/v1/apps?featured=true`와 불일치). 가치 2 / 위험 1 / S
+  - 프런트엔드 `streamAiChat`이 종료 시 잔여 버퍼·`TextDecoder` 플러시를 하지 않고, chunk 경계에 걸친 `\r\n`을 정규화하지 못해 이벤트가 유실됨. 가치 2 / 위험 1 / S
+  - rate limiter의 `Retry-After: 60` 고정값을 현재 분 윈도우 잔여 시간으로 계산. 가치 2 / 위험 1 / S
+  - `branding` URL 가져오기(`fetchBrandingSource`)에 SSRF 가드가 없어 admin이 내부 주소를 탐침할 수 있고 오류 메시지로 상태 코드가 새어 나감. 가치 3 / 위험 3 / M
+  - `internal/httpapi` 커버리지 — DB 없이 테스트 가능한 `SPAHandler`, middleware, `DecodeJSON`에 단위 테스트 추가. 가치 3 / 위험 1 / M
+- 릴리즈: v2.5.1 (2026-09-05)
