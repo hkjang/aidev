@@ -71,3 +71,15 @@
   - 전화번호·웹사이트도 형식 검사가 없음 — 길이만 볼 뿐이라 "내선 3번"이 전화번호로, 사내 위키 제목이 웹사이트로 저장됨 (가치 3 / 위험 1 / M)
   - `Makefile`의 VERSION(0.6.21)이 README의 릴리스 예시(0.7.26)와 어긋남 — 릴리스 문서 정합성 (가치 2 / 위험 1 / S)
 - 릴리즈: v0.7.40 (2026-09-03)
+
+## 2026-09-04
+- 선택: 요청 값이 공급업체 거래 상태로 들어가는 쓰기 경로에 어휘 검사 추가, 그리고 폼과 API가 서로 다른 단어를 쓰던 것을 하나로 (가치 4 / 위험 2 / 작업량 M)
+- 결과: 성공 (commit 71e618a)
+- 요약: 날짜·숫자·문자열·리스크등급·레코드id·이메일 스윕과 같은 기준(철자가 아니라 연산 — 요청 값이 질의가 분기하는 컬럼에 도달)으로, 리스크 등급 스윕이 riskLevel만 가져가고 옆에 두고 온 status를 훑었다. 거래 상태는 라벨이 아니라 질의가 읽는 단어다 — 대시보드의 거래 가능 타일은 status='active'를, 심사 대기 타일은 status='screening'을 세고, MCP 추천 도구는 status IN('active','approved')만 추리며, 목록 필터는 철자를 그대로 비교한다. createSupplier·updateSupplier 둘 다 들어온 status를 길이 말고는 보지 않았다. 그리고 그 결함은 이미 제품 안에서, 가장 눈에 안 띄는 자리에서 일어나 있었다: 웹앱이 어휘를 세 번(목록 필터, 배지 라벨 맵, 편집 폼 드롭다운) 따로 적어 두었고, 편집 폼만 "registered"라고 적혀 있었다 — 저장소 어디에도 없는 철자다. 결과는 둘이고 두 번째가 나쁘다. (1) 편집 폼에서 등록을 고르면 "registered"가 저장돼 등록 필터에 영영 안 잡히고, 라벨 맵에 한국어가 없어 영문이 그대로 배지에 뜨며, 색도 warning이 아닌 기본색이 된다. (2) 포털 자가등록이 넣는 "registration"이 옵션에 없어서 select가 첫 옵션으로 떨어진다 — 자가등록 업체를 열어 전화번호만 고치고 저장하면 상태 칸을 건드린 적도 없이 후보로 되돌아간다. 누가 보고 있던 등록 큐에서 빠져 아무도 안 보는 목록으로 가고, 화면에는 아무 흔적도 없다. rows.go의 riskGrades 옆에 supplierStatuses를, web/src/status.ts에 같은 목록을 두고 필터·드롭다운·라벨 맵이 모두 그것을 읽게 했다. 검증: docker postgres:16-alpine으로 CI와 동일한 세 DSN을 걸고 `go test ./internal/... ./cmd/...` 전체 통과, gofmt·go vet 무결, 웹 테스트·빌드·린트 통과. 가드는 넷 — 패키지를 파싱하는 TestEverySupplierStatusIsInTheVocabulary, 요청 필드가 아니라 statement를 읽는 TestEverySupplierStatusInTheSQLIsInTheVocabulary, status.ts와 rows.go를 서로에게 묶는 TestTheStatusListTheFormOffersIsTheOneTheAPIAccepts, 엔드포인트를 실제로 호출하는 TestEverySupplierStatusOnAWriteIsInTheVocabulary — 여기에 웹 쪽 supplier-status.test.tsx가 "registration" 업체를 편집 폼에 띄워 그대로 저장한다. updateSupplier 가드를 되돌리면 파싱·통합 테스트가, status.ts에 "registered"를 되돌리면 교차 검사와 웹 테스트가 실패하는 것까지 확인했다.
+- 보류 아이디어:
+  - CI의 go job이 `go test ./internal/...`만 돌려 `./cmd/...`를 빼놓음 — Makefile/README와 불일치 (가치 2 / 위험 1 / S)
+  - 업무 객체의 status는 여전히 임의 문자열 — `status IN('completed','accepted','closed')` 같은 집계가 오타 하나로 조용히 빠짐(유형별 어휘가 어디에도 정의돼 있지 않아 위험은 큼) (가치 3 / 위험 3 / M)
+  - 전화번호·웹사이트는 길이만 볼 뿐 형식 검사가 없음 — "내선 3번"이 전화번호로, 사내 위키 제목이 웹사이트로 저장됨 (가치 3 / 위험 1 / M)
+  - 업무 객체의 data jsonb 블롭에는 어떤 검증도 없음 — 폼이 쓰는 키(품목·수량·단가)가 API로는 무제한이고 목록 응답이 블롭 전체를 반환 (가치 3 / 위험 2 / M)
+  - `Makefile`의 VERSION(0.6.21)이 README의 릴리스 예시(0.7.26)와 어긋남 — 릴리스 문서 정합성 (가치 2 / 위험 1 / S)
+- 릴리즈: v0.7.41 (2026-09-04)
