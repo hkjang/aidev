@@ -1,0 +1,50 @@
+release: carry release markers to v0.2.15
+
+v0.2.15 ships the two fixes already merged to main. Uploads stored the
+multipart part header's Content-Type verbatim in `file_infos.mime_type`
+without inspecting a byte, and every route that returned those bytes
+replayed the stored value as the response Content-Type. `/api/v4`
+responses carry no CSP — the webui handler attaches one only to SPA
+documents — so any member could upload an SVG holding a `<script>` as
+`image/svg+xml` and hand a victim a `/files/{id}/preview` or
+`/users/{id}/image` link to run script on the moyro origin with that
+victim's session. The link preview proxy had the same hole because
+`FetchImage` checked only the `image/` prefix and would replay a remote
+host's SVG from our origin. A single SVG-excluding raster allow-list in
+`usercontent.go` now backs one policy for every path that serves stored
+or proxied bytes — nosniff always, inline only for allow-listed types,
+everything else an opaque attachment — so `/preview` answers 404 for
+non-raster instead of falling back to the original, profile image uploads
+take the same allow-list rather than `image/*`, and the proxy answers 502
+for scriptable upstream types. `Content-Disposition` also interpolated
+the stored name directly, and `files.sanitize` strips only path
+separators, so a name like `a";filename="evil.html` could close the
+quoted string and append its own parameter; the header now carries a
+reduced quotable ASCII filename alongside `filename*`, and the compliance
+report download's reportID path segment was fixed the same way.
+
+The second fix keeps sidebar categories to channels the user can still
+see. `sidebar.fillChannelIDs` documented that it recomputes membership
+from `channel_members` on every call so stale rows cannot surface, but
+applied that rule only to the auto-classified remainder.
+`sidebar_category_channels` rows survive channel archival and member
+removal — the foreign key cascades only when the channel row is deleted —
+so channels the user had left and channels that were archived stayed
+pinned in custom categories forever, and the `favorite_channel`
+preference carries no team, so a favorite marked in one team appeared in
+every team's Favorites. The live membership set is now read first and all
+three sources are filtered through it, and explicit placements are
+recorded beyond the requested category so a `Get` for a default category
+neither reclassifies channels a custom category already holds nor lists a
+favorite twice. The previously untested sidebar package gained three
+PostgreSQL tests and joined the CI PostgreSQL job.
+
+This commit carries the release markers from v0.2.14 to v0.2.15 — the web
+and plugin SDK manifests, both OpenAPI contracts, the README, product
+spec, offline guide, the published Pages documents and their verifier, and
+the version the web client falls back to — and dates the published Pages
+at 2026-09-04. No behavior moves with it.
+
+Verified with go vet, go build, and go test in server and plugin-sdk/go,
+npm test, tsc and vite build in webapp, scripts/verify-pages.mjs, and
+scripts/check-source-sizes.sh.
