@@ -175,3 +175,33 @@
   도달하는 호출자는 항상 super admin이고 `HasPermission`이 무조건 true를 돌려준다.
   즉 오타 난 scope는 이미 400을 받는다.
 - 릴리즈: v0.2.24 (2026-09-04)
+
+## 2026-09-04
+- 선택: `attributes.*`에 대한 `!=`가 그 키가 없는 자산을 전부 제외하던 문제 (가치 4 / 위험 2 / 작업량 M)
+- 결과: 성공
+- 요약: `attributes.*` 경로는 저장된 JSON 문서에서 값을 꺼내므로 그 키를 한 번도
+  보고하지 않은 자산에서는 SQL `NULL`이 나오고, `NULL != 'prod'`는 참이 아니라
+  미지(unknown)라 행이 탈락했다. 그래서 `attributes.env != "prod"`는 env를 수집한
+  적 없는 자산 — "운영이 아닌 것"을 묻는 운영자가 가장 보고 싶어 하는 미표시
+  자산 — 을 하나도 돌려주지 않았고, 응답은 HTTP 200과 짧아진 목록뿐이라 무엇이
+  빠졌는지 알 길이 없었으며 `/query/validate`는 그 표현식을 이미 valid라고 답한
+  뒤였다. PostgreSQL의 `#>>`와 SQLite의 `json_extract`가 똑같이 NULL을 주므로 두
+  모드를 비교해도 힌트가 없었다. 이제 속성 경로의 부등호는
+  `(<경로> IS NULL OR <경로> != $n)`으로 컴파일된다. 등호는 그대로 두어 값을 묻는
+  절이 보고한 적 없는 자산을 끌어오지 않게 했고, 질의 가능한 컬럼은 전부
+  `NOT NULL`이라 컬럼 절은 단순 비교를 유지한다. 콘솔이 렌더링하는 문법 참조에도
+  `!=`가 해당 속성이 없는 자산을 포함한다고 적었다(문구는 서버 `Describe()`가
+  내려주므로 `webui/dist` 재빌드 불필요). 검증: querydsl 단위 테스트 2개(두 모드의
+  컴파일 결과·컬럼 절 무회귀)와 `/api/v1/query/execute` 통합 테스트 1개(prod·
+  staging·env 없음 세 자산으로 `!=`와 `=` 양쪽 확인)를 추가해 수정 전 실패
+  (`!=`가 staging 하나만 반환)·수정 후 통과를 확인하고, `go test ./...`를 SQLite
+  fallback과 실제 PostgreSQL(`scripts/test-postgres.sh`) 양쪽에서 전 패키지 통과,
+  `go vet`, `go build`, `gofmt`, `npm test`(130개), `npm run build`,
+  `redocly lint openapi.yaml` 통과.
+- 보류 아이디어:
+  - `/api/v1/external/query/*` API key 경로의 한도·감사 로그 커버리지 (가치 3 / 위험 2 / M)
+  - 콘솔이 마지막 scope 체크박스를 비활성화하지 않아 이제 400을 받고서야 알게 됨(web 변경 시 `webui/dist` 재빌드 필요) (가치 2 / 위험 2 / S)
+  - Query DSL에 OR/괄호 지원 추가 (가치 3 / 위험 4 / L)
+  - Query DSL이 `attributes.<키>`의 존재/부재 자체를 묻는 연산자를 제공하지 않음(지금은 `>= ""` 같은 우회가 필요) (가치 3 / 위험 2 / M)
+- 릴리즈: v0.2.25 (2026-09-04)
+- 릴리즈: v0.2.25 (2026-09-04)
