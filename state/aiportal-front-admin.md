@@ -76,3 +76,14 @@
   - AdvancedPolicyView가 `snapshot.extensions`를 v-model로 직접 변형해 저장 실패 시 화면과 서버 상태가 어긋나는 문제 (가치 2 / 위험 2 / S)
   - `shared/format.ts` 단위 테스트 공백 보강 + `formatDateTime`이 epoch millis를 날짜로 해석하지 못하고 원시 숫자 문자열을 그대로 보여주는 문제 (가치 2 / 위험 1 / S)
   - 루트 앱의 `crypto-js` local tarball 의존성 제거로 clean install 복구 — 현재 `npm ci` 자체가 불가해 검증 비용 큼 (가치 4 / 위험 4 / M)
+
+## 2026-09-05
+- 선택: 기존 backend의 400 + 토큰 code를 세션 만료로 처리 (가치 5 / 위험 1 / 작업량 S)
+- 결과: 성공
+- 요약: 지난 두 세션이 고친 401 세션 정리 경로가 실환경에서는 아예 동작하지 않았다. 루트 앱 `src/api/common/interceptors.js:192-195`와 `docs/API_GUIDE.md`(오류와 재시도 표), `docs/ARCHITECTURE.md`가 모두 기록하듯 기존 backend는 토큰 문제를 HTTP 401이 아니라 **HTTP 400 + body code `401`(토큰 없음)/`403`(만료)/`405`(토큰 정보 오류)** 로 알리는데, admin-v2 `http.ts`는 `error.response?.status === 401`만 봤다. 그래서 세션이 끝나도 캐시된 관리자 세션이 계속 유효해 보이고 router guard가 `/sso/ssologin`을 다시 부르지 않아 사용자는 새로고침 전까지 모든 조회가 "API 요청에 실패했습니다."로 끝나는 화면에 갇혔다. 판정을 `isSessionExpired()` 한곳에 모아 세션 정리 handler 호출과 `fallbackErrorMessage`가 같은 기준을 쓰게 했고(HTTP 403 인가 실패와 `BZ01` 같은 400 업무 오류는 제외), admin-v2 ARCHITECTURE.md에 이 신호 계약을 문서화했다. 검증은 `npm run verify`(typecheck + vitest 70개 통과, 기존 64개 + 신규 6개로 `isSessionExpired` 단위 판정 3개와 axios adapter를 통한 400+`403` handler 호출·400+`BZ01` 미호출·fallback 문구)와 `npm run build`(build → runtime-config 검증 → offline 검사 → integrity manifest 19개) 전체 통과, 그리고 수정을 되돌려 신규 interceptor 테스트 2개가 실제로 실패하는지 직접 확인했다. 커밋 c2b6751.
+- 보류 아이디어:
+  - 세션 만료 판정 후 refresh token으로 원요청을 1회 재시도하는 경로 도입 — 루트 앱은 이미 하지만 admin-v2는 SSO 재확인에만 의존한다 (가치 3 / 위험 3 / M)
+  - CatalogView·ContentAccessView가 route query를 onMounted에서만 읽어 같은 경로의 query 변경(딥링크 재진입)에 반응하지 않는 문제 — 컴포넌트 테스트 환경(jsdom, @vue/test-utils) 선행 정비 필요 (가치 3 / 위험 3 / M)
+  - AdvancedPolicyView가 `snapshot.extensions`를 v-model로 직접 변형해 저장 실패 시 화면과 서버 상태가 어긋나는 문제 (가치 2 / 위험 2 / S)
+  - `monitoringParser.toPod`이 kubectl 스타일 `restarts`(`"3 (5d ago)"`)에서 NaN을 표에 그대로 노출하는 문제 (가치 2 / 위험 1 / S)
+  - `shared/format.ts` 단위 테스트 공백 보강 + `formatDateTime`이 epoch millis를 날짜로 해석하지 못하는 문제 (가치 2 / 위험 1 / S)
