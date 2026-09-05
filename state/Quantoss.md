@@ -54,3 +54,15 @@
   - `notify.Notifier` 를 구조체 리터럴로 만들면 `http` 가 nil (toss.Client 의 limiter nil 패닉과 같은 계열) — 지연 초기화 (가치 3 / 위험 1 / S)
   - `agent/github.go` 상태 표(평균가·현재가·손절·목표)가 `%.0f` — 미국 종목 $150.32 가 "150", $0.90 이 "1" 로 보임, `market.FormatPrice(Country, ...)` 사용 (가치 3 / 위험 1 / S)
   - `journal.Summary` 가 PnL==0 인 거래를 패배로 집계 (`t.PnL > 0` else) — 승률·평균손실이 미세하게 왜곡 (가치 2 / 위험 1 / S)
+
+## 2026-09-05
+- 선택: 전략 override(QUANTOSS_US_STRATEGY·QUANTOSS_PAPER_STRATEGY)가 실제 실행에 반영되지 않던 버그 수정 (가치 4 / 위험 2 / 작업량 M)
+- 결과: 성공
+- 요약: `runAgent` 가 전략을 `QUANTOSS_STRATEGY` 하나로 **미리 한 번** 해석해(`mk`) 모든 시장에 재사용하고 있었다. `ForMarket("US")` 이 `m.Strategy = USStrategy` 를 세워도 그 값은 로그·리포트·알림 **라벨에만** 쓰여서, `QUANTOSS_MARKET=BOTH` + `QUANTOSS_US_STRATEGY=vwap_reclaim` 은 미국 세션이 국내 전략으로 돌면서 기록만 `vwap_reclaim` 으로 남았다 — 이 프로젝트의 핵심인 전진 검증 기록이 통째로 거짓이 되는 결함이다. 직전 커밋(93b0b10)이 넣은 `QUANTOSS_PAPER_STRATEGY` 도 같은 이유로 무력했다: `FromEnv` 가 `Mode=="paper"` 일 때만 `Strategy` 를 덮어쓰는데, 모의 병행 실행은 실거래와 같은 `.env`(`QUANTOSS_MODE=live`)를 쓰고 `runAgent` 가 `cfg.Mode="paper"` 로 바꾸는 것은 그보다 뒤라 조건이 성립하지 않는다. 수정: `ForMarket` 이 override 를 `Strategy` 필드에 확정(우선순위 PaperStrategy > USStrategy > Strategy, 멱등)해 실행 전략과 라벨이 늘 같은 값을 보게 하고, `runAgent` 는 시장별로 `Registry` 를 조회하되 **API 접속 전에** 모든 시장의 전략 이름을 검증한다(몇 시간 뒤 시작하는 US 세션이 오타로 그제서야 죽지 않도록). `backtest`/`optimize` 의 `-strategy` 기본값도 `marketCfg` 이후의 `cfg.Strategy` 로 바꿔 `-market US` 백테스트가 override 를 무시하던 문제를 함께 고쳤고, `-strategy` 를 명시하면 override 보다 우선하도록 했다. 검증: `internal/config/market_test.go` 에 우선순위·멱등·런타임 모드 전환 테스트 2개를 추가하고 `ForMarket` 을 옛 동작으로 되돌리면 4개 단언이 실제로 실패함을 확인. 바이너리 스모크로 `QUANTOSS_US_STRATEGY=nope_typo` → "알 수 없는 전략: nope_typo (시장 US)" 즉시 종료, `QUANTOSS_MODE=live` + `QUANTOSS_PAPER_STRATEGY=nope2` + `paper` → "(시장 KR)" 로 잡히는 것, `-strategy combo` 가 오타 override 를 이기는 것까지 확인. `gofmt -l`(clean)·`go vet ./...`·`go build ./...`·`go test -count=1 ./...` 전부 통과. 커밋 0e5821c.
+- 보류 아이디어:
+  - GitHub Actions CI 없음 — `go build`/`go vet`/`go test`/`gofmt -l` 워크플로 추가 (가치 4 / 위험 1 / S)
+  - `internal/journal`·`internal/notify` 테스트 0건 — Summary/MaxDrawdown, Load 날짜 필터, Notifier httptest 테스트 (가치 3 / 위험 1 / S)
+  - `notify.Notifier` 를 구조체 리터럴로 만들면 `http` 가 nil (toss.Client 의 limiter nil 패닉과 같은 계열) — 지연 초기화 (가치 3 / 위험 1 / S)
+  - `agent/github.go` 상태 표(평균가·현재가·손절·목표)가 `%.0f` — 미국 종목 $150.32 가 "150", $0.90 이 "1" 로 보임, `market.FormatPrice(Country, ...)` 사용 (가치 3 / 위험 1 / S)
+  - `Config.Validate` 가 신규 gap_reclaim 파라미터를 검사하지 않음 — `GapMin >= GapMax` 면 신호가 영영 안 나오는데 조용히 통과 (가치 3 / 위험 1 / S)
+  - `journal.Summary` 가 PnL==0 인 거래를 패배로 집계 (`t.PnL > 0` else) — 승률·평균손실이 미세하게 왜곡 (가치 2 / 위험 1 / S)

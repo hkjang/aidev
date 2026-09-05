@@ -5,7 +5,7 @@
 #   - gh 인증, 디스크, 잠금 상태를 docs/data/health.json 에 남기고 문제가 있으면 notify.sh 채널로 알린다
 set -uo pipefail
 export HOME=/home/hkjang
-export PATH="$HOME/.local/bin:$HOME/.nvm/versions/node/v22.23.1/bin:$HOME/miniconda3/bin:/usr/local/go/bin:/usr/local/bin:/usr/bin:/bin"
+export PATH="$HOME/.local/bin:$HOME/.nvm/versions/node/v22.23.1/bin:$HOME/miniconda3/bin:/usr/local/go/bin:/usr/local/bin:/usr/bin:/bin:/mnt/c/WINDOWS/system32:/mnt/c/WINDOWS/System32/WindowsPowerShell/v1.0"
 HERE="${AIDEV_BIN:-$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)}"
 REPO_DIR="$(cd "$HERE/.." && pwd)"
 RUNS="$REPO_DIR/docs/data/runs.jsonl"; OUT="$REPO_DIR/docs/data/health.json"; LOCK="$HOME/.auto-improve/run.lock"
@@ -31,13 +31,14 @@ fi
 gh auth status >/dev/null 2>&1 || problems+=("gh 인증 실패 — gh auth login 필요")
 disk=$(df -P "$REPO_DIR" | awk 'NR==2{print $5}' | tr -d '%'); [ "${disk:-0}" -gt 90 ] && problems+=("디스크 ${disk}% 사용")
 docker info >/dev/null 2>&1 || problems+=("docker 를 쓸 수 없음 — 자산 빌드 실패 예상")
-sched=$(schtasks.exe /Query /TN AutoImprove /FO CSV 2>/dev/null | tail -1 | tr -d '\r' | awk -F'","' '{print $3}' | tr -d '"')
+sched=$(schtasks.exe /Query /TN AutoImprove /FO LIST 2>/dev/null | iconv -f cp949 -t utf-8 2>/dev/null | tr -d '\r' | grep -E "^(상태|Status):" | head -1 | sed -E 's/^[^:]+:[[:space:]]*//')
+next_run=$(schtasks.exe /Query /TN AutoImprove /FO LIST 2>/dev/null | iconv -f cp949 -t utf-8 2>/dev/null | tr -d '\r' | grep -E "^(다음 실행 시간|Next Run Time):" | head -1 | sed -E 's/^[^:]+:[[:space:]]*//')
 
 mkdir -p "$(dirname "$OUT")"
 jq -cn --arg ts "$(date -Iseconds)" --arg last "$last_ts" --argjson since "$since_last" --arg pid "${run_pid:-}" --argjson age "${run_age:-0}" \
-   --arg sched "${sched:-unknown}" --argjson disk "${disk:-0}" --argjson problems "$(printf '%s\n' "${problems[@]:-}" | jq -R . | jq -s 'map(select(length>0))')" \
+   --arg sched "${sched:-unknown}" --arg next "${next_run:-}" --argjson disk "${disk:-0}" --argjson problems "$(printf '%s\n' "${problems[@]:-}" | jq -R . | jq -s 'map(select(length>0))')" \
    --argjson actions "$(printf '%s\n' "${actions[@]:-}" | jq -R . | jq -s 'map(select(length>0))')" \
-   '{checked:$ts,last_run:$last,seconds_since_last:$since,runner_pid:$pid,runner_age_seconds:$age,scheduler_status:$sched,disk_percent:$disk,
+   '{checked:$ts,last_run:$last,seconds_since_last:$since,runner_pid:$pid,runner_age_seconds:$age,scheduler_status:$sched,scheduler_next_run:$next,disk_percent:$disk,
      ok:(($problems|length)==0),problems:$problems,actions:$actions}' > "$OUT"
 echo "health: ok=$(jq -r .ok "$OUT") problems=${#problems[@]} actions=${#actions[@]}"
 

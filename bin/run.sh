@@ -28,6 +28,9 @@ CLAUDE_SETTINGS='{"attribution":{"commit":"","pr":""}}'
 # aidev 자신은 후보에서 뺀다 — 에이전트가 자기 러너를 고치게 두지 않는다
 # Naviq 는 사용자 요청으로 제외 (2026-09-02)
 EXCLUDE_RE='^(aidev|Naviq|sqlpad|_tmp.*|visitflow-node-modules.*|새 폴더)$'
+# 일일 상한·휴면 규칙 (state/caps.env)
+MAX_DAILY_COST=80; MAX_DAILY_ROUNDS=60; MAX_DAILY_RELEASES=30; DORMANT_AFTER=3; DORMANT_DAYS=7
+[ -f "$REPO_DIR/state/caps.env" ] && . "$REPO_DIR/state/caps.env"
 
 while [ $# -gt 0 ]; do case "$1" in
   --dry-run) DRY=1;; --count) COUNT=$2; shift;; --project) ONLY=$2; shift;;
@@ -60,10 +63,12 @@ record_usage(){ # $1=프로젝트 $2=단계(improve/release/assets) $3=json $4=t
 }
 
 # 회차 기록 한 줄을 docs/data/runs.jsonl 에 남기고 GitHub Pages 일일 보고를 다시 만든다
-record_run(){ # $1=프로젝트 $2=결과
+record_run(){ # $1=프로젝트 $2=결과  (RUN_META 가 있으면 변경 요약을 함께 남긴다)
   mkdir -p "$REPO_DIR/docs/data"
-  jq -cn --arg ts "$(date -Iseconds)" --arg d "$RUN_DATE" --arg p "$1" --arg r "$2" \
-     '{ts:$ts,date:$d,project:$p,result:$r}' >> "$REPO_DIR/docs/data/runs.jsonl"
+  jq -cn --arg ts "$(date -Iseconds)" --arg d "$RUN_DATE" --arg p "$1" --arg r "$2" --argjson m "${RUN_META:-{\}}" \
+     '{ts:$ts,date:$d,project:$p,result:$r} + $m' >> "$REPO_DIR/docs/data/runs.jsonl"
+  RUN_META="{}"
+  "$HERE/digest.sh" >>"$LOG" 2>&1 || true
   "$HERE/regress.sh" >>"$LOG" 2>&1 || true
   python3 "$HERE/report.py" >>"$LOG" 2>&1 || log "report.py FAILED"
   "$HERE/notify.sh" >>"$LOG" 2>&1 || true
@@ -332,6 +337,29 @@ if [ -n "${RELEASE_ONLY:-}" ]; then
   log "done"; exit 0
 fi
 
+# ---- 일일 상한 ---------------------------------------------------------------
+if [ -z "$ONLY" ] && [ $DRY -eq 0 ]; then
+  today_cost=$(jq -s --arg d "$RUN_DATE" '[.[]|select(.date==$d)|.cost_usd//0]|add // 0' "$REPO_DIR/docs/data/usage.jsonl" 2>/dev/null || echo 0)
+  today_rounds=$(jq -s --arg d "$RUN_DATE" '[.[]|select(.date==$d)]|length' "$REPO_DIR/docs/data/runs.jsonl" 2>/dev/null || echo 0)
+  today_rel=$(jq -s --arg d "$RUN_DATE" '[.[]|select(.date==$d)|select(.result|test("released v?[0-9]"))]|length' "$REPO_DIR/docs/data/runs.jsonl" 2>/dev/null || echo 0)
+  cap=""
+  awk -v c="$today_cost" -v m="$MAX_DAILY_COST" 'BEGIN{exit !(c>=m)}' && cap="비용 \$$today_cost ≥ \$$MAX_DAILY_COST"
+  [ "${today_rounds:-0}" -ge "$MAX_DAILY_ROUNDS" ] && cap="회차 $today_rounds ≥ $MAX_DAILY_ROUNDS"
+  [ "${today_rel:-0}" -ge "$MAX_DAILY_RELEASES" ] && cap="릴리즈 $today_rel ≥ $MAX_DAILY_RELEASES"
+  if [ -n "$cap" ]; then
+    log "daily cap reached: $cap — 오늘은 더 돌지 않는다"
+    if [ ! -f "$STATE/.cap-$RUN_DATE" ]; then
+      touch "$STATE/.cap-$RUN_DATE"
+      ps1=$(wslpath -w "$HERE/toast.ps1" 2>/dev/null); [ -n "$ps1" ] && powershell.exe -NoProfile -ExecutionPolicy Bypass -File "$ps1" -Title "aidev 일일 상한 도달" -Message "$cap" >/dev/null 2>&1
+      jq -cn --arg ts "$(date -Iseconds)" --arg d "$RUN_DATE" --arg r "daily cap reached: $cap" '{ts:$ts,date:$d,project:"(runner)",result:$r}' >> "$REPO_DIR/docs/data/runs.jsonl"
+      python3 "$HERE/report.py" >>"$LOG" 2>&1 || true; sync_repo "run($RUN_DATE): daily cap — $cap"
+    fi
+    exit 0
+  fi
+fi
+# 수동 트리거(이슈 라벨 run) 수집
+[ -z "$ONLY" ] && "$HERE/inbox.sh" >>"$LOG" 2>&1 || true
+
 # ---- 후보 선정 ---------------------------------------------------------------
 candidates=()
 since=$(date -d "-$DAYS days" +%s)
@@ -343,6 +371,14 @@ for d in "$ROOT"/*/; do
   [ "$last" -ge "$since" ] || continue
   git -C "$d" remote get-url origin >/dev/null 2>&1 || continue
   [ -z "$(git -C "$d" status --porcelain 2>/dev/null)" ] || { log "skip $n: dirty working tree"; continue; }
+  # 휴면: 최근 N회가 모두 "변경 없음"이고 마지막이 DORMANT_DAYS 안이면 건너뛴다 (수동/수정 큐는 예외)
+  if [ -z "$ONLY" ] && [ -s "$REPO_DIR/docs/data/runs.jsonl" ]; then
+    read -r streak lastd < <(jq -rs --arg p "$n" --argjson k "$DORMANT_AFTER" '[.[]|select(.project==$p)] | (.[-$k:] ) as $l | [( ($l|length)==$k and all($l[]; .result|test("no change")) ), ($l[-1].date // "")] | @tsv' "$REPO_DIR/docs/data/runs.jsonl" 2>/dev/null || echo "false ")
+    if [ "$streak" = true ] && [ -n "$lastd" ] && [ $(( ($(date +%s) - $(date -d "$lastd" +%s)) / 86400 )) -lt "$DORMANT_DAYS" ] \
+       && ! grep -q -P "^$n\t" "$STATE/fix-queue.tsv" "$STATE/run-queue.tsv" 2>/dev/null; then
+      log "skip $n: dormant (변경 없음 ${DORMANT_AFTER}연속, $lastd)"; continue
+    fi
+  fi
   candidates+=("$n")
 done
 [ ${#candidates[@]} -gt 0 ] || { log "no candidates"; exit 0; }
@@ -364,7 +400,20 @@ if [ -z "$ONLY" ] && [ -s "$FIXQ" ]; then
     fi
   done < "$FIXQ"
 fi
-[ -n "$FIX_PROJECT" ] || echo $(( (idx+COUNT) % ${#candidates[@]} )) > "$CURSOR"
+RUN_ISSUE=""; RUNQ="$STATE/run-queue.tsv"
+if [ -z "$FIX_PROJECT" ] && [ -z "$ONLY" ] && [ -s "$RUNQ" ]; then
+  while IFS=$'\t' read -r rp rnote rnum; do
+    [ -n "$rp" ] || continue
+    if printf '%s\n' "${candidates[@]}" | grep -qx "$rp"; then
+      picked=("$rp"); RUN_PROJECT="$rp"; RUN_ISSUE="$rnum"; log "run-queue: picked $rp ($rnote)"; break
+    else
+      log "run-queue: $rp 은 후보가 아님(더러운 트리/원격 없음/30일 무활동) — 이슈에 안내"; \
+      (cd "$REPO_DIR" && gh issue comment "$rnum" --body "\`$rp\` 은 지금 후보가 아닙니다(미커밋 변경이 있거나, 원격이 없거나, 30일간 커밋이 없음). 정리 후 다시 라벨을 달아 주세요." >/dev/null 2>&1; gh issue edit "$rnum" --remove-label run >/dev/null 2>&1) || true
+      grep -v -P "^$rp\t" "$RUNQ" > "$RUNQ.tmp"; mv "$RUNQ.tmp" "$RUNQ"
+    fi
+  done < "$RUNQ"
+fi
+[ -n "$FIX_PROJECT" ] || [ -n "${RUN_PROJECT:-}" ] || echo $(( (idx+COUNT) % ${#candidates[@]} )) > "$CURSOR"
 log "picked: ${picked[*]}"
 [ $DRY -eq 1 ] && exit 0
 
@@ -384,9 +433,12 @@ $(printf '%b' "$FIX_NOTE_TEXT")
 릴리즈 워크플로가 같은 이유로 두 번 실패했습니다. 워크플로 파일(.github/workflows)과 실패한 단계의 스크립트·테스트를 읽고 원인을 고치세요. 워크플로 자체를 느슨하게 만들어 통과시키는 것은 금지입니다(검증을 지우거나 continue-on-error 를 넣지 마세요). 고친 뒤 같은 검증을 로컬에서 재현해 통과를 확인하고, 원장에 '수정 과제' 로 기록하세요."
   fi
   lessons=$(jq -r --arg p "$n" 'select(.project==$p) | "- \(.date) [\(.kind)] \(.detail)"' "$STATE/lessons.jsonl" 2>/dev/null | tail -n 8)
+  ideas_file="$STATE/$n.ideas.json"
+  ideas=$(jq -r '.[]? | select(.status=="pending") | "- [\(.value)/\(.risk)/\(.size)] \(.title) — \(.note // "")"' "$ideas_file" 2>/dev/null | head -n 12)
   prompt=$(LEDGER_FILE="$ledger" RUN_DATE="$RUN_DATE" FIX_NOTE="$fix_note" LESSONS="${lessons:-(없음)}" \
+           IDEAS_FILE="$ideas_file" IDEAS_CONTENT="${ideas:-(없음)}" \
            LEDGER_CONTENT="$(cat "$ledger" 2>/dev/null || echo '(없음)')" \
-           envsubst '$LEDGER_FILE $RUN_DATE $LEDGER_CONTENT $FIX_NOTE $LESSONS' < "$REPO_DIR/prompt.md")
+           envsubst '$LEDGER_FILE $RUN_DATE $LEDGER_CONTENT $FIX_NOTE $LESSONS $IDEAS_FILE $IDEAS_CONTENT' < "$REPO_DIR/prompt.md")
 
   # 프로젝트별 환경(예: WEEKLY_TEST_POSTGRES_DSN)은 state/<프로젝트>.env 에 두면 에이전트에 전달된다 (.env 는 git 제외)
   envfile="$STATE/$n.env"
@@ -406,8 +458,11 @@ $(printf '%b' "$FIX_NOTE_TEXT")
     { printf '## %s\n- 선택: %s\n- 결과: 성공(원장 미기록, 러너가 대체 기록)\n- 요약: 커밋 %s개\n' \
         "$RUN_DATE" "$(git -C "$wt" log -1 --format=%s)" "$ahead"; } >> "$ledger"
   fi
-  result="no change"
+  result="no change"; RUN_META="{}"
   if [ "$ahead" -gt 0 ]; then
+    # 대시보드 미리보기용: 파일 수·증감·테스트 파일 수·커밋 제목
+    RUN_META=$(git -C "$wt" diff --numstat "$base..HEAD" | awk 'BEGIN{f=0;a=0;d=0;t=0} {f++; a+=$1; d+=$2; if ($3 ~ /(^|\/)(test|tests|spec|__tests__)\/|_test\.|\.test\.|\.spec\.|Test\.java|test_.*\.py/) t++} END{printf "{\"files\":%d,\"additions\":%d,\"deletions\":%d,\"tests\":%d}", f,a,d,t}')
+    RUN_META=$(jq -c --arg t "$(git -C "$wt" log -1 --format=%s)" '. + {title:$t}' <<<"$RUN_META" 2>/dev/null || echo "{}")
     git -C "$wt" push -u origin "$slug" >>"$LOG" 2>&1
     body=$(printf '자율 개선 에이전트가 생성한 PR입니다.\n\n%s\n\n🤖 auto-improve %s · https://github.com/hkjang/aidev' \
            "$(tail -n 12 "$ledger" 2>/dev/null)" "$RUN_DATE")
@@ -452,6 +507,12 @@ $(sed 's/^/- /' <<<"$guarded")
     git -C "$repo" branch -D "$slug" >>"$LOG" 2>&1 || true
   fi
   git -C "$repo" worktree remove --force "$wt" >>"$LOG" 2>&1 || true
+  if [ "$n" = "${RUN_PROJECT:-}" ]; then
+    grep -v -P "^$n\t" "$RUNQ" > "$RUNQ.tmp" 2>/dev/null; mv "$RUNQ.tmp" "$RUNQ"; result="manual: $result"
+    [ -n "$RUN_ISSUE" ] && (cd "$REPO_DIR" && gh issue comment "$RUN_ISSUE" --body "✅ 실행 완료 — $result
+
+https://hkjang.github.io/aidev/projects/$n/" >/dev/null 2>&1; gh issue close "$RUN_ISSUE" >/dev/null 2>&1) || true
+  fi
   if [ "$n" = "${FIX_PROJECT:-}" ]; then
     grep -v -P "^$n\t" "$FIXQ" > "$FIXQ.tmp" 2>/dev/null; mv "$FIXQ.tmp" "$FIXQ"; result="fix-round: $result"
     case "$result" in *merged*) ;; *) log "$n: fix round did not merge — rolling back"; rollback_project "$n" "${FIX_SHA:-}";; esac

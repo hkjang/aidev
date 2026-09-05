@@ -1,0 +1,83 @@
+[
+  {
+    "title": "전략 override(QUANTOSS_US_STRATEGY·QUANTOSS_PAPER_STRATEGY)가 실제 실행에 반영되지 않음",
+    "value": 4,
+    "risk": 2,
+    "size": "M",
+    "status": "done",
+    "note": "runAgent 가 전략을 한 번만 해석해 모든 시장에 재사용 → US 세션이 국내 전략으로 돌면서 기록만 US 전략 이름. PaperStrategy 는 FromEnv 의 Mode 조건이 runAgent 의 Mode 전환보다 앞서 무력. ForMarket 이 override 를 Strategy 에 확정하고 runAgent 가 시장별로 Registry 조회 + 접속 전 전 시장 검증. 커밋 0e5821c",
+    "updated": "2026-09-05"
+  },
+  {
+    "title": "GitHub Actions CI 없음 — go build/vet/test/gofmt 워크플로 추가",
+    "value": 4,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": ".github/workflows 디렉터리 자체가 없다. 자동 개선 커밋이 계속 쌓이는데 검증은 로컬 실행에만 의존.",
+    "updated": "2026-09-05"
+  },
+  {
+    "title": "internal/journal·internal/notify 테스트 0건",
+    "value": 3,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "Summary(승률·PF·MaxDrawdown), Load 날짜 필터·JSONL 파싱, Notifier 를 httptest 로. 두 패키지 모두 테스트 파일이 없다.",
+    "updated": "2026-09-05"
+  },
+  {
+    "title": "notify.Notifier 를 구조체 리터럴로 만들면 http 가 nil → 패닉",
+    "value": 3,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "New() 만 http 필드를 채운다. toss.Client 의 limiter nil 패닉과 같은 계열. Send 안에서 지연 초기화.",
+    "updated": "2026-09-05"
+  },
+  {
+    "title": "agent/github.go 상태 표 가격이 %.0f — 미국 종목이 뭉개짐",
+    "value": 3,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "github.go:221 평균가·현재가·손절·목표. $150.32 → \"150\", $0.90 → \"1\". market.FormatPrice(Country, ...) 사용. engine.go:538 진입 사유 문자열도 동일.",
+    "updated": "2026-09-05"
+  },
+  {
+    "title": "Config.Validate 가 gap_reclaim 파라미터를 검사하지 않음",
+    "value": 3,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "GapMin/GapMax/GapPullMin/GapVolMult 는 93b0b10 에서 추가됐으나 Validate 대상 밖. GapMin >= GapMax 면 신호가 영영 안 나오는데 조용히 통과 — 연구 세션이 통째로 낭비된다.",
+    "updated": "2026-09-05"
+  },
+  {
+    "title": "journal.Summary 가 PnL==0 인 거래를 패배로 집계",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "journal.go:174 `if t.PnL > 0 { win } else { loss }`. 본전 청산이 패배·평균손실에 섞여 승률이 왜곡. printBreakdown(main.go) 도 같은 판정.",
+    "updated": "2026-09-05"
+  },
+  {
+    "title": "market.FetchCandles 종료 조건 중복 단순화",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "`page[0].TS.Before(cutoff) || !page[0].TS.After(cutoff)` 는 앞 항이 뒤 항에 포함된다. 단순화 + 페이지네이션 테스트.",
+    "updated": "2026-09-05"
+  },
+  {
+    "title": "README '알려진 한계' 가 stale — WebSocket 미사용이라 적혀 있음",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "README:265 '실시간 WebSocket 미사용' 이 README:216 'WebSocket(trade:kr)으로 즉시 청산' 과 정면으로 모순. 한 파일 안에서 서로 반박하고 있어 신규 사용자가 손절 지연을 오해한다.",
+    "updated": "2026-09-05"
+  }
+]

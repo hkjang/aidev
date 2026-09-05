@@ -119,6 +119,15 @@ def pill(status):
     return f'<span class="pill pill-{status}">{STATUS[status]}</span>'
 
 
+def meta_html(r):
+    """runs.jsonl 의 변경 요약(files/additions/deletions/tests/title)을 한 줄로."""
+    if not r.get("files"):
+        return ""
+    t = f' — {esc(r["title"])}' if r.get("title") else ""
+    tests = f' · 테스트 {r.get("tests", 0)}' if r.get("tests") else " · <em>테스트 없음</em>"
+    return f'<div class="meta">{r["files"]}파일 <span style="color:var(--good)">+{r.get("additions",0)}</span>/<span style="color:var(--bad)">−{r.get("deletions",0)}</span>{tests}{t}</div>'
+
+
 def ts_hm(r):
     return (r.get("ts") or "")[11:16]
 
@@ -164,6 +173,24 @@ def fix_queue():
             if "\t" in line:
                 parts = line.rstrip("\n").split("\t")
                 out.append({"project": parts[0], "note": parts[1], "merge_sha": parts[2] if len(parts) > 2 else ""})
+    return out
+
+
+def ideas(project):
+    try:
+        return json.load(open(os.path.join(STATE, f"{project}.ideas.json"), encoding="utf-8"))
+    except Exception:
+        return []
+
+
+def caps():
+    out = {}
+    path = os.path.join(STATE, "caps.env")
+    if os.path.exists(path):
+        for line in open(path, encoding="utf-8"):
+            m = re.match(r"^\s*([A-Z_]+)=(\d+)", line)
+            if m:
+                out[m.group(1)] = int(m.group(2))
     return out
 
 
@@ -214,8 +241,9 @@ def health_html(h, lessons):
     items = "".join(f"<li>{esc(x)}</li>" for x in (h.get("problems") or []) + [f"조치: {a}" for a in (h.get("actions") or [])])
     cutoff = (date.today() - timedelta(days=7)).isoformat()
     reg7 = sum(1 for l in lessons if (l.get("date") or "") >= cutoff)
+    nxt = f' · 다음 실행 {esc(h["scheduler_next_run"])}' if h.get("scheduler_next_run") else ""
     return (f'<div class="{cls}" role="status"><strong>{"🩺 러너 정상" if ok else "🩺 러너 점검 필요"}</strong> '
-            f'<span class="meta">— 마지막 회차 {ago} · 스케줄러 {esc(h.get("scheduler_status") or "?")} · 디스크 {h.get("disk_percent", "?")}% · '
+            f'<span class="meta">— 마지막 회차 {ago} · 스케줄러 {esc(h.get("scheduler_status") or "?")}{nxt} · 디스크 {h.get("disk_percent", "?")}% · '
             f'최근 7일 회귀 {reg7}건 · 점검 {esc((h.get("checked") or "")[11:16])}</span>{("<ul>" + items + "</ul>") if items else ""}</div>\n')
 
 
@@ -417,7 +445,7 @@ def runs_table(runs_, with_date=False, filterable=True, caption=None):
         when = (r.get("ts") or "")[:16].replace("T", " ") if with_date else ts_hm(r)
         rows.append((classify(r.get("result")),
                      [esc(when), f'<a href="{SITE}/projects/{esc(p)}/">{esc(p)}</a>',
-                      pill(classify(r.get("result"))) + " " + result_html(p, r.get("result"))]))
+                      pill(classify(r.get("result"))) + " " + result_html(p, r.get("result")) + meta_html(r)]))
     return table([("일시" if with_date else "시각", ""), ("프로젝트", "primary"), ("결과", "")], rows, filterable=filterable, caption=caption)
 
 
@@ -468,7 +496,20 @@ def write_report(day, day_runs, day_usage):
              f"# 자율 개선 일일 보고 — {day}\n", f'<p class="tldr"><strong>요약.</strong> {esc(desc)}</p>\n', stats_html(c, u),
              "## 회차\n", runs_table(day_runs, caption="시각은 KST. 상태 칩과 검색으로 거를 수 있습니다.")]
     if day_usage:
-        lines += ["## 비용·사용량\n", usage_table(day_usage, caption="claude -p 가 보고한 추정 비용(정액제에서는 참고값)과 소요 시간")]
+        cp = caps()
+    if cp:
+        def bar(v, m):
+            pct = min(100, int(v / m * 100)) if m else 0
+            col = "var(--bad)" if pct >= 100 else ("var(--warn)" if pct >= 80 else "var(--good)")
+            return f'<span class="meta">{v} / {m}</span> <span style="display:inline-block;width:6rem;height:.5rem;background:var(--card-2);border-radius:4px;vertical-align:middle"><span style="display:block;width:{pct}%;height:100%;background:{col};border-radius:4px"></span></span>'
+        lines += ["## 오늘 상한\n", '<dl class="kv">',
+                  f'<dt>비용</dt><dd>{bar(round(u["cost"], 2), cp.get("MAX_DAILY_COST", 0))}</dd>',
+                  f'<dt>회차</dt><dd>{bar(c["total"], cp.get("MAX_DAILY_ROUNDS", 0))}</dd>',
+                  f'<dt>릴리즈</dt><dd>{bar(c["released"], cp.get("MAX_DAILY_RELEASES", 0))}</dd>',
+                  f'<dt>휴면 규칙</dt><dd>변경 없음 {cp.get("DORMANT_AFTER", "?")}회 연속이면 {cp.get("DORMANT_DAYS", "?")}일 제외</dd>',
+                  f'<dt>수동 실행</dt><dd><a href="{GH}/aidev/issues/new?labels=run&title=run%3A+%3C%ED%94%84%EB%A1%9C%EC%A0%9D%ED%8A%B8%3E">이슈 만들기</a> — 제목 <code>run: &lt;프로젝트&gt;</code>, 라벨 <code>run</code> → 다음 회차 우선 실행</dd>',
+                  "</dl>\n", "설정: `state/caps.env`. 상한에 닿으면 그날은 새 회차를 시작하지 않고 알린다.\n"]
+    lines += ["## 비용·사용량\n", usage_table(day_usage, caption="claude -p 가 보고한 추정 비용(정액제에서는 참고값)과 소요 시간")]
     seen, detail = set(), []
     for r in day_runs:
         p = r.get("project", "")
@@ -579,7 +620,30 @@ def write_project(p, runs_p, usage_p):
     lines.append("</dl>\n")
     lines += ["## 회차 이력\n", runs_table(list(reversed(runs_p)), with_date=True, filterable=len(runs_p) > 8)]
     if usage_p:
-        lines += ["## 비용·사용량\n", usage_table(list(reversed(usage_p))[:30], caption="최근 30세션")]
+        cp = caps()
+    if cp:
+        def bar(v, m):
+            pct = min(100, int(v / m * 100)) if m else 0
+            col = "var(--bad)" if pct >= 100 else ("var(--warn)" if pct >= 80 else "var(--good)")
+            return f'<span class="meta">{v} / {m}</span> <span style="display:inline-block;width:6rem;height:.5rem;background:var(--card-2);border-radius:4px;vertical-align:middle"><span style="display:block;width:{pct}%;height:100%;background:{col};border-radius:4px"></span></span>'
+        lines += ["## 오늘 상한\n", '<dl class="kv">',
+                  f'<dt>비용</dt><dd>{bar(round(u["cost"], 2), cp.get("MAX_DAILY_COST", 0))}</dd>',
+                  f'<dt>회차</dt><dd>{bar(c["total"], cp.get("MAX_DAILY_ROUNDS", 0))}</dd>',
+                  f'<dt>릴리즈</dt><dd>{bar(c["released"], cp.get("MAX_DAILY_RELEASES", 0))}</dd>',
+                  f'<dt>휴면 규칙</dt><dd>변경 없음 {cp.get("DORMANT_AFTER", "?")}회 연속이면 {cp.get("DORMANT_DAYS", "?")}일 제외</dd>',
+                  f'<dt>수동 실행</dt><dd><a href="{GH}/aidev/issues/new?labels=run&title=run%3A+%3C%ED%94%84%EB%A1%9C%EC%A0%9D%ED%8A%B8%3E">이슈 만들기</a> — 제목 <code>run: &lt;프로젝트&gt;</code>, 라벨 <code>run</code> → 다음 회차 우선 실행</dd>',
+                  "</dl>\n", "설정: `state/caps.env`. 상한에 닿으면 그날은 새 회차를 시작하지 않고 알린다.\n"]
+    lines += ["## 비용·사용량\n", usage_table(list(reversed(usage_p))[:30], caption="최근 30세션")]
+    ideas_p = ideas(p)
+    pend = [i for i in ideas_p if i.get("status") == "pending"]
+    if ideas_p:
+        lines += [f"## 아이디어 백로그 — 대기 {len(pend)} / 전체 {len(ideas_p)}\n"]
+        rows = [("nochange" if i.get("status") == "pending" else ("released" if i.get("status") == "done" else "failed"),
+                 [esc(i.get("title", "")), esc(f"{i.get('value','?')}/{i.get('risk','?')}/{i.get('size','?')}"),
+                  esc({"pending": "대기", "done": "완료", "rejected": "기각"}.get(i.get("status"), i.get("status", ""))), esc(i.get("note", "")), esc(i.get("updated", ""))])
+                for i in sorted(ideas_p, key=lambda x: (x.get("status") != "pending", -(x.get("value") or 0), x.get("risk") or 0))]
+        lines.append(table([("아이디어", "primary"), ("가치/위험/크기", ""), ("상태", ""), ("메모", ""), ("갱신", "")], rows, filterable=len(rows) > 8,
+                           caption="에이전트가 회차마다 재평가한다. 가치 높고 위험 낮은 대기 항목이 다음 회차 후보다."))
     if lessons_p:
         lines += ["## 교훈 (깨졌던 변경)\n"] + [f"- {esc(l.get('date',''))} **{esc(l.get('kind',''))}** — {esc(l.get('detail',''))}" + (f" ([링크]({l['pr']}))" if (l.get("pr") or "").startswith("http") else "") for l in reversed(lessons_p)] + [""]
     lt = ledger_text(p)
@@ -590,6 +654,7 @@ def write_project(p, runs_p, usage_p):
     return {"name": p, "repo": f"{GH}/{repo}", "page": f"{SITE}/projects/{p}/", "runs": c["total"], "released": c["released"],
             "last_ts": last.get("ts"), "last_status": classify(last.get("result")) if last else None, "last_result": last.get("result"),
             "cost": round(u["cost"], 2), "minutes": round(u["minutes"]), "grade": grade, "grade_why": gwhy, "lessons": len(lessons_p),
+            "ideas_pending": len(pend), "ideas_total": len(ideas_p),
             "release": {k: rel.get(k) for k in ("status", "version", "tag", "assets_count", "prev_tag", "prev_assets_count") if k in rel}}
 
 
@@ -730,6 +795,19 @@ def write_index(by_day, days, by_day_usage, projects_info, alert_items, weeks, m
     lines += ["## 프로젝트별 현황\n",
               table([("프로젝트 · 건강", "primary"), ("마지막 회차", ""), ("결과", ""), ("최근 릴리즈", ""), ("누적 비용", "num")], rows, filterable=True,
                     caption="프로젝트 이름을 누르면 원장 전체와 회차 이력을 볼 수 있습니다.")]
+    cp = caps()
+    if cp:
+        def bar(v, m):
+            pct = min(100, int(v / m * 100)) if m else 0
+            col = "var(--bad)" if pct >= 100 else ("var(--warn)" if pct >= 80 else "var(--good)")
+            return f'<span class="meta">{v} / {m}</span> <span style="display:inline-block;width:6rem;height:.5rem;background:var(--card-2);border-radius:4px;vertical-align:middle"><span style="display:block;width:{pct}%;height:100%;background:{col};border-radius:4px"></span></span>'
+        lines += ["## 오늘 상한\n", '<dl class="kv">',
+                  f'<dt>비용</dt><dd>{bar(round(u["cost"], 2), cp.get("MAX_DAILY_COST", 0))}</dd>',
+                  f'<dt>회차</dt><dd>{bar(c["total"], cp.get("MAX_DAILY_ROUNDS", 0))}</dd>',
+                  f'<dt>릴리즈</dt><dd>{bar(c["released"], cp.get("MAX_DAILY_RELEASES", 0))}</dd>',
+                  f'<dt>휴면 규칙</dt><dd>변경 없음 {cp.get("DORMANT_AFTER", "?")}회 연속이면 {cp.get("DORMANT_DAYS", "?")}일 제외</dd>',
+                  f'<dt>수동 실행</dt><dd><a href="{GH}/aidev/issues/new?labels=run&title=run%3A+%3C%ED%94%84%EB%A1%9C%EC%A0%9D%ED%8A%B8%3E">이슈 만들기</a> — 제목 <code>run: &lt;프로젝트&gt;</code>, 라벨 <code>run</code> → 다음 회차 우선 실행</dd>',
+                  "</dl>\n", "설정: `state/caps.env`. 상한에 닿으면 그날은 새 회차를 시작하지 않고 알린다.\n"]
     lines += ["## 비용·사용량\n",
               f'<ul class="stats"><li><b>${u["cost"]:.2f}</b><span>오늘 비용</span></li><li><b>{fmt_min(u["minutes"])}</b><span>오늘 에이전트 시간</span></li>'
               f'<li><b>{int(u["sessions"])}</b><span>오늘 세션</span></li><li><b>${all_u["cost"]:.2f}</b><span>누적 비용</span></li>'
@@ -784,7 +862,7 @@ def main():
                          "cost_usd": round(u["cost"], 2), "minutes": round(u["minutes"]), "sessions": int(u["sessions"])},
                "totals": {"runs": total_runs, "released": total_rel, "days": len(days), "cost_usd": round(all_u["cost"], 2),
                           "minutes": round(all_u["minutes"]), "tokens_in": int(all_u["in"]), "tokens_out": int(all_u["out"])},
-               "alerts": alert_items, "fix_queue": fix_queue(), "health": health(), "lessons": lessons[-50:],
+               "alerts": alert_items, "fix_queue": fix_queue(), "health": health(), "lessons": lessons[-50:], "caps": caps(),
                "days": [{"date": d, **{k: counts(by_day[d])[k] for k in ("total", "released", "merged", "nochange", "failed")},
                          "cost_usd": round(usage_sum(by_day_usage.get(d, []))["cost"], 2)} for d in days[:30]],
                "weeks": weeks[:8], "months": months[:6],
