@@ -199,6 +199,27 @@ SEO / AEO / 모바일:
 | 기타 | 맨 위로 버튼(스크롤 600px 뒤), 갱신 시각 상대 표시("n분 전"), 인쇄 스타일, `prefers-reduced-motion`, 44px 터치 타깃 |
 매일 아침 대시보드의 "일일 보고" 표에서 어제 날짜를 누르면 된다. 수동 재생성은 `python3 bin/report.py`.
 
+## 10-1. 실패 복구 · 알림 · 주간/월간 · 비용
+
+**릴리즈 워크플로 실패 복구** (`retry_release_workflow()`)
+1. 태그 워크플로가 실패하면 `gh run rerun --failed` 로 한 번 재실행하고 최대 20분 기다린다 → 성공하면 `recovered on rerun`
+2. 또 실패하면 실패 단계·실행 URL·로그 요지를 `state/fix-queue.tsv` 에 넣는다 (프로젝트당 1건)
+3. 다음 회차에서 러너는 라운드로빈보다 **큐의 프로젝트를 먼저** 집고, `prompt.md` 의 `$FIX_NOTE` 로 "새 아이디어 대신 이 실패를 고쳐라 — 검증을 느슨하게 만드는 건 금지" 를 지시한다. 회차 결과는 `fix-round:` 로 표시되고 큐에서 빠진다
+4. 큐에 있는 동안 대시보드 '주의 필요' 와 프로젝트 페이지에 '수정 과제' 로 보인다
+
+**알림** (`bin/notify.sh`, 보고 생성 직후 실행) — `summary.json` 의 alerts 중 처음 보는 것만:
+| 채널 | 설정 | 비고 |
+|---|---|---|
+| GitHub Issue | 없음 | 라벨 `alert`, 열린 이슈가 있으면 코멘트. 추적용 — 본인 활동은 GitHub 이 이메일로 알리지 않음 |
+| Windows 토스트 | 없음 | `bin/toast.ps1` (PowerShell AppId 사용) |
+| Slack | `AIDEV_SLACK_WEBHOOK` | incoming webhook |
+| 이메일 | `AIDEV_SMTP_URL/USER/PASS`, `AIDEV_MAIL_TO` | curl SMTP. 네이버는 `smtps://smtp.naver.com:465` + 앱 비밀번호 |
+설정 파일: `state/notify.env.example` → `~/.auto-improve/notify.env`. 해소된 경고는 seen 목록에서 빠져 재발 시 다시 알린다.
+
+**주간·월간 보고** — `/weekly/YYYY-Www/`, `/monthly/YYYY-MM/`: 기간 요약(활동일·실패율·비용), 날짜별 차트·표, 프로젝트별 회차·릴리즈 태그, 실패·경고 회차 목록. 대시보드 '주간·월간 보고' 절과 `summary.json` 의 `weeks`/`months` 에도 있다.
+
+**비용·사용량** — `claude -p --output-format json` 의 `total_cost_usd`·`duration_ms`·`num_turns`·`usage` 를 `record_usage()` 가 `docs/data/usage.jsonl` 에 남긴다(단계: improve/release/assets). 사람이 읽을 답변은 종전처럼 `logs/<날짜>-<프로젝트>.txt`. 대시보드 '비용·사용량', 일일 보고, 프로젝트 페이지에 표시. **정액제에서는 참고값**이다.
+
 ## 11. 점검 루틴
 
 - **매일**: `tail -50 logs/cron.log` — `merge FAILED`, `claude exited non-zero`(사용량 한도 가능성), `aidev sync FAILED` 확인

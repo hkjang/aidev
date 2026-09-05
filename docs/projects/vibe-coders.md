@@ -1,7 +1,7 @@
 ---
 title: "vibe-coders — 자율 개선 이력"
 description: "vibe-coders: 자율 개선 회차 5회, 릴리즈 3건. 최근 릴리즈 v0.83.0."
-last_modified_at: 2026-09-05 10:00:32 +0900
+last_modified_at: 2026-09-05 10:07:26 +0900
 ---
 {% raw %}
 <script type="application/ld+json">
@@ -18,7 +18,7 @@ last_modified_at: 2026-09-05 10:00:32 +0900
   "name": "hkjang",
   "url": "https://github.com/hkjang"
  },
- "dateModified": "2026-09-05T10:00:32+09:00",
+ "dateModified": "2026-09-05T10:07:26+09:00",
  "version": "0.83.0"
 }
 </script>
@@ -39,7 +39,7 @@ last_modified_at: 2026-09-05 10:00:32 +0900
 
 ## 회차 이력
 
-<div class="table-wrap"><table class="rt"><thead><tr><th class="primary">일시</th><th>결과</th></tr></thead><tbody><tr data-status="released"><td data-label="일시" class="primary">2026-09-05 09:12</td><td data-label="결과"><span class="pill pill-released">🚀 릴리즈</span> merged <a href="https://github.com/hkjang/vibe-coders/pull/14">PR #14</a>, released <a href="https://github.com/hkjang/vibe-coders/releases/tag/v0.83.0">v0.83.0</a> +7 assets</td></tr><tr data-status="released"><td data-label="일시" class="primary">2026-09-04 01:51</td><td data-label="결과"><span class="pill pill-released">🚀 릴리즈</span> merged <a href="https://github.com/hkjang/vibe-coders/pull/12">PR #12</a>, released <a href="https://github.com/hkjang/vibe-coders/releases/tag/v0.82.2">v0.82.2</a> +7 assets</td></tr><tr data-status="merged"><td data-label="일시" class="primary">2026-09-03 17:50</td><td data-label="결과"><span class="pill pill-merged">✅ 머지</span> merged <a href="https://github.com/hkjang/vibe-coders/pull/11">PR #11</a>, <strong>release missing</strong></td></tr><tr data-status="released"><td data-label="일시" class="primary">2026-09-03 05:19</td><td data-label="결과"><span class="pill pill-released">🚀 릴리즈</span> merged <a href="https://github.com/hkjang/vibe-coders/pull/9">PR #9</a>, released <a href="https://github.com/hkjang/vibe-coders/releases/tag/v0.82.0">v0.82.0</a></td></tr><tr data-status="other"><td data-label="일시" class="primary">2026-09-02 23:03</td><td data-label="결과"><span class="pill pill-other">• 기타</span> PR </td></tr></tbody></table></div>
+<div class="table-wrap"><table class="rt"><thead><tr><th>일시</th><th class="primary">프로젝트</th><th>결과</th></tr></thead><tbody><tr data-status="released"><td data-label="일시">2026-09-05 09:12</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/vibe-coders/">vibe-coders</a></td><td data-label="결과"><span class="pill pill-released">🚀 릴리즈</span> merged <a href="https://github.com/hkjang/vibe-coders/pull/14">PR #14</a>, released <a href="https://github.com/hkjang/vibe-coders/releases/tag/v0.83.0">v0.83.0</a> +7 assets</td></tr><tr data-status="released"><td data-label="일시">2026-09-04 01:51</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/vibe-coders/">vibe-coders</a></td><td data-label="결과"><span class="pill pill-released">🚀 릴리즈</span> merged <a href="https://github.com/hkjang/vibe-coders/pull/12">PR #12</a>, released <a href="https://github.com/hkjang/vibe-coders/releases/tag/v0.82.2">v0.82.2</a> +7 assets</td></tr><tr data-status="merged"><td data-label="일시">2026-09-03 17:50</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/vibe-coders/">vibe-coders</a></td><td data-label="결과"><span class="pill pill-merged">✅ 머지</span> merged <a href="https://github.com/hkjang/vibe-coders/pull/11">PR #11</a>, <strong>release missing</strong></td></tr><tr data-status="released"><td data-label="일시">2026-09-03 05:19</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/vibe-coders/">vibe-coders</a></td><td data-label="결과"><span class="pill pill-released">🚀 릴리즈</span> merged <a href="https://github.com/hkjang/vibe-coders/pull/9">PR #9</a>, released <a href="https://github.com/hkjang/vibe-coders/releases/tag/v0.82.0">v0.82.0</a></td></tr><tr data-status="other"><td data-label="일시">2026-09-02 23:03</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/vibe-coders/">vibe-coders</a></td><td data-label="결과"><span class="pill pill-other">• 기타</span> PR </td></tr></tbody></table></div>
 
 ## 원장 (에이전트가 남긴 기록)
 

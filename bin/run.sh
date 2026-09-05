@@ -42,12 +42,30 @@ RUN_DATE=$(date +%Y-%m-%d)
 LOG="$LOGS/$RUN_DATE.log"
 log(){ echo "[$(date +%H:%M:%S)] $*" | tee -a "$LOG"; }
 
+# claude -p 의 JSON 결과에서 비용·토큰·시간을 docs/data/usage.jsonl 에 남기고, 사람이 읽을 답변은 .txt 에 붙인다
+record_usage(){ # $1=프로젝트 $2=단계(improve/release/assets) $3=json $4=txt
+  local n=$1 phase=$2 j=$3 t=$4
+  mkdir -p "$REPO_DIR/docs/data"
+  if jq -e '.type=="result"' "$j" >/dev/null 2>&1; then
+    jq -r '.result // ""' "$j" >> "$t"
+    jq -c --arg ts "$(date -Iseconds)" --arg d "$RUN_DATE" --arg p "$n" --arg ph "$phase" \
+      '{ts:$ts,date:$d,project:$p,phase:$ph,subtype:(.subtype//""),duration_ms:(.duration_ms//0),num_turns:(.num_turns//0),
+        cost_usd:(.total_cost_usd//0),input_tokens:(.usage.input_tokens//0),output_tokens:(.usage.output_tokens//0),
+        cache_read:(.usage.cache_read_input_tokens//0),cache_create:(.usage.cache_creation_input_tokens//0)}' "$j" \
+      >> "$REPO_DIR/docs/data/usage.jsonl"
+    log "$n: $phase — $(jq -r '"\(.num_turns//0) turns, \((.duration_ms//0)/60000|floor)m, $\(.total_cost_usd//0|.*100|round/100), \(.subtype//"")"' "$j")"
+  else
+    cat "$j" >> "$t" 2>/dev/null  # JSON 이 아니면(예: 예산 초과 메시지) 그대로 남긴다
+  fi
+}
+
 # 회차 기록 한 줄을 docs/data/runs.jsonl 에 남기고 GitHub Pages 일일 보고를 다시 만든다
 record_run(){ # $1=프로젝트 $2=결과
   mkdir -p "$REPO_DIR/docs/data"
   jq -cn --arg ts "$(date -Iseconds)" --arg d "$RUN_DATE" --arg p "$1" --arg r "$2" \
      '{ts:$ts,date:$d,project:$p,result:$r}' >> "$REPO_DIR/docs/data/runs.jsonl"
   python3 "$HERE/report.py" >>"$LOG" 2>&1 || log "report.py FAILED"
+  "$HERE/notify.sh" >>"$LOG" 2>&1 || true
 }
 
 # 원장·로그·보고를 aidev 저장소에 남긴다. 실패해도 회차는 계속한다.
@@ -80,6 +98,31 @@ wait_for_checks(){
     sleep 30
   done
   CHECKS_FAILED=0; log "$n: CI on ${sha:0:7} still pending after 20 min — continuing"; return 0
+}
+
+# 릴리즈 워크플로 실패 복구: 한 번 재실행하고, 그래도 실패하면 실패 단계·로그 요지를 수정 큐에 넣는다
+retry_release_workflow(){
+  local n=$1 tag=$2 rid i st conc step excerpt
+  rid=$(cd "$repo" && gh run list --limit 40 --json databaseId,headBranch,conclusion \
+        --jq "[.[] | select(.headBranch==\"$tag\" and .conclusion==\"failure\")] | .[0].databaseId" 2>/dev/null)
+  [ -n "$rid" ] && [ "$rid" != null ] || return 0
+  (cd "$repo" && gh run rerun "$rid" --failed >>"$LOG" 2>&1) || { log "$n: rerun of $rid not possible"; return 0; }
+  log "$n: release workflow $rid re-run for $tag — waiting"
+  for i in $(seq 1 40); do
+    sleep 30
+    read -r st conc < <(cd "$repo" && gh run view "$rid" --json status,conclusion --jq '"\(.status) \(.conclusion//"")"' 2>/dev/null || echo "unknown")
+    [ "$st" = completed ] && break
+  done
+  if [ "${conc:-}" = success ]; then
+    log "$n: release workflow recovered on rerun ($tag)"; result="${result/ (release workflow FAILED)/ (recovered on rerun)}"
+    return 0
+  fi
+  step=$(cd "$repo" && gh run view "$rid" --json jobs --jq '[.jobs[] | .steps[] | select(.conclusion=="failure") | .name] | join(", ")' 2>/dev/null)
+  excerpt=$(cd "$repo" && gh run view "$rid" --log-failed 2>/dev/null | sed 's/^[^\t]*\t[^\t]*\t//' | grep -i -E "error|fail|expected|mismatch" | grep -v -i "deprecat" | head -6 | cut -c1-200 | tr '\n' ' ' | sed 's/\t/ /g')
+  local note="릴리즈 워크플로 실패 2회 — 태그 $tag, 실패 단계: ${step:-?}. 실행: $(cd "$repo" && gh run view "$rid" --json url --jq .url 2>/dev/null). 로그 요지: ${excerpt:-없음}"
+  mkdir -p "$STATE"; touch "$STATE/fix-queue.tsv"
+  grep -q -P "^$n\t" "$STATE/fix-queue.tsv" || printf '%s\t%s\n' "$n" "$note" >> "$STATE/fix-queue.tsv"
+  log "$n: queued for fix round ($step)"; result="$result, queued for fix"
 }
 
 # GitHub Release 를 보장하고 자산을 올린다. 사용: publish_release <프로젝트> <태그> <제목> <노트파일> <ghrel(true/false)> <release.json>
@@ -127,7 +170,10 @@ publish_release(){
         local wf; wf=$(cd "$repo" && gh run list --limit 40 --json headBranch,conclusion,status,name \
           --jq "[.[] | select(.headBranch==\"$tag\")] | .[0] | \"\\(.name): \\(.status)/\\(.conclusion)\"" 2>/dev/null)
         log "$n: ASSETS MISSING on $tag (prev $prev had $prev_n) — workflow: ${wf:-none}"
-        case "$wf" in *failure*) result="$result, ASSETS MISSING (release workflow FAILED)";; *) result="$result, ASSETS MISSING";; esac
+        case "$wf" in
+          *failure*) result="$result, ASSETS MISSING (release workflow FAILED)"; retry_release_workflow "$n" "$tag";;
+          *) result="$result, ASSETS MISSING";;
+        esac
       fi
     fi
   fi
@@ -166,7 +212,8 @@ release_project(){
       --allowedTools "Bash,Read,Edit,Write,Glob,Grep" \
       --add-dir "$STATE" \
       --max-budget-usd "$RBUDGET" \
-      --output-format text ) > "$LOGS/$RUN_DATE-$n-release.txt" 2>&1 || log "$n: release agent exited non-zero"
+      --output-format json ) > "$LOGS/$RUN_DATE-$n-release.json" 2>"$LOGS/$RUN_DATE-$n-release.txt" || log "$n: release agent exited non-zero"
+  record_usage "$n" "$mode" "$LOGS/$RUN_DATE-$n-release.json" "$LOGS/$RUN_DATE-$n-release.txt"
 
   local status ahead tag title notes ghrel tagged
   status=$(jq -r '.status // "missing"' "$rfile" 2>/dev/null || echo missing)
@@ -248,7 +295,18 @@ CURSOR="$STATE/.cursor"; idx=$(cat "$CURSOR" 2>/dev/null || echo 0)
 picked=()
 for ((i=0;i<COUNT && i<${#candidates[@]};i++)); do
   picked+=("${candidates[$(( (idx+i) % ${#candidates[@]} ))]}"); done
-echo $(( (idx+COUNT) % ${#candidates[@]} )) > "$CURSOR"
+FIX_PROJECT=""; FIX_NOTE_TEXT=""
+FIXQ="$STATE/fix-queue.tsv"
+if [ -z "$ONLY" ] && [ -s "$FIXQ" ]; then
+  # 릴리즈 워크플로가 두 번 실패한 프로젝트는 라운드로빈보다 먼저, 원인 수정 과제로 배정한다
+  while IFS=$'\t' read -r fp fnote; do
+    [ -n "$fp" ] || continue
+    if printf '%s\n' "${candidates[@]}" | grep -qx "$fp"; then
+      picked=("$fp"); FIX_PROJECT="$fp"; FIX_NOTE_TEXT="$fnote"; log "fix-queue: picked $fp"; break
+    fi
+  done < "$FIXQ"
+fi
+[ -n "$FIX_PROJECT" ] || echo $(( (idx+COUNT) % ${#candidates[@]} )) > "$CURSOR"
 log "picked: ${picked[*]}"
 [ $DRY -eq 1 ] && exit 0
 
@@ -261,9 +319,15 @@ for n in "${picked[@]}"; do
   git -C "$repo" worktree remove --force "$wt" 2>/dev/null || true
   git -C "$repo" worktree add -b "$slug" "$wt" "$base" >>"$LOG" 2>&1
 
-  prompt=$(LEDGER_FILE="$ledger" RUN_DATE="$RUN_DATE" \
+  fix_note=""
+  if [ "$n" = "${FIX_PROJECT:-}" ]; then
+    fix_note="## 우선 과제 (자동 배정) — 이번 회차는 새 아이디어 대신 아래 실패를 고치세요
+$(printf '%b' "$FIX_NOTE_TEXT")
+릴리즈 워크플로가 같은 이유로 두 번 실패했습니다. 워크플로 파일(.github/workflows)과 실패한 단계의 스크립트·테스트를 읽고 원인을 고치세요. 워크플로 자체를 느슨하게 만들어 통과시키는 것은 금지입니다(검증을 지우거나 continue-on-error 를 넣지 마세요). 고친 뒤 같은 검증을 로컬에서 재현해 통과를 확인하고, 원장에 '수정 과제' 로 기록하세요."
+  fi
+  prompt=$(LEDGER_FILE="$ledger" RUN_DATE="$RUN_DATE" FIX_NOTE="$fix_note" \
            LEDGER_CONTENT="$(cat "$ledger" 2>/dev/null || echo '(없음)')" \
-           envsubst '$LEDGER_FILE $RUN_DATE $LEDGER_CONTENT' < "$REPO_DIR/prompt.md")
+           envsubst '$LEDGER_FILE $RUN_DATE $LEDGER_CONTENT $FIX_NOTE' < "$REPO_DIR/prompt.md")
 
   # 프로젝트별 환경(예: WEEKLY_TEST_POSTGRES_DSN)은 state/<프로젝트>.env 에 두면 에이전트에 전달된다 (.env 는 git 제외)
   envfile="$STATE/$n.env"
@@ -274,7 +338,8 @@ for n in "${picked[@]}"; do
       --allowedTools "Bash,Read,Edit,Write,Glob,Grep,WebFetch,WebSearch" \
       --add-dir "$STATE" \
       --max-budget-usd "$BUDGET" \
-      --output-format text ) > "$LOGS/$RUN_DATE-$n.txt" 2>&1 || log "$n: claude exited non-zero"
+      --output-format json ) > "$LOGS/$RUN_DATE-$n.json" 2>"$LOGS/$RUN_DATE-$n.txt" || log "$n: claude exited non-zero"
+  record_usage "$n" improve "$LOGS/$RUN_DATE-$n.json" "$LOGS/$RUN_DATE-$n.txt"
 
   ahead=$(git -C "$wt" rev-list --count "$base..$slug")
   # 에이전트가 예산 소진 등으로 원장을 못 남겼으면 커밋 제목으로 대신 기록한다
@@ -316,6 +381,9 @@ for n in "${picked[@]}"; do
     git -C "$repo" branch -D "$slug" >>"$LOG" 2>&1 || true
   fi
   git -C "$repo" worktree remove --force "$wt" >>"$LOG" 2>&1 || true
+  if [ "$n" = "${FIX_PROJECT:-}" ]; then
+    grep -v -P "^$n\t" "$FIXQ" > "$FIXQ.tmp" 2>/dev/null; mv "$FIXQ.tmp" "$FIXQ"; result="fix-round: $result"
+  fi
   record_run "$n" "$result"
   sync_repo "run($RUN_DATE): $n — $result"
 done

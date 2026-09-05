@@ -1,7 +1,7 @@
 ---
 title: "appstore — 자율 개선 이력"
 description: "appstore: 자율 개선 회차 5회, 릴리즈 5건. 최근 릴리즈 v2.5.1."
-last_modified_at: 2026-09-05 10:00:32 +0900
+last_modified_at: 2026-09-05 10:07:26 +0900
 ---
 {% raw %}
 <script type="application/ld+json">
@@ -18,7 +18,7 @@ last_modified_at: 2026-09-05 10:00:32 +0900
   "name": "hkjang",
   "url": "https://github.com/hkjang"
  },
- "dateModified": "2026-09-05T10:00:32+09:00",
+ "dateModified": "2026-09-05T10:07:26+09:00",
  "version": "2.5.1"
 }
 </script>
@@ -39,7 +39,7 @@ last_modified_at: 2026-09-05 10:00:32 +0900
 
 ## 회차 이력
 
-<div class="table-wrap"><table class="rt"><thead><tr><th class="primary">일시</th><th>결과</th></tr></thead><tbody><tr data-status="released"><td data-label="일시" class="primary">2026-09-05 01:43</td><td data-label="결과"><span class="pill pill-released">🚀 릴리즈</span> merged <a href="https://github.com/hkjang/appstore/pull/5">PR #5</a>, released <a href="https://github.com/hkjang/appstore/releases/tag/v2.5.1">v2.5.1</a></td></tr><tr data-status="released"><td data-label="일시" class="primary">2026-09-03 08:05</td><td data-label="결과"><span class="pill pill-released">🚀 릴리즈</span> merged <a href="https://github.com/hkjang/appstore/pull/4">PR #4</a>, released <a href="https://github.com/hkjang/appstore/releases/tag/v2.1.4">v2.1.4</a></td></tr><tr data-status="released"><td data-label="일시" class="primary">2026-09-03 02:16</td><td data-label="결과"><span class="pill pill-released">🚀 릴리즈</span> merged <a href="https://github.com/hkjang/appstore/pull/3">PR #3</a>, released <a href="https://github.com/hkjang/appstore/releases/tag/v2.1.3">v2.1.3</a></td></tr><tr data-status="released"><td data-label="일시" class="primary">2026-09-02 19:56</td><td data-label="결과"><span class="pill pill-released">🚀 릴리즈</span> merged <a href="https://github.com/hkjang/appstore/pull/2">PR #2</a>, released <a href="https://github.com/hkjang/appstore/releases/tag/v2.1.2">v2.1.2</a></td></tr><tr data-status="released"><td data-label="일시" class="primary">2026-09-02 13:56</td><td data-label="결과"><span class="pill pill-released">🚀 릴리즈</span> merged <a href="https://github.com/hkjang/appstore/pull/1">PR #1</a>, released <a href="https://github.com/hkjang/appstore/releases/tag/v2.1.1">v2.1.1</a></td></tr></tbody></table></div>
+<div class="table-wrap"><table class="rt"><thead><tr><th>일시</th><th class="primary">프로젝트</th><th>결과</th></tr></thead><tbody><tr data-status="released"><td data-label="일시">2026-09-05 01:43</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/appstore/">appstore</a></td><td data-label="결과"><span class="pill pill-released">🚀 릴리즈</span> merged <a href="https://github.com/hkjang/appstore/pull/5">PR #5</a>, released <a href="https://github.com/hkjang/appstore/releases/tag/v2.5.1">v2.5.1</a></td></tr><tr data-status="released"><td data-label="일시">2026-09-03 08:05</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/appstore/">appstore</a></td><td data-label="결과"><span class="pill pill-released">🚀 릴리즈</span> merged <a href="https://github.com/hkjang/appstore/pull/4">PR #4</a>, released <a href="https://github.com/hkjang/appstore/releases/tag/v2.1.4">v2.1.4</a></td></tr><tr data-status="released"><td data-label="일시">2026-09-03 02:16</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/appstore/">appstore</a></td><td data-label="결과"><span class="pill pill-released">🚀 릴리즈</span> merged <a href="https://github.com/hkjang/appstore/pull/3">PR #3</a>, released <a href="https://github.com/hkjang/appstore/releases/tag/v2.1.3">v2.1.3</a></td></tr><tr data-status="released"><td data-label="일시">2026-09-02 19:56</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/appstore/">appstore</a></td><td data-label="결과"><span class="pill pill-released">🚀 릴리즈</span> merged <a href="https://github.com/hkjang/appstore/pull/2">PR #2</a>, released <a href="https://github.com/hkjang/appstore/releases/tag/v2.1.2">v2.1.2</a></td></tr><tr data-status="released"><td data-label="일시">2026-09-02 13:56</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/appstore/">appstore</a></td><td data-label="결과"><span class="pill pill-released">🚀 릴리즈</span> merged <a href="https://github.com/hkjang/appstore/pull/1">PR #1</a>, released <a href="https://github.com/hkjang/appstore/releases/tag/v2.1.1">v2.1.1</a></td></tr></tbody></table></div>
 
 ## 원장 (에이전트가 남긴 기록)
 
