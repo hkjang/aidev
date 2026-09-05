@@ -2,6 +2,10 @@
 
 $FIX_NOTE
 
+$REQUEST_NOTE
+
+$CAMPAIGN_NOTE
+
 ## 절차
 1. **파악** — CLAUDE.md, README, docs/, 로드맵, TODO/FIXME, 최근 `git log -30`, 테스트 구성과 CI 설정을 읽고 프로젝트의 목적·기술 스택·품질 상태를 요약하세요.
 2. **과거 기록 확인** — 아래 "이전 개선 기록"을 읽고 이미 시도했거나 실패한 아이디어는 반복하지 마세요.

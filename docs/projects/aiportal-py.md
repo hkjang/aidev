@@ -1,7 +1,7 @@
 ---
 title: "aiportal-py — 자율 개선 이력"
-description: "aiportal-py: 자율 개선 회차 7회, 릴리즈 0건. 최근 릴리즈 없음."
-last_modified_at: 2026-09-05 18:02:02 +0900
+description: "aiportal-py: 자율 개선 회차 8회, 릴리즈 0건. 최근 릴리즈 없음."
+last_modified_at: 2026-09-05 19:27:45 +0900
 ---
 {% raw %}
 <script type="application/ld+json">
@@ -11,35 +11,35 @@ last_modified_at: 2026-09-05 18:02:02 +0900
  "name": "aiportal-py",
  "codeRepository": "https://github.com/hkjang/aiportal-py",
  "url": "https://hkjang.github.io/aidev/projects/aiportal-py/",
- "description": "aiportal-py: 자율 개선 회차 7회, 릴리즈 0건. 최근 릴리즈 없음.",
+ "description": "aiportal-py: 자율 개선 회차 8회, 릴리즈 0건. 최근 릴리즈 없음.",
  "inLanguage": "ko",
  "maintainer": {
   "@type": "Person",
   "name": "hkjang",
   "url": "https://github.com/hkjang"
  },
- "dateModified": "2026-09-05T18:02:02+09:00"
+ "dateModified": "2026-09-05T19:27:45+09:00"
 }
 </script>
 
 # aiportal-py
 
-<p class="tldr"><strong>요약.</strong> aiportal-py: 자율 개선 회차 7회, 릴리즈 0건. 최근 릴리즈 없음. <span class="pill pill-merged" title="14일: 릴리즈 0, 실패 0, 경고 0, 회귀 0">건강 B</span> <span class="meta">14일: 릴리즈 0, 실패 0, 경고 0, 회귀 0</span></p>
+<p class="tldr"><strong>요약.</strong> aiportal-py: 자율 개선 회차 8회, 릴리즈 0건. 최근 릴리즈 없음. <span class="pill pill-merged" title="14일: 릴리즈 0, 실패 0, 경고 0, 회귀 0">건강 B</span> <span class="meta">14일: 릴리즈 0, 실패 0, 경고 0, 회귀 0</span></p>
 
-<ul class="stats"><li><b>7</b><span>회차</span></li><li><b>1</b><span>프로젝트</span></li><li><b>0</b><span>배포 준비 완료</span></li><li><b>0</b><span>릴리즈 진행 중</span></li><li><b>6</b><span>병합 완료</span></li><li><b>0</b><span>검토 대기</span></li><li><b>0</b><span>검증 실패</span></li><li><b>1</b><span>변경 없음</span></li><li><b>0</b><span>실행 오류</span></li></ul>
+<ul class="stats"><li><b>8</b><span>회차</span></li><li><b>1</b><span>프로젝트</span></li><li><b>0</b><span>배포 준비 완료</span></li><li><b>0</b><span>릴리즈 진행 중</span></li><li><b>6</b><span>병합 완료</span></li><li><b>0</b><span>검토 대기</span></li><li><b>0</b><span>검증 실패</span></li><li><b>1</b><span>변경 없음</span></li><li><b>1</b><span>실행 오류</span></li></ul>
 
 ## 현황
 
 <dl class="kv">
 <dt>저장소</dt><dd><a href="https://github.com/hkjang/aiportal-py">https://github.com/hkjang/aiportal-py</a></dd>
-<dt>마지막 회차</dt><dd>2026-09-05 01:10 KST — <span class="pill pill-merged">✅ 머지</span> merged <a href="https://github.com/hkjang/aiportal-py/pull/6">PR #6</a>, release skipped</dd>
+<dt>마지막 회차</dt><dd>2026-09-05 19:00 KST — <span class="pill pill-other">• 기타</span> hold: budget</dd>
 <dt>최근 릴리즈</dt><dd>skipped — skipped</dd>
 <dt>사유</dt><dd>릴리즈 이력이 전혀 없는 저장소입니다. 확인 결과: git tag 0개(로컬·origin ls-remote 모두 없음), gh release list 결과 없음, CHANGELOG.md/docs/RELEASE*.md 등 릴리즈 노트 없음, 버전 파일 없음(pyproject.toml/setup.py/setup.cfg/package.json/VERSION/Chart.yaml/Cargo.toml 모두 부재), .github/workflows 디렉터리 자체가 없어 태그·릴리즈에 반응하는 워크플로 없음, scripts/ 나 Makefile 등 릴리즈·오프라인 패키징 스크립트 없음, git log 전체 14개 커밋에 릴리즈/버전 형식 커밋 없음(first commit, docs, fix, merge PR 뿐). 배포는 .gitlab-ci.yml 이 main/develop 브랜치 푸시에 반응해 배포 디렉터리에서 git reset --hard 후 k8s rollout restart/podman restart 하는 방식이라 버전·태그 개념을 쓰지 않습니다. api.py:106 의 FastAPI version=&quot;1.0.0&quot; 은 첫 커밋 이후 한 번도 변경된 적 없는 앱 메타데이터이며 릴리즈 절차와 무관합니다. docs/ROADMAP.md 의 R0~R5 는 버전이 아니라 로드맵 단계 표기입니다. 따를 기존 관례가 없어 새 관례를 만들지 않고 건너뜁니다(관례 수립은 사람의 결정 사항). 커밋·태그·파일 변경 없음.</dd>
 </dl>
 
 ## 회차 이력
 
-<div class="table-wrap"><table class="rt"><thead><tr><th>일시</th><th class="primary">프로젝트</th><th>결과</th></tr></thead><tbody><tr data-status="merged"><td data-label="일시">2026-09-05 01:10</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/aiportal-py/">aiportal-py</a></td><td data-label="결과"><span class="pill pill-merged" title="outcome=merged">병합 완료</span> merged <a href="https://github.com/hkjang/aiportal-py/pull/6">PR #6</a>, release skipped</td></tr><tr data-status="merged"><td data-label="일시">2026-09-04 06:09</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/aiportal-py/">aiportal-py</a></td><td data-label="결과"><span class="pill pill-merged" title="outcome=merged">병합 완료</span> merged <a href="https://github.com/hkjang/aiportal-py/pull/5">PR #5</a>, release skipped</td></tr><tr data-status="nochange"><td data-label="일시">2026-09-03 22:23</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/aiportal-py/">aiportal-py</a></td><td data-label="결과"><span class="pill pill-nochange" title="outcome=no-change">변경 없음</span> no change</td></tr><tr data-status="merged"><td data-label="일시">2026-09-03 14:06</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/aiportal-py/">aiportal-py</a></td><td data-label="결과"><span class="pill pill-merged" title="outcome=merged">병합 완료</span> merged <a href="https://github.com/hkjang/aiportal-py/pull/4">PR #4</a>, release skipped</td></tr><tr data-status="merged"><td data-label="일시">2026-09-03 02:07</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/aiportal-py/">aiportal-py</a></td><td data-label="결과"><span class="pill pill-merged" title="outcome=merged">병합 완료</span> merged <a href="https://github.com/hkjang/aiportal-py/pull/3">PR #3</a>, release skipped</td></tr><tr data-status="merged"><td data-label="일시">2026-09-02 19:48</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/aiportal-py/">aiportal-py</a></td><td data-label="결과"><span class="pill pill-merged" title="outcome=merged">병합 완료</span> merged <a href="https://github.com/hkjang/aiportal-py/pull/2">PR #2</a>, release skipped</td></tr><tr data-status="merged"><td data-label="일시">2026-09-02 13:45</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/aiportal-py/">aiportal-py</a></td><td data-label="결과"><span class="pill pill-merged" title="outcome=merged">병합 완료</span> merged <a href="https://github.com/hkjang/aiportal-py/pull/1">PR #1</a>, release skipped</td></tr></tbody></table></div>
+<div class="table-wrap"><table class="rt"><thead><tr><th>일시</th><th class="primary">프로젝트</th><th>결과</th></tr></thead><tbody><tr data-status="other"><td data-label="일시">2026-09-05 19:00</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/aiportal-py/">aiportal-py</a></td><td data-label="결과"><span class="pill pill-failed" title="outcome=error">실행 오류</span> hold: budget</td></tr><tr data-status="merged"><td data-label="일시">2026-09-05 01:10</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/aiportal-py/">aiportal-py</a></td><td data-label="결과"><span class="pill pill-merged" title="outcome=merged">병합 완료</span> merged <a href="https://github.com/hkjang/aiportal-py/pull/6">PR #6</a>, release skipped</td></tr><tr data-status="merged"><td data-label="일시">2026-09-04 06:09</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/aiportal-py/">aiportal-py</a></td><td data-label="결과"><span class="pill pill-merged" title="outcome=merged">병합 완료</span> merged <a href="https://github.com/hkjang/aiportal-py/pull/5">PR #5</a>, release skipped</td></tr><tr data-status="nochange"><td data-label="일시">2026-09-03 22:23</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/aiportal-py/">aiportal-py</a></td><td data-label="결과"><span class="pill pill-nochange" title="outcome=no-change">변경 없음</span> no change</td></tr><tr data-status="merged"><td data-label="일시">2026-09-03 14:06</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/aiportal-py/">aiportal-py</a></td><td data-label="결과"><span class="pill pill-merged" title="outcome=merged">병합 완료</span> merged <a href="https://github.com/hkjang/aiportal-py/pull/4">PR #4</a>, release skipped</td></tr><tr data-status="merged"><td data-label="일시">2026-09-03 02:07</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/aiportal-py/">aiportal-py</a></td><td data-label="결과"><span class="pill pill-merged" title="outcome=merged">병합 완료</span> merged <a href="https://github.com/hkjang/aiportal-py/pull/3">PR #3</a>, release skipped</td></tr><tr data-status="merged"><td data-label="일시">2026-09-02 19:48</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/aiportal-py/">aiportal-py</a></td><td data-label="결과"><span class="pill pill-merged" title="outcome=merged">병합 완료</span> merged <a href="https://github.com/hkjang/aiportal-py/pull/2">PR #2</a>, release skipped</td></tr><tr data-status="merged"><td data-label="일시">2026-09-02 13:45</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/aiportal-py/">aiportal-py</a></td><td data-label="결과"><span class="pill pill-merged" title="outcome=merged">병합 완료</span> merged <a href="https://github.com/hkjang/aiportal-py/pull/1">PR #1</a>, release skipped</td></tr></tbody></table></div>
 
 ## 원장 (에이전트가 남긴 기록)
 

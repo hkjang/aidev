@@ -230,6 +230,45 @@ def caps():
     return out
 
 
+def policy_of(project):
+    base = {}
+    try:
+        base = json.load(open(os.path.join(STATE, "default.policy.json"), encoding="utf-8"))
+    except Exception:
+        pass
+    try:
+        base.update(json.load(open(os.path.join(STATE, f"{project}.policy.json"), encoding="utf-8")))
+    except Exception:
+        pass
+    return base
+
+
+AUTONOMY_LABEL = {"analyze": "분석만", "pr": "PR 생성", "approve": "승인 후 병합", "low-risk": "저위험 자동 병합", "release": "검증된 릴리즈 게시"}
+
+
+def autonomy_html(project):
+    pol = policy_of(project)
+    a = pol.get("autonomy", "release")
+    cls = {"analyze": "pill-nochange", "pr": "pill-nochange", "approve": "pill-merged", "low-risk": "pill-merged", "release": "pill-released"}.get(a, "pill-other")
+    tip = f"자율화 단계 {a}" + (f" — 강등: {pol.get('demoted_reason')} ({(pol.get('demoted_at') or '')[:10]})" if pol.get("demoted_reason") else "")
+    return f'<span class="pill {cls}" title="{esc(tip)}">{esc(AUTONOMY_LABEL.get(a, a))}</span>' + (" ⬇" if pol.get("demoted_reason") else "")
+
+
+def campaigns():
+    try:
+        return json.load(open(os.path.join(STATE, "campaigns.json"), encoding="utf-8")).get("campaigns", [])
+    except Exception:
+        return []
+
+
+def stops():
+    out = []
+    for f in sorted(os.listdir(STATE)) if os.path.isdir(STATE) else []:
+        if f == "STOP" or f.startswith("STOP-"):
+            out.append({"scope": "all" if f == "STOP" else f[5:], "note": open(os.path.join(STATE, f), encoding="utf-8").read().strip()[:120]})
+    return out
+
+
 def lessons_all():
     return load_jsonl(os.path.join(STATE, "lessons.jsonl"))
 
@@ -759,6 +798,76 @@ def write_lessons(lessons):
     write_page(os.path.join(DOCS, "lessons.md"), lines)
 
 
+# ---------- 사람 판단 작업함 ----------
+def gh_json(args):
+    try:
+        return json.loads(subprocess.check_output(["gh"] + args, text=True, stderr=subprocess.DEVNULL, timeout=40))
+    except Exception:
+        return None
+
+
+def inbox_items(by_day, days, alert_items):
+    """사람이 판단해야 할 것: 열린 러너 PR(리뷰 보류·보호 파일·CI 실패·승인 대기), 배포 복구 이슈, 수정 큐."""
+    items = []
+    seen = set()
+    cutoff = (date.today() - timedelta(days=14)).isoformat()
+    for d in days:
+        if d < cutoff:
+            break
+        for r in reversed(by_day[d]):
+            pr = r.get("pr")
+            if not pr or pr in seen or outcome_of(r) not in ("review-pending", "verify-failed"):
+                continue
+            seen.add(pr)
+            info = gh_json(["pr", "view", pr, "--json", "state,headRefOid,labels,title,additions,deletions,changedFiles"])
+            if not info or info.get("state") != "OPEN":
+                continue
+            st = r.get("stages") or {}
+            why = "; ".join(f"{k}: {v.get('state')} — {(v.get('reason') or '')[:80]}" for k, v in st.items()
+                            if v.get("state") in ("held", "rejected", "failed", "no-ci", "pending", "timeout", "invalid", "missing", "conflict", "stopped") or k in ("guard", "review", "ci"))
+            labels = ",".join(l.get("name", "") for l in info.get("labels", []))
+            rec = "승인: PR 라벨 aidev-approved / 반려: aidev-rejected — 다음 회차에 러너가 승인 당시 커밋에만 CI 확인 후 머지·닫기"
+            items.append({"kind": "PR", "project": r.get("project"), "title": info.get("title", ""), "url": pr, "sha": (info.get("headRefOid") or "")[:7],
+                          "summary": f"{info.get('changedFiles', '?')}파일 +{info.get('additions', '?')}/−{info.get('deletions', '?')} · {(r.get('result') or '')[:90]}",
+                          "why": why or (r.get("result") or ""), "evidence": f"{GH}/aidev/tree/main/state/runs/{r.get('run_id', '')}", "labels": labels, "action": rec, "date": d})
+    for it in gh_json(["issue", "list", "-R", "hkjang/aidev", "--label", "deploy-recovery", "--state", "open", "--json", "number,title,url,createdAt"]) or []:
+        items.append({"kind": "배포 복구", "project": re.sub(r"^.*?: ", "", it["title"]).split(" ")[0], "title": it["title"], "url": it["url"], "sha": "",
+                      "summary": "이전 정상 릴리즈로 운영 복귀 여부 결정", "why": "롤백 PR 과 별개로 운영 환경 복구가 필요할 수 있음", "evidence": it["url"], "labels": "", "action": "이슈 안내대로 복구 후 이슈 닫기", "date": it["createdAt"][:10]})
+    for q in fix_queue():
+        items.append({"kind": "수정 과제", "project": q["project"], "title": q["note"][:100], "url": f"{SITE}/projects/{q['project']}/", "sha": "",
+                      "summary": "릴리즈 워크플로 2회 실패 — 다음 회차 자동 배정", "why": q["note"][:200], "evidence": "", "labels": "", "action": "두면 러너가 수정 회차를 돌림. 급하면 run: 이슈, 멈추려면 stop", "date": ""})
+    return items
+
+
+def write_inbox(items, alert_items):
+    desc = f"사람이 판단해야 할 항목 {len(items)}건 — 열린 PR(리뷰 보류·보호 파일·CI 실패·승인 대기), 배포 복구, 수정 과제. 각 항목에 변경 요약·실패 근거·권장 조치가 붙어 있다."
+    lines = [front_matter("작업함 — 사람 판단 필요", desc, None, {"type": "report"}), "# 작업함 — 사람 판단 필요\n",
+             f'<p class="tldr"><strong>요약.</strong> {esc(desc)}</p>\n']
+    st = stops()
+    if st:
+        lines.append('<div class="alerts" role="alert"><strong>⛔ 긴급 중지 중</strong><ul>' + "".join(f"<li><code>{esc(x['scope'])}</code> — {esc(x['note'])}</li>" for x in st)
+                     + '</ul><p class="meta">해제: <code>bin/stop.sh &lt;범위&gt; off</code> 또는 <code>stop:</code> 이슈 닫기</p></div>\n')
+    lines.append("## 승인 방법\n")
+    lines.append("- **승인**: PR 에 라벨 `aidev-approved` → 다음 회차 시작 시 러너가 승인 당시 커밋(SHA)을 기록하고, CI 성공을 확인한 뒤 **그 커밋에만** 머지합니다. 승인 뒤 커밋이 바뀌면 라벨을 떼고 다시 물어봅니다. 승인은 정책 버전과 함께 `state/approvals.jsonl` 에 남습니다.\n"
+                 "- **반려**: 라벨 `aidev-rejected` → PR 을 닫고 교훈으로 기록합니다.\n"
+                 "- **재실행**: [수동 작업 요청 이슈](https://github.com/hkjang/aidev/issues/new?template=run.yml)로 문제·수용 기준·금지 범위를 적어 요청합니다.\n"
+                 "- **긴급 중지**: `bin/stop.sh all|merge|release|<프로젝트> on \"사유\"` 또는 라벨 `stop`, 제목 `stop: <범위>` 이슈.\n")
+    if items:
+        rows = []
+        for it in items:
+            rows.append(("failed" if it["kind"] == "배포 복구" else "merged",
+                         [esc(it["kind"]), f'<a href="{SITE}/projects/{esc(it["project"])}/">{esc(it["project"])}</a> {autonomy_html(it["project"])}',
+                          f'<a href="{esc(it["url"])}">{esc(it["title"])}</a>' + (f' <code>{esc(it["sha"])}</code>' if it["sha"] else "") + (f' <span class="meta">[{esc(it["labels"])}]</span>' if it["labels"] else ""),
+                          esc(it["summary"]), esc(it["why"]) + (f' · <a href="{esc(it["evidence"])}">증거</a>' if it["evidence"] else ""), esc(it["action"])]))
+        lines.append(table([("종류", ""), ("프로젝트", "primary"), ("항목", ""), ("변경 요약", ""), ("근거", ""), ("권장 조치", "")], rows, filterable=len(rows) > 6))
+    else:
+        lines.append('<div class="alerts ok" role="status"><strong>✅ 비어 있음</strong> — 사람이 판단할 항목이 없습니다.</div>\n')
+    if alert_items:
+        lines += ["## 현재 경고\n"] + [f"- **{esc(a['project'])}** — {esc(a['why'])}" for a in alert_items] + [""]
+    lines.append(f"\n[← 대시보드]({SITE}/)\n")
+    write_page(os.path.join(DOCS, "inbox.md"), lines)
+
+
 # ---------- 대시보드 ----------
 FAQ = [
     ("이 페이지는 무엇인가요?",
@@ -779,6 +888,10 @@ FAQ = [
      "있습니다. 구현과 다른 세션의 리뷰 에이전트가 diff 만 읽고 '머지하면 안 되는 이유'(검증하지 않는 테스트, 논리 오류, 설명과 다른 동작, 위험한 변경)를 찾습니다. 거절하면 PR 에 사유를 달고 열어 둡니다. 또 워크플로·마이그레이션·인증·결제·배포 파일(보호 파일)을 건드린 PR 은 자동 머지하지 않습니다."),
     ("깨진 변경은 어떻게 되나요?",
      "머지 2시간 뒤부터 main CI 실패와 되돌림 커밋을 확인해 '교훈'으로 기록하고, 그 프로젝트의 다음 회차 프롬프트에 주입해 같은 실수를 피하게 합니다. 릴리즈 워크플로가 반복 실패하고 수정 회차도 실패하면 원래 머지를 되돌리는 롤백 PR 을 자동으로 엽니다(머지는 사람). 프로젝트마다 최근 14일의 실패·경고·회귀로 건강 등급 A~D 를 매깁니다."),
+    ("자율화 단계란 무엇인가요?",
+     "프로젝트마다 러너 권한을 '분석만 → PR 생성 → 승인 후 병합 → 저위험 자동 병합 → 검증된 릴리즈 게시' 다섯 단계로 나눕니다. 단계를 올리는 것은 사람이 정책 파일(state/<프로젝트>.policy.json 의 autonomy)을 고쳐야 하고, 롤백이나 회귀가 생기면 러너가 한 단계 내립니다(⬇ 표시). 작업함에서 승인(aidev-approved)·반려(aidev-rejected) 라벨로 개별 PR 을 처리할 수 있습니다."),
+    ("긴급히 멈추려면?",
+     "bin/stop.sh all|merge|release|<프로젝트> on \"사유\" 또는 aidev 저장소에 라벨 stop, 제목 stop: <범위> 이슈를 만들면 됩니다. 새 회차 시작뿐 아니라 진행 중인 회차도 에이전트 시작 전·머지 전·릴리즈 전 경계에서 멈춥니다."),
     ("비용은 어떻게 계산되나요?",
      "각 회차의 claude -p 세션이 보고한 추정 비용(USD)과 소요 시간·턴 수·토큰을 그대로 합산합니다. 정액제 구독에서는 실제 청구가 아닌 참고값입니다."),
     ("원본 데이터는 어디서 보나요?",
@@ -786,7 +899,7 @@ FAQ = [
 ]
 
 
-def write_index(by_day, days, by_day_usage, projects_info, alert_items, weeks, months, lessons):
+def write_index(by_day, days, by_day_usage, projects_info, alert_items, weeks, months, lessons, inbox_cache):
     today = date.today().isoformat()
     tr = by_day.get(today, [])
     tu = by_day_usage.get(today, [])
@@ -816,6 +929,8 @@ def write_index(by_day, days, by_day_usage, projects_info, alert_items, weeks, m
              f'<p class="tldr"><strong>한 줄 요약.</strong> {esc(desc)} 회차가 끝날 때마다 자동 갱신됩니다 '
              f'(마지막 갱신 <time datetime="{NOW.isoformat(timespec="seconds")}" data-rel>{NOW.strftime("%Y-%m-%d %H:%M")}</time> KST).</p>\n',
              alerts_html(alert_items), health_html(health(), lessons),
+             ('<div class="alerts" role="alert"><strong>⛔ 긴급 중지 중:</strong> ' + ", ".join(f"<code>{esc(x['scope'])}</code>" for x in stops()) + f' — <a href="{SITE}/inbox/">작업함</a></div>\n') if stops() else "",
+             f'<p><a href="{SITE}/inbox/"><strong>📥 작업함</strong></a> — 사람 판단이 필요한 PR·복구·수정 과제 {len(inbox_cache)}건</p>\n',
              f"[운영 문서]({GH}/aidev#readme) · [원장]({GH}/aidev/tree/main/state) · [실행 이력]({GH}/aidev/commits/main) · [경고 이슈]({GH}/aidev/issues?q=label%3Aalert) · "
              f"[교훈 {len(lessons)}건]({SITE}/lessons/) · [Atom 피드]({SITE}/feed.xml) · [summary.json]({SITE}/data/summary.json)\n",
              f"## 오늘 ({today})\n"]
@@ -849,10 +964,10 @@ def write_index(by_day, days, by_day_usage, projects_info, alert_items, weeks, m
         else:
             rel_s = esc(rel.get("status") or "")
         st = info["last_status"] or "other"
-        rows.append((st, [f'<a href="{info["page"]}">{esc(info["name"])}</a> ' + grade_html(info["grade"], info["grade_why"]), esc((info["last_ts"] or "")[:16].replace("T", " ")),
+        rows.append((st, [f'<a href="{info["page"]}">{esc(info["name"])}</a> ' + grade_html(info["grade"], info["grade_why"]), autonomy_html(info["name"]), esc((info["last_ts"] or "")[:16].replace("T", " ")),
                           pill(st) + " " + result_html(info["name"], info["last_result"]), rel_s, f"${info['cost']:.2f}"]))
     lines += ["## 프로젝트별 현황\n",
-              table([("프로젝트 · 건강", "primary"), ("마지막 회차", ""), ("결과", ""), ("최근 릴리즈", ""), ("누적 비용", "num")], rows, filterable=True,
+              table([("프로젝트 · 건강", "primary"), ("자율화", ""), ("마지막 회차", ""), ("결과", ""), ("최근 릴리즈", ""), ("누적 비용", "num")], rows, filterable=True,
                     caption="프로젝트 이름을 누르면 원장 전체와 회차 이력을 볼 수 있습니다.")]
     cp = caps()
     if cp:
@@ -876,6 +991,15 @@ def write_index(by_day, days, by_day_usage, projects_info, alert_items, weeks, m
               f'<li><b>{int(u["sessions"])}</b><span>오늘 세션</span></li><li><b>${all_u["cost"]:.2f}</b><span>누적 비용</span></li>'
               f'<li><b>{fmt_min(all_u["minutes"])}</b><span>누적 시간</span></li><li><b>{fmt_tok(all_u["in"])}/{fmt_tok(all_u["out"])}</b><span>누적 토큰 입력/출력</span></li></ul>\n',
               f"claude -p 가 세션마다 보고한 추정값(정액제에서는 참고값). 회차별 내역은 각 일일 보고와 프로젝트 페이지, 원본은 [usage.jsonl]({SITE}/data/usage.jsonl).\n"]
+    camps = [c for c in campaigns() if not str(c.get("id", "")).startswith("example-")]
+    if camps:
+        rows = []
+        for cmp in camps:
+            spent = sum(float(u.get("cost_usd") or 0) for v in by_day_usage.values() for u in v if u.get("campaign") == cmp.get("id"))
+            n_runs = sum(1 for v in by_day.values() for r in v if r.get("campaign") == cmp.get("id"))
+            rows.append(("released" if not cmp.get("done") else "nochange", [esc(cmp.get("id", "")), esc(cmp.get("goal", ""))[:160], esc(", ".join(cmp.get("projects", []))), f"${spent:.2f} / ${cmp.get('budget_usd', 0)}", esc(cmp.get("until", "")), str(n_runs), "완료" if cmp.get("done") else "진행"]))
+        lines += ["## 개선 캠페인\n", table([("캠페인", "primary"), ("목표", ""), ("대상", ""), ("예산", "num"), ("기한", ""), ("회차", "num"), ("상태", "")], rows),
+                  "설정: `state/campaigns.json`. 캠페인 대상은 수정·수동 큐 다음 순서로 우선 배정되고, 예산·기한이 다하면 자동 종료된다.\n"]
     lines.append("## FAQ\n")
     for q, a in FAQ:
         lines.append(f"<details><summary>{esc(q)}</summary><p>{esc(a)}</p></details>")
@@ -917,7 +1041,9 @@ def main():
     alert_items = alerts(by_day, days)
     lessons = lessons_all()
     write_lessons(lessons)
-    desc, c, u, total_runs, total_rel, all_u = write_index(by_day, days, by_day_usage, projects_info, alert_items, weeks, months, lessons)
+    inbox_cache = inbox_items(by_day, days, alert_items)
+    write_inbox(inbox_cache, alert_items)
+    desc, c, u, total_runs, total_rel, all_u = write_index(by_day, days, by_day_usage, projects_info, alert_items, weeks, months, lessons, inbox_cache)
     write_feed(days, descs)
     os.makedirs(os.path.join(DOCS, "data"), exist_ok=True)
     summary = {"generated": NOW.isoformat(timespec="seconds"), "site": SITE, "description": desc,
@@ -926,6 +1052,8 @@ def main():
                "totals": {"runs": total_runs, "released": total_rel, "days": len(days), "cost_usd": round(all_u["cost"], 2),
                           "minutes": round(all_u["minutes"]), "tokens_in": int(all_u["in"]), "tokens_out": int(all_u["out"])},
                "alerts": alert_items, "fix_queue": fix_queue(), "health": health(), "lessons": lessons[-50:], "caps": caps(),
+               "inbox": inbox_cache, "stops": stops(), "campaigns": campaigns(),
+               "projects_autonomy": {p: policy_of(p).get("autonomy", "release") for p in by_project},
                "quality": [{"metric": k, "value": v, "detail": w} for k, v, w in quality_metrics([r for v in by_day.values() for r in v], [x for v in by_day_usage.values() for x in v], lessons, alert_history())],
                "outcomes_today": {k[2:]: v for k, v in c.items() if k.startswith("o:")},
                "days": [{"date": d, **{k: counts(by_day[d])[k] for k in ("total", "released", "merged", "nochange", "failed")},

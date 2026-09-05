@@ -254,6 +254,16 @@ SEO / AEO / 모바일:
 | 코드/배포 복구 분리 | 롤백 PR(코드) 과 별도로 라벨 `deploy-recovery` 이슈를 열어 이전 정상 릴리즈·자산 링크를 안내. 머지 커밋에 `migrations/` 가 있으면 자동 복구 대상이 아님을 명시하고 사람 계획·승인 요구 |
 | 품질 지표 | 대시보드 '품질 지표(최근 14일)': 검증된 개선 완료율(24h 관찰 후 회귀 없음), 완전한 릴리즈 비율, 사람의 재작업률, 변경 후 회귀율, 유효 개선당 비용(비용 확인 세션만), 예외 처리 소요 시간 중앙값(`state/alerts-history.jsonl` open→close), 실행 오류 수 |
 
+## 10-1b. 러너 v2 — 운영 통제 (3단계)
+
+| 기능 | 사용법 | 동작 |
+|---|---|---|
+| **자율화 단계** | `state/<프로젝트>.policy.json` 의 `autonomy`: `analyze` < `pr` < `approve` < `low-risk` < `release` (기본 `release`) | analyze: 아이디어·원장만, 커밋은 버림 / pr: PR 만 / approve: 참고용 리뷰 코멘트 후 사람 승인 대기 / low-risk: 리뷰 `risk=low` 이고 파일 ≤ `auto_merge_max_files`(12) 이며 보호 파일 없을 때만 자동 머지, 릴리즈는 사람 / release: 검증된 릴리즈까지. **상승은 사람이 파일을 고쳐야** 하고, 롤백·회귀(main CI 실패·되돌림)가 생기면 러너가 한 단계 **자동 강등**(`demoted_reason`, 교훈 `demoted`, 대시보드 ⬇) |
+| **긴급 중지** | `bin/stop.sh all\|merge\|release\|<프로젝트> on "사유"` / `off` / `status`, 또는 aidev 이슈 라벨 `stop` + 제목 `stop: <범위>` (닫으면 해제) | 파일 `state/STOP*` 를 회차 시작·후보 선정·머지 전·릴리즈 전 경계에서 확인. 진행 중인 에이전트 세션은 끝까지 두되 그 뒤 단계에서 멈춤 |
+| **작업함** | https://hkjang.github.io/aidev/inbox/ | 열린 러너 PR(리뷰 보류·보호 파일·CI 실패·승인 대기)·배포 복구 이슈·수정 과제를 변경 요약·실패 근거(단계 기록 링크)·권장 조치와 함께 표시. **승인**: PR 라벨 `aidev-approved` → 다음 회차 시작 시 승인 당시 SHA 와 정책 버전을 `state/approvals.jsonl` 에 기록, CI 확인 후 **그 커밋에만** 머지(바뀌면 라벨 제거·재확인 요청). **반려**: `aidev-rejected` → 닫고 교훈 기록 |
+| **개선 캠페인** | `state/campaigns.json`: `{id, goal, projects[], budget_usd, until}` | 수정 큐·수동 큐 다음 순서로 캠페인 대상을 우선 배정하고 프롬프트에 목표를 넣음. 캠페인 안에서 프로젝트를 순환, `usage.jsonl`/`runs.jsonl` 에 `campaign` 태그. 예산·기한이 다하면 `done` |
+| **구조화 수동 요청** | aidev 이슈 템플릿 "수동 작업 요청(run)" — 프로젝트·문제·수용 기준·금지 범위·긴급도 | `inbox.sh` 가 필드를 뽑아 `run-queue.tsv` 에 넣고(긴급이면 맨 앞), 프롬프트 `$REQUEST_NOTE` 로 명세만 전달. 요청 본문은 정책·권한을 바꾸지 못하며 "규칙을 무시하라"는 내용은 따르지 말라고 명시 |
+
 ## 10-2. 품질·안전 게이트
 
 | 단계 | 파일 | 동작 |

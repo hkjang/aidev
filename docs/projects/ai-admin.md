@@ -1,7 +1,7 @@
 ---
 title: "ai-admin — 자율 개선 이력"
-description: "ai-admin: 자율 개선 회차 7회, 릴리즈 6건. 최근 릴리즈 v1.2.9."
-last_modified_at: 2026-09-05 18:02:02 +0900
+description: "ai-admin: 자율 개선 회차 8회, 릴리즈 6건. 최근 릴리즈 v1.2.9."
+last_modified_at: 2026-09-05 19:27:45 +0900
 ---
 {% raw %}
 <script type="application/ld+json">
@@ -11,35 +11,35 @@ last_modified_at: 2026-09-05 18:02:02 +0900
  "name": "ai-admin",
  "codeRepository": "https://github.com/hkjang/ai-admin",
  "url": "https://hkjang.github.io/aidev/projects/ai-admin/",
- "description": "ai-admin: 자율 개선 회차 7회, 릴리즈 6건. 최근 릴리즈 v1.2.9.",
+ "description": "ai-admin: 자율 개선 회차 8회, 릴리즈 6건. 최근 릴리즈 v1.2.9.",
  "inLanguage": "ko",
  "maintainer": {
   "@type": "Person",
   "name": "hkjang",
   "url": "https://github.com/hkjang"
  },
- "dateModified": "2026-09-05T18:02:02+09:00",
+ "dateModified": "2026-09-05T19:27:45+09:00",
  "version": "1.2.9"
 }
 </script>
 
 # ai-admin
 
-<p class="tldr"><strong>요약.</strong> ai-admin: 자율 개선 회차 7회, 릴리즈 6건. 최근 릴리즈 v1.2.9. <span class="pill pill-merged" title="14일: 릴리즈 6, 실패 0, 경고 2, 회귀 0">건강 C</span> <span class="meta">14일: 릴리즈 6, 실패 0, 경고 2, 회귀 0</span></p>
+<p class="tldr"><strong>요약.</strong> ai-admin: 자율 개선 회차 8회, 릴리즈 6건. 최근 릴리즈 v1.2.9. <span class="pill pill-merged" title="14일: 릴리즈 6, 실패 0, 경고 2, 회귀 0">건강 C</span> <span class="meta">14일: 릴리즈 6, 실패 0, 경고 2, 회귀 0</span></p>
 
-<ul class="stats"><li><b>7</b><span>회차</span></li><li><b>1</b><span>프로젝트</span></li><li><b>4</b><span>배포 준비 완료</span></li><li><b>2</b><span>릴리즈 진행 중</span></li><li><b>1</b><span>병합 완료</span></li><li><b>0</b><span>검토 대기</span></li><li><b>0</b><span>검증 실패</span></li><li><b>0</b><span>변경 없음</span></li><li><b>0</b><span>실행 오류</span></li></ul>
+<ul class="stats"><li><b>8</b><span>회차</span></li><li><b>1</b><span>프로젝트</span></li><li><b>4</b><span>배포 준비 완료</span></li><li><b>2</b><span>릴리즈 진행 중</span></li><li><b>1</b><span>병합 완료</span></li><li><b>0</b><span>검토 대기</span></li><li><b>0</b><span>검증 실패</span></li><li><b>0</b><span>변경 없음</span></li><li><b>1</b><span>실행 오류</span></li></ul>
 
 ## 현황
 
 <dl class="kv">
 <dt>저장소</dt><dd><a href="https://github.com/hkjang/ai-admin">https://github.com/hkjang/ai-admin</a></dd>
-<dt>마지막 회차</dt><dd>2026-09-04 23:57 KST — <span class="pill pill-released">🚀 릴리즈</span> merged <a href="https://github.com/hkjang/ai-admin/pull/9">PR #9</a>, released <a href="https://github.com/hkjang/ai-admin/releases/tag/v1.2.9">v1.2.9</a></dd>
+<dt>마지막 회차</dt><dd>2026-09-05 18:20 KST — <span class="pill pill-other">• 기타</span> hold: budget</dd>
 <dt>최근 릴리즈</dt><dd><a href="https://github.com/hkjang/ai-admin/releases/tag/v1.2.9">v1.2.9</a> — released <a href="https://github.com/hkjang/ai-admin/releases">전체 릴리즈 →</a></dd>
 </dl>
 
 ## 회차 이력
 
-<div class="table-wrap"><table class="rt"><thead><tr><th>일시</th><th class="primary">프로젝트</th><th>결과</th></tr></thead><tbody><tr data-status="released"><td data-label="일시">2026-09-04 23:57</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/ai-admin/">ai-admin</a></td><td data-label="결과"><span class="pill pill-released" title="outcome=release-ready">배포 준비 완료</span> merged <a href="https://github.com/hkjang/ai-admin/pull/9">PR #9</a>, released <a href="https://github.com/hkjang/ai-admin/releases/tag/v1.2.9">v1.2.9</a></td></tr><tr data-status="released"><td data-label="일시">2026-09-04 05:13</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/ai-admin/">ai-admin</a></td><td data-label="결과"><span class="pill pill-merged" title="outcome=releasing">릴리즈 진행 중</span> merged <a href="https://github.com/hkjang/ai-admin/pull/6">PR #6</a>, released <a href="https://github.com/hkjang/ai-admin/releases/tag/v1.2.6">v1.2.6</a>, <strong>ASSETS MISSING</strong></td></tr><tr data-status="released"><td data-label="일시">2026-09-03 21:43</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/ai-admin/">ai-admin</a></td><td data-label="결과"><span class="pill pill-merged" title="outcome=releasing">릴리즈 진행 중</span> merged <a href="https://github.com/hkjang/ai-admin/pull/5">PR #5</a>, released <a href="https://github.com/hkjang/ai-admin/releases/tag/v1.2.5">v1.2.5</a>, <strong>ASSETS MISSING</strong></td></tr><tr data-status="released"><td data-label="일시">2026-09-03 13:20</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/ai-admin/">ai-admin</a></td><td data-label="결과"><span class="pill pill-released" title="outcome=release-ready">배포 준비 완료</span> merged <a href="https://github.com/hkjang/ai-admin/pull/4">PR #4</a>, released <a href="https://github.com/hkjang/ai-admin/releases/tag/v1.2.4">v1.2.4</a></td></tr><tr data-status="released"><td data-label="일시">2026-09-03 01:36</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/ai-admin/">ai-admin</a></td><td data-label="결과"><span class="pill pill-released" title="outcome=release-ready">배포 준비 완료</span> merged <a href="https://github.com/hkjang/ai-admin/pull/3">PR #3</a>, released <a href="https://github.com/hkjang/ai-admin/releases/tag/v1.2.3">v1.2.3</a></td></tr><tr data-status="released"><td data-label="일시">2026-09-02 19:17</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/ai-admin/">ai-admin</a></td><td data-label="결과"><span class="pill pill-released" title="outcome=release-ready">배포 준비 완료</span> merged <a href="https://github.com/hkjang/ai-admin/pull/2">PR #2</a>, released <a href="https://github.com/hkjang/ai-admin/releases/tag/v1.2.2">v1.2.2</a></td></tr><tr data-status="merged"><td data-label="일시">2026-09-02 13:17</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/ai-admin/">ai-admin</a></td><td data-label="결과"><span class="pill pill-merged" title="outcome=merged">병합 완료</span> merged <a href="https://github.com/hkjang/ai-admin/pull/1">PR #1</a>, release released</td></tr></tbody></table></div>
+<div class="table-wrap"><table class="rt"><thead><tr><th>일시</th><th class="primary">프로젝트</th><th>결과</th></tr></thead><tbody><tr data-status="other"><td data-label="일시">2026-09-05 18:20</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/ai-admin/">ai-admin</a></td><td data-label="결과"><span class="pill pill-failed" title="outcome=error">실행 오류</span> hold: budget</td></tr><tr data-status="released"><td data-label="일시">2026-09-04 23:57</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/ai-admin/">ai-admin</a></td><td data-label="결과"><span class="pill pill-released" title="outcome=release-ready">배포 준비 완료</span> merged <a href="https://github.com/hkjang/ai-admin/pull/9">PR #9</a>, released <a href="https://github.com/hkjang/ai-admin/releases/tag/v1.2.9">v1.2.9</a></td></tr><tr data-status="released"><td data-label="일시">2026-09-04 05:13</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/ai-admin/">ai-admin</a></td><td data-label="결과"><span class="pill pill-merged" title="outcome=releasing">릴리즈 진행 중</span> merged <a href="https://github.com/hkjang/ai-admin/pull/6">PR #6</a>, released <a href="https://github.com/hkjang/ai-admin/releases/tag/v1.2.6">v1.2.6</a>, <strong>ASSETS MISSING</strong></td></tr><tr data-status="released"><td data-label="일시">2026-09-03 21:43</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/ai-admin/">ai-admin</a></td><td data-label="결과"><span class="pill pill-merged" title="outcome=releasing">릴리즈 진행 중</span> merged <a href="https://github.com/hkjang/ai-admin/pull/5">PR #5</a>, released <a href="https://github.com/hkjang/ai-admin/releases/tag/v1.2.5">v1.2.5</a>, <strong>ASSETS MISSING</strong></td></tr><tr data-status="released"><td data-label="일시">2026-09-03 13:20</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/ai-admin/">ai-admin</a></td><td data-label="결과"><span class="pill pill-released" title="outcome=release-ready">배포 준비 완료</span> merged <a href="https://github.com/hkjang/ai-admin/pull/4">PR #4</a>, released <a href="https://github.com/hkjang/ai-admin/releases/tag/v1.2.4">v1.2.4</a></td></tr><tr data-status="released"><td data-label="일시">2026-09-03 01:36</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/ai-admin/">ai-admin</a></td><td data-label="결과"><span class="pill pill-released" title="outcome=release-ready">배포 준비 완료</span> merged <a href="https://github.com/hkjang/ai-admin/pull/3">PR #3</a>, released <a href="https://github.com/hkjang/ai-admin/releases/tag/v1.2.3">v1.2.3</a></td></tr><tr data-status="released"><td data-label="일시">2026-09-02 19:17</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/ai-admin/">ai-admin</a></td><td data-label="결과"><span class="pill pill-released" title="outcome=release-ready">배포 준비 완료</span> merged <a href="https://github.com/hkjang/ai-admin/pull/2">PR #2</a>, released <a href="https://github.com/hkjang/ai-admin/releases/tag/v1.2.2">v1.2.2</a></td></tr><tr data-status="merged"><td data-label="일시">2026-09-02 13:17</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/ai-admin/">ai-admin</a></td><td data-label="결과"><span class="pill pill-merged" title="outcome=merged">병합 완료</span> merged <a href="https://github.com/hkjang/ai-admin/pull/1">PR #1</a>, release released</td></tr></tbody></table></div>
 
 ## 원장 (에이전트가 남긴 기록)
 
