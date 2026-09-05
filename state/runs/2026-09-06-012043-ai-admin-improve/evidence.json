@@ -1,0 +1,130 @@
+{
+  "run_id": "2026-09-06-012043-ai-admin-improve",
+  "generated": "2026-09-06T01:30:06+09:00",
+  "run": {
+    "run_id": "2026-09-06-012043-ai-admin-improve",
+    "project": "ai-admin",
+    "kind": "improve",
+    "started": "2026-09-06T01:20:43+09:00",
+    "model": "claude-opus-5",
+    "policy_version": "7c35e50",
+    "prompts_hash": "a3b041a352fd55fa",
+    "runner_version": "7c35e50",
+    "finished": "2026-09-06T01:30:06+09:00",
+    "outcome": "verify-failed"
+  },
+  "record": {
+    "ts": "2026-09-06T01:30:06+09:00",
+    "date": "2026-09-06",
+    "project": "ai-admin",
+    "result": "verify failed: secrets in diff",
+    "outcome": "verify-failed",
+    "run_id": "2026-09-06-012043-ai-admin-improve",
+    "base_sha": "1667ffb43d5883707aeeea9c2172e1ff616c39d8",
+    "head_sha": "e307d0d1e5abedbd25ef19ba5cc1cf0c135c98ee",
+    "pr": "",
+    "stages": {
+      "base": {
+        "state": "pinned",
+        "reason": "main@1667ffb",
+        "at": "2026-09-06T01:20:47+09:00"
+      },
+      "autonomy": {
+        "state": "release",
+        "reason": "",
+        "at": "2026-09-06T01:20:47+09:00"
+      },
+      "verify": {
+        "state": "failed",
+        "reason": "변경에 비밀정보 의심 문자열",
+        "at": "2026-09-06T01:30:05+09:00"
+      }
+    },
+    "campaign": "",
+    "autonomy": "release",
+    "files": 21,
+    "additions": 259,
+    "deletions": 59,
+    "tests": 2,
+    "title": "fix: stop reporting login backend failures as a wrong password"
+  },
+  "stages": {
+    "base": {
+      "state": "pinned",
+      "reason": "main@1667ffb",
+      "at": "2026-09-06T01:20:47+09:00"
+    },
+    "autonomy": {
+      "state": "release",
+      "reason": "",
+      "at": "2026-09-06T01:20:47+09:00"
+    },
+    "verify": {
+      "state": "failed",
+      "reason": "변경에 비밀정보 의심 문자열",
+      "at": "2026-09-06T01:30:05+09:00"
+    }
+  },
+  "provenance": {
+    "model": "claude-opus-5",
+    "policy_version": "7c35e50",
+    "prompts_hash": "a3b041a352fd55fa",
+    "runner_version": "7c35e50",
+    "base_sha": "1667ffb43d5883707aeeea9c2172e1ff616c39d8",
+    "head_sha": "e307d0d1e5abedbd25ef19ba5cc1cf0c135c98ee",
+    "pr": ""
+  },
+  "verification": {
+    "runner": {
+      "source": "auto",
+      "commands": [
+        {
+          "cmd": "go build ./...",
+          "exit": 0,
+          "seconds": 0
+        },
+        {
+          "cmd": "go vet ./...",
+          "exit": 0,
+          "seconds": 1
+        },
+        {
+          "cmd": "go test ./...",
+          "exit": 0,
+          "seconds": 1
+        }
+      ]
+    },
+    "runner_gate": {
+      "ok": true,
+      "state": "verified",
+      "reason": "검증 3개 통과 (auto)"
+    },
+    "after_rebase": null,
+    "review": null,
+    "ci_gate": null
+  },
+  "release": {
+    "result": null,
+    "assets_sha256": []
+  },
+  "approval": null,
+  "usage": [
+    {
+      "ts": "2026-09-06T01:30:02+09:00",
+      "date": "2026-09-06",
+      "project": "ai-admin",
+      "phase": "improve",
+      "run_id": "2026-09-06-012043-ai-admin-improve",
+      "campaign": "",
+      "subtype": "success",
+      "duration_ms": 589496,
+      "num_turns": 77,
+      "cost_usd": 5.605474500000001,
+      "input_tokens": 128,
+      "output_tokens": 36196,
+      "cache_read": 6692739,
+      "cache_create": 134427
+    }
+  ]
+}

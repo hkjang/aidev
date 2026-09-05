@@ -1,0 +1,83 @@
+[
+  {
+    "title": "로그인 실패 원인을 자격 증명 오류와 백엔드 장애로 구분",
+    "value": 4,
+    "risk": 1,
+    "size": "S",
+    "status": "done",
+    "note": "auth.Login이 ErrInvalidCredentials/ErrAccountInactive를 구분해 반환하고, 그 밖의 장애는 401 대신 Retry-After와 함께 503 login_unavailable을 반환하며 아이디별 backoff에 누적되지 않는다. 감사 reason도 invalid_credentials/account_inactive/login_backend_unavailable로 분리. v1.2.10.",
+    "updated": "2026-09-06"
+  },
+  {
+    "title": "auth.truncate의 UTF-8 경계 무시로 session INSERT 실패 가능",
+    "value": 3,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "user_agent를 1000바이트로 바이트 절단해 다국어 UA가 경계에서 깨지면 PostgreSQL이 invalid byte sequence로 INSERT를 거부한다. v1.2.10 이후에는 401이 아니라 503으로 정확히 보고되지만 로그인 실패 자체는 남으므로 rune 경계까지 잘라야 한다.",
+    "updated": "2026-09-06"
+  },
+  {
+    "title": "CI에 정적 분석 단계(gofmt -l, go vet, eslint) 추가",
+    "value": 3,
+    "risk": 1,
+    "size": "M",
+    "status": "pending",
+    "note": ".github/workflows/ci.yml은 go test / npm test / docker build만 실행한다. web에는 eslint 설정 자체가 없어 도입 시 오프라인 빌드 정책과 의존성 추가를 함께 검토해야 한다.",
+    "updated": "2026-09-06"
+  },
+  {
+    "title": "loadGrants가 map 순회로 roles·permissions 순서를 무작위화",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "internal/auth/auth.go의 loadGrants가 map에서 슬라이스를 만들어 /api/v1/auth/me의 roles·permissions 순서가 요청마다 달라지고, 프로필 화면(PersonalPages.tsx)의 태그가 새로고침마다 섞인다. sort.Strings 한 줄이면 해결된다.",
+    "updated": "2026-09-06"
+  },
+  {
+    "title": "safeCSVCell이 tab·CR 선행 문자를 중화하지 않음",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "OWASP가 =+-@ 와 함께 권고하는 0x09·0x0D를 처리하지 않아 \\t=cmd|... 형태가 기존 방어를 우회한다. docs/api.md의 \"formula injection 위험 문자를 중화합니다\"와 어긋나지만 주요 필드가 TrimSpace되어 실제 도달 경로는 좁다.",
+    "updated": "2026-09-06"
+  },
+  {
+    "title": "대시보드 위젯이 조회 실패를 빈 값으로 감춤",
+    "value": 2,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "legacyRequestTrend·dashboardProviders·pending 승인 count가 오류를 무시해 대기 중인 승인이 0건인지 조회 실패인지 화면에서 구분할 수 없다. metrics의 available 플래그와 같은 관례를 적용하면 되지만 프런트엔드 변경이 함께 필요하다.",
+    "updated": "2026-09-06"
+  },
+  {
+    "title": "clearSessionCookies가 Secure·SameSite를 setSessionCookies와 다르게 지움",
+    "value": 2,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "auth_handlers.go:112가 Secure를 설정하지 않고 CSRF 쿠키도 Strict가 아닌 Lax로 지운다. 브라우저는 대체로 이름·Path만으로 삭제를 처리하므로 실제 결함보다는 비대칭에 가깝다.",
+    "updated": "2026-09-06"
+  },
+  {
+    "title": "listUsers의 q 파라미터에 길이 상한이 없음",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "감사·레거시·MCP 조회는 모두 200자 상한을 두는데 /api/v1/users만 없어, 매우 긴 검색어가 세 컬럼 ILIKE '%...%' 스캔으로 들어간다. 일관성 및 방어 목적의 소폭 보강.",
+    "updated": "2026-09-06"
+  },
+  {
+    "title": "chat 프록시가 비스트리밍 응답의 upstream Content-Type을 그대로 전달",
+    "value": 2,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "providers.go의 chatCompletions가 스트리밍이 아닐 때 공급자의 Content-Type을 검증 없이 내려준다. nosniff와 CSP가 있고 공급자는 관리자가 등록하므로 위험은 낮지만, application/json 계열로 제한하면 OpenAI 호환 계약과도 맞는다.",
+    "updated": "2026-09-06"
+  }
+]
