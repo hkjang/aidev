@@ -1,9 +1,9 @@
 ---
 title: "aidev 자율 개선 대시보드"
 description: "Claude Code 자율 개선 에이전트가 hkjang 의 프로젝트를 개선·테스트·머지·릴리즈한 일일 보고. 오늘 20회차·릴리즈 16건, 누적 243회차·릴리즈 140건, 주의 필요 16건."
-last_modified_at: 2026-09-05 09:12:52 +0900
+last_modified_at: 2026-09-05 09:13:36 +0900
 ---
-
+{% raw %}
 <script type="application/ld+json">
 {
  "@context": "https://schema.org",
@@ -17,7 +17,7 @@ last_modified_at: 2026-09-05 09:12:52 +0900
   "name": "hkjang",
   "url": "https://github.com/hkjang"
  },
- "dateModified": "2026-09-05T09:12:52+09:00"
+ "dateModified": "2026-09-05T09:13:36+09:00"
 }
 </script>
 
@@ -152,7 +152,7 @@ last_modified_at: 2026-09-05 09:12:52 +0900
 
 # aidev 자율 개선 대시보드
 
-<p class="tldr"><strong>한 줄 요약.</strong> Claude Code 자율 개선 에이전트가 hkjang 의 프로젝트를 개선·테스트·머지·릴리즈한 일일 보고. 오늘 20회차·릴리즈 16건, 누적 243회차·릴리즈 140건, 주의 필요 16건. 회차가 끝날 때마다 자동 갱신됩니다 (마지막 갱신 <time datetime="2026-09-05T09:12:52+09:00" data-rel>2026-09-05 09:12</time> KST).</p>
+<p class="tldr"><strong>한 줄 요약.</strong> Claude Code 자율 개선 에이전트가 hkjang 의 프로젝트를 개선·테스트·머지·릴리즈한 일일 보고. 오늘 20회차·릴리즈 16건, 누적 243회차·릴리즈 140건, 주의 필요 16건. 회차가 끝날 때마다 자동 갱신됩니다 (마지막 갱신 <time datetime="2026-09-05T09:13:36+09:00" data-rel>2026-09-05 09:13</time> KST).</p>
 
 <div class="alerts" role="alert"><strong>⚠️ 주의 필요 16건</strong><ul><li><a href="https://hkjang.github.io/aidev/projects/igame/">igame</a> — 릴리즈 자산 누락 — 이전 릴리즈엔 있던 파일이 이번엔 없음 <span class=meta>(2026-09-05 03:23)</span></li><li><a href="https://hkjang.github.io/aidev/projects/moina/">moina</a> — 릴리즈 자산 누락 — 이전 릴리즈엔 있던 파일이 이번엔 없음 <span class=meta>(2026-09-05 05:15)</span></li><li><a href="https://hkjang.github.io/aidev/projects/relio/">relio</a> — 릴리즈 자산 누락 — 이전 릴리즈엔 있던 파일이 이번엔 없음 <span class=meta>(2026-09-05 07:33)</span></li><li><a href="https://hkjang.github.io/aidev/projects/relio/">relio</a> — 릴리즈 자산 누락 — 이전 릴리즈엔 있던 파일이 이번엔 없음 <span class=meta>(2026-09-05 08:12)</span></li><li><a href="https://hkjang.github.io/aidev/projects/weekly/">weekly</a> — 릴리즈 에이전트가 결과를 남기지 못함 <span class=meta>(2026-09-04 02:53)</span></li><li><a href="https://hkjang.github.io/aidev/projects/ai-admin/">ai-admin</a> — 릴리즈 자산 누락 — 이전 릴리즈엔 있던 파일이 이번엔 없음 <span class=meta>(2026-09-04 05:13)</span></li><li><a href="https://hkjang.github.io/aidev/projects/dataworks/">dataworks</a> — 자산 빌드 실패 <span class=meta>(2026-09-04 07:00)</span></li><li><a href="https://hkjang.github.io/aidev/projects/ptium/">ptium</a> — 자산 빌드 결과 없음 <span class=meta>(2026-09-04 07:04)</span></li><li><a href="https://hkjang.github.io/aidev/projects/Invenqor/">Invenqor</a> — 자산 빌드 결과 없음 <span class=meta>(2026-09-04 07:06)</span></li><li><a href="https://hkjang.github.io/aidev/projects/igame/">igame</a> — 릴리즈 단계 실패 <span class=meta>(2026-09-04 07:20)</span></li><li><a href="https://hkjang.github.io/aidev/projects/igame/">igame</a> — 릴리즈 자산 누락 — 이전 릴리즈엔 있던 파일이 이번엔 없음 <span class=meta>(2026-09-04 08:18)</span></li><li><a href="https://hkjang.github.io/aidev/projects/jupiq/">jupiq</a> — 릴리즈 자산 누락 — 이전 릴리즈엔 있던 파일이 이번엔 없음 <span class=meta>(2026-09-04 08:40)</span></li><li><a href="https://hkjang.github.io/aidev/projects/moina/">moina</a> — 릴리즈 에이전트가 결과를 남기지 못함 <span class=meta>(2026-09-04 09:27)</span></li><li><a href="https://hkjang.github.io/aidev/projects/moyro/">moyro</a> — 릴리즈 자산 누락 — 이전 릴리즈엔 있던 파일이 이번엔 없음 <span class=meta>(2026-09-04 10:01)</span></li><li><a href="https://hkjang.github.io/aidev/projects/relio/">relio</a> — 릴리즈 자산 누락 — 이전 릴리즈엔 있던 파일이 이번엔 없음 <span class=meta>(2026-09-04 16:19)</span></li><li><a href="https://hkjang.github.io/aidev/projects/AgentHub/">AgentHub</a> — 릴리즈 자산 누락 — 이전 릴리즈엔 있던 파일이 이번엔 없음 <span class=meta>(2026-09-04 21:54)</span></li></ul></div>
 
@@ -190,3 +190,5 @@ last_modified_at: 2026-09-05 09:12:52 +0900
 
 ---
 러너·프롬프트·원장은 [https://github.com/hkjang/aidev](https://github.com/hkjang/aidev) 에서 관리한다. 이 페이지는 회차가 끝날 때마다 `bin/report.py` 가 다시 만든다.
+
+{% endraw %}

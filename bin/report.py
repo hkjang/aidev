@@ -160,6 +160,9 @@ def yaml_str(s):
     return json.dumps(s, ensure_ascii=False)
 
 
+RAW_OPEN, RAW_CLOSE = "{% raw %}", "{% endraw %}"
+
+
 def front_matter(title, description, day=None, extra=None):
     fm = ["---", f"title: {yaml_str(title)}", f"description: {yaml_str(description)}"]
     if day:
@@ -167,7 +170,7 @@ def front_matter(title, description, day=None, extra=None):
     fm.append(f"last_modified_at: {NOW.strftime('%Y-%m-%d %H:%M:%S %z')}")
     for k, v in (extra or {}).items():
         fm.append(f"{k}: {v}")
-    fm.append("---\n")
+    fm.append("---\n" + RAW_OPEN)
     return "\n".join(fm)
 
 
@@ -322,7 +325,7 @@ def write_report(day, day_runs):
         lines.extend(detail)
     lines.append(f"\n[← 대시보드]({SITE}/) · [Atom 피드]({SITE}/feed.xml) · 원본 데이터 [runs.jsonl]({SITE}/data/runs.jsonl)\n")
     with open(os.path.join(REPORTS, f"{day}.md"), "w", encoding="utf-8") as f:
-        f.write("\n".join(lines))
+        f.write("\n".join(lines) + "\n" + RAW_CLOSE + "\n")
     return desc
 
 
@@ -367,7 +370,7 @@ def write_project(p, runs_p):
         lines += ["## 원장 (에이전트가 남긴 기록)\n", body, ""]
     lines.append(f"\n[← 대시보드]({SITE}/)\n")
     with open(os.path.join(PROJECTS, f"{p}.md"), "w", encoding="utf-8") as f:
-        f.write("\n".join(lines))
+        f.write("\n".join(lines) + "\n" + RAW_CLOSE + "\n")
     return {"name": p, "repo": f"{GH}/{repo}", "page": f"{SITE}/projects/{p}/", "runs": c["total"], "released": c["released"],
             "last_ts": last.get("ts"), "last_status": classify(last.get("result")) if last else None, "last_result": last.get("result"),
             "release": {k: rel.get(k) for k in ("status", "version", "tag", "assets_count", "prev_tag", "prev_assets_count") if k in rel}}
@@ -492,7 +495,7 @@ def write_index(by_day, days, projects_info, alert_items):
     lines.append("")
     lines.append(f"---\n러너·프롬프트·원장은 [{GH}/aidev]({GH}/aidev) 에서 관리한다. 이 페이지는 회차가 끝날 때마다 `bin/report.py` 가 다시 만든다.\n")
     with open(os.path.join(DOCS, "index.md"), "w", encoding="utf-8") as f:
-        f.write("\n".join(lines))
+        f.write("\n".join(lines) + "\n" + RAW_CLOSE + "\n")
     return desc, c, total_runs, total_rel
 
 
