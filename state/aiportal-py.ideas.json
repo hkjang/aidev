@@ -1,0 +1,101 @@
+[
+  {
+    "title": "오류 경로의 미할당 이름 참조 수정 (감사 A-105 부분 해결)",
+    "value": 4,
+    "risk": 2,
+    "size": "M",
+    "status": "done",
+    "note": "api.py 5개 라우트의 except 가 미할당 response.json() 을 호출해 UnboundLocalError 로 원래 오류를 덮던 문제, /status_completions 의 last_state·종료 프레임·bare except, kcb remove_legacy_file 의 collection_name, milvus sync_collection 의 response·append 버그를 수정. test_cleanup_paths.py 에 except 검사 추가. 751 passed. 커밋 4587666",
+    "updated": "2026-09-06"
+  },
+  {
+    "title": "A-002 startup 무기한 대기(policy token) 에 timeout/backoff 추가",
+    "value": 4,
+    "risk": 3,
+    "size": "M",
+    "status": "pending",
+    "note": "lifespan 이 while token_store.policy_token is None 에서 timeout 없이 반복. 총 대기 제한·exponential backoff·degraded mode 필요. 기동 동작 변경이라 운영 검증 필요",
+    "updated": "2026-09-06"
+  },
+  {
+    "title": "A-105 후속: 공통 오류 응답 model 도입과 traceback 노출 제거",
+    "value": 4,
+    "risk": 3,
+    "size": "L",
+    "status": "pending",
+    "note": "미할당 이름 참조는 해결했으나 HTTP 200+code 299/499, 빈 문자열, None, HTTP 500 혼재는 그대로. 클라이언트에 traceback 을 그대로 돌려주는 것도 A-106 과 연계해 정리 필요. 응답 형태 변경이라 클라이언트 영향 큼",
+    "updated": "2026-09-06"
+  },
+  {
+    "title": "A-206 추천 질문 캐시 무한 append → 원자적 교체·중복 제거·최대 크기",
+    "value": 3,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "api.py QuestionStore.questions 가 30분 갱신마다 append 만 해 메모리와 중복이 계속 증가. 새 목록으로 원자적 교체하고 마지막 갱신 시각을 두면 됨",
+    "updated": "2026-09-06"
+  },
+  {
+    "title": "A-108 Confluence 그래프의 retrieve → llm_response → END 명시적 edge 추가",
+    "value": 3,
+    "risk": 3,
+    "size": "S",
+    "status": "pending",
+    "note": "util/cf_workflow.py 가 entry point 를 retrieve 로 두지만 후속 edge 가 없음. langgraph 가 설치돼 있지 않아 실제 실행 확인이 선행돼야 함",
+    "updated": "2026-09-06"
+  },
+  {
+    "title": "A-107 후속: 재시도·circuit breaker·공용 requests.Session 도입",
+    "value": 3,
+    "risk": 3,
+    "size": "M",
+    "status": "pending",
+    "note": "timeout 은 전부 지정됐으나 재시도·backoff·connection pooling 은 없음. idempotent 호출에만 제한 재시도를 붙이는 설계가 필요",
+    "updated": "2026-09-06"
+  },
+  {
+    "title": "except 절 범위 축소 (bare except → 구체 예외)",
+    "value": 3,
+    "risk": 3,
+    "size": "M",
+    "status": "pending",
+    "note": "저장소 전반의 bare except 가 KeyboardInterrupt/CancelledError/GeneratorExit 까지 삼킨다. /status_completions 만 이번에 좁혔음. 나머지는 예외 종류를 확인해야 하므로 파일별로 나눠 진행",
+    "updated": "2026-09-06"
+  },
+  {
+    "title": "util/extract_minor.py 의 except Exception: return e 정리 및 테스트",
+    "value": 3,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "예외 객체를 값처럼 반환해 호출부가 성공/실패를 구분하지 못함. 호출부 확인 후 명시적 오류 반환으로 교체",
+    "updated": "2026-09-06"
+  },
+  {
+    "title": "pipeline/law/library/xml_parser_core.py, json_formatter.py 단위 테스트",
+    "value": 3,
+    "risk": 1,
+    "size": "M",
+    "status": "pending",
+    "note": "fixture XML/JSON 을 만들어야 함. 순수 변환 로직이라 외부 의존성 없이 테스트 가능",
+    "updated": "2026-09-06"
+  },
+  {
+    "title": "GitLab CI 에 deploy 앞단 test stage 추가",
+    "value": 4,
+    "risk": 3,
+    "size": "L",
+    "status": "pending",
+    "note": "러너가 shell 태그 기반이라 python 실행 환경이 불확실하고, 실패 시 배포가 막힐 위험이 있어 러너 환경 확인이 선행돼야 함",
+    "updated": "2026-09-06"
+  },
+  {
+    "title": "A-104 후속: collection name allowlist 와 field 별 타입 검증",
+    "value": 3,
+    "risk": 2,
+    "size": "M",
+    "status": "pending",
+    "note": "표현식 escape 는 끝났으나 요청이 지정하는 collection/table 이름은 여전히 검증 없이 Collection() 에 전달됨",
+    "updated": "2026-09-06"
+  }
+]

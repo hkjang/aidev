@@ -1,0 +1,185 @@
+{
+  "run_id": "2026-09-06-022043-aiportal-py-improve",
+  "generated": "2026-09-06T02:31:55+09:00",
+  "run": {
+    "run_id": "2026-09-06-022043-aiportal-py-improve",
+    "project": "aiportal-py",
+    "kind": "improve",
+    "started": "2026-09-06T02:20:43+09:00",
+    "model": "claude-opus-5",
+    "policy_version": "7c35e50",
+    "prompts_hash": "a3b041a352fd55fa",
+    "runner_version": "7c35e50",
+    "finished": "2026-09-06T02:31:55+09:00",
+    "outcome": "review-pending"
+  },
+  "record": {
+    "ts": "2026-09-06T02:31:55+09:00",
+    "date": "2026-09-06",
+    "project": "aiportal-py",
+    "result": "CI no-ci, PR open https://github.com/hkjang/aiportal-py/pull/7",
+    "outcome": "review-pending",
+    "run_id": "2026-09-06-022043-aiportal-py-improve",
+    "base_sha": "12d7a47bba7525eddc717c245ad26d01b51d1785",
+    "head_sha": "4587666b59e24c9b2e4b4ab9447ccac3c4989140",
+    "pr": "https://github.com/hkjang/aiportal-py/pull/7",
+    "stages": {
+      "base": {
+        "state": "pinned",
+        "reason": "main@12d7a47",
+        "at": "2026-09-06T02:20:46+09:00"
+      },
+      "autonomy": {
+        "state": "release",
+        "reason": "",
+        "at": "2026-09-06T02:20:46+09:00"
+      },
+      "verify": {
+        "state": "passed",
+        "reason": "검증 1개 통과 (auto)",
+        "at": "2026-09-06T02:25:39+09:00"
+      },
+      "pr": {
+        "state": "created",
+        "reason": "https://github.com/hkjang/aiportal-py/pull/7",
+        "at": "2026-09-06T02:25:45+09:00"
+      },
+      "review": {
+        "state": "approved",
+        "reason": "리뷰 승인 (risk=low)",
+        "at": "2026-09-06T02:27:34+09:00"
+      },
+      "ci": {
+        "state": "no-ci",
+        "reason": "이 커밋에 검사가 없음 (정책 allow_merge_without_ci 가 없으면 차단)",
+        "at": "2026-09-06T02:31:55+09:00"
+      }
+    },
+    "campaign": "",
+    "autonomy": "release",
+    "files": 7,
+    "additions": 97,
+    "deletions": 14,
+    "tests": 1,
+    "title": "fix: 오류 경로의 미할당 이름 참조 수정 (감사 A-105)"
+  },
+  "stages": {
+    "base": {
+      "state": "pinned",
+      "reason": "main@12d7a47",
+      "at": "2026-09-06T02:20:46+09:00"
+    },
+    "autonomy": {
+      "state": "release",
+      "reason": "",
+      "at": "2026-09-06T02:20:46+09:00"
+    },
+    "verify": {
+      "state": "passed",
+      "reason": "검증 1개 통과 (auto)",
+      "at": "2026-09-06T02:25:39+09:00"
+    },
+    "pr": {
+      "state": "created",
+      "reason": "https://github.com/hkjang/aiportal-py/pull/7",
+      "at": "2026-09-06T02:25:45+09:00"
+    },
+    "review": {
+      "state": "approved",
+      "reason": "리뷰 승인 (risk=low)",
+      "at": "2026-09-06T02:27:34+09:00"
+    },
+    "ci": {
+      "state": "no-ci",
+      "reason": "이 커밋에 검사가 없음 (정책 allow_merge_without_ci 가 없으면 차단)",
+      "at": "2026-09-06T02:31:55+09:00"
+    }
+  },
+  "provenance": {
+    "model": "claude-opus-5",
+    "policy_version": "7c35e50",
+    "prompts_hash": "a3b041a352fd55fa",
+    "runner_version": "7c35e50",
+    "base_sha": "12d7a47bba7525eddc717c245ad26d01b51d1785",
+    "head_sha": "4587666b59e24c9b2e4b4ab9447ccac3c4989140",
+    "pr": "https://github.com/hkjang/aiportal-py/pull/7"
+  },
+  "verification": {
+    "runner": {
+      "source": "auto",
+      "commands": [
+        {
+          "cmd": "python3 -m pytest -q -x",
+          "exit": 0,
+          "seconds": 0
+        }
+      ]
+    },
+    "runner_gate": {
+      "ok": true,
+      "state": "verified",
+      "reason": "검증 1개 통과 (auto)"
+    },
+    "after_rebase": null,
+    "review": {
+      "verdict": "approve",
+      "reasons": [],
+      "notes": [
+        "테스트 검증 확인: tests/unit/test_cleanup_paths.py:91 의 _unsafe_except_uses 를 main 버전 파일에 직접 돌려보니 api.py 342/366/391/657/692/1023, kcb_pipeline_milvus.py:93 을 실제로 검출합니다. 즉 수정 전 코드에서는 새 테스트가 실패하므로 '항상 통과하는 테스트'가 아닙니다. 전체 스위트 751 passed 재현됨.",
+        "docs/CURRENT_STATE_AUDIT.md:90 이 말하는 '/delete_history_session' 은 api.py:644 의 함수명이 history() 인 라우트를 가리키며 실제로 일치합니다(라우트 데코레이터 api.py:639). 문서/커밋 메시지와 코드는 일치.",
+        "util/milvus_collection.py:97 의 result[\"data\"].append(...) 재대입 제거는 반환값 의미를 None -> list 로 바꾸지만, sync_collection 은 api.py:54 에서 import 만 되고 호출부가 없어 회귀 위험 없음. 다만 A-105(미할당 이름) 주제와는 별개의 버그 수정이라 범위가 약간 넓습니다(커밋 메시지에는 명시됨).",
+        "api.py:344 등 5곳은 이전에 UnboundLocalError -> 미들웨어 HTTP 500(일반 메시지)이었으나 이제 HTTP 200 + 전체 traceback 본문을 반환합니다. api.py:1223/1258/1293/... 의 기존 저장소 관례와 동일하고 docs/API_REFERENCE.md:270 에 기록됐지만, 오류 경로의 traceback 노출 범위가 5개 엔드포인트만큼 넓어진 것은 사실입니다. A-106/통합 오류 모델 작업에서 정리 필요.",
+        "tests/unit/test_cleanup_paths.py:60 _bound_before 는 try 가 중첩된 경우 스코프 전체를 훑으면서 try 본문 안의 대입까지 bound 로 취급합니다(주석은 '제외한다'고 하지만 코드는 제외하지 않음). 이 헬퍼는 main 에서 그대로 온 기존 코드지만, 새 except 검사기도 같은 사각지대를 물려받아 중첩 try 의 미할당 참조는 놓칠 수 있습니다.",
+        "api.py:1022 status_completions 는 except Exception 으로 좁혀 GeneratorExit/CancelledError 를 전파시키고 오류 시 499 종료 프레임을 yield 하도록 바뀌었습니다. 정상 종료 경로의 프레임 구성은 그대로이고, 기존 break 직전의 message 대입은 yield 되지 않던 죽은 코드였으므로 제거는 무해합니다.",
+        "pipeline/kcb/kcb_pipeline_milvus.py:82-92 에는 이번 변경과 무관한 기존 버그가 남아 있습니다: 모듈 전역 COLLECTION_LIST_INNER_LAW 에 매 호출마다 append 하고, for 루프 첫 회에 return 해 첫 컬렉션만 처리합니다. 이번 PR 범위 밖이라 별도 이슈 권장.",
+        "코드 변경은 순수 애플리케이션 로직 + 문서이며 마이그레이션·외부 상태 변경이 없어 revert 로 완전히 되돌릴 수 있습니다."
+      ],
+      "risk": "low"
+    },
+    "ci_gate": {
+      "ok": false,
+      "state": "no-ci",
+      "reason": "이 커밋에 검사가 없음 (정책 allow_merge_without_ci 가 없으면 차단)",
+      "checks": 0
+    }
+  },
+  "release": {
+    "result": null,
+    "assets_sha256": []
+  },
+  "approval": null,
+  "usage": [
+    {
+      "ts": "2026-09-06T02:25:39+09:00",
+      "date": "2026-09-06",
+      "project": "aiportal-py",
+      "phase": "improve",
+      "run_id": "2026-09-06-022043-aiportal-py-improve",
+      "campaign": "",
+      "subtype": "success",
+      "duration_ms": 308845,
+      "num_turns": 47,
+      "cost_usd": 2.0113445,
+      "input_tokens": 70,
+      "output_tokens": 22328,
+      "cache_read": 1725029,
+      "cache_create": 58253
+    },
+    {
+      "ts": "2026-09-06T02:27:34+09:00",
+      "date": "2026-09-06",
+      "project": "aiportal-py",
+      "phase": "review",
+      "run_id": "2026-09-06-022043-aiportal-py-improve",
+      "campaign": "",
+      "subtype": "success",
+      "duration_ms": 114220,
+      "num_turns": 11,
+      "cost_usd": 0.6556755000000001,
+      "input_tokens": 22,
+      "output_tokens": 6994,
+      "cache_read": 347653,
+      "cache_create": 30507
+    }
+  ]
+}
