@@ -1,0 +1,56 @@
+[
+  {
+    "title": "정책 규칙의 순서와 기본 정책이 Pod까지 전달되지 않음 (차단 위 승인이 Pod에서만 차단으로 바뀌고, 기본값 차단은 도구 호출에 전혀 적용되지 않음)",
+    "value": 4,
+    "risk": 3,
+    "size": "M",
+    "status": "done",
+    "note": "ServerRules가 규칙을 순서대로 + 기본값과 함께 싣고 policy.Decide가 Evaluate와 같은 절차로 읽도록 수정. 요약 목록은 옛 base 이미지용으로 유지. 커밋 235f78b, BASE_VERSION 0.23.0.",
+    "updated": "2026-09-05"
+  },
+  {
+    "title": "데이터 등급(dataClasses) 조건이 붙은 tool.call 규칙이 컴파일 단계에서 절대 매치되지 않아 Pod에 전달되지 않음",
+    "value": 3,
+    "risk": 3,
+    "size": "M",
+    "status": "pending",
+    "note": "CompileServer는 request.DataClasses가 빈 채로 matches()를 부르므로 dataClasses 선택자가 있는 규칙은 항상 탈락한다. 게이트웨이는 DLP 스캐너로 등급을 실제로 알고 있으므로, 그런 규칙을 등급 조건과 함께 실어 보내면 호출 시점에 판정할 수 있다. 문서는 '데이터 등급을 조건으로 한 규칙'을 광고한다.",
+    "updated": "2026-09-05"
+  },
+  {
+    "title": "scrubDecision이 record.Agent 등 남은 자유 텍스트를 검사하지 않아 에이전트 이름으로는 무엇이든 나갈 수 있음",
+    "value": 2,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "감사 기록의 자유 텍스트 필드가 DLP 검사를 우회한다.",
+    "updated": "2026-09-05"
+  },
+  {
+    "title": "정책 시뮬레이터가 '이 규칙이 Pod에서 어떻게 컴파일되는가'를 보여주지 않아 순서 실수를 저장 전에 볼 수 없음",
+    "value": 3,
+    "risk": 1,
+    "size": "M",
+    "status": "pending",
+    "note": "시뮬레이터는 문서를 평가할 뿐이라 컴파일 결과(게이트웨이가 실제로 받는 것)는 화면 어디에도 없다. CompileServer 결과를 서버·에이전트 단위로 보여주면 이번 회차 같은 불일치를 운영자가 직접 볼 수 있다.",
+    "updated": "2026-09-05"
+  },
+  {
+    "title": "korean.EndsInConsonant가 괄호·따옴표로 끝나는 값에서 조사를 잘못 고름",
+    "value": 2,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "사용자에게 보이는 문장의 은/는, 이/가가 어긋난다.",
+    "updated": "2026-09-05"
+  },
+  {
+    "title": "captureHandler.WithGroup이 그룹 이름을 버려 서로 다른 그룹의 같은 키가 충돌",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "구조화 로그의 속성이 조용히 덮어써진다.",
+    "updated": "2026-09-05"
+  }
+]
