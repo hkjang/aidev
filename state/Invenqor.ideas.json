@@ -1,0 +1,65 @@
+[
+  {
+    "title": "SQLite 모드에서 attributes.* 절이 문자열로 저장된 값만 찾음 (숫자·참거짓 = 는 항상 0건, != 는 전부 매칭)",
+    "value": 4,
+    "risk": 2,
+    "size": "M",
+    "status": "done",
+    "note": "PostgreSQL #>> 는 저장값을 텍스트로 렌더링하지만 SQLite json_extract 는 SQL 값(INTEGER/REAL, 참거짓은 1/0)을 돌려주고 숫자는 텍스트와 같지 않다. fallback 을 PostgreSQL 과 같게 렌더링하도록 수정하고 정렬 비교의 숫자 쪽만 추출값 유지. querydsl 단위 2건 + query/execute 통합 1건 추가, 두 모드 전 패키지 통과.",
+    "updated": "2026-09-05"
+  },
+  {
+    "title": "중간에 실패한 행 읽기가 완전한 결과로 응답됨 (rows.Err() 미확인 9곳)",
+    "value": 4,
+    "risk": 1,
+    "size": "M",
+    "status": "done",
+    "note": "병렬 브랜치 auto/2026-09-05-1110(facda0b)에서 처리됨. 아직 main 에 병합 전.",
+    "updated": "2026-09-05"
+  },
+  {
+    "title": "exportAssets CSV 가 limit(기본 10,000)에서 조용히 잘림",
+    "value": 3,
+    "risk": 2,
+    "size": "M",
+    "status": "pending",
+    "note": "목록 API 는 total·has_more 를 주는데 CSV 응답에는 잘렸다는 표시가 전혀 없다. 헤더나 사전 count 로 알릴 방법을 정해야 함.",
+    "updated": "2026-09-05"
+  },
+  {
+    "title": "Query DSL 에 attributes.<키> 존재/부재 연산자가 없음",
+    "value": 3,
+    "risk": 2,
+    "size": "M",
+    "status": "pending",
+    "note": "지금은 `>= \"\"` 같은 우회가 필요하다. != 가 키 없는 자산을 포함하도록 바뀐 뒤로 \"값을 보고한 자산만\"을 표현할 수단이 더 필요해졌다.",
+    "updated": "2026-09-05"
+  },
+  {
+    "title": "/api/v1/external/query/* API key 경로의 한도·감사 로그 커버리지",
+    "value": 3,
+    "risk": 2,
+    "size": "M",
+    "status": "pending",
+    "note": "세션 경로와 달리 키 경로의 rate limit·감사 기록에 대한 테스트가 없다.",
+    "updated": "2026-09-05"
+  },
+  {
+    "title": "attributes.* 의 배열·객체 값이 두 모드에서 다른 텍스트로 렌더링됨",
+    "value": 2,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "SQLite 는 공백 없는 JSON, PostgreSQL #>> 는 {\"k\": \"v\"} 형태. 스칼라는 이번에 맞췄지만 컨테이너 값 비교는 여전히 갈린다. 애초에 이런 절을 거절하는 편이 나을 수도 있다.",
+    "updated": "2026-09-05"
+  },
+  {
+    "title": "콘솔이 마지막 scope 체크박스를 비활성화하지 않음",
+    "value": 2,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "서버가 scope 없는 키를 거절하므로 이제 400 을 받고서야 알게 된다. web 변경 시 webui/dist 재빌드 필요.",
+    "updated": "2026-09-05"
+  }
+]
