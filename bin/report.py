@@ -496,20 +496,7 @@ def write_report(day, day_runs, day_usage):
              f"# 자율 개선 일일 보고 — {day}\n", f'<p class="tldr"><strong>요약.</strong> {esc(desc)}</p>\n', stats_html(c, u),
              "## 회차\n", runs_table(day_runs, caption="시각은 KST. 상태 칩과 검색으로 거를 수 있습니다.")]
     if day_usage:
-        cp = caps()
-    if cp:
-        def bar(v, m):
-            pct = min(100, int(v / m * 100)) if m else 0
-            col = "var(--bad)" if pct >= 100 else ("var(--warn)" if pct >= 80 else "var(--good)")
-            return f'<span class="meta">{v} / {m}</span> <span style="display:inline-block;width:6rem;height:.5rem;background:var(--card-2);border-radius:4px;vertical-align:middle"><span style="display:block;width:{pct}%;height:100%;background:{col};border-radius:4px"></span></span>'
-        lines += ["## 오늘 상한\n", '<dl class="kv">',
-                  f'<dt>비용</dt><dd>{bar(round(u["cost"], 2), cp.get("MAX_DAILY_COST", 0))}</dd>',
-                  f'<dt>회차</dt><dd>{bar(c["total"], cp.get("MAX_DAILY_ROUNDS", 0))}</dd>',
-                  f'<dt>릴리즈</dt><dd>{bar(c["released"], cp.get("MAX_DAILY_RELEASES", 0))}</dd>',
-                  f'<dt>휴면 규칙</dt><dd>변경 없음 {cp.get("DORMANT_AFTER", "?")}회 연속이면 {cp.get("DORMANT_DAYS", "?")}일 제외</dd>',
-                  f'<dt>수동 실행</dt><dd><a href="{GH}/aidev/issues/new?labels=run&title=run%3A+%3C%ED%94%84%EB%A1%9C%EC%A0%9D%ED%8A%B8%3E">이슈 만들기</a> — 제목 <code>run: &lt;프로젝트&gt;</code>, 라벨 <code>run</code> → 다음 회차 우선 실행</dd>',
-                  "</dl>\n", "설정: `state/caps.env`. 상한에 닿으면 그날은 새 회차를 시작하지 않고 알린다.\n"]
-    lines += ["## 비용·사용량\n", usage_table(day_usage, caption="claude -p 가 보고한 추정 비용(정액제에서는 참고값)과 소요 시간")]
+        lines += ["## 비용·사용량\n", usage_table(day_usage, caption="claude -p 가 보고한 추정 비용(정액제에서는 참고값)과 소요 시간")]
     seen, detail = set(), []
     for r in day_runs:
         p = r.get("project", "")
@@ -620,20 +607,7 @@ def write_project(p, runs_p, usage_p):
     lines.append("</dl>\n")
     lines += ["## 회차 이력\n", runs_table(list(reversed(runs_p)), with_date=True, filterable=len(runs_p) > 8)]
     if usage_p:
-        cp = caps()
-    if cp:
-        def bar(v, m):
-            pct = min(100, int(v / m * 100)) if m else 0
-            col = "var(--bad)" if pct >= 100 else ("var(--warn)" if pct >= 80 else "var(--good)")
-            return f'<span class="meta">{v} / {m}</span> <span style="display:inline-block;width:6rem;height:.5rem;background:var(--card-2);border-radius:4px;vertical-align:middle"><span style="display:block;width:{pct}%;height:100%;background:{col};border-radius:4px"></span></span>'
-        lines += ["## 오늘 상한\n", '<dl class="kv">',
-                  f'<dt>비용</dt><dd>{bar(round(u["cost"], 2), cp.get("MAX_DAILY_COST", 0))}</dd>',
-                  f'<dt>회차</dt><dd>{bar(c["total"], cp.get("MAX_DAILY_ROUNDS", 0))}</dd>',
-                  f'<dt>릴리즈</dt><dd>{bar(c["released"], cp.get("MAX_DAILY_RELEASES", 0))}</dd>',
-                  f'<dt>휴면 규칙</dt><dd>변경 없음 {cp.get("DORMANT_AFTER", "?")}회 연속이면 {cp.get("DORMANT_DAYS", "?")}일 제외</dd>',
-                  f'<dt>수동 실행</dt><dd><a href="{GH}/aidev/issues/new?labels=run&title=run%3A+%3C%ED%94%84%EB%A1%9C%EC%A0%9D%ED%8A%B8%3E">이슈 만들기</a> — 제목 <code>run: &lt;프로젝트&gt;</code>, 라벨 <code>run</code> → 다음 회차 우선 실행</dd>',
-                  "</dl>\n", "설정: `state/caps.env`. 상한에 닿으면 그날은 새 회차를 시작하지 않고 알린다.\n"]
-    lines += ["## 비용·사용량\n", usage_table(list(reversed(usage_p))[:30], caption="최근 30세션")]
+        lines += ["## 비용·사용량\n", usage_table(list(reversed(usage_p))[:30], caption="최근 30세션")]
     ideas_p = ideas(p)
     pend = [i for i in ideas_p if i.get("status") == "pending"]
     if ideas_p:
