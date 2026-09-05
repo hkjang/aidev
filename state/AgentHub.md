@@ -85,3 +85,14 @@
   - korean.EndsInConsonant가 괄호·따옴표로 끝나는 값에서 조사를 잘못 고름 (2/2/S)
   - captureHandler.WithGroup이 그룹 이름을 버려 서로 다른 그룹의 같은 키가 충돌 (2/1/S)
 - 릴리즈: v0.233.0 (2026-09-04)
+
+## 2026-09-05
+- 선택: 넓은 차단 위에 쓴 좁은 예외(도구를 지정한 allow)가 Pod까지 전달되지 않던 문제 수정 (가치 4 / 위험 2 / 작업량 M)
+- 결과: 성공 — 커밋 c930c46 (auto/2026-09-05-1010)
+- 요약: 도구를 지정한 allow는 이 효과가 존재하는 이유 그 자체이고("이 서버는 아무도 못 쓰되 read_file만 예외"), 코드 위 주석도 "좁은 예외가 넓은 차단 위에 앉을 수 있도록 명시적 allow가 있다"고 적혀 있었습니다. 그런데 `CompileServer`는 deny와 require_approval만 컴파일하고 좁은 allow는 `continue`로 버렸습니다 — 게이트웨이에 전달된 것은 아래의 deny뿐이었습니다. 나머지 화면은 전부 문서와 일치했습니다: 시뮬레이터는 allow를 답하고, 감사 로그에 allow 규칙 ID가 남고, task.create·runtime.start는 API에서 판정되므로 지켜졌습니다. 오직 tool.call만 Pod 안에서 판정되는데, 에이전트가 우회할 수 없는 그 게이트웨이가 정책이 허용한 호출을 거절했고, 그 불일치는 어느 화면에도 나타나지 않았습니다. `ServerRules.Allowed`를 추가해 아래 restriction보다 위에 쓰인 allow의 도구 패턴을 싣고, 위쪽 restriction이 이미 잡은 패턴은 싣지 않습니다(그 규칙이 호출 시점에 먼저 결정하므로). 두 끝 다 서버가 뜨기 전에는 도구 목록을 모르므로 겹침 판정은 이름이 아니라 패턴끼리 합니다("github/delete_*"와 "delete_temp"는 같은 호출). 필드는 기존 경로를 그대로 따라갑니다: MCPBinding → CRD 스키마(선언하지 않으면 API 서버가 잘라냄) → 오퍼레이터 → 게이트웨이. 게이트웨이에서는 플랫폼 자신의 deny/gate만 무력화하고 그 외에는 아무것도 건드리지 않습니다 — 에이전트의 허용 목록과 카탈로그의 승인 요구는 다른 사람의 진술이라, 플랫폼 예외가 소유자가 주지 않은 도구를 건네주지는 않습니다. 검증: 수정 전 새 테스트가 각 계층에서 실패하는 것 확인(policy 3개), `TestTheCompiledRulesAgreeWithTheDocument`가 운영자가 실제로 쓰는 6가지 배열에 대해 "게이트웨이가 받은 것 == 문서의 판정"을 스윕, go vet ./..., go test -race ./cmd/... ./internal/..., web npm ci+lint+build, `scripts/release-catalog-images.sh check-versions`·`validate` 모두 통과. internal/policy·cmd/runtime-proxy가 런타임 base 이미지 소스라 BASE_VERSION 0.22.0으로 상향(5곳).
+- 보류 아이디어:
+  - 게이트웨이가 Denied를 Gated보다 먼저 보므로, 차단 위에 쓴 승인 규칙(gate above deny)은 Pod에서만 차단으로 바뀜 (3/3/M)
+  - scrubDecision이 record.Agent 등 남은 자유 텍스트를 검사하지 않아 에이전트 이름으로는 무엇이든 나갈 수 있음 (2/2/S)
+  - korean.EndsInConsonant가 괄호·따옴표로 끝나는 값에서 조사를 잘못 고름 (2/2/S)
+  - captureHandler.WithGroup이 그룹 이름을 버려 서로 다른 그룹의 같은 키가 충돌 (2/1/S)
+- 릴리즈: v0.234.0 (2026-09-05)

@@ -1,7 +1,7 @@
 ---
 title: "AgentHub — 자율 개선 이력"
-description: "AgentHub: 자율 개선 회차 8회, 릴리즈 8건. 최근 릴리즈 v0.233.0."
-last_modified_at: 2026-09-05 10:07:26 +0900
+description: "AgentHub: 자율 개선 회차 9회, 릴리즈 9건. 최근 릴리즈 v0.234.0 (자산 0개)."
+last_modified_at: 2026-09-05 10:46:02 +0900
 ---
 {% raw %}
 <script type="application/ld+json">
@@ -11,35 +11,39 @@ last_modified_at: 2026-09-05 10:07:26 +0900
  "name": "AgentHub",
  "codeRepository": "https://github.com/hkjang/AgentHub",
  "url": "https://hkjang.github.io/aidev/projects/AgentHub/",
- "description": "AgentHub: 자율 개선 회차 8회, 릴리즈 8건. 최근 릴리즈 v0.233.0.",
+ "description": "AgentHub: 자율 개선 회차 9회, 릴리즈 9건. 최근 릴리즈 v0.234.0 (자산 0개).",
  "inLanguage": "ko",
  "maintainer": {
   "@type": "Person",
   "name": "hkjang",
   "url": "https://github.com/hkjang"
  },
- "dateModified": "2026-09-05T10:07:26+09:00",
- "version": "0.233.0"
+ "dateModified": "2026-09-05T10:46:02+09:00",
+ "version": "0.234.0"
 }
 </script>
 
 # AgentHub
 
-<p class="tldr"><strong>요약.</strong> AgentHub: 자율 개선 회차 8회, 릴리즈 8건. 최근 릴리즈 v0.233.0.</p>
+<p class="tldr"><strong>요약.</strong> AgentHub: 자율 개선 회차 9회, 릴리즈 9건. 최근 릴리즈 v0.234.0 (자산 0개).</p>
 
-<ul class="stats"><li><b>8</b><span>회차</span></li><li><b>1</b><span>프로젝트</span></li><li><b>8</b><span>릴리즈</span></li><li><b>0</b><span>머지(릴리즈 없음)</span></li><li><b>0</b><span>변경 없음</span></li><li><b>0</b><span>실패</span></li></ul>
+<ul class="stats"><li><b>9</b><span>회차</span></li><li><b>1</b><span>프로젝트</span></li><li><b>9</b><span>릴리즈</span></li><li><b>0</b><span>머지(릴리즈 없음)</span></li><li><b>0</b><span>변경 없음</span></li><li><b>0</b><span>실패</span></li><li><b>$4.52</b><span>비용</span></li><li><b>11분</b><span>에이전트 시간</span></li></ul>
 
 ## 현황
 
 <dl class="kv">
 <dt>저장소</dt><dd><a href="https://github.com/hkjang/AgentHub">https://github.com/hkjang/AgentHub</a></dd>
-<dt>마지막 회차</dt><dd>2026-09-04 21:54 KST — <span class="pill pill-released">🚀 릴리즈</span> merged <a href="https://github.com/hkjang/AgentHub/pull/8">PR #8</a>, released <a href="https://github.com/hkjang/AgentHub/releases/tag/v0.233.0">v0.233.0</a>, <strong>ASSETS MISSING</strong></dd>
-<dt>최근 릴리즈</dt><dd><a href="https://github.com/hkjang/AgentHub/releases/tag/v0.233.0">v0.233.0</a> — released <a href="https://github.com/hkjang/AgentHub/releases">전체 릴리즈 →</a></dd>
+<dt>마지막 회차</dt><dd>2026-09-05 10:46 KST — <span class="pill pill-released">🚀 릴리즈</span> merged <a href="https://github.com/hkjang/AgentHub/pull/9">PR #9</a>, released <a href="https://github.com/hkjang/AgentHub/releases/tag/v0.234.0">v0.234.0</a>, <strong>ASSETS MISSING</strong></dd>
+<dt>최근 릴리즈</dt><dd><a href="https://github.com/hkjang/AgentHub/releases/tag/v0.234.0">v0.234.0</a> — released · 자산 0개 (이전 v0.233.0: 10개) <span class="pill pill-failed">❌ 자산 누락</span> <a href="https://github.com/hkjang/AgentHub/releases">전체 릴리즈 →</a></dd>
 </dl>
 
 ## 회차 이력
 
-<div class="table-wrap"><table class="rt"><thead><tr><th>일시</th><th class="primary">프로젝트</th><th>결과</th></tr></thead><tbody><tr data-status="released"><td data-label="일시">2026-09-04 21:54</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/AgentHub/">AgentHub</a></td><td data-label="결과"><span class="pill pill-released">🚀 릴리즈</span> merged <a href="https://github.com/hkjang/AgentHub/pull/8">PR #8</a>, released <a href="https://github.com/hkjang/AgentHub/releases/tag/v0.233.0">v0.233.0</a>, <strong>ASSETS MISSING</strong></td></tr><tr data-status="released"><td data-label="일시">2026-09-04 03:25</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/AgentHub/">AgentHub</a></td><td data-label="결과"><span class="pill pill-released">🚀 릴리즈</span> merged <a href="https://github.com/hkjang/AgentHub/pull/7">PR #7</a>, released <a href="https://github.com/hkjang/AgentHub/releases/tag/v0.232.0">v0.232.0</a></td></tr><tr data-status="released"><td data-label="일시">2026-09-03 19:47</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/AgentHub/">AgentHub</a></td><td data-label="결과"><span class="pill pill-released">🚀 릴리즈</span> merged <a href="https://github.com/hkjang/AgentHub/pull/6">PR #6</a>, released <a href="https://github.com/hkjang/AgentHub/releases/tag/v0.231.0">v0.231.0</a></td></tr><tr data-status="released"><td data-label="일시">2026-09-03 11:40</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/AgentHub/">AgentHub</a></td><td data-label="결과"><span class="pill pill-released">🚀 릴리즈</span> merged <a href="https://github.com/hkjang/AgentHub/pull/5">PR #5</a>, released <a href="https://github.com/hkjang/AgentHub/releases/tag/v0.230.0">v0.230.0</a></td></tr><tr data-status="released"><td data-label="일시">2026-09-03 06:18</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/AgentHub/">AgentHub</a></td><td data-label="결과"><span class="pill pill-released">🚀 릴리즈</span> merged <a href="https://github.com/hkjang/AgentHub/pull/4">PR #4</a>, released <a href="https://github.com/hkjang/AgentHub/releases/tag/v0.229.0">v0.229.0</a></td></tr><tr data-status="released"><td data-label="일시">2026-09-03 00:17</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/AgentHub/">AgentHub</a></td><td data-label="결과"><span class="pill pill-released">🚀 릴리즈</span> merged <a href="https://github.com/hkjang/AgentHub/pull/3">PR #3</a>, released <a href="https://github.com/hkjang/AgentHub/releases/tag/v0.228.0">v0.228.0</a></td></tr><tr data-status="released"><td data-label="일시">2026-09-02 17:38</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/AgentHub/">AgentHub</a></td><td data-label="결과"><span class="pill pill-released">🚀 릴리즈</span> merged <a href="https://github.com/hkjang/AgentHub/pull/2">PR #2</a>, released <a href="https://github.com/hkjang/AgentHub/releases/tag/v0.227.0">v0.227.0</a></td></tr><tr data-status="released"><td data-label="일시">2026-09-02 12:46</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/AgentHub/">AgentHub</a></td><td data-label="결과"><span class="pill pill-released">🚀 릴리즈</span> release-only, released <a href="https://github.com/hkjang/AgentHub/releases/tag/v0.226.0">v0.226.0</a></td></tr></tbody></table></div>
+<div class="table-wrap"><table class="rt" data-filter="1"><thead><tr><th>일시</th><th class="primary">프로젝트</th><th>결과</th></tr></thead><tbody><tr data-status="released"><td data-label="일시">2026-09-05 10:46</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/AgentHub/">AgentHub</a></td><td data-label="결과"><span class="pill pill-released">🚀 릴리즈</span> merged <a href="https://github.com/hkjang/AgentHub/pull/9">PR #9</a>, released <a href="https://github.com/hkjang/AgentHub/releases/tag/v0.234.0">v0.234.0</a>, <strong>ASSETS MISSING</strong></td></tr><tr data-status="released"><td data-label="일시">2026-09-04 21:54</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/AgentHub/">AgentHub</a></td><td data-label="결과"><span class="pill pill-released">🚀 릴리즈</span> merged <a href="https://github.com/hkjang/AgentHub/pull/8">PR #8</a>, released <a href="https://github.com/hkjang/AgentHub/releases/tag/v0.233.0">v0.233.0</a>, <strong>ASSETS MISSING</strong></td></tr><tr data-status="released"><td data-label="일시">2026-09-04 03:25</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/AgentHub/">AgentHub</a></td><td data-label="결과"><span class="pill pill-released">🚀 릴리즈</span> merged <a href="https://github.com/hkjang/AgentHub/pull/7">PR #7</a>, released <a href="https://github.com/hkjang/AgentHub/releases/tag/v0.232.0">v0.232.0</a></td></tr><tr data-status="released"><td data-label="일시">2026-09-03 19:47</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/AgentHub/">AgentHub</a></td><td data-label="결과"><span class="pill pill-released">🚀 릴리즈</span> merged <a href="https://github.com/hkjang/AgentHub/pull/6">PR #6</a>, released <a href="https://github.com/hkjang/AgentHub/releases/tag/v0.231.0">v0.231.0</a></td></tr><tr data-status="released"><td data-label="일시">2026-09-03 11:40</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/AgentHub/">AgentHub</a></td><td data-label="결과"><span class="pill pill-released">🚀 릴리즈</span> merged <a href="https://github.com/hkjang/AgentHub/pull/5">PR #5</a>, released <a href="https://github.com/hkjang/AgentHub/releases/tag/v0.230.0">v0.230.0</a></td></tr><tr data-status="released"><td data-label="일시">2026-09-03 06:18</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/AgentHub/">AgentHub</a></td><td data-label="결과"><span class="pill pill-released">🚀 릴리즈</span> merged <a href="https://github.com/hkjang/AgentHub/pull/4">PR #4</a>, released <a href="https://github.com/hkjang/AgentHub/releases/tag/v0.229.0">v0.229.0</a></td></tr><tr data-status="released"><td data-label="일시">2026-09-03 00:17</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/AgentHub/">AgentHub</a></td><td data-label="결과"><span class="pill pill-released">🚀 릴리즈</span> merged <a href="https://github.com/hkjang/AgentHub/pull/3">PR #3</a>, released <a href="https://github.com/hkjang/AgentHub/releases/tag/v0.228.0">v0.228.0</a></td></tr><tr data-status="released"><td data-label="일시">2026-09-02 17:38</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/AgentHub/">AgentHub</a></td><td data-label="결과"><span class="pill pill-released">🚀 릴리즈</span> merged <a href="https://github.com/hkjang/AgentHub/pull/2">PR #2</a>, released <a href="https://github.com/hkjang/AgentHub/releases/tag/v0.227.0">v0.227.0</a></td></tr><tr data-status="released"><td data-label="일시">2026-09-02 12:46</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/AgentHub/">AgentHub</a></td><td data-label="결과"><span class="pill pill-released">🚀 릴리즈</span> release-only, released <a href="https://github.com/hkjang/AgentHub/releases/tag/v0.226.0">v0.226.0</a></td></tr></tbody></table></div>
+
+## 비용·사용량
+
+<div class="table-wrap"><table class="rt"><caption class="meta">최근 30세션</caption><thead><tr><th>시각</th><th class="primary">프로젝트</th><th>단계</th><th class="num">시간</th><th class="num">턴</th><th class="num">비용</th><th class="num">토큰 입력/출력</th><th>종료</th></tr></thead><tbody><tr data-status="other"><td data-label="시각">10:26</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/AgentHub/">AgentHub</a></td><td data-label="단계">릴리즈</td><td data-label="시간" class="num">2분</td><td data-label="턴" class="num">18</td><td data-label="비용" class="num">$0.75</td><td data-label="토큰 입력/출력" class="num">559K / 5K</td><td data-label="종료">success</td></tr><tr data-status="other"><td data-label="시각">10:19</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/AgentHub/">AgentHub</a></td><td data-label="단계">개선</td><td data-label="시간" class="num">9분</td><td data-label="턴" class="num">59</td><td data-label="비용" class="num">$3.77</td><td data-label="토큰 입력/출력" class="num">3.9M / 38K</td><td data-label="종료">success</td></tr></tbody></table></div>
 
 ## 원장 (에이전트가 남긴 기록)
 
@@ -130,6 +134,17 @@ last_modified_at: 2026-09-05 10:07:26 +0900
   - korean.EndsInConsonant가 괄호·따옴표로 끝나는 값에서 조사를 잘못 고름 (2/2/S)
   - captureHandler.WithGroup이 그룹 이름을 버려 서로 다른 그룹의 같은 키가 충돌 (2/1/S)
 - 릴리즈: v0.233.0 (2026-09-04)
+
+## 2026-09-05
+- 선택: 넓은 차단 위에 쓴 좁은 예외(도구를 지정한 allow)가 Pod까지 전달되지 않던 문제 수정 (가치 4 / 위험 2 / 작업량 M)
+- 결과: 성공 — 커밋 c930c46 (auto/2026-09-05-1010)
+- 요약: 도구를 지정한 allow는 이 효과가 존재하는 이유 그 자체이고("이 서버는 아무도 못 쓰되 read_file만 예외"), 코드 위 주석도 "좁은 예외가 넓은 차단 위에 앉을 수 있도록 명시적 allow가 있다"고 적혀 있었습니다. 그런데 `CompileServer`는 deny와 require_approval만 컴파일하고 좁은 allow는 `continue`로 버렸습니다 — 게이트웨이에 전달된 것은 아래의 deny뿐이었습니다. 나머지 화면은 전부 문서와 일치했습니다: 시뮬레이터는 allow를 답하고, 감사 로그에 allow 규칙 ID가 남고, task.create·runtime.start는 API에서 판정되므로 지켜졌습니다. 오직 tool.call만 Pod 안에서 판정되는데, 에이전트가 우회할 수 없는 그 게이트웨이가 정책이 허용한 호출을 거절했고, 그 불일치는 어느 화면에도 나타나지 않았습니다. `ServerRules.Allowed`를 추가해 아래 restriction보다 위에 쓰인 allow의 도구 패턴을 싣고, 위쪽 restriction이 이미 잡은 패턴은 싣지 않습니다(그 규칙이 호출 시점에 먼저 결정하므로). 두 끝 다 서버가 뜨기 전에는 도구 목록을 모르므로 겹침 판정은 이름이 아니라 패턴끼리 합니다("github/delete_*"와 "delete_temp"는 같은 호출). 필드는 기존 경로를 그대로 따라갑니다: MCPBinding → CRD 스키마(선언하지 않으면 API 서버가 잘라냄) → 오퍼레이터 → 게이트웨이. 게이트웨이에서는 플랫폼 자신의 deny/gate만 무력화하고 그 외에는 아무것도 건드리지 않습니다 — 에이전트의 허용 목록과 카탈로그의 승인 요구는 다른 사람의 진술이라, 플랫폼 예외가 소유자가 주지 않은 도구를 건네주지는 않습니다. 검증: 수정 전 새 테스트가 각 계층에서 실패하는 것 확인(policy 3개), `TestTheCompiledRulesAgreeWithTheDocument`가 운영자가 실제로 쓰는 6가지 배열에 대해 "게이트웨이가 받은 것 == 문서의 판정"을 스윕, go vet ./..., go test -race ./cmd/... ./internal/..., web npm ci+lint+build, `scripts/release-catalog-images.sh check-versions`·`validate` 모두 통과. internal/policy·cmd/runtime-proxy가 런타임 base 이미지 소스라 BASE_VERSION 0.22.0으로 상향(5곳).
+- 보류 아이디어:
+  - 게이트웨이가 Denied를 Gated보다 먼저 보므로, 차단 위에 쓴 승인 규칙(gate above deny)은 Pod에서만 차단으로 바뀜 (3/3/M)
+  - scrubDecision이 record.Agent 등 남은 자유 텍스트를 검사하지 않아 에이전트 이름으로는 무엇이든 나갈 수 있음 (2/2/S)
+  - korean.EndsInConsonant가 괄호·따옴표로 끝나는 값에서 조사를 잘못 고름 (2/2/S)
+  - captureHandler.WithGroup이 그룹 이름을 버려 서로 다른 그룹의 같은 키가 충돌 (2/1/S)
+- 릴리즈: v0.234.0 (2026-09-05)
 
 
 [← 대시보드](https://hkjang.github.io/aidev/)
