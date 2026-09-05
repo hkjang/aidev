@@ -188,7 +188,7 @@ SEO / AEO / 모바일:
 대시보드 구성 요소 (모두 `bin/report.py` 가 생성, JS 없이도 동작):
 | 요소 | 내용 |
 |---|---|
-| ⚠️ 주의 필요 | 최근 2일 회차의 `CI failed`·`merge failed`·`release failed/missing`·`ASSETS MISSING`·자산 빌드 실패와, 최신 릴리즈 자산이 0개인데 이전엔 있던 프로젝트. 없으면 초록 "주의 필요 없음" |
+| ⚠️ 주의 필요 | 최근 2일 회차의 `CI failed`·`merge failed`·`release failed/missing`·`ASSETS MISSING`·자산 빌드 실패와, 최신 릴리즈 자산이 0개인데 이전엔 있던 프로젝트. `ASSETS MISSING` 은 생성 시점에 GitHub 에서 다시 확인해 워크플로가 늦게 붙인 건 빼고, 실패한 워크플로 이름을 함께 적는다. 없으면 초록 "주의 필요 없음" |
 | 상태 알약 | 🚀 릴리즈 / ✅ 머지 / ➖ 변경 없음 / ❌ 실패 — 색·아이콘·글자를 함께 써 색만으로 뜻을 나르지 않음 |
 | 최근 14일 차트 | 인라인 SVG 누적 막대(상태 팔레트 good/warning/neutral/critical, dataviz 검증). 세그먼트마다 `<title>` 툴팁, 아래 표가 테이블 뷰 |
 | 표 | HTML `table.rt` — 셀마다 `data-label`, 행마다 `data-status`. **640px 이하에서는 카드로 접힘**, JS 가 있으면 검색창 + 상태 칩 필터 |

@@ -63,15 +63,18 @@ sync_repo(){
 # 릴리즈 커밋의 CI 가 끝날 때까지 기다린 뒤 태그를 민다 — moina 처럼 릴리즈 워크플로가
 # "정확히 그 커밋의 CI 성공"을 요구하는 저장소는 커밋과 태그를 같이 밀면 매번 실패했다. 실패해도 태그는 민다.
 wait_for_checks(){
-  local n=$1 sha=$2 i total pending failed
+  local n=$1 sha=$2 i total pending failed last_total=""
   for i in $(seq 1 40); do
     read -r total pending failed < <(cd "$repo" && gh api "repos/{owner}/{repo}/commits/$sha/check-runs" \
       --jq '[.check_runs|length, ([.check_runs[]|select(.status!="completed")]|length), ([.check_runs[]|select(.conclusion=="failure")]|length)] | @tsv' 2>/dev/null || echo "0 0 0")
-    if [ "${total:-0}" -gt 0 ] && [ "${pending:-0}" -eq 0 ]; then
+    # check-run 은 잡이 시작될 때 하나씩 생긴다 — 빠른 검사만 먼저 끝난 순간을 "완료"로 오판하지 않도록
+    # 두 번 연속(30초 간격) 같은 개수로 모두 완료여야 통과로 본다 (moina v0.1.21 이 그렇게 새어 나갔다)
+    if [ "${total:-0}" -gt 0 ] && [ "${pending:-0}" -eq 0 ] && [ "${total}" = "${last_total:-}" ]; then
       CHECKS_FAILED=${failed:-0}
       [ "${failed:-0}" -eq 0 ] && log "$n: CI on ${sha:0:7} passed ($total checks)" || log "$n: CI on ${sha:0:7} has $failed failed check(s)"
       return 0
     fi
+    last_total=$total
     [ "$i" -eq 1 ] && log "$n: waiting for CI on ${sha:0:7} (checks: ${total:-0}, pending: ${pending:-0})"
     [ "${total:-0}" -eq 0 ] && [ "$i" -ge 10 ] && { CHECKS_FAILED=0; log "$n: no CI checks on ${sha:0:7} after 5 min — continuing"; return 0; }
     sleep 30
