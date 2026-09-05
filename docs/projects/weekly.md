@@ -1,7 +1,7 @@
 ---
 title: "weekly — 자율 개선 이력"
-description: "weekly: 자율 개선 회차 7회, 릴리즈 6건. 최근 릴리즈 v0.289.0."
-last_modified_at: 2026-09-05 09:39:03 +0900
+description: "weekly: 자율 개선 회차 8회, 릴리즈 6건. 최근 릴리즈 v0.289.0."
+last_modified_at: 2026-09-05 10:00:32 +0900
 ---
 {% raw %}
 <script type="application/ld+json">
@@ -11,35 +11,35 @@ last_modified_at: 2026-09-05 09:39:03 +0900
  "name": "weekly",
  "codeRepository": "https://github.com/hkjang/weekly",
  "url": "https://hkjang.github.io/aidev/projects/weekly/",
- "description": "weekly: 자율 개선 회차 7회, 릴리즈 6건. 최근 릴리즈 v0.289.0.",
+ "description": "weekly: 자율 개선 회차 8회, 릴리즈 6건. 최근 릴리즈 v0.289.0.",
  "inLanguage": "ko",
  "maintainer": {
   "@type": "Person",
   "name": "hkjang",
   "url": "https://github.com/hkjang"
  },
- "dateModified": "2026-09-05T09:39:03+09:00",
+ "dateModified": "2026-09-05T10:00:32+09:00",
  "version": "0.289.0"
 }
 </script>
 
 # weekly
 
-<p class="tldr"><strong>요약.</strong> weekly: 자율 개선 회차 7회, 릴리즈 6건. 최근 릴리즈 v0.289.0.</p>
+<p class="tldr"><strong>요약.</strong> weekly: 자율 개선 회차 8회, 릴리즈 6건. 최근 릴리즈 v0.289.0.</p>
 
-<ul class="stats"><li><b>7</b><span>회차</span></li><li><b>1</b><span>프로젝트</span></li><li><b>6</b><span>릴리즈</span></li><li><b>1</b><span>머지(릴리즈 없음)</span></li><li><b>0</b><span>변경 없음</span></li><li><b>0</b><span>실패</span></li></ul>
+<ul class="stats"><li><b>8</b><span>회차</span></li><li><b>1</b><span>프로젝트</span></li><li><b>6</b><span>릴리즈</span></li><li><b>1</b><span>머지(릴리즈 없음)</span></li><li><b>1</b><span>변경 없음</span></li><li><b>0</b><span>실패</span></li></ul>
 
 ## 현황
 
 <dl class="kv">
 <dt>저장소</dt><dd><a href="https://github.com/hkjang/weekly">https://github.com/hkjang/weekly</a></dd>
-<dt>마지막 회차</dt><dd>2026-09-04 21:15 KST — <span class="pill pill-released">🚀 릴리즈</span> merged <a href="https://github.com/hkjang/weekly/pull/8">PR #8</a>, released <a href="https://github.com/hkjang/weekly/releases/tag/v0.289.0">v0.289.0</a></dd>
+<dt>마지막 회차</dt><dd>2026-09-05 10:00 KST — <span class="pill pill-nochange">➖ 변경 없음</span> no change</dd>
 <dt>최근 릴리즈</dt><dd><a href="https://github.com/hkjang/weekly/releases/tag/v0.289.0">v0.289.0</a> — released <a href="https://github.com/hkjang/weekly/releases">전체 릴리즈 →</a></dd>
 </dl>
 
 ## 회차 이력
 
-<div class="table-wrap"><table class="rt"><thead><tr><th class="primary">일시</th><th>결과</th></tr></thead><tbody><tr data-status="released"><td data-label="일시" class="primary">2026-09-04 21:15</td><td data-label="결과"><span class="pill pill-released">🚀 릴리즈</span> merged <a href="https://github.com/hkjang/weekly/pull/8">PR #8</a>, released <a href="https://github.com/hkjang/weekly/releases/tag/v0.289.0">v0.289.0</a></td></tr><tr data-status="merged"><td data-label="일시" class="primary">2026-09-04 02:53</td><td data-label="결과"><span class="pill pill-merged">✅ 머지</span> merged <a href="https://github.com/hkjang/weekly/pull/7">PR #7</a>, <strong>release missing</strong></td></tr><tr data-status="released"><td data-label="일시" class="primary">2026-09-03 19:17</td><td data-label="결과"><span class="pill pill-released">🚀 릴리즈</span> merged <a href="https://github.com/hkjang/weekly/pull/6">PR #6</a>, released <a href="https://github.com/hkjang/weekly/releases/tag/v0.286.0">v0.286.0</a></td></tr><tr data-status="released"><td data-label="일시" class="primary">2026-09-03 11:28</td><td data-label="결과"><span class="pill pill-released">🚀 릴리즈</span> merged <a href="https://github.com/hkjang/weekly/pull/5">PR #5</a>, released <a href="https://github.com/hkjang/weekly/releases/tag/v0.285.0">v0.285.0</a></td></tr><tr data-status="released"><td data-label="일시" class="primary">2026-09-03 06:06</td><td data-label="결과"><span class="pill pill-released">🚀 릴리즈</span> merged <a href="https://github.com/hkjang/weekly/pull/4">PR #4</a>, released <a href="https://github.com/hkjang/weekly/releases/tag/v0.284.0">v0.284.0</a></td></tr><tr data-status="released"><td data-label="일시" class="primary">2026-09-03 00:01</td><td data-label="결과"><span class="pill pill-released">🚀 릴리즈</span> merged <a href="https://github.com/hkjang/weekly/pull/3">PR #3</a>, released <a href="https://github.com/hkjang/weekly/releases/tag/v0.283.0">v0.283.0</a></td></tr><tr data-status="released"><td data-label="일시" class="primary">2026-09-02 17:27</td><td data-label="결과"><span class="pill pill-released">🚀 릴리즈</span> merged <a href="https://github.com/hkjang/weekly/pull/2">PR #2</a>, released <a href="https://github.com/hkjang/weekly/releases/tag/v0.282.0">v0.282.0</a></td></tr></tbody></table></div>
+<div class="table-wrap"><table class="rt"><thead><tr><th class="primary">일시</th><th>결과</th></tr></thead><tbody><tr data-status="nochange"><td data-label="일시" class="primary">2026-09-05 10:00</td><td data-label="결과"><span class="pill pill-nochange">➖ 변경 없음</span> no change</td></tr><tr data-status="released"><td data-label="일시" class="primary">2026-09-04 21:15</td><td data-label="결과"><span class="pill pill-released">🚀 릴리즈</span> merged <a href="https://github.com/hkjang/weekly/pull/8">PR #8</a>, released <a href="https://github.com/hkjang/weekly/releases/tag/v0.289.0">v0.289.0</a></td></tr><tr data-status="merged"><td data-label="일시" class="primary">2026-09-04 02:53</td><td data-label="결과"><span class="pill pill-merged">✅ 머지</span> merged <a href="https://github.com/hkjang/weekly/pull/7">PR #7</a>, <strong>release missing</strong></td></tr><tr data-status="released"><td data-label="일시" class="primary">2026-09-03 19:17</td><td data-label="결과"><span class="pill pill-released">🚀 릴리즈</span> merged <a href="https://github.com/hkjang/weekly/pull/6">PR #6</a>, released <a href="https://github.com/hkjang/weekly/releases/tag/v0.286.0">v0.286.0</a></td></tr><tr data-status="released"><td data-label="일시" class="primary">2026-09-03 11:28</td><td data-label="결과"><span class="pill pill-released">🚀 릴리즈</span> merged <a href="https://github.com/hkjang/weekly/pull/5">PR #5</a>, released <a href="https://github.com/hkjang/weekly/releases/tag/v0.285.0">v0.285.0</a></td></tr><tr data-status="released"><td data-label="일시" class="primary">2026-09-03 06:06</td><td data-label="결과"><span class="pill pill-released">🚀 릴리즈</span> merged <a href="https://github.com/hkjang/weekly/pull/4">PR #4</a>, released <a href="https://github.com/hkjang/weekly/releases/tag/v0.284.0">v0.284.0</a></td></tr><tr data-status="released"><td data-label="일시" class="primary">2026-09-03 00:01</td><td data-label="결과"><span class="pill pill-released">🚀 릴리즈</span> merged <a href="https://github.com/hkjang/weekly/pull/3">PR #3</a>, released <a href="https://github.com/hkjang/weekly/releases/tag/v0.283.0">v0.283.0</a></td></tr><tr data-status="released"><td data-label="일시" class="primary">2026-09-02 17:27</td><td data-label="결과"><span class="pill pill-released">🚀 릴리즈</span> merged <a href="https://github.com/hkjang/weekly/pull/2">PR #2</a>, released <a href="https://github.com/hkjang/weekly/releases/tag/v0.282.0">v0.282.0</a></td></tr></tbody></table></div>
 
 ## 원장 (에이전트가 남긴 기록)
 
