@@ -83,3 +83,15 @@
   - 업무 객체의 data jsonb 블롭에는 어떤 검증도 없음 — 폼이 쓰는 키(품목·수량·단가)가 API로는 무제한이고 목록 응답이 블롭 전체를 반환 (가치 3 / 위험 2 / M)
   - `Makefile`의 VERSION(0.6.21)이 README의 릴리스 예시(0.7.26)와 어긋남 — 릴리스 문서 정합성 (가치 2 / 위험 1 / S)
 - 릴리즈: v0.7.41 (2026-09-04)
+## 2026-09-06
+- 선택: 결재에서 「보완 요청」으로 되돌아온 건을 다시 상신할 수 있게 하고, 업무 객체 상태 어휘를 한 곳에 모으기 (가치 4 / 위험 2 / 작업량 M)
+- 결과: 성공 (commit 87510e2)
+- 요약: 공급업체 거래 상태 스윕이 status.ts에 만든 "어휘는 한 곳에" 원칙을 업무 객체 쪽에 적용하다가, 그 페이지가 어휘를 따로 적어 두었기 때문에 생긴 기능 구멍을 찾았다. 결재자의 결정은 셋이다 — 승인은 넘기고, 반려는 끝내고, 보완 요청은 고쳐서 다시 올리라고 돌려보낸다. 마지막 하나가 둘째와 다른 점의 전부인데, 목록이 되돌아가는 길을 주지 않았다: 행의 승인 요청 버튼도, 체크박스도, 일괄 승인 요청도 전부 `status === "draft"`를 물었으므로 returned 건은 셋을 한꺼번에 잃었고, 상태 필터에 보완 요청 옵션이 없어 찾을 수조차 없었으며, 배지는 모르는 상태가 떨어지는 중립 파랑에 영문 "returned"를 그대로 띄웠다(할 일이 없다는 뜻으로 읽힌다). 남은 길은 계약을 처음부터 다시 입력하는 것뿐 — 그건 아무도 통보받지 않은 반려이고, 바로 그것을 막으려고 있는 버튼을 통해 도달한다. API는 처음부터 재상신을 허용했다(submitObject는 상태가 아니라 열린 결재가 없는지를 본다). status.ts에 approvalStatuses·submittableStatuses·canSubmitForApproval·objectStatusFilters·objectStatusLabel을 공급업체 어휘 옆에 두고, 페이지의 네 번째 목록과 세 군데 흩어진 한 단어 비교를 대체했다. 검증: docker postgres:16-alpine으로 CI와 동일한 세 DSN을 걸고 `go test ./internal/... ./cmd/...` 전체 통과, gofmt·go vet 무결, 웹 테스트(10파일 40개)·tsc·eslint·빌드 통과. 가드는 넷 — status.ts를 workflowOwnedStatus에 양방향으로 묶고 이미 결착된 상태를 상신 가능 목록에 넣지 못하게 하는 TestTheApprovalStatusesTheListShowsAreTheOnesTheWorkflowAwards, 페이지의 두 번째 목록과 `status === "draft"` 형태를 거부하는 TestTheObjectListDoesNotWriteItsStatusesOutAgain, 상신→보완요청→수정→재상신 전체를 API로 걷고 결재가 2건 중 1건만 열려 있는지 확인하는 TestAReturnedRequestCanBeSubmittedAgain, returned 계약을 실제로 렌더링해 버튼·체크박스·일괄 액션을 누르는 object-status.test.tsx. 양쪽 수정을 각각 되돌리면 Go와 웹 가드가 모두 실패하는 것까지 확인했다.
+- 보류 아이디어:
+  - 업무 객체 status는 여전히 임의 문자열 — createObject/updateObject가 결재 소유 상태만 막고 나머지는 무검사라 오타 하나가 집계에서 조용히 빠짐(유형별 어휘가 어디에도 정의돼 있지 않아 위험은 큼) (가치 3 / 위험 3 / M)
+  - 낙찰(awardSourcing)이 sourcing_participants.status에 'preferred_negotiation'을 쓰는데 그 표의 어휘(invited/draft/submitted/declined/selected/not_selected)에 없는 단어이고, 이후 포털 응답 저장이 참가 상태를 draft/submitted로 되돌려 낙찰 기록을 지움 (가치 3 / 위험 2 / M)
+  - 전화번호·웹사이트는 길이만 볼 뿐 형식 검사가 없음 — "내선 3번"이 전화번호로, 사내 위키 제목이 웹사이트로 저장됨 (가치 3 / 위험 1 / M)
+  - 업무 객체의 data jsonb 블롭에는 어떤 검증도 없음 — 폼이 쓰는 키(품목·수량·단가)가 API로는 무제한이고 목록 응답이 블롭 전체를 반환 (가치 3 / 위험 2 / M)
+  - CI의 go job이 `go test ./internal/...`만 돌려 `./cmd/...`를 빼놓음 — Makefile/README와 불일치 (가치 2 / 위험 1 / S)
+
+- 릴리즈: v0.7.42 (2026-09-06, run 2026-09-06-010043-Vendra-improve)

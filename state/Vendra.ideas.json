@@ -1,0 +1,92 @@
+[
+  {
+    "title": "결재에서 「보완 요청」으로 되돌아온 건을 다시 상신할 수 있게 하고, 업무 객체 상태 어휘를 status.ts 한 곳에 모으기",
+    "value": 4,
+    "risk": 2,
+    "size": "M",
+    "status": "done",
+    "note": "승인 요청 버튼·행 체크박스·일괄 액션이 모두 status === \"draft\"를 물어 returned 건이 셋을 한꺼번에 잃었고, 상태 필터에 보완 요청 옵션이 없어 찾을 수도 없었으며 배지는 영문 raw 값을 중립색으로 띄웠다. API는 처음부터 재상신을 허용했다. canSubmitForApproval·objectStatusFilters·objectStatusLabel로 대체하고 Go 파싱 가드 2개 + 통합 테스트 + 웹 테스트 추가. commit 87510e2",
+    "updated": "2026-09-06"
+  },
+  {
+    "title": "업무 객체 status가 여전히 임의 문자열 — 결재 소유 상태 외에는 무검사",
+    "value": 3,
+    "risk": 3,
+    "size": "M",
+    "status": "pending",
+    "note": "createObject/updateObject는 refusedWorkflowStatus로 pending_approval/approved/rejected/returned만 막고 나머지는 그대로 저장한다. analytics의 status IN('completed','accepted','closed') 같은 집계가 오타 하나로 조용히 빠진다. 유형별 어휘가 어디에도 정의돼 있지 않고 유형마다 다르므로(contract는 active/ended/terminated, delivery는 completed/accepted/closed, issue는 closed/resolved, quality는 defect/ncr/return) 어휘를 확정하는 것 자체가 위험. status.ts의 objectStatusLabels가 첫 목록의 출발점이 될 수 있다.",
+    "updated": "2026-09-06"
+  },
+  {
+    "title": "낙찰이 sourcing_participants.status에 그 표에 없는 단어를 쓰고, 이후 응답 저장이 낙찰 기록을 덮어씀",
+    "value": 3,
+    "risk": 2,
+    "size": "M",
+    "status": "pending",
+    "note": "awardSourcing(sourcing.go:672)이 참가자 상태에 objectStatus를 그대로 넣어 preferred 선정이면 'preferred_negotiation'이 저장되는데, 그 표의 어휘는 invited/draft/submitted/declined/selected/not_selected다. 게다가 portalSubmitSourcingResponse(sourcing.go:251)가 참가 상태를 무조건 draft/submitted로 덮으므로, 마감 전이면 탈락 업체가 초안 한 번 저장해 not_selected를 지울 수 있다. 포털 목록(sourcing.go:165)이 이 값을 공급업체에게 그대로 보여준다.",
+    "updated": "2026-09-06"
+  },
+  {
+    "title": "전화번호·웹사이트는 길이만 볼 뿐 형식 검사가 없음",
+    "value": 3,
+    "risk": 1,
+    "size": "M",
+    "status": "pending",
+    "note": "createSupplier·updateSupplier·portalUpdateProfile·담당자 두 문이 phone/website를 maxIdentifierLen으로만 잰다. \"내선 3번\"이 전화번호로, 사내 위키 제목이 웹사이트로 저장된다. 다만 웹사이트는 어디서도 <a href>로 렌더링되지 않고 텍스트로만 표시되므로(Suppliers.tsx:1006) 링크 깨짐 같은 기능적 파급은 없다 — 값어치는 데이터 품질 쪽.",
+    "updated": "2026-09-06"
+  },
+  {
+    "title": "업무 객체의 data jsonb 블롭에는 어떤 검증도 없음",
+    "value": 3,
+    "risk": 2,
+    "size": "M",
+    "status": "pending",
+    "note": "폼이 쓰는 키(품목·수량·단가·description 등)가 API로는 무제한이고, 목록 응답이 블롭 전체를 반환한다. 2MB 본문 제한 말고는 상한이 없다.",
+    "updated": "2026-09-06"
+  },
+  {
+    "title": "CI의 go job이 go test ./internal/...만 돌려 ./cmd/...를 빼놓음",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "Makefile의 test 타깃과 README는 ./cmd/...를 포함한다. go vet은 이미 둘 다 돈다. cmd/vendra에 테스트 파일이 없어 실효는 없지만 불일치가 남아 있다.",
+    "updated": "2026-09-06"
+  },
+  {
+    "title": "Makefile의 VERSION(0.6.21)이 README의 릴리스 예시(0.7.26)와 어긋남",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "web/package.json도 0.6.21이고 실제 릴리스 태그는 v0.7.41이다. 릴리스 문서 정합성.",
+    "updated": "2026-09-06"
+  },
+  {
+    "title": "워크플로 조건 폼 라벨은 \"공급업체 Risk 조건\"인데 실제로는 업무 객체의 risk_level과 매칭됨",
+    "value": 3,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "라벨과 동작 불일치. matchingWorkflow가 보는 것은 business_objects.risk_level이다.",
+    "updated": "2026-09-06"
+  },
+  {
+    "title": "공급업체 수정(PATCH /suppliers/{id})은 tradingSince·annualSpend·businessNumber를 갱신하지 않음",
+    "value": 2,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "편집 폼이 보내지 않으므로 의도로 보이나 API 전용 클라이언트에는 무응답 — 200을 받고 값은 그대로다.",
+    "updated": "2026-09-06"
+  },
+  {
+    "title": "web 프론트엔드 테스트 커버리지 — Sourcing/Admin 페이지에 테스트 없음",
+    "value": 3,
+    "risk": 1,
+    "size": "L",
+    "status": "pending",
+    "note": "10개 테스트 파일로 늘었고 Objects는 이번에 object-status.test.tsx가 생겼다. 남은 큰 구멍은 Sourcing.tsx와 Admin.tsx.",
+    "updated": "2026-09-06"
+  }
+]
