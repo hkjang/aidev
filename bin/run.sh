@@ -229,7 +229,7 @@ publish_release(){ # $1=태그 $2=제목 $3=노트 $4=ghrel $5=자산 목록 파
   if ! (cd "$repo" && gh release view "$tag" >/dev/null 2>&1); then
     if [ "$ghrel" = true ]; then
       local -a nargs=(--generate-notes); [ -n "$notes" ] && [ -f "$notes" ] && nargs=(--notes-file "$notes")
-      (cd "$repo" && gh release create "$tag" --title "${title:-$tag}" "${nargs[@]}" >>"$LOG" 2>&1) && stage release created "GitHub Release $tag" || stage release create-failed "gh release create 실패"
+      (cd "$repo" && gh release create "$tag" --title "${title:-$tag}" "${nargs[@]}" >>"$LOG" 2>&1) && stage gh-release created "GitHub Release $tag" || stage gh-release create-failed "gh release create 실패"
     elif [ ${#assets[@]} -gt 0 ]; then
       for i in $(seq 1 30); do (cd "$repo" && gh release view "$tag" >/dev/null 2>&1) && break; sleep 30; done
       (cd "$repo" && gh release view "$tag" >/dev/null 2>&1) || { log "$n: 워크플로가 15분 안에 Release 를 만들지 않음 — 직접 만든다"; (cd "$repo" && gh release create "$tag" --title "${title:-$tag}" --generate-notes >>"$LOG" 2>&1) || true; }
