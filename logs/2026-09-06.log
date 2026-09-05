@@ -1,0 +1,28 @@
+[00:00:10] skip DartFly: dirty working tree
+[00:00:11] skip Kkiit: dirty working tree
+[00:00:12] skip Momento: dirty working tree
+[00:00:12] skip SecCheck: dirty working tree
+[00:00:20] skip cutover: dirty working tree
+[00:00:34] skip postra: dirty working tree
+[00:00:37] skip seaton: dirty working tree
+[00:00:42] candidates(29): AgentHub Clustara Invenqor Quantoss ReSSO Vendra ai-admin aiportal-front-admin aiportal-front aiportal-java aiportal-py appstore dataworks git-ctx igame jikim jupiq kanpic moina moyro muni pii-masker ptium releasedock relio umm vibe-coders visitflow weekly
+[00:00:42] picked: Clustara
+[00:00:42] === Clustara (base=main, run 2026-09-06-000042-Clustara-improve, 회차 예산 $34)
+Preparing worktree (new branch 'auto/2026-09-06-0000')
+Updating files:  68% (729/1072)Updating files:  69% (740/1072)Updating files:  70% (751/1072)Updating files:  71% (762/1072)Updating files:  72% (772/1072)Updating files:  73% (783/1072)Updating files:  74% (794/1072)Updating files:  75% (804/1072)Updating files:  76% (815/1072)Updating files:  77% (826/1072)Updating files:  78% (837/1072)Updating files:  79% (847/1072)Updating files:  80% (858/1072)Updating files:  81% (869/1072)Updating files:  82% (880/1072)Updating files:  83% (890/1072)Updating files:  84% (901/1072)Updating files:  85% (912/1072)Updating files:  86% (922/1072)Updating files:  87% (933/1072)Updating files:  88% (944/1072)Updating files:  89% (955/1072)Updating files:  90% (965/1072)Updating files:  91% (976/1072)Updating files:  92% (987/1072)Updating files:  93% (997/1072)Updating files:  94% (1008/1072)Updating files:  95% (1019/1072)Updating files:  96% (1030/1072)Updating files:  97% (1040/1072)Updating files:  98% (1051/1072)Updating files:  99% (1062/1072)Updating files: 100% (1072/1072)Updating files: 100% (1072/1072), done.
+HEAD is now at 8f09d19 Merge pull request #10 from hkjang/auto/2026-09-05-1650
+[00:00:46] Clustara: [base] pinned — main@8f09d19
+[00:00:47] Clustara: [autonomy] release — 
+[00:11:44] Clustara: improve — 62 turns, 11m, $4.71, success
+[00:11:44] Clustara: verify `go build ./...` → exit 0 (0s)
+[00:11:45] Clustara: verify `go vet ./...` → exit 0 (1s)
+[00:12:41] Clustara: verify `go test -count=1 ./...` → exit 0 (56s)
+[00:12:41] Clustara: [verify] passed — 검증 3개 통과 (policy)
+branch 'auto/2026-09-06-0000' set up to track 'origin/auto/2026-09-06-0000'.
+[00:12:49] Clustara: [pr] created — https://github.com/hkjang/clustara/pull/11
+[00:17:19] Clustara: review — 26 turns, 4m, $1.92, success
+[00:17:19] Clustara: [review] rejected — 리뷰 거절: internal/analyzer/resourcesummary.go:42-47 PodResourceNumbers now applies the init-container max rule to LIMITS as well as requests. The max rule is correct for scheduling/capacity/cost (what the PR set out to fix), but LimCPUm/LimMemB feed runtime consumers that compare *running-container* metrics against them, so the pod is now measured against a limit no running container enforces. Concrete: pod with initContainer 'load-model' limits memory 8Gi and container 'app' limits memory 1Gi. main returns LimMemB=1Gi (the value the app container actually OOMKills at); HEAD returns 8Gi. The PR's own new test (internal/analyzer/capacity_effective_request_test.go:75) asserts exactly this new behavior (init 2Gi wins over app 512Mi), so it is confirmed, not hypothetical. / internal/analyzer/predictive_incident.go:52,60 consequence of the above: PodCPUSaturation / PodMemorySaturation and the 24h PredictedCPU/MemoryExhaustion drafts divide pod-level metric usage by q.LimCPUm / q.LimMemB. With app limit 1Gi and an init limit of 8Gi, a pod sitting at 950Mi used to trip the 0.9 ratio and emit a critical 'PodMemorySaturation' draft; it now computes 950Mi/8Gi = 0.12 and emits nothing. The alert is silently lost, with no test covering it and no mention in scripts/changelog.txt. / internal/proxy/admin_k8s_resource_advisor.go:81 -> internal/analyzer/resourceadvisor.go:86,129 same root cause on the advisor path: the CPU-throttling rule (UsageCPUm >= LimCPUm*throttleNearLimit) stops firing when an init container declares a larger CPU limit than the app containers, and the OOMKilled recommendation renders rec.Current = FormatMemBytes(in.LimMemB) — i.e. it tells the operator the pod's 'current memory limit' is the init container's 8Gi while the container that just OOMKilled is capped at 1Gi.
+https://github.com/hkjang/clustara/pull/11#issuecomment-5552758147
+evidence: /mnt/c/Users/USER/projects/aidev/state/runs/2026-09-06-000042-Clustara-improve/evidence.json
+reports: 5 day(s), 1 week(s), 1 month(s), 285 run(s), 22 usage row(s), 29 project page(s), 6 alert(s)
+notify: no new alerts
