@@ -1,0 +1,130 @@
+{
+  "run_id": "2026-09-06-005044-ReSSO-improve",
+  "generated": "2026-09-06T00:59:15+09:00",
+  "run": {
+    "run_id": "2026-09-06-005044-ReSSO-improve",
+    "project": "ReSSO",
+    "kind": "improve",
+    "started": "2026-09-06T00:50:44+09:00",
+    "model": "claude-opus-5",
+    "policy_version": "7c35e50",
+    "prompts_hash": "a3b041a352fd55fa",
+    "runner_version": "7c35e50",
+    "finished": "2026-09-06T00:59:15+09:00",
+    "outcome": "verify-failed"
+  },
+  "record": {
+    "ts": "2026-09-06T00:59:15+09:00",
+    "date": "2026-09-06",
+    "project": "ReSSO",
+    "result": "verify failed: secrets in diff",
+    "outcome": "verify-failed",
+    "run_id": "2026-09-06-005044-ReSSO-improve",
+    "base_sha": "060f26d92625237faa10797f128bfed60ecf0082",
+    "head_sha": "9ba95ab06ed2f2d1653b6dd312c2d921e218fe9c",
+    "pr": "",
+    "stages": {
+      "base": {
+        "state": "pinned",
+        "reason": "main@060f26d",
+        "at": "2026-09-06T00:50:47+09:00"
+      },
+      "autonomy": {
+        "state": "release",
+        "reason": "",
+        "at": "2026-09-06T00:50:47+09:00"
+      },
+      "verify": {
+        "state": "failed",
+        "reason": "변경에 비밀정보 의심 문자열",
+        "at": "2026-09-06T00:59:13+09:00"
+      }
+    },
+    "campaign": "",
+    "autonomy": "release",
+    "files": 3,
+    "additions": 151,
+    "deletions": 1,
+    "tests": 1,
+    "title": "fix: stop login blaming the password for a fault on this side"
+  },
+  "stages": {
+    "base": {
+      "state": "pinned",
+      "reason": "main@060f26d",
+      "at": "2026-09-06T00:50:47+09:00"
+    },
+    "autonomy": {
+      "state": "release",
+      "reason": "",
+      "at": "2026-09-06T00:50:47+09:00"
+    },
+    "verify": {
+      "state": "failed",
+      "reason": "변경에 비밀정보 의심 문자열",
+      "at": "2026-09-06T00:59:13+09:00"
+    }
+  },
+  "provenance": {
+    "model": "claude-opus-5",
+    "policy_version": "7c35e50",
+    "prompts_hash": "a3b041a352fd55fa",
+    "runner_version": "7c35e50",
+    "base_sha": "060f26d92625237faa10797f128bfed60ecf0082",
+    "head_sha": "9ba95ab06ed2f2d1653b6dd312c2d921e218fe9c",
+    "pr": ""
+  },
+  "verification": {
+    "runner": {
+      "source": "auto",
+      "commands": [
+        {
+          "cmd": "go build ./...",
+          "exit": 0,
+          "seconds": 1
+        },
+        {
+          "cmd": "go vet ./...",
+          "exit": 0,
+          "seconds": 1
+        },
+        {
+          "cmd": "go test ./...",
+          "exit": 0,
+          "seconds": 1
+        }
+      ]
+    },
+    "runner_gate": {
+      "ok": true,
+      "state": "verified",
+      "reason": "검증 3개 통과 (auto)"
+    },
+    "after_rebase": null,
+    "review": null,
+    "ci_gate": null
+  },
+  "release": {
+    "result": null,
+    "assets_sha256": []
+  },
+  "approval": null,
+  "usage": [
+    {
+      "ts": "2026-09-06T00:59:07+09:00",
+      "date": "2026-09-06",
+      "project": "ReSSO",
+      "phase": "improve",
+      "run_id": "2026-09-06-005044-ReSSO-improve",
+      "campaign": "",
+      "subtype": "success",
+      "duration_ms": 528706,
+      "num_turns": 61,
+      "cost_usd": 3.1153164999999996,
+      "input_tokens": 106,
+      "output_tokens": 22387,
+      "cache_read": 3466103,
+      "cache_create": 80998
+    }
+  ]
+}
