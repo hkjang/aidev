@@ -220,6 +220,24 @@ SEO / AEO / 모바일:
 
 **비용·사용량** — `claude -p --output-format json` 의 `total_cost_usd`·`duration_ms`·`num_turns`·`usage` 를 `record_usage()` 가 `docs/data/usage.jsonl` 에 남긴다(단계: improve/release/assets). 사람이 읽을 답변은 종전처럼 `logs/<날짜>-<프로젝트>.txt`. 대시보드 '비용·사용량', 일일 보고, 프로젝트 페이지에 표시. **정액제에서는 참고값**이다.
 
+## 10-0. 러너 v2 — 검증되지 않은 변경 차단 (1단계)
+
+원칙: **에이전트는 제안하고, 러너가 검증하며, 게시는 러너만 한다. 확인하지 못한 것은 성공이 아니다.**
+
+| 항목 | 구현 | 완료 기준 |
+|---|---|---|
+| CI 판정 | `bin/gate.py ci` — check-runs 를 `--paginate` 로 전부 받아 API 오류·파싱 오류·빈 응답·미완료·취소·시간 초과·다른 커밋을 성공과 구분. 정책 `required_checks` 로 필수 검사 지정, 재실행은 최신 시도만. 두 번 연속 통과 필요. CI 없는 저장소는 정책 `allow_merge_without_ci: true` 일 때만 | 필수 검사 성공을 확인하지 못하면 PR 유지, 머지 안 함 (`CI <상태>, PR open`) |
+| 판정 회귀 테스트 | `tests/test_gate.py` 26건 — 정상/실패/취소/시간초과/진행 중/빈 응답/API 오류/페이지네이션/재실행/커밋 불일치/리뷰 판정값/릴리즈 스키마·자산 경로/아이디어 스키마/비밀정보 | `python3 tests/test_gate.py` 통과 |
+| 리뷰 명시 승인 | `gate.py review` — 결과 파일 존재·JSON 유효·`verdict ∈ {approve, reject}` 를 각각 검증. 누락·알 수 없는 값은 보류 | 유효한 `approve` 일 때만 CI 단계로 |
+| 러너 직접 검증 | `run_verify()` — 정책 `verify` 명령(없으면 go/npm/pytest/cargo/make 자동 감지)을 러너가 실행, 종료 코드·소요 시간을 `state/runs/<run_id>/verify.json` 에 기록. 실패하면 PR 을 열지 않음 | 머지되는 모든 변경에 러너가 수집한 검증 결과가 run_id 로 연결 |
+| 에이전트 권한 격리 | `run_agent()` — `env -i` + **임시 HOME**(gh 미인증, git 자격증명 없음, 홈의 비밀 파일 없음), 토큰 환경변수 없음, `CLAUDE_CONFIG_DIR` 만 실제 경로, 워크트리 push URL `DISABLED`, `--add-dir` 는 실행별 출력 디렉터리만. GitHub 정보는 러너가 미리 뽑아 프롬프트에 넣음(`release_context()`) | 에이전트가 원격 머지·릴리즈 게시·정책 변경을 직접 할 수 없음. **잔여 위험**: 도커 소켓은 자산 빌드를 위해 아직 노출 |
+| 정책·기록 보호 | 에이전트는 `$OUT`(실행별 디렉터리)에만 씀. 원장 항목(`ledger-entry.md`)·아이디어(`ideas.json`)·릴리즈(`release.json`)·리뷰(`review.json`)를 러너가 `gate.py` 로 검사한 뒤 영구 기록에 반영(`merge_outputs()`). `default.policy.json`·`caps.env`·`*.guard`·다른 프로젝트 원장은 에이전트가 보지도 고치지도 못함 | 작업 중 정책 완화·타 프로젝트 기록 변경 불가 |
+| 기준 커밋 고정 | 정책 `base_branch`, `origin/<base>` 를 fetch 한 SHA 에서 시작(`BASE_SHA`), 리뷰·검증·CI 는 `HEAD_SHA` 에 연결. 머지 직전 base 가 움직였으면 리베이스 → 재검증 → force-with-lease → CI 재확인. 머지는 `gh pr merge --match-head-commit` | 검증하지 않은 커밋·의도하지 않은 브랜치로 머지되지 않음 |
+| 결과 파일 검증 | `gate.py release/ideas` 스키마, 자산은 `$OUT/assets/` 안의 존재하는 비어 있지 않은 파일만, 태그 형식 검사. 커밋·태그 존재는 러너가 git 으로 재확인 | 잘못된 판정값·외부 경로·없는 자산으로 후속 작업 없음 |
+| 비밀정보·공개 분리 | `gate.py secrets` — PR/릴리즈 diff 에 토큰·키·자격증명 URL 이 있으면 푸시 안 함. 원장 항목은 사설 IP·내부 호스트까지 검사해 걸리면 `state/private/`(git 제외)로. 러너 로그는 커밋 전 `redact_log()` | 토큰·내부 주소가 공개 보고에 들어가지 않음 |
+
+실행 기록: `state/runs/<run_id>/` 에 `run.json`·`stages.json`(단계별 상태/사유/시각)·`verify.json`·`review.json`·`release.json`·`ci-*.json`. `runs.jsonl` 에는 `run_id`·`base_sha`·`head_sha`·`pr`·`outcome`(`no-change | review-pending | verify-failed | merged | releasing | release-ready | error`)·`stages` 가 구조화 필드로 들어간다.
+
 ## 10-2. 품질·안전 게이트
 
 | 단계 | 파일 | 동작 |
