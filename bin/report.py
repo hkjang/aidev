@@ -211,14 +211,40 @@ def summary_sentence(day, c, day_runs):
 
 
 # ---------- 주의 필요 ----------
+def live_release(project, tag):
+    """(자산 수, 태그 워크플로 결론) — 경고가 아직 유효한지 GitHub 에서 다시 본다. 실패하면 None."""
+    repo = repo_name(project)
+    try:
+        n = subprocess.check_output(["gh", "release", "view", tag, "-R", f"hkjang/{repo}", "--json", "assets", "--jq", ".assets|length"],
+                                    text=True, stderr=subprocess.DEVNULL, timeout=30).strip()
+        n = int(n)
+    except Exception:
+        n = None
+    try:
+        wf = subprocess.check_output(["gh", "run", "list", "-R", f"hkjang/{repo}", "--limit", "40", "--json", "headBranch,conclusion,name",
+                                      "--jq", f'[.[] | select(.headBranch=="{tag}")] | .[0] | "\\(.name): \\(.conclusion)"'],
+                                     text=True, stderr=subprocess.DEVNULL, timeout=30).strip()
+    except Exception:
+        wf = ""
+    return n, wf
+
+
 def alerts(by_day, days):
-    """최근 2일 회차와 release.json 에서 사람이 봐야 할 것을 모은다."""
+    """최근 2일 회차와 release.json 에서 사람이 봐야 할 것을 모은다. 자산 누락은 GitHub 에서 다시 확인해 해소된 건 뺀다."""
     out = []
     for d in days[:2]:
         for r in by_day[d]:
             res = r.get("result") or ""
             for key, why in WARN_PATTERNS:
                 if key in res:
+                    if key == "ASSETS MISSING" and released_tag(res):
+                        n, wf = live_release(r.get("project"), released_tag(res))
+                        if n:  # 워크플로가 늦게 붙였다 — 해소됨
+                            break
+                        if n is None:
+                            why = f"릴리즈 {released_tag(res)} 가 GitHub 에 없음" + (f" — 워크플로 {wf}" if wf else "")
+                        elif wf:
+                            why = f"릴리즈 {released_tag(res)} 자산 0개 — 워크플로 {wf}"
                     out.append({"date": d, "time": ts_hm(r), "project": r.get("project"), "why": why, "result": res})
                     break
     for p in sorted({r.get("project") for d in days[:3] for r in by_day[d]}):

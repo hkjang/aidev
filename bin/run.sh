@@ -118,8 +118,14 @@ publish_release(){
         new_n=$(cd "$repo" && gh release view "$tag" --json assets --jq '.assets | length' 2>/dev/null || echo 0)
         [ "${new_n:-0}" -gt 0 ] && break; sleep 30
       done
-      [ "${new_n:-0}" -gt 0 ] && log "$n: $tag has $new_n asset(s) (prev $prev: $prev_n)" \
-        || { log "$n: ASSETS MISSING on $tag (prev $prev had $prev_n)"; result="$result, ASSETS MISSING"; }
+      if [ "${new_n:-0}" -gt 0 ]; then log "$n: $tag has $new_n asset(s) (prev $prev: $prev_n)"
+      else
+        # 워크플로가 실패해서 없는 것인지, 아직 도는 중인지 구분해 남긴다
+        local wf; wf=$(cd "$repo" && gh run list --limit 40 --json headBranch,conclusion,status,name \
+          --jq "[.[] | select(.headBranch==\"$tag\")] | .[0] | \"\\(.name): \\(.status)/\\(.conclusion)\"" 2>/dev/null)
+        log "$n: ASSETS MISSING on $tag (prev $prev had $prev_n) — workflow: ${wf:-none}"
+        case "$wf" in *failure*) result="$result, ASSETS MISSING (release workflow FAILED)";; *) result="$result, ASSETS MISSING";; esac
+      fi
     fi
   fi
   # 대시보드가 쓰도록 자산 수를 release.json 에 남긴다
