@@ -1,0 +1,74 @@
+[
+  {
+    "title": "콘솔의 세션·API Key 미들웨어가 저장소 장애를 401 authentication_required로 답해, DB 순단이 콘솔 사용자 전원을 \"세션 만료\"로 로그아웃시킨다",
+    "value": 4,
+    "risk": 2,
+    "size": "M",
+    "status": "done",
+    "note": "requireSession·requireSessionOrAPIKey가 store.ErrNotFound만 401로 두고 나머지는 500 internal_error + Error 로그. 변경 요청에 나가던 browser_session_required도 함께. 콘솔은 401만 만료로 읽으므로 500이면 화면에 머물며 재시도. AuthenticateAPIKey도 같은 구분(= /metrics 수집).",
+    "updated": "2026-09-05"
+  },
+  {
+    "title": "login의 Realm 조회 실패가 401 invalid_credentials로 나가고 로그인 카운터도 움직이지 않는다",
+    "value": 4,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "auth.go:88-91. RealmByName·RealmByID의 에러를 \"없음\"과 같이 취급해 사용자에게 \"아이디 또는 비밀번호가 올바르지 않습니다\"라고 답한다. 같은 핸들러의 다른 여섯 조회는 모두 writeLoginError(500 + result=\"error\")를 쓰는데 이것만 그 앞에서 돌아 예외다. ErrNotFound(존재하지 않는 Realm)는 계정 열거 방지로 401을 유지할 것.",
+    "updated": "2026-09-05"
+  },
+  {
+    "title": "login의 AuthorizationRequestByToken 실패가 400 expired_request로 나간다",
+    "value": 3,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "auth.go:75-79. 조회 장애를 \"요청이 만료되었거나 이미 사용되었습니다\"로 답하므로 사용자는 RP에서 흐름을 다시 시작하고 같은 곳에서 다시 실패한다. 위 항목과 한 커밋으로 묶을 수 있다.",
+    "updated": "2026-09-05"
+  },
+  {
+    "title": "authorization이 id_token_hint·max_age를 AuthorizationRequest에 저장하지 않아, 로그인 폼을 거친 뒤에는 hint가 지목한 계정과 다른 계정으로 로그인해도 코드가 나간다",
+    "value": 3,
+    "risk": 2,
+    "size": "M",
+    "status": "pending",
+    "note": "컬럼 추가 마이그레이션이 필요하다.",
+    "updated": "2026-09-05"
+  },
+  {
+    "title": "UserInfo POST에서 form-encoded access_token 파라미터 수용 (RFC 6750 §2.2)",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "현재는 Authorization 헤더만 읽는다.",
+    "updated": "2026-09-05"
+  },
+  {
+    "title": "oidcLogout이 hint의 sub를 쿠키 세션의 사용자와 대조하지 않아, 다른 사람의 ID Token을 hint로 줘도 지금 로그인한 사람이 로그아웃된다",
+    "value": 2,
+    "risk": 2,
+    "size": "M",
+    "status": "pending",
+    "note": "RP-Initiated Logout 1.0 상 SHOULD. CSRF성 성가심 수준.",
+    "updated": "2026-09-05"
+  },
+  {
+    "title": "SessionByToken이 locked_until을 보지 않는 것은 의도 — 막지 말고 문서화하는 쪽으로 결론낼 것",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "잠금은 무차별 대입 방어이고 세션 종료로 확장하면 DoS가 된다.",
+    "updated": "2026-09-05"
+  },
+  {
+    "title": "docs/operations.md의 resso_introspection_errors_total 항목에 stage 라벨 값 목록을 적기",
+    "value": 1,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "어느 조회가 멈췄는지 대시보드에서 바로 읽게 한다.",
+    "updated": "2026-09-05"
+  }
+]
