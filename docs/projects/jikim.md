@@ -1,7 +1,7 @@
 ---
 title: "jikim — 자율 개선 이력"
 description: "jikim: 자율 개선 회차 1회, 릴리즈 1건. 최근 릴리즈 v0.2.2."
-last_modified_at: 2026-09-05 16:47:01 +0900
+last_modified_at: 2026-09-05 17:13:20 +0900
 ---
 {% raw %}
 <script type="application/ld+json">
@@ -18,7 +18,7 @@ last_modified_at: 2026-09-05 16:47:01 +0900
   "name": "hkjang",
   "url": "https://github.com/hkjang"
  },
- "dateModified": "2026-09-05T16:47:01+09:00",
+ "dateModified": "2026-09-05T17:13:20+09:00",
  "version": "0.2.2"
 }
 </script>
@@ -27,7 +27,7 @@ last_modified_at: 2026-09-05 16:47:01 +0900
 
 <p class="tldr"><strong>요약.</strong> jikim: 자율 개선 회차 1회, 릴리즈 1건. 최근 릴리즈 v0.2.2. <span class="pill pill-released" title="14일: 릴리즈 1, 실패 0, 경고 0, 회귀 0">건강 A</span> <span class="meta">14일: 릴리즈 1, 실패 0, 경고 0, 회귀 0</span></p>
 
-<ul class="stats"><li><b>1</b><span>회차</span></li><li><b>1</b><span>프로젝트</span></li><li><b>1</b><span>릴리즈</span></li><li><b>0</b><span>머지(릴리즈 없음)</span></li><li><b>0</b><span>변경 없음</span></li><li><b>0</b><span>실패</span></li></ul>
+<ul class="stats"><li><b>1</b><span>회차</span></li><li><b>1</b><span>프로젝트</span></li><li><b>1</b><span>배포 준비 완료</span></li><li><b>0</b><span>릴리즈 진행 중</span></li><li><b>0</b><span>병합 완료</span></li><li><b>0</b><span>검토 대기</span></li><li><b>0</b><span>검증 실패</span></li><li><b>0</b><span>변경 없음</span></li><li><b>0</b><span>실행 오류</span></li></ul>
 
 ## 현황
 
@@ -39,7 +39,7 @@ last_modified_at: 2026-09-05 16:47:01 +0900
 
 ## 회차 이력
 
-<div class="table-wrap"><table class="rt"><thead><tr><th>일시</th><th class="primary">프로젝트</th><th>결과</th></tr></thead><tbody><tr data-status="released"><td data-label="일시">2026-09-05 03:52</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/jikim/">jikim</a></td><td data-label="결과"><span class="pill pill-released">🚀 릴리즈</span> merged <a href="https://github.com/hkjang/jikim/pull/14">PR #14</a>, released <a href="https://github.com/hkjang/jikim/releases/tag/v0.2.2">v0.2.2</a></td></tr></tbody></table></div>
+<div class="table-wrap"><table class="rt"><thead><tr><th>일시</th><th class="primary">프로젝트</th><th>결과</th></tr></thead><tbody><tr data-status="released"><td data-label="일시">2026-09-05 03:52</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/jikim/">jikim</a></td><td data-label="결과"><span class="pill pill-released" title="outcome=release-ready">배포 준비 완료</span> merged <a href="https://github.com/hkjang/jikim/pull/14">PR #14</a>, released <a href="https://github.com/hkjang/jikim/releases/tag/v0.2.2">v0.2.2</a></td></tr></tbody></table></div>
 
 ## 원장 (에이전트가 남긴 기록)
 

@@ -1,7 +1,7 @@
 ---
 title: "Quantoss — 자율 개선 이력"
 description: "Quantoss: 자율 개선 회차 6회, 릴리즈 0건. 최근 릴리즈 없음."
-last_modified_at: 2026-09-05 16:47:01 +0900
+last_modified_at: 2026-09-05 17:13:20 +0900
 ---
 {% raw %}
 <script type="application/ld+json">
@@ -18,7 +18,7 @@ last_modified_at: 2026-09-05 16:47:01 +0900
   "name": "hkjang",
   "url": "https://github.com/hkjang"
  },
- "dateModified": "2026-09-05T16:47:01+09:00"
+ "dateModified": "2026-09-05T17:13:20+09:00"
 }
 </script>
 
@@ -26,7 +26,7 @@ last_modified_at: 2026-09-05 16:47:01 +0900
 
 <p class="tldr"><strong>요약.</strong> Quantoss: 자율 개선 회차 6회, 릴리즈 0건. 최근 릴리즈 없음. <span class="pill pill-merged" title="14일: 릴리즈 0, 실패 0, 경고 0, 회귀 0">건강 B</span> <span class="meta">14일: 릴리즈 0, 실패 0, 경고 0, 회귀 0</span></p>
 
-<ul class="stats"><li><b>6</b><span>회차</span></li><li><b>1</b><span>프로젝트</span></li><li><b>0</b><span>릴리즈</span></li><li><b>6</b><span>머지(릴리즈 없음)</span></li><li><b>0</b><span>변경 없음</span></li><li><b>0</b><span>실패</span></li><li><b>$4.27</b><span>비용</span></li><li><b>10분</b><span>에이전트 시간</span></li></ul>
+<ul class="stats"><li><b>6</b><span>회차</span></li><li><b>1</b><span>프로젝트</span></li><li><b>0</b><span>배포 준비 완료</span></li><li><b>0</b><span>릴리즈 진행 중</span></li><li><b>6</b><span>병합 완료</span></li><li><b>0</b><span>검토 대기</span></li><li><b>0</b><span>검증 실패</span></li><li><b>0</b><span>변경 없음</span></li><li><b>0</b><span>실행 오류</span></li><li><b>$4.27</b><span>비용</span></li><li><b>10분</b><span>에이전트 시간</span></li></ul>
 
 ## 현황
 
@@ -39,7 +39,7 @@ last_modified_at: 2026-09-05 16:47:01 +0900
 
 ## 회차 이력
 
-<div class="table-wrap"><table class="rt"><thead><tr><th>일시</th><th class="primary">프로젝트</th><th>결과</th></tr></thead><tbody><tr data-status="merged"><td data-label="일시">2026-09-05 11:44</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/Quantoss/">Quantoss</a></td><td data-label="결과"><span class="pill pill-merged">✅ 머지</span> merged <a href="https://github.com/hkjang/Quantoss/pull/11">PR #11</a>, release skipped</td></tr><tr data-status="merged"><td data-label="일시">2026-09-04 22:49</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/Quantoss/">Quantoss</a></td><td data-label="결과"><span class="pill pill-merged">✅ 머지</span> merged <a href="https://github.com/hkjang/Quantoss/pull/9">PR #9</a>, release skipped</td></tr><tr data-status="merged"><td data-label="일시">2026-09-04 04:14</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/Quantoss/">Quantoss</a></td><td data-label="결과"><span class="pill pill-merged">✅ 머지</span> merged <a href="https://github.com/hkjang/Quantoss/pull/6">PR #6</a>, release skipped</td></tr><tr data-status="merged"><td data-label="일시">2026-09-03 20:39</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/Quantoss/">Quantoss</a></td><td data-label="결과"><span class="pill pill-merged">✅ 머지</span> merged <a href="https://github.com/hkjang/Quantoss/pull/4">PR #4</a>, release skipped</td></tr><tr data-status="merged"><td data-label="일시">2026-09-03 06:43</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/Quantoss/">Quantoss</a></td><td data-label="결과"><span class="pill pill-merged">✅ 머지</span> merged <a href="https://github.com/hkjang/Quantoss/pull/2">PR #2</a>, release skipped</td></tr><tr data-status="merged"><td data-label="일시">2026-09-03 00:46</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/Quantoss/">Quantoss</a></td><td data-label="결과"><span class="pill pill-merged">✅ 머지</span> merged <a href="https://github.com/hkjang/Quantoss/pull/1">PR #1</a>, release skipped</td></tr></tbody></table></div>
+<div class="table-wrap"><table class="rt"><thead><tr><th>일시</th><th class="primary">프로젝트</th><th>결과</th></tr></thead><tbody><tr data-status="merged"><td data-label="일시">2026-09-05 11:44</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/Quantoss/">Quantoss</a></td><td data-label="결과"><span class="pill pill-merged" title="outcome=merged">병합 완료</span> merged <a href="https://github.com/hkjang/Quantoss/pull/11">PR #11</a>, release skipped</td></tr><tr data-status="merged"><td data-label="일시">2026-09-04 22:49</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/Quantoss/">Quantoss</a></td><td data-label="결과"><span class="pill pill-merged" title="outcome=merged">병합 완료</span> merged <a href="https://github.com/hkjang/Quantoss/pull/9">PR #9</a>, release skipped</td></tr><tr data-status="merged"><td data-label="일시">2026-09-04 04:14</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/Quantoss/">Quantoss</a></td><td data-label="결과"><span class="pill pill-merged" title="outcome=merged">병합 완료</span> merged <a href="https://github.com/hkjang/Quantoss/pull/6">PR #6</a>, release skipped</td></tr><tr data-status="merged"><td data-label="일시">2026-09-03 20:39</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/Quantoss/">Quantoss</a></td><td data-label="결과"><span class="pill pill-merged" title="outcome=merged">병합 완료</span> merged <a href="https://github.com/hkjang/Quantoss/pull/4">PR #4</a>, release skipped</td></tr><tr data-status="merged"><td data-label="일시">2026-09-03 06:43</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/Quantoss/">Quantoss</a></td><td data-label="결과"><span class="pill pill-merged" title="outcome=merged">병합 완료</span> merged <a href="https://github.com/hkjang/Quantoss/pull/2">PR #2</a>, release skipped</td></tr><tr data-status="merged"><td data-label="일시">2026-09-03 00:46</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/Quantoss/">Quantoss</a></td><td data-label="결과"><span class="pill pill-merged" title="outcome=merged">병합 완료</span> merged <a href="https://github.com/hkjang/Quantoss/pull/1">PR #1</a>, release skipped</td></tr></tbody></table></div>
 
 ## 비용·사용량
 
