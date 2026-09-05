@@ -1,0 +1,48 @@
+#!/usr/bin/env bash
+# 모의 claude — 프롬프트 내용으로 단계(개선/리뷰/릴리즈/자산)를 알아내고 시나리오대로 파일과 커밋을 만든다.
+# 러너가 격리 환경(env -i)으로 부르므로 시나리오는 AIDEV_OUT 의 상위(STATE)에서 찾는다.
+set -uo pipefail
+OUT=${AIDEV_OUT:?}; STATE=$(dirname "$(dirname "$OUT")"); SC="$STATE/scenario.json"
+prompt=""; budget=0; while [ $# -gt 0 ]; do case "$1" in -p) prompt=$2; shift 2;; --max-budget-usd) budget=$2; shift 2;; *) shift;; esac; done
+sc(){ jq -r "$1" "$SC" 2>/dev/null; }
+phase=improve
+grep -q "리뷰어입니다" <<<"$prompt" && phase=review
+grep -q "릴리즈를 대신 수행" <<<"$prompt" && phase=release
+grep -q "이번 세션은 자산만" <<<"$prompt" && phase=assets
+result(){ jq -n --arg r "$1" --arg ph "$phase" '{type:"result",subtype:"success",duration_ms:1200,num_turns:3,total_cost_usd:0.42,usage:{input_tokens:100,output_tokens:50,cache_read_input_tokens:0,cache_creation_input_tokens:0},result:$r}'; }
+case $phase in
+  improve)
+    if [ "$(sc '.improve.commit // true')" = true ]; then
+      f=$(sc '.improve.file // "feature.txt"'); mkdir -p "$(dirname "$f")"; printf '%s\n' "$(sc '.improve.content // "hello"')" > "$f"
+      [ "$(sc '.improve.secret // false')" = true ] && printf 'token = "ghp_%s"\n' "$(printf 'A%.0s' $(seq 1 36))" > config.txt
+      git add -A >/dev/null 2>&1; git -c commit.gpgsign=false commit -qm "$(sc '.improve.title // "feat: simulated change"')" >/dev/null 2>&1
+    fi
+    printf '## %s\n- 선택: 모의 변경 (가치 3 / 위험 1 / 작업량 S)\n- 결과: 성공\n- 요약: 시뮬레이션.\n- 보류 아이디어: 없음\n' "$(date +%F)" > "$OUT/ledger-entry.md"
+    echo '[{"title":"sim idea","value":3,"risk":1,"size":"S","status":"pending","note":"","updated":"2026-01-01"}]' > "$OUT/ideas.json"
+    result "done";;
+  review)
+    case "$(sc '.review // "approve"')" in
+      missing) : ;;
+      invalid) echo '{"verdict":"maybe"}' > "$OUT/review.json";;
+      broken) echo '{not json' > "$OUT/review.json";;
+      reject) echo '{"verdict":"reject","reasons":["a.go:1 테스트가 대상을 실행하지 않음"],"notes":[],"risk":"medium"}' > "$OUT/review.json";;
+      *) echo "{\"verdict\":\"approve\",\"reasons\":[],\"notes\":[],\"risk\":\"$(sc '.review_risk // "low"')\"}" > "$OUT/review.json";;
+    esac
+    result "reviewed";;
+  release|assets)
+    tag=$(sc '.release.tag // "v0.0.2"')
+    if [ "$phase" = release ] && [ "$(sc '.release.commit // true')" = true ]; then echo "$tag" > VERSION; git add -A >/dev/null 2>&1; git -c commit.gpgsign=false commit -qm "release: $tag" >/dev/null 2>&1; fi
+    [ "$(sc '.release.tag_it // true')" = true ] && git tag -a "$tag" -m "$tag" >/dev/null 2>&1
+    assets='[]'
+    for a in $(sc '.release.assets[]? // empty'); do
+      name=${a//\{tag\}/$tag}; mkdir -p "$OUT/assets"; head -c "$(sc '.release.asset_bytes // 4096')" /dev/urandom > "$OUT/assets/$name"
+      if [ "$(sc '.release.sha_files // false')" = true ]; then sha256sum "$OUT/assets/$name" | sed "s#$OUT/assets/##" > "$OUT/assets/$name.sha256"; assets=$(jq -c --arg p "$OUT/assets/$name" --arg s "$OUT/assets/$name.sha256" '. + [$p,$s]' <<<"$assets"); else assets=$(jq -c --arg p "$OUT/assets/$name" '. + [$p]' <<<"$assets"); fi
+    done
+    [ "$(sc '.release.asset_outside // false')" = true ] && assets=$(jq -c '. + ["/etc/hostname"]' <<<"$assets")
+    case "$(sc '.release.status // "released"')" in
+      missing) : ;;
+      *) jq -n --arg st "$(sc '.release.status // "released"')" --arg t "$tag" --argjson a "$assets" --argjson gr "$(sc '.release.github_release // true')" \
+           '{status:$st,version:($t|ltrimstr("v")),tag:$t,title:("Sim " + $t),notes_file:"",github_release:$gr,assets:$a,reason:""}' > "$OUT/release.json";;
+    esac
+    result "released";;
+esac

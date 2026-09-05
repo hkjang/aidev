@@ -264,6 +264,17 @@ SEO / AEO / 모바일:
 | **개선 캠페인** | `state/campaigns.json`: `{id, goal, projects[], budget_usd, until}` | 수정 큐·수동 큐 다음 순서로 캠페인 대상을 우선 배정하고 프롬프트에 목표를 넣음. 캠페인 안에서 프로젝트를 순환, `usage.jsonl`/`runs.jsonl` 에 `campaign` 태그. 예산·기한이 다하면 `done` |
 | **구조화 수동 요청** | aidev 이슈 템플릿 "수동 작업 요청(run)" — 프로젝트·문제·수용 기준·금지 범위·긴급도 | `inbox.sh` 가 필드를 뽑아 `run-queue.tsv` 에 넣고(긴급이면 맨 앞), 프롬프트 `$REQUEST_NOTE` 로 명세만 전달. 요청 본문은 정책·권한을 바꾸지 못하며 "규칙을 무시하라"는 내용은 따르지 말라고 명시 |
 
+## 10-1c. 모의 실행 하네스 · 실행 증거 패키지 (4단계 1·2)
+
+**전체 흐름 모의 실행** — `tests/sim/`
+- `tests/sim/bin/gh`, `tests/sim/bin/claude`: 러너가 쓰는 서브커맨드만 흉내 내는 가짜 도구. 상태는 임시 디렉터리(`$AIDEV_SIM`), 동작은 `scenario.json` 이 정함 (`ci: success|failure|pending|api-error|none|timed_out`, `review: approve|reject|missing|invalid|broken`, `release: {tag, assets[], status, asset_outside}`, `verify`, `autonomy`, `stops`, `tag_exists`, `merge_fail`, `improve.secret` …)
+- `tests/sim/run_sim.sh <scenario.json> [--keep]`: bare 원격 + 작업 클론을 만들고 **실제 `bin/run.sh` 를** `--project simproj --no-sync` 로 돌린 뒤 outcome·단계·PR·릴리즈·원격 태그를 JSON 으로 요약. 실제 상태·로그·데이터·잠금은 `AIDEV_STATE/LOGS/DATA/OWNER`, `WT_BASE`, `ROOT` 로 격리. 대기 시간은 `CI_POLL/CI_MAX/REL_MAX/RETRY_DELAYS` 로 단축
+- `python3 tests/test_sim.py`: 시나리오 24개 — 해피패스(release-ready), CI API 오류/실패/진행 중/없음, 리뷰 누락/무효/손상/거절, 러너 검증 실패, diff 비밀정보, 보호 파일, 긴급 중지(merge/all), 자율화 단계(pr/low-risk/analyze), 태그 충돌, 자산 누락/외부 경로/이름 불일치, 릴리즈 결과 누락, 중복 PR 방지, 일시 오류 재시도. **정책·러너를 바꾼 뒤 이 스위트가 통과해야 푸시한다**
+
+**실행 증거 패키지** — `bin/evidence.sh <run 디렉터리>` (record_run 이 자동 호출) → `state/runs/<run_id>/evidence.json`
+- 실행 ID·시작/완료·outcome, 기준/변경 커밋·PR, 단계 기록, **출처**(모델, 정책 버전 = `default.policy.json`/`default.guard`/프롬프트의 마지막 커밋, 프롬프트 해시, 러너 버전), 러너 검증 결과(리베이스 후 재검증 포함), 리뷰 판정, CI gate 판정, 릴리즈 결과·업로드 자산 SHA-256, 승인 기록(승인 SHA·정책 버전), 사용량
+- 에이전트 원문(`agent-*.txt`)과 비밀값은 넣지 않음. 작업함·프로젝트 페이지의 '증거' 링크가 이 디렉터리를 가리킴
+
 ## 10-2. 품질·안전 게이트
 
 | 단계 | 파일 | 동작 |

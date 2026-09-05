@@ -1,0 +1,85 @@
+#!/usr/bin/env bash
+# 모의 gh — 러너가 쓰는 gh 서브커맨드만 흉내 낸다. 상태는 $AIDEV_SIM 아래 파일에 두고, 시나리오는 $AIDEV_SIM/scenario.json 이 정한다.
+#   scenario.ci: success | failure | pending | api-error | none | timed_out
+#   scenario.tag_exists (bool): 원격에 태그가 이미 있는 것처럼
+#   scenario.prev_release_assets: 이전 릴리즈 자산 이름 배열  scenario.release_workflow: success|failure|none
+set -uo pipefail
+SIM=${AIDEV_SIM:?}; SC="$SIM/scenario.json"; mkdir -p "$SIM/prs" "$SIM/releases" "$SIM/log"
+echo "gh $*" >> "$SIM/log/gh.log"
+sc(){ jq -r "$1" "$SC" 2>/dev/null; }
+# --jq 와 --json 을 뽑아내고 나머지 인자를 남긴다
+JQ=""; args=(); while [ $# -gt 0 ]; do case "$1" in --jq) JQ=$2; shift 2;; --json) shift 2;; -R) shift 2;; *) args+=("$1"); shift;; esac; done
+set -- "${args[@]}"
+emit(){ if [ -n "$JQ" ]; then jq -r "$JQ" <<<"$1"; else printf '%s\n' "$1"; fi; }
+origin=$(sc .origin); proj=$(sc .project_repo)
+branch_sha(){ git --git-dir="$origin" rev-parse "refs/heads/$1" 2>/dev/null; }
+find_pr(){ local f; for f in "$SIM"/prs/*.json; do [ -f "$f" ] && [ "$(jq -r .url "$f")" = "$1" ] && { echo "$f"; return 0; }; done; return 1; }
+
+case "$1 ${2:-}" in
+  "auth status") exit 0;;
+  "label create"|"issue comment"|"issue close"|"issue edit"|"pr comment"|"pr edit") exit 0;;
+  "issue create") echo "https://github.com/hkjang/sim/issues/1"; exit 0;;
+  "issue list") emit '[]'; exit 0;;
+  "pr create")
+    head=""; for ((i=1;i<=$#;i++)); do [ "${!i}" = --head ] && j=$((i+1)) && head=${!j}; done
+    n=$(( $(ls "$SIM/prs" | wc -l) + 1 )); url="https://github.com/hkjang/sim/pull/$n"
+    jq -n --arg u "$url" --arg h "$head" --argjson n "$n" '{url:$u,number:$n,head:$h,state:"OPEN",labels:[],title:"sim pr"}' > "$SIM/prs/$n.json"
+    echo "$url"; exit 0;;
+  "pr list")
+    head=""; for ((i=1;i<=$#;i++)); do [ "${!i}" = --head ] && j=$((i+1)) && head=${!j}; done
+    state="OPEN"; for ((i=1;i<=$#;i++)); do [ "${!i}" = --state ] && j=$((i+1)) && state=${!j^^}; done
+    out=$(for f in "$SIM"/prs/*.json; do [ -f "$f" ] && jq -c --arg h "$head" --arg s "$state" 'select(($h=="" or .head==$h) and ($s=="ALL" or .state==$s)) | . + {mergeCommit:{oid:(.merge_sha // null)}}' "$f"; done | jq -s '.')
+    emit "$out"; exit 0;;
+  "pr view")
+    f=$(find_pr "$3"); [ -f "$f" ] || { echo "not found" >&2; exit 1; }
+    out=$(jq -c '. + {headRefOid:(.head_sha // ""), mergeCommit:{oid:(.merge_sha // null)}, mergedAt:(.merged_at // null), additions:3, deletions:1, changedFiles:2}' "$f")
+    hs=$(branch_sha "$(jq -r .head "$f")"); [ -n "$hs" ] && out=$(jq -c --arg h "$hs" '.headRefOid=$h' <<<"$out")
+    emit "$out"; exit 0;;
+  "pr merge")
+    url=$3; f=$(find_pr "$url"); [ -f "$f" ] || { echo "HTTP 404: pr not found" >&2; exit 1; }
+    want=""; for ((i=1;i<=$#;i++)); do [ "${!i}" = --match-head-commit ] && j=$((i+1)) && want=${!j}; done
+    br=$(jq -r .head "$f"); hs=$(branch_sha "$br")
+    [ -z "$want" ] || [ "$want" = "$hs" ] || { echo "HTTP 405: head commit mismatch (not mergeable)" >&2; exit 1; }
+    [ "$(sc '.merge_fail // empty')" = "network" ] && [ ! -f "$SIM/merge_failed_once" ] && { touch "$SIM/merge_failed_once"; echo "HTTP 502 Bad Gateway: connection reset" >&2; exit 1; }
+    tmp=$(mktemp -d); git clone -q "$origin" "$tmp" && git -C "$tmp" -c user.name=sim -c user.email=sim@x merge -q --no-ff "origin/$br" -m "Merge pull request $url" >/dev/null 2>&1 && git -C "$tmp" push -q origin HEAD:main && git -C "$tmp" push -q origin --delete "$br" >/dev/null 2>&1
+    msha=$(git -C "$tmp" rev-parse HEAD); rm -rf "$tmp"
+    jq --arg s "$msha" --arg t "$(date -Iseconds)" '.state="MERGED" | .merge_sha=$s | .merged_at=$t' "$f" > "$f.tmp" && mv "$f.tmp" "$f"
+    echo "✓ Merged"; exit 0;;
+  "pr close") exit 0;;
+  "api "*)
+    path=$2; [ "$2" = --paginate ] && path=$3
+    case "$path" in
+      *check-runs*)
+        sha=$(sed -E 's#.*/commits/([0-9a-f]+)/check-runs.*#\1#' <<<"$path")
+        case "$(sc .ci)" in
+          api-error) echo '{"message":"Server Error","documentation_url":"x"}'; exit 1;;
+          none) echo '{"total_count":0,"check_runs":[]}';;
+          pending) jq -n --arg s "$sha" '{check_runs:[{id:1,name:"CI",status:"in_progress",conclusion:null,head_sha:$s,started_at:"2026-01-01T00:00:00Z"}]}';;
+          failure) jq -n --arg s "$sha" '{check_runs:[{id:1,name:"CI",status:"completed",conclusion:"failure",head_sha:$s,started_at:"2026-01-01T00:00:00Z"}]}';;
+          timed_out) jq -n --arg s "$sha" '{check_runs:[{id:1,name:"CI",status:"completed",conclusion:"timed_out",head_sha:$s,started_at:"2026-01-01T00:00:00Z"}]}';;
+          *) jq -n --arg s "$sha" '{check_runs:[{id:1,name:"CI",status:"completed",conclusion:"success",head_sha:$s,started_at:"2026-01-01T00:00:00Z"},{id:2,name:"lint",status:"completed",conclusion:"success",head_sha:$s,started_at:"2026-01-01T00:00:00Z"}]}';;
+        esac; exit 0;;
+      *commits*) emit '[]'; exit 0;;
+      *) emit '{}'; exit 0;;
+    esac;;
+  "release list")
+    out=$(for f in "$SIM"/releases/*/meta.json; do [ -f "$f" ] && jq -c . "$f"; done | jq -s 'sort_by(.publishedAt) | reverse'); emit "$out"; exit 0;;
+  "release view")
+    tag=$3; f="$SIM/releases/$tag/meta.json"; [ -f "$f" ] || { echo "release not found" >&2; exit 1; }
+    out=$(jq -c --arg d "$SIM/releases/$tag/assets" '. + {assets:[( $d | try (ltrimstr("") ) ) ] | .assets=[]}' "$f" 2>/dev/null)
+    names=$(ls "$SIM/releases/$tag/assets" 2>/dev/null); alist=$(for a in $names; do jq -n --arg n "$a" --arg u "file://$SIM/releases/$tag/assets/$a" '{name:$n,url:$u}'; done | jq -s '.')
+    out=$(jq -c --argjson a "$alist" '.assets=$a' "$f"); emit "$out"; exit 0;;
+  "release create")
+    tag=$3; mkdir -p "$SIM/releases/$tag/assets"; jq -n --arg t "$tag" --arg n "$tag" --arg at "$(date -Iseconds)" '{tagName:$t,name:$n,publishedAt:$at,isPrerelease:false,body:""}' > "$SIM/releases/$tag/meta.json"; echo "https://github.com/hkjang/sim/releases/tag/$tag"; exit 0;;
+  "release upload")
+    tag=$3; shift 3; for a in "$@"; do [[ "$a" == --* ]] && continue; cp "$a" "$SIM/releases/$tag/assets/"; done; exit 0;;
+  "run list")
+    case "$(sc '.release_workflow // "none"')" in
+      failure) emit '[{"databaseId":1,"name":"Release","headBranch":"'"$(sc '.expected_tag // "v0.0.0"')"'","conclusion":"failure","status":"completed"}]';;
+      success) emit '[{"databaseId":1,"name":"Release","headBranch":"'"$(sc '.expected_tag // "v0.0.0"')"'","conclusion":"success","status":"completed"}]';;
+      *) emit '[]';;
+    esac; exit 0;;
+  "run view") emit '{"status":"completed","conclusion":"failure","jobs":[{"steps":[{"name":"build","conclusion":"failure"}]}],"url":"https://github.com/hkjang/sim/actions/runs/1"}'; exit 0;;
+  "run rerun") exit 0;;
+  *) echo "sim gh: unsupported: $*" >&2; exit 2;;
+esac

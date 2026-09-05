@@ -10,7 +10,7 @@ set -uo pipefail  # -e 는 쓰지 않는다: 명령 치환 속 파이프 실패�
 ROOT="${ROOT:-/mnt/c/Users/USER/projects}"
 HERE="${AIDEV_BIN:-$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)}"
 REPO_DIR="$(cd "$HERE/.." && pwd)"
-STATE="$REPO_DIR/state"; LOGS="$REPO_DIR/logs"; RUNS="$STATE/runs"
+STATE="${AIDEV_STATE:-$REPO_DIR/state}"; LOGS="${AIDEV_LOGS:-$REPO_DIR/logs}"; RUNS="$STATE/runs"; DATA="${AIDEV_DATA:-$REPO_DIR/docs/data}"
 WT_BASE="${WT_BASE:-$HOME/.cache/auto-improve-wt}"
 DAYS=30; COUNT=1; BUDGET=""; RBUDGET=""; DRY=0; ONLY=""; MERGE=1; SYNC=1; RELEASE=1; REVIEW=1
 MODEL="${MODEL:-claude-opus-5}"
@@ -28,14 +28,16 @@ while [ $# -gt 0 ]; do case "$1" in
   --release-only) RELEASE_ONLY=$2; shift;; --assets-only) ASSETS_ONLY=$2; shift;;
   *) echo "unknown arg $1"; exit 2;; esac; shift; done
 
-mkdir -p "$STATE" "$LOGS" "$WT_BASE" "$RUNS" "$REPO_DIR/docs/data" "$HOME/.auto-improve"
+mkdir -p "$STATE" "$LOGS" "$WT_BASE" "$RUNS" "$DATA" "$HOME/.auto-improve"
 RUN_DATE=$(date +%Y-%m-%d); LOG="$LOGS/$RUN_DATE.log"
 log(){ echo "[$(date +%H:%M:%S)] $*" | tee -a "$LOG"; }
 GATE="python3 $HERE/gate.py"
 # 단계별 제한 시간(초) — 넘기면 그 단계의 프로세스만 종료하고 시간 초과로 기록한다
 T_IMPROVE=${T_IMPROVE:-2700}; T_REVIEW=${T_REVIEW:-900}; T_RELEASE=${T_RELEASE:-3600}; T_ASSETS=${T_ASSETS:-3600}
+# 대기 간격·횟수 (모의 실행은 짧게 잡는다): CI 30초×40회=20분, 릴리즈/자산 30초×30회=15분
+CI_POLL=${CI_POLL:-30}; CI_MAX=${CI_MAX:-40}; REL_MAX=${REL_MAX:-30}; RETRY_DELAYS=${RETRY_DELAYS:-"10 30 90"}
 # 잠금 소유자 기록 (health.sh 가 고착 판단에 쓴다) — 다른 회차의 작업 디렉터리는 건드리지 않는다
-OWNER_FILE="$HOME/.auto-improve/run.owner"
+OWNER_FILE="${AIDEV_OWNER:-$HOME/.auto-improve/run.owner}"
 if opid=$(jq -r '.pid // empty' "$OWNER_FILE" 2>/dev/null) && [ -n "$opid" ] && [ "$opid" != "$$" ] && kill -0 "$opid" 2>/dev/null; then
   log "다른 러너(pid $opid)가 실행 중 — 겹쳐 돌리지 않는다 (flock 뒤에서 실행하세요)"; exit 4
 fi
@@ -45,7 +47,7 @@ trap 'rm -f "$OWNER_FILE"' EXIT
 # 일시적 오류(네트워크·GitHub 5xx·잠깐의 잠금)만 재시도한다. 인증 오류·충돌·테스트 실패는 재시도하지 않는다.
 #   사용: with_retry "<설명>" <명령...>   (명령의 stderr 를 검사해 유형을 나눈다)
 with_retry(){
-  local what=$1; shift; local i rc err delays=(10 30 90)
+  local what=$1; shift; local i rc err; local -a delays=($RETRY_DELAYS)
   for i in 0 1 2 3; do
     err=$("$@" 2>&1 >>"$LOG"); rc=$?
     [ $rc -eq 0 ] && return 0
@@ -70,7 +72,11 @@ policy(){ # $1=프로젝트 $2=jq 경로 (예: .base_branch)
 }
 new_run(){ # $1=프로젝트 $2=종류 → RUN_ID, OUT 설정
   RUN_ID="$RUN_DATE-$(date +%H%M%S)-$1-$2"; OUT="$RUNS/$RUN_ID"; mkdir -p "$OUT/assets" "$OUT/home"
-  printf '{"run_id":"%s","project":"%s","kind":"%s","started":"%s"}\n' "$RUN_ID" "$1" "$2" "$(date -Iseconds)" > "$OUT/run.json"
+  local pv; pv=$(cd "$REPO_DIR" && git log -1 --format=%h -- prompt.md review-prompt.md release-prompt.md state/default.policy.json state/default.guard 2>/dev/null)
+  jq -cn --arg rid "$RUN_ID" --arg p "$1" --arg k "$2" --arg st "$(date -Iseconds)" --arg m "$MODEL" --arg pv "${pv:-}" \
+     --arg ph "$(sha256sum "$REPO_DIR/prompt.md" "$REPO_DIR/review-prompt.md" "$REPO_DIR/release-prompt.md" 2>/dev/null | sha256sum | cut -c1-16)" \
+     --arg rv "$(cd "$REPO_DIR" && git log -1 --format=%h -- bin/run.sh bin/gate.py 2>/dev/null)" \
+     '{run_id:$rid,project:$p,kind:$k,started:$st,model:$m,policy_version:$pv,prompts_hash:$ph,runner_version:$rv}' > "$OUT/run.json"
 }
 stage(){ # $1=단계 $2=상태 $3=사유 — $OUT/stages.json 에 누적
   local f="$OUT/stages.json"; [ -f "$f" ] || echo '{}' > "$f"
@@ -108,18 +114,18 @@ record_usage(){ # $1=프로젝트 $2=단계 $3=json $4=txt
     jq -c --arg ts "$(date -Iseconds)" --arg d "$RUN_DATE" --arg p "$n" --arg ph "$phase" --arg rid "${RUN_ID:-}" --arg camp "${CAMPAIGN_ID:-}" \
       '{ts:$ts,date:$d,project:$p,phase:$ph,run_id:$rid,campaign:$camp,subtype:(.subtype//""),duration_ms:(.duration_ms//0),num_turns:(.num_turns//0),
         cost_usd:(.total_cost_usd//null),input_tokens:(.usage.input_tokens//0),output_tokens:(.usage.output_tokens//0),
-        cache_read:(.usage.cache_read_input_tokens//0),cache_create:(.usage.cache_creation_input_tokens//0)}' "$j" >> "$REPO_DIR/docs/data/usage.jsonl"
+        cache_read:(.usage.cache_read_input_tokens//0),cache_create:(.usage.cache_creation_input_tokens//0)}' "$j" >> "$DATA/usage.jsonl"
     log "$n: $phase — $(jq -r '"\(.num_turns//0) turns, \((.duration_ms//0)/60000|floor)m, $\(.total_cost_usd//0|.*100|round/100), \(.subtype//"")"' "$j")"
   else
     cat "$j" >> "$t" 2>/dev/null || true
     jq -cn --arg ts "$(date -Iseconds)" --arg d "$RUN_DATE" --arg p "$n" --arg ph "$phase" --arg rid "${RUN_ID:-}" \
-      '{ts:$ts,date:$d,project:$p,phase:$ph,run_id:$rid,subtype:"unknown",cost_usd:null}' >> "$REPO_DIR/docs/data/usage.jsonl"
+      '{ts:$ts,date:$d,project:$p,phase:$ph,run_id:$rid,subtype:"unknown",cost_usd:null}' >> "$DATA/usage.jsonl"
     log "$n: $phase — 결과 JSON 없음 (비용 미확인)"
   fi
 }
 # 잔여 예산: 오늘 쓴 비용 + 이 단계 예산이 상한을 넘으면 시작하지 않는다
 budget_ok(){ # $1=이번 단계 예산
-  local spent; spent=$(jq -s --arg d "$RUN_DATE" '[.[]|select(.date==$d)|.cost_usd//0]|add // 0' "$REPO_DIR/docs/data/usage.jsonl" 2>/dev/null || echo 0)
+  local spent; spent=$(jq -s --arg d "$RUN_DATE" '[.[]|select(.date==$d)|.cost_usd//0]|add // 0' "$DATA/usage.jsonl" 2>/dev/null || echo 0)
   awk -v s="$spent" -v b="${1:-0}" -v m="$MAX_DAILY_COST" 'BEGIN{exit !(s+b<=m)}'
 }
 
@@ -158,7 +164,7 @@ apply_demotions(){
 approvals(){
   local rec pr st head labels appr_sha pv
   pv=$(cd "$REPO_DIR" && git log -1 --format=%h -- state/default.policy.json state/default.guard 2>/dev/null)
-  jq -r --arg s "$(date -d '-14 days' +%F)" 'select(.date >= $s and .outcome=="review-pending" and (.pr|length)>0) | "\(.project)\t\(.pr)"' "$REPO_DIR/docs/data/runs.jsonl" 2>/dev/null | sort -u \
+  jq -r --arg s "$(date -d '-14 days' +%F)" 'select(.date >= $s and .outcome=="review-pending" and (.pr|length)>0) | "\(.project)\t\(.pr)"' "$DATA/runs.jsonl" 2>/dev/null | sort -u \
   | while IFS=$'\t' read -r n pr; do
     repo="$ROOT/$n"; [ -d "$repo" ] || continue
     read -r st head labels < <(cd "$repo" && gh pr view "$pr" --json state,headRefOid,labels --jq '"\(.state) \(.headRefOid) \([.labels[].name]|join(","))"' 2>/dev/null || echo "UNKNOWN  ")
@@ -191,12 +197,12 @@ pick_campaign(){
   while IFS=$'\t' read -r id goal budget until projs; do
     [ -n "$id" ] || continue
     [[ "$until" < "$RUN_DATE" ]] && { jq --arg id "$id" '(.campaigns[]|select(.id==$id)).done=true' "$cj" > "$cj.tmp" && mv "$cj.tmp" "$cj"; log "campaign $id: 기한 종료"; continue; }
-    spent=$(jq -s --arg id "$id" '[.[]|select(.campaign==$id)|.cost_usd//0]|add // 0' "$REPO_DIR/docs/data/usage.jsonl" 2>/dev/null || echo 0)
+    spent=$(jq -s --arg id "$id" '[.[]|select(.campaign==$id)|.cost_usd//0]|add // 0' "$DATA/usage.jsonl" 2>/dev/null || echo 0)
     awk -v s="$spent" -v b="$budget" 'BEGIN{exit !(s>=b)}' && { jq --arg id "$id" '(.campaigns[]|select(.id==$id)).done=true' "$cj" > "$cj.tmp" && mv "$cj.tmp" "$cj"; log "campaign $id: 예산 소진 (\$$spent/\$$budget)"; continue; }
     for cp in $projs; do
       if printf '%s\n' "${candidates[@]}" | grep -qx "$cp"; then
         # 캠페인 안에서도 순환: 마지막으로 돈 프로젝트 다음 것
-        local lastp; lastp=$(jq -r --arg id "$id" 'select(.campaign==$id) | .project' "$REPO_DIR/docs/data/runs.jsonl" 2>/dev/null | tail -1)
+        local lastp; lastp=$(jq -r --arg id "$id" 'select(.campaign==$id) | .project' "$DATA/runs.jsonl" 2>/dev/null | tail -1)
         [ -n "$lastp" ] && [ "$cp" = "$lastp" ] && [ "$(wc -w <<<"$projs")" -gt 1 ] && continue
         CAMPAIGN_ID=$id; CAMPAIGN_PROJECT=$cp
         CAMPAIGN_NOTE="## 개선 캠페인 \"$id\" (자동 배정) — 새 아이디어 대신 이 목표를 우선하세요
@@ -242,7 +248,7 @@ run_verify(){ # $1=작업 디렉터리 $2=결과 파일
 ci_gate(){ # $1=sha → CI_STATE, CI_REASON 설정; 0=통과
   local sha=$1 i passes=0 req allow f="$OUT/ci-${1:0:12}.json" g
   req=$(policy "$n" '.required_checks | join(",")'); allow=$(policy "$n" '.allow_merge_without_ci')
-  for i in $(seq 1 40); do
+  for i in $(seq 1 "$CI_MAX"); do
     (cd "$repo" && gh api --paginate "repos/{owner}/{repo}/commits/$sha/check-runs" 2>/dev/null | jq -s '.') > "$f" 2>/dev/null || echo '{"message":"gh api failed"}' > "$f"
     g=$($GATE ci "$f" --sha "$sha" --required "$req" $( [ "$allow" = true ] && echo --allow-no-ci ) 2>/dev/null || true)
     CI_STATE=$(jq -r .state <<<"$g" 2>/dev/null || echo api-error); CI_REASON=$(jq -r .reason <<<"$g" 2>/dev/null || echo "gate 실행 실패")
@@ -252,9 +258,10 @@ ci_gate(){ # $1=sha → CI_STATE, CI_REASON 설정; 0=통과
       *) return 1;;
     esac
     [ $i -eq 1 ] && log "$n: waiting for CI on ${sha:0:7} ($CI_STATE)"
-    sleep 30
+    sleep "$CI_POLL"
   done
-  CI_STATE=timeout; CI_REASON="20분 안에 CI 완료를 확인하지 못함"; return 1
+  # 시간 초과: 마지막으로 본 상태가 '검사 없음/API 오류'면 그 상태를 유지한다 (원인이 다르다)
+  case "${CI_STATE:-}" in no-ci|api-error) CI_REASON="$CI_REASON (대기 시간 초과)";; *) CI_STATE=timeout; CI_REASON="제한 시간 안에 CI 완료를 확인하지 못함";; esac; return 1
 }
 guarded_files(){ # $1=base
   local pat; pat=$(cat "$STATE/default.guard" "$STATE/$n.guard" 2>/dev/null | grep -v '^#' | grep -v '^[[:space:]]*$')
@@ -289,9 +296,10 @@ record_run(){ # $1=프로젝트 $2=결과 문장 $3=outcome
   jq -cn --arg ts "$(date -Iseconds)" --arg d "$RUN_DATE" --arg p "$1" --arg r "$2" --arg o "$3" --arg rid "${RUN_ID:-}" \
      --arg b "${BASE_SHA:-}" --arg h "${HEAD_SHA:-}" --arg pr "$pr" --argjson m "${RUN_META:-{\}}" --argjson st "$st" \
      --arg camp "${CAMPAIGN_ID:-}" --arg au "${AUTONOMY_NOW:-}" \
-     '{ts:$ts,date:$d,project:$p,result:$r,outcome:$o,run_id:$rid,base_sha:$b,head_sha:$h,pr:$pr,stages:$st,campaign:$camp,autonomy:$au} + $m' >> "$REPO_DIR/docs/data/runs.jsonl"
+     '{ts:$ts,date:$d,project:$p,result:$r,outcome:$o,run_id:$rid,base_sha:$b,head_sha:$h,pr:$pr,stages:$st,campaign:$camp,autonomy:$au} + $m' >> "$DATA/runs.jsonl"
   RUN_META="{}"
-  "$HERE/digest.sh" >>"$LOG" 2>&1 || true
+  [ -f "${OUT:-/nonexistent}/run.json" ] && "$HERE/evidence.sh" "$OUT" >>"$LOG" 2>&1 || true
+  [ -n "${AIDEV_SIM:-}" ] || "$HERE/digest.sh" >>"$LOG" 2>&1 || true
 }
 # 에이전트가 $OUT 에 남긴 원장 항목·아이디어를 러너가 검사한 뒤 영구 기록에 반영한다 (비밀·내부 정보는 비공개 파일로)
 merge_outputs(){
@@ -331,7 +339,7 @@ retry_release_workflow(){ # $1=태그 → 한 번 재실행; 또 실패면 수�
   [ -n "$rid" ] && [ "$rid" != null ] || return 0
   (cd "$repo" && gh run rerun "$rid" --failed >>"$LOG" 2>&1) || { log "$n: rerun of $rid not possible"; return 0; }
   log "$n: release workflow $rid re-run for $tag — waiting"
-  for i in $(seq 1 40); do sleep 30; read -r st conc < <(cd "$repo" && gh run view "$rid" --json status,conclusion --jq '"\(.status) \(.conclusion//"")"' 2>/dev/null || echo "unknown"); [ "$st" = completed ] && break; done
+  for i in $(seq 1 "$CI_MAX"); do sleep "$CI_POLL"; read -r st conc < <(cd "$repo" && gh run view "$rid" --json status,conclusion --jq '"\(.status) \(.conclusion//"")"' 2>/dev/null || echo "unknown"); [ "$st" = completed ] && break; done
   if [ "${conc:-}" = success ]; then stage workflow recovered "재실행으로 성공 ($tag)"; return 0; fi
   step=$(cd "$repo" && gh run view "$rid" --json jobs --jq '[.jobs[] | .steps[] | select(.conclusion=="failure") | .name] | join(", ")' 2>/dev/null)
   excerpt=$(cd "$repo" && gh run view "$rid" --log-failed 2>/dev/null | sed 's/^[^\t]*\t[^\t]*\t//' | grep -i -E "error|fail|expected|mismatch" | grep -v -i deprecat | head -6 | cut -c1-200 | tr '\n' ' ' | sed 's/\t/ /g')
@@ -351,7 +359,7 @@ publish_release(){ # $1=태그 $2=제목 $3=노트 $4=ghrel $5=자산 목록 파
       local -a nargs=(--generate-notes); [ -n "$notes" ] && [ -f "$notes" ] && nargs=(--notes-file "$notes")
       (cd "$repo" && gh release create "$tag" --title "${title:-$tag}" "${nargs[@]}" >>"$LOG" 2>&1) && stage gh-release created "GitHub Release $tag" || stage gh-release create-failed "gh release create 실패"
     elif [ ${#assets[@]} -gt 0 ]; then
-      for i in $(seq 1 30); do (cd "$repo" && gh release view "$tag" >/dev/null 2>&1) && break; sleep 30; done
+      for i in $(seq 1 "$REL_MAX"); do (cd "$repo" && gh release view "$tag" >/dev/null 2>&1) && break; sleep "$CI_POLL"; done
       (cd "$repo" && gh release view "$tag" >/dev/null 2>&1) || { log "$n: 워크플로가 15분 안에 Release 를 만들지 않음 — 직접 만든다"; (cd "$repo" && gh release create "$tag" --title "${title:-$tag}" --generate-notes >>"$LOG" 2>&1) || true; }
     fi
   fi
@@ -382,14 +390,14 @@ publish_release(){ # $1=태그 $2=제목 $3=노트 $4=ghrel $5=자산 목록 파
         if [ "$sum_old" = "$sum_new" ]; then log "$n: asset $name 동일(이미 게시됨)"; continue; fi
         log "$n: ASSET CONFLICT $name — 게시된 파일과 체크섬이 다름, 덮어쓰지 않음"; conflict=1; continue
       fi
-      with_retry "asset upload $name" bash -c "cd '$repo' && gh release upload '$tag' '$a'" && log "$n: uploaded $name ($sum_new)" || { log "$n: upload FAILED $name ($RETRY_KIND)"; conflict=1; }
+      with_retry "asset upload $name" bash -c "cd '$repo' && gh release upload '$tag' '$a'" && { log "$n: uploaded $name ($sum_new)"; printf '%s  %s\n' "$sum_new" "$name" >> "$OUT/assets.sha256"; } || { log "$n: upload FAILED $name ($RETRY_KIND)"; conflict=1; }
     done
     [ $conflict -eq 0 ] && stage assets uploaded "${#assets[@]}개" || { stage assets conflict "충돌/실패 있음 — 사람 확인"; result="$result, asset conflict"; }
   fi
   prev=$(cd "$repo" && gh release list --limit 10 --json tagName --jq "[.[].tagName] | map(select(. != \"$tag\")) | .[0] // empty" 2>/dev/null)
   prev_n=0; [ -n "$prev" ] && prev_n=$(cd "$repo" && gh release view "$prev" --json assets --jq '.assets | length' 2>/dev/null || echo 0)
   if [ "${prev_n:-0}" -gt 0 ]; then
-    for i in $(seq 1 30); do new_n=$(cd "$repo" && gh release view "$tag" --json assets --jq '.assets | length' 2>/dev/null || echo 0); [ "${new_n:-0}" -gt 0 ] && break; sleep 30; done
+    for i in $(seq 1 "$REL_MAX"); do new_n=$(cd "$repo" && gh release view "$tag" --json assets --jq '.assets | length' 2>/dev/null || echo 0); [ "${new_n:-0}" -gt 0 ] && break; sleep "$CI_POLL"; done
     if [ "${new_n:-0}" -gt 0 ]; then stage assets verified "$tag 자산 $new_n개 (이전 $prev: $prev_n)"; OUTCOME=release-ready
     else
       wf=$(cd "$repo" && gh run list --limit 40 --json headBranch,conclusion,status,name --jq "[.[] | select(.headBranch==\"$tag\")] | .[0] | \"\(.name): \(.status)/\(.conclusion)\"" 2>/dev/null)
@@ -548,9 +556,9 @@ fi
 
 # ================================================================ 일일 상한 · 큐 · 후보
 if [ $DRY -eq 0 ]; then
-  today_cost=$(jq -s --arg d "$RUN_DATE" '[.[]|select(.date==$d)|.cost_usd//0]|add // 0' "$REPO_DIR/docs/data/usage.jsonl" 2>/dev/null || echo 0)
-  today_rounds=$(jq -s --arg d "$RUN_DATE" '[.[]|select(.date==$d)]|length' "$REPO_DIR/docs/data/runs.jsonl" 2>/dev/null || echo 0)
-  today_rel=$(jq -s --arg d "$RUN_DATE" '[.[]|select(.date==$d)|select(.result|test("released v?[0-9]"))]|length' "$REPO_DIR/docs/data/runs.jsonl" 2>/dev/null || echo 0)
+  today_cost=$(jq -s --arg d "$RUN_DATE" '[.[]|select(.date==$d)|.cost_usd//0]|add // 0' "$DATA/usage.jsonl" 2>/dev/null || echo 0)
+  today_rounds=$(jq -s --arg d "$RUN_DATE" '[.[]|select(.date==$d)]|length' "$DATA/runs.jsonl" 2>/dev/null || echo 0)
+  today_rel=$(jq -s --arg d "$RUN_DATE" '[.[]|select(.date==$d)|select(.result|test("released v?[0-9]"))]|length' "$DATA/runs.jsonl" 2>/dev/null || echo 0)
   cap=""; awk -v c="$today_cost" -v m="$MAX_DAILY_COST" 'BEGIN{exit !(c>=m)}' && cap="비용 \$$today_cost ≥ \$$MAX_DAILY_COST"
   [ "${today_rounds:-0}" -ge "$MAX_DAILY_ROUNDS" ] && cap="회차 $today_rounds ≥ $MAX_DAILY_ROUNDS"
   [ "${today_rel:-0}" -ge "$MAX_DAILY_RELEASES" ] && cap="릴리즈 $today_rel ≥ $MAX_DAILY_RELEASES"
@@ -579,8 +587,8 @@ for d in "$ROOT"/*/; do
   git -C "$d" remote get-url origin >/dev/null 2>&1 || continue
   [ -z "$(git -C "$d" status --porcelain 2>/dev/null)" ] || { log "skip $n: dirty working tree"; continue; }
   [ -f "$STATE/STOP-$n" ] && { log "skip $n: STOP"; continue; }
-  if [ -z "$ONLY" ] && [ -s "$REPO_DIR/docs/data/runs.jsonl" ]; then
-    read -r streak lastd < <(jq -rs --arg p "$n" --argjson k "$DORMANT_AFTER" '[.[]|select(.project==$p)] | (.[-$k:]) as $l | [(($l|length)==$k and all($l[]; .result|test("no change"))), ($l[-1].date // "")] | @tsv' "$REPO_DIR/docs/data/runs.jsonl" 2>/dev/null || echo "false ")
+  if [ -z "$ONLY" ] && [ -s "$DATA/runs.jsonl" ]; then
+    read -r streak lastd < <(jq -rs --arg p "$n" --argjson k "$DORMANT_AFTER" '[.[]|select(.project==$p)] | (.[-$k:]) as $l | [(($l|length)==$k and all($l[]; .result|test("no change"))), ($l[-1].date // "")] | @tsv' "$DATA/runs.jsonl" 2>/dev/null || echo "false ")
     if [ "$streak" = true ] && [ -n "$lastd" ] && [ $(( ($(date +%s) - $(date -d "$lastd" +%s)) / 86400 )) -lt "$DORMANT_DAYS" ] && ! grep -q -P "^$n\t" "$STATE/fix-queue.tsv" "$STATE/run-queue.tsv" 2>/dev/null; then
       log "skip $n: dormant (변경 없음 ${DORMANT_AFTER}연속, $lastd)"; continue
     fi
