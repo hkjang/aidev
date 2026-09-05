@@ -1,0 +1,83 @@
+[
+  {
+    "title": "잘못된 요청 파라미터가 400 대신 500 으로 응답되는 문제 수정 (GlobalExceptionHandler 의 catch-all 이 Spring 기본 400 매핑을 가로챔)",
+    "value": 4,
+    "risk": 2,
+    "size": "M",
+    "status": "done",
+    "note": "MethodArgumentTypeMismatch/MissingServletRequestParameter/MissingServletRequestPart/HttpMessageNotReadable/BindException 을 400(C001), HttpMediaTypeNotSupported 를 415(C003) 로 매핑. 커밋 5cb50b3, 테스트 GlobalExceptionHandlerInvalidRequestTest 8건.",
+    "updated": "2026-09-06"
+  },
+  {
+    "title": "JwtAuthenticationFilter 와 WebConfig 의 허용 Origin 목록 이중 관리를 설정(yaml)으로 일원화",
+    "value": 3,
+    "risk": 3,
+    "size": "M",
+    "status": "pending",
+    "note": "두 목록이 서로 다르게 드리프트 중. 2026-09-05 에 sso.kcb4u.com 스킴 누락만 고쳤고 일원화는 미완.",
+    "updated": "2026-09-06"
+  },
+  {
+    "title": "AthenaServiceImpl 2294행 등 무검증 JsonNode 체인 접근으로 인한 NPE",
+    "value": 3,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "root.get(\"data\").get(\"data\").get(\"documents\").get(0) — 필드가 없으면 null 체인 NPE. 1629행/UserInfoAthenaServiceImpl 215행은 total>0 인데 items 가 비면 NPE. 362행은 이미 isArray/size 가드 있음. GlobalExceptionHandler 가 500 ResponseDto 로 감싸 주긴 함.",
+    "updated": "2026-09-06"
+  },
+  {
+    "title": "AthenaServiceImpl 1790행 userInfoVo.getEmail().split(\"@\")[0] — email null 에 NPE",
+    "value": 3,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "checkMyProject 에서 userInfoVo null 은 막았지만 email null 은 미검증.",
+    "updated": "2026-09-06"
+  },
+  {
+    "title": "AppController·ToolsController·WidgetController 등이 @RequestParam user_id 를 인증 사용자와 대조 없이 신뢰 (IDOR)",
+    "value": 5,
+    "risk": 4,
+    "size": "L",
+    "status": "pending",
+    "note": "ChatController 는 2026-09-02 세션에서 principal 로 덮어쓰도록 고쳐졌으나 나머지 컨트롤러 10여 곳은 그대로. 프론트 영향 범위가 넓어 한 세션에 끝내기 어려움 — 엔드포인트를 나눠 진행할 것.",
+    "updated": "2026-09-06"
+  },
+  {
+    "title": "FileServiceImpl.ocrUpload 의 하드코딩 경로 E:\\KCB\\doc\\ocr 설정화 또는 제거",
+    "value": 2,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "호출부가 없는 사실상 죽은 코드. 제거 쪽이 깔끔하나 외부 호출 여부 확인 필요.",
+    "updated": "2026-09-06"
+  },
+  {
+    "title": "ValidUtil, ApiCallUtil 단위 테스트 공백 보강",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "common/util 아래 15개 중 5개만 테스트 존재.",
+    "updated": "2026-09-06"
+  },
+  {
+    "title": "매퍼 XML 의 ${} SQL 문자열 보간 점검",
+    "value": 3,
+    "risk": 1,
+    "size": "S",
+    "status": "rejected",
+    "note": "2026-09-06 확인: src/main/resources/mapper 전체에 ${} 사용 0건. SQL 인젝션 경로 없음.",
+    "updated": "2026-09-06"
+  },
+  {
+    "title": "AppStatisticsServiceImpl 의 LocalDate.parse 날짜 검증 보강",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "rejected",
+    "note": "2026-09-06 확인: validateFeedbackPeriod 가 이미 null/blank/DateTimeParseException/역전 구간을 BusinessException 으로 처리 중.",
+    "updated": "2026-09-06"
+  }
+]

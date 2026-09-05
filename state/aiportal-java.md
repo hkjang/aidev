@@ -102,3 +102,14 @@
   - `AthenaServiceImpl` 1790행 `userInfoVo.getEmail().split("@")[0]` — email null 에 NPE (가치 3 / 위험 1 / 작업량 S)
   - `FileServiceImpl.ocrUpload` 의 하드코딩 경로 `E:\KCB\doc\ocr` — 호출부가 없는 사실상 죽은 코드라 설정화 또는 제거 판단 필요 (가치 2 / 위험 2 / 작업량 S)
   - `ValidUtil`, `ApiCallUtil` 단위 테스트 공백 보강 (가치 2 / 위험 1 / 작업량 S)
+## 2026-09-06
+- 선택: 잘못된 요청 파라미터가 400 대신 500 으로 응답되는 문제 수정 (가치 4 / 위험 2 / 작업량 M)
+- 결과: 성공
+- 요약: `GlobalExceptionHandler` 의 `@ExceptionHandler(Exception.class)` 는 Spring 의 `DefaultHandlerExceptionResolver` 보다 먼저 동작하기 때문에, Spring 이 원래 400 으로 내려 주던 클라이언트 입력 오류(`?limit=abc` 같은 파라미터 타입 불일치, 필수 파라미터 누락, 깨진 JSON 본문, 필수 업로드 항목 누락)까지 전부 삼켜서 `C002 서버 내부 오류가 발생했습니다`(500) 로 응답했습니다. 호출자는 자기 요청이 잘못된 것인지 서버가 죽은 것인지 구분할 수 없고, 이 요청들이 activity_log 에 서버 오류로 쌓여 실제 장애를 가립니다(컨트롤러 45개 `@RequestParam`, 44개 `@RequestBody` 가 모두 해당). 핸들러 인자 처리 단계에서 발생하는 `MethodArgumentTypeMismatchException`·`MissingServletRequestParameterException`·`MissingServletRequestPartException`·`HttpMessageNotReadableException`·`BindException` 을 400(C001) 로, `HttpMediaTypeNotSupportedException` 을 415(신규 `ErrorCode.UNSUPPORTED_MEDIA_TYPE`, C003) 로 매핑하고 어떤 파라미터가 문제인지 알려 주는 메시지를 붙였습니다(예외 원문에는 내부 타입·패키지명이 섞여 있어 그대로 노출하지 않음). 매핑 단계에서 던져지는 예외(405·404 등)는 handler 가 null 이라 `basePackages` 로 제한된 이 advice 의 대상이 아니어서 범위에서 제외했고, 기존 `MethodArgumentNotValidException` 핸들러는 `BindException` 보다 구체적이라 그대로 우선합니다. 검증은 `GlobalExceptionHandlerInvalidRequestTest`(8: 타입 불일치 / 필수 파라미터 누락 / 깨진 JSON / 필수 업로드 항목 누락 / 415 / 정상 요청 / 서버 예외 500 유지 / BusinessException 400 유지 회귀 가드) 를 standalone MockMvc 로 추가한 뒤 `sh gradlew check build` 실행으로 했고 25개 테스트 클래스 121개 테스트 전부 통과했습니다. 커밋 5cb50b3. (참고: 이 세션 환경에는 JDK 가 없고 JRE 만 있어 Temurin 21 을 `~/jdks` 에 내려받아 `JAVA_HOME` 을 지정해 빌드했습니다. 저장소에는 아무 변경도 하지 않았습니다.)
+- 보류 아이디어:
+  - `JwtAuthenticationFilter` 와 `WebConfig` 의 허용 Origin 목록 이중 관리를 설정(yaml)으로 일원화 — 현재 두 목록이 서로 다르게 드리프트 중 (가치 3 / 위험 3 / 작업량 M)
+  - `AthenaServiceImpl` 2294행 `root.get("data").get("data").get("documents").get(0)` 등 무검증 JsonNode 체인 — 응답 형식이 다르면 NPE (가치 3 / 위험 2 / 작업량 S)
+  - `AthenaServiceImpl` 1790행 `userInfoVo.getEmail().split("@")[0]` — email null 에 NPE (가치 3 / 위험 1 / 작업량 S)
+  - `AppController`·`ToolsController`·`WidgetController` 등이 `@RequestParam user_id` 를 그대로 신뢰 — 인증 사용자와 대조하지 않아 타인 데이터 접근 가능(IDOR). 프론트 영향 범위가 넓어 별도 세션 필요 (가치 5 / 위험 4 / 작업량 L)
+  - `FileServiceImpl.ocrUpload` 의 하드코딩 경로 `E:\KCB\doc\ocr` — 호출부가 없는 사실상 죽은 코드라 설정화 또는 제거 판단 필요 (가치 2 / 위험 2 / 작업량 S)
+
