@@ -28,10 +28,40 @@ while [ $# -gt 0 ]; do case "$1" in
   --release-only) RELEASE_ONLY=$2; shift;; --assets-only) ASSETS_ONLY=$2; shift;;
   *) echo "unknown arg $1"; exit 2;; esac; shift; done
 
-mkdir -p "$STATE" "$LOGS" "$WT_BASE" "$RUNS" "$REPO_DIR/docs/data"
+mkdir -p "$STATE" "$LOGS" "$WT_BASE" "$RUNS" "$REPO_DIR/docs/data" "$HOME/.auto-improve"
 RUN_DATE=$(date +%Y-%m-%d); LOG="$LOGS/$RUN_DATE.log"
 log(){ echo "[$(date +%H:%M:%S)] $*" | tee -a "$LOG"; }
 GATE="python3 $HERE/gate.py"
+# 단계별 제한 시간(초) — 넘기면 그 단계의 프로세스만 종료하고 시간 초과로 기록한다
+T_IMPROVE=${T_IMPROVE:-2700}; T_REVIEW=${T_REVIEW:-900}; T_RELEASE=${T_RELEASE:-3600}; T_ASSETS=${T_ASSETS:-3600}
+# 잠금 소유자 기록 (health.sh 가 고착 판단에 쓴다) — 다른 회차의 작업 디렉터리는 건드리지 않는다
+OWNER_FILE="$HOME/.auto-improve/run.owner"
+if opid=$(jq -r '.pid // empty' "$OWNER_FILE" 2>/dev/null) && [ -n "$opid" ] && [ "$opid" != "$$" ] && kill -0 "$opid" 2>/dev/null; then
+  log "다른 러너(pid $opid)가 실행 중 — 겹쳐 돌리지 않는다 (flock 뒤에서 실행하세요)"; exit 4
+fi
+printf '{"pid":%d,"started":"%s","script":"%s"}\n' $$ "$(date -Iseconds)" "$0" > "$OWNER_FILE"
+trap 'rm -f "$OWNER_FILE"' EXIT
+
+# 일시적 오류(네트워크·GitHub 5xx·잠깐의 잠금)만 재시도한다. 인증 오류·충돌·테스트 실패는 재시도하지 않는다.
+#   사용: with_retry "<설명>" <명령...>   (명령의 stderr 를 검사해 유형을 나눈다)
+with_retry(){
+  local what=$1; shift; local i rc err delays=(10 30 90)
+  for i in 0 1 2 3; do
+    err=$("$@" 2>&1 >>"$LOG"); rc=$?
+    [ $rc -eq 0 ] && return 0
+    printf '%s\n' "$err" >> "$LOG"
+    if grep -qiE "HTTP 401|HTTP 403|authentication|not logged|permission denied \(publickey\)|bad credentials" <<<"$err"; then
+      log "$what: 인증/권한 오류 — 재시도하지 않음"; RETRY_KIND=auth; return $rc; fi
+    if grep -qiE "conflict|non-fast-forward|rejected|already exists|not mergeable|CONFLICT" <<<"$err"; then
+      log "$what: 충돌/거절 — 재시도하지 않음"; RETRY_KIND=conflict; return $rc; fi
+    if [ $i -lt 3 ] && grep -qiE "timeout|timed out|connection|network|HTTP 5[0-9][0-9]|502|503|504|rate limit|temporarily|EOF|reset by peer|could not resolve" <<<"$err"; then
+      log "$what: 일시 오류 — ${delays[$i]}s 뒤 재시도 ($((i+1))/3)"; sleep "${delays[$i]}"; continue; fi
+    RETRY_KIND=other; return $rc
+  done
+  RETRY_KIND=exhausted; return 1
+}
+# 회차 시작 전 인증 확인 — 없으면 아무것도 하지 않고 실행 오류로 남긴다
+gh auth status >/dev/null 2>&1 || { log "gh 인증 없음 — 회차를 시작하지 않는다"; exit 3; }
 
 # ---------------------------------------------------------------- 정책 · 실행 단위
 # 정책: default.policy.json 위에 <프로젝트>.policy.json 을 덮는다. 에이전트는 이 파일들을 보지 못한다.
@@ -63,9 +93,12 @@ run_agent(){ # $1=단계 $2=프롬프트 $3=작업 디렉터리 $4=예산 $5=허
       npm_config_cache="$REAL_HOME/.npm" NVM_DIR="$REAL_HOME/.nvm" PIP_CACHE_DIR="$REAL_HOME/.cache/pip" \
       DOCKER_HOST="${DOCKER_HOST:-}" AIDEV_OUT="$OUT" \
       bash -c '[ -f "$0" ] && { set -a; . "$0"; set +a; }; exec "$@"' "$envfile" \
+      timeout -k 30 "$(case "$phase" in improve) echo $T_IMPROVE;; review) echo $T_REVIEW;; release) echo $T_RELEASE;; *) echo $T_ASSETS;; esac)" \
       claude -p "$prompt" --model "$MODEL" --settings "$CLAUDE_SETTINGS" --permission-mode acceptEdits \
         --allowedTools "$tools" --add-dir "$OUT" --max-budget-usd "$budget" --output-format json \
-  ) > "$OUT/agent-$phase.json" 2>"$OUT/agent-$phase.txt" || log "$n: $phase agent exited non-zero"
+  ) > "$OUT/agent-$phase.json" 2>"$OUT/agent-$phase.txt"; local rc=$?
+  [ $rc -eq 124 ] && { stage "$phase" timeout "단계 제한 시간 초과"; echo "TIMEOUT" >> "$OUT/agent-$phase.txt"; }
+  [ $rc -ne 0 ] && [ $rc -ne 124 ] && log "$n: $phase agent exited $rc"
   record_usage "$n" "$phase" "$OUT/agent-$phase.json" "$OUT/agent-$phase.txt"
 }
 record_usage(){ # $1=프로젝트 $2=단계 $3=json $4=txt
@@ -166,6 +199,7 @@ secrets_gate(){ # $1=설명 $2=파일(- 는 stdin)
 # ---------------------------------------------------------------- 기록 · 동기화
 record_run(){ # $1=프로젝트 $2=결과 문장 $3=outcome
   local pr; pr=$(grep -o 'https://github.com/[^ ,]*/pull/[0-9]*' <<<"$2" | head -1 || true)
+  [ -f "${OUT:-/nonexistent}/run.json" ] && jq --arg f "$(date -Iseconds)" --arg o "$3" '.finished=$f | .outcome=$o' "$OUT/run.json" > "$OUT/run.json.tmp" && mv "$OUT/run.json.tmp" "$OUT/run.json"
   local st='{}'; [ -f "${OUT:-/nonexistent}/stages.json" ] && st=$(cat "$OUT/stages.json")
   jq -cn --arg ts "$(date -Iseconds)" --arg d "$RUN_DATE" --arg p "$1" --arg r "$2" --arg o "$3" --arg rid "${RUN_ID:-}" \
      --arg b "${BASE_SHA:-}" --arg h "${HEAD_SHA:-}" --arg pr "$pr" --argjson m "${RUN_META:-{\}}" --argjson st "$st" \
@@ -235,6 +269,23 @@ publish_release(){ # $1=태그 $2=제목 $3=노트 $4=ghrel $5=자산 목록 파
       (cd "$repo" && gh release view "$tag" >/dev/null 2>&1) || { log "$n: 워크플로가 15분 안에 Release 를 만들지 않음 — 직접 만든다"; (cd "$repo" && gh release create "$tag" --title "${title:-$tag}" --generate-notes >>"$LOG" 2>&1) || true; }
     fi
   fi
+  # 매니페스트 검증 — state/<프로젝트>.assets.json 이 있으면 그 규칙을, 없으면 이전 릴리즈 자산 이름(버전만 치환)을 필수 목록으로 삼는다
+  if [ ${#assets[@]} -gt 0 ]; then
+    local mf="$STATE/$n.assets.json" req_names="" ver="${tag#v}" prev_ver missing="" a2 minsz
+    if [ -f "$mf" ]; then req_names=$(jq -r --arg v "$ver" --arg t "$tag" '.required[]? | gsub("\\{version\\}";$v) | gsub("\\{tag\\}";$t)' "$mf" 2>/dev/null)
+    else
+      local ptag; ptag=$(cd "$repo" && gh release list --limit 10 --json tagName --jq "[.[].tagName] | map(select(. != \"$tag\")) | .[0] // empty" 2>/dev/null)
+      prev_ver="${ptag#v}"
+      [ -n "$ptag" ] && req_names=$(cd "$repo" && gh release view "$ptag" --json assets --jq '.assets[].name' 2>/dev/null | sed "s/$prev_ver/$ver/g; s/$ptag/$tag/g")
+    fi
+    for a2 in $req_names; do printf '%s\n' "${assets[@]##*/}" | grep -qx "$a2" || missing="$missing $a2"; done
+    minsz=$(jq -r '.min_bytes // 1024' "$mf" 2>/dev/null); minsz=${minsz:-1024}
+    for a2 in "${assets[@]}"; do
+      [ "$(stat -c %s "$a2")" -ge "$minsz" ] || missing="$missing $(basename "$a2")(too-small)"
+      [ -f "$a2.sha256" ] && ! grep -q "$(sha256sum "$a2" | cut -d' ' -f1)" "$a2.sha256" && missing="$missing $(basename "$a2")(sha256-mismatch)"
+    done
+    if [ -n "$missing" ]; then stage manifest failed "누락/불량:$missing"; result="$result, asset manifest failed"; OUTCOME=releasing; rm -f "$5"; assets=(); else stage manifest ok "$(printf '%s ' "${assets[@]##*/}")"; fi
+  fi
   if [ ${#assets[@]} -gt 0 ]; then
     local a name existing sum_new sum_old conflict=0
     for a in "${assets[@]}"; do
@@ -245,7 +296,7 @@ publish_release(){ # $1=태그 $2=제목 $3=노트 $4=ghrel $5=자산 목록 파
         if [ "$sum_old" = "$sum_new" ]; then log "$n: asset $name 동일(이미 게시됨)"; continue; fi
         log "$n: ASSET CONFLICT $name — 게시된 파일과 체크섬이 다름, 덮어쓰지 않음"; conflict=1; continue
       fi
-      (cd "$repo" && gh release upload "$tag" "$a" >>"$LOG" 2>&1) && log "$n: uploaded $name ($sum_new)" || { log "$n: upload FAILED $name"; conflict=1; }
+      with_retry "asset upload $name" bash -c "cd '$repo' && gh release upload '$tag' '$a'" && log "$n: uploaded $name ($sum_new)" || { log "$n: upload FAILED $name ($RETRY_KIND)"; conflict=1; }
     done
     [ $conflict -eq 0 ] && stage assets uploaded "${#assets[@]}개" || { stage assets conflict "충돌/실패 있음 — 사람 확인"; result="$result, asset conflict"; }
   fi
@@ -305,14 +356,15 @@ release_project(){ # $1=base $2=변경 요약 [$3=assets] — 에이전트는 �
   if [ "$ahead" -gt 0 ] && ! git -C "$rwt" diff "origin/$base..HEAD" | secrets_gate "release diff" -; then stage release blocked "릴리즈 커밋에 비밀정보 의심"; result="$result, release blocked (secrets)"; git -C "$repo" worktree remove --force "$rwt" >>"$LOG" 2>&1 || true; return 0; fi
   git -C "$rwt" remote set-url --push origin "$(git -C "$repo" remote get-url origin)" >/dev/null 2>&1
   if [ "$ahead" -gt 0 ]; then
-    git -C "$rwt" push origin "HEAD:$base" >>"$LOG" 2>&1 || { stage release push-failed "릴리즈 커밋 푸시 실패"; result="$result, release push failed"; git -C "$repo" worktree remove --force "$rwt" >>"$LOG" 2>&1 || true; return 0; }
+    with_retry "release push" git -C "$rwt" push origin "HEAD:$base" || { stage release push-failed "릴리즈 커밋 푸시 실패 ($RETRY_KIND)"; result="$result, release push failed"; git -C "$repo" worktree remove --force "$rwt" >>"$LOG" 2>&1 || true; return 0; }
     if [ "$tagged" -eq 1 ] && ! ci_gate "$(git -C "$rwt" rev-parse HEAD)"; then
       stage release ci-blocked "릴리즈 커밋 CI: $CI_STATE — $CI_REASON (태그 보류)"; result="$result, release tag held ($CI_STATE)"; OUTCOME=releasing
       git -C "$repo" pull --ff-only origin "$base" >>"$LOG" 2>&1 || true; git -C "$repo" worktree remove --force "$rwt" >>"$LOG" 2>&1 || true; return 0
     fi
   fi
   if [ "$tagged" -eq 1 ]; then
-    git -C "$rwt" push origin "refs/tags/$tag" >>"$LOG" 2>&1 || { stage release tag-push-failed "태그 푸시 실패"; result="$result, tag push failed"; git -C "$repo" worktree remove --force "$rwt" >>"$LOG" 2>&1 || true; return 0; }
+    if git -C "$repo" ls-remote --tags origin "refs/tags/$tag" 2>/dev/null | grep -q .; then log "$n: tag $tag already on remote (재개)"; \
+    else with_retry "tag push" git -C "$rwt" push origin "refs/tags/$tag" || { stage release tag-push-failed "태그 푸시 실패 ($RETRY_KIND)"; result="$result, tag push failed"; git -C "$repo" worktree remove --force "$rwt" >>"$LOG" 2>&1 || true; return 0; }; fi
   fi
   stage release published "${tag:-$(jq -r .version "$rfile")}"; result="$result, released ${tag:-$(jq -r .version "$rfile")}"; OUTCOME=releasing
   git -C "$repo" pull --ff-only origin "$base" >>"$LOG" 2>&1 || true
@@ -332,10 +384,71 @@ rollback_project(){ # $1=머지 커밋
 
 🤖 aidev 자동 롤백 · run $RUN_ID · https://hkjang.github.io/aidev/projects/$n/" 2>>"$LOG" || true)
     stage rollback pr-opened "$url"; result="$result, rollback PR $url"
+    # 배포 복구는 별도 절차 — 이전 정상 릴리즈와 자산을 안내하는 이슈를 연다. DB 마이그레이션이 섞였으면 자동 복구 대상이 아니다.
+    local good mig
+    good=$(cd "$repo" && gh release list --limit 10 --json tagName,isPrerelease --jq '[.[]|select(.isPrerelease==false)] | .[1].tagName // .[0].tagName // "?"' 2>/dev/null)
+    mig=$(git -C "$repo" show --name-only --format= "$sha" 2>/dev/null | grep -E '(^|/)migrations?/' | head -5 | tr '\n' ' ')
+    (cd "$REPO_DIR" && gh label create deploy-recovery --color B60205 --description "배포 복구 필요" >/dev/null 2>&1; gh issue create --title "⏪ 배포 복구 필요: $n (${sha:0:7})" --label deploy-recovery --body "코드 되돌림 PR: $url
+
+**배포 복구는 별도입니다.** 운영 환경을 마지막 정상 릴리즈로 되돌리려면:
+- 이전 정상 릴리즈: https://github.com/hkjang/$(basename "$(git -C "$repo" remote get-url origin)" .git)/releases/tag/$good (자산·체크섬은 그 릴리즈 페이지)
+- $( [ -n "$mig" ] && echo "⚠️ 이 변경에 DB 마이그레이션이 포함됩니다($mig). 자동 복구 대상이 아니며 **사람의 복구 계획과 승인**이 필요합니다." || echo "DB 마이그레이션은 포함되지 않았습니다." )
+- 복구 후 이 이슈를 닫아 주세요. (run $RUN_ID)" >/dev/null 2>&1) || true
     jq -cn --arg ts "$(date -Iseconds)" --arg d "$RUN_DATE" --arg p "$n" --arg pr "$url" --arg detail "머지 ${sha:0:7} 이 릴리즈를 반복해서 깨뜨려 되돌림 PR 을 열었다. 같은 접근은 피할 것." '{ts:$ts,date:$d,project:$p,kind:"rolled-back",pr:$pr,detail:$detail}' >> "$STATE/lessons.jsonl"
   else stage rollback conflict "revert 충돌 — 사람 개입"; result="$result, rollback failed"; fi
   git -C "$repo" worktree remove --force "$rwt" >>"$LOG" 2>&1 || true
 }
+
+# ================================================================ 중단된 실행 재개
+# 6시간 안에 시작했지만 finished 가 없는 improve 실행: PR 이 있으면 원격 상태를 보고 마지막 안전한 단계부터 이어간다.
+# (이미 만든 PR·태그·릴리즈는 다시 만들지 않는다. 에이전트 단계는 다시 돌리지 않는다.)
+resume_runs(){
+  local rj d st url pr_state msha owner_pid
+  # 다른 러너가 살아 있으면(잠금 소유자 pid 생존) 그 실행은 진행 중이므로 재개하지 않는다
+  owner_pid=$(jq -r '.pid // empty' "$HOME/.auto-improve/run.owner" 2>/dev/null)
+  if [ -n "$owner_pid" ] && [ "$owner_pid" != "$$" ] && kill -0 "$owner_pid" 2>/dev/null; then log "resume: 다른 러너(pid $owner_pid) 실행 중 — 재개 생략"; return 0; fi
+  for rj in "$RUNS"/*/run.json; do
+    [ -f "$rj" ] || continue
+    jq -e '.finished' "$rj" >/dev/null 2>&1 && continue
+    # 10분 안에 갱신된 실행은 아직 살아 있을 수 있다
+    [ $(( $(date +%s) - $(stat -c %Y "$(dirname "$rj")") )) -gt 600 ] || { log "resume: $(basename "$(dirname "$rj")") 최근 갱신 — 생략"; continue; }
+    [ "$(jq -r .kind "$rj")" = improve ] || { jq --arg f "$(date -Iseconds)" '.finished=$f | .outcome="error" | .note="재개 불가 종류"' "$rj" > "$rj.tmp" && mv "$rj.tmp" "$rj"; continue; }
+    [ $(( $(date +%s) - $(date -d "$(jq -r .started "$rj")" +%s) )) -lt 21600 ] || { jq --arg f "$(date -Iseconds)" '.finished=$f | .outcome="error" | .note="6시간 경과, 재개 안 함"' "$rj" > "$rj.tmp" && mv "$rj.tmp" "$rj"; continue; }
+    d=$(dirname "$rj"); n=$(jq -r .project "$rj"); repo="$ROOT/$n"; OUT="$d"; RUN_ID=$(basename "$d"); RUN_META="{}"; HEAD_SHA=""; BASE_SHA=""
+    [ -d "$repo" ] || continue
+    url=$(jq -r '.pr.reason // empty' "$d/stages.json" 2>/dev/null)
+    base=$(policy "$n" '.base_branch'); base=${base:-main}
+    log "=== resume $RUN_ID ($n) — 단계: $(jq -r 'to_entries|map("\(.key)=\(.value.state)")|join(",")' "$d/stages.json" 2>/dev/null)"
+    if [ -z "$url" ]; then
+      # PR 전에 끊김: 에이전트 산출물은 신뢰하지 않는다 → 실행 오류로 닫는다
+      stage resume closed "PR 이전 단계에서 중단 — 에이전트 단계는 재실행하지 않음"; record_run "$n" "error: interrupted before PR" "error"; continue
+    fi
+    read -r pr_state msha HEAD_SHA < <(cd "$repo" && gh pr view "$url" --json state,mergeCommit,headRefOid --jq '"\(.state) \(.mergeCommit.oid // "") \(.headRefOid)"' 2>/dev/null || echo "UNKNOWN  ")
+    case "$pr_state" in
+      MERGED)
+        stage merge done "$msha (원격 확인)"; result="merged $url"; OUTCOME=merged
+        if ! jq -e '.release' "$d/stages.json" >/dev/null 2>&1 && [ "$RELEASE" -eq 1 ] && [ "$(policy "$n" '.release')" = true ]; then
+          git -C "$repo" pull -q --ff-only origin "$base" >>"$LOG" 2>&1 || true
+          release_project "$base" "$(tail -n 8 "$d/ledger-entry.md" 2>/dev/null)"
+        fi
+        record_run "$n" "resumed: $result" "$OUTCOME"; sync_repo "run($RUN_DATE): $n — resumed, $result";;
+      OPEN)
+        # 리뷰·CI 게이트부터 다시: 리뷰 결과가 유효하면 재사용, 아니면 사람 판단으로 남긴다
+        result="PR $url"; OUTCOME=review-pending
+        if $GATE review "$d/review.json" >/dev/null 2>&1 && [ -n "$HEAD_SHA" ] && [ "$MERGE" -eq 1 ] && [ "$(policy "$n" '.auto_merge')" = true ]; then
+          if ci_gate "$HEAD_SHA"; then
+            if with_retry "pr merge" bash -c "cd '$repo' && gh pr merge '$url' --merge --delete-branch --match-head-commit '$HEAD_SHA'"; then
+              stage merge done "$HEAD_SHA (재개)"; result="merged $url"; OUTCOME=merged; git -C "$repo" pull -q --ff-only origin "$base" >>"$LOG" 2>&1 || true
+              [ "$RELEASE" -eq 1 ] && [ "$(policy "$n" '.release')" = true ] && release_project "$base" "$(tail -n 8 "$d/ledger-entry.md" 2>/dev/null)"
+            else stage merge failed "재개 머지 실패"; result="merge failed $url"; fi
+          else stage ci "$CI_STATE" "$CI_REASON (재개)"; result="CI ${CI_STATE}, PR open $url"; fi
+        else stage resume held "리뷰 결과 없음/무효 — 사람 판단"; result="review missing, PR open $url"; fi
+        record_run "$n" "resumed: $result" "$OUTCOME"; sync_repo "run($RUN_DATE): $n — resumed, $result";;
+      *) stage resume closed "PR 상태 확인 불가($pr_state)"; record_run "$n" "error: resume ($pr_state)" "error";;
+    esac
+  done
+}
+[ $DRY -eq 1 ] || resume_runs
 
 # ================================================================ 단독 모드
 if [ -n "${ASSETS_ONLY:-}" ] || [ -n "${RELEASE_ONLY:-}" ]; then
@@ -347,7 +460,7 @@ if [ -n "${ASSETS_ONLY:-}" ] || [ -n "${RELEASE_ONLY:-}" ]; then
 fi
 
 # ================================================================ 일일 상한 · 큐 · 후보
-if [ -z "$ONLY" ] && [ $DRY -eq 0 ]; then
+if [ $DRY -eq 0 ]; then
   today_cost=$(jq -s --arg d "$RUN_DATE" '[.[]|select(.date==$d)|.cost_usd//0]|add // 0' "$REPO_DIR/docs/data/usage.jsonl" 2>/dev/null || echo 0)
   today_rounds=$(jq -s --arg d "$RUN_DATE" '[.[]|select(.date==$d)]|length' "$REPO_DIR/docs/data/runs.jsonl" 2>/dev/null || echo 0)
   today_rel=$(jq -s --arg d "$RUN_DATE" '[.[]|select(.date==$d)|select(.result|test("released v?[0-9]"))]|length' "$REPO_DIR/docs/data/runs.jsonl" 2>/dev/null || echo 0)
@@ -409,8 +522,9 @@ for n in "${picked[@]}"; do
   base=$(policy "$n" '.base_branch'); base=${base:-$(git -C "$repo" symbolic-ref --short HEAD)}
   new_run "$n" improve
   ibudget=$(policy "$n" '.budget_usd.improve'); [ -n "$BUDGET" ] && ibudget=$BUDGET; ibudget=${ibudget:-8}
-  log "=== $n (base=$base, run $RUN_ID)"
-  budget_ok "$ibudget" || { stage improve hold "예산 부족"; record_run "$n" "hold: budget" "error"; continue; }
+  round_budget=$(awk -v a="$ibudget" -v b="$(policy "$n" '.budget_usd.review')" -v c="$(policy "$n" '.budget_usd.release')" 'BEGIN{print a+b+c}')
+  log "=== $n (base=$base, run $RUN_ID, 회차 예산 \$$round_budget)"
+  budget_ok "$round_budget" || { stage improve hold "회차 예산(\$$round_budget)이 오늘 남은 상한을 넘음"; record_run "$n" "hold: budget" "error"; continue; }
   # 기준 커밋 고정: 원격의 base 에서 시작하고 SHA 를 기록한다
   git -C "$repo" fetch -q origin "$base" >>"$LOG" 2>&1 || { stage improve error "fetch 실패"; record_run "$n" "error: fetch" "error"; continue; }
   BASE_SHA=$(git -C "$repo" rev-parse "origin/$base"); slug="auto/$RUN_DATE-$(date +%H%M)"
@@ -444,11 +558,12 @@ $(printf '%b' "$FIX_NOTE_TEXT")
     else
       stage verify passed "$(jq -r .reason "$OUT/verify.gate.json")"
       git -C "$wt" remote set-url --push origin "$(git -C "$repo" remote get-url origin)" >/dev/null 2>&1
-      git -C "$wt" push -u origin "$slug" >>"$LOG" 2>&1
+      with_retry "branch push" git -C "$wt" push -u origin "$slug" || { stage pr push-failed "브랜치 푸시 실패 ($RETRY_KIND)"; result="error: push ($RETRY_KIND)"; OUTCOME=error; }
       git -C "$wt" remote set-url --push origin DISABLED >/dev/null 2>&1 || true
       body=$(printf '자율 개선 에이전트가 생성한 PR입니다. (run %s, base %s)\n\n%s\n\n🤖 auto-improve %s · https://hkjang.github.io/aidev/projects/%s/' "$RUN_ID" "${BASE_SHA:0:7}" "$(tail -n 12 "$OUT/ledger-entry.md" 2>/dev/null)" "$RUN_DATE" "$n")
-      url=$(cd "$repo" && gh pr create --base "$base" --head "$slug" --title "auto-improve: $(git -C "$wt" log -1 --format=%s)" --body "$body" 2>>"$LOG" || true)
-      stage pr created "$url"; result="PR $url"; OUTCOME=review-pending
+      url=""; [ "$OUTCOME" != error ] && { url=$(cd "$repo" && gh pr list --head "$slug" --json url --jq '.[0].url // empty' 2>/dev/null); }   # 재개 시 중복 생성 방지
+      [ -n "$url" ] || [ "$OUTCOME" = error ] || url=$(cd "$repo" && gh pr create --base "$base" --head "$slug" --title "auto-improve: $(git -C "$wt" log -1 --format=%s)" --body "$body" 2>>"$LOG" || true)
+      [ -n "$url" ] && { stage pr created "$url"; result="PR $url"; OUTCOME=review-pending; } || { [ "$OUTCOME" = error ] || { stage pr create-failed "gh pr create 실패"; result="error: pr create"; OUTCOME=error; }; }
       merge_ok=0; [ "$MERGE" -eq 1 ] && [ "$(policy "$n" '.auto_merge')" = true ] && [ -n "$url" ] && merge_ok=1
       if [ "$merge_ok" -eq 1 ]; then
         guarded=$(guarded_files "$BASE_SHA")
@@ -478,7 +593,7 @@ $(sed 's/^/- /' <<<"$guarded")
         if ci_gate "$HEAD_SHA"; then
           stage ci passed "$CI_REASON"
           git -C "$repo" worktree remove --force "$wt" >>"$LOG" 2>&1 || true
-          if (cd "$repo" && gh pr merge "$url" --merge --delete-branch --match-head-commit "$HEAD_SHA" >>"$LOG" 2>&1); then
+          if with_retry "pr merge" bash -c "cd '$repo' && gh pr merge '$url' --merge --delete-branch --match-head-commit '$HEAD_SHA'"; then
             stage merge done "$HEAD_SHA"; result="merged $url"; OUTCOME=merged
             git -C "$repo" pull --ff-only origin "$base" >>"$LOG" 2>&1 || true
             [ "$RELEASE" -eq 1 ] && [ "$(policy "$n" '.release')" = true ] && release_project "$base" "$(tail -n 8 "$OUT/ledger-entry.md" 2>/dev/null)"

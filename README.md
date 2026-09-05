@@ -238,6 +238,22 @@ SEO / AEO / 모바일:
 
 실행 기록: `state/runs/<run_id>/` 에 `run.json`·`stages.json`(단계별 상태/사유/시각)·`verify.json`·`review.json`·`release.json`·`ci-*.json`. `runs.jsonl` 에는 `run_id`·`base_sha`·`head_sha`·`pr`·`outcome`(`no-change | review-pending | verify-failed | merged | releasing | release-ready | error`)·`stages` 가 구조화 필드로 들어간다.
 
+## 10-1a. 러너 v2 — 실행·릴리즈 신뢰성 (2단계)
+
+| 항목 | 구현 |
+|---|---|
+| 실행 ID | `state/runs/<날짜-시각-프로젝트-종류>/` 에 실행별 증거(`run.json` 시작/완료/outcome, `stages.json`, verify/review/release/ci 결과). 같은 날 같은 프로젝트를 여러 번 돌려도 덮어쓰지 않음 |
+| 구조화 상태 | `runs.jsonl` 의 `outcome`(변경 없음·검토 대기·검증 실패·병합 완료·릴리즈 진행 중·배포 준비 완료·실행 오류)과 `stages`(단계별 state/reason/at). 대시보드·통계는 outcome 기준, 옛 기록은 문장으로 추정 |
+| 중단 재개 | `resume_runs()` — 시작 시 6시간 안의 미완료 improve 실행을 찾아 원격 상태로 이어감: PR 없음→실행 오류로 닫음(에이전트 단계는 재실행 안 함), PR 머지됨→릴리즈만, PR 열림→유효한 리뷰 결과가 있으면 CI→머지→릴리즈. PR·태그·Release 는 존재 확인 후 재생성하지 않음 |
+| 실패 유형별 재시도 | `with_retry` — stderr 로 분류: 인증/권한 → 즉시 중단, 충돌/거절 → 재시도 없음, 네트워크·5xx·rate limit → 10/30/90초 간격 3회. 시작 시 `gh auth status` 실패면 회차를 열지 않음(exit 3) |
+| 잠금·종료 | `~/.auto-improve/run.owner` 에 pid·시작 시각·스크립트 기록(종료 시 제거). 단계별 제한 시간 `timeout -k 30`(개선 45분·리뷰 15분·릴리즈/자산 60분) — 초과 시 그 단계 프로세스만 종료하고 `timeout` 으로 기록. 다른 회차의 작업 디렉터리는 건드리지 않음 |
+| 전체 회차 예산 | 개선+리뷰+릴리즈 예산 합이 오늘 남은 상한 안에 있어야 시작(`hold: budget`). 단계 시작 전 `budget_ok` 재확인. `--project` 수동 실행에도 일일 상한 적용. 비용 없는 세션은 `cost_usd: null`(미확인)로 기록해 0 과 구분 |
+| 릴리즈 완료 조건 분리 | `stages`: `release`(태그 게시) / `gh-release`(Release 생성) / `manifest` / `assets`(업로드·검증). `release-ready` 는 자산 검증까지 끝났을 때만 |
+| 자산 매니페스트 | `state/<프로젝트>.assets.json` (`required` 이름 패턴 `{version}`/`{tag}`, `min_bytes`) — 없으면 **이전 릴리즈 자산 이름에서 버전만 치환한 목록**을 필수로 삼음. 누락·너무 작은 파일·`.sha256` 불일치면 업로드하지 않고 `manifest failed` |
+| 자산 불변성 | 같은 이름의 게시 자산은 체크섬 비교 → 같으면 건너뜀, 다르면 `asset conflict` 로 사람 확인 (덮어쓰기 없음) |
+| 코드/배포 복구 분리 | 롤백 PR(코드) 과 별도로 라벨 `deploy-recovery` 이슈를 열어 이전 정상 릴리즈·자산 링크를 안내. 머지 커밋에 `migrations/` 가 있으면 자동 복구 대상이 아님을 명시하고 사람 계획·승인 요구 |
+| 품질 지표 | 대시보드 '품질 지표(최근 14일)': 검증된 개선 완료율(24h 관찰 후 회귀 없음), 완전한 릴리즈 비율, 사람의 재작업률, 변경 후 회귀율, 유효 개선당 비용(비용 확인 세션만), 예외 처리 소요 시간 중앙값(`state/alerts-history.jsonl` open→close), 실행 오류 수 |
+
 ## 10-2. 품질·안전 게이트
 
 | 단계 | 파일 | 동작 |

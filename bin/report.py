@@ -60,6 +60,33 @@ WARN_PATTERNS = [
 
 
 # ---------- 기본 유틸 ----------
+OUTCOME_LABEL = {"no-change": "변경 없음", "review-pending": "검토 대기", "verify-failed": "검증 실패", "merged": "병합 완료",
+                 "releasing": "릴리즈 진행 중", "release-ready": "배포 준비 완료", "error": "실행 오류"}
+
+
+def outcome_of(r):
+    """구조화 outcome 이 있으면 그것을, 없으면 결과 문장으로 추정한다 (구 기록 호환)."""
+    o = r.get("outcome") if isinstance(r, dict) else None
+    if o in OUTCOME_LABEL:
+        return o
+    res = (r.get("result") or "") if isinstance(r, dict) else ""
+    if "ASSETS MISSING" in res or "release failed" in res or "release missing" in res:
+        return "releasing" if re.search(r"released v?\d", res) else "merged"
+    if re.search(r"released v?\d", res):
+        return "release-ready"
+    if "PR open" in res or "review" in res or "guarded" in res:
+        return "review-pending"
+    if "merge failed" in res or "CI failed" in res or "verify failed" in res:
+        return "verify-failed"
+    if "merged" in res:
+        return "merged"
+    if "no change" in res:
+        return "no-change"
+    if "error" in res or "daily cap" in res:
+        return "error"
+    return "no-change"
+
+
 def classify(result):
     r = result or ""
     if re.search(r"released v?\d", r):
@@ -117,6 +144,15 @@ def result_html(project, result):
 
 def pill(status):
     return f'<span class="pill pill-{status}">{STATUS[status]}</span>'
+
+
+OUTCOME_PILL = {"no-change": "nochange", "review-pending": "merged", "verify-failed": "failed", "merged": "merged",
+                "releasing": "merged", "release-ready": "released", "error": "failed"}
+
+
+def outcome_pill(r):
+    o = outcome_of(r)
+    return f'<span class="pill pill-{OUTCOME_PILL[o]}" title="outcome={o}">{OUTCOME_LABEL[o]}</span>'
 
 
 def meta_html(r):
@@ -251,9 +287,58 @@ def counts(day_runs):
     c = defaultdict(int)
     for r in day_runs:
         c[classify(r.get("result"))] += 1
+        c["o:" + outcome_of(r)] += 1
     c["total"] = len(day_runs)
-    c["projects"] = len({r.get("project") for r in day_runs})
+    c["projects"] = len({r.get("project") for r in day_runs if r.get("project") != "(runner)"})
     return c
+
+
+def quality_metrics(runs, usage, lessons, alert_hist, days_window=14):
+    """대시보드 품질 지표. 관찰 기간(24h)이 지나지 않은 머지는 '검증된 개선' 분모에서 뺀다."""
+    cutoff = (date.today() - timedelta(days=days_window)).isoformat()
+    recent = [r for r in runs if (r.get("date") or "") >= cutoff and r.get("project") != "(runner)"]
+    merged = [r for r in recent if outcome_of(r) in ("merged", "releasing", "release-ready")]
+    observed = [r for r in merged if (NOW - datetime.fromisoformat(r["ts"])).total_seconds() >= 86400] if merged else []
+    prs = {r.get("pr") for r in observed if r.get("pr")}
+    regressed_prs = {l.get("pr") for l in lessons if l.get("kind") in ("ci-broken-after-merge", "reverted", "rolled-back") and (l.get("date") or "") >= cutoff}
+    reworked_prs = {l.get("pr") for l in lessons if l.get("kind") in ("reverted", "rolled-back") and (l.get("date") or "") >= cutoff}
+    verified = [r for r in observed if r.get("pr") not in regressed_prs]
+    rel_attempts = [r for r in recent if outcome_of(r) in ("releasing", "release-ready")]
+    rel_ready = [r for r in rel_attempts if outcome_of(r) == "release-ready"]
+    costed_ids = {u.get("run_id") for u in usage if u.get("cost_usd") is not None and u.get("run_id")}
+    cost_total = sum(float(u.get("cost_usd") or 0) for u in usage if (u.get("date") or "") >= cutoff and u.get("cost_usd") is not None)
+    verified_costed = [r for r in verified if r.get("run_id") in costed_ids]
+    unknown_cost = sum(1 for u in usage if (u.get("date") or "") >= cutoff and u.get("cost_usd") is None)
+    # 예외 처리 소요 시간: alerts-history 의 open→close 짝
+    durations = []
+    opened = {}
+    for e in alert_hist:
+        k = e.get("key")
+        if e.get("event") == "open":
+            opened[k] = e.get("ts")
+        elif e.get("event") == "close" and k in opened:
+            try:
+                durations.append((datetime.fromisoformat(e["ts"]) - datetime.fromisoformat(opened.pop(k))).total_seconds() / 3600)
+            except Exception:
+                pass
+    durations.sort()
+    med = durations[len(durations) // 2] if durations else None
+
+    def pct(a, b):
+        return f"{a / b * 100:.0f}%" if b else "—"
+    return [
+        ("검증된 개선 완료율", pct(len(verified), len(observed)), f"관찰 24h 지난 머지 {len(observed)}건 중 회귀 없음 {len(verified)}건"),
+        ("완전한 릴리즈 비율", pct(len(rel_ready), len(rel_attempts)), f"릴리즈 시도 {len(rel_attempts)}건 중 자산 검증까지 {len(rel_ready)}건"),
+        ("사람의 재작업률", pct(len(reworked_prs & prs), len(observed)), f"되돌림·롤백 {len(reworked_prs & prs)}건 / 관찰 머지 {len(observed)}건"),
+        ("변경 후 회귀율", pct(len(regressed_prs & prs), len(observed)), f"회귀 {len(regressed_prs & prs)}건 / 관찰 머지 {len(observed)}건"),
+        ("유효 개선당 비용", (f"${cost_total / len(verified_costed):.2f}" if verified_costed else "—"), f"비용 확인된 유효 개선 {len(verified_costed)}건, 미확인 세션 {unknown_cost}"),
+        ("예외 처리 소요 시간(중앙값)", (f"{med:.1f}시간" if med is not None else "—"), f"해결된 경고 {len(durations)}건"),
+        ("실행 오류", str(sum(1 for r in recent if outcome_of(r) == "error")), f"최근 {days_window}일"),
+    ]
+
+
+def alert_history():
+    return load_jsonl(os.path.join(STATE, "alerts-history.jsonl"))
 
 
 def usage_sum(rows):
@@ -304,8 +389,8 @@ def jsonld(obj):
 
 
 def stats_html(c, usage=None):
-    items = [("회차", c["total"]), ("프로젝트", c["projects"]), ("릴리즈", c["released"]),
-             ("머지(릴리즈 없음)", c["merged"]), ("변경 없음", c["nochange"]), ("실패", c["failed"])]
+    items = [("회차", c["total"]), ("프로젝트", c["projects"]), ("배포 준비 완료", c["o:release-ready"]), ("릴리즈 진행 중", c["o:releasing"]),
+             ("병합 완료", c["o:merged"]), ("검토 대기", c["o:review-pending"]), ("검증 실패", c["o:verify-failed"]), ("변경 없음", c["o:no-change"]), ("실행 오류", c["o:error"])]
     if usage and usage["sessions"]:
         items += [("비용", f"${usage['cost']:.2f}"), ("에이전트 시간", fmt_min(usage["minutes"]))]
     return '<ul class="stats">' + "".join(f"<li><b>{v}</b><span>{k}</span></li>" for k, v in items) + "</ul>\n"
@@ -445,7 +530,7 @@ def runs_table(runs_, with_date=False, filterable=True, caption=None):
         when = (r.get("ts") or "")[:16].replace("T", " ") if with_date else ts_hm(r)
         rows.append((classify(r.get("result")),
                      [esc(when), f'<a href="{SITE}/projects/{esc(p)}/">{esc(p)}</a>',
-                      pill(classify(r.get("result"))) + " " + result_html(p, r.get("result")) + meta_html(r)]))
+                      outcome_pill(r) + " " + result_html(p, r.get("result")) + meta_html(r)]))
     return table([("일시" if with_date else "시각", ""), ("프로젝트", "primary"), ("결과", "")], rows, filterable=filterable, caption=caption)
 
 
@@ -782,6 +867,10 @@ def write_index(by_day, days, by_day_usage, projects_info, alert_items, weeks, m
                   f'<dt>휴면 규칙</dt><dd>변경 없음 {cp.get("DORMANT_AFTER", "?")}회 연속이면 {cp.get("DORMANT_DAYS", "?")}일 제외</dd>',
                   f'<dt>수동 실행</dt><dd><a href="{GH}/aidev/issues/new?labels=run&title=run%3A+%3C%ED%94%84%EB%A1%9C%EC%A0%9D%ED%8A%B8%3E">이슈 만들기</a> — 제목 <code>run: &lt;프로젝트&gt;</code>, 라벨 <code>run</code> → 다음 회차 우선 실행</dd>',
                   "</dl>\n", "설정: `state/caps.env`. 상한에 닿으면 그날은 새 회차를 시작하지 않고 알린다.\n"]
+    qm = quality_metrics([r for v in by_day.values() for r in v], [x for v in by_day_usage.values() for x in v], lessons, alert_history())
+    lines += ["## 품질 지표 (최근 14일)\n",
+              '<ul class="stats">' + "".join(f'<li title="{esc(w)}"><b>{esc(v)}</b><span>{esc(k)}</span></li>' for k, v, w in qm) + "</ul>\n",
+              "'검증된 개선'은 머지 후 24시간 관찰에서 회귀(main CI 실패·되돌림·롤백)가 없는 변경. '완전한 릴리즈'는 태그·Release·필수 자산 검증까지 끝난 것. 비용이 확인되지 않은 세션은 0이 아니라 '미확인'으로 뺀다.\n"]
     lines += ["## 비용·사용량\n",
               f'<ul class="stats"><li><b>${u["cost"]:.2f}</b><span>오늘 비용</span></li><li><b>{fmt_min(u["minutes"])}</b><span>오늘 에이전트 시간</span></li>'
               f'<li><b>{int(u["sessions"])}</b><span>오늘 세션</span></li><li><b>${all_u["cost"]:.2f}</b><span>누적 비용</span></li>'
@@ -837,6 +926,8 @@ def main():
                "totals": {"runs": total_runs, "released": total_rel, "days": len(days), "cost_usd": round(all_u["cost"], 2),
                           "minutes": round(all_u["minutes"]), "tokens_in": int(all_u["in"]), "tokens_out": int(all_u["out"])},
                "alerts": alert_items, "fix_queue": fix_queue(), "health": health(), "lessons": lessons[-50:], "caps": caps(),
+               "quality": [{"metric": k, "value": v, "detail": w} for k, v, w in quality_metrics([r for v in by_day.values() for r in v], [x for v in by_day_usage.values() for x in v], lessons, alert_history())],
+               "outcomes_today": {k[2:]: v for k, v in c.items() if k.startswith("o:")},
                "days": [{"date": d, **{k: counts(by_day[d])[k] for k in ("total", "released", "merged", "nochange", "failed")},
                          "cost_usd": round(usage_sum(by_day_usage.get(d, []))["cost"], 2)} for d in days[:30]],
                "weeks": weeks[:8], "months": months[:6],

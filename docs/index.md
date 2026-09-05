@@ -1,7 +1,7 @@
 ---
 title: "aidev 자율 개선 대시보드"
 description: "Claude Code 자율 개선 에이전트가 hkjang 의 프로젝트를 개선·테스트·머지·릴리즈한 일일 보고. 오늘 33회차·릴리즈 21건, 누적 256회차·릴리즈 145건, 주의 필요 16건."
-last_modified_at: 2026-09-05 17:27:34 +0900
+last_modified_at: 2026-09-05 17:28:31 +0900
 ---
 {% raw %}
 <script type="application/ld+json">
@@ -17,7 +17,7 @@ last_modified_at: 2026-09-05 17:27:34 +0900
   "name": "hkjang",
   "url": "https://github.com/hkjang"
  },
- "dateModified": "2026-09-05T17:27:34+09:00"
+ "dateModified": "2026-09-05T17:28:31+09:00"
 }
 </script>
 
@@ -189,7 +189,7 @@ last_modified_at: 2026-09-05 17:27:34 +0900
 
 # aidev 자율 개선 대시보드
 
-<p class="tldr"><strong>한 줄 요약.</strong> Claude Code 자율 개선 에이전트가 hkjang 의 프로젝트를 개선·테스트·머지·릴리즈한 일일 보고. 오늘 33회차·릴리즈 21건, 누적 256회차·릴리즈 145건, 주의 필요 16건. 회차가 끝날 때마다 자동 갱신됩니다 (마지막 갱신 <time datetime="2026-09-05T17:27:34+09:00" data-rel>2026-09-05 17:27</time> KST).</p>
+<p class="tldr"><strong>한 줄 요약.</strong> Claude Code 자율 개선 에이전트가 hkjang 의 프로젝트를 개선·테스트·머지·릴리즈한 일일 보고. 오늘 33회차·릴리즈 21건, 누적 256회차·릴리즈 145건, 주의 필요 16건. 회차가 끝날 때마다 자동 갱신됩니다 (마지막 갱신 <time datetime="2026-09-05T17:28:31+09:00" data-rel>2026-09-05 17:28</time> KST).</p>
 
 <div class="alerts" role="alert"><strong>⚠️ 주의 필요 16건</strong> <span class="meta">— 새 경고는 GitHub Issue·Slack·이메일·Windows 알림으로도 보냅니다</span><ul><li><a href="https://hkjang.github.io/aidev/projects/moina/">moina</a> — 릴리즈 v0.1.21 가 GitHub 에 없음 — 워크플로 Release offline image: failure <span class=meta>(2026-09-05 05:15)</span></li><li><a href="https://hkjang.github.io/aidev/projects/relio/">relio</a> — 릴리즈 v1.11.16 가 GitHub 에 없음 — 워크플로 Release Offline Docker Image: failure <span class=meta>(2026-09-05 07:33)</span></li><li><a href="https://hkjang.github.io/aidev/projects/relio/">relio</a> — 릴리즈 v1.11.17 가 GitHub 에 없음 — 워크플로 Release Offline Docker Image: failure <span class=meta>(2026-09-05 08:12)</span></li><li><a href="https://hkjang.github.io/aidev/projects/Invenqor/">Invenqor</a> — 보호 파일 변경 — 자동 머지 안 함, 사람 검토 필요 <span class=meta>(2026-09-05 11:20)</span></li><li><a href="https://hkjang.github.io/aidev/projects/AgentHub/">AgentHub</a> — 보호 파일 변경 — 자동 머지 안 함, 사람 검토 필요 <span class=meta>(2026-09-05 16:44)</span></li><li><a href="https://hkjang.github.io/aidev/projects/weekly/">weekly</a> — 릴리즈 에이전트가 결과를 남기지 못함 <span class=meta>(2026-09-04 02:53)</span></li><li><a href="https://hkjang.github.io/aidev/projects/ai-admin/">ai-admin</a> — 릴리즈 v1.2.6 자산 0개 — 워크플로 Offline release: failure <span class=meta>(2026-09-04 05:13)</span></li><li><a href="https://hkjang.github.io/aidev/projects/dataworks/">dataworks</a> — 자산 빌드 실패 <span class=meta>(2026-09-04 07:00)</span></li><li><a href="https://hkjang.github.io/aidev/projects/ptium/">ptium</a> — 자산 빌드 결과 없음 <span class=meta>(2026-09-04 07:04)</span></li><li><a href="https://hkjang.github.io/aidev/projects/Invenqor/">Invenqor</a> — 자산 빌드 결과 없음 <span class=meta>(2026-09-04 07:06)</span></li><li><a href="https://hkjang.github.io/aidev/projects/igame/">igame</a> — 릴리즈 단계 실패 <span class=meta>(2026-09-04 07:20)</span></li><li><a href="https://hkjang.github.io/aidev/projects/igame/">igame</a> — 릴리즈 v0.7.5 가 GitHub 에 없음 — 워크플로 Release offline image: failure <span class=meta>(2026-09-04 08:18)</span></li><li><a href="https://hkjang.github.io/aidev/projects/jupiq/">jupiq</a> — 릴리즈 v1.4.0 가 GitHub 에 없음 — 워크플로 오프라인 이미지 릴리스: failure <span class=meta>(2026-09-04 08:40)</span></li><li><a href="https://hkjang.github.io/aidev/projects/moina/">moina</a> — 릴리즈 에이전트가 결과를 남기지 못함 <span class=meta>(2026-09-04 09:27)</span></li><li><a href="https://hkjang.github.io/aidev/projects/relio/">relio</a> — 릴리즈 v1.11.15 가 GitHub 에 없음 — 워크플로 Release Offline Docker Image: failure <span class=meta>(2026-09-04 16:19)</span></li><li><a href="https://hkjang.github.io/aidev/projects/AgentHub/">AgentHub</a> — 최신 릴리즈 v0.234.0 자산 0개 (이전 v0.233.0: 10개)</li></ul></div>
 

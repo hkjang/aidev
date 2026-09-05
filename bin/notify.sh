@@ -14,6 +14,11 @@ SITE="https://hkjang.github.io/aidev"
 
 mapfile -t new < <(jq -r --slurpfile seen "$SEEN" \
   '.alerts[] | "\(.project)|\(.why)" | select(. as $k | ($seen[0] | index($k)) == null)' "$SUMMARY" 2>/dev/null)
+# 경고 이력: 새로 생긴 것은 open, 사라진 것은 close 로 남긴다 (예외 처리 소요 시간 지표에 쓴다)
+HIST="$STATE/alerts-history.jsonl"; now=$(date -Iseconds)
+mapfile -t gone < <(jq -r --slurpfile cur <(jq '[.alerts[] | "\(.project)|\(.why)"]' "$SUMMARY") '.[] | select(. as $k | ($cur[0] | index($k)) == null)' "$SEEN" 2>/dev/null)
+for k in "${new[@]}";  do jq -cn --arg ts "$now" --arg k "$k" '{ts:$ts,event:"open",key:$k}'  >> "$HIST"; done
+for k in "${gone[@]}"; do jq -cn --arg ts "$now" --arg k "$k" '{ts:$ts,event:"close",key:$k}' >> "$HIST"; done
 # 현재 경고 전체를 seen 으로 교체 (해소된 건 빠진다)
 jq '[.alerts[] | "\(.project)|\(.why)"]' "$SUMMARY" > "$SEEN.tmp" 2>/dev/null && mv "$SEEN.tmp" "$SEEN"
 [ ${#new[@]} -gt 0 ] || { echo "notify: no new alerts"; exit 0; }
