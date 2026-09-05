@@ -1,0 +1,56 @@
+[
+  {
+    "title": "동기 /v1/mask 동시 처리 개수 제한",
+    "value": 4,
+    "risk": 2,
+    "size": "M",
+    "status": "done",
+    "note": "ProcessSync가 syncSlots 세마포어(PII_MASKER_MAX_CONCURRENT_SYNC, 기본 4)를 얻은 뒤에만 처리하고, PII_MASKER_SYNC_QUEUE_WAIT_SECONDS(기본 10초)를 넘기면 503 server_busy + Retry-After로 흘려보냄. 비동기 job 제한을 /v1/mask로 우회하던 경로를 막음.",
+    "updated": "2026-09-05"
+  },
+  {
+    "title": "/v1/history의 limit 상한 적용",
+    "value": 3,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "handleHistory가 limit>0이면 그대로 사용해, ?limit=100000 요청 하나로 전체 job 목록을 직렬화함. 기본 20/최대 100 정도로 클램프 필요.",
+    "updated": "2026-09-05"
+  },
+  {
+    "title": "handleGetJobResult를 스트리밍으로 전환",
+    "value": 3,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "os.ReadFile로 결과 파일(최대 50MB)을 통째로 메모리에 올린 뒤 응답. os.Open + http.ServeContent로 바꾸면 Range 지원과 함께 파일이 사라진 경우 500 대신 404도 함께 해결됨.",
+    "updated": "2026-09-05"
+  },
+  {
+    "title": "graceful shutdown과 http.Server 타임아웃",
+    "value": 3,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "cmd/pii-masker가 시그널을 처리하지 않아 App.Close()가 호출되지 않고, http.Server에 ReadHeaderTimeout/IdleTimeout이 없어 유휴 커넥션이 무한정 유지됨. 큰 업로드/느린 응답을 끊지 않도록 ReadTimeout/WriteTimeout은 건드리지 말 것.",
+    "updated": "2026-09-05"
+  },
+  {
+    "title": "internal/config 단위 테스트",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "normalizeAllowHosts, normalizeEndpointURL, envInt/envNonNegativeInt, normalizePIILang 등 순수 함수인데 테스트가 하나도 없음. t.Setenv로 Load()까지 검증 가능.",
+    "updated": "2026-09-05"
+  },
+  {
+    "title": "동기 슬롯 대기열의 메모리 상한",
+    "value": 3,
+    "risk": 3,
+    "size": "M",
+    "status": "pending",
+    "note": "슬롯을 기다리는 요청은 이미 읽어 둔 업로드 바이트를 들고 있어 대기열 메모리는 여전히 무제한. 본문을 읽기 전에 슬롯을 잡거나 대기 중인 요청 수 자체를 제한해야 하는데, 본문 읽기 중 슬롯을 점유하면 느린 클라이언트가 슬롯을 묶어 버리므로 읽기 데드라인과 함께 설계해야 함.",
+    "updated": "2026-09-05"
+  }
+]
