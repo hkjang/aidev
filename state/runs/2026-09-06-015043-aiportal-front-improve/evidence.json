@@ -1,0 +1,188 @@
+{
+  "run_id": "2026-09-06-015043-aiportal-front-improve",
+  "generated": "2026-09-06T02:03:41+09:00",
+  "run": {
+    "run_id": "2026-09-06-015043-aiportal-front-improve",
+    "project": "aiportal-front",
+    "kind": "improve",
+    "started": "2026-09-06T01:50:43+09:00",
+    "model": "claude-opus-5",
+    "policy_version": "7c35e50",
+    "prompts_hash": "a3b041a352fd55fa",
+    "runner_version": "7c35e50",
+    "finished": "2026-09-06T02:03:41+09:00",
+    "outcome": "review-pending"
+  },
+  "record": {
+    "ts": "2026-09-06T02:03:41+09:00",
+    "date": "2026-09-06",
+    "project": "aiportal-front",
+    "result": "CI no-ci, PR open https://github.com/hkjang/aiportal-front/pull/5",
+    "outcome": "review-pending",
+    "run_id": "2026-09-06-015043-aiportal-front-improve",
+    "base_sha": "3824e48dc43ea26a923c82f5d88311fd0aa34d68",
+    "head_sha": "7ff4f4566571306f56b25e06de7e51a6782e06c1",
+    "pr": "https://github.com/hkjang/aiportal-front/pull/5",
+    "stages": {
+      "base": {
+        "state": "pinned",
+        "reason": "main@3824e48",
+        "at": "2026-09-06T01:50:46+09:00"
+      },
+      "autonomy": {
+        "state": "release",
+        "reason": "",
+        "at": "2026-09-06T01:50:46+09:00"
+      },
+      "verify": {
+        "state": "passed",
+        "reason": "검증 2개 통과 (auto)",
+        "at": "2026-09-06T01:56:25+09:00"
+      },
+      "pr": {
+        "state": "created",
+        "reason": "https://github.com/hkjang/aiportal-front/pull/5",
+        "at": "2026-09-06T01:56:32+09:00"
+      },
+      "review": {
+        "state": "approved",
+        "reason": "리뷰 승인 (risk=low)",
+        "at": "2026-09-06T01:59:21+09:00"
+      },
+      "ci": {
+        "state": "no-ci",
+        "reason": "이 커밋에 검사가 없음 (정책 allow_merge_without_ci 가 없으면 차단)",
+        "at": "2026-09-06T02:03:40+09:00"
+      }
+    },
+    "campaign": "",
+    "autonomy": "release",
+    "files": 2,
+    "additions": 185,
+    "deletions": 8,
+    "tests": 1,
+    "title": "fix: 마크다운 렌더링 코드블록/표 래퍼 속성 유실 및 외부 링크 하드닝"
+  },
+  "stages": {
+    "base": {
+      "state": "pinned",
+      "reason": "main@3824e48",
+      "at": "2026-09-06T01:50:46+09:00"
+    },
+    "autonomy": {
+      "state": "release",
+      "reason": "",
+      "at": "2026-09-06T01:50:46+09:00"
+    },
+    "verify": {
+      "state": "passed",
+      "reason": "검증 2개 통과 (auto)",
+      "at": "2026-09-06T01:56:25+09:00"
+    },
+    "pr": {
+      "state": "created",
+      "reason": "https://github.com/hkjang/aiportal-front/pull/5",
+      "at": "2026-09-06T01:56:32+09:00"
+    },
+    "review": {
+      "state": "approved",
+      "reason": "리뷰 승인 (risk=low)",
+      "at": "2026-09-06T01:59:21+09:00"
+    },
+    "ci": {
+      "state": "no-ci",
+      "reason": "이 커밋에 검사가 없음 (정책 allow_merge_without_ci 가 없으면 차단)",
+      "at": "2026-09-06T02:03:40+09:00"
+    }
+  },
+  "provenance": {
+    "model": "claude-opus-5",
+    "policy_version": "7c35e50",
+    "prompts_hash": "a3b041a352fd55fa",
+    "runner_version": "7c35e50",
+    "base_sha": "3824e48dc43ea26a923c82f5d88311fd0aa34d68",
+    "head_sha": "7ff4f4566571306f56b25e06de7e51a6782e06c1",
+    "pr": "https://github.com/hkjang/aiportal-front/pull/5"
+  },
+  "verification": {
+    "runner": {
+      "source": "auto",
+      "commands": [
+        {
+          "cmd": "[ -d node_modules ] || npm ci --no-audit --no-fund",
+          "exit": 0,
+          "seconds": 0
+        },
+        {
+          "cmd": "npm test --silent",
+          "exit": 0,
+          "seconds": 1
+        }
+      ]
+    },
+    "runner_gate": {
+      "ok": true,
+      "state": "verified",
+      "reason": "검증 2개 통과 (auto)"
+    },
+    "after_rebase": null,
+    "review": {
+      "verdict": "approve",
+      "reasons": [],
+      "notes": [
+        "tests/unit/markdown.spec.js: main 의 src/utils/markdown.js 로 되돌려 실행하니 25건 중 6건 실패(코드블록 class 유지 2건, table-wrap 유지 1건, rel 강제 1건, MARK/DATE 플레이스홀더 2건), HEAD 에서는 25건 전부 통과. 전체 스위트도 155건 통과 — 새 테스트가 실제로 변경을 검증함을 확인했다.",
+        "src/utils/markdown.js:216 table-wrap 보호 정규식이 non-greedy 라 셀 안에 raw <div> 가 들어오면 첫 </div> 에서 끊겨 __TABLE_WRAP_CLOSE__ 가 표 중간에 놓인다. 실제로 '| <div>x</div> | 2 |' 로 확인해 보니 DOMPurify 가 중첩을 교정해 최종 출력은 table-wrap + table 이 정상이었다(현재는 무해). 또한 `\\btable-wrap\\b` 는 'my-table-wrap' 같은 클래스에도 걸리고 복원 시 class=\"table-wrap\" 으로 속성이 고정 치환된다 — 렌더러가 만드는 래퍼 외에는 발생 경로가 없어 실사용 영향은 없다고 판단.",
+        "src/utils/markdown.js:219 마커 문자열 __TABLE_WRAP_OPEN__ 이 본문에 그대로 있어도 marked 가 먼저 <strong> 으로 바꿔 주입되지 않는 것을 확인('hello __TABLE_WRAP_OPEN__evil...' → <strong> 출력).",
+        "커밋 메시지의 '코드블록이 밝은 배경에 어두운 키워드 색으로 렌더링되고 있었다' 는 설명은 과장으로 보인다. github-dark.css 의 토큰 색 규칙(.hljs-keyword 등)은 .hljs 하위에 중첩돼 있지 않아 class 없이도 적용됐고, .hljs 배경은 markdown.css:114 `.answer-markdown pre code { background:none; color:inherit }` 가 특이도상 이긴다. 실제 변화는 `pre code.hljs { padding:1em; overflow-x:auto }` 가 새로 적용되는 정도의 미세한 여백 변화다. 코드(속성 유실 복구) 자체는 옳고 skipKcb 경로와 동작이 일치하게 되므로 결함은 아니다.",
+        "src/utils/markdown.js:101 DOMPurify.addHook 은 모듈 로드 시 전역 싱글턴에 등록된다. src 내 dompurify 사용처는 markdown.js 뿐이고 monaco-editor 는 자체 중첩 dompurify(3.2.7)를 쓰므로 충돌 없음. 다만 target 이 있는 a 의 기존 rel(예: nofollow)은 무조건 덮어쓴다 — 현재 코드에 그런 경로는 없다.",
+        "변경 범위는 src/utils/markdown.js 와 신규 테스트 파일뿐이며 의존성·마이그레이션·인증/권한/삭제 로직 변경이 없어 revert 로 완전히 되돌릴 수 있다."
+      ],
+      "risk": "low"
+    },
+    "ci_gate": {
+      "ok": false,
+      "state": "no-ci",
+      "reason": "이 커밋에 검사가 없음 (정책 allow_merge_without_ci 가 없으면 차단)",
+      "checks": 0
+    }
+  },
+  "release": {
+    "result": null,
+    "assets_sha256": []
+  },
+  "approval": null,
+  "usage": [
+    {
+      "ts": "2026-09-06T01:56:23+09:00",
+      "date": "2026-09-06",
+      "project": "aiportal-front",
+      "phase": "improve",
+      "run_id": "2026-09-06-015043-aiportal-front-improve",
+      "campaign": "",
+      "subtype": "success",
+      "duration_ms": 357096,
+      "num_turns": 37,
+      "cost_usd": 2.010063,
+      "input_tokens": 60,
+      "output_tokens": 25161,
+      "cache_read": 1535144,
+      "cache_create": 60688
+    },
+    {
+      "ts": "2026-09-06T01:59:21+09:00",
+      "date": "2026-09-06",
+      "project": "aiportal-front",
+      "phase": "review",
+      "run_id": "2026-09-06-015043-aiportal-front-improve",
+      "campaign": "",
+      "subtype": "success",
+      "duration_ms": 177710,
+      "num_turns": 15,
+      "cost_usd": 0.9624254999999998,
+      "input_tokens": 28,
+      "output_tokens": 11587,
+      "cache_read": 538123,
+      "cache_create": 40168
+    }
+  ]
+}

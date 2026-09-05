@@ -1,0 +1,101 @@
+[
+  {
+    "title": "markdown.js 렌더링 경로 하드닝 (코드블록 class 유실 / table-wrap 제거 / target=_blank rel 누락 / 플레이스홀더 복원 크래시)",
+    "value": 4,
+    "risk": 2,
+    "size": "M",
+    "status": "done",
+    "note": "2026-09-06 구현. 기존 'DOMPurify 설정/onclick 파싱 경로 XSS 하드닝 검토' 항목을 실제 결함 4건으로 구체화해 처리. XSS 자체는 DOMPurify allowlist 로 이미 차단되고 있었고, 실제 남은 구멍은 target 지정 링크의 rel 누락이었다. 신규 테스트 25건(tests/unit/markdown.spec.js).",
+    "updated": "2026-09-06"
+  },
+  {
+    "title": "useFileAttach 알림 문구 하드코딩(20MB/100MB) 및 msg.includes('10') 오판 수정",
+    "value": 3,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "src/utils/useFileAttach.js:51,56,83. opts.maxFileSize/maxTotalSize 를 무시하고 문구가 고정돼 있고, 서버 오류 메시지에 '10' 이 들어가기만 하면 용량초과로 오판한다. 사용처는 RequestWrite.vue 1곳뿐이라 범위가 좁다.",
+    "updated": "2026-09-06"
+  },
+  {
+    "title": "parseUtcToKstDate 가 로컬 타임존이 KST 일 때 +9h 를 이중 적용하는 문제 정리",
+    "value": 3,
+    "risk": 4,
+    "size": "S",
+    "status": "pending",
+    "note": "운영 표시값에 광범위한 영향이 있어 계속 보류. 서버가 UTC/KST 중 무엇을 주는지 확인이 선행돼야 한다.",
+    "updated": "2026-09-06"
+  },
+  {
+    "title": "mapAppToCard(item, idx, 'prompt') 결과에 to 가 없어 GlobalSearch 프롬프트 카드 클릭이 무반응",
+    "value": 3,
+    "risk": 3,
+    "size": "S",
+    "status": "pending",
+    "note": "의도적으로 비워둔 것인지 확인 필요. 프롬프트 카드가 이동 대상이 없는 설계일 수 있다.",
+    "updated": "2026-09-06"
+  },
+  {
+    "title": "mitt 이 eventBus.js 에서 직접 import 되는데 package.json 직접 의존성에 없음",
+    "value": 3,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "전이 의존성에 기대고 있어 상위 패키지가 mitt 을 떼면 빌드가 깨진다. package.json 에 명시 추가만 하면 되는 저위험 작업.",
+    "updated": "2026-09-06"
+  },
+  {
+    "title": "빌드 산출물 단일 청크 6.2MB 문제(manualChunks 코드 스플리팅) 개선",
+    "value": 3,
+    "risk": 3,
+    "size": "M",
+    "status": "pending",
+    "note": "index-*.js 가 6,218kB (gzip 1,695kB). monaco-editor/pdfjs-dist/milkdown 등 무거운 의존성을 vendor 청크로 분리할 여지가 크다. 다만 초기 로딩 경로 회귀 위험이 있어 검증 방법이 필요.",
+    "updated": "2026-09-06"
+  },
+  {
+    "title": "ESLint + Prettier 도입",
+    "value": 3,
+    "risk": 2,
+    "size": "M",
+    "status": "pending",
+    "note": "탭·스페이스 혼재(markdown.js 는 스페이스 2, 나머지 utils 는 탭)로 초기 diff 노이즈가 커서 계속 보류. 도입한다면 포맷 커밋과 규칙 커밋을 분리해야 한다.",
+    "updated": "2026-09-06"
+  },
+  {
+    "title": "useTableUtils.sortData 가 모든 값을 getNum 으로 숫자 변환해 텍스트·날짜 컬럼 정렬 불가",
+    "value": 2,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "현재 .vue 어디에서도 사용되지 않아 실사용 영향이 없다. 사용처가 생기면 우선순위 상승.",
+    "updated": "2026-09-06"
+  },
+  {
+    "title": "useAppList.getFormattedAppList 의 String(x) ?? '' 가 문자열 'undefined' 를 만드는 문제",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "Sidemenu.vue 에도 동일 코드가 중복돼 있어 두 곳을 같이 고쳐야 한다.",
+    "updated": "2026-09-06"
+  },
+  {
+    "title": "buttonSettingPolicy.buildSettingActions 모드별 액션 구성 단위 테스트 보강",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "버그가 확인된 것은 아니고 회귀 방어용 테스트 공백 보강.",
+    "updated": "2026-09-06"
+  },
+  {
+    "title": "transformAppAnchors 의 div 일괄 제거가 표 외의 의미 있는 div 도 지우는지 재검토",
+    "value": 2,
+    "risk": 3,
+    "size": "S",
+    "status": "pending",
+    "note": "2026-09-06 신규. table-wrap 은 보호했지만 <div style=\"white-space:pre\"> 등 다른 의미 있는 래퍼도 skipKcb:false 경로에서 사라진다. 실제 응답 샘플 확인 후 판단 필요.",
+    "updated": "2026-09-06"
+  }
+]
