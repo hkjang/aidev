@@ -1,7 +1,7 @@
 ---
 title: "umm — 자율 개선 이력"
-description: "umm: 자율 개선 회차 8회, 릴리즈 7건. 최근 릴리즈 v0.71.2."
-last_modified_at: 2026-09-05 19:27:45 +0900
+description: "umm: 자율 개선 회차 9회, 릴리즈 7건. 최근 릴리즈 v0.71.2."
+last_modified_at: 2026-09-05 22:20:06 +0900
 ---
 {% raw %}
 <script type="application/ld+json">
@@ -11,35 +11,35 @@ last_modified_at: 2026-09-05 19:27:45 +0900
  "name": "umm",
  "codeRepository": "https://github.com/hkjang/umm",
  "url": "https://hkjang.github.io/aidev/projects/umm/",
- "description": "umm: 자율 개선 회차 8회, 릴리즈 7건. 최근 릴리즈 v0.71.2.",
+ "description": "umm: 자율 개선 회차 9회, 릴리즈 7건. 최근 릴리즈 v0.71.2.",
  "inLanguage": "ko",
  "maintainer": {
   "@type": "Person",
   "name": "hkjang",
   "url": "https://github.com/hkjang"
  },
- "dateModified": "2026-09-05T19:27:45+09:00",
+ "dateModified": "2026-09-05T22:20:06+09:00",
  "version": "0.71.2"
 }
 </script>
 
 # umm
 
-<p class="tldr"><strong>요약.</strong> umm: 자율 개선 회차 8회, 릴리즈 7건. 최근 릴리즈 v0.71.2. <span class="pill pill-released" title="14일: 릴리즈 7, 실패 0, 경고 0, 회귀 0">건강 A</span> <span class="meta">14일: 릴리즈 7, 실패 0, 경고 0, 회귀 0</span></p>
+<p class="tldr"><strong>요약.</strong> umm: 자율 개선 회차 9회, 릴리즈 7건. 최근 릴리즈 v0.71.2. <span class="pill pill-released" title="14일: 릴리즈 7, 실패 0, 경고 0, 회귀 0">건강 A</span> <span class="meta">14일: 릴리즈 7, 실패 0, 경고 0, 회귀 0</span></p>
 
-<ul class="stats"><li><b>8</b><span>회차</span></li><li><b>1</b><span>프로젝트</span></li><li><b>7</b><span>배포 준비 완료</span></li><li><b>0</b><span>릴리즈 진행 중</span></li><li><b>1</b><span>병합 완료</span></li><li><b>0</b><span>검토 대기</span></li><li><b>0</b><span>검증 실패</span></li><li><b>0</b><span>변경 없음</span></li><li><b>0</b><span>실행 오류</span></li></ul>
+<ul class="stats"><li><b>9</b><span>회차</span></li><li><b>1</b><span>프로젝트</span></li><li><b>7</b><span>배포 준비 완료</span></li><li><b>0</b><span>릴리즈 진행 중</span></li><li><b>1</b><span>병합 완료</span></li><li><b>0</b><span>검토 대기</span></li><li><b>0</b><span>검증 실패</span></li><li><b>0</b><span>변경 없음</span></li><li><b>1</b><span>실행 오류</span></li></ul>
 
 ## 현황
 
 <dl class="kv">
 <dt>저장소</dt><dd><a href="https://github.com/hkjang/umm">https://github.com/hkjang/umm</a></dd>
-<dt>마지막 회차</dt><dd>2026-09-05 08:43 KST — <span class="pill pill-released">🚀 릴리즈</span> merged <a href="https://github.com/hkjang/umm/pull/144">PR #144</a>, released <a href="https://github.com/hkjang/umm/releases/tag/v0.71.2">v0.71.2</a></dd>
+<dt>마지막 회차</dt><dd>2026-09-05 21:30 KST — <span class="pill pill-other">• 기타</span> hold: budget</dd>
 <dt>최근 릴리즈</dt><dd><a href="https://github.com/hkjang/umm/releases/tag/v0.71.2">v0.71.2</a> — released <a href="https://github.com/hkjang/umm/releases">전체 릴리즈 →</a></dd>
 </dl>
 
 ## 회차 이력
 
-<div class="table-wrap"><table class="rt"><thead><tr><th>일시</th><th class="primary">프로젝트</th><th>결과</th></tr></thead><tbody><tr data-status="released"><td data-label="일시">2026-09-05 08:43</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/umm/">umm</a></td><td data-label="결과"><span class="pill pill-released" title="outcome=release-ready">배포 준비 완료</span> merged <a href="https://github.com/hkjang/umm/pull/144">PR #144</a>, released <a href="https://github.com/hkjang/umm/releases/tag/v0.71.2">v0.71.2</a></td></tr><tr data-status="released"><td data-label="일시">2026-09-04 17:04</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/umm/">umm</a></td><td data-label="결과"><span class="pill pill-released" title="outcome=release-ready">배포 준비 완료</span> merged <a href="https://github.com/hkjang/umm/pull/143">PR #143</a>, released <a href="https://github.com/hkjang/umm/releases/tag/v0.71.1">v0.71.1</a></td></tr><tr data-status="released"><td data-label="일시">2026-09-04 01:10</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/umm/">umm</a></td><td data-label="결과"><span class="pill pill-released" title="outcome=release-ready">배포 준비 완료</span> merged <a href="https://github.com/hkjang/umm/pull/138">PR #138</a>, released <a href="https://github.com/hkjang/umm/releases/tag/v0.67.2">v0.67.2</a></td></tr><tr data-status="released"><td data-label="일시">2026-09-03 17:31</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/umm/">umm</a></td><td data-label="결과"><span class="pill pill-released" title="outcome=release-ready">배포 준비 완료</span> merged <a href="https://github.com/hkjang/umm/pull/137">PR #137</a>, released <a href="https://github.com/hkjang/umm/releases/tag/v0.67.1">v0.67.1</a></td></tr><tr data-status="released"><td data-label="일시">2026-09-03 10:31</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/umm/">umm</a></td><td data-label="결과"><span class="pill pill-released" title="outcome=release-ready">배포 준비 완료</span> merged <a href="https://github.com/hkjang/umm/pull/135">PR #135</a>, released <a href="https://github.com/hkjang/umm/releases/tag/v0.66.3">v0.66.3</a></td></tr><tr data-status="released"><td data-label="일시">2026-09-03 05:00</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/umm/">umm</a></td><td data-label="결과"><span class="pill pill-released" title="outcome=release-ready">배포 준비 완료</span> merged <a href="https://github.com/hkjang/umm/pull/133">PR #133</a>, released <a href="https://github.com/hkjang/umm/releases/tag/v0.66.1">v0.66.1</a></td></tr><tr data-status="released"><td data-label="일시">2026-09-02 22:44</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/umm/">umm</a></td><td data-label="결과"><span class="pill pill-released" title="outcome=release-ready">배포 준비 완료</span> merged <a href="https://github.com/hkjang/umm/pull/132">PR #132</a>, released <a href="https://github.com/hkjang/umm/releases/tag/v0.66.0">v0.66.0</a></td></tr><tr data-status="merged"><td data-label="일시">2026-09-02 16:30</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/umm/">umm</a></td><td data-label="결과"><span class="pill pill-merged" title="outcome=merged">병합 완료</span> merged <a href="https://github.com/hkjang/umm/pull/131">PR #131</a>, release released</td></tr></tbody></table></div>
+<div class="table-wrap"><table class="rt" data-filter="1"><thead><tr><th>일시</th><th class="primary">프로젝트</th><th>결과</th></tr></thead><tbody><tr data-status="other"><td data-label="일시">2026-09-05 21:30</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/umm/">umm</a></td><td data-label="결과"><span class="pill pill-failed" title="outcome=error">실행 오류</span> hold: budget</td></tr><tr data-status="released"><td data-label="일시">2026-09-05 08:43</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/umm/">umm</a></td><td data-label="결과"><span class="pill pill-released" title="outcome=release-ready">배포 준비 완료</span> merged <a href="https://github.com/hkjang/umm/pull/144">PR #144</a>, released <a href="https://github.com/hkjang/umm/releases/tag/v0.71.2">v0.71.2</a></td></tr><tr data-status="released"><td data-label="일시">2026-09-04 17:04</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/umm/">umm</a></td><td data-label="결과"><span class="pill pill-released" title="outcome=release-ready">배포 준비 완료</span> merged <a href="https://github.com/hkjang/umm/pull/143">PR #143</a>, released <a href="https://github.com/hkjang/umm/releases/tag/v0.71.1">v0.71.1</a></td></tr><tr data-status="released"><td data-label="일시">2026-09-04 01:10</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/umm/">umm</a></td><td data-label="결과"><span class="pill pill-released" title="outcome=release-ready">배포 준비 완료</span> merged <a href="https://github.com/hkjang/umm/pull/138">PR #138</a>, released <a href="https://github.com/hkjang/umm/releases/tag/v0.67.2">v0.67.2</a></td></tr><tr data-status="released"><td data-label="일시">2026-09-03 17:31</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/umm/">umm</a></td><td data-label="결과"><span class="pill pill-released" title="outcome=release-ready">배포 준비 완료</span> merged <a href="https://github.com/hkjang/umm/pull/137">PR #137</a>, released <a href="https://github.com/hkjang/umm/releases/tag/v0.67.1">v0.67.1</a></td></tr><tr data-status="released"><td data-label="일시">2026-09-03 10:31</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/umm/">umm</a></td><td data-label="결과"><span class="pill pill-released" title="outcome=release-ready">배포 준비 완료</span> merged <a href="https://github.com/hkjang/umm/pull/135">PR #135</a>, released <a href="https://github.com/hkjang/umm/releases/tag/v0.66.3">v0.66.3</a></td></tr><tr data-status="released"><td data-label="일시">2026-09-03 05:00</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/umm/">umm</a></td><td data-label="결과"><span class="pill pill-released" title="outcome=release-ready">배포 준비 완료</span> merged <a href="https://github.com/hkjang/umm/pull/133">PR #133</a>, released <a href="https://github.com/hkjang/umm/releases/tag/v0.66.1">v0.66.1</a></td></tr><tr data-status="released"><td data-label="일시">2026-09-02 22:44</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/umm/">umm</a></td><td data-label="결과"><span class="pill pill-released" title="outcome=release-ready">배포 준비 완료</span> merged <a href="https://github.com/hkjang/umm/pull/132">PR #132</a>, released <a href="https://github.com/hkjang/umm/releases/tag/v0.66.0">v0.66.0</a></td></tr><tr data-status="merged"><td data-label="일시">2026-09-02 16:30</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/umm/">umm</a></td><td data-label="결과"><span class="pill pill-merged" title="outcome=merged">병합 완료</span> merged <a href="https://github.com/hkjang/umm/pull/131">PR #131</a>, release released</td></tr></tbody></table></div>
 
 ## 원장 (에이전트가 남긴 기록)
 

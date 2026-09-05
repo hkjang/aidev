@@ -1,7 +1,7 @@
 ---
 title: "git-ctx — 자율 개선 이력"
-description: "git-ctx: 자율 개선 회차 7회, 릴리즈 3건. 최근 릴리즈 v0.77.5."
-last_modified_at: 2026-09-05 19:27:45 +0900
+description: "git-ctx: 자율 개선 회차 8회, 릴리즈 3건. 최근 릴리즈 v0.77.5."
+last_modified_at: 2026-09-05 22:20:06 +0900
 ---
 {% raw %}
 <script type="application/ld+json">
@@ -11,35 +11,35 @@ last_modified_at: 2026-09-05 19:27:45 +0900
  "name": "git-ctx",
  "codeRepository": "https://github.com/hkjang/git-ctx",
  "url": "https://hkjang.github.io/aidev/projects/git-ctx/",
- "description": "git-ctx: 자율 개선 회차 7회, 릴리즈 3건. 최근 릴리즈 v0.77.5.",
+ "description": "git-ctx: 자율 개선 회차 8회, 릴리즈 3건. 최근 릴리즈 v0.77.5.",
  "inLanguage": "ko",
  "maintainer": {
   "@type": "Person",
   "name": "hkjang",
   "url": "https://github.com/hkjang"
  },
- "dateModified": "2026-09-05T19:27:45+09:00",
+ "dateModified": "2026-09-05T22:20:06+09:00",
  "version": "0.77.5"
 }
 </script>
 
 # git-ctx
 
-<p class="tldr"><strong>요약.</strong> git-ctx: 자율 개선 회차 7회, 릴리즈 3건. 최근 릴리즈 v0.77.5. <span class="pill pill-merged" title="14일: 릴리즈 3, 실패 0, 경고 2, 회귀 0">건강 C</span> <span class="meta">14일: 릴리즈 3, 실패 0, 경고 2, 회귀 0</span></p>
+<p class="tldr"><strong>요약.</strong> git-ctx: 자율 개선 회차 8회, 릴리즈 3건. 최근 릴리즈 v0.77.5. <span class="pill pill-merged" title="14일: 릴리즈 3, 실패 0, 경고 2, 회귀 0">건강 C</span> <span class="meta">14일: 릴리즈 3, 실패 0, 경고 2, 회귀 0</span></p>
 
-<ul class="stats"><li><b>7</b><span>회차</span></li><li><b>1</b><span>프로젝트</span></li><li><b>3</b><span>배포 준비 완료</span></li><li><b>0</b><span>릴리즈 진행 중</span></li><li><b>2</b><span>병합 완료</span></li><li><b>0</b><span>검토 대기</span></li><li><b>0</b><span>검증 실패</span></li><li><b>2</b><span>변경 없음</span></li><li><b>0</b><span>실행 오류</span></li></ul>
+<ul class="stats"><li><b>8</b><span>회차</span></li><li><b>1</b><span>프로젝트</span></li><li><b>3</b><span>배포 준비 완료</span></li><li><b>0</b><span>릴리즈 진행 중</span></li><li><b>2</b><span>병합 완료</span></li><li><b>0</b><span>검토 대기</span></li><li><b>0</b><span>검증 실패</span></li><li><b>2</b><span>변경 없음</span></li><li><b>1</b><span>실행 오류</span></li></ul>
 
 ## 현황
 
 <dl class="kv">
 <dt>저장소</dt><dd><a href="https://github.com/hkjang/git-ctx">https://github.com/hkjang/git-ctx</a></dd>
-<dt>마지막 회차</dt><dd>2026-09-05 02:45 KST — <span class="pill pill-released">🚀 릴리즈</span> merged <a href="https://github.com/hkjang/git-ctx/pull/18">PR #18</a>, released <a href="https://github.com/hkjang/git-ctx/releases/tag/v0.77.5">v0.77.5</a></dd>
+<dt>마지막 회차</dt><dd>2026-09-05 19:30 KST — <span class="pill pill-other">• 기타</span> hold: budget</dd>
 <dt>최근 릴리즈</dt><dd><a href="https://github.com/hkjang/git-ctx/releases/tag/v0.77.5">v0.77.5</a> — released <a href="https://github.com/hkjang/git-ctx/releases">전체 릴리즈 →</a></dd>
 </dl>
 
 ## 회차 이력
 
-<div class="table-wrap"><table class="rt"><thead><tr><th>일시</th><th class="primary">프로젝트</th><th>결과</th></tr></thead><tbody><tr data-status="released"><td data-label="일시">2026-09-05 02:45</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/git-ctx/">git-ctx</a></td><td data-label="결과"><span class="pill pill-released" title="outcome=release-ready">배포 준비 완료</span> merged <a href="https://github.com/hkjang/git-ctx/pull/18">PR #18</a>, released <a href="https://github.com/hkjang/git-ctx/releases/tag/v0.77.5">v0.77.5</a></td></tr><tr data-status="released"><td data-label="일시">2026-09-04 06:56</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/git-ctx/">git-ctx</a></td><td data-label="결과"><span class="pill pill-released" title="outcome=release-ready">배포 준비 완료</span> merged <a href="https://github.com/hkjang/git-ctx/pull/17">PR #17</a>, released <a href="https://github.com/hkjang/git-ctx/releases/tag/v0.77.4">v0.77.4</a></td></tr><tr data-status="nochange"><td data-label="일시">2026-09-03 22:44</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/git-ctx/">git-ctx</a></td><td data-label="결과"><span class="pill pill-nochange" title="outcome=no-change">변경 없음</span> no change</td></tr><tr data-status="released"><td data-label="일시">2026-09-03 14:30</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/git-ctx/">git-ctx</a></td><td data-label="결과"><span class="pill pill-released" title="outcome=release-ready">배포 준비 완료</span> merged <a href="https://github.com/hkjang/git-ctx/pull/16">PR #16</a>, released <a href="https://github.com/hkjang/git-ctx/releases/tag/v0.77.3">v0.77.3</a></td></tr><tr data-status="merged"><td data-label="일시">2026-09-03 02:40</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/git-ctx/">git-ctx</a></td><td data-label="결과"><span class="pill pill-merged" title="outcome=merged">병합 완료</span> merged <a href="https://github.com/hkjang/git-ctx/pull/15">PR #15</a>, <strong>release missing</strong></td></tr><tr data-status="merged"><td data-label="일시">2026-09-02 20:32</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/git-ctx/">git-ctx</a></td><td data-label="결과"><span class="pill pill-merged" title="outcome=merged">병합 완료</span> merged <a href="https://github.com/hkjang/git-ctx/pull/14">PR #14</a>, <strong>release missing</strong></td></tr><tr data-status="nochange"><td data-label="일시">2026-09-02 14:10</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/git-ctx/">git-ctx</a></td><td data-label="결과"><span class="pill pill-nochange" title="outcome=no-change">변경 없음</span> no change</td></tr></tbody></table></div>
+<div class="table-wrap"><table class="rt"><thead><tr><th>일시</th><th class="primary">프로젝트</th><th>결과</th></tr></thead><tbody><tr data-status="other"><td data-label="일시">2026-09-05 19:30</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/git-ctx/">git-ctx</a></td><td data-label="결과"><span class="pill pill-failed" title="outcome=error">실행 오류</span> hold: budget</td></tr><tr data-status="released"><td data-label="일시">2026-09-05 02:45</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/git-ctx/">git-ctx</a></td><td data-label="결과"><span class="pill pill-released" title="outcome=release-ready">배포 준비 완료</span> merged <a href="https://github.com/hkjang/git-ctx/pull/18">PR #18</a>, released <a href="https://github.com/hkjang/git-ctx/releases/tag/v0.77.5">v0.77.5</a></td></tr><tr data-status="released"><td data-label="일시">2026-09-04 06:56</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/git-ctx/">git-ctx</a></td><td data-label="결과"><span class="pill pill-released" title="outcome=release-ready">배포 준비 완료</span> merged <a href="https://github.com/hkjang/git-ctx/pull/17">PR #17</a>, released <a href="https://github.com/hkjang/git-ctx/releases/tag/v0.77.4">v0.77.4</a></td></tr><tr data-status="nochange"><td data-label="일시">2026-09-03 22:44</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/git-ctx/">git-ctx</a></td><td data-label="결과"><span class="pill pill-nochange" title="outcome=no-change">변경 없음</span> no change</td></tr><tr data-status="released"><td data-label="일시">2026-09-03 14:30</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/git-ctx/">git-ctx</a></td><td data-label="결과"><span class="pill pill-released" title="outcome=release-ready">배포 준비 완료</span> merged <a href="https://github.com/hkjang/git-ctx/pull/16">PR #16</a>, released <a href="https://github.com/hkjang/git-ctx/releases/tag/v0.77.3">v0.77.3</a></td></tr><tr data-status="merged"><td data-label="일시">2026-09-03 02:40</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/git-ctx/">git-ctx</a></td><td data-label="결과"><span class="pill pill-merged" title="outcome=merged">병합 완료</span> merged <a href="https://github.com/hkjang/git-ctx/pull/15">PR #15</a>, <strong>release missing</strong></td></tr><tr data-status="merged"><td data-label="일시">2026-09-02 20:32</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/git-ctx/">git-ctx</a></td><td data-label="결과"><span class="pill pill-merged" title="outcome=merged">병합 완료</span> merged <a href="https://github.com/hkjang/git-ctx/pull/14">PR #14</a>, <strong>release missing</strong></td></tr><tr data-status="nochange"><td data-label="일시">2026-09-02 14:10</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/git-ctx/">git-ctx</a></td><td data-label="결과"><span class="pill pill-nochange" title="outcome=no-change">변경 없음</span> no change</td></tr></tbody></table></div>
 
 ## 원장 (에이전트가 남긴 기록)
 
