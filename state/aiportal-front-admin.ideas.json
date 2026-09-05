@@ -1,0 +1,74 @@
+[
+  {
+    "title": "세션 만료를 라우트 이동 없이 즉시 복구 (session.ts 만료 handler + auth/guard.ts resolveAdminAccess)",
+    "value": 4,
+    "risk": 2,
+    "size": "M",
+    "status": "done",
+    "note": "만료 감지는 있었지만 재확인은 router.beforeEach뿐이라, 한 화면에 머무는 사용자는 라우트를 옮길 때까지 모든 조회가 실패하는 화면에 갇혔다. guard 본문을 auth/guard.ts로 추출해 router guard와 만료 복구가 같은 판단·같은 SSO 왕복 제한을 공유한다. 커밋 e425b54, vitest 80개 통과.",
+    "updated": "2026-09-06"
+  },
+  {
+    "title": "세션 만료 후 refresh token으로 원요청을 1회 재시도",
+    "value": 3,
+    "risk": 3,
+    "size": "M",
+    "status": "rejected",
+    "note": "루트 앱의 refresh는 pInf.user.getRefreshToken, 즉 별도 python backend endpoint다. admin-v2는 backendBaseUrl 하나만 계약하므로 runtime config에 새 origin과 allowedHosts 항목을 추가해야 해 범위와 위험이 커진다. 2026-09-06 세션이 대신 즉시 SSO 재확인으로 복구 경로를 만들었다.",
+    "updated": "2026-09-06"
+  },
+  {
+    "title": "CatalogView·ContentAccessView가 같은 경로의 route query 변경에 반응하지 않음",
+    "value": 3,
+    "risk": 3,
+    "size": "M",
+    "status": "pending",
+    "note": "queryValue()를 setup/onMounted에서만 읽어 딥링크 재진입 시 이전 필터가 남는다. 컴포넌트 테스트 환경(jsdom, @vue/test-utils) 선행 정비 필요.",
+    "updated": "2026-09-06"
+  },
+  {
+    "title": "AdvancedPolicyView가 snapshot.extensions를 v-model로 직접 변형",
+    "value": 2,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "저장 실패 시 체크박스는 바뀐 상태로 남고 서버는 그대로라 화면과 서버가 어긋난다. form에 복사본을 두고 저장 성공 시에만 반영해야 한다. 컴포넌트 테스트 환경 없으면 검증이 약하다.",
+    "updated": "2026-09-06"
+  },
+  {
+    "title": "monitoringParser.toPod의 restarts NaN 노출",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "kubectl 스타일 \"3 (5d ago)\" 같은 문자열이 오면 Number()가 NaN이 되어 표와 합계에 그대로 나온다. 선행 정수만 파싱하고 실패하면 0으로 떨어뜨린다. 순수 함수라 기존 vitest로 검증 가능.",
+    "updated": "2026-09-06"
+  },
+  {
+    "title": "shared/format.ts 테스트 공백 보강 + formatDateTime 입력 형식 확장",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "format.ts에는 단위 테스트가 전혀 없다. formatDateTime은 epoch millis와 yyyyMMddHHmmss를 해석하지 못해 원시 숫자 문자열을 그대로 보여준다.",
+    "updated": "2026-09-06"
+  },
+  {
+    "title": "PaginationBar가 범위 밖 페이지에 머물 때 표시가 어긋남",
+    "value": 2,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "unwrapPageEnvelope가 요청 페이지를 유지하므로 총건수가 줄면 page > totalPages가 되어 \"31–25 / 25\"처럼 표시되고, 차이가 2 이상이면 이전 버튼도 move() 가드에 막힌다. 컴포넌트 테스트 환경 선행 필요.",
+    "updated": "2026-09-06"
+  },
+  {
+    "title": "루트 앱의 crypto-js local tarball 의존성 제거로 clean install 복구",
+    "value": 4,
+    "risk": 4,
+    "size": "M",
+    "status": "pending",
+    "note": "루트 package.json이 crypto-js를 file:crypto-js-4.2.0.tgz로 참조해 npm ci가 불가하다. admin-v2(upgrade/admin-v2)는 별도 package.json이라 영향이 없고, 루트 앱은 테스트가 없어 회귀 검증 비용이 크다.",
+    "updated": "2026-09-06"
+  }
+]
