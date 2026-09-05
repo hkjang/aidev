@@ -18,7 +18,7 @@ HERE="${AIDEV_BIN:-$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)}"
 REPO_DIR="$(cd "$HERE/.." && pwd)"
 STATE="$REPO_DIR/state"; LOGS="$REPO_DIR/logs"
 WT_BASE="${WT_BASE:-$HOME/.cache/auto-improve-wt}"
-DAYS=30; COUNT=1; BUDGET=8; DRY=0; ONLY=""; MERGE=1; SYNC=1; RELEASE=1; RBUDGET=10
+DAYS=30; COUNT=1; BUDGET=8; DRY=0; ONLY=""; MERGE=1; SYNC=1; RELEASE=1; RBUDGET=10; REVIEW=1; RVBUDGET=4
 MODEL="${MODEL:-claude-opus-5}"
 # 모든 커밋(에이전트·러너)은 hkjang 명의로 — 저장소별 git 설정과 무관하게 강제한다
 export GIT_AUTHOR_NAME=hkjang GIT_AUTHOR_EMAIL=gagagiga@naver.com
@@ -34,7 +34,7 @@ while [ $# -gt 0 ]; do case "$1" in
   --days) DAYS=$2; shift;; --budget) BUDGET=$2; shift;; --no-merge) MERGE=0;; --no-sync) SYNC=0;;
   --no-release) RELEASE=0;; --release-budget) RBUDGET=$2; shift;;
   --release-only) RELEASE_ONLY=$2; shift;;
-  --assets-only) ASSETS_ONLY=$2; shift;;
+  --assets-only) ASSETS_ONLY=$2; shift;; --no-review) REVIEW=0;;
   *) echo "unknown arg $1"; exit 2;; esac; shift; done
 
 mkdir -p "$STATE" "$LOGS" "$WT_BASE"
@@ -64,6 +64,7 @@ record_run(){ # $1=프로젝트 $2=결과
   mkdir -p "$REPO_DIR/docs/data"
   jq -cn --arg ts "$(date -Iseconds)" --arg d "$RUN_DATE" --arg p "$1" --arg r "$2" \
      '{ts:$ts,date:$d,project:$p,result:$r}' >> "$REPO_DIR/docs/data/runs.jsonl"
+  "$HERE/regress.sh" >>"$LOG" 2>&1 || true
   python3 "$HERE/report.py" >>"$LOG" 2>&1 || log "report.py FAILED"
   "$HERE/notify.sh" >>"$LOG" 2>&1 || true
 }
@@ -121,8 +122,65 @@ retry_release_workflow(){
   excerpt=$(cd "$repo" && gh run view "$rid" --log-failed 2>/dev/null | sed 's/^[^\t]*\t[^\t]*\t//' | grep -i -E "error|fail|expected|mismatch" | grep -v -i "deprecat" | head -6 | cut -c1-200 | tr '\n' ' ' | sed 's/\t/ /g')
   local note="릴리즈 워크플로 실패 2회 — 태그 $tag, 실패 단계: ${step:-?}. 실행: $(cd "$repo" && gh run view "$rid" --json url --jq .url 2>/dev/null). 로그 요지: ${excerpt:-없음}"
   mkdir -p "$STATE"; touch "$STATE/fix-queue.tsv"
-  grep -q -P "^$n\t" "$STATE/fix-queue.tsv" || printf '%s\t%s\n' "$n" "$note" >> "$STATE/fix-queue.tsv"
+  local msha; msha=$(cd "$repo" && gh pr list --state merged --limit 1 --json mergeCommit --jq '.[0].mergeCommit.oid // ""' 2>/dev/null)
+  grep -q -P "^$n\t" "$STATE/fix-queue.tsv" || printf '%s\t%s\t%s\n' "$n" "$note" "$msha" >> "$STATE/fix-queue.tsv"
+  jq -cn --arg ts "$(date -Iseconds)" --arg d "$RUN_DATE" --arg p "$n" --arg pr "$tag" --arg detail "릴리즈 워크플로가 2회 실패($step). 릴리즈 관련 검증은 머지 전에 로컬에서 재현할 것." \
+     '{ts:$ts,date:$d,project:$p,kind:"release-workflow-failed",pr:$pr,detail:$detail}' >> "$STATE/lessons.jsonl"
   log "$n: queued for fix round ($step)"; result="$result, queued for fix"
+}
+
+# 리뷰 게이트 — 구현과 다른 세션이 diff 만 읽고 머지 반대 사유를 찾는다. reject 면 1 을 돌려주고 PR 에 사유를 단다.
+review_pr(){ # $1=프로젝트 $2=base $3=PR url
+  local n=$1 base=$2 url=$3 rvfile="$STATE/$n.review.json" rprompt verdict
+  rm -f "$rvfile"
+  rprompt=$(BASE="$base" REVIEW_FILE="$rvfile" envsubst '$BASE $REVIEW_FILE' < "$REPO_DIR/review-prompt.md")
+  ( cd "$wt" && claude -p "$rprompt" --model "$MODEL" --settings "$CLAUDE_SETTINGS" --permission-mode acceptEdits \
+      --allowedTools "Bash,Read,Glob,Grep,Write" --add-dir "$STATE" --max-budget-usd "$RVBUDGET" \
+      --output-format json ) > "$LOGS/$RUN_DATE-$n-review.json" 2>"$LOGS/$RUN_DATE-$n-review.txt" || log "$n: review agent exited non-zero"
+  record_usage "$n" review "$LOGS/$RUN_DATE-$n-review.json" "$LOGS/$RUN_DATE-$n-review.txt"
+  verdict=$(jq -r '.verdict // "approve"' "$rvfile" 2>/dev/null || echo approve)
+  if [ "$verdict" = reject ]; then
+    local reasons; reasons=$(jq -r '.reasons[]? | "- " + .' "$rvfile" 2>/dev/null)
+    log "$n: REVIEW REJECTED — $(jq -r '.reasons|join(" / ")' "$rvfile" 2>/dev/null | cut -c1-200)"
+    (cd "$repo" && gh pr comment "$url" --body "🧐 리뷰 에이전트가 머지를 보류했습니다 — 사람이 판단해 주세요.
+
+$reasons
+
+(위험도: $(jq -r '.risk // "?"' "$rvfile"), 자율 개선 러너 자동 코멘트)" >>"$LOG" 2>&1) || true
+    result="review rejected, PR open $url"
+    return 1
+  fi
+  log "$n: review approved (risk $(jq -r '.risk // "?"' "$rvfile" 2>/dev/null))"
+  return 0
+}
+
+# 보호 파일 — default.guard + <프로젝트>.guard 의 정규식에 걸리는 파일을 건드렸으면 자동 머지하지 않는다
+guarded_files(){ # $1=프로젝트 $2=base ; 걸린 파일 목록을 출력
+  local pat; pat=$(cat "$STATE/default.guard" "$STATE/$1.guard" 2>/dev/null | grep -v '^#' | grep -v '^[[:space:]]*$')
+  [ -n "$pat" ] || return 0
+  git -C "$wt" diff --name-only "$2..HEAD" 2>/dev/null | grep -E -f <(printf '%s\n' "$pat") || true
+}
+
+# 자동 롤백 — 수정 회차까지 실패하면 원래 머지 커밋을 되돌리는 PR 을 연다 (머지는 사람)
+rollback_project(){ # $1=프로젝트 $2=머지 커밋
+  local n=$1 sha=$2 rwt="$WT_BASE/$n-revert" br="revert/$RUN_DATE-$(date +%H%M)" url
+  [ -n "$sha" ] || { log "$n: rollback skipped (no merge sha)"; return 0; }
+  git -C "$repo" fetch -q origin "$base" >>"$LOG" 2>&1 || true
+  git -C "$repo" worktree remove --force "$rwt" 2>/dev/null || true
+  git -C "$repo" worktree add -b "$br" "$rwt" "origin/$base" >>"$LOG" 2>&1 || return 0
+  if (cd "$rwt" && { git revert --no-edit -m 1 "$sha" || git revert --no-edit "$sha"; } >>"$LOG" 2>&1); then
+    git -C "$rwt" push -u origin "$br" >>"$LOG" 2>&1
+    url=$(cd "$rwt" && gh pr create --base "$base" --head "$br" --title "revert: 자율 개선 변경 되돌리기 (${sha:0:7})" \
+          --body "릴리즈 워크플로가 반복 실패했고 수정 회차도 실패해 ${sha:0:7} 을 되돌리는 PR 입니다. 사람이 검토 후 머지해 주세요.
+
+🤖 aidev 자동 롤백 · https://hkjang.github.io/aidev/projects/$n/" 2>>"$LOG" || true)
+    log "$n: rollback PR $url (사람 머지)"; result="$result, rollback PR $url"
+    jq -cn --arg ts "$(date -Iseconds)" --arg d "$RUN_DATE" --arg p "$n" --arg pr "$url" --arg detail "머지 ${sha:0:7} 이 릴리즈를 반복해서 깨뜨려 되돌림 PR 을 열었다. 같은 접근은 피할 것." \
+       '{ts:$ts,date:$d,project:$p,kind:"rolled-back",pr:$pr,detail:$detail}' >> "$STATE/lessons.jsonl"
+  else
+    log "$n: rollback revert FAILED (conflict) — 사람 개입 필요"; result="$result, rollback failed"
+  fi
+  git -C "$repo" worktree remove --force "$rwt" >>"$LOG" 2>&1 || true
 }
 
 # GitHub Release 를 보장하고 자산을 올린다. 사용: publish_release <프로젝트> <태그> <제목> <노트파일> <ghrel(true/false)> <release.json>
@@ -299,10 +357,10 @@ FIX_PROJECT=""; FIX_NOTE_TEXT=""
 FIXQ="$STATE/fix-queue.tsv"
 if [ -z "$ONLY" ] && [ -s "$FIXQ" ]; then
   # 릴리즈 워크플로가 두 번 실패한 프로젝트는 라운드로빈보다 먼저, 원인 수정 과제로 배정한다
-  while IFS=$'\t' read -r fp fnote; do
+  while IFS=$'\t' read -r fp fnote fsha; do
     [ -n "$fp" ] || continue
     if printf '%s\n' "${candidates[@]}" | grep -qx "$fp"; then
-      picked=("$fp"); FIX_PROJECT="$fp"; FIX_NOTE_TEXT="$fnote"; log "fix-queue: picked $fp"; break
+      picked=("$fp"); FIX_PROJECT="$fp"; FIX_NOTE_TEXT="$fnote"; FIX_SHA="${fsha:-}"; log "fix-queue: picked $fp"; break
     fi
   done < "$FIXQ"
 fi
@@ -325,9 +383,10 @@ for n in "${picked[@]}"; do
 $(printf '%b' "$FIX_NOTE_TEXT")
 릴리즈 워크플로가 같은 이유로 두 번 실패했습니다. 워크플로 파일(.github/workflows)과 실패한 단계의 스크립트·테스트를 읽고 원인을 고치세요. 워크플로 자체를 느슨하게 만들어 통과시키는 것은 금지입니다(검증을 지우거나 continue-on-error 를 넣지 마세요). 고친 뒤 같은 검증을 로컬에서 재현해 통과를 확인하고, 원장에 '수정 과제' 로 기록하세요."
   fi
-  prompt=$(LEDGER_FILE="$ledger" RUN_DATE="$RUN_DATE" FIX_NOTE="$fix_note" \
+  lessons=$(jq -r --arg p "$n" 'select(.project==$p) | "- \(.date) [\(.kind)] \(.detail)"' "$STATE/lessons.jsonl" 2>/dev/null | tail -n 8)
+  prompt=$(LEDGER_FILE="$ledger" RUN_DATE="$RUN_DATE" FIX_NOTE="$fix_note" LESSONS="${lessons:-(없음)}" \
            LEDGER_CONTENT="$(cat "$ledger" 2>/dev/null || echo '(없음)')" \
-           envsubst '$LEDGER_FILE $RUN_DATE $LEDGER_CONTENT $FIX_NOTE' < "$REPO_DIR/prompt.md")
+           envsubst '$LEDGER_FILE $RUN_DATE $LEDGER_CONTENT $FIX_NOTE $LESSONS' < "$REPO_DIR/prompt.md")
 
   # 프로젝트별 환경(예: WEEKLY_TEST_POSTGRES_DSN)은 state/<프로젝트>.env 에 두면 에이전트에 전달된다 (.env 는 git 제외)
   envfile="$STATE/$n.env"
@@ -359,9 +418,21 @@ $(printf '%b' "$FIX_NOTE_TEXT")
     # PR 의 CI 가 끝나고 실패가 없을 때만 머지한다 — moina v0.1.18 은 이미지 빌드가 깨진 채 머지·릴리즈됐다
     ci_ok=1
     if [ "$MERGE" -eq 1 ] && [ -n "$url" ]; then
-      wait_for_checks "$n" "$(git -C "$wt" rev-parse HEAD)"
-      if [ "${CHECKS_FAILED:-0}" -gt 0 ]; then
-        ci_ok=0; log "$n: CI FAILED on PR — not merging, PR left open"; result="CI failed, PR open $url"
+      guarded=$(guarded_files "$n" "$base")
+      if [ -n "$guarded" ]; then
+        ci_ok=0; log "$n: GUARDED files touched — not merging: $(tr '\n' ' ' <<<"$guarded")"; result="guarded files, PR open $url"
+        (cd "$repo" && gh pr comment "$url" --body "🔒 보호 파일을 건드려 자동 머지하지 않습니다. 사람이 검토해 주세요.
+
+$(sed 's/^/- /' <<<"$guarded")
+
+(state/default.guard 규칙, 자율 개선 러너 자동 코멘트)" >>"$LOG" 2>&1) || true
+      elif [ "$REVIEW" -eq 1 ] && ! review_pr "$n" "$base" "$url"; then
+        ci_ok=0
+      else
+        wait_for_checks "$n" "$(git -C "$wt" rev-parse HEAD)"
+        if [ "${CHECKS_FAILED:-0}" -gt 0 ]; then
+          ci_ok=0; log "$n: CI FAILED on PR — not merging, PR left open"; result="CI failed, PR open $url"
+        fi
       fi
     fi
     if [ "$MERGE" -eq 1 ] && [ -n "$url" ] && [ "$ci_ok" -eq 1 ]; then
@@ -383,6 +454,7 @@ $(printf '%b' "$FIX_NOTE_TEXT")
   git -C "$repo" worktree remove --force "$wt" >>"$LOG" 2>&1 || true
   if [ "$n" = "${FIX_PROJECT:-}" ]; then
     grep -v -P "^$n\t" "$FIXQ" > "$FIXQ.tmp" 2>/dev/null; mv "$FIXQ.tmp" "$FIXQ"; result="fix-round: $result"
+    case "$result" in *merged*) ;; *) log "$n: fix round did not merge — rolling back"; rollback_project "$n" "${FIX_SHA:-}";; esac
   fi
   record_run "$n" "$result"
   sync_repo "run($RUN_DATE): $n — $result"

@@ -44,6 +44,10 @@ COLOR = {"released": "#0ca30c", "merged": "#fab219", "nochange": "#9ca3af", "fai
 WARN_PATTERNS = [
     ("ASSETS MISSING", "릴리즈 자산 누락 — 이전 릴리즈엔 있던 파일이 이번엔 없음"),
     ("queued for fix", "릴리즈 워크플로 2회 실패 — 수정 과제 배정됨"),
+    ("review rejected", "리뷰 에이전트가 머지 보류 — PR 열림, 사람 판단 필요"),
+    ("guarded files", "보호 파일 변경 — 자동 머지 안 함, 사람 검토 필요"),
+    ("rollback PR", "자동 롤백 PR 생성 — 사람 머지 필요"),
+    ("rollback failed", "롤백 충돌 — 사람 개입 필요"),
     ("CI failed", "CI 실패로 PR 미머지"),
     ("merge failed", "PR 머지 실패"),
     ("release push failed", "릴리즈 푸시 실패"),
@@ -158,9 +162,61 @@ def fix_queue():
     if os.path.exists(path):
         for line in open(path, encoding="utf-8"):
             if "\t" in line:
-                p, note = line.rstrip("\n").split("\t", 1)
-                out.append({"project": p, "note": note})
+                parts = line.rstrip("\n").split("\t")
+                out.append({"project": parts[0], "note": parts[1], "merge_sha": parts[2] if len(parts) > 2 else ""})
     return out
+
+
+def lessons_all():
+    return load_jsonl(os.path.join(STATE, "lessons.jsonl"))
+
+
+def health():
+    try:
+        return json.load(open(os.path.join(DOCS, "data", "health.json"), encoding="utf-8"))
+    except Exception:
+        return {}
+
+
+def health_grade(runs_p, lessons_p):
+    """최근 14일: 실패·경고·회귀로 A~D. (등급, 설명)"""
+    cutoff = (date.today() - timedelta(days=14)).isoformat()
+    recent = [r for r in runs_p if (r.get("date") or "") >= cutoff]
+    rel = sum(1 for r in recent if classify(r.get("result")) == "released")
+    fails = sum(1 for r in recent if classify(r.get("result")) == "failed")
+    warns = sum(1 for r in recent if any(k in (r.get("result") or "") for k, _ in WARN_PATTERNS))
+    regress = sum(1 for l in lessons_p if (l.get("date") or "") >= cutoff)
+    if regress >= 2 or warns >= 4 or fails >= 3:
+        g = "D"
+    elif regress == 1 or warns >= 2 or fails >= 1:
+        g = "C"
+    elif warns == 1 or rel == 0:
+        g = "B"
+    else:
+        g = "A"
+    return g, f"14일: 릴리즈 {rel}, 실패 {fails}, 경고 {warns}, 회귀 {regress}"
+
+
+GRADE_PILL = {"A": "pill-released", "B": "pill-merged", "C": "pill-merged", "D": "pill-failed"}
+
+
+def grade_html(g, why):
+    return f'<span class="pill {GRADE_PILL[g]}" title="{esc(why)}">건강 {g}</span>'
+
+
+def health_html(h, lessons):
+    if not h:
+        return ""
+    since = int(h.get("seconds_since_last") or 0)
+    ago = f"{since//3600}시간 {since%3600//60}분 전" if since >= 3600 else f"{since//60}분 전"
+    ok = h.get("ok", True)
+    cls = "alerts ok" if ok else "alerts"
+    items = "".join(f"<li>{esc(x)}</li>" for x in (h.get("problems") or []) + [f"조치: {a}" for a in (h.get("actions") or [])])
+    cutoff = (date.today() - timedelta(days=7)).isoformat()
+    reg7 = sum(1 for l in lessons if (l.get("date") or "") >= cutoff)
+    return (f'<div class="{cls}" role="status"><strong>{"🩺 러너 정상" if ok else "🩺 러너 점검 필요"}</strong> '
+            f'<span class="meta">— 마지막 회차 {ago} · 스케줄러 {esc(h.get("scheduler_status") or "?")} · 디스크 {h.get("disk_percent", "?")}% · '
+            f'최근 7일 회귀 {reg7}건 · 점검 {esc((h.get("checked") or "")[11:16])}</span>{("<ul>" + items + "</ul>") if items else ""}</div>\n')
 
 
 def counts(day_runs):
@@ -490,6 +546,8 @@ def write_period(kind, key, by_day, by_day_usage):
 def write_project(p, runs_p, usage_p):
     repo = repo_name(p, runs_p[-1].get("result") if runs_p else "")
     rel = release_info(p)
+    lessons_p = [l for l in lessons_all() if l.get("project") == p]
+    grade, gwhy = health_grade(runs_p, lessons_p)
     c = counts(runs_p)
     u = usage_sum(usage_p)
     last = runs_p[-1] if runs_p else {}
@@ -501,7 +559,7 @@ def write_project(p, runs_p, usage_p):
     if rel.get("tag"):
         ld["version"] = rel.get("version") or rel.get("tag")
     lines = [front_matter(f"{p} — 자율 개선 이력", desc), jsonld(ld), f"# {p}\n",
-             f'<p class="tldr"><strong>요약.</strong> {esc(desc)}</p>\n', stats_html(c, u), "## 현황\n", '<dl class="kv">',
+             f'<p class="tldr"><strong>요약.</strong> {esc(desc)} {grade_html(grade, gwhy)} <span class="meta">{esc(gwhy)}</span></p>\n', stats_html(c, u), "## 현황\n", '<dl class="kv">',
              f'<dt>저장소</dt><dd><a href="{GH}/{repo}">{GH}/{repo}</a></dd>']
     if last:
         lines.append(f'<dt>마지막 회차</dt><dd>{esc((last.get("ts") or "")[:16].replace("T", " "))} KST — {pill(classify(last.get("result")))} {result_html(p, last.get("result"))}</dd>')
@@ -522,14 +580,16 @@ def write_project(p, runs_p, usage_p):
     lines += ["## 회차 이력\n", runs_table(list(reversed(runs_p)), with_date=True, filterable=len(runs_p) > 8)]
     if usage_p:
         lines += ["## 비용·사용량\n", usage_table(list(reversed(usage_p))[:30], caption="최근 30세션")]
+    if lessons_p:
+        lines += ["## 교훈 (깨졌던 변경)\n"] + [f"- {esc(l.get('date',''))} **{esc(l.get('kind',''))}** — {esc(l.get('detail',''))}" + (f" ([링크]({l['pr']}))" if (l.get("pr") or "").startswith("http") else "") for l in reversed(lessons_p)] + [""]
     lt = ledger_text(p)
     if lt:
         lines += ["## 원장 (에이전트가 남긴 기록)\n", re.sub(r"^# .*\n", "", lt, count=1).strip(), ""]
-    lines.append(f"\n[← 대시보드]({SITE}/)\n")
+    lines.append(f"\n[← 대시보드]({SITE}/) · [교훈 모음]({SITE}/lessons/)\n")
     write_page(os.path.join(PROJECTS, f"{p}.md"), lines)
     return {"name": p, "repo": f"{GH}/{repo}", "page": f"{SITE}/projects/{p}/", "runs": c["total"], "released": c["released"],
             "last_ts": last.get("ts"), "last_status": classify(last.get("result")) if last else None, "last_result": last.get("result"),
-            "cost": round(u["cost"], 2), "minutes": round(u["minutes"]),
+            "cost": round(u["cost"], 2), "minutes": round(u["minutes"]), "grade": grade, "grade_why": gwhy, "lessons": len(lessons_p),
             "release": {k: rel.get(k) for k in ("status", "version", "tag", "assets_count", "prev_tag", "prev_assets_count") if k in rel}}
 
 
@@ -558,6 +618,23 @@ def write_feed(days, descs):
         f.write(xml)
 
 
+# ---------- 교훈 페이지 ----------
+def write_lessons(lessons):
+    desc = f"자율 개선 에이전트의 변경이 깨뜨린 것들 {len(lessons)}건 — 머지 뒤 CI 실패, 되돌림, 릴리즈 워크플로 반복 실패, 롤백. 다음 회차 프롬프트에 프로젝트별로 주입된다."
+    lines = [front_matter("교훈 — 깨졌던 변경 모음", desc, None, {"type": "report"}), "# 교훈 — 깨졌던 변경 모음\n",
+             f'<p class="tldr"><strong>요약.</strong> {esc(desc)}</p>\n']
+    byk = defaultdict(int)
+    for l in lessons:
+        byk[l.get("kind", "")] += 1
+    if byk:
+        lines.append('<ul class="stats">' + "".join(f"<li><b>{v}</b><span>{esc(k)}</span></li>" for k, v in sorted(byk.items(), key=lambda x: -x[1])) + "</ul>\n")
+    rows = [("failed", [esc(l.get("date", "")), f'<a href="{SITE}/projects/{esc(l.get("project",""))}/">{esc(l.get("project",""))}</a>', esc(l.get("kind", "")),
+                        esc(l.get("detail", "")) + (f' <a href="{l["pr"]}">링크</a>' if (l.get("pr") or "").startswith("http") else "")]) for l in reversed(lessons)]
+    lines.append(table([("날짜", ""), ("프로젝트", "primary"), ("종류", ""), ("내용", "")], rows, filterable=True) if rows else "아직 기록된 교훈이 없습니다.\n")
+    lines.append(f"\n[← 대시보드]({SITE}/)\n")
+    write_page(os.path.join(DOCS, "lessons.md"), lines)
+
+
 # ---------- 대시보드 ----------
 FAQ = [
     ("이 페이지는 무엇인가요?",
@@ -574,6 +651,10 @@ FAQ = [
      "개선은 머지됐지만 릴리즈가 만들어지지 않은 회차입니다. 릴리즈 이력이 전혀 없는 신규 저장소(관례를 새로 정하지 않음)이거나, 릴리즈 단계가 실패·미완료된 경우입니다."),
     ("'주의 필요'에는 무엇이 뜨나요? 알림은 어디로 오나요?",
      "최근 2일 회차 중 CI 실패로 머지되지 않은 PR, 릴리즈 실패, 이전 릴리즈에는 있던 첨부 자산이 빠진 릴리즈, 수정 과제 대기처럼 사람이 확인해야 할 항목입니다. 새 경고가 생기면 GitHub Issue(라벨 alert)에 기록하고, 설정돼 있으면 Slack·이메일·Windows 알림으로도 보냅니다."),
+    ("머지 전에 검토는 없나요?",
+     "있습니다. 구현과 다른 세션의 리뷰 에이전트가 diff 만 읽고 '머지하면 안 되는 이유'(검증하지 않는 테스트, 논리 오류, 설명과 다른 동작, 위험한 변경)를 찾습니다. 거절하면 PR 에 사유를 달고 열어 둡니다. 또 워크플로·마이그레이션·인증·결제·배포 파일(보호 파일)을 건드린 PR 은 자동 머지하지 않습니다."),
+    ("깨진 변경은 어떻게 되나요?",
+     "머지 2시간 뒤부터 main CI 실패와 되돌림 커밋을 확인해 '교훈'으로 기록하고, 그 프로젝트의 다음 회차 프롬프트에 주입해 같은 실수를 피하게 합니다. 릴리즈 워크플로가 반복 실패하고 수정 회차도 실패하면 원래 머지를 되돌리는 롤백 PR 을 자동으로 엽니다(머지는 사람). 프로젝트마다 최근 14일의 실패·경고·회귀로 건강 등급 A~D 를 매깁니다."),
     ("비용은 어떻게 계산되나요?",
      "각 회차의 claude -p 세션이 보고한 추정 비용(USD)과 소요 시간·턴 수·토큰을 그대로 합산합니다. 정액제 구독에서는 실제 청구가 아닌 참고값입니다."),
     ("원본 데이터는 어디서 보나요?",
@@ -581,7 +662,7 @@ FAQ = [
 ]
 
 
-def write_index(by_day, days, by_day_usage, projects_info, alert_items, weeks, months):
+def write_index(by_day, days, by_day_usage, projects_info, alert_items, weeks, months, lessons):
     today = date.today().isoformat()
     tr = by_day.get(today, [])
     tu = by_day_usage.get(today, [])
@@ -610,9 +691,9 @@ def write_index(by_day, days, by_day_usage, projects_info, alert_items, weeks, m
              "# aidev 자율 개선 대시보드\n",
              f'<p class="tldr"><strong>한 줄 요약.</strong> {esc(desc)} 회차가 끝날 때마다 자동 갱신됩니다 '
              f'(마지막 갱신 <time datetime="{NOW.isoformat(timespec="seconds")}" data-rel>{NOW.strftime("%Y-%m-%d %H:%M")}</time> KST).</p>\n',
-             alerts_html(alert_items),
+             alerts_html(alert_items), health_html(health(), lessons),
              f"[운영 문서]({GH}/aidev#readme) · [원장]({GH}/aidev/tree/main/state) · [실행 이력]({GH}/aidev/commits/main) · [경고 이슈]({GH}/aidev/issues?q=label%3Aalert) · "
-             f"[Atom 피드]({SITE}/feed.xml) · [summary.json]({SITE}/data/summary.json)\n",
+             f"[교훈 {len(lessons)}건]({SITE}/lessons/) · [Atom 피드]({SITE}/feed.xml) · [summary.json]({SITE}/data/summary.json)\n",
              f"## 오늘 ({today})\n"]
     if tr:
         lines += [stats_html(c, u), f"[{today} 보고 자세히 보기 →]({SITE}/reports/{today}/)\n", runs_table(tr, caption="오늘 전체 회차 (KST)")]
@@ -644,10 +725,10 @@ def write_index(by_day, days, by_day_usage, projects_info, alert_items, weeks, m
         else:
             rel_s = esc(rel.get("status") or "")
         st = info["last_status"] or "other"
-        rows.append((st, [f'<a href="{info["page"]}">{esc(info["name"])}</a>', esc((info["last_ts"] or "")[:16].replace("T", " ")),
+        rows.append((st, [f'<a href="{info["page"]}">{esc(info["name"])}</a> ' + grade_html(info["grade"], info["grade_why"]), esc((info["last_ts"] or "")[:16].replace("T", " ")),
                           pill(st) + " " + result_html(info["name"], info["last_result"]), rel_s, f"${info['cost']:.2f}"]))
     lines += ["## 프로젝트별 현황\n",
-              table([("프로젝트", "primary"), ("마지막 회차", ""), ("결과", ""), ("최근 릴리즈", ""), ("누적 비용", "num")], rows, filterable=True,
+              table([("프로젝트 · 건강", "primary"), ("마지막 회차", ""), ("결과", ""), ("최근 릴리즈", ""), ("누적 비용", "num")], rows, filterable=True,
                     caption="프로젝트 이름을 누르면 원장 전체와 회차 이력을 볼 수 있습니다.")]
     lines += ["## 비용·사용량\n",
               f'<ul class="stats"><li><b>${u["cost"]:.2f}</b><span>오늘 비용</span></li><li><b>{fmt_min(u["minutes"])}</b><span>오늘 에이전트 시간</span></li>'
@@ -693,7 +774,9 @@ def main():
         by_project_usage[p].sort(key=lambda r: r.get("ts") or "")
         projects_info.append(write_project(p, by_project[p], by_project_usage.get(p, [])))
     alert_items = alerts(by_day, days)
-    desc, c, u, total_runs, total_rel, all_u = write_index(by_day, days, by_day_usage, projects_info, alert_items, weeks, months)
+    lessons = lessons_all()
+    write_lessons(lessons)
+    desc, c, u, total_runs, total_rel, all_u = write_index(by_day, days, by_day_usage, projects_info, alert_items, weeks, months, lessons)
     write_feed(days, descs)
     os.makedirs(os.path.join(DOCS, "data"), exist_ok=True)
     summary = {"generated": NOW.isoformat(timespec="seconds"), "site": SITE, "description": desc,
@@ -701,7 +784,7 @@ def main():
                          "cost_usd": round(u["cost"], 2), "minutes": round(u["minutes"]), "sessions": int(u["sessions"])},
                "totals": {"runs": total_runs, "released": total_rel, "days": len(days), "cost_usd": round(all_u["cost"], 2),
                           "minutes": round(all_u["minutes"]), "tokens_in": int(all_u["in"]), "tokens_out": int(all_u["out"])},
-               "alerts": alert_items, "fix_queue": fix_queue(),
+               "alerts": alert_items, "fix_queue": fix_queue(), "health": health(), "lessons": lessons[-50:],
                "days": [{"date": d, **{k: counts(by_day[d])[k] for k in ("total", "released", "merged", "nochange", "failed")},
                          "cost_usd": round(usage_sum(by_day_usage.get(d, []))["cost"], 2)} for d in days[:30]],
                "weeks": weeks[:8], "months": months[:6],

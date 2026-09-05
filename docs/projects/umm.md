@@ -1,7 +1,7 @@
 ---
 title: "umm — 자율 개선 이력"
 description: "umm: 자율 개선 회차 8회, 릴리즈 7건. 최근 릴리즈 v0.71.2."
-last_modified_at: 2026-09-05 10:46:02 +0900
+last_modified_at: 2026-09-05 11:03:18 +0900
 ---
 {% raw %}
 <script type="application/ld+json">
@@ -18,14 +18,14 @@ last_modified_at: 2026-09-05 10:46:02 +0900
   "name": "hkjang",
   "url": "https://github.com/hkjang"
  },
- "dateModified": "2026-09-05T10:46:02+09:00",
+ "dateModified": "2026-09-05T11:03:18+09:00",
  "version": "0.71.2"
 }
 </script>
 
 # umm
 
-<p class="tldr"><strong>요약.</strong> umm: 자율 개선 회차 8회, 릴리즈 7건. 최근 릴리즈 v0.71.2.</p>
+<p class="tldr"><strong>요약.</strong> umm: 자율 개선 회차 8회, 릴리즈 7건. 최근 릴리즈 v0.71.2. <span class="pill pill-released" title="14일: 릴리즈 7, 실패 0, 경고 0, 회귀 0">건강 A</span> <span class="meta">14일: 릴리즈 7, 실패 0, 경고 0, 회귀 0</span></p>
 
 <ul class="stats"><li><b>8</b><span>회차</span></li><li><b>1</b><span>프로젝트</span></li><li><b>7</b><span>릴리즈</span></li><li><b>1</b><span>머지(릴리즈 없음)</span></li><li><b>0</b><span>변경 없음</span></li><li><b>0</b><span>실패</span></li></ul>
 
@@ -145,6 +145,6 @@ last_modified_at: 2026-09-05 10:46:02 +0900
 - 릴리즈: v0.71.2 (2026-09-05)
 
 
-[← 대시보드](https://hkjang.github.io/aidev/)
+[← 대시보드](https://hkjang.github.io/aidev/) · [교훈 모음](https://hkjang.github.io/aidev/lessons/)
 
 {% endraw %}

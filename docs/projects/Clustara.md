@@ -1,7 +1,7 @@
 ---
 title: "Clustara — 자율 개선 이력"
 description: "Clustara: 자율 개선 회차 16회, 릴리즈 8건. 최근 릴리즈 v0.9.269."
-last_modified_at: 2026-09-05 10:46:02 +0900
+last_modified_at: 2026-09-05 11:03:18 +0900
 ---
 {% raw %}
 <script type="application/ld+json">
@@ -18,16 +18,16 @@ last_modified_at: 2026-09-05 10:46:02 +0900
   "name": "hkjang",
   "url": "https://github.com/hkjang"
  },
- "dateModified": "2026-09-05T10:46:02+09:00",
+ "dateModified": "2026-09-05T11:03:18+09:00",
  "version": "0.9.269"
 }
 </script>
 
 # Clustara
 
-<p class="tldr"><strong>요약.</strong> Clustara: 자율 개선 회차 16회, 릴리즈 8건. 최근 릴리즈 v0.9.269.</p>
+<p class="tldr"><strong>요약.</strong> Clustara: 자율 개선 회차 16회, 릴리즈 8건. 최근 릴리즈 v0.9.269. <span class="pill pill-released" title="14일: 릴리즈 8, 실패 0, 경고 0, 회귀 0">건강 A</span> <span class="meta">14일: 릴리즈 8, 실패 0, 경고 0, 회귀 0</span></p>
 
-<ul class="stats"><li><b>16</b><span>회차</span></li><li><b>1</b><span>프로젝트</span></li><li><b>8</b><span>릴리즈</span></li><li><b>1</b><span>머지(릴리즈 없음)</span></li><li><b>0</b><span>변경 없음</span></li><li><b>0</b><span>실패</span></li></ul>
+<ul class="stats"><li><b>16</b><span>회차</span></li><li><b>1</b><span>프로젝트</span></li><li><b>8</b><span>릴리즈</span></li><li><b>1</b><span>머지(릴리즈 없음)</span></li><li><b>0</b><span>변경 없음</span></li><li><b>0</b><span>실패</span></li><li><b>$4.12</b><span>비용</span></li><li><b>10분</b><span>에이전트 시간</span></li></ul>
 
 ## 현황
 
@@ -40,6 +40,10 @@ last_modified_at: 2026-09-05 10:46:02 +0900
 ## 회차 이력
 
 <div class="table-wrap"><table class="rt" data-filter="1"><thead><tr><th>일시</th><th class="primary">프로젝트</th><th>결과</th></tr></thead><tbody><tr data-status="released"><td data-label="일시">2026-09-04 22:19</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/Clustara/">Clustara</a></td><td data-label="결과"><span class="pill pill-released">🚀 릴리즈</span> merged <a href="https://github.com/hkjang/clustara/pull/8">PR #8</a>, released <a href="https://github.com/hkjang/clustara/releases/tag/v0.9.269">v0.9.269</a> +3 assets</td></tr><tr data-status="other"><td data-label="일시">2026-09-04 11:23</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/Clustara/">Clustara</a></td><td data-label="결과"><span class="pill pill-other">• 기타</span> assets-only v0.9.262, assets for v0.9.262 +3 assets</td></tr><tr data-status="other"><td data-label="일시">2026-09-04 11:21</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/Clustara/">Clustara</a></td><td data-label="결과"><span class="pill pill-other">• 기타</span> assets-only v0.9.263, assets for v0.9.263 +3 assets</td></tr><tr data-status="other"><td data-label="일시">2026-09-04 11:20</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/Clustara/">Clustara</a></td><td data-label="결과"><span class="pill pill-other">• 기타</span> assets-only v0.9.264, assets for v0.9.264 +3 assets</td></tr><tr data-status="other"><td data-label="일시">2026-09-04 11:18</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/Clustara/">Clustara</a></td><td data-label="결과"><span class="pill pill-other">• 기타</span> assets-only v0.9.265, assets for v0.9.265 +3 assets</td></tr><tr data-status="other"><td data-label="일시">2026-09-04 11:16</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/Clustara/">Clustara</a></td><td data-label="결과"><span class="pill pill-other">• 기타</span> assets-only v0.9.266, assets for v0.9.266 +3 assets</td></tr><tr data-status="other"><td data-label="일시">2026-09-04 11:14</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/Clustara/">Clustara</a></td><td data-label="결과"><span class="pill pill-other">• 기타</span> assets-only v0.9.267, assets for v0.9.267 +3 assets</td></tr><tr data-status="other"><td data-label="일시">2026-09-04 07:02</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/Clustara/">Clustara</a></td><td data-label="결과"><span class="pill pill-other">• 기타</span> assets-only, assets for v0.9.268 +3 assets</td></tr><tr data-status="released"><td data-label="일시">2026-09-04 03:41</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/Clustara/">Clustara</a></td><td data-label="결과"><span class="pill pill-released">🚀 릴리즈</span> merged <a href="https://github.com/hkjang/clustara/pull/7">PR #7</a>, released <a href="https://github.com/hkjang/clustara/releases/tag/v0.9.268">v0.9.268</a></td></tr><tr data-status="released"><td data-label="일시">2026-09-03 20:00</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/Clustara/">Clustara</a></td><td data-label="결과"><span class="pill pill-released">🚀 릴리즈</span> merged <a href="https://github.com/hkjang/clustara/pull/6">PR #6</a>, released <a href="https://github.com/hkjang/clustara/releases/tag/v0.9.267">v0.9.267</a></td></tr><tr data-status="released"><td data-label="일시">2026-09-03 12:04</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/Clustara/">Clustara</a></td><td data-label="결과"><span class="pill pill-released">🚀 릴리즈</span> merged <a href="https://github.com/hkjang/clustara/pull/5">PR #5</a>, released <a href="https://github.com/hkjang/clustara/releases/tag/v0.9.266">v0.9.266</a></td></tr><tr data-status="released"><td data-label="일시">2026-09-03 06:29</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/Clustara/">Clustara</a></td><td data-label="결과"><span class="pill pill-released">🚀 릴리즈</span> merged <a href="https://github.com/hkjang/clustara/pull/4">PR #4</a>, released <a href="https://github.com/hkjang/clustara/releases/tag/v0.9.265">v0.9.265</a></td></tr><tr data-status="released"><td data-label="일시">2026-09-03 00:29</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/Clustara/">Clustara</a></td><td data-label="결과"><span class="pill pill-released">🚀 릴리즈</span> merged <a href="https://github.com/hkjang/clustara/pull/3">PR #3</a>, released <a href="https://github.com/hkjang/clustara/releases/tag/v0.9.264">v0.9.264</a></td></tr><tr data-status="released"><td data-label="일시">2026-09-02 18:00</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/Clustara/">Clustara</a></td><td data-label="결과"><span class="pill pill-released">🚀 릴리즈</span> merged <a href="https://github.com/hkjang/clustara/pull/2">PR #2</a>, released <a href="https://github.com/hkjang/clustara/releases/tag/v0.9.263">v0.9.263</a></td></tr><tr data-status="released"><td data-label="일시">2026-09-02 17:41</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/Clustara/">Clustara</a></td><td data-label="결과"><span class="pill pill-released">🚀 릴리즈</span> release-only, released <a href="https://github.com/hkjang/clustara/releases/tag/v0.9.262">v0.9.262</a></td></tr><tr data-status="merged"><td data-label="일시">2026-09-02 12:45</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/Clustara/">Clustara</a></td><td data-label="결과"><span class="pill pill-merged">✅ 머지</span> merged (옛 러너 경로에서 수행된 회차 원장 이관)</td></tr></tbody></table></div>
+
+## 비용·사용량
+
+<div class="table-wrap"><table class="rt"><caption class="meta">최근 30세션</caption><thead><tr><th>시각</th><th class="primary">프로젝트</th><th>단계</th><th class="num">시간</th><th class="num">턴</th><th class="num">비용</th><th class="num">토큰 입력/출력</th><th>종료</th></tr></thead><tbody><tr data-status="other"><td data-label="시각">11:00</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/Clustara/">Clustara</a></td><td data-label="단계">개선</td><td data-label="시간" class="num">10분</td><td data-label="턴" class="num">55</td><td data-label="비용" class="num">$4.12</td><td data-label="토큰 입력/출력" class="num">4.2M / 36K</td><td data-label="종료">success</td></tr></tbody></table></div>
 
 ## 원장 (에이전트가 남긴 기록)
 
@@ -106,7 +110,14 @@ last_modified_at: 2026-09-05 10:46:02 +0900
 - 릴리즈: v0.9.269 (2026-09-04)
 - 릴리즈: v0.9.269 (2026-09-04)
 
+## 2026-09-05
+- 선택: 실클러스터 write 경로(`internal/kube` executor·stack applier)의 대상 조립 결함 5개 수정 (가치 5 / 위험 2 / 작업량 M)
+- 결과: 성공
+- 요약: `internal/kube` 의 executor 는 Action Center 승인 뒤 실제로 클러스터를 바꾸는 곳이고 stack applier 는 GitOps Stack 의 server-side apply 경로인데, 둘 다 요청 URL 을 문자열로 조립하면서 다섯 가지가 틀렸다 — ① `DeletePod` 는 name 이 비면 `/api/v1/namespaces/{ns}/pods/` 를 만드는데 이건 Kubernetes 가 **deletecollection 으로 처리하는 URL** 이라 이름 없는 delete_pod 한 건이 네임스페이스의 Pod 를 전부 지운다. 그리고 그런 요청이 실제로 만들어질 수 있었다: `analyzer.PlanDevRequest` 가 `in.ResourceName != ""` 로만 검증하는데 핸들러는 `strings.TrimSpace` 한 값을 저장하므로 공백만 있는 `resource_name` 이 대상 없는 액션 요청으로 적재됐다(검증기는 trim 후 비교, executor 는 요청 경로를 믿지 않고 빈 namespace·name·node 를 전송 전에 거절) ② `normalizeWorkloadKind` 가 switch 앞에서 복수형 `s` 를 무조건 떼어내 `sts`→`st`, `ds`→`d` 가 되면서 바로 아래 `case "sts"`·`case "ds"` 가 실행 불가능한 코드였다 — `ResourceKind` 는 자유 입력이고 단축 이름은 운영자·Ops Agent 가 쓰는 표기(`deploy` 는 `s` 로 안 끝나 우연히 동작 중이었음) ③ apps/v1 DaemonSet 에는 `/scale` 서브리소스가 없는데 `workloadResourcePlural` 이 scale 대상으로 받아들여 요청→영향도→승인을 다 통과한 뒤 실행 시점에 404 로 끝났다 ④ `resolveStackTargets` 가 모든 문서에 stack namespace 를 채우므로 `clusterScopedKinds` 에 없는 cluster-scoped kind 는 `/namespaces/{stack}/...` 로 조립돼 실패 — `IngressClass`·`PodSecurityPolicy` 는 `pluralizeKind` 의 불규칙 목록에 이미 있으면서 이 목록엔 없었고, webhook configuration 2종·`APIService`·`RuntimeClass`·`CSIDriver`·`VolumeSnapshotClass`·`ValidatingAdmissionPolicy(Binding)` 도 추가 ⑤ 같은 패키지 읽기 경로(`podLogRequest`·`podExecURL`)는 `url.PathEscape` 를 쓰는데 `apiResourcePath` 만 날것으로 이어붙여, 저장된 manifest 값의 슬래시가 `force=true` apply 를 다른 리소스로 돌릴 수 있었다. 검증: 신규 테스트 5개를 고치기 전 코드에 되돌려 붙여 다섯 개가 각 결함을 지목하며 실패함을 확인했고 `go build ./...`·`go vet ./...`·`go test ./...` 전부 통과. 저장소 관례대로 AppVersion·changelog·docs 버전 마커를 v0.9.270 으로 올렸다(release gate 테스트가 강제).
+- 보류 아이디어: ① `delete_pod` 실행기가 `act.ResourceKind` 를 아예 보지 않아 Deployment 를 대상으로 만든 요청이 같은 이름의 Pod 삭제로 나감 (가치 3 / 위험 1 / S) ② `require_resource_limits` 는 `limits` 가 비어있지 않기만 하면 통과 — cpu 만 있고 memory limit 이 없는(OOM 무제한) 형태를 놓침 (가치 3 / 위험 2 / S) ③ `AssessImpact` 가 인벤토리에 없는 대상을 zero value 로 받아 "replicas 0 → N" 처럼 현재 상태를 아는 척함 (가치 3 / 위험 1 / S) ④ `.github` 에 CI 워크플로 없음 — build/vet/test 게이트 추가 (가치 3 / 위험 1 / S) ⑤ `kube.splitCommandLine` 이 빈 인자(`sh -c ""`)를 버려 argv 가 밀림 — `podExecArgs` 의 CommandArg 경로도 같음 (가치 2 / 위험 1 / S)
+- 릴리즈: v0.9.270 (2026-09-05)
 
-[← 대시보드](https://hkjang.github.io/aidev/)
+
+[← 대시보드](https://hkjang.github.io/aidev/) · [교훈 모음](https://hkjang.github.io/aidev/lessons/)
 
 {% endraw %}

@@ -220,6 +220,17 @@ SEO / AEO / 모바일:
 
 **비용·사용량** — `claude -p --output-format json` 의 `total_cost_usd`·`duration_ms`·`num_turns`·`usage` 를 `record_usage()` 가 `docs/data/usage.jsonl` 에 남긴다(단계: improve/release/assets). 사람이 읽을 답변은 종전처럼 `logs/<날짜>-<프로젝트>.txt`. 대시보드 '비용·사용량', 일일 보고, 프로젝트 페이지에 표시. **정액제에서는 참고값**이다.
 
+## 10-2. 품질·안전 게이트
+
+| 단계 | 파일 | 동작 |
+|---|---|---|
+| **회귀 감시** | `bin/regress.sh` (회차마다) | 머지 2~48시간 뒤 머지 커밋의 CI 실패·되돌림 커밋을 확인해 `state/lessons.jsonl` 에 교훈 기록 → `prompt.md` `$LESSONS` 로 그 프로젝트 다음 회차에 주입, `/lessons/` 페이지 |
+| **리뷰 게이트** | `review-prompt.md`, `review_pr()` | PR 생성 후 CI 대기 전에 별도 세션이 diff 만 읽고 거절 사유 탐색(검증 안 하는 테스트·논리 오류·설명 불일치·위험 변경). reject → PR 코멘트 + 열어 둠(`review rejected`). `--no-review`, 예산 `RVBUDGET`(기본 $4) |
+| **보호 파일** | `state/default.guard`, `state/<프로젝트>.guard` | 정규식에 걸리는 파일(workflows, migrations, auth, payment, Dockerfile/compose, deploy, secret, LICENSE)을 건드리면 자동 머지 안 함 + PR 코멘트(`guarded files`) |
+| **자동 롤백** | `rollback_project()` | 수정 회차(fix-round)까지 머지에 실패하면 큐에 저장된 원래 머지 커밋을 `git revert` 한 PR 을 열고 교훈 기록(`rollback PR`). 머지는 사람 |
+| **헬스체크** | `bin/health.sh`, 작업 스케줄러 `AutoImproveHealth`(30분) | 마지막 회차 3시간 초과·gh 인증·docker·디스크 점검, 3시간 넘게 매달린 러너 종료·잠금 해제, `docs/data/health.json` 갱신·푸시, 문제 시 토스트/Slack |
+| **건강 등급** | `report.py health_grade()` | 프로젝트별 최근 14일 실패·경고·회귀로 A~D. 프로젝트 표와 페이지에 알약으로 표시 |
+
 ## 11. 점검 루틴
 
 - **매일**: `tail -50 logs/cron.log` — `merge FAILED`, `claude exited non-zero`(사용량 한도 가능성), `aidev sync FAILED` 확인
