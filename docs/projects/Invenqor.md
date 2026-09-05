@@ -1,7 +1,7 @@
 ---
 title: "Invenqor — 자율 개선 이력"
-description: "Invenqor: 자율 개선 회차 14회, 릴리즈 7건. 최근 릴리즈 v0.2.25."
-last_modified_at: 2026-09-05 11:08:19 +0900
+description: "Invenqor: 자율 개선 회차 15회, 릴리즈 7건. 최근 릴리즈 v0.2.25."
+last_modified_at: 2026-09-05 11:20:22 +0900
 ---
 {% raw %}
 <script type="application/ld+json">
@@ -11,35 +11,39 @@ last_modified_at: 2026-09-05 11:08:19 +0900
  "name": "Invenqor",
  "codeRepository": "https://github.com/hkjang/invenqor",
  "url": "https://hkjang.github.io/aidev/projects/Invenqor/",
- "description": "Invenqor: 자율 개선 회차 14회, 릴리즈 7건. 최근 릴리즈 v0.2.25.",
+ "description": "Invenqor: 자율 개선 회차 15회, 릴리즈 7건. 최근 릴리즈 v0.2.25.",
  "inLanguage": "ko",
  "maintainer": {
   "@type": "Person",
   "name": "hkjang",
   "url": "https://github.com/hkjang"
  },
- "dateModified": "2026-09-05T11:08:19+09:00",
+ "dateModified": "2026-09-05T11:20:22+09:00",
  "version": "0.2.25"
 }
 </script>
 
 # Invenqor
 
-<p class="tldr"><strong>요약.</strong> Invenqor: 자율 개선 회차 14회, 릴리즈 7건. 최근 릴리즈 v0.2.25. <span class="pill pill-merged" title="14일: 릴리즈 7, 실패 0, 경고 1, 회귀 0">건강 B</span> <span class="meta">14일: 릴리즈 7, 실패 0, 경고 1, 회귀 0</span></p>
+<p class="tldr"><strong>요약.</strong> Invenqor: 자율 개선 회차 15회, 릴리즈 7건. 최근 릴리즈 v0.2.25. <span class="pill pill-merged" title="14일: 릴리즈 7, 실패 0, 경고 2, 회귀 0">건강 C</span> <span class="meta">14일: 릴리즈 7, 실패 0, 경고 2, 회귀 0</span></p>
 
-<ul class="stats"><li><b>14</b><span>회차</span></li><li><b>1</b><span>프로젝트</span></li><li><b>7</b><span>릴리즈</span></li><li><b>0</b><span>머지(릴리즈 없음)</span></li><li><b>0</b><span>변경 없음</span></li><li><b>0</b><span>실패</span></li></ul>
+<ul class="stats"><li><b>15</b><span>회차</span></li><li><b>1</b><span>프로젝트</span></li><li><b>7</b><span>릴리즈</span></li><li><b>0</b><span>머지(릴리즈 없음)</span></li><li><b>0</b><span>변경 없음</span></li><li><b>0</b><span>실패</span></li><li><b>$4.72</b><span>비용</span></li><li><b>10분</b><span>에이전트 시간</span></li></ul>
 
 ## 현황
 
 <dl class="kv">
 <dt>저장소</dt><dd><a href="https://github.com/hkjang/invenqor">https://github.com/hkjang/invenqor</a></dd>
-<dt>마지막 회차</dt><dd>2026-09-04 22:36 KST — <span class="pill pill-released">🚀 릴리즈</span> merged <a href="https://github.com/hkjang/invenqor/pull/8">PR #8</a>, released <a href="https://github.com/hkjang/invenqor/releases/tag/v0.2.25">v0.2.25</a> +25 assets</dd>
+<dt>마지막 회차</dt><dd>2026-09-05 11:20 KST — <span class="pill pill-other">• 기타</span> <strong>guarded files</strong>, PR open <a href="https://github.com/hkjang/invenqor/pull/9">PR #9</a></dd>
 <dt>최근 릴리즈</dt><dd><a href="https://github.com/hkjang/invenqor/releases/tag/v0.2.25">v0.2.25</a> — released <a href="https://github.com/hkjang/invenqor/releases">전체 릴리즈 →</a></dd>
 </dl>
 
 ## 회차 이력
 
-<div class="table-wrap"><table class="rt" data-filter="1"><thead><tr><th>일시</th><th class="primary">프로젝트</th><th>결과</th></tr></thead><tbody><tr data-status="released"><td data-label="일시">2026-09-04 22:36</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/Invenqor/">Invenqor</a></td><td data-label="결과"><span class="pill pill-released">🚀 릴리즈</span> merged <a href="https://github.com/hkjang/invenqor/pull/8">PR #8</a>, released <a href="https://github.com/hkjang/invenqor/releases/tag/v0.2.25">v0.2.25</a> +25 assets</td></tr><tr data-status="other"><td data-label="일시">2026-09-04 13:30</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/Invenqor/">Invenqor</a></td><td data-label="결과"><span class="pill pill-other">• 기타</span> assets-only v0.2.19, assets for v0.2.19 +25 assets</td></tr><tr data-status="other"><td data-label="일시">2026-09-04 13:25</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/Invenqor/">Invenqor</a></td><td data-label="결과"><span class="pill pill-other">• 기타</span> assets-only v0.2.20, assets for v0.2.20 +25 assets</td></tr><tr data-status="other"><td data-label="일시">2026-09-04 12:27</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/Invenqor/">Invenqor</a></td><td data-label="결과"><span class="pill pill-other">• 기타</span> assets-only v0.2.21, assets for v0.2.21 +25 assets</td></tr><tr data-status="other"><td data-label="일시">2026-09-04 11:57</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/Invenqor/">Invenqor</a></td><td data-label="결과"><span class="pill pill-other">• 기타</span> assets-only v0.2.22, assets for v0.2.22 +25 assets</td></tr><tr data-status="other"><td data-label="일시">2026-09-04 11:43</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/Invenqor/">Invenqor</a></td><td data-label="결과"><span class="pill pill-other">• 기타</span> assets-only v0.2.23, assets for v0.2.23 +25 assets</td></tr><tr data-status="other"><td data-label="일시">2026-09-04 10:56</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/Invenqor/">Invenqor</a></td><td data-label="결과"><span class="pill pill-other">• 기타</span> assets-only, assets for v0.2.24 +25 assets</td></tr><tr data-status="other"><td data-label="일시">2026-09-04 07:06</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/Invenqor/">Invenqor</a></td><td data-label="결과"><span class="pill pill-other">• 기타</span> assets-only, <strong>assets missing</strong></td></tr><tr data-status="released"><td data-label="일시">2026-09-04 04:01</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/Invenqor/">Invenqor</a></td><td data-label="결과"><span class="pill pill-released">🚀 릴리즈</span> merged <a href="https://github.com/hkjang/invenqor/pull/7">PR #7</a>, released <a href="https://github.com/hkjang/invenqor/releases/tag/v0.2.24">v0.2.24</a></td></tr><tr data-status="released"><td data-label="일시">2026-09-03 20:22</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/Invenqor/">Invenqor</a></td><td data-label="결과"><span class="pill pill-released">🚀 릴리즈</span> merged <a href="https://github.com/hkjang/invenqor/pull/6">PR #6</a>, released <a href="https://github.com/hkjang/invenqor/releases/tag/v0.2.23">v0.2.23</a></td></tr><tr data-status="released"><td data-label="일시">2026-09-03 12:20</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/Invenqor/">Invenqor</a></td><td data-label="결과"><span class="pill pill-released">🚀 릴리즈</span> merged <a href="https://github.com/hkjang/invenqor/pull/5">PR #5</a>, released <a href="https://github.com/hkjang/invenqor/releases/tag/v0.2.22">v0.2.22</a></td></tr><tr data-status="released"><td data-label="일시">2026-09-03 06:39</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/Invenqor/">Invenqor</a></td><td data-label="결과"><span class="pill pill-released">🚀 릴리즈</span> merged <a href="https://github.com/hkjang/invenqor/pull/4">PR #4</a>, released <a href="https://github.com/hkjang/invenqor/releases/tag/v0.2.21">v0.2.21</a></td></tr><tr data-status="released"><td data-label="일시">2026-09-03 00:39</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/Invenqor/">Invenqor</a></td><td data-label="결과"><span class="pill pill-released">🚀 릴리즈</span> merged <a href="https://github.com/hkjang/invenqor/pull/3">PR #3</a>, released <a href="https://github.com/hkjang/invenqor/releases/tag/v0.2.20">v0.2.20</a></td></tr><tr data-status="released"><td data-label="일시">2026-09-02 18:20</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/Invenqor/">Invenqor</a></td><td data-label="결과"><span class="pill pill-released">🚀 릴리즈</span> merged <a href="https://github.com/hkjang/invenqor/pull/2">PR #2</a>, released <a href="https://github.com/hkjang/invenqor/releases/tag/v0.2.19">v0.2.19</a></td></tr></tbody></table></div>
+<div class="table-wrap"><table class="rt" data-filter="1"><thead><tr><th>일시</th><th class="primary">프로젝트</th><th>결과</th></tr></thead><tbody><tr data-status="other"><td data-label="일시">2026-09-05 11:20</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/Invenqor/">Invenqor</a></td><td data-label="결과"><span class="pill pill-other">• 기타</span> <strong>guarded files</strong>, PR open <a href="https://github.com/hkjang/invenqor/pull/9">PR #9</a></td></tr><tr data-status="released"><td data-label="일시">2026-09-04 22:36</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/Invenqor/">Invenqor</a></td><td data-label="결과"><span class="pill pill-released">🚀 릴리즈</span> merged <a href="https://github.com/hkjang/invenqor/pull/8">PR #8</a>, released <a href="https://github.com/hkjang/invenqor/releases/tag/v0.2.25">v0.2.25</a> +25 assets</td></tr><tr data-status="other"><td data-label="일시">2026-09-04 13:30</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/Invenqor/">Invenqor</a></td><td data-label="결과"><span class="pill pill-other">• 기타</span> assets-only v0.2.19, assets for v0.2.19 +25 assets</td></tr><tr data-status="other"><td data-label="일시">2026-09-04 13:25</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/Invenqor/">Invenqor</a></td><td data-label="결과"><span class="pill pill-other">• 기타</span> assets-only v0.2.20, assets for v0.2.20 +25 assets</td></tr><tr data-status="other"><td data-label="일시">2026-09-04 12:27</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/Invenqor/">Invenqor</a></td><td data-label="결과"><span class="pill pill-other">• 기타</span> assets-only v0.2.21, assets for v0.2.21 +25 assets</td></tr><tr data-status="other"><td data-label="일시">2026-09-04 11:57</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/Invenqor/">Invenqor</a></td><td data-label="결과"><span class="pill pill-other">• 기타</span> assets-only v0.2.22, assets for v0.2.22 +25 assets</td></tr><tr data-status="other"><td data-label="일시">2026-09-04 11:43</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/Invenqor/">Invenqor</a></td><td data-label="결과"><span class="pill pill-other">• 기타</span> assets-only v0.2.23, assets for v0.2.23 +25 assets</td></tr><tr data-status="other"><td data-label="일시">2026-09-04 10:56</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/Invenqor/">Invenqor</a></td><td data-label="결과"><span class="pill pill-other">• 기타</span> assets-only, assets for v0.2.24 +25 assets</td></tr><tr data-status="other"><td data-label="일시">2026-09-04 07:06</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/Invenqor/">Invenqor</a></td><td data-label="결과"><span class="pill pill-other">• 기타</span> assets-only, <strong>assets missing</strong></td></tr><tr data-status="released"><td data-label="일시">2026-09-04 04:01</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/Invenqor/">Invenqor</a></td><td data-label="결과"><span class="pill pill-released">🚀 릴리즈</span> merged <a href="https://github.com/hkjang/invenqor/pull/7">PR #7</a>, released <a href="https://github.com/hkjang/invenqor/releases/tag/v0.2.24">v0.2.24</a></td></tr><tr data-status="released"><td data-label="일시">2026-09-03 20:22</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/Invenqor/">Invenqor</a></td><td data-label="결과"><span class="pill pill-released">🚀 릴리즈</span> merged <a href="https://github.com/hkjang/invenqor/pull/6">PR #6</a>, released <a href="https://github.com/hkjang/invenqor/releases/tag/v0.2.23">v0.2.23</a></td></tr><tr data-status="released"><td data-label="일시">2026-09-03 12:20</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/Invenqor/">Invenqor</a></td><td data-label="결과"><span class="pill pill-released">🚀 릴리즈</span> merged <a href="https://github.com/hkjang/invenqor/pull/5">PR #5</a>, released <a href="https://github.com/hkjang/invenqor/releases/tag/v0.2.22">v0.2.22</a></td></tr><tr data-status="released"><td data-label="일시">2026-09-03 06:39</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/Invenqor/">Invenqor</a></td><td data-label="결과"><span class="pill pill-released">🚀 릴리즈</span> merged <a href="https://github.com/hkjang/invenqor/pull/4">PR #4</a>, released <a href="https://github.com/hkjang/invenqor/releases/tag/v0.2.21">v0.2.21</a></td></tr><tr data-status="released"><td data-label="일시">2026-09-03 00:39</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/Invenqor/">Invenqor</a></td><td data-label="결과"><span class="pill pill-released">🚀 릴리즈</span> merged <a href="https://github.com/hkjang/invenqor/pull/3">PR #3</a>, released <a href="https://github.com/hkjang/invenqor/releases/tag/v0.2.20">v0.2.20</a></td></tr><tr data-status="released"><td data-label="일시">2026-09-02 18:20</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/Invenqor/">Invenqor</a></td><td data-label="결과"><span class="pill pill-released">🚀 릴리즈</span> merged <a href="https://github.com/hkjang/invenqor/pull/2">PR #2</a>, released <a href="https://github.com/hkjang/invenqor/releases/tag/v0.2.19">v0.2.19</a></td></tr></tbody></table></div>
+
+## 비용·사용량
+
+<div class="table-wrap"><table class="rt"><caption class="meta">최근 30세션</caption><thead><tr><th>시각</th><th class="primary">프로젝트</th><th>단계</th><th class="num">시간</th><th class="num">턴</th><th class="num">비용</th><th class="num">토큰 입력/출력</th><th>종료</th></tr></thead><tbody><tr data-status="other"><td data-label="시각">11:20</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/Invenqor/">Invenqor</a></td><td data-label="단계">개선</td><td data-label="시간" class="num">10분</td><td data-label="턴" class="num">78</td><td data-label="비용" class="num">$4.72</td><td data-label="토큰 입력/출력" class="num">5.7M / 34K</td><td data-label="종료">success</td></tr></tbody></table></div>
 
 ## 원장 (에이전트가 남긴 기록)
 
@@ -248,6 +252,36 @@ last_modified_at: 2026-09-05 11:08:19 +0900
   - Query DSL이 `attributes.<키>`의 존재/부재 자체를 묻는 연산자를 제공하지 않음(지금은 `>= ""` 같은 우회가 필요) (가치 3 / 위험 2 / M)
 - 릴리즈: v0.2.25 (2026-09-04)
 - 릴리즈: v0.2.25 (2026-09-04)
+
+## 2026-09-05
+- 선택: 중간에 실패한 행 읽기가 완전한 결과로 응답되던 문제 (가치 4 / 위험 1 / 작업량 M)
+- 결과: 성공
+- 요약: `*sql.Rows` 반복문은 "끝까지 읽었다"와 "읽다가 실패했다"를 구분하지
+  못한다 — `Next()`가 둘 다 `false`를 돌려주고 `rows.Err()`만이 둘을 가른다.
+  그런데 아홉 곳이 그것을 호출하지 않아, 연결이 끊기거나 statement가 취소되면
+  그때까지 도착한 행이 그대로 답이 되어 HTTP 200으로 나갔고 조각이라는 표시는
+  응답 어디에도 없었다. 가장 무거운 자리는 `/api/v1/query/execute`로,
+  3,000대 규모 질의가 3대만 돌려줄 수 있었고 바로 다음 줄의 감사 레코드가 그
+  짧아진 수를 "표현식에 일치한 자산 수"로 남겼다. Agent 목록, 설정 목록·변경
+  이력, 자산의 수집 원천·변경 이력·관계도 같은 모양이었고, `mergeAssets`는
+  scan 오류까지 버려 실패한 scan이 빈 문자열을 "옮긴 source id" 목록에 넣었으며
+  그 목록은 `asset_changes`에 영구 기록으로 들어간다. 이제 아홉 곳 모두 요청을
+  실패시키고(진단 pruner만 읽은 행을 유지하되 그 회차를 버림), 나머지 반복문은
+  이미 확인하고 있었다는 차이가 다시 생기지 않도록 **Server 트리의 모든 행
+  반복문을 소스로 읽어** 커서를 연 함수가 오류를 확인하는지 요구하는 테스트를
+  추가했다(CSV 컬럼의 `spreadsheetSafe` 검사와 같은 방식 — 이 저장소에 이미
+  AST 규약 테스트가 4개 있다). 검증: 새 테스트가 수정 전 아홉 곳을 파일·함수·
+  변수 이름과 함께 나열하며 실패하고 수정 후 통과함을 확인, `go test ./...`를
+  SQLite fallback과 실제 PostgreSQL(`scripts/test-postgres.sh`) 양쪽에서 전
+  패키지 통과, `go vet`·`go build`·`gofmt`, `npm test`(130개)·`npm run build`
+  (`webui/dist` 무변경 확인), `redocly lint openapi.yaml`,
+  `cargo build --locked` 통과.
+- 보류 아이디어:
+  - `exportAssets` CSV가 limit(기본 10,000)에서 조용히 잘림. 목록 API는 `total`·`has_more`를 주는데 CSV에는 아무 표시가 없음 (가치 3 / 위험 2 / M)
+  - Query DSL이 `attributes.<키>`의 존재/부재 자체를 묻는 연산자를 제공하지 않음(지금은 `>= ""` 같은 우회가 필요) (가치 3 / 위험 2 / M)
+  - `/api/v1/external/query/*` API key 경로의 한도·감사 로그 커버리지 (가치 3 / 위험 2 / M)
+  - 콘솔이 마지막 scope 체크박스를 비활성화하지 않아 이제 400을 받고서야 알게 됨(web 변경 시 `webui/dist` 재빌드 필요) (가치 2 / 위험 2 / S)
+- 릴리즈: v0.2.26 (2026-09-05)
 
 
 [← 대시보드](https://hkjang.github.io/aidev/) · [교훈 모음](https://hkjang.github.io/aidev/lessons/)
