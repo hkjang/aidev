@@ -122,6 +122,10 @@ publish_release(){
         || { log "$n: ASSETS MISSING on $tag (prev $prev had $prev_n)"; result="$result, ASSETS MISSING"; }
     fi
   fi
+  # 대시보드가 쓰도록 자산 수를 release.json 에 남긴다
+  local cur_n; cur_n=$(cd "$repo" && gh release view "$tag" --json assets --jq '.assets|length' 2>/dev/null || echo 0)
+  jq --argjson n "${cur_n:-0}" --arg prev "${prev:-}" --argjson pn "${prev_n:-0}" \
+     '.assets_count=$n | .prev_tag=$prev | .prev_assets_count=$pn' "$rfile" > "$rfile.tmp" 2>/dev/null && mv "$rfile.tmp" "$rfile" || rm -f "$rfile.tmp"
 }
 
 # 머지된 뒤 그 저장소의 관례대로 릴리즈한다. 에이전트는 detached worktree 에서 커밋·태그·자산만 만들고,

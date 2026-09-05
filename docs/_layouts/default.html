@@ -3,17 +3,22 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="color-scheme" content="light dark">
   <meta name="theme-color" content="#0f766e" media="(prefers-color-scheme: light)">
   <meta name="theme-color" content="#0b1220" media="(prefers-color-scheme: dark)">
   <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large">
   <meta name="google" content="notranslate">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="aidev">
   {%- if page.date %}<meta property="article:published_time" content="{{ page.date | date_to_xmlschema }}">{% endif %}
   {%- if page.last_modified_at %}<meta property="article:modified_time" content="{{ page.last_modified_at | date_to_xmlschema }}">{% endif %}
   {% seo %}
-  <link rel="alternate" type="application/json" href="{{ '/data/runs.jsonl' | relative_url }}" title="회차 원본 데이터">
+  <link rel="manifest" href="{{ '/manifest.webmanifest' | relative_url }}">
+  <link rel="alternate" type="application/atom+xml" href="{{ '/feed.xml' | relative_url }}" title="aidev 일일 보고">
+  <link rel="alternate" type="application/json" href="{{ '/data/summary.json' | relative_url }}" title="요약 JSON">
   <link rel="sitemap" type="application/xml" href="{{ '/sitemap.xml' | relative_url }}">
   <link rel="icon" href="{{ '/assets/favicon.svg' | relative_url }}" type="image/svg+xml">
-  <link rel="preload" href="{{ '/assets/style.css' | relative_url }}" as="style">
+  <link rel="apple-touch-icon" href="{{ '/assets/icon-192.png' | relative_url }}">
   <link rel="stylesheet" href="{{ '/assets/style.css' | relative_url }}">
 </head>
 <body>
@@ -21,22 +26,64 @@
   <header class="site-header" role="banner">
     <nav class="site-nav" aria-label="주 메뉴">
       <a class="brand" href="{{ '/' | relative_url }}">aidev</a>
-      <a href="{{ '/' | relative_url }}">대시보드</a>
+      <a href="{{ '/#오늘' | relative_url }}">오늘</a>
       <a href="{{ '/#일일-보고' | relative_url }}">일일 보고</a>
+      <a href="{{ '/#프로젝트별-현황' | relative_url }}">프로젝트</a>
       <a href="{{ '/#faq' | relative_url }}">FAQ</a>
-      <a href="https://github.com/hkjang/aidev#readme" rel="noopener">운영 문서</a>
+      <a href="{{ '/feed.xml' | relative_url }}" title="Atom 피드">피드</a>
+      <a href="https://github.com/hkjang/aidev#readme" rel="noopener">문서</a>
       <a href="https://github.com/hkjang/aidev" rel="noopener">GitHub</a>
     </nav>
   </header>
   <main id="main" class="content" role="main">
-    {% if page.type == "report" %}
+    {% if page.type == "report" or page.type == "project" %}
     <nav class="crumbs" aria-label="현재 위치"><a href="{{ '/' | relative_url }}">대시보드</a> › <span aria-current="page">{{ page.title }}</span></nav>
     {% endif %}
     {{ content }}
   </main>
+  <a class="to-top" href="#main" aria-label="맨 위로">↑</a>
   <footer class="site-footer" role="contentinfo">
     <p>{{ site.description }}</p>
-    <p><a href="https://github.com/hkjang/aidev" rel="noopener">hkjang/aidev</a> · <a href="{{ '/sitemap.xml' | relative_url }}">사이트맵</a> · <a href="{{ '/data/runs.jsonl' | relative_url }}">runs.jsonl</a>{% if page.last_modified_at %} · 갱신 <time datetime="{{ page.last_modified_at | date_to_xmlschema }}">{{ page.last_modified_at | date: "%Y-%m-%d %H:%M" }}</time>{% endif %}</p>
+    <p><a href="https://github.com/hkjang/aidev" rel="noopener">hkjang/aidev</a> · <a href="{{ '/feed.xml' | relative_url }}">Atom</a> · <a href="{{ '/data/summary.json' | relative_url }}">summary.json</a> · <a href="{{ '/data/runs.jsonl' | relative_url }}">runs.jsonl</a> · <a href="{{ '/sitemap.xml' | relative_url }}">사이트맵</a>{% if page.last_modified_at %} · 갱신 <time datetime="{{ page.last_modified_at | date_to_xmlschema }}">{{ page.last_modified_at | date: "%Y-%m-%d %H:%M" }}</time> KST{% endif %}</p>
   </footer>
+  <script>
+  // 점진적 향상: JS 가 없어도 표·링크는 전부 동작한다.
+  (function () {
+    // 1) 표 필터 — data-filter 가 붙은 표 위에 검색창과 상태 칩을 만든다
+    document.querySelectorAll('table.rt[data-filter]').forEach(function (t) {
+      var wrap = t.closest('.table-wrap') || t, rows = Array.prototype.slice.call(t.tBodies[0].rows);
+      var box = document.createElement('div'); box.className = 'filter';
+      var inp = document.createElement('input'); inp.type = 'search'; inp.placeholder = '프로젝트·결과 검색'; inp.setAttribute('aria-label', '표 필터');
+      var chips = document.createElement('div'); chips.className = 'chips'; var active = '';
+      [['', '전체'], ['released', '🚀 릴리즈'], ['merged', '✅ 머지'], ['nochange', '➖ 변경 없음'], ['failed', '❌ 실패']].forEach(function (c) {
+        var b = document.createElement('button'); b.type = 'button'; b.textContent = c[1]; b.dataset.k = c[0];
+        b.setAttribute('aria-pressed', c[0] === '' ? 'true' : 'false');
+        b.addEventListener('click', function () { active = c[0]; chips.querySelectorAll('button').forEach(function (x) { x.setAttribute('aria-pressed', x.dataset.k === active ? 'true' : 'false'); }); apply(); });
+        chips.appendChild(b);
+      });
+      var cnt = document.createElement('span'); cnt.className = 'count';
+      function apply() {
+        var q = inp.value.trim().toLowerCase(), n = 0;
+        rows.forEach(function (r) {
+          var ok = (!q || r.textContent.toLowerCase().indexOf(q) >= 0) && (!active || r.dataset.status === active);
+          r.style.display = ok ? '' : 'none'; if (ok) n++;
+        });
+        cnt.textContent = n + ' / ' + rows.length + ' 건';
+      }
+      inp.addEventListener('input', apply);
+      box.appendChild(inp); box.appendChild(chips); box.appendChild(cnt);
+      wrap.parentNode.insertBefore(box, wrap); apply();
+    });
+    // 2) 맨 위로
+    var top = document.querySelector('.to-top');
+    if (top) { window.addEventListener('scroll', function () { top.classList.toggle('show', window.scrollY > 600); }, { passive: true }); }
+    // 3) 상대 시각 — 갱신이 몇 분 전인지
+    document.querySelectorAll('time[data-rel]').forEach(function (el) {
+      var d = new Date(el.getAttribute('datetime')); if (isNaN(d)) return;
+      var m = Math.round((Date.now() - d) / 60000);
+      el.title = el.textContent; el.textContent += m < 60 ? ' (' + m + '분 전)' : m < 1440 ? ' (' + Math.round(m / 60) + '시간 전)' : ' (' + Math.round(m / 1440) + '일 전)';
+    });
+  })();
+  </script>
 </body>
 </html>

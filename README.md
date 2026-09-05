@@ -184,6 +184,19 @@ SEO / AEO / 모바일:
 - 페이지마다 front matter `title/description/date/last_modified_at` 과 본문 첫 문장 요약(TL;DR) — 검색·답변 엔진이 그대로 인용할 수 있는 한 문장
 - 구조화 데이터: 대시보드에 `WebSite`·`FAQPage`(FAQ 6문항)·`ItemList`(일일 보고 목록)·`Dataset`(runs.jsonl), 일일 보고에 `Report`·`BreadcrumbList`
 - 검증: `curl -s https://hkjang.github.io/aidev/ | grep -c 'application/ld+json'` (5), Google Rich Results Test 에 URL 입력
+
+대시보드 구성 요소 (모두 `bin/report.py` 가 생성, JS 없이도 동작):
+| 요소 | 내용 |
+|---|---|
+| ⚠️ 주의 필요 | 최근 2일 회차의 `CI failed`·`merge failed`·`release failed/missing`·`ASSETS MISSING`·자산 빌드 실패와, 최신 릴리즈 자산이 0개인데 이전엔 있던 프로젝트. 없으면 초록 "주의 필요 없음" |
+| 상태 알약 | 🚀 릴리즈 / ✅ 머지 / ➖ 변경 없음 / ❌ 실패 — 색·아이콘·글자를 함께 써 색만으로 뜻을 나르지 않음 |
+| 최근 14일 차트 | 인라인 SVG 누적 막대(상태 팔레트 good/warning/neutral/critical, dataviz 검증). 세그먼트마다 `<title>` 툴팁, 아래 표가 테이블 뷰 |
+| 표 | HTML `table.rt` — 셀마다 `data-label`, 행마다 `data-status`. **640px 이하에서는 카드로 접힘**, JS 가 있으면 검색창 + 상태 칩 필터 |
+| 프로젝트 페이지 | `/projects/<이름>/` — 현황(마지막 회차, 최근 릴리즈·자산 수·누락 표시), 회차 이력, 원장 전문. `SoftwareSourceCode` JSON-LD |
+| Atom 피드 | `/feed.xml` — 일일 보고 30건. RSS 리더·Slack 등에서 구독 |
+| summary.json | `/data/summary.json` — 오늘·누적·일별·프로젝트별·주의 필요를 한 번에. 외부 도구용 |
+| PWA | `manifest.webmanifest` + 192/512 아이콘 — 모바일 홈 화면에 추가 가능, safe-area 여백 |
+| 기타 | 맨 위로 버튼(스크롤 600px 뒤), 갱신 시각 상대 표시("n분 전"), 인쇄 스타일, `prefers-reduced-motion`, 44px 터치 타깃 |
 매일 아침 대시보드의 "일일 보고" 표에서 어제 날짜를 누르면 된다. 수동 재생성은 `python3 bin/report.py`.
 
 ## 11. 점검 루틴
