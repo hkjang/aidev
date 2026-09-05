@@ -1,7 +1,7 @@
 ---
 title: "visitflow — 자율 개선 이력"
-description: "visitflow: 자율 개선 회차 7회, 릴리즈 4건. 최근 릴리즈 v2.6.4."
-last_modified_at: 2026-09-05 09:23:00 +0900
+description: "visitflow: 자율 개선 회차 8회, 릴리즈 5건. 최근 릴리즈 v2.6.5 (자산 1개)."
+last_modified_at: 2026-09-05 09:39:03 +0900
 ---
 {% raw %}
 <script type="application/ld+json">
@@ -11,35 +11,35 @@ last_modified_at: 2026-09-05 09:23:00 +0900
  "name": "visitflow",
  "codeRepository": "https://github.com/hkjang/visitflow",
  "url": "https://hkjang.github.io/aidev/projects/visitflow/",
- "description": "visitflow: 자율 개선 회차 7회, 릴리즈 4건. 최근 릴리즈 v2.6.4.",
+ "description": "visitflow: 자율 개선 회차 8회, 릴리즈 5건. 최근 릴리즈 v2.6.5 (자산 1개).",
  "inLanguage": "ko",
  "maintainer": {
   "@type": "Person",
   "name": "hkjang",
   "url": "https://github.com/hkjang"
  },
- "dateModified": "2026-09-05T09:23:00+09:00",
- "version": "2.6.4"
+ "dateModified": "2026-09-05T09:39:03+09:00",
+ "version": "2.6.5"
 }
 </script>
 
 # visitflow
 
-<p class="tldr"><strong>요약.</strong> visitflow: 자율 개선 회차 7회, 릴리즈 4건. 최근 릴리즈 v2.6.4.</p>
+<p class="tldr"><strong>요약.</strong> visitflow: 자율 개선 회차 8회, 릴리즈 5건. 최근 릴리즈 v2.6.5 (자산 1개).</p>
 
-<ul class="stats"><li><b>7</b><span>회차</span></li><li><b>1</b><span>프로젝트</span></li><li><b>4</b><span>릴리즈</span></li><li><b>3</b><span>머지(릴리즈 없음)</span></li><li><b>0</b><span>변경 없음</span></li><li><b>0</b><span>실패</span></li></ul>
+<ul class="stats"><li><b>8</b><span>회차</span></li><li><b>1</b><span>프로젝트</span></li><li><b>5</b><span>릴리즈</span></li><li><b>3</b><span>머지(릴리즈 없음)</span></li><li><b>0</b><span>변경 없음</span></li><li><b>0</b><span>실패</span></li></ul>
 
 ## 현황
 
 <dl class="kv">
 <dt>저장소</dt><dd><a href="https://github.com/hkjang/visitflow">https://github.com/hkjang/visitflow</a></dd>
-<dt>마지막 회차</dt><dd>2026-09-04 17:47 KST — <span class="pill pill-released">🚀 릴리즈</span> merged <a href="https://github.com/hkjang/visitflow/pull/7">PR #7</a>, released <a href="https://github.com/hkjang/visitflow/releases/tag/v2.6.4">v2.6.4</a></dd>
-<dt>최근 릴리즈</dt><dd><a href="https://github.com/hkjang/visitflow/releases/tag/v2.6.4">v2.6.4</a> — released <a href="https://github.com/hkjang/visitflow/releases">전체 릴리즈 →</a></dd>
+<dt>마지막 회차</dt><dd>2026-09-05 09:39 KST — <span class="pill pill-released">🚀 릴리즈</span> merged <a href="https://github.com/hkjang/visitflow/pull/8">PR #8</a>, released <a href="https://github.com/hkjang/visitflow/releases/tag/v2.6.5">v2.6.5</a></dd>
+<dt>최근 릴리즈</dt><dd><a href="https://github.com/hkjang/visitflow/releases/tag/v2.6.5">v2.6.5</a> — released · 자산 1개 (이전 v2.6.4: 1개) <a href="https://github.com/hkjang/visitflow/releases">전체 릴리즈 →</a></dd>
 </dl>
 
 ## 회차 이력
 
-<div class="table-wrap"><table class="rt"><thead><tr><th class="primary">일시</th><th>결과</th></tr></thead><tbody><tr data-status="released"><td data-label="일시" class="primary">2026-09-04 17:47</td><td data-label="결과"><span class="pill pill-released">🚀 릴리즈</span> merged <a href="https://github.com/hkjang/visitflow/pull/7">PR #7</a>, released <a href="https://github.com/hkjang/visitflow/releases/tag/v2.6.4">v2.6.4</a></td></tr><tr data-status="released"><td data-label="일시" class="primary">2026-09-04 02:09</td><td data-label="결과"><span class="pill pill-released">🚀 릴리즈</span> merged <a href="https://github.com/hkjang/visitflow/pull/6">PR #6</a>, released <a href="https://github.com/hkjang/visitflow/releases/tag/v2.6.3">v2.6.3</a></td></tr><tr data-status="released"><td data-label="일시" class="primary">2026-09-03 18:08</td><td data-label="결과"><span class="pill pill-released">🚀 릴리즈</span> merged <a href="https://github.com/hkjang/visitflow/pull/5">PR #5</a>, released <a href="https://github.com/hkjang/visitflow/releases/tag/v2.6.2">v2.6.2</a></td></tr><tr data-status="merged"><td data-label="일시" class="primary">2026-09-03 10:47</td><td data-label="결과"><span class="pill pill-merged">✅ 머지</span> merged <a href="https://github.com/hkjang/visitflow/pull/4">PR #4</a>, <strong>release missing</strong></td></tr><tr data-status="merged"><td data-label="일시" class="primary">2026-09-03 05:26</td><td data-label="결과"><span class="pill pill-merged">✅ 머지</span> merged <a href="https://github.com/hkjang/visitflow/pull/3">PR #3</a>, <strong>release missing</strong></td></tr><tr data-status="released"><td data-label="일시" class="primary">2026-09-02 23:18</td><td data-label="결과"><span class="pill pill-released">🚀 릴리즈</span> merged <a href="https://github.com/hkjang/visitflow/pull/2">PR #2</a>, released <a href="https://github.com/hkjang/visitflow/releases/tag/v2.6.1">v2.6.1</a></td></tr><tr data-status="merged"><td data-label="일시" class="primary">2026-09-02 17:02</td><td data-label="결과"><span class="pill pill-merged">✅ 머지</span> merged <a href="https://github.com/hkjang/visitflow/pull/1">PR #1</a>, <strong>release missing</strong></td></tr></tbody></table></div>
+<div class="table-wrap"><table class="rt"><thead><tr><th class="primary">일시</th><th>결과</th></tr></thead><tbody><tr data-status="released"><td data-label="일시" class="primary">2026-09-05 09:39</td><td data-label="결과"><span class="pill pill-released">🚀 릴리즈</span> merged <a href="https://github.com/hkjang/visitflow/pull/8">PR #8</a>, released <a href="https://github.com/hkjang/visitflow/releases/tag/v2.6.5">v2.6.5</a></td></tr><tr data-status="released"><td data-label="일시" class="primary">2026-09-04 17:47</td><td data-label="결과"><span class="pill pill-released">🚀 릴리즈</span> merged <a href="https://github.com/hkjang/visitflow/pull/7">PR #7</a>, released <a href="https://github.com/hkjang/visitflow/releases/tag/v2.6.4">v2.6.4</a></td></tr><tr data-status="released"><td data-label="일시" class="primary">2026-09-04 02:09</td><td data-label="결과"><span class="pill pill-released">🚀 릴리즈</span> merged <a href="https://github.com/hkjang/visitflow/pull/6">PR #6</a>, released <a href="https://github.com/hkjang/visitflow/releases/tag/v2.6.3">v2.6.3</a></td></tr><tr data-status="released"><td data-label="일시" class="primary">2026-09-03 18:08</td><td data-label="결과"><span class="pill pill-released">🚀 릴리즈</span> merged <a href="https://github.com/hkjang/visitflow/pull/5">PR #5</a>, released <a href="https://github.com/hkjang/visitflow/releases/tag/v2.6.2">v2.6.2</a></td></tr><tr data-status="merged"><td data-label="일시" class="primary">2026-09-03 10:47</td><td data-label="결과"><span class="pill pill-merged">✅ 머지</span> merged <a href="https://github.com/hkjang/visitflow/pull/4">PR #4</a>, <strong>release missing</strong></td></tr><tr data-status="merged"><td data-label="일시" class="primary">2026-09-03 05:26</td><td data-label="결과"><span class="pill pill-merged">✅ 머지</span> merged <a href="https://github.com/hkjang/visitflow/pull/3">PR #3</a>, <strong>release missing</strong></td></tr><tr data-status="released"><td data-label="일시" class="primary">2026-09-02 23:18</td><td data-label="결과"><span class="pill pill-released">🚀 릴리즈</span> merged <a href="https://github.com/hkjang/visitflow/pull/2">PR #2</a>, released <a href="https://github.com/hkjang/visitflow/releases/tag/v2.6.1">v2.6.1</a></td></tr><tr data-status="merged"><td data-label="일시" class="primary">2026-09-02 17:02</td><td data-label="결과"><span class="pill pill-merged">✅ 머지</span> merged <a href="https://github.com/hkjang/visitflow/pull/1">PR #1</a>, <strong>release missing</strong></td></tr></tbody></table></div>
 
 ## 원장 (에이전트가 남긴 기록)
 
@@ -89,6 +89,13 @@ last_modified_at: 2026-09-05 09:23:00 +0900
 - 추가 수정: 전체 테스트 중 방문 생성이 간헐적으로 500을 내는 것을 추적해 `requestNoSuffix`를 새로 뒀다. 신청번호 접미사가 5바이트 base64url(7자)에서 `_`를 지운 뒤 `[:6]`으로 잘렸는데, 구분자가 두 개 나오면 5자만 남아 슬라이스가 panic했다(실측 약 0.34%, 방문 생성 300건 중 1건이 500). 12바이트에서 `-`·`_`를 모두 지우고 재시도하도록 바꿨고, 6자 고정·구분자 없음을 5,000회 확인하는 단위 테스트를 추가한 뒤 옛 구현에서 실패하는 것을 확인했다. 별도 커밋으로 남겼다.
 - 보류 아이디어: `bestAcceptLanguage`의 `q=0`(수용 불가)·`q>1`·잘못된 `q` 값 처리 정정 / 방문 이력 CSV의 50,000행·감사 로그 10,000행 상한 초과 시 잘렸음을 사용자에게 알리는 표시 / CSV·XLSX 가져오기 파서(`visitorInputsFromRows`) 엣지케이스 단위 테스트 보강 / 설정 내보내기 JSON을 되돌려 넣는 가져오기 경로와 스키마 검증 / 관리자 대시보드 Watch List 타일이 `starts_at`을 무시해 미래 시작 항목까지 활성으로 세는 문제
 - 릴리즈: v2.6.4 (2026-09-04)
+
+## 2026-09-05
+- 선택: 방문 목록 검색이 동행 방문자를 잘라내 인원수·대표 방문자를 틀리게 보여주는 문제 수정 (가치 4 / 위험 2 / 작업량 M)
+- 결과: 성공
+- 요약: `queryVisits`는 `visitor_visits`·`visitors`를 LEFT JOIN한 뒤 `count(vv.id)`와 `array_agg(...)[1]`로 인원수와 대표 방문자를 집계하는데, 검색어(`q`)의 회사·이름 해시·전화 해시 조건을 그 참가자 행에 직접 걸어 두어 집계 전에 검색어와 무관한 동행자가 통째로 제외됐다. 그래서 5명이 오는 방문을 동행자 한 명의 전화번호로 찾으면 목록에 "방문자 1명"으로 뜨고 대표 방문자 칸에는 주 방문자 대신 검색에 걸린 사람이 나왔으며, 이 쿼리는 방문 목록·MCP `visits.search`·담당자 대시보드가 공유한다. 이미 같은 문제를 EXISTS 서브쿼리로 푼 방문 이력 CSV 내보내기와 똑같이, 참가자 관련 조건만 `EXISTS(SELECT 1 FROM visitor_visits mvv JOIN visitors mp ...)`로 옮겨 서브쿼리가 방문의 매칭 여부만 판정하고 집계는 참가자 전원을 보도록 했다. 검증은 `go vet ./...`, docker postgres:16-alpine을 띄운 `VISITFLOW_TEST_DSN` 전체 테스트 통과, `npm ci && npm run build`이며, 주 방문자 1명 + 동행 1명인 방문을 만들고 동행자의 전화·이름·회사 세 가지로 각각 검색해 `visitorCount`가 2이고 `primaryVisitor`가 주 방문자인지 보는 통합 테스트 1개를 추가한 뒤 옛 조건으로 되돌려 실제로 실패(인원수 1)하는 것까지 확인했다. API_AND_MCP 문서에 한 문장을 덧붙였다.
+- 보류 아이디어: 관리자 대시보드 Watch List 타일이 `starts_at`을 무시해 아직 시작하지 않은 항목까지 활성으로 세는 문제(실제 매칭 쿼리는 `starts_at<=now()`를 건다) / MCP `statistics` 도구만 아직 `v.start_at>=CURRENT_DATE-$1`을 써 통계 화면의 사업장 시간대 구간과 다른 숫자를 내는 문제 / `bestAcceptLanguage`의 `q=0`(수용 불가)·`q>1`·잘못된 `q` 값 처리 정정 / 방문 이력 CSV의 50,000행·감사 로그 10,000행 상한 초과 시 잘렸음을 사용자에게 알리는 표시 / CSV·XLSX 가져오기 파서(`visitorInputsFromRows`) 엣지케이스 단위 테스트 보강
+- 릴리즈: v2.6.5 (2026-09-05)
 
 
 [← 대시보드](https://hkjang.github.io/aidev/)
