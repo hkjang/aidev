@@ -1,7 +1,7 @@
 ---
 title: "vibe-coders — 자율 개선 이력"
-description: "vibe-coders: 자율 개선 회차 4회, 릴리즈 2건. 최근 릴리즈 v0.83.0."
-last_modified_at: 2026-09-05 09:12:18 +0900
+description: "vibe-coders: 자율 개선 회차 5회, 릴리즈 3건. 최근 릴리즈 v0.83.0."
+last_modified_at: 2026-09-05 09:12:52 +0900
 ---
 
 <script type="application/ld+json">
@@ -11,35 +11,35 @@ last_modified_at: 2026-09-05 09:12:18 +0900
  "name": "vibe-coders",
  "codeRepository": "https://github.com/hkjang/vibe-coders",
  "url": "https://hkjang.github.io/aidev/projects/vibe-coders/",
- "description": "vibe-coders: 자율 개선 회차 4회, 릴리즈 2건. 최근 릴리즈 v0.83.0.",
+ "description": "vibe-coders: 자율 개선 회차 5회, 릴리즈 3건. 최근 릴리즈 v0.83.0.",
  "inLanguage": "ko",
  "maintainer": {
   "@type": "Person",
   "name": "hkjang",
   "url": "https://github.com/hkjang"
  },
- "dateModified": "2026-09-05T09:12:18+09:00",
+ "dateModified": "2026-09-05T09:12:52+09:00",
  "version": "0.83.0"
 }
 </script>
 
 # vibe-coders
 
-<p class="tldr"><strong>요약.</strong> vibe-coders: 자율 개선 회차 4회, 릴리즈 2건. 최근 릴리즈 v0.83.0.</p>
+<p class="tldr"><strong>요약.</strong> vibe-coders: 자율 개선 회차 5회, 릴리즈 3건. 최근 릴리즈 v0.83.0.</p>
 
-<ul class="stats"><li><b>4</b><span>회차</span></li><li><b>1</b><span>프로젝트</span></li><li><b>2</b><span>릴리즈</span></li><li><b>1</b><span>머지(릴리즈 없음)</span></li><li><b>0</b><span>변경 없음</span></li><li><b>0</b><span>실패</span></li></ul>
+<ul class="stats"><li><b>5</b><span>회차</span></li><li><b>1</b><span>프로젝트</span></li><li><b>3</b><span>릴리즈</span></li><li><b>1</b><span>머지(릴리즈 없음)</span></li><li><b>0</b><span>변경 없음</span></li><li><b>0</b><span>실패</span></li></ul>
 
 ## 현황
 
 <dl class="kv">
 <dt>저장소</dt><dd><a href="https://github.com/hkjang/vibe-coders">https://github.com/hkjang/vibe-coders</a></dd>
-<dt>마지막 회차</dt><dd>2026-09-04 01:51 KST — <span class="pill pill-released">🚀 릴리즈</span> merged <a href="https://github.com/hkjang/vibe-coders/pull/12">PR #12</a>, released <a href="https://github.com/hkjang/vibe-coders/releases/tag/v0.82.2">v0.82.2</a> +7 assets</dd>
+<dt>마지막 회차</dt><dd>2026-09-05 09:12 KST — <span class="pill pill-released">🚀 릴리즈</span> merged <a href="https://github.com/hkjang/vibe-coders/pull/14">PR #14</a>, released <a href="https://github.com/hkjang/vibe-coders/releases/tag/v0.83.0">v0.83.0</a> +7 assets</dd>
 <dt>최근 릴리즈</dt><dd><a href="https://github.com/hkjang/vibe-coders/releases/tag/v0.83.0">v0.83.0</a> — released <a href="https://github.com/hkjang/vibe-coders/releases">전체 릴리즈 →</a></dd>
 </dl>
 
 ## 회차 이력
 
-<div class="table-wrap"><table class="rt"><thead><tr><th class="primary">일시</th><th>결과</th></tr></thead><tbody><tr data-status="released"><td data-label="일시" class="primary">2026-09-04 01:51</td><td data-label="결과"><span class="pill pill-released">🚀 릴리즈</span> merged <a href="https://github.com/hkjang/vibe-coders/pull/12">PR #12</a>, released <a href="https://github.com/hkjang/vibe-coders/releases/tag/v0.82.2">v0.82.2</a> +7 assets</td></tr><tr data-status="merged"><td data-label="일시" class="primary">2026-09-03 17:50</td><td data-label="결과"><span class="pill pill-merged">✅ 머지</span> merged <a href="https://github.com/hkjang/vibe-coders/pull/11">PR #11</a>, <strong>release missing</strong></td></tr><tr data-status="released"><td data-label="일시" class="primary">2026-09-03 05:19</td><td data-label="결과"><span class="pill pill-released">🚀 릴리즈</span> merged <a href="https://github.com/hkjang/vibe-coders/pull/9">PR #9</a>, released <a href="https://github.com/hkjang/vibe-coders/releases/tag/v0.82.0">v0.82.0</a></td></tr><tr data-status="other"><td data-label="일시" class="primary">2026-09-02 23:03</td><td data-label="결과"><span class="pill pill-other">• 기타</span> PR </td></tr></tbody></table></div>
+<div class="table-wrap"><table class="rt"><thead><tr><th class="primary">일시</th><th>결과</th></tr></thead><tbody><tr data-status="released"><td data-label="일시" class="primary">2026-09-05 09:12</td><td data-label="결과"><span class="pill pill-released">🚀 릴리즈</span> merged <a href="https://github.com/hkjang/vibe-coders/pull/14">PR #14</a>, released <a href="https://github.com/hkjang/vibe-coders/releases/tag/v0.83.0">v0.83.0</a> +7 assets</td></tr><tr data-status="released"><td data-label="일시" class="primary">2026-09-04 01:51</td><td data-label="결과"><span class="pill pill-released">🚀 릴리즈</span> merged <a href="https://github.com/hkjang/vibe-coders/pull/12">PR #12</a>, released <a href="https://github.com/hkjang/vibe-coders/releases/tag/v0.82.2">v0.82.2</a> +7 assets</td></tr><tr data-status="merged"><td data-label="일시" class="primary">2026-09-03 17:50</td><td data-label="결과"><span class="pill pill-merged">✅ 머지</span> merged <a href="https://github.com/hkjang/vibe-coders/pull/11">PR #11</a>, <strong>release missing</strong></td></tr><tr data-status="released"><td data-label="일시" class="primary">2026-09-03 05:19</td><td data-label="결과"><span class="pill pill-released">🚀 릴리즈</span> merged <a href="https://github.com/hkjang/vibe-coders/pull/9">PR #9</a>, released <a href="https://github.com/hkjang/vibe-coders/releases/tag/v0.82.0">v0.82.0</a></td></tr><tr data-status="other"><td data-label="일시" class="primary">2026-09-02 23:03</td><td data-label="결과"><span class="pill pill-other">• 기타</span> PR </td></tr></tbody></table></div>
 
 ## 원장 (에이전트가 남긴 기록)
 
@@ -77,6 +77,7 @@ last_modified_at: 2026-09-05 09:12:18 +0900
 - 요약: `text2sql.ValidateSQL`의 두 LIMIT 규칙이 중첩을 전혀 고려하지 않고 문장 전체를 훑어, 서브쿼리·CTE 본문의 LIMIT이 바깥 쿼리를 대신 대답하고 있었다. (1) 상한 검사는 `limitRe.FindString`으로 텍스트 순서상 첫 매치만 봤는데 서브쿼리는 바깥 LIMIT보다 먼저 쓰이므로 `... (SELECT ... LIMIT 5) ... LIMIT 999999`가 5로 측정돼 통과했다 → 이제 모든 LIMIT을 `MaxLimit`과 비교한다. (2) 기본 LIMIT 주입은 어디든 LIMIT이 있으면 건너뛰어, 바깥은 무제한인데 서브쿼리에만 LIMIT이 있는 쿼리(`SELECT * FROM users WHERE id IN (SELECT ... LIMIT 5)`)에 아무 상한도 붙지 않았다 — 기본 상한이 존재하는 이유인 바로 그 쿼리에 무제한 스캔과 ORDER BY 전체 정렬을 넘긴 셈 → 괄호 밖(depth 0) LIMIT 유무로 판정하게 바꿨다. (3) 값을 `fmt.Sscanf("limit %d")`로 되읽었는데 포맷의 공백은 개행과 매치되지 않아 줄바꿈된 `LIMIT\n999999`가 0으로 파싱돼 상한이 무력화됐고, 오버플로하는 리터럴도 0이 됐다 → 정규식 캡처 그룹 + `strconv.Atoi`로 바꾸고 파싱 불가 값은 거부한다. 회귀 테스트 6개를 새 파일로 추가해 수정 전 코드에서 실패함을 확인했고(중첩 4건·개행 1건·오버플로 1건), gofmt·go vet·go build·`go test ./... -count=1`·`go test -race ./internal/text2sql`·`cmd/api-surface-audit` 모두 통과. Go 전용 변경이라 OpenAPI/프런트엔드 영향 없음.
 - 보류 아이디어: `audit.InferLanguages`의 `addSignal`이 더 높은 신뢰도 신호가 오면 기존 evidence를 통째로 버리는 문제(근거 누적 유실) / redact.go IPv4 규칙의 "사설망 제외" 주석과 실제 동작(전부 마스킹) 불일치 정리 / `EstimateTokens`의 `[]rune(text)` 전체 복사를 `utf8.RuneCountInString`으로 교체 / `MODEL_PRICING_KRW_PER_1M` 키가 소문자 정규화되지 않아 `lookupPrice`의 정확 매칭을 항상 놓치고 prefix 루프로만 걸리는 문제 / `ValidateSQL`이 MySQL `LIMIT 5, 100` 및 `FETCH FIRST n ROWS ONLY` 형식을 인식하지 못해 상한·기본값 규칙이 모두 우회되는 문제
 - 참고: 2026-09-02(가격 longest-prefix 매칭)·2026-09-03(PROXY_API_KEYS 트림) 세션 수정은 여전히 master에 병합되지 않았다(`internal/audit/usage.go`의 `lookupPrice`가 아직 첫 prefix 일치를 반환). 중복 작업하지 말 것.
+- 릴리즈: v0.83.0 (2026-09-05)
 
 
 [← 대시보드](https://hkjang.github.io/aidev/)

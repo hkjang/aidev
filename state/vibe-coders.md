@@ -26,3 +26,11 @@
 - 보류 아이디어: OpenAPI `PricingWriteRequest` 스키마에 `minimum: 0` 반영(이번엔 생략 — 재생성에 Node 24·pnpm 11이 필요한데 환경엔 Node 22·pnpm 없음, 손으로 openapi.json을 고치면 `pnpm openapi:check` drift로 CI가 깨짐) / `audit.InferLanguages`가 동점 신뢰도를 알파벳순으로만 깨서 대표 언어가 자의적으로 결정되는 문제를 근거 개수 기준으로 개선 / redact.go IPv4 규칙의 "사설망 제외" 주석과 실제 동작(전부 마스킹) 불일치 정리 / `EstimateTokens`의 `[]rune(text)` 전체 복사를 `utf8.RuneCountInString`으로 교체 / `MODEL_PRICING_KRW_PER_1M` 키가 소문자 정규화되지 않아 `lookupPrice`의 정확 매칭을 항상 놓치고 prefix 루프로만 걸리는 문제
 - 참고: 2026-09-02(가격 longest-prefix 매칭)·2026-09-03(PROXY_API_KEYS 트림) 세션 수정 모두 아직 master에 병합되지 않아, master의 `audit.lookupPrice`는 여전히 첫 prefix 일치를 반환한다. 중복 작업하지 말 것.
 - 릴리즈: v0.82.2 (2026-09-04)
+
+## 2026-09-05
+- 선택: Text2SQL LIMIT 규칙을 문장 자신의 결과 범위로 한정 (가치 4 / 위험 1 / 작업량 S)
+- 결과: 성공
+- 요약: `text2sql.ValidateSQL`의 두 LIMIT 규칙이 중첩을 전혀 고려하지 않고 문장 전체를 훑어, 서브쿼리·CTE 본문의 LIMIT이 바깥 쿼리를 대신 대답하고 있었다. (1) 상한 검사는 `limitRe.FindString`으로 텍스트 순서상 첫 매치만 봤는데 서브쿼리는 바깥 LIMIT보다 먼저 쓰이므로 `... (SELECT ... LIMIT 5) ... LIMIT 999999`가 5로 측정돼 통과했다 → 이제 모든 LIMIT을 `MaxLimit`과 비교한다. (2) 기본 LIMIT 주입은 어디든 LIMIT이 있으면 건너뛰어, 바깥은 무제한인데 서브쿼리에만 LIMIT이 있는 쿼리(`SELECT * FROM users WHERE id IN (SELECT ... LIMIT 5)`)에 아무 상한도 붙지 않았다 — 기본 상한이 존재하는 이유인 바로 그 쿼리에 무제한 스캔과 ORDER BY 전체 정렬을 넘긴 셈 → 괄호 밖(depth 0) LIMIT 유무로 판정하게 바꿨다. (3) 값을 `fmt.Sscanf("limit %d")`로 되읽었는데 포맷의 공백은 개행과 매치되지 않아 줄바꿈된 `LIMIT\n999999`가 0으로 파싱돼 상한이 무력화됐고, 오버플로하는 리터럴도 0이 됐다 → 정규식 캡처 그룹 + `strconv.Atoi`로 바꾸고 파싱 불가 값은 거부한다. 회귀 테스트 6개를 새 파일로 추가해 수정 전 코드에서 실패함을 확인했고(중첩 4건·개행 1건·오버플로 1건), gofmt·go vet·go build·`go test ./... -count=1`·`go test -race ./internal/text2sql`·`cmd/api-surface-audit` 모두 통과. Go 전용 변경이라 OpenAPI/프런트엔드 영향 없음.
+- 보류 아이디어: `audit.InferLanguages`의 `addSignal`이 더 높은 신뢰도 신호가 오면 기존 evidence를 통째로 버리는 문제(근거 누적 유실) / redact.go IPv4 규칙의 "사설망 제외" 주석과 실제 동작(전부 마스킹) 불일치 정리 / `EstimateTokens`의 `[]rune(text)` 전체 복사를 `utf8.RuneCountInString`으로 교체 / `MODEL_PRICING_KRW_PER_1M` 키가 소문자 정규화되지 않아 `lookupPrice`의 정확 매칭을 항상 놓치고 prefix 루프로만 걸리는 문제 / `ValidateSQL`이 MySQL `LIMIT 5, 100` 및 `FETCH FIRST n ROWS ONLY` 형식을 인식하지 못해 상한·기본값 규칙이 모두 우회되는 문제
+- 참고: 2026-09-02(가격 longest-prefix 매칭)·2026-09-03(PROXY_API_KEYS 트림) 세션 수정은 여전히 master에 병합되지 않았다(`internal/audit/usage.go`의 `lookupPrice`가 아직 첫 prefix 일치를 반환). 중복 작업하지 말 것.
+- 릴리즈: v0.83.0 (2026-09-05)
