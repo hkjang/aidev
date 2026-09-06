@@ -1,7 +1,7 @@
 ---
 title: "muni — 자율 개선 이력"
-description: "muni: 자율 개선 회차 7회, 릴리즈 6건. 최근 릴리즈 v0.27.0."
-last_modified_at: 2026-09-06 02:49:54 +0900
+description: "muni: 자율 개선 회차 8회, 릴리즈 6건. 최근 릴리즈 v0.27.0."
+last_modified_at: 2026-09-06 11:10:06 +0900
 ---
 {% raw %}
 <script type="application/ld+json">
@@ -11,35 +11,35 @@ last_modified_at: 2026-09-06 02:49:54 +0900
  "name": "muni",
  "codeRepository": "https://github.com/hkjang/muni",
  "url": "https://hkjang.github.io/aidev/projects/muni/",
- "description": "muni: 자율 개선 회차 7회, 릴리즈 6건. 최근 릴리즈 v0.27.0.",
+ "description": "muni: 자율 개선 회차 8회, 릴리즈 6건. 최근 릴리즈 v0.27.0.",
  "inLanguage": "ko",
  "maintainer": {
   "@type": "Person",
   "name": "hkjang",
   "url": "https://github.com/hkjang"
  },
- "dateModified": "2026-09-06T02:49:54+09:00",
+ "dateModified": "2026-09-06T11:10:06+09:00",
  "version": "0.27.0"
 }
 </script>
 
 # muni
 
-<p class="tldr"><strong>요약.</strong> muni: 자율 개선 회차 7회, 릴리즈 6건. 최근 릴리즈 v0.27.0. <span class="pill pill-released" title="14일: 릴리즈 6, 실패 0, 경고 0, 회귀 0">건강 A</span> <span class="meta">14일: 릴리즈 6, 실패 0, 경고 0, 회귀 0</span></p>
+<p class="tldr"><strong>요약.</strong> muni: 자율 개선 회차 8회, 릴리즈 6건. 최근 릴리즈 v0.27.0. <span class="pill pill-released" title="14일: 릴리즈 6, 실패 0, 경고 0, 회귀 0">건강 A</span> <span class="meta">14일: 릴리즈 6, 실패 0, 경고 0, 회귀 0</span></p>
 
-<ul class="stats"><li><b>7</b><span>회차</span></li><li><b>1</b><span>프로젝트</span></li><li><b>6</b><span>배포 준비 완료</span></li><li><b>0</b><span>릴리즈 진행 중</span></li><li><b>0</b><span>병합 완료</span></li><li><b>0</b><span>검토 대기</span></li><li><b>0</b><span>검증 실패</span></li><li><b>1</b><span>변경 없음</span></li><li><b>0</b><span>실행 오류</span></li></ul>
+<ul class="stats"><li><b>8</b><span>회차</span></li><li><b>1</b><span>프로젝트</span></li><li><b>6</b><span>배포 준비 완료</span></li><li><b>0</b><span>릴리즈 진행 중</span></li><li><b>0</b><span>병합 완료</span></li><li><b>0</b><span>검토 대기</span></li><li><b>0</b><span>검증 실패</span></li><li><b>1</b><span>변경 없음</span></li><li><b>1</b><span>실행 오류</span></li></ul>
 
 ## 현황
 
 <dl class="kv">
 <dt>저장소</dt><dd><a href="https://github.com/hkjang/muni">https://github.com/hkjang/muni</a></dd>
-<dt>마지막 회차</dt><dd>2026-09-05 05:43 KST — <span class="pill pill-released">🚀 릴리즈</span> merged <a href="https://github.com/hkjang/muni/pull/6">PR #6</a>, released <a href="https://github.com/hkjang/muni/releases/tag/v0.27.0">v0.27.0</a></dd>
+<dt>마지막 회차</dt><dd>2026-09-06 08:40 KST — <span class="pill pill-other">• 기타</span> hold: budget</dd>
 <dt>최근 릴리즈</dt><dd><a href="https://github.com/hkjang/muni/releases/tag/v0.27.0">v0.27.0</a> — released <a href="https://github.com/hkjang/muni/releases">전체 릴리즈 →</a></dd>
 </dl>
 
 ## 회차 이력
 
-<div class="table-wrap"><table class="rt"><thead><tr><th>일시</th><th class="primary">프로젝트</th><th>결과</th></tr></thead><tbody><tr data-status="released"><td data-label="일시">2026-09-05 05:43</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/muni/">muni</a></td><td data-label="결과"><span class="pill pill-released" title="outcome=release-ready">배포 준비 완료</span> merged <a href="https://github.com/hkjang/muni/pull/6">PR #6</a>, released <a href="https://github.com/hkjang/muni/releases/tag/v0.27.0">v0.27.0</a></td></tr><tr data-status="nochange"><td data-label="일시">2026-09-03 23:50</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/muni/">muni</a></td><td data-label="결과"><span class="pill pill-nochange" title="outcome=no-change">변경 없음</span> no change</td></tr><tr data-status="released"><td data-label="일시">2026-09-03 16:29</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/muni/">muni</a></td><td data-label="결과"><span class="pill pill-released" title="outcome=release-ready">배포 준비 완료</span> merged <a href="https://github.com/hkjang/muni/pull/5">PR #5</a>, released <a href="https://github.com/hkjang/muni/releases/tag/v0.26.0">v0.26.0</a></td></tr><tr data-status="released"><td data-label="일시">2026-09-03 09:38</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/muni/">muni</a></td><td data-label="결과"><span class="pill pill-released" title="outcome=release-ready">배포 준비 완료</span> merged <a href="https://github.com/hkjang/muni/pull/4">PR #4</a>, released <a href="https://github.com/hkjang/muni/releases/tag/v0.25.0">v0.25.0</a></td></tr><tr data-status="released"><td data-label="일시">2026-09-03 04:00</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/muni/">muni</a></td><td data-label="결과"><span class="pill pill-released" title="outcome=release-ready">배포 준비 완료</span> merged <a href="https://github.com/hkjang/muni/pull/3">PR #3</a>, released <a href="https://github.com/hkjang/muni/releases/tag/v0.24.0">v0.24.0</a></td></tr><tr data-status="released"><td data-label="일시">2026-09-02 21:47</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/muni/">muni</a></td><td data-label="결과"><span class="pill pill-released" title="outcome=release-ready">배포 준비 완료</span> merged <a href="https://github.com/hkjang/muni/pull/2">PR #2</a>, released <a href="https://github.com/hkjang/muni/releases/tag/v0.23.0">v0.23.0</a></td></tr><tr data-status="released"><td data-label="일시">2026-09-02 15:18</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/muni/">muni</a></td><td data-label="결과"><span class="pill pill-released" title="outcome=release-ready">배포 준비 완료</span> merged <a href="https://github.com/hkjang/muni/pull/1">PR #1</a>, released <a href="https://github.com/hkjang/muni/releases/tag/v0.22.0">v0.22.0</a></td></tr></tbody></table></div>
+<div class="table-wrap"><table class="rt"><thead><tr><th>일시</th><th class="primary">프로젝트</th><th>결과</th></tr></thead><tbody><tr data-status="other"><td data-label="일시">2026-09-06 08:40</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/muni/">muni</a></td><td data-label="결과"><span class="pill pill-failed" title="outcome=error">실행 오류</span> hold: budget</td></tr><tr data-status="released"><td data-label="일시">2026-09-05 05:43</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/muni/">muni</a></td><td data-label="결과"><span class="pill pill-released" title="outcome=release-ready">배포 준비 완료</span> merged <a href="https://github.com/hkjang/muni/pull/6">PR #6</a>, released <a href="https://github.com/hkjang/muni/releases/tag/v0.27.0">v0.27.0</a></td></tr><tr data-status="nochange"><td data-label="일시">2026-09-03 23:50</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/muni/">muni</a></td><td data-label="결과"><span class="pill pill-nochange" title="outcome=no-change">변경 없음</span> no change</td></tr><tr data-status="released"><td data-label="일시">2026-09-03 16:29</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/muni/">muni</a></td><td data-label="결과"><span class="pill pill-released" title="outcome=release-ready">배포 준비 완료</span> merged <a href="https://github.com/hkjang/muni/pull/5">PR #5</a>, released <a href="https://github.com/hkjang/muni/releases/tag/v0.26.0">v0.26.0</a></td></tr><tr data-status="released"><td data-label="일시">2026-09-03 09:38</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/muni/">muni</a></td><td data-label="결과"><span class="pill pill-released" title="outcome=release-ready">배포 준비 완료</span> merged <a href="https://github.com/hkjang/muni/pull/4">PR #4</a>, released <a href="https://github.com/hkjang/muni/releases/tag/v0.25.0">v0.25.0</a></td></tr><tr data-status="released"><td data-label="일시">2026-09-03 04:00</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/muni/">muni</a></td><td data-label="결과"><span class="pill pill-released" title="outcome=release-ready">배포 준비 완료</span> merged <a href="https://github.com/hkjang/muni/pull/3">PR #3</a>, released <a href="https://github.com/hkjang/muni/releases/tag/v0.24.0">v0.24.0</a></td></tr><tr data-status="released"><td data-label="일시">2026-09-02 21:47</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/muni/">muni</a></td><td data-label="결과"><span class="pill pill-released" title="outcome=release-ready">배포 준비 완료</span> merged <a href="https://github.com/hkjang/muni/pull/2">PR #2</a>, released <a href="https://github.com/hkjang/muni/releases/tag/v0.23.0">v0.23.0</a></td></tr><tr data-status="released"><td data-label="일시">2026-09-02 15:18</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/muni/">muni</a></td><td data-label="결과"><span class="pill pill-released" title="outcome=release-ready">배포 준비 완료</span> merged <a href="https://github.com/hkjang/muni/pull/1">PR #1</a>, released <a href="https://github.com/hkjang/muni/releases/tag/v0.22.0">v0.22.0</a></td></tr></tbody></table></div>
 
 ## 원장 (에이전트가 남긴 기록)
 

@@ -1,7 +1,7 @@
 ---
 title: "aiportal-front — 자율 개선 이력"
-description: "aiportal-front: 자율 개선 회차 6회, 릴리즈 0건. 최근 릴리즈 없음."
-last_modified_at: 2026-09-06 02:49:54 +0900
+description: "aiportal-front: 자율 개선 회차 7회, 릴리즈 0건. 최근 릴리즈 없음."
+last_modified_at: 2026-09-06 11:10:06 +0900
 ---
 {% raw %}
 <script type="application/ld+json">
@@ -11,35 +11,35 @@ last_modified_at: 2026-09-06 02:49:54 +0900
  "name": "aiportal-front",
  "codeRepository": "https://github.com/hkjang/aiportal-front",
  "url": "https://hkjang.github.io/aidev/projects/aiportal-front/",
- "description": "aiportal-front: 자율 개선 회차 6회, 릴리즈 0건. 최근 릴리즈 없음.",
+ "description": "aiportal-front: 자율 개선 회차 7회, 릴리즈 0건. 최근 릴리즈 없음.",
  "inLanguage": "ko",
  "maintainer": {
   "@type": "Person",
   "name": "hkjang",
   "url": "https://github.com/hkjang"
  },
- "dateModified": "2026-09-06T02:49:54+09:00"
+ "dateModified": "2026-09-06T11:10:06+09:00"
 }
 </script>
 
 # aiportal-front
 
-<p class="tldr"><strong>요약.</strong> aiportal-front: 자율 개선 회차 6회, 릴리즈 0건. 최근 릴리즈 없음. <span class="pill pill-merged" title="14일: 릴리즈 0, 실패 0, 경고 0, 회귀 0">건강 B</span> <span class="meta">14일: 릴리즈 0, 실패 0, 경고 0, 회귀 0</span></p>
+<p class="tldr"><strong>요약.</strong> aiportal-front: 자율 개선 회차 7회, 릴리즈 0건. 최근 릴리즈 없음. <span class="pill pill-merged" title="14일: 릴리즈 0, 실패 0, 경고 0, 회귀 0">건강 B</span> <span class="meta">14일: 릴리즈 0, 실패 0, 경고 0, 회귀 0</span></p>
 
-<ul class="stats"><li><b>6</b><span>회차</span></li><li><b>1</b><span>프로젝트</span></li><li><b>0</b><span>배포 준비 완료</span></li><li><b>0</b><span>릴리즈 진행 중</span></li><li><b>4</b><span>병합 완료</span></li><li><b>1</b><span>검토 대기</span></li><li><b>0</b><span>검증 실패</span></li><li><b>0</b><span>변경 없음</span></li><li><b>1</b><span>실행 오류</span></li><li><b>$2.97</b><span>비용</span></li><li><b>9분</b><span>에이전트 시간</span></li></ul>
+<ul class="stats"><li><b>7</b><span>회차</span></li><li><b>1</b><span>프로젝트</span></li><li><b>0</b><span>배포 준비 완료</span></li><li><b>0</b><span>릴리즈 진행 중</span></li><li><b>4</b><span>병합 완료</span></li><li><b>1</b><span>검토 대기</span></li><li><b>0</b><span>검증 실패</span></li><li><b>0</b><span>변경 없음</span></li><li><b>2</b><span>실행 오류</span></li><li><b>$2.97</b><span>비용</span></li><li><b>9분</b><span>에이전트 시간</span></li></ul>
 
 ## 현황
 
 <dl class="kv">
 <dt>저장소</dt><dd><a href="https://github.com/hkjang/aiportal-front">https://github.com/hkjang/aiportal-front</a></dd>
-<dt>마지막 회차</dt><dd>2026-09-06 02:03 KST — <span class="pill pill-other">• 기타</span> CI no-ci, PR open <a href="https://github.com/hkjang/aiportal-front/pull/5">PR #5</a></dd>
+<dt>마지막 회차</dt><dd>2026-09-06 06:40 KST — <span class="pill pill-other">• 기타</span> hold: budget</dd>
 <dt>최근 릴리즈</dt><dd>skipped — skipped</dd>
 <dt>사유</dt><dd>저장소에 릴리즈 이력이 전혀 없음: git 태그 0개, GitHub Release 0개(gh release list 결과 없음), CHANGELOG.md/RELEASE 노트 없음, .github/workflows 디렉터리 자체가 없음, scripts/ 디렉터리·Makefile·version-check 등 릴리즈 스크립트 없음. package.json 의 version 은 첫 커밋(ab700ba)의 Vite 스캐폴드 기본값 &quot;0.0.0&quot; 그대로이며 전체 히스토리(5개 커밋)에서 한 번도 변경된 적 없고 private:true 라 배포 대상도 아님. .gitlab-ci.yml 은 $CI_COMMIT_BRANCH == main/develop 브랜치 푸시에만 반응하는 빌드·배포 잡만 있고 태그나 릴리즈에 반응하는 잡은 없음(파일 내 tags: 는 모두 GitLab Runner 태그). 따를 이전 방식(버전 체계·노트 양식·태그 형식·자산 규칙)이 존재하지 않아 관례를 새로 만들지 않고 건너뜀.</dd>
 </dl>
 
 ## 회차 이력
 
-<div class="table-wrap"><table class="rt"><thead><tr><th>일시</th><th class="primary">프로젝트</th><th>결과</th></tr></thead><tbody><tr data-status="other"><td data-label="일시">2026-09-06 02:03</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/aiportal-front/">aiportal-front</a></td><td data-label="결과"><span class="pill pill-merged" title="outcome=review-pending">검토 대기</span> CI no-ci, PR open <a href="https://github.com/hkjang/aiportal-front/pull/5">PR #5</a><div class="meta">2파일 <span style="color:var(--good)">+185</span>/<span style="color:var(--bad)">−8</span> · 테스트 1 — fix: 마크다운 렌더링 코드블록/표 래퍼 속성 유실 및 외부 링크 하드닝</div></td></tr><tr data-status="other"><td data-label="일시">2026-09-05 18:40</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/aiportal-front/">aiportal-front</a></td><td data-label="결과"><span class="pill pill-failed" title="outcome=error">실행 오류</span> hold: budget</td></tr><tr data-status="merged"><td data-label="일시">2026-09-05 00:31</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/aiportal-front/">aiportal-front</a></td><td data-label="결과"><span class="pill pill-merged" title="outcome=merged">병합 완료</span> merged <a href="https://github.com/hkjang/aiportal-front/pull/4">PR #4</a>, release skipped</td></tr><tr data-status="merged"><td data-label="일시">2026-09-04 05:45</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/aiportal-front/">aiportal-front</a></td><td data-label="결과"><span class="pill pill-merged" title="outcome=merged">병합 완료</span> merged <a href="https://github.com/hkjang/aiportal-front/pull/3">PR #3</a>, release skipped</td></tr><tr data-status="merged"><td data-label="일시">2026-09-03 22:04</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/aiportal-front/">aiportal-front</a></td><td data-label="결과"><span class="pill pill-merged" title="outcome=merged">병합 완료</span> merged <a href="https://github.com/hkjang/aiportal-front/pull/2">PR #2</a>, release skipped</td></tr><tr data-status="merged"><td data-label="일시">2026-09-03 13:47</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/aiportal-front/">aiportal-front</a></td><td data-label="결과"><span class="pill pill-merged" title="outcome=merged">병합 완료</span> merged <a href="https://github.com/hkjang/aiportal-front/pull/1">PR #1</a>, release skipped</td></tr></tbody></table></div>
+<div class="table-wrap"><table class="rt"><thead><tr><th>일시</th><th class="primary">프로젝트</th><th>결과</th></tr></thead><tbody><tr data-status="other"><td data-label="일시">2026-09-06 06:40</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/aiportal-front/">aiportal-front</a></td><td data-label="결과"><span class="pill pill-failed" title="outcome=error">실행 오류</span> hold: budget</td></tr><tr data-status="other"><td data-label="일시">2026-09-06 02:03</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/aiportal-front/">aiportal-front</a></td><td data-label="결과"><span class="pill pill-merged" title="outcome=review-pending">검토 대기</span> CI no-ci, PR open <a href="https://github.com/hkjang/aiportal-front/pull/5">PR #5</a><div class="meta">2파일 <span style="color:var(--good)">+185</span>/<span style="color:var(--bad)">−8</span> · 테스트 1 — fix: 마크다운 렌더링 코드블록/표 래퍼 속성 유실 및 외부 링크 하드닝</div></td></tr><tr data-status="other"><td data-label="일시">2026-09-05 18:40</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/aiportal-front/">aiportal-front</a></td><td data-label="결과"><span class="pill pill-failed" title="outcome=error">실행 오류</span> hold: budget</td></tr><tr data-status="merged"><td data-label="일시">2026-09-05 00:31</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/aiportal-front/">aiportal-front</a></td><td data-label="결과"><span class="pill pill-merged" title="outcome=merged">병합 완료</span> merged <a href="https://github.com/hkjang/aiportal-front/pull/4">PR #4</a>, release skipped</td></tr><tr data-status="merged"><td data-label="일시">2026-09-04 05:45</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/aiportal-front/">aiportal-front</a></td><td data-label="결과"><span class="pill pill-merged" title="outcome=merged">병합 완료</span> merged <a href="https://github.com/hkjang/aiportal-front/pull/3">PR #3</a>, release skipped</td></tr><tr data-status="merged"><td data-label="일시">2026-09-03 22:04</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/aiportal-front/">aiportal-front</a></td><td data-label="결과"><span class="pill pill-merged" title="outcome=merged">병합 완료</span> merged <a href="https://github.com/hkjang/aiportal-front/pull/2">PR #2</a>, release skipped</td></tr><tr data-status="merged"><td data-label="일시">2026-09-03 13:47</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/aiportal-front/">aiportal-front</a></td><td data-label="결과"><span class="pill pill-merged" title="outcome=merged">병합 완료</span> merged <a href="https://github.com/hkjang/aiportal-front/pull/1">PR #1</a>, release skipped</td></tr></tbody></table></div>
 
 ## 비용·사용량
 

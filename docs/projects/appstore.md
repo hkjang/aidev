@@ -1,7 +1,7 @@
 ---
 title: "appstore — 자율 개선 이력"
-description: "appstore: 자율 개선 회차 7회, 릴리즈 5건. 최근 릴리즈 v2.5.1."
-last_modified_at: 2026-09-06 02:49:54 +0900
+description: "appstore: 자율 개선 회차 8회, 릴리즈 5건. 최근 릴리즈 v2.5.1."
+last_modified_at: 2026-09-06 11:10:06 +0900
 ---
 {% raw %}
 <script type="application/ld+json">
@@ -11,35 +11,35 @@ last_modified_at: 2026-09-06 02:49:54 +0900
  "name": "appstore",
  "codeRepository": "https://github.com/hkjang/appstore",
  "url": "https://hkjang.github.io/aidev/projects/appstore/",
- "description": "appstore: 자율 개선 회차 7회, 릴리즈 5건. 최근 릴리즈 v2.5.1.",
+ "description": "appstore: 자율 개선 회차 8회, 릴리즈 5건. 최근 릴리즈 v2.5.1.",
  "inLanguage": "ko",
  "maintainer": {
   "@type": "Person",
   "name": "hkjang",
   "url": "https://github.com/hkjang"
  },
- "dateModified": "2026-09-06T02:49:54+09:00",
+ "dateModified": "2026-09-06T11:10:06+09:00",
  "version": "2.5.1"
 }
 </script>
 
 # appstore
 
-<p class="tldr"><strong>요약.</strong> appstore: 자율 개선 회차 7회, 릴리즈 5건. 최근 릴리즈 v2.5.1. <span class="pill pill-released" title="14일: 릴리즈 5, 실패 0, 경고 0, 회귀 0">건강 A</span> <span class="meta">14일: 릴리즈 5, 실패 0, 경고 0, 회귀 0</span></p>
+<p class="tldr"><strong>요약.</strong> appstore: 자율 개선 회차 8회, 릴리즈 5건. 최근 릴리즈 v2.5.1. <span class="pill pill-released" title="14일: 릴리즈 5, 실패 0, 경고 0, 회귀 0">건강 A</span> <span class="meta">14일: 릴리즈 5, 실패 0, 경고 0, 회귀 0</span></p>
 
-<ul class="stats"><li><b>7</b><span>회차</span></li><li><b>1</b><span>프로젝트</span></li><li><b>5</b><span>배포 준비 완료</span></li><li><b>0</b><span>릴리즈 진행 중</span></li><li><b>0</b><span>병합 완료</span></li><li><b>0</b><span>검토 대기</span></li><li><b>1</b><span>검증 실패</span></li><li><b>0</b><span>변경 없음</span></li><li><b>1</b><span>실행 오류</span></li><li><b>$5.21</b><span>비용</span></li><li><b>10분</b><span>에이전트 시간</span></li></ul>
+<ul class="stats"><li><b>8</b><span>회차</span></li><li><b>1</b><span>프로젝트</span></li><li><b>5</b><span>배포 준비 완료</span></li><li><b>0</b><span>릴리즈 진행 중</span></li><li><b>0</b><span>병합 완료</span></li><li><b>0</b><span>검토 대기</span></li><li><b>1</b><span>검증 실패</span></li><li><b>0</b><span>변경 없음</span></li><li><b>2</b><span>실행 오류</span></li><li><b>$5.21</b><span>비용</span></li><li><b>10분</b><span>에이전트 시간</span></li></ul>
 
 ## 현황
 
 <dl class="kv">
 <dt>저장소</dt><dd><a href="https://github.com/hkjang/appstore">https://github.com/hkjang/appstore</a></dd>
-<dt>마지막 회차</dt><dd>2026-09-06 02:49 KST — <span class="pill pill-other">• 기타</span> verify failed: secrets in diff</dd>
+<dt>마지막 회차</dt><dd>2026-09-06 07:10 KST — <span class="pill pill-other">• 기타</span> hold: budget</dd>
 <dt>최근 릴리즈</dt><dd><a href="https://github.com/hkjang/appstore/releases/tag/v2.5.1">v2.5.1</a> — released <a href="https://github.com/hkjang/appstore/releases">전체 릴리즈 →</a></dd>
 </dl>
 
 ## 회차 이력
 
-<div class="table-wrap"><table class="rt"><thead><tr><th>일시</th><th class="primary">프로젝트</th><th>결과</th></tr></thead><tbody><tr data-status="other"><td data-label="일시">2026-09-06 02:49</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/appstore/">appstore</a></td><td data-label="결과"><span class="pill pill-failed" title="outcome=verify-failed">검증 실패</span> verify failed: secrets in diff<div class="meta">8파일 <span style="color:var(--good)">+139</span>/<span style="color:var(--bad)">−9</span> · 테스트 3 — fix: reject a bootstrap password that bcrypt cannot hash</div></td></tr><tr data-status="other"><td data-label="일시">2026-09-05 19:10</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/appstore/">appstore</a></td><td data-label="결과"><span class="pill pill-failed" title="outcome=error">실행 오류</span> hold: budget</td></tr><tr data-status="released"><td data-label="일시">2026-09-05 01:43</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/appstore/">appstore</a></td><td data-label="결과"><span class="pill pill-released" title="outcome=release-ready">배포 준비 완료</span> merged <a href="https://github.com/hkjang/appstore/pull/5">PR #5</a>, released <a href="https://github.com/hkjang/appstore/releases/tag/v2.5.1">v2.5.1</a></td></tr><tr data-status="released"><td data-label="일시">2026-09-03 08:05</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/appstore/">appstore</a></td><td data-label="결과"><span class="pill pill-released" title="outcome=release-ready">배포 준비 완료</span> merged <a href="https://github.com/hkjang/appstore/pull/4">PR #4</a>, released <a href="https://github.com/hkjang/appstore/releases/tag/v2.1.4">v2.1.4</a></td></tr><tr data-status="released"><td data-label="일시">2026-09-03 02:16</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/appstore/">appstore</a></td><td data-label="결과"><span class="pill pill-released" title="outcome=release-ready">배포 준비 완료</span> merged <a href="https://github.com/hkjang/appstore/pull/3">PR #3</a>, released <a href="https://github.com/hkjang/appstore/releases/tag/v2.1.3">v2.1.3</a></td></tr><tr data-status="released"><td data-label="일시">2026-09-02 19:56</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/appstore/">appstore</a></td><td data-label="결과"><span class="pill pill-released" title="outcome=release-ready">배포 준비 완료</span> merged <a href="https://github.com/hkjang/appstore/pull/2">PR #2</a>, released <a href="https://github.com/hkjang/appstore/releases/tag/v2.1.2">v2.1.2</a></td></tr><tr data-status="released"><td data-label="일시">2026-09-02 13:56</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/appstore/">appstore</a></td><td data-label="결과"><span class="pill pill-released" title="outcome=release-ready">배포 준비 완료</span> merged <a href="https://github.com/hkjang/appstore/pull/1">PR #1</a>, released <a href="https://github.com/hkjang/appstore/releases/tag/v2.1.1">v2.1.1</a></td></tr></tbody></table></div>
+<div class="table-wrap"><table class="rt"><thead><tr><th>일시</th><th class="primary">프로젝트</th><th>결과</th></tr></thead><tbody><tr data-status="other"><td data-label="일시">2026-09-06 07:10</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/appstore/">appstore</a></td><td data-label="결과"><span class="pill pill-failed" title="outcome=error">실행 오류</span> hold: budget</td></tr><tr data-status="other"><td data-label="일시">2026-09-06 02:49</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/appstore/">appstore</a></td><td data-label="결과"><span class="pill pill-failed" title="outcome=verify-failed">검증 실패</span> verify failed: secrets in diff<div class="meta">8파일 <span style="color:var(--good)">+139</span>/<span style="color:var(--bad)">−9</span> · 테스트 3 — fix: reject a bootstrap password that bcrypt cannot hash</div></td></tr><tr data-status="other"><td data-label="일시">2026-09-05 19:10</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/appstore/">appstore</a></td><td data-label="결과"><span class="pill pill-failed" title="outcome=error">실행 오류</span> hold: budget</td></tr><tr data-status="released"><td data-label="일시">2026-09-05 01:43</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/appstore/">appstore</a></td><td data-label="결과"><span class="pill pill-released" title="outcome=release-ready">배포 준비 완료</span> merged <a href="https://github.com/hkjang/appstore/pull/5">PR #5</a>, released <a href="https://github.com/hkjang/appstore/releases/tag/v2.5.1">v2.5.1</a></td></tr><tr data-status="released"><td data-label="일시">2026-09-03 08:05</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/appstore/">appstore</a></td><td data-label="결과"><span class="pill pill-released" title="outcome=release-ready">배포 준비 완료</span> merged <a href="https://github.com/hkjang/appstore/pull/4">PR #4</a>, released <a href="https://github.com/hkjang/appstore/releases/tag/v2.1.4">v2.1.4</a></td></tr><tr data-status="released"><td data-label="일시">2026-09-03 02:16</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/appstore/">appstore</a></td><td data-label="결과"><span class="pill pill-released" title="outcome=release-ready">배포 준비 완료</span> merged <a href="https://github.com/hkjang/appstore/pull/3">PR #3</a>, released <a href="https://github.com/hkjang/appstore/releases/tag/v2.1.3">v2.1.3</a></td></tr><tr data-status="released"><td data-label="일시">2026-09-02 19:56</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/appstore/">appstore</a></td><td data-label="결과"><span class="pill pill-released" title="outcome=release-ready">배포 준비 완료</span> merged <a href="https://github.com/hkjang/appstore/pull/2">PR #2</a>, released <a href="https://github.com/hkjang/appstore/releases/tag/v2.1.2">v2.1.2</a></td></tr><tr data-status="released"><td data-label="일시">2026-09-02 13:56</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/appstore/">appstore</a></td><td data-label="결과"><span class="pill pill-released" title="outcome=release-ready">배포 준비 완료</span> merged <a href="https://github.com/hkjang/appstore/pull/1">PR #1</a>, released <a href="https://github.com/hkjang/appstore/releases/tag/v2.1.1">v2.1.1</a></td></tr></tbody></table></div>
 
 ## 비용·사용량
 
