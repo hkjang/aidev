@@ -55,3 +55,9 @@
 - 보류 아이디어: (1) 일일 플레이 제한이 진행 중인 세션의 경과 시간을 세지 않아(`duration_ms`가 NULL) 제한을 한 세션만큼 넘겨 시작할 수 있는 문제 — SQL 한 줄이지만 검증에 PostgreSQL이 필요하고 이 환경에는 없다. (2) `cmd/igame` 커버리지 13.7% — 기동/종료 경로 테스트 보강. (3) `listUsers`만 검색어를 TrimSpace 하지 않아 다른 목록과 동작이 다른 점 정리. (4) `Migrate`의 체크섬 불일치 경로는 여전히 DB가 있어야만 검증 가능 — 트랜잭션 경계까지 포함한 통합 테스트 마련. (5) `<input type="time">`은 24:00을 입력할 수 없어 "종일 허용" 창은 화면에서 00:00~23:59까지만 만들 수 있는 점 정리.
 
 - 릴리즈: v0.7.7 (2026-09-06, run 2026-09-06-145047-igame-improve)
+## 2026-09-07
+- 선택: 진행 중인 세션을 일일 플레이 제한에 반영 (가치 4 / 위험 2 / 작업량 M)
+- 결과: 성공
+- 요약: `duration_ms`는 세션이 끝날 때만 기록되므로 `playAllowed`(internal/api/catalog.go)의 `sum(duration_ms)`가 아직 열려 있는 세션을 0분으로 셌다. 제한은 세션을 시작할 때 확인하는데 그 순간 열려 있는 세션이 바로 합계에서 빠진 것이라, 종료된 세션만 제한 아래면 이미 몇 시간을 플레이했든 다시 시작이 허용돼 매일 한 세션만큼 한도를 넘겼다(제한 60분에 55분씩 플레이하면 110분까지 통과). 열린 세션은 시작 이후 경과 시간을 더하도록 고쳤다 — 세션을 finish 할 때와 새 세션이 이전 세션을 abandoned 로 닫을 때 이미 쓰는 것과 같은 계산이다. 판정 주체가 SQL이라 실제로 돌려서 검증했다: `IGAME_TEST_DSN`이 있을 때만 도는 PostgreSQL 테스트(internal/api/catalog_pg_test.go)가 마이그레이션을 버릴 DB에 적용하고 진행 중 세션·서비스 하루 시작 이전 세션·duration 없이 닫힌 세션 세 경우를 확인하며, `make test-db DSN=...` 타깃과 README 안내를 추가했다. 검증: `gofmt -l`, `go vet ./cmd/... ./internal/... ./migrations/...`, `go build ./...`, `go test`·`go test -race` 전체 통과, docker `postgres:17-alpine` 컨테이너로 새 테스트 3개 통과 및 옛 쿼리로 되돌리면 실패함을 확인. 웹 테스트/린트는 이 워크트리에 `web/node_modules`가 없어(오프라인) 실행하지 못했고, 변경은 Go 1개·테스트 1개·Makefile·README 뿐이라 프런트엔드에 닿지 않는다.
+- 보류 아이디어: (1) `cmd/igame` 커버리지 13.7% — 기동/종료 경로 테스트 보강. (2) `listUsers`만 검색어를 TrimSpace 하지 않아 다른 목록과 동작이 다른 점 정리. (3) `Migrate`의 체크섬 불일치·트랜잭션 경계 통합 테스트 — 이제 `IGAME_TEST_DSN` 하네스가 생겨 실제로 쓸 수 있다. (4) `<input type="time">`은 24:00을 입력할 수 없어 "종일 허용" 창을 UI에서 만들 수 없는 점 정리. (5) `issueSession`의 쿠키 MaxAge가 `s.Now()`가 아니라 실제 시계(`time.Until`)로 계산돼 주입된 시계와 어긋나는 점 정리.
+

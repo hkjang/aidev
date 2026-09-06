@@ -1,0 +1,130 @@
+{
+  "run_id": "2026-09-07-012047-igame-improve",
+  "generated": "2026-09-07T01:26:42+09:00",
+  "run": {
+    "run_id": "2026-09-07-012047-igame-improve",
+    "project": "igame",
+    "kind": "improve",
+    "started": "2026-09-07T01:20:48+09:00",
+    "model": "claude-opus-5",
+    "policy_version": "7c35e50",
+    "prompts_hash": "a3b041a352fd55fa",
+    "runner_version": "4bc6b6c",
+    "finished": "2026-09-07T01:26:42+09:00",
+    "outcome": "verify-failed"
+  },
+  "record": {
+    "ts": "2026-09-07T01:26:42+09:00",
+    "date": "2026-09-07",
+    "project": "igame",
+    "result": "verify failed: secrets in diff",
+    "outcome": "verify-failed",
+    "run_id": "2026-09-07-012047-igame-improve",
+    "base_sha": "423dc7b212683fd30ecce1f134878875bd613ff0",
+    "head_sha": "308f5794a98c401906c9c95d5873206662f7bb50",
+    "pr": "",
+    "stages": {
+      "base": {
+        "state": "pinned",
+        "reason": "main@423dc7b",
+        "at": "2026-09-07T01:20:51+09:00"
+      },
+      "autonomy": {
+        "state": "release",
+        "reason": "",
+        "at": "2026-09-07T01:20:51+09:00"
+      },
+      "verify": {
+        "state": "failed",
+        "reason": "변경에 비밀정보 의심 문자열",
+        "at": "2026-09-07T01:26:42+09:00"
+      }
+    },
+    "campaign": "",
+    "autonomy": "release",
+    "files": 4,
+    "additions": 157,
+    "deletions": 2,
+    "tests": 1,
+    "title": "fix: count the session in progress against the daily play limit"
+  },
+  "stages": {
+    "base": {
+      "state": "pinned",
+      "reason": "main@423dc7b",
+      "at": "2026-09-07T01:20:51+09:00"
+    },
+    "autonomy": {
+      "state": "release",
+      "reason": "",
+      "at": "2026-09-07T01:20:51+09:00"
+    },
+    "verify": {
+      "state": "failed",
+      "reason": "변경에 비밀정보 의심 문자열",
+      "at": "2026-09-07T01:26:42+09:00"
+    }
+  },
+  "provenance": {
+    "model": "claude-opus-5",
+    "policy_version": "7c35e50",
+    "prompts_hash": "a3b041a352fd55fa",
+    "runner_version": "4bc6b6c",
+    "base_sha": "423dc7b212683fd30ecce1f134878875bd613ff0",
+    "head_sha": "308f5794a98c401906c9c95d5873206662f7bb50",
+    "pr": ""
+  },
+  "verification": {
+    "runner": {
+      "source": "auto",
+      "commands": [
+        {
+          "cmd": "go build ./...",
+          "exit": 0,
+          "seconds": 0
+        },
+        {
+          "cmd": "go vet ./...",
+          "exit": 0,
+          "seconds": 0
+        },
+        {
+          "cmd": "go test ./...",
+          "exit": 0,
+          "seconds": 1
+        }
+      ]
+    },
+    "runner_gate": {
+      "ok": true,
+      "state": "verified",
+      "reason": "검증 3개 통과 (auto)"
+    },
+    "after_rebase": null,
+    "review": null,
+    "ci_gate": null
+  },
+  "release": {
+    "result": null,
+    "assets_sha256": []
+  },
+  "approval": null,
+  "usage": [
+    {
+      "ts": "2026-09-07T01:26:40+09:00",
+      "date": "2026-09-07",
+      "project": "igame",
+      "phase": "improve",
+      "run_id": "2026-09-07-012047-igame-improve",
+      "campaign": "",
+      "subtype": "success",
+      "duration_ms": 378794,
+      "num_turns": 58,
+      "cost_usd": 3.3573334999999997,
+      "input_tokens": 98,
+      "output_tokens": 23645,
+      "cache_read": 3656859,
+      "cache_create": 92679
+    }
+  ]
+}
