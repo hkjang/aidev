@@ -1,0 +1,74 @@
+[
+  {
+    "title": "권고 판정을 질의한 패키지의 선언으로만 좁히기 (LIKE %name% 이웃 패키지 오판)",
+    "value": 4,
+    "risk": 3,
+    "size": "M",
+    "status": "done",
+    "note": "classifyAgainstFix가 부분 일치로 걸린 requests-toolbelt 0.10.1을 requests 권고의 버전으로 읽어 저장소를 '영향'으로 보고했다. namesPackage(이름 전체 또는 온전한 한 조각)로 판정 대상을 좁히고, 제외한 선언은 Declarations에 남기고 notes에 이름을 적는다. 좌표 질의(log4j -> ...:log4j-core, gin-gonic/gin)는 그대로 유지. commit 0e6f282.",
+    "updated": "2026-09-06"
+  },
+  {
+    "title": "ParseLock의 MaxLockPackages 4000 절단이 조용함",
+    "value": 3,
+    "risk": 2,
+    "size": "M",
+    "status": "pending",
+    "note": "go.sum이 알파벳 순이라 뒤쪽 이름부터 통째로 사라지고, 해석된 버전 판정을 말없이 잃는다. 절단 사실을 인벤토리 진단으로 올릴 경로가 필요.",
+    "updated": "2026-09-06"
+  },
+  {
+    "title": "parseRequirements 연산자 목록에 != 와 === 누락",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "urllib3!=1.25.0 의 버전이 \"!\" 로 기록된다. requirementLine 정규식에 연산자 두 개를 추가하면 되는 작은 수정.",
+    "updated": "2026-09-06"
+  },
+  {
+    "title": "clampResponse의 truncation notice 예약치(320B) 부족",
+    "value": 2,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "실제 공지가 약 329B + 코드펜스라 '예산에 맞춰 잘랐다'면서 예산을 십수 바이트 초과한다. 공지를 먼저 만들고 그 길이로 room을 계산하면 정확해진다.",
+    "updated": "2026-09-06"
+  },
+  {
+    "title": "dependencyScanLimit 절단 시 어떤 버전 그룹이 잘렸는지 알 수 없음",
+    "value": 2,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "2000건에서 잘리면 버전 그룹과 영향/안전 집계가 불완전한데 notes는 '상위 2000건만 확인했습니다'라고만 한다. 권고 판정 중이면 절단이 판정을 불완전하게 만든다고 명시해야 한다.",
+    "updated": "2026-09-06"
+  },
+  {
+    "title": "parsePOM이 <dependencyManagement> 선언까지 실제 의존성으로 집계",
+    "value": 3,
+    "risk": 3,
+    "size": "M",
+    "status": "pending",
+    "note": "BOM만 정의한 부모 POM이 권고에 허위 양성으로 걸린다. 다만 부모 POM의 핀이 유일한 버전 근거인 멀티모듈 저장소에서는 참 양성을 잃을 위험이 있어 신중히.",
+    "updated": "2026-09-06"
+  },
+  {
+    "title": "netclient.JoinAPIPath가 base URL이 다른 리소스 경로로 끝날 때 경로 중복 연결",
+    "value": 2,
+    "risk": 3,
+    "size": "S",
+    "status": "pending",
+    "note": "2026-09-02, 09-03 회차에서 연속 보류. 실제 오설정 사례가 확인되지 않아 우선순위 낮음.",
+    "updated": "2026-09-06"
+  },
+  {
+    "title": "mcp.filterLibraries / cacheKey가 호출자 슬라이스를 제자리 변경",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "items[:0] 재사용과 sort.Strings(p.ACLPrincipals)가 컨텍스트에 담긴 슬라이스를 변형한다. 지금은 안전하지만 캐시된 슬라이스가 들어오면 ACL 오염 위험.",
+    "updated": "2026-09-06"
+  }
+]
