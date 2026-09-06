@@ -1,0 +1,239 @@
+{
+  "run_id": "2026-09-07-050049-weekly-improve",
+  "generated": "2026-09-07T05:52:36+09:00",
+  "run": {
+    "run_id": "2026-09-07-050049-weekly-improve",
+    "project": "weekly",
+    "kind": "improve",
+    "started": "2026-09-07T05:00:50+09:00",
+    "model": "claude-opus-5",
+    "policy_version": "7c35e50",
+    "prompts_hash": "a3b041a352fd55fa",
+    "runner_version": "4bc6b6c",
+    "finished": "2026-09-07T05:52:36+09:00",
+    "outcome": "merged"
+  },
+  "record": {
+    "ts": "2026-09-07T05:52:36+09:00",
+    "date": "2026-09-07",
+    "project": "weekly",
+    "result": "merged https://github.com/hkjang/weekly/pull/9, release blocked (secrets)",
+    "outcome": "merged",
+    "run_id": "2026-09-07-050049-weekly-improve",
+    "base_sha": "5763cd2e9970a70724edbc1dca9abaa928b2a5e7",
+    "head_sha": "6d8b1092de8b9a101901e63590993b04d402ae1f",
+    "pr": "https://github.com/hkjang/weekly/pull/9",
+    "stages": {
+      "base": {
+        "state": "pinned",
+        "reason": "main@5763cd2",
+        "at": "2026-09-07T05:00:53+09:00"
+      },
+      "autonomy": {
+        "state": "release",
+        "reason": "",
+        "at": "2026-09-07T05:00:53+09:00"
+      },
+      "verify": {
+        "state": "passed",
+        "reason": "검증 3개 통과 (auto)",
+        "at": "2026-09-07T05:26:05+09:00"
+      },
+      "pr": {
+        "state": "created",
+        "reason": "https://github.com/hkjang/weekly/pull/9",
+        "at": "2026-09-07T05:26:13+09:00"
+      },
+      "review": {
+        "state": "approved",
+        "reason": "리뷰 승인 (risk=low)",
+        "at": "2026-09-07T05:33:20+09:00"
+      },
+      "ci": {
+        "state": "passed",
+        "reason": "검사 1개 모두 success",
+        "at": "2026-09-07T05:48:14+09:00"
+      },
+      "merge": {
+        "state": "done",
+        "reason": "6d8b1092de8b9a101901e63590993b04d402ae1f",
+        "at": "2026-09-07T05:48:18+09:00"
+      },
+      "release": {
+        "state": "blocked",
+        "reason": "릴리즈 커밋에 비밀정보 의심",
+        "at": "2026-09-07T05:52:35+09:00"
+      }
+    },
+    "campaign": "",
+    "autonomy": "release",
+    "files": 3,
+    "additions": 161,
+    "deletions": 11,
+    "tests": 1,
+    "title": "fix: 주 격자를 옮겨도 참여 분석이 이미 낸 보고서를 셉니다"
+  },
+  "stages": {
+    "base": {
+      "state": "pinned",
+      "reason": "main@5763cd2",
+      "at": "2026-09-07T05:00:53+09:00"
+    },
+    "autonomy": {
+      "state": "release",
+      "reason": "",
+      "at": "2026-09-07T05:00:53+09:00"
+    },
+    "verify": {
+      "state": "passed",
+      "reason": "검증 3개 통과 (auto)",
+      "at": "2026-09-07T05:26:05+09:00"
+    },
+    "pr": {
+      "state": "created",
+      "reason": "https://github.com/hkjang/weekly/pull/9",
+      "at": "2026-09-07T05:26:13+09:00"
+    },
+    "review": {
+      "state": "approved",
+      "reason": "리뷰 승인 (risk=low)",
+      "at": "2026-09-07T05:33:20+09:00"
+    },
+    "ci": {
+      "state": "passed",
+      "reason": "검사 1개 모두 success",
+      "at": "2026-09-07T05:48:14+09:00"
+    },
+    "merge": {
+      "state": "done",
+      "reason": "6d8b1092de8b9a101901e63590993b04d402ae1f",
+      "at": "2026-09-07T05:48:18+09:00"
+    },
+    "release": {
+      "state": "blocked",
+      "reason": "릴리즈 커밋에 비밀정보 의심",
+      "at": "2026-09-07T05:52:35+09:00"
+    }
+  },
+  "provenance": {
+    "model": "claude-opus-5",
+    "policy_version": "7c35e50",
+    "prompts_hash": "a3b041a352fd55fa",
+    "runner_version": "4bc6b6c",
+    "base_sha": "5763cd2e9970a70724edbc1dca9abaa928b2a5e7",
+    "head_sha": "6d8b1092de8b9a101901e63590993b04d402ae1f",
+    "pr": "https://github.com/hkjang/weekly/pull/9"
+  },
+  "verification": {
+    "runner": {
+      "source": "auto",
+      "commands": [
+        {
+          "cmd": "go build ./...",
+          "exit": 0,
+          "seconds": 0
+        },
+        {
+          "cmd": "go vet ./...",
+          "exit": 0,
+          "seconds": 1
+        },
+        {
+          "cmd": "go test ./...",
+          "exit": 0,
+          "seconds": 117
+        }
+      ]
+    },
+    "runner_gate": {
+      "ok": true,
+      "state": "verified",
+      "reason": "검증 3개 통과 (auto)"
+    },
+    "after_rebase": null,
+    "review": {
+      "verdict": "approve",
+      "reasons": [],
+      "notes": [
+        "테스트 유효성 확인: internal/app/admin_analytics.go 와 internal/app/weekstart.go 만 main 버전으로 되돌리고 새 테스트를 돌린 결과 5건 실패(추세 3주 0건, 보고한 사람이 3주 밀림, 미제출자 2명), 수정본에서 통과. 수정 전 코드에서도 통과하는 테스트가 아님. 전체 `go test ./...` 및 `go vet ./internal/...` 통과.",
+        "internal/app/admin_analytics.go:379-393 성능: weekCoveringDaysOf 의 `r.week_start + 6 >= day` 는 인덱스를 못 타고, 이전의 `WHERE r.week_start BETWEEN $1 AND $2` 단일 스캔이 주(週)마다 한 번 도는 LATERAL 로 바뀌었습니다. weeks=analyticsMaxWeeks(104) 이면 104회입니다. weekIsOwed 의 NOT EXISTS 도 (user_id, week_start) 유니크 인덱스 정확 일치에서 범위 조건으로 바뀌어 사용자 수 x 104 회 실행됩니다. 보고서 테이블이 큰 배포에서는 관리자 분석 응답이 느려질 수 있으니 실측을 권합니다(결함은 아님).",
+        "internal/app/admin_analytics.go:384-390 겹침 판정이라 격자를 옮긴 뒤 옛 보고서 1건이 인접한 두 격자 주에 모두 제출로 잡힙니다(테스트에서도 3건 보고가 4개 주에 걸침). 다만 weekIsFree 가 그 두 주 모두에 새 보고 작성을 막으므로 제품 동작과는 일관되고, weekIsOwed 도 같은 규칙이라 추세와 미제출자 목록은 서로 어긋나지 않습니다. 창(window) 합계가 실제 보고서 수보다 커진다는 점만 유의.",
+        "internal/app/admin_analytics.go:391 DISTINCT ON 타이브레이크가 `(r.status <> 'DRAFT') DESC, r.week_start DESC` 인데, 같은 질문을 하는 internal/app/analytics.go:73-75 는 `r.week_start DESC` 뿐입니다. 전환기에 제출된 A주 보고와 그 뒤 초안 B주 보고가 같은 격자 주에 겹치면 참여 분석은 제출로, 개요는 DRAFT 로 읽습니다. 여기서는 weekIsOwed 의 `status <> 'DRAFT'` 와 맞추려면 이 순서가 필요하므로 이 PR 쪽이 옳고, 주석이 근거로 든 snapshotFor(internal/app/meeting.go:162)는 초안 우선 규칙이 없다는 점만 부정확합니다.",
+        "internal/app/admin_analytics.go:363-365 응답의 `reports` 필드 의미가 '해당 주 보고서 건수(초안 포함)'에서 '해당 주를 덮는 보고서를 가진 사람 수'로 바뀌었습니다. frontend/src/pages/AdminAnalyticsTab.tsx:128 에서 차트 보조 계열로만 쓰이고 같은 패널의 다른 수치가 모두 인원 기준이라 표시상 문제는 없습니다.",
+        "마이그레이션·인증·권한·삭제·워크플로 변경 없음. 순수 쿼리 변경이라 revert 로 완전히 되돌아옵니다. 커밋 범위도 관련 3개 파일뿐이며 리팩터/의존성 갱신 혼입 없음.",
+        "작업 트리에 커밋되지 않은 변경(README.md, VERSION, docs/*, deploy/*, frontend/package.json, .github/release-notes/v0.290.0.md)이 남아 있습니다. main...HEAD 차이에는 포함되지 않으므로 이번 심사 대상은 아니지만, 릴리스 산출물이 커밋 누락된 것인지 확인이 필요합니다."
+      ],
+      "risk": "low"
+    },
+    "ci_gate": {
+      "ok": true,
+      "state": "success",
+      "reason": "검사 1개 모두 success",
+      "checks": 1
+    }
+  },
+  "release": {
+    "result": {
+      "status": "released",
+      "version": "0.290.0",
+      "tag": "v0.290.0",
+      "title": "Weekly v0.290.0",
+      "notes_file": "/mnt/c/Users/USER/projects/aidev/state/runs/2026-09-07-050049-weekly-improve/release-notes-v0.290.0.md",
+      "github_release": false,
+      "assets": [],
+      "reason": ""
+    },
+    "assets_sha256": []
+  },
+  "approval": null,
+  "usage": [
+    {
+      "ts": "2026-09-07T05:24:05+09:00",
+      "date": "2026-09-07",
+      "project": "weekly",
+      "phase": "improve",
+      "run_id": "2026-09-07-050049-weekly-improve",
+      "campaign": "",
+      "subtype": "success",
+      "duration_ms": 1521139,
+      "num_turns": 86,
+      "cost_usd": 6.4658545,
+      "input_tokens": 146,
+      "output_tokens": 46732,
+      "cache_read": 7821635,
+      "cache_create": 137568
+    },
+    {
+      "ts": "2026-09-07T05:33:20+09:00",
+      "date": "2026-09-07",
+      "project": "weekly",
+      "phase": "review",
+      "run_id": "2026-09-07-050049-weekly-improve",
+      "campaign": "",
+      "subtype": "success",
+      "duration_ms": 468405,
+      "num_turns": 25,
+      "cost_usd": 1.3624075,
+      "input_tokens": 50,
+      "output_tokens": 16512,
+      "cache_read": 990025,
+      "cache_create": 45248
+    },
+    {
+      "ts": "2026-09-07T05:52:35+09:00",
+      "date": "2026-09-07",
+      "project": "weekly",
+      "phase": "release",
+      "run_id": "2026-09-07-050049-weekly-improve",
+      "campaign": "",
+      "subtype": "success",
+      "duration_ms": 269172,
+      "num_turns": 38,
+      "cost_usd": 1.9076404999999996,
+      "input_tokens": 56,
+      "output_tokens": 14600,
+      "cache_read": 1695823,
+      "cache_create": 68732
+    }
+  ]
+}
