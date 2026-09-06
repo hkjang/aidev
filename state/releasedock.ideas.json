@@ -1,0 +1,65 @@
+[
+  {
+    "title": "보류된 배포 후 단계를 미뤄 둔 단계와 구분해 표시 (HELD 상태 도입)",
+    "value": 4,
+    "risk": 2,
+    "size": "M",
+    "status": "done",
+    "note": "SKIPPED 하나로 '나중에 실행' 과 '실행되지 않음' 을 함께 표현해 실행 상세 화면이 실패 원인을 반대로 설명했습니다. 마이그레이션 025 로 HELD 를 추가하고 stageDeferred 로 후속 판단을 묶었으며, replicationError 도 단계 옆에 표시합니다. v0.5.9.",
+    "updated": "2026-09-06"
+  },
+  {
+    "title": "CI 와 Makefile 에 go vet (또는 golangci-lint) 단계 추가",
+    "value": 3,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "ci.yml 은 go test 만 돌리고 Makefile test 타깃도 마찬가지라 정적 검사가 매번 수동입니다. 매 세션 직접 go vet 을 실행해 왔습니다.",
+    "updated": "2026-09-06"
+  },
+  {
+    "title": "simpleRunLogger.append 가 빈 줄을 저장하지 않아 스크립트 출력의 문단 구분이 사라짐",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "append 는 len(payload)==0 이면 budget.take 가 0 을 돌려줘 그대로 반환합니다. 빈 줄도 한 행으로 저장하면 로그 가독성이 원본과 같아집니다.",
+    "updated": "2026-09-06"
+  },
+  {
+    "title": "로그 다운로드 파일명에 패키지 이름과 상태 반영",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "downloadSimpleRunLog 이 original_filename 과 status 를 조회하지만 쓰지 않아 Content-Disposition 이 run id 뿐입니다. 여러 실행 로그를 내려받으면 구분이 어렵습니다. 헤더 인젝션을 막으려면 파일명 정제가 필요합니다.",
+    "updated": "2026-09-06"
+  },
+  {
+    "title": "0.5.9 이전에 보류된 단계를 남긴 기존 실행 기록의 표시",
+    "value": 2,
+    "risk": 3,
+    "size": "S",
+    "status": "pending",
+    "note": "예전 행은 여전히 SKIPPED 라 상세 화면이 '마지막 파일에서 실행' 이라고 안내합니다. FAILED 실행의 SKIPPED 단계는 보류였다고 추론해 백필할 수 있지만 과거 기록을 추론으로 고쳐 쓰는 위험이 있어 이번에는 보류했습니다.",
+    "updated": "2026-09-06"
+  },
+  {
+    "title": "실행 상세 화면에 같은 묶음의 다른 실행 목록·링크 표시",
+    "value": 3,
+    "risk": 1,
+    "size": "M",
+    "status": "pending",
+    "note": "batchId/batchLast 는 이미 API 로 내려오지만 화면에서 쓰이지 않습니다. 보류된 단계를 만난 운영자가 어느 패키지가 실패했는지 찾으려면 지금은 실행 목록에서 눈으로 골라야 합니다.",
+    "updated": "2026-09-06"
+  },
+  {
+    "title": "web/dist/assets/vendor 청크 617KB 분할로 폐쇄망 초기 로딩 개선",
+    "value": 2,
+    "risk": 3,
+    "size": "M",
+    "status": "pending",
+    "note": "MUI 가 대부분입니다. 코드 분할은 라우팅 구조까지 건드려야 해 회귀 위험이 있고 폐쇄망은 대개 LAN 이라 체감 이득이 작습니다.",
+    "updated": "2026-09-06"
+  }
+]
