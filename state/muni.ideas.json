@@ -1,0 +1,65 @@
+[
+  {
+    "title": "한글 문서(.hwp/.hwpx)의 쪽 나누기 읽기와 .hwpx 왕복",
+    "value": 4,
+    "risk": 2,
+    "size": "M",
+    "status": "done",
+    "note": "나뉜 자리가 아니라 다음 문단이 지님 — .hwp 는 PARA_HEADER 문단 나누기 종류의 0x04 비트, .hwpx 는 <hp:p pageBreak=\"1\">. 첫 문단의 0x03(구역·다단)은 쪽 나누기가 아님. 실제 파일 스물둘로 개수 대조. 커밋 a488f72",
+    "updated": "2026-09-06"
+  },
+  {
+    "title": "CI 에 go vet 과 gofmt -l 추가",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": ".github/workflows/ci.yml 의 Go tests 단계 앞에 두 줄. 다섯 회차 내리 손으로 돌렸음",
+    "updated": "2026-09-06"
+  },
+  {
+    "title": ".hwpx 인용문·코드블록 왕복",
+    "value": 3,
+    "risk": 2,
+    "size": "M",
+    "status": "pending",
+    "note": "쓰기는 인용을 들여쓴 문단으로, 코드블록을 고정폭 문단 여러 개로 흘려보내고 blockContext.quote 는 아무도 읽지 않는 죽은 값. 읽기가 되살릴 단서가 없어 .docx 처럼 스타일을 심어야 함(한글에는 인용·코드 기본 스타일이 없음)",
+    "updated": "2026-09-06"
+  },
+  {
+    "title": ".hwpx 머리글 칸의 기본 음영",
+    "value": 2,
+    "risk": 3,
+    "size": "S",
+    "status": "pending",
+    "note": ".docx 쓰기는 F3F4FA 를 깔아 머리글 행이 보이게 하는데 .hwpx 는 굵게뿐. 리더가 머리글 행의 음영을 버리므로 왕복이 어긋날 자리가 있음",
+    "updated": "2026-09-06"
+  },
+  {
+    "title": ".hwp 표 캡션의 위치(위/아래) 읽기",
+    "value": 2,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "지금은 언제나 표 뒤에 붙임",
+    "updated": "2026-09-06"
+  },
+  {
+    "title": ".hwp/.hwpx 표 행 높이 읽기",
+    "value": 2,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "열 너비와 같은 자리에 있는데 muni 편집기가 행 높이를 들지 않음",
+    "updated": "2026-09-06"
+  },
+  {
+    "title": "다단(columnBreak)·단 나누기 읽기",
+    "value": 1,
+    "risk": 2,
+    "size": "S",
+    "status": "rejected",
+    "note": "쪽 나누기와 같은 바이트·같은 속성에 있고 실제 파일에도 흔하지만(shortcut.hwp 에 39개), muni 문서 모델에 단이라는 것이 없어 담을 자리가 없음",
+    "updated": "2026-09-06"
+  }
+]
