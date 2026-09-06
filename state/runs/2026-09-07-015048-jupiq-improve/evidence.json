@@ -1,0 +1,180 @@
+{
+  "run_id": "2026-09-07-015048-jupiq-improve",
+  "generated": "2026-09-07T01:59:02+09:00",
+  "run": {
+    "run_id": "2026-09-07-015048-jupiq-improve",
+    "project": "jupiq",
+    "kind": "improve",
+    "started": "2026-09-07T01:50:48+09:00",
+    "model": "claude-opus-5",
+    "policy_version": "7c35e50",
+    "prompts_hash": "a3b041a352fd55fa",
+    "runner_version": "4bc6b6c",
+    "finished": "2026-09-07T01:59:02+09:00",
+    "outcome": "review-pending"
+  },
+  "record": {
+    "ts": "2026-09-07T01:59:02+09:00",
+    "date": "2026-09-07",
+    "project": "jupiq",
+    "result": "review held, PR open https://github.com/hkjang/jupiq/pull/5",
+    "outcome": "review-pending",
+    "run_id": "2026-09-07-015048-jupiq-improve",
+    "base_sha": "d247a9d12d68ee3957b32e5d87ee7c45c4f513d1",
+    "head_sha": "e87047385711c1cf3f4071bc76b3a269c65acd70",
+    "pr": "https://github.com/hkjang/jupiq/pull/5",
+    "stages": {
+      "base": {
+        "state": "pinned",
+        "reason": "main@d247a9d",
+        "at": "2026-09-07T01:50:51+09:00"
+      },
+      "autonomy": {
+        "state": "release",
+        "reason": "",
+        "at": "2026-09-07T01:50:51+09:00"
+      },
+      "verify": {
+        "state": "passed",
+        "reason": "검증 3개 통과 (auto)",
+        "at": "2026-09-07T01:55:19+09:00"
+      },
+      "pr": {
+        "state": "created",
+        "reason": "https://github.com/hkjang/jupiq/pull/5",
+        "at": "2026-09-07T01:55:26+09:00"
+      },
+      "review": {
+        "state": "rejected",
+        "reason": "리뷰 거절: internal/collector/collector.go:67-79 (goHub) + collector.go:112-117/171-181 (collectHubs/due) — 세마포어에 shedding(포기 경로)이 없어 대기 큐가 무한히 자란다. goHub은 슬롯이 없으면 ctx가 취소될 때까지 goroutine을 만든 채 무조건 대기시키고, due()는 '완료 시각'이 아니라 '큐에 넣은 시각'을 c.last[hub.ID]에 기록하므로 이전 프로브가 아직 큐에 남아 있어도 다음 주기에 같은 허브의 프로브가 또 쌓인다. 유입률 = N/CollectIntervalSeconds, 소화율 = 8/probe_duration 이므로 허브가 응답 불능이라 25초 타임아웃을 다 쓰는 상황에서는 소화율이 8/25=0.32/s로 고정된다. 최소 간격 30초(internal/store/hubs.go:30)에서 허브 12개만 모두 도달 불가여도 유입 0.4/s > 소화 0.32/s 가 되어 goroutine과 중복 프로브가 무한 누적된다(분당 +5개, 하루 7천여 개). 변경 전에는 허브 수만큼(=N개) 동시에 떠서 25초 안에 모두 회수됐으므로 정상 상태였다. 즉 '리소스 사용을 상한한다'는 목적의 변경이, 이 상한이 실제로 필요하다고 주석(collector.go:18-22)에 적어 둔 바로 그 시나리오(허브 수십 개 + 타임아웃)에서 무한 증가하는 누수를 새로 만든다. 동시에 허브 health 갱신이 설정 간격보다 계속 뒤처져 상태 표시가 만성적으로 stale 해진다. TryAcquire/포화 시 skip, 또는 허브별 in-flight 중복 방지가 필요하다. / internal/collector/collector_test.go:91-172 — 새 테스트 3개가 모두 c.goHub/c.waitForHubs를 직접 호출할 뿐, 이번 변경의 실제 배선(collector.go:117에서 collectHubs가 goHub을 경유하는지, collector.go:49에서 Run이 waitForHubs를 defer 하는지, cmd/jupiq/main.go:55-76의 collectorDone 대기)은 어느 것도 검증하지 않는다. collectHubs를 다시 `go func(){...}()`로 되돌리거나 Run의 `defer c.waitForHubs()`를 지워도 세 테스트는 모두 통과한다(헬퍼만 남기면 그린). 동시성 변경에서 회귀를 막아 주는 지점이 비어 있다.",
+        "at": "2026-09-07T01:59:00+09:00"
+      }
+    },
+    "campaign": "",
+    "autonomy": "release",
+    "files": 3,
+    "additions": 150,
+    "deletions": 4,
+    "tests": 1,
+    "title": "fix: 허브 수집 goroutine에 동시 실행 상한과 종료 대기를 도입한다"
+  },
+  "stages": {
+    "base": {
+      "state": "pinned",
+      "reason": "main@d247a9d",
+      "at": "2026-09-07T01:50:51+09:00"
+    },
+    "autonomy": {
+      "state": "release",
+      "reason": "",
+      "at": "2026-09-07T01:50:51+09:00"
+    },
+    "verify": {
+      "state": "passed",
+      "reason": "검증 3개 통과 (auto)",
+      "at": "2026-09-07T01:55:19+09:00"
+    },
+    "pr": {
+      "state": "created",
+      "reason": "https://github.com/hkjang/jupiq/pull/5",
+      "at": "2026-09-07T01:55:26+09:00"
+    },
+    "review": {
+      "state": "rejected",
+      "reason": "리뷰 거절: internal/collector/collector.go:67-79 (goHub) + collector.go:112-117/171-181 (collectHubs/due) — 세마포어에 shedding(포기 경로)이 없어 대기 큐가 무한히 자란다. goHub은 슬롯이 없으면 ctx가 취소될 때까지 goroutine을 만든 채 무조건 대기시키고, due()는 '완료 시각'이 아니라 '큐에 넣은 시각'을 c.last[hub.ID]에 기록하므로 이전 프로브가 아직 큐에 남아 있어도 다음 주기에 같은 허브의 프로브가 또 쌓인다. 유입률 = N/CollectIntervalSeconds, 소화율 = 8/probe_duration 이므로 허브가 응답 불능이라 25초 타임아웃을 다 쓰는 상황에서는 소화율이 8/25=0.32/s로 고정된다. 최소 간격 30초(internal/store/hubs.go:30)에서 허브 12개만 모두 도달 불가여도 유입 0.4/s > 소화 0.32/s 가 되어 goroutine과 중복 프로브가 무한 누적된다(분당 +5개, 하루 7천여 개). 변경 전에는 허브 수만큼(=N개) 동시에 떠서 25초 안에 모두 회수됐으므로 정상 상태였다. 즉 '리소스 사용을 상한한다'는 목적의 변경이, 이 상한이 실제로 필요하다고 주석(collector.go:18-22)에 적어 둔 바로 그 시나리오(허브 수십 개 + 타임아웃)에서 무한 증가하는 누수를 새로 만든다. 동시에 허브 health 갱신이 설정 간격보다 계속 뒤처져 상태 표시가 만성적으로 stale 해진다. TryAcquire/포화 시 skip, 또는 허브별 in-flight 중복 방지가 필요하다. / internal/collector/collector_test.go:91-172 — 새 테스트 3개가 모두 c.goHub/c.waitForHubs를 직접 호출할 뿐, 이번 변경의 실제 배선(collector.go:117에서 collectHubs가 goHub을 경유하는지, collector.go:49에서 Run이 waitForHubs를 defer 하는지, cmd/jupiq/main.go:55-76의 collectorDone 대기)은 어느 것도 검증하지 않는다. collectHubs를 다시 `go func(){...}()`로 되돌리거나 Run의 `defer c.waitForHubs()`를 지워도 세 테스트는 모두 통과한다(헬퍼만 남기면 그린). 동시성 변경에서 회귀를 막아 주는 지점이 비어 있다.",
+      "at": "2026-09-07T01:59:00+09:00"
+    }
+  },
+  "provenance": {
+    "model": "claude-opus-5",
+    "policy_version": "7c35e50",
+    "prompts_hash": "a3b041a352fd55fa",
+    "runner_version": "4bc6b6c",
+    "base_sha": "d247a9d12d68ee3957b32e5d87ee7c45c4f513d1",
+    "head_sha": "e87047385711c1cf3f4071bc76b3a269c65acd70",
+    "pr": "https://github.com/hkjang/jupiq/pull/5"
+  },
+  "verification": {
+    "runner": {
+      "source": "auto",
+      "commands": [
+        {
+          "cmd": "go build ./...",
+          "exit": 0,
+          "seconds": 0
+        },
+        {
+          "cmd": "go vet ./...",
+          "exit": 0,
+          "seconds": 1
+        },
+        {
+          "cmd": "go test ./...",
+          "exit": 0,
+          "seconds": 0
+        }
+      ]
+    },
+    "runner_gate": {
+      "ok": true,
+      "state": "verified",
+      "reason": "검증 3개 통과 (auto)"
+    },
+    "after_rebase": null,
+    "review": {
+      "verdict": "reject",
+      "reasons": [
+        "internal/collector/collector.go:67-79 (goHub) + collector.go:112-117/171-181 (collectHubs/due) — 세마포어에 shedding(포기 경로)이 없어 대기 큐가 무한히 자란다. goHub은 슬롯이 없으면 ctx가 취소될 때까지 goroutine을 만든 채 무조건 대기시키고, due()는 '완료 시각'이 아니라 '큐에 넣은 시각'을 c.last[hub.ID]에 기록하므로 이전 프로브가 아직 큐에 남아 있어도 다음 주기에 같은 허브의 프로브가 또 쌓인다. 유입률 = N/CollectIntervalSeconds, 소화율 = 8/probe_duration 이므로 허브가 응답 불능이라 25초 타임아웃을 다 쓰는 상황에서는 소화율이 8/25=0.32/s로 고정된다. 최소 간격 30초(internal/store/hubs.go:30)에서 허브 12개만 모두 도달 불가여도 유입 0.4/s > 소화 0.32/s 가 되어 goroutine과 중복 프로브가 무한 누적된다(분당 +5개, 하루 7천여 개). 변경 전에는 허브 수만큼(=N개) 동시에 떠서 25초 안에 모두 회수됐으므로 정상 상태였다. 즉 '리소스 사용을 상한한다'는 목적의 변경이, 이 상한이 실제로 필요하다고 주석(collector.go:18-22)에 적어 둔 바로 그 시나리오(허브 수십 개 + 타임아웃)에서 무한 증가하는 누수를 새로 만든다. 동시에 허브 health 갱신이 설정 간격보다 계속 뒤처져 상태 표시가 만성적으로 stale 해진다. TryAcquire/포화 시 skip, 또는 허브별 in-flight 중복 방지가 필요하다.",
+        "internal/collector/collector_test.go:91-172 — 새 테스트 3개가 모두 c.goHub/c.waitForHubs를 직접 호출할 뿐, 이번 변경의 실제 배선(collector.go:117에서 collectHubs가 goHub을 경유하는지, collector.go:49에서 Run이 waitForHubs를 defer 하는지, cmd/jupiq/main.go:55-76의 collectorDone 대기)은 어느 것도 검증하지 않는다. collectHubs를 다시 `go func(){...}()`로 되돌리거나 Run의 `defer c.waitForHubs()`를 지워도 세 테스트는 모두 통과한다(헬퍼만 남기면 그린). 동시성 변경에서 회귀를 막아 주는 지점이 비어 있다."
+      ],
+      "notes": [
+        "mutation 검증은 수행함: hubSlots 용량을 1000으로 키우면 TestHubProbesRunUnderAConcurrencyCap/TestQueuedHubProbesAreDroppedAfterCancellation 이 실패하고, waitForHubs를 no-op으로 만들면 TestWaitForHubsBlocksUntilInFlightProbesFinish 가 실패한다. 즉 헬퍼 단위에서는 단언이 실효적이다. go vet ./... 및 go test -race -count=5 ./internal/collector/, go test ./... 전체 통과.",
+        "동작/설명 불일치 성격의 부작용: 종료 시 in-flight 프로브의 requestCtx는 ctx 파생이라 즉시 취소되고, 그 에러가 updateHubHealth(collector.go:157-169)의 WithoutCancel 경로로 흘러 internal/store/hubs.go:368의 `status='degraded', last_error='... context canceled'`를 기록한다. 변경 전에는 이 쓰기가 database.Close와 경쟁해 대개 유실됐지만, 이제 main.go:76의 대기 때문에 매 정상 재시작마다 허브가 'degraded'로 확정 기록된다. 주석은 이를 '수집이 멈춘 이유를 설명하는 degraded status'라고 정당화하지만 실제로는 허브가 아니라 jupiq가 내려간 것이므로 잘못된 상태다(다음 기동 첫 수집에서 자가 복구되긴 함).",
+        "waitForHubs(collector.go:85-96)는 grace 타임아웃 시 내부 hubs.Wait() goroutine을 남긴 채 반환한다. 프로세스 종료 직전이라 실질 영향은 없다.",
+        "종료 시간 상한이 HTTP 15초(main.go:68) + 허브 10초(collector.go:26) = 최대 25초로 늘어난다. 리포지토리에 terminationGracePeriodSeconds/stop_grace_period 설정이 없어 오케스트레이터 기본값 30초 가정 시에는 여유가 있으나, 배포 환경이 20초 이하 grace를 쓰면 SIGKILL을 맞는다.",
+        "범위 이탈·되돌리기 위험은 없음: 변경은 3개 파일에 한정되고 인증/권한/결제/마이그레이션/시크릿/삭제 로직을 건드리지 않으며, 스키마·외부 상태 변경이 없어 revert로 완전히 복구된다. &Collector{} 리터럴은 테스트(collector_test.go:38,56)에만 있고 goHub을 호출하지 않으므로 nil hubSlots 문제는 발생하지 않는다."
+      ],
+      "risk": "medium"
+    },
+    "ci_gate": null
+  },
+  "release": {
+    "result": null,
+    "assets_sha256": []
+  },
+  "approval": null,
+  "usage": [
+    {
+      "ts": "2026-09-07T01:55:19+09:00",
+      "date": "2026-09-07",
+      "project": "jupiq",
+      "phase": "improve",
+      "run_id": "2026-09-07-015048-jupiq-improve",
+      "campaign": "",
+      "subtype": "success",
+      "duration_ms": 290409,
+      "num_turns": 34,
+      "cost_usd": 1.712019,
+      "input_tokens": 56,
+      "output_tokens": 19069,
+      "cache_read": 1372046,
+      "cache_create": 54304
+    },
+    {
+      "ts": "2026-09-07T01:58:59+09:00",
+      "date": "2026-09-07",
+      "project": "jupiq",
+      "phase": "review",
+      "run_id": "2026-09-07-015048-jupiq-improve",
+      "campaign": "",
+      "subtype": "success",
+      "duration_ms": 233092,
+      "num_turns": 14,
+      "cost_usd": 0.9875884999999998,
+      "input_tokens": 28,
+      "output_tokens": 14057,
+      "cache_read": 501715,
+      "cache_create": 38335
+    }
+  ]
+}

@@ -191,3 +191,33 @@ reports: 6 day(s), 2 week(s), 1 month(s), 312 run(s), 111 usage row(s), 29 proje
 notify: 1 new alert(s)
 notify: commented on issue #1
 notify: toast shown
+[osc] Running Open Code Review...
+[01:42:13] aidev synced: run(2026-09-07): jikim — guarded files, PR open https://github.com/hkjang/jikim/pull/16
+[01:42:13] done
+[01:50:17] skip DartFly: dirty working tree
+[01:50:18] skip Kkiit: dirty working tree
+[01:50:19] skip Momento: dirty working tree
+[01:50:21] skip SecCheck: dirty working tree
+[01:50:27] skip cutover: dirty working tree
+[01:50:42] skip postra: dirty working tree
+[01:50:45] skip seaton: dirty working tree
+[01:50:48] candidates(29): AgentHub Clustara Invenqor Quantoss ReSSO Vendra ai-admin aiportal-front-admin aiportal-front aiportal-java aiportal-py appstore dataworks git-ctx igame jikim jupiq kanpic moina moyro muni pii-masker ptium releasedock relio umm vibe-coders visitflow weekly
+[01:50:48] picked: jupiq
+[01:50:49] === jupiq (base=main, run 2026-09-07-015048-jupiq-improve, 회차 예산 $22)
+Preparing worktree (new branch 'auto/2026-09-07-0150')
+HEAD is now at d247a9d Merge pull request #4 from hkjang/auto/2026-09-06-1550
+[01:50:51] jupiq: [base] pinned — main@d247a9d
+[01:50:51] jupiq: [autonomy] release — 
+[01:55:19] jupiq: improve — 34 turns, 4m, $1.71, success
+[01:55:20] jupiq: verify `go build ./...` → exit 0 (0s)
+[01:55:21] jupiq: verify `go vet ./...` → exit 0 (1s)
+[01:55:21] jupiq: verify `go test ./...` → exit 0 (0s)
+[01:55:19] jupiq: [verify] passed — 검증 3개 통과 (auto)
+branch 'auto/2026-09-07-0150' set up to track 'origin/auto/2026-09-07-0150'.
+[01:55:26] jupiq: [pr] created — https://github.com/hkjang/jupiq/pull/5
+[01:58:59] jupiq: review — 14 turns, 3m, $0.99, success
+[01:59:00] jupiq: [review] rejected — 리뷰 거절: internal/collector/collector.go:67-79 (goHub) + collector.go:112-117/171-181 (collectHubs/due) — 세마포어에 shedding(포기 경로)이 없어 대기 큐가 무한히 자란다. goHub은 슬롯이 없으면 ctx가 취소될 때까지 goroutine을 만든 채 무조건 대기시키고, due()는 '완료 시각'이 아니라 '큐에 넣은 시각'을 c.last[hub.ID]에 기록하므로 이전 프로브가 아직 큐에 남아 있어도 다음 주기에 같은 허브의 프로브가 또 쌓인다. 유입률 = N/CollectIntervalSeconds, 소화율 = 8/probe_duration 이므로 허브가 응답 불능이라 25초 타임아웃을 다 쓰는 상황에서는 소화율이 8/25=0.32/s로 고정된다. 최소 간격 30초(internal/store/hubs.go:30)에서 허브 12개만 모두 도달 불가여도 유입 0.4/s > 소화 0.32/s 가 되어 goroutine과 중복 프로브가 무한 누적된다(분당 +5개, 하루 7천여 개). 변경 전에는 허브 수만큼(=N개) 동시에 떠서 25초 안에 모두 회수됐으므로 정상 상태였다. 즉 '리소스 사용을 상한한다'는 목적의 변경이, 이 상한이 실제로 필요하다고 주석(collector.go:18-22)에 적어 둔 바로 그 시나리오(허브 수십 개 + 타임아웃)에서 무한 증가하는 누수를 새로 만든다. 동시에 허브 health 갱신이 설정 간격보다 계속 뒤처져 상태 표시가 만성적으로 stale 해진다. TryAcquire/포화 시 skip, 또는 허브별 in-flight 중복 방지가 필요하다. / internal/collector/collector_test.go:91-172 — 새 테스트 3개가 모두 c.goHub/c.waitForHubs를 직접 호출할 뿐, 이번 변경의 실제 배선(collector.go:117에서 collectHubs가 goHub을 경유하는지, collector.go:49에서 Run이 waitForHubs를 defer 하는지, cmd/jupiq/main.go:55-76의 collectorDone 대기)은 어느 것도 검증하지 않는다. collectHubs를 다시 `go func(){...}()`로 되돌리거나 Run의 `defer c.waitForHubs()`를 지워도 세 테스트는 모두 통과한다(헬퍼만 남기면 그린). 동시성 변경에서 회귀를 막아 주는 지점이 비어 있다.
+https://github.com/hkjang/jupiq/pull/5#issuecomment-5560749082
+evidence: /mnt/c/Users/USER/projects/aidev/state/runs/2026-09-07-015048-jupiq-improve/evidence.json
+reports: 6 day(s), 2 week(s), 1 month(s), 313 run(s), 113 usage row(s), 29 project page(s), 12 alert(s)
+notify: no new alerts

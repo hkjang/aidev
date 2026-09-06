@@ -1,0 +1,5 @@
+## 2026-09-07
+- 선택: 허브 수집 goroutine 동시 실행 상한과 종료 대기 도입 (가치 4 / 위험 2 / 작업량 M)
+- 결과: 성공
+- 요약: `collectHubs`가 수집 대상 허브 수만큼 goroutine을 제한 없이 띄우고 아무도 기다리지 않아, 허브가 많으면 30초 주기마다 그만큼의 아웃바운드 HTTP·DB 연결이 동시에 열리고 종료 시에는 `main`의 `defer database.Close()`가 진행 중인 상태 쓰기 아래에서 풀을 닫아 버렸다. `updateHubHealth`가 `context.WithoutCancel`로 쓰기 컨텍스트를 분리해 둔 의도가 무산되던 지점이다. `goHub`(용량 8 세마포어, 취소된 컨텍스트면 대기 중인 프로브를 버림)와 `waitForHubs`(10초 상한 대기)를 추가하고 `Run`이 반환할 때만 대기하도록 해 kubernetes·prometheus 수집이 주기마다 지연되지 않게 했으며, `main`은 HTTP 종료 후 collector 종료를 기다린 뒤 DB를 닫는다. 동시 실행 상한·종료 대기·취소 시 대기열 폐기를 덮는 테스트 3개를 추가해 collector 커버리지가 13.9%→18.7%로 올랐고, 세마포어를 제거한 변형에서 테스트가 실제로 실패하는지 확인했다. `go vet ./...`, `go test -race ./...`, `scripts/check-version.sh`, `scripts/check-screenshots.mjs`, `npm run lint`, `npm test`(18파일 58개) 모두 통과했다.
+- 보류 아이디어: `internal/api/helpers.go`의 사용되지 않는 `parseTimeQuery` 제거(boundedTimeRange로 대체됨) / `internal/secure`의 `EncryptString`·`DecryptString`·`Derive`·`RandomToken` 테스트 공백 보강(현재 39.5%) / `collectPrometheus`가 metric마다 features 설정을 다시 읽는 중복 조회 제거 / 로그인 리미터 `succeeded`가 ip 키를 의도적으로 유지하는 동작에 대한 테스트·문서화 / `collectHubs`의 `due`가 프로브 성공 여부와 무관하게 시각을 선기록해 실패한 허브가 전체 간격만큼 재시도되지 않는 문제 검토
