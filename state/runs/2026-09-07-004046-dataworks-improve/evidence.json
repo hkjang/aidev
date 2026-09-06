@@ -1,0 +1,241 @@
+{
+  "run_id": "2026-09-07-004046-dataworks-improve",
+  "generated": "2026-09-07T00:54:44+09:00",
+  "run": {
+    "run_id": "2026-09-07-004046-dataworks-improve",
+    "project": "dataworks",
+    "kind": "improve",
+    "started": "2026-09-07T00:40:46+09:00",
+    "model": "claude-opus-5",
+    "policy_version": "7c35e50",
+    "prompts_hash": "a3b041a352fd55fa",
+    "runner_version": "4bc6b6c",
+    "finished": "2026-09-07T00:54:44+09:00",
+    "outcome": "merged"
+  },
+  "record": {
+    "ts": "2026-09-07T00:54:44+09:00",
+    "date": "2026-09-07",
+    "project": "dataworks",
+    "result": "merged https://github.com/hkjang/dataworks/pull/8, release blocked (secrets)",
+    "outcome": "merged",
+    "run_id": "2026-09-07-004046-dataworks-improve",
+    "base_sha": "2312a802daec9cebb83887077f9161cdd029557a",
+    "head_sha": "b616421c102fd77ddbf7de52f425e89672ee71ef",
+    "pr": "https://github.com/hkjang/dataworks/pull/8",
+    "stages": {
+      "base": {
+        "state": "pinned",
+        "reason": "main@2312a80",
+        "at": "2026-09-07T00:40:49+09:00"
+      },
+      "autonomy": {
+        "state": "release",
+        "reason": "",
+        "at": "2026-09-07T00:40:49+09:00"
+      },
+      "verify": {
+        "state": "passed",
+        "reason": "검증 3개 통과 (auto)",
+        "at": "2026-09-07T00:46:42+09:00"
+      },
+      "pr": {
+        "state": "created",
+        "reason": "https://github.com/hkjang/dataworks/pull/8",
+        "at": "2026-09-07T00:46:46+09:00"
+      },
+      "review": {
+        "state": "approved",
+        "reason": "리뷰 승인 (risk=medium)",
+        "at": "2026-09-07T00:49:38+09:00"
+      },
+      "ci": {
+        "state": "passed",
+        "reason": "검사 2개 모두 success",
+        "at": "2026-09-07T00:50:07+09:00"
+      },
+      "merge": {
+        "state": "done",
+        "reason": "b616421c102fd77ddbf7de52f425e89672ee71ef",
+        "at": "2026-09-07T00:50:11+09:00"
+      },
+      "release": {
+        "state": "blocked",
+        "reason": "릴리즈 커밋에 비밀정보 의심",
+        "at": "2026-09-07T00:54:43+09:00"
+      }
+    },
+    "campaign": "",
+    "autonomy": "release",
+    "files": 5,
+    "additions": 248,
+    "deletions": 17,
+    "tests": 2,
+    "title": "fix: evaluate the active entitlement when a key holds several for one product"
+  },
+  "stages": {
+    "base": {
+      "state": "pinned",
+      "reason": "main@2312a80",
+      "at": "2026-09-07T00:40:49+09:00"
+    },
+    "autonomy": {
+      "state": "release",
+      "reason": "",
+      "at": "2026-09-07T00:40:49+09:00"
+    },
+    "verify": {
+      "state": "passed",
+      "reason": "검증 3개 통과 (auto)",
+      "at": "2026-09-07T00:46:42+09:00"
+    },
+    "pr": {
+      "state": "created",
+      "reason": "https://github.com/hkjang/dataworks/pull/8",
+      "at": "2026-09-07T00:46:46+09:00"
+    },
+    "review": {
+      "state": "approved",
+      "reason": "리뷰 승인 (risk=medium)",
+      "at": "2026-09-07T00:49:38+09:00"
+    },
+    "ci": {
+      "state": "passed",
+      "reason": "검사 2개 모두 success",
+      "at": "2026-09-07T00:50:07+09:00"
+    },
+    "merge": {
+      "state": "done",
+      "reason": "b616421c102fd77ddbf7de52f425e89672ee71ef",
+      "at": "2026-09-07T00:50:11+09:00"
+    },
+    "release": {
+      "state": "blocked",
+      "reason": "릴리즈 커밋에 비밀정보 의심",
+      "at": "2026-09-07T00:54:43+09:00"
+    }
+  },
+  "provenance": {
+    "model": "claude-opus-5",
+    "policy_version": "7c35e50",
+    "prompts_hash": "a3b041a352fd55fa",
+    "runner_version": "4bc6b6c",
+    "base_sha": "2312a802daec9cebb83887077f9161cdd029557a",
+    "head_sha": "b616421c102fd77ddbf7de52f425e89672ee71ef",
+    "pr": "https://github.com/hkjang/dataworks/pull/8"
+  },
+  "verification": {
+    "runner": {
+      "source": "auto",
+      "commands": [
+        {
+          "cmd": "go build ./...",
+          "exit": 0,
+          "seconds": 1
+        },
+        {
+          "cmd": "go vet ./...",
+          "exit": 0,
+          "seconds": 0
+        },
+        {
+          "cmd": "go test ./...",
+          "exit": 0,
+          "seconds": 0
+        }
+      ]
+    },
+    "runner_gate": {
+      "ok": true,
+      "state": "verified",
+      "reason": "검증 3개 통과 (auto)"
+    },
+    "after_rebase": null,
+    "review": {
+      "verdict": "approve",
+      "reasons": [],
+      "notes": [
+        "검증 완료: main(2312a80) 워크트리에 새 테스트 2개를 그대로 복사해 실행한 결과 둘 다 실패(proxy: 403 inactive_entitlement 수신, store: ent_revoked 선택)했고 HEAD에서는 통과합니다. 테스트가 수정 대상을 실제로 검증합니다. go build ./..., go vet, go test ./... 모두 통과.",
+        "internal/store/dataworks_operations.go:518 EntitlementActive 는 parseStoredTime(RFC3339Nano→RFC3339) 을 쓰는데 이전 proxy 구현은 time.Parse(RFC3339Nano) 였습니다. RFC3339Nano 파서가 RFC3339 도 받으므로 판정 결과는 동일하며 파싱 실패=만료 정책도 유지됩니다(admin_dataworks.go:1602 주석과 일관).",
+        "internal/store/dataworks_operations.go:480 LIMIT 50 은 updated_at DESC 상위 50행만 검사합니다. 한 키+상품에 51행 이상 쌓이고 활성 행이 그 밖에 있으면 오탐 403 이 납니다. 기존 LIMIT 1 보다 나쁘지는 않으나 상한이 있다는 점은 남아 있습니다.",
+        "internal/store/dataworks_operations.go:499 선택은 status/expiry 만 보고 scope 와 contract 상태는 보지 않습니다. 가장 최근 활성 entitlement 의 scope 가 query 를 허용하지 않거나 contract 가 비활성이면, 통과 가능한 다른 활성 행이 있어도 403 scope_denied / contract_scope_inactive 로 거부됩니다(dataworks_runtime.go:70,106). 커밋 목적 범위 밖의 잔여 케이스입니다.",
+        "권한 의미 변경: 이전에는 '더 최근 revoked 행 추가'만으로도 접근이 차단됐지만, 이제는 활성 행이 하나라도 남아 있으면 허용됩니다. 취소는 반드시 해당 entitlement id 를 revoked 로 갱신해야 합니다. 쓰기 경로는 admin_dataworks.go:1327 의 id 기준 upsert 하나뿐이고 DELETE 엔드포인트가 없어 정상 운영 절차와 일치하며, docs/OPERATIONS.md:148-152 에 이 규칙이 문서화됐습니다.",
+        "내부 store 의 time.Now() 와 runtime 의 now(dataworks_runtime.go:64) 가 미세하게 다릅니다. 그 사이에 만료되면 403 inactive_entitlement 가 나는데, 이는 안전한 방향(거부)이며 실질 위험은 없습니다.",
+        "마이그레이션·스키마·외부 상태 변경이 없고 순수 조회 로직 + 테스트 + 문서 변경이라 revert 로 완전히 되돌아갑니다. 범위 이탈(무관한 리팩터·의존성 갱신·포맷 변경)은 없습니다."
+      ],
+      "risk": "medium"
+    },
+    "ci_gate": {
+      "ok": true,
+      "state": "success",
+      "reason": "검사 2개 모두 success",
+      "checks": 2
+    }
+  },
+  "release": {
+    "result": {
+      "status": "released",
+      "version": "0.9.43",
+      "tag": "v0.9.43",
+      "title": "v0.9.43 - Data Works",
+      "notes_file": "/mnt/c/Users/USER/projects/aidev/state/runs/2026-09-07-004046-dataworks-improve/release-notes-v0.9.43.md",
+      "github_release": true,
+      "assets": [
+        "/mnt/c/Users/USER/projects/aidev/state/runs/2026-09-07-004046-dataworks-improve/assets/dataworks-v0.9.43.tar.gz"
+      ],
+      "reason": ""
+    },
+    "assets_sha256": []
+  },
+  "approval": null,
+  "usage": [
+    {
+      "ts": "2026-09-07T00:46:39+09:00",
+      "date": "2026-09-07",
+      "project": "dataworks",
+      "phase": "improve",
+      "run_id": "2026-09-07-004046-dataworks-improve",
+      "campaign": "",
+      "subtype": "success",
+      "duration_ms": 380335,
+      "num_turns": 35,
+      "cost_usd": 2.1845925,
+      "input_tokens": 60,
+      "output_tokens": 23994,
+      "cache_read": 1741533,
+      "cache_create": 70301
+    },
+    {
+      "ts": "2026-09-07T00:49:38+09:00",
+      "date": "2026-09-07",
+      "project": "dataworks",
+      "phase": "review",
+      "run_id": "2026-09-07-004046-dataworks-improve",
+      "campaign": "",
+      "subtype": "success",
+      "duration_ms": 185668,
+      "num_turns": 28,
+      "cost_usd": 1.179148,
+      "input_tokens": 56,
+      "output_tokens": 10753,
+      "cache_read": 1035074,
+      "cache_create": 39069
+    },
+    {
+      "ts": "2026-09-07T00:54:43+09:00",
+      "date": "2026-09-07",
+      "project": "dataworks",
+      "phase": "release",
+      "run_id": "2026-09-07-004046-dataworks-improve",
+      "campaign": "",
+      "subtype": "success",
+      "duration_ms": 288772,
+      "num_turns": 33,
+      "cost_usd": 1.6998575,
+      "input_tokens": 56,
+      "output_tokens": 13348,
+      "cache_read": 1531761,
+      "cache_create": 59358
+    }
+  ]
+}
