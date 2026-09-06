@@ -123,3 +123,10 @@
   - `crm.Contracts` 의 `expiringDays` 는 3650 을 넘으면 0 으로 떨어져 필터가 사라짐 — 좁히라는 요청이 오히려 전체를 반환 (가치 2 / 위험 1 / S)
   - CI 에 `gofmt -l` 검사 추가 — 지금은 포맷 위반이 통과함 (가치 2 / 위험 1 / S)
 - 릴리즈: v1.11.17 (2026-09-05)
+## 2026-09-06
+- 선택: 범위가 정해진 정수 질의 파라미터를 보낸 그대로 읽기 (가치 4 / 위험 1 / 작업량 S)
+- 결과: 성공
+- 요약: `httpx.IntQuery` 가 `fmt.Sscan` 으로 파싱했는데, Sscan 은 읽을 수 있는 만큼만 소비하고 남은 부분에 대해 아무 오류도 내지 않습니다. 그래서 32곳의 호출부 전부에서 `1e3` 은 1, `0x10` 은 16, `030` 은 8진수 24, `50abc` 는 50 으로 읽혀, 이 서버가 `type: integer` + minimum/maximum 으로 공표한 계약 아래에서 클라이언트가 보낸 것과 다른 숫자로 응답이 나갔습니다(`limit=1e3` → 1건). `strconv.Atoi` 로 엄격하게 파싱하되, 질의 문자열이 `+` 를 공백으로 실어 나르므로 앞뒤 공백은 계속 허용합니다. `expiringDays` 는 반대 방향의 문제였습니다 — fallback 이 0 인데 계약 질의에서 0 은 "종료일로 좁히지 않음"을 뜻하므로, 범위를 벗어난 값이 필터 자체를 꺼버렸습니다. `get_expiring_contracts` 에 days=5000 을 준 에이전트는 종료일이 아예 없는 계약까지 포함한 전체 목록을 "만료 예정"으로 받았습니다. 이런 필터는 이제 핸들러(`httpx.ClampQuery`)와 서비스(`boundExpiringDays`) 양쪽에서 상한으로 줄여 적용해 REST 와 MCP 경로가 같은 기준을 쓰고, OpenAPI 설명에도 적었습니다. 검증은 새 테스트 6개(정수가 아닌 8가지 값이 fallback 인지·질의 문자열이 실을 수 있는 모든 형태(`+30`→" 30", `030`→30)를 그대로 읽는지·범위 밖 fallback·클램프가 필터를 켠 채로 두는지·읽을 수 없는 값은 여전히 fallback·서비스 쪽 상한)를 옛 구현으로 되돌리면 실제로 실패하는지 확인(`1e3`→1, `0x10`→16, `030`→24, `boundExpiringDays(5000)`→0 로 6건 실패)한 뒤 `go test -race ./...`, `go vet ./...`, `gofmt -l`, web typecheck·build, `check-env-contract.sh`, `check-static-assets.sh` 전체 통과. 커밋 38255ae.
+- 보류 아이디어: `system.timezone` 설정을 읽는 Go 코드가 한 줄도 없어 관리자 화면의 선택이 순전히 장식 (가치 4 / 위험 3 / M) · 네 intelligence 필터의 `Cursor` 필드는 어떤 질의도 쓰지 않고 어떤 핸들러도 채우지 않는 죽은 코드 (가치 3 / 위험 1 / M) · `internal/audit` 는 테스트가 하나도 없고 `nullableJSON` 이 marshal 오류를 버려 감사 데이터를 조용히 NULL 로 만듦 (가치 3 / 위험 1 / M) · `minScore` 도 fallback 0 이 필터를 끄는 같은 구조 — 다른 좁히기 필터에도 `ClampQuery` 를 적용할지 검토 (가치 2 / 위험 1 / S) · CI 에 `gofmt -l` 검사 추가 (가치 2 / 위험 1 / S)
+
+- 릴리즈: v1.11.18 (2026-09-06, run 2026-09-06-183046-relio-improve)

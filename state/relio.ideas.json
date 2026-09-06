@@ -1,0 +1,65 @@
+[
+  {
+    "title": "범위가 정해진 정수 질의 파라미터를 보낸 그대로 읽기 (fmt.Sscan 대신 strconv.Atoi)",
+    "value": 4,
+    "risk": 1,
+    "size": "S",
+    "status": "done",
+    "note": "Sscan 이 1e3→1, 0x10→16, 030→8진수 24, 50abc→50 으로 읽어 32곳의 IntQuery 호출부 전부에서 클라이언트가 보낸 것과 다른 숫자로 응답이 나갔다. 엄격 파싱으로 바꾸고, 필터를 꺼버리는 fallback 을 가진 expiringDays 는 ClampQuery/boundExpiringDays 로 상한 클램프. 커밋 38255ae.",
+    "updated": "2026-09-06"
+  },
+  {
+    "title": "system.timezone 설정을 읽는 Go 코드가 한 줄도 없음 — 관리자 화면의 선택이 순전히 장식",
+    "value": 4,
+    "risk": 3,
+    "size": "M",
+    "status": "pending",
+    "note": "Asia/Seoul·UTC·Asia/Tokyo 를 고를 수 있지만 internal/server/today.go:87 의 time.Now().Truncate(24*time.Hour) 를 포함해 어디서도 읽지 않는다. 타임존 배선이 필요해 위험이 있다.",
+    "updated": "2026-09-06"
+  },
+  {
+    "title": "네 intelligence 필터의 Cursor 필드는 죽은 코드 — 커서 페이징을 붙이거나 제거",
+    "value": 3,
+    "risk": 1,
+    "size": "M",
+    "status": "pending",
+    "note": "internal/intelligence/signals.go 의 SignalFilter·RiskFilter·InsightFilter·RecommendationFilter 가 Cursor 를 선언하지만 어떤 질의도 쓰지 않고 어떤 핸들러도 채우지 않는다.",
+    "updated": "2026-09-06"
+  },
+  {
+    "title": "internal/audit 에 테스트가 하나도 없음 — nullableJSON 이 marshal 오류를 버림",
+    "value": 3,
+    "risk": 1,
+    "size": "M",
+    "status": "pending",
+    "note": "감사 데이터가 조용히 NULL 로 기록될 수 있다. DB 의존이라 순수 헬퍼 추출이 필요하다.",
+    "updated": "2026-09-06"
+  },
+  {
+    "title": "minScore 등 다른 좁히기 필터에도 ClampQuery 적용 검토",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "crm_intelligence.go 의 minScore 는 fallback 0 이 필터를 끄는 expiringDays 와 같은 구조 — 범위 밖 값이 좁히기 요청을 전체 반환으로 바꾼다. year(fallback 0, min 2000) 처럼 fallback 이 sentinel 인 경우는 클램프가 오히려 의미를 바꾸므로 케이스별 판단이 필요하다.",
+    "updated": "2026-09-06"
+  },
+  {
+    "title": "list_activities·get_contracts·list_quotations 등 나머지 MCP 목록 도구는 페이징 자체가 없음",
+    "value": 3,
+    "risk": 2,
+    "size": "M",
+    "status": "pending",
+    "note": "서비스가 슬라이스만 돌려주어 상위 N건 뒤는 에이전트가 볼 수 없다.",
+    "updated": "2026-09-06"
+  },
+  {
+    "title": "CI 에 gofmt -l 검사 추가",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "지금은 포맷 위반이 CI 를 통과한다.",
+    "updated": "2026-09-06"
+  }
+]
