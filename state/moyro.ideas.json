@@ -1,0 +1,65 @@
+[
+  {
+    "title": "채널 북마크 재정렬이 실제로 재정렬하지 않음 (끌어놓은 행만 sort_order를 써서 create_at tie-break에 밀림)",
+    "value": 4,
+    "risk": 2,
+    "size": "M",
+    "status": "done",
+    "note": "bookmarks.Reorder를 트랜잭션 + FOR UPDATE + 0..n-1 조밀 재번호로 교체하고 정렬된 목록을 반환. 핸들러는 맨 정수 본문(공식 MM 클라이언트)과 {\"sort_order\":n}을 모두 수용하고 목록을 응답/브로드캐스트. 통합 테스트 3건 + 디코더 표 테스트 1건 추가, CI에 ./internal/bookmarks 등록.",
+    "updated": "2026-09-06"
+  },
+  {
+    "title": "커스텀 상태가 write-only — 저장되지만 어떤 API로도 다시 읽히지 않음",
+    "value": 4,
+    "risk": 3,
+    "size": "L",
+    "status": "pending",
+    "note": "userstatus.GetCustomStatus는 정의만 되어 있고 호출자가 없다. 설정 직후 WS 이벤트 한 번만 나가고, 새로고침하면 사라지며 다른 사용자는 영영 못 본다. Mattermost는 user.props[\"customStatus\"]로 실어 보내므로 auth.User에 props를 더하고 userColumns를 쓰는 10여 개 쿼리에 조인을 넣어야 해서 L. expires_at 만료 처리도 함께 필요.",
+    "updated": "2026-09-06"
+  },
+  {
+    "title": "userstatus.Get이 실제 DB 오류까지 삼키고 offline을 반환",
+    "value": 3,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "pgx.ErrNoRows만 offline 기본값으로 합성하고 나머지 오류는 올려야 한다. 지금은 DB 장애가 '전원 오프라인'으로 위장돼 운영자가 원인을 못 찾는다. GetMany는 이미 오류를 올리므로 두 경로가 서로 다르게 동작한다.",
+    "updated": "2026-09-06"
+  },
+  {
+    "title": "sidebar.Update가 사용자가 멤버가 아닌 채널 ID도 카테고리에 기록하도록 허용",
+    "value": 2,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "읽기 경로(fillChannelIDs)가 걸러주므로 노출은 없지만, 쓰기 시점에 거부하면 join 테이블에 죽은 행이 쌓이지 않고 오류도 즉시 드러난다.",
+    "updated": "2026-09-06"
+  },
+  {
+    "title": "create-post 인가·멤버십 2회 쿼리를 단일 쿼리로 병합 (로드맵)",
+    "value": 3,
+    "risk": 3,
+    "size": "M",
+    "status": "pending",
+    "note": "게시 경로의 핫 패스. 되돌리기 어려운 인가 로직이라 PostgreSQL 통합 테스트로 동등성을 먼저 고정해야 한다.",
+    "updated": "2026-09-06"
+  },
+  {
+    "title": "invites/postacks/savedposts 통합 테스트 보강",
+    "value": 2,
+    "risk": 1,
+    "size": "M",
+    "status": "pending",
+    "note": "세 패키지 모두 테스트가 없다. 다만 코드를 읽어본 결과 명확한 결함은 발견하지 못했고, 버그 없는 테스트 추가는 가치가 낮다. 회귀 방지 목적이라면 invites의 게스트 채널 검증 경로가 가장 값어치 있다.",
+    "updated": "2026-09-06"
+  },
+  {
+    "title": "메시지 목록 가상화 — 로드된 모든 행이 DOM에 남음 (로드맵)",
+    "value": 3,
+    "risk": 4,
+    "size": "L",
+    "status": "pending",
+    "note": "단일 세션 범위를 넘고 스크롤/점프/읽음 표시와 얽혀 회귀 위험이 크다. 자율 개선 세션에서는 계속 보류.",
+    "updated": "2026-09-06"
+  }
+]
