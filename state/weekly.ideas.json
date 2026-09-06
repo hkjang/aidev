@@ -1,0 +1,74 @@
+[
+  {
+    "title": "analyticsParticipation 과 weekIsOwed 가 주 격자를 옮긴 뒤 모든 지난 주를 미제출로 셉니다",
+    "value": 4,
+    "risk": 3,
+    "size": "M",
+    "status": "done",
+    "note": "추이는 week_start 로 묶고 미제출 명단은 정확일치로 물어, 요일을 바꾸는 순간 이미 낸 보고서 전부가 격자에서 벗어나 추이가 0 이 되고 매주 낸 사람이 명단에 올랐습니다. 두 질의를 기간 겹침(weekCovering)으로 바꾸고 한 사람이 두 주에 걸쳐 세어지지 않게 DISTINCT ON 으로 묶었습니다.",
+    "updated": "2026-09-06"
+  },
+  {
+    "title": "analyticsOrganizations 의 제출 CTE 는 날짜 범위로, 기대건은 격자 주로 세어 창 가장자리에서 어긋납니다",
+    "value": 2,
+    "risk": 2,
+    "size": "S",
+    "note": "옮긴 격자에서는 한 주의 보고서가 창 시작보다 최대 6일 앞선 날짜를 가질 수 있어 분자에서만 빠집니다. 참여 분석과 같은 겹침 규칙으로 맞출지 확인.",
+    "status": "pending",
+    "updated": "2026-09-06"
+  },
+  {
+    "title": "참여 추이의 정시·지각은 보고서 자신의 week_start 마감으로 재는데 행의 이름표는 격자 주입니다",
+    "value": 2,
+    "risk": 2,
+    "size": "S",
+    "note": "옮긴 격자에서 한 주의 정시율이 이름표와 며칠 어긋난 마감으로 매겨집니다. 작성자가 실제로 지켜야 했던 마감이므로 지금이 옳을 수도 있어, 어느 쪽이 옳은지부터 정해야 합니다.",
+    "status": "pending",
+    "updated": "2026-09-06"
+  },
+  {
+    "title": "키워드 분석의 두 창(collectTerms)도 week_start BETWEEN 이라 전환 주가 옆 창으로 넘어갑니다",
+    "value": 2,
+    "risk": 2,
+    "size": "S",
+    "note": "이전 기간 대비 증감이 한 주만큼 밀려 보일 수 있는지 확인.",
+    "status": "pending",
+    "updated": "2026-09-06"
+  },
+  {
+    "title": "summarizeWorkItem 의 AgeWeeks·SilentWeeks 가 7일 등간격을 전제합니다",
+    "value": 2,
+    "risk": 2,
+    "size": "S",
+    "note": "격자를 옮긴 주가 한 주 더 세어지는지 확인.",
+    "status": "pending",
+    "updated": "2026-09-06"
+  },
+  {
+    "title": "issueoutcome.go 의 r.week_start < $2 가 전환 주에 같은 주 보고서를 이전 결과로 셈합니다",
+    "value": 1,
+    "risk": 2,
+    "size": "S",
+    "note": "weekEndedBefore 로 바꿀 자리인지 확인. 사용자에게 보이는 영향은 작습니다.",
+    "status": "pending",
+    "updated": "2026-09-06"
+  },
+  {
+    "title": "mailMessageID 의 도메인 추출 분기에 잔존 변이 3건",
+    "value": 1,
+    "risk": 1,
+    "size": "S",
+    "note": "@ 위치와 randfail 분기를 짚는 시험이 없습니다.",
+    "status": "pending",
+    "updated": "2026-09-06"
+  },
+  {
+    "title": "outlookForDueDate 의 AT_RISK 문구가 low==high 일 때 최근 속도를 빼고 전체 평균만 말합니다",
+    "value": 1,
+    "risk": 1,
+    "size": "S",
+    "note": "문구만 고치는 자리입니다.",
+    "status": "pending",
+    "updated": "2026-09-06"
+  }
+]
