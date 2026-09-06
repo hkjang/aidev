@@ -1,7 +1,7 @@
 ---
 title: "작업함 — 사람 판단 필요"
 description: "사람이 판단해야 할 항목 13건 — 열린 PR(리뷰 보류·보호 파일·CI 실패·승인 대기), 배포 복구, 수정 과제. 각 항목에 변경 요약·실패 근거·권장 조치가 붙어 있다."
-last_modified_at: 2026-09-06 21:09:12 +0900
+last_modified_at: 2026-09-06 21:45:18 +0900
 type: report
 ---
 {% raw %}
@@ -25,12 +25,14 @@ type: report
 - **relio** — 릴리즈 v1.11.18 가 GitHub 에 없음 — 워크플로 Release Offline Docker Image: failure
 - **relio** — 보호 파일 변경 — 자동 머지 안 함, 사람 검토 필요
 - **AgentHub** — 보호 파일 변경 — 자동 머지 안 함, 사람 검토 필요
+- **Clustara** — 릴리즈 v0.9.273 자산 0개 — 워크플로 null: null
 - **moina** — 릴리즈 v0.1.21 가 GitHub 에 없음 — 워크플로 Release offline image: failure
 - **relio** — 릴리즈 v1.11.16 가 GitHub 에 없음 — 워크플로 Release Offline Docker Image: failure
 - **relio** — 릴리즈 v1.11.17 가 GitHub 에 없음 — 워크플로 Release Offline Docker Image: failure
 - **Invenqor** — 보호 파일 변경 — 자동 머지 안 함, 사람 검토 필요
 - **AgentHub** — 보호 파일 변경 — 자동 머지 안 함, 사람 검토 필요
 - **AgentHub** — 최신 릴리즈 v0.234.0 자산 0개 (이전 v0.233.0: 10개)
+- **Clustara** — 최신 릴리즈 v0.9.273 자산 0개 (이전 v0.9.271: 3개)
 - **igame** — 최신 릴리즈 v0.7.7 자산 0개 (이전 v0.7.6: 1개)
 - **relio** — 최신 릴리즈 v1.11.18 자산 0개 (이전 v1.11.14: 1개)
 
