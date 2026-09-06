@@ -1,0 +1,65 @@
+[
+  {
+    "title": "이어지는 슬라이드가 모두 첫 아홉 줄(A1:B9)을 출처로 적는 문제",
+    "value": 4,
+    "risk": 1,
+    "size": "S",
+    "status": "done",
+    "note": "writeSheet 이 이어지는 장마다 rangeOf(sheet, columns, len(piece)+1) 을 불러 모든 장이 A1 부터라고 말했다. sheetPiece 로 시작 행을 들고 다니게 하고 rangeOf 를 첫 행·끝 행으로 바꿔 A1:B9 → A10:B17 → A18:B25 로 이어지게 함. 1.69.28.",
+    "updated": "2026-09-07"
+  },
+  {
+    "title": "빈 행 때문에 출처의 행 번호가 실제 시트와 어긋나는 문제",
+    "value": 3,
+    "risk": 3,
+    "size": "M",
+    "status": "pending",
+    "note": "gridOf 가 행의 r 속성을 보지 않고 trimGrid 이 빈 행을 지우므로, 시트 중간이나 위쪽에 빈 줄이 있으면 A1:B9 가 실제 A5:B13 을 가리킨다. 원래 행 번호를 grid 와 함께 들고 다녀야 하는데 trimGrid 은 워드 표 경로와 공유한다.",
+    "updated": "2026-09-07"
+  },
+  {
+    "title": "숨긴 시트를 그대로 가져와 설정·코드표가 슬라이드가 되는 문제",
+    "value": 3,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "xl/workbook.xml 의 sheet state=\"hidden\"/\"veryHidden\" 을 읽지 않는다. 전부 숨김이면 지금의 \"읽을 표가 없습니다\" 대신 왜인지 말해야 한다.",
+    "updated": "2026-09-07"
+  },
+  {
+    "title": "allNumeric 이 통화 기호·괄호 음수를 숫자로 보지 않는 문제",
+    "value": 3,
+    "risk": 3,
+    "size": "M",
+    "status": "pending",
+    "note": "\"₩1,200\", \"(1,200)\", \"1,200원\" 이 있는 2열 금액 시트가 차트 대신 표가 된다. 고치려면 deck/compile.go 의 parseBareNumber 도 같이 손봐야 하고, 라벨을 숫자로 오인할 위험이 있다.",
+    "updated": "2026-09-07"
+  },
+  {
+    "title": "맥 엑셀의 1904 날짜 체계를 무시해 날짜가 4년 이르게 읽히는 문제",
+    "value": 2,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "xl/workbook.xml 의 workbookPr date1904 를 읽지 않아 기준일이 1899-12-30 으로 고정이다. 1462일 차이. 덤으로 일련번호 1–60 구간이 하루 이르다(1900년 1–2월).",
+    "updated": "2026-09-07"
+  },
+  {
+    "title": "writeSheet 이 첫 행을 무조건 머리글로 삼는 문제",
+    "value": 2,
+    "risk": 3,
+    "size": "M",
+    "status": "pending",
+    "note": "A1 에 제목 한 칸만 있는 시트는 머리글이 제목 한 칸이 되어 표가 어긋난다. 어디부터가 표인지 짐작해야 해서 위험이 있다.",
+    "updated": "2026-09-07"
+  },
+  {
+    "title": "유럽식 Excel 이 저장하는 ; 구분 CSV 를 한 열로 읽는 문제",
+    "value": 2,
+    "risk": 3,
+    "size": "S",
+    "status": "pending",
+    "note": "readSeparated 가 확장자로만 구분자를 정한다. 첫 줄을 보고 구분자를 짐작하는 방법이 있으나, 문장에 세미콜론이 있는 한국어 CSV 를 잘못 쪼갤 위험이 있다.",
+    "updated": "2026-09-07"
+  }
+]
