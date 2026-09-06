@@ -48,3 +48,10 @@
 - 보류 아이디어: `gofmt -l` 미정렬 64개 파일 일괄 포맷(현재 CI 게이트 제외) / Playwright e2e 를 서비스 컨테이너 기반 CI 잡으로 편입 / `npm run build` 가 추적 파일 `web/dist/.gitkeep` 을 삭제하는 문제를 vite 설정으로 해결 / 계약·엔타이틀먼트 만료 임박 기준(30일 고정)을 쿼리 파라미터로 노출 / `parseWindow` 의 미사용 `bucket` 인자 제거(호출부 70곳 일괄 정리)
 - 릴리즈: v0.9.42 (2026-09-05)
 - 릴리즈: v0.9.42 (2026-09-05)
+## 2026-09-06
+- 선택: 런타임이 강제하지 않는 계약 `masking_policy` 를 마스킹 근거로 인정하던 문제 수정 (가치 4 / 위험 2 / 작업량 M)
+- 결과: 성공
+- 요약: `applyMasking` 이 구현한 정책은 `redact`·`hash` 뿐이고 그 외 값은 `default` 분기에서 원본 값을 그대로 반환하는데, `POST /admin/dataworks/products/{key}/contract-scopes` 는 `masking_policy` 를 형식 검사 없이 저장했고 민감 상품 Publish Gate 는 비어 있지 않고 `none` 이 아니면 무조건 마스킹 구성으로 집계했다. 그래서 `"개인 단위 원천값 제외"` 같은 서술형 문구나 `redact_pii` 같은 오타를 저장하면 `masking_configured` 가 통과해 민감 상품이 게시되지만 `POST /v1/data-products/{key}/query` 응답은 마스킹 없이 원본 샘플 값을 그대로 내보냈다(fail-open). 쓰기 경로에서 런타임이 실제로 이해하는 `none`(빈 값 포함)·`redact`·`hash` 만 허용하고 그 외에는 `400 invalid_masking_policy` 로 거부하며 소문자·trim 정규화 후 저장하도록 했고, Publish Gate 판독기도 `applyMasking` 이 값을 실제로 바꾸는 정책만 세도록 맞춰 레거시 서술형 행이 `masking_configured=false`(`missing_evidence: masking_policy`) 로 노출되게 했다. 검증: HTTP 회귀 테스트 2건(쓰기 거부+정규화 저장, Publish Gate 판정)과 정책 분류 단위 테스트, 허용 목록과 `applyMasking` 동기화 테스트를 추가하고 옛 동작으로 되돌려 두 회귀 테스트가 실제로 실패하는 것을 확인, `go build ./...`·`go vet ./...`(0건)·`go test ./...` 전체 통과, `go run ./cmd/api-surface-audit` gap 0, web 에서 `npm ci && npm run lint && npm test && npm run build` 전부 통과(vitest 14건). `docs/OPERATIONS.md` 에 허용 값을 명시하고 v0.9.43 으로 릴리즈 정렬.
+- 보류 아이디어: `gofmt -l` 미정렬 64개 파일 일괄 포맷(현재 CI 게이트 제외, 대부분 CRLF) / Playwright e2e 를 서비스 컨테이너 기반 CI 잡으로 편입 / `npm run build` 가 추적 파일 `web/dist/.gitkeep` 을 삭제하는 문제를 vite 설정으로 해결(이번 회차에도 재현·수동 복원) / 계약·엔타이틀먼트 만료 임박 기준(30일 고정)을 쿼리 파라미터로 노출 / `parseWindow` 의 미사용 `bucket` 인자 제거(호출부 70곳 일괄 정리)
+- 릴리즈: v0.9.43 (2026-09-06)
+

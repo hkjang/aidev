@@ -1,0 +1,74 @@
+[
+  {
+    "title": "런타임이 강제하지 않는 계약 masking_policy 를 마스킹 근거로 인정하던 문제 수정",
+    "value": 4,
+    "risk": 2,
+    "size": "M",
+    "status": "done",
+    "note": "applyMasking 은 redact/hash 만 구현하는데 쓰기 경로는 임의 문자열을 저장했고 Publish Gate 는 non-empty/non-none 을 모두 마스킹 구성으로 집계해, 서술형 정책을 넣으면 민감 상품이 게시되고도 /v1/data-products/{key}/query 응답이 원본 값으로 나갔다. 쓰기 검증(400 invalid_masking_policy)+정규화, Publish Gate fail-closed 정렬, 회귀 테스트 4건, docs/OPERATIONS.md 명시.",
+    "updated": "2026-09-06"
+  },
+  {
+    "title": "gofmt -l 미정렬 64개 파일 일괄 포맷",
+    "value": 2,
+    "risk": 2,
+    "size": "M",
+    "status": "pending",
+    "note": "대부분 CRLF 줄바꿈 때문이라 포맷만으로는 안 되고 줄바꿈 정규화가 필요하다. 현재 CI 게이트에서 제외돼 있어 급하지 않고, 전 파일 재작성은 diff 노이즈와 리뷰 부담이 크다.",
+    "updated": "2026-09-06"
+  },
+  {
+    "title": "Playwright e2e 를 서비스 컨테이너 기반 CI 잡으로 편입",
+    "value": 3,
+    "risk": 2,
+    "size": "M",
+    "status": "pending",
+    "note": "web/e2e 와 web/capture 스펙이 존재하지만 .github/workflows/ci.yml 에서 실행되지 않아 릴리즈마다 버전 문자열만 갱신되고 실제로는 한 번도 돌지 않는다.",
+    "updated": "2026-09-06"
+  },
+  {
+    "title": "npm run build 가 추적 파일 web/dist/.gitkeep 을 삭제하는 문제를 vite 설정으로 해결",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "이번 회차에도 재현되어 커밋 전 git checkout 으로 수동 복원했다. vite build.emptyOutDir 설정이나 .gitkeep 재생성 스크립트로 정리 가능.",
+    "updated": "2026-09-06"
+  },
+  {
+    "title": "계약·엔타이틀먼트 만료 임박 기준(30일 고정)을 쿼리 파라미터로 노출",
+    "value": 3,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "action center 의 expiring_contracts 판정이 30일로 하드코딩돼 있어 분기 단위 계약 갱신 주기를 쓰는 운영에서 조정할 수 없다.",
+    "updated": "2026-09-06"
+  },
+  {
+    "title": "parseWindow 의 미사용 bucket 인자 제거(호출부 70곳 일괄 정리)",
+    "value": 2,
+    "risk": 2,
+    "size": "M",
+    "status": "pending",
+    "note": "순수 정리 작업이라 가치는 낮고 호출부가 70곳이라 diff 가 크다. 다른 버그 수정과 충돌하기 쉬우므로 우선순위 낮음.",
+    "updated": "2026-09-06"
+  },
+  {
+    "title": "contractResponseFields 가 allowed_fields 와 다른 대소문자로 요청한 필드를 요청 표기 그대로 응답",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "containsFold 로 허용 여부는 대소문자 무시로 판정하면서 응답 키는 클라이언트가 보낸 표기를 그대로 쓴다. 계약에 적힌 필드명과 응답 키가 달라져 스키마 검증하는 소비자가 깨질 수 있다.",
+    "updated": "2026-09-06"
+  },
+  {
+    "title": "internal/dataworks 도메인 함수 테스트 커버리지 보강",
+    "value": 3,
+    "risk": 1,
+    "size": "M",
+    "status": "pending",
+    "note": "domain.go 851줄 대비 domain_test.go 220줄로, EvaluatePublishGateV2 의 strict/non-strict 분기와 EvaluateRetirementCandidate 등 핵심 판정 로직이 단위 테스트 없이 HTTP 경유로만 간접 검증된다.",
+    "updated": "2026-09-06"
+  }
+]
