@@ -1,0 +1,56 @@
+[
+  {
+    "title": "응답 보안 헤더 보강(CSP frame-ancestors·base-uri·form-action·object-src)과 TLS 한정 HSTS, middleware 테스트 신설",
+    "value": 4,
+    "risk": 1,
+    "size": "S",
+    "status": "done",
+    "note": "setSecurityHeaders로 분리해 네 CSP 지시자를 추가하고 auth.IsSecureRequest가 참일 때만 max-age=31536000을 붙였다. 테스트가 없던 middleware에 헤더·동일 출처 검사·요청 ID·panic 복구 테스트 5개 추가.",
+    "updated": "2026-09-06"
+  },
+  {
+    "title": "internal/api/helpers.go의 사용되지 않는 parseTimeQuery 제거",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "boundedTimeRange가 RFC3339 검증과 기간 상한까지 담당해 완전히 대체했다. 정의만 남아 있고 호출자가 없음을 이번 회차에도 grep으로 재확인했다.",
+    "updated": "2026-09-06"
+  },
+  {
+    "title": "internal/secure의 EncryptString·DecryptString·Derive·RandomToken 테스트 공백 보강",
+    "value": 3,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "DB 없이 검증 가능한 순수 암호 헬퍼인데 커버리지가 0%다. base64 라운드트립, 잘못된 인코딩·잘린 blob 거부, Derive의 결정성과 label 분리, RandomToken 길이·유일성을 덮을 수 있다.",
+    "updated": "2026-09-06"
+  },
+  {
+    "title": "collectHubs의 goroutine 동시성 상한과 종료 대기 도입",
+    "value": 3,
+    "risk": 2,
+    "size": "M",
+    "status": "pending",
+    "note": "허브 수만큼 goroutine을 제한 없이 띄우고 collect가 기다리지 않아 종료 시 진행 중인 쓰기가 버려진다. 다만 대기를 넣으면 kubernetes·prometheus 수집이 최대 25초 늦춰지므로 세마포어와 대기 지점 설계를 함께 정해야 한다.",
+    "updated": "2026-09-06"
+  },
+  {
+    "title": "collectPrometheus가 metric마다 features 설정을 다시 읽는 중복 조회 제거",
+    "value": 2,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "루프 앞에서 gpuMonitoring을 이미 구했는데 루프 안에서 metric마다 featureEnabled를 또 호출해 30초 주기마다 쿼리 수만큼 설정을 재조회한다. collectLLMUsage처럼 주기 중 기능 OFF를 반영하려는 의도일 수 있어 의도 확인이 먼저다.",
+    "updated": "2026-09-06"
+  },
+  {
+    "title": "로그인 리미터 succeeded가 ip 키를 의도적으로 유지하는 동작에 대한 테스트·문서화",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "succeeded는 pair·account 키만 지우고 ip 키는 남겨 한 IP에서의 분산 스프레이 방어를 유지한다. 의도가 코드에 적혀 있지 않아 나중에 '버그'로 오해되어 지워질 위험이 있다.",
+    "updated": "2026-09-06"
+  }
+]
