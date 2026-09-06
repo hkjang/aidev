@@ -1,0 +1,74 @@
+[
+  {
+    "title": "security 설정의 잘못된 타입 값이 오류 없이 저장되고 조용히 무시되는 문제를 검증으로 막기",
+    "value": 3,
+    "risk": 1,
+    "size": "S",
+    "status": "done",
+    "note": "2026-09-06 구현. optionalString·optionalIntInRange 헬퍼로 security(boolean·정수·문자열), service(문자열), AI(max_tokens·timeout_seconds) 타입 검증 후 400 거부. 커밋 dbf7b03.",
+    "updated": "2026-09-06"
+  },
+  {
+    "title": "신뢰 프록시 목록 기반 X-Forwarded-For 처리로 감사 로그·로그인 rate limit의 IP 고정 문제 해결",
+    "value": 4,
+    "risk": 3,
+    "size": "M",
+    "status": "pending",
+    "note": "remoteIP(server.go:314)는 RemoteAddr만 사용한다. 리버스 프록시 뒤에서는 감사 로그 IP와 loginRateKey가 모두 프록시 주소가 되어 rate limit이 전역 공유된다. 신뢰 프록시 CIDR 설정 없이 XFF를 신뢰하면 우회가 가능하므로 설정 기반이어야 한다.",
+    "updated": "2026-09-06"
+  },
+  {
+    "title": "Transit batch_input/batch_results 지원 추가로 OpenBao 호환 범위 확대",
+    "value": 3,
+    "risk": 3,
+    "size": "M",
+    "status": "pending",
+    "note": "현재 TransitEncrypt/TransitDecrypt는 단건만 처리한다. 호환성 프로파일 문서 갱신도 함께 필요.",
+    "updated": "2026-09-06"
+  },
+  {
+    "title": "로그인 성공 판정 전에 rate limiter를 succeeded로 초기화하는 순서 정리",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "auth_handlers.go의 login과 openbao.go의 baoUserpassLogin 모두 Authenticate 직후 succeeded()를 호출하고 그 뒤에 AllowLocalLogin을 확인한다. 로컬 로그인이 꺼진 계정으로 올바른 비밀번호를 넣으면 실패 카운터가 초기화된다. succeeded() 호출을 세션 생성 직전으로 옮기면 된다.",
+    "updated": "2026-09-06"
+  },
+  {
+    "title": "settings GET이 주입하는 파생 필드가 PUT 왕복 시 workflow 설정에 저장되는 문제 정리",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "resource_handlers.go의 settings()가 approval에 four_eyes·required_approvals·supported_targets를 주입하는데 updateSettings()는 *_configured와 supported_events만 삭제한다. 나머지는 workflow 설정 JSON에 그대로 적재된다.",
+    "updated": "2026-09-06"
+  },
+  {
+    "title": "데드 코드(var _ = ...) 제거와 관리 화면의 v0.2.0 프리뷰 문구 최신화",
+    "value": 1,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "server.go:363, auth_handlers.go:154, settings.go의 var _ = pgx.ErrNoRows. SettingsPage.tsx 보안 탭 안내와 disabled 입력 설명이 아직 v0.2.0을 가리킨다(현재 v0.2.2).",
+    "updated": "2026-09-06"
+  },
+  {
+    "title": "감사 로그 보존(audit_retention_days) 자동 정리 구현",
+    "value": 3,
+    "risk": 3,
+    "size": "M",
+    "status": "pending",
+    "note": "설정은 저장·검증되지만 실제 삭제 작업이 없다. UI도 프리뷰로 명시하고 있어 정직성 문제는 아니지만 기능 공백이다. 삭제는 되돌릴 수 없으므로 배치 주기·드라이런 설계가 필요하다.",
+    "updated": "2026-09-06"
+  },
+  {
+    "title": "requestedOpenBaoVersion이 음수 version 쿼리를 오류 대신 latest로 처리하는 동작 정리",
+    "value": 2,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "openbao.go의 requestedOpenBaoVersion은 version<1이면 0(latest)을 돌려준다. OpenBao는 잘못된 버전에 오류를 낸다. 다만 클라이언트 호환에 영향이 있어 differential suite와 함께 다루는 편이 낫다.",
+    "updated": "2026-09-06"
+  }
+]
