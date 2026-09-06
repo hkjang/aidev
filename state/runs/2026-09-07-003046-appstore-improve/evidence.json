@@ -1,0 +1,130 @@
+{
+  "run_id": "2026-09-07-003046-appstore-improve",
+  "generated": "2026-09-07T00:36:58+09:00",
+  "run": {
+    "run_id": "2026-09-07-003046-appstore-improve",
+    "project": "appstore",
+    "kind": "improve",
+    "started": "2026-09-07T00:30:46+09:00",
+    "model": "claude-opus-5",
+    "policy_version": "7c35e50",
+    "prompts_hash": "a3b041a352fd55fa",
+    "runner_version": "4bc6b6c",
+    "finished": "2026-09-07T00:36:58+09:00",
+    "outcome": "verify-failed"
+  },
+  "record": {
+    "ts": "2026-09-07T00:36:58+09:00",
+    "date": "2026-09-07",
+    "project": "appstore",
+    "result": "verify failed: secrets in diff",
+    "outcome": "verify-failed",
+    "run_id": "2026-09-07-003046-appstore-improve",
+    "base_sha": "818bc9405b2e2ef3f0fef2812276b3035d1c4ac6",
+    "head_sha": "ee70048aadc66082c58b96172f722a9f8893e41c",
+    "pr": "",
+    "stages": {
+      "base": {
+        "state": "pinned",
+        "reason": "main@818bc94",
+        "at": "2026-09-07T00:30:51+09:00"
+      },
+      "autonomy": {
+        "state": "release",
+        "reason": "",
+        "at": "2026-09-07T00:30:51+09:00"
+      },
+      "verify": {
+        "state": "failed",
+        "reason": "변경에 비밀정보 의심 문자열",
+        "at": "2026-09-07T00:36:58+09:00"
+      }
+    },
+    "campaign": "",
+    "autonomy": "release",
+    "files": 4,
+    "additions": 90,
+    "deletions": 3,
+    "tests": 1,
+    "title": "fix: bound the bootstrap login username"
+  },
+  "stages": {
+    "base": {
+      "state": "pinned",
+      "reason": "main@818bc94",
+      "at": "2026-09-07T00:30:51+09:00"
+    },
+    "autonomy": {
+      "state": "release",
+      "reason": "",
+      "at": "2026-09-07T00:30:51+09:00"
+    },
+    "verify": {
+      "state": "failed",
+      "reason": "변경에 비밀정보 의심 문자열",
+      "at": "2026-09-07T00:36:58+09:00"
+    }
+  },
+  "provenance": {
+    "model": "claude-opus-5",
+    "policy_version": "7c35e50",
+    "prompts_hash": "a3b041a352fd55fa",
+    "runner_version": "4bc6b6c",
+    "base_sha": "818bc9405b2e2ef3f0fef2812276b3035d1c4ac6",
+    "head_sha": "ee70048aadc66082c58b96172f722a9f8893e41c",
+    "pr": ""
+  },
+  "verification": {
+    "runner": {
+      "source": "auto",
+      "commands": [
+        {
+          "cmd": "go build ./...",
+          "exit": 0,
+          "seconds": 1
+        },
+        {
+          "cmd": "go vet ./...",
+          "exit": 0,
+          "seconds": 0
+        },
+        {
+          "cmd": "go test ./...",
+          "exit": 0,
+          "seconds": 1
+        }
+      ]
+    },
+    "runner_gate": {
+      "ok": true,
+      "state": "verified",
+      "reason": "검증 3개 통과 (auto)"
+    },
+    "after_rebase": null,
+    "review": null,
+    "ci_gate": null
+  },
+  "release": {
+    "result": null,
+    "assets_sha256": []
+  },
+  "approval": null,
+  "usage": [
+    {
+      "ts": "2026-09-07T00:36:56+09:00",
+      "date": "2026-09-07",
+      "project": "appstore",
+      "phase": "improve",
+      "run_id": "2026-09-07-003046-appstore-improve",
+      "campaign": "",
+      "subtype": "success",
+      "duration_ms": 397827,
+      "num_turns": 51,
+      "cost_usd": 2.539467,
+      "input_tokens": 82,
+      "output_tokens": 23574,
+      "cache_read": 2466044,
+      "cache_create": 70774
+    }
+  ]
+}
