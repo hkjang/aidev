@@ -1,0 +1,5 @@
+## 2026-09-07
+- 선택: 미디어 응답 `Content-Disposition`에 RFC 6266 `filename*` 추가 (가치 3 / 위험 1 / 작업량 S)
+- 결과: 성공
+- 요약: `getMedia`가 저장된 파일 이름을 `fmt.Sprintf("inline; filename=%q", …)`로 header에 그대로 넣어, `사진.png` 같은 한글 이름이 charset 표시 없는 raw UTF-8 바이트로 나갔고 브라우저는 이를 대개 Latin-1로 읽어 "이미지 저장" 이름이 깨졌습니다(header 문법을 깨뜨릴 수 있는 `"`도 조용히 지워 이름이 달라졌습니다). RFC 6266대로 ASCII fallback을 `filename`에, 원래 이름을 RFC 8187 percent-encoding으로 `filename*=UTF-8''`에 함께 내려보내는 `contentDisposition` 헬퍼를 추가하고(ASCII 이름은 기존과 완전히 동일한 header 유지), `api/openapi.yaml`의 media 조회 설명에 이 계약을 적었습니다. 검증은 새 테스트 6케이스(생성 값 비교 + `mime.ParseMediaType`으로 원래 이름 복원 확인) 포함 `go test -race ./...` 전체 통과, `make fmt`·`make check`·`go vet`·staticcheck 통과(DB를 건드리지 않는 순수 로직이라 integration test는 skip, frontend 무변경이라 ESLint·vitest 생략).
+- 보류 아이디어: `updatePost`가 DB 오류를 409 `not_editable`로 보고해 원인을 감춤(가치 2 / 위험 1 / S) · `safeFilename`이 확장자와 판정한 MIME의 불일치를 그대로 둬 JPEG이 `photo.png`로 저장·다운로드됨(가치 2 / 위험 2 / S) · Makefile `test`가 CI와 달리 `-race` 미사용(가치 2 / 위험 1 / S) · 일간 Digest `digestDue`가 DST 전환일에 존재하지 않는 지역 시각을 `time.Date` 정규화에 맡겨 발송 시각이 한 시간 밀림(가치 2 / 위험 3 / M)

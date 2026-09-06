@@ -1,0 +1,229 @@
+{
+  "run_id": "2026-09-07-022048-moina-improve",
+  "generated": "2026-09-07T02:36:02+09:00",
+  "run": {
+    "run_id": "2026-09-07-022048-moina-improve",
+    "project": "moina",
+    "kind": "improve",
+    "started": "2026-09-07T02:20:48+09:00",
+    "model": "claude-opus-5",
+    "policy_version": "7c35e50",
+    "prompts_hash": "a3b041a352fd55fa",
+    "runner_version": "4bc6b6c",
+    "finished": "2026-09-07T02:36:02+09:00",
+    "outcome": "merged"
+  },
+  "record": {
+    "ts": "2026-09-07T02:36:02+09:00",
+    "date": "2026-09-07",
+    "project": "moina",
+    "result": "merged https://github.com/hkjang/moina/pull/9, release blocked (secrets)",
+    "outcome": "merged",
+    "run_id": "2026-09-07-022048-moina-improve",
+    "base_sha": "13fce09952faa7589af38837495cacd7772a415b",
+    "head_sha": "6eb0753baa7f62531858279b75a2c6b21724adf7",
+    "pr": "https://github.com/hkjang/moina/pull/9",
+    "stages": {
+      "base": {
+        "state": "pinned",
+        "reason": "main@13fce09",
+        "at": "2026-09-07T02:20:53+09:00"
+      },
+      "autonomy": {
+        "state": "release",
+        "reason": "",
+        "at": "2026-09-07T02:20:53+09:00"
+      },
+      "verify": {
+        "state": "passed",
+        "reason": "검증 1개 통과 (auto)",
+        "at": "2026-09-07T02:24:51+09:00"
+      },
+      "pr": {
+        "state": "created",
+        "reason": "https://github.com/hkjang/moina/pull/9",
+        "at": "2026-09-07T02:24:55+09:00"
+      },
+      "review": {
+        "state": "approved",
+        "reason": "리뷰 승인 (risk=low)",
+        "at": "2026-09-07T02:26:34+09:00"
+      },
+      "ci": {
+        "state": "passed",
+        "reason": "검사 2개 모두 success",
+        "at": "2026-09-07T02:32:37+09:00"
+      },
+      "merge": {
+        "state": "done",
+        "reason": "6eb0753baa7f62531858279b75a2c6b21724adf7",
+        "at": "2026-09-07T02:32:41+09:00"
+      },
+      "release": {
+        "state": "blocked",
+        "reason": "릴리즈 커밋에 비밀정보 의심",
+        "at": "2026-09-07T02:36:00+09:00"
+      }
+    },
+    "campaign": "",
+    "autonomy": "release",
+    "files": 3,
+    "additions": 76,
+    "deletions": 2,
+    "tests": 1,
+    "title": "fix: keep non-ASCII media filenames intact in Content-Disposition"
+  },
+  "stages": {
+    "base": {
+      "state": "pinned",
+      "reason": "main@13fce09",
+      "at": "2026-09-07T02:20:53+09:00"
+    },
+    "autonomy": {
+      "state": "release",
+      "reason": "",
+      "at": "2026-09-07T02:20:53+09:00"
+    },
+    "verify": {
+      "state": "passed",
+      "reason": "검증 1개 통과 (auto)",
+      "at": "2026-09-07T02:24:51+09:00"
+    },
+    "pr": {
+      "state": "created",
+      "reason": "https://github.com/hkjang/moina/pull/9",
+      "at": "2026-09-07T02:24:55+09:00"
+    },
+    "review": {
+      "state": "approved",
+      "reason": "리뷰 승인 (risk=low)",
+      "at": "2026-09-07T02:26:34+09:00"
+    },
+    "ci": {
+      "state": "passed",
+      "reason": "검사 2개 모두 success",
+      "at": "2026-09-07T02:32:37+09:00"
+    },
+    "merge": {
+      "state": "done",
+      "reason": "6eb0753baa7f62531858279b75a2c6b21724adf7",
+      "at": "2026-09-07T02:32:41+09:00"
+    },
+    "release": {
+      "state": "blocked",
+      "reason": "릴리즈 커밋에 비밀정보 의심",
+      "at": "2026-09-07T02:36:00+09:00"
+    }
+  },
+  "provenance": {
+    "model": "claude-opus-5",
+    "policy_version": "7c35e50",
+    "prompts_hash": "a3b041a352fd55fa",
+    "runner_version": "4bc6b6c",
+    "base_sha": "13fce09952faa7589af38837495cacd7772a415b",
+    "head_sha": "6eb0753baa7f62531858279b75a2c6b21724adf7",
+    "pr": "https://github.com/hkjang/moina/pull/9"
+  },
+  "verification": {
+    "runner": {
+      "source": "auto",
+      "commands": [
+        {
+          "cmd": "make test",
+          "exit": 0,
+          "seconds": 20
+        }
+      ]
+    },
+    "runner_gate": {
+      "ok": true,
+      "state": "verified",
+      "reason": "검증 1개 통과 (auto)"
+    },
+    "after_rebase": null,
+    "review": {
+      "verdict": "approve",
+      "reasons": [],
+      "notes": [
+        "backend/internal/httpapi/social.go:711-748 contentDisposition/asciiFilename의 attr-char 집합(\"!#$&+-.^_`|~\" + ALPHA/DIGIT)이 RFC 8187과 정확히 일치하고, fallback은 0x20~0x7e 밖 문자와 \"/\\\\ 를 모두 밑줄로 바꿔 quoted-string과 header 값을 깨뜨리지 않습니다. CRLF 주입 경로도 없습니다.",
+        "backend/internal/httpapi/httpapi_test.go:526-551 새 테스트는 이번 커밋에서 추가된 contentDisposition을 실제로 호출하고 문자열 전체를 단언하며, 추가로 mime.ParseMediaType으로 왕복 검증(params[\"filename\"] == 원래 이름)까지 합니다. 변경 전 코드에는 함수 자체가 없어 통과할 수 없는 테스트입니다.",
+        "다만 테스트는 helper 단위 테스트라 getMedia 핸들러 응답 header를 직접 확인하지는 않습니다. social.go:782에서 호출되는 것을 눈으로 확인했으므로 결함은 아니지만, 향후 핸들러 레벨 테스트가 있으면 회귀 방어가 더 확실해집니다.",
+        "경계 동작 하나: 파일 이름이 ASCII이면서 asciiFilename 결과가 밑줄/공백뿐인 경우(예: \"___\") ascii != filename이 되어 fallback은 \"media\"가 되고 filename*=UTF-8''___ 가 붙습니다. 브라우저는 filename*을 우선하므로 최종 저장 이름은 그대로 \"___\"이고 실사용 영향은 없습니다.",
+        "유효하지 않은 UTF-8 바이트가 저장된 파일 이름이면 filename*에 UTF-8이라고 표시한 채 원본 바이트가 percent-encoding됩니다. 이 경우 브라우저가 filename* 를 버리고 ASCII fallback을 쓰게 되므로 안전하게 degrade합니다.",
+        "go vet ./... 통과, go build ./... 통과, go test ./... 전 패키지 통과(httpapi 신규 6개 subtest 포함) 확인했습니다.",
+        "마이그레이션·외부 상태·인증/권한/삭제 로직 변경은 없고, openapi.yaml 변경도 이번 동작을 설명하는 description 한 줄뿐이라 범위 이탈이 없으며 revert로 완전히 되돌릴 수 있습니다."
+      ],
+      "risk": "low"
+    },
+    "ci_gate": {
+      "ok": true,
+      "state": "success",
+      "reason": "검사 2개 모두 success",
+      "checks": 2
+    }
+  },
+  "release": {
+    "result": {
+      "status": "released",
+      "version": "0.1.23",
+      "tag": "v0.1.23",
+      "title": "moina v0.1.23",
+      "notes_file": "",
+      "github_release": false,
+      "assets": [],
+      "reason": ""
+    },
+    "assets_sha256": []
+  },
+  "approval": null,
+  "usage": [
+    {
+      "ts": "2026-09-07T02:24:30+09:00",
+      "date": "2026-09-07",
+      "project": "moina",
+      "phase": "improve",
+      "run_id": "2026-09-07-022048-moina-improve",
+      "campaign": "",
+      "subtype": "success",
+      "duration_ms": 236124,
+      "num_turns": 31,
+      "cost_usd": 1.5521435,
+      "input_tokens": 54,
+      "output_tokens": 14786,
+      "cache_read": 1301389,
+      "cache_create": 52100
+    },
+    {
+      "ts": "2026-09-07T02:26:34+09:00",
+      "date": "2026-09-07",
+      "project": "moina",
+      "phase": "review",
+      "run_id": "2026-09-07-022048-moina-improve",
+      "campaign": "",
+      "subtype": "success",
+      "duration_ms": 104869,
+      "num_turns": 10,
+      "cost_usd": 0.46341299999999996,
+      "input_tokens": 12,
+      "output_tokens": 6994,
+      "cache_read": 142534,
+      "cache_create": 21542
+    },
+    {
+      "ts": "2026-09-07T02:35:59+09:00",
+      "date": "2026-09-07",
+      "project": "moina",
+      "phase": "release",
+      "run_id": "2026-09-07-022048-moina-improve",
+      "campaign": "",
+      "subtype": "success",
+      "duration_ms": 206044,
+      "num_turns": 24,
+      "cost_usd": 1.3070819999999999,
+      "input_tokens": 42,
+      "output_tokens": 11747,
+      "cache_read": 983912,
+      "cache_create": 51590
+    }
+  ]
+}
