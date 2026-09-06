@@ -1,0 +1,185 @@
+{
+  "run_id": "2026-09-07-001048-aiportal-py-improve",
+  "generated": "2026-09-07T00:25:05+09:00",
+  "run": {
+    "run_id": "2026-09-07-001048-aiportal-py-improve",
+    "project": "aiportal-py",
+    "kind": "improve",
+    "started": "2026-09-07T00:10:48+09:00",
+    "model": "claude-opus-5",
+    "policy_version": "7c35e50",
+    "prompts_hash": "a3b041a352fd55fa",
+    "runner_version": "4bc6b6c",
+    "finished": "2026-09-07T00:25:05+09:00",
+    "outcome": "review-pending"
+  },
+  "record": {
+    "ts": "2026-09-07T00:25:05+09:00",
+    "date": "2026-09-07",
+    "project": "aiportal-py",
+    "result": "CI no-ci, PR open https://github.com/hkjang/aiportal-py/pull/9",
+    "outcome": "review-pending",
+    "run_id": "2026-09-07-001048-aiportal-py-improve",
+    "base_sha": "12d7a47bba7525eddc717c245ad26d01b51d1785",
+    "head_sha": "90199dcd390fd040458c910499cdc0664ef73702",
+    "pr": "https://github.com/hkjang/aiportal-py/pull/9",
+    "stages": {
+      "base": {
+        "state": "pinned",
+        "reason": "main@12d7a47",
+        "at": "2026-09-07T00:10:51+09:00"
+      },
+      "autonomy": {
+        "state": "release",
+        "reason": "",
+        "at": "2026-09-07T00:10:51+09:00"
+      },
+      "verify": {
+        "state": "passed",
+        "reason": "검증 1개 통과 (auto)",
+        "at": "2026-09-07T00:18:08+09:00"
+      },
+      "pr": {
+        "state": "created",
+        "reason": "https://github.com/hkjang/aiportal-py/pull/9",
+        "at": "2026-09-07T00:18:14+09:00"
+      },
+      "review": {
+        "state": "approved",
+        "reason": "리뷰 승인 (risk=medium)",
+        "at": "2026-09-07T00:20:51+09:00"
+      },
+      "ci": {
+        "state": "no-ci",
+        "reason": "이 커밋에 검사가 없음 (정책 allow_merge_without_ci 가 없으면 차단)",
+        "at": "2026-09-07T00:25:04+09:00"
+      }
+    },
+    "campaign": "",
+    "autonomy": "release",
+    "files": 8,
+    "additions": 496,
+    "deletions": 31,
+    "tests": 1,
+    "title": "fix: 기동 시 정책 토큰 무기한 대기 제거하고 degraded 기동 도입 (감사 A-002)"
+  },
+  "stages": {
+    "base": {
+      "state": "pinned",
+      "reason": "main@12d7a47",
+      "at": "2026-09-07T00:10:51+09:00"
+    },
+    "autonomy": {
+      "state": "release",
+      "reason": "",
+      "at": "2026-09-07T00:10:51+09:00"
+    },
+    "verify": {
+      "state": "passed",
+      "reason": "검증 1개 통과 (auto)",
+      "at": "2026-09-07T00:18:08+09:00"
+    },
+    "pr": {
+      "state": "created",
+      "reason": "https://github.com/hkjang/aiportal-py/pull/9",
+      "at": "2026-09-07T00:18:14+09:00"
+    },
+    "review": {
+      "state": "approved",
+      "reason": "리뷰 승인 (risk=medium)",
+      "at": "2026-09-07T00:20:51+09:00"
+    },
+    "ci": {
+      "state": "no-ci",
+      "reason": "이 커밋에 검사가 없음 (정책 allow_merge_without_ci 가 없으면 차단)",
+      "at": "2026-09-07T00:25:04+09:00"
+    }
+  },
+  "provenance": {
+    "model": "claude-opus-5",
+    "policy_version": "7c35e50",
+    "prompts_hash": "a3b041a352fd55fa",
+    "runner_version": "4bc6b6c",
+    "base_sha": "12d7a47bba7525eddc717c245ad26d01b51d1785",
+    "head_sha": "90199dcd390fd040458c910499cdc0664ef73702",
+    "pr": "https://github.com/hkjang/aiportal-py/pull/9"
+  },
+  "verification": {
+    "runner": {
+      "source": "auto",
+      "commands": [
+        {
+          "cmd": "python3 -m pytest -q -x",
+          "exit": 0,
+          "seconds": 1
+        }
+      ]
+    },
+    "runner_gate": {
+      "ok": true,
+      "state": "verified",
+      "reason": "검증 1개 통과 (auto)"
+    },
+    "after_rebase": null,
+    "review": {
+      "verdict": "approve",
+      "reasons": [],
+      "notes": [
+        "검증 완료: `python -m pytest` 691 passed. main 의 api.py/token_store.py 를 대상으로 tests/unit/test_startup_wait.py 의 AST 정적 검사를 직접 돌려 5건 실패(test_health_reports_token_state, test_lifespan_has_no_unbounded_poll_loop, test_lifespan_uses_bounded_wait_helper, test_wait_helper_is_imported, test_initial_setup_is_guarded)를 확인했습니다. 새 테스트는 수정 전 코드에서 실제로 실패하므로 변경을 검증합니다. wait_until 단위 테스트도 sleep/monotonic 주입으로 backoff·timeout·abort 경계를 실제 실행해 단언합니다.",
+        "docs/OPERATIONS.md:79 '토큰이 필요한 라우트는 degraded 동안 실패합니다. readiness가 body의 status를 확인하므로 트래픽은 붙지 않습니다.' 는 확정 사실처럼 적혀 있지만 저장소에 k8s manifest 가 없어 확인할 수 없고, 바로 아래 81줄은 '현재 readiness probe는 HTTP status뿐 아니라 JSON body를 확인해야 합니다'라고 아직 요구사항으로 서술합니다. /health 는 항상 HTTP 200 이므로(67줄), 실제 probe 가 body 를 보지 않는다면 이번 변경으로 '기동조차 안 되던 pod' 이 '토큰 없이 Ready 인 pod' 으로 바뀌어 트래픽이 붙습니다. 코드 결함은 아니고 A-002 조치안(명시적 degraded mode)에 부합하지만, 배포 전 probe 설정을 확인해야 합니다.",
+        "docs/OPERATIONS.md:88 백그라운드 작업 표의 'policy/chat token 갱신 / 운영 주의: 최초 policy token 전 startup 대기' 항목이 이번 변경의 60초 상한을 반영하지 않아 반쯤 낡았습니다.",
+        "커밋 메시지의 '동의어 API 장애가 갱신 루프 task 를 죽여 토큰이 영영 발급되지 않는 경로' 표현은 다소 과합니다. util/token_store.py:47 에서 policy_token 이 먼저 설정되므로, 동의어 조회만 실패하는 흔한 경우 실제 영향은 '이미 발급된 토큰이 더 이상 갱신되지 않아 만료된다'입니다. '영영 발급되지 않는' 것은 토큰 fetch 도 실패하고 Kiwi() 초기화가 예외를 던지는 경우에 한합니다. 수정된 코드 동작 자체는 두 경로 모두 올바르게 막습니다.",
+        "tests/unit/test_startup_wait.py:414 test_lifespan_has_no_unbounded_poll_loop 은 lifespan 안의 모든 While/For 를 금지합니다. 의도(무기한 폴링 금지)보다 넓어, 향후 무관한 짧은 루프를 넣으면 오탐으로 실패합니다. 지금은 통과하므로 차단 사유는 아닙니다.",
+        "api.py:104 logger.error(..., exc_info=token_task.exception()) 는 stdlib logging.Logger(util/logger_class.py)라 exc_info 를 지원하고, cancelled() 가드가 있어 CancelledError 재발생 경로도 없습니다. exception() 호출이 'Task exception was never retrieved' 경고도 함께 없앱니다.",
+        "util/startup_wait.py:560-566 상수는 import 시점에 os.getenv 로 읽으므로 변경에 재시작이 필요합니다. docs/CONFIGURATION.md 가 Settings 와 무관하게 프로세스 환경변수를 직접 읽는다고 명시해 설명과 일치합니다.",
+        "되돌리기: 마이그레이션·외부 상태 변경·비밀값 처리 변경이 없고 순수 코드/문서 변경이라 revert 로 완전히 복구됩니다. pyflakes 신규 경고 없음(기존 미사용 import 경고는 main 에도 존재)."
+      ],
+      "risk": "medium"
+    },
+    "ci_gate": {
+      "ok": false,
+      "state": "no-ci",
+      "reason": "이 커밋에 검사가 없음 (정책 allow_merge_without_ci 가 없으면 차단)",
+      "checks": 0
+    }
+  },
+  "release": {
+    "result": null,
+    "assets_sha256": []
+  },
+  "approval": null,
+  "usage": [
+    {
+      "ts": "2026-09-07T00:18:05+09:00",
+      "date": "2026-09-07",
+      "project": "aiportal-py",
+      "phase": "improve",
+      "run_id": "2026-09-07-001048-aiportal-py-improve",
+      "campaign": "",
+      "subtype": "success",
+      "duration_ms": 475051,
+      "num_turns": 49,
+      "cost_usd": 2.807111,
+      "input_tokens": 78,
+      "output_tokens": 34937,
+      "cache_read": 2291692,
+      "cache_create": 77778
+    },
+    {
+      "ts": "2026-09-07T00:20:51+09:00",
+      "date": "2026-09-07",
+      "project": "aiportal-py",
+      "phase": "review",
+      "run_id": "2026-09-07-001048-aiportal-py-improve",
+      "campaign": "",
+      "subtype": "success",
+      "duration_ms": 171052,
+      "num_turns": 14,
+      "cost_usd": 0.9901195,
+      "input_tokens": 28,
+      "output_tokens": 10563,
+      "cache_read": 561031,
+      "cache_create": 44357
+    }
+  ]
+}

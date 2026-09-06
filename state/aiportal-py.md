@@ -82,3 +82,13 @@
 - 보류 아이디어: `util/extract_minor.py` 의 `except Exception: return e` (예외 객체 반환) 정리 및 테스트 — 가치 3 / 위험 2 / S
 - 보류 아이디어: A-108 Confluence 그래프의 `retrieve → llm_response → END` 명시적 edge 추가 — 가치 3 / 위험 3 / S (LangGraph 실행 확인 필요)
 
+## 2026-09-07
+- 선택: 기동 시 정책 토큰 무기한 대기 제거하고 degraded 기동 도입 (감사 A-002) (가치 4 / 위험 2 / 작업량 M)
+- 결과: 성공
+- 요약: `api.py` 의 `lifespan` 이 `while token_store.policy_token is None` 에서 timeout 없이 0.5초 폴링을 반복해, 토큰 endpoint 장애·잘못된 credential·빈 URL 이면 startup 이 영원히 끝나지 않았다. FastAPI 는 lifespan 이 `yield` 하기 전까지 요청을 받지 않으므로 `/health` 조차 호출할 수 없고(docs/OPERATIONS.md 에도 알려진 제약으로 적혀 있었다) 원인 로그도 남지 않았으며, 토큰 갱신 루프는 600초마다 재시도하므로 첫 실패 후 10분간 무의미한 폴링만 돌았다. 총 대기 제한(`STARTUP_WAIT_TIMEOUT` 기본 60초)·exponential backoff(0.5초→5초)·`ready`/`timeout`/`aborted` 원인과 경과 시간·확인 횟수를 돌려주는 `wait_until()` 을 담은 설정 모듈 비의존 `util/startup_wait.py` 를 추가하고, lifespan 이 결과와 무관하게 `yield` 해 degraded 상태로 기동하도록 바꿨다(실패 시 DEGRADED 로그, 갱신 task 가 이미 죽었으면 `abort` 로 즉시 종료하고 그 예외를 로깅). degraded 상태를 관측할 수 있게 `/health` 에 `checks.m2m_token` 을 추가했고(HTTP 는 계속 200, body `status` 만 `unhealthy` — 기존 계약 유지), 동의어 API 장애가 갱신 루프 task 를 죽여 토큰이 영영 발급되지 않던 경로를 막으려 `util/token_store.py` 의 Kiwi·동의어 초기화를 `try/except` 로 감쌌다. `sleep`/`monotonic` 을 주입할 수 있어 실제로 기다리지 않고 backoff·deadline·abort 를 검증하는 단위 테스트와, `api.py`·`token_store.py` 는 import 불가라 AST 정적 검사(무기한 폴링 금지·`wait_until` 사용·무조건 `yield`·`m2m_token` 검사·초기화 보호)를 `tests/unit/test_startup_wait.py` 에 추가했다. 옛 코드를 되돌려 넣어 정적 검사 5건이 실제로 실패하는지 확인했다. `python -m pytest` 691 passed(기존 654), `python -m pyflakes .` undefined name 0건. docs 4종(CURRENT_STATE_AUDIT/OPERATIONS/CONFIGURATION/TESTING) 갱신. 커밋 `90199dc`.
+- 보류 아이디어: A-105 후속 — 공통 오류 응답 model 도입과 traceback 노출 제거(A-106 연계) — 가치 4 / 위험 3 / L
+- 보류 아이디어: `util/extract_minor.py` 의 `except Exception: return e` 정리 — 예외 객체가 `extract_logic` → `fileobj["text"]` → Milvus 색인까지 흘러가고, 지원하지 않는 확장자는 `None` 이 된다. `"err"` 로 통일 필요 — 가치 3 / 위험 2 / S
+- 보류 아이디어: A-102/A-206 후속 — 추천 질문·토큰 캐시를 프로세스 간 공유(외부 cache 또는 sticky routing) — 가치 3 / 위험 3 / M
+- 보류 아이디어: A-107 후속 — 재시도·circuit breaker·공용 `requests.Session` 도입 — 가치 3 / 위험 3 / M
+- 보류 아이디어: `api.py` 의 미사용 import 정리 후 pyflakes 를 CI 게이트로 승격 — 가치 2 / 위험 1 / S
+
