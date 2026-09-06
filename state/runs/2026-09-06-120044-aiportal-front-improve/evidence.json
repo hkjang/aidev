@@ -1,0 +1,189 @@
+{
+  "run_id": "2026-09-06-120044-aiportal-front-improve",
+  "generated": "2026-09-06T12:11:19+09:00",
+  "run": {
+    "run_id": "2026-09-06-120044-aiportal-front-improve",
+    "project": "aiportal-front",
+    "kind": "improve",
+    "started": "2026-09-06T12:00:44+09:00",
+    "model": "claude-opus-5",
+    "policy_version": "7c35e50",
+    "prompts_hash": "a3b041a352fd55fa",
+    "runner_version": "4bc6b6c",
+    "finished": "2026-09-06T12:11:19+09:00",
+    "outcome": "review-pending"
+  },
+  "record": {
+    "ts": "2026-09-06T12:11:19+09:00",
+    "date": "2026-09-06",
+    "project": "aiportal-front",
+    "result": "CI no-ci, PR open https://github.com/hkjang/aiportal-front/pull/6",
+    "outcome": "review-pending",
+    "run_id": "2026-09-06-120044-aiportal-front-improve",
+    "base_sha": "3824e48dc43ea26a923c82f5d88311fd0aa34d68",
+    "head_sha": "089124b8be72825aa33a1f2b0999f712f4ecb065",
+    "pr": "https://github.com/hkjang/aiportal-front/pull/6",
+    "stages": {
+      "base": {
+        "state": "pinned",
+        "reason": "main@3824e48",
+        "at": "2026-09-06T12:00:47+09:00"
+      },
+      "autonomy": {
+        "state": "release",
+        "reason": "",
+        "at": "2026-09-06T12:00:47+09:00"
+      },
+      "verify": {
+        "state": "passed",
+        "reason": "검증 2개 통과 (auto)",
+        "at": "2026-09-06T12:05:14+09:00"
+      },
+      "pr": {
+        "state": "created",
+        "reason": "https://github.com/hkjang/aiportal-front/pull/6",
+        "at": "2026-09-06T12:05:18+09:00"
+      },
+      "review": {
+        "state": "approved",
+        "reason": "리뷰 승인 (risk=low)",
+        "at": "2026-09-06T12:07:04+09:00"
+      },
+      "ci": {
+        "state": "no-ci",
+        "reason": "이 커밋에 검사가 없음 (정책 allow_merge_without_ci 가 없으면 차단)",
+        "at": "2026-09-06T12:11:18+09:00"
+      }
+    },
+    "campaign": "",
+    "autonomy": "release",
+    "files": 2,
+    "additions": 370,
+    "deletions": 31,
+    "tests": 1,
+    "title": "fix: 첨부파일 용량 안내 문구 옵션 반영 및 업로드 오류 오판 수정 및 단위 테스트 추가"
+  },
+  "stages": {
+    "base": {
+      "state": "pinned",
+      "reason": "main@3824e48",
+      "at": "2026-09-06T12:00:47+09:00"
+    },
+    "autonomy": {
+      "state": "release",
+      "reason": "",
+      "at": "2026-09-06T12:00:47+09:00"
+    },
+    "verify": {
+      "state": "passed",
+      "reason": "검증 2개 통과 (auto)",
+      "at": "2026-09-06T12:05:14+09:00"
+    },
+    "pr": {
+      "state": "created",
+      "reason": "https://github.com/hkjang/aiportal-front/pull/6",
+      "at": "2026-09-06T12:05:18+09:00"
+    },
+    "review": {
+      "state": "approved",
+      "reason": "리뷰 승인 (risk=low)",
+      "at": "2026-09-06T12:07:04+09:00"
+    },
+    "ci": {
+      "state": "no-ci",
+      "reason": "이 커밋에 검사가 없음 (정책 allow_merge_without_ci 가 없으면 차단)",
+      "at": "2026-09-06T12:11:18+09:00"
+    }
+  },
+  "provenance": {
+    "model": "claude-opus-5",
+    "policy_version": "7c35e50",
+    "prompts_hash": "a3b041a352fd55fa",
+    "runner_version": "4bc6b6c",
+    "base_sha": "3824e48dc43ea26a923c82f5d88311fd0aa34d68",
+    "head_sha": "089124b8be72825aa33a1f2b0999f712f4ecb065",
+    "pr": "https://github.com/hkjang/aiportal-front/pull/6"
+  },
+  "verification": {
+    "runner": {
+      "source": "auto",
+      "commands": [
+        {
+          "cmd": "[ -d node_modules ] || npm ci --no-audit --no-fund",
+          "exit": 0,
+          "seconds": 0
+        },
+        {
+          "cmd": "npm test --silent",
+          "exit": 0,
+          "seconds": 1
+        }
+      ]
+    },
+    "runner_gate": {
+      "ok": true,
+      "state": "verified",
+      "reason": "검증 2개 통과 (auto)"
+    },
+    "after_rebase": null,
+    "review": {
+      "verdict": "approve",
+      "reasons": [],
+      "notes": [
+        "테스트 진위 확인: 새 테스트 중 다수가 수정 전 코드에서 반드시 실패한다. (a) tests/unit/useFileAttach.spec.js:184 은 maxFileSize=5MB 안내 문구를 단언하는데 구 코드는 '20MB' 하드코딩, (b) :211 은 '10초 후 다시 시도해 주세요.' 메시지를 그대로 노출할 것을 요구하는데 구 코드는 msg.includes('10') 으로 용량 초과 오판, (c) :233 removeFile(-1) 은 구 코드 splice(-1,1) 로 마지막 항목이 삭제됨, (d) :166 initialList 미복사, (e) :113 getExt('.env') → 구 코드 'env'. 실제 동작을 실행하고 단언한다.",
+        "전체 스위트 통과 확인: npx vitest run → 8 files / 156 tests passed.",
+        "실사용 영향 없음: 유일한 호출부 src/views/Request/RequestWrite.vue:70 이 20MB/100MB 를 넘기므로 사용자에게 보이는 문구는 그대로다. 인증/권한/결제/마이그레이션/워크플로/비밀값/외부 상태 변경 없음. 2개 파일(1개는 신규)뿐이라 revert 로 완전 복구 가능.",
+        "동작 변경(의도된 것으로 판단되나 참고): src/utils/useFileAttach.js:61 getExt 가 idx>-1 → idx>0 으로 바뀌어 '.env' 같은 dotfile 의 ext 가 ''. 다만 src/utils/common.js:460 의 동명 getExt 는 여전히 구 동작(dotfile 을 확장자로 인식)이라 코드베이스 내 두 getExt 의 의미가 갈린다. 향후 통합 권장.",
+        "동작 변경 참고: src/utils/useFileAttach.js:99 pickId 가 id===0 을 유효 식별자로 취급(구 코드는 || 로 fileId 폴백). 서버가 0 을 fileId 로 쓰지 않는다면 무해하며 오히려 정확하다.",
+        "판별 범위 축소 참고: src/utils/useFileAttach.js:19 SIZE_LIMIT_PATTERN 에 '초과' 가 없어 '제한을 초과했습니다' 류 서버 메시지는 더 이상 용량 전용 안내로 분기되지 않는다. 대신 서버 메시지를 그대로 노출하므로 사용자에게 정보 손실은 없다.",
+        "범위: 커밋 메시지가 헬퍼 분리·removeFile 범위 검증·initialList 복사·dotfile 처리까지 모두 명시하고 있어 설명과 코드가 일치한다. 무관한 리팩터/의존성 변경 없음."
+      ],
+      "risk": "low"
+    },
+    "ci_gate": {
+      "ok": false,
+      "state": "no-ci",
+      "reason": "이 커밋에 검사가 없음 (정책 allow_merge_without_ci 가 없으면 차단)",
+      "checks": 0
+    }
+  },
+  "release": {
+    "result": null,
+    "assets_sha256": []
+  },
+  "approval": null,
+  "usage": [
+    {
+      "ts": "2026-09-06T12:05:12+09:00",
+      "date": "2026-09-06",
+      "project": "aiportal-front",
+      "phase": "improve",
+      "run_id": "2026-09-06-120044-aiportal-front-improve",
+      "campaign": "",
+      "subtype": "success",
+      "duration_ms": 283621,
+      "num_turns": 28,
+      "cost_usd": 1.5467594999999998,
+      "input_tokens": 44,
+      "output_tokens": 20673,
+      "cache_read": 983693,
+      "cache_create": 52944
+    },
+    {
+      "ts": "2026-09-06T12:07:04+09:00",
+      "date": "2026-09-06",
+      "project": "aiportal-front",
+      "phase": "review",
+      "run_id": "2026-09-06-120044-aiportal-front-improve",
+      "campaign": "",
+      "subtype": "success",
+      "duration_ms": 110085,
+      "num_turns": 8,
+      "cost_usd": 0.5541834999999999,
+      "input_tokens": 16,
+      "output_tokens": 6659,
+      "cache_read": 231879,
+      "cache_create": 26987
+    }
+  ]
+}
