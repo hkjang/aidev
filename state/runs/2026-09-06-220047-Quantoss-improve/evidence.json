@@ -1,0 +1,192 @@
+{
+  "run_id": "2026-09-06-220047-Quantoss-improve",
+  "generated": "2026-09-06T22:29:16+09:00",
+  "run": {
+    "run_id": "2026-09-06-220047-Quantoss-improve",
+    "project": "Quantoss",
+    "kind": "improve",
+    "started": "2026-09-06T22:00:47+09:00",
+    "model": "claude-opus-5",
+    "policy_version": "7c35e50",
+    "prompts_hash": "a3b041a352fd55fa",
+    "runner_version": "4bc6b6c",
+    "finished": "2026-09-06T22:29:16+09:00",
+    "outcome": "review-pending"
+  },
+  "record": {
+    "ts": "2026-09-06T22:29:16+09:00",
+    "date": "2026-09-06",
+    "project": "Quantoss",
+    "result": "CI no-ci, PR open https://github.com/hkjang/Quantoss/pull/15",
+    "outcome": "review-pending",
+    "run_id": "2026-09-06-220047-Quantoss-improve",
+    "base_sha": "3533317d93553138ca8edfe6de59a97a2dd44d2e",
+    "head_sha": "805f1040014ea2e9c14d11f59fa4cf08039277ad",
+    "pr": "https://github.com/hkjang/Quantoss/pull/15",
+    "stages": {
+      "base": {
+        "state": "pinned",
+        "reason": "main@3533317",
+        "at": "2026-09-06T22:00:51+09:00"
+      },
+      "autonomy": {
+        "state": "release",
+        "reason": "",
+        "at": "2026-09-06T22:00:51+09:00"
+      },
+      "verify": {
+        "state": "passed",
+        "reason": "검증 3개 통과 (auto)",
+        "at": "2026-09-06T22:17:50+09:00"
+      },
+      "pr": {
+        "state": "created",
+        "reason": "https://github.com/hkjang/Quantoss/pull/15",
+        "at": "2026-09-06T22:17:56+09:00"
+      },
+      "review": {
+        "state": "approved",
+        "reason": "리뷰 승인 (risk=low)",
+        "at": "2026-09-06T22:25:02+09:00"
+      },
+      "ci": {
+        "state": "no-ci",
+        "reason": "이 커밋에 검사가 없음 (정책 allow_merge_without_ci 가 없으면 차단)",
+        "at": "2026-09-06T22:29:16+09:00"
+      }
+    },
+    "campaign": "",
+    "autonomy": "release",
+    "files": 2,
+    "additions": 49,
+    "deletions": 3,
+    "tests": 1,
+    "title": "부분 체결 매도 중 서버 손절 예약 재등록 제거 (이중 매도·유령 예약 방지)"
+  },
+  "stages": {
+    "base": {
+      "state": "pinned",
+      "reason": "main@3533317",
+      "at": "2026-09-06T22:00:51+09:00"
+    },
+    "autonomy": {
+      "state": "release",
+      "reason": "",
+      "at": "2026-09-06T22:00:51+09:00"
+    },
+    "verify": {
+      "state": "passed",
+      "reason": "검증 3개 통과 (auto)",
+      "at": "2026-09-06T22:17:50+09:00"
+    },
+    "pr": {
+      "state": "created",
+      "reason": "https://github.com/hkjang/Quantoss/pull/15",
+      "at": "2026-09-06T22:17:56+09:00"
+    },
+    "review": {
+      "state": "approved",
+      "reason": "리뷰 승인 (risk=low)",
+      "at": "2026-09-06T22:25:02+09:00"
+    },
+    "ci": {
+      "state": "no-ci",
+      "reason": "이 커밋에 검사가 없음 (정책 allow_merge_without_ci 가 없으면 차단)",
+      "at": "2026-09-06T22:29:16+09:00"
+    }
+  },
+  "provenance": {
+    "model": "claude-opus-5",
+    "policy_version": "7c35e50",
+    "prompts_hash": "a3b041a352fd55fa",
+    "runner_version": "4bc6b6c",
+    "base_sha": "3533317d93553138ca8edfe6de59a97a2dd44d2e",
+    "head_sha": "805f1040014ea2e9c14d11f59fa4cf08039277ad",
+    "pr": "https://github.com/hkjang/Quantoss/pull/15"
+  },
+  "verification": {
+    "runner": {
+      "source": "auto",
+      "commands": [
+        {
+          "cmd": "go build ./...",
+          "exit": 0,
+          "seconds": 1
+        },
+        {
+          "cmd": "go vet ./...",
+          "exit": 0,
+          "seconds": 0
+        },
+        {
+          "cmd": "go test ./...",
+          "exit": 0,
+          "seconds": 35
+        }
+      ]
+    },
+    "runner_gate": {
+      "ok": true,
+      "state": "verified",
+      "reason": "검증 3개 통과 (auto)"
+    },
+    "after_rebase": null,
+    "review": {
+      "verdict": "approve",
+      "reasons": [],
+      "notes": [
+        "internal/broker/sell_test.go:149 TestSellPartialDoesNotRearmGuardWhileStillSelling 은 실제 회귀 테스트다 — main 의 live.go 로 되돌려 실행하니 'del=1 post=1' 로 실패함(확인 완료). 반면 sell_test.go:165 TestSellRestoresGuardWhenRemainderUnsold 는 수정 전 코드에서도 통과한다(구 코드는 settle 의 placeGuard 로 같은 결과). 결함은 아니고 동작 보존(characterization) 테스트로만 유효하다는 점은 기록해 둔다.",
+        "internal/broker/live.go:273 defer 로 옮긴 reguard 가 '살아 있는 매도 주문 중 예약 복구' 를 유발하는 경로가 있는지 Sell 의 모든 조기 반환을 따로 확인했다: (a) resolvePending done=false(284) 와 sellOrder 의 결과 미확인(310/324) 은 l.pending[symbol] 이 남아 reguard 가 건너뛴다, (b) cancelGuard 2회 실패(288) 와 createIdempotent 실패(382) 는 pos.GuardID 가 비어 있지 않거나 이미 복구돼 restoreGuard 가 no-op, (c) 전량 체결 시 pos.Qty<=0 이라 no-op. 새로운 이중 매도 경로는 찾지 못했다.",
+        "internal/broker/live.go:340 reguard 는 pos 포인터를 defer 등록 시점에 캡처한다. 단일 고루틴(agent 의 a.mu 아래) 전제에서만 안전하며, WS 이벤트가 별도 고루틴에서 l.pos 를 교체할 수 있다면 오래된 포인터에 예약을 걸 여지가 있다. 다만 이는 이번 변경 이전부터 있던 동시성 전제이고 이 PR 이 새로 만든 문제는 아니다.",
+        "internal/broker/live.go:287 긴급 청산에서 cancelGuard 가 실패한 채 전량 체결되면 서버 예약이 살아 있는데 pos 가 삭제되어 유령 예약이 남는 경로는 여전히 존재한다(이번 커밋 범위 밖, 기존 동작). 커밋 메시지가 '유령 예약 방지' 라고 말하지만 실제로 막는 것은 부분 체결→시장가 경로의 유령 예약뿐이다.",
+        "범위: internal/broker/live.go(+16/-3), sell_test.go(+36) 뿐이고 리팩터·의존성·워크플로 변경 없음. 코드 변경만이라 revert 로 완전히 되돌아간다. go build ./... 및 go test -count=1 ./internal/... 전체 통과(broker 36s, 전 패키지 ok)."
+      ],
+      "risk": "low"
+    },
+    "ci_gate": {
+      "ok": false,
+      "state": "no-ci",
+      "reason": "이 커밋에 검사가 없음 (정책 allow_merge_without_ci 가 없으면 차단)",
+      "checks": 0
+    }
+  },
+  "release": {
+    "result": null,
+    "assets_sha256": []
+  },
+  "approval": null,
+  "usage": [
+    {
+      "ts": "2026-09-06T22:17:14+09:00",
+      "date": "2026-09-06",
+      "project": "Quantoss",
+      "phase": "improve",
+      "run_id": "2026-09-06-220047-Quantoss-improve",
+      "campaign": "",
+      "subtype": "success",
+      "duration_ms": 1076692,
+      "num_turns": 35,
+      "cost_usd": 1.9381949999999997,
+      "input_tokens": 56,
+      "output_tokens": 20422,
+      "cache_read": 1556734,
+      "cache_create": 63843
+    },
+    {
+      "ts": "2026-09-06T22:25:02+09:00",
+      "date": "2026-09-06",
+      "project": "Quantoss",
+      "phase": "review",
+      "run_id": "2026-09-06-220047-Quantoss-improve",
+      "campaign": "",
+      "subtype": "success",
+      "duration_ms": 466184,
+      "num_turns": 17,
+      "cost_usd": 1.0364170000000001,
+      "input_tokens": 22,
+      "output_tokens": 11906,
+      "cache_read": 447640,
+      "cache_create": 51297
+    }
+  ]
+}

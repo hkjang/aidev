@@ -88,3 +88,14 @@
   - `Config.Validate` 가 gap_reclaim 파라미터(GapMin/GapMax/GapPullMin/GapVolMult)를 검사하지 않음 — `GapMin >= GapMax` 면 신호가 영영 안 나오는데 조용히 통과 (가치 3 / 위험 1 / S)
   - `journal.Summary`·`swing.Evaluate` 가 PnL==0 인 거래를 패배로 집계 (`PnL > 0` else) — 승률·평균손실 왜곡 (가치 2 / 위험 1 / S)
 
+## 2026-09-06
+- 선택: 부분 체결 매도 중 서버 손절 예약이 되살아나 이중 매도·유령 예약이 생기던 버그 수정 (가치 4 / 위험 2 / 작업량 S)
+- 결과: 성공
+- 요약: 직전 커밋(3533317)이 넣은 "비긴급 청산은 최우선 매수호가 지정가 → 잔량 시장가" 2단 매도가, 중간 체결마다 `settle` 이 잔량에 서버 조건주문(손절 예약)을 다시 걸도록 되어 있었다. 그래서 지정가가 부분 체결되면 곧바로 이어지는 시장가 주문과 **살아 있는 손절 예약이 같은 잔량을 두고 겹쳐** 이중 매도가 될 수 있었고, 시장가로 전량이 팔리면 `l.pos` 에서 포지션만 지워지고 서버 예약은 취소되지 않아 **유령 예약**이 남았다(같은 종목에 재진입하면 그 예약이 새 포지션을 임의로 던진다 — `ServerStop` 기본값이 yes 라 기본 설정에서 발생). `settle` 의 재예약을 없애고, "매도 시도가 끝난 뒤 잔량이 남아 있고 결과 미확인 주문이 없을 때만 복구" 하는 `reguard` 를 `Sell` 진입부에 `defer` 로 걸어 모든 반환 경로에서 한 번만 판단하게 통일했다. 검증: `internal/broker/sell_test.go` 에 서버 예약 생성·취소 횟수 카운터를 추가하고 테스트 2개(지정가 부분 체결 → 시장가 전량 체결 시 재예약 0·유령 예약 없음 / 시장가가 한 주도 못 팔아 잔량이 남으면 예약 복구 1)를 넣었다. 수정 전 코드에서 첫 테스트가 실제로 `del=1 post=1` 로 실패함을 확인. `gofmt -l`(clean)·`go vet ./...`·`go build ./...`·`go test -count=1 ./...` 전부 통과.
+- 보류 아이디어:
+  - GitHub Actions CI 없음 — 워크플로 추가, 단 푸시 토큰에 `workflow` 스코프가 없으면 회차 전체가 날아가므로 위험 3 (가치 4 / 위험 3 / S)
+  - `swing.Runner` 의 동시 보유 한도가 `MaxPositions*5`, 예약 상한은 `*3` — 배수 근거가 없어 MaxPositions=1 에서도 5종목 동시 보유 (가치 3 / 위험 2 / S)
+  - `internal/journal`·`internal/notify` 테스트 0건 — Summary/MaxDrawdown, Load 날짜 필터, Notifier httptest (가치 3 / 위험 1 / S)
+  - `notify.Notifier` 를 구조체 리터럴로 만들면 `http` 가 nil → 백그라운드 고루틴에서 패닉, `Send` 안에서 지연 초기화 (가치 3 / 위험 1 / S)
+  - `Config.Validate` 가 gap_reclaim 파라미터(GapMin/GapMax/GapPullMin/GapVolMult)를 검사하지 않음 — `GapMin >= GapMax` 면 신호가 영영 안 나오는데 조용히 통과 (가치 3 / 위험 1 / S)
+
