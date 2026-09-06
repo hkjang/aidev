@@ -1,7 +1,7 @@
 ---
 title: "vibe-coders — 자율 개선 이력"
-description: "vibe-coders: 자율 개선 회차 7회, 릴리즈 3건. 최근 릴리즈 v0.83.0."
-last_modified_at: 2026-09-06 11:10:06 +0900
+description: "vibe-coders: 자율 개선 회차 5회, 릴리즈 3건. 최근 릴리즈 v0.83.0."
+last_modified_at: 2026-09-06 11:10:28 +0900
 ---
 {% raw %}
 <script type="application/ld+json">
@@ -11,35 +11,35 @@ last_modified_at: 2026-09-06 11:10:06 +0900
  "name": "vibe-coders",
  "codeRepository": "https://github.com/hkjang/vibe-coders",
  "url": "https://hkjang.github.io/aidev/projects/vibe-coders/",
- "description": "vibe-coders: 자율 개선 회차 7회, 릴리즈 3건. 최근 릴리즈 v0.83.0.",
+ "description": "vibe-coders: 자율 개선 회차 5회, 릴리즈 3건. 최근 릴리즈 v0.83.0.",
  "inLanguage": "ko",
  "maintainer": {
   "@type": "Person",
   "name": "hkjang",
   "url": "https://github.com/hkjang"
  },
- "dateModified": "2026-09-06T11:10:06+09:00",
+ "dateModified": "2026-09-06T11:10:28+09:00",
  "version": "0.83.0"
 }
 </script>
 
 # vibe-coders
 
-<p class="tldr"><strong>요약.</strong> vibe-coders: 자율 개선 회차 7회, 릴리즈 3건. 최근 릴리즈 v0.83.0. <span class="pill pill-merged" title="14일: 릴리즈 3, 실패 0, 경고 1, 회귀 0">건강 B</span> <span class="meta">14일: 릴리즈 3, 실패 0, 경고 1, 회귀 0</span></p>
+<p class="tldr"><strong>요약.</strong> vibe-coders: 자율 개선 회차 5회, 릴리즈 3건. 최근 릴리즈 v0.83.0. <span class="pill pill-merged" title="14일: 릴리즈 3, 실패 0, 경고 1, 회귀 0">건강 B</span> <span class="meta">14일: 릴리즈 3, 실패 0, 경고 1, 회귀 0</span></p>
 
-<ul class="stats"><li><b>7</b><span>회차</span></li><li><b>1</b><span>프로젝트</span></li><li><b>3</b><span>배포 준비 완료</span></li><li><b>0</b><span>릴리즈 진행 중</span></li><li><b>1</b><span>병합 완료</span></li><li><b>0</b><span>검토 대기</span></li><li><b>0</b><span>검증 실패</span></li><li><b>1</b><span>변경 없음</span></li><li><b>2</b><span>실행 오류</span></li></ul>
+<ul class="stats"><li><b>5</b><span>회차</span></li><li><b>1</b><span>프로젝트</span></li><li><b>3</b><span>배포 준비 완료</span></li><li><b>0</b><span>릴리즈 진행 중</span></li><li><b>1</b><span>병합 완료</span></li><li><b>0</b><span>검토 대기</span></li><li><b>0</b><span>검증 실패</span></li><li><b>1</b><span>변경 없음</span></li><li><b>0</b><span>실행 오류</span></li></ul>
 
 ## 현황
 
 <dl class="kv">
 <dt>저장소</dt><dd><a href="https://github.com/hkjang/vibe-coders">https://github.com/hkjang/vibe-coders</a></dd>
-<dt>마지막 회차</dt><dd>2026-09-06 05:00 KST — <span class="pill pill-other">• 기타</span> hold: budget</dd>
+<dt>마지막 회차</dt><dd>2026-09-05 09:12 KST — <span class="pill pill-released">🚀 릴리즈</span> merged <a href="https://github.com/hkjang/vibe-coders/pull/14">PR #14</a>, released <a href="https://github.com/hkjang/vibe-coders/releases/tag/v0.83.0">v0.83.0</a> +7 assets</dd>
 <dt>최근 릴리즈</dt><dd><a href="https://github.com/hkjang/vibe-coders/releases/tag/v0.83.0">v0.83.0</a> — released <a href="https://github.com/hkjang/vibe-coders/releases">전체 릴리즈 →</a></dd>
 </dl>
 
 ## 회차 이력
 
-<div class="table-wrap"><table class="rt"><thead><tr><th>일시</th><th class="primary">프로젝트</th><th>결과</th></tr></thead><tbody><tr data-status="other"><td data-label="일시">2026-09-06 05:00</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/vibe-coders/">vibe-coders</a></td><td data-label="결과"><span class="pill pill-failed" title="outcome=error">실행 오류</span> hold: budget</td></tr><tr data-status="other"><td data-label="일시">2026-09-05 21:40</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/vibe-coders/">vibe-coders</a></td><td data-label="결과"><span class="pill pill-failed" title="outcome=error">실행 오류</span> hold: budget</td></tr><tr data-status="released"><td data-label="일시">2026-09-05 09:12</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/vibe-coders/">vibe-coders</a></td><td data-label="결과"><span class="pill pill-released" title="outcome=release-ready">배포 준비 완료</span> merged <a href="https://github.com/hkjang/vibe-coders/pull/14">PR #14</a>, released <a href="https://github.com/hkjang/vibe-coders/releases/tag/v0.83.0">v0.83.0</a> +7 assets</td></tr><tr data-status="released"><td data-label="일시">2026-09-04 01:51</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/vibe-coders/">vibe-coders</a></td><td data-label="결과"><span class="pill pill-released" title="outcome=release-ready">배포 준비 완료</span> merged <a href="https://github.com/hkjang/vibe-coders/pull/12">PR #12</a>, released <a href="https://github.com/hkjang/vibe-coders/releases/tag/v0.82.2">v0.82.2</a> +7 assets</td></tr><tr data-status="merged"><td data-label="일시">2026-09-03 17:50</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/vibe-coders/">vibe-coders</a></td><td data-label="결과"><span class="pill pill-merged" title="outcome=merged">병합 완료</span> merged <a href="https://github.com/hkjang/vibe-coders/pull/11">PR #11</a>, <strong>release missing</strong></td></tr><tr data-status="released"><td data-label="일시">2026-09-03 05:19</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/vibe-coders/">vibe-coders</a></td><td data-label="결과"><span class="pill pill-released" title="outcome=release-ready">배포 준비 완료</span> merged <a href="https://github.com/hkjang/vibe-coders/pull/9">PR #9</a>, released <a href="https://github.com/hkjang/vibe-coders/releases/tag/v0.82.0">v0.82.0</a></td></tr><tr data-status="other"><td data-label="일시">2026-09-02 23:03</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/vibe-coders/">vibe-coders</a></td><td data-label="결과"><span class="pill pill-nochange" title="outcome=no-change">변경 없음</span> PR </td></tr></tbody></table></div>
+<div class="table-wrap"><table class="rt"><thead><tr><th>일시</th><th class="primary">프로젝트</th><th>결과</th></tr></thead><tbody><tr data-status="released"><td data-label="일시">2026-09-05 09:12</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/vibe-coders/">vibe-coders</a></td><td data-label="결과"><span class="pill pill-released" title="outcome=release-ready">배포 준비 완료</span> merged <a href="https://github.com/hkjang/vibe-coders/pull/14">PR #14</a>, released <a href="https://github.com/hkjang/vibe-coders/releases/tag/v0.83.0">v0.83.0</a> +7 assets</td></tr><tr data-status="released"><td data-label="일시">2026-09-04 01:51</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/vibe-coders/">vibe-coders</a></td><td data-label="결과"><span class="pill pill-released" title="outcome=release-ready">배포 준비 완료</span> merged <a href="https://github.com/hkjang/vibe-coders/pull/12">PR #12</a>, released <a href="https://github.com/hkjang/vibe-coders/releases/tag/v0.82.2">v0.82.2</a> +7 assets</td></tr><tr data-status="merged"><td data-label="일시">2026-09-03 17:50</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/vibe-coders/">vibe-coders</a></td><td data-label="결과"><span class="pill pill-merged" title="outcome=merged">병합 완료</span> merged <a href="https://github.com/hkjang/vibe-coders/pull/11">PR #11</a>, <strong>release missing</strong></td></tr><tr data-status="released"><td data-label="일시">2026-09-03 05:19</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/vibe-coders/">vibe-coders</a></td><td data-label="결과"><span class="pill pill-released" title="outcome=release-ready">배포 준비 완료</span> merged <a href="https://github.com/hkjang/vibe-coders/pull/9">PR #9</a>, released <a href="https://github.com/hkjang/vibe-coders/releases/tag/v0.82.0">v0.82.0</a></td></tr><tr data-status="other"><td data-label="일시">2026-09-02 23:03</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/vibe-coders/">vibe-coders</a></td><td data-label="결과"><span class="pill pill-nochange" title="outcome=no-change">변경 없음</span> PR </td></tr></tbody></table></div>
 
 ## 원장 (에이전트가 남긴 기록)
 
