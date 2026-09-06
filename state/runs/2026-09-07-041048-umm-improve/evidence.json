@@ -1,0 +1,130 @@
+{
+  "run_id": "2026-09-07-041048-umm-improve",
+  "generated": "2026-09-07T04:22:19+09:00",
+  "run": {
+    "run_id": "2026-09-07-041048-umm-improve",
+    "project": "umm",
+    "kind": "improve",
+    "started": "2026-09-07T04:10:49+09:00",
+    "model": "claude-opus-5",
+    "policy_version": "7c35e50",
+    "prompts_hash": "a3b041a352fd55fa",
+    "runner_version": "4bc6b6c",
+    "finished": "2026-09-07T04:22:19+09:00",
+    "outcome": "verify-failed"
+  },
+  "record": {
+    "ts": "2026-09-07T04:22:19+09:00",
+    "date": "2026-09-07",
+    "project": "umm",
+    "result": "verify failed: secrets in diff",
+    "outcome": "verify-failed",
+    "run_id": "2026-09-07-041048-umm-improve",
+    "base_sha": "59ae1ba2af873beb2143ee8d50845e000f7b8d18",
+    "head_sha": "34f5413375692a9d20845e761dbe56790769797e",
+    "pr": "",
+    "stages": {
+      "base": {
+        "state": "pinned",
+        "reason": "main@59ae1ba",
+        "at": "2026-09-07T04:10:59+09:00"
+      },
+      "autonomy": {
+        "state": "release",
+        "reason": "",
+        "at": "2026-09-07T04:10:59+09:00"
+      },
+      "verify": {
+        "state": "failed",
+        "reason": "변경에 비밀정보 의심 문자열",
+        "at": "2026-09-07T04:22:18+09:00"
+      }
+    },
+    "campaign": "",
+    "autonomy": "release",
+    "files": 8,
+    "additions": 280,
+    "deletions": 40,
+    "tests": 1,
+    "title": "Release v0.71.5 a thought cut apart by its own handwriting"
+  },
+  "stages": {
+    "base": {
+      "state": "pinned",
+      "reason": "main@59ae1ba",
+      "at": "2026-09-07T04:10:59+09:00"
+    },
+    "autonomy": {
+      "state": "release",
+      "reason": "",
+      "at": "2026-09-07T04:10:59+09:00"
+    },
+    "verify": {
+      "state": "failed",
+      "reason": "변경에 비밀정보 의심 문자열",
+      "at": "2026-09-07T04:22:18+09:00"
+    }
+  },
+  "provenance": {
+    "model": "claude-opus-5",
+    "policy_version": "7c35e50",
+    "prompts_hash": "a3b041a352fd55fa",
+    "runner_version": "4bc6b6c",
+    "base_sha": "59ae1ba2af873beb2143ee8d50845e000f7b8d18",
+    "head_sha": "34f5413375692a9d20845e761dbe56790769797e",
+    "pr": ""
+  },
+  "verification": {
+    "runner": {
+      "source": "auto",
+      "commands": [
+        {
+          "cmd": "go build ./...",
+          "exit": 0,
+          "seconds": 1
+        },
+        {
+          "cmd": "go vet ./...",
+          "exit": 0,
+          "seconds": 1
+        },
+        {
+          "cmd": "go test ./...",
+          "exit": 0,
+          "seconds": 3
+        }
+      ]
+    },
+    "runner_gate": {
+      "ok": true,
+      "state": "verified",
+      "reason": "검증 3개 통과 (auto)"
+    },
+    "after_rebase": null,
+    "review": null,
+    "ci_gate": null
+  },
+  "release": {
+    "result": null,
+    "assets_sha256": []
+  },
+  "approval": null,
+  "usage": [
+    {
+      "ts": "2026-09-07T04:22:12+09:00",
+      "date": "2026-09-07",
+      "project": "umm",
+      "phase": "improve",
+      "run_id": "2026-09-07-041048-umm-improve",
+      "campaign": "",
+      "subtype": "success",
+      "duration_ms": 739405,
+      "num_turns": 58,
+      "cost_usd": 4.1209335,
+      "input_tokens": 106,
+      "output_tokens": 40028,
+      "cache_read": 4195409,
+      "cache_create": 101144
+    }
+  ]
+}
