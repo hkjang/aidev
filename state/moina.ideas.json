@@ -1,0 +1,65 @@
+[
+  {
+    "title": "detectMediaType이 ftyp box만 보고 HEIC·AVIF·M4A·QuickTime을 video/mp4로 저장",
+    "value": 3,
+    "risk": 2,
+    "size": "S",
+    "status": "done",
+    "note": "ftyp box의 major brand를 MP4 brand 목록과 대조하도록 고치고, MP4가 아닌 ISO Base Media 파일은 application/octet-stream으로 남겨 기존 allowlist가 415로 거절하게 했다. 새 테스트 7케이스 추가, OpenAPI 업로드 설명에 계약 명시.",
+    "updated": "2026-09-06"
+  },
+  {
+    "title": "updatePost가 DB 오류를 409 not_editable로 보고해 원인을 감춤",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "posts.go의 UPDATE에서 err != nil과 RowsAffected()==0을 한 분기로 묶어 처리해, 저장소 장애도 '본인의 공개 Moin만 수정할 수 있습니다'로 보인다. err는 500 storage_error로 분리해야 한다.",
+    "updated": "2026-09-06"
+  },
+  {
+    "title": "Makefile test가 CI와 달리 -race 미사용",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "make test는 go test ./...만 실행해 로컬에서 통과한 변경이 CI의 -race에서 처음 실패할 수 있다. CGO 필요 여부와 실행 시간 증가를 확인한 뒤 맞출 것.",
+    "updated": "2026-09-06"
+  },
+  {
+    "title": "미디어 응답 Content-Disposition이 non-ASCII 파일명을 RFC 6266 filename* 없이 전달",
+    "value": 2,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "social.go getMedia가 filename=%q로만 내려보내 한글 파일명이 브라우저마다 다르게 깨진다. filename*=UTF-8''<percent-encoded>를 함께 붙이고 ASCII fallback을 두면 된다.",
+    "updated": "2026-09-06"
+  },
+  {
+    "title": "일간 Digest digestDue가 DST 전환일에 존재하지 않는 지역 시각을 time.Date 정규화에 맡김",
+    "value": 2,
+    "risk": 3,
+    "size": "M",
+    "status": "pending",
+    "note": "봄 DST 전환으로 건너뛴 시각(예: 02:30)을 지정하면 time.Date가 조용히 한 시간 밀린 시각으로 정규화해 발송 시각과 window ID가 어긋난다. 기본 시간대가 Asia/Seoul이라 국내 인스턴스는 영향이 없다.",
+    "updated": "2026-09-06"
+  },
+  {
+    "title": "조용한 시간·Digest가 사용자별 시간대가 아닌 인스턴스 기본 시간대만 사용",
+    "value": 3,
+    "risk": 3,
+    "size": "L",
+    "status": "pending",
+    "note": "여러 시간대 사용자가 한 인스턴스를 쓰면 조용한 시간이 엉뚱한 시각에 걸린다. 사용자 설정·마이그레이션·UI가 모두 필요해 한 세션 범위를 넘는다.",
+    "updated": "2026-09-06"
+  },
+  {
+    "title": "safeFilename이 확장자와 실제 형식의 불일치를 그대로 둠",
+    "value": 2,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "photo.png로 올린 JPEG이 filename=photo.png, mime_type=image/jpeg로 저장돼 다운로드 파일 확장자가 내용과 어긋난다. 판정한 MIME에 맞는 확장자로 교정할 수 있다.",
+    "updated": "2026-09-06"
+  }
+]
