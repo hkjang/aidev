@@ -114,3 +114,10 @@
   - 서버의 `formatValue` 는 글자 "123" 을 `toNumber` 로 수로 읽고 격자는 글자로 보아, 숫자처럼 생긴 글자 값에서 두 곳의 답이 갈릴 수 있다.
 - 릴리즈: v0.236.0 (2026-09-05)
 - 릴리즈: v0.236.0 (2026-09-05)
+## 2026-09-07
+- 선택: 외부 호출 캐시가 그때의 크기 상한과 시간 제한을 함께 기억한다 (가치 4 / 위험 1 / 작업량 S)
+- 결과: 성공
+- 요약: `internal/external` 의 답 캐시는 자리 이름을 함수·주소로만 지어, 옛 `external.max_kb` 에서 받은 "응답이 허용된 크기를 넘습니다" 를 관리자가 상한을 올린 뒤에도 `cache_seconds`(기본 5분, 최대 하루) 동안 그대로 내주었다 — 관리자에게는 설정이 먹지 않은 것으로 보인다. 허용 호스트 목록은 이미 캐시 바깥에 있어 고치면 곧바로 통하는데(`TestPolicyIsNotCachedInEitherDirection`), 크기 상한과 시간 제한도 부르는 방법을 정하는 정책이라는 점에서 다르지 않으므로 새 `cacheKey` 가 `MaxBytes`·`Timeout` 을 자리 이름에 함께 넣게 했다(엔진이 답을 찾는 `formula.ExternalKey` 는 그대로 두었다). 검증: 새 테스트 2개(`TestRaisingTheSizeCeilingIsBelievedAtOnce` — 고치기 전에 실제로 깨지는 것을 확인했다, `TestResolveIsSafeToShare` — 여덟 갈래가 같은 주소들을 한꺼번에 부르는 길을 `-race` 로 못 박음), `gofmt -l`, `go vet`, `go build ./...`, `go test ./...`(전체 통과)와 `go test -race ./internal/external/`, `scripts/check-release-docs.sh`, `scripts/check-commit-identities.sh`. 커밋 1개(7cdb124), 릴리즈 노트 v0.237.0 과 README VERSION 갱신. 웹·가이드 문서는 external 설정을 다루지 않아 손대지 않았고 npm 검사도 돌리지 않았다.
+- 보류 아이디어: 원격 500·타임아웃 같은 실패도 캐시에 담겨 원격이 고쳐져도 cache_seconds 동안 그대로다(정책과 달리 실패는 짧게 담거나 담지 않을지 검토) / `parseCSV` 가 쉼표·탭만 보아 세미콜론으로 가른 유럽식 CSV 를 한 열로 읽는다 / `csvNumber` 자리(`formula.DecimalNumber`)가 IMPORTDATA 의 `"1,200"`·`"12%"`·앞뒤 통화 기호를 글자로 남긴다 / `DOLLARDE`·`DOLLARFR` 이 `math.Pow(10, ceil(log10(fraction)))` 로 자리를 밀어 `DOLLARDE(1.02,16)` 이 1.1250000000000002 다 / `?` 의 자리 맞추기 빈칸을 그리지 않아 `# ??/??` 의 한 자리 분자가 자릿수를 맞추지 못한다
+
+- 릴리즈: v0.237.0 (2026-09-07, run 2026-09-07-020048-kanpic-improve)

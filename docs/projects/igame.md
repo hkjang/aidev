@@ -1,7 +1,7 @@
 ---
 title: "igame — 자율 개선 이력"
 description: "igame: 자율 개선 회차 11회, 릴리즈 6건. 최근 릴리즈 v0.7.7 (자산 0개)."
-last_modified_at: 2026-09-07 01:59:02 +0900
+last_modified_at: 2026-09-07 02:17:33 +0900
 ---
 {% raw %}
 <script type="application/ld+json">
@@ -18,7 +18,7 @@ last_modified_at: 2026-09-07 01:59:02 +0900
   "name": "hkjang",
   "url": "https://github.com/hkjang"
  },
- "dateModified": "2026-09-07T01:59:02+09:00",
+ "dateModified": "2026-09-07T02:17:33+09:00",
  "version": "0.7.7"
 }
 </script>

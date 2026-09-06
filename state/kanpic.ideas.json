@@ -1,0 +1,65 @@
+[
+  {
+    "title": "외부 호출 캐시 키에 정책(max_kb·timeout)을 함께 넣는다",
+    "value": 4,
+    "risk": 1,
+    "size": "S",
+    "status": "done",
+    "note": "옛 상한에서 받은 '크기를 넘습니다' 거절이 상한을 올린 뒤에도 cache_seconds 동안 남았다. cacheKey 가 MaxBytes·Timeout 을 함께 담게 했다. 커밋 7cdb124, v0.237.0.",
+    "updated": "2026-09-07"
+  },
+  {
+    "title": "원격 실패(500·타임아웃)도 캐시에 담긴다",
+    "value": 3,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "정책이 아니라 원격 쪽 사정으로 난 실패는 원격이 고쳐져도 cache_seconds 동안 그대로다. 실패만 짧은 시간(예: 30초)으로 담거나 아예 담지 않는 쪽을 검토할 것. 담지 않으면 타임아웃이 매 재계산마다 되풀이되므로 그 값을 저울질해야 한다.",
+    "updated": "2026-09-07"
+  },
+  {
+    "title": "IMPORTDATA 의 parseCSV 가 세미콜론 구분 CSV 를 한 열로 읽는다",
+    "value": 3,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "쉼표를 기본으로 두고 첫 줄에 탭이 있고 쉼표가 없을 때만 탭으로 본다. 유럽 로케일 엑셀이 내보내는 세미콜론 CSV 가 통째로 한 열이 된다. internal/importexport 의 구분자 판단과 규칙을 맞출지 검토할 것.",
+    "updated": "2026-09-07"
+  },
+  {
+    "title": "csvNumber 자리가 IMPORTDATA 의 \"1,200\"·\"12%\"·통화 기호를 글자로 남긴다",
+    "value": 3,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "이제 formula.DecimalNumber 한 곳이다. valueOfText 의 규칙(자릿점·통화 기호·백분율)까지 넓힐지, 아니면 가져오기 미리보기의 '글자로 담긴 숫자' 경고와 같은 자리에 둘지 정할 것.",
+    "updated": "2026-09-07"
+  },
+  {
+    "title": "DOLLARDE·DOLLARFR 의 이진 실수 어긋남",
+    "value": 3,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "math.Pow(10, ceil(log10(fraction))) 로 자리를 밀어 DOLLARDE(1.02,16) 이 1.125 가 아니라 1.1250000000000002 다. 십진 셈이나 자리수 반올림으로 맞출지 검토할 것.",
+    "updated": "2026-09-07"
+  },
+  {
+    "title": "분수 서식의 ? 자리 맞추기 빈칸을 그리지 않는다",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "엑셀은 '# ??/??' 의 한 자리 분자를 빈칸으로 채워 자릿수를 맞춘다. 단조 글꼴 표에서만 눈에 띄어 가치가 낮다. 고칠 때는 internal/formula 와 web/src/lib/cellFormat.ts 양쪽을 같은 규칙으로.",
+    "updated": "2026-09-07"
+  },
+  {
+    "title": "서버 formatValue 가 글자 \"123\" 을 수로 읽는 것과 격자의 차이",
+    "value": 2,
+    "risk": 2,
+    "size": "S",
+    "status": "rejected",
+    "note": "서버의 formatValue 는 TEXT() 만 쓰고 칸 그리기에는 쓰이지 않는다. 엑셀의 TEXT 도 숫자처럼 생긴 글자를 수로 강제 변환하므로 지금 동작이 맞다. 갈림이 아니라 서로 다른 두 일이다.",
+    "updated": "2026-09-07"
+  }
+]
