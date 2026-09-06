@@ -39,3 +39,10 @@
 - 보류 아이디어: (1) `ParseLock`의 `MaxLockPackages` 4000 절단이 조용하고, go.sum이 알파벳 순이라 뒤쪽 이름부터 통째로 사라짐 (가치 3 / 위험 2 / M). (2) `parseRequirements`의 연산자 목록에 `!=`·`===`가 없어 `urllib3!=1.25.0`의 버전이 `"!"`로 기록됨 (가치 2 / 위험 1 / S). (3) `clampResponse`의 truncation notice 예약치 320B보다 실제 공지가 길어 "예산에 맞춰 잘랐다"면서 예산을 십수 바이트 초과 (가치 2 / 위험 2 / S). (4) `dependencyScanLimit`(2000) 절단 시 버전 그룹이 불완전한데 notes는 "상위 N건만 확인"이라고만 하고 어떤 그룹이 잘렸는지 말하지 않음 (가치 2 / 위험 2 / S). (5) `parsePOM`이 `<dependencyManagement>`의 버전 관리용 선언까지 실제 의존성으로 집계 (가치 3 / 위험 3 / M).
 
 - 릴리즈: v0.77.6 (2026-09-06, run 2026-09-06-131045-git-ctx-improve)
+## 2026-09-06
+- 선택: 권고 판정이 표시 limit에 잘려 일부 저장소를 아무 데도 세지 않던 것 수정, 절단 사실을 정확히 통지 (가치 4 / 위험 2 / 작업량 S)
+- 결과: 성공 (commit ca7907a)
+- 요약: `internal/search/dependencies.go`의 인벤토리 질의는 `LIMIT min(limit*4, dependencyScanLimit)`로 끊는데, 절단 통지는 상수 `dependencyScanLimit`(2000)과 비교하고 있었습니다. 기본 limit 100이면 실제 SQL 한계는 400이라 통지는 `limit>=500`이 아닌 한 절대 뜨지 않았고, 널리 쓰이는 패키지의 권고는 앞쪽 400개 선언만 보고 "영향 N개 · 안전 M개"를 냈습니다. 정렬이 이름→library_id 순이라 뒤쪽 저장소가 통째로 빠지고, 그 저장소들은 영향·안전·판정 불가 어디에도 세지 않아 결과적으로 무사 통보처럼 읽혔습니다. `fixedIn`이 있으면 판정은 매치 전체를 대변한다는 기존 주석대로 `dependencyScanLimit`까지 스캔하게 하고(표시 limit은 목록만 제한), 통지는 실제 적용된 한계와 비교하도록 고쳤습니다. 권고 중 절단이 실제로 발생하면 "그 뒤 저장소는 집계에 없어 아래 수치가 불완전하다"고 명시합니다. 검증: 새 테스트 `TestAdvisoryJudgesEveryMatchNotOnlyTheListedOnes`(저장소 12개·limit 1: 전부 판정되는지, 목록은 1건인지, 권고 없는 질의는 "상위 4건만 확인했습니다"를 내는지) 추가 — 수정 전에는 affected가 2개만 나와 실패함을 확인. `gofmt -l`, `go vet ./...`, `go build -tags sqlite_fts5 ./...`, `go test -tags sqlite_fts5 ./...` 전체 통과, search·mcp는 `-race`도 통과.
+- 보류 아이디어: (1) `ParseLock`의 `MaxLockPackages` 4000 절단이 조용하고 go.sum이 알파벳 순이라 뒤쪽 이름부터 통째로 사라짐 (가치 3 / 위험 2 / M). (2) `parseRequirements`에 `!=`·`===`가 없어 `urllib3!=1.25.0`의 버전이 `"!"`로 기록됨 (가치 2 / 위험 1 / S). (3) `clampResponse`의 truncation notice 예약치 320B보다 실제 공지가 길어 예산을 십수 바이트 초과 (가치 2 / 위험 2 / S). (4) `parsePOM`이 `<dependencyManagement>` 선언까지 실제 의존성으로 집계 (가치 3 / 위험 3 / M). (5) `MaxManifestBytes`(1MB)·`MaxLockBytes`(8MB) 초과 파일이 `nil`로 조용히 버려져 인벤토리에서 저장소가 통째로 빠짐 (가치 3 / 위험 2 / M).
+
+- 릴리즈: v0.77.7 (2026-09-06, run 2026-09-06-140046-git-ctx-improve)
