@@ -1,7 +1,7 @@
 ---
 title: "weekly — 자율 개선 이력"
 description: "weekly: 자율 개선 회차 8회, 릴리즈 6건. 최근 릴리즈 v0.289.0."
-last_modified_at: 2026-09-06 19:02:11 +0900
+last_modified_at: 2026-09-06 19:19:11 +0900
 ---
 {% raw %}
 <script type="application/ld+json">
@@ -18,7 +18,7 @@ last_modified_at: 2026-09-06 19:02:11 +0900
   "name": "hkjang",
   "url": "https://github.com/hkjang"
  },
- "dateModified": "2026-09-06T19:02:11+09:00",
+ "dateModified": "2026-09-06T19:19:11+09:00",
  "version": "0.289.0"
 }
 </script>
