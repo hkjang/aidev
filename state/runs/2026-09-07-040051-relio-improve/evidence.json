@@ -1,0 +1,130 @@
+{
+  "run_id": "2026-09-07-040051-relio-improve",
+  "generated": "2026-09-07T04:09:14+09:00",
+  "run": {
+    "run_id": "2026-09-07-040051-relio-improve",
+    "project": "relio",
+    "kind": "improve",
+    "started": "2026-09-07T04:00:51+09:00",
+    "model": "claude-opus-5",
+    "policy_version": "7c35e50",
+    "prompts_hash": "a3b041a352fd55fa",
+    "runner_version": "4bc6b6c",
+    "finished": "2026-09-07T04:09:14+09:00",
+    "outcome": "verify-failed"
+  },
+  "record": {
+    "ts": "2026-09-07T04:09:14+09:00",
+    "date": "2026-09-07",
+    "project": "relio",
+    "result": "verify failed: secrets in diff",
+    "outcome": "verify-failed",
+    "run_id": "2026-09-07-040051-relio-improve",
+    "base_sha": "342312268af55c0db9f6309643ccb8544e3882e2",
+    "head_sha": "253c768eaedac5cc4d0b94fe2f00e3721540ad06",
+    "pr": "",
+    "stages": {
+      "base": {
+        "state": "pinned",
+        "reason": "main@3423122",
+        "at": "2026-09-07T04:00:55+09:00"
+      },
+      "autonomy": {
+        "state": "low-risk",
+        "reason": "롤백 PR ",
+        "at": "2026-09-07T04:00:55+09:00"
+      },
+      "verify": {
+        "state": "failed",
+        "reason": "변경에 비밀정보 의심 문자열",
+        "at": "2026-09-07T04:09:14+09:00"
+      }
+    },
+    "campaign": "",
+    "autonomy": "low-risk",
+    "files": 3,
+    "additions": 193,
+    "deletions": 17,
+    "tests": 1,
+    "title": "fix(auth): spend the same password derivation on every login outcome"
+  },
+  "stages": {
+    "base": {
+      "state": "pinned",
+      "reason": "main@3423122",
+      "at": "2026-09-07T04:00:55+09:00"
+    },
+    "autonomy": {
+      "state": "low-risk",
+      "reason": "롤백 PR ",
+      "at": "2026-09-07T04:00:55+09:00"
+    },
+    "verify": {
+      "state": "failed",
+      "reason": "변경에 비밀정보 의심 문자열",
+      "at": "2026-09-07T04:09:14+09:00"
+    }
+  },
+  "provenance": {
+    "model": "claude-opus-5",
+    "policy_version": "7c35e50",
+    "prompts_hash": "a3b041a352fd55fa",
+    "runner_version": "4bc6b6c",
+    "base_sha": "342312268af55c0db9f6309643ccb8544e3882e2",
+    "head_sha": "253c768eaedac5cc4d0b94fe2f00e3721540ad06",
+    "pr": ""
+  },
+  "verification": {
+    "runner": {
+      "source": "auto",
+      "commands": [
+        {
+          "cmd": "go build ./...",
+          "exit": 0,
+          "seconds": 1
+        },
+        {
+          "cmd": "go vet ./...",
+          "exit": 0,
+          "seconds": 0
+        },
+        {
+          "cmd": "go test ./...",
+          "exit": 0,
+          "seconds": 2
+        }
+      ]
+    },
+    "runner_gate": {
+      "ok": true,
+      "state": "verified",
+      "reason": "검증 3개 통과 (auto)"
+    },
+    "after_rebase": null,
+    "review": null,
+    "ci_gate": null
+  },
+  "release": {
+    "result": null,
+    "assets_sha256": []
+  },
+  "approval": null,
+  "usage": [
+    {
+      "ts": "2026-09-07T04:09:10+09:00",
+      "date": "2026-09-07",
+      "project": "relio",
+      "phase": "improve",
+      "run_id": "2026-09-07-040051-relio-improve",
+      "campaign": "",
+      "subtype": "success",
+      "duration_ms": 541932,
+      "num_turns": 47,
+      "cost_usd": 3.403914499999999,
+      "input_tokens": 70,
+      "output_tokens": 35886,
+      "cache_read": 2812903,
+      "cache_create": 108851
+    }
+  ]
+}
