@@ -1,0 +1,238 @@
+{
+  "run_id": "2026-09-06-201046-visitflow-improve",
+  "generated": "2026-09-06T20:23:24+09:00",
+  "run": {
+    "run_id": "2026-09-06-201046-visitflow-improve",
+    "project": "visitflow",
+    "kind": "improve",
+    "started": "2026-09-06T20:10:45+09:00",
+    "model": "claude-opus-5",
+    "policy_version": "7c35e50",
+    "prompts_hash": "a3b041a352fd55fa",
+    "runner_version": "4bc6b6c",
+    "finished": "2026-09-06T20:23:24+09:00",
+    "outcome": "merged"
+  },
+  "record": {
+    "ts": "2026-09-06T20:23:24+09:00",
+    "date": "2026-09-06",
+    "project": "visitflow",
+    "result": "merged https://github.com/hkjang/visitflow/pull/9, release blocked (secrets)",
+    "outcome": "merged",
+    "run_id": "2026-09-06-201046-visitflow-improve",
+    "base_sha": "2adfd641d29367fbfcfd940051d24e24c5bc5835",
+    "head_sha": "6efcbf02e876e2554dc233a882f297e6dc98ef99",
+    "pr": "https://github.com/hkjang/visitflow/pull/9",
+    "stages": {
+      "base": {
+        "state": "pinned",
+        "reason": "main@2adfd64",
+        "at": "2026-09-06T20:10:48+09:00"
+      },
+      "autonomy": {
+        "state": "release",
+        "reason": "",
+        "at": "2026-09-06T20:10:48+09:00"
+      },
+      "verify": {
+        "state": "passed",
+        "reason": "검증 3개 통과 (auto)",
+        "at": "2026-09-06T20:14:59+09:00"
+      },
+      "pr": {
+        "state": "created",
+        "reason": "https://github.com/hkjang/visitflow/pull/9",
+        "at": "2026-09-06T20:15:05+09:00"
+      },
+      "review": {
+        "state": "approved",
+        "reason": "리뷰 승인 (risk=low)",
+        "at": "2026-09-06T20:18:57+09:00"
+      },
+      "ci": {
+        "state": "passed",
+        "reason": "검사 2개 모두 success",
+        "at": "2026-09-06T20:19:27+09:00"
+      },
+      "merge": {
+        "state": "done",
+        "reason": "6efcbf02e876e2554dc233a882f297e6dc98ef99",
+        "at": "2026-09-06T20:19:29+09:00"
+      },
+      "release": {
+        "state": "blocked",
+        "reason": "릴리즈 커밋에 비밀정보 의심",
+        "at": "2026-09-06T20:23:23+09:00"
+      }
+    },
+    "campaign": "",
+    "autonomy": "release",
+    "files": 4,
+    "additions": 135,
+    "deletions": 3,
+    "tests": 2,
+    "title": "fix(mcp): count visit statistics over the days the statistics screen shows"
+  },
+  "stages": {
+    "base": {
+      "state": "pinned",
+      "reason": "main@2adfd64",
+      "at": "2026-09-06T20:10:48+09:00"
+    },
+    "autonomy": {
+      "state": "release",
+      "reason": "",
+      "at": "2026-09-06T20:10:48+09:00"
+    },
+    "verify": {
+      "state": "passed",
+      "reason": "검증 3개 통과 (auto)",
+      "at": "2026-09-06T20:14:59+09:00"
+    },
+    "pr": {
+      "state": "created",
+      "reason": "https://github.com/hkjang/visitflow/pull/9",
+      "at": "2026-09-06T20:15:05+09:00"
+    },
+    "review": {
+      "state": "approved",
+      "reason": "리뷰 승인 (risk=low)",
+      "at": "2026-09-06T20:18:57+09:00"
+    },
+    "ci": {
+      "state": "passed",
+      "reason": "검사 2개 모두 success",
+      "at": "2026-09-06T20:19:27+09:00"
+    },
+    "merge": {
+      "state": "done",
+      "reason": "6efcbf02e876e2554dc233a882f297e6dc98ef99",
+      "at": "2026-09-06T20:19:29+09:00"
+    },
+    "release": {
+      "state": "blocked",
+      "reason": "릴리즈 커밋에 비밀정보 의심",
+      "at": "2026-09-06T20:23:23+09:00"
+    }
+  },
+  "provenance": {
+    "model": "claude-opus-5",
+    "policy_version": "7c35e50",
+    "prompts_hash": "a3b041a352fd55fa",
+    "runner_version": "4bc6b6c",
+    "base_sha": "2adfd641d29367fbfcfd940051d24e24c5bc5835",
+    "head_sha": "6efcbf02e876e2554dc233a882f297e6dc98ef99",
+    "pr": "https://github.com/hkjang/visitflow/pull/9"
+  },
+  "verification": {
+    "runner": {
+      "source": "auto",
+      "commands": [
+        {
+          "cmd": "go build ./...",
+          "exit": 0,
+          "seconds": 0
+        },
+        {
+          "cmd": "go vet ./...",
+          "exit": 0,
+          "seconds": 1
+        },
+        {
+          "cmd": "go test ./...",
+          "exit": 0,
+          "seconds": 0
+        }
+      ]
+    },
+    "runner_gate": {
+      "ok": true,
+      "state": "verified",
+      "reason": "검증 3개 통과 (auto)"
+    },
+    "after_rebase": null,
+    "review": {
+      "verdict": "approve",
+      "reasons": [],
+      "notes": [
+        "internal/app/mcp.go:82-85 의 변경은 실제 결함을 고친다. 임시로 이전 쿼리(v.start_at>=CURRENT_DATE-$1)로 되돌려 TestMCPVisitStatisticsMatchTheStatisticsScreen 을 돌려보니 'mcp reported 3 participants ... screen counts 1' 로 실패했고, 변경 후에는 통과한다. 새 테스트가 수정 전 코드에서도 통과하는 유형이 아님을 확인했다.",
+        "전체 테스트를 실제 PostgreSQL(도커 postgres:16, VISITFLOW_TEST_DSN)로 실행해 go vet ./... 및 go test ./... 모두 통과했다.",
+        "internal/app/mcp_test.go:29-45 TestMCPToolsAreUniquelyNamed 는 이번 변경과 직접 관련이 없고 수정 전 코드에서도 통과한다(회귀 방지용 보조 테스트). 게다가 주석은 '광고하는 모든 도구를 executeMCPTool 이 처리해야 한다'고 말하지만 실제 단언은 이름 중복과 inputSchema 존재만 검사한다 — 주석과 단언의 경미한 불일치. 거절 사유로 볼 만한 결함은 아니나 주석을 단언에 맞추면 좋다.",
+        "동작 변경: get_visit_statistics 가 이제 미래 예약을 세지 않고 상한이 닫힌다. MCP 도구 응답 값이 달라지는 계약 변경이지만 이것이 수정 목적이고 docs/API_AND_MCP.md 와 tools/list description 도 함께 갱신되었다. 마이그레이션·외부 상태 변경이 없어 revert 는 쿼리 한 줄 되돌리기로 끝난다.",
+        "statisticsSpanCTE 의 'today' 는 모든 사업장 중 가장 앞선 사업장 로컬 날짜의 max 이므로, 시간대가 섞인 다중 사업장에서는 '사업장 시간대 기준 오늘'이라는 문서 표현이 엄밀하지는 않다. 다만 통계 화면과 동일한 정의를 그대로 재사용한 것이라 화면과의 일치라는 목적에는 부합한다(기존 동작, 이번 PR 이 만든 문제 아님).",
+        "권한 경로는 그대로다: get_visit_statistics 는 여전히 u.IsAdmin() 로 게이트되고 /mcp 는 mcp 스코프 API 키만 통과한다. 관리자 통계와 마찬가지로 사업장 스코프 필터가 없다는 점은 변경 전후 동일하다."
+      ],
+      "risk": "low"
+    },
+    "ci_gate": {
+      "ok": true,
+      "state": "success",
+      "reason": "검사 2개 모두 success",
+      "checks": 2
+    }
+  },
+  "release": {
+    "result": {
+      "status": "released",
+      "version": "2.6.6",
+      "tag": "v2.6.6",
+      "title": "VisitFlow v2.6.6",
+      "notes_file": "",
+      "github_release": false,
+      "assets": [],
+      "reason": ""
+    },
+    "assets_sha256": []
+  },
+  "approval": null,
+  "usage": [
+    {
+      "ts": "2026-09-06T20:14:56+09:00",
+      "date": "2026-09-06",
+      "project": "visitflow",
+      "phase": "improve",
+      "run_id": "2026-09-06-201046-visitflow-improve",
+      "campaign": "",
+      "subtype": "success",
+      "duration_ms": 269328,
+      "num_turns": 45,
+      "cost_usd": 2.2568574999999997,
+      "input_tokens": 76,
+      "output_tokens": 17049,
+      "cache_read": 2276769,
+      "cache_create": 68156
+    },
+    {
+      "ts": "2026-09-06T20:18:57+09:00",
+      "date": "2026-09-06",
+      "project": "visitflow",
+      "phase": "review",
+      "run_id": "2026-09-06-201046-visitflow-improve",
+      "campaign": "",
+      "subtype": "success",
+      "duration_ms": 251033,
+      "num_turns": 23,
+      "cost_usd": 1.2193840000000002,
+      "input_tokens": 46,
+      "output_tokens": 8968,
+      "cache_read": 1027006,
+      "cache_create": 47961
+    },
+    {
+      "ts": "2026-09-06T20:23:22+09:00",
+      "date": "2026-09-06",
+      "project": "visitflow",
+      "phase": "release",
+      "run_id": "2026-09-06-201046-visitflow-improve",
+      "campaign": "",
+      "subtype": "success",
+      "duration_ms": 245441,
+      "num_turns": 22,
+      "cost_usd": 0.7519625000000001,
+      "input_tokens": 32,
+      "output_tokens": 7244,
+      "cache_read": 521445,
+      "cache_create": 30481
+    }
+  ]
+}

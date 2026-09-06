@@ -1,0 +1,5 @@
+## 2026-09-06
+- 선택: MCP `get_visit_statistics`가 통계 화면과 다른 기간을 세는 문제 수정 (가치 4 / 위험 2 / 작업량 S)
+- 결과: 성공
+- 요약: 지난 세 세션에 걸쳐 통계 화면의 추이·요약·부문별 집계를 모두 사업장 시간대 구간(`statisticsSpanCTE`/`statisticsSpanWhere`)으로 통일했는데 MCP 도구만 옛 `v.start_at>=CURRENT_DATE-$1::int`로 남아 있었고, 이 조건은 두 가지로 어긋났다 — DB 세션 자정이 배포 컨테이너에서는 UTC라 기본값 Asia/Seoul 사업장에서 화면의 첫 날보다 9시간 앞서 세기 시작했고, 상한이 없어 오늘 이후로 예약된 방문까지 "지난 30일"에 포함시켰다(테스트에서 화면 1건 대 MCP 3건). 쿼리를 `mcpVisitStatisticsQuery` 상수로 빼내 화면 요약 타일과 같은 CTE·필터를 쓰도록 바꾸고 `sites` 조인과 도구 설명을 함께 갱신했다. 검증은 `go vet ./...`, docker postgres:16-alpine을 띄운 `VISITFLOW_TEST_DSN` 전체 테스트 통과, `npm ci && npm run build`이며, 구간 안·구간 직전·30일 뒤 방문을 하나씩 만들고 API 키로 실제 `/mcp` 엔드포인트를 호출해 화면 요약과 같은 값이 나오는지 보는 통합 테스트 1개와 단위 테스트 2개를 추가한 뒤 옛 쿼리로 되돌려 실제로 실패(MCP 3 vs 화면 1)하는 것까지 확인했다. API_AND_MCP 문서에 한 문장을 덧붙였다.
+- 보류 아이디어: `bestAcceptLanguage`의 `q=0`(수용 불가)·`q>1`·잘못된 `q` 값 처리 정정 / 방문 이력 CSV의 50,000행·감사 로그 10,000행 상한 초과 시 잘렸음을 사용자에게 알리는 표시 / CSV·XLSX 가져오기 파서(`visitorInputsFromRows`) 엣지케이스 단위 테스트 보강 / 설정 내보내기 JSON을 되돌려 넣는 가져오기 경로와 스키마 검증 / MCP `get_lobby_status`가 `search_visits`와 달리 담당자·부서 범위를 무시하고 전 사업장을 집계하는지 점검

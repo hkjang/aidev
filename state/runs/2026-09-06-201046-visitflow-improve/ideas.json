@@ -1,0 +1,65 @@
+[
+  {
+    "title": "MCP get_visit_statistics가 통계 화면과 다른 기간을 세는 문제 수정",
+    "value": 4,
+    "risk": 2,
+    "size": "S",
+    "status": "done",
+    "note": "옛 v.start_at>=CURRENT_DATE-days는 세션 자정(UTC) 기준이라 화면보다 9시간 일찍 시작했고 상한이 없어 미래 예약까지 셌다. statisticsSpanCTE/statisticsSpanWhere를 재사용하도록 통일하고 /mcp 엔드포인트를 실제로 호출하는 통합 테스트를 추가했다.",
+    "updated": "2026-09-06"
+  },
+  {
+    "title": "관리자 대시보드 Watch List 타일이 starts_at을 무시해 아직 시작하지 않은 항목까지 활성으로 세는 문제",
+    "value": 1,
+    "risk": 1,
+    "size": "S",
+    "status": "rejected",
+    "note": "재평가 결과 현재 코드에서는 도달 불가능하다. createWatchlist는 starts_at을 넣지 않고 컬럼 기본값이 now()이므로 미래 시작 항목이 API로는 만들어지지 않는다. DB를 직접 건드린 경우에만 어긋나므로 실익이 없다.",
+    "updated": "2026-09-06"
+  },
+  {
+    "title": "bestAcceptLanguage의 q=0(수용 불가)·q>1·잘못된 q 값 처리 정정",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "RFC 7231상 q=0은 '이 언어는 받지 않겠다'는 뜻인데 현재는 그냥 가장 낮은 우선순위로 취급한다. q>1이나 파싱 불가 값의 처리도 함께 정리하고 단위 테스트를 붙인다.",
+    "updated": "2026-09-06"
+  },
+  {
+    "title": "방문 이력 CSV 50,000행·감사 로그 10,000행 상한 초과 시 잘렸음을 사용자에게 알리는 표시",
+    "value": 3,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "지금은 상한에 걸려도 조용히 잘려 나가 감사 근거로 쓸 때 전량인 줄 착각한다. 응답 헤더나 마지막 행 주석, 화면 안내 중 하나로 알린다.",
+    "updated": "2026-09-06"
+  },
+  {
+    "title": "CSV·XLSX 가져오기 파서(visitorInputsFromRows) 엣지케이스 단위 테스트 보강",
+    "value": 3,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "헤더 별칭, 빈 행, 전화번호 정규화, 동의 열 해석 등 실패 시 조용히 잘못된 방문자를 만드는 경로에 테스트가 얇다.",
+    "updated": "2026-09-06"
+  },
+  {
+    "title": "설정 내보내기 JSON을 되돌려 넣는 가져오기 경로와 스키마 검증",
+    "value": 3,
+    "risk": 3,
+    "size": "M",
+    "status": "pending",
+    "note": "내보내기만 있고 복구 경로가 없다. 알 수 없는 키 거부, 비밀값 제외, 미리보기 후 적용 순서가 필요하다.",
+    "updated": "2026-09-06"
+  },
+  {
+    "title": "MCP get_lobby_status가 담당자·부서 범위를 무시하고 전 사업장을 집계하는지 점검",
+    "value": 3,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "search_visits는 queryVisits로 사용자/부서/사업장 범위를 적용하는데 get_lobby_status는 role='lobby'일 때만 site_scope를 본다. dept_manager나 auditor가 호출하면 범위 밖 사업장까지 집계될 수 있어 문서의 '동일한 Scope 적용' 약속과 어긋나는지 확인한다.",
+    "updated": "2026-09-06"
+  }
+]
