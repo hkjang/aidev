@@ -830,3 +830,36 @@ HEAD is now at 74b9a2b Merge pull request #8 from hkjang/auto/2026-09-04-2220
 evidence: /mnt/c/Users/USER/projects/aidev/state/runs/2026-09-07-071051-Invenqor-improve/evidence.json
 reports: 6 day(s), 2 week(s), 1 month(s), 328 run(s), 144 usage row(s), 29 project page(s), 10 alert(s)
 notify: no new alerts
+                                  [07:15:57] aidev synced: run(2026-09-07): Invenqor — verify failed: 실패한 검증: cargo test --quiet (exit 127)
+[07:15:57] done
+[07:20:17] skip DartFly: dirty working tree
+[07:20:19] skip Kkiit: dirty working tree
+[07:20:19] skip Momento: dirty working tree
+[07:20:20] skip Quantoss: dirty working tree
+[07:20:21] skip SecCheck: dirty working tree
+[07:20:28] skip cutover: dirty working tree
+[07:20:35] skip jupiq: dirty working tree
+[07:20:40] skip moyro: dirty working tree
+[07:20:44] skip postra: dirty working tree
+[07:20:48] skip seaton: dirty working tree
+[07:20:50] candidates(26): AgentHub Clustara Invenqor ReSSO Vendra ai-admin aiportal-front-admin aiportal-front aiportal-java aiportal-py appstore dataworks git-ctx igame jikim kanpic moina muni pii-masker ptium releasedock relio umm vibe-coders visitflow weekly
+[07:20:50] picked: ReSSO
+[07:20:52] === ReSSO (base=main, run 2026-09-07-072050-ReSSO-improve, 회차 예산 $22)
+Preparing worktree (new branch 'auto/2026-09-07-0720')
+Updating files:  63% (117/185)Updating files:  64% (119/185)Updating files:  65% (121/185)Updating files:  66% (123/185)Updating files:  67% (124/185)Updating files:  68% (126/185)Updating files:  69% (128/185)Updating files:  70% (130/185)Updating files:  71% (132/185)Updating files:  72% (134/185)Updating files:  73% (136/185)Updating files:  74% (137/185)Updating files:  75% (139/185)Updating files:  76% (141/185)Updating files:  77% (143/185)Updating files:  78% (145/185)Updating files:  79% (147/185)Updating files:  80% (148/185)Updating files:  81% (150/185)Updating files:  82% (152/185)Updating files:  83% (154/185)Updating files:  84% (156/185)Updating files:  85% (158/185)Updating files:  86% (160/185)Updating files:  87% (161/185)Updating files:  88% (163/185)Updating files:  89% (165/185)Updating files:  90% (167/185)Updating files:  91% (169/185)Updating files:  92% (171/185)Updating files:  93% (173/185)Updating files:  94% (174/185)Updating files:  95% (176/185)Updating files:  96% (178/185)Updating files:  97% (180/185)Updating files:  98% (182/185)Updating files:  99% (184/185)Updating files: 100% (185/185)Updating files: 100% (185/185), done.
+HEAD is now at 060f26d release: ReSSO v0.9.70
+[07:20:57] ReSSO: [base] pinned — main@060f26d
+[07:20:57] ReSSO: [autonomy] release — 
+[07:30:26] ReSSO: improve — 53 turns, 10m, $3.25, success
+[07:30:30] ReSSO: verify `go build ./...` → exit 0 (1s)
+[07:30:31] ReSSO: verify `go vet ./...` → exit 0 (1s)
+[07:30:32] ReSSO: verify `go test ./...` → exit 0 (1s)
+[07:30:33] ReSSO: [verify] passed — 검증 3개 통과 (auto)
+branch 'auto/2026-09-07-0720' set up to track 'origin/auto/2026-09-07-0720'.
+[07:30:41] ReSSO: [pr] created — https://github.com/hkjang/ReSSO/pull/10
+[07:36:26] ReSSO: review — 30 turns, 6m, $1.53, success
+[07:36:27] ReSSO: [review] rejected — 리뷰 거절: internal/httpserver/oidc.go:545 새 분류가 store.ErrNotFound 만 '호출자 사실'로 보기 때문에, 호출자가 보낸 잘못된 입력에서 나온 DB 오류까지 '조회 실패(=우리 잘못)'로 취급된다. client_id 에 NUL 바이트를 넣으면 ClientByIdentifier 의 텍스트 파라미터가 PostgreSQL 에서 'invalid byte sequence for encoding UTF8 (SQLSTATE 22021)' 로 실패하고 ErrNotFound 가 아니므로, 인증되지 않은 호출자가 /token, /token/introspect, /revoke 에 대해 횟수 제한 없이 500 server_error 를 받아낸다. 실측 확인: 동일한 임시 통합 테스트로 HEAD 는 25회 연속 500(제한 없음), main 은 1회차 401 → 25회차 429 였다. 장애가 전혀 없는데도 요청마다 ERROR 로그 'client authentication could not be decided' 가 남는다 / internal/httpserver/oidc.go:509-512 위 결함으로 함수 주석의 계약이 코드와 어긋난 채 남았다. 주석은 실패 카운팅 목적이 '비밀값 추측을 제한하고, 인증되지 않은 호출자가 자격증명 검증 경로를 계속 붙잡고 있지 못하게' 하는 것이라고 말하지만, 이제 잘못된 형식의 client_id 로 보낸 요청은 client 버킷·address 버킷 어디에도 세지 않아 200/5분 주소 제한을 그대로 우회한다(정상 형식의 없는 client_id 는 여전히 ErrNotFound 로 세므로, 우회는 잘못된 입력에서만 생기는 새 경로다) / docs/operations.md:65 이번 PR 이 추가한 운영 지침이 위 결함 때문에 성립하지 않는다. 문서는 500 + 로그 'client authentication could not be decided' 를 '조회 자체를 못 한 상태(저장소 장애)' 의 신호로 읽으라고 말하지만, 인증되지 않은 외부 호출자가 바이트 하나로 이 신호를 원하는 만큼 만들어 낼 수 있어 오탐 호출(false page)이 가능하다
+https://github.com/hkjang/ReSSO/pull/10#issuecomment-5562667108
+evidence: /mnt/c/Users/USER/projects/aidev/state/runs/2026-09-07-072050-ReSSO-improve/evidence.json
+reports: 6 day(s), 2 week(s), 1 month(s), 329 run(s), 146 usage row(s), 29 project page(s), 10 alert(s)
+notify: no new alerts

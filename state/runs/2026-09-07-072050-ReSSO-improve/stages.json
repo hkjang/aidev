@@ -1,0 +1,27 @@
+{
+  "base": {
+    "state": "pinned",
+    "reason": "main@060f26d",
+    "at": "2026-09-07T07:20:57+09:00"
+  },
+  "autonomy": {
+    "state": "release",
+    "reason": "",
+    "at": "2026-09-07T07:20:57+09:00"
+  },
+  "verify": {
+    "state": "passed",
+    "reason": "검증 3개 통과 (auto)",
+    "at": "2026-09-07T07:30:33+09:00"
+  },
+  "pr": {
+    "state": "created",
+    "reason": "https://github.com/hkjang/ReSSO/pull/10",
+    "at": "2026-09-07T07:30:41+09:00"
+  },
+  "review": {
+    "state": "rejected",
+    "reason": "리뷰 거절: internal/httpserver/oidc.go:545 새 분류가 store.ErrNotFound 만 '호출자 사실'로 보기 때문에, 호출자가 보낸 잘못된 입력에서 나온 DB 오류까지 '조회 실패(=우리 잘못)'로 취급된다. client_id 에 NUL 바이트를 넣으면 ClientByIdentifier 의 텍스트 파라미터가 PostgreSQL 에서 'invalid byte sequence for encoding UTF8 (SQLSTATE 22021)' 로 실패하고 ErrNotFound 가 아니므로, 인증되지 않은 호출자가 /token, /token/introspect, /revoke 에 대해 횟수 제한 없이 500 server_error 를 받아낸다. 실측 확인: 동일한 임시 통합 테스트로 HEAD 는 25회 연속 500(제한 없음), main 은 1회차 401 → 25회차 429 였다. 장애가 전혀 없는데도 요청마다 ERROR 로그 'client authentication could not be decided' 가 남는다 / internal/httpserver/oidc.go:509-512 위 결함으로 함수 주석의 계약이 코드와 어긋난 채 남았다. 주석은 실패 카운팅 목적이 '비밀값 추측을 제한하고, 인증되지 않은 호출자가 자격증명 검증 경로를 계속 붙잡고 있지 못하게' 하는 것이라고 말하지만, 이제 잘못된 형식의 client_id 로 보낸 요청은 client 버킷·address 버킷 어디에도 세지 않아 200/5분 주소 제한을 그대로 우회한다(정상 형식의 없는 client_id 는 여전히 ErrNotFound 로 세므로, 우회는 잘못된 입력에서만 생기는 새 경로다) / docs/operations.md:65 이번 PR 이 추가한 운영 지침이 위 결함 때문에 성립하지 않는다. 문서는 500 + 로그 'client authentication could not be decided' 를 '조회 자체를 못 한 상태(저장소 장애)' 의 신호로 읽으라고 말하지만, 인증되지 않은 외부 호출자가 바이트 하나로 이 신호를 원하는 만큼 만들어 낼 수 있어 오탐 호출(false page)이 가능하다",
+    "at": "2026-09-07T07:36:27+09:00"
+  }
+}

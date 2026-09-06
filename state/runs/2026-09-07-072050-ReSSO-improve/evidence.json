@@ -1,0 +1,181 @@
+{
+  "run_id": "2026-09-07-072050-ReSSO-improve",
+  "generated": "2026-09-07T07:36:29+09:00",
+  "run": {
+    "run_id": "2026-09-07-072050-ReSSO-improve",
+    "project": "ReSSO",
+    "kind": "improve",
+    "started": "2026-09-07T07:20:51+09:00",
+    "model": "claude-opus-5",
+    "policy_version": "7c35e50",
+    "prompts_hash": "a3b041a352fd55fa",
+    "runner_version": "4bc6b6c",
+    "finished": "2026-09-07T07:36:29+09:00",
+    "outcome": "review-pending"
+  },
+  "record": {
+    "ts": "2026-09-07T07:36:29+09:00",
+    "date": "2026-09-07",
+    "project": "ReSSO",
+    "result": "review held, PR open https://github.com/hkjang/ReSSO/pull/10",
+    "outcome": "review-pending",
+    "run_id": "2026-09-07-072050-ReSSO-improve",
+    "base_sha": "060f26d92625237faa10797f128bfed60ecf0082",
+    "head_sha": "acac75431416f2694c288e69adc684590f2d784b",
+    "pr": "https://github.com/hkjang/ReSSO/pull/10",
+    "stages": {
+      "base": {
+        "state": "pinned",
+        "reason": "main@060f26d",
+        "at": "2026-09-07T07:20:57+09:00"
+      },
+      "autonomy": {
+        "state": "release",
+        "reason": "",
+        "at": "2026-09-07T07:20:57+09:00"
+      },
+      "verify": {
+        "state": "passed",
+        "reason": "검증 3개 통과 (auto)",
+        "at": "2026-09-07T07:30:33+09:00"
+      },
+      "pr": {
+        "state": "created",
+        "reason": "https://github.com/hkjang/ReSSO/pull/10",
+        "at": "2026-09-07T07:30:41+09:00"
+      },
+      "review": {
+        "state": "rejected",
+        "reason": "리뷰 거절: internal/httpserver/oidc.go:545 새 분류가 store.ErrNotFound 만 '호출자 사실'로 보기 때문에, 호출자가 보낸 잘못된 입력에서 나온 DB 오류까지 '조회 실패(=우리 잘못)'로 취급된다. client_id 에 NUL 바이트를 넣으면 ClientByIdentifier 의 텍스트 파라미터가 PostgreSQL 에서 'invalid byte sequence for encoding UTF8 (SQLSTATE 22021)' 로 실패하고 ErrNotFound 가 아니므로, 인증되지 않은 호출자가 /token, /token/introspect, /revoke 에 대해 횟수 제한 없이 500 server_error 를 받아낸다. 실측 확인: 동일한 임시 통합 테스트로 HEAD 는 25회 연속 500(제한 없음), main 은 1회차 401 → 25회차 429 였다. 장애가 전혀 없는데도 요청마다 ERROR 로그 'client authentication could not be decided' 가 남는다 / internal/httpserver/oidc.go:509-512 위 결함으로 함수 주석의 계약이 코드와 어긋난 채 남았다. 주석은 실패 카운팅 목적이 '비밀값 추측을 제한하고, 인증되지 않은 호출자가 자격증명 검증 경로를 계속 붙잡고 있지 못하게' 하는 것이라고 말하지만, 이제 잘못된 형식의 client_id 로 보낸 요청은 client 버킷·address 버킷 어디에도 세지 않아 200/5분 주소 제한을 그대로 우회한다(정상 형식의 없는 client_id 는 여전히 ErrNotFound 로 세므로, 우회는 잘못된 입력에서만 생기는 새 경로다) / docs/operations.md:65 이번 PR 이 추가한 운영 지침이 위 결함 때문에 성립하지 않는다. 문서는 500 + 로그 'client authentication could not be decided' 를 '조회 자체를 못 한 상태(저장소 장애)' 의 신호로 읽으라고 말하지만, 인증되지 않은 외부 호출자가 바이트 하나로 이 신호를 원하는 만큼 만들어 낼 수 있어 오탐 호출(false page)이 가능하다",
+        "at": "2026-09-07T07:36:27+09:00"
+      }
+    },
+    "campaign": "",
+    "autonomy": "release",
+    "files": 4,
+    "additions": 178,
+    "deletions": 2,
+    "tests": 1,
+    "title": "fix: separate a credential this service could not check from one it rejected"
+  },
+  "stages": {
+    "base": {
+      "state": "pinned",
+      "reason": "main@060f26d",
+      "at": "2026-09-07T07:20:57+09:00"
+    },
+    "autonomy": {
+      "state": "release",
+      "reason": "",
+      "at": "2026-09-07T07:20:57+09:00"
+    },
+    "verify": {
+      "state": "passed",
+      "reason": "검증 3개 통과 (auto)",
+      "at": "2026-09-07T07:30:33+09:00"
+    },
+    "pr": {
+      "state": "created",
+      "reason": "https://github.com/hkjang/ReSSO/pull/10",
+      "at": "2026-09-07T07:30:41+09:00"
+    },
+    "review": {
+      "state": "rejected",
+      "reason": "리뷰 거절: internal/httpserver/oidc.go:545 새 분류가 store.ErrNotFound 만 '호출자 사실'로 보기 때문에, 호출자가 보낸 잘못된 입력에서 나온 DB 오류까지 '조회 실패(=우리 잘못)'로 취급된다. client_id 에 NUL 바이트를 넣으면 ClientByIdentifier 의 텍스트 파라미터가 PostgreSQL 에서 'invalid byte sequence for encoding UTF8 (SQLSTATE 22021)' 로 실패하고 ErrNotFound 가 아니므로, 인증되지 않은 호출자가 /token, /token/introspect, /revoke 에 대해 횟수 제한 없이 500 server_error 를 받아낸다. 실측 확인: 동일한 임시 통합 테스트로 HEAD 는 25회 연속 500(제한 없음), main 은 1회차 401 → 25회차 429 였다. 장애가 전혀 없는데도 요청마다 ERROR 로그 'client authentication could not be decided' 가 남는다 / internal/httpserver/oidc.go:509-512 위 결함으로 함수 주석의 계약이 코드와 어긋난 채 남았다. 주석은 실패 카운팅 목적이 '비밀값 추측을 제한하고, 인증되지 않은 호출자가 자격증명 검증 경로를 계속 붙잡고 있지 못하게' 하는 것이라고 말하지만, 이제 잘못된 형식의 client_id 로 보낸 요청은 client 버킷·address 버킷 어디에도 세지 않아 200/5분 주소 제한을 그대로 우회한다(정상 형식의 없는 client_id 는 여전히 ErrNotFound 로 세므로, 우회는 잘못된 입력에서만 생기는 새 경로다) / docs/operations.md:65 이번 PR 이 추가한 운영 지침이 위 결함 때문에 성립하지 않는다. 문서는 500 + 로그 'client authentication could not be decided' 를 '조회 자체를 못 한 상태(저장소 장애)' 의 신호로 읽으라고 말하지만, 인증되지 않은 외부 호출자가 바이트 하나로 이 신호를 원하는 만큼 만들어 낼 수 있어 오탐 호출(false page)이 가능하다",
+      "at": "2026-09-07T07:36:27+09:00"
+    }
+  },
+  "provenance": {
+    "model": "claude-opus-5",
+    "policy_version": "7c35e50",
+    "prompts_hash": "a3b041a352fd55fa",
+    "runner_version": "4bc6b6c",
+    "base_sha": "060f26d92625237faa10797f128bfed60ecf0082",
+    "head_sha": "acac75431416f2694c288e69adc684590f2d784b",
+    "pr": "https://github.com/hkjang/ReSSO/pull/10"
+  },
+  "verification": {
+    "runner": {
+      "source": "auto",
+      "commands": [
+        {
+          "cmd": "go build ./...",
+          "exit": 0,
+          "seconds": 1
+        },
+        {
+          "cmd": "go vet ./...",
+          "exit": 0,
+          "seconds": 1
+        },
+        {
+          "cmd": "go test ./...",
+          "exit": 0,
+          "seconds": 1
+        }
+      ]
+    },
+    "runner_gate": {
+      "ok": true,
+      "state": "verified",
+      "reason": "검증 3개 통과 (auto)"
+    },
+    "after_rebase": null,
+    "review": {
+      "verdict": "reject",
+      "reasons": [
+        "internal/httpserver/oidc.go:545 새 분류가 store.ErrNotFound 만 '호출자 사실'로 보기 때문에, 호출자가 보낸 잘못된 입력에서 나온 DB 오류까지 '조회 실패(=우리 잘못)'로 취급된다. client_id 에 NUL 바이트를 넣으면 ClientByIdentifier 의 텍스트 파라미터가 PostgreSQL 에서 'invalid byte sequence for encoding UTF8 (SQLSTATE 22021)' 로 실패하고 ErrNotFound 가 아니므로, 인증되지 않은 호출자가 /token, /token/introspect, /revoke 에 대해 횟수 제한 없이 500 server_error 를 받아낸다. 실측 확인: 동일한 임시 통합 테스트로 HEAD 는 25회 연속 500(제한 없음), main 은 1회차 401 → 25회차 429 였다. 장애가 전혀 없는데도 요청마다 ERROR 로그 'client authentication could not be decided' 가 남는다",
+        "internal/httpserver/oidc.go:509-512 위 결함으로 함수 주석의 계약이 코드와 어긋난 채 남았다. 주석은 실패 카운팅 목적이 '비밀값 추측을 제한하고, 인증되지 않은 호출자가 자격증명 검증 경로를 계속 붙잡고 있지 못하게' 하는 것이라고 말하지만, 이제 잘못된 형식의 client_id 로 보낸 요청은 client 버킷·address 버킷 어디에도 세지 않아 200/5분 주소 제한을 그대로 우회한다(정상 형식의 없는 client_id 는 여전히 ErrNotFound 로 세므로, 우회는 잘못된 입력에서만 생기는 새 경로다)",
+        "docs/operations.md:65 이번 PR 이 추가한 운영 지침이 위 결함 때문에 성립하지 않는다. 문서는 500 + 로그 'client authentication could not be decided' 를 '조회 자체를 못 한 상태(저장소 장애)' 의 신호로 읽으라고 말하지만, 인증되지 않은 외부 호출자가 바이트 하나로 이 신호를 원하는 만큼 만들어 낼 수 있어 오탐 호출(false page)이 가능하다"
+      ],
+      "notes": [
+        "방향 자체는 타당하고 나머지 구현은 정확하다. 세 엔드포인트(token/introspect/revoke) 호출부가 모두 writeClientAuthError 를 거치므로 500 경로가 빠짐없이 적용되고, ErrNotFound 는 401 로 유지되어 client 존재 여부 노출 차이는 생기지 않는다. clientColumns 에 secret_hash 가 없어(internal/store/clients.go:22) 테스트의 두 번째 시나리오가 VerifyClientSecret 조회만 정확히 분리한다",
+        "새 테스트는 실제로 변경을 검증한다. 실제 PostgreSQL(도커 16-alpine)로 실행해 HEAD 에서 통과, main 의 oidc.go 로 되돌리면 커밋 메시지가 말한 대로 정확히 7개 단언이 실패했다(6개 401 오답 + attempt 21 에서 429 잠금). 전체 스위트(go test ./... , DSN 지정)도 통과했다",
+        "제안하는 최소 수정: client_id 를 조회 전에 검증해(NUL 등 제어 문자 포함 시 invalid_request 또는 종전대로 실패 카운트되는 invalid_client) 호출자 입력 오류가 clientAuthUnavailableError 로 들어가지 않게 하거나, 반대로 unavailable 경로에도 address 버킷만은 계속 Fail 을 걸어 인증되지 않은 호출자의 무제한 반복을 막는 것",
+        "마이그레이션·외부 상태 변경은 없고 코드 변경은 oidc.go 한 파일에 국한되어 revert 는 간단하다. 범위 이탈(무관한 리팩터·포맷·의존성 변경)은 없다",
+        "검증용으로 로컬에 띄운 도커 컨테이너 resso-review-pg2(포트 55434)가 남아 있고 임시 파일 /tmp/nultest, /tmp/oidc_head.go 도 남아 있다. 작업 트리는 git status 기준 깨끗한 상태로 복구했다"
+      ],
+      "risk": "medium"
+    },
+    "ci_gate": null
+  },
+  "release": {
+    "result": null,
+    "assets_sha256": []
+  },
+  "approval": null,
+  "usage": [
+    {
+      "ts": "2026-09-07T07:30:26+09:00",
+      "date": "2026-09-07",
+      "project": "ReSSO",
+      "phase": "improve",
+      "run_id": "2026-09-07-072050-ReSSO-improve",
+      "campaign": "",
+      "subtype": "success",
+      "duration_ms": 622995,
+      "num_turns": 53,
+      "cost_usd": 3.2496050000000003,
+      "input_tokens": 90,
+      "output_tokens": 25702,
+      "cache_read": 3301970,
+      "cache_create": 94108
+    },
+    {
+      "ts": "2026-09-07T07:36:26+09:00",
+      "date": "2026-09-07",
+      "project": "ReSSO",
+      "phase": "review",
+      "run_id": "2026-09-07-072050-ReSSO-improve",
+      "campaign": "",
+      "subtype": "success",
+      "duration_ms": 378761,
+      "num_turns": 30,
+      "cost_usd": 1.526803,
+      "input_tokens": 60,
+      "output_tokens": 17430,
+      "cache_read": 1250532,
+      "cache_create": 46367
+    }
+  ]
+}
