@@ -340,3 +340,33 @@ HEAD is now at 2ed0530 release: carry release markers to v0.2.15
 evidence: /mnt/c/Users/USER/projects/aidev/state/runs/2026-09-07-024047-moyro-improve/evidence.json
 reports: 6 day(s), 2 week(s), 1 month(s), 316 run(s), 120 usage row(s), 29 project page(s), 12 alert(s)
 notify: no new alerts
+                                  [02:52:10] aidev synced: run(2026-09-07): moyro — verify failed: 실행한 검증 명령이 없음 — 정책(verify) 또는 자동 감지 필요
+[02:52:10] done
+[03:00:18] skip DartFly: dirty working tree
+[03:00:19] skip Kkiit: dirty working tree
+[03:00:20] skip Momento: dirty working tree
+[03:00:21] skip SecCheck: dirty working tree
+[03:00:28] skip cutover: dirty working tree
+[03:00:43] skip postra: dirty working tree
+[03:00:46] skip seaton: dirty working tree
+[03:00:49] candidates(29): AgentHub Clustara Invenqor Quantoss ReSSO Vendra ai-admin aiportal-front-admin aiportal-front aiportal-java aiportal-py appstore dataworks git-ctx igame jikim jupiq kanpic moina moyro muni pii-masker ptium releasedock relio umm vibe-coders visitflow weekly
+[03:00:49] picked: muni
+[03:00:50] === muni (base=main, run 2026-09-07-030049-muni-improve, 회차 예산 $22)
+Preparing worktree (new branch 'auto/2026-09-07-0300')
+Updating files:  39% (170/431)Updating files:  40% (173/431)Updating files:  41% (177/431)Updating files:  42% (182/431)Updating files:  43% (186/431)Updating files:  44% (190/431)Updating files:  45% (194/431)Updating files:  46% (199/431)Updating files:  47% (203/431)Updating files:  48% (207/431)Updating files:  49% (212/431)Updating files:  50% (216/431)Updating files:  51% (220/431)Updating files:  52% (225/431)Updating files:  53% (229/431)Updating files:  54% (233/431)Updating files:  55% (238/431)Updating files:  56% (242/431)Updating files:  57% (246/431)Updating files:  58% (250/431)Updating files:  59% (255/431)Updating files:  60% (259/431)Updating files:  61% (263/431)Updating files:  62% (268/431)Updating files:  63% (272/431)Updating files:  64% (276/431)Updating files:  65% (281/431)Updating files:  66% (285/431)Updating files:  67% (289/431)Updating files:  68% (294/431)Updating files:  69% (298/431)Updating files:  70% (302/431)Updating files:  71% (307/431)Updating files:  72% (311/431)Updating files:  73% (315/431)Updating files:  74% (319/431)Updating files:  75% (324/431)Updating files:  76% (328/431)Updating files:  76% (329/431)Updating files:  77% (332/431)Updating files:  78% (337/431)Updating files:  79% (341/431)Updating files:  80% (345/431)Updating files:  81% (350/431)Updating files:  82% (354/431)Updating files:  83% (358/431)Updating files:  84% (363/431)Updating files:  85% (367/431)Updating files:  86% (371/431)Updating files:  87% (375/431)Updating files:  88% (380/431)Updating files:  89% (384/431)Updating files:  90% (388/431)Updating files:  91% (393/431)Updating files:  92% (397/431)Updating files:  93% (401/431)Updating files:  94% (406/431)Updating files:  95% (410/431)Updating files:  96% (414/431)Updating files:  97% (419/431)Updating files:  98% (423/431)Updating files:  99% (427/431)Updating files: 100% (431/431)Updating files: 100% (431/431), done.
+HEAD is now at 94fecbd docs: record the v0.30.0 release asset digest
+[03:00:55] muni: [base] pinned — main@94fecbd
+[03:00:55] muni: [autonomy] release — 
+[03:08:32] muni: improve — 86 turns, 8m, $3.93, success
+[03:08:33] muni: verify `go build ./...` → exit 0 (0s)
+[03:08:33] muni: verify `go vet ./...` → exit 0 (0s)
+[03:08:35] muni: verify `go test ./...` → exit 0 (2s)
+[03:08:35] muni: [verify] passed — 검증 3개 통과 (auto)
+branch 'auto/2026-09-07-0300' set up to track 'origin/auto/2026-09-07-0300'.
+[03:08:43] muni: [pr] created — https://github.com/hkjang/muni/pull/9
+[03:13:32] muni: review — 32 turns, 5m, $1.64, success
+[03:13:32] muni: [review] rejected — 리뷰 거절: frontend/src/features/editor/ImageMenu.tsx:56 — heightFor()가 null 을 돌려줄 때(저장된 width 가 없을 때) 남아 있는 stale height 를 지우지 않고 width 만 갱신합니다. 그 결과 노드는 {width: 새 값, height: 옛 값} 이 되고 imageAttributes.ts:81 의 renderHTML 이 `aspect-ratio: 358/40` 을 그립니다. 재현: 편집기에 `<img src=... height="40">` 또는 `<img src=... style="height:40px">` 를 붙여 넣으면(파싱 결과 {width:null, height:40} — 실제로 확인) 처음에는 정상으로 그려지지만, 이미지 메뉴의 50% 단추를 한 번 누르는 순간 358x40 의 납작한 띠로 찌그러집니다. 이 PR 이전에는 height 가 스키마에 없어 같은 조작이 비율을 지켰으므로 명백한 회귀이며, 찌그러진 값은 그대로 저장되어 render.go 의 aspect-ratio 와 docx runs.go:227-231(attrWidth/attrHeight 를 그대로 사용)을 거쳐 HTML·PDF·DOCX 내보내기까지 전파됩니다. 고칠 곳은 한 줄입니다 — 그 분기에서 `{ width, height: null }` 로 stale height 를 함께 지우면 됩니다. / frontend/src/features/editor/extensions/imageAttributes.ts:69 — 위 결함의 근인이자 PR 자신이 세운 규칙과의 모순입니다. 서버 쪽 import_html.go:585-594 는 "높이는 너비 옆에 있을 때만 뜻이 있다"며 너비 없는 height 를 일부러 버리고 TestImportedPictureSizeIgnoresAHeightAlone 으로 그것을 못박아 두었는데, 편집기의 parseHTML 은 같은 규칙 없이 element.getAttribute("height") / element.style.height 를 너비와 무관하게 단독으로 받아들입니다. 붙여넣기는 서버 import 를 거치지 않고 ProseMirror 클립보드 파서가 이 parseHTML 을 직접 쓰므로, 두 경로가 같은 입력에 다르게 답합니다.
+https://github.com/hkjang/muni/pull/9#issuecomment-5561170311
+evidence: /mnt/c/Users/USER/projects/aidev/state/runs/2026-09-07-030049-muni-improve/evidence.json
+reports: 6 day(s), 2 week(s), 1 month(s), 317 run(s), 122 usage row(s), 29 project page(s), 12 alert(s)
+notify: no new alerts
