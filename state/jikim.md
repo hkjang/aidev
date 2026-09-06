@@ -23,3 +23,9 @@
   - `server.go`·`auth_handlers.go`·`settings.go`의 `var _ = ...` 데드 코드 제거와 관리 화면의 "v0.2.0 프리뷰" 문구 최신화 (가치 1 / 위험 1 / S)
 
 - 릴리즈: v0.2.3 (2026-09-06, run 2026-09-06-153047-jikim-improve)
+## 2026-09-07
+- 선택: 신뢰 Reverse Proxy 설정 기반 X-Forwarded-For 처리로 감사 로그·로그인 rate limit IP 고정 문제 해결 (가치 4 / 위험 2 / 작업량 M)
+- 결과: 성공
+- 요약: `remoteIP`가 `RemoteAddr`만 사용해 운영 권장 구성인 TLS Reverse Proxy 뒤에서는 감사 로그의 IP가 항상 Proxy 주소로 기록되고 로그인 실패 제한 키의 IP 성분도 모든 클라이언트에서 동일해졌습니다. `X-Forwarded-For`를 무조건 신뢰하면 누구나 IP를 위조할 수 있어 환경변수 대신 `security` 설정에 `trusted_proxies`(CIDR·IP 목록)를 추가하고, 접속 주소가 등록 대역일 때만 전달 체인을 오른쪽에서 왼쪽으로 훑어 신뢰 대역 밖 첫 주소를 클라이언트로 판정하도록 `clientIP`를 새로 만들었습니다(목록이 비면 기존 동작 유지, 30초 TTL 캐시). 저장소의 "환경변수 네 개" 제품 계약을 깨지 않으려고 설정 값으로 두었고 관리 화면 보안 탭에 입력 필드와 안내를 추가했습니다. 검증은 `clientIP` 판별 10개 케이스·rate key 분리·`trusted_proxies` 검증/파싱 단위 테스트를 추가하고 `./scripts/verify.sh` 전체(Go test·vet·gofmt, React test·lint·build, docs, compose)를 통과시켜 확인했습니다. 커밋 `aa0eccf`, 릴리스 커밋 `a20a367`(v0.2.4).
+- 보류 아이디어: Transit batch_input/batch_results 지원으로 OpenBao 호환 범위 확대 (3/3/M) / 로그인 성공 판정 전에 rate limiter를 succeeded로 초기화하는 순서 정리 (2/1/S) / settings GET이 주입하는 파생 필드가 PUT 왕복 시 workflow 설정에 저장되는 문제 정리 (2/1/S) / 감사 로그 보존(audit_retention_days) 자동 정리 구현 (3/3/M) / requestIsHTTPS가 신뢰 Proxy 여부와 무관하게 X-Forwarded-Proto를 신뢰하는 부분을 trusted_proxies와 일관되게 정리 (2/3/S)
+
