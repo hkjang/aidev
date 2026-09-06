@@ -1,7 +1,7 @@
 ---
 title: "appstore — 자율 개선 이력"
 description: "appstore: 자율 개선 회차 6회, 릴리즈 5건. 최근 릴리즈 v2.5.1."
-last_modified_at: 2026-09-06 17:13:31 +0900
+last_modified_at: 2026-09-06 17:50:05 +0900
 ---
 {% raw %}
 <script type="application/ld+json">
@@ -18,7 +18,7 @@ last_modified_at: 2026-09-06 17:13:31 +0900
   "name": "hkjang",
   "url": "https://github.com/hkjang"
  },
- "dateModified": "2026-09-06T17:13:31+09:00",
+ "dateModified": "2026-09-06T17:50:05+09:00",
  "version": "2.5.1"
 }
 </script>
