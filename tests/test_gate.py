@@ -142,14 +142,28 @@ class Secrets(unittest.TestCase):
         self.assertTrue(gate.scan_secrets("token: ghp_" + "A" * 36))
         self.assertTrue(gate.scan_secrets("AKIAABCDEFGHIJKLMNOP"))
         self.assertTrue(gate.scan_secrets("-----BEGIN RSA PRIVATE KEY-----"))
-        self.assertTrue(gate.scan_secrets('password = "hunter2hunter2"'))
-        self.assertTrue(gate.scan_secrets("postgres://user:pw@db.example.com/x"))
+        self.assertTrue(gate.scan_secrets('password = "Xk9v2mQpL7sT4wRz"'))
+        self.assertTrue(gate.scan_secrets("postgres://app:Xk9v2mQpL7sT4wRz9@db.prod.example.com/x"))
         self.assertTrue(gate.scan_secrets("host 10.0.3.7 down", internal=True))
 
     def test_clean(self):
         self.assertFalse(gate.scan_secrets("fix: handle empty list in parser; password field renamed"))
         self.assertFalse(gate.scan_secrets("see https://github.com/hkjang/aidev/pull/1"))
         self.assertFalse(gate.scan_secrets("host 10.0.3.7 down"))  # internal 옵션 없으면 사설 IP 는 통과
+        # 자리표시자·로컬 DSN·짧은 값은 비밀이 아니다 (compose/.env.example/CHANGELOG 의 예시)
+        self.assertFalse(gate.scan_secrets("postgres://weekly:weekly@localhost:5432/weekly"))
+        self.assertFalse(gate.scan_secrets("postgres://app:CHANGEME@db:5432/app"))
+        self.assertFalse(gate.scan_secrets("postgres://user:password@db.example.com/x"))
+        self.assertFalse(gate.scan_secrets('password = "changeme-please"'))
+        self.assertFalse(gate.scan_secrets('SECRET_KEY = "${SECRET_KEY}"'))
+        self.assertFalse(gate.scan_secrets('token: "<your-token-here>"'))
+
+    def test_diff_scans_only_added_code_lines(self):
+        diff = ("diff --git a/docs/setup.md b/docs/setup.md\n+++ b/docs/setup.md\n@@ -1 +1 @@\n+postgres://app:Xk9v2mQpL7sT4wRz9@db.prod.example.com/x\n"
+                "diff --git a/cmd/main.go b/cmd/main.go\n+++ b/cmd/main.go\n@@ -1 +1 @@\n-dsn := \"postgres://app:Xk9v2mQpL7sT4wRz9@db.prod.example.com/x\"\n+dsn := os.Getenv(\"DSN\")\n")
+        self.assertFalse(gate.scan_secrets(diff))  # docs 는 건너뛰고, 코드는 삭제된 줄이라 통과
+        diff2 = "diff --git a/cmd/main.go b/cmd/main.go\n+++ b/cmd/main.go\n@@ -1 +1 @@\n+dsn := \"postgres://app:Xk9v2mQpL7sT4wRz9@db.prod.example.com/x\"\n"
+        self.assertTrue(gate.scan_secrets(diff2))
 
 
 class Verify(unittest.TestCase):

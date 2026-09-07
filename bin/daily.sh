@@ -2,7 +2,7 @@
 # 자율 개선 에이전트 정기 실행 래퍼 — Windows 작업 스케줄러가 wsl.exe 로 이 파일을 부른다.
 # 비대화 셸이라 PATH 를 직접 잡고, flock 으로 겹침 실행을 막는다.
 export HOME=/home/hkjang
-export PATH="$HOME/.local/bin:$HOME/.nvm/versions/node/v22.23.1/bin:$HOME/miniconda3/bin:/usr/local/go/bin:/usr/local/bin:/usr/bin:/bin:/mnt/c/WINDOWS/system32:/mnt/c/WINDOWS/System32/WindowsPowerShell/v1.0"
+export PATH="$HOME/.local/bin:$HOME/.cargo/bin:$HOME/.nvm/versions/node/v22.23.1/bin:$HOME/miniconda3/bin:/usr/local/go/bin:/usr/local/bin:/usr/bin:/bin:/mnt/c/WINDOWS/system32:/mnt/c/WINDOWS/System32/WindowsPowerShell/v1.0"
 export LANG=C.UTF-8
 HERE="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 REPO_DIR="$(cd "$HERE/.." && pwd)"

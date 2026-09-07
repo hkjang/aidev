@@ -23,21 +23,36 @@ ALLOWED_RELEASE_STATUS = {"released", "skipped", "failed"}
 ALLOWED_IDEA_STATUS = {"pending", "done", "rejected"}
 ALLOWED_SIZES = {"S", "M", "L"}
 GOOD_CONCLUSIONS = {"success", "neutral", "skipped"}
-SECRET_PATTERNS = [
+SECRET_PATTERNS = [  # 확실한 토큰 형식 — 문맥 없이도 차단
     (r"gh[pousr]_[A-Za-z0-9]{20,}", "GitHub 토큰"),
     (r"github_pat_[A-Za-z0-9_]{20,}", "GitHub fine-grained 토큰"),
     (r"AKIA[0-9A-Z]{16}", "AWS 액세스 키"),
     (r"xox[abprs]-[A-Za-z0-9-]{10,}", "Slack 토큰"),
-    (r"sk-[A-Za-z0-9_-]{20,}", "API 키(sk-)"),
-    (r"-----BEGIN (RSA |EC |OPENSSH |DSA )?PRIVATE KEY-----", "개인 키"),
-    (r"(?i)(password|passwd|secret|token|api[_-]?key)\s*[:=]\s*['\"][^'\"\s]{8,}['\"]", "비밀값 대입"),
-    (r"[a-z][a-z0-9+.-]*://[^/\s:@]+:[^/\s:@]+@", "URL 내 자격증명"),
-    (r"eyJ[A-Za-z0-9_-]{20,}\.[A-Za-z0-9_-]{20,}\.[A-Za-z0-9_-]{10,}", "JWT"),
+    (r"sk-(proj-|ant-)?[A-Za-z0-9_-]{24,}", "API 키(sk-)"),
+    (r"-----BEGIN (RSA |EC |OPENSSH |DSA |PGP )?PRIVATE KEY-----", "개인 키"),
+    (r"eyJ[A-Za-z0-9_-]{20,}\.[A-Za-z0-9_-]{40,}\.[A-Za-z0-9_-]{20,}", "JWT"),
 ]
+# 값을 봐야 하는 패턴 — 자리표시자·예시·로컬 DSN 은 걸지 않는다 (docs/compose/.env.example 의 postgres://app:app@db 같은 것)
+VALUE_PATTERNS = [
+    (r"(?i)(password|passwd|secret|token|api[_-]?key)\s*[:=]\s*['\"]([^'\"\s]{8,})['\"]", "비밀값 대입"),
+    (r"[a-z][a-z0-9+.-]*://([^/\s:@]+):([^/\s:@]+)@([^/\s:]+)", "URL 내 자격증명"),
+]
+PLACEHOLDER = re.compile(r"(?i)^(.*(password|passwd|secret|changeme|change[_-]?me|example|sample|dummy|placeholder|your[_-]|xxx|todo|redacted|test|dev|local|admin|user|guest|root|\*{3,}|\.{3,}).*|<[^>]*>|\$\{?[A-Za-z_][A-Za-z0-9_]*\}?|\{\{.*\}\}|%[A-Za-z_]+%|[a-z]{1,8})$")
+LOCAL_HOST = re.compile(r"(?i)^(localhost|127\.\d+\.\d+\.\d+|0\.0\.0\.0|host\.docker\.internal|[a-z0-9_-]+)(:\d+)?$")  # 점 없는 호스트 = compose 서비스명
 INTERNAL_PATTERNS = [
     (r"\b(10\.\d{1,3}|192\.168|172\.(1[6-9]|2\d|3[01]))\.\d{1,3}\.\d{1,3}\b", "사설 IP"),
-    (r"\b[a-z0-9-]+\.(internal|local|corp|lan)\b", "내부 호스트명"),
+    (r"\b[a-z0-9-]+\.(internal|corp|lan)\b", "내부 호스트명"),
 ]
+SKIP_FILES = re.compile(r"(^|/)(docs?/|test/|tests/|testdata/|fixtures?/|examples?/|CHANGELOG|README|.*\.(md|example|sample|template|dist)$|docker-compose.*\.ya?ml$|compose.*\.ya?ml$|.*_test\.go$|.*\.test\.[jt]sx?$|.*\.spec\.[jt]sx?$|test_.*\.py$|.*\.env\.example$)")
+
+
+def looks_real(value):
+    """자리표시자가 아니고 실제 비밀처럼 보이는 값인가: 12자 이상, 글자와 숫자/기호 섞임."""
+    if PLACEHOLDER.match(value):
+        return False
+    if len(value) < 12:
+        return False
+    return bool(re.search(r"[A-Za-z]", value)) and bool(re.search(r"[0-9!@#$%^&*+=/_-]", value))
 
 
 def out(ok, state, reason, **extra):
@@ -215,15 +230,44 @@ def cmd_ideas(a):
 
 
 # ---------- 비밀정보 ----------
-def scan_secrets(text, internal=False):
+def _hits_in(text, internal):
     hits = []
     for pat, label in SECRET_PATTERNS + (INTERNAL_PATTERNS if internal else []):
         for m in re.finditer(pat, text):
             s = m.group(0)
             hits.append(f"{label}: {s[:6]}…{s[-3:]}" if len(s) > 12 else f"{label}: {s[:4]}…")
-            if len(hits) >= 10:
-                return hits
+    for pat, label in VALUE_PATTERNS:
+        for m in re.finditer(pat, text):
+            if label == "URL 내 자격증명":
+                user, pw, host = m.group(1), m.group(2), m.group(3)
+                if LOCAL_HOST.match(host) or not looks_real(pw) or pw == user:
+                    continue
+            else:
+                if not looks_real(m.group(2)):
+                    continue
+            s = m.group(0)
+            hits.append(f"{label}: {s[:6]}…{s[-3:]}")
     return hits
+
+
+def scan_secrets(text, internal=False):
+    """unified diff 면 추가된 줄만, 문서·예시·테스트·compose 파일은 건너뛴다. 그 외 텍스트는 통째로 본다."""
+    if "+++ b/" in text or "+++ " in text and "\n@@" in text:
+        hits, current, skip = [], "", False
+        for line in text.splitlines():
+            if line.startswith("+++ "):
+                current = line[4:].strip()
+                current = current[2:] if current.startswith("b/") else current
+                skip = bool(SKIP_FILES.search(current))
+                continue
+            if skip or not line.startswith("+") or line.startswith("+++"):
+                continue
+            for h in _hits_in(line[1:], internal):
+                hits.append(f"{current}: {h}")
+                if len(hits) >= 10:
+                    return hits
+        return hits
+    return _hits_in(text, internal)[:10]
 
 
 def cmd_secrets(a):

@@ -1,0 +1,119 @@
+[
+  {
+    "title": "컨트롤러가 @RequestParam user_id 를 인증 사용자와 대조 없이 신뢰 (IDOR)",
+    "value": 5,
+    "risk": 4,
+    "size": "L",
+    "status": "pending",
+    "note": "AppController·ToolsController·WidgetController 등 10여 곳. ChatController 는 2026-09-02 세션에서 principal 로 덮어쓰도록 고쳐졌다. ToolsController.preview 는 @PathVariable id 만 받고 selectOcrOneInfo 매퍼에도 user_id 필터가 없어 id 를 증가시키며 남의 OCR 원본 파일을 내려받을 수 있다. 프론트 영향 범위가 넓어 엔드포인트를 나눠 여러 세션에 걸쳐 진행할 것",
+    "updated": "2026-09-07"
+  },
+  {
+    "title": "DrmUtil.decrypt 가 복호화 실패를 성공으로 위장 + generatePath 유니크 이름 폐기",
+    "value": 4,
+    "risk": 3,
+    "size": "M",
+    "status": "done",
+    "note": "2026-09-07 세션에서 구현(커밋 12cfb27). 실패 시 코드·파일명을 담은 IOException 을 던지고 복호화되지 않은 복사본을 삭제하도록 변경. 호출부 parse() 의 기존 실패 경로(status 400 / FILE_PREPARE_FAILED)로 흘러간다. AthenaServiceImpl 2005행의 decFileDrm 호출을 try 안으로 옮겨 파일 하나의 실패가 요청 전체를 죽이지 않게 했다. generatePath 는 다운로드 파일명 유지를 위해 원본 파일명을 두되 요청마다 유니크한 하위 디렉토리를 만들도록 바꾸고 죽은 ext 변수를 제거. 네이티브 호출을 createDecryptFile(File,File) 로 분리해 DrmUtilTest 6건 추가",
+    "updated": "2026-09-07"
+  },
+  {
+    "title": "인증 필터의 요청 헤더 전량 INFO 로깅 축소",
+    "value": 3,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "JwtAuthenticationFilter 가 요청마다 모든 헤더와 profile 을 INFO 로 남긴다. LogMaskUtil 로 마스킹은 하지만 요청량 대비 로그량이 크고 운영 로그에서 실제 오류를 가린다. DEBUG 로 낮추거나 필요한 헤더만 남기는 방안",
+    "updated": "2026-09-07"
+  },
+  {
+    "title": "BoardServiceImpl/LibraryServiceImpl 의 get() 이 조회수 증가를 겸해 수정·삭제·등록에서도 view_cnt 가 오름",
+    "value": 3,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "BoardServiceImpl.get() 62행 updateBoardViewCnt 가 modify()(2회 호출 → PUT 당 +2)·delete()·put() 에서도 실행된다. LibraryServiceImpl 61행도 동일. 조회수 통계가 편집된 글에서 부풀려진다. countView 플래그를 받는 오버로드로 분리",
+    "updated": "2026-09-07"
+  },
+  {
+    "title": "SystemPolicyUtil 의 빈 배열 저장 무시 및 fileLimit 키 불일치",
+    "value": 3,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "saveExtension(107-118)·saveNote(231-242) 의 !isEmpty() 가드 때문에 빈 배열 저장이 조용히 무시되는데 PolicyController 는 success 를 반환한다. deleteExtension 도 마지막 항목 삭제가 반영되지 않는다. 별개로 getFileLimit() 은 'fileLimit' 키를 읽지만 saveFileLimit() 은 'simpleBotFileLimit' 키를 쓴다 — 2026-09-07 세션에서 확인한 결과 getFileLimit() 은 호출부가 없어(PolicyController 는 getSimpleBotFileLimit() 을 쓴다) 현재 무해하므로 키 불일치 자체의 가치는 낮다. 실제 가치는 빈 배열 저장 쪽",
+    "updated": "2026-09-07"
+  },
+  {
+    "title": "남은 외부 응답 무검증 접근에 JsonNodeUtil 확대 적용",
+    "value": 3,
+    "risk": 2,
+    "size": "M",
+    "status": "pending",
+    "note": "2026-09-06 세션(커밋 602dfc3, 아직 미병합)에서 JsonNodeUtil 을 만들었으므로 getAthenaCallApi 반환값의 (JsonNode) 무검증 캐스팅, PythonApiCallUtil/RerankModelCallUtil 응답 파싱 등 나머지 경로에도 같은 방식을 적용할 수 있다. 해당 커밋이 main 에 병합된 뒤 진행할 것",
+    "updated": "2026-09-07"
+  },
+  {
+    "title": "ToolsServiceImpl.decFileDrm 이 DrmUtil 을 new 로 직접 생성해 테스트 불가",
+    "value": 2,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "2026-09-07 세션에서 발견. ToolsServiceImpl 1063·1109행과 SampleDrmServiceImpl 34행이 매 호출마다 new DrmUtil(drmConfig) 를 만든다. DrmConfig 만 의존하는 무상태 객체이므로 @Bean 하나로 만들어 주입하면 decFileDrm 의 실패 처리(RuntimeException 래핑, 결과 파일 검증)를 단위 테스트할 수 있고 객체 생성도 줄어든다. 이번 세션에서는 DrmUtil 자체에 테스트 시임을 넣어 우회했다",
+    "updated": "2026-09-07"
+  },
+  {
+    "title": "decFileDrm 의 도달 불가능한 폴백 분기 제거",
+    "value": 1,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "2026-09-07 세션에서 발견. ToolsServiceImpl 1081-1083·1127-1129행의 catch(IOException) 안 'if (resultFile != null && resultFile.exists()) return resultFile.getAbsolutePath();' 는 도달할 수 없다 — resultFile 이 대입된 뒤 던져지는 IOException 은 resultFile 이 null 이거나 존재하지 않을 때뿐이다. 실패 경로를 읽는 사람을 헷갈리게 하는 죽은 코드",
+    "updated": "2026-09-07"
+  },
+  {
+    "title": "MenuAccessAuthorityServiceImpl.update 가 setModifyAuditFields 대신 setCreationAuditFields 호출",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "137행. 다른 모든 수정 경로는 setModifyAuditFields 를 쓴다. UPDATE SQL 이 creator_id 를 바인딩하지 않아 지금은 무해하지만 modifier_id 가 설정되지 않는다",
+    "updated": "2026-09-07"
+  },
+  {
+    "title": "ImgCreate 목록 총건수가 검색어를 무시",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "ToolsServiceImpl 1293행 countPageImgHistoryList(userId) 는 사용자 id 만 넘기는데 selectPageImgHistoryList 는 key_word 필터를 적용한다(ImgCreateMapper.xml 59-65 vs 75-81). 검색 시 총건수와 실제 목록 건수가 어긋난다",
+    "updated": "2026-09-07"
+  },
+  {
+    "title": "CORS 허용 메서드·헤더도 CorsProperties 로 옮기고 필터 오류 응답에 Vary: Origin 추가",
+    "value": 2,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "2026-09-06 세션(커밋 acc1904, 아직 미병합)에서 Origin 만 설정화했다. WebConfig 의 allowedMethods/allowedHeaders/exposedHeaders 는 아직 하드코딩이고, 필터가 직접 쓰는 오류 응답에는 Vary: Origin 이 없어 캐시가 잘못된 CORS 헤더를 재사용할 여지가 있다. ToolsController.preview 의 @CrossOrigin 하드코딩 Origin 목록(83-107행)도 같은 대상",
+    "updated": "2026-09-07"
+  },
+  {
+    "title": "FileServiceImpl.ocrUpload 의 하드코딩 경로 E:\\KCB\\doc\\ocr 설정화 또는 제거",
+    "value": 2,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "호출부가 없는 사실상 죽은 코드. 제거 쪽이 깔끔하나 외부 호출 여부 확인 필요",
+    "updated": "2026-09-07"
+  },
+  {
+    "title": "ValidUtil, ApiCallUtil 단위 테스트 공백 보강",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "common/util 15개 중 6개만 테스트 존재(2026-09-07 세션에서 DrmUtilTest 추가). ValidUtil 은 isValidUUID 하나뿐이라 값이 낮고, ApiCallUtil 은 RestClient 를 필드에서 직접 만들어(RestClient.create()) 주입이 불가능해 테스트하려면 생성자 주입으로 바꿔야 한다 — 그 리팩터가 실제 이득",
+    "updated": "2026-09-07"
+  }
+]

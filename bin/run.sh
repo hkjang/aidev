@@ -8,6 +8,7 @@
 set -uo pipefail  # -e 는 쓰지 않는다: 명령 치환 속 파이프 실패가 회차를 조용히 죽였다(ideas.json 없음 등). 실패는 각 단계에서 명시적으로 다룬다
 
 ROOT="${ROOT:-/mnt/c/Users/USER/projects}"
+export PATH="$HOME/.cargo/bin:$PATH"
 HERE="${AIDEV_BIN:-$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)}"
 REPO_DIR="$(cd "$HERE/.." && pwd)"
 STATE="${AIDEV_STATE:-$REPO_DIR/state}"; LOGS="${AIDEV_LOGS:-$REPO_DIR/logs}"; RUNS="$STATE/runs"; DATA="${AIDEV_DATA:-$REPO_DIR/docs/data}"
@@ -222,11 +223,24 @@ run_verify(){ # $1=작업 디렉터리 $2=결과 파일
   tmo=$(policy "$n" '.verify_timeout_seconds'); tmo=${tmo:-1800}
   if [ ${#cmds[@]} -eq 0 ]; then
     src=auto
-    [ -f "$wd/go.mod" ] && cmds+=("go build ./..." "go vet ./..." "go test ./...")
-    if [ -f "$wd/package.json" ] && jq -e '.scripts.test' "$wd/package.json" >/dev/null 2>&1; then cmds+=("[ -d node_modules ] || npm ci --no-audit --no-fund" "npm test --silent"); fi
-    if [ -f "$wd/package.json" ] && jq -e '.scripts.build' "$wd/package.json" >/dev/null 2>&1; then cmds+=("[ -d node_modules ] || npm ci --no-audit --no-fund" "npm run build --silent"); fi
-    if [ -f "$wd/pyproject.toml" ] || [ -f "$wd/pytest.ini" ] || ls "$wd"/tests/*.py >/dev/null 2>&1; then cmds+=("python3 -m pytest -q -x"); fi
-    [ -f "$wd/Cargo.toml" ] && cmds+=("cargo test --quiet")
+    # 루트에 빌드 파일이 없으면 흔한 하위 모듈(server/backend/api/webapp/frontend/web)도 본다. 설치되지 않은 도구는 쓰지 않는다.
+    local sub d
+    for sub in . server backend api app webapp frontend web; do
+      d="$wd/$sub"; [ -d "$d" ] || continue
+      local pre=""; [ "$sub" != . ] && pre="cd $sub && "
+      [ -f "$d/go.mod" ] && cmds+=("${pre}go build ./..." "${pre}go vet ./..." "${pre}go test ./...")
+      if [ -f "$d/package.json" ]; then
+        local pm="npm ci --no-audit --no-fund" runner="npm"; [ -f "$d/pnpm-lock.yaml" ] && command -v pnpm >/dev/null && { pm="pnpm install --frozen-lockfile"; runner="pnpm"; }
+        jq -e '.scripts.test' "$d/package.json" >/dev/null 2>&1 && cmds+=("${pre}[ -d node_modules ] || $pm" "${pre}$runner test --silent")
+        jq -e '.scripts.typecheck' "$d/package.json" >/dev/null 2>&1 && cmds+=("${pre}[ -d node_modules ] || $pm" "${pre}$runner run typecheck --silent")
+        jq -e '.scripts.build' "$d/package.json" >/dev/null 2>&1 && cmds+=("${pre}[ -d node_modules ] || $pm" "${pre}$runner run build --silent")
+      fi
+      { [ -f "$d/pyproject.toml" ] || [ -f "$d/pytest.ini" ] || ls "$d"/tests/*.py >/dev/null 2>&1; } && command -v python3 >/dev/null && cmds+=("${pre}python3 -m pytest -q -x")
+      [ -f "$d/Cargo.toml" ] && command -v cargo >/dev/null && cmds+=("${pre}cargo test --quiet")
+      [ -f "$d/gradlew" ] && cmds+=("${pre}./gradlew --quiet --offline test || ./gradlew --quiet test")
+      [ -f "$d/pom.xml" ] && command -v mvn >/dev/null && cmds+=("${pre}mvn -q -B test")
+      [ ${#cmds[@]} -gt 0 ] && [ "$sub" != . ] && continue
+    done
     if [ ${#cmds[@]} -eq 0 ] && [ -f "$wd/Makefile" ] && grep -qE '^test:' "$wd/Makefile"; then cmds+=("make test"); fi
   fi
   [ ${#cmds[@]} -gt 0 ] || src=none
