@@ -1,7 +1,7 @@
 ---
 title: "jikim — 자율 개선 이력"
 description: "jikim: 자율 개선 회차 3회, 릴리즈 2건. 최근 릴리즈 v0.2.3 (자산 2개)."
-last_modified_at: 2026-09-07 10:43:41 +0900
+last_modified_at: 2026-09-07 10:45:20 +0900
 ---
 {% raw %}
 <script type="application/ld+json">
@@ -18,14 +18,14 @@ last_modified_at: 2026-09-07 10:43:41 +0900
   "name": "hkjang",
   "url": "https://github.com/hkjang"
  },
- "dateModified": "2026-09-07T10:43:41+09:00",
+ "dateModified": "2026-09-07T10:45:20+09:00",
  "version": "0.2.3"
 }
 </script>
 
 # jikim
 
-<p class="tldr"><strong>요약.</strong> jikim: 자율 개선 회차 3회, 릴리즈 2건. 최근 릴리즈 v0.2.3 (자산 2개). <span class="pill pill-merged" title="14일: 릴리즈 2, 실패 0, 경고 1, 회귀 0">건강 B</span> <span class="meta">14일: 릴리즈 2, 실패 0, 경고 1, 회귀 0</span></p>
+<p class="tldr"><strong>요약.</strong> jikim: 자율 개선 회차 3회, 릴리즈 2건. 최근 릴리즈 v0.2.3 (자산 2개). <span class="pill pill-merged" title="14일: 릴리즈 2, 실패 0, 경고 1, 회귀 1">건강 C</span> <span class="meta">14일: 릴리즈 2, 실패 0, 경고 1, 회귀 1</span></p>
 
 <ul class="stats"><li><b>3</b><span>회차</span></li><li><b>1</b><span>프로젝트</span></li><li><b>2</b><span>배포 준비 완료</span></li><li><b>0</b><span>릴리즈 진행 중</span></li><li><b>0</b><span>병합 완료</span></li><li><b>1</b><span>검토 대기</span></li><li><b>0</b><span>검증 실패</span></li><li><b>0</b><span>변경 없음</span></li><li><b>0</b><span>실행 오류</span></li><li><b>$9.71</b><span>비용</span></li><li><b>20분</b><span>에이전트 시간</span></li></ul>
 
@@ -48,6 +48,10 @@ last_modified_at: 2026-09-07 10:43:41 +0900
 ## 아이디어 백로그 — 대기 8 / 전체 9
 
 <div class="table-wrap"><table class="rt" data-filter="1"><caption class="meta">에이전트가 회차마다 재평가한다. 가치 높고 위험 낮은 대기 항목이 다음 회차 후보다.</caption><thead><tr><th class="primary">아이디어</th><th>가치/위험/크기</th><th>상태</th><th>메모</th><th>갱신</th></tr></thead><tbody><tr data-status="nochange"><td data-label="아이디어" class="primary">Transit batch_input/batch_results 지원 추가로 OpenBao 호환 범위 확대</td><td data-label="가치/위험/크기">3/3/M</td><td data-label="상태">대기</td><td data-label="메모">TransitEncrypt/TransitDecrypt는 아직 단건만 처리한다. 호환성 프로파일 문서(docs/guides/compatibility.md) 갱신도 함께 필요하고, 부분 실패 시 항목별 error 표현을 OpenBao와 맞춰야 한다.</td><td data-label="갱신">2026-09-07</td></tr><tr data-status="nochange"><td data-label="아이디어" class="primary">감사 로그 보존(audit_retention_days) 자동 정리 구현</td><td data-label="가치/위험/크기">3/3/M</td><td data-label="상태">대기</td><td data-label="메모">설정은 저장·검증되지만 실제 삭제 작업이 없다. UI도 프리뷰(disabled)로 명시하고 있어 정직성 문제는 아니지만 기능 공백이다. 삭제는 되돌릴 수 없으므로 배치 주기·드라이런·감사 기록 설계가 필요하다.</td><td data-label="갱신">2026-09-07</td></tr><tr data-status="nochange"><td data-label="아이디어" class="primary">로그인 성공 판정 전에 rate limiter를 succeeded로 초기화하는 순서 정리</td><td data-label="가치/위험/크기">2/1/S</td><td data-label="상태">대기</td><td data-label="메모">auth_handlers.go의 login과 openbao.go의 baoUserpassLogin 모두 Authenticate 직후 succeeded()를 호출하고 그 뒤에 AllowLocalLogin을 확인한다. 로컬 로그인이 꺼진 계정으로 올바른 비밀번호를 넣으면 실패 카운터가 초기화된다. succeeded() 호출을 세션 생성 직전으로 옮기면 된다.</td><td data-label="갱신">2026-09-07</td></tr><tr data-status="nochange"><td data-label="아이디어" class="primary">settings GET이 주입하는 파생 필드가 PUT 왕복 시 workflow 설정에 저장되는 문제 정리</td><td data-label="가치/위험/크기">2/1/S</td><td data-label="상태">대기</td><td data-label="메모">resource_handlers.go의 settings()가 approval에 four_eyes·required_approvals·supported_targets를 주입하는데 updateSettings()는 *_configured와 supported_events만 삭제한다. 나머지는 workflow 설정 JSON에 그대로 적재된다.</td><td data-label="갱신">2026-09-07</td></tr><tr data-status="nochange"><td data-label="아이디어" class="primary">requestedOpenBaoVersion이 음수 version 쿼리를 오류 대신 latest로 처리하는 동작 정리</td><td data-label="가치/위험/크기">2/2/S</td><td data-label="상태">대기</td><td data-label="메모">openbao.go의 requestedOpenBaoVersion은 version&lt;1이면 0(latest)을 돌려준다. OpenBao는 잘못된 버전에 오류를 낸다. 클라이언트 호환 영향이 있어 differential suite와 함께 다루는 편이 낫다.</td><td data-label="갱신">2026-09-07</td></tr><tr data-status="nochange"><td data-label="아이디어" class="primary">requestIsHTTPS의 X-Forwarded-Proto 신뢰를 trusted_proxies와 일관되게 정리</td><td data-label="가치/위험/크기">2/3/S</td><td data-label="상태">대기</td><td data-label="메모">auth_handlers.go의 requestIsHTTPS는 신뢰 Proxy 여부와 무관하게 X-Forwarded-Proto를 믿고 세션 쿠키의 Secure 플래그를 정한다. 위조 방향이 안전한 쪽(쿠키가 더 엄격해짐)이라 급하지 않지만, v0.2.4에서 추가한 trusted_proxies와 판단 기준이 다르다. 다만 trusted_proxies를 등록하지 않은 기존 Proxy 배포에서 Secure가 빠지는 회귀가 생기므로 전환 안내가 필요하다.</td><td data-label="갱신">2026-09-07</td></tr><tr data-status="nochange"><td data-label="아이디어" class="primary">관리 화면 전반의 &#x27;v0.2.0&#x27; 프리뷰 문구 최신화</td><td data-label="가치/위험/크기">1/1/S</td><td data-label="상태">대기</td><td data-label="메모">SettingsPage.tsx는 v0.2.4에서 버전 무관 문구로 정리했지만 FeaturePage.tsx, SecretEditorPage.tsx, SecretDetailPage.tsx에는 아직 &#x27;v0.2.0은 …&#x27; 안내가 남아 있다. 릴리스마다 갱신되지 않도록 &#x27;현재 버전&#x27; 표현이나 APP_VERSION 참조로 바꾸는 편이 낫다.</td><td data-label="갱신">2026-09-07</td></tr><tr data-status="nochange"><td data-label="아이디어" class="primary">데드 코드(var _ = ...) 제거</td><td data-label="가치/위험/크기">1/1/S</td><td data-label="상태">대기</td><td data-label="메모">server.go의 var _ = fmt.Sprintf, auth_handlers.go의 var _ = store.ErrUnauthorized, settings.go의 var _ = pgx.ErrNoRows. 관리 화면 문구 부분은 별도 항목으로 분리했다.</td><td data-label="갱신">2026-09-07</td></tr><tr data-status="released"><td data-label="아이디어" class="primary">신뢰 프록시 목록 기반 X-Forwarded-For 처리로 감사 로그·로그인 rate limit의 IP 고정 문제 해결</td><td data-label="가치/위험/크기">4/2/M</td><td data-label="상태">완료</td><td data-label="메모">v0.2.4에서 구현. 환경변수 네 개 제품 계약을 유지하기 위해 security 설정의 trusted_proxies(CIDR·IP 목록)로 두고, 접속 주소가 등록 대역일 때만 X-Forwarded-For 체인을 오른쪽에서 왼쪽으로 판별한다. 목록이 비면 기존과 동일하게 접속 주소만 사용하며 설정은 30초 TTL로 캐시한다. 커밋 aa0eccf / a20a367.</td><td data-label="갱신">2026-09-07</td></tr></tbody></table></div>
+
+## 교훈 (깨졌던 변경)
+
+- 2026-09-07 **rejected-by-human** — 사람이 PR 을 반려함. 같은 접근은 피할 것. ([링크](https://github.com/hkjang/jikim/pull/16))
 
 ## 원장 (에이전트가 남긴 기록)
 

@@ -1,7 +1,7 @@
 ---
 title: "git-ctx — 자율 개선 이력"
 description: "git-ctx: 자율 개선 회차 10회, 릴리즈 5건. 최근 릴리즈 v0.77.7 (자산 2개)."
-last_modified_at: 2026-09-07 10:43:41 +0900
+last_modified_at: 2026-09-07 10:45:20 +0900
 ---
 {% raw %}
 <script type="application/ld+json">
@@ -18,14 +18,14 @@ last_modified_at: 2026-09-07 10:43:41 +0900
   "name": "hkjang",
   "url": "https://github.com/hkjang"
  },
- "dateModified": "2026-09-07T10:43:41+09:00",
+ "dateModified": "2026-09-07T10:45:20+09:00",
  "version": "0.77.7"
 }
 </script>
 
 # git-ctx
 
-<p class="tldr"><strong>요약.</strong> git-ctx: 자율 개선 회차 10회, 릴리즈 5건. 최근 릴리즈 v0.77.7 (자산 2개). <span class="pill pill-failed" title="14일: 릴리즈 5, 실패 0, 경고 4, 회귀 0">건강 D</span> <span class="meta">14일: 릴리즈 5, 실패 0, 경고 4, 회귀 0</span></p>
+<p class="tldr"><strong>요약.</strong> git-ctx: 자율 개선 회차 10회, 릴리즈 5건. 최근 릴리즈 v0.77.7 (자산 2개). <span class="pill pill-failed" title="14일: 릴리즈 5, 실패 0, 경고 4, 회귀 1">건강 D</span> <span class="meta">14일: 릴리즈 5, 실패 0, 경고 4, 회귀 1</span></p>
 
 <ul class="stats"><li><b>10</b><span>회차</span></li><li><b>1</b><span>프로젝트</span></li><li><b>4</b><span>배포 준비 완료</span></li><li><b>1</b><span>릴리즈 진행 중</span></li><li><b>2</b><span>병합 완료</span></li><li><b>1</b><span>검토 대기</span></li><li><b>0</b><span>검증 실패</span></li><li><b>2</b><span>변경 없음</span></li><li><b>0</b><span>실행 오류</span></li><li><b>$10.11</b><span>비용</span></li><li><b>39분</b><span>에이전트 시간</span></li></ul>
 
@@ -48,6 +48,10 @@ last_modified_at: 2026-09-07 10:43:41 +0900
 ## 아이디어 백로그 — 대기 6 / 전체 9
 
 <div class="table-wrap"><table class="rt" data-filter="1"><caption class="meta">에이전트가 회차마다 재평가한다. 가치 높고 위험 낮은 대기 항목이 다음 회차 후보다.</caption><thead><tr><th class="primary">아이디어</th><th>가치/위험/크기</th><th>상태</th><th>메모</th><th>갱신</th></tr></thead><tbody><tr data-status="nochange"><td data-label="아이디어" class="primary">parsePOM이 &lt;dependencyManagement&gt; 선언까지 실제 의존성으로 집계 — BOM만 정의한 부모 POM이 허위 양성</td><td data-label="가치/위험/크기">3/3/M</td><td data-label="상태">대기</td><td data-label="메모">부모 POM의 핀이 유일한 버전 근거인 멀티모듈 저장소에서는 참 양성을 잃을 위험이 있어 신중히.</td><td data-label="갱신">2026-09-07</td></tr><tr data-status="nochange"><td data-label="아이디어" class="primary">parseRequirements 연산자 목록에 != 와 === 누락 — urllib3!=1.25.0의 버전이 &quot;!&quot;로 기록되고 foo===1.0은 빈 버전</td><td data-label="가치/위험/크기">2/1/S</td><td data-label="상태">대기</td><td data-label="메모">requirementLine 정규식에 연산자 두 개 추가. != 는 핀이 아니므로 버전을 비우는 편이 정확할 수 있음. 2026-09-07 재확인: 여전히 재현됨.</td><td data-label="갱신">2026-09-07</td></tr><tr data-status="nochange"><td data-label="아이디어" class="primary">mcp.filterLibraries / cacheKey가 호출자 슬라이스를 제자리 변경</td><td data-label="가치/위험/크기">2/1/S</td><td data-label="상태">대기</td><td data-label="메모">items[:0] 재사용과 sort.Strings(p.ACLPrincipals)가 컨텍스트에 담긴 슬라이스를 변형한다. 지금은 안전하지만 캐시된 슬라이스가 들어오면 ACL 오염 위험.</td><td data-label="갱신">2026-09-07</td></tr><tr data-status="nochange"><td data-label="아이디어" class="primary">인덱스 작업 warning이 매니페스트 경고를 앞 3건만 join하고, candidates == 0일 때 warning 전체를 덮어씀</td><td data-label="가치/위험/크기">2/1/S</td><td data-label="상태">대기</td><td data-label="메모">2026-09-07 신규. indexer.go 850-867. 이번 회차에서 매니페스트 경고가 늘어난 만큼, 3건 상한과 덮어쓰기가 새 진단을 가릴 수 있다. &#x27;외 N건&#x27; 요약을 붙이고 candidates == 0 경로는 덧붙이기로 바꾸는 정도의 작은 수정.</td><td data-label="갱신">2026-09-07</td></tr><tr data-status="nochange"><td data-label="아이디어" class="primary">clampResponse의 truncation notice 예약치(320B) 부족 — 실제 공지가 약 329B + 코드펜스라 예산을 십수 바이트 초과</td><td data-label="가치/위험/크기">2/2/S</td><td data-label="상태">대기</td><td data-label="메모">공지를 먼저 만들고 그 길이로 room을 계산하면 정확해진다. 2026-09-07 재확인: responseNoticeBytes = 320 그대로.</td><td data-label="갱신">2026-09-07</td></tr><tr data-status="nochange"><td data-label="아이디어" class="primary">dependencyScanLimit(2000) 절단 시 어떤 버전 그룹이 잘렸는지 notes가 말하지 않음</td><td data-label="가치/위험/크기">2/2/S</td><td data-label="상태">대기</td><td data-label="메모">2026-09-06 회차에서 통지 조건 자체는 고쳐졌으나, 여전히 &#x27;어느 그룹이 불완전한지&#x27;는 말하지 않는다.</td><td data-label="갱신">2026-09-07</td></tr><tr data-status="released"><td data-label="아이디어" class="primary">ParseLock의 MaxLockPackages 4000 절단이 조용함 — go.sum 알파벳 뒤쪽이 통째로 사라지고 해석된 버전 판정을 말없이 잃는다</td><td data-label="가치/위험/크기">3/2/M</td><td data-label="상태">완료</td><td data-label="메모">2026-09-07 구현. ParseLockNoted가 절단 개수를 note로 돌려주고 indexer가 manifestWarnings로 올린다. MaxManifestBytes/MaxLockBytes 초과, ref당 매니페스트 60개 상한도 같은 회차에서 함께 처리. commit fbcff94.</td><td data-label="갱신">2026-09-07</td></tr><tr data-status="released"><td data-label="아이디어" class="primary">MaxManifestBytes / MaxLockBytes 초과 파일이 조용히 nil로 버려져 저장소가 인벤토리에서 통째로 빠짐</td><td data-label="가치/위험/크기">3/2/M</td><td data-label="상태">완료</td><td data-label="메모">2026-09-07 구현. ParseNoted/ParseLockNoted가 크기 초과 사실을 note로 돌려주고, indexer 2차 패스의 file.Size 초과 skip도 경고로 남긴다. commit fbcff94.</td><td data-label="갱신">2026-09-07</td></tr><tr data-status="failed"><td data-label="아이디어" class="primary">netclient.JoinAPIPath가 base URL이 다른 리소스 경로로 끝날 때 경로 중복 연결</td><td data-label="가치/위험/크기">2/3/S</td><td data-label="상태">기각</td><td data-label="메모">2026-09-02·09-03·09-07 세 회차 연속 보류. 실제 오설정 사례가 확인되지 않아 우선순위를 계속 잃음. 실제 신고가 들어오면 다시 연다.</td><td data-label="갱신">2026-09-07</td></tr></tbody></table></div>
+
+## 교훈 (깨졌던 변경)
+
+- 2026-09-07 **rejected-by-human** — 사람이 PR 을 반려함. 같은 접근은 피할 것. ([링크](https://github.com/hkjang/git-ctx/pull/21))
 
 ## 원장 (에이전트가 남긴 기록)
 

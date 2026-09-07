@@ -1,7 +1,7 @@
 ---
 title: "muni — 자율 개선 이력"
 description: "muni: 자율 개선 회차 10회, 릴리즈 8건. 최근 릴리즈 v0.29.0 (자산 1개)."
-last_modified_at: 2026-09-07 10:43:41 +0900
+last_modified_at: 2026-09-07 10:45:20 +0900
 ---
 {% raw %}
 <script type="application/ld+json">
@@ -18,14 +18,14 @@ last_modified_at: 2026-09-07 10:43:41 +0900
   "name": "hkjang",
   "url": "https://github.com/hkjang"
  },
- "dateModified": "2026-09-07T10:43:41+09:00",
+ "dateModified": "2026-09-07T10:45:20+09:00",
  "version": "0.29.0"
 }
 </script>
 
 # muni
 
-<p class="tldr"><strong>요약.</strong> muni: 자율 개선 회차 10회, 릴리즈 8건. 최근 릴리즈 v0.29.0 (자산 1개). <span class="pill pill-released" title="14일: 릴리즈 8, 실패 0, 경고 0, 회귀 0">건강 A</span> <span class="meta">14일: 릴리즈 8, 실패 0, 경고 0, 회귀 0</span></p>
+<p class="tldr"><strong>요약.</strong> muni: 자율 개선 회차 10회, 릴리즈 8건. 최근 릴리즈 v0.29.0 (자산 1개). <span class="pill pill-merged" title="14일: 릴리즈 8, 실패 0, 경고 0, 회귀 1">건강 C</span> <span class="meta">14일: 릴리즈 8, 실패 0, 경고 0, 회귀 1</span></p>
 
 <ul class="stats"><li><b>10</b><span>회차</span></li><li><b>1</b><span>프로젝트</span></li><li><b>8</b><span>배포 준비 완료</span></li><li><b>0</b><span>릴리즈 진행 중</span></li><li><b>0</b><span>병합 완료</span></li><li><b>1</b><span>검토 대기</span></li><li><b>0</b><span>검증 실패</span></li><li><b>1</b><span>변경 없음</span></li><li><b>0</b><span>실행 오류</span></li><li><b>$22.06</b><span>비용</span></li><li><b>52분</b><span>에이전트 시간</span></li></ul>
 
@@ -48,6 +48,10 @@ last_modified_at: 2026-09-07 10:43:41 +0900
 ## 아이디어 백로그 — 대기 6 / 전체 9
 
 <div class="table-wrap"><table class="rt" data-filter="1"><caption class="meta">에이전트가 회차마다 재평가한다. 가치 높고 위험 낮은 대기 항목이 다음 회차 후보다.</caption><thead><tr><th class="primary">아이디어</th><th>가치/위험/크기</th><th>상태</th><th>메모</th><th>갱신</th></tr></thead><tbody><tr data-status="nochange"><td data-label="아이디어" class="primary">.hwpx 인용문·코드블록 왕복</td><td data-label="가치/위험/크기">3/2/M</td><td data-label="상태">대기</td><td data-label="메모">쓰기는 인용을 들여쓴 문단으로, 코드블록을 고정폭 문단 여러 개로 흘려보내고 blockContext.quote 는 죽은 값. 읽기가 되살릴 단서가 없어 .docx 처럼 스타일을 심어야 함(한글에는 인용·코드 기본 스타일이 없음).</td><td data-label="갱신">2026-09-07</td></tr><tr data-status="nochange"><td data-label="아이디어" class="primary">CI 에 go vet 과 gofmt -l 추가</td><td data-label="가치/위험/크기">2/1/S</td><td data-label="상태">대기</td><td data-label="메모">.github/workflows/ci.yml 의 Go tests 단계 앞에 두 줄. 일곱 회차 내리 손으로 돌렸음.</td><td data-label="갱신">2026-09-07</td></tr><tr data-status="nochange"><td data-label="아이디어" class="primary">.hwp 표 캡션의 위치(위/아래) 읽기</td><td data-label="가치/위험/크기">2/2/S</td><td data-label="상태">대기</td><td data-label="메모">지금은 언제나 표 뒤에 붙임.</td><td data-label="갱신">2026-09-07</td></tr><tr data-status="nochange"><td data-label="아이디어" class="primary">.hwp/.hwpx 표 행 높이 읽기</td><td data-label="가치/위험/크기">2/2/S</td><td data-label="상태">대기</td><td data-label="메모">열 너비와 같은 자리에 있는데 muni 편집기가 행 높이를 들지 않음. 편집기가 받지 않는 값을 읽어 두는 값어치가 낮아 계속 뒤로 밀림.</td><td data-label="갱신">2026-09-07</td></tr><tr data-status="nochange"><td data-label="아이디어" class="primary">그림의 그린 크기를 markdown 왕복에서도 지키기</td><td data-label="가치/위험/크기">2/2/S</td><td data-label="상태">대기</td><td data-label="메모">markdown 은 크기를 담을 자리가 없어 잃는 것이 정상이지만, 이제 네 형식이 크기를 담으니 붙임말이나 HTML 태그로 남길 수 있는지 볼 만함.</td><td data-label="갱신">2026-09-07</td></tr><tr data-status="nochange"><td data-label="아이디어" class="primary">.hwpx 머리글 칸의 기본 음영</td><td data-label="가치/위험/크기">2/3/S</td><td data-label="상태">대기</td><td data-label="메모">.docx 쓰기는 F3F4FA 를 깔아 머리글 행이 보이게 하는데 .hwpx 는 굵게뿐. 리더가 머리글 행의 음영을 버리므로 왕복이 어긋날 자리가 있음.</td><td data-label="갱신">2026-09-07</td></tr><tr data-status="released"><td data-label="아이디어" class="primary">그림이 그려진 모양 그대로 편집기와 HTML·PDF 까지 가게 하기 (.docx cy, PDF 상자, HTML height, aspect-ratio)</td><td data-label="가치/위험/크기">4/2/M</td><td data-label="상태">완료</td><td data-label="메모">지난 회차의 한글 그림 크기가 문 앞에서 사라지고 있었음 — 스타일시트의 height:auto 가 눌러 둔 그림을 되펴서, 크기를 지닌 그림은 aspect-ratio 로 그리게 함. 커밋 7c5e172.</td><td data-label="갱신">2026-09-07</td></tr><tr data-status="released"><td data-label="아이디어" class="primary">.docx 리더가 그림 높이(&lt;wp:extent cy&gt;)도 읽기</td><td data-label="가치/위험/크기">3/1/S</td><td data-label="상태">완료</td><td data-label="메모">이번 회차에 함께 했음 — 라이터는 예전부터 cx·cy 를 짝으로 읽고 있었다.</td><td data-label="갱신">2026-09-07</td></tr><tr data-status="released"><td data-label="아이디어" class="primary">PDF 내보내기가 그림의 그려진 크기를 쓰기</td><td data-label="가치/위험/크기">3/2/M</td><td data-label="상태">완료</td><td data-label="메모">PDF 내보내기는 HTML 을 Chromium 으로 그리는 길이라, imageHTML 이 비율을 적게 되면서 함께 풀렸다. internal/pdfx(읽기)도 상자 높이를 담게 했다.</td><td data-label="갱신">2026-09-07</td></tr></tbody></table></div>
+
+## 교훈 (깨졌던 변경)
+
+- 2026-09-07 **rejected-by-human** — 사람이 PR 을 반려함. 같은 접근은 피할 것. ([링크](https://github.com/hkjang/muni/pull/9))
 
 ## 원장 (에이전트가 남긴 기록)
 

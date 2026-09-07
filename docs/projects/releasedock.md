@@ -1,7 +1,7 @@
 ---
 title: "releasedock — 자율 개선 이력"
 description: "releasedock: 자율 개선 회차 11회, 릴리즈 8건. 최근 릴리즈 v0.5.9 (자산 2개)."
-last_modified_at: 2026-09-07 10:43:41 +0900
+last_modified_at: 2026-09-07 10:45:20 +0900
 ---
 {% raw %}
 <script type="application/ld+json">
@@ -18,14 +18,14 @@ last_modified_at: 2026-09-07 10:43:41 +0900
   "name": "hkjang",
   "url": "https://github.com/hkjang"
  },
- "dateModified": "2026-09-07T10:43:41+09:00",
+ "dateModified": "2026-09-07T10:45:20+09:00",
  "version": "0.5.9"
 }
 </script>
 
 # releasedock
 
-<p class="tldr"><strong>요약.</strong> releasedock: 자율 개선 회차 11회, 릴리즈 8건. 최근 릴리즈 v0.5.9 (자산 2개). <span class="pill pill-merged" title="14일: 릴리즈 8, 실패 0, 경고 2, 회귀 0">건강 C</span> <span class="meta">14일: 릴리즈 8, 실패 0, 경고 2, 회귀 0</span></p>
+<p class="tldr"><strong>요약.</strong> releasedock: 자율 개선 회차 11회, 릴리즈 8건. 최근 릴리즈 v0.5.9 (자산 2개). <span class="pill pill-merged" title="14일: 릴리즈 8, 실패 0, 경고 2, 회귀 1">건강 C</span> <span class="meta">14일: 릴리즈 8, 실패 0, 경고 2, 회귀 1</span></p>
 
 <ul class="stats"><li><b>11</b><span>회차</span></li><li><b>1</b><span>프로젝트</span></li><li><b>8</b><span>배포 준비 완료</span></li><li><b>0</b><span>릴리즈 진행 중</span></li><li><b>1</b><span>병합 완료</span></li><li><b>1</b><span>검토 대기</span></li><li><b>0</b><span>검증 실패</span></li><li><b>1</b><span>변경 없음</span></li><li><b>0</b><span>실행 오류</span></li><li><b>$6.91</b><span>비용</span></li><li><b>19분</b><span>에이전트 시간</span></li></ul>
 
@@ -48,6 +48,10 @@ last_modified_at: 2026-09-07 10:43:41 +0900
 ## 아이디어 백로그 — 대기 7 / 전체 8
 
 <div class="table-wrap"><table class="rt"><caption class="meta">에이전트가 회차마다 재평가한다. 가치 높고 위험 낮은 대기 항목이 다음 회차 후보다.</caption><thead><tr><th class="primary">아이디어</th><th>가치/위험/크기</th><th>상태</th><th>메모</th><th>갱신</th></tr></thead><tbody><tr data-status="nochange"><td data-label="아이디어" class="primary">CI 와 Makefile 에 go vet (또는 golangci-lint) 단계 추가</td><td data-label="가치/위험/크기">3/1/S</td><td data-label="상태">대기</td><td data-label="메모">ci.yml 은 go test 만 돌리고 Makefile test 타깃도 마찬가지라 정적 검사가 매번 수동이다. 매 세션 직접 go vet 을 실행해 왔다. 이번에도 수동으로 통과시켰다.</td><td data-label="갱신">2026-09-07</td></tr><tr data-status="nochange"><td data-label="아이디어" class="primary">실행 상세 화면에 같은 묶음의 다른 실행 목록·링크 표시</td><td data-label="가치/위험/크기">3/1/M</td><td data-label="상태">대기</td><td data-label="메모">batchId/batchLast 는 이미 API 로 내려오지만 화면에서 쓰이지 않는다. 보류된 단계를 만난 운영자가 어느 패키지가 실패했는지 찾으려면 지금은 실행 목록에서 눈으로 골라야 한다.</td><td data-label="갱신">2026-09-07</td></tr><tr data-status="nochange"><td data-label="아이디어" class="primary">simpleRunLogger.append 가 빈 줄을 저장하지 않아 스크립트 출력의 문단 구분이 사라짐</td><td data-label="가치/위험/크기">2/1/S</td><td data-label="상태">대기</td><td data-label="메모">append 는 len(payload)==0 이면 budget.take 가 0 을 돌려줘 그대로 반환한다. 빈 줄도 한 행으로 저장하면 로그 가독성이 원본과 같아진다. 다만 명령 예산이 소진된 뒤에는 빈 줄도 버려야 행 수가 무한히 늘지 않는다.</td><td data-label="갱신">2026-09-07</td></tr><tr data-status="nochange"><td data-label="아이디어" class="primary">로그 다운로드 파일명에 패키지 이름과 상태 반영</td><td data-label="가치/위험/크기">2/1/S</td><td data-label="상태">대기</td><td data-label="메모">downloadSimpleRunLog 이 original_filename 과 status 를 조회하지만 쓰지 않아 Content-Disposition 이 run id 뿐이다. 여러 실행 로그를 내려받으면 구분이 어렵다. 헤더 인젝션을 막으려면 파일명 정제가 필요하다.</td><td data-label="갱신">2026-09-07</td></tr><tr data-status="nochange"><td data-label="아이디어" class="primary">downloadSimpleRunLog 이 스트리밍 도중 실패해도 완결된 로그처럼 보임</td><td data-label="가치/위험/크기">2/2/S</td><td data-label="상태">대기</td><td data-label="메모">200 과 헤더를 이미 보낸 뒤 rows.Scan 이 실패하면 조용히 return 해서 잘린 로그가 정상 다운로드처럼 저장된다. 마지막에 rows.Err() 를 확인해 꼬리에 경고 줄을 붙이면 읽는 사람이 알 수 있다.</td><td data-label="갱신">2026-09-07</td></tr><tr data-status="nochange"><td data-label="아이디어" class="primary">0.5.9 이전에 보류된 단계를 남긴 기존 실행 기록의 표시</td><td data-label="가치/위험/크기">2/3/S</td><td data-label="상태">대기</td><td data-label="메모">예전 행은 여전히 SKIPPED 라 상세 화면이 &#x27;마지막 파일에서 실행&#x27; 이라고 안내한다. FAILED 실행의 SKIPPED 단계는 보류였다고 추론해 백필할 수 있지만 과거 기록을 추론으로 고쳐 쓰는 위험이 있다. HELD 를 도입한 브랜치(auto/2026-09-06-1820)가 병합된 뒤에만 의미가 있다.</td><td data-label="갱신">2026-09-07</td></tr><tr data-status="nochange"><td data-label="아이디어" class="primary">web/dist/assets/vendor 청크 617KB 분할로 폐쇄망 초기 로딩 개선</td><td data-label="가치/위험/크기">2/3/M</td><td data-label="상태">대기</td><td data-label="메모">MUI 가 대부분이다. 코드 분할은 라우팅 구조까지 건드려야 해 회귀 위험이 있고 폐쇄망은 대개 LAN 이라 체감 이득이 작다.</td><td data-label="갱신">2026-09-07</td></tr><tr data-status="released"><td data-label="아이디어" class="primary">업로드 도중 종료된 프로세스가 남긴 임시 업로드 파일을 부팅 시 정리</td><td data-label="가치/위험/크기">3/2/S</td><td data-label="상태">완료</td><td data-label="메모">스테이징 파일은 createSimpleRun 의 모든 반환 경로에서 discard 되지만 프로세스가 죽으면 남는다. 어떤 실행 기록도 가리키지 않고 화면에도 없는 채 패키지 크기만큼 디스크를 먹는다. RemoveStagedSimpleUploads + isStagedUploadName 으로 이름이 정확히 일치하는 일반 파일만 지운다. 0.5.9 에서 구현.</td><td data-label="갱신">2026-09-07</td></tr></tbody></table></div>
+
+## 교훈 (깨졌던 변경)
+
+- 2026-09-07 **rejected-by-human** — 사람이 PR 을 반려함. 같은 접근은 피할 것. ([링크](https://github.com/hkjang/releasedock/pull/9))
 
 ## 원장 (에이전트가 남긴 기록)
 
