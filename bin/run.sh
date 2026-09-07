@@ -167,8 +167,10 @@ apply_demotions(){
 approvals(){
   local rec pr st head labels appr_sha pv
   pv=$(cd "$REPO_DIR" && git log -1 --format=%h -- state/default.policy.json state/default.guard 2>/dev/null)
-  jq -r --arg s "$(date -d '-14 days' +%F)" 'select(.date >= $s and .outcome=="review-pending" and (.pr|length)>0) | "\(.project)\t\(.pr)"' "$DATA/runs.jsonl" 2>/dev/null | sort -u \
-  | while IFS=$'\t' read -r n pr; do
+  local -a items=(); local line
+  mapfile -t items < <(jq -r --arg s "$(date -d '-14 days' +%F)" 'select(.date >= $s and .outcome=="review-pending" and (.pr|length)>0) | "\(.project)\t\(.pr)"' "$DATA/runs.jsonl" 2>/dev/null | sort -u)
+  for line in "${items[@]}"; do
+    IFS=$'\t' read -r n pr <<<"$line"
     repo="$ROOT/$n"; [ -d "$repo" ] || continue
     read -r st head labels < <(cd "$repo" && gh pr view "$pr" --json state,headRefOid,labels --jq '"\(.state) \(.headRefOid) \([.labels[].name]|join(","))"' 2>/dev/null || echo "UNKNOWN  ")
     [ "$st" = OPEN ] || continue
@@ -187,10 +189,34 @@ approvals(){
       if with_retry "pr merge" bash -c "cd '$repo' && gh pr merge '$pr' --merge --delete-branch --match-head-commit '$head'"; then
         stage merge done "$head (사람 승인)"; result="merged $pr (approved)"; OUTCOME=merged; git -C "$repo" pull -q --ff-only origin "$base" >>"$LOG" 2>&1 || true
         [ "$RELEASE" -eq 1 ] && [ "$(autonomy "$n")" = release ] && ! stopped release "$n" && release_project "$base" "(사람 승인 머지)"
-      else stage merge failed "머지 실패 ($RETRY_KIND)"; fi
+      else
+        stage merge failed "머지 실패 ($RETRY_KIND)"
+        [ "$RETRY_KIND" = conflict ] && rebase_pr "$pr" "$base"
+      fi
     else stage ci "$CI_STATE" "$CI_REASON"; fi
     rm -rf "$OUT/home"; record_run "$n" "$result" "$OUTCOME"; sync_repo "run($RUN_DATE): $n — $result"
   done
+}
+# 승인된 PR 이 base 와 충돌하면 리베이스해 러너 검증을 다시 돌리고 강제 푸시한다. 커밋이 바뀌므로 승인은 다시 받는다.
+rebase_pr(){ # $1=PR url $2=base
+  local pr=$1 base=$2 br rwt="$WT_BASE/$n-rebase" newsha
+  br=$(cd "$repo" && gh pr view "$pr" --json headRefName --jq .headRefName 2>/dev/null); [ -n "$br" ] || return 0
+  git -C "$repo" fetch -q origin "$base" "$br" >>"$LOG" 2>&1 || return 0
+  git -C "$repo" worktree remove --force "$rwt" 2>/dev/null || true
+  git -C "$repo" worktree add --detach "$rwt" "origin/$br" >>"$LOG" 2>&1 || return 0
+  if git -C "$rwt" rebase "origin/$base" >>"$LOG" 2>&1 && wt="$rwt" run_verify "$rwt" "$OUT/verify-rebased.json"; then
+    newsha=$(git -C "$rwt" rev-parse HEAD)
+    if git -C "$rwt" push --force-with-lease origin "HEAD:$br" >>"$LOG" 2>&1; then
+      stage rebase pushed "${newsha:0:7} — 재검증 통과, 재승인 필요"; result="$result, rebased ${newsha:0:7} (re-approval needed)"
+      (cd "$repo" && gh api -X DELETE "repos/{owner}/{repo}/issues/${pr##*/}/labels/aidev-approved" >/dev/null 2>&1
+       gh pr comment "$pr" --body "🔁 base 와 충돌해 리베이스했습니다 (${newsha:0:7}). 러너 검증은 다시 통과했습니다. 커밋이 바뀌었으니 확인 후 \`aidev-approved\` 라벨을 다시 달아 주세요. (run $RUN_ID)" >/dev/null 2>&1) || true
+    else stage rebase push-failed "강제 푸시 실패"; fi
+  else
+    git -C "$rwt" rebase --abort >/dev/null 2>&1 || true
+    stage rebase conflict "자동 리베이스 실패 — 수동 해결 필요"; result="$result, rebase conflict"
+    (cd "$repo" && gh pr comment "$pr" --body "⚠️ base 와 충돌하는데 자동 리베이스로 풀리지 않습니다. 수동으로 해결해 주세요. (run $RUN_ID)" >/dev/null 2>&1) || true
+  fi
+  git -C "$repo" worktree remove --force "$rwt" >>"$LOG" 2>&1 || true
 }
 # 캠페인: 활성(미완료·기한 내·예산 남음) 캠페인의 대상 프로젝트를 후보 중에서 고른다 → CAMPAIGN_ID, CAMPAIGN_NOTE, CAMPAIGN_PROJECT
 pick_campaign(){
