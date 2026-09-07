@@ -1,0 +1,235 @@
+{
+  "run_id": "2026-09-07-085051-aiportal-front-improve",
+  "generated": "2026-09-07T08:59:57+09:00",
+  "run": {
+    "run_id": "2026-09-07-085051-aiportal-front-improve",
+    "project": "aiportal-front",
+    "kind": "improve",
+    "started": "2026-09-07T08:50:51+09:00",
+    "model": "claude-opus-5",
+    "policy_version": "b9d4cc5",
+    "prompts_hash": "8c673b85a315bb10",
+    "runner_version": "4bc6b6c",
+    "finished": "2026-09-07T08:59:56+09:00",
+    "outcome": "merged"
+  },
+  "record": {
+    "ts": "2026-09-07T08:59:57+09:00",
+    "date": "2026-09-07",
+    "project": "aiportal-front",
+    "result": "merged https://github.com/hkjang/aiportal-front/pull/7, release skipped",
+    "outcome": "merged",
+    "run_id": "2026-09-07-085051-aiportal-front-improve",
+    "base_sha": "3824e48dc43ea26a923c82f5d88311fd0aa34d68",
+    "head_sha": "cdc157a917437fed79ebdc20a9f47ed1618994c1",
+    "pr": "https://github.com/hkjang/aiportal-front/pull/7",
+    "stages": {
+      "base": {
+        "state": "pinned",
+        "reason": "main@3824e48",
+        "at": "2026-09-07T08:50:54+09:00"
+      },
+      "autonomy": {
+        "state": "release",
+        "reason": "",
+        "at": "2026-09-07T08:50:54+09:00"
+      },
+      "verify": {
+        "state": "passed",
+        "reason": "검증 2개 통과 (auto)",
+        "at": "2026-09-07T08:55:49+09:00"
+      },
+      "pr": {
+        "state": "created",
+        "reason": "https://github.com/hkjang/aiportal-front/pull/7",
+        "at": "2026-09-07T08:55:55+09:00"
+      },
+      "review": {
+        "state": "approved",
+        "reason": "리뷰 승인 (risk=low)",
+        "at": "2026-09-07T08:58:07+09:00"
+      },
+      "ci": {
+        "state": "passed",
+        "reason": "검사 없음 — 정책으로 허용",
+        "at": "2026-09-07T08:58:40+09:00"
+      },
+      "merge": {
+        "state": "done",
+        "reason": "cdc157a917437fed79ebdc20a9f47ed1618994c1",
+        "at": "2026-09-07T08:58:44+09:00"
+      },
+      "release": {
+        "state": "skipped",
+        "reason": "릴리즈 안 함: 릴리즈 관례가 전혀 없는 저장소입니다. 확인 결과: (1) git 태그 0개(`git tag | wc -l` = 0), (2) GitHub Release 이력 없음(러너가 미리 가져온 목록이 비어 있음), (3) CHANGELOG.md / docs/RELEASE*.md / 릴리즈 노트 파일 없음(docs/ 는 개발·테스트 가이드만 존재), (4) 릴리즈 커밋 양식 없음 — 전체 커밋 11개가 `first commit` + fix/test 커밋과 PR 머지뿐이고 release/버전 관련 커밋이 하나도 없음, (5) 버전 파일 사실상 없음 — package.json 은 `\"private\": true` 에 `\"version\": \"0.0.0\"` 으로 first commit 이후 한 번도 갱신된 적이 없는 Vite 스캐폴드 기본값이며, README.md 의 `## 버전 기록` 표(`0.0.1 | 2025-01-01 | 초기 릴리스`) 역시 first commit 부터 그대로인 보일러플레이트로 이후 4번의 수정 커밋에서 전혀 갱신되지 않았고 package.json 값(0.0.0)과도 어긋남, (6) 릴리즈/패키징 스크립트 없음 — scripts/ 디렉터리·Makefile 부재, package.json scripts 는 dev/build/preview/test 뿐, (7) .github 디렉터리 자체가 없어 태그 푸시나 릴리즈에 반응하는 워크플로 없음. 유일한 CI 는 .gitlab-ci.yml 이며 태그가 아니라 브랜치 푸시(main/develop)에 반응해 `npm run build:*` 후 PVC 디렉터리로 dist 를 복사하는 방식이라 버전·태그 개념을 쓰지 않음. 따라서 버전 체계(0.0.0 vs README 의 0.0.1 중 무엇을 기준으로 할지), 태그 형식, 릴리즈 노트 위치·양식을 이번에 새로 정해야 하는데 이는 사람이 결정할 일이므로 지침 5에 따라 아무것도 만들지 않고 건너뜁니다. 저장소는 손대지 않았고 워킹트리는 깨끗합니다(커밋·태그·파일 변경 없음).",
+        "at": "2026-09-07T08:59:56+09:00"
+      }
+    },
+    "campaign": "",
+    "autonomy": "release",
+    "files": 3,
+    "additions": 330,
+    "deletions": 47,
+    "tests": 1,
+    "title": "fix: 로그아웃 후 사용자 정보 잔존 및 탭 간 동기화 누락 수정"
+  },
+  "stages": {
+    "base": {
+      "state": "pinned",
+      "reason": "main@3824e48",
+      "at": "2026-09-07T08:50:54+09:00"
+    },
+    "autonomy": {
+      "state": "release",
+      "reason": "",
+      "at": "2026-09-07T08:50:54+09:00"
+    },
+    "verify": {
+      "state": "passed",
+      "reason": "검증 2개 통과 (auto)",
+      "at": "2026-09-07T08:55:49+09:00"
+    },
+    "pr": {
+      "state": "created",
+      "reason": "https://github.com/hkjang/aiportal-front/pull/7",
+      "at": "2026-09-07T08:55:55+09:00"
+    },
+    "review": {
+      "state": "approved",
+      "reason": "리뷰 승인 (risk=low)",
+      "at": "2026-09-07T08:58:07+09:00"
+    },
+    "ci": {
+      "state": "passed",
+      "reason": "검사 없음 — 정책으로 허용",
+      "at": "2026-09-07T08:58:40+09:00"
+    },
+    "merge": {
+      "state": "done",
+      "reason": "cdc157a917437fed79ebdc20a9f47ed1618994c1",
+      "at": "2026-09-07T08:58:44+09:00"
+    },
+    "release": {
+      "state": "skipped",
+      "reason": "릴리즈 안 함: 릴리즈 관례가 전혀 없는 저장소입니다. 확인 결과: (1) git 태그 0개(`git tag | wc -l` = 0), (2) GitHub Release 이력 없음(러너가 미리 가져온 목록이 비어 있음), (3) CHANGELOG.md / docs/RELEASE*.md / 릴리즈 노트 파일 없음(docs/ 는 개발·테스트 가이드만 존재), (4) 릴리즈 커밋 양식 없음 — 전체 커밋 11개가 `first commit` + fix/test 커밋과 PR 머지뿐이고 release/버전 관련 커밋이 하나도 없음, (5) 버전 파일 사실상 없음 — package.json 은 `\"private\": true` 에 `\"version\": \"0.0.0\"` 으로 first commit 이후 한 번도 갱신된 적이 없는 Vite 스캐폴드 기본값이며, README.md 의 `## 버전 기록` 표(`0.0.1 | 2025-01-01 | 초기 릴리스`) 역시 first commit 부터 그대로인 보일러플레이트로 이후 4번의 수정 커밋에서 전혀 갱신되지 않았고 package.json 값(0.0.0)과도 어긋남, (6) 릴리즈/패키징 스크립트 없음 — scripts/ 디렉터리·Makefile 부재, package.json scripts 는 dev/build/preview/test 뿐, (7) .github 디렉터리 자체가 없어 태그 푸시나 릴리즈에 반응하는 워크플로 없음. 유일한 CI 는 .gitlab-ci.yml 이며 태그가 아니라 브랜치 푸시(main/develop)에 반응해 `npm run build:*` 후 PVC 디렉터리로 dist 를 복사하는 방식이라 버전·태그 개념을 쓰지 않음. 따라서 버전 체계(0.0.0 vs README 의 0.0.1 중 무엇을 기준으로 할지), 태그 형식, 릴리즈 노트 위치·양식을 이번에 새로 정해야 하는데 이는 사람이 결정할 일이므로 지침 5에 따라 아무것도 만들지 않고 건너뜁니다. 저장소는 손대지 않았고 워킹트리는 깨끗합니다(커밋·태그·파일 변경 없음).",
+      "at": "2026-09-07T08:59:56+09:00"
+    }
+  },
+  "provenance": {
+    "model": "claude-opus-5",
+    "policy_version": "b9d4cc5",
+    "prompts_hash": "8c673b85a315bb10",
+    "runner_version": "4bc6b6c",
+    "base_sha": "3824e48dc43ea26a923c82f5d88311fd0aa34d68",
+    "head_sha": "cdc157a917437fed79ebdc20a9f47ed1618994c1",
+    "pr": "https://github.com/hkjang/aiportal-front/pull/7"
+  },
+  "verification": {
+    "runner": {
+      "source": "auto",
+      "commands": [
+        {
+          "cmd": "[ -d node_modules ] || npm ci --no-audit --no-fund",
+          "exit": 0,
+          "seconds": 0
+        },
+        {
+          "cmd": "npm test --silent",
+          "exit": 0,
+          "seconds": 1
+        }
+      ]
+    },
+    "runner_gate": {
+      "ok": true,
+      "state": "verified",
+      "reason": "검증 2개 통과 (auto)"
+    },
+    "after_rebase": null,
+    "review": {
+      "verdict": "approve",
+      "reasons": [],
+      "notes": [
+        "테스트 유효성 검증 완료: main 코드를 임시 워크트리에 체크아웃하고 신규 tests/unit/userStorage.spec.js 를 그대로 실행한 결과 21건 중 11건 실패(clearUser 메모리 잔존, 다른 탭 sessionStorage 미갱신, 깨진 JSON 예외, clearUser/다른 탭 변경 미통지 등). 현재 HEAD 에서는 8파일 151건 전부 통과. 즉 새 테스트가 수정 대상 결함을 실제로 검증함.",
+        "main 의 실제 결함 확인: userStorage.js:27-33(구버전) 인라인 리스너가 _userStorageSyncInitialized 를 먼저 세워 setupUserStorageSync() 가 항상 조기 반환 → sessionStorage 동기화 코드가 죽은 코드였음. clearUser 도 userRef 를 남겨 readUser() 가 로그아웃 후에도 is_admin 포함 이전 사용자를 반환했음. 커밋 메시지 설명과 코드 동작이 일치함.",
+        "src/storage/userStorage.js:79-87 sessionStorage.setItem 이 try/catch 로 감싸져 있어 쿼터 초과 등으로 실패해도 userRef 는 갱신됨. 이 경우 메모리와 sessionStorage 가 어긋나 새로고침 시 이전 값이 되살아날 수 있음(기존 대비 악화는 아님, 극히 드문 경로).",
+        "src/storage/userStorage.js:32-33 addUserChangeListener 가 함수가 아닌 인자를 조용히 무시하고 () => false 를 반환. 현재 호출부(Sidemenu 뿐)는 모두 함수를 넘기므로 영향 없으나 호출자 버그를 숨길 수 있는 계약 완화.",
+        "tests/unit/userStorage.spec.js:246-250 '리스너는 한 번만 등록된다' 테스트는 main 코드에서도 통과(구버전도 플래그 가드가 있었음)하는 약한 테스트. 다만 회귀 커버리지는 다른 테스트들이 담당함.",
+        "tests/unit/userStorage.spec.js:11-15 loadModule() 이 매번 _userStorageSyncInitialized 를 지우고 재import 하므로 이전 모듈 인스턴스의 storage 리스너가 window 에 계속 누적됨(해제 없음). 모든 인스턴스 동작이 동일해 현재는 무해하나, 향후 리스너 동작이 바뀌면 테스트 간 간섭 원인이 될 수 있음.",
+        "src/components/layout/Sidemenu.vue:304 의 if (!readUser()) return 은 fetchAppList 내부의 if (!userId) return(Sidemenu.vue:192-193)과 중복되는 방어 코드로 동작 변화 없음. onMounted 에서 await 이전에 리스너를 등록하므로 언마운트 경합으로 인한 누수도 없음.",
+        "변경 범위는 userStorage.js / Sidemenu.vue / 신규 테스트로 한정. 마이그레이션·외부 상태 변경·의존성 갱신 없음. 순수 프론트엔드 코드라 revert 로 완전히 되돌아감. 인증 인접 코드지만 변경 방향이 '로그아웃 시 사용자 정보를 더 확실히 제거'하는 쪽이라 보안상 안전한 방향."
+      ],
+      "risk": "low"
+    },
+    "ci_gate": {
+      "ok": false,
+      "state": "no-ci",
+      "reason": "이 커밋에 검사가 없음 (정책 allow_merge_without_ci 가 없으면 차단)",
+      "checks": 0
+    }
+  },
+  "release": {
+    "result": {
+      "status": "skipped",
+      "version": "",
+      "tag": "",
+      "title": "",
+      "notes_file": "",
+      "github_release": false,
+      "assets": [],
+      "reason": "릴리즈 관례가 전혀 없는 저장소입니다. 확인 결과: (1) git 태그 0개(`git tag | wc -l` = 0), (2) GitHub Release 이력 없음(러너가 미리 가져온 목록이 비어 있음), (3) CHANGELOG.md / docs/RELEASE*.md / 릴리즈 노트 파일 없음(docs/ 는 개발·테스트 가이드만 존재), (4) 릴리즈 커밋 양식 없음 — 전체 커밋 11개가 `first commit` + fix/test 커밋과 PR 머지뿐이고 release/버전 관련 커밋이 하나도 없음, (5) 버전 파일 사실상 없음 — package.json 은 `\"private\": true` 에 `\"version\": \"0.0.0\"` 으로 first commit 이후 한 번도 갱신된 적이 없는 Vite 스캐폴드 기본값이며, README.md 의 `## 버전 기록` 표(`0.0.1 | 2025-01-01 | 초기 릴리스`) 역시 first commit 부터 그대로인 보일러플레이트로 이후 4번의 수정 커밋에서 전혀 갱신되지 않았고 package.json 값(0.0.0)과도 어긋남, (6) 릴리즈/패키징 스크립트 없음 — scripts/ 디렉터리·Makefile 부재, package.json scripts 는 dev/build/preview/test 뿐, (7) .github 디렉터리 자체가 없어 태그 푸시나 릴리즈에 반응하는 워크플로 없음. 유일한 CI 는 .gitlab-ci.yml 이며 태그가 아니라 브랜치 푸시(main/develop)에 반응해 `npm run build:*` 후 PVC 디렉터리로 dist 를 복사하는 방식이라 버전·태그 개념을 쓰지 않음. 따라서 버전 체계(0.0.0 vs README 의 0.0.1 중 무엇을 기준으로 할지), 태그 형식, 릴리즈 노트 위치·양식을 이번에 새로 정해야 하는데 이는 사람이 결정할 일이므로 지침 5에 따라 아무것도 만들지 않고 건너뜁니다. 저장소는 손대지 않았고 워킹트리는 깨끗합니다(커밋·태그·파일 변경 없음)."
+    },
+    "assets_sha256": []
+  },
+  "approval": null,
+  "usage": [
+    {
+      "ts": "2026-09-07T08:55:46+09:00",
+      "date": "2026-09-07",
+      "project": "aiportal-front",
+      "phase": "improve",
+      "run_id": "2026-09-07-085051-aiportal-front-improve",
+      "campaign": "",
+      "subtype": "success",
+      "duration_ms": 290794,
+      "num_turns": 32,
+      "cost_usd": 1.8879424999999999,
+      "input_tokens": 58,
+      "output_tokens": 21692,
+      "cache_read": 1477565,
+      "cache_create": 59538
+    },
+    {
+      "ts": "2026-09-07T08:58:07+09:00",
+      "date": "2026-09-07",
+      "project": "aiportal-front",
+      "phase": "review",
+      "run_id": "2026-09-07-085051-aiportal-front-improve",
+      "campaign": "",
+      "subtype": "success",
+      "duration_ms": 129645,
+      "num_turns": 13,
+      "cost_usd": 0.798372,
+      "input_tokens": 18,
+      "output_tokens": 9018,
+      "cache_read": 325076,
+      "cache_create": 40844
+    },
+    {
+      "ts": "2026-09-07T08:59:56+09:00",
+      "date": "2026-09-07",
+      "project": "aiportal-front",
+      "phase": "release",
+      "run_id": "2026-09-07-085051-aiportal-front-improve",
+      "campaign": "",
+      "subtype": "success",
+      "duration_ms": 65180,
+      "num_turns": 12,
+      "cost_usd": 0.4644189999999999,
+      "input_tokens": 16,
+      "output_tokens": 4848,
+      "cache_read": 218778,
+      "cache_create": 22890
+    }
+  ]
+}

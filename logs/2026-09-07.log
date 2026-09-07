@@ -1004,3 +1004,49 @@ fatal: '/home/hkjang/.cache/auto-improve-wt/aiportal-front-admin' is not a worki
 evidence: /mnt/c/Users/USER/projects/aidev/state/runs/2026-09-07-083054-aiportal-front-admin-improve/evidence.json
 reports: 6 day(s), 2 week(s), 1 month(s), 332 run(s), 153 usage row(s), 29 project page(s), 11 alert(s)
 notify: no new alerts
+                                  [08:46:17] aidev synced: run(2026-09-07): aiportal-front-admin — merged https://github.com/hkjang/aiportal-front-admin/pull/9, release skipped
+[08:46:17] done
+[08:50:18] skip DartFly: dirty working tree
+[08:50:19] skip Kkiit: dirty working tree
+[08:50:20] skip Momento: dirty working tree
+[08:50:20] skip Quantoss: dirty working tree
+[08:50:21] skip SecCheck: dirty working tree
+[08:50:29] skip cutover: dirty working tree
+[08:50:43] skip postra: dirty working tree
+[08:50:46] skip seaton: dirty working tree
+[08:50:51] candidates(28): AgentHub Clustara Invenqor ReSSO Vendra ai-admin aiportal-front-admin aiportal-front aiportal-java aiportal-py appstore dataworks git-ctx igame jikim jupiq kanpic moina moyro muni pii-masker ptium releasedock relio umm vibe-coders visitflow weekly
+[08:50:51] picked: aiportal-front
+[08:50:52] === aiportal-front (base=main, run 2026-09-07-085051-aiportal-front-improve, 회차 예산 $22)
+Preparing worktree (new branch 'auto/2026-09-07-0850')
+HEAD is now at 3824e48 Merge pull request #4 from hkjang/auto/2026-09-05-0020
+[08:50:54] aiportal-front: [base] pinned — main@3824e48
+[08:50:54] aiportal-front: [autonomy] release — 
+[08:55:47] aiportal-front: improve — 32 turns, 4m, $1.89, success
+[08:55:47] aiportal-front: verify `[ -d node_modules ] || npm ci --no-audit --no-fund` → exit 0 (0s)
+[08:55:48] aiportal-front: verify `npm test --silent` → exit 0 (1s)
+[08:55:49] aiportal-front: [verify] passed — 검증 2개 통과 (auto)
+branch 'auto/2026-09-07-0850' set up to track 'origin/auto/2026-09-07-0850'.
+[08:55:55] aiportal-front: [pr] created — https://github.com/hkjang/aiportal-front/pull/7
+[08:58:07] aiportal-front: review — 13 turns, 2m, $0.8, success
+[08:58:07] aiportal-front: [review] approved — 리뷰 승인 (risk=low)
+[08:58:09] aiportal-front: waiting for CI on cdc157a (no-ci-allowed)
+[08:58:40] aiportal-front: [ci] passed — 검사 없음 — 정책으로 허용
+[08:58:44] aiportal-front: [merge] done — cdc157a917437fed79ebdc20a9f47ed1618994c1
+From https://github.com/hkjang/aiportal-front
+ * branch            main       -> FETCH_HEAD
+   3824e48..832d9ef  main       -> origin/main
+Updating 3824e48..832d9ef
+Fast-forward
+ src/components/layout/Sidemenu.vue |  10 +-
+ src/storage/userStorage.js         | 114 ++++++++++-------
+ tests/unit/userStorage.spec.js     | 253 +++++++++++++++++++++++++++++++++++++
+ 3 files changed, 330 insertions(+), 47 deletions(-)
+ create mode 100644 tests/unit/userStorage.spec.js
+Preparing worktree (detached HEAD 832d9ef)
+HEAD is now at 832d9ef Merge pull request #7 from hkjang/auto/2026-09-07-0850
+[08:59:56] aiportal-front: release — 12 turns, 1m, $0.46, success
+[08:59:56] aiportal-front: [release] skipped — 릴리즈 안 함: 릴리즈 관례가 전혀 없는 저장소입니다. 확인 결과: (1) git 태그 0개(`git tag | wc -l` = 0), (2) GitHub Release 이력 없음(러너가 미리 가져온 목록이 비어 있음), (3) CHANGELOG.md / docs/RELEASE*.md / 릴리즈 노트 파일 없음(docs/ 는 개발·테스트 가이드만 존재), (4) 릴리즈 커밋 양식 없음 — 전체 커밋 11개가 `first commit` + fix/test 커밋과 PR 머지뿐이고 release/버전 관련 커밋이 하나도 없음, (5) 버전 파일 사실상 없음 — package.json 은 `"private": true` 에 `"version": "0.0.0"` 으로 first commit 이후 한 번도 갱신된 적이 없는 Vite 스캐폴드 기본값이며, README.md 의 `## 버전 기록` 표(`0.0.1 | 2025-01-01 | 초기 릴리스`) 역시 first commit 부터 그대로인 보일러플레이트로 이후 4번의 수정 커밋에서 전혀 갱신되지 않았고 package.json 값(0.0.0)과도 어긋남, (6) 릴리즈/패키징 스크립트 없음 — scripts/ 디렉터리·Makefile 부재, package.json scripts 는 dev/build/preview/test 뿐, (7) .github 디렉터리 자체가 없어 태그 푸시나 릴리즈에 반응하는 워크플로 없음. 유일한 CI 는 .gitlab-ci.yml 이며 태그가 아니라 브랜치 푸시(main/develop)에 반응해 `npm run build:*` 후 PVC 디렉터리로 dist 를 복사하는 방식이라 버전·태그 개념을 쓰지 않음. 따라서 버전 체계(0.0.0 vs README 의 0.0.1 중 무엇을 기준으로 할지), 태그 형식, 릴리즈 노트 위치·양식을 이번에 새로 정해야 하는데 이는 사람이 결정할 일이므로 지침 5에 따라 아무것도 만들지 않고 건너뜁니다. 저장소는 손대지 않았고 워킹트리는 깨끗합니다(커밋·태그·파일 변경 없음).
+fatal: '/home/hkjang/.cache/auto-improve-wt/aiportal-front' is not a working tree
+evidence: /mnt/c/Users/USER/projects/aidev/state/runs/2026-09-07-085051-aiportal-front-improve/evidence.json
+reports: 6 day(s), 2 week(s), 1 month(s), 333 run(s), 156 usage row(s), 29 project page(s), 11 alert(s)
+notify: no new alerts
