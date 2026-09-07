@@ -1,101 +1,110 @@
 [
-  {
-    "title": "부분 체결 매도 중 서버 손절 예약이 다시 걸려 이중 매도·유령 예약이 생김 (broker.Live.settle → placeGuard)",
-    "value": 4,
-    "risk": 2,
-    "size": "S",
-    "status": "done",
-    "note": "비긴급 청산의 지정가 leg 가 부분 체결되면 settle 이 잔량에 서버 조건주문(손절 예약)을 다시 걸었고, 그 직후 Sell 이 같은 잔량을 시장가로 냈다 — 예약과 주문이 겹쳐 이중 매도, 전량 체결되면 유령 예약이 남아 재진입 종목을 임의로 던진다. settle 의 재예약을 없애고 Sell 종료 시 defer reguard 로 일원화. 커밋 참조.",
-    "updated": "2026-09-06"
-  },
-  {
-    "title": "GitHub Actions CI 없음 — go build/vet/test/gofmt 워크플로 추가",
-    "value": 4,
-    "risk": 3,
-    "size": "S",
-    "status": "pending",
-    "note": "위험 3 유지: 이 세션은 push 권한이 없고 외부 스크립트가 푸시하는데, 그 토큰에 workflow 스코프가 없으면 .github/workflows 추가 커밋의 푸시가 거부되어 회차 산출물이 통째로 날아간다. 스코프를 확인할 수 있는 회차에 하거나 scripts/check.sh 같은 로컬 검증 스크립트부터.",
-    "updated": "2026-09-06"
-  },
-  {
-    "title": "swing.Runner 가 MaxPositions 를 동시 보유에 5배로 완화해 적용",
-    "value": 3,
-    "risk": 2,
-    "size": "S",
-    "status": "pending",
-    "note": "재평가: runner.go:412 에 len(r.state.Open) >= r.Cfg.MaxPositions*5 검사가 생겨 '한도 전무' 는 아니게 됐다. 다만 MaxPositions=1 이면 여전히 5종목 동시 보유가 가능하고, 예약 상한은 *3 이라 두 배수가 서로 다르다. 배수의 근거가 코드·문서에 없으니 의도를 정하고(=MaxPositions 또는 명시 설정) 테스트로 고정할 것.",
-    "updated": "2026-09-06"
-  },
-  {
-    "title": "internal/journal·internal/notify 테스트 0건",
-    "value": 3,
-    "risk": 1,
-    "size": "S",
-    "status": "pending",
-    "note": "재확인: 두 디렉터리에 _test.go 파일이 하나도 없다. Summary(승률·PF·MaxDrawdown), Load 날짜 필터·JSONL 파싱, Notifier 를 httptest 로.",
-    "updated": "2026-09-06"
-  },
-  {
-    "title": "notify.Notifier 를 구조체 리터럴로 만들면 http 가 nil → 패닉",
-    "value": 3,
-    "risk": 1,
-    "size": "S",
-    "status": "pending",
-    "note": "재확인: notify.go:18 의 http 필드는 New() 만 채우고, Send 의 고루틴 안에서 n.http.PostForm 을 부른다 — 리터럴로 만들면 백그라운드 고루틴에서 패닉해 프로세스가 죽는다. Send 안에서 지연 초기화. toss.Client limiter nil 패닉과 같은 계열(그쪽은 수정됨).",
-    "updated": "2026-09-06"
-  },
-  {
-    "title": "Config.Validate 가 gap_reclaim 파라미터를 검사하지 않음",
-    "value": 3,
-    "risk": 1,
-    "size": "S",
-    "status": "pending",
-    "note": "재확인: config.go:517~ 에서 GapMin/GapMax/GapPullMin/GapVolMult 를 읽지만 Validate 대상 밖. GapMin >= GapMax 면 research.go 에서 신호가 영영 안 나오는데 조용히 통과 — 연구 세션 하나가 통째로 낭비된다.",
-    "updated": "2026-09-06"
-  },
-  {
-    "title": "journal.Summary·swing.Evaluate 등이 PnL==0 인 거래를 패배로 집계",
-    "value": 2,
-    "risk": 1,
-    "size": "S",
-    "status": "pending",
-    "note": "재확인: journal.go:204, swing.go:291, report/weekly.go:117, cmd/quantoss/main.go:452 가 모두 `if PnL > 0 { win } else { loss }`. 함께 고칠 것. 실무 빈도는 낮음(비용 때문에 정확히 0 이 드묾).",
-    "updated": "2026-09-06"
-  },
-  {
-    "title": "README '알려진 한계' 가 stale — WebSocket 미사용이라 적혀 있음",
-    "value": 2,
-    "risk": 1,
-    "size": "S",
-    "status": "pending",
-    "note": "재확인: README:359 '실시간 WebSocket ... 미사용 → 급락 시 손절 슬리피지' 가 README:310 'WebSocket(trade:kr) 으로 즉시 청산' 과 한 파일 안에서 정면 모순. 신규 사용자가 손절 지연을 오해한다.",
-    "updated": "2026-09-06"
-  },
-  {
-    "title": "cmd/quantoss backtest 출력이 -market US 에서도 가격·손익을 %.0f 로 찍는다",
-    "value": 2,
-    "risk": 1,
-    "size": "S",
-    "status": "pending",
-    "note": "재확인: main.go:245 거래 목록(Entry->Exit, PnL)과 252-255 요약(net_pnl/avg_win/avg_loss). 운영 경로는 2026-09-05 회차에서 고쳤지만 백테스트 콘솔 출력은 남았다. market.FormatPrice/Money(cfg.Currency, ...) 로 통일.",
-    "updated": "2026-09-06"
-  },
-  {
-    "title": "journal.Load 의 날짜 필터가 문자열 prefix 라 타임존이 다른 기록을 놓칠 수 있다",
-    "value": 2,
-    "risk": 2,
-    "size": "S",
-    "status": "pending",
-    "note": "journal.go 의 strings.HasPrefix(t.ExitTime, date). ExitTime 은 RFC3339(현지 오프셋)라 미국 세션 기록을 KST 날짜로 조회하면 경계 근처가 어긋난다. 어느 타임존 기준 날짜인지 먼저 정의할 것 — 과거 산출물 재생성이 필요할 수 있어 위험 2.",
-    "updated": "2026-09-06"
-  },
-  {
-    "title": "swing.Evaluate 가 호출자의 trades 슬라이스를 in-place 정렬한다",
-    "value": 1,
-    "risk": 1,
-    "size": "S",
-    "status": "pending",
-    "note": "swing.go 의 sort.Slice(trades, ...) 가 인자 슬라이스를 직접 정렬한다. 지금 호출 순서에선 무해하지만 순서가 바뀌면 조용히 깨진다. 사본을 정렬할 것.",
-    "updated": "2026-09-06"
-  }
+ {
+  "title": "스윙 실행기가 마지막 봉만 보고 체결·청산하는지 현재 main 기준으로 재확인",
+  "value": 4,
+  "risk": 2,
+  "size": "M",
+  "status": "pending",
+  "note": "PR #13 이 이 문제를 고쳤으나 main 의 runner 구조 변경(DeepBars·Cross·EventsFn·실시간 게이트)과 충돌해 닫힘. 현재 코드에 같은 문제가 남아 있는지 먼저 확인하고, 있으면 지금 구조에 맞게 다시 고칠 것.",
+  "updated": "2026-09-07"
+ },
+ {
+  "title": "부분 체결 매도 중 서버 손절 예약이 다시 걸려 이중 매도·유령 예약이 생김 (broker.Live.settle → placeGuard)",
+  "value": 4,
+  "risk": 2,
+  "size": "S",
+  "status": "done",
+  "note": "비긴급 청산의 지정가 leg 가 부분 체결되면 settle 이 잔량에 서버 조건주문(손절 예약)을 다시 걸었고, 그 직후 Sell 이 같은 잔량을 시장가로 냈다 — 예약과 주문이 겹쳐 이중 매도, 전량 체결되면 유령 예약이 남아 재진입 종목을 임의로 던진다. settle 의 재예약을 없애고 Sell 종료 시 defer reguard 로 일원화. 커밋 참조.",
+  "updated": "2026-09-06"
+ },
+ {
+  "title": "GitHub Actions CI 없음 — go build/vet/test/gofmt 워크플로 추가",
+  "value": 4,
+  "risk": 3,
+  "size": "S",
+  "status": "pending",
+  "note": "위험 3 유지: 이 세션은 push 권한이 없고 외부 스크립트가 푸시하는데, 그 토큰에 workflow 스코프가 없으면 .github/workflows 추가 커밋의 푸시가 거부되어 회차 산출물이 통째로 날아간다. 스코프를 확인할 수 있는 회차에 하거나 scripts/check.sh 같은 로컬 검증 스크립트부터.",
+  "updated": "2026-09-06"
+ },
+ {
+  "title": "swing.Runner 가 MaxPositions 를 동시 보유에 5배로 완화해 적용",
+  "value": 3,
+  "risk": 2,
+  "size": "S",
+  "status": "pending",
+  "note": "재평가: runner.go:412 에 len(r.state.Open) >= r.Cfg.MaxPositions*5 검사가 생겨 '한도 전무' 는 아니게 됐다. 다만 MaxPositions=1 이면 여전히 5종목 동시 보유가 가능하고, 예약 상한은 *3 이라 두 배수가 서로 다르다. 배수의 근거가 코드·문서에 없으니 의도를 정하고(=MaxPositions 또는 명시 설정) 테스트로 고정할 것.",
+  "updated": "2026-09-06"
+ },
+ {
+  "title": "internal/journal·internal/notify 테스트 0건",
+  "value": 3,
+  "risk": 1,
+  "size": "S",
+  "status": "pending",
+  "note": "재확인: 두 디렉터리에 _test.go 파일이 하나도 없다. Summary(승률·PF·MaxDrawdown), Load 날짜 필터·JSONL 파싱, Notifier 를 httptest 로.",
+  "updated": "2026-09-06"
+ },
+ {
+  "title": "notify.Notifier 를 구조체 리터럴로 만들면 http 가 nil → 패닉",
+  "value": 3,
+  "risk": 1,
+  "size": "S",
+  "status": "pending",
+  "note": "재확인: notify.go:18 의 http 필드는 New() 만 채우고, Send 의 고루틴 안에서 n.http.PostForm 을 부른다 — 리터럴로 만들면 백그라운드 고루틴에서 패닉해 프로세스가 죽는다. Send 안에서 지연 초기화. toss.Client limiter nil 패닉과 같은 계열(그쪽은 수정됨).",
+  "updated": "2026-09-06"
+ },
+ {
+  "title": "Config.Validate 가 gap_reclaim 파라미터를 검사하지 않음",
+  "value": 3,
+  "risk": 1,
+  "size": "S",
+  "status": "pending",
+  "note": "재확인: config.go:517~ 에서 GapMin/GapMax/GapPullMin/GapVolMult 를 읽지만 Validate 대상 밖. GapMin >= GapMax 면 research.go 에서 신호가 영영 안 나오는데 조용히 통과 — 연구 세션 하나가 통째로 낭비된다.",
+  "updated": "2026-09-06"
+ },
+ {
+  "title": "journal.Summary·swing.Evaluate 등이 PnL==0 인 거래를 패배로 집계",
+  "value": 2,
+  "risk": 1,
+  "size": "S",
+  "status": "pending",
+  "note": "재확인: journal.go:204, swing.go:291, report/weekly.go:117, cmd/quantoss/main.go:452 가 모두 `if PnL > 0 { win } else { loss }`. 함께 고칠 것. 실무 빈도는 낮음(비용 때문에 정확히 0 이 드묾).",
+  "updated": "2026-09-06"
+ },
+ {
+  "title": "README '알려진 한계' 가 stale — WebSocket 미사용이라 적혀 있음",
+  "value": 2,
+  "risk": 1,
+  "size": "S",
+  "status": "pending",
+  "note": "재확인: README:359 '실시간 WebSocket ... 미사용 → 급락 시 손절 슬리피지' 가 README:310 'WebSocket(trade:kr) 으로 즉시 청산' 과 한 파일 안에서 정면 모순. 신규 사용자가 손절 지연을 오해한다.",
+  "updated": "2026-09-06"
+ },
+ {
+  "title": "cmd/quantoss backtest 출력이 -market US 에서도 가격·손익을 %.0f 로 찍는다",
+  "value": 2,
+  "risk": 1,
+  "size": "S",
+  "status": "pending",
+  "note": "재확인: main.go:245 거래 목록(Entry->Exit, PnL)과 252-255 요약(net_pnl/avg_win/avg_loss). 운영 경로는 2026-09-05 회차에서 고쳤지만 백테스트 콘솔 출력은 남았다. market.FormatPrice/Money(cfg.Currency, ...) 로 통일.",
+  "updated": "2026-09-06"
+ },
+ {
+  "title": "journal.Load 의 날짜 필터가 문자열 prefix 라 타임존이 다른 기록을 놓칠 수 있다",
+  "value": 2,
+  "risk": 2,
+  "size": "S",
+  "status": "pending",
+  "note": "journal.go 의 strings.HasPrefix(t.ExitTime, date). ExitTime 은 RFC3339(현지 오프셋)라 미국 세션 기록을 KST 날짜로 조회하면 경계 근처가 어긋난다. 어느 타임존 기준 날짜인지 먼저 정의할 것 — 과거 산출물 재생성이 필요할 수 있어 위험 2.",
+  "updated": "2026-09-06"
+ },
+ {
+  "title": "swing.Evaluate 가 호출자의 trades 슬라이스를 in-place 정렬한다",
+  "value": 1,
+  "risk": 1,
+  "size": "S",
+  "status": "pending",
+  "note": "swing.go 의 sort.Slice(trades, ...) 가 인자 슬라이스를 직접 정렬한다. 지금 호출 순서에선 무해하지만 순서가 바뀌면 조용히 깨진다. 사본을 정렬할 것.",
+  "updated": "2026-09-06"
+ }
 ]
