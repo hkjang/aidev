@@ -1,0 +1,9 @@
+## 2026-09-07
+- 선택: /health 가 공용 Milvus default alias 를 끊지 않도록 전용 alias 도입 (감사 A-007) (가치 4 / 위험 2 / 작업량 M)
+- 결과: 성공
+- 요약: `api.py` 의 `/health` 가 Milvus 상태를 확인하려고 `connections.has_connection("default")` 이면 `disconnect("default")` 한 뒤 기본 주소로 다시 `connect(alias="default", ...)` 했다. `default` 는 `util/search_module.py`·`util/milvus_collection.py`·`util/milvus_confluence.py` 등 검색·색인 경로가 실제로 쓰는 alias 이고 readiness probe 가 `/health` 를 주기적으로 호출하므로, 같은 순간 진행 중이던 요청이 끊긴 연결을 쓰다 실패할 수 있었다. 또 KAI 전용 Milvus 로 `default` 를 연결해 둔 흐름을 헬스 체크가 기본 주소로 되돌려 다음 호출이 엉뚱한 서버를 보게 된다. 설정·pymilvus 비의존 helper `util/health_check.py` 를 추가해 전용 alias `health_check` 로만 연결하고 `finally` 에서 그 alias 만 닫으며, 이전 검사가 남긴 alias 는 연결 전에 정리하도록 했다(정리 실패는 삼켜 검사 결과를 바꾸지 않고, 연결 실패는 그대로 전파해 라우트의 기존 `except Exception` 처리와 응답 형태를 유지). 저장소의 Milvus 호출부가 모두 사용 직전에 스스로 `connect(alias="default", ...)` 함을 확인해 헬스 체크가 `default` 를 만들어 둘 필요가 없음을 검증했다. `api.py` 는 kiwipiepy·pymilvus 미설치로 import 할 수 없어, helper 는 가짜 `connections` 객체로 6건의 단위 테스트(전용 alias 사용·정리·`default` 무접촉·실패 전파·stale alias 정리·disconnect 실패 무시)를, 라우트는 AST 정적 검사 3건(`/health` 안에서 `default` 문자열로 connect/disconnect/has_connection 금지, `probe_milvus` 호출, import 존재)으로 `tests/unit/test_health_check.py` 에 넣었다. 옛 코드를 되돌려 넣어 정적 검사 3건이 실제로 실패하는지 확인했다. `python -m pytest` 809 passed(기존 790), `python -m pyflakes .` undefined name 0건. docs 4종(CURRENT_STATE_AUDIT/OPERATIONS/API_REFERENCE/TESTING) 갱신. 커밋 `be496d6`.
+- 보류 아이디어: A-105 후속 — 공통 오류 응답 model 도입과 traceback 노출 제거(A-106 연계) — 가치 4 / 위험 3 / L
+- 보류 아이디어: A-007 후속 — `util/search_module.py` 의 `hybrid_search` 가 진입 시 `default` 를 disconnect 하고 KAI/기본 Milvus 를 같은 alias 로 번갈아 연결. host 별 alias 로 분리 필요 — 가치 4 / 위험 3 / M
+- 보류 아이디어: A-003 후속 — 백그라운드 task 에 `add_done_callback` 로그와 `/health` checks 노출 — 가치 3 / 위험 2 / S
+- 보류 아이디어: `util/extract_minor.py` 의 `except Exception: return e` 정리(예외 객체가 Milvus 색인까지 흘러감) — 가치 3 / 위험 2 / S
+- 보류 아이디어: A-107 후속 — 재시도·circuit breaker·공용 `requests.Session` 도입 — 가치 3 / 위험 3 / M
