@@ -1,0 +1,268 @@
+{
+  "run_id": "2026-09-07-111546-appstore-improve",
+  "generated": "2026-09-07T11:35:37+09:00",
+  "run": {
+    "run_id": "2026-09-07-111546-appstore-improve",
+    "project": "appstore",
+    "kind": "improve",
+    "started": "2026-09-07T11:15:47+09:00",
+    "model": "claude-opus-5",
+    "policy_version": "e8237e1",
+    "prompts_hash": "8c673b85a315bb10",
+    "runner_version": "06b1914",
+    "finished": "2026-09-07T11:35:37+09:00",
+    "outcome": "release-ready"
+  },
+  "record": {
+    "ts": "2026-09-07T11:35:37+09:00",
+    "date": "2026-09-07",
+    "project": "appstore",
+    "result": "merged https://github.com/hkjang/appstore/pull/6, released v2.5.2",
+    "outcome": "release-ready",
+    "run_id": "2026-09-07-111546-appstore-improve",
+    "base_sha": "818bc9405b2e2ef3f0fef2812276b3035d1c4ac6",
+    "head_sha": "ab67119aec5db75af522709fc1004107bb03fcd2",
+    "pr": "https://github.com/hkjang/appstore/pull/6",
+    "stages": {
+      "base": {
+        "state": "pinned",
+        "reason": "main@818bc94",
+        "at": "2026-09-07T11:15:50+09:00"
+      },
+      "autonomy": {
+        "state": "release",
+        "reason": "",
+        "at": "2026-09-07T11:15:50+09:00"
+      },
+      "verify": {
+        "state": "passed",
+        "reason": "검증 7개 통과 (auto)",
+        "at": "2026-09-07T11:21:17+09:00"
+      },
+      "pr": {
+        "state": "created",
+        "reason": "https://github.com/hkjang/appstore/pull/6",
+        "at": "2026-09-07T11:21:23+09:00"
+      },
+      "review": {
+        "state": "approved",
+        "reason": "리뷰 승인 (risk=low)",
+        "at": "2026-09-07T11:23:10+09:00"
+      },
+      "ci": {
+        "state": "passed",
+        "reason": "검사 2개 모두 success",
+        "at": "2026-09-07T11:25:44+09:00"
+      },
+      "merge": {
+        "state": "done",
+        "reason": "ab67119aec5db75af522709fc1004107bb03fcd2",
+        "at": "2026-09-07T11:25:48+09:00"
+      },
+      "release": {
+        "state": "published",
+        "reason": "v2.5.2",
+        "at": "2026-09-07T11:33:30+09:00"
+      },
+      "assets": {
+        "state": "verified",
+        "reason": "v2.5.2 자산 1개 (이전 v2.5.1: 1)",
+        "at": "2026-09-07T11:35:36+09:00"
+      }
+    },
+    "campaign": "",
+    "autonomy": "release",
+    "files": 5,
+    "additions": 89,
+    "deletions": 25,
+    "tests": 2,
+    "title": "fix: keep the editorial order in the MCP featured shelf"
+  },
+  "stages": {
+    "base": {
+      "state": "pinned",
+      "reason": "main@818bc94",
+      "at": "2026-09-07T11:15:50+09:00"
+    },
+    "autonomy": {
+      "state": "release",
+      "reason": "",
+      "at": "2026-09-07T11:15:50+09:00"
+    },
+    "verify": {
+      "state": "passed",
+      "reason": "검증 7개 통과 (auto)",
+      "at": "2026-09-07T11:21:17+09:00"
+    },
+    "pr": {
+      "state": "created",
+      "reason": "https://github.com/hkjang/appstore/pull/6",
+      "at": "2026-09-07T11:21:23+09:00"
+    },
+    "review": {
+      "state": "approved",
+      "reason": "리뷰 승인 (risk=low)",
+      "at": "2026-09-07T11:23:10+09:00"
+    },
+    "ci": {
+      "state": "passed",
+      "reason": "검사 2개 모두 success",
+      "at": "2026-09-07T11:25:44+09:00"
+    },
+    "merge": {
+      "state": "done",
+      "reason": "ab67119aec5db75af522709fc1004107bb03fcd2",
+      "at": "2026-09-07T11:25:48+09:00"
+    },
+    "release": {
+      "state": "published",
+      "reason": "v2.5.2",
+      "at": "2026-09-07T11:33:30+09:00"
+    },
+    "assets": {
+      "state": "verified",
+      "reason": "v2.5.2 자산 1개 (이전 v2.5.1: 1)",
+      "at": "2026-09-07T11:35:36+09:00"
+    }
+  },
+  "provenance": {
+    "model": "claude-opus-5",
+    "policy_version": "e8237e1",
+    "prompts_hash": "8c673b85a315bb10",
+    "runner_version": "06b1914",
+    "base_sha": "818bc9405b2e2ef3f0fef2812276b3035d1c4ac6",
+    "head_sha": "ab67119aec5db75af522709fc1004107bb03fcd2",
+    "pr": "https://github.com/hkjang/appstore/pull/6"
+  },
+  "verification": {
+    "runner": {
+      "source": "auto",
+      "commands": [
+        {
+          "cmd": "go build ./...",
+          "exit": 0,
+          "seconds": 1
+        },
+        {
+          "cmd": "go vet ./...",
+          "exit": 0,
+          "seconds": 0
+        },
+        {
+          "cmd": "go test ./...",
+          "exit": 0,
+          "seconds": 0
+        },
+        {
+          "cmd": "cd web && [ -d node_modules ] || npm ci --no-audit --no-fund",
+          "exit": 0,
+          "seconds": 6
+        },
+        {
+          "cmd": "cd web && npm test --silent",
+          "exit": 0,
+          "seconds": 2
+        },
+        {
+          "cmd": "cd web && [ -d node_modules ] || npm ci --no-audit --no-fund",
+          "exit": 0,
+          "seconds": 0
+        },
+        {
+          "cmd": "cd web && npm run build --silent",
+          "exit": 0,
+          "seconds": 4
+        }
+      ]
+    },
+    "runner_gate": {
+      "ok": true,
+      "state": "verified",
+      "reason": "검증 7개 통과 (auto)"
+    },
+    "after_rebase": null,
+    "review": {
+      "verdict": "approve",
+      "reasons": [],
+      "notes": [
+        "internal/httpapi/ratelimit_test.go:28 새 테스트는 변경 전 코드에서 확실히 실패한다. 옛 코드는 allow() 51회 호출로 calls%1024!=0 이라 스윕이 돌지 않아 buckets=51 이 되고, 테스트는 1을 요구한다. 세 번째 단언(현재 윈도의 버킷은 살아남고 limit=2에서 remaining=0)도 스윕이 현재 윈도를 지우지 않음을 검증한다.",
+        "internal/store/apps.go:31 appListOrder 는 기존 인라인 로직과 완전히 동치다(알려진 Sort 키 우선 → 없으면 Featured 면 featuredOrder → 아니면 recentOrder). repository_test.go:48 의 테이블 테스트는 이 동치성/우선순위를 고정하는 characterization 테스트이며, 실제 동작 변경(MCP featured_apps 의 Sort)을 직접 검증하지는 않는다. 다만 repository 는 *store.Repository 구상 타입이라 DB 없이 MCP 핸들러를 단위 테스트할 수 없고, 커밋 메시지도 \"스토어의 우선순위 규칙을 커버한다\"고만 말해 설명과 코드가 불일치하지 않는다.",
+        "internal/httpapi/ratelimit.go:41 시계가 1분 이상 뒤로 점프하면(NTP 보정) window <= swept 가 되어 시계가 따라잡을 때까지 스윕이 아예 멈춘다. 옛 1024회 방식은 이 상황에서도 스윕이 돌았으므로 이 극단 케이스에서는 이론적 후퇴다. 다만 그 동안에도 bucket.window != window 이면 카운트가 리셋되므로 레이트리밋 우회는 발생하지 않고, 맵은 그 구간의 고유 키 수만큼만 늘어난다. 실사용 위험은 낮다고 판단해 거절 사유로 보지 않는다.",
+        "MCP featured_apps 의 Sort:\"updated\" -> \"featured\" 변경은 featuredOrder(a.featured DESC, a.featured_rank ASC NULLS LAST, a.updated_at DESC, a.id)를 쓰며, Featured 필터가 이미 걸려 있어 a.featured DESC 는 무의미하지만 해가 없다. REST /api/v1/apps?featured=true 는 normalizedSort 가 빈 문자열을 반환해 동일하게 featuredOrder 를 타므로 커밋 메시지의 \"REST 와 같은 순서\" 주장은 사실이다. internal/mcp/tools.go:35 의 도구 설명(\"관리자가 추천한 앱 목록\")과도 일치한다.",
+        "마이그레이션·인증/권한·비밀값·삭제 로직 변경 없음. 두 커밋 모두 순수 코드 변경이라 revert 로 완전히 되돌아온다. 범위 이탈로 볼 만한 무관한 리팩터/포맷/의존성 변경 없음(스토어 리팩터는 테스트 대상 함수를 뽑아내기 위한 것으로 목적에 종속).",
+        "go build ./... , go vet ./... , go test ./... 전부 통과. internal/httpapi/integration_test.go 는 APPSTORE_TEST_POSTGRES_DSN 없으면 skip 이라 featured 정렬의 실제 SQL 경로는 이 환경에서 실행되지 않았다."
+      ],
+      "risk": "low"
+    },
+    "ci_gate": {
+      "ok": true,
+      "state": "success",
+      "reason": "검사 2개 모두 success",
+      "checks": 2
+    }
+  },
+  "release": {
+    "result": {
+      "status": "released",
+      "version": "2.5.2",
+      "tag": "v2.5.2",
+      "title": "AppStore v2.5.2",
+      "notes_file": "",
+      "github_release": false,
+      "assets": [],
+      "reason": ""
+    },
+    "assets_sha256": []
+  },
+  "approval": null,
+  "usage": [
+    {
+      "ts": "2026-09-07T11:21:04+09:00",
+      "date": "2026-09-07",
+      "project": "appstore",
+      "phase": "improve",
+      "run_id": "2026-09-07-111546-appstore-improve",
+      "campaign": "",
+      "subtype": "success",
+      "duration_ms": 311865,
+      "num_turns": 45,
+      "cost_usd": 2.377663,
+      "input_tokens": 78,
+      "output_tokens": 22919,
+      "cache_read": 2196456,
+      "cache_create": 69628
+    },
+    {
+      "ts": "2026-09-07T11:23:09+09:00",
+      "date": "2026-09-07",
+      "project": "appstore",
+      "phase": "review",
+      "run_id": "2026-09-07-111546-appstore-improve",
+      "campaign": "",
+      "subtype": "success",
+      "duration_ms": 103943,
+      "num_turns": 10,
+      "cost_usd": 0.557902,
+      "input_tokens": 20,
+      "output_tokens": 6768,
+      "cache_read": 267392,
+      "cache_create": 25304
+    },
+    {
+      "ts": "2026-09-07T11:29:19+09:00",
+      "date": "2026-09-07",
+      "project": "appstore",
+      "phase": "release",
+      "run_id": "2026-09-07-111546-appstore-improve",
+      "campaign": "",
+      "subtype": "success",
+      "duration_ms": 202123,
+      "num_turns": 30,
+      "cost_usd": 1.1222165,
+      "input_tokens": 44,
+      "output_tokens": 8155,
+      "cache_read": 933205,
+      "cache_create": 44603
+    }
+  ]
+}
