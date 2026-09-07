@@ -31,6 +31,13 @@ fi
 gh auth status >/dev/null 2>&1 || problems+=("gh 인증 실패 — gh auth login 필요")
 disk=$(df -P "$REPO_DIR" | awk 'NR==2{print $5}' | tr -d '%'); [ "${disk:-0}" -gt 90 ] && problems+=("디스크 ${disk}% 사용")
 docker info >/dev/null 2>&1 || problems+=("docker 를 쓸 수 없음 — 자산 빌드 실패 예상")
+# 자기 복구: 예전 러너가 남긴 pushurl=DISABLED(저장소 공통 설정)를 발견하면 풀어준다 — 사용자 push 를 막아서는 안 된다
+for d in "${ROOT:-/mnt/c/Users/USER/projects}"/*/; do
+  [ -d "$d/.git" ] || continue
+  if [ "$(git -C "$d" config --get remote.origin.pushurl 2>/dev/null)" = DISABLED ]; then
+    git -C "$d" config --unset remote.origin.pushurl && actions+=("$(basename "$d"): pushurl=DISABLED 제거")
+  fi
+done
 sched=$(schtasks.exe /Query /TN AutoImprove /FO LIST 2>/dev/null | iconv -f cp949 -t utf-8 2>/dev/null | tr -d '\r' | grep -E "^(상태|Status):" | head -1 | sed -E 's/^[^:]+:[[:space:]]*//')
 next_run=$(schtasks.exe /Query /TN AutoImprove /FO LIST 2>/dev/null | iconv -f cp949 -t utf-8 2>/dev/null | tr -d '\r' | grep -E "^(다음 실행 시간|Next Run Time):" | head -1 | sed -E 's/^[^:]+:[[:space:]]*//')
 

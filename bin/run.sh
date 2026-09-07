@@ -87,6 +87,7 @@ stage(){ # $1=단계 $2=상태 $3=사유 — $OUT/stages.json 에 누적
 
 # ---------------------------------------------------------------- 격리된 에이전트 실행
 # 에이전트 세션: 임시 HOME(→ gh 미인증, git 자격증명 없음, 홈의 비밀 파일 없음), 토큰 환경변수 제거, 결과는 $OUT 에만.
+# push 차단은 GIT_CONFIG_* 환경변수로 이 프로세스에만 건다 — `git remote set-url` 은 저장소 공통 설정이라 사용자 체크아웃까지 막는다(2026-09-07 사고).
 # Claude 자체 설정은 CLAUDE_CONFIG_DIR 로 넘긴다. 빌드 캐시는 실제 경로(비밀 아님)로 연결해 속도를 유지한다.
 run_agent(){ # $1=단계 $2=프롬프트 $3=작업 디렉터리 $4=예산 $5=허용 도구
   local phase=$1 prompt=$2 wd=$3 budget=$4 tools=$5 envfile="$STATE/$n.env"
@@ -99,6 +100,7 @@ run_agent(){ # $1=단계 $2=프롬프트 $3=작업 디렉터리 $4=예산 $5=허
       GOPATH="$REAL_HOME/go" GOMODCACHE="$REAL_HOME/go/pkg/mod" GOCACHE="$REAL_HOME/.cache/go-build" \
       npm_config_cache="$REAL_HOME/.npm" NVM_DIR="$REAL_HOME/.nvm" PIP_CACHE_DIR="$REAL_HOME/.cache/pip" \
       DOCKER_HOST="${DOCKER_HOST:-}" AIDEV_OUT="$OUT" \
+      GIT_CONFIG_COUNT=2 GIT_CONFIG_KEY_0=remote.origin.pushurl GIT_CONFIG_VALUE_0=DISABLED GIT_CONFIG_KEY_1=credential.helper GIT_CONFIG_VALUE_1= \
       bash -c '[ -f "$0" ] && { set -a; . "$0"; set +a; }; exec "$@"' "$envfile" \
       timeout -k 30 "$(case "$phase" in improve) echo $T_IMPROVE;; review) echo $T_REVIEW;; release) echo $T_RELEASE;; *) echo $T_ASSETS;; esac)" \
       claude -p "$prompt" --model "$MODEL" --settings "$CLAUDE_SETTINGS" --permission-mode acceptEdits \
@@ -438,7 +440,6 @@ release_project(){ # $1=base $2=변경 요약 [$3=assets] — 에이전트는 �
   fi
   git -C "$repo" worktree remove --force "$rwt" 2>/dev/null || true
   git -C "$repo" worktree add --detach "$rwt" "$ref" >>"$LOG" 2>&1
-  git -C "$rwt" remote set-url --push origin DISABLED >/dev/null 2>&1 || true
   release_context
   rprompt=$(RELEASE_FILE="$rfile" OUT_DIR="$OUT" CHANGE_SUMMARY="$summary" MODE_NOTE="$mode_note" RELEASE_CONTEXT="$(cat "$OUT/release-context.md")" \
             envsubst '$RELEASE_FILE $OUT_DIR $CHANGE_SUMMARY $MODE_NOTE $RELEASE_CONTEXT' < "$REPO_DIR/release-prompt.md")
@@ -462,7 +463,6 @@ release_project(){ # $1=base $2=변경 요약 [$3=assets] — 에이전트는 �
   if [ "$ahead" -eq 0 ] && [ "$tagged" -eq 0 ]; then stage release nothing "커밋도 태그도 없음"; git -C "$repo" worktree remove --force "$rwt" >>"$LOG" 2>&1 || true; return 0; fi
   # 릴리즈 커밋 비밀정보 검사 → 푸시 → 그 커밋의 CI 성공 확인 → 태그 푸시 (CI 실패한 커밋에는 태그를 밀지 않는다)
   if [ "$ahead" -gt 0 ] && ! git -C "$rwt" diff "origin/$base..HEAD" | secrets_gate "release diff" -; then stage release blocked "릴리즈 커밋에 비밀정보 의심"; result="$result, release blocked (secrets)"; git -C "$repo" worktree remove --force "$rwt" >>"$LOG" 2>&1 || true; return 0; fi
-  git -C "$rwt" remote set-url --push origin "$(git -C "$repo" remote get-url origin)" >/dev/null 2>&1
   if [ "$ahead" -gt 0 ]; then
     with_retry "release push" git -C "$rwt" push origin "HEAD:$base" || { stage release push-failed "릴리즈 커밋 푸시 실패 ($RETRY_KIND)"; result="$result, release push failed"; git -C "$repo" worktree remove --force "$rwt" >>"$LOG" 2>&1 || true; return 0; }
     if [ "$tagged" -eq 1 ] && ! ci_gate "$(git -C "$rwt" rev-parse HEAD)"; then
@@ -649,7 +649,6 @@ for n in "${picked[@]}"; do
   BASE_SHA=$(git -C "$repo" rev-parse "origin/$base"); slug="auto/$RUN_DATE-$(date +%H%M)"
   git -C "$repo" worktree remove --force "$wt" 2>/dev/null || true
   git -C "$repo" worktree add -b "$slug" "$wt" "$BASE_SHA" >>"$LOG" 2>&1
-  git -C "$wt" remote set-url --push origin DISABLED >/dev/null 2>&1 || true
   stage base pinned "$base@${BASE_SHA:0:7}"
 
   fix_note=""; [ "$n" = "$FIX_PROJECT" ] && fix_note="## 우선 과제 (자동 배정) — 이번 회차는 새 아이디어 대신 아래 실패를 고치세요
@@ -687,9 +686,7 @@ $(printf '%b' "$RUN_SPEC")
       stage verify failed "변경에 비밀정보 의심 문자열"; result="verify failed: secrets in diff"; OUTCOME=verify-failed
     else
       stage verify passed "$(jq -r .reason "$OUT/verify.gate.json")"
-      git -C "$wt" remote set-url --push origin "$(git -C "$repo" remote get-url origin)" >/dev/null 2>&1
       with_retry "branch push" git -C "$wt" push -u origin "$slug" || { stage pr push-failed "브랜치 푸시 실패 ($RETRY_KIND)"; result="error: push ($RETRY_KIND)"; OUTCOME=error; }
-      git -C "$wt" remote set-url --push origin DISABLED >/dev/null 2>&1 || true
       body=$(printf '자율 개선 에이전트가 생성한 PR입니다. (run %s, base %s)\n\n%s\n\n🤖 auto-improve %s · https://hkjang.github.io/aidev/projects/%s/' "$RUN_ID" "${BASE_SHA:0:7}" "$(tail -n 12 "$OUT/ledger-entry.md" 2>/dev/null)" "$RUN_DATE" "$n")
       url=""; [ "$OUTCOME" != error ] && { url=$(cd "$repo" && gh pr list --head "$slug" --json url --jq '.[0].url // empty' 2>/dev/null); }   # 재개 시 중복 생성 방지
       [ -n "$url" ] || [ "$OUTCOME" = error ] || url=$(cd "$repo" && gh pr create --base "$base" --head "$slug" --title "auto-improve: $(git -C "$wt" log -1 --format=%s)" --body "$body" 2>>"$LOG" || true)
@@ -723,9 +720,7 @@ $(sed 's/^/- /' <<<"$guarded")
           log "$n: base moved (${BASE_SHA:0:7} → $(git -C "$repo" rev-parse --short "origin/$base")) — rebase & re-verify"
           if git -C "$wt" rebase "origin/$base" >>"$LOG" 2>&1 && run_verify "$wt" "$OUT/verify-rebased.json"; then
             BASE_SHA=$(git -C "$repo" rev-parse "origin/$base"); HEAD_SHA=$(git -C "$wt" rev-parse HEAD)
-            git -C "$wt" remote set-url --push origin "$(git -C "$repo" remote get-url origin)" >/dev/null 2>&1
-            git -C "$wt" push --force-with-lease origin "$slug" >>"$LOG" 2>&1; git -C "$wt" remote set-url --push origin DISABLED >/dev/null 2>&1 || true
-            stage base rebased "${BASE_SHA:0:7}, 재검증 통과"
+            git -C "$wt" push --force-with-lease origin "$slug" >>"$LOG" 2>&1;            stage base rebased "${BASE_SHA:0:7}, 재검증 통과"
           else git -C "$wt" rebase --abort >/dev/null 2>&1 || true; stage base conflict "리베이스 충돌 또는 재검증 실패 — 보류"; result="base moved, PR open $url"; merge_ok=0; fi
         fi
       fi
