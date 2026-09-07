@@ -179,7 +179,7 @@ approvals(){
     stopped merge "$n" && continue
     appr_sha=$(jq -r --arg pr "$pr" 'select(.pr==$pr) | .sha' "$STATE/approvals.jsonl" 2>/dev/null | tail -1)
     if [ -z "$appr_sha" ]; then appr_sha=$head; jq -cn --arg ts "$(date -Iseconds)" --arg pr "$pr" --arg sha "$head" --arg pv "$pv" '{ts:$ts,pr:$pr,sha:$sha,policy_version:$pv}' >> "$STATE/approvals.jsonl"; log "$n: 승인 기록 $pr @ ${head:0:7} (policy $pv)"; fi
-    if [ "$appr_sha" != "$head" ]; then (cd "$repo" && gh pr comment "$pr" --body "승인 뒤 커밋이 바뀌었습니다(승인 ${appr_sha:0:7} → 현재 ${head:0:7}). 다시 확인하고 라벨을 다시 달아 주세요." >/dev/null 2>&1; gh pr edit "$pr" --remove-label aidev-approved >/dev/null 2>&1); log "$n: $pr 승인 커밋 불일치 — 라벨 제거"; continue; fi
+    if [ "$appr_sha" != "$head" ]; then (cd "$repo" && gh pr comment "$pr" --body "승인 뒤 커밋이 바뀌었습니다(승인 ${appr_sha:0:7} → 현재 ${head:0:7}). 다시 확인하고 라벨을 다시 달아 주세요." >/dev/null 2>&1; gh api -X DELETE "repos/{owner}/{repo}/issues/${pr##*/}/labels/aidev-approved" >/dev/null 2>&1); log "$n: $pr 승인 커밋 불일치 — 라벨 제거"; continue; fi
     new_run "$n" approve; base=$(policy "$n" '.base_branch'); base=${base:-main}; result="approved $pr"; OUTCOME=review-pending; RUN_META="{}"; BASE_SHA=""; HEAD_SHA=$head
     if ci_gate "$head"; then
       if with_retry "pr merge" bash -c "cd '$repo' && gh pr merge '$pr' --merge --delete-branch --match-head-commit '$head'"; then
@@ -624,7 +624,7 @@ RUN_PROJECT=""; RUN_ISSUE=""; RUN_SPEC=""; RUNQ="$STATE/run-queue.tsv"
 if [ -z "$FIX_PROJECT" ] && [ -z "$ONLY" ] && [ -s "$RUNQ" ]; then
   while IFS=$'\t' read -r rp rnote rnum rurg rspec; do [ -n "$rp" ] || continue
     if printf '%s\n' "${candidates[@]}" | grep -qx "$rp"; then picked=("$rp"); RUN_PROJECT="$rp"; RUN_ISSUE="$rnum"; RUN_SPEC="${rspec:-}"; log "run-queue: picked $rp ($rnote)"; break
-    else (cd "$REPO_DIR" && gh issue comment "$rnum" --body "\`$rp\` 은 지금 후보가 아닙니다(미커밋 변경/원격 없음/30일 무활동). 정리 후 다시 라벨을 달아 주세요." >/dev/null 2>&1; gh issue edit "$rnum" --remove-label run >/dev/null 2>&1) || true; grep -v -P "^$rp\t" "$RUNQ" > "$RUNQ.tmp"; mv "$RUNQ.tmp" "$RUNQ"; fi
+    else (cd "$REPO_DIR" && gh issue comment "$rnum" --body "\`$rp\` 은 지금 후보가 아닙니다(미커밋 변경/원격 없음/30일 무활동). 정리 후 다시 라벨을 달아 주세요." >/dev/null 2>&1; gh api -X DELETE "repos/hkjang/aidev/issues/$rnum/labels/run" >/dev/null 2>&1) || true; grep -v -P "^$rp\t" "$RUNQ" > "$RUNQ.tmp"; mv "$RUNQ.tmp" "$RUNQ"; fi
   done < "$RUNQ"
 fi
 CAMPAIGN_ID=""; CAMPAIGN_NOTE=""; CAMPAIGN_PROJECT=""

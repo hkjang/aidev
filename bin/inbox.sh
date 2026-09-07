@@ -16,7 +16,7 @@ gh issue list --label run --state open --json number,title,body --jq '.[] | "\(.
   p=$(field "$body" "프로젝트" | head -1 | tr -d '[:space:]')
   [ -n "$p" ] || p=$(sed -nE 's/^[[:space:]]*(run|실행)[[:space:]]*:[[:space:]]*([A-Za-z0-9_.-]+).*/\2/p' <<<"$title")
   [ -n "$p" ] || p=$(sed -nE 's/^[[:space:]]*(run|실행)[[:space:]]*:[[:space:]]*([A-Za-z0-9_.-]+).*/\2/p' <<<"$first")
-  [[ "$p" =~ ^[A-Za-z0-9_.-]+$ ]] || { gh issue comment "$num" --body "프로젝트 이름을 알 수 없습니다. 이슈 폼의 '프로젝트' 칸이나 제목 \`run: <프로젝트>\` 를 채워 주세요." >/dev/null 2>&1; gh issue edit "$num" --remove-label run >/dev/null 2>&1; continue; }
+  [[ "$p" =~ ^[A-Za-z0-9_.-]+$ ]] || { gh issue comment "$num" --body "프로젝트 이름을 알 수 없습니다. 이슈 폼의 '프로젝트' 칸이나 제목 \`run: <프로젝트>\` 를 채워 주세요." >/dev/null 2>&1; gh api -X DELETE "repos/hkjang/aidev/issues/$num/labels/run" >/dev/null 2>&1; continue; }
   spec=$(printf '문제: %s\n수용 기준: %s\n금지 범위: %s\n긴급도: %s' "$(field "$body" "문제 설명")" "$(field "$body" "수용 기준")" "$(field "$body" "금지 범위")" "$(field "$body" "긴급도" | head -1)" | tr '\n' '\r' | sed 's/\r/\\n/g')
   urgent=0; grep -q "높음" <<<"$(field "$body" "긴급도")" && urgent=1
   if ! grep -q -P "^$p\t" "$Q"; then
