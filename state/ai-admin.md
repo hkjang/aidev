@@ -114,3 +114,9 @@
 
 - 릴리즈: v1.2.10 (2026-09-07, run 2026-09-07-102543-ai-admin-approve)
 - 릴리즈: v1.2.11 (2026-09-08, run 2026-09-08-150055-ai-admin-improve)
+## 2026-09-08
+- 선택: 확인하지 못한 자격 증명을 세션 만료로 보고하던 인증 미들웨어 수정 (가치 4 / 위험 2 / 작업량 M)
+- 결과: 성공
+- 요약: `auth.Authenticate`가 session·API key 조회 실패를 자격 증명 오류와 같은 값으로 반환하고 미들웨어가 모두 401 `unauthenticated`로 답해, DB 장애가 나면 아직 유효한 session이 만료된 것으로 보여 모든 운영자가 로그인 화면으로 밀려나고 API key client는 키가 폐기된 것으로 읽었다(프런트엔드는 이미 401이 아닌 인증 오류에 "서비스에 연결할 수 없습니다"+재시도를 띄우도록 되어 있었지만 서버가 그 상태를 만들지 않았다). v1.2.10 로그인 분류·990c7fb의 DB 오류 분류와 같은 원칙으로 `ErrUnauthenticated` sentinel을 도입해 "확인해서 거부한" 경우만 401로, 조회 실패는 `Retry-After`와 함께 503 `auth_unavailable`로 답하고 MCP의 `WWW-Authenticate` challenge도 실제 거부에만 붙게 했다. 연결 불가 pool을 향한 요청의 401/503 분기와, 정상 DB에서 폐기 session·비활성 계정·없는 key는 401이고 session·role table이 안 읽힐 때만 503인지를 통합 테스트로 검증했다(수정 전 코드에서는 모두 401로 실패). Docker PostgreSQL 16에 `TEST_POSTGRES_DSN`을 걸어 `go test -race -count=1 ./...`를 통과시켰고 `gofmt -l`·`go vet ./...`·`go build ./...`·`scripts/verify-version.sh`·`npm ci && npm test`(62개)·`npm run build`도 통과했다. 이번 세션 규칙대로 버전·CHANGELOG는 건드리지 않았고 `docs/api.md`에만 401/503 계약을 명시했다.
+- 보류 아이디어: CI에 정적 분석 단계(`gofmt -l`, `go vet`) 추가 — eslint는 설정 자체가 없어 축소 범위 권장 (가치 3 / 위험 1 / M) · `loadGrants`가 map 순회로 roles·permissions 순서를 무작위화해 `/api/v1/auth/me` 응답 순서가 요청마다 뒤바뀜 (가치 2 / 위험 1 / S) · `safeCSVCell`이 OWASP가 함께 권고하는 tab(0x09)·CR(0x0D) 선행 문자를 중화하지 않음 (가치 2 / 위험 1 / S) · `listUsers`의 `q`에만 길이 상한이 없어 매우 긴 검색어가 세 컬럼 ILIKE 스캔으로 들어감 (가치 2 / 위험 1 / S) · `decideApproval`이 `approval_action.comment`에는 trim한 값을, `approval_request.decision_comment`에는 원문을 저장해 같은 결정의 두 기록이 달라짐 (가치 2 / 위험 1 / S)
+
