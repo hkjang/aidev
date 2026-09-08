@@ -1,0 +1,5 @@
+## 2026-09-09
+- 선택: Transit 핸들러의 store 오류를 종류별 상태 코드로 분리 (가치 2 / 위험 1 / 작업량 S)
+- 결과: 성공
+- 요약: `/v1/transit/{encrypt,decrypt}/{key}`가 store 오류를 종류와 무관하게 `400 + err.Error()`로 반환해 DB 장애가 "잘못된 요청"으로 보고되고 pgx·crypto 내부 오류 문자열(SQLSTATE, DSN host 등)이 클라이언트에 노출됐습니다. KV 핸들러와 같은 방식으로 `baoTransitFailure` 헬퍼를 추가해 `ErrInvalid`는 400+이유, `ErrNotFound`는 OpenBao와 동일한 400 `encryption key not found`, 나머지는 500+일반 메시지로 나누고 batch 경로도 같은 판정을 항목별 `error`에 적용했으며(전부 실패인데 서버 장애가 섞이면 400 대신 500), AEAD 인증 실패는 잘못된 입력이므로 `TransitDecrypt`에서 `ErrInvalid`로 감싸 400을 유지했습니다. 검증은 단건 4케이스·batch 서버 장애·부분 성공을 덮는 hook 기반 단위 테스트 3개를 추가하고 기존 batch 테스트의 hook 오류를 실제 store 오류 타입으로 바로잡은 뒤 `./scripts/verify.sh` 전체(Go test·vet·gofmt, React test·lint·build, docs, compose)를 통과시켜 확인했습니다. 커밋 `ab3f6b1`.
+- 보류 아이디어: 로그인 성공 판정 전에 rate limiter를 succeeded로 초기화하는 순서 정리 (2/1/S) / settings GET이 주입하는 파생 필드가 PUT 왕복 시 workflow 설정에 저장되는 문제 정리 (2/1/S) / 감사 로그 보존(audit_retention_days) 자동 정리 구현 (3/3/M) / MCP tool 오류가 모든 store 오류를 err.Error() 그대로 반환하는 문제를 Transit과 같은 방식으로 정리 (2/1/S) / Transit rewrap 엔드포인트 추가 (2/3/M)
