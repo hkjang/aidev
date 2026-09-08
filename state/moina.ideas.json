@@ -1,74 +1,83 @@
 [
-  {
-    "title": "HEIC 사진 업로드가 415로 거절되는데 안내가 형식 목록뿐",
-    "value": 3,
-    "risk": 2,
-    "size": "M",
-    "status": "done",
-    "note": "utils/media.ts에 isHEIC·unsupportedMediaMessage를 추가해 MoinComposer·ProfileAvatarEditor가 '높은 호환성' 촬영 설정과 JPEG 내보내기를 안내하도록 고쳤다. 브라우저가 MIME을 모를 때를 위해 확장자도 보고, ProfileAvatarEditor.selectFiles가 type이 비면 안내 없이 버리던 경로도 함께 수정. iOS Safari의 자동 변환을 지키려 accept 목록은 유지. 커밋 9c1a7aa.",
-    "updated": "2026-09-09"
-  },
-  {
-    "title": "updatePost가 DB 오류를 409 not_editable로 보고해 원인을 감춤",
-    "value": 2,
-    "risk": 1,
-    "size": "S",
-    "status": "pending",
-    "note": "posts.go:832의 UPDATE에서 err != nil과 RowsAffected()==0을 한 분기로 묶어, 저장소 장애도 '본인의 공개 Moin만 수정할 수 있습니다'로 보인다. err는 500 storage_error로 분리해야 한다. 이번 회차에도 코드 확인 결과 그대로 남아 있어 여전히 유효.",
-    "updated": "2026-09-09"
-  },
-  {
-    "title": "safeFilename이 확장자와 실제 형식의 불일치를 그대로 둠",
-    "value": 2,
-    "risk": 2,
-    "size": "S",
-    "status": "pending",
-    "note": "photo.png로 올린 JPEG이 filename=photo.png, mime_type=image/jpeg로 저장돼 다운로드 파일 확장자가 내용과 어긋난다. 판정한 MIME에 맞는 확장자로 교정할 수 있다. Content-Disposition 수정 이후 파일명이 실제 다운로드 이름이라 가치가 유지된다.",
-    "updated": "2026-09-09"
-  },
-  {
-    "title": "Makefile test가 CI와 달리 -race 미사용",
-    "value": 2,
-    "risk": 1,
-    "size": "S",
-    "status": "pending",
-    "note": "make test는 go test ./...만 실행해 로컬에서 통과한 변경이 CI의 -race에서 처음 실패할 수 있다. CGO 필요 여부와 실행 시간 증가를 확인한 뒤 맞출 것.",
-    "updated": "2026-09-09"
-  },
-  {
-    "title": "서버 415 unsupported_media 메시지가 HEIC을 구분하지 못함",
-    "value": 2,
-    "risk": 2,
-    "size": "S",
-    "status": "pending",
-    "note": "이번 회차에 웹 앱은 HEIC 안내를 갖췄지만 서버 uploadMedia는 여전히 형식 목록만 돌려준다. detectMediaType이 HEIC brand(heic·heix·mif1·msf1)를 알아보고 415 본문에 같은 안내를 담으면 API·MCP client와 서드파티 앱도 원인을 알 수 있다. 다만 detectMediaType이 지금은 ISO Base Media를 application/octet-stream 하나로 뭉개므로 판정 결과를 호출부로 전달할 방법이 필요하다.",
-    "updated": "2026-09-09"
-  },
-  {
-    "title": "일간 Digest digestDue가 DST 전환일에 존재하지 않는 지역 시각을 time.Date 정규화에 맡김",
-    "value": 2,
-    "risk": 3,
-    "size": "M",
-    "status": "pending",
-    "note": "봄 DST 전환으로 건너뛴 시각(예: 02:30)을 지정하면 time.Date가 조용히 한 시간 밀린 시각으로 정규화해 발송 시각과 window ID가 어긋난다. 기본 시간대가 Asia/Seoul이라 국내 인스턴스는 영향이 없다.",
-    "updated": "2026-09-09"
-  },
-  {
-    "title": "avatar 조회가 프로필 응답과 별도 요청이라 Flow 한 화면에 작성자 수만큼 미디어 요청이 발생",
-    "value": 2,
-    "risk": 3,
-    "size": "M",
-    "status": "pending",
-    "note": "avatarUrl이 /api/v1/media/{id}를 가리키고 미디어가 no-cache 재검증으로 바뀌어, 같은 작성자가 여러 번 등장하는 Flow에서 아바타 재검증 요청이 늘어난다. 아바타는 사용자가 바꾸면 ID 자체가 바뀌므로 아바타 경로만 별도 라우트로 분리해 immutable 캐시를 줄 수 있는지 검토할 가치가 있다.",
-    "updated": "2026-09-09"
-  },
-  {
-    "title": "조용한 시간·Digest가 사용자별 시간대가 아닌 인스턴스 기본 시간대만 사용",
-    "value": 3,
-    "risk": 3,
-    "size": "L",
-    "status": "pending",
-    "note": "여러 시간대 사용자가 한 인스턴스를 쓰면 조용한 시간이 엉뚱한 시각에 걸린다. 사용자 설정·마이그레이션·UI가 모두 필요해 한 세션 범위를 넘는다.",
-    "updated": "2026-09-09"
-  }
+ {
+  "title": "HEIC 사진 업로드가 415로 거절되는데 안내가 형식 목록뿐",
+  "value": 3,
+  "risk": 2,
+  "size": "M",
+  "status": "done",
+  "note": "utils/media.ts에 isHEIC·unsupportedMediaMessage를 추가해 MoinComposer·ProfileAvatarEditor가 '높은 호환성' 촬영 설정과 JPEG 내보내기를 안내하도록 고쳤다. 브라우저가 MIME을 모를 때를 위해 확장자도 보고, ProfileAvatarEditor.selectFiles가 type이 비면 안내 없이 버리던 경로도 함께 수정. iOS Safari의 자동 변환을 지키려 accept 목록은 유지. 커밋 9c1a7aa.",
+  "updated": "2026-09-09"
+ },
+ {
+  "title": "updatePost가 DB 오류를 409 not_editable로 보고해 원인을 감춤",
+  "value": 2,
+  "risk": 1,
+  "size": "S",
+  "status": "pending",
+  "note": "posts.go:832의 UPDATE에서 err != nil과 RowsAffected()==0을 한 분기로 묶어, 저장소 장애도 '본인의 공개 Moin만 수정할 수 있습니다'로 보인다. err는 500 storage_error로 분리해야 한다. 이번 회차에도 코드 확인 결과 그대로 남아 있어 여전히 유효.",
+  "updated": "2026-09-09"
+ },
+ {
+  "title": "safeFilename이 확장자와 실제 형식의 불일치를 그대로 둠",
+  "value": 2,
+  "risk": 2,
+  "size": "S",
+  "status": "pending",
+  "note": "photo.png로 올린 JPEG이 filename=photo.png, mime_type=image/jpeg로 저장돼 다운로드 파일 확장자가 내용과 어긋난다. 판정한 MIME에 맞는 확장자로 교정할 수 있다. Content-Disposition 수정 이후 파일명이 실제 다운로드 이름이라 가치가 유지된다.",
+  "updated": "2026-09-09"
+ },
+ {
+  "title": "Makefile test가 CI와 달리 -race 미사용",
+  "value": 2,
+  "risk": 1,
+  "size": "S",
+  "status": "pending",
+  "note": "make test는 go test ./...만 실행해 로컬에서 통과한 변경이 CI의 -race에서 처음 실패할 수 있다. CGO 필요 여부와 실행 시간 증가를 확인한 뒤 맞출 것.",
+  "updated": "2026-09-09"
+ },
+ {
+  "title": "서버 415 unsupported_media 메시지가 HEIC을 구분하지 못함",
+  "value": 2,
+  "risk": 2,
+  "size": "S",
+  "status": "pending",
+  "note": "이번 회차에 웹 앱은 HEIC 안내를 갖췄지만 서버 uploadMedia는 여전히 형식 목록만 돌려준다. detectMediaType이 HEIC brand(heic·heix·mif1·msf1)를 알아보고 415 본문에 같은 안내를 담으면 API·MCP client와 서드파티 앱도 원인을 알 수 있다. 다만 detectMediaType이 지금은 ISO Base Media를 application/octet-stream 하나로 뭉개므로 판정 결과를 호출부로 전달할 방법이 필요하다.",
+  "updated": "2026-09-09"
+ },
+ {
+  "title": "일간 Digest digestDue가 DST 전환일에 존재하지 않는 지역 시각을 time.Date 정규화에 맡김",
+  "value": 2,
+  "risk": 3,
+  "size": "M",
+  "status": "pending",
+  "note": "봄 DST 전환으로 건너뛴 시각(예: 02:30)을 지정하면 time.Date가 조용히 한 시간 밀린 시각으로 정규화해 발송 시각과 window ID가 어긋난다. 기본 시간대가 Asia/Seoul이라 국내 인스턴스는 영향이 없다.",
+  "updated": "2026-09-09"
+ },
+ {
+  "title": "avatar 조회가 프로필 응답과 별도 요청이라 Flow 한 화면에 작성자 수만큼 미디어 요청이 발생",
+  "value": 2,
+  "risk": 3,
+  "size": "M",
+  "status": "pending",
+  "note": "avatarUrl이 /api/v1/media/{id}를 가리키고 미디어가 no-cache 재검증으로 바뀌어, 같은 작성자가 여러 번 등장하는 Flow에서 아바타 재검증 요청이 늘어난다. 아바타는 사용자가 바꾸면 ID 자체가 바뀌므로 아바타 경로만 별도 라우트로 분리해 immutable 캐시를 줄 수 있는지 검토할 가치가 있다.",
+  "updated": "2026-09-09"
+ },
+ {
+  "title": "조용한 시간·Digest가 사용자별 시간대가 아닌 인스턴스 기본 시간대만 사용",
+  "value": 3,
+  "risk": 3,
+  "size": "L",
+  "status": "pending",
+  "note": "여러 시간대 사용자가 한 인스턴스를 쓰면 조용한 시간이 엉뚱한 시각에 걸린다. 사용자 설정·마이그레이션·UI가 모두 필요해 한 세션 범위를 넘는다.",
+  "updated": "2026-09-09"
+ },
+ {
+  "title": "빠른 이동 닫힘 후 포커스 복원 스모크 테스트가 간헐 실패",
+  "value": 3,
+  "risk": 1,
+  "size": "S",
+  "status": "pending",
+  "note": "2026-09-09 PR #11 에서 이 테스트만 실패했으나 같은 커밋 재실행에서 통과 — 변경과 무관한 플레이키. 포커스 복원을 폴링/대기로 확인하도록 스모크 테스트를 안정화할 것.",
+  "updated": "2026-09-09"
+ }
 ]
