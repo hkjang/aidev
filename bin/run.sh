@@ -427,7 +427,12 @@ publish_release(){ # $1=태그 $2=제목 $3=노트 $4=ghrel $5=자산 목록 파
     for a2 in $req_names; do printf '%s\n' "${assets[@]##*/}" | grep -qx "$a2" || missing="$missing $a2"; done
     minsz=$(jq -r '.min_bytes // 1024' "$mf" 2>/dev/null); minsz=${minsz:-1024}
     for a2 in "${assets[@]}"; do
-      [ "$(stat -c %s "$a2")" -ge "$minsz" ] || missing="$missing $(basename "$a2")(too-small)"
+      # 크기 하한은 압축본에만 적용한다 — .sha256(약 100B)·README·매니페스트 같은 곁 파일은 원래 작다
+      case "$a2" in
+        *.tar.gz|*.tgz|*.zip|*.tar|*.gz|*.bin|*.exe)
+          [ "$(stat -c %s "$a2")" -ge "$minsz" ] || missing="$missing $(basename "$a2")(too-small)";;
+        *) [ -s "$a2" ] || missing="$missing $(basename "$a2")(empty)";;
+      esac
       [ -f "$a2.sha256" ] && ! grep -q "$(sha256sum "$a2" | cut -d' ' -f1)" "$a2.sha256" && missing="$missing $(basename "$a2")(sha256-mismatch)"
     done
     if [ -n "$missing" ]; then stage manifest failed "누락/불량:$missing"; result="$result, asset manifest failed"; OUTCOME=releasing; rm -f "$5"; assets=(); else stage manifest ok "$(printf '%s ' "${assets[@]##*/}")"; fi
