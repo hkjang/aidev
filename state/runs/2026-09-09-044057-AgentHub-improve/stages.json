@@ -1,0 +1,27 @@
+{
+  "base": {
+    "state": "pinned",
+    "reason": "main@88b4ec1",
+    "at": "2026-09-09T04:41:04+09:00"
+  },
+  "autonomy": {
+    "state": "release",
+    "reason": "",
+    "at": "2026-09-09T04:41:04+09:00"
+  },
+  "verify": {
+    "state": "passed",
+    "reason": "검증 5개 통과 (auto)",
+    "at": "2026-09-09T04:54:02+09:00"
+  },
+  "pr": {
+    "state": "created",
+    "reason": "https://github.com/hkjang/AgentHub/pull/16",
+    "at": "2026-09-09T04:54:06+09:00"
+  },
+  "review": {
+    "state": "rejected",
+    "reason": "리뷰 거절: internal/execution/scmpost.go:442 리뷰 코멘트 경계의 정책 행위자(actor)를 잘못 해석합니다. contentGuard 는 agent.OwnerID(에이전트 정의 소유자)로 UserByID 를 조회해 guard.Owner 를 채우지만, 같은 파일의 announceReview 는 이미 task 를 인자로 받고 있고 이 플랫폼의 다른 모든 정책 지점은 작업 소유자를 씁니다 — 모델 경계 review.go:411 (workflow.Step{... OwnerID: task.OwnerID}), 그리고 이번에 함께 고친 내보내기 경계 store/provenance.go:104 (DecisionForTask 가 t.owner_id 를 읽음). 두 소유자는 실제로 갈립니다: control.go:221 위임은 OwnerID: task.OwnerID 로 AgentID: target.ID 인 다른 사람의 에이전트에 자식 작업을 만들고, scheduler.go:83 / dispatcher.go:106 은 trigger.OwnerID 를 씁니다. 그 결과 공유 리뷰 에이전트(관리자 소유)에 계약직의 작업이 위임되면 roles:[contractor] + actions:[review.comment] 규칙이 관리자 역할로 평가되어 매칭되지 않고, 등급의 전역 동작(기록만)이 결정해 주민등록번호가 그대로 남의 pull request 에 게시됩니다. 이 커밋이 고치겠다고 선언한 바로 그 실패가 두 경계 중 한 곳에 그대로 남아 있습니다. (자격증명 조회 SCMTokenFor 는 agent.OwnerID 가 맞으므로 단순 치환이 아니라 두 값을 분리해야 합니다.) / internal/execution/contentpolicy_test.go:97 새 테스트가 이 결함을 구조적으로 볼 수 없습니다. TestARuleAboutAPersonDecidesAtTheBoundariesThatPublish 는 ContentGuard{... Owner: store.User{Role: \"contractor\"}} 를 손으로 만들어 SendDecision/PostReviewComment 에 직접 넘기므로, 결함이 있는 배선(o.contentGuard / d.contentGuard 가 어느 소유자를 조회하는지)은 한 번도 실행되지 않습니다. 보완용으로 추가된 contentpolicy_test.go:180 TestBothSendersAreGivenThePolicyAndTheOwner 는 빌더 소스에 \"UserByID(\" 문자열이 있는지만 확인하고 어떤 소유자를 넘기는지는 단언하지 않아, 잘못된 소유자를 조회해도 통과합니다. 즉 헤드라인 시나리오가 프로덕션 배선에서 동작한다는 증거가 이 PR 안에 없습니다.",
+    "at": "2026-09-09T04:58:32+09:00"
+  }
+}
