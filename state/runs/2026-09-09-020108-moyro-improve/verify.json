@@ -1,0 +1,15 @@
+{
+  "source": "policy",
+  "commands": [
+    {
+      "cmd": "cd server && go build ./... && go vet ./... && go test ./...",
+      "exit": 0,
+      "seconds": 7
+    },
+    {
+      "cmd": "cd webapp && ([ -d node_modules ] || npm ci --no-audit --no-fund) && npm run typecheck --silent && npm test --silent",
+      "exit": 2,
+      "seconds": 16
+    }
+  ]
+}
