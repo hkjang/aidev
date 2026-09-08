@@ -1011,3 +1011,77 @@ https://github.com/hkjang/AgentHub/pull/13#issuecomment-5577630351
 evidence: /mnt/c/Users/USER/projects/aidev/state/runs/2026-09-08-100054-AgentHub-improve/evidence.json
 reports: 7 day(s), 2 week(s), 1 month(s), 374 run(s), 182 usage row(s), 29 project page(s), 5 alert(s)
 notify: no new alerts
+                                  [10:20:46] aidev synced: run(2026-09-08): AgentHub — review held, PR open https://github.com/hkjang/AgentHub/pull/13
+[10:20:46] done
+[10:30:20] skip DartFly: dirty working tree
+[10:30:21] skip Kkiit: dirty working tree
+[10:30:22] skip Momento: dirty working tree
+[10:30:23] skip Quantoss: dirty working tree
+[10:30:24] skip SecCheck: dirty working tree
+[10:30:32] skip cutover: dirty working tree
+[10:30:43] skip muni: dirty working tree
+[10:30:45] skip postra: dirty working tree
+[10:30:49] skip seaton: dirty working tree
+[10:30:52] skip vibe-coders: dirty working tree
+[10:30:53] skip visitflow: dirty working tree
+[10:30:54] candidates(25): AgentHub Clustara Invenqor ReSSO Vendra ai-admin aiportal-front-admin aiportal-front aiportal-java aiportal-py appstore dataworks git-ctx igame jikim jupiq kanpic moina moyro pii-masker ptium releasedock relio umm weekly
+[10:30:54] picked: Clustara
+[10:30:55] === Clustara (base=main, run 2026-09-08-103054-Clustara-improve, 회차 예산 $22)
+Preparing worktree (new branch 'auto/2026-09-08-1030')
+Updating files:  58% (632/1073)Updating files:  59% (634/1073)Updating files:  60% (644/1073)Updating files:  61% (655/1073)Updating files:  62% (666/1073)Updating files:  63% (676/1073)Updating files:  64% (687/1073)Updating files:  65% (698/1073)Updating files:  66% (709/1073)Updating files:  67% (719/1073)Updating files:  68% (730/1073)Updating files:  69% (741/1073)Updating files:  70% (752/1073)Updating files:  71% (762/1073)Updating files:  72% (773/1073)Updating files:  73% (784/1073)Updating files:  74% (795/1073)Updating files:  75% (805/1073)Updating files:  76% (816/1073)Updating files:  77% (827/1073)Updating files:  78% (837/1073)Updating files:  79% (848/1073)Updating files:  80% (859/1073)Updating files:  81% (870/1073)Updating files:  82% (880/1073)Updating files:  83% (891/1073)Updating files:  84% (902/1073)Updating files:  85% (913/1073)Updating files:  86% (923/1073)Updating files:  87% (934/1073)Updating files:  88% (945/1073)Updating files:  89% (955/1073)Updating files:  90% (966/1073)Updating files:  91% (977/1073)Updating files:  92% (988/1073)Updating files:  93% (998/1073)Updating files:  94% (1009/1073)Updating files:  95% (1020/1073)Updating files:  96% (1031/1073)Updating files:  97% (1041/1073)Updating files:  98% (1052/1073)Updating files:  99% (1063/1073)Updating files: 100% (1073/1073)Updating files: 100% (1073/1073), done.
+HEAD is now at 6d2c579 Merge pull request #13 from hkjang/auto/2026-09-07-0630
+[10:30:59] Clustara: [base] pinned — main@6d2c579
+[10:30:59] Clustara: [autonomy] release — 
+[10:41:42] Clustara: improve — 55 turns, 11m, $4.19, success
+[10:41:43] Clustara: verify `go build ./...` → exit 0 (1s)
+[10:41:44] Clustara: verify `go vet ./...` → exit 0 (1s)
+[10:42:41] Clustara: verify `go test -count=1 ./...` → exit 0 (57s)
+[10:42:41] Clustara: [verify] passed — 검증 3개 통과 (policy)
+branch 'auto/2026-09-08-1030' set up to track 'origin/auto/2026-09-08-1030'.
+[10:42:48] Clustara: [pr] created — https://github.com/hkjang/clustara/pull/14
+[10:49:30] Clustara: review — 24 turns, 7m, $1.51, success
+[10:49:30] Clustara: [review] approved — 리뷰 승인 (risk=medium)
+[10:49:32] Clustara: waiting for CI on 467635d (no-ci-allowed)
+[10:50:01] Clustara: [ci] passed — 검사 없음 — 정책으로 허용
+[10:50:05] Clustara: [merge] done — 467635da731cb57c03ab65e2daadf3bf0dbdd950
+From https://github.com/hkjang/clustara
+ * branch            main       -> FETCH_HEAD
+   6d2c579..15e9d85  main       -> origin/main
+Updating 6d2c579..15e9d85
+Fast-forward
+ internal/analyzer/commandrisk.go                  | 19 +++--
+ internal/analyzer/commandrisk_quoting_test.go     | 76 ++++++++++++++++++
+ internal/analyzer/shellwords.go                   | 97 +++++++++++++++++++++++
+ internal/analyzer/shellwords_test.go              | 60 ++++++++++++++
+ internal/analyzer/terminalmode.go                 |  6 +-
+ internal/kube/exec.go                             | 79 ++++++++++++------
+ internal/kube/exec_command_split_test.go          | 63 +++++++++++++++
+ internal/proxy/admin_k8s_terminal.go              | 24 +++++-
+ internal/proxy/admin_k8s_terminal_quoting_test.go | 80 +++++++++++++++++++
+ 9 files changed, 469 insertions(+), 35 deletions(-)
+ create mode 100644 internal/analyzer/commandrisk_quoting_test.go
+ create mode 100644 internal/analyzer/shellwords.go
+ create mode 100644 internal/analyzer/shellwords_test.go
+ create mode 100644 internal/kube/exec_command_split_test.go
+ create mode 100644 internal/proxy/admin_k8s_terminal_quoting_test.go
+Preparing worktree (detached HEAD 15e9d85)
+HEAD is now at 15e9d85 Merge pull request #14 from hkjang/auto/2026-09-08-1030
+[10:54:58] Clustara: release — 28 turns, 4m, $1.51, success
+[10:55:01] Clustara: waiting for CI on 30c3812 (no-ci-allowed)
+[10:56:32] Clustara: [release] published — v0.9.275
+From https://github.com/hkjang/clustara
+ * branch            main       -> FETCH_HEAD
+Updating 15e9d85..30c3812
+Fast-forward
+ docs/K8S_OPERATIONS_HUB.md | 23 +++++++++++++++++++++--
+ internal/proxy/server.go   |  2 +-
+ scripts/changelog.txt      |  8 ++++++++
+ 3 files changed, 30 insertions(+), 3 deletions(-)
+https://github.com/hkjang/clustara/releases/tag/v0.9.275
+[10:56:37] Clustara: [gh-release] created — GitHub Release v0.9.275
+[10:56:38] Clustara: [manifest] failed — 누락/불량: clustara-v0.9.275.tar.gz.sha256(too-small) README-offline-v0.9.275.md(too-small)
+[10:56:39] Clustara: [assets] n/a — 이전 릴리즈에도 자산 없음
+fatal: '/home/hkjang/.cache/auto-improve-wt/Clustara' is not a working tree
+evidence: /mnt/c/Users/USER/projects/aidev/state/runs/2026-09-08-103054-Clustara-improve/evidence.json
+reports: 7 day(s), 2 week(s), 1 month(s), 375 run(s), 185 usage row(s), 29 project page(s), 5 alert(s)
+notify: no new alerts
