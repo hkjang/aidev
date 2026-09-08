@@ -272,7 +272,8 @@ run_verify(){ # $1=작업 디렉터리 $2=결과 파일
       fi
       { [ -f "$d/pyproject.toml" ] || [ -f "$d/pytest.ini" ] || ls "$d"/tests/*.py >/dev/null 2>&1; } && command -v python3 >/dev/null && cmds+=("${pre}python3 -m pytest -q -x")
       [ -f "$d/Cargo.toml" ] && command -v cargo >/dev/null && cmds+=("${pre}cargo test --quiet")
-      [ -f "$d/gradlew" ] && cmds+=("${pre}./gradlew --quiet --offline test || ./gradlew --quiet test")
+      # sh 로 부른다 — gradlew 가 100644 로 커밋된 저장소(Windows 체크아웃)에서 ./gradlew 는 exit 126 이 된다
+      [ -f "$d/gradlew" ] && cmds+=("${pre}sh gradlew --quiet --offline test || sh gradlew --quiet test")
       [ -f "$d/pom.xml" ] && command -v mvn >/dev/null && cmds+=("${pre}mvn -q -B test")
       [ ${#cmds[@]} -gt 0 ] && [ "$sub" != . ] && continue
     done
