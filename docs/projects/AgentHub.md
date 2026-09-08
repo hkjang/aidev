@@ -1,7 +1,7 @@
 ---
 title: "AgentHub — 자율 개선 이력"
 description: "AgentHub: 자율 개선 회차 28회, 릴리즈 13건. 최근 릴리즈 v0.238.0 (자산 8개)."
-last_modified_at: 2026-09-09 04:58:39 +0900
+last_modified_at: 2026-09-09 05:03:11 +0900
 ---
 {% raw %}
 <script type="application/ld+json">
@@ -18,14 +18,14 @@ last_modified_at: 2026-09-09 04:58:39 +0900
   "name": "hkjang",
   "url": "https://github.com/hkjang"
  },
- "dateModified": "2026-09-09T04:58:39+09:00",
+ "dateModified": "2026-09-09T05:03:11+09:00",
  "version": "0.238.0"
 }
 </script>
 
 # AgentHub
 
-<p class="tldr"><strong>요약.</strong> AgentHub: 자율 개선 회차 28회, 릴리즈 13건. 최근 릴리즈 v0.238.0 (자산 8개). <span class="pill pill-failed" title="14일: 릴리즈 13, 실패 0, 경고 5, 회귀 1">건강 D</span> <span class="meta">14일: 릴리즈 13, 실패 0, 경고 5, 회귀 1</span></p>
+<p class="tldr"><strong>요약.</strong> AgentHub: 자율 개선 회차 28회, 릴리즈 13건. 최근 릴리즈 v0.238.0 (자산 8개). <span class="pill pill-failed" title="14일: 릴리즈 13, 실패 0, 경고 5, 회귀 2">건강 D</span> <span class="meta">14일: 릴리즈 13, 실패 0, 경고 5, 회귀 2</span></p>
 
 <ul class="stats"><li><b>28</b><span>회차</span></li><li><b>1</b><span>프로젝트</span></li><li><b>10</b><span>배포 준비 완료</span></li><li><b>3</b><span>릴리즈 진행 중</span></li><li><b>0</b><span>병합 완료</span></li><li><b>14</b><span>검토 대기</span></li><li><b>0</b><span>검증 실패</span></li><li><b>0</b><span>변경 없음</span></li><li><b>1</b><span>실행 오류</span></li><li><b>$54.81</b><span>비용</span></li><li><b>2시간 2분</b><span>에이전트 시간</span></li></ul>
 
@@ -51,6 +51,7 @@ last_modified_at: 2026-09-09 04:58:39 +0900
 
 ## 교훈 (깨졌던 변경)
 
+- 2026-09-09 **review-rejected** — 정책 규칙의 행위자(actor)를 agent.OwnerID 로 잡았다 — 이 플랫폼의 정책 지점은 모두 작업 소유자(task.OwnerID)를 쓴다. 자격증명 조회(SCMTokenFor)만 agent.OwnerID 가 맞으므로 두 값을 분리할 것. 또한 ContentGuard 를 손으로 만들어 주입하는 테스트는 배선 결함을 못 본다 — 프로덕션 배선을 통과하는 테스트로 증명할 것. 소스 문자열 검사는 증거가 아니다. ([링크](https://github.com/hkjang/AgentHub/pull/16))
 - 2026-09-08 **rejected-by-human** — 사람이 PR 을 반려함. 같은 접근은 피할 것. ([링크](https://github.com/hkjang/AgentHub/pull/13))
 
 ## 원장 (에이전트가 남긴 기록)
