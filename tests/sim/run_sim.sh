@@ -12,6 +12,7 @@ cp "$REPO_DIR/state/default.policy.json" "$REPO_DIR/state/default.guard" "$AIDEV
 [ -f "$REPO_DIR/state/caps.env" ] && cp "$REPO_DIR/state/caps.env" "$AIDEV_STATE/"
 # 모의 프로젝트: bare 원격 + 작업 클론
 proj=simproj; origin="$T/origin.git"; git init -q --bare "$origin"
+git --git-dir="$origin" symbolic-ref HEAD refs/heads/main   # bare 의 기본 HEAD 가 master 라 clone 이 체크아웃하지 못해 머지가 조용히 실패했다(2026-09-08)
 git init -q -b main "$ROOT/$proj"; ( cd "$ROOT/$proj" && echo "# sim" > README.md && printf 'v0.0.1\n' > VERSION && git add -A && git -c user.name=sim -c user.email=sim@x commit -qm "init" && git remote add origin "$origin" && git push -q -u origin main )
 git -C "$ROOT/$proj" tag -a v0.0.1 -m v0.0.1; git -C "$ROOT/$proj" push -q origin v0.0.1
 # 시나리오 → 모의 도구가 읽을 위치 (gh 는 AIDEV_SIM, claude 는 STATE)

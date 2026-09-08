@@ -41,7 +41,14 @@ case "$1 ${2:-}" in
     br=$(jq -r .head "$f"); hs=$(branch_sha "$br")
     [ -z "$want" ] || [ "$want" = "$hs" ] || { echo "HTTP 405: head commit mismatch (not mergeable)" >&2; exit 1; }
     [ "$(sc '.merge_fail // empty')" = "network" ] && [ ! -f "$SIM/merge_failed_once" ] && { touch "$SIM/merge_failed_once"; echo "HTTP 502 Bad Gateway: connection reset" >&2; exit 1; }
-    tmp=$(mktemp -d); git clone -q "$origin" "$tmp" && git -C "$tmp" -c user.name=sim -c user.email=sim@x merge -q --no-ff "origin/$br" -m "Merge pull request $url" >/dev/null 2>&1 && git -C "$tmp" push -q origin HEAD:main && git -C "$tmp" push -q origin --delete "$br" >/dev/null 2>&1
+    tmp=$(mktemp -d)
+    # 어느 단계든 실패하면 머지되지 않은 것이다 — 조용히 MERGED 로 기록하면 시험이 거짓으로 통과한다
+    if ! { git clone -q "$origin" "$tmp" \
+        && git -C "$tmp" -c user.name=sim -c user.email=sim@x merge -q --no-ff "origin/$br" -m "Merge pull request $url" \
+        && git -C "$tmp" push -q origin HEAD:main; }; then
+      echo "sim: merge failed for $br" >&2; rm -rf "$tmp"; exit 1
+    fi
+    git -C "$tmp" push -q origin --delete "$br" >/dev/null 2>&1
     msha=$(git -C "$tmp" rev-parse HEAD); rm -rf "$tmp"
     jq --arg s "$msha" --arg t "$(date -Iseconds)" '.state="MERGED" | .merge_sha=$s | .merged_at=$t' "$f" > "$f.tmp" && mv "$f.tmp" "$f"
     echo "✓ Merged"; exit 0;;
