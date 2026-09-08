@@ -1,7 +1,7 @@
 ---
 title: "작업함 — 사람 판단 필요"
 description: "사람이 판단해야 할 항목 1건 — 열린 PR(리뷰 보류·보호 파일·CI 실패·승인 대기), 배포 복구, 수정 과제. 각 항목에 변경 요약·실패 근거·권장 조치가 붙어 있다."
-last_modified_at: 2026-09-08 21:36:58 +0900
+last_modified_at: 2026-09-08 21:39:51 +0900
 type: report
 ---
 {% raw %}
@@ -19,10 +19,6 @@ type: report
 - **긴급 중지**: `bin/stop.sh all|merge|release|<프로젝트> on "사유"` 또는 라벨 `stop`, 제목 `stop: <범위>` 이슈.
 
 <div class="table-wrap"><table class="rt"><thead><tr><th>종류</th><th class="primary">프로젝트</th><th>항목</th><th>변경 요약</th><th>근거</th><th>권장 조치</th></tr></thead><tbody><tr data-status="failed"><td data-label="종류">배포 복구</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/relio/">relio</a> <span class="pill pill-merged" title="자율화 단계 low-risk — 강등: 롤백 PR  (2026-09-06)">저위험 자동 병합</span> ⬇</td><td data-label="항목"><a href="https://github.com/hkjang/aidev/issues/3">⏪ 배포 복구 필요: relio (60601bd)</a></td><td data-label="변경 요약">이전 정상 릴리즈로 운영 복귀 여부 결정</td><td data-label="근거">롤백 PR 과 별개로 운영 환경 복구가 필요할 수 있음 · <a href="https://github.com/hkjang/aidev/issues/3">증거</a></td><td data-label="권장 조치">이슈 안내대로 복구 후 이슈 닫기</td></tr></tbody></table></div>
-
-## 현재 경고
-
-- **igame** — 최신 릴리즈 v0.7.7 자산 0개 (이전 v0.7.6: 1개)
 
 
 [← 대시보드](https://hkjang.github.io/aidev/)
