@@ -302,7 +302,7 @@ ci_gate(){ # $1=sha → CI_STATE, CI_REASON 설정; 0=통과
   ci_max=$(policy "$n" '.timeouts.ci_minutes' | grep -E '^[0-9]+$'); ci_max=$(( ${ci_max:-0} * 60 / CI_POLL ))
   [ "$ci_max" -gt 0 ] || ci_max=$CI_MAX
   req=$(policy "$n" '.required_checks | join(",")'); allow=$(policy "$n" '.allow_merge_without_ci')
-  for i in $(seq 1 "$CI_MAX"); do
+  for i in $(seq 1 "$ci_max"); do
     (cd "$repo" && gh api --paginate "repos/{owner}/{repo}/commits/$sha/check-runs" 2>/dev/null | jq -s '.') > "$f" 2>/dev/null || echo '{"message":"gh api failed"}' > "$f"
     g=$($GATE ci "$f" --sha "$sha" --required "$req" $( [ "$allow" = true ] && echo --allow-no-ci ) 2>/dev/null || true)
     CI_STATE=$(jq -r .state <<<"$g" 2>/dev/null || echo api-error); CI_REASON=$(jq -r .reason <<<"$g" 2>/dev/null || echo "gate 실행 실패")
