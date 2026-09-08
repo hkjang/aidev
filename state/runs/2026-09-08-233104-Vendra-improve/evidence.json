@@ -1,0 +1,200 @@
+{
+  "run_id": "2026-09-08-233104-Vendra-improve",
+  "generated": "2026-09-08T23:46:27+09:00",
+  "run": {
+    "run_id": "2026-09-08-233104-Vendra-improve",
+    "project": "Vendra",
+    "kind": "improve",
+    "started": "2026-09-08T23:31:05+09:00",
+    "model": "claude-opus-5",
+    "policy_version": "5935779a",
+    "prompts_hash": "82f2440d4b2fef65",
+    "runner_version": "07e41602",
+    "finished": "2026-09-08T23:46:27+09:00",
+    "outcome": "review-pending"
+  },
+  "record": {
+    "ts": "2026-09-08T23:46:27+09:00",
+    "date": "2026-09-08",
+    "project": "Vendra",
+    "result": "review held, PR open https://github.com/hkjang/Vendra/pull/114",
+    "outcome": "review-pending",
+    "run_id": "2026-09-08-233104-Vendra-improve",
+    "base_sha": "aada71865880e5bdace3926e3596f8bd217e454e",
+    "head_sha": "df479bfce8ab377b43c642124d007b08a3b06301",
+    "pr": "https://github.com/hkjang/Vendra/pull/114",
+    "stages": {
+      "base": {
+        "state": "pinned",
+        "reason": "main@aada718",
+        "at": "2026-09-08T23:31:11+09:00"
+      },
+      "autonomy": {
+        "state": "release",
+        "reason": "",
+        "at": "2026-09-08T23:31:11+09:00"
+      },
+      "verify": {
+        "state": "passed",
+        "reason": "검증 7개 통과 (auto)",
+        "at": "2026-09-08T23:43:08+09:00"
+      },
+      "pr": {
+        "state": "created",
+        "reason": "https://github.com/hkjang/Vendra/pull/114",
+        "at": "2026-09-08T23:43:17+09:00"
+      },
+      "review": {
+        "state": "rejected",
+        "reason": "리뷰 거절: web/src/pages/Suppliers.tsx:439,468 — `ownerId` state is seeded with `supplier.ownerId` and the id is sent on EVERY save, so any edit to a supplier whose current owner is deactivated or outside the caller's data scope is rejected 400 '담당자는 조직 범위 안의 활성 내부 사용자만 지정할 수 있습니다' by the new check in internal/httpapi/suppliers.go:490, even though the user never touched the 담당자 box. This is a regression against main (the field was previously dropped and the edit succeeded), and it hits exactly the scenario the commit message names ('a supplier whose 담당자 has left the company'). Verified by running SupplierEdit under vitest with ownerId=<departed>: the select renders with DOM value \"\" (the id matches no <option>, so the box looks blank/미지정) while patch() is called with ownerId=\"22222222-2222-2222-2222-222222222222\". The backend refuses a deactivated id with 400 per the PR's own case in internal/httpapi/supplierowner_test.go:127 ('an account that has been deactivated'). Fix: send ownerId only when it differs from supplier.ownerId (or reset the state to \"\" when the id is not among the loaded candidates). / web/src/pages/supplier-owner.test.tsx:80 — the test for that exact case ('says so when the owner is no longer somebody who can hold the record') asserts only the hint text and never asserts what is submitted, so it passes while the form ships an id the API will refuse. The suite's other cases only ever submit ids that are in the candidate list, so nothing covers the out-of-scope/departed owner on save.",
+        "at": "2026-09-08T23:46:25+09:00"
+      }
+    },
+    "campaign": "",
+    "autonomy": "release",
+    "files": 12,
+    "additions": 617,
+    "deletions": 29,
+    "tests": 4,
+    "title": "fix: let a supplier be handed to the person who now looks after it"
+  },
+  "stages": {
+    "base": {
+      "state": "pinned",
+      "reason": "main@aada718",
+      "at": "2026-09-08T23:31:11+09:00"
+    },
+    "autonomy": {
+      "state": "release",
+      "reason": "",
+      "at": "2026-09-08T23:31:11+09:00"
+    },
+    "verify": {
+      "state": "passed",
+      "reason": "검증 7개 통과 (auto)",
+      "at": "2026-09-08T23:43:08+09:00"
+    },
+    "pr": {
+      "state": "created",
+      "reason": "https://github.com/hkjang/Vendra/pull/114",
+      "at": "2026-09-08T23:43:17+09:00"
+    },
+    "review": {
+      "state": "rejected",
+      "reason": "리뷰 거절: web/src/pages/Suppliers.tsx:439,468 — `ownerId` state is seeded with `supplier.ownerId` and the id is sent on EVERY save, so any edit to a supplier whose current owner is deactivated or outside the caller's data scope is rejected 400 '담당자는 조직 범위 안의 활성 내부 사용자만 지정할 수 있습니다' by the new check in internal/httpapi/suppliers.go:490, even though the user never touched the 담당자 box. This is a regression against main (the field was previously dropped and the edit succeeded), and it hits exactly the scenario the commit message names ('a supplier whose 담당자 has left the company'). Verified by running SupplierEdit under vitest with ownerId=<departed>: the select renders with DOM value \"\" (the id matches no <option>, so the box looks blank/미지정) while patch() is called with ownerId=\"22222222-2222-2222-2222-222222222222\". The backend refuses a deactivated id with 400 per the PR's own case in internal/httpapi/supplierowner_test.go:127 ('an account that has been deactivated'). Fix: send ownerId only when it differs from supplier.ownerId (or reset the state to \"\" when the id is not among the loaded candidates). / web/src/pages/supplier-owner.test.tsx:80 — the test for that exact case ('says so when the owner is no longer somebody who can hold the record') asserts only the hint text and never asserts what is submitted, so it passes while the form ships an id the API will refuse. The suite's other cases only ever submit ids that are in the candidate list, so nothing covers the out-of-scope/departed owner on save.",
+      "at": "2026-09-08T23:46:25+09:00"
+    }
+  },
+  "provenance": {
+    "model": "claude-opus-5",
+    "policy_version": "5935779a",
+    "prompts_hash": "82f2440d4b2fef65",
+    "runner_version": "07e41602",
+    "base_sha": "aada71865880e5bdace3926e3596f8bd217e454e",
+    "head_sha": "df479bfce8ab377b43c642124d007b08a3b06301",
+    "pr": "https://github.com/hkjang/Vendra/pull/114"
+  },
+  "verification": {
+    "runner": {
+      "source": "auto",
+      "commands": [
+        {
+          "cmd": "go build ./...",
+          "exit": 0,
+          "seconds": 1
+        },
+        {
+          "cmd": "go vet ./...",
+          "exit": 0,
+          "seconds": 0
+        },
+        {
+          "cmd": "go test ./...",
+          "exit": 0,
+          "seconds": 2
+        },
+        {
+          "cmd": "cd web && [ -d node_modules ] || npm ci --no-audit --no-fund",
+          "exit": 0,
+          "seconds": 0
+        },
+        {
+          "cmd": "cd web && npm test --silent",
+          "exit": 0,
+          "seconds": 3
+        },
+        {
+          "cmd": "cd web && [ -d node_modules ] || npm ci --no-audit --no-fund",
+          "exit": 0,
+          "seconds": 0
+        },
+        {
+          "cmd": "cd web && npm run build --silent",
+          "exit": 0,
+          "seconds": 0
+        }
+      ]
+    },
+    "runner_gate": {
+      "ok": true,
+      "state": "verified",
+      "reason": "검증 7개 통과 (auto)"
+    },
+    "after_rebase": null,
+    "review": {
+      "verdict": "reject",
+      "reasons": [
+        "web/src/pages/Suppliers.tsx:439,468 — `ownerId` state is seeded with `supplier.ownerId` and the id is sent on EVERY save, so any edit to a supplier whose current owner is deactivated or outside the caller's data scope is rejected 400 '담당자는 조직 범위 안의 활성 내부 사용자만 지정할 수 있습니다' by the new check in internal/httpapi/suppliers.go:490, even though the user never touched the 담당자 box. This is a regression against main (the field was previously dropped and the edit succeeded), and it hits exactly the scenario the commit message names ('a supplier whose 담당자 has left the company'). Verified by running SupplierEdit under vitest with ownerId=<departed>: the select renders with DOM value \"\" (the id matches no <option>, so the box looks blank/미지정) while patch() is called with ownerId=\"22222222-2222-2222-2222-222222222222\". The backend refuses a deactivated id with 400 per the PR's own case in internal/httpapi/supplierowner_test.go:127 ('an account that has been deactivated'). Fix: send ownerId only when it differs from supplier.ownerId (or reset the state to \"\" when the id is not among the loaded candidates).",
+        "web/src/pages/supplier-owner.test.tsx:80 — the test for that exact case ('says so when the owner is no longer somebody who can hold the record') asserts only the hint text and never asserts what is submitted, so it passes while the form ships an id the API will refuse. The suite's other cases only ever submit ids that are in the candidate list, so nothing covers the out-of-scope/departed owner on save."
+      ],
+      "notes": [
+        "Backend logic itself is sound: internalUserInScope (internal/httpapi/rows.go:850) is shared by the picker and the write check, ownerCandidateInScope/organizationInScope run before the UPDATE, empty values fall through COALESCE(NULLIF(...)) so an absent field is not a clear, and the change is audited via auditableSupplierInput (the whole body is passed). Go build, vet and TestThePeopleTheOwnerPickerOffersAreTheOnesTheTransferAccepts pass; the DB-backed test could not be run here (no database).",
+        "organizationInScope relies on orgInScope, which has no 'own' branch, so an 'own'-scope caller can never set organizationId. Probably intended, but the paired UI defaults moveOrganization=true, so such a caller picking an owner in another org gets a 400 about 조직.",
+        "createSupplier (internal/httpapi/suppliers.go:202) still validates ownerId/organizationId only as UUIDs, with no scope check — so the 'the transfer accepts exactly the people the picker offered' invariant the new test enforces holds for PATCH but not for POST. Pre-existing, out of scope, but worth a follow-up.",
+        "Scope creep, harmless: three unrelated Badge JSX reflows in Suppliers.tsx (lines ~295, ~860, ~1084) are pure formatting.",
+        "No migration and no external state change; the diff is a plain revert if needed."
+      ],
+      "risk": "medium"
+    },
+    "ci_gate": null
+  },
+  "release": {
+    "result": null,
+    "assets_sha256": []
+  },
+  "approval": null,
+  "usage": [
+    {
+      "ts": "2026-09-08T23:43:00+09:00",
+      "date": "2026-09-08",
+      "project": "Vendra",
+      "phase": "improve",
+      "run_id": "2026-09-08-233104-Vendra-improve",
+      "campaign": "",
+      "subtype": "success",
+      "duration_ms": 777302,
+      "num_turns": 88,
+      "cost_usd": 7.234216999999999,
+      "input_tokens": 156,
+      "output_tokens": 52146,
+      "cache_read": 8836602,
+      "cache_create": 149512
+    },
+    {
+      "ts": "2026-09-08T23:46:25+09:00",
+      "date": "2026-09-08",
+      "project": "Vendra",
+      "phase": "review",
+      "run_id": "2026-09-08-233104-Vendra-improve",
+      "campaign": "",
+      "subtype": "success",
+      "duration_ms": 204288,
+      "num_turns": 19,
+      "cost_usd": 1.2400805000000004,
+      "input_tokens": 38,
+      "output_tokens": 12434,
+      "cache_read": 819847,
+      "cache_create": 51730
+    }
+  ]
+}

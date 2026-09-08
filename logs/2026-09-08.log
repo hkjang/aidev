@@ -3530,3 +3530,31 @@ reports: 7 day(s), 2 week(s), 1 month(s), 421 run(s), 295 usage row(s), 29 proje
 notify: 1 new alert(s)
 notify: commented on issue #1
 notify: toast shown
+                                  [23:43:35] aidev synced: run(2026-09-08): ReSSO — guarded files, PR open https://github.com/hkjang/ReSSO/pull/13
+[23:44:01] ai-admin: [ci] passed — 검사 1개 모두 success
+[23:44:06] ai-admin: [merge] done — d2835d6157cf0c256bc55e877df53377a4f04fd4
+From https://github.com/hkjang/ai-admin
+ * branch            main       -> FETCH_HEAD
+   0cd3b29..b4f5ef6  main       -> origin/main
+Updating 0cd3b29..b4f5ef6
+Fast-forward
+ docs/api.md                                        |   1 +
+ internal/server/chat_relay_test.go                 | 140 +++++++++++++++++++++
+ .../server/chat_truncation_integration_test.go     | 127 +++++++++++++++++++
+ internal/server/providers.go                       |  78 ++++++++----
+ web/src/api/client.test.ts                         |  21 ++++
+ web/src/api/client.ts                              |  12 +-
+ web/src/pages/AiPlaygroundPage.tsx                 |   4 +-
+ 7 files changed, 354 insertions(+), 29 deletions(-)
+ create mode 100644 internal/server/chat_relay_test.go
+ create mode 100644 internal/server/chat_truncation_integration_test.go
+Preparing worktree (detached HEAD b4f5ef6)
+HEAD is now at b4f5ef6 Merge pull request #15 from hkjang/auto/2026-09-08-2331
+[23:45:53] ai-admin: release — 16 turns, 1m, $0.77, success
+[23:45:57] ai-admin: waiting for CI on 7c12b73 (no-ci)
+[23:46:25] Vendra: review — 19 turns, 3m, $1.24, success
+[23:46:25] Vendra: [review] rejected — 리뷰 거절: web/src/pages/Suppliers.tsx:439,468 — `ownerId` state is seeded with `supplier.ownerId` and the id is sent on EVERY save, so any edit to a supplier whose current owner is deactivated or outside the caller's data scope is rejected 400 '담당자는 조직 범위 안의 활성 내부 사용자만 지정할 수 있습니다' by the new check in internal/httpapi/suppliers.go:490, even though the user never touched the 담당자 box. This is a regression against main (the field was previously dropped and the edit succeeded), and it hits exactly the scenario the commit message names ('a supplier whose 담당자 has left the company'). Verified by running SupplierEdit under vitest with ownerId=<departed>: the select renders with DOM value "" (the id matches no <option>, so the box looks blank/미지정) while patch() is called with ownerId="22222222-2222-2222-2222-222222222222". The backend refuses a deactivated id with 400 per the PR's own case in internal/httpapi/supplierowner_test.go:127 ('an account that has been deactivated'). Fix: send ownerId only when it differs from supplier.ownerId (or reset the state to "" when the id is not among the loaded candidates). / web/src/pages/supplier-owner.test.tsx:80 — the test for that exact case ('says so when the owner is no longer somebody who can hold the record') asserts only the hint text and never asserts what is submitted, so it passes while the form ships an id the API will refuse. The suite's other cases only ever submit ids that are in the candidate list, so nothing covers the out-of-scope/departed owner on save.
+https://github.com/hkjang/Vendra/pull/114#issuecomment-5587007840
+evidence: /mnt/c/Users/USER/projects/aidev/state/runs/2026-09-08-233104-Vendra-improve/evidence.json
+reports: 7 day(s), 2 week(s), 1 month(s), 422 run(s), 298 usage row(s), 29 project page(s), 1 alert(s)
+notify: no new alerts

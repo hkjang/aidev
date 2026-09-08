@@ -18,5 +18,10 @@
     "state": "created",
     "reason": "https://github.com/hkjang/Vendra/pull/114",
     "at": "2026-09-08T23:43:17+09:00"
+  },
+  "review": {
+    "state": "rejected",
+    "reason": "리뷰 거절: web/src/pages/Suppliers.tsx:439,468 — `ownerId` state is seeded with `supplier.ownerId` and the id is sent on EVERY save, so any edit to a supplier whose current owner is deactivated or outside the caller's data scope is rejected 400 '담당자는 조직 범위 안의 활성 내부 사용자만 지정할 수 있습니다' by the new check in internal/httpapi/suppliers.go:490, even though the user never touched the 담당자 box. This is a regression against main (the field was previously dropped and the edit succeeded), and it hits exactly the scenario the commit message names ('a supplier whose 담당자 has left the company'). Verified by running SupplierEdit under vitest with ownerId=<departed>: the select renders with DOM value \"\" (the id matches no <option>, so the box looks blank/미지정) while patch() is called with ownerId=\"22222222-2222-2222-2222-222222222222\". The backend refuses a deactivated id with 400 per the PR's own case in internal/httpapi/supplierowner_test.go:127 ('an account that has been deactivated'). Fix: send ownerId only when it differs from supplier.ownerId (or reset the state to \"\" when the id is not among the loaded candidates). / web/src/pages/supplier-owner.test.tsx:80 — the test for that exact case ('says so when the owner is no longer somebody who can hold the record') asserts only the hint text and never asserts what is submitted, so it passes while the form ships an id the API will refuse. The suite's other cases only ever submit ids that are in the candidate list, so nothing covers the out-of-scope/departed owner on save.",
+    "at": "2026-09-08T23:46:25+09:00"
   }
 }
