@@ -338,6 +338,16 @@ secrets_gate(){ # $1=설명 $2=파일(- 는 stdin)
   log "$n: SECRETS in $1 — $(jq -r .reason <<<"$g" 2>/dev/null)"; return 1
 }
 
+# 실수로 들어간 빌드 산출물 찾기 — 1MB 넘는 바이너리 추가는 개선 내용이 아니다 (2026-09-08 appstore 에 20MB ELF 가 딸려 들어감)
+added_artifacts(){
+  local f blob sz
+  git -C "$wt" diff --numstat "$BASE_SHA..HEAD" 2>/dev/null | awk '$1=="-" && $2=="-" {print $3}' | while read -r f; do
+    blob=$(git -C "$wt" rev-parse "HEAD:$f" 2>/dev/null) || continue
+    sz=$(git -C "$wt" cat-file -s "$blob" 2>/dev/null || echo 0)
+    [ "${sz:-0}" -gt 1048576 ] && printf '%s(%sMB) ' "$f" "$((sz/1048576))"
+  done
+}
+
 # ---------------------------------------------------------------- 기록 · 동기화
 record_run(){ # $1=프로젝트 $2=결과 문장 $3=outcome
   local pr; pr=$(grep -o 'https://github.com/[^ ,]*/pull/[0-9]*' <<<"$2" | head -1 || true)
@@ -739,6 +749,8 @@ $(printf '%b' "$RUN_SPEC")
     # 1) 러너 직접 검증  2) 비밀정보 검사  — 둘 다 통과해야 PR 을 연다
     if ! run_verify "$wt" "$OUT/verify.json"; then
       stage verify failed "$(jq -r .reason "$OUT/verify.gate.json" 2>/dev/null || echo '검증 실패')"; result="verify failed: $(jq -r .reason "$OUT/verify.gate.json" 2>/dev/null | cut -c1-120)"; OUTCOME=verify-failed
+    elif [ -n "$(added_artifacts)" ]; then
+      stage verify failed "빌드 산출물이 커밋됨: $(added_artifacts | tr '\n' ' ')"; result="verify failed: build artifacts committed"; OUTCOME=verify-failed
     elif ! git -C "$wt" diff "$BASE_SHA..HEAD" | secrets_gate "diff" -; then
       stage verify failed "변경에 비밀정보 의심 문자열"; result="verify failed: secrets in diff"; OUTCOME=verify-failed
     else
