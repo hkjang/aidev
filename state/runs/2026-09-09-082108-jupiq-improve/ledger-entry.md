@@ -1,0 +1,5 @@
+## 2026-09-09
+- 선택: 기동 설정 오류 일괄 보고와 config.Load() 테스트 신설 (가치 3 / 위험 1 / 작업량 S)
+- 결과: 성공
+- 요약: `config.Load()`는 누락 환경변수만 모아 보고하고 `ENCRYPTION_KEY` 파싱 실패·`BOOTSTRAP_ADMIN_PASSWORD` 최소 길이는 하나씩 순차 반환해, 운영자가 첫 기동에서 문제마다 컨테이너를 다시 띄워야 알 수 있었다. 세 종류를 하나의 오류로 합쳐 한 번에 고칠 수 있게 하고(값이 비어 있으면 이미 누락 목록에 있으므로 중복 보고하지 않음), 테스트가 `ParseEncryptionKey` 하나뿐이던 이 패키지에 트리밍 규칙(비밀번호는 의도적으로 미트리밍)·누락 4개 동시 보고·12자 경계·거부 시 빈 Config 반환·미사용 값 동시 보고를 덮는 테스트 5개를 추가해 커버리지가 23.1%→100%로 올랐다. 집계를 되돌린 변형에서 새 테스트가 실제로 실패하는 것을 확인했고, README의 환경변수 표에 최소 12자 조건을 명시했다. 겸사겸사 다섯 회차 동안 보류돼 있던 호출자 없는 `parseTimeQuery`를 별도 커밋으로 제거했다(`time` 임포트도 함께 정리). `go vet ./...`, `go test -race ./...`, `scripts/check-version.sh`, `scripts/check-screenshots.mjs`, `npm run lint`, `npm test`(18파일 59개) 모두 통과했다.
+- 보류 아이디어: `collectPrometheus`가 metric마다 `featureEnabled`로 features 설정을 다시 읽는 중복 조회 제거 / `/api/v1/metrics`의 GPU 게이트가 `store.IsGPUMetricName`과 달리 `cuda`·`nvidia`를 빼먹어 응답 모양(`feature_enabled`)이 달라지는 불일치 정리 / 로그인 리미터 `succeeded`가 ip 키를 의도적으로 유지하는 동작에 대한 테스트·문서화 / `internal/store` 커버리지 16.7% 중 DB 없이 테스트 가능한 순수 함수 경로 보강

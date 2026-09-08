@@ -71,3 +71,9 @@
 - 보류 아이디어: 일시적 설정 읽기 실패가 OIDC client secret / AI API 키를 지움 (admin.go:358·:458의 무시된 읽기 오류) / playAllowed의 무시된 오류 3곳이 전부 fail-open (catalog.go:401·:420·:427) / 관리자 비밀번호 재설정이 대상 사용자의 auth_sessions를 지우지 않음 / 동점일 때 row_number()와 바깥 ORDER BY가 독립적으로 정렬돼 rank 번호와 행 순서가 어긋날 수 있음 / 잘린 감사 로그 CSV가 200과 완전한 헤더로 내려가고 audit.export가 잘린 개수를 전체인 양 기록함
 
 - 릴리즈: v0.7.8 (2026-09-09, run 2026-09-09-011059-igame-improve)
+## 2026-09-09
+- 선택: 일시적 설정 읽기 실패가 저장된 OIDC client secret / AI API 키를 지우는 문제 (가치 4 / 위험 2 / 작업량 S)
+- 결과: 성공
+- 요약: `putOIDCSetting`·`putAISetting`(internal/api/admin.go)은 요청이 secret을 비워 보내면 저장된 값을 이어받는데, 설정 화면은 secret을 절대 돌려받지 못하므로 **모든 평범한 저장이 이 경로**다. 그런데 기존 값을 읽는 `_ = s.setting(...)`이 오류를 버려서, 캐시가 일시 장애를 담지 않는 이상(cache.go의 의도적 설계) DB가 잠깐 흔들린 순간의 읽기 실패가 "secret이 없다"와 같은 zero 값이 됐고, 그대로 빈 문자열을 덮어써 동작 중인 SSO 로그인이나 AI 연동을 끊으면서 200과 "설정을 갱신했다"는 감사 기록을 남겼다(감사 항목의 이전 값도 zero로 기록됐다). 이제 두 핸들러 모두 `pgx.ErrNoRows`가 아닌 읽기 오류에 503 `oidc_setting_unavailable`·`ai_setting_unavailable`로 거부하고, 아직 key가 없는 최초 저장은 그대로 진행한다 — 지난 회차 rankings 수정과 같은 방식이다. 게이트가 쓰기보다 앞이라 새 테스트(internal/api/admin_secret_test.go)는 설정 캐시만 심고 DB 없이 핸들러를 돌려, 거부된 저장은 상태 코드로, 허용된 저장은 nil 풀 도달로 확인한다. 검증: `gofmt -l`, `go vet ./cmd/... ./internal/... ./migrations/...`, `go build ./...`, `go test`·`go test -race` 전체 통과, 수정을 되돌리면 새 테스트 2개가 실패함도 확인. 웹 린트/테스트는 이 워크트리에 `web/node_modules`가 없어(오프라인) 실행하지 못했고, 프런트엔드 변경은 errorMessages.ts에 한국어 문구 2줄을 더한 것뿐이다.
+- 보류 아이디어: playAllowed의 무시된 오류 3곳이 전부 허용 방향으로 fail-open (catalog.go의 정책 읽기·slug 조회·합계 조회) / 관리자 비밀번호 재설정이 대상 사용자의 auth_sessions를 지우지 않아 탈취된 세션이 최대 12시간 더 삶 / 동점일 때 row_number()와 바깥 ORDER BY가 독립적으로 정렬돼 rank 번호와 행 순서가 어긋날 수 있음 / 잘린 감사 로그 CSV가 200과 완전한 헤더로 내려가고 audit.export가 잘린 개수를 전체인 양 기록함 / 게임에 묶이지 않은 전역 업적은 content.go의 `JOIN ... ON gs.game_id=a.game_id`가 NULL과 매치되지 않아 클라이언트에서 해금될 수 없음
+
