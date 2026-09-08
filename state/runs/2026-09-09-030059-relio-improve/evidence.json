@@ -1,0 +1,236 @@
+{
+  "run_id": "2026-09-09-030059-relio-improve",
+  "generated": "2026-09-09T03:15:00+09:00",
+  "run": {
+    "run_id": "2026-09-09-030059-relio-improve",
+    "project": "relio",
+    "kind": "improve",
+    "started": "2026-09-09T03:00:59+09:00",
+    "model": "claude-opus-5",
+    "policy_version": "5935779a",
+    "prompts_hash": "82f2440d4b2fef65",
+    "runner_version": "07e41602",
+    "finished": "2026-09-09T03:15:00+09:00",
+    "outcome": "merged"
+  },
+  "record": {
+    "ts": "2026-09-09T03:15:00+09:00",
+    "date": "2026-09-09",
+    "project": "relio",
+    "result": "merged https://github.com/hkjang/relio/pull/14",
+    "outcome": "merged",
+    "run_id": "2026-09-09-030059-relio-improve",
+    "base_sha": "81847af4e7aafa07f84db502516457b9c4b93bc1",
+    "head_sha": "9571cbd8288342b52d4d4d739d509383542fde35",
+    "pr": "https://github.com/hkjang/relio/pull/14",
+    "stages": {
+      "base": {
+        "state": "pinned",
+        "reason": "main@81847af",
+        "at": "2026-09-09T03:01:02+09:00"
+      },
+      "autonomy": {
+        "state": "low-risk",
+        "reason": "롤백 PR ",
+        "at": "2026-09-09T03:01:02+09:00"
+      },
+      "verify": {
+        "state": "passed",
+        "reason": "검증 7개 통과 (auto)",
+        "at": "2026-09-09T03:10:51+09:00"
+      },
+      "pr": {
+        "state": "created",
+        "reason": "https://github.com/hkjang/relio/pull/14",
+        "at": "2026-09-09T03:10:56+09:00"
+      },
+      "review": {
+        "state": "approved",
+        "reason": "리뷰 승인 (risk=low)",
+        "at": "2026-09-09T03:14:25+09:00"
+      },
+      "ci": {
+        "state": "passed",
+        "reason": "검사 2개 모두 success",
+        "at": "2026-09-09T03:14:55+09:00"
+      },
+      "merge": {
+        "state": "done",
+        "reason": "9571cbd8288342b52d4d4d739d509383542fde35",
+        "at": "2026-09-09T03:14:59+09:00"
+      },
+      "release": {
+        "state": "skipped",
+        "reason": "자율화 단계 low-risk — 릴리즈는 사람이",
+        "at": "2026-09-09T03:15:00+09:00"
+      }
+    },
+    "campaign": "",
+    "autonomy": "low-risk",
+    "files": 12,
+    "additions": 567,
+    "deletions": 9,
+    "tests": 2,
+    "title": "fix(settings): derive dates from the configured system.timezone"
+  },
+  "stages": {
+    "base": {
+      "state": "pinned",
+      "reason": "main@81847af",
+      "at": "2026-09-09T03:01:02+09:00"
+    },
+    "autonomy": {
+      "state": "low-risk",
+      "reason": "롤백 PR ",
+      "at": "2026-09-09T03:01:02+09:00"
+    },
+    "verify": {
+      "state": "passed",
+      "reason": "검증 7개 통과 (auto)",
+      "at": "2026-09-09T03:10:51+09:00"
+    },
+    "pr": {
+      "state": "created",
+      "reason": "https://github.com/hkjang/relio/pull/14",
+      "at": "2026-09-09T03:10:56+09:00"
+    },
+    "review": {
+      "state": "approved",
+      "reason": "리뷰 승인 (risk=low)",
+      "at": "2026-09-09T03:14:25+09:00"
+    },
+    "ci": {
+      "state": "passed",
+      "reason": "검사 2개 모두 success",
+      "at": "2026-09-09T03:14:55+09:00"
+    },
+    "merge": {
+      "state": "done",
+      "reason": "9571cbd8288342b52d4d4d739d509383542fde35",
+      "at": "2026-09-09T03:14:59+09:00"
+    },
+    "release": {
+      "state": "skipped",
+      "reason": "자율화 단계 low-risk — 릴리즈는 사람이",
+      "at": "2026-09-09T03:15:00+09:00"
+    }
+  },
+  "provenance": {
+    "model": "claude-opus-5",
+    "policy_version": "5935779a",
+    "prompts_hash": "82f2440d4b2fef65",
+    "runner_version": "07e41602",
+    "base_sha": "81847af4e7aafa07f84db502516457b9c4b93bc1",
+    "head_sha": "9571cbd8288342b52d4d4d739d509383542fde35",
+    "pr": "https://github.com/hkjang/relio/pull/14"
+  },
+  "verification": {
+    "runner": {
+      "source": "auto",
+      "commands": [
+        {
+          "cmd": "go build ./...",
+          "exit": 0,
+          "seconds": 0
+        },
+        {
+          "cmd": "go vet ./...",
+          "exit": 0,
+          "seconds": 1
+        },
+        {
+          "cmd": "go test ./...",
+          "exit": 0,
+          "seconds": 1
+        },
+        {
+          "cmd": "cd web && [ -d node_modules ] || npm ci --no-audit --no-fund",
+          "exit": 0,
+          "seconds": 0
+        },
+        {
+          "cmd": "cd web && npm run typecheck --silent",
+          "exit": 0,
+          "seconds": 3
+        },
+        {
+          "cmd": "cd web && [ -d node_modules ] || npm ci --no-audit --no-fund",
+          "exit": 0,
+          "seconds": 0
+        },
+        {
+          "cmd": "cd web && npm run build --silent",
+          "exit": 0,
+          "seconds": 5
+        }
+      ]
+    },
+    "runner_gate": {
+      "ok": true,
+      "state": "verified",
+      "reason": "검증 7개 통과 (auto)"
+    },
+    "after_rebase": null,
+    "review": {
+      "verdict": "approve",
+      "reasons": [],
+      "notes": [
+        "Tests genuinely discriminate: internal/crm/numbering_test.go:199-208 builds two Services pinned to Pacific/Kiritimati (UTC+14) and Pacific/Midway (UTC-11) — 25h apart, so their calendar dates can never coincide — and fails if the two stamps match. Pre-fix code used time.Now().Format(\"20060102\") for both, so it would fail (and would not even compile, since contractNumber/quotationNumber are new). timezone_test.go:556-593 pins an instant (2026-01-01T18:00Z) and asserts DateOf gives 2026-01-02 in Seoul, plus an explicit assertion that the replaced Truncate(24h) expression differs.",
+        "Verified the read path matches the write path: migrations/001_initial.sql:636 seeds ('system','timezone','\"Asia/Seoul\"') into a jsonb column, admin/settings.go:130 stores json.Marshal(item.Value) (frontend AdminPages.tsx:52 sends valueType 'string'), and timezone.go:423 json.Unmarshal(raw, &name) reads exactly that shape. TestQueryNamesTheSettingTheAdminScreenWrites pins the namespace/key so a rename fails loudly.",
+        "Type shapes check out: sales.recognized_date and opportunities.next_action_date are DATE (migrations/001_initial.sql:397,254). pgx decodes DATE at midnight UTC, and DateOf returns midnight UTC with the configured zone's Y/M/D, so today.go:93 `due.Before(today)` compares like with like and RecognizeRevenueSchedule's date encodes back unchanged.",
+        "Nil-safety is real, not just claimed: Loader.Location returns Default() for a nil *Loader and for a zero Loader (timezone.go:374-376), covered by TestUnwiredLoaderStillAnswersTheDefault. Only cmd/relio/main.go constructs the services; every existing test builds crm.Service/relationship.Service/server.Server without a Clock and now gets Asia/Seoul instead of the process clock.",
+        "No Clock lookup happens while a transaction or a rows cursor is open: contractNumber runs before s.DB.Begin (contracts.go:236 vs 244), RecognizeRevenueSchedule reads the date before Begin (contracts.go:376 vs 391), collectToday hoists it above the query (today.go:70), planYear and exportVoices hold no cursor. So the extra pooled connection cannot deadlock a small pool.",
+        "Incomplete, not wrong: today.go's SQL window still uses the database clock — `o.next_action_date <= (now()+interval '2 days')::date`. Before 09:00 KST that window ends a day earlier than the app-side `today` implies, so an action due 2 days out in Seoul terms can be filtered out before the (now correct) severity comparison ever sees it. Pre-existing, and the reported defect (an action due today reported overdue) is genuinely fixed.",
+        "Two small test-robustness gaps, both sub-millisecond windows: numbering_test.go:216 recomputes DateOf(time.Now(), loc) after generating the number without the before/after guard that timezone_test.go:610-613 uses, so it can flake if either zone rolls over between the two calls (twice a day, microsecond window). And the numbering tests exercise contractNumber/quotationNumber directly rather than through CreateContract/CreateQuotation, so nothing test-side pins the call sites — the diff shows them wired correctly.",
+        "Loader.warn (timezone.go:439-449) dedupes by exact message text and never clears l.warned on a successful read, so a misconfiguration that is fixed and later reintroduced with the same cause logs nothing the second time. Also, on a failed read cachedAt is not refreshed, so during a database outage every date lookup issues another failing query — harmless amplification, the database is already down.",
+        "Scope is clean and the change is revert-safe: no migration, no schema change, no external state, no go.mod change (time/tzdata is stdlib), no auth/permission/payment/deletion logic touched. `go build ./...`, `go vet ./...` and `go test ./...` all pass at exit 0. Loader.Now(ctx) (timezone.go:400) is currently unused by production code."
+      ],
+      "risk": "low"
+    },
+    "ci_gate": {
+      "ok": true,
+      "state": "success",
+      "reason": "검사 2개 모두 success",
+      "checks": 2
+    }
+  },
+  "release": {
+    "result": null,
+    "assets_sha256": []
+  },
+  "approval": null,
+  "usage": [
+    {
+      "ts": "2026-09-09T03:10:40+09:00",
+      "date": "2026-09-09",
+      "project": "relio",
+      "phase": "improve",
+      "run_id": "2026-09-09-030059-relio-improve",
+      "campaign": "",
+      "subtype": "success",
+      "duration_ms": 632637,
+      "num_turns": 83,
+      "cost_usd": 4.792514000000001,
+      "input_tokens": 120,
+      "output_tokens": 43621,
+      "cache_read": 5045620,
+      "cache_create": 116465
+    },
+    {
+      "ts": "2026-09-09T03:14:25+09:00",
+      "date": "2026-09-09",
+      "project": "relio",
+      "phase": "review",
+      "run_id": "2026-09-09-030059-relio-improve",
+      "campaign": "",
+      "subtype": "success",
+      "duration_ms": 226141,
+      "num_turns": 22,
+      "cost_usd": 1.2925239999999998,
+      "input_tokens": 32,
+      "output_tokens": 14551,
+      "cache_read": 771426,
+      "cache_create": 54106
+    }
+  ]
+}
