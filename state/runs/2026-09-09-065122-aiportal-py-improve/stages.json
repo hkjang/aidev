@@ -1,0 +1,27 @@
+{
+  "base": {
+    "state": "pinned",
+    "reason": "main@e49b6d2",
+    "at": "2026-09-09T06:51:23+09:00"
+  },
+  "autonomy": {
+    "state": "release",
+    "reason": "",
+    "at": "2026-09-09T06:51:23+09:00"
+  },
+  "verify": {
+    "state": "passed",
+    "reason": "검증 1개 통과 (auto)",
+    "at": "2026-09-09T06:56:54+09:00"
+  },
+  "pr": {
+    "state": "created",
+    "reason": "https://github.com/hkjang/aiportal-py/pull/13",
+    "at": "2026-09-09T06:57:00+09:00"
+  },
+  "review": {
+    "state": "rejected",
+    "reason": "리뷰 거절: util/task_supervisor.py:83-97 _on_done() 의 shutdown 예외 처리가 'cancelled' 상태에만 적용되어, 정상 종료 시 feedback_batch 가 매번 오탐 ERROR 를 남긴다. service/feedbackservice.py:276-278 의 feedback_batch_loop 은 asyncio.CancelledError 를 잡아 break 하고 정상 반환한다. 이 경우 Python 3.8+ 에서 task.cancelled() 는 False, exception() 은 None 이 되므로(3.13 에서 재현 확인) _describe() 는 'cancelled' 가 아니라 'stopped'(util/task_supervisor.py:114) 를 돌려주고, _on_done 은 self._shutting_down 이 True 인데도 else 분기로 떨어져 \"'feedback_batch' 가 예고 없이 종료되었습니다. 해당 주기 작업이 더 이상 실행되지 않습니다.\" 를 ERROR 로 기록한다. api.py:119-124 의 begin_shutdown() → cancel() → gather() 경로에서 콜백이 실제로 실행되므로 서버를 정상 종료할 때마다 발생한다. / docs/OPERATIONS.md:81-90 운영 문서와 실제 동작이 어긋난다. 표는 status 'stopped' 를 '예외 없이 끝남 (무한 루프이므로 비정상) → 로그 확인 후 재기동' 으로 규정하지만, 위 결함 때문에 아무 문제 없는 정상 shutdown 마다 그 ERROR 가 찍힌다. 운영자가 런북대로 대응하면 존재하지 않는 장애를 추적하게 되고, 관측성 신호를 만드는 것이 목적인 변경이 오히려 신호를 오염시킨다. / tests/unit/test_task_supervisor.py:141-171 테스트가 이 결함을 잡지 못한다. test_task_finishing_without_error_is_still_abnormal 은 begin_shutdown() 없이 finish() 만, test_cancel_during_shutdown_is_not_an_error 는 cancel() 만 검증할 뿐, 실제 운영 경로인 'begin_shutdown() 이후 CancelledError 를 삼키고 정상 종료' 조합이 없다. FakeTask 는 cancel() 이 곧 cancelled()==True 라고 가정하는데(tests/unit/test_task_supervisor.py:67-69) 이는 CancelledError 를 잡는 실제 루프의 동작과 다르므로, 대역 자체가 결함을 감춘다.",
+    "at": "2026-09-09T06:59:16+09:00"
+  }
+}

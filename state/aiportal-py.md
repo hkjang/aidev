@@ -122,3 +122,13 @@
 - 보류 아이디어: A-107 후속 — 재시도·circuit breaker·공용 `requests.Session` 도입 — 가치 3 / 위험 3 / M
 - 보류 아이디어: `confluence_pipeline_spacefile_detail` 의 루프 안 `insert_to_milvus_cf` 누적 재삽입 — 파일마다 누적된 `insert_batch_list` 전체를 다시 삽입해 N개 파일이면 N(N+1)/2 건을 쓴다 — 가치 3 / 위험 2 / S
 
+## 2026-09-09
+- 선택: 백그라운드 task 종료를 로그·`/health` 로 관측 가능하게 (감사 A-003) (가치 3 / 위험 2 / 작업량 S)
+- 결과: 성공
+- 요약: `api.py` 의 `lifespan` 이 `asyncio.create_task()` 로 띄우는 무한 루프 task 3개(추천 질문 갱신·M2M 토큰 갱신·피드백 배치)는 아무도 `await` 하지 않아, 본문에서 예외가 새어 나가면 예외가 task 안에 갇힌 채 조용히 죽고 로그 한 줄 남지 않았다. A-002 작업으로 토큰 task 만 startup 시점 한 번의 degraded 로그를 얻었을 뿐, 기동 이후에 죽는 경우와 나머지 두 task 는 관측 수단이 없어 추천 질문이 영원히 갱신되지 않거나 피드백이 DB 에 반영되지 않는데도 `/health` 는 계속 `healthy` 를 돌려줬다. 설정·pymilvus 비의존이고 task 를 `done()`/`cancelled()`/`exception()`/`add_done_callback()` duck typing 으로만 다루는 `util/task_supervisor.py` 를 추가해, `register(name, task)` 가 done callback 으로 종료 이유(예외/취소/정상 종료)를 로그에 남기고(예외를 실제로 읽으므로 asyncio 의 "Task exception was never retrieved" 경고도 사라진다) `snapshot()`/`stopped()` 로 상태를 돌려주게 했다. 무한 루프이므로 예외 없는 종료(`stopped`)도 비정상으로 판정하며, 정상 shutdown 시의 취소는 `begin_shutdown()` 이후 info 로 낮춘다. `lifespan` 은 세 task 를 이름(`question_refresh`/`m2m_token_refresh`/`feedback_batch`)으로 등록하고 `yield` 직후 `begin_shutdown()` 을 호출하며, `/health` 는 `checks.background_tasks` 로 각 task 상태를 노출하고 하나라도 살아 있지 않으면 전체 `status` 를 `unhealthy` 로 만든다(HTTP 는 계속 200 — 기존 계약 유지). `api.py` 는 kiwipiepy·pymilvus 미설치로 import 할 수 없어, helper 는 가짜 task·로거로 11건의 단위 테스트(예외/취소/정상 종료 로그 레벨·상태 판정·예외 읽기·shutdown 구분·callback 이 절대 예외를 내지 않음)로, `api.py` 는 AST 정적 검사 5건(세 task 등록 누락 금지·supervisor 를 거치지 않는 `create_task` 금지·`begin_shutdown` 호출·`/health` 의 `snapshot`/`stopped` 호출과 `background_tasks` 검사 항목·helper import)으로 `tests/unit/test_task_supervisor.py` 에 넣었다. 옛 `api.py` 를 되돌려 넣어 정적 검사 5건이 실제로 실패하는지 확인했다. `python -m pytest` 933 passed(기존 907), `python -m pyflakes .` undefined name 0건. docs 5종(CURRENT_STATE_AUDIT/OPERATIONS/API_REFERENCE/CODEBASE_MAP/TESTING) 갱신. 커밋 `1bf2426`.
+- 보류 아이디어: A-105 후속 — 공통 오류 응답 model 도입과 traceback 노출 제거(A-106 연계) — 가치 4 / 위험 3 / L
+- 보류 아이디어: `confluence_pipeline_spacefile_detail` 의 루프 안 `insert_to_milvus_cf` 누적 재삽입 — 파일마다 누적된 `insert_batch_list` 전체를 다시 삽입해 N개 파일이면 N(N+1)/2 건을 쓴다 — 가치 3 / 위험 2 / S
+- 보류 아이디어: A-102/A-206 후속 — 추천 질문·토큰 캐시를 프로세스 간 공유 — 가치 3 / 위험 3 / M
+- 보류 아이디어: A-107 후속 — 재시도·circuit breaker·공용 `requests.Session` 도입 — 가치 3 / 위험 3 / M
+- 보류 아이디어: 백그라운드 task 의 "마지막 성공 시각" 노출 — 지금은 task 가 살아 있기만 하면 healthy 라, 루프는 도는데 매 주기 예외를 삼키는 상태를 구분하지 못한다 — 가치 3 / 위험 2 / S
+
