@@ -102,3 +102,13 @@
 - 보류 아이디어: `util/extract_minor.py` 의 `except Exception: return e` 정리(예외 객체가 Milvus 색인까지 흘러감) — 가치 3 / 위험 2 / S
 - 보류 아이디어: A-107 후속 — 재시도·circuit breaker·공용 `requests.Session` 도입 — 가치 3 / 위험 3 / M
 
+## 2026-09-08
+- 선택: 검색 경로의 Milvus default alias 재사용 분리 (감사 A-007 후속) (가치 4 / 위험 3 / 작업량 M)
+- 결과: 성공
+- 요약: `util/search_module.py` 의 `hybrid_search` 가 진입할 때마다 `connections.disconnect("default")` 를 호출한 뒤, 컬렉션이 `COLLECTION_LIST_KAI` 에 있으면 `KAI_MILVUS_HOST`, 아니면 `MILVUS_HOST` 로 같은 `default` alias 를 다시 연결했다. `default` 는 `util/milvus_collection.py`·`util/milvus_confluence.py`·pipeline 이 공유하는 alias 이므로, 단일 프로세스에서 요청이 겹치면 (1) 무조건적인 진입 시 `disconnect` 가 다른 요청이 사용 중이던 연결을 끊고, (2) KAI 검색이 `default` 를 KAI 서버로 연결해 둔 사이 다른 요청이 기본 주소로 같은 alias 를 연결하면 pymilvus 가 주소 불일치로 실패하거나 앞선 요청이 엉뚱한 서버를 보게 된다. 설정·pymilvus 비의존 helper `util/milvus_connection.py` 를 추가해 `alias_for(host, port)` 가 `milvus_<주소>_<sha1 8자>` 형태의 결정적 alias 를 만들고(`normalize_endpoint` 로 int `19530` 과 str `"19530"` 을 같은 alias 로 합치며, 해시 덕에 정규화 충돌이 없다), `ensure_connection()` 이 그 alias 가 없을 때만 연결한 뒤 alias 를 돌려주도록 했다. `search_module` 의 연결 지점 9곳을 전부 helper 로 바꾸고 `Collection(...)` 에 `using=alias` 를 명시했으며 진입 시 `disconnect` 는 제거했다. `default` 를 그대로 쓰는 `milvus_collection.py` 등은 항상 기본 주소 하나만 보고 호출 직전에 스스로 연결하므로 동작이 바뀌지 않아 범위에서 제외했다. pymilvus 미설치라 helper 는 가짜 `connections` 로 단위 테스트(주소별 alias·`default` 무접촉·재사용·두 서버 동시 연결 유지·빈 host 거부·실패 전파)하고, `search_module` 은 AST 정적 검사(`disconnect` 금지·`default` 문자열 금지·`using=` 누락 금지·helper import·KAI 주소 선택 유지)로 검증하는 `tests/unit/test_milvus_connection.py` 를 추가했다. 옛 `search_module.py` 를 되돌려 넣어 정적 검사 4건이 실제로 실패하는지 확인했다. `python -m pytest` 875 passed(기존 848), `python -m pyflakes .` undefined name 0건. docs 4종(CURRENT_STATE_AUDIT/MILVUS_SEARCH/CODEBASE_MAP/TESTING) 갱신. 커밋 `5d67513`.
+- 보류 아이디어: A-105 후속 — 공통 오류 응답 model 도입과 traceback 노출 제거(A-106 연계) — 가치 4 / 위험 3 / L
+- 보류 아이디어: A-003 후속 — 백그라운드 task 에 `add_done_callback` 로그와 `/health` checks 노출 — 가치 3 / 위험 2 / S
+- 보류 아이디어: `util/extract_minor.py` 의 `except Exception: return e` 정리(예외 객체가 Milvus 색인까지 흘러감) — 가치 3 / 위험 2 / S
+- 보류 아이디어: `util/milvus_collection.py`·`util/milvus_confluence.py`·pipeline 의 `default` alias 도 `ensure_connection` 으로 통일 — 가치 2 / 위험 2 / M
+- 보류 아이디어: A-107 후속 — 재시도·circuit breaker·공용 `requests.Session` 도입 — 가치 3 / 위험 3 / M
+
