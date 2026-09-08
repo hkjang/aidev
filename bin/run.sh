@@ -297,7 +297,10 @@ run_verify(){ # $1=작업 디렉터리 $2=결과 파일
 # ---------------------------------------------------------------- CI · 보호 파일 · 리뷰 · 비밀정보
 # CI: check-runs 를 페이지 전체로 받아 gate 에 넘긴다. 두 번 연속 통과해야 한다(잡이 늦게 등록되는 경우). 확인 불가는 차단.
 ci_gate(){ # $1=sha → CI_STATE, CI_REASON 설정; 0=통과
-  local sha=$1 i passes=0 req allow f="$OUT/ci-${1:0:12}.json" g
+  local sha=$1 i passes=0 req allow f="$OUT/ci-${1:0:12}.json" g ci_max
+  # CI 대기 시간은 프로젝트마다 다르다 — 정책 .timeouts.ci_minutes 로 늘린다 (weekly 는 CI 가 22분)
+  ci_max=$(policy "$n" '.timeouts.ci_minutes' | grep -E '^[0-9]+$'); ci_max=$(( ${ci_max:-0} * 60 / CI_POLL ))
+  [ "$ci_max" -gt 0 ] || ci_max=$CI_MAX
   req=$(policy "$n" '.required_checks | join(",")'); allow=$(policy "$n" '.allow_merge_without_ci')
   for i in $(seq 1 "$CI_MAX"); do
     (cd "$repo" && gh api --paginate "repos/{owner}/{repo}/commits/$sha/check-runs" 2>/dev/null | jq -s '.') > "$f" 2>/dev/null || echo '{"message":"gh api failed"}' > "$f"
