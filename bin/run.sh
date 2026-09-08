@@ -499,6 +499,13 @@ release_project(){ # $1=base $2=변경 요약 [$3=assets] — 에이전트는 �
   budget=$(policy "$n" ".budget_usd.$( [ "$mode" = assets ] && echo assets || echo release)"); [ -n "$RBUDGET" ] && budget=$RBUDGET; budget=${budget:-10}
   budget_ok "$budget" || { stage release hold "예산 부족"; result="$result, release hold (budget)"; return 0; }
   git -C "$repo" fetch -q --force --tags origin "$base" >>"$LOG" 2>&1 || log "$n: tag fetch had errors (continuing)"
+  # 이미 최신 태그가 base 끝을 가리키면 릴리즈할 것이 없다 — 에이전트 세션을 낭비하지 않는다 (2026-09-08 git-ctx 재개가 같은 버전을 다시 돌렸다)
+  if [ "$mode" != assets ]; then
+    local last_tag; last_tag=$(git -C "$repo" describe --tags --abbrev=0 "origin/$base" 2>/dev/null)
+    if [ -n "$last_tag" ] && [ "$(git -C "$repo" rev-list --count "$last_tag..origin/$base" 2>/dev/null)" = 0 ]; then
+      stage release nothing-to-release "$last_tag 이 이미 origin/$base 끝을 가리킨다"; return 0
+    fi
+  fi
   if [ "$mode" = assets ]; then
     latest=${ASSETS_TAG:-$(cd "$repo" && gh release list --limit 1 --json tagName --jq '.[0].tagName' 2>/dev/null)}
     [ -n "$latest" ] || { stage assets skipped "GitHub Release 없음"; return 0; }
