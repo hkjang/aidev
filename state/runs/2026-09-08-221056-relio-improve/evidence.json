@@ -1,0 +1,233 @@
+{
+  "run_id": "2026-09-08-221056-relio-improve",
+  "generated": "2026-09-08T22:19:56+09:00",
+  "run": {
+    "run_id": "2026-09-08-221056-relio-improve",
+    "project": "relio",
+    "kind": "improve",
+    "started": "2026-09-08T22:10:56+09:00",
+    "model": "claude-opus-5",
+    "policy_version": "5935779a",
+    "prompts_hash": "82f2440d4b2fef65",
+    "runner_version": "ba42249a",
+    "finished": "2026-09-08T22:19:56+09:00",
+    "outcome": "merged"
+  },
+  "record": {
+    "ts": "2026-09-08T22:19:56+09:00",
+    "date": "2026-09-08",
+    "project": "relio",
+    "result": "merged https://github.com/hkjang/relio/pull/13",
+    "outcome": "merged",
+    "run_id": "2026-09-08-221056-relio-improve",
+    "base_sha": "e88b4909efb9843f726e77c7d22cfe75fd67093a",
+    "head_sha": "d9ee0c8255c3e94358bdcf5cae1fd71eb0db4909",
+    "pr": "https://github.com/hkjang/relio/pull/13",
+    "stages": {
+      "base": {
+        "state": "pinned",
+        "reason": "main@e88b490",
+        "at": "2026-09-08T22:11:00+09:00"
+      },
+      "autonomy": {
+        "state": "low-risk",
+        "reason": "롤백 PR ",
+        "at": "2026-09-08T22:11:00+09:00"
+      },
+      "verify": {
+        "state": "passed",
+        "reason": "검증 7개 통과 (auto)",
+        "at": "2026-09-08T22:16:21+09:00"
+      },
+      "pr": {
+        "state": "created",
+        "reason": "https://github.com/hkjang/relio/pull/13",
+        "at": "2026-09-08T22:16:28+09:00"
+      },
+      "review": {
+        "state": "approved",
+        "reason": "리뷰 승인 (risk=low)",
+        "at": "2026-09-08T22:18:25+09:00"
+      },
+      "ci": {
+        "state": "passed",
+        "reason": "검사 2개 모두 success",
+        "at": "2026-09-08T22:19:51+09:00"
+      },
+      "merge": {
+        "state": "done",
+        "reason": "d9ee0c8255c3e94358bdcf5cae1fd71eb0db4909",
+        "at": "2026-09-08T22:19:53+09:00"
+      },
+      "release": {
+        "state": "skipped",
+        "reason": "자율화 단계 low-risk — 릴리즈는 사람이",
+        "at": "2026-09-08T22:19:56+09:00"
+      }
+    },
+    "campaign": "",
+    "autonomy": "low-risk",
+    "files": 4,
+    "additions": 234,
+    "deletions": 5,
+    "tests": 2,
+    "title": "fix(audit): keep an event from being lost by the address it came from"
+  },
+  "stages": {
+    "base": {
+      "state": "pinned",
+      "reason": "main@e88b490",
+      "at": "2026-09-08T22:11:00+09:00"
+    },
+    "autonomy": {
+      "state": "low-risk",
+      "reason": "롤백 PR ",
+      "at": "2026-09-08T22:11:00+09:00"
+    },
+    "verify": {
+      "state": "passed",
+      "reason": "검증 7개 통과 (auto)",
+      "at": "2026-09-08T22:16:21+09:00"
+    },
+    "pr": {
+      "state": "created",
+      "reason": "https://github.com/hkjang/relio/pull/13",
+      "at": "2026-09-08T22:16:28+09:00"
+    },
+    "review": {
+      "state": "approved",
+      "reason": "리뷰 승인 (risk=low)",
+      "at": "2026-09-08T22:18:25+09:00"
+    },
+    "ci": {
+      "state": "passed",
+      "reason": "검사 2개 모두 success",
+      "at": "2026-09-08T22:19:51+09:00"
+    },
+    "merge": {
+      "state": "done",
+      "reason": "d9ee0c8255c3e94358bdcf5cae1fd71eb0db4909",
+      "at": "2026-09-08T22:19:53+09:00"
+    },
+    "release": {
+      "state": "skipped",
+      "reason": "자율화 단계 low-risk — 릴리즈는 사람이",
+      "at": "2026-09-08T22:19:56+09:00"
+    }
+  },
+  "provenance": {
+    "model": "claude-opus-5",
+    "policy_version": "5935779a",
+    "prompts_hash": "82f2440d4b2fef65",
+    "runner_version": "ba42249a",
+    "base_sha": "e88b4909efb9843f726e77c7d22cfe75fd67093a",
+    "head_sha": "d9ee0c8255c3e94358bdcf5cae1fd71eb0db4909",
+    "pr": "https://github.com/hkjang/relio/pull/13"
+  },
+  "verification": {
+    "runner": {
+      "source": "auto",
+      "commands": [
+        {
+          "cmd": "go build ./...",
+          "exit": 0,
+          "seconds": 0
+        },
+        {
+          "cmd": "go vet ./...",
+          "exit": 0,
+          "seconds": 1
+        },
+        {
+          "cmd": "go test ./...",
+          "exit": 0,
+          "seconds": 1
+        },
+        {
+          "cmd": "cd web && [ -d node_modules ] || npm ci --no-audit --no-fund",
+          "exit": 0,
+          "seconds": 0
+        },
+        {
+          "cmd": "cd web && npm run typecheck --silent",
+          "exit": 0,
+          "seconds": 1
+        },
+        {
+          "cmd": "cd web && [ -d node_modules ] || npm ci --no-audit --no-fund",
+          "exit": 0,
+          "seconds": 0
+        },
+        {
+          "cmd": "cd web && npm run build --silent",
+          "exit": 0,
+          "seconds": 3
+        }
+      ]
+    },
+    "runner_gate": {
+      "ok": true,
+      "state": "verified",
+      "reason": "검증 7개 통과 (auto)"
+    },
+    "after_rebase": null,
+    "review": {
+      "verdict": "approve",
+      "reasons": [],
+      "notes": [
+        "검증함: main 의 구버전 구현으로 두 파일을 되돌려 새 테스트를 실행하니 25건이 실패했고(httpx 20, audit 5), HEAD 에서는 go build ./... , go vet, go test ./... 전부 통과. 테스트가 변경을 실제로 검증함(항상 참인 단언·미실행 없음).",
+        "커밋 설명과 코드 일치 확인: internal/audit/service.go:46, internal/auth/service.go:152/179/262, internal/mcp/server.go:238, internal/server/server.go:477 의 IP 바인딩이 모두 NULLIF($n,'')::inet 이라 \"\" 는 NULL 로 저장되고, zone 이 붙은 주소는 문장 전체를 실패시킨다는 전제가 실제로 성립함.",
+        "동작 변경(결함 아님, 인지 필요): ClientIP 가 이제 호스트명·비주소(\"localhost:8080\", \"@\")에 \"\" 를 반환하므로 해당 요청의 ip 컬럼이 NULL 이 되고, internal/server/public.go:52 의 로그인 리미터와 internal/server/server.go:447 의 레이트리밋 키에서 그런 피어들이 한 버킷으로 합쳐짐. 실운영에서 net/http 의 RemoteAddr 은 TCP 리스너에서 항상 숫자 host:port 라 영향 범위가 좁고, 이전에도 \"@\" 는 단일 키였음. IP 기반 접근 제어(allowlist/CIDR)는 코드베이스에 없어 인증·권한 우회 위험은 없음.",
+        "IPv4-mapped 언매핑으로 기존에 저장된 ::ffff:x 형태 로그와 신규 로그의 표기가 달라지지만, 마이그레이션·외부 상태 변경이 없어 revert 로 완전히 되돌아감.",
+        "경미: 인코딩 실패 시 저장되는 {\"encodeError\": err.Error()} 는 커스텀 MarshalJSON 오류일 경우 페이로드 일부 문자열을 포함할 수 있음(json.MarshalerError 가 내부 오류를 감쌈). 표준 타입 경로에서는 \"json: unsupported type/value: ...\" 뿐이라 실제 노출 위험은 낮음. 감사 로그 조회(internal/server/admin_operations.go:111)는 any 로 언마샬해 그대로 렌더하므로 리더가 깨지지는 않음.",
+        "범위 이탈 없음: 변경은 httpx.ClientIP, audit.nullableJSON 과 각 테스트 4개 파일뿐이며 의존성·포맷·리팩터 혼입 없음."
+      ],
+      "risk": "low"
+    },
+    "ci_gate": {
+      "ok": true,
+      "state": "success",
+      "reason": "검사 2개 모두 success",
+      "checks": 2
+    }
+  },
+  "release": {
+    "result": null,
+    "assets_sha256": []
+  },
+  "approval": null,
+  "usage": [
+    {
+      "ts": "2026-09-08T22:16:13+09:00",
+      "date": "2026-09-08",
+      "project": "relio",
+      "phase": "improve",
+      "run_id": "2026-09-08-221056-relio-improve",
+      "campaign": "",
+      "subtype": "success",
+      "duration_ms": 340108,
+      "num_turns": 34,
+      "cost_usd": 2.0271719999999998,
+      "input_tokens": 52,
+      "output_tokens": 22373,
+      "cache_read": 1523336,
+      "cache_create": 69305
+    },
+    {
+      "ts": "2026-09-08T22:18:25+09:00",
+      "date": "2026-09-08",
+      "project": "relio",
+      "phase": "review",
+      "run_id": "2026-09-08-221056-relio-improve",
+      "campaign": "",
+      "subtype": "success",
+      "duration_ms": 125585,
+      "num_turns": 12,
+      "cost_usd": 0.7134815000000001,
+      "input_tokens": 24,
+      "output_tokens": 7105,
+      "cache_read": 398161,
+      "cache_create": 33479
+    }
+  ]
+}
