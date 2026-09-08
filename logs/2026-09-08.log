@@ -1743,3 +1743,38 @@ fatal: '/home/hkjang/.cache/auto-improve-wt/dataworks' is not a working tree
 evidence: /mnt/c/Users/USER/projects/aidev/state/runs/2026-09-08-171056-dataworks-improve/evidence.json
 reports: 7 day(s), 2 week(s), 1 month(s), 389 run(s), 213 usage row(s), 29 project page(s), 8 alert(s)
 notify: no new alerts
+                                  [17:29:33] aidev synced: run(2026-09-08): dataworks — merged https://github.com/hkjang/dataworks/pull/10, released v0.9.45
+[17:29:33] done
+[17:30:21] skip DartFly: dirty working tree
+[17:30:23] skip Kkiit: dirty working tree
+[17:30:24] skip Momento: dirty working tree
+[17:30:25] skip Quantoss: dirty working tree
+[17:30:26] skip SecCheck: dirty working tree
+[17:30:34] skip cutover: dirty working tree
+[17:30:47] skip muni: dirty working tree
+[17:30:47] skip postra: dirty working tree
+[17:30:50] skip seaton: dirty working tree
+[17:30:54] skip vibe-coders: dirty working tree
+[17:30:54] skip visitflow: dirty working tree
+[17:30:55] candidates(25): AgentHub Clustara Invenqor ReSSO Vendra ai-admin aiportal-front-admin aiportal-front aiportal-java aiportal-py appstore dataworks git-ctx igame jikim jupiq kanpic moina moyro pii-masker ptium releasedock relio umm weekly
+[17:30:55] picked: git-ctx
+[17:30:56] === git-ctx (base=main, run 2026-09-08-173055-git-ctx-improve, 회차 예산 $22)
+Preparing worktree (new branch 'auto/2026-09-08-1730')
+HEAD is now at 6fa3eec release: v0.77.7
+[17:30:58] git-ctx: [base] pinned — main@6fa3eec
+[17:30:58] git-ctx: [autonomy] release — 
+[17:37:39] 다른 러너(pid 334087)가 실행 중 — 겹쳐 돌리지 않는다 (flock 뒤에서 실행하세요)
+[17:37:41] 다른 러너(pid 334087)가 실행 중 — 겹쳐 돌리지 않는다 (flock 뒤에서 실행하세요)
+[17:37:41] git-ctx: improve — 22 turns, 7m, $1.56, success
+[17:37:44] git-ctx: verify `go build ./...` → exit 0 (2s)
+[17:37:44] git-ctx: verify `go vet ./...` → exit 0 (0s)
+[17:39:19] git-ctx: verify `go test ./...` → exit 0 (95s)
+[17:39:20] git-ctx: [verify] passed — 검증 3개 통과 (auto)
+branch 'auto/2026-09-08-1730' set up to track 'origin/auto/2026-09-08-1730'.
+[17:39:27] git-ctx: [pr] created — https://github.com/hkjang/git-ctx/pull/22
+[17:43:38] git-ctx: review — 16 turns, 4m, $1.11, success
+[17:43:38] git-ctx: [review] rejected — 리뷰 거절: internal/manifest/manifest.go:254 parseGradle was rewritten from a whole-content regex to a line-by-line scan (`for _, raw := range strings.Split(content, "\n")` with `gradleDeclaration` at manifest.go:217 anchored `^...$`), so a declaration wrapped over more than one line is now dropped. The old regex `(implementation|...)\s*[( ]\s*['\"]` let `\s*` cross the newline and read it. Verified by running both parsers on the same input: for `dependencies {\n implementation(\n "androidx.compose.ui:ui:1.5.0"\n )\n testImplementation (\n 'org.mockito:mockito-core:5.3.1'\n )\n implementation "androidx.room:room-runtime:2.6.1"\n}` the parser on main returns all three packages, HEAD returns only androidx.room:room-runtime. This wrapped form is normal Kotlin-DSL / formatter-wrapped Groovy style, so a repository that declares a library only that way silently leaves the inventory — the exact failure the commit message says it is fixing ('absent reads exactly like a repository that does not use the library at all'). Behaviour therefore contradicts the commit message, which describes the change as purely additive. / internal/manifest/manifest_test.go:258 neither new test covers a declaration split across lines, so the regression above is not caught; the added cases only exercise single-line shapes.
+https://github.com/hkjang/git-ctx/pull/22#issuecomment-5581990446
+evidence: /mnt/c/Users/USER/projects/aidev/state/runs/2026-09-08-173055-git-ctx-improve/evidence.json
+reports: 7 day(s), 2 week(s), 1 month(s), 390 run(s), 215 usage row(s), 29 project page(s), 8 alert(s)
+notify: no new alerts

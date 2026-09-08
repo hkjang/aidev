@@ -1,0 +1,27 @@
+{
+  "base": {
+    "state": "pinned",
+    "reason": "main@6fa3eec",
+    "at": "2026-09-08T17:30:58+09:00"
+  },
+  "autonomy": {
+    "state": "release",
+    "reason": "",
+    "at": "2026-09-08T17:30:58+09:00"
+  },
+  "verify": {
+    "state": "passed",
+    "reason": "검증 3개 통과 (auto)",
+    "at": "2026-09-08T17:39:20+09:00"
+  },
+  "pr": {
+    "state": "created",
+    "reason": "https://github.com/hkjang/git-ctx/pull/22",
+    "at": "2026-09-08T17:39:27+09:00"
+  },
+  "review": {
+    "state": "rejected",
+    "reason": "리뷰 거절: internal/manifest/manifest.go:254 parseGradle was rewritten from a whole-content regex to a line-by-line scan (`for _, raw := range strings.Split(content, \"\\n\")` with `gradleDeclaration` at manifest.go:217 anchored `^...$`), so a declaration wrapped over more than one line is now dropped. The old regex `(implementation|...)\\s*[( ]\\s*['\\\"]` let `\\s*` cross the newline and read it. Verified by running both parsers on the same input: for `dependencies {\\n implementation(\\n \"androidx.compose.ui:ui:1.5.0\"\\n )\\n testImplementation (\\n 'org.mockito:mockito-core:5.3.1'\\n )\\n implementation \"androidx.room:room-runtime:2.6.1\"\\n}` the parser on main returns all three packages, HEAD returns only androidx.room:room-runtime. This wrapped form is normal Kotlin-DSL / formatter-wrapped Groovy style, so a repository that declares a library only that way silently leaves the inventory — the exact failure the commit message says it is fixing ('absent reads exactly like a repository that does not use the library at all'). Behaviour therefore contradicts the commit message, which describes the change as purely additive. / internal/manifest/manifest_test.go:258 neither new test covers a declaration split across lines, so the regression above is not caught; the added cases only exercise single-line shapes.",
+    "at": "2026-09-08T17:43:38+09:00"
+  }
+}
