@@ -36,7 +36,7 @@ GATE="python3 $HERE/gate.py"
 # 단계별 제한 시간(초) — 넘기면 그 단계의 프로세스만 종료하고 시간 초과로 기록한다
 T_IMPROVE=${T_IMPROVE:-2700}; T_REVIEW=${T_REVIEW:-900}; T_RELEASE=${T_RELEASE:-3600}; T_ASSETS=${T_ASSETS:-3600}
 # 대기 간격·횟수 (모의 실행은 짧게 잡는다): CI 30초×40회=20분, 릴리즈/자산 30초×30회=15분
-CI_POLL=${CI_POLL:-30}; CI_MAX=${CI_MAX:-40}; REL_MAX=${REL_MAX:-30}; RETRY_DELAYS=${RETRY_DELAYS:-"10 30 90"}
+CI_POLL=${CI_POLL:-30}; CI_MAX=${CI_MAX:-40}; REL_MAX=${REL_MAX:-30}; REL_ASSET_MAX=${REL_ASSET_MAX:-120}; RETRY_DELAYS=${RETRY_DELAYS:-"10 30 90"}
 # 잠금 소유자 기록 (health.sh 가 고착 판단에 쓴다) — 다른 회차의 작업 디렉터리는 건드리지 않는다
 OWNER_FILE="${AIDEV_OWNER:-$HOME/.auto-improve/run.owner}"
 if opid=$(jq -r '.pid // empty' "$OWNER_FILE" 2>/dev/null) && [ -n "$opid" ] && [ "$opid" != "$$" ] && kill -0 "$opid" 2>/dev/null; then
@@ -449,7 +449,17 @@ publish_release(){ # $1=태그 $2=제목 $3=노트 $4=ghrel $5=자산 목록 파
   prev=$(cd "$repo" && gh release list --limit 10 --json tagName --jq "[.[].tagName] | map(select(. != \"$tag\")) | .[0] // empty" 2>/dev/null)
   prev_n=0; [ -n "$prev" ] && prev_n=$(cd "$repo" && gh release view "$prev" --json assets --jq '.assets | length' 2>/dev/null || echo 0)
   if [ "${prev_n:-0}" -gt 0 ]; then
-    for i in $(seq 1 "$REL_MAX"); do new_n=$(cd "$repo" && gh release view "$tag" --json assets --jq '.assets | length' 2>/dev/null || echo 0); [ "${new_n:-0}" -gt 0 ] && break; sleep "$CI_POLL"; done
+    # 자산은 릴리즈 워크플로가 붙인다 — 워크플로가 아직 돌고 있으면 계속 기다린다(이미지 빌드는 20분 넘기도 한다).
+    # 고정 15분 대기로는 AgentHub 같은 저장소에서 매번 "자산 없음" 오탐이 났다 (2026-09-08).
+    local wf_state
+    for i in $(seq 1 "$REL_ASSET_MAX"); do
+      new_n=$(cd "$repo" && gh release view "$tag" --json assets --jq '.assets | length' 2>/dev/null || echo 0)
+      [ "${new_n:-0}" -gt 0 ] && break
+      wf_state=$(cd "$repo" && gh run list --limit 40 --json headBranch,status --jq "[.[] | select(.headBranch==\"$tag\")] | .[0].status // \"\"" 2>/dev/null)
+      # 워크플로가 끝났는데도 자산이 없으면 더 기다릴 이유가 없다
+      case "$wf_state" in in_progress|queued|requested|waiting|pending) ;; *) [ "$i" -ge "$REL_MAX" ] && break;; esac
+      sleep "$CI_POLL"
+    done
     if [ "${new_n:-0}" -gt 0 ]; then stage assets verified "$tag 자산 $new_n개 (이전 $prev: $prev_n)"; OUTCOME=release-ready
     else
       wf=$(cd "$repo" && gh run list --limit 40 --json headBranch,conclusion,status,name --jq "[.[] | select(.headBranch==\"$tag\")] | .[0] | \"\(.name): \(.status)/\(.conclusion)\"" 2>/dev/null)
