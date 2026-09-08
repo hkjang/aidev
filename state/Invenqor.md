@@ -387,3 +387,4 @@
   않았다. 문서 `.md` 와 버전 범프·릴리즈 노트도 하지 않았다.
 - 보류 아이디어: MCP `asset_search` 의 `type`·`status` 오타가 "해당 자산 없음"으로 답해짐 — 다만 `type` 은 열린 집합이라 고정 enum 은 정답이 아님이 이번에 확인됐다 (가치 3 / 위험 2 / M) · Query DSL 에 `attributes.<키>` 존재/부재 연산자가 없어 `>= ""` 우회가 필요함 (가치 3 / 위험 2 / M) · `listAgents`·설정 목록/이력·자산 상세의 sources/history/relations 루프가 `rows.Err()` 를 확인하지 않아 부분 결과를 200 으로 돌려줌 (가치 3 / 위험 1 / M) · 잘못된 API key 는 rate limit 을 전혀 소비하지 않아(429 검사가 `Authenticate` 성공 뒤에 있음) 키 추측 시도만 무제한 (가치 2 / 위험 3 / M) · API key 로 한 행위도 감사 기록의 `actor_type` 이 `user` 라 소유자가 콘솔에서 한 일과 구분되지 않음 (가치 2 / 위험 3 / S)
 
+- 릴리즈: v0.2.26 (2026-09-08, run 2026-09-08-131347-Invenqor-release)
