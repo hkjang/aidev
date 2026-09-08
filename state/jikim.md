@@ -35,3 +35,4 @@
 - 요약: `/v1/transit/{encrypt,decrypt}/{key}`가 단건만 처리해 `bao` CLI와 OpenBao SDK가 흔히 쓰는 batch 호출을 사용할 수 없었습니다. `batch_input`이 있을 때만 동작하는 추가 경로로 구현해 기존 단건 계약은 그대로 두고, 입력 순서를 유지한 `batch_results`·`reference` 반향·항목별 `error`·전부 실패 시에만 400이라는 OpenBao 의미를 맞췄으며, 미구현 파라미터(`context`, `nonce`, `associated_data`, `key_version`)는 조용히 무시하지 않고 항목 오류로 처리했습니다. batch decrypt는 감사 기록에 실패하면 평문을 전부 withhold하는 기존 보안 불변식을 유지합니다. 검증은 순서·항목 오류·빈 배열·전부 실패·감사 실패·권한 거부를 덮는 단위 테스트 5개(hook 기반, DB 불필요)를 추가하고 `./scripts/verify.sh` 전체(Go test·vet·gofmt, React test·lint·build, docs, compose)를 통과시켜 확인했습니다. 커밋 `29788a6`.
 - 보류 아이디어: 로그인 성공 판정 전에 rate limiter를 succeeded로 초기화하는 순서 정리 (2/1/S) / settings GET이 주입하는 파생 필드가 PUT 왕복 시 workflow 설정에 저장되는 문제 정리 (2/1/S) / 감사 로그 보존(audit_retention_days) 자동 정리 구현 (3/3/M) / requestedOpenBaoVersion이 음수 version 쿼리를 오류 대신 latest로 처리하는 동작 정리 (2/2/S) / 데드 코드(var _ = ...) 제거와 관리 화면의 'v0.2.0 프리뷰' 문구 최신화 (1/1/S)
 
+- 릴리즈: v0.2.4 (2026-09-08, run 2026-09-08-202134-jikim-improve)
