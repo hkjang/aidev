@@ -113,3 +113,4 @@
 - 보류 아이디어: DB 오류를 업무 규칙 충돌로 잘못 보고하는 handler들(`rotateKey`의 409 `key_not_active`, `decideApproval`의 409 `approval_not_pending`, `updateUser`의 404 `user_not_found`·400 `roles_invalid`)을 로그인 분류(v1.2.10)와 같은 방식으로 구분 (가치 3 / 위험 2 / M) · CI에 정적 분석 단계(`gofmt -l`, `go vet`) 추가 — eslint는 설정 자체가 없어 축소 범위 권장 (가치 3 / 위험 1 / M) · `loadGrants`가 map 순회로 roles·permissions를 만들어 `/api/v1/auth/me` 응답 순서가 요청마다 뒤바뀜 (가치 2 / 위험 1 / S) · `safeCSVCell`이 OWASP가 함께 권고하는 tab(0x09)·CR(0x0D) 선행 문자를 중화하지 않음 (가치 2 / 위험 1 / S) · `decideApproval`이 `approval_action.comment`에는 trim한 값을, `approval_request.decision_comment`에는 원문을 저장해 같은 결정의 두 기록이 달라짐 (가치 2 / 위험 1 / S)
 
 - 릴리즈: v1.2.10 (2026-09-07, run 2026-09-07-102543-ai-admin-approve)
+- 릴리즈: v1.2.11 (2026-09-08, run 2026-09-08-150055-ai-admin-improve)
