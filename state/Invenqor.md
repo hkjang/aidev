@@ -413,3 +413,4 @@
   노트는 하지 않았다: `docs/*.md` 는 릴리즈 커밋에서 PDF 와 함께만 갱신된다.
 - 보류 아이디어: MCP `asset_search` 가 0건일 때 실제 존재하는 type·status 값을 함께 돌려주어 '자산 없음'과 '필터 값 없음'을 구분하게 함 (가치 3 / 위험 2 / M) · Query DSL 에 `attributes.<키>` 존재/부재 연산자가 없어 `>= ""` 우회가 필요함 (가치 3 / 위험 2 / M) · `listAgents`·설정 목록/이력·자산 상세 루프·`executeQuery` 가 `rows.Err()` 를 확인하지 않아 부분 결과를 200 으로 돌려줌 — 드라이버 fault injection 없이는 테스트 불가 (가치 3 / 위험 1 / M) · 잘못된 API key 는 rate limit 을 전혀 소비하지 않아 키 추측만 무제한 (가치 2 / 위험 3 / M) · API key 로 한 행위도 감사 기록의 `actor_type` 이 `user` 라 소유자가 콘솔에서 한 일과 구분되지 않음 (가치 2 / 위험 3 / S)
 
+- 릴리즈: v0.2.27 (2026-09-08, run 2026-09-08-175105-Invenqor-improve)
