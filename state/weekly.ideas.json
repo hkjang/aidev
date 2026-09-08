@@ -1,12 +1,48 @@
 [
   {
-    "title": "MCP weekly_reports_search 의 weekStart 필터가 정확일치라 격자를 옮긴 주에 빈 목록을 돌려줍니다",
+    "title": "상황판이 읽히지 않았을 때 빈 달력을 그려 \"이번 달 계획 없음\"이라고 말합니다",
     "value": 3,
-    "risk": 2,
+    "risk": 1,
     "size": "S",
     "status": "done",
-    "note": "이번 회차에 고쳤습니다. mcp.go 의 r.week_start=$n 을 weekCoveringDays 겹침으로 바꿔 같은 도구 묶음의 weekly_submission_overview(v0.287.0 에서 이미 겹침)와 한 응답 안에서 같은 답을 하게 했습니다. 회귀 시험 1개(currentweekgrid_test.go, guards: mcpSearchReports/weekCoveringDays)와 MCP.md 한 문단.",
-    "updated": "2026-09-08"
+    "note": "이번 회차에 고쳤습니다. SchedulePage 의 네 보기가 board 없이도 그려져, 첫 읽기가 실패하면 벽에 42칸짜리 빈 달력이 걸리고 목록·담당자 보기는 '이 기간에 등록된 업무 일정이 없습니다', 주 보기는 '일정 없음' 이라고 말했습니다. 더 나쁜 것은 다음 달로 넘어가다 실패했을 때로, 지난달 줄이 이번 달 제목 아래 그대로 남았습니다(부서 전체 토글도 같음). boardAfterFailure 로 창(from·to·scope)이 다른 판은 버리고 같은 창이면 벽에 걸린 것을 지키며, 네 보기를 읽힌 판에만 그립니다. failstate-check 의 SCREENS 에도 schedule 을 더했습니다.",
+    "updated": "2026-09-09"
+  },
+  {
+    "title": "listScheduleTasks 에 상한이 없습니다 — 최대 366일 × 부서 전원이 한 응답에 실립니다",
+    "value": 3,
+    "risk": 2,
+    "size": "M",
+    "status": "pending",
+    "note": "지금 코드로 다시 확인했습니다(schedule.go:223-235). 다만 화면은 월 격자(최대 6주)나 한 주만 요청하므로 366일 창은 API·MCP 로만 닿습니다 — 실제 손해는 처음 적은 것보다 좁습니다. 값이 3으로 남는 이유는 다른 쪽입니다: /api/v1/schedule 이 scale-check.py 의 조회 경로 목록에 아예 없어, 규모에서만 보이는 것을 아무도 재지 않고 있습니다. 상한을 걸면 요약(summary)이 실린 행이 아니라 창 전체를 말하도록 집계 질의로 옮겨야 하고, 달력의 꼬리를 자르는 것은 마지막 주를 통째로 비우는 일이라 잘린 건수를 화면이 말해야 합니다. 그래서 M.",
+    "updated": "2026-09-09"
+  },
+  {
+    "title": "failstate-check 의 화면 목록이 손으로 관리돼 새 화면이 조용히 빠집니다",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "이번에 상황판을 더하면서 드러났습니다. a11y-check 의 PAGES 에는 schedule 이 있었는데 failstate-check 의 SCREENS 에는 없었습니다 — 두 목록을 손으로 맞추고 있고, 빠진 화면은 '통과'로 보입니다. checksdoc_test.go 가 docs/CHECKS.md 를 scripts/ 디렉터리와 맞춰 보는 것과 같은 자리입니다. 다만 router.ts 의 모든 라우트가 주 목록 요청을 하나씩 갖는 것은 아니라(설정·발표 같은 화면), 무엇을 요구할지부터 정해야 합니다.",
+    "updated": "2026-09-09"
+  },
+  {
+    "title": "월 격자는 이웃 달의 며칠까지 조회하므로 요약 숫자가 '이 달' 보다 큽니다",
+    "value": 2,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "gridRange 는 격자가 그리는 첫날~마지막날(8/30 ~ 10/3)을 서버에 보내고, 서버의 summary 는 그 창 전체를 셉니다. 화면 머리는 '2026년 9월' 이라고 적혀 있으므로 '15건'·'3 지연' 은 9월의 수가 아니라 42일의 수입니다. 회색으로 그린 이웃 달 칸을 세는 것이 맞는지부터 정해야 하는 자리(격자를 보여 주니 격자를 세는 것도 한 답입니다)라 위험보다 모호함이 문제입니다.",
+    "updated": "2026-09-09"
+  },
+  {
+    "title": "상황판 편집이 workItemId 를 담지 않아 업무 링크를 조용히 끊습니다",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "지금도 그대로입니다. schedule.go:568 의 UPDATE 는 work_item_id=$6 을 요청 값 그대로 쓰고, SchedulePage.tsx 의 openTask 는 draft 에 workItemId 를 담지 않으며 save() 도 보내지 않습니다. 제목 한 글자만 고쳐도 상황판 줄과 업무 추적의 연결이 사라집니다. 화면에서 링크를 만들 길이 아직 없어 오늘 겪는 사람은 API·MCP 로 만든 줄을 화면에서 고친 경우뿐입니다. 고치는 쪽은 프런트가 값을 실어 보내는 것(PUT 은 전체 치환이라는 계약 유지)입니다.",
+    "updated": "2026-09-09"
   },
   {
     "title": "analyticsOrganizations 의 제출 CTE 는 날짜 범위로, 기대건은 격자 주로 세어 창 가장자리에서 어긋납니다",
@@ -14,8 +50,8 @@
     "risk": 2,
     "size": "S",
     "status": "pending",
-    "note": "지금 코드 기준으로 다시 확인했습니다(admin_analytics.go:205-237). owed 는 generate_series 격자 주를, submitted 는 r.week_start BETWEEN $1 AND $2 를 셉니다. 격자를 옮긴 뒤에는 창 시작 쪽 한 주의 보고서가 분모에는 있고 분자에는 없을 수 있어 조직 제출률이 한 사람당 한 건만큼 낮게 나옵니다. 창 가장자리에 한정된 오차라 값은 낮습니다.",
-    "updated": "2026-09-08"
+    "note": "admin_analytics.go:205-237. owed 는 generate_series 격자 주를, submitted 는 r.week_start BETWEEN $1 AND $2 를 셉니다. 격자를 옮긴 뒤에는 창 시작 쪽 한 주의 보고서가 분모에는 있고 분자에는 없을 수 있어 조직 제출률이 한 사람당 한 건만큼 낮게 나옵니다. 창 가장자리에 한정된 오차라 값은 낮습니다.",
+    "updated": "2026-09-09"
   },
   {
     "title": "키워드 분석의 두 창(collectTerms)도 week_start BETWEEN 이라 전환 주가 옆 창으로 넘어갑니다",
@@ -24,7 +60,7 @@
     "size": "S",
     "status": "pending",
     "note": "이전 기간 대비 증감이 한 주만큼 밀려 보일 수 있는지 확인. 문서 빈도라 한 주가 통째로 사라지지는 않고 창을 넘나드는 정도입니다.",
-    "updated": "2026-09-08"
+    "updated": "2026-09-09"
   },
   {
     "title": "summarizeWorkItem 의 AgeWeeks·SilentWeeks 가 7일 등간격을 전제합니다",
@@ -33,7 +69,7 @@
     "size": "S",
     "status": "pending",
     "note": "workitems.go:382 의 (last-first)/7+1 은 내림이라 격자를 옮긴 주가 대개 흡수되지만, 옮긴 폭과 빠진 주가 겹치면 침묵 주 수가 한 주 어긋납니다. 무엇이 옳은 규칙인지부터 정해야 해서 위험보다 모호함이 문제입니다.",
-    "updated": "2026-09-08"
+    "updated": "2026-09-09"
   },
   {
     "title": "겹침 규칙에서는 옛 격자의 보고서 한 건이 새 격자의 두 주를 면제합니다",
@@ -42,34 +78,7 @@
     "size": "M",
     "status": "pending",
     "note": "v0.290.0 이 weekIsOwed 를 겹침으로 바꾸면서 생긴 성질입니다. weekIsFree 의 거절과는 일치하지만, 격주로 보고하던 사람이 전환 구간에서 밀리지 않은 것으로 보일 수 있습니다. 대안인 '가장 많이 겹치는 한 주'(|week_start - grid| <= 3) 는 거꾸로 weekIsFree 가 막는 주를 미제출로 남깁니다. 어느 쪽이 덜 나쁜지 정해야 하는 자리라 M.",
-    "updated": "2026-09-08"
-  },
-  {
-    "title": "업무 상황판 편집이 workItemId 를 담지 않아 업무 링크를 조용히 끊습니다",
-    "value": 2,
-    "risk": 1,
-    "size": "S",
-    "status": "pending",
-    "note": "schedule.go:568 의 UPDATE 는 work_item_id=$6 을 요청 값 그대로 씁니다. SchedulePage.tsx 의 save() 는 workItemId 를 보내지 않으므로 제목 한 글자만 고쳐도 상황판 줄과 업무 추적의 연결이 사라집니다. 화면에서 링크를 만들 길이 아직 없어 오늘 당장 겪는 사람은 API·MCP 로 만든 줄을 화면에서 고친 경우뿐입니다. 고치는 쪽은 프런트가 값을 실어 보내는 것(PUT 은 전체 치환이라는 계약 유지)입니다.",
-    "updated": "2026-09-08"
-  },
-  {
-    "title": "listScheduleTasks 에 상한이 없습니다 — 최대 366일 × 부서 전원이 한 응답에 실립니다",
-    "value": 3,
-    "risk": 2,
-    "size": "M",
-    "status": "pending",
-    "note": "schedule.go:223-235 는 LIMIT 없이 기간 겹침 전부를 돌려줍니다. scheduleSpanDays 가 366 이라 연간 계획을 여는 300명 부서에서는 수만 행이 한 번에 나갑니다. 이 저장소는 다른 조회 경로에서 '상한과 순위로 답하고 잘라 낸 건수를 화면에 표시한다'를 규칙으로 삼고 있고(paging-check.py), 이 응답은 tasks 만 있고 total 이 없어 그 검사에도 걸리지 않습니다. 상한 + 잘림 표시 + 화면 문구까지라 M.",
-    "updated": "2026-09-08"
-  },
-  {
-    "title": "상황판 담당자 선택 목록이 report-inclusions 를 재사용해 그 밖의 담당자를 본인으로 보여 줍니다",
-    "value": 2,
-    "risk": 1,
-    "size": "S",
-    "status": "pending",
-    "note": "SchedulePage.tsx:404 의 select 은 value={draft.assigneeId || session.user.id} 인데 선택지는 /api/v1/me/report-inclusions 의 members 입니다. 그 목록에 없는 담당자의 줄을 팀장이 열면 고르지도 않은 '본인' 이 선택된 것처럼 보입니다(저장은 원래 담당자를 지킵니다). 담당자 후보는 canViewPerson 범위이므로 목록의 출처가 애초에 다릅니다.",
-    "updated": "2026-09-08"
+    "updated": "2026-09-09"
   },
   {
     "title": "issueoutcome.go 의 r.week_start < $2 가 전환 주에 같은 주 보고서를 이전 결과로 셉니다",
@@ -78,7 +87,25 @@
     "size": "S",
     "status": "pending",
     "note": "weekEndedBefore 로 바꿀 자리인지 확인. 사용자에게 보이는 영향은 작습니다.",
-    "updated": "2026-09-08"
+    "updated": "2026-09-09"
+  },
+  {
+    "title": "상황판 담당자 선택 목록이 report-inclusions 를 재사용합니다",
+    "value": 1,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "지금 코드로 다시 보고 값을 낮췄습니다. /api/v1/me/report-inclusions 의 members 는 '고른 팀원' 이 아니라 조직 서브트리의 활성 사용자 전부(report_inclusions.go:79-88)라, canViewPerson 범위와 거의 같습니다. 남는 어긋남은 좁습니다 — 그 서브트리 밖 담당자나 비활성 담당자의 줄을 열면 select 이 첫 선택지인 '본인' 을 보여 줍니다. 저장은 draft.assigneeId 를 그대로 보내므로 원래 담당자가 지켜집니다(표시만 틀립니다).",
+    "updated": "2026-09-09"
+  },
+  {
+    "title": "scheduleReminderSubject 가 100건 상한에 걸린 뒤에도 그 수를 전체 건수처럼 말합니다",
+    "value": 1,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "schedulereminder.go:43 의 주석은 '상한에 걸려도 제목의 수는 진실을 말한다' 고 적었지만, scheduleTasksDueSoon 이 LIMIT 100 이므로 150건인 사람의 제목은 '마감 임박 업무 100건' 입니다. 마감이 100건 넘게 몰린 사람이 드물어 값은 낮습니다.",
+    "updated": "2026-09-09"
   },
   {
     "title": "mailMessageID 의 도메인 추출 분기에 잔존 변이 3건",
@@ -87,7 +114,7 @@
     "size": "S",
     "status": "pending",
     "note": "@ 위치와 randfail 분기를 짚는 시험이 없습니다.",
-    "updated": "2026-09-08"
+    "updated": "2026-09-09"
   },
   {
     "title": "outlookForDueDate 의 AT_RISK 문구가 low==high 일 때 최근 속도를 빼고 전체 평균만 말합니다",
@@ -96,6 +123,6 @@
     "size": "S",
     "status": "pending",
     "note": "문구만 고치는 자리입니다.",
-    "updated": "2026-09-08"
+    "updated": "2026-09-09"
   }
 ]
