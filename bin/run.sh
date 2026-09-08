@@ -368,9 +368,12 @@ sync_repo(){
   redact_log "$LOG"
   python3 "$HERE/report.py" >>"$LOG" 2>&1 || log "report.py FAILED"
   "$HERE/notify.sh" >>"$LOG" 2>&1 || true
-  ( cd "$REPO_DIR" && git add -A state logs docs >/dev/null 2>&1 \
+  # aidev 저장소 갱신은 한 번에 하나만 — 동시에 pull --rebase 하면 .git/rebase-merge 가 남아 이후 모든 동기화가 막힌다 (2026-09-08)
+  ( flock -w 300 9 || exit 1
+    cd "$REPO_DIR" && rm -rf .git/rebase-merge .git/rebase-apply 2>/dev/null
+    git add -A state logs docs >/dev/null 2>&1 \
     && { git diff --cached --quiet || git commit -qm "$1"; } \
-    && { git pull -q --rebase --autostash origin main >/dev/null 2>&1 || true; } && git push -q origin HEAD ) >>"$LOG" 2>&1 \
+    && { git pull -q --rebase --autostash origin main >/dev/null 2>&1 || true; } && git push -q origin HEAD ) 9>"$HOME/.auto-improve/sync.lock" >>"$LOG" 2>&1 \
     && log "aidev synced: $1" || log "aidev sync FAILED: $1"
 }
 
