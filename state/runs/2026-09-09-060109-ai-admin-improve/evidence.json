@@ -1,0 +1,170 @@
+{
+  "run_id": "2026-09-09-060109-ai-admin-improve",
+  "generated": "2026-09-09T06:08:38+09:00",
+  "run": {
+    "run_id": "2026-09-09-060109-ai-admin-improve",
+    "project": "ai-admin",
+    "kind": "improve",
+    "started": "2026-09-09T06:01:10+09:00",
+    "model": "claude-opus-5",
+    "policy_version": "5935779a",
+    "prompts_hash": "82f2440d4b2fef65",
+    "runner_version": "07e41602",
+    "finished": "2026-09-09T06:08:38+09:00",
+    "outcome": "review-pending"
+  },
+  "record": {
+    "ts": "2026-09-09T06:08:38+09:00",
+    "date": "2026-09-09",
+    "project": "ai-admin",
+    "result": "guarded files, PR open https://github.com/hkjang/ai-admin/pull/16",
+    "outcome": "review-pending",
+    "run_id": "2026-09-09-060109-ai-admin-improve",
+    "base_sha": "7c12b73f1d107da587ffdcf2146a2d1c22eea3c6",
+    "head_sha": "4d333cf5f1850a2408633b9187c1494928a61b57",
+    "pr": "https://github.com/hkjang/ai-admin/pull/16",
+    "stages": {
+      "base": {
+        "state": "pinned",
+        "reason": "main@7c12b73",
+        "at": "2026-09-09T06:01:13+09:00"
+      },
+      "autonomy": {
+        "state": "release",
+        "reason": "",
+        "at": "2026-09-09T06:01:13+09:00"
+      },
+      "verify": {
+        "state": "passed",
+        "reason": "검증 7개 통과 (auto)",
+        "at": "2026-09-09T06:08:31+09:00"
+      },
+      "pr": {
+        "state": "created",
+        "reason": "https://github.com/hkjang/ai-admin/pull/16",
+        "at": "2026-09-09T06:08:38+09:00"
+      },
+      "guard": {
+        "state": "held",
+        "reason": "internal/auth/auth.go ",
+        "at": "2026-09-09T06:08:38+09:00"
+      }
+    },
+    "campaign": "",
+    "autonomy": "release",
+    "files": 7,
+    "additions": 240,
+    "deletions": 21,
+    "tests": 3,
+    "title": "fix: report an SSO backend outage instead of an account problem"
+  },
+  "stages": {
+    "base": {
+      "state": "pinned",
+      "reason": "main@7c12b73",
+      "at": "2026-09-09T06:01:13+09:00"
+    },
+    "autonomy": {
+      "state": "release",
+      "reason": "",
+      "at": "2026-09-09T06:01:13+09:00"
+    },
+    "verify": {
+      "state": "passed",
+      "reason": "검증 7개 통과 (auto)",
+      "at": "2026-09-09T06:08:31+09:00"
+    },
+    "pr": {
+      "state": "created",
+      "reason": "https://github.com/hkjang/ai-admin/pull/16",
+      "at": "2026-09-09T06:08:38+09:00"
+    },
+    "guard": {
+      "state": "held",
+      "reason": "internal/auth/auth.go ",
+      "at": "2026-09-09T06:08:38+09:00"
+    }
+  },
+  "provenance": {
+    "model": "claude-opus-5",
+    "policy_version": "5935779a",
+    "prompts_hash": "82f2440d4b2fef65",
+    "runner_version": "07e41602",
+    "base_sha": "7c12b73f1d107da587ffdcf2146a2d1c22eea3c6",
+    "head_sha": "4d333cf5f1850a2408633b9187c1494928a61b57",
+    "pr": "https://github.com/hkjang/ai-admin/pull/16"
+  },
+  "verification": {
+    "runner": {
+      "source": "auto",
+      "commands": [
+        {
+          "cmd": "go build ./...",
+          "exit": 0,
+          "seconds": 1
+        },
+        {
+          "cmd": "go vet ./...",
+          "exit": 0,
+          "seconds": 0
+        },
+        {
+          "cmd": "go test ./...",
+          "exit": 0,
+          "seconds": 1
+        },
+        {
+          "cmd": "cd web && [ -d node_modules ] || npm ci --no-audit --no-fund",
+          "exit": 0,
+          "seconds": 0
+        },
+        {
+          "cmd": "cd web && npm test --silent",
+          "exit": 0,
+          "seconds": 10
+        },
+        {
+          "cmd": "cd web && [ -d node_modules ] || npm ci --no-audit --no-fund",
+          "exit": 0,
+          "seconds": 0
+        },
+        {
+          "cmd": "cd web && npm run build --silent",
+          "exit": 0,
+          "seconds": 4
+        }
+      ]
+    },
+    "runner_gate": {
+      "ok": true,
+      "state": "verified",
+      "reason": "검증 7개 통과 (auto)"
+    },
+    "after_rebase": null,
+    "review": null,
+    "ci_gate": null
+  },
+  "release": {
+    "result": null,
+    "assets_sha256": []
+  },
+  "approval": null,
+  "usage": [
+    {
+      "ts": "2026-09-09T06:08:15+09:00",
+      "date": "2026-09-09",
+      "project": "ai-admin",
+      "phase": "improve",
+      "run_id": "2026-09-09-060109-ai-admin-improve",
+      "campaign": "",
+      "subtype": "success",
+      "duration_ms": 462996,
+      "num_turns": 59,
+      "cost_usd": 3.5229874999999993,
+      "input_tokens": 88,
+      "output_tokens": 28763,
+      "cache_read": 3591497,
+      "cache_create": 99204
+    }
+  ]
+}
