@@ -1,27 +1,27 @@
 {
- "generated": "2026-09-09T06:59:18+09:00",
+ "generated": "2026-09-09T07:00:28+09:00",
  "site": "https://hkjang.github.io/aidev",
- "description": "Claude Code 자율 개선 에이전트가 hkjang 의 프로젝트를 개선·테스트·머지·릴리즈한 일일 보고. 오늘 29회차·릴리즈 19건, 누적 452회차·릴리즈 215건, 주의 필요 0건.",
+ "description": "Claude Code 자율 개선 에이전트가 hkjang 의 프로젝트를 개선·테스트·머지·릴리즈한 일일 보고. 오늘 30회차·릴리즈 19건, 누적 453회차·릴리즈 215건, 주의 필요 0건.",
  "today": {
   "date": "2026-09-09",
-  "total": 29,
+  "total": 30,
   "projects": 24,
   "released": 19,
-  "merged": 5,
+  "merged": 6,
   "nochange": 0,
   "failed": 1,
-  "cost_usd": 140.77,
-  "minutes": 376,
-  "sessions": 78
+  "cost_usd": 141.17,
+  "minutes": 377,
+  "sessions": 79
  },
  "totals": {
-  "runs": 452,
+  "runs": 453,
   "released": 215,
   "days": 8,
-  "cost_usd": 744.47,
-  "minutes": 2112,
-  "tokens_in": 688797062,
-  "tokens_out": 6627190
+  "cost_usd": 744.87,
+  "minutes": 2113,
+  "tokens_in": 688980037,
+  "tokens_out": 6631333
  },
  "alerts": [],
  "fix_queue": [],
@@ -150,6 +150,14 @@
    "kind": "review-rejected",
    "pr": "https://github.com/hkjang/AgentHub/pull/16",
    "detail": "정책 규칙의 행위자(actor)를 agent.OwnerID 로 잡았다 — 이 플랫폼의 정책 지점은 모두 작업 소유자(task.OwnerID)를 쓴다. 자격증명 조회(SCMTokenFor)만 agent.OwnerID 가 맞으므로 두 값을 분리할 것. 또한 ContentGuard 를 손으로 만들어 주입하는 테스트는 배선 결함을 못 본다 — 프로덕션 배선을 통과하는 테스트로 증명할 것. 소스 문자열 검사는 증거가 아니다."
+  },
+  {
+   "ts": "2026-09-09T07:00:08+09:00",
+   "date": "2026-09-09",
+   "project": "aiportal-py",
+   "kind": "review-rejected",
+   "pr": "https://github.com/hkjang/aiportal-py/pull/13",
+   "detail": "백그라운드 task 종료 판정을 task 상태('cancelled')로 잡으면 CancelledError 를 삼키고 정상 반환하는 루프에서 cancelled()==False·exception()==None 이라 'stopped' 로 보여 정상 종료마다 오탐 ERROR 가 난다. shutdown 여부는 _shutting_down 플래그로 판정할 것. 또한 cancel() 이 곧 cancelled()==True 라고 가정하는 FakeTask 대역은 이 결함을 구조적으로 못 보므로 진짜 asyncio.Task 로 검증할 것. /health 같은 폴링 경로에서는 상태 전이 시점에만 로깅할 것."
   }
  ],
  "caps": {
@@ -160,19 +168,6 @@
   "DORMANT_DAYS": 7
  },
  "inbox": [
-  {
-   "kind": "PR",
-   "project": "aiportal-py",
-   "title": "auto-improve: fix: 백그라운드 task 종료를 로그·/health 로 관측 가능하게 (감사 A-003)",
-   "url": "https://github.com/hkjang/aiportal-py/pull/13",
-   "sha": "1bf2426",
-   "summary": "8파일 +531/−9 · review held, PR open https://github.com/hkjang/aiportal-py/pull/13",
-   "why": "review: rejected — 리뷰 거절: util/task_supervisor.py:83-97 _on_done() 의 shutdown 예외 처리가 'cancelled' 상태",
-   "evidence": "https://github.com/hkjang/aidev/tree/main/state/runs/2026-09-09-065122-aiportal-py-improve",
-   "labels": "",
-   "action": "승인: PR 라벨 aidev-approved / 반려: aidev-rejected — 다음 회차에 러너가 승인 당시 커밋에만 CI 확인 후 머지·닫기",
-   "date": "2026-09-09"
-  },
   {
    "kind": "PR",
    "project": "Vendra",
@@ -283,7 +278,7 @@
   },
   {
    "metric": "유효 개선당 비용",
-   "value": "$19.09",
+   "value": "$19.10",
    "detail": "비용 확인된 유효 개선 39건, 미확인 세션 2"
   },
   {
@@ -298,7 +293,7 @@
   }
  ],
  "outcomes_today": {
-  "merged": 5,
+  "merged": 6,
   "release-ready": 19,
   "verify-failed": 2,
   "review-pending": 3,
@@ -309,12 +304,12 @@
  "days": [
   {
    "date": "2026-09-09",
-   "total": 29,
+   "total": 30,
    "released": 19,
-   "merged": 5,
+   "merged": 6,
    "nochange": 0,
    "failed": 1,
-   "cost_usd": 140.77
+   "cost_usd": 141.17
   },
   {
    "date": "2026-09-08",
@@ -385,13 +380,13 @@
    "key": "2026-W37",
    "url": "https://hkjang.github.io/aidev/weekly/2026-W37/",
    "days": 3,
-   "total": 146,
+   "total": 147,
    "released": 58,
-   "merged": 26,
+   "merged": 27,
    "nochange": 0,
    "failed": 1,
-   "cost": 503.99,
-   "minutes": 1461
+   "cost": 504.39,
+   "minutes": 1462
   },
   {
    "key": "2026-W36",
@@ -411,13 +406,13 @@
    "key": "2026-09",
    "url": "https://hkjang.github.io/aidev/monthly/2026-09/",
    "days": 8,
-   "total": 452,
+   "total": 453,
    "released": 215,
-   "merged": 85,
+   "merged": 86,
    "nochange": 14,
    "failed": 1,
-   "cost": 744.47,
-   "minutes": 2112
+   "cost": 744.87,
+   "minutes": 2113
   }
  ],
  "projects": [
@@ -475,13 +470,13 @@
    "name": "aiportal-front",
    "repo": "https://github.com/hkjang/aiportal-front",
    "page": "https://hkjang.github.io/aidev/projects/aiportal-front/",
-   "runs": 15,
+   "runs": 16,
    "released": 0,
-   "last_ts": "2026-09-09T00:11:46+09:00",
+   "last_ts": "2026-09-09T07:00:27+09:00",
    "last_status": "merged",
-   "last_result": "merged https://github.com/hkjang/aiportal-front/pull/10, release skipped",
-   "cost": 25.1,
-   "minutes": 74,
+   "last_result": "merged https://github.com/hkjang/aiportal-front/pull/11, release skipped",
+   "cost": 25.5,
+   "minutes": 75,
    "grade": "C",
    "grade_why": "14일: 릴리즈 0, 실패 0, 경고 0, 회귀 1",
    "lessons": 1,
@@ -548,9 +543,9 @@
    "last_result": "review held, PR open https://github.com/hkjang/aiportal-py/pull/13",
    "cost": 23.28,
    "minutes": 63,
-   "grade": "B",
-   "grade_why": "14일: 릴리즈 0, 실패 0, 경고 0, 회귀 0",
-   "lessons": 0,
+   "grade": "C",
+   "grade_why": "14일: 릴리즈 0, 실패 0, 경고 0, 회귀 1",
+   "lessons": 1,
    "ideas_pending": 11,
    "ideas_total": 12,
    "release": {
