@@ -102,7 +102,7 @@ run_agent(){ # $1=단계 $2=프롬프트 $3=작업 디렉터리 $4=예산 $5=허
       DOCKER_HOST="${DOCKER_HOST:-}" AIDEV_OUT="$OUT" \
       GIT_CONFIG_COUNT=2 GIT_CONFIG_KEY_0=remote.origin.pushurl GIT_CONFIG_VALUE_0=DISABLED GIT_CONFIG_KEY_1=credential.helper GIT_CONFIG_VALUE_1= \
       bash -c '[ -f "$0" ] && { set -a; . "$0"; set +a; }; exec "$@"' "$envfile" \
-      timeout -k 30 "$(case "$phase" in improve) echo $T_IMPROVE;; review) echo $T_REVIEW;; release) echo $T_RELEASE;; *) echo $T_ASSETS;; esac)" \
+      timeout -k 30 "$(policy "$n" ".timeouts.$phase" | grep -E '^[0-9]+$' || case "$phase" in improve) echo $T_IMPROVE;; review) echo $T_REVIEW;; release) echo $T_RELEASE;; *) echo $T_ASSETS;; esac)" \
       claude -p "$prompt" --model "$MODEL" --settings "$CLAUDE_SETTINGS" --permission-mode acceptEdits \
         --allowedTools "$tools" --add-dir "$OUT" --max-budget-usd "$budget" --output-format json \
   ) > "$OUT/agent-$phase.json" 2>"$OUT/agent-$phase.txt"; local rc=$?
