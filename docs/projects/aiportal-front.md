@@ -1,7 +1,7 @@
 ---
 title: "aiportal-front — 자율 개선 이력"
 description: "aiportal-front: 자율 개선 회차 12회, 릴리즈 0건. 최근 릴리즈 없음."
-last_modified_at: 2026-09-08 20:41:40 +0900
+last_modified_at: 2026-09-08 20:53:20 +0900
 ---
 {% raw %}
 <script type="application/ld+json">
@@ -18,13 +18,13 @@ last_modified_at: 2026-09-08 20:41:40 +0900
   "name": "hkjang",
   "url": "https://github.com/hkjang"
  },
- "dateModified": "2026-09-08T20:41:40+09:00"
+ "dateModified": "2026-09-08T20:53:20+09:00"
 }
 </script>
 
 # aiportal-front
 
-<p class="tldr"><strong>요약.</strong> aiportal-front: 자율 개선 회차 12회, 릴리즈 0건. 최근 릴리즈 없음. <span class="pill pill-failed" title="14일: 릴리즈 0, 실패 0, 경고 0, 회귀 2">건강 D</span> <span class="meta">14일: 릴리즈 0, 실패 0, 경고 0, 회귀 2</span></p>
+<p class="tldr"><strong>요약.</strong> aiportal-front: 자율 개선 회차 12회, 릴리즈 0건. 최근 릴리즈 없음. <span class="pill pill-merged" title="14일: 릴리즈 0, 실패 0, 경고 0, 회귀 1">건강 C</span> <span class="meta">14일: 릴리즈 0, 실패 0, 경고 0, 회귀 1</span></p>
 
 <ul class="stats"><li><b>12</b><span>회차</span></li><li><b>1</b><span>프로젝트</span></li><li><b>0</b><span>배포 준비 완료</span></li><li><b>0</b><span>릴리즈 진행 중</span></li><li><b>7</b><span>병합 완료</span></li><li><b>4</b><span>검토 대기</span></li><li><b>1</b><span>검증 실패</span></li><li><b>0</b><span>변경 없음</span></li><li><b>0</b><span>실행 오류</span></li><li><b>$18.14</b><span>비용</span></li><li><b>54분</b><span>에이전트 시간</span></li></ul>
 
@@ -52,7 +52,6 @@ last_modified_at: 2026-09-08 20:41:40 +0900
 ## 교훈 (깨졌던 변경)
 
 - 2026-09-08 **demoted** — 자율화 단계 release → low-risk: 회귀(reverted) 2026-09-08T00:00:35+09:00
-- 2026-09-08 **reverted** — PR #5 &quot;auto-improve: fix: 마크다운 렌더링 코드블록/표 래퍼 속성 유실 및 외부 링크 하드닝&quot; 가 머지 뒤 되돌려짐({&quot;messa). 같은 접근은 다시 시도하지 말 것. ([링크](https://github.com/hkjang/aiportal-front/pull/5))
 
 ## 원장 (에이전트가 남긴 기록)
 
