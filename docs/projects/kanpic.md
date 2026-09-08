@@ -1,7 +1,7 @@
 ---
 title: "kanpic — 자율 개선 이력"
 description: "kanpic: 자율 개선 회차 11회, 릴리즈 10건. 최근 릴리즈 v0.238.0 (자산 2개)."
-last_modified_at: 2026-09-08 23:28:23 +0900
+last_modified_at: 2026-09-08 23:42:50 +0900
 ---
 {% raw %}
 <script type="application/ld+json">
@@ -18,7 +18,7 @@ last_modified_at: 2026-09-08 23:28:23 +0900
   "name": "hkjang",
   "url": "https://github.com/hkjang"
  },
- "dateModified": "2026-09-08T23:28:23+09:00",
+ "dateModified": "2026-09-08T23:42:50+09:00",
  "version": "0.238.0"
 }
 </script>
