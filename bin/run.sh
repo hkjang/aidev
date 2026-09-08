@@ -446,8 +446,13 @@ publish_release(){ # $1=태그 $2=제목 $3=노트 $4=ghrel $5=자산 목록 파
     done
     [ $conflict -eq 0 ] && stage assets uploaded "${#assets[@]}개" || { stage assets conflict "충돌/실패 있음 — 사람 확인"; result="$result, asset conflict"; }
   fi
-  prev=$(cd "$repo" && gh release list --limit 10 --json tagName --jq "[.[].tagName] | map(select(. != \"$tag\")) | .[0] // empty" 2>/dev/null)
-  prev_n=0; [ -n "$prev" ] && prev_n=$(cd "$repo" && gh release view "$prev" --json assets --jq '.assets | length' 2>/dev/null || echo 0)
+  # 기준은 "직전 릴리즈"가 아니라 "자산이 있었던 가장 최근 릴리즈" — 한 번 비면 다음부터 계속 정상으로 보이던 문제(2026-09-08 Clustara v0.9.273~275)
+  prev=""; prev_n=0
+  while read -r t; do
+    [ -n "$t" ] && [ "$t" != "$tag" ] || continue
+    local c; c=$(cd "$repo" && gh release view "$t" --json assets --jq '.assets | length' 2>/dev/null || echo 0)
+    if [ "${c:-0}" -gt 0 ]; then prev=$t; prev_n=$c; break; fi
+  done < <(cd "$repo" && gh release list --limit 10 --json tagName --jq '.[].tagName' 2>/dev/null)
   if [ "${prev_n:-0}" -gt 0 ]; then
     # 자산은 릴리즈 워크플로가 붙인다 — 워크플로가 아직 돌고 있으면 계속 기다린다(이미지 빌드는 20분 넘기도 한다).
     # 고정 15분 대기로는 AgentHub 같은 저장소에서 매번 "자산 없음" 오탐이 났다 (2026-09-08).
