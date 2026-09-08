@@ -509,6 +509,9 @@ release_project(){ # $1=base $2=변경 요약 [$3=assets] — 에이전트는 �
   if [ "$mode" = assets ]; then
     latest=${ASSETS_TAG:-$(cd "$repo" && gh release list --limit 1 --json tagName --jq '.[0].tagName' 2>/dev/null)}
     [ -n "$latest" ] || { stage assets skipped "GitHub Release 없음"; return 0; }
+    # 이미 자산이 붙어 있으면 다시 만들지 않는다 — 도커 빌드는 재현되지 않아 체크섬 충돌만 낸다 (2026-09-08 igame)
+    local have; have=$(cd "$repo" && gh release view "$latest" --json assets --jq '.assets|length' 2>/dev/null || echo 0)
+    if [ "${have:-0}" -gt 0 ]; then stage assets present "$latest 에 이미 자산 $have 개가 있다"; return 0; fi
     ref="refs/tags/$latest"
     mode_note="## 이번 세션은 자산만 만든다
 이미 태그 \`$latest\` 와 GitHub Release 가 나가 있지만 이전 릴리즈에 있던 자산이 빠졌다. **버전을 올리거나 커밋·태그를 만들지 말고**, 체크아웃된 \`$latest\` 로 이전 릴리즈와 같은 자산을 같은 방법·같은 이름 규칙으로 \`$OUT/assets/\` 에 만들어 \`assets\` 에 적기만 하라. JSON 의 \`status\` 는 \`released\`, \`tag\` 는 \`$latest\`, \`github_release\` 는 \`false\`."
