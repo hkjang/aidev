@@ -1,0 +1,173 @@
+{
+  "run_id": "2026-09-08-160056-aiportal-front-improve",
+  "generated": "2026-09-08T16:11:59+09:00",
+  "run": {
+    "run_id": "2026-09-08-160056-aiportal-front-improve",
+    "project": "aiportal-front",
+    "kind": "improve",
+    "started": "2026-09-08T16:00:57+09:00",
+    "model": "claude-opus-5",
+    "policy_version": "e8237e1",
+    "prompts_hash": "8c673b85a315bb10",
+    "runner_version": "a8ab853",
+    "finished": "2026-09-08T16:11:58+09:00",
+    "outcome": "review-pending"
+  },
+  "record": {
+    "ts": "2026-09-08T16:11:58+09:00",
+    "date": "2026-09-08",
+    "project": "aiportal-front",
+    "result": "needs approval (risk=medium, files=2), PR open https://github.com/hkjang/aiportal-front/pull/8",
+    "outcome": "review-pending",
+    "run_id": "2026-09-08-160056-aiportal-front-improve",
+    "base_sha": "92b5e59a21d9ae8cc6021981d7022b43cdd6a868",
+    "head_sha": "5c935ea7e18780d123343c0f22d5b07ce2797fc7",
+    "pr": "https://github.com/hkjang/aiportal-front/pull/8",
+    "stages": {
+      "base": {
+        "state": "pinned",
+        "reason": "main@92b5e59",
+        "at": "2026-09-08T16:00:59+09:00"
+      },
+      "autonomy": {
+        "state": "held",
+        "reason": "low-risk 단계 — 위험도 medium, 파일 2: 사람 승인 필요",
+        "at": "2026-09-08T16:11:58+09:00"
+      },
+      "verify": {
+        "state": "passed",
+        "reason": "검증 2개 통과 (auto)",
+        "at": "2026-09-08T16:08:59+09:00"
+      },
+      "pr": {
+        "state": "created",
+        "reason": "https://github.com/hkjang/aiportal-front/pull/8",
+        "at": "2026-09-08T16:09:06+09:00"
+      },
+      "review": {
+        "state": "approved",
+        "reason": "리뷰 승인 (risk=medium)",
+        "at": "2026-09-08T16:11:57+09:00"
+      }
+    },
+    "campaign": "",
+    "autonomy": "low-risk",
+    "files": 2,
+    "additions": 577,
+    "deletions": 52,
+    "tests": 1,
+    "title": "fix: OCR 사용 횟수 초기화 누락 및 상태 스토어 정합성 수정"
+  },
+  "stages": {
+    "base": {
+      "state": "pinned",
+      "reason": "main@92b5e59",
+      "at": "2026-09-08T16:00:59+09:00"
+    },
+    "autonomy": {
+      "state": "held",
+      "reason": "low-risk 단계 — 위험도 medium, 파일 2: 사람 승인 필요",
+      "at": "2026-09-08T16:11:58+09:00"
+    },
+    "verify": {
+      "state": "passed",
+      "reason": "검증 2개 통과 (auto)",
+      "at": "2026-09-08T16:08:59+09:00"
+    },
+    "pr": {
+      "state": "created",
+      "reason": "https://github.com/hkjang/aiportal-front/pull/8",
+      "at": "2026-09-08T16:09:06+09:00"
+    },
+    "review": {
+      "state": "approved",
+      "reason": "리뷰 승인 (risk=medium)",
+      "at": "2026-09-08T16:11:57+09:00"
+    }
+  },
+  "provenance": {
+    "model": "claude-opus-5",
+    "policy_version": "e8237e1",
+    "prompts_hash": "8c673b85a315bb10",
+    "runner_version": "a8ab853",
+    "base_sha": "92b5e59a21d9ae8cc6021981d7022b43cdd6a868",
+    "head_sha": "5c935ea7e18780d123343c0f22d5b07ce2797fc7",
+    "pr": "https://github.com/hkjang/aiportal-front/pull/8"
+  },
+  "verification": {
+    "runner": {
+      "source": "auto",
+      "commands": [
+        {
+          "cmd": "[ -d node_modules ] || npm ci --no-audit --no-fund",
+          "exit": 0,
+          "seconds": 0
+        },
+        {
+          "cmd": "npm test --silent",
+          "exit": 0,
+          "seconds": 1
+        }
+      ]
+    },
+    "runner_gate": {
+      "ok": true,
+      "state": "verified",
+      "reason": "검증 2개 통과 (auto)"
+    },
+    "after_rebase": null,
+    "review": {
+      "verdict": "approve",
+      "reasons": [],
+      "notes": [
+        "테스트 유효성 검증: tests/unit/ocrStatusCheckStore.spec.js 를 main 의 구 구현으로 되돌려 실행하니 12건 실패 후 힙 OOM 으로 중단됨(startPolling(0) 무한 타이머 버그가 실제로 재현). 즉 새 테스트는 변경 대상을 실제로 실행하며 수정 전 코드에서 통과하지 않음. HEAD 에서는 전체 스위트 11파일 245건 통과, 작업트리 복원 확인.",
+        "src/storage/ocrStatusCheckStore.js:170 calculateUseCount 가 group_id 가 없거나 빈 문자열인 항목을 각각 별개 요청으로 세도록 바뀌었다(기존에는 undefined 키 하나로 전부 묶여 1회). 사용 한도를 더 엄격한 방향으로 바꾸는 동작 변경이라, 서버가 진행중 항목에 group_id 를 생략하는 경우가 있다면 사용자가 실제보다 빨리 한도에 걸린다. src/ 내 OCR 목록 화면들이 모두 group_id 를 전제로 동작하므로 실무상 누락은 없어 보이나, 백엔드 응답 스펙 확인 권장.",
+        "src/storage/ocrStatusCheckStore.js:98 normalizeStoredStatus 는 savedDate 가 없는 기존 저장값을 '오늘이 아님'으로 보고 useCount 를 0 으로 되돌린다. 배포 직후 1회에 한해 모든 사용자의 당일 사용 횟수가 초기화된다(한도 우회 방향). 다음 폴링(checkOcrStatus)에서 서버 todayOcrList 기준으로 재계산되므로 최대 수 초간만 유효하고, 고치려던 '어제 값이 남아 영구히 막힘' 버그보다 영향이 작아 수용 가능하다고 판단. 다만 클라이언트 한도만으로 제한을 거는 구조라면 서버측 검증 필요.",
+        "src/storage/ocrStatusCheckStore.js:316 canUseOcr 가 비로그인 시 최대 횟수 API 를 호출하지 않게 되면서 maxUse 로 실제 값 대신 DEFAULT_MAX_USE_OCR(5) 를 반환한다. SupportOcr.vue:199 의 '사용: 0회 / 최대: N회' 안내 문구가 실제 한도와 다를 수 있으나, 비로그인은 어차피 변환 불가 경로라 표시상 문제에 그친다.",
+        "src/storage/ocrStatusCheckStore.js:143 saveStatus 가 항상 savedDate 를 오늘로 갱신하므로, 탭을 자정 넘겨 열어둔 상태에서 markAsRead/resetStatus 가 호출되면 어제 메모리 값인 useCount 가 '오늘 값'으로 저장될 수 있다. 다만 main 에서도 메모리 값 때문에 동일하게 막히는 상황이고 이번 변경으로 악화되지 않았다.",
+        "범위·되돌리기: 변경 파일은 src/storage/ocrStatusCheckStore.js 와 신규 스펙 2개뿐이고 무관한 리팩터/의존성 변경 없음. 마이그레이션이나 외부 상태 변경 없이 localStorage 에 savedDate 필드만 추가되므로 revert 시 구 loadStatus 가 해당 필드를 무시할 뿐 부작용 없음. 커밋 메시지의 7개 수정 항목은 모두 코드에서 실제로 확인됨."
+      ],
+      "risk": "medium"
+    },
+    "ci_gate": null
+  },
+  "release": {
+    "result": null,
+    "assets_sha256": []
+  },
+  "approval": null,
+  "usage": [
+    {
+      "ts": "2026-09-08T16:08:57+09:00",
+      "date": "2026-09-08",
+      "project": "aiportal-front",
+      "phase": "improve",
+      "run_id": "2026-09-08-160056-aiportal-front-improve",
+      "campaign": "",
+      "subtype": "success",
+      "duration_ms": 516455,
+      "num_turns": 29,
+      "cost_usd": 2.4774774999999996,
+      "input_tokens": 50,
+      "output_tokens": 34855,
+      "cache_read": 1572005,
+      "cache_create": 80771
+    },
+    {
+      "ts": "2026-09-08T16:11:57+09:00",
+      "date": "2026-09-08",
+      "project": "aiportal-front",
+      "phase": "review",
+      "run_id": "2026-09-08-160056-aiportal-front-improve",
+      "campaign": "",
+      "subtype": "success",
+      "duration_ms": 182847,
+      "num_turns": 14,
+      "cost_usd": 0.9701694999999999,
+      "input_tokens": 28,
+      "output_tokens": 10051,
+      "cache_read": 536991,
+      "cache_create": 44844
+    }
+  ]
+}
