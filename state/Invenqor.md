@@ -475,3 +475,4 @@
   노트는 하지 않았다.
 - 보류 아이디어: `attributes.*` 의 배열·객체 값이 두 저장 모드에서 다른 텍스트로 렌더링됨(SQLite 은 공백 없는 JSON, PG `#>>` 는 `{"k": "v"}`) (가치 3 / 위험 2 / S) · Query DSL 에 `attributes.<키>` 존재/부재 연산자가 없어 `>= ""` 우회가 필요함 (가치 3 / 위험 2 / M) · Query DSL 실행에 offset 이 없어 상한 500 을 넘는 나머지를 받아낼 방법이 아예 없음 — `/api/v1/assets` 처럼 offset·total 을 주는 것이 대안 (가치 3 / 위험 2 / M) · `listAgents`·설정 목록/이력·자산 상세 루프·`executeQuery` 가 `rows.Err()` 를 확인하지 않아 부분 결과를 200 으로 돌려줌 — 드라이버 fault injection 없이는 테스트 불가 (가치 3 / 위험 1 / M) · MCP 의 `has_more` 가 `len(items) == limit` 추측이라 마지막 페이지에서 거짓말하고, offset 없는 agents 도구는 가져올 수 없는 페이지를 약속함 (가치 2 / 위험 1 / S)
 
+- 릴리즈: v0.2.29 (2026-09-09, run 2026-09-09-044107-Invenqor-improve)
