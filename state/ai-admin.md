@@ -127,3 +127,4 @@
 - 보류 아이디어: CI에 정적 분석 단계(`gofmt -l`, `go vet`) 추가 — eslint는 설정 자체가 없어 축소 범위 권장 (가치 3 / 위험 1 / M) · `loadGrants`가 map 순회로 roles·permissions 순서를 무작위화해 `/api/v1/auth/me` 응답 순서가 요청마다 뒤바뀜 (가치 2 / 위험 1 / S) · `updatePreferences`가 `locale`(varchar 20)·`timezone`(varchar 80)에 길이·형식 검증 없이 저장해 긴 값이 400 대신 500이 됨 (가치 2 / 위험 1 / S) · `listUsers`의 `q`에만 길이 상한이 없어 매우 긴 검색어가 세 컬럼 ILIKE 스캔으로 들어감 (가치 2 / 위험 1 / S) · `safeCSVCell`이 OWASP가 함께 권고하는 tab(0x09)·CR(0x0D) 선행 문자를 중화하지 않음 (가치 2 / 위험 1 / S)
 
 - 릴리즈: v1.2.12 (2026-09-08, run 2026-09-08-183103-ai-admin-improve)
+- 릴리즈: v1.2.13 (2026-09-08, run 2026-09-08-205400-ai-admin-approve)

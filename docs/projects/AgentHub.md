@@ -1,7 +1,7 @@
 ---
 title: "AgentHub — 자율 개선 이력"
 description: "AgentHub: 자율 개선 회차 26회, 릴리즈 12건. 최근 릴리즈 v0.237.0 (자산 8개)."
-last_modified_at: 2026-09-08 20:53:20 +0900
+last_modified_at: 2026-09-08 21:06:09 +0900
 ---
 {% raw %}
 <script type="application/ld+json">
@@ -18,14 +18,14 @@ last_modified_at: 2026-09-08 20:53:20 +0900
   "name": "hkjang",
   "url": "https://github.com/hkjang"
  },
- "dateModified": "2026-09-08T20:53:20+09:00",
+ "dateModified": "2026-09-08T21:06:09+09:00",
  "version": "0.237.0"
 }
 </script>
 
 # AgentHub
 
-<p class="tldr"><strong>요약.</strong> AgentHub: 자율 개선 회차 26회, 릴리즈 12건. 최근 릴리즈 v0.237.0 (자산 8개). <span class="pill pill-failed" title="14일: 릴리즈 12, 실패 0, 경고 5, 회귀 0">건강 D</span> <span class="meta">14일: 릴리즈 12, 실패 0, 경고 5, 회귀 0</span></p>
+<p class="tldr"><strong>요약.</strong> AgentHub: 자율 개선 회차 26회, 릴리즈 12건. 최근 릴리즈 v0.237.0 (자산 8개). <span class="pill pill-failed" title="14일: 릴리즈 12, 실패 0, 경고 5, 회귀 1">건강 D</span> <span class="meta">14일: 릴리즈 12, 실패 0, 경고 5, 회귀 1</span></p>
 
 <ul class="stats"><li><b>26</b><span>회차</span></li><li><b>1</b><span>프로젝트</span></li><li><b>9</b><span>배포 준비 완료</span></li><li><b>3</b><span>릴리즈 진행 중</span></li><li><b>0</b><span>병합 완료</span></li><li><b>13</b><span>검토 대기</span></li><li><b>0</b><span>검증 실패</span></li><li><b>0</b><span>변경 없음</span></li><li><b>1</b><span>실행 오류</span></li><li><b>$37.82</b><span>비용</span></li><li><b>1시간 25분</b><span>에이전트 시간</span></li></ul>
 
@@ -48,6 +48,10 @@ last_modified_at: 2026-09-08 20:53:20 +0900
 ## 아이디어 백로그 — 대기 8 / 전체 10
 
 <div class="table-wrap"><table class="rt" data-filter="1"><caption class="meta">에이전트가 회차마다 재평가한다. 가치 높고 위험 낮은 대기 항목이 다음 회차 후보다.</caption><thead><tr><th class="primary">아이디어</th><th>가치/위험/크기</th><th>상태</th><th>메모</th><th>갱신</th></tr></thead><tbody><tr data-status="nochange"><td data-label="아이디어" class="primary">정책 시뮬레이터가 &#x27;이 규칙이 Pod에서 어떻게 컴파일되는가&#x27;를 보여주지 않아 순서 실수를 저장 전에 볼 수 없음</td><td data-label="가치/위험/크기">3/1/M</td><td data-label="상태">대기</td><td data-label="메모">여전히 유효. CompileServer 결과를 서버·에이전트 단위로 보여주면 최근 여러 회차가 고친 종류의 불일치(순서·기본값·데이터 등급 조건)를 운영자가 저장 전에 직접 볼 수 있다. 컴파일 경로가 이제 규칙 자체를 순서대로 싣고 있어 보여줄 것이 갖춰져 있다.</td><td data-label="갱신">2026-09-08</td></tr><tr data-status="nochange"><td data-label="아이디어" class="primary">컴파일된 규칙에 사유가 없어, Pod에서 거절된 도구 호출이 운영자가 쓴 이유를 전하지 못함</td><td data-label="가치/위험/크기">3/1/S</td><td data-label="상태">대기</td><td data-label="메모">Validate는 차단·승인 규칙에 사유를 요구하고 시뮬레이터·감사 로그는 그 사유를 보여주는데, CompiledRule은 effect·tools만 싣는다. 게이트웨이의 거절문은 &#x27;플랫폼 정책에 의해 차단되었습니다. 관리자에게 문의하세요&#x27; 한 줄. CompiledRule.Reason 한 필드와 CRD 스키마 한 줄이면 되지만, 같은 구조체를 건드리는 auto/2026-09-08-1000 브랜치가 아직 병합 전이라 충돌을 감안해야 한다.</td><td data-label="갱신">2026-09-08</td></tr><tr data-status="nochange"><td data-label="아이디어" class="primary">이름으로 승인 게이트가 걸린 도구 호출은 스캔 전에 승인 요청이 나가, 원문 값이 승인 테이블에 복사됨</td><td data-label="가치/위험/크기">3/2/M</td><td data-label="상태">대기</td><td data-label="메모">auto/2026-09-08-1000(데이터 등급 조건의 Pod 전달)이 병합된 뒤에야 그 위에서 판단할 수 있다. 스캔 뒤에 걸리는 게이트는 마스킹된 인자를 보내지만, 도구 이름으로 걸리는 기존 게이트는 여전히 스캔보다 먼저 실행되어 원문을 컨트롤 플레인에 남긴다. 스캔을 앞으로 옮기면 닫히지만, 차단된 호출에 승인 요청을 만들지 않는 현재 순서의 이점을 잃지 않아야 한다.</td><td data-label="갱신">2026-09-08</td></tr><tr data-status="nochange"><td data-label="아이디어" class="primary">알 수 없는 데이터 등급은 경고가 아니라 거절할 수 있음 — 사용자·에이전트와 달리 나중에 생길 수 없는 닫힌 집합이라서</td><td data-label="가치/위험/크기">2/1/S</td><td data-label="상태">대기</td><td data-label="메모">새 항목. checkPolicyNames는 네 종류를 한 규칙으로 다루지만 성격이 다르다: 사용자·에이전트·MCP 서버는 나중에 만들어질 수 있어 경고가 맞고, 데이터 등급은 코드 안의 탐지기 목록이 전부라 오타는 영원히 무효다. Settings.Validate는 이미 그 목록으로 거절하므로 Document.Validate만 다르게 관대하다. 다만 경고가 이미 있어 값어치는 낮다.</td><td data-label="갱신">2026-09-08</td></tr><tr data-status="nochange"><td data-label="아이디어" class="primary">알 수 없는 완료 판정 방식(completionStrategy)이 저장 검증을 우회해 들어오면 모든 작업이 무조건 통과됨</td><td data-label="가치/위험/크기">2/1/S</td><td data-label="상태">대기</td><td data-label="메모">새 항목. internal/api/execution.go는 agent·rule·judge·composite만 받지만, judgeCompletion의 default는 Passed: true — 목록이 바뀌기 전에 저장된 행이나 API를 거치지 않은 경로로 들어온 값은 완료 조건을 하나도 확인하지 않고 완료로 기록된다. 검증기가 이미 거절하는 값에 대한 실행부의 fail-open이라 실제 발생 조건이 좁다.</td><td data-label="갱신">2026-09-08</td></tr><tr data-status="nochange"><td data-label="아이디어" class="primary">captureHandler.WithGroup이 그룹 이름을 버려 서로 다른 그룹의 같은 키가 충돌</td><td data-label="가치/위험/크기">2/1/S</td><td data-label="상태">대기</td><td data-label="메모">internal/logging/ring.go가 groups를 저장만 하고 Handle·WithAttrs 어디에서도 쓰지 않는다. 링 버퍼의 Fields는 평평한 키를 쓰므로 그룹이 다른 같은 키가 조용히 덮어써진다. 현재 코드베이스에서 WithGroup을 부르는 곳은 없어 잠재 결함.</td><td data-label="갱신">2026-09-08</td></tr><tr data-status="nochange"><td data-label="아이디어" class="primary">scrubDecision이 record.Agent 등 남은 자유 텍스트를 검사하지 않아 에이전트 이름으로는 무엇이든 나갈 수 있음</td><td data-label="가치/위험/크기">2/2/S</td><td data-label="상태">대기</td><td data-label="메모">internal/execution/provenance.go의 scrubDecision은 Scenario·Reasoning·SourceURL 세 필드만 검사한다. DecisionRecord의 Agent(사용자가 입력하는 에이전트 이름)와 Model 이름은 검사 없이 외부 sink로 나간다. reflection으로 문자열 필드를 훑으면 나중에 추가되는 필드도 자동으로 덮인다.</td><td data-label="갱신">2026-09-08</td></tr><tr data-status="nochange"><td data-label="아이디어" class="primary">korean.EndsInConsonant가 괄호·따옴표로 끝나는 값에서 조사를 잘못 고름</td><td data-label="가치/위험/크기">2/2/S</td><td data-label="상태">대기</td><td data-label="메모">마지막 룬만 보므로 &quot;작업(백업)&quot;은 &#x27;)&#x27;에서 false가 되어 는/를을 고른다. 읽는 사람은 괄호 안 마지막 음절로 발음하므로 은/을이 맞다. 닫는 괄호·따옴표를 건너뛰고 그 앞 글자로 판정하면 된다.</td><td data-label="갱신">2026-09-08</td></tr><tr data-status="failed"><td data-label="아이디어" class="primary">정책 문서가 알 수 없는 데이터 등급 이름을 그대로 저장해, 오타 난 규칙이 조용히 아무것도 매치하지 않음</td><td data-label="가치/위험/크기">3/1/S</td><td data-label="상태">기각</td><td data-label="메모">전제가 틀렸다. internal/api/policynames.go의 checkPolicyNames가 dlp.Detectors()와 대조해 저장 응답에 &#x27;이 배포에 없는 대상을 가리키는 규칙이 있습니다 — …, 이 규칙은 아무것도 차단하지 않습니다&#x27;를 실어 보낸다. 조용하지 않다.</td><td data-label="갱신">2026-09-08</td></tr><tr data-status="released"><td data-label="아이디어" class="primary">plan·judge 단계의 Step에 AgentID가 없어 에이전트 조건 규칙이 플래너·판정자의 모델 호출에 적용되지 않음</td><td data-label="가치/위험/크기">3/2/S</td><td data-label="상태">완료</td><td data-label="메모">커밋 18a4f57. planStep·judgeStep이 agent.ID·agent.Name을 싣도록 하고, 표시용 이름 대신 감사·로그가 step ID(plan·judge·task)를 싣게 했다. guard 쪽에서 결과를 확인하는 테스트와, 재발을 막는 소스 스윕(TestEveryStepSaysWhichAgentItIsFor)을 소유자 스윕 옆에 추가.</td><td data-label="갱신">2026-09-08</td></tr></tbody></table></div>
+
+## 교훈 (깨졌던 변경)
+
+- 2026-09-08 **rejected-by-human** — 사람이 PR 을 반려함. 같은 접근은 피할 것. ([링크](https://github.com/hkjang/AgentHub/pull/13))
 
 ## 원장 (에이전트가 남긴 기록)
 

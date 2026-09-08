@@ -1,7 +1,7 @@
 ---
 title: "ReSSO — 자율 개선 이력"
 description: "ReSSO: 자율 개선 회차 13회, 릴리즈 7건. 최근 릴리즈 v0.9.72 (자산 2개)."
-last_modified_at: 2026-09-08 20:53:20 +0900
+last_modified_at: 2026-09-08 21:06:09 +0900
 ---
 {% raw %}
 <script type="application/ld+json">
@@ -18,14 +18,14 @@ last_modified_at: 2026-09-08 20:53:20 +0900
   "name": "hkjang",
   "url": "https://github.com/hkjang"
  },
- "dateModified": "2026-09-08T20:53:20+09:00",
+ "dateModified": "2026-09-08T21:06:09+09:00",
  "version": "0.9.72"
 }
 </script>
 
 # ReSSO
 
-<p class="tldr"><strong>요약.</strong> ReSSO: 자율 개선 회차 13회, 릴리즈 7건. 최근 릴리즈 v0.9.72 (자산 2개). <span class="pill pill-merged" title="14일: 릴리즈 7, 실패 0, 경고 2, 회귀 0">건강 C</span> <span class="meta">14일: 릴리즈 7, 실패 0, 경고 2, 회귀 0</span></p>
+<p class="tldr"><strong>요약.</strong> ReSSO: 자율 개선 회차 13회, 릴리즈 7건. 최근 릴리즈 v0.9.72 (자산 2개). <span class="pill pill-merged" title="14일: 릴리즈 7, 실패 0, 경고 2, 회귀 1">건강 C</span> <span class="meta">14일: 릴리즈 7, 실패 0, 경고 2, 회귀 1</span></p>
 
 <ul class="stats"><li><b>13</b><span>회차</span></li><li><b>1</b><span>프로젝트</span></li><li><b>7</b><span>배포 준비 완료</span></li><li><b>0</b><span>릴리즈 진행 중</span></li><li><b>2</b><span>병합 완료</span></li><li><b>1</b><span>검토 대기</span></li><li><b>3</b><span>검증 실패</span></li><li><b>0</b><span>변경 없음</span></li><li><b>0</b><span>실행 오류</span></li><li><b>$33.54</b><span>비용</span></li><li><b>1시간 28분</b><span>에이전트 시간</span></li></ul>
 
@@ -48,6 +48,10 @@ last_modified_at: 2026-09-08 20:53:20 +0900
 ## 아이디어 백로그 — 대기 10 / 전체 11
 
 <div class="table-wrap"><table class="rt" data-filter="1"><caption class="meta">에이전트가 회차마다 재평가한다. 가치 높고 위험 낮은 대기 항목이 다음 회차 후보다.</caption><thead><tr><th class="primary">아이디어</th><th>가치/위험/크기</th><th>상태</th><th>메모</th><th>갱신</th></tr></thead><tbody><tr data-status="nochange"><td data-label="아이디어" class="primary">authorization이 id_token_hint·max_age를 AuthorizationRequest에 저장하지 않는다</td><td data-label="가치/위험/크기">3/2/M</td><td data-label="상태">대기</td><td data-label="메모">로그인 폼을 거친 뒤에는 hint가 지목한 계정과 다른 계정으로 로그인해도 코드가 나간다. authorization_requests에 컬럼 추가 마이그레이션이 필요하고 login 핸들러가 발급 직전에 대조해야 한다. docs/compatibility.md의 id_token_hint 행이 &#x27;지정한 계정과 다르면 재인증을 요구한다&#x27;고 적고 있어 문서와 동작이 갈리는 지점이다.</td><td data-label="갱신">2026-09-08</td></tr><tr data-status="nochange"><td data-label="아이디어" class="primary">인가 Endpoint의 리다이렉트 가능한 실패에 카운터가 없어 장애가 시계열에 남지 않는다</td><td data-label="가치/위험/크기">3/2/M</td><td data-label="상태">대기</td><td data-label="메모">새 아이디어. 이번 회차의 500은 resso_http_requests_total{status}에 잡히지만, 인가 Endpoint가 redirectOAuthError로 server_error를 302에 실어 보내는 네 경우(SSO 세션 조회·SessionAuthenticatedRecently·CreateAuthorizationCode·CreateAuthorizationRequest)는 HTTP 상태가 302라 성공한 인가와 시계열에서 구별되지 않는다. resso_token_errors_total과 같은 방식으로 stage 라벨을 단 카운터 하나가 그 넷을 드러낸다.</td><td data-label="갱신">2026-09-08</td></tr><tr data-status="nochange"><td data-label="아이디어" class="primary">authChallenge가 없는 요청에 404 not_found를 답해 login의 400 expired_request와 문구가 갈린다</td><td data-label="가치/위험/크기">2/1/S</td><td data-label="상태">대기</td><td data-label="메모">같은 원인(만료·소진된 request token)인데 로그인 화면이 먼저 부르는 authChallenge는 &#x27;요청한 항목을 찾을 수 없습니다&#x27;, 제출은 &#x27;만료되었거나 이미 사용되었습니다&#x27;를 답한다. 장애 구분(500)은 writeStoreError가 이미 한다. auth.go:21-42.</td><td data-label="갱신">2026-09-08</td></tr><tr data-status="nochange"><td data-label="아이디어" class="primary">UserInfo POST에서 form-encoded access_token 파라미터 수용 (RFC 6750 §2.2)</td><td data-label="가치/위험/크기">2/1/S</td><td data-label="상태">대기</td><td data-label="메모">현재는 Authorization 헤더만 읽는다. 헤더를 붙이지 못하는 오래된 RP를 위한 것이고, 헤더와 본문이 둘 다 오면 400 invalid_request여야 한다.</td><td data-label="갱신">2026-09-08</td></tr><tr data-status="nochange"><td data-label="아이디어" class="primary">oidcCORS가 realmFromPath 실패에 조용히 CORS 헤더를 빼고 지나간다</td><td data-label="가치/위험/크기">2/1/S</td><td data-label="상태">대기</td><td data-label="메모">realmFromPath의 여섯 번째 호출자다. 미들웨어라 응답을 바꿀 수는 없지만(뒤 핸들러가 이미 500을 답한다), 브라우저 RP에는 원인 없는 CORS 오류로만 보이므로 로그 한 줄은 값이 있다. Origin 헤더가 있을 때만 도는 경로라 빈도는 낮다. 이번에 oidcLogout에 넣은 logoutClient의 로그와 같은 성격이다.</td><td data-label="갱신">2026-09-08</td></tr><tr data-status="nochange"><td data-label="아이디어" class="primary">SessionByToken이 locked_until을 보지 않는 것은 의도이므로 막지 말고 문서화한다</td><td data-label="가치/위험/크기">2/1/S</td><td data-label="상태">대기</td><td data-label="메모">잠금은 무차별 대입 방어이고 세션 종료로 확장하면 DoS가 된다. docs에 그 판단을 적는 것으로 끝낼 것.</td><td data-label="갱신">2026-09-08</td></tr><tr data-status="nochange"><td data-label="아이디어" class="primary">clientAuthLimiter가 인스턴스별 메모리라 다중 인스턴스에서 실효 잠금 한도가 20*N이다</td><td data-label="가치/위험/크기">2/1/S</td><td data-label="상태">대기</td><td data-label="메모">ratelimit 패키지 doc이 PostgreSQL 버킷 대신 메모리를 쓰는 이유를 이미 적고 있으므로 구현을 바꿀 일은 아니다. 운영자가 보는 실효 한도를 docs/operations.md에 적는 쪽이 맞다.</td><td data-label="갱신">2026-09-08</td></tr><tr data-status="nochange"><td data-label="아이디어" class="primary">logoutClient가 Client를 못 읽어 post_logout_redirect_uri를 버린 것을 감사 트레일에도 남기기</td><td data-label="가치/위험/크기">2/1/S</td><td data-label="상태">대기</td><td data-label="메모">새 아이디어. 이번 회차에 로그 한 줄은 넣었지만, LOGOUT 감사 항목의 detail에는 아무것도 없어 트레일만 보는 사람에게는 RP가 등록하지 않은 목적지를 보낸 것과 여전히 같아 보인다. LOGOUT 항목이 이미 detail 맵을 쓰므로 키 하나면 된다.</td><td data-label="갱신">2026-09-08</td></tr><tr data-status="nochange"><td data-label="아이디어" class="primary">oidcLogout이 id_token_hint의 sub를 쿠키 세션의 사용자와 대조하지 않는다</td><td data-label="가치/위험/크기">2/2/M</td><td data-label="상태">대기</td><td data-label="메모">다른 사람의 ID Token을 hint로 줘도 지금 로그인한 사람이 로그아웃된다. RP-Initiated Logout 1.0 상 SHOULD이며 CSRF성 성가심 수준이다.</td><td data-label="갱신">2026-09-08</td></tr><tr data-status="nochange"><td data-label="아이디어" class="primary">docs/operations.md의 resso_introspection_errors_total 항목에 stage 라벨 값 목록 적기</td><td data-label="가치/위험/크기">1/1/S</td><td data-label="상태">대기</td><td data-label="메모">realm·revocation_state·refresh_token·session·user 등 어느 조회가 멈췄는지 대시보드에서 바로 읽게 한다. resso_token_errors_total과 resso_client_auth_failures_total 항목은 이미 같은 방식이므로 형식을 따르면 된다.</td><td data-label="갱신">2026-09-08</td></tr><tr data-status="released"><td data-label="아이디어" class="primary">authorization의 ClientByIdentifier 실패가 400 invalid_request &quot;unknown client_id&quot;로 나간다</td><td data-label="가치/위험/크기">4/2/M</td><td data-label="상태">완료</td><td data-label="메모">이번 회차에 구현했다. clients 테이블 장애가 RP에게 &#x27;네 client_id는 등록되어 있지 않다&#x27;는 설정 오류로 나갔고, RP에게는 재시도할 것이 없다. 이제 store.ErrNotFound와 !Enabled만 400을 유지하고 나머지는 500 server_error + 로그다. redirect_uri 검증이 바로 이 레코드로 이루어지므로 리다이렉트하지 않고 본문으로 답한다. oidcLogout의 같은 조회 둘은 logoutClient 헬퍼로 묶어 장애일 때 로그를 남긴다(응답은 그대로 — 확인된 목적지가 없어 바꿀 수 없다). handleRefreshGrant의 같은 계열은 병합 대기 중인 7753752가 이미 고쳐 손대지 않았다.</td><td data-label="갱신">2026-09-08</td></tr></tbody></table></div>
+
+## 교훈 (깨졌던 변경)
+
+- 2026-09-08 **rejected-by-human** — 사람이 PR 을 반려함. 같은 접근은 피할 것. ([링크](https://github.com/hkjang/ReSSO/pull/10))
 
 ## 원장 (에이전트가 남긴 기록)
 
