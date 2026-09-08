@@ -1,7 +1,7 @@
 ---
 title: "jikim — 자율 개선 이력"
-description: "jikim: 자율 개선 회차 5회, 릴리즈 4건. 최근 릴리즈 v0.2.6."
-last_modified_at: 2026-09-09 08:35:25 +0900
+description: "jikim: 자율 개선 회차 6회, 릴리즈 5건. 최근 릴리즈 v0.2.6 (자산 2개)."
+last_modified_at: 2026-09-09 08:38:14 +0900
 ---
 {% raw %}
 <script type="application/ld+json">
@@ -11,35 +11,35 @@ last_modified_at: 2026-09-09 08:35:25 +0900
  "name": "jikim",
  "codeRepository": "https://github.com/hkjang/jikim",
  "url": "https://hkjang.github.io/aidev/projects/jikim/",
- "description": "jikim: 자율 개선 회차 5회, 릴리즈 4건. 최근 릴리즈 v0.2.6.",
+ "description": "jikim: 자율 개선 회차 6회, 릴리즈 5건. 최근 릴리즈 v0.2.6 (자산 2개).",
  "inLanguage": "ko",
  "maintainer": {
   "@type": "Person",
   "name": "hkjang",
   "url": "https://github.com/hkjang"
  },
- "dateModified": "2026-09-09T08:35:25+09:00",
+ "dateModified": "2026-09-09T08:38:14+09:00",
  "version": "0.2.6"
 }
 </script>
 
 # jikim
 
-<p class="tldr"><strong>요약.</strong> jikim: 자율 개선 회차 5회, 릴리즈 4건. 최근 릴리즈 v0.2.6. <span class="pill pill-merged" title="14일: 릴리즈 4, 실패 0, 경고 1, 회귀 1">건강 C</span> <span class="meta">14일: 릴리즈 4, 실패 0, 경고 1, 회귀 1</span></p>
+<p class="tldr"><strong>요약.</strong> jikim: 자율 개선 회차 6회, 릴리즈 5건. 최근 릴리즈 v0.2.6 (자산 2개). <span class="pill pill-merged" title="14일: 릴리즈 5, 실패 0, 경고 1, 회귀 1">건강 C</span> <span class="meta">14일: 릴리즈 5, 실패 0, 경고 1, 회귀 1</span></p>
 
-<ul class="stats"><li><b>5</b><span>회차</span></li><li><b>1</b><span>프로젝트</span></li><li><b>4</b><span>배포 준비 완료</span></li><li><b>0</b><span>릴리즈 진행 중</span></li><li><b>0</b><span>병합 완료</span></li><li><b>1</b><span>검토 대기</span></li><li><b>0</b><span>검증 실패</span></li><li><b>0</b><span>변경 없음</span></li><li><b>0</b><span>실행 오류</span></li><li><b>$22.58</b><span>비용</span></li><li><b>52분</b><span>에이전트 시간</span></li></ul>
+<ul class="stats"><li><b>6</b><span>회차</span></li><li><b>1</b><span>프로젝트</span></li><li><b>5</b><span>배포 준비 완료</span></li><li><b>0</b><span>릴리즈 진행 중</span></li><li><b>0</b><span>병합 완료</span></li><li><b>1</b><span>검토 대기</span></li><li><b>0</b><span>검증 실패</span></li><li><b>0</b><span>변경 없음</span></li><li><b>0</b><span>실행 오류</span></li><li><b>$22.58</b><span>비용</span></li><li><b>52분</b><span>에이전트 시간</span></li></ul>
 
 ## 현황
 
 <dl class="kv">
 <dt>저장소</dt><dd><a href="https://github.com/hkjang/jikim">https://github.com/hkjang/jikim</a></dd>
-<dt>마지막 회차</dt><dd>2026-09-09 01:29 KST — <span class="pill pill-released">🚀 릴리즈</span> merged <a href="https://github.com/hkjang/jikim/pull/18">PR #18</a>, released <a href="https://github.com/hkjang/jikim/releases/tag/v0.2.5">v0.2.5</a></dd>
-<dt>최근 릴리즈</dt><dd><a href="https://github.com/hkjang/jikim/releases/tag/v0.2.6">v0.2.6</a> — released <a href="https://github.com/hkjang/jikim/releases">전체 릴리즈 →</a></dd>
+<dt>마지막 회차</dt><dd>2026-09-09 08:38 KST — <span class="pill pill-released">🚀 릴리즈</span> merged <a href="https://github.com/hkjang/jikim/pull/21">PR #21</a>, released <a href="https://github.com/hkjang/jikim/releases/tag/v0.2.6">v0.2.6</a></dd>
+<dt>최근 릴리즈</dt><dd><a href="https://github.com/hkjang/jikim/releases/tag/v0.2.6">v0.2.6</a> — released · 자산 2개 (이전 v0.2.5: 2개) <a href="https://github.com/hkjang/jikim/releases">전체 릴리즈 →</a></dd>
 </dl>
 
 ## 회차 이력
 
-<div class="table-wrap"><table class="rt"><thead><tr><th>일시</th><th class="primary">프로젝트</th><th>결과</th></tr></thead><tbody><tr data-status="released"><td data-label="일시">2026-09-09 01:29</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/jikim/">jikim</a></td><td data-label="결과"><span class="pill pill-released" title="outcome=release-ready">배포 준비 완료</span> merged <a href="https://github.com/hkjang/jikim/pull/18">PR #18</a>, released <a href="https://github.com/hkjang/jikim/releases/tag/v0.2.5">v0.2.5</a><div class="meta">5파일 <span style="color:var(--good)">+202</span>/<span style="color:var(--bad)">−15</span> · 테스트 2 — fix: map Transit store failures to their real status instead of 400</div></td></tr><tr data-status="released"><td data-label="일시">2026-09-08 20:41</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/jikim/">jikim</a></td><td data-label="결과"><span class="pill pill-released" title="outcome=release-ready">배포 준비 완료</span> merged <a href="https://github.com/hkjang/jikim/pull/17">PR #17</a>, released <a href="https://github.com/hkjang/jikim/releases/tag/v0.2.4">v0.2.4</a><div class="meta">6파일 <span style="color:var(--good)">+362</span>/<span style="color:var(--bad)">−9</span> · 테스트 1 — feat: support OpenBao Transit batch_input and batch_results</div></td></tr><tr data-status="other"><td data-label="일시">2026-09-07 01:41</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/jikim/">jikim</a></td><td data-label="결과"><span class="pill pill-merged" title="outcome=review-pending">검토 대기</span> <strong>guarded files</strong>, PR open <a href="https://github.com/hkjang/jikim/pull/16">PR #16</a><div class="meta">33파일 <span style="color:var(--good)">+414</span>/<span style="color:var(--bad)">−98</span> · 테스트 3 — release: 신뢰 Reverse Proxy 클라이언트 IP 판별을 v0.2.4로 릴리스</div></td></tr><tr data-status="released"><td data-label="일시">2026-09-06 15:47</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/jikim/">jikim</a></td><td data-label="결과"><span class="pill pill-released" title="outcome=release-ready">배포 준비 완료</span> merged <a href="https://github.com/hkjang/jikim/pull/15">PR #15</a>, released <a href="https://github.com/hkjang/jikim/releases/tag/v0.2.3">v0.2.3</a><div class="meta">3파일 <span style="color:var(--good)">+107</span>/<span style="color:var(--bad)">−10</span> · 테스트 1 — fix: reject mistyped security and general settings values</div></td></tr><tr data-status="released"><td data-label="일시">2026-09-05 03:52</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/jikim/">jikim</a></td><td data-label="결과"><span class="pill pill-released" title="outcome=release-ready">배포 준비 완료</span> merged <a href="https://github.com/hkjang/jikim/pull/14">PR #14</a>, released <a href="https://github.com/hkjang/jikim/releases/tag/v0.2.2">v0.2.2</a></td></tr></tbody></table></div>
+<div class="table-wrap"><table class="rt"><thead><tr><th>일시</th><th class="primary">프로젝트</th><th>결과</th></tr></thead><tbody><tr data-status="released"><td data-label="일시">2026-09-09 08:38</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/jikim/">jikim</a></td><td data-label="결과"><span class="pill pill-released" title="outcome=release-ready">배포 준비 완료</span> merged <a href="https://github.com/hkjang/jikim/pull/21">PR #21</a>, released <a href="https://github.com/hkjang/jikim/releases/tag/v0.2.6">v0.2.6</a><div class="meta">3파일 <span style="color:var(--good)">+144</span>/<span style="color:var(--bad)">−10</span> · 테스트 1 — fix: hide store internals from MCP tool errors</div></td></tr><tr data-status="released"><td data-label="일시">2026-09-09 01:29</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/jikim/">jikim</a></td><td data-label="결과"><span class="pill pill-released" title="outcome=release-ready">배포 준비 완료</span> merged <a href="https://github.com/hkjang/jikim/pull/18">PR #18</a>, released <a href="https://github.com/hkjang/jikim/releases/tag/v0.2.5">v0.2.5</a><div class="meta">5파일 <span style="color:var(--good)">+202</span>/<span style="color:var(--bad)">−15</span> · 테스트 2 — fix: map Transit store failures to their real status instead of 400</div></td></tr><tr data-status="released"><td data-label="일시">2026-09-08 20:41</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/jikim/">jikim</a></td><td data-label="결과"><span class="pill pill-released" title="outcome=release-ready">배포 준비 완료</span> merged <a href="https://github.com/hkjang/jikim/pull/17">PR #17</a>, released <a href="https://github.com/hkjang/jikim/releases/tag/v0.2.4">v0.2.4</a><div class="meta">6파일 <span style="color:var(--good)">+362</span>/<span style="color:var(--bad)">−9</span> · 테스트 1 — feat: support OpenBao Transit batch_input and batch_results</div></td></tr><tr data-status="other"><td data-label="일시">2026-09-07 01:41</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/jikim/">jikim</a></td><td data-label="결과"><span class="pill pill-merged" title="outcome=review-pending">검토 대기</span> <strong>guarded files</strong>, PR open <a href="https://github.com/hkjang/jikim/pull/16">PR #16</a><div class="meta">33파일 <span style="color:var(--good)">+414</span>/<span style="color:var(--bad)">−98</span> · 테스트 3 — release: 신뢰 Reverse Proxy 클라이언트 IP 판별을 v0.2.4로 릴리스</div></td></tr><tr data-status="released"><td data-label="일시">2026-09-06 15:47</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/jikim/">jikim</a></td><td data-label="결과"><span class="pill pill-released" title="outcome=release-ready">배포 준비 완료</span> merged <a href="https://github.com/hkjang/jikim/pull/15">PR #15</a>, released <a href="https://github.com/hkjang/jikim/releases/tag/v0.2.3">v0.2.3</a><div class="meta">3파일 <span style="color:var(--good)">+107</span>/<span style="color:var(--bad)">−10</span> · 테스트 1 — fix: reject mistyped security and general settings values</div></td></tr><tr data-status="released"><td data-label="일시">2026-09-05 03:52</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/jikim/">jikim</a></td><td data-label="결과"><span class="pill pill-released" title="outcome=release-ready">배포 준비 완료</span> merged <a href="https://github.com/hkjang/jikim/pull/14">PR #14</a>, released <a href="https://github.com/hkjang/jikim/releases/tag/v0.2.2">v0.2.2</a></td></tr></tbody></table></div>
 
 ## 비용·사용량
 
