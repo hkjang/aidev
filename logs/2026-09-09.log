@@ -1301,3 +1301,93 @@ fatal: '/home/hkjang/.cache/auto-improve-wt/Invenqor' is not a working tree
 evidence: /mnt/c/Users/USER/projects/aidev/state/runs/2026-09-09-044107-Invenqor-improve/evidence.json
 reports: 8 day(s), 2 week(s), 1 month(s), 446 run(s), 358 usage row(s), 29 project page(s), 0 alert(s)
 notify: no new alerts
+                                  [05:06:28] aidev synced: run(2026-09-09): Invenqor — merged https://github.com/hkjang/invenqor/pull/13, released v0.2.29
+[05:06:28] done
+[05:10:27] skip DartFly: dirty working tree
+[05:10:28] skip Kkiit: dirty working tree
+[05:10:26] skip Momento: dirty working tree
+[05:10:27] skip Quantoss: dirty working tree
+[05:10:29] skip SecCheck: dirty working tree
+[05:10:35] skip aiportal-java: STOP
+[05:10:37] skip cutover: dirty working tree
+[05:10:50] skip muni: dirty working tree
+[05:10:53] skip postra: dirty working tree
+[05:10:55] skip seaton: dirty working tree
+[05:10:57] skip vibe-coders: dirty working tree
+[05:10:57] skip visitflow: dirty working tree
+[05:10:59] candidates(24): AgentHub Clustara Invenqor ReSSO Vendra ai-admin aiportal-front-admin aiportal-front aiportal-py appstore dataworks git-ctx igame jikim jupiq kanpic moina moyro pii-masker ptium releasedock relio umm weekly
+[05:10:59] run-queue: picked AgentHub (이슈 #5: run: AgentHub — 정책 행위자를 작업 소유자로 바로잡고 배선을 실제로 검증)
+[05:10:59] picked: AgentHub
+[05:11:00] === AgentHub (base=main, run 2026-09-09-051059-AgentHub-improve, 회차 예산 $22)
+Preparing worktree (new branch 'auto/2026-09-09-0511')
+HEAD is now at 88b4ec1 chore(release): 0.238.0
+[05:11:01] AgentHub: [base] pinned — main@88b4ec1
+[05:11:01] AgentHub: [autonomy] release — 
+[05:22:29] AgentHub: improve — 75 turns, 12m, $6.71, success
+[05:22:32] AgentHub: verify `go build ./...` → exit 0 (2s)
+[05:22:33] AgentHub: verify `go vet ./...` → exit 0 (1s)
+[05:22:47] AgentHub: verify `go test ./...` → exit 0 (14s)
+[05:22:47] AgentHub: verify `cd web && [ -d node_modules ] || npm ci --no-audit --no-fund` → exit 0 (0s)
+[05:22:51] AgentHub: verify `cd web && npm run build --silent` → exit 0 (4s)
+[05:22:51] AgentHub: [verify] passed — 검증 5개 통과 (auto)
+branch 'auto/2026-09-09-0511' set up to track 'origin/auto/2026-09-09-0511'.
+[05:22:58] AgentHub: [pr] created — https://github.com/hkjang/AgentHub/pull/17
+[05:27:53] AgentHub: review — 29 turns, 5m, $2.07, success
+[05:27:53] AgentHub: [review] approved — 리뷰 승인 (risk=medium)
+[05:27:54] AgentHub: waiting for CI on abe9934 (success)
+[05:28:22] AgentHub: [ci] passed — 검사 1개 모두 success
+[05:28:27] AgentHub: [merge] done — abe993437589dcc37268f6950c683b4d4093b4f9
+From https://github.com/hkjang/AgentHub
+ * branch            main       -> FETCH_HEAD
+   88b4ec1..b597de0  main       -> origin/main
+Updating 88b4ec1..b597de0
+Fast-forward
+ BASE_VERSION                                  |   2 +-
+ README.md                                     |   2 +-
+ compose.yaml                                  |   2 +-
+ deploy/kubernetes/ollama-bridge.yaml          |   2 +-
+ internal/api/policyactions_test.go            |  27 +++
+ internal/api/provenance.go                    |  11 +-
+ internal/buildinfo/buildinfo.go               |   2 +-
+ internal/execution/contentpolicy_live_test.go | 259 ++++++++++++++++++++++++++
+ internal/execution/contentpolicy_test.go      | 186 ++++++++++++++++++
+ internal/execution/contentscan.go             |  96 +++++++++-
+ internal/execution/contentscan_test.go        |  26 +--
+ internal/execution/provenance.go              | 102 +++++++---
+ internal/execution/provenance_test.go         |  10 +-
+ internal/execution/review.go                  |   2 +-
+ internal/execution/scmannounce_live_test.go   |   6 +-
+ internal/execution/scmpost.go                 | 118 ++++++++----
+ internal/execution/scmpost_test.go            |  17 +-
+ internal/execution/scmscan_test.go            |  12 +-
+ internal/execution/scmwithheld_live_test.go   |   2 +-
+ internal/policy/policy.go                     |  16 +-
+ web/src/pages/AdminPolicy.tsx                 |   2 +
+ 21 files changed, 787 insertions(+), 115 deletions(-)
+ create mode 100644 internal/execution/contentpolicy_live_test.go
+ create mode 100644 internal/execution/contentpolicy_test.go
+Preparing worktree (detached HEAD b597de0)
+HEAD is now at b597de0 Merge pull request #17 from hkjang/auto/2026-09-09-0511
+[05:30:53] AgentHub: release — 24 turns, 2m, $0.86, success
+[05:30:54] AgentHub: waiting for CI on d62f998 (no-ci)
+[05:32:49] AgentHub: [release] published — v0.239.0
+From https://github.com/hkjang/AgentHub
+ * branch            main       -> FETCH_HEAD
+Updating b597de0..d62f998
+Fast-forward
+ README.md                       | 2 +-
+ VERSION                         | 2 +-
+ compose.yaml                    | 6 +++---
+ deploy/kubernetes/agenthub.yaml | 4 ++--
+ deploy/kubernetes/operator.yaml | 2 +-
+ deploy/kubernetes/worker.yaml   | 2 +-
+ deploy/offline/.env.example     | 2 +-
+ deploy/offline/compose.yaml     | 4 ++--
+ docs/index.html                 | 2 +-
+ docs/offline-install.md         | 2 +-
+ 10 files changed, 14 insertions(+), 14 deletions(-)
+[05:53:52] AgentHub: [assets] verified — v0.239.0 자산 9개 (이전 v0.238.0: 8)
+fatal: '/home/hkjang/.cache/auto-improve-wt/AgentHub' is not a working tree
+evidence: /mnt/c/Users/USER/projects/aidev/state/runs/2026-09-09-051059-AgentHub-improve/evidence.json
+reports: 8 day(s), 2 week(s), 1 month(s), 447 run(s), 361 usage row(s), 29 project page(s), 0 alert(s)
+notify: no new alerts
