@@ -1,7 +1,7 @@
 ---
 title: "ptium — 자율 개선 이력"
-description: "ptium: 자율 개선 회차 18회, 릴리즈 8건. 최근 릴리즈 v1.69.28 (자산 7개)."
-last_modified_at: 2026-09-09 02:39:05 +0900
+description: "ptium: 자율 개선 회차 18회, 릴리즈 8건. 최근 릴리즈 v1.69.29."
+last_modified_at: 2026-09-09 02:46:18 +0900
 ---
 {% raw %}
 <script type="application/ld+json">
@@ -11,30 +11,30 @@ last_modified_at: 2026-09-09 02:39:05 +0900
  "name": "ptium",
  "codeRepository": "https://github.com/hkjang/ptium",
  "url": "https://hkjang.github.io/aidev/projects/ptium/",
- "description": "ptium: 자율 개선 회차 18회, 릴리즈 8건. 최근 릴리즈 v1.69.28 (자산 7개).",
+ "description": "ptium: 자율 개선 회차 18회, 릴리즈 8건. 최근 릴리즈 v1.69.29.",
  "inLanguage": "ko",
  "maintainer": {
   "@type": "Person",
   "name": "hkjang",
   "url": "https://github.com/hkjang"
  },
- "dateModified": "2026-09-09T02:39:05+09:00",
- "version": "1.69.28"
+ "dateModified": "2026-09-09T02:46:18+09:00",
+ "version": "1.69.29"
 }
 </script>
 
 # ptium
 
-<p class="tldr"><strong>요약.</strong> ptium: 자율 개선 회차 18회, 릴리즈 8건. 최근 릴리즈 v1.69.28 (자산 7개). <span class="pill pill-merged" title="14일: 릴리즈 8, 실패 0, 경고 2, 회귀 0">건강 C</span> <span class="meta">14일: 릴리즈 8, 실패 0, 경고 2, 회귀 0</span></p>
+<p class="tldr"><strong>요약.</strong> ptium: 자율 개선 회차 18회, 릴리즈 8건. 최근 릴리즈 v1.69.29. <span class="pill pill-merged" title="14일: 릴리즈 8, 실패 0, 경고 2, 회귀 0">건강 C</span> <span class="meta">14일: 릴리즈 8, 실패 0, 경고 2, 회귀 0</span></p>
 
-<ul class="stats"><li><b>18</b><span>회차</span></li><li><b>1</b><span>프로젝트</span></li><li><b>8</b><span>배포 준비 완료</span></li><li><b>0</b><span>릴리즈 진행 중</span></li><li><b>2</b><span>병합 완료</span></li><li><b>0</b><span>검토 대기</span></li><li><b>1</b><span>검증 실패</span></li><li><b>7</b><span>변경 없음</span></li><li><b>0</b><span>실행 오류</span></li><li><b>$8.90</b><span>비용</span></li><li><b>25분</b><span>에이전트 시간</span></li></ul>
+<ul class="stats"><li><b>18</b><span>회차</span></li><li><b>1</b><span>프로젝트</span></li><li><b>8</b><span>배포 준비 완료</span></li><li><b>0</b><span>릴리즈 진행 중</span></li><li><b>2</b><span>병합 완료</span></li><li><b>0</b><span>검토 대기</span></li><li><b>1</b><span>검증 실패</span></li><li><b>7</b><span>변경 없음</span></li><li><b>0</b><span>실행 오류</span></li><li><b>$10.78</b><span>비용</span></li><li><b>31분</b><span>에이전트 시간</span></li></ul>
 
 ## 현황
 
 <dl class="kv">
 <dt>저장소</dt><dd><a href="https://github.com/hkjang/ptium">https://github.com/hkjang/ptium</a></dd>
 <dt>마지막 회차</dt><dd>2026-09-08 22:09 KST — <span class="pill pill-released">🚀 릴리즈</span> merged <a href="https://github.com/hkjang/ptium/pull/10">PR #10</a>, released <a href="https://github.com/hkjang/ptium/releases/tag/v1.69.28">v1.69.28</a></dd>
-<dt>최근 릴리즈</dt><dd><a href="https://github.com/hkjang/ptium/releases/tag/v1.69.28">v1.69.28</a> — released · 자산 7개 (이전 v1.69.27: 7개) <a href="https://github.com/hkjang/ptium/releases">전체 릴리즈 →</a></dd>
+<dt>최근 릴리즈</dt><dd><a href="https://github.com/hkjang/ptium/releases/tag/v1.69.29">v1.69.29</a> — released <a href="https://github.com/hkjang/ptium/releases">전체 릴리즈 →</a></dd>
 </dl>
 
 ## 회차 이력
@@ -43,7 +43,7 @@ last_modified_at: 2026-09-09 02:39:05 +0900
 
 ## 비용·사용량
 
-<div class="table-wrap"><table class="rt"><caption class="meta">최근 30세션</caption><thead><tr><th>시각</th><th class="primary">프로젝트</th><th>단계</th><th class="num">시간</th><th class="num">턴</th><th class="num">비용</th><th class="num">토큰 입력/출력</th><th>종료</th></tr></thead><tbody><tr data-status="other"><td data-label="시각">02:38</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/ptium/">ptium</a></td><td data-label="단계">개선</td><td data-label="시간" class="num">8분</td><td data-label="턴" class="num">44</td><td data-label="비용" class="num">$2.64</td><td data-label="토큰 입력/출력" class="num">2.2M / 30K</td><td data-label="종료">success</td></tr><tr data-status="other"><td data-label="시각">22:04</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/ptium/">ptium</a></td><td data-label="단계">릴리즈</td><td data-label="시간" class="num">5분</td><td data-label="턴" class="num">35</td><td data-label="비용" class="num">$1.65</td><td data-label="토큰 입력/출력" class="num">1.6M / 12K</td><td data-label="종료">success</td></tr><tr data-status="other"><td data-label="시각">21:56</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/ptium/">ptium</a></td><td data-label="단계">review</td><td data-label="시간" class="num">1분</td><td data-label="턴" class="num">7</td><td data-label="비용" class="num">$0.44</td><td data-label="토큰 입력/출력" class="num">201K / 5K</td><td data-label="종료">success</td></tr><tr data-status="other"><td data-label="시각">21:54</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/ptium/">ptium</a></td><td data-label="단계">개선</td><td data-label="시간" class="num">4분</td><td data-label="턴" class="num">24</td><td data-label="비용" class="num">$1.26</td><td data-label="토큰 입력/출력" class="num">947K / 13K</td><td data-label="종료">success</td></tr><tr data-status="other"><td data-label="시각">03:37</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/ptium/">ptium</a></td><td data-label="단계">개선</td><td data-label="시간" class="num">7분</td><td data-label="턴" class="num">43</td><td data-label="비용" class="num">$2.90</td><td data-label="토큰 입력/출력" class="num">2.8M / 26K</td><td data-label="종료">success</td></tr></tbody></table></div>
+<div class="table-wrap"><table class="rt"><caption class="meta">최근 30세션</caption><thead><tr><th>시각</th><th class="primary">프로젝트</th><th>단계</th><th class="num">시간</th><th class="num">턴</th><th class="num">비용</th><th class="num">토큰 입력/출력</th><th>종료</th></tr></thead><tbody><tr data-status="other"><td data-label="시각">02:45</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/ptium/">ptium</a></td><td data-label="단계">릴리즈</td><td data-label="시간" class="num">3분</td><td data-label="턴" class="num">28</td><td data-label="비용" class="num">$1.16</td><td data-label="토큰 입력/출력" class="num">995K / 9K</td><td data-label="종료">success</td></tr><tr data-status="other"><td data-label="시각">02:40</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/ptium/">ptium</a></td><td data-label="단계">review</td><td data-label="시간" class="num">3분</td><td data-label="턴" class="num">12</td><td data-label="비용" class="num">$0.71</td><td data-label="토큰 입력/출력" class="num">318K / 11K</td><td data-label="종료">success</td></tr><tr data-status="other"><td data-label="시각">02:38</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/ptium/">ptium</a></td><td data-label="단계">개선</td><td data-label="시간" class="num">8분</td><td data-label="턴" class="num">44</td><td data-label="비용" class="num">$2.64</td><td data-label="토큰 입력/출력" class="num">2.2M / 30K</td><td data-label="종료">success</td></tr><tr data-status="other"><td data-label="시각">22:04</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/ptium/">ptium</a></td><td data-label="단계">릴리즈</td><td data-label="시간" class="num">5분</td><td data-label="턴" class="num">35</td><td data-label="비용" class="num">$1.65</td><td data-label="토큰 입력/출력" class="num">1.6M / 12K</td><td data-label="종료">success</td></tr><tr data-status="other"><td data-label="시각">21:56</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/ptium/">ptium</a></td><td data-label="단계">review</td><td data-label="시간" class="num">1분</td><td data-label="턴" class="num">7</td><td data-label="비용" class="num">$0.44</td><td data-label="토큰 입력/출력" class="num">201K / 5K</td><td data-label="종료">success</td></tr><tr data-status="other"><td data-label="시각">21:54</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/ptium/">ptium</a></td><td data-label="단계">개선</td><td data-label="시간" class="num">4분</td><td data-label="턴" class="num">24</td><td data-label="비용" class="num">$1.26</td><td data-label="토큰 입력/출력" class="num">947K / 13K</td><td data-label="종료">success</td></tr><tr data-status="other"><td data-label="시각">03:37</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/ptium/">ptium</a></td><td data-label="단계">개선</td><td data-label="시간" class="num">7분</td><td data-label="턴" class="num">43</td><td data-label="비용" class="num">$2.90</td><td data-label="토큰 입력/출력" class="num">2.8M / 26K</td><td data-label="종료">success</td></tr></tbody></table></div>
 
 ## 아이디어 백로그 — 대기 7 / 전체 8
 
