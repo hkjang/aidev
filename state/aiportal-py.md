@@ -132,3 +132,13 @@
 - 보류 아이디어: A-107 후속 — 재시도·circuit breaker·공용 `requests.Session` 도입 — 가치 3 / 위험 3 / M
 - 보류 아이디어: 백그라운드 task 의 "마지막 성공 시각" 노출 — 지금은 task 가 살아 있기만 하면 healthy 라, 루프는 도는데 매 주기 예외를 삼키는 상태를 구분하지 못한다 — 가치 3 / 위험 2 / S
 
+## 2026-09-09
+- 선택: 백그라운드 task 종료 관측 재구현 — shutdown 오탐 ERROR 제거 (감사 A-003, PR #13 리뷰 반영) (가치 4 / 위험 2 / 작업량 M)
+- 결과: 성공
+- 요약: 닫힌 PR #13 의 목적(무한 루프 task 3개가 조용히 죽는 것을 로그·`/health` 로 관측)은 유지하되, 리뷰가 지적한 두 결함을 고쳐 다시 구현했다. `util/task_supervisor.py` 의 `_on_done()` 이 shutdown 예외 처리를 `'cancelled'` 상태에만 적용해, `CancelledError` 를 잡아 `break` 하고 정상 반환하는 `feedback_batch_loop`(Python 3.8+ 에서 `cancelled()`==False·`exception()` is None → `'stopped'`)이 **서버 정상 종료마다** 오탐 ERROR 를 남기던 것을, 판정 기준을 task 상태가 아닌 `_shutting_down` 플래그로 바꿔 제거했다(예외로 끝난 `failed` 는 shutdown 중에도 ERROR 유지). `/health` 는 readiness probe 폴링 경로이므로 `note_state_change()` 를 추가해 상태 전이 시점에만 로깅하고, `docs/OPERATIONS.md` 의 상태 표는 `stopped`/`cancelled` 가 정상 종료 시에도 나타남을 명시하고 판정을 로그 레벨(`INFO ... 종료 (서버 shutdown / …)` vs `ERROR`)로 하도록 고쳤다. 검증은 리뷰 요구대로 대역이 아닌 **진짜 `asyncio.Task`** 로 실제 shutdown 경로(`begin_shutdown()` → `cancel()` → `gather()`)를 재현하는 테스트 6건을 추가했고(취소를 삼키는 루프·전파하는 루프·shutdown 아닌 조기 종료·예외 종료), `/health` 의 전이 로깅은 AST 정적 검사로 잡았다. 옛 구현을 되돌려 넣어 핵심 3건(`test_shutdown_of_real_task_swallowing_cancel_logs_no_error` 포함)이 실제로 실패하는지 확인했다. `python3 -m pytest -q` 941 passed(기존 907), `python -m pyflakes .` undefined name 0건. docs 5종(CURRENT_STATE_AUDIT/OPERATIONS/API_REFERENCE/CODEBASE_MAP/TESTING) 갱신. 커밋 `effe9e0`.
+- 보류 아이디어: A-105 후속 — 공통 오류 응답 model 도입과 traceback 노출 제거(A-106 연계) — 가치 4 / 위험 3 / L
+- 보류 아이디어: 백그라운드 task 의 마지막 성공 시각(heartbeat) 노출 — 이제 task 생존은 보이지만 루프가 살아 있으면서 매 주기 예외를 삼키는 상태는 여전히 healthy 로 보인다 — 가치 3 / 위험 2 / S
+- 보류 아이디어: `confluence_pipeline_spacefile_detail` 의 루프 안 `insert_to_milvus_cf` 누적 재삽입(N개 파일이면 N(N+1)/2 건) — 가치 3 / 위험 2 / S
+- 보류 아이디어: A-107 후속 — 재시도·circuit breaker·공용 `requests.Session` 도입 — 가치 3 / 위험 3 / M
+- 보류 아이디어: bare except → 구체 예외로 범위 축소(`service/pipelineservice.confluence_pipeline_kcblaw` 등 잔여) — 가치 3 / 위험 3 / M
+

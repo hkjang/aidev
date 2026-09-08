@@ -1653,3 +1653,59 @@ fatal: '/home/hkjang/.cache/auto-improve-wt/aiportal-front' is not a working tre
 evidence: /mnt/c/Users/USER/projects/aidev/state/runs/2026-09-09-065117-aiportal-front-improve/evidence.json
 reports: 8 day(s), 2 week(s), 1 month(s), 453 run(s), 377 usage row(s), 29 project page(s), 0 alert(s)
 notify: no new alerts
+                                  [07:01:09] aidev synced: run(2026-09-09): aiportal-front — merged https://github.com/hkjang/aiportal-front/pull/11, release skipped
+[07:01:09] done
+[07:10:26] skip DartFly: dirty working tree
+[07:10:27] skip Kkiit: dirty working tree
+[07:10:28] skip Momento: dirty working tree
+[07:10:29] skip Quantoss: dirty working tree
+[07:10:28] skip SecCheck: dirty working tree
+[07:10:35] skip aiportal-java: STOP
+[07:10:36] skip cutover: dirty working tree
+[07:10:49] skip muni: dirty working tree
+[07:10:52] skip postra: dirty working tree
+[07:10:55] skip seaton: dirty working tree
+[07:10:56] skip vibe-coders: dirty working tree
+[07:10:57] skip visitflow: dirty working tree
+[07:10:58] candidates(24): AgentHub Clustara Invenqor ReSSO Vendra ai-admin aiportal-front-admin aiportal-front aiportal-py appstore dataworks git-ctx igame jikim jupiq kanpic moina moyro pii-masker ptium releasedock relio umm weekly
+[07:10:58] run-queue: picked aiportal-py (이슈 #6: run: aiportal-py — 백그라운드 task 관측(A-003) 재작업, 정상 종료 오탐 제거)
+[07:10:58] picked: aiportal-py
+[07:10:59] === aiportal-py (base=main, run 2026-09-09-071058-aiportal-py-improve, 회차 예산 $22)
+Preparing worktree (new branch 'auto/2026-09-09-0711')
+HEAD is now at e49b6d2 Merge pull request #12 from hkjang/auto/2026-09-09-0001
+[07:11:01] aiportal-py: [base] pinned — main@e49b6d2
+[07:11:01] aiportal-py: [autonomy] release — 
+[07:16:22] aiportal-py: improve — 39 turns, 5m, $2.13, success
+[07:16:23] aiportal-py: verify `python3 -m pytest -q -x` → exit 0 (0s)
+[07:16:23] aiportal-py: [verify] passed — 검증 1개 통과 (auto)
+branch 'auto/2026-09-09-0711' set up to track 'origin/auto/2026-09-09-0711'.
+[07:16:30] aiportal-py: [pr] created — https://github.com/hkjang/aiportal-py/pull/14
+[07:18:35] aiportal-py: review — 14 turns, 2m, $0.78, success
+[07:18:35] aiportal-py: [review] approved — 리뷰 승인 (risk=low)
+[07:18:37] aiportal-py: waiting for CI on effe9e0 (no-ci-allowed)
+[07:19:05] aiportal-py: [ci] passed — 검사 없음 — 정책으로 허용
+[07:19:07] aiportal-py: [merge] done — effe9e0c0d0eea40dcffa8b29918c2cb6d68c746
+From https://github.com/hkjang/aiportal-py
+ * branch            main       -> FETCH_HEAD
+   e49b6d2..4708ba5  main       -> origin/main
+Updating e49b6d2..4708ba5
+Fast-forward
+ api.py                             |  39 ++-
+ docs/API_REFERENCE.md              |   2 +-
+ docs/CODEBASE_MAP.md               |   1 +
+ docs/CURRENT_STATE_AUDIT.md        |   4 +-
+ docs/OPERATIONS.md                 |  41 ++-
+ docs/TESTING.md                    |   1 +
+ tests/unit/test_task_supervisor.py | 531 +++++++++++++++++++++++++++++++++++++
+ util/task_supervisor.py            | 160 +++++++++++
+ 8 files changed, 770 insertions(+), 9 deletions(-)
+ create mode 100644 tests/unit/test_task_supervisor.py
+ create mode 100644 util/task_supervisor.py
+Preparing worktree (detached HEAD 4708ba5)
+HEAD is now at 4708ba5 Merge pull request #14 from hkjang/auto/2026-09-09-0711
+[07:20:23] aiportal-py: release — 15 turns, 1m, $0.48, success
+[07:20:23] aiportal-py: [release] skipped — 릴리즈 안 함: 릴리즈 이력이 전혀 없는 저장소입니다. git tag 0개(로컬·origin 모두 refs/tags/* 없음), GitHub Release 없음, .github/workflows 디렉터리 자체가 없음, CHANGELOG.md·docs/RELEASE*.md 없음, VERSION/pyproject.toml/setup.py/Makefile/package.json 등 버전 파일 없음, scripts/ 디렉터리와 릴리즈·오프라인 빌드 스크립트 없음, 29개 커밋 전체에 릴리즈·버전 범프 커밋 없음(fix:/docs: 와 merge 커밋뿐). 유일한 버전 문자열인 api.py:133 version="1.0.0" 은 FastAPI OpenAPI 메타데이터로 first commit(2075c62) 이후 한 번도 변경된 적이 없고 릴리즈 절차와 무관합니다. 배포는 .gitlab-ci.yml 의 deploy stage 가 main/develop 브랜치 푸시에 반응해 git reset --hard origin/$CI_COMMIT_BRANCH 후 k8s rollout restart/podman restart 를 하는 브랜치 추적 방식이며 태그·버전을 쓰지 않습니다. docs/DEPLOYMENT.md 도 Dockerfile·Compose·Kubernetes manifest 가 저장소에 없어 이미지 빌드는 배포 호스트에서 별도 관리한다고 명시하므로 재현할 릴리즈 자산 관례도 없습니다. 버전 체계·태그 형식·릴리즈 노트 양식을 새로 정하는 것은 사람의 결정이므로 아무것도 만들지 않았습니다.
+fatal: '/home/hkjang/.cache/auto-improve-wt/aiportal-py' is not a working tree
+evidence: /mnt/c/Users/USER/projects/aidev/state/runs/2026-09-09-071058-aiportal-py-improve/evidence.json
+reports: 8 day(s), 2 week(s), 1 month(s), 454 run(s), 380 usage row(s), 29 project page(s), 0 alert(s)
+notify: no new alerts
