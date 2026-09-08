@@ -1,0 +1,259 @@
+{
+  "run_id": "2026-09-08-210921-moina-improve",
+  "generated": "2026-09-08T21:26:53+09:00",
+  "run": {
+    "run_id": "2026-09-08-210921-moina-improve",
+    "project": "moina",
+    "kind": "improve",
+    "started": "2026-09-08T21:09:21+09:00",
+    "model": "claude-opus-5",
+    "policy_version": "5935779a",
+    "prompts_hash": "82f2440d4b2fef65",
+    "runner_version": "61f0533a",
+    "finished": "2026-09-08T21:26:53+09:00",
+    "outcome": "releasing"
+  },
+  "record": {
+    "ts": "2026-09-08T21:26:53+09:00",
+    "date": "2026-09-08",
+    "project": "moina",
+    "result": "merged https://github.com/hkjang/moina/pull/10, release tag held (failed)",
+    "outcome": "releasing",
+    "run_id": "2026-09-08-210921-moina-improve",
+    "base_sha": "f6651f5f7369584769b1cbb49d8883a57332c0cd",
+    "head_sha": "a97950d1e206bde5f159d0ad9fb58f692dc96db5",
+    "pr": "https://github.com/hkjang/moina/pull/10",
+    "stages": {
+      "base": {
+        "state": "pinned",
+        "reason": "main@f6651f5",
+        "at": "2026-09-08T21:09:26+09:00"
+      },
+      "autonomy": {
+        "state": "release",
+        "reason": "",
+        "at": "2026-09-08T21:09:26+09:00"
+      },
+      "verify": {
+        "state": "passed",
+        "reason": "검증 7개 통과 (auto)",
+        "at": "2026-09-08T21:13:50+09:00"
+      },
+      "pr": {
+        "state": "created",
+        "reason": "https://github.com/hkjang/moina/pull/10",
+        "at": "2026-09-08T21:13:54+09:00"
+      },
+      "review": {
+        "state": "approved",
+        "reason": "리뷰 승인 (risk=low)",
+        "at": "2026-09-08T21:16:23+09:00"
+      },
+      "ci": {
+        "state": "passed",
+        "reason": "검사 2개 모두 success",
+        "at": "2026-09-08T21:22:02+09:00"
+      },
+      "merge": {
+        "state": "done",
+        "reason": "a97950d1e206bde5f159d0ad9fb58f692dc96db5",
+        "at": "2026-09-08T21:22:06+09:00"
+      },
+      "release": {
+        "state": "ci-blocked",
+        "reason": "릴리즈 커밋 CI: failed — 성공이 아닌 검사: Source tests=failure (태그 보류)",
+        "at": "2026-09-08T21:26:49+09:00"
+      }
+    },
+    "campaign": "",
+    "autonomy": "release",
+    "files": 4,
+    "additions": 160,
+    "deletions": 2,
+    "tests": 2,
+    "title": "fix: revalidate media instead of caching it for an hour"
+  },
+  "stages": {
+    "base": {
+      "state": "pinned",
+      "reason": "main@f6651f5",
+      "at": "2026-09-08T21:09:26+09:00"
+    },
+    "autonomy": {
+      "state": "release",
+      "reason": "",
+      "at": "2026-09-08T21:09:26+09:00"
+    },
+    "verify": {
+      "state": "passed",
+      "reason": "검증 7개 통과 (auto)",
+      "at": "2026-09-08T21:13:50+09:00"
+    },
+    "pr": {
+      "state": "created",
+      "reason": "https://github.com/hkjang/moina/pull/10",
+      "at": "2026-09-08T21:13:54+09:00"
+    },
+    "review": {
+      "state": "approved",
+      "reason": "리뷰 승인 (risk=low)",
+      "at": "2026-09-08T21:16:23+09:00"
+    },
+    "ci": {
+      "state": "passed",
+      "reason": "검사 2개 모두 success",
+      "at": "2026-09-08T21:22:02+09:00"
+    },
+    "merge": {
+      "state": "done",
+      "reason": "a97950d1e206bde5f159d0ad9fb58f692dc96db5",
+      "at": "2026-09-08T21:22:06+09:00"
+    },
+    "release": {
+      "state": "ci-blocked",
+      "reason": "릴리즈 커밋 CI: failed — 성공이 아닌 검사: Source tests=failure (태그 보류)",
+      "at": "2026-09-08T21:26:49+09:00"
+    }
+  },
+  "provenance": {
+    "model": "claude-opus-5",
+    "policy_version": "5935779a",
+    "prompts_hash": "82f2440d4b2fef65",
+    "runner_version": "61f0533a",
+    "base_sha": "f6651f5f7369584769b1cbb49d8883a57332c0cd",
+    "head_sha": "a97950d1e206bde5f159d0ad9fb58f692dc96db5",
+    "pr": "https://github.com/hkjang/moina/pull/10"
+  },
+  "verification": {
+    "runner": {
+      "source": "auto",
+      "commands": [
+        {
+          "cmd": "cd backend && go build ./...",
+          "exit": 0,
+          "seconds": 1
+        },
+        {
+          "cmd": "cd backend && go vet ./...",
+          "exit": 0,
+          "seconds": 0
+        },
+        {
+          "cmd": "cd backend && go test ./...",
+          "exit": 0,
+          "seconds": 1
+        },
+        {
+          "cmd": "cd frontend && [ -d node_modules ] || npm ci --no-audit --no-fund",
+          "exit": 0,
+          "seconds": 6
+        },
+        {
+          "cmd": "cd frontend && npm test --silent",
+          "exit": 0,
+          "seconds": 3
+        },
+        {
+          "cmd": "cd frontend && [ -d node_modules ] || npm ci --no-audit --no-fund",
+          "exit": 0,
+          "seconds": 0
+        },
+        {
+          "cmd": "cd frontend && npm run build --silent",
+          "exit": 0,
+          "seconds": 5
+        }
+      ]
+    },
+    "runner_gate": {
+      "ok": true,
+      "state": "verified",
+      "reason": "검증 7개 통과 (auto)"
+    },
+    "after_rebase": null,
+    "review": {
+      "verdict": "approve",
+      "reasons": [],
+      "notes": [
+        "backend/internal/httpapi/social.go:798 변경은 `private, max-age=3600` → `private, no-cache` + SHA-256 강한 ETag로, 차단·공개범위 변경 후에도 최대 1시간 브라우저 캐시로 미디어가 계속 보이던 문제를 실제로 막습니다. 헤더 변경뿐이라 revert 가 쉽고 마이그레이션·외부 상태 변경은 없습니다.",
+        "테스트 검증 확인: docker postgres 16 을 띄우고 MOINA_TEST_POSTGRES_DSN 을 준 상태에서 media_cache_postgres_integration_test.go 를 실행해 200(ETag) → 304(If-None-Match) → 차단 후 404 흐름이 실제로 통과함을 확인했습니다. 첫 단언(Cache-Control=\"private, no-cache\", ETag=저장 digest)이 수정 전 코드값(max-age=3600, ETag 없음)과 정면으로 어긋나므로 수정 전 코드에서는 통과할 수 없습니다. backend 전체 `go test ./...`(DSN 포함)도 통과했습니다.",
+        "httpapi_test.go:555 의 mediaETag 단위 테스트는 빈 값·짧은 길이·비 hex·대문자 hex 를 모두 커버하고, 저장 경로가 hex.EncodeToString(소문자)를 쓰므로 대문자 거부는 안전합니다.",
+        "성능 참고(결함 아님): 304 재검증도 media.Open 을 먼저 호출하므로 요청마다 PostgreSQL 트랜잭션 + readSlots 세마포어 + large object open 비용이 듭니다. 이미지가 많은 Flow 에서 DB 읽기 슬롯 경합이 늘 수 있으니, If-None-Match 가 metadata 만으로 판정되도록 본문 open 전에 조기 종료하는 후속 최적화를 고려할 만합니다(접근 검사는 여전히 매 요청 필요).",
+        "보안 참고: ETag 가 콘텐츠 SHA-256 그대로라 접근 권한이 있는 두 미디어의 바이트 동일 여부가 노출됩니다. 권한 없는 요청은 404 이므로 실질 위험은 낮지만, 신경 쓰인다면 media ID 를 섞은 해시로 바꾸면 됩니다.",
+        "범위 이탈 없음: openapi.yaml 설명 갱신과 테스트 2개 외에 무관한 리팩터·의존성 변경이 섞이지 않았습니다."
+      ],
+      "risk": "low"
+    },
+    "ci_gate": {
+      "ok": false,
+      "state": "failed",
+      "reason": "성공이 아닌 검사: Source tests=failure",
+      "checks": 3,
+      "bad": 1
+    }
+  },
+  "release": {
+    "result": {
+      "status": "released",
+      "version": "0.1.24",
+      "tag": "v0.1.24",
+      "title": "moina v0.1.24",
+      "notes_file": "",
+      "github_release": false,
+      "assets": [],
+      "reason": ""
+    },
+    "assets_sha256": []
+  },
+  "approval": null,
+  "usage": [
+    {
+      "ts": "2026-09-08T21:13:31+09:00",
+      "date": "2026-09-08",
+      "project": "moina",
+      "phase": "improve",
+      "run_id": "2026-09-08-210921-moina-improve",
+      "campaign": "",
+      "subtype": "success",
+      "duration_ms": 267201,
+      "num_turns": 43,
+      "cost_usd": 2.035532,
+      "input_tokens": 64,
+      "output_tokens": 16875,
+      "cache_read": 1825716,
+      "cache_create": 68855
+    },
+    {
+      "ts": "2026-09-08T21:16:23+09:00",
+      "date": "2026-09-08",
+      "project": "moina",
+      "phase": "review",
+      "run_id": "2026-09-08-210921-moina-improve",
+      "campaign": "",
+      "subtype": "success",
+      "duration_ms": 159439,
+      "num_turns": 22,
+      "cost_usd": 0.9634510000000002,
+      "input_tokens": 44,
+      "output_tokens": 9215,
+      "cache_read": 746680,
+      "cache_create": 35770
+    },
+    {
+      "ts": "2026-09-08T21:24:52+09:00",
+      "date": "2026-09-08",
+      "project": "moina",
+      "phase": "release",
+      "run_id": "2026-09-08-210921-moina-improve",
+      "campaign": "",
+      "subtype": "success",
+      "duration_ms": 172829,
+      "num_turns": 25,
+      "cost_usd": 1.1635375,
+      "input_tokens": 36,
+      "output_tokens": 8932,
+      "cache_read": 851801,
+      "cache_create": 50865
+    }
+  ]
+}

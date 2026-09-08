@@ -1,7 +1,7 @@
 ---
 title: "kanpic — 자율 개선 이력"
-description: "kanpic: 자율 개선 회차 10회, 릴리즈 9건. 최근 릴리즈 v0.237.0 (자산 2개)."
-last_modified_at: 2026-09-08 21:20:04 +0900
+description: "kanpic: 자율 개선 회차 10회, 릴리즈 9건. 최근 릴리즈 v0.238.0."
+last_modified_at: 2026-09-08 21:26:54 +0900
 ---
 {% raw %}
 <script type="application/ld+json">
@@ -11,30 +11,30 @@ last_modified_at: 2026-09-08 21:20:04 +0900
  "name": "kanpic",
  "codeRepository": "https://github.com/hkjang/kanpic",
  "url": "https://hkjang.github.io/aidev/projects/kanpic/",
- "description": "kanpic: 자율 개선 회차 10회, 릴리즈 9건. 최근 릴리즈 v0.237.0 (자산 2개).",
+ "description": "kanpic: 자율 개선 회차 10회, 릴리즈 9건. 최근 릴리즈 v0.238.0.",
  "inLanguage": "ko",
  "maintainer": {
   "@type": "Person",
   "name": "hkjang",
   "url": "https://github.com/hkjang"
  },
- "dateModified": "2026-09-08T21:20:04+09:00",
- "version": "0.237.0"
+ "dateModified": "2026-09-08T21:26:54+09:00",
+ "version": "0.238.0"
 }
 </script>
 
 # kanpic
 
-<p class="tldr"><strong>요약.</strong> kanpic: 자율 개선 회차 10회, 릴리즈 9건. 최근 릴리즈 v0.237.0 (자산 2개). <span class="pill pill-merged" title="14일: 릴리즈 9, 실패 0, 경고 1, 회귀 0">건강 B</span> <span class="meta">14일: 릴리즈 9, 실패 0, 경고 1, 회귀 0</span></p>
+<p class="tldr"><strong>요약.</strong> kanpic: 자율 개선 회차 10회, 릴리즈 9건. 최근 릴리즈 v0.238.0. <span class="pill pill-merged" title="14일: 릴리즈 9, 실패 0, 경고 1, 회귀 0">건강 B</span> <span class="meta">14일: 릴리즈 9, 실패 0, 경고 1, 회귀 0</span></p>
 
-<ul class="stats"><li><b>10</b><span>회차</span></li><li><b>1</b><span>프로젝트</span></li><li><b>9</b><span>배포 준비 완료</span></li><li><b>0</b><span>릴리즈 진행 중</span></li><li><b>1</b><span>병합 완료</span></li><li><b>0</b><span>검토 대기</span></li><li><b>0</b><span>검증 실패</span></li><li><b>0</b><span>변경 없음</span></li><li><b>0</b><span>실행 오류</span></li><li><b>$5.02</b><span>비용</span></li><li><b>14분</b><span>에이전트 시간</span></li></ul>
+<ul class="stats"><li><b>10</b><span>회차</span></li><li><b>1</b><span>프로젝트</span></li><li><b>9</b><span>배포 준비 완료</span></li><li><b>0</b><span>릴리즈 진행 중</span></li><li><b>1</b><span>병합 완료</span></li><li><b>0</b><span>검토 대기</span></li><li><b>0</b><span>검증 실패</span></li><li><b>0</b><span>변경 없음</span></li><li><b>0</b><span>실행 오류</span></li><li><b>$5.76</b><span>비용</span></li><li><b>16분</b><span>에이전트 시간</span></li></ul>
 
 ## 현황
 
 <dl class="kv">
 <dt>저장소</dt><dd><a href="https://github.com/hkjang/kanpic">https://github.com/hkjang/kanpic</a></dd>
 <dt>마지막 회차</dt><dd>2026-09-07 02:17 KST — <span class="pill pill-released">🚀 릴리즈</span> merged <a href="https://github.com/hkjang/kanpic/pull/10">PR #10</a>, released <a href="https://github.com/hkjang/kanpic/releases/tag/v0.237.0">v0.237.0</a></dd>
-<dt>최근 릴리즈</dt><dd><a href="https://github.com/hkjang/kanpic/releases/tag/v0.237.0">v0.237.0</a> — released · 자산 2개 (이전 v0.236.0: 2개) <a href="https://github.com/hkjang/kanpic/releases">전체 릴리즈 →</a></dd>
+<dt>최근 릴리즈</dt><dd><a href="https://github.com/hkjang/kanpic/releases/tag/v0.238.0">v0.238.0</a> — released <a href="https://github.com/hkjang/kanpic/releases">전체 릴리즈 →</a></dd>
 </dl>
 
 ## 회차 이력
@@ -43,7 +43,7 @@ last_modified_at: 2026-09-08 21:20:04 +0900
 
 ## 비용·사용량
 
-<div class="table-wrap"><table class="rt"><caption class="meta">최근 30세션</caption><thead><tr><th>시각</th><th class="primary">프로젝트</th><th>단계</th><th class="num">시간</th><th class="num">턴</th><th class="num">비용</th><th class="num">토큰 입력/출력</th><th>종료</th></tr></thead><tbody><tr data-status="other"><td data-label="시각">21:15</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/kanpic/">kanpic</a></td><td data-label="단계">review</td><td data-label="시간" class="num">2분</td><td data-label="턴" class="num">11</td><td data-label="비용" class="num">$0.70</td><td data-label="토큰 입력/출력" class="num">382K / 8K</td><td data-label="종료">success</td></tr><tr data-status="other"><td data-label="시각">21:12</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/kanpic/">kanpic</a></td><td data-label="단계">개선</td><td data-label="시간" class="num">4분</td><td data-label="턴" class="num">20</td><td data-label="비용" class="num">$1.32</td><td data-label="토큰 입력/출력" class="num">903K / 14K</td><td data-label="종료">success</td></tr><tr data-status="other"><td data-label="시각">02:15</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/kanpic/">kanpic</a></td><td data-label="단계">릴리즈</td><td data-label="시간" class="num">1분</td><td data-label="턴" class="num">19</td><td data-label="비용" class="num">$0.60</td><td data-label="토큰 입력/출력" class="num">402K / 5K</td><td data-label="종료">success</td></tr><tr data-status="other"><td data-label="시각">02:07</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/kanpic/">kanpic</a></td><td data-label="단계">review</td><td data-label="시간" class="num">2분</td><td data-label="턴" class="num">12</td><td data-label="비용" class="num">$0.74</td><td data-label="토큰 입력/출력" class="num">437K / 8K</td><td data-label="종료">success</td></tr><tr data-status="other"><td data-label="시각">02:05</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/kanpic/">kanpic</a></td><td data-label="단계">개선</td><td data-label="시간" class="num">5분</td><td data-label="턴" class="num">30</td><td data-label="비용" class="num">$1.67</td><td data-label="토큰 입력/출력" class="num">1.3M / 17K</td><td data-label="종료">success</td></tr></tbody></table></div>
+<div class="table-wrap"><table class="rt"><caption class="meta">최근 30세션</caption><thead><tr><th>시각</th><th class="primary">프로젝트</th><th>단계</th><th class="num">시간</th><th class="num">턴</th><th class="num">비용</th><th class="num">토큰 입력/출력</th><th>종료</th></tr></thead><tbody><tr data-status="other"><td data-label="시각">21:23</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/kanpic/">kanpic</a></td><td data-label="단계">릴리즈</td><td data-label="시간" class="num">2분</td><td data-label="턴" class="num">21</td><td data-label="비용" class="num">$0.74</td><td data-label="토큰 입력/출력" class="num">484K / 7K</td><td data-label="종료">success</td></tr><tr data-status="other"><td data-label="시각">21:15</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/kanpic/">kanpic</a></td><td data-label="단계">review</td><td data-label="시간" class="num">2분</td><td data-label="턴" class="num">11</td><td data-label="비용" class="num">$0.70</td><td data-label="토큰 입력/출력" class="num">382K / 8K</td><td data-label="종료">success</td></tr><tr data-status="other"><td data-label="시각">21:12</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/kanpic/">kanpic</a></td><td data-label="단계">개선</td><td data-label="시간" class="num">4분</td><td data-label="턴" class="num">20</td><td data-label="비용" class="num">$1.32</td><td data-label="토큰 입력/출력" class="num">903K / 14K</td><td data-label="종료">success</td></tr><tr data-status="other"><td data-label="시각">02:15</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/kanpic/">kanpic</a></td><td data-label="단계">릴리즈</td><td data-label="시간" class="num">1분</td><td data-label="턴" class="num">19</td><td data-label="비용" class="num">$0.60</td><td data-label="토큰 입력/출력" class="num">402K / 5K</td><td data-label="종료">success</td></tr><tr data-status="other"><td data-label="시각">02:07</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/kanpic/">kanpic</a></td><td data-label="단계">review</td><td data-label="시간" class="num">2분</td><td data-label="턴" class="num">12</td><td data-label="비용" class="num">$0.74</td><td data-label="토큰 입력/출력" class="num">437K / 8K</td><td data-label="종료">success</td></tr><tr data-status="other"><td data-label="시각">02:05</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/kanpic/">kanpic</a></td><td data-label="단계">개선</td><td data-label="시간" class="num">5분</td><td data-label="턴" class="num">30</td><td data-label="비용" class="num">$1.67</td><td data-label="토큰 입력/출력" class="num">1.3M / 17K</td><td data-label="종료">success</td></tr></tbody></table></div>
 
 ## 아이디어 백로그 — 대기 6 / 전체 7
 
