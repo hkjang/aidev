@@ -1,0 +1,18 @@
+release: v0.77.9
+
+pyproject 가 선언한 의존성 배열을 인벤토리가 한 줄에서 끊거나 아예 읽지 않던 것을
+고칩니다. PEP 621 배열은 dependencies\s*=\s*\[(.*?)\] 로 첫 ] 까지만 잘라 읽었는데,
+요구사항은 extra 를 적을 때 대괄호를 스스로 가지고 있습니다 — black[jupyter]>=23.0
+하나가 배열을 문자열 한가운데서 끊어 그 뒤의 requests · urllib3 가 통째로 사라졌습니다.
+읽히지 않던 나머지 배열 [project.optional-dependencies], PEP 735 [dependency-groups],
+[tool.pdm.dev-dependencies] 는 setuptools · hatch · PDM 프로젝트가 개발 · 시험 도구를
+두는 표준 자리라, 거기에 라이브러리를 핀한 저장소는 find-dependency-usage 가 보기에 그
+라이브러리를 안 쓰는 저장소와 똑같았습니다. 이제 인용 · 중첩 · 주석을 추적하는 스캐너로
+배열을 읽어 요구사항 안의 대괄호가 요구사항의 일부로 남게 하고, 섹션 이름이 말하는 대로
+scope 를 매깁니다 — extra 는 optional, test 라는 이름의 그룹은 test, 나머지 그룹은 dev.
+섹션 순회는 tomlSections 로 뽑아 parseTOMLDependencies 와 공유합니다. 요구사항 정규식에는
+!= 와 === 를 더했습니다. urllib3!=1.25.0 은 버전 "!" 로 기록돼 무엇과도 비교할 수 없는
+가짜 버전 그룹을 만들었는데, 제외는 프로젝트가 받지 않을 릴리스를 말할 뿐이므로 이제
+버전을 lock 파일에 맡깁니다. 정확 핀인 pip===23.3.1 은 버전 없음이 아니라 핀 그대로
+기록해 권고를 바로 판정할 수 있게 합니다. 의존성 인벤토리는 색인할 때 만들어지므로 이
+릴리스는 재색인이 필요합니다.

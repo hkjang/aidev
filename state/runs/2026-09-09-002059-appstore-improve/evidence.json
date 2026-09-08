@@ -1,0 +1,267 @@
+{
+  "run_id": "2026-09-09-002059-appstore-improve",
+  "generated": "2026-09-09T00:45:25+09:00",
+  "run": {
+    "run_id": "2026-09-09-002059-appstore-improve",
+    "project": "appstore",
+    "kind": "improve",
+    "started": "2026-09-09T00:21:00+09:00",
+    "model": "claude-opus-5",
+    "policy_version": "5935779a",
+    "prompts_hash": "82f2440d4b2fef65",
+    "runner_version": "07e41602",
+    "finished": "2026-09-09T00:45:25+09:00",
+    "outcome": "release-ready"
+  },
+  "record": {
+    "ts": "2026-09-09T00:45:25+09:00",
+    "date": "2026-09-09",
+    "project": "appstore",
+    "result": "merged https://github.com/hkjang/appstore/pull/9, released v2.5.4",
+    "outcome": "release-ready",
+    "run_id": "2026-09-09-002059-appstore-improve",
+    "base_sha": "26767d1a48bb78add0ab9b948fc6f5ff214fccf3",
+    "head_sha": "fec02b9b86cfe4986327353455d37f7890d517df",
+    "pr": "https://github.com/hkjang/appstore/pull/9",
+    "stages": {
+      "base": {
+        "state": "pinned",
+        "reason": "main@26767d1",
+        "at": "2026-09-09T00:21:04+09:00"
+      },
+      "autonomy": {
+        "state": "release",
+        "reason": "",
+        "at": "2026-09-09T00:21:04+09:00"
+      },
+      "verify": {
+        "state": "passed",
+        "reason": "검증 7개 통과 (auto)",
+        "at": "2026-09-09T00:28:35+09:00"
+      },
+      "pr": {
+        "state": "created",
+        "reason": "https://github.com/hkjang/appstore/pull/9",
+        "at": "2026-09-09T00:28:42+09:00"
+      },
+      "review": {
+        "state": "approved",
+        "reason": "리뷰 승인 (risk=low)",
+        "at": "2026-09-09T00:30:00+09:00"
+      },
+      "ci": {
+        "state": "passed",
+        "reason": "검사 2개 모두 success",
+        "at": "2026-09-09T00:33:47+09:00"
+      },
+      "merge": {
+        "state": "done",
+        "reason": "fec02b9b86cfe4986327353455d37f7890d517df",
+        "at": "2026-09-09T00:33:51+09:00"
+      },
+      "release": {
+        "state": "published",
+        "reason": "v2.5.4",
+        "at": "2026-09-09T00:42:24+09:00"
+      },
+      "assets": {
+        "state": "verified",
+        "reason": "v2.5.4 자산 1개 (이전 v2.5.3: 1)",
+        "at": "2026-09-09T00:45:24+09:00"
+      }
+    },
+    "campaign": "",
+    "autonomy": "release",
+    "files": 5,
+    "additions": 75,
+    "deletions": 3,
+    "tests": 1,
+    "title": "fix: bound the rejection reason a reviewer stores"
+  },
+  "stages": {
+    "base": {
+      "state": "pinned",
+      "reason": "main@26767d1",
+      "at": "2026-09-09T00:21:04+09:00"
+    },
+    "autonomy": {
+      "state": "release",
+      "reason": "",
+      "at": "2026-09-09T00:21:04+09:00"
+    },
+    "verify": {
+      "state": "passed",
+      "reason": "검증 7개 통과 (auto)",
+      "at": "2026-09-09T00:28:35+09:00"
+    },
+    "pr": {
+      "state": "created",
+      "reason": "https://github.com/hkjang/appstore/pull/9",
+      "at": "2026-09-09T00:28:42+09:00"
+    },
+    "review": {
+      "state": "approved",
+      "reason": "리뷰 승인 (risk=low)",
+      "at": "2026-09-09T00:30:00+09:00"
+    },
+    "ci": {
+      "state": "passed",
+      "reason": "검사 2개 모두 success",
+      "at": "2026-09-09T00:33:47+09:00"
+    },
+    "merge": {
+      "state": "done",
+      "reason": "fec02b9b86cfe4986327353455d37f7890d517df",
+      "at": "2026-09-09T00:33:51+09:00"
+    },
+    "release": {
+      "state": "published",
+      "reason": "v2.5.4",
+      "at": "2026-09-09T00:42:24+09:00"
+    },
+    "assets": {
+      "state": "verified",
+      "reason": "v2.5.4 자산 1개 (이전 v2.5.3: 1)",
+      "at": "2026-09-09T00:45:24+09:00"
+    }
+  },
+  "provenance": {
+    "model": "claude-opus-5",
+    "policy_version": "5935779a",
+    "prompts_hash": "82f2440d4b2fef65",
+    "runner_version": "07e41602",
+    "base_sha": "26767d1a48bb78add0ab9b948fc6f5ff214fccf3",
+    "head_sha": "fec02b9b86cfe4986327353455d37f7890d517df",
+    "pr": "https://github.com/hkjang/appstore/pull/9"
+  },
+  "verification": {
+    "runner": {
+      "source": "auto",
+      "commands": [
+        {
+          "cmd": "go build ./...",
+          "exit": 0,
+          "seconds": 0
+        },
+        {
+          "cmd": "go vet ./...",
+          "exit": 0,
+          "seconds": 0
+        },
+        {
+          "cmd": "go test ./...",
+          "exit": 0,
+          "seconds": 1
+        },
+        {
+          "cmd": "cd web && [ -d node_modules ] || npm ci --no-audit --no-fund",
+          "exit": 0,
+          "seconds": 0
+        },
+        {
+          "cmd": "cd web && npm test --silent",
+          "exit": 0,
+          "seconds": 2
+        },
+        {
+          "cmd": "cd web && [ -d node_modules ] || npm ci --no-audit --no-fund",
+          "exit": 0,
+          "seconds": 0
+        },
+        {
+          "cmd": "cd web && npm run build --silent",
+          "exit": 0,
+          "seconds": 2
+        }
+      ]
+    },
+    "runner_gate": {
+      "ok": true,
+      "state": "verified",
+      "reason": "검증 7개 통과 (auto)"
+    },
+    "after_rebase": null,
+    "review": {
+      "verdict": "approve",
+      "reasons": [],
+      "notes": [
+        "internal/httpapi/validation.go:114 ValidateReviewReason 는 새 함수라 '수정 전에도 통과할 테스트' 문제는 없음. 두 테스트 모두 실제로 함수를 호출하고 반환값/APIError.Status(422)/Details[\"reason\"] 를 단언하며, 경계값(maxReasonRunes 정확히 2000자)이 유효하게 남는지도 확인함. go test -count=1 통과, go build/go vet 클린, openapi.json 은 유효한 JSON.",
+        "internal/httpapi/review_handlers.go:83 핸들러 배선(rejectReview 가 검증기를 실제로 호출하는지)을 덮는 테스트는 없음. 나중에 이 호출이 사라져도 유닛 테스트는 계속 통과함. 결함은 아니지만 회귀 방어가 얇음.",
+        "internal/httpapi/validation.go:145 multiLine 은 \\n,\\r,\\t 를 허용함. 주석은 'line break or a tab' 이라고만 쓰여 있지만 \\r 도 줄바꿈이라 코드와 설명이 어긋나지는 않음. approveReview 는 reason 을 \"\"(빈 문자열)로 넘기므로 검증 대상이 아니고, 빈 사유의 필수 여부는 기존대로 store 트랜잭션(internal/store/workflow.go:255, config.RejectReasonRequired)에서 강제되어 동작 변화 없음.",
+        "web/src/pages/review-pages.tsx:200 Textarea 는 props 를 그대로 <textarea> 로 전달(web/src/components/ui.tsx:218)하므로 maxLength 가 실제로 적용됨. 다만 HTML maxLength 는 UTF-16 코드 단위, 서버는 rune 기준이라 이모지 등 BMP 밖 문자에서는 프런트가 더 엄격해짐 - 서버가 잘못 거절하는 방향은 아니라 무해함.",
+        "범위: 변경은 반려 사유 검증(핸들러/검증기/테스트)과 그에 대응하는 openapi maxLength 문서화, 폼 maxLength 로 한정됨. 무관한 리팩터/포맷/의존성 변경 없음. 마이그레이션이나 외부 상태 변경이 없어 revert 로 완전히 되돌아옴. 인증/권한 경로(reviewScope, teamOnly 검사)는 손대지 않음."
+      ],
+      "risk": "low"
+    },
+    "ci_gate": {
+      "ok": true,
+      "state": "success",
+      "reason": "검사 3개 모두 success",
+      "checks": 3
+    }
+  },
+  "release": {
+    "result": {
+      "status": "released",
+      "version": "2.5.4",
+      "tag": "v2.5.4",
+      "title": "AppStore v2.5.4",
+      "notes_file": "",
+      "github_release": false,
+      "assets": [],
+      "reason": ""
+    },
+    "assets_sha256": []
+  },
+  "approval": null,
+  "usage": [
+    {
+      "ts": "2026-09-09T00:28:29+09:00",
+      "date": "2026-09-09",
+      "project": "appstore",
+      "phase": "improve",
+      "run_id": "2026-09-09-002059-appstore-improve",
+      "campaign": "",
+      "subtype": "success",
+      "duration_ms": 485772,
+      "num_turns": 61,
+      "cost_usd": 4.317332500000001,
+      "input_tokens": 114,
+      "output_tokens": 25945,
+      "cache_read": 5080019,
+      "cache_create": 111666
+    },
+    {
+      "ts": "2026-09-09T00:30:00+09:00",
+      "date": "2026-09-09",
+      "project": "appstore",
+      "phase": "review",
+      "run_id": "2026-09-09-002059-appstore-improve",
+      "campaign": "",
+      "subtype": "success",
+      "duration_ms": 84177,
+      "num_turns": 11,
+      "cost_usd": 0.4328895,
+      "input_tokens": 14,
+      "output_tokens": 4843,
+      "cache_read": 176327,
+      "cache_create": 22177
+    },
+    {
+      "ts": "2026-09-09T00:38:07+09:00",
+      "date": "2026-09-09",
+      "project": "appstore",
+      "phase": "release",
+      "run_id": "2026-09-09-002059-appstore-improve",
+      "campaign": "",
+      "subtype": "success",
+      "duration_ms": 268893,
+      "num_turns": 33,
+      "cost_usd": 1.3824804999999998,
+      "input_tokens": 52,
+      "output_tokens": 9830,
+      "cache_read": 1251931,
+      "cache_create": 50492
+    }
+  ]
+}
