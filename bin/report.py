@@ -480,11 +480,35 @@ def live_release(project, tag):
     return n, wf
 
 
+def pr_open(url):
+    """PR 이 아직 열려 있나 — 머지·닫힘이면 그 경고는 해소된 것이다."""
+    m = re.match(r"https://github\.com/([^/]+/[^/]+)/pull/(\d+)", url or "")
+    if not m:
+        return True
+    try:
+        st = subprocess.check_output(["gh", "pr", "view", m.group(2), "-R", m.group(1), "--json", "state", "--jq", ".state"],
+                                     text=True, stderr=subprocess.DEVNULL, timeout=30).strip()
+        return st == "OPEN"
+    except Exception:
+        return True   # 확인 못 하면 남겨 둔다
+
+
 def alerts(by_day, days):
     out = []
+    # 나중 회차가 같은 프로젝트에서 성공했다면 앞선 경고는 지나간 일이다
+    latest_ok = {}
+    for d in days[:3]:
+        for r in by_day[d]:
+            if r.get("outcome") in ("release-ready", "merged") and r.get("project"):
+                latest_ok[r["project"]] = max(latest_ok.get(r["project"], ""), r.get("ts") or "")
     for d in days[:2]:
         for r in by_day[d]:
             res = r.get("result") or ""
+            if (r.get("ts") or "") < latest_ok.get(r.get("project"), ""):
+                continue   # 이후 회차가 성공으로 끝났다
+            pr = r.get("pr") or ""
+            if pr and not pr_open(pr):
+                continue   # PR 이 머지되거나 닫혔다
             for key, why in WARN_PATTERNS:
                 if key in res:
                     if key == "ASSETS MISSING" and released_tag(res):

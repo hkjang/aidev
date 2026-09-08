@@ -1,7 +1,7 @@
 ---
 title: "aidev 자율 개선 대시보드"
-description: "Claude Code 자율 개선 에이전트가 hkjang 의 프로젝트를 개선·테스트·머지·릴리즈한 일일 보고. 오늘 39회차·릴리즈 20건, 누적 410회차·릴리즈 188건, 주의 필요 7건."
-last_modified_at: 2026-09-08 21:33:49 +0900
+description: "Claude Code 자율 개선 에이전트가 hkjang 의 프로젝트를 개선·테스트·머지·릴리즈한 일일 보고. 오늘 39회차·릴리즈 20건, 누적 410회차·릴리즈 188건, 주의 필요 1건."
+last_modified_at: 2026-09-08 21:36:58 +0900
 ---
 {% raw %}
 <script type="application/ld+json">
@@ -10,14 +10,14 @@ last_modified_at: 2026-09-08 21:33:49 +0900
  "@type": "WebSite",
  "name": "aidev 자율 개선 대시보드",
  "url": "https://hkjang.github.io/aidev/",
- "description": "Claude Code 자율 개선 에이전트가 hkjang 의 프로젝트를 개선·테스트·머지·릴리즈한 일일 보고. 오늘 39회차·릴리즈 20건, 누적 410회차·릴리즈 188건, 주의 필요 7건.",
+ "description": "Claude Code 자율 개선 에이전트가 hkjang 의 프로젝트를 개선·테스트·머지·릴리즈한 일일 보고. 오늘 39회차·릴리즈 20건, 누적 410회차·릴리즈 188건, 주의 필요 1건.",
  "inLanguage": "ko",
  "author": {
   "@type": "Person",
   "name": "hkjang",
   "url": "https://github.com/hkjang"
  },
- "dateModified": "2026-09-08T21:33:49+09:00"
+ "dateModified": "2026-09-08T21:36:58+09:00"
 }
 </script>
 
@@ -223,9 +223,9 @@ last_modified_at: 2026-09-08 21:33:49 +0900
 
 # aidev 자율 개선 대시보드
 
-<p class="tldr"><strong>한 줄 요약.</strong> Claude Code 자율 개선 에이전트가 hkjang 의 프로젝트를 개선·테스트·머지·릴리즈한 일일 보고. 오늘 39회차·릴리즈 20건, 누적 410회차·릴리즈 188건, 주의 필요 7건. 회차가 끝날 때마다 자동 갱신됩니다 (마지막 갱신 <time datetime="2026-09-08T21:33:49+09:00" data-rel>2026-09-08 21:33</time> KST).</p>
+<p class="tldr"><strong>한 줄 요약.</strong> Claude Code 자율 개선 에이전트가 hkjang 의 프로젝트를 개선·테스트·머지·릴리즈한 일일 보고. 오늘 39회차·릴리즈 20건, 누적 410회차·릴리즈 188건, 주의 필요 1건. 회차가 끝날 때마다 자동 갱신됩니다 (마지막 갱신 <time datetime="2026-09-08T21:36:58+09:00" data-rel>2026-09-08 21:36</time> KST).</p>
 
-<div class="alerts" role="alert"><strong>⚠️ 주의 필요 7건</strong> <span class="meta">— 새 경고는 GitHub Issue·Slack·이메일·Windows 알림으로도 보냅니다</span><ul><li><a href="https://hkjang.github.io/aidev/projects/Clustara/">Clustara</a> — 릴리즈 자산 누락 — 이전 릴리즈엔 있던 파일이 이번엔 없음 <span class=meta>(2026-09-08 11:15)</span></li><li><a href="https://hkjang.github.io/aidev/projects/Invenqor/">Invenqor</a> — 릴리즈 에이전트가 결과를 남기지 못함 <span class=meta>(2026-09-08 12:28)</span></li><li><a href="https://hkjang.github.io/aidev/projects/ai-admin/">ai-admin</a> — 보호 파일 변경 — 자동 머지 안 함, 사람 검토 필요 <span class=meta>(2026-09-08 15:40)</span></li><li><a href="https://hkjang.github.io/aidev/projects/git-ctx/">git-ctx</a> — 보호 파일 변경 — 자동 머지 안 함, 사람 검토 필요 <span class=meta>(2026-09-07 01:11)</span></li><li><a href="https://hkjang.github.io/aidev/projects/jikim/">jikim</a> — 보호 파일 변경 — 자동 머지 안 함, 사람 검토 필요 <span class=meta>(2026-09-07 01:41)</span></li><li><a href="https://hkjang.github.io/aidev/projects/ai-admin/">ai-admin</a> — 보호 파일 변경 — 자동 머지 안 함, 사람 검토 필요 <span class=meta>(2026-09-07 08:20)</span></li><li><a href="https://hkjang.github.io/aidev/projects/igame/">igame</a> — 최신 릴리즈 v0.7.7 자산 0개 (이전 v0.7.6: 1개)</li></ul></div>
+<div class="alerts" role="alert"><strong>⚠️ 주의 필요 1건</strong> <span class="meta">— 새 경고는 GitHub Issue·Slack·이메일·Windows 알림으로도 보냅니다</span><ul><li><a href="https://hkjang.github.io/aidev/projects/igame/">igame</a> — 최신 릴리즈 v0.7.7 자산 0개 (이전 v0.7.6: 1개)</li></ul></div>
 
 <div class="alerts ok" role="status"><strong>🩺 러너 정상</strong> <span class="meta">— 마지막 회차 7분 전 · 스케줄러 실행 중 · 다음 실행 2026-09-08 오후 9:20:00 · 디스크 66% · 최근 7일 회귀 13건 · 점검 21:15</span></div>
 
