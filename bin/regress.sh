@@ -37,7 +37,13 @@ jq -r 'select(.result|test("merged https://github.com/[^/]+/[^/]+/pull/[0-9]+"))
     lesson "$p" "ci-broken-after-merge" "$url" "PR #$num \"$title\" 머지 뒤 main CI 실패: ${names:-?}. 이런 유형의 변경은 머지 전에 해당 검사를 로컬에서 재현해야 한다."
   fi
   # 2) 되돌림
-  rev=$(gh api "repos/$repo/commits?since=$merged_at&per_page=50" --jq "[.[] | select(.commit.message | test(\"(?i)revert\") and test(\"#$num|${sha:0:7}\"))] | .[0].sha // empty" 2>/dev/null)
+  # merged_at 이 비면 URL 이 깨져 API 오류가 오고, 그 오류 본문이 SHA 로 오인돼 멀쩡한 PR 이 '되돌려짐'으로 기록됐다(2026-09-08 aiportal-front).
+  rev=""
+  if [ -n "$merged_at" ]; then
+    rev=$(gh api "repos/$repo/commits?since=$merged_at&per_page=50" --jq "[.[] | select(.commit.message | test(\"(?i)revert\") and test(\"#$num|${sha:0:7}\"))] | .[0].sha // empty" 2>/dev/null)
+  fi
+  # 40자 16진수(커밋 SHA)일 때만 되돌림으로 본다
+  [[ "$rev" =~ ^[0-9a-f]{40}$ ]] || rev=""
   if [ -n "$rev" ]; then
     title=$(gh pr view "$num" -R "$repo" --json title --jq .title 2>/dev/null)
     lesson "$p" "reverted" "$url" "PR #$num \"$title\" 가 머지 뒤 되돌려짐(${rev:0:7}). 같은 접근은 다시 시도하지 말 것."
