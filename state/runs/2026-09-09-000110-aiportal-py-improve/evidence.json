@@ -1,0 +1,229 @@
+{
+  "run_id": "2026-09-09-000110-aiportal-py-improve",
+  "generated": "2026-09-09T00:10:55+09:00",
+  "run": {
+    "run_id": "2026-09-09-000110-aiportal-py-improve",
+    "project": "aiportal-py",
+    "kind": "improve",
+    "started": "2026-09-09T00:01:10+09:00",
+    "model": "claude-opus-5",
+    "policy_version": "5935779a",
+    "prompts_hash": "82f2440d4b2fef65",
+    "runner_version": "07e41602",
+    "finished": "2026-09-09T00:10:55+09:00",
+    "outcome": "merged"
+  },
+  "record": {
+    "ts": "2026-09-09T00:10:55+09:00",
+    "date": "2026-09-09",
+    "project": "aiportal-py",
+    "result": "merged https://github.com/hkjang/aiportal-py/pull/12, release skipped",
+    "outcome": "merged",
+    "run_id": "2026-09-09-000110-aiportal-py-improve",
+    "base_sha": "f2f984b6c5b019c8bb68bf93bae5d2a0acb8cdc2",
+    "head_sha": "efd08781c4fdf127ca081fd08ce7967f7f343fb2",
+    "pr": "https://github.com/hkjang/aiportal-py/pull/12",
+    "stages": {
+      "base": {
+        "state": "pinned",
+        "reason": "main@f2f984b",
+        "at": "2026-09-09T00:01:13+09:00"
+      },
+      "autonomy": {
+        "state": "release",
+        "reason": "",
+        "at": "2026-09-09T00:01:13+09:00"
+      },
+      "verify": {
+        "state": "passed",
+        "reason": "검증 1개 통과 (auto)",
+        "at": "2026-09-09T00:06:59+09:00"
+      },
+      "pr": {
+        "state": "created",
+        "reason": "https://github.com/hkjang/aiportal-py/pull/12",
+        "at": "2026-09-09T00:07:06+09:00"
+      },
+      "review": {
+        "state": "approved",
+        "reason": "리뷰 승인 (risk=low)",
+        "at": "2026-09-09T00:09:20+09:00"
+      },
+      "ci": {
+        "state": "passed",
+        "reason": "검사 없음 — 정책으로 허용",
+        "at": "2026-09-09T00:09:50+09:00"
+      },
+      "merge": {
+        "state": "done",
+        "reason": "efd08781c4fdf127ca081fd08ce7967f7f343fb2",
+        "at": "2026-09-09T00:09:55+09:00"
+      },
+      "release": {
+        "state": "skipped",
+        "reason": "릴리즈 안 함: 이 저장소에는 릴리즈 이력이 전혀 없습니다. git tag 0개(`git tag | wc -l` == 0), CHANGELOG.md·docs/RELEASE*.md 등 릴리즈 노트 없음, GitHub Release 목록 비어 있음, .github/workflows 없음(러너 제공 정보와 일치). 버전이 적힌 파일도 없습니다(pyproject.toml/setup.py/setup.cfg/VERSION/package.json/Makefile 모두 부재). 유일한 버전 문자열은 api.py:123 의 FastAPI OpenAPI 메타데이터 `version=\"1.0.0\"` 이며, `git log -L 123,123:api.py` 결과 first commit(2075c62) 이후 한 번도 변경된 적이 없어 릴리즈용 버전 파일로 관리되고 있지 않습니다. 배포는 .gitlab-ci.yml 이 담당하는데 태그가 아니라 브랜치 기준(`$CI_COMMIT_BRANCH == \"main\"|\"develop\"` 조건으로 배포 디렉터리에서 `git reset --hard origin/$CI_COMMIT_BRANCH` 후 rollout restart/podman restart)이라 태그·버전 개념 자체가 파이프라인에 없습니다. docs/ROADMAP.md 의 R0~R5 \"Release\" 표는 버전 릴리즈가 아니라 개선 단계 계획입니다. 릴리즈 자산을 만드는 스크립트(scripts/, Makefile)도 없습니다. 관례를 새로 정하는 것은 사람의 판단이므로 태그·버전 파일·릴리즈 노트를 만들지 않고 건너뜁니다.",
+        "at": "2026-09-09T00:10:55+09:00"
+      }
+    },
+    "campaign": "",
+    "autonomy": "release",
+    "files": 7,
+    "additions": 374,
+    "deletions": 77,
+    "tests": 1,
+    "title": "fix: 첨부파일 추출이 예외 객체·None 대신 항상 문자열을 반환 (감사 A-110)"
+  },
+  "stages": {
+    "base": {
+      "state": "pinned",
+      "reason": "main@f2f984b",
+      "at": "2026-09-09T00:01:13+09:00"
+    },
+    "autonomy": {
+      "state": "release",
+      "reason": "",
+      "at": "2026-09-09T00:01:13+09:00"
+    },
+    "verify": {
+      "state": "passed",
+      "reason": "검증 1개 통과 (auto)",
+      "at": "2026-09-09T00:06:59+09:00"
+    },
+    "pr": {
+      "state": "created",
+      "reason": "https://github.com/hkjang/aiportal-py/pull/12",
+      "at": "2026-09-09T00:07:06+09:00"
+    },
+    "review": {
+      "state": "approved",
+      "reason": "리뷰 승인 (risk=low)",
+      "at": "2026-09-09T00:09:20+09:00"
+    },
+    "ci": {
+      "state": "passed",
+      "reason": "검사 없음 — 정책으로 허용",
+      "at": "2026-09-09T00:09:50+09:00"
+    },
+    "merge": {
+      "state": "done",
+      "reason": "efd08781c4fdf127ca081fd08ce7967f7f343fb2",
+      "at": "2026-09-09T00:09:55+09:00"
+    },
+    "release": {
+      "state": "skipped",
+      "reason": "릴리즈 안 함: 이 저장소에는 릴리즈 이력이 전혀 없습니다. git tag 0개(`git tag | wc -l` == 0), CHANGELOG.md·docs/RELEASE*.md 등 릴리즈 노트 없음, GitHub Release 목록 비어 있음, .github/workflows 없음(러너 제공 정보와 일치). 버전이 적힌 파일도 없습니다(pyproject.toml/setup.py/setup.cfg/VERSION/package.json/Makefile 모두 부재). 유일한 버전 문자열은 api.py:123 의 FastAPI OpenAPI 메타데이터 `version=\"1.0.0\"` 이며, `git log -L 123,123:api.py` 결과 first commit(2075c62) 이후 한 번도 변경된 적이 없어 릴리즈용 버전 파일로 관리되고 있지 않습니다. 배포는 .gitlab-ci.yml 이 담당하는데 태그가 아니라 브랜치 기준(`$CI_COMMIT_BRANCH == \"main\"|\"develop\"` 조건으로 배포 디렉터리에서 `git reset --hard origin/$CI_COMMIT_BRANCH` 후 rollout restart/podman restart)이라 태그·버전 개념 자체가 파이프라인에 없습니다. docs/ROADMAP.md 의 R0~R5 \"Release\" 표는 버전 릴리즈가 아니라 개선 단계 계획입니다. 릴리즈 자산을 만드는 스크립트(scripts/, Makefile)도 없습니다. 관례를 새로 정하는 것은 사람의 판단이므로 태그·버전 파일·릴리즈 노트를 만들지 않고 건너뜁니다.",
+      "at": "2026-09-09T00:10:55+09:00"
+    }
+  },
+  "provenance": {
+    "model": "claude-opus-5",
+    "policy_version": "5935779a",
+    "prompts_hash": "82f2440d4b2fef65",
+    "runner_version": "07e41602",
+    "base_sha": "f2f984b6c5b019c8bb68bf93bae5d2a0acb8cdc2",
+    "head_sha": "efd08781c4fdf127ca081fd08ce7967f7f343fb2",
+    "pr": "https://github.com/hkjang/aiportal-py/pull/12"
+  },
+  "verification": {
+    "runner": {
+      "source": "auto",
+      "commands": [
+        {
+          "cmd": "python3 -m pytest -q -x",
+          "exit": 0,
+          "seconds": 2
+        }
+      ]
+    },
+    "runner_gate": {
+      "ok": true,
+      "state": "verified",
+      "reason": "검증 1개 통과 (auto)"
+    },
+    "after_rebase": null,
+    "review": {
+      "verdict": "approve",
+      "reasons": [],
+      "notes": [
+        "util/extract_text.py:104-120 새 helper 는 모든 분기에서 문자열만 반환하고, extract()/extract_undrm() 은 sniff_drm 만 다른 wrapper 로 기존 계약(NUL 조기 판정 유무, UnicodeDecodeError/JSONDecodeError -> \"DRM\")을 그대로 유지한다. 원본 코드와 분기별로 대조했고 동작 차이는 실패 경로(예외 객체/None -> \"err\")뿐이다.",
+        "tests/unit/test_extract_text.py:170-227 정적 검사 4건은 수정 전 코드에서 실제로 실패한다. 옛 extract_minor.py 는 `except Exception as e: return e` 를 가지고 있었고(offender 검출), util.extract_text import 도 없었으며(공용 헬퍼 검사 실패), 옛 extract_logic 의 마지막 문장은 Return 이 아닌 If 였고(암묵적 None 검사 실패) bare except 도 있었다. 동작 테스트는 새 모듈을 실제 import 해 단언한다. 전체 907 passed 확인.",
+        "util/pipeline_module.py:42 bare except -> except Exception 변경으로 CancelledError 가 이제 전파된다. 호출부 service/pipelineservice.py:98 의 `except Exception as e: raise` 도 CancelledError 를 잡지 않으므로 취소가 정상적으로 위로 전달된다. 회귀 없음.",
+        "동작 변화(의도된 것이지만 기록): 지원하지 않는 확장자·추출 실패 첨부파일이 이제 예외로 색인을 중단시키는 대신 \"err\" 문자열로 Milvus 에 색인된다(service/pipelineservice.py:82-84 가 \"err\" 에 안내 문구를 덧붙여 fileobj[\"text\"] 로 넣음). api.py:1625 의 extract_undrm 경로도 실패 시 None 대신 \"err\" 내용이 색인된다. 쓰레기 청크가 생기지만 스페이스 전체 색인 중단보다는 낫고, \"DRM\" 문자열이 색인되는 기존 동작과 같은 성격이다.",
+        "tests/unit/test_extract_text.py:160-166 의 저장소 전체 os.walk 는 skip 집합에 .venv/venv/env 가 없다. .gitignore 가 이들을 무시하므로 저장소 안에 가상환경을 두는 개발자 환경에서는 site-packages 까지 스캔해 서드파티 코드의 `except ... as e: return e` 로 오탐 실패하거나 매우 느려질 수 있다. 현재 워크트리에는 가상환경이 없어 통과하지만, skip 집합에 추가해두면 좋다.",
+        "util/extract_text.py:115-116 의 UnicodeDecodeError/JSONDecodeError -> DRM_MARKER 경로는 로그를 남기지 않는다. 감사 문서가 지적한 \"어느 첨부파일인지 로그에 남지 않는다\" 문제는 err 경로에서만 해소됐다(원본 동작 유지이므로 회귀는 아님).",
+        "마이그레이션·외부 상태 변경·인증/권한/비밀값 관련 변경 없음. 코드 변경은 util/extract_text.py 신규, util/extract_minor.py 재작성, util/pipeline_module.py 3줄이며 revert 로 완전히 되돌릴 수 있다. 문서 변경(CODEBASE_MAP/CURRENT_STATE_AUDIT/TESTING)은 이번 변경 내용과 일치하며 범위 이탈 없음."
+      ],
+      "risk": "low"
+    },
+    "ci_gate": {
+      "ok": false,
+      "state": "no-ci",
+      "reason": "이 커밋에 검사가 없음 (정책 allow_merge_without_ci 가 없으면 차단)",
+      "checks": 0
+    }
+  },
+  "release": {
+    "result": {
+      "status": "skipped",
+      "version": "",
+      "tag": "",
+      "title": "",
+      "notes_file": "",
+      "github_release": false,
+      "assets": [],
+      "reason": "이 저장소에는 릴리즈 이력이 전혀 없습니다. git tag 0개(`git tag | wc -l` == 0), CHANGELOG.md·docs/RELEASE*.md 등 릴리즈 노트 없음, GitHub Release 목록 비어 있음, .github/workflows 없음(러너 제공 정보와 일치). 버전이 적힌 파일도 없습니다(pyproject.toml/setup.py/setup.cfg/VERSION/package.json/Makefile 모두 부재). 유일한 버전 문자열은 api.py:123 의 FastAPI OpenAPI 메타데이터 `version=\"1.0.0\"` 이며, `git log -L 123,123:api.py` 결과 first commit(2075c62) 이후 한 번도 변경된 적이 없어 릴리즈용 버전 파일로 관리되고 있지 않습니다. 배포는 .gitlab-ci.yml 이 담당하는데 태그가 아니라 브랜치 기준(`$CI_COMMIT_BRANCH == \"main\"|\"develop\"` 조건으로 배포 디렉터리에서 `git reset --hard origin/$CI_COMMIT_BRANCH` 후 rollout restart/podman restart)이라 태그·버전 개념 자체가 파이프라인에 없습니다. docs/ROADMAP.md 의 R0~R5 \"Release\" 표는 버전 릴리즈가 아니라 개선 단계 계획입니다. 릴리즈 자산을 만드는 스크립트(scripts/, Makefile)도 없습니다. 관례를 새로 정하는 것은 사람의 판단이므로 태그·버전 파일·릴리즈 노트를 만들지 않고 건너뜁니다."
+    },
+    "assets_sha256": []
+  },
+  "approval": null,
+  "usage": [
+    {
+      "ts": "2026-09-09T00:06:55+09:00",
+      "date": "2026-09-09",
+      "project": "aiportal-py",
+      "phase": "improve",
+      "run_id": "2026-09-09-000110-aiportal-py-improve",
+      "campaign": "",
+      "subtype": "success",
+      "duration_ms": 375751,
+      "num_turns": 38,
+      "cost_usd": 2.303391,
+      "input_tokens": 66,
+      "output_tokens": 26504,
+      "cache_read": 1859888,
+      "cache_create": 69855
+    },
+    {
+      "ts": "2026-09-09T00:09:20+09:00",
+      "date": "2026-09-09",
+      "project": "aiportal-py",
+      "phase": "review",
+      "run_id": "2026-09-09-000110-aiportal-py-improve",
+      "campaign": "",
+      "subtype": "success",
+      "duration_ms": 145678,
+      "num_turns": 9,
+      "cost_usd": 0.736532,
+      "input_tokens": 18,
+      "output_tokens": 9148,
+      "cache_read": 306886,
+      "cache_create": 35243
+    },
+    {
+      "ts": "2026-09-09T00:10:54+09:00",
+      "date": "2026-09-09",
+      "project": "aiportal-py",
+      "phase": "release",
+      "run_id": "2026-09-09-000110-aiportal-py-improve",
+      "campaign": "",
+      "subtype": "success",
+      "duration_ms": 59514,
+      "num_turns": 12,
+      "cost_usd": 0.407474,
+      "input_tokens": 14,
+      "output_tokens": 3829,
+      "cache_read": 181880,
+      "cache_create": 21572
+    }
+  ]
+}
