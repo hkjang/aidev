@@ -1,7 +1,7 @@
 ---
 title: "vibe-coders — 자율 개선 이력"
 description: "vibe-coders: 자율 개선 회차 7회, 릴리즈 3건. 최근 릴리즈 v0.83.0."
-last_modified_at: 2026-09-08 12:28:50 +0900
+last_modified_at: 2026-09-08 13:13:16 +0900
 ---
 {% raw %}
 <script type="application/ld+json">
@@ -18,7 +18,7 @@ last_modified_at: 2026-09-08 12:28:50 +0900
   "name": "hkjang",
   "url": "https://github.com/hkjang"
  },
- "dateModified": "2026-09-08T12:28:50+09:00",
+ "dateModified": "2026-09-08T13:13:16+09:00",
  "version": "0.83.0"
 }
 </script>
