@@ -1,0 +1,18 @@
+release: v0.77.10
+
+프로젝트가 실제로 쓰는 이름의 pip 요구사항 파일을 인벤토리가 읽지 않던 것을 고칩니다.
+Recognize 는 requirements.txt 와 requirements-dev.txt 두 이름의 정확 일치만 봤기 때문에,
+파이썬 프로젝트가 보통 갖는 형태가 통째로 빠졌습니다 — pip-tools 쌍(requirements.in 을
+컴파일해 requirements.txt 를 만드는 형태), 한 벌을 갈라 쓴 이름(requirements_test.txt,
+dev-requirements.txt), 그리고 대다수 Django 프로젝트가 출발점으로 삼는 환경별 한 파일
+레이아웃(requirements/base.txt, requirements/prod.in). 핀이 한 번도 읽히지 않은 저장소는
+find-dependency-usage 가 보기에 그 라이브러리를 안 쓰는 저장소와 구별되지 않아, 그런
+저장소를 포함한 권고 조회가 무사 통보처럼 읽혔습니다. 이제 이름 규칙으로 인식합니다 —
+requirements 접두사·접미사, 확장자 .txt·.in, 그리고 requirements/ 디렉터리 아래의 .txt·.in.
+요구사항 파일에는 // indirect 같은 표시가 없어 한 벌이 무엇에 쓰이는지 말하는 것은 파일
+이름뿐인데 모든 선언이 direct 로 들어갔으므로, 이름이 dev·test 를 말하면 그 scope 로
+기록합니다. 요구사항이 사는 자리의 .txt 를 읽게 되면 산문도 파서에 닿습니다 — 연산자가
+선택이고 버전 그룹이 따로였기 때문에 이름 뒤의 맨 단어가 버전으로 읽혀 "This directory
+contains" 가 패키지 "This" 의 버전 "directory" 가 되었습니다. 어떤 요구사항도 연산자 없이
+버전을 적지 않으므로 그런 줄은 건너뜁니다. 의존성 인벤토리는 색인할 때 만들어지므로 이
+릴리스는 재색인이 필요합니다.
