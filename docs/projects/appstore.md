@@ -1,7 +1,7 @@
 ---
 title: "appstore — 자율 개선 이력"
 description: "appstore: 자율 개선 회차 10회, 릴리즈 7건. 최근 릴리즈 v2.5.3 (자산 1개)."
-last_modified_at: 2026-09-08 21:08:00 +0900
+last_modified_at: 2026-09-08 21:20:04 +0900
 ---
 {% raw %}
 <script type="application/ld+json">
@@ -18,14 +18,14 @@ last_modified_at: 2026-09-08 21:08:00 +0900
   "name": "hkjang",
   "url": "https://github.com/hkjang"
  },
- "dateModified": "2026-09-08T21:08:00+09:00",
+ "dateModified": "2026-09-08T21:20:04+09:00",
  "version": "2.5.3"
 }
 </script>
 
 # appstore
 
-<p class="tldr"><strong>요약.</strong> appstore: 자율 개선 회차 10회, 릴리즈 7건. 최근 릴리즈 v2.5.3 (자산 1개). <span class="pill pill-released" title="14일: 릴리즈 7, 실패 0, 경고 0, 회귀 0">건강 A</span> <span class="meta">14일: 릴리즈 7, 실패 0, 경고 0, 회귀 0</span></p>
+<p class="tldr"><strong>요약.</strong> appstore: 자율 개선 회차 10회, 릴리즈 7건. 최근 릴리즈 v2.5.3 (자산 1개). <span class="pill pill-merged" title="14일: 릴리즈 7, 실패 0, 경고 0, 회귀 1">건강 C</span> <span class="meta">14일: 릴리즈 7, 실패 0, 경고 0, 회귀 1</span></p>
 
 <ul class="stats"><li><b>10</b><span>회차</span></li><li><b>1</b><span>프로젝트</span></li><li><b>7</b><span>배포 준비 완료</span></li><li><b>0</b><span>릴리즈 진행 중</span></li><li><b>0</b><span>병합 완료</span></li><li><b>1</b><span>검토 대기</span></li><li><b>2</b><span>검증 실패</span></li><li><b>0</b><span>변경 없음</span></li><li><b>0</b><span>실행 오류</span></li><li><b>$23.26</b><span>비용</span></li><li><b>55분</b><span>에이전트 시간</span></li></ul>
 
@@ -48,6 +48,10 @@ last_modified_at: 2026-09-08 21:08:00 +0900
 ## 아이디어 백로그 — 대기 7 / 전체 9
 
 <div class="table-wrap"><table class="rt" data-filter="1"><caption class="meta">에이전트가 회차마다 재평가한다. 가치 높고 위험 낮은 대기 항목이 다음 회차 후보다.</caption><thead><tr><th class="primary">아이디어</th><th>가치/위험/크기</th><th>상태</th><th>메모</th><th>갱신</th></tr></thead><tbody><tr data-status="nochange"><td data-label="아이디어" class="primary">clientAddress가 RemoteAddr만 보아 reverse proxy 뒤에서 rate limit이 전역이 됨</td><td data-label="가치/위험/크기">3/3/M</td><td data-label="상태">대기</td><td data-label="메모">Docker/nginx 배포에서 모든 익명 요청이 anonymous:&lt;proxy IP&gt; 하나의 bucket을 공유한다. 신뢰할 프록시를 설정으로 알려야 하는데 환경변수 계약이 네 개로 고정되어 있어(check-env-contract.sh) DB 설정에 둘지 등 설계 결정이 먼저 필요하다. bootstrap 로그인 한도(IP+username)도 같은 영향을 받는다.</td><td data-label="갱신">2026-09-08</td></tr><tr data-status="nochange"><td data-label="아이디어" class="primary">관리자 write 경로의 path param이 잘못된 UTF-8이면 여전히 500</td><td data-label="가치/위험/크기">2/1/S</td><td data-label="상태">대기</td><td data-label="메모">51574ee는 읽기 필터만 정규화했다. adminUpsertKeyPermission의 {key}처럼 값을 저장하는 경로는 조용한 정규화가 옳지 않으므로(엉뚱한 key가 저장된다) httpapi 쪽에서 utf8.ValidString + NUL 검사로 422를 돌려주는 편이 맞다. settings:write 권한자만 닿는 경로라 급하지 않다.</td><td data-label="갱신">2026-09-08</td></tr><tr data-status="nochange"><td data-label="아이디어" class="primary">프런트엔드 streamAiChat이 스트림 종료 시 잔여 버퍼와 TextDecoder를 플러시하지 않음</td><td data-label="가치/위험/크기">2/2/S</td><td data-label="상태">대기</td><td data-label="메모">api.ts의 파서는 done에서 곧바로 break하고 chunk마다 \r\n을 치환해 chunk 경계에 걸친 CRLF를 놓친다. 서버(ai_handler.go)는 항상 \n\n으로 이벤트를 끝내므로 손실은 연결이 중간에 끊길 때뿐이고, 그때 남은 버퍼를 그대로 emit하면 잘린 JSON이 화면에 노출될 수 있다 — 마지막 블록은 JSON으로 파싱되거나 [DONE]일 때만 emit하는 편이 안전하다. api.test.ts에 SSE 테스트가 이미 있어 붙이기 쉽다.</td><td data-label="갱신">2026-09-08</td></tr><tr data-status="nochange"><td data-label="아이디어" class="primary">branding URL 가져오기의 오류 메시지에 upstream 상태 코드와 err 원문이 샘</td><td data-label="가치/위험/크기">2/2/S</td><td data-label="상태">대기</td><td data-label="메모">fetchBrandingSource는 settings:write 권한자만 호출할 수 있고 폐쇄망에서 사내 주소 로고 취득이 정당한 사용이라 사설 IP 일괄 차단은 정상 동작을 깨뜨린다. 응답 메시지에서 upstream 상태 코드와 err 원문만 줄이는 편이 안전하다.</td><td data-label="갱신">2026-09-08</td></tr><tr data-status="nochange"><td data-label="아이디어" class="primary">httpapi.SPAHandler.fmtInt는 strconv.Itoa 재구현</td><td data-label="가치/위험/크기">1/1/S</td><td data-label="상태">대기</td><td data-label="메모">spa.go에 동작 테스트가 생겼으니(미머지 브랜치 f7aaeac) 다른 spa.go 변경이 생길 때 함께 지우면 안전하다. 단독 커밋할 가치는 없다.</td><td data-label="갱신">2026-09-08</td></tr><tr data-status="nochange"><td data-label="아이디어" class="primary">auth_handlers.go에 남은 Retry-After: 60 정리</td><td data-label="가치/위험/크기">1/1/S</td><td data-label="상태">대기</td><td data-label="메모">9d81c75가 retryAfterSeconds를 만들었지만 bootstrapLogin의 한 곳은 미머지 브랜치 ee70048의 hunk와 겹쳐 남겨 뒀다. 두 브랜치가 모두 머지된 뒤 한 줄 교체. 브라우저 로그인 폼만 읽는 경로라 실제 영향은 없다.</td><td data-label="갱신">2026-09-08</td></tr><tr data-status="nochange"><td data-label="아이디어" class="primary">앱 screenshots URL에 scheme 검증이 없음</td><td data-label="가치/위험/크기">1/2/S</td><td data-label="상태">대기</td><td data-label="메모">ValidateAppInput은 serviceUrl만 validHTTPURL로 검사하고 screenshots는 cleanStrings의 길이·제어문자 검사만 통과하면 저장된다. 현재 프런트엔드는 screenshots를 어디에서도 &lt;img&gt;로 렌더링하지 않아 실제 XSS 표면이 없다 — 화면에 노출하는 변경이 생기면 함께 처리하는 편이 낫다.</td><td data-label="갱신">2026-09-08</td></tr><tr data-status="released"><td data-label="아이디어" class="primary">카탈로그 필터가 PostgreSQL에 보내는 바이트 정규화 (잘못된 UTF-8/NUL로 인한 공개 500)</td><td data-label="가치/위험/크기">4/1/S</td><td data-label="상태">완료</td><td data-label="메모">URL query/path의 raw byte가 잘못된 UTF-8로 pool에 도달해 SQLSTATE 22021로 statement 전체가 거절되고 공개 카탈로그가 500을 반환했다. store.normalizeFilter가 그 바이트를 U+FFFD로 바꾸고 200 rune으로 자른다. 커밋 51574ee. 함께 store 통합 테스트의 stale한 &#x27;migration 1개&#x27; 단언을 임베드 파일 수 기준으로 고쳤다.</td><td data-label="갱신">2026-09-08</td></tr><tr data-status="failed"><td data-label="아이디어" class="primary">httpapi.decodeSetting이 Unmarshal 실패 시 부분 변형된 fallback을 반환</td><td data-label="가치/위험/크기">1/1/S</td><td data-label="상태">기각</td><td data-label="메모">코드를 다시 확인했다: server.go:249의 decodeSetting은 어디에서도 호출되지 않는 죽은 코드라 재발할 동작이 없다. 지운다면 다른 server.go 변경에 얹을 것.</td><td data-label="갱신">2026-09-08</td></tr></tbody></table></div>
+
+## 교훈 (깨졌던 변경)
+
+- 2026-09-08 **rejected-by-human** — 사람이 PR 을 반려함. 같은 접근은 피할 것. ([링크](https://github.com/hkjang/appstore/pull/7))
 
 ## 원장 (에이전트가 남긴 기록)
 
