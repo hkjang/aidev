@@ -1,0 +1,125 @@
+{
+  "run_id": "2026-09-09-084151-moyro-improve",
+  "generated": "2026-09-09T08:52:18+09:00",
+  "run": {
+    "run_id": "2026-09-09-084151-moyro-improve",
+    "project": "moyro",
+    "kind": "improve",
+    "started": "2026-09-09T08:41:52+09:00",
+    "model": "claude-opus-5",
+    "policy_version": "5935779a",
+    "prompts_hash": "82f2440d4b2fef65",
+    "runner_version": "07e41602",
+    "finished": "2026-09-09T08:52:18+09:00",
+    "outcome": "verify-failed"
+  },
+  "record": {
+    "ts": "2026-09-09T08:52:18+09:00",
+    "date": "2026-09-09",
+    "project": "moyro",
+    "result": "verify failed: 실패한 검증: cd webapp && ([ -d node_modules ] || npm ci --no-audit --no-fund) && npm run typecheck --silent && npm",
+    "outcome": "verify-failed",
+    "run_id": "2026-09-09-084151-moyro-improve",
+    "base_sha": "f31824481af19d94897d10d23f61e92b69572f03",
+    "head_sha": "1940f5c629c76e0982bee9cba81e088b9e41a483",
+    "pr": "",
+    "stages": {
+      "base": {
+        "state": "pinned",
+        "reason": "main@f318244",
+        "at": "2026-09-09T08:41:56+09:00"
+      },
+      "autonomy": {
+        "state": "release",
+        "reason": "",
+        "at": "2026-09-09T08:41:56+09:00"
+      },
+      "verify": {
+        "state": "failed",
+        "reason": "실패한 검증: cd webapp && ([ -d node_modules ] || npm ci --no-audit --no-fund) && npm run typecheck --silent && npm test --silent (exit 2)",
+        "at": "2026-09-09T08:52:17+09:00"
+      }
+    },
+    "campaign": "",
+    "autonomy": "release",
+    "files": 3,
+    "additions": 322,
+    "deletions": 8,
+    "tests": 2,
+    "title": "fix: stop the daily digest from quoting the reader and cutting Korean mid-character"
+  },
+  "stages": {
+    "base": {
+      "state": "pinned",
+      "reason": "main@f318244",
+      "at": "2026-09-09T08:41:56+09:00"
+    },
+    "autonomy": {
+      "state": "release",
+      "reason": "",
+      "at": "2026-09-09T08:41:56+09:00"
+    },
+    "verify": {
+      "state": "failed",
+      "reason": "실패한 검증: cd webapp && ([ -d node_modules ] || npm ci --no-audit --no-fund) && npm run typecheck --silent && npm test --silent (exit 2)",
+      "at": "2026-09-09T08:52:17+09:00"
+    }
+  },
+  "provenance": {
+    "model": "claude-opus-5",
+    "policy_version": "5935779a",
+    "prompts_hash": "82f2440d4b2fef65",
+    "runner_version": "07e41602",
+    "base_sha": "f31824481af19d94897d10d23f61e92b69572f03",
+    "head_sha": "1940f5c629c76e0982bee9cba81e088b9e41a483",
+    "pr": ""
+  },
+  "verification": {
+    "runner": {
+      "source": "policy",
+      "commands": [
+        {
+          "cmd": "cd server && go build ./... && go vet ./... && go test ./...",
+          "exit": 0,
+          "seconds": 6
+        },
+        {
+          "cmd": "cd webapp && ([ -d node_modules ] || npm ci --no-audit --no-fund) && npm run typecheck --silent && npm test --silent",
+          "exit": 2,
+          "seconds": 19
+        }
+      ]
+    },
+    "runner_gate": {
+      "ok": false,
+      "state": "verify-failed",
+      "reason": "실패한 검증: cd webapp && ([ -d node_modules ] || npm ci --no-audit --no-fund) && npm run typecheck --silent && npm test --silent (exit 2)"
+    },
+    "after_rebase": null,
+    "review": null,
+    "ci_gate": null
+  },
+  "release": {
+    "result": null,
+    "assets_sha256": []
+  },
+  "approval": null,
+  "usage": [
+    {
+      "ts": "2026-09-09T08:51:52+09:00",
+      "date": "2026-09-09",
+      "project": "moyro",
+      "phase": "improve",
+      "run_id": "2026-09-09-084151-moyro-improve",
+      "campaign": "",
+      "subtype": "success",
+      "duration_ms": 653500,
+      "num_turns": 62,
+      "cost_usd": 3.679934,
+      "input_tokens": 106,
+      "output_tokens": 30331,
+      "cache_read": 3807112,
+      "cache_create": 100273
+    }
+  ]
+}

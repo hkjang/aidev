@@ -72,3 +72,9 @@
 - 보류 아이디어: `updatePost`가 DB 오류를 409 `not_editable`로 보고해 원인을 감춤(가치 2 / 위험 1 / S) · `safeFilename`이 확장자와 판정한 MIME의 불일치를 그대로 둬 JPEG이 `photo.png`로 저장·다운로드됨(가치 2 / 위험 2 / S) · Makefile `test`가 CI와 달리 `-race` 미사용(가치 2 / 위험 1 / S) · 서버 415 `unsupported_media` 메시지가 HEIC을 구분하지 못해 API·MCP client에는 여전히 형식 목록만 전달됨(가치 2 / 위험 2 / S)
 
 - 릴리즈: v0.1.25 (2026-09-09, run 2026-09-09-041814-moina-release)
+## 2026-09-09
+- 선택: 서버 415 `unsupported_media`가 HEIC 사진에 JPEG 전환 방법을 안내 (가치 3 / 위험 1 / 작업량 S)
+- 결과: 성공
+- 요약: 직전 회차에 웹 앱은 HEIC 거절에 아이폰 JPEG 전환 안내를 붙였지만 서버 `uploadMedia`는 여전히 지원 형식 목록만 돌려줘, API key·MCP·서드파티 client로 올린 사용자는 갤러리에서 평범해 보이는 사진이 왜 415인지 알 수 없었습니다. `detectMediaType`이 non-MP4 ISO Base Media를 `application/octet-stream` 하나로 뭉개 판정 결과를 전달할 수 없던 문제는 sniff한 앞부분을 그대로 보는 `unsupportedMediaMessage(sniff)`를 따로 두어 해결했고(기존 판정 로직은 그대로), ftyp major brand가 HEIF 계열(`heic`·`heix`·`hevc`·`mif1`·`msf1` 등)이면 웹 앱과 같은 문구로 촬영 설정 변경과 JPEG 내보내기를 안내하며 그 밖의 형식은 기존 형식 목록을 유지합니다. `api/openapi.yaml`·`docs/api-mcp.md`에 이 계약을 적었습니다. 검증은 새 테스트 9케이스(HEIF brand 4종은 안내, AVIF·M4A·PDF·짧은 파일·빈 파일은 형식 목록) 포함 `go test -race ./...` 전체 통과, `make fmt`·`make check`·`go vet`·staticcheck 통과(DB를 건드리지 않는 순수 로직이라 integration test는 skip, frontend 무변경이라 ESLint·vitest 생략).
+- 보류 아이디어: `updatePost`가 DB 오류를 409 `not_editable`로 보고해 원인을 감춤(가치 2 / 위험 1 / S) · `safeFilename`이 확장자와 판정한 MIME의 불일치를 그대로 둬 JPEG이 `photo.png`로 저장·다운로드됨(가치 2 / 위험 2 / S) · Makefile `test`가 CI와 달리 `-race` 미사용(가치 2 / 위험 1 / S) · 업로드가 이미지 dimension만 읽어 동영상은 항상 `width=0,height=0`으로 저장돼 client가 재생 전 자리를 잡지 못함(가치 2 / 위험 2 / M)
+
