@@ -975,3 +975,39 @@ Fast-forward
 evidence: /mnt/c/Users/USER/projects/aidev/state/runs/2026-09-08-094239-relio-release/evidence.json
 reports: 7 day(s), 2 week(s), 1 month(s), 373 run(s), 180 usage row(s), 29 project page(s), 5 alert(s)
 notify: no new alerts
+                                  [09:54:04] aidev synced: run(2026-09-08): relio — release-only, released v1.11.19
+[09:54:04] done
+[10:00:19] skip DartFly: dirty working tree
+[10:00:21] skip Kkiit: dirty working tree
+[10:00:22] skip Momento: dirty working tree
+[10:00:23] skip Quantoss: dirty working tree
+[10:00:24] skip SecCheck: dirty working tree
+[10:00:32] skip cutover: dirty working tree
+[10:00:45] skip muni: dirty working tree
+[10:00:46] skip postra: dirty working tree
+[10:00:49] skip seaton: dirty working tree
+[10:00:53] skip vibe-coders: dirty working tree
+[10:00:53] skip visitflow: dirty working tree
+[10:00:54] candidates(25): AgentHub Clustara Invenqor ReSSO Vendra ai-admin aiportal-front-admin aiportal-front aiportal-java aiportal-py appstore dataworks git-ctx igame jikim jupiq kanpic moina moyro pii-masker ptium releasedock relio umm weekly
+[10:00:54] picked: AgentHub
+[10:00:55] === AgentHub (base=main, run 2026-09-08-100054-AgentHub-improve, 회차 예산 $22)
+Preparing worktree (new branch 'auto/2026-09-08-1000')
+Updating files:  38% (285/747)Updating files:  39% (292/747)Updating files:  40% (299/747)Updating files:  41% (307/747)Updating files:  42% (314/747)Updating files:  43% (322/747)Updating files:  44% (329/747)Updating files:  45% (337/747)Updating files:  46% (344/747)Updating files:  47% (352/747)Updating files:  48% (359/747)Updating files:  49% (367/747)Updating files:  50% (374/747)Updating files:  51% (381/747)Updating files:  52% (389/747)Updating files:  53% (396/747)Updating files:  54% (404/747)Updating files:  55% (411/747)Updating files:  56% (419/747)Updating files:  57% (426/747)Updating files:  58% (434/747)Updating files:  59% (441/747)Updating files:  60% (449/747)Updating files:  61% (456/747)Updating files:  62% (464/747)Updating files:  63% (471/747)Updating files:  64% (479/747)Updating files:  65% (486/747)Updating files:  66% (494/747)Updating files:  67% (501/747)Updating files:  68% (508/747)Updating files:  69% (516/747)Updating files:  70% (523/747)Updating files:  71% (531/747)Updating files:  72% (538/747)Updating files:  73% (546/747)Updating files:  74% (553/747)Updating files:  75% (561/747)Updating files:  76% (568/747)Updating files:  77% (576/747)Updating files:  78% (583/747)Updating files:  79% (591/747)Updating files:  80% (598/747)Updating files:  81% (606/747)Updating files:  82% (613/747)Updating files:  83% (621/747)Updating files:  84% (628/747)Updating files:  85% (635/747)Updating files:  86% (643/747)Updating files:  87% (650/747)Updating files:  88% (658/747)Updating files:  89% (665/747)Updating files:  90% (673/747)Updating files:  91% (680/747)Updating files:  92% (688/747)Updating files:  93% (695/747)Updating files:  94% (703/747)Updating files:  95% (710/747)Updating files:  96% (718/747)Updating files:  97% (725/747)Updating files:  98% (733/747)Updating files:  99% (740/747)Updating files: 100% (747/747)Updating files: 100% (747/747), done.
+HEAD is now at 127a7b8 chore(release): 0.236.0
+[10:01:01] AgentHub: [base] pinned — main@127a7b8
+[10:01:01] AgentHub: [autonomy] release — 
+[10:13:58] AgentHub: improve — 75 turns, 13m, $6.69, success
+[10:14:01] AgentHub: verify `go build ./...` → exit 0 (2s)
+[10:14:02] AgentHub: verify `go vet ./...` → exit 0 (1s)
+[10:14:22] AgentHub: verify `go test ./...` → exit 0 (20s)
+[10:14:22] AgentHub: verify `cd web && [ -d node_modules ] || npm ci --no-audit --no-fund` → exit 0 (0s)
+[10:14:26] AgentHub: verify `cd web && npm run build --silent` → exit 0 (4s)
+[10:14:26] AgentHub: [verify] passed — 검증 5개 통과 (auto)
+branch 'auto/2026-09-08-1000' set up to track 'origin/auto/2026-09-08-1000'.
+[10:14:34] AgentHub: [pr] created — https://github.com/hkjang/AgentHub/pull/13
+[10:20:17] AgentHub: review — 37 turns, 6m, $2.36, success
+[10:20:17] AgentHub: [review] rejected — 리뷰 거절: cmd/runtime-proxy/mcp.go:339-347 주석은 "검토자에게 보이는 것은 마스킹된 형태"이고 "값을 보내면 이 규칙이 막으려는 바로 그 테이블에 복사된다"고 단언하지만, 코드가 승인 요청에 싣는 replacement 는 클래스 동작이 Redact 일 때만 마스킹된다. 클래스가 기록만(Audit)이면 internal/dlp/dlp.go:311 의 cuts 가 비어 result.Text 가 원문 그대로이고, cmd/runtime-proxy/dlp.go:78 이 그 원문을 돌려주므로 masked.Params.Arguments 에 주민등록번호 원본이 그대로 들어간다. 그 값은 awaitApproval -> approver.decide -> POST 를 거쳐 internal/api/toolapproval.go:82 와 internal/store/toolapproval.go:112 에서 tool_approvals.arguments 컬럼에 평문 저장된다. 즉 커밋 메시지가 동기로 든 바로 그 구성(클래스는 기록만, 규칙으로 나머지를 잡는다)에서 effect=require_approval 인 데이터클래스 규칙은 민감값을 컨트롤 플레인 DB 에 새로 기록한다. main 에서는 이 규칙이 Pod 에 도달하지 못했으므로 이 기록 자체가 없었고, 이번 변경으로 새로 생기는 경로다. 임시 테스트로 재현 확인함(scannerFor("rrn","audit") + require_approval 규칙 -> 승인 요청 본문에 900101-1234568 원문 포함). / cmd/runtime-proxy/dataclass_test.go:77 TestADataClassGateWaitsForAPerson 이 위 단언("The reviewer sees the call, and never the value in it")을 검증하지만 scannerFor("rrn","redact") 한 가지 구성만 쓴다. 마스킹은 DLP 의 Redact 동작이 해 준 것이지 이 변경이 보장하는 것이 아니어서, 주석이 깨지는 유일한 구성(기록만/Audit)은 테스트가 전혀 건드리지 않는다. 새 기능이 내세우는 보안 속성을 실제로 성립하지 않는 조건에서 통과시키는 테스트다.
+https://github.com/hkjang/AgentHub/pull/13#issuecomment-5577630351
+evidence: /mnt/c/Users/USER/projects/aidev/state/runs/2026-09-08-100054-AgentHub-improve/evidence.json
+reports: 7 day(s), 2 week(s), 1 month(s), 374 run(s), 182 usage row(s), 29 project page(s), 5 alert(s)
+notify: no new alerts
