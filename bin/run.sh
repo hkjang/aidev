@@ -1,7 +1,8 @@
 #!/usr/bin/env bash
 # aidev 자율 개선 러너 v2 — 에이전트는 변경과 결과를 "제안"하고, 러너가 검증하며, 게시(푸시·머지·릴리즈)는 러너만 한다.
 #   사용법: bin/run.sh [--dry-run] [--count N] [--project NAME] [--days 30] [--budget USD] [--release-budget USD]
-#                     [--no-merge] [--no-release] [--no-review] [--no-sync] [--release-only NAME] [--assets-only NAME[:TAG]]
+#                     [--no-merge] [--no-release] [--no-review] [--no-sync] [--parallel] [--release-only NAME] [--assets-only NAME[:TAG]]
+#   --parallel: --count 로 고른 프로젝트를 동시에 돌린다 (프로젝트마다 워크트리·실행 디렉터리가 달라 간섭 없음)
 #   흐름: 상한 → 수동/수정 큐 → 후보(휴면 제외) → 기준 커밋 고정 → 격리된 에이전트 → 러너 검증 → 비밀정보 검사 → PR
 #         → 보호 파일 → 독립 리뷰 → 기준 브랜치 이동 시 재검증 → CI(gate) → 커밋 일치 머지 → 릴리즈(gate) → 자산 검증 → 회귀 감시·보고·알림
 #   원칙: 확인하지 못한 것은 성공이 아니다 (판정은 bin/gate.py, 회귀 테스트 tests/test_gate.py).
@@ -13,7 +14,7 @@ HERE="${AIDEV_BIN:-$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)}"
 REPO_DIR="$(cd "$HERE/.." && pwd)"
 STATE="${AIDEV_STATE:-$REPO_DIR/state}"; LOGS="${AIDEV_LOGS:-$REPO_DIR/logs}"; RUNS="$STATE/runs"; DATA="${AIDEV_DATA:-$REPO_DIR/docs/data}"
 WT_BASE="${WT_BASE:-$HOME/.cache/auto-improve-wt}"
-DAYS=30; COUNT=1; BUDGET=""; RBUDGET=""; DRY=0; ONLY=""; MERGE=1; SYNC=1; RELEASE=1; REVIEW=1
+DAYS=30; COUNT=1; BUDGET=""; RBUDGET=""; DRY=0; ONLY=""; MERGE=1; SYNC=1; RELEASE=1; REVIEW=1; PARALLEL=0
 MODEL="${MODEL:-claude-opus-5}"
 REAL_HOME="$HOME"; CLAUDE_CFG="${CLAUDE_CONFIG_DIR:-$REAL_HOME/.claude}"
 export GIT_AUTHOR_NAME=hkjang GIT_AUTHOR_EMAIL=gagagiga@naver.com GIT_COMMITTER_NAME=hkjang GIT_COMMITTER_EMAIL=gagagiga@naver.com
@@ -25,7 +26,7 @@ MAX_DAILY_COST=80; MAX_DAILY_ROUNDS=60; MAX_DAILY_RELEASES=30; DORMANT_AFTER=3; 
 while [ $# -gt 0 ]; do case "$1" in
   --dry-run) DRY=1;; --count) COUNT=$2; shift;; --project) ONLY=$2; shift;; --days) DAYS=$2; shift;;
   --budget) BUDGET=$2; shift;; --release-budget) RBUDGET=$2; shift;;
-  --no-merge) MERGE=0;; --no-sync) SYNC=0;; --no-release) RELEASE=0;; --no-review) REVIEW=0;;
+  --no-merge) MERGE=0;; --no-sync) SYNC=0;; --no-release) RELEASE=0;; --no-review) REVIEW=0;; --parallel) PARALLEL=1;;
   --release-only) RELEASE_ONLY=$2; shift;; --assets-only) ASSETS_ONLY=$2; shift;;
   *) echo "unknown arg $1"; exit 2;; esac; shift; done
 
@@ -703,7 +704,9 @@ log "picked: ${picked[*]}"
 [ $DRY -eq 1 ] && exit 0
 
 # ================================================================ 프로젝트별 회차
-for n in "${picked[@]}"; do
+# 한 프로젝트의 회차 전체. --parallel 이면 서브셸에서 동시에 돈다(각자 워크트리·실행 디렉터리가 달라 서로 간섭하지 않는다).
+round_body(){
+  local n=$1
   repo="$ROOT/$n"; ledger="$STATE/$n.md"; wt="$WT_BASE/$n"; result="no change"; OUTCOME=no-change; RUN_META="{}"; HEAD_SHA=""; BASE_SHA=""; url=""
   base=$(policy "$n" '.base_branch'); base=${base:-$(git -C "$repo" symbolic-ref --short HEAD)}
   new_run "$n" improve
@@ -825,5 +828,12 @@ https://hkjang.github.io/aidev/projects/$n/" >/dev/null 2>&1; gh issue close "$R
   fi
   record_run "$n" "$result" "$OUTCOME"
   sync_repo "run($RUN_DATE): $n — $result"
+}
+
+for n in "${picked[@]}"; do
+  if [ "$PARALLEL" -eq 1 ] && [ "${#picked[@]}" -gt 1 ]; then
+    ( round_body "$n" ) & sleep 5   # 시작을 조금 어긋내 git fetch·docker 가 한꺼번에 몰리지 않게
+  else round_body "$n"; fi
 done
+[ "$PARALLEL" -eq 1 ] && wait
 log "done"
