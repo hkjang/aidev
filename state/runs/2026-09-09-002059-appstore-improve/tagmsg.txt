@@ -1,0 +1,9 @@
+AppStore v2.5.4
+
+검토 반려 사유(reason)의 길이와 제어문자를 검증하지 않아 과도한 텍스트가 저장되고 NUL이 500으로 끝나던 문제를 고친 patch 릴리스입니다.
+
+- `rejectReview`가 받은 reason을 trim만 하고 그대로 저장해, 유일한 상한이 2MB 요청 본문이었습니다. 그 크기가 `reviews.reason`에 저장되고 검토 상세 화면에 렌더링되며 감사 로그의 before/after 양쪽에 복사돼 한 번의 붙여넣기가 세 번 저장됐습니다.
+- reason에 NUL(`U+0000`)이 있으면 PostgreSQL text column이 담을 수 없어 UPDATE가 SQLSTATE 22021로 실패하고, 검토자에게 필드 오류 대신 불투명한 500이 갔습니다.
+- 새 `ValidateReviewReason`이 2000 rune 상한과 개행·탭을 제외한 제어문자를 422 필드 오류로 돌려줍니다. textarea이므로 줄바꿈은 사용자가 쓴 텍스트의 일부로 그대로 허용합니다. 사유 필수 여부는 workflow 정책이 결정하므로 여기서는 빈 사유를 통과시킵니다.
+- 반려 dialog의 textarea `maxLength`와 OpenAPI `rejectReview` 스키마의 `maxLength`를 같은 2000으로 맞췄습니다.
+- Schema 변경이 없어 기존 설치는 image만 교체하면 됩니다.
