@@ -1,0 +1,27 @@
+{
+  "base": {
+    "state": "pinned",
+    "reason": "main@d68a8c2",
+    "at": "2026-09-08T16:51:00+09:00"
+  },
+  "autonomy": {
+    "state": "release",
+    "reason": "",
+    "at": "2026-09-08T16:51:00+09:00"
+  },
+  "verify": {
+    "state": "passed",
+    "reason": "검증 7개 통과 (auto)",
+    "at": "2026-09-08T16:58:42+09:00"
+  },
+  "pr": {
+    "state": "created",
+    "reason": "https://github.com/hkjang/appstore/pull/7",
+    "at": "2026-09-08T16:58:53+09:00"
+  },
+  "review": {
+    "state": "rejected",
+    "reason": "리뷰 거절: server:1 (binary blob) — commit 9d81c75, whose stated scope is only the Retry-After header fix, also adds a 20,911,024-byte compiled ELF x86-64 Go binary named `server`. `file` reports it is dynamically linked, 'with debug_info, not stripped', and `strings` shows it was built without -trimpath from this worktree, so it embeds absolute local build paths (/home/hkjang/.cache/auto-improve-wt/appstore/cmd/server/main.go, .../internal/crypto/secret.go, etc.). This is a stray local `go build` artifact swept in by a blanket `git add`; it is completely unrelated to the diff's purpose (범위 이탈). / server:1 — the binary is not ignored anywhere: .gitignore lists `/appstore` but not `/server` (`git check-ignore -v server` exits 1), so the artifact will silently reappear in future commits. .dockerignore likewise ignores `appstore` but not `server`, and the Dockerfile go-build stage does `COPY . ./`, so the 20MB blob is shipped into the Docker build context and the builder layer on every image build. / server:1 — this is not cleanly revertable (되돌리기 어려움). `git revert` deletes the file from the tree but the 20MB blob stays in main's history forever once merged; removing it requires a history rewrite (filter-repo/BFG) and a force-push coordinated with every clone. A merge is therefore a one-way door for repository size.",
+    "at": "2026-09-08T17:01:16+09:00"
+  }
+}
