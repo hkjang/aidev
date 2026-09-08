@@ -1,7 +1,7 @@
 ---
 title: "jupiq — 자율 개선 이력"
-description: "jupiq: 자율 개선 회차 7회, 릴리즈 3건. 최근 릴리즈 v1.4.8."
-last_modified_at: 2026-09-08 20:31:54 +0900
+description: "jupiq: 자율 개선 회차 8회, 릴리즈 4건. 최근 릴리즈 v1.4.8 (자산 1개)."
+last_modified_at: 2026-09-08 20:37:19 +0900
 ---
 {% raw %}
 <script type="application/ld+json">
@@ -11,35 +11,35 @@ last_modified_at: 2026-09-08 20:31:54 +0900
  "name": "jupiq",
  "codeRepository": "https://github.com/hkjang/jupiq",
  "url": "https://hkjang.github.io/aidev/projects/jupiq/",
- "description": "jupiq: 자율 개선 회차 7회, 릴리즈 3건. 최근 릴리즈 v1.4.8.",
+ "description": "jupiq: 자율 개선 회차 8회, 릴리즈 4건. 최근 릴리즈 v1.4.8 (자산 1개).",
  "inLanguage": "ko",
  "maintainer": {
   "@type": "Person",
   "name": "hkjang",
   "url": "https://github.com/hkjang"
  },
- "dateModified": "2026-09-08T20:31:54+09:00",
+ "dateModified": "2026-09-08T20:37:19+09:00",
  "version": "1.4.8"
 }
 </script>
 
 # jupiq
 
-<p class="tldr"><strong>요약.</strong> jupiq: 자율 개선 회차 7회, 릴리즈 3건. 최근 릴리즈 v1.4.8. <span class="pill pill-merged" title="14일: 릴리즈 3, 실패 0, 경고 1, 회귀 0">건강 B</span> <span class="meta">14일: 릴리즈 3, 실패 0, 경고 1, 회귀 0</span></p>
+<p class="tldr"><strong>요약.</strong> jupiq: 자율 개선 회차 8회, 릴리즈 4건. 최근 릴리즈 v1.4.8 (자산 1개). <span class="pill pill-merged" title="14일: 릴리즈 4, 실패 0, 경고 1, 회귀 0">건강 B</span> <span class="meta">14일: 릴리즈 4, 실패 0, 경고 1, 회귀 0</span></p>
 
-<ul class="stats"><li><b>7</b><span>회차</span></li><li><b>1</b><span>프로젝트</span></li><li><b>2</b><span>배포 준비 완료</span></li><li><b>1</b><span>릴리즈 진행 중</span></li><li><b>2</b><span>병합 완료</span></li><li><b>1</b><span>검토 대기</span></li><li><b>0</b><span>검증 실패</span></li><li><b>1</b><span>변경 없음</span></li><li><b>0</b><span>실행 오류</span></li><li><b>$10.07</b><span>비용</span></li><li><b>27분</b><span>에이전트 시간</span></li></ul>
+<ul class="stats"><li><b>8</b><span>회차</span></li><li><b>1</b><span>프로젝트</span></li><li><b>3</b><span>배포 준비 완료</span></li><li><b>1</b><span>릴리즈 진행 중</span></li><li><b>2</b><span>병합 완료</span></li><li><b>1</b><span>검토 대기</span></li><li><b>0</b><span>검증 실패</span></li><li><b>1</b><span>변경 없음</span></li><li><b>0</b><span>실행 오류</span></li><li><b>$10.07</b><span>비용</span></li><li><b>27분</b><span>에이전트 시간</span></li></ul>
 
 ## 현황
 
 <dl class="kv">
 <dt>저장소</dt><dd><a href="https://github.com/hkjang/jupiq">https://github.com/hkjang/jupiq</a></dd>
-<dt>마지막 회차</dt><dd>2026-09-07 10:02 KST — <span class="pill pill-other">• 기타</span> release-only, release skipped</dd>
-<dt>최근 릴리즈</dt><dd><a href="https://github.com/hkjang/jupiq/releases/tag/v1.4.8">v1.4.8</a> — released <a href="https://github.com/hkjang/jupiq/releases">전체 릴리즈 →</a></dd>
+<dt>마지막 회차</dt><dd>2026-09-08 20:37 KST — <span class="pill pill-released">🚀 릴리즈</span> merged <a href="https://github.com/hkjang/jupiq/pull/6">PR #6</a>, released <a href="https://github.com/hkjang/jupiq/releases/tag/v1.4.8">v1.4.8</a></dd>
+<dt>최근 릴리즈</dt><dd><a href="https://github.com/hkjang/jupiq/releases/tag/v1.4.8">v1.4.8</a> — released · 자산 1개 (이전 v1.4.7: 1개) <a href="https://github.com/hkjang/jupiq/releases">전체 릴리즈 →</a></dd>
 </dl>
 
 ## 회차 이력
 
-<div class="table-wrap"><table class="rt"><thead><tr><th>일시</th><th class="primary">프로젝트</th><th>결과</th></tr></thead><tbody><tr data-status="other"><td data-label="일시">2026-09-07 10:02</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/jupiq/">jupiq</a></td><td data-label="결과"><span class="pill pill-merged" title="outcome=merged">병합 완료</span> release-only, release skipped</td></tr><tr data-status="other"><td data-label="일시">2026-09-07 01:59</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/jupiq/">jupiq</a></td><td data-label="결과"><span class="pill pill-merged" title="outcome=review-pending">검토 대기</span> review held, PR open <a href="https://github.com/hkjang/jupiq/pull/5">PR #5</a><div class="meta">3파일 <span style="color:var(--good)">+150</span>/<span style="color:var(--bad)">−4</span> · 테스트 1 — fix: 허브 수집 goroutine에 동시 실행 상한과 종료 대기를 도입한다</div></td></tr><tr data-status="merged"><td data-label="일시">2026-09-06 16:00</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/jupiq/">jupiq</a></td><td data-label="결과"><span class="pill pill-merged" title="outcome=merged">병합 완료</span> merged <a href="https://github.com/hkjang/jupiq/pull/4">PR #4</a>, release blocked (secrets)<div class="meta">2파일 <span style="color:var(--good)">+169</span>/<span style="color:var(--bad)">−5</span> · 테스트 1 — fix: 응답 보안 헤더에 CSP 보강 지시자와 TLS 한정 HSTS를 추가한다</div></td></tr><tr data-status="released"><td data-label="일시">2026-09-05 04:17</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/jupiq/">jupiq</a></td><td data-label="결과"><span class="pill pill-released" title="outcome=release-ready">배포 준비 완료</span> merged <a href="https://github.com/hkjang/jupiq/pull/3">PR #3</a>, released <a href="https://github.com/hkjang/jupiq/releases/tag/v1.4.4">v1.4.4</a></td></tr><tr data-status="released"><td data-label="일시">2026-09-04 08:40</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/jupiq/">jupiq</a></td><td data-label="결과"><span class="pill pill-merged" title="outcome=releasing">릴리즈 진행 중</span> merged <a href="https://github.com/hkjang/jupiq/pull/2">PR #2</a>, released <a href="https://github.com/hkjang/jupiq/releases/tag/v1.4.0">v1.4.0</a>, <strong>ASSETS MISSING</strong></td></tr><tr data-status="nochange"><td data-label="일시">2026-09-03 23:04</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/jupiq/">jupiq</a></td><td data-label="결과"><span class="pill pill-nochange" title="outcome=no-change">변경 없음</span> no change</td></tr><tr data-status="released"><td data-label="일시">2026-09-03 14:58</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/jupiq/">jupiq</a></td><td data-label="결과"><span class="pill pill-released" title="outcome=release-ready">배포 준비 완료</span> merged <a href="https://github.com/hkjang/jupiq/pull/1">PR #1</a>, released <a href="https://github.com/hkjang/jupiq/releases/tag/v1.3.0">v1.3.0</a></td></tr></tbody></table></div>
+<div class="table-wrap"><table class="rt"><thead><tr><th>일시</th><th class="primary">프로젝트</th><th>결과</th></tr></thead><tbody><tr data-status="released"><td data-label="일시">2026-09-08 20:37</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/jupiq/">jupiq</a></td><td data-label="결과"><span class="pill pill-released" title="outcome=release-ready">배포 준비 완료</span> merged <a href="https://github.com/hkjang/jupiq/pull/6">PR #6</a>, released <a href="https://github.com/hkjang/jupiq/releases/tag/v1.4.8">v1.4.8</a><div class="meta">2파일 <span style="color:var(--good)">+162</span>/<span style="color:var(--bad)">−2</span> · 테스트 1 — test: secure 패키지의 문자열 암복호화·파생키·토큰 생성을 검증한다</div></td></tr><tr data-status="other"><td data-label="일시">2026-09-07 10:02</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/jupiq/">jupiq</a></td><td data-label="결과"><span class="pill pill-merged" title="outcome=merged">병합 완료</span> release-only, release skipped</td></tr><tr data-status="other"><td data-label="일시">2026-09-07 01:59</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/jupiq/">jupiq</a></td><td data-label="결과"><span class="pill pill-merged" title="outcome=review-pending">검토 대기</span> review held, PR open <a href="https://github.com/hkjang/jupiq/pull/5">PR #5</a><div class="meta">3파일 <span style="color:var(--good)">+150</span>/<span style="color:var(--bad)">−4</span> · 테스트 1 — fix: 허브 수집 goroutine에 동시 실행 상한과 종료 대기를 도입한다</div></td></tr><tr data-status="merged"><td data-label="일시">2026-09-06 16:00</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/jupiq/">jupiq</a></td><td data-label="결과"><span class="pill pill-merged" title="outcome=merged">병합 완료</span> merged <a href="https://github.com/hkjang/jupiq/pull/4">PR #4</a>, release blocked (secrets)<div class="meta">2파일 <span style="color:var(--good)">+169</span>/<span style="color:var(--bad)">−5</span> · 테스트 1 — fix: 응답 보안 헤더에 CSP 보강 지시자와 TLS 한정 HSTS를 추가한다</div></td></tr><tr data-status="released"><td data-label="일시">2026-09-05 04:17</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/jupiq/">jupiq</a></td><td data-label="결과"><span class="pill pill-released" title="outcome=release-ready">배포 준비 완료</span> merged <a href="https://github.com/hkjang/jupiq/pull/3">PR #3</a>, released <a href="https://github.com/hkjang/jupiq/releases/tag/v1.4.4">v1.4.4</a></td></tr><tr data-status="released"><td data-label="일시">2026-09-04 08:40</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/jupiq/">jupiq</a></td><td data-label="결과"><span class="pill pill-merged" title="outcome=releasing">릴리즈 진행 중</span> merged <a href="https://github.com/hkjang/jupiq/pull/2">PR #2</a>, released <a href="https://github.com/hkjang/jupiq/releases/tag/v1.4.0">v1.4.0</a>, <strong>ASSETS MISSING</strong></td></tr><tr data-status="nochange"><td data-label="일시">2026-09-03 23:04</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/jupiq/">jupiq</a></td><td data-label="결과"><span class="pill pill-nochange" title="outcome=no-change">변경 없음</span> no change</td></tr><tr data-status="released"><td data-label="일시">2026-09-03 14:58</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/jupiq/">jupiq</a></td><td data-label="결과"><span class="pill pill-released" title="outcome=release-ready">배포 준비 완료</span> merged <a href="https://github.com/hkjang/jupiq/pull/1">PR #1</a>, released <a href="https://github.com/hkjang/jupiq/releases/tag/v1.3.0">v1.3.0</a></td></tr></tbody></table></div>
 
 ## 비용·사용량
 
@@ -88,6 +88,8 @@ last_modified_at: 2026-09-08 20:31:54 +0900
 - 결과: 성공
 - 요약: `EncryptString`·`DecryptString`·`Derive`·`RandomToken`·`HashToken`은 OIDC state 쿠키, 허브 자격증명, JWT 서명키, API 키 해시가 모두 의존하는데 테스트가 라운드트립 하나뿐이었다. 잘못된 base64·표준 패딩·nonce보다 짧은 blob·변조·절단 ciphertext를 `DecryptString`이 모두 거부하고 오류 시 빈 문자열을 돌려주는지, `Derive`가 label과 키로 분리되며 결정적인지, `RandomToken`이 요청한 바이트 수를 그대로 디코딩하고 재사용되지 않는지 덮는 테스트 6개를 추가해 커버리지가 39.5%→87.5%로 올랐다. 겸사겸사 `RandomToken`이 크기 0 이하에 빈 문자열을 조용히 돌려주던 계약을 오류로 바꿔(현재 호출자는 모두 상수라 동작 변화 없음) 나중에 크기를 계산해 넘기는 호출자가 빈 state·nonce를 비밀값으로 쓰지 못하게 했다. 1바이트 토큰 유일성 검사는 256개 값에서 16회 추출 시 ~37% 확률로 충돌해 플레이키하므로 12바이트 이상에만 적용했고, `-count=20`으로 반복 확인했다. `go vet ./...`, `go test -race ./...`, `scripts/check-version.sh`, `scripts/check-screenshots.mjs`, `npm run lint`, `npm test`(18파일 59개) 모두 통과했다.
 - 보류 아이디어: `internal/api/helpers.go`의 사용되지 않는 `parseTimeQuery` 제거(호출자 없음을 이번에도 재확인) / `collectPrometheus`가 metric마다 `featureEnabled`로 features 설정을 다시 읽는 중복 조회 제거 / `internal/config`의 `Load()` 테스트 신설(현재 `ParseEncryptionKey`만 덮여 있고 필수 환경변수 누락 집계·비밀번호 최소 길이·오류 우선순위는 미검증) / 로그인 리미터 `succeeded`가 ip 키를 의도적으로 유지하는 동작에 대한 테스트·문서화
+
+- 릴리즈: v1.4.8 (2026-09-08, run 2026-09-08-202139-jupiq-improve)
 
 
 [← 대시보드](https://hkjang.github.io/aidev/) · [교훈 모음](https://hkjang.github.io/aidev/lessons/)

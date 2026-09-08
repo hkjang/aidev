@@ -1,7 +1,7 @@
 ---
 title: "jikim — 자율 개선 이력"
-description: "jikim: 자율 개선 회차 3회, 릴리즈 2건. 최근 릴리즈 v0.2.3 (자산 2개)."
-last_modified_at: 2026-09-08 20:31:54 +0900
+description: "jikim: 자율 개선 회차 3회, 릴리즈 2건. 최근 릴리즈 v0.2.4."
+last_modified_at: 2026-09-08 20:37:19 +0900
 ---
 {% raw %}
 <script type="application/ld+json">
@@ -11,30 +11,30 @@ last_modified_at: 2026-09-08 20:31:54 +0900
  "name": "jikim",
  "codeRepository": "https://github.com/hkjang/jikim",
  "url": "https://hkjang.github.io/aidev/projects/jikim/",
- "description": "jikim: 자율 개선 회차 3회, 릴리즈 2건. 최근 릴리즈 v0.2.3 (자산 2개).",
+ "description": "jikim: 자율 개선 회차 3회, 릴리즈 2건. 최근 릴리즈 v0.2.4.",
  "inLanguage": "ko",
  "maintainer": {
   "@type": "Person",
   "name": "hkjang",
   "url": "https://github.com/hkjang"
  },
- "dateModified": "2026-09-08T20:31:54+09:00",
- "version": "0.2.3"
+ "dateModified": "2026-09-08T20:37:19+09:00",
+ "version": "0.2.4"
 }
 </script>
 
 # jikim
 
-<p class="tldr"><strong>요약.</strong> jikim: 자율 개선 회차 3회, 릴리즈 2건. 최근 릴리즈 v0.2.3 (자산 2개). <span class="pill pill-merged" title="14일: 릴리즈 2, 실패 0, 경고 1, 회귀 1">건강 C</span> <span class="meta">14일: 릴리즈 2, 실패 0, 경고 1, 회귀 1</span></p>
+<p class="tldr"><strong>요약.</strong> jikim: 자율 개선 회차 3회, 릴리즈 2건. 최근 릴리즈 v0.2.4. <span class="pill pill-merged" title="14일: 릴리즈 2, 실패 0, 경고 1, 회귀 1">건강 C</span> <span class="meta">14일: 릴리즈 2, 실패 0, 경고 1, 회귀 1</span></p>
 
-<ul class="stats"><li><b>3</b><span>회차</span></li><li><b>1</b><span>프로젝트</span></li><li><b>2</b><span>배포 준비 완료</span></li><li><b>0</b><span>릴리즈 진행 중</span></li><li><b>0</b><span>병합 완료</span></li><li><b>1</b><span>검토 대기</span></li><li><b>0</b><span>검증 실패</span></li><li><b>0</b><span>변경 없음</span></li><li><b>0</b><span>실행 오류</span></li><li><b>$13.73</b><span>비용</span></li><li><b>31분</b><span>에이전트 시간</span></li></ul>
+<ul class="stats"><li><b>3</b><span>회차</span></li><li><b>1</b><span>프로젝트</span></li><li><b>2</b><span>배포 준비 완료</span></li><li><b>0</b><span>릴리즈 진행 중</span></li><li><b>0</b><span>병합 완료</span></li><li><b>1</b><span>검토 대기</span></li><li><b>0</b><span>검증 실패</span></li><li><b>0</b><span>변경 없음</span></li><li><b>0</b><span>실행 오류</span></li><li><b>$14.81</b><span>비용</span></li><li><b>33분</b><span>에이전트 시간</span></li></ul>
 
 ## 현황
 
 <dl class="kv">
 <dt>저장소</dt><dd><a href="https://github.com/hkjang/jikim">https://github.com/hkjang/jikim</a></dd>
 <dt>마지막 회차</dt><dd>2026-09-07 01:41 KST — <span class="pill pill-other">• 기타</span> <strong>guarded files</strong>, PR open <a href="https://github.com/hkjang/jikim/pull/16">PR #16</a></dd>
-<dt>최근 릴리즈</dt><dd><a href="https://github.com/hkjang/jikim/releases/tag/v0.2.3">v0.2.3</a> — released · 자산 2개 (이전 v0.2.2: 2개) <a href="https://github.com/hkjang/jikim/releases">전체 릴리즈 →</a></dd>
+<dt>최근 릴리즈</dt><dd><a href="https://github.com/hkjang/jikim/releases/tag/v0.2.4">v0.2.4</a> — released <a href="https://github.com/hkjang/jikim/releases">전체 릴리즈 →</a></dd>
 </dl>
 
 ## 회차 이력
@@ -43,7 +43,7 @@ last_modified_at: 2026-09-08 20:31:54 +0900
 
 ## 비용·사용량
 
-<div class="table-wrap"><table class="rt"><caption class="meta">최근 30세션</caption><thead><tr><th>시각</th><th class="primary">프로젝트</th><th>단계</th><th class="num">시간</th><th class="num">턴</th><th class="num">비용</th><th class="num">토큰 입력/출력</th><th>종료</th></tr></thead><tbody><tr data-status="other"><td data-label="시각">20:31</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/jikim/">jikim</a></td><td data-label="단계">review</td><td data-label="시간" class="num">4분</td><td data-label="턴" class="num">16</td><td data-label="비용" class="num">$1.18</td><td data-label="토큰 입력/출력" class="num">714K / 15K</td><td data-label="종료">success</td></tr><tr data-status="other"><td data-label="시각">20:27</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/jikim/">jikim</a></td><td data-label="단계">개선</td><td data-label="시간" class="num">7분</td><td data-label="턴" class="num">38</td><td data-label="비용" class="num">$2.84</td><td data-label="토큰 입력/출력" class="num">2.2M / 31K</td><td data-label="종료">success</td></tr><tr data-status="other"><td data-label="시각">01:41</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/jikim/">jikim</a></td><td data-label="단계">개선</td><td data-label="시간" class="num">12분</td><td data-label="턴" class="num">74</td><td data-label="비용" class="num">$5.93</td><td data-label="토큰 입력/출력" class="num">6.8M / 43K</td><td data-label="종료">success</td></tr><tr data-status="other"><td data-label="시각">15:40</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/jikim/">jikim</a></td><td data-label="단계">릴리즈</td><td data-label="시간" class="num">2분</td><td data-label="턴" class="num">23</td><td data-label="비용" class="num">$1.07</td><td data-label="토큰 입력/출력" class="num">841K / 7K</td><td data-label="종료">success</td></tr><tr data-status="other"><td data-label="시각">15:37</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/jikim/">jikim</a></td><td data-label="단계">review</td><td data-label="시간" class="num">2분</td><td data-label="턴" class="num">19</td><td data-label="비용" class="num">$0.75</td><td data-label="토큰 입력/출력" class="num">432K / 8K</td><td data-label="종료">success</td></tr><tr data-status="other"><td data-label="시각">15:35</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/jikim/">jikim</a></td><td data-label="단계">개선</td><td data-label="시간" class="num">5분</td><td data-label="턴" class="num">38</td><td data-label="비용" class="num">$1.97</td><td data-label="토큰 입력/출력" class="num">1.7M / 18K</td><td data-label="종료">success</td></tr></tbody></table></div>
+<div class="table-wrap"><table class="rt"><caption class="meta">최근 30세션</caption><thead><tr><th>시각</th><th class="primary">프로젝트</th><th>단계</th><th class="num">시간</th><th class="num">턴</th><th class="num">비용</th><th class="num">토큰 입력/출력</th><th>종료</th></tr></thead><tbody><tr data-status="other"><td data-label="시각">20:34</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/jikim/">jikim</a></td><td data-label="단계">릴리즈</td><td data-label="시간" class="num">2분</td><td data-label="턴" class="num">21</td><td data-label="비용" class="num">$1.08</td><td data-label="토큰 입력/출력" class="num">810K / 7K</td><td data-label="종료">success</td></tr><tr data-status="other"><td data-label="시각">20:31</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/jikim/">jikim</a></td><td data-label="단계">review</td><td data-label="시간" class="num">4분</td><td data-label="턴" class="num">16</td><td data-label="비용" class="num">$1.18</td><td data-label="토큰 입력/출력" class="num">714K / 15K</td><td data-label="종료">success</td></tr><tr data-status="other"><td data-label="시각">20:27</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/jikim/">jikim</a></td><td data-label="단계">개선</td><td data-label="시간" class="num">7분</td><td data-label="턴" class="num">38</td><td data-label="비용" class="num">$2.84</td><td data-label="토큰 입력/출력" class="num">2.2M / 31K</td><td data-label="종료">success</td></tr><tr data-status="other"><td data-label="시각">01:41</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/jikim/">jikim</a></td><td data-label="단계">개선</td><td data-label="시간" class="num">12분</td><td data-label="턴" class="num">74</td><td data-label="비용" class="num">$5.93</td><td data-label="토큰 입력/출력" class="num">6.8M / 43K</td><td data-label="종료">success</td></tr><tr data-status="other"><td data-label="시각">15:40</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/jikim/">jikim</a></td><td data-label="단계">릴리즈</td><td data-label="시간" class="num">2분</td><td data-label="턴" class="num">23</td><td data-label="비용" class="num">$1.07</td><td data-label="토큰 입력/출력" class="num">841K / 7K</td><td data-label="종료">success</td></tr><tr data-status="other"><td data-label="시각">15:37</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/jikim/">jikim</a></td><td data-label="단계">review</td><td data-label="시간" class="num">2분</td><td data-label="턴" class="num">19</td><td data-label="비용" class="num">$0.75</td><td data-label="토큰 입력/출력" class="num">432K / 8K</td><td data-label="종료">success</td></tr><tr data-status="other"><td data-label="시각">15:35</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/jikim/">jikim</a></td><td data-label="단계">개선</td><td data-label="시간" class="num">5분</td><td data-label="턴" class="num">38</td><td data-label="비용" class="num">$1.97</td><td data-label="토큰 입력/출력" class="num">1.7M / 18K</td><td data-label="종료">success</td></tr></tbody></table></div>
 
 ## 아이디어 백로그 — 대기 9 / 전체 10
 
