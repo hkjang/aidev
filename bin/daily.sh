@@ -14,4 +14,9 @@ git -C "$REPO_DIR" pull -q --ff-only origin main || echo "warn: aidev pull faile
 # bash 는 스크립트를 실행하면서 읽으므로, 회차 도중 git pull 로 run.sh 가 바뀌면 깨질 수 있다 → 복사본으로 실행
 export AIDEV_BIN="$HERE"
 tmp=$(mktemp /tmp/aidev-run.XXXXXX.sh) && cp "$HERE/run.sh" "$tmp"
-exec flock -n "$HOME/.auto-improve/run.lock" bash -c 'trap "rm -f $0" EXIT; bash "$0" "$@"' "$tmp" "${@:---count 1}"
+# 회차를 별도 세션(setsid)에서 돌린다 — wsl.exe 나 작업 스케줄러가 이 래퍼를 끊어도 회차는 살아남는다.
+# (2026-09-08: 10분 넘는 회차가 매번 다음 트리거 시각에 통째로 사라져 개선 단계가 한 건도 완료되지 않았다.)
+setsid flock -n "$HOME/.auto-improve/run.lock" bash -c 'trap "rm -f $0" EXIT; bash "$0" "$@"' "$tmp" "${@:---count 1}" &
+child=$!
+# 래퍼는 자식이 끝날 때까지 붙어 있는다(정상 종료 시 작업도 정상 종료). 끊기면 자식만 계속 돈다.
+wait "$child"

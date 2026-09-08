@@ -11,7 +11,7 @@
           --accent: #2dd4bf; --accent-bg: #0f2a2a; --card: #111827; --card-2: #172033; }
 }
 * { box-sizing: border-box; }
-html { -webkit-text-size-adjust: 100%; scroll-behavior: smooth; scroll-padding-top: 4rem; }
+html { -webkit-text-size-adjust: 100%; scroll-behavior: smooth; scroll-padding-top: 5rem; }
 body { margin: 0; background: var(--bg); color: var(--fg);
   font: 16px/1.6 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Apple SD Gothic Neo", "Noto Sans KR", "Malgun Gothic", sans-serif; }
 a { color: var(--accent); text-decoration: none; }
@@ -72,7 +72,9 @@ blockquote { margin: 0; padding: .5rem 1rem; border-left: 4px solid var(--accent
 .table-wrap { width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; margin: .5rem 0 1rem; }
 table.rt { border-collapse: collapse; width: 100%; font-size: .95rem; }
 table.rt th, table.rt td { border-bottom: 1px solid var(--line); padding: .5rem .6rem; text-align: left; vertical-align: top; }
-table.rt th { background: var(--card); font-weight: 600; white-space: nowrap; position: sticky; top: var(--tap); z-index: 1; }
+/* 헤더를 sticky 로 두지 않는다 — .table-wrap 이 overflow-x 때문에 자체 스크롤 컨테이너가 되어
+   top 오프셋이 뷰포트가 아닌 래퍼 기준으로 잡히고, 헤더가 아래로 밀려 첫 행을 덮었다 (2026-09-07). */
+table.rt th { background: var(--card); font-weight: 600; white-space: nowrap; }
 table.rt td.num { text-align: right; font-variant-numeric: tabular-nums; }
 table.rt tr:hover td { background: color-mix(in srgb, var(--card) 70%, transparent); }
 .content table:not(.rt) { display: block; overflow-x: auto; border-collapse: collapse; }

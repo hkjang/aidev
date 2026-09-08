@@ -194,7 +194,14 @@ approvals(){
         [ "$RETRY_KIND" = conflict ] && rebase_pr "$pr" "$base"
       fi
     else stage ci "$CI_STATE" "$CI_REASON"; fi
-    rm -rf "$OUT/home"; record_run "$n" "$result" "$OUTCOME"; sync_repo "run($RUN_DATE): $n — $result"
+    rm -rf "$OUT/home"
+    # 아무것도 달라지지 않은 승인 확인(같은 PR 이 여전히 CI 대기/실패)은 회차로 기록하지 않는다 —
+    # 10분마다 같은 기록이 쌓여 일일 회차 상한(60)을 태우고 대시보드를 덮었다 (2026-09-08).
+    if [ "$OUTCOME" = merged ] || [ "${CI_STATE:-}" = failed ]; then
+      record_run "$n" "$result" "$OUTCOME"; sync_repo "run($RUN_DATE): $n — $result"
+    else
+      log "$n: 승인 대기 유지 ($pr, CI ${CI_STATE:-?}) — 회차로 기록하지 않음"; rm -rf "$OUT"
+    fi
   done
 }
 # 승인된 PR 이 base 와 충돌하면 리베이스해 러너 검증을 다시 돌리고 강제 푸시한다. 커밋이 바뀌므로 승인은 다시 받는다.
