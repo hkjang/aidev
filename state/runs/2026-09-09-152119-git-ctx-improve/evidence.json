@@ -1,6 +1,6 @@
 {
   "run_id": "2026-09-09-152119-git-ctx-improve",
-  "generated": "2026-09-09T15:21:20+09:00",
+  "generated": "2026-09-09T15:32:55+09:00",
   "run": {
     "run_id": "2026-09-09-152119-git-ctx-improve",
     "project": "git-ctx",
@@ -10,34 +10,89 @@
     "policy_version": "5935779a",
     "prompts_hash": "82f2440d4b2fef65",
     "runner_version": "5b81a64b",
-    "finished": "2026-09-09T15:21:20+09:00",
-    "outcome": "error"
+    "finished": "2026-09-09T15:32:55+09:00",
+    "outcome": "review-pending"
   },
   "record": {
-    "ts": "2026-09-09T15:21:20+09:00",
+    "ts": "2026-09-09T15:32:55+09:00",
     "date": "2026-09-09",
     "project": "git-ctx",
-    "result": "hold: budget",
-    "outcome": "error",
+    "result": "guarded files, PR open https://github.com/hkjang/git-ctx/pull/26",
+    "outcome": "review-pending",
     "run_id": "2026-09-09-152119-git-ctx-improve",
-    "base_sha": "",
-    "head_sha": "",
-    "pr": "",
+    "base_sha": "3527d486572b25e14cb7b4d2d41f500aeb689ca0",
+    "head_sha": "49b72bfcb73876bf807d28a53072bc10582491c1",
+    "pr": "https://github.com/hkjang/git-ctx/pull/26",
     "stages": {
       "improve": {
         "state": "hold",
         "reason": "회차 예산($22)이 오늘 남은 상한을 넘음",
         "at": "2026-09-09T15:21:20+09:00"
+      },
+      "base": {
+        "state": "pinned",
+        "reason": "main@3527d48",
+        "at": "2026-09-09T15:21:23+09:00"
+      },
+      "autonomy": {
+        "state": "release",
+        "reason": "",
+        "at": "2026-09-09T15:21:23+09:00"
+      },
+      "verify": {
+        "state": "passed",
+        "reason": "검증 3개 통과 (auto)",
+        "at": "2026-09-09T15:32:47+09:00"
+      },
+      "pr": {
+        "state": "created",
+        "reason": "https://github.com/hkjang/git-ctx/pull/26",
+        "at": "2026-09-09T15:32:53+09:00"
+      },
+      "guard": {
+        "state": "held",
+        "reason": "internal/contentsecurity/credential_shapes_test.go ",
+        "at": "2026-09-09T15:32:54+09:00"
       }
     },
     "campaign": "",
-    "autonomy": ""
+    "autonomy": "release",
+    "files": 3,
+    "additions": 79,
+    "deletions": 5,
+    "tests": 2,
+    "title": "fix(contentsecurity): keep masking inside the line it started on"
   },
   "stages": {
     "improve": {
       "state": "hold",
       "reason": "회차 예산($22)이 오늘 남은 상한을 넘음",
       "at": "2026-09-09T15:21:20+09:00"
+    },
+    "base": {
+      "state": "pinned",
+      "reason": "main@3527d48",
+      "at": "2026-09-09T15:21:23+09:00"
+    },
+    "autonomy": {
+      "state": "release",
+      "reason": "",
+      "at": "2026-09-09T15:21:23+09:00"
+    },
+    "verify": {
+      "state": "passed",
+      "reason": "검증 3개 통과 (auto)",
+      "at": "2026-09-09T15:32:47+09:00"
+    },
+    "pr": {
+      "state": "created",
+      "reason": "https://github.com/hkjang/git-ctx/pull/26",
+      "at": "2026-09-09T15:32:53+09:00"
+    },
+    "guard": {
+      "state": "held",
+      "reason": "internal/contentsecurity/credential_shapes_test.go ",
+      "at": "2026-09-09T15:32:54+09:00"
     }
   },
   "provenance": {
@@ -45,13 +100,36 @@
     "policy_version": "5935779a",
     "prompts_hash": "82f2440d4b2fef65",
     "runner_version": "5b81a64b",
-    "base_sha": "",
-    "head_sha": "",
-    "pr": ""
+    "base_sha": "3527d486572b25e14cb7b4d2d41f500aeb689ca0",
+    "head_sha": "49b72bfcb73876bf807d28a53072bc10582491c1",
+    "pr": "https://github.com/hkjang/git-ctx/pull/26"
   },
   "verification": {
-    "runner": null,
-    "runner_gate": null,
+    "runner": {
+      "source": "auto",
+      "commands": [
+        {
+          "cmd": "go build ./...",
+          "exit": 0,
+          "seconds": 1
+        },
+        {
+          "cmd": "go vet ./...",
+          "exit": 0,
+          "seconds": 0
+        },
+        {
+          "cmd": "go test ./...",
+          "exit": 0,
+          "seconds": 102
+        }
+      ]
+    },
+    "runner_gate": {
+      "ok": true,
+      "state": "verified",
+      "reason": "검증 3개 통과 (auto)"
+    },
     "after_rebase": null,
     "review": null,
     "ci_gate": null
@@ -61,5 +139,22 @@
     "assets_sha256": []
   },
   "approval": null,
-  "usage": []
+  "usage": [
+    {
+      "ts": "2026-09-09T15:31:01+09:00",
+      "date": "2026-09-09",
+      "project": "git-ctx",
+      "phase": "improve",
+      "run_id": "2026-09-09-152119-git-ctx-improve",
+      "campaign": "",
+      "subtype": "success",
+      "duration_ms": 577449,
+      "num_turns": 43,
+      "cost_usd": 3.1899075,
+      "input_tokens": 78,
+      "output_tokens": 33454,
+      "cache_read": 2848751,
+      "cache_create": 91360
+    }
+  ]
 }
