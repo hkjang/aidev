@@ -1,0 +1,235 @@
+{
+  "run_id": "2026-09-09-150603-aiportal-front-admin-improve",
+  "generated": "2026-09-09T15:15:10+09:00",
+  "run": {
+    "run_id": "2026-09-09-150603-aiportal-front-admin-improve",
+    "project": "aiportal-front-admin",
+    "kind": "improve",
+    "started": "2026-09-09T15:06:03+09:00",
+    "model": "claude-opus-5",
+    "policy_version": "5935779a",
+    "prompts_hash": "82f2440d4b2fef65",
+    "runner_version": "5b81a64b",
+    "finished": "2026-09-09T15:15:10+09:00",
+    "outcome": "merged"
+  },
+  "record": {
+    "ts": "2026-09-09T15:15:10+09:00",
+    "date": "2026-09-09",
+    "project": "aiportal-front-admin",
+    "result": "merged https://github.com/hkjang/aiportal-front-admin/pull/14, release skipped",
+    "outcome": "merged",
+    "run_id": "2026-09-09-150603-aiportal-front-admin-improve",
+    "base_sha": "365bf7f89e9945e4bbf217ca714ed4fc7e694564",
+    "head_sha": "732897a90eb7a381af111f12b8820be6c38ef182",
+    "pr": "https://github.com/hkjang/aiportal-front-admin/pull/14",
+    "stages": {
+      "base": {
+        "state": "pinned",
+        "reason": "main@365bf7f",
+        "at": "2026-09-09T15:06:06+09:00"
+      },
+      "autonomy": {
+        "state": "release",
+        "reason": "",
+        "at": "2026-09-09T15:06:06+09:00"
+      },
+      "verify": {
+        "state": "passed",
+        "reason": "검증 2개 통과 (policy)",
+        "at": "2026-09-09T15:10:56+09:00"
+      },
+      "pr": {
+        "state": "created",
+        "reason": "https://github.com/hkjang/aiportal-front-admin/pull/14",
+        "at": "2026-09-09T15:11:02+09:00"
+      },
+      "review": {
+        "state": "approved",
+        "reason": "리뷰 승인 (risk=low)",
+        "at": "2026-09-09T15:13:15+09:00"
+      },
+      "ci": {
+        "state": "passed",
+        "reason": "검사 없음 — 정책으로 허용",
+        "at": "2026-09-09T15:13:47+09:00"
+      },
+      "merge": {
+        "state": "done",
+        "reason": "732897a90eb7a381af111f12b8820be6c38ef182",
+        "at": "2026-09-09T15:13:52+09:00"
+      },
+      "release": {
+        "state": "skipped",
+        "reason": "릴리즈 안 함: 저장소에 릴리즈 이력이 전혀 없어 따라할 관례가 없다. 확인한 근거: (1) 태그 0개 - `git tag -l` 이 비어 있고 refs/tags 아래 ref 도 없다. (2) GitHub Release 없음(러너 제공 목록 비어 있음), `.github/workflows` 디렉터리 자체가 없다. (3) CHANGELOG.md / docs/RELEASE*.md / 릴리즈 노트 형식 문서가 없다. (4) 배포는 `.gitlab-ci.yml` 이 브랜치 기준으로만 한다 - main/develop push 시 `npm run build:*` 후 dist 를 PVC 경로에 cp 하는 continuous deploy 이고, 태그·버전·artifact 보관 단계가 없다. (5) 버전 필드는 package.json(root `kcb_ai` 0.0.0)와 upgrade/admin-v2/package.json(`@aiportal/admin-v2` 0.1.0)에 있지만 둘 다 `private: true` 이고, 전체 히스토리에서 파일 생성 시점 이후 한 번도 변경된 적이 없다(`git log -p --all` 의 version 라인 diff 가 최초 추가 2건뿐). 즉 릴리즈 표식이 아니라 scaffolding 기본값이다. (6) 문서도 이를 뒷받침한다 - docs/IMPROVEMENTS.md OBS-001 은 'release/version 표식'을 아직 하지 않은 개선 과제로 적어 두었고, docs/INDEX.md 작성 원칙은 '날짜와 version history는 실제 release 근거가 있을 때만 기록한다'고 못박는다. 따라서 버전 증가 단위, 태그 형식, 릴리즈 노트 양식·언어를 새로 정하는 일이 되므로 절차 5에 따라 아무 변경도 만들지 않았다. 워크트리는 커밋·태그 없이 clean 상태 그대로다. 릴리즈 자산 스크립트도 없다(upgrade/admin-v2/deploy 의 create-offline-cache.sh 는 npm offline cache 생성, deploy-changed.sh 는 변경 파일 배포용이며 둘 다 릴리즈 패키징이 아니다).",
+        "at": "2026-09-09T15:15:10+09:00"
+      }
+    },
+    "campaign": "",
+    "autonomy": "release",
+    "files": 3,
+    "additions": 199,
+    "deletions": 11,
+    "tests": 1,
+    "title": "fix(admin-v2): 목록의 날짜 값을 시간대와 형식에 흔들리지 않게 표시한다"
+  },
+  "stages": {
+    "base": {
+      "state": "pinned",
+      "reason": "main@365bf7f",
+      "at": "2026-09-09T15:06:06+09:00"
+    },
+    "autonomy": {
+      "state": "release",
+      "reason": "",
+      "at": "2026-09-09T15:06:06+09:00"
+    },
+    "verify": {
+      "state": "passed",
+      "reason": "검증 2개 통과 (policy)",
+      "at": "2026-09-09T15:10:56+09:00"
+    },
+    "pr": {
+      "state": "created",
+      "reason": "https://github.com/hkjang/aiportal-front-admin/pull/14",
+      "at": "2026-09-09T15:11:02+09:00"
+    },
+    "review": {
+      "state": "approved",
+      "reason": "리뷰 승인 (risk=low)",
+      "at": "2026-09-09T15:13:15+09:00"
+    },
+    "ci": {
+      "state": "passed",
+      "reason": "검사 없음 — 정책으로 허용",
+      "at": "2026-09-09T15:13:47+09:00"
+    },
+    "merge": {
+      "state": "done",
+      "reason": "732897a90eb7a381af111f12b8820be6c38ef182",
+      "at": "2026-09-09T15:13:52+09:00"
+    },
+    "release": {
+      "state": "skipped",
+      "reason": "릴리즈 안 함: 저장소에 릴리즈 이력이 전혀 없어 따라할 관례가 없다. 확인한 근거: (1) 태그 0개 - `git tag -l` 이 비어 있고 refs/tags 아래 ref 도 없다. (2) GitHub Release 없음(러너 제공 목록 비어 있음), `.github/workflows` 디렉터리 자체가 없다. (3) CHANGELOG.md / docs/RELEASE*.md / 릴리즈 노트 형식 문서가 없다. (4) 배포는 `.gitlab-ci.yml` 이 브랜치 기준으로만 한다 - main/develop push 시 `npm run build:*` 후 dist 를 PVC 경로에 cp 하는 continuous deploy 이고, 태그·버전·artifact 보관 단계가 없다. (5) 버전 필드는 package.json(root `kcb_ai` 0.0.0)와 upgrade/admin-v2/package.json(`@aiportal/admin-v2` 0.1.0)에 있지만 둘 다 `private: true` 이고, 전체 히스토리에서 파일 생성 시점 이후 한 번도 변경된 적이 없다(`git log -p --all` 의 version 라인 diff 가 최초 추가 2건뿐). 즉 릴리즈 표식이 아니라 scaffolding 기본값이다. (6) 문서도 이를 뒷받침한다 - docs/IMPROVEMENTS.md OBS-001 은 'release/version 표식'을 아직 하지 않은 개선 과제로 적어 두었고, docs/INDEX.md 작성 원칙은 '날짜와 version history는 실제 release 근거가 있을 때만 기록한다'고 못박는다. 따라서 버전 증가 단위, 태그 형식, 릴리즈 노트 양식·언어를 새로 정하는 일이 되므로 절차 5에 따라 아무 변경도 만들지 않았다. 워크트리는 커밋·태그 없이 clean 상태 그대로다. 릴리즈 자산 스크립트도 없다(upgrade/admin-v2/deploy 의 create-offline-cache.sh 는 npm offline cache 생성, deploy-changed.sh 는 변경 파일 배포용이며 둘 다 릴리즈 패키징이 아니다).",
+      "at": "2026-09-09T15:15:10+09:00"
+    }
+  },
+  "provenance": {
+    "model": "claude-opus-5",
+    "policy_version": "5935779a",
+    "prompts_hash": "82f2440d4b2fef65",
+    "runner_version": "5b81a64b",
+    "base_sha": "365bf7f89e9945e4bbf217ca714ed4fc7e694564",
+    "head_sha": "732897a90eb7a381af111f12b8820be6c38ef182",
+    "pr": "https://github.com/hkjang/aiportal-front-admin/pull/14"
+  },
+  "verification": {
+    "runner": {
+      "source": "policy",
+      "commands": [
+        {
+          "cmd": "[ -d node_modules ] || npm ci --no-audit --no-fund",
+          "exit": 0,
+          "seconds": 4
+        },
+        {
+          "cmd": "npm run build:dev --silent",
+          "exit": 0,
+          "seconds": 3
+        }
+      ]
+    },
+    "runner_gate": {
+      "ok": true,
+      "state": "verified",
+      "reason": "검증 2개 통과 (policy)"
+    },
+    "after_rebase": null,
+    "review": {
+      "verdict": "approve",
+      "reasons": [],
+      "notes": [
+        "테스트가 실제로 변경을 검증함을 확인했다. main 의 format.ts 를 되돌린 상태로 src/shared/format.test.ts 를 돌리면 3개 케이스('2026-08-25' 날짜만 값, yyyyMMdd/yyyyMMddHHmmss, epoch millis)가 실패하고, 신규 코드에서는 13개 모두 통과한다.",
+        "시간대 의존성 없음: TZ=UTC / America/New_York / Pacific/Kiritimati / Asia/Kolkata 4개 환경에서 format.test.ts 전부 통과. 기대값을 동일한 Intl formatter 와 로컬 Date 생성자로 만들어 ICU 표기 차이에 흔들리지 않게 짠 점이 적절하다.",
+        "전체 스위트(npm run test) 16파일 124테스트 통과, npm run typecheck(vue-tsc --noEmit) 통과. 워킹트리 깨끗함.",
+        "format.ts:20 localDate() 의 롤오버 검증은 DST 스프링포워드 갭 시각(예: America/New_York 의 2026-03-08 02:30:00)을 '달력에 없는 값'으로 보고 원본 문자열을 그대로 노출한다. 대상이 DST 없는 KST 기준 관리자 화면이고 실패 모드가 원본 표시(비파괴)라 결함으로 보지 않지만, 다국가 확장 시 재검토 대상이다.",
+        "커밋 메시지와 ARCHITECTURE.md 가 주장하는 'backend 가 yyyyMMdd·yyyyMMddHHmmss·epoch millis 를 내려준다'는 근거를 리포지토리에서 찾지 못했다(mock.ts 의 실제 필드는 모두 offset 없는 'yyyy-MM-dd HH:mm:ss' 또는 ISO 형식). 다만 해당 경로는 정확히 8/13/14 자리로만 좁혀져 있고 그 외 자릿수는 원본을 남기므로 오탐 위험이 낮은 방어적 처리다. 설명이 다소 앞서간 정도로 본다.",
+        "범위: ARCHITECTURE.md 문서 추가와 yesterdayLabel() 의 공용 DATE_FORMAT 상수 재사용(동작 동일)만 부수 변경이며 목적과 어긋나지 않는다. 인증·권한·마이그레이션·외부 상태 변경 없음, 순수 표시 로직이라 revert 로 완전히 되돌아온다.",
+        "기존 동작 대비 사용자 눈에 보이는 변화: 날짜만 있는 값이 '2026. 08. 25. 09:00'(KST 에서 없는 시각) 대신 '2026. 08. 25.' 로 시각 없이 표시된다. 의도된 개선이며 문서에도 명시돼 있다.",
+        "formatCompact 테스트(format.test.ts:32)의 단언이 길이 비교뿐이라 약하지만, formatCompact 는 이번에 변경되지 않았고 추가 커버리지 목적이므로 거절 사유는 아니다."
+      ],
+      "risk": "low"
+    },
+    "ci_gate": {
+      "ok": false,
+      "state": "no-ci",
+      "reason": "이 커밋에 검사가 없음 (정책 allow_merge_without_ci 가 없으면 차단)",
+      "checks": 0
+    }
+  },
+  "release": {
+    "result": {
+      "status": "skipped",
+      "version": "",
+      "tag": "",
+      "title": "",
+      "notes_file": "",
+      "github_release": false,
+      "assets": [],
+      "reason": "저장소에 릴리즈 이력이 전혀 없어 따라할 관례가 없다. 확인한 근거: (1) 태그 0개 - `git tag -l` 이 비어 있고 refs/tags 아래 ref 도 없다. (2) GitHub Release 없음(러너 제공 목록 비어 있음), `.github/workflows` 디렉터리 자체가 없다. (3) CHANGELOG.md / docs/RELEASE*.md / 릴리즈 노트 형식 문서가 없다. (4) 배포는 `.gitlab-ci.yml` 이 브랜치 기준으로만 한다 - main/develop push 시 `npm run build:*` 후 dist 를 PVC 경로에 cp 하는 continuous deploy 이고, 태그·버전·artifact 보관 단계가 없다. (5) 버전 필드는 package.json(root `kcb_ai` 0.0.0)와 upgrade/admin-v2/package.json(`@aiportal/admin-v2` 0.1.0)에 있지만 둘 다 `private: true` 이고, 전체 히스토리에서 파일 생성 시점 이후 한 번도 변경된 적이 없다(`git log -p --all` 의 version 라인 diff 가 최초 추가 2건뿐). 즉 릴리즈 표식이 아니라 scaffolding 기본값이다. (6) 문서도 이를 뒷받침한다 - docs/IMPROVEMENTS.md OBS-001 은 'release/version 표식'을 아직 하지 않은 개선 과제로 적어 두었고, docs/INDEX.md 작성 원칙은 '날짜와 version history는 실제 release 근거가 있을 때만 기록한다'고 못박는다. 따라서 버전 증가 단위, 태그 형식, 릴리즈 노트 양식·언어를 새로 정하는 일이 되므로 절차 5에 따라 아무 변경도 만들지 않았다. 워크트리는 커밋·태그 없이 clean 상태 그대로다. 릴리즈 자산 스크립트도 없다(upgrade/admin-v2/deploy 의 create-offline-cache.sh 는 npm offline cache 생성, deploy-changed.sh 는 변경 파일 배포용이며 둘 다 릴리즈 패키징이 아니다)."
+    },
+    "assets_sha256": []
+  },
+  "approval": null,
+  "usage": [
+    {
+      "ts": "2026-09-09T15:10:48+09:00",
+      "date": "2026-09-09",
+      "project": "aiportal-front-admin",
+      "phase": "improve",
+      "run_id": "2026-09-09-150603-aiportal-front-admin-improve",
+      "campaign": "",
+      "subtype": "success",
+      "duration_ms": 280027,
+      "num_turns": 43,
+      "cost_usd": 2.7058669999999996,
+      "input_tokens": 68,
+      "output_tokens": 19252,
+      "cache_read": 2597488,
+      "cache_create": 91289
+    },
+    {
+      "ts": "2026-09-09T15:13:15+09:00",
+      "date": "2026-09-09",
+      "project": "aiportal-front-admin",
+      "phase": "review",
+      "run_id": "2026-09-09-150603-aiportal-front-admin-improve",
+      "campaign": "",
+      "subtype": "success",
+      "duration_ms": 130998,
+      "num_turns": 13,
+      "cost_usd": 0.6654895000000002,
+      "input_tokens": 26,
+      "output_tokens": 8717,
+      "cache_read": 382147,
+      "cache_create": 25454
+    },
+    {
+      "ts": "2026-09-09T15:15:10+09:00",
+      "date": "2026-09-09",
+      "project": "aiportal-front-admin",
+      "phase": "release",
+      "run_id": "2026-09-09-150603-aiportal-front-admin-improve",
+      "campaign": "",
+      "subtype": "success",
+      "duration_ms": 70306,
+      "num_turns": 11,
+      "cost_usd": 0.47853000000000007,
+      "input_tokens": 16,
+      "output_tokens": 4898,
+      "cache_read": 228504,
+      "cache_create": 23677
+    }
+  ]
+}

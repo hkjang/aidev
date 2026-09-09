@@ -142,3 +142,13 @@
 - 보류 아이디어: A-107 후속 — 재시도·circuit breaker·공용 `requests.Session` 도입 — 가치 3 / 위험 3 / M
 - 보류 아이디어: bare except → 구체 예외로 범위 축소(`service/pipelineservice.confluence_pipeline_kcblaw` 등 잔여) — 가치 3 / 위험 3 / M
 
+## 2026-09-09
+- 선택: 스페이스 첨부 색인의 누적 배치 반복 삽입 제거 (감사 A-111) (가치 4 / 위험 2 / 작업량 S)
+- 결과: 성공
+- 요약: `service/pipelineservice.confluence_pipeline_spacefile_detail` 이 파일마다 `insert_batch_list.extend(result)` 로 청크를 누적한 뒤 **루프 안에서** `insert_to_milvus_cf(CONFLUENCE_COLLECTION_NAME, insert_batch_list)` 로 누적 목록 전체를 다시 삽입했다. `util/milvus_confluence.insert_to_milvus_cf` 는 upsert 가 아니라 `collection.insert()` 이고 Milvus 는 primary key 가 같아도 삽입을 막지 않으므로, 파일 N 개짜리 스페이스를 색인하면 첫 파일의 청크가 N 번·두 번째가 N-1 번 들어가 전체 쓰기량이 N(N+1)/2 배치로 불어나고 컬렉션에 같은 id 의 중복 entity 가 쌓인다(중복은 검색 결과에 그대로 나타나고, 파일마다 `flush()`/`load()` 를 다시 도는 탓에 스페이스가 클수록 색인이 급격히 느려진다). 같은 파일 위쪽의 `confluence_piepeline_detail` 은 루프 밖에서 한 번만 삽입하므로 대조군이 있었다. 설정·Milvus 비의존 helper `util/space_file_indexer.py` 를 추가해 다운로드·추출·청킹·삽입을 주입받는 `index_space_files()` 에 파일 단위 루프를 담고 삽입에 **이번 파일의 청크만** 넘기도록 했으며, 청크가 없으면 삽입을 건너뛰고 로그는 파일별 건수와 누적 건수를 함께 남긴다. 반환값은 여전히 전체 누적 목록이라 `api.py` 의 `len(insert_list)` 적재 건수 로그 계약이 유지되고, 파일 하나의 예외가 스페이스 색인을 중단시키던 기존 의미와 `EXTRACT_ERROR` 안내 문구 처리도 그대로다. 검증은 helper 를 실제 import 한 단위 테스트 14건(파일당 1회 삽입·중복 id 0·삽입 건수가 파일 수에 비례(2/4/8)·반환 누적 목록·빈 청크 스킵·추출 실패 문구·예외 전파·파일별 로그)과, import 할 수 없는 `service/pipelineservice.py` 의 AST 정적 검사 4건으로 했다. 정적 검사는 "같은 루프 층에서 `.extend()` 로 누적한 이름을 `insert_to_milvus_cf` 에 다시 넘김" 패턴을 파일 전체에서 막되 중첩 루프는 건너뛰어, 안쪽 루프에서 누적하고 바깥에서 한 번 삽입하는 `confluence_piepeline_detail` 은 통과시킨다. 옛 코드를 되돌려 넣어 정적 검사 4건이 실제로 실패하는지 확인했다. `python3 -m pytest -q` 969 passed(기존 941), `python -m pyflakes .` undefined name 0건. docs 4종(CURRENT_STATE_AUDIT/PIPELINE/CODEBASE_MAP/TESTING) 갱신. 커밋 `6b83be1`.
+- 보류 아이디어: A-105 후속 — 공통 오류 응답 model 도입과 traceback 노출 제거(A-106 연계) — 가치 4 / 위험 3 / L
+- 보류 아이디어: 백그라운드 task 의 마지막 성공 시각(heartbeat) 노출 — task 생존은 보이지만 루프가 살아 있으면서 매 주기 예외를 삼키는 상태는 여전히 healthy 로 보인다 — 가치 3 / 위험 2 / S
+- 보류 아이디어: bare except → 구체 예외로 범위 축소(`service/pipelineservice.confluence_pipeline_kcblaw`, `api.py` 의 `/run_confluence_pipeline_spacefile` 등 잔여) — 가치 3 / 위험 3 / M
+- 보류 아이디어: A-107 후속 — 재시도·circuit breaker·공용 `requests.Session` 도입 — 가치 3 / 위험 3 / M
+- 보류 아이디어: A-104 후속 — collection name allowlist 와 field 별 타입 검증 — 가치 3 / 위험 2 / M
+
