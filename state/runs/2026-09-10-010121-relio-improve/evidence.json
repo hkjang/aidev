@@ -1,0 +1,233 @@
+{
+  "run_id": "2026-09-10-010121-relio-improve",
+  "generated": "2026-09-10T01:10:42+09:00",
+  "run": {
+    "run_id": "2026-09-10-010121-relio-improve",
+    "project": "relio",
+    "kind": "improve",
+    "started": "2026-09-10T01:01:22+09:00",
+    "model": "claude-opus-5",
+    "policy_version": "5935779a",
+    "prompts_hash": "82f2440d4b2fef65",
+    "runner_version": "5b81a64b",
+    "finished": "2026-09-10T01:10:41+09:00",
+    "outcome": "merged"
+  },
+  "record": {
+    "ts": "2026-09-10T01:10:41+09:00",
+    "date": "2026-09-10",
+    "project": "relio",
+    "result": "merged https://github.com/hkjang/relio/pull/16",
+    "outcome": "merged",
+    "run_id": "2026-09-10-010121-relio-improve",
+    "base_sha": "b42287d18ba6cc5e748327adc4e1c554f0f1f4ca",
+    "head_sha": "574c08173479ee822a105c2d0b893a30e758376a",
+    "pr": "https://github.com/hkjang/relio/pull/16",
+    "stages": {
+      "base": {
+        "state": "pinned",
+        "reason": "main@b42287d",
+        "at": "2026-09-10T01:01:26+09:00"
+      },
+      "autonomy": {
+        "state": "low-risk",
+        "reason": "롤백 PR ",
+        "at": "2026-09-10T01:01:26+09:00"
+      },
+      "verify": {
+        "state": "passed",
+        "reason": "검증 7개 통과 (auto)",
+        "at": "2026-09-10T01:06:52+09:00"
+      },
+      "pr": {
+        "state": "created",
+        "reason": "https://github.com/hkjang/relio/pull/16",
+        "at": "2026-09-10T01:06:58+09:00"
+      },
+      "review": {
+        "state": "approved",
+        "reason": "리뷰 승인 (risk=low)",
+        "at": "2026-09-10T01:09:35+09:00"
+      },
+      "ci": {
+        "state": "passed",
+        "reason": "검사 2개 모두 success",
+        "at": "2026-09-10T01:10:34+09:00"
+      },
+      "merge": {
+        "state": "done",
+        "reason": "574c08173479ee822a105c2d0b893a30e758376a",
+        "at": "2026-09-10T01:10:38+09:00"
+      },
+      "release": {
+        "state": "skipped",
+        "reason": "자율화 단계 low-risk — 릴리즈는 사람이",
+        "at": "2026-09-10T01:10:41+09:00"
+      }
+    },
+    "campaign": "",
+    "autonomy": "low-risk",
+    "files": 2,
+    "additions": 414,
+    "deletions": 81,
+    "tests": 1,
+    "title": "fix(intelligence): bound the amount and probability drop rules by their window"
+  },
+  "stages": {
+    "base": {
+      "state": "pinned",
+      "reason": "main@b42287d",
+      "at": "2026-09-10T01:01:26+09:00"
+    },
+    "autonomy": {
+      "state": "low-risk",
+      "reason": "롤백 PR ",
+      "at": "2026-09-10T01:01:26+09:00"
+    },
+    "verify": {
+      "state": "passed",
+      "reason": "검증 7개 통과 (auto)",
+      "at": "2026-09-10T01:06:52+09:00"
+    },
+    "pr": {
+      "state": "created",
+      "reason": "https://github.com/hkjang/relio/pull/16",
+      "at": "2026-09-10T01:06:58+09:00"
+    },
+    "review": {
+      "state": "approved",
+      "reason": "리뷰 승인 (risk=low)",
+      "at": "2026-09-10T01:09:35+09:00"
+    },
+    "ci": {
+      "state": "passed",
+      "reason": "검사 2개 모두 success",
+      "at": "2026-09-10T01:10:34+09:00"
+    },
+    "merge": {
+      "state": "done",
+      "reason": "574c08173479ee822a105c2d0b893a30e758376a",
+      "at": "2026-09-10T01:10:38+09:00"
+    },
+    "release": {
+      "state": "skipped",
+      "reason": "자율화 단계 low-risk — 릴리즈는 사람이",
+      "at": "2026-09-10T01:10:41+09:00"
+    }
+  },
+  "provenance": {
+    "model": "claude-opus-5",
+    "policy_version": "5935779a",
+    "prompts_hash": "82f2440d4b2fef65",
+    "runner_version": "5b81a64b",
+    "base_sha": "b42287d18ba6cc5e748327adc4e1c554f0f1f4ca",
+    "head_sha": "574c08173479ee822a105c2d0b893a30e758376a",
+    "pr": "https://github.com/hkjang/relio/pull/16"
+  },
+  "verification": {
+    "runner": {
+      "source": "auto",
+      "commands": [
+        {
+          "cmd": "go build ./...",
+          "exit": 0,
+          "seconds": 1
+        },
+        {
+          "cmd": "go vet ./...",
+          "exit": 0,
+          "seconds": 0
+        },
+        {
+          "cmd": "go test ./...",
+          "exit": 0,
+          "seconds": 0
+        },
+        {
+          "cmd": "cd web && [ -d node_modules ] || npm ci --no-audit --no-fund",
+          "exit": 0,
+          "seconds": 0
+        },
+        {
+          "cmd": "cd web && npm run typecheck --silent",
+          "exit": 0,
+          "seconds": 3
+        },
+        {
+          "cmd": "cd web && [ -d node_modules ] || npm ci --no-audit --no-fund",
+          "exit": 0,
+          "seconds": 0
+        },
+        {
+          "cmd": "cd web && npm run build --silent",
+          "exit": 0,
+          "seconds": 4
+        }
+      ]
+    },
+    "runner_gate": {
+      "ok": true,
+      "state": "verified",
+      "reason": "검증 7개 통과 (auto)"
+    },
+    "after_rebase": null,
+    "review": {
+      "verdict": "approve",
+      "reasons": [],
+      "notes": [
+        "internal/intelligence/health.go:229 historySince/withinWindow convert float64 days to time.Duration without a range check. A threshold above ~106751 days (or 1e308 / +Inf, which the admin update path in health.go:176 stores without validating) overflows int64: the conversion is undefined in Go and on amd64 yields math.MinInt64, so withinWindow's window goes negative and the rule silently never fires -- the exact failure mode windowDays was added to prevent. Absurd input only, but an upper clamp alongside the `!(days > 0)` guard would close it.",
+        "internal/intelligence/health.go:78 windowDays deliberately reinterprets days<=0 as the seeded default (90/180) instead of 'window disabled'. For CLOSE_DATE_SLIPPAGE this reverses prior behaviour (a 0 window used to suppress the rule); the commit message states this and the `active` flag is the intended off switch, so it is a defensible call, but any operator relying on days:0 to mute slippage will see it start firing after deploy.",
+        "Tests genuinely exercise the change: TestDropRulesOnlyCountChangesInsideTheirWindow (89d fires / 91d quiet, plus a narrowed 7d window) and TestHistoryFetchCoversTheWidestConfiguredWindow both fail against the pre-change logic, and the windowDays fallback case asserts a fire that only happens if 0 falls back to 90. Boundary is probed at 89/91 but not exactly 90; minor.",
+        "Refactor scope (switch moved out of DealHealth into pure evaluateHealthRule) is declared in the commit message and is what makes the fix testable without a database. Diff-checked: the six non-history cases moved verbatim, only the three window-bounded rules changed behaviour (added windowDays + withinWindow + a windowDays evidence key). Evidence maps are rendered generically by web/src/components/Intelligence.tsx:14, so the new key breaks no client.",
+        "Seeded thresholds in migrations/002_sales_intelligence.sql:135-137 confirm the commit's premise (slippage days:180, both drops days:90). No migration, schema, auth, or deletion logic touched; opportunity_health_snapshots rows are append-only history, so a revert restores prior behaviour cleanly.",
+        "go build ./..., go vet ./internal/intelligence/..., and go test -count=1 ./... all pass."
+      ],
+      "risk": "low"
+    },
+    "ci_gate": {
+      "ok": true,
+      "state": "success",
+      "reason": "검사 2개 모두 success",
+      "checks": 2
+    }
+  },
+  "release": {
+    "result": null,
+    "assets_sha256": []
+  },
+  "approval": null,
+  "usage": [
+    {
+      "ts": "2026-09-10T01:06:43+09:00",
+      "date": "2026-09-10",
+      "project": "relio",
+      "phase": "improve",
+      "run_id": "2026-09-10-010121-relio-improve",
+      "campaign": "",
+      "subtype": "success",
+      "duration_ms": 328676,
+      "num_turns": 36,
+      "cost_usd": 2.2845120000000003,
+      "input_tokens": 60,
+      "output_tokens": 24880,
+      "cache_read": 1854198,
+      "cache_create": 71897
+    },
+    {
+      "ts": "2026-09-10T01:09:35+09:00",
+      "date": "2026-09-10",
+      "project": "relio",
+      "phase": "review",
+      "run_id": "2026-09-10-010121-relio-improve",
+      "campaign": "",
+      "subtype": "success",
+      "duration_ms": 161030,
+      "num_turns": 16,
+      "cost_usd": 0.8471995000000003,
+      "input_tokens": 32,
+      "output_tokens": 10317,
+      "cache_read": 530697,
+      "cache_create": 32195
+    }
+  ]
+}

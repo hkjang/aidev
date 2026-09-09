@@ -167,3 +167,13 @@
 - 보류 아이디어: `web/dist/assets/vendor` 청크가 617KB 로 커서 폐쇄망 초기 로딩 최적화 여지가 있습니다 (가치 2 / 위험 3 / M).
 
 - 릴리즈: v0.5.13 (2026-09-09, run 2026-09-09-115113-releasedock-improve)
+## 2026-09-10
+- 선택: 실행 기록 INSERT 실패를 전부 "이미 실행 중"으로 보고하던 문제 수정 (가치 3 / 위험 1 / 작업량 S)
+- 결과: 성공
+- 요약: `createSimpleRun` 은 업로드를 대상 디렉터리에 안착시킨 뒤 `simple_runs` 에 행을 넣는데, 그 `Exec` 이 어떤 이유로 실패하든 `409 simple_run_active` + "이 대상에서 이미 실행 중인 작업이 있습니다" 로 답했습니다. 부분 유니크 인덱스 위반(23505)만이 업로더가 실제로 기다리면 풀리는 상황이고, 사용자 행이 사라진 actor 의 외래 키 위반·연결 끊김·요청 취소는 모두 서버 쪽 실패입니다 — 그런데도 같은 문구가 나가고 에러는 아무 데도 기록되지 않아, 폐쇄망 운영자는 실행 목록에 아무것도 없는 대상을 두고 존재하지 않는 실행이 끝나기를 기다리게 됩니다. `errors.As` 로 `*pgconn.PgError` 를 꺼내 코드가 23505 일 때만 409 를 유지하는 `isUniqueViolation` 을 두고(전체 모드 `releases.go` 의 `isSerializationFailure` 와 같은 방식), 나머지는 `s.log.Error("could not record a simple run", ...)` 로 남긴 뒤 `500 database_error` / "실행 기록을 저장하지 못했습니다" 로 나누었습니다. 두 경로 모두 기존 defer 가 그대로 동작해 스테이징 파일은 지워지고 동시 실행 슬롯도 반납됩니다. 새 테스트 3건을 `simple_conflict_test.go` 에 추가했는데, 순수 단위 테스트는 23505·래핑된 23505 만 참이고 23503·23514·40001·`context.Canceled`·일반 오류·nil 은 거짓임을 확인하고, 스키마 격리 통합 테스트 두 건은 실제 핸들러로 멀티파트를 올려 (1) RUNNING 실행이 있으면 409 `simple_run_active`, (2) users 에 없는 actor 로는 500 `database_error` 가 나가는지, 그리고 두 경우 모두 대상 디렉터리가 비고 슬롯이 0 이며 실행 행이 남지 않는지 검사합니다. 고치기 전 코드로 되돌려 (2) 가 `status = 409` 로 실패하는 것도 확인했습니다. 로컬 도커 PostgreSQL 16 으로 `TEST_POSTGRES_DSN` 을 채워 backend/runner `go vet`·`go test ./...`(통합 테스트 포함), `npm ci`, `npm test -- --run`(90건), `npm run build`(tsc -b 포함) 을 모두 통과했고 `web/dist` 는 커밋 전에 지웠습니다. 사용자에게 보이는 동작 설명이 바뀌지 않아 docs 는 손대지 않았고, VERSION 은 릴리즈 세션의 몫이라 건드리지 않았습니다.
+- 보류 아이디어: 전체 모드의 릴리즈 업로드(`releases.go`)와 프리셋 업로드(`presets.go`)도 `ParseMultipartForm` 을 써서 같은 임시 사본이 생깁니다 (가치 3 / 위험 3 / M).
+- 보류 아이디어: CI 와 Makefile 에 `go vet`(또는 golangci-lint) 단계가 없어 정적 검사가 매 세션 수동입니다 (가치 3 / 위험 1 / S).
+- 보류 아이디어: 진행 중 실행의 SSE 중복 제거가 줄마다 전체 배열을 훑어 긴 로그에서 O(n²) 이 됩니다 — 마지막 id 비교로 충분합니다 (가치 2 / 위험 1 / S).
+- 보류 아이디어: `simpleRunLogger.append` 가 빈 payload 를 저장하지 않아 스크립트 출력의 빈 줄(문단 구분)이 로그에서 사라집니다 (가치 2 / 위험 1 / S).
+- 보류 아이디어: 로그 한도 도달을 알리는 system 행이 system 예산을 차감하지 않아, 예산 회계에서 벗어난 유일한 행입니다 (가치 1 / 위험 1 / S).
+
