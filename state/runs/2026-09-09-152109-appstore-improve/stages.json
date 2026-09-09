@@ -1,0 +1,32 @@
+{
+  "improve": {
+    "state": "hold",
+    "reason": "회차 예산($22)이 오늘 남은 상한을 넘음",
+    "at": "2026-09-09T15:21:10+09:00"
+  },
+  "base": {
+    "state": "pinned",
+    "reason": "main@247b897",
+    "at": "2026-09-09T15:21:14+09:00"
+  },
+  "autonomy": {
+    "state": "release",
+    "reason": "",
+    "at": "2026-09-09T15:21:14+09:00"
+  },
+  "verify": {
+    "state": "passed",
+    "reason": "검증 7개 통과 (auto)",
+    "at": "2026-09-09T15:28:42+09:00"
+  },
+  "pr": {
+    "state": "created",
+    "reason": "https://github.com/hkjang/appstore/pull/11",
+    "at": "2026-09-09T15:28:48+09:00"
+  },
+  "review": {
+    "state": "rejected",
+    "reason": "리뷰 거절: internal/httpapi/validation.go:48-52 categorySlugPattern 이 앱 슬러그보다 밑줄을 더 허용하는 유일한 근거로 \"the seeded taxonomy ships slugs such as 'enterprise_ops' and those are live URLs\" 를 들지만 이는 사실이 아닙니다. 시드는 apps_enriched.json 의 category 값을 internal/database/seed.go:217 에서 slugify() 로 통과시키고, slugify(internal/database/seed.go:245-262)는 문자/숫자가 아닌 룬을 '-' 로 바꾸므로 DB 에 저장되는 슬러그는 'enterprise-ops', 'ai-agents' 입니다(임시 테스트로 직접 실행해 확인). 즉 기존 slugPattern 으로도 관리자가 잠기는 일은 없었고, 커밋 메시지·주석이 말하는 동작과 실제 시스템 상태가 다릅니다(판정 항목 3). / internal/httpapi/validation_test.go:124-133 TestValidateCategoryInputKeepsTheSeededTaxonomyEditable 은 \"The shipped categories carry underscore slugs and those are live /categories/{slug} URLs\" 라는 위 거짓 전제를 테스트 이름과 주석으로 고정합니다. 실제로 존재하지 않는 회귀를 지키는 테스트라 이후 슬러그 규칙을 앱과 통일하려는 변경을 부당하게 막습니다. / web/src/pages/admin-pages.tsx:1271-1275 프런트 슬러그 필터를 /[^a-z0-9-]/ 에서 /[^a-z0-9_-]/ 로 넓힌 것도 같은 거짓 근거(주석 1272-1273)에 기대고 있습니다. 이번 변경의 목적은 '렌더링되는 카테고리 필드에 상한을 두는 것'인데, 근거가 성립하지 않는 슬러그 문자셋 완화가 서버·클라이언트 양쪽에 섞여 들어갔습니다(판정 항목 4).",
+    "at": "2026-09-09T15:31:30+09:00"
+  }
+}

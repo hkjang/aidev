@@ -1,0 +1,212 @@
+{
+  "run_id": "2026-09-09-152109-appstore-improve",
+  "generated": "2026-09-09T15:31:32+09:00",
+  "run": {
+    "run_id": "2026-09-09-152109-appstore-improve",
+    "project": "appstore",
+    "kind": "improve",
+    "started": "2026-09-09T15:21:09+09:00",
+    "model": "claude-opus-5",
+    "policy_version": "5935779a",
+    "prompts_hash": "82f2440d4b2fef65",
+    "runner_version": "5b81a64b",
+    "finished": "2026-09-09T15:31:32+09:00",
+    "outcome": "review-pending"
+  },
+  "record": {
+    "ts": "2026-09-09T15:31:32+09:00",
+    "date": "2026-09-09",
+    "project": "appstore",
+    "result": "review held, PR open https://github.com/hkjang/appstore/pull/11",
+    "outcome": "review-pending",
+    "run_id": "2026-09-09-152109-appstore-improve",
+    "base_sha": "247b89756f9b2d5ac20ea9c8f8f75596ff3801a7",
+    "head_sha": "68543753603fd4c5e002ae9891774511fc589872",
+    "pr": "https://github.com/hkjang/appstore/pull/11",
+    "stages": {
+      "improve": {
+        "state": "hold",
+        "reason": "회차 예산($22)이 오늘 남은 상한을 넘음",
+        "at": "2026-09-09T15:21:10+09:00"
+      },
+      "base": {
+        "state": "pinned",
+        "reason": "main@247b897",
+        "at": "2026-09-09T15:21:14+09:00"
+      },
+      "autonomy": {
+        "state": "release",
+        "reason": "",
+        "at": "2026-09-09T15:21:14+09:00"
+      },
+      "verify": {
+        "state": "passed",
+        "reason": "검증 7개 통과 (auto)",
+        "at": "2026-09-09T15:28:42+09:00"
+      },
+      "pr": {
+        "state": "created",
+        "reason": "https://github.com/hkjang/appstore/pull/11",
+        "at": "2026-09-09T15:28:48+09:00"
+      },
+      "review": {
+        "state": "rejected",
+        "reason": "리뷰 거절: internal/httpapi/validation.go:48-52 categorySlugPattern 이 앱 슬러그보다 밑줄을 더 허용하는 유일한 근거로 \"the seeded taxonomy ships slugs such as 'enterprise_ops' and those are live URLs\" 를 들지만 이는 사실이 아닙니다. 시드는 apps_enriched.json 의 category 값을 internal/database/seed.go:217 에서 slugify() 로 통과시키고, slugify(internal/database/seed.go:245-262)는 문자/숫자가 아닌 룬을 '-' 로 바꾸므로 DB 에 저장되는 슬러그는 'enterprise-ops', 'ai-agents' 입니다(임시 테스트로 직접 실행해 확인). 즉 기존 slugPattern 으로도 관리자가 잠기는 일은 없었고, 커밋 메시지·주석이 말하는 동작과 실제 시스템 상태가 다릅니다(판정 항목 3). / internal/httpapi/validation_test.go:124-133 TestValidateCategoryInputKeepsTheSeededTaxonomyEditable 은 \"The shipped categories carry underscore slugs and those are live /categories/{slug} URLs\" 라는 위 거짓 전제를 테스트 이름과 주석으로 고정합니다. 실제로 존재하지 않는 회귀를 지키는 테스트라 이후 슬러그 규칙을 앱과 통일하려는 변경을 부당하게 막습니다. / web/src/pages/admin-pages.tsx:1271-1275 프런트 슬러그 필터를 /[^a-z0-9-]/ 에서 /[^a-z0-9_-]/ 로 넓힌 것도 같은 거짓 근거(주석 1272-1273)에 기대고 있습니다. 이번 변경의 목적은 '렌더링되는 카테고리 필드에 상한을 두는 것'인데, 근거가 성립하지 않는 슬러그 문자셋 완화가 서버·클라이언트 양쪽에 섞여 들어갔습니다(판정 항목 4).",
+        "at": "2026-09-09T15:31:30+09:00"
+      }
+    },
+    "campaign": "",
+    "autonomy": "release",
+    "files": 5,
+    "additions": 145,
+    "deletions": 5,
+    "tests": 1,
+    "title": "fix: bound the category fields the browse page renders"
+  },
+  "stages": {
+    "improve": {
+      "state": "hold",
+      "reason": "회차 예산($22)이 오늘 남은 상한을 넘음",
+      "at": "2026-09-09T15:21:10+09:00"
+    },
+    "base": {
+      "state": "pinned",
+      "reason": "main@247b897",
+      "at": "2026-09-09T15:21:14+09:00"
+    },
+    "autonomy": {
+      "state": "release",
+      "reason": "",
+      "at": "2026-09-09T15:21:14+09:00"
+    },
+    "verify": {
+      "state": "passed",
+      "reason": "검증 7개 통과 (auto)",
+      "at": "2026-09-09T15:28:42+09:00"
+    },
+    "pr": {
+      "state": "created",
+      "reason": "https://github.com/hkjang/appstore/pull/11",
+      "at": "2026-09-09T15:28:48+09:00"
+    },
+    "review": {
+      "state": "rejected",
+      "reason": "리뷰 거절: internal/httpapi/validation.go:48-52 categorySlugPattern 이 앱 슬러그보다 밑줄을 더 허용하는 유일한 근거로 \"the seeded taxonomy ships slugs such as 'enterprise_ops' and those are live URLs\" 를 들지만 이는 사실이 아닙니다. 시드는 apps_enriched.json 의 category 값을 internal/database/seed.go:217 에서 slugify() 로 통과시키고, slugify(internal/database/seed.go:245-262)는 문자/숫자가 아닌 룬을 '-' 로 바꾸므로 DB 에 저장되는 슬러그는 'enterprise-ops', 'ai-agents' 입니다(임시 테스트로 직접 실행해 확인). 즉 기존 slugPattern 으로도 관리자가 잠기는 일은 없었고, 커밋 메시지·주석이 말하는 동작과 실제 시스템 상태가 다릅니다(판정 항목 3). / internal/httpapi/validation_test.go:124-133 TestValidateCategoryInputKeepsTheSeededTaxonomyEditable 은 \"The shipped categories carry underscore slugs and those are live /categories/{slug} URLs\" 라는 위 거짓 전제를 테스트 이름과 주석으로 고정합니다. 실제로 존재하지 않는 회귀를 지키는 테스트라 이후 슬러그 규칙을 앱과 통일하려는 변경을 부당하게 막습니다. / web/src/pages/admin-pages.tsx:1271-1275 프런트 슬러그 필터를 /[^a-z0-9-]/ 에서 /[^a-z0-9_-]/ 로 넓힌 것도 같은 거짓 근거(주석 1272-1273)에 기대고 있습니다. 이번 변경의 목적은 '렌더링되는 카테고리 필드에 상한을 두는 것'인데, 근거가 성립하지 않는 슬러그 문자셋 완화가 서버·클라이언트 양쪽에 섞여 들어갔습니다(판정 항목 4).",
+      "at": "2026-09-09T15:31:30+09:00"
+    }
+  },
+  "provenance": {
+    "model": "claude-opus-5",
+    "policy_version": "5935779a",
+    "prompts_hash": "82f2440d4b2fef65",
+    "runner_version": "5b81a64b",
+    "base_sha": "247b89756f9b2d5ac20ea9c8f8f75596ff3801a7",
+    "head_sha": "68543753603fd4c5e002ae9891774511fc589872",
+    "pr": "https://github.com/hkjang/appstore/pull/11"
+  },
+  "verification": {
+    "runner": {
+      "source": "auto",
+      "commands": [
+        {
+          "cmd": "go build ./...",
+          "exit": 0,
+          "seconds": 0
+        },
+        {
+          "cmd": "go vet ./...",
+          "exit": 0,
+          "seconds": 1
+        },
+        {
+          "cmd": "go test ./...",
+          "exit": 0,
+          "seconds": 0
+        },
+        {
+          "cmd": "cd web && [ -d node_modules ] || npm ci --no-audit --no-fund",
+          "exit": 0,
+          "seconds": 0
+        },
+        {
+          "cmd": "cd web && npm test --silent",
+          "exit": 0,
+          "seconds": 1
+        },
+        {
+          "cmd": "cd web && [ -d node_modules ] || npm ci --no-audit --no-fund",
+          "exit": 0,
+          "seconds": 0
+        },
+        {
+          "cmd": "cd web && npm run build --silent",
+          "exit": 0,
+          "seconds": 4
+        }
+      ]
+    },
+    "runner_gate": {
+      "ok": true,
+      "state": "verified",
+      "reason": "검증 7개 통과 (auto)"
+    },
+    "after_rebase": null,
+    "review": {
+      "verdict": "reject",
+      "reasons": [
+        "internal/httpapi/validation.go:48-52 categorySlugPattern 이 앱 슬러그보다 밑줄을 더 허용하는 유일한 근거로 \"the seeded taxonomy ships slugs such as 'enterprise_ops' and those are live URLs\" 를 들지만 이는 사실이 아닙니다. 시드는 apps_enriched.json 의 category 값을 internal/database/seed.go:217 에서 slugify() 로 통과시키고, slugify(internal/database/seed.go:245-262)는 문자/숫자가 아닌 룬을 '-' 로 바꾸므로 DB 에 저장되는 슬러그는 'enterprise-ops', 'ai-agents' 입니다(임시 테스트로 직접 실행해 확인). 즉 기존 slugPattern 으로도 관리자가 잠기는 일은 없었고, 커밋 메시지·주석이 말하는 동작과 실제 시스템 상태가 다릅니다(판정 항목 3).",
+        "internal/httpapi/validation_test.go:124-133 TestValidateCategoryInputKeepsTheSeededTaxonomyEditable 은 \"The shipped categories carry underscore slugs and those are live /categories/{slug} URLs\" 라는 위 거짓 전제를 테스트 이름과 주석으로 고정합니다. 실제로 존재하지 않는 회귀를 지키는 테스트라 이후 슬러그 규칙을 앱과 통일하려는 변경을 부당하게 막습니다.",
+        "web/src/pages/admin-pages.tsx:1271-1275 프런트 슬러그 필터를 /[^a-z0-9-]/ 에서 /[^a-z0-9_-]/ 로 넓힌 것도 같은 거짓 근거(주석 1272-1273)에 기대고 있습니다. 이번 변경의 목적은 '렌더링되는 카테고리 필드에 상한을 두는 것'인데, 근거가 성립하지 않는 슬러그 문자셋 완화가 서버·클라이언트 양쪽에 섞여 들어갔습니다(판정 항목 4)."
+      ],
+      "notes": [
+        "나머지 검증 로직 자체는 건전합니다. ValidateCategoryInput 이 storeInput() 결과에 대해 돌아 아이콘 기본값(📦) 적용 후 값을 보고, position 0~9999 / name 1~60 / description 240 / NUL 제어문자 거부가 커밋이 말한 세 가지 500(int4 overflow, SQLSTATE 22021, 무제한 name)을 실제로 필드 에러로 바꿉니다. 경계 테스트도 상·하한 양쪽을 실제로 단언합니다.",
+        "go build ./..., go vet ./internal/..., go test ./... -count=1 모두 통과했습니다.",
+        "openapi/openapi.json 의 CategoryInput 에서 icon 이 minLength:1 인데 설명은 '비우면 기본 아이콘을 사용합니다' 입니다. 서버는 빈 icon 을 받아 기본값을 넣으므로 스펙이 구현보다 엄격합니다. 생성된 클라이언트가 빈 문자열을 거부할 수 있으니 minLength 를 빼거나 설명을 고치세요.",
+        "되돌리기 자체는 코드 revert 로 충분합니다(마이그레이션·외부 상태 변경 없음). 다만 병합 후 밑줄 슬러그로 만들어진 카테고리가 생기면, 이 PR 을 revert 했을 때 그 행은 편집 시 422 가 되어 수정 불가가 됩니다.",
+        "ValidateCategoryInput 의 icon 최소 길이 1 검사는 storeInput() 이 이미 공백 아이콘을 📦 로 채우므로 사실상 도달 불가한 분기입니다(동작상 문제는 아님).",
+        "adminUpdateCategory 에서 검증이 GetCategoryByID 앞으로 옮겨져, 없는 id + 잘못된 본문일 때 404 대신 422 가 나갑니다. OpenAPI 에 두 응답이 모두 기술돼 있어 문제는 아니지만 의도된 변화인지 확인해 두세요."
+      ],
+      "risk": "low"
+    },
+    "ci_gate": null
+  },
+  "release": {
+    "result": null,
+    "assets_sha256": []
+  },
+  "approval": null,
+  "usage": [
+    {
+      "ts": "2026-09-09T15:28:34+09:00",
+      "date": "2026-09-09",
+      "project": "appstore",
+      "phase": "improve",
+      "run_id": "2026-09-09-152109-appstore-improve",
+      "campaign": "",
+      "subtype": "success",
+      "duration_ms": 439161,
+      "num_turns": 69,
+      "cost_usd": 4.145242000000001,
+      "input_tokens": 110,
+      "output_tokens": 31375,
+      "cache_read": 4647434,
+      "cache_create": 102321
+    },
+    {
+      "ts": "2026-09-09T15:31:30+09:00",
+      "date": "2026-09-09",
+      "project": "appstore",
+      "phase": "review",
+      "run_id": "2026-09-09-152109-appstore-improve",
+      "campaign": "",
+      "subtype": "success",
+      "duration_ms": 159917,
+      "num_turns": 22,
+      "cost_usd": 0.9201709999999999,
+      "input_tokens": 26,
+      "output_tokens": 11087,
+      "cache_read": 477140,
+      "cache_create": 40248
+    }
+  ]
+}
