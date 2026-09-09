@@ -1,0 +1,245 @@
+{
+  "run_id": "2026-09-09-092150-moyro-improve",
+  "generated": "2026-09-09T10:30:58+09:00",
+  "run": {
+    "run_id": "2026-09-09-092150-moyro-improve",
+    "project": "moyro",
+    "kind": "improve",
+    "started": "2026-09-09T09:21:51+09:00",
+    "model": "claude-opus-5",
+    "policy_version": "5935779a",
+    "prompts_hash": "82f2440d4b2fef65",
+    "runner_version": "07e41602",
+    "finished": "2026-09-09T10:30:58+09:00",
+    "outcome": "release-ready"
+  },
+  "record": {
+    "ts": "2026-09-09T10:30:58+09:00",
+    "date": "2026-09-09",
+    "project": "moyro",
+    "result": "manual: merged https://github.com/hkjang/moyro/pull/8, released v0.2.26",
+    "outcome": "release-ready",
+    "run_id": "2026-09-09-092150-moyro-improve",
+    "base_sha": "f31824481af19d94897d10d23f61e92b69572f03",
+    "head_sha": "0993c4b186d53dc1188ae1baaad5f8c3a0b61e63",
+    "pr": "https://github.com/hkjang/moyro/pull/8",
+    "stages": {
+      "base": {
+        "state": "pinned",
+        "reason": "main@f318244",
+        "at": "2026-09-09T09:21:55+09:00"
+      },
+      "autonomy": {
+        "state": "release",
+        "reason": "",
+        "at": "2026-09-09T09:21:56+09:00"
+      },
+      "verify": {
+        "state": "passed",
+        "reason": "검증 2개 통과 (policy)",
+        "at": "2026-09-09T09:46:36+09:00"
+      },
+      "pr": {
+        "state": "created",
+        "reason": "https://github.com/hkjang/moyro/pull/8",
+        "at": "2026-09-09T09:46:43+09:00"
+      },
+      "review": {
+        "state": "approved",
+        "reason": "리뷰 승인 (risk=low)",
+        "at": "2026-09-09T09:49:12+09:00"
+      },
+      "ci": {
+        "state": "passed",
+        "reason": "검사 3개 모두 success",
+        "at": "2026-09-09T09:57:24+09:00"
+      },
+      "merge": {
+        "state": "done",
+        "reason": "0993c4b186d53dc1188ae1baaad5f8c3a0b61e63",
+        "at": "2026-09-09T09:57:29+09:00"
+      },
+      "release": {
+        "state": "published",
+        "reason": "v0.2.26",
+        "at": "2026-09-09T10:13:49+09:00"
+      },
+      "assets": {
+        "state": "verified",
+        "reason": "v0.2.26 자산 1개 (이전 v0.2.25: 1)",
+        "at": "2026-09-09T10:30:54+09:00"
+      }
+    },
+    "campaign": "",
+    "autonomy": "release",
+    "files": 2,
+    "additions": 22,
+    "deletions": 0,
+    "tests": 1,
+    "title": "fix: pin the webapp type scope so stray @types packages cannot break typecheck"
+  },
+  "stages": {
+    "base": {
+      "state": "pinned",
+      "reason": "main@f318244",
+      "at": "2026-09-09T09:21:55+09:00"
+    },
+    "autonomy": {
+      "state": "release",
+      "reason": "",
+      "at": "2026-09-09T09:21:56+09:00"
+    },
+    "verify": {
+      "state": "passed",
+      "reason": "검증 2개 통과 (policy)",
+      "at": "2026-09-09T09:46:36+09:00"
+    },
+    "pr": {
+      "state": "created",
+      "reason": "https://github.com/hkjang/moyro/pull/8",
+      "at": "2026-09-09T09:46:43+09:00"
+    },
+    "review": {
+      "state": "approved",
+      "reason": "리뷰 승인 (risk=low)",
+      "at": "2026-09-09T09:49:12+09:00"
+    },
+    "ci": {
+      "state": "passed",
+      "reason": "검사 3개 모두 success",
+      "at": "2026-09-09T09:57:24+09:00"
+    },
+    "merge": {
+      "state": "done",
+      "reason": "0993c4b186d53dc1188ae1baaad5f8c3a0b61e63",
+      "at": "2026-09-09T09:57:29+09:00"
+    },
+    "release": {
+      "state": "published",
+      "reason": "v0.2.26",
+      "at": "2026-09-09T10:13:49+09:00"
+    },
+    "assets": {
+      "state": "verified",
+      "reason": "v0.2.26 자산 1개 (이전 v0.2.25: 1)",
+      "at": "2026-09-09T10:30:54+09:00"
+    }
+  },
+  "provenance": {
+    "model": "claude-opus-5",
+    "policy_version": "5935779a",
+    "prompts_hash": "82f2440d4b2fef65",
+    "runner_version": "07e41602",
+    "base_sha": "f31824481af19d94897d10d23f61e92b69572f03",
+    "head_sha": "0993c4b186d53dc1188ae1baaad5f8c3a0b61e63",
+    "pr": "https://github.com/hkjang/moyro/pull/8"
+  },
+  "verification": {
+    "runner": {
+      "source": "policy",
+      "commands": [
+        {
+          "cmd": "cd server && go build ./... && go vet ./... && go test ./...",
+          "exit": 0,
+          "seconds": 5
+        },
+        {
+          "cmd": "cd webapp && ([ -d node_modules ] || npm ci --no-audit --no-fund) && npm run typecheck --silent && npm test --silent",
+          "exit": 0,
+          "seconds": 13
+        }
+      ]
+    },
+    "runner_gate": {
+      "ok": true,
+      "state": "verified",
+      "reason": "검증 2개 통과 (policy)"
+    },
+    "after_rebase": null,
+    "review": {
+      "verdict": "approve",
+      "reasons": [],
+      "notes": [
+        "Diff is 2 files, 22 added lines, no deletions: webapp/tsconfig.json gains \"types\": [\"vite/client\"], plus a new guard test webapp/src/tsconfig.test.ts. No scope creep, no refactors, no dependency changes, no server/auth/migration/secret code touched.",
+        "Reproduced the bug the commit message describes. An ancestor directory of this worktree really does carry /home/hkjang/node_modules/@types/node. Running tsc with main's tsconfig (types field absent) fails: src/features/workspace/composer/useDraft.test.tsx(196,76) TS2345 'Type number is not assignable to type Timeout'. With the pinned field, tsc --noEmit exits 0. The fix does exactly what the message claims.",
+        "Verified the claim 'src references no Node globals': grep for process./__dirname/Buffer/NodeJS./require( across webapp/src returns nothing. vite.config.ts does use node:path, but tsconfig include is [\"src\"], so it was never in the program and is unaffected by the pin.",
+        "Full webapp suite passes: 45 files / 189 tests, and tsc --noEmit exits 0 on HEAD.",
+        "The new test is not a no-op. Before the change compilerOptions.types is absent, so expect(types).toEqual([\"vite/client\"]) fails at runtime (and the property access would not even typecheck). It does verify the change, though it is a config-mirror assertion rather than a behavioral one: it locks the field's value but cannot catch a regression that reintroduces ambient @types by another route (a transitive /// <reference types=\"node\" /> in a dependency's .d.ts still bypasses compilerOptions.types). A stronger guard would be a CI typecheck run with @types/node deliberately present in an ancestor node_modules. Not blocking.",
+        "webapp/src/tsconfig.test.ts:19 'expect(types).not.toContain(\"node\")' is fully subsumed by the toEqual on line 15. Redundant, harmless.",
+        "Maintenance note: with types pinned, any future global type package (vitest globals, @testing-library/jest-dom matchers) must be added in two places, tsconfig.json and this test, or the suite goes red. That is the intended trade-off, just worth knowing.",
+        "Reversibility is trivial: config-only, no data migration, no external state, no generated artifacts committed (webapp/dist and tsconfig.tsbuildinfo untouched)."
+      ],
+      "risk": "low"
+    },
+    "ci_gate": {
+      "ok": true,
+      "state": "success",
+      "reason": "검사 3개 모두 success",
+      "checks": 3
+    }
+  },
+  "release": {
+    "result": {
+      "status": "released",
+      "version": "0.2.26",
+      "tag": "v0.2.26",
+      "title": "moyro v0.2.26",
+      "notes_file": "",
+      "github_release": false,
+      "assets": [],
+      "reason": ""
+    },
+    "assets_sha256": []
+  },
+  "approval": null,
+  "usage": [
+    {
+      "ts": "2026-09-09T09:46:17+09:00",
+      "date": "2026-09-09",
+      "project": "moyro",
+      "phase": "improve",
+      "run_id": "2026-09-09-092150-moyro-improve",
+      "campaign": "",
+      "subtype": "success",
+      "duration_ms": 1461533,
+      "num_turns": 28,
+      "cost_usd": 1.3883020000000004,
+      "input_tokens": 48,
+      "output_tokens": 15003,
+      "cache_read": 1098260,
+      "cache_create": 44640
+    },
+    {
+      "ts": "2026-09-09T09:49:12+09:00",
+      "date": "2026-09-09",
+      "project": "moyro",
+      "phase": "review",
+      "run_id": "2026-09-09-092150-moyro-improve",
+      "campaign": "",
+      "subtype": "success",
+      "duration_ms": 146753,
+      "num_turns": 11,
+      "cost_usd": 0.5481225,
+      "input_tokens": 22,
+      "output_tokens": 9113,
+      "cache_read": 269753,
+      "cache_create": 18350
+    },
+    {
+      "ts": "2026-09-09T10:00:26+09:00",
+      "date": "2026-09-09",
+      "project": "moyro",
+      "phase": "release",
+      "run_id": "2026-09-09-092150-moyro-improve",
+      "campaign": "",
+      "subtype": "success",
+      "duration_ms": 164759,
+      "num_turns": 29,
+      "cost_usd": 1.1256549999999999,
+      "input_tokens": 36,
+      "output_tokens": 9376,
+      "cache_read": 841134,
+      "cache_create": 46521
+    }
+  ]
+}
