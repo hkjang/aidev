@@ -1,6 +1,6 @@
 {
   "run_id": "2026-09-09-154119-jupiq-improve",
-  "generated": "2026-09-09T15:41:19+09:00",
+  "generated": "2026-09-09T15:49:02+09:00",
   "run": {
     "run_id": "2026-09-09-154119-jupiq-improve",
     "project": "jupiq",
@@ -10,34 +10,89 @@
     "policy_version": "5935779a",
     "prompts_hash": "82f2440d4b2fef65",
     "runner_version": "5b81a64b",
-    "finished": "2026-09-09T15:41:19+09:00",
-    "outcome": "error"
+    "finished": "2026-09-09T15:49:02+09:00",
+    "outcome": "review-pending"
   },
   "record": {
-    "ts": "2026-09-09T15:41:19+09:00",
+    "ts": "2026-09-09T15:49:02+09:00",
     "date": "2026-09-09",
     "project": "jupiq",
-    "result": "hold: budget",
-    "outcome": "error",
+    "result": "review held, PR open https://github.com/hkjang/jupiq/pull/9",
+    "outcome": "review-pending",
     "run_id": "2026-09-09-154119-jupiq-improve",
-    "base_sha": "",
-    "head_sha": "",
-    "pr": "",
+    "base_sha": "6aa5a437b57f93836f9d3295506e01615cdeb516",
+    "head_sha": "b5b6072b183a6caccfe844f79b7932aec6fb949d",
+    "pr": "https://github.com/hkjang/jupiq/pull/9",
     "stages": {
       "improve": {
         "state": "hold",
         "reason": "회차 예산($22)이 오늘 남은 상한을 넘음",
         "at": "2026-09-09T15:41:19+09:00"
+      },
+      "base": {
+        "state": "pinned",
+        "reason": "main@6aa5a43",
+        "at": "2026-09-09T15:41:22+09:00"
+      },
+      "autonomy": {
+        "state": "release",
+        "reason": "",
+        "at": "2026-09-09T15:41:22+09:00"
+      },
+      "verify": {
+        "state": "passed",
+        "reason": "검증 7개 통과 (auto)",
+        "at": "2026-09-09T15:48:55+09:00"
+      },
+      "pr": {
+        "state": "created",
+        "reason": "https://github.com/hkjang/jupiq/pull/9",
+        "at": "2026-09-09T15:49:01+09:00"
+      },
+      "review": {
+        "state": "hold",
+        "reason": "예산 부족으로 리뷰를 돌리지 못함",
+        "at": "2026-09-09T15:49:01+09:00"
       }
     },
     "campaign": "",
-    "autonomy": ""
+    "autonomy": "release",
+    "files": 7,
+    "additions": 194,
+    "deletions": 44,
+    "tests": 4,
+    "title": "refactor: 프로메테우스 수집 주기가 GPU 기능을 한 번만 읽게 한다"
   },
   "stages": {
     "improve": {
       "state": "hold",
       "reason": "회차 예산($22)이 오늘 남은 상한을 넘음",
       "at": "2026-09-09T15:41:19+09:00"
+    },
+    "base": {
+      "state": "pinned",
+      "reason": "main@6aa5a43",
+      "at": "2026-09-09T15:41:22+09:00"
+    },
+    "autonomy": {
+      "state": "release",
+      "reason": "",
+      "at": "2026-09-09T15:41:22+09:00"
+    },
+    "verify": {
+      "state": "passed",
+      "reason": "검증 7개 통과 (auto)",
+      "at": "2026-09-09T15:48:55+09:00"
+    },
+    "pr": {
+      "state": "created",
+      "reason": "https://github.com/hkjang/jupiq/pull/9",
+      "at": "2026-09-09T15:49:01+09:00"
+    },
+    "review": {
+      "state": "hold",
+      "reason": "예산 부족으로 리뷰를 돌리지 못함",
+      "at": "2026-09-09T15:49:01+09:00"
     }
   },
   "provenance": {
@@ -45,13 +100,56 @@
     "policy_version": "5935779a",
     "prompts_hash": "82f2440d4b2fef65",
     "runner_version": "5b81a64b",
-    "base_sha": "",
-    "head_sha": "",
-    "pr": ""
+    "base_sha": "6aa5a437b57f93836f9d3295506e01615cdeb516",
+    "head_sha": "b5b6072b183a6caccfe844f79b7932aec6fb949d",
+    "pr": "https://github.com/hkjang/jupiq/pull/9"
   },
   "verification": {
-    "runner": null,
-    "runner_gate": null,
+    "runner": {
+      "source": "auto",
+      "commands": [
+        {
+          "cmd": "go build ./...",
+          "exit": 0,
+          "seconds": 1
+        },
+        {
+          "cmd": "go vet ./...",
+          "exit": 0,
+          "seconds": 0
+        },
+        {
+          "cmd": "go test ./...",
+          "exit": 0,
+          "seconds": 1
+        },
+        {
+          "cmd": "cd web && [ -d node_modules ] || npm ci --no-audit --no-fund",
+          "exit": 0,
+          "seconds": 0
+        },
+        {
+          "cmd": "cd web && npm test --silent",
+          "exit": 0,
+          "seconds": 5
+        },
+        {
+          "cmd": "cd web && [ -d node_modules ] || npm ci --no-audit --no-fund",
+          "exit": 0,
+          "seconds": 0
+        },
+        {
+          "cmd": "cd web && npm run build --silent",
+          "exit": 0,
+          "seconds": 9
+        }
+      ]
+    },
+    "runner_gate": {
+      "ok": true,
+      "state": "verified",
+      "reason": "검증 7개 통과 (auto)"
+    },
     "after_rebase": null,
     "review": null,
     "ci_gate": null
@@ -61,5 +159,22 @@
     "assets_sha256": []
   },
   "approval": null,
-  "usage": []
+  "usage": [
+    {
+      "ts": "2026-09-09T15:48:38+09:00",
+      "date": "2026-09-09",
+      "project": "jupiq",
+      "phase": "improve",
+      "run_id": "2026-09-09-154119-jupiq-improve",
+      "campaign": "",
+      "subtype": "success",
+      "duration_ms": 435241,
+      "num_turns": 48,
+      "cost_usd": 3.1248970000000007,
+      "input_tokens": 78,
+      "output_tokens": 30967,
+      "cache_read": 2858322,
+      "cache_create": 91101
+    }
+  ]
 }
