@@ -9,7 +9,7 @@ export PATH="$HOME/.local/bin:$HOME/.nvm/versions/node/v22.23.1/bin:$HOME/minico
 HERE="${AIDEV_BIN:-$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)}"
 REPO_DIR="$(cd "$HERE/.." && pwd)"
 RUNS="$REPO_DIR/docs/data/runs.jsonl"; OUT="$REPO_DIR/docs/data/health.json"; LOCK="$HOME/.auto-improve/run.lock"
-STALE_SEC=$((3*3600)); now=$(date +%s); problems=(); actions=()
+STALE_SEC=$((3*3600)); KICK_SEC=$((40*60)); now=$(date +%s); problems=(); actions=()
 
 last_ts=$(tail -n 1 "$RUNS" 2>/dev/null | jq -r '.ts // empty')
 last_epoch=$(date -d "${last_ts:-1970-01-01}" +%s 2>/dev/null || echo 0)
@@ -40,6 +40,24 @@ for d in "${ROOT:-/mnt/c/Users/USER/projects}"/*/; do
 done
 sched=$(schtasks.exe /Query /TN AutoImprove /FO LIST 2>/dev/null | iconv -f cp949 -t utf-8 2>/dev/null | tr -d '\r' | grep -E "^(상태|Status):" | head -1 | sed -E 's/^[^:]+:[[:space:]]*//')
 next_run=$(schtasks.exe /Query /TN AutoImprove /FO LIST 2>/dev/null | iconv -f cp949 -t utf-8 2>/dev/null | tr -d '\r' | grep -E "^(다음 실행 시간|Next Run Time):" | head -1 | sed -E 's/^[^:]+:[[:space:]]*//')
+
+# 자기 복구: 회차가 끊겼는데 러너도 없고 멈춤·상한 사유도 없으면 스케줄러를 직접 깨운다.
+# (2026-09-10: PC 절전 후 부팅 시 트리거가 0x800710E0 으로 거부되며 7시간 동안 한 건도 안 돌았다.
+#  30분마다 도는 이 스크립트가 다음 점검에서 되살리도록 한다.)
+kick_stamp="$HOME/.auto-improve/.kicked"
+if [ "$since_last" -gt "$KICK_SEC" ] && [ -z "$run_pid" ] \
+   && [ ! -f "$REPO_DIR/state/STOP" ] && [ ! -f "$REPO_DIR/state/.cap-$(date +%F)" ] \
+   && [ "$(( now - $(stat -c %Y "$kick_stamp" 2>/dev/null || echo 0) ))" -gt 1800 ]; then
+  case "${sched:-}" in
+    *실행*|*Running*) ;;                       # 이미 돌고 있으면 건드리지 않는다
+    *) if schtasks.exe /Run /TN AutoImprove >/dev/null 2>&1; then
+         date +%s > "$kick_stamp"
+         actions+=("회차가 $((since_last/60))분째 없어 AutoImprove 를 직접 실행했다")
+       else
+         problems+=("AutoImprove 재실행 실패 — 작업 스케줄러 확인 필요")
+       fi;;
+  esac
+fi
 
 mkdir -p "$(dirname "$OUT")"
 jq -cn --arg ts "$(date -Iseconds)" --arg last "$last_ts" --argjson since "$since_last" --arg pid "${run_pid:-}" --argjson age "${run_age:-0}" \
