@@ -1,0 +1,281 @@
+{
+  "run_id": "2026-09-09-123112-umm-improve",
+  "generated": "2026-09-09T13:07:39+09:00",
+  "run": {
+    "run_id": "2026-09-09-123112-umm-improve",
+    "project": "umm",
+    "kind": "improve",
+    "started": "2026-09-09T12:31:13+09:00",
+    "model": "claude-opus-5",
+    "policy_version": "5935779a",
+    "prompts_hash": "82f2440d4b2fef65",
+    "runner_version": "07e41602",
+    "finished": "2026-09-09T13:07:39+09:00",
+    "outcome": "release-ready"
+  },
+  "record": {
+    "ts": "2026-09-09T13:07:39+09:00",
+    "date": "2026-09-09",
+    "project": "umm",
+    "result": "merged https://github.com/hkjang/umm/pull/147, released v0.71.5",
+    "outcome": "release-ready",
+    "run_id": "2026-09-09-123112-umm-improve",
+    "base_sha": "e467ba4000f7dd674bf1b6a5d42f593759dc9d1a",
+    "head_sha": "335f18283aa0514721d132dbc17fba1e88f72ef5",
+    "pr": "https://github.com/hkjang/umm/pull/147",
+    "stages": {
+      "base": {
+        "state": "pinned",
+        "reason": "main@e467ba4",
+        "at": "2026-09-09T12:31:24+09:00"
+      },
+      "autonomy": {
+        "state": "release",
+        "reason": "",
+        "at": "2026-09-09T12:31:24+09:00"
+      },
+      "verify": {
+        "state": "passed",
+        "reason": "검증 9개 통과 (auto)",
+        "at": "2026-09-09T12:38:52+09:00"
+      },
+      "pr": {
+        "state": "created",
+        "reason": "https://github.com/hkjang/umm/pull/147",
+        "at": "2026-09-09T12:39:02+09:00"
+      },
+      "review": {
+        "state": "approved",
+        "reason": "리뷰 승인 (risk=low)",
+        "at": "2026-09-09T12:41:52+09:00"
+      },
+      "ci": {
+        "state": "passed",
+        "reason": "검사 1개 모두 success",
+        "at": "2026-09-09T12:50:37+09:00"
+      },
+      "merge": {
+        "state": "done",
+        "reason": "335f18283aa0514721d132dbc17fba1e88f72ef5",
+        "at": "2026-09-09T12:50:41+09:00"
+      },
+      "release": {
+        "state": "published",
+        "reason": "v0.71.5",
+        "at": "2026-09-09T13:05:55+09:00"
+      },
+      "assets": {
+        "state": "verified",
+        "reason": "v0.71.5 자산 3개 (이전 v0.71.4: 3)",
+        "at": "2026-09-09T13:07:37+09:00"
+      }
+    },
+    "campaign": "",
+    "autonomy": "release",
+    "files": 2,
+    "additions": 164,
+    "deletions": 8,
+    "tests": 1,
+    "title": "Keep a name on the line the export gives it"
+  },
+  "stages": {
+    "base": {
+      "state": "pinned",
+      "reason": "main@e467ba4",
+      "at": "2026-09-09T12:31:24+09:00"
+    },
+    "autonomy": {
+      "state": "release",
+      "reason": "",
+      "at": "2026-09-09T12:31:24+09:00"
+    },
+    "verify": {
+      "state": "passed",
+      "reason": "검증 9개 통과 (auto)",
+      "at": "2026-09-09T12:38:52+09:00"
+    },
+    "pr": {
+      "state": "created",
+      "reason": "https://github.com/hkjang/umm/pull/147",
+      "at": "2026-09-09T12:39:02+09:00"
+    },
+    "review": {
+      "state": "approved",
+      "reason": "리뷰 승인 (risk=low)",
+      "at": "2026-09-09T12:41:52+09:00"
+    },
+    "ci": {
+      "state": "passed",
+      "reason": "검사 1개 모두 success",
+      "at": "2026-09-09T12:50:37+09:00"
+    },
+    "merge": {
+      "state": "done",
+      "reason": "335f18283aa0514721d132dbc17fba1e88f72ef5",
+      "at": "2026-09-09T12:50:41+09:00"
+    },
+    "release": {
+      "state": "published",
+      "reason": "v0.71.5",
+      "at": "2026-09-09T13:05:55+09:00"
+    },
+    "assets": {
+      "state": "verified",
+      "reason": "v0.71.5 자산 3개 (이전 v0.71.4: 3)",
+      "at": "2026-09-09T13:07:37+09:00"
+    }
+  },
+  "provenance": {
+    "model": "claude-opus-5",
+    "policy_version": "5935779a",
+    "prompts_hash": "82f2440d4b2fef65",
+    "runner_version": "07e41602",
+    "base_sha": "e467ba4000f7dd674bf1b6a5d42f593759dc9d1a",
+    "head_sha": "335f18283aa0514721d132dbc17fba1e88f72ef5",
+    "pr": "https://github.com/hkjang/umm/pull/147"
+  },
+  "verification": {
+    "runner": {
+      "source": "auto",
+      "commands": [
+        {
+          "cmd": "go build ./...",
+          "exit": 0,
+          "seconds": 3
+        },
+        {
+          "cmd": "go vet ./...",
+          "exit": 0,
+          "seconds": 0
+        },
+        {
+          "cmd": "go test ./...",
+          "exit": 0,
+          "seconds": 3
+        },
+        {
+          "cmd": "cd web && [ -d node_modules ] || npm ci --no-audit --no-fund",
+          "exit": 0,
+          "seconds": 0
+        },
+        {
+          "cmd": "cd web && npm test --silent",
+          "exit": 0,
+          "seconds": 9
+        },
+        {
+          "cmd": "cd web && [ -d node_modules ] || npm ci --no-audit --no-fund",
+          "exit": 0,
+          "seconds": 0
+        },
+        {
+          "cmd": "cd web && npm run typecheck --silent",
+          "exit": 0,
+          "seconds": 0
+        },
+        {
+          "cmd": "cd web && [ -d node_modules ] || npm ci --no-audit --no-fund",
+          "exit": 0,
+          "seconds": 0
+        },
+        {
+          "cmd": "cd web && npm run build --silent",
+          "exit": 0,
+          "seconds": 1
+        }
+      ]
+    },
+    "runner_gate": {
+      "ok": true,
+      "state": "verified",
+      "reason": "검증 9개 통과 (auto)"
+    },
+    "after_rebase": null,
+    "review": {
+      "verdict": "approve",
+      "reasons": [],
+      "notes": [
+        "The bug is real and correctly diagnosed. web/src/lib/markdown-import.ts:120 isExportBanner tests /^Exported from umm at\\s+\\S+$/ against the whole trimmed section body with no /m flag, and export_handlers.go:196 writes '# <name>\\n\\nExported from umm at ...'. A space name holding \\n puts its second line in that body, the banner is not recognised, ummExport stays false and every id/canvas/kind/colour/line/connection is dropped on restore. Reachable: store.go:620 CreateSpace and store.go:630 UpdateSpace only TrimSpace, branches.go:89 CreateBranch only TrimSpace, so an API/MCP client can store an interior newline.",
+        "Tests do exercise the change. TestOneLineKeepsTheWordsAndDropsTheBreak covers \\n, \\r\\n, \\r, trim, no-op and empty and cannot exist before the change; TestMarkdownExportKeepsNamesOnOneLineIntegration drives the real exportMarkdown handler through chi+auth with newline-bearing space name, note title, branch name and resolution, and asserts exact banner lines, the exact heading list and the two line-of-thinking lines. With oneLine reverted to identity, lines[0] would be '# 우리 팀' and the heading list would gain '## 다음 단계', so it fails. .github/workflows/ci.yml:12 sets POSTGRES_DSN, so the skip guard does not make it dead in CI (it does skip locally).",
+        "Verified: go build ./... clean, go vet ./internal/httpapi clean, gofmt reports nothing, go test ./internal/httpapi passes (integration test skipped locally, no DSN).",
+        "No scope creep: the diff is only the new helper, five call sites in exportMarkdown, and one new test file. No auth, migration, workflow, secret or delete logic touched — exportAllowed and requireScope are unchanged. Output-format only, no persisted state changes, so a revert is clean and files already on disk parse identically.",
+        "Content-Disposition is not a new injection path: export_handlers.go:238 still passes the raw spaceName, but content_disposition.go:67 dispositionSafe strips r < 0x20, so the newline is already removed there.",
+        "Pre-existing, out of scope, left unfixed: n.Content is written verbatim at export_handlers.go:201, so a thought whose body contains a '## ' line or '- id: `...`'-shaped lines still confuses the importer. Same for a backtick inside a branch name vs exportedLineLabel, and '**' inside a branch name vs exportedLine.",
+        "Nit: export_one_line_integration_test.go:100-105 indexes lines[0..3] directly; if the banner block ever shrank this panics instead of failing with a message. Not reachable with the current format.",
+        "Nit: the reason/resolution call sites now TrimSpace where they did not before, so a whitespace-only reason yields no ' — ' suffix instead of an empty one. The importer trims either way, so no behaviour difference on restore.",
+        "Nit: the file is named *_integration_test.go but its first test is a pure unit test needing no database."
+      ],
+      "risk": "low"
+    },
+    "ci_gate": {
+      "ok": true,
+      "state": "success",
+      "reason": "검사 1개 모두 success",
+      "checks": 1
+    }
+  },
+  "release": {
+    "result": {
+      "status": "released",
+      "version": "0.71.5",
+      "tag": "v0.71.5",
+      "title": "umm v0.71.5",
+      "notes_file": "/mnt/c/Users/USER/projects/aidev/state/runs/2026-09-09-123112-umm-improve/release-notes-v0.71.5.md",
+      "github_release": false,
+      "assets": [],
+      "reason": ""
+    },
+    "assets_sha256": []
+  },
+  "approval": null,
+  "usage": [
+    {
+      "ts": "2026-09-09T12:38:25+09:00",
+      "date": "2026-09-09",
+      "project": "umm",
+      "phase": "improve",
+      "run_id": "2026-09-09-123112-umm-improve",
+      "campaign": "",
+      "subtype": "success",
+      "duration_ms": 419453,
+      "num_turns": 50,
+      "cost_usd": 2.8470435000000007,
+      "input_tokens": 72,
+      "output_tokens": 25130,
+      "cache_read": 2578267,
+      "cache_create": 91612
+    },
+    {
+      "ts": "2026-09-09T12:41:52+09:00",
+      "date": "2026-09-09",
+      "project": "umm",
+      "phase": "review",
+      "run_id": "2026-09-09-123112-umm-improve",
+      "campaign": "",
+      "subtype": "success",
+      "duration_ms": 168574,
+      "num_turns": 24,
+      "cost_usd": 1.0195195000000001,
+      "input_tokens": 34,
+      "output_tokens": 11841,
+      "cache_read": 636157,
+      "cache_create": 40343
+    },
+    {
+      "ts": "2026-09-09T12:53:26+09:00",
+      "date": "2026-09-09",
+      "project": "umm",
+      "phase": "release",
+      "run_id": "2026-09-09-123112-umm-improve",
+      "campaign": "",
+      "subtype": "success",
+      "duration_ms": 141426,
+      "num_turns": 23,
+      "cost_usd": 0.8803785000000001,
+      "input_tokens": 32,
+      "output_tokens": 8160,
+      "cache_read": 634431,
+      "cache_create": 35229
+    }
+  ]
+}
