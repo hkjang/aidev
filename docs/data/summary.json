@@ -1,27 +1,27 @@
 {
- "generated": "2026-09-09T10:52:50+09:00",
+ "generated": "2026-09-09T11:02:10+09:00",
  "site": "https://hkjang.github.io/aidev",
- "description": "Claude Code 자율 개선 에이전트가 hkjang 의 프로젝트를 개선·테스트·머지·릴리즈한 일일 보고. 오늘 45회차·릴리즈 28건, 누적 468회차·릴리즈 224건, 주의 필요 1건.",
+ "description": "Claude Code 자율 개선 에이전트가 hkjang 의 프로젝트를 개선·테스트·머지·릴리즈한 일일 보고. 오늘 46회차·릴리즈 29건, 누적 469회차·릴리즈 225건, 주의 필요 1건.",
  "today": {
   "date": "2026-09-09",
-  "total": 45,
+  "total": 46,
   "projects": 24,
-  "released": 28,
+  "released": 29,
   "merged": 7,
   "nochange": 0,
   "failed": 1,
-  "cost_usd": 191.69,
-  "minutes": 539,
-  "sessions": 113
+  "cost_usd": 193.59,
+  "minutes": 545,
+  "sessions": 115
  },
  "totals": {
-  "runs": 468,
-  "released": 224,
+  "runs": 469,
+  "released": 225,
   "days": 8,
-  "cost_usd": 795.39,
-  "minutes": 2275,
-  "tokens_in": 732832413,
-  "tokens_out": 7117562
+  "cost_usd": 797.29,
+  "minutes": 2282,
+  "tokens_in": 734115606,
+  "tokens_out": 7140252
  },
  "alerts": [
   {
@@ -173,6 +173,14 @@
    "project": "moyro",
    "kind": "verify-false-positive",
    "detail": "webapp/tsconfig.json 에 \"types\" 가 없어 node_modules/@types/* 가 전부 스코프에 들어온다. @types/node 가 끼면 window.setInterval 이 Node 의 Timeout 반환으로 해석돼 useDraft.test.tsx:196 이 TS2345 로 깨진다. main 은 깨끗하다(clean npm ci 후 typecheck exit 0). webapp 을 건드리지 않은 Go 전용 회차도 이 오류로 폐기되므로, 이 오류가 보이면 자기 변경 탓으로 여기지 말 것."
+  },
+  {
+   "ts": "2026-09-09T10:53:45+09:00",
+   "date": "2026-09-09",
+   "project": "ptium",
+   "kind": "review-rejected",
+   "pr": "https://github.com/hkjang/ptium/pull/12",
+   "detail": "docs 의 amountOf/allNumeric(분류기)과 deck 의 bareNumber(렌더러)는 서로 다른 숫자 파서다. 분류기만 넓히면 시트가 ::table 대신 ::columns 로 넘어가면서 렌더러가 같은 값을 다르게 읽어 차트가 망가진다(고정 공백 '1\\u00a0200' → 분류기 1200, 렌더러 1). 파서 한쪽만 고치지 말고 두 경로가 같은 값을 같은 숫자로 읽는지 end-to-end 로 검증할 것. 또한 pptx/blocks.go 는 math.Abs 로 높이를 잡으므로 음수 파싱을 추가해도 렌더링은 안 바뀐다 — 커밋 메시지에 실제로 일어나지 않는 사용자 가시 효과를 쓰지 말 것."
   }
  ],
  "caps": {
@@ -287,27 +295,27 @@
   {
    "metric": "검증된 개선 완료율",
    "value": "97%",
-   "detail": "관찰 24h 지난 머지 245건 중 회귀 없음 237건"
+   "detail": "관찰 24h 지난 머지 246건 중 회귀 없음 238건"
   },
   {
    "metric": "완전한 릴리즈 비율",
    "value": "92%",
-   "detail": "릴리즈 시도 228건 중 자산 검증까지 209건"
+   "detail": "릴리즈 시도 229건 중 자산 검증까지 210건"
   },
   {
    "metric": "사람의 재작업률",
    "value": "0%",
-   "detail": "되돌림·롤백 0건 / 관찰 머지 245건"
+   "detail": "되돌림·롤백 0건 / 관찰 머지 246건"
   },
   {
    "metric": "변경 후 회귀율",
    "value": "0%",
-   "detail": "회귀 0건 / 관찰 머지 245건"
+   "detail": "회귀 0건 / 관찰 머지 246건"
   },
   {
    "metric": "유효 개선당 비용",
-   "value": "$20.39",
-   "detail": "비용 확인된 유효 개선 39건, 미확인 세션 2"
+   "value": "$19.93",
+   "detail": "비용 확인된 유효 개선 40건, 미확인 세션 2"
   },
   {
    "metric": "예외 처리 소요 시간(중앙값)",
@@ -322,7 +330,7 @@
  ],
  "outcomes_today": {
   "merged": 7,
-  "release-ready": 28,
+  "release-ready": 29,
   "verify-failed": 3,
   "review-pending": 7,
   "releasing": 0,
@@ -332,12 +340,12 @@
  "days": [
   {
    "date": "2026-09-09",
-   "total": 45,
-   "released": 28,
+   "total": 46,
+   "released": 29,
    "merged": 7,
    "nochange": 0,
    "failed": 1,
-   "cost_usd": 191.69
+   "cost_usd": 193.59
   },
   {
    "date": "2026-09-08",
@@ -408,13 +416,13 @@
    "key": "2026-W37",
    "url": "https://hkjang.github.io/aidev/weekly/2026-W37/",
    "days": 3,
-   "total": 162,
-   "released": 67,
+   "total": 163,
+   "released": 68,
    "merged": 28,
    "nochange": 0,
    "failed": 1,
-   "cost": 554.9,
-   "minutes": 1624
+   "cost": 556.8,
+   "minutes": 1631
   },
   {
    "key": "2026-W36",
@@ -434,13 +442,13 @@
    "key": "2026-09",
    "url": "https://hkjang.github.io/aidev/monthly/2026-09/",
    "days": 8,
-   "total": 468,
-   "released": 224,
+   "total": 469,
+   "released": 225,
    "merged": 87,
    "nochange": 14,
    "failed": 1,
-   "cost": 795.39,
-   "minutes": 2275
+   "cost": 797.29,
+   "minutes": 2282
   }
  ],
  "projects": [
@@ -919,8 +927,8 @@
    "cost": 14.42,
    "minutes": 42,
    "grade": "C",
-   "grade_why": "14일: 릴리즈 9, 실패 0, 경고 2, 회귀 0",
-   "lessons": 0,
+   "grade_why": "14일: 릴리즈 9, 실패 0, 경고 2, 회귀 1",
+   "lessons": 1,
    "ideas_pending": 7,
    "ideas_total": 8,
    "release": {
@@ -958,24 +966,24 @@
    "name": "releasedock",
    "repo": "https://github.com/hkjang/releasedock",
    "page": "https://hkjang.github.io/aidev/projects/releasedock/",
-   "runs": 13,
-   "released": 10,
-   "last_ts": "2026-09-09T02:46:16+09:00",
+   "runs": 14,
+   "released": 11,
+   "last_ts": "2026-09-09T11:02:09+09:00",
    "last_status": "released",
-   "last_result": "merged https://github.com/hkjang/releasedock/pull/12, released v0.5.11",
-   "cost": 18.75,
-   "minutes": 49,
+   "last_result": "merged https://github.com/hkjang/releasedock/pull/13, released v0.5.12",
+   "cost": 20.65,
+   "minutes": 56,
    "grade": "C",
-   "grade_why": "14일: 릴리즈 10, 실패 0, 경고 2, 회귀 1",
+   "grade_why": "14일: 릴리즈 11, 실패 0, 경고 2, 회귀 1",
    "lessons": 1,
    "ideas_pending": 6,
    "ideas_total": 7,
    "release": {
     "status": "released",
-    "version": "0.5.11",
-    "tag": "v0.5.11",
+    "version": "0.5.12",
+    "tag": "v0.5.12",
     "assets_count": 2,
-    "prev_tag": "v0.5.10",
+    "prev_tag": "v0.5.11",
     "prev_assets_count": 2
    }
   },

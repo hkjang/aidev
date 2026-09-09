@@ -1,7 +1,7 @@
 ---
 title: "ptium — 자율 개선 이력"
 description: "ptium: 자율 개선 회차 20회, 릴리즈 9건. 최근 릴리즈 v1.69.29 (자산 7개)."
-last_modified_at: 2026-09-09 10:52:50 +0900
+last_modified_at: 2026-09-09 11:02:10 +0900
 ---
 {% raw %}
 <script type="application/ld+json">
@@ -18,14 +18,14 @@ last_modified_at: 2026-09-09 10:52:50 +0900
   "name": "hkjang",
   "url": "https://github.com/hkjang"
  },
- "dateModified": "2026-09-09T10:52:50+09:00",
+ "dateModified": "2026-09-09T11:02:10+09:00",
  "version": "1.69.29"
 }
 </script>
 
 # ptium
 
-<p class="tldr"><strong>요약.</strong> ptium: 자율 개선 회차 20회, 릴리즈 9건. 최근 릴리즈 v1.69.29 (자산 7개). <span class="pill pill-merged" title="14일: 릴리즈 9, 실패 0, 경고 2, 회귀 0">건강 C</span> <span class="meta">14일: 릴리즈 9, 실패 0, 경고 2, 회귀 0</span></p>
+<p class="tldr"><strong>요약.</strong> ptium: 자율 개선 회차 20회, 릴리즈 9건. 최근 릴리즈 v1.69.29 (자산 7개). <span class="pill pill-merged" title="14일: 릴리즈 9, 실패 0, 경고 2, 회귀 1">건강 C</span> <span class="meta">14일: 릴리즈 9, 실패 0, 경고 2, 회귀 1</span></p>
 
 <ul class="stats"><li><b>20</b><span>회차</span></li><li><b>1</b><span>프로젝트</span></li><li><b>9</b><span>배포 준비 완료</span></li><li><b>0</b><span>릴리즈 진행 중</span></li><li><b>2</b><span>병합 완료</span></li><li><b>1</b><span>검토 대기</span></li><li><b>1</b><span>검증 실패</span></li><li><b>7</b><span>변경 없음</span></li><li><b>0</b><span>실행 오류</span></li><li><b>$14.42</b><span>비용</span></li><li><b>42분</b><span>에이전트 시간</span></li></ul>
 
@@ -48,6 +48,10 @@ last_modified_at: 2026-09-09 10:52:50 +0900
 ## 아이디어 백로그 — 대기 7 / 전체 8
 
 <div class="table-wrap"><table class="rt"><caption class="meta">에이전트가 회차마다 재평가한다. 가치 높고 위험 낮은 대기 항목이 다음 회차 후보다.</caption><thead><tr><th class="primary">아이디어</th><th>가치/위험/크기</th><th>상태</th><th>메모</th><th>갱신</th></tr></thead><tbody><tr data-status="nochange"><td data-label="아이디어" class="primary">seriesFromRows 가 표의 값을 쉼표로 다시 쪼개 &quot;1,200&quot; 을 1 과 200 두 점으로 읽는 문제</td><td data-label="가치/위험/크기">3/3/M</td><td data-label="상태">대기</td><td data-label="메모">새 아이디어. deck/compile.go:1370 이 row[1:] 을 &quot;,&quot; 로 이어 붙였다가 다시 &quot;,&quot; 로 쪼개서, 셀 하나에 든 천 단위 구분 기호가 점 두 개가 된다. parseBareNumber 가 쉼표를 걷어내는 코드는 그래서 도달할 일이 거의 없다. 셀 경계를 지키도록 고치면 3열 이상 금액 표도 꺾은선이 될 수 있으나, 한 셀에 &quot;1, 2, 3&quot; 을 써 여러 점을 넣던 기존 문법을 깨뜨릴 위험이 있어 함께 봐야 한다.</td><td data-label="갱신">2026-09-09</td></tr><tr data-status="nochange"><td data-label="아이디어" class="primary">빈 행 때문에 출처의 행 번호가 실제 시트와 어긋나는 문제</td><td data-label="가치/위험/크기">3/3/M</td><td data-label="상태">대기</td><td data-label="메모">gridOf 가 행의 r 을 보지 않고 trimGrid 이 빈 행을 지운다. 미머지 브랜치 auto/2026-09-07-0330(ae451c5)이 같은 writeSheet/rangeOf 를 이미 고쳐 두었고 이번에 확인한바 아직 main 에 없다. 그 머지 뒤에 손대야 충돌이 없다.</td><td data-label="갱신">2026-09-09</td></tr><tr data-status="nochange"><td data-label="아이디어" class="primary">ISO 날짜 셀(t=&quot;d&quot;)이 저장된 글자 그대로 나오는 문제</td><td data-label="가치/위험/크기">2/1/S</td><td data-label="상태">대기</td><td data-label="메모">엄격(strict) 스키마로 저장한 통합 문서는 날짜를 t=&quot;d&quot; 와 &quot;2025-01-21T13:30:00&quot; 로 쓴다. gridOf 의 default 가지가 이를 숫자로 보려다 ParseFloat 에서 실패해 T 가 든 글자가 슬라이드에 그대로 나온다. 서식이 date 인지 datetime 인지에 따라 잘라 쓰면 된다.</td><td data-label="갱신">2026-09-09</td></tr><tr data-status="nochange"><td data-label="아이디어" class="primary">시트가 30장 한도에 걸렸을 때 어떤 시트가 잘렸는지 말하지 않는 문제</td><td data-label="가치/위험/크기">2/1/S</td><td data-label="상태">대기</td><td data-label="메모">workbook.go:117 은 &quot;시트가 많아 앞 N개만 가져왔습니다&quot;만 말한다. 남긴 시트 이름을 대지 않고, 게다가 N 은 슬라이드 수(maximumSlides)라 시트 수처럼 말하는 것도 틀렸다 — 한 시트가 여러 장이 되면 시트는 그보다 적다. 숨긴 시트 경고처럼 이름을 대면 사람이 무엇을 따로 챙길지 안다. 이름이 서른 개면 경고 한 줄이 길어져 자르는 기준이 필요하다.</td><td data-label="갱신">2026-09-09</td></tr><tr data-status="nochange"><td data-label="아이디어" class="primary">숨긴 행·열을 그대로 표에 넣는 문제</td><td data-label="가치/위험/크기">2/2/M</td><td data-label="상태">대기</td><td data-label="메모">row hidden=&quot;1&quot;, cols 의 col hidden=&quot;1&quot; 로 감춘 중간 계산 행·열이 슬라이드 표에 들어온다. 행을 지우면 출처 범위가 어긋나므로 범위 계산과 함께 봐야 하고, 그 범위 계산은 미머지 브랜치가 고쳐 두었다.</td><td data-label="갱신">2026-09-09</td></tr><tr data-status="nochange"><td data-label="아이디어" class="primary">writeSheet 이 첫 행을 무조건 머리글로 삼는 문제</td><td data-label="가치/위험/크기">2/3/M</td><td data-label="상태">대기</td><td data-label="메모">A1 에 제목 한 칸만 있는 시트는 머리글이 제목 한 칸이 되어 표가 어긋난다. 어디부터가 표인지 짐작해야 해서 위험이 있다.</td><td data-label="갱신">2026-09-09</td></tr><tr data-status="nochange"><td data-label="아이디어" class="primary">유럽식 Excel 이 저장하는 ; 구분 CSV 를 한 열로 읽는 문제</td><td data-label="가치/위험/크기">2/3/S</td><td data-label="상태">대기</td><td data-label="메모">readSeparated 가 확장자로만 구분자를 정한다. 첫 줄을 보고 짐작할 수 있으나, 문장에 세미콜론이 있는 한국어 CSV 를 잘못 쪼갤 위험이 있다.</td><td data-label="갱신">2026-09-09</td></tr><tr data-status="released"><td data-label="아이디어" class="primary">allNumeric 이 통화 기호·괄호 음수를 숫자로 보지 않아 금액 시트가 차트가 못 되는 문제</td><td data-label="가치/위험/크기">3/2/M</td><td data-label="상태">완료</td><td data-label="메모">이번 회차에 구현. docs/tables.go 에 amountOf 를 두어 통화 기호(₩ ￦ $ € £ ¥ ￥)·낱말 &quot;원&quot;·고정 공백·회계 괄호를 벗기고 읽게 했고, deck/source.go 의 parseNumber 도 괄호를 빼기 부호로 읽게 했다. 낱말 단위(&quot;1월&quot;, &quot;3개&quot;)는 그대로 두어 라벨을 숫자로 오인하지 않는다. deck/compile.go 의 parseBareNumber 는 손대지 않았다 — 그 경로(seriesFromRows)는 값을 쉼표로 다시 쪼개는 별개 문제가 앞에 있다. 커밋 cf1429b.</td><td data-label="갱신">2026-09-09</td></tr></tbody></table></div>
+
+## 교훈 (깨졌던 변경)
+
+- 2026-09-09 **review-rejected** — docs 의 amountOf/allNumeric(분류기)과 deck 의 bareNumber(렌더러)는 서로 다른 숫자 파서다. 분류기만 넓히면 시트가 ::table 대신 ::columns 로 넘어가면서 렌더러가 같은 값을 다르게 읽어 차트가 망가진다(고정 공백 &#x27;1\u00a0200&#x27; → 분류기 1200, 렌더러 1). 파서 한쪽만 고치지 말고 두 경로가 같은 값을 같은 숫자로 읽는지 end-to-end 로 검증할 것. 또한 pptx/blocks.go 는 math.Abs 로 높이를 잡으므로 음수 파싱을 추가해도 렌더링은 안 바뀐다 — 커밋 메시지에 실제로 일어나지 않는 사용자 가시 효과를 쓰지 말 것. ([링크](https://github.com/hkjang/ptium/pull/12))
 
 ## 원장 (에이전트가 남긴 기록)
 
