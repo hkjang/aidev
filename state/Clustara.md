@@ -126,3 +126,6 @@
 - 보류 아이디어: ① `.github` 에 CI 워크플로 없음 — build/vet/test 게이트 추가 (가치 3 / 위험 1 / S) ② PSS Restricted 검사에 seccompProfile 항목이 없어 `RuntimeDefault`/`Localhost` 미설정 Pod 가 Restricted 로 남음 (가치 3 / 위험 2 / S) ③ 취약점 import 가 파싱 못 한 아티팩트를 '취약점 0건 완료' 로 저장 — 400 거절 또는 `parse_failed` 상태 재검토 (가치 3 / 위험 3 / S) ④ `PodSecurityResult` 에 `cluster_id` 가 없어 다중 클러스터 포스처 표가 어느 클러스터인지 말하지 못함 — SecFinding 은 이번에 채웠음 (가치 2 / 위험 1 / S) ⑤ `isSensitivePath` 가 substring 매칭이라 `imagePullSecrets` 같은 참조 이름까지 `***` 로 덮어 manifest 원장 diff 에 잡음 (가치 2 / 위험 2 / S)
 
 - 릴리즈: v0.9.278 (2026-09-09, run 2026-09-09-044102-Clustara-improve)
+## 2026-09-09
+- (원장 항목에 비밀/내부 정보 의심 문자열이 있어 비공개 기록으로 옮김 — run 2026-09-09-131238-Clustara-improve)
+

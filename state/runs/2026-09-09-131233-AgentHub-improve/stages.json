@@ -1,0 +1,27 @@
+{
+  "base": {
+    "state": "pinned",
+    "reason": "main@d62f998",
+    "at": "2026-09-09T13:12:35+09:00"
+  },
+  "autonomy": {
+    "state": "release",
+    "reason": "",
+    "at": "2026-09-09T13:12:35+09:00"
+  },
+  "verify": {
+    "state": "passed",
+    "reason": "검증 5개 통과 (auto)",
+    "at": "2026-09-09T13:19:59+09:00"
+  },
+  "pr": {
+    "state": "created",
+    "reason": "https://github.com/hkjang/AgentHub/pull/18",
+    "at": "2026-09-09T13:20:05+09:00"
+  },
+  "review": {
+    "state": "rejected",
+    "reason": "리뷰 거절: internal/execution/provenance.go:59-60 The scan now covers Agent, but the audit entry written on the very same call still carries the raw, unscrubbed name: SendDecision takes the record by value, so exportDecision's `record.Agent` is the pre-scrub string and it is passed as details[\"agent\"] to recordContentScan. With the PR's own example (an agent named \"민원 900101-1234568 담당\", rrn=block) the RRN is refused at the HTTP boundary and then persisted verbatim in audit_events.details — and audit details are read back and shipped out again by store.AuditTrailEach (internal/store/audit.go:114). Before this change that path could not fire for an agent-name value (no findings -> recordContentScan returns early, as its own comment says), so the PR converts an external leak into a stored one. It contradicts recordContentScan's doc at internal/execution/contentscan.go:119-121 (\"never the value itself\") and dlp.Scan's at internal/dlp/dlp.go:~268 (\"never logged and never stored\"). Passing record.AgentID (already the audit subject) instead would keep the entry useful without storing the value. / internal/execution/provenance.go:233-236 Agent and Category are the same string by construction — internal/store/provenance.go:122 does `record.Category = record.Agent` — so scanning both reports every agent-name finding twice. Verified by calling scrubDecision directly with Agent=Category=\"민원 900101-1234568 담당\": findings=2, Labels()=[주민등록번호 주민등록번호], Summary()=\"주민등록번호 1건, 주민등록번호 1건\", and the operator-facing sentence becomes \"결정 기록에 주민등록번호, 주민등록번호가 포함되어 보내지 않았습니다\". That is the double-reporting scrubDecision's own comment (provenance.go:262-264, \"an entry per field would tell the operator the same record left three times\") and dlp's claim() mechanism (internal/dlp/dlp.go:~415, \"so one value is reported once\") both exist to prevent. The new test bakes it in rather than catching it: provenance_test.go:337 asserts exactly 3 findings for a single RRN that appears in two mirrored fields plus Model. Findings should be merged per class before they reach WithheldError/Summary, or Category should be scanned as the copy it is.",
+    "at": "2026-09-09T13:23:27+09:00"
+  }
+}

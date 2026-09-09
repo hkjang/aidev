@@ -1,0 +1,191 @@
+{
+  "run_id": "2026-09-09-131233-AgentHub-improve",
+  "generated": "2026-09-09T13:23:29+09:00",
+  "run": {
+    "run_id": "2026-09-09-131233-AgentHub-improve",
+    "project": "AgentHub",
+    "kind": "improve",
+    "started": "2026-09-09T13:12:33+09:00",
+    "model": "claude-opus-5",
+    "policy_version": "5935779a",
+    "prompts_hash": "82f2440d4b2fef65",
+    "runner_version": "07e41602",
+    "finished": "2026-09-09T13:23:28+09:00",
+    "outcome": "review-pending"
+  },
+  "record": {
+    "ts": "2026-09-09T13:23:29+09:00",
+    "date": "2026-09-09",
+    "project": "AgentHub",
+    "result": "review held, PR open https://github.com/hkjang/AgentHub/pull/18",
+    "outcome": "review-pending",
+    "run_id": "2026-09-09-131233-AgentHub-improve",
+    "base_sha": "d62f99803c8810a0a10bc462ef03a810db008959",
+    "head_sha": "e16350d9ba028b8aecff27a6c2b9a4ea7b9e8f9b",
+    "pr": "https://github.com/hkjang/AgentHub/pull/18",
+    "stages": {
+      "base": {
+        "state": "pinned",
+        "reason": "main@d62f998",
+        "at": "2026-09-09T13:12:35+09:00"
+      },
+      "autonomy": {
+        "state": "release",
+        "reason": "",
+        "at": "2026-09-09T13:12:35+09:00"
+      },
+      "verify": {
+        "state": "passed",
+        "reason": "검증 5개 통과 (auto)",
+        "at": "2026-09-09T13:19:59+09:00"
+      },
+      "pr": {
+        "state": "created",
+        "reason": "https://github.com/hkjang/AgentHub/pull/18",
+        "at": "2026-09-09T13:20:05+09:00"
+      },
+      "review": {
+        "state": "rejected",
+        "reason": "리뷰 거절: internal/execution/provenance.go:59-60 The scan now covers Agent, but the audit entry written on the very same call still carries the raw, unscrubbed name: SendDecision takes the record by value, so exportDecision's `record.Agent` is the pre-scrub string and it is passed as details[\"agent\"] to recordContentScan. With the PR's own example (an agent named \"민원 900101-1234568 담당\", rrn=block) the RRN is refused at the HTTP boundary and then persisted verbatim in audit_events.details — and audit details are read back and shipped out again by store.AuditTrailEach (internal/store/audit.go:114). Before this change that path could not fire for an agent-name value (no findings -> recordContentScan returns early, as its own comment says), so the PR converts an external leak into a stored one. It contradicts recordContentScan's doc at internal/execution/contentscan.go:119-121 (\"never the value itself\") and dlp.Scan's at internal/dlp/dlp.go:~268 (\"never logged and never stored\"). Passing record.AgentID (already the audit subject) instead would keep the entry useful without storing the value. / internal/execution/provenance.go:233-236 Agent and Category are the same string by construction — internal/store/provenance.go:122 does `record.Category = record.Agent` — so scanning both reports every agent-name finding twice. Verified by calling scrubDecision directly with Agent=Category=\"민원 900101-1234568 담당\": findings=2, Labels()=[주민등록번호 주민등록번호], Summary()=\"주민등록번호 1건, 주민등록번호 1건\", and the operator-facing sentence becomes \"결정 기록에 주민등록번호, 주민등록번호가 포함되어 보내지 않았습니다\". That is the double-reporting scrubDecision's own comment (provenance.go:262-264, \"an entry per field would tell the operator the same record left three times\") and dlp's claim() mechanism (internal/dlp/dlp.go:~415, \"so one value is reported once\") both exist to prevent. The new test bakes it in rather than catching it: provenance_test.go:337 asserts exactly 3 findings for a single RRN that appears in two mirrored fields plus Model. Findings should be merged per class before they reach WithheldError/Summary, or Category should be scanned as the copy it is.",
+        "at": "2026-09-09T13:23:27+09:00"
+      }
+    },
+    "campaign": "",
+    "autonomy": "release",
+    "files": 2,
+    "additions": 161,
+    "deletions": 10,
+    "tests": 1,
+    "title": "fix: the exported decision record was scanned three fields out of nine"
+  },
+  "stages": {
+    "base": {
+      "state": "pinned",
+      "reason": "main@d62f998",
+      "at": "2026-09-09T13:12:35+09:00"
+    },
+    "autonomy": {
+      "state": "release",
+      "reason": "",
+      "at": "2026-09-09T13:12:35+09:00"
+    },
+    "verify": {
+      "state": "passed",
+      "reason": "검증 5개 통과 (auto)",
+      "at": "2026-09-09T13:19:59+09:00"
+    },
+    "pr": {
+      "state": "created",
+      "reason": "https://github.com/hkjang/AgentHub/pull/18",
+      "at": "2026-09-09T13:20:05+09:00"
+    },
+    "review": {
+      "state": "rejected",
+      "reason": "리뷰 거절: internal/execution/provenance.go:59-60 The scan now covers Agent, but the audit entry written on the very same call still carries the raw, unscrubbed name: SendDecision takes the record by value, so exportDecision's `record.Agent` is the pre-scrub string and it is passed as details[\"agent\"] to recordContentScan. With the PR's own example (an agent named \"민원 900101-1234568 담당\", rrn=block) the RRN is refused at the HTTP boundary and then persisted verbatim in audit_events.details — and audit details are read back and shipped out again by store.AuditTrailEach (internal/store/audit.go:114). Before this change that path could not fire for an agent-name value (no findings -> recordContentScan returns early, as its own comment says), so the PR converts an external leak into a stored one. It contradicts recordContentScan's doc at internal/execution/contentscan.go:119-121 (\"never the value itself\") and dlp.Scan's at internal/dlp/dlp.go:~268 (\"never logged and never stored\"). Passing record.AgentID (already the audit subject) instead would keep the entry useful without storing the value. / internal/execution/provenance.go:233-236 Agent and Category are the same string by construction — internal/store/provenance.go:122 does `record.Category = record.Agent` — so scanning both reports every agent-name finding twice. Verified by calling scrubDecision directly with Agent=Category=\"민원 900101-1234568 담당\": findings=2, Labels()=[주민등록번호 주민등록번호], Summary()=\"주민등록번호 1건, 주민등록번호 1건\", and the operator-facing sentence becomes \"결정 기록에 주민등록번호, 주민등록번호가 포함되어 보내지 않았습니다\". That is the double-reporting scrubDecision's own comment (provenance.go:262-264, \"an entry per field would tell the operator the same record left three times\") and dlp's claim() mechanism (internal/dlp/dlp.go:~415, \"so one value is reported once\") both exist to prevent. The new test bakes it in rather than catching it: provenance_test.go:337 asserts exactly 3 findings for a single RRN that appears in two mirrored fields plus Model. Findings should be merged per class before they reach WithheldError/Summary, or Category should be scanned as the copy it is.",
+      "at": "2026-09-09T13:23:27+09:00"
+    }
+  },
+  "provenance": {
+    "model": "claude-opus-5",
+    "policy_version": "5935779a",
+    "prompts_hash": "82f2440d4b2fef65",
+    "runner_version": "07e41602",
+    "base_sha": "d62f99803c8810a0a10bc462ef03a810db008959",
+    "head_sha": "e16350d9ba028b8aecff27a6c2b9a4ea7b9e8f9b",
+    "pr": "https://github.com/hkjang/AgentHub/pull/18"
+  },
+  "verification": {
+    "runner": {
+      "source": "auto",
+      "commands": [
+        {
+          "cmd": "go build ./...",
+          "exit": 0,
+          "seconds": 2
+        },
+        {
+          "cmd": "go vet ./...",
+          "exit": 0,
+          "seconds": 1
+        },
+        {
+          "cmd": "go test ./...",
+          "exit": 0,
+          "seconds": 19
+        },
+        {
+          "cmd": "cd web && [ -d node_modules ] || npm ci --no-audit --no-fund",
+          "exit": 0,
+          "seconds": 0
+        },
+        {
+          "cmd": "cd web && npm run build --silent",
+          "exit": 0,
+          "seconds": 3
+        }
+      ]
+    },
+    "runner_gate": {
+      "ok": true,
+      "state": "verified",
+      "reason": "검증 5개 통과 (auto)"
+    },
+    "after_rebase": null,
+    "review": {
+      "verdict": "reject",
+      "reasons": [
+        "internal/execution/provenance.go:59-60 The scan now covers Agent, but the audit entry written on the very same call still carries the raw, unscrubbed name: SendDecision takes the record by value, so exportDecision's `record.Agent` is the pre-scrub string and it is passed as details[\"agent\"] to recordContentScan. With the PR's own example (an agent named \"민원 900101-1234568 담당\", rrn=block) the RRN is refused at the HTTP boundary and then persisted verbatim in audit_events.details — and audit details are read back and shipped out again by store.AuditTrailEach (internal/store/audit.go:114). Before this change that path could not fire for an agent-name value (no findings -> recordContentScan returns early, as its own comment says), so the PR converts an external leak into a stored one. It contradicts recordContentScan's doc at internal/execution/contentscan.go:119-121 (\"never the value itself\") and dlp.Scan's at internal/dlp/dlp.go:~268 (\"never logged and never stored\"). Passing record.AgentID (already the audit subject) instead would keep the entry useful without storing the value.",
+        "internal/execution/provenance.go:233-236 Agent and Category are the same string by construction — internal/store/provenance.go:122 does `record.Category = record.Agent` — so scanning both reports every agent-name finding twice. Verified by calling scrubDecision directly with Agent=Category=\"민원 900101-1234568 담당\": findings=2, Labels()=[주민등록번호 주민등록번호], Summary()=\"주민등록번호 1건, 주민등록번호 1건\", and the operator-facing sentence becomes \"결정 기록에 주민등록번호, 주민등록번호가 포함되어 보내지 않았습니다\". That is the double-reporting scrubDecision's own comment (provenance.go:262-264, \"an entry per field would tell the operator the same record left three times\") and dlp's claim() mechanism (internal/dlp/dlp.go:~415, \"so one value is reported once\") both exist to prevent. The new test bakes it in rather than catching it: provenance_test.go:337 asserts exactly 3 findings for a single RRN that appears in two mirrored fields plus Model. Findings should be merged per class before they reach WithheldError/Summary, or Category should be scanned as the copy it is."
+      ],
+      "notes": [
+        "The new tests do exercise the change: reverting decisionWords to the original three fields (Scenario/Reasoning/SourceURL) makes TestEveryWordInARecordIsScannedOnItsWayOut and TestEveryFieldOfARecordIsEitherScannedOrAnIdentifier fail with the expected messages. Working tree was restored afterwards.",
+        "go build ./..., go vet ./internal/... and go test ./internal/... all pass on HEAD.",
+        "The identifier exemption is sound and is defended by a real assertion (TestTheIdentifiersInARecordAreNotScanned first proves the account detector actually claims an all-digit uuid, then proves the ids are untouched). The reflection sweep covers all 15 string fields of DecisionRecord; OccurredAt/AgentVersion are correctly skipped as non-strings.",
+        "No scope creep: two files, both on the reported defect. Nothing irreversible — no migration, no external state; a plain revert restores prior behaviour.",
+        "Minor: the reflection test greps provenance.go for the literal loop line `for _, field := range decisionWords {`, so any reformatting of that line fails the test for a non-reason. Style only, not a merge blocker.",
+        "Redacting Model/RuntimeImage/Outcome/Source rewrites values a receiving system may key on. I checked the plausible false positive (a date-suffixed model name like gpt-4o-2024-05-13): the account detector's notPhone validator requires >=9 digits, so it does not fire. No concrete false positive found."
+      ],
+      "risk": "medium"
+    },
+    "ci_gate": null
+  },
+  "release": {
+    "result": null,
+    "assets_sha256": []
+  },
+  "approval": null,
+  "usage": [
+    {
+      "ts": "2026-09-09T13:19:33+09:00",
+      "date": "2026-09-09",
+      "project": "AgentHub",
+      "phase": "improve",
+      "run_id": "2026-09-09-131233-AgentHub-improve",
+      "campaign": "",
+      "subtype": "success",
+      "duration_ms": 416288,
+      "num_turns": 36,
+      "cost_usd": 2.9440584999999997,
+      "input_tokens": 64,
+      "output_tokens": 27535,
+      "cache_read": 2513745,
+      "cache_create": 97909
+    },
+    {
+      "ts": "2026-09-09T13:23:27+09:00",
+      "date": "2026-09-09",
+      "project": "AgentHub",
+      "phase": "review",
+      "run_id": "2026-09-09-131233-AgentHub-improve",
+      "campaign": "",
+      "subtype": "success",
+      "duration_ms": 199595,
+      "num_turns": 22,
+      "cost_usd": 1.033617,
+      "input_tokens": 28,
+      "output_tokens": 13409,
+      "cache_read": 512990,
+      "cache_create": 43994
+    }
+  ]
+}
