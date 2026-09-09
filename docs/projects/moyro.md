@@ -1,7 +1,7 @@
 ---
 title: "moyro — 자율 개선 이력"
 description: "moyro: 자율 개선 회차 13회, 릴리즈 6건. 최근 릴리즈 v0.2.15."
-last_modified_at: 2026-09-09 08:52:19 +0900
+last_modified_at: 2026-09-09 09:10:40 +0900
 ---
 {% raw %}
 <script type="application/ld+json">
@@ -18,14 +18,14 @@ last_modified_at: 2026-09-09 08:52:19 +0900
   "name": "hkjang",
   "url": "https://github.com/hkjang"
  },
- "dateModified": "2026-09-09T08:52:19+09:00",
+ "dateModified": "2026-09-09T09:10:40+09:00",
  "version": "0.2.15"
 }
 </script>
 
 # moyro
 
-<p class="tldr"><strong>요약.</strong> moyro: 자율 개선 회차 13회, 릴리즈 6건. 최근 릴리즈 v0.2.15. <span class="pill pill-merged" title="14일: 릴리즈 6, 실패 0, 경고 2, 회귀 0">건강 C</span> <span class="meta">14일: 릴리즈 6, 실패 0, 경고 2, 회귀 0</span></p>
+<p class="tldr"><strong>요약.</strong> moyro: 자율 개선 회차 13회, 릴리즈 6건. 최근 릴리즈 v0.2.15. <span class="pill pill-merged" title="14일: 릴리즈 6, 실패 0, 경고 2, 회귀 1">건강 C</span> <span class="meta">14일: 릴리즈 6, 실패 0, 경고 2, 회귀 1</span></p>
 
 <ul class="stats"><li><b>13</b><span>회차</span></li><li><b>1</b><span>프로젝트</span></li><li><b>5</b><span>배포 준비 완료</span></li><li><b>1</b><span>릴리즈 진행 중</span></li><li><b>1</b><span>병합 완료</span></li><li><b>0</b><span>검토 대기</span></li><li><b>5</b><span>검증 실패</span></li><li><b>1</b><span>변경 없음</span></li><li><b>0</b><span>실행 오류</span></li><li><b>$18.67</b><span>비용</span></li><li><b>58분</b><span>에이전트 시간</span></li></ul>
 
@@ -48,6 +48,10 @@ last_modified_at: 2026-09-09 08:52:19 +0900
 ## 아이디어 백로그 — 대기 9 / 전체 11
 
 <div class="table-wrap"><table class="rt" data-filter="1"><caption class="meta">에이전트가 회차마다 재평가한다. 가치 높고 위험 낮은 대기 항목이 다음 회차 후보다.</caption><thead><tr><th class="primary">아이디어</th><th>가치/위험/크기</th><th>상태</th><th>메모</th><th>갱신</th></tr></thead><tbody><tr data-status="nochange"><td data-label="아이디어" class="primary">getPreferenceByName이 모든 오류를 404로 뭉개 DB 장애를 &#x27;설정 없음&#x27;으로 위장</td><td data-label="가치/위험/크기">3/1/S</td><td data-label="상태">대기</td><td data-label="메모">compat_wave_handlers_early.go:80의 핸들러가 err != nil이면 무조건 404 &#x27;preference not found&#x27;를 쓴다. 서비스는 이미 pgx.ErrNoRows를 구분해 돌려주므로 errors.Is로 404/500을 나누면 된다. 2026-09-09 재확인: main에 그대로 남아 있다. 미머지 브랜치 auto/2026-09-07-0240이 같은 파일의 upsert/delete 핸들러를 손대므로 그 브랜치가 머지된 뒤에 하는 편이 충돌이 적다.</td><td data-label="갱신">2026-09-09</td></tr><tr data-status="nochange"><td data-label="아이디어" class="primary">post_reminders에 사용자당 상한이 없어 무한 적재 가능</td><td data-label="가치/위험/크기">3/1/S</td><td data-label="상태">대기</td><td data-label="메모">createPostReminder는 remind_at이 미래인지만 검사하고 reminders.Create는 개수 상한 없이 INSERT한다. delivered 행도 남고 소유자 삭제·게시물 캐스케이드 외에는 지워지지 않는다. remind_at 상한(예: 1년)도 함께 볼 것. 2026-09-09 재확인: 미머지 브랜치 auto/2026-09-08-2109가 reminders/service.go와 worker.go를 크게 고치고 마이그레이션 000018을 추가하므로 그 뒤에 얹는 편이 낫다.</td><td data-label="갱신">2026-09-09</td></tr><tr data-status="nochange"><td data-label="아이디어" class="primary">다이제스트가 채널의 미읽음 전체를 &#x27;멘션&#x27;으로 취급</td><td data-label="가치/위험/크기">3/3/L</td><td data-label="상태">대기</td><td data-label="메모">신규(2026-09-09). loadMentions는 mention_count&gt;0인 채널의 미읽음 게시물을 전부 실어 보내므로, 바쁜 채널에서 한 번 멘션되면 남의 잡담 20건이 &#x27;멘션&#x27;으로 온다. 코드 주석이 근사치임을 명시하고 있다. 실제 @멘션만 고르려면 게시 시점의 mentionedIDs를 어딘가에 기록해야 해서(스키마 변경) L. 이번 회차에서 본인 글 제외와 발췌 손상은 이미 처리했다.</td><td data-label="갱신">2026-09-09</td></tr><tr data-status="nochange"><td data-label="아이디어" class="primary">커스텀 상태가 write-only — 저장되지만 어떤 API로도 다시 읽히지 않음</td><td data-label="가치/위험/크기">3/3/L</td><td data-label="상태">대기</td><td data-label="메모">userstatus.GetCustomStatus는 여전히 호출자가 없다. moyro 웹앱은 custom_status를 읽지도 쓰지도 않아 이득이 공식 Mattermost 클라이언트 한정. Mattermost는 user.props[&#x27;customStatus&#x27;]로 실어 보내므로 auth.User에 props를 더하고 userColumns를 쓰는 10여 개 쿼리를 손대야 해서 L. expires_at 만료 처리도 함께 필요.</td><td data-label="갱신">2026-09-09</td></tr><tr data-status="nochange"><td data-label="아이디어" class="primary">메시지 목록 가상화 — 로드된 모든 행이 DOM에 남음</td><td data-label="가치/위험/크기">3/4/L</td><td data-label="상태">대기</td><td data-label="메모">7d19ba6이 off-screen 렌더 비용은 줄였고 로드맵도 &#x27;메모리만 남는 문제&#x27;로 범위를 좁혔다. 스크롤/점프/읽음 표시와 얽혀 회귀 위험이 커서 자율 개선 세션에서는 계속 보류.</td><td data-label="갱신">2026-09-09</td></tr><tr data-status="nochange"><td data-label="아이디어" class="primary">전달 중인 리마인더가 소유자에게 보이지도 지워지지도 않음</td><td data-label="가치/위험/크기">2/1/S</td><td data-label="상태">대기</td><td data-label="메모">ListPending과 Delete 모두 delivered_at = 0만 본다. 두 경로가 delivered_at &lt;= 0을 보게 하면 사라지는데, Delete가 claim을 무효화해야 하므로 워커와의 상호작용을 먼저 정리해야 한다. auto/2026-09-08-2109의 리스 도입에 의존하는 후속 작업이라 그 브랜치가 머지될 때까지 대기.</td><td data-label="갱신">2026-09-09</td></tr><tr data-status="nochange"><td data-label="아이디어" class="primary">postacks/savedposts 통합 테스트 보강</td><td data-label="가치/위험/크기">2/1/M</td><td data-label="상태">대기</td><td data-label="메모">2026-09-09 재확인: 두 패키지 모두 여전히 테스트 파일이 없다. savedposts.savePost는 게시물 존재+채널 멤버십을 제대로 게이트하고 postacks의 세 핸들러도 멤버십으로 막혀 있어 명확한 결함은 없고 순수 회귀 방지 목적. 다만 ack 핸들러들이 IsMember 오류를 `ok, _ :=`로 삼켜 DB 장애가 403으로 나가는 작은 흠은 있다. CI가 DSN을 준 채 ./...를 돌리므로 추가하면 바로 실행된다.</td><td data-label="갱신">2026-09-09</td></tr><tr data-status="nochange"><td data-label="아이디어" class="primary">sidebar.Update가 사용자가 멤버가 아닌 채널 ID도 카테고리에 기록하도록 허용</td><td data-label="가치/위험/크기">2/2/S</td><td data-label="상태">대기</td><td data-label="메모">읽기 경로(fillChannelIDs)가 걸러주므로 노출은 없지만, 쓰기 시점에 거부하면 join 테이블에 죽은 행이 쌓이지 않고 오류도 즉시 드러난다. 2026-09-09 재확인: sidebar/service.go는 main 기준 그대로이고 미머지 브랜치도 이 파일을 건드리지 않아 지금 당장 손댈 수 있는 유일한 후보다(가치는 낮음).</td><td data-label="갱신">2026-09-09</td></tr><tr data-status="nochange"><td data-label="아이디어" class="primary">manual 상태가 영구히 고정돼 사용자가 자동 프레즌스로 돌아갈 수 없음</td><td data-label="가치/위험/크기">2/2/S</td><td data-label="상태">대기</td><td data-label="메모">userstatus.Set이 manual=true를 쓰면 SetAuto의 `WHERE user_statuses.manual = false` 가드가 이후 모든 소켓 연동을 영구히 막는다. manual=false로 되돌리는 유일한 방법은 클라이언트가 명시적으로 manual:false를 PUT하는 것인데 moyro 웹앱은 그 필드를 보내지 않는다. Mattermost는 online 선택 시 manual을 해제하는데 그 규칙을 따를지 결정이 필요해 순수 버그라기보다 동작 정의 문제. 미머지 브랜치 auto/2026-09-09-0201이 userstatus/service.go를 손대므로 그 뒤에.</td><td data-label="갱신">2026-09-09</td></tr><tr data-status="released"><td data-label="아이디어" class="primary">일간 다이제스트가 본인 글을 멘션으로 인용하고 발췌를 바이트로 잘라 한국어를 깨뜨림</td><td data-label="가치/위험/크기">4/1/M</td><td data-label="상태">완료</td><td data-label="메모">digest.loadMentions가 mention_count&gt;0인 채널의 미읽음 게시물을 전부 나열해 수신자 본인 글까지 &#x27;멘션&#x27;으로 넣었고(BumpUnread는 작성자에게 mention_count를 올리지 않으므로 본인 글은 배지 대상이 될 수 없다), 발췌를 msg[:160] 바이트 슬라이스로 잘라 한글에서 세 번 중 두 번 잘못된 UTF-8을 만들고 상한이 실제로는 53자였다. p.user_id &lt;&gt; $1 필터 + 룬 기반 발췌 헬퍼(리마인더·활동 피드와 동일 관용구)로 고치고, 상관 서브쿼리로 재조회하던 last_viewed_at을 이미 조인된 cm 행에서 읽게 단순화. 단위 테스트 1건 + PostgreSQL 통합 테스트 3건 추가(수정 전 구현에서 3건 모두 실패 확인).</td><td data-label="갱신">2026-09-09</td></tr><tr data-status="released"><td data-label="아이디어" class="primary">create-post 인가·멤버십 2회 쿼리를 단일 쿼리로 병합</td><td data-label="가치/위험/크기">3/2/M</td><td data-label="상태">완료</td><td data-label="메모">main의 bea85ad &#x27;perf: answer the create-post preconditions in one read&#x27;로 해결됨. 2026-09-09 재확인.</td><td data-label="갱신">2026-09-09</td></tr></tbody></table></div>
+
+## 교훈 (깨졌던 변경)
+
+- 2026-09-09 **verify-false-positive** — webapp/tsconfig.json 에 &quot;types&quot; 가 없어 node_modules/@types/* 가 전부 스코프에 들어온다. @types/node 가 끼면 window.setInterval 이 Node 의 Timeout 반환으로 해석돼 useDraft.test.tsx:196 이 TS2345 로 깨진다. main 은 깨끗하다(clean npm ci 후 typecheck exit 0). webapp 을 건드리지 않은 Go 전용 회차도 이 오류로 폐기되므로, 이 오류가 보이면 자기 변경 탓으로 여기지 말 것.
 
 ## 원장 (에이전트가 남긴 기록)
 

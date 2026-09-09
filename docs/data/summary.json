@@ -1,27 +1,27 @@
 {
- "generated": "2026-09-09T08:52:19+09:00",
+ "generated": "2026-09-09T09:10:17+09:00",
  "site": "https://hkjang.github.io/aidev",
- "description": "Claude Code 자율 개선 에이전트가 hkjang 의 프로젝트를 개선·테스트·머지·릴리즈한 일일 보고. 오늘 39회차·릴리즈 24건, 누적 462회차·릴리즈 220건, 주의 필요 1건.",
+ "description": "Claude Code 자율 개선 에이전트가 hkjang 의 프로젝트를 개선·테스트·머지·릴리즈한 일일 보고. 오늘 40회차·릴리즈 25건, 누적 463회차·릴리즈 221건, 주의 필요 1건.",
  "today": {
   "date": "2026-09-09",
-  "total": 39,
+  "total": 40,
   "projects": 24,
-  "released": 24,
+  "released": 25,
   "merged": 7,
   "nochange": 0,
   "failed": 1,
-  "cost_usd": 176.51,
-  "minutes": 479,
-  "sessions": 102
+  "cost_usd": 179.28,
+  "minutes": 487,
+  "sessions": 105
  },
  "totals": {
-  "runs": 462,
-  "released": 220,
+  "runs": 463,
+  "released": 221,
   "days": 8,
-  "cost_usd": 780.21,
-  "minutes": 2215,
-  "tokens_in": 719870816,
-  "tokens_out": 6964506
+  "cost_usd": 782.98,
+  "minutes": 2224,
+  "tokens_in": 721660099,
+  "tokens_out": 6993739
  },
  "alerts": [
   {
@@ -166,6 +166,13 @@
    "kind": "review-rejected",
    "pr": "https://github.com/hkjang/aiportal-py/pull/13",
    "detail": "백그라운드 task 종료 판정을 task 상태('cancelled')로 잡으면 CancelledError 를 삼키고 정상 반환하는 루프에서 cancelled()==False·exception()==None 이라 'stopped' 로 보여 정상 종료마다 오탐 ERROR 가 난다. shutdown 여부는 _shutting_down 플래그로 판정할 것. 또한 cancel() 이 곧 cancelled()==True 라고 가정하는 FakeTask 대역은 이 결함을 구조적으로 못 보므로 진짜 asyncio.Task 로 검증할 것. /health 같은 폴링 경로에서는 상태 전이 시점에만 로깅할 것."
+  },
+  {
+   "ts": "2026-09-09T08:57:47+09:00",
+   "date": "2026-09-09",
+   "project": "moyro",
+   "kind": "verify-false-positive",
+   "detail": "webapp/tsconfig.json 에 \"types\" 가 없어 node_modules/@types/* 가 전부 스코프에 들어온다. @types/node 가 끼면 window.setInterval 이 Node 의 Timeout 반환으로 해석돼 useDraft.test.tsx:196 이 TS2345 로 깨진다. main 은 깨끗하다(clean npm ci 후 typecheck exit 0). webapp 을 건드리지 않은 Go 전용 회차도 이 오류로 폐기되므로, 이 오류가 보이면 자기 변경 탓으로 여기지 말 것."
   }
  ],
  "caps": {
@@ -285,7 +292,7 @@
   {
    "metric": "완전한 릴리즈 비율",
    "value": "92%",
-   "detail": "릴리즈 시도 224건 중 자산 검증까지 205건"
+   "detail": "릴리즈 시도 225건 중 자산 검증까지 206건"
   },
   {
    "metric": "사람의 재작업률",
@@ -299,7 +306,7 @@
   },
   {
    "metric": "유효 개선당 비용",
-   "value": "$20.01",
+   "value": "$20.08",
    "detail": "비용 확인된 유효 개선 39건, 미확인 세션 2"
   },
   {
@@ -315,7 +322,7 @@
  ],
  "outcomes_today": {
   "merged": 7,
-  "release-ready": 24,
+  "release-ready": 25,
   "verify-failed": 3,
   "review-pending": 5,
   "releasing": 0,
@@ -325,12 +332,12 @@
  "days": [
   {
    "date": "2026-09-09",
-   "total": 39,
-   "released": 24,
+   "total": 40,
+   "released": 25,
    "merged": 7,
    "nochange": 0,
    "failed": 1,
-   "cost_usd": 176.51
+   "cost_usd": 179.28
   },
   {
    "date": "2026-09-08",
@@ -401,13 +408,13 @@
    "key": "2026-W37",
    "url": "https://hkjang.github.io/aidev/weekly/2026-W37/",
    "days": 3,
-   "total": 156,
-   "released": 63,
+   "total": 157,
+   "released": 64,
    "merged": 28,
    "nochange": 0,
    "failed": 1,
-   "cost": 539.72,
-   "minutes": 1564
+   "cost": 542.5,
+   "minutes": 1572
   },
   {
    "key": "2026-W36",
@@ -427,13 +434,13 @@
    "key": "2026-09",
    "url": "https://hkjang.github.io/aidev/monthly/2026-09/",
    "days": 8,
-   "total": 462,
-   "released": 220,
+   "total": 463,
+   "released": 221,
    "merged": 87,
    "nochange": 14,
    "failed": 1,
-   "cost": 780.21,
-   "minutes": 2215
+   "cost": 782.98,
+   "minutes": 2224
   }
  ],
  "projects": [
@@ -779,24 +786,24 @@
    "name": "kanpic",
    "repo": "https://github.com/hkjang/kanpic",
    "page": "https://hkjang.github.io/aidev/projects/kanpic/",
-   "runs": 12,
-   "released": 11,
-   "last_ts": "2026-09-09T02:26:45+09:00",
+   "runs": 13,
+   "released": 12,
+   "last_ts": "2026-09-09T09:10:13+09:00",
    "last_status": "released",
-   "last_result": "merged https://github.com/hkjang/kanpic/pull/12, released v0.239.0",
-   "cost": 11.45,
-   "minutes": 33,
+   "last_result": "merged https://github.com/hkjang/kanpic/pull/13, released v0.240.0",
+   "cost": 13.09,
+   "minutes": 39,
    "grade": "B",
-   "grade_why": "14일: 릴리즈 11, 실패 0, 경고 1, 회귀 0",
+   "grade_why": "14일: 릴리즈 12, 실패 0, 경고 1, 회귀 0",
    "lessons": 0,
    "ideas_pending": 6,
    "ideas_total": 8,
    "release": {
     "status": "released",
-    "version": "0.239.0",
-    "tag": "v0.239.0",
+    "version": "0.240.0",
+    "tag": "v0.240.0",
     "assets_count": 2,
-    "prev_tag": "v0.238.0",
+    "prev_tag": "v0.239.0",
     "prev_assets_count": 2
    }
   },
@@ -809,8 +816,8 @@
    "last_ts": "2026-09-09T04:34:24+09:00",
    "last_status": "released",
    "last_result": "release-only, released v0.1.25",
-   "cost": 18.52,
-   "minutes": 46,
+   "cost": 19.65,
+   "minutes": 48,
    "grade": "C",
    "grade_why": "14일: 릴리즈 7, 실패 1, 경고 3, 회귀 0",
    "lessons": 0,
@@ -818,11 +825,8 @@
    "ideas_total": 9,
    "release": {
     "status": "released",
-    "version": "0.1.25",
-    "tag": "v0.1.25",
-    "assets_count": 1,
-    "prev_tag": "v0.1.23",
-    "prev_assets_count": 1
+    "version": "0.1.26",
+    "tag": "v0.1.26"
    }
   },
   {
@@ -837,8 +841,8 @@
    "cost": 18.67,
    "minutes": 58,
    "grade": "C",
-   "grade_why": "14일: 릴리즈 6, 실패 0, 경고 2, 회귀 0",
-   "lessons": 0,
+   "grade_why": "14일: 릴리즈 6, 실패 0, 경고 2, 회귀 1",
+   "lessons": 1,
    "ideas_pending": 9,
    "ideas_total": 11,
    "release": {
