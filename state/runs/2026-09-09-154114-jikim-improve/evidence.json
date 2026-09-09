@@ -1,0 +1,180 @@
+{
+  "run_id": "2026-09-09-154114-jikim-improve",
+  "generated": "2026-09-09T15:47:11+09:00",
+  "run": {
+    "run_id": "2026-09-09-154114-jikim-improve",
+    "project": "jikim",
+    "kind": "improve",
+    "started": "2026-09-09T15:41:14+09:00",
+    "model": "claude-opus-5",
+    "policy_version": "5935779a",
+    "prompts_hash": "82f2440d4b2fef65",
+    "runner_version": "5b81a64b",
+    "finished": "2026-09-09T15:47:11+09:00",
+    "outcome": "review-pending"
+  },
+  "record": {
+    "ts": "2026-09-09T15:47:11+09:00",
+    "date": "2026-09-09",
+    "project": "jikim",
+    "result": "review held, PR open https://github.com/hkjang/jikim/pull/22",
+    "outcome": "review-pending",
+    "run_id": "2026-09-09-154114-jikim-improve",
+    "base_sha": "8d7796a3a5b5222562ff206404487325a3af482d",
+    "head_sha": "c143d70586141bb28b42cc5f2a912a571722e258",
+    "pr": "https://github.com/hkjang/jikim/pull/22",
+    "stages": {
+      "improve": {
+        "state": "hold",
+        "reason": "회차 예산($22)이 오늘 남은 상한을 넘음",
+        "at": "2026-09-09T15:41:14+09:00"
+      },
+      "base": {
+        "state": "pinned",
+        "reason": "main@8d7796a",
+        "at": "2026-09-09T15:41:16+09:00"
+      },
+      "autonomy": {
+        "state": "release",
+        "reason": "",
+        "at": "2026-09-09T15:41:16+09:00"
+      },
+      "verify": {
+        "state": "passed",
+        "reason": "검증 7개 통과 (auto)",
+        "at": "2026-09-09T15:47:05+09:00"
+      },
+      "pr": {
+        "state": "created",
+        "reason": "https://github.com/hkjang/jikim/pull/22",
+        "at": "2026-09-09T15:47:10+09:00"
+      },
+      "review": {
+        "state": "hold",
+        "reason": "예산 부족으로 리뷰를 돌리지 못함",
+        "at": "2026-09-09T15:47:10+09:00"
+      }
+    },
+    "campaign": "",
+    "autonomy": "release",
+    "files": 4,
+    "additions": 225,
+    "deletions": 26,
+    "tests": 1,
+    "title": "fix: report failed capability checks as server faults, not denials"
+  },
+  "stages": {
+    "improve": {
+      "state": "hold",
+      "reason": "회차 예산($22)이 오늘 남은 상한을 넘음",
+      "at": "2026-09-09T15:41:14+09:00"
+    },
+    "base": {
+      "state": "pinned",
+      "reason": "main@8d7796a",
+      "at": "2026-09-09T15:41:16+09:00"
+    },
+    "autonomy": {
+      "state": "release",
+      "reason": "",
+      "at": "2026-09-09T15:41:16+09:00"
+    },
+    "verify": {
+      "state": "passed",
+      "reason": "검증 7개 통과 (auto)",
+      "at": "2026-09-09T15:47:05+09:00"
+    },
+    "pr": {
+      "state": "created",
+      "reason": "https://github.com/hkjang/jikim/pull/22",
+      "at": "2026-09-09T15:47:10+09:00"
+    },
+    "review": {
+      "state": "hold",
+      "reason": "예산 부족으로 리뷰를 돌리지 못함",
+      "at": "2026-09-09T15:47:10+09:00"
+    }
+  },
+  "provenance": {
+    "model": "claude-opus-5",
+    "policy_version": "5935779a",
+    "prompts_hash": "82f2440d4b2fef65",
+    "runner_version": "5b81a64b",
+    "base_sha": "8d7796a3a5b5222562ff206404487325a3af482d",
+    "head_sha": "c143d70586141bb28b42cc5f2a912a571722e258",
+    "pr": "https://github.com/hkjang/jikim/pull/22"
+  },
+  "verification": {
+    "runner": {
+      "source": "auto",
+      "commands": [
+        {
+          "cmd": "go build ./...",
+          "exit": 0,
+          "seconds": 1
+        },
+        {
+          "cmd": "go vet ./...",
+          "exit": 0,
+          "seconds": 0
+        },
+        {
+          "cmd": "go test ./...",
+          "exit": 0,
+          "seconds": 1
+        },
+        {
+          "cmd": "cd web && [ -d node_modules ] || npm ci --no-audit --no-fund",
+          "exit": 0,
+          "seconds": 0
+        },
+        {
+          "cmd": "cd web && npm test --silent",
+          "exit": 0,
+          "seconds": 2
+        },
+        {
+          "cmd": "cd web && [ -d node_modules ] || npm ci --no-audit --no-fund",
+          "exit": 0,
+          "seconds": 0
+        },
+        {
+          "cmd": "cd web && npm run build --silent",
+          "exit": 0,
+          "seconds": 3
+        }
+      ]
+    },
+    "runner_gate": {
+      "ok": true,
+      "state": "verified",
+      "reason": "검증 7개 통과 (auto)"
+    },
+    "after_rebase": null,
+    "review": null,
+    "ci_gate": null
+  },
+  "release": {
+    "result": null,
+    "assets_sha256": []
+  },
+  "approval": null,
+  "usage": [
+    {
+      "ts": "2026-09-09T15:46:57+09:00",
+      "date": "2026-09-09",
+      "project": "jikim",
+      "phase": "improve",
+      "run_id": "2026-09-09-154114-jikim-improve",
+      "campaign": "",
+      "subtype": "success",
+      "duration_ms": 338894,
+      "num_turns": 49,
+      "cost_usd": 2.889359,
+      "input_tokens": 80,
+      "output_tokens": 25069,
+      "cache_read": 2757888,
+      "cache_create": 87389
+    }
+  ]
+}

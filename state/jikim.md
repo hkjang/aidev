@@ -50,3 +50,9 @@
 - 보류 아이디어: 로그인 성공 판정 전에 rate limiter를 succeeded로 초기화하는 순서 정리 (2/1/S) / settings GET이 주입하는 파생 필드가 PUT 왕복 시 workflow 설정에 저장되는 문제 정리 (2/1/S) / 감사 로그 보존(audit_retention_days) 자동 정리 구현 (3/3/M) / MCP secrets.metadata가 SecretVersions 실패 시에도 result를 채워 부분 결과와 오류가 섞이는 경로 정리 (2/1/S) / Transit rewrap 엔드포인트 추가 (2/3/M)
 
 - 릴리즈: v0.2.6 (2026-09-09, run 2026-09-09-082103-jikim-improve)
+## 2026-09-09
+- 선택: 실패한 capability 확인을 permission denied가 아닌 서버 장애로 보고 (가치 3 / 위험 1 / 작업량 M)
+- 결과: 성공
+- 요약: OpenBao KV·Transit 핸들러 9곳과 MCP 도구 3곳이 `allowed, err := CanAccess(...)` 결과를 `err != nil || !allowed`로 접어 DB 장애로 policy 조회가 실패해도 403 `permission denied`를 돌려줬습니다. 호출자는 정책 오설정을 쫓게 되고 재시도 가능한 서버 장애가 종결 오류로 보이므로, 앞선 v0.2.5·v0.2.6의 오류 매핑 정리와 같은 방식으로 `baoAllow`·`baoAccessFailure`와 `mcpAccessFailure`를 추가해 판정 불가와 거부를 나눴습니다(sentinel은 기존대로 403, ErrInvalid는 400+이유, 나머지는 500 `failed to check permissions`이며 driver 문자열 미노출, MCP transit.decrypt 감사 StatusCode도 실제 실패 종류를 따름). 곁들여 userpass login이 SecurityConfig 조회 실패를 "local login is disabled"로 보고하던 것을 500으로 분리하고 secrets.metadata의 부분 결과 경로를 막았으며, compatibility.md에 판정 계약을 문서화했습니다. 검증은 hook 기반 단위 테스트 6개(`openbao_access_errors_test.go`) 추가 후 `./scripts/verify.sh` 전체(Go test·vet·gofmt, React test·lint·build, docs, compose) 통과로 확인했습니다. 커밋 `c143d70`.
+- 보류 아이디어: 로그인 성공 판정 전에 rate limiter를 succeeded로 초기화하는 순서 정리 (2/1/S) / settings GET이 주입하는 파생 필드가 PUT 왕복 시 workflow 설정에 저장되는 문제 정리 (2/1/S) / 감사 로그 보존(audit_retention_days) 자동 정리 구현 (3/3/M) / SessionByToken이 DB 장애까지 ErrUnauthorized로 접어 인증 미들웨어가 장애를 403으로 보고하는 문제 정리 (3/2/M) / Transit rewrap 엔드포인트 추가 (2/3/M)
+
