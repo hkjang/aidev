@@ -384,11 +384,19 @@ sync_repo(){
   python3 "$HERE/report.py" >>"$LOG" 2>&1 || log "report.py FAILED"
   "$HERE/notify.sh" >>"$LOG" 2>&1 || true
   # aidev 저장소 갱신은 한 번에 하나만 — 동시에 pull --rebase 하면 .git/rebase-merge 가 남아 이후 모든 동기화가 막힌다 (2026-09-08)
+  # --autostash 는 쓰지 않는다: 커밋과 pull 사이에 병렬 회차가 runs.jsonl 에 한 줄을 덧붙이면
+  # 그 줄이 스태시로 들어가고, pop 이 충돌하면 조용히 남아 기록이 사라진다
+  # (2026-09-09: 9/8 git-ctx v0.77.8 회차 한 건이 이렇게 유실된 것을 스태시에서 복원했다).
+  # 대신 매 시도마다 다시 add·commit 해서 스태시할 것 자체를 남기지 않는다.
   ( flock -w 300 9 || exit 1
-    cd "$REPO_DIR" && rm -rf .git/rebase-merge .git/rebase-apply 2>/dev/null
-    git add -A state logs docs >/dev/null 2>&1 \
-    && { git diff --cached --quiet || git commit -qm "$1"; } \
-    && { git pull -q --rebase --autostash origin main >/dev/null 2>&1 || true; } && git push -q origin HEAD ) 9>"$HOME/.auto-improve/sync.lock" >>"$LOG" 2>&1 \
+    cd "$REPO_DIR" || exit 1; rm -rf .git/rebase-merge .git/rebase-apply 2>/dev/null
+    for attempt in 1 2 3; do
+      git add -A state logs docs >/dev/null 2>&1
+      git diff --cached --quiet || git commit -qm "$1" >/dev/null 2>&1
+      git pull -q --rebase origin main >/dev/null 2>&1 || { git rebase --abort >/dev/null 2>&1; continue; }
+      git push -q origin HEAD >/dev/null 2>&1 && exit 0
+    done
+    exit 1 ) 9>"$HOME/.auto-improve/sync.lock" >>"$LOG" 2>&1 \
     && log "aidev synced: $1" || log "aidev sync FAILED: $1"
 }
 

@@ -16,4 +16,4 @@ fi
 case "$what" in all) f="$STATE/STOP";; merge|release) f="$STATE/STOP-$what";; *) f="$STATE/STOP-$what";; esac
 if [ "$onoff" = on ]; then printf '%s by %s: %s\n' "$(date -Iseconds)" "$USER" "${why:-(사유 없음)}" > "$f"; echo "중지 설정: $(basename "$f")"
 else rm -f "$f"; echo "중지 해제: $(basename "$f")"; fi
-( cd "$REPO_DIR" && git add -A state && git commit -qm "stop: $what $onoff ${why:+— $why}" && git pull -q --rebase --autostash origin main && git push -q origin main ) >/dev/null 2>&1 && echo "aidev 에 반영됨" || echo "(로컬에만 반영 — 원격 푸시 실패)"
+( cd "$REPO_DIR" && git add -A state && git commit -qm "stop: $what $onoff ${why:+— $why}" && git pull -q --rebase origin main && git push -q origin main ) >/dev/null 2>&1 && echo "aidev 에 반영됨" || echo "(로컬에만 반영 — 원격 푸시 실패)"
