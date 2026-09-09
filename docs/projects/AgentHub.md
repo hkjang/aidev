@@ -1,7 +1,7 @@
 ---
 title: "AgentHub — 자율 개선 이력"
 description: "AgentHub: 자율 개선 회차 30회, 릴리즈 14건. 최근 릴리즈 v0.239.0 (자산 9개)."
-last_modified_at: 2026-09-09 13:23:29 +0900
+last_modified_at: 2026-09-09 13:30:52 +0900
 ---
 {% raw %}
 <script type="application/ld+json">
@@ -18,14 +18,14 @@ last_modified_at: 2026-09-09 13:23:29 +0900
   "name": "hkjang",
   "url": "https://github.com/hkjang"
  },
- "dateModified": "2026-09-09T13:23:29+09:00",
+ "dateModified": "2026-09-09T13:30:52+09:00",
  "version": "0.239.0"
 }
 </script>
 
 # AgentHub
 
-<p class="tldr"><strong>요약.</strong> AgentHub: 자율 개선 회차 30회, 릴리즈 14건. 최근 릴리즈 v0.239.0 (자산 9개). <span class="pill pill-failed" title="14일: 릴리즈 14, 실패 0, 경고 5, 회귀 2">건강 D</span> <span class="meta">14일: 릴리즈 14, 실패 0, 경고 5, 회귀 2</span></p>
+<p class="tldr"><strong>요약.</strong> AgentHub: 자율 개선 회차 30회, 릴리즈 14건. 최근 릴리즈 v0.239.0 (자산 9개). <span class="pill pill-failed" title="14일: 릴리즈 14, 실패 0, 경고 5, 회귀 3">건강 D</span> <span class="meta">14일: 릴리즈 14, 실패 0, 경고 5, 회귀 3</span></p>
 
 <ul class="stats"><li><b>30</b><span>회차</span></li><li><b>1</b><span>프로젝트</span></li><li><b>11</b><span>배포 준비 완료</span></li><li><b>3</b><span>릴리즈 진행 중</span></li><li><b>0</b><span>병합 완료</span></li><li><b>15</b><span>검토 대기</span></li><li><b>0</b><span>검증 실패</span></li><li><b>0</b><span>변경 없음</span></li><li><b>1</b><span>실행 오류</span></li><li><b>$68.42</b><span>비용</span></li><li><b>2시간 33분</b><span>에이전트 시간</span></li></ul>
 
@@ -51,6 +51,7 @@ last_modified_at: 2026-09-09 13:23:29 +0900
 
 ## 교훈 (깨졌던 변경)
 
+- 2026-09-09 **review-rejected** — DLP 스캔 범위를 넓힐 때 두 가지를 같이 볼 것. (1) SendDecision 은 record 를 값으로 받으므로 호출자의 record.&lt;field&gt; 는 스크럽 이전 문자열이다 — 그 값을 recordContentScan 의 details 로 넘기면 audit_events.details 에 원문이 저장되고 AuditTrailEach 가 다시 내보낸다. 감사에는 식별자(AgentID)만 넘길 것. (2) store/provenance.go 가 Category = Agent 로 복사하므로 두 필드를 각각 스캔하면 같은 값이 두 번 보고된다. 클래스별로 병합하거나 사본으로 취급할 것 — 다만 Category 를 스캔 목록에서 빼면 원문이 스크럽되지 않고 나간다. ([링크](https://github.com/hkjang/AgentHub/pull/18))
 - 2026-09-09 **review-rejected** — 정책 규칙의 행위자(actor)를 agent.OwnerID 로 잡았다 — 이 플랫폼의 정책 지점은 모두 작업 소유자(task.OwnerID)를 쓴다. 자격증명 조회(SCMTokenFor)만 agent.OwnerID 가 맞으므로 두 값을 분리할 것. 또한 ContentGuard 를 손으로 만들어 주입하는 테스트는 배선 결함을 못 본다 — 프로덕션 배선을 통과하는 테스트로 증명할 것. 소스 문자열 검사는 증거가 아니다. ([링크](https://github.com/hkjang/AgentHub/pull/16))
 - 2026-09-08 **rejected-by-human** — 사람이 PR 을 반려함. 같은 접근은 피할 것. ([링크](https://github.com/hkjang/AgentHub/pull/13))
 

@@ -1,27 +1,27 @@
 {
- "generated": "2026-09-09T13:23:29+09:00",
+ "generated": "2026-09-09T13:30:52+09:00",
  "site": "https://hkjang.github.io/aidev",
- "description": "Claude Code 자율 개선 에이전트가 hkjang 의 프로젝트를 개선·테스트·머지·릴리즈한 일일 보고. 오늘 58회차·릴리즈 33건, 누적 481회차·릴리즈 229건, 주의 필요 2건.",
+ "description": "Claude Code 자율 개선 에이전트가 hkjang 의 프로젝트를 개선·테스트·머지·릴리즈한 일일 보고. 오늘 59회차·릴리즈 34건, 누적 483회차·릴리즈 231건, 주의 필요 2건.",
  "today": {
   "date": "2026-09-09",
-  "total": 58,
+  "total": 59,
   "projects": 24,
-  "released": 33,
+  "released": 34,
   "merged": 8,
   "nochange": 1,
   "failed": 2,
-  "cost_usd": 246.11,
-  "minutes": 677,
-  "sessions": 139
+  "cost_usd": 247.24,
+  "minutes": 681,
+  "sessions": 140
  },
  "totals": {
-  "runs": 481,
-  "released": 229,
+  "runs": 483,
+  "released": 231,
   "days": 8,
-  "cost_usd": 849.81,
-  "minutes": 2414,
-  "tokens_in": 782559862,
-  "tokens_out": 7648980
+  "cost_usd": 850.93,
+  "minutes": 2418,
+  "tokens_in": 783413774,
+  "tokens_out": 7659804
  },
  "alerts": [
   {
@@ -196,6 +196,14 @@
    "kind": "review-rejected",
    "pr": "https://github.com/hkjang/ptium/pull/13",
    "detail": "figures.Of 가 공백에서 숫자를 끊는 동작은 라인 차트 계열('- 전환 전 | 120, 118, 121, 119')이 의존하는 계약이다. 구분자 처리를 넓히면 값이 붙어 1.20118121119e+11 이 되고 inspect.go 의 감사 출력까지 새어 나간다. docs/deck/compile 세 곳의 숫자 파서를 통합하려 하지 말 것 — 각자 다른 계약을 지키고 있다. 분류기 쪽을 좁히는 방향으로만 고칠 것."
+  },
+  {
+   "ts": "2026-09-09T13:24:44+09:00",
+   "date": "2026-09-09",
+   "project": "AgentHub",
+   "kind": "review-rejected",
+   "pr": "https://github.com/hkjang/AgentHub/pull/18",
+   "detail": "DLP 스캔 범위를 넓힐 때 두 가지를 같이 볼 것. (1) SendDecision 은 record 를 값으로 받으므로 호출자의 record.<field> 는 스크럽 이전 문자열이다 — 그 값을 recordContentScan 의 details 로 넘기면 audit_events.details 에 원문이 저장되고 AuditTrailEach 가 다시 내보낸다. 감사에는 식별자(AgentID)만 넘길 것. (2) store/provenance.go 가 Category = Agent 로 복사하므로 두 필드를 각각 스캔하면 같은 값이 두 번 보고된다. 클래스별로 병합하거나 사본으로 취급할 것 — 다만 Category 를 스캔 목록에서 빼면 원문이 스크럽되지 않고 나간다."
   }
  ],
  "caps": {
@@ -206,19 +214,6 @@
   "DORMANT_DAYS": 7
  },
  "inbox": [
-  {
-   "kind": "PR",
-   "project": "AgentHub",
-   "title": "auto-improve: fix: the exported decision record was scanned three fields out of nine",
-   "url": "https://github.com/hkjang/AgentHub/pull/18",
-   "sha": "e16350d",
-   "summary": "2파일 +161/−10 · review held, PR open https://github.com/hkjang/AgentHub/pull/18",
-   "why": "review: rejected — 리뷰 거절: internal/execution/provenance.go:59-60 The scan now covers Agent, but the",
-   "evidence": "https://github.com/hkjang/aidev/tree/main/state/runs/2026-09-09-131233-AgentHub-improve",
-   "labels": "",
-   "action": "승인: PR 라벨 aidev-approved / 반려: aidev-rejected — 다음 회차에 러너가 승인 당시 커밋에만 CI 확인 후 머지·닫기",
-   "date": "2026-09-09"
-  },
   {
    "kind": "PR",
    "project": "Invenqor",
@@ -354,7 +349,7 @@
   {
    "metric": "완전한 릴리즈 비율",
    "value": "92%",
-   "detail": "릴리즈 시도 233건 중 자산 검증까지 214건"
+   "detail": "릴리즈 시도 235건 중 자산 검증까지 216건"
   },
   {
    "metric": "사람의 재작업률",
@@ -368,7 +363,7 @@
   },
   {
    "metric": "유효 개선당 비용",
-   "value": "$20.23",
+   "value": "$20.26",
    "detail": "비용 확인된 유효 개선 42건, 미확인 세션 2"
   },
   {
@@ -384,7 +379,7 @@
  ],
  "outcomes_today": {
   "merged": 8,
-  "release-ready": 33,
+  "release-ready": 34,
   "verify-failed": 4,
   "review-pending": 11,
   "error": 1,
@@ -394,17 +389,17 @@
  "days": [
   {
    "date": "2026-09-09",
-   "total": 58,
-   "released": 33,
+   "total": 59,
+   "released": 34,
    "merged": 8,
    "nochange": 1,
    "failed": 2,
-   "cost_usd": 246.11
+   "cost_usd": 247.24
   },
   {
    "date": "2026-09-08",
-   "total": 52,
-   "released": 28,
+   "total": 53,
+   "released": 29,
    "merged": 8,
    "nochange": 0,
    "failed": 0,
@@ -470,13 +465,13 @@
    "key": "2026-W37",
    "url": "https://hkjang.github.io/aidev/weekly/2026-W37/",
    "days": 3,
-   "total": 175,
-   "released": 72,
+   "total": 177,
+   "released": 74,
    "merged": 29,
    "nochange": 1,
    "failed": 2,
-   "cost": 609.32,
-   "minutes": 1763
+   "cost": 610.45,
+   "minutes": 1767
   },
   {
    "key": "2026-W36",
@@ -496,13 +491,13 @@
    "key": "2026-09",
    "url": "https://hkjang.github.io/aidev/monthly/2026-09/",
    "days": 8,
-   "total": 481,
-   "released": 229,
+   "total": 483,
+   "released": 231,
    "merged": 88,
    "nochange": 15,
    "failed": 2,
-   "cost": 849.81,
-   "minutes": 2414
+   "cost": 850.93,
+   "minutes": 2418
   }
  ],
  "projects": [
@@ -518,8 +513,8 @@
    "cost": 68.42,
    "minutes": 153,
    "grade": "D",
-   "grade_why": "14일: 릴리즈 14, 실패 0, 경고 5, 회귀 2",
-   "lessons": 2,
+   "grade_why": "14일: 릴리즈 14, 실패 0, 경고 5, 회귀 3",
+   "lessons": 3,
    "ideas_pending": 11,
    "ideas_total": 12,
    "release": {
@@ -673,24 +668,24 @@
    "name": "Clustara",
    "repo": "https://github.com/hkjang/clustara",
    "page": "https://hkjang.github.io/aidev/projects/Clustara/",
-   "runs": 27,
-   "released": 16,
-   "last_ts": "2026-09-09T05:03:10+09:00",
+   "runs": 28,
+   "released": 17,
+   "last_ts": "2026-09-09T13:30:51+09:00",
    "last_status": "released",
-   "last_result": "merged https://github.com/hkjang/clustara/pull/17, released v0.9.278",
-   "cost": 62.85,
-   "minutes": 198,
+   "last_result": "merged https://github.com/hkjang/clustara/pull/18, released v0.9.279",
+   "cost": 63.97,
+   "minutes": 202,
    "grade": "C",
-   "grade_why": "14일: 릴리즈 16, 실패 0, 경고 2, 회귀 1",
+   "grade_why": "14일: 릴리즈 17, 실패 0, 경고 2, 회귀 1",
    "lessons": 1,
    "ideas_pending": 12,
    "ideas_total": 13,
    "release": {
     "status": "released",
-    "version": "0.9.278",
-    "tag": "v0.9.278",
+    "version": "0.9.279",
+    "tag": "v0.9.279",
     "assets_count": 3,
-    "prev_tag": "v0.9.277",
+    "prev_tag": "v0.9.278",
     "prev_assets_count": 3
    }
   },
@@ -723,15 +718,15 @@
    "name": "git-ctx",
    "repo": "https://github.com/hkjang/git-ctx",
    "page": "https://hkjang.github.io/aidev/projects/git-ctx/",
-   "runs": 14,
-   "released": 8,
+   "runs": 15,
+   "released": 9,
    "last_ts": "2026-09-09T08:17:05+09:00",
    "last_status": "released",
    "last_result": "merged https://github.com/hkjang/git-ctx/pull/25, released v0.77.10",
    "cost": 26.33,
    "minutes": 114,
    "grade": "D",
-   "grade_why": "14일: 릴리즈 8, 실패 0, 경고 4, 회귀 2",
+   "grade_why": "14일: 릴리즈 9, 실패 0, 경고 4, 회귀 2",
    "lessons": 2,
    "ideas_pending": 8,
    "ideas_total": 9,
