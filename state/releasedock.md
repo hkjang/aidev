@@ -166,3 +166,4 @@
 - 보류 아이디어: `simpleRunLogger.append` 가 빈 payload 를 저장하지 않아 스크립트 출력의 빈 줄(문단 구분)이 로그에서 사라집니다 (가치 2 / 위험 1 / S).
 - 보류 아이디어: `web/dist/assets/vendor` 청크가 617KB 로 커서 폐쇄망 초기 로딩 최적화 여지가 있습니다 (가치 2 / 위험 3 / M).
 
+- 릴리즈: v0.5.13 (2026-09-09, run 2026-09-09-115113-releasedock-improve)
