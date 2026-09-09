@@ -2360,3 +2360,21 @@ fatal: '/home/hkjang/.cache/auto-improve-wt/pii-masker' is not a working tree
 evidence: /mnt/c/Users/USER/projects/aidev/state/runs/2026-09-09-104105-pii-masker-improve/evidence.json
 reports: 8 day(s), 2 week(s), 1 month(s), 467 run(s), 409 usage row(s), 29 project page(s), 1 alert(s)
 notify: no new alerts
+                                  [10:49:40] aidev synced: run(2026-09-09): pii-masker — merged https://github.com/hkjang/pii-masker/pull/14, released v1.0.17
+[10:49:58] releasedock: improve — 63 turns, 8m, $4.84, success
+[10:49:59] releasedock: verify `cd backend && go build ./...` → exit 0 (0s)
+[10:49:59] releasedock: verify `cd backend && go vet ./...` → exit 0 (0s)
+[10:50:00] releasedock: verify `cd backend && go test ./...` → exit 0 (1s)
+[10:50:00] releasedock: verify `cd web && [ -d node_modules ] || npm ci --no-audit --no-fund` → exit 0 (0s)
+[10:50:02] releasedock: verify `cd web && npm test --silent` → exit 0 (2s)
+[10:50:02] releasedock: verify `cd web && [ -d node_modules ] || npm ci --no-audit --no-fund` → exit 0 (0s)
+[10:50:08] releasedock: verify `cd web && npm run build --silent` → exit 0 (6s)
+[10:50:08] releasedock: [verify] passed — 검증 7개 통과 (auto)
+branch 'auto/2026-09-09-1041' set up to track 'origin/auto/2026-09-09-1041'.
+[10:50:14] releasedock: [pr] created — https://github.com/hkjang/releasedock/pull/13
+[10:52:48] ptium: review — 25 turns, 4m, $1.44, success
+[10:52:48] ptium: [review] rejected — 리뷰 거절: server/internal/docs/tables.go:287 amountSigns 에 고정 공백(U+00A0)을 추가하면서 allNumeric 이 "1\u00a0200" 같은 셀을 숫자로 받아들이지만, 이 값을 실제로 그리는 server/internal/deck/source.go:710 bareNumber 는 첫 고정 공백에서 멈춰 1 로 읽습니다. 실제로 확인함: CSV "지역,매출 / 서울,1\u00a0200 / 부산,980" 이 HEAD 에서는 ::columns 로 분류되고 deck 파싱 결과가 서울=1, 부산=980 이 되어, 라벨은 1 200 인데 막대는 980 짜리 부산보다 1/980 높이로 그려집니다(막대 순서가 뒤집힌 차트). main 에서는 같은 시트가 ::table 로 남아 잘못된 숫자를 그리는 경로 자체가 없었으므로 이 diff 가 새로 만든 회귀입니다. ASCII 공백판 동일 결함은 기존에도 있었으나, 고정 공백은 이번에 추가된 것입니다. / server/internal/docs/sheetamounts_test.go:105 {"1\u00a0200", 1200, true} 로 amountOf 가 1200 을 읽는다고 못박고 있지만, 같은 값을 소비하는 deck 쪽은 1 로 읽습니다. 테스트가 두 파서의 불일치를 검증하지 못하고 오히려 고정시켰습니다(allNumeric 은 amountOf 의 반환값을 버리고 ok 만 쓰므로 단위 테스트만으로는 드러나지 않음). / server/internal/deck/source.go:695-697 주석과 커밋 메시지가 "괄호 없이 읽으면 환불이 340 을 판 달과 같은 높이로 축 위에 그려졌다"고 하며 부호를 붙이는 것이 그 문제의 수정인 것처럼 설명하지만, 실제 렌더링은 바뀌지 않습니다. 그림 경로는 server/internal/pptx/blocks.go:1240 과 1293 에서 math.Abs(item.number()) 로 높이를 잡아 -340 도 +340 과 똑같은 막대를 축 위에 그리고, 부호를 살리는 네이티브 차트 경로는 server/internal/pptx/chartblock.go:150-156 의 chartNumberFormat 이 표시 문자열 "(340)" 를 거부해(number 가 빈 문자열이 됨) 진입하지 못합니다. "(340)" 이 든 블록에 대해 chartPart 가 nil 을 반환하는 것을 직접 실행해 확인했습니다. 즉 설명된 사용자 가시 효과는 어디에서도 일어나지 않으며, 이를 검증하는 테스트도 없습니다(새 테스트는 파서 반환값만 단언).
+https://github.com/hkjang/ptium/pull/12#issuecomment-5594565705
+evidence: /mnt/c/Users/USER/projects/aidev/state/runs/2026-09-09-104110-ptium-improve/evidence.json
+reports: 8 day(s), 2 week(s), 1 month(s), 468 run(s), 411 usage row(s), 29 project page(s), 1 alert(s)
+notify: no new alerts

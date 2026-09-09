@@ -1,0 +1,210 @@
+{
+  "run_id": "2026-09-09-104110-ptium-improve",
+  "generated": "2026-09-09T10:52:50+09:00",
+  "run": {
+    "run_id": "2026-09-09-104110-ptium-improve",
+    "project": "ptium",
+    "kind": "improve",
+    "started": "2026-09-09T10:41:11+09:00",
+    "model": "claude-opus-5",
+    "policy_version": "5935779a",
+    "prompts_hash": "82f2440d4b2fef65",
+    "runner_version": "07e41602",
+    "finished": "2026-09-09T10:52:49+09:00",
+    "outcome": "review-pending"
+  },
+  "record": {
+    "ts": "2026-09-09T10:52:49+09:00",
+    "date": "2026-09-09",
+    "project": "ptium",
+    "result": "review held, PR open https://github.com/hkjang/ptium/pull/12",
+    "outcome": "review-pending",
+    "run_id": "2026-09-09-104110-ptium-improve",
+    "base_sha": "01e78a77c42681d43377c2063ae50a2cd8979845",
+    "head_sha": "cf1429bc145b91ddfb4e01ea0629dfd98ccb0f71",
+    "pr": "https://github.com/hkjang/ptium/pull/12",
+    "stages": {
+      "base": {
+        "state": "pinned",
+        "reason": "main@01e78a7",
+        "at": "2026-09-09T10:41:19+09:00"
+      },
+      "autonomy": {
+        "state": "release",
+        "reason": "",
+        "at": "2026-09-09T10:41:19+09:00"
+      },
+      "verify": {
+        "state": "passed",
+        "reason": "검증 9개 통과 (auto)",
+        "at": "2026-09-09T10:47:47+09:00"
+      },
+      "pr": {
+        "state": "created",
+        "reason": "https://github.com/hkjang/ptium/pull/12",
+        "at": "2026-09-09T10:47:57+09:00"
+      },
+      "review": {
+        "state": "rejected",
+        "reason": "리뷰 거절: server/internal/docs/tables.go:287 amountSigns 에 고정 공백(U+00A0)을 추가하면서 allNumeric 이 \"1\\u00a0200\" 같은 셀을 숫자로 받아들이지만, 이 값을 실제로 그리는 server/internal/deck/source.go:710 bareNumber 는 첫 고정 공백에서 멈춰 1 로 읽습니다. 실제로 확인함: CSV \"지역,매출 / 서울,1\\u00a0200 / 부산,980\" 이 HEAD 에서는 ::columns 로 분류되고 deck 파싱 결과가 서울=1, 부산=980 이 되어, 라벨은 1 200 인데 막대는 980 짜리 부산보다 1/980 높이로 그려집니다(막대 순서가 뒤집힌 차트). main 에서는 같은 시트가 ::table 로 남아 잘못된 숫자를 그리는 경로 자체가 없었으므로 이 diff 가 새로 만든 회귀입니다. ASCII 공백판 동일 결함은 기존에도 있었으나, 고정 공백은 이번에 추가된 것입니다. / server/internal/docs/sheetamounts_test.go:105 {\"1\\u00a0200\", 1200, true} 로 amountOf 가 1200 을 읽는다고 못박고 있지만, 같은 값을 소비하는 deck 쪽은 1 로 읽습니다. 테스트가 두 파서의 불일치를 검증하지 못하고 오히려 고정시켰습니다(allNumeric 은 amountOf 의 반환값을 버리고 ok 만 쓰므로 단위 테스트만으로는 드러나지 않음). / server/internal/deck/source.go:695-697 주석과 커밋 메시지가 \"괄호 없이 읽으면 환불이 340 을 판 달과 같은 높이로 축 위에 그려졌다\"고 하며 부호를 붙이는 것이 그 문제의 수정인 것처럼 설명하지만, 실제 렌더링은 바뀌지 않습니다. 그림 경로는 server/internal/pptx/blocks.go:1240 과 1293 에서 math.Abs(item.number()) 로 높이를 잡아 -340 도 +340 과 똑같은 막대를 축 위에 그리고, 부호를 살리는 네이티브 차트 경로는 server/internal/pptx/chartblock.go:150-156 의 chartNumberFormat 이 표시 문자열 \"(340)\" 를 거부해(number 가 빈 문자열이 됨) 진입하지 못합니다. \"(340)\" 이 든 블록에 대해 chartPart 가 nil 을 반환하는 것을 직접 실행해 확인했습니다. 즉 설명된 사용자 가시 효과는 어디에서도 일어나지 않으며, 이를 검증하는 테스트도 없습니다(새 테스트는 파서 반환값만 단언).",
+        "at": "2026-09-09T10:52:48+09:00"
+      }
+    },
+    "campaign": "",
+    "autonomy": "release",
+    "files": 4,
+    "additions": 202,
+    "deletions": 1,
+    "tests": 2,
+    "title": "Read a sheet of money as a column of figures"
+  },
+  "stages": {
+    "base": {
+      "state": "pinned",
+      "reason": "main@01e78a7",
+      "at": "2026-09-09T10:41:19+09:00"
+    },
+    "autonomy": {
+      "state": "release",
+      "reason": "",
+      "at": "2026-09-09T10:41:19+09:00"
+    },
+    "verify": {
+      "state": "passed",
+      "reason": "검증 9개 통과 (auto)",
+      "at": "2026-09-09T10:47:47+09:00"
+    },
+    "pr": {
+      "state": "created",
+      "reason": "https://github.com/hkjang/ptium/pull/12",
+      "at": "2026-09-09T10:47:57+09:00"
+    },
+    "review": {
+      "state": "rejected",
+      "reason": "리뷰 거절: server/internal/docs/tables.go:287 amountSigns 에 고정 공백(U+00A0)을 추가하면서 allNumeric 이 \"1\\u00a0200\" 같은 셀을 숫자로 받아들이지만, 이 값을 실제로 그리는 server/internal/deck/source.go:710 bareNumber 는 첫 고정 공백에서 멈춰 1 로 읽습니다. 실제로 확인함: CSV \"지역,매출 / 서울,1\\u00a0200 / 부산,980\" 이 HEAD 에서는 ::columns 로 분류되고 deck 파싱 결과가 서울=1, 부산=980 이 되어, 라벨은 1 200 인데 막대는 980 짜리 부산보다 1/980 높이로 그려집니다(막대 순서가 뒤집힌 차트). main 에서는 같은 시트가 ::table 로 남아 잘못된 숫자를 그리는 경로 자체가 없었으므로 이 diff 가 새로 만든 회귀입니다. ASCII 공백판 동일 결함은 기존에도 있었으나, 고정 공백은 이번에 추가된 것입니다. / server/internal/docs/sheetamounts_test.go:105 {\"1\\u00a0200\", 1200, true} 로 amountOf 가 1200 을 읽는다고 못박고 있지만, 같은 값을 소비하는 deck 쪽은 1 로 읽습니다. 테스트가 두 파서의 불일치를 검증하지 못하고 오히려 고정시켰습니다(allNumeric 은 amountOf 의 반환값을 버리고 ok 만 쓰므로 단위 테스트만으로는 드러나지 않음). / server/internal/deck/source.go:695-697 주석과 커밋 메시지가 \"괄호 없이 읽으면 환불이 340 을 판 달과 같은 높이로 축 위에 그려졌다\"고 하며 부호를 붙이는 것이 그 문제의 수정인 것처럼 설명하지만, 실제 렌더링은 바뀌지 않습니다. 그림 경로는 server/internal/pptx/blocks.go:1240 과 1293 에서 math.Abs(item.number()) 로 높이를 잡아 -340 도 +340 과 똑같은 막대를 축 위에 그리고, 부호를 살리는 네이티브 차트 경로는 server/internal/pptx/chartblock.go:150-156 의 chartNumberFormat 이 표시 문자열 \"(340)\" 를 거부해(number 가 빈 문자열이 됨) 진입하지 못합니다. \"(340)\" 이 든 블록에 대해 chartPart 가 nil 을 반환하는 것을 직접 실행해 확인했습니다. 즉 설명된 사용자 가시 효과는 어디에서도 일어나지 않으며, 이를 검증하는 테스트도 없습니다(새 테스트는 파서 반환값만 단언).",
+      "at": "2026-09-09T10:52:48+09:00"
+    }
+  },
+  "provenance": {
+    "model": "claude-opus-5",
+    "policy_version": "5935779a",
+    "prompts_hash": "82f2440d4b2fef65",
+    "runner_version": "07e41602",
+    "base_sha": "01e78a77c42681d43377c2063ae50a2cd8979845",
+    "head_sha": "cf1429bc145b91ddfb4e01ea0629dfd98ccb0f71",
+    "pr": "https://github.com/hkjang/ptium/pull/12"
+  },
+  "verification": {
+    "runner": {
+      "source": "auto",
+      "commands": [
+        {
+          "cmd": "cd server && go build ./...",
+          "exit": 0,
+          "seconds": 0
+        },
+        {
+          "cmd": "cd server && go vet ./...",
+          "exit": 0,
+          "seconds": 1
+        },
+        {
+          "cmd": "cd server && go test ./...",
+          "exit": 0,
+          "seconds": 3
+        },
+        {
+          "cmd": "cd web && [ -d node_modules ] || npm ci --no-audit --no-fund",
+          "exit": 0,
+          "seconds": 0
+        },
+        {
+          "cmd": "cd web && npm test --silent",
+          "exit": 0,
+          "seconds": 1
+        },
+        {
+          "cmd": "cd web && [ -d node_modules ] || npm ci --no-audit --no-fund",
+          "exit": 0,
+          "seconds": 0
+        },
+        {
+          "cmd": "cd web && npm run typecheck --silent",
+          "exit": 0,
+          "seconds": 1
+        },
+        {
+          "cmd": "cd web && [ -d node_modules ] || npm ci --no-audit --no-fund",
+          "exit": 0,
+          "seconds": 0
+        },
+        {
+          "cmd": "cd web && npm run build --silent",
+          "exit": 0,
+          "seconds": 1
+        }
+      ]
+    },
+    "runner_gate": {
+      "ok": true,
+      "state": "verified",
+      "reason": "검증 9개 통과 (auto)"
+    },
+    "after_rebase": null,
+    "review": {
+      "verdict": "reject",
+      "reasons": [
+        "server/internal/docs/tables.go:287 amountSigns 에 고정 공백(U+00A0)을 추가하면서 allNumeric 이 \"1\\u00a0200\" 같은 셀을 숫자로 받아들이지만, 이 값을 실제로 그리는 server/internal/deck/source.go:710 bareNumber 는 첫 고정 공백에서 멈춰 1 로 읽습니다. 실제로 확인함: CSV \"지역,매출 / 서울,1\\u00a0200 / 부산,980\" 이 HEAD 에서는 ::columns 로 분류되고 deck 파싱 결과가 서울=1, 부산=980 이 되어, 라벨은 1 200 인데 막대는 980 짜리 부산보다 1/980 높이로 그려집니다(막대 순서가 뒤집힌 차트). main 에서는 같은 시트가 ::table 로 남아 잘못된 숫자를 그리는 경로 자체가 없었으므로 이 diff 가 새로 만든 회귀입니다. ASCII 공백판 동일 결함은 기존에도 있었으나, 고정 공백은 이번에 추가된 것입니다.",
+        "server/internal/docs/sheetamounts_test.go:105 {\"1\\u00a0200\", 1200, true} 로 amountOf 가 1200 을 읽는다고 못박고 있지만, 같은 값을 소비하는 deck 쪽은 1 로 읽습니다. 테스트가 두 파서의 불일치를 검증하지 못하고 오히려 고정시켰습니다(allNumeric 은 amountOf 의 반환값을 버리고 ok 만 쓰므로 단위 테스트만으로는 드러나지 않음).",
+        "server/internal/deck/source.go:695-697 주석과 커밋 메시지가 \"괄호 없이 읽으면 환불이 340 을 판 달과 같은 높이로 축 위에 그려졌다\"고 하며 부호를 붙이는 것이 그 문제의 수정인 것처럼 설명하지만, 실제 렌더링은 바뀌지 않습니다. 그림 경로는 server/internal/pptx/blocks.go:1240 과 1293 에서 math.Abs(item.number()) 로 높이를 잡아 -340 도 +340 과 똑같은 막대를 축 위에 그리고, 부호를 살리는 네이티브 차트 경로는 server/internal/pptx/chartblock.go:150-156 의 chartNumberFormat 이 표시 문자열 \"(340)\" 를 거부해(number 가 빈 문자열이 됨) 진입하지 못합니다. \"(340)\" 이 든 블록에 대해 chartPart 가 nil 을 반환하는 것을 직접 실행해 확인했습니다. 즉 설명된 사용자 가시 효과는 어디에서도 일어나지 않으며, 이를 검증하는 테스트도 없습니다(새 테스트는 파서 반환값만 단언)."
+      ],
+      "notes": [
+        "핵심 기능인 '통화 서식이 붙은 열을 표가 아니라 차트로 읽기'(₩1,200 / 1,200원 / $1,200.50)는 end-to-end 로 동작하고, 새 테스트들은 main 코드에서는 통과하지 못합니다(amountOf 미존재로 컴파일 실패, 그리고 (340) 은 340 으로 읽혀 -340 단언 실패). 테스트 자체는 공허하지 않습니다.",
+        "parseNumber 이 이제 괄호로 완전히 감싸인 값 전부를 음수로 뒤집습니다: \"(약 30%)\" -> -30, \"(2025년 기준)\" -> -2025 (이전 +30 / +2025). 문서 경로에서는 amountOf 가 걸러 도달하지 않지만, 모델이 쓴 deck 소스의 값 필드에서는 도달합니다. 렌더링이 math.Abs 를 쓰는 지금은 눈에 띄지 않지만 blocks.go 가 부호를 살리도록 고쳐지는 순간 곧바로 드러납니다.",
+        "고정 공백 항목을 amountSigns 에서 빼거나, deck 의 bareNumber 가 amountOf 와 같은 정규화를 쓰도록 두 파서를 하나로 합치면 첫 번째 사유는 해소됩니다. 세 번째 사유는 blocks.go 의 음수 처리를 함께 고치거나, 주석/커밋 메시지를 실제로 하는 일(내보낸 차트 XML 이 부호를 싣게 될 때를 대비한 파싱)로 낮춰 쓰면 됩니다.",
+        "server/internal/docs/tables.go:245 에서 amountOf 의 값을 버리고 ok 만 쓰는 구조가 두 파서의 불일치를 숨깁니다. 범위 이탈·인증/결제/마이그레이션 변경은 없고, 순수 코드 변경이라 revert 는 깨끗합니다. 전체 go test ./... 는 통과합니다."
+      ],
+      "risk": "medium"
+    },
+    "ci_gate": null
+  },
+  "release": {
+    "result": null,
+    "assets_sha256": []
+  },
+  "approval": null,
+  "usage": [
+    {
+      "ts": "2026-09-09T10:47:39+09:00",
+      "date": "2026-09-09",
+      "project": "ptium",
+      "phase": "improve",
+      "run_id": "2026-09-09-104110-ptium-improve",
+      "campaign": "",
+      "subtype": "success",
+      "duration_ms": 377359,
+      "num_turns": 36,
+      "cost_usd": 2.2035525,
+      "input_tokens": 58,
+      "output_tokens": 24629,
+      "cache_read": 1735361,
+      "cache_create": 70965
+    },
+    {
+      "ts": "2026-09-09T10:52:48+09:00",
+      "date": "2026-09-09",
+      "project": "ptium",
+      "phase": "review",
+      "run_id": "2026-09-09-104110-ptium-improve",
+      "campaign": "",
+      "subtype": "success",
+      "duration_ms": 288515,
+      "num_turns": 25,
+      "cost_usd": 1.4425560000000002,
+      "input_tokens": 50,
+      "output_tokens": 19594,
+      "cache_read": 984320,
+      "cache_create": 45843
+    }
+  ]
+}
