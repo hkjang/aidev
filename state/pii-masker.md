@@ -90,3 +90,4 @@
 - 보류 아이디어: 동기 슬롯 대기열의 메모리 상한(대기 요청이 이미 읽은 업로드 바이트를 보유) / 종료 시 실행 중인 비동기 job이 `running`으로 남고 재기동 시 `failed` 처리될 뿐 재개되지 않음 / `internal/config`의 나머지 순수 함수(`normalizeAllowHosts`, `normalizeEndpointURL`, `normalizePIILang/Schema`, `envInt/envNonNegativeInt/envBool`) 단위 테스트 / `/v1/jobs/{id}/result`가 `GET`만 라우팅되어 `HEAD` 프로브가 405를 받음(`ServeContent`는 이미 HEAD 처리) / 업로드 파일명 유니코드 정규화 부재(NFD 자모 분리 한글이 그대로 디스크에 기록되어 재조회·비교가 어긋남)
 
 - 릴리즈: v1.0.16 (2026-09-09, run 2026-09-09-023058-pii-masker-improve)
+- 릴리즈: v1.0.17 (2026-09-09, run 2026-09-09-104105-pii-masker-improve)
