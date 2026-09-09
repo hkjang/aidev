@@ -1,0 +1,200 @@
+{
+  "run_id": "2026-09-09-123107-relio-improve",
+  "generated": "2026-09-09T12:41:03+09:00",
+  "run": {
+    "run_id": "2026-09-09-123107-relio-improve",
+    "project": "relio",
+    "kind": "improve",
+    "started": "2026-09-09T12:31:08+09:00",
+    "model": "claude-opus-5",
+    "policy_version": "5935779a",
+    "prompts_hash": "82f2440d4b2fef65",
+    "runner_version": "07e41602",
+    "finished": "2026-09-09T12:41:03+09:00",
+    "outcome": "review-pending"
+  },
+  "record": {
+    "ts": "2026-09-09T12:41:03+09:00",
+    "date": "2026-09-09",
+    "project": "relio",
+    "result": "review held, PR open https://github.com/hkjang/relio/pull/15",
+    "outcome": "review-pending",
+    "run_id": "2026-09-09-123107-relio-improve",
+    "base_sha": "7f192a8cf29a9562c942659a130d57ea6a30bc0f",
+    "head_sha": "2c282f4ad14e5a86c6c67fbfc42a226b77d5a0a2",
+    "pr": "https://github.com/hkjang/relio/pull/15",
+    "stages": {
+      "base": {
+        "state": "pinned",
+        "reason": "main@7f192a8",
+        "at": "2026-09-09T12:31:12+09:00"
+      },
+      "autonomy": {
+        "state": "low-risk",
+        "reason": "롤백 PR ",
+        "at": "2026-09-09T12:31:12+09:00"
+      },
+      "verify": {
+        "state": "passed",
+        "reason": "검증 7개 통과 (auto)",
+        "at": "2026-09-09T12:38:16+09:00"
+      },
+      "pr": {
+        "state": "created",
+        "reason": "https://github.com/hkjang/relio/pull/15",
+        "at": "2026-09-09T12:38:30+09:00"
+      },
+      "review": {
+        "state": "rejected",
+        "reason": "리뷰 거절: internal/crm/service.go:478 `today := s.Clock.DateAt(ctx, now)` 가 `s.DB.Query(...)` + `defer rows.Close()` 이후에 놓여 있어, 풀 커넥션을 쥔 상태에서 timezone.Loader 가 같은 pgxpool 로 두 번째 커넥션을 요청한다. 바로 앞 커밋 9571cbd 가 internal/server/today.go:69-71 에 \"Read outside the row loop: the zone lookup is its own query and would otherwise take a second pooled connection while these rows are open.\" 라고 명시적으로 남긴 불변식을 이번 변경이 그대로 위반한다. pool 은 database.go:22 의 `pgxpool.New` 기본값(MaxConns = max(4, NumCPU))이고 zone 캐시는 30초라, 캐시 만료 시점에 ListOpportunities 가 MaxConns 개 동시에 들어오면 모두 rows 커넥션을 쥔 채 두 번째 Acquire 에서 서로를 기다린다. http.Server 의 WriteTimeout 은 핸들러의 request context 를 취소하지 않으므로 클라이언트가 끊을 때까지 스톨이 풀리지 않는다. 수정은 한 줄 이동(`s.DB.Query` 호출 전으로 옮기기)이며, 그렇게 해도 주석이 말한 \"페이지 전체를 한 날짜로 판정\"·\"페이지당 조회 1회\" 라는 의도는 그대로 유지된다. / internal/crm/service.go:478 같은 이유로 이 경로에는 회귀 테스트가 없다. 새 테스트 3개는 모두 순수 함수 `opportunityHealth` 만 호출하고 `ListOpportunities` 는 실행하지 않으므로, 커넥션 홀딩 문제를 잡아내지 못한다.",
+        "at": "2026-09-09T12:41:02+09:00"
+      }
+    },
+    "campaign": "",
+    "autonomy": "low-risk",
+    "files": 9,
+    "additions": 279,
+    "deletions": 22,
+    "tests": 4,
+    "title": "fix(intelligence): count D-days on the configured timezone's calendar"
+  },
+  "stages": {
+    "base": {
+      "state": "pinned",
+      "reason": "main@7f192a8",
+      "at": "2026-09-09T12:31:12+09:00"
+    },
+    "autonomy": {
+      "state": "low-risk",
+      "reason": "롤백 PR ",
+      "at": "2026-09-09T12:31:12+09:00"
+    },
+    "verify": {
+      "state": "passed",
+      "reason": "검증 7개 통과 (auto)",
+      "at": "2026-09-09T12:38:16+09:00"
+    },
+    "pr": {
+      "state": "created",
+      "reason": "https://github.com/hkjang/relio/pull/15",
+      "at": "2026-09-09T12:38:30+09:00"
+    },
+    "review": {
+      "state": "rejected",
+      "reason": "리뷰 거절: internal/crm/service.go:478 `today := s.Clock.DateAt(ctx, now)` 가 `s.DB.Query(...)` + `defer rows.Close()` 이후에 놓여 있어, 풀 커넥션을 쥔 상태에서 timezone.Loader 가 같은 pgxpool 로 두 번째 커넥션을 요청한다. 바로 앞 커밋 9571cbd 가 internal/server/today.go:69-71 에 \"Read outside the row loop: the zone lookup is its own query and would otherwise take a second pooled connection while these rows are open.\" 라고 명시적으로 남긴 불변식을 이번 변경이 그대로 위반한다. pool 은 database.go:22 의 `pgxpool.New` 기본값(MaxConns = max(4, NumCPU))이고 zone 캐시는 30초라, 캐시 만료 시점에 ListOpportunities 가 MaxConns 개 동시에 들어오면 모두 rows 커넥션을 쥔 채 두 번째 Acquire 에서 서로를 기다린다. http.Server 의 WriteTimeout 은 핸들러의 request context 를 취소하지 않으므로 클라이언트가 끊을 때까지 스톨이 풀리지 않는다. 수정은 한 줄 이동(`s.DB.Query` 호출 전으로 옮기기)이며, 그렇게 해도 주석이 말한 \"페이지 전체를 한 날짜로 판정\"·\"페이지당 조회 1회\" 라는 의도는 그대로 유지된다. / internal/crm/service.go:478 같은 이유로 이 경로에는 회귀 테스트가 없다. 새 테스트 3개는 모두 순수 함수 `opportunityHealth` 만 호출하고 `ListOpportunities` 는 실행하지 않으므로, 커넥션 홀딩 문제를 잡아내지 못한다.",
+      "at": "2026-09-09T12:41:02+09:00"
+    }
+  },
+  "provenance": {
+    "model": "claude-opus-5",
+    "policy_version": "5935779a",
+    "prompts_hash": "82f2440d4b2fef65",
+    "runner_version": "07e41602",
+    "base_sha": "7f192a8cf29a9562c942659a130d57ea6a30bc0f",
+    "head_sha": "2c282f4ad14e5a86c6c67fbfc42a226b77d5a0a2",
+    "pr": "https://github.com/hkjang/relio/pull/15"
+  },
+  "verification": {
+    "runner": {
+      "source": "auto",
+      "commands": [
+        {
+          "cmd": "go build ./...",
+          "exit": 0,
+          "seconds": 4
+        },
+        {
+          "cmd": "go vet ./...",
+          "exit": 0,
+          "seconds": 0
+        },
+        {
+          "cmd": "go test ./...",
+          "exit": 0,
+          "seconds": 4
+        },
+        {
+          "cmd": "cd web && [ -d node_modules ] || npm ci --no-audit --no-fund",
+          "exit": 0,
+          "seconds": 0
+        },
+        {
+          "cmd": "cd web && npm run typecheck --silent",
+          "exit": 0,
+          "seconds": 9
+        },
+        {
+          "cmd": "cd web && [ -d node_modules ] || npm ci --no-audit --no-fund",
+          "exit": 0,
+          "seconds": 0
+        },
+        {
+          "cmd": "cd web && npm run build --silent",
+          "exit": 0,
+          "seconds": 11
+        }
+      ]
+    },
+    "runner_gate": {
+      "ok": true,
+      "state": "verified",
+      "reason": "검증 7개 통과 (auto)"
+    },
+    "after_rebase": null,
+    "review": {
+      "verdict": "reject",
+      "reasons": [
+        "internal/crm/service.go:478 `today := s.Clock.DateAt(ctx, now)` 가 `s.DB.Query(...)` + `defer rows.Close()` 이후에 놓여 있어, 풀 커넥션을 쥔 상태에서 timezone.Loader 가 같은 pgxpool 로 두 번째 커넥션을 요청한다. 바로 앞 커밋 9571cbd 가 internal/server/today.go:69-71 에 \"Read outside the row loop: the zone lookup is its own query and would otherwise take a second pooled connection while these rows are open.\" 라고 명시적으로 남긴 불변식을 이번 변경이 그대로 위반한다. pool 은 database.go:22 의 `pgxpool.New` 기본값(MaxConns = max(4, NumCPU))이고 zone 캐시는 30초라, 캐시 만료 시점에 ListOpportunities 가 MaxConns 개 동시에 들어오면 모두 rows 커넥션을 쥔 채 두 번째 Acquire 에서 서로를 기다린다. http.Server 의 WriteTimeout 은 핸들러의 request context 를 취소하지 않으므로 클라이언트가 끊을 때까지 스톨이 풀리지 않는다. 수정은 한 줄 이동(`s.DB.Query` 호출 전으로 옮기기)이며, 그렇게 해도 주석이 말한 \"페이지 전체를 한 날짜로 판정\"·\"페이지당 조회 1회\" 라는 의도는 그대로 유지된다.",
+        "internal/crm/service.go:478 같은 이유로 이 경로에는 회귀 테스트가 없다. 새 테스트 3개는 모두 순수 함수 `opportunityHealth` 만 호출하고 `ListOpportunities` 는 실행하지 않으므로, 커넥션 홀딩 문제를 잡아내지 못한다."
+      ],
+      "notes": [
+        "시간대 로직 자체는 정확하다. DateOf/DateAt 이 pgx 의 DATE 표현(자정 UTC)과 같은 모양을 돌려주고, calendarDays 양변이 이제 모두 캘린더 날짜라 D-day 계산이 일관된다. nil *Loader 가 Asia/Seoul 로 답하는 폴백도 timezone.go:100-103 에서 확인했다.",
+        "새 테스트는 실제로 변경을 검증한다. intelligence/calendar_test.go:56-79 는 같은 end_date 2026-08-15 에 대해 Seoul=D-2 / UTC=D-3 를 요구하므로 today 를 무시하면 반드시 깨지고, TestConfiguredZoneDecidesTheDayTheEngineCountsFrom 은 두 존이 실제로 다른 날짜인지 전제부터 검사한다. crm/health_test.go:41-57 은 마감일 당일을 overdue 로 보지 않는다고 단언해 기존 `Before(now)` 동작을 배제한다.",
+        "intelligence/health.go:200 의 DealHealth CLOSE_DATE_PASSED 수정에는 테스트가 없다(DB 가 필요한 경로). 로직은 opportunitySignals 와 동일하므로 타당해 보이지만 검증되지 않은 채로 머지된다.",
+        "go build ./... , go vet, 그리고 crm/intelligence/timezone 3개 패키지 테스트는 모두 통과했다. 마이그레이션·인증·권한·비밀값·삭제 로직은 건드리지 않았고, 커밋 메시지대로 dedupe 키((type, entity))도 바뀌지 않아 revert 로 완전히 되돌릴 수 있다. 범위 이탈이나 무관한 리팩터도 없다.",
+        "기존 신호가 title/evidence 의 일수만 바뀌므로, 배포 직후 한 번의 스캔에서 사용자에게 D-day 표기가 하루 조정되어 보이는 것은 의도된 결과다."
+      ],
+      "risk": "medium"
+    },
+    "ci_gate": null
+  },
+  "release": {
+    "result": null,
+    "assets_sha256": []
+  },
+  "approval": null,
+  "usage": [
+    {
+      "ts": "2026-09-09T12:37:45+09:00",
+      "date": "2026-09-09",
+      "project": "relio",
+      "phase": "improve",
+      "run_id": "2026-09-09-123107-relio-improve",
+      "campaign": "",
+      "subtype": "success",
+      "duration_ms": 391517,
+      "num_turns": 60,
+      "cost_usd": 3.4613200000000006,
+      "input_tokens": 88,
+      "output_tokens": 31615,
+      "cache_read": 3311664,
+      "cache_create": 99986
+    },
+    {
+      "ts": "2026-09-09T12:41:02+09:00",
+      "date": "2026-09-09",
+      "project": "relio",
+      "phase": "review",
+      "run_id": "2026-09-09-123107-relio-improve",
+      "campaign": "",
+      "subtype": "success",
+      "duration_ms": 144195,
+      "num_turns": 14,
+      "cost_usd": 0.947092,
+      "input_tokens": 20,
+      "output_tokens": 10177,
+      "cache_read": 428282,
+      "cache_create": 47661
+    }
+  ]
+}
