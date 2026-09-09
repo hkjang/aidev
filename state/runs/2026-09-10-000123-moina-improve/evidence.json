@@ -1,0 +1,217 @@
+{
+  "run_id": "2026-09-10-000123-moina-improve",
+  "generated": "2026-09-10T00:15:24+09:00",
+  "run": {
+    "run_id": "2026-09-10-000123-moina-improve",
+    "project": "moina",
+    "kind": "improve",
+    "started": "2026-09-10T00:01:24+09:00",
+    "model": "claude-opus-5",
+    "policy_version": "5935779a",
+    "prompts_hash": "82f2440d4b2fef65",
+    "runner_version": "5b81a64b",
+    "finished": "2026-09-10T00:15:24+09:00",
+    "outcome": "verify-failed"
+  },
+  "record": {
+    "ts": "2026-09-10T00:15:24+09:00",
+    "date": "2026-09-10",
+    "project": "moina",
+    "result": "CI failed, PR open https://github.com/hkjang/moina/pull/13",
+    "outcome": "verify-failed",
+    "run_id": "2026-09-10-000123-moina-improve",
+    "base_sha": "6c5b52301eb422ccef0ccfe0c53d79e64f51ac4e",
+    "head_sha": "b4a01c14b58bff3478b16f7776b198d59a85c604",
+    "pr": "https://github.com/hkjang/moina/pull/13",
+    "stages": {
+      "base": {
+        "state": "pinned",
+        "reason": "main@6c5b523",
+        "at": "2026-09-10T00:01:29+09:00"
+      },
+      "autonomy": {
+        "state": "release",
+        "reason": "",
+        "at": "2026-09-10T00:01:29+09:00"
+      },
+      "verify": {
+        "state": "passed",
+        "reason": "검증 7개 통과 (auto)",
+        "at": "2026-09-10T00:08:32+09:00"
+      },
+      "pr": {
+        "state": "created",
+        "reason": "https://github.com/hkjang/moina/pull/13",
+        "at": "2026-09-10T00:08:39+09:00"
+      },
+      "review": {
+        "state": "approved",
+        "reason": "리뷰 승인 (risk=low)",
+        "at": "2026-09-10T00:10:56+09:00"
+      },
+      "ci": {
+        "state": "failed",
+        "reason": "성공이 아닌 검사: Image and browser smoke=failure",
+        "at": "2026-09-10T00:15:23+09:00"
+      }
+    },
+    "campaign": "",
+    "autonomy": "release",
+    "files": 3,
+    "additions": 135,
+    "deletions": 3,
+    "tests": 1,
+    "title": "fix: report the real pixel size of an uploaded WebP image"
+  },
+  "stages": {
+    "base": {
+      "state": "pinned",
+      "reason": "main@6c5b523",
+      "at": "2026-09-10T00:01:29+09:00"
+    },
+    "autonomy": {
+      "state": "release",
+      "reason": "",
+      "at": "2026-09-10T00:01:29+09:00"
+    },
+    "verify": {
+      "state": "passed",
+      "reason": "검증 7개 통과 (auto)",
+      "at": "2026-09-10T00:08:32+09:00"
+    },
+    "pr": {
+      "state": "created",
+      "reason": "https://github.com/hkjang/moina/pull/13",
+      "at": "2026-09-10T00:08:39+09:00"
+    },
+    "review": {
+      "state": "approved",
+      "reason": "리뷰 승인 (risk=low)",
+      "at": "2026-09-10T00:10:56+09:00"
+    },
+    "ci": {
+      "state": "failed",
+      "reason": "성공이 아닌 검사: Image and browser smoke=failure",
+      "at": "2026-09-10T00:15:23+09:00"
+    }
+  },
+  "provenance": {
+    "model": "claude-opus-5",
+    "policy_version": "5935779a",
+    "prompts_hash": "82f2440d4b2fef65",
+    "runner_version": "5b81a64b",
+    "base_sha": "6c5b52301eb422ccef0ccfe0c53d79e64f51ac4e",
+    "head_sha": "b4a01c14b58bff3478b16f7776b198d59a85c604",
+    "pr": "https://github.com/hkjang/moina/pull/13"
+  },
+  "verification": {
+    "runner": {
+      "source": "auto",
+      "commands": [
+        {
+          "cmd": "cd backend && go build ./...",
+          "exit": 0,
+          "seconds": 1
+        },
+        {
+          "cmd": "cd backend && go vet ./...",
+          "exit": 0,
+          "seconds": 0
+        },
+        {
+          "cmd": "cd backend && go test ./...",
+          "exit": 0,
+          "seconds": 1
+        },
+        {
+          "cmd": "cd frontend && [ -d node_modules ] || npm ci --no-audit --no-fund",
+          "exit": 0,
+          "seconds": 5
+        },
+        {
+          "cmd": "cd frontend && npm test --silent",
+          "exit": 0,
+          "seconds": 3
+        },
+        {
+          "cmd": "cd frontend && [ -d node_modules ] || npm ci --no-audit --no-fund",
+          "exit": 0,
+          "seconds": 0
+        },
+        {
+          "cmd": "cd frontend && npm run build --silent",
+          "exit": 0,
+          "seconds": 6
+        }
+      ]
+    },
+    "runner_gate": {
+      "ok": true,
+      "state": "verified",
+      "reason": "검증 7개 통과 (auto)"
+    },
+    "after_rebase": null,
+    "review": {
+      "verdict": "approve",
+      "reasons": [],
+      "notes": [
+        "backend/internal/httpapi/social.go:804 webpDimensions의 VP8/VP8L/VP8X 헤더 해석을 사양과 대조해 확인함: chunk fourcc는 data[12:16], payload는 data[20:]가 맞고, VP8X는 flags 1 + reserved 3 뒤 24bit canvas(-1), VP8L은 0x2f 서명 뒤 14bit+14bit(-1), VP8 lossy는 key frame 비트(payload[0]&1==0)와 sync code 0x9d 0x01 0x2a 확인 후 14bit 너비·높이(0x3fff 마스크로 표시 배율 비트 제거) 모두 정확함.",
+        "httpapi_test.go:618-620 base64 fixture 3개를 독립 디코더(PIL)로 열어 실제 크기가 23x17 / 31x13 / 45x29 임을 확인함 — 테스트 기대값이 구현에 맞춰 역산된 값이 아님. webpDimensions와 imageDimensionsFrom 시그니처가 모두 이번 커밋에서 새로 생긴 것이라 수정 전 코드에서는 컴파일 자체가 되지 않음(= 통과할 수 없음).",
+        "social.go:642 imageDimensionsFrom이 조기 반환해 file을 읽지 않아도 바로 뒤 file.Seek(0, io.SeekStart)가 있어 이후 mediastore.Put의 본문 스트리밍 위치는 영향 없음. sniff는 최대 4096바이트라 WebP 헤더(최대 30바이트)에 충분하고, 모든 분기가 len(payload) 하한을 검사해 짧은/잘린 입력에서 panic 없음.",
+        "backend go build/vet/go test ./... 전부 통과. scripts/check-openapi-routes.mjs 통과(112 method/path).",
+        "api/openapi.yaml:1283 새 description 줄은 flow mapping 안 plain scalar지만 쉼표·중괄호·': ' 가 없어 YAML로 정상 파싱됨(단독 파싱 확인). 참고로 python yaml.safe_load로 파일 전체를 읽으면 line 489에서 실패하는데, 이는 main에서도 동일하게 실패하는 기존 문제이며 이번 변경과 무관함.",
+        "model.Media의 Width/Height가 json:\"...,omitempty\"라 openapi 설명의 '0이면 응답에서 생략' 문구는 실제 동작과 일치함. 다만 설명이 width 필드에만 붙어 있고 height에는 없음(문서 스타일 문제, 결함 아님).",
+        "webpDimensions는 chunk size 필드(data[16:20])를 payload 실제 길이와 대조하지 않아 크기 필드가 거짓인 파일도 헤더 바이트만으로 크기를 답할 수 있음. 슬라이스 길이는 별도로 검사하므로 안전성 문제는 없고, 값은 어차피 표시용 힌트라 실질 영향 없음.",
+        "uploadMedia 핸들러를 WebP 업로드로 관통하는 end-to-end 테스트는 없고 imageDimensionsFrom 단위 테스트로만 덮여 있음. 핸들러 배선 변경이 한 줄(social.go:642)이라 허용 범위로 판단함.",
+        "범위 이탈 없음: 커밋 1개, 파일 3개, 모두 WebP 크기 보고라는 목적에 직접 관련됨. 인증·권한·결제·마이그레이션·비밀값·삭제 로직 미변경이고 외부 상태를 바꾸지 않아 revert로 완전히 되돌아옴."
+      ],
+      "risk": "low"
+    },
+    "ci_gate": {
+      "ok": false,
+      "state": "failed",
+      "reason": "성공이 아닌 검사: Image and browser smoke=failure",
+      "checks": 2,
+      "bad": 1
+    }
+  },
+  "release": {
+    "result": null,
+    "assets_sha256": []
+  },
+  "approval": null,
+  "usage": [
+    {
+      "ts": "2026-09-10T00:08:16+09:00",
+      "date": "2026-09-10",
+      "project": "moina",
+      "phase": "improve",
+      "run_id": "2026-09-10-000123-moina-improve",
+      "campaign": "",
+      "subtype": "success",
+      "duration_ms": 420899,
+      "num_turns": 47,
+      "cost_usd": 2.877208000000001,
+      "input_tokens": 84,
+      "output_tokens": 26119,
+      "cache_read": 2741512,
+      "cache_create": 84051
+    },
+    {
+      "ts": "2026-09-10T00:10:56+09:00",
+      "date": "2026-09-10",
+      "project": "moina",
+      "phase": "review",
+      "run_id": "2026-09-10-000123-moina-improve",
+      "campaign": "",
+      "subtype": "success",
+      "duration_ms": 140165,
+      "num_turns": 13,
+      "cost_usd": 0.619545,
+      "input_tokens": 18,
+      "output_tokens": 9055,
+      "cache_read": 270648,
+      "cache_create": 25594
+    }
+  ]
+}
