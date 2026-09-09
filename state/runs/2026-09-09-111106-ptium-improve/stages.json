@@ -1,0 +1,27 @@
+{
+  "base": {
+    "state": "pinned",
+    "reason": "main@01e78a7",
+    "at": "2026-09-09T11:11:12+09:00"
+  },
+  "autonomy": {
+    "state": "release",
+    "reason": "",
+    "at": "2026-09-09T11:11:12+09:00"
+  },
+  "verify": {
+    "state": "passed",
+    "reason": "검증 9개 통과 (auto)",
+    "at": "2026-09-09T11:20:42+09:00"
+  },
+  "pr": {
+    "state": "created",
+    "reason": "https://github.com/hkjang/ptium/pull/13",
+    "at": "2026-09-09T11:20:51+09:00"
+  },
+  "review": {
+    "state": "rejected",
+    "reason": "리뷰 거절: server/internal/figures/figures.go:73 `case character == ',' || unicode.IsSpace(character)` no longer ends the figure at a space, so a value holding several numbers glues them together. The documented line-chart row form (docs/deck-source.md:91 `- 전환 전 | 120, 118, 121, 119`) is parsed by parseSourceItem -> figures.Of into 1.20118121119e+11 instead of 120. Verified by running the same probe on both trees: main gives Number=120 for that row, HEAD gives Number=1.20118121119e+11. / server/internal/deck/source.go:700 the regression above escapes to user-visible output. compile.go leaves Items on a ::line block (only ::table clears them, compile.go:143), pptx.SanitizeBlock keeps them, and inspect.go:752 includes BlockLine in plottedFigures. statesFigure(\"120, 118, 121, 119\") is false, so the audit emits the finding `figures with no source: 전환 전 120118121119` (verified by direct call to plottedFigures). Before this change it read `전환 전 120`. No test covers this path.",
+    "at": "2026-09-09T11:26:46+09:00"
+  }
+}

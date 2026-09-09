@@ -2416,3 +2416,45 @@ fatal: '/home/hkjang/.cache/auto-improve-wt/releasedock' is not a working tree
 evidence: /mnt/c/Users/USER/projects/aidev/state/runs/2026-09-09-104115-releasedock-improve/evidence.json
 reports: 8 day(s), 2 week(s), 1 month(s), 469 run(s), 413 usage row(s), 29 project page(s), 1 alert(s)
 notify: no new alerts
+                                  [11:02:56] aidev synced: run(2026-09-09): releasedock — merged https://github.com/hkjang/releasedock/pull/13, released v0.5.12
+[11:02:56] done
+[11:10:28] skip DartFly: dirty working tree
+[11:10:30] skip Kkiit: dirty working tree
+[11:10:31] skip Momento: dirty working tree
+[11:10:32] skip Quantoss: dirty working tree
+[11:10:33] skip SecCheck: dirty working tree
+[11:10:40] skip aiportal-java: STOP
+[11:10:42] skip cutover: dirty working tree
+[11:10:55] skip muni: dirty working tree
+[11:10:57] skip postra: dirty working tree
+[11:11:01] skip seaton: dirty working tree
+[11:11:04] skip vibe-coders: dirty working tree
+[11:11:05] skip visitflow: dirty working tree
+[11:11:06] candidates(24): AgentHub Clustara Invenqor ReSSO Vendra ai-admin aiportal-front-admin aiportal-front aiportal-py appstore dataworks git-ctx igame jikim jupiq kanpic moina moyro pii-masker ptium releasedock relio umm weekly
+[11:11:06] run-queue: picked ptium (이슈 #8: run: ptium — 고정 공백 회귀 수정 후 통화 열 차트 읽기 재작업)
+[11:11:06] picked: ptium
+[11:11:07] === ptium (base=main, run 2026-09-09-111106-ptium-improve, 회차 예산 $22)
+Preparing worktree (new branch 'auto/2026-09-09-1111')
+Updating files:  79% (703/883)Updating files:  80% (707/883)Updating files:  81% (716/883)Updating files:  82% (725/883)Updating files:  83% (733/883)Updating files:  84% (742/883)Updating files:  85% (751/883)Updating files:  86% (760/883)Updating files:  87% (769/883)Updating files:  88% (778/883)Updating files:  89% (786/883)Updating files:  90% (795/883)Updating files:  91% (804/883)Updating files:  92% (813/883)Updating files:  93% (822/883)Updating files:  94% (831/883)Updating files:  95% (839/883)Updating files:  96% (848/883)Updating files:  97% (857/883)Updating files:  98% (866/883)Updating files:  99% (875/883)Updating files: 100% (883/883)Updating files: 100% (883/883), done.
+HEAD is now at 01e78a7 Release 1.69.29
+[11:11:12] ptium: [base] pinned — main@01e78a7
+[11:11:12] ptium: [autonomy] release — 
+[11:20:30] ptium: improve — 47 turns, 9m, $3.17, success
+[11:20:31] ptium: verify `cd server && go build ./...` → exit 0 (1s)
+[11:20:31] ptium: verify `cd server && go vet ./...` → exit 0 (0s)
+[11:20:34] ptium: verify `cd server && go test ./...` → exit 0 (3s)
+[11:20:38] ptium: verify `cd web && [ -d node_modules ] || npm ci --no-audit --no-fund` → exit 0 (4s)
+[11:20:40] ptium: verify `cd web && npm test --silent` → exit 0 (2s)
+[11:20:40] ptium: verify `cd web && [ -d node_modules ] || npm ci --no-audit --no-fund` → exit 0 (0s)
+[11:20:40] ptium: verify `cd web && npm run typecheck --silent` → exit 0 (0s)
+[11:20:40] ptium: verify `cd web && [ -d node_modules ] || npm ci --no-audit --no-fund` → exit 0 (0s)
+[11:20:41] ptium: verify `cd web && npm run build --silent` → exit 0 (1s)
+[11:20:42] ptium: [verify] passed — 검증 9개 통과 (auto)
+branch 'auto/2026-09-09-1111' set up to track 'origin/auto/2026-09-09-1111'.
+[11:20:51] ptium: [pr] created — https://github.com/hkjang/ptium/pull/13
+[11:26:46] ptium: review — 45 turns, 5m, $2.34, success
+[11:26:46] ptium: [review] rejected — 리뷰 거절: server/internal/figures/figures.go:73 `case character == ',' || unicode.IsSpace(character)` no longer ends the figure at a space, so a value holding several numbers glues them together. The documented line-chart row form (docs/deck-source.md:91 `- 전환 전 | 120, 118, 121, 119`) is parsed by parseSourceItem -> figures.Of into 1.20118121119e+11 instead of 120. Verified by running the same probe on both trees: main gives Number=120 for that row, HEAD gives Number=1.20118121119e+11. / server/internal/deck/source.go:700 the regression above escapes to user-visible output. compile.go leaves Items on a ::line block (only ::table clears them, compile.go:143), pptx.SanitizeBlock keeps them, and inspect.go:752 includes BlockLine in plottedFigures. statesFigure("120, 118, 121, 119") is false, so the audit emits the finding `figures with no source: 전환 전 120118121119` (verified by direct call to plottedFigures). Before this change it read `전환 전 120`. No test covers this path.
+https://github.com/hkjang/ptium/pull/13#issuecomment-5594842043
+evidence: /mnt/c/Users/USER/projects/aidev/state/runs/2026-09-09-111106-ptium-improve/evidence.json
+reports: 8 day(s), 2 week(s), 1 month(s), 470 run(s), 415 usage row(s), 29 project page(s), 1 alert(s)
+notify: no new alerts
