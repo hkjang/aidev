@@ -1,7 +1,7 @@
 ---
 title: "AgentHub — 자율 개선 이력"
 description: "AgentHub: 자율 개선 회차 32회, 릴리즈 16건. 최근 릴리즈 v0.242.0."
-last_modified_at: 2026-09-10 17:50:10 +0900
+last_modified_at: 2026-09-10 17:58:32 +0900
 ---
 {% raw %}
 <script type="application/ld+json">
@@ -18,7 +18,7 @@ last_modified_at: 2026-09-10 17:50:10 +0900
   "name": "hkjang",
   "url": "https://github.com/hkjang"
  },
- "dateModified": "2026-09-10T17:50:10+09:00",
+ "dateModified": "2026-09-10T17:58:32+09:00",
  "version": "0.242.0"
 }
 </script>
@@ -233,6 +233,8 @@ last_modified_at: 2026-09-10 17:50:10 +0900
 - 결과: 성공 — 커밋 abd554b (auto/2026-09-10-1731)
 - 요약: Pod 게이트웨이의 승인 게이트는 컨트롤 플레인에 승인을 만들어 달라고 POST 하면서 호출 인자를 함께 보내고, 그 값은 approvals 행에 저장되어 승인 대기열 화면에 그대로 표시됩니다 — 즉 승인을 묻는 행위 자체가 Pod 밖으로 나가는 경로인데, 그 POST 가 내용 검사기보다 **먼저** 실행되고 있었습니다. 그래서 이름으로 게이트된 도구를 주민등록번호를 실은 채 호출하면, 그 번호가 컨트롤 플레인 DB 에 영구히 그리고 모든 검토자 앞에 복사된 **뒤에** 스캐너가 돌아 호출을 거절했습니다. `rrn: block` 을 써 둔 배포에서 값은 MCP 서버에 닿지 않았고 트레일에는 blocked 가 남았지만, 값은 이미 바로 옆문으로 나가 있었습니다. 같은 파일의 승인 요청이 "검토자에게 무엇을 할 호출인지 보여줘야 한다"는 이유로 인자를 싣는 것은 옳지만, 그 인자가 스캐너를 거치지 않은 원문일 이유는 없습니다. 스캔을 게이트 앞으로 옮기고, 게이트가 보내는 파싱본(`request.Params.Arguments`)도 함께 마스킹본으로 교체했습니다 — 본문만 다시 쓰고 파싱본을 그대로 두면 호출은 가려지고 승인 대기열에는 원문이 가는, 바로 이 순서가 닫으려는 유출이 그대로 남기 때문입니다. 기존 순서의 이점은 유지했습니다: 스캐너가 거절하는 호출은 여전히 승인 요청 자체가 만들어지지 않고, 이제는 어차피 일어날 수 없는 호출을 두고 사람이 기다리는 일도 없어집니다. 검증: 새 테스트 3개를 수정 전 코드에 대고 실제로 실패시켜 확인했습니다 — `TestAGatedCallIsScannedBeforeAReviewerIsAsked` 는 승인 요청 본문에서 `900101-1234568` 원문을 찾아 실패하고, `TestACallTheScannerRefusesNeverBecomesAnApproval` 은 거절된 호출이 승인 요청을 1건 만들었다며 실패했으며, `TestACleanGatedCallReachesTheReviewerUnchanged` 는 깨끗한 인자가 가려지지 않고 검토자에게 그대로 가는지를 양방향으로 고정합니다. `go build ./...`, `go vet ./...`, `go test -race ./cmd/... ./internal/...`, web `npm ci`+lint+build, `release-catalog-images.sh validate`·`check-versions`, `kubectl kustomize deploy/kubernetes` 모두 통과. cmd/runtime-proxy 가 런타임 base 이미지 소스라 BASE_VERSION 0.26.0 으로 상향(5곳, 릴리즈 VERSION 은 건드리지 않음).
 - 보류 아이디어: dlp.tool 보고 엔드포인트(reportDLPEvent)만 테스트가 하나도 없고, 발견 0건·미절단 보고가 트레일에 'audited'(기록만)로 잘못 파일됨 (3/1/M) / 정책 시뮬레이터가 '이 규칙이 Pod에서 어떻게 컴파일되는가'를 보여주지 않아 순서 실수를 저장 전에 볼 수 없음 (3/1/M) / 결정 기록 내보내기가 정책에 거절당해도 provenance 화면이 그 건수를 세어 보여주지 않음 (3/2/S) / 감사 결과(outcome) 값 목록이 서버와 콘솔 두 곳에 하드코딩돼 드리프트 가드가 없음 (2/1/S)
+
+- 릴리즈: v0.242.0 (2026-09-10, run 2026-09-10-173111-AgentHub-improve)
 
 
 [← 대시보드](https://hkjang.github.io/aidev/) · [교훈 모음](https://hkjang.github.io/aidev/lessons/)

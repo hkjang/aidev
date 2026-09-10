@@ -564,3 +564,4 @@
   추가된 키는 무해하다). 버전 범프·릴리즈 노트는 하지 않았다.
 - 보류 아이디어: Query DSL 에 `attributes.<키>` 존재/부재 연산자가 없어 `>= ""` 우회가 필요함 (가치 3 / 위험 2 / M) · MCP `asset_relations` 가 상대 자산의 이름·종류를 주지 않아 edge 마다 `asset_get` 을 한 번 더 부르게 만듦 (가치 3 / 위험 2 / M) · MCP `asset_search` 가 0건일 때 실제 존재하는 type·status 값을 함께 돌려주어 '자산 없음'과 '필터 값 없음'을 구분하게 함 (가치 3 / 위험 2 / M) · `listAgents`·설정 목록/이력·자산 상세 루프가 `rows.Err()` 를 확인하지 않아 부분 결과를 200 으로 돌려줌 — fault injection 불가, 이번에 `executeQuery` 만 해결 (가치 3 / 위험 1 / M) · 콘솔 Query DSL 화면이 새 `total`·`offset` 을 쓰지 않아 여전히 첫 페이지만 보여줌 (가치 3 / 위험 2 / M)
 
+- 릴리즈: v0.2.31 (2026-09-10, run 2026-09-10-173121-Invenqor-improve)
