@@ -236,18 +236,23 @@ pick_campaign(){
     [[ "$until" < "$RUN_DATE" ]] && { jq --arg id "$id" '(.campaigns[]|select(.id==$id)).done=true' "$cj" > "$cj.tmp" && mv "$cj.tmp" "$cj"; log "campaign $id: 기한 종료"; continue; }
     spent=$(jq -s --arg id "$id" '[.[]|select(.campaign==$id)|.cost_usd//0]|add // 0' "$DATA/usage.jsonl" 2>/dev/null || echo 0)
     awk -v s="$spent" -v b="$budget" 'BEGIN{exit !(s>=b)}' && { jq --arg id "$id" '(.campaigns[]|select(.id==$id)).done=true' "$cj" > "$cj.tmp" && mv "$cj.tmp" "$cj"; log "campaign $id: 예산 소진 (\$$spent/\$$budget)"; continue; }
+    # 가장 오래 안 돈 프로젝트를 고른다. "마지막으로 돈 것만 건너뛰기"로는 목록이
+    # 셋 이상일 때 앞의 두 개를 번갈아 돌 뿐 나머지는 영영 차례가 오지 않았다.
+    local best="" best_rank=-1 rank
     for cp in $projs; do
-      if printf '%s\n' "${candidates[@]}" | grep -qx "$cp"; then
-        # 캠페인 안에서도 순환: 마지막으로 돈 프로젝트 다음 것
-        local lastp; lastp=$(jq -r --arg id "$id" 'select(.campaign==$id) | .project' "$DATA/runs.jsonl" 2>/dev/null | tail -1)
-        [ -n "$lastp" ] && [ "$cp" = "$lastp" ] && [ "$(wc -w <<<"$projs")" -gt 1 ] && continue
+      printf '%s\n' "${candidates[@]}" | grep -qx "$cp" || continue
+      rank=$(jq -r --arg id "$id" --arg p "$cp" 'select(.campaign==$id and .project==$p) | .ts' "$DATA/runs.jsonl" 2>/dev/null | tail -1)
+      [ -n "$rank" ] || { best=$cp; break; }                       # 한 번도 안 돈 프로젝트가 먼저
+      [ -z "$best" ] || [[ "$rank" < "$best_rank" ]] && { best=$cp; best_rank=$rank; }
+    done
+    if [ -n "$best" ]; then
+        cp=$best
         CAMPAIGN_ID=$id; CAMPAIGN_PROJECT=$cp
         CAMPAIGN_NOTE="## 개선 캠페인 \"$id\" (자동 배정) — 새 아이디어 대신 이 목표를 우선하세요
 $goal
 예산: \$$spent / \$$budget 사용, 기한 $until. 이 목표와 무관한 변경은 만들지 마세요."
         return 0
-      fi
-    done
+    fi
   done < <(jq -r --arg d "$RUN_DATE" '.campaigns[]? | select(.done!=true) | "\(.id)\t\(.goal)\t\(.budget_usd)\t\(.until)\t\(.projects|join(" "))"' "$cj" 2>/dev/null)
 }
 
@@ -343,12 +348,20 @@ secrets_gate(){ # $1=설명 $2=파일(- 는 stdin)
 }
 
 # 실수로 들어간 빌드 산출물 찾기 — 1MB 넘는 바이너리 추가는 개선 내용이 아니다 (2026-09-08 appstore 에 20MB ELF 가 딸려 들어감)
+#
+# docs/ 아래의 문서·그림은 예외로 15MB 까지 둔다. 이 검사가 잡으려는 것은 실수로
+# 딸려 들어간 실행 파일이지, 일부러 쓴 문서가 아니다. 화면 캡처를 넣은 가이드 PDF 는
+# 1MB 를 쉽게 넘고, 그때마다 회차가 통째로 실패했다 (2026-09-10 weekly).
 added_artifacts(){
-  local f blob sz
+  local f blob sz limit
   git -C "$wt" diff --numstat "$BASE_SHA..HEAD" 2>/dev/null | awk '$1=="-" && $2=="-" {print $3}' | while read -r f; do
     blob=$(git -C "$wt" rev-parse "HEAD:$f" 2>/dev/null) || continue
     sz=$(git -C "$wt" cat-file -s "$blob" 2>/dev/null || echo 0)
-    [ "${sz:-0}" -gt 1048576 ] && printf '%s(%sMB) ' "$f" "$((sz/1048576))"
+    limit=1048576
+    case "$f" in docs/*|*/docs/*)
+      case "${f,,}" in *.pdf|*.png|*.jpg|*.jpeg|*.gif|*.webp|*.svg) limit=15728640;; esac;;
+    esac
+    [ "${sz:-0}" -gt "$limit" ] && printf '%s(%sMB) ' "$f" "$((sz/1048576))"
   done
 }
 
