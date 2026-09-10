@@ -1,0 +1,203 @@
+{
+  "run_id": "2026-09-10-094115-Vendra-improve",
+  "generated": "2026-09-10T10:01:12+09:00",
+  "run": {
+    "run_id": "2026-09-10-094115-Vendra-improve",
+    "project": "Vendra",
+    "kind": "improve",
+    "started": "2026-09-10T09:41:15+09:00",
+    "model": "claude-opus-5",
+    "policy_version": "5935779a",
+    "prompts_hash": "82f2440d4b2fef65",
+    "runner_version": "5b81a64b",
+    "finished": "2026-09-10T10:01:12+09:00",
+    "outcome": "review-pending"
+  },
+  "record": {
+    "ts": "2026-09-10T10:01:12+09:00",
+    "date": "2026-09-10",
+    "project": "Vendra",
+    "result": "review held, PR open https://github.com/hkjang/Vendra/pull/117",
+    "outcome": "review-pending",
+    "run_id": "2026-09-10-094115-Vendra-improve",
+    "base_sha": "8f149e1814f11c26992ab78fe46ba7e5f465b38f",
+    "head_sha": "2e1abb1f6a52aebe92c1bc396a3517aadb04ee90",
+    "pr": "https://github.com/hkjang/Vendra/pull/117",
+    "stages": {
+      "base": {
+        "state": "pinned",
+        "reason": "main@8f149e1",
+        "at": "2026-09-10T09:41:23+09:00"
+      },
+      "autonomy": {
+        "state": "release",
+        "reason": "",
+        "at": "2026-09-10T09:41:23+09:00"
+      },
+      "verify": {
+        "state": "passed",
+        "reason": "검증 7개 통과 (auto)",
+        "at": "2026-09-10T09:54:57+09:00"
+      },
+      "pr": {
+        "state": "created",
+        "reason": "https://github.com/hkjang/Vendra/pull/117",
+        "at": "2026-09-10T09:55:06+09:00"
+      },
+      "review": {
+        "state": "rejected",
+        "reason": "리뷰 거절: internal/httpapi/sourcing.go:311 `in.Currency = tenderCurrency` overwrites the stored currency of an existing bid unconditionally, and the ON CONFLICT branch writes `currency=excluded.currency`, so the unit of an already-stored amount is rewritten while the number is left alone. The legacy row this hits is the exact one the commit message exists because of: the old form offered KRW/USD/EUR/JPY and every tender created through the UI is KRW (web/src/pages/Objects.tsx:699 hardcodes it), so a bid stored as USD 50,000 against a KRW tender is the normal pre-change state. On the next save that row silently becomes KRW 50,000. Nothing warns the bidder or the buyer, there is no backfill, and the mismatch guard at sourcing.go:308 cannot catch it because the client now sends the tender's own code. / web/src/pages/Portal.tsx:779 `const currency = item.currency || \"KRW\"` takes the tender's code and ignores `response.currency`, so for that same legacy bid the form renders `총 견적금액 (KRW)` (Portal.tsx:820) directly above `defaultValue={response?.totalAmount}` = 50000, a number that was dollars. Before this change the box showed the bid's own currency (`defaultValue={response?.currency || \"KRW\"}`). This is a new, user-visible mislabeling of an existing amount, and it is what feeds the silent rewrite above. / internal/httpapi/currency_integration_test.go:23 the new integration test only covers a tender in USD with no prior bid; it never seeds a response whose currency differs from the tender's, which is the only case where the overwrite at sourcing.go:311 does anything. The behaviour that regressed is not exercised by any test in this branch.",
+        "at": "2026-09-10T10:01:11+09:00"
+      }
+    },
+    "campaign": "",
+    "autonomy": "release",
+    "files": 12,
+    "additions": 687,
+    "deletions": 25,
+    "tests": 4,
+    "title": "fix: price a bid in the currency the tender was put out in, and say which one every amount is in"
+  },
+  "stages": {
+    "base": {
+      "state": "pinned",
+      "reason": "main@8f149e1",
+      "at": "2026-09-10T09:41:23+09:00"
+    },
+    "autonomy": {
+      "state": "release",
+      "reason": "",
+      "at": "2026-09-10T09:41:23+09:00"
+    },
+    "verify": {
+      "state": "passed",
+      "reason": "검증 7개 통과 (auto)",
+      "at": "2026-09-10T09:54:57+09:00"
+    },
+    "pr": {
+      "state": "created",
+      "reason": "https://github.com/hkjang/Vendra/pull/117",
+      "at": "2026-09-10T09:55:06+09:00"
+    },
+    "review": {
+      "state": "rejected",
+      "reason": "리뷰 거절: internal/httpapi/sourcing.go:311 `in.Currency = tenderCurrency` overwrites the stored currency of an existing bid unconditionally, and the ON CONFLICT branch writes `currency=excluded.currency`, so the unit of an already-stored amount is rewritten while the number is left alone. The legacy row this hits is the exact one the commit message exists because of: the old form offered KRW/USD/EUR/JPY and every tender created through the UI is KRW (web/src/pages/Objects.tsx:699 hardcodes it), so a bid stored as USD 50,000 against a KRW tender is the normal pre-change state. On the next save that row silently becomes KRW 50,000. Nothing warns the bidder or the buyer, there is no backfill, and the mismatch guard at sourcing.go:308 cannot catch it because the client now sends the tender's own code. / web/src/pages/Portal.tsx:779 `const currency = item.currency || \"KRW\"` takes the tender's code and ignores `response.currency`, so for that same legacy bid the form renders `총 견적금액 (KRW)` (Portal.tsx:820) directly above `defaultValue={response?.totalAmount}` = 50000, a number that was dollars. Before this change the box showed the bid's own currency (`defaultValue={response?.currency || \"KRW\"}`). This is a new, user-visible mislabeling of an existing amount, and it is what feeds the silent rewrite above. / internal/httpapi/currency_integration_test.go:23 the new integration test only covers a tender in USD with no prior bid; it never seeds a response whose currency differs from the tender's, which is the only case where the overwrite at sourcing.go:311 does anything. The behaviour that regressed is not exercised by any test in this branch.",
+      "at": "2026-09-10T10:01:11+09:00"
+    }
+  },
+  "provenance": {
+    "model": "claude-opus-5",
+    "policy_version": "5935779a",
+    "prompts_hash": "82f2440d4b2fef65",
+    "runner_version": "5b81a64b",
+    "base_sha": "8f149e1814f11c26992ab78fe46ba7e5f465b38f",
+    "head_sha": "2e1abb1f6a52aebe92c1bc396a3517aadb04ee90",
+    "pr": "https://github.com/hkjang/Vendra/pull/117"
+  },
+  "verification": {
+    "runner": {
+      "source": "auto",
+      "commands": [
+        {
+          "cmd": "go build ./...",
+          "exit": 0,
+          "seconds": 1
+        },
+        {
+          "cmd": "go vet ./...",
+          "exit": 0,
+          "seconds": 0
+        },
+        {
+          "cmd": "go test ./...",
+          "exit": 0,
+          "seconds": 2
+        },
+        {
+          "cmd": "cd web && [ -d node_modules ] || npm ci --no-audit --no-fund",
+          "exit": 0,
+          "seconds": 0
+        },
+        {
+          "cmd": "cd web && npm test --silent",
+          "exit": 0,
+          "seconds": 3
+        },
+        {
+          "cmd": "cd web && [ -d node_modules ] || npm ci --no-audit --no-fund",
+          "exit": 0,
+          "seconds": 0
+        },
+        {
+          "cmd": "cd web && npm run build --silent",
+          "exit": 0,
+          "seconds": 3
+        }
+      ]
+    },
+    "runner_gate": {
+      "ok": true,
+      "state": "verified",
+      "reason": "검증 7개 통과 (auto)"
+    },
+    "after_rebase": null,
+    "review": {
+      "verdict": "reject",
+      "reasons": [
+        "internal/httpapi/sourcing.go:311 `in.Currency = tenderCurrency` overwrites the stored currency of an existing bid unconditionally, and the ON CONFLICT branch writes `currency=excluded.currency`, so the unit of an already-stored amount is rewritten while the number is left alone. The legacy row this hits is the exact one the commit message exists because of: the old form offered KRW/USD/EUR/JPY and every tender created through the UI is KRW (web/src/pages/Objects.tsx:699 hardcodes it), so a bid stored as USD 50,000 against a KRW tender is the normal pre-change state. On the next save that row silently becomes KRW 50,000. Nothing warns the bidder or the buyer, there is no backfill, and the mismatch guard at sourcing.go:308 cannot catch it because the client now sends the tender's own code.",
+        "web/src/pages/Portal.tsx:779 `const currency = item.currency || \"KRW\"` takes the tender's code and ignores `response.currency`, so for that same legacy bid the form renders `총 견적금액 (KRW)` (Portal.tsx:820) directly above `defaultValue={response?.totalAmount}` = 50000, a number that was dollars. Before this change the box showed the bid's own currency (`defaultValue={response?.currency || \"KRW\"}`). This is a new, user-visible mislabeling of an existing amount, and it is what feeds the silent rewrite above.",
+        "internal/httpapi/currency_integration_test.go:23 the new integration test only covers a tender in USD with no prior bid; it never seeds a response whose currency differs from the tender's, which is the only case where the overwrite at sourcing.go:311 does anything. The behaviour that regressed is not exercised by any test in this branch.",
+        "web/src/pages/Approvals.tsx:150 and :202 still call `money(item.amount)` with no code, and internal/httpapi/workflows.go:261 does not select `o.currency`, so the approval inbox — the screen where someone authorizes the spend — still renders a USD purchase order as ₩. The commit message promises to \"say which one every amount is in\"; 11 of the 18 `money()` call sites were left unchanged, including this one and web/src/pages/Suppliers.tsx:1906. A Go-side sweep test was added for the write path but nothing holds the render path, which is where the ₩ mislabeling actually lives."
+      ],
+      "notes": [
+        "Verified green on a throwaway Postgres 16: `go build ./...`, `go vet`, full `go test ./...` with VENDRA_TEST_DSN (internal/httpapi 22.5s ok), `npx tsc --noEmit`, and full `npx vitest run` (17 files, 72 tests). Both new integration tests pass and both genuinely fail on the pre-change code (validCurrencyFields does not exist on main; the portal test asserts `readonly` and the absence of the combobox). The new unit tests are real assertions, not no-ops.",
+        "No schema migration and no external state change — a revert is clean. Rows written under the newly-blessed codes would remain, which is harmless.",
+        "internal/httpapi/rows.go:637-646 argues that mixing currencies in one column produces \"a total that is not a total\", but analytics.go:655 still recomputes `annual_spend` as `SUM(amount)` across every currency and Suppliers.tsx:241/296/902/1178, SupplierNetwork.tsx:213, Dashboard.tsx:246 and Objects.tsx:1216/1307/1334/1382 all render those sums as ₩. The PR's own reasoning applies to code it does not touch.",
+        "objects.go:410 newly permits changing a tender's currency with no check for existing submitted bids, so a buyer can reinterpret every stored bid amount on that object after the fact. Related: approval routing matches `minAmount` (objects.go:509) against the raw amount with no currency, so an object corrected to USD routes on its bare number.",
+        "There is no UI to set or correct a business object's currency — Objects.tsx:699 and Portal.tsx:991 both hardcode `currency: \"KRW\"` — so the PATCH capability the commit message describes as the fix for \"an order entered under the wrong currency\" is reachable only through the API.",
+        "Scope is otherwise clean: every hunk is currency-related, no refactors, formatting churn or dependency bumps."
+      ],
+      "risk": "medium"
+    },
+    "ci_gate": null
+  },
+  "release": {
+    "result": null,
+    "assets_sha256": []
+  },
+  "approval": null,
+  "usage": [
+    {
+      "ts": "2026-09-10T09:54:46+09:00",
+      "date": "2026-09-10",
+      "project": "Vendra",
+      "phase": "improve",
+      "run_id": "2026-09-10-094115-Vendra-improve",
+      "campaign": "",
+      "subtype": "success",
+      "duration_ms": 857646,
+      "num_turns": 94,
+      "cost_usd": 7.123291499999999,
+      "input_tokens": 156,
+      "output_tokens": 54592,
+      "cache_read": 8494165,
+      "cache_create": 149244
+    },
+    {
+      "ts": "2026-09-10T10:01:11+09:00",
+      "date": "2026-09-10",
+      "project": "Vendra",
+      "phase": "review",
+      "run_id": "2026-09-10-094115-Vendra-improve",
+      "campaign": "",
+      "subtype": "success",
+      "duration_ms": 388464,
+      "num_turns": 40,
+      "cost_usd": 2.3811865000000005,
+      "input_tokens": 80,
+      "output_tokens": 22012,
+      "cache_read": 2237299,
+      "cache_create": 71002
+    }
+  ]
+}

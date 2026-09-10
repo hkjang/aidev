@@ -1,0 +1,27 @@
+{
+  "base": {
+    "state": "pinned",
+    "reason": "main@8f149e1",
+    "at": "2026-09-10T09:41:23+09:00"
+  },
+  "autonomy": {
+    "state": "release",
+    "reason": "",
+    "at": "2026-09-10T09:41:23+09:00"
+  },
+  "verify": {
+    "state": "passed",
+    "reason": "검증 7개 통과 (auto)",
+    "at": "2026-09-10T09:54:57+09:00"
+  },
+  "pr": {
+    "state": "created",
+    "reason": "https://github.com/hkjang/Vendra/pull/117",
+    "at": "2026-09-10T09:55:06+09:00"
+  },
+  "review": {
+    "state": "rejected",
+    "reason": "리뷰 거절: internal/httpapi/sourcing.go:311 `in.Currency = tenderCurrency` overwrites the stored currency of an existing bid unconditionally, and the ON CONFLICT branch writes `currency=excluded.currency`, so the unit of an already-stored amount is rewritten while the number is left alone. The legacy row this hits is the exact one the commit message exists because of: the old form offered KRW/USD/EUR/JPY and every tender created through the UI is KRW (web/src/pages/Objects.tsx:699 hardcodes it), so a bid stored as USD 50,000 against a KRW tender is the normal pre-change state. On the next save that row silently becomes KRW 50,000. Nothing warns the bidder or the buyer, there is no backfill, and the mismatch guard at sourcing.go:308 cannot catch it because the client now sends the tender's own code. / web/src/pages/Portal.tsx:779 `const currency = item.currency || \"KRW\"` takes the tender's code and ignores `response.currency`, so for that same legacy bid the form renders `총 견적금액 (KRW)` (Portal.tsx:820) directly above `defaultValue={response?.totalAmount}` = 50000, a number that was dollars. Before this change the box showed the bid's own currency (`defaultValue={response?.currency || \"KRW\"}`). This is a new, user-visible mislabeling of an existing amount, and it is what feeds the silent rewrite above. / internal/httpapi/currency_integration_test.go:23 the new integration test only covers a tender in USD with no prior bid; it never seeds a response whose currency differs from the tender's, which is the only case where the overwrite at sourcing.go:311 does anything. The behaviour that regressed is not exercised by any test in this branch.",
+    "at": "2026-09-10T10:01:11+09:00"
+  }
+}
