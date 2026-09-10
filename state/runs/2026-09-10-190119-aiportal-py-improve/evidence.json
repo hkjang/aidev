@@ -1,0 +1,232 @@
+{
+  "run_id": "2026-09-10-190119-aiportal-py-improve",
+  "generated": "2026-09-10T19:13:26+09:00",
+  "run": {
+    "run_id": "2026-09-10-190119-aiportal-py-improve",
+    "project": "aiportal-py",
+    "kind": "improve",
+    "started": "2026-09-10T19:01:20+09:00",
+    "model": "claude-opus-5",
+    "policy_version": "5935779a",
+    "prompts_hash": "82f2440d4b2fef65",
+    "runner_version": "5b81a64b",
+    "finished": "2026-09-10T19:13:25+09:00",
+    "outcome": "merged"
+  },
+  "record": {
+    "ts": "2026-09-10T19:13:25+09:00",
+    "date": "2026-09-10",
+    "project": "aiportal-py",
+    "result": "merged https://github.com/hkjang/aiportal-py/pull/17, release skipped",
+    "outcome": "merged",
+    "run_id": "2026-09-10-190119-aiportal-py-improve",
+    "base_sha": "1f6c9cda8cccf6f44864eac557eb4003c01d2360",
+    "head_sha": "acfc43258993cb844e034e9299ee877f76ee558b",
+    "pr": "https://github.com/hkjang/aiportal-py/pull/17",
+    "stages": {
+      "base": {
+        "state": "pinned",
+        "reason": "main@1f6c9cd",
+        "at": "2026-09-10T19:01:22+09:00"
+      },
+      "autonomy": {
+        "state": "release",
+        "reason": "",
+        "at": "2026-09-10T19:01:22+09:00"
+      },
+      "verify": {
+        "state": "passed",
+        "reason": "검증 1개 통과 (auto)",
+        "at": "2026-09-10T19:08:54+09:00"
+      },
+      "pr": {
+        "state": "created",
+        "reason": "https://github.com/hkjang/aiportal-py/pull/17",
+        "at": "2026-09-10T19:08:59+09:00"
+      },
+      "review": {
+        "state": "approved",
+        "reason": "리뷰 승인 (risk=low)",
+        "at": "2026-09-10T19:11:23+09:00"
+      },
+      "ci": {
+        "state": "passed",
+        "reason": "검사 없음 — 정책으로 허용",
+        "at": "2026-09-10T19:11:53+09:00"
+      },
+      "merge": {
+        "state": "done",
+        "reason": "acfc43258993cb844e034e9299ee877f76ee558b",
+        "at": "2026-09-10T19:11:58+09:00"
+      },
+      "release": {
+        "state": "skipped",
+        "reason": "릴리즈 안 함: 이 저장소에는 릴리즈 이력이 전혀 없습니다. git 태그 0개(`git tag | wc -l` = 0, `git for-each-ref refs/tags` = 0), 릴리즈 커밋 0개(`git log --all --oneline` 33개 커밋 전부 first commit / docs / fix: ... (감사 A-xxx) / Merge pull request 형식이며 release·버전·semver 패턴 매치 없음), CHANGELOG.md·docs/RELEASE*.md 없음, GitHub Release 목록 비어 있음, .github/workflows 없음(러너 제공 정보와 일치), 릴리즈/패키징 스크립트 없음(추적되는 .sh·Makefile·pyproject.toml·setup.py·package.json·Chart.yaml·Dockerfile·compose 파일 0개). 배포는 버전이 아니라 브랜치 기준입니다 — .gitlab-ci.yml 이 main/develop push 에 반응해 배포 디렉터리에서 `git reset --hard origin/$CI_COMMIT_BRANCH` 후 k8s rollout restart/podman restart 를 하며 태그·버전을 전혀 참조하지 않습니다. 버전 문자열은 api.py:147 의 FastAPI(version=\"1.0.0\") 하나뿐인데 이는 OpenAPI 문서용 하드코딩 값이고 `git log -S` 결과 first commit(2075c62) 이후 17개 PR 동안 한 번도 변경된 적이 없어 릴리즈 시 갱신하는 버전 파일로 볼 수 없습니다(docs/IMPROVEMENTS.md 의 version=\"2.0.0\" 은 제안 코드 스니펫, docs/ROADMAP.md 의 R0~R5 \"Release\" 는 소프트웨어 버전이 아니라 로드맵 단계입니다). 따라서 절차 5에 따라 아무것도 만들지 않았습니다 — 버전 체계·태그 형식·릴리즈 노트 위치를 새로 정하는 것은 사람의 결정입니다. 커밋·태그·파일 변경 없음, worktree 는 clean 상태로 둡니다. 참고로 이번 머지분(acfc432, 감사 A-113 Milvus 적재 실패 보고 수정)은 main 에 이미 반영되어 있어 기존 브랜치 기반 GitLab CI 배포로 그대로 나갑니다.",
+        "at": "2026-09-10T19:13:25+09:00"
+      }
+    },
+    "campaign": "",
+    "autonomy": "release",
+    "files": 11,
+    "additions": 409,
+    "deletions": 32,
+    "tests": 2,
+    "title": "fix: Milvus 적재 실패를 성공으로 보고하지 않도록 수정 (감사 A-113)"
+  },
+  "stages": {
+    "base": {
+      "state": "pinned",
+      "reason": "main@1f6c9cd",
+      "at": "2026-09-10T19:01:22+09:00"
+    },
+    "autonomy": {
+      "state": "release",
+      "reason": "",
+      "at": "2026-09-10T19:01:22+09:00"
+    },
+    "verify": {
+      "state": "passed",
+      "reason": "검증 1개 통과 (auto)",
+      "at": "2026-09-10T19:08:54+09:00"
+    },
+    "pr": {
+      "state": "created",
+      "reason": "https://github.com/hkjang/aiportal-py/pull/17",
+      "at": "2026-09-10T19:08:59+09:00"
+    },
+    "review": {
+      "state": "approved",
+      "reason": "리뷰 승인 (risk=low)",
+      "at": "2026-09-10T19:11:23+09:00"
+    },
+    "ci": {
+      "state": "passed",
+      "reason": "검사 없음 — 정책으로 허용",
+      "at": "2026-09-10T19:11:53+09:00"
+    },
+    "merge": {
+      "state": "done",
+      "reason": "acfc43258993cb844e034e9299ee877f76ee558b",
+      "at": "2026-09-10T19:11:58+09:00"
+    },
+    "release": {
+      "state": "skipped",
+      "reason": "릴리즈 안 함: 이 저장소에는 릴리즈 이력이 전혀 없습니다. git 태그 0개(`git tag | wc -l` = 0, `git for-each-ref refs/tags` = 0), 릴리즈 커밋 0개(`git log --all --oneline` 33개 커밋 전부 first commit / docs / fix: ... (감사 A-xxx) / Merge pull request 형식이며 release·버전·semver 패턴 매치 없음), CHANGELOG.md·docs/RELEASE*.md 없음, GitHub Release 목록 비어 있음, .github/workflows 없음(러너 제공 정보와 일치), 릴리즈/패키징 스크립트 없음(추적되는 .sh·Makefile·pyproject.toml·setup.py·package.json·Chart.yaml·Dockerfile·compose 파일 0개). 배포는 버전이 아니라 브랜치 기준입니다 — .gitlab-ci.yml 이 main/develop push 에 반응해 배포 디렉터리에서 `git reset --hard origin/$CI_COMMIT_BRANCH` 후 k8s rollout restart/podman restart 를 하며 태그·버전을 전혀 참조하지 않습니다. 버전 문자열은 api.py:147 의 FastAPI(version=\"1.0.0\") 하나뿐인데 이는 OpenAPI 문서용 하드코딩 값이고 `git log -S` 결과 first commit(2075c62) 이후 17개 PR 동안 한 번도 변경된 적이 없어 릴리즈 시 갱신하는 버전 파일로 볼 수 없습니다(docs/IMPROVEMENTS.md 의 version=\"2.0.0\" 은 제안 코드 스니펫, docs/ROADMAP.md 의 R0~R5 \"Release\" 는 소프트웨어 버전이 아니라 로드맵 단계입니다). 따라서 절차 5에 따라 아무것도 만들지 않았습니다 — 버전 체계·태그 형식·릴리즈 노트 위치를 새로 정하는 것은 사람의 결정입니다. 커밋·태그·파일 변경 없음, worktree 는 clean 상태로 둡니다. 참고로 이번 머지분(acfc432, 감사 A-113 Milvus 적재 실패 보고 수정)은 main 에 이미 반영되어 있어 기존 브랜치 기반 GitLab CI 배포로 그대로 나갑니다.",
+      "at": "2026-09-10T19:13:25+09:00"
+    }
+  },
+  "provenance": {
+    "model": "claude-opus-5",
+    "policy_version": "5935779a",
+    "prompts_hash": "82f2440d4b2fef65",
+    "runner_version": "5b81a64b",
+    "base_sha": "1f6c9cda8cccf6f44864eac557eb4003c01d2360",
+    "head_sha": "acfc43258993cb844e034e9299ee877f76ee558b",
+    "pr": "https://github.com/hkjang/aiportal-py/pull/17"
+  },
+  "verification": {
+    "runner": {
+      "source": "auto",
+      "commands": [
+        {
+          "cmd": "python3 -m pytest -q -x",
+          "exit": 0,
+          "seconds": 2
+        }
+      ]
+    },
+    "runner_gate": {
+      "ok": true,
+      "state": "verified",
+      "reason": "검증 1개 통과 (auto)"
+    },
+    "after_rebase": null,
+    "review": {
+      "verdict": "approve",
+      "reasons": [],
+      "notes": [
+        "검증 완료: main 코드에 새 테스트만 얹어 실행하니 16개가 실패(test_milvus_insert_failure.py 7개, test_space_file_indexer.py 9개)했고 HEAD 에서는 전체 1001개가 통과. 새 테스트가 수정 전 코드에서 통과하지 않는다는 점을 실제로 확인했다.",
+        "tests/unit/test_milvus_insert_failure.py:166 test_page_pipeline_counts_insert_only_on_success 는 수정 전 코드에서도 통과한다(수정 전에는 해당 except 절 자체가 없어 조건이 공허하게 참). 회귀 방지 가드로는 유효하지만 이 테스트 하나만으로 변경이 검증되지는 않는다 — 실검증은 같은 파일의 다른 테스트와 test_space_file_indexer.py 가 담당한다.",
+        "util/milvus_confluence.py:7 MilvusInsertError 를 새로 정의했지만 두 호출부(service/pipelineservice.py:70, util/space_file_indexer.py:108)는 모두 광범위한 except Exception 으로 잡는다. docstring 이 말하는 '다른 오류와 구분'은 현재 코드에서 실제로 쓰이지 않는 문서적 장치다(향후 확장 여지로는 무해).",
+        "util/milvus_confluence.py:56 insert_to_milvus(col_name, data_list) 는 저장소 전체에서 호출부가 없다(pipelineservice 가 import 하는 insert_to_milvus 는 pipeline/law/milvus.py 의 동명 함수). 이 함수의 raise 전환은 사실상 죽은 코드 정리이며 호출부 영향 없음. import traceback 제거도 파일 내 다른 사용처가 없어 NameError 위험 없음.",
+        "api.py:1934 적재 실패 시에도 HTTP 200 으로 문자열을 돌려주고 실패 여부는 메시지 문자열('// 적재 실패 M 파일 : ...')로만 구분된다. 이 라우트는 원래도 예외 시 traceback 문자열을 200 으로 돌려주던 구조라 기존 관례를 따른 것이지만, 기계 호출자는 여전히 문자열 파싱에 의존한다. docs/API_REFERENCE.md 에 형식이 명시되어 있다.",
+        "util/space_file_indexer.py:111 fileobj.get('title','') 를 실패 목록에 담으므로 title 키가 없는 첨부는 빈 문자열로 기록되어 api.py 응답에 ', ' 만 남는다. 실제 Confluence 응답에는 title 이 항상 있어 보이고, 같은 파일의 성공 로그도 동일한 get 패턴을 쓰므로 새로 생긴 문제는 아니다.",
+        "service/pipelineservice.py:65 배치 삭제(delete_to_milvus)가 삽입보다 먼저 일어나므로 삽입이 실패한 배치의 page_id 는 Milvus 에서 지워진 채 남는다. 이는 이번 변경 이전부터 있던 구조이고 PR 이 바꾸지 않았으며, 오히려 total_failed 로 그 상황이 처음 드러나게 됐다. 다만 '실패 = 해당 페이지가 컬렉션에서 사라짐'이라는 점은 운영 문서에 남길 가치가 있다.",
+        "변경 전에는 connections.connect()/Collection() 단계의 예외(try 블록 밖)가 파이프라인 전체를 중단시켰지만 이제는 배치/파일 단위 실패로 집계되고 루프가 계속 돈다. Milvus 가 완전히 죽은 경우 재시도가 늘어나지만 결과는 total_failed / failed_files 로 정확히 보고되므로 '성공으로 오보'라는 원래 결함은 해소된다.",
+        "범위: 변경 파일은 api.py 2개 hunk, pipelineservice.py 1개 hunk, milvus_confluence.py, space_file_indexer.py, 테스트 2개, 문서 5개뿐이다. 무관한 리팩터·포맷 변경·의존성 갱신 없음. 인증/권한/결제/마이그레이션/비밀값/워크플로 미변경. 데이터 마이그레이션이나 외부 상태 변경이 없어 revert 로 온전히 되돌아온다.",
+        "docs/CURRENT_STATE_AUDIT.md:180 의 A-113 기술 내용(예외 전환, 빈 데이터는 조용히 반환, delete 경로는 여전히 실패를 삼킴)이 코드와 일치하며 남은 한계도 정직하게 적혀 있다."
+      ],
+      "risk": "low"
+    },
+    "ci_gate": {
+      "ok": false,
+      "state": "no-ci",
+      "reason": "이 커밋에 검사가 없음 (정책 allow_merge_without_ci 가 없으면 차단)",
+      "checks": 0
+    }
+  },
+  "release": {
+    "result": {
+      "status": "skipped",
+      "version": "",
+      "tag": "",
+      "title": "",
+      "notes_file": "",
+      "github_release": false,
+      "assets": [],
+      "reason": "이 저장소에는 릴리즈 이력이 전혀 없습니다. git 태그 0개(`git tag | wc -l` = 0, `git for-each-ref refs/tags` = 0), 릴리즈 커밋 0개(`git log --all --oneline` 33개 커밋 전부 first commit / docs / fix: ... (감사 A-xxx) / Merge pull request 형식이며 release·버전·semver 패턴 매치 없음), CHANGELOG.md·docs/RELEASE*.md 없음, GitHub Release 목록 비어 있음, .github/workflows 없음(러너 제공 정보와 일치), 릴리즈/패키징 스크립트 없음(추적되는 .sh·Makefile·pyproject.toml·setup.py·package.json·Chart.yaml·Dockerfile·compose 파일 0개). 배포는 버전이 아니라 브랜치 기준입니다 — .gitlab-ci.yml 이 main/develop push 에 반응해 배포 디렉터리에서 `git reset --hard origin/$CI_COMMIT_BRANCH` 후 k8s rollout restart/podman restart 를 하며 태그·버전을 전혀 참조하지 않습니다. 버전 문자열은 api.py:147 의 FastAPI(version=\"1.0.0\") 하나뿐인데 이는 OpenAPI 문서용 하드코딩 값이고 `git log -S` 결과 first commit(2075c62) 이후 17개 PR 동안 한 번도 변경된 적이 없어 릴리즈 시 갱신하는 버전 파일로 볼 수 없습니다(docs/IMPROVEMENTS.md 의 version=\"2.0.0\" 은 제안 코드 스니펫, docs/ROADMAP.md 의 R0~R5 \"Release\" 는 소프트웨어 버전이 아니라 로드맵 단계입니다). 따라서 절차 5에 따라 아무것도 만들지 않았습니다 — 버전 체계·태그 형식·릴리즈 노트 위치를 새로 정하는 것은 사람의 결정입니다. 커밋·태그·파일 변경 없음, worktree 는 clean 상태로 둡니다. 참고로 이번 머지분(acfc432, 감사 A-113 Milvus 적재 실패 보고 수정)은 main 에 이미 반영되어 있어 기존 브랜치 기반 GitLab CI 배포로 그대로 나갑니다."
+    },
+    "assets_sha256": []
+  },
+  "approval": null,
+  "usage": [
+    {
+      "ts": "2026-09-10T19:08:50+09:00",
+      "date": "2026-09-10",
+      "project": "aiportal-py",
+      "phase": "improve",
+      "run_id": "2026-09-10-190119-aiportal-py-improve",
+      "campaign": "",
+      "subtype": "success",
+      "duration_ms": 488564,
+      "num_turns": 42,
+      "cost_usd": 3.350613000000001,
+      "input_tokens": 76,
+      "output_tokens": 37199,
+      "cache_read": 2853888,
+      "cache_create": 97894
+    },
+    {
+      "ts": "2026-09-10T19:11:23+09:00",
+      "date": "2026-09-10",
+      "project": "aiportal-py",
+      "phase": "review",
+      "run_id": "2026-09-10-190119-aiportal-py-improve",
+      "campaign": "",
+      "subtype": "success",
+      "duration_ms": 157325,
+      "num_turns": 20,
+      "cost_usd": 0.9492145,
+      "input_tokens": 30,
+      "output_tokens": 9569,
+      "cache_read": 558401,
+      "cache_create": 42882
+    },
+    {
+      "ts": "2026-09-10T19:13:25+09:00",
+      "date": "2026-09-10",
+      "project": "aiportal-py",
+      "phase": "release",
+      "run_id": "2026-09-10-190119-aiportal-py-improve",
+      "campaign": "",
+      "subtype": "success",
+      "duration_ms": 87953,
+      "num_turns": 15,
+      "cost_usd": 0.469387,
+      "input_tokens": 18,
+      "output_tokens": 5658,
+      "cache_read": 244854,
+      "cache_create": 20010
+    }
+  ]
+}
