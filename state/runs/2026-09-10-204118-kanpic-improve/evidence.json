@@ -1,6 +1,6 @@
 {
   "run_id": "2026-09-10-204118-kanpic-improve",
-  "generated": "2026-09-10T20:41:19+09:00",
+  "generated": "2026-09-10T21:02:41+09:00",
   "run": {
     "run_id": "2026-09-10-204118-kanpic-improve",
     "project": "kanpic",
@@ -10,34 +10,89 @@
     "policy_version": "5935779a",
     "prompts_hash": "82f2440d4b2fef65",
     "runner_version": "bda3920a",
-    "finished": "2026-09-10T20:41:19+09:00",
-    "outcome": "error"
+    "finished": "2026-09-10T21:02:41+09:00",
+    "outcome": "review-pending"
   },
   "record": {
-    "ts": "2026-09-10T20:41:19+09:00",
+    "ts": "2026-09-10T21:02:41+09:00",
     "date": "2026-09-10",
     "project": "kanpic",
-    "result": "hold: budget",
-    "outcome": "error",
+    "result": "review held, PR open https://github.com/hkjang/kanpic/pull/16",
+    "outcome": "review-pending",
     "run_id": "2026-09-10-204118-kanpic-improve",
-    "base_sha": "",
-    "head_sha": "",
-    "pr": "",
+    "base_sha": "fea021e07f91e7271cc74a8d7ae91e2b263af1a4",
+    "head_sha": "fd9c4220e1236ad86843fbdfc7de1594f8b9de7b",
+    "pr": "https://github.com/hkjang/kanpic/pull/16",
     "stages": {
       "improve": {
         "state": "hold",
         "reason": "회차 예산($22)이 오늘 남은 상한을 넘음",
         "at": "2026-09-10T20:41:19+09:00"
+      },
+      "base": {
+        "state": "pinned",
+        "reason": "main@fea021e",
+        "at": "2026-09-10T20:41:27+09:00"
+      },
+      "autonomy": {
+        "state": "release",
+        "reason": "",
+        "at": "2026-09-10T20:41:27+09:00"
+      },
+      "verify": {
+        "state": "passed",
+        "reason": "검증 7개 통과 (auto)",
+        "at": "2026-09-10T20:47:11+09:00"
+      },
+      "pr": {
+        "state": "created",
+        "reason": "https://github.com/hkjang/kanpic/pull/16",
+        "at": "2026-09-10T20:47:21+09:00"
+      },
+      "review": {
+        "state": "missing",
+        "reason": "리뷰 결과 없음/손상: missing — 보류",
+        "at": "2026-09-10T21:02:44+09:00"
       }
     },
     "campaign": "",
-    "autonomy": ""
+    "autonomy": "release",
+    "files": 5,
+    "additions": 117,
+    "deletions": 1,
+    "tests": 2,
+    "title": "fix: 사용자 명단도 무엇으로 적혔는지 밝히면 밝힌 대로 읽는다"
   },
   "stages": {
     "improve": {
       "state": "hold",
       "reason": "회차 예산($22)이 오늘 남은 상한을 넘음",
       "at": "2026-09-10T20:41:19+09:00"
+    },
+    "base": {
+      "state": "pinned",
+      "reason": "main@fea021e",
+      "at": "2026-09-10T20:41:27+09:00"
+    },
+    "autonomy": {
+      "state": "release",
+      "reason": "",
+      "at": "2026-09-10T20:41:27+09:00"
+    },
+    "verify": {
+      "state": "passed",
+      "reason": "검증 7개 통과 (auto)",
+      "at": "2026-09-10T20:47:11+09:00"
+    },
+    "pr": {
+      "state": "created",
+      "reason": "https://github.com/hkjang/kanpic/pull/16",
+      "at": "2026-09-10T20:47:21+09:00"
+    },
+    "review": {
+      "state": "missing",
+      "reason": "리뷰 결과 없음/손상: missing — 보류",
+      "at": "2026-09-10T21:02:44+09:00"
     }
   },
   "provenance": {
@@ -45,13 +100,56 @@
     "policy_version": "5935779a",
     "prompts_hash": "82f2440d4b2fef65",
     "runner_version": "bda3920a",
-    "base_sha": "",
-    "head_sha": "",
-    "pr": ""
+    "base_sha": "fea021e07f91e7271cc74a8d7ae91e2b263af1a4",
+    "head_sha": "fd9c4220e1236ad86843fbdfc7de1594f8b9de7b",
+    "pr": "https://github.com/hkjang/kanpic/pull/16"
   },
   "verification": {
-    "runner": null,
-    "runner_gate": null,
+    "runner": {
+      "source": "auto",
+      "commands": [
+        {
+          "cmd": "go build ./...",
+          "exit": 0,
+          "seconds": 1
+        },
+        {
+          "cmd": "go vet ./...",
+          "exit": 0,
+          "seconds": 0
+        },
+        {
+          "cmd": "go test ./...",
+          "exit": 0,
+          "seconds": 1
+        },
+        {
+          "cmd": "cd web && [ -d node_modules ] || npm ci --no-audit --no-fund",
+          "exit": 0,
+          "seconds": 0
+        },
+        {
+          "cmd": "cd web && npm test --silent",
+          "exit": 0,
+          "seconds": 3
+        },
+        {
+          "cmd": "cd web && [ -d node_modules ] || npm ci --no-audit --no-fund",
+          "exit": 0,
+          "seconds": 0
+        },
+        {
+          "cmd": "cd web && npm run build --silent",
+          "exit": 0,
+          "seconds": 8
+        }
+      ]
+    },
+    "runner_gate": {
+      "ok": true,
+      "state": "verified",
+      "reason": "검증 7개 통과 (auto)"
+    },
     "after_rebase": null,
     "review": null,
     "ci_gate": null
@@ -61,5 +159,31 @@
     "assets_sha256": []
   },
   "approval": null,
-  "usage": []
+  "usage": [
+    {
+      "ts": "2026-09-10T20:46:58+09:00",
+      "date": "2026-09-10",
+      "project": "kanpic",
+      "phase": "improve",
+      "run_id": "2026-09-10-204118-kanpic-improve",
+      "campaign": "",
+      "subtype": "success",
+      "duration_ms": 362329,
+      "num_turns": 42,
+      "cost_usd": 2.3869679999999995,
+      "input_tokens": 72,
+      "output_tokens": 22609,
+      "cache_read": 2197778,
+      "cache_create": 70928
+    },
+    {
+      "ts": "2026-09-10T21:02:44+09:00",
+      "date": "2026-09-10",
+      "project": "kanpic",
+      "phase": "review",
+      "run_id": "2026-09-10-204118-kanpic-improve",
+      "subtype": "unknown",
+      "cost_usd": null
+    }
+  ]
 }
