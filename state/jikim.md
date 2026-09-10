@@ -71,3 +71,6 @@
 - 보류 아이디어: 로그인 성공 판정 전에 rate limiter를 succeeded로 초기화하는 순서 정리 (2/1/S) / settings GET이 주입하는 파생 필드가 PUT 왕복 시 workflow 설정에 저장되는 문제 정리 (2/1/S) / authorizeTransit이 존재하지 않는 transit key의 decrypt를 400 encryption key not found 대신 403 permission denied로 보고하는 문제 정리 (2/2/S) / 감사 로그 보존(audit_retention_days) 자동 정리 구현 (3/3/M) / baoKVWrite가 SecretExistsByPath로 create·update capability를 고르면서 생기는 TOCTOU 정리 (2/2/S)
 
 - 릴리즈: v0.2.9 (2026-09-10, run 2026-09-10-195116-jikim-improve)
+## 2026-09-11
+- (원장 항목에 비밀/내부 정보 의심 문자열이 있어 비공개 기록으로 옮김 — run 2026-09-11-025110-jikim-improve)
+
