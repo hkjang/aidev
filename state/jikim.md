@@ -57,3 +57,9 @@
 - 보류 아이디어: 로그인 성공 판정 전에 rate limiter를 succeeded로 초기화하는 순서 정리 (2/1/S) / settings GET이 주입하는 파생 필드가 PUT 왕복 시 workflow 설정에 저장되는 문제 정리 (2/1/S) / 감사 로그 보존(audit_retention_days) 자동 정리 구현 (3/3/M) / SessionByToken이 DB 장애까지 ErrUnauthorized로 접어 인증 미들웨어가 장애를 403으로 보고하는 문제 정리 (3/2/M) / Transit rewrap 엔드포인트 추가 (2/3/M)
 
 - 릴리즈: v0.2.7 (2026-09-10, run 2026-09-10-105020-jikim-approve)
+## 2026-09-10
+- 선택: SessionByToken·Authenticate가 DB 장애를 인증 실패로 접는 문제 수정 (가치 3 / 위험 2 / 작업량 M)
+- 결과: 성공
+- 요약: `users.go`의 `Authenticate`와 `SessionByToken`이 `QueryRow` 실패를 원인과 무관하게 `ErrUnauthorized`로 바꿔, DB 장애가 "자격증명 거부"·"세션 만료"로 보고되고 인증 미들웨어는 401/403을, 로그인 rate limiter는 장애를 실패 시도로 계산해 5분 창 동안 계정을 잠갔습니다. v0.2.5~v0.2.7의 오류 매핑 정리와 같은 방식으로 `lookupFailed`로 `pgx.ErrNoRows`와 그 밖의 오류를 나눠 행 없음만 sentinel로 남기고, `withAuth`·`sessionStatus`는 `storeError`로 500을, `withBaoAuth`는 새 `baoSessionFailure`로 만료 토큰(403 `permission denied`)과 조회 불가(500 `failed to look up token`)를 갈랐으며, `login`·`baoUserpassLogin`은 장애를 실패 시도로 계산하지 않고 500을 반환하고 driver 문자열을 응답에 담지 않습니다. 검증은 hook 기반 단위 테스트 7개(`auth_outage_test.go` 6개 + store `lookupFailed` 1개)를 추가하고 `./scripts/verify.sh` 전체(Go test·vet·gofmt, React test·lint·build, docs, compose) 통과로 확인했습니다. 커밋 `d79383b`.
+- 보류 아이디어: 로그인 성공 판정 전에 rate limiter를 succeeded로 초기화하는 순서 정리 (2/1/S) / settings GET이 주입하는 파생 필드가 PUT 왕복 시 workflow 설정에 저장되는 문제 정리 (2/1/S) / 감사 로그 보존(audit_retention_days) 자동 정리 구현 (3/3/M) / baoKVWrite가 SecretExistsByPath로 create·update capability를 고르면서 생기는 TOCTOU 정리 (2/2/S) / Transit rewrap 엔드포인트 추가 (2/3/M)
+

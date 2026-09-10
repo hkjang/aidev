@@ -1,0 +1,27 @@
+{
+  "base": {
+    "state": "pinned",
+    "reason": "main@bc2a0bb",
+    "at": "2026-09-10T12:11:19+09:00"
+  },
+  "autonomy": {
+    "state": "release",
+    "reason": "",
+    "at": "2026-09-10T12:11:19+09:00"
+  },
+  "verify": {
+    "state": "passed",
+    "reason": "검증 3개 통과 (auto)",
+    "at": "2026-09-10T12:18:58+09:00"
+  },
+  "pr": {
+    "state": "created",
+    "reason": "https://github.com/hkjang/git-ctx/pull/27",
+    "at": "2026-09-10T12:19:04+09:00"
+  },
+  "review": {
+    "state": "rejected",
+    "reason": "리뷰 거절: internal/manifest/lockfile.go:256-270 parsePipfileLock appends every entry of `default` and then of `develop` with no de-duplication, so a package resolved into both sections at the same version is emitted twice as a byte-identical Package. Verified by running ParseLock(\"Pipfile.lock\", {\"default\":{\"six\":{\"version\":\"==1.16.0\"},...},\"develop\":{\"six\":{\"version\":\"==1.16.0\"},...}}) -> 4 packages with `six@1.16.0` appearing twice. This is the shape pipenv actually writes: it resolves the two sections independently and each carries its full transitive closure, so shared transitives (six, packaging, typing-extensions, urllib3, idna, attrs) land in both. Every other parser in this same file guards against exactly this with a `seen` map — parseGoSum:97-101, parsePackageLock:119-127, parseYarnLock:167,185-188, parsePnpmLock:215,224-228 — and the new one is the only parser that does not. / internal/indexer/indexer.go:633-637 is where that duplicate becomes a hard failure. The batch statement is `INSERT INTO repository_packages_staging(...) VALUES (...),(...) ON CONFLICT(generation_id,repository_id,ref_name,ecosystem,name,version,manifest_path) DO UPDATE SET scope=excluded.scope`, and the two duplicated rows are identical in all seven conflict-target columns (same manifest_path \"Pipfile.lock\", same ecosystem \"pypi\", same version) and land in the same 200-row batch (packageInsertBatch=200, indexer.go:1004). PostgreSQL — a first-class backend here (internal/store/store.go:12,47 pgx; internal/{app,backup,notification}/postgres_integration_test.go) — rejects a multi-row ON CONFLICT DO UPDATE that touches the same row twice with `ERROR: ON CONFLICT DO UPDATE command cannot affect row a second time`, and indexer.go:636-638 turns that into `return fail(err)`, aborting the entire index generation for the ref. Before this PR Pipfile.lock was ignored, so this is a new failure mode: on Postgres, indexing a repository that contains an ordinary Pipfile.lock now fails outright rather than gaining an inventory. SQLite applies the rows sequentially and silently collapses them, which is why `go test ./internal/indexer/ ./internal/manifest/` is green and hides this. / internal/manifest/lockfile_test.go:98-210 no case covers a package present in both `default` and `develop`, i.e. the single most common Pipfile.lock property, so the defect above is not exercised by any assertion. TestPipfileLockStatesTheVersionAlone (lockfile_test.go:203-209) uses a one-package `default` only and also cannot reach it.",
+    "at": "2026-09-10T12:22:19+09:00"
+  }
+}
