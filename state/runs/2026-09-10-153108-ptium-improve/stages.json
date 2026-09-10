@@ -1,0 +1,27 @@
+{
+  "base": {
+    "state": "pinned",
+    "reason": "main@1a3a67f",
+    "at": "2026-09-10T15:31:22+09:00"
+  },
+  "autonomy": {
+    "state": "release",
+    "reason": "",
+    "at": "2026-09-10T15:31:22+09:00"
+  },
+  "verify": {
+    "state": "passed",
+    "reason": "검증 9개 통과 (auto)",
+    "at": "2026-09-10T15:38:01+09:00"
+  },
+  "pr": {
+    "state": "created",
+    "reason": "https://github.com/hkjang/ptium/pull/17",
+    "at": "2026-09-10T15:38:11+09:00"
+  },
+  "review": {
+    "state": "rejected",
+    "reason": "리뷰 거절: server/internal/docs/tables.go:336-339 (amountSigns) — adding the European currency signs (€, £, and also $/¥) to the stripper newly admits comma-decimal locales, which this reader cannot read. Verified by running the branch: the CSV \"Region,Umsatz\\nBerlin,\\\"€1.234,56\\\"\\nHamburg,\\\"€980,00\\\"\" is emitted as ::columns with item numbers Berlin=1.23456 and Hamburg=98000 — the smaller amount is drawn ~79,000x taller than the larger one, with the value labels on the same slide still reading €1.234,56 and €980,00. On main the same sheet stays ::table (ParseFloat rejected the € sign), so this is a regression introduced by this branch, and it is exactly the failure the change says it exists to prevent ('a chart of heights nobody wrote'). / server/internal/docs/tables.go:271-285 (amountOf doc comment) — the stated contract is 'where the two readings disagree, this one gives way', and the space-thousands form (\"1 200\") is excluded on that ground. But the € case above is a disagreement of a different kind that the guard does not cover: docs.amountOf and deck.parseNumber agree perfectly (both say 1.23456) and both disagree with the sheet. The comment and the tests therefore describe a safety property the code does not have; the far more common European format (dot thousands, comma decimal) is admitted while the rarer space-thousands one is refused. / server/internal/docs/sheetamounts_test.go:209-261 (TestTheChartReadsTheFiguresTheSheetWasSentOnFor) — the test that is supposed to guarantee 'the sheet this one sends on as a chart is one the other draws at the figures the sheet shows' only checks parser-vs-parser agreement against hand-written expectations, and every case uses dot-decimal (₩1,200 / 1,200원 / $1,200.50). It cannot fail for the defect above. Adding €/£ without a single comma-decimal case is the coverage gap that let it through.",
+    "at": "2026-09-10T15:41:58+09:00"
+  }
+}
