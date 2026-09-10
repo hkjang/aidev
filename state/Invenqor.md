@@ -565,3 +565,27 @@
 - 보류 아이디어: Query DSL 에 `attributes.<키>` 존재/부재 연산자가 없어 `>= ""` 우회가 필요함 (가치 3 / 위험 2 / M) · MCP `asset_relations` 가 상대 자산의 이름·종류를 주지 않아 edge 마다 `asset_get` 을 한 번 더 부르게 만듦 (가치 3 / 위험 2 / M) · MCP `asset_search` 가 0건일 때 실제 존재하는 type·status 값을 함께 돌려주어 '자산 없음'과 '필터 값 없음'을 구분하게 함 (가치 3 / 위험 2 / M) · `listAgents`·설정 목록/이력·자산 상세 루프가 `rows.Err()` 를 확인하지 않아 부분 결과를 200 으로 돌려줌 — fault injection 불가, 이번에 `executeQuery` 만 해결 (가치 3 / 위험 1 / M) · 콘솔 Query DSL 화면이 새 `total`·`offset` 을 쓰지 않아 여전히 첫 페이지만 보여줌 (가치 3 / 위험 2 / M)
 
 - 릴리즈: v0.2.31 (2026-09-10, run 2026-09-10-173121-Invenqor-improve)
+## 2026-09-10
+- 선택: 사용자·관리자 가이드를 화면 캡처가 들어간 완성본으로 만든다 (가치 4 / 위험 1 / 작업량 M)
+- 결과: 성공
+- 요약: 두 가이드는 분량은 충분했지만 캡처가 한 장도 없어 콘솔을 처음 여는 사람이
+  문장만 읽고 화면을 상상해야 했다. `scripts/capture-guide-screenshots.mjs` 를 새로
+  만들어 임시 디렉터리에 Server 를 빌드·기동하고 가공한 자산 6대·계정 3개·API key
+  2개를 채운 뒤 headless Chrome(CDP) 으로 1440x900 에서 21장을 촬영하게 했다. 대상
+  주소를 환경 변수로 받지 않아 실수로 운영 배포를 촬영·변경할 수 없고, Server 가
+  `os.Hostname()` 을 진단 기록·request ID 에 남기므로 UTS namespace 안에서 띄워
+  빌드 장비 이름이 감사 로그·Server 로그 캡처에 실리지 않게 했다(첫 촬영본에서
+  실제로 `DESKTOP-…` 가 찍혀 발견). 사용자 가이드에 "처음 5분", 화면별 사용법 6절,
+  자주 하는 작업, 용어를 더하고 관리자 가이드에 코드(`config.Load()`)에서 읽은 Server
+  기동 환경 변수 전수 표, migration 에서 읽은 내장 역할별 권한 표, 운영 설정 화면과
+  감사·Server 로그 절을 더했다. PDF 는 저장소 자체 변환기 대신 공용 도구를 쓰도록
+  두 문서를 `scripts/build-docs.sh` 에서 빼고 `scripts/build-guide-pdfs.sh` 로 옮겨
+  정본을 하나로 두었다. 검증: 캡처 스크립트를 4회 실제 실행해 21장이 모두 데이터가
+  찬 화면인지 눈으로 확인했고(빈 목록·스피너·실명 없음), 공용 md2pdf 로 구운 PDF 에
+  이미지 XObject 가 각각 12·9개 들어갔고 `/URI (file://` 가 남지 않았음을 확인했다.
+  링크 rewrite 를 빠뜨린 첫 빌드에서 실제로 `file:///tmp/guide-…/USER_GUIDE.md` 가
+  검출돼 raw HTML `href=` 까지 rewrite 하도록 고쳤다. `sh -n` 으로 두 셸 스크립트
+  구문을 확인했다. Go·Rust·web 코드는 손대지 않아 해당 테스트는 돌리지 않았다.
+  버전 범프·릴리즈 노트는 하지 않았다.
+- 보류 아이디어: Query DSL 에 `attributes.<키>` 존재/부재 연산자가 없어 `>= ""` 우회가 필요함 (가치 3 / 위험 2 / M) · MCP `asset_relations` 가 상대 자산의 이름·종류를 주지 않아 edge 마다 `asset_get` 을 한 번 더 부르게 만듦 (가치 3 / 위험 2 / M) · 콘솔 Query DSL 화면이 새 `total`·`offset` 을 쓰지 않아 여전히 첫 페이지만 보여줌 (가치 3 / 위험 2 / M) · MCP `asset_search` 가 0건일 때 실제 존재하는 type·status 값을 함께 돌려주어 '자산 없음'과 '필터 값 없음'을 구분하게 함 (가치 3 / 위험 2 / M) · 캡처 스크립트가 촬영한 화면 목록과 가이드가 싣는 그림 목록을 대조하는 테스트가 없어 화면 이름이 바뀌면 조용히 옛 그림이 남음 (가치 2 / 위험 1 / S)
+

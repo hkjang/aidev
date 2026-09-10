@@ -1,7 +1,7 @@
 ---
 title: "AgentHub — 자율 개선 이력"
 description: "AgentHub: 자율 개선 회차 34회, 릴리즈 17건. 최근 릴리즈 v0.242.0 (자산 9개)."
-last_modified_at: 2026-09-10 21:54:37 +0900
+last_modified_at: 2026-09-10 22:37:25 +0900
 ---
 {% raw %}
 <script type="application/ld+json">
@@ -18,14 +18,14 @@ last_modified_at: 2026-09-10 21:54:37 +0900
   "name": "hkjang",
   "url": "https://github.com/hkjang"
  },
- "dateModified": "2026-09-10T21:54:37+09:00",
+ "dateModified": "2026-09-10T22:37:25+09:00",
  "version": "0.242.0"
 }
 </script>
 
 # AgentHub
 
-<p class="tldr"><strong>요약.</strong> AgentHub: 자율 개선 회차 34회, 릴리즈 17건. 최근 릴리즈 v0.242.0 (자산 9개). <span class="pill pill-failed" title="14일: 릴리즈 17, 실패 0, 경고 5, 회귀 3">건강 D</span> <span class="meta">14일: 릴리즈 17, 실패 0, 경고 5, 회귀 3</span></p>
+<p class="tldr"><strong>요약.</strong> AgentHub: 자율 개선 회차 34회, 릴리즈 17건. 최근 릴리즈 v0.242.0 (자산 9개). <span class="pill pill-failed" title="14일: 릴리즈 17, 실패 0, 경고 5, 회귀 4">건강 D</span> <span class="meta">14일: 릴리즈 17, 실패 0, 경고 5, 회귀 4</span></p>
 
 <ul class="stats"><li><b>34</b><span>회차</span></li><li><b>1</b><span>프로젝트</span></li><li><b>14</b><span>배포 준비 완료</span></li><li><b>3</b><span>릴리즈 진행 중</span></li><li><b>0</b><span>병합 완료</span></li><li><b>16</b><span>검토 대기</span></li><li><b>0</b><span>검증 실패</span></li><li><b>0</b><span>변경 없음</span></li><li><b>1</b><span>실행 오류</span></li><li><b>$101.72</b><span>비용</span></li><li><b>3시간 53분</b><span>에이전트 시간</span></li></ul>
 
@@ -35,6 +35,7 @@ last_modified_at: 2026-09-10 21:54:37 +0900
 <dt>저장소</dt><dd><a href="https://github.com/hkjang/AgentHub">https://github.com/hkjang/AgentHub</a></dd>
 <dt>마지막 회차</dt><dd>2026-09-10 21:54 KST — <span class="pill pill-other">• 기타</span> review held, PR open <a href="https://github.com/hkjang/AgentHub/pull/22">PR #22</a></dd>
 <dt>최근 릴리즈</dt><dd><a href="https://github.com/hkjang/AgentHub/releases/tag/v0.242.0">v0.242.0</a> — released · 자산 9개 (이전 v0.241.0: 10개) <a href="https://github.com/hkjang/AgentHub/releases">전체 릴리즈 →</a></dd>
+<dt>수정 과제</dt><dd>⚠️ PR #22(가이드)가 리뷰에서 거절됐습니다. 그 PR 브랜치(auto/2026-09-10-2131)를 이어서 고치세요, 새로 만들지 마세요. 넷 다 고쳐야 합니다: (1) docs/ADMIN_GUIDE.md:197-198 이 /api/v1/admin/readiness 와 /admin/kubernetes/check 를 GET 으로 안내하는데 internal/api/catalog.go:279,281 에 POST 로만 등록돼 있어 405 가 납니다 — 문서의 모든 API 메서드를 카탈로그에서 확인하세요. (2) README.md:17,103,186 과 docs/index.html:901,1054, docs/sitemap.xml:10 이 아직 옛 docs/user-guide.md 와 docs/AgentHub_User_Guide.pdf 를 가리켜 사용자 가이드가 두 벌이 됐습니다 — 옛 통합 가이드를 정리하거나 링크를 새 문서 4개로 옮겨 정본을 하나로 만드세요. (3) web/scripts/guide-shots.mjs:248,257,260 이 정책·DLP·sessionGateway 를 PUT 으로 통째로 덮어쓰면서 이전 값을 읽지도 복원하지도 않습니다 — 형제 스크립트 policy-e2e.mjs:51,143 처럼 읽어 두고 복원하세요. (4) 같은 스크립트의 대상 기본값이 다른 e2e 와 공유하는 AGENTHUB_TEST_URL 이라 실제 배포를 가리킨 채 돌면 설정이 사라집니다 — 캡처 전용 변수를 쓰고 값이 없으면 멈추게 하세요. aidev 의 GUIDE-STANDARD.md 를 다시 읽고 따르세요.</dd>
 </dl>
 
 ## 회차 이력
@@ -51,6 +52,7 @@ last_modified_at: 2026-09-10 21:54:37 +0900
 
 ## 교훈 (깨졌던 변경)
 
+- 2026-09-10 **review-rejected** — 가이드 문서의 API 메서드를 소스에서 확인하지 않아 GET/POST 가 어긋났고, 옛 통합 가이드를 그대로 둬 정본이 둘이 됐으며, 캡처 스크립트가 전역 설정을 백업 없이 덮어썼다. ([링크](https://github.com/hkjang/AgentHub/pull/22))
 - 2026-09-09 **review-rejected** — DLP 스캔 범위를 넓힐 때 두 가지를 같이 볼 것. (1) SendDecision 은 record 를 값으로 받으므로 호출자의 record.&lt;field&gt; 는 스크럽 이전 문자열이다 — 그 값을 recordContentScan 의 details 로 넘기면 audit_events.details 에 원문이 저장되고 AuditTrailEach 가 다시 내보낸다. 감사에는 식별자(AgentID)만 넘길 것. (2) store/provenance.go 가 Category = Agent 로 복사하므로 두 필드를 각각 스캔하면 같은 값이 두 번 보고된다. 클래스별로 병합하거나 사본으로 취급할 것 — 다만 Category 를 스캔 목록에서 빼면 원문이 스크럽되지 않고 나간다. ([링크](https://github.com/hkjang/AgentHub/pull/18))
 - 2026-09-09 **review-rejected** — 정책 규칙의 행위자(actor)를 agent.OwnerID 로 잡았다 — 이 플랫폼의 정책 지점은 모두 작업 소유자(task.OwnerID)를 쓴다. 자격증명 조회(SCMTokenFor)만 agent.OwnerID 가 맞으므로 두 값을 분리할 것. 또한 ContentGuard 를 손으로 만들어 주입하는 테스트는 배선 결함을 못 본다 — 프로덕션 배선을 통과하는 테스트로 증명할 것. 소스 문자열 검사는 증거가 아니다. ([링크](https://github.com/hkjang/AgentHub/pull/16))
 - 2026-09-08 **rejected-by-human** — 사람이 PR 을 반려함. 같은 접근은 피할 것. ([링크](https://github.com/hkjang/AgentHub/pull/13))
