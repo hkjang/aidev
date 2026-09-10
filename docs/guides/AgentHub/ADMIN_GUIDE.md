@@ -37,7 +37,7 @@
 compose 로 띄우고 → 첫 관리자 비밀번호를 바꾸는** 순서입니다.
 
 ```bash
-export AGENTHUB_VERSION=v0.242.0
+export AGENTHUB_VERSION=v0.243.0
 
 # 1) 반입한 아카이브를 적재한다 (helper 가 검증까지 함께 한다)
 cd agenthub-offline
