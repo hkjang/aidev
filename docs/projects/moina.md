@@ -1,7 +1,7 @@
 ---
 title: "moina — 자율 개선 이력"
 description: "moina: 자율 개선 회차 16회, 릴리즈 8건. 최근 릴리즈 v0.1.27."
-last_modified_at: 2026-09-10 14:09:54 +0900
+last_modified_at: 2026-09-10 14:19:24 +0900
 ---
 {% raw %}
 <script type="application/ld+json">
@@ -18,7 +18,7 @@ last_modified_at: 2026-09-10 14:09:54 +0900
   "name": "hkjang",
   "url": "https://github.com/hkjang"
  },
- "dateModified": "2026-09-10T14:09:54+09:00",
+ "dateModified": "2026-09-10T14:19:24+09:00",
  "version": "0.1.27"
 }
 </script>
@@ -141,6 +141,8 @@ last_modified_at: 2026-09-10 14:09:54 +0900
 - 결과: 성공
 - 요약: 서버는 `media_values`가 만드는 Moin 응답에 이미 `width`·`height`를 담아 주는데(직전 회차에 WebP까지 채워졌습니다) `normalizeMoin`이 두 값을 통째로 버려 `Moin.media` 타입에도 필드가 없었고, `MoinCard`의 `img`는 크기를 모른 채 렌더링됐습니다. `.moin-media img`는 `min-height:180px`만 잡고 있어 그림이 도착하는 순간 카드 높이가 실제 비율로 늘어났고, Flow를 스크롤하며 읽는 동안 아래 카드들이 밀렸습니다. `adapters.ts`에 `dimension()`을 두어 양수 정수인 크기만 남기고(서버가 크기를 못 읽은 동영상 등은 0을 주므로 생략), `types.ts`의 media 항목에 `width`·`height`를 추가한 뒤 두 값이 모두 있을 때만 `img`에 속성으로 넘겨 브라우저가 로드 전에 자리를 예약하게 했습니다. 속성으로 준 비율은 로드 전 placeholder로만 쓰이고 그림이 도착하면 실제 비율이 이기므로(EXIF로 회전된 사진도 지금과 같게 배치됨) 로드 후 화면은 변하지 않습니다. 검증은 새 테스트 3개(adapters의 크기 보존·0/소수 생략, MoinCard의 속성 전달·크기 없을 때 미부착 — 수정 전 코드에서 2개 파일 모두 실패하는 것 확인) 포함 `npm test`(32파일 229개)·`npm run lint`(0 error)·`npm run build`·`make fmt`·`make check`·backend `go vet ./...`·`go test ./...` 전부 통과.
 - 보류 아이디어: `updatePost`가 DB 오류를 409 `not_editable`로 보고해 원인을 감춤(가치 2 / 위험 1 / S) · `safeFilename`이 확장자와 판정한 MIME의 불일치를 그대로 둬 JPEG이 `photo.png`로 저장·다운로드됨(가치 2 / 위험 2 / S) · Makefile `test`가 CI와 달리 `-race` 미사용(가치 2 / 위험 1 / S) · 업로드가 EXIF orientation을 무시해 회전된 JPEG의 저장 크기가 화면 표시와 뒤바뀜(가치 2 / 위험 2 / M)
+
+- 릴리즈: v0.1.27 (2026-09-10, run 2026-09-10-135116-moina-improve)
 
 
 [← 대시보드](https://hkjang.github.io/aidev/) · [교훈 모음](https://hkjang.github.io/aidev/lessons/)
