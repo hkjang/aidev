@@ -111,3 +111,9 @@
 - 보류 아이디어: action center 의 활성 판정이 `ent.Status != "active"` 라 대소문자가 다른 레거시 행을 런타임과 반대로 판정(`store.EntitlementActive` 재사용 필요) / 이미 지난 `expires_at` 으로 발급되는 죽은 엔타이틀먼트를 쓰기 경로에서 거부 / `internal/dataworks` 도메인 함수(EvaluatePublishGateV2·EvaluateRetirementCandidate) 단위 테스트 보강 / 동일 API 키에 활성 엔타이틀먼트가 둘 이상일 때 운영 화면에서 경고 / action center 가 상품이 사라진 고아 Contract Scope·Entitlement 도 그대로 집계
 
 - 릴리즈: v0.9.50 (2026-09-10, run 2026-09-10-114120-dataworks-improve)
+## 2026-09-10
+- 선택: action center 의 엔타이틀먼트 활성 판정을 런타임 규칙(`store.EntitlementActive`)으로 통일 (가치 3 / 위험 1 / 작업량 S)
+- 결과: 성공
+- 요약: `GET /admin/dataworks/action-center` 는 `ent.Status != "active" || entitlementExpired(...)` 로 대소문자·공백을 그대로 비교했지만 런타임 조회 게이트는 `store.EntitlementActive`(status 는 `EqualFold`+trim, `expires_at` 은 trim 후 파싱, 해석 불가면 만료)를 쓴다. 그래서 쓰기 경로가 status 를 정규화하기(v0.9.50) 전에 저장된 `"Active"`·`" active "` 행은 고객 API 키가 정상적으로 서빙받는데도 운영 화면에는 `inactive_access` 로 떠서 운영자가 멀쩡한 접근권을 회수하도록 유도했고, 그런 행은 만료 예고(`entitlement_expiring`) 경로에도 도달하지 못해 갱신 신호까지 잃었다. 판정을 같은 패키지의 런타임 래퍼 `entitlementActive` 에 위임하고 이제 호출부가 없는 `entitlementExpired` 를 삭제했다(진짜로 닫힌 `revoked` 행은 종전대로 `inactive_access` 로 남는다). 검증: HTTP 회귀 테스트(레거시 `"Active"`·`" active "` 행 + `revoked` 행 → `inactive_access=1`(revoked 만), 20일 뒤 만료되는 공백 포함 행이 `expiring_access=1` 로 잡힘)를 추가하고 옛 대소문자 비교로 되돌려 두 레거시 행이 모두 `entitlement_inactive` 로 보고되며 실패하는 것을 확인, `go build ./...`·`go vet ./...`(0건)·`go test ./...` 전체 통과, `go run ./cmd/api-surface-audit` gap 0, 수정·신규 파일 `gofmt -l` 클린. `docs/OPERATIONS.md` "만료 예정 계약·권한 확인" 절에 문서화. web 변경이 없어 웹 체크는 미실행이고, 릴리즈 커밋은 남기지 않았다.
+- 보류 아이디어: `internal/dataworks` 도메인 함수(EvaluatePublishGateV2·EvaluateRetirementCandidate) 단위 테스트 보강 / action center 가 상품이 사라진 고아 Contract Scope·Entitlement 도 그대로 집계 / 동일 API 키에 활성 엔타이틀먼트가 둘 이상일 때 운영 화면에서 경고 / 이미 지난 `expires_at` 으로 발급되는 죽은 엔타이틀먼트를 쓰기 경로에서 경고·거부 / Playwright e2e 를 서비스 컨테이너 기반 CI 잡으로 편입
+
