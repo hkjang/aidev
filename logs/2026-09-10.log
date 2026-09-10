@@ -449,3 +449,91 @@ branch 'auto/2026-09-10-0851' set up to track 'origin/auto/2026-09-10-0851'.
 [09:00:07] Clustara: [pr] created — https://github.com/hkjang/clustara/pull/19
 reports: 9 day(s), 2 week(s), 1 month(s), 512 run(s), 489 usage row(s), 29 project page(s), 5 alert(s)
 notify: no new alerts
+[09:01:00] aidev synced: run(2026-09-10): weekly — verify failed: build artifacts committed
+[09:03:41] AgentHub: improve — 90 turns, 12m, $6.87, success
+[09:03:44] AgentHub: verify `go build ./...` → exit 0 (2s)
+[09:03:45] AgentHub: verify `go vet ./...` → exit 0 (1s)
+[09:04:04] AgentHub: verify `go test ./...` → exit 0 (19s)
+[09:04:04] AgentHub: verify `cd web && [ -d node_modules ] || npm ci --no-audit --no-fund` → exit 0 (0s)
+[09:04:08] AgentHub: verify `cd web && npm run build --silent` → exit 0 (4s)
+[09:04:09] AgentHub: [verify] passed — 검증 5개 통과 (auto)
+branch 'auto/2026-09-10-0851' set up to track 'origin/auto/2026-09-10-0851'.
+[09:04:15] AgentHub: [pr] created — https://github.com/hkjang/AgentHub/pull/20
+[09:05:00] Clustara: review — 17 turns, 5m, $0.97, success
+[09:05:01] Clustara: [review] approved — 리뷰 승인 (risk=low)
+[09:05:03] Clustara: waiting for CI on a93941a (no-ci-allowed)
+[09:05:32] Clustara: [ci] passed — 검사 없음 — 정책으로 허용
+[09:05:37] Clustara: [merge] done — a93941a71c8809e028d45aad31fc398a4e335aed
+From https://github.com/hkjang/clustara
+ * branch            main       -> FETCH_HEAD
+   53db55b..c805c62  main       -> origin/main
+Updating 53db55b..c805c62
+Fast-forward
+ internal/analyzer/imageusage.go                    |   2 +-
+ internal/analyzer/policy.go                        |   2 +-
+ internal/analyzer/security.go                      |  61 +++++++++--
+ internal/analyzer/security_runasroot_test.go       | 116 +++++++++++++++++++++
+ internal/proxy/admin_k8s_runtime_security.go       |  16 +--
+ .../admin_k8s_runtime_security_containers_test.go  |  82 +++++++++++++++
+ internal/proxy/admin_k8s_workspace.go              |  12 ++-
+ 7 files changed, 270 insertions(+), 21 deletions(-)
+ create mode 100644 internal/analyzer/security_runasroot_test.go
+ create mode 100644 internal/proxy/admin_k8s_runtime_security_containers_test.go
+Preparing worktree (detached HEAD c805c62)
+Updating files:  90% (982/1086)Updating files:  91% (989/1086)Updating files:  92% (1000/1086)Updating files:  93% (1010/1086)Updating files:  94% (1021/1086)Updating files:  95% (1032/1086)Updating files:  96% (1043/1086)Updating files:  97% (1054/1086)Updating files:  98% (1065/1086)Updating files:  99% (1076/1086)Updating files: 100% (1086/1086)Updating files: 100% (1086/1086), done.
+HEAD is now at c805c62 Merge pull request #19 from hkjang/auto/2026-09-10-0851
+[09:09:32] Clustara: release — 28 turns, 3m, $1.39, success
+[09:09:36] Clustara: waiting for CI on 32d3ef0 (no-ci-allowed)
+[09:10:36] AgentHub: review — 35 turns, 6m, $2.57, success
+[09:10:36] AgentHub: [review] approved — 리뷰 승인 (risk=medium)
+[09:10:36] AgentHub: waiting for CI on 9f84183 (success)
+[09:11:06] AgentHub: [ci] passed — 검사 1개 모두 success
+[09:11:06] Clustara: [release] published — v0.9.280
+From https://github.com/hkjang/clustara
+ * branch            main       -> FETCH_HEAD
+Updating c805c62..32d3ef0
+Fast-forward
+ docs/K8S_OPERATIONS_HUB.md | 27 ++++++++++++++++++++++++---
+ internal/proxy/server.go   |  2 +-
+ scripts/changelog.txt      |  7 +++++++
+ 3 files changed, 32 insertions(+), 4 deletions(-)
+[09:11:10] AgentHub: [merge] done — 9f84183031e09761cf3900da4b6589cbf7f68a1d
+https://github.com/hkjang/clustara/releases/tag/v0.9.280
+[09:11:11] Clustara: [gh-release] created — GitHub Release v0.9.280
+From https://github.com/hkjang/AgentHub
+ * branch            main       -> FETCH_HEAD
+   a7fbd27..1916caa  main       -> origin/main
+[09:11:12] Clustara: [manifest] ok — clustara-v0.9.280.tar.gz clustara-v0.9.280.tar.gz.sha256 README-offline-v0.9.280.md 
+Updating a7fbd27..1916caa
+Fast-forward
+ BASE_VERSION                              |   2 +-
+ README.md                                 |   2 +-
+ cmd/runtime-proxy/dlp.go                  |   8 ++
+ cmd/runtime-proxy/scanlimit_test.go       |  80 ++++++++++++++++++
+ compose.yaml                              |   2 +-
+ deploy/kubernetes/ollama-bridge.yaml      |   2 +-
+ internal/api/dlp.go                       |  14 +++-
+ internal/buildinfo/buildinfo.go           |   2 +-
+ internal/dlp/dlp.go                       |  33 ++++++++
+ internal/dlp/dlp_test.go                  |  44 ++++++++++
+ internal/execution/contentscan.go         |  18 +++--
+ internal/execution/contentscan_test.go    |  65 +++++++++++++++
+ internal/execution/scanlimit_live_test.go | 129 ++++++++++++++++++++++++++++++
+ internal/guard/guard.go                   |  18 ++++-
+ web/src/components/UI.tsx                 |   6 +-
+ web/src/pages/AdminDLP.tsx                |   2 +-
+ web/src/pages/AdminOperations.tsx         |   5 +-
+ 17 files changed, 413 insertions(+), 19 deletions(-)
+ create mode 100644 cmd/runtime-proxy/scanlimit_test.go
+ create mode 100644 internal/execution/scanlimit_live_test.go
+Preparing worktree (detached HEAD 1916caa)
+HEAD is now at 1916caa Merge pull request #20 from hkjang/auto/2026-09-10-0851
+[09:11:16] Clustara: uploaded clustara-v0.9.280.tar.gz (ac7a891392740186798b1def37b1771178aa5a9f50aaa0866bb1b1b98cd06a33)
+[09:11:18] Clustara: uploaded clustara-v0.9.280.tar.gz.sha256 (71a06959551b66bf39ea356778cd4d8b778a25e9d6c56e5f815c06e4c20fa8f9)
+[09:11:20] Clustara: uploaded README-offline-v0.9.280.md (f5b158b3750883f1cbea6a459da18fd173d3b90e7a8b2931b61fa40ac50785fc)
+[09:11:20] Clustara: [assets] uploaded — 3개
+[09:11:21] Clustara: [assets] verified — v0.9.280 자산 3개 (이전 v0.9.279: 3)
+fatal: '/home/hkjang/.cache/auto-improve-wt/Clustara' is not a working tree
+evidence: /mnt/c/Users/USER/projects/aidev/state/runs/2026-09-10-085117-Clustara-improve/evidence.json
+reports: 9 day(s), 2 week(s), 1 month(s), 513 run(s), 493 usage row(s), 29 project page(s), 2 alert(s)
+notify: no new alerts
