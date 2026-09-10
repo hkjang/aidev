@@ -1,0 +1,229 @@
+{
+  "run_id": "2026-09-10-114110-aiportal-py-improve",
+  "generated": "2026-09-10T11:54:47+09:00",
+  "run": {
+    "run_id": "2026-09-10-114110-aiportal-py-improve",
+    "project": "aiportal-py",
+    "kind": "improve",
+    "started": "2026-09-10T11:41:10+09:00",
+    "model": "claude-opus-5",
+    "policy_version": "5935779a",
+    "prompts_hash": "82f2440d4b2fef65",
+    "runner_version": "5b81a64b",
+    "finished": "2026-09-10T11:54:47+09:00",
+    "outcome": "merged"
+  },
+  "record": {
+    "ts": "2026-09-10T11:54:47+09:00",
+    "date": "2026-09-10",
+    "project": "aiportal-py",
+    "result": "merged https://github.com/hkjang/aiportal-py/pull/16, release skipped",
+    "outcome": "merged",
+    "run_id": "2026-09-10-114110-aiportal-py-improve",
+    "base_sha": "7591e31e579e6c8851763d8ebcf0b73c79f5a850",
+    "head_sha": "277d90e3ded67bb76e537e609cc4c4b1ab5dd269",
+    "pr": "https://github.com/hkjang/aiportal-py/pull/16",
+    "stages": {
+      "base": {
+        "state": "pinned",
+        "reason": "main@7591e31",
+        "at": "2026-09-10T11:41:14+09:00"
+      },
+      "autonomy": {
+        "state": "release",
+        "reason": "",
+        "at": "2026-09-10T11:41:14+09:00"
+      },
+      "verify": {
+        "state": "passed",
+        "reason": "검증 1개 통과 (auto)",
+        "at": "2026-09-10T11:49:45+09:00"
+      },
+      "pr": {
+        "state": "created",
+        "reason": "https://github.com/hkjang/aiportal-py/pull/16",
+        "at": "2026-09-10T11:49:51+09:00"
+      },
+      "review": {
+        "state": "approved",
+        "reason": "리뷰 승인 (risk=low)",
+        "at": "2026-09-10T11:52:46+09:00"
+      },
+      "ci": {
+        "state": "passed",
+        "reason": "검사 없음 — 정책으로 허용",
+        "at": "2026-09-10T11:53:15+09:00"
+      },
+      "merge": {
+        "state": "done",
+        "reason": "277d90e3ded67bb76e537e609cc4c4b1ab5dd269",
+        "at": "2026-09-10T11:53:19+09:00"
+      },
+      "release": {
+        "state": "skipped",
+        "reason": "릴리즈 안 함: 저장소에 릴리즈 이력이 전혀 없어 따라할 기존 방식이 없습니다. (1) git tag 0개 - refs/tags 자체가 없고 packed-refs 도 비어 있으며 git describe --tags 가 SHA 로 폴백합니다. (2) 버전 파일 없음 - pyproject.toml/setup.py/VERSION/package.json/Chart.yaml/Makefile/Dockerfile 모두 부재. 유일한 버전 문자열인 api.py:147 의 FastAPI app metadata version=\"1.0.0\" 은 최초 커밋(2075c62) 이후 한 번도 바뀐 적이 없어(git log -L 147,147:api.py 결과가 최초 추가 1건) 릴리즈용으로 관리되는 값이 아니며, docs/API_REFERENCE.md 는 이를 '앱 metadata version' 으로만 설명합니다. (3) 릴리즈 노트 없음 - CHANGELOG.md/docs/RELEASE*.md 부재이고 git log --all --diff-filter=A 로 어느 브랜치에서도 해당 파일이 추가된 적이 없습니다. docs/ROADMAP.md 의 'Release R0~R5' 는 향후 계획 단계 표기일 뿐 출시 이력이 아닙니다. (4) GitHub Release 없음 - 러너가 미리 가져온 릴리즈 목록이 비어 있습니다. (5) 릴리즈 워크플로/자산 없음 - .github 디렉터리가 없고, CI 는 GitLab(.gitlab-ci.yml) 의 deploy stage 6개 job 뿐인데 전부 브랜치 기반(git fetch origin $CI_COMMIT_BRANCH -> git reset --hard -> k8s rollout restart 또는 podman restart)이라 태그·버전을 전혀 참조하지 않습니다. docs/DEPLOYMENT.md 도 이미지 빌드·패키징 단계가 CI 에 없다고 명시합니다. scripts/ 디렉터리와 Makefile release 타깃도 없어 재현할 자산 빌드 방법이 없습니다. 이 프로젝트는 main 에 머지하면 배포 호스트가 브랜치 head 로 동기화되는 방식이라 버전 태깅 관례를 새로 정하는 것은 사람의 판단 영역이므로 커밋·태그·파일 변경을 하지 않았습니다. A-112 변경(277d90e)은 이미 main 에 머지되어 기존 배포 경로로 반영됩니다.",
+        "at": "2026-09-10T11:54:47+09:00"
+      }
+    },
+    "campaign": "",
+    "autonomy": "release",
+    "files": 10,
+    "additions": 506,
+    "deletions": 37,
+    "tests": 1,
+    "title": "fix: 백그라운드 루프의 마지막 성공 시각을 /health 로 노출 (감사 A-112)"
+  },
+  "stages": {
+    "base": {
+      "state": "pinned",
+      "reason": "main@7591e31",
+      "at": "2026-09-10T11:41:14+09:00"
+    },
+    "autonomy": {
+      "state": "release",
+      "reason": "",
+      "at": "2026-09-10T11:41:14+09:00"
+    },
+    "verify": {
+      "state": "passed",
+      "reason": "검증 1개 통과 (auto)",
+      "at": "2026-09-10T11:49:45+09:00"
+    },
+    "pr": {
+      "state": "created",
+      "reason": "https://github.com/hkjang/aiportal-py/pull/16",
+      "at": "2026-09-10T11:49:51+09:00"
+    },
+    "review": {
+      "state": "approved",
+      "reason": "리뷰 승인 (risk=low)",
+      "at": "2026-09-10T11:52:46+09:00"
+    },
+    "ci": {
+      "state": "passed",
+      "reason": "검사 없음 — 정책으로 허용",
+      "at": "2026-09-10T11:53:15+09:00"
+    },
+    "merge": {
+      "state": "done",
+      "reason": "277d90e3ded67bb76e537e609cc4c4b1ab5dd269",
+      "at": "2026-09-10T11:53:19+09:00"
+    },
+    "release": {
+      "state": "skipped",
+      "reason": "릴리즈 안 함: 저장소에 릴리즈 이력이 전혀 없어 따라할 기존 방식이 없습니다. (1) git tag 0개 - refs/tags 자체가 없고 packed-refs 도 비어 있으며 git describe --tags 가 SHA 로 폴백합니다. (2) 버전 파일 없음 - pyproject.toml/setup.py/VERSION/package.json/Chart.yaml/Makefile/Dockerfile 모두 부재. 유일한 버전 문자열인 api.py:147 의 FastAPI app metadata version=\"1.0.0\" 은 최초 커밋(2075c62) 이후 한 번도 바뀐 적이 없어(git log -L 147,147:api.py 결과가 최초 추가 1건) 릴리즈용으로 관리되는 값이 아니며, docs/API_REFERENCE.md 는 이를 '앱 metadata version' 으로만 설명합니다. (3) 릴리즈 노트 없음 - CHANGELOG.md/docs/RELEASE*.md 부재이고 git log --all --diff-filter=A 로 어느 브랜치에서도 해당 파일이 추가된 적이 없습니다. docs/ROADMAP.md 의 'Release R0~R5' 는 향후 계획 단계 표기일 뿐 출시 이력이 아닙니다. (4) GitHub Release 없음 - 러너가 미리 가져온 릴리즈 목록이 비어 있습니다. (5) 릴리즈 워크플로/자산 없음 - .github 디렉터리가 없고, CI 는 GitLab(.gitlab-ci.yml) 의 deploy stage 6개 job 뿐인데 전부 브랜치 기반(git fetch origin $CI_COMMIT_BRANCH -> git reset --hard -> k8s rollout restart 또는 podman restart)이라 태그·버전을 전혀 참조하지 않습니다. docs/DEPLOYMENT.md 도 이미지 빌드·패키징 단계가 CI 에 없다고 명시합니다. scripts/ 디렉터리와 Makefile release 타깃도 없어 재현할 자산 빌드 방법이 없습니다. 이 프로젝트는 main 에 머지하면 배포 호스트가 브랜치 head 로 동기화되는 방식이라 버전 태깅 관례를 새로 정하는 것은 사람의 판단 영역이므로 커밋·태그·파일 변경을 하지 않았습니다. A-112 변경(277d90e)은 이미 main 에 머지되어 기존 배포 경로로 반영됩니다.",
+      "at": "2026-09-10T11:54:47+09:00"
+    }
+  },
+  "provenance": {
+    "model": "claude-opus-5",
+    "policy_version": "5935779a",
+    "prompts_hash": "82f2440d4b2fef65",
+    "runner_version": "5b81a64b",
+    "base_sha": "7591e31e579e6c8851763d8ebcf0b73c79f5a850",
+    "head_sha": "277d90e3ded67bb76e537e609cc4c4b1ab5dd269",
+    "pr": "https://github.com/hkjang/aiportal-py/pull/16"
+  },
+  "verification": {
+    "runner": {
+      "source": "auto",
+      "commands": [
+        {
+          "cmd": "python3 -m pytest -q -x",
+          "exit": 0,
+          "seconds": 3
+        }
+      ]
+    },
+    "runner_gate": {
+      "ok": true,
+      "state": "verified",
+      "reason": "검증 1개 통과 (auto)"
+    },
+    "after_rebase": null,
+    "review": {
+      "verdict": "approve",
+      "reasons": [],
+      "notes": [
+        "api.py:383 `note_state_change(stopped_tasks + stale_tasks)` 는 두 목록을 하나의 정렬 tuple 로 합쳐 식별키로 쓴다. 같은 task 가 stale -> stopped/failed 로 악화되면 합친 목록이 ['X'] 로 동일해 changed=False 가 되고 '백그라운드 task 중단 감지' ERROR 로그가 한 번도 나오지 않는다(가짜 시계로 재현 확인). 다만 /health 응답 body 의 message 와 status 는 정상적으로 '중단된 task: X' 로 바뀌고, task 사망 자체는 task_supervisor._on_done 의 [BackgroundTask] ERROR 로그로 별도 기록되므로 실제 관측 손실은 중복 경보 한 줄뿐이라 머지 차단 사유로는 보지 않는다. 후속으로 stopped/stale 을 각각 별도 키로 전이 판정하는 편이 낫다.",
+        "docs/OPERATIONS.md 는 '중단·지연 로그는 상태가 바뀐 시점에 한 번만 남습니다' 라고 적었는데, 위 stale->stopped 케이스에서는 상태가 바뀌어도 중단 로그가 남지 않는다. 문서와 구현이 이 한 경로에서 어긋난다.",
+        "stale 판정은 /health 전체 status 를 unhealthy 로 만든다(HTTP 는 계속 200, 기존 m2m_token 검사와 같은 패턴). 추천 질문 수집이 비는 것은 코드가 의도적으로 허용하는 상태인데 65분 지속되면 unhealthy 가 되므로, body 를 파싱하는 probe/알림이 있다면 새로운 경보가 생긴다. 배포 측 probe 설정 확인 권장.",
+        "question_refresh 의 max_silence=3900 은 sleep(1800) 기준이라 실제 주기(수집 시간 + 1800)가 2100초를 넘으면 오탐이 난다. 앱 수와 LLM 호출 지연이 크게 늘면 재검토 필요.",
+        "heartbeat 시각 표시는 datetime.now() 로 tz 없는 로컬 시각이다(경과 계산 자체는 monotonic 이라 시스템 시각 변경에 안전). docs 에 '로컬 시각' 이라고 명시되어 있어 불일치는 없다.",
+        "테스트는 실효성이 있다: 단위 테스트는 가짜 시계로 supervisor 를 직접 호출하고(STALE/max_silence 는 수정 전 모듈에 없어 import 부터 실패), AST 검사는 세 루프의 heartbeat 호출이 성공 분기 안에 있는지·register 의 max_silence·/health 의 stale() 호출을 실제 파일에서 확인한다. python3 -m pytest -q 984 passed, pyflakes undefined name 0건 직접 확인.",
+        "범위 이탈·마이그레이션·인증/권한/비밀값 변경 없음. util/token_store.py 의 policy 토큰 실패 warning 로그는 OPERATIONS.md 의 stale 대응 절차가 참조하는 로그라 이번 변경 목적 안에 있다. 순수 코드 변경이라 revert 로 완전히 되돌아온다."
+      ],
+      "risk": "low"
+    },
+    "ci_gate": {
+      "ok": false,
+      "state": "no-ci",
+      "reason": "이 커밋에 검사가 없음 (정책 allow_merge_without_ci 가 없으면 차단)",
+      "checks": 0
+    }
+  },
+  "release": {
+    "result": {
+      "status": "skipped",
+      "version": "",
+      "tag": "",
+      "title": "",
+      "notes_file": "",
+      "github_release": false,
+      "assets": [],
+      "reason": "저장소에 릴리즈 이력이 전혀 없어 따라할 기존 방식이 없습니다. (1) git tag 0개 - refs/tags 자체가 없고 packed-refs 도 비어 있으며 git describe --tags 가 SHA 로 폴백합니다. (2) 버전 파일 없음 - pyproject.toml/setup.py/VERSION/package.json/Chart.yaml/Makefile/Dockerfile 모두 부재. 유일한 버전 문자열인 api.py:147 의 FastAPI app metadata version=\"1.0.0\" 은 최초 커밋(2075c62) 이후 한 번도 바뀐 적이 없어(git log -L 147,147:api.py 결과가 최초 추가 1건) 릴리즈용으로 관리되는 값이 아니며, docs/API_REFERENCE.md 는 이를 '앱 metadata version' 으로만 설명합니다. (3) 릴리즈 노트 없음 - CHANGELOG.md/docs/RELEASE*.md 부재이고 git log --all --diff-filter=A 로 어느 브랜치에서도 해당 파일이 추가된 적이 없습니다. docs/ROADMAP.md 의 'Release R0~R5' 는 향후 계획 단계 표기일 뿐 출시 이력이 아닙니다. (4) GitHub Release 없음 - 러너가 미리 가져온 릴리즈 목록이 비어 있습니다. (5) 릴리즈 워크플로/자산 없음 - .github 디렉터리가 없고, CI 는 GitLab(.gitlab-ci.yml) 의 deploy stage 6개 job 뿐인데 전부 브랜치 기반(git fetch origin $CI_COMMIT_BRANCH -> git reset --hard -> k8s rollout restart 또는 podman restart)이라 태그·버전을 전혀 참조하지 않습니다. docs/DEPLOYMENT.md 도 이미지 빌드·패키징 단계가 CI 에 없다고 명시합니다. scripts/ 디렉터리와 Makefile release 타깃도 없어 재현할 자산 빌드 방법이 없습니다. 이 프로젝트는 main 에 머지하면 배포 호스트가 브랜치 head 로 동기화되는 방식이라 버전 태깅 관례를 새로 정하는 것은 사람의 판단 영역이므로 커밋·태그·파일 변경을 하지 않았습니다. A-112 변경(277d90e)은 이미 main 에 머지되어 기존 배포 경로로 반영됩니다."
+    },
+    "assets_sha256": []
+  },
+  "approval": null,
+  "usage": [
+    {
+      "ts": "2026-09-10T11:49:41+09:00",
+      "date": "2026-09-10",
+      "project": "aiportal-py",
+      "phase": "improve",
+      "run_id": "2026-09-10-114110-aiportal-py-improve",
+      "campaign": "",
+      "subtype": "success",
+      "duration_ms": 543558,
+      "num_turns": 62,
+      "cost_usd": 4.512372500000001,
+      "input_tokens": 114,
+      "output_tokens": 41565,
+      "cache_read": 4724329,
+      "cache_create": 109669
+    },
+    {
+      "ts": "2026-09-10T11:52:46+09:00",
+      "date": "2026-09-10",
+      "project": "aiportal-py",
+      "phase": "review",
+      "run_id": "2026-09-10-114110-aiportal-py-improve",
+      "campaign": "",
+      "subtype": "success",
+      "duration_ms": 186361,
+      "num_turns": 15,
+      "cost_usd": 1.08507,
+      "input_tokens": 30,
+      "output_tokens": 11158,
+      "cache_read": 581962,
+      "cache_create": 51317
+    },
+    {
+      "ts": "2026-09-10T11:54:47+09:00",
+      "date": "2026-09-10",
+      "project": "aiportal-py",
+      "phase": "release",
+      "run_id": "2026-09-10-114110-aiportal-py-improve",
+      "campaign": "",
+      "subtype": "success",
+      "duration_ms": 87234,
+      "num_turns": 16,
+      "cost_usd": 0.5207209999999999,
+      "input_tokens": 16,
+      "output_tokens": 6104,
+      "cache_read": 235250,
+      "cache_create": 24506
+    }
+  ]
+}
