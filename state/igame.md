@@ -90,3 +90,10 @@
 - 보류 아이디어: 일일 플레이 제한이 진행 중인 세션을 세지 않는 문제가 main에 그대로 남아 있음 — 2026-09-07 회차의 수정은 원격에 올라간 적 없는 브랜치에만 있다 / 동점일 때 row_number()와 바깥 ORDER BY가 독립적으로 정렬돼 rank 번호와 행 순서가 어긋날 수 있음 / 잘린 감사 로그 CSV가 200과 완전한 헤더로 내려가고 audit.export가 잘린 개수를 전체인 양 기록함 / Migrate 체크섬 불일치·트랜잭션 경계 통합 테스트 — 이번에 들어온 IGAME_TEST_DSN 하네스로 이제 가능 / 게임에 묶이지 않은 전역 업적은 content.go의 JOIN이 NULL과 매치되지 않아 클라이언트에서 해금될 수 없음
 
 - 릴리즈: v0.7.9 (2026-09-10, run 2026-09-10-121120-igame-improve)
+## 2026-09-10
+- 선택: 수정 과제 — 릴리즈 워크플로의 "Audit locked Node dependencies" 실패 (가치 5 / 위험 2 / 작업량 M)
+- 결과: 성공
+- 요약: 릴리즈 워크플로는 두 Node 트리를 `--audit-level=low`로 검사하므로 심각도와 무관하게 권고 하나만 있어도 태그가 나가지 못한다. v0.7.9가 두 번 걸린 이유는 두 트리가 같은 권고 두 개를 들고 있었기 때문이다 — GHSA-82fw-gwwq-j7x9은 vitest 2.1.0~4.1.10 전체(잠긴 3.2.7 포함)를, GHSA-2883-xcg3-v3hh은 js-yaml 4.3.2 미만을 덮는다. CI는 audit 게이트를 `--omit=dev`로 돌리고 dev 권고는 step summary에 적기만 해서 PR은 끝까지 초록이었고, 처음 빨개진 곳이 릴리즈였다. 워크플로를 느슨하게 하지 않고 의존성 쪽을 고쳤다: vitest를 5.0.0으로, js-yaml을 eslint가 이미 요구하는 범위 안의 4.3.2로 올렸다. 다른 수정 라인인 4.1.11이 아니라 5.0.0을 고른 이유는 npm 10.9.8(두 워크플로와 이미지가 쓰는 Node 22에 딸려 오는 npm)이 vitest 4의 peer set을 풀다가 `Cannot read properties of null (reading 'edgesOut')`로 죽어 이 저장소에서도 빈 디렉터리에서도 설치 자체가 불가능하기 때문이다. SDK에는 포털과 같은 `vite ^7.1.3`을 명시했다 — SDK에는 vitest의 vite peer를 제약하는 것이 없어 업그레이드가 vite 8과 rolldown을 한쪽 테스트 툴체인에만 끌어왔다. 검증: 실패한 릴리즈 단계를 그대로 재현해 두 audit 모두 `found 0 vulnerabilities`(수정 전에는 같은 명령이 3건으로 exit 1), 새 lockfile로 `make deps`(npm ci), `make lint`, `make test`(SDK 9 / web 221 / Go 전체), `make web-build`와 오프라인 번들 검사, `UPDATE_KERNEL_VECTORS=1 npx vitest run ...`으로 RealmGuard vector가 바이트 동일하게 재생성됨, 그리고 두 트리의 `npm ci`를 node:22-alpine에서 도는 `make docker-build`까지 통과.
+- 보류 아이디어: 릴리즈만 dev 권고에 걸리고 CI는 --omit=dev라 PR이 끝까지 초록인 구조적 공백(릴리즈 게이트를 느슨하게 하지 않고 알림을 앞당길 방법) / 일일 플레이 제한이 진행 중인 세션의 경과 시간을 세지 않는 문제가 main에 그대로 남아 있음 / 동점일 때 row_number()와 바깥 ORDER BY가 독립적으로 정렬돼 rank 번호와 행 순서가 어긋날 수 있음 / 잘린 감사 로그 CSV가 200과 완전한 헤더로 내려가고 audit.export가 잘린 개수를 전체인 양 기록함 / 게임에 묶이지 않은 전역 업적은 content.go의 JOIN이 NULL과 매치되지 않아 클라이언트에서 해금될 수 없음
+
+- 릴리즈: v0.7.10 (2026-09-10, run 2026-09-10-130107-igame-improve)
