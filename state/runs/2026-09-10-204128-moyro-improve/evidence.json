@@ -1,6 +1,6 @@
 {
   "run_id": "2026-09-10-204128-moyro-improve",
-  "generated": "2026-09-10T20:41:29+09:00",
+  "generated": "2026-09-10T21:21:55+09:00",
   "run": {
     "run_id": "2026-09-10-204128-moyro-improve",
     "project": "moyro",
@@ -10,34 +10,119 @@
     "policy_version": "5935779a",
     "prompts_hash": "82f2440d4b2fef65",
     "runner_version": "bda3920a",
-    "finished": "2026-09-10T20:41:29+09:00",
-    "outcome": "error"
+    "finished": "2026-09-10T21:21:55+09:00",
+    "outcome": "merged"
   },
   "record": {
-    "ts": "2026-09-10T20:41:29+09:00",
+    "ts": "2026-09-10T21:21:55+09:00",
     "date": "2026-09-10",
     "project": "moyro",
-    "result": "hold: budget",
-    "outcome": "error",
+    "result": "merged https://github.com/hkjang/moyro/pull/11, release hold (budget)",
+    "outcome": "merged",
     "run_id": "2026-09-10-204128-moyro-improve",
-    "base_sha": "",
-    "head_sha": "",
-    "pr": "",
+    "base_sha": "0164e1cb3dfd7b022269a1e67b073aa6340bbbf7",
+    "head_sha": "95cae9044ab72c7446dcabfb0adb94950e99c85a",
+    "pr": "https://github.com/hkjang/moyro/pull/11",
     "stages": {
       "improve": {
         "state": "hold",
         "reason": "회차 예산($22)이 오늘 남은 상한을 넘음",
         "at": "2026-09-10T20:41:29+09:00"
+      },
+      "base": {
+        "state": "pinned",
+        "reason": "main@0164e1c",
+        "at": "2026-09-10T20:41:31+09:00"
+      },
+      "autonomy": {
+        "state": "release",
+        "reason": "",
+        "at": "2026-09-10T20:41:31+09:00"
+      },
+      "verify": {
+        "state": "passed",
+        "reason": "검증 2개 통과 (policy)",
+        "at": "2026-09-10T21:09:04+09:00"
+      },
+      "pr": {
+        "state": "created",
+        "reason": "https://github.com/hkjang/moyro/pull/11",
+        "at": "2026-09-10T21:09:09+09:00"
+      },
+      "review": {
+        "state": "approved",
+        "reason": "리뷰 승인 (risk=low)",
+        "at": "2026-09-10T21:12:52+09:00"
+      },
+      "ci": {
+        "state": "passed",
+        "reason": "검사 3개 모두 success",
+        "at": "2026-09-10T21:21:49+09:00"
+      },
+      "merge": {
+        "state": "done",
+        "reason": "95cae9044ab72c7446dcabfb0adb94950e99c85a",
+        "at": "2026-09-10T21:21:54+09:00"
+      },
+      "release": {
+        "state": "hold",
+        "reason": "예산 부족",
+        "at": "2026-09-10T21:21:55+09:00"
       }
     },
     "campaign": "",
-    "autonomy": ""
+    "autonomy": "release",
+    "files": 11,
+    "additions": 352,
+    "deletions": 89,
+    "tests": 1,
+    "title": "fix: cap the request bodies that carry client-supplied collections"
   },
   "stages": {
     "improve": {
       "state": "hold",
       "reason": "회차 예산($22)이 오늘 남은 상한을 넘음",
       "at": "2026-09-10T20:41:29+09:00"
+    },
+    "base": {
+      "state": "pinned",
+      "reason": "main@0164e1c",
+      "at": "2026-09-10T20:41:31+09:00"
+    },
+    "autonomy": {
+      "state": "release",
+      "reason": "",
+      "at": "2026-09-10T20:41:31+09:00"
+    },
+    "verify": {
+      "state": "passed",
+      "reason": "검증 2개 통과 (policy)",
+      "at": "2026-09-10T21:09:04+09:00"
+    },
+    "pr": {
+      "state": "created",
+      "reason": "https://github.com/hkjang/moyro/pull/11",
+      "at": "2026-09-10T21:09:09+09:00"
+    },
+    "review": {
+      "state": "approved",
+      "reason": "리뷰 승인 (risk=low)",
+      "at": "2026-09-10T21:12:52+09:00"
+    },
+    "ci": {
+      "state": "passed",
+      "reason": "검사 3개 모두 success",
+      "at": "2026-09-10T21:21:49+09:00"
+    },
+    "merge": {
+      "state": "done",
+      "reason": "95cae9044ab72c7446dcabfb0adb94950e99c85a",
+      "at": "2026-09-10T21:21:54+09:00"
+    },
+    "release": {
+      "state": "hold",
+      "reason": "예산 부족",
+      "at": "2026-09-10T21:21:55+09:00"
     }
   },
   "provenance": {
@@ -45,21 +130,91 @@
     "policy_version": "5935779a",
     "prompts_hash": "82f2440d4b2fef65",
     "runner_version": "bda3920a",
-    "base_sha": "",
-    "head_sha": "",
-    "pr": ""
+    "base_sha": "0164e1cb3dfd7b022269a1e67b073aa6340bbbf7",
+    "head_sha": "95cae9044ab72c7446dcabfb0adb94950e99c85a",
+    "pr": "https://github.com/hkjang/moyro/pull/11"
   },
   "verification": {
-    "runner": null,
-    "runner_gate": null,
+    "runner": {
+      "source": "policy",
+      "commands": [
+        {
+          "cmd": "cd server && go build ./... && go vet ./... && go test ./...",
+          "exit": 0,
+          "seconds": 4
+        },
+        {
+          "cmd": "cd webapp && ([ -d node_modules ] || npm ci --no-audit --no-fund) && npm run typecheck --silent && npm test --silent",
+          "exit": 0,
+          "seconds": 26
+        }
+      ]
+    },
+    "runner_gate": {
+      "ok": true,
+      "state": "verified",
+      "reason": "검증 2개 통과 (policy)"
+    },
     "after_rebase": null,
-    "review": null,
-    "ci_gate": null
+    "review": {
+      "verdict": "approve",
+      "reasons": [],
+      "notes": [
+        "Verification run: `go build ./...`, `go test -count=1 ./...` (all packages pass), `go vet ./internal/httpapi/` clean. No webapp changes, so no typecheck/build needed there.",
+        "Tests do exercise the change. server/internal/httpapi/request_body_test.go:112-176 drives the real handler (h.updateSidebarCategoryOrder) with a nil h.sidebar, so a request that slipped past the new guard would panic on UpdateOrder rather than pass — the test cannot succeed against pre-change code. TestDecodeCollectionBodyStopsReadingAtTheCap asserts on bytes actually pulled from an endless body (countingReader), not just on the status, which is the one assertion that distinguishes 'refused early' from 'buffered then refused'.",
+        "server/internal/httpapi/compat_wave_handlers_final.go:1094 — bulkDeleteUsers keeps the tolerant `_ = decodeCappedBody(...)` form. A body over the 1 MiB cap therefore leaves body.UserIDs nil (json.Decoder.Decode reads the whole value before unmarshalling, so dst is untouched on a read error) and the handler answers 200 having deleted nobody, instead of the 413 the strict path gives. It fails closed (no deletions), and >1 MiB of ids is >200 items so it would be refused anyway, but the outcome is inconsistent with every other capped batch endpoint. Worth a follow-up, not a merge blocker.",
+        "server/internal/httpapi/handlers.go:1035-1037 — getUserStatusesByIDs gains a silent truncate-to-200 that did not exist before this branch. The commit message describes read-side truncation as something that is 'kept', which is accurate for usersByIDs/postsByIDs/emojisByNames but not for this endpoint. Practically harmless: the only caller (webapp/src/components/ChatView.tsx:696, hydrateUsers) passes just the not-yet-cached authors of one page of posts, far under 200.",
+        "API-visible behavior change for third-party clients: bulkAddChannelMembers (server/internal/httpapi/compat_wave_handlers_late.go:907) and addTeamMembersBatch (server/internal/httpapi/compat_handlers.go:156) now answer 400 where they previously truncated to 200 and applied the first 200. This is deliberate and stated in the commit message, and it is closer to upstream Mattermost (which errors on oversized member batches) than silent truncation was, but it is a contract change under /api/v4.",
+        "The 413 path reuses each handler's existing `*.invalid_body` error id, so a client keying off the error id alone cannot tell 'too large' from 'malformed' — only the status code separates them. This is documented at server/internal/httpapi/request_body.go:31-34, so it is a stated tradeoff rather than an oversight.",
+        "Coverage is partial by design: 79 uncapped `json.NewDecoder(r.Body)` call sites remain in internal/httpapi. The two preferences handlers (compat_wave_handlers_early.go:105 and :130) are genuinely collection-shaped ([]preferences.Preference with per-element writes) and are the most notable gap; the commit message explicitly defers them to branch auto/2026-09-07-0240. Nothing here regresses, it just leaves work undone.",
+        "Revertability is clean: code-only, no migrations, no schema or external-state changes, no dependency updates, no generated artifacts touched. A plain revert of 95cae90 restores prior behavior exactly."
+      ],
+      "risk": "low"
+    },
+    "ci_gate": {
+      "ok": true,
+      "state": "success",
+      "reason": "검사 3개 모두 success",
+      "checks": 3
+    }
   },
   "release": {
     "result": null,
     "assets_sha256": []
   },
   "approval": null,
-  "usage": []
+  "usage": [
+    {
+      "ts": "2026-09-10T21:08:32+09:00",
+      "date": "2026-09-10",
+      "project": "moyro",
+      "phase": "improve",
+      "run_id": "2026-09-10-204128-moyro-improve",
+      "campaign": "",
+      "subtype": "success",
+      "duration_ms": 1714669,
+      "num_turns": 84,
+      "cost_usd": 5.773601,
+      "input_tokens": 160,
+      "output_tokens": 42691,
+      "cache_read": 7053088,
+      "cache_create": 116131
+    },
+    {
+      "ts": "2026-09-10T21:12:52+09:00",
+      "date": "2026-09-10",
+      "project": "moyro",
+      "phase": "review",
+      "run_id": "2026-09-10-204128-moyro-improve",
+      "campaign": "",
+      "subtype": "success",
+      "duration_ms": 241752,
+      "num_turns": 23,
+      "cost_usd": 1.3640625000000004,
+      "input_tokens": 46,
+      "output_tokens": 14939,
+      "cache_read": 988163,
+      "cache_create": 49446
+    }
+  ]
 }
