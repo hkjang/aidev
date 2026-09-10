@@ -1,0 +1,14 @@
+release: ReSSO v0.9.76
+
+The login screen no longer reports a fault here as an expired login request: it
+reads the parked authorization request before it draws the form and answered
+every failure of that read with "your login request expired, start again at the
+connected service", which only 404 — a request token that is spent, expired or
+was never issued — actually means. A store that did not answer replies 500 and a
+restart the page fetched into does not reply at all, and for both of those the
+request the person is holding is sitting there untouched, so that one message
+was an instruction that sent them back to the relying party for a fresh token to
+meet the same fault again. 404 keeps the old message; everything else now says
+the request is still there and not to start over, carries a retry that refetches
+the same challenge, and shows the trace identifier. Stamps the version in the
+Makefile, the console package metadata and both compose files.
