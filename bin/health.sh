@@ -74,6 +74,7 @@ if [ ${#problems[@]} -gt 0 ] || [ ${#actions[@]} -gt 0 ]; then
     echo "$key" > "$stamp"
     text="🩺 aidev 헬스체크 $(date '+%m-%d %H:%M')
 $(printf -- '- %s\n' "${problems[@]:-}" "${actions[@]:-}" | grep -v '^- $')"
+    "$HERE/tg.sh" "$text" >/dev/null 2>&1 || true
     [ -f "$HOME/.auto-improve/notify.env" ] && { set -a; . "$HOME/.auto-improve/notify.env"; set +a; }
     [ -n "${AIDEV_SLACK_WEBHOOK:-}" ] && curl -s -m 15 -X POST -H 'Content-type: application/json' --data "$(jq -cn --arg t "$text" '{text:$t}')" "$AIDEV_SLACK_WEBHOOK" >/dev/null
     if command -v powershell.exe >/dev/null 2>&1; then

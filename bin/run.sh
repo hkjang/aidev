@@ -80,10 +80,23 @@ new_run(){ # $1=프로젝트 $2=종류 → RUN_ID, OUT 설정
      --arg rv "$(cd "$REPO_DIR" && git log -1 --format=%h -- bin/run.sh bin/gate.py 2>/dev/null)" \
      '{run_id:$rid,project:$p,kind:$k,started:$st,model:$m,policy_version:$pv,prompts_hash:$ph,runner_version:$rv}' > "$OUT/run.json"
 }
+# 단계 상태별 표식 — 텔레그램에서 훑을 때 무엇이 잘못됐는지 한눈에 보이게 한다.
+stage_mark(){
+  case "$1" in
+    passed|done|created|approved|published|pinned|merged) echo "✅";;
+    failed|error|rejected|create-failed|push-failed)      echo "❌";;
+    held|hold|stopped|stale)                              echo "⛔";;
+    *)                                                     echo "•";;
+  esac
+}
+
 stage(){ # $1=단계 $2=상태 $3=사유 — $OUT/stages.json 에 누적
   local f="$OUT/stages.json"; [ -f "$f" ] || echo '{}' > "$f"
   jq --arg k "$1" --arg s "$2" --arg r "$3" --arg t "$(date -Iseconds)" '.[$k]={state:$s,reason:$r,at:$t}' "$f" > "$f.tmp" && mv "$f.tmp" "$f"
   log "$n: [$1] $2 — $3"
+  # 단계마다 알린다. tg.sh 는 설정이 없으면 조용히 넘어가고 실패해도 회차를 붙잡지 않는다.
+  "$HERE/tg.sh" "$(stage_mark "$2") $n · $1 $2${3:+
+$3}" >/dev/null 2>&1 &
 }
 
 # ---------------------------------------------------------------- 격리된 에이전트 실행
@@ -294,7 +307,9 @@ pick_campaign(){
     done
     if [ "$remaining" -eq 0 ]; then
       jq --arg id "$id" '(.campaigns[]|select(.id==$id)).done=true' "$cj" > "$cj.tmp" && mv "$cj.tmp" "$cj"
-      log "campaign $id: 대상 $(wc -w <<<"$projs")개 전부 완료 — 캠페인을 닫는다"; continue
+      log "campaign $id: 대상 $(wc -w <<<"$projs")개 전부 완료 — 캠페인을 닫는다"
+      "$HERE/tg.sh" "🏁 캠페인 $id 완료 — 대상 $(wc -w <<<"$projs")개를 모두 돌았습니다." >/dev/null 2>&1 &
+      continue
     fi
     if [ -n "$best" ]; then
         cp=$best
@@ -428,6 +443,16 @@ record_run(){ # $1=프로젝트 $2=결과 문장 $3=outcome
      --arg b "${BASE_SHA:-}" --arg h "${HEAD_SHA:-}" --arg pr "$pr" --argjson m "${RUN_META:-{\}}" --argjson st "$st" \
      --arg camp "${CAMPAIGN_ID:-}" --arg au "${AUTONOMY_NOW:-}" \
      '{ts:$ts,date:$d,project:$p,result:$r,outcome:$o,run_id:$rid,base_sha:$b,head_sha:$h,pr:$pr,stages:$st,campaign:$camp,autonomy:$au} + $m' >> "$DATA/runs.jsonl"
+  local mark; case "$3" in
+    release-ready|merged) mark="🎉";;
+    review-pending)       mark="🔎";;
+    verify-failed|error)  mark="❌";;
+    no-change)            mark="➖";;
+    *)                    mark="•";;
+  esac
+  "$HERE/tg.sh" "$mark $1 회차 끝 — $3
+$2${CAMPAIGN_ID:+
+캠페인 $CAMPAIGN_ID}" >/dev/null 2>&1 &
   RUN_META="{}"
   [ -f "${OUT:-/nonexistent}/run.json" ] && "$HERE/evidence.sh" "$OUT" >>"$LOG" 2>&1 || true
   [ -n "${AIDEV_SIM:-}" ] || "$HERE/digest.sh" >>"$LOG" 2>&1 || true
@@ -738,6 +763,8 @@ if [ $DRY -eq 0 ]; then
   fi
   if [ -n "$cap" ]; then
     log "daily cap reached: $cap"
+    "$HERE/tg.sh" "⛔ 일일 상한 도달 — $cap
+오늘은 새 회차를 시작하지 않습니다." >/dev/null 2>&1 &
     if [ ! -f "$STATE/.cap-$RUN_DATE" ]; then
       touch "$STATE/.cap-$RUN_DATE"; ps1=$(wslpath -w "$HERE/toast.ps1" 2>/dev/null); [ -n "$ps1" ] && powershell.exe -NoProfile -ExecutionPolicy Bypass -File "$ps1" -Title "aidev 일일 상한 도달" -Message "$cap" >/dev/null 2>&1
       n="(runner)"; RUN_META="{}"; BASE_SHA=""; HEAD_SHA=""; record_run "(runner)" "daily cap reached: $cap" "error"; sync_repo "run($RUN_DATE): daily cap — $cap"
@@ -822,6 +849,8 @@ round_body(){
   [ -n "${CAMPAIGN_IMPROVE_BUDGET:-}" ] && [ "$n" = "${CAMPAIGN_PROJECT:-}" ] && ibudget=$CAMPAIGN_IMPROVE_BUDGET
   round_budget=$(awk -v a="$ibudget" -v b="$(policy "$n" '.budget_usd.review')" -v c="$(policy "$n" '.budget_usd.release')" 'BEGIN{print a+b+c}')
   log "=== $n (base=$base, run $RUN_ID, 회차 예산 \$$round_budget)"
+  "$HERE/tg.sh" "▶ $n 회차 시작${CAMPAIGN_ID:+ · 캠페인 $CAMPAIGN_ID}
+base=$base · 예산 \$$round_budget" >/dev/null 2>&1 &
   # return 이지 continue 가 아니다: --parallel 은 이 함수를 서브셸로 돌려 감쌀 루프가 없다.
   # continue 는 그 자리에서 실패하고 회차가 그대로 이어져, 상한에 걸린 회차가 계속 돈다.
   budget_ok "$round_budget" || { stage improve hold "회차 예산(\$$round_budget)이 오늘 남은 상한을 넘음"; record_run "$n" "hold: budget" "error"; return 0; }
