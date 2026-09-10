@@ -228,11 +228,14 @@ rebase_pr(){ # $1=PR url $2=base
 }
 # 캠페인: 활성(미완료·기한 내·예산 남음) 캠페인의 대상 프로젝트를 후보 중에서 고른다 → CAMPAIGN_ID, CAMPAIGN_NOTE, CAMPAIGN_PROJECT
 pick_campaign(){
-  local cj="$STATE/campaigns.json" id goal budget until spent projs cp
+  local cj="$STATE/campaigns.json" id goal goal64 budget until spent projs cp
   CAMPAIGN_ID=""; CAMPAIGN_NOTE=""; CAMPAIGN_PROJECT=""
   [ -f "$cj" ] || return 0
-  while IFS=$'\t' read -r id goal budget until projs; do
+  while IFS=$'\t' read -r id goal64 budget until projs; do
     [ -n "$id" ] || continue
+    goal=$(printf '%s' "$goal64" | base64 -d 2>/dev/null)
+    # 빈 기한은 "지난 기한" 이 아니다 — 읽기가 어긋났을 때 캠페인을 조용히 끄지 않는다.
+    [ -n "$until" ] || { log "campaign $id: until 이 비어 있어 건너뜀 (campaigns.json 확인)"; continue; }
     [[ "$until" < "$RUN_DATE" ]] && { jq --arg id "$id" '(.campaigns[]|select(.id==$id)).done=true' "$cj" > "$cj.tmp" && mv "$cj.tmp" "$cj"; log "campaign $id: 기한 종료"; continue; }
     spent=$(jq -s --arg id "$id" '[.[]|select(.campaign==$id)|.cost_usd//0]|add // 0' "$DATA/usage.jsonl" 2>/dev/null || echo 0)
     awk -v s="$spent" -v b="$budget" 'BEGIN{exit !(s>=b)}' && { jq --arg id "$id" '(.campaigns[]|select(.id==$id)).done=true' "$cj" > "$cj.tmp" && mv "$cj.tmp" "$cj"; log "campaign $id: 예산 소진 (\$$spent/\$$budget)"; continue; }
@@ -253,7 +256,10 @@ $goal
 예산: \$$spent / \$$budget 사용, 기한 $until. 이 목표와 무관한 변경은 만들지 마세요."
         return 0
     fi
-  done < <(jq -r --arg d "$RUN_DATE" '.campaigns[]? | select(.done!=true) | "\(.id)\t\(.goal)\t\(.budget_usd)\t\(.until)\t\(.projects|join(" "))"' "$cj" 2>/dev/null)
+    # 목표는 base64 로 싣는다. 여러 줄짜리 목표를 그대로 넣으면 TSV 한 줄이 쪼개져
+    # budget·until·projects 가 통째로 비고, 빈 until 이 기한 지난 것으로 읽혀 캠페인이
+    # 시작하자마자 "기한 종료" 로 꺼졌다 (2026-09-10 guides-2026-09).
+  done < <(jq -r --arg d "$RUN_DATE" '.campaigns[]? | select(.done!=true) | "\(.id)\t\(.goal|@base64)\t\(.budget_usd)\t\(.until)\t\(.projects|join(" "))"' "$cj" 2>/dev/null)
 }
 
 # ---------------------------------------------------------------- 러너 직접 검증
