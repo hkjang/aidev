@@ -1715,3 +1715,100 @@ fatal: '/home/hkjang/.cache/auto-improve-wt/pii-masker' is not a working tree
 evidence: /mnt/c/Users/USER/projects/aidev/state/runs/2026-09-10-143115-pii-masker-improve/evidence.json
 reports: 9 day(s), 2 week(s), 1 month(s), 531 run(s), 545 usage row(s), 29 project page(s), 1 alert(s)
 notify: no new alerts
+[14:40:24] aidev synced: run(2026-09-10): pii-masker — merged https://github.com/hkjang/pii-masker/pull/17, released v1.0.20
+[14:41:32] moyro: review — 39 turns, 5m, $1.79, success
+[14:41:32] moyro: [review] approved — 리뷰 승인 (risk=low)
+[14:41:34] moyro: waiting for CI on d32423a (pending)
+[14:43:00] muni: improve — 91 turns, 12m, $6.75, success
+[14:43:03] muni: verify `go build ./...` → exit 0 (2s)
+[14:43:04] muni: verify `go vet ./...` → exit 0 (1s)
+[14:43:05] muni: verify `go test ./...` → exit 0 (1s)
+[14:43:21] muni: verify `cd frontend && [ -d node_modules ] || npm ci --no-audit --no-fund` → exit 0 (16s)
+[14:43:25] muni: verify `cd frontend && npm test --silent` → exit 0 (4s)
+[14:43:25] muni: verify `cd frontend && [ -d node_modules ] || npm ci --no-audit --no-fund` → exit 0 (0s)
+[14:43:27] muni: verify `cd frontend && npm run build --silent` → exit 0 (2s)
+[14:43:28] muni: [verify] passed — 검증 7개 통과 (auto)
+branch 'auto/2026-09-10-1431' set up to track 'origin/auto/2026-09-10-1431'.
+[14:43:35] muni: [pr] created — https://github.com/hkjang/muni/pull/11
+[14:49:35] moyro: [ci] passed — 검사 3개 모두 success
+[14:49:38] moyro: [merge] done — d32423a9bd0f9ce5e05ca197178aa1b1ab636d03
+From https://github.com/hkjang/moyro
+ * branch            main       -> FETCH_HEAD
+   43660ee..41f3e76  main       -> origin/main
+[14:49:42] muni: review — 25 turns, 6m, $2.22, success
+[14:49:42] muni: [review] approved — 리뷰 승인 (risk=low)
+Updating b8cf8f3..41f3e76
+Fast-forward
+ server/internal/audit/service.go                   |   4 +-
+ server/internal/auth/auth.go                       |   8 +-
+ .../auth/search_wildcards_postgres_test.go         |  69 ++++++++++
+ server/internal/bots/service.go                    |   2 +-
+ .../channels/search_wildcards_postgres_test.go     | 152 +++++++++++++++++++++
+ server/internal/channels/service.go                |  16 +--
+ .../internal/httpapi/compat_wave_handlers_final.go |   9 +-
+ server/internal/store/like.go                      |  35 +++++
+ server/internal/store/like_test.go                 |  46 +++++++
+ server/internal/teams/service.go                   |   2 +-
+ webapp/e2e/globals.d.ts                            |  16 +++
+ webapp/package-lock.json                           |  48 +++----
+ webapp/package.json                                |   3 +-
+ webapp/src/tsconfig.test.ts                        |  27 ++++
+ webapp/tsconfig.node.json                          |   8 ++
+ 15 files changed, 394 insertions(+), 51 deletions(-)
+ create mode 100644 server/internal/auth/search_wildcards_postgres_test.go
+ create mode 100644 server/internal/channels/search_wildcards_postgres_test.go
+ create mode 100644 server/internal/store/like.go
+ create mode 100644 server/internal/store/like_test.go
+ create mode 100644 webapp/e2e/globals.d.ts
+ create mode 100644 webapp/tsconfig.node.json
+[14:49:44] muni: waiting for CI on 17c16d9 (success)
+Preparing worktree (detached HEAD 41f3e76)
+Updating files:  87% (546/622)Updating files:  88% (548/622)Updating files:  89% (554/622)Updating files:  90% (560/622)Updating files:  91% (567/622)Updating files:  92% (573/622)Updating files:  93% (579/622)Updating files:  94% (585/622)Updating files:  95% (591/622)Updating files:  96% (598/622)Updating files:  97% (604/622)Updating files:  98% (610/622)Updating files:  99% (616/622)Updating files: 100% (622/622)Updating files: 100% (622/622), done.
+HEAD is now at 41f3e76 Merge pull request #10 from hkjang/auto/2026-09-10-1431
+[14:50:12] muni: [ci] passed — 검사 2개 모두 success
+[14:50:18] muni: [merge] done — 17c16d9442a849c77aae95876f710cea4902199c
+From https://github.com/hkjang/muni
+ * branch            main       -> FETCH_HEAD
+   1442df0..2424305  main       -> origin/main
+Updating 549baa8..2424305
+Fast-forward
+ .github/workflows/ci.yml            |  13 +++++
+ README.md                           |   4 +-
+ internal/hangul/hangul.go           |  59 ++++++++++++++++++++
+ internal/hwp/body.go                |  30 +++++++---
+ internal/hwp/build_test.go          |  29 ++++++++++
+ internal/hwp/control.go             |  12 ++--
+ internal/hwp/hangul_shapes_test.go  |  45 +++++++++++++++
+ internal/hwp/hwp.go                 |  11 ++--
+ internal/hwp/shape.go               |  52 +++++++++++++++---
+ internal/hwpx/body.go               | 107 +++++++++++++++++++++++++++++++++++-
+ internal/hwpx/export.go             |  49 +++++++++++++----
+ internal/hwpx/export_test.go        |  35 ++++++++++++
+ internal/hwpx/hangul_shapes_test.go |  42 +++++++++++++-
+ internal/hwpx/hangul_writes_test.go |  53 ++++++++++++++++--
+ internal/hwpx/header.go             |  32 ++++++++---
+ internal/hwpx/hwpx.go               |  11 ++++
+ internal/hwpx/hwpx_test.go          |  50 ++++++++++++++++-
+ internal/hwpx/parts.go              |  49 ++++++++++++++---
+ 18 files changed, 616 insertions(+), 67 deletions(-)
+Preparing worktree (detached HEAD 2424305)
+Updating files:  70% (319/451)Updating files:  71% (321/451)Updating files:  72% (325/451)Updating files:  73% (330/451)Updating files:  74% (334/451)Updating files:  75% (339/451)Updating files:  76% (343/451)Updating files:  77% (348/451)Updating files:  78% (352/451)Updating files:  79% (357/451)Updating files:  80% (361/451)Updating files:  81% (366/451)Updating files:  82% (370/451)Updating files:  83% (375/451)Updating files:  84% (379/451)Updating files:  85% (384/451)Updating files:  86% (388/451)Updating files:  87% (393/451)Updating files:  88% (397/451)Updating files:  89% (402/451)Updating files:  90% (406/451)Updating files:  91% (411/451)Updating files:  92% (415/451)Updating files:  93% (420/451)Updating files:  94% (424/451)Updating files:  95% (429/451)Updating files:  96% (433/451)Updating files:  97% (438/451)Updating files:  98% (442/451)Updating files:  99% (447/451)Updating files: 100% (451/451)Updating files: 100% (451/451), done.
+HEAD is now at 2424305 Merge pull request #11 from hkjang/auto/2026-09-10-1431
+[14:52:18] moyro: release — 25 turns, 2m, $1.11, success
+[14:52:22] moyro: waiting for CI on 0164e1c (no-ci-allowed)
+[14:53:17] muni: release — 32 turns, 3m, $1.22, success
+[14:53:21] muni: waiting for CI on 5f709bc (no-ci)
+[14:57:09] muni: [release] published — v0.36.0
+From https://github.com/hkjang/muni
+ * branch            main       -> FETCH_HEAD
+Updating 2424305..5f709bc
+Fast-forward
+ VERSION                  |  2 +-
+ docs/releases/v0.36.0.md | 97 ++++++++++++++++++++++++++++++++++++++++++++++++
+ 2 files changed, 98 insertions(+), 1 deletion(-)
+ create mode 100644 docs/releases/v0.36.0.md
+[15:01:10] muni: [assets] verified — v0.36.0 자산 1개 (이전 v0.35.0: 1)
+fatal: '/home/hkjang/.cache/auto-improve-wt/muni' is not a working tree
+evidence: /mnt/c/Users/USER/projects/aidev/state/runs/2026-09-10-143110-muni-improve/evidence.json
+reports: 9 day(s), 2 week(s), 1 month(s), 532 run(s), 550 usage row(s), 29 project page(s), 1 alert(s)
+notify: no new alerts
