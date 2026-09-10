@@ -83,10 +83,54 @@ new_run(){ # $1=프로젝트 $2=종류 → RUN_ID, OUT 설정
 # 단계 상태별 표식 — 텔레그램에서 훑을 때 무엇이 잘못됐는지 한눈에 보이게 한다.
 stage_mark(){
   case "$1" in
-    passed|done|created|approved|published|pinned|merged) echo "✅";;
-    failed|error|rejected|create-failed|push-failed)      echo "❌";;
-    held|hold|stopped|stale)                              echo "⛔";;
+    passed|done|created|approved|published|pinned|merged|recovered|pushed|pr-opened) echo "✅";;
+    failed|error|rejected|create-failed|push-failed|tag-push-failed|failed-twice|conflict|ci-blocked|blocked) echo "❌";;
+    held|hold|stopped|stale|closed)                       echo "⛔";;
+    skipped|nothing|nothing-to-release)                   echo "➖";;
     *)                                                     echo "•";;
+  esac
+}
+
+# 단계·상태를 사람 말로 옮긴다. 알림을 받는 사람은 러너 코드를 모른다 —
+# "merge done" 은 무엇이 일어났는지 알려 주지 않는다.
+stage_ko(){ # $1=단계 $2=상태
+  case "$1 $2" in
+    "base pinned")            echo "기준 커밋을 고정했습니다";;
+    "autonomy held")          echo "자율 단계가 낮아 사람 승인이 필요합니다";;
+    "improve hold")           echo "예산이 모자라 개선을 시작하지 않았습니다";;
+    "improve error")          echo "개선 단계에서 오류가 났습니다";;
+    "verify passed")          echo "러너 검증을 통과했습니다";;
+    "verify failed")          echo "러너 검증에 실패해 PR 을 열지 않았습니다";;
+    "pr created")             echo "PR 을 열었습니다";;
+    "pr create-failed")       echo "PR 을 열지 못했습니다";;
+    "pr push-failed")         echo "브랜치를 푸시하지 못했습니다";;
+    "guard held")             echo "보호 파일을 건드려 자동 머지하지 않습니다 (사람 검토 필요)";;
+    "review approved")        echo "독립 리뷰가 승인했습니다";;
+    "review rejected")        echo "독립 리뷰가 거절했습니다";;
+    "review hold")            echo "리뷰를 돌리지 못했습니다";;
+    "ci passed")              echo "CI 검사를 통과했습니다";;
+    "ci failed")              echo "CI 검사에 실패했습니다";;
+    "ci stale"|"ci timeout")  echo "CI 결과를 제때 받지 못했습니다";;
+    "merge done")             echo "main 에 머지했습니다";;
+    "merge failed")           echo "머지하지 못했습니다";;
+    "merge stopped")          echo "긴급 중지 상태라 머지하지 않았습니다";;
+    "release published")      echo "릴리즈를 게시했습니다";;
+    "release skipped"|"release nothing"|"release nothing-to-release") echo "릴리즈할 것이 없어 넘어갔습니다";;
+    "release blocked"|"release ci-blocked") echo "CI 때문에 릴리즈하지 못했습니다";;
+    "release hold")           echo "예산이 모자라 릴리즈하지 않았습니다";;
+    "release stopped")        echo "긴급 중지 상태라 릴리즈하지 않았습니다";;
+    "release push-failed"|"release tag-push-failed") echo "릴리즈 태그를 푸시하지 못했습니다";;
+    "workflow recovered")     echo "릴리즈 워크플로가 다시 성공했습니다";;
+    "workflow failed-twice")  echo "릴리즈 워크플로가 두 번 실패했습니다";;
+    "rebase pushed")          echo "충돌을 풀어 다시 푸시했습니다";;
+    "rebase conflict")        echo "충돌이 남아 사람이 풀어야 합니다";;
+    "rebase push-failed")     echo "리베이스한 브랜치를 푸시하지 못했습니다";;
+    "rollback pr-opened")     echo "되돌리는 PR 을 열었습니다";;
+    "rollback conflict")      echo "되돌리기가 충돌했습니다";;
+    "resume closed")          echo "이어서 하던 일을 닫았습니다";;
+    "resume held")            echo "이어서 하던 일을 보류했습니다";;
+    "assets"*|"manifest"*)    echo "릴리즈 자산: $2";;
+    *)                        echo "$1 $2";;
   esac
 }
 
@@ -95,8 +139,10 @@ stage(){ # $1=단계 $2=상태 $3=사유 — $OUT/stages.json 에 누적
   jq --arg k "$1" --arg s "$2" --arg r "$3" --arg t "$(date -Iseconds)" '.[$k]={state:$s,reason:$r,at:$t}' "$f" > "$f.tmp" && mv "$f.tmp" "$f"
   log "$n: [$1] $2 — $3"
   # 단계마다 알린다. tg.sh 는 설정이 없으면 조용히 넘어가고 실패해도 회차를 붙잡지 않는다.
-  "$HERE/tg.sh" "$(stage_mark "$2") $n · $1 $2${3:+
-$3}" >/dev/null 2>&1 &
+  # 40자리 커밋 해시는 앞 7자만 남긴다 — 알림에서 전체 해시는 읽을 것이 아니라 벽이다.
+  local detail; detail=$(printf '%s' "${3:-}" | sed -E 's/\b([0-9a-f]{7})[0-9a-f]{25,}\b/\1/g')
+  "$HERE/tg.sh" "$(stage_mark "$2") $n — $(stage_ko "$1" "$2")${detail:+
+$detail}" >/dev/null 2>&1 &
 }
 
 # ---------------------------------------------------------------- 격리된 에이전트 실행
@@ -443,16 +489,20 @@ record_run(){ # $1=프로젝트 $2=결과 문장 $3=outcome
      --arg b "${BASE_SHA:-}" --arg h "${HEAD_SHA:-}" --arg pr "$pr" --argjson m "${RUN_META:-{\}}" --argjson st "$st" \
      --arg camp "${CAMPAIGN_ID:-}" --arg au "${AUTONOMY_NOW:-}" \
      '{ts:$ts,date:$d,project:$p,result:$r,outcome:$o,run_id:$rid,base_sha:$b,head_sha:$h,pr:$pr,stages:$st,campaign:$camp,autonomy:$au} + $m' >> "$DATA/runs.jsonl"
-  local mark; case "$3" in
-    release-ready|merged) mark="🎉";;
-    review-pending)       mark="🔎";;
-    verify-failed|error)  mark="❌";;
-    no-change)            mark="➖";;
-    *)                    mark="•";;
+  local mark outcome_ko
+  case "$3" in
+    release-ready) mark="🎉"; outcome_ko="머지하고 릴리즈까지 끝냈습니다";;
+    merged)        mark="🎉"; outcome_ko="머지했습니다 (릴리즈는 없음)";;
+    review-pending) mark="🔎"; outcome_ko="PR 은 열었지만 사람 확인을 기다립니다";;
+    verify-failed) mark="❌"; outcome_ko="검증에 실패해 아무것도 반영하지 않았습니다";;
+    error)         mark="❌"; outcome_ko="오류로 중단했습니다";;
+    no-change)     mark="➖"; outcome_ko="고칠 것을 찾지 못해 그대로 뒀습니다";;
+    *)             mark="•";  outcome_ko="$3";;
   esac
-  "$HERE/tg.sh" "$mark $1 회차 끝 — $3
-$2${CAMPAIGN_ID:+
-캠페인 $CAMPAIGN_ID}" >/dev/null 2>&1 &
+  local rdetail; rdetail=$(printf '%s' "$2" | sed -E 's/\b([0-9a-f]{7})[0-9a-f]{25,}\b/\1/g')
+  "$HERE/tg.sh" "$mark $1 회차 끝 — $outcome_ko
+$rdetail${CAMPAIGN_ID:+
+캠페인: $CAMPAIGN_ID}" >/dev/null 2>&1 &
   RUN_META="{}"
   [ -f "${OUT:-/nonexistent}/run.json" ] && "$HERE/evidence.sh" "$OUT" >>"$LOG" 2>&1 || true
   [ -n "${AIDEV_SIM:-}" ] || "$HERE/digest.sh" >>"$LOG" 2>&1 || true
@@ -849,8 +899,9 @@ round_body(){
   [ -n "${CAMPAIGN_IMPROVE_BUDGET:-}" ] && [ "$n" = "${CAMPAIGN_PROJECT:-}" ] && ibudget=$CAMPAIGN_IMPROVE_BUDGET
   round_budget=$(awk -v a="$ibudget" -v b="$(policy "$n" '.budget_usd.review')" -v c="$(policy "$n" '.budget_usd.release')" 'BEGIN{print a+b+c}')
   log "=== $n (base=$base, run $RUN_ID, 회차 예산 \$$round_budget)"
-  "$HERE/tg.sh" "▶ $n 회차 시작${CAMPAIGN_ID:+ · 캠페인 $CAMPAIGN_ID}
-base=$base · 예산 \$$round_budget" >/dev/null 2>&1 &
+  "$HERE/tg.sh" "▶ $n — 개선 회차를 시작합니다${CAMPAIGN_ID:+
+캠페인: $CAMPAIGN_ID}
+기준 브랜치 $base · 이번 회차에 쓸 수 있는 돈 \$$round_budget" >/dev/null 2>&1 &
   # return 이지 continue 가 아니다: --parallel 은 이 함수를 서브셸로 돌려 감쌀 루프가 없다.
   # continue 는 그 자리에서 실패하고 회차가 그대로 이어져, 상한에 걸린 회차가 계속 돈다.
   budget_ok "$round_budget" || { stage improve hold "회차 예산(\$$round_budget)이 오늘 남은 상한을 넘음"; record_run "$n" "hold: budget" "error"; return 0; }
