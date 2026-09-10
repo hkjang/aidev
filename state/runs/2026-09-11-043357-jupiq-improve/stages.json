@@ -1,0 +1,27 @@
+{
+  "base": {
+    "state": "pinned",
+    "reason": "main@3df15c2",
+    "at": "2026-09-11T04:33:57+09:00"
+  },
+  "autonomy": {
+    "state": "release",
+    "reason": "",
+    "at": "2026-09-11T04:33:58+09:00"
+  },
+  "verify": {
+    "state": "passed",
+    "reason": "검증 7개 통과 (auto)",
+    "at": "2026-09-11T04:50:53+09:00"
+  },
+  "pr": {
+    "state": "created",
+    "reason": "https://github.com/hkjang/jupiq/pull/12",
+    "at": "2026-09-11T04:51:02+09:00"
+  },
+  "review": {
+    "state": "rejected",
+    "reason": "리뷰 거절: docs/USER_GUIDE.md:345 '**GPU·AI·승인 메뉴가 없습니다.** 이 세 기능은 기본이 OFF이고, 관리자가 켠 환경에서만 나타납니다.' 는 AI 에 대해 사실이 아닙니다. web/src/utils/navigation.ts:62-66 의 isFeatureMenuVisible 은 '/gpus'(gpuMonitoring) 와 '/approvals'(approvalWorkflow) 만 기능 스위치로 가립니다. '/ai-ops' 는 navigation.ts:43-46 대로 전역 ai:chat 권한만 있으면 어떤 스위치와도 무관하게 노출되고, ai.enabled(internal/store/store.go:169) 를 꺼도 메뉴는 사라지지 않습니다. 이 PR 이 함께 넣은 캡처가 그대로 반증합니다 — docs/assets/screenshots/hub-management.webp 와 admin-roles.webp 는 GPU·승인 기능이 기본 OFF 라 GPU/검토·승인 메뉴가 없는 상태인데도 좌측에 'AI·LLM 운영' 메뉴가 그대로 보입니다. 결과적으로 AI 메뉴가 안 보이는 사용자는 '관리자 설정에 AI 를 켜는 스위치가 있다'고 잘못 안내받고, 관리자도 존재하지 않는 스위치를 찾게 됩니다(실제 원인은 ai:chat 권한 미부여). README 가 이 문서를 '정본'으로 선언하고 docs/USER_GUIDE.pdf 로도 배포되므로 오안내가 그대로 굳습니다. 같은 문서 3.12 절(docs/USER_GUIDE.md:225-234)이 AI 메뉴를 기능 스위치로 설명하지 않는 점과도 문서 내부에서 모순됩니다.",
+    "at": "2026-09-11T04:56:57+09:00"
+  }
+}

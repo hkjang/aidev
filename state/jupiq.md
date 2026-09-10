@@ -74,3 +74,9 @@
 - 보류 아이디어: 로그인 리미터 `succeeded`가 ip 키를 의도적으로 유지하는 동작에 대한 테스트·문서화 / `internal/store` 커버리지 중 DB 없이 테스트 가능한 순수 함수 경로 보강 / `internal/api` 통합 테스트를 로컬에서 돌리는 방법 문서화와 `make test-integration` 타깃 / `auth/oidc.go`가 `RandomToken` 오류를 무시하고 state·nonce·verifier를 만드는 부분 정리 / 쿼리로만 GPU로 분류되는 별칭 지표가 `feature_enabled` 없이 빈 목록을 받는 잔여 간극 / `queryInt`가 잘못된 `page`·`page_size`·`limit`을 조용히 기본값으로 바꾸는 부분을 400으로 돌려주기
 
 - 릴리즈: v1.4.13 (2026-09-10, run 2026-09-10-195118-jupiq-improve)
+## 2026-09-11
+- 선택: 화면 캡처가 들어간 사용자·관리자 가이드 정본 작성(캠페인 guides-2026-09) (가치 4 / 위험 1 / 작업량 L)
+- 결과: 성공
+- 요약: 가이드가 GitHub Pages HTML 두 장뿐이고 저장소 안에 정본이 없어, GUIDE-STANDARD.md에 맞춰 `docs/USER_GUIDE.md`·`docs/ADMIN_GUIDE.md`와 공용 `md2pdf.mjs`로 만든 PDF 두 개를 추가했다. 캡처는 지어내지 않았다 — 로컬 PostgreSQL(postgres:16-alpine)과 v1.4.13 빌드(`npm run build` + `go build`)로 앱을 8080에 띄우고 저장소의 `scripts/capture-screenshots.mjs`로 manifest 29장을 모두 다시 찍었으며(기존 파일은 v1.0.0~v1.1.0 시점 캡처였다), 관리자 가이드의 "계정과 권한" 절에 실을 역할 화면이 없어 `admin-roles.webp`(관리자 설정 → 보안·키 권한) 한 장을 manifest·캡처 조건·갤러리·홈 카운트(29→30)와 함께 추가했다. 사용자 가이드는 캡처 26장과 함께 처음 5분·화면별 사용법·자주 하는 작업·막혔을 때·용어로 구성했고 오류 표는 코드의 실제 문구를 옮겼다. 관리자 가이드의 환경 변수 표는 `internal/config/config.go`에서, 장애 대응의 로그 문구는 `internal/collector`에서, API 메서드·경로는 라우트 등록 자리에서 읽어 썼다. 정본이 갈라지지 않도록 README 문서 링크를 새 파일로 옮기고 기존 Pages 가이드 두 장에는 "요약이며 정본은 이것"이라는 안내를 넣었다. `gofmt -l`, `go vet ./...`, `go test -race ./...`, `scripts/check-version.sh`, `scripts/check-screenshots.mjs`, `npm run lint`, `npm test`(18파일 59개) 모두 통과했고, PDF는 표지·표·코드 블록·그림이 정상 렌더링되는지 페이지를 이미지로 뽑아 확인했다(사용자 30쪽/그림 26, 관리자 17쪽/그림 3). 임시 컨테이너·빌드 산출물·로컬 비밀값은 커밋 전에 모두 제거했다.
+- 보류 아이디어: 로그인 리미터 succeeded가 ip 키를 유지하는 의도에 대한 테스트·주석 / internal/store의 DB 없이 테스트 가능한 순수 함수 경로 커버리지 보강 / internal/api 통합 테스트 실행법 문서화와 make test-integration 타깃 / auth/oidc.go가 RandomToken 오류를 무시하는 부분 정리 / queryInt가 잘못된 page·page_size를 조용히 기본값으로 바꾸는 부분을 400으로 / 감사 로그 캡처가 캡처 스크립트 자신의 settings.update로 가득 차는 문제(캡처 전 시드 이벤트 다양화)
+
