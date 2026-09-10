@@ -129,8 +129,30 @@ record_usage(){ # $1=프로젝트 $2=단계 $3=json $4=txt
 }
 # 잔여 예산: 오늘 쓴 비용 + 이 단계 예산이 상한을 넘으면 시작하지 않는다
 budget_ok(){ # $1=이번 단계 예산
-  local spent; spent=$(jq -s --arg d "$RUN_DATE" '[.[]|select(.date==$d)|.cost_usd//0]|add // 0' "$DATA/usage.jsonl" 2>/dev/null || echo 0)
+  # 캠페인 회차는 캠페인 자체 예산으로 본다. 캠페인은 예산과 기한을 스스로 들고
+  # 있으므로 일일 상한까지 겹쳐 걸면, 상한을 채운 날에는 시작조차 못 하고
+  # 캠페인이 기한까지 그대로 밀린다.
+  local spent
+  if [ -n "${CAMPAIGN_ID:-}" ] && [ "${n:-}" = "${CAMPAIGN_PROJECT:-}" ]; then
+    spent=$(jq -s --arg id "$CAMPAIGN_ID" '[.[]|select(.campaign==$id)|.cost_usd//0]|add // 0' "$DATA/usage.jsonl" 2>/dev/null || echo 0)
+    awk -v s="$spent" -v b="${1:-0}" -v m="${CAMPAIGN_BUDGET:-0}" 'BEGIN{exit !(s+b<=m)}'
+    return
+  fi
+  spent=$(jq -s --arg d "$RUN_DATE" '[.[]|select(.date==$d)|.cost_usd//0]|add // 0' "$DATA/usage.jsonl" 2>/dev/null || echo 0)
   awk -v s="$spent" -v b="${1:-0}" -v m="$MAX_DAILY_COST" 'BEGIN{exit !(s+b<=m)}'
+}
+
+# 아직 예산이 남은 활성 캠페인이 있나 — 일일 상한에 걸린 날에도 캠페인은 잇는다.
+campaign_room(){
+  local cj="$STATE/campaigns.json" id budget until spent
+  [ -f "$cj" ] || return 1
+  while IFS=$'\t' read -r id budget until; do
+    [ -n "$id" ] && [ -n "$until" ] || continue
+    [[ "$until" < "$RUN_DATE" ]] && continue
+    spent=$(jq -s --arg id "$id" '[.[]|select(.campaign==$id)|.cost_usd//0]|add // 0' "$DATA/usage.jsonl" 2>/dev/null || echo 0)
+    awk -v s="$spent" -v b="$budget" 'BEGIN{exit !(s<b)}' && return 0
+  done < <(jq -r '.campaigns[]? | select(.done!=true) | "\(.id)\t\(.budget_usd)\t\(.until)"' "$cj" 2>/dev/null)
+  return 1
 }
 
 # ---------------------------------------------------------------- 긴급 중지 · 자율화 단계 · 승인 · 캠페인
@@ -229,7 +251,7 @@ rebase_pr(){ # $1=PR url $2=base
 # 캠페인: 활성(미완료·기한 내·예산 남음) 캠페인의 대상 프로젝트를 후보 중에서 고른다 → CAMPAIGN_ID, CAMPAIGN_NOTE, CAMPAIGN_PROJECT
 pick_campaign(){
   local cj="$STATE/campaigns.json" id goal goal64 budget until spent projs cp
-  CAMPAIGN_ID=""; CAMPAIGN_NOTE=""; CAMPAIGN_PROJECT=""
+  CAMPAIGN_ID=""; CAMPAIGN_NOTE=""; CAMPAIGN_PROJECT=""; CAMPAIGN_BUDGET=0
   [ -f "$cj" ] || return 0
   while IFS=$'\t' read -r id goal64 budget until projs; do
     [ -n "$id" ] || continue
@@ -250,7 +272,7 @@ pick_campaign(){
     done
     if [ -n "$best" ]; then
         cp=$best
-        CAMPAIGN_ID=$id; CAMPAIGN_PROJECT=$cp
+        CAMPAIGN_ID=$id; CAMPAIGN_PROJECT=$cp; CAMPAIGN_BUDGET=$budget
         CAMPAIGN_NOTE="## 개선 캠페인 \"$id\" (자동 배정) — 새 아이디어 대신 이 목표를 우선하세요
 $goal
 예산: \$$spent / \$$budget 사용, 기한 $until. 이 목표와 무관한 변경은 만들지 마세요."
@@ -684,6 +706,10 @@ if [ $DRY -eq 0 ]; then
   cap=""; awk -v c="$today_cost" -v m="$MAX_DAILY_COST" 'BEGIN{exit !(c>=m)}' && cap="비용 \$$today_cost ≥ \$$MAX_DAILY_COST"
   [ "${today_rounds:-0}" -ge "$MAX_DAILY_ROUNDS" ] && cap="회차 $today_rounds ≥ $MAX_DAILY_ROUNDS"
   [ "${today_rel:-0}" -ge "$MAX_DAILY_RELEASES" ] && cap="릴리즈 $today_rel ≥ $MAX_DAILY_RELEASES"
+  if [ -n "$cap" ] && campaign_room; then
+    log "daily cap reached: $cap — 캠페인 회차만 이어서 돈다 (캠페인 자체 예산)"
+    CAMPAIGN_ONLY=1; cap=""
+  fi
   if [ -n "$cap" ]; then
     log "daily cap reached: $cap"
     if [ ! -f "$STATE/.cap-$RUN_DATE" ]; then
@@ -697,7 +723,7 @@ fi
 if [ $DRY -eq 0 ]; then
   stopped start && { log "전체 중지 상태 — 새 회차를 시작하지 않는다 (bin/stop.sh all off 로 해제)"; exit 0; }
   apply_demotions
-  [ -z "$ONLY" ] && approvals
+  [ -z "$ONLY" ] && [ "${CAMPAIGN_ONLY:-0}" -eq 0 ] && approvals
 fi
 
 candidates=(); since=$(date -d "-$DAYS days" +%s); touch "$STATE/fix-queue.tsv" "$STATE/run-queue.tsv"
@@ -736,7 +762,13 @@ if [ -z "$FIX_PROJECT" ] && [ -z "$ONLY" ] && [ -s "$RUNQ" ]; then
   done < "$RUNQ"
 fi
 CAMPAIGN_ID=""; CAMPAIGN_NOTE=""; CAMPAIGN_PROJECT=""
-if [ -z "$FIX_PROJECT" ] && [ -z "$RUN_PROJECT" ] && [ -z "$ONLY" ]; then
+if [ "${CAMPAIGN_ONLY:-0}" -eq 1 ]; then
+  # 일일 상한을 채운 날. 캠페인 말고는 아무것도 시작하지 않는다.
+  FIX_PROJECT=""; RUN_PROJECT=""
+  pick_campaign
+  [ -n "$CAMPAIGN_PROJECT" ] || { log "상한 상태이고 캠페인 대상 중 후보가 없다 — 여기서 멈춘다"; exit 0; }
+  picked=("$CAMPAIGN_PROJECT"); log "campaign $CAMPAIGN_ID: picked $CAMPAIGN_PROJECT (상한 상태, 캠페인 예산 \$$CAMPAIGN_BUDGET)"
+elif [ -z "$FIX_PROJECT" ] && [ -z "$RUN_PROJECT" ] && [ -z "$ONLY" ]; then
   pick_campaign; [ -n "$CAMPAIGN_PROJECT" ] && { picked=("$CAMPAIGN_PROJECT"); log "campaign $CAMPAIGN_ID: picked $CAMPAIGN_PROJECT"; }
 fi
 [ -n "$FIX_PROJECT" ] || [ -n "$RUN_PROJECT" ] || [ -n "$CAMPAIGN_PROJECT" ] || echo $(( (idx+COUNT) % ${#candidates[@]} )) > "$CURSOR"
