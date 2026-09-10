@@ -1,0 +1,40 @@
+{
+  "source": "auto",
+  "commands": [
+    {
+      "cmd": "go build ./...",
+      "exit": 0,
+      "seconds": 1
+    },
+    {
+      "cmd": "go vet ./...",
+      "exit": 0,
+      "seconds": 0
+    },
+    {
+      "cmd": "go test ./...",
+      "exit": 0,
+      "seconds": 119
+    },
+    {
+      "cmd": "cd frontend && [ -d node_modules ] || npm ci --no-audit --no-fund",
+      "exit": 0,
+      "seconds": 0
+    },
+    {
+      "cmd": "cd frontend && npm test --silent",
+      "exit": 0,
+      "seconds": 2
+    },
+    {
+      "cmd": "cd frontend && [ -d node_modules ] || npm ci --no-audit --no-fund",
+      "exit": 0,
+      "seconds": 0
+    },
+    {
+      "cmd": "cd frontend && npm run build --silent",
+      "exit": 0,
+      "seconds": 0
+    }
+  ]
+}
