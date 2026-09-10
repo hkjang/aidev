@@ -1,0 +1,188 @@
+{
+  "run_id": "2026-09-11-021110-igame-improve",
+  "generated": "2026-09-11T02:41:11+09:00",
+  "run": {
+    "run_id": "2026-09-11-021110-igame-improve",
+    "project": "igame",
+    "kind": "improve",
+    "started": "2026-09-11T02:11:10+09:00",
+    "model": "claude-opus-5",
+    "policy_version": "5935779a",
+    "prompts_hash": "82f2440d4b2fef65",
+    "runner_version": "37d0504d",
+    "finished": "2026-09-11T02:41:11+09:00",
+    "outcome": "review-pending"
+  },
+  "record": {
+    "ts": "2026-09-11T02:41:11+09:00",
+    "date": "2026-09-11",
+    "project": "igame",
+    "result": "review held, PR open https://github.com/hkjang/igame/pull/15",
+    "outcome": "review-pending",
+    "run_id": "2026-09-11-021110-igame-improve",
+    "base_sha": "e0e82bb75da6a692389505a1a8f964339f73b648",
+    "head_sha": "a47f7c9037f39d51df348507bc7cc6a6376b46f0",
+    "pr": "https://github.com/hkjang/igame/pull/15",
+    "stages": {
+      "base": {
+        "state": "pinned",
+        "reason": "main@e0e82bb",
+        "at": "2026-09-11T02:11:11+09:00"
+      },
+      "autonomy": {
+        "state": "release",
+        "reason": "",
+        "at": "2026-09-11T02:11:11+09:00"
+      },
+      "verify": {
+        "state": "passed",
+        "reason": "검증 4개 통과 (policy)",
+        "at": "2026-09-11T02:35:07+09:00"
+      },
+      "pr": {
+        "state": "created",
+        "reason": "https://github.com/hkjang/igame/pull/15",
+        "at": "2026-09-11T02:35:17+09:00"
+      },
+      "review": {
+        "state": "rejected",
+        "reason": "리뷰 거절: scripts/build-docs-pdf.sh:4-6 주석은 새 두 PDF가 \"the shared guide tool\"로 만들어진다며 docs/USER_GUIDE.md와 scripts/capture-guide-screenshots.sh를 가리키지만, 전자는 마크다운 문서이고 후자는 PNG만 생성합니다. 저장소 어디에도 docs/USER_GUIDE.pdf(2.5MB)·docs/ADMIN_GUIDE.pdf(1.4MB)를 만드는 도구가 없습니다(Makefile 타깃은 docs-pdf·guide-shots 둘뿐이고, docs-pdf의 MANUALS 목록에서 guide.md가 제거됨). 즉 이 커밋은 재생성 불가능한 바이너리 3.9MB를 새로 커밋하면서, 바로 아래 7-12행이 \"이전 PDF는 커밋되지 않은 파이프라인에서 나와 제품이 바뀌어도 다시 만들 수 없었다 — 이 스크립트가 그 파이프라인이다\"라고 선언한 저장소 자체의 원칙을 되돌립니다. 근본 원인도 확인됨: scripts/docs-pdf/render.mjs:26-29 inline()은 링크만 처리하고 `![]()` 이미지 문법을 지원하지 않아, 캡처를 싣는 가이드를 기존 파이프라인에 넣으려면 렌더러 확장이 필요한데 그 대신 산출물만 커밋했습니다. / docs/release.md:32 \"사용자 가이드와 관리자 가이드는 … 공용 가이드 도구로 만듭니다 — 사용자 가이드 참조\"는 릴리스 담당자가 실제로 따라갈 수 없는 절차입니다. 지목된 docs/USER_GUIDE.md에는 PDF 생성 방법이 한 줄도 없고(파일 전체 확인), 해당 도구도 저장소에 없습니다. 결과적으로 마크다운을 고쳐도 게시되는 PDF는 조용히 낡습니다.",
+        "at": "2026-09-11T02:41:08+09:00"
+      }
+    },
+    "campaign": "guides-2026-09",
+    "autonomy": "release",
+    "files": 38,
+    "additions": 1071,
+    "deletions": 83,
+    "tests": 0,
+    "title": "docs: publish the user and administrator guides with real screen captures"
+  },
+  "stages": {
+    "base": {
+      "state": "pinned",
+      "reason": "main@e0e82bb",
+      "at": "2026-09-11T02:11:11+09:00"
+    },
+    "autonomy": {
+      "state": "release",
+      "reason": "",
+      "at": "2026-09-11T02:11:11+09:00"
+    },
+    "verify": {
+      "state": "passed",
+      "reason": "검증 4개 통과 (policy)",
+      "at": "2026-09-11T02:35:07+09:00"
+    },
+    "pr": {
+      "state": "created",
+      "reason": "https://github.com/hkjang/igame/pull/15",
+      "at": "2026-09-11T02:35:17+09:00"
+    },
+    "review": {
+      "state": "rejected",
+      "reason": "리뷰 거절: scripts/build-docs-pdf.sh:4-6 주석은 새 두 PDF가 \"the shared guide tool\"로 만들어진다며 docs/USER_GUIDE.md와 scripts/capture-guide-screenshots.sh를 가리키지만, 전자는 마크다운 문서이고 후자는 PNG만 생성합니다. 저장소 어디에도 docs/USER_GUIDE.pdf(2.5MB)·docs/ADMIN_GUIDE.pdf(1.4MB)를 만드는 도구가 없습니다(Makefile 타깃은 docs-pdf·guide-shots 둘뿐이고, docs-pdf의 MANUALS 목록에서 guide.md가 제거됨). 즉 이 커밋은 재생성 불가능한 바이너리 3.9MB를 새로 커밋하면서, 바로 아래 7-12행이 \"이전 PDF는 커밋되지 않은 파이프라인에서 나와 제품이 바뀌어도 다시 만들 수 없었다 — 이 스크립트가 그 파이프라인이다\"라고 선언한 저장소 자체의 원칙을 되돌립니다. 근본 원인도 확인됨: scripts/docs-pdf/render.mjs:26-29 inline()은 링크만 처리하고 `![]()` 이미지 문법을 지원하지 않아, 캡처를 싣는 가이드를 기존 파이프라인에 넣으려면 렌더러 확장이 필요한데 그 대신 산출물만 커밋했습니다. / docs/release.md:32 \"사용자 가이드와 관리자 가이드는 … 공용 가이드 도구로 만듭니다 — 사용자 가이드 참조\"는 릴리스 담당자가 실제로 따라갈 수 없는 절차입니다. 지목된 docs/USER_GUIDE.md에는 PDF 생성 방법이 한 줄도 없고(파일 전체 확인), 해당 도구도 저장소에 없습니다. 결과적으로 마크다운을 고쳐도 게시되는 PDF는 조용히 낡습니다.",
+      "at": "2026-09-11T02:41:08+09:00"
+    }
+  },
+  "provenance": {
+    "model": "claude-opus-5",
+    "policy_version": "5935779a",
+    "prompts_hash": "82f2440d4b2fef65",
+    "runner_version": "37d0504d",
+    "base_sha": "e0e82bb75da6a692389505a1a8f964339f73b648",
+    "head_sha": "a47f7c9037f39d51df348507bc7cc6a6376b46f0",
+    "pr": "https://github.com/hkjang/igame/pull/15"
+  },
+  "verification": {
+    "runner": {
+      "source": "policy",
+      "commands": [
+        {
+          "cmd": "make deps",
+          "exit": 0,
+          "seconds": 20
+        },
+        {
+          "cmd": "make test",
+          "exit": 0,
+          "seconds": 3
+        },
+        {
+          "cmd": "make build",
+          "exit": 0,
+          "seconds": 10
+        },
+        {
+          "cmd": "make check-contract",
+          "exit": 0,
+          "seconds": 1
+        }
+      ]
+    },
+    "runner_gate": {
+      "ok": true,
+      "state": "verified",
+      "reason": "검증 4개 통과 (policy)"
+    },
+    "after_rebase": null,
+    "review": {
+      "verdict": "reject",
+      "reasons": [
+        "scripts/build-docs-pdf.sh:4-6 주석은 새 두 PDF가 \"the shared guide tool\"로 만들어진다며 docs/USER_GUIDE.md와 scripts/capture-guide-screenshots.sh를 가리키지만, 전자는 마크다운 문서이고 후자는 PNG만 생성합니다. 저장소 어디에도 docs/USER_GUIDE.pdf(2.5MB)·docs/ADMIN_GUIDE.pdf(1.4MB)를 만드는 도구가 없습니다(Makefile 타깃은 docs-pdf·guide-shots 둘뿐이고, docs-pdf의 MANUALS 목록에서 guide.md가 제거됨). 즉 이 커밋은 재생성 불가능한 바이너리 3.9MB를 새로 커밋하면서, 바로 아래 7-12행이 \"이전 PDF는 커밋되지 않은 파이프라인에서 나와 제품이 바뀌어도 다시 만들 수 없었다 — 이 스크립트가 그 파이프라인이다\"라고 선언한 저장소 자체의 원칙을 되돌립니다. 근본 원인도 확인됨: scripts/docs-pdf/render.mjs:26-29 inline()은 링크만 처리하고 `![]()` 이미지 문법을 지원하지 않아, 캡처를 싣는 가이드를 기존 파이프라인에 넣으려면 렌더러 확장이 필요한데 그 대신 산출물만 커밋했습니다.",
+        "docs/release.md:32 \"사용자 가이드와 관리자 가이드는 … 공용 가이드 도구로 만듭니다 — 사용자 가이드 참조\"는 릴리스 담당자가 실제로 따라갈 수 없는 절차입니다. 지목된 docs/USER_GUIDE.md에는 PDF 생성 방법이 한 줄도 없고(파일 전체 확인), 해당 도구도 저장소에 없습니다. 결과적으로 마크다운을 고쳐도 게시되는 PDF는 조용히 낡습니다."
+      ],
+      "notes": [
+        "가이드 본문의 사실 정확도는 표본 검증 결과 매우 높습니다. USER_GUIDE.md \"막혔을 때\" 표의 22개 문구 전부가 web/src/api/errorMessages.ts에 그대로 존재하고, ADMIN_GUIDE.md 6.1/6.2의 로그 문구(configuration error, startup failed, encryption initialization failed, HTTP server failed, request origin rejected, local sign-in throttled, access denied, write audit log, sessions_revoked, audit.export)도 cmd/igame/main.go·internal/api/*.go에서 확인됩니다. 설정 캐시 5초(internal/api/cache.go:16), 비밀번호 12자·ENCRYPTION_KEY 32바이트(internal/config/config.go:50,53,84), 키 접두사 igk_(internal/api/apikeys.go:166), 로그인 버튼 라벨(web/src/pages/LoginPage.tsx:54,59), 모든 화면 경로(web/src/App.tsx:60-91), 참조 문서 10종 존재 여부까지 일치합니다.",
+        "캡처 도구는 실제로 동작한 흔적이 있습니다. PNG 21장 모두 정확히 1440x900이고, admin-audit.png에 capture.mjs가 만든 12건(notice.update, realmguard.version.create, api_key.create, season.create …)이 찍혀 있으며, rankings.png는 seed.sql이 넣은 8명의 점수를 보여 줍니다. PDF의 이미지 개수(USER 10, ADMIN 11)도 각 마크다운의 ![]() 개수와 정확히 일치해 산출물과 소스가 어긋나 있지는 않습니다. 유출 검증도 통과: profile-keys.png는 키 앞자리만, admin-security.png는 빈 Client Secret 입력란만 노출합니다.",
+        "seed.sql은 스키마와 맞습니다(users.team은 migrations/002_extended.sql:1, game_sessions.session_token_hash bytea UNIQUE·scores.session_id UNIQUE는 001_initial.sql:131,157). 다만 34-35행 UPDATE users … WHERE display_name='' OR display_name=username 는 대상 DB의 display_name이 빈 계정 전부를 동일한 '데모 관리자'/admin@example.internal로 덮어씁니다. 스크립트가 IGAME_GUIDE_CAPTURE_DISPOSABLE=yes를 요구하므로 실질 위험은 낮지만, 주석이 말하는 \"부트스트랩 관리자\"보다 범위가 넓습니다.",
+        "docs/igame_User_Guide.pdf 삭제로 2026-08-22부터 sitemap에 올라 있던 https://hkjang.github.io/igame/igame_User_Guide.pdf 가 404가 됩니다. GitHub Pages에는 리다이렉트 수단이 없어 외부 링크는 깨집니다(revert로는 복구 가능).",
+        "docs/index.html:941(및 en:941)의 카드 설명은 여전히 \"랭킹 및 AI Co-Pilot 사용자 가이드\"라고 적혀 있지만, 새 USER_GUIDE는 AI Game Lab을 메뉴 언급 수준으로만 다룹니다. href만 바꾸고 설명은 그대로 둔 결과입니다.",
+        "삭제된 docs/guide.md에만 있던 접근성 안내(WCAG AA 대비, Tab으로 나타나는 본문 건너뛰기 링크)가 새 가이드에 없습니다. 해당 기능은 web/src/components/RouteChrome.tsx:81에 실제로 존재하므로, 이제 어느 문서에도 기록되지 않습니다.",
+        "ADMIN_GUIDE.md:97,292는 릴리스 자산이 tar.gz 하나뿐이라고 밝힌 뒤(39행) scripts/smoke-test.sh·scripts/backup.sh 실행을 안내합니다. 이미지만 반입한 운영자에게는 그 경로가 없습니다.",
+        "코드·마이그레이션·워크플로 변경은 전혀 없고 CI도 docs를 참조하지 않으므로 런타임 회귀 위험은 없습니다."
+      ],
+      "risk": "low"
+    },
+    "ci_gate": null
+  },
+  "release": {
+    "result": null,
+    "assets_sha256": []
+  },
+  "approval": null,
+  "usage": [
+    {
+      "ts": "2026-09-11T02:34:26+09:00",
+      "date": "2026-09-11",
+      "project": "igame",
+      "phase": "improve",
+      "run_id": "2026-09-11-021110-igame-improve",
+      "campaign": "guides-2026-09",
+      "subtype": "success",
+      "duration_ms": 1531165,
+      "num_turns": 165,
+      "cost_usd": 14.964935499999996,
+      "input_tokens": 278,
+      "output_tokens": 84244,
+      "cache_read": 20767897,
+      "cache_create": 245698
+    },
+    {
+      "ts": "2026-09-11T02:41:08+09:00",
+      "date": "2026-09-11",
+      "project": "igame",
+      "phase": "review",
+      "run_id": "2026-09-11-021110-igame-improve",
+      "campaign": "guides-2026-09",
+      "subtype": "success",
+      "duration_ms": 384397,
+      "num_turns": 38,
+      "cost_usd": 2.7446900000000007,
+      "input_tokens": 76,
+      "output_tokens": 23600,
+      "cache_read": 2450608,
+      "cache_create": 92719
+    }
+  ]
+}
