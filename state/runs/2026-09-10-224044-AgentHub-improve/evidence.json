@@ -1,0 +1,150 @@
+{
+  "run_id": "2026-09-10-224044-AgentHub-improve",
+  "generated": "2026-09-10T22:58:55+09:00",
+  "run": {
+    "run_id": "2026-09-10-224044-AgentHub-improve",
+    "project": "AgentHub",
+    "kind": "improve",
+    "started": "2026-09-10T22:40:45+09:00",
+    "model": "claude-opus-5",
+    "policy_version": "5935779a",
+    "prompts_hash": "82f2440d4b2fef65",
+    "runner_version": "37d0504d",
+    "finished": "2026-09-10T22:58:55+09:00",
+    "outcome": "error"
+  },
+  "record": {
+    "ts": "2026-09-10T22:58:55+09:00",
+    "date": "2026-09-10",
+    "project": "AgentHub",
+    "result": "fix-round: error: pr create",
+    "outcome": "error",
+    "run_id": "2026-09-10-224044-AgentHub-improve",
+    "base_sha": "b58d6d893512924672b25de95d6c83f0ee279584",
+    "head_sha": "88b400e7f8d763f72fcd93dc45ffd5dd81840e18",
+    "pr": "",
+    "stages": {
+      "base": {
+        "state": "pinned",
+        "reason": "main@b58d6d8",
+        "at": "2026-09-10T22:40:47+09:00"
+      },
+      "autonomy": {
+        "state": "release",
+        "reason": "",
+        "at": "2026-09-10T22:40:47+09:00"
+      },
+      "verify": {
+        "state": "passed",
+        "reason": "검증 5개 통과 (auto)",
+        "at": "2026-09-10T22:58:51+09:00"
+      },
+      "pr": {
+        "state": "create-failed",
+        "reason": "gh pr create 실패",
+        "at": "2026-09-10T22:58:54+09:00"
+      }
+    },
+    "campaign": "guides-2026-09",
+    "autonomy": "release",
+    "files": 46,
+    "additions": 1202,
+    "deletions": 981,
+    "tests": 1,
+    "title": "docs: 가이드의 정본을 하나로 두고, API 메서드와 캡처 도구의 안전장치를 고치다"
+  },
+  "stages": {
+    "base": {
+      "state": "pinned",
+      "reason": "main@b58d6d8",
+      "at": "2026-09-10T22:40:47+09:00"
+    },
+    "autonomy": {
+      "state": "release",
+      "reason": "",
+      "at": "2026-09-10T22:40:47+09:00"
+    },
+    "verify": {
+      "state": "passed",
+      "reason": "검증 5개 통과 (auto)",
+      "at": "2026-09-10T22:58:51+09:00"
+    },
+    "pr": {
+      "state": "create-failed",
+      "reason": "gh pr create 실패",
+      "at": "2026-09-10T22:58:54+09:00"
+    }
+  },
+  "provenance": {
+    "model": "claude-opus-5",
+    "policy_version": "5935779a",
+    "prompts_hash": "82f2440d4b2fef65",
+    "runner_version": "37d0504d",
+    "base_sha": "b58d6d893512924672b25de95d6c83f0ee279584",
+    "head_sha": "88b400e7f8d763f72fcd93dc45ffd5dd81840e18",
+    "pr": ""
+  },
+  "verification": {
+    "runner": {
+      "source": "auto",
+      "commands": [
+        {
+          "cmd": "go build ./...",
+          "exit": 0,
+          "seconds": 2
+        },
+        {
+          "cmd": "go vet ./...",
+          "exit": 0,
+          "seconds": 1
+        },
+        {
+          "cmd": "go test ./...",
+          "exit": 0,
+          "seconds": 15
+        },
+        {
+          "cmd": "cd web && [ -d node_modules ] || npm ci --no-audit --no-fund",
+          "exit": 0,
+          "seconds": 0
+        },
+        {
+          "cmd": "cd web && npm run build --silent",
+          "exit": 0,
+          "seconds": 4
+        }
+      ]
+    },
+    "runner_gate": {
+      "ok": true,
+      "state": "verified",
+      "reason": "검증 5개 통과 (auto)"
+    },
+    "after_rebase": null,
+    "review": null,
+    "ci_gate": null
+  },
+  "release": {
+    "result": null,
+    "assets_sha256": []
+  },
+  "approval": null,
+  "usage": [
+    {
+      "ts": "2026-09-10T22:58:19+09:00",
+      "date": "2026-09-10",
+      "project": "AgentHub",
+      "phase": "improve",
+      "run_id": "2026-09-10-224044-AgentHub-improve",
+      "campaign": "guides-2026-09",
+      "subtype": "success",
+      "duration_ms": 1153091,
+      "num_turns": 147,
+      "cost_usd": 12.991914000000001,
+      "input_tokens": 268,
+      "output_tokens": 63615,
+      "cache_read": 18818630,
+      "cache_create": 197004
+    }
+  ]
+}
