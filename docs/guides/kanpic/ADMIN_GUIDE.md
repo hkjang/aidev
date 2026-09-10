@@ -1,10 +1,14 @@
 # kanpic 관리자 가이드 (System Administrator Manual)
 
 - **제품명**: kanpic 데이터 협업 플랫폼  
-- **시스템 버전**: v0.18.0
-- **문서 버전**: v1.0  
-- **최종 수정일**: 2026년 8월 2일
+- **시스템 버전**: v0.242.0
+- **문서 버전**: v2.0  
+- **최종 수정일**: 2026년 9월 11일
 - **문서 분류**: 시스템 관리자 및 DevOps 엔지니어용 통합 운영 매뉴얼 (System Administrator Manual)  
+- **함께 보는 문서**: 화면을 쓰는 방법은 [사용자 가이드](USER_GUIDE.md)에 있습니다. 여기서는 겹쳐 적지 않습니다.
+
+이 문서의 화면 캡처는 모두 v0.242.0 을 실제로 띄워 1440×900 에서 찍은 것이며,
+등장하는 이름·이메일·워크북은 전부 예시용 가짜 데이터입니다.
 
 ---
 
@@ -46,29 +50,109 @@ kanpic은 인프라 복잡도를 극소화하고 폐쇄망 환경에서의 안�
 - **Embedded Assets**: React 프론트엔드 정적 파일(`web/dist`), CA 인증서, 타임존 데이터, DDL 마이그레이션 SQL 파일이 Go 바이너리 내부(`embed.FS`)에 집적되어 별도의 외부 파일 의존성이 없습니다.
 - **Server-Authoritative Storage**: PostgreSQL 16을 유일한 영구 저장소로 활용하며, 모든 워크북 변경사항은 JSONB 형태의 델타 변경 이력으로 기록됩니다.
 
+### 2.1 구성 요소
+
+| 구성 요소 | 무엇인가 | 필수 | 비고 |
+| --- | --- | --- | --- |
+| `kanpic` 컨테이너 | Go 단일 바이너리. REST·WebSocket·MCP·정적 자산을 한 프로세스가 낸다 | 필수 | 기본 8080/tcp |
+| PostgreSQL | 유일한 영구 저장소. 워크북·설정·로그·API 키·세션이 모두 여기 있다 | 필수 | 16 이상(compose 예시는 `postgres:17-alpine`) |
+| Keycloak(OIDC) | 조직 계정 로그인 | 선택 | 없으면 bootstrap 관리자 로그인만 쓴다 |
+| 사내 LLM Gateway | Workbook Agent(AI) | 선택 | OpenAI 호환 `/v1` |
+| 사내 SMTP 릴레이 | 공유·댓글·멘션·지켜보기 알림 메일 | 선택 | |
+| 프레젠테이션 서비스(Ptium) | 선택 범위로 슬라이드 만들기 | 선택 | |
+
+Redis, 메시지 브로커, 별도의 파일 저장소는 쓰지 않습니다.
+
+| 자원 | 값 |
+| --- | --- |
+| 포트 | 컨테이너 8080/tcp 하나. 외부에는 리버스 프록시의 443 만 연다 |
+| 볼륨 | 애플리케이션 컨테이너는 상태가 없다. PostgreSQL 데이터 디렉터리만 볼륨으로 잡는다 |
+| 바깥으로 나가는 연결 | PostgreSQL, (설정한 경우) Keycloak · LLM Gateway · SMTP · 프레젠테이션 서비스 · `external.allowed_hosts` 에 적은 곳뿐 |
+
+### 2.2 릴리즈 자산으로 설치
+
+GitHub Release 의 `kanpic-vX.Y.Z.tar.gz` 는 Docker 이미지 아카이브입니다. 폐쇄망에서는
+이 파일과 `.sha256` 만 옮기면 됩니다. 런타임에 인터넷이 필요하지 않습니다.
+
+```bash
+# 1. 받은 파일이 온전한지 확인하고 이미지를 올린다
+VERSION=v0.242.0
+sha256sum -c "kanpic-${VERSION}.tar.gz.sha256"
+gzip -dc "kanpic-${VERSION}.tar.gz" | docker load
+
+# 2. compose 파일을 쓴다 (이미지 태그를 방금 올린 버전으로)
+cat > compose.yaml <<'YAML'
+name: kanpic
+services:
+  api:
+    image: kanpic:v0.242.0
+    environment:
+      POSTGRES_DSN: postgres://kanpic:${POSTGRES_PASSWORD}@postgres:5432/kanpic?sslmode=disable
+      BOOTSTRAP_ADMIN_ID: ${BOOTSTRAP_ADMIN_ID}
+      BOOTSTRAP_ADMIN_PASSWORD: ${BOOTSTRAP_ADMIN_PASSWORD}
+    ports: ["8080:8080"]
+    depends_on:
+      postgres: { condition: service_healthy }
+    restart: unless-stopped
+  postgres:
+    image: postgres:17-alpine
+    environment:
+      POSTGRES_DB: kanpic
+      POSTGRES_USER: kanpic
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U kanpic -d kanpic"]
+      interval: 2s
+      timeout: 3s
+      retries: 15
+    volumes: [kanpic-postgres:/var/lib/postgresql/data]
+volumes:
+  kanpic-postgres:
+YAML
+
+# 3. 최초 관리자 계정과 DB 비밀번호를 넘겨 띄운다
+#    (셸 기록에 남지 않게 read 로 받거나 배포 도구의 비밀 저장소를 쓴다)
+read -rs POSTGRES_PASSWORD; export POSTGRES_PASSWORD
+read -rs BOOTSTRAP_ADMIN_PASSWORD; export BOOTSTRAP_ADMIN_PASSWORD
+export BOOTSTRAP_ADMIN_ID=admin
+docker compose up -d
+
+# 4. 떴는지 확인한다
+curl -fsS http://localhost:8080/healthz
+curl -fsS http://localhost:8080/api/v1/version
+```
+
+스키마는 서버가 시작할 때 `migrations/` 를 순서대로 적용하므로 따로 할 일이 없습니다.
+브라우저로 `http://<서버>:8080` 을 열어 `BOOTSTRAP_ADMIN_ID` 로 로그인하면 관리자 콘솔이
+열립니다. 이후 설정은 모두 `/admin` 화면에서 하고, 바꿀 때마다 설정 버전이 생깁니다.
+
+> `BOOTSTRAP_ADMIN_ID` 와 `BOOTSTRAP_ADMIN_PASSWORD` 는 **둘 다 넣거나 둘 다 빼야** 합니다.
+> 하나만 넣으면 서버가 시작하지 않습니다(`BOOTSTRAP_ADMIN_ID and BOOTSTRAP_ADMIN_PASSWORD must be configured together`).
+> 둘 다 빼면 로그인 없이 최초 설정을 할 수 있는 개방형 모드가 되므로, 운영 배포에서는 반드시 지정합니다.
+
+### 2.3 환경 변수 전수
+
+서버가 읽는 환경 변수는 이것이 전부입니다(`cmd/api/main.go`). 나머지 서비스 설정은
+환경 변수가 아니라 관리자 콘솔에 저장되며, 그 목록은 3.5 절의 설정 키 표에 있습니다.
+
+| 이름 | 기본값 | 필수 | 설명 |
+| --- | --- | --- | --- |
+| `POSTGRES_DSN` | 없음 | **필수** | PostgreSQL 접속 문자열. 없으면 서버가 `POSTGRES_DSN is required` 를 남기고 종료합니다. 예: `postgres://kanpic:<비밀번호>@postgres:5432/kanpic?sslmode=require` |
+| `BOOTSTRAP_ADMIN_ID` | 빈 값 | 선택(짝) | 로컬 관리자 로그인 아이디. 예: `admin` |
+| `BOOTSTRAP_ADMIN_PASSWORD` | 빈 값 | 선택(짝) | 로컬 관리자 비밀번호. 충분히 길게 정하고 배포 도구의 비밀 저장소로 주입합니다 |
+| `PORT` | `8080` | 선택 | 서버가 열 포트 |
+
 ---
 
 ## 3. 관리자 콘솔 (`/admin`) 및 주요 관리 기능
 
 관리자 계정으로 로그인 후 상단 프로필 메뉴의 **[관리자 콘솔]** 또는 `/admin` 경로로 이동하여 시스템 전반을 관리할 수 있습니다.
 
-```
-+-----------------------------------------------------------------------------------+
-| [kanpic Admin] 대시보드 | 사용자 관리 | API키 관리 | 시스템 설정 | 마이그레이션 이력 |
-+-----------------------------------------------------------------------------------+
-| System Overview                                                                   |
-| +---------------------+  +---------------------+  +---------------------+        |
-| | 활성 워크북 수      |  | 등록 사용자 수      |  | DB 커넥션 상태      |        |
-| | 128 개              |  | 45 명               |  | Active: 8 / Max: 50 |        |
-| +---------------------+  +---------------------+  +---------------------+        |
-|                                                                                   |
-| 등록된 API 키 감사 목록                                                           |
-| +-------------------------------------------------------------------------------+ |
-| | Key ID      | 소유자      | 생성일      | 권한 스코프 | 상태   | 조치         | |
-| | live_sk_8f  | admin       | 2026-07-01  | mcp.use     | 활성   | [폐기]       | |
-| +-------------------------------------------------------------------------------+ |
-+-----------------------------------------------------------------------------------+
-```
+![관리자 콘솔 개요 — 사용자·부서·워크북·공유 규모 카드와 점검이 필요한 항목 목록](images/guide/admin-overview.png)
+
+왼쪽 목록이 콘솔의 전부입니다: **개요 · 시스템 설정 · 사용자 및 역할 · 워크북 거버넌스 ·
+부서 및 공유 · AI 호출 이력 · 알림 메일 · 방문자 추적 · 서버 로그 · API 키 현황 · 시스템 상태**.
+각 화면은 `/admin?tab=<이름>` 주소를 그대로 가지므로 북마크하거나 링크로 넘길 수 있습니다.
 
 ### 3.1 관리자 개요와 워크북 거버넌스
 
@@ -85,6 +169,8 @@ kanpic은 인프라 복잡도를 극소화하고 폐쇄망 환경에서의 안�
 | 잠든 워크북 | 1년 이상 손대지 않은 워크북 |
 | 휴지통 | 삭제되어 복원 가능한 워크북 |
 
+![워크북 거버넌스 — 거르개(전체·링크 공개·조직 전체·소유자 문제·잠든 워크북·휴지통)와 워크북마다 소유자·공유 범위·시트 수·최근 수정](images/guide/admin-workbooks.png)
+
 각 행에서 **공개 해제**(링크 액세스를 제한됨으로 되돌리기), **소유권** 이전, **휴지통** 이동, 휴지통 항목의 **복원**을 실행할 수 있습니다.
 
 조직 차원의 상한은 시스템 설정으로 강제합니다.
@@ -93,6 +179,8 @@ kanpic은 인프라 복잡도를 극소화하고 폐쇄망 환경에서의 안�
 - `sharing.default_link_access`: 새 워크북의 기본 링크 액세스.
 
 ### 3.2 사용자 및 역할 관리
+
+![사용자 및 역할 — 전체 사용자·관리자·정지된 계정 수와 사용자마다 역할·부서·워크북 수·마지막 접속·상태](images/guide/admin-users.png)
 
 `/admin` → **사용자 및 역할** 에서 계정 상태와 kanpic 역할을 관리합니다. 신원 자체는 OIDC 공급자(또는 bootstrap 로그인)가 소유하고, kanpic은 접근 통제에 필요한 상태만 보관합니다.
 
@@ -130,6 +218,9 @@ kanpic은 인프라 복잡도를 극소화하고 폐쇄망 환경에서의 안�
   - **같은 파일 안에 같은 아이디가 두 번** 나오면 뒤엣것으로 덮어쓰지 않고 몇 번째 줄과 겹치는지 짚어 줍니다. 어느 줄이 맞는지는 사람이 정해야 합니다.
   - 한 줄이 잘못돼도 나머지를 버리지 않고, 무엇이 들어갔고 무엇이 안 들어갔는지 줄마다 돌려줍니다.
   - 역할과 부서는 등록한 뒤 사용자별로 지정합니다.
+
+  ![사용자 일괄 등록 — 미리 보기가 줄마다 새로 만듦·갱신·건너뜀을 알려 준다](images/guide/admin-users-import.png)
+
 - **잠든 계정 찾기**: 사용자 목록의 **잠든 계정만(90일)** 을 켜면 90일 넘게 들어오지 않은 계정만 보입니다. **한 번도 들어온 적 없는 계정도 잠든 것으로 셉니다** — 미리 등록해 두고 아무도 쓰지 않은 계정이 그대로 남는 일이 흔합니다. 개요 화면에도 수가 나옵니다.
 - **가진 워크북 인수인계**: 사용자를 고르고 **가진 워크북 인수인계…** 를 누르면 그 사람이 소유한 워크북을 **모두** 보여 주고 한 번에 새 소유자에게 넘깁니다. 퇴사자가 마흔 개를 가지고 있어도 한 번입니다.
   - 목록은 **자르지 않습니다.** 200개까지만 보여 주면 201번째 워크북은 넘겨지지 않은 채 남고 아무도 그것을 모릅니다.
@@ -148,6 +239,8 @@ REST 계약은 `GET/POST /api/v1/admin/users`, `GET/PATCH /api/v1/admin/users/{u
 
 `/admin` → **부서 및 공유** 에서 조직의 부서 계층을 관리합니다. 부서는 워크북 공유의 기본 단위이므로 관리자만 변경할 수 있습니다.
 
+![부서 및 공유 — 부서 수와 구성원 배치 수, 상위/하위 관계가 보이는 부서 목록](images/guide/admin-departments.png)
+
 - **부서 생성**: 이름과 상위 부서를 지정합니다. 같은 상위 부서 아래에서는 이름이 중복될 수 없고 최대 8단계까지 중첩됩니다.
 - **구성원 배치**: 사용자 ID 또는 이메일을 쉼표나 공백으로 구분해 한 번에 최대 200명까지 추가합니다. 대소문자는 구분하지 않습니다.
 - **상위 부서 변경**: 자신의 하위 부서를 상위로 지정하는 순환 구조는 거부됩니다.
@@ -160,7 +253,89 @@ REST 계약은 `GET/POST /api/v1/admin/users`, `GET/PATCH /api/v1/admin/users/{u
 REST `GET /api/v1/departments`와 MCP `spreadsheet.department.list`는 모든 로그인 사용자가 사용할 수 있고(공유 대상 선택에 필요), 생성·수정·삭제·구성원 변경은 `admin.*` scope 또는 관리자 세션만 허용합니다.
 
 ### 3.4 개인 API 키 통제 및 회전 (Key Rotation)
-- `/admin` 콘솔에서 발급된 모든 Personal API Key 목록을 조회하고, 보안 위협 발생 시 즉시 **[폐기(Revoke)]** 또는 **[회전(Rotate)]**을 집행할 수 있습니다.
+- `/admin` → **API 키 현황** 에서 발급된 모든 Personal API Key 의 소유자·앞자리(Prefix)·scope·최근 사용·상태를 감사하고, 새어 나간 키를 즉시 **폐기** 할 수 있습니다. 키 원문은 어디에도 다시 표시되지 않습니다(데이터베이스에는 SHA-256 해시만 있습니다).
+
+![API 키 현황 — 소유자와 키 이름, 앞자리, scope, 최근 사용과 상태](images/guide/admin-keys.png)
+
+### 3.5 설정 화면과 설정 키
+
+**시스템 설정** 화면은 자주 쓰는 것을 카드로 묶어 보여 주고(Keycloak OIDC 간편 연결,
+사내 AI Gateway 간편 연결 …), 그 아래에서 개별 키를 직접 다룰 수 있습니다. 값을 저장할
+때마다 설정 스냅샷 revision 이 생기므로 **설정 버전** 목록에서 이전 상태로 되돌릴 수 있습니다.
+
+![시스템 설정 — Keycloak OIDC 간편 연결 카드와 설정 검증·연결 테스트 단추](images/guide/admin-settings.png)
+
+기본값이 있는 설정 키는 다음과 같습니다(`internal/settings/repository.go`). 비밀 설정으로
+표시된 것은 저장한 뒤 화면에 다시 나오지 않습니다.
+
+| 키 | 기본값 | 설명 |
+| --- | --- | --- |
+| `branding.product_name` | `kanpic` | 화면에 표시할 제품명 |
+| `localization.locale` | `ko-KR` | 기본 로케일 |
+| `localization.timezone` | `Asia/Seoul` | 기본 시간대 |
+| `editor.autosave_batch_ms` | `250` | 자동 저장 배치 간격(ms) |
+| `editor.max_cells_per_operation` | `1000` | 쓰기 요청당 최대 셀 수 |
+| `auth.oidc.enabled` | `false` | Keycloak OIDC 로그인 사용 |
+| `auth.oidc.issuer_url` | 빈 값 | Keycloak Realm Issuer URL |
+| `auth.oidc.client_id` | `kanpic` | Keycloak Client ID |
+| `auth.oidc.client_secret` | 빈 값 | Confidential Client Secret (비밀 설정) |
+| `auth.oidc.ca_pem` | 빈 값 | 사내 CA 인증서 PEM (비밀 설정) |
+| `auth.oidc.scopes` | `openid, profile, email` | OIDC Scope |
+| `auth.oidc.admin_roles` | `kanpic-admin` | 관리자 권한으로 인정할 Keycloak Role |
+| `auth.session_hours` | `8` | 로그인 세션 유지 시간 |
+| `server.public_url` | 빈 값 | 프록시 외부 공개 URL. 비우면 요청 Host 사용 |
+| `files.max_import_mb` | `20` | Import 파일 최대 크기(MB) |
+| `files.max_image_mb` | `5` | 시트에 넣는 이미지 한 장의 최대 크기(MB) |
+| `ai.enabled` | `false` | AI 기능 사용 |
+| `ai.gateway_url` | 빈 값 | 사내 OpenAI 호환 LLM Gateway |
+| `ai.model` | `kanpic-default` | AI 작업에 사용할 모델 |
+| `ai.api_key` | 빈 값 | LLM Gateway API Key (비밀 설정) |
+| `ai.ca_pem` | 빈 값 | 사내 LLM Gateway CA 인증서 PEM (비밀 설정) |
+| `ai.timeout_seconds` | `30` | AI Gateway 요청 제한 시간(초) |
+| `ai.max_input_cells` | `200` | AI 에 전달할 선택 범위 최대 셀 수 |
+| `ai.max_changes` | `100` | AI 계획 한 건의 최대 변경 셀 수 |
+| `ai.max_output_tokens` | `0` | 응답 최대 토큰. `0`이면 컨텍스트 길이에서 자동 계산 |
+| `ai.history_retention_days` | `0` | AI 호출 이력 보존 기간(일). `0`이면 계속 보관 |
+| `presentation.enabled` | `false` | 선택 범위로 프레젠테이션 만들기 사용 |
+| `presentation.provider` | `ptium` | 프레젠테이션 서비스 종류 |
+| `presentation.base_url` | 빈 값 | 프레젠테이션 서비스 주소 |
+| `presentation.api_key` | 빈 값 | 프레젠테이션 서비스 API Key (비밀 설정) |
+| `presentation.timeout_seconds` | `60` | 프레젠테이션 서비스 요청 제한 시간(초) |
+| `presentation.default_template_id` | 빈 값 | 기본 템플릿 ID. 비우면 서비스 기본 디자인 |
+| `presentation.max_cells` | `5000` | 한 프레젠테이션이 읽을 최대 셀 수 |
+| `mail.enabled` | `false` | 이벤트 알림 메일 발송 사용 |
+| `mail.smtp_host` | 빈 값 | 사내 SMTP 서버 주소 |
+| `mail.smtp_port` | `25` | 사내 릴레이 25, STARTTLS 587, TLS 465 |
+| `mail.security` | `auto` | `auto`, `none`, `starttls`, `tls` |
+| `mail.username` | 빈 값 | 비우면 인증 없이 발송 |
+| `mail.password` | 빈 값 | SMTP 비밀번호 (비밀 설정) |
+| `mail.from_address` | 빈 값 | 보내는 주소. 비우면 `kanpic@SMTP호스트` |
+| `mail.from_name` | `kanpic` | 보내는 사람 이름 |
+| `mail.base_url` | 빈 값 | 메일 본문 링크에 쓰는 kanpic 주소 |
+| `mail.skip_tls_verify` | `false` | 사설 인증서 SMTP 의 인증서 검증 생략 |
+| `mail.timeout_seconds` | `10` | SMTP 연결 제한 시간(초) |
+| `mail.notify_share` · `notify_comment` · `notify_watch` · `notify_mention` · `notify_access_request` | 모두 `true` | 이벤트별 발송 여부 |
+| `analytics.enabled` | `false` | 방문자 추적 코드 삽입 사용 |
+| `analytics.provider` | `none` | `none`, `ga4`, `gtm`, `matomo`, `custom` |
+| `analytics.measurement_id` | 빈 값 | GA4 측정 ID(G-) 또는 GTM 컨테이너 ID(GTM-) |
+| `analytics.matomo_url` · `analytics.matomo_site_id` | 빈 값 | Matomo 서버 주소와 사이트 ID |
+| `analytics.custom_snippet` | 빈 값 | 직접 입력하는 추적 코드(HTML) |
+| `analytics.allowed_hosts` | 빈 값 | 추적 코드가 접속할 추가 도메인. 쉼표로 구분 |
+| `analytics.include_admin` | `false` | 관리자·개인 설정 화면에도 삽입 |
+| `analytics.placement` | `head` | 삽입 위치: `head` 또는 `body` |
+| `automation.enabled` | `false` | 워크북 자동화 실행 사용 |
+| `automation.max_cells_per_run` | `1000` | 자동화 실행 한 건의 최대 변경 셀 수 |
+| `automation.max_runs_per_hour` | `100` | 워크북별 시간당 자동화 실행 한도 |
+| `automation.scheduler_poll_seconds` | `15` | 스케줄 자동화 확인 주기(초) |
+| `external.enabled` | `false` | 수식의 외부 호출(WEBSERVICE, IMPORTDATA) 사용 |
+| `external.allowed_hosts` | 빈 목록 | 외부 호출을 허용할 호스트. 비어 있으면 아무 데도 부르지 않음 |
+| `external.timeout_seconds` | `10` | 외부 호출 한 건의 제한 시간(초) |
+| `external.max_kb` | `1024` | 외부 호출 응답의 최대 크기(KB) |
+| `external.cache_seconds` | `300` | 같은 주소의 응답을 다시 쓰는 시간(초) |
+| `sharing.max_link_access` | `anyone` | 허용할 최대 링크 액세스 범위 |
+| `sharing.default_link_access` | `restricted` | 새 워크북의 기본 링크 액세스 |
+| `mcp.enabled` | `true` | MCP Gateway 사용 |
+| `observability.log_retention_days` | `30` | 서버 로그 보존 일수 |
 
 ---
 
@@ -375,6 +550,48 @@ docker exec -t kanpic-postgres pg_dump -U kanpic_user -d kanpic_db -F c -b -v -f
 docker exec -i kanpic-postgres pg_restore -U kanpic_user -d kanpic_db -v /backups/kanpic_dump_20260731.bak
 ```
 
+백업 대상은 PostgreSQL 하나입니다. 워크북·설정·설정 버전·API 키 해시·세션·서버 로그가
+모두 그 안에 있고, 애플리케이션 컨테이너에는 보관할 상태가 없습니다.
+
+### 7.2-1 상태 점검
+
+| 확인할 것 | 방법 | 정상 |
+| --- | --- | --- |
+| 컨테이너가 살아 있는가 | `GET /healthz` | `200` |
+| 어떤 빌드가 떠 있는가 | `GET /api/v1/version` | `{"product":"kanpic","version":"v0.242.0",…}` |
+| 저장소가 붙어 있는가 | `/admin` → **시스템 상태** | kanpic API `ok`, PostgreSQL `연결됨` |
+
+![시스템 상태 — kanpic API 버전과 PostgreSQL 연결 상태. Redis 는 초기 버전에서 쓰지 않는다](images/guide/admin-system.png)
+
+`/healthz` 와 `/api/v1/version` 은 로그인 없이 열려 있으므로 그대로 컨테이너 health check 와
+로드밸런서 점검에 씁니다. 나머지 경로는 인증을 요구합니다.
+
+### 7.2-2 업그레이드와 되돌리기
+
+```bash
+# 1. 새 버전 이미지를 올린다
+NEW=v0.243.0
+sha256sum -c "kanpic-${NEW}.tar.gz.sha256"
+gzip -dc "kanpic-${NEW}.tar.gz" | docker load
+
+# 2. 올리기 직전 상태를 받아 둔다 (스키마 변경은 되돌아가지 않는다)
+docker compose exec -T postgres pg_dump -U kanpic -d kanpic -F c > kanpic-before-${NEW}.dump
+
+# 3. compose 의 image 태그를 새 버전으로 바꾸고 애플리케이션만 다시 띄운다
+docker compose up -d api
+
+# 4. 확인
+curl -fsS http://localhost:8080/healthz && curl -fsS http://localhost:8080/api/v1/version
+```
+
+- 마이그레이션은 서버가 시작할 때 스스로 적용합니다. 적용 중 실패하면 서버가 뜨지 않으므로
+  로그에서 실패한 파일 이름을 먼저 봅니다.
+- **되돌리기**: 애플리케이션만 문제라면 compose 의 `image` 태그를 이전 버전으로 되돌려
+  `docker compose up -d api` 하면 됩니다. 새 버전이 스키마를 바꿨다면 이전 버전이 그 스키마를
+  모르므로, 2단계에서 받아 둔 덤프로 데이터베이스까지 함께 되돌립니다.
+- 설정만 잘못 바꾼 경우에는 배포를 건드릴 필요가 없습니다 — **시스템 설정** 의 설정 버전에서
+  이전 revision 을 복원합니다.
+
 ---
 
 ### 공개 링크 일괄 해제
@@ -417,6 +634,8 @@ admin.action user.status
 
 ## 7.4 서버 로그 내보내기 (감사 대응)
 
+![서버 로그 — 최근 로그와 오류 수, 레벨·검색어·기간 거르개, 줄마다 시각·레벨·메시지·속성·Trace ID](images/guide/admin-logs.png)
+
 `/admin` → **서버 로그** 에서 레벨·검색어와 함께 **기간** 으로 거를 수 있습니다. 시작·끝 날짜만 적으면 그 날이 통째로 들어갑니다 — 끝 날짜의 기록이 빠지면 아무도 알아채지 못하기 때문입니다.
 
 **CSV 내보내기** 는 화면에 건 조건 **그대로** 내려받습니다. 화면과 내보내기가 같은 물음을 쓰므로, 감사에 넘긴 파일과 화면에서 본 것이 어긋나지 않습니다.
@@ -433,10 +652,65 @@ curl -H "X-Kanpic-Actor: admin" \
   -o kanpic-logs-1월.csv
 ```
 
-## 8. 보안 및 컴플라이언스 (Security Checklists)
+## 8. 장애 대응 (증상 → 확인할 곳 → 조치)
+
+로그는 JSON 한 줄에 하나씩 표준 출력과 PostgreSQL 양쪽에 남습니다. 컨테이너에서는
+`docker compose logs -f api`, 화면에서는 `/admin` → **서버 로그** 로 같은 것을 봅니다.
+
+| 증상 | 확인할 곳 | 로그에 찍히는 문구 | 조치 |
+| --- | --- | --- | --- |
+| 컨테이너가 곧바로 죽는다 | `docker compose logs api` | `POSTGRES_DSN is required` | 환경 변수 `POSTGRES_DSN` 을 넣습니다(2.3). |
+| 컨테이너가 곧바로 죽는다 | 같은 곳 | `BOOTSTRAP_ADMIN_ID and BOOTSTRAP_ADMIN_PASSWORD must be configured together` | 둘 다 넣거나 둘 다 뺍니다. |
+| 컨테이너가 뜨지 않고 DB 오류 | 같은 곳 | `database startup failed` | DSN 의 호스트·사용자·비밀번호·`sslmode`, 네트워크와 PostgreSQL 상태를 확인합니다. 시작 시 30초 제한이 있습니다. |
+| 업그레이드 뒤 서버가 뜨지 않는다 | 같은 곳 | `apply migration <파일> …` | 실패한 마이그레이션 파일 이름을 확인하고, 되돌려야 하면 7.2-2 의 덤프로 복구합니다. |
+| 떴는데 화면이 비어 있다 | `GET /healthz`, `GET /api/v1/version` | `kanpic API started` | 서버는 정상입니다. 리버스 프록시가 `/`·`/api`·`/ws` 를 모두 넘기는지, `server.public_url` 이 맞는지 봅니다. |
+| 사용자가 `403` 만 받는다 | `/admin` → 사용자 및 역할 | 응답 `account_suspended` (`정지된 계정입니다. 관리자에게 문의하세요.`) | 계정 정지를 풀거나, 정지된 소유자의 API 키를 쓰는 연동이 아닌지 확인합니다. |
+| SSO 로그인이 되지 않는다 | `/admin` → 시스템 설정 → **연결 테스트** | 검증 결과에 `OIDC를 사용할 때 필수입니다.` | Issuer URL·Client ID 를 채우고, 사설 CA 면 `auth.oidc.ca_pem` 을 넣습니다. |
+| AI 패널이 비활성이라고 나온다 | `/admin` → 시스템 설정 → 사내 AI Gateway | 검증 결과에 `AI를 사용할 때 필수입니다.` | `ai.gateway_url` 과 `ai.model` 을 채우고 연결 테스트 뒤 `ai.enabled` 를 켭니다. |
+| 알림 메일이 오지 않는다 | `/admin` → 알림 메일 → **연결 확인** · **테스트 메일 보내기** | 화면에 릴레이 응답이 그대로 | 방화벽·포트(25/587/465)·인증 방식을 확인합니다. 사설 인증서면 `mail.skip_tls_verify` 를 검토합니다. |
+| 자동화가 돌지 않는다 | `/admin` → 서버 로그(검색어 `automation`) | `automation scheduler tick failed` · `scheduled automation failed` · `automation run failed` | `automation.enabled`, 시간당 한도(`automation.max_runs_per_hour`), 실행 한 건의 셀 한도를 확인합니다. |
+| `IMPORTDATA`·`WEBSERVICE` 가 `#VALUE!` 만 돌려준다 | `/admin` → 시스템 설정 → external | — | `external.enabled` 와 `external.allowed_hosts` 를 확인합니다. 허용 목록이 비어 있으면 아무 데도 부르지 않습니다. 원격 장애는 최대 30초, 그 밖의 응답은 `external.cache_seconds` 동안 캐시됩니다. |
+| 로그가 너무 짧게만 남는다 | `/admin` → 시스템 설정 | — | `observability.log_retention_days`(기본 30)를 늘립니다. 감사에 넘길 것은 CSV 로 미리 내보내 둡니다(7.4). |
+
+`trace_id` 는 요청 하나를 끝까지 따라갑니다. 사용자가 겪은 오류를 재현할 수 없을 때는
+그 시각·계정으로 로그를 걸러 `trace_id` 를 찾은 뒤, 그 값으로 다시 걸러 한 요청의 전 구간을 봅니다.
+
+---
+
+## 9. 보안 및 컴플라이언스 (Security Checklists)
 
 > [!IMPORTANT]
 > **운영 서버 보안 체크리스트**  
 > 1. 기본 관리자 계정의 초기 비밀번호 변경 필수  
 > 2. 관리자 설정의 OIDC Client Secret은 화면에 재노출하지 말고 설정 변경·복원 권한을 관리자에게만 부여
 > 3. PostgreSQL TLS 1.3 통신 적용 및 8080 포트 리버스 프록시(Nginx/HAProxy) SSL 오프로딩 적용
+
+**기본값 중 배포 전에 바꿔야 하는 것**
+
+| 설정 | 기본값 | 왜 바꾸는가 |
+| --- | --- | --- |
+| `BOOTSTRAP_ADMIN_ID` · `BOOTSTRAP_ADMIN_PASSWORD` | 없음 | 둘 다 비우면 로그인 없이 최초 설정을 할 수 있는 개방형 모드가 됩니다. 운영에서는 반드시 지정하고, 비밀번호는 배포 도구의 비밀 저장소로 주입합니다. |
+| `sharing.max_link_access` | `anyone` | 링크를 아는 사람이면 열 수 있는 범위까지 허용됩니다. 조직 정책에 맞춰 `organization` 이나 `restricted` 로 낮춥니다. |
+| `sharing.default_link_access` | `restricted` | 그대로 두는 편이 안전합니다. 올리면 새로 만드는 워크북이 전부 열린 채로 시작합니다. |
+| `POSTGRES_DSN` 의 `sslmode` | 예시는 `disable` | 같은 호스트가 아니면 `require` 이상으로 올립니다. |
+| `mail.skip_tls_verify` | `false` | 켜면 SMTP 인증서를 검증하지 않습니다. 사설 인증서를 쓰는 동안만 켭니다. |
+| `external.enabled` · `external.allowed_hosts` | `false` · 빈 목록 | 수식이 바깥을 부르게 하려면 부를 곳을 목록으로 못 박습니다. 켜고 목록을 비워 두면 아무 데도 부르지 않습니다. |
+| `observability.log_retention_days` | `30` | 감사 요구 기간에 맞춥니다. |
+
+**외부에 열면 안 되는 것**
+
+- PostgreSQL(5432)은 애플리케이션 컨테이너에서만 닿게 둡니다. compose 예시의 포트 노출은
+  로컬 개발용이며, 운영에서는 지웁니다.
+- 애플리케이션의 8080 은 리버스 프록시 뒤에만 둡니다. 밖에는 프록시의 443 만 엽니다.
+- 프록시 뒤에 둘 때는 `server.public_url` 을 실제 외부 주소로 맞춥니다. 비어 있으면 요청
+  Host 를 그대로 쓰므로, OIDC redirect 와 메일 본문 링크가 내부 주소로 나갈 수 있습니다.
+- `/mcp` 는 API 키의 `mcp.use` scope 를 요구합니다. 쓰지 않는 배포에서는 `mcp.enabled` 를 끕니다.
+
+**인증 연동**
+
+- 운영 배포의 정식 로그인은 Keycloak OIDC(Authorization Code + PKCE)입니다. bootstrap 관리자
+  로그인은 최초 설정과 비상 접근용으로만 남기고, 아이디·비밀번호는 배포 도구에서 관리합니다.
+- 관리자 권한은 `auth.oidc.admin_roles` 에 적은 Keycloak Role 또는 kanpic 역할로 판정합니다.
+  사람이 조직을 떠나면 Keycloak 에서 역할을 회수하는 것으로 kanpic 관리자 권한도 사라집니다.
+- API 키 원문은 데이터베이스에 없습니다(SHA-256 해시만). 새어 나간 키는 **API 키 현황** 에서
+  폐기하고, 사람이 떠날 때는 계정 정지로 그 사람의 키까지 함께 막습니다.
