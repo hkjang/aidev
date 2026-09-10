@@ -1,0 +1,150 @@
+{
+  "run_id": "2026-09-11-001109-Vendra-improve",
+  "generated": "2026-09-11T00:35:44+09:00",
+  "run": {
+    "run_id": "2026-09-11-001109-Vendra-improve",
+    "project": "Vendra",
+    "kind": "improve",
+    "started": "2026-09-11T00:11:09+09:00",
+    "model": "claude-opus-5",
+    "policy_version": "5935779a",
+    "prompts_hash": "82f2440d4b2fef65",
+    "runner_version": "37d0504d",
+    "finished": "2026-09-11T00:35:44+09:00",
+    "outcome": "verify-failed"
+  },
+  "record": {
+    "ts": "2026-09-11T00:35:44+09:00",
+    "date": "2026-09-11",
+    "project": "Vendra",
+    "result": "verify failed: secrets in diff",
+    "outcome": "verify-failed",
+    "run_id": "2026-09-11-001109-Vendra-improve",
+    "base_sha": "8f149e1814f11c26992ab78fe46ba7e5f465b38f",
+    "head_sha": "80c085f9f80cb0ca80da67e64717b39e845df39b",
+    "pr": "",
+    "stages": {
+      "base": {
+        "state": "pinned",
+        "reason": "main@8f149e1",
+        "at": "2026-09-11T00:11:13+09:00"
+      },
+      "autonomy": {
+        "state": "release",
+        "reason": "",
+        "at": "2026-09-11T00:11:13+09:00"
+      },
+      "verify": {
+        "state": "failed",
+        "reason": "변경에 비밀정보 의심 문자열",
+        "at": "2026-09-11T00:35:44+09:00"
+      }
+    },
+    "campaign": "guides-2026-09",
+    "autonomy": "release",
+    "files": 39,
+    "additions": 1475,
+    "deletions": 221,
+    "tests": 0,
+    "title": "docs: 사용자·관리자 가이드를 실제로 찍은 화면과 함께 완성본으로"
+  },
+  "stages": {
+    "base": {
+      "state": "pinned",
+      "reason": "main@8f149e1",
+      "at": "2026-09-11T00:11:13+09:00"
+    },
+    "autonomy": {
+      "state": "release",
+      "reason": "",
+      "at": "2026-09-11T00:11:13+09:00"
+    },
+    "verify": {
+      "state": "failed",
+      "reason": "변경에 비밀정보 의심 문자열",
+      "at": "2026-09-11T00:35:44+09:00"
+    }
+  },
+  "provenance": {
+    "model": "claude-opus-5",
+    "policy_version": "5935779a",
+    "prompts_hash": "82f2440d4b2fef65",
+    "runner_version": "37d0504d",
+    "base_sha": "8f149e1814f11c26992ab78fe46ba7e5f465b38f",
+    "head_sha": "80c085f9f80cb0ca80da67e64717b39e845df39b",
+    "pr": ""
+  },
+  "verification": {
+    "runner": {
+      "source": "auto",
+      "commands": [
+        {
+          "cmd": "go build ./...",
+          "exit": 0,
+          "seconds": 0
+        },
+        {
+          "cmd": "go vet ./...",
+          "exit": 0,
+          "seconds": 0
+        },
+        {
+          "cmd": "go test ./...",
+          "exit": 0,
+          "seconds": 2
+        },
+        {
+          "cmd": "cd web && [ -d node_modules ] || npm ci --no-audit --no-fund",
+          "exit": 0,
+          "seconds": 0
+        },
+        {
+          "cmd": "cd web && npm test --silent",
+          "exit": 0,
+          "seconds": 3
+        },
+        {
+          "cmd": "cd web && [ -d node_modules ] || npm ci --no-audit --no-fund",
+          "exit": 0,
+          "seconds": 0
+        },
+        {
+          "cmd": "cd web && npm run build --silent",
+          "exit": 0,
+          "seconds": 4
+        }
+      ]
+    },
+    "runner_gate": {
+      "ok": true,
+      "state": "verified",
+      "reason": "검증 7개 통과 (auto)"
+    },
+    "after_rebase": null,
+    "review": null,
+    "ci_gate": null
+  },
+  "release": {
+    "result": null,
+    "assets_sha256": []
+  },
+  "approval": null,
+  "usage": [
+    {
+      "ts": "2026-09-11T00:35:28+09:00",
+      "date": "2026-09-11",
+      "project": "Vendra",
+      "phase": "improve",
+      "run_id": "2026-09-11-001109-Vendra-improve",
+      "campaign": "guides-2026-09",
+      "subtype": "error_max_budget_usd",
+      "duration_ms": 9,
+      "num_turns": 1,
+      "cost_usd": 16.0820225,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read": 0,
+      "cache_create": 0
+    }
+  ]
+}
