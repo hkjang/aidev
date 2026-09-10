@@ -134,15 +134,36 @@ stage_ko(){ # $1=단계 $2=상태
   esac
 }
 
+# 알림에 붙일 "무엇을 했는가". 단계 이름만으로는 무엇이 머지됐는지 알 수 없다.
+# 러너가 이미 들고 있는 것을 쓴다 — 커밋 제목, 이번 회차가 고르기로 한 항목, PR 주소.
+stage_context(){ # $1=단계
+  local title choice
+  title=$(jq -r '.title // empty' <<<"${RUN_META:-{}}" 2>/dev/null || true)
+  [ -n "$title" ] && printf '「%s」\n' "$title"
+  case "$1" in
+    pr|verify)
+      choice=$(grep -m1 '^- 선택:' "${OUT:-/nonexistent}/ledger-entry.md" 2>/dev/null | sed 's/^- 선택: *//')
+      [ -n "$choice" ] && printf '고친 것: %s\n' "$choice"
+      ;;
+  esac
+  case "$1" in
+    pr|review|ci|merge|guard) [ -n "${url:-}" ] && printf '%s\n' "$url";;
+  esac
+  return 0
+}
+
 stage(){ # $1=단계 $2=상태 $3=사유 — $OUT/stages.json 에 누적
   local f="$OUT/stages.json"; [ -f "$f" ] || echo '{}' > "$f"
   jq --arg k "$1" --arg s "$2" --arg r "$3" --arg t "$(date -Iseconds)" '.[$k]={state:$s,reason:$r,at:$t}' "$f" > "$f.tmp" && mv "$f.tmp" "$f"
   log "$n: [$1] $2 — $3"
   # 단계마다 알린다. tg.sh 는 설정이 없으면 조용히 넘어가고 실패해도 회차를 붙잡지 않는다.
   # 40자리 커밋 해시는 앞 7자만 남긴다 — 알림에서 전체 해시는 읽을 것이 아니라 벽이다.
-  local detail; detail=$(printf '%s' "${3:-}" | sed -E 's/\b([0-9a-f]{7})[0-9a-f]{25,}\b/\1/g')
+  local detail ctx
+  detail=$(printf '%s' "${3:-}" | sed -E 's/\b([0-9a-f]{7})[0-9a-f]{25,}\b/\1/g')
+  ctx=$(stage_context "$1")
   "$HERE/tg.sh" "$(stage_mark "$2") $n — $(stage_ko "$1" "$2")${detail:+
-$detail}" >/dev/null 2>&1 &
+$detail}${ctx:+
+$ctx}" >/dev/null 2>&1 &
 }
 
 # ---------------------------------------------------------------- 격리된 에이전트 실행
@@ -499,8 +520,13 @@ record_run(){ # $1=프로젝트 $2=결과 문장 $3=outcome
     no-change)     mark="➖"; outcome_ko="고칠 것을 찾지 못해 그대로 뒀습니다";;
     *)             mark="•";  outcome_ko="$3";;
   esac
-  local rdetail; rdetail=$(printf '%s' "$2" | sed -E 's/\b([0-9a-f]{7})[0-9a-f]{25,}\b/\1/g')
-  "$HERE/tg.sh" "$mark $1 회차 끝 — $outcome_ko
+  local rdetail rtitle rsize
+  rdetail=$(printf '%s' "$2" | sed -E 's/\b([0-9a-f]{7})[0-9a-f]{25,}\b/\1/g')
+  rtitle=$(jq -r '.title // empty' <<<"${RUN_META:-{}}" 2>/dev/null || true)
+  rsize=$(jq -r 'if .files then "파일 \(.files)개 · +\(.additions)/-\(.deletions)" else empty end' <<<"${RUN_META:-{}}" 2>/dev/null || true)
+  "$HERE/tg.sh" "$mark $1 회차 끝 — $outcome_ko${rtitle:+
+「$rtitle」}${rsize:+
+$rsize}
 $rdetail${CAMPAIGN_ID:+
 캠페인: $CAMPAIGN_ID}" >/dev/null 2>&1 &
   RUN_META="{}"
