@@ -27,15 +27,19 @@ IMAGE = re.compile(r"!\[[^\]]*\]\(([^)\s]+)")
 def copy_one(project: Path, target: Path) -> dict:
     """한 저장소의 가이드와 그 가이드가 싣는 그림을 사본으로 옮긴다."""
     found = {}
+    # NTFS 위의 WSL 은 대소문자를 가리지 않는다. exists() 는 user_guide.md 를
+    # USER_GUIDE.md 로 있다고 답하므로, 실제 이름이 그대로인 것만 받는다 —
+    # 아니면 sqlon 처럼 소문자로 쓰는 저장소의 문서를 남의 이름으로 복사한다.
+    listed = {entry.name for entry in (project / "docs").iterdir()} if (project / "docs").is_dir() else set()
     for stem, label in DOCS:
         source = project / "docs" / f"{stem}.md"
-        if not source.exists():
+        if f"{stem}.md" not in listed or not source.exists():
             continue
         target.mkdir(parents=True, exist_ok=True)
         shutil.copy2(source, target / f"{stem}.md")
         entry = {"label": label, "md": f"{stem}.md", "pdf": None, "images": 0, "missing": []}
         pdf = source.with_suffix(".pdf")
-        if pdf.exists():
+        if f"{stem}.pdf" in listed and pdf.exists():
             shutil.copy2(pdf, target / f"{stem}.pdf")
             entry["pdf"] = f"{stem}.pdf"
         # 그림은 문서가 가리키는 것만 옮긴다 — docs/ 전체를 복사하면 가이드와
