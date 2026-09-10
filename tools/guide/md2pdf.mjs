@@ -48,7 +48,30 @@ renderer.image = (token) => {
   return `<figure><img src="${uri}" alt="${alt}">${caption}</figure>`;
 };
 
+// ```mermaid 는 코드가 아니라 그림이다. 그대로 두면 가이드 PDF 에 다이어그램 대신
+// 스크립트가 실린다 — 읽는 사람에게는 아무 의미가 없는 줄들이다.
+let hasMermaid = false;
+renderer.code = ({ text, lang }) => {
+  if ((lang ?? '').trim().toLowerCase() === 'mermaid') {
+    hasMermaid = true;
+    return `<pre class="mermaid">${text.replace(/[&<>]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' }[c]))}</pre>`;
+  }
+  const escaped = text.replace(/[&<>]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' }[c]));
+  return `<pre><code>${escaped}</code></pre>`;
+};
+
 const body = marked.parse(source, { renderer, gfm: true, breaks: false });
+
+// 번들을 통째로 심는다. 문서를 굽는 자리에 네트워크가 있으리라고 기대하지 않는다.
+const mermaidBundle = (() => {
+  if (!hasMermaid) return '';
+  const file = new URL('./node_modules/mermaid/dist/mermaid.min.js', import.meta.url);
+  try { return readFileSync(file, 'utf8'); } catch {
+    console.error('mermaid 다이어그램이 있는데 mermaid 가 설치돼 있지 않습니다.');
+    console.error(`  cd ${dirname(fileURLToPath(import.meta.url))} && npm install --no-audit --no-fund`);
+    process.exit(1);
+  }
+})();
 if (missing.length) {
   console.error(`그림을 찾지 못했습니다 (${missing.length}건): ${missing.join(', ')}`);
   console.error('가이드는 실제로 찍은 화면만 싣습니다. 캡처를 먼저 만들고 다시 실행하세요.');
@@ -93,6 +116,8 @@ th { background: var(--code-bg); font-weight: 700; }
 blockquote { margin: 10pt 0; padding: 7pt 12pt; border-left: 3px solid var(--accent);
              background: #f4f8fd; color: var(--ink); page-break-inside: avoid; }
 blockquote p { margin: 0; }
+pre.mermaid { background: none; border: none; padding: 0; text-align: center; page-break-inside: avoid; margin: 14pt 0; }
+pre.mermaid svg { max-width: 100%; height: auto; }
 figure { margin: 14pt 0; page-break-inside: avoid; text-align: center; }
 figure img { max-width: 100%; border: 1px solid var(--line); border-radius: 5px; }
 figcaption { color: var(--muted); font-size: 9pt; margin-top: 5pt; }
@@ -110,6 +135,16 @@ a { color: var(--accent); text-decoration: none; word-break: break-all; }
   </dl>
 </section>
 ${body}
+${mermaidBundle ? `<script>${mermaidBundle}</script>
+<script>
+  const ns = typeof __esbuild_esm_mermaid_nm !== 'undefined' ? __esbuild_esm_mermaid_nm.mermaid : null;
+  const mermaid = ns && (ns.default || ns);
+  if (mermaid) {
+    mermaid.initialize({ startOnLoad: false, theme: 'neutral', securityLevel: 'strict',
+                         fontFamily: '"NanumBarunGothic","Noto Sans CJK KR",sans-serif' });
+    mermaid.run({ querySelector: 'pre.mermaid' });
+  }
+</script>` : ''}
 </body></html>`;
 
 const work = join(tmpdir(), `guide-${process.pid}`);
@@ -123,9 +158,13 @@ const chrome = ['google-chrome', 'chromium', 'chromium-browser', 'google-chrome-
 });
 if (!chrome) { console.error('Chrome/Chromium 을 찾지 못했습니다.'); process.exit(1); }
 try {
-  execFileSync(chrome, ['--headless=new', '--no-sandbox', '--disable-gpu',
-    `--print-to-pdf=${output}`, '--no-pdf-header-footer', `file://${page}`],
-    { stdio: ['ignore', 'ignore', 'pipe'], timeout: 180000 });
+  // mermaid 는 그려질 시간이 필요하다. virtual-time-budget 이 없으면 Chrome 이
+  // 스크립트가 끝나기 전에 인쇄해 다이어그램 자리가 빈 채로 나온다.
+  const args = ['--headless=new', '--no-sandbox', '--disable-gpu',
+    `--print-to-pdf=${output}`, '--no-pdf-header-footer'];
+  if (mermaidBundle) args.push('--virtual-time-budget=30000');
+  execFileSync(chrome, [...args, `file://${page}`],
+    { stdio: ['ignore', 'ignore', 'pipe'], timeout: 300000 });
 } catch (error) {
   if (!existsSync(output)) { console.error(`PDF 생성 실패: ${error.message}`); process.exit(1); }
 }
