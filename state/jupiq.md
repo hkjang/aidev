@@ -67,3 +67,10 @@
 - 보류 아이디어: 로그인 리미터 `succeeded`가 ip 키를 의도적으로 유지하는 동작에 대한 테스트·문서화 / `internal/store` 커버리지 중 DB 없이 테스트 가능한 순수 함수 경로 보강 / `auth/oidc.go`가 `RandomToken` 오류를 무시하고 state·nonce·verifier를 만드는 부분 정리 / `internal/api` 통합 테스트를 로컬에서 돌리는 방법 문서화와 `make test-integration` 타깃 / 쿼리로만 GPU로 분류되는 별칭 지표가 `feature_enabled` 없이 빈 목록을 받는 잔여 간극
 
 - 릴리즈: v1.4.12 (2026-09-10, run 2026-09-10-135106-jupiq-improve)
+## 2026-09-10
+- 선택: 연동 요청 경로의 이중 percent 인코딩 수정 (가치 4 / 위험 1 / 작업량 S)
+- 결과: 성공
+- 요약: `integration.joinURL`이 호출자가 이미 `url.PathEscape`로 세그먼트를 이스케이프해 넘긴 경로를 `URL.Path`(디코딩된 값을 담는 필드)에 그대로 넣어, `URL.String()`이 `%`를 한 번 더 이스케이프했다. 그 결과 JupyterHub 서버 시작·정지·재시작 요청이 `홍길동`을 `%25ED%2599%258D…`로, `john doe`를 `john%2520doe`로 보내 존재하지 않는 사용자 경로를 때렸고(한국어 사용자명·공백 포함 사용자명·이름 있는 서버가 모두 영향), Kubernetes namespace 경로에도 같은 잠재 결함이 있었다. 이스케이프된 경로를 `RawPath`에, 디코딩한 값을 `Path`에 넣어 호출자의 인코딩이 그대로 나가게 고치고, 경로 조립을 검증할 수 있도록 `ServerAction`의 경로 계산을 `serverEndpoint`로 분리했다. 단일 인코딩·기본 URL의 경로 접두사 보존과 쿼리 제거·이스케이프된 `%2F`가 `RequestURI`에서 구분자로 풀리지 않는지(경로 탈출 방지 유지)를 덮는 테스트 4개를 추가했고, 수정 전 코드로 되돌린 변형에서 3개가 실제로 실패하는 것을 확인했다. `gofmt -l`, `go vet ./...`, `go test -race ./...`, `scripts/check-version.sh`, `scripts/check-screenshots.mjs`, `npm run lint`, `npm test`(18파일 59개) 모두 통과했다.
+- 보류 아이디어: 로그인 리미터 `succeeded`가 ip 키를 의도적으로 유지하는 동작에 대한 테스트·문서화 / `internal/store` 커버리지 중 DB 없이 테스트 가능한 순수 함수 경로 보강 / `internal/api` 통합 테스트를 로컬에서 돌리는 방법 문서화와 `make test-integration` 타깃 / `auth/oidc.go`가 `RandomToken` 오류를 무시하고 state·nonce·verifier를 만드는 부분 정리 / 쿼리로만 GPU로 분류되는 별칭 지표가 `feature_enabled` 없이 빈 목록을 받는 잔여 간극 / `queryInt`가 잘못된 `page`·`page_size`·`limit`을 조용히 기본값으로 바꾸는 부분을 400으로 돌려주기
+
+- 릴리즈: v1.4.13 (2026-09-10, run 2026-09-10-195118-jupiq-improve)
