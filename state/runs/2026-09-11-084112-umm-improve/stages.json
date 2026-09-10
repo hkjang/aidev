@@ -1,0 +1,27 @@
+{
+  "base": {
+    "state": "pinned",
+    "reason": "main@9524c38",
+    "at": "2026-09-11T08:41:17+09:00"
+  },
+  "autonomy": {
+    "state": "release",
+    "reason": "",
+    "at": "2026-09-11T08:41:17+09:00"
+  },
+  "verify": {
+    "state": "passed",
+    "reason": "검증 9개 통과 (auto)",
+    "at": "2026-09-11T08:56:11+09:00"
+  },
+  "pr": {
+    "state": "created",
+    "reason": "https://github.com/hkjang/umm/pull/151",
+    "at": "2026-09-11T08:56:19+09:00"
+  },
+  "review": {
+    "state": "rejected",
+    "reason": "리뷰 거절: docs/features.md:10-196 still embeds the 21 screenshots this commit deletes (01_login.png … 25_admin_audit.png); every image in that file is now broken. features.md is linked from README.md:198 and docs/README.md:19, and scripts/generate_pdf.js:252 builds it into umm_features_guide.pdf and umm_complete_manual.pdf — resolveImages (generate_pdf.js:241-246) silently leaves missing files as dead <img> tags, so the next PDF regeneration ships two guides with no pictures. / web/src/pages/AdminPage.tsx:1842 and web/src/i18n/en.ts:1171-1172 (the in-product AI Gateway embedding-quality hint) tell the admin 'candidate models are compared in docs/admin-guide.md' — that file is renamed to docs/ADMIN_GUIDE.md in this commit, so the running product now points at a path that does not exist. Same stale pointer in docs/ARCHITECTURE.md:203 and internal/intelligence/quality.go:203. The commit message claims 'README, the docs hub, the showcase page and compose.yaml point at the new files', which is true for those four but not for the product UI or ARCHITECTURE.md.",
+    "at": "2026-09-11T08:58:27+09:00"
+  }
+}
