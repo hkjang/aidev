@@ -753,9 +753,11 @@ round_body(){
   ibudget=$(policy "$n" '.budget_usd.improve'); [ -n "$BUDGET" ] && ibudget=$BUDGET; ibudget=${ibudget:-8}
   round_budget=$(awk -v a="$ibudget" -v b="$(policy "$n" '.budget_usd.review')" -v c="$(policy "$n" '.budget_usd.release')" 'BEGIN{print a+b+c}')
   log "=== $n (base=$base, run $RUN_ID, 회차 예산 \$$round_budget)"
-  budget_ok "$round_budget" || { stage improve hold "회차 예산(\$$round_budget)이 오늘 남은 상한을 넘음"; record_run "$n" "hold: budget" "error"; continue; }
+  # return 이지 continue 가 아니다: --parallel 은 이 함수를 서브셸로 돌려 감쌀 루프가 없다.
+  # continue 는 그 자리에서 실패하고 회차가 그대로 이어져, 상한에 걸린 회차가 계속 돈다.
+  budget_ok "$round_budget" || { stage improve hold "회차 예산(\$$round_budget)이 오늘 남은 상한을 넘음"; record_run "$n" "hold: budget" "error"; return 0; }
   # 기준 커밋 고정: 원격의 base 에서 시작하고 SHA 를 기록한다
-  git -C "$repo" fetch -q origin "$base" >>"$LOG" 2>&1 || { stage improve error "fetch 실패"; record_run "$n" "error: fetch" "error"; continue; }
+  git -C "$repo" fetch -q origin "$base" >>"$LOG" 2>&1 || { stage improve error "fetch 실패"; record_run "$n" "error: fetch" "error"; return 0; }
   BASE_SHA=$(git -C "$repo" rev-parse "origin/$base"); slug="auto/$RUN_DATE-$(date +%H%M)"
   git -C "$repo" worktree remove --force "$wt" 2>/dev/null || true
   git -C "$repo" worktree add -b "$slug" "$wt" "$BASE_SHA" >>"$LOG" 2>&1
