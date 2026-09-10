@@ -15,7 +15,7 @@
 
 | 구성 요소 | 형태 | 역할 | 비고 |
 | --- | --- | --- | --- |
-| `igame` | 컨테이너 1개 (`igame:v0.7.11`) | API·포털·게임 자산·MCP 엔드포인트를 모두 제공 | 최종 runtime은 `scratch` 기반. shell·패키지 매니저 없음 |
+| `igame` | 컨테이너 1개 (`igame:v0.7.12`) | API·포털·게임 자산·MCP 엔드포인트를 모두 제공 | 최종 runtime은 `scratch` 기반. shell·패키지 매니저 없음 |
 | PostgreSQL | 외부 서비스 | 사용자·설정·점수·감사 로그·게시 콘텐츠 전부 | 15 이상. 릴리스에 포함되지 않음 |
 | `igame-data` 볼륨 | Docker named volume | 컨테이너의 `/app/data` | 업로드 자산을 쓰는 배포에서만 내용이 생깁니다 |
 | Keycloak | 외부 서비스 (선택) | 사내 SSO(OIDC) | 없으면 로컬 아이디·비밀번호 로그인만 씁니다 |
@@ -56,10 +56,10 @@
 ### 2.2 이미지 로드
 
 ```bash
-sha256sum igame-v0.7.11.tar.gz
-gzip -t igame-v0.7.11.tar.gz
-gzip -dc igame-v0.7.11.tar.gz | docker load
-docker image inspect igame:v0.7.11 --format '{{json .RepoTags}}'
+sha256sum igame-v0.7.12.tar.gz
+gzip -t igame-v0.7.12.tar.gz
+gzip -dc igame-v0.7.12.tar.gz | docker load
+docker image inspect igame:v0.7.12 --format '{{json .RepoTags}}'
 ```
 
 ### 2.3 환경 파일
@@ -97,7 +97,7 @@ curl --fail --max-time 5 http://127.0.0.1:8080/readyz
 bash ./scripts/smoke-test.sh http://127.0.0.1:8080
 ```
 
-`/readyz`가 `{"service":"igame","status":"ok","version":"0.7.11"}`을 돌려주면 데이터베이스까지
+`/readyz`가 `{"service":"igame","status":"ok","version":"0.7.12"}`을 돌려주면 데이터베이스까지
 붙은 것입니다.
 
 ### 2.5 최초 관리자 계정
