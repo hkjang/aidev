@@ -142,6 +142,20 @@ budget_ok(){ # $1=이번 단계 예산
   awk -v s="$spent" -v b="${1:-0}" -v m="$MAX_DAILY_COST" 'BEGIN{exit !(s+b<=m)}'
 }
 
+# 이 프로젝트가 활성 캠페인의 대상인가. 맞으면 그 캠페인의 예산 정보를 잡아 온다.
+campaign_claim(){ # $1=프로젝트
+  local cj="$STATE/campaigns.json" id budget until ibudget projs
+  [ -f "$cj" ] || return 1
+  while IFS=$'\t' read -r id budget until ibudget projs; do
+    [ -n "$id" ] && [ -n "$until" ] || continue
+    [[ "$until" < "$RUN_DATE" ]] && continue
+    printf '%s\n' $projs | grep -qx "$1" || continue
+    CAMPAIGN_ID=$id; CAMPAIGN_PROJECT=$1; CAMPAIGN_BUDGET=$budget; CAMPAIGN_IMPROVE_BUDGET=$ibudget
+    return 0
+  done < <(jq -r '.campaigns[]? | select(.done!=true) | "\(.id)\t\(.budget_usd)\t\(.until)\t\(.improve_budget_usd // "")\t\(.projects|join(" "))"' "$cj" 2>/dev/null)
+  return 1
+}
+
 # 아직 예산이 남은 활성 캠페인이 있나 — 일일 상한에 걸린 날에도 캠페인은 잇는다.
 campaign_room(){
   local cj="$STATE/campaigns.json" id budget until spent
@@ -775,11 +789,18 @@ if [ -z "$FIX_PROJECT" ] && [ -z "$ONLY" ] && [ -s "$RUNQ" ]; then
 fi
 CAMPAIGN_ID=""; CAMPAIGN_NOTE=""; CAMPAIGN_PROJECT=""
 if [ "${CAMPAIGN_ONLY:-0}" -eq 1 ]; then
-  # 일일 상한을 채운 날. 캠페인 말고는 아무것도 시작하지 않는다.
-  FIX_PROJECT=""; RUN_PROJECT=""
-  pick_campaign
-  [ -n "$CAMPAIGN_PROJECT" ] || { log "상한 상태이고 캠페인 대상 중 후보가 없다 — 여기서 멈춘다"; exit 0; }
-  picked=("$CAMPAIGN_PROJECT"); log "campaign $CAMPAIGN_ID: picked $CAMPAIGN_PROJECT (상한 상태, 캠페인 예산 \$$CAMPAIGN_BUDGET)"
+  # 일일 상한을 채운 날. 캠페인 말고는 아무것도 시작하지 않는다. 다만 캠페인 대상의
+  # 수정 큐는 캠페인 일감이다 — 캠페인이 연 PR 이 거절돼 고쳐야 하는 경우가 그것이라,
+  # 이걸 버리면 상한이 걸린 동안 그 PR 은 영영 고쳐지지 않는다.
+  RUN_PROJECT=""
+  if [ -n "$FIX_PROJECT" ] && campaign_claim "$FIX_PROJECT"; then
+    picked=("$FIX_PROJECT"); log "fix-queue(캠페인 대상): $FIX_PROJECT — 상한 상태, 캠페인 예산 \$$CAMPAIGN_BUDGET"
+  else
+    FIX_PROJECT=""
+    pick_campaign
+    [ -n "$CAMPAIGN_PROJECT" ] || { log "상한 상태이고 캠페인 대상 중 후보가 없다 — 여기서 멈춘다"; exit 0; }
+    picked=("$CAMPAIGN_PROJECT"); log "campaign $CAMPAIGN_ID: picked $CAMPAIGN_PROJECT (상한 상태, 캠페인 예산 \$$CAMPAIGN_BUDGET)"
+  fi
 elif [ -z "$FIX_PROJECT" ] && [ -z "$RUN_PROJECT" ] && [ -z "$ONLY" ]; then
   pick_campaign; [ -n "$CAMPAIGN_PROJECT" ] && { picked=("$CAMPAIGN_PROJECT"); log "campaign $CAMPAIGN_ID: picked $CAMPAIGN_PROJECT"; }
 fi
