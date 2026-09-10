@@ -92,3 +92,9 @@
 - 보류 아이디어: `updatePost`가 DB 오류를 409 `not_editable`로 보고해 원인을 감춤(가치 2 / 위험 1 / S) · `safeFilename`이 확장자와 판정한 MIME의 불일치를 그대로 둬 JPEG이 `photo.png`로 저장·다운로드됨(가치 2 / 위험 2 / S) · Makefile `test`가 CI와 달리 `-race` 미사용(가치 2 / 위험 1 / S) · 업로드가 EXIF orientation을 무시해 회전된 JPEG의 저장 크기가 화면 표시와 뒤바뀜(가치 2 / 위험 2 / M)
 
 - 릴리즈: v0.1.27 (2026-09-10, run 2026-09-10-135116-moina-improve)
+## 2026-09-10
+- 선택: 업로드한 JPEG의 EXIF orientation을 반영해 표시 크기를 저장·응답 (가치 3 / 위험 2 / 작업량 M)
+- 결과: 성공
+- 요약: 세로로 든 휴대전화는 사진을 센서 방향 그대로(가로) 저장하고 EXIF orientation만 남기는 경우가 많은데 `imageDimensionsFrom`이 `image.DecodeConfig`의 저장 픽셀 크기를 그대로 media에 담아, orientation 5~8인 사진은 `width`·`height`가 브라우저가 실제로 그리는 크기와 반대였습니다(브라우저 기본값 `image-orientation: from-image`가 돌려 그립니다). 직전 회차에 웹 앱이 이 값을 `img` 속성으로 넘겨 로드 전 자리를 예약하기 시작해, 세로 사진은 가로 자리를 예약했다가 그림이 도착하는 순간 오히려 배치가 밀렸습니다 — 레이아웃 밀림을 막으려던 변경이 회전된 사진에서만 반대로 작동한 셈입니다. 새 의존성 없이 이미 sniff한 앞부분에서 JPEG marker를 훑어 APP1 Exif(`Exif\0\0`)를 찾고 TIFF 블록의 IFD0 tag 0x0112(SHORT 1개, II·MM 양쪽 byte order)를 읽어 5~8이면 `width`·`height`를 뒤바꿔 표시 크기를 보고합니다. IFD0은 TIFF 헤더 바로 뒤라 sniff 범위로 충분하고, JPEG이 아니거나 헤더가 잘렸거나 orientation이 1~8 밖이면 크기를 그대로 둬 멀쩡한 첨부가 뒤집히지 않게 했으며(WebP·PNG 경로는 그대로), `api/openapi.yaml`의 `width` 설명에 "화면에 그려지는 크기"라는 계약을 적었습니다. 검증은 새 테스트 2개(13케이스: orientation 1·3은 그대로, 5·6·7·8과 big-endian TIFF는 뒤바뀜, 비-JPEG·Exif 없음·길이 잘림·byte order 깨짐·범위 밖 orientation은 거절 — 수정 전 코드에서 실패하는 것 확인) 포함 `go test -race ./...` 전체 통과, `make fmt`·`make check`·`go vet`·staticcheck 통과(이 환경에 PostgreSQL이 없어 integration test는 skip 상태, frontend 무변경이라 ESLint·vitest 생략).
+- 보류 아이디어: `updatePost`가 DB 오류를 409 `not_editable`로 보고해 원인을 감춤(가치 2 / 위험 1 / S) · `safeFilename`이 확장자와 판정한 MIME의 불일치를 그대로 둬 JPEG이 `photo.png`로 저장·다운로드됨(가치 2 / 위험 2 / S) · Makefile `test`가 CI와 달리 `-race` 미사용(가치 2 / 위험 1 / S) · 업로드가 이미지 dimension만 읽어 MP4·WebM 동영상은 항상 `width=0,height=0`(가치 2 / 위험 2 / M)
+
