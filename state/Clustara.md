@@ -130,3 +130,9 @@
 - (원장 항목에 비밀/내부 정보 의심 문자열이 있어 비공개 기록으로 옮김 — run 2026-09-09-131238-Clustara-improve)
 
 - 릴리즈: v0.9.279 (2026-09-09, run 2026-09-09-131238-Clustara-improve)
+## 2026-09-10
+- 선택: Pod 레벨 `securityContext.runAsUser: 0` 이 root 로 판정되지 않던 결함 4종 (가치 4 / 위험 1 / 작업량 M)
+- 결과: 성공
+- 요약: `spec.securityContext.runAsUser: 0` 를 Pod 레벨에 적고 컨테이너는 아무것도 적지 않는 것이 워크로드를 root 로 돌리는 가장 흔한 형태인데(Pod 값은 덮어쓰지 않은 모든 컨테이너의 기본값), 세 보안 화면이 컨테이너 securityContext 만 읽어 그 워크로드를 root 아님으로 보고했다 — ① SEC-01 `classifyPodSecurity` 는 `runAsUser=0` 위반을 아예 만들지 않았고 ② Runtime Security Profile(CLU-OCP-03)의 `podSecurityInput` 은 Pod 레벨을 읽긴 하지만 **무조건** 적용해 컨테이너가 실제 UID 로 덮어쓴 Pod 까지 root 로 점수를 매겼으며(반대 방향 오탐), 동시에 `containers` 만 순회해 privileged init 컨테이너·그 추가 capability·**지금 붙어 있는 privileged 디버그(ephemeral) 컨테이너**가 위험 설정이 하나도 없는 것으로 채점됐다(같은 Pod 를 정책 엔진과 SEC-01 은 이미 위반으로 적고 있어 제품의 두 부분이 반대 판정) ③ Workspace 건강도의 `podHasRuntimeSecurityRisk` 는 Pod 레벨을 통째로 무시하고 역시 `containers` 만 봐서 같은 Pod 를 두고 런타임 보안 화면과 답이 달랐다. 판정을 한 곳으로 모았다 — `analyzer.EffectiveRunAsUser` 가 컨테이너 → Pod 우선순위를 양방향으로 적용하고(명시적 null 은 미설정), `PodRunsAsRoot` 가 세 호출자 모두에게 한 번만 답하며, 두 핸들러는 포스처·정책 엔진이 이미 쓰던 `analyzer.SecurityRelevantContainers`(regular+init+ephemeral)를 순회한다. 검증: 신규 테스트 8개를 고치기 전 코드에 되돌려 붙여 6개가 각 결함을 지목하며 실패함을 확인했고(나머지 2개는 컨테이너가 Pod 의 0 을 덮어쓴 경우와 Pod 의 non-root 를 컨테이너가 덮어쓴 경우를 지키는 오탐 회귀), `go build ./...`·`go vet ./...`·`go test ./...` 전부 통과(20 패키지). 이번 세션 규칙에 따라 버전·changelog·docs 마커는 건드리지 않았다.
+- 보류 아이디어: ① `.github` 에 CI 워크플로 없음 — build/vet/test 게이트 추가 (가치 3 / 위험 1 / S) ② PSS Restricted 검사에 seccompProfile 항목이 없어 `RuntimeDefault`/`Localhost` 미설정 Pod 가 Restricted 로 남음 (가치 3 / 위험 2 / S) ③ 취약점 import 가 파싱 못 한 아티팩트를 '취약점 0건 완료' 로 저장 — 400 거절 또는 `parse_failed` 상태 재검토 (가치 3 / 위험 3 / S) ④ `PodSecurityResult` 에 `cluster_id` 가 없어 다중 클러스터 포스처 표가 어느 클러스터인지 말하지 못함 (가치 2 / 위험 1 / S) ⑤ `capacity.podRequestGPU` 는 nvidia 만, `node_monitoring.podGPURequests` 는 amd·intel 도 세어 화면마다 GPU 요청량이 다름 (가치 2 / 위험 1 / S)
+

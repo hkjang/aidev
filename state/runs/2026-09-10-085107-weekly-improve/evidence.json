@@ -1,0 +1,150 @@
+{
+  "run_id": "2026-09-10-085107-weekly-improve",
+  "generated": "2026-09-10T08:59:56+09:00",
+  "run": {
+    "run_id": "2026-09-10-085107-weekly-improve",
+    "project": "weekly",
+    "kind": "improve",
+    "started": "2026-09-10T08:51:08+09:00",
+    "model": "claude-opus-5",
+    "policy_version": "5935779a",
+    "prompts_hash": "82f2440d4b2fef65",
+    "runner_version": "5b81a64b",
+    "finished": "2026-09-10T08:59:56+09:00",
+    "outcome": "verify-failed"
+  },
+  "record": {
+    "ts": "2026-09-10T08:59:56+09:00",
+    "date": "2026-09-10",
+    "project": "weekly",
+    "result": "verify failed: build artifacts committed",
+    "outcome": "verify-failed",
+    "run_id": "2026-09-10-085107-weekly-improve",
+    "base_sha": "149adb962c439cc4fef51eb575d0fd7d29b185dc",
+    "head_sha": "817df73883609e00bdb75fc3750f0ba23dc98b15",
+    "pr": "",
+    "stages": {
+      "base": {
+        "state": "pinned",
+        "reason": "main@149adb9",
+        "at": "2026-09-10T08:51:12+09:00"
+      },
+      "autonomy": {
+        "state": "release",
+        "reason": "",
+        "at": "2026-09-10T08:51:12+09:00"
+      },
+      "verify": {
+        "state": "failed",
+        "reason": "빌드 산출물이 커밋됨: docs/USER_GUIDE.pdf(1MB) ",
+        "at": "2026-09-10T08:59:55+09:00"
+      }
+    },
+    "campaign": "",
+    "autonomy": "release",
+    "files": 6,
+    "additions": 126,
+    "deletions": 27,
+    "tests": 1,
+    "title": "fix: 완료 숨기기가 담당자별 완료율을 0%로, 다 끝낸 기간을 '일정 없음'으로 그리지 않습니다"
+  },
+  "stages": {
+    "base": {
+      "state": "pinned",
+      "reason": "main@149adb9",
+      "at": "2026-09-10T08:51:12+09:00"
+    },
+    "autonomy": {
+      "state": "release",
+      "reason": "",
+      "at": "2026-09-10T08:51:12+09:00"
+    },
+    "verify": {
+      "state": "failed",
+      "reason": "빌드 산출물이 커밋됨: docs/USER_GUIDE.pdf(1MB) ",
+      "at": "2026-09-10T08:59:55+09:00"
+    }
+  },
+  "provenance": {
+    "model": "claude-opus-5",
+    "policy_version": "5935779a",
+    "prompts_hash": "82f2440d4b2fef65",
+    "runner_version": "5b81a64b",
+    "base_sha": "149adb962c439cc4fef51eb575d0fd7d29b185dc",
+    "head_sha": "817df73883609e00bdb75fc3750f0ba23dc98b15",
+    "pr": ""
+  },
+  "verification": {
+    "runner": {
+      "source": "auto",
+      "commands": [
+        {
+          "cmd": "go build ./...",
+          "exit": 0,
+          "seconds": 1
+        },
+        {
+          "cmd": "go vet ./...",
+          "exit": 0,
+          "seconds": 0
+        },
+        {
+          "cmd": "go test ./...",
+          "exit": 0,
+          "seconds": 0
+        },
+        {
+          "cmd": "cd frontend && [ -d node_modules ] || npm ci --no-audit --no-fund",
+          "exit": 0,
+          "seconds": 0
+        },
+        {
+          "cmd": "cd frontend && npm test --silent",
+          "exit": 0,
+          "seconds": 1
+        },
+        {
+          "cmd": "cd frontend && [ -d node_modules ] || npm ci --no-audit --no-fund",
+          "exit": 0,
+          "seconds": 0
+        },
+        {
+          "cmd": "cd frontend && npm run build --silent",
+          "exit": 0,
+          "seconds": -1
+        }
+      ]
+    },
+    "runner_gate": {
+      "ok": true,
+      "state": "verified",
+      "reason": "검증 7개 통과 (auto)"
+    },
+    "after_rebase": null,
+    "review": null,
+    "ci_gate": null
+  },
+  "release": {
+    "result": null,
+    "assets_sha256": []
+  },
+  "approval": null,
+  "usage": [
+    {
+      "ts": "2026-09-10T08:59:52+09:00",
+      "date": "2026-09-10",
+      "project": "weekly",
+      "phase": "improve",
+      "run_id": "2026-09-10-085107-weekly-improve",
+      "campaign": "",
+      "subtype": "success",
+      "duration_ms": 540235,
+      "num_turns": 57,
+      "cost_usd": 4.459375499999999,
+      "input_tokens": 106,
+      "output_tokens": 34373,
+      "cache_read": 4813893,
+      "cache_create": 117631
+    }
+  ]
+}
