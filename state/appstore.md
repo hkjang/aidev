@@ -125,3 +125,6 @@
 - 보류 아이디어: `clientAddress`가 RemoteAddr만 보아 reverse proxy 뒤에서는 익명 사용자 전체가 하나의 rate limit bucket을 공유 — 신뢰 프록시 설정이 필요한데 환경변수 계약이 네 개로 고정(가치 3/위험 3/M) · 검토 이력(승인·반려 반복)이 소유자에게 마지막 한 건만 보여 여러 번 반려된 앱의 앞선 지적이 사라짐 — `/me/apps/{id}/reviews` 같은 읽기 경로가 필요(가치 2/위험 1/M) · pending_review 상태의 앱을 수정해도 검토가 level 1로 되돌아가지 않아 다단계 승인에서 level 2 검토자가 level 1이 본 적 없는 내용을 승인함 — 정책 결정이 먼저 필요(가치 2/위험 3/S) · `fetchBrandingSource`의 오류 메시지에 upstream 상태 코드와 err 원문이 샘(가치 2/위험 2/S) · 앱 카드가 status를 전혀 표시하지 않아 `/my/apps`에서 초안·검토 대기·보관됨을 구분할 수 없음(가치 3/위험 1/S)
 
 - 릴리즈: v2.5.7 (2026-09-10, run 2026-09-10-192110-appstore-improve)
+## 2026-09-11
+- (원장 항목에 비밀/내부 정보 의심 문자열이 있어 비공개 기록으로 옮김 — run 2026-09-11-011110-appstore-improve)
+
