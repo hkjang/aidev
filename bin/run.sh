@@ -250,10 +250,10 @@ rebase_pr(){ # $1=PR url $2=base
 }
 # 캠페인: 활성(미완료·기한 내·예산 남음) 캠페인의 대상 프로젝트를 후보 중에서 고른다 → CAMPAIGN_ID, CAMPAIGN_NOTE, CAMPAIGN_PROJECT
 pick_campaign(){
-  local cj="$STATE/campaigns.json" id goal goal64 budget until spent projs cp
-  CAMPAIGN_ID=""; CAMPAIGN_NOTE=""; CAMPAIGN_PROJECT=""; CAMPAIGN_BUDGET=0
+  local cj="$STATE/campaigns.json" id goal goal64 budget until ibudget spent projs cp
+  CAMPAIGN_ID=""; CAMPAIGN_NOTE=""; CAMPAIGN_PROJECT=""; CAMPAIGN_BUDGET=0; CAMPAIGN_IMPROVE_BUDGET=""
   [ -f "$cj" ] || return 0
-  while IFS=$'\t' read -r id goal64 budget until projs; do
+  while IFS=$'\t' read -r id goal64 budget until ibudget projs; do
     [ -n "$id" ] || continue
     goal=$(printf '%s' "$goal64" | base64 -d 2>/dev/null)
     # 빈 기한은 "지난 기한" 이 아니다 — 읽기가 어긋났을 때 캠페인을 조용히 끄지 않는다.
@@ -261,18 +261,30 @@ pick_campaign(){
     [[ "$until" < "$RUN_DATE" ]] && { jq --arg id "$id" '(.campaigns[]|select(.id==$id)).done=true' "$cj" > "$cj.tmp" && mv "$cj.tmp" "$cj"; log "campaign $id: 기한 종료"; continue; }
     spent=$(jq -s --arg id "$id" '[.[]|select(.campaign==$id)|.cost_usd//0]|add // 0' "$DATA/usage.jsonl" 2>/dev/null || echo 0)
     awk -v s="$spent" -v b="$budget" 'BEGIN{exit !(s>=b)}' && { jq --arg id "$id" '(.campaigns[]|select(.id==$id)).done=true' "$cj" > "$cj.tmp" && mv "$cj.tmp" "$cj"; log "campaign $id: 예산 소진 (\$$spent/\$$budget)"; continue; }
-    # 가장 오래 안 돈 프로젝트를 고른다. "마지막으로 돈 것만 건너뛰기"로는 목록이
-    # 셋 이상일 때 앞의 두 개를 번갈아 돌 뿐 나머지는 영영 차례가 오지 않았다.
-    local best="" best_rank=-1 rank
+    # 아직 성과가 없는 프로젝트를 고른다. 캠페인은 유한한 일감이다 — 대상마다 한 번씩
+    # 해내면 끝이고, 다 돌았는데 목록을 다시 도는 것은 같은 문서를 또 쓰는 것이다.
+    # 한 번도 안 돈 것이 먼저, 그 다음이 실패해서 다시 해야 하는 것(가장 오래된 순).
+    local best="" best_rank="" rank last_out remaining=0
     for cp in $projs; do
-      printf '%s\n' "${candidates[@]}" | grep -qx "$cp" || continue
+      last_out=$(jq -r --arg id "$id" --arg p "$cp" 'select(.campaign==$id and .project==$p) | .outcome' "$DATA/runs.jsonl" 2>/dev/null | tail -1)
+      case "$last_out" in
+        "") ;;                                    # 아직 안 함
+        error|verify-failed) ;;                   # 성과 없이 끝남 — 다시 한다
+        *) continue;;                             # PR 까지 갔으면 이 캠페인에서는 끝난 것으로 본다
+      esac
+      remaining=$((remaining+1))
+      printf '%s\n' "${candidates[@]}" | grep -qx "$cp" || continue   # 지금 후보가 아니면 다음 기회에
+      [ -n "$last_out" ] || { best=$cp; break; }
       rank=$(jq -r --arg id "$id" --arg p "$cp" 'select(.campaign==$id and .project==$p) | .ts' "$DATA/runs.jsonl" 2>/dev/null | tail -1)
-      [ -n "$rank" ] || { best=$cp; break; }                       # 한 번도 안 돈 프로젝트가 먼저
       [ -z "$best" ] || [[ "$rank" < "$best_rank" ]] && { best=$cp; best_rank=$rank; }
     done
+    if [ "$remaining" -eq 0 ]; then
+      jq --arg id "$id" '(.campaigns[]|select(.id==$id)).done=true' "$cj" > "$cj.tmp" && mv "$cj.tmp" "$cj"
+      log "campaign $id: 대상 $(wc -w <<<"$projs")개 전부 완료 — 캠페인을 닫는다"; continue
+    fi
     if [ -n "$best" ]; then
         cp=$best
-        CAMPAIGN_ID=$id; CAMPAIGN_PROJECT=$cp; CAMPAIGN_BUDGET=$budget
+        CAMPAIGN_ID=$id; CAMPAIGN_PROJECT=$cp; CAMPAIGN_BUDGET=$budget; CAMPAIGN_IMPROVE_BUDGET=$ibudget
         CAMPAIGN_NOTE="## 개선 캠페인 \"$id\" (자동 배정) — 새 아이디어 대신 이 목표를 우선하세요
 $goal
 예산: \$$spent / \$$budget 사용, 기한 $until. 이 목표와 무관한 변경은 만들지 마세요."
@@ -281,7 +293,7 @@ $goal
     # 목표는 base64 로 싣는다. 여러 줄짜리 목표를 그대로 넣으면 TSV 한 줄이 쪼개져
     # budget·until·projects 가 통째로 비고, 빈 until 이 기한 지난 것으로 읽혀 캠페인이
     # 시작하자마자 "기한 종료" 로 꺼졌다 (2026-09-10 guides-2026-09).
-  done < <(jq -r --arg d "$RUN_DATE" '.campaigns[]? | select(.done!=true) | "\(.id)\t\(.goal|@base64)\t\(.budget_usd)\t\(.until)\t\(.projects|join(" "))"' "$cj" 2>/dev/null)
+  done < <(jq -r --arg d "$RUN_DATE" '.campaigns[]? | select(.done!=true) | "\(.id)\t\(.goal|@base64)\t\(.budget_usd)\t\(.until)\t\(.improve_budget_usd // "")\t\(.projects|join(" "))"' "$cj" 2>/dev/null)
 }
 
 # ---------------------------------------------------------------- 러너 직접 검증
@@ -783,6 +795,10 @@ round_body(){
   base=$(policy "$n" '.base_branch'); base=${base:-$(git -C "$repo" symbolic-ref --short HEAD)}
   new_run "$n" improve
   ibudget=$(policy "$n" '.budget_usd.improve'); [ -n "$BUDGET" ] && ibudget=$BUDGET; ibudget=${ibudget:-8}
+  # 캠페인이 개선 예산을 따로 정했으면 그것을 쓴다. 캠페인 한 회차의 일감은 평소
+  # 개선과 크기가 다르다 — 가이드 회차는 앱을 띄우고 화면 서른 장을 찍고 문서 둘을
+  # 쓰므로, 기본 $8 로는 문서를 쓰다 중간에 끊긴다 (2026-09-10 AgentHub, $8.06 소진).
+  [ -n "${CAMPAIGN_IMPROVE_BUDGET:-}" ] && [ "$n" = "${CAMPAIGN_PROJECT:-}" ] && ibudget=$CAMPAIGN_IMPROVE_BUDGET
   round_budget=$(awk -v a="$ibudget" -v b="$(policy "$n" '.budget_usd.review')" -v c="$(policy "$n" '.budget_usd.release')" 'BEGIN{print a+b+c}')
   log "=== $n (base=$base, run $RUN_ID, 회차 예산 \$$round_budget)"
   # return 이지 continue 가 아니다: --parallel 은 이 함수를 서브셸로 돌려 감쌀 루프가 없다.
