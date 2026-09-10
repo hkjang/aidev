@@ -1,7 +1,7 @@
 ---
 title: "appstore — 자율 개선 이력"
 description: "appstore: 자율 개선 회차 14회, 릴리즈 9건. 최근 릴리즈 v2.5.5 (자산 1개)."
-last_modified_at: 2026-09-10 10:16:08 +0900
+last_modified_at: 2026-09-10 11:18:17 +0900
 ---
 {% raw %}
 <script type="application/ld+json">
@@ -18,14 +18,14 @@ last_modified_at: 2026-09-10 10:16:08 +0900
   "name": "hkjang",
   "url": "https://github.com/hkjang"
  },
- "dateModified": "2026-09-10T10:16:08+09:00",
+ "dateModified": "2026-09-10T11:18:17+09:00",
  "version": "2.5.5"
 }
 </script>
 
 # appstore
 
-<p class="tldr"><strong>요약.</strong> appstore: 자율 개선 회차 14회, 릴리즈 9건. 최근 릴리즈 v2.5.5 (자산 1개). <span class="pill pill-merged" title="14일: 릴리즈 9, 실패 0, 경고 0, 회귀 1">건강 C</span> <span class="meta">14일: 릴리즈 9, 실패 0, 경고 0, 회귀 1</span></p>
+<p class="tldr"><strong>요약.</strong> appstore: 자율 개선 회차 14회, 릴리즈 9건. 최근 릴리즈 v2.5.5 (자산 1개). <span class="pill pill-failed" title="14일: 릴리즈 9, 실패 0, 경고 0, 회귀 2">건강 D</span> <span class="meta">14일: 릴리즈 9, 실패 0, 경고 0, 회귀 2</span></p>
 
 <ul class="stats"><li><b>14</b><span>회차</span></li><li><b>1</b><span>프로젝트</span></li><li><b>9</b><span>배포 준비 완료</span></li><li><b>0</b><span>릴리즈 진행 중</span></li><li><b>0</b><span>병합 완료</span></li><li><b>2</b><span>검토 대기</span></li><li><b>2</b><span>검증 실패</span></li><li><b>0</b><span>변경 없음</span></li><li><b>1</b><span>실행 오류</span></li><li><b>$40.92</b><span>비용</span></li><li><b>1시간 33분</b><span>에이전트 시간</span></li></ul>
 
@@ -51,6 +51,7 @@ last_modified_at: 2026-09-10 10:16:08 +0900
 
 ## 교훈 (깨졌던 변경)
 
+- 2026-09-10 **rejected-by-human** — 사람이 PR 을 반려함. 같은 접근은 피할 것. ([링크](https://github.com/hkjang/appstore/pull/11))
 - 2026-09-08 **rejected-by-human** — 사람이 PR 을 반려함. 같은 접근은 피할 것. ([링크](https://github.com/hkjang/appstore/pull/7))
 
 ## 원장 (에이전트가 남긴 기록)
