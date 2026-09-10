@@ -1,0 +1,5 @@
+## 2026-09-10
+- 선택: 오류 메시지 자르기가 한글 문자를 쪼개지 않게 수정 (가치 3 / 위험 1 / 작업량 S)
+- 결과: 성공
+- 요약: `store.truncate`(1000바이트)와 `integration.safeConnectionError`(500바이트)가 바이트 단위로 슬라이스해, 한글 오류 메시지가 상한을 넘으면 자르는 지점이 UTF-8 시퀀스 중간에 떨어졌다. 앞의 값은 `hubs.last_error`·`integration_health.last_error`에 그대로 들어가는데 PostgreSQL이 잘못된 바이트 시퀀스를 거부하므로 실패를 기록하려는 UPDATE 자체가 실패해 망가진 Hub가 계속 healthy로 남고, 뒤의 값은 연결 검증 Drawer에 그대로 보이므로 JSON 인코더가 U+FFFD로 바꿔 관리자에게 깨진 글자가 보인다. 두 곳 모두 룬 경계까지 되돌아가 자르고 애초에 유효하지 않은 입력은 대체 문자로 치환하도록 고쳤으며, 상한 근처 모든 오프셋에서 결과가 유효한 UTF-8이고 원본의 접두사이며 한 룬(3바이트) 넘게 버리지 않는지 검증하는 테스트 4개를 추가했다. 수정 전 코드로 되돌린 변형에서 새 테스트가 실제로 실패하는 것을 확인했고, `gofmt -l`, `go vet ./...`, `go test -race ./...`, `scripts/check-version.sh`, `scripts/check-screenshots.mjs`, `npm run lint`, `npm test`(18파일 59개) 모두 통과했다.
+- 보류 아이디어: 로그인 리미터 `succeeded`가 ip 키를 의도적으로 유지하는 동작에 대한 테스트·문서화 / `internal/store` 커버리지 중 DB 없이 테스트 가능한 순수 함수 경로 보강 / `auth/oidc.go`가 `RandomToken` 오류를 무시하고 state·nonce·verifier를 만드는 부분 정리 / `internal/api` 통합 테스트를 로컬에서 돌리는 방법 문서화와 `make test-integration` 타깃 / 쿼리로만 GPU로 분류되는 별칭 지표가 `feature_enabled` 없이 빈 목록을 받는 잔여 간극
