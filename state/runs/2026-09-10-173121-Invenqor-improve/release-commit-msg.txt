@@ -1,0 +1,20 @@
+chore: release v0.2.31
+
+Versions, guides, the offline bundle reference and the release PDFs move to
+0.2.31, and the notes are added for a release that fixes one defect: Query DSL
+execution had no offset. It reads at most 500 rows, and an expression matching
+more than that had no page two - v0.2.29 made the response admit it had been cut
+short, but the only way to see the rest was still to keep narrowing the
+expression until each variant fitted under the cap and stitch the pieces back
+together, which is what a script holding an API key had to do without a console
+to notice the flag in. It now takes the same offset /api/v1/assets takes and
+returns offset, has_more and next_offset, so a caller walks the whole result by
+feeding next_offset back while has_more is true; total comes from a COUNT(*) over
+the same expression, so the response and the query.execute audit entry say how
+many assets matched rather than only how many were handed over. truncated keeps
+its meaning and its value, so callers written before this keep working. The page
+order gained id as a tiebreaker - assets ingested in one batch share last_seen_at
+to the second, and without a total order a paged walk would have returned some of
+them twice and skipped others - and the row loop now checks rows.Err(), which it
+did not, so a query that broke mid-scan no longer answers 200 with the rows it
+had collected so far.
