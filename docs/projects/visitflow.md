@@ -1,7 +1,7 @@
 ---
 title: "visitflow — 자율 개선 이력"
 description: "visitflow: 자율 개선 회차 11회, 릴리즈 5건. 최근 릴리즈 없음."
-last_modified_at: 2026-09-10 20:10:56 +0900
+last_modified_at: 2026-09-10 20:33:17 +0900
 ---
 {% raw %}
 <script type="application/ld+json">
@@ -18,7 +18,7 @@ last_modified_at: 2026-09-10 20:10:56 +0900
   "name": "hkjang",
   "url": "https://github.com/hkjang"
  },
- "dateModified": "2026-09-10T20:10:56+09:00"
+ "dateModified": "2026-09-10T20:33:17+09:00"
 }
 </script>
 
