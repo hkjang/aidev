@@ -1,0 +1,170 @@
+{
+  "run_id": "2026-09-12-063115-SecCheck-improve",
+  "generated": "2026-09-12T06:40:05+09:00",
+  "run": {
+    "run_id": "2026-09-12-063115-SecCheck-improve",
+    "project": "SecCheck",
+    "kind": "improve",
+    "started": "2026-09-12T06:31:16+09:00",
+    "model": "claude-opus-5",
+    "policy_version": "5935779a",
+    "prompts_hash": "82f2440d4b2fef65",
+    "runner_version": "79bd9d23",
+    "finished": "2026-09-12T06:40:05+09:00",
+    "outcome": "review-pending"
+  },
+  "record": {
+    "ts": "2026-09-12T06:40:05+09:00",
+    "date": "2026-09-12",
+    "project": "SecCheck",
+    "result": "fix-round: guarded files, PR open https://github.com/hkjang/SecCheck/pull/1",
+    "outcome": "review-pending",
+    "run_id": "2026-09-12-063115-SecCheck-improve",
+    "base_sha": "c32eec770c581e9676a83b6d7bc79949d2cc3bc4",
+    "head_sha": "9c320695126bbc0d34d371949c6dcff215dea93e",
+    "pr": "https://github.com/hkjang/SecCheck/pull/1",
+    "stages": {
+      "base": {
+        "state": "pinned",
+        "reason": "main@c32eec7",
+        "at": "2026-09-12T06:31:21+09:00"
+      },
+      "autonomy": {
+        "state": "release",
+        "reason": "",
+        "at": "2026-09-12T06:31:21+09:00"
+      },
+      "verify": {
+        "state": "passed",
+        "reason": "검증 7개 통과 (auto)",
+        "at": "2026-09-12T06:39:45+09:00"
+      },
+      "pr": {
+        "state": "created",
+        "reason": "https://github.com/hkjang/SecCheck/pull/1",
+        "at": "2026-09-12T06:40:04+09:00"
+      },
+      "guard": {
+        "state": "held",
+        "reason": ".github/workflows/ci.yml ",
+        "at": "2026-09-12T06:40:04+09:00"
+      }
+    },
+    "campaign": "",
+    "autonomy": "release",
+    "files": 101,
+    "additions": 2834,
+    "deletions": 724,
+    "tests": 3,
+    "title": "Hold the bodies the screens send against the fields the server reads"
+  },
+  "stages": {
+    "base": {
+      "state": "pinned",
+      "reason": "main@c32eec7",
+      "at": "2026-09-12T06:31:21+09:00"
+    },
+    "autonomy": {
+      "state": "release",
+      "reason": "",
+      "at": "2026-09-12T06:31:21+09:00"
+    },
+    "verify": {
+      "state": "passed",
+      "reason": "검증 7개 통과 (auto)",
+      "at": "2026-09-12T06:39:45+09:00"
+    },
+    "pr": {
+      "state": "created",
+      "reason": "https://github.com/hkjang/SecCheck/pull/1",
+      "at": "2026-09-12T06:40:04+09:00"
+    },
+    "guard": {
+      "state": "held",
+      "reason": ".github/workflows/ci.yml ",
+      "at": "2026-09-12T06:40:04+09:00"
+    }
+  },
+  "provenance": {
+    "model": "claude-opus-5",
+    "policy_version": "5935779a",
+    "prompts_hash": "82f2440d4b2fef65",
+    "runner_version": "79bd9d23",
+    "base_sha": "c32eec770c581e9676a83b6d7bc79949d2cc3bc4",
+    "head_sha": "9c320695126bbc0d34d371949c6dcff215dea93e",
+    "pr": "https://github.com/hkjang/SecCheck/pull/1"
+  },
+  "verification": {
+    "runner": {
+      "source": "auto",
+      "commands": [
+        {
+          "cmd": "go build ./...",
+          "exit": 0,
+          "seconds": 0
+        },
+        {
+          "cmd": "go vet ./...",
+          "exit": 0,
+          "seconds": 1
+        },
+        {
+          "cmd": "go test ./...",
+          "exit": 0,
+          "seconds": 0
+        },
+        {
+          "cmd": "cd web && [ -d node_modules ] || npm ci --no-audit --no-fund",
+          "exit": 0,
+          "seconds": 0
+        },
+        {
+          "cmd": "cd web && npm test --silent",
+          "exit": 0,
+          "seconds": 1
+        },
+        {
+          "cmd": "cd web && [ -d node_modules ] || npm ci --no-audit --no-fund",
+          "exit": 0,
+          "seconds": 0
+        },
+        {
+          "cmd": "cd web && npm run build --silent",
+          "exit": 0,
+          "seconds": 1
+        }
+      ]
+    },
+    "runner_gate": {
+      "ok": true,
+      "state": "verified",
+      "reason": "검증 7개 통과 (auto)"
+    },
+    "after_rebase": null,
+    "review": null,
+    "ci_gate": null
+  },
+  "release": {
+    "result": null,
+    "assets_sha256": []
+  },
+  "approval": null,
+  "usage": [
+    {
+      "ts": "2026-09-12T06:39:23+09:00",
+      "date": "2026-09-12",
+      "project": "SecCheck",
+      "phase": "improve",
+      "run_id": "2026-09-12-063115-SecCheck-improve",
+      "campaign": "",
+      "subtype": "success",
+      "duration_ms": 506229,
+      "num_turns": 45,
+      "cost_usd": 3.9451800000000006,
+      "input_tokens": 90,
+      "output_tokens": 26682,
+      "cache_read": 4134860,
+      "cache_create": 118945
+    }
+  ]
+}

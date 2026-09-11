@@ -1,7 +1,7 @@
 ---
 title: "vibe-coders — 자율 개선 이력"
 description: "vibe-coders: 자율 개선 회차 43회, 릴리즈 3건. 최근 릴리즈 v0.83.0."
-last_modified_at: 2026-09-12 06:18:54 +0900
+last_modified_at: 2026-09-12 06:40:06 +0900
 ---
 {% raw %}
 <script type="application/ld+json">
@@ -18,7 +18,7 @@ last_modified_at: 2026-09-12 06:18:54 +0900
   "name": "hkjang",
   "url": "https://github.com/hkjang"
  },
- "dateModified": "2026-09-12T06:18:54+09:00",
+ "dateModified": "2026-09-12T06:40:06+09:00",
  "version": "0.83.0"
 }
 </script>
@@ -35,6 +35,7 @@ last_modified_at: 2026-09-12 06:18:54 +0900
 <dt>저장소</dt><dd><a href="https://github.com/hkjang/vibe-coders">https://github.com/hkjang/vibe-coders</a></dd>
 <dt>마지막 회차</dt><dd>2026-09-12 06:01 KST — <span class="pill pill-other">• 기타</span> error: fetch</dd>
 <dt>최근 릴리즈</dt><dd><a href="https://github.com/hkjang/vibe-coders/releases/tag/v0.83.0">v0.83.0</a> — released <a href="https://github.com/hkjang/vibe-coders/releases">전체 릴리즈 →</a></dd>
+<dt>수정 과제</dt><dd>⚠️ 가이드 캠페인 회차가 34번 연속 fetch 실패했습니다. 이 저장소의 기준 브랜치는 master 인데 러너가 main 을 받으려 했습니다 — state/vibe-coders.policy.json 에 base_branch 를 적어 고쳤습니다. 이제 진행되니 사용자·관리자 가이드를 화면 캡처와 함께 완성하세요. aidev 의 GUIDE-STANDARD.md 를 읽고 따르세요.</dd>
 </dl>
 
 ## 회차 이력
