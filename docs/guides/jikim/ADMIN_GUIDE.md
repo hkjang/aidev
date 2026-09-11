@@ -1,6 +1,6 @@
 # jikim 관리자 가이드
 
-이 문서는 jikim `v0.2.9`를 설치하고 지키는 사람을 위한 것입니다. 화면 캡처는 모두
+이 문서는 jikim `v0.2.10`을 설치하고 지키는 사람을 위한 것입니다. 화면 캡처는 모두
 `jikim:v0.2.9` 이미지를 전용 PostgreSQL과 함께 띄운 뒤 데모 데이터를 넣고 찍은 것입니다.
 
 화면을 쓰는 방법은 [사용자 가이드](USER_GUIDE.md)에 있습니다. 같은 내용을 두 번 적지 않았으니
@@ -18,7 +18,7 @@ jikim은 컨테이너 하나와 외부 PostgreSQL 하나로 동작합니다. 서
 
 | 구성 요소 | 필수 | 제공 방식 | 하는 일 |
 | --- | --- | --- | --- |
-| `jikim` 컨테이너 | 필수 | 릴리스 이미지 `jikim:v0.2.9` | Go 서버 하나가 관리 API, OpenBao 제한 호환 API, MCP, React 정적 자산을 모두 제공 |
+| `jikim` 컨테이너 | 필수 | 릴리스 이미지 `jikim:v0.2.10` | Go 서버 하나가 관리 API, OpenBao 제한 호환 API, MCP, React 정적 자산을 모두 제공 |
 | PostgreSQL | 필수 | 사내 표준 인스턴스 | 사용자·정책·시크릿 암호문·감사 로그 저장 |
 | TLS Reverse Proxy | 운영 권장 | 사내 표준 | 외부 HTTPS 종단, `Host`·`X-Forwarded-Proto` 전달 |
 | Keycloak | 선택 | 사내 표준 | OIDC SSO 로그인 |
@@ -60,9 +60,9 @@ React 정적 자산은 이미지 안의 `/app/web`에 들어 있고 Go 서버가
 GitHub Release에 올라오는 자산은 두 개입니다.
 
 ```bash
-sha256sum --check jikim-v0.2.9.tar.gz.sha256
-docker load --input jikim-v0.2.9.tar.gz
-docker image inspect jikim:v0.2.9
+sha256sum --check jikim-v0.2.10.tar.gz.sha256
+docker load --input jikim-v0.2.10.tar.gz
+docker image inspect jikim:v0.2.10
 ```
 
 체크섬 확인 없이 적재하지 마십시오. 반입 경로에서 파일이 바뀌었는지 확인할 유일한 수단입니다.
@@ -116,7 +116,7 @@ curl --fail http://127.0.0.1:8080/v1/sys/health
 - `GET /healthz`는 프로세스가 살아 있는지만 답합니다.
 - `GET /readyz`는 PostgreSQL에 2초 제한으로 ping 한 뒤 답합니다. 저장소에 닿지 못하면 `503`과
   `not_ready`, `데이터베이스 연결을 확인할 수 없습니다`를 돌려줍니다.
-- `GET /v1/sys/health`는 OpenBao 클라이언트와 Load Balancer가 쓰는 경로입니다. `v0.2.9`는
+- `GET /v1/sys/health`는 OpenBao 클라이언트와 Load Balancer가 쓰는 경로입니다. `v0.2.10`은
   저장소 미도달을 seal과 같은 운영 상태로 보아 `"sealed": true`와 `503`을 반환합니다.
   probe 설정을 이식할 때는 `activecode`·`sealedcode` 쿼리로 상태 코드를 바꿀 수 있고,
   100\~599 정수가 아니면 조용히 무시하지 않고 `400`으로 거부합니다.
@@ -224,7 +224,7 @@ Client Secret은 민감 설정으로 암호화 저장되고 조회 응답에는 
 ### 3.4 승인 워크플로
 
 기본값은 비활성입니다. 꺼져 있으면 생성·변경 작업에 검토 단계를 만들지 않고 즉시 반영합니다.
-`v0.2.9`에서 설정할 수 있는 것은 워크플로 사용 여부, 적용 작업(시크릿 생성·변경, 시크릿 폐기),
+`v0.2.10`에서 설정할 수 있는 것은 워크플로 사용 여부, 적용 작업(시크릿 생성·변경, 시크릿 폐기),
 검토 역할(`manager` 또는 `admin`)입니다.
 
 승인은 1인 검토이며 요청자 본인 승인은 항상 금지됩니다. 환경·위험 등급별 조건, 다단계 승인,
@@ -396,7 +396,7 @@ docker compose logs --follow jikim
 ```text
 {"level":"INFO","msg":"bootstrap 관리자 준비","username":"...","created":true}
 {"level":"INFO","msg":"웹 UI 활성화","directory":"/app/web"}
-{"level":"INFO","msg":"jikim 시작","address":":8080","version":"v0.2.9"}
+{"level":"INFO","msg":"jikim 시작","address":":8080","version":"v0.2.10"}
 ```
 
 종료 신호를 받으면 `종료 신호 수신`을 남기고 최대 20초 동안 진행 중인 요청을 마무리합니다.
@@ -462,7 +462,7 @@ docker compose logs --follow jikim
 
 | 증상 | 확인할 곳 | 조치 |
 | --- | --- | --- |
-| `/readyz`가 `503` + `데이터베이스 연결을 확인할 수 없습니다` | PostgreSQL 도달성, DSN, TLS 모드, 계정 권한 | 저장소를 복구합니다. `v0.2.9`는 DB 장애를 자격증명 거부로 접지 않고 `500`으로 구분해 보고합니다. |
+| `/readyz`가 `503` + `데이터베이스 연결을 확인할 수 없습니다` | PostgreSQL 도달성, DSN, TLS 모드, 계정 권한 | 저장소를 복구합니다. `v0.2.10`은 DB 장애를 자격증명 거부로 접지 않고 `500`으로 구분해 보고합니다. |
 | `아이디 또는 비밀번호가 올바르지 않습니다` | 사용자 관리 화면의 계정 상태 | 계정·비밀번호를 확인합니다. DB 장애일 때는 이 문구가 아니라 `500`이 나옵니다. |
 | `사용자 계정이 비활성화되었습니다` | 사용자 관리 화면 | 계정을 활성화합니다. |
 | `로컬 로그인이 비활성화되었습니다` | 보안 탭의 **로컬 로그인 허용** | OIDC로 들어가거나, 그것도 막혔으면 설정 값을 되돌려야 합니다. |
