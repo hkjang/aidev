@@ -589,3 +589,35 @@ https://github.com/hkjang/vibe-coders/pull/15#issuecomment-5641222444
 evidence: /mnt/c/Users/USER/projects/aidev/state/runs/2026-09-12-065126-vibe-coders-improve/evidence.json
 reports: 11 day(s), 2 week(s), 1 month(s), 648 run(s), 710 usage row(s), 34 project page(s), 10 alert(s)
 notify: no new alerts
+[07:14:00] aidev synced: run(2026-09-12): vibe-coders — fix-round: review held, PR open https://github.com/hkjang/vibe-coders/pull/15
+[07:14:00] done
+[07:20:45] skip DartFly: dirty working tree
+[07:20:46] skip Quantoss: dirty working tree
+[07:20:53] skip aiportal-java: STOP
+[07:21:09] skip postra: dirty working tree
+[07:21:15] candidates(32): AgentHub Clustara Invenqor Kkiit Momento ReSSO SecCheck Vendra ai-admin aiportal-front-admin aiportal-front aiportal-py appstore cutover dataworks git-ctx igame jikim jupiq kanpic moina moyro muni pii-masker ptium releasedock relio seaton umm vibe-coders visitflow weekly
+[07:21:16] campaign guides-2026-09: 세 번 이상 실패해 더 잡지 않는 프로젝트 — SecCheck vibe-coders
+[07:21:16] campaign guides-2026-09: 대상 25개 전부 완료 — 캠페인을 닫는다
+[07:21:16] campaign tracking-2026-09: picked AgentHub
+[07:21:16] picked: AgentHub
+[07:21:17] === AgentHub (base=main, run 2026-09-12-072116-AgentHub-improve, 회차 예산 $28)
+Preparing worktree (new branch 'auto/2026-09-12-0721')
+Updating files:  88% (705/795)Updating files:  89% (708/795)Updating files:  90% (716/795)Updating files:  91% (724/795)Updating files:  92% (732/795)Updating files:  93% (740/795)Updating files:  94% (748/795)Updating files:  95% (756/795)Updating files:  96% (764/795)Updating files:  97% (772/795)Updating files:  98% (780/795)Updating files:  99% (788/795)Updating files: 100% (795/795)Updating files: 100% (795/795), done.
+HEAD is now at c289d39 chore(release): 0.244.0
+[07:21:20] AgentHub: [base] pinned — main@c289d39
+[07:21:20] AgentHub: [autonomy] release — 
+[07:40:13] AgentHub: improve — 102 turns, 19m, $12.23, success
+[07:40:16] AgentHub: verify `go build ./...` → exit 0 (2s)
+[07:40:17] AgentHub: verify `go vet ./...` → exit 0 (1s)
+[07:40:36] AgentHub: verify `go test ./...` → exit 0 (19s)
+[07:40:36] AgentHub: verify `cd web && [ -d node_modules ] || npm ci --no-audit --no-fund` → exit 0 (0s)
+[07:40:40] AgentHub: verify `cd web && npm run build --silent` → exit 0 (4s)
+[07:40:41] AgentHub: [verify] passed — 검증 5개 통과 (auto)
+branch 'auto/2026-09-12-0721' set up to track 'origin/auto/2026-09-12-0721'.
+[07:40:51] AgentHub: [pr] created — https://github.com/hkjang/AgentHub/pull/24
+[07:43:48] AgentHub: review — 18 turns, 3m, $1.47, success
+[07:43:48] AgentHub: [review] rejected — 리뷰 거절: web/src/pages/AdminSettings.tsx:138 화면은 provider 가 비어 있을 때 'momento' 를 선택된 것으로 보여 주지만(TRACKING_PROVIDERS 에 'none' 은 없음) 서버 기본값은 tracking.Defaults() 의 'none' 이다. 새로 설치한 곳에서는 GET /admin/settings 에 tracking 키가 없어 value={} 이므로, 관리자가 '방문 추적 사용' 을 켜고 Momento 주소·사이트 id 만 채워 저장하면 select 의 onChange 가 한 번도 안 불려 provider 없이 {enabled:true,momentoUrl,momentoSiteId} 가 전송된다 → decodeTrackingSettings 가 provider='none' 으로 채우고 Validate 는 ProviderNone 을 통과시켜(internal/tracking/tracking.go:136) 저장 성공 메시지를 내지만 Active() 는 false(tracking.go:167) 라 어떤 페이지에도 스니펫이 붙지 않는다. 화면을 다시 열어도 여전히 'Momento' 가 선택된 것처럼 보여 원인을 알 수 없다 — 커밋 메시지가 막겠다고 한 '조용히 비는 대시보드' 를 첫 설정 흐름에서 그대로 재현한다. 수정: 폼이 provider 를 항상 전송하거나(초기값을 value 에 채우기), Validate 가 Enabled && ProviderNone 을 거절해야 한다. guide-shots.mjs 는 provider 를 명시해 보내므로 실물 확인이 이 경로를 지나지 않았다.
+https://github.com/hkjang/AgentHub/pull/24#issuecomment-5641471266
+evidence: /mnt/c/Users/USER/projects/aidev/state/runs/2026-09-12-072116-AgentHub-improve/evidence.json
+reports: 11 day(s), 2 week(s), 1 month(s), 649 run(s), 712 usage row(s), 34 project page(s), 10 alert(s)
+notify: no new alerts
