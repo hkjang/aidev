@@ -1,0 +1,5 @@
+## 2026-09-11
+- 선택: 사용자·관리자 가이드를 실제 화면 캡처가 실린 완성본으로 재구성 (가치 5 / 위험 1 / 작업량 M)
+- 결과: 성공
+- 요약: docs/USER_GUIDE.md·ADMIN_GUIDE.md 를 GUIDE-STANDARD 구성(처음 5분·화면별 사용법·막혔을 때 / 구성 요소·설치·환경 변수 전수 표·계정과 권한·운영·장애 대응·보안)으로 다시 쓰고, v0.34.39 를 로컬 Postgres 와 함께 실제로 띄워 seed.mjs 로 가짜 데이터(데모 포털, EMP0001, hong@example.com)를 넣은 뒤 headless Chrome 1440x900 으로 49장을 찍어 docs/assets/guide/ 에 실었다. 환경 변수 표는 internal/config·internal/database 에서, 역할 표는 라우터 미들웨어에서, 오류 문구는 writeError/queryError.ts 에서 읽었고, 옛 USER_GUIDE.html/ADMIN_GUIDE.html 은 삭제하고 docs/index*.html·README 링크를 새 문서로 옮겼다. 공용 md2pdf 로 두 PDF(47쪽/27쪽)를 생성해 표지·그림이 렌더링되는 것과 문서가 참조하는 그림이 모두 존재하는 것을 확인했다. scripts/guide 는 전용 환경 변수만 받고 로컬 호스트가 아니면 멈추며 --cleanup 으로 만든 것만 지운다; 비밀값은 글자로 적지 않았다.
+- 보류 아이디어: User Explorer 타임라인이 365일을 요청해 기본 정책(180일)에서 RANGE_EXCEEDS_POLICY 로 막힘 — 사이트 정책 한도를 읽어 요청하도록 수정 (가치 4 / 위험 2 / S); 대량 과거 이벤트 반입 직후 aggregate maintenance 가 deadlock(40P01)으로 실패하는 재집계 작업 — 재시도 또는 잠금 순서 정리 (가치 3 / 위험 3 / M); compose.yml 의 build: 때문에 릴리즈 이미지로 띄울 때 --no-build 가 필요 — 문서화했으나 compose 파일에 주석 추가 (가치 2 / 위험 1 / S); 캡처 스크립트를 CI 에서 릴리즈 tarball 로 돌려 가이드 그림이 최신 화면과 어긋나는지 검사 (가치 3 / 위험 2 / M).

@@ -1,0 +1,8 @@
+[
+  {"title":"사용자·관리자 가이드를 실제 화면 캡처가 실린 완성본으로 재구성","value":5,"risk":1,"size":"M","status":"done","note":"guides-2026-09 캠페인. 49장 캡처, 두 PDF, scripts/guide 시드·캡처 도구, 옛 HTML 가이드 정리","updated":"2026-09-11"},
+  {"title":"User Explorer 타임라인의 365일 요청이 기본 쿼리 정책(180일)에 막힘","value":4,"risk":2,"size":"S","status":"pending","note":"UserExplorerPage.tsx 가 rangeQuery(365)로 고정 요청. 기본 max_exact_days=180 인 사이트에서는 추적 버튼을 누르면 RANGE_EXCEEDS_POLICY. 사이트 정책 한도(query-policy)를 읽어 min(365, 한도)로 요청하도록 수정","updated":"2026-09-11"},
+  {"title":"대량 과거 이벤트 반입 직후 aggregate maintenance deadlock(40P01) 실패","value":3,"risk":3,"size":"M","status":"pending","note":"시드로 70일치 late event 를 넣자 late_event 재집계 작업 17건이 deadlock detected 로 failed. Worker 의 일별 집계 upsert 와 재집계의 잠금 순서 정리 또는 40P01 재시도","updated":"2026-09-11"},
+  {"title":"compose.yml 에 릴리즈 이미지로 띄울 때 --no-build 가 필요하다는 주석","value":2,"risk":1,"size":"S","status":"pending","note":"build: 가 있어 소스 트리에서 docker compose up 하면 적재한 릴리즈 이미지 대신 다시 빌드함. 관리자 가이드 2.3 에 문서화함","updated":"2026-09-11"},
+  {"title":"가이드 캡처 스크립트를 CI 에서 릴리즈 tarball 로 돌려 화면 어긋남 검사","value":3,"risk":2,"size":"M","status":"pending","note":"scripts/guide 를 release 워크플로 뒤에 붙여 캡처가 실패하면(셀렉터·문구 변경) 알린다. 그림 자동 갱신은 하지 않음","updated":"2026-09-11"},
+  {"title":"관리자 가이드 4.1 역할 표를 라우터 순회 테스트로 고정","value":2,"risk":1,"size":"S","status":"pending","note":"admin/orgAdmin 미들웨어 대상 경로 목록을 테스트가 출력해 문서 표와 diff 하면 권한 변경이 문서에서 조용히 어긋나지 않음","updated":"2026-09-11"}
+]
