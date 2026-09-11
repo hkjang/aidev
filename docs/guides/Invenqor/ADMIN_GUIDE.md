@@ -1,14 +1,5 @@
-<div class="document-cover">
-  <p class="eyebrow">INVENQOR AGENT · OPERATIONS & SECURITY</p>
-  <h1>관리자 가이드</h1>
-  <p class="subtitle">수집 데이터 사전, 배포, 인증, 운영 통제, 모니터링과 장애 대응 기준서</p>
-  <div class="meta">
-    <p><strong>대상 버전</strong> Agent v0.2.31 · Server v0.2.31</p>
-    <p><strong>문서 버전</strong> 1.0</p>
-    <p><strong>기준일</strong> 2026-08-24</p>
-    <p><strong>문서 등급</strong> 공개</p>
-  </div>
-</div>
+> **대상 버전** Agent v0.2.31 · Server v0.2.31 · **문서 버전** 1.1 ·
+> **기준일** 2026-09-10 · **문서 등급** 공개
 
 > Server v0.2.31 운영자는 [Server 설치 및 운영 가이드](SERVER_INSTALLATION.md)를
 > 먼저 확인하십시오. 문서에는 PostgreSQL/SQLite 선택, 최초 관리자, Agent
@@ -608,12 +599,10 @@ PID를 숫자 순으로 정렬한 뒤 `max_processes`까지만 처리합니다. 
 프로세스와 권한 때문에 읽지 못한 프로세스는 제외합니다. 환경변수, 열린 파일,
 메모리 내용은 수집하지 않습니다.
 
-<div class="callout danger">
-<strong>개인정보/비밀정보 위험:</strong> <code>include_process_cmdline=true</code>는
-명령행에 포함된 비밀번호, 토큰, 사용자 입력, 파일 경로를 중앙으로 전송할 수
-있습니다. 법무·보안 승인, 최소권한, 보존 기간, 마스킹 정책 없이 활성화하지
-마십시오.
-</div>
+> **개인정보/비밀정보 위험:** `include_process_cmdline=true`는
+> 명령행에 포함된 비밀번호, 토큰, 사용자 입력, 파일 경로를 중앙으로 전송할 수
+> 있습니다. 법무·보안 승인, 최소권한, 보존 기간, 마스킹 정책 없이 활성화하지
+> 마십시오.
 
 ### 6.8 패키지 (`software.package`)
 
@@ -805,10 +794,8 @@ process는 단독 신호로 제품에 승격하지 않고 패키지·서비스·
 2. 새 envelope 생성을 실패시켜 데이터 손실을 명시적으로 드러냅니다.
 3. 운영자는 원인 복구 후 큐가 정상 감소하는지 확인해야 합니다.
 
-<div class="callout warning">
-큐 파일을 수동 수정·재정렬·삭제하지 마십시오. 불가피한 폐기는 변경 승인,
-백업, 영향 이벤트 범위, 중앙 수신 상태를 기록한 후 수행하십시오.
-</div>
+> 큐 파일을 수동 수정·재정렬·삭제하지 마십시오. 불가피한 폐기는 변경 승인,
+> 백업, 영향 이벤트 범위, 중앙 수신 상태를 기록한 후 수행하십시오.
 
 ## 9. 게이트웨이 연동 계약
 
@@ -1312,6 +1299,8 @@ TLS 신뢰를 먼저 확인하고 Callback/Logout URI, 표준 scope·claim을 �
 SSO를 활성화합니다. 기존 Secret이 있으면 재입력 없이 재검증할 수 있습니다.
 Discovery 실패 시 기존 운영 설정은 유지됩니다.
 
+![설정 → Keycloak — 최소 정보 빠른 연동으로 Keycloak 주소·Realm·Client 정보만 입력하고 Discovery 검증 뒤 활성화한다](assets/guide/settings-keycloak.png)
+
 권장 Keycloak claim 구성:
 
 | 목적 | Claim 예시 | Invenqor 입력 |
@@ -1326,6 +1315,25 @@ Discovery 실패 시 기존 운영 설정은 유지됩니다.
 로그인마다 프로필과 Keycloak 원천 역할을 재동기화합니다. 로컬 관리자가 추가한
 역할은 `local`, IdP가 제공한 역할은 `keycloak` 원천으로 분리되어 IdP 역할 회수
 시 로컬 예외 권한까지 우연히 삭제되지 않습니다.
+
+![사용자 관리 — 로컬 계정을 만들고 역할을 부여하며, 계정별로 정보 수정·비활성·비밀번호 초기화·삭제를 수행한다](assets/guide/users.png)
+
+내장 역할과 각 역할이 받는 권한은 다음과 같습니다. 역할은 시스템 역할이며 콘솔에서
+권한 구성을 변경할 수 없습니다.
+
+| 역할 | 설명 | 부여되는 권한 |
+|---|---|---|
+| `super_admin` | 모든 권한 | 정의된 모든 권한(`api_keys.manage`, `mcp.access` 포함) |
+| `asset_manager` | 자산 수명주기 관리 | `assets.read` `assets.write` `assets.delete` `assets.merge` `assets.export` `relations.read` `relations.write` |
+| `operator` | Agent·수집 운영 | `agents.read` `agents.manage` `assets.read` |
+| `security_admin` | 보안 자산 검토 | `assets.read` `agents.read` |
+| `auditor` | 읽기 전용 감사·내보내기 | `assets.read` `assets.export` `audit.read` |
+| `viewer` | 읽기 전용 자산 조회 | `assets.read` |
+| `api_user` | Scope 기반 API 접근 | 없음(권한은 API key의 scope에서 나옵니다) |
+
+`api_user`는 콘솔 권한을 부여하지 않습니다. 이 역할을 받은 계정이 할 수 있는 일은
+그 계정이 소유한 API key의 scope로만 결정되므로, 연계 시스템 전용 계정에
+사용하십시오.
 
 **사용자** 화면에서는 로컬 계정 생성, 역할 관리, 비활성화, 잠금 해제, 비밀번호
 초기화와 삭제를 수행합니다. 자기 잠금과 마지막 Super Admin 제거는 서버가
@@ -1414,9 +1422,118 @@ rollback, 사용자 수명주기, API key scope/회전/폐기, 감사 상세 API
 콘솔 API client가 상태 변경 요청에 자동 적용합니다.
 
 우측 상단 프로필 메뉴는 내 계정 보안, 개인화와 로그아웃을 연결합니다. 개인화는
-사용자 ID별 브라우저 저장소에 테마, 정보 밀도, 로그인 시작 화면, 운영 통계
-자동 갱신 주기와 모션 축소를 보관합니다. 이 값은 Server 정책이나 다른
+사용자 ID별 브라우저 저장소에 화면 테마, 정보 밀도, 로그인 시작 화면, 운영 통계
+새로고침 주기와 화면 움직임 최소화를 보관합니다. 이 값은 Server 정책이나 다른
 브라우저에 전파되지 않으므로 보안·권한 설정 용도로 사용하지 않습니다.
+
+### 17.1 감사 로그와 Server 로그
+
+**감사 로그**는 누가 무엇을 바꿨는지를 남깁니다. 행위·자원·결과·기간과 request ID로
+검색하고, 총 건수와 페이징, CSV 내려받기를 제공합니다. Agent 자동 등록처럼 사람이
+아닌 행위자도 같은 표에 기록됩니다.
+
+![감사 로그 — 행위·자원·결과·기간으로 검색하고 행마다 행위자와 대상, 결과를 확인한다](assets/guide/audit.png)
+
+**Server 로그**는 모든 Pod의 Agent 등록·전송 실패와 Server 오류를 같은 공용 DB에서
+검색합니다. 감사 로그 행의 request ID로 이동하면 그 요청이 남긴 진단 기록을 바로
+볼 수 있습니다. 보존 일수와 최대 건수는 화면 오른쪽 위에 표시됩니다.
+
+![Server 로그 — 구성요소·Pod·수준으로 진단 이벤트를 검색하고 request ID로 요청을 추적한다](assets/guide/logs.png)
+
+## 18. Server 기동 환경 변수
+
+Server 프로세스가 읽는 설정은 아래가 전부입니다. 이 표는
+`server/internal/config/config.go`의 `Load()`에서 그대로 옮긴 것으로, 여기에 없는
+이름은 Server가 읽지 않습니다. 운영 중 바뀌는 값(Agent 등록 정책, Keycloak,
+분류 규칙 등)은 환경 변수가 아니라 관리 콘솔의 **설정** 화면과 메타데이터
+데이터베이스에 있습니다.
+
+| 변수 | 기본값 | 필수 | 설명 |
+|---|---|---|---|
+| `INVENQOR_LISTEN_ADDRESS` | `127.0.0.1:7070` | 컨테이너에서 필수 | 수신 주소. 컨테이너에서는 `0.0.0.0:7070`으로 지정해야 외부에서 접속됩니다. |
+| `INVENQOR_BASE_URL` | 없음 | 아니오 | 외부에서 보이는 기본 URL. `http`/`https`만 허용하며 Keycloak Redirect URI 생성 등에 사용합니다. |
+| `INVENQOR_STATE_DIR` | `/var/lib/invenqor-server` | 아니오 | 상태 디렉터리. 절대 경로여야 합니다. 아래 세 경로의 기본값이 여기서 파생됩니다. |
+| `INVENQOR_SQLITE_PATH` | `<state>/invenqor.db` | 아니오 | SQLite 파일 경로. PostgreSQL DSN을 지정하면 사용하지 않습니다. |
+| `INVENQOR_UPDATE_DIR` | `<state>/updates` | 아니오 | 게시된 Agent 업데이트 artifact 보관 경로. 멀티 Pod에서는 RWX 볼륨입니다. |
+| `INVENQOR_EVENT_SPOOL_DIR` | `<state>/spool` | 아니오 | DB 장애 시 Agent 이벤트를 받아 두는 spool 경로. 멀티 Pod에서는 RWX 볼륨입니다. |
+| `INVENQOR_POSTGRES_DSN` | 없음 | 운영 배포에서 필수 | 운영 PostgreSQL DSN. 지정하면 연결·migration 실패 시 SQLite로 내려가지 않고 기동과 readiness가 실패합니다. 별칭 `POSTGRES_DSN`, `postgres_dsn`. |
+| `INVENQOR_POSTGRES_SCHEMA` | `public` | 아니오 | 사용할 PostgreSQL 스키마 이름. |
+| `INVENQOR_DATABASE_TIMEOUT` | `5s` | 아니오 | 데이터베이스 작업 timeout. Go duration 표기(`750ms`, `10s`). |
+| `INVENQOR_SHUTDOWN_TIMEOUT` | `15s` | 아니오 | 종료 시 진행 중 요청을 기다리는 시간. |
+| `INVENQOR_MASTER_KEY_FILE` | 없음(상태 디렉터리에서 생성) | 멀티 Pod에서 필수 | 비밀 설정을 봉인하는 32-byte Master Key 파일의 절대 경로. 모든 Pod가 같은 값을 사용해야 합니다. |
+| `INVENQOR_BOOTSTRAP_ADMIN` | 없음 | 아니오 | 최초 관리자 ID. 비밀번호와 반드시 함께 지정합니다. 별칭 `BOOTSTRAP_ADMIN`, `bootstrap_admin`. |
+| `INVENQOR_BOOTSTRAP_ADMIN_PASSWORD` | 없음 | 아니오 | 최초 관리자 비밀번호. 예: `ChangeMe-With-A-Strong-Password-42!`. 별칭 `BOOTSTRAP_ADMIN_PASSWORD`, `bootstrap_admin_password`. |
+| `INVENQOR_BOOTSTRAP_ADMIN_PASSWORD_FILE` | 없음 | 아니오 | 위 비밀번호를 담은 파일의 절대 경로. 값과 파일을 동시에 지정하면 기동이 거부됩니다. |
+| `INVENQOR_AGENT_AUTO_ENROLLMENT` | `true` | 아니오 | 최초 기동 시 자동 등록 기본 정책. 이후에는 **설정 → Agent 등록**의 DB 값이 우선합니다. 별칭 `AGENT_AUTO_ENROLLMENT`, `agent_auto_enrollment`. |
+| `INVENQOR_AGENT_ENROLLMENT_TOKEN` | 없음 | 아니오 | 등록 Token 초기값. 32자 이상이어야 하며 짧으면 기동이 실패합니다. 예: `ivq_ec_` + 임의 64자. 별칭 `AGENT_ENROLLMENT_TOKEN`, `agent_enrollment_token`. |
+| `INVENQOR_AGENT_ENROLLMENT_TOKEN_FILE` | 없음 | 아니오 | 위 Token을 담은 파일의 절대 경로. |
+| `INVENQOR_UPDATE_PUBLIC_KEY` | 없음 | 권장 | Agent 업데이트 서명 검증용 Ed25519 공개키(base64). 지정하지 않으면 기동 시 경고를 남기고 게시 시점 검증을 건너뜁니다. 별칭 `UPDATE_PUBLIC_KEY`, `update_public_key`. |
+| `INVENQOR_UPDATE_PUBLIC_KEY_FILE` | 없음 | 아니오 | 위 공개키를 담은 파일의 절대 경로. |
+
+비밀값은 값 대신 `*_FILE` 변수와 Secret volume을 사용하십시오. 표의 예시 값은 모두
+가짜이며 그대로 사용해서는 안 됩니다. 설치 절차 전체와 Kubernetes·Helm 배포는
+[Server 설치 및 운영 가이드](SERVER_INSTALLATION.md)를 따릅니다.
+
+## 19. 운영 설정 화면
+
+**설정**은 PostgreSQL, Agent 등록, 자산 분류, Keycloak, 고급 설정, 시스템 정보
+여섯 개 하위 화면으로 나뉩니다. 선택한 하위 화면은 `#/settings/agents` 같은 URL과
+사용자별 브라우저 상태에 함께 저장되어 새로고침 후에도 유지됩니다.
+
+**PostgreSQL**은 DSN을 저장하기 전에 실제 연결을 시험합니다. 현재 실행 중인
+데이터베이스 모드도 같은 화면에 표시되므로, SQLite fallback으로 뜬 Pod를 여기서
+가장 빨리 알아차릴 수 있습니다.
+
+![설정 → PostgreSQL — 연결을 시험한 뒤 저장하고 현재 데이터베이스 모드를 확인한다](assets/guide/settings-postgresql.png)
+
+**Agent 등록**은 재기동 없이 URL-only/Token 보호/차단을 전환하고 등록 Token을
+발급·회전·폐기하며 IP/CIDR allowlist와 신뢰 프록시를 통제합니다. 여기서 바꾼 값이
+환경 변수보다 우선합니다.
+
+![설정 → Agent 등록 — 등록 모드, 등록 Token, IP/CIDR allowlist와 신뢰 프록시를 재기동 없이 바꾼다](assets/guide/settings-agent-enrollment.png)
+
+**자산 분류**는 수집 범주를 자산 유형과 호스트 관계로 옮기는 규칙을 우선순위
+순서로 관리합니다. 뒤의 규칙은 앞의 규칙이 정한 값을 조건으로 쓸 수 있고, 운영자가
+직접 지정한 값은 자동 실행으로 덮어쓰지 않습니다. 규칙을 바꾼 뒤에는 **저장된 자산
+재분류**로 기존 자산에 다시 적용합니다.
+
+![설정 → 자산 분류·관계 — 수집 범주를 자산 유형·호스트 관계로 옮기는 규칙을 우선순위 순서로 관리하고 저장된 자산에 재적용한다](assets/guide/settings-classification.png)
+
+**시스템 정보**는 읽기 전용입니다. Server 버전과 Commit·Build time, Database mode,
+서비스 주소, Agent 자동 등록 상태, Liveness·Readiness·Database health를 현재 실행
+프로세스 기준으로 보여 줍니다. 장애 문의 시 이 화면의 값을 그대로 전달하십시오.
+
+![설정 → 시스템 정보 — Server 버전, Database mode, Liveness·Readiness를 현재 실행 프로세스 기준으로 확인한다](assets/guide/settings-system.png)
+
+**API · MCP 키**는 사람 Session과 분리된 기계 자격 증명을 관리합니다. scope는
+필요한 것만 고르고, 원문 Secret은 발급·회전 응답에서 한 번만 표시됩니다. 수명주기
+상세는 [자산 API·MCP·키 관리 가이드](API_MCP_GUIDE.md)를 따릅니다.
+
+![API · MCP 키 — 최소권한 scope로 키를 발급하고 이름 변경·회전·폐기를 수행한다](assets/guide/api-keys.png)
+
+## 20. 가이드 화면 캡처 다시 만들기
+
+이 문서와 [사용자 가이드](USER_GUIDE.md)의 화면 캡처는 저장소의 스크립트가
+생성합니다.
+
+```bash
+node scripts/capture-guide-screenshots.mjs
+```
+
+스크립트는 임시 디렉터리에 `invenqor-server`를 빌드해 loopback 전용 포트로 띄우고,
+가공한 자산·계정·Agent를 채운 뒤 headless Chrome 으로 1440x900 에서 촬영하고,
+끝나면 그 Server 와 상태 디렉터리를 삭제합니다. 대상 주소를 환경 변수로 받지
+않으므로 실수로 운영 배포를 촬영하거나 그 설정을 바꿀 수 없습니다.
+`GUIDE_CAPTURE_PORT`로 사용할 포트만 바꿀 수 있습니다. 촬영에 쓰는 관리자·사용자
+계정의 비밀번호는 실행할 때마다 무작위로 만들어 어디에도 기록하지 않으며, 로그인
+화면은 비밀번호를 입력하기 전에 촬영합니다.
+
+PDF 는 저장소 루트에서 `./scripts/build-guide-pdfs.sh` 로 만듭니다. 공용 가이드
+도구(`GUIDE_TOOL`)가 필요하며, 그림이 하나라도 없으면 실패합니다.
+
+스크립트가 촬영하는 화면 목록, `docs/assets/guide/` 의 파일, 두 가이드가 싣는
+그림은 `go test ./internal/webui/` 의 `TestGuideScreenshotsMatchCaptureScript` 가
+대조하므로, 화면을 추가하거나 이름을 바꾸면 세 곳을 함께 고쳐야 합니다.
 
 <p class="small">문서 오류 및 제품 문의:
 <a href="https://github.com/hkjang/invenqor">GitHub 저장소</a> ·
