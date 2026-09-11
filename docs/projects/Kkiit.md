@@ -1,7 +1,7 @@
 ---
 title: "Kkiit — 자율 개선 이력"
 description: "Kkiit: 자율 개선 회차 1회, 릴리즈 0건. 최근 릴리즈 없음."
-last_modified_at: 2026-09-12 04:32:10 +0900
+last_modified_at: 2026-09-12 04:54:18 +0900
 ---
 {% raw %}
 <script type="application/ld+json">
@@ -18,7 +18,7 @@ last_modified_at: 2026-09-12 04:32:10 +0900
   "name": "hkjang",
   "url": "https://github.com/hkjang"
  },
- "dateModified": "2026-09-12T04:32:10+09:00"
+ "dateModified": "2026-09-12T04:54:18+09:00"
 }
 </script>
 
