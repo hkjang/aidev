@@ -1,0 +1,213 @@
+{
+  "run_id": "2026-09-12-001117-Momento-improve",
+  "generated": "2026-09-12T00:20:50+09:00",
+  "run": {
+    "run_id": "2026-09-12-001117-Momento-improve",
+    "project": "Momento",
+    "kind": "improve",
+    "started": "2026-09-12T00:11:18+09:00",
+    "model": "claude-opus-5",
+    "policy_version": "5935779a",
+    "prompts_hash": "82f2440d4b2fef65",
+    "runner_version": "02a49720",
+    "finished": "2026-09-12T00:20:50+09:00",
+    "outcome": "verify-failed"
+  },
+  "record": {
+    "ts": "2026-09-12T00:20:50+09:00",
+    "date": "2026-09-12",
+    "project": "Momento",
+    "result": "CI failed, PR open https://github.com/hkjang/Momento/pull/4",
+    "outcome": "verify-failed",
+    "run_id": "2026-09-12-001117-Momento-improve",
+    "base_sha": "9f857c4b750e068e6e88298479d8c4c052e5e6cc",
+    "head_sha": "292285fb1c2dd82d094d8f7c0ed241b26cdd21e8",
+    "pr": "https://github.com/hkjang/Momento/pull/4",
+    "stages": {
+      "base": {
+        "state": "pinned",
+        "reason": "main@9f857c4",
+        "at": "2026-09-12T00:11:21+09:00"
+      },
+      "autonomy": {
+        "state": "release",
+        "reason": "",
+        "at": "2026-09-12T00:11:21+09:00"
+      },
+      "verify": {
+        "state": "passed",
+        "reason": "검증 7개 통과 (auto)",
+        "at": "2026-09-12T00:15:47+09:00"
+      },
+      "pr": {
+        "state": "created",
+        "reason": "https://github.com/hkjang/Momento/pull/4",
+        "at": "2026-09-12T00:15:54+09:00"
+      },
+      "review": {
+        "state": "approved",
+        "reason": "리뷰 승인 (risk=low)",
+        "at": "2026-09-12T00:16:49+09:00"
+      },
+      "ci": {
+        "state": "failed",
+        "reason": "성공이 아닌 검사: test=failure",
+        "at": "2026-09-12T00:20:49+09:00"
+      }
+    },
+    "campaign": "guides-2026-09",
+    "autonomy": "release",
+    "files": 3,
+    "additions": 70,
+    "deletions": 13,
+    "tests": 1,
+    "title": "fix(console): a requeued aggregate job says it is waiting to retry, not merely pending"
+  },
+  "stages": {
+    "base": {
+      "state": "pinned",
+      "reason": "main@9f857c4",
+      "at": "2026-09-12T00:11:21+09:00"
+    },
+    "autonomy": {
+      "state": "release",
+      "reason": "",
+      "at": "2026-09-12T00:11:21+09:00"
+    },
+    "verify": {
+      "state": "passed",
+      "reason": "검증 7개 통과 (auto)",
+      "at": "2026-09-12T00:15:47+09:00"
+    },
+    "pr": {
+      "state": "created",
+      "reason": "https://github.com/hkjang/Momento/pull/4",
+      "at": "2026-09-12T00:15:54+09:00"
+    },
+    "review": {
+      "state": "approved",
+      "reason": "리뷰 승인 (risk=low)",
+      "at": "2026-09-12T00:16:49+09:00"
+    },
+    "ci": {
+      "state": "failed",
+      "reason": "성공이 아닌 검사: test=failure",
+      "at": "2026-09-12T00:20:49+09:00"
+    }
+  },
+  "provenance": {
+    "model": "claude-opus-5",
+    "policy_version": "5935779a",
+    "prompts_hash": "82f2440d4b2fef65",
+    "runner_version": "02a49720",
+    "base_sha": "9f857c4b750e068e6e88298479d8c4c052e5e6cc",
+    "head_sha": "292285fb1c2dd82d094d8f7c0ed241b26cdd21e8",
+    "pr": "https://github.com/hkjang/Momento/pull/4"
+  },
+  "verification": {
+    "runner": {
+      "source": "auto",
+      "commands": [
+        {
+          "cmd": "go build ./...",
+          "exit": 0,
+          "seconds": 0
+        },
+        {
+          "cmd": "go vet ./...",
+          "exit": 0,
+          "seconds": 0
+        },
+        {
+          "cmd": "go test ./...",
+          "exit": 0,
+          "seconds": 1
+        },
+        {
+          "cmd": "cd web && [ -d node_modules ] || npm ci --no-audit --no-fund",
+          "exit": 0,
+          "seconds": 0
+        },
+        {
+          "cmd": "cd web && npm test --silent",
+          "exit": 0,
+          "seconds": 0
+        },
+        {
+          "cmd": "cd web && [ -d node_modules ] || npm ci --no-audit --no-fund",
+          "exit": 0,
+          "seconds": 0
+        },
+        {
+          "cmd": "cd web && npm run build --silent",
+          "exit": 0,
+          "seconds": 7
+        }
+      ]
+    },
+    "runner_gate": {
+      "ok": true,
+      "state": "verified",
+      "reason": "검증 7개 통과 (auto)"
+    },
+    "after_rebase": null,
+    "review": {
+      "verdict": "approve",
+      "reasons": [],
+      "notes": [
+        "web/src/pages/aggregateJobStatus.ts:4-5 주석은 '잉게스트 워커에 락을 뺏겨 pending 으로 돌아가는' 경로도 있다고 말하지만, 코드상 pending+error 를 만드는 곳은 internal/service/maintenance.go:30 의 'recovered after interrupted worker' 한 곳뿐입니다. 동작에는 영향이 없는 주석 과장이므로 approve 하되 주석을 실제 경로에 맞게 좁히는 것을 권합니다.",
+        "테스트는 새 순수 함수 describeAggregateJobStatus 를 직접 호출하며 라벨·색을 단언합니다. pending+빈/공백/null error → 'pending', pending+error → '재시도 대기', success/failed/running 색 유지까지 경계값을 실제로 검증합니다. node --test 통과, tsc --noEmit 통과 확인.",
+        "DataTable.Column.format 시그니처는 (value, row) 이므로 row 기반 호출은 유효하고, attempts 컬럼은 API(internal/httpapi/enterprise_governance.go:400,419)가 이미 내려주는 필드입니다. align:'right' 도 Column 타입에 존재합니다.",
+        "변경은 콘솔 표시 전용(UI 라벨·색·컬럼 추가)이며 백엔드·인증·마이그레이션·데이터 상태를 건드리지 않아 revert 로 완전히 되돌릴 수 있습니다.",
+        "runNext 가 job 을 running 으로 올릴 때 error=NULL 로 지우고, 실패 시 status='failed' 로 바꾸므로 'pending + error 있음' 조합은 재큐된 경우에만 발생합니다. 라벨 규칙이 백엔드 상태 기계와 일치합니다."
+      ],
+      "risk": "low"
+    },
+    "ci_gate": {
+      "ok": false,
+      "state": "failed",
+      "reason": "성공이 아닌 검사: test=failure",
+      "checks": 1,
+      "bad": 1
+    }
+  },
+  "release": {
+    "result": null,
+    "assets_sha256": []
+  },
+  "approval": null,
+  "usage": [
+    {
+      "ts": "2026-09-12T00:15:36+09:00",
+      "date": "2026-09-12",
+      "project": "Momento",
+      "phase": "improve",
+      "run_id": "2026-09-12-001117-Momento-improve",
+      "campaign": "guides-2026-09",
+      "subtype": "success",
+      "duration_ms": 260040,
+      "num_turns": 25,
+      "cost_usd": 1.228399,
+      "input_tokens": 50,
+      "output_tokens": 12702,
+      "cache_read": 978480,
+      "cache_create": 41348
+    },
+    {
+      "ts": "2026-09-12T00:16:49+09:00",
+      "date": "2026-09-12",
+      "project": "Momento",
+      "phase": "review",
+      "run_id": "2026-09-12-001117-Momento-improve",
+      "campaign": "guides-2026-09",
+      "subtype": "success",
+      "duration_ms": 53447,
+      "num_turns": 10,
+      "cost_usd": 0.33922399999999997,
+      "input_tokens": 20,
+      "output_tokens": 2864,
+      "cache_read": 237036,
+      "cache_create": 14712
+    }
+  ]
+}
