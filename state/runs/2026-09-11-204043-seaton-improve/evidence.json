@@ -1,0 +1,202 @@
+{
+  "run_id": "2026-09-11-204043-seaton-improve",
+  "generated": "2026-09-11T21:02:40+09:00",
+  "run": {
+    "run_id": "2026-09-11-204043-seaton-improve",
+    "project": "seaton",
+    "kind": "improve",
+    "started": "2026-09-11T20:40:43+09:00",
+    "model": "claude-opus-5",
+    "policy_version": "5935779a",
+    "prompts_hash": "82f2440d4b2fef65",
+    "runner_version": "02a49720",
+    "finished": "2026-09-11T21:02:40+09:00",
+    "outcome": "review-pending"
+  },
+  "record": {
+    "ts": "2026-09-11T21:02:40+09:00",
+    "date": "2026-09-11",
+    "project": "seaton",
+    "result": "review held, PR open https://github.com/hkjang/seaton/pull/25",
+    "outcome": "review-pending",
+    "run_id": "2026-09-11-204043-seaton-improve",
+    "base_sha": "a9820e386ddac8045477b47965fefd47220800f4",
+    "head_sha": "1487c1d82261445ae968e2e7df37fc13a455cde3",
+    "pr": "https://github.com/hkjang/seaton/pull/25",
+    "stages": {
+      "base": {
+        "state": "pinned",
+        "reason": "main@a9820e3",
+        "at": "2026-09-11T20:40:45+09:00"
+      },
+      "autonomy": {
+        "state": "release",
+        "reason": "",
+        "at": "2026-09-11T20:40:45+09:00"
+      },
+      "verify": {
+        "state": "passed",
+        "reason": "검증 7개 통과 (auto)",
+        "at": "2026-09-11T20:59:20+09:00"
+      },
+      "pr": {
+        "state": "created",
+        "reason": "https://github.com/hkjang/seaton/pull/25",
+        "at": "2026-09-11T20:59:27+09:00"
+      },
+      "review": {
+        "state": "rejected",
+        "reason": "리뷰 거절: scripts/build-docs.py:104,180-181 번호 목록 이어붙이기 로직 결함 — flush() 가 순서 없는(불릿) 목록에서도 start 를 누적하고, 새 목록 직전 블록이 image 이면 그 사이에 제목·문단이 있었더라도 start 를 1로 되돌리지 않는다. 그 결과 커밋된 docs/USER_GUIDE.html:201 에서 3.6 '내 API 키' 절의 1~5단계가 <ol start=\"14\"> 로 렌더링되어 14~18번으로 표시된다(마크다운 원본 docs/USER_GUIDE.md:178-182 는 1~5). 산출물에 실제로 잘못 찍힌 상태로 머지되는 문서 결함.",
+        "at": "2026-09-11T21:02:37+09:00"
+      }
+    },
+    "campaign": "guides-2026-09",
+    "autonomy": "release",
+    "files": 31,
+    "additions": 1214,
+    "deletions": 402,
+    "tests": 0,
+    "title": "docs: 사용자·관리자 가이드를 실제 화면 캡처와 함께 표준 구성으로 정비"
+  },
+  "stages": {
+    "base": {
+      "state": "pinned",
+      "reason": "main@a9820e3",
+      "at": "2026-09-11T20:40:45+09:00"
+    },
+    "autonomy": {
+      "state": "release",
+      "reason": "",
+      "at": "2026-09-11T20:40:45+09:00"
+    },
+    "verify": {
+      "state": "passed",
+      "reason": "검증 7개 통과 (auto)",
+      "at": "2026-09-11T20:59:20+09:00"
+    },
+    "pr": {
+      "state": "created",
+      "reason": "https://github.com/hkjang/seaton/pull/25",
+      "at": "2026-09-11T20:59:27+09:00"
+    },
+    "review": {
+      "state": "rejected",
+      "reason": "리뷰 거절: scripts/build-docs.py:104,180-181 번호 목록 이어붙이기 로직 결함 — flush() 가 순서 없는(불릿) 목록에서도 start 를 누적하고, 새 목록 직전 블록이 image 이면 그 사이에 제목·문단이 있었더라도 start 를 1로 되돌리지 않는다. 그 결과 커밋된 docs/USER_GUIDE.html:201 에서 3.6 '내 API 키' 절의 1~5단계가 <ol start=\"14\"> 로 렌더링되어 14~18번으로 표시된다(마크다운 원본 docs/USER_GUIDE.md:178-182 는 1~5). 산출물에 실제로 잘못 찍힌 상태로 머지되는 문서 결함.",
+      "at": "2026-09-11T21:02:37+09:00"
+    }
+  },
+  "provenance": {
+    "model": "claude-opus-5",
+    "policy_version": "5935779a",
+    "prompts_hash": "82f2440d4b2fef65",
+    "runner_version": "02a49720",
+    "base_sha": "a9820e386ddac8045477b47965fefd47220800f4",
+    "head_sha": "1487c1d82261445ae968e2e7df37fc13a455cde3",
+    "pr": "https://github.com/hkjang/seaton/pull/25"
+  },
+  "verification": {
+    "runner": {
+      "source": "auto",
+      "commands": [
+        {
+          "cmd": "go build ./...",
+          "exit": 0,
+          "seconds": 1
+        },
+        {
+          "cmd": "go vet ./...",
+          "exit": 0,
+          "seconds": 0
+        },
+        {
+          "cmd": "go test ./...",
+          "exit": 0,
+          "seconds": 1
+        },
+        {
+          "cmd": "cd web && [ -d node_modules ] || npm ci --no-audit --no-fund",
+          "exit": 0,
+          "seconds": 0
+        },
+        {
+          "cmd": "cd web && npm test --silent",
+          "exit": 0,
+          "seconds": 0
+        },
+        {
+          "cmd": "cd web && [ -d node_modules ] || npm ci --no-audit --no-fund",
+          "exit": 0,
+          "seconds": 0
+        },
+        {
+          "cmd": "cd web && npm run build --silent",
+          "exit": 0,
+          "seconds": 6
+        }
+      ]
+    },
+    "runner_gate": {
+      "ok": true,
+      "state": "verified",
+      "reason": "검증 7개 통과 (auto)"
+    },
+    "after_rebase": null,
+    "review": {
+      "verdict": "reject",
+      "reasons": [
+        "scripts/build-docs.py:104,180-181 번호 목록 이어붙이기 로직 결함 — flush() 가 순서 없는(불릿) 목록에서도 start 를 누적하고, 새 목록 직전 블록이 image 이면 그 사이에 제목·문단이 있었더라도 start 를 1로 되돌리지 않는다. 그 결과 커밋된 docs/USER_GUIDE.html:201 에서 3.6 '내 API 키' 절의 1~5단계가 <ol start=\"14\"> 로 렌더링되어 14~18번으로 표시된다(마크다운 원본 docs/USER_GUIDE.md:178-182 는 1~5). 산출물에 실제로 잘못 찍힌 상태로 머지되는 문서 결함."
+      ],
+      "notes": [
+        "docs/*.html 은 scripts/build-docs.py 로 재생성해도 diff 가 없어 md 와 일치함(위 번호 결함도 재현됨).",
+        "ADMIN_GUIDE 환경 변수 3개(internal/platform/config.go)와 설정 키 31개·기본값(internal/database/migrations.sql)을 코드와 대조 — 전부 일치.",
+        "USER_GUIDE '막혔을 때' 절의 오류 문구 30여 개를 web/src·internal 에서 grep — 전부 실제 문구.",
+        "docs/assets/guide/*.png 22장은 md 참조와 1:1 일치, guide-shots.mjs 의 shot() 22회와도 일치. profile-keys-created.png 의 키 원문은 가려져 있고 목록에는 식별용 prefix 만 보임.",
+        "web/e2e/guide-shots.mjs: try/finally 가 없어 키 생성(약 185행) 이후 단계가 실패하면 커밋 메시지가 약속한 API 키 폐기와 browser.close() 가 실행되지 않음. 로컬 배포 한정이라 위험은 낮지만 설명과 동작이 어긋날 수 있는 경로.",
+        "README 가 PDF 빌드를 저장소 밖 경로(../aidev/tools/guide/md2pdf.mjs)에 의존시킴 — 이 저장소만 클론한 사람은 PDF 를 재생성할 수 없음.",
+        "가이드 PDF 가 각 1.5MB·2.3MB 로 커졌고 바이너리라 리뷰 불가. 이미지 수(17/8)는 md 의 그림 수(14/8) 이상으로 정상 범위.",
+        "Go 코드·마이그레이션·인증 로직 변경 없음. 되돌리기는 git revert 로 완전히 가능."
+      ],
+      "risk": "low"
+    },
+    "ci_gate": null
+  },
+  "release": {
+    "result": null,
+    "assets_sha256": []
+  },
+  "approval": null,
+  "usage": [
+    {
+      "ts": "2026-09-11T20:59:06+09:00",
+      "date": "2026-09-11",
+      "project": "seaton",
+      "phase": "improve",
+      "run_id": "2026-09-11-204043-seaton-improve",
+      "campaign": "guides-2026-09",
+      "subtype": "success",
+      "duration_ms": 1101845,
+      "num_turns": 105,
+      "cost_usd": 10.847997499999996,
+      "input_tokens": 172,
+      "output_tokens": 67137,
+      "cache_read": 13655763,
+      "cache_create": 233695
+    },
+    {
+      "ts": "2026-09-11T21:02:37+09:00",
+      "date": "2026-09-11",
+      "project": "seaton",
+      "phase": "review",
+      "run_id": "2026-09-11-204043-seaton-improve",
+      "campaign": "guides-2026-09",
+      "subtype": "success",
+      "duration_ms": 188541,
+      "num_turns": 22,
+      "cost_usd": 1.034424,
+      "input_tokens": 44,
+      "output_tokens": 8966,
+      "cache_read": 843876,
+      "cache_create": 38625
+    }
+  ]
+}
