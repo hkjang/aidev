@@ -1,0 +1,203 @@
+{
+  "run_id": "2026-09-11-182116-Kkiit-improve",
+  "generated": "2026-09-11T18:50:24+09:00",
+  "run": {
+    "run_id": "2026-09-11-182116-Kkiit-improve",
+    "project": "Kkiit",
+    "kind": "improve",
+    "started": "2026-09-11T18:21:16+09:00",
+    "model": "claude-opus-5",
+    "policy_version": "5935779a",
+    "prompts_hash": "82f2440d4b2fef65",
+    "runner_version": "02a49720",
+    "finished": "2026-09-11T18:50:24+09:00",
+    "outcome": "review-pending"
+  },
+  "record": {
+    "ts": "2026-09-11T18:50:24+09:00",
+    "date": "2026-09-11",
+    "project": "Kkiit",
+    "result": "CI no-ci, PR open https://github.com/hkjang/Kkiit/pull/1",
+    "outcome": "review-pending",
+    "run_id": "2026-09-11-182116-Kkiit-improve",
+    "base_sha": "7e96575b598a276f34623aa7295e8d3ee9c5b6ee",
+    "head_sha": "ff19bc7c7cd1cd571e78d6c9feddc5fdede7e3c8",
+    "pr": "https://github.com/hkjang/Kkiit/pull/1",
+    "stages": {
+      "base": {
+        "state": "pinned",
+        "reason": "main@7e96575",
+        "at": "2026-09-11T18:21:18+09:00"
+      },
+      "autonomy": {
+        "state": "release",
+        "reason": "",
+        "at": "2026-09-11T18:21:18+09:00"
+      },
+      "verify": {
+        "state": "passed",
+        "reason": "검증 5개 통과 (auto)",
+        "at": "2026-09-11T18:43:06+09:00"
+      },
+      "pr": {
+        "state": "created",
+        "reason": "https://github.com/hkjang/Kkiit/pull/1",
+        "at": "2026-09-11T18:43:13+09:00"
+      },
+      "review": {
+        "state": "approved",
+        "reason": "리뷰 승인 (risk=low)",
+        "at": "2026-09-11T18:45:47+09:00"
+      },
+      "ci": {
+        "state": "no-ci",
+        "reason": "이 커밋에 검사가 없음 (정책 allow_merge_without_ci 가 없으면 차단)",
+        "at": "2026-09-11T18:50:23+09:00"
+      }
+    },
+    "campaign": "guides-2026-09",
+    "autonomy": "release",
+    "files": 45,
+    "additions": 1272,
+    "deletions": 2,
+    "tests": 0,
+    "title": "docs: 사용자·관리자 가이드에 실제 화면 캡처를 싣다"
+  },
+  "stages": {
+    "base": {
+      "state": "pinned",
+      "reason": "main@7e96575",
+      "at": "2026-09-11T18:21:18+09:00"
+    },
+    "autonomy": {
+      "state": "release",
+      "reason": "",
+      "at": "2026-09-11T18:21:18+09:00"
+    },
+    "verify": {
+      "state": "passed",
+      "reason": "검증 5개 통과 (auto)",
+      "at": "2026-09-11T18:43:06+09:00"
+    },
+    "pr": {
+      "state": "created",
+      "reason": "https://github.com/hkjang/Kkiit/pull/1",
+      "at": "2026-09-11T18:43:13+09:00"
+    },
+    "review": {
+      "state": "approved",
+      "reason": "리뷰 승인 (risk=low)",
+      "at": "2026-09-11T18:45:47+09:00"
+    },
+    "ci": {
+      "state": "no-ci",
+      "reason": "이 커밋에 검사가 없음 (정책 allow_merge_without_ci 가 없으면 차단)",
+      "at": "2026-09-11T18:50:23+09:00"
+    }
+  },
+  "provenance": {
+    "model": "claude-opus-5",
+    "policy_version": "5935779a",
+    "prompts_hash": "82f2440d4b2fef65",
+    "runner_version": "02a49720",
+    "base_sha": "7e96575b598a276f34623aa7295e8d3ee9c5b6ee",
+    "head_sha": "ff19bc7c7cd1cd571e78d6c9feddc5fdede7e3c8",
+    "pr": "https://github.com/hkjang/Kkiit/pull/1"
+  },
+  "verification": {
+    "runner": {
+      "source": "auto",
+      "commands": [
+        {
+          "cmd": "go build ./...",
+          "exit": 0,
+          "seconds": 0
+        },
+        {
+          "cmd": "go vet ./...",
+          "exit": 0,
+          "seconds": 0
+        },
+        {
+          "cmd": "go test ./...",
+          "exit": 0,
+          "seconds": 0
+        },
+        {
+          "cmd": "cd web && [ -d node_modules ] || npm ci --no-audit --no-fund",
+          "exit": 0,
+          "seconds": 14
+        },
+        {
+          "cmd": "cd web && npm run build --silent",
+          "exit": 0,
+          "seconds": 4
+        }
+      ]
+    },
+    "runner_gate": {
+      "ok": true,
+      "state": "verified",
+      "reason": "검증 5개 통과 (auto)"
+    },
+    "after_rebase": null,
+    "review": {
+      "verdict": "approve",
+      "reasons": [],
+      "notes": [
+        "docs/ADMIN_GUIDE.md:305 '로그인 시도는 계정당 분당 10회' 는 부정확. internal/httpapi/ratelimit.go:80-83 의 throttle 은 로그인 시 principal 이 없으므로 클라이언트 IP 기준(ip:<addr>)이고 계정 단위 잠금/제한은 코드에 없음(failed_login/lockout 없음). 보안 절이므로 'IP 당' 으로 고치는 편이 좋음 — 머지 전 한 줄 수정 권장.",
+        "docs/ADMIN_GUIDE.md:104-106 ENCRYPTION_KEY 만 빠졌을 때의 로그 문구는 'ENCRYPTION_KEY is required'(internal/config/config.go:50)이며, 표기된 통합 문구는 다른 세 변수가 빠졌을 때만 나옴. 장애 대응 표(280행)는 정확함.",
+        "docs/ADMIN_GUIDE.md:327 PDF 생성 도구 'aidev/tools/guide/md2pdf.mjs' 는 이 저장소 밖 경로라 저장소만 받은 독자는 PDF 를 재생성할 수 없음. PDF(약 4.3MB)와 PNG 39장(약 4.5MB)이 생성 산출물로 커밋되어 이후 문서 수정 시 드리프트 가능.",
+        "검증 결과 일치 확인: 환경 변수 5개와 오류 문구(config.go, main.go), 역할·권한 표(001_initial.sql, 004, 006, 011), system_settings 기본값(001, 006, settlement/risk), throttle 기본값(ratelimit.go: login 10, order_create 30, message_create 60), compose.yaml/Dockerfile(uid 10001, read_only, /tmp 64m, HEALTHCHECK 30s), 사용자 가이드의 인용 문구 30개 모두 소스에 존재. 가이드가 참조하는 PNG 39장이 모두 존재하고 미참조 파일 없음.",
+        "scripts/guide-screenshots.mjs: 루프백 강제·환경 변수 자격 증명·멱등 재실행(register→login 폴백, coupon 409 허용, favorite 는 ON CONFLICT DO NOTHING, 주문/문의/RFQ/신고/조직/키/정책은 기존 조회 후 생성)이 주석대로 동작함을 코드로 확인. 하드코딩된 비밀값 없음. 캡처 이미지에서 API 키 원문·비밀번호 노출 없음(키는 접두사만, 비밀번호 마스킹).",
+        "범위: 문서·스크립트·자산만 변경, Go/TS 소스·마이그레이션·워크플로 미변경. 워크트리의 internal/ui/dist 변경은 커밋에 포함되지 않음. revert 로 완전히 되돌릴 수 있음."
+      ],
+      "risk": "low"
+    },
+    "ci_gate": {
+      "ok": false,
+      "state": "no-ci",
+      "reason": "이 커밋에 검사가 없음 (정책 allow_merge_without_ci 가 없으면 차단)",
+      "checks": 0
+    }
+  },
+  "release": {
+    "result": null,
+    "assets_sha256": []
+  },
+  "approval": null,
+  "usage": [
+    {
+      "ts": "2026-09-11T18:42:39+09:00",
+      "date": "2026-09-11",
+      "project": "Kkiit",
+      "phase": "improve",
+      "run_id": "2026-09-11-182116-Kkiit-improve",
+      "campaign": "guides-2026-09",
+      "subtype": "success",
+      "duration_ms": 1275100,
+      "num_turns": 117,
+      "cost_usd": 11.641851500000001,
+      "input_tokens": 202,
+      "output_tokens": 73163,
+      "cache_read": 14721839,
+      "cache_create": 244702
+    },
+    {
+      "ts": "2026-09-11T18:45:47+09:00",
+      "date": "2026-09-11",
+      "project": "Kkiit",
+      "phase": "review",
+      "run_id": "2026-09-11-182116-Kkiit-improve",
+      "campaign": "guides-2026-09",
+      "subtype": "success",
+      "duration_ms": 151441,
+      "num_turns": 26,
+      "cost_usd": 1.7125934999999997,
+      "input_tokens": 52,
+      "output_tokens": 9503,
+      "cache_read": 1536609,
+      "cache_create": 70461
+    }
+  ]
+}
