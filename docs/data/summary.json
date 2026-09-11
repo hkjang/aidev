@@ -1,27 +1,27 @@
 {
- "generated": "2026-09-12T07:43:50+09:00",
+ "generated": "2026-09-12T08:28:03+09:00",
  "site": "https://hkjang.github.io/aidev",
- "description": "Claude Code 자율 개선 에이전트가 hkjang 의 프로젝트를 개선·테스트·머지·릴리즈한 일일 보고. 오늘 27회차·릴리즈 0건, 누적 649회차·릴리즈 272건, 주의 필요 10건.",
+ "description": "Claude Code 자율 개선 에이전트가 hkjang 의 프로젝트를 개선·테스트·머지·릴리즈한 일일 보고. 오늘 28회차·릴리즈 1건, 누적 650회차·릴리즈 273건, 주의 필요 12건.",
  "today": {
   "date": "2026-09-12",
-  "total": 27,
-  "projects": 4,
-  "released": 0,
+  "total": 28,
+  "projects": 5,
+  "released": 1,
   "merged": 0,
   "nochange": 0,
   "failed": 5,
-  "cost_usd": 76.34,
-  "minutes": 215,
-  "sessions": 25
+  "cost_usd": 90.6,
+  "minutes": 246,
+  "sessions": 28
  },
  "totals": {
-  "runs": 649,
-  "released": 272,
+  "runs": 650,
+  "released": 273,
   "days": 11,
-  "cost_usd": 1701.46,
-  "minutes": 4433,
-  "tokens_in": 1716893692,
-  "tokens_out": 13879474
+  "cost_usd": 1715.72,
+  "minutes": 4464,
+  "tokens_in": 1732643467,
+  "tokens_out": 13995145
  },
  "alerts": [
   {
@@ -93,18 +93,43 @@
    "project": "Momento",
    "why": "CI 실패로 PR 미머지",
    "result": "CI failed, PR open https://github.com/hkjang/Momento/pull/3"
+  },
+  {
+   "date": "",
+   "time": "",
+   "project": "Momento",
+   "why": "수정 과제 대기 중 — internal/httpapi 테스트 패키지가 CI 에서 600초 제한에 걸려 타임아웃합니다(단언 실패가 아니라 멈춤). 열린 PR 열 건이 모두 이것 때문에 막혀 있고, 그중에는 가이드 PR #1 과 스케일 테스트 수정 PR #10 이 있습니다. test 워크플로가 main 푸시에서는",
+   "result": ""
+  },
+  {
+   "date": "",
+   "time": "",
+   "project": "visitflow",
+   "why": "수정 과제 대기 중 — internal/app 테스트 패키지가 CI 에서 600초 제한에 걸려 타임아웃하고, 로그에 sites_code_key 와 users_username_key 중복 키 오류가 남습니다. 고정된 이름으로 픽스처를 만드는 테스트들이 같은 데이터베이스에서 겹치는 것으로 보입니다. 가이드 PR ",
+   "result": ""
   }
  ],
- "fix_queue": [],
+ "fix_queue": [
+  {
+   "project": "Momento",
+   "note": "internal/httpapi 테스트 패키지가 CI 에서 600초 제한에 걸려 타임아웃합니다(단언 실패가 아니라 멈춤). 열린 PR 열 건이 모두 이것 때문에 막혀 있고, 그중에는 가이드 PR #1 과 스케일 테스트 수정 PR #10 이 있습니다. test 워크플로가 main 푸시에서는 돌지 않아 회귀가 묻혔습니다. 무엇이 오래 걸리는지 찾아 고치세요 — 패키지를 나누거나, 무거운 시나리오를 짧게 하거나, 실제로 멈추는 지점이 있으면 그것을 고치세요. 같은 일이 다시 묻히지 않도록 test 를 main 푸시에서도 돌리는 것을 함께 검토하세요.",
+   "merge_sha": ""
+  },
+  {
+   "project": "visitflow",
+   "note": "internal/app 테스트 패키지가 CI 에서 600초 제한에 걸려 타임아웃하고, 로그에 sites_code_key 와 users_username_key 중복 키 오류가 남습니다. 고정된 이름으로 픽스처를 만드는 테스트들이 같은 데이터베이스에서 겹치는 것으로 보입니다. 가이드 PR #11 이 이것 때문에 막혀 있습니다. 픽스처 이름을 테스트마다 다르게 하거나 격리를 주어 고치세요.",
+   "merge_sha": ""
+  }
+ ],
  "health": {
-  "checked": "2026-09-12T07:15:04+09:00",
-  "last_run": "2026-09-12T07:12:43+09:00",
-  "seconds_since_last": 139,
-  "runner_pid": "",
-  "runner_age_seconds": 0,
-  "scheduler_status": "준비",
-  "scheduler_next_run": "2026-09-12 오전 7:20:00",
-  "disk_percent": 70,
+  "checked": "2026-09-12T08:15:04+09:00",
+  "last_run": "2026-09-12T07:43:49+09:00",
+  "seconds_since_last": 1872,
+  "runner_pid": "1767180",
+  "runner_age_seconds": 1590,
+  "scheduler_status": "실행 중",
+  "scheduler_next_run": "2026-09-12 오전 8:20:00",
+  "disk_percent": 69,
   "ok": true,
   "problems": [],
   "actions": []
@@ -324,7 +349,7 @@
    "summary": "31파일 +634/−69 · fix-round: review held, PR open https://github.com/hkjang/vibe-coders/pull/15",
    "why": "review: rejected — 리뷰 거절: docs/USER_GUIDE.md:81 세션 비행기록이 `X-Vibe-Session` 헤더로 묶인다고 설명하지만 게이트웨이가 인식하",
    "evidence": "https://github.com/hkjang/aidev/tree/main/state/runs/2026-09-12-065126-vibe-coders-improve",
-   "labels": "",
+   "labels": "aidev-approved",
    "action": "승인: PR 라벨 aidev-approved / 반려: aidev-rejected — 다음 회차에 러너가 승인 당시 커밋에만 CI 확인 후 머지·닫기",
    "date": "2026-09-12"
   },
@@ -454,7 +479,7 @@
    "summary": "31파일 +1214/−402 · review held, PR open https://github.com/hkjang/seaton/pull/25",
    "why": "review: rejected — 리뷰 거절: scripts/build-docs.py:104,180-181 번호 목록 이어붙이기 로직 결함 — flush() 가 순서 없는(불릿)",
    "evidence": "https://github.com/hkjang/aidev/tree/main/state/runs/2026-09-11-204043-seaton-improve",
-   "labels": "",
+   "labels": "aidev-approved",
    "action": "승인: PR 라벨 aidev-approved / 반려: aidev-rejected — 다음 회차에 러너가 승인 당시 커밋에만 CI 확인 후 머지·닫기",
    "date": "2026-09-11"
   },
@@ -467,7 +492,7 @@
    "summary": "24파일 +677/−192 · CI no-ci, PR open https://github.com/hkjang/cutover/pull/1",
    "why": "review: approved — 리뷰 승인 (risk=low); ci: no-ci — 이 커밋에 검사가 없음 (정책 allow_merge_without_ci 가 없으면 차단)",
    "evidence": "https://github.com/hkjang/aidev/tree/main/state/runs/2026-09-11-201042-cutover-improve",
-   "labels": "",
+   "labels": "aidev-approved",
    "action": "승인: PR 라벨 aidev-approved / 반려: aidev-rejected — 다음 회차에 러너가 승인 당시 커밋에만 CI 확인 후 머지·닫기",
    "date": "2026-09-11"
   },
@@ -493,7 +518,7 @@
    "summary": "45파일 +1272/−2 · CI no-ci, PR open https://github.com/hkjang/Kkiit/pull/1",
    "why": "review: approved — 리뷰 승인 (risk=low); ci: no-ci — 이 커밋에 검사가 없음 (정책 allow_merge_without_ci 가 없으면 차단)",
    "evidence": "https://github.com/hkjang/aidev/tree/main/state/runs/2026-09-11-182116-Kkiit-improve",
-   "labels": "",
+   "labels": "aidev-approved",
    "action": "승인: PR 라벨 aidev-approved / 반려: aidev-rejected — 다음 회차에 러너가 승인 당시 커밋에만 CI 확인 후 머지·닫기",
    "date": "2026-09-11"
   },
@@ -506,7 +531,7 @@
    "summary": "48파일 +1865/−1024 · needs approval (risk=low, files=48), PR open https://github.com/hkjang/relio/pull/18",
    "why": "autonomy: held — low-risk 단계 — 위험도 low, 파일 48: 사람 승인 필요; review: approved — 리뷰 승인 (risk=low)",
    "evidence": "https://github.com/hkjang/aidev/tree/main/state/runs/2026-09-11-124111-relio-improve",
-   "labels": "",
+   "labels": "aidev-approved",
    "action": "승인: PR 라벨 aidev-approved / 반려: aidev-rejected — 다음 회차에 러너가 승인 당시 커밋에만 CI 확인 후 머지·닫기",
    "date": "2026-09-11"
   },
@@ -519,7 +544,7 @@
    "summary": "41파일 +1195/−343 · review held, PR open https://github.com/hkjang/ptium/pull/19",
    "why": "review: rejected — 리뷰 거절: commit 7cb0ef4 (Point the format check at the guide that is now canonical",
    "evidence": "https://github.com/hkjang/aidev/tree/main/state/runs/2026-09-11-122112-ptium-improve",
-   "labels": "",
+   "labels": "aidev-approved",
    "action": "승인: PR 라벨 aidev-approved / 반려: aidev-rejected — 다음 회차에 러너가 승인 당시 커밋에만 CI 확인 후 머지·닫기",
    "date": "2026-09-11"
   },
@@ -532,7 +557,7 @@
    "summary": "40파일 +1493/−221 · review held, PR open https://github.com/hkjang/Vendra/pull/119",
    "why": "review: rejected — 리뷰 거절: docs/USER_GUIDE.md:370 용어표가 Data Scope 값을 `company` · `organization` · `o",
    "evidence": "https://github.com/hkjang/aidev/tree/main/state/runs/2026-09-11-120115-Vendra-improve",
-   "labels": "",
+   "labels": "aidev-approved",
    "action": "승인: PR 라벨 aidev-approved / 반려: aidev-rejected — 다음 회차에 러너가 승인 당시 커밋에만 CI 확인 후 머지·닫기",
    "date": "2026-09-11"
   },
@@ -678,6 +703,32 @@
    "labels": "",
    "action": "이슈 안내대로 복구 후 이슈 닫기",
    "date": "2026-09-06"
+  },
+  {
+   "kind": "수정 과제",
+   "project": "Momento",
+   "title": "internal/httpapi 테스트 패키지가 CI 에서 600초 제한에 걸려 타임아웃합니다(단언 실패가 아니라 멈춤). 열린 PR 열 건이 모두 이것 때문에 막혀 있고, 그중에는",
+   "url": "https://hkjang.github.io/aidev/projects/Momento/",
+   "sha": "",
+   "summary": "릴리즈 워크플로 2회 실패 — 다음 회차 자동 배정",
+   "why": "internal/httpapi 테스트 패키지가 CI 에서 600초 제한에 걸려 타임아웃합니다(단언 실패가 아니라 멈춤). 열린 PR 열 건이 모두 이것 때문에 막혀 있고, 그중에는 가이드 PR #1 과 스케일 테스트 수정 PR #10 이 있습니다. test 워크플로가 main 푸시에서는 돌지 않아 회귀가 묻혔습니다. 무엇이 오래 걸리는지 찾아 고치세요 — ",
+   "evidence": "",
+   "labels": "",
+   "action": "두면 러너가 수정 회차를 돌림. 급하면 run: 이슈, 멈추려면 stop",
+   "date": ""
+  },
+  {
+   "kind": "수정 과제",
+   "project": "visitflow",
+   "title": "internal/app 테스트 패키지가 CI 에서 600초 제한에 걸려 타임아웃하고, 로그에 sites_code_key 와 users_username_key 중복 키 오류가 남습니",
+   "url": "https://hkjang.github.io/aidev/projects/visitflow/",
+   "sha": "",
+   "summary": "릴리즈 워크플로 2회 실패 — 다음 회차 자동 배정",
+   "why": "internal/app 테스트 패키지가 CI 에서 600초 제한에 걸려 타임아웃하고, 로그에 sites_code_key 와 users_username_key 중복 키 오류가 남습니다. 고정된 이름으로 픽스처를 만드는 테스트들이 같은 데이터베이스에서 겹치는 것으로 보입니다. 가이드 PR #11 이 이것 때문에 막혀 있습니다. 픽스처 이름을 테스트마다 다르게 ",
+   "evidence": "",
+   "labels": "",
+   "action": "두면 러너가 수정 회차를 돌림. 급하면 run: 이슈, 멈추려면 stop",
+   "date": ""
   }
  ],
  "stops": [
@@ -762,6 +813,21 @@
    "improve_budget_usd": 14,
    "until": "2026-10-31",
    "done": false
+  },
+  {
+   "id": "handoff-2026-09",
+   "goal": "이 서비스가 다른 사내 서비스와 문서를 주고받을 수 있게 만든다.\n\n표준은 aidev 저장소의 HANDOFF-STANDARD.md 에 있다. 먼저 읽고 그대로 따른다.\n엔드포인트 이름·요청 모양·응답 코드를 임의로 바꾸지 마라 — 여섯 서비스가 서로 맞물려야\n하므로, 한 곳이라도 다르게 만들면 아무것도 이어지지 않는다:\n  /mnt/c/Users/USER/projects/aidev/HANDOFF-STANDARD.md\n\n지금은 생각이 umm 의 캔버스에서 muni 의 문서가 되고 ptium 의 슬라이드가 되어 weekly 의\n보고로 들어가는 동안, 단계마다 사람이 파일을 내려받아 다시 올린다. 형식은 이미 맞는다 —\numm 은 마크다운을 내보내고 ptium 은 마크다운을 읽는다. 없는 것은 넘기는 손이다.\n\n서비스끼리 서로의 자격 증명을 들고 있지 않는다. 한 번만 쓸 수 있는 5분짜리 표(claim)를\n발급하고, 표를 들고 온 쪽이 원본에서 직접 받아 간다.\n\n가장 조심할 곳은 받는 쪽의 source 다. 밖에서 들어온 주소를 그대로 받아 오면 이 서비스가\n사내 아무 주소나 대신 긁어 오는 도구가 된다. 관리자가 설정한 허용 목록에 있는 오리진만\n받고, 없으면 아무것도 요청하지 않고 거절한다. 리다이렉트를 따라가지 않고, 크기와 시간에\n상한을 둔다. 이 부분을 빠뜨린 구현은 받지 않는다.\n\n표준의 형식 표에서 이 저장소가 맡은 칸만 만든다. 받을 수 없는 형식으로 보내는 단추는\n만들지 않는다. 허용 목록의 기본값은 비어 있고, 그때는 보내기 단추가 보이지 않는다 —\n새로 설치한 곳에서는 아무것도 달라지지 않아야 한다.\n\n한 회차에 보내는 쪽과 받는 쪽을 다 만들기 벅차면 표준의 형식 표에서 이 저장소가 맡은\n쪽부터 하나를 온전히 끝낸다. 반쯤 된 양쪽보다 완성된 한쪽이 낫다.\n\n관리자 가이드(docs/ADMIN_GUIDE.md)에 허용 목록 설정 방법을 더한다.",
+   "projects": [
+    "umm",
+    "muni",
+    "kanpic",
+    "ptium",
+    "weekly"
+   ],
+   "budget_usd": 180,
+   "improve_budget_usd": 16,
+   "until": "2026-11-15",
+   "done": false
   }
  ],
  "projects_autonomy": {
@@ -809,7 +875,7 @@
   {
    "metric": "완전한 릴리즈 비율",
    "value": "93%",
-   "detail": "릴리즈 시도 276건 중 자산 검증까지 256건"
+   "detail": "릴리즈 시도 277건 중 자산 검증까지 257건"
   },
   {
    "metric": "사람의 재작업률",
@@ -823,7 +889,7 @@
   },
   {
    "metric": "유효 개선당 비용",
-   "value": "$10.63",
+   "value": "$10.72",
    "detail": "비용 확인된 유효 개선 160건, 미확인 세션 4"
   },
   {
@@ -841,7 +907,7 @@
   "error": 9,
   "verify-failed": 14,
   "review-pending": 4,
-  "release-ready": 0,
+  "release-ready": 1,
   "releasing": 0,
   "merged": 0,
   "no-change": 0
@@ -849,12 +915,12 @@
  "days": [
   {
    "date": "2026-09-12",
-   "total": 27,
-   "released": 0,
+   "total": 28,
+   "released": 1,
    "merged": 0,
    "nochange": 0,
    "failed": 5,
-   "cost_usd": 76.34
+   "cost_usd": 90.6
   },
   {
    "date": "2026-09-11",
@@ -952,13 +1018,13 @@
    "key": "2026-W37",
    "url": "https://hkjang.github.io/aidev/weekly/2026-W37/",
    "days": 6,
-   "total": 343,
-   "released": 115,
+   "total": 344,
+   "released": 116,
    "merged": 40,
    "nochange": 2,
    "failed": 12,
-   "cost": 1460.98,
-   "minutes": 3782
+   "cost": 1475.24,
+   "minutes": 3813
   },
   {
    "key": "2026-W36",
@@ -978,13 +1044,13 @@
    "key": "2026-09",
    "url": "https://hkjang.github.io/aidev/monthly/2026-09/",
    "days": 11,
-   "total": 649,
-   "released": 272,
+   "total": 650,
+   "released": 273,
    "merged": 99,
    "nochange": 16,
    "failed": 12,
-   "cost": 1701.46,
-   "minutes": 4433
+   "cost": 1715.72,
+   "minutes": 4464
   }
  ],
  "projects": [
@@ -1273,24 +1339,24 @@
    "name": "Invenqor",
    "repo": "https://github.com/hkjang/invenqor",
    "page": "https://hkjang.github.io/aidev/projects/Invenqor/",
-   "runs": 29,
-   "released": 14,
-   "last_ts": "2026-09-11T11:09:58+09:00",
+   "runs": 30,
+   "released": 15,
+   "last_ts": "2026-09-12T08:28:02+09:00",
    "last_status": "released",
-   "last_result": "merged https://github.com/hkjang/invenqor/pull/17, released v0.2.32",
-   "cost": 80.04,
-   "minutes": 299,
+   "last_result": "merged https://github.com/hkjang/invenqor/pull/18, released v0.2.33",
+   "cost": 94.3,
+   "minutes": 330,
    "grade": "D",
-   "grade_why": "14일: 릴리즈 14, 실패 1, 경고 4, 회귀 0",
+   "grade_why": "14일: 릴리즈 15, 실패 1, 경고 4, 회귀 0",
    "lessons": 0,
-   "ideas_pending": 13,
+   "ideas_pending": 14,
    "ideas_total": 15,
    "release": {
     "status": "released",
-    "version": "0.2.32",
-    "tag": "v0.2.32",
+    "version": "0.2.33",
+    "tag": "v0.2.33",
     "assets_count": 25,
-    "prev_tag": "v0.2.31",
+    "prev_tag": "v0.2.32",
     "prev_assets_count": 25
    }
   },

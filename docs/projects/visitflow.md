@@ -1,7 +1,7 @@
 ---
 title: "visitflow — 자율 개선 이력"
 description: "visitflow: 자율 개선 회차 13회, 릴리즈 5건. 최근 릴리즈 없음."
-last_modified_at: 2026-09-12 07:43:50 +0900
+last_modified_at: 2026-09-12 08:28:03 +0900
 ---
 {% raw %}
 <script type="application/ld+json">
@@ -18,7 +18,7 @@ last_modified_at: 2026-09-12 07:43:50 +0900
   "name": "hkjang",
   "url": "https://github.com/hkjang"
  },
- "dateModified": "2026-09-12T07:43:50+09:00"
+ "dateModified": "2026-09-12T08:28:03+09:00"
 }
 </script>
 
@@ -35,6 +35,7 @@ last_modified_at: 2026-09-12 07:43:50 +0900
 <dt>마지막 회차</dt><dd>2026-09-11 23:16 KST — <span class="pill pill-nochange">➖ 변경 없음</span> no change</dd>
 <dt>최근 릴리즈</dt><dd>skipped — skipped</dd>
 <dt>사유</dt><dd>Nothing new to release: HEAD (70941c2 &#x27;feat(notifications): e-mail channel for delivery rules&#x27;) is already the tagged commit of v2.7.0 on origin (git ls-remote: refs/tags/v2.7.0^{} -&gt; 70941c22cb4a09ebf59280700374bbb9caef71ff), and GitHub Release &#x27;VisitFlow v2.7.0&#x27; with asset visitflow-v2.7.0.tar.gz already exists. &#x27;git log v2.7.0..HEAD&#x27; is empty and all version markers (README.md, docs/index.html, web/package.json, web/package-lock.json) already read 2.7.0, so a new tag would ship an identical tree. Note: local-only tags v2.6.6/v2.6.7 from earlier sessions were never pushed (absent from origin and from GitHub Releases); they were superseded by v2.7.0, which contains those same fixes (PRs #9 and #10). Release assets are produced by .github/workflows/release.yml on tag push, so no local artifacts were needed.</dd>
+<dt>수정 과제</dt><dd>⚠️ internal/app 테스트 패키지가 CI 에서 600초 제한에 걸려 타임아웃하고, 로그에 sites_code_key 와 users_username_key 중복 키 오류가 남습니다. 고정된 이름으로 픽스처를 만드는 테스트들이 같은 데이터베이스에서 겹치는 것으로 보입니다. 가이드 PR #11 이 이것 때문에 막혀 있습니다. 픽스처 이름을 테스트마다 다르게 하거나 격리를 주어 고치세요.</dd>
 </dl>
 
 ## 회차 이력

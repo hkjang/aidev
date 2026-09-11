@@ -1,7 +1,7 @@
 ---
 title: "Momento — 자율 개선 이력"
 description: "Momento: 자율 개선 회차 9회, 릴리즈 0건. 최근 릴리즈 없음."
-last_modified_at: 2026-09-12 07:43:50 +0900
+last_modified_at: 2026-09-12 08:28:03 +0900
 ---
 {% raw %}
 <script type="application/ld+json">
@@ -18,7 +18,7 @@ last_modified_at: 2026-09-12 07:43:50 +0900
   "name": "hkjang",
   "url": "https://github.com/hkjang"
  },
- "dateModified": "2026-09-12T07:43:50+09:00"
+ "dateModified": "2026-09-12T08:28:03+09:00"
 }
 </script>
 
@@ -33,6 +33,7 @@ last_modified_at: 2026-09-12 07:43:50 +0900
 <dl class="kv">
 <dt>저장소</dt><dd><a href="https://github.com/hkjang/Momento">https://github.com/hkjang/Momento</a></dd>
 <dt>마지막 회차</dt><dd>2026-09-12 04:32 KST — <span class="pill pill-other">• 기타</span> <strong>guarded files</strong>, PR open <a href="https://github.com/hkjang/Momento/pull/9">PR #9</a></dd>
+<dt>수정 과제</dt><dd>⚠️ internal/httpapi 테스트 패키지가 CI 에서 600초 제한에 걸려 타임아웃합니다(단언 실패가 아니라 멈춤). 열린 PR 열 건이 모두 이것 때문에 막혀 있고, 그중에는 가이드 PR #1 과 스케일 테스트 수정 PR #10 이 있습니다. test 워크플로가 main 푸시에서는 돌지 않아 회귀가 묻혔습니다. 무엇이 오래 걸리는지 찾아 고치세요 — 패키지를 나누거나, 무거운 시나리오를 짧게 하거나, 실제로 멈추는 지점이 있으면 그것을 고치세요. 같은 일이 다시 묻히지 않도록 test 를 main 푸시에서도 돌리는 것을 함께 검토하세요.</dd>
 </dl>
 
 ## 회차 이력
