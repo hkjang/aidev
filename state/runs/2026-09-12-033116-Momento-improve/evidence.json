@@ -1,0 +1,214 @@
+{
+  "run_id": "2026-09-12-033116-Momento-improve",
+  "generated": "2026-09-12T03:48:56+09:00",
+  "run": {
+    "run_id": "2026-09-12-033116-Momento-improve",
+    "project": "Momento",
+    "kind": "improve",
+    "started": "2026-09-12T03:31:17+09:00",
+    "model": "claude-opus-5",
+    "policy_version": "5935779a",
+    "prompts_hash": "82f2440d4b2fef65",
+    "runner_version": "02a49720",
+    "finished": "2026-09-12T03:48:56+09:00",
+    "outcome": "verify-failed"
+  },
+  "record": {
+    "ts": "2026-09-12T03:48:56+09:00",
+    "date": "2026-09-12",
+    "project": "Momento",
+    "result": "CI failed, PR open https://github.com/hkjang/Momento/pull/8",
+    "outcome": "verify-failed",
+    "run_id": "2026-09-12-033116-Momento-improve",
+    "base_sha": "9f857c4b750e068e6e88298479d8c4c052e5e6cc",
+    "head_sha": "5c4a19612a143bfd70c61c0cc160721eaa1dafe6",
+    "pr": "https://github.com/hkjang/Momento/pull/8",
+    "stages": {
+      "base": {
+        "state": "pinned",
+        "reason": "main@9f857c4",
+        "at": "2026-09-12T03:31:20+09:00"
+      },
+      "autonomy": {
+        "state": "release",
+        "reason": "",
+        "at": "2026-09-12T03:31:20+09:00"
+      },
+      "verify": {
+        "state": "passed",
+        "reason": "검증 7개 통과 (auto)",
+        "at": "2026-09-12T03:44:09+09:00"
+      },
+      "pr": {
+        "state": "created",
+        "reason": "https://github.com/hkjang/Momento/pull/8",
+        "at": "2026-09-12T03:44:17+09:00"
+      },
+      "review": {
+        "state": "approved",
+        "reason": "리뷰 승인 (risk=low)",
+        "at": "2026-09-12T03:45:56+09:00"
+      },
+      "ci": {
+        "state": "failed",
+        "reason": "성공이 아닌 검사: test=failure",
+        "at": "2026-09-12T03:48:55+09:00"
+      }
+    },
+    "campaign": "guides-2026-09",
+    "autonomy": "release",
+    "files": 5,
+    "additions": 246,
+    "deletions": 27,
+    "tests": 2,
+    "title": "fix(export): a cell the visitor wrote is text, not a formula, in the spreadsheet that opens it"
+  },
+  "stages": {
+    "base": {
+      "state": "pinned",
+      "reason": "main@9f857c4",
+      "at": "2026-09-12T03:31:20+09:00"
+    },
+    "autonomy": {
+      "state": "release",
+      "reason": "",
+      "at": "2026-09-12T03:31:20+09:00"
+    },
+    "verify": {
+      "state": "passed",
+      "reason": "검증 7개 통과 (auto)",
+      "at": "2026-09-12T03:44:09+09:00"
+    },
+    "pr": {
+      "state": "created",
+      "reason": "https://github.com/hkjang/Momento/pull/8",
+      "at": "2026-09-12T03:44:17+09:00"
+    },
+    "review": {
+      "state": "approved",
+      "reason": "리뷰 승인 (risk=low)",
+      "at": "2026-09-12T03:45:56+09:00"
+    },
+    "ci": {
+      "state": "failed",
+      "reason": "성공이 아닌 검사: test=failure",
+      "at": "2026-09-12T03:48:55+09:00"
+    }
+  },
+  "provenance": {
+    "model": "claude-opus-5",
+    "policy_version": "5935779a",
+    "prompts_hash": "82f2440d4b2fef65",
+    "runner_version": "02a49720",
+    "base_sha": "9f857c4b750e068e6e88298479d8c4c052e5e6cc",
+    "head_sha": "5c4a19612a143bfd70c61c0cc160721eaa1dafe6",
+    "pr": "https://github.com/hkjang/Momento/pull/8"
+  },
+  "verification": {
+    "runner": {
+      "source": "auto",
+      "commands": [
+        {
+          "cmd": "go build ./...",
+          "exit": 0,
+          "seconds": 1
+        },
+        {
+          "cmd": "go vet ./...",
+          "exit": 0,
+          "seconds": 0
+        },
+        {
+          "cmd": "go test ./...",
+          "exit": 0,
+          "seconds": 1
+        },
+        {
+          "cmd": "cd web && [ -d node_modules ] || npm ci --no-audit --no-fund",
+          "exit": 0,
+          "seconds": 0
+        },
+        {
+          "cmd": "cd web && npm test --silent",
+          "exit": 0,
+          "seconds": 0
+        },
+        {
+          "cmd": "cd web && [ -d node_modules ] || npm ci --no-audit --no-fund",
+          "exit": 0,
+          "seconds": 0
+        },
+        {
+          "cmd": "cd web && npm run build --silent",
+          "exit": 0,
+          "seconds": 8
+        }
+      ]
+    },
+    "runner_gate": {
+      "ok": true,
+      "state": "verified",
+      "reason": "검증 7개 통과 (auto)"
+    },
+    "after_rebase": null,
+    "review": {
+      "verdict": "approve",
+      "reasons": [],
+      "notes": [
+        "Tests genuinely exercise the change: web/test/csvExport.test.mjs passes (node --test); Go unit test covers csvCell; the integration test TestTheExportedCSVCannotCarryAFormula was run against a throwaway Postgres 16 and passes on HEAD, and fails (two assertions) when the single `record[i] = csvCell(record[i])` line in analytics.go:1001 is removed — so it does verify the fix, not just the helper.",
+        "go vet ./internal/httpapi clean; the rest of the httpapi integration suite still passes with the change.",
+        "Only two CSV producers exist in the repo (exportEvents CSV branch and DataTable download) and both are covered; the NDJSON branch is untouched, which is correct.",
+        "Minor inconsistency, not a defect: Go csvCell prefixes any stringified value (a negative number would become '-3) while the TS csvValue only prefixes typeof string values. No exported Go column carries a negative number today (contract_version is positive, timestamp starts with a digit), so behaviour matches the commit message in practice.",
+        "Behavioural change for programmatic consumers of the CSV export: any string cell beginning with = + - @ now carries a leading apostrophe (e.g. a campaign named '-' or a user_id starting with '-'). Modern Excel shows the apostrophe literally on CSV import rather than swallowing it. This is the OWASP-recommended mitigation and is fully reverted by reverting the commit; no migration or persisted state involved.",
+        "DataTable.tsx change is a straight extraction of searchableValue/csvValue into csvExport.ts (cellText keeps identical semantics for the search filter) — in scope, since it exists to make the rule unit-testable."
+      ],
+      "risk": "low"
+    },
+    "ci_gate": {
+      "ok": false,
+      "state": "failed",
+      "reason": "성공이 아닌 검사: test=failure",
+      "checks": 1,
+      "bad": 1
+    }
+  },
+  "release": {
+    "result": null,
+    "assets_sha256": []
+  },
+  "approval": null,
+  "usage": [
+    {
+      "ts": "2026-09-12T03:43:59+09:00",
+      "date": "2026-09-12",
+      "project": "Momento",
+      "phase": "improve",
+      "run_id": "2026-09-12-033116-Momento-improve",
+      "campaign": "guides-2026-09",
+      "subtype": "success",
+      "duration_ms": 789979,
+      "num_turns": 49,
+      "cost_usd": 2.99867,
+      "input_tokens": 98,
+      "output_tokens": 23348,
+      "cache_read": 3195078,
+      "cache_create": 80281
+    },
+    {
+      "ts": "2026-09-12T03:45:56+09:00",
+      "date": "2026-09-12",
+      "project": "Momento",
+      "phase": "review",
+      "run_id": "2026-09-12-033116-Momento-improve",
+      "campaign": "guides-2026-09",
+      "subtype": "success",
+      "duration_ms": 101301,
+      "num_turns": 14,
+      "cost_usd": 0.582006,
+      "input_tokens": 28,
+      "output_tokens": 5490,
+      "cache_read": 412960,
+      "cache_create": 23632
+    }
+  ]
+}
