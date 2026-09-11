@@ -1,6 +1,6 @@
 # moyro 사용자 가이드
 
-대상 버전: **v0.2.27** · 이 문서는 저장소 정본입니다. PDF: [`USER_GUIDE.pdf`](USER_GUIDE.pdf)
+대상 버전: **v0.2.28** · 이 문서는 저장소 정본입니다. PDF: [`USER_GUIDE.pdf`](USER_GUIDE.pdf)
 
 서비스를 설치하고 운영하는 쪽 내용은 [관리자 가이드](ADMIN_GUIDE.md)에 있습니다.
 이 문서에는 같은 내용을 다시 쓰지 않고 필요한 곳에서 가리킵니다.

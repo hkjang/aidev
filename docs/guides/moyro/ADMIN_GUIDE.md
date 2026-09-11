@@ -1,6 +1,6 @@
 # moyro 관리자 가이드
 
-대상 버전: **v0.2.27** · 이 문서는 저장소 정본입니다. PDF: [`ADMIN_GUIDE.pdf`](ADMIN_GUIDE.pdf)
+대상 버전: **v0.2.28** · 이 문서는 저장소 정본입니다. PDF: [`ADMIN_GUIDE.pdf`](ADMIN_GUIDE.pdf)
 
 화면을 쓰는 쪽 내용은 [사용자 가이드](USER_GUIDE.md)에 있습니다. 같은 내용을 두 번
 쓰지 않고 필요한 곳에서 가리킵니다. 오프라인 설치의 더 자세한 절차는
@@ -18,7 +18,7 @@ moyro는 **애플리케이션 컨테이너 한 개 + 외부 PostgreSQL** 로 동
 
 | 구성 요소 | 형태 | 필수 | 하는 일 |
 |---|---|---|---|
-| moyro 애플리케이션 | Docker 이미지 `moyro:v0.2.27` | 필수 | HTTP API(`/api/v4`, `/api/moyro/v1`), WebSocket, 웹 UI 정적 파일, 백그라운드 워커 |
+| moyro 애플리케이션 | Docker 이미지 `moyro:v0.2.28` | 필수 | HTTP API(`/api/v4`, `/api/moyro/v1`), WebSocket, 웹 UI 정적 파일, 백그라운드 워커 |
 | PostgreSQL | 조직이 운영하는 외부 서비스 | 필수 | 모든 상태. 메시지, 사용자, 설정, 작업/결정, 알림함, 감사 로그 |
 | 데이터 볼륨 `moyro-data` | Docker 볼륨 → `/var/lib/moyro` | 필수 | 업로드 파일(`files/`)과 플러그인(`plugins/`) |
 | 리버스 프록시 | 조직 표준 | 권장 | TLS 종료. moyro 자체는 평문 HTTP로 `8065`를 듣습니다 |
@@ -35,7 +35,7 @@ moyro는 **애플리케이션 컨테이너 한 개 + 외부 PostgreSQL** 로 동
 | 나감 | moyro → Outgoing Webhook 대상 | **허용 목록에 넣은 host 만** |
 | 나감 | moyro → Keycloak / AI endpoint | 켠 경우에만 |
 
-v0.2.27이 **지원하지 않는 것**을 먼저 확인하세요. 애플리케이션 컨테이너 다중 복제,
+v0.2.28이 **지원하지 않는 것**을 먼저 확인하세요. 애플리케이션 컨테이너 다중 복제,
 Redis fan-out, S3 파일 저장, SMTP 발송, 외부 링크 미리보기는 이 릴리즈의 범위 밖입니다.
 파일은 로컬 볼륨에 저장됩니다.
 
@@ -51,9 +51,9 @@ Redis fan-out, S3 파일 저장, SMTP 발송, 외부 링크 미리보기는 이 
 릴리즈 아카이브를 조직의 승인된 매체로 옮긴 뒤 릴리즈 노트의 SHA-256과 비교합니다.
 
 ```bash
-sha256sum moyro-v0.2.27.tar.gz
-docker load --input moyro-v0.2.27.tar.gz
-docker image inspect moyro:v0.2.27
+sha256sum moyro-v0.2.28.tar.gz
+docker load --input moyro-v0.2.28.tar.gz
+docker image inspect moyro:v0.2.28
 ```
 
 지원 플랫폼은 `linux/amd64` 입니다.
@@ -103,7 +103,7 @@ docker run -d \
   --env-file /etc/moyro/moyro.env \
   --mount type=volume,src=moyro-data,dst=/var/lib/moyro \
   --publish 8065:8065 \
-  moyro:v0.2.27
+  moyro:v0.2.28
 ```
 
 ### 2.5 기동 확인과 최초 관리자
