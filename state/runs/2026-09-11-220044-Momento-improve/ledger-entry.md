@@ -1,12 +1,5 @@
 ## 2026-09-11
-- 선택: 사용자·관리자 가이드를 실제 화면 캡처가 실린 완성본으로 재구성 (가치 5 / 위험 1 / 작업량 M)
-- 결과: 성공
-- 요약: docs/USER_GUIDE.md·ADMIN_GUIDE.md 를 GUIDE-STANDARD 구성(처음 5분·화면별 사용법·막혔을 때 / 구성 요소·설치·환경 변수 전수 표·계정과 권한·운영·장애 대응·보안)으로 다시 쓰고, v0.34.39 를 로컬 Postgres 와 함께 실제로 띄워 seed.mjs 로 가짜 데이터(데모 포털, EMP0001, hong@example.com)를 넣은 뒤 headless Chrome 1440x900 으로 49장을 찍어 docs/assets/guide/ 에 실었다. 환경 변수 표는 internal/config·internal/database 에서, 역할 표는 라우터 미들웨어에서, 오류 문구는 writeError/queryError.ts 에서 읽었고, 옛 USER_GUIDE.html/ADMIN_GUIDE.html 은 삭제하고 docs/index*.html·README 링크를 새 문서로 옮겼다. 공용 md2pdf 로 두 PDF(47쪽/27쪽)를 생성해 표지·그림이 렌더링되는 것과 문서가 참조하는 그림이 모두 존재하는 것을 확인했다. scripts/guide 는 전용 환경 변수만 받고 로컬 호스트가 아니면 멈추며 --cleanup 으로 만든 것만 지운다; 비밀값은 글자로 적지 않았다.
-- 보류 아이디어: User Explorer 타임라인이 365일을 요청해 기본 정책(180일)에서 RANGE_EXCEEDS_POLICY 로 막힘 — 사이트 정책 한도를 읽어 요청하도록 수정 (가치 4 / 위험 2 / S); 대량 과거 이벤트 반입 직후 aggregate maintenance 가 deadlock(40P01)으로 실패하는 재집계 작업 — 재시도 또는 잠금 순서 정리 (가치 3 / 위험 3 / M); compose.yml 의 build: 때문에 릴리즈 이미지로 띄울 때 --no-build 가 필요 — 문서화했으나 compose 파일에 주석 추가 (가치 2 / 위험 1 / S); 캡처 스크립트를 CI 에서 릴리즈 tarball 로 돌려 가이드 그림이 최신 화면과 어긋나는지 검사 (가치 3 / 위험 2 / M).
-
-## 2026-09-11
 - 선택: 고정 기간으로 조회하는 화면이 사이트 정책 한도(max_exact_days)를 넘겨 요청하지 않게 한다 (가치 4 / 위험 2 / 작업량 S)
 - 결과: 성공
 - 요약: 캠페인 목표(가이드 완성본)는 앞 회차 커밋 e73d357(브랜치 auto/2026-09-11-1901, 미머지)에 이미 완성되어 있어 이 브랜치에서 다시 만들면 충돌하는 중복이 되므로 손대지 않고, 그 회차가 캡처 중 발견한 실제 버그를 고쳤다. UserExplorerPage 가 타임라인을 365일 고정으로 요청해 기본 정책(180일)에서 "추적" 버튼이 항상 RANGE_EXCEEDS_POLICY 를 받았다. queryError.ts 에 policyRange(days, maxExactDays) 를 추가하고 페이지들의 고정 기간 rangeQuery 호출 10곳(7·30·90·365일)을 모두 이것을 거치게 했으며, periodOptions.test.mjs 에 단위 테스트와 `rangeQuery(<숫자>, …)` 가 policyRange 없이 남아 있으면 실패하는 소스 검사 테스트를 추가했다. web 에서 npm test(91 통과)·eslint·tsc -b && vite build 로 검증했다.
 - 보류 아이디어: 대량 과거 이벤트 반입 직후 aggregate maintenance 재집계 작업이 deadlock(40P01)으로 failed — 잠금 순서 정리 또는 40P01 재시도 (가치 3 / 위험 3 / M); compose.yml 의 build: 때문에 릴리즈 이미지로 띄울 때 --no-build 가 필요하다는 주석을 compose 파일에 추가 (가치 2 / 위험 1 / S); scripts/guide 캡처를 CI 에서 릴리즈 tarball 로 돌려 셀렉터·문구 변경으로 가이드 그림이 어긋나면 알린다 (가치 3 / 위험 2 / M); 관리자 가이드 4.1 역할 표를 라우터 admin/orgAdmin 미들웨어 순회 테스트 출력과 diff 해 고정 (가치 2 / 위험 1 / S); 서버의 RANGE_EXCEEDS_POLICY 오류 문구가 "기간을 줄이거나"라고 하지만 기간을 고를 수 없는 화면(추적·사용량)에서는 줄일 방법이 없으므로 ErrorState 가 정책 화면 링크를 함께 보여주게 한다 (가치 2 / 위험 1 / S).
-

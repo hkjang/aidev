@@ -1,0 +1,215 @@
+{
+  "run_id": "2026-09-11-220044-Momento-improve",
+  "generated": "2026-09-11T22:09:24+09:00",
+  "run": {
+    "run_id": "2026-09-11-220044-Momento-improve",
+    "project": "Momento",
+    "kind": "improve",
+    "started": "2026-09-11T22:00:44+09:00",
+    "model": "claude-opus-5",
+    "policy_version": "5935779a",
+    "prompts_hash": "82f2440d4b2fef65",
+    "runner_version": "02a49720",
+    "finished": "2026-09-11T22:09:24+09:00",
+    "outcome": "verify-failed"
+  },
+  "record": {
+    "ts": "2026-09-11T22:09:24+09:00",
+    "date": "2026-09-11",
+    "project": "Momento",
+    "result": "CI failed, PR open https://github.com/hkjang/Momento/pull/2",
+    "outcome": "verify-failed",
+    "run_id": "2026-09-11-220044-Momento-improve",
+    "base_sha": "9f857c4b750e068e6e88298479d8c4c052e5e6cc",
+    "head_sha": "bc6cb92f2c305410c8012e1cc13d9eb2f6e1b472",
+    "pr": "https://github.com/hkjang/Momento/pull/2",
+    "stages": {
+      "base": {
+        "state": "pinned",
+        "reason": "main@9f857c4",
+        "at": "2026-09-11T22:00:48+09:00"
+      },
+      "autonomy": {
+        "state": "release",
+        "reason": "",
+        "at": "2026-09-11T22:00:48+09:00"
+      },
+      "verify": {
+        "state": "passed",
+        "reason": "검증 7개 통과 (auto)",
+        "at": "2026-09-11T22:04:35+09:00"
+      },
+      "pr": {
+        "state": "created",
+        "reason": "https://github.com/hkjang/Momento/pull/2",
+        "at": "2026-09-11T22:04:42+09:00"
+      },
+      "review": {
+        "state": "approved",
+        "reason": "리뷰 승인 (risk=low)",
+        "at": "2026-09-11T22:05:47+09:00"
+      },
+      "ci": {
+        "state": "failed",
+        "reason": "성공이 아닌 검사: test=failure",
+        "at": "2026-09-11T22:09:23+09:00"
+      }
+    },
+    "campaign": "guides-2026-09",
+    "autonomy": "release",
+    "files": 8,
+    "additions": 63,
+    "deletions": 14,
+    "tests": 1,
+    "title": "fix(console): ask for the period the site's policy allows, not a fixed one"
+  },
+  "stages": {
+    "base": {
+      "state": "pinned",
+      "reason": "main@9f857c4",
+      "at": "2026-09-11T22:00:48+09:00"
+    },
+    "autonomy": {
+      "state": "release",
+      "reason": "",
+      "at": "2026-09-11T22:00:48+09:00"
+    },
+    "verify": {
+      "state": "passed",
+      "reason": "검증 7개 통과 (auto)",
+      "at": "2026-09-11T22:04:35+09:00"
+    },
+    "pr": {
+      "state": "created",
+      "reason": "https://github.com/hkjang/Momento/pull/2",
+      "at": "2026-09-11T22:04:42+09:00"
+    },
+    "review": {
+      "state": "approved",
+      "reason": "리뷰 승인 (risk=low)",
+      "at": "2026-09-11T22:05:47+09:00"
+    },
+    "ci": {
+      "state": "failed",
+      "reason": "성공이 아닌 검사: test=failure",
+      "at": "2026-09-11T22:09:23+09:00"
+    }
+  },
+  "provenance": {
+    "model": "claude-opus-5",
+    "policy_version": "5935779a",
+    "prompts_hash": "82f2440d4b2fef65",
+    "runner_version": "02a49720",
+    "base_sha": "9f857c4b750e068e6e88298479d8c4c052e5e6cc",
+    "head_sha": "bc6cb92f2c305410c8012e1cc13d9eb2f6e1b472",
+    "pr": "https://github.com/hkjang/Momento/pull/2"
+  },
+  "verification": {
+    "runner": {
+      "source": "auto",
+      "commands": [
+        {
+          "cmd": "go build ./...",
+          "exit": 0,
+          "seconds": 1
+        },
+        {
+          "cmd": "go vet ./...",
+          "exit": 0,
+          "seconds": 0
+        },
+        {
+          "cmd": "go test ./...",
+          "exit": 0,
+          "seconds": 1
+        },
+        {
+          "cmd": "cd web && [ -d node_modules ] || npm ci --no-audit --no-fund",
+          "exit": 0,
+          "seconds": 0
+        },
+        {
+          "cmd": "cd web && npm test --silent",
+          "exit": 0,
+          "seconds": 0
+        },
+        {
+          "cmd": "cd web && [ -d node_modules ] || npm ci --no-audit --no-fund",
+          "exit": 0,
+          "seconds": 0
+        },
+        {
+          "cmd": "cd web && npm run build --silent",
+          "exit": 0,
+          "seconds": 7
+        }
+      ]
+    },
+    "runner_gate": {
+      "ok": true,
+      "state": "verified",
+      "reason": "검증 7개 통과 (auto)"
+    },
+    "after_rebase": null,
+    "review": {
+      "verdict": "approve",
+      "reasons": [],
+      "notes": [
+        "web/src/components/queryError.ts:244 policyRange는 allowedRanges와 같은 규칙(0/undefined면 무제한, 그 외 min)을 따르며 서버 enforceRangePolicy(analytics.go:109-116)의 `days > MaxExactDays` 판정과 경계가 일치함(rangeQuery는 from=오늘-(days-1), 서버는 to+1일이므로 정확히 days일).",
+        "web/test/periodOptions.test.mjs:91 소스 스캔 검사는 main의 코드(rangeQuery(7, …) 등 10곳)에서는 assert.fail로 실패하고, HEAD에서는 capped=10으로 통과함 — 변경을 실제로 검증한다. `npm test` 91개 전부 통과 확인.",
+        "스캔 범위는 web/src/pages/*.tsx 뿐이고, 현재 pages 밖에는 rangeQuery(숫자, …) 호출이 없음. 컴포넌트/훅에 새 고정 기간 호출이 생기면 검사가 놓친다.",
+        "동작 변화: 방문자 추적이 정책 한도(기본 180일)까지만 조회하며 화면에 그 사실을 알리지 않음. 사용자는 1년치를 기대할 수 있으나 이전에는 아예 오류였으므로 개선임.",
+        "max_exact_days는 queryKey에 포함되지 않아 정책을 바꿔도 site 객체가 갱신되기 전까지는 캐시된 결과가 유지될 수 있음(기존 동작과 동일).",
+        "DST가 있는 시간대에서는 서버가 ceil(hours/24)로 일수를 세므로 정확히 한도와 같은 기간이 181일로 계산될 수 있으나, 이는 기존 allowedRanges의 180일 옵션에도 동일하게 있는 문제로 이 PR이 도입한 것은 아님.",
+        "범위 이탈 없음: 커밋 메시지대로 policyRange 추가·10곳 적용·테스트 추가만 포함. 인증/마이그레이션/외부 상태 변경 없음, revert로 완전히 되돌릴 수 있음."
+      ],
+      "risk": "low"
+    },
+    "ci_gate": {
+      "ok": false,
+      "state": "failed",
+      "reason": "성공이 아닌 검사: test=failure",
+      "checks": 1,
+      "bad": 1
+    }
+  },
+  "release": {
+    "result": null,
+    "assets_sha256": []
+  },
+  "approval": null,
+  "usage": [
+    {
+      "ts": "2026-09-11T22:04:25+09:00",
+      "date": "2026-09-11",
+      "project": "Momento",
+      "phase": "improve",
+      "run_id": "2026-09-11-220044-Momento-improve",
+      "campaign": "guides-2026-09",
+      "subtype": "success",
+      "duration_ms": 215589,
+      "num_turns": 36,
+      "cost_usd": 1.6881415000000002,
+      "input_tokens": 72,
+      "output_tokens": 13020,
+      "cache_read": 1612331,
+      "cache_create": 55073
+    },
+    {
+      "ts": "2026-09-11T22:05:47+09:00",
+      "date": "2026-09-11",
+      "project": "Momento",
+      "phase": "review",
+      "run_id": "2026-09-11-220044-Momento-improve",
+      "campaign": "guides-2026-09",
+      "subtype": "success",
+      "duration_ms": 63396,
+      "num_turns": 9,
+      "cost_usd": 0.46252950000000004,
+      "input_tokens": 18,
+      "output_tokens": 3945,
+      "cache_read": 258387,
+      "cache_create": 23281
+    }
+  ]
+}
