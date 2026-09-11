@@ -1,0 +1,189 @@
+{
+  "run_id": "2026-09-11-201042-cutover-improve",
+  "generated": "2026-09-11T20:31:31+09:00",
+  "run": {
+    "run_id": "2026-09-11-201042-cutover-improve",
+    "project": "cutover",
+    "kind": "improve",
+    "started": "2026-09-11T20:10:43+09:00",
+    "model": "claude-opus-5",
+    "policy_version": "5935779a",
+    "prompts_hash": "82f2440d4b2fef65",
+    "runner_version": "02a49720",
+    "finished": "2026-09-11T20:31:31+09:00",
+    "outcome": "review-pending"
+  },
+  "record": {
+    "ts": "2026-09-11T20:31:31+09:00",
+    "date": "2026-09-11",
+    "project": "cutover",
+    "result": "CI no-ci, PR open https://github.com/hkjang/cutover/pull/1",
+    "outcome": "review-pending",
+    "run_id": "2026-09-11-201042-cutover-improve",
+    "base_sha": "aa8f7d40377fad2388ffd1a026cb5ba1cdbcbec7",
+    "head_sha": "18cfb207699233ac64ab6283cc5af3f39ec5404a",
+    "pr": "https://github.com/hkjang/cutover/pull/1",
+    "stages": {
+      "base": {
+        "state": "pinned",
+        "reason": "main@aa8f7d4",
+        "at": "2026-09-11T20:10:45+09:00"
+      },
+      "autonomy": {
+        "state": "release",
+        "reason": "",
+        "at": "2026-09-11T20:10:45+09:00"
+      },
+      "verify": {
+        "state": "passed",
+        "reason": "검증 2개 통과 (auto)",
+        "at": "2026-09-11T20:25:17+09:00"
+      },
+      "pr": {
+        "state": "created",
+        "reason": "https://github.com/hkjang/cutover/pull/1",
+        "at": "2026-09-11T20:25:23+09:00"
+      },
+      "review": {
+        "state": "approved",
+        "reason": "리뷰 승인 (risk=low)",
+        "at": "2026-09-11T20:26:54+09:00"
+      },
+      "ci": {
+        "state": "no-ci",
+        "reason": "이 커밋에 검사가 없음 (정책 allow_merge_without_ci 가 없으면 차단)",
+        "at": "2026-09-11T20:31:30+09:00"
+      }
+    },
+    "campaign": "guides-2026-09",
+    "autonomy": "release",
+    "files": 24,
+    "additions": 677,
+    "deletions": 192,
+    "tests": 1,
+    "title": "docs: 사용자·관리자 가이드를 실제 화면 캡처가 들어간 표준 형식으로 재작성하고 PDF 추가"
+  },
+  "stages": {
+    "base": {
+      "state": "pinned",
+      "reason": "main@aa8f7d4",
+      "at": "2026-09-11T20:10:45+09:00"
+    },
+    "autonomy": {
+      "state": "release",
+      "reason": "",
+      "at": "2026-09-11T20:10:45+09:00"
+    },
+    "verify": {
+      "state": "passed",
+      "reason": "검증 2개 통과 (auto)",
+      "at": "2026-09-11T20:25:17+09:00"
+    },
+    "pr": {
+      "state": "created",
+      "reason": "https://github.com/hkjang/cutover/pull/1",
+      "at": "2026-09-11T20:25:23+09:00"
+    },
+    "review": {
+      "state": "approved",
+      "reason": "리뷰 승인 (risk=low)",
+      "at": "2026-09-11T20:26:54+09:00"
+    },
+    "ci": {
+      "state": "no-ci",
+      "reason": "이 커밋에 검사가 없음 (정책 allow_merge_without_ci 가 없으면 차단)",
+      "at": "2026-09-11T20:31:30+09:00"
+    }
+  },
+  "provenance": {
+    "model": "claude-opus-5",
+    "policy_version": "5935779a",
+    "prompts_hash": "82f2440d4b2fef65",
+    "runner_version": "02a49720",
+    "base_sha": "aa8f7d40377fad2388ffd1a026cb5ba1cdbcbec7",
+    "head_sha": "18cfb207699233ac64ab6283cc5af3f39ec5404a",
+    "pr": "https://github.com/hkjang/cutover/pull/1"
+  },
+  "verification": {
+    "runner": {
+      "source": "auto",
+      "commands": [
+        {
+          "cmd": "[ -d node_modules ] || npm ci --no-audit --no-fund",
+          "exit": 0,
+          "seconds": 0
+        },
+        {
+          "cmd": "npm run build --silent",
+          "exit": 0,
+          "seconds": 3
+        }
+      ]
+    },
+    "runner_gate": {
+      "ok": true,
+      "state": "verified",
+      "reason": "검증 2개 통과 (auto)"
+    },
+    "after_rebase": null,
+    "review": {
+      "verdict": "approve",
+      "reasons": [],
+      "notes": [
+        "문서·캡처 스크립트만 추가된 변경으로 앱 런타임 코드는 수정되지 않음(package.json 은 screenshots:guide 스크립트 1줄 추가만).",
+        "scripts/guide-screenshots/capture.spec.ts 가 쓰는 data-testid(mobile-clock, activity-json-file, activity-json-upload, activity-import-error(-details), activity-import-success)·title('제목 수정','취소','아래로 이동')·문구('관리자 비밀번호가 틀렸습니다.','완료되었습니다!','activity.json 업로드','개 액티비티를 반영했습니다.')가 실제 app/·components/ 에 존재함을 확인. '아래로 이동' 뒤 두 번째 형제 버튼이 편집 버튼인 것도 ActivityTree.tsx:118-136 순서와 일치.",
+        "루트 playwright.config.ts 의 testDir 이 ./e2e 이므로 npm run test:e2e 가 새 capture.spec.ts 를 잘못 실행하지 않음. tsconfig include 가 **/*.ts 라 scripts/ 도 next build 타입검사 대상이 되지만 npx tsc --noEmit, eslint scripts 모두 통과.",
+        "문서의 사실 주장을 코드와 대조: 갱신 주기(/ 10초 app/page.tsx:33, /pc 2초 app/pc/page.tsx:15, /admin 1초 app/admin/page.tsx:18), Secure 쿠키(app/api/auth/login/route.ts:43 secure: NODE_ENV==='production', sameSite strict, 7일 maxAge), 제목 100자·시간 100자·제목 300자 제한(lib/activityData.ts:153,194,203), 작업 편집 입력란에 Enter 핸들러 없음(components/ActivityTree.tsx:93-94), lib/s3.ts 를 import 하는 라우트 없음 — 모두 일치.",
+        "docs/*.md 가 참조하는 13개 PNG 가 모두 docs/assets/guide/ 에 존재하고 캡처 내용은 seed.ts 의 가짜 데이터(실제 호스트명·담당자 없음).",
+        "참고: docs/USER_GUIDE.pdf(0.6MB)·ADMIN_GUIDE.pdf(1.2MB) 바이너리가 저장소에 커밋됨. 커밋 메시지의 '공용 md2pdf 도구'는 저장소에 포함되지 않아 PDF 재생성 절차가 스크립트화되어 있지 않음(캡처 PNG 는 npm run screenshots:guide 로 재생성 가능). 이후 문서 수정 시 PDF 가 md 와 어긋날 수 있음 — 결함은 아니며 운영상 유의 사항.",
+        "참고: 캡처 설정의 AUTH_SECRET 기본값이 관리자 비밀번호로 폴백하는데, 이는 lib/adminSession.ts:12 의 앱 기본 동작과 동일하고 일회용 격리 서버(포트 3200, test-results/guide-screenshots 데이터)에만 쓰이므로 문제 없음."
+      ],
+      "risk": "low"
+    },
+    "ci_gate": {
+      "ok": false,
+      "state": "no-ci",
+      "reason": "이 커밋에 검사가 없음 (정책 allow_merge_without_ci 가 없으면 차단)",
+      "checks": 0
+    }
+  },
+  "release": {
+    "result": null,
+    "assets_sha256": []
+  },
+  "approval": null,
+  "usage": [
+    {
+      "ts": "2026-09-11T20:25:09+09:00",
+      "date": "2026-09-11",
+      "project": "cutover",
+      "phase": "improve",
+      "run_id": "2026-09-11-201042-cutover-improve",
+      "campaign": "guides-2026-09",
+      "subtype": "success",
+      "duration_ms": 864668,
+      "num_turns": 63,
+      "cost_usd": 5.4023010000000005,
+      "input_tokens": 84,
+      "output_tokens": 55677,
+      "cache_read": 4851100,
+      "cache_create": 158056
+    },
+    {
+      "ts": "2026-09-11T20:26:54+09:00",
+      "date": "2026-09-11",
+      "project": "cutover",
+      "phase": "review",
+      "run_id": "2026-09-11-201042-cutover-improve",
+      "campaign": "guides-2026-09",
+      "subtype": "success",
+      "duration_ms": 89286,
+      "num_turns": 14,
+      "cost_usd": 0.709734,
+      "input_tokens": 28,
+      "output_tokens": 5685,
+      "cache_read": 464286,
+      "cache_create": 33351
+    }
+  ]
+}

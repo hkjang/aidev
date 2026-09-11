@@ -1,0 +1,56 @@
+[
+  {
+    "title": "사용자·관리자 가이드를 실제 화면 캡처가 들어간 표준 형식으로 완성 (캠페인 guides-2026-09)",
+    "value": 5,
+    "risk": 1,
+    "size": "M",
+    "status": "done",
+    "note": "docs/USER_GUIDE.md·pdf, docs/ADMIN_GUIDE.md·pdf, docs/assets/guide/*.png 13장, scripts/guide-screenshots (npm run screenshots:guide). 커밋 18cfb20.",
+    "updated": "2026-09-11"
+  },
+  {
+    "title": "운영 빌드 관리자 세션 쿠키의 Secure 속성을 설정 가능하게 (HTTP 사내망 배포에서 관리자 로그인 불가)",
+    "value": 5,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "lib/adminSession·login route 의 secure: NODE_ENV==='production' 때문에 Docker 이미지를 http://<LAN IP>:3000 으로 쓰면 브라우저가 쿠키를 버려 PUT 이 401, 새로고침 시 로그인 화면. 2026-09-11 실측 확인. 환경 변수(예: ADMIN_COOKIE_SECURE) 또는 x-forwarded-proto 기반으로 제어하고 e2e 추가.",
+    "updated": "2026-09-11"
+  },
+  {
+    "title": "삭제·상태 전파의 하위 탐색을 ID 접두사 대신 parentId 기반으로 변경",
+    "value": 4,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "lib/treeUtils deleteActivity 와 app/admin/page.tsx onStatusChange 가 id.startsWith(parent+'-') 로 하위를 찾는다. 업로드한 JSON 의 자식 ID 가 접두사를 따르지 않으면 삭제 시 고아가 남아 validateActivityImport 400 으로 조용히 실패. 관리자 가이드 6장에 증상으로 기록됨.",
+    "updated": "2026-09-11"
+  },
+  {
+    "title": "관리자 콘솔 PUT 실패를 화면에 표시하고 삭제 확인창 중복 제거",
+    "value": 3,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "ActivityTree 삭제 버튼과 admin page onDeleteActivity 가 각각 confirm 을 띄워 두 번 뜨고, 두 번째는 루트 node.title 을 표시. PUT 응답(400/401)을 무시해 실패가 보이지 않음. 제목 100자 초과 시에도 조용히 닫힘.",
+    "updated": "2026-09-11"
+  },
+  {
+    "title": "미사용 코드 정리: lib/s3.ts, amplify.yml, *_bak/*_local 파일, reset-visitor API",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "lib/s3.ts 는 어떤 라우트도 import 하지 않음(_bak 만). visitorCount 는 증가 코드가 없어 reset-visitor 도 의미 없음. 정리 시 README 아키텍처 그림의 S3 언급도 함께 수정.",
+    "updated": "2026-09-11"
+  },
+  {
+    "title": "validateActivityImport 단위 테스트 추가 (node --test)",
+    "value": 3,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "현재 검증 로직은 e2e 한 건으로만 간접 검증됨. 중복 ID·순환·level 불일치·50건 생략 메시지·진행중 변환을 빠른 단위 테스트로 고정.",
+    "updated": "2026-09-11"
+  }
+]
