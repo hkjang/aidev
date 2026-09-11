@@ -1,0 +1,233 @@
+{
+  "run_id": "2026-09-11-175949-relio-improve",
+  "generated": "2026-09-11T18:11:32+09:00",
+  "run": {
+    "run_id": "2026-09-11-175949-relio-improve",
+    "project": "relio",
+    "kind": "improve",
+    "started": "2026-09-11T17:59:49+09:00",
+    "model": "claude-opus-5",
+    "policy_version": "5935779a",
+    "prompts_hash": "82f2440d4b2fef65",
+    "runner_version": "02a49720",
+    "finished": "2026-09-11T18:11:32+09:00",
+    "outcome": "merged"
+  },
+  "record": {
+    "ts": "2026-09-11T18:11:32+09:00",
+    "date": "2026-09-11",
+    "project": "relio",
+    "result": "fix-round: merged https://github.com/hkjang/relio/pull/19",
+    "outcome": "merged",
+    "run_id": "2026-09-11-175949-relio-improve",
+    "base_sha": "13ff4609b7a3a649621247432df7bd0cdafc236c",
+    "head_sha": "c8e530b97797a2661b39ced6f6d3677db342dcba",
+    "pr": "https://github.com/hkjang/relio/pull/19",
+    "stages": {
+      "base": {
+        "state": "pinned",
+        "reason": "main@13ff460",
+        "at": "2026-09-11T17:59:52+09:00"
+      },
+      "autonomy": {
+        "state": "low-risk",
+        "reason": "롤백 PR ",
+        "at": "2026-09-11T17:59:52+09:00"
+      },
+      "verify": {
+        "state": "passed",
+        "reason": "검증 7개 통과 (auto)",
+        "at": "2026-09-11T18:07:39+09:00"
+      },
+      "pr": {
+        "state": "created",
+        "reason": "https://github.com/hkjang/relio/pull/19",
+        "at": "2026-09-11T18:07:44+09:00"
+      },
+      "review": {
+        "state": "approved",
+        "reason": "리뷰 승인 (risk=low)",
+        "at": "2026-09-11T18:08:51+09:00"
+      },
+      "ci": {
+        "state": "passed",
+        "reason": "검사 2개 모두 success",
+        "at": "2026-09-11T18:11:25+09:00"
+      },
+      "merge": {
+        "state": "done",
+        "reason": "c8e530b97797a2661b39ced6f6d3677db342dcba",
+        "at": "2026-09-11T18:11:29+09:00"
+      },
+      "release": {
+        "state": "skipped",
+        "reason": "자율화 단계 low-risk — 릴리즈는 사람이",
+        "at": "2026-09-11T18:11:32+09:00"
+      }
+    },
+    "campaign": "",
+    "autonomy": "low-risk",
+    "files": 8,
+    "additions": 131,
+    "deletions": 3,
+    "tests": 2,
+    "title": "build: let a fresh checkout compile before the frontend has been built"
+  },
+  "stages": {
+    "base": {
+      "state": "pinned",
+      "reason": "main@13ff460",
+      "at": "2026-09-11T17:59:52+09:00"
+    },
+    "autonomy": {
+      "state": "low-risk",
+      "reason": "롤백 PR ",
+      "at": "2026-09-11T17:59:52+09:00"
+    },
+    "verify": {
+      "state": "passed",
+      "reason": "검증 7개 통과 (auto)",
+      "at": "2026-09-11T18:07:39+09:00"
+    },
+    "pr": {
+      "state": "created",
+      "reason": "https://github.com/hkjang/relio/pull/19",
+      "at": "2026-09-11T18:07:44+09:00"
+    },
+    "review": {
+      "state": "approved",
+      "reason": "리뷰 승인 (risk=low)",
+      "at": "2026-09-11T18:08:51+09:00"
+    },
+    "ci": {
+      "state": "passed",
+      "reason": "검사 2개 모두 success",
+      "at": "2026-09-11T18:11:25+09:00"
+    },
+    "merge": {
+      "state": "done",
+      "reason": "c8e530b97797a2661b39ced6f6d3677db342dcba",
+      "at": "2026-09-11T18:11:29+09:00"
+    },
+    "release": {
+      "state": "skipped",
+      "reason": "자율화 단계 low-risk — 릴리즈는 사람이",
+      "at": "2026-09-11T18:11:32+09:00"
+    }
+  },
+  "provenance": {
+    "model": "claude-opus-5",
+    "policy_version": "5935779a",
+    "prompts_hash": "82f2440d4b2fef65",
+    "runner_version": "02a49720",
+    "base_sha": "13ff4609b7a3a649621247432df7bd0cdafc236c",
+    "head_sha": "c8e530b97797a2661b39ced6f6d3677db342dcba",
+    "pr": "https://github.com/hkjang/relio/pull/19"
+  },
+  "verification": {
+    "runner": {
+      "source": "auto",
+      "commands": [
+        {
+          "cmd": "go build ./...",
+          "exit": 0,
+          "seconds": 1
+        },
+        {
+          "cmd": "go vet ./...",
+          "exit": 0,
+          "seconds": 0
+        },
+        {
+          "cmd": "go test ./...",
+          "exit": 0,
+          "seconds": 1
+        },
+        {
+          "cmd": "cd web && [ -d node_modules ] || npm ci --no-audit --no-fund",
+          "exit": 0,
+          "seconds": 0
+        },
+        {
+          "cmd": "cd web && npm run typecheck --silent",
+          "exit": 0,
+          "seconds": 2
+        },
+        {
+          "cmd": "cd web && [ -d node_modules ] || npm ci --no-audit --no-fund",
+          "exit": 0,
+          "seconds": 0
+        },
+        {
+          "cmd": "cd web && npm run build --silent",
+          "exit": 0,
+          "seconds": 3
+        }
+      ]
+    },
+    "runner_gate": {
+      "ok": true,
+      "state": "verified",
+      "reason": "검증 7개 통과 (auto)"
+    },
+    "after_rebase": null,
+    "review": {
+      "verdict": "approve",
+      "reasons": [],
+      "notes": [
+        "Verified on a fresh `git clone` with no frontend build: `go build ./...`, full `go test ./...`, and scripts/check-static-assets.sh all pass — the stated goal (compile before `npm run build`) holds.",
+        "The worktree itself contains a real Vite build (internal/webui/dist built 18:07) and `git status` is clean, which confirms web/public/README is copied back byte-identical by the build, as the commit message claims.",
+        "internal/server/public.go: spaHandler -> spaHandlerFor(fs.FS) is a pure extraction; behaviour is unchanged. TestSPAServesBuiltFilesAndShellsEverythingElse pins existing behaviour (immutable Cache-Control, dot-less /README falls through to the shell, empty FS -> 500) rather than catching a regression, which is appropriate for a refactor-only change; assertions are real and exercise the handler.",
+        "internal/webui/assets_test.go genuinely reads dist/README through the embed FS and compares against ../../web/public/README, so it fails if the anchor is dropped or the two copies drift.",
+        ".gitignore `dist/` -> `/dist/` plus `internal/webui/dist/*` + `!internal/webui/dist/README`: the only `dist` directory in the repo is internal/webui/dist, and the Makefile's root `dist/relio` output remains ignored. .dockerignore's `dist` entry is root-anchored, so the Docker build is unaffected (the web-build stage overwrites internal/webui/dist anyway and includes README from web/public).",
+        "No auth/payment/migration/secret/deletion logic touched; fully revertible."
+      ],
+      "risk": "low"
+    },
+    "ci_gate": {
+      "ok": true,
+      "state": "success",
+      "reason": "검사 2개 모두 success",
+      "checks": 2
+    }
+  },
+  "release": {
+    "result": null,
+    "assets_sha256": []
+  },
+  "approval": null,
+  "usage": [
+    {
+      "ts": "2026-09-11T18:07:29+09:00",
+      "date": "2026-09-11",
+      "project": "relio",
+      "phase": "improve",
+      "run_id": "2026-09-11-175949-relio-improve",
+      "campaign": "",
+      "subtype": "success",
+      "duration_ms": 456032,
+      "num_turns": 49,
+      "cost_usd": 3.592260000000001,
+      "input_tokens": 98,
+      "output_tokens": 29834,
+      "cache_read": 3715690,
+      "cache_create": 96732
+    },
+    {
+      "ts": "2026-09-11T18:08:51+09:00",
+      "date": "2026-09-11",
+      "project": "relio",
+      "phase": "review",
+      "run_id": "2026-09-11-175949-relio-improve",
+      "campaign": "",
+      "subtype": "success",
+      "duration_ms": 64109,
+      "num_turns": 7,
+      "cost_usd": 0.3535805,
+      "input_tokens": 14,
+      "output_tokens": 3875,
+      "cache_read": 172559,
+      "cache_create": 16854
+    }
+  ]
+}
