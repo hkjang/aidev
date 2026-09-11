@@ -1,0 +1,199 @@
+{
+  "run_id": "2026-09-11-124111-relio-improve",
+  "generated": "2026-09-11T12:49:58+09:00",
+  "run": {
+    "run_id": "2026-09-11-124111-relio-improve",
+    "project": "relio",
+    "kind": "improve",
+    "started": "2026-09-11T12:41:11+09:00",
+    "model": "claude-opus-5",
+    "policy_version": "5935779a",
+    "prompts_hash": "82f2440d4b2fef65",
+    "runner_version": "02a49720",
+    "finished": "2026-09-11T12:49:57+09:00",
+    "outcome": "review-pending"
+  },
+  "record": {
+    "ts": "2026-09-11T12:49:57+09:00",
+    "date": "2026-09-11",
+    "project": "relio",
+    "result": "needs approval (risk=low, files=48), PR open https://github.com/hkjang/relio/pull/18",
+    "outcome": "review-pending",
+    "run_id": "2026-09-11-124111-relio-improve",
+    "base_sha": "13ff4609b7a3a649621247432df7bd0cdafc236c",
+    "head_sha": "9318481d0bc8d80c20eb25358312f1f05bb33ec0",
+    "pr": "https://github.com/hkjang/relio/pull/18",
+    "stages": {
+      "base": {
+        "state": "pinned",
+        "reason": "main@13ff460",
+        "at": "2026-09-11T12:41:15+09:00"
+      },
+      "autonomy": {
+        "state": "held",
+        "reason": "low-risk 단계 — 위험도 low, 파일 48: 사람 승인 필요",
+        "at": "2026-09-11T12:49:57+09:00"
+      },
+      "verify": {
+        "state": "passed",
+        "reason": "검증 7개 통과 (auto)",
+        "at": "2026-09-11T12:47:24+09:00"
+      },
+      "pr": {
+        "state": "created",
+        "reason": "https://github.com/hkjang/relio/pull/18",
+        "at": "2026-09-11T12:47:32+09:00"
+      },
+      "review": {
+        "state": "approved",
+        "reason": "리뷰 승인 (risk=low)",
+        "at": "2026-09-11T12:49:57+09:00"
+      }
+    },
+    "campaign": "guides-2026-09",
+    "autonomy": "low-risk",
+    "files": 48,
+    "additions": 1865,
+    "deletions": 1024,
+    "tests": 0,
+    "title": "docs(guide): capture the strategic account plan with data in it"
+  },
+  "stages": {
+    "base": {
+      "state": "pinned",
+      "reason": "main@13ff460",
+      "at": "2026-09-11T12:41:15+09:00"
+    },
+    "autonomy": {
+      "state": "held",
+      "reason": "low-risk 단계 — 위험도 low, 파일 48: 사람 승인 필요",
+      "at": "2026-09-11T12:49:57+09:00"
+    },
+    "verify": {
+      "state": "passed",
+      "reason": "검증 7개 통과 (auto)",
+      "at": "2026-09-11T12:47:24+09:00"
+    },
+    "pr": {
+      "state": "created",
+      "reason": "https://github.com/hkjang/relio/pull/18",
+      "at": "2026-09-11T12:47:32+09:00"
+    },
+    "review": {
+      "state": "approved",
+      "reason": "리뷰 승인 (risk=low)",
+      "at": "2026-09-11T12:49:57+09:00"
+    }
+  },
+  "provenance": {
+    "model": "claude-opus-5",
+    "policy_version": "5935779a",
+    "prompts_hash": "82f2440d4b2fef65",
+    "runner_version": "02a49720",
+    "base_sha": "13ff4609b7a3a649621247432df7bd0cdafc236c",
+    "head_sha": "9318481d0bc8d80c20eb25358312f1f05bb33ec0",
+    "pr": "https://github.com/hkjang/relio/pull/18"
+  },
+  "verification": {
+    "runner": {
+      "source": "auto",
+      "commands": [
+        {
+          "cmd": "go build ./...",
+          "exit": 0,
+          "seconds": 0
+        },
+        {
+          "cmd": "go vet ./...",
+          "exit": 0,
+          "seconds": 0
+        },
+        {
+          "cmd": "go test ./...",
+          "exit": 0,
+          "seconds": 1
+        },
+        {
+          "cmd": "cd web && [ -d node_modules ] || npm ci --no-audit --no-fund",
+          "exit": 0,
+          "seconds": 0
+        },
+        {
+          "cmd": "cd web && npm run typecheck --silent",
+          "exit": 0,
+          "seconds": 3
+        },
+        {
+          "cmd": "cd web && [ -d node_modules ] || npm ci --no-audit --no-fund",
+          "exit": 0,
+          "seconds": 0
+        },
+        {
+          "cmd": "cd web && npm run build --silent",
+          "exit": 0,
+          "seconds": 1
+        }
+      ]
+    },
+    "runner_gate": {
+      "ok": true,
+      "state": "verified",
+      "reason": "검증 7개 통과 (auto)"
+    },
+    "after_rebase": null,
+    "review": {
+      "verdict": "approve",
+      "reasons": [],
+      "notes": [
+        "scripts/guide/screenshots.mjs:7 헤더 주석은 '전역 설정을 바꾸지 않으므로 복원할 것이 없다'고 하지만 withRateLimitLifted(253-262)가 api.rate_limit_per_minute 를 0 으로 바꿨다가 복원함. 커밋 메시지와 ADMIN_GUIDE 부록은 올바르게 기술하고 있어 주석만 오래된 것 — 후속에서 헤더 주석 수정 권장.",
+        "scripts/guide/screenshots.mjs:46 ['/usr/bin/google-chrome', ...].find(Boolean) 은 항상 첫 번째 경로를 반환해 후보 목록이 무의미함(존재 여부 미확인). RELIO_GUIDE_CHROME 으로 우회 가능하므로 도구 편의 문제.",
+        "내용 검증: ADMIN_GUIDE 의 환경 변수 계약(internal/config/config.go), 설정 기본값(migrations 001~004), Role 권한(migrations/007), 로그·오류 문자열 26건, Dockerfile UID/HEALTHCHECK, ClientIP 가 X-Forwarded-For 를 읽지 않는다는 점, security.allowed_origins 를 서버가 읽지 않는다는 점, rate limit 0 = 무제한(requestLimiter.allow) 을 모두 소스와 대조해 일치 확인. USER_GUIDE 의 계획 상태/White Space 상태 라벨(web/src/labels.ts), 버전 충돌 메시지, 계약 일정 상한 600, 계약번호 형식도 일치.",
+        "마지막 커밋의 근거(계획 없는 고객도 status=DRAFT 응답, id 는 저장된 행에만 존재)는 internal/relationship/account.go:83-87 과 일치하며, customer-360-plan.png 에 실제 데이터가 채워진 것을 이미지로 확인.",
+        "docs/index_en.html 의 가이드 설명 문구는 한국어 페이지와 달리 갱신되지 않음(HTML 뷰어 링크만 제거). 기능 오류는 아님.",
+        "테스트 없음 — 문서·캡처 스크립트만의 변경이라 단위 테스트 대상이 아니며, 산출물(PNG/PDF)이 검증 수단. 바이너리 약 9MB 추가.",
+        "되돌리기: 파일 변경만 있고 마이그레이션·외부 상태 변경 없음. 스크립트는 RELIO_GUIDE_DISPOSABLE=1 없이는 실행 거부."
+      ],
+      "risk": "low"
+    },
+    "ci_gate": null
+  },
+  "release": {
+    "result": null,
+    "assets_sha256": []
+  },
+  "approval": null,
+  "usage": [
+    {
+      "ts": "2026-09-11T12:47:09+09:00",
+      "date": "2026-09-11",
+      "project": "relio",
+      "phase": "improve",
+      "run_id": "2026-09-11-124111-relio-improve",
+      "campaign": "guides-2026-09",
+      "subtype": "success",
+      "duration_ms": 386644,
+      "num_turns": 57,
+      "cost_usd": 3.8567374999999986,
+      "input_tokens": 114,
+      "output_tokens": 21400,
+      "cache_read": 4607271,
+      "cache_create": 99765
+    },
+    {
+      "ts": "2026-09-11T12:49:57+09:00",
+      "date": "2026-09-11",
+      "project": "relio",
+      "phase": "review",
+      "run_id": "2026-09-11-124111-relio-improve",
+      "campaign": "guides-2026-09",
+      "subtype": "success",
+      "duration_ms": 158787,
+      "num_turns": 24,
+      "cost_usd": 1.8265140000000002,
+      "input_tokens": 48,
+      "output_tokens": 9745,
+      "cache_read": 1496296,
+      "cache_create": 83262
+    }
+  ]
+}
