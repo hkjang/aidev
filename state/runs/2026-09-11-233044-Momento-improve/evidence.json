@@ -1,0 +1,215 @@
+{
+  "run_id": "2026-09-11-233044-Momento-improve",
+  "generated": "2026-09-11T23:45:51+09:00",
+  "run": {
+    "run_id": "2026-09-11-233044-Momento-improve",
+    "project": "Momento",
+    "kind": "improve",
+    "started": "2026-09-11T23:30:44+09:00",
+    "model": "claude-opus-5",
+    "policy_version": "5935779a",
+    "prompts_hash": "82f2440d4b2fef65",
+    "runner_version": "02a49720",
+    "finished": "2026-09-11T23:45:51+09:00",
+    "outcome": "verify-failed"
+  },
+  "record": {
+    "ts": "2026-09-11T23:45:51+09:00",
+    "date": "2026-09-11",
+    "project": "Momento",
+    "result": "CI failed, PR open https://github.com/hkjang/Momento/pull/3",
+    "outcome": "verify-failed",
+    "run_id": "2026-09-11-233044-Momento-improve",
+    "base_sha": "9f857c4b750e068e6e88298479d8c4c052e5e6cc",
+    "head_sha": "67add934d4e83a960579541df5a55e23e1c0a3f9",
+    "pr": "https://github.com/hkjang/Momento/pull/3",
+    "stages": {
+      "base": {
+        "state": "pinned",
+        "reason": "main@9f857c4",
+        "at": "2026-09-11T23:30:50+09:00"
+      },
+      "autonomy": {
+        "state": "release",
+        "reason": "",
+        "at": "2026-09-11T23:30:50+09:00"
+      },
+      "verify": {
+        "state": "passed",
+        "reason": "검증 7개 통과 (auto)",
+        "at": "2026-09-11T23:41:11+09:00"
+      },
+      "pr": {
+        "state": "created",
+        "reason": "https://github.com/hkjang/Momento/pull/3",
+        "at": "2026-09-11T23:41:17+09:00"
+      },
+      "review": {
+        "state": "approved",
+        "reason": "리뷰 승인 (risk=low)",
+        "at": "2026-09-11T23:42:48+09:00"
+      },
+      "ci": {
+        "state": "failed",
+        "reason": "성공이 아닌 검사: test=failure",
+        "at": "2026-09-11T23:45:49+09:00"
+      }
+    },
+    "campaign": "guides-2026-09",
+    "autonomy": "release",
+    "files": 2,
+    "additions": 300,
+    "deletions": 4,
+    "tests": 1,
+    "title": "fix(maintenance): a rebuild that lost a deadlock to the event worker is tried again, not failed"
+  },
+  "stages": {
+    "base": {
+      "state": "pinned",
+      "reason": "main@9f857c4",
+      "at": "2026-09-11T23:30:50+09:00"
+    },
+    "autonomy": {
+      "state": "release",
+      "reason": "",
+      "at": "2026-09-11T23:30:50+09:00"
+    },
+    "verify": {
+      "state": "passed",
+      "reason": "검증 7개 통과 (auto)",
+      "at": "2026-09-11T23:41:11+09:00"
+    },
+    "pr": {
+      "state": "created",
+      "reason": "https://github.com/hkjang/Momento/pull/3",
+      "at": "2026-09-11T23:41:17+09:00"
+    },
+    "review": {
+      "state": "approved",
+      "reason": "리뷰 승인 (risk=low)",
+      "at": "2026-09-11T23:42:48+09:00"
+    },
+    "ci": {
+      "state": "failed",
+      "reason": "성공이 아닌 검사: test=failure",
+      "at": "2026-09-11T23:45:49+09:00"
+    }
+  },
+  "provenance": {
+    "model": "claude-opus-5",
+    "policy_version": "5935779a",
+    "prompts_hash": "82f2440d4b2fef65",
+    "runner_version": "02a49720",
+    "base_sha": "9f857c4b750e068e6e88298479d8c4c052e5e6cc",
+    "head_sha": "67add934d4e83a960579541df5a55e23e1c0a3f9",
+    "pr": "https://github.com/hkjang/Momento/pull/3"
+  },
+  "verification": {
+    "runner": {
+      "source": "auto",
+      "commands": [
+        {
+          "cmd": "go build ./...",
+          "exit": 0,
+          "seconds": 1
+        },
+        {
+          "cmd": "go vet ./...",
+          "exit": 0,
+          "seconds": 0
+        },
+        {
+          "cmd": "go test ./...",
+          "exit": 0,
+          "seconds": 0
+        },
+        {
+          "cmd": "cd web && [ -d node_modules ] || npm ci --no-audit --no-fund",
+          "exit": 0,
+          "seconds": 14
+        },
+        {
+          "cmd": "cd web && npm test --silent",
+          "exit": 0,
+          "seconds": 1
+        },
+        {
+          "cmd": "cd web && [ -d node_modules ] || npm ci --no-audit --no-fund",
+          "exit": 0,
+          "seconds": 0
+        },
+        {
+          "cmd": "cd web && npm run build --silent",
+          "exit": 0,
+          "seconds": 7
+        }
+      ]
+    },
+    "runner_gate": {
+      "ok": true,
+      "state": "verified",
+      "reason": "검증 7개 통과 (auto)"
+    },
+    "after_rebase": null,
+    "review": {
+      "verdict": "approve",
+      "reasons": [],
+      "notes": [
+        "Verified against a throwaway postgres:16 container: both new integration tests pass on HEAD; TestMaintenanceRequeuesARebuildThatLostADeadlock fails on main's maintenance.go (`a lost deadlock is not a failure to report: ERROR: deadlock detected (SQLSTATE 40P01)`), so it genuinely exercises the fix.",
+        "internal/service/maintenance_test.go:167 TestMaintenanceFailsARebuildOutOfAttempts also passes on main's code — it is a guard for the retry bound, not a regression test; acceptable but it does not prove the new branch on its own.",
+        "internal/service/maintenance.go:104 a requeued job returns (false, nil), which ends the whole drain pass in Run(); other pending jobs wait up to one 15s tick. Documented in the RunPending comment; intentional, minor throughput cost.",
+        "internal/service/maintenance.go:98-99 if the requeue UPDATE itself fails the job stays 'running' with started_at set; it is only recovered by the 30-minute 'recovered after interrupted worker' sweep at startup, not by the running loop. Pre-existing shape of the failure path, not a regression.",
+        "internal/service/maintenance.go:118 semantics: Attempts < 10 → 9 requeues, 10 executions total; the comment's 'how many times ... put back' is off by one but harmless.",
+        "Test deadlock construction relies on Postgres choosing the longer-waiting transaction (the rebuild) as the victim; the test asserts this explicitly and it held in 3 runs, but could flake under heavy load. Skips without MOMENTO_TEST_POSTGRES_DSN like the other integration tests.",
+        "Scope is tight: only maintenance.go plus its new test; no migration needed (attempts column already exists in 001/009); fully revertable."
+      ],
+      "risk": "low"
+    },
+    "ci_gate": {
+      "ok": false,
+      "state": "failed",
+      "reason": "성공이 아닌 검사: test=failure",
+      "checks": 1,
+      "bad": 1
+    }
+  },
+  "release": {
+    "result": null,
+    "assets_sha256": []
+  },
+  "approval": null,
+  "usage": [
+    {
+      "ts": "2026-09-11T23:40:47+09:00",
+      "date": "2026-09-11",
+      "project": "Momento",
+      "phase": "improve",
+      "run_id": "2026-09-11-233044-Momento-improve",
+      "campaign": "guides-2026-09",
+      "subtype": "success",
+      "duration_ms": 609308,
+      "num_turns": 29,
+      "cost_usd": 1.9089335000000003,
+      "input_tokens": 58,
+      "output_tokens": 22210,
+      "cache_read": 1407355,
+      "cache_create": 64311
+    },
+    {
+      "ts": "2026-09-11T23:42:48+09:00",
+      "date": "2026-09-11",
+      "project": "Momento",
+      "phase": "review",
+      "run_id": "2026-09-11-233044-Momento-improve",
+      "campaign": "guides-2026-09",
+      "subtype": "success",
+      "duration_ms": 90551,
+      "num_turns": 13,
+      "cost_usd": 0.5861520000000001,
+      "input_tokens": 26,
+      "output_tokens": 5240,
+      "cache_read": 405712,
+      "cache_create": 25035
+    }
+  ]
+}
