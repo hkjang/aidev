@@ -1,0 +1,8 @@
+[
+  {"title":"사용자·관리자 가이드를 실제 콘솔 캡처와 함께 GUIDE-STANDARD 구조로 재작성 (수정 과제: 캠페인 34회 fetch 실패)","value":5,"risk":1,"size":"M","status":"done","note":"scripts/guide-screenshots.sh + web/scripts/guide-screenshots.mjs 로 /app 24화면 캡처, USER/ADMIN_GUIDE.md·PDF·README 링크 갱신. fetch 실패 원인은 러너 정책 base_branch=main → master 로 정정됨; 저장소 스크립트·워크플로는 이미 master 만 참조해 코드 변경 없음","updated":"2026-09-12"},
+  {"title":"OPERATIONS.md·SAFETY_GUIDE.md·ROUTING_GUIDE.md 에도 docs/images/guide 캡처를 실어 문서군 통일","value":3,"risk":1,"size":"S","status":"pending","note":"캡처 스크립트가 있으니 shots 목록만 늘리면 됨","updated":"2026-09-12"},
+  {"title":"가이드 캡처 스크립트를 CI 선택 잡으로 돌려 빈 화면·오류 상태 회귀 감지","value":3,"risk":2,"size":"M","status":"pending","note":"드라이버가 page-state-error 를 실패로 보고함. workflow_dispatch 로 시작","updated":"2026-09-12"},
+  {"title":"MODEL_PRICING_KRW_PER_1M 키 소문자 정규화 부재로 lookupPrice 정확 매칭이 항상 실패하고 prefix 루프로만 걸림","value":3,"risk":1,"size":"S","status":"pending","note":"적재 시점에 strings.ToLower(TrimSpace) 일원화","updated":"2026-09-12"},
+  {"title":"audit.InferLanguages.addSignal 이 더 높은 신뢰도 신호가 오면 기존 evidence 를 통째로 버림","value":2,"risk":1,"size":"S","status":"pending","note":"근거 누적 유실","updated":"2026-09-12"},
+  {"title":"text2sql.ValidateSQL 이 MySQL `LIMIT n, m`·`FETCH FIRST n ROWS ONLY` 를 인식하지 못해 상한·기본값 규칙 우회","value":3,"risk":2,"size":"S","status":"pending","note":"limitRe 확장 + 회귀 테스트","updated":"2026-09-12"}
+]
