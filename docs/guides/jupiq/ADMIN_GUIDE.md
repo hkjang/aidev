@@ -1,6 +1,6 @@
 # jupiq 관리자 가이드
 
-이 문서는 jupiq **v1.4.14**을 오프라인망에 설치하고 운영하는 사람을 위한 것입니다.
+이 문서는 jupiq **v1.5.0**을 오프라인망에 설치하고 운영하는 사람을 위한 것입니다.
 화면을 쓰는 방법은 [사용자 가이드](USER_GUIDE.md)에 있으니 여기서 되풀이하지 않습니다.
 실린 화면은 모두 실제 jupiq를 띄워 찍은 것이며, 주소·이름·키는 데모용 가짜 값입니다.
 
@@ -44,10 +44,10 @@ jupiq는 **컨테이너 하나**입니다. Go 서버가 REST API와 SPA를 같�
 ```bash
 # GitHub Release 본문의 64자리 SHA-256을 승인 기록과 대조
 JUPIQ_ARCHIVE_SHA256='릴리스-본문의-SHA256'
-printf '%s  %s\n' "${JUPIQ_ARCHIVE_SHA256}" jupiq-v1.4.14.tar.gz | sha256sum -c -
-gzip -t jupiq-v1.4.14.tar.gz
-gzip -dc jupiq-v1.4.14.tar.gz | docker load
-docker image inspect jupiq:v1.4.14 --format '{{index .Config.Labels "org.opencontainers.image.version"}}'
+printf '%s  %s\n' "${JUPIQ_ARCHIVE_SHA256}" jupiq-v1.5.0.tar.gz | sha256sum -c -
+gzip -t jupiq-v1.5.0.tar.gz
+gzip -dc jupiq-v1.5.0.tar.gz | docker load
+docker image inspect jupiq:v1.5.0 --format '{{index .Config.Labels "org.opencontainers.image.version"}}'
 ```
 
 ### 2.2 PostgreSQL 준비
@@ -91,7 +91,7 @@ docker run -d --name jupiq --restart unless-stopped --init \
   --env-file .env -p 127.0.0.1:8080:8080 \
   --read-only --tmpfs /tmp:size=64m,mode=1777 \
   --cap-drop ALL --security-opt no-new-privileges:true \
-  jupiq:v1.4.14
+  jupiq:v1.5.0
 curl --fail http://127.0.0.1:8080/readyz
 ```
 
