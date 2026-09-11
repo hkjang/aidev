@@ -1,7 +1,7 @@
-> **대상 버전** Agent v0.2.31 · Server v0.2.31 · **문서 버전** 1.1 ·
+> **대상 버전** Agent v0.2.32 · Server v0.2.32 · **문서 버전** 1.1 ·
 > **기준일** 2026-09-10 · **문서 등급** 공개
 
-> Server v0.2.31 운영자는 [Server 설치 및 운영 가이드](SERVER_INSTALLATION.md)를
+> Server v0.2.32 운영자는 [Server 설치 및 운영 가이드](SERVER_INSTALLATION.md)를
 > 먼저 확인하십시오. 문서에는 PostgreSQL/SQLite 선택, 최초 관리자, Agent
 > Bearer·mTLS 등록, 장애 spool과 Kubernetes 배포가 포함됩니다.
 
@@ -27,7 +27,7 @@
 
 ## 문서 범위와 독자
 
-이 문서는 Invenqor Agent v0.2.31를 운영 환경에 배포하는 Linux·Windows, 보안, 네트워크,
+이 문서는 Invenqor Agent v0.2.32를 운영 환경에 배포하는 Linux·Windows, 보안, 네트워크,
 CMDB/게이트웨이 관리자를 위한 기준서입니다. 다음 범위를 다룹니다.
 
 - 지원 환경, 패키지 무결성 검증과 init 시스템별 설치
@@ -36,7 +36,7 @@ CMDB/게이트웨이 관리자를 위한 기준서입니다. 다음 범위를 �
 - 스냅샷, 변경 이벤트, 하트비트, 로컬 큐와 재시도 동작
 - 게이트웨이 계약, 파일 권한, 모니터링, 업그레이드, 롤백과 장애 대응
 
-v0.2.31에는 중앙 Server·대시보드·서명 자동 업데이트·자산 API·MCP와 주요
+v0.2.32에는 중앙 Server·대시보드·서명 자동 업데이트·자산 API·MCP와 주요
 소프트웨어 자동 식별이 포함됩니다.
 CVE 매핑, 자동 시정 정책 엔진과 원격 명령은 포함되지 않습니다.
 
@@ -180,8 +180,8 @@ WMI는 사용하지 않습니다. 통상적인 방법이지만 COM 아파트먼�
 x86_64 예시:
 
 ```bash
-curl -fLO https://github.com/hkjang/invenqor/releases/download/v0.2.31/invenqor-agent-linux-x86_64.tar.gz
-curl -fLO https://github.com/hkjang/invenqor/releases/download/v0.2.31/invenqor-agent-linux-x86_64.tar.gz.sha256
+curl -fLO https://github.com/hkjang/invenqor/releases/download/v0.2.32/invenqor-agent-linux-x86_64.tar.gz
+curl -fLO https://github.com/hkjang/invenqor/releases/download/v0.2.32/invenqor-agent-linux-x86_64.tar.gz.sha256
 sha256sum -c invenqor-agent-linux-x86_64.tar.gz.sha256
 ```
 
@@ -193,7 +193,7 @@ sha256sum -c invenqor-agent-linux-x86_64.tar.gz.sha256
 artifact를 직접 서명할 때 생성합니다.
 
 폐쇄망에 세 플랫폼을 함께 반입할 때는
-`invenqor-agents-0.2.31.tar.gz`와 같은 이름의 `.sha256`을 받으십시오. 이 묶음에는
+`invenqor-agents-0.2.32.tar.gz`와 같은 이름의 `.sha256`을 받으십시오. 이 묶음에는
 Linux x86_64·aarch64, Windows x86_64 패키지와 각 체크섬,
 `sign-agent-update-manifest-v2.py`가 들어 있습니다.
 
@@ -495,7 +495,7 @@ sudo systemctl restart invenqor-agent
 
 제한: DMI 제조사·시리얼, BIOS, 메인보드 정보는 수집하지 않습니다. 에이전트는
 로컬 ID 초기화 시 machine-id와 DMI product UUID를 읽어 info 로그에 기록할 수
-있지만 v0.2.31 인벤토리 레코드나 전송 envelope에는 포함하지 않습니다.
+있지만 v0.2.32 인벤토리 레코드나 전송 envelope에는 포함하지 않습니다.
 
 ### 6.2 CPU (`hardware.cpu`)
 
@@ -561,7 +561,7 @@ sudo systemctl restart invenqor-agent
 | `addresses` | IPv4/IPv6 주소 문자열 배열 |
 
 네트워크 네임스페이스 기준으로 보이는 인터페이스만 수집합니다. 프리픽스 길이,
-브로드캐스트, VLAN/본딩 관계는 v0.2.31에 포함되지 않습니다.
+브로드캐스트, VLAN/본딩 관계는 v0.2.32에 포함되지 않습니다.
 
 ### 6.6 네트워크 구성 (`network.configuration`)
 
@@ -575,7 +575,7 @@ sudo systemctl restart invenqor-agent
 | `listening[]` | protocol, local address, local port |
 
 TCP는 상태 `LISTEN`만 포함합니다. UDP는 연결 상태 개념 차이로 `/proc/net/udp*`의
-로컬 endpoint를 포함합니다. IPv6 주소는 수집하지만 v0.2.31의 기본 경로 수집은
+로컬 endpoint를 포함합니다. IPv6 주소는 수집하지만 v0.2.32의 기본 경로 수집은
 IPv4 `/proc/net/route`만 사용합니다. 소켓과 프로세스의 연결 관계는 제공하지
 않습니다.
 
@@ -683,7 +683,7 @@ Windows에서도 같은 카테고리를 만들되, 원천과 몇몇 필드가 �
   "Windows 10 …"을 보고합니다. Microsoft가 값을 갱신하지 않았기 때문이며, 이
   값을 그대로 쓰는 인벤토리는 Windows 11 전체를 Windows 10으로 집계합니다.
   Agent는 빌드 번호 22000 이상에서 이름을 교정합니다. Server 계열은 빌드 번호
-  체계를 공유하므로 교정 대상이 아닙니다. v0.2.31 Agent는 최상위 `os_name`과
+  체계를 공유하므로 교정 대상이 아닙니다. v0.2.32 Agent는 최상위 `os_name`과
   `os_release.{id,name,pretty_name,version_id,build_id}`를 함께 보내고, Server는
   두 형식을 모두 읽습니다. v0.2.13 이하에서 이미 등록된 장비는 저장된 `system`
   원천을 첫 heartbeat에서 다시 투영하거나 다음 `system` delta를 처리해 자동
@@ -704,7 +704,7 @@ Windows에서도 같은 카테고리를 만들되, 원천과 몇몇 필드가 �
 원시 `process`는 시점 관찰이고 `service`와 `software.package`는 설치·구성
 증거입니다. 어느 하나만 CMDB 소프트웨어로 사용하면 다중 PID를 중복 집계하거나,
 설치됐지만 실행되지 않는 제품과 실행됐지만 패키지 관리자를 거치지 않은 제품을
-놓칩니다. v0.2.31 Server는 매 inventory에서 세 원천을 host 단위로 다시 결합해
+놓칩니다. v0.2.32 Server는 매 inventory에서 세 원천을 host 단위로 다시 결합해
 `software_product` 대표 자산을 만듭니다.
 
 | 출력 필드 | 의미 |
@@ -804,7 +804,7 @@ process는 단독 신호로 제품에 승격하지 않고 패키지·서비스·
 ```http
 POST {server.url}/v1/agent/events
 Content-Type: application/json
-User-Agent: invenqor-agent/0.2.31
+User-Agent: invenqor-agent/0.2.32
 X-Invenqor-Agent-Id: <agent UUID>
 X-Invenqor-Event-Id: <event UUID>
 Authorization: Bearer <token>   # 구성한 경우
@@ -834,7 +834,7 @@ Authorization: Bearer <token>   # 구성한 경우
 ```
 
 HTTP 2xx와 `accepted: true`가 모두 충족돼야 성공입니다. `policy_version`은
-로그에 관찰만 하며 v0.2.31는 원격 정책이나 명령을 실행하지 않습니다.
+로그에 관찰만 하며 v0.2.32는 원격 정책이나 명령을 실행하지 않습니다.
 
 게이트웨이는 `event_id`에 대해 멱등 처리해야 합니다. 네트워크 단절로 서버가
 처리 후 응답을 보내지 못하면 같은 event가 재전송될 수 있습니다.
@@ -976,7 +976,7 @@ Agent Event의 상태 판정은 다음과 같습니다.
 | `pending`, `failed` | 재처리 가능 | `processing_error`와 request ID를 조사한 뒤 재전송 |
 | `processed` | 성공한 최종 상태 | 재전송해도 중복 성공이며 수동 상태 변경 금지 |
 
-v0.2.31 Server는 실패 상태를 기록하는 UPSERT에서 기존 `processed` 행을 제외합니다.
+v0.2.32 Server는 실패 상태를 기록하는 UPSERT에서 기존 `processed` 행을 제외합니다.
 따라서 Pod A가 성공을 commit한 직후 Pod B가 같은 이벤트 처리 실패를 기록해도
 상태와 자산 projection은 성공 상태로 유지됩니다. 한 요청이 오류를 반환했더라도
 DB가 `processed`이면 Agent의 at-least-once 재전송에 맡기고, 행을 `failed`로
@@ -1024,7 +1024,7 @@ DB에 저장되고 등록 요청마다 읽으므로 Kubernetes 모든 Pod에 즉
 
 ### 12.2 업그레이드
 
-v0.2.31는 관리자가 승인한 Ed25519 manifest v2 서명 artifact의 자동 스테이징,
+v0.2.32는 관리자가 승인한 Ed25519 manifest v2 서명 artifact의 자동 스테이징,
 Windows service 자동 적용과 Linux 권한 분리 기반 원자 교체를 지원합니다. 서명
 개인키는 Server와 Agent에 배포하지 않고 오프라인 환경에서 보관합니다. v2 서명은
 버전·channel·OS·architecture·크기·SHA-256·`allow_downgrade`를 함께 보호합니다.
@@ -1047,7 +1047,7 @@ OpenRC와 SysV는 서비스 시작 시 적용합니다.
    python3 scripts/sign-agent-update-manifest-v2.py \
      --artifact invenqor-agent-linux-x86_64 \
      --private-key update-signing.pem \
-     --version 0.2.31 --channel stable \
+     --version 0.2.32 --channel stable \
      --os linux --architecture x86_64 \
      > invenqor-agent-linux-x86_64.signature-bundle.json
    ```
@@ -1092,7 +1092,7 @@ Windows는 실행 중인 실행 파일을 덮어쓰거나 삭제할 수 없지�
 보고하지 않고 종료합니다. `install.ps1`이 설정한 SCM crash recovery가 fresh install
 직후에도 새 바이너리로 즉시 되살립니다.
 
-v0.2.31 service의 background checker는 서명된 update를 내려받은 뒤 이 적용 경로를
+v0.2.32 service의 background checker는 서명된 update를 내려받은 뒤 이 적용 경로를
 자동 실행합니다. 따라서 운영자가 각 Windows 장비에서 `--update-now`를 호출하거나
 재부팅할 필요가 없습니다. `Content-Length`가 없는 chunked Ingress artifact도
 manifest 크기 이하로 bounded streaming하고 실제 길이·SHA-256·서명을 재검증합니다.
@@ -1270,7 +1270,7 @@ CA를 관리합니다. 연결 테스트는 실제 discovery와 TLS 신뢰를 확
 Secret은 Master Key로 암호화되어 구성 여부만 표시됩니다. Client Secret 없이
 SSO를 활성화하거나 존재하지 않는 내부 역할을 mapping하는 설정은 거부됩니다.
 
-v0.2.31부터 Client Secret은 Pod 로컬 파일이 아니라 공용 PostgreSQL의
+v0.2.32부터 Client Secret은 Pod 로컬 파일이 아니라 공용 PostgreSQL의
 `auth.keycloak.client_secret`에 ciphertext envelope로 저장됩니다. 모든 Pod가
 공유하는 32-byte Master Key를 사용한 AES-256-GCM AEAD이며 암호화 용도도
 associated data로 인증합니다. 따라서 어느 Pod가 로그인 시작·callback을 처리해도
@@ -1278,7 +1278,7 @@ associated data로 인증합니다. 따라서 어느 Pod가 로그인 시작·ca
 만들거나 평문으로 대체하지 않고 시작 또는 복호화 오류를 명시적으로 반환합니다.
 
 v0.2.14의 Pod-local `bootstrap.enc`만 있는 경우, 동일 Master Key와 기존 state
-PVC를 가진 첫 v0.2.31 Pod가 시작하면서 공용 DB로 자동 이관합니다. 두 번째 Pod의
+PVC를 가진 첫 v0.2.32 Pod가 시작하면서 공용 DB로 자동 이관합니다. 두 번째 Pod의
 Keycloak 설정에서 **Client Secret 구성됨**을 확인할 때까지 기존 PVC를 폐기하지
 마십시오. PVC가 먼저 유실되어 공용 Secret도 없으면 로컬 Super Admin으로 전용
 Keycloak 화면에서 다시 입력합니다. Master Key가 유실된 경우에는 일치하는 DB·Key
@@ -1538,4 +1538,4 @@ PDF 는 저장소 루트에서 `./scripts/build-guide-pdfs.sh` 로 만듭니다.
 <p class="small">문서 오류 및 제품 문의:
 <a href="https://github.com/hkjang/invenqor">GitHub 저장소</a> ·
 일반 사용 절차: <a href="USER_GUIDE.md">사용자 가이드</a> ·
-보안 취약점 보고 절차: <a href="https://github.com/hkjang/invenqor/blob/v0.2.31/SECURITY.md">SECURITY.md</a></p>
+보안 취약점 보고 절차: <a href="https://github.com/hkjang/invenqor/blob/v0.2.32/SECURITY.md">SECURITY.md</a></p>
