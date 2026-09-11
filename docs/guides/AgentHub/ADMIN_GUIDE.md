@@ -1,7 +1,7 @@
 # AgentHub 관리자 가이드
 
 이 문서는 AgentHub 를 **띄워 놓고 지키는 사람**을 위한 것입니다. 화면을 쓰는 방법은
-[사용자 가이드](USER_GUIDE.md)에 있습니다. 화면 캡처는 모두 v0.242.0 을 실제로 띄워
+[사용자 가이드](USER_GUIDE.md)에 있습니다. 화면 캡처는 모두 v0.243.0 을 실제로 띄워
 찍었고, 그 안의 이름·주소·값은 이 문서를 위해 만든 가짜입니다.
 
 폐쇄망 설치의 전 과정(번들 내려받기, 서명·SBOM 검증, 매체 반입)은
@@ -37,7 +37,7 @@
 compose 로 띄우고 → 첫 관리자 비밀번호를 바꾸는** 순서입니다.
 
 ```bash
-export AGENTHUB_VERSION=v0.243.0
+export AGENTHUB_VERSION=v0.244.0
 
 # 1) 반입한 아카이브를 적재한다 (helper 가 검증까지 함께 한다)
 cd agenthub-offline
@@ -262,6 +262,7 @@ Runtime 수·CPU·메모리·저장소와 함께 **토큰 예산과 금액**을 
 | `AGENTHUB_ENCRYPTION_KEY: must be exactly 32 bytes …` | 같은 로그 | 32바이트 키를 base64·16진수·평문 중 하나로 |
 | 작업이 `대기 중` 에서 안 움직임 | `GET /api/v1/admin/workers`, `관리자 ▸ 실행 제어` | 워커가 죽었거나 실행이 일시 정지 상태입니다. 정지를 풀고 회수·재큐 |
 | 런타임이 `pending` 에서 멈춤 | `GET /api/v1/admin/kubernetes/health` | 오퍼레이터·클러스터 연결. `Kubernetes 연결 전까지 Runtime은 pending 상태로 유지됩니다.` |
+| 작업은 끝나는데 런타임이 모두 `대기`, 실행 기록 타임라인에 `Kubernetes가 구성되지 않아 Runtime 없이 진행합니다.` | `관리자 ▸ 시스템 설정 ▸ Kubernetes`, `POST /api/v1/admin/kubernetes/check` | 클러스터 설정이 비어 있습니다. 워커는 모델과 글로만 실행을 이어가므로 파일 편집·명령이 필요한 작업은 전부 `런타임 인계` 로 멈춥니다. 클러스터를 연결하면 다음 작업부터 Pod 가 뜹니다 |
 | 모든 작업이 `Runtime을 확보하지 못했습니다: Unauthorized` | 같은 곳 | 서비스 계정 토큰이 만료됐습니다. 새 토큰을 발급해 `관리자 ▸ 시스템 설정 ▸ Kubernetes` 에 저장 |
 | 작업 실패에 `런타임 이미지를 가져오지 못했습니다 … ErrImagePull` | `관리자 ▸ 런타임 이미지`, Pod 상태 | 승인한 태그가 클러스터에 없습니다. 이미지를 적재하거나 승인 태그를 맞추세요 |
 | 런타임 중지가 `409 runtime_busy` | 응답 본문에 무엇이 올라가 있는지 함께 옵니다 | 확인 후 진행하거나 `force` 를 실어 호출 |
