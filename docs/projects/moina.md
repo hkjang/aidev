@@ -1,7 +1,7 @@
 ---
 title: "moina — 자율 개선 이력"
 description: "moina: 자율 개선 회차 20회, 릴리즈 9건. 최근 릴리즈 v0.1.27 (자산 1개)."
-last_modified_at: 2026-09-11 19:35:51 +0900
+last_modified_at: 2026-09-11 20:03:21 +0900
 ---
 {% raw %}
 <script type="application/ld+json">
@@ -18,7 +18,7 @@ last_modified_at: 2026-09-11 19:35:51 +0900
   "name": "hkjang",
   "url": "https://github.com/hkjang"
  },
- "dateModified": "2026-09-11T19:35:51+09:00",
+ "dateModified": "2026-09-11T20:03:21+09:00",
  "version": "0.1.27"
 }
 </script>
