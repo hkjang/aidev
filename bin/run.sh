@@ -358,12 +358,20 @@ pick_campaign(){
     # 아직 성과가 없는 프로젝트를 고른다. 캠페인은 유한한 일감이다 — 대상마다 한 번씩
     # 해내면 끝이고, 다 돌았는데 목록을 다시 도는 것은 같은 문서를 또 쓰는 것이다.
     # 한 번도 안 돈 것이 먼저, 그 다음이 실패해서 다시 해야 하는 것(가장 오래된 순).
-    local best="" best_rank="" rank last_out remaining=0
+    local best="" best_rank="" rank last_out tries remaining=0; local -a stuck=()
     for cp in $projs; do
       last_out=$(jq -r --arg id "$id" --arg p "$cp" 'select(.campaign==$id and .project==$p) | .outcome' "$DATA/runs.jsonl" 2>/dev/null | tail -1)
       case "$last_out" in
         "") ;;                                    # 아직 안 함
-        error|verify-failed) ;;                   # 성과 없이 끝남 — 다시 한다
+        error|verify-failed)
+          # 세 번까지만 다시 한다. 같은 자리에서 실패하는 회차는 다시 돌린다고
+          # 달라지지 않는데, 무한히 다시 잡으면 캠페인이 그 프로젝트에 갇히고
+          # 예산만 탄다 (2026-09-12 SecCheck·vibe-coders 가 각각 여섯 번).
+          tries=$(jq -r --arg id "$id" --arg p "$cp" 'select(.campaign==$id and .project==$p and (.outcome=="error" or .outcome=="verify-failed")) | .project' "$DATA/runs.jsonl" 2>/dev/null | wc -l)
+          if [ "${tries:-0}" -ge 3 ]; then
+            printf '%s\n' "${stuck[@]}" | grep -qx "$cp" || stuck+=("$cp")
+            continue
+          fi;;
         *) continue;;                             # PR 까지 갔으면 이 캠페인에서는 끝난 것으로 본다
       esac
       remaining=$((remaining+1))
@@ -372,6 +380,11 @@ pick_campaign(){
       rank=$(jq -r --arg id "$id" --arg p "$cp" 'select(.campaign==$id and .project==$p) | .ts' "$DATA/runs.jsonl" 2>/dev/null | tail -1)
       [ -z "$best" ] || [[ "$rank" < "$best_rank" ]] && { best=$cp; best_rank=$rank; }
     done
+    if [ ${#stuck[@]} -gt 0 ]; then
+      log "campaign $id: 세 번 이상 실패해 더 잡지 않는 프로젝트 — ${stuck[*]}"
+      "$HERE/tg.sh" "⛔ 캠페인 $id — 다음 프로젝트는 세 번 실패해 더 시도하지 않습니다: ${stuck[*]}
+사람이 원인을 봐야 합니다." >/dev/null 2>&1 &
+    fi
     if [ "$remaining" -eq 0 ]; then
       jq --arg id "$id" '(.campaigns[]|select(.id==$id)).done=true' "$cj" > "$cj.tmp" && mv "$cj.tmp" "$cj"
       log "campaign $id: 대상 $(wc -w <<<"$projs")개 전부 완료 — 캠페인을 닫는다"
@@ -406,7 +419,11 @@ run_verify(){ # $1=작업 디렉터리 $2=결과 파일
       d="$wd/$sub"; [ -d "$d" ] || continue
       local pre=""; [ "$sub" != . ] && pre="cd $sub && "
       [ -f "$d/go.mod" ] && cmds+=("${pre}go build ./..." "${pre}go vet ./..." "${pre}go test ./...")
-      if [ -f "$d/package.json" ]; then
+      # 잠금 파일이 있어야 설치할 수 있다. npm ci 는 package-lock.json 없이는
+      # 무슨 수를 써도 실패하므로, 잠금 파일이 없는 package.json 은 건너뛴다 —
+      # 하위 디렉터리로 스크립트만 넘기는 껍데기(SecCheck 루트처럼)가 그렇고,
+      # 그런 디렉터리를 검증 대상으로 잡으면 회차가 영영 같은 자리에서 실패한다.
+      if [ -f "$d/package.json" ] && { [ -f "$d/package-lock.json" ] || [ -f "$d/npm-shrinkwrap.json" ] || [ -f "$d/pnpm-lock.yaml" ]; }; then
         local pm="npm ci --no-audit --no-fund" runner="npm"; [ -f "$d/pnpm-lock.yaml" ] && command -v pnpm >/dev/null && { pm="pnpm install --frozen-lockfile"; runner="pnpm"; }
         jq -e '.scripts.test' "$d/package.json" >/dev/null 2>&1 && cmds+=("${pre}[ -d node_modules ] || $pm" "${pre}$runner test --silent")
         jq -e '.scripts.typecheck' "$d/package.json" >/dev/null 2>&1 && cmds+=("${pre}[ -d node_modules ] || $pm" "${pre}$runner run typecheck --silent")
@@ -914,7 +931,7 @@ log "picked: ${picked[*]}"
 # ================================================================ 프로젝트별 회차
 # 한 프로젝트의 회차 전체. --parallel 이면 서브셸에서 동시에 돈다(각자 워크트리·실행 디렉터리가 달라 서로 간섭하지 않는다).
 round_body(){
-  local n=$1
+  local n=$1 remote_head
   repo="$ROOT/$n"; ledger="$STATE/$n.md"; wt="$WT_BASE/$n"; result="no change"; OUTCOME=no-change; RUN_META="{}"; HEAD_SHA=""; BASE_SHA=""; url=""
   base=$(policy "$n" '.base_branch'); base=${base:-$(git -C "$repo" symbolic-ref --short HEAD)}
   new_run "$n" improve
@@ -932,6 +949,17 @@ round_body(){
   # continue 는 그 자리에서 실패하고 회차가 그대로 이어져, 상한에 걸린 회차가 계속 돈다.
   budget_ok "$round_budget" || { stage improve hold "회차 예산(\$$round_budget)이 오늘 남은 상한을 넘음"; record_run "$n" "hold: budget" "error"; return 0; }
   # 기준 커밋 고정: 원격의 base 에서 시작하고 SHA 를 기록한다
+  # 기준 브랜치가 원격에 없으면 원격이 말하는 기본 브랜치를 쓴다. 정책 기본값이
+  # main 이라, master 를 쓰는 저장소는 회차마다 같은 자리에서 fetch 에 실패했다
+  # (2026-09-12 vibe-coders). 설정을 고치는 편이 낫지만, 그때까지 멈춰 있을
+  # 이유는 없다.
+  if ! git -C "$repo" ls-remote --exit-code --heads origin "$base" >/dev/null 2>&1; then
+    remote_head=$(git -C "$repo" remote show origin 2>/dev/null | sed -n 's/.*HEAD branch: //p' | head -1)
+    if [ -n "$remote_head" ] && [ "$remote_head" != "$base" ]; then
+      log "$n: 기준 브랜치 '$base' 가 원격에 없어 '$remote_head' 로 진행한다 (state/$n.policy.json 에 base_branch 를 적어 두세요)"
+      base=$remote_head
+    fi
+  fi
   git -C "$repo" fetch -q origin "$base" >>"$LOG" 2>&1 || { stage improve error "fetch 실패"; record_run "$n" "error: fetch" "error"; return 0; }
   BASE_SHA=$(git -C "$repo" rev-parse "origin/$base"); slug="auto/$RUN_DATE-$(date +%H%M)"
   git -C "$repo" worktree remove --force "$wt" 2>/dev/null || true
