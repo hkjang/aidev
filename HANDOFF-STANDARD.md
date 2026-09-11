@@ -90,7 +90,6 @@ GET /handoff?source=https://umm.intra&claim=<표>
 | `umm` | `markdown` | — |
 | `muni` | `markdown` · `docx` | `markdown` |
 | `kanpic` | `csv` · `xlsx` | `csv` · `xlsx` |
-| `jasheets` | `csv` · `xlsx` | `csv` · `xlsx` |
 | `ptium` | `pptx` | `markdown` · `docx` · `csv` · `xlsx` · `txt` |
 | `weekly` | `pptx` | `markdown` · `docx` · `pptx` |
 
