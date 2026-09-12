@@ -1,0 +1,201 @@
+{
+  "run_id": "2026-09-12-132956-ai-admin-improve",
+  "generated": "2026-09-12T13:52:20+09:00",
+  "run": {
+    "run_id": "2026-09-12-132956-ai-admin-improve",
+    "project": "ai-admin",
+    "kind": "improve",
+    "started": "2026-09-12T13:29:57+09:00",
+    "model": "claude-opus-5",
+    "policy_version": "5935779a",
+    "prompts_hash": "82f2440d4b2fef65",
+    "runner_version": "79bd9d23",
+    "finished": "2026-09-12T13:52:20+09:00",
+    "outcome": "review-pending"
+  },
+  "record": {
+    "ts": "2026-09-12T13:52:20+09:00",
+    "date": "2026-09-12",
+    "project": "ai-admin",
+    "result": "review held, PR open https://github.com/hkjang/ai-admin/pull/21",
+    "outcome": "review-pending",
+    "run_id": "2026-09-12-132956-ai-admin-improve",
+    "base_sha": "76f434e9d3d7ef1fbcd92201579cf145493999a6",
+    "head_sha": "67715bb470ffba3cbed563d5f309865d3725102c",
+    "pr": "https://github.com/hkjang/ai-admin/pull/21",
+    "stages": {
+      "base": {
+        "state": "pinned",
+        "reason": "main@76f434e",
+        "at": "2026-09-12T13:30:02+09:00"
+      },
+      "autonomy": {
+        "state": "release",
+        "reason": "",
+        "at": "2026-09-12T13:30:02+09:00"
+      },
+      "verify": {
+        "state": "passed",
+        "reason": "검증 7개 통과 (auto)",
+        "at": "2026-09-12T13:48:15+09:00"
+      },
+      "pr": {
+        "state": "created",
+        "reason": "https://github.com/hkjang/ai-admin/pull/21",
+        "at": "2026-09-12T13:48:22+09:00"
+      },
+      "review": {
+        "state": "rejected",
+        "reason": "리뷰 거절: internal/tracking/tracking.go:270-282 SnippetOrigins는 strings.ToLower(snippet)에서 찾은 바이트 오프셋으로 원본 snippet을 인덱싱한다. 소문자화 시 UTF-8 길이가 줄어드는 문자(İ U+0130→i, 켈빈 기호 K U+212A→k)가 스니펫에 있으면 오프셋이 어긋나고, lowered에서 'http'가 잡힌 위치가 원본에서 경계 문자(공백 등)이면 end==start==index 로 진행이 없어 무한 루프에 빠진다. 재현: SnippetOrigins(\"<!-- İ -->  <script src=\\\"https://cdn.example.com/x.js\\\"></script>\") 이 2초 내 반환하지 않음(직접 확인). 이 값은 카탈로그 검증(8KB, 문자열)을 통과해 저장되고, PolicySources()가 /login·/ 등 스니펫이 붙는 모든 SPA 셸 요청과 GET /api/v1/tracking/status, Recorder.List 에서 호출되므로 저장 즉시 로그인 화면 요청마다 고루틴이 100% CPU로 영구 회전한다(recoverer·WriteTimeout으로 회수되지 않음). 서버 코드로 복구할 수 없고 DB에서 설정을 지워야 한다. / internal/tracking/tracking.go:197-211 withNonce도 같은 방식(ToLower 결과의 인덱스로 원본 remaining 슬라이스)이라 위 문자가 있으면 nonce가 <script 태그가 아닌 엉뚱한 바이트 위치에 삽입되어 스니펫 HTML이 깨진다(무한 루프는 아님). 두 곳 모두 ASCII 전용 대소문자 비교(bytes.EqualFold 기반 탐색이나 lowered 슬라이스만 사용)로 바꿔야 한다.",
+        "at": "2026-09-12T13:52:18+09:00"
+      }
+    },
+    "campaign": "tracking-2026-09",
+    "autonomy": "release",
+    "files": 16,
+    "additions": 1699,
+    "deletions": 41,
+    "tests": 3,
+    "title": "feat: 관리자가 화면에서 붙이는 방문 추적 스니펫과 nonce 기반 CSP"
+  },
+  "stages": {
+    "base": {
+      "state": "pinned",
+      "reason": "main@76f434e",
+      "at": "2026-09-12T13:30:02+09:00"
+    },
+    "autonomy": {
+      "state": "release",
+      "reason": "",
+      "at": "2026-09-12T13:30:02+09:00"
+    },
+    "verify": {
+      "state": "passed",
+      "reason": "검증 7개 통과 (auto)",
+      "at": "2026-09-12T13:48:15+09:00"
+    },
+    "pr": {
+      "state": "created",
+      "reason": "https://github.com/hkjang/ai-admin/pull/21",
+      "at": "2026-09-12T13:48:22+09:00"
+    },
+    "review": {
+      "state": "rejected",
+      "reason": "리뷰 거절: internal/tracking/tracking.go:270-282 SnippetOrigins는 strings.ToLower(snippet)에서 찾은 바이트 오프셋으로 원본 snippet을 인덱싱한다. 소문자화 시 UTF-8 길이가 줄어드는 문자(İ U+0130→i, 켈빈 기호 K U+212A→k)가 스니펫에 있으면 오프셋이 어긋나고, lowered에서 'http'가 잡힌 위치가 원본에서 경계 문자(공백 등)이면 end==start==index 로 진행이 없어 무한 루프에 빠진다. 재현: SnippetOrigins(\"<!-- İ -->  <script src=\\\"https://cdn.example.com/x.js\\\"></script>\") 이 2초 내 반환하지 않음(직접 확인). 이 값은 카탈로그 검증(8KB, 문자열)을 통과해 저장되고, PolicySources()가 /login·/ 등 스니펫이 붙는 모든 SPA 셸 요청과 GET /api/v1/tracking/status, Recorder.List 에서 호출되므로 저장 즉시 로그인 화면 요청마다 고루틴이 100% CPU로 영구 회전한다(recoverer·WriteTimeout으로 회수되지 않음). 서버 코드로 복구할 수 없고 DB에서 설정을 지워야 한다. / internal/tracking/tracking.go:197-211 withNonce도 같은 방식(ToLower 결과의 인덱스로 원본 remaining 슬라이스)이라 위 문자가 있으면 nonce가 <script 태그가 아닌 엉뚱한 바이트 위치에 삽입되어 스니펫 HTML이 깨진다(무한 루프는 아님). 두 곳 모두 ASCII 전용 대소문자 비교(bytes.EqualFold 기반 탐색이나 lowered 슬라이스만 사용)로 바꿔야 한다.",
+      "at": "2026-09-12T13:52:18+09:00"
+    }
+  },
+  "provenance": {
+    "model": "claude-opus-5",
+    "policy_version": "5935779a",
+    "prompts_hash": "82f2440d4b2fef65",
+    "runner_version": "79bd9d23",
+    "base_sha": "76f434e9d3d7ef1fbcd92201579cf145493999a6",
+    "head_sha": "67715bb470ffba3cbed563d5f309865d3725102c",
+    "pr": "https://github.com/hkjang/ai-admin/pull/21"
+  },
+  "verification": {
+    "runner": {
+      "source": "auto",
+      "commands": [
+        {
+          "cmd": "go build ./...",
+          "exit": 0,
+          "seconds": 0
+        },
+        {
+          "cmd": "go vet ./...",
+          "exit": 0,
+          "seconds": 1
+        },
+        {
+          "cmd": "go test ./...",
+          "exit": 0,
+          "seconds": 0
+        },
+        {
+          "cmd": "cd web && [ -d node_modules ] || npm ci --no-audit --no-fund",
+          "exit": 0,
+          "seconds": 0
+        },
+        {
+          "cmd": "cd web && npm test --silent",
+          "exit": 0,
+          "seconds": 9
+        },
+        {
+          "cmd": "cd web && [ -d node_modules ] || npm ci --no-audit --no-fund",
+          "exit": 0,
+          "seconds": 0
+        },
+        {
+          "cmd": "cd web && npm run build --silent",
+          "exit": 0,
+          "seconds": 3
+        }
+      ]
+    },
+    "runner_gate": {
+      "ok": true,
+      "state": "verified",
+      "reason": "검증 7개 통과 (auto)"
+    },
+    "after_rebase": null,
+    "review": {
+      "verdict": "reject",
+      "reasons": [
+        "internal/tracking/tracking.go:270-282 SnippetOrigins는 strings.ToLower(snippet)에서 찾은 바이트 오프셋으로 원본 snippet을 인덱싱한다. 소문자화 시 UTF-8 길이가 줄어드는 문자(İ U+0130→i, 켈빈 기호 K U+212A→k)가 스니펫에 있으면 오프셋이 어긋나고, lowered에서 'http'가 잡힌 위치가 원본에서 경계 문자(공백 등)이면 end==start==index 로 진행이 없어 무한 루프에 빠진다. 재현: SnippetOrigins(\"<!-- İ -->  <script src=\\\"https://cdn.example.com/x.js\\\"></script>\") 이 2초 내 반환하지 않음(직접 확인). 이 값은 카탈로그 검증(8KB, 문자열)을 통과해 저장되고, PolicySources()가 /login·/ 등 스니펫이 붙는 모든 SPA 셸 요청과 GET /api/v1/tracking/status, Recorder.List 에서 호출되므로 저장 즉시 로그인 화면 요청마다 고루틴이 100% CPU로 영구 회전한다(recoverer·WriteTimeout으로 회수되지 않음). 서버 코드로 복구할 수 없고 DB에서 설정을 지워야 한다.",
+        "internal/tracking/tracking.go:197-211 withNonce도 같은 방식(ToLower 결과의 인덱스로 원본 remaining 슬라이스)이라 위 문자가 있으면 nonce가 <script 태그가 아닌 엉뚱한 바이트 위치에 삽입되어 스니펫 HTML이 깨진다(무한 루프는 아님). 두 곳 모두 ASCII 전용 대소문자 비교(bytes.EqualFold 기반 탐색이나 lowered 슬라이스만 사용)로 바꿔야 한다."
+      ],
+      "notes": [
+        "테스트 자체는 실제 코드를 실행하고 nonce·정책·프록시·신고를 구체적으로 단언하므로 형식적 테스트는 아니다. go vet, 대상 패키지 go test 통과 확인. PostgreSQL 통합 테스트(TestTrackingEndToEnd)는 TEST_POSTGRES_DSN 미설정으로 이 세션에서 실행하지 못했다.",
+        "internal/server/tracking.go:223-266 /momento/* 는 무인증으로 관리자가 적은 수집기 호스트에 GET/HEAD/POST·임의 경로·256KB 본문을 그대로 전달한다. 문서(‘하나의 주소로 넘기는 터널’)와 코드는 일치하지만, 수집기 호스트가 같은 오리진에 관리 API를 두고 있으면 외부에서 그 API에 도달하는 통로가 된다. 허용 경로를 /tracker.js·/collect/* 등으로 좁히는 편이 안전하다.",
+        "internal/server/tracking.go:56-81 trackingConfig가 모든 SPA 셸 요청·/momento/*·csp-report(무인증)마다 DB 쿼리를 한 번씩 실행하며 컨텍스트 타임아웃이 없다. 이전에는 셸 제공이 DB와 무관했으므로 DB 지연이 곧바로 페이지 로드 지연이 된다. 짧은 TTL 캐시나 컨텍스트 타임아웃을 권장.",
+        "tracking.allowed_hosts 는 공백·세미콜론·따옴표만 거르므로 '*' 나 'data:' 같은 값이 script-src에 그대로 들어갈 수 있다. settings.write 권한자만 쓸 수 있으니 결함은 아니지만 https://host 형식 검증을 넣는 편이 낫다.",
+        "include_admin=false 의 의미가 ‘문서를 처음 요청한 URL’ 기준이라 /login 에서 로드된 트래커는 클라이언트 라우팅으로 /admin/* 로 넘어가도 계속 동작한다. ADMIN_GUIDE 3.5절에 명시돼 있어 불일치는 아님.",
+        "openapi.go 의 큰 diff는 새 항목 추가에 따른 gofmt 정렬 변경이며 범위 이탈이 아니다. 마이그레이션·외부 상태 변경은 없고 설정은 기본 꺼짐이라 revert 가능."
+      ],
+      "risk": "medium"
+    },
+    "ci_gate": null
+  },
+  "release": {
+    "result": null,
+    "assets_sha256": []
+  },
+  "approval": null,
+  "usage": [
+    {
+      "ts": "2026-09-12T13:48:00+09:00",
+      "date": "2026-09-12",
+      "project": "ai-admin",
+      "phase": "improve",
+      "run_id": "2026-09-12-132956-ai-admin-improve",
+      "campaign": "tracking-2026-09",
+      "subtype": "success",
+      "duration_ms": 1159472,
+      "num_turns": 97,
+      "cost_usd": 12.2603485,
+      "input_tokens": 184,
+      "output_tokens": 71420,
+      "cache_read": 16140715,
+      "cache_create": 238532
+    },
+    {
+      "ts": "2026-09-12T13:52:18+09:00",
+      "date": "2026-09-12",
+      "project": "ai-admin",
+      "phase": "review",
+      "run_id": "2026-09-12-132956-ai-admin-improve",
+      "campaign": "tracking-2026-09",
+      "subtype": "success",
+      "duration_ms": 252911,
+      "num_turns": 23,
+      "cost_usd": 1.8571289999999996,
+      "input_tokens": 46,
+      "output_tokens": 15572,
+      "cache_read": 1369504,
+      "cache_create": 78102
+    }
+  ]
+}

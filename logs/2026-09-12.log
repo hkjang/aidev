@@ -1129,3 +1129,41 @@ reports: 11 day(s), 2 week(s), 1 month(s), 657 run(s), 728 usage row(s), 34 proj
 notify: 1 new alert(s)
 notify: commented on issue #1
 notify: toast shown
+[13:10:30] aidev synced: run(2026-09-12): Vendra — guarded files, PR open https://github.com/hkjang/Vendra/pull/120
+[13:10:30] done
+[13:20:16] Kkiit: waiting for CI on ff19bc7 (no-ci)
+[13:24:32] Kkiit: [ci] no-ci — 이 커밋에 검사가 없음 (정책 allow_merge_without_ci 가 없으면 차단)
+[13:24:32] Kkiit: 승인 대기 유지 (https://github.com/hkjang/Kkiit/pull/1, CI no-ci) — 회차로 기록하지 않음
+[13:24:48] cutover: waiting for CI on 18cfb20 (no-ci)
+[13:29:04] cutover: [ci] no-ci — 이 커밋에 검사가 없음 (정책 allow_merge_without_ci 가 없으면 차단)
+[13:29:04] cutover: 승인 대기 유지 (https://github.com/hkjang/cutover/pull/1, CI no-ci) — 회차로 기록하지 않음
+[13:29:23] skip DartFly: dirty working tree
+[13:29:26] skip Quantoss: dirty working tree
+[13:29:34] skip aiportal-java: STOP
+[13:29:50] skip postra: dirty working tree
+[13:29:56] candidates(32): AgentHub Clustara Invenqor Kkiit Momento ReSSO SecCheck Vendra ai-admin aiportal-front-admin aiportal-front aiportal-py appstore cutover dataworks git-ctx igame jikim jupiq kanpic moina moyro muni pii-masker ptium releasedock relio seaton umm vibe-coders visitflow weekly
+[13:29:56] campaign tracking-2026-09: picked ai-admin
+[13:29:56] picked: ai-admin
+[13:29:57] === ai-admin (base=main, run 2026-09-12-132956-ai-admin-improve, 회차 예산 $28)
+Preparing worktree (new branch 'auto/2026-09-12-1330')
+Updating files:  68% (185/270)Updating files:  69% (187/270)Updating files:  70% (189/270)Updating files:  71% (192/270)Updating files:  72% (195/270)Updating files:  73% (198/270)Updating files:  74% (200/270)Updating files:  75% (203/270)Updating files:  76% (206/270)Updating files:  77% (208/270)Updating files:  78% (211/270)Updating files:  79% (214/270)Updating files:  80% (216/270)Updating files:  81% (219/270)Updating files:  82% (222/270)Updating files:  83% (225/270)Updating files:  84% (227/270)Updating files:  85% (230/270)Updating files:  86% (233/270)Updating files:  87% (235/270)Updating files:  88% (238/270)Updating files:  89% (241/270)Updating files:  90% (243/270)Updating files:  91% (246/270)Updating files:  92% (249/270)Updating files:  93% (252/270)Updating files:  94% (254/270)Updating files:  95% (257/270)Updating files:  96% (260/270)Updating files:  97% (262/270)Updating files:  98% (265/270)Updating files:  99% (268/270)Updating files: 100% (270/270)Updating files: 100% (270/270), done.
+HEAD is now at 76f434e chore: release ai-admin v1.2.19
+[13:30:02] ai-admin: [base] pinned — main@76f434e
+[13:30:02] ai-admin: [autonomy] release — 
+[13:48:00] ai-admin: improve — 97 turns, 19m, $12.26, success
+[13:48:01] ai-admin: verify `go build ./...` → exit 0 (0s)
+[13:48:02] ai-admin: verify `go vet ./...` → exit 0 (1s)
+[13:48:02] ai-admin: verify `go test ./...` → exit 0 (0s)
+[13:48:02] ai-admin: verify `cd web && [ -d node_modules ] || npm ci --no-audit --no-fund` → exit 0 (0s)
+[13:48:11] ai-admin: verify `cd web && npm test --silent` → exit 0 (9s)
+[13:48:11] ai-admin: verify `cd web && [ -d node_modules ] || npm ci --no-audit --no-fund` → exit 0 (0s)
+[13:48:14] ai-admin: verify `cd web && npm run build --silent` → exit 0 (3s)
+[13:48:15] ai-admin: [verify] passed — 검증 7개 통과 (auto)
+branch 'auto/2026-09-12-1330' set up to track 'origin/auto/2026-09-12-1330'.
+[13:48:22] ai-admin: [pr] created — https://github.com/hkjang/ai-admin/pull/21
+[13:52:18] ai-admin: review — 23 turns, 4m, $1.86, success
+[13:52:18] ai-admin: [review] rejected — 리뷰 거절: internal/tracking/tracking.go:270-282 SnippetOrigins는 strings.ToLower(snippet)에서 찾은 바이트 오프셋으로 원본 snippet을 인덱싱한다. 소문자화 시 UTF-8 길이가 줄어드는 문자(İ U+0130→i, 켈빈 기호 K U+212A→k)가 스니펫에 있으면 오프셋이 어긋나고, lowered에서 'http'가 잡힌 위치가 원본에서 경계 문자(공백 등)이면 end==start==index 로 진행이 없어 무한 루프에 빠진다. 재현: SnippetOrigins("<!-- İ -->  <script src=\"https://cdn.example.com/x.js\"></script>") 이 2초 내 반환하지 않음(직접 확인). 이 값은 카탈로그 검증(8KB, 문자열)을 통과해 저장되고, PolicySources()가 /login·/ 등 스니펫이 붙는 모든 SPA 셸 요청과 GET /api/v1/tracking/status, Recorder.List 에서 호출되므로 저장 즉시 로그인 화면 요청마다 고루틴이 100% CPU로 영구 회전한다(recoverer·WriteTimeout으로 회수되지 않음). 서버 코드로 복구할 수 없고 DB에서 설정을 지워야 한다. / internal/tracking/tracking.go:197-211 withNonce도 같은 방식(ToLower 결과의 인덱스로 원본 remaining 슬라이스)이라 위 문자가 있으면 nonce가 <script 태그가 아닌 엉뚱한 바이트 위치에 삽입되어 스니펫 HTML이 깨진다(무한 루프는 아님). 두 곳 모두 ASCII 전용 대소문자 비교(bytes.EqualFold 기반 탐색이나 lowered 슬라이스만 사용)로 바꿔야 한다.
+https://github.com/hkjang/ai-admin/pull/21#issuecomment-5643567614
+evidence: /mnt/c/Users/USER/projects/aidev/state/runs/2026-09-12-132956-ai-admin-improve/evidence.json
+reports: 11 day(s), 2 week(s), 1 month(s), 658 run(s), 730 usage row(s), 34 project page(s), 13 alert(s)
+notify: no new alerts
