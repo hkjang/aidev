@@ -674,3 +674,4 @@
   노트는 하지 않았다.
 - 보류 아이디어: 설정 → Keycloak 화면 캡처에 auto_login 토글이 없음 — 캡처 스크립트·PNG·가이드 세 곳 대조 테스트가 있어 방문 추적 캡처와 같은 회차에 묶어 재촬영 (가치 2 / 위험 1 / S) · Query DSL 에 `attributes.<키>` 존재/부재 연산자가 없어 `>= ""` 우회가 필요함 (가치 3 / 위험 2 / M) · MCP `asset_relations` 가 상대 자산의 이름·종류를 주지 않아 edge 마다 `asset_get` 을 한 번 더 부르게 만듦 (가치 3 / 위험 2 / M) · 콘솔 Query DSL 화면이 새 `total`·`offset` 을 쓰지 않아 여전히 첫 페이지만 보여줌 (가치 3 / 위험 2 / M) · 콜백의 `RefusedSilently` 가 평범한 로그인의 provider 오류에서도 흐름을 소비하므로 `oidc_flows` 정리 SQL 의 `consumed_at` 조건과 함께 e2e-multipod 스크립트에 silent 흐름 케이스를 더함 (가치 2 / 위험 1 / S)
 
+- 릴리즈: v0.2.34 (2026-09-13, run 2026-09-13-065012-Invenqor-approve)
