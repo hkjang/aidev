@@ -1776,3 +1776,33 @@ reports: 11 day(s), 2 week(s), 1 month(s), 665 run(s), 750 usage row(s), 34 proj
 notify: 1 new alert(s)
 notify: commented on issue #1
 notify: toast shown
+[19:46:19] aidev synced: run(2026-09-12): moina — CI failed, PR open https://github.com/hkjang/moina/pull/19
+[19:46:19] done
+[19:50:28] cutover: waiting for CI on 18cfb20 (no-ci)
+[19:54:40] cutover: [ci] no-ci — 이 커밋에 검사가 없음 (정책 allow_merge_without_ci 가 없으면 차단)
+[19:54:40] cutover: 승인 대기 유지 (https://github.com/hkjang/cutover/pull/1, CI no-ci) — 회차로 기록하지 않음
+[19:54:59] skip DartFly: dirty working tree
+[19:55:02] skip Quantoss: dirty working tree
+[19:55:10] skip aiportal-java: STOP
+[19:55:23] skip postra: dirty working tree
+[19:55:31] candidates(32): AgentHub Clustara Invenqor Kkiit Momento ReSSO SecCheck Vendra ai-admin aiportal-front-admin aiportal-front aiportal-py appstore cutover dataworks git-ctx igame jikim jupiq kanpic moina moyro muni pii-masker ptium releasedock relio seaton umm vibe-coders visitflow weekly
+[19:55:32] campaign tracking-2026-09: picked moyro
+[19:55:32] picked: moyro
+[19:55:32] === moyro (base=main, run 2026-09-12-195532-moyro-improve, 회차 예산 $28)
+Preparing worktree (new branch 'auto/2026-09-12-1955')
+Updating files:  39% (251/628)Updating files:  40% (252/628)Updating files:  41% (258/628)Updating files:  42% (264/628)Updating files:  43% (271/628)Updating files:  44% (277/628)Updating files:  45% (283/628)Updating files:  46% (289/628)Updating files:  47% (296/628)Updating files:  48% (302/628)Updating files:  49% (308/628)Updating files:  50% (314/628)Updating files:  51% (321/628)Updating files:  52% (327/628)Updating files:  53% (333/628)Updating files:  54% (340/628)Updating files:  55% (346/628)Updating files:  56% (352/628)Updating files:  57% (358/628)Updating files:  58% (365/628)Updating files:  59% (371/628)Updating files:  60% (377/628)Updating files:  61% (384/628)Updating files:  62% (390/628)Updating files:  63% (396/628)Updating files:  64% (402/628)Updating files:  65% (409/628)Updating files:  66% (415/628)Updating files:  67% (421/628)Updating files:  68% (428/628)Updating files:  69% (434/628)Updating files:  70% (440/628)Updating files:  71% (446/628)Updating files:  72% (453/628)Updating files:  73% (459/628)Updating files:  74% (465/628)Updating files:  75% (471/628)Updating files:  76% (478/628)Updating files:  77% (484/628)Updating files:  78% (490/628)Updating files:  79% (497/628)Updating files:  80% (503/628)Updating files:  80% (507/628)Updating files:  81% (509/628)Updating files:  82% (515/628)Updating files:  83% (522/628)Updating files:  84% (528/628)Updating files:  85% (534/628)Updating files:  86% (541/628)Updating files:  87% (547/628)Updating files:  88% (553/628)Updating files:  89% (559/628)Updating files:  90% (566/628)Updating files:  91% (572/628)Updating files:  92% (578/628)Updating files:  93% (585/628)Updating files:  94% (591/628)Updating files:  95% (597/628)Updating files:  96% (603/628)Updating files:  97% (610/628)Updating files:  98% (616/628)Updating files:  99% (622/628)Updating files: 100% (628/628)Updating files: 100% (628/628), done.
+HEAD is now at d4ac11d release: carry release markers to v0.2.28
+[19:55:38] moyro: [base] pinned — main@d4ac11d
+[19:55:38] moyro: [autonomy] release — 
+[20:12:19] moyro: improve — 101 turns, 18m, $11.45, success
+[20:12:26] moyro: verify `cd server && go build ./... && go vet ./... && go test ./...` → exit 0 (5s)
+[20:12:42] moyro: verify `cd webapp && ([ -d node_modules ] || npm ci --no-audit --no-fund) && npm run typecheck --silent && npm test --silent` → exit 0 (16s)
+[20:12:43] moyro: [verify] passed — 검증 2개 통과 (policy)
+branch 'auto/2026-09-12-1955' set up to track 'origin/auto/2026-09-12-1955'.
+[20:12:49] moyro: [pr] created — https://github.com/hkjang/moyro/pull/13
+[20:18:33] moyro: review — 26 turns, 6m, $2, success
+[20:18:33] moyro: [review] rejected — 리뷰 거절: server/internal/tracking/tracking.go:325-337 SnippetOrigins는 strings.ToLower(snippet)에서 구한 바이트 인덱스를 원본 snippet에 그대로 적용합니다. 소문자화로 바이트 길이가 달라지는 문자(예: U+212A KELVIN SIGN 3바이트→'k' 1바이트, U+0130 'İ' 2바이트→3바이트)가 스니펫에 있으면 인덱스가 어긋나 `lower[index:]`가 범위를 벗어나 panic 합니다(재현: 'K'×8 + "http://a.example tail" → slice bounds out of range [40:29]). Validate는 이런 스니펫을 통과시키고, PolicySources→SnippetOrigins는 webui.ServeHTTP가 추적 대상 페이지 응답마다 호출하므로 저장 즉시 모든 화면 응답이 Recoverer 500이 되고, listTrackingViolations(AllowsOrigin)도 함께 500이 됩니다. / server/internal/tracking/tracking.go:359-373 withNonce도 같은 결함입니다. strings.ToLower(remaining)에서 찾은 `<script` 위치를 remaining에 적용하므로 앞에 'İ' 같은 문자가 있으면 태그 중간에 nonce가 삽입됩니다(재현: "İİİİ<script>1</script>" → `İİİİ<sc nonce="n"ript>1</script>`). 결과 태그가 깨져 스니펫이 조용히 실행되지 않는데, 이는 이 기능이 해결하려던 '조용히 막힘' 그 자체입니다. 두 함수 모두 소문자 사본에서 위치를 찾은 뒤 원본에 쓰지 말고, ASCII 전용 case-fold(또는 EqualFold 기반 탐색)로 바꿔야 합니다.
+https://github.com/hkjang/moyro/pull/13#issuecomment-5645557245
+evidence: /mnt/c/Users/USER/projects/aidev/state/runs/2026-09-12-195532-moyro-improve/evidence.json
+reports: 11 day(s), 2 week(s), 1 month(s), 666 run(s), 752 usage row(s), 34 project page(s), 14 alert(s)
+notify: no new alerts
