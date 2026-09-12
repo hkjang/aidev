@@ -1,0 +1,170 @@
+{
+  "run_id": "2026-09-12-114001-ReSSO-improve",
+  "generated": "2026-09-12T12:04:29+09:00",
+  "run": {
+    "run_id": "2026-09-12-114001-ReSSO-improve",
+    "project": "ReSSO",
+    "kind": "improve",
+    "started": "2026-09-12T11:40:02+09:00",
+    "model": "claude-opus-5",
+    "policy_version": "5935779a",
+    "prompts_hash": "82f2440d4b2fef65",
+    "runner_version": "79bd9d23",
+    "finished": "2026-09-12T12:04:29+09:00",
+    "outcome": "review-pending"
+  },
+  "record": {
+    "ts": "2026-09-12T12:04:29+09:00",
+    "date": "2026-09-12",
+    "project": "ReSSO",
+    "result": "guarded files, PR open https://github.com/hkjang/ReSSO/pull/19",
+    "outcome": "review-pending",
+    "run_id": "2026-09-12-114001-ReSSO-improve",
+    "base_sha": "159e58db48de420d7ec1985d9db0f2d66980acc5",
+    "head_sha": "1d9b41d775d7e737e0651dd8c7613f206ea17f72",
+    "pr": "https://github.com/hkjang/ReSSO/pull/19",
+    "stages": {
+      "base": {
+        "state": "pinned",
+        "reason": "main@159e58d",
+        "at": "2026-09-12T11:40:07+09:00"
+      },
+      "autonomy": {
+        "state": "release",
+        "reason": "",
+        "at": "2026-09-12T11:40:07+09:00"
+      },
+      "verify": {
+        "state": "passed",
+        "reason": "검증 7개 통과 (auto)",
+        "at": "2026-09-12T12:04:16+09:00"
+      },
+      "pr": {
+        "state": "created",
+        "reason": "https://github.com/hkjang/ReSSO/pull/19",
+        "at": "2026-09-12T12:04:25+09:00"
+      },
+      "guard": {
+        "state": "held",
+        "reason": "internal/store/migrations/016_platform_settings.sql ",
+        "at": "2026-09-12T12:04:26+09:00"
+      }
+    },
+    "campaign": "tracking-2026-09",
+    "autonomy": "release",
+    "files": 20,
+    "additions": 1995,
+    "deletions": 7,
+    "tests": 4,
+    "title": "feat: let a service administrator attach a visitor tracking snippet under the strict content security policy"
+  },
+  "stages": {
+    "base": {
+      "state": "pinned",
+      "reason": "main@159e58d",
+      "at": "2026-09-12T11:40:07+09:00"
+    },
+    "autonomy": {
+      "state": "release",
+      "reason": "",
+      "at": "2026-09-12T11:40:07+09:00"
+    },
+    "verify": {
+      "state": "passed",
+      "reason": "검증 7개 통과 (auto)",
+      "at": "2026-09-12T12:04:16+09:00"
+    },
+    "pr": {
+      "state": "created",
+      "reason": "https://github.com/hkjang/ReSSO/pull/19",
+      "at": "2026-09-12T12:04:25+09:00"
+    },
+    "guard": {
+      "state": "held",
+      "reason": "internal/store/migrations/016_platform_settings.sql ",
+      "at": "2026-09-12T12:04:26+09:00"
+    }
+  },
+  "provenance": {
+    "model": "claude-opus-5",
+    "policy_version": "5935779a",
+    "prompts_hash": "82f2440d4b2fef65",
+    "runner_version": "79bd9d23",
+    "base_sha": "159e58db48de420d7ec1985d9db0f2d66980acc5",
+    "head_sha": "1d9b41d775d7e737e0651dd8c7613f206ea17f72",
+    "pr": "https://github.com/hkjang/ReSSO/pull/19"
+  },
+  "verification": {
+    "runner": {
+      "source": "auto",
+      "commands": [
+        {
+          "cmd": "go build ./...",
+          "exit": 0,
+          "seconds": 0
+        },
+        {
+          "cmd": "go vet ./...",
+          "exit": 0,
+          "seconds": 1
+        },
+        {
+          "cmd": "go test ./...",
+          "exit": 0,
+          "seconds": 1
+        },
+        {
+          "cmd": "cd web && [ -d node_modules ] || npm ci --no-audit --no-fund",
+          "exit": 0,
+          "seconds": 0
+        },
+        {
+          "cmd": "cd web && npm test --silent",
+          "exit": 0,
+          "seconds": 5
+        },
+        {
+          "cmd": "cd web && [ -d node_modules ] || npm ci --no-audit --no-fund",
+          "exit": 0,
+          "seconds": 0
+        },
+        {
+          "cmd": "cd web && npm run build --silent",
+          "exit": 0,
+          "seconds": 8
+        }
+      ]
+    },
+    "runner_gate": {
+      "ok": true,
+      "state": "verified",
+      "reason": "검증 7개 통과 (auto)"
+    },
+    "after_rebase": null,
+    "review": null,
+    "ci_gate": null
+  },
+  "release": {
+    "result": null,
+    "assets_sha256": []
+  },
+  "approval": null,
+  "usage": [
+    {
+      "ts": "2026-09-12T12:03:53+09:00",
+      "date": "2026-09-12",
+      "project": "ReSSO",
+      "phase": "improve",
+      "run_id": "2026-09-12-114001-ReSSO-improve",
+      "campaign": "tracking-2026-09",
+      "subtype": "error_max_budget_usd",
+      "duration_ms": 1521902,
+      "num_turns": 114,
+      "cost_usd": 14.122491500000006,
+      "input_tokens": 226,
+      "output_tokens": 83535,
+      "cache_read": 18682870,
+      "cache_create": 251369
+    }
+  ]
+}
