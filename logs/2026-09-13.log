@@ -245,3 +245,38 @@ https://github.com/hkjang/SecCheck/pull/3#issuecomment-5647646062
 evidence: /mnt/c/Users/USER/projects/aidev/state/runs/2026-09-13-023557-SecCheck-improve/evidence.json
 reports: 12 day(s), 2 week(s), 1 month(s), 690 run(s), 763 usage row(s), 34 project page(s), 15 alert(s)
 notify: no new alerts
+[02:54:25] aidev synced: run(2026-09-13): SecCheck — guarded files, PR open https://github.com/hkjang/SecCheck/pull/3
+[02:54:25] done
+[03:00:31] cutover: waiting for CI on 18cfb20 (no-ci)
+[03:05:05] cutover: [ci] no-ci — 이 커밋에 검사가 없음 (정책 allow_merge_without_ci 가 없으면 차단)
+[03:05:05] cutover: 승인 대기 유지 (https://github.com/hkjang/cutover/pull/1, CI no-ci) — 회차로 기록하지 않음
+[03:05:25] skip DartFly: dirty working tree
+[03:05:28] skip Quantoss: dirty working tree
+[03:05:35] skip aiportal-java: STOP
+[03:05:50] skip postra: dirty working tree
+[03:05:57] candidates(32): AgentHub Clustara Invenqor Kkiit Momento ReSSO SecCheck Vendra ai-admin aiportal-front-admin aiportal-front aiportal-py appstore cutover dataworks git-ctx igame jikim jupiq kanpic moina moyro muni pii-masker ptium releasedock relio seaton umm vibe-coders visitflow weekly
+[03:05:58] campaign silent-sso-2026-09: picked Vendra
+[03:05:58] picked: Vendra
+[03:05:58] === Vendra (base=main, run 2026-09-13-030558-Vendra-improve, 회차 예산 $28)
+Preparing worktree (new branch 'auto/2026-09-13-0306')
+Updating files:  52% (130/249)Updating files:  53% (132/249)Updating files:  54% (135/249)Updating files:  55% (137/249)Updating files:  56% (140/249)Updating files:  57% (142/249)Updating files:  58% (145/249)Updating files:  59% (147/249)Updating files:  60% (150/249)Updating files:  61% (152/249)Updating files:  62% (155/249)Updating files:  63% (157/249)Updating files:  64% (160/249)Updating files:  65% (162/249)Updating files:  66% (165/249)Updating files:  67% (167/249)Updating files:  68% (170/249)Updating files:  69% (172/249)Updating files:  70% (175/249)Updating files:  71% (177/249)Updating files:  72% (180/249)Updating files:  73% (182/249)Updating files:  74% (185/249)Updating files:  75% (187/249)Updating files:  76% (190/249)Updating files:  77% (192/249)Updating files:  78% (195/249)Updating files:  79% (197/249)Updating files:  80% (200/249)Updating files:  81% (202/249)Updating files:  82% (205/249)Updating files:  83% (207/249)Updating files:  84% (210/249)Updating files:  85% (212/249)Updating files:  86% (215/249)Updating files:  87% (217/249)Updating files:  88% (220/249)Updating files:  89% (222/249)Updating files:  90% (225/249)Updating files:  91% (227/249)Updating files:  92% (230/249)Updating files:  93% (232/249)Updating files:  94% (235/249)Updating files:  95% (237/249)Updating files:  96% (240/249)Updating files:  97% (242/249)Updating files:  98% (245/249)Updating files:  99% (247/249)Updating files: 100% (249/249)Updating files: 100% (249/249), done.
+HEAD is now at 98299d9 Merge pull request #119 from hkjang/auto/2026-09-11-1201
+[03:06:05] Vendra: [base] pinned — main@98299d9
+[03:06:05] Vendra: [autonomy] release — 
+[03:24:19] Vendra: improve — 99 turns, 18m, $7.4, success
+[03:24:21] Vendra: verify `go build ./...` → exit 0 (1s)
+[03:24:21] Vendra: verify `go vet ./...` → exit 0 (0s)
+[03:24:23] Vendra: verify `go test ./...` → exit 0 (2s)
+[03:24:23] Vendra: verify `cd web && [ -d node_modules ] || npm ci --no-audit --no-fund` → exit 0 (0s)
+[03:24:26] Vendra: verify `cd web && npm test --silent` → exit 0 (3s)
+[03:24:26] Vendra: verify `cd web && [ -d node_modules ] || npm ci --no-audit --no-fund` → exit 0 (0s)
+[03:24:29] Vendra: verify `cd web && npm run build --silent` → exit 0 (3s)
+[03:24:30] Vendra: [verify] passed — 검증 7개 통과 (auto)
+branch 'auto/2026-09-13-0306' set up to track 'origin/auto/2026-09-13-0306'.
+[03:24:39] Vendra: [pr] created — https://github.com/hkjang/Vendra/pull/121
+[03:28:20] Vendra: review — 22 turns, 3m, $1.31, success
+[03:28:20] Vendra: [review] rejected — 리뷰 거절: docs/USER_GUIDE.md:42, docs/ADMIN_GUIDE.md:220 — '직접 로그아웃한 뒤에는 자동으로 다시 로그인되지 않습니다' 라고 무조건적으로 약속하지만, 실제 가드는 web/src/silentSso.ts:13 의 sessionStorage 플래그(SIGNED_OUT_KEY)라 그 탭에만 유효합니다. 로그아웃 요청(internal/httpapi/auth.go logout)은 Keycloak 세션을 끝내지 않으므로, 로그아웃 직후 새 탭(또는 탭을 닫았다 다시 열기)에서 Vendra 를 열면 prompt=none 이 다시 시도되어 곧바로 이전 사용자로 로그인됩니다. 공용 PC 시나리오에서 사용자가 문서를 믿고 로그아웃이 유효하다고 판단하게 만드는 인증 동작-설명 불일치입니다. 같은 문단의 '한 탭에 한 번만' 항목은 탭 범위를 명시하는데 로그아웃 항목만 범위를 숨기고 있어 더 오해를 부릅니다. / internal/httpapi/oidc.go:192 — 조용한 시도가 거절되면 flow.ReturnTo 를 버리고 고정 경로 /login?sso=none 으로 보냅니다. 프런트는 어떤 경로에서든 세션이 없으면 Login 을 그 자리에 그리므로(web/src/App.tsx:160), autoLogin 이 꺼진 배포에서 /suppliers/42 를 연 사람은 그 주소에서 로그인해 그대로 /suppliers/42 에 남습니다. autoLogin 을 켜면 같은 사람이 /login?sso=none 에 내려앉고, 비밀번호로 로그인하면 Shell 의 `path="*"` → Navigate('/') 로 딥 링크가 사라집니다. ADMIN_GUIDE.md:223 은 '깊은 링크로 들어온 사람은 … 그 자리로 돌아옵니다' 라고 적었지만 Keycloak 세션이 없는 경우(문서 스스로 '평범한 답'이라 부르는 경우)에는 거짓입니다. 프런트 가드는 `search.has('sso')` 라 어느 경로에나 붙일 수 있으므로 flow.ReturnTo 에 sso=none 을 붙여 되돌리면 해결됩니다.
+https://github.com/hkjang/Vendra/pull/121#issuecomment-5647840510
+evidence: /mnt/c/Users/USER/projects/aidev/state/runs/2026-09-13-030558-Vendra-improve/evidence.json
+reports: 12 day(s), 2 week(s), 1 month(s), 691 run(s), 765 usage row(s), 34 project page(s), 15 alert(s)
+notify: no new alerts

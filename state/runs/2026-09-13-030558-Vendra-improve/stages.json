@@ -1,0 +1,27 @@
+{
+  "base": {
+    "state": "pinned",
+    "reason": "main@98299d9",
+    "at": "2026-09-13T03:06:05+09:00"
+  },
+  "autonomy": {
+    "state": "release",
+    "reason": "",
+    "at": "2026-09-13T03:06:05+09:00"
+  },
+  "verify": {
+    "state": "passed",
+    "reason": "검증 7개 통과 (auto)",
+    "at": "2026-09-13T03:24:30+09:00"
+  },
+  "pr": {
+    "state": "created",
+    "reason": "https://github.com/hkjang/Vendra/pull/121",
+    "at": "2026-09-13T03:24:39+09:00"
+  },
+  "review": {
+    "state": "rejected",
+    "reason": "리뷰 거절: docs/USER_GUIDE.md:42, docs/ADMIN_GUIDE.md:220 — '직접 로그아웃한 뒤에는 자동으로 다시 로그인되지 않습니다' 라고 무조건적으로 약속하지만, 실제 가드는 web/src/silentSso.ts:13 의 sessionStorage 플래그(SIGNED_OUT_KEY)라 그 탭에만 유효합니다. 로그아웃 요청(internal/httpapi/auth.go logout)은 Keycloak 세션을 끝내지 않으므로, 로그아웃 직후 새 탭(또는 탭을 닫았다 다시 열기)에서 Vendra 를 열면 prompt=none 이 다시 시도되어 곧바로 이전 사용자로 로그인됩니다. 공용 PC 시나리오에서 사용자가 문서를 믿고 로그아웃이 유효하다고 판단하게 만드는 인증 동작-설명 불일치입니다. 같은 문단의 '한 탭에 한 번만' 항목은 탭 범위를 명시하는데 로그아웃 항목만 범위를 숨기고 있어 더 오해를 부릅니다. / internal/httpapi/oidc.go:192 — 조용한 시도가 거절되면 flow.ReturnTo 를 버리고 고정 경로 /login?sso=none 으로 보냅니다. 프런트는 어떤 경로에서든 세션이 없으면 Login 을 그 자리에 그리므로(web/src/App.tsx:160), autoLogin 이 꺼진 배포에서 /suppliers/42 를 연 사람은 그 주소에서 로그인해 그대로 /suppliers/42 에 남습니다. autoLogin 을 켜면 같은 사람이 /login?sso=none 에 내려앉고, 비밀번호로 로그인하면 Shell 의 `path=\"*\"` → Navigate('/') 로 딥 링크가 사라집니다. ADMIN_GUIDE.md:223 은 '깊은 링크로 들어온 사람은 … 그 자리로 돌아옵니다' 라고 적었지만 Keycloak 세션이 없는 경우(문서 스스로 '평범한 답'이라 부르는 경우)에는 거짓입니다. 프런트 가드는 `search.has('sso')` 라 어느 경로에나 붙일 수 있으므로 flow.ReturnTo 에 sso=none 을 붙여 되돌리면 해결됩니다.",
+    "at": "2026-09-13T03:28:20+09:00"
+  }
+}
