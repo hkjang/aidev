@@ -1,0 +1,175 @@
+{
+  "run_id": "2026-09-13-011604-Invenqor-improve",
+  "generated": "2026-09-13T01:30:51+09:00",
+  "run": {
+    "run_id": "2026-09-13-011604-Invenqor-improve",
+    "project": "Invenqor",
+    "kind": "improve",
+    "started": "2026-09-13T01:16:05+09:00",
+    "model": "claude-opus-5",
+    "policy_version": "5935779a",
+    "prompts_hash": "82f2440d4b2fef65",
+    "runner_version": "79bd9d23",
+    "finished": "2026-09-13T01:30:51+09:00",
+    "outcome": "review-pending"
+  },
+  "record": {
+    "ts": "2026-09-13T01:30:51+09:00",
+    "date": "2026-09-13",
+    "project": "Invenqor",
+    "result": "guarded files, PR open https://github.com/hkjang/invenqor/pull/19",
+    "outcome": "review-pending",
+    "run_id": "2026-09-13-011604-Invenqor-improve",
+    "base_sha": "9823287e0c3e62d6cbc11844d4f902fe97f40c1b",
+    "head_sha": "a66947efb76c5695e505bc32edbab999e7db9331",
+    "pr": "https://github.com/hkjang/invenqor/pull/19",
+    "stages": {
+      "base": {
+        "state": "pinned",
+        "reason": "main@9823287",
+        "at": "2026-09-13T01:16:11+09:00"
+      },
+      "autonomy": {
+        "state": "release",
+        "reason": "",
+        "at": "2026-09-13T01:16:11+09:00"
+      },
+      "verify": {
+        "state": "passed",
+        "reason": "검증 8개 통과 (auto)",
+        "at": "2026-09-13T01:30:42+09:00"
+      },
+      "pr": {
+        "state": "created",
+        "reason": "https://github.com/hkjang/invenqor/pull/19",
+        "at": "2026-09-13T01:30:49+09:00"
+      },
+      "guard": {
+        "state": "held",
+        "reason": "server/internal/auth/oidc.go server/internal/auth/oidc_failure_test.go server/internal/auth/oidc_silent_test.go server/internal/auth/oidc_test.go server/migrations/postgres/008_silent_sso.sql server/migrations/sqlite/008_silent_sso.sql ",
+        "at": "2026-09-13T01:30:50+09:00"
+      }
+    },
+    "campaign": "silent-sso-2026-09",
+    "autonomy": "release",
+    "files": 19,
+    "additions": 901,
+    "deletions": 72,
+    "tests": 6,
+    "title": "feat: a visitor already signed in at Keycloak enters the console without the login screen"
+  },
+  "stages": {
+    "base": {
+      "state": "pinned",
+      "reason": "main@9823287",
+      "at": "2026-09-13T01:16:11+09:00"
+    },
+    "autonomy": {
+      "state": "release",
+      "reason": "",
+      "at": "2026-09-13T01:16:11+09:00"
+    },
+    "verify": {
+      "state": "passed",
+      "reason": "검증 8개 통과 (auto)",
+      "at": "2026-09-13T01:30:42+09:00"
+    },
+    "pr": {
+      "state": "created",
+      "reason": "https://github.com/hkjang/invenqor/pull/19",
+      "at": "2026-09-13T01:30:49+09:00"
+    },
+    "guard": {
+      "state": "held",
+      "reason": "server/internal/auth/oidc.go server/internal/auth/oidc_failure_test.go server/internal/auth/oidc_silent_test.go server/internal/auth/oidc_test.go server/migrations/postgres/008_silent_sso.sql server/migrations/sqlite/008_silent_sso.sql ",
+      "at": "2026-09-13T01:30:50+09:00"
+    }
+  },
+  "provenance": {
+    "model": "claude-opus-5",
+    "policy_version": "5935779a",
+    "prompts_hash": "82f2440d4b2fef65",
+    "runner_version": "79bd9d23",
+    "base_sha": "9823287e0c3e62d6cbc11844d4f902fe97f40c1b",
+    "head_sha": "a66947efb76c5695e505bc32edbab999e7db9331",
+    "pr": "https://github.com/hkjang/invenqor/pull/19"
+  },
+  "verification": {
+    "runner": {
+      "source": "auto",
+      "commands": [
+        {
+          "cmd": "cargo test --quiet",
+          "exit": 0,
+          "seconds": 14
+        },
+        {
+          "cmd": "cd server && go build ./...",
+          "exit": 0,
+          "seconds": 0
+        },
+        {
+          "cmd": "cd server && go vet ./...",
+          "exit": 0,
+          "seconds": 1
+        },
+        {
+          "cmd": "cd server && go test ./...",
+          "exit": 0,
+          "seconds": 18
+        },
+        {
+          "cmd": "cd web && [ -d node_modules ] || npm ci --no-audit --no-fund",
+          "exit": 0,
+          "seconds": 0
+        },
+        {
+          "cmd": "cd web && npm test --silent",
+          "exit": 0,
+          "seconds": 1
+        },
+        {
+          "cmd": "cd web && [ -d node_modules ] || npm ci --no-audit --no-fund",
+          "exit": 0,
+          "seconds": 0
+        },
+        {
+          "cmd": "cd web && npm run build --silent",
+          "exit": 0,
+          "seconds": 4
+        }
+      ]
+    },
+    "runner_gate": {
+      "ok": true,
+      "state": "verified",
+      "reason": "검증 8개 통과 (auto)"
+    },
+    "after_rebase": null,
+    "review": null,
+    "ci_gate": null
+  },
+  "release": {
+    "result": null,
+    "assets_sha256": []
+  },
+  "approval": null,
+  "usage": [
+    {
+      "ts": "2026-09-13T01:30:02+09:00",
+      "date": "2026-09-13",
+      "project": "Invenqor",
+      "phase": "improve",
+      "run_id": "2026-09-13-011604-Invenqor-improve",
+      "campaign": "silent-sso-2026-09",
+      "subtype": "success",
+      "duration_ms": 831207,
+      "num_turns": 96,
+      "cost_usd": 9.021043999999996,
+      "input_tokens": 152,
+      "output_tokens": 58683,
+      "cache_read": 11225596,
+      "cache_create": 193131
+    }
+  ]
+}
