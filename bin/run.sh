@@ -346,13 +346,48 @@ approvals(){
   done
 }
 # 승인된 PR 이 base 와 충돌하면 리베이스해 러너 검증을 다시 돌리고 강제 푸시한다. 커밋이 바뀌므로 승인은 다시 받는다.
+# 리베이스 충돌이 만들어 낸 파일에만 있으면 다시 만들어 푼다.
+#
+# 양쪽이 같은 원본에서 각자 구운 PDF 는 바이너리라 git 이 섞을 수 없고, 한쪽을
+# 고르는 것은 답이 아니다 — 고른 쪽은 병합된 본문이 아니라 그 브랜치의 본문을
+# 담고 있다. 원본(.md)은 대개 깨끗이 병합되므로, 병합된 본문으로 다시 굽는다.
+# (2026-09-13 ai-admin·Vendra·Kkiit 이 모두 이 모양이었다.)
+resolve_generated_conflicts(){ # $1=워크트리
+  local wt=$1 file pdf md tool="$REPO_DIR/tools/guide/md2pdf.mjs"
+  local -a conflicted=()
+  mapfile -t conflicted < <(git -C "$wt" diff --name-only --diff-filter=U 2>/dev/null)
+  [ ${#conflicted[@]} -gt 0 ] || return 1
+  for file in "${conflicted[@]}"; do
+    case "$file" in *.pdf) ;; *) return 1;; esac      # PDF 말고는 손대지 않는다
+    [ -f "$wt/${file%.pdf}.md" ] || return 1          # 다시 구울 원본이 있어야 한다
+  done
+  [ -f "$tool" ] || return 1
+  for file in "${conflicted[@]}"; do
+    git -C "$wt" checkout --theirs -- "$file" >/dev/null 2>&1 || git -C "$wt" checkout --ours -- "$file" >/dev/null 2>&1
+    git -C "$wt" add -- "$file" >/dev/null 2>&1
+  done
+  GIT_EDITOR=true git -C "$wt" rebase --continue >>"$LOG" 2>&1 || return 1
+  # 여기서부터는 병합이 끝났다. 병합된 본문으로 다시 굽는다.
+  ( cd "$REPO_DIR/tools/guide" && [ -d node_modules ] || npm install --no-audit --no-fund ) >>"$LOG" 2>&1 || true
+  for file in "${conflicted[@]}"; do
+    md="$wt/${file%.pdf}.md"; pdf="$wt/$file"
+    node "$tool" "$md" "$pdf" --title "$(basename "${file%.pdf}")" --project "$n" >>"$LOG" 2>&1 || return 1
+    git -C "$wt" add -- "$file" >/dev/null 2>&1
+  done
+  git -C "$wt" diff --cached --quiet && return 0
+  git -C "$wt" -c user.name=hkjang -c user.email=gagagiga@naver.com commit -q -m "Rebuild the guide PDFs from the merged text" >>"$LOG" 2>&1
+  log "$n: 리베이스 충돌이 만들어 낸 PDF 뿐이라 병합된 본문으로 다시 구웠다"
+  return 0
+}
+
 rebase_pr(){ # $1=PR url $2=base
   local pr=$1 base=$2 br rwt="$WT_BASE/$n-rebase" newsha
   br=$(cd "$repo" && gh pr view "$pr" --json headRefName --jq .headRefName 2>/dev/null); [ -n "$br" ] || return 0
   git -C "$repo" fetch -q origin "$base" "$br" >>"$LOG" 2>&1 || return 0
   git -C "$repo" worktree remove --force "$rwt" 2>/dev/null || true
   git -C "$repo" worktree add --detach "$rwt" "origin/$br" >>"$LOG" 2>&1 || return 0
-  if git -C "$rwt" rebase "origin/$base" >>"$LOG" 2>&1 && wt="$rwt" run_verify "$rwt" "$OUT/verify-rebased.json"; then
+  if { git -C "$rwt" rebase "origin/$base" >>"$LOG" 2>&1 || resolve_generated_conflicts "$rwt"; } \
+     && wt="$rwt" run_verify "$rwt" "$OUT/verify-rebased.json"; then
     newsha=$(git -C "$rwt" rev-parse HEAD)
     if git -C "$rwt" push --force-with-lease origin "HEAD:$br" >>"$LOG" 2>&1; then
       stage rebase pushed "${newsha:0:7} — 재검증 통과, 재승인 필요"; result="$result, rebased ${newsha:0:7} (re-approval needed)"
