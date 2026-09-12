@@ -1,7 +1,7 @@
 ---
 title: "ReSSO — 자율 개선 이력"
 description: "ReSSO: 자율 개선 회차 22회, 릴리즈 13건. 최근 릴리즈 v0.9.78 (자산 2개)."
-last_modified_at: 2026-09-13 04:24:10 +0900
+last_modified_at: 2026-09-13 04:37:18 +0900
 ---
 {% raw %}
 <script type="application/ld+json">
@@ -18,7 +18,7 @@ last_modified_at: 2026-09-13 04:24:10 +0900
   "name": "hkjang",
   "url": "https://github.com/hkjang"
  },
- "dateModified": "2026-09-13T04:24:10+09:00",
+ "dateModified": "2026-09-13T04:37:18+09:00",
  "version": "0.9.78"
 }
 </script>
