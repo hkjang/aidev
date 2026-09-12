@@ -1,0 +1,38 @@
+chore(release): AppStore v2.6.0
+
+관리자가 화면에서 방문 추적 스크립트를 붙이고, 서비스가 nonce 기반 CSP로
+그 스크립트만 허용하는 minor 릴리스입니다.
+
+Version
+
+web/package.json, package-lock.json, docker-compose.yml, README, GitHub Pages
+문서와 docs/USER_GUIDE.md·docs/ADMIN_GUIDE.md의 버전 표기를 v2.6.0으로
+올렸습니다. 관리자 가이드 롤백 예시가 가리키는 직전 릴리스 이미지도 한 칸
+밀어 appstore-v2.5.8-stopped로 맞췄습니다. 두 가이드 PDF는 가이드를 만든
+것과 같은 공용 변환기(aidev/tools/guide/md2pdf.mjs)로 다시 구워 표지 버전이
+본문과 일치합니다. 관리자 가이드는 4.9 방문 추적 절이 들어와 34쪽이 됐고
+사용자 가이드는 24쪽 그대로입니다.
+
+새 /admin/analytics 라우트의 캡처 2장과 사이드바 항목이 늘어난 관리자 캡처
+19장은 기능 커밋(1294a77)에서 이미 v2.5.8 기준으로 다시 찍어 두었으므로,
+screenshot manifest는 86개 항목의 version만 갱신하고 캡처 파일과 SHA-256은
+그대로 두었습니다. 릴리스 가이드의 항목 수 표기도 84에서 86으로 맞췄습니다.
+
+Migration
+
+Schema 변경이 없습니다. 000003까지의 migration은 v2.5.8과 동일하며, 방문
+추적 설정은 기존 system_settings의 analytics 한 행을 씁니다. 시드와 migration
+이 없어 기본값은 꺼짐이고, 관리자가 화면에서 켜기 전까지 응답 헤더와
+index.html은 v2.5.8과 같습니다.
+
+Embedded bundle
+
+internal/webui/dist는 v2.4.0 이후 갱신되지 않았고 v2.5.0부터 v2.5.8 릴리스도
+그대로 두었습니다. Dockerfile이 web/dist를 새로 빌드해 이 디렉터리를 덮어쓰므로
+릴리스 image에는 영향이 없어 이번에도 릴리스 범위 밖 변경을 넣지 않고 그대로
+둡니다.
+
+검증: go test -race 전체 패키지, go vet, gofmt, go build, npm test 23건,
+npm run lint, prettier check, npm run build, Playwright desktop·mobile 49건,
+check-offline-assets.sh, check-env-contract.sh, check-docs.sh 모두
+통과했습니다.
