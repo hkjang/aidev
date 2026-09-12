@@ -1,6 +1,6 @@
 # jupiq 관리자 가이드
 
-이 문서는 jupiq **v1.5.0**을 오프라인망에 설치하고 운영하는 사람을 위한 것입니다.
+이 문서는 jupiq **v1.6.0**을 오프라인망에 설치하고 운영하는 사람을 위한 것입니다.
 화면을 쓰는 방법은 [사용자 가이드](USER_GUIDE.md)에 있으니 여기서 되풀이하지 않습니다.
 실린 화면은 모두 실제 jupiq를 띄워 찍은 것이며, 주소·이름·키는 데모용 가짜 값입니다.
 
@@ -44,10 +44,10 @@ jupiq는 **컨테이너 하나**입니다. Go 서버가 REST API와 SPA를 같�
 ```bash
 # GitHub Release 본문의 64자리 SHA-256을 승인 기록과 대조
 JUPIQ_ARCHIVE_SHA256='릴리스-본문의-SHA256'
-printf '%s  %s\n' "${JUPIQ_ARCHIVE_SHA256}" jupiq-v1.5.0.tar.gz | sha256sum -c -
-gzip -t jupiq-v1.5.0.tar.gz
-gzip -dc jupiq-v1.5.0.tar.gz | docker load
-docker image inspect jupiq:v1.5.0 --format '{{index .Config.Labels "org.opencontainers.image.version"}}'
+printf '%s  %s\n' "${JUPIQ_ARCHIVE_SHA256}" jupiq-v1.6.0.tar.gz | sha256sum -c -
+gzip -t jupiq-v1.6.0.tar.gz
+gzip -dc jupiq-v1.6.0.tar.gz | docker load
+docker image inspect jupiq:v1.6.0 --format '{{index .Config.Labels "org.opencontainers.image.version"}}'
 ```
 
 ### 2.2 PostgreSQL 준비
@@ -91,7 +91,7 @@ docker run -d --name jupiq --restart unless-stopped --init \
   --env-file .env -p 127.0.0.1:8080:8080 \
   --read-only --tmpfs /tmp:size=64m,mode=1777 \
   --cap-drop ALL --security-opt no-new-privileges:true \
-  jupiq:v1.5.0
+  jupiq:v1.6.0
 curl --fail http://127.0.0.1:8080/readyz
 ```
 
@@ -152,7 +152,7 @@ docker compose --env-file .env -f compose.example.yaml ps
 
 ### 3.2 관리자 설정 화면
 
-`서비스 관리 → 관리자 설정`에 탭 여섯 개가 있습니다. 값을 바꾸면 오른쪽 위 `설정 저장`이 활성화되며,
+`서비스 관리 → 관리자 설정`에 탭 일곱 개가 있습니다. 값을 바꾸면 오른쪽 위 `설정 저장`이 활성화되며,
 **저장해야 반영**됩니다(연결 테스트 성공은 저장이 아닙니다).
 
 | 탭 | 들어 있는 것 |
@@ -163,6 +163,7 @@ docker compose --env-file .env -f compose.example.yaml ps
 | LLM 사용량 | 수집 소스(Prometheus 고정), Pod→username 정규식, 샘플 Pod, 수집 PromQL(JSON), 토큰 단가, stale 판정(초), LLM 사용량 보존(일) |
 | 승인 프로세스 | 검토·승인 사용, 팀장 선검토, 사유 필수, 승인 대상 요청 |
 | 보안·키 권한 | 개인 API 키 정책(회전 주기·최대 유효기간·허용 권한), 비밀값 암호화 안내, 역할·세부 권한 관리 |
+| 방문 추적 | 방문 추적 사용(기본 OFF), 수집 도구(Momento·GA4·GTM·Matomo·직접 붙여넣기), 추가 허용 출처, 관리 화면 포함 여부, 삽입 위치, 정책이 막은 출처 목록. 자세한 것은 3.5 |
 
 ![관리자 설정 → 외부 연동 — 연동마다 카드 하나와 저장 전 연결 테스트 버튼](assets/screenshots/admin-settings.webp)
 
@@ -202,6 +203,73 @@ Drawer 입력 항목:
   counter가 필요합니다. token 지표는 선택입니다. 정규식은 후보 필터일 뿐이고, 현재 서버 인벤토리의 Pod 이름과
   정확히 일치한 샘플만 사용자에게 귀속됩니다.
 - 두 기능 모두 프롬프트·응답 본문이나 Notebook 내용을 수집하지 않습니다.
+
+### 3.5 방문 추적 스크립트
+
+"어느 화면이 실제로 쓰이는가"를 재고 싶을 때 `관리자 설정 → 방문 추적` 탭에서 추적 도구를 붙입니다.
+**기본값은 꺼짐**이며, 새로 설치한 곳에서는 아무것도 달라지지 않습니다. 설정은 다른 탭과 같이 DB에
+저장되므로 다시 배포하지 않고 운영 중에 바꿀 수 있습니다.
+
+| 항목 | 뜻 |
+|---|---|
+| 방문 추적 사용 | 켜야 스니펫이 들어갑니다. 저장 뒤 다음 화면 로딩부터 적용됩니다 |
+| 수집 도구 | `Momento`(사내 수집기, 첫 자리) · `Google Analytics 4` · `Google Tag Manager` · `Matomo` · `직접 붙여넣기` |
+| Momento 수집기 주소 · 사이트 ID | Momento 관리 화면의 사이트 설정에서 복사합니다 |
+| 같은 오리진 프록시 | 기본 ON. jupiq가 `/momento/*` 를 수집기로 넘기고 스니펫에 `data-endpoint="/momento"` 를 줍니다 |
+| 수집기 TLS 검증 | 프록시가 수집기에 접속할 때 인증서를 검증합니다. 운영에서는 켜 두세요 |
+| 측정 ID / 컨테이너 ID | GA4·GTM의 `G-…` / `GTM-…` |
+| Matomo 주소 · 사이트 ID | Matomo 인스턴스 주소와 숫자 사이트 ID |
+| 추적 코드 | 직접 붙여넣기용. **8KB**까지 저장됩니다 |
+| 추가 허용 출처 | 스니펫에서 자동으로 읽지 못한 출처를 쉼표·줄바꿈으로 나눠 적습니다 |
+| 관리 화면도 추적 | 기본 OFF. `/admin` 경로로 처음 진입한 화면에는 붙이지 않습니다 |
+| 삽입 위치 | `</head>` 앞(기본) 또는 `</body>` 앞 |
+
+**Momento를 권합니다.** 사내 자체 호스팅 수집기라 데이터가 밖으로 나가지 않는 유일한 선택지입니다.
+같은 오리진 프록시를 쓰면 외부 출처가 정책에 아예 등장하지 않으므로 CSP를 바꿀 수 없는 설치에서도
+동작합니다. 프록시는 추적기 로더(`GET /momento/tracker.js`)와 이벤트 수집(`POST /momento/collect/*`)만
+넘기고, jupiq 세션 쿠키와 Authorization 헤더는 수집기로 보내지 않으며 수집기가 심는 쿠키도 걸러 냅니다.
+수집기 주소는 다른 연동과 같은 제한(loopback·클라우드 metadata 주소 불가, 10초 응답 제한)을 받습니다.
+
+#### 왜 그냥 붙이면 안 되는가 — CSP
+
+jupiq의 화면 응답은 `Content-Security-Policy: … script-src 'self' …` 로 잠겨 있어 인라인 스크립트와
+외부 스크립트를 브라우저가 **조용히** 차단합니다. 화면은 멀쩡해 보이는데 수집만 안 들어오는 상태가
+됩니다. 추적을 켜면 jupiq가 다음을 요청마다 합니다.
+
+1. 무작위 **nonce**를 만들어 스니펫의 모든 `<script>` 태그에 붙이고, 같은 값을 `script-src 'nonce-…'`
+   로 정책에 넣습니다. 정책을 `'unsafe-inline'` 으로 푸는 일은 하지 않습니다 — 한 번 풀면 추적을 끈
+   뒤에도 느슨한 채 남기 때문입니다.
+2. 수집 도구가 필요로 하는 출처를 `script-src` · `connect-src` · `img-src` 에 더합니다. Momento(직접
+   접속)·Matomo는 적어 둔 주소에서, GA4·GTM은 알려진 Google 출처에서, 직접 붙여넣기는 **스니펫 안의
+   http(s) 주소를 읽어** 채웁니다.
+3. `report-uri /api/v1/analytics/csp-report` 를 정책에 넣어 브라우저가 거부한 요청을 신고하게 합니다.
+
+추적을 끄면 정책은 원래대로 좁아지고 신고 경로도 빠집니다. API·MCP·`/healthz`·`/readyz`·`/momento/*`
+응답에는 스니펫이 붙지 않고 정책은 `default-src 'none'` 으로 더 좁습니다.
+
+#### 막힌 출처를 찾아 허용하기
+
+같은 탭 오른쪽의 **정책이 막은 출처** 카드가 신고 내용을 보여 줍니다(출처·지시어·횟수·마지막 시각).
+서버 메모리에 서로 다른 출처 100개까지만 남고 재시작하면 사라집니다 — 감사 기록이 아니라 스니펫을
+고치는 동안 쓰는 진단 자료입니다.
+
+1. 추적을 켜고 저장한 뒤 아무 화면이나 한 번 엽니다.
+2. 카드에 나타난 항목의 **허용 목록에 추가**를 누르면 `추가 허용 출처`에 들어갑니다.
+3. **설정 저장**을 누릅니다. 이미 허용된 출처는 `현재 설정이 허용`으로 표시됩니다.
+4. **기록 지우기**로 비운 뒤 다시 화면을 열어 아직 막히는 것이 없는지 확인합니다.
+
+API로도 같은 일을 할 수 있습니다: `GET /api/v1/analytics/violations`(settings:read),
+`DELETE /api/v1/analytics/violations`(settings:write).
+
+#### 알아 둘 것
+
+- jupiq는 단일 페이지 앱이라 스니펫은 **처음 진입한 경로**를 기준으로 들어갑니다. `/dashboard` 로 들어와
+  화면 안에서 `/admin/settings` 로 이동하면 추적기는 이미 실려 있습니다. 관리 화면을 완전히 빼려면
+  관리자가 관리 화면 주소로 바로 진입하도록 안내하세요.
+- 로그인 화면에도 붙습니다. Momento 추적기는 이메일·전화번호 같은 값을 보내기 전에 지우지만, 다른
+  도구를 쓴다면 개인 식별 값을 보내지 않는지 그 도구 설정을 확인하세요.
+- 스니펫은 `settings:write` 권한이 있는 관리자만 넣을 수 있고, 변경은 감사 로그의 `settings.update`
+  에 남습니다.
 
 ---
 
@@ -446,7 +514,7 @@ GPU·LLM 화면 자체가 없다면 장애가 아니라 `선택 기능` 스위�
 
 | 항목 | 내용 |
 |---|---|
-| 응답 헤더 | `Content-Security-Policy`(frame-ancestors·base-uri·form-action·object-src 포함), `X-Content-Type-Options`, `X-Frame-Options: DENY`, `Referrer-Policy`, `Permissions-Policy`, TLS 요청에는 HSTS |
+| 응답 헤더 | `Content-Security-Policy`(화면은 `script-src 'self'`, 방문 추적이 켜진 화면만 요청별 nonce 추가, API·MCP·probe는 `default-src 'none'`; frame-ancestors·base-uri·form-action·object-src 포함), `X-Content-Type-Options`, `X-Frame-Options: DENY`, `Referrer-Policy`, `Permissions-Policy`, TLS 요청에는 HSTS |
 | 상태 변경 요청 | 동일 출처가 아니면 거부(Origin 호스트·스킴과 `Sec-Fetch-Site` 확인) |
 | 세션 | HttpOnly `jupiq_session` 쿠키, SameSite=Lax, 토큰 8시간 |
 | 로그인 시도 | 10분 창, 조합 8회 / 계정 16회 / IP 40회 |
