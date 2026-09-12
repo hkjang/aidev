@@ -1,7 +1,7 @@
 ---
 title: "relio — 자율 개선 이력"
 description: "relio: 자율 개선 회차 28회, 릴리즈 12건. 최근 릴리즈 v1.11.19 (자산 1개)."
-last_modified_at: 2026-09-13 03:51:15 +0900
+last_modified_at: 2026-09-13 04:24:10 +0900
 ---
 {% raw %}
 <script type="application/ld+json">
@@ -18,7 +18,7 @@ last_modified_at: 2026-09-13 03:51:15 +0900
   "name": "hkjang",
   "url": "https://github.com/hkjang"
  },
- "dateModified": "2026-09-13T03:51:15+09:00",
+ "dateModified": "2026-09-13T04:24:10+09:00",
  "version": "1.11.19"
 }
 </script>
