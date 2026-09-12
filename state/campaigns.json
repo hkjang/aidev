@@ -124,6 +124,39 @@
       "improve_budget_usd": 14,
       "until": "2026-11-30",
       "done": false
+    },
+    {
+      "id": "silent-sso-2026-09",
+      "goal": "Keycloak(또는 ReSSO)에 이미 로그인한 사람이 이 서비스를 열면 로그인 화면 없이 바로 본 화면으로\n들어가게 만든다. OIDC 의 prompt=none 을 쓰는 silent authentication 이다.\n\n표준은 aidev 저장소의 SILENT-SSO-STANDARD.md 에 있다. 먼저 읽고 그대로 따른다:\n  /mnt/c/Users/USER/projects/aidev/SILENT-SSO-STANDARD.md\n\n참조 구현은 releasedock 이다. 코드를 베끼지 말고 이 저장소의 언어와 구조에 맞게 같은 능력을 만든다:\n  /mnt/c/Users/USER/projects/releasedock/backend/internal/server/oidc.go  (prompt=none 시작, 콜백의 login_required 처리)\n  /mnt/c/Users/USER/projects/releasedock/web/src/auth/silentSso.ts        (언제 시도할지 정하는 규칙)\n\n이 일의 전부는 무한 루프를 막는 것이다. prompt=none 은 화면을 그리지 않고, 세션이 없으면\nerror=login_required 로 돌아온다 — 그것은 실패가 아니라 평범한 대답이다. 그런데 그때 다시\n시도하면 브라우저가 제공자와 앱 사이를 끝없이 오가고 사용자는 화면이 깜빡이는 것만 본다.\n막는 장치를 세 겹으로 둔다: (1) sessionStorage 에 '한 탭 세션에 한 번' 표시, (2) 스스로\n로그아웃했으면 억제, (3) 콜백이 거절을 받으면 /login?sso=none 으로 보내 주소에도 표시를 남김.\n그리고 저장소를 읽지 못하면 '이미 시도했다'로 친다 — 사생활 보호 모드에서 예외가 나는데\n그것을 '아직 안 했다'로 읽으면 바로 루프가 된다. 막히는 쪽으로 실패한다.\n\n숨은 iframe 이 아니라 최상위 이동을 쓴다. 서드파티 쿠키가 막힌 브라우저에서도 동작하고\n제공자가 프레임을 허용하는지 신경 쓰지 않아도 된다.\n\nOIDC 설정에 auto_login 을 두고 기본값은 꺼짐이다. 서버는 그 설정이 꺼져 있으면 prompt=none\n요청이 와도 조용히 평범한 로그인으로 바꾼다 — 누구든 주소에 붙여 흐름을 바꿀 수 있으면 안 된다.\n\n콜백·오류·로그인 경로와 API·MCP·헬스 경로에서는 시도하지 않는다. 브라우저 이동에만 해당한다.\n깊은 링크로 들어온 사람은 조용히 로그인한 뒤 그 자리로 돌아가야 한다 — return_to 는 '/' 로\n시작하고 '//' 로 시작하지 않는 값만 받는다.\n\n이 저장소에 OIDC 가 없으면 새로 만들지 말고, 원장에 그 사실을 적고 변경 없이 끝낸다.\n관리자 가이드(docs/ADMIN_GUIDE.md)에 auto_login 설정과 동작을 더한다.",
+      "projects": [
+        "AgentHub",
+        "Invenqor",
+        "Kkiit",
+        "ReSSO",
+        "SecCheck",
+        "Vendra",
+        "ai-admin",
+        "appstore",
+        "cutover",
+        "dataworks",
+        "igame",
+        "jikim",
+        "jupiq",
+        "moina",
+        "moyro",
+        "muni",
+        "ptium",
+        "relio",
+        "seaton",
+        "umm",
+        "vibe-coders",
+        "visitflow",
+        "weekly"
+      ],
+      "budget_usd": 300,
+      "improve_budget_usd": 14,
+      "until": "2026-12-15",
+      "done": false
     }
   ]
 }
