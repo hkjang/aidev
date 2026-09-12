@@ -75,3 +75,10 @@
 - (원장 항목에 비밀/내부 정보 의심 문자열이 있어 비공개 기록으로 옮김 — run 2026-09-11-025110-jikim-improve)
 
 - 릴리즈: v0.2.10 (2026-09-11, run 2026-09-11-164027-jikim-approve)
+## 2026-09-12
+- 선택: 캠페인 tracking-2026-09 — 관리자가 화면에서 방문 추적 스크립트를 붙이는 체계(nonce 기반 CSP·Momento 같은 오리진 프록시·차단 출처 기록) (가치 4 / 위험 2 / 작업량 M)
+- 결과: 성공
+- 요약: jikim은 React 관리 화면을 제공하므로 TRACKING-STANDARD.md를 그대로 따라 `internal/tracking`(설정·스니펫·정책 출처·위반 기록), `settings`의 `tracking` 키(타입·제공자·8KB·URL 검증, 기본 꺼짐), SPA 셸 전용 `decorateIndex`(요청마다 nonce를 만들어 모든 `<script>`에 붙이고 같은 nonce·스니펫 출처·`report-uri`를 `script-src`·`connect-src`·`img-src`에 더함, `'unsafe-inline'` 미사용, 설정 저장소 장애 시 추적 없이 이전 정책으로 응답), `/api/v1/tracking/csp-report`(무인증 204, 감사 제외, 메모리 100개 고리)와 admin 전용 목록·삭제·한 번 눌러 허용 API, `/momento/*` 같은 오리진 프록시(Momento가 켜졌을 때만 열리고 Cookie·Authorization·X-Vault-Token 제거, Set-Cookie 미전달, 64KB·10초), 관리 화면 **방문 추적** 탭(Momento 첫 자리·프록시 기본 ON·차단 출처 표와 허용 버튼)을 추가했고 브라우저가 그리지 않는 `/api/*`·`/v1/*`·`/mcp`·probe·`/momento/*` 응답의 정책은 `default-src 'none'`으로 더 좁혔습니다. 곁들여 settings.go의 데드 코드 `var _ = pgx.ErrNoRows`를 제거했습니다(보류 아이디어 [1/1/S] 해결). 검증은 tracking 12개·store 1개·httpapi 9개 단위 테스트(hook 기반, DB 불필요)와 설정 탭 vitest 4개를 추가하고 `./scripts/verify.sh` 전체(Go test·vet·gofmt, React test·lint·build, docs, compose)를 통과시켰으며, 실제 PostgreSQL 16 컨테이너와 stub 수집기로 서버를 띄워 curl로 꺼짐 기본값·8KB 거부·nonce와 스니펫 일치·관리 화면 제외·custom 스니펫 출처 반영·신고 기록/허용/감사 미기록·끄면 정책 원복을 확인하고 Playwright Chromium으로 `/momento/tracker.js`가 정책 위반·콘솔 오류 없이 프록시를 거쳐 로드되고 수집기가 Cookie 없는 요청을 받는 것을 확인했습니다. 그 화면을 `docs/screenshots/admin-settings-tracking.png`로 캡처해 관리자 가이드 3.7절(설정 방법·CSP·nonce·프록시·API 표)에 실었고 공용 md2pdf로 PDF를 다시 구웠습니다. 커밋 `67f0934`.
+- 보류 아이디어: 로그인 성공 판정 전에 rate limiter를 succeeded로 초기화하는 순서 정리 (2/1/S) / settings GET이 주입하는 파생 필드가 PUT 왕복 시 workflow 설정에 저장되는 문제 정리 (2/1/S) / 감사 로그 보존(audit_retention_days) 자동 정리 구현 (3/3/M) / 캡처 파이프라인(all-pages.spec.ts)에 방문 추적 탭 캡처를 정식 편입하고 admin-settings.png를 7개 탭 기준으로 다시 찍기 (2/1/S) / SPA 내부 이동 시 include_admin 제외가 처음 연 주소 기준으로만 적용되는 한계를 클라이언트 라우팅 훅으로 보완 (2/2/M)
+
+- 릴리즈: v0.2.11 (2026-09-12, run 2026-09-12-174012-jikim-improve)

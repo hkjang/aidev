@@ -1,7 +1,7 @@
 ---
 title: "Kkiit — 자율 개선 이력"
-description: "Kkiit: 자율 개선 회차 2회, 릴리즈 0건. 최근 릴리즈 없음."
-last_modified_at: 2026-09-12 17:20:51 +0900
+description: "Kkiit: 자율 개선 회차 2회, 릴리즈 0건. 최근 릴리즈 v0.2.0 (자산 1개)."
+last_modified_at: 2026-09-12 18:14:30 +0900
 ---
 {% raw %}
 <script type="application/ld+json">
@@ -11,28 +11,30 @@ last_modified_at: 2026-09-12 17:20:51 +0900
  "name": "Kkiit",
  "codeRepository": "https://github.com/hkjang/Kkiit",
  "url": "https://hkjang.github.io/aidev/projects/Kkiit/",
- "description": "Kkiit: 자율 개선 회차 2회, 릴리즈 0건. 최근 릴리즈 없음.",
+ "description": "Kkiit: 자율 개선 회차 2회, 릴리즈 0건. 최근 릴리즈 v0.2.0 (자산 1개).",
  "inLanguage": "ko",
  "maintainer": {
   "@type": "Person",
   "name": "hkjang",
   "url": "https://github.com/hkjang"
  },
- "dateModified": "2026-09-12T17:20:51+09:00"
+ "dateModified": "2026-09-12T18:14:30+09:00",
+ "version": "0.2.0"
 }
 </script>
 
 # Kkiit
 
-<p class="tldr"><strong>요약.</strong> Kkiit: 자율 개선 회차 2회, 릴리즈 0건. 최근 릴리즈 없음. <span class="pill pill-merged" title="14일: 릴리즈 0, 실패 0, 경고 1, 회귀 0">건강 B</span> <span class="meta">14일: 릴리즈 0, 실패 0, 경고 1, 회귀 0</span></p>
+<p class="tldr"><strong>요약.</strong> Kkiit: 자율 개선 회차 2회, 릴리즈 0건. 최근 릴리즈 v0.2.0 (자산 1개). <span class="pill pill-merged" title="14일: 릴리즈 0, 실패 0, 경고 1, 회귀 0">건강 B</span> <span class="meta">14일: 릴리즈 0, 실패 0, 경고 1, 회귀 0</span></p>
 
-<ul class="stats"><li><b>2</b><span>회차</span></li><li><b>1</b><span>프로젝트</span></li><li><b>0</b><span>배포 준비 완료</span></li><li><b>0</b><span>릴리즈 진행 중</span></li><li><b>0</b><span>병합 완료</span></li><li><b>2</b><span>검토 대기</span></li><li><b>0</b><span>검증 실패</span></li><li><b>0</b><span>변경 없음</span></li><li><b>0</b><span>실행 오류</span></li><li><b>$22.65</b><span>비용</span></li><li><b>46분</b><span>에이전트 시간</span></li></ul>
+<ul class="stats"><li><b>2</b><span>회차</span></li><li><b>1</b><span>프로젝트</span></li><li><b>0</b><span>배포 준비 완료</span></li><li><b>0</b><span>릴리즈 진행 중</span></li><li><b>0</b><span>병합 완료</span></li><li><b>2</b><span>검토 대기</span></li><li><b>0</b><span>검증 실패</span></li><li><b>0</b><span>변경 없음</span></li><li><b>0</b><span>실행 오류</span></li><li><b>$23.32</b><span>비용</span></li><li><b>49분</b><span>에이전트 시간</span></li></ul>
 
 ## 현황
 
 <dl class="kv">
 <dt>저장소</dt><dd><a href="https://github.com/hkjang/Kkiit">https://github.com/hkjang/Kkiit</a></dd>
 <dt>마지막 회차</dt><dd>2026-09-12 11:20 KST — <span class="pill pill-other">• 기타</span> <strong>guarded files</strong>, PR open <a href="https://github.com/hkjang/Kkiit/pull/2">PR #2</a></dd>
+<dt>최근 릴리즈</dt><dd><a href="https://github.com/hkjang/Kkiit/releases/tag/v0.2.0">v0.2.0</a> — released · 자산 1개 (이전 v0.1.1: 1개) <a href="https://github.com/hkjang/Kkiit/releases">전체 릴리즈 →</a></dd>
 </dl>
 
 ## 회차 이력
@@ -41,7 +43,7 @@ last_modified_at: 2026-09-12 17:20:51 +0900
 
 ## 비용·사용량
 
-<div class="table-wrap"><table class="rt"><caption class="meta">최근 30세션</caption><thead><tr><th>시각</th><th class="primary">프로젝트</th><th>단계</th><th class="num">시간</th><th class="num">턴</th><th class="num">비용</th><th class="num">토큰 입력/출력</th><th>종료</th></tr></thead><tbody><tr data-status="other"><td data-label="시각">11:20</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/Kkiit/">Kkiit</a></td><td data-label="단계">개선</td><td data-label="시간" class="num">22분</td><td data-label="턴" class="num">81</td><td data-label="비용" class="num">$9.30</td><td data-label="토큰 입력/출력" class="num">10.9M / 78K</td><td data-label="종료">success</td></tr><tr data-status="other"><td data-label="시각">18:45</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/Kkiit/">Kkiit</a></td><td data-label="단계">review</td><td data-label="시간" class="num">3분</td><td data-label="턴" class="num">26</td><td data-label="비용" class="num">$1.71</td><td data-label="토큰 입력/출력" class="num">1.6M / 10K</td><td data-label="종료">success</td></tr><tr data-status="other"><td data-label="시각">18:42</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/Kkiit/">Kkiit</a></td><td data-label="단계">개선</td><td data-label="시간" class="num">21분</td><td data-label="턴" class="num">117</td><td data-label="비용" class="num">$11.64</td><td data-label="토큰 입력/출력" class="num">15.0M / 73K</td><td data-label="종료">success</td></tr></tbody></table></div>
+<div class="table-wrap"><table class="rt"><caption class="meta">최근 30세션</caption><thead><tr><th>시각</th><th class="primary">프로젝트</th><th>단계</th><th class="num">시간</th><th class="num">턴</th><th class="num">비용</th><th class="num">토큰 입력/출력</th><th>종료</th></tr></thead><tbody><tr data-status="other"><td data-label="시각">17:33</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/Kkiit/">Kkiit</a></td><td data-label="단계">릴리즈</td><td data-label="시간" class="num">3분</td><td data-label="턴" class="num">15</td><td data-label="비용" class="num">$0.66</td><td data-label="토큰 입력/출력" class="num">480K / 7K</td><td data-label="종료">success</td></tr><tr data-status="other"><td data-label="시각">11:20</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/Kkiit/">Kkiit</a></td><td data-label="단계">개선</td><td data-label="시간" class="num">22분</td><td data-label="턴" class="num">81</td><td data-label="비용" class="num">$9.30</td><td data-label="토큰 입력/출력" class="num">10.9M / 78K</td><td data-label="종료">success</td></tr><tr data-status="other"><td data-label="시각">18:45</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/Kkiit/">Kkiit</a></td><td data-label="단계">review</td><td data-label="시간" class="num">3분</td><td data-label="턴" class="num">26</td><td data-label="비용" class="num">$1.71</td><td data-label="토큰 입력/출력" class="num">1.6M / 10K</td><td data-label="종료">success</td></tr><tr data-status="other"><td data-label="시각">18:42</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/Kkiit/">Kkiit</a></td><td data-label="단계">개선</td><td data-label="시간" class="num">21분</td><td data-label="턴" class="num">117</td><td data-label="비용" class="num">$11.64</td><td data-label="토큰 입력/출력" class="num">15.0M / 73K</td><td data-label="종료">success</td></tr></tbody></table></div>
 
 ## 아이디어 백로그 — 대기 7 / 전체 9
 
@@ -60,6 +62,8 @@ last_modified_at: 2026-09-12 17:20:51 +0900
 - 결과: 성공
 - 요약: TRACKING-STANDARD 를 kanpic 참조 구현 구조대로 Go 에 옮겼다. 새 패키지 `internal/analytics`(설정 `analytics.tracking` 한 객체, provider 는 momento 첫 자리·기본값, `momento_proxy` 기본 켜짐, 스니펫 렌더링·모든 `<script>` 에 nonce 부착·스니펫 http(s) 출처 추출·`allowed_hosts`·차단 기록 고리 버퍼 100건)와 httpapi 쪽(`securityHeaders` 가 요청마다 nonce 를 만들어 정책에 넣고 SPA 셸 `index.html` 에 placement 대로 삽입, `/api·/health·/mcp·/momento` 는 `default-src 'none'`, 켜진 동안만 `report-uri`, `POST /analytics/csp-report`(비인증·8KB·분당 60·CSRF 예외), 관리자용 violations 목록·비우기·allow, `/momento/*` ReverseProxy 는 Momento 켜진 동안만 열리고 Cookie·Authorization 제거, `putSetting` 이 8KB 초과·잘못된 provider·주소 없이 켜기를 400 으로 거부하고 10초 캐시를 무효화), 마이그레이션 040(기본 꺼짐), React 관리 화면 `/admin/tracking`(제공자별 칸, 막힌 출처 목록과 "허용 목록에 추가"), `docs/TRACKING.md`·README·openapi 를 추가했다. 꺼진 상태의 페이지 정책은 이전과 의미가 같은 문자열(`script-src 'self'` 만 명시적으로 추가)이고 `'unsafe-inline'` 은 style-src 의 기존 항목 외에 넣지 않았다. 검증: analytics 단위 테스트 9개·httpapi 테스트 8개(꺼짐 시 원래 정책, 켜면 nonce·출처·report-uri, body 삽입, admin 제외, 비화면 경로 좁은 정책, 프록시가 쿠키 없이 전달, 신고 중복 집계, 8KB 거부) 추가 후 `go vet`·`go test ./cmd/... ./internal/...` 통과, 통합 테스트 전체(postgres:16 임시 컨테이너, 60초) 통과, `npm run lint`·`npm run build` 통과. 임시 Postgres 로 서버를 띄워 curl 로 정책 헤더·스니펫·프록시(가짜 수집기 200)·신고→목록→allow→정책 반영→끄면 원복을 확인했고, headless Chrome 으로 `/admin/tracking` 을 열어 SPA 가 nonce 정책 아래 콘솔 오류 없이 렌더되고 `/momento/tracker.js` 가 프록시로 200 을 받는 것을 캡처했다. `internal/ui/dist` 는 저장소가 추적하는 embed 대상이라 다시 빌드해 함께 커밋했다(Node 22 로 빌드됨). **주의**: `docs/ADMIN_GUIDE.md` 와 PDF 는 main 에 없고 미병합 브랜치 `auto/2026-09-11-1821`(ff19bc7) 에만 있어, 그 파일을 만들면 add/add 충돌이 나므로 CSP·설정 설명은 `docs/TRACKING.md` 로 두었다. 가이드 PR 이 병합되면 이 문서를 ADMIN_GUIDE 의 한 절로 옮기고 PDF 를 다시 구워야 한다.
 - 보류 아이디어: ADMIN_GUIDE.md 병합 뒤 방문 추적 절(docs/TRACKING.md)을 옮기고 `/admin/tracking` 캡처를 실어 PDF 재생성 (가치 4 / 위험 1 / S) · 승인 대기열 정책 카드에 조건(min_amount·service_types 등) 표시 (가치 3 / 위험 1 / S) · 정지된 계정 로그인 거부 문구를 README 설명과 맞추기 (가치 3 / 위험 2 / S) · 운영 대시보드 '누적 결제' 집계 기준 확인·라벨 수정 (가치 3 / 위험 2 / S) · Momento 프록시 응답의 상류 CSP·Set-Cookie 헤더 제거와 프록시 타임아웃 명시 (가치 2 / 위험 1 / S)
+
+- 릴리즈: v0.2.0 (2026-09-12, run 2026-09-12-173013-Kkiit-approve)
 
 
 [← 대시보드](https://hkjang.github.io/aidev/) · [교훈 모음](https://hkjang.github.io/aidev/lessons/)
