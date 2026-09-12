@@ -1,7 +1,7 @@
 ---
 title: "seaton — 자율 개선 이력"
-description: "seaton: 자율 개선 회차 1회, 릴리즈 0건. 최근 릴리즈 없음."
-last_modified_at: 2026-09-12 08:51:34 +0900
+description: "seaton: 자율 개선 회차 1회, 릴리즈 0건. 최근 릴리즈 v1.4.1 (자산 1개)."
+last_modified_at: 2026-09-12 10:03:48 +0900
 ---
 {% raw %}
 <script type="application/ld+json">
@@ -11,28 +11,30 @@ last_modified_at: 2026-09-12 08:51:34 +0900
  "name": "seaton",
  "codeRepository": "https://github.com/hkjang/seaton",
  "url": "https://hkjang.github.io/aidev/projects/seaton/",
- "description": "seaton: 자율 개선 회차 1회, 릴리즈 0건. 최근 릴리즈 없음.",
+ "description": "seaton: 자율 개선 회차 1회, 릴리즈 0건. 최근 릴리즈 v1.4.1 (자산 1개).",
  "inLanguage": "ko",
  "maintainer": {
   "@type": "Person",
   "name": "hkjang",
   "url": "https://github.com/hkjang"
  },
- "dateModified": "2026-09-12T08:51:34+09:00"
+ "dateModified": "2026-09-12T10:03:48+09:00",
+ "version": "1.4.1"
 }
 </script>
 
 # seaton
 
-<p class="tldr"><strong>요약.</strong> seaton: 자율 개선 회차 1회, 릴리즈 0건. 최근 릴리즈 없음. <span class="pill pill-merged" title="14일: 릴리즈 0, 실패 0, 경고 0, 회귀 0">건강 B</span> <span class="meta">14일: 릴리즈 0, 실패 0, 경고 0, 회귀 0</span></p>
+<p class="tldr"><strong>요약.</strong> seaton: 자율 개선 회차 1회, 릴리즈 0건. 최근 릴리즈 v1.4.1 (자산 1개). <span class="pill pill-merged" title="14일: 릴리즈 0, 실패 0, 경고 0, 회귀 0">건강 B</span> <span class="meta">14일: 릴리즈 0, 실패 0, 경고 0, 회귀 0</span></p>
 
-<ul class="stats"><li><b>1</b><span>회차</span></li><li><b>1</b><span>프로젝트</span></li><li><b>0</b><span>배포 준비 완료</span></li><li><b>0</b><span>릴리즈 진행 중</span></li><li><b>0</b><span>병합 완료</span></li><li><b>1</b><span>검토 대기</span></li><li><b>0</b><span>검증 실패</span></li><li><b>0</b><span>변경 없음</span></li><li><b>0</b><span>실행 오류</span></li><li><b>$11.88</b><span>비용</span></li><li><b>22분</b><span>에이전트 시간</span></li></ul>
+<ul class="stats"><li><b>1</b><span>회차</span></li><li><b>1</b><span>프로젝트</span></li><li><b>0</b><span>배포 준비 완료</span></li><li><b>0</b><span>릴리즈 진행 중</span></li><li><b>0</b><span>병합 완료</span></li><li><b>1</b><span>검토 대기</span></li><li><b>0</b><span>검증 실패</span></li><li><b>0</b><span>변경 없음</span></li><li><b>0</b><span>실행 오류</span></li><li><b>$13.58</b><span>비용</span></li><li><b>28분</b><span>에이전트 시간</span></li></ul>
 
 ## 현황
 
 <dl class="kv">
 <dt>저장소</dt><dd><a href="https://github.com/hkjang/seaton">https://github.com/hkjang/seaton</a></dd>
 <dt>마지막 회차</dt><dd>2026-09-11 21:02 KST — <span class="pill pill-other">• 기타</span> review held, PR open <a href="https://github.com/hkjang/seaton/pull/25">PR #25</a></dd>
+<dt>최근 릴리즈</dt><dd><a href="https://github.com/hkjang/seaton/releases/tag/v1.4.1">v1.4.1</a> — released · 자산 1개 (이전 v1.4.0: 1개) <a href="https://github.com/hkjang/seaton/releases">전체 릴리즈 →</a></dd>
 </dl>
 
 ## 회차 이력
@@ -41,7 +43,7 @@ last_modified_at: 2026-09-12 08:51:34 +0900
 
 ## 비용·사용량
 
-<div class="table-wrap"><table class="rt"><caption class="meta">최근 30세션</caption><thead><tr><th>시각</th><th class="primary">프로젝트</th><th>단계</th><th class="num">시간</th><th class="num">턴</th><th class="num">비용</th><th class="num">토큰 입력/출력</th><th>종료</th></tr></thead><tbody><tr data-status="other"><td data-label="시각">21:02</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/seaton/">seaton</a></td><td data-label="단계">review</td><td data-label="시간" class="num">3분</td><td data-label="턴" class="num">22</td><td data-label="비용" class="num">$1.03</td><td data-label="토큰 입력/출력" class="num">883K / 9K</td><td data-label="종료">success</td></tr><tr data-status="other"><td data-label="시각">20:59</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/seaton/">seaton</a></td><td data-label="단계">개선</td><td data-label="시간" class="num">18분</td><td data-label="턴" class="num">105</td><td data-label="비용" class="num">$10.85</td><td data-label="토큰 입력/출력" class="num">13.9M / 67K</td><td data-label="종료">success</td></tr></tbody></table></div>
+<div class="table-wrap"><table class="rt"><caption class="meta">최근 30세션</caption><thead><tr><th>시각</th><th class="primary">프로젝트</th><th>단계</th><th class="num">시간</th><th class="num">턴</th><th class="num">비용</th><th class="num">토큰 입력/출력</th><th>종료</th></tr></thead><tbody><tr data-status="other"><td data-label="시각">08:59</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/seaton/">seaton</a></td><td data-label="단계">릴리즈</td><td data-label="시간" class="num">7분</td><td data-label="턴" class="num">31</td><td data-label="비용" class="num">$1.70</td><td data-label="토큰 입력/출력" class="num">1.6M / 14K</td><td data-label="종료">success</td></tr><tr data-status="other"><td data-label="시각">21:02</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/seaton/">seaton</a></td><td data-label="단계">review</td><td data-label="시간" class="num">3분</td><td data-label="턴" class="num">22</td><td data-label="비용" class="num">$1.03</td><td data-label="토큰 입력/출력" class="num">883K / 9K</td><td data-label="종료">success</td></tr><tr data-status="other"><td data-label="시각">20:59</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/seaton/">seaton</a></td><td data-label="단계">개선</td><td data-label="시간" class="num">18분</td><td data-label="턴" class="num">105</td><td data-label="비용" class="num">$10.85</td><td data-label="토큰 입력/출력" class="num">13.9M / 67K</td><td data-label="종료">success</td></tr></tbody></table></div>
 
 ## 아이디어 백로그 — 대기 5 / 전체 6
 
@@ -54,6 +56,8 @@ last_modified_at: 2026-09-12 08:51:34 +0900
 - 결과: 성공
 - 요약: 릴리즈와 같은 방법(docker build → postgres + compose 환경변수)으로 SeatOn v1.4.0을 띄우고 e2e 시드로 가짜 데이터를 채운 뒤, 새 `web/e2e/guide-shots.mjs`(Playwright, 1440x900, 캡처 전용 환경변수·로컬 주소 가드·API 키 원문 가림과 폐기)로 22장을 찍어 `docs/assets/guide/`에 실었다. USER_GUIDE는 처음 5분·화면별 사용법·자주 하는 작업·막혔을 때(서버·프런트 실제 문구)·용어로, ADMIN_GUIDE는 구성 요소·설치·환경변수 3개와 설정 키 32개 전수 표·계정과 권한·운영(healthz/readyz·로그·백업·복구·업그레이드)·장애 대응(실제 로그 문구)·보안으로 다시 썼고 기존 엔진 실측 절은 유지했다. PDF는 공용 md2pdf.mjs로 굽고(21쪽/21쪽, 표지·표·코드·그림 확인) build-docs.py는 두 가이드의 HTML만 만들며 그림·번호 목록 이어 세기를 지원하도록 고쳤다. 검증: tsc, vitest 76건, go test/vet, Playwright login/admin/api-keys 11건 통과. 부서 관리자 역할은 코드상 직원과 동일함을 그대로 적었고 화면에 계정 생성·비활성화가 없다는 점도 API 경로와 함께 명시했다.
 - 보류 아이디어: 사용자 권한 화면에 계정 비활성화 토글 추가(API는 있으나 UI 없음) / 좌석 상세 편집 창에서 조직 구역 지정(현재 API·처리필요로만 가능) / 좌석맵에서 배정 해제 단추(현재 DELETE API·퇴직자 해제만) / CI에 guide-shots 스모크(캡처 스크립트가 깨지지 않는지) 추가 / build-docs.py 파서 단위 테스트(이미지·목록 번호 이어 세기)
+
+- 릴리즈: v1.4.1 (2026-09-12, run 2026-09-12-085250-seaton-approve)
 
 
 [← 대시보드](https://hkjang.github.io/aidev/) · [교훈 모음](https://hkjang.github.io/aidev/lessons/)

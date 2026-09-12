@@ -1,0 +1,213 @@
+{
+  "run_id": "2026-09-12-094228-Momento-improve",
+  "generated": "2026-09-12T10:03:47+09:00",
+  "run": {
+    "run_id": "2026-09-12-094228-Momento-improve",
+    "project": "Momento",
+    "kind": "improve",
+    "started": "2026-09-12T09:42:29+09:00",
+    "model": "claude-opus-5",
+    "policy_version": "5935779a",
+    "prompts_hash": "82f2440d4b2fef65",
+    "runner_version": "79bd9d23",
+    "finished": "2026-09-12T10:03:47+09:00",
+    "outcome": "review-pending"
+  },
+  "record": {
+    "ts": "2026-09-12T10:03:47+09:00",
+    "date": "2026-09-12",
+    "project": "Momento",
+    "result": "fix-round: CI no-ci, PR open https://github.com/hkjang/Momento/pull/11",
+    "outcome": "review-pending",
+    "run_id": "2026-09-12-094228-Momento-improve",
+    "base_sha": "9f857c4b750e068e6e88298479d8c4c052e5e6cc",
+    "head_sha": "9d3e06c46a38658ed607243e669177dfca3482ee",
+    "pr": "https://github.com/hkjang/Momento/pull/11",
+    "stages": {
+      "base": {
+        "state": "pinned",
+        "reason": "main@9f857c4",
+        "at": "2026-09-12T09:42:33+09:00"
+      },
+      "autonomy": {
+        "state": "release",
+        "reason": "",
+        "at": "2026-09-12T09:42:33+09:00"
+      },
+      "verify": {
+        "state": "passed",
+        "reason": "검증 7개 통과 (auto)",
+        "at": "2026-09-12T09:55:54+09:00"
+      },
+      "pr": {
+        "state": "created",
+        "reason": "https://github.com/hkjang/Momento/pull/11",
+        "at": "2026-09-12T09:56:01+09:00"
+      },
+      "review": {
+        "state": "approved",
+        "reason": "리뷰 승인 (risk=low)",
+        "at": "2026-09-12T09:59:25+09:00"
+      },
+      "ci": {
+        "state": "no-ci",
+        "reason": "이 커밋에 검사가 없음 (정책 allow_merge_without_ci 가 없으면 차단)",
+        "at": "2026-09-12T10:03:46+09:00"
+      }
+    },
+    "campaign": "",
+    "autonomy": "release",
+    "files": 1,
+    "additions": 32,
+    "deletions": 3,
+    "tests": 1,
+    "title": "test: seed the fixture in one batch instead of two thousand round trips"
+  },
+  "stages": {
+    "base": {
+      "state": "pinned",
+      "reason": "main@9f857c4",
+      "at": "2026-09-12T09:42:33+09:00"
+    },
+    "autonomy": {
+      "state": "release",
+      "reason": "",
+      "at": "2026-09-12T09:42:33+09:00"
+    },
+    "verify": {
+      "state": "passed",
+      "reason": "검증 7개 통과 (auto)",
+      "at": "2026-09-12T09:55:54+09:00"
+    },
+    "pr": {
+      "state": "created",
+      "reason": "https://github.com/hkjang/Momento/pull/11",
+      "at": "2026-09-12T09:56:01+09:00"
+    },
+    "review": {
+      "state": "approved",
+      "reason": "리뷰 승인 (risk=low)",
+      "at": "2026-09-12T09:59:25+09:00"
+    },
+    "ci": {
+      "state": "no-ci",
+      "reason": "이 커밋에 검사가 없음 (정책 allow_merge_without_ci 가 없으면 차단)",
+      "at": "2026-09-12T10:03:46+09:00"
+    }
+  },
+  "provenance": {
+    "model": "claude-opus-5",
+    "policy_version": "5935779a",
+    "prompts_hash": "82f2440d4b2fef65",
+    "runner_version": "79bd9d23",
+    "base_sha": "9f857c4b750e068e6e88298479d8c4c052e5e6cc",
+    "head_sha": "9d3e06c46a38658ed607243e669177dfca3482ee",
+    "pr": "https://github.com/hkjang/Momento/pull/11"
+  },
+  "verification": {
+    "runner": {
+      "source": "auto",
+      "commands": [
+        {
+          "cmd": "go build ./...",
+          "exit": 0,
+          "seconds": 1
+        },
+        {
+          "cmd": "go vet ./...",
+          "exit": 0,
+          "seconds": 0
+        },
+        {
+          "cmd": "go test ./...",
+          "exit": 0,
+          "seconds": 1
+        },
+        {
+          "cmd": "cd web && [ -d node_modules ] || npm ci --no-audit --no-fund",
+          "exit": 0,
+          "seconds": 16
+        },
+        {
+          "cmd": "cd web && npm test --silent",
+          "exit": 0,
+          "seconds": 0
+        },
+        {
+          "cmd": "cd web && [ -d node_modules ] || npm ci --no-audit --no-fund",
+          "exit": 0,
+          "seconds": 0
+        },
+        {
+          "cmd": "cd web && npm run build --silent",
+          "exit": 0,
+          "seconds": 6
+        }
+      ]
+    },
+    "runner_gate": {
+      "ok": true,
+      "state": "verified",
+      "reason": "검증 7개 통과 (auto)"
+    },
+    "after_rebase": null,
+    "review": {
+      "verdict": "approve",
+      "reasons": [],
+      "notes": [
+        "Single commit, test-only change (internal/httpapi/integration_test.go): seed() queues statements into a pgx.Batch and flushes before every read-back; SQL text unchanged.",
+        "Verified flush ordering by reading the whole seed(): flush at :124 precedes the first QueryRow, every pool.QueryRow/pool.Exec between :127 and :395 only depends on rows inserted by earlier QueryRows or on rows already flushed at :382, and the derived-rollup INSERT...SELECTs (:351-:381) run inside the same batch after the raw_events inserts so they see them in the implicit transaction.",
+        "Error path: flush() drains results in queued order so the SQL reported on failure is the failing statement; results.Close() is called on both paths, no leak.",
+        "Ran the package myself against a throwaway postgres:16 container with -race: ok, 43s, 0 failures; only skip is the pre-existing opt-in TestEndpointLatencyUnderLoad (loadPool). TestTheFixtureIsWhatItSaysItIs passes. Fixture-only test on main's version of the file: 3.0s vs 0.29s on HEAD, which matches the commit message's numbers.",
+        "Behavioural difference worth knowing: inside one batch now() is a single transaction timestamp for all ~2000 statements (previously it advanced ~3s across autocommits). Nothing in the fixture or tests relies on that drift, and it removes a latent cross-midnight flake rather than adding one.",
+        "Commit message's last paragraph about CI runs not appearing on main pushes is commentary, not something this diff changes; ci.yml already sets MOMENTO_TEST_POSTGRES_DSN and runs go test -race ./internal/..., so this change will be exercised there."
+      ],
+      "risk": "low"
+    },
+    "ci_gate": {
+      "ok": false,
+      "state": "no-ci",
+      "reason": "이 커밋에 검사가 없음 (정책 allow_merge_without_ci 가 없으면 차단)",
+      "checks": 0
+    }
+  },
+  "release": {
+    "result": null,
+    "assets_sha256": []
+  },
+  "approval": null,
+  "usage": [
+    {
+      "ts": "2026-09-12T09:55:28+09:00",
+      "date": "2026-09-12",
+      "project": "Momento",
+      "phase": "improve",
+      "run_id": "2026-09-12-094228-Momento-improve",
+      "campaign": "",
+      "subtype": "success",
+      "duration_ms": 826769,
+      "num_turns": 41,
+      "cost_usd": 3.1395835,
+      "input_tokens": 82,
+      "output_tokens": 23968,
+      "cache_read": 3114185,
+      "cache_create": 96509
+    },
+    {
+      "ts": "2026-09-12T09:59:25+09:00",
+      "date": "2026-09-12",
+      "project": "Momento",
+      "phase": "review",
+      "run_id": "2026-09-12-094228-Momento-improve",
+      "campaign": "",
+      "subtype": "success",
+      "duration_ms": 215277,
+      "num_turns": 13,
+      "cost_usd": 0.6023200000000001,
+      "input_tokens": 26,
+      "output_tokens": 5584,
+      "cache_read": 419148,
+      "cache_create": 25120
+    }
+  ]
+}
