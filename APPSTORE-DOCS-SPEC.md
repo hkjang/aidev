@@ -55,6 +55,31 @@ app_documents(
 렌더링하는 것은 또 하나의 스크립트 실행 경로이고, 안전하게 하려면 정화기가 필요하다.
 내려받기부터 온전히 만든다.
 
+## API — 이름을 임의로 바꾸지 않는다
+
+문서를 사람이 손으로만 올리지 않는다. `aidev` 가 서비스마다 모아 둔 가이드를 이
+API 로 밀어 넣어 자동으로 최신을 유지한다. 그쪽 구현이 이 이름에 맞춰 쓰이므로
+경로·필드·응답을 바꾸면 이어지지 않는다.
+
+```
+GET    /api/v1/apps/{slug}/documents
+  200 [{"id","kind","title","filename","contentType","bytes","checksum","updatedAt"}, ...]
+
+POST   /api/v1/apps/{slug}/documents          multipart/form-data
+  file=<바이트>  kind=user_guide|admin_guide|release_notes|other  title=<표시 이름>
+  201 {문서 하나}
+  같은 kind 가 이미 있으면 갈아 끼우고 200 을 돌려준다(새로 만들지 않는다).
+
+GET    /api/v1/apps/{slug}/documents/{id}/download
+DELETE /api/v1/apps/{slug}/documents/{id}
+```
+
+**목록 응답의 `checksum` 은 파일 바이트의 SHA-256 16진 문자열이다.** 이것이 중요하다. 자동으로 미는 쪽이 그것을 보고 바뀐 것만
+올린다. 없으면 30분마다 같은 PDF 를 다시 밀어 넣게 된다.
+
+쓰기는 API 키로도 되게 한다(`internal/apikey`). 그 키는 문서만 다룰 수 있어야 하고,
+앱의 다른 항목을 고치거나 앱을 새로 만들 수는 없어야 한다.
+
 ## 누가
 
 - 올리고 지우는 것은 **그 앱의 소유자와 관리자**.

@@ -86,6 +86,9 @@ fi
 # 프로젝트별 가이드를 docs/guides 로 모은다 — 25개 저장소를 열어 보지 않고 한곳에서 본다.
 # 내용이 같으면 git 이 새 blob 을 만들지 않으므로, 회차가 문서를 다시 쓸 때만 늘어난다.
 python3 "$HERE/collect-guides.py" >/dev/null 2>&1 || true
+# 모아 둔 가이드를 AppStore 의 앱마다 첨부한다 — 바뀐 것만, 가이드 문서만.
+# 설정(~/.auto-improve/appstore.env)이 없으면 조용히 넘어간다.
+python3 "$HERE/publish-guides.py" >>"$REPO_DIR/logs/publish-guides.log" 2>&1 || true
 
 # health.json 을 사이트에 반영 (회차가 안 도는 상황이 바로 이 스크립트가 잡는 것이므로 직접 푸시)
 ( flock -w 300 9 || exit 1; cd "$REPO_DIR" && rm -rf .git/rebase-merge .git/rebase-apply 2>/dev/null; git add docs/data/health.json docs/guides >/dev/null 2>&1 && { git diff --cached --quiet || git -c user.name=hkjang -c user.email=gagagiga@naver.com commit -qm "health: $(date '+%F %H:%M') $( [ ${#problems[@]} -eq 0 ] && echo ok || echo "${#problems[@]} problem(s)")"; } \
