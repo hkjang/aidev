@@ -1,0 +1,17 @@
+{
+  "verdict": "approve",
+  "reasons": [],
+  "notes": [
+    "검증: npm run test:unit 25/25 통과, tsc/eslint 클린, next build 성공, e2e/tracking.spec.ts 3/3 통과(시스템 Chrome). 프로덕션 빌드(next start)에서 /pc·/admin 의 모든 <script> 에 nonce 가 붙고 'unsafe-inline' 없는 정책으로 화면이 정상 렌더되는 것을 직접 확인. GA4/custom(head·body 배치), /momento 404, csp-report→violations 흐름도 프로덕션에서 확인.",
+    "lib/tracking/core.ts:446 buildPagePolicy 는 추적과 무관하게 모든 화면에 default-src 'self' + frame-ancestors 'self' 를 건다. 이 상황판을 다른 오리진의 iframe(월보드 등)에 넣어 쓰고 있었다면 머지 후 깨진다. 현재 코드베이스에는 외부 이미지·폰트가 없어 앱 자체는 영향 없음.",
+    "lib/tracking/store.ts:44 readTrackingConfig 는 fs.stat 의 ENOENT 외 오류(EACCES/ENOTDIR 등)를 그대로 던진다. proxy.ts 가 모든 화면 요청에서 이를 호출하므로 그런 경우 대시보드 전체가 500 이 된다. '손상된 파일은 꺼진 것으로 다룬다'는 주석의 의도와 어긋나는 에러 경로(읽기 실패는 삼키고 stat 실패는 전파). 드문 조건이라 거절 사유로는 보지 않음.",
+    "components/TrackingSnippet.tsx:20 custom 스니펫의 속성명이 React props 로 그대로 들어간다. <script children=\"x\"> 나 <script style=\"...\"> 같은 속성이 있으면 React 가 렌더 중 throw 하여(head 배치) 루트 레이아웃 = 모든 화면이 에러가 된다. include_admin 기본 false 라 /admin 은 살아 있어 복구는 가능. 관리자 입력이라 보안 문제는 아니지만 허용 속성 화이트리스트가 안전함.",
+    "app/momento/[...path]/route.ts:29 path 세그먼트를 encodeURIComponent 로 재인코딩하지만 '..' 은 그대로 남아 new URL 해석 시 momento_url 의 경로 아래를 벗어날 수 있음(같은 수집기 오리진 안에서만). 브라우저는 정규화하므로 직접 요청에서만 해당.",
+    "app/api/csp-report/route.ts 는 인증 없음(설계상 불가피). 100개 고리 버퍼를 임의 출처로 채워 실제 차단 기록을 밀어낼 수 있으나 메모리 상한이 있고 진단용이라 영향 한정.",
+    "proxy.ts:41 matcher 가 prefetch 요청을 건너뛰므로 그 요청에는 클라이언트가 보낸 x-nonce/x-tracking-active 가 레이아웃까지 전달될 수 있다. 해당 응답에는 CSP 헤더도 없고 요청자 본인 화면에만 영향이라 무해.",
+    "tsconfig.json allowImportingTsExtensions 와 store.ts/violations.ts 의 './core.ts' 확장자 import 는 node --test 를 위한 것. Next 빌드는 통과함. 범위 이탈은 아니나 설정 변경임.",
+    "GTM 은 컨테이너 태그가 주입하는 추가 인라인 스크립트에 nonce 가 전파되지 않아 일부 태그가 차단될 수 있음(문서 7.4 의 차단 목록으로 진단 가능). 동작 설명과 코드는 일치함.",
+    "e2e 는 dev 서버 기준(unsafe-eval 포함)이라 프로덕션 정책은 자동 검증되지 않음 — 위에서 수동으로 확인했으며 CI 에 prod 빌드 검증을 추가하면 좋음."
+  ],
+  "risk": "medium"
+}
