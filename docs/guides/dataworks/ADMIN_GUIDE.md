@@ -1,12 +1,12 @@
 # Data Works 관리자 가이드
 
-> 적용 버전: **v0.9.52**<br>
+> 적용 버전: **v0.9.53**<br>
 > 서비스 관리자 화면: `http://<host>:8080/dataworks/settings`<br>
 > 일반 사용 방법은 [사용자 가이드](USER_GUIDE.md)를 참고하세요.
 
-이 문서는 폐쇄망 설치, 최초 관리자 로그인, AI·MCP, Keycloak SSO, 키 정책과 데이터 상품 운영 절차를 실제 v0.9.52 구현 기준으로 설명합니다.
+이 문서는 폐쇄망 설치, 최초 관리자 로그인, AI·MCP, Keycloak SSO, 키 정책과 데이터 상품 운영 절차를 실제 v0.9.53 구현 기준으로 설명합니다.
 
-> 이 문서의 모든 화면은 v0.9.52을 실제로 띄워 가상 데이터로 촬영했습니다. 실제 운영 키와 고객 정보가 아닙니다.
+> 이 문서의 모든 화면은 v0.9.53을 실제로 띄워 가상 데이터로 촬영했습니다. 실제 운영 키와 고객 정보가 아닙니다.
 
 ## 1. 구성 요소
 
@@ -46,13 +46,13 @@ Data Works 배포 이미지는 React SPA와 Go API를 하나의 바이너리로 
 GitHub Release의 운영 산출물은 다음 하나의 custom asset입니다.
 
 ```text
-dataworks-v0.9.52.tar.gz
+dataworks-v0.9.53.tar.gz
 ```
 
 압축 파일을 적재하면 다음 이미지가 생성됩니다.
 
 ```text
-dataworks:v0.9.52
+dataworks:v0.9.53
 ```
 
 ## 2. 폐쇄망 설치
@@ -66,7 +66,7 @@ dataworks:v0.9.52
 | `BOOTSTRAP_ADMIN_PASSWORD` | 최초 최고 관리자 비밀번호 |
 | `ENCRYPTION_KEY` | JWT 서명과 저장 비밀 암호화에 사용할 키 |
 
-운영자가 컨테이너에 전달해야 하는 설정은 이 네 항목입니다. AI 공급자, Keycloak과 런타임 정책은 기동 후 관리자 화면에서 저장합니다. 나머지 환경 변수 전체는 [3.3 환경 변수 전수 표](#33-환경-변수-전수-표)에 있습니다.
+운영자가 컨테이너에 전달해야 하는 설정은 이 네 항목입니다. AI 공급자, Keycloak과 런타임 정책은 기동 후 관리자 화면에서 저장합니다. 나머지 환경 변수 전체는 [4.6 환경 변수 전수 표](#46-환경-변수-전수-표)에 있습니다.
 
 `ENCRYPTION_KEY`는 32바이트 난수를 64자리 16진수로 표현하는 방식을 권장합니다.
 
@@ -79,9 +79,9 @@ openssl rand -hex 32
 ### 이미지 적재
 
 ```bash
-gzip -t dataworks-v0.9.52.tar.gz
-gunzip -c dataworks-v0.9.52.tar.gz | docker load
-docker image inspect dataworks:v0.9.52
+gzip -t dataworks-v0.9.53.tar.gz
+gunzip -c dataworks-v0.9.53.tar.gz | docker load
+docker image inspect dataworks:v0.9.53
 ```
 
 ### 컨테이너 실행
@@ -96,7 +96,7 @@ docker run -d --name dataworks --restart=always \
   -e BOOTSTRAP_ADMIN='admin@dataworks.local' \
   -e BOOTSTRAP_ADMIN_PASSWORD='replace-with-a-strong-password' \
   -e ENCRYPTION_KEY='replace-with-64-hex-characters' \
-  dataworks:v0.9.52
+  dataworks:v0.9.53
 ```
 
 저장소의 `docker-compose.yml`을 함께 반입한 환경에서는 같은 네 값을 `.env`에 저장한 뒤 실행할 수 있습니다.
@@ -110,7 +110,7 @@ ENCRYPTION_KEY=0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef
 
 ```bash
 docker compose config --images
-# dataworks:v0.9.52
+# dataworks:v0.9.53
 docker compose up -d
 ```
 
@@ -143,7 +143,7 @@ PostgreSQL 마이그레이션은 기동 시 자동 실행됩니다. 외부 공�
 
 1. `http://<host>:8080/dataworks/`를 엽니다.
 2. Bootstrap 이메일과 비밀번호로 로그인합니다.
-3. 로그인 화면 또는 프로필 메뉴에서 `v0.9.52`를 확인합니다.
+3. 로그인 화면 또는 프로필 메뉴에서 `v0.9.53`를 확인합니다.
 4. 왼쪽 아래 `관리자 설정`을 엽니다.
 
 ![로그인 화면 — 로컬 로그인과 Keycloak SSO 버튼, 서비스 버전이 함께 보인다](assets/screenshots/desktop/00-login.jpg)
@@ -265,7 +265,59 @@ DELETE /admin/settings/by-key/{key}
 
 DB에 저장된 관리자 override는 `SETTINGS_RELOAD_INTERVAL`(기본 `10s`)마다 다시 읽습니다.
 
-### 4.5 환경 변수 전수 표
+### 4.5 방문 추적 스크립트
+
+`관리자 설정 → 방문 추적`에서 어떤 화면이 실제로 쓰이는지 재는 추적 도구를 붙입니다. 기본값은 **꺼짐**이며, 새로 설치한 곳은 켜기 전까지 아무것도 달라지지 않습니다. 설정은 다른 런타임 설정과 같이 DB에 저장되고 화면에서 바꿉니다(환경변수 없음, 재배포 불필요).
+
+| 설정 | 뜻 | 기본값 |
+| --- | --- | --- |
+| `tracking.enabled` | 스니펫 삽입 여부. 나머지를 저장한 뒤 **마지막에** 켭니다 | `false` |
+| `tracking.provider` | `none` · `momento` · `ga4` · `gtm` · `matomo` · `custom` | `none` |
+| `tracking.momento_url` · `tracking.momento_site_id` | Momento 수집기 주소와 사이트 id | 없음 |
+| `tracking.momento_proxy` | 같은 오리진 프록시(`/momento/*`) 사용 | `true` |
+| `tracking.momento_environment` | Momento `data-environment` 값 | `prd` |
+| `tracking.measurement_id` | GA4(`G-…`) 또는 GTM(`GTM-…`) id | 없음 |
+| `tracking.matomo_url` · `tracking.matomo_site_id` | Matomo 주소와 사이트 id | 없음 |
+| `tracking.custom_snippet` | 붙여넣는 스니펫. 8KB 를 넘으면 저장되지 않습니다 | 없음 |
+| `tracking.allowed_hosts` | 스니펫에서 자동으로 읽지 못한 출처를 더하는 자리(쉼표 구분) | 없음 |
+| `tracking.include_admin` | 관리 화면(`/admin`, `/dataworks/settings`)에서도 추적할지 | `false` |
+| `tracking.placement` | `head` 또는 `body` | `head` |
+
+**Momento 를 먼저 씁니다.** 사내 자체 호스팅 수집기라 데이터가 밖으로 나가지 않는 유일한 선택지입니다. 순서는 다음과 같습니다.
+
+1. `tracking.provider` = `momento`, `tracking.momento_url` = `https://momento.internal`, `tracking.momento_site_id` = 발급받은 id 를 저장합니다.
+2. `tracking.enabled` = `true` 로 켭니다. 오른쪽 "현재 상태"가 `추적 중`이면 끝입니다. `설정 미완료`면 빠진 값이 그 아래에 적혀 있습니다.
+3. 브라우저에서 워크벤치를 한 번 열고 Momento 쪽에 페이지뷰가 들어오는지 확인합니다.
+
+같은 오리진 프록시가 기본입니다. 서버가 `/momento/*` 를 수집기로 넘기고 스니펫에 `data-endpoint="/momento"` 를 주므로 tracker.js 와 수집 호출이 모두 이 서비스 주소로만 나갑니다. 프록시는 추적이 켜져 있고 provider 가 `momento` 일 때만 열리며, 방문자의 세션 쿠키와 Authorization 헤더는 수집기로 전달하지 않습니다. 브라우저가 수집기에 직접 닿아야 하는 설치라면 `tracking.momento_proxy` = `false` 로 두면 수집기 출처가 정책에 자동으로 추가됩니다.
+
+#### CSP 와 nonce
+
+워크벤치(`/dataworks/*`)는 `script-src 'self'` 로 잠긴 콘텐츠 보안 정책(CSP)을 답니다. 스니펫을 그냥 붙이면 브라우저가 조용히 막고 화면은 비어 있는 이유를 알려 주지 않습니다. 그래서 서버는 다음을 자동으로 합니다.
+
+- 요청마다 nonce 를 새로 만들어 스니펫의 **모든** `<script>` 태그에 붙이고, 같은 값을 `script-src 'nonce-…'` 로 정책에 넣습니다. 정책을 `'unsafe-inline'` 으로 풀지 않습니다 — 한 번 풀면 추적을 끈 뒤에도 느슨한 채 남기 때문입니다.
+- provider 가 필요로 하는 출처(GA4·GTM 의 googletagmanager, Matomo 주소, 직접 연결 모드의 Momento 주소)와 `custom` 스니펫 안에 적힌 `http(s)` 출처를 읽어 `script-src` · `connect-src` · `img-src` 에 더합니다.
+- 추적이 켜져 있는 동안만 `report-uri /tracking/csp-report` 를 정책에 넣어 브라우저가 막은 요청을 신고하게 하고, 그 출처와 지시어를 메모리에 최대 100개까지 기억합니다.
+- 추적을 끄면 정책은 원래대로 좁아지고(nonce 도 report-uri 도 사라짐) 프록시는 닫힙니다.
+
+`관리자 설정 → 방문 추적 → 차단된 출처`에 "이 출처가 막혔습니다" 가 뜨면 `허용`을 눌러 `tracking.allowed_hosts` 에 넣습니다. 이미 허용된 출처는 `허용됨`으로 표시됩니다. 스니펫을 고친 뒤 휴지통 버튼으로 기록을 비우면 아직 막히는 것이 남았는지 다시 볼 수 있습니다.
+
+```http
+GET    /admin/tracking/status              # 유효 설정, 스니펫, 정책 출처, 미완료 사유
+GET    /admin/tracking/violations          # 차단된 출처 목록
+DELETE /admin/tracking/violations          # 기록 비우기
+POST   /admin/tracking/violations/allow    # {"origin":"https://…"} → tracking.allowed_hosts 에 추가
+POST   /tracking/csp-report                # 브라우저 신고 수신(무인증, 추적이 꺼져 있으면 버림)
+```
+
+붙지 않는 곳:
+
+- `/v1/*` · `/admin/*` API · `/healthz` · `/metrics` 같은 비화면 경로. 이쪽은 `default-src 'none'` 으로 오히려 더 좁습니다.
+- 관리 화면은 `tracking.include_admin` 이 켜졌을 때만. 워크벤치는 한 문서(SPA)라 브라우저가 처음 연 주소 기준으로 판단합니다.
+- 레거시 콘솔(`/admin`)은 인라인 핸들러로 만들어져 nonce 정책을 달 수 없으므로 CSP 없이 그대로이며, 스니펫은 `include_admin` 일 때만 들어갑니다.
+- 로그인 화면에 붙더라도 스니펫에 개인 식별 값을 넣지 마세요.
+
+### 4.6 환경 변수 전수 표
 
 아래는 서비스 바이너리(`cmd/dataworks`)가 읽는 환경 변수 전부입니다. **필수** 표시가 없는 값은 설정하지 않아도 기본값으로 동작합니다. 비밀값 예시는 모두 가짜 값입니다.
 
