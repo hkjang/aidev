@@ -154,7 +154,7 @@ curl -fsS http://localhost:8080/api/version    # 버전·커밋·빌드 시각
 | 분류 | 키 | 기본값 | 하는 일 |
 |---|---|---|---|
 | general | `branding` | 서비스명·로그인 문구 | 로그인 화면과 머리글에 나오는 문구 |
-| identity | `oidc` | `enabled:false`, `autoCreate:true`, `defaultRole:business_user` | OIDC 연동(3.3) |
+| identity | `oidc` | `enabled:false`, `autoCreate:true`, `autoLogin:false`, `defaultRole:business_user` | OIDC 연동(3.3) |
 | security | `security.login` | `maxFailures:5`, `windowMinutes:15`, `lockoutMinutes:15`, `maxAddressFailures:25` | 로그인 실패 임계값과 잠금 시간 |
 | security | `security.password` | `minLength:10`, `requireClasses:0` | 비밀번호 정책 |
 | security | `security.session` | `ttlHours:12`, `secureCookie:false` | 세션 수명과 쿠키 Secure 속성 |
@@ -200,6 +200,36 @@ https://vendra.internal/api/auth/oidc/callback
 - `autoCreate` 가 켜져 있으면 처음 로그인한 사용자에게 `defaultRole`(기본
   `business_user`) 역할로 계정을 만듭니다. 끄면 미리 만들어 둔 계정만 들어옵니다.
 - Client Secret 은 `ENCRYPTION_KEY` 로 암호화되어 저장되며 화면에 다시 표시되지 않습니다.
+
+#### Keycloak 세션이 있으면 자동 로그인 (`autoLogin`)
+
+같은 화면의 **Keycloak 세션이 있으면 자동 로그인** 토글입니다. **기본은 꺼짐**이며, 꺼진
+배포에서는 아무것도 달라지지 않습니다.
+
+켜면 Keycloak 에 이미 로그인한 사람이 Vendra 를 열었을 때 로그인 화면을 보지 않고 바로
+본 화면으로 들어옵니다. 브라우저가 세션이 없다는 것을 알면 `prompt=none` 을 붙여 공급자로
+한 번 다녀오는데(OIDC silent authentication), 이 요청은 화면을 그리지 않습니다 — 세션이
+있으면 인가 코드가 곧바로 돌아와 평소 로그인과 같이 이어지고, 없으면 공급자가
+`login_required` 로 답하고 로그인 화면이 나옵니다. 숨은 iframe 이 아니라 최상위 이동이라
+서드파티 쿠키를 막은 브라우저에서도 동작합니다.
+
+동작 규칙:
+
+- **한 탭에 한 번만** 시도합니다. 세션이 없어 거절된 뒤 새로고침해도 다시 공급자로 가지
+  않으며, 새 탭을 열면 다시 한 번 시도합니다.
+- **직접 로그아웃한 뒤에는** 자동으로 다시 로그인하지 않습니다. 다시 로그인하면 풀립니다.
+- 거절되면 `/login?sso=none` 으로 돌아옵니다. 주소의 `sso=none` 이 있는 동안은 브라우저
+  저장소가 비워졌더라도 다시 시도하지 않습니다.
+- 깊은 링크(예: `/suppliers/42`)로 들어온 사람은 조용히 로그인한 뒤 그 자리로 돌아옵니다.
+  돌아갈 주소는 `/` 로 시작하는 이 서비스 안의 경로만 받습니다.
+- 로그인·등록(`/register`)·API 경로에서는 시도하지 않습니다. 초대 링크로 온 공급업체
+  담당자는 Keycloak 으로 보내지 않고 등록 화면을 그대로 받습니다.
+- 서버는 이 토글이 꺼져 있으면 주소에 `?prompt=none` 이 붙어 있어도 평범한 로그인으로
+  처리합니다. 자동 로그인이 일어나는 자리는 오직 이 설정에 묶입니다.
+
+확인법: Keycloak 에 로그인한 브라우저로 Vendra 를 열면 로그인 화면 없이 대시보드가 떠야
+하고, 로그인하지 않은 브라우저로 열면 로그인 화면이 한 번 뜬 뒤 새로고침을 반복해도
+깜빡이지 않아야 합니다.
 
 ### 3.4 AI 모델 연결
 

@@ -177,6 +177,7 @@ docker logs --tail 100 moyro
 | 연동 | 플러그인 | `/admin/integrations/plugins` | `manage_plugins` |
 | 워크플로 | 검토 · 승인 | `/admin/workflows/review` | `manage_approval_policies` |
 | 시스템 | 사이트 설정 | `/admin/site` | `manage_settings` |
+| 시스템 | 방문 추적 | `/admin/tracking` | `manage_settings` |
 | 시스템 | 호환 API | `/admin/operations` | `manage_system` |
 
 ![운영 현황 — PostgreSQL·마이그레이션·작업 큐·Webhook·저장소 상태](assets/screenshots/admin-overview.jpg)
@@ -311,6 +312,69 @@ API 계약은 두 벌입니다. Mattermost 호환 `/api/v4` 는
 > **격리 경계** — 플러그인은 sandbox나 서명 검증 없이 moyro 서비스 UID, 컨테이너
 > namespace, 볼륨, 네트워크를 공유합니다. 아카이브 검사는 공급망 신뢰를 대신하지
 > 않습니다. 업로드 전에 SHA-256과 배포 출처를 별도 절차로 확인하세요.
+
+### 3.9 방문 추적
+
+![방문 추적 — 공급자, 삽입 위치, 허용 출처와 정책이 막은 출처](assets/screenshots/admin-tracking.jpg)
+
+**시스템 → 방문 추적**(`/admin/tracking`, `manage_settings`)에서 방문 통계 스크립트를
+화면에 붙입니다. **기본값은 꺼짐**이며 새로 설치한 곳에서는 아무것도 달라지지 않습니다.
+설정은 PostgreSQL 설정 저장소(`tracking` 섹션)에 저장되고 저장 즉시 다음 페이지 응답부터
+적용됩니다 — 재배포나 재시작이 필요 없습니다.
+
+| 항목 | 뜻 |
+|---|---|
+| 방문 추적 켜기 | 꺼짐이 기본값입니다. 켜야 스니펫이 붙습니다 |
+| 공급자 | `Momento` · `Google Analytics 4` · `Google Tag Manager` · `Matomo` · `직접 붙여넣기` |
+| Momento 주소 · 사이트 ID | 사내 Momento 수집기의 http(s) 절대 주소와 사이트 id |
+| 같은 오리진 프록시 | 켜면(기본) 브라우저는 이 서버의 `/momento/*` 만 부르고 서버가 수집기로 넘깁니다 |
+| 측정 ID | GA4(`G-…`) · GTM(`GTM-…`) id. 폐쇄망에서는 동작하지 않습니다 |
+| Matomo 주소 · 사이트 ID | Matomo 의 주소와 사이트 id |
+| 추적 코드 | 직접 붙여넣는 스니펫. **8 KB** 를 넘으면 저장되지 않습니다 |
+| 추가로 허용할 출처 | 스니펫에서 자동으로 못 읽은 출처를 더하는 자리. `*.example.com` 꼴도 됩니다 |
+| 관리 화면에서도 추적 | 기본은 아니오. `/admin`·`/settings` 로 처음 들어오는 페이지는 제외됩니다 |
+| 삽입 위치 | `<head>` 끝(기본) 또는 `<body>` 끝 |
+
+**권장 절차 (Momento)**
+
+1. 공급자를 **Momento** 로 두고 수집기 주소와 사이트 ID 를 넣습니다.
+2. **같은 오리진 프록시**는 켠 채로 둡니다. 서버가 `/momento/tracker.js` 와
+   `/momento/collect/...` 를 수집기로 전달하므로 정책에 외부 출처가 하나도 들어가지
+   않습니다. 이 요청에서는 세션 쿠키와 `Authorization` 헤더를 떼어 내고 보냅니다.
+3. **방문 추적 켜기**를 켜고 저장합니다.
+4. 브라우저에서 아무 화면이나 한 번 연 뒤 Momento 쪽에 방문이 들어오는지 확인합니다.
+5. 다시 관리 화면으로 돌아와 **정책이 막은 출처**가 비어 있는지 봅니다.
+
+수집기가 `/momento/*` 프록시를 받지 못하는 경우에만 프록시를 끕니다. 그러면 수집기
+주소가 `script-src`·`connect-src`·`img-src` 에 자동으로 더해집니다.
+
+**콘텐츠 보안 정책(CSP)과의 관계**
+
+moyro 의 웹 화면은 `script-src 'self' blob:` 으로 잠겨 있습니다. 스니펫을 그냥 넣으면
+브라우저가 조용히 막고, 화면이 왜 비어 있는지는 콘솔을 열어 봐야 알 수 있습니다.
+방문 추적을 켜면 서버가 페이지 응답마다 다음을 함께 처리합니다.
+
+- **nonce** — 응답마다 새 난수를 만들어 스니펫의 모든 `<script>` 태그에 붙이고 같은 값을
+  `script-src 'nonce-…'` 에 넣습니다. 그래서 인라인 코드를 담은 스니펫도 정책을 풀지
+  않고 실행됩니다.
+- **출처 추가** — 공급자에서 정해지는 출처(예: Matomo 주소, GA4 의 googletagmanager.com)와
+  붙여넣은 코드 안에 적힌 http(s) 주소, 그리고 **추가로 허용할 출처**를 `script-src`·
+  `connect-src`·`img-src` 에 더합니다. 그 밖의 지시어(`frame-ancestors 'none'`,
+  `object-src 'none'` 등)는 그대로입니다.
+- **차단 신고** — 추적이 켜진 동안만 정책에 `report-uri` 를 넣어 브라우저가 막은 요청을
+  `POST /api/moyro/v1/tracking/csp-report` 로 보내게 합니다. 서버는 **출처와 지시어**를
+  메모리에 기억하고(서로 다른 출처 100개까지, 횟수가 아니라 출처가 중요하므로) 같은
+  화면의 **정책이 막은 출처** 표에 보여 줍니다. 행의 **허용**을 누르면 그 출처가 허용
+  목록에 들어가고 바로 저장됩니다. **기록 지우기**로 비운 뒤 화면을 다시 열어 아직 막히는
+  것이 있는지 확인합니다.
+- **`'unsafe-inline'` 은 넣지 않습니다.** 한 번 풀면 그 앱의 모든 인라인 스크립트가 함께
+  허용되고 추적을 끈 뒤에도 정책이 느슨한 채 남습니다. 추적을 끄면 nonce·출처·`report-uri`
+  가 모두 빠지고 정책은 원래대로 좁아집니다.
+
+**붙지 않는 곳** — `/api/*`·`/hooks/*`·`/mcp`·`/healthz`·`/metrics` 같은 비화면 경로에는
+붙지 않습니다. 로그인 화면에는 붙더라도 스니펫에 개인 식별 값을 넣지 마세요.
+관리·개인 설정 화면은 **관리 화면에서도 추적**을 켠 경우에만 붙습니다(단일 페이지 앱이라
+다른 화면에서 시작한 뒤 화면 안에서 옮겨 온 경우는 이미 실린 스크립트가 그대로 남습니다).
 
 ---
 
@@ -493,6 +557,8 @@ Implemented** 를 돌려줍니다. `PUT /config`, `PUT /config/patch`,
 | `GET /metrics` | 인증 없이 운영 지표를 노출합니다. 내부 스크레이퍼만 닿게 하세요 |
 | `GET /healthz` | 인증이 없습니다. 프로브 범위로 제한하세요 |
 | `POST /hooks/{hookID}` | URL만 알면 게시할 수 있습니다. 필요한 대역에서만 닿게 하세요 |
+| `POST /api/moyro/v1/tracking/csp-report` | 인증이 없는 브라우저 신고 수신처입니다. 본문 8 KB·메모리 100건으로 묶여 있고 추적이 꺼져 있으면 버립니다 |
+| `/momento/*` | 방문 추적의 Momento 프록시가 켜진 동안만 답합니다. 수집기가 아닌 곳으로는 전달하지 않습니다 |
 | PostgreSQL 5432 | 내부망 안에만 |
 | 컨테이너 8065 직접 노출 | 프록시 뒤에 두세요 |
 

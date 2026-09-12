@@ -1,4 +1,4 @@
-> **대상 버전** Agent v0.2.33 · Server v0.2.33 · **문서 버전** 1.1 ·
+> **대상 버전** Agent v0.2.34 · Server v0.2.34 · **문서 버전** 1.1 ·
 > **기준일** 2026-09-10 · **문서 등급** 공개
 
 ## 이 문서의 목적
@@ -15,10 +15,10 @@
 3. 서비스 상태, 로그, 수집 결과와 전송 대기열을 확인합니다.
 4. 기본적인 장애를 구분하고 안전하게 제거합니다.
 
-> Invenqor Agent v0.2.33는 Server v0.2.33와 중앙 관리 콘솔을 함께 사용합니다.
+> Invenqor Agent v0.2.34는 Server v0.2.34와 중앙 관리 콘솔을 함께 사용합니다.
 > 서버 설치와 수집 데이터 처리 원칙은 [Server 설치 및 운영 가이드](SERVER_INSTALLATION.md)를 참조하십시오.
 
-이 문서의 화면 캡처는 모두 v0.2.33 Server를 실제로 띄워 촬영한 것입니다. 자산·
+이 문서의 화면 캡처는 모두 v0.2.34 Server를 실제로 띄워 촬영한 것입니다. 자산·
 계정·호스트 이름은 전부 가공한 예시 값입니다. 다시 촬영하려면
 `node scripts/capture-guide-screenshots.mjs`를 실행하십시오. 이 스크립트는 임시
 디렉터리에 자체 Server를 띄워 촬영하고 끝나면 지우므로 운영 배포에 접근하지
@@ -133,13 +133,13 @@ GitHub 릴리즈 페이지에서 아키텍처에 맞는 `.tar.gz`와 같은 이�
 `.sha256` 파일을 같은 디렉터리에 받습니다.
 
 폐쇄망에 Linux와 Windows 배포본을 함께 반입하는 관리자는
-`invenqor-agents-0.2.33.tar.gz`와 같은 이름의 `.sha256`을 사용할 수 있습니다.
+`invenqor-agents-0.2.34.tar.gz`와 같은 이름의 `.sha256`을 사용할 수 있습니다.
 묶음을 한 번 검증·해제한 뒤 대상 장비에는 아키텍처에 맞는 개별 패키지와 그
 체크섬만 전달하십시오.
 
 ```bash
-curl -LO https://github.com/hkjang/invenqor/releases/download/v0.2.33/invenqor-agent-linux-x86_64.tar.gz
-curl -LO https://github.com/hkjang/invenqor/releases/download/v0.2.33/invenqor-agent-linux-x86_64.tar.gz.sha256
+curl -LO https://github.com/hkjang/invenqor/releases/download/v0.2.34/invenqor-agent-linux-x86_64.tar.gz
+curl -LO https://github.com/hkjang/invenqor/releases/download/v0.2.34/invenqor-agent-linux-x86_64.tar.gz.sha256
 sha256sum -c invenqor-agent-linux-x86_64.tar.gz.sha256
 ```
 
@@ -221,7 +221,7 @@ sudo service invenqor-agent status
 /opt/invenqor-agent/bin/invenqor-agent --version
 ```
 
-예상 출력은 `invenqor-agent 0.2.33`입니다.
+예상 출력은 `invenqor-agent 0.2.34`입니다.
 
 ## 4.4 Windows에 설치하기
 
@@ -229,7 +229,7 @@ Windows는 별도 배포본을 사용합니다. `invenqor-agent-windows-x86_64.z
 체크섬을 확인하고, 압축을 푼 뒤 **관리자 권한 PowerShell**에서 설치합니다.
 
 ```powershell
-$release = 'https://github.com/hkjang/invenqor/releases/download/v0.2.33'
+$release = 'https://github.com/hkjang/invenqor/releases/download/v0.2.34'
 Invoke-WebRequest "$release/invenqor-agent-windows-x86_64.zip" -OutFile invenqor-agent-windows-x86_64.zip
 Invoke-WebRequest "$release/invenqor-agent-windows-x86_64.zip.sha256" -OutFile invenqor-agent-windows-x86_64.zip.sha256
 (Get-FileHash invenqor-agent-windows-x86_64.zip -Algorithm SHA256).Hash.ToLower()
@@ -381,7 +381,7 @@ sudo -u invenqor-agent \
 ```
 
 ```text
-invenqor-agent 0.2.33 registration diagnosis at 2026-08-24T09:12:44Z
+invenqor-agent 0.2.34 registration diagnosis at 2026-08-24T09:12:44Z
   host          app-web-01
   agent-id      d8d847a5-7a75-48bc-8ee8-c8e1af94f74c
   config        /etc/invenqor-agent/config.toml
@@ -395,7 +395,7 @@ invenqor-agent 0.2.33 registration diagnosis at 2026-08-24T09:12:44Z
   [PASS] transport encryption          HTTPS is configured
   [PASS] name resolution               inventory.example resolves to 10.10.4.20:7070
   [PASS] server reachability           GET /health/ready answered READY
-  [PASS] server identity               Invenqor Server 0.2.33 (pod invenqor-0, database POSTGRES)
+  [PASS] server identity               Invenqor Server 0.2.34 (pod invenqor-0, database POSTGRES)
   [PASS] observed source address       the Server sees this host as 10.20.7.31
   [PASS] registration policy           mode open, network any: this host may register
   [PASS] device credential             accepted by the Server as agent d8d847a5… (auto_bearer)
@@ -489,7 +489,7 @@ sudo -u invenqor-agent \
 ```
 
 ```text
-invenqor-agent 0.2.33 on app-web-01
+invenqor-agent 0.2.34 on app-web-01
   updated       2026-08-24T09:14:02Z
   server.url    https://inventory.example:7070
   registration  failed (the Server rejected or could not be reached for registration)
@@ -608,7 +608,7 @@ grep -n '^\s*url' /etc/invenqor-agent/config.toml
 확인하십시오. 이전 버전 Server는 Windows가 전송한 최상위 `os_name`을 읽지
 못했습니다. v0.2.14 이상 Server는 기존 Agent 형식과 새 `os_release` 호환 형식을 모두
 이해하고, 이미 저장된 기존 `system` 원천도 다음 heartbeat에서 다시 투영합니다.
-따라서 Agent를 먼저 올리지 않아도 자동 복구되며, Agent v0.2.33로 순차 업데이트하면
+따라서 Agent를 먼저 올리지 않아도 자동 복구되며, Agent v0.2.34로 순차 업데이트하면
 구 Server와의 양방향 wire 호환도 확보됩니다. `%ProgramData%\Invenqor\state`를
 삭제하거나 Agent를 재등록하지 마십시오.
 
@@ -816,7 +816,7 @@ URL은 접근 가능한 첫 화면으로 안전하게 복구됩니다.
 
 신뢰도 80% 이상은 **높음**, 미만은 **검토 권장**입니다. 이는 보안 위험도가 아니라
 제품 식별 근거의 강도입니다. 상세 화면의 서비스·프로세스·패키지와 원천 ID를
-확인해 판단하십시오. v0.2.33 내장 카탈로그는 인프라와 보안 제품에 더해
+확인해 판단하십시오. v0.2.34 내장 카탈로그는 인프라와 보안 제품에 더해
 Office/Microsoft 365, Chrome·Edge·Firefox, Teams·Zoom, Java·.NET,
 MECM·Tanium·BigFix, Elastic Agent·Wazuh 등 51개 주요 제품을 식별합니다.
 카탈로그에 없는 일반 프로세스는 제품으로 추측하지 않으므로,
@@ -931,4 +931,4 @@ Keycloak 계정의 비밀번호와 MFA는 조직 Keycloak에서 관리하므로 
 
 <p class="small">문서 오류 및 제품 문의:
 <a href="https://github.com/hkjang/invenqor">GitHub 저장소</a> ·
-보안 취약점 보고 절차: <a href="https://github.com/hkjang/invenqor/blob/v0.2.33/SECURITY.md">SECURITY.md</a></p>
+보안 취약점 보고 절차: <a href="https://github.com/hkjang/invenqor/blob/v0.2.34/SECURITY.md">SECURITY.md</a></p>
