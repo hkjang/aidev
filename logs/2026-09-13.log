@@ -444,3 +444,101 @@ reports: 12 day(s), 2 week(s), 1 month(s), 696 run(s), 770 usage row(s), 34 proj
 notify: 1 new alert(s)
 notify: commented on issue #1
 notify: toast shown
+[05:30:16] aidev synced: run(2026-09-13): igame — guarded files, PR open https://github.com/hkjang/igame/pull/17
+[05:30:16] done
+[05:40:31] cutover: waiting for CI on 18cfb20 (no-ci)
+[05:45:00] cutover: [ci] no-ci — 이 커밋에 검사가 없음 (정책 allow_merge_without_ci 가 없으면 차단)
+[05:45:00] cutover: 승인 대기 유지 (https://github.com/hkjang/cutover/pull/1, CI no-ci) — 회차로 기록하지 않음
+[05:45:20] skip DartFly: dirty working tree
+[05:45:24] skip Quantoss: dirty working tree
+[05:45:31] skip aiportal-java: STOP
+[05:45:49] skip postra: dirty working tree
+[05:45:57] candidates(32): AgentHub Clustara Invenqor Kkiit Momento ReSSO SecCheck Vendra ai-admin aiportal-front-admin aiportal-front aiportal-py appstore cutover dataworks git-ctx igame jikim jupiq kanpic moina moyro muni pii-masker ptium releasedock relio seaton umm vibe-coders visitflow weekly
+[05:45:57] campaign silent-sso-2026-09: picked jikim
+[05:45:57] picked: jikim
+[05:45:58] === jikim (base=main, run 2026-09-13-054557-jikim-improve, 회차 예산 $28)
+Preparing worktree (new branch 'auto/2026-09-13-0546')
+HEAD is now at 5f0c739 feat: release the visitor tracking snippet and nonce-backed CSP for v0.2.11
+[05:46:01] jikim: [base] pinned — main@5f0c739
+[05:46:01] jikim: [autonomy] release — 
+[05:57:13] jikim: improve — 78 turns, 11m, $6.98, success
+[05:57:14] jikim: verify `go build ./...` → exit 0 (0s)
+[05:57:14] jikim: verify `go vet ./...` → exit 0 (0s)
+[05:57:15] jikim: verify `go test ./...` → exit 0 (1s)
+[05:57:15] jikim: verify `cd web && [ -d node_modules ] || npm ci --no-audit --no-fund` → exit 0 (0s)
+[05:57:20] jikim: verify `cd web && npm test --silent` → exit 0 (5s)
+[05:57:21] jikim: verify `cd web && [ -d node_modules ] || npm ci --no-audit --no-fund` → exit 0 (0s)
+[05:57:24] jikim: verify `cd web && npm run build --silent` → exit 0 (3s)
+[05:57:24] jikim: [verify] passed — 검증 7개 통과 (auto)
+branch 'auto/2026-09-13-0546' set up to track 'origin/auto/2026-09-13-0546'.
+[05:57:31] jikim: [pr] created — https://github.com/hkjang/jikim/pull/27
+[06:00:32] jikim: review — 12 turns, 3m, $1.11, success
+[06:00:32] jikim: [review] approved — 리뷰 승인 (risk=medium)
+[06:00:34] jikim: waiting for CI on 7c4ea02 (success)
+[06:01:04] jikim: [ci] passed — 검사 2개 모두 success
+[06:01:08] jikim: [merge] done — 7c4ea0237eaea0a6825988b2e84b504c56b99eaa
+From https://github.com/hkjang/jikim
+ * branch            main       -> FETCH_HEAD
+   5f0c739..12fbd96  main       -> origin/main
+Updating 5f0c739..12fbd96
+Fast-forward
+ docs/ADMIN_GUIDE.md                        |  35 ++++++-
+ docs/USER_GUIDE.md                         |   5 +-
+ internal/httpapi/oidc.go                   | 114 ++++++++++++++++++++--
+ internal/httpapi/oidc_silent_test.go       | 152 +++++++++++++++++++++++++++++
+ internal/httpapi/resource_handlers.go      |   2 +-
+ internal/httpapi/server.go                 |   1 +
+ internal/store/settings.go                 |  20 +++-
+ internal/store/settings_validation_test.go |   9 ++
+ web/src/App.silentSso.test.tsx             |  80 +++++++++++++++
+ web/src/App.tsx                            |  15 ++-
+ web/src/components/AppLayout.tsx           |   3 +
+ web/src/contexts/AuthContext.tsx           |   3 +
+ web/src/lib/silentSso.test.ts              |  77 +++++++++++++++
+ web/src/lib/silentSso.ts                   |  90 +++++++++++++++++
+ web/src/pages/LoginPage.tsx                |  17 ++--
+ web/src/pages/OidcCallbackPage.tsx         |  10 +-
+ web/src/pages/admin/SettingsPage.test.tsx  |  14 +++
+ web/src/pages/admin/SettingsPage.tsx       |  10 ++
+ 18 files changed, 634 insertions(+), 23 deletions(-)
+ create mode 100644 internal/httpapi/oidc_silent_test.go
+ create mode 100644 web/src/App.silentSso.test.tsx
+ create mode 100644 web/src/lib/silentSso.test.ts
+ create mode 100644 web/src/lib/silentSso.ts
+Preparing worktree (detached HEAD 12fbd96)
+HEAD is now at 12fbd96 Merge pull request #27 from hkjang/auto/2026-09-13-0546
+[06:05:05] jikim: release — 22 turns, 3m, $1.44, success
+[06:05:10] jikim: waiting for CI on d1e446f (no-ci)
+[06:08:41] jikim: [release] published — v0.2.12
+From https://github.com/hkjang/jikim
+ * branch            main       -> FETCH_HEAD
+Updating 12fbd96..d1e446f
+Fast-forward
+ .github/workflows/release.yml  |   4 ++--
+ CHANGELOG.md                   |  17 ++++++++++++++++-
+ CONTRIBUTING.md                |   2 +-
+ README.md                      |  18 +++++++++---------
+ docker-compose.yml             |   2 +-
+ docs/ADMIN_GUIDE.md            |  18 +++++++++---------
+ docs/ADMIN_GUIDE.pdf           | Bin 1376484 -> 1405256 bytes
+ docs/USER_GUIDE.md             |  10 +++++-----
+ docs/USER_GUIDE.pdf            | Bin 2140489 -> 2141518 bytes
+ docs/guides/README.md          |  12 ++++++------
+ docs/guides/api-guide.md       |   8 ++++----
+ docs/guides/compatibility.md   |  12 ++++++------
+ docs/guides/index.html         |   8 ++++----
+ docs/guides/offline-install.md |  20 ++++++++++----------
+ docs/guides/security.md        |   6 +++---
+ docs/index.html                |  24 ++++++++++++------------
+ docs/llms.txt                  |   8 ++++----
+ internal/version/version.go    |   2 +-
+ scripts/version.sh             |   2 +-
+ web/package-lock.json          |   4 ++--
+ web/package.json               |   2 +-
+ web/src/lib/format.ts          |   2 +-
+ 22 files changed, 98 insertions(+), 83 deletions(-)
+[06:12:22] jikim: [assets] verified — v0.2.12 자산 2개 (이전 v0.2.11: 2)
+fatal: '/home/hkjang/.cache/auto-improve-wt/jikim' is not a working tree
+evidence: /mnt/c/Users/USER/projects/aidev/state/runs/2026-09-13-054557-jikim-improve/evidence.json
+reports: 12 day(s), 2 week(s), 1 month(s), 697 run(s), 773 usage row(s), 34 project page(s), 19 alert(s)
+notify: no new alerts
