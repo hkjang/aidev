@@ -1,0 +1,217 @@
+{
+  "run_id": "2026-09-12-191548-moina-improve",
+  "generated": "2026-09-12T19:44:53+09:00",
+  "run": {
+    "run_id": "2026-09-12-191548-moina-improve",
+    "project": "moina",
+    "kind": "improve",
+    "started": "2026-09-12T19:15:48+09:00",
+    "model": "claude-opus-5",
+    "policy_version": "5935779a",
+    "prompts_hash": "82f2440d4b2fef65",
+    "runner_version": "79bd9d23",
+    "finished": "2026-09-12T19:44:53+09:00",
+    "outcome": "verify-failed"
+  },
+  "record": {
+    "ts": "2026-09-12T19:44:53+09:00",
+    "date": "2026-09-12",
+    "project": "moina",
+    "result": "CI failed, PR open https://github.com/hkjang/moina/pull/19",
+    "outcome": "verify-failed",
+    "run_id": "2026-09-12-191548-moina-improve",
+    "base_sha": "9f29f92b52b60b2e41583c7ff167b07f6fcf271a",
+    "head_sha": "f49eb38fe8d55eddd2090bd94735e9129943ed02",
+    "pr": "https://github.com/hkjang/moina/pull/19",
+    "stages": {
+      "base": {
+        "state": "pinned",
+        "reason": "main@9f29f92",
+        "at": "2026-09-12T19:15:55+09:00"
+      },
+      "autonomy": {
+        "state": "release",
+        "reason": "",
+        "at": "2026-09-12T19:15:55+09:00"
+      },
+      "verify": {
+        "state": "passed",
+        "reason": "검증 7개 통과 (auto)",
+        "at": "2026-09-12T19:38:54+09:00"
+      },
+      "pr": {
+        "state": "created",
+        "reason": "https://github.com/hkjang/moina/pull/19",
+        "at": "2026-09-12T19:39:00+09:00"
+      },
+      "review": {
+        "state": "approved",
+        "reason": "리뷰 승인 (risk=medium)",
+        "at": "2026-09-12T19:42:33+09:00"
+      },
+      "ci": {
+        "state": "failed",
+        "reason": "성공이 아닌 검사: Image and browser smoke=failure",
+        "at": "2026-09-12T19:44:53+09:00"
+      }
+    },
+    "campaign": "tracking-2026-09",
+    "autonomy": "release",
+    "files": 17,
+    "additions": 2095,
+    "deletions": 4,
+    "tests": 4,
+    "title": "feat: 관리자가 화면에서 방문 추적 스니펫을 붙일 수 있게 합니다"
+  },
+  "stages": {
+    "base": {
+      "state": "pinned",
+      "reason": "main@9f29f92",
+      "at": "2026-09-12T19:15:55+09:00"
+    },
+    "autonomy": {
+      "state": "release",
+      "reason": "",
+      "at": "2026-09-12T19:15:55+09:00"
+    },
+    "verify": {
+      "state": "passed",
+      "reason": "검증 7개 통과 (auto)",
+      "at": "2026-09-12T19:38:54+09:00"
+    },
+    "pr": {
+      "state": "created",
+      "reason": "https://github.com/hkjang/moina/pull/19",
+      "at": "2026-09-12T19:39:00+09:00"
+    },
+    "review": {
+      "state": "approved",
+      "reason": "리뷰 승인 (risk=medium)",
+      "at": "2026-09-12T19:42:33+09:00"
+    },
+    "ci": {
+      "state": "failed",
+      "reason": "성공이 아닌 검사: Image and browser smoke=failure",
+      "at": "2026-09-12T19:44:53+09:00"
+    }
+  },
+  "provenance": {
+    "model": "claude-opus-5",
+    "policy_version": "5935779a",
+    "prompts_hash": "82f2440d4b2fef65",
+    "runner_version": "79bd9d23",
+    "base_sha": "9f29f92b52b60b2e41583c7ff167b07f6fcf271a",
+    "head_sha": "f49eb38fe8d55eddd2090bd94735e9129943ed02",
+    "pr": "https://github.com/hkjang/moina/pull/19"
+  },
+  "verification": {
+    "runner": {
+      "source": "auto",
+      "commands": [
+        {
+          "cmd": "cd backend && go build ./...",
+          "exit": 0,
+          "seconds": 0
+        },
+        {
+          "cmd": "cd backend && go vet ./...",
+          "exit": 0,
+          "seconds": 0
+        },
+        {
+          "cmd": "cd backend && go test ./...",
+          "exit": 0,
+          "seconds": 1
+        },
+        {
+          "cmd": "cd frontend && [ -d node_modules ] || npm ci --no-audit --no-fund",
+          "exit": 0,
+          "seconds": 0
+        },
+        {
+          "cmd": "cd frontend && npm test --silent",
+          "exit": 0,
+          "seconds": 3
+        },
+        {
+          "cmd": "cd frontend && [ -d node_modules ] || npm ci --no-audit --no-fund",
+          "exit": 0,
+          "seconds": 0
+        },
+        {
+          "cmd": "cd frontend && npm run build --silent",
+          "exit": 0,
+          "seconds": 5
+        }
+      ]
+    },
+    "runner_gate": {
+      "ok": true,
+      "state": "verified",
+      "reason": "검증 7개 통과 (auto)"
+    },
+    "after_rebase": null,
+    "review": {
+      "verdict": "approve",
+      "reasons": [],
+      "notes": [
+        "로컬 main 이 origin/main(PR #18 머지 포함)보다 뒤처져 있어 실제 PR 내용은 f49eb38 단일 커밋으로 판단했고 origin/main 기준으로 심사했습니다.",
+        "검증: go build/vet/test(internal/analytics, internal/httpapi) 통과, frontend tsc·eslint·vitest(AdminTrackingSettings.test.tsx 5건) 통과. 테스트는 nonce-정책 일치, 'unsafe-inline' 부재, 관리 화면 제외, 비화면 경로 apiPolicy, 프록시 cookie/Authorization 미전달, csp-report 무인증 204 등 변경 대상을 실제로 실행하며 단언합니다.",
+        "backend/internal/httpapi/analytics.go:355-422 Momento 프록시는 무인증으로 /momento/* 하위 경로 전체를 수집기 base URL 에 그대로 이어 붙여 GET/HEAD/POST 를 중계합니다(경로 화이트리스트 없음). 수집기가 같은 오리진에 대시보드·관리 API 를 함께 노출하거나 momentoAllowPrivateNetwork 로 사설망 host 를 지정한 경우, 인터넷에서 그 host 의 임의 경로에 도달하는 SSRF 성 표면이 됩니다. 문서('수집기 하나에만 연결')와 코드는 일치하나, /tracker.js 와 수집 endpoint 로 경로를 제한하는 후속 강화를 권합니다.",
+        "backend/internal/httpapi/analytics.go:420 업스트림 응답 본문을 크기 제한 없이 io.Copy 합니다(10초 timeout 만 있음). 요청 본문은 64KB 로 제한되지만 응답은 제한이 없습니다.",
+        "backend/internal/httpapi/server.go:773-778 명시적으로 /index.html 을 요청하면 정적 파일 분기(os.Stat 성공)로 먼저 처리되어 헤더에는 nonce 가 붙지만 스니펫은 삽입되지 않습니다. 추적 누락일 뿐 보안상 문제는 없습니다.",
+        "backend/internal/httpapi/analytics.go:69-86 securityHeaders 미들웨어가 모든 화면 경로(정적 asset 포함)에서 설정 캐시를 읽고, DB 장애 시 캐시 미스마다 slog.Warn 을 남겨 장애 중 로그가 많아질 수 있습니다.",
+        "backend/internal/httpapi/analytics.go:164-182 csp-report 는 무인증·Origin 검사 제외이며 rate limit 이 없습니다. 메모리 100개 ring 이라 저장 폭주는 없지만, 누구나 가짜 출처를 채워 실제 위반 기록을 밀어낼 수 있습니다(관리자 UI 의 '허용' 버튼을 유도하는 사회공학 여지).",
+        "frontend/src/pages/admin/AdminTrackingSettings.tsx:106-117 '허용' 은 서버에 저장된 설정을 기준으로 allowedHosts 를 더해 저장한 뒤 reload 하므로, 카드에서 저장하지 않은 편집 내용은 사라집니다(UX).",
+        "되돌리기: 설정은 analytics.tracking 키 한 건이며 마이그레이션·외부 상태 변경 없음. revert 시 남는 설정 행은 무시됩니다."
+      ],
+      "risk": "medium"
+    },
+    "ci_gate": {
+      "ok": false,
+      "state": "failed",
+      "reason": "성공이 아닌 검사: Image and browser smoke=failure",
+      "checks": 2,
+      "bad": 1
+    }
+  },
+  "release": {
+    "result": null,
+    "assets_sha256": []
+  },
+  "approval": null,
+  "usage": [
+    {
+      "ts": "2026-09-12T19:38:42+09:00",
+      "date": "2026-09-12",
+      "project": "moina",
+      "phase": "improve",
+      "run_id": "2026-09-12-191548-moina-improve",
+      "campaign": "tracking-2026-09",
+      "subtype": "success",
+      "duration_ms": 1492761,
+      "num_turns": 85,
+      "cost_usd": 11.675501000000002,
+      "input_tokens": 164,
+      "output_tokens": 87105,
+      "cache_read": 14013098,
+      "cache_create": 247577
+    },
+    {
+      "ts": "2026-09-12T19:42:33+09:00",
+      "date": "2026-09-12",
+      "project": "moina",
+      "phase": "review",
+      "run_id": "2026-09-12-191548-moina-improve",
+      "campaign": "tracking-2026-09",
+      "subtype": "success",
+      "duration_ms": 228796,
+      "num_turns": 20,
+      "cost_usd": 1.7896839999999998,
+      "input_tokens": 40,
+      "output_tokens": 13687,
+      "cache_read": 1184106,
+      "cache_create": 85344
+    }
+  ]
+}
