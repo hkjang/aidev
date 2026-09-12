@@ -85,7 +85,7 @@ stage_mark(){
   case "$1" in
     passed|done|created|approved|published|pinned|merged|recovered|pushed|pr-opened) echo "✅";;
     failed|error|rejected|create-failed|push-failed|tag-push-failed|failed-twice|conflict|ci-blocked|blocked) echo "❌";;
-    held|hold|stopped|stale|closed)                       echo "⛔";;
+    held|held-expected|hold|stopped|stale|closed)         echo "⛔";;
     skipped|nothing|nothing-to-release)                   echo "➖";;
     *)                                                     echo "•";;
   esac
@@ -158,6 +158,8 @@ stage(){ # $1=단계 $2=상태 $3=사유 — $OUT/stages.json 에 누적
   log "$n: [$1] $2 — $3"
   # 단계마다 알린다. tg.sh 는 설정이 없으면 조용히 넘어가고 실패해도 회차를 붙잡지 않는다.
   # 40자리 커밋 해시는 앞 7자만 남긴다 — 알림에서 전체 해시는 읽을 것이 아니라 벽이다.
+  # 부르는 쪽이 따로 요약을 보내는 상태는 여기서 알리지 않는다.
+  case "$2" in held-expected) return 0;; esac
   local detail ctx
   detail=$(printf '%s' "${3:-}" | sed -E 's/\b([0-9a-f]{7})[0-9a-f]{25,}\b/\1/g')
   ctx=$(stage_context "$1")
@@ -222,17 +224,39 @@ budget_ok(){ # $1=이번 단계 예산
   awk -v s="$spent" -v b="${1:-0}" -v m="$MAX_DAILY_COST" 'BEGIN{exit !(s+b<=m)}'
 }
 
+# 걸린 보호 파일이 전부 이 캠페인이 예상한 경로인가.
+#
+# 캠페인이 인증을 고치는 일이면 대상마다 auth/ 가 걸린다. 걸리는 것 자체는 옳다 —
+# 인증 변경은 사람이 봐야 한다. 옳지 않은 것은 스물세 번 경보가 울리는 일이다.
+# 사람이 시켜서 하는 일에 "예상 밖의 것을 건드렸다" 고 알릴 이유가 없다.
+#
+# 하나라도 예상 밖이면 평소대로 알린다. 그것이 이 가드가 원래 잡으려던 것이다.
+campaign_expects_guard(){ # $1=걸린 파일 목록(줄바꿈)
+  [ -n "${CAMPAIGN_EXPECTED_GUARD:-}" ] || return 1
+  [ "$n" = "${CAMPAIGN_PROJECT:-}" ] || return 1
+  local file pattern matched
+  while IFS= read -r file; do
+    [ -n "$file" ] || continue
+    matched=0
+    for pattern in $CAMPAIGN_EXPECTED_GUARD; do
+      case "$file" in *"$pattern"*) matched=1; break;; esac
+    done
+    [ "$matched" -eq 1 ] || return 1
+  done <<<"$1"
+  return 0
+}
+
 # 이 프로젝트가 활성 캠페인의 대상인가. 맞으면 그 캠페인의 예산 정보를 잡아 온다.
 campaign_claim(){ # $1=프로젝트
-  local cj="$STATE/campaigns.json" id budget until ibudget projs
+  local cj="$STATE/campaigns.json" id budget until ibudget guardpat projs
   [ -f "$cj" ] || return 1
-  while IFS=$'\t' read -r id budget until ibudget projs; do
+  while IFS=$'\t' read -r id budget until ibudget guardpat projs; do
     [ -n "$id" ] && [ -n "$until" ] || continue
     [[ "$until" < "$RUN_DATE" ]] && continue
     printf '%s\n' $projs | grep -qx "$1" || continue
-    CAMPAIGN_ID=$id; CAMPAIGN_PROJECT=$1; CAMPAIGN_BUDGET=$budget; CAMPAIGN_IMPROVE_BUDGET=$ibudget
+    CAMPAIGN_ID=$id; CAMPAIGN_PROJECT=$1; CAMPAIGN_BUDGET=$budget; CAMPAIGN_IMPROVE_BUDGET=$ibudget; CAMPAIGN_EXPECTED_GUARD=$guardpat
     return 0
-  done < <(jq -r '.campaigns[]? | select(.done!=true) | "\(.id)\t\(.budget_usd)\t\(.until)\t\(.improve_budget_usd // "")\t\(.projects|join(" "))"' "$cj" 2>/dev/null)
+  done < <(jq -r '.campaigns[]? | select(.done!=true) | "\(.id)\t\(.budget_usd)\t\(.until)\t\(.improve_budget_usd // "")\t\((.expected_guard // [])|join(" "))\t\(.projects|join(" "))"' "$cj" 2>/dev/null)
   return 1
 }
 
@@ -344,10 +368,10 @@ rebase_pr(){ # $1=PR url $2=base
 }
 # 캠페인: 활성(미완료·기한 내·예산 남음) 캠페인의 대상 프로젝트를 후보 중에서 고른다 → CAMPAIGN_ID, CAMPAIGN_NOTE, CAMPAIGN_PROJECT
 pick_campaign(){
-  local cj="$STATE/campaigns.json" id goal goal64 budget until ibudget spent projs cp
-  CAMPAIGN_ID=""; CAMPAIGN_NOTE=""; CAMPAIGN_PROJECT=""; CAMPAIGN_BUDGET=0; CAMPAIGN_IMPROVE_BUDGET=""
+  local cj="$STATE/campaigns.json" id goal goal64 budget until ibudget guardpat spent projs cp
+  CAMPAIGN_ID=""; CAMPAIGN_NOTE=""; CAMPAIGN_PROJECT=""; CAMPAIGN_BUDGET=0; CAMPAIGN_IMPROVE_BUDGET=""; CAMPAIGN_EXPECTED_GUARD=""
   [ -f "$cj" ] || return 0
-  while IFS=$'\t' read -r id goal64 budget until ibudget projs; do
+  while IFS=$'\t' read -r id goal64 budget until ibudget guardpat projs; do
     [ -n "$id" ] || continue
     goal=$(printf '%s' "$goal64" | base64 -d 2>/dev/null)
     # 빈 기한은 "지난 기한" 이 아니다 — 읽기가 어긋났을 때 캠페인을 조용히 끄지 않는다.
@@ -393,7 +417,7 @@ pick_campaign(){
     fi
     if [ -n "$best" ]; then
         cp=$best
-        CAMPAIGN_ID=$id; CAMPAIGN_PROJECT=$cp; CAMPAIGN_BUDGET=$budget; CAMPAIGN_IMPROVE_BUDGET=$ibudget
+        CAMPAIGN_ID=$id; CAMPAIGN_PROJECT=$cp; CAMPAIGN_BUDGET=$budget; CAMPAIGN_IMPROVE_BUDGET=$ibudget; CAMPAIGN_EXPECTED_GUARD=$guardpat
         CAMPAIGN_NOTE="## 개선 캠페인 \"$id\" (자동 배정) — 새 아이디어 대신 이 목표를 우선하세요
 $goal
 예산: \$$spent / \$$budget 사용, 기한 $until. 이 목표와 무관한 변경은 만들지 마세요."
@@ -1017,7 +1041,18 @@ $(printf '%b' "$RUN_SPEC")
       if [ "$merge_ok" -eq 1 ]; then
         guarded=$(guarded_files "$BASE_SHA")
         if [ -n "$guarded" ]; then
-          stage guard held "$(tr '\n' ' ' <<<"$guarded")"; result="guarded files, PR open $url"
+          if campaign_expects_guard "$guarded"; then
+            # 사람이 시켜서 하는 일이다. 막는 것은 그대로 두되, 대상마다 경보를
+            # 울리지 않는다. 아래 문장은 회차마다 같으므로 tg.sh 가 한 번만 보낸다.
+            stage guard held-expected "$(tr '\n' ' ' <<<"$guarded")"
+            "$HERE/tg.sh" "⛔ 캠페인 $CAMPAIGN_ID — 보호 파일을 건드리는 변경이라 사람 검토가 필요합니다.
+이 캠페인이 고치는 자리가 보호 경로($CAMPAIGN_EXPECTED_GUARD)라 대상마다 걸립니다.
+검토 대기 중인 PR 은 대시보드의 '주의 필요' 에서 한꺼번에 보세요.
+https://hkjang.github.io/aidev/" >/dev/null 2>&1 &
+          else
+            stage guard held "$(tr '\n' ' ' <<<"$guarded")"
+          fi
+          result="guarded files, PR open $url"
           (cd "$repo" && gh pr comment "$url" --body "🔒 보호 파일을 건드려 자동 머지하지 않습니다. 사람이 검토해 주세요.
 
 $(sed 's/^/- /' <<<"$guarded")
