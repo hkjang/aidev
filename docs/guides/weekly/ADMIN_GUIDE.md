@@ -1,6 +1,6 @@
 # Weekly 관리자 가이드
 
-- **문서 버전**: v0.299.0
+- **문서 버전**: v0.300.0
 - **대상**: 시스템 관리자, Security/DevOps 엔지니어, 데이터 보안 담당자
 - **문서 개요**: 구성 요소, 릴리즈 자산으로 설치, 환경 변수와 관리자 설정, 계정과 권한, 운영(백업·상태·업그레이드), 장애 대응, 보안. 화면을 쓰는 사람의 안내는 [사용자 가이드](USER_GUIDE.md)에 있습니다.
 
@@ -28,14 +28,14 @@
 
 ## 2. 설치
 
-GitHub Release 에서 `weekly-v0.299.0.tar.gz` 하나만 반입합니다. 자세한 검증 근거(파일 해시와 이미지 다이제스트가 왜 둘 다 필요한지)는 [README 오프라인 설치](../README.md#오프라인-설치)에 있고, 여기서는 순서대로 붙여 넣을 명령만 적습니다.
+GitHub Release 에서 `weekly-v0.300.0.tar.gz` 하나만 반입합니다. 자세한 검증 근거(파일 해시와 이미지 다이제스트가 왜 둘 다 필요한지)는 [README 오프라인 설치](../README.md#오프라인-설치)에 있고, 여기서는 순서대로 붙여 넣을 명령만 적습니다.
 
 ```bash
 # 1. 파일이 온전히 왔는지 — 릴리즈에 적힌 SHA-256 과 비교
-sha256sum weekly-v0.299.0.tar.gz
+sha256sum weekly-v0.300.0.tar.gz
 
-# 2. 이미지 적재. 같은 버전의 weekly:v0.299.0 이 생깁니다
-gzip -dc weekly-v0.299.0.tar.gz | docker load
+# 2. 이미지 적재. 같은 버전의 weekly:v0.300.0 이 생깁니다
+gzip -dc weekly-v0.300.0.tar.gz | docker load
 
 # 3. 환경 파일. deploy/.env.example 을 복사해 값을 채웁니다
 cp deploy/.env.example deploy/.env
@@ -80,7 +80,7 @@ Kubernetes 는 `deploy/kubernetes.yaml`을 씁니다. `strategy: Recreate`와 `s
 | `WEEKLY_ENCRYPTION_KEY` | 없음 (볼륨의 `instance.key` 로 대체) | 강력 권장 | 관리자 화면에서 입력한 OIDC Client Secret·AI API Key·Confluence 비밀번호·ITSM 토큰·SMTP 비밀번호를 보호하는 마스터 키. `openssl rand -base64 32` 로 한 번 만들고 업그레이드마다 같은 값을 유지합니다. 비우면 키가 상태 볼륨에만 저장되는 하위 호환 모드이며 기동 로그가 그 사실을 적습니다 |
 | `WEEKLY_ALLOW_SECRET_RESET` | `false` | 선택 | 비밀 설정을 복호화할 수 없는 상태에서 기동을 강행하고 모두 다시 입력하기로 했을 때만 `true`. 기존 암호문은 지우지 않고 화면에 `다시 입력 필요`로 표시합니다 |
 
-Compose 파일은 `WEEKLY_VERSION`(이미지 태그, 기본 `0.299.0`)도 읽습니다. 이것은 프로세스가 아니라 `deploy/compose.yaml`의 변수입니다.
+Compose 파일은 `WEEKLY_VERSION`(이미지 태그, 기본 `0.300.0`)도 읽습니다. 이것은 프로세스가 아니라 `deploy/compose.yaml`의 변수입니다.
 
 ### 3.2 관리자 화면의 서비스 설정
 
@@ -254,7 +254,7 @@ Confluence 본문은 PostgreSQL 이나 로그에 저장되지 않습니다. 운�
 {"level":"INFO","msg":"bootstrap administrator ensured","username":"admin"}
 {"level":"INFO","msg":"database capabilities detected","pg_trgm":true,"pgvector":false}
 {"level":"INFO","msg":"password hashing pool sized","workers":8,"reserved_mib":512,"container_limit_mib":0}
-{"level":"INFO","msg":"Weekly started","address":":8080","version":"0.299.0"}
+{"level":"INFO","msg":"Weekly started","address":":8080","version":"0.300.0"}
 ```
 
 `key_source`가 `environment`가 아니라 볼륨이면 `WEEKLY_ENCRYPTION_KEY`가 없는 하위 호환 모드입니다. `container_limit_mib`가 0 이면 메모리 한도 없이 호스트 메모리를 상속한 것이니 Compose 의 `mem_limit`를 확인하십시오.
