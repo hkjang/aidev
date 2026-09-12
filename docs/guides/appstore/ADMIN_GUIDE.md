@@ -1,6 +1,6 @@
 # AppStore 관리자 가이드
 
-대상 버전: **v2.5.8** · 실린 화면은 모두 이 버전을 실제로 띄워 찍은 것입니다.
+대상 버전: **v2.6.0** · 실린 화면은 모두 이 버전을 실제로 띄워 찍은 것입니다.
 
 화면을 쓰는 사람을 위한 설명은 [사용자 가이드](USER_GUIDE.md)에 있습니다. 이 문서는 그 화면을 띄워 놓고 지키는 사람을 위한 것입니다.
 
@@ -34,7 +34,7 @@ AppStore는 컨테이너 하나로 동작합니다. React SPA, REST API, OIDC �
 
 ## 2. 설치
 
-릴리스 자산 하나(`appstore-vX.Y.Z.tar.gz`)로 폐쇄망까지 반입할 수 있습니다. 아래는 v2.5.8 기준입니다.
+릴리스 자산 하나(`appstore-vX.Y.Z.tar.gz`)로 폐쇄망까지 반입할 수 있습니다. 아래는 v2.6.0 기준입니다.
 
 ### 2.1. 선행 조건
 
@@ -52,10 +52,10 @@ PostgreSQL 이미지는 릴리스에 포함되지 않습니다. 먼저 준비하
 ### 2.2. 이미지 반입과 검증
 
 ```bash
-sha256sum appstore-v2.5.8.tar.gz          # 릴리스 노트의 SHA-256과 대조
-gzip -t appstore-v2.5.8.tar.gz
-gzip -dc appstore-v2.5.8.tar.gz | docker load
-docker image inspect appstore:v2.5.8 \
+sha256sum appstore-v2.6.0.tar.gz          # 릴리스 노트의 SHA-256과 대조
+gzip -t appstore-v2.6.0.tar.gz
+gzip -dc appstore-v2.6.0.tar.gz | docker load
+docker image inspect appstore:v2.6.0 \
   --format '{{.RepoTags}} user={{.Config.User}} version={{index .Config.Labels "org.opencontainers.image.version"}}'
 ```
 
@@ -65,10 +65,10 @@ docker image inspect appstore:v2.5.8 \
 
 ```bash
 docker build \
-  --build-arg VERSION=v2.5.8 \
+  --build-arg VERSION=v2.6.0 \
   --build-arg COMMIT="$(git rev-parse HEAD)" \
   --build-arg BUILD_DATE="$(date -u +%Y-%m-%dT%H:%M:%SZ)" \
-  -t appstore:v2.5.8 .
+  -t appstore:v2.6.0 .
 ```
 
 ### 2.3. 환경 파일 준비
@@ -102,13 +102,13 @@ docker run -d \
   --security-opt no-new-privileges:true \
   --env-file ./appstore.env \
   -p 127.0.0.1:8080:8080 \
-  appstore:v2.5.8
+  appstore:v2.6.0
 ```
 
 Docker Compose (저장소의 `docker-compose.yml`):
 
 ```bash
-APPSTORE_VERSION=v2.5.8 docker compose up -d --no-build
+APPSTORE_VERSION=v2.6.0 docker compose up -d --no-build
 docker compose ps
 docker compose logs --tail 100 appstore
 ```
@@ -349,6 +349,36 @@ Provider의 Base URL·API Key·기본 모델과, 모델별 Context Window / Max 
 
 로그인, 앱 변경, 승인·반려, 키 수명주기, 역할·설정 변경이 actor·대상·시각·요청 ID와 함께 남습니다. DB 트리거(`audit_logs_immutable`)가 UPDATE와 DELETE를 막으므로 **관리자에게도 삭제 기능이 없습니다.**
 
+### 4.9. 방문 추적과 콘텐츠 보안 정책
+
+![방문 추적 — provider, Momento 프록시, 허용 출처와 정책이 차단한 출처](assets/screenshots/captures/admin-analytics-desktop.webp)
+
+관리자 → **방문 추적**에서 방문 추적 스크립트를 화면에 붙입니다. 설정은 환경 변수가 아니라 PostgreSQL(`system_settings.analytics`)에 저장되므로 수집기 주소가 바뀌어도 재배포 없이 바꿀 수 있고, 변경은 감사 로그에 `analytics.setting.update`로 남습니다. **기본값은 꺼짐**입니다. 새로 설치한 곳은 이 화면을 손대기 전까지 아무것도 달라지지 않습니다.
+
+| 칸 | 초기값 | 설명 |
+| --- | --- | --- |
+| 방문 추적 사용 | 꺼짐 | 끄면 어떤 페이지에도 스니펫이 들어가지 않고 정책도 원래대로 좁아집니다 |
+| Provider | 사용 안 함 | `Momento` · `GA4` · `GTM` · `Matomo` · `직접 붙여 넣기` |
+| Momento 수집기 주소 / 사이트 ID | 빈 값 | 사내 Momento 수집기의 origin과 사이트 id |
+| 같은 오리진 프록시 사용 | 켬 | 이 서비스가 `/momento/*`를 수집기로 넘깁니다. 브라우저는 이 서비스 주소만 보므로 외부 출처가 정책에 등장하지 않습니다 |
+| 측정 ID / Matomo 주소 · 사이트 ID | 빈 값 | GA4·GTM·Matomo용. 영문·숫자·`_ . : -` 64자 이내 |
+| 추적 스니펫 | 빈 값 | 직접 붙여 넣기용 `<script>` 태그. **8KB**를 넘으면 저장되지 않습니다 |
+| 추가 허용 출처 | 빈 값 | 스니펫에서 자동으로 읽지 못한 `https://host`를 쉼표·줄바꿈으로 나열 |
+| 관리자 콘솔에서도 추적 | 꺼짐 | `/admin` 화면은 기본으로 추적하지 않습니다 |
+| 삽입 위치 | head | `head` 또는 `body` |
+
+**Momento를 먼저 씁니다.** Momento는 사내 자체 호스팅 수집기라 방문 데이터가 밖으로 나가지 않는 유일한 선택지입니다. 같은 오리진 프록시를 켜 두면 스니펫은 `/momento/tracker.js`를 읽고 이벤트를 `/momento`로 보내며, 서비스가 그 요청을 수집기 주소로 전달합니다. 전달할 때 이 서비스의 세션 쿠키와 `Authorization` 헤더는 떼어 냅니다 — 수집기는 이벤트만 받고 방문자의 세션은 받지 않습니다. 추적이 꺼져 있거나 provider가 Momento가 아니면 `/momento/*`는 404입니다. GA4·GTM은 데이터가 Google로 나가므로 폐쇄망에서는 동작하지 않습니다.
+
+**콘텐츠 보안 정책.** 모든 화면은 `script-src 'self'`로 잠겨 있어 스니펫을 그냥 붙이면 브라우저가 조용히 차단합니다. 추적을 켜면 서비스는 다음을 요청마다 합니다.
+
+1. 무작위 nonce를 만들어 정책의 `script-src`에 `'nonce-…'`로 넣고, 스니펫의 **모든** `<script>` 태그에 같은 값을 붙입니다. `'unsafe-inline'`은 쓰지 않습니다. 한 번 풀면 그 앱의 모든 인라인 스크립트가 함께 허용되고 추적을 끈 뒤에도 느슨한 채 남기 때문입니다.
+2. provider가 정한 출처(예: Matomo 주소)와 붙여 넣은 스니펫에서 읽어 낸 `http(s)` 출처, 추가 허용 출처를 `script-src` · `connect-src` · `img-src`에 더합니다.
+3. `report-uri /api/v1/analytics/csp-report`를 정책에 넣어 브라우저가 거부한 요청을 신고하게 합니다. 이 신고는 추적이 켜진 동안에만 옵니다.
+
+`/api/*` · `/mcp` · `/health*` · `/momento/*` 같은 비화면 경로는 `default-src 'none'`으로 오히려 더 좁고, 관리자 콘솔은 *관리자 콘솔에서도 추적*을 켰을 때만 스니펫을 받습니다. 추적을 끄면 정책은 7.2의 원래 문자열로 즉시 돌아갑니다.
+
+**정책이 차단한 출처.** 같은 화면 아래에 브라우저가 신고한 차단이 출처·지시어·횟수로 모입니다(메모리에 최근 100건, 같은 출처는 한 줄). 화면이 비어 보이는데 여기에 출처가 있으면 그 출처가 막힌 것입니다. **허용에 추가**를 누르면 추가 허용 출처에 들어가고 다음 페이지부터 정책에 실립니다. 스니펫을 고친 뒤에는 **기록 비우기**로 지우고 다시 띄워 남는 차단이 없는지 확인합니다. Momento 프록시를 쓰면 외부 출처가 없으니 이 표가 비어 있는 것이 정상입니다.
+
 ---
 
 ## 5. 운영
@@ -419,7 +449,7 @@ pg_restore --clean --if-exists --no-owner --no-privileges \
 4. 교체합니다.
 
 ```bash
-APPSTORE_VERSION=v2.5.8 docker compose up -d --no-build
+APPSTORE_VERSION=v2.6.0 docker compose up -d --no-build
 docker compose ps
 docker compose logs --tail 200 appstore
 ```
@@ -436,7 +466,7 @@ docker compose logs --tail 200 appstore
 
 ```bash
 docker rm -f appstore
-docker rename appstore-v2.5.7-stopped appstore
+docker rename appstore-v2.5.8-stopped appstore
 docker start appstore
 curl --fail http://127.0.0.1:8080/health/ready
 ```
@@ -465,6 +495,9 @@ curl --fail http://127.0.0.1:8080/health/ready
 | 검토 대기 목록이 비어 있다 | 관리자 → 승인 워크플로 | *Workflow가 활성화된 경우에만 등록 건이 이 목록에 나타납니다.* |
 | 팀장이 `팀장 검토에는 사용자 팀 정보가 필요합니다.` 를 받는다 | 사용자 → 담당팀 | SSO에서 팀 정보가 오지 않았습니다. 사용자 정보의 팀을 채웁니다 |
 | AI 응답이 `사용 가능한 AI Provider가 없습니다.` | 관리자 → AI 공급자 | Provider와 모델을 등록하고 활성화합니다 |
+| 추적을 켰는데 수집이 들어오지 않는다 | 관리자 → 방문 추적 → **정책이 차단한 출처** | 출처가 보이면 **허용에 추가**합니다. 비어 있으면 브라우저 콘솔의 `Refused to load` 줄과 스니펫의 `<script>`에 `nonce`가 붙었는지 확인합니다. Momento는 같은 오리진 프록시를 켜는 편이 가장 확실합니다 |
+| `/momento/*`가 404 | 관리자 → 방문 추적 | 추적 사용·provider Momento·같은 오리진 프록시가 모두 켜져 있어야 열립니다 |
+| `/momento/*`가 502 | `docker logs`에서 `momento proxy failed` | 컨테이너가 Momento 수집기 주소에 15초 안에 닿아야 합니다 |
 
 ---
 
@@ -480,12 +513,13 @@ curl --fail http://127.0.0.1:8080/health/ready
 | API·MCP 익명 조회 | 켬 | 조직 정책에 따라 끄거나 최소 조회로 둡니다 |
 | 공개 모드 | 켬 | 카탈로그를 사내에만 보여야 한다면 끕니다 |
 | API 120 / MCP 60 req·min | 그대로 | 실제 사용량에 맞춰 조정합니다 |
+| 방문 추적 | 꺼짐 | 켜야 한다면 Momento + 같은 오리진 프록시로. 외부 provider는 방문 데이터가 밖으로 나갑니다 |
 
 ### 7.2. 노출 범위
 
 컨테이너는 평문 HTTP 8080만 listen합니다. **8080을 외부에 직접 열지 말고** reverse proxy가 `127.0.0.1:8080`에 붙게 하세요(`-p 127.0.0.1:8080:8080`). PostgreSQL은 서비스 네트워크 안에만 두고 외부에 열지 않습니다.
 
-서비스가 스스로 붙이는 응답 헤더: `X-Content-Type-Options: nosniff`, `X-Frame-Options: DENY`, `Referrer-Policy: strict-origin-when-cross-origin`, `Permissions-Policy`(camera·microphone·geolocation·payment 모두 차단), `Cross-Origin-Opener-Policy: same-origin`, 그리고 `default-src 'self'` 기반 CSP(`frame-ancestors 'none'`, `object-src 'none'`). reverse proxy에서 이 헤더를 약하게 덮어쓰지 마세요.
+서비스가 스스로 붙이는 응답 헤더: `X-Content-Type-Options: nosniff`, `X-Frame-Options: DENY`, `Referrer-Policy: strict-origin-when-cross-origin`, `Permissions-Policy`(camera·microphone·geolocation·payment 모두 차단), `Cross-Origin-Opener-Policy: same-origin`, 그리고 `default-src 'self'` 기반 CSP(`frame-ancestors 'none'`, `object-src 'none'`, `script-src 'self'`). 방문 추적을 켜면 페이지 응답의 `script-src`에 요청마다 다른 `'nonce-…'`와 provider 출처가 더해지고(4.9), `/api/*`·`/mcp`·`/momento/*`는 `default-src 'none'`을 받습니다. reverse proxy에서 이 헤더를 약하게 덮어쓰거나 캐시하지 마세요 — nonce는 응답마다 달라야 합니다.
 
 ### 7.3. 비밀값 취급
 
