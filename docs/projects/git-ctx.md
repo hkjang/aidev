@@ -1,7 +1,7 @@
 ---
 title: "git-ctx — 자율 개선 이력"
 description: "git-ctx: 자율 개선 회차 19회, 릴리즈 9건. 최근 릴리즈 v0.77.11 (자산 2개)."
-last_modified_at: 2026-09-12 20:59:55 +0900
+last_modified_at: 2026-09-13 00:29:28 +0900
 ---
 {% raw %}
 <script type="application/ld+json">
@@ -18,7 +18,7 @@ last_modified_at: 2026-09-12 20:59:55 +0900
   "name": "hkjang",
   "url": "https://github.com/hkjang"
  },
- "dateModified": "2026-09-12T20:59:55+09:00",
+ "dateModified": "2026-09-13T00:29:28+09:00",
  "version": "0.77.11"
 }
 </script>
