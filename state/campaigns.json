@@ -91,6 +91,39 @@
       "improve_budget_usd": 16,
       "until": "2026-11-15",
       "done": false
+    },
+    {
+      "id": "mail-2026-09",
+      "goal": "사내 SMTP 릴레이로 이벤트 알림을 보내는 체계를 이 저장소에 만든다.\n\n표준과 참조 구현은 aidev 저장소의 MAIL-STANDARD.md 에 있다. 먼저 읽고 그대로 따른다:\n  /mnt/c/Users/USER/projects/aidev/MAIL-STANDARD.md\n\n참조 구현은 kanpic 이다. 코드를 베끼지 말고 이 저장소의 언어와 구조에 맞게 같은 능력을 만든다:\n  /mnt/c/Users/USER/projects/kanpic/internal/mail/         (릴레이 연결·설정·발송 기록)\n  /mnt/c/Users/USER/projects/kanpic/internal/httpapi/mail.go (기록 조회·시험 발송)\n\n지켜야 할 다섯 가지는 표준에 있고, 그중 넷은 빠뜨리기 쉬우니 다시 적는다.\n- 메일은 배경에서 보낸다. 릴레이가 죽어 있어도 그 요청은 정상으로 끝나야 한다.\n- 시도마다 기록한다. 실패만 남기면 '안 왔다'는 문의에 답할 수 없다. 다만 본문은 담지 않는다.\n- 사용자 명부를 새로 만들지 않는다. 계정 id 를 메일 주소로 바꾸는 조회만 빌려 쓴다.\n- SMTP 비밀번호는 설정 API 가 돌려주지 않는다. 화면에는 '설정됨'만 보이고 로그에도 남기지 않는다.\n\n설정 키 이름은 표준의 표 그대로 쓴다(mail.enabled, mail.smtp_host, ...). 앱마다 이름이 다르면\n운영자가 스무 번 다르게 배운다. 사내 릴레이는 포트 25·인증 없음·TLS 없음이 흔하므로 그것이\n기본값이고, 인증과 암호화는 선택 사항이다.\n\n보낼 이벤트는 kanpic 의 목록을 옮기지 말고 이 앱에서 사람이 실제로 기다리는 일을 3~6개 고른다.\n기준은 하나다 — 이 메일이 오지 않으면 누군가 손해를 보거나 화면을 계속 새로고침한다. 승인 요청,\n만료 임박, 내 차례가 됨, 실패로 멈춤 같은 것들이다. 단순한 '무언가 바뀜'은 메일감이 아니다.\n무엇을 골랐고 왜 골랐는지 원장에 적는다.\n\n시끄러우면 사람들은 규칙을 만들어 통째로 버리고, 그러면 정말 필요한 알림도 함께 버려진다.\n자기가 한 일로 자기에게 보내지 않고, 한 작업이 여러 알림을 만들면 묶어서 한 통으로 보낸다.\n\n기본값은 꺼짐이다. 새로 설치한 곳에서는 아무것도 달라지지 않아야 한다.\n관리 화면에 설정과 시험 발송 단추를 두고, 관리자 가이드에 설정 표를 더한다.",
+      "projects": [
+        "AgentHub",
+        "Invenqor",
+        "Kkiit",
+        "ReSSO",
+        "SecCheck",
+        "Vendra",
+        "ai-admin",
+        "appstore",
+        "cutover",
+        "dataworks",
+        "igame",
+        "jikim",
+        "jupiq",
+        "moina",
+        "moyro",
+        "muni",
+        "ptium",
+        "relio",
+        "seaton",
+        "umm",
+        "vibe-coders",
+        "visitflow",
+        "weekly"
+      ],
+      "budget_usd": 300,
+      "improve_budget_usd": 14,
+      "until": "2026-11-30",
+      "done": false
     }
   ]
 }
