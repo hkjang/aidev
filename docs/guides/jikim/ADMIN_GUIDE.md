@@ -1,6 +1,6 @@
 # jikim 관리자 가이드
 
-이 문서는 jikim `v0.2.11`을 설치하고 지키는 사람을 위한 것입니다. 화면 캡처는 모두
+이 문서는 jikim `v0.2.12`을 설치하고 지키는 사람을 위한 것입니다. 화면 캡처는 모두
 `jikim:v0.2.9` 이미지를 전용 PostgreSQL과 함께 띄운 뒤 데모 데이터를 넣고 찍은 것입니다.
 
 화면을 쓰는 방법은 [사용자 가이드](USER_GUIDE.md)에 있습니다. 같은 내용을 두 번 적지 않았으니
@@ -18,7 +18,7 @@ jikim은 컨테이너 하나와 외부 PostgreSQL 하나로 동작합니다. 서
 
 | 구성 요소 | 필수 | 제공 방식 | 하는 일 |
 | --- | --- | --- | --- |
-| `jikim` 컨테이너 | 필수 | 릴리스 이미지 `jikim:v0.2.11` | Go 서버 하나가 관리 API, OpenBao 제한 호환 API, MCP, React 정적 자산을 모두 제공 |
+| `jikim` 컨테이너 | 필수 | 릴리스 이미지 `jikim:v0.2.12` | Go 서버 하나가 관리 API, OpenBao 제한 호환 API, MCP, React 정적 자산을 모두 제공 |
 | PostgreSQL | 필수 | 사내 표준 인스턴스 | 사용자·정책·시크릿 암호문·감사 로그 저장 |
 | TLS Reverse Proxy | 운영 권장 | 사내 표준 | 외부 HTTPS 종단, `Host`·`X-Forwarded-Proto` 전달 |
 | Keycloak | 선택 | 사내 표준 | OIDC SSO 로그인 |
@@ -60,9 +60,9 @@ React 정적 자산은 이미지 안의 `/app/web`에 들어 있고 Go 서버가
 GitHub Release에 올라오는 자산은 두 개입니다.
 
 ```bash
-sha256sum --check jikim-v0.2.11.tar.gz.sha256
-docker load --input jikim-v0.2.11.tar.gz
-docker image inspect jikim:v0.2.11
+sha256sum --check jikim-v0.2.12.tar.gz.sha256
+docker load --input jikim-v0.2.12.tar.gz
+docker image inspect jikim:v0.2.12
 ```
 
 체크섬 확인 없이 적재하지 마십시오. 반입 경로에서 파일이 바뀌었는지 확인할 유일한 수단입니다.
@@ -116,7 +116,7 @@ curl --fail http://127.0.0.1:8080/v1/sys/health
 - `GET /healthz`는 프로세스가 살아 있는지만 답합니다.
 - `GET /readyz`는 PostgreSQL에 2초 제한으로 ping 한 뒤 답합니다. 저장소에 닿지 못하면 `503`과
   `not_ready`, `데이터베이스 연결을 확인할 수 없습니다`를 돌려줍니다.
-- `GET /v1/sys/health`는 OpenBao 클라이언트와 Load Balancer가 쓰는 경로입니다. `v0.2.11`은
+- `GET /v1/sys/health`는 OpenBao 클라이언트와 Load Balancer가 쓰는 경로입니다. `v0.2.12`은
   저장소 미도달을 seal과 같은 운영 상태로 보아 `"sealed": true`와 `503`을 반환합니다.
   probe 설정을 이식할 때는 `activecode`·`sealedcode` 쿼리로 상태 코드를 바꿀 수 있고,
   100\~599 정수가 아니면 조용히 무시하지 않고 `400`으로 거부합니다.
@@ -174,7 +174,7 @@ jikim 애플리케이션이 읽는 환경변수는 정확히 다음 네 개입�
 | --- | --- |
 | 일반 | 서비스 표시 이름, 기본 언어, 표준 시간대(IANA 이름) |
 | 승인 워크플로 | 워크플로 사용 여부, 기본 검토 역할, 필수 승인 수, 승인 적용 작업 |
-| Keycloak OIDC | Issuer URL, Client ID·Secret, Scopes, 사용자명·그룹·역할 Claim, Callback URL 확인, 내부 HTTP 허용 |
+| Keycloak OIDC | Issuer URL, Client ID·Secret, Scopes, 사용자명·그룹·역할 Claim, Callback URL 확인, 자동 로그인(조용한 SSO), 내부 HTTP 허용 |
 | AI | 사용 여부, Base URL, 모델, 인증 방식, API Key, 최대 출력 토큰, 요청 제한 시간, 내부 HTTP 허용 |
 | 보안 | 세션 제한 시간(5\~1440분), 최소 비밀번호 길이(12\~128), 감사 로그 보존 기간(1\~3650일, 프리뷰), 허용 네트워크(프리뷰), 로컬 로그인 허용, 최초 비밀번호 변경 요구(프리뷰) |
 | 알림 | 서명 Webhook 사용 여부, Webhook URL, 서명 Secret, 전송 이벤트, 내부 HTTP 허용 |
@@ -222,10 +222,43 @@ Token을 검증한 뒤 짧은 TTL의 일회용 `code`만 프런트엔드에 넘�
 Client Secret은 민감 설정으로 암호화 저장되고 조회 응답에는 설정 여부만 나옵니다. 비상 로컬
 로그인을 검증하기 전에 OIDC를 유일한 관리 경로로 만들지 마십시오.
 
+#### 자동 로그인(조용한 SSO, `auto_login`)
+
+Keycloak에 이미 로그인한 사람이 jikim을 열면 로그인 화면을 거치지 않고 바로 본 화면으로
+들어가게 하는 설정입니다. **기본값은 OFF**이며 켜지 않은 설치에서는 아무것도 달라지지
+않습니다. OIDC 탭의 **자동 로그인(조용한 SSO)** 스위치로 켜며, `PATCH /api/v1/settings`의
+`oidc.auto_login`(boolean)과 같습니다. 공개 설정 `GET /api/v1/settings/public`에는
+`oidc_auto_login`으로 실리는데 OIDC 자체가 꺼져 있으면 항상 `false`입니다.
+
+동작은 다음과 같습니다.
+
+1. 로그인하지 않은 브라우저가 보호된 화면(`/dashboard`, `/secrets/...` 등)을 열면 프런트엔드가
+   `GET /api/v1/oidc/login?prompt=none&return_to=<그 경로>`로 **최상위 이동**을 합니다. 숨은
+   iframe이 아니므로 서드파티 쿠키가 막힌 브라우저에서도 동작하고 Keycloak이 프레임을
+   허용하는지 신경 쓸 필요가 없습니다.
+2. `prompt=none`은 화면을 그리지 않고 Keycloak의 기존 세션으로만 답하라는 요청입니다. 세션이
+   있으면 인가 코드가 곧바로 돌아와 평소 로그인 흐름으로 이어지고, 원래 열려던 경로로
+   돌아갑니다. 세션이 없으면 `error=login_required`가 돌아오는데 이것은 실패가 아니라 평범한
+   대답입니다 — 콜백은 이때 `/login?sso=none`으로 보내 평소 로그인 화면을 띄웁니다.
+3. 무한 루프는 세 겹으로 막습니다. 브라우저의 `sessionStorage`에 **한 탭 세션에 한 번만**
+   시도했다는 표시를 남기고(새 탭에서는 다시 시도, 거절 뒤 새로고침은 다시 시도하지 않음),
+   **스스로 로그아웃**했으면 다시 로그인할 때까지 시도하지 않으며, 콜백이 거절을 받으면 주소에
+   `?sso=none` 표시를 남겨 저장소가 지워졌더라도 다시 시도하지 않습니다. 사생활 보호 모드처럼
+   `sessionStorage`를 읽지 못하는 브라우저는 "이미 시도했다"로 취급해 막히는 쪽으로 실패합니다.
+4. 서버는 이 설정이 꺼져 있으면 `?prompt=none`이 붙은 요청도 조용히 평범한 로그인으로
+   바꿉니다. 누구든 주소를 고쳐 흐름을 바꿀 수는 없습니다.
+5. `return_to`는 `/`로 시작하고 `//`로 시작하지 않는 같은 오리진 경로만 받으며 `/login`과
+   `/oidc/callback`은 돌아갈 자리로 받지 않습니다. 그 밖의 값은 `/dashboard`로 접힙니다.
+   콜백·로그인·오류 화면과 `/api/*`·`/v1/*`·`/mcp`·probe 경로에서는 시도하지 않습니다.
+
+켜기 전에 확인할 것: Keycloak의 SSO Session Idle/Max가 조직 정책에 맞는지, 그리고 공용
+단말에서 앞사람의 Keycloak 세션으로 뒷사람이 들어가지 않도록 로그아웃 절차가 있는지입니다.
+jikim의 로그아웃은 Keycloak RP-initiated logout까지 이어지므로 화면의 로그아웃을 쓰면 됩니다.
+
 ### 3.4 승인 워크플로
 
 기본값은 비활성입니다. 꺼져 있으면 생성·변경 작업에 검토 단계를 만들지 않고 즉시 반영합니다.
-`v0.2.11`에서 설정할 수 있는 것은 워크플로 사용 여부, 적용 작업(시크릿 생성·변경, 시크릿 폐기),
+`v0.2.12`에서 설정할 수 있는 것은 워크플로 사용 여부, 적용 작업(시크릿 생성·변경, 시크릿 폐기),
 검토 역할(`manager` 또는 `admin`)입니다.
 
 승인은 1인 검토이며 요청자 본인 승인은 항상 금지됩니다. 환경·위험 등급별 조건, 다단계 승인,
@@ -474,7 +507,7 @@ docker compose logs --follow jikim
 ```text
 {"level":"INFO","msg":"bootstrap 관리자 준비","username":"...","created":true}
 {"level":"INFO","msg":"웹 UI 활성화","directory":"/app/web"}
-{"level":"INFO","msg":"jikim 시작","address":":8080","version":"v0.2.11"}
+{"level":"INFO","msg":"jikim 시작","address":":8080","version":"v0.2.12"}
 ```
 
 종료 신호를 받으면 `종료 신호 수신`을 남기고 최대 20초 동안 진행 중인 요청을 마무리합니다.
@@ -540,7 +573,7 @@ docker compose logs --follow jikim
 
 | 증상 | 확인할 곳 | 조치 |
 | --- | --- | --- |
-| `/readyz`가 `503` + `데이터베이스 연결을 확인할 수 없습니다` | PostgreSQL 도달성, DSN, TLS 모드, 계정 권한 | 저장소를 복구합니다. `v0.2.11`은 DB 장애를 자격증명 거부로 접지 않고 `500`으로 구분해 보고합니다. |
+| `/readyz`가 `503` + `데이터베이스 연결을 확인할 수 없습니다` | PostgreSQL 도달성, DSN, TLS 모드, 계정 권한 | 저장소를 복구합니다. `v0.2.12`은 DB 장애를 자격증명 거부로 접지 않고 `500`으로 구분해 보고합니다. |
 | `아이디 또는 비밀번호가 올바르지 않습니다` | 사용자 관리 화면의 계정 상태 | 계정·비밀번호를 확인합니다. DB 장애일 때는 이 문구가 아니라 `500`이 나옵니다. |
 | `사용자 계정이 비활성화되었습니다` | 사용자 관리 화면 | 계정을 활성화합니다. |
 | `로컬 로그인이 비활성화되었습니다` | 보안 탭의 **로컬 로그인 허용** | OIDC로 들어가거나, 그것도 막혔으면 설정 값을 되돌려야 합니다. |
