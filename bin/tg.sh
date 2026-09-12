@@ -13,6 +13,27 @@ set -uo pipefail
 
 text="${1:-}"; [ -n "$text" ] || text=$(cat)
 [ -n "$text" ] || exit 0
+
+# 같은 문장을 되풀이해 보내지 않는다.
+#
+# 승인 스윕은 10분마다 돌면서 아직 머지되지 못한 PR 을 다시 확인한다. 아무것도
+# 달라지지 않았으므로 러너는 그것을 회차로 기록하지 않는데, 알림은 매번 나갔다.
+# CI 워크플로가 없는 저장소 하나가 같은 문장을 12번 보냈다 (2026-09-12 Kkiit).
+#
+# 상황이 이어지는 동안 사람이 알아야 할 것은 "그렇다" 한 번이지 열두 번이 아니다.
+# 창을 넘기면 다시 보낸다 — 아직 안 풀렸다는 사실 자체는 다시 알릴 값이 있다.
+QUIET_SECONDS=${AIDEV_TG_QUIET_SECONDS:-21600}
+seen_dir="$HOME/.auto-improve/.tg-seen"
+mkdir -p "$seen_dir" 2>/dev/null
+key=$(printf '%s' "$text" | md5sum | cut -c1-16)
+stamp="$seen_dir/$key"
+if [ -f "$stamp" ]; then
+  age=$(( $(date +%s) - $(stat -c %Y "$stamp" 2>/dev/null || echo 0) ))
+  [ "$age" -lt "$QUIET_SECONDS" ] && exit 0
+fi
+: > "$stamp"
+# 오래된 기록은 치운다 — 매 단계마다 파일이 하나씩 생긴다.
+find "$seen_dir" -type f -mmin +1440 -delete 2>/dev/null || true
 # 텔레그램 한 통은 4096자까지다. 넘치면 잘라 보내되 잘렸다고 밝힌다.
 [ "${#text}" -gt 3900 ] && text="${text:0:3900}
 …(잘림)"

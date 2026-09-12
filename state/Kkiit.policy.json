@@ -1,0 +1,8 @@
+{
+  "_comment": "PR 에서 도는 CI 워크플로가 없는 저장소(release.yml 뿐) — 러너가 직접 실행하는 검증이 CI 를 대신한다.",
+  "allow_merge_without_ci": true,
+  "verify": [
+    "go build ./... && go vet ./... && go test ./...",
+    "cd web && npm ci --no-audit --no-fund && npm run build --silent"
+  ]
+}
