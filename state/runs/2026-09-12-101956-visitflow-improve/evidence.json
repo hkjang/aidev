@@ -1,0 +1,259 @@
+{
+  "run_id": "2026-09-12-101956-visitflow-improve",
+  "generated": "2026-09-12T10:47:26+09:00",
+  "run": {
+    "run_id": "2026-09-12-101956-visitflow-improve",
+    "project": "visitflow",
+    "kind": "improve",
+    "started": "2026-09-12T10:19:57+09:00",
+    "model": "claude-opus-5",
+    "policy_version": "5935779a",
+    "prompts_hash": "82f2440d4b2fef65",
+    "runner_version": "79bd9d23",
+    "finished": "2026-09-12T10:47:26+09:00",
+    "outcome": "release-ready"
+  },
+  "record": {
+    "ts": "2026-09-12T10:47:26+09:00",
+    "date": "2026-09-12",
+    "project": "visitflow",
+    "result": "fix-round: merged https://github.com/hkjang/visitflow/pull/12, released v2.7.4",
+    "outcome": "release-ready",
+    "run_id": "2026-09-12-101956-visitflow-improve",
+    "base_sha": "1de7c53646519c30836fd495b3707062df0873b6",
+    "head_sha": "13ab2b777835edef855af208fbdb89054d3e645a",
+    "pr": "https://github.com/hkjang/visitflow/pull/12",
+    "stages": {
+      "base": {
+        "state": "pinned",
+        "reason": "main@1de7c53",
+        "at": "2026-09-12T10:20:00+09:00"
+      },
+      "autonomy": {
+        "state": "release",
+        "reason": "",
+        "at": "2026-09-12T10:20:00+09:00"
+      },
+      "verify": {
+        "state": "passed",
+        "reason": "검증 5개 통과 (auto)",
+        "at": "2026-09-12T10:35:03+09:00"
+      },
+      "pr": {
+        "state": "created",
+        "reason": "https://github.com/hkjang/visitflow/pull/12",
+        "at": "2026-09-12T10:35:08+09:00"
+      },
+      "review": {
+        "state": "approved",
+        "reason": "리뷰 승인 (risk=low)",
+        "at": "2026-09-12T10:36:38+09:00"
+      },
+      "ci": {
+        "state": "passed",
+        "reason": "검사 2개 모두 success",
+        "at": "2026-09-12T10:39:04+09:00"
+      },
+      "merge": {
+        "state": "done",
+        "reason": "13ab2b777835edef855af208fbdb89054d3e645a",
+        "at": "2026-09-12T10:39:09+09:00"
+      },
+      "release": {
+        "state": "published",
+        "reason": "v2.7.4",
+        "at": "2026-09-12T10:45:51+09:00"
+      },
+      "assets": {
+        "state": "verified",
+        "reason": "v2.7.4 자산 1개 (이전 v2.7.3: 1)",
+        "at": "2026-09-12T10:47:24+09:00"
+      }
+    },
+    "campaign": "",
+    "autonomy": "release",
+    "files": 2,
+    "additions": 26,
+    "deletions": 6,
+    "tests": 2,
+    "title": "fix(tests): stop the OpenAPI route probe hanging on the lobby SSE stream"
+  },
+  "stages": {
+    "base": {
+      "state": "pinned",
+      "reason": "main@1de7c53",
+      "at": "2026-09-12T10:20:00+09:00"
+    },
+    "autonomy": {
+      "state": "release",
+      "reason": "",
+      "at": "2026-09-12T10:20:00+09:00"
+    },
+    "verify": {
+      "state": "passed",
+      "reason": "검증 5개 통과 (auto)",
+      "at": "2026-09-12T10:35:03+09:00"
+    },
+    "pr": {
+      "state": "created",
+      "reason": "https://github.com/hkjang/visitflow/pull/12",
+      "at": "2026-09-12T10:35:08+09:00"
+    },
+    "review": {
+      "state": "approved",
+      "reason": "리뷰 승인 (risk=low)",
+      "at": "2026-09-12T10:36:38+09:00"
+    },
+    "ci": {
+      "state": "passed",
+      "reason": "검사 2개 모두 success",
+      "at": "2026-09-12T10:39:04+09:00"
+    },
+    "merge": {
+      "state": "done",
+      "reason": "13ab2b777835edef855af208fbdb89054d3e645a",
+      "at": "2026-09-12T10:39:09+09:00"
+    },
+    "release": {
+      "state": "published",
+      "reason": "v2.7.4",
+      "at": "2026-09-12T10:45:51+09:00"
+    },
+    "assets": {
+      "state": "verified",
+      "reason": "v2.7.4 자산 1개 (이전 v2.7.3: 1)",
+      "at": "2026-09-12T10:47:24+09:00"
+    }
+  },
+  "provenance": {
+    "model": "claude-opus-5",
+    "policy_version": "5935779a",
+    "prompts_hash": "82f2440d4b2fef65",
+    "runner_version": "79bd9d23",
+    "base_sha": "1de7c53646519c30836fd495b3707062df0873b6",
+    "head_sha": "13ab2b777835edef855af208fbdb89054d3e645a",
+    "pr": "https://github.com/hkjang/visitflow/pull/12"
+  },
+  "verification": {
+    "runner": {
+      "source": "auto",
+      "commands": [
+        {
+          "cmd": "go build ./...",
+          "exit": 0,
+          "seconds": 1
+        },
+        {
+          "cmd": "go vet ./...",
+          "exit": 0,
+          "seconds": 0
+        },
+        {
+          "cmd": "go test ./...",
+          "exit": 0,
+          "seconds": 1
+        },
+        {
+          "cmd": "cd web && [ -d node_modules ] || npm ci --no-audit --no-fund",
+          "exit": 0,
+          "seconds": 0
+        },
+        {
+          "cmd": "cd web && npm run build --silent",
+          "exit": 0,
+          "seconds": 5
+        }
+      ]
+    },
+    "runner_gate": {
+      "ok": true,
+      "state": "verified",
+      "reason": "검증 5개 통과 (auto)"
+    },
+    "after_rebase": null,
+    "review": {
+      "verdict": "approve",
+      "reasons": [],
+      "notes": [
+        "Test-only change (internal/app/integration_test.go, internal/app/lists_test.go); no production code touched.",
+        "Verified empirically against a throwaway postgres:16 container: main's TestSmallEndpointsRespond hits `panic: test timed out after 20s`; HEAD's version passes in 2.85s (the 2s deadline on the /lobby/stream probe accounts for most of it). The fix genuinely addresses the hang.",
+        "internal/app/events.go:46 — lobbyStream selects on r.Context().Done(), so the request-context deadline is the correct cancellation path; the same pattern is already used by TestLobbyStreamFlushesEvents (integration_test.go:1496).",
+        "internal/app/lists_test.go:112 — the 2s deadline applies to every probe, not just the SSE path. Under a heavily loaded CI runner a slow normal endpoint could hit the deadline and appear as a non-404 response; because the check only looks for endpoint_not_found, a timed-out probe would still be treated as 'routed', so this cannot cause a false failure, only a false pass on a genuinely unrouted path (unlikely: the 404 is produced by the router before any DB work).",
+        "Removing the dead `routed := ...; _ = routed` is a trivial cleanup inside the same test; not a scope concern.",
+        "Commit message claim about sites_code_key / users_username_key being deliberate 409 tests is consistent with integration_test.go:662 and similar StatusConflict assertions.",
+        "Fully revertible; no migrations, workflow, auth, or secret handling changes."
+      ],
+      "risk": "low"
+    },
+    "ci_gate": {
+      "ok": true,
+      "state": "success",
+      "reason": "검사 2개 모두 success",
+      "checks": 2
+    }
+  },
+  "release": {
+    "result": {
+      "status": "released",
+      "version": "2.7.4",
+      "tag": "v2.7.4",
+      "title": "VisitFlow v2.7.4",
+      "notes_file": "/mnt/c/Users/USER/projects/aidev/state/runs/2026-09-12-101956-visitflow-improve/release-notes-v2.7.4.md",
+      "github_release": false,
+      "assets": [],
+      "reason": ""
+    },
+    "assets_sha256": []
+  },
+  "approval": null,
+  "usage": [
+    {
+      "ts": "2026-09-12T10:34:54+09:00",
+      "date": "2026-09-12",
+      "project": "visitflow",
+      "phase": "improve",
+      "run_id": "2026-09-12-101956-visitflow-improve",
+      "campaign": "",
+      "subtype": "success",
+      "duration_ms": 954534,
+      "num_turns": 35,
+      "cost_usd": 2.1650165000000006,
+      "input_tokens": 70,
+      "output_tokens": 17461,
+      "cache_read": 2052955,
+      "cache_create": 68747
+    },
+    {
+      "ts": "2026-09-12T10:36:38+09:00",
+      "date": "2026-09-12",
+      "project": "visitflow",
+      "phase": "review",
+      "run_id": "2026-09-12-101956-visitflow-improve",
+      "campaign": "",
+      "subtype": "success",
+      "duration_ms": 95343,
+      "num_turns": 15,
+      "cost_usd": 0.45648599999999995,
+      "input_tokens": 30,
+      "output_tokens": 4278,
+      "cache_read": 370360,
+      "cache_create": 16239
+    },
+    {
+      "ts": "2026-09-12T10:42:23+09:00",
+      "date": "2026-09-12",
+      "project": "visitflow",
+      "phase": "release",
+      "run_id": "2026-09-12-101956-visitflow-improve",
+      "campaign": "",
+      "subtype": "success",
+      "duration_ms": 198469,
+      "num_turns": 14,
+      "cost_usd": 0.6190645,
+      "input_tokens": 28,
+      "output_tokens": 5853,
+      "cache_read": 430863,
+      "cache_create": 25176
+    }
+  ]
+}
