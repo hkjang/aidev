@@ -1,6 +1,6 @@
 # ai-admin 관리자 가이드
 
-`v1.2.19` 기준입니다. 이 문서는 ai-admin을 **설치하고 지키는 사람**을 위한 것입니다.
+`v1.2.20` 기준입니다. 이 문서는 ai-admin을 **설치하고 지키는 사람**을 위한 것입니다.
 화면을 쓰는 방법은 [사용자 가이드](USER_GUIDE.md)에 있습니다.
 
 화면 캡처는 합성 데이터로 채운 실제 ai-admin 화면을 1440×1024에서 찍은 것입니다.
@@ -61,14 +61,14 @@ Compose 파일은 PostgreSQL을 함께 띄우지 않습니다. `POSTGRES_DSN`의
 
 ### 2.2 이미지 반입
 
-GitHub Release에서 `ai-admin-v1.2.19.tar.gz`와 `SHA256SUMS`를 받아 승인된 매체로 반입합니다.
+GitHub Release에서 `ai-admin-v1.2.20.tar.gz`와 `SHA256SUMS`를 받아 승인된 매체로 반입합니다.
 반입 전후 모두 체크섬을 확인하세요. 공식 아카이브는 Linux `amd64`입니다.
 
 ```bash
 sha256sum -c SHA256SUMS
-gzip -t ai-admin-v1.2.19.tar.gz
-gzip -dc ai-admin-v1.2.19.tar.gz | docker load
-docker image inspect ai-admin:v1.2.19 --format '{{.RepoTags}}'
+gzip -t ai-admin-v1.2.20.tar.gz
+gzip -dc ai-admin-v1.2.20.tar.gz | docker load
+docker image inspect ai-admin:v1.2.20 --format '{{.RepoTags}}'
 ```
 
 ### 2.3 환경 파일과 기동
@@ -101,7 +101,7 @@ docker run -d --name ai-admin --restart unless-stopped \
   --env-file .env -p 8080:8080 \
   --read-only --tmpfs /tmp:size=64m,noexec,nosuid \
   --cap-drop ALL --security-opt no-new-privileges \
-  ai-admin:v1.2.19
+  ai-admin:v1.2.20
 ```
 
 시작할 때 DB 연결 → migration → seed 순으로 진행하며, 하나라도 실패하면 프로세스는 종료됩니다.
@@ -481,8 +481,8 @@ credential 또는 승인된 백업 에이전트를 쓰세요. 복구는 별도 D
 
 ```bash
 sha256sum -c SHA256SUMS
-gzip -dc ai-admin-v1.2.19.tar.gz | docker load
-docker image inspect ai-admin:v1.2.19 --format '{{.RepoTags}}'
+gzip -dc ai-admin-v1.2.20.tar.gz | docker load
+docker image inspect ai-admin:v1.2.20 --format '{{.RepoTags}}'
 docker compose --env-file .env -f compose.offline.yml up -d --force-recreate
 ```
 
