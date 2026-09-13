@@ -1,0 +1,27 @@
+{
+  "base": {
+    "state": "pinned",
+    "reason": "main@7cc4974",
+    "at": "2026-09-13T18:11:51+09:00"
+  },
+  "autonomy": {
+    "state": "release",
+    "reason": "",
+    "at": "2026-09-13T18:11:51+09:00"
+  },
+  "verify": {
+    "state": "passed",
+    "reason": "검증 9개 통과 (auto)",
+    "at": "2026-09-13T18:29:39+09:00"
+  },
+  "pr": {
+    "state": "created",
+    "reason": "https://github.com/hkjang/ptium/pull/21",
+    "at": "2026-09-13T18:29:51+09:00"
+  },
+  "review": {
+    "state": "rejected",
+    "reason": "리뷰 거절: server/internal/httpapi/handlers_analytics.go:136-137 The same-origin proxy (the default, analytics.momento_proxy=true) drops the collector's base path. `proxied.SetURL(target)` already joins target.Path with the request path, but the next line overwrites `Out.URL.Path` with `TrimPrefix(request.URL.Path, \"/momento\")`, so a collector stored as `http://momento.internal:8080/collect` — which validateSettingValue explicitly accepts (analytics_test.go:167) and which direct mode renders as `<momento_url>/tracker.js` (analytics.go:199, ADMIN_GUIDE.md `<momento_url>/tracker.js`) — is forwarded to `http://momento.internal:8080/tracker.js`. Verified with a throwaway test: collector at `<url>/collect` saw `/tracker.js`. Result: with a path-mounted collector the tracker 404s and no visitor is counted, silently; direct mode and proxy mode disagree on the same setting. TestTheProxyReachesTheCollectorWithoutTheBrowsersCredentials only uses `collector.URL + \"/\"`, so the case the validation admits is never exercised.",
+    "at": "2026-09-13T18:32:44+09:00"
+  }
+}

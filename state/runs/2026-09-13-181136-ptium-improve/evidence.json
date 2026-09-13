@@ -1,0 +1,210 @@
+{
+  "run_id": "2026-09-13-181136-ptium-improve",
+  "generated": "2026-09-13T18:32:46+09:00",
+  "run": {
+    "run_id": "2026-09-13-181136-ptium-improve",
+    "project": "ptium",
+    "kind": "improve",
+    "started": "2026-09-13T18:11:37+09:00",
+    "model": "claude-opus-5",
+    "policy_version": "5935779a",
+    "prompts_hash": "82f2440d4b2fef65",
+    "runner_version": "3e336c78",
+    "finished": "2026-09-13T18:32:45+09:00",
+    "outcome": "review-pending"
+  },
+  "record": {
+    "ts": "2026-09-13T18:32:45+09:00",
+    "date": "2026-09-13",
+    "project": "ptium",
+    "result": "review held, PR open https://github.com/hkjang/ptium/pull/21",
+    "outcome": "review-pending",
+    "run_id": "2026-09-13-181136-ptium-improve",
+    "base_sha": "7cc49748b46df2136e49801732fbd58c86057a24",
+    "head_sha": "5d31ee124a254786e11ab6b5b0247677381197e7",
+    "pr": "https://github.com/hkjang/ptium/pull/21",
+    "stages": {
+      "base": {
+        "state": "pinned",
+        "reason": "main@7cc4974",
+        "at": "2026-09-13T18:11:51+09:00"
+      },
+      "autonomy": {
+        "state": "release",
+        "reason": "",
+        "at": "2026-09-13T18:11:51+09:00"
+      },
+      "verify": {
+        "state": "passed",
+        "reason": "검증 9개 통과 (auto)",
+        "at": "2026-09-13T18:29:39+09:00"
+      },
+      "pr": {
+        "state": "created",
+        "reason": "https://github.com/hkjang/ptium/pull/21",
+        "at": "2026-09-13T18:29:51+09:00"
+      },
+      "review": {
+        "state": "rejected",
+        "reason": "리뷰 거절: server/internal/httpapi/handlers_analytics.go:136-137 The same-origin proxy (the default, analytics.momento_proxy=true) drops the collector's base path. `proxied.SetURL(target)` already joins target.Path with the request path, but the next line overwrites `Out.URL.Path` with `TrimPrefix(request.URL.Path, \"/momento\")`, so a collector stored as `http://momento.internal:8080/collect` — which validateSettingValue explicitly accepts (analytics_test.go:167) and which direct mode renders as `<momento_url>/tracker.js` (analytics.go:199, ADMIN_GUIDE.md `<momento_url>/tracker.js`) — is forwarded to `http://momento.internal:8080/tracker.js`. Verified with a throwaway test: collector at `<url>/collect` saw `/tracker.js`. Result: with a path-mounted collector the tracker 404s and no visitor is counted, silently; direct mode and proxy mode disagree on the same setting. TestTheProxyReachesTheCollectorWithoutTheBrowsersCredentials only uses `collector.URL + \"/\"`, so the case the validation admits is never exercised.",
+        "at": "2026-09-13T18:32:44+09:00"
+      }
+    },
+    "campaign": "tracking-2026-09",
+    "autonomy": "release",
+    "files": 24,
+    "additions": 2124,
+    "deletions": 15,
+    "tests": 5,
+    "title": "Let an administrator put a visitor tracking snippet on the pages"
+  },
+  "stages": {
+    "base": {
+      "state": "pinned",
+      "reason": "main@7cc4974",
+      "at": "2026-09-13T18:11:51+09:00"
+    },
+    "autonomy": {
+      "state": "release",
+      "reason": "",
+      "at": "2026-09-13T18:11:51+09:00"
+    },
+    "verify": {
+      "state": "passed",
+      "reason": "검증 9개 통과 (auto)",
+      "at": "2026-09-13T18:29:39+09:00"
+    },
+    "pr": {
+      "state": "created",
+      "reason": "https://github.com/hkjang/ptium/pull/21",
+      "at": "2026-09-13T18:29:51+09:00"
+    },
+    "review": {
+      "state": "rejected",
+      "reason": "리뷰 거절: server/internal/httpapi/handlers_analytics.go:136-137 The same-origin proxy (the default, analytics.momento_proxy=true) drops the collector's base path. `proxied.SetURL(target)` already joins target.Path with the request path, but the next line overwrites `Out.URL.Path` with `TrimPrefix(request.URL.Path, \"/momento\")`, so a collector stored as `http://momento.internal:8080/collect` — which validateSettingValue explicitly accepts (analytics_test.go:167) and which direct mode renders as `<momento_url>/tracker.js` (analytics.go:199, ADMIN_GUIDE.md `<momento_url>/tracker.js`) — is forwarded to `http://momento.internal:8080/tracker.js`. Verified with a throwaway test: collector at `<url>/collect` saw `/tracker.js`. Result: with a path-mounted collector the tracker 404s and no visitor is counted, silently; direct mode and proxy mode disagree on the same setting. TestTheProxyReachesTheCollectorWithoutTheBrowsersCredentials only uses `collector.URL + \"/\"`, so the case the validation admits is never exercised.",
+      "at": "2026-09-13T18:32:44+09:00"
+    }
+  },
+  "provenance": {
+    "model": "claude-opus-5",
+    "policy_version": "5935779a",
+    "prompts_hash": "82f2440d4b2fef65",
+    "runner_version": "3e336c78",
+    "base_sha": "7cc49748b46df2136e49801732fbd58c86057a24",
+    "head_sha": "5d31ee124a254786e11ab6b5b0247677381197e7",
+    "pr": "https://github.com/hkjang/ptium/pull/21"
+  },
+  "verification": {
+    "runner": {
+      "source": "auto",
+      "commands": [
+        {
+          "cmd": "cd server && go build ./...",
+          "exit": 0,
+          "seconds": 1
+        },
+        {
+          "cmd": "cd server && go vet ./...",
+          "exit": 0,
+          "seconds": 0
+        },
+        {
+          "cmd": "cd server && go test ./...",
+          "exit": 0,
+          "seconds": 3
+        },
+        {
+          "cmd": "cd web && [ -d node_modules ] || npm ci --no-audit --no-fund",
+          "exit": 0,
+          "seconds": 0
+        },
+        {
+          "cmd": "cd web && npm test --silent",
+          "exit": 0,
+          "seconds": 2
+        },
+        {
+          "cmd": "cd web && [ -d node_modules ] || npm ci --no-audit --no-fund",
+          "exit": 0,
+          "seconds": 0
+        },
+        {
+          "cmd": "cd web && npm run typecheck --silent",
+          "exit": 0,
+          "seconds": 0
+        },
+        {
+          "cmd": "cd web && [ -d node_modules ] || npm ci --no-audit --no-fund",
+          "exit": 0,
+          "seconds": 0
+        },
+        {
+          "cmd": "cd web && npm run build --silent",
+          "exit": 0,
+          "seconds": 1
+        }
+      ]
+    },
+    "runner_gate": {
+      "ok": true,
+      "state": "verified",
+      "reason": "검증 9개 통과 (auto)"
+    },
+    "after_rebase": null,
+    "review": {
+      "verdict": "reject",
+      "reasons": [
+        "server/internal/httpapi/handlers_analytics.go:136-137 The same-origin proxy (the default, analytics.momento_proxy=true) drops the collector's base path. `proxied.SetURL(target)` already joins target.Path with the request path, but the next line overwrites `Out.URL.Path` with `TrimPrefix(request.URL.Path, \"/momento\")`, so a collector stored as `http://momento.internal:8080/collect` — which validateSettingValue explicitly accepts (analytics_test.go:167) and which direct mode renders as `<momento_url>/tracker.js` (analytics.go:199, ADMIN_GUIDE.md `<momento_url>/tracker.js`) — is forwarded to `http://momento.internal:8080/tracker.js`. Verified with a throwaway test: collector at `<url>/collect` saw `/tracker.js`. Result: with a path-mounted collector the tracker 404s and no visitor is counted, silently; direct mode and proxy mode disagree on the same setting. TestTheProxyReachesTheCollectorWithoutTheBrowsersCredentials only uses `collector.URL + \"/\"`, so the case the validation admits is never exercised."
+      ],
+      "notes": [
+        "Everything else checked out: analytics/webui/httpapi Go tests and web/src/pages/tracking.test.ts pass (`go test -count=1`, vitest). Tests genuinely exercise the change (nonce per request and in policy, off-by-default policy byte-identical, Kelvin-sign fold, admin exclusion, dead collector → 502, credential stripping).",
+        "server/internal/httpapi/server.go:229 `/momento/` is an unauthenticated open relay (any method/path, 256 KB body) to the configured collector while the proxy is on. Intended by design (browser must reach it without credentials), and 404 on a fresh install, but it means anyone who can reach Ptium can reach the collector's whole path space through it.",
+        "server/internal/httpapi/server.go:229 The route is the subtree `/momento/`, so a request to exactly `/momento` (the value of data-endpoint) is answered with a 301 to `/momento/` by ServeMux; harmless if the Momento tracker appends a sub-path (the test posts to /momento/collect/v1/events), worth confirming against the tracker contract.",
+        "server/internal/httpapi/handlers_admin.go:206 trackingAfter().Validate() now runs on every settings save, including non-analytics sections; if the stored analytics values are ever invalid (e.g. seeded outside the API), unrelated saves are refused with an analytics error.",
+        "Local `main` is stale (1de2cac); origin/main already contains PR #20 (7cc4974), so the effective PR is commit 5d31ee1 only. Reviewed against 7cc4974..HEAD.",
+        "docs/ADMIN_GUIDE.pdf is a regenerated binary (in-scope: the guide gained the section)."
+      ],
+      "risk": "medium"
+    },
+    "ci_gate": null
+  },
+  "release": {
+    "result": null,
+    "assets_sha256": []
+  },
+  "approval": null,
+  "usage": [
+    {
+      "ts": "2026-09-13T18:29:30+09:00",
+      "date": "2026-09-13",
+      "project": "ptium",
+      "phase": "improve",
+      "run_id": "2026-09-13-181136-ptium-improve",
+      "campaign": "tracking-2026-09",
+      "subtype": "success",
+      "duration_ms": 1138884,
+      "num_turns": 99,
+      "cost_usd": 12.780949500000006,
+      "input_tokens": 198,
+      "output_tokens": 84934,
+      "cache_read": 16217903,
+      "cache_create": 252871
+    },
+    {
+      "ts": "2026-09-13T18:32:44+09:00",
+      "date": "2026-09-13",
+      "project": "ptium",
+      "phase": "review",
+      "run_id": "2026-09-13-181136-ptium-improve",
+      "campaign": "tracking-2026-09",
+      "subtype": "success",
+      "duration_ms": 182398,
+      "num_turns": 27,
+      "cost_usd": 1.6574305,
+      "input_tokens": 54,
+      "output_tokens": 11497,
+      "cache_read": 1362589,
+      "cache_create": 68663
+    }
+  ]
+}
