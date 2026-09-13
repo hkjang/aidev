@@ -351,6 +351,12 @@ approvals(){
       jq -cn --arg ts "$(date -Iseconds)" --arg pr "$pr" --arg was "$appr_sha" --arg now "$head" '{ts:$ts,pr:$pr,sha:"",cleared:true,approved_sha:$was,head_sha:$now}' >> "$STATE/approvals.jsonl"
       log "$n: $pr 승인 커밋 불일치 — 라벨 제거"; continue
     fi
+    # 이 PR 을 연 회차가 캠페인 회차였다면, 머지도 그 캠페인 밑에 적는다.
+    # 적지 않으면 캠페인 장부에는 PR 을 열던 때의 결과(review-pending·
+    # verify-failed)만 남아, 이미 들어간 일을 다시 잡는다 — moina 의 추적이
+    # 머지된 뒤에도 캠페인은 그것을 남은 일로 보고 있었다 (2026-09-13).
+    local prev_campaign=${CAMPAIGN_ID:-}
+    CAMPAIGN_ID=$(jq -r --arg pr "$pr" 'select(.pr==$pr and (.campaign // "") != "") | .campaign' "$DATA/runs.jsonl" 2>/dev/null | tail -1)
     new_run "$n" approve; base=$(policy "$n" '.base_branch'); base=${base:-main}; result="approved $pr"; OUTCOME=review-pending; RUN_META="{}"; BASE_SHA=""; HEAD_SHA=$head
     if ci_gate "$head"; then
       if with_retry "pr merge" bash -c "cd '$repo' && gh pr merge '$pr' --merge --delete-branch --match-head-commit '$head'"; then
@@ -369,6 +375,7 @@ approvals(){
     else
       log "$n: 승인 대기 유지 ($pr, CI ${CI_STATE:-?}) — 회차로 기록하지 않음"; rm -rf "$OUT"
     fi
+    CAMPAIGN_ID=$prev_campaign
   done
 }
 # 승인된 PR 이 base 와 충돌하면 리베이스해 러너 검증을 다시 돌리고 강제 푸시한다. 커밋이 바뀌므로 승인은 다시 받는다.
