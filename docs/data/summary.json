@@ -1,27 +1,27 @@
 {
- "generated": "2026-09-13T07:45:00+09:00",
+ "generated": "2026-09-13T09:31:43+09:00",
  "site": "https://hkjang.github.io/aidev",
- "description": "Claude Code 자율 개선 에이전트가 hkjang 의 프로젝트를 개선·테스트·머지·릴리즈한 일일 보고. 오늘 15회차·릴리즈 2건, 누적 699회차·릴리즈 282건, 주의 필요 12건.",
+ "description": "Claude Code 자율 개선 에이전트가 hkjang 의 프로젝트를 개선·테스트·머지·릴리즈한 일일 보고. 오늘 16회차·릴리즈 2건, 누적 700회차·릴리즈 282건, 주의 필요 13건.",
  "today": {
   "date": "2026-09-13",
-  "total": 15,
-  "projects": 14,
+  "total": 16,
+  "projects": 15,
   "released": 2,
-  "merged": 1,
+  "merged": 2,
   "nochange": 2,
   "failed": 0,
-  "cost_usd": 108.52,
-  "minutes": 219,
-  "sessions": 23
+  "cost_usd": 115.93,
+  "minutes": 244,
+  "sessions": 29
  },
  "totals": {
-  "runs": 699,
+  "runs": 700,
   "released": 282,
   "days": 12,
-  "cost_usd": 2019.68,
-  "minutes": 5108,
-  "tokens_in": 2088709605,
-  "tokens_out": 16218598
+  "cost_usd": 2027.09,
+  "minutes": 5132,
+  "tokens_in": 2095136284,
+  "tokens_out": 16274614
  },
  "alerts": [
   {
@@ -107,18 +107,31 @@
    "project": "moina",
    "why": "CI 실패로 PR 미머지",
    "result": "CI failed, PR open https://github.com/hkjang/moina/pull/19"
+  },
+  {
+   "date": "",
+   "time": "",
+   "project": "moina",
+   "why": "수정 과제 대기 중 — PR #19(방문 추적)가 시각 회귀 4건으로 막혀 있습니다. 결함이 아니라 기준 이미지 문제입니다 — light/dark x desktop/mobile 의 admin-settings 네 장이 6.6~9.9% 달라졌는데, 이 PR 이 관리 설정 화면에 방문 추적 섹션을 새로 넣었으니 당",
+   "result": ""
   }
  ],
- "fix_queue": [],
+ "fix_queue": [
+  {
+   "project": "moina",
+   "note": "PR #19(방문 추적)가 시각 회귀 4건으로 막혀 있습니다. 결함이 아니라 기준 이미지 문제입니다 — light/dark x desktop/mobile 의 admin-settings 네 장이 6.6~9.9% 달라졌는데, 이 PR 이 관리 설정 화면에 방문 추적 섹션을 새로 넣었으니 당연한 변화입니다. e2e/visual-baselines 의 그 네 장을 갱신하세요(npm run visual:update --prefix e2e, MOINA_UPDATE_VISUALS=1). 갱신 전에 새 화면이 제대로 그려지는지 눈으로 확인하고, 다른 48장은 건드리지 마세요 - 폰트 렌더링이 달라지면 전부 틀어집니다. CI 는 도커로 앱을 띄운 뒤(.github/workflows/ci.yml 의 Image and browser smoke) scripts/qa-api-smoke.sh 를 먼저 돌리고 e2e 를 실행합니다.",
+   "merge_sha": ""
+  }
+ ],
  "health": {
-  "checked": "2026-09-13T07:45:04+09:00",
+  "checked": "2026-09-13T09:15:04+09:00",
   "last_run": "2026-09-13T07:44:59+09:00",
-  "seconds_since_last": 3,
+  "seconds_since_last": 5403,
   "runner_pid": "2558296",
-  "runner_age_seconds": 3410,
+  "runner_age_seconds": 9020,
   "scheduler_status": "실행 중",
-  "scheduler_next_run": "2026-09-13 오전 7:50:00",
-  "disk_percent": 70,
+  "scheduler_next_run": "2026-09-13 오전 9:20:00",
+  "disk_percent": 69,
   "ok": true,
   "problems": [],
   "actions": []
@@ -306,6 +319,13 @@
    "kind": "review-rejected",
    "pr": "https://github.com/hkjang/AgentHub/pull/22",
    "detail": "가이드 문서의 API 메서드를 소스에서 확인하지 않아 GET/POST 가 어긋났고, 옛 통합 가이드를 그대로 둬 정본이 둘이 됐으며, 캡처 스크립트가 전역 설정을 백업 없이 덮어썼다."
+  },
+  {
+   "ts": "2026-09-13T08:16:00+09:00",
+   "date": "2026-09-13",
+   "project": "SecCheck",
+   "kind": "security-gate",
+   "detail": "컨테이너 취약점 게이트는 베이스 이미지가 태그된 날의 패키지를 그대로 들고 오는 것에서 막힌다. Dockerfile 에 apt-get upgrade 를 넣고, 의존성(golang.org/x/crypto 등)도 고칠 수 있는 버전이 있으면 올릴 것. 게이트를 푸는 것이 아니라 취약점을 고치는 쪽이 맞다."
   }
  ],
  "caps": {
@@ -344,19 +364,6 @@
   },
   {
    "kind": "PR",
-   "project": "moyro",
-   "title": "auto-improve: feat: let administrators attach a visitor-tracking snippet without loosening the CSP",
-   "url": "https://github.com/hkjang/moyro/pull/13",
-   "sha": "1e017bf",
-   "summary": "26파일 +2197/−18 · review held, PR open https://github.com/hkjang/moyro/pull/13",
-   "why": "review: rejected — 리뷰 거절: server/internal/tracking/tracking.go:325-337 SnippetOrigins는 strings.ToLo",
-   "evidence": "https://github.com/hkjang/aidev/tree/main/state/runs/2026-09-12-195532-moyro-improve",
-   "labels": "",
-   "action": "승인: PR 라벨 aidev-approved / 반려: aidev-rejected — 다음 회차에 러너가 승인 당시 커밋에만 CI 확인 후 머지·닫기",
-   "date": "2026-09-12"
-  },
-  {
-   "kind": "PR",
    "project": "moina",
    "title": "auto-improve: feat: 관리자가 화면에서 방문 추적 스니펫을 붙일 수 있게 합니다",
    "url": "https://github.com/hkjang/moina/pull/19",
@@ -386,11 +393,11 @@
    "project": "ai-admin",
    "title": "auto-improve: feat: 관리자가 화면에서 붙이는 방문 추적 스니펫과 nonce 기반 CSP",
    "url": "https://github.com/hkjang/ai-admin/pull/21",
-   "sha": "67715bb",
+   "sha": "c3f287d",
    "summary": "16파일 +1699/−41 · review held, PR open https://github.com/hkjang/ai-admin/pull/21",
    "why": "review: rejected — 리뷰 거절: internal/tracking/tracking.go:270-282 SnippetOrigins는 strings.ToLower(sni",
    "evidence": "https://github.com/hkjang/aidev/tree/main/state/runs/2026-09-12-132956-ai-admin-improve",
-   "labels": "",
+   "labels": "aidev-approved",
    "action": "승인: PR 라벨 aidev-approved / 반려: aidev-rejected — 다음 회차에 러너가 승인 당시 커밋에만 CI 확인 후 머지·닫기",
    "date": "2026-09-12"
   },
@@ -399,11 +406,11 @@
    "project": "Vendra",
    "title": "auto-improve: feat: let an administrator attach a visit-tracking script from the screen, under the policy that stays locked",
    "url": "https://github.com/hkjang/Vendra/pull/120",
-   "sha": "b6d1883",
+   "sha": "241589c",
    "summary": "18파일 +2121/−13 · guarded files, PR open https://github.com/hkjang/Vendra/pull/120",
    "why": "guard: held — internal/db/migrations/017_tracking.sql ",
    "evidence": "https://github.com/hkjang/aidev/tree/main/state/runs/2026-09-12-125004-Vendra-improve",
-   "labels": "",
+   "labels": "aidev-approved",
    "action": "승인: PR 라벨 aidev-approved / 반려: aidev-rejected — 다음 회차에 러너가 승인 당시 커밋에만 CI 확인 후 머지·닫기",
    "date": "2026-09-12"
   },
@@ -425,11 +432,11 @@
    "project": "Kkiit",
    "title": "auto-improve: feat: 관리자가 화면에서 방문 추적 스크립트를 붙일 수 있게 하다",
    "url": "https://github.com/hkjang/Kkiit/pull/2",
-   "sha": "e9a699f",
+   "sha": "45eb161",
    "summary": "28파일 +1619/−23 · guarded files, PR open https://github.com/hkjang/Kkiit/pull/2",
    "why": "guard: held — internal/database/migrations/040_visitor_tracking.sql ",
    "evidence": "https://github.com/hkjang/aidev/tree/main/state/runs/2026-09-12-110003-Kkiit-improve",
-   "labels": "",
+   "labels": "aidev-approved",
    "action": "승인: PR 라벨 aidev-approved / 반려: aidev-rejected — 다음 회차에 러너가 승인 당시 커밋에만 CI 확인 후 머지·닫기",
    "date": "2026-09-12"
   },
@@ -455,7 +462,7 @@
    "summary": "16파일 +1594/−12 · review held, PR open https://github.com/hkjang/AgentHub/pull/24",
    "why": "review: rejected — 리뷰 거절: web/src/pages/AdminSettings.tsx:138 화면은 provider 가 비어 있을 때 'momento' 를 선택",
    "evidence": "https://github.com/hkjang/aidev/tree/main/state/runs/2026-09-12-072116-AgentHub-improve",
-   "labels": "",
+   "labels": "aidev-approved",
    "action": "승인: PR 라벨 aidev-approved / 반려: aidev-rejected — 다음 회차에 러너가 승인 당시 커밋에만 CI 확인 후 머지·닫기",
    "date": "2026-09-12"
   },
@@ -578,19 +585,6 @@
   },
   {
    "kind": "PR",
-   "project": "cutover",
-   "title": "auto-improve: docs: 사용자·관리자 가이드를 실제 화면 캡처가 들어간 표준 형식으로 재작성하고 PDF 추가",
-   "url": "https://github.com/hkjang/cutover/pull/1",
-   "sha": "18cfb20",
-   "summary": "24파일 +677/−192 · CI no-ci, PR open https://github.com/hkjang/cutover/pull/1",
-   "why": "review: approved — 리뷰 승인 (risk=low); ci: no-ci — 이 커밋에 검사가 없음 (정책 allow_merge_without_ci 가 없으면 차단)",
-   "evidence": "https://github.com/hkjang/aidev/tree/main/state/runs/2026-09-11-201042-cutover-improve",
-   "labels": "aidev-approved",
-   "action": "승인: PR 라벨 aidev-approved / 반려: aidev-rejected — 다음 회차에 러너가 승인 당시 커밋에만 CI 확인 후 머지·닫기",
-   "date": "2026-09-11"
-  },
-  {
-   "kind": "PR",
    "project": "Momento",
    "title": "auto-improve: docs: 사용자·관리자 가이드를 실제 화면 캡처가 실린 완성본으로 다시 쓴다",
    "url": "https://github.com/hkjang/Momento/pull/1",
@@ -601,45 +595,6 @@
    "labels": "",
    "action": "승인: PR 라벨 aidev-approved / 반려: aidev-rejected — 다음 회차에 러너가 승인 당시 커밋에만 CI 확인 후 머지·닫기",
    "date": "2026-09-11"
-  },
-  {
-   "kind": "PR",
-   "project": "kanpic",
-   "title": "auto-improve: fix: 사용자 명단도 무엇으로 적혔는지 밝히면 밝힌 대로 읽는다",
-   "url": "https://github.com/hkjang/kanpic/pull/16",
-   "sha": "fd9c422",
-   "summary": "5파일 +117/−1 · review held, PR open https://github.com/hkjang/kanpic/pull/16",
-   "why": "review: missing — 리뷰 결과 없음/손상: missing — 보류",
-   "evidence": "https://github.com/hkjang/aidev/tree/main/state/runs/2026-09-10-204118-kanpic-improve",
-   "labels": "aidev-approved",
-   "action": "승인: PR 라벨 aidev-approved / 반려: aidev-rejected — 다음 회차에 러너가 승인 당시 커밋에만 CI 확인 후 머지·닫기",
-   "date": "2026-09-10"
-  },
-  {
-   "kind": "PR",
-   "project": "moina",
-   "title": "auto-improve: fix: EXIF로 돌려 찍은 사진의 표시 크기를 알려 줍니다",
-   "url": "https://github.com/hkjang/moina/pull/17",
-   "sha": "89176b8",
-   "summary": "3파일 +183/−7 · review held, PR open https://github.com/hkjang/moina/pull/17",
-   "why": "review: rejected — 리뷰 거절: backend/internal/httpapi/social.go:836 APP1 segment 전체가 sniff 버퍼 안에 들어와야만",
-   "evidence": "https://github.com/hkjang/aidev/tree/main/state/runs/2026-09-10-204123-moina-improve",
-   "labels": "aidev-approved",
-   "action": "승인: PR 라벨 aidev-approved / 반려: aidev-rejected — 다음 회차에 러너가 승인 당시 커밋에만 CI 확인 후 머지·닫기",
-   "date": "2026-09-10"
-  },
-  {
-   "kind": "PR",
-   "project": "git-ctx",
-   "title": "auto-improve: fix(contentsecurity): mask the value a block scalar states below its key",
-   "url": "https://github.com/hkjang/git-ctx/pull/28",
-   "sha": "9b9ea38",
-   "summary": "3파일 +157/−4 · guarded files, PR open https://github.com/hkjang/git-ctx/pull/28",
-   "why": "guard: held — internal/contentsecurity/credential_shapes_test.go ",
-   "evidence": "https://github.com/hkjang/aidev/tree/main/state/runs/2026-09-10-192120-git-ctx-improve",
-   "labels": "aidev-approved",
-   "action": "승인: PR 라벨 aidev-approved / 반려: aidev-rejected — 다음 회차에 러너가 승인 당시 커밋에만 CI 확인 후 머지·닫기",
-   "date": "2026-09-10"
   },
   {
    "kind": "PR",
@@ -656,32 +611,6 @@
   },
   {
    "kind": "PR",
-   "project": "relio",
-   "title": "auto-improve: perf(intelligence): read the deal health facts once for the whole set",
-   "url": "https://github.com/hkjang/relio/pull/17",
-   "sha": "6e90880",
-   "summary": "3파일 +341/−42 · needs approval (risk=medium, files=3), PR open https://github.com/hkjang/relio/pull/17",
-   "why": "autonomy: held — low-risk 단계 — 위험도 medium, 파일 3: 사람 승인 필요; review: approved — 리뷰 승인 (risk=medium)",
-   "evidence": "https://github.com/hkjang/aidev/tree/main/state/runs/2026-09-10-153118-relio-improve",
-   "labels": "aidev-approved",
-   "action": "승인: PR 라벨 aidev-approved / 반려: aidev-rejected — 다음 회차에 러너가 승인 당시 커밋에만 CI 확인 후 머지·닫기",
-   "date": "2026-09-10"
-  },
-  {
-   "kind": "PR",
-   "project": "ptium",
-   "title": "auto-improve: Leave a sheet that spaces its thousands the table it was",
-   "url": "https://github.com/hkjang/ptium/pull/17",
-   "sha": "6b22609",
-   "summary": "2파일 +109/−18 · review held, PR open https://github.com/hkjang/ptium/pull/17",
-   "why": "review: rejected — 리뷰 거절: server/internal/docs/tables.go:336-339 (amountSigns) — adding the Europea",
-   "evidence": "https://github.com/hkjang/aidev/tree/main/state/runs/2026-09-10-153108-ptium-improve",
-   "labels": "",
-   "action": "승인: PR 라벨 aidev-approved / 반려: aidev-rejected — 다음 회차에 러너가 승인 당시 커밋에만 CI 확인 후 머지·닫기",
-   "date": "2026-09-10"
-  },
-  {
-   "kind": "PR",
    "project": "git-ctx",
    "title": "auto-improve: fix(manifest): read the python lock files a project actually has",
    "url": "https://github.com/hkjang/git-ctx/pull/27",
@@ -689,7 +618,7 @@
    "summary": "4파일 +216/−4 · review held, PR open https://github.com/hkjang/git-ctx/pull/27",
    "why": "review: rejected — 리뷰 거절: internal/manifest/lockfile.go:256-270 parsePipfileLock appends every entr",
    "evidence": "https://github.com/hkjang/aidev/tree/main/state/runs/2026-09-10-121115-git-ctx-improve",
-   "labels": "",
+   "labels": "aidev-approved",
    "action": "승인: PR 라벨 aidev-approved / 반려: aidev-rejected — 다음 회차에 러너가 승인 당시 커밋에만 CI 확인 후 머지·닫기",
    "date": "2026-09-10"
   },
@@ -698,8 +627,8 @@
    "project": "Vendra",
    "title": "auto-improve: fix: price a bid in the currency the tender was put out in, and say which one every amount is in",
    "url": "https://github.com/hkjang/Vendra/pull/117",
-   "sha": "2e1abb1",
-   "summary": "12파일 +687/−25 · review held, PR open https://github.com/hkjang/Vendra/pull/117",
+   "sha": "77fce29",
+   "summary": "12파일 +711/−27 · review held, PR open https://github.com/hkjang/Vendra/pull/117",
    "why": "review: rejected — 리뷰 거절: internal/httpapi/sourcing.go:311 `in.Currency = tenderCurrency` overwrite",
    "evidence": "https://github.com/hkjang/aidev/tree/main/state/runs/2026-09-10-094115-Vendra-improve",
    "labels": "",
@@ -718,6 +647,19 @@
    "labels": "",
    "action": "이슈 안내대로 복구 후 이슈 닫기",
    "date": "2026-09-06"
+  },
+  {
+   "kind": "수정 과제",
+   "project": "moina",
+   "title": "PR #19(방문 추적)가 시각 회귀 4건으로 막혀 있습니다. 결함이 아니라 기준 이미지 문제입니다 — light/dark x desktop/mobile 의 admin-settin",
+   "url": "https://hkjang.github.io/aidev/projects/moina/",
+   "sha": "",
+   "summary": "릴리즈 워크플로 2회 실패 — 다음 회차 자동 배정",
+   "why": "PR #19(방문 추적)가 시각 회귀 4건으로 막혀 있습니다. 결함이 아니라 기준 이미지 문제입니다 — light/dark x desktop/mobile 의 admin-settings 네 장이 6.6~9.9% 달라졌는데, 이 PR 이 관리 설정 화면에 방문 추적 섹션을 새로 넣었으니 당연한 변화입니다. e2e/visual-baselines 의 그 네 장을 ",
+   "evidence": "",
+   "labels": "",
+   "action": "두면 러너가 수정 회차를 돌림. 급하면 run: 이슈, 멈추려면 stop",
+   "date": ""
   }
  ],
  "stops": [
@@ -794,7 +736,7 @@
     "visitflow",
     "weekly"
    ],
-   "budget_usd": 300,
+   "budget_usd": 400,
    "improve_budget_usd": 14,
    "until": "2026-10-31",
    "done": false,
@@ -848,7 +790,7 @@
     "visitflow",
     "weekly"
    ],
-   "budget_usd": 300,
+   "budget_usd": 400,
    "improve_budget_usd": 14,
    "until": "2026-11-30",
    "done": false,
@@ -940,7 +882,7 @@
   {
    "metric": "검증된 개선 완료율",
    "value": "96%",
-   "detail": "관찰 24h 지난 머지 377건 중 회귀 없음 363건"
+   "detail": "관찰 24h 지난 머지 379건 중 회귀 없음 365건"
   },
   {
    "metric": "완전한 릴리즈 비율",
@@ -950,22 +892,22 @@
   {
    "metric": "사람의 재작업률",
    "value": "0%",
-   "detail": "되돌림·롤백 0건 / 관찰 머지 377건"
+   "detail": "되돌림·롤백 0건 / 관찰 머지 379건"
   },
   {
    "metric": "변경 후 회귀율",
    "value": "0%",
-   "detail": "회귀 0건 / 관찰 머지 377건"
+   "detail": "회귀 0건 / 관찰 머지 379건"
   },
   {
    "metric": "유효 개선당 비용",
-   "value": "$12.32",
-   "detail": "비용 확인된 유효 개선 164건, 미확인 세션 4"
+   "value": "$12.29",
+   "detail": "비용 확인된 유효 개선 165건, 미확인 세션 4"
   },
   {
    "metric": "예외 처리 소요 시간(중앙값)",
-   "value": "9.2시간",
-   "detail": "해결된 경고 40건"
+   "value": "8.5시간",
+   "detail": "해결된 경고 47건"
   },
   {
    "metric": "실행 오류",
@@ -977,7 +919,7 @@
   "release-ready": 2,
   "review-pending": 10,
   "no-change": 2,
-  "merged": 1,
+  "merged": 2,
   "releasing": 0,
   "verify-failed": 0,
   "error": 0
@@ -985,12 +927,12 @@
  "days": [
   {
    "date": "2026-09-13",
-   "total": 15,
+   "total": 16,
    "released": 2,
-   "merged": 1,
+   "merged": 2,
    "nochange": 2,
    "failed": 0,
-   "cost_usd": 108.52
+   "cost_usd": 115.93
   },
   {
    "date": "2026-09-12",
@@ -1097,13 +1039,13 @@
    "key": "2026-W37",
    "url": "https://hkjang.github.io/aidev/weekly/2026-W37/",
    "days": 7,
-   "total": 393,
+   "total": 394,
    "released": 125,
-   "merged": 42,
+   "merged": 43,
    "nochange": 4,
    "failed": 13,
-   "cost": 1779.19,
-   "minutes": 4457
+   "cost": 1786.6,
+   "minutes": 4481
   },
   {
    "key": "2026-W36",
@@ -1123,13 +1065,13 @@
    "key": "2026-09",
    "url": "https://hkjang.github.io/aidev/monthly/2026-09/",
    "days": 12,
-   "total": 699,
+   "total": 700,
    "released": 282,
-   "merged": 101,
+   "merged": 102,
    "nochange": 18,
    "failed": 13,
-   "cost": 2019.68,
-   "minutes": 5108
+   "cost": 2027.09,
+   "minutes": 5132
   }
  ],
  "projects": [
@@ -1330,14 +1272,21 @@
    "last_ts": "2026-09-13T04:37:18+09:00",
    "last_status": "nochange",
    "last_result": "no change",
-   "cost": 16.01,
-   "minutes": 43,
+   "cost": 16.84,
+   "minutes": 47,
    "grade": "B",
    "grade_why": "14일: 릴리즈 0, 실패 0, 경고 0, 회귀 0",
    "lessons": 0,
    "ideas_pending": 8,
    "ideas_total": 9,
-   "release": {}
+   "release": {
+    "status": "released",
+    "version": "1.4.0",
+    "tag": "v1.4.0",
+    "assets_count": 1,
+    "prev_tag": "v1.3.0",
+    "prev_assets_count": 1
+   }
   },
   {
    "name": "dataworks",
@@ -1373,8 +1322,8 @@
    "last_ts": "2026-09-10T19:34:33+09:00",
    "last_status": "other",
    "last_result": "guarded files, PR open https://github.com/hkjang/git-ctx/pull/28",
-   "cost": 38.53,
-   "minutes": 155,
+   "cost": 39.86,
+   "minutes": 162,
    "grade": "D",
    "grade_why": "14일: 릴리즈 9, 실패 0, 경고 6, 회귀 2",
    "lessons": 2,
@@ -1382,10 +1331,10 @@
    "ideas_total": 12,
    "release": {
     "status": "released",
-    "version": "0.77.11",
-    "tag": "v0.77.11",
+    "version": "0.77.12",
+    "tag": "v0.77.12",
     "assets_count": 2,
-    "prev_tag": "v0.77.10",
+    "prev_tag": "v0.77.11",
     "prev_assets_count": 2
    }
   },
@@ -1498,8 +1447,8 @@
    "last_ts": "2026-09-11T05:42:10+09:00",
    "last_status": "released",
    "last_result": "merged https://github.com/hkjang/kanpic/pull/17, released v0.243.0",
-   "cost": 43.18,
-   "minutes": 97,
+   "cost": 44.25,
+   "minutes": 99,
    "grade": "B",
    "grade_why": "14일: 릴리즈 15, 실패 0, 경고 1, 회귀 0",
    "lessons": 0,
@@ -1507,10 +1456,10 @@
    "ideas_total": 10,
    "release": {
     "status": "released",
-    "version": "0.243.0",
-    "tag": "v0.243.0",
+    "version": "0.244.0",
+    "tag": "v0.244.0",
     "assets_count": 2,
-    "prev_tag": "v0.242.0",
+    "prev_tag": "v0.243.0",
     "prev_assets_count": 2
    }
   },
@@ -1548,8 +1497,8 @@
    "last_ts": "2026-09-12T19:44:53+09:00",
    "last_status": "failed",
    "last_result": "CI failed, PR open https://github.com/hkjang/moina/pull/19",
-   "cost": 58.4,
-   "minutes": 131,
+   "cost": 60.22,
+   "minutes": 135,
    "grade": "D",
    "grade_why": "14일: 릴리즈 9, 실패 3, 경고 5, 회귀 0",
    "lessons": 0,
@@ -1557,10 +1506,10 @@
    "ideas_total": 13,
    "release": {
     "status": "released",
-    "version": "0.1.27",
-    "tag": "v0.1.27",
+    "version": "0.1.28",
+    "tag": "v0.1.28",
     "assets_count": 1,
-    "prev_tag": "v0.1.26",
+    "prev_tag": "v0.1.27",
     "prev_assets_count": 1
    }
   },
@@ -1591,8 +1540,8 @@
    "last_ts": "2026-09-12T20:18:36+09:00",
    "last_status": "other",
    "last_result": "review held, PR open https://github.com/hkjang/moyro/pull/13",
-   "cost": 68.27,
-   "minutes": 198,
+   "cost": 69.31,
+   "minutes": 201,
    "grade": "C",
    "grade_why": "14일: 릴리즈 8, 실패 0, 경고 3, 회귀 1",
    "lessons": 1,
@@ -1600,10 +1549,10 @@
    "ideas_total": 14,
    "release": {
     "status": "released",
-    "version": "0.2.28",
-    "tag": "v0.2.28",
+    "version": "0.2.29",
+    "tag": "v0.2.29",
     "assets_count": 1,
-    "prev_tag": "v0.2.27",
+    "prev_tag": "v0.2.28",
     "prev_assets_count": 1
    }
   },
@@ -1666,8 +1615,8 @@
    "last_ts": "2026-09-11T12:36:15+09:00",
    "last_status": "other",
    "last_result": "review held, PR open https://github.com/hkjang/ptium/pull/19",
-   "cost": 54.9,
-   "minutes": 146,
+   "cost": 56.22,
+   "minutes": 151,
    "grade": "D",
    "grade_why": "14일: 릴리즈 11, 실패 0, 경고 2, 회귀 2",
    "lessons": 2,
@@ -1675,10 +1624,10 @@
    "ideas_total": 13,
    "release": {
     "status": "released",
-    "version": "1.69.34",
-    "tag": "v1.69.34",
+    "version": "1.69.37",
+    "tag": "v1.69.37",
     "assets_count": 7,
-    "prev_tag": "v1.69.33",
+    "prev_tag": "v1.69.36",
     "prev_assets_count": 7
    }
   },
@@ -1733,11 +1682,11 @@
    "name": "relio",
    "repo": "https://github.com/hkjang/relio",
    "page": "https://hkjang.github.io/aidev/projects/relio/",
-   "runs": 28,
+   "runs": 29,
    "released": 12,
-   "last_ts": "2026-09-12T08:51:33+09:00",
+   "last_ts": "2026-09-13T09:31:41+09:00",
    "last_status": "merged",
-   "last_result": "merged https://github.com/hkjang/relio/pull/18 (approved)",
+   "last_result": "merged https://github.com/hkjang/relio/pull/17 (approved)",
    "cost": 52.85,
    "minutes": 125,
    "grade": "D",
@@ -1816,8 +1765,8 @@
    "cost": 76.36,
    "minutes": 158,
    "grade": "C",
-   "grade_why": "14일: 릴리즈 0, 실패 0, 경고 3, 회귀 0",
-   "lessons": 0,
+   "grade_why": "14일: 릴리즈 0, 실패 0, 경고 3, 회귀 1",
+   "lessons": 1,
    "ideas_pending": 11,
    "ideas_total": 12,
    "release": {}

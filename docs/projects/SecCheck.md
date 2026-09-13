@@ -1,7 +1,7 @@
 ---
 title: "SecCheck — 자율 개선 이력"
 description: "SecCheck: 자율 개선 회차 15회, 릴리즈 0건. 최근 릴리즈 없음."
-last_modified_at: 2026-09-13 07:45:00 +0900
+last_modified_at: 2026-09-13 09:31:43 +0900
 ---
 {% raw %}
 <script type="application/ld+json">
@@ -18,13 +18,13 @@ last_modified_at: 2026-09-13 07:45:00 +0900
   "name": "hkjang",
   "url": "https://github.com/hkjang"
  },
- "dateModified": "2026-09-13T07:45:00+09:00"
+ "dateModified": "2026-09-13T09:31:43+09:00"
 }
 </script>
 
 # SecCheck
 
-<p class="tldr"><strong>요약.</strong> SecCheck: 자율 개선 회차 15회, 릴리즈 0건. 최근 릴리즈 없음. <span class="pill pill-merged" title="14일: 릴리즈 0, 실패 0, 경고 3, 회귀 0">건강 C</span> <span class="meta">14일: 릴리즈 0, 실패 0, 경고 3, 회귀 0</span></p>
+<p class="tldr"><strong>요약.</strong> SecCheck: 자율 개선 회차 15회, 릴리즈 0건. 최근 릴리즈 없음. <span class="pill pill-merged" title="14일: 릴리즈 0, 실패 0, 경고 3, 회귀 1">건강 C</span> <span class="meta">14일: 릴리즈 0, 실패 0, 경고 3, 회귀 1</span></p>
 
 <ul class="stats"><li><b>15</b><span>회차</span></li><li><b>1</b><span>프로젝트</span></li><li><b>0</b><span>배포 준비 완료</span></li><li><b>0</b><span>릴리즈 진행 중</span></li><li><b>0</b><span>병합 완료</span></li><li><b>3</b><span>검토 대기</span></li><li><b>12</b><span>검증 실패</span></li><li><b>0</b><span>변경 없음</span></li><li><b>0</b><span>실행 오류</span></li><li><b>$76.36</b><span>비용</span></li><li><b>2시간 38분</b><span>에이전트 시간</span></li></ul>
 
@@ -46,6 +46,10 @@ last_modified_at: 2026-09-13 07:45:00 +0900
 ## 아이디어 백로그 — 대기 11 / 전체 12
 
 <div class="table-wrap"><table class="rt" data-filter="1"><caption class="meta">에이전트가 회차마다 재평가한다. 가치 높고 위험 낮은 대기 항목이 다음 회차 후보다.</caption><thead><tr><th class="primary">아이디어</th><th>가치/위험/크기</th><th>상태</th><th>메모</th><th>갱신</th></tr></thead><tbody><tr data-status="nochange"><td data-label="아이디어" class="primary">store.SchemaDrift 의 스크래치 스키마 이름에서 `-` 를 제거해 verify-schema 명령과 TestVerifyingTheSchemaReportsWhatTheBuildIsMissing 을 살리기</td><td data-label="가치/위험/크기">4/1/S</td><td data-label="상태">대기</td><td data-label="메모">NewID()[:12] 는 9번째 글자가 항상 `-` 라 CREATE SCHEMA 가 구문 오류. 2026-09-13 재확인: base 523cd0f 에서도 실패. 로컬 main(c32eec7 &#x27;Let an operator ask whether the database matches the build&#x27;)에 이미 고쳐졌을 수 있으니 먼저 확인. 캠페인 밖이라 이번에도 손대지 않음.</td><td data-label="갱신">2026-09-13</td></tr><tr data-status="nochange"><td data-label="아이디어" class="primary">payloads vitest 를 get/del/upload 경로까지 넓혀 화면이 부르는 모든 메서드+경로를 server.go 의 s.handle 등록과 대조</td><td data-label="가치/위험/크기">3/1/M</td><td data-label="상태">대기</td><td data-label="메모">지금은 본문이 있는 호출만 본다. `${…}` 를 `{*}` 로 정규화해 s.handle(&quot;METHOD /path&quot;) 목록과 맞추면 된다. 2026-09-13 재평가: 여전히 타당.</td><td data-label="갱신">2026-09-13</td></tr><tr data-status="nochange"><td data-label="아이디어" class="primary">콜백이 login_required 를 받은 조용한 시도를 서버 로그 auth 의 INFO 로 남겨 &#x27;자동 로그인이 왜 안 되나&#x27; 를 운영자가 볼 수 있게 하기</td><td data-label="가치/위험/크기">2/1/S</td><td data-label="상태">대기</td><td data-label="메모">지금은 거절이 감사로그에도 서버 로그에도 남지 않는다(평범한 대답이라 감사로그는 맞지 않음). 붙이면 ADMIN_GUIDE 6절 표 행과 docs_test 의 로그 문구 대조가 따라온다.</td><td data-label="갱신">2026-09-13</td></tr><tr data-status="nochange"><td data-label="아이디어" class="primary">방문 추적 탭(admin-settings-analytics.png)과 Keycloak OIDC 탭(자동 로그인 토글 포함)을 다시 캡처해 ADMIN_GUIDE 3-2 에 싣기</td><td data-label="가치/위험/크기">2/1/S</td><td data-label="상태">대기</td><td data-label="메모">다른 탭은 그림이 있는데 방문 추적 탭만 없고, OIDC 탭 그림은 토글이 생기기 전 것. capture_all.js 에 장면 추가 후 SECCHECK_CAPTURE_ONLY 로. 서버+Playwright 필요.</td><td data-label="갱신">2026-09-13</td></tr><tr data-status="nochange"><td data-label="아이디어" class="primary">DecisionModal 의 종류별 본문을 정적 표로 빼고 payloads vitest 가 그 표까지 읽게 하기</td><td data-label="가치/위험/크기">2/1/S</td><td data-label="상태">대기</td><td data-label="메모">ReviewDetail.tsx 의 action(path, data) 는 경로·본문이 모두 변수라 정적으로 못 읽는다(008c9ec 의 현장).</td><td data-label="갱신">2026-09-13</td></tr><tr data-status="nochange"><td data-label="아이디어" class="primary">USER_GUIDE 3-7 에 알림 수신 설정 창을 캡처해 싣기</td><td data-label="가치/위험/크기">2/1/S</td><td data-label="상태">대기</td><td data-label="메모">서버 필요. 2026-09-13 재평가: 타당.</td><td data-label="갱신">2026-09-13</td></tr><tr data-status="nochange"><td data-label="아이디어" class="primary">캡처 스크립트에 시드 데이터 정리(--cleanup) 옵션 추가</td><td data-label="가치/위험/크기">2/2/S</td><td data-label="상태">대기</td><td data-label="메모">서버 기동 비용 대비 가치가 낮아 뒤로. 2026-09-13 재평가: 여전히 타당.</td><td data-label="갱신">2026-09-13</td></tr><tr data-status="nochange"><td data-label="아이디어" class="primary">Notifications.tsx 의 adminDestination 에 API_KEY_REVOKED·ACCOUNT_LOCKED·USER 대상 인계 알림의 이동 버튼 추가</td><td data-label="가치/위험/크기">2/2/S</td><td data-label="상태">대기</td><td data-label="메모">캠페인 밖. 붙이면 docs_test 가 USER_GUIDE 3-7 표 갱신을 요구한다.</td><td data-label="갱신">2026-09-13</td></tr><tr data-status="nochange"><td data-label="아이디어" class="primary">프록시를 끈 외부 도구를 위해 추적 활성 화면에서만 COEP 를 credentialless 로 낮출지 검토</td><td data-label="가치/위험/크기">2/3/S</td><td data-label="상태">대기</td><td data-label="메모">화면은 Cross-Origin-Embedder-Policy: require-corp 라 CORP 헤더 없는 외부 스크립트는 CSP 와 별개로 안 읽힘. 지금은 ADMIN_GUIDE 3-4 에 요건만 적음. Safari 는 credentialless 미지원.</td><td data-label="갱신">2026-09-13</td></tr><tr data-status="nochange"><td data-label="아이디어" class="primary">Login.tsx 가 /login?sso=none 에 도착했을 때 &#x27;사내 SSO로 로그인&#x27; 버튼을 첫 초점으로 두기</td><td data-label="가치/위험/크기">1/1/S</td><td data-label="상태">대기</td><td data-label="메모">Keycloak 세션이 없어 온 사람이 다음에 누를 것이 그 버튼. 캡처 없이 가능.</td><td data-label="갱신">2026-09-13</td></tr><tr data-status="nochange"><td data-label="아이디어" class="primary">search-command.png 를 심의·항목·증적 세 종류 결과가 한 화면에 보이는 검색어로 다시 찍기</td><td data-label="가치/위험/크기">1/1/S</td><td data-label="상태">대기</td><td data-label="메모">서버 필요. 타당하나 가치 낮음.</td><td data-label="갱신">2026-09-13</td></tr><tr data-status="released"><td data-label="아이디어" class="primary">캠페인 silent-sso-2026-09: OIDC auto_login(기본 꺼짐) + prompt=none 최상위 이동 + 세 겹 루프 방지(sessionStorage 한 번·로그아웃 억제·/login?sso=none) + ADMIN_GUIDE 3-2·3-3</td><td data-label="가치/위험/크기">4/2/M</td><td data-label="상태">완료</td><td data-label="메모">커밋 013c2c1. 서버 BeginOIDC(silent)·AbandonOIDC·SafeReturnTo·oidc_states.silent(035)·public config oidc_auto_login, 브라우저 web/src/lib/silentSso.ts + main.tsx, Settings 토글, vitest 8 + Go 통합 3. 실제 Keycloak 으로는 미확인(환경에 IdP 없음).</td><td data-label="갱신">2026-09-13</td></tr></tbody></table></div>
+
+## 교훈 (깨졌던 변경)
+
+- 2026-09-13 **security-gate** — 컨테이너 취약점 게이트는 베이스 이미지가 태그된 날의 패키지를 그대로 들고 오는 것에서 막힌다. Dockerfile 에 apt-get upgrade 를 넣고, 의존성(golang.org/x/crypto 등)도 고칠 수 있는 버전이 있으면 올릴 것. 게이트를 푸는 것이 아니라 취약점을 고치는 쪽이 맞다.
 
 ## 원장 (에이전트가 남긴 기록)
 

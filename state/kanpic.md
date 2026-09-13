@@ -169,3 +169,4 @@
 - 보류 아이디어: parseUserCSV 는 쉼표만 보아 세미콜론으로 가른 명단을 한 열로 읽는다(워크북 쪽은 delimited.Delimiter 를 쓴다) / csvNumber 자리(formula.DecimalNumber)가 IMPORTDATA 의 "1,200"·"12%"·통화 기호를 글자로 남긴다 / 서버 formatValue 는 글자 "123" 을 수로 읽고 격자는 글자로 보아 숫자처럼 생긴 글자 값에서 두 곳이 갈린다 / IMPORTDATA 의 CSV 파싱 실패(#VALUE!)도 cache_seconds 만큼 담겨 원격이 파일을 고쳐도 회복이 늦다 / 홈 화면 워크북 카드의 미리보기가 값이 있는 워크북에서도 빈 격자로 그려진다(캡처하다 발견)
 
 - 릴리즈: v0.243.0 (2026-09-11, run 2026-09-11-050112-kanpic-improve)
+- 릴리즈: v0.244.0 (2026-09-13, run 2026-09-13-081952-kanpic-approve)

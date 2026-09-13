@@ -1,7 +1,7 @@
 ---
 title: "cutover — 자율 개선 이력"
-description: "cutover: 자율 개선 회차 3회, 릴리즈 0건. 최근 릴리즈 없음."
-last_modified_at: 2026-09-13 07:45:00 +0900
+description: "cutover: 자율 개선 회차 3회, 릴리즈 0건. 최근 릴리즈 v1.4.0 (자산 1개)."
+last_modified_at: 2026-09-13 09:31:43 +0900
 ---
 {% raw %}
 <script type="application/ld+json">
@@ -11,28 +11,30 @@ last_modified_at: 2026-09-13 07:45:00 +0900
  "name": "cutover",
  "codeRepository": "https://github.com/hkjang/cutover",
  "url": "https://hkjang.github.io/aidev/projects/cutover/",
- "description": "cutover: 자율 개선 회차 3회, 릴리즈 0건. 최근 릴리즈 없음.",
+ "description": "cutover: 자율 개선 회차 3회, 릴리즈 0건. 최근 릴리즈 v1.4.0 (자산 1개).",
  "inLanguage": "ko",
  "maintainer": {
   "@type": "Person",
   "name": "hkjang",
   "url": "https://github.com/hkjang"
  },
- "dateModified": "2026-09-13T07:45:00+09:00"
+ "dateModified": "2026-09-13T09:31:43+09:00",
+ "version": "1.4.0"
 }
 </script>
 
 # cutover
 
-<p class="tldr"><strong>요약.</strong> cutover: 자율 개선 회차 3회, 릴리즈 0건. 최근 릴리즈 없음. <span class="pill pill-merged" title="14일: 릴리즈 0, 실패 0, 경고 0, 회귀 0">건강 B</span> <span class="meta">14일: 릴리즈 0, 실패 0, 경고 0, 회귀 0</span></p>
+<p class="tldr"><strong>요약.</strong> cutover: 자율 개선 회차 3회, 릴리즈 0건. 최근 릴리즈 v1.4.0 (자산 1개). <span class="pill pill-merged" title="14일: 릴리즈 0, 실패 0, 경고 0, 회귀 0">건강 B</span> <span class="meta">14일: 릴리즈 0, 실패 0, 경고 0, 회귀 0</span></p>
 
-<ul class="stats"><li><b>3</b><span>회차</span></li><li><b>1</b><span>프로젝트</span></li><li><b>0</b><span>배포 준비 완료</span></li><li><b>0</b><span>릴리즈 진행 중</span></li><li><b>0</b><span>병합 완료</span></li><li><b>2</b><span>검토 대기</span></li><li><b>0</b><span>검증 실패</span></li><li><b>1</b><span>변경 없음</span></li><li><b>0</b><span>실행 오류</span></li><li><b>$16.01</b><span>비용</span></li><li><b>43분</b><span>에이전트 시간</span></li></ul>
+<ul class="stats"><li><b>3</b><span>회차</span></li><li><b>1</b><span>프로젝트</span></li><li><b>0</b><span>배포 준비 완료</span></li><li><b>0</b><span>릴리즈 진행 중</span></li><li><b>0</b><span>병합 완료</span></li><li><b>2</b><span>검토 대기</span></li><li><b>0</b><span>검증 실패</span></li><li><b>1</b><span>변경 없음</span></li><li><b>0</b><span>실행 오류</span></li><li><b>$16.84</b><span>비용</span></li><li><b>47분</b><span>에이전트 시간</span></li></ul>
 
 ## 현황
 
 <dl class="kv">
 <dt>저장소</dt><dd><a href="https://github.com/hkjang/cutover">https://github.com/hkjang/cutover</a></dd>
 <dt>마지막 회차</dt><dd>2026-09-13 04:37 KST — <span class="pill pill-nochange">➖ 변경 없음</span> no change</dd>
+<dt>최근 릴리즈</dt><dd><a href="https://github.com/hkjang/cutover/releases/tag/v1.4.0">v1.4.0</a> — released · 자산 1개 (이전 v1.3.0: 1개) <a href="https://github.com/hkjang/cutover/releases">전체 릴리즈 →</a></dd>
 </dl>
 
 ## 회차 이력
@@ -41,7 +43,7 @@ last_modified_at: 2026-09-13 07:45:00 +0900
 
 ## 비용·사용량
 
-<div class="table-wrap"><table class="rt"><caption class="meta">최근 30세션</caption><thead><tr><th>시각</th><th class="primary">프로젝트</th><th>단계</th><th class="num">시간</th><th class="num">턴</th><th class="num">비용</th><th class="num">토큰 입력/출력</th><th>종료</th></tr></thead><tbody><tr data-status="other"><td data-label="시각">04:37</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/cutover/">cutover</a></td><td data-label="단계">개선</td><td data-label="시간" class="num">1분</td><td data-label="턴" class="num">8</td><td data-label="비용" class="num">$0.49</td><td data-label="토큰 입력/출력" class="num">191K / 6K</td><td data-label="종료">success</td></tr><tr data-status="other"><td data-label="시각">15:24</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/cutover/">cutover</a></td><td data-label="단계">review</td><td data-label="시간" class="num">5분</td><td data-label="턴" class="num">28</td><td data-label="비용" class="num">$1.86</td><td data-label="토큰 입력/출력" class="num">1.6M / 15K</td><td data-label="종료">success</td></tr><tr data-status="other"><td data-label="시각">15:19</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/cutover/">cutover</a></td><td data-label="단계">개선</td><td data-label="시간" class="num">21분</td><td data-label="턴" class="num">90</td><td data-label="비용" class="num">$7.54</td><td data-label="토큰 입력/출력" class="num">7.5M / 85K</td><td data-label="종료">success</td></tr><tr data-status="other"><td data-label="시각">20:26</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/cutover/">cutover</a></td><td data-label="단계">review</td><td data-label="시간" class="num">1분</td><td data-label="턴" class="num">14</td><td data-label="비용" class="num">$0.71</td><td data-label="토큰 입력/출력" class="num">498K / 6K</td><td data-label="종료">success</td></tr><tr data-status="other"><td data-label="시각">20:25</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/cutover/">cutover</a></td><td data-label="단계">개선</td><td data-label="시간" class="num">14분</td><td data-label="턴" class="num">63</td><td data-label="비용" class="num">$5.40</td><td data-label="토큰 입력/출력" class="num">5.0M / 56K</td><td data-label="종료">success</td></tr></tbody></table></div>
+<div class="table-wrap"><table class="rt"><caption class="meta">최근 30세션</caption><thead><tr><th>시각</th><th class="primary">프로젝트</th><th>단계</th><th class="num">시간</th><th class="num">턴</th><th class="num">비용</th><th class="num">토큰 입력/출력</th><th>종료</th></tr></thead><tbody><tr data-status="other"><td data-label="시각">07:50</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/cutover/">cutover</a></td><td data-label="단계">릴리즈</td><td data-label="시간" class="num">3분</td><td data-label="턴" class="num">15</td><td data-label="비용" class="num">$0.83</td><td data-label="토큰 입력/출력" class="num">555K / 9K</td><td data-label="종료">success</td></tr><tr data-status="other"><td data-label="시각">04:37</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/cutover/">cutover</a></td><td data-label="단계">개선</td><td data-label="시간" class="num">1분</td><td data-label="턴" class="num">8</td><td data-label="비용" class="num">$0.49</td><td data-label="토큰 입력/출력" class="num">191K / 6K</td><td data-label="종료">success</td></tr><tr data-status="other"><td data-label="시각">15:24</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/cutover/">cutover</a></td><td data-label="단계">review</td><td data-label="시간" class="num">5분</td><td data-label="턴" class="num">28</td><td data-label="비용" class="num">$1.86</td><td data-label="토큰 입력/출력" class="num">1.6M / 15K</td><td data-label="종료">success</td></tr><tr data-status="other"><td data-label="시각">15:19</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/cutover/">cutover</a></td><td data-label="단계">개선</td><td data-label="시간" class="num">21분</td><td data-label="턴" class="num">90</td><td data-label="비용" class="num">$7.54</td><td data-label="토큰 입력/출력" class="num">7.5M / 85K</td><td data-label="종료">success</td></tr><tr data-status="other"><td data-label="시각">20:26</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/cutover/">cutover</a></td><td data-label="단계">review</td><td data-label="시간" class="num">1분</td><td data-label="턴" class="num">14</td><td data-label="비용" class="num">$0.71</td><td data-label="토큰 입력/출력" class="num">498K / 6K</td><td data-label="종료">success</td></tr><tr data-status="other"><td data-label="시각">20:25</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/cutover/">cutover</a></td><td data-label="단계">개선</td><td data-label="시간" class="num">14분</td><td data-label="턴" class="num">63</td><td data-label="비용" class="num">$5.40</td><td data-label="토큰 입력/출력" class="num">5.0M / 56K</td><td data-label="종료">success</td></tr></tbody></table></div>
 
 ## 아이디어 백로그 — 대기 8 / 전체 9
 
@@ -66,6 +68,8 @@ last_modified_at: 2026-09-13 07:45:00 +0900
 - 결과: 변경없음
 - 요약: SILENT-SSO-STANDARD.md 를 읽고 저장소 전체(app/, lib/, components/, docs/, package.json, e2e/)를 조사한 결과 이 저장소에는 OIDC 가 없다. 인증은 lib/adminSession.ts 의 공유 비밀번호(ADMIN_PASSWORD / USER_PASSWORD, 환경 변수)와 HMAC-SHA256 서명 쿠키(cutover_admin_session, app/api/auth/login·session)뿐이며 OIDC·OAuth·Keycloak·ReSSO 관련 코드·설정·의존성이 하나도 없다(oidc|openid|keycloak|sso|oauth 검색 결과 0건, package-lock.json 의 무관한 문자열 1건 제외). 표준의 "OIDC 가 없으면 새로 만들지 말고 원장에 적고 변경 없이 끝낸다" 규칙에 따라 코드·문서 변경 없이 종료했다(git status 깨끗함, 커밋 없음). 부수 확인: 이 브랜치(main 기준)에는 2026-09-12 회차의 tracking 작업(proxy.ts, lib/tracking, npm run test:unit)이 아직 없다 — 그 회차 브랜치가 머지되기 전까지는 test:unit 을 전제한 보류 아이디어를 실행할 수 없다.
 - 보류 아이디어: (1) 운영 빌드 관리자 세션 쿠키 Secure 속성을 ADMIN_COOKIE_SECURE 환경 변수/x-forwarded-proto 로 제어 — 코드 재확인 결과 여전히 secure: NODE_ENV==='production' — 가치 5 / 위험 2 / S. (2) 삭제·상태 전파의 하위 탐색을 ID 접두사(lib/treeUtils.ts:66, app/admin/page.tsx:224) 대신 parentId 기반으로 — 가치 4 / 위험 2 / S. (3) 관리자 콘솔 PUT 실패 표시와 삭제 확인창 중복(ActivityTree.tsx:122 + admin/page.tsx:279) 제거 — 가치 3 / 위험 1 / S. (4) 미사용 lib/s3.ts·amplify.yml·*_bak/_local·reset-visitor 정리 — 가치 2 / 위험 1 / S. (5) 관리자 가이드 2.1 의 쿠키 이름 오기(`cutover_admin` → 실제 `cutover_admin_session`) 수정과 세션 만료(7일)·AUTH_SECRET 설명 보강 — 가치 2 / 위험 1 / S. (6) 만약 나중에 사내 표준으로 OIDC 로그인이 도입되면 그때 silent SSO(prompt=none, 3겹 루프 방지, auto_login 기본 꺼짐)를 함께 붙인다 — 지금은 선행 조건(OIDC) 부재로 보류 — 가치 4 / 위험 3 / L.
+
+- 릴리즈: v1.4.0 (2026-09-13, run 2026-09-13-074631-cutover-approve)
 
 
 [← 대시보드](https://hkjang.github.io/aidev/) · [교훈 모음](https://hkjang.github.io/aidev/lessons/)
