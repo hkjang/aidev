@@ -1,0 +1,8 @@
+[
+  {"title":"Silent SSO(OIDC prompt=none) + oidc_auto_login 설정 (캠페인 silent-sso-2026-09)","value":5,"risk":2,"size":"M","status":"done","note":"서버 prompt=none 게이트·/login?sso=none 거절 처리·return_to 검증, 브라우저 3겹 루프 방지 규칙 모듈, 관리자 토글·가이드. 커밋 323950c.","updated":"2026-09-14"},
+  {"title":"로그인 화면에 ?sso=none 도착 시 안내 문구 표시","value":2,"risk":1,"size":"S","status":"pending","note":"조용한 시도가 거절되어 로그인 화면이 뜬 것임을 사용자에게 알려 혼란을 줄인다. ErrorBox가 아닌 부드러운 안내여야 한다.","updated":"2026-09-14"},
+  {"title":"Playwright 브라우저 시험에 silent SSO 루프 방지 시나리오 추가","value":3,"risk":2,"size":"M","status":"pending","note":"가짜 OIDC 제공자로 login_required 왕복 후 새로고침 반복 시 리다이렉트가 반복되지 않는지 실제 브라우저에서 확인. tests/browser.mjs 구조를 따른다.","updated":"2026-09-14"},
+  {"title":"SAML /auth/saml/start에도 return_to 보존 적용","value":2,"risk":2,"size":"S","status":"pending","note":"OIDC와 같은 oidcReturnTo 검증 규칙을 재사용해 깊은 링크 복귀를 통일한다.","updated":"2026-09-14"},
+  {"title":"비조용 OIDC 제공자 오류를 /login?sso=error 리다이렉트로 안내","value":3,"risk":2,"size":"S","status":"pending","note":"현재는 401 JSON 본문이 브라우저에 그대로 보인다. releasedock처럼 로그인 화면으로 보내되 sso=error 표시로 재시도를 막는다. 기존 통합 테스트의 401 기대치 수정 필요.","updated":"2026-09-14"},
+  {"title":"OpenAPI 목록에 OIDC start의 prompt/return_to 파라미터 설명 추가","value":1,"risk":1,"size":"S","status":"pending","note":"openapi.go의 경로 목록은 요약만 담고 있어 파라미터 설명 구조가 있는지 먼저 확인해야 한다.","updated":"2026-09-14"}
+]
