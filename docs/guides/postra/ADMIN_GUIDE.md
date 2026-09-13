@@ -234,6 +234,55 @@ Postra v0.10.0+는 장애 및 시스템 이벤트 추적 파이프라인을 지�
 - `postra_outbox_pending_messages`: 발송 대기 큐 크기
 - `postra_attachment_blocked_total`: 악성 첨부파일 차단 횟수
 
+### 6.3 방문 추적 스크립트와 콘텐츠 보안 정책(CSP)
+
+관리자는 `/ui/admin/settings` 의 **방문 추적** 카드에서 화면에 추적 도구를 붙일 수 있습니다. 설정은 시스템 설정 저장소(`tracking.*` 키)에 들어가며 REST `PATCH /api/admin/settings` 로도 바꿀 수 있습니다. **기본값은 꺼짐**입니다 — 새로 설치한 곳에서는 어떤 화면에도 스크립트가 붙지 않고, 정책도 달라지지 않습니다.
+
+| 설정 키 | 기본값 | 뜻 |
+| --- | --- | --- |
+| `tracking.enabled` | `false` | 관리자가 켜야 스니펫이 붙습니다 |
+| `tracking.provider` | `none` | `momento` · `ga4` · `gtm` · `matomo` · `custom` |
+| `tracking.momento_url` · `tracking.momento_site_id` | (없음) | Momento 수집기 주소와 사이트 id |
+| `tracking.momento_proxy` | `true` | `/momento/*` 를 앱이 수집기로 넘기는 같은 오리진 프록시 |
+| `tracking.measurement_id` | (없음) | GA4 · GTM 의 id |
+| `tracking.matomo_url` · `tracking.matomo_site_id` | (없음) | Matomo 주소와 사이트 id |
+| `tracking.custom_snippet` | (없음) | 붙여넣은 스니펫. **8KB** 를 넘으면 저장되지 않습니다 |
+| `tracking.allowed_hosts` | (없음) | 스니펫에서 자동으로 읽지 못한 출처를 더하는 자리 (쉼표 구분) |
+| `tracking.include_admin` | `false` | `/ui/admin/*` 에서도 추적할지 |
+| `tracking.placement` | `head` | `head` 또는 `body` (문서 끝) |
+
+**Momento 를 먼저 씁니다.** Momento 는 사내 자체 호스팅 수집기라 방문 데이터가 밖으로 나가지 않는 유일한 선택지입니다. 기본값인 프록시 모드에서는 스니펫이 `/momento/tracker.js` 를 부르고 `data-endpoint="/momento"` 로 신고하므로, 브라우저는 Postra 오리진하고만 통신하고 정책에 외부 출처가 아예 등장하지 않습니다. 프록시를 끄면 `tracking.momento_url` 의 출처가 정책에 더해집니다. 프록시로 넘길 때 세션 쿠키와 `Authorization` 헤더는 제거됩니다.
+
+```html
+<!-- 프록시 모드에서 실제로 나가는 마크업 -->
+<script nonce="…" async src="/momento/tracker.js" data-site-id="<site id>"
+        data-environment="prd" data-contract-version="1" data-endpoint="/momento"></script>
+```
+
+**CSP 가 어려운 쪽입니다.** Postra 의 화면은 `script-src 'self'` 로 잠겨 있어 스니펫을 그냥 붙이면 브라우저가 조용히 막고, 관리자는 화면이 비어 있는 이유를 알 수 없습니다. Postra 는 다음과 같이 처리합니다.
+
+1. **요청마다 nonce** — 모든 UI 응답에 새 nonce 를 만들어 `script-src 'self' 'nonce-…'` 로 내보내고, 레이아웃의 자체 스크립트와 스니펫의 **모든** `<script>` 태그에 같은 nonce 를 붙입니다. `'unsafe-inline'` 은 쓰지 않습니다 — 한 번 풀면 그 앱의 모든 인라인 스크립트가 함께 허용되고, 추적을 끈 뒤에도 정책이 느슨한 채 남기 때문입니다. 추적을 끄면 정책은 원래대로 좁아집니다.
+2. **정책 출처는 스니펫에서 읽어 냅니다** — 붙여 넣은 스니펫에 적힌 `http(s)` 출처(로더 주소, 신고 endpoint, 픽셀)를 긁어 `script-src` · `connect-src` · `img-src` 에 더합니다. GA4 · GTM · Matomo 는 provider 에 맞는 출처가 자동으로 들어갑니다.
+3. **차단된 것을 기록해 보여 줍니다** — 추적이 켜져 있는 동안만 `report-uri /ui/csp-report` 를 정책에 넣습니다. 브라우저의 신고를 받아 **출처와 지시어**를 메모리에 기억(서로 다른 출처 최대 100개, DB 에 남기지 않음)하고, 설정 화면의 **차단된 출처** 표에 보여 줍니다. 한 줄의 **허용** 버튼을 누르면 그 출처가 `tracking.allowed_hosts` 에 들어가고, 이미 허용된 출처는 "허용됨" 으로 표시됩니다. **기록 지우기**로 비운 뒤 다시 띄워 보면 아직 막히는 것이 남았는지 확인할 수 있습니다.
+4. **붙이지 않는 곳** — `/api/*` · `/metrics` · `/ui/static/*` · `/ui/jobs/status` 같은 비화면 응답은 `default-src 'none'` 으로 더 좁게 잠급니다. `/ui/login` · `/ui/setup` · `/ui/auth/*` 처럼 자격 증명을 다루는 화면에는 절대 붙지 않고, 관리 화면(`/ui/admin/*`)은 `tracking.include_admin` 이 켜졌을 때만 붙습니다.
+
+화면 정책의 실제 모양(추적 켜짐, custom 스니펫이 `https://tracker.example` 을 부를 때):
+
+```
+Content-Security-Policy: default-src 'self';
+  script-src 'self' 'nonce-<요청마다 다름>' https://tracker.example;
+  style-src 'self' 'unsafe-inline'; img-src 'self' data: https://tracker.example;
+  connect-src 'self' https://tracker.example; object-src 'none';
+  frame-ancestors 'none'; base-uri 'self'; report-uri /ui/csp-report
+```
+
+`style-src` 만 `'unsafe-inline'` 을 허용하는데, 이는 템플릿과 세니타이즈된 메일 본문이 style 속성을 쓰기 때문이며 스크립트 실행과는 무관합니다.
+
+**설정 절차**
+1. `/ui/admin/settings` → **방문 추적** 카드에서 provider 를 고르고 필요한 주소·id 를 채웁니다 (Momento: 수집기 주소 + 사이트 id, 프록시는 켜 둔 채로).
+2. **방문 추적 켜기**를 체크하고 저장합니다. provider 에 필요한 값이 비어 있거나 스니펫이 8KB 를 넘으면 저장이 거부되고 이유가 화면에 표시됩니다.
+3. 일반 화면(예: `/ui/`)을 띄워 수집기에 이벤트가 들어오는지 확인합니다. 들어오지 않으면 설정 화면의 **차단된 출처** 표를 보고 **허용**을 누른 뒤 다시 띄웁니다.
+
 ---
 
 ## 7. 전체 릴리즈 이력 (Release History: v0.1.0 ~ v0.10.5)

@@ -1525,7 +1525,7 @@ Server 프로세스가 읽는 설정은 아래가 전부입니다. 이 표는
 ## 19. 운영 설정 화면
 
 **설정**은 PostgreSQL, Agent 등록, 자산 분류, Keycloak, 고급 설정, 방문 추적,
-시스템 정보 일곱 개 하위 화면으로 나뉩니다. 선택한 하위 화면은 `#/settings/agents` 같은 URL과
+메일 알림, 시스템 정보 여덟 개 하위 화면으로 나뉩니다. 선택한 하위 화면은 `#/settings/agents` 같은 URL과
 사용자별 브라우저 상태에 함께 저장되어 새로고침 후에도 유지됩니다.
 
 **PostgreSQL**은 DSN을 저장하기 전에 실제 연결을 시험합니다. 현재 실행 중인
@@ -1683,7 +1683,89 @@ curl -sS -b cookie.txt -H "X-CSRF-Token: $CSRF" -X PATCH \
 nonce 가 붙어 있으며, Momento 관리 화면에 페이지뷰가 들어오는지 봅니다. 들어오지
 않으면 20.4 의 목록을 먼저 보십시오.
 
-## 21. 가이드 화면 캡처 다시 만들기
+## 21. 메일 알림 — 사내 SMTP 릴레이
+
+**설정 → 메일 알림**(`#/settings/mail`)에서 사람이 기다리는 일을 사내 SMTP
+릴레이로 알립니다. 설정은 공용 DB 의 `settings` 표에 사내 표준과 같은 `mail.*`
+키로 저장되어 모든 Pod 에 즉시 적용되며 재기동이 필요 없습니다. **기본값은
+꺼짐**입니다. 새로 설치한 곳에서는 아무 행도 생기지 않고 아무것도 보내지 않습니다.
+폐쇄망에서는 릴레이 주소로 사내 메일 서비스 `postra` 를 가리키면 알림이 밖으로
+나가지 않습니다.
+
+메일은 **배경에서** 보냅니다. 릴레이가 느리거나 죽어 있어도 계정 생성이나 잠금
+해제 같은 요청은 평소처럼 즉시 끝나고, 실패는 그 요청의 실패가 아니라 발송
+기록의 실패로 남습니다. 한 번 실패하면 2초 뒤 한 번 더 시도합니다.
+
+### 21.1 설정 항목
+
+| 키 | 기본값 | 뜻 |
+|---|---|---|
+| `mail.enabled` | `false` | 꺼짐이 기본. 관리자가 켭니다. 켜려면 `mail.smtp_host` 와 `mail.from_address` 가 있어야 저장됩니다 |
+| `mail.smtp_host` | — | 사내 릴레이 주소 |
+| `mail.smtp_port` | `25` | 사내 릴레이는 대개 25. `465` 를 적으면 `mail.security` 가 `auto` 일 때 `tls` 로 봅니다 |
+| `mail.security` | `auto` | `auto` · `none` · `starttls` · `tls`. `auto` 는 릴레이가 STARTTLS 를 알리면 쓰고 아니면 평문으로 보냅니다 |
+| `mail.skip_tls_verify` | `false` | 사내 인증서가 사설일 때만 |
+| `mail.username` · `mail.password` | 빈 값 | 인증 없는 릴레이가 흔하므로 **선택 사항**. 사용자 이름이 비어 있으면 인증을 시도하지 않습니다. 릴레이가 PLAIN·LOGIN·CRAM-MD5 중 알리는 것을 씁니다 |
+| `mail.from_address` · `mail.from_name` | — · `Invenqor` | 보내는 사람. 주소를 비우면 `invenqor@<릴레이 주소>` 를 씁니다 |
+| `mail.base_url` | — | 메일 속 "바로 열기" 링크가 가리킬 이 콘솔의 주소. 비우면 링크를 넣지 않습니다 |
+| `mail.timeout_seconds` | `10` | 연결과 각 SMTP 단계의 응답 제한 |
+| `mail.notify_account_locked` | `true` | 로그인 실패 누적으로 계정이 잠김 → 계정 주인과 모든 `super_admin` |
+| `mail.notify_account_unlocked` | `true` | 관리자가 잠금을 해제함 → 계정 주인 |
+| `mail.notify_account_created` | `true` | 관리자가 로컬 계정을 만듦 → 새 사용자. 비밀번호는 담지 않습니다 |
+| `mail.notify_agent_update_halted` | `true` | 운영자가 Agent 배포를 0% 로 멈춤 → 그 운영자를 뺀 `super_admin` |
+
+`mail.password` 는 **설정 API 가 돌려주지 않습니다.** 화면과
+`GET /api/v1/admin/settings/mail` 에는 `password_configured` 로 "설정됨"만 보이고,
+바꿀 때만 새 값을 보냅니다(빈 문자열은 지우기, 필드를 빼면 유지). 값은 Keycloak
+client secret 과 같은 마스터 키로 봉인되어 `settings` 표에 `secret=TRUE` 로 저장되고,
+범용 설정 API(`PATCH /api/v1/admin/settings`)는 이 키를 거절하므로 평문 행이 생길
+길이 없습니다. Server 로그와 감사 기록에도 남지 않습니다.
+
+이벤트는 **이 메일이 오지 않으면 누군가 손해를 보거나 화면을 계속 새로고침하는
+일**만 골랐습니다. 자기가 한 일은 자기에게 보내지 않고(계정을 만든 관리자는 생성
+메일을 받지 않습니다), 한 작업에서 한 사람에게는 한 통만 갑니다. 받을 사람의
+주소는 **사용자 관리의 메일 주소**를 그대로 씁니다 — 메일 기능이 따로 명부를
+갖지 않으므로 주소가 비어 있거나 비활성인 계정은 조용히 건너뜁니다.
+`super_admin` 계정에 메일 주소가 없으면 잠김·배포 중단 알림을 받을 사람이 없으니
+먼저 채우십시오.
+
+### 21.2 시험 발송과 발송 기록
+
+릴레이 설정은 한 번에 맞는 일이 드뭅니다. 설정을 **적용**한 뒤 같은 화면의
+**시험 발송**에 받는 주소(비우면 내 계정의 주소)를 넣고 누르면 저장된 설정으로
+실제 한 통을 보내고, 어느 SMTP 단계에서 무엇 때문에 막혔는지(`SMTP connect …
+connection refused`, `RCPT TO failed: 550 …`, `the relay does not offer AUTH …`)
+그 자리에서 보여 줍니다. 저장하지 않은 변경은 시험에 반영되지 않으므로 단추가
+잠깁니다.
+
+**발송 기록**은 시도마다 남습니다 — 언제, 어떤 이벤트로, 누구에게, 제목이
+무엇이었고, 되었는지(`sent`) 안 되었는지(`failed`)와 그 이유. 실패만 남기면
+"안 왔다"는 문의에 답할 수 없어 성공도 함께 적습니다. **본문은 담지 않습니다.**
+기록은 90일 뒤 지워집니다.
+
+### 21.3 API
+
+| 메서드·경로 | 권한 | 뜻 |
+|---|---|---|
+| `GET /api/v1/admin/settings/mail` | settings.read | 현재 설정. 비밀번호 대신 `password_configured` |
+| `PATCH /api/v1/admin/settings/mail` | settings.write + CSRF | 있는 필드만 바꿉니다. `events` 는 `{"account.locked": false}` 꼴. 잘못된 값은 400 |
+| `POST /api/v1/admin/settings/mail/test` | settings.write + CSRF | `{"recipient":"…"}`. 릴레이가 받으면 200, 거절하거나 응답이 없으면 502 와 이유 |
+| `GET /api/v1/admin/mail/deliveries?status=&limit=` | settings.read | 발송 기록(최신순)과 상태별 집계 |
+
+```bash
+curl -sS -b cookie.txt -H "X-CSRF-Token: $CSRF" -X PATCH \
+  -H 'Content-Type: application/json' \
+  https://invenqor.corp.example:7070/api/v1/admin/settings/mail \
+  -d '{"enabled":true,"smtp_host":"postra.corp.example","from_address":"invenqor@corp.example","base_url":"https://invenqor.corp.example:7070","reason":"postra 릴레이 연결"}'
+curl -sS -b cookie.txt -H "X-CSRF-Token: $CSRF" -X POST \
+  -H 'Content-Type: application/json' \
+  https://invenqor.corp.example:7070/api/v1/admin/settings/mail/test -d '{}'
+```
+
+변경은 감사 기록에 `settings.mail.update`(값은 비밀번호를 뺀 형태)와
+`settings.mail.test` 로 남습니다.
+
+## 22. 가이드 화면 캡처 다시 만들기
 
 이 문서와 [사용자 가이드](USER_GUIDE.md)의 화면 캡처는 저장소의 스크립트가
 생성합니다.
