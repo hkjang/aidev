@@ -134,11 +134,8 @@ PostgreSQL 사용자는 대상 데이터베이스에 schema·table·extension(`p
 | Dream Layer | 자동 생성 시각·주기, 컨텍스트 범위, 최대 응답 토큰, 품질 기준선 | 부록 3 |
 | AI Gateway | 채팅·임베딩 주소와 키, timeout·재시도, 비용, 임베딩 품질 측정, 자동 찾기 | 부록 4 |
 | Ptium 발표 자료 | Ptium 주소·API 키·`timeout_seconds`, 연결 시험 | 부록 8-2 |
-<<<<<<< HEAD
 | 방문 추적 | 추적 도구(Momento 우선)·주소·사이트 ID, 같은 오리진 프록시, 붙여 넣은 스니펫, 허용 출처, 관리 화면 포함, 넣는 자리, 정책이 차단한 출처 | 부록 10 |
-=======
 | 다른 서비스로 보내기 | 공간을 문서로 넘길 수 있는 사내 서비스의 허용 목록(`handoff.targets`) — 기본은 비어 있음 | 부록 11 |
->>>>>>> 22ace52 (Hand a space to another service without anyone carrying the file)
 | 유사도 기준 | 연관 생각·군집·연결 추천의 상대 기준, 저장 전 재보기 | 부록 4-2 |
 | AI 품질 평가 | Dream 회귀 케이스 | 부록 7 |
 | 키 · 권한 | 허용 스코프, 기본 만료, 회전 중첩, 남용 방지, 암호화 키 상태·회전 | 부록 4-1 · 8 |
@@ -738,7 +735,6 @@ v0.61.0부터는 실패 응답이 그 덱을 지목하고(`ptiumId`, `deckLeftBe
 
 ---
 
-<<<<<<< HEAD
 ## 부록 10. 방문 추적 (`/admin/analytics`)
 
 어느 화면이 실제로 쓰이는지 세려면 추적 스크립트를 붙여야 하는데, umm 은 스크립트 실행을 응답마다 다른 nonce 로
@@ -825,7 +821,6 @@ umm 의 정책은 `script-src 'nonce-<응답마다 다름>' 'strict-dynamic' 'se
   방문이 들어옵니다.
 - 브라우저 콘솔에 `Refused to load …` 가 남으면 같은 출처가 **정책이 차단한 출처** 카드에 떠야 합니다.
 - 다시 끄면 첫 항목으로 돌아가야 합니다.
-=======
 ## 부록 11. 다른 서비스로 보내기 (`/admin/handoff`)
 
 생각은 umm 의 캔버스에서 시작해 muni 의 문서가 되고 ptium 의 슬라이드가 되어 weekly 의 보고로 들어갑니다.
@@ -887,4 +882,3 @@ umm 에 아무 요청도 보내지 않고 거절합니다 — 그것이 표준�
 3. `docker compose logs umm | grep handoff/claims` — 접근 로그에 `path=/api/v1/handoff/claims/{claim}` 으로만
    찍히고 표 자체는 없어야 합니다. 감사 로그(`space.export`, `format=handoff`)에도 표는 없습니다.
 4. 같은 표로 두 번 받으면 두 번째는 `404` 입니다.
->>>>>>> 22ace52 (Hand a space to another service without anyone carrying the file)
