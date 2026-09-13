@@ -306,7 +306,7 @@ apply_demotions(){
 }
 # 승인 스윕: 러너가 연 PR 중 사람이 aidev-approved 라벨을 단 것을 CI 확인 후 승인 당시 커밋에만 머지한다. aidev-rejected 는 닫는다.
 approvals(){
-  local rec pr st head labels appr_sha pv
+  local rec pr st head labels appr_sha pv abase
   pv=$(cd "$REPO_DIR" && git log -1 --format=%h -- state/default.policy.json state/default.guard 2>/dev/null)
   local -a items=(); local line
   mapfile -t items < <(jq -r --arg s "$(date -d '-14 days' +%F)" 'select(.date >= $s and .outcome=="review-pending" and (.pr|length)>0) | "\(.project)\t\(.pr)"' "$DATA/runs.jsonl" 2>/dev/null | sort -u)
@@ -315,6 +315,17 @@ approvals(){
     repo="$ROOT/$n"; [ -d "$repo" ] || continue
     read -r st head labels < <(cd "$repo" && gh pr view "$pr" --json state,headRefOid,labels --jq '"\(.state) \(.headRefOid) \([.labels[].name]|join(","))"' 2>/dev/null || echo "UNKNOWN  ")
     [ "$st" = OPEN ] || continue
+    # 내용이 이미 기본 브랜치에 들어가 있는데 PR 만 열린 채 남는 일이 있다.
+    # GitHub 은 그 PR 을 머지로 표시하지 않으므로 "쌓인 PR" 로 계속 보이고,
+    # 사람이 열어 보면 볼 것이 없다 (visitflow #13, 2026-09-13). 남은 것이
+    # 없으면 여기서 닫는다 — 머지할 것이 없으니 머지 경로로 보낼 수도 없다.
+    abase=$(policy "$n" '.base_branch'); abase=${abase:-main}
+    if git -C "$repo" fetch -q origin "$abase" 2>/dev/null \
+       && git -C "$repo" merge-base --is-ancestor "$head" FETCH_HEAD 2>/dev/null; then
+      (cd "$repo" && gh pr close "$pr" --comment "이 브랜치의 커밋(${head:0:7})은 이미 $abase 에 들어가 있어 머지할 것이 남아 있지 않습니다 — 자율 개선 러너가 닫습니다." >/dev/null 2>&1) \
+        && log "$n: PR $pr 이미 $abase 에 반영됨 — 닫음"
+      continue
+    fi
     if [[ ",$labels," == *",aidev-rejected,"* ]]; then
       (cd "$repo" && gh pr close "$pr" --comment "사람이 반려(aidev-rejected)했습니다 — 자율 개선 러너가 닫습니다." >/dev/null 2>&1) && log "$n: PR $pr 반려로 닫음"
       jq -cn --arg ts "$(date -Iseconds)" --arg d "$RUN_DATE" --arg p "$n" --arg pr "$pr" --arg detail "사람이 PR 을 반려함. 같은 접근은 피할 것." '{ts:$ts,date:$d,project:$p,kind:"rejected-by-human",pr:$pr,detail:$detail}' >> "$STATE/lessons.jsonl"
