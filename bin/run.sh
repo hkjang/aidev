@@ -935,6 +935,13 @@ if [ $DRY -eq 0 ]; then
       touch "$STATE/.cap-$RUN_DATE"; ps1=$(wslpath -w "$HERE/toast.ps1" 2>/dev/null); [ -n "$ps1" ] && powershell.exe -NoProfile -ExecutionPolicy Bypass -File "$ps1" -Title "aidev 일일 상한 도달" -Message "$cap" >/dev/null 2>&1
       n="(runner)"; RUN_META="{}"; BASE_SHA=""; HEAD_SHA=""; record_run "(runner)" "daily cap reached: $cap" "error"; sync_repo "run($RUN_DATE): daily cap — $cap"
     fi
+    # 상한은 새 회차를 시작하지 말라는 뜻이지, 사람이 이미 승인한 PR 을 하루가
+    # 끝날 때까지 붙잡아 두라는 뜻이 아니다. 여기서 그냥 나가 버려 라벨을 단
+    # PR 여섯 건이 몇 시간을 그대로 서 있었다 (2026-09-13). 머지는 모델을
+    # 부르지 않으므로 상한과 상관없이 쓸어 담고, 모델을 부르는 릴리즈만 끈다.
+    if [ -z "$ONLY" ] && ! stopped start; then
+      cap_release=$RELEASE; RELEASE=0; approvals; RELEASE=$cap_release
+    fi
     exit 0
   fi
 fi
@@ -942,7 +949,9 @@ fi
 if [ $DRY -eq 0 ]; then
   stopped start && { log "전체 중지 상태 — 새 회차를 시작하지 않는다 (bin/stop.sh all off 로 해제)"; exit 0; }
   apply_demotions
-  [ -z "$ONLY" ] && [ "${CAMPAIGN_ONLY:-0}" -eq 0 ] && approvals
+  # 캠페인만 도는 회차에서도 쓸어 담는다. 승인 머지는 캠페인 예산을 쓰지 않고,
+  # 빼 두면 캠페인이 도는 동안 승인된 PR 이 계속 쌓이기만 했다.
+  [ -z "$ONLY" ] && approvals
 fi
 
 candidates=(); since=$(date -d "-$DAYS days" +%s); touch "$STATE/fix-queue.tsv" "$STATE/run-queue.tsv"
