@@ -26,10 +26,12 @@ RUNS = AIDEV / "docs" / "data" / "runs.jsonl"
 USAGE = AIDEV / "docs" / "data" / "usage.jsonl"
 CAMPAIGNS = AIDEV / "state" / "campaigns.json"
 CRON = AIDEV / "logs" / "cron.log"
+LOGS = AIDEV / "logs"
 
 REPEAT_LIMIT = 3       # 같은 결과가 이만큼 이어지면 되풀이로 본다
 STUCK_HOURS = 3        # 이만큼 회차가 없으면 멈춘 것으로 본다
 OPEN_PR_LIMIT = 5      # 한 저장소에 이만큼 쌓이면 무언가 막고 있는 것이다
+SKIP_DAYS = 2          # 작업 트리가 더러워 이만큼 연달아 건너뛰면 사람이 볼 일이다
 
 
 def load(path: Path) -> list[dict]:
@@ -144,6 +146,44 @@ def cost_spike(usage: list[dict], runs: list[dict]) -> list[dict]:
     return out
 
 
+def stuck_dirty(_: list[dict]) -> list[dict]:
+    """작업 트리가 더러워 계속 건너뛰는 프로젝트.
+
+    러너는 커밋되지 않은 변경이 있는 저장소를 건드리지 않는다 — 남의 작업 위에
+    커밋을 얹지 않으려는 것이라 옳다. 다만 그 사실이 로그 한 줄로만 남아,
+    저장소 하나가 며칠째 아무 개선도 받지 못하는 동안 아무도 알아채지 못했다
+    (postra·Quantoss·DartFly 는 163회 연속으로 건너뛰어졌다).
+    """
+    if not LOGS.is_dir():
+        return []
+    cutoff = (datetime.now() - timedelta(days=SKIP_DAYS)).date()
+    seen: dict[str, set] = defaultdict(set)
+    for log in sorted(LOGS.glob("20*.log")):
+        try:
+            day = datetime.strptime(log.stem, "%Y-%m-%d").date()
+        except ValueError:
+            continue
+        if day < cutoff:
+            continue
+        for line in log.read_text(encoding="utf-8", errors="replace").splitlines():
+            hit = re.search(r"skip (\S+): dirty working tree", line)
+            if hit:
+                seen[hit.group(1)].add(day)
+    out = []
+    for project, days in sorted(seen.items()):
+        if len(days) <= SKIP_DAYS:
+            continue
+        span = ", ".join(str(d) for d in sorted(days))
+        out.append(finding(
+            "stuck-dirty", project,
+            f"{project} 은 커밋되지 않은 변경 때문에 {len(days)}일 연속 건너뛰어졌습니다",
+            [f"건너뛴 날: {span}",
+             f"확인: git -C {project} status --porcelain"],
+            "이 저장소의 남아 있는 변경이 사람이 하던 작업인지, 예전 회차가 흘린 찌꺼기인지 "
+            "가려 주세요. 찌꺼기라면 무엇을 버려도 되는지도 알려 주세요."))
+    return out
+
+
 def main() -> int:
     runs, usage = load(RUNS), load(USAGE)
     campaigns = {}
@@ -154,7 +194,8 @@ def main() -> int:
             pass
 
     findings = (repeated_failures(runs) + impossible_campaign(campaigns)
-                + silent_runner(runs) + cost_spike(usage, runs))
+                + silent_runner(runs) + cost_spike(usage, runs)
+                + stuck_dirty(runs))
 
     if "--json" in sys.argv:
         for item in findings:
