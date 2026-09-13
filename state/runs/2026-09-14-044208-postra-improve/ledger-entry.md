@@ -1,13 +1,5 @@
-## 2026-09-13
-- 선택: Silent SSO (OIDC prompt=none) — auto_login 설정 뒤에 두고 무한 루프 3중 방지 (가치 5 / 위험 2 / 작업량 M)
-- 결과: 성공
-- 요약: 캠페인 "silent-sso-2026-09" 목표를 구현했다. `auth.oidc.auto_login` 설정(기본 꺼짐, 관리 화면 체크박스 + `POSTRA_OIDC_AUTO_LOGIN`)을 추가하고, 로그인 페이지가 최상위 이동으로 `/ui/auth/oidc/start?prompt=none&return_to=…` 을 한 탭 세션에 한 번만 시도하도록 했다(sessionStorage 표시, 읽기 실패는 '이미 시도'로 간주, 로그아웃 시 억제 표시, 콜백은 login_required/interaction_required/consent_required 를 받으면 `/ui/login?sso=none` 으로 보내 주소에 표시). 서버는 auto_login 이 꺼져 있으면 `?prompt=none` 을 조용히 일반 로그인으로 바꾸고, `return_to` 는 `/` 로 시작하고 `//` 로 시작하지 않는 앱 내부 경로만 받아 gate → 로그인 폼 → 서명된 flow 쿠키 → 콜백까지 전달한다. 검증: 새 테스트 7개(SafeReturnTo·login_required 판별·BeginOIDC 다운그레이드·gate 딥링크·로그인 페이지 트리거 유무·콜백 거절 처리·로그아웃 마커) 추가, `go build ./... && go vet ./... && go test -race ./...` 전부 통과. 관리자 가이드 3.3 절 추가.
-- 보류 아이디어: (1) OIDC 콜백에서 CompleteOIDC 실패 시 sso=error 마커로 로그인 페이지 리다이렉트해 주소를 정리(가치 2/위험 2/S); (2) `OIDCConfigured`·`OIDCAutoLoginEnabled` 가 로그인 렌더마다 SystemSettings 를 두 번 읽음 — 한 번에 읽는 헬퍼로 합치기(가치 2/위험 1/S); (3) `oidcStart` 에서 discovery 실패 시 502 를 로그인 페이지에 인라인으로 보여주는데 incident 기록도 남기기(가치 2/위험 1/S); (4) `internal/application/incidents.go` 가 gofmt 미적용 상태 — CI 에 gofmt 검사 추가(가치 2/위험 1/S).
-
 ## 2026-09-14
 - 선택: 캠페인 "tracking-2026-09" — 관리자가 화면에서 붙이는 방문 추적 스크립트 + nonce 기반 CSP (가치 5 / 위험 3 / 작업량 M)
 - 결과: 성공
 - 요약: TRACKING-STANDARD 를 따라 `internal/platform/tracking` (설정·스니펫 렌더·ASCII-only 대소문자 접기·스니펫 출처 추출·차단 기록 100개 고리) 를 만들고 시스템 설정에 `tracking.*` 키(기본 꺼짐, provider 첫 자리 momento, `momento_proxy` 기본 켜짐)를 더했다. 이 앱은 원래 CSP 가 전혀 없었으므로 UI 미들웨어가 요청마다 nonce 를 만들어 `script-src 'self' 'nonce-…'`(style 만 'unsafe-inline') 로 잠그고, 레이아웃 자체 스크립트에 nonce 를 붙이고 `onsubmit="return confirm()"` 류 인라인 핸들러 10곳을 `data-confirm` 위임 핸들러로 옮겼다. 추적이 켜진 화면에만 스니펫·출처·`report-uri /ui/csp-report` 가 붙고, 신고는 메모리 기록기로 모아 설정 화면 "차단된 출처" 표에서 한 번에 허용/지우기 할 수 있다. `/momento/*` 는 같은 오리진 리버스 프록시(쿠키·Authorization 제거)로 넘기고, `/api/*`·정적 파일·`/ui/jobs/status` 는 `default-src 'none'`. 검증: tracking 패키지 테스트 7개 + webui 통합 테스트 5개(꺼짐 기본값/nonce 별도/İ 다국어 접기/head·body 배치/admin·login 제외/끄면 정책 복귀/비화면 좁은 정책/Momento 프록시/신고 수신·허용·지우기·8KB 거부) 추가, `go build && go vet && go test -race ./...` 전부 통과. 실제 바이너리를 띄워 headless Chromium 으로 nonce 스니펫이 실행되고(`data-ran="1"`) 동적 출처는 CSP 에 막히며 report-uri 가 정책에 있는 것을 확인. ADMIN_GUIDE 6.3 절 추가, ADMIN_GUIDE.pdf 다시 구움.
 - 보류 아이디어: (1) 관리 화면 "차단된 출처" 표에서 허용/지우기를 REST(`/api/admin/tracking/violations`)로도 노출 — CLI/자동화용(가치 2/위험 1/S); (2) OIDC 콜백 CompleteOIDC 실패 시 `sso=error` 마커로 리다이렉트해 주소 정리(가치 2/위험 2/S); (3) 로그인 렌더마다 SystemSettings 두 번 읽는 OIDCConfigured·OIDCAutoLoginEnabled 를 단일 헬퍼로(가치 2/위험 1/S); (4) `oidcStart` discovery 실패를 incident 로 기록(가치 2/위험 1/S); (5) CI 에 gofmt 검사 추가 + `incidents.go` 정리(가치 2/위험 1/S).
-
-- 릴리즈: v0.18.6 (2026-09-14, run 2026-09-14-044208-postra-improve)
