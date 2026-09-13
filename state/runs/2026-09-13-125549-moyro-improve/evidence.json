@@ -1,0 +1,145 @@
+{
+  "run_id": "2026-09-13-125549-moyro-improve",
+  "generated": "2026-09-13T13:14:57+09:00",
+  "run": {
+    "run_id": "2026-09-13-125549-moyro-improve",
+    "project": "moyro",
+    "kind": "improve",
+    "started": "2026-09-13T12:55:50+09:00",
+    "model": "claude-opus-5",
+    "policy_version": "5935779a",
+    "prompts_hash": "82f2440d4b2fef65",
+    "runner_version": "097916ac",
+    "finished": "2026-09-13T13:14:56+09:00",
+    "outcome": "review-pending"
+  },
+  "record": {
+    "ts": "2026-09-13T13:14:56+09:00",
+    "date": "2026-09-13",
+    "project": "moyro",
+    "result": "guarded files, PR open https://github.com/hkjang/moyro/pull/14",
+    "outcome": "review-pending",
+    "run_id": "2026-09-13-125549-moyro-improve",
+    "base_sha": "7bfdc19c8ae51d372ce0ae2795384c562c1d5592",
+    "head_sha": "5476cfbe0aa9834142ad87635256cedbe5df9d7b",
+    "pr": "https://github.com/hkjang/moyro/pull/14",
+    "stages": {
+      "base": {
+        "state": "pinned",
+        "reason": "main@7bfdc19",
+        "at": "2026-09-13T12:55:56+09:00"
+      },
+      "autonomy": {
+        "state": "release",
+        "reason": "",
+        "at": "2026-09-13T12:55:56+09:00"
+      },
+      "verify": {
+        "state": "passed",
+        "reason": "검증 2개 통과 (policy)",
+        "at": "2026-09-13T13:14:46+09:00"
+      },
+      "pr": {
+        "state": "created",
+        "reason": "https://github.com/hkjang/moyro/pull/14",
+        "at": "2026-09-13T13:14:53+09:00"
+      },
+      "guard": {
+        "state": "held-expected",
+        "reason": "webapp/src/auth/silentSso.test.ts webapp/src/auth/silentSso.ts ",
+        "at": "2026-09-13T13:14:53+09:00"
+      }
+    },
+    "campaign": "silent-sso-2026-09",
+    "autonomy": "release",
+    "files": 23,
+    "additions": 720,
+    "deletions": 21,
+    "tests": 5,
+    "title": "feat: sign visitors in silently with prompt=none when Keycloak already has a session"
+  },
+  "stages": {
+    "base": {
+      "state": "pinned",
+      "reason": "main@7bfdc19",
+      "at": "2026-09-13T12:55:56+09:00"
+    },
+    "autonomy": {
+      "state": "release",
+      "reason": "",
+      "at": "2026-09-13T12:55:56+09:00"
+    },
+    "verify": {
+      "state": "passed",
+      "reason": "검증 2개 통과 (policy)",
+      "at": "2026-09-13T13:14:46+09:00"
+    },
+    "pr": {
+      "state": "created",
+      "reason": "https://github.com/hkjang/moyro/pull/14",
+      "at": "2026-09-13T13:14:53+09:00"
+    },
+    "guard": {
+      "state": "held-expected",
+      "reason": "webapp/src/auth/silentSso.test.ts webapp/src/auth/silentSso.ts ",
+      "at": "2026-09-13T13:14:53+09:00"
+    }
+  },
+  "provenance": {
+    "model": "claude-opus-5",
+    "policy_version": "5935779a",
+    "prompts_hash": "82f2440d4b2fef65",
+    "runner_version": "097916ac",
+    "base_sha": "7bfdc19c8ae51d372ce0ae2795384c562c1d5592",
+    "head_sha": "5476cfbe0aa9834142ad87635256cedbe5df9d7b",
+    "pr": "https://github.com/hkjang/moyro/pull/14"
+  },
+  "verification": {
+    "runner": {
+      "source": "policy",
+      "commands": [
+        {
+          "cmd": "cd server && go build ./... && go vet ./... && go test ./...",
+          "exit": 0,
+          "seconds": 4
+        },
+        {
+          "cmd": "cd webapp && ([ -d node_modules ] || npm ci --no-audit --no-fund) && npm run typecheck --silent && npm test --silent",
+          "exit": 0,
+          "seconds": 15
+        }
+      ]
+    },
+    "runner_gate": {
+      "ok": true,
+      "state": "verified",
+      "reason": "검증 2개 통과 (policy)"
+    },
+    "after_rebase": null,
+    "review": null,
+    "ci_gate": null
+  },
+  "release": {
+    "result": null,
+    "assets_sha256": []
+  },
+  "approval": null,
+  "usage": [
+    {
+      "ts": "2026-09-13T13:14:25+09:00",
+      "date": "2026-09-13",
+      "project": "moyro",
+      "phase": "improve",
+      "run_id": "2026-09-13-125549-moyro-improve",
+      "campaign": "silent-sso-2026-09",
+      "subtype": "success",
+      "duration_ms": 1171011,
+      "num_turns": 114,
+      "cost_usd": 10.824605000000004,
+      "input_tokens": 194,
+      "output_tokens": 63688,
+      "cache_read": 14388802,
+      "cache_create": 201875
+    }
+  ]
+}
