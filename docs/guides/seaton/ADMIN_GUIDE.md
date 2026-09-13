@@ -1,6 +1,6 @@
 # SeatOn 관리자 가이드
 
-SeatOn v1.4.2 기준. 화면을 쓰는 사람을 위한 조작법은 [사용자 가이드](USER_GUIDE.md)에 있으며, 이 문서는 그 화면을 띄워 놓고 지키는 사람을 위한 것입니다. API 세부는 [API_AND_MCP.md](API_AND_MCP.md), 내부 구조는 [ARCHITECTURE.md](ARCHITECTURE.md)를 봅니다.
+SeatOn v1.4.3 기준. 화면을 쓰는 사람을 위한 조작법은 [사용자 가이드](USER_GUIDE.md)에 있으며, 이 문서는 그 화면을 띄워 놓고 지키는 사람을 위한 것입니다. API 세부는 [API_AND_MCP.md](API_AND_MCP.md), 내부 구조는 [ARCHITECTURE.md](ARCHITECTURE.md)를 봅니다.
 
 ## 1. 구성 요소
 
@@ -12,13 +12,14 @@ SeatOn v1.4.2 기준. 화면을 쓰는 사람을 위한 조작법은 [사용자 
 | Keycloak (선택) | OIDC Discovery + Authorization Code/PKCE. 그룹으로 역할 결정 | Issuer URL로 나가는 HTTPS, 콜백 `/api/v1/auth/oidc/callback` |
 | 인사 시스템 API (선택) | 직원·조직 JSON을 내려주는 사내 엔드포인트 | `hr.api_url`로 `GET` + Bearer |
 | 사내 비전 모델 서버 (선택) | OpenAI 호환 `/chat/completions` (vLLM·Ollama 등) | `ai.vlm_base_url`로 HTTPS/HTTP |
+| Momento 수집기 (선택) | 사내 자체 호스팅 방문 추적. 브라우저가 `tracker.js`를 받고 `/collect/v1/events`로 보냄 | 기본은 SeatOn의 `/momento/*` 프록시를 거침(§3.6) |
 | 리버스 프록시 (권장) | HTTPS 종료 | `X-Forwarded-Proto`, `X-Forwarded-Host` 전달 |
 
 컨테이너는 `read_only` 루트, `cap_drop: ALL`, `no-new-privileges`, UID 10001로 돌며 `/tmp`만 tmpfs로 씁니다. 이미지 크기는 약 186MB이고 PDF 도면 변환용 `poppler-utils`가 들어 있습니다.
 
 ## 2. 설치
 
-릴리즈 자산 `SeatOn-v1.4.2.tar.gz`(GitHub Release 첨부)와 이 저장소의 `compose.yaml` 하나면 됩니다. PostgreSQL은 외부 또는 사내 것을 준비합니다(빈 데이터베이스와 소유 계정만 있으면 스키마는 SeatOn이 만듭니다).
+릴리즈 자산 `SeatOn-v1.4.3.tar.gz`(GitHub Release 첨부)와 이 저장소의 `compose.yaml` 하나면 됩니다. PostgreSQL은 외부 또는 사내 것을 준비합니다(빈 데이터베이스와 소유 계정만 있으면 스키마는 SeatOn이 만듭니다).
 
 | 항목 | 값 |
 | --- | --- |
@@ -31,14 +32,14 @@ SeatOn v1.4.2 기준. 화면을 쓰는 사람을 위한 조작법은 [사용자 
 ### 2.1 처음부터 끝까지
 
 ```bash
-# 1. 이미지 적재 — seaton:v1.4.2 태그가 생긴다
-docker load < SeatOn-v1.4.2.tar.gz
+# 1. 이미지 적재 — seaton:v1.4.3 태그가 생긴다
+docker load < SeatOn-v1.4.3.tar.gz
 
 # 2. 필수 환경변수 3개 + Compose 이미지 태그
 export POSTGRES_DSN='postgres://seaton:change-db-password@postgres.intra:5432/seaton?sslmode=require'
 export BOOTSTRAP_ADMIN='admin'
 export BOOTSTRAP_ADMIN_PASSWORD='change-this-strong-password'   # 12자 이상
-export SEATON_IMAGE_TAG='v1.4.2'
+export SEATON_IMAGE_TAG='v1.4.3'
 
 # 3. 기동
 docker compose up -d
@@ -147,6 +148,22 @@ Compose 전용(컨테이너에 전달되지 않음):
 | `hr.api_token` | API Bearer Token | 빈 값 | 비밀값(암호화 저장) |
 | `hr.schedule` | 동기화 일정 (Cron) | `0 2 * * *` | 표준 5필드 cron. 잘못된 식은 로그 `invalid HR sync schedule` |
 
+**방문 추적**(§3.6)
+
+| 키 | 화면 항목 | 기본값 | 설명 |
+| --- | --- | --- | --- |
+| `tracking.enabled` | 방문 추적 사용 | `false` | 켜야 스니펫이 붙음. 새 설치에서는 꺼져 있어 아무것도 달라지지 않음 |
+| `tracking.provider` | 추적 도구 | `momento` | `momento` · `ga4` · `gtm` · `matomo` · `custom` · `none` |
+| `tracking.momento_url` | Momento 수집기 주소 | 빈 값 | 예 `https://momento.intra`. `tracker.js`와 `/collect/v1/events`를 내주는 곳 |
+| `tracking.momento_site_id` | 사이트 ID | 빈 값 | Momento 관리 센터 → 사이트의 `SITE_…` 키 |
+| `tracking.momento_proxy` | 같은 오리진 프록시(/momento) 사용 | `true` | 켜면 로더와 수집 요청이 SeatOn의 `/momento/*`를 거쳐 수집기로 가고 외부 출처가 정책에 등장하지 않음 |
+| `tracking.measurement_id` | 측정 ID / 컨테이너 ID | 빈 값 | GA4 `G-…`, GTM `GTM-…` |
+| `tracking.matomo_url` · `tracking.matomo_site_id` | Matomo 주소 · 사이트 ID | 빈 값 | |
+| `tracking.custom_snippet` | 추적 스니펫 (HTML) | 빈 값 | `<script>` 태그를 그대로. **8,192바이트 초과는 `400 invalid_setting`으로 저장 거부** |
+| `tracking.allowed_hosts` | 추가로 허용할 출처 | 빈 값 | 쉼표 구분 `https://host[:port]`. 차단 기록의 **허용에 추가**가 채움 |
+| `tracking.include_admin` | 관리 화면(/admin, /profile)도 추적 | `false` | 꺼져 있으면 `/admin/*`·`/profile/*` 주소로 연 문서에는 붙지 않음 |
+| `tracking.placement` | 넣는 자리 | `head` | `head`(`</head>` 앞) 또는 `body`(`</body>` 앞) |
+
 ### 3.3 Keycloak 연결
 
 ![시스템 설정 · Keycloak SSO — 사용 스위치, 콜백 URL 안내, Issuer URL·Client ID·Client Secret·Scopes·그룹 이름, 저장 후 연결 테스트](assets/guide/admin-settings-sso.png)
@@ -182,6 +199,33 @@ Keycloak에 이미 로그인한 사람이 SeatOn을 열었을 때 로그인 화�
 
 `hr.api_url`을 `GET`으로 호출하고 `hr.api_token`이 있으면 `Authorization: Bearer`를 붙입니다. 응답 JSON의 `organizations[]`(`externalId`, `name`, `parentExternalId`, `color`)와 `employees[]`(`employeeNo`, `name`, `email`, `organizationExternalId`, `title`, `position`, `workplace`, `status`)를 upsert합니다. 화면의 **저장 후 지금 동기화**(`POST /api/v1/settings/hr/sync`)로 즉시 돌려 볼 수 있고, 결과는 `employee_sync_runs` 테이블과 감사 로그(`hr.sync`)에 남습니다. `status`가 `retired`인 직원이 좌석을 갖고 있으면 처리필요의 **퇴직자** 항목이 됩니다.
 
+### 3.6 방문 추적과 콘텐츠 보안 정책(CSP)
+
+![시스템 설정 · 방문 추적 — 사용·관리 화면 포함·같은 오리진 프록시 스위치, 추적 도구와 넣는 자리, Momento 수집기 주소·사이트 ID, 추가로 허용할 출처, 정책이 차단한 출처 표와 허용에 추가 단추](assets/guide/admin-settings-tracking.png)
+
+**시스템 설정 → 방문 추적** 탭에서 관리자가 화면에서 추적 도구를 붙입니다. 다시 배포하지 않아도 되고, 저장하면 **다음에 여는 문서부터** 붙습니다(이미 열어 둔 탭은 새로 고쳐야 합니다). 기본값은 꺼짐이며, 켜지 않은 설치는 응답 한 바이트도 달라지지 않습니다.
+
+**어려운 쪽은 `<script>` 한 줄이 아니라 정책입니다.** SeatOn의 모든 응답에는 `Content-Security-Policy: … script-src 'self'; connect-src 'self' …`가 붙어 있어, 스니펫을 그냥 넣으면 브라우저가 조용히 막고 화면은 멀쩡한데 수집만 안 됩니다. 추적이 켜진 문서에는 SeatOn이 다음을 함께 합니다.
+
+1. **요청마다 nonce** — 문서를 내보낼 때 무작위 nonce를 만들어 스니펫의 **모든** `<script>` 태그에 `nonce="…"`로 붙이고, 같은 값을 `script-src 'nonce-…'`에 넣습니다. `'unsafe-inline'`은 어떤 경우에도 넣지 않습니다. 한 번 풀면 그 앱의 모든 인라인 스크립트가 함께 허용되고, 추적을 끈 뒤에도 느슨한 채 남기 때문입니다.
+2. **정책 출처 자동 추출** — provider가 아는 주소(Matomo 주소, Google 도메인)와 붙여넣은 스니펫 안에 적힌 `http(s)://` 주소를 읽어 `script-src`·`connect-src`·`img-src`에 더합니다. 관리자가 브라우저 콘솔의 정책 오류를 호스트 이름으로 번역해 손으로 넣을 일이 없습니다.
+3. **차단 기록** — 추적이 켜진 동안만 정책에 `report-uri /api/v1/tracking/csp-report`를 넣고, 브라우저가 신고한 **차단된 출처와 지시어**를 메모리에 기억합니다(서로 다른 출처 100개, 재시작하면 비워짐). 같은 탭의 **정책이 차단한 출처** 표에 나타나며, **허용에 추가**를 한 번 누르면 `tracking.allowed_hosts`에 들어가 바로 저장됩니다. 이미 허용된 출처는 `허용됨`으로 표시됩니다.
+4. **붙이지 않는 곳** — `/api/*`·`/mcp`·`/healthz`·`/readyz`와 정적 자산은 문서가 아니므로 스니펫도 nonce도 없고 원래 정책 그대로입니다. `/admin/*`·`/profile/*` 주소로 연 문서는 `tracking.include_admin`이 켜졌을 때만 붙습니다. 로그인 화면에는 붙지만 SeatOn이 개인 식별 값을 보내지는 않습니다 — 추적 도구가 무엇을 모으는지는 그 도구의 설정에서 확인하십시오.
+
+추적을 끄면 정책은 위의 원래 문자열로 **글자 그대로** 돌아갑니다. 켜져 있는 동안의 정책과 스니펫은 `curl -sI https://서비스주소/ | grep -i content-security-policy`와 `curl -s https://서비스주소/ | grep nonce`로 확인할 수 있습니다.
+
+**Momento(권장, 기본).** 사내 자체 호스팅 수집기라 데이터가 밖으로 나가지 않는 유일한 선택지입니다. 수집기 주소와 사이트 ID를 넣고 켜면 됩니다. 기본으로 켜져 있는 **같은 오리진 프록시**는 브라우저가 `https://서비스주소/momento/tracker.js`에서 로더를 받고 `https://서비스주소/momento/collect/v1/events`로 이벤트를 보내게 하며, SeatOn이 이 둘만 수집기로 넘깁니다. 그래서 외부 출처가 정책에 아예 등장하지 않고, 앞단 프록시의 정책을 바꿀 수 없는 설치에서도 동작합니다.
+
+```html
+<!-- 프록시를 쓸 때 SeatOn이 문서에 넣는 스니펫 (nonce는 요청마다 다름) -->
+<script nonce="…" async src="/momento/tracker.js" data-site-id="SITE_…"
+        data-environment="prd" data-contract-version="1" data-endpoint="/momento"></script>
+```
+
+프록시를 지날 때 SeatOn은 브라우저의 세션 쿠키와 `Authorization`을 벗기고 수집기의 `Set-Cookie`·정책 헤더를 돌려주지 않으며, 원래 방문자 주소를 `X-Forwarded-For`로 넘깁니다. Momento 쪽에서는 (1) 사이트의 **허용 도메인**에 SeatOn 주소를 등록하고 (2) 방문자 IP를 그대로 쓰려면 SeatOn 컨테이너의 주소를 `security.trusted_proxy_cidrs`에 넣습니다. 프록시를 끄면 브라우저가 수집기에 직접 연결하며, 이때는 수집기 출처가 `script-src`·`connect-src`·`img-src`에 자동으로 더해집니다. `/momento/*`는 추적이 Momento·프록시 구성으로 켜져 있을 때만 열리고 그 밖에는 `404`이며, 수집기에 닿지 못하면 `502 tracking_upstream`과 로그 `Momento 수집기에 연결하지 못했습니다`가 남습니다.
+
+**GA4 · GTM · Matomo · 직접 붙여넣기.** 각각 ID 또는 주소만 넣으면 표준 로더를 SeatOn이 만듭니다. 직접 붙여넣기는 8KB까지이며 안에 적힌 주소가 자동으로 정책에 들어갑니다. 문자열을 이어 붙여 만든 주소처럼 읽히지 않는 출처가 있으면 차단 기록에 나타나므로 거기서 허용에 더하십시오. 폐쇄망에서 외부 도구는 브라우저가 밖으로 나갈 수 있을 때만 의미가 있습니다.
+
 ## 4. 계정과 권한
 
 | 역할 | 값 | 할 수 있는 일 |
@@ -209,7 +253,7 @@ Keycloak에 이미 로그인한 사람이 SeatOn을 열었을 때 로그인 화�
 | --- | --- | --- | --- |
 | `/healthz` | GET | 없음 | 프로세스 살아 있음 `{"status":"ok"}`. 컨테이너 헬스체크가 이걸 봄 |
 | `/readyz` | GET | 없음 | DB `Ping` 성공 시 `{"status":"ready"}`, 실패 시 `503 database_unavailable` |
-| `/api/v1/version` | GET | 없음 | `{"name":"SeatOn","version":"1.4.2","commit":"…","builtAt":"…"}` |
+| `/api/v1/version` | GET | 없음 | `{"name":"SeatOn","version":"1.4.3","commit":"…","builtAt":"…"}` |
 | `/api/v1/dashboard` | GET | 좌석 관리자 | 운영 준비도·연동 상태·처리 필요 건수 |
 
 처리필요 화면의 **운영 준비도**와 **연동 상태**가 같은 정보를 사람이 보기 좋게 보여 줍니다.
@@ -221,7 +265,7 @@ Keycloak에 이미 로그인한 사람이 SeatOn을 열었을 때 로그인 화�
 표준 출력에 JSON 한 줄씩(`log/slog`) 찍힙니다. `docker compose logs -f seaton`으로 봅니다. 요청마다 `"msg":"request"`에 메서드·경로·소요 시간·`request_id`가 남습니다.
 
 ```json
-{"time":"2026-09-11T11:41:57Z","level":"INFO","msg":"SeatOn started","address":":8080","version":"1.4.2","commit":"…"}
+{"time":"2026-09-11T11:41:57Z","level":"INFO","msg":"SeatOn started","address":":8080","version":"1.4.3","commit":"…"}
 {"time":"…","level":"INFO","msg":"request","method":"GET","path":"/readyz","duration_ms":0,"request_id":"…"}
 {"time":"…","level":"INFO","msg":"도면 분석 완료","jobId":"…","floorMapId":"…","engine":"cv","detected":30,"review":6}
 ```
@@ -276,11 +320,11 @@ curl -s http://127.0.0.1:8080/api/v1/version    # "version":"1.5.0"
 되돌릴 때는 태그를 이전 값으로 바꿔 다시 올립니다. 새 버전이 스키마를 바꾼 뒤라면 이전 바이너리가 그 스키마를 이해한다는 보장이 없으므로, 백업한 덤프를 먼저 복원합니다.
 
 ```bash
-export SEATON_IMAGE_TAG='v1.4.2'
+export SEATON_IMAGE_TAG='v1.4.3'
 docker compose up -d
 ```
 
-분석이 진행 중일 때 재시작하면 그 잡은 실패로 정리되고 도면은 다시 분석할 수 있는 상태로 돌아옵니다. 릴리즈 자산은 `SeatOn-v<버전>.tar.gz` → `seaton:v<버전>` 이름 규칙을 따르고, 애플리케이션이 알리는 버전 문자열은 `v` 없는 `1.4.2`입니다.
+분석이 진행 중일 때 재시작하면 그 잡은 실패로 정리되고 도면은 다시 분석할 수 있는 상태로 돌아옵니다. 릴리즈 자산은 `SeatOn-v<버전>.tar.gz` → `seaton:v<버전>` 이름 규칙을 따르고, 애플리케이션이 알리는 버전 문자열은 `v` 없는 `1.4.3`입니다.
 
 ## 6. 장애 대응
 
@@ -304,6 +348,9 @@ docker compose up -d
 | 처리필요 화면이 느림, 로그 `집계 쿼리 실패` | DB 부하 | 상단 배지는 `/dashboard/action-count`만 쓰므로 화면 이동은 영향 없음. DB 점검 |
 | 로그 `audit log failed` | DB 쓰기 | 감사 기록 실패는 요청을 막지 않음. DB 디스크·권한 확인 |
 | 로그 `panic` + 스택 | 애플리케이션 결함 | `request_id`와 함께 이슈로 보고. 프로세스는 계속 동작 |
+| 추적을 켰는데 수집이 안 됨, 콘솔에 `Refused to load/connect … Content Security Policy` | 시스템 설정 → 방문 추적의 **정책이 차단한 출처** | 막힌 출처를 **허용에 추가**. 표가 비어 있으면 화면을 새로 고쳐 문서를 다시 받았는지, `tracking.enabled`가 저장됐는지 확인(§3.6) |
+| `/momento/tracker.js`가 `404` | `tracking.provider=momento`, `tracking.momento_proxy=true`, `tracking.enabled=true` 인지 | 셋 중 하나라도 아니면 프록시 경로는 없음 |
+| `/momento/*`가 `502 tracking_upstream`, 로그 `Momento 수집기에 연결하지 못했습니다` | 컨테이너에서 `tracking.momento_url`로 나가는 연결, 사내 CA | 수집기 주소·방화벽 확인 |
 
 ## 7. 보안
 
@@ -311,10 +358,11 @@ docker compose up -d
 - **밖에 열면 안 되는 것**: `:8080`은 리버스 프록시 뒤에만 둡니다. PostgreSQL 포트는 SeatOn 컨테이너에서만 닿게 합니다. `/mcp`와 `/api/v1/*`은 같은 포트이므로 프록시에서 따로 막을 필요는 없지만, 사내망 밖으로 열지 않습니다.
 - **프록시에서 HTTPS 종료**: `X-Forwarded-Proto: https`와 `X-Forwarded-Host`를 반드시 전달합니다. 이 값으로 세션 쿠키의 `Secure` 플래그와 OIDC 콜백 주소가 결정됩니다.
 - **컨테이너 강화**: `compose.yaml`의 `read_only`, `cap_drop: ALL`, `no-new-privileges`, 비루트 UID 10001을 그대로 둡니다. 응답에는 `CSP default-src 'self'`, `X-Frame-Options: DENY`, `nosniff`가 항상 붙습니다.
+- **방문 추적과 정책**: 추적을 켜도 `script-src`에 `'unsafe-inline'`은 들어가지 않습니다 — 요청마다 다른 nonce와 스니펫에서 읽은 출처만 더해지고, 끄면 원래 정책으로 돌아갑니다(§3.6). Momento를 같은 오리진 프록시로 쓰면 외부 출처가 정책에 전혀 없습니다. 차단 신고 수신(`POST /api/v1/tracking/csp-report`)은 인증 없이 열려 있지만 추적이 켜진 동안만 기록하고, 메모리의 유계 목록(100개)만 바꿉니다.
 - **비밀값 저장**: 설정의 비밀값은 `master.key`로 AES-256-GCM 암호화, 세션 토큰과 API 키는 HMAC 해시만 저장. `master.key`는 백업 대상이자 유출 금지 대상입니다.
 - **인증 연동**: Keycloak Authorization Code + PKCE(S256) + nonce 검증. SSO를 검증한 뒤 `auth.local_enabled`를 끄면 부트스트랩 계정도 화면에서는 못 들어오므로, 비상시 되돌리는 SQL(§6)을 운영 문서에 적어 둡니다.
 - **API 키 정책**: 기본 유효기간 90일, 회전 유예 24시간. 유출이 의심되면 소유자가 **폐기**하거나, 관리자가 그 사용자를 비활성화합니다(비활성 사용자의 키는 즉시 거부).
-- **인터넷 통신**: 기본 설정(`ai.engine=cv`, SSO·인사 연동 꺼짐)에서는 컨테이너가 밖으로 나가는 연결이 없습니다. 연결이 생기는 곳은 Keycloak Issuer, `hr.api_url`, `ai.vlm_base_url` 세 군데뿐이며 모두 사내 주소를 씁니다.
+- **인터넷 통신**: 기본 설정(`ai.engine=cv`, SSO·인사 연동·방문 추적 꺼짐)에서는 컨테이너가 밖으로 나가는 연결이 없습니다. 연결이 생기는 곳은 Keycloak Issuer, `hr.api_url`, `ai.vlm_base_url`, 그리고 Momento 프록시를 켰을 때의 `tracking.momento_url` 네 군데뿐이며 모두 사내 주소를 씁니다.
 
 ## 8. 좌석 인식 엔진 (CV · VLM · 하이브리드)
 
