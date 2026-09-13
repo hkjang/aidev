@@ -1,6 +1,6 @@
 # SeatOn 관리자 가이드
 
-SeatOn v1.4.1 기준. 화면을 쓰는 사람을 위한 조작법은 [사용자 가이드](USER_GUIDE.md)에 있으며, 이 문서는 그 화면을 띄워 놓고 지키는 사람을 위한 것입니다. API 세부는 [API_AND_MCP.md](API_AND_MCP.md), 내부 구조는 [ARCHITECTURE.md](ARCHITECTURE.md)를 봅니다.
+SeatOn v1.4.2 기준. 화면을 쓰는 사람을 위한 조작법은 [사용자 가이드](USER_GUIDE.md)에 있으며, 이 문서는 그 화면을 띄워 놓고 지키는 사람을 위한 것입니다. API 세부는 [API_AND_MCP.md](API_AND_MCP.md), 내부 구조는 [ARCHITECTURE.md](ARCHITECTURE.md)를 봅니다.
 
 ## 1. 구성 요소
 
@@ -18,7 +18,7 @@ SeatOn v1.4.1 기준. 화면을 쓰는 사람을 위한 조작법은 [사용자 
 
 ## 2. 설치
 
-릴리즈 자산 `SeatOn-v1.4.1.tar.gz`(GitHub Release 첨부)와 이 저장소의 `compose.yaml` 하나면 됩니다. PostgreSQL은 외부 또는 사내 것을 준비합니다(빈 데이터베이스와 소유 계정만 있으면 스키마는 SeatOn이 만듭니다).
+릴리즈 자산 `SeatOn-v1.4.2.tar.gz`(GitHub Release 첨부)와 이 저장소의 `compose.yaml` 하나면 됩니다. PostgreSQL은 외부 또는 사내 것을 준비합니다(빈 데이터베이스와 소유 계정만 있으면 스키마는 SeatOn이 만듭니다).
 
 | 항목 | 값 |
 | --- | --- |
@@ -31,14 +31,14 @@ SeatOn v1.4.1 기준. 화면을 쓰는 사람을 위한 조작법은 [사용자 
 ### 2.1 처음부터 끝까지
 
 ```bash
-# 1. 이미지 적재 — seaton:v1.4.1 태그가 생긴다
-docker load < SeatOn-v1.4.1.tar.gz
+# 1. 이미지 적재 — seaton:v1.4.2 태그가 생긴다
+docker load < SeatOn-v1.4.2.tar.gz
 
 # 2. 필수 환경변수 3개 + Compose 이미지 태그
 export POSTGRES_DSN='postgres://seaton:change-db-password@postgres.intra:5432/seaton?sslmode=require'
 export BOOTSTRAP_ADMIN='admin'
 export BOOTSTRAP_ADMIN_PASSWORD='change-this-strong-password'   # 12자 이상
-export SEATON_IMAGE_TAG='v1.4.1'
+export SEATON_IMAGE_TAG='v1.4.2'
 
 # 3. 기동
 docker compose up -d
@@ -105,6 +105,7 @@ Compose 전용(컨테이너에 전달되지 않음):
 | `oidc.enabled` | Keycloak SSO 사용 | `false` | 켜면 로그인 화면에 **사내 SSO로 로그인** 단추가 나타남 |
 | `auth.local_enabled` | 로컬 관리자 로그인 허용 | `true` | 끄면 아이디·비밀번호 로그인이 `403 local_login_disabled`. **SSO가 검증되기 전에는 끄지 말 것** |
 | `oidc.auto_provision` | SSO 사용자 자동 생성 | `true` | 첫 SSO 로그인 때 사용자 자동 생성 |
+| `oidc.auto_login` | Keycloak 세션이 있으면 자동 로그인 | `false` | 켜면 Keycloak에 이미 로그인한 사람은 로그인 화면 없이 바로 들어옴(§3.3 조용한 로그인). `oidc.enabled`가 켜져 있을 때만 효과 |
 | `oidc.issuer_url` | Keycloak Issuer URL | 빈 값 | 예 `https://keycloak.intra/realms/company`. Discovery 문서에서 나머지 엔드포인트를 자동 구성 |
 | `oidc.client_id` | Client ID | 빈 값 | |
 | `oidc.client_secret` | Client Secret | 빈 값 | 비밀값(암호화 저장) |
@@ -157,6 +158,20 @@ Compose 전용(컨테이너에 전달되지 않음):
 
 SSO 사용자는 첫 로그인 때 자동 생성되고 그룹으로 역할이 정해집니다. 이미 `system_admin`인 사용자는 그룹이 바뀌어도 강등되지 않습니다.
 
+**조용한 로그인(`oidc.auto_login`)**
+
+Keycloak에 이미 로그인한 사람이 SeatOn을 열었을 때 로그인 화면을 건너뛰게 하려면 **Keycloak 세션이 있으면 자동 로그인**을 켭니다. 기본값은 꺼짐이며, 꺼진 설치에서는 아무것도 달라지지 않습니다.
+
+동작은 다음과 같습니다.
+
+1. 세션이 없는 브라우저가 화면 경로(`/`, `/admin/...` 등)를 열면 로그인 화면 대신 `GET /api/v1/auth/oidc/start?prompt=none&returnTo=<원래 경로>`로 이동합니다. 숨은 iframe이 아니라 최상위 이동이므로 서드파티 쿠키가 막힌 브라우저에서도 동작합니다.
+2. 서버는 `oidc.auto_login`이 켜져 있을 때만 Keycloak에 `prompt=none`을 붙입니다. 꺼져 있으면 주소에 `prompt=none`이 있어도 평범한 로그인으로 바꿉니다 — 누구든 주소를 고쳐 흐름을 바꿀 수 없습니다.
+3. Keycloak에 세션이 있으면 화면 없이 인가 코드가 돌아와 평소처럼 로그인되고 `returnTo` 자리로 갑니다(`/`로 시작하고 `//`로 시작하지 않는 경로만 받습니다). 세션이 없으면 Keycloak이 `error=login_required`를 보내고, 콜백은 이를 실패가 아닌 "세션 없음"으로 다뤄 `/login?sso=none`으로 보냅니다. 서버 로그에는 아무것도 남지 않습니다.
+
+`prompt=none`이 거절된 뒤 다시 시도하면 브라우저가 Keycloak과 SeatOn 사이를 끝없이 오가므로, 화면은 세 겹으로 재시도를 막습니다: 한 탭 세션에 한 번만 시도(`sessionStorage`, 새 탭은 다시 시도), 로그아웃 단추로 나간 뒤에는 다시 로그인하기 전까지 시도하지 않음, 주소에 `?sso=none`이 붙어 있으면 시도하지 않음. 저장소를 읽지 못하는 사생활 보호 모드에서는 "이미 시도했다"로 쳐서 시도하지 않습니다. 로그인·콜백·API·MCP·헬스 경로에서는 시도하지 않습니다.
+
+로그인 화면이 깜빡이며 반복된다면 브라우저 주소가 `/login?sso=none`으로 끝나는지, 리버스 프록시가 쿼리 문자열을 지우지 않는지 확인합니다.
+
 ### 3.4 좌석 인식 엔진과 사내 비전 모델
 
 ![시스템 설정 · AI 분석 — 좌석 인식 엔진 선택과 신뢰도 기준, VLM 엔드포인트·모델·제한 시간·타일 수 등](assets/guide/admin-settings-ai.png)
@@ -194,7 +209,7 @@ SSO 사용자는 첫 로그인 때 자동 생성되고 그룹으로 역할이 �
 | --- | --- | --- | --- |
 | `/healthz` | GET | 없음 | 프로세스 살아 있음 `{"status":"ok"}`. 컨테이너 헬스체크가 이걸 봄 |
 | `/readyz` | GET | 없음 | DB `Ping` 성공 시 `{"status":"ready"}`, 실패 시 `503 database_unavailable` |
-| `/api/v1/version` | GET | 없음 | `{"name":"SeatOn","version":"1.4.1","commit":"…","builtAt":"…"}` |
+| `/api/v1/version` | GET | 없음 | `{"name":"SeatOn","version":"1.4.2","commit":"…","builtAt":"…"}` |
 | `/api/v1/dashboard` | GET | 좌석 관리자 | 운영 준비도·연동 상태·처리 필요 건수 |
 
 처리필요 화면의 **운영 준비도**와 **연동 상태**가 같은 정보를 사람이 보기 좋게 보여 줍니다.
@@ -206,7 +221,7 @@ SSO 사용자는 첫 로그인 때 자동 생성되고 그룹으로 역할이 �
 표준 출력에 JSON 한 줄씩(`log/slog`) 찍힙니다. `docker compose logs -f seaton`으로 봅니다. 요청마다 `"msg":"request"`에 메서드·경로·소요 시간·`request_id`가 남습니다.
 
 ```json
-{"time":"2026-09-11T11:41:57Z","level":"INFO","msg":"SeatOn started","address":":8080","version":"1.4.1","commit":"…"}
+{"time":"2026-09-11T11:41:57Z","level":"INFO","msg":"SeatOn started","address":":8080","version":"1.4.2","commit":"…"}
 {"time":"…","level":"INFO","msg":"request","method":"GET","path":"/readyz","duration_ms":0,"request_id":"…"}
 {"time":"…","level":"INFO","msg":"도면 분석 완료","jobId":"…","floorMapId":"…","engine":"cv","detected":30,"review":6}
 ```
@@ -261,11 +276,11 @@ curl -s http://127.0.0.1:8080/api/v1/version    # "version":"1.5.0"
 되돌릴 때는 태그를 이전 값으로 바꿔 다시 올립니다. 새 버전이 스키마를 바꾼 뒤라면 이전 바이너리가 그 스키마를 이해한다는 보장이 없으므로, 백업한 덤프를 먼저 복원합니다.
 
 ```bash
-export SEATON_IMAGE_TAG='v1.4.1'
+export SEATON_IMAGE_TAG='v1.4.2'
 docker compose up -d
 ```
 
-분석이 진행 중일 때 재시작하면 그 잡은 실패로 정리되고 도면은 다시 분석할 수 있는 상태로 돌아옵니다. 릴리즈 자산은 `SeatOn-v<버전>.tar.gz` → `seaton:v<버전>` 이름 규칙을 따르고, 애플리케이션이 알리는 버전 문자열은 `v` 없는 `1.4.1`입니다.
+분석이 진행 중일 때 재시작하면 그 잡은 실패로 정리되고 도면은 다시 분석할 수 있는 상태로 돌아옵니다. 릴리즈 자산은 `SeatOn-v<버전>.tar.gz` → `seaton:v<버전>` 이름 규칙을 따르고, 애플리케이션이 알리는 버전 문자열은 `v` 없는 `1.4.2`입니다.
 
 ## 6. 장애 대응
 
