@@ -1,0 +1,197 @@
+{
+  "run_id": "2026-09-13-222148-postra-improve",
+  "generated": "2026-09-13T22:34:14+09:00",
+  "run": {
+    "run_id": "2026-09-13-222148-postra-improve",
+    "project": "postra",
+    "kind": "improve",
+    "started": "2026-09-13T22:21:48+09:00",
+    "model": "claude-opus-5",
+    "policy_version": "5935779a",
+    "prompts_hash": "82f2440d4b2fef65",
+    "runner_version": "5c1744b4",
+    "finished": "2026-09-13T22:34:13+09:00",
+    "outcome": "verify-failed"
+  },
+  "record": {
+    "ts": "2026-09-13T22:34:13+09:00",
+    "date": "2026-09-13",
+    "project": "postra",
+    "result": "CI failed, PR open https://github.com/hkjang/postra/pull/3",
+    "outcome": "verify-failed",
+    "run_id": "2026-09-13-222148-postra-improve",
+    "base_sha": "e31cfca1d5d511bbdbb04ca94be7670a4ff7dfaa",
+    "head_sha": "8111af3b39fe4cc2b0e6579895c173227f7d7463",
+    "pr": "https://github.com/hkjang/postra/pull/3",
+    "stages": {
+      "base": {
+        "state": "pinned",
+        "reason": "main@e31cfca",
+        "at": "2026-09-13T22:21:50+09:00"
+      },
+      "autonomy": {
+        "state": "release",
+        "reason": "",
+        "at": "2026-09-13T22:21:50+09:00"
+      },
+      "verify": {
+        "state": "passed",
+        "reason": "검증 3개 통과 (auto)",
+        "at": "2026-09-13T22:31:35+09:00"
+      },
+      "pr": {
+        "state": "created",
+        "reason": "https://github.com/hkjang/postra/pull/3",
+        "at": "2026-09-13T22:31:41+09:00"
+      },
+      "review": {
+        "state": "approved",
+        "reason": "리뷰 승인 (risk=medium)",
+        "at": "2026-09-13T22:34:14+09:00"
+      },
+      "ci": {
+        "state": "failed",
+        "reason": "성공이 아닌 검사: gosec=failure, gosec (medium+)=failure",
+        "at": "2026-09-13T22:34:13+09:00"
+      }
+    },
+    "campaign": "silent-sso-2026-09",
+    "autonomy": "release",
+    "files": 11,
+    "additions": 631,
+    "deletions": 26,
+    "tests": 3,
+    "title": "feat(auth): silent SSO via OIDC prompt=none behind an auto_login setting"
+  },
+  "stages": {
+    "base": {
+      "state": "pinned",
+      "reason": "main@e31cfca",
+      "at": "2026-09-13T22:21:50+09:00"
+    },
+    "autonomy": {
+      "state": "release",
+      "reason": "",
+      "at": "2026-09-13T22:21:50+09:00"
+    },
+    "verify": {
+      "state": "passed",
+      "reason": "검증 3개 통과 (auto)",
+      "at": "2026-09-13T22:31:35+09:00"
+    },
+    "pr": {
+      "state": "created",
+      "reason": "https://github.com/hkjang/postra/pull/3",
+      "at": "2026-09-13T22:31:41+09:00"
+    },
+    "review": {
+      "state": "approved",
+      "reason": "리뷰 승인 (risk=medium)",
+      "at": "2026-09-13T22:34:14+09:00"
+    },
+    "ci": {
+      "state": "failed",
+      "reason": "성공이 아닌 검사: gosec=failure, gosec (medium+)=failure",
+      "at": "2026-09-13T22:34:13+09:00"
+    }
+  },
+  "provenance": {
+    "model": "claude-opus-5",
+    "policy_version": "5935779a",
+    "prompts_hash": "82f2440d4b2fef65",
+    "runner_version": "5c1744b4",
+    "base_sha": "e31cfca1d5d511bbdbb04ca94be7670a4ff7dfaa",
+    "head_sha": "8111af3b39fe4cc2b0e6579895c173227f7d7463",
+    "pr": "https://github.com/hkjang/postra/pull/3"
+  },
+  "verification": {
+    "runner": {
+      "source": "auto",
+      "commands": [
+        {
+          "cmd": "go build ./...",
+          "exit": 0,
+          "seconds": 1
+        },
+        {
+          "cmd": "go vet ./...",
+          "exit": 0,
+          "seconds": 1
+        },
+        {
+          "cmd": "go test ./...",
+          "exit": 0,
+          "seconds": 8
+        }
+      ]
+    },
+    "runner_gate": {
+      "ok": true,
+      "state": "verified",
+      "reason": "검증 3개 통과 (auto)"
+    },
+    "after_rebase": null,
+    "review": {
+      "verdict": "approve",
+      "reasons": [],
+      "notes": [
+        "internal/application/oidc.go:174 서버측 가드 확인: opts.Silent && rt.AutoLogin 이므로 auto_login 이 꺼져 있으면 ?prompt=none 이 실제로 무시되며, TestBeginOIDCSilentOnlyWhenAutoLoginEnabled / TestSilentSSOAttemptOnlyWhenAutoLoginOn 이 authURL 의 prompt 파라미터와 flow.Silent 를 직접 단언한다(수정 전 코드에서는 컴파일조차 되지 않고, 동작상으로도 실패).",
+        "internal/transport/webui/webui.go:534 콜백 refusal 경로는 flow 쿠키의 HMAC 검증 + state 상수시간 비교 + flow.Silent 를 모두 요구하므로, 타인의 error 콜백이나 대화형 흐름의 login_required 가 조용한 리다이렉트로 바뀌지 않음(테스트로 state 불일치·비-silent 흐름 케이스 확인).",
+        "internal/transport/webui/templates/layout.html:198 sessionStorage 마커를 지우는 스크립트는 {{if not .AuthPage}} 블록 안에 있고 render() 가 login/setup 에 AuthPage=true 를 세팅하므로 로그인 페이지 자체가 마커를 지워 루프를 만드는 문제는 없음(확인함).",
+        "루프 시나리오 점검: (a) Keycloak 세션 없음 → sso=none 랜딩(스크립트 미렌더) ; (b) Keycloak 세션은 있으나 CompleteOIDC 실패(미프로비저닝 등) → Error 렌더로 스크립트 미렌더 + sessionStorage attempted 마커로 /ui/ 재진입 시에도 재시도 없음 ; (c) discovery 실패 → Error 렌더. storage 읽기 실패는 '시도함' 으로 간주해 닫히는 쪽으로 실패. 모두 문제 없음.",
+        "open redirect 점검: SafeReturnTo 가 '', 상대경로, //host, /\\host, 절대 URL, CR/LF 를 거부하고 url.Parse 로 Host=='' 를 재확인. 서버(gate→login form→flow 쿠키→callback) 모든 구간에서 재검증하며, 클라이언트 스크립트 검증은 보조일 뿐임. return_to 가 /ui/logout 이나 /ui/auth/oidc/start 같은 앱 내부 경로를 가리킬 수는 있으나 무해함.",
+        "사소: gate 의 loginURL 이 /ui/jobs/status 같은 XHR 폴링 GET 에도 return_to 를 붙임(세션 만료 시). fetch 가 HTML 을 받고 catch 로 무시되므로 무해하지만, 사용자가 실제로 로그인 후 /ui/jobs/status JSON 페이지에 착지할 일은 없음(폴링 응답은 페이지 이동이 아님).",
+        "사소: 한 탭에서 silent 거절 뒤에는 새 탭을 열기 전까지 자동 로그인이 재시도되지 않음(설계 의도이며 ADMIN_GUIDE 에 문서화됨).",
+        "되돌리기: 스키마 마이그레이션 없음. 설정 키 auth.oidc.auto_login 만 settings 테이블에 추가되며 revert 후 남아 있어도 무시됨.",
+        "gofmt -l 에 internal/application/incidents.go 가 잡히지만 이 PR 의 변경 파일이 아님(기존 문제). go build/vet 및 application·webui·config 패키지 테스트 통과 확인."
+      ],
+      "risk": "medium"
+    },
+    "ci_gate": {
+      "ok": false,
+      "state": "failed",
+      "reason": "성공이 아닌 검사: gosec=failure, gosec (medium+)=failure",
+      "checks": 6,
+      "bad": 2
+    }
+  },
+  "release": {
+    "result": null,
+    "assets_sha256": []
+  },
+  "approval": null,
+  "usage": [
+    {
+      "ts": "2026-09-13T22:31:23+09:00",
+      "date": "2026-09-13",
+      "project": "postra",
+      "phase": "improve",
+      "run_id": "2026-09-13-222148-postra-improve",
+      "campaign": "silent-sso-2026-09",
+      "subtype": "success",
+      "duration_ms": 619249,
+      "num_turns": 41,
+      "cost_usd": 4.0370715,
+      "input_tokens": 82,
+      "output_tokens": 42315,
+      "cache_read": 3503717,
+      "cache_create": 122268
+    },
+    {
+      "ts": "2026-09-13T22:34:14+09:00",
+      "date": "2026-09-13",
+      "project": "postra",
+      "phase": "review",
+      "run_id": "2026-09-13-222148-postra-improve",
+      "campaign": "silent-sso-2026-09",
+      "subtype": "success",
+      "duration_ms": 161921,
+      "num_turns": 12,
+      "cost_usd": 0.9310225000000001,
+      "input_tokens": 24,
+      "output_tokens": 9451,
+      "cache_read": 480903,
+      "cache_create": 45236
+    }
+  ]
+}
