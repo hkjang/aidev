@@ -190,7 +190,7 @@ kubectl apply -f ptium-1.69.32.kubernetes.yaml
 
 ### 3.2 서비스 설정 (관리자 콘솔)
 
-**관리 → 서비스 설정**(`/admin/settings`)의 다섯 영역이 데이터베이스에 저장되는 운영 설정입니다.
+**관리 → 서비스 설정**(`/admin/settings`)의 여섯 영역이 데이터베이스에 저장되는 운영 설정입니다.
 저장은 `PUT /api/v1/admin/settings/{key}` 또는 영역 단위 `PATCH /api/v1/admin/settings` 로 이뤄지며,
 누가 무엇을 바꿨는지는 **감사 기록**과 설정 화면의 변경 이력에 남고 되돌릴 수 있습니다
 (`POST /api/v1/admin/settings/changes/{id}/revert`).
@@ -211,6 +211,7 @@ kubectl apply -f ptium-1.69.32.kubernetes.yaml
 | | `ai.timeout_seconds` | `300` | 한 번의 완성을 기다리는 시간 |
 | OIDC · SSO | `auth.oidc.issuer_url` · `auth.oidc.client_id` · `auth.oidc.client_secret` | (없음) | 환경 변수가 있으면 재시작 전까지 환경 변수가 우선 |
 | | `auth.oidc.admin_roles` | `["ptium-admin","admin"]` | 관리자로 볼 역할 |
+| | `auth.oidc.auto_login` | `false` | 제공자에 이미 로그인한 사람을 로그인 화면 없이 들여보내기(silent SSO). 저장 즉시 적용, 재시작 불필요 |
 | 생성 정책 | `generation.default_slide_count` | `10` | 기본 장수 |
 | | `generation.max_slides` | `50` | 최대 장수 |
 | | `generation.default_theme` | `slate-classic` | 기본 디자인 |
@@ -221,6 +222,16 @@ kubectl apply -f ptium-1.69.32.kubernetes.yaml
 | | `generation.allow_user_uploads` | `true` | 사용자가 자기 PowerPoint 템플릿을 올릴 수 있는지 |
 | 보안 · 키 | `security.api_key_grace` | `24h` | API 키 회전 시 이전 키가 함께 유효한 기간 |
 | | `security.cors_origins` | `[]` | 추가로 허용할 브라우저 출처. 바꾸면 재시작 필요 |
+| 방문 추적 | `analytics.enabled` | `false` | 추적 스니펫을 페이지에 붙일지. 저장 즉시 적용, 재시작 불필요 |
+| | `analytics.provider` | `none` | `momento`(사내 수집기) · `ga4` · `gtm` · `matomo` · `custom`(붙여 넣기) |
+| | `analytics.momento_url` · `analytics.momento_site_id` | (없음) | Momento 수집기 주소와 사이트 ID |
+| | `analytics.momento_proxy` | `true` | 수집기를 이 서비스의 `/momento/*` 로 넘겨 정책에 외부 출처가 등장하지 않게 |
+| | `analytics.measurement_id` | (없음) | GA4 의 `G-…` 또는 GTM 의 `GTM-…` |
+| | `analytics.matomo_url` · `analytics.matomo_site_id` | (없음) | Matomo 주소와 사이트 ID |
+| | `analytics.custom_snippet` | (없음) | 붙여 넣은 스니펫. 8KB 까지 |
+| | `analytics.allowed_hosts` | (없음) | 스니펫에서 자동으로 못 읽은 출처를 더하는 자리. 쉼표·줄바꿈 구분 |
+| | `analytics.include_admin` | `false` | 관리 화면(`/admin`)도 추적할지 |
+| | `analytics.placement` | `head` | 스니펫 자리: `head` 또는 `body` |
 
 **AI 모델 연결.** `ai.provider` 를 `openai-compatible` 로 바꾸고 주소·모델을 넣은 뒤 **지금 확인**을
 누르면 저장된 설정 그대로 제공자에게 한 번 물어 응답 여부와 걸린 시간을 보여 줍니다 — 아무것도
@@ -235,9 +246,85 @@ ID 를 넣습니다. Keycloak 쪽에는 Ptium 의 정확한 origin 과 리다이
 
 ![서비스 설정 — OIDC · SSO](assets/guide/admin-settings-oidc.png)
 
+**자동 로그인(silent SSO).** 같은 화면의 **자동 로그인**(`auth.oidc.auto_login`, 기본 **사용 안 함**)을
+켜면, Keycloak 에 이미 로그인한 사람이 Ptium 을 열었을 때 로그인 화면을 거치지 않고 바로 본 화면으로
+들어갑니다. 저장하면 다음 페이지 로드부터 적용되고 재시작은 필요 없습니다. 동작은 이렇습니다.
+
+- 세션이 없는 브라우저가 페이지를 열면, 로그인 화면을 보이기 전에 제공자에게 OIDC 의 `prompt=none`
+  으로 **한 번** 묻습니다(최상위 이동, 숨은 iframe 이 아니므로 서드파티 쿠키가 막힌 브라우저에서도
+  동작합니다). 제공자에 세션이 있으면 코드가 바로 돌아와 평소 로그인 흐름으로 이어지고, 깊은 링크로
+  들어온 사람은 그 자리로 돌아갑니다.
+- 제공자에 세션이 없으면 `error=login_required` 로 돌아옵니다. 이것은 오류가 아니라 평범한 대답이며,
+  브라우저는 `/login?sso=none` 으로 가 평소 로그인 화면을 보입니다. 감사 로그나 오류 센터에는 아무것도
+  남지 않습니다.
+- 같은 탭에서는 다시 묻지 않습니다(새로고침을 반복해도 리다이렉트가 되풀이되지 않음). 새 탭은 다시
+  한 번 묻습니다. **로그아웃**을 누른 뒤에는 다시 로그인할 때까지 묻지 않으므로, 로그아웃이 제공자
+  세션에 의해 되돌려지는 것처럼 보이지 않습니다.
+- 사생활 보호 모드처럼 브라우저 저장소를 읽을 수 없는 경우에는 "이미 물었다" 로 보고 로그인 화면을
+  보입니다.
+- 설정이 꺼져 있으면 서버가 `/api/v1/auth/config` 에 `autoLogin: false` 를 내려 보내고 브라우저는
+  `prompt=none` 을 붙이지 않습니다. 주소에 무엇을 붙이든 이 흐름을 켤 수 없습니다.
+- 공유 링크(`/view/…`), 로그인·콜백 경로, API·MCP·상태 점검 경로에서는 시도하지 않습니다.
+
+Keycloak 쪽에 별도 설정은 없습니다 — 리다이렉트 URI 가 이미 허용되어 있으면 됩니다. 켜기 전에
+로그인하지 않은 브라우저로 한 번 열어 화면이 깜빡이지 않는지(로그인 화면이 한 번에 뜨는지), 로그아웃
+뒤 다시 열어도 자동으로 로그인되지 않는지 확인하세요.
+
 ![서비스 설정 — 생성 정책](assets/guide/admin-settings-generation.png)
 
 ![서비스 설정 — 보안 · 키](assets/guide/admin-settings-security.png)
+
+### 3.3 방문 추적 (analytics)
+
+**관리 → 서비스 설정 → 방문 추적**에서 방문 추적 스크립트를 붙입니다. 기본값은 **꺼짐**이라 새로 설치한
+곳에서는 아무 페이지에도 스니펫이 없고 페이지 정책도 그대로입니다. 켜고 저장하면 다음 페이지 로드부터
+붙으며 재시작은 필요 없습니다.
+
+**어려운 쪽은 `<script>` 가 아니라 CSP 입니다.** Ptium 의 페이지는 `script-src 'self'` 로 잠겨 있어서
+스니펫을 그냥 붙이면 브라우저가 조용히 막고, 화면이 왜 비어 있는지 알 길이 없습니다. Ptium 은 정책을
+`'unsafe-inline'` 으로 풀지 않습니다 — 한 번 풀면 그 앱의 모든 인라인 스크립트가 함께 허용되고, 추적을
+끈 뒤에도 정책은 느슨한 채로 남기 때문입니다. 대신 다음을 합니다.
+
+- 페이지를 줄 때마다 새 nonce 를 만들어 스니펫의 **모든** `<script>` 태그에 붙이고, 같은 값을
+  `script-src 'nonce-…'` 로 정책에 넣습니다. 자산 파일(`/assets/*`)과 API·MCP·상태 점검 경로에는
+  스니펫이 붙지 않고, 이쪽 정책은 오히려 `default-src 'none'` 으로 더 좁습니다.
+- 스니펫과 도구 설정에서 `http(s)` 출처를 읽어 `script-src` · `connect-src` · `img-src` 에 더합니다.
+  화면의 **정책에 더해질 출처**가 저장 전에 그 목록을 보여 줍니다.
+- 추적이 켜져 있는 동안만 정책에 `report-uri /api/v1/analytics/csp-report` 를 넣어, 브라우저가 막은
+  요청을 신고하게 합니다. 신고는 메모리에 출처별로 한 줄씩(최대 100개) 모이고 **차단된 출처** 표에
+  나타납니다. **허용**을 누르면 그 출처가 `analytics.allowed_hosts` 에 더해지고 설정 변경 이력에 남습니다.
+  프로세스가 재시작되면 표는 비워집니다.
+- 추적을 끄면 정책은 원래대로 좁아지고 `report-uri` 도 빠집니다.
+
+**Momento (권장).** Momento 는 사내 자체 호스팅 수집기라 데이터가 밖으로 나가지 않는 유일한 선택지이며
+목록의 첫 자리에 있습니다. 수집기 주소와 사이트 ID 를 넣으면 다음 스니펫이 붙습니다.
+
+```html
+<script async src="<momento_url>/tracker.js" data-site-id="<site_id>"
+        data-environment="prd" data-contract-version="1" nonce="…"></script>
+```
+
+**같은 오리진 프록시**(`analytics.momento_proxy`, 기본 **사용**)를 켜 두면 브라우저는 수집기가 아니라
+Ptium 자신의 `/momento/*` 로 트래커를 받고 이벤트를 보내며(`data-endpoint="/momento"`), 서버가 이를
+수집기로 넘깁니다. 외부 출처가 정책에 아예 등장하지 않으므로 정책을 바꿀 수 없는 설치에서도 동작하고,
+브라우저의 세션 쿠키·인증 헤더는 수집기로 전달되지 않습니다. 추적이 꺼져 있거나 다른 도구를 골랐거나
+프록시를 끄면 `/momento/*` 는 404 입니다. 프록시를 끄면 브라우저가 수집기에 직접 닿고 수집기 출처가
+정책에 더해집니다.
+
+**GA4 · GTM · Matomo.** 측정 ID(또는 Matomo 주소와 사이트 ID)만 넣으면 표준 로더가 붙고, 각 도구가
+쓰는 출처(`googletagmanager.com` 등, Matomo 는 그 주소)가 정책에 더해집니다. 폐쇄망에서는 닿지 않는
+주소이므로 사용 여부는 망 정책에 따릅니다.
+
+**직접 붙여 넣기.** 도구가 준 `<script>` 코드를 그대로 붙여 넣습니다(8KB 까지). 모든 `<script>` 에
+nonce 가 붙고 스니펫 안의 `http(s)` 출처가 정책에 더해집니다. 로더가 나중에 불러오는 두 번째 주소처럼
+스니펫에 적혀 있지 않은 출처는 **차단된 출처**에 나타나니 거기서 허용하거나 **추가 허용 출처**에 적습니다.
+
+**붙지 않는 곳.** 관리 화면(`/admin`)은 `analytics.include_admin` 을 켜야 붙습니다. 로그인 화면에도
+붙지만 Ptium 은 스니펫에 개인 식별 값을 넘기지 않습니다. 워크스페이스는 단일 페이지 앱이라 한 번 붙은
+스니펫은 화면 이동 뒤에도 그 탭에 남습니다 — 관리 화면 제외는 관리 화면 주소로 **들어올 때** 적용됩니다.
+
+**켜기 전에 확인.** 저장한 뒤 로그인하지 않은 브라우저로 페이지를 한 번 열고, 수집기에 방문이 들어오는지와
+**차단된 출처**가 비어 있는지 봅니다. 막힌 것이 있으면 **허용**을 누르고 페이지를 다시 엽니다.
 
 ## 4. 계정과 권한
 
@@ -429,6 +516,10 @@ API 의 `status` 값은 `open`·`acknowledged`·`resolved`·`ignored` 이고, �
   즉시입니다.
 - AI 제공자 키와 OIDC 시크릿은 관리자 설정 엔드포인트로만 받고, 읽기는 `configured` 표시만
   돌려줍니다. 로그·인시던트·오류 응답은 인증 헤더·쿠키·비밀번호·토큰·키를 가립니다.
+
+**페이지 정책(CSP).** 워크스페이스 페이지는 `script-src 'self'` 이고 `'unsafe-inline'` 은 어디에도
+없습니다. 방문 추적(3.3)을 켜면 요청마다 nonce 와 도구의 출처만 더해지고, 끄면 원래대로 돌아갑니다.
+API·MCP·상태 점검 응답은 `default-src 'none'` 입니다.
 
 **감사.** **관리 → 감사 기록**(`/admin/audit`)에 누가 무엇을 했는지 남습니다. 설정 변경은 설정 화면의
 변경 이력에서 되돌릴 수 있습니다.
