@@ -1,7 +1,7 @@
 ---
 title: "umm — 자율 개선 이력"
 description: "umm: 자율 개선 회차 16회, 릴리즈 10건. 최근 릴리즈 v0.71.7 (자산 3개)."
-last_modified_at: 2026-09-13 13:44:19 +0900
+last_modified_at: 2026-09-13 14:07:06 +0900
 ---
 {% raw %}
 <script type="application/ld+json">
@@ -18,7 +18,7 @@ last_modified_at: 2026-09-13 13:44:19 +0900
   "name": "hkjang",
   "url": "https://github.com/hkjang"
  },
- "dateModified": "2026-09-13T13:44:19+09:00",
+ "dateModified": "2026-09-13T14:07:06+09:00",
  "version": "0.71.7"
 }
 </script>
@@ -35,6 +35,7 @@ last_modified_at: 2026-09-13 13:44:19 +0900
 <dt>저장소</dt><dd><a href="https://github.com/hkjang/umm">https://github.com/hkjang/umm</a></dd>
 <dt>마지막 회차</dt><dd>2026-09-11 08:58 KST — <span class="pill pill-other">• 기타</span> review held, PR open <a href="https://github.com/hkjang/umm/pull/151">PR #151</a></dd>
 <dt>최근 릴리즈</dt><dd><a href="https://github.com/hkjang/umm/releases/tag/v0.71.7">v0.71.7</a> — released · 자산 3개 (이전 v0.71.5: 3개) <a href="https://github.com/hkjang/umm/releases">전체 릴리즈 →</a></dd>
+<dt>수정 과제</dt><dd>⚠️ PR #149 가 리뷰에서 거절됐습니다. markdown-import.ts 가 첫 내보내기 배너를 본 뒤 파일 끝까지를 모두 내보내기 규칙으로 자릅니다. 가져오기 화면(ImportThoughtsModal.tsx:65)이 [현재 글, ...고른 파일들]을 &#x27;---&#x27; 로 이어 붙이므로, 내보내기 뒤에 평범한 마크다운을 붙이면 그쪽까지 잘려 나갑니다. 새 테스트도 내보내기+내보내기만 덮고 내보내기+일반 마크다운은 덮지 않아 통과합니다. 제가 시도해 보고 되돌린 접근을 적어 둡니다: 줄마다 &#x27;내보내기 구간인가&#x27;를 표시해 구간별로 다른 규칙을 적용하고 ummExport 를 구간별로 두는 방향은 맞아 보이는데, 구간의 끝을 정하는 데서 막힙니다 - 내보내기된 생각의 본문 안에 있는 &#x27;---&#x27; 와 파일 사이의 &#x27;---&#x27; 를 다음 줄만 보고는 구별할 수 없습니다(그렇게 하면 &#x27;본문에 수평선이 있는 문서&#x27; 테스트가 깨집니다). 경계를 분명히 하는 쪽(내보내기에 끝 표시를 넣거나, 이어 붙일 때 구분자를 달리하거나)을 함께 검토하세요. 되돌린 상태이니 브랜치는 그대로입니다.</dd>
 </dl>
 
 ## 회차 이력
