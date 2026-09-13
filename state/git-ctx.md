@@ -101,3 +101,4 @@
 - 보류 아이디어: `authorizationHeaderRE`가 스킴과 값 사이의 줄바꿈을 공백 하나로 되써 3줄이 2줄이 됨 — 직접 확인, 줄 수 불변식의 마지막 구멍 (가치 3 / 위험 1 / S). `Sanitize`의 finding이 가장 심각한 규칙이 아니라 마지막에 실행된 규칙을 보고해 security event가 과소보고됨 — 직접 확인 (가치 2 / 위험 1 / S). `clampResponse`의 truncation notice 예약치 320B보다 실제 공지가 길어 예산을 십수 바이트 초과 (가치 2 / 위험 2 / S). `parsePOM`이 `<dependencyManagement>` 선언까지 실제 의존성으로 집계 (가치 3 / 위험 3 / M). Gradle 버전 카탈로그(`gradle/libs.versions.toml`)를 매니페스트로 인식하지 않음 — 다만 Gradle 파서를 넓히는 PR(214bf01)이 반려된 이력이 있어 사유 확인 전에는 손대지 말 것 (가치 4 / 위험 3 / M).
 
 - 릴리즈: v0.77.12 (2026-09-13, run 2026-09-13-075057-git-ctx-approve)
+- 릴리즈: v0.77.13 (2026-09-13, run 2026-09-13-102644-git-ctx-approve)

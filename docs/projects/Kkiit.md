@@ -1,7 +1,7 @@
 ---
 title: "Kkiit — 자율 개선 이력"
-description: "Kkiit: 자율 개선 회차 3회, 릴리즈 0건. 최근 릴리즈 v0.2.0 (자산 1개)."
-last_modified_at: 2026-09-13 09:31:43 +0900
+description: "Kkiit: 자율 개선 회차 3회, 릴리즈 0건. 최근 릴리즈 v0.3.0 (자산 1개)."
+last_modified_at: 2026-09-13 11:22:40 +0900
 ---
 {% raw %}
 <script type="application/ld+json">
@@ -11,30 +11,30 @@ last_modified_at: 2026-09-13 09:31:43 +0900
  "name": "Kkiit",
  "codeRepository": "https://github.com/hkjang/Kkiit",
  "url": "https://hkjang.github.io/aidev/projects/Kkiit/",
- "description": "Kkiit: 자율 개선 회차 3회, 릴리즈 0건. 최근 릴리즈 v0.2.0 (자산 1개).",
+ "description": "Kkiit: 자율 개선 회차 3회, 릴리즈 0건. 최근 릴리즈 v0.3.0 (자산 1개).",
  "inLanguage": "ko",
  "maintainer": {
   "@type": "Person",
   "name": "hkjang",
   "url": "https://github.com/hkjang"
  },
- "dateModified": "2026-09-13T09:31:43+09:00",
- "version": "0.2.0"
+ "dateModified": "2026-09-13T11:22:40+09:00",
+ "version": "0.3.0"
 }
 </script>
 
 # Kkiit
 
-<p class="tldr"><strong>요약.</strong> Kkiit: 자율 개선 회차 3회, 릴리즈 0건. 최근 릴리즈 v0.2.0 (자산 1개). <span class="pill pill-merged" title="14일: 릴리즈 0, 실패 0, 경고 2, 회귀 0">건강 C</span> <span class="meta">14일: 릴리즈 0, 실패 0, 경고 2, 회귀 0</span></p>
+<p class="tldr"><strong>요약.</strong> Kkiit: 자율 개선 회차 3회, 릴리즈 0건. 최근 릴리즈 v0.3.0 (자산 1개). <span class="pill pill-merged" title="14일: 릴리즈 0, 실패 0, 경고 2, 회귀 0">건강 C</span> <span class="meta">14일: 릴리즈 0, 실패 0, 경고 2, 회귀 0</span></p>
 
-<ul class="stats"><li><b>3</b><span>회차</span></li><li><b>1</b><span>프로젝트</span></li><li><b>0</b><span>배포 준비 완료</span></li><li><b>0</b><span>릴리즈 진행 중</span></li><li><b>0</b><span>병합 완료</span></li><li><b>3</b><span>검토 대기</span></li><li><b>0</b><span>검증 실패</span></li><li><b>0</b><span>변경 없음</span></li><li><b>0</b><span>실행 오류</span></li><li><b>$31.09</b><span>비용</span></li><li><b>1시간 3분</b><span>에이전트 시간</span></li></ul>
+<ul class="stats"><li><b>3</b><span>회차</span></li><li><b>1</b><span>프로젝트</span></li><li><b>0</b><span>배포 준비 완료</span></li><li><b>0</b><span>릴리즈 진행 중</span></li><li><b>0</b><span>병합 완료</span></li><li><b>3</b><span>검토 대기</span></li><li><b>0</b><span>검증 실패</span></li><li><b>0</b><span>변경 없음</span></li><li><b>0</b><span>실행 오류</span></li><li><b>$31.82</b><span>비용</span></li><li><b>1시간 5분</b><span>에이전트 시간</span></li></ul>
 
 ## 현황
 
 <dl class="kv">
 <dt>저장소</dt><dd><a href="https://github.com/hkjang/Kkiit">https://github.com/hkjang/Kkiit</a></dd>
 <dt>마지막 회차</dt><dd>2026-09-13 02:00 KST — <span class="pill pill-other">• 기타</span> <strong>guarded files</strong>, PR open <a href="https://github.com/hkjang/Kkiit/pull/3">PR #3</a></dd>
-<dt>최근 릴리즈</dt><dd><a href="https://github.com/hkjang/Kkiit/releases/tag/v0.2.0">v0.2.0</a> — released · 자산 1개 (이전 v0.1.1: 1개) <a href="https://github.com/hkjang/Kkiit/releases">전체 릴리즈 →</a></dd>
+<dt>최근 릴리즈</dt><dd><a href="https://github.com/hkjang/Kkiit/releases/tag/v0.3.0">v0.3.0</a> — released · 자산 1개 (이전 v0.2.0: 1개) <a href="https://github.com/hkjang/Kkiit/releases">전체 릴리즈 →</a></dd>
 </dl>
 
 ## 회차 이력
@@ -43,7 +43,7 @@ last_modified_at: 2026-09-13 09:31:43 +0900
 
 ## 비용·사용량
 
-<div class="table-wrap"><table class="rt"><caption class="meta">최근 30세션</caption><thead><tr><th>시각</th><th class="primary">프로젝트</th><th>단계</th><th class="num">시간</th><th class="num">턴</th><th class="num">비용</th><th class="num">토큰 입력/출력</th><th>종료</th></tr></thead><tbody><tr data-status="other"><td data-label="시각">02:00</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/Kkiit/">Kkiit</a></td><td data-label="단계">개선</td><td data-label="시간" class="num">14분</td><td data-label="턴" class="num">78</td><td data-label="비용" class="num">$7.77</td><td data-label="토큰 입력/출력" class="num">9.4M / 60K</td><td data-label="종료">success</td></tr><tr data-status="other"><td data-label="시각">17:33</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/Kkiit/">Kkiit</a></td><td data-label="단계">릴리즈</td><td data-label="시간" class="num">3분</td><td data-label="턴" class="num">15</td><td data-label="비용" class="num">$0.66</td><td data-label="토큰 입력/출력" class="num">480K / 7K</td><td data-label="종료">success</td></tr><tr data-status="other"><td data-label="시각">11:20</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/Kkiit/">Kkiit</a></td><td data-label="단계">개선</td><td data-label="시간" class="num">22분</td><td data-label="턴" class="num">81</td><td data-label="비용" class="num">$9.30</td><td data-label="토큰 입력/출력" class="num">10.9M / 78K</td><td data-label="종료">success</td></tr><tr data-status="other"><td data-label="시각">18:45</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/Kkiit/">Kkiit</a></td><td data-label="단계">review</td><td data-label="시간" class="num">3분</td><td data-label="턴" class="num">26</td><td data-label="비용" class="num">$1.71</td><td data-label="토큰 입력/출력" class="num">1.6M / 10K</td><td data-label="종료">success</td></tr><tr data-status="other"><td data-label="시각">18:42</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/Kkiit/">Kkiit</a></td><td data-label="단계">개선</td><td data-label="시간" class="num">21분</td><td data-label="턴" class="num">117</td><td data-label="비용" class="num">$11.64</td><td data-label="토큰 입력/출력" class="num">15.0M / 73K</td><td data-label="종료">success</td></tr></tbody></table></div>
+<div class="table-wrap"><table class="rt"><caption class="meta">최근 30세션</caption><thead><tr><th>시각</th><th class="primary">프로젝트</th><th>단계</th><th class="num">시간</th><th class="num">턴</th><th class="num">비용</th><th class="num">토큰 입력/출력</th><th>종료</th></tr></thead><tbody><tr data-status="other"><td data-label="시각">10:05</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/Kkiit/">Kkiit</a></td><td data-label="단계">릴리즈</td><td data-label="시간" class="num">2분</td><td data-label="턴" class="num">15</td><td data-label="비용" class="num">$0.73</td><td data-label="토큰 입력/출력" class="num">520K / 7K</td><td data-label="종료">success</td></tr><tr data-status="other"><td data-label="시각">02:00</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/Kkiit/">Kkiit</a></td><td data-label="단계">개선</td><td data-label="시간" class="num">14분</td><td data-label="턴" class="num">78</td><td data-label="비용" class="num">$7.77</td><td data-label="토큰 입력/출력" class="num">9.4M / 60K</td><td data-label="종료">success</td></tr><tr data-status="other"><td data-label="시각">17:33</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/Kkiit/">Kkiit</a></td><td data-label="단계">릴리즈</td><td data-label="시간" class="num">3분</td><td data-label="턴" class="num">15</td><td data-label="비용" class="num">$0.66</td><td data-label="토큰 입력/출력" class="num">480K / 7K</td><td data-label="종료">success</td></tr><tr data-status="other"><td data-label="시각">11:20</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/Kkiit/">Kkiit</a></td><td data-label="단계">개선</td><td data-label="시간" class="num">22분</td><td data-label="턴" class="num">81</td><td data-label="비용" class="num">$9.30</td><td data-label="토큰 입력/출력" class="num">10.9M / 78K</td><td data-label="종료">success</td></tr><tr data-status="other"><td data-label="시각">18:45</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/Kkiit/">Kkiit</a></td><td data-label="단계">review</td><td data-label="시간" class="num">3분</td><td data-label="턴" class="num">26</td><td data-label="비용" class="num">$1.71</td><td data-label="토큰 입력/출력" class="num">1.6M / 10K</td><td data-label="종료">success</td></tr><tr data-status="other"><td data-label="시각">18:42</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/Kkiit/">Kkiit</a></td><td data-label="단계">개선</td><td data-label="시간" class="num">21분</td><td data-label="턴" class="num">117</td><td data-label="비용" class="num">$11.64</td><td data-label="토큰 입력/출력" class="num">15.0M / 73K</td><td data-label="종료">success</td></tr></tbody></table></div>
 
 ## 아이디어 백로그 — 대기 9 / 전체 10
 
@@ -69,6 +69,8 @@ last_modified_at: 2026-09-13 09:31:43 +0900
 - 결과: 성공
 - 요약: 이 저장소의 OIDC 는 `auth_providers` 다중 제공자 모델(옵션 JSONB)이라 `auto_login` 을 제공자별 `options.auto_login`(기본 꺼짐, OIDC 타입만 유효)으로 두고 SILENT-SSO-STANDARD 를 releasedock 구조대로 옮겼다. 서버(`internal/httpapi/auth.go`): `oauthStart` 가 `?prompt=none` 을 그 제공자의 auto_login 이 켜졌을 때만(그리고 link 흐름이 아닐 때만) 전달하고 꺼져 있으면 조용히 평범한 로그인으로 바꾸며, `return_to` 는 `safeReturnTo`(`/` 로 시작·`//`·`/\`·CRLF·절대 URL 거부)를 통과한 값만 마이그레이션 040 의 `oauth_states.silent/return_to` 에 저장; `oauthCallback` 은 `error=` 응답에서 state 행을 소비해 silent 면 `/login?sso=none` 302, 아니면 기존 401 그대로, 성공하면 저장된 return_to 로(다시 검사) 돌아간다. `/api/v1/auth/providers` 가 `auto_login` 을 공개한다. 브라우저(`web/src/silentSso.ts`): 탭당 한 번(sessionStorage `kkiit.sso.silentAttempted`), 로그아웃 억제(`kkiit.sso.signedOut`, AppShell 로그아웃이 API 성공 직후 표시하고 App 의 `[me]` 효과가 세션이 생기면 해제), 주소의 `sso=none|error` 표시, 저장소 예외는 '이미 시도했다'로 취급(막히는 쪽으로 실패), `/login`·`/api`·`/mcp`·`/health` 경로 제외, `window.location.assign` 최상위 이동. App 부트스트랩은 `/me` 가 401 일 때만 제공자 목록을 받아 auto_login 제공자가 있으면 현재 경로를 return_to 로 들고 이동하며 그동안 `ready` 를 올리지 않아 로그인 화면이 스치지 않는다. 관리 화면 편집 창에 OIDC 전용 스위치와 카드 `자동 로그인` 칩을 더했다. 검증: Go 단위 테스트 2개(safeReturnTo·providerAutoLogin) + 가짜 OIDC 발급자(discovery·JWKS·RS256 토큰)로 시작→login_required→`/login?sso=none`(토큰 엔드포인트 미호출, state 재사용 시 401)·코드→세션→깊은 링크 복귀·off-site return_to 거부·auto_login 꺼짐 시 prompt 미전달을 확인하는 통합 테스트 1개, `go vet`·`go test`·통합 전체(postgres:16 임시 컨테이너, 55초) 통과. 프런트는 `node --test` 와 Node 22 타입 스트리핑으로 의존성 없이 `web/src/silentSso.test.ts` 10건(`npm test`, `make check` 에 포함, tsconfig 에서 테스트 파일 제외), `npm run lint`·`npm run build` 통과, `internal/ui/dist` 재빌드 커밋. 추가로 빌드한 서버 + 가짜 IdP + headless Chrome(CDP) 스모크 10건 — 거절 시 제공자 왕복 정확히 1회·새로고침·같은 탭 깊은 링크에서 재시도 없음, 새 탭 깊은 링크 `/orders/42?tab=deliveries` 로 조용히 로그인 후 복귀, UI 로그아웃 뒤 제공자 세션이 있어도 자동 로그인 없음, auto_login 끄면 아무 변화 없음 — 모두 통과. 문서: ADMIN_GUIDE 3.3 에 `auto_login` 절·장애 대응 행 추가 후 md2pdf 로 PDF 재생성(부제는 이전 값을 알 수 없어 "설치·설정·운영과 장애 대응" 으로 넣음), README 한 단락, openapi 에 `prompt`/`return_to`/`error` 파라미터와 `auto_login` 설명. 임시 컨테이너·바이너리·스모크 스크립트는 지웠고 커밋 트리는 깨끗하다.
 - 보류 아이디어: ADMIN_GUIDE 에 방문 추적 절과 `/admin/tracking` 캡처 — 추적 캠페인 브랜치(analytics·마이그레이션 040 tracking)가 main 에 없어 그 PR 병합 뒤에나 가능하고, 이번 회차가 040 번호를 썼으므로 그쪽 마이그레이션은 041 로 번호를 옮겨야 함 (가치 4 / 위험 1 / S) · 승인 대기열 정책 카드에 조건(min_amount·service_types) 표시 (가치 3 / 위험 1 / S) · 정지된 계정 로그인 거부 문구를 README 설명과 맞추기 (가치 3 / 위험 2 / S) · 운영 대시보드 '누적 결제' 집계 기준 확인·라벨 수정 (가치 3 / 위험 2 / S) · 조용한 로그인이 거절된 `/login?sso=none` 화면에 "SSO 세션이 없어 로그인 화면을 보여 드립니다" 한 줄 안내와, 자동 로그인 제공자 버튼을 맨 위에 두기 (가치 2 / 위험 1 / S)
+
+- 릴리즈: v0.3.0 (2026-09-13, run 2026-09-13-100237-Kkiit-approve)
 
 
 [← 대시보드](https://hkjang.github.io/aidev/) · [교훈 모음](https://hkjang.github.io/aidev/lessons/)
