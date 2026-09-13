@@ -1,0 +1,56 @@
+[
+  {
+    "title": "Silent SSO 표준 정합 — auto_login 기본 꺼짐과 sessionStorage 읽기 실패 시 fail-closed 억제",
+    "value": 4,
+    "risk": 2,
+    "size": "S",
+    "status": "done",
+    "note": "settings.go 기본값·oidcAutoEnabled·settings.tsx·openapi 를 기본 꺼짐으로, auth-flow.ts automaticLoginSuppressed 예외 시 true. Go/web 테스트 추가, 관리자 가이드·README 갱신.",
+    "updated": "2026-09-14"
+  },
+  {
+    "title": "콜백 거절 표시를 표준 이름 /login?sso=none 으로도 발행·인식",
+    "value": 2,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "현재 /login?sso=skip&error=oidc_login_required 로 기능은 동등. 표준 문구와 이름을 맞추려면 프런트 shouldAutomaticallyLogin, Go 테스트, 가이드 동시 변경 필요.",
+    "updated": "2026-09-14"
+  },
+  {
+    "title": "프런트 자동 시도에서 /login 경로 자체를 pathname 으로 제외",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "표준 '로그인 경로에서는 시도하지 않는다'. 현재는 sso/error 쿼리·sessionStorage·서버 쿠키 세 겹으로 루프가 막혀 실질 위험은 낮음. 직접 /login 을 입력한 사용자의 자동 진입이 사라지는 UX 변화 검토 필요.",
+    "updated": "2026-09-14"
+  },
+  {
+    "title": "서버가 mode=auto + auto_login 꺼짐을 /login 복귀 대신 interactive 로 조용히 전환",
+    "value": 2,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "releasedock 방식. 현재 동작(prompt=none 없이 평범한 로그인 화면으로 복귀)도 '주소로 흐름을 바꿀 수 없다'는 표준 의도를 충족하므로 우선순위 낮음.",
+    "updated": "2026-09-14"
+  },
+  {
+    "title": "oidcReturnTo(Go)와 safeReturnPath(TS)의 return_to 규칙을 공유 테스트 벡터로 교차 검증",
+    "value": 3,
+    "risk": 1,
+    "size": "M",
+    "status": "pending",
+    "note": "두 구현이 따로 진화하면 프런트가 받아들인 깊은 링크를 서버가 /dashboard 로 바꾸는 불일치가 생길 수 있음. JSON 벡터 파일 하나를 양쪽 테스트에서 읽는 방식.",
+    "updated": "2026-09-14"
+  },
+  {
+    "title": "설정 화면 필드 정의의 default 값이 실제 렌더링에 쓰이지 않는지 확인하고 미사용이면 정리",
+    "value": 1,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "settings.tsx 의 field.default 참조를 찾지 못함. 서버 기본값과 이중 관리되는 상태라 어긋날 수 있음.",
+    "updated": "2026-09-14"
+  }
+]

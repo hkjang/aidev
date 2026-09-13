@@ -390,3 +390,87 @@ reports: 13 day(s), 3 week(s), 1 month(s), 740 run(s), 850 usage row(s), 39 proj
 notify: 1 new alert(s)
 notify: commented on issue #1
 notify: toast shown
+[06:32:55] aidev synced: run(2026-09-14): SecCheck — guarded files, PR open https://github.com/hkjang/SecCheck/pull/5
+[06:32:55] done
+[06:41:35] skip Quantoss: dirty working tree
+[06:41:42] skip aiportal-java: STOP
+[06:42:13] candidates(41): AgentHub Clustara DartFly Invenqor Kkiit Momento ReSSO SecCheck Vendra ai-admin aiportal-front-admin aiportal-front aiportal-py appstore cutover dataworks git-ctx hunter igame jikim jupiq kanpic madi moina moyro muni nexabuilder orbit pii-masker postra ptium qurio releasedock relio seaton sqlon trace umm vibe-coders visitflow weekly
+[06:42:16] campaign 후보 4개 — silent-sso-2026-09 tracking-2026-09 handoff-2026-09 mail-2026-09 중 silent-sso-2026-09 차례 (마지막 회차 2026-09-14T04:37:35+09:00)
+[06:42:16] campaign silent-sso-2026-09: picked hunter
+[06:42:16] picked: hunter
+[06:42:16] === hunter (base=main, run 2026-09-14-064216-hunter-improve, 회차 예산 $28)
+Preparing worktree (new branch 'auto/2026-09-14-0642')
+HEAD is now at b906d62 feat: add seamless SSO and isolated visitor tracking for v1.9.0
+[06:42:19] hunter: [base] pinned — main@b906d62
+[06:42:19] hunter: [autonomy] release — 
+[07:00:39] hunter: improve — 52 turns, 18m, $3.11, success
+[07:00:42] hunter: verify `go build ./...` → exit 0 (2s)
+[07:00:43] hunter: verify `go vet ./...` → exit 0 (1s)
+[07:00:45] hunter: verify `go test ./...` → exit 0 (2s)
+[07:00:45] hunter: verify `cd web && [ -d node_modules ] || npm ci --no-audit --no-fund` → exit 0 (0s)
+[07:00:46] hunter: verify `cd web && npm test --silent` → exit 0 (1s)
+[07:00:46] hunter: verify `cd web && [ -d node_modules ] || npm ci --no-audit --no-fund` → exit 0 (0s)
+[07:00:46] hunter: verify `cd web && npm run typecheck --silent` → exit 0 (0s)
+[07:00:46] hunter: verify `cd web && [ -d node_modules ] || npm ci --no-audit --no-fund` → exit 0 (0s)
+[07:00:47] hunter: verify `cd web && npm run build --silent` → exit 0 (1s)
+[07:00:48] hunter: [verify] passed — 검증 9개 통과 (auto)
+branch 'auto/2026-09-14-0642' set up to track 'origin/auto/2026-09-14-0642'.
+[07:00:55] hunter: [pr] created — https://github.com/hkjang/hunter/pull/1
+[07:02:23] hunter: review — 15 turns, 1m, $0.76, success
+[07:02:23] hunter: [review] approved — 리뷰 승인 (risk=medium)
+[07:02:25] hunter: waiting for CI on f0b45b8 (pending)
+[07:19:42] hunter: [ci] passed — 검사 1개 모두 success
+[07:19:46] hunter: [merge] done — f0b45b8ddc951433bcf55328a9c6874770958787
+From https://github.com/hkjang/hunter
+ * branch            main       -> FETCH_HEAD
+   b906d62..b349831  main       -> origin/main
+Updating b906d62..b349831
+Fast-forward
+ README.md                      |  2 +-
+ docs/guides/admin-guide.html   |  4 ++--
+ docs/guides/admin-guide.md     |  4 ++--
+ internal/app/auth_oidc.go      |  8 +++----
+ internal/app/auth_oidc_test.go | 51 ++++++++++++++++++++++++++++++++++++++++++
+ internal/app/openapi.json      |  2 +-
+ internal/app/settings.go       |  2 +-
+ web/src/auth-flow.ts           |  4 +++-
+ web/src/settings.tsx           |  4 ++--
+ web/tests/auth-flow.test.mjs   | 14 +++++++++---
+ 10 files changed, 77 insertions(+), 18 deletions(-)
+Preparing worktree (detached HEAD b349831)
+HEAD is now at b349831 Merge pull request #1 from hkjang/auto/2026-09-14-0642
+[07:37:35] hunter: release — 46 turns, 18m, $3.25, success
+[07:37:42] hunter: waiting for CI on dec6c24 (no-ci)
+[07:56:28] hunter: [release] published — v1.10.0
+From https://github.com/hkjang/hunter
+ * branch            main       -> FETCH_HEAD
+Updating b349831..dec6c24
+Fast-forward
+ README.md                    |  12 +++++++-----
+ VERSION                      |   2 +-
+ cmd/hunter/main.go           |   2 +-
+ compose.yaml                 |   2 +-
+ docs/guides/admin-guide.html |  26 +++++++++++++-------------
+ docs/guides/admin-guide.md   |  22 +++++++++++-----------
+ docs/guides/admin-guide.pdf  | Bin 9735776 -> 9750290 bytes
+ docs/guides/user-guide.html  |   6 +++---
+ docs/guides/user-guide.md    |   2 +-
+ docs/guides/user-guide.pdf   | Bin 8852368 -> 8858706 bytes
+ docs/index.html              |   8 ++++----
+ docs/llms.txt                |   4 ++--
+ docs/package-lock.json       |   4 ++--
+ docs/package.json            |   2 +-
+ docs/release-v1.10.0.md      |  24 ++++++++++++++++++++++++
+ docs/validation.md           |  14 ++++++++++++++
+ internal/app/openapi.json    |   2 +-
+ scripts/release-notes.py     |  17 ++++++++++++++++-
+ web/package-lock.json        |   4 ++--
+ web/package.json             |   2 +-
+ web/src/App.tsx              |   8 ++++----
+ 21 files changed, 109 insertions(+), 54 deletions(-)
+ create mode 100644 docs/release-v1.10.0.md
+[07:59:07] hunter: [assets] verified — v1.10.0 자산 1개 (이전 v1.9.0: 1)
+fatal: '/home/hkjang/.cache/auto-improve-wt/hunter' is not a working tree
+evidence: /mnt/c/Users/USER/projects/aidev/state/runs/2026-09-14-064216-hunter-improve/evidence.json
+reports: 13 day(s), 3 week(s), 1 month(s), 741 run(s), 853 usage row(s), 40 project page(s), 0 alert(s)
+notify: no new alerts
