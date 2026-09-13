@@ -1,0 +1,8 @@
+[
+  {"title":"Silent SSO(prompt=none) — auto_login 설정과 3겹 루프 방지","value":5,"risk":2,"size":"M","status":"done","note":"캠페인 silent-sso-2026-09. 커밋 b88a3c8. 서버 prompt=none 게이트·흐름 쿠키·/login?sso=none, silentsso.js 규칙, df_sso_config.auto_login(DDL+ensureColumn), docs/ADMIN_GUIDE.md. 실제 MariaDB·바이너리로 신규/기존 설치 모두 확인","updated":"2026-09-14"},
+  {"title":"OIDC env 폴백에 DARTFLY_OIDC_AUTO_LOGIN 추가","value":2,"risk":1,"size":"S","status":"pending","note":"env 전용 배포에서는 auto_login 을 켤 수 없음. 다만 env OIDC 변수(DARTFLY_OIDC_*)가 environment-variables.md 에 문서화조차 안 되어 있어 관리 화면이 정식 경로. 문서화와 함께 할 것","updated":"2026-09-14"},
+  {"title":"로그아웃 시 IdP end_session(RP-initiated logout) 호출","value":3,"risk":3,"size":"M","status":"pending","note":"현재 로그아웃 억제는 탭(sessionStorage) 단위라 다른 탭에서는 IdP 세션으로 조용히 다시 들어옴. 표준 범위 밖이며 IdP 설정(post_logout_redirect_uri) 필요","updated":"2026-09-14"},
+  {"title":"로그인 페이지 조용한 시도 중 폼 깜빡임 제거","value":2,"risk":1,"size":"S","status":"pending","note":"system/info 응답 전까지 로그인 카드가 잠깐 보였다가 IdP 로 이동. auto_login 켜진 경우만 결정 전까지 카드를 숨기는 소폭 UX. system/info 실패 시 반드시 다시 보여야 함","updated":"2026-09-14"},
+  {"title":"조용한 시도의 IdP 오류값을 서버 로그에 남기기","value":2,"risk":1,"size":"S","status":"pending","note":"지금은 silent 흐름의 모든 error 를 거절(sso=none)로 같게 처리. login_required/interaction_required/consent_required 외의 값(예: invalid_client)은 설정 문제이므로 Warn 로그로 구분하면 진단에 도움","updated":"2026-09-14"},
+  {"title":"401 리다이렉트 헬퍼 일원화","value":2,"risk":1,"size":"S","status":"pending","note":"app.js·resources.js·mcp.js·admin-*.js 가 각자 fetch 래퍼에서 401 처리(이번에 loginUrl() 로 통일했지만 코드 중복은 그대로). layout.js 의 api() 로 모으면 return_to·CSRF 처리가 한 곳에 남음","updated":"2026-09-14"}
+]
