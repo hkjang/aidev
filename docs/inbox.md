@@ -1,7 +1,7 @@
 ---
 title: "작업함 — 사람 판단 필요"
 description: "사람이 판단해야 할 항목 21건 — 열린 PR(리뷰 보류·보호 파일·CI 실패·승인 대기), 배포 복구, 수정 과제. 각 항목에 변경 요약·실패 근거·권장 조치가 붙어 있다."
-last_modified_at: 2026-09-13 11:59:13 +0900
+last_modified_at: 2026-09-13 12:11:03 +0900
 type: report
 ---
 {% raw %}
@@ -32,7 +32,6 @@ type: report
 - **Momento** — CI 실패로 PR 미머지
 - **Momento** — 보호 파일 변경 — 자동 머지 안 함, 사람 검토 필요
 - **SecCheck** — 보호 파일 변경 — 자동 머지 안 함, 사람 검토 필요
-- **moina** — CI 실패로 PR 미머지
 
 
 [← 대시보드](https://hkjang.github.io/aidev/)
