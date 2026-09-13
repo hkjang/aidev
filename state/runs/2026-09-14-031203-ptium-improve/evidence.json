@@ -1,0 +1,214 @@
+{
+  "run_id": "2026-09-14-031203-ptium-improve",
+  "generated": "2026-09-14T03:44:42+09:00",
+  "run": {
+    "run_id": "2026-09-14-031203-ptium-improve",
+    "project": "ptium",
+    "kind": "improve",
+    "started": "2026-09-14T03:12:04+09:00",
+    "model": "claude-opus-5",
+    "policy_version": "5935779a",
+    "prompts_hash": "82f2440d4b2fef65",
+    "runner_version": "5c1744b4",
+    "finished": "2026-09-14T03:44:42+09:00",
+    "outcome": "review-pending"
+  },
+  "record": {
+    "ts": "2026-09-14T03:44:42+09:00",
+    "date": "2026-09-14",
+    "project": "ptium",
+    "result": "review held, PR open https://github.com/hkjang/ptium/pull/22",
+    "outcome": "review-pending",
+    "run_id": "2026-09-14-031203-ptium-improve",
+    "base_sha": "df03f7c2ba16f776da5f28b81beb07c21f9c639e",
+    "head_sha": "a6716820d017c648151530ebc6cc68278b175f0d",
+    "pr": "https://github.com/hkjang/ptium/pull/22",
+    "stages": {
+      "base": {
+        "state": "pinned",
+        "reason": "main@df03f7c",
+        "at": "2026-09-14T03:12:12+09:00"
+      },
+      "autonomy": {
+        "state": "release",
+        "reason": "",
+        "at": "2026-09-14T03:12:12+09:00"
+      },
+      "verify": {
+        "state": "passed",
+        "reason": "검증 9개 통과 (auto)",
+        "at": "2026-09-14T03:41:42+09:00"
+      },
+      "pr": {
+        "state": "created",
+        "reason": "https://github.com/hkjang/ptium/pull/22",
+        "at": "2026-09-14T03:41:53+09:00"
+      },
+      "review": {
+        "state": "rejected",
+        "reason": "리뷰 거절: web/src/pages/EditorPage.tsx:1219 window.open('about:blank','_blank','noopener,noreferrer') returns null by spec whenever 'noopener' is in the feature string, so `opened` is always null. The blank tab is still created but never navigated and never closed (opened?.close() at :1228 is a no-op), so every '다른 서비스로 보내기' click leaves an orphan about:blank tab. The real navigation then falls back to a second window.open(url) issued only after `await save()` and `await api.issueHandoffClaim(id)`, i.e. outside the click's user activation the comment says it was designed to avoid — in Safari and in Chromium/Firefox once the activation window lapses the popup is blocked, while the five-minute single-use claim has already been issued and the user is shown '…(으)로 보냈습니다'. The feature's send path does not work as described. / server/internal/httpapi/handlers_handoff.go:244 the fallback title trims '.'+document.Format, but the filename suffix for the markdown format is '.md' (handoff.extensions), so a markdown document with no heading lands as a deck titled 'notes.md' instead of 'notes'. Use handoff's extension for the format instead of the format name.",
+        "at": "2026-09-14T03:44:40+09:00"
+      }
+    },
+    "campaign": "handoff-2026-09",
+    "autonomy": "release",
+    "files": 27,
+    "additions": 2202,
+    "deletions": 16,
+    "tests": 5,
+    "title": "Pass a deck to another service, and take a document from one, without a download"
+  },
+  "stages": {
+    "base": {
+      "state": "pinned",
+      "reason": "main@df03f7c",
+      "at": "2026-09-14T03:12:12+09:00"
+    },
+    "autonomy": {
+      "state": "release",
+      "reason": "",
+      "at": "2026-09-14T03:12:12+09:00"
+    },
+    "verify": {
+      "state": "passed",
+      "reason": "검증 9개 통과 (auto)",
+      "at": "2026-09-14T03:41:42+09:00"
+    },
+    "pr": {
+      "state": "created",
+      "reason": "https://github.com/hkjang/ptium/pull/22",
+      "at": "2026-09-14T03:41:53+09:00"
+    },
+    "review": {
+      "state": "rejected",
+      "reason": "리뷰 거절: web/src/pages/EditorPage.tsx:1219 window.open('about:blank','_blank','noopener,noreferrer') returns null by spec whenever 'noopener' is in the feature string, so `opened` is always null. The blank tab is still created but never navigated and never closed (opened?.close() at :1228 is a no-op), so every '다른 서비스로 보내기' click leaves an orphan about:blank tab. The real navigation then falls back to a second window.open(url) issued only after `await save()` and `await api.issueHandoffClaim(id)`, i.e. outside the click's user activation the comment says it was designed to avoid — in Safari and in Chromium/Firefox once the activation window lapses the popup is blocked, while the five-minute single-use claim has already been issued and the user is shown '…(으)로 보냈습니다'. The feature's send path does not work as described. / server/internal/httpapi/handlers_handoff.go:244 the fallback title trims '.'+document.Format, but the filename suffix for the markdown format is '.md' (handoff.extensions), so a markdown document with no heading lands as a deck titled 'notes.md' instead of 'notes'. Use handoff's extension for the format instead of the format name.",
+      "at": "2026-09-14T03:44:40+09:00"
+    }
+  },
+  "provenance": {
+    "model": "claude-opus-5",
+    "policy_version": "5935779a",
+    "prompts_hash": "82f2440d4b2fef65",
+    "runner_version": "5c1744b4",
+    "base_sha": "df03f7c2ba16f776da5f28b81beb07c21f9c639e",
+    "head_sha": "a6716820d017c648151530ebc6cc68278b175f0d",
+    "pr": "https://github.com/hkjang/ptium/pull/22"
+  },
+  "verification": {
+    "runner": {
+      "source": "auto",
+      "commands": [
+        {
+          "cmd": "cd server && go build ./...",
+          "exit": 0,
+          "seconds": 0
+        },
+        {
+          "cmd": "cd server && go vet ./...",
+          "exit": 0,
+          "seconds": 1
+        },
+        {
+          "cmd": "cd server && go test ./...",
+          "exit": 0,
+          "seconds": 2
+        },
+        {
+          "cmd": "cd web && [ -d node_modules ] || npm ci --no-audit --no-fund",
+          "exit": 0,
+          "seconds": 0
+        },
+        {
+          "cmd": "cd web && npm test --silent",
+          "exit": 0,
+          "seconds": 2
+        },
+        {
+          "cmd": "cd web && [ -d node_modules ] || npm ci --no-audit --no-fund",
+          "exit": 0,
+          "seconds": 0
+        },
+        {
+          "cmd": "cd web && npm run typecheck --silent",
+          "exit": 0,
+          "seconds": 0
+        },
+        {
+          "cmd": "cd web && [ -d node_modules ] || npm ci --no-audit --no-fund",
+          "exit": 0,
+          "seconds": 0
+        },
+        {
+          "cmd": "cd web && npm run build --silent",
+          "exit": 0,
+          "seconds": 1
+        }
+      ]
+    },
+    "runner_gate": {
+      "ok": true,
+      "state": "verified",
+      "reason": "검증 9개 통과 (auto)"
+    },
+    "after_rebase": null,
+    "review": {
+      "verdict": "reject",
+      "reasons": [
+        "web/src/pages/EditorPage.tsx:1219 window.open('about:blank','_blank','noopener,noreferrer') returns null by spec whenever 'noopener' is in the feature string, so `opened` is always null. The blank tab is still created but never navigated and never closed (opened?.close() at :1228 is a no-op), so every '다른 서비스로 보내기' click leaves an orphan about:blank tab. The real navigation then falls back to a second window.open(url) issued only after `await save()` and `await api.issueHandoffClaim(id)`, i.e. outside the click's user activation the comment says it was designed to avoid — in Safari and in Chromium/Firefox once the activation window lapses the popup is blocked, while the five-minute single-use claim has already been issued and the user is shown '…(으)로 보냈습니다'. The feature's send path does not work as described.",
+        "server/internal/httpapi/handlers_handoff.go:244 the fallback title trims '.'+document.Format, but the filename suffix for the markdown format is '.md' (handoff.extensions), so a markdown document with no heading lands as a deck titled 'notes.md' instead of 'notes'. Use handoff's extension for the format instead of the format name."
+      ],
+      "notes": [
+        "Go build/vet and all handoff tests in internal/handoff and internal/httpapi pass; web vitest for handoff.test.ts/handoffpeers.test.ts and tsc --noEmit pass. Tests exercise real behaviour (httptest peers, redirect not followed, size cut-off, allow-list refusal before any request, claim hidden from the log).",
+        "store/handoff_test.go (single-use redeem, expiry, sweep) needs PTIUM_TEST_DSN and was skipped here; same convention as the other store tests.",
+        "Migration adds a new table only (CREATE TABLE IF NOT EXISTS handoff_claims); revert leaves an unused table, no data rewrite — reversible.",
+        "GET /api/v1/handoff/claims/{claim} is unauthenticated by design (claim is the credential): 256-bit random token, SHA-256 digest at rest, DELETE … RETURNING makes redeem atomic, same 404 for used/expired/unknown, path masked in request log and incident capture. receive is gated on exact-origin allow list, no redirects, 30 s / 25 MB, then max_template_mb. Looked sound.",
+        "receiveHandoff holds the import budget slot for the whole peer fetch (up to 30 s), so one slow listed peer can make uploads/imports answer 'import_busy' for that long; acceptable given peers are admin-listed, but worth knowing.",
+        "Claim expiry compares Go time.Now() (expires_at) against Postgres now() in DELETE/sweep; clock skew between app and DB shifts the effective TTL slightly.",
+        "PUBLIC_BASE_URL fallback reads X-Forwarded-Host from the request; only affects the `source` echoed to the caller's own browser and the receiver re-checks it against its allow list, so no exposure.",
+        "return_to added to the login redirect goes through the pre-existing safeReturnTo (same-origin path only, no //, no /login or /auth/), so no open redirect.",
+        "No unrelated refactors/dependency changes; openapi.yaml updated and the route-vs-spec test passes; ADMIN_GUIDE.md/PDF match the behaviour."
+      ],
+      "risk": "medium"
+    },
+    "ci_gate": null
+  },
+  "release": {
+    "result": null,
+    "assets_sha256": []
+  },
+  "approval": null,
+  "usage": [
+    {
+      "ts": "2026-09-14T03:41:34+09:00",
+      "date": "2026-09-14",
+      "project": "ptium",
+      "phase": "improve",
+      "run_id": "2026-09-14-031203-ptium-improve",
+      "campaign": "handoff-2026-09",
+      "subtype": "success",
+      "duration_ms": 1761522,
+      "num_turns": 127,
+      "cost_usd": 15.432362499999995,
+      "input_tokens": 252,
+      "output_tokens": 93851,
+      "cache_read": 21122181,
+      "cache_create": 250460
+    },
+    {
+      "ts": "2026-09-14T03:44:40+09:00",
+      "date": "2026-09-14",
+      "project": "ptium",
+      "phase": "review",
+      "run_id": "2026-09-14-031203-ptium-improve",
+      "campaign": "handoff-2026-09",
+      "subtype": "success",
+      "duration_ms": 166003,
+      "num_turns": 19,
+      "cost_usd": 1.610855,
+      "input_tokens": 38,
+      "output_tokens": 11490,
+      "cache_read": 1040578,
+      "cache_create": 80131
+    }
+  ]
+}

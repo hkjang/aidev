@@ -1,0 +1,27 @@
+{
+  "base": {
+    "state": "pinned",
+    "reason": "main@df03f7c",
+    "at": "2026-09-14T03:12:12+09:00"
+  },
+  "autonomy": {
+    "state": "release",
+    "reason": "",
+    "at": "2026-09-14T03:12:12+09:00"
+  },
+  "verify": {
+    "state": "passed",
+    "reason": "검증 9개 통과 (auto)",
+    "at": "2026-09-14T03:41:42+09:00"
+  },
+  "pr": {
+    "state": "created",
+    "reason": "https://github.com/hkjang/ptium/pull/22",
+    "at": "2026-09-14T03:41:53+09:00"
+  },
+  "review": {
+    "state": "rejected",
+    "reason": "리뷰 거절: web/src/pages/EditorPage.tsx:1219 window.open('about:blank','_blank','noopener,noreferrer') returns null by spec whenever 'noopener' is in the feature string, so `opened` is always null. The blank tab is still created but never navigated and never closed (opened?.close() at :1228 is a no-op), so every '다른 서비스로 보내기' click leaves an orphan about:blank tab. The real navigation then falls back to a second window.open(url) issued only after `await save()` and `await api.issueHandoffClaim(id)`, i.e. outside the click's user activation the comment says it was designed to avoid — in Safari and in Chromium/Firefox once the activation window lapses the popup is blocked, while the five-minute single-use claim has already been issued and the user is shown '…(으)로 보냈습니다'. The feature's send path does not work as described. / server/internal/httpapi/handlers_handoff.go:244 the fallback title trims '.'+document.Format, but the filename suffix for the markdown format is '.md' (handoff.extensions), so a markdown document with no heading lands as a deck titled 'notes.md' instead of 'notes'. Use handoff's extension for the format instead of the format name.",
+    "at": "2026-09-14T03:44:40+09:00"
+  }
+}
