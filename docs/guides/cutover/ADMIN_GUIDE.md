@@ -348,3 +348,84 @@ npm run screenshots:guide
 **데이터**
 
 - `activity.json`에는 작업명과 시간만 들어갑니다. 개인정보를 제목에 적지 마십시오 — 사용자 화면과 인증 없는 API로 모두 보입니다.
+
+## 8. 방문 추적 스크립트 설정
+
+관리자 화면의 **방문 추적 스크립트** 카드에서 상황판에 방문 추적 도구를 붙일 수 있습니다. **기본값은 꺼짐**이며, 새로 설치한 서버는 켜기 전까지 아무것도 달라지지 않습니다. 설정은 서버의 `data/tracking.json`에 저장되므로 수집 서버 주소가 바뀌어도 재배포 없이 화면에서 고치면 됩니다. 저장한 설정은 다음 페이지 열람부터 바로 반영됩니다.
+
+### 8.1 콘텐츠 보안 정책(CSP)과 nonce
+
+이 대시보드의 모든 화면에는 콘텐츠 보안 정책이 붙습니다. 스크립트는 **앱 자신의 오리진**과 **요청마다 새로 만드는 nonce** 를 단 것만 실행됩니다.
+
+```
+script-src 'self' 'nonce-<요청마다 다른 값>'
+```
+
+그래서 추적 스니펫을 HTML에 그냥 붙여 넣으면 브라우저가 조용히 차단하고 화면에는 아무 표시도 나지 않습니다. 이 카드로 설정하면 앱이 다음을 대신합니다.
+
+1. 요청마다 nonce 를 만들어 스니펫의 **모든 `<script>` 태그**에 붙이고, 같은 값을 `script-src` 에 넣습니다.
+2. 스니펫 안에 적힌 `http(s)` 주소(로더 주소, 수집 endpoint, 픽셀 주소)를 읽어 `script-src` · `connect-src` · `img-src` 에 더합니다.
+3. 추적이 켜진 동안에만 `report-uri` 를 정책에 넣어, 브라우저가 막은 요청을 신고받아 화면에 보여 줍니다(7.4).
+
+정책은 `'unsafe-inline'` 으로 풀지 않습니다. 한 번 풀면 앱의 모든 인라인 스크립트가 함께 허용되고, 추적을 끈 뒤에도 정책은 느슨한 채로 남기 때문입니다. **추적을 끄면 정책은 원래대로(앱 오리진 + nonce) 좁아집니다.** `/api/*` 와 `/momento/*` 같은 비화면 경로에는 스니펫이 붙지 않고 정책도 `default-src 'none'` 으로 더 좁습니다.
+
+> [!NOTE]
+> `style-src` 에는 `'unsafe-inline'` 이 있습니다. 상황판이 React 인라인 스타일(`style=`)을 쓰기 때문이며, 스타일은 스크립트가 아니므로 위 원칙과 무관합니다.
+
+### 8.2 설정 항목
+
+| 항목 | 뜻 |
+|---|---|
+| 추적 사용 (`enabled`) | 꺼짐이 기본값입니다. 켜야 스니펫이 붙습니다. |
+| 수집 도구 (`provider`) | `momento` · `ga4` · `gtm` · `matomo` · `custom` · `none` |
+| `momento_url` · `momento_site_id` | Momento 수집기 주소와 사이트 ID |
+| `momento_proxy` | 같은 오리진 프록시(`/momento/*`) 사용 여부. 기본 켜짐 (7.3) |
+| `measurement_id` | GA4 측정 ID(`G-…`) 또는 GTM 컨테이너 ID(`GTM-…`) |
+| `matomo_url` · `matomo_site_id` | Matomo 주소와 사이트 ID |
+| `custom_snippet` | 붙여 넣은 추적 코드. **8KB 제한**, `<script>` 태그만 삽입되며 `<noscript>` 등은 무시됩니다 |
+| `allowed_hosts` | 스니펫에서 자동으로 읽지 못한 출처를 손으로 더하는 자리. `https://host[:port]` 또는 `https://*.domain` 모양만 허용되며 쉼표·줄바꿈으로 구분 |
+| 관리 화면에서도 추적 (`include_admin`) | 기본 아니오. `/admin` 은 방문자 데이터가 아니므로 켜야만 붙습니다 |
+| 삽입 위치 (`placement`) | `head` 또는 `body` 끝 |
+
+저장하면 서버가 값을 검증합니다. 켜져 있을 때 선택한 도구의 필수값이 비어 있거나, 주소가 `http(s)` 로 시작하지 않거나, `allowed_hosts` 모양이 틀리면 `allowed_hosts: "…" 는 https://host[:port] … 모양이어야 합니다` 같은 이유가 화면에 표시되고 저장되지 않습니다. 카드 하단의 **정책에 더해지는 출처** 줄에서 현재 설정으로 정책에 들어가는 외부 출처를 미리 볼 수 있습니다.
+
+같은 설정은 API 로도 다룰 수 있습니다(관리자 세션 필요).
+
+| 메서드 | 경로 | 설명 |
+|---|---|---|
+| `GET` | `/api/tracking` | 현재 설정, 정책에 더해지는 출처, 삽입될 스크립트 목록 |
+| `PUT` | `/api/tracking` | 설정 저장(검증 실패 시 400 과 `details`) |
+| `GET` | `/api/tracking/violations` | 정책이 막은 출처 목록 |
+| `DELETE` | `/api/tracking/violations` | 목록 비우기 |
+| `POST` | `/api/csp-report` | 브라우저의 위반 신고 수신(인증 없음, 추적이 꺼져 있으면 기록하지 않음) |
+
+파일 위치는 `TRACKING_CONFIG_FILE` 환경 변수로 바꿀 수 있고, 지정하지 않으면 `ACTIVITY_DATA_FILE` 과 같은 디렉토리의 `tracking.json` 입니다. Docker 에서는 `/app/data` 볼륨에 함께 보관됩니다.
+
+### 8.3 Momento 연결 (권장)
+
+Momento 는 사내 자체 호스팅 수집기라 데이터가 밖으로 나가지 않는 유일한 선택지이므로 목록의 첫 자리에 있습니다.
+
+1. **추적 사용**을 켜고 수집 도구에서 **Momento** 를 고릅니다.
+2. `momento_url` 에 수집기 주소(예: `https://momento.corp.example`), `momento_site_id` 에 이 대시보드의 사이트 ID 를 넣습니다. 환경(`data-environment`)은 기본 `prd` 입니다.
+3. **같은 오리진 프록시 사용**은 켜 둡니다(기본). 이 경우 브라우저는 `/momento/tracker.js` 만 부르고, 앱 서버가 `/momento/*` 요청을 수집기로 넘깁니다. 외부 출처가 정책에 아예 등장하지 않으므로 CSP 를 손볼 일이 없고, 방문자 PC 에서 수집기가 직접 닿지 않는 망에서도 동작합니다(앱 서버 → 수집기 경로만 열려 있으면 됩니다).
+4. **설정 저장**을 누른 뒤 상황판(`/` 또는 `/pc`)을 한 번 열어 Momento 쪽에 방문이 들어오는지 확인합니다.
+
+삽입되는 태그는 다음과 같습니다(nonce 는 요청마다 다릅니다).
+
+```html
+<script async src="/momento/tracker.js" nonce="…"
+        data-site-id="<momento_site_id>" data-environment="prd"
+        data-contract-version="1" data-endpoint="/momento"></script>
+```
+
+프록시를 끄면 `src` 가 `<momento_url>/tracker.js` 가 되고 수집기 출처가 `script-src` · `connect-src` · `img-src` 에 더해집니다.
+
+### 8.4 정책이 막은 출처 확인과 허용
+
+추적이 켜져 있으면 카드 아래에 **정책이 막은 출처** 목록이 나타납니다(5초마다 갱신). 브라우저가 정책 때문에 차단한 요청을 `report-uri` 로 신고하면 앱이 **출처와 지시어**(`script-src`, `connect-src`, `img-src` …)를 기억합니다. 같은 차단이 페이지마다 반복되므로 횟수가 아니라 서로 다른 출처만 최대 100개까지 메모리에 보관하며, 서버를 재시작하면 비워집니다.
+
+- 막힌 출처 옆의 **허용 목록에 추가**를 누르면 `allowed_hosts` 에 들어가 바로 저장되고, 다음 페이지 열람부터 허용됩니다.
+- 현재 설정이 이미 허용하는 출처는 **이미 허용됨**으로 표시됩니다.
+- 스니펫을 고친 뒤에는 휴지통 아이콘으로 목록을 비우고 상황판을 다시 열어 아직 막히는 것이 있는지 확인합니다.
+- 브라우저 확장이나 `data:` URL 처럼 http 출처가 아닌 것은 허용할 수도 없고 쓸모도 없어 기록하지 않습니다.
+
