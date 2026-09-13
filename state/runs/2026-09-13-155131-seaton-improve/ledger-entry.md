@@ -1,14 +1,5 @@
-## 2026-09-11
-- 선택: 사용자·관리자 가이드를 실제 화면 캡처와 함께 GUIDE-STANDARD 구성으로 정비 (가치 5 / 위험 1 / 작업량 M)
-- 결과: 성공
-- 요약: 릴리즈와 같은 방법(docker build → postgres + compose 환경변수)으로 SeatOn v1.4.0을 띄우고 e2e 시드로 가짜 데이터를 채운 뒤, 새 `web/e2e/guide-shots.mjs`(Playwright, 1440x900, 캡처 전용 환경변수·로컬 주소 가드·API 키 원문 가림과 폐기)로 22장을 찍어 `docs/assets/guide/`에 실었다. USER_GUIDE는 처음 5분·화면별 사용법·자주 하는 작업·막혔을 때(서버·프런트 실제 문구)·용어로, ADMIN_GUIDE는 구성 요소·설치·환경변수 3개와 설정 키 32개 전수 표·계정과 권한·운영(healthz/readyz·로그·백업·복구·업그레이드)·장애 대응(실제 로그 문구)·보안으로 다시 썼고 기존 엔진 실측 절은 유지했다. PDF는 공용 md2pdf.mjs로 굽고(21쪽/21쪽, 표지·표·코드·그림 확인) build-docs.py는 두 가이드의 HTML만 만들며 그림·번호 목록 이어 세기를 지원하도록 고쳤다. 검증: tsc, vitest 76건, go test/vet, Playwright login/admin/api-keys 11건 통과. 부서 관리자 역할은 코드상 직원과 동일함을 그대로 적었고 화면에 계정 생성·비활성화가 없다는 점도 API 경로와 함께 명시했다.
-- 보류 아이디어: 사용자 권한 화면에 계정 비활성화 토글 추가(API는 있으나 UI 없음) / 좌석 상세 편집 창에서 조직 구역 지정(현재 API·처리필요로만 가능) / 좌석맵에서 배정 해제 단추(현재 DELETE API·퇴직자 해제만) / CI에 guide-shots 스모크(캡처 스크립트가 깨지지 않는지) 추가 / build-docs.py 파서 단위 테스트(이미지·목록 번호 이어 세기)
-
-- 릴리즈: v1.4.1 (2026-09-12, run 2026-09-12-085250-seaton-approve)
 ## 2026-09-13
 - 선택: 조용한 SSO(prompt=none) 자동 로그인 — 캠페인 silent-sso-2026-09 (가치 5 / 위험 2 / 작업량 M)
 - 결과: 성공
 - 요약: SILENT-SSO-STANDARD.md 를 따라 `oidc.auto_login`(기본 꺼짐) 설정을 추가하고, 서버 `oidcStart` 는 이 설정이 켜져 있을 때만 `?prompt=none` 을 Keycloak 에 전달(꺼져 있으면 조용히 평범한 로그인으로)하며 `oidc_states.silent` 열에 조용한 시도임을 남긴다. 콜백은 조용한 시도의 `login_required`·`interaction_required`·`consent_required` 를 실패가 아닌 세션 없음으로 다뤄 `/login?sso=none` 으로 보내고(다른 오류는 `sso=none&error=`), `returnTo` 는 `/` 로 시작하고 `//`·`/\` 로 시작하지 않는 값만 받는다(콜백에서도 재검증). 프런트는 `web/src/lib/silentSso.ts` 에 규칙을 두어 세션이 없고 `oidcAutoLogin` 이면 `window.location.assign` 최상위 이동으로 한 번만 시도하고, 세 겹 루프 방지(sessionStorage 한 탭 한 번·로그아웃 억제·주소의 `sso=none`)와 저장소 예외 시 "이미 시도"로 치는 규칙, 로그인·API·MCP·헬스 경로 제외를 구현했으며 떠나는 동안 로딩 화면을 유지해 깜빡임을 없앴다. 설정 화면 Keycloak 탭에 스위치를 더하고 ADMIN_GUIDE §3.2 표·§3.3 절과 README 에 동작·재시도 방지를 적었다. 검증: go test(새 auth_test 4건)·vet·gofmt, tsc, vitest 84건(새 silentSso 8건), docker 이미지로 실서버를 띄워 Playwright 전체 스위트 통과(login.spec 에 조용한 SSO 4건 추가 — 한 번만 시도·새로고침 후 재시도 없음·새 탭 재시도·auto_login 꺼짐·/login 에서 미시도), curl 로 콜백 오류 리다이렉트·설정 키·silent 열 확인.
 - 보류 아이디어: 사용자 권한 화면에 계정 비활성화 토글 추가(API는 있으나 UI 없음) / 좌석 상세 편집 창에서 조직 구역 지정(현재 API·처리필요로만 가능) / 좌석맵에서 배정 해제 단추(현재 DELETE API·퇴직자 해제만) / CI에 guide-shots 스모크 추가 / build-docs.py 파서 단위 테스트 / 로그인 화면 SSO 단추가 깊은 링크 returnTo 를 들고 가게(세션 만료 뒤 수동 SSO 로그인도 원래 자리로) / 세션 만료(401) 뒤에도 auto_login 이면 조용한 재로그인 시도(현재는 첫 로드에만)
-
-- 릴리즈: v1.4.2 (2026-09-13, run 2026-09-13-155131-seaton-improve)
