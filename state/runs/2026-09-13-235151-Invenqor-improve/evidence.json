@@ -1,0 +1,175 @@
+{
+  "run_id": "2026-09-13-235151-Invenqor-improve",
+  "generated": "2026-09-14T00:11:23+09:00",
+  "run": {
+    "run_id": "2026-09-13-235151-Invenqor-improve",
+    "project": "Invenqor",
+    "kind": "improve",
+    "started": "2026-09-13T23:51:52+09:00",
+    "model": "claude-opus-5",
+    "policy_version": "5935779a",
+    "prompts_hash": "82f2440d4b2fef65",
+    "runner_version": "5c1744b4",
+    "finished": "2026-09-14T00:11:23+09:00",
+    "outcome": "review-pending"
+  },
+  "record": {
+    "ts": "2026-09-14T00:11:23+09:00",
+    "date": "2026-09-13",
+    "project": "Invenqor",
+    "result": "guarded files, PR open https://github.com/hkjang/invenqor/pull/20",
+    "outcome": "review-pending",
+    "run_id": "2026-09-13-235151-Invenqor-improve",
+    "base_sha": "c9527e7ddfdbc4e9a0ff640a4ffb89f2a9740d8a",
+    "head_sha": "152c6ba77236020e7675cb7da2f2dc636931904e",
+    "pr": "https://github.com/hkjang/invenqor/pull/20",
+    "stages": {
+      "base": {
+        "state": "pinned",
+        "reason": "main@c9527e7",
+        "at": "2026-09-13T23:51:58+09:00"
+      },
+      "autonomy": {
+        "state": "release",
+        "reason": "",
+        "at": "2026-09-13T23:51:58+09:00"
+      },
+      "verify": {
+        "state": "passed",
+        "reason": "검증 8개 통과 (auto)",
+        "at": "2026-09-14T00:11:13+09:00"
+      },
+      "pr": {
+        "state": "created",
+        "reason": "https://github.com/hkjang/invenqor/pull/20",
+        "at": "2026-09-14T00:11:20+09:00"
+      },
+      "guard": {
+        "state": "held",
+        "reason": "server/internal/auth/service.go server/migrations/postgres/009_mail_deliveries.sql server/migrations/sqlite/009_mail_deliveries.sql ",
+        "at": "2026-09-14T00:11:21+09:00"
+      }
+    },
+    "campaign": "mail-2026-09",
+    "autonomy": "release",
+    "files": 26,
+    "additions": 2793,
+    "deletions": 40,
+    "tests": 5,
+    "title": "feat: the people waiting on an account or a rollout are told by mail through the company SMTP relay"
+  },
+  "stages": {
+    "base": {
+      "state": "pinned",
+      "reason": "main@c9527e7",
+      "at": "2026-09-13T23:51:58+09:00"
+    },
+    "autonomy": {
+      "state": "release",
+      "reason": "",
+      "at": "2026-09-13T23:51:58+09:00"
+    },
+    "verify": {
+      "state": "passed",
+      "reason": "검증 8개 통과 (auto)",
+      "at": "2026-09-14T00:11:13+09:00"
+    },
+    "pr": {
+      "state": "created",
+      "reason": "https://github.com/hkjang/invenqor/pull/20",
+      "at": "2026-09-14T00:11:20+09:00"
+    },
+    "guard": {
+      "state": "held",
+      "reason": "server/internal/auth/service.go server/migrations/postgres/009_mail_deliveries.sql server/migrations/sqlite/009_mail_deliveries.sql ",
+      "at": "2026-09-14T00:11:21+09:00"
+    }
+  },
+  "provenance": {
+    "model": "claude-opus-5",
+    "policy_version": "5935779a",
+    "prompts_hash": "82f2440d4b2fef65",
+    "runner_version": "5c1744b4",
+    "base_sha": "c9527e7ddfdbc4e9a0ff640a4ffb89f2a9740d8a",
+    "head_sha": "152c6ba77236020e7675cb7da2f2dc636931904e",
+    "pr": "https://github.com/hkjang/invenqor/pull/20"
+  },
+  "verification": {
+    "runner": {
+      "source": "auto",
+      "commands": [
+        {
+          "cmd": "cargo test --quiet",
+          "exit": 0,
+          "seconds": 13
+        },
+        {
+          "cmd": "cd server && go build ./...",
+          "exit": 0,
+          "seconds": 1
+        },
+        {
+          "cmd": "cd server && go vet ./...",
+          "exit": 0,
+          "seconds": 0
+        },
+        {
+          "cmd": "cd server && go test ./...",
+          "exit": 0,
+          "seconds": 20
+        },
+        {
+          "cmd": "cd web && [ -d node_modules ] || npm ci --no-audit --no-fund",
+          "exit": 0,
+          "seconds": 0
+        },
+        {
+          "cmd": "cd web && npm test --silent",
+          "exit": 0,
+          "seconds": 1
+        },
+        {
+          "cmd": "cd web && [ -d node_modules ] || npm ci --no-audit --no-fund",
+          "exit": 0,
+          "seconds": 0
+        },
+        {
+          "cmd": "cd web && npm run build --silent",
+          "exit": 0,
+          "seconds": 4
+        }
+      ]
+    },
+    "runner_gate": {
+      "ok": true,
+      "state": "verified",
+      "reason": "검증 8개 통과 (auto)"
+    },
+    "after_rebase": null,
+    "review": null,
+    "ci_gate": null
+  },
+  "release": {
+    "result": null,
+    "assets_sha256": []
+  },
+  "approval": null,
+  "usage": [
+    {
+      "ts": "2026-09-14T00:10:32+09:00",
+      "date": "2026-09-13",
+      "project": "Invenqor",
+      "phase": "improve",
+      "run_id": "2026-09-13-235151-Invenqor-improve",
+      "campaign": "mail-2026-09",
+      "subtype": "success",
+      "duration_ms": 1112979,
+      "num_turns": 84,
+      "cost_usd": 10.760767499999996,
+      "input_tokens": 168,
+      "output_tokens": 84608,
+      "cache_read": 12614975,
+      "cache_create": 232782
+    }
+  ]
+}
