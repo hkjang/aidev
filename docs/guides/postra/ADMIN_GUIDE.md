@@ -74,6 +74,7 @@ Postra는 설정 파일(`config.json`) 또는 환경변수(`POSTRA_*`)를 통해
 | `POSTRA_OIDC_ISSUER` | - | OIDC Provider Issuer URL (예: `https://auth.company.com/realms/main`) |
 | `POSTRA_OIDC_CLIENT_ID` | - | OIDC Client ID |
 | `POSTRA_OIDC_CLIENT_SECRET_REF` | - | 암호화 SecretStore에 등록된 OIDC Client Secret 참조 키 |
+| `POSTRA_OIDC_AUTO_LOGIN` | `false` | Keycloak 세션이 있는 사용자를 로그인 화면 없이 자동 로그인 (silent SSO, `prompt=none`). 관리 화면 `auth.oidc.auto_login` 으로도 설정 |
 | `POSTRA_VECTOR_STORE_DRIVER` | `db` | 의미론적 벡터 검색 드라이버 (`db` 또는 `milvus`) |
 | `POSTRA_OPENAI_API_KEY_REF` | - | AI 임베딩 생성용 OpenAI 호환 API Key 비밀값 참조 키 |
 
@@ -101,6 +102,36 @@ Postra 기동 시 `bootstrapAdmin` 프로세스가 실행되어 어드민 계정
    export POSTRA_OIDC_CLIENT_SECRET_REF="sec_a1b2c3d4"
    ./postra serve
    ```
+
+### 3.3 자동 로그인 (silent SSO, `auth.oidc.auto_login`)
+Keycloak(또는 ReSSO)에 이미 로그인한 사용자가 Postra를 열면 로그인 화면을 거치지 않고 바로
+본 화면으로 들어가게 하는 기능입니다. **기본값은 꺼짐**이며, 관리 화면(시스템 설정 → Keycloak
+OIDC SSO)의 "이미 로그인한 사용자는 로그인 화면 없이 자동 로그인" 체크박스 또는
+`POSTRA_OIDC_AUTO_LOGIN=true` 로 켭니다. 꺼져 있는 설치에서는 아무것도 달라지지 않습니다.
+
+동작 방식:
+- 로그인 화면이 열리면 브라우저가 `/ui/auth/oidc/start?prompt=none` 으로 **최상위 이동**합니다
+  (숨은 iframe 이 아니므로 서드파티 쿠키 차단·프레임 정책과 무관합니다). `prompt=none` 은
+  제공자 화면을 절대 그리지 않습니다 — Keycloak 세션이 있으면 인가 코드가 바로 돌아와 평소처럼
+  로그인되고, 없으면 `error=login_required` 로 돌아옵니다. 이것은 실패가 아니라 평범한 대답이며,
+  서버는 `/ui/login?sso=none` 으로 보내 일반 로그인 화면을 보여 줍니다.
+- 서버는 `auto_login` 이 꺼져 있으면 `?prompt=none` 이 붙어 와도 조용히 평범한 로그인으로
+  바꿉니다. 주소를 손봐서 흐름을 바꿀 수는 없습니다.
+- 깊은 링크(예: `/ui/messages/…`)로 들어온 사용자는 로그인 뒤 그 자리로 돌아갑니다.
+  `return_to` 는 `/` 로 시작하고 `//` 로 시작하지 않는 앱 내부 경로만 받습니다.
+
+무한 루프 방지(세 겹): (1) 한 탭 세션에 한 번만 시도 — `sessionStorage` 표시, 새 탭은 다시
+시도하지만 거절 뒤 새로고침은 시도하지 않음. (2) 로그아웃 직후에는 시도하지 않음 —
+로그아웃 시 억제 표시를 남기고 세션이 다시 생기면 지움. (3) 콜백이 거절을 받으면
+`/ui/login?sso=none` 으로 보내 주소에도 표시를 남김 — 브라우저 저장소가 비워져도 재시도하지
+않음. 사생활 보호 모드처럼 저장소를 읽지 못하면 "이미 시도했다" 로 간주해 막히는 쪽으로
+실패합니다. 콜백·오류·로그인 실패 화면과 API·MCP·헬스 경로에서는 시도하지 않습니다.
+
+확인 절차:
+- Keycloak 에 로그인한 상태로 Postra 를 열면 로그인 화면 없이 본 화면이 뜹니다.
+- 로그인하지 않은 상태로 열면 로그인 화면이 한 번에 뜨고, 새로고침을 반복해도 리다이렉트가
+  반복되지 않습니다.
+- 로그아웃한 뒤 다시 열어도 자동으로 로그인되지 않습니다.
 
 ---
 
