@@ -1,11 +1,11 @@
 # MOINA 관리자 가이드
 
-버전 `v0.1.28` · linux/amd64 단일 컨테이너 · 외부 PostgreSQL · 폐쇄망 운영
+버전 `v0.1.27` · linux/amd64 단일 컨테이너 · 외부 PostgreSQL · 폐쇄망 운영
 
 이 문서는 MOINA를 **설치하고 지키는 사람**을 위한 안내입니다. 화면을 쓰는 방법은
 [사용자 가이드](USER_GUIDE.md)에 있으니 사용자에게는 그 문서를 안내하세요.
 
-이 문서의 화면 캡처는 `v0.1.28` 서비스를 실제로 띄워 캡처 전용 데이터베이스에서 찍은
+이 문서의 화면 캡처는 `v0.1.27` 서비스를 실제로 띄워 캡처 전용 데이터베이스에서 찍은
 것이며, 화면에 보이는 계정·주소는 모두 예시입니다.
 
 ---
@@ -14,7 +14,7 @@
 
 | 구성 | 내용 |
 | --- | --- |
-| 서비스 컨테이너 | `moina:v0.1.28` 하나. distroless·non-root·read-only로 실행하며 Go 서버와 React 웹 앱을 함께 담고 있습니다. |
+| 서비스 컨테이너 | `moina:v0.1.27` 하나. distroless·non-root·read-only로 실행하며 Go 서버와 React 웹 앱을 함께 담고 있습니다. |
 | 데이터 저장소 | **외부 PostgreSQL**. 이미지에 포함되지 않으므로 기관 표준 PostgreSQL을 먼저 준비합니다. 미디어는 Large Object로 저장합니다. |
 | 노출 포트 | 컨테이너 `8080`(HTTP). 기본 compose는 `127.0.0.1:8080`에만 bind합니다. |
 | 앞단 | 기관 표준 TLS reverse proxy. WebSocket과 SSE를 통과시켜야 합니다. |
@@ -48,16 +48,16 @@ CREATE EXTENSION IF NOT EXISTS pg_trgm;
 
 ## 2. 설치
 
-GitHub Release에는 서비스 이미지 `moina-v0.1.28.tar.gz` 하나만 올라가고 SHA256 값은 릴리스
+GitHub Release에는 서비스 이미지 `moina-v0.1.27.tar.gz` 하나만 올라가고 SHA256 값은 릴리스
 본문에 적힙니다. 파일과 해시를 서로 다른 경로로 반입하세요.
 
 ### 2.1 이미지 반입과 확인
 
 ```bash
-sha256sum moina-v0.1.28.tar.gz
-gzip -t moina-v0.1.28.tar.gz
-gzip -dc moina-v0.1.28.tar.gz | docker image load
-docker image inspect moina:v0.1.28 --format '{{.Os}}/{{.Architecture}} {{.Config.User}}'
+sha256sum moina-v0.1.27.tar.gz
+gzip -t moina-v0.1.27.tar.gz
+gzip -dc moina-v0.1.27.tar.gz | docker image load
+docker image inspect moina:v0.1.27 --format '{{.Os}}/{{.Architecture}} {{.Config.User}}'
 ```
 
 마지막 명령의 결과는 `linux/amd64 nonroot:nonroot`여야 합니다.
@@ -84,7 +84,7 @@ docker compose --env-file .env \
 ```
 
 `deploy/docker-compose.offline.yml`의 `image:` 줄에는 태그가 고정되어 있습니다. 반입한
-태그(`moina:v0.1.28`)와 다르면 그 줄을 반입한 버전으로 맞춘 뒤 기동하세요. `pull_policy: never`
+태그(`moina:v0.1.27`)와 다르면 그 줄을 반입한 버전으로 맞춘 뒤 기동하세요. `pull_policy: never`
 이므로 이미지가 로컬에 없으면 그 자리에서 실패합니다.
 
 사설 CA가 필요하면 기관의 **전체** PEM CA bundle을 mount합니다. 추가 환경변수는 없습니다.
@@ -151,7 +151,7 @@ CI에서 검사합니다. 나머지는 전부 PostgreSQL에 저장되고 관리 
 | `MOINA_ENCRYPTION_KEY` | 없음 | 필수 | 저장 비밀값을 보호하는 32바이트 root key(base64). `openssl rand -base64 32`로 만들고 DB backup과 **다른 곳**에 보관합니다. |
 
 > `MOINA_ENCRYPTION_KEY`를 잃으면 암호화된 OIDC·AI·SMTP 비밀과 기존 session·API key 검증
-> 정보를 복구할 수 없습니다. `v0.1.28`은 온라인 root key 교체를 제공하지 않으므로 값을 바꾸지
+> 정보를 복구할 수 없습니다. `v0.1.27`은 온라인 root key 교체를 제공하지 않으므로 값을 바꾸지
 > 마세요.
 
 ### 3.2 일반 설정
@@ -300,6 +300,68 @@ intermediate를 모두 포함해야 합니다.
   즉시 검토할 수 없습니다.
 - 승인·반려 event는 수행자·시각·대상·결과·검토 comment와 함께 감사 로그에 남습니다.
 
+### 3.8 방문 추적(애널리틱스)
+
+**서비스 관리자 → 일반 설정**의 맨 아래 **방문 추적** 카드에서 방문 통계 스니펫을 화면에
+붙입니다. 기본값은 **꺼짐**이며, 새로 설치한 곳은 이 카드를 켜기 전까지 아무것도 달라지지
+않습니다. 환경 변수는 없고 설정은 PostgreSQL에 저장되어 재배포 없이 바꿀 수 있습니다.
+
+| 항목 | 뜻 |
+| --- | --- |
+| 방문 추적 사용 | 꺼짐이 기본입니다. 켜야 스니펫이 붙습니다 |
+| Provider | `Momento`(사내 수집기) · `Google Analytics 4` · `Google Tag Manager` · `Matomo` · `직접 붙여 넣기` |
+| Momento 수집기 주소 · 사이트 ID | 수집기 URL(query·fragment 없음)과 사이트 id |
+| 같은 오리진 프록시 사용 | 서버가 `/momento/*`를 수집기로 넘기고 스니펫에 `data-endpoint="/momento"`를 줍니다. 권장·기본값 |
+| 사설망 수집기 허용 | 수집기 DNS 이름이 RFC1918·ULA 주소로 해석될 때만 켭니다. IP 직접 입력·loopback은 거절 |
+| 측정 ID · 컨테이너 ID | GA4 · GTM의 id |
+| Matomo 주소 · 사이트 ID | Matomo URL과 사이트 id |
+| 추적 코드 | 추적 도구가 준 `<script>` 스니펫. **8KB**를 넘으면 저장되지 않습니다 |
+| 추가 허용 출처 | 스니펫에서 자동으로 읽지 못한 `https://host[:port]` 출처, 한 줄에 하나 |
+| 관리 화면에도 붙이기 | 기본은 아니오. `/admin`으로 시작하는 화면을 새로 열 때는 스니펫을 넣지 않습니다 |
+| 삽입 위치 | `head 끝` 또는 `body 끝` |
+
+**Momento를 먼저 고릅니다.** Momento는 사내 자체 호스팅 수집기라 방문 데이터가 밖으로
+나가지 않는 유일한 선택지입니다. 프록시를 켠 기본 구성에서는 브라우저가 `/momento/tracker.js`를
+MOINA 자기 오리진에서 받고 이벤트도 `/momento`로 보내므로 정책에 외부 출처가 아예 등장하지
+않습니다. 프록시는 OIDC·AI·SMTP와 같은 exact-authority 아웃바운드 정책으로 수집기 주소
+하나에만 연결하고, 세션 cookie·Authorization 헤더는 수집기로 넘기지 않으며 수집기의
+`Set-Cookie`도 브라우저로 돌려주지 않습니다. 수집기 주소를 `http://`로 적으면 그 주소에만
+평문 HTTP를 허용합니다.
+
+순서는 이렇습니다.
+
+1. **방문 추적 사용**을 켜고 provider를 고릅니다(기본 선택은 Momento).
+2. 수집기 주소와 사이트 ID를 넣고 **방문 추적 저장**을 누릅니다.
+3. 사용자 화면(예: 플로우)을 새로 엽니다. 스니펫은 문서를 새로 받을 때 들어가므로 이미
+   열려 있던 탭은 새로 고쳐야 합니다.
+4. 수집기 화면에 방문이 들어오는지 확인합니다. 들어오지 않으면 아래 **정책이 차단한 출처**를
+   봅니다.
+
+#### Content-Security-Policy와 nonce
+
+MOINA의 화면 정책은 `script-src 'self'`로 잠겨 있어 스니펫을 그냥 붙이면 브라우저가 조용히
+막습니다. 그래서 추적을 켜면 서버가 **요청마다 nonce**를 만들어 스니펫의 모든 `<script>`에
+`nonce="…"`를 붙이고, 같은 값을 그 응답의 `script-src 'nonce-…'`에 넣습니다. 정책을
+`'unsafe-inline'`으로 풀지는 않습니다 — 한 번 풀면 그 앱의 모든 인라인 스크립트가 함께
+허용되고 추적을 끈 뒤에도 느슨한 채 남기 때문입니다. 추적을 끄면 정책은 원래대로 좁아집니다.
+
+스니펫이 가리키는 출처는 서버가 읽어 `script-src`·`connect-src`·`img-src`에 더합니다.
+Momento 직접 연결·Matomo는 입력한 주소의 출처, GA4·GTM은 Google 수집 출처, 직접 붙여 넣은
+코드는 본문에 적힌 `http(s)://…` 주소의 출처입니다. 그래도 막히는 것이 있으면 추적이 켜진
+동안에만 정책에 들어가는 `report-uri`로 브라우저가 서버에 신고하고, 카드 아래 **정책이 차단한
+출처** 표에 출처·지시어·횟수가 보입니다. **허용**을 누르면 그 출처가 **추가 허용 출처**에
+들어가 저장까지 끝나고, **기록 비우기**로 지운 뒤 화면을 다시 열어 남는 차단이 있는지
+확인합니다. 이 기록은 인스턴스 메모리에만 있으며(서로 다른 출처 최대 100개) 재시작하면
+비워집니다.
+
+`/api/*`·`/mcp`·`/healthz`·`/readyz`·`/metrics`·`/momento/*` 같은 비화면 응답에는 스니펫이 붙지 않고
+정책도 `default-src 'none'`으로 더 좁습니다. 로그인 화면에도 스니펫이 붙으므로 개인 식별 값을
+보내는 스니펫은 쓰지 마세요.
+
+API는 `GET`·`PUT /api/v1/admin/analytics`, `GET`·`DELETE /api/v1/admin/analytics/violations`,
+`POST /api/v1/admin/analytics/violations/allow`(`settings:manage`)이며, 브라우저 신고는
+`POST /api/v1/analytics/csp-report`(무인증, 항상 204)로 들어옵니다.
+
 ---
 
 ## 4. 계정과 권한
@@ -381,7 +443,7 @@ intermediate를 모두 포함해야 합니다.
 ![신고·제재 — 접수된 신고를 검토·해결·기각한다](assets/screenshots/desktop-admin-reports.webp)
 
 **신고·제재**에서는 접수된 신고를 검토해 해결하거나 기각하고, 필요하면 사용자 활성 상태를
-바꾸거나 게시물을 지웁니다. `v0.1.28`은 신고 유형·우선순위·SLA를 사용자 정의하는 설정을
+바꾸거나 게시물을 지웁니다. `v0.1.27`은 신고 유형·우선순위·SLA를 사용자 정의하는 설정을
 제공하지 않으므로, 기관별 기준과 escalation은 별도 운영 정책으로 관리하고 검토 메모에
 판단 근거를 남기세요. 반복 패턴은 관찰하되 자동 판단만으로 영구 제재하지 않습니다.
 
@@ -420,7 +482,7 @@ Dead Letter로 떨어진 비동기 event는 같은 화면 위쪽 **실패 이벤
   (`pg_dump -b` 등)을 명시합니다.
 - 같은 시점의 `MOINA_ENCRYPTION_KEY`와 현재 이미지 `tar.gz`를 **서로 다른 보안 영역**에
   보관합니다.
-- 복구 훈련에서 미디어·DB backup·원래 key가 함께 유효한지 확인합니다. `v0.1.28`은 온라인
+- 복구 훈련에서 미디어·DB backup·원래 key가 함께 유효한지 확인합니다. `v0.1.27`은 온라인
   root key 교체를 제공하지 않습니다.
 
 ### 5.6 업그레이드와 되돌리기
@@ -488,6 +550,8 @@ ID와 영향 범위를 남기고 DSN·비밀번호·token·암호화 key는 남�
 - OIDC·AI·SMTP의 허용 host는 정확한 authority만 등록합니다. wildcard·scheme·경로는 넣지
   않으며, loopback·link-local·cloud metadata·CGNAT·unspecified·multicast는 항상 차단됩니다.
 - 폐쇄망 HTTP는 명시적으로 켠 등록 host에만 허용합니다.
+- 방문 추적은 꺼진 채 두는 것이 기본입니다. 켜더라도 `'unsafe-inline'`으로 정책을 풀지 않고
+  요청별 nonce를 쓰며, 데이터가 밖으로 나가지 않는 Momento 같은 오리진 프록시를 먼저 고릅니다.
 - 최소 권한 원칙으로 역할을 나누고, 특히 `audit:read`(조사)와 `outbox:manage`(복구),
   `settings:manage`(설정)를 서로 다른 역할에 둡니다.
 - 컨테이너는 read-only·non-root·`cap_drop: ALL`·`no-new-privileges`로 실행합니다. 기본
