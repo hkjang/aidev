@@ -83,6 +83,10 @@ $(printf -- '- %s\n' "${problems[@]:-}" "${actions[@]:-}" | grep -v '^- $')"
     fi
   fi
 fi
+# 러너가 스스로 설명하지 못하는 것이 있으면 물어본다. 안에 전체 간격(기본 2시간)과
+# 같은 것을 다시 묻지 않는 표시가 있어 헬스체크마다 부르는 것이 안전하다.
+"$HERE/ask-claude.sh" >>"$REPO_DIR/logs/ask-claude.log" 2>&1 || true
+
 # 프로젝트별 가이드를 docs/guides 로 모은다 — 25개 저장소를 열어 보지 않고 한곳에서 본다.
 # 내용이 같으면 git 이 새 blob 을 만들지 않으므로, 회차가 문서를 다시 쓸 때만 늘어난다.
 python3 "$HERE/collect-guides.py" >/dev/null 2>&1 || true
