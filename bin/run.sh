@@ -412,6 +412,7 @@ rebase_pr(){ # $1=PR url $2=base
 pick_campaign(){
   local cj="$STATE/campaigns.json" id goal goal64 budget until ibudget guardpat spent projs cp
   CAMPAIGN_ID=""; CAMPAIGN_NOTE=""; CAMPAIGN_PROJECT=""; CAMPAIGN_BUDGET=0; CAMPAIGN_IMPROVE_BUDGET=""; CAMPAIGN_EXPECTED_GUARD=""
+  local -a cand_id=() cand_project=() cand_budget=() cand_ibudget=() cand_guard=() cand_note=() cand_last=()
   [ -f "$cj" ] || return 0
   while IFS=$'\t' read -r id goal64 budget until ibudget guardpat projs; do
     [ -n "$id" ] || continue
@@ -465,17 +466,41 @@ pick_campaign(){
       continue
     fi
     if [ -n "$best" ]; then
-        cp=$best
-        CAMPAIGN_ID=$id; CAMPAIGN_PROJECT=$cp; CAMPAIGN_BUDGET=$budget; CAMPAIGN_IMPROVE_BUDGET=$ibudget; CAMPAIGN_EXPECTED_GUARD=$guardpat
-        CAMPAIGN_NOTE="## 개선 캠페인 \"$id\" (자동 배정) — 새 아이디어 대신 이 목표를 우선하세요
+        # 여기서 바로 돌려주지 않는다. 파일에 먼저 적힌 캠페인이 언제나 이기면,
+        # 뒤에 적힌 캠페인은 앞의 것이 다 끝날 때까지 한 번도 돌지 못한다 —
+        # mail-2026-09 와 handoff-2026-09 가 그렇게 회차 0 으로 남아 있었다
+        # (2026-09-13). 프로젝트를 고를 때와 같은 규칙으로, 가장 오래 쉰
+        # 캠페인부터 차례를 준다.
+        cand_id+=("$id"); cand_project+=("$best"); cand_budget+=("$budget")
+        cand_ibudget+=("$ibudget"); cand_guard+=("$guardpat")
+        cand_note+=("## 개선 캠페인 \"$id\" (자동 배정) — 새 아이디어 대신 이 목표를 우선하세요
 $goal
-예산: \$$spent / \$$budget 사용, 기한 $until. 이 목표와 무관한 변경은 만들지 마세요."
-        return 0
+예산: \$$spent / \$$budget 사용, 기한 $until. 이 목표와 무관한 변경은 만들지 마세요.")
+        # 이 캠페인이 마지막으로 돈 시각. 한 번도 안 돌았으면 빈 값이고, 빈 값이
+        # 가장 앞선다.
+        cand_last+=("$(jq -r --arg id "$id" 'select(.campaign==$id) | .ts' "$DATA/runs.jsonl" 2>/dev/null | tail -1)")
     fi
     # 목표는 base64 로 싣는다. 여러 줄짜리 목표를 그대로 넣으면 TSV 한 줄이 쪼개져
     # budget·until·projects 가 통째로 비고, 빈 until 이 기한 지난 것으로 읽혀 캠페인이
     # 시작하자마자 "기한 종료" 로 꺼졌다 (2026-09-10 guides-2026-09).
   done < <(jq -r --arg d "$RUN_DATE" '.campaigns[]? | select(.done!=true) | "\(.id)\t\(.goal|@base64)\t\(.budget_usd)\t\(.until)\t\(.improve_budget_usd // "")\t\((.expected_guard // [])|join(" "))\t\(.projects|join(" "))"' "$cj" 2>/dev/null)
+
+  [ ${#cand_id[@]} -gt 0 ] || return 0
+
+  # 가장 오래 쉰 캠페인에 차례를 준다. 한 번도 돌지 않은 캠페인(빈 ts)이 가장 앞선다.
+  local i pick=0
+  for ((i=1; i<${#cand_id[@]}; i++)); do
+    if [ -z "${cand_last[$i]}" ] && [ -n "${cand_last[$pick]}" ]; then pick=$i
+    elif [ -n "${cand_last[$i]}" ] && [ -n "${cand_last[$pick]}" ] && [[ "${cand_last[$i]}" < "${cand_last[$pick]}" ]]; then pick=$i
+    fi
+  done
+  if [ ${#cand_id[@]} -gt 1 ]; then
+    log "campaign 후보 ${#cand_id[@]}개 — ${cand_id[*]} 중 ${cand_id[$pick]} 차례 (마지막 회차 ${cand_last[$pick]:-없음})"
+  fi
+  CAMPAIGN_ID="${cand_id[$pick]}"; CAMPAIGN_PROJECT="${cand_project[$pick]}"
+  CAMPAIGN_BUDGET="${cand_budget[$pick]}"; CAMPAIGN_IMPROVE_BUDGET="${cand_ibudget[$pick]}"
+  CAMPAIGN_EXPECTED_GUARD="${cand_guard[$pick]}"; CAMPAIGN_NOTE="${cand_note[$pick]}"
+  return 0
 }
 
 # ---------------------------------------------------------------- 러너 직접 검증
