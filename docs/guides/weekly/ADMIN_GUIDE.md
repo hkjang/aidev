@@ -91,7 +91,7 @@ Compose 파일은 `WEEKLY_VERSION`(이미지 태그, 기본 `0.300.0`)도 읽습
 | 카드 | 주요 설정 | 비고 |
 |---|---|---|
 | 일반 · 워크플로 | 서비스 이름·공지·시간대, `팀장 검토·승인 사용`, `주차 시작 요일`, 제출 마감(주차 시작 후 며칠째·몇 시까지) | **주차 시작 요일은 사실상 데이터 이관입니다**(3.3 절) |
-| 인증 · Keycloak OIDC | 로컬 로그인 사용, 세션 유효시간, 계정당·IP당 로그인 실패 허용 횟수, 차단 시간, OIDC Issuer·Client·Scopes·Claim·관리자 그룹·자동 등록 | `OIDC 연결 시험` 버튼. IP당 제한은 기본 꺼짐 |
+| 인증 · Keycloak OIDC | 로컬 로그인 사용, 세션 유효시간, 계정당·IP당 로그인 실패 허용 횟수, 차단 시간, OIDC Issuer·Client·Scopes·Claim·관리자 그룹·자동 등록, `Keycloak 세션 자동 로그인 (prompt=none)` | `OIDC 연결 시험` 버튼. IP당 제한은 기본 꺼짐 |
 | AI Gateway · 과거 자료 Import | AI 사용, Chat Completions Endpoint, API Key, 모델, 제한시간, 최대 입력 글자수, Import 파일 수·크기·원본 보관일 | `AI Structured Output 연결 시험` |
 | Confluence 6.9.1 자동화 | 사용 여부, Base URL, 인증 방식, Service Account, Space 포함·제외, 수집 주기, AI 분류, 점수 규칙 | `Confluence REST 연결 시험`. 상세는 [CONFLUENCE.md](CONFLUENCE.md) |
 | 주간보고 메일 발송 | 사용, SMTP 호스트·포트·보안·계정·보내는 주소·이름·제한시간·재시도 | `메일 발송 시험`은 관리자 본인 주소로 갑니다. 최근 발송·대기·실패 건수가 카드 아래에 보입니다 |
@@ -113,8 +113,15 @@ Compose 파일은 `WEEKLY_VERSION`(이미지 태그, 기본 `0.300.0`)도 읽습
 2. Keycloak 클라이언트의 Valid Redirect URI 에 `https://<weekly 주소>/api/v1/auth/oidc/callback` 을 등록합니다(라우트는 `GET`).
 3. Issuer URL·Client ID·Client Secret 을 넣고, 그룹 Claim 과 `관리자 그룹`을 지정하면 그 그룹의 사용자가 자동으로 ADMIN 이 됩니다. `사용자 자동 등록`을 켜면 처음 로그인하는 사용자가 계정을 얻습니다.
 4. `OIDC 연결 시험` → `설정 저장` → `Keycloak OIDC 사용`을 켭니다.
+5. 이미 Keycloak 에 로그인한 사람이 로그인 화면 없이 바로 들어오게 하려면 `Keycloak 세션 자동 로그인 (prompt=none)` 을 켭니다. **기본값은 꺼짐**이며, 꺼진 설치에서는 아래 자동 확인이 일어나지 않고 로그인 화면의 `Keycloak SSO로 로그인` 버튼만 남습니다.
 
-OIDC 가 켜진 배포에서 Weekly 세션이 없는 브라우저가 앱을 처음 열면 Authorization Code + PKCE 흐름을 `prompt=none`으로 한 번 시작합니다. Keycloak SSO 세션이 있으면 로그인 화면 없이 원래 화면으로 돌아오고, `login_required`·`interaction_required`·`consent_required`·`account_selection_required`이면 일반 로그인 화면으로 돌아옵니다. state·nonce·PKCE 와 10분 만료를 검증하며 ID·Access·Refresh Token 은 DB 에 보관하지 않습니다. 이 자동 확인은 앱 최초 세션 조회가 401 인 경우에만 하므로 PostgreSQL 장애를 로그아웃으로 오인해 Keycloak 으로 보내지 않고, 작성 중 세션 만료 시에는 탭을 이동하지 않습니다. Weekly 의 `로그아웃`은 Keycloak Realm 로그아웃을 호출하지 않고 현재 탭(`sessionStorage`)의 자동 확인만 억제합니다.
+#### 자동 로그인의 동작
+
+자동 로그인을 켠 배포에서 Weekly 세션이 없는 브라우저가 앱을 처음 열면 Authorization Code + PKCE 흐름을 `prompt=none`으로 한 번 시작합니다. Keycloak SSO 세션이 있으면 로그인 화면 없이 원래 화면으로 돌아오고, `login_required`·`interaction_required`·`consent_required`·`account_selection_required`이면 일반 로그인 화면으로 돌아옵니다. state·nonce·PKCE 와 10분 만료를 검증하며 ID·Access·Refresh Token 은 DB 에 보관하지 않습니다. 이 자동 확인은 앱 최초 세션 조회가 401 인 경우에만 하므로 PostgreSQL 장애를 로그아웃으로 오인해 Keycloak 으로 보내지 않고, 작성 중 세션 만료 시에는 탭을 이동하지 않습니다. Weekly 의 `로그아웃`은 Keycloak Realm 로그아웃을 호출하지 않고 현재 탭(`sessionStorage`)의 자동 확인만 억제합니다.
+
+무한 루프를 막는 장치는 세 겹입니다. (1) 시도했다는 표시를 탭의 `sessionStorage` 에 남겨 한 탭 세션에 한 번만 시도합니다 — 새 탭은 다시 시도하고, 거절당한 뒤 새로고침하면 다시 시도하지 않습니다. (2) 스스로 로그아웃한 탭은 억제 표시를 남기고, 다시 세션이 생기면 지웁니다. (3) 콜백이 거절을 받으면 `/?oidc_auto=miss#/...` 로 돌아와 주소에도 표시를 남기므로 저장소가 지워졌더라도 반복하지 않습니다. 사생활 보호 모드처럼 `sessionStorage` 를 읽지 못하는 브라우저는 "이미 시도했다" 로 쳐서 시도하지 않습니다. 숨은 iframe 이 아니라 최상위 이동을 쓰므로 서드파티 쿠키가 막힌 브라우저에서도 동작합니다.
+
+이 설정은 서버가 지킵니다. 꺼져 있으면 시작 주소에 `silent=1` 이 붙어 있어도 평범한 로그인으로 처리하고 `prompt=none` 을 보내지 않으므로, 주소를 고쳐 흐름을 바꿀 수 없습니다. `Keycloak OIDC 사용` 을 끄면 저장된 자동 로그인 값과 무관하게 꺼집니다. 깊은 링크(`#/history?report=17` 같은 SPA 경로)로 들어온 사람은 조용히 로그인한 뒤 그 자리로 돌아오며, 돌아갈 자리는 `#/` 로 시작하는 이 앱의 경로만 받습니다.
 
 ### 3.5 AI Gateway 와 Import
 
