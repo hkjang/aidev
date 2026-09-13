@@ -1,0 +1,170 @@
+{
+  "run_id": "2026-09-13-113546-jupiq-improve",
+  "generated": "2026-09-13T11:45:01+09:00",
+  "run": {
+    "run_id": "2026-09-13-113546-jupiq-improve",
+    "project": "jupiq",
+    "kind": "improve",
+    "started": "2026-09-13T11:35:47+09:00",
+    "model": "claude-opus-5",
+    "policy_version": "5935779a",
+    "prompts_hash": "82f2440d4b2fef65",
+    "runner_version": "feed5877",
+    "finished": "2026-09-13T11:45:01+09:00",
+    "outcome": "review-pending"
+  },
+  "record": {
+    "ts": "2026-09-13T11:45:01+09:00",
+    "date": "2026-09-13",
+    "project": "jupiq",
+    "result": "guarded files, PR open https://github.com/hkjang/jupiq/pull/15",
+    "outcome": "review-pending",
+    "run_id": "2026-09-13-113546-jupiq-improve",
+    "base_sha": "86d430a1ae661d75d0d7894db54e8bed2210432c",
+    "head_sha": "039604196a9dcf3340d21a3338d3b920c46338c3",
+    "pr": "https://github.com/hkjang/jupiq/pull/15",
+    "stages": {
+      "base": {
+        "state": "pinned",
+        "reason": "main@86d430a",
+        "at": "2026-09-13T11:35:49+09:00"
+      },
+      "autonomy": {
+        "state": "release",
+        "reason": "",
+        "at": "2026-09-13T11:35:49+09:00"
+      },
+      "verify": {
+        "state": "passed",
+        "reason": "검증 7개 통과 (auto)",
+        "at": "2026-09-13T11:44:52+09:00"
+      },
+      "pr": {
+        "state": "created",
+        "reason": "https://github.com/hkjang/jupiq/pull/15",
+        "at": "2026-09-13T11:44:59+09:00"
+      },
+      "guard": {
+        "state": "held",
+        "reason": "internal/auth/oidc.go internal/auth/oidc_silent_test.go web/src/auth/silentSso.test.ts web/src/auth/silentSso.ts ",
+        "at": "2026-09-13T11:44:59+09:00"
+      }
+    },
+    "campaign": "",
+    "autonomy": "release",
+    "files": 16,
+    "additions": 269,
+    "deletions": 18,
+    "tests": 6,
+    "title": "test: 로그인 리미터가 성공 뒤에도 IP 창을 유지하는 의도를 주석과 테스트로 남긴다"
+  },
+  "stages": {
+    "base": {
+      "state": "pinned",
+      "reason": "main@86d430a",
+      "at": "2026-09-13T11:35:49+09:00"
+    },
+    "autonomy": {
+      "state": "release",
+      "reason": "",
+      "at": "2026-09-13T11:35:49+09:00"
+    },
+    "verify": {
+      "state": "passed",
+      "reason": "검증 7개 통과 (auto)",
+      "at": "2026-09-13T11:44:52+09:00"
+    },
+    "pr": {
+      "state": "created",
+      "reason": "https://github.com/hkjang/jupiq/pull/15",
+      "at": "2026-09-13T11:44:59+09:00"
+    },
+    "guard": {
+      "state": "held",
+      "reason": "internal/auth/oidc.go internal/auth/oidc_silent_test.go web/src/auth/silentSso.test.ts web/src/auth/silentSso.ts ",
+      "at": "2026-09-13T11:44:59+09:00"
+    }
+  },
+  "provenance": {
+    "model": "claude-opus-5",
+    "policy_version": "5935779a",
+    "prompts_hash": "82f2440d4b2fef65",
+    "runner_version": "feed5877",
+    "base_sha": "86d430a1ae661d75d0d7894db54e8bed2210432c",
+    "head_sha": "039604196a9dcf3340d21a3338d3b920c46338c3",
+    "pr": "https://github.com/hkjang/jupiq/pull/15"
+  },
+  "verification": {
+    "runner": {
+      "source": "auto",
+      "commands": [
+        {
+          "cmd": "go build ./...",
+          "exit": 0,
+          "seconds": 0
+        },
+        {
+          "cmd": "go vet ./...",
+          "exit": 0,
+          "seconds": 1
+        },
+        {
+          "cmd": "go test ./...",
+          "exit": 0,
+          "seconds": 1
+        },
+        {
+          "cmd": "cd web && [ -d node_modules ] || npm ci --no-audit --no-fund",
+          "exit": 0,
+          "seconds": 0
+        },
+        {
+          "cmd": "cd web && npm test --silent",
+          "exit": 0,
+          "seconds": 7
+        },
+        {
+          "cmd": "cd web && [ -d node_modules ] || npm ci --no-audit --no-fund",
+          "exit": 0,
+          "seconds": 0
+        },
+        {
+          "cmd": "cd web && npm run build --silent",
+          "exit": 0,
+          "seconds": 10
+        }
+      ]
+    },
+    "runner_gate": {
+      "ok": true,
+      "state": "verified",
+      "reason": "검증 7개 통과 (auto)"
+    },
+    "after_rebase": null,
+    "review": null,
+    "ci_gate": null
+  },
+  "release": {
+    "result": null,
+    "assets_sha256": []
+  },
+  "approval": null,
+  "usage": [
+    {
+      "ts": "2026-09-13T11:44:32+09:00",
+      "date": "2026-09-13",
+      "project": "jupiq",
+      "phase": "improve",
+      "run_id": "2026-09-13-113546-jupiq-improve",
+      "campaign": "",
+      "subtype": "success",
+      "duration_ms": 547845,
+      "num_turns": 54,
+      "cost_usd": 4.1530545,
+      "input_tokens": 108,
+      "output_tokens": 34781,
+      "cache_read": 4446859,
+      "cache_create": 104472
+    }
+  ]
+}

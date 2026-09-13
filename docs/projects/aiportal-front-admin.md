@@ -1,7 +1,7 @@
 ---
 title: "aiportal-front-admin — 자율 개선 이력"
 description: "aiportal-front-admin: 자율 개선 회차 19회, 릴리즈 0건. 최근 릴리즈 없음."
-last_modified_at: 2026-09-13 11:22:40 +0900
+last_modified_at: 2026-09-13 11:45:01 +0900
 ---
 {% raw %}
 <script type="application/ld+json">
@@ -18,7 +18,7 @@ last_modified_at: 2026-09-13 11:22:40 +0900
   "name": "hkjang",
   "url": "https://github.com/hkjang"
  },
- "dateModified": "2026-09-13T11:22:40+09:00"
+ "dateModified": "2026-09-13T11:45:01+09:00"
 }
 </script>
 
