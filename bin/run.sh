@@ -414,6 +414,13 @@ pick_campaign(){
     [[ "$until" < "$RUN_DATE" ]] && { jq --arg id "$id" '(.campaigns[]|select(.id==$id)).done=true' "$cj" > "$cj.tmp" && mv "$cj.tmp" "$cj"; log "campaign $id: 기한 종료"; continue; }
     spent=$(jq -s --arg id "$id" '[.[]|select(.campaign==$id)|.cost_usd//0]|add // 0' "$DATA/usage.jsonl" 2>/dev/null || echo 0)
     awk -v s="$spent" -v b="$budget" 'BEGIN{exit !(s>=b)}' && { jq --arg id "$id" '(.campaigns[]|select(.id==$id)).done=true' "$cj" > "$cj.tmp" && mv "$cj.tmp" "$cj"; log "campaign $id: 예산 소진 (\$$spent/\$$budget)"; continue; }
+    # 빈 대상 목록은 "다 끝났다" 가 아니다. 읽기가 어긋났을 때 캠페인을 조용히
+    # 닫아 버리면 아무도 모른다 — 2026-09-13 에 TSV 열 하나가 어긋나 네 캠페인이
+    # 한꺼번에 "대상 0개 전부 완료" 로 닫혔다.
+    if [ -z "$(printf '%s' "$projs" | tr -d '[:space:]')" ]; then
+      log "campaign $id: 대상 목록이 비어 있어 건너뜀 (campaigns.json 과 읽는 열 수를 확인하세요)"
+      continue
+    fi
     # 아직 성과가 없는 프로젝트를 고른다. 캠페인은 유한한 일감이다 — 대상마다 한 번씩
     # 해내면 끝이고, 다 돌았는데 목록을 다시 도는 것은 같은 문서를 또 쓰는 것이다.
     # 한 번도 안 돈 것이 먼저, 그 다음이 실패해서 다시 해야 하는 것(가장 오래된 순).
@@ -461,7 +468,7 @@ $goal
     # 목표는 base64 로 싣는다. 여러 줄짜리 목표를 그대로 넣으면 TSV 한 줄이 쪼개져
     # budget·until·projects 가 통째로 비고, 빈 until 이 기한 지난 것으로 읽혀 캠페인이
     # 시작하자마자 "기한 종료" 로 꺼졌다 (2026-09-10 guides-2026-09).
-  done < <(jq -r --arg d "$RUN_DATE" '.campaigns[]? | select(.done!=true) | "\(.id)\t\(.goal|@base64)\t\(.budget_usd)\t\(.until)\t\(.improve_budget_usd // "")\t\(.projects|join(" "))"' "$cj" 2>/dev/null)
+  done < <(jq -r --arg d "$RUN_DATE" '.campaigns[]? | select(.done!=true) | "\(.id)\t\(.goal|@base64)\t\(.budget_usd)\t\(.until)\t\(.improve_budget_usd // "")\t\((.expected_guard // [])|join(" "))\t\(.projects|join(" "))"' "$cj" 2>/dev/null)
 }
 
 # ---------------------------------------------------------------- 러너 직접 검증
