@@ -1,0 +1,5 @@
+## 2026-09-13
+- 선택: [수정 과제] JDK 21 이 없는 머신에서도 Gradle 툴체인을 내려받아 릴리즈 빌드가 되게 한다 (가치 5 / 위험 1 / 작업량 S)
+- 결과: 성공
+- 요약: 릴리즈 검증 단계의 명령(`./gradlew --no-daemon bootJar -x test`)을 그대로 돌려 실패를 재현했다 — build.gradle.kts 가 Java 21 툴체인을 고정하는데 실행기에는 javac 없는 JRE 21 만 있어 "Cannot find a Java installation … Toolchain download repositories have not been configured" 로 멈춘다. 코드 문제가 아니라 툴체인 리졸버 부재라 settings.gradle.kts 에 `org.gradle.toolchains.foojay-resolver-convention` 1.0.0 을 붙여 Gradle 이 Temurin 21 을 `$GRADLE_USER_HOME/jdks` 에 한 번 내려받아 재사용하게 했고(setup-java 가 있는 CI 와 Temurin 이미지 Dockerfile 에서는 내려받지 않음), 워크플로는 손대지 않았다. JAVA_HOME 을 지운 채 bootJar 와 `cleanTest test`(563개 통과)를 재실행해 확인했고, 문서·워크플로 스텝 이름에 남아 있던 JDK 17 표기를 21 로 맞췄다. 커밋 4174eaf.
+- 보류 아이디어: Spring Boot 4.1 이전(dependabot #5 재오픈 → 플러그인 적용 확인 → Framework 7 / jakarta / 프로퍼티 이름 변경 추종; 메이저라 별도 회차, L) / CI 에 gradle wrapper 검증 액션 추가(공급망 보안, S) / docker-publish.yml 의 actions/checkout@v4 를 다른 워크플로와 같이 v6 로 맞추기(S) / ListExportController 의 OpenPDF 3 deprecated API 정리(S) / WorkflowHttpActionTest 의 @DirtiesContext(AFTER_EACH_TEST_METHOD) 를 줄여 테스트 메모리·시간 절감(M)

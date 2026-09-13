@@ -1,0 +1,65 @@
+[
+  {
+    "title": "JDK 21 이 없는 머신에서도 Gradle 툴체인을 자동으로 내려받아 빌드되게 한다 (foojay-resolver-convention)",
+    "value": 5,
+    "risk": 1,
+    "size": "S",
+    "status": "done",
+    "note": "릴리즈 검증 bootJar 가 'Cannot find a Java installation … Toolchain download repositories have not been configured' 로 두 번 실패. settings.gradle.kts 에 리졸버 플러그인 추가, JAVA_HOME 없이 bootJar·test(563) 통과 확인. 커밋 4174eaf.",
+    "updated": "2026-09-13"
+  },
+  {
+    "title": "Spring Boot 4.1 이전 (dependabot #5 재오픈)",
+    "value": 4,
+    "risk": 5,
+    "size": "L",
+    "status": "pending",
+    "note": "Gradle wrapper 8.14.3 은 이미 들어가 있어 플러그인 적용 자체는 될 것. 그 뒤 Spring Framework 7, jakarta 네임스페이스 정리, 프로퍼티 이름 변경(management.otlp.tracing 등), thymeleaf-extras-springsecurity6→7, springdoc 3.x 를 함께 따라가야 함. 메이저 업그레이드라 개선 회차 범위 밖 — 별도 회차에서 진행.",
+    "updated": "2026-09-13"
+  },
+  {
+    "title": "CI 에 Gradle wrapper 검증 액션(gradle/actions/wrapper-validation) 추가",
+    "value": 3,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "gradle-wrapper.jar 가 커밋돼 있는데 체크섬 검증이 없음. 공급망 보안 보강.",
+    "updated": "2026-09-13"
+  },
+  {
+    "title": "docker-publish.yml 의 actions/checkout@v4 를 다른 워크플로와 같이 v6 로 맞추기",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "dependabot #1 이 ci/codeql/release 만 올리고 docker-publish 는 남겨 둠. 같은 태그 트리거로 함께 도는 워크플로라 버전을 맞춰 두는 편이 좋음.",
+    "updated": "2026-09-13"
+  },
+  {
+    "title": "ListExportController 의 OpenPDF 3 deprecated API 사용 정리",
+    "value": 2,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "compileJava 가 'uses or overrides a deprecated API' 경고를 냄. -Xlint:deprecation 으로 위치를 확인해 대체 API 로 바꾸고 CJK PDF 내보내기 테스트로 회귀 확인.",
+    "updated": "2026-09-13"
+  },
+  {
+    "title": "WorkflowHttpActionTest 의 @DirtiesContext(AFTER_EACH_TEST_METHOD) 를 줄여 테스트 메모리·시간 절감",
+    "value": 3,
+    "risk": 3,
+    "size": "M",
+    "status": "pending",
+    "note": "#11 에서 힙 2g 로 막아 둔 OOM 의 근본 원인. 메서드마다 컨텍스트를 새로 만드는 이유(정적 상태·MockWebServer 포트 등)를 확인해 @DirtiesContext 를 클래스 단위나 상태 리셋으로 바꾸면 힙 여유와 실행 시간 모두 개선.",
+    "updated": "2026-09-13"
+  },
+  {
+    "title": "docs/operations/deployment.md 의 예시 jar 이름(nexabuilder-1.2.0.jar) 등 낡은 버전 표기를 버전 무관 표현으로 정리",
+    "value": 1,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "릴리즈마다 문서가 뒤처지는 항목. `nexabuilder-<version>.jar` 식으로 바꾸면 유지 부담이 사라짐.",
+    "updated": "2026-09-13"
+  }
+]
