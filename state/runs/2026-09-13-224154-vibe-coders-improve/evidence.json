@@ -1,0 +1,213 @@
+{
+  "run_id": "2026-09-13-224154-vibe-coders-improve",
+  "generated": "2026-09-13T23:09:05+09:00",
+  "run": {
+    "run_id": "2026-09-13-224154-vibe-coders-improve",
+    "project": "vibe-coders",
+    "kind": "improve",
+    "started": "2026-09-13T22:41:54+09:00",
+    "model": "claude-opus-5",
+    "policy_version": "5935779a",
+    "prompts_hash": "82f2440d4b2fef65",
+    "runner_version": "5c1744b4",
+    "finished": "2026-09-13T23:09:05+09:00",
+    "outcome": "review-pending"
+  },
+  "record": {
+    "ts": "2026-09-13T23:09:05+09:00",
+    "date": "2026-09-13",
+    "project": "vibe-coders",
+    "result": "review held, PR open https://github.com/hkjang/vibe-coders/pull/17",
+    "outcome": "review-pending",
+    "run_id": "2026-09-13-224154-vibe-coders-improve",
+    "base_sha": "eee0ed4d4d94d6e4077bd6b7fc751c3a7a15e59b",
+    "head_sha": "e1852638f767571b27b809c53ac56df7d1cc382b",
+    "pr": "https://github.com/hkjang/vibe-coders/pull/17",
+    "stages": {
+      "base": {
+        "state": "pinned",
+        "reason": "master@eee0ed4",
+        "at": "2026-09-13T22:42:06+09:00"
+      },
+      "autonomy": {
+        "state": "release",
+        "reason": "",
+        "at": "2026-09-13T22:42:06+09:00"
+      },
+      "verify": {
+        "state": "passed",
+        "reason": "검증 9개 통과 (auto)",
+        "at": "2026-09-13T23:04:36+09:00"
+      },
+      "pr": {
+        "state": "created",
+        "reason": "https://github.com/hkjang/vibe-coders/pull/17",
+        "at": "2026-09-13T23:04:46+09:00"
+      },
+      "review": {
+        "state": "rejected",
+        "reason": "리뷰 거절: internal/proxy/tracking.go:231-248 handleMomentoProxy builds a fresh *http.Transport (and ReverseProxy) for every /momento/* request. A Transport keeps its keep-alive connection plus readLoop/writeLoop goroutines alive until the peer closes it (IdleConnTimeout is 0 on a custom Transport and CloseIdleConnections is never called), so every tracker.js fetch and every visitor beacon leaks one TCP connection to the collector and ~3 goroutines. Reproduced outside the repo with the identical pattern: 200 proxied requests -> goroutines 4 -> 604 after GC, none reclaimed. Under real visitor traffic this is an unbounded fd/goroutine leak on the success path. Fix: one shared Transport on the Server (or at least DisableKeepAlives/CloseIdleConnections). The proxy integration test (TestMomentoProxyForwardsSameOriginTraffic) cannot catch this because it makes only two requests. / internal/proxy/tracking.go:91 tracking.allowed_hosts is registered with no validator, and SplitHosts (internal/tracking/tracking.go:248-260) only splits on comma/whitespace, so whatever an operator types via PUT /admin/settings/by-key/tracking.allowed_hosts is spliced verbatim into script-src/connect-src/img-src (tracking.go:240-242, policy.go:54). Values such as 'unsafe-inline', *, data:, or https://a.example;default-src * pass straight into the Content-Security-Policy header of every /app page. This contradicts the commit message, the package doc (tracking.go:10), and ADMIN_GUIDE.md 3.6 ('never unsafe-inline' / 'widened by exactly those origins'). The /admin/tracking/violations/allow path validates strictly (tracking.go:313-318) but the ordinary settings write does not, so the documented invariant is unenforced on the path the runtime-settings tab actually uses.",
+        "at": "2026-09-13T23:09:03+09:00"
+      }
+    },
+    "campaign": "tracking-2026-09",
+    "autonomy": "release",
+    "files": 23,
+    "additions": 2704,
+    "deletions": 8,
+    "tests": 4,
+    "title": "feat(tracking): let administrators attach a visitor tracking snippet under a strict CSP"
+  },
+  "stages": {
+    "base": {
+      "state": "pinned",
+      "reason": "master@eee0ed4",
+      "at": "2026-09-13T22:42:06+09:00"
+    },
+    "autonomy": {
+      "state": "release",
+      "reason": "",
+      "at": "2026-09-13T22:42:06+09:00"
+    },
+    "verify": {
+      "state": "passed",
+      "reason": "검증 9개 통과 (auto)",
+      "at": "2026-09-13T23:04:36+09:00"
+    },
+    "pr": {
+      "state": "created",
+      "reason": "https://github.com/hkjang/vibe-coders/pull/17",
+      "at": "2026-09-13T23:04:46+09:00"
+    },
+    "review": {
+      "state": "rejected",
+      "reason": "리뷰 거절: internal/proxy/tracking.go:231-248 handleMomentoProxy builds a fresh *http.Transport (and ReverseProxy) for every /momento/* request. A Transport keeps its keep-alive connection plus readLoop/writeLoop goroutines alive until the peer closes it (IdleConnTimeout is 0 on a custom Transport and CloseIdleConnections is never called), so every tracker.js fetch and every visitor beacon leaks one TCP connection to the collector and ~3 goroutines. Reproduced outside the repo with the identical pattern: 200 proxied requests -> goroutines 4 -> 604 after GC, none reclaimed. Under real visitor traffic this is an unbounded fd/goroutine leak on the success path. Fix: one shared Transport on the Server (or at least DisableKeepAlives/CloseIdleConnections). The proxy integration test (TestMomentoProxyForwardsSameOriginTraffic) cannot catch this because it makes only two requests. / internal/proxy/tracking.go:91 tracking.allowed_hosts is registered with no validator, and SplitHosts (internal/tracking/tracking.go:248-260) only splits on comma/whitespace, so whatever an operator types via PUT /admin/settings/by-key/tracking.allowed_hosts is spliced verbatim into script-src/connect-src/img-src (tracking.go:240-242, policy.go:54). Values such as 'unsafe-inline', *, data:, or https://a.example;default-src * pass straight into the Content-Security-Policy header of every /app page. This contradicts the commit message, the package doc (tracking.go:10), and ADMIN_GUIDE.md 3.6 ('never unsafe-inline' / 'widened by exactly those origins'). The /admin/tracking/violations/allow path validates strictly (tracking.go:313-318) but the ordinary settings write does not, so the documented invariant is unenforced on the path the runtime-settings tab actually uses.",
+      "at": "2026-09-13T23:09:03+09:00"
+    }
+  },
+  "provenance": {
+    "model": "claude-opus-5",
+    "policy_version": "5935779a",
+    "prompts_hash": "82f2440d4b2fef65",
+    "runner_version": "5c1744b4",
+    "base_sha": "eee0ed4d4d94d6e4077bd6b7fc751c3a7a15e59b",
+    "head_sha": "e1852638f767571b27b809c53ac56df7d1cc382b",
+    "pr": "https://github.com/hkjang/vibe-coders/pull/17"
+  },
+  "verification": {
+    "runner": {
+      "source": "auto",
+      "commands": [
+        {
+          "cmd": "go build ./...",
+          "exit": 0,
+          "seconds": 1
+        },
+        {
+          "cmd": "go vet ./...",
+          "exit": 0,
+          "seconds": 0
+        },
+        {
+          "cmd": "go test ./...",
+          "exit": 0,
+          "seconds": 60
+        },
+        {
+          "cmd": "cd web && [ -d node_modules ] || npm ci --no-audit --no-fund",
+          "exit": 0,
+          "seconds": 0
+        },
+        {
+          "cmd": "cd web && npm test --silent",
+          "exit": 0,
+          "seconds": 51
+        },
+        {
+          "cmd": "cd web && [ -d node_modules ] || npm ci --no-audit --no-fund",
+          "exit": 0,
+          "seconds": 0
+        },
+        {
+          "cmd": "cd web && npm run typecheck --silent",
+          "exit": 0,
+          "seconds": 18
+        },
+        {
+          "cmd": "cd web && [ -d node_modules ] || npm ci --no-audit --no-fund",
+          "exit": 0,
+          "seconds": 0
+        },
+        {
+          "cmd": "cd web && npm run build --silent",
+          "exit": 0,
+          "seconds": 19
+        }
+      ]
+    },
+    "runner_gate": {
+      "ok": true,
+      "state": "verified",
+      "reason": "검증 9개 통과 (auto)"
+    },
+    "after_rebase": null,
+    "review": {
+      "verdict": "reject",
+      "reasons": [
+        "internal/proxy/tracking.go:231-248 handleMomentoProxy builds a fresh *http.Transport (and ReverseProxy) for every /momento/* request. A Transport keeps its keep-alive connection plus readLoop/writeLoop goroutines alive until the peer closes it (IdleConnTimeout is 0 on a custom Transport and CloseIdleConnections is never called), so every tracker.js fetch and every visitor beacon leaks one TCP connection to the collector and ~3 goroutines. Reproduced outside the repo with the identical pattern: 200 proxied requests -> goroutines 4 -> 604 after GC, none reclaimed. Under real visitor traffic this is an unbounded fd/goroutine leak on the success path. Fix: one shared Transport on the Server (or at least DisableKeepAlives/CloseIdleConnections). The proxy integration test (TestMomentoProxyForwardsSameOriginTraffic) cannot catch this because it makes only two requests.",
+        "internal/proxy/tracking.go:91 tracking.allowed_hosts is registered with no validator, and SplitHosts (internal/tracking/tracking.go:248-260) only splits on comma/whitespace, so whatever an operator types via PUT /admin/settings/by-key/tracking.allowed_hosts is spliced verbatim into script-src/connect-src/img-src (tracking.go:240-242, policy.go:54). Values such as 'unsafe-inline', *, data:, or https://a.example;default-src * pass straight into the Content-Security-Policy header of every /app page. This contradicts the commit message, the package doc (tracking.go:10), and ADMIN_GUIDE.md 3.6 ('never unsafe-inline' / 'widened by exactly those origins'). The /admin/tracking/violations/allow path validates strictly (tracking.go:313-318) but the ordinary settings write does not, so the documented invariant is unenforced on the path the runtime-settings tab actually uses."
+      ],
+      "notes": [
+        "Tests are genuine: tracking package, appui injection, proxy integration and Vitest tab tests all exercise the new code and would fail on the pre-change code. go test ./internal/proxy ./internal/tracking ./internal/appui and vitest for the tab pass (OpenAPI snapshot included).",
+        "Commit message and ADMIN_GUIDE say 'every console page ships with script-src self', but the legacy /admin page has no Content-Security-Policy header at all and serveTrackedLegacyPage sets none; injection works there anyway, the description just overstates.",
+        "SnippetOrigins adds every http(s) URL found anywhere in a custom snippet (including comments/docs links) to script-src/connect-src/img-src — documented, but wider than 'exactly what the snippet needs'.",
+        "Tracked index.html (serveTrackedIndex) bypasses the gzip path used by serveFile; performance only.",
+        "Momento proxy forwards collector response headers (e.g. Set-Cookie) onto the gateway origin unchanged; minor given the collector is operator-controlled.",
+        "tracking.* settings fall into the 'admin' permission group; tracking.custom_snippet lets any full admin execute arbitrary JS in every user's /app session, comparable to the 'security' group settings.",
+        "ADMIN_GUIDE 3.6 says browsers send report-uri reports without credentials; same-origin report-uri POSTs do carry cookies. Harmless since the handler ignores them.",
+        "Rollback is clean: all settings default off, no migration; leftover tracking.* rows in admin_settings are ignored by older code."
+      ],
+      "risk": "medium"
+    },
+    "ci_gate": null
+  },
+  "release": {
+    "result": null,
+    "assets_sha256": []
+  },
+  "approval": null,
+  "usage": [
+    {
+      "ts": "2026-09-13T23:02:04+09:00",
+      "date": "2026-09-13",
+      "project": "vibe-coders",
+      "phase": "improve",
+      "run_id": "2026-09-13-224154-vibe-coders-improve",
+      "campaign": "tracking-2026-09",
+      "subtype": "success",
+      "duration_ms": 1223311,
+      "num_turns": 107,
+      "cost_usd": 12.079897,
+      "input_tokens": 186,
+      "output_tokens": 82901,
+      "cache_read": 15337946,
+      "cache_create": 232486
+    },
+    {
+      "ts": "2026-09-13T23:09:03+09:00",
+      "date": "2026-09-13",
+      "project": "vibe-coders",
+      "phase": "review",
+      "run_id": "2026-09-13-224154-vibe-coders-improve",
+      "campaign": "tracking-2026-09",
+      "subtype": "success",
+      "duration_ms": 254987,
+      "num_turns": 23,
+      "cost_usd": 1.6943665,
+      "input_tokens": 46,
+      "output_tokens": 13063,
+      "cache_read": 1257865,
+      "cache_create": 73681
+    }
+  ]
+}
