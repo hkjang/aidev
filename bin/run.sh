@@ -322,9 +322,16 @@ approvals(){
     fi
     [[ ",$labels," == *",aidev-approved,"* ]] || continue
     stopped merge "$n" && continue
-    appr_sha=$(jq -r --arg pr "$pr" 'select(.pr==$pr) | .sha' "$STATE/approvals.jsonl" 2>/dev/null | tail -1)
+    appr_sha=$(jq -r --arg pr "$pr" 'select(.pr==$pr) | (.sha // "")' "$STATE/approvals.jsonl" 2>/dev/null | tail -1)
     if [ -z "$appr_sha" ]; then appr_sha=$head; jq -cn --arg ts "$(date -Iseconds)" --arg pr "$pr" --arg sha "$head" --arg pv "$pv" '{ts:$ts,pr:$pr,sha:$sha,policy_version:$pv}' >> "$STATE/approvals.jsonl"; log "$n: 승인 기록 $pr @ ${head:0:7} (policy $pv)"; fi
-    if [ "$appr_sha" != "$head" ]; then (cd "$repo" && gh pr comment "$pr" --body "승인 뒤 커밋이 바뀌었습니다(승인 ${appr_sha:0:7} → 현재 ${head:0:7}). 다시 확인하고 라벨을 다시 달아 주세요." >/dev/null 2>&1; gh api -X DELETE "repos/{owner}/{repo}/issues/${pr##*/}/labels/aidev-approved" >/dev/null 2>&1); log "$n: $pr 승인 커밋 불일치 — 라벨 제거"; continue; fi
+    if [ "$appr_sha" != "$head" ]; then
+      # 라벨을 떼면서 기록도 함께 비운다. 비우지 않으면 tail -1 이 영영 옛 커밋을
+      # 가리켜, 사람이 다시 확인하고 라벨을 다시 달아도 매 스윕마다 같은 이유로
+      # 라벨이 떨어진다 — 한 번 어긋난 PR 은 두 번 다시 승인할 수 없었다 (2026-09-13).
+      (cd "$repo" && gh pr comment "$pr" --body "승인 뒤 커밋이 바뀌었습니다(승인 ${appr_sha:0:7} → 현재 ${head:0:7}). 다시 확인하고 라벨을 다시 달아 주세요." >/dev/null 2>&1; gh api -X DELETE "repos/{owner}/{repo}/issues/${pr##*/}/labels/aidev-approved" >/dev/null 2>&1)
+      jq -cn --arg ts "$(date -Iseconds)" --arg pr "$pr" --arg was "$appr_sha" --arg now "$head" '{ts:$ts,pr:$pr,sha:"",cleared:true,approved_sha:$was,head_sha:$now}' >> "$STATE/approvals.jsonl"
+      log "$n: $pr 승인 커밋 불일치 — 라벨 제거"; continue
+    fi
     new_run "$n" approve; base=$(policy "$n" '.base_branch'); base=${base:-main}; result="approved $pr"; OUTCOME=review-pending; RUN_META="{}"; BASE_SHA=""; HEAD_SHA=$head
     if ci_gate "$head"; then
       if with_retry "pr merge" bash -c "cd '$repo' && gh pr merge '$pr' --merge --delete-branch --match-head-commit '$head'"; then
