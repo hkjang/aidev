@@ -1,0 +1,8 @@
+[
+  {"title":"Silent SSO(OIDC prompt=none) 자동 로그인 + 무한 루프 3중 방지 (auth.oidc.auto_login, 기본 꺼짐)","value":5,"risk":2,"size":"M","status":"done","note":"캠페인 silent-sso-2026-09. 서버 게이팅·state.silent·/login?sso=none, SPA sessionStorage/로그아웃 억제/경로 제외/fail-closed, 관리자 스위치, admin-guide 문서. 커밋 7af0883.","updated":"2026-09-14"},
+  {"title":"OIDC state store 통합 테스트: PutOIDCState/ConsumeOIDCState의 return_to·silent 왕복 검증","value":3,"risk":1,"size":"S","status":"pending","note":"-tags=integration 스위트(PostgreSQL 필요)에 추가. 이번 세션엔 로컬 PostgreSQL이 없어 단위 테스트만 수행.","updated":"2026-09-14"},
+  {"title":"Keycloak RP-initiated logout(end_session_endpoint) 연동 검토","value":3,"risk":3,"size":"M","status":"pending","note":"현재 로그아웃은 Qurio 세션만 지움. 자동 로그인과 함께 쓰면 제공자 세션이 남아 다른 탭에서 다시 로그인될 수 있어 관리자 선택형으로 검토.","updated":"2026-09-14"},
+  {"title":"로컬 로그인 후에도 location.state.from 딥링크로 복귀","value":2,"risk":1,"size":"S","status":"pending","note":"SSO 버튼은 return_to를 넘기지만 로컬 로그인은 항상 /workspace로 이동. safeReturnTo 재사용.","updated":"2026-09-14"},
+  {"title":"콜백의 비조용 제공자 오류(error=...)를 감사 로그에 기록","value":2,"risk":1,"size":"S","status":"pending","note":"현재는 logger.Warn만 남김. auth.oidc.failed 이벤트에 reason=provider_error 추가.","updated":"2026-09-14"},
+  {"title":"미사용 SPA /auth/oidc/callback 페이지 정리 검토","value":1,"risk":2,"size":"S","status":"pending","note":"서버 콜백이 /workspace 또는 return_to로 직접 리다이렉트하므로 SPA 콜백 페이지는 실제 흐름에서 쓰이지 않음. 외부 북마크 호환성 확인 후 판단.","updated":"2026-09-14"}
+]

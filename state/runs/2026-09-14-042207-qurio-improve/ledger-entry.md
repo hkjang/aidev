@@ -1,0 +1,5 @@
+## 2026-09-14
+- 선택: Silent SSO(OIDC prompt=none) 자동 로그인 + 무한 루프 3중 방지 — 캠페인 silent-sso-2026-09 (가치 5 / 위험 2 / 작업량 M)
+- 결과: 성공
+- 요약: `auth.oidc.auto_login` 설정(기본 꺼짐)을 추가하고, 서버는 이 설정이 켜진 경우에만 `prompt=none`을 제공자에 전달하며(꺼져 있으면 조용히 일반 로그인으로 전환) 조용한 시도 여부를 일회용 state 에 기록해 콜백이 `login_required`를 받으면 `/login?sso=none`으로 보낸다(migration 0033: `qurio_oidc_states.silent`, `return_to` 저장). SPA는 `web/src/lib/silentSso.ts`에서 sessionStorage '한 탭 한 번' 표시·로그아웃 억제·주소 표시·저장소 예외 시 fail-closed·콜백/로그인/API/MCP/헬스 경로 제외 규칙을 적용하고 최상위 이동으로 시도하며, 깊은 링크는 `/`로 시작하고 `//`가 아닌 `return_to`로만 복귀한다. 관리자 UI 스위치와 docs/guides/admin-guide.md 설명을 추가했고 `make lint`, `go test ./...`, `vitest run`(27 files/134 tests) 및 임베디드 SPA 재빌드로 검증했다. 커밋 7af0883.
+- 보류 아이디어: OIDC 상태 store 통합 테스트(PutOIDCState/ConsumeOIDCState의 return_to·silent 왕복)를 `-tags=integration` 스위트에 추가 (가치 3 / 위험 1 / S); Keycloak 세션 로그아웃 연동(RP-initiated logout, `end_session_endpoint`) 검토 (가치 3 / 위험 3 / M); 로컬 로그인 후에도 `location.state.from` 딥링크로 복귀하도록 LoginPage 정리 (가치 2 / 위험 1 / S); 콜백에서 `/login?error=oidc`에 제공자 error 코드를 감사 로그에 남기기 (가치 2 / 위험 1 / S); SPA `/auth/oidc/callback` 페이지가 현재 흐름에서 쓰이지 않으므로 정리 여부 검토 (가치 1 / 위험 2 / S)
