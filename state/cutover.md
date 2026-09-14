@@ -17,3 +17,4 @@
 - 보류 아이디어: (1) 운영 빌드 관리자 세션 쿠키 Secure 속성을 ADMIN_COOKIE_SECURE 환경 변수/x-forwarded-proto 로 제어 — 코드 재확인 결과 여전히 secure: NODE_ENV==='production' — 가치 5 / 위험 2 / S. (2) 삭제·상태 전파의 하위 탐색을 ID 접두사(lib/treeUtils.ts:66, app/admin/page.tsx:224) 대신 parentId 기반으로 — 가치 4 / 위험 2 / S. (3) 관리자 콘솔 PUT 실패 표시와 삭제 확인창 중복(ActivityTree.tsx:122 + admin/page.tsx:279) 제거 — 가치 3 / 위험 1 / S. (4) 미사용 lib/s3.ts·amplify.yml·*_bak/_local·reset-visitor 정리 — 가치 2 / 위험 1 / S. (5) 관리자 가이드 2.1 의 쿠키 이름 오기(`cutover_admin` → 실제 `cutover_admin_session`) 수정과 세션 만료(7일)·AUTH_SECRET 설명 보강 — 가치 2 / 위험 1 / S. (6) 만약 나중에 사내 표준으로 OIDC 로그인이 도입되면 그때 silent SSO(prompt=none, 3겹 루프 방지, auto_login 기본 꺼짐)를 함께 붙인다 — 지금은 선행 조건(OIDC) 부재로 보류 — 가치 4 / 위험 3 / L.
 
 - 릴리즈: v1.4.0 (2026-09-13, run 2026-09-13-074631-cutover-approve)
+- 릴리즈: v1.5.0 (2026-09-14, run 2026-09-14-122631-cutover-release)
