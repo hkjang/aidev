@@ -821,3 +821,120 @@ Fast-forward
 evidence: /mnt/c/Users/USER/projects/aidev/state/runs/2026-09-14-115455-jikim-release/evidence.json
 reports: 13 day(s), 3 week(s), 1 month(s), 753 run(s), 867 usage row(s), 42 project page(s), 7 alert(s)
 notify: no new alerts
+[12:06:48] aidev synced: run(2026-09-14): jikim — release-only, released v0.2.13
+[12:06:48] done
+[12:06:56] === visitflow release-only (base=main, run 2026-09-14-120656-visitflow-release)
+Preparing worktree (detached HEAD c6688ec)
+Updating files:  73% (128/173)Updating files:  74% (129/173)Updating files:  75% (130/173)Updating files:  76% (132/173)Updating files:  77% (134/173)Updating files:  78% (135/173)Updating files:  79% (137/173)Updating files:  80% (139/173)Updating files:  81% (141/173)Updating files:  82% (142/173)Updating files:  83% (144/173)Updating files:  84% (146/173)Updating files:  85% (148/173)Updating files:  86% (149/173)Updating files:  87% (151/173)Updating files:  88% (153/173)Updating files:  89% (154/173)Updating files:  90% (156/173)Updating files:  91% (158/173)Updating files:  92% (160/173)Updating files:  93% (161/173)Updating files:  94% (163/173)Updating files:  95% (165/173)Updating files:  96% (167/173)Updating files:  97% (168/173)Updating files:  98% (170/173)Updating files:  99% (172/173)Updating files: 100% (173/173)Updating files: 100% (173/173), done.
+HEAD is now at c6688ec Merge pull request #14 from hkjang/auto/2026-09-14-0041
+[12:12:11] visitflow: release — 18 turns, 5m, $0.84, success
+[12:12:15] visitflow: waiting for CI on 8cb6fa7 (no-ci)
+[12:16:11] visitflow: [release] published — v2.8.0
+From https://github.com/hkjang/visitflow
+ * branch            main       -> FETCH_HEAD
+Updating b892f66..8cb6fa7
+Fast-forward
+ .github/workflows/ci.yml                           |   1 +
+ README.md                                          |  10 +-
+ docs/ADMIN_GUIDE.md                                | 344 ++++++++++++----
+ docs/ADMIN_GUIDE.pdf                               | Bin 0 -> 2503910 bytes
+ docs/API_AND_MCP.md                                |   1 +
+ docs/USER_GUIDE.md                                 | 216 ++++++++--
+ docs/USER_GUIDE.pdf                                | Bin 0 -> 2719727 bytes
+ docs/assets/guide/admin-api.png                    | Bin 0 -> 208767 bytes
+ docs/assets/guide/admin-audit.png                  | Bin 0 -> 249327 bytes
+ docs/assets/guide/admin-dashboard.png              | Bin 0 -> 215310 bytes
+ docs/assets/guide/admin-guides.png                 | Bin 0 -> 205043 bytes
+ docs/assets/guide/admin-notification-settings.png  | Bin 0 -> 239890 bytes
+ docs/assets/guide/admin-operations.png             | Bin 0 -> 204587 bytes
+ docs/assets/guide/admin-resources.png              | Bin 0 -> 199840 bytes
+ docs/assets/guide/admin-settings-general.png       | Bin 0 -> 212731 bytes
+ docs/assets/guide/admin-settings-security.png      | Bin 0 -> 226528 bytes
+ docs/assets/guide/admin-settings-visit.png         | Bin 0 -> 218339 bytes
+ docs/assets/guide/admin-statistics.png             | Bin 0 -> 186181 bytes
+ docs/assets/guide/admin-visits.png                 | Bin 0 -> 224869 bytes
+ docs/assets/guide/approvals-review.png             | Bin 0 -> 162345 bytes
+ docs/assets/guide/approvals.png                    | Bin 0 -> 188437 bytes
+ docs/assets/guide/dashboard.png                    | Bin 0 -> 196104 bytes
+ docs/assets/guide/guides.png                       | Bin 0 -> 198678 bytes
+ docs/assets/guide/kiosk.png                        | Bin 0 -> 60222 bytes
+ docs/assets/guide/lobby-roster.png                 | Bin 0 -> 186339 bytes
+ docs/assets/guide/lobby-scan-valid.png             | Bin 0 -> 229495 bytes
+ docs/assets/guide/lobby-walk-in.png                | Bin 0 -> 175042 bytes
+ docs/assets/guide/lobby.png                        | Bin 0 -> 203317 bytes
+ docs/assets/guide/login.png                        | Bin 0 -> 425109 bytes
+ docs/assets/guide/mobile-pass.png                  | Bin 0 -> 49871 bytes
+ docs/assets/guide/profile-keys.png                 | Bin 0 -> 202337 bytes
+ docs/assets/guide/self-registration.png            | Bin 0 -> 81379 bytes
+ docs/assets/guide/templates.png                    | Bin 0 -> 203012 bytes
+ docs/assets/guide/visits-detail.png                | Bin 0 -> 163964 bytes
+ docs/assets/guide/visits-new.png                   | Bin 0 -> 245812 bytes
+ docs/assets/guide/visits.png                       | Bin 0 -> 213774 bytes
+ docs/index.html                                    |   2 +-
+ internal/app/auth.go                               |  70 +++-
+ internal/app/openapi.go                            |   3 +
+ internal/app/server.go                             |  37 +-
+ internal/app/settings.go                           |  27 +-
+ internal/app/silent_sso_test.go                    | 168 ++++++++
+ internal/app/tracking.go                           | 392 ++++++++++++++++++
+ internal/app/tracking_test.go                      | 440 ++++++++++++++++++++
+ internal/app/tracking_violations.go                | 269 ++++++++++++
+ .../database/migrations/0013_oidc_auto_login.sql   |  10 +
+ internal/database/migrations/0014_tracking.sql     |  19 +
+ web/package-lock.json                              | 456 ++++++++++++++++++++-
+ web/package.json                                   |   9 +-
+ web/playwright.screenshots.config.ts               |  26 ++
+ web/screenshots/guide.spec.ts                      | 271 ++++++++++++
+ web/src/App.tsx                                    |  19 +-
+ web/src/auth.tsx                                   |   6 +
+ web/src/pages/SettingsPage.tsx                     |  27 +-
+ web/src/silentSso.test.ts                          | 110 +++++
+ web/src/silentSso.ts                               | 117 ++++++
+ web/src/types.ts                                   |   2 +
+ web/vite.config.ts                                 |   6 +
+ 58 files changed, 2920 insertions(+), 138 deletions(-)
+ create mode 100644 docs/ADMIN_GUIDE.pdf
+ create mode 100644 docs/USER_GUIDE.pdf
+ create mode 100644 docs/assets/guide/admin-api.png
+ create mode 100644 docs/assets/guide/admin-audit.png
+ create mode 100644 docs/assets/guide/admin-dashboard.png
+ create mode 100644 docs/assets/guide/admin-guides.png
+ create mode 100644 docs/assets/guide/admin-notification-settings.png
+ create mode 100644 docs/assets/guide/admin-operations.png
+ create mode 100644 docs/assets/guide/admin-resources.png
+ create mode 100644 docs/assets/guide/admin-settings-general.png
+ create mode 100644 docs/assets/guide/admin-settings-security.png
+ create mode 100644 docs/assets/guide/admin-settings-visit.png
+ create mode 100644 docs/assets/guide/admin-statistics.png
+ create mode 100644 docs/assets/guide/admin-visits.png
+ create mode 100644 docs/assets/guide/approvals-review.png
+ create mode 100644 docs/assets/guide/approvals.png
+ create mode 100644 docs/assets/guide/dashboard.png
+ create mode 100644 docs/assets/guide/guides.png
+ create mode 100644 docs/assets/guide/kiosk.png
+ create mode 100644 docs/assets/guide/lobby-roster.png
+ create mode 100644 docs/assets/guide/lobby-scan-valid.png
+ create mode 100644 docs/assets/guide/lobby-walk-in.png
+ create mode 100644 docs/assets/guide/lobby.png
+ create mode 100644 docs/assets/guide/login.png
+ create mode 100644 docs/assets/guide/mobile-pass.png
+ create mode 100644 docs/assets/guide/profile-keys.png
+ create mode 100644 docs/assets/guide/self-registration.png
+ create mode 100644 docs/assets/guide/templates.png
+ create mode 100644 docs/assets/guide/visits-detail.png
+ create mode 100644 docs/assets/guide/visits-new.png
+ create mode 100644 docs/assets/guide/visits.png
+ create mode 100644 internal/app/silent_sso_test.go
+ create mode 100644 internal/app/tracking.go
+ create mode 100644 internal/app/tracking_test.go
+ create mode 100644 internal/app/tracking_violations.go
+ create mode 100644 internal/database/migrations/0013_oidc_auto_login.sql
+ create mode 100644 internal/database/migrations/0014_tracking.sql
+ create mode 100644 web/playwright.screenshots.config.ts
+ create mode 100644 web/screenshots/guide.spec.ts
+ create mode 100644 web/src/silentSso.test.ts
+ create mode 100644 web/src/silentSso.ts
+[12:17:46] visitflow: [assets] verified — v2.8.0 자산 1개 (이전 v2.7.4: 1)
+evidence: /mnt/c/Users/USER/projects/aidev/state/runs/2026-09-14-120656-visitflow-release/evidence.json
+reports: 13 day(s), 3 week(s), 1 month(s), 754 run(s), 868 usage row(s), 42 project page(s), 7 alert(s)
+notify: no new alerts
