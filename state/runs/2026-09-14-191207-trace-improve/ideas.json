@@ -1,0 +1,8 @@
+[
+  {"title":"Silent SSO 자동 로그인 (OIDC prompt=none, oidc.autoLogin 기본 꺼짐)","value":5,"risk":2,"size":"M","status":"done","note":"캠페인 silent-sso-2026-09. 서버 prompt=none 게이트+oauth_states.silent, 콜백 /login?sso=none, 프런트 silentSso.ts 3겹 루프 방지, ADMIN_GUIDE.md 추가. 커밋 8b8159b.","updated":"2026-09-14"},
+  {"title":"OIDC 시작 엔드포인트 IP 레이트리밋","value":3,"risk":2,"size":"S","status":"pending","note":"releasedock은 oidc-ip 키로 분당 120회 제한. Trace에는 레이트리미터가 없어 간단한 메모리 토큰버킷 도입 필요.","updated":"2026-09-14"},
+  {"title":"LoginPage에서 ?error= / ?sso=none 쿼리를 읽어 안내 문구 표시","value":2,"risk":1,"size":"S","status":"pending","note":"현재 LoginPage는 콜백이 붙인 error 코드를 무시함. sso=none은 안내 없이 조용히 두고 error 코드만 한국어로 매핑하면 충분.","updated":"2026-09-14"},
+  {"title":"OIDC 핸들러 수준 테스트를 위한 Store 인터페이스 분리","value":3,"risk":3,"size":"M","status":"pending","note":"httpapi.Server가 *store.Store 구체 타입에 의존해 start/callback을 DB 없이 테스트 불가. 지금은 순수 헬퍼만 테스트함.","updated":"2026-09-14"},
+  {"title":"openapi.yaml·docs/api.md에 public config의 oidc.autoLogin과 ?prompt=none 명세 추가","value":2,"risk":1,"size":"S","status":"pending","note":"openapi.yaml에는 OIDC 설정 스키마 자체가 없음. 문서 정합성 작업.","updated":"2026-09-14"},
+  {"title":"폐쇄망용 평문 HTTP issuer 허용 옵션(AllowInsecureEndpoints, 사설 호스트 한정)","value":3,"risk":3,"size":"M","status":"pending","note":"표준 '폐쇄망에서' 절. validateHTTPURL이 http를 이미 허용하므로 현재는 오히려 공개 호스트 평문도 막지 않음 — 정책을 명시적으로 바꾸는 작업이라 별도 세션 권장.","updated":"2026-09-14"}
+]
