@@ -111,6 +111,7 @@ Docker 없이 로컬에서 볼 때는 README의 [로컬 개발 환경 실행](..
 | `NODE_ENV` | `production` (Dockerfile) | 아니오 | `production`이면 관리자 세션 쿠키에 `Secure`가 붙습니다(2.4절). |
 | `NEXT_TELEMETRY_DISABLED` | `1` (Dockerfile) | 아니오 | Next.js 원격 측정 비활성화. 폐쇄망에서는 켜 두십시오. |
 | `MY_AWS_REGION`, `MY_AWS_ACCESS_KEY_ID`, `MY_AWS_SECRET_ACCESS_KEY`, `S3_BUCKET_NAME` | 없음 | 아니오 | `lib/s3.ts`에서만 참조하며 **현재 어떤 라우트도 사용하지 않습니다.** 설정할 필요가 없습니다. |
+| `MAIL_CONFIG_FILE`, `MAIL_DELIVERIES_FILE` | `ACTIVITY_DATA_FILE`과 같은 폴더의 `mail.json`, `mail-deliveries.json` | 아니오 | 메일 알림 설정과 발송 기록 파일 경로(9장). |
 | `PLAYWRIGHT_CHROMIUM_PATH` | 없음 | 아니오 | 개발용. e2e·화면 캡처 때 쓸 Chrome 실행 파일 경로. |
 | `GUIDE_SHOT_ADMIN_PASSWORD`, `GUIDE_SHOT_USER_PASSWORD`, `GUIDE_SHOT_AUTH_SECRET` | 없음 | 아니오 | 개발용. 가이드 화면 캡처 스크립트(`npm run screenshots:guide`)가 자체 서버를 띄울 때 쓰는 일회용 값. 앞의 둘이 없으면 스크립트가 시작하지 않습니다. |
 
@@ -290,6 +291,9 @@ curl -s -o /dev/null -w '%{http_code}\n' http://localhost:3000/api/activities
 | `POST` | `/api/auth/login` | `{"pw":"...","role":"admin"|"user"}`. 관리자면 세션 쿠키 발급. |
 | `GET` | `/api/auth/session` | 관리자 세션 유효 여부(`200`/`401`). |
 | `DELETE` | `/api/auth/session` | 관리자 세션 쿠키 삭제(로그아웃). 화면에서는 부르지 않습니다. |
+| `GET`/`PUT` 🔒 | `/api/mail` | 메일 알림 설정 조회·저장(9장). 비밀번호는 돌려주지 않습니다. |
+| `POST` 🔒 | `/api/mail/test` | 시험 발송. |
+| `GET` 🔒 | `/api/mail/deliveries` | 발송 기록. |
 
 ### 5.7 가이드 화면 다시 찍기 (개발자용)
 
@@ -429,3 +433,71 @@ Momento 는 사내 자체 호스팅 수집기라 데이터가 밖으로 나가�
 - 스니펫을 고친 뒤에는 휴지통 아이콘으로 목록을 비우고 상황판을 다시 열어 아직 막히는 것이 있는지 확인합니다.
 - 브라우저 확장이나 `data:` URL 처럼 http 출처가 아닌 것은 허용할 수도 없고 쓸모도 없어 기록하지 않습니다.
 
+
+---
+
+## 9. 메일 알림 설정 (SMTP 릴레이)
+
+관리자 화면의 **메일 알림 (SMTP 릴레이)** 카드에서 상황판의 변화를 사내 SMTP 릴레이로 보낼 수 있습니다. **기본값은 꺼짐**이며, 새로 설치한 서버는 켜기 전까지 아무것도 달라지지 않습니다(설정 파일도 만들지 않습니다). 설정은 서버의 `data/mail.json`에, 발송 기록은 `data/mail-deliveries.json`에 저장됩니다. 사내 메일 표준(MAIL-STANDARD)을 따르며 설정 키 이름은 다른 사내 서비스(kanpic 등)와 같습니다.
+
+### 9.1 어떤 일이 메일로 가는가
+
+기준은 하나입니다 — **이 메일이 오지 않으면 누군가 손해를 보거나 화면을 계속 새로고침한다.** 제목·시간 편집, 항목 추가·삭제·이동, `activity.json` 업로드처럼 단순히 "무언가 바뀐" 것은 보내지 않습니다.
+
+| 이벤트 | 스위치 | 언제 |
+|---|---|---|
+| `activity.delayed` | `mail.notify_activity_delayed` | 어떤 단계든 작업이 **지연**으로 바뀔 때. 실패로 멈춘 것이므로 통제관과 후속 작업 팀이 바로 알아야 합니다. |
+| `activity.delay_cleared` | `mail.notify_delay_cleared` | 지연이던 작업이 다시 **진행** 또는 **완료**가 될 때. 지연 메일을 받고 기다리던 사람이 화면을 그만 새로고침하게 합니다(대기로 되돌린 것은 취소로 보고 보내지 않습니다). |
+| `task.completed` | `mail.notify_task_completed` | **최상위 작업**(Task)이 완료될 때. 다음 Task 를 맡은 팀의 차례가 됐다는 신호입니다. 하위 항목 완료는 보내지 않습니다. |
+| `drill.completed` | `mail.notify_drill_completed` | 모든 최상위 작업이 완료될 때. 서비스 개시 결정을 기다리는 모두에게 갑니다. |
+| `test` | 없음 | 카드의 **시험 메일 보내기**. |
+
+관리자 콘솔의 한 번의 조작은 연동 규칙(4.3절) 때문에 여러 항목을 한꺼번에 바꿉니다. 그렇게 생긴 변화는 **한 통으로 묶여** 나가며, 가장 급한 것(지연 > 훈련 완료 > 작업 완료 > 지연 해소)이 제목이 되고 나머지는 `외 n건`으로 접힙니다. 메일 본문에는 바뀐 항목의 제목·시간·상태만 들어갑니다.
+
+발송은 **응답이 나간 뒤 배경에서** 합니다. 릴레이가 느리거나 죽어 있어도 상태 클릭은 평소처럼 즉시 끝나고, 실패는 발송 기록에만 남습니다. 연결이 거부되면 2초 뒤 한 번 더 시도합니다.
+
+### 9.2 설정 항목
+
+| 키 | 기본값 | 뜻 |
+|---|---|---|
+| `mail.enabled` | `false` | 꺼짐이 기본. 관리자가 켭니다. 켜려면 `smtp_host` 와 `from_address` 가 있어야 저장됩니다. |
+| `mail.smtp_host` | — | 사내 릴레이 주소. 폐쇄망에서는 `postra` 를 가리키면 알림이 밖으로 나가지 않습니다. |
+| `mail.smtp_port` | `25` | 사내 릴레이는 대개 25. `465` 에 `auto` 면 처음부터 TLS 로 붙습니다. |
+| `mail.security` | `auto` | `auto` · `none` · `starttls` · `tls`. `auto` 는 서버가 STARTTLS 를 알리면 올리고 아니면 평문으로 보냅니다. |
+| `mail.skip_tls_verify` | `false` | 사내 인증서가 사설일 때만 켭니다. |
+| `mail.username` · `mail.password` | 빈 값 | 인증 없는 릴레이가 흔하므로 **선택 사항**. 사용자 이름이 비어 있으면 서버가 AUTH 를 알려도 인증하지 않습니다. PLAIN · LOGIN 을 지원합니다. |
+| `mail.from_address` · `mail.from_name` | — · `Cutover 상황판` | 보내는 사람. EHLO 이름은 보내는 주소의 도메인을 씁니다. |
+| `mail.base_url` | — | 메일 속 **바로 열기** 링크가 가리킬 이 앱의 주소(예: `http://cutover.corp.example:3000`). 비우면 링크를 넣지 않습니다. |
+| `mail.timeout_seconds` | `10` | 연결·응답 제한 시간(1~120). |
+| `mail.recipients` | — | 받는 사람 명부. 쉼표·줄바꿈으로 구분, 최대 50명. 이 앱에는 개인 계정이 없으므로(관리자·사용자 공용 비밀번호뿐) 계정에서 주소를 찾는 대신 **상황실 배포 목록**을 그대로 적습니다. 관리자 콘솔을 조작하는 사람 자신의 주소는 넣지 않는 편이 조용합니다. |
+| `mail.notify_activity_delayed` 등 | `true` | 9.1절의 이벤트별 스위치. |
+
+파일에는 `mail.` 접두사 없이 같은 이름으로 저장됩니다(`data/mail.json` 의 `smtp_host` 등). 파일 위치는 `MAIL_CONFIG_FILE` · `MAIL_DELIVERIES_FILE` 환경 변수로 바꿀 수 있고, 지정하지 않으면 `ACTIVITY_DATA_FILE` 과 같은 디렉토리입니다. Docker 에서는 `/app/data` 볼륨에 함께 보관됩니다.
+
+> [!IMPORTANT]
+> **SMTP 비밀번호는 되읽히지 않습니다.** 설정 API(`GET /api/mail`)는 `password` 를 돌려주지 않고 `password_set` 으로 "설정됨" 여부만 알립니다. 화면에서도 **설정됨**만 보이며, 바꿀 때만 새 값을 입력하고 지울 때는 **지우기**를 체크합니다. 로그와 발송 기록, 오류 문장에도 비밀번호는 들어가지 않습니다. 파일 `data/mail.json` 에는 평문으로 저장되므로 볼륨 권한(`nextjs`, uid 1001 전용)을 유지하십시오.
+
+### 9.3 시험 발송과 발송 기록
+
+릴레이 설정은 한 번에 맞는 일이 드뭅니다. 저장한 뒤 카드 아래 **시험 발송**에 자기 주소를 넣고 **시험 메일 보내기**를 누르면 저장된 설정으로 실제 한 통을 보내고 결과를 그 자리에서 보여 줍니다(이것만은 요청이 발송을 기다립니다). 실패하면 릴레이가 돌려준 이유(`RCPT TO 실패: 550 …`, `SMTP 연결 실패 (…): ECONNREFUSED` 등)가 그대로 표시됩니다. 저장하지 않은 변경은 시험에 쓰이지 않으므로 단추가 꺼져 있으면 먼저 저장하십시오.
+
+**최근 발송 기록**에는 시도마다 — 언제, 어떤 이벤트로, 누구에게, 어떤 제목으로, 성공했는지(`성공` / `실패` / `대기`), 몇 번 시도했는지, 실패 이유 — 가 남습니다. 성공도 남기므로 "메일이 안 왔다"는 문의에 답할 수 있습니다. **본문은 기록하지 않습니다.** 기록은 최근 500건을 보관하며 서버를 재시작해도 남습니다.
+
+같은 것을 API 로도 다룰 수 있습니다(관리자 세션 필요).
+
+| 메서드 | 경로 | 설명 |
+|---|---|---|
+| `GET` | `/api/mail` | 현재 설정(`password` 없음, `password_set` 만) |
+| `PUT` | `/api/mail` | 설정 저장. `password` 가 없거나 빈 문자열이면 기존 값 유지, `password_clear: true` 면 삭제. 검증 실패 시 400 과 `details` |
+| `POST` | `/api/mail/test` | `{"recipient":"me@corp.example"}` 로 시험 발송. 성공 200, 꺼져 있거나 설정 부족 409, 릴레이 오류 502 |
+| `GET` | `/api/mail/deliveries?limit=50&status=failed` | 발송 기록(최신순, 최대 200건)과 상태별 집계 |
+
+### 9.4 자주 겪는 문제
+
+| 증상 | 조치 |
+|---|---|
+| 기록에 `릴레이 주소(mail.smtp_host)가 비어 있습니다.` / `받는 사람(mail.recipients)이 비어 있습니다.` | 켜져 있지만 설정이 모자란 상태입니다. 해당 값을 채우고 저장합니다. |
+| `SMTP 연결 실패 (…): connect ECONNREFUSED` 또는 `연결 시간 초과` | 앱 서버에서 릴레이 포트가 열려 있는지 확인합니다(`docker exec cutover-app nc -zv <호스트> 25`). 방화벽 규칙은 앱 서버 → 릴레이 방향입니다. |
+| `서버가 인증을 지원하지 않습니다.` | 사내 릴레이는 대개 인증이 없습니다. 사용자 이름을 비우고 저장합니다. |
+| `RCPT TO 실패: 550` / `MAIL FROM 실패` | 릴레이가 그 주소를 받지 않습니다. 보내는 주소가 릴레이가 허용하는 도메인인지, 받는 주소가 맞는지 확인합니다. |
+| 메일이 너무 많이 온다 | 9.1절의 이벤트 스위치를 종류별로 끕니다. 특히 `지연 해소`는 지연이 잦은 훈련에서 절반을 차지합니다. |
