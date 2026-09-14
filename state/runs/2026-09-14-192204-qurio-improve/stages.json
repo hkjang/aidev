@@ -1,0 +1,27 @@
+{
+  "base": {
+    "state": "pinned",
+    "reason": "main@df104c3",
+    "at": "2026-09-14T19:22:08+09:00"
+  },
+  "autonomy": {
+    "state": "release",
+    "reason": "",
+    "at": "2026-09-14T19:22:08+09:00"
+  },
+  "verify": {
+    "state": "passed",
+    "reason": "검증 9개 통과 (auto)",
+    "at": "2026-09-14T19:39:07+09:00"
+  },
+  "pr": {
+    "state": "created",
+    "reason": "https://github.com/hkjang/qurio/pull/12",
+    "at": "2026-09-14T19:39:14+09:00"
+  },
+  "review": {
+    "state": "rejected",
+    "reason": "리뷰 거절: internal/httpapi/tracking_handlers.go:451-458 The unauthenticated /momento/* proxy forwards the client path verbatim (only the /momento prefix is trimmed, no path.Clean / '..' rejection). Verified empirically: GET /momento/../admin/secret with momento_url=https://host/base/ is sent upstream as /base/../admin/secret, which any normal upstream normalises to /admin/secret. The docs (admin-guide.md 'forwards /momento/* to <momento_url>/*') and the comment promise base-path confinement, but an anonymous user can reach any path on the collector host. TestMomentoProxyForwardsWithoutCredentials only checks the happy path /base/tracker.js. / internal/httpapi/tracking_handlers.go:389-399 handleAllowTrackingHost does a read-modify-write with s.trackingConfig(), which deliberately swallows SettingsMap errors and returns Config{} (AllowedHosts=\"\"). On a transient read failure the handler then persists only the new origin, silently wiping the existing tracking.allowed_hosts list; the 'no tracking on outage' fallback is right for page rendering but wrong for a write path. Two concurrent allow clicks also lose one update (no version check). / internal/httpapi/settings_handlers.go:137 tracking.allowed_hosts is validated only by stringLimit(4096); every whitespace/comma token is spliced verbatim into script-src/connect-src/img-src (tracking.go:250-254). A value such as 'unsafe-inline' or * is accepted and shipped in the header, contradicting the commit message, the UI copy and admin-guide.md ('never widened with unsafe-inline'). handleAllowTrackingHost validates origins but the ordinary PUT /admin/settings path does not.",
+    "at": "2026-09-14T19:43:36+09:00"
+  }
+}
