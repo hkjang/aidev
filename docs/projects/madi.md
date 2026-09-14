@@ -1,7 +1,7 @@
 ---
 title: "madi — 자율 개선 이력"
-description: "madi: 자율 개선 회차 2회, 릴리즈 0건. 최근 릴리즈 없음."
-last_modified_at: 2026-09-14 16:17:54 +0900
+description: "madi: 자율 개선 회차 3회, 릴리즈 0건. 최근 릴리즈 v0.3.0."
+last_modified_at: 2026-09-14 16:49:28 +0900
 ---
 {% raw %}
 <script type="application/ld+json">
@@ -11,37 +11,39 @@ last_modified_at: 2026-09-14 16:17:54 +0900
  "name": "madi",
  "codeRepository": "https://github.com/hkjang/madi",
  "url": "https://hkjang.github.io/aidev/projects/madi/",
- "description": "madi: 자율 개선 회차 2회, 릴리즈 0건. 최근 릴리즈 없음.",
+ "description": "madi: 자율 개선 회차 3회, 릴리즈 0건. 최근 릴리즈 v0.3.0.",
  "inLanguage": "ko",
  "maintainer": {
   "@type": "Person",
   "name": "hkjang",
   "url": "https://github.com/hkjang"
  },
- "dateModified": "2026-09-14T16:17:54+09:00"
+ "dateModified": "2026-09-14T16:49:28+09:00",
+ "version": "0.3.0"
 }
 </script>
 
 # madi
 
-<p class="tldr"><strong>요약.</strong> madi: 자율 개선 회차 2회, 릴리즈 0건. 최근 릴리즈 없음. <span class="pill pill-merged" title="14일: 릴리즈 0, 실패 0, 경고 2, 회귀 0">건강 C</span> <span class="meta">14일: 릴리즈 0, 실패 0, 경고 2, 회귀 0</span></p>
+<p class="tldr"><strong>요약.</strong> madi: 자율 개선 회차 3회, 릴리즈 0건. 최근 릴리즈 v0.3.0. <span class="pill pill-merged" title="14일: 릴리즈 0, 실패 0, 경고 2, 회귀 0">건강 C</span> <span class="meta">14일: 릴리즈 0, 실패 0, 경고 2, 회귀 0</span></p>
 
-<ul class="stats"><li><b>2</b><span>회차</span></li><li><b>1</b><span>프로젝트</span></li><li><b>0</b><span>배포 준비 완료</span></li><li><b>0</b><span>릴리즈 진행 중</span></li><li><b>0</b><span>병합 완료</span></li><li><b>2</b><span>검토 대기</span></li><li><b>0</b><span>검증 실패</span></li><li><b>0</b><span>변경 없음</span></li><li><b>0</b><span>실행 오류</span></li><li><b>$12.05</b><span>비용</span></li><li><b>25분</b><span>에이전트 시간</span></li></ul>
+<ul class="stats"><li><b>3</b><span>회차</span></li><li><b>1</b><span>프로젝트</span></li><li><b>0</b><span>배포 준비 완료</span></li><li><b>1</b><span>릴리즈 진행 중</span></li><li><b>0</b><span>병합 완료</span></li><li><b>2</b><span>검토 대기</span></li><li><b>0</b><span>검증 실패</span></li><li><b>0</b><span>변경 없음</span></li><li><b>0</b><span>실행 오류</span></li><li><b>$15.63</b><span>비용</span></li><li><b>35분</b><span>에이전트 시간</span></li></ul>
 
 ## 현황
 
 <dl class="kv">
 <dt>저장소</dt><dd><a href="https://github.com/hkjang/madi">https://github.com/hkjang/madi</a></dd>
-<dt>마지막 회차</dt><dd>2026-09-14 10:19 KST — <span class="pill pill-other">• 기타</span> <strong>guarded files</strong>, PR open <a href="https://github.com/hkjang/madi/pull/2">PR #2</a></dd>
+<dt>마지막 회차</dt><dd>2026-09-14 16:49 KST — <span class="pill pill-other">• 기타</span> release-only, release tag held (timeout)</dd>
+<dt>최근 릴리즈</dt><dd><a href="https://github.com/hkjang/madi/releases/tag/v0.3.0">v0.3.0</a> — released <a href="https://github.com/hkjang/madi/releases">전체 릴리즈 →</a></dd>
 </dl>
 
 ## 회차 이력
 
-<div class="table-wrap"><table class="rt"><thead><tr><th>일시</th><th class="primary">프로젝트</th><th>결과</th></tr></thead><tbody><tr data-status="other"><td data-label="일시">2026-09-14 10:19</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/madi/">madi</a></td><td data-label="결과"><span class="pill pill-merged" title="outcome=review-pending">검토 대기</span> <strong>guarded files</strong>, PR open <a href="https://github.com/hkjang/madi/pull/2">PR #2</a><div class="meta">13파일 <span style="color:var(--good)">+1406</span>/<span style="color:var(--bad)">−6</span> · 테스트 4 — feat: add admin-configured visitor tracking snippet with nonce CSP</div></td></tr><tr data-status="other"><td data-label="일시">2026-09-14 02:20</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/madi/">madi</a></td><td data-label="결과"><span class="pill pill-merged" title="outcome=review-pending">검토 대기</span> <strong>guarded files</strong>, PR open <a href="https://github.com/hkjang/madi/pull/1">PR #1</a><div class="meta">13파일 <span style="color:var(--good)">+463</span>/<span style="color:var(--bad)">−16</span> · 테스트 2 — feat: add silent SSO (OIDC prompt=none) with opt-in auto_login</div></td></tr></tbody></table></div>
+<div class="table-wrap"><table class="rt"><thead><tr><th>일시</th><th class="primary">프로젝트</th><th>결과</th></tr></thead><tbody><tr data-status="other"><td data-label="일시">2026-09-14 16:49</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/madi/">madi</a></td><td data-label="결과"><span class="pill pill-merged" title="outcome=releasing">릴리즈 진행 중</span> release-only, release tag held (timeout)</td></tr><tr data-status="other"><td data-label="일시">2026-09-14 10:19</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/madi/">madi</a></td><td data-label="결과"><span class="pill pill-merged" title="outcome=review-pending">검토 대기</span> <strong>guarded files</strong>, PR open <a href="https://github.com/hkjang/madi/pull/2">PR #2</a><div class="meta">13파일 <span style="color:var(--good)">+1406</span>/<span style="color:var(--bad)">−6</span> · 테스트 4 — feat: add admin-configured visitor tracking snippet with nonce CSP</div></td></tr><tr data-status="other"><td data-label="일시">2026-09-14 02:20</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/madi/">madi</a></td><td data-label="결과"><span class="pill pill-merged" title="outcome=review-pending">검토 대기</span> <strong>guarded files</strong>, PR open <a href="https://github.com/hkjang/madi/pull/1">PR #1</a><div class="meta">13파일 <span style="color:var(--good)">+463</span>/<span style="color:var(--bad)">−16</span> · 테스트 2 — feat: add silent SSO (OIDC prompt=none) with opt-in auto_login</div></td></tr></tbody></table></div>
 
 ## 비용·사용량
 
-<div class="table-wrap"><table class="rt"><caption class="meta">최근 30세션</caption><thead><tr><th>시각</th><th class="primary">프로젝트</th><th>단계</th><th class="num">시간</th><th class="num">턴</th><th class="num">비용</th><th class="num">토큰 입력/출력</th><th>종료</th></tr></thead><tbody><tr data-status="other"><td data-label="시각">10:19</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/madi/">madi</a></td><td data-label="단계">개선</td><td data-label="시간" class="num">17분</td><td data-label="턴" class="num">106</td><td data-label="비용" class="num">$8.27</td><td data-label="토큰 입력/출력" class="num">9.7M / 64K</td><td data-label="종료">success</td></tr><tr data-status="other"><td data-label="시각">02:20</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/madi/">madi</a></td><td data-label="단계">개선</td><td data-label="시간" class="num">8분</td><td data-label="턴" class="num">59</td><td data-label="비용" class="num">$3.79</td><td data-label="토큰 입력/출력" class="num">3.8M / 30K</td><td data-label="종료">success</td></tr></tbody></table></div>
+<div class="table-wrap"><table class="rt"><caption class="meta">최근 30세션</caption><thead><tr><th>시각</th><th class="primary">프로젝트</th><th>단계</th><th class="num">시간</th><th class="num">턴</th><th class="num">비용</th><th class="num">토큰 입력/출력</th><th>종료</th></tr></thead><tbody><tr data-status="other"><td data-label="시각">16:30</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/madi/">madi</a></td><td data-label="단계">릴리즈</td><td data-label="시간" class="num">10분</td><td data-label="턴" class="num">53</td><td data-label="비용" class="num">$3.57</td><td data-label="토큰 입력/출력" class="num">4.2M / 22K</td><td data-label="종료">success</td></tr><tr data-status="other"><td data-label="시각">10:19</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/madi/">madi</a></td><td data-label="단계">개선</td><td data-label="시간" class="num">17분</td><td data-label="턴" class="num">106</td><td data-label="비용" class="num">$8.27</td><td data-label="토큰 입력/출력" class="num">9.7M / 64K</td><td data-label="종료">success</td></tr><tr data-status="other"><td data-label="시각">02:20</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/madi/">madi</a></td><td data-label="단계">개선</td><td data-label="시간" class="num">8분</td><td data-label="턴" class="num">59</td><td data-label="비용" class="num">$3.79</td><td data-label="토큰 입력/출력" class="num">3.8M / 30K</td><td data-label="종료">success</td></tr></tbody></table></div>
 
 ## 아이디어 백로그 — 대기 7 / 전체 8
 
