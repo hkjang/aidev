@@ -1,6 +1,6 @@
 # AppStore 관리자 가이드
 
-대상 버전: **v2.6.1** · 실린 화면은 모두 이 버전을 실제로 띄워 찍은 것입니다.
+대상 버전: **v2.7.0** · 실린 화면은 모두 이 버전을 실제로 띄워 찍은 것입니다.
 
 화면을 쓰는 사람을 위한 설명은 [사용자 가이드](USER_GUIDE.md)에 있습니다. 이 문서는 그 화면을 띄워 놓고 지키는 사람을 위한 것입니다.
 
@@ -34,7 +34,7 @@ AppStore는 컨테이너 하나로 동작합니다. React SPA, REST API, OIDC �
 
 ## 2. 설치
 
-릴리스 자산 하나(`appstore-vX.Y.Z.tar.gz`)로 폐쇄망까지 반입할 수 있습니다. 아래는 v2.6.1 기준입니다.
+릴리스 자산 하나(`appstore-vX.Y.Z.tar.gz`)로 폐쇄망까지 반입할 수 있습니다. 아래는 v2.7.0 기준입니다.
 
 ### 2.1. 선행 조건
 
@@ -52,10 +52,10 @@ PostgreSQL 이미지는 릴리스에 포함되지 않습니다. 먼저 준비하
 ### 2.2. 이미지 반입과 검증
 
 ```bash
-sha256sum appstore-v2.6.1.tar.gz          # 릴리스 노트의 SHA-256과 대조
-gzip -t appstore-v2.6.1.tar.gz
-gzip -dc appstore-v2.6.1.tar.gz | docker load
-docker image inspect appstore:v2.6.1 \
+sha256sum appstore-v2.7.0.tar.gz          # 릴리스 노트의 SHA-256과 대조
+gzip -t appstore-v2.7.0.tar.gz
+gzip -dc appstore-v2.7.0.tar.gz | docker load
+docker image inspect appstore:v2.7.0 \
   --format '{{.RepoTags}} user={{.Config.User}} version={{index .Config.Labels "org.opencontainers.image.version"}}'
 ```
 
@@ -65,10 +65,10 @@ docker image inspect appstore:v2.6.1 \
 
 ```bash
 docker build \
-  --build-arg VERSION=v2.6.1 \
+  --build-arg VERSION=v2.7.0 \
   --build-arg COMMIT="$(git rev-parse HEAD)" \
   --build-arg BUILD_DATE="$(date -u +%Y-%m-%dT%H:%M:%SZ)" \
-  -t appstore:v2.6.1 .
+  -t appstore:v2.7.0 .
 ```
 
 ### 2.3. 환경 파일 준비
@@ -102,13 +102,13 @@ docker run -d \
   --security-opt no-new-privileges:true \
   --env-file ./appstore.env \
   -p 127.0.0.1:8080:8080 \
-  appstore:v2.6.1
+  appstore:v2.7.0
 ```
 
 Docker Compose (저장소의 `docker-compose.yml`):
 
 ```bash
-APPSTORE_VERSION=v2.6.1 docker compose up -d --no-build
+APPSTORE_VERSION=v2.7.0 docker compose up -d --no-build
 docker compose ps
 docker compose logs --tail 100 appstore
 ```
@@ -198,6 +198,7 @@ AppStore 쪽 입력:
 | 칸 | 초기값 | 설명 |
 | --- | --- | --- |
 | OIDC 활성화 | 꺼짐 | 연결 테스트가 성공한 뒤에 켭니다 |
+| 자동 로그인 (Silent SSO) | 꺼짐 | Keycloak에 이미 로그인한 사람을 로그인 화면 없이 바로 들여보냅니다. 아래 *자동 로그인* 참조 |
 | Issuer URL | 빈 값 | realm까지 포함한 기준 URL(예: `https://sso.example.internal/realms/company`). `/.well-known/...`은 붙이지 않습니다 |
 | Client ID / Client Secret | 빈 값 | 저장한 Secret은 다시 조회할 수 없습니다. 화면에는 *저장된 Secret은 표시하지 않음* 만 보입니다 |
 | Role Claim Path | `realm_access.roles` | |
@@ -214,6 +215,22 @@ AppStore 쪽 입력:
 | `discovery 문서의 issuer(...)가 입력한 Issuer URL(...)과 다릅니다` | Keycloak이 내부 hostname으로 issuer를 발행합니다. `KC_HOSTNAME`을 사용자에게 노출되는 주소로 맞춥니다 |
 
 Client Secret과 refresh token은 브라우저에 저장되지 않습니다. 세션 쿠키는 서버가 Secure·HttpOnly로 관리합니다.
+
+#### 자동 로그인 (Silent SSO)
+
+사내 앱을 여럿 오가는 사람이 앱마다 같은 로그인 화면을 지나지 않도록, OIDC의 `prompt=none`으로 **조용히** 로그인을 시도하는 기능입니다. 기본값은 꺼짐이며, 켜기 전까지는 아무것도 달라지지 않습니다.
+
+켜면 이렇게 동작합니다.
+
+1. 로그인하지 않은 브라우저가 화면을 열면 SPA가 `/api/v1/auth/oidc/login?prompt=none&returnTo=<원래 경로>`로 **최상위 이동**합니다. 숨은 iframe을 쓰지 않으므로 서드파티 쿠키가 막힌 브라우저에서도 동작하고 Keycloak이 프레임을 허용하는지 신경 쓰지 않아도 됩니다.
+2. Keycloak에 세션이 있으면 인가 코드가 곧바로 돌아와 평소 로그인과 같은 절차로 세션이 만들어지고, 사람은 **처음 열었던 경로**로 돌아갑니다(`returnTo`는 `/`로 시작하고 `//`로 시작하지 않는 값만 받습니다).
+3. 세션이 없으면 Keycloak이 화면을 그리지 않고 `error=login_required`로 돌아옵니다. 이것은 실패가 아니라 평범한 대답이라, 콜백은 `/login?sso=none`으로 보내 로그인 화면을 보여 줍니다.
+
+같은 시도가 반복되면 브라우저가 Keycloak과 AppStore 사이를 끝없이 오가므로, 되풀이를 막는 장치가 세 겹 있습니다 — 탭 세션당 한 번만 시도(`sessionStorage`), 스스로 로그아웃한 뒤에는 시도하지 않음(다시 로그인하면 풀림), 거절당한 주소의 `sso=none` 표시. 브라우저 저장소를 읽지 못하는 사생활 보호 모드에서는 "이미 시도했다"로 간주해 시도하지 않습니다. 로그인·오류 화면과 `/api`·`/mcp`·`/health` 경로에서는 시도하지 않습니다.
+
+서버는 이 설정이 꺼져 있으면 주소에 `?prompt=none`이 붙어 와도 조용히 평범한 로그인으로 바꿉니다. 리다이렉트가 생기는 자리는 관리자 설정에만 묶입니다.
+
+> 공개 모드에서 Keycloak 계정이 없는 익명 방문자는 탭당 한 번 로그인 화면을 거친 뒤에야 카탈로그로 돌아옵니다. 외부 방문자가 많은 공개 카탈로그라면 이 설정을 끄는 편이 맞습니다.
 
 ---
 
@@ -449,7 +466,7 @@ pg_restore --clean --if-exists --no-owner --no-privileges \
 4. 교체합니다.
 
 ```bash
-APPSTORE_VERSION=v2.6.1 docker compose up -d --no-build
+APPSTORE_VERSION=v2.7.0 docker compose up -d --no-build
 docker compose ps
 docker compose logs --tail 200 appstore
 ```
@@ -466,7 +483,7 @@ docker compose logs --tail 200 appstore
 
 ```bash
 docker rm -f appstore
-docker rename appstore-v2.6.0-stopped appstore
+docker rename appstore-v2.6.1-stopped appstore
 docker start appstore
 curl --fail http://127.0.0.1:8080/health/ready
 ```
@@ -486,6 +503,8 @@ curl --fail http://127.0.0.1:8080/health/ready
 | `/health/live`는 200인데 `/health/ready`가 503 `{"status":"not_ready"}` | PostgreSQL, 네트워크 | DB가 죽었거나 연결이 끊겼습니다. 2초 안에 ping이 되어야 합니다 |
 | 사용자에게 500과 요청 ID가 보인다 | `docker logs`에서 `request_id`로 검색 | `panic recovered`면 `stack`을, 아니면 해당 `http request`의 `status`와 `path`를 봅니다 |
 | SSO 로그인이 안 된다 | 관리자 → 인증·SSO → **연결 테스트** | 3.3의 실패 메시지 표를 따릅니다 |
+| 자동 로그인을 켰는데 로그인 화면이 뜬다 | 같은 브라우저 탭에서 Keycloak에 로그인돼 있는지, 주소에 `sso=none`이 붙어 있는지 | 탭 세션당 한 번만 시도합니다. 새 탭에서 열거나 Keycloak에 먼저 로그인한 뒤 다시 엽니다. 로그아웃 직후에는 의도적으로 시도하지 않습니다 |
+| 자동 로그인을 켠 뒤 화면이 깜빡이며 반복된다 | Keycloak의 Valid Redirect URIs, `docker logs`의 `/api/v1/auth/oidc/callback` 줄 | 정상이라면 일어나지 않습니다. 콜백이 `/login?sso=none`으로 302를 돌려주는지 확인하고, 아니면 자동 로그인을 끄고 연결 테스트부터 다시 합니다 |
 | 로그인은 되는데 화면이 403 | 사용자 → 역할, 인증·SSO → Role Mapping | 외부 역할 값과 Role Claim Path가 실제 token과 맞는지 확인합니다 |
 | 익명 사용자가 아무 화면도 못 본다 | 시스템 설정 → 공개 모드 | 꺼져 있으면 익명 탐색이 차단됩니다 |
 | API 호출이 `자동화 API가 비활성화되어 있습니다.` | 관리자 → REST API | API 사용을 켭니다 |
@@ -509,6 +528,7 @@ curl --fail http://127.0.0.1:8080/health/ready
 | --- | --- | --- |
 | `BOOTSTRAP_ADMIN_PASSWORD` | `.env.example`의 placeholder | 길고 무작위한 값으로. vault에 보관하고 일상 계정으로 공유하지 않습니다 |
 | OIDC | 꺼짐 | 조직 SSO를 붙이고 SSO Super Admin을 따로 지정합니다 |
+| 자동 로그인 (Silent SSO) | 꺼짐 | 모든 방문자에게 Keycloak 계정이 있는 사내 설치에서만 켭니다 |
 | 서비스 접속 URL | 빈 값 | 실제 HTTPS origin으로 채웁니다. redirect URL이 여기서 만들어집니다 |
 | API·MCP 익명 조회 | 켬 | 조직 정책에 따라 끄거나 최소 조회로 둡니다 |
 | 공개 모드 | 켬 | 카탈로그를 사내에만 보여야 한다면 끕니다 |
