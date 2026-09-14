@@ -1,7 +1,7 @@
 ---
 title: "qurio — 자율 개선 이력"
-description: "qurio: 자율 개선 회차 1회, 릴리즈 0건. 최근 릴리즈 없음."
-last_modified_at: 2026-09-14 14:10:54 +0900
+description: "qurio: 자율 개선 회차 2회, 릴리즈 0건. 최근 릴리즈 v1.4.0."
+last_modified_at: 2026-09-14 14:46:33 +0900
 ---
 {% raw %}
 <script type="application/ld+json">
@@ -11,37 +11,39 @@ last_modified_at: 2026-09-14 14:10:54 +0900
  "name": "qurio",
  "codeRepository": "https://github.com/hkjang/qurio",
  "url": "https://hkjang.github.io/aidev/projects/qurio/",
- "description": "qurio: 자율 개선 회차 1회, 릴리즈 0건. 최근 릴리즈 없음.",
+ "description": "qurio: 자율 개선 회차 2회, 릴리즈 0건. 최근 릴리즈 v1.4.0.",
  "inLanguage": "ko",
  "maintainer": {
   "@type": "Person",
   "name": "hkjang",
   "url": "https://github.com/hkjang"
  },
- "dateModified": "2026-09-14T14:10:54+09:00"
+ "dateModified": "2026-09-14T14:46:33+09:00",
+ "version": "1.4.0"
 }
 </script>
 
 # qurio
 
-<p class="tldr"><strong>요약.</strong> qurio: 자율 개선 회차 1회, 릴리즈 0건. 최근 릴리즈 없음. <span class="pill pill-merged" title="14일: 릴리즈 0, 실패 0, 경고 1, 회귀 0">건강 B</span> <span class="meta">14일: 릴리즈 0, 실패 0, 경고 1, 회귀 0</span></p>
+<p class="tldr"><strong>요약.</strong> qurio: 자율 개선 회차 2회, 릴리즈 0건. 최근 릴리즈 v1.4.0. <span class="pill pill-merged" title="14일: 릴리즈 0, 실패 0, 경고 1, 회귀 0">건강 B</span> <span class="meta">14일: 릴리즈 0, 실패 0, 경고 1, 회귀 0</span></p>
 
-<ul class="stats"><li><b>1</b><span>회차</span></li><li><b>1</b><span>프로젝트</span></li><li><b>0</b><span>배포 준비 완료</span></li><li><b>0</b><span>릴리즈 진행 중</span></li><li><b>0</b><span>병합 완료</span></li><li><b>1</b><span>검토 대기</span></li><li><b>0</b><span>검증 실패</span></li><li><b>0</b><span>변경 없음</span></li><li><b>0</b><span>실행 오류</span></li><li><b>$5.75</b><span>비용</span></li><li><b>13분</b><span>에이전트 시간</span></li></ul>
+<ul class="stats"><li><b>2</b><span>회차</span></li><li><b>1</b><span>프로젝트</span></li><li><b>0</b><span>배포 준비 완료</span></li><li><b>1</b><span>릴리즈 진행 중</span></li><li><b>0</b><span>병합 완료</span></li><li><b>1</b><span>검토 대기</span></li><li><b>0</b><span>검증 실패</span></li><li><b>0</b><span>변경 없음</span></li><li><b>0</b><span>실행 오류</span></li><li><b>$7.60</b><span>비용</span></li><li><b>28분</b><span>에이전트 시간</span></li></ul>
 
 ## 현황
 
 <dl class="kv">
 <dt>저장소</dt><dd><a href="https://github.com/hkjang/qurio">https://github.com/hkjang/qurio</a></dd>
-<dt>마지막 회차</dt><dd>2026-09-14 04:37 KST — <span class="pill pill-other">• 기타</span> <strong>guarded files</strong>, PR open <a href="https://github.com/hkjang/qurio/pull/10">PR #10</a></dd>
+<dt>마지막 회차</dt><dd>2026-09-14 14:46 KST — <span class="pill pill-other">• 기타</span> release-only, release tag held (timeout)</dd>
+<dt>최근 릴리즈</dt><dd><a href="https://github.com/hkjang/qurio/releases/tag/v1.4.0">v1.4.0</a> — released <a href="https://github.com/hkjang/qurio/releases">전체 릴리즈 →</a></dd>
 </dl>
 
 ## 회차 이력
 
-<div class="table-wrap"><table class="rt"><thead><tr><th>일시</th><th class="primary">프로젝트</th><th>결과</th></tr></thead><tbody><tr data-status="other"><td data-label="일시">2026-09-14 04:37</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/qurio/">qurio</a></td><td data-label="결과"><span class="pill pill-merged" title="outcome=review-pending">검토 대기</span> <strong>guarded files</strong>, PR open <a href="https://github.com/hkjang/qurio/pull/10">PR #10</a><div class="meta">35파일 <span style="color:var(--good)">+700</span>/<span style="color:var(--bad)">−72</span> · 테스트 4 — feat: add silent OIDC sign-in with prompt=none loop guards</div></td></tr></tbody></table></div>
+<div class="table-wrap"><table class="rt"><thead><tr><th>일시</th><th class="primary">프로젝트</th><th>결과</th></tr></thead><tbody><tr data-status="other"><td data-label="일시">2026-09-14 14:46</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/qurio/">qurio</a></td><td data-label="결과"><span class="pill pill-merged" title="outcome=releasing">릴리즈 진행 중</span> release-only, release tag held (timeout)</td></tr><tr data-status="other"><td data-label="일시">2026-09-14 04:37</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/qurio/">qurio</a></td><td data-label="결과"><span class="pill pill-merged" title="outcome=review-pending">검토 대기</span> <strong>guarded files</strong>, PR open <a href="https://github.com/hkjang/qurio/pull/10">PR #10</a><div class="meta">35파일 <span style="color:var(--good)">+700</span>/<span style="color:var(--bad)">−72</span> · 테스트 4 — feat: add silent OIDC sign-in with prompt=none loop guards</div></td></tr></tbody></table></div>
 
 ## 비용·사용량
 
-<div class="table-wrap"><table class="rt"><caption class="meta">최근 30세션</caption><thead><tr><th>시각</th><th class="primary">프로젝트</th><th>단계</th><th class="num">시간</th><th class="num">턴</th><th class="num">비용</th><th class="num">토큰 입력/출력</th><th>종료</th></tr></thead><tbody><tr data-status="other"><td data-label="시각">04:34</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/qurio/">qurio</a></td><td data-label="단계">개선</td><td data-label="시간" class="num">13분</td><td data-label="턴" class="num">98</td><td data-label="비용" class="num">$5.75</td><td data-label="토큰 입력/출력" class="num">6.1M / 50K</td><td data-label="종료">success</td></tr></tbody></table></div>
+<div class="table-wrap"><table class="rt"><caption class="meta">최근 30세션</caption><thead><tr><th>시각</th><th class="primary">프로젝트</th><th>단계</th><th class="num">시간</th><th class="num">턴</th><th class="num">비용</th><th class="num">토큰 입력/출력</th><th>종료</th></tr></thead><tbody><tr data-status="other"><td data-label="시각">14:27</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/qurio/">qurio</a></td><td data-label="단계">릴리즈</td><td data-label="시간" class="num">15분</td><td data-label="턴" class="num">32</td><td data-label="비용" class="num">$1.85</td><td data-label="토큰 입력/출력" class="num">1.9M / 13K</td><td data-label="종료">success</td></tr><tr data-status="other"><td data-label="시각">04:34</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/qurio/">qurio</a></td><td data-label="단계">개선</td><td data-label="시간" class="num">13분</td><td data-label="턴" class="num">98</td><td data-label="비용" class="num">$5.75</td><td data-label="토큰 입력/출력" class="num">6.1M / 50K</td><td data-label="종료">success</td></tr></tbody></table></div>
 
 ## 아이디어 백로그 — 대기 5 / 전체 6
 
