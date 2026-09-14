@@ -67,7 +67,7 @@ Redis, 메시지 브로커, 별도의 파일 저장소는 쓰지 않습니다.
 | --- | --- |
 | 포트 | 컨테이너 8080/tcp 하나. 외부에는 리버스 프록시의 443 만 연다 |
 | 볼륨 | 애플리케이션 컨테이너는 상태가 없다. PostgreSQL 데이터 디렉터리만 볼륨으로 잡는다 |
-| 바깥으로 나가는 연결 | PostgreSQL, (설정한 경우) Keycloak · LLM Gateway · SMTP · 프레젠테이션 서비스 · `external.allowed_hosts` 에 적은 곳뿐 |
+| 바깥으로 나가는 연결 | PostgreSQL, (설정한 경우) Keycloak · LLM Gateway · SMTP · 프레젠테이션 서비스 · `external.allowed_hosts` 와 `handoff.peers` 에 적은 곳뿐 |
 
 ### 2.2 릴리즈 자산으로 설치
 
@@ -332,6 +332,7 @@ REST `GET /api/v1/departments`와 MCP `spreadsheet.department.list`는 모든 �
 | `external.timeout_seconds` | `10` | 외부 호출 한 건의 제한 시간(초) |
 | `external.max_kb` | `1024` | 외부 호출 응답의 최대 크기(KB) |
 | `external.cache_seconds` | `300` | 같은 주소의 응답을 다시 쓰는 시간(초) |
+| `handoff.peers` | 빈 목록 | 문서를 주고받을 사내 서비스. `서비스이름=오리진` 꼴. 비어 있으면 보내기 단추가 없고 아무 데서도 받지 않음 |
 | `sharing.max_link_access` | `anyone` | 허용할 최대 링크 액세스 범위 |
 | `sharing.default_link_access` | `restricted` | 새 워크북의 기본 링크 액세스 |
 | `mcp.enabled` | `true` | MCP Gateway 사용 |
@@ -424,6 +425,36 @@ flowchart LR
 GET  /api/v1/admin/mail/deliveries?status=sent|failed|queued&limit=100
 POST /api/v1/admin/mail:test   {"recipient":"admin@corp.example"}
 ```
+
+---
+
+## 다른 서비스와 문서 주고받기 (Handoff)
+
+kanpic 은 사내 서비스 간 문서 넘기기 표준을 따릅니다. 편집기의 **파일 › 다른 서비스로 보내기** 를 고르면 사람이 파일을 내려받아 다시 올리는 대신, 받는 서비스의 `/handoff` 가 새 창에서 열리고 그쪽이 kanpic 에서 직접 받아 갑니다. 반대로 다른 서비스가 CSV·XLSX 를 kanpic 으로 보내면 새 워크북이 만들어지고 그 워크북으로 넘어갑니다.
+
+- kanpic 은 `csv` 와 `xlsx` 를 보내고, `csv` 와 `xlsx` 를 받습니다.
+- 서비스끼리 서로의 자격 증명을 들고 있지 않습니다. 넘기는 것은 **한 번만 쓸 수 있는 5분짜리 표(claim)** 이고, 표는 그 사용자가 읽을 수 있는(내보내기가 허용된) 그 문서 하나에만 묶입니다. 표 원문은 데이터베이스에도 서버 로그에도 남지 않습니다(해시만 둡니다).
+- 받은 워크북에는 어디서 왔는지가 남습니다: `GET /api/v1/workbooks/{workbookId}/handoff` 가 보낸 서비스의 오리진·파일 이름·받은 사람·시각을 답합니다.
+
+### 허용 목록 설정
+
+`source` 는 밖에서 들어오는 값입니다. 그대로 받아 오면 kanpic 이 사내 아무 주소나 대신 긁어 오는 도구가 되므로, **관리자가 `handoff.peers` 에 적은 오리진에서만** 받고 없으면 아무것도 요청하지 않고 거절합니다. 이 목록은 **설정** 화면의 `handoff.peers`(문자열 목록)에 둡니다. 기본값은 비어 있고, 비어 있는 동안에는 편집기에 보내기 단추가 보이지 않으며 어느 서비스에서 보낸 문서도 받지 않습니다 — 새로 설치한 곳에서는 아무것도 달라지지 않습니다.
+
+한 줄에 서비스 하나를 `서비스이름=오리진` 꼴로 적습니다. 오리진은 `https://호스트[:포트]` 까지만이고 경로는 붙이지 않습니다.
+
+```
+ptium=https://ptium.intra, weekly=https://weekly.intra, kanpic=https://kanpic-staging.intra:8443
+```
+
+| 서비스 이름 | 보내기 단추에 보이는가 | 까닭 |
+| --- | --- | --- |
+| `ptium`, `kanpic` | 보인다 | CSV·XLSX 를 받는 서비스 |
+| `umm`, `muni`, `weekly` | 보이지 않는다 | CSV·XLSX 를 받지 않는다. 그쪽에서 kanpic 으로 보내는 것만 허용된다 |
+| 이름 없이 오리진만 | 보이지 않는다 | 무엇을 받는지 알 수 없어 받기만 허용한다 |
+
+받을 때는 다음을 지킵니다. 리다이렉트를 따라가지 않고, 25MB 를 넘는 본문은 중간에 끊으며, 30초 안에 오지 않으면 포기하고, 응답의 `Content-Type` 이 `text/csv` 나 XLSX 가 아니면 버립니다. 거절하면 사람이 읽을 수 있는 화면에 까닭(허용 목록에 없음·표 만료·형식·크기)이 나옵니다.
+
+kanpic 이 표에 적는 자기 주소는 `server.public_url` 입니다. 리버스 프록시 뒤에 있다면 받는 서비스가 그 주소로 표를 받으러 오므로 프록시 바깥에서 닿는 주소를 적어야 합니다. 비워 두면 요청의 `Host` 를 씁니다.
 
 ---
 
