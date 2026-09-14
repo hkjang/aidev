@@ -89,3 +89,4 @@
 - 보류 아이디어: 로그인 성공 판정 전에 rate limiter를 succeeded로 초기화하는 순서 정리 (2/1/S) / settings GET이 주입하는 파생 필드가 PUT 왕복 시 workflow 설정에 저장되는 문제 정리 (2/1/S) / 감사 로그 보존(audit_retention_days) 자동 정리 구현 (3/3/M) / 조용한 SSO 흐름을 E2E(Playwright)로 stub OIDC 제공자와 함께 검증하고 로그인 화면의 `?sso=none` 상태를 캡처해 가이드에 싣기 (3/2/M) / 세션 만료(`jikim:unauthorized`) 뒤 조용한 재로그인 시 편집 중이던 폼 내용이 사라지는 문제를 return_to에 더해 로컬 초안 보존으로 보완 (2/2/M)
 
 - 릴리즈: v0.2.12 (2026-09-13, run 2026-09-13-054557-jikim-improve)
+- 릴리즈: v0.2.13 (2026-09-14, run 2026-09-14-115455-jikim-release)
