@@ -1,6 +1,6 @@
 # jupiq 관리자 가이드
 
-이 문서는 jupiq **v1.6.0**을 오프라인망에 설치하고 운영하는 사람을 위한 것입니다.
+이 문서는 jupiq **v1.7.0**을 오프라인망에 설치하고 운영하는 사람을 위한 것입니다.
 화면을 쓰는 방법은 [사용자 가이드](USER_GUIDE.md)에 있으니 여기서 되풀이하지 않습니다.
 실린 화면은 모두 실제 jupiq를 띄워 찍은 것이며, 주소·이름·키는 데모용 가짜 값입니다.
 
@@ -44,10 +44,10 @@ jupiq는 **컨테이너 하나**입니다. Go 서버가 REST API와 SPA를 같�
 ```bash
 # GitHub Release 본문의 64자리 SHA-256을 승인 기록과 대조
 JUPIQ_ARCHIVE_SHA256='릴리스-본문의-SHA256'
-printf '%s  %s\n' "${JUPIQ_ARCHIVE_SHA256}" jupiq-v1.6.0.tar.gz | sha256sum -c -
-gzip -t jupiq-v1.6.0.tar.gz
-gzip -dc jupiq-v1.6.0.tar.gz | docker load
-docker image inspect jupiq:v1.6.0 --format '{{index .Config.Labels "org.opencontainers.image.version"}}'
+printf '%s  %s\n' "${JUPIQ_ARCHIVE_SHA256}" jupiq-v1.7.0.tar.gz | sha256sum -c -
+gzip -t jupiq-v1.7.0.tar.gz
+gzip -dc jupiq-v1.7.0.tar.gz | docker load
+docker image inspect jupiq:v1.7.0 --format '{{index .Config.Labels "org.opencontainers.image.version"}}'
 ```
 
 ### 2.2 PostgreSQL 준비
@@ -91,7 +91,7 @@ docker run -d --name jupiq --restart unless-stopped --init \
   --env-file .env -p 127.0.0.1:8080:8080 \
   --read-only --tmpfs /tmp:size=64m,mode=1777 \
   --cap-drop ALL --security-opt no-new-privileges:true \
-  jupiq:v1.6.0
+  jupiq:v1.7.0
 curl --fail http://127.0.0.1:8080/readyz
 ```
 
@@ -329,9 +329,41 @@ API로도 같은 일을 할 수 있습니다: `GET /api/v1/analytics/violations`
 | 방식 | 동작 |
 |---|---|
 | Keycloak SSO | `관리자 설정 → 외부 연동`에서 켠 경우에만 로그인 화면에 버튼이 나옴. `최초 로그인 사용자 자동 생성`을 켜면 새 계정에 `user` 역할 부여 |
+| Keycloak 자동 로그인(Silent SSO) | 같은 카드의 `자동 로그인(Silent SSO)`을 켠 경우. Keycloak에 이미 로그인한 사람은 jupiq를 열면 로그인 화면 없이 바로 본 화면으로 들어옴. **기본값은 꺼짐** |
 | 로컬 Bootstrap 계정 | 항상 사용 가능. 비상 통로 |
 
 브라우저 세션은 HttpOnly 쿠키 `jupiq_session`(SameSite=Lax, HTTPS에서는 Secure)이며 토큰 유효기간은 8시간입니다.
+
+#### 자동 로그인(Silent SSO)이 하는 일
+
+`자동 로그인`을 켜면 세션이 없는 방문자의 브라우저가 로그인 화면을 그리기 전에 Keycloak으로
+`prompt=none` 요청을 한 번 보냅니다. 이 요청은 **화면을 절대 그리지 않습니다** — Keycloak에 세션이
+있으면 곧바로 인가 코드가 돌아와 평소 SSO 로그인처럼 세션이 만들어지고, 세션이 없으면
+`login_required`가 돌아옵니다. 후자는 오류가 아니라 "로그인한 적 없음"이라는 평범한 대답이며, 그때
+로그인 화면이 나타납니다.
+
+같은 방문자가 제공자와 jupiq 사이를 끝없이 오가지 않도록 세 겹의 장치가 있습니다.
+
+1. **한 탭에 한 번.** 시도 여부를 `sessionStorage`에 남기므로, 거절당한 뒤 새로고침해도 다시 시도하지
+   않습니다. 새 탭을 열면 다시 한 번 시도합니다.
+2. **스스로 로그아웃했으면 시도하지 않습니다.** 로그아웃 직후 조용히 다시 로그인되면 로그아웃이 고장
+   난 것처럼 보이기 때문입니다. 다음에 세션이 생기면 억제가 풀립니다.
+3. **거절은 주소에 남습니다.** 콜백이 `login_required`를 받으면 `/login?sso=none`으로 보내며, 브라우저
+   저장소가 지워졌더라도 이 표시가 있으면 다시 시도하지 않습니다. 그 외 제공자 오류는
+   `/login?sso=error`로 보내고 로그인 화면에 안내를 띄웁니다. 같은 주소에서 시작 요청이 분당 120회를
+   넘어 jupiq가 제공자를 부르지 않고 돌려보낸 경우는 `/login?sso=limited`이며, 이 표시 역시 재시도를
+   막습니다(7.3절).
+
+브라우저 저장소를 읽을 수 없는 환경(사생활 보호 모드 등)에서는 "이미 시도했다"로 간주해 시도하지
+않습니다. 숨은 iframe이 아니라 최상위 페이지 이동을 쓰므로 서드파티 쿠키가 막힌 브라우저에서도
+동작하고, Keycloak이 프레임을 허용하는지 신경 쓸 필요가 없습니다.
+
+깊은 링크(예: `/users/user01?tab=servers`)로 들어온 사람은 조용히 로그인한 뒤 그 자리로 돌아갑니다.
+`return_to`는 `/`로 시작하고 `//`로 시작하지 않는 같은 출처 경로만 받습니다.
+
+서버는 `자동 로그인`이 꺼져 있으면 `?prompt=none`이 붙은 요청이 와도 평범한 로그인으로 처리하므로,
+주소만으로 이 흐름을 켤 수는 없습니다. 콜백·로그인·API·MCP·probe 경로에서는 시도하지 않으며,
+이미 세션이 있는 사람에게도 아무 일이 일어나지 않습니다.
 
 ---
 
@@ -482,6 +514,10 @@ GPU·LLM 화면 자체가 없다면 장애가 아니라 `선택 기능` 스위�
 | `로그인 시도가 너무 많습니다. 잠시 후 다시 시도하세요` | 10분 창 안에서 같은 IP·계정 조합 8회, 계정 16회, IP 40회 실패하면 잠깁니다. 창이 지나면 자동 해제됩니다 |
 | SSO 버튼이 보이지 않음 | `외부 연동 → Keycloak OIDC`의 `SSO 사용`이 꺼져 있음 |
 | SSO 로그인 후 되돌아옴 | Issuer·Client·Redirect URL과 클럭 스큐 확인. `연결 테스트`는 Discovery까지만 검증하므로 실제 로그인은 별도 확인 필요 |
+| Keycloak에 로그인했는데 jupiq는 로그인 화면이 나옴 | `외부 연동 → Keycloak OIDC`의 `자동 로그인(Silent SSO)`이 꺼져 있음(기본값). 켜져 있다면 그 탭에서 이미 한 번 시도했거나 직전에 로그아웃한 것이므로 새 탭에서 열어 확인 |
+| 로그인 화면 주소에 `?sso=none`이 붙음 | 정상. 조용한 시도가 "세션 없음"을 받았다는 표시이며 그대로 로그인하면 됨 |
+| 로그인 화면에 `SSO 로그인이 완료되지 않았습니다` 안내 | Keycloak이 `login_required` 외의 오류(예: `access_denied`, `interaction_required`)를 돌려줌. 컨테이너 로그의 `OIDC provider returned an error` 항목에서 오류 코드 확인 |
+| 로그인 화면에 `SSO 로그인 요청이 너무 많습니다` 안내 | 같은 IP에서 1분 안에 `GET /api/v1/auth/oidc/login`이 120회를 넘음. 리버스 프록시 뒤라면 모든 사용자가 프록시 주소 하나로 합산되므로, 배포 직후 동시 접속이나 반복 호출하는 클라이언트가 있는지 확인. 1분 뒤 자동 해제 |
 | 모든 관리자가 잠김 | Bootstrap 계정으로 로그인. 마지막 최고 관리자 할당은 서비스가 보호하므로 완전히 잠기지는 않습니다 |
 
 ### 6.5 서버 제어가 실행되지 않는다
@@ -517,7 +553,8 @@ GPU·LLM 화면 자체가 없다면 장애가 아니라 `선택 기능` 스위�
 | 응답 헤더 | `Content-Security-Policy`(화면은 `script-src 'self'`, 방문 추적이 켜진 화면만 요청별 nonce 추가, API·MCP·probe는 `default-src 'none'`; frame-ancestors·base-uri·form-action·object-src 포함), `X-Content-Type-Options`, `X-Frame-Options: DENY`, `Referrer-Policy`, `Permissions-Policy`, TLS 요청에는 HSTS |
 | 상태 변경 요청 | 동일 출처가 아니면 거부(Origin 호스트·스킴과 `Sec-Fetch-Site` 확인) |
 | 세션 | HttpOnly `jupiq_session` 쿠키, SameSite=Lax, 토큰 8시간 |
-| 로그인 시도 | 10분 창, 조합 8회 / 계정 16회 / IP 40회 |
+| 로그인 시도 | 10분 창, 조합 8회 / 계정 16회 / IP 40회 (실패만 셈) |
+| OIDC 로그인 시작 | `GET /api/v1/auth/oidc/login`은 호출마다 Keycloak Discovery 요청이 나가므로 IP별 분당 120회. 넘으면 제공자를 부르지 않고 `/login?sso=limited`로 보내 로그인 화면에 안내를 띄운다. IP는 jupiq에 직접 닿는 주소라 리버스 프록시 뒤에서는 프록시 주소 하나로 합산된다 |
 | 요청 본문 | 2 MiB 초과 시 거부 |
 | 비밀값 | Hub 토큰·OIDC client secret·AI 키는 암호화 저장, 화면·API에서 평문 재표시 없음 |
 | API 키 | 해시로만 저장, 발급·회전 직후 1회 표시 |
@@ -528,7 +565,7 @@ GPU·LLM 화면 자체가 없다면 장애가 아니라 `선택 기능` 스위�
 ### 7.4 인증 연동
 
 Keycloak OIDC는 `외부 연동` 탭에서 Issuer URL, Client ID·Secret, Redirect URL, Scopes, 사용자 ID Claim,
-최초 로그인 사용자 자동 생성, TLS 검증을 설정합니다. `연결 테스트`는 Discovery 문서와 endpoint 존재까지
+최초 로그인 사용자 자동 생성, 자동 로그인(Silent SSO, 기본 꺼짐 — 동작은 4.4절), TLS 검증을 설정합니다. `연결 테스트`는 Discovery 문서와 endpoint 존재까지
 검증하며, authorization code·PKCE·ID token claim 검증은 저장 후 실제 로그인으로 확인해야 합니다.
 
 `TLS 검증` 스위치는 운영에서 켜 두세요. 끄면 중간자 공격을 막지 못합니다.
