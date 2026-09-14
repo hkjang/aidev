@@ -20,7 +20,7 @@ REAL_HOME="$HOME"; CLAUDE_CFG="${CLAUDE_CONFIG_DIR:-$REAL_HOME/.claude}"
 export GIT_AUTHOR_NAME=hkjang GIT_AUTHOR_EMAIL=gagagiga@naver.com GIT_COMMITTER_NAME=hkjang GIT_COMMITTER_EMAIL=gagagiga@naver.com
 CLAUDE_SETTINGS='{"attribution":{"commit":"","pr":""}}'
 EXCLUDE_RE='^(aidev|Naviq|sqlpad|_tmp.*|visitflow-node-modules.*|새 폴더)$'
-MAX_DAILY_COST=80; MAX_DAILY_ROUNDS=60; MAX_DAILY_RELEASES=30; DORMANT_AFTER=3; DORMANT_DAYS=7
+MAX_DAILY_COST=300; MAX_DAILY_ROUNDS=60; MAX_DAILY_RELEASES=40; DORMANT_AFTER=3; DORMANT_DAYS=7
 [ -f "$STATE/caps.env" ] && . "$STATE/caps.env"
 
 while [ $# -gt 0 ]; do case "$1" in
