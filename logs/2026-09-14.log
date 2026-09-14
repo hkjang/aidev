@@ -562,3 +562,33 @@ reports: 13 day(s), 3 week(s), 1 month(s), 744 run(s), 857 usage row(s), 40 proj
 notify: 1 new alert(s)
 notify: commented on issue #1
 notify: toast shown
+[09:33:06] aidev synced: run(2026-09-14): Vendra — guarded files, PR open https://github.com/hkjang/Vendra/pull/123
+[09:33:06] done
+[09:41:12] skip Quantoss: dirty working tree
+[09:41:20] skip aiportal-java: STOP
+[09:41:50] candidates(41): AgentHub Clustara DartFly Invenqor Kkiit Momento ReSSO SecCheck Vendra ai-admin aiportal-front-admin aiportal-front aiportal-py appstore cutover dataworks git-ctx hunter igame jikim jupiq kanpic madi moina moyro muni nexabuilder orbit pii-masker postra ptium qurio releasedock relio seaton sqlon trace umm vibe-coders visitflow weekly
+[09:41:53] campaign 후보 4개 — silent-sso-2026-09 tracking-2026-09 handoff-2026-09 mail-2026-09 중 silent-sso-2026-09 차례 (마지막 회차 2026-09-14T07:59:09+09:00)
+[09:41:53] campaign silent-sso-2026-09: picked orbit
+[09:41:53] picked: orbit
+[09:41:53] === orbit (base=main, run 2026-09-14-094153-orbit-improve, 회차 예산 $28)
+Preparing worktree (new branch 'auto/2026-09-14-0941')
+HEAD is now at 18b01ab chore(release): v0.5.0
+[09:41:55] orbit: [base] pinned — main@18b01ab
+[09:41:55] orbit: [autonomy] release — 
+[09:49:00] orbit: improve — 64 turns, 7m, $3.48, success
+[09:49:01] orbit: verify `go build ./...` → exit 0 (0s)
+[09:49:02] orbit: verify `go vet ./...` → exit 0 (1s)
+[09:49:03] orbit: verify `go test ./...` → exit 0 (1s)
+[09:49:03] orbit: verify `cd web && [ -d node_modules ] || npm ci --no-audit --no-fund` → exit 0 (0s)
+[09:49:04] orbit: verify `cd web && npm test --silent` → exit 0 (1s)
+[09:49:04] orbit: verify `cd web && [ -d node_modules ] || npm ci --no-audit --no-fund` → exit 0 (0s)
+[09:49:07] orbit: verify `cd web && npm run build --silent` → exit 0 (3s)
+[09:49:07] orbit: [verify] passed — 검증 7개 통과 (auto)
+branch 'auto/2026-09-14-0941' set up to track 'origin/auto/2026-09-14-0941'.
+[09:49:11] orbit: [pr] created — https://github.com/hkjang/orbit/pull/1
+[09:51:35] orbit: review — 9 turns, 2m, $0.83, success
+[09:51:35] orbit: [review] rejected — 리뷰 거절: internal/server/auth.go:237-240 조용한 시도(prompt=none)가 oidcStart에서 Discovery 실패를 만나면 internalError로 JSON 500을 그대로 낸다. auto_login이 켜진 상태에서 Keycloak이 잠시 죽으면, 로그인하지 않은 모든 방문자가 화면을 열 때마다 로그인 폼 대신 JSON 오류 페이지에 떨어지고 아이디/비밀번호 로그인에 닿을 길이 없어진다(/login을 직접 쳐야 함). 이 변경 전에는 Keycloak 장애가 SSO 버튼에만 영향을 줬으므로 인증 가용성 회귀다. 조용한 시도의 시작 실패는 콜백의 거절과 마찬가지로 /login?sso=error로 보내야 한다. / internal/server/auth.go:345-380 콜백에서 코드 교환 실패(401), id_token 검증 실패(401), provisioning_disabled(403), account_disabled(403)는 여전히 JSON writeError다. 사용자가 아무 것도 누르지 않은 자동 흐름에서 이 경로에 들어가면 — 예: auto_provision 꺼짐 + Keycloak 세션은 있으나 Orbit에 미등록인 사용자, 또는 비활성화된 사용자 — 새 탭을 열 때마다 로그인 화면 대신 원문 JSON을 본다. 커밋 메시지·ADMIN_GUIDE는 '로그인하지 않은 브라우저에서는 로그인 화면이 뜬다'고 설명하지만 이 경우 그렇지 않다. stateData["silent"]가 참이면 이 오류들도 /login?sso=error(또는 사유 코드)로 리다이렉트해야 한다.
+https://github.com/hkjang/orbit/pull/1#issuecomment-5657532886
+evidence: /mnt/c/Users/USER/projects/aidev/state/runs/2026-09-14-094153-orbit-improve/evidence.json
+reports: 13 day(s), 3 week(s), 1 month(s), 745 run(s), 859 usage row(s), 41 project page(s), 3 alert(s)
+notify: no new alerts

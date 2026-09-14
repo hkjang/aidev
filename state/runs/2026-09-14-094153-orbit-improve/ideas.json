@@ -1,0 +1,56 @@
+[
+  {
+    "title": "Silent SSO(prompt=none) 자동 로그인 — auto_login 설정, 3겹 루프 방지, return_to, 관리자 가이드",
+    "value": 5,
+    "risk": 2,
+    "size": "M",
+    "status": "done",
+    "note": "캠페인 silent-sso-2026-09. auth.go(prompt=none 시작·콜백 login_required→/login?sso=none), web/src/silentSso.ts(규칙), AdminPage 체크박스, docs/ADMIN_GUIDE.md. Go/vitest 테스트 추가.",
+    "updated": "2026-09-14"
+  },
+  {
+    "title": "OIDC 콜백의 provisioning_disabled/account_disabled 403 JSON을 /login?sso=… 리다이렉트로",
+    "value": 3,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "자동 로그인이 켜졌을 때 미등록·비활성 사용자는 새 탭마다 원시 JSON 페이지를 본다. 루프는 아니지만 UX가 나쁘다. 로그인 화면이 코드를 읽어 설명하게 하면 된다.",
+    "updated": "2026-09-14"
+  },
+  {
+    "title": "세션 만료로 사용자가 비워질 때도 한 번 조용한 재로그인 시도",
+    "value": 3,
+    "risk": 3,
+    "size": "S",
+    "status": "pending",
+    "note": "현재는 최초 페이지 로드에서만 시도한다. 만료 시 Protected가 클라이언트 라우팅으로 /login에 보낸다. sessionStorage 표시가 이미 지워진(로그인 성공 시 clear) 상태라 한 번은 안전하게 시도할 수 있다.",
+    "updated": "2026-09-14"
+  },
+  {
+    "title": "폐쇄망용 AllowInsecureEndpoints — HTTP issuer를 사설 호스트에만 허용",
+    "value": 2,
+    "risk": 3,
+    "size": "M",
+    "status": "pending",
+    "note": "표준의 폐쇄망 절. 현재 validateURL은 http도 통과시키고 go-oidc도 막지 않으므로 동작은 하지만, 공개 호스트 평문을 막는 안전장치가 없다.",
+    "updated": "2026-09-14"
+  },
+  {
+    "title": "OIDC 콜백 성공 경로를 httptest 제공자로 통합 테스트",
+    "value": 3,
+    "risk": 1,
+    "size": "M",
+    "status": "pending",
+    "note": "코드 교환·ID 토큰 검증·return_to 리다이렉트는 DB(readSetting, issueSession)에 묶여 있어 현재 단위 테스트가 없다. readSetting을 인터페이스로 빼거나 pgxmock이 필요하다.",
+    "updated": "2026-09-14"
+  },
+  {
+    "title": "web `npm run lint`가 eslint 미설치로 실패",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "package.json에 lint 스크립트는 있으나 devDependencies에 eslint가 없고 CI도 돌리지 않는다. 설정 파일을 붙여 CI에 넣거나 스크립트를 지운다.",
+    "updated": "2026-09-14"
+  }
+]

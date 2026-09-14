@@ -1,0 +1,27 @@
+{
+  "base": {
+    "state": "pinned",
+    "reason": "main@18b01ab",
+    "at": "2026-09-14T09:41:55+09:00"
+  },
+  "autonomy": {
+    "state": "release",
+    "reason": "",
+    "at": "2026-09-14T09:41:55+09:00"
+  },
+  "verify": {
+    "state": "passed",
+    "reason": "검증 7개 통과 (auto)",
+    "at": "2026-09-14T09:49:07+09:00"
+  },
+  "pr": {
+    "state": "created",
+    "reason": "https://github.com/hkjang/orbit/pull/1",
+    "at": "2026-09-14T09:49:11+09:00"
+  },
+  "review": {
+    "state": "rejected",
+    "reason": "리뷰 거절: internal/server/auth.go:237-240 조용한 시도(prompt=none)가 oidcStart에서 Discovery 실패를 만나면 internalError로 JSON 500을 그대로 낸다. auto_login이 켜진 상태에서 Keycloak이 잠시 죽으면, 로그인하지 않은 모든 방문자가 화면을 열 때마다 로그인 폼 대신 JSON 오류 페이지에 떨어지고 아이디/비밀번호 로그인에 닿을 길이 없어진다(/login을 직접 쳐야 함). 이 변경 전에는 Keycloak 장애가 SSO 버튼에만 영향을 줬으므로 인증 가용성 회귀다. 조용한 시도의 시작 실패는 콜백의 거절과 마찬가지로 /login?sso=error로 보내야 한다. / internal/server/auth.go:345-380 콜백에서 코드 교환 실패(401), id_token 검증 실패(401), provisioning_disabled(403), account_disabled(403)는 여전히 JSON writeError다. 사용자가 아무 것도 누르지 않은 자동 흐름에서 이 경로에 들어가면 — 예: auto_provision 꺼짐 + Keycloak 세션은 있으나 Orbit에 미등록인 사용자, 또는 비활성화된 사용자 — 새 탭을 열 때마다 로그인 화면 대신 원문 JSON을 본다. 커밋 메시지·ADMIN_GUIDE는 '로그인하지 않은 브라우저에서는 로그인 화면이 뜬다'고 설명하지만 이 경우 그렇지 않다. stateData[\"silent\"]가 참이면 이 오류들도 /login?sso=error(또는 사유 코드)로 리다이렉트해야 한다.",
+    "at": "2026-09-14T09:51:35+09:00"
+  }
+}

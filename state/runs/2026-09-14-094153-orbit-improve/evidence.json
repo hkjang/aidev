@@ -1,0 +1,200 @@
+{
+  "run_id": "2026-09-14-094153-orbit-improve",
+  "generated": "2026-09-14T09:51:36+09:00",
+  "run": {
+    "run_id": "2026-09-14-094153-orbit-improve",
+    "project": "orbit",
+    "kind": "improve",
+    "started": "2026-09-14T09:41:53+09:00",
+    "model": "claude-opus-5",
+    "policy_version": "5935779a",
+    "prompts_hash": "82f2440d4b2fef65",
+    "runner_version": "5c1744b4",
+    "finished": "2026-09-14T09:51:36+09:00",
+    "outcome": "review-pending"
+  },
+  "record": {
+    "ts": "2026-09-14T09:51:36+09:00",
+    "date": "2026-09-14",
+    "project": "orbit",
+    "result": "review held, PR open https://github.com/hkjang/orbit/pull/1",
+    "outcome": "review-pending",
+    "run_id": "2026-09-14-094153-orbit-improve",
+    "base_sha": "18b01ab909d9436bf773f4f13dbb5d3279c4afb6",
+    "head_sha": "1247aebf0696221a809f8bbd104436caec36f708",
+    "pr": "https://github.com/hkjang/orbit/pull/1",
+    "stages": {
+      "base": {
+        "state": "pinned",
+        "reason": "main@18b01ab",
+        "at": "2026-09-14T09:41:55+09:00"
+      },
+      "autonomy": {
+        "state": "release",
+        "reason": "",
+        "at": "2026-09-14T09:41:55+09:00"
+      },
+      "verify": {
+        "state": "passed",
+        "reason": "검증 7개 통과 (auto)",
+        "at": "2026-09-14T09:49:07+09:00"
+      },
+      "pr": {
+        "state": "created",
+        "reason": "https://github.com/hkjang/orbit/pull/1",
+        "at": "2026-09-14T09:49:11+09:00"
+      },
+      "review": {
+        "state": "rejected",
+        "reason": "리뷰 거절: internal/server/auth.go:237-240 조용한 시도(prompt=none)가 oidcStart에서 Discovery 실패를 만나면 internalError로 JSON 500을 그대로 낸다. auto_login이 켜진 상태에서 Keycloak이 잠시 죽으면, 로그인하지 않은 모든 방문자가 화면을 열 때마다 로그인 폼 대신 JSON 오류 페이지에 떨어지고 아이디/비밀번호 로그인에 닿을 길이 없어진다(/login을 직접 쳐야 함). 이 변경 전에는 Keycloak 장애가 SSO 버튼에만 영향을 줬으므로 인증 가용성 회귀다. 조용한 시도의 시작 실패는 콜백의 거절과 마찬가지로 /login?sso=error로 보내야 한다. / internal/server/auth.go:345-380 콜백에서 코드 교환 실패(401), id_token 검증 실패(401), provisioning_disabled(403), account_disabled(403)는 여전히 JSON writeError다. 사용자가 아무 것도 누르지 않은 자동 흐름에서 이 경로에 들어가면 — 예: auto_provision 꺼짐 + Keycloak 세션은 있으나 Orbit에 미등록인 사용자, 또는 비활성화된 사용자 — 새 탭을 열 때마다 로그인 화면 대신 원문 JSON을 본다. 커밋 메시지·ADMIN_GUIDE는 '로그인하지 않은 브라우저에서는 로그인 화면이 뜬다'고 설명하지만 이 경우 그렇지 않다. stateData[\"silent\"]가 참이면 이 오류들도 /login?sso=error(또는 사유 코드)로 리다이렉트해야 한다.",
+        "at": "2026-09-14T09:51:35+09:00"
+      }
+    },
+    "campaign": "silent-sso-2026-09",
+    "autonomy": "release",
+    "files": 13,
+    "additions": 529,
+    "deletions": 21,
+    "tests": 2,
+    "title": "feat(auth): Keycloak에 이미 로그인한 사람은 로그인 화면 없이 들여보낸다"
+  },
+  "stages": {
+    "base": {
+      "state": "pinned",
+      "reason": "main@18b01ab",
+      "at": "2026-09-14T09:41:55+09:00"
+    },
+    "autonomy": {
+      "state": "release",
+      "reason": "",
+      "at": "2026-09-14T09:41:55+09:00"
+    },
+    "verify": {
+      "state": "passed",
+      "reason": "검증 7개 통과 (auto)",
+      "at": "2026-09-14T09:49:07+09:00"
+    },
+    "pr": {
+      "state": "created",
+      "reason": "https://github.com/hkjang/orbit/pull/1",
+      "at": "2026-09-14T09:49:11+09:00"
+    },
+    "review": {
+      "state": "rejected",
+      "reason": "리뷰 거절: internal/server/auth.go:237-240 조용한 시도(prompt=none)가 oidcStart에서 Discovery 실패를 만나면 internalError로 JSON 500을 그대로 낸다. auto_login이 켜진 상태에서 Keycloak이 잠시 죽으면, 로그인하지 않은 모든 방문자가 화면을 열 때마다 로그인 폼 대신 JSON 오류 페이지에 떨어지고 아이디/비밀번호 로그인에 닿을 길이 없어진다(/login을 직접 쳐야 함). 이 변경 전에는 Keycloak 장애가 SSO 버튼에만 영향을 줬으므로 인증 가용성 회귀다. 조용한 시도의 시작 실패는 콜백의 거절과 마찬가지로 /login?sso=error로 보내야 한다. / internal/server/auth.go:345-380 콜백에서 코드 교환 실패(401), id_token 검증 실패(401), provisioning_disabled(403), account_disabled(403)는 여전히 JSON writeError다. 사용자가 아무 것도 누르지 않은 자동 흐름에서 이 경로에 들어가면 — 예: auto_provision 꺼짐 + Keycloak 세션은 있으나 Orbit에 미등록인 사용자, 또는 비활성화된 사용자 — 새 탭을 열 때마다 로그인 화면 대신 원문 JSON을 본다. 커밋 메시지·ADMIN_GUIDE는 '로그인하지 않은 브라우저에서는 로그인 화면이 뜬다'고 설명하지만 이 경우 그렇지 않다. stateData[\"silent\"]가 참이면 이 오류들도 /login?sso=error(또는 사유 코드)로 리다이렉트해야 한다.",
+      "at": "2026-09-14T09:51:35+09:00"
+    }
+  },
+  "provenance": {
+    "model": "claude-opus-5",
+    "policy_version": "5935779a",
+    "prompts_hash": "82f2440d4b2fef65",
+    "runner_version": "5c1744b4",
+    "base_sha": "18b01ab909d9436bf773f4f13dbb5d3279c4afb6",
+    "head_sha": "1247aebf0696221a809f8bbd104436caec36f708",
+    "pr": "https://github.com/hkjang/orbit/pull/1"
+  },
+  "verification": {
+    "runner": {
+      "source": "auto",
+      "commands": [
+        {
+          "cmd": "go build ./...",
+          "exit": 0,
+          "seconds": 0
+        },
+        {
+          "cmd": "go vet ./...",
+          "exit": 0,
+          "seconds": 1
+        },
+        {
+          "cmd": "go test ./...",
+          "exit": 0,
+          "seconds": 1
+        },
+        {
+          "cmd": "cd web && [ -d node_modules ] || npm ci --no-audit --no-fund",
+          "exit": 0,
+          "seconds": 0
+        },
+        {
+          "cmd": "cd web && npm test --silent",
+          "exit": 0,
+          "seconds": 1
+        },
+        {
+          "cmd": "cd web && [ -d node_modules ] || npm ci --no-audit --no-fund",
+          "exit": 0,
+          "seconds": 0
+        },
+        {
+          "cmd": "cd web && npm run build --silent",
+          "exit": 0,
+          "seconds": 3
+        }
+      ]
+    },
+    "runner_gate": {
+      "ok": true,
+      "state": "verified",
+      "reason": "검증 7개 통과 (auto)"
+    },
+    "after_rebase": null,
+    "review": {
+      "verdict": "reject",
+      "reasons": [
+        "internal/server/auth.go:237-240 조용한 시도(prompt=none)가 oidcStart에서 Discovery 실패를 만나면 internalError로 JSON 500을 그대로 낸다. auto_login이 켜진 상태에서 Keycloak이 잠시 죽으면, 로그인하지 않은 모든 방문자가 화면을 열 때마다 로그인 폼 대신 JSON 오류 페이지에 떨어지고 아이디/비밀번호 로그인에 닿을 길이 없어진다(/login을 직접 쳐야 함). 이 변경 전에는 Keycloak 장애가 SSO 버튼에만 영향을 줬으므로 인증 가용성 회귀다. 조용한 시도의 시작 실패는 콜백의 거절과 마찬가지로 /login?sso=error로 보내야 한다.",
+        "internal/server/auth.go:345-380 콜백에서 코드 교환 실패(401), id_token 검증 실패(401), provisioning_disabled(403), account_disabled(403)는 여전히 JSON writeError다. 사용자가 아무 것도 누르지 않은 자동 흐름에서 이 경로에 들어가면 — 예: auto_provision 꺼짐 + Keycloak 세션은 있으나 Orbit에 미등록인 사용자, 또는 비활성화된 사용자 — 새 탭을 열 때마다 로그인 화면 대신 원문 JSON을 본다. 커밋 메시지·ADMIN_GUIDE는 '로그인하지 않은 브라우저에서는 로그인 화면이 뜬다'고 설명하지만 이 경우 그렇지 않다. stateData[\"silent\"]가 참이면 이 오류들도 /login?sso=error(또는 사유 코드)로 리다이렉트해야 한다."
+      ],
+      "notes": [
+        "테스트는 실제로 새 코드를 실행한다: Go 4개(TestSilentOIDCRequestedNeedsAutoLogin, TestSafeReturnTo, TestOIDCCallbackRefusal 5케이스, TestOIDCCallbackRejectsBadStateWithoutProviderError) 통과, vitest 9개 통과, tsc 통과. 구 코드에서는 TestOIDCCallbackRefusal이 nil DB로 진행해 실패하므로 변경을 검증한다.",
+        "루프 방지 3겹(sessionStorage 1회, 로그아웃 억제, /login?sso=none 주소 표시, 저장소 예외 시 '이미 시도')은 코드와 설명이 일치하며 auto_login 게이트·return_to 검증(//, /\\, 절대 URL, CRLF)도 서버·클라이언트 양쪽에서 확인됨.",
+        "동시성: 같은 브라우저에서 여러 탭을 거의 동시에 열면(ctrl-click 여러 개 등) 탭마다 조용한 시도가 나가며 orbit_oidc_state 쿠키는 마지막 것만 남아, Keycloak 세션이 있어도 나머지 탭은 콜백에서 'SSO 상태가 일치하지 않습니다' JSON 400에 떨어진다. 수동 SSO에도 있던 제약이지만 자동 흐름이 되면서 노출 빈도가 커진다.",
+        "되돌리기: 스키마 변경 없음. settings 기본값에 auto_login:false 추가는 신규 부트스트랩에만 적용되고 기존 행은 zero value(false)로 읽히므로 revert 안전. publicConfig 응답 필드 추가는 하위 호환.",
+        "범위: README 링크 1줄·ADMIN_GUIDE 신규·LoginPage의 from 리팩터는 모두 이 기능(깊은 링크 복귀, 문서)과 직접 연관되어 범위 이탈 없음."
+      ],
+      "risk": "medium"
+    },
+    "ci_gate": null
+  },
+  "release": {
+    "result": null,
+    "assets_sha256": []
+  },
+  "approval": null,
+  "usage": [
+    {
+      "ts": "2026-09-14T09:49:00+09:00",
+      "date": "2026-09-14",
+      "project": "orbit",
+      "phase": "improve",
+      "run_id": "2026-09-14-094153-orbit-improve",
+      "campaign": "silent-sso-2026-09",
+      "subtype": "success",
+      "duration_ms": 441966,
+      "num_turns": 64,
+      "cost_usd": 3.4802225000000004,
+      "input_tokens": 66,
+      "output_tokens": 33790,
+      "cache_read": 2941245,
+      "cache_create": 116029
+    },
+    {
+      "ts": "2026-09-14T09:51:35+09:00",
+      "date": "2026-09-14",
+      "project": "orbit",
+      "phase": "review",
+      "run_id": "2026-09-14-094153-orbit-improve",
+      "campaign": "silent-sso-2026-09",
+      "subtype": "success",
+      "duration_ms": 146177,
+      "num_turns": 9,
+      "cost_usd": 0.8334975,
+      "input_tokens": 18,
+      "output_tokens": 9114,
+      "cache_read": 344615,
+      "cache_create": 43136
+    }
+  ]
+}

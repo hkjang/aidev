@@ -1,0 +1,6 @@
+## 2026-09-14
+- 선택: Silent SSO(prompt=none) 자동 로그인 — 캠페인 silent-sso-2026-09 (가치 5 / 위험 2 / 작업량 M)
+- 결과: 성공
+- 요약: 이 저장소에는 go-oidc 기반 Keycloak OIDC가 이미 있어 표준대로 auto_login(기본 꺼짐)을 OIDC 설정에 추가하고, 서버는 auto_login이 켜졌을 때만 ?prompt=none을 존중하며 조용한지·return_to를 봉인된 state 쿠키에 실어 콜백이 login_required를 받으면 /login?sso=none으로, 평범한 오류는 /login?sso=error로 보내도록 했다. 프런트는 web/src/silentSso.ts에 규칙(sessionStorage 한 탭 한 번·로그아웃 억제·주소 표시·저장소 예외는 '이미 시도'·콜백/로그인/API/MCP/헬스 경로 제외·return_to '/'·'//' 검증)을 두고 AuthProvider 초기 로드에서 최상위 이동으로 시도하며, 관리자 화면 체크박스와 docs/ADMIN_GUIDE.md(신규, README에 링크)를 더했다. 검증: `go test -race ./...`, `vitest --run`(104 통과, 신규 13), `tsc -b && vite build` 모두 통과; 커밋 1개(feat(auth)).
+- 보류 아이디어: OIDC 콜백의 provisioning_disabled/account_disabled 403 JSON을 /login?sso=… 리다이렉트로 바꿔 자동 로그인 대상이 아닌 사용자가 원시 JSON을 보지 않게 함 (가치 3/위험 2/S); 세션 만료로 사용자가 비워질 때도 한 번 조용한 재로그인 시도(현재는 최초 로드만) (가치 3/위험 3/S); 폐쇄망용 AllowInsecureEndpoints — 공개 호스트에는 불허하는 HTTP issuer 허용 (가치 2/위험 3/M); OIDC 콜백 성공 경로(코드 교환·ID 토큰 검증)를 httptest 제공자로 통합 테스트 (가치 3/위험 1/M); web lint 스크립트가 eslint 미설치로 실패 — devDependencies에 추가하거나 스크립트 제거 (가치 2/위험 1/S)
+
