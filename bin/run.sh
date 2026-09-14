@@ -72,6 +72,23 @@ gh auth status >/dev/null 2>&1 || { log "gh 인증 없음 — 회차를 시작�
 policy(){ # $1=프로젝트 $2=jq 경로 (예: .base_branch)
   jq -r "$2 // empty" <(jq -s '.[0] * (.[1] // {})' "$STATE/default.policy.json" <([ -f "$STATE/$1.policy.json" ] && cat "$STATE/$1.policy.json" || echo '{}')) 2>/dev/null
 }
+# 기준 브랜치를 정한다: 정책에 적혀 있으면 그것, 없으면 저장소에 물어본다.
+#
+# "main" 으로 고정해 두면 master 를 쓰는 저장소에서 조용히 어긋난다. worktree
+# 를 만들 ref 가 없어 릴리즈 에이전트가 없는 디렉터리에서 시작하고, 남는 것은
+# "결과 JSON 없음" 뿐이라 원인을 짚기 어렵다 (2026-09-14 nexabuilder).
+# 저장소마다 정책 파일을 만들어 두는 것으로는 새로 들어오는 저장소를 놓친다.
+declare -A BASE_BRANCH_CACHE=()
+base_branch(){ # $1=프로젝트 → 기준 브랜치 이름
+  local p=$1 b
+  b=$(policy "$p" '.base_branch'); [ -n "$b" ] && { printf '%s' "$b"; return; }
+  [ -n "${BASE_BRANCH_CACHE[$p]:-}" ] && { printf '%s' "${BASE_BRANCH_CACHE[$p]}"; return; }
+  b=$(git -C "$ROOT/$p" symbolic-ref --short refs/remotes/origin/HEAD 2>/dev/null | sed 's|^origin/||')
+  [ -z "$b" ] && b=$(cd "$ROOT/$p" 2>/dev/null && gh api "repos/{owner}/{repo}" --jq .default_branch 2>/dev/null)
+  b=${b:-main}
+  BASE_BRANCH_CACHE[$p]=$b
+  printf '%s' "$b"
+}
 new_run(){ # $1=프로젝트 $2=종류 → RUN_ID, OUT 설정
   RUN_ID="$RUN_DATE-$(date +%H%M%S)-$1-$2"; OUT="$RUNS/$RUN_ID"; mkdir -p "$OUT/assets" "$OUT/home"
   local pv; pv=$(cd "$REPO_DIR" && git log -1 --format=%h -- prompt.md review-prompt.md release-prompt.md state/default.policy.json state/default.guard 2>/dev/null)
@@ -320,7 +337,7 @@ approvals(){
     # GitHub 은 그 PR 을 머지로 표시하지 않으므로 "쌓인 PR" 로 계속 보이고,
     # 사람이 열어 보면 볼 것이 없다 (visitflow #13, 2026-09-13). 남은 것이
     # 없으면 여기서 닫는다 — 머지할 것이 없으니 머지 경로로 보낼 수도 없다.
-    abase=$(policy "$n" '.base_branch'); abase=${abase:-main}
+    abase=$(base_branch "$n")
     # 한 저장소는 스윕당 한 번만 받아 온다. PR 마다 받으면 열린 PR 수만큼
     # 네트워크 왕복이 늘고, 스윕은 10분마다 돈다.
     if ! printf '%s\n' "${fetched[@]:-}" | grep -qx "$n"; then
@@ -357,7 +374,7 @@ approvals(){
     # 머지된 뒤에도 캠페인은 그것을 남은 일로 보고 있었다 (2026-09-13).
     local prev_campaign=${CAMPAIGN_ID:-}
     CAMPAIGN_ID=$(jq -r --arg pr "$pr" 'select(.pr==$pr and (.campaign // "") != "") | .campaign' "$DATA/runs.jsonl" 2>/dev/null | tail -1)
-    new_run "$n" approve; base=$(policy "$n" '.base_branch'); base=${base:-main}; result="approved $pr"; OUTCOME=review-pending; RUN_META="{}"; BASE_SHA=""; HEAD_SHA=$head
+    new_run "$n" approve; base=$(base_branch "$n"); result="approved $pr"; OUTCOME=review-pending; RUN_META="{}"; BASE_SHA=""; HEAD_SHA=$head
     if ci_gate "$head"; then
       if with_retry "pr merge" bash -c "cd '$repo' && gh pr merge '$pr' --merge --delete-branch --match-head-commit '$head'"; then
         stage merge done "$head (사람 승인)"; result="merged $pr (approved)"; OUTCOME=merged; git -C "$repo" pull -q --ff-only origin "$base" >>"$LOG" 2>&1 || true
@@ -924,7 +941,7 @@ resume_runs(){
     d=$(dirname "$rj"); n=$(jq -r .project "$rj"); repo="$ROOT/$n"; OUT="$d"; RUN_ID=$(basename "$d"); RUN_META="{}"; HEAD_SHA=""; BASE_SHA=""
     [ -d "$repo" ] || continue
     url=$(jq -r '.pr.reason // empty' "$d/stages.json" 2>/dev/null)
-    base=$(policy "$n" '.base_branch'); base=${base:-main}
+    base=$(base_branch "$n")
     log "=== resume $RUN_ID ($n) — 단계: $(jq -r 'to_entries|map("\(.key)=\(.value.state)")|join(",")' "$d/stages.json" 2>/dev/null)"
     if [ -z "$url" ]; then
       # PR 전에 끊김: 에이전트 산출물은 신뢰하지 않는다 → 실행 오류로 닫는다
@@ -960,7 +977,7 @@ resume_runs(){
 # ================================================================ 단독 모드
 if [ -n "${ASSETS_ONLY:-}" ] || [ -n "${RELEASE_ONLY:-}" ]; then
   if [ -n "${ASSETS_ONLY:-}" ]; then n=${ASSETS_ONLY%%:*}; ASSETS_TAG=""; [[ "$ASSETS_ONLY" == *:* ]] && ASSETS_TAG=${ASSETS_ONLY#*:}; kind=assets; else n=$RELEASE_ONLY; kind=release; fi
-  repo="$ROOT/$n"; base=$(policy "$n" '.base_branch'); base=${base:-main}; result="$kind-only"; OUTCOME=merged; RUN_META="{}"; BASE_SHA=""; HEAD_SHA=""
+  repo="$ROOT/$n"; base=$(base_branch "$n"); result="$kind-only"; OUTCOME=merged; RUN_META="{}"; BASE_SHA=""; HEAD_SHA=""
   new_run "$n" "$kind"; log "=== $n $kind-only (base=$base, run $RUN_ID)"
   if [ "$kind" = assets ]; then release_project "$base" "(자산 보충)" assets; else release_project "$base" "$(tail -n 8 "$STATE/$n.md" 2>/dev/null)"; fi
   rm -rf "$OUT/home"; record_run "$n" "$result" "${OUTCOME:-error}"; sync_repo "run($RUN_DATE): $n — $result"; log "done"; exit 0
@@ -1066,7 +1083,7 @@ log "picked: ${picked[*]}"
 round_body(){
   local n=$1 remote_head
   repo="$ROOT/$n"; ledger="$STATE/$n.md"; wt="$WT_BASE/$n"; result="no change"; OUTCOME=no-change; RUN_META="{}"; HEAD_SHA=""; BASE_SHA=""; url=""
-  base=$(policy "$n" '.base_branch'); base=${base:-$(git -C "$repo" symbolic-ref --short HEAD)}
+  base=$(base_branch "$n")
   new_run "$n" improve
   ibudget=$(policy "$n" '.budget_usd.improve'); [ -n "$BUDGET" ] && ibudget=$BUDGET; ibudget=${ibudget:-8}
   # 캠페인이 개선 예산을 따로 정했으면 그것을 쓴다. 캠페인 한 회차의 일감은 평소
