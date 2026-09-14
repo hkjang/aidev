@@ -1,7 +1,5 @@
-- 릴리즈: v0.1.5 (2026-09-14, run 2026-09-14-114432-sqlon-release)
 ## 2026-09-14
 - 선택: Silent SSO(prompt=none) 자동 로그인 — 캠페인 silent-sso-2026-09 (가치 5 / 위험 2 / 작업량 M)
 - 결과: 성공
 - 요약: 이 저장소에는 Keycloak OIDC(authorization code + userinfo)가 이미 있어 표준대로 auto_login 을 붙였다. 서버는 `oidc_auto_login` 설정(기본 꺼짐, 환경변수 `SQLON_OIDC_AUTO_LOGIN`/플래그 `-oidc-auto-login`, 저장 설정이 우선)이 켜진 경우에만 `/auth/sso/login?prompt=none` 을 제공자로 넘기고, 꺼져 있으면 조용히 평범한 로그인으로 바꾼다. 왕복 컨텍스트(silent 여부·return_to)는 짧은 쿠키로 들고 다니며, 콜백이 login_required/interaction_required/consent_required 를 받으면 `/auth/login?sso=none&next=<deep link>` 로 보내고 성공하면 `return_to`(`/`로 시작·`//` 아님·절대 URL 아님)로 돌아간다. 로그인 화면(login.html)이 시도 여부를 정한다: 탭 세션당 한 번(sessionStorage), 직접 로그아웃 후 억제(nav.js 가 표시하고 세션이 다시 생기면 지움), 주소의 `sso=none|error` 표시, 저장소 예외는 '이미 시도했다'로 처리. 최상위 이동(location.assign)이며 iframe 은 쓰지 않는다. 검증: Go 테스트 7개(auto_login 꺼짐 시 prompt=none 무시, 거절→로그인 화면+표시, 깊은 링크 복귀(가짜 IdP httptest), return_to 검증, 설정/`/auth/me` 노출, 부팅 기본값) + login.html 인라인 스크립트를 node vm 으로 돌리는 브라우저 규칙 테스트 9개(node 없으면 skip); `go vet ./...`, `go test ./...` 전부 통과. 관리자 가이드 3.4 와 README 에 설정·동작을 적었다.
 - 보류 아이디어: OIDC 콜백의 error 분기에서도 state 쿠키 일치를 확인(비-silent 경로 견고화) / OIDC 로그인에 nonce·PKCE(S256) 추가 / 설정 화면에서 boolean 설정(`oidc_auto_login`)을 토글로 렌더링 / docs/auth.md 가 0바이트 — 인증 모델(로컬·SSO·MCP 키·마스터 토큰) 문서 채우기 / 서버 측 guard 리다이렉트에서 `?next=` 를 `RequestURI` 로 넘길 때 절대 URI 형태(프록시 요청) 방어 테스트 추가
-

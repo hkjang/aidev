@@ -1,0 +1,8 @@
+[
+  {"title":"Silent SSO(prompt=none) 자동 로그인 — auto_login 설정, 콜백 login_required 처리, 브라우저 3겹 루프 방지, 깊은 링크 복귀","value":5,"risk":2,"size":"M","status":"done","note":"캠페인 silent-sso-2026-09. 커밋 07e74de. Go 테스트 + node vm 기반 login.html 규칙 테스트 추가, 관리자 가이드 3.4 작성.","updated":"2026-09-14"},
+  {"title":"OIDC 콜백의 error 분기에서 state 쿠키 일치 확인","value":2,"risk":1,"size":"S","status":"pending","note":"현재 error 파라미터가 있으면 state 검사 전에 처리한다. 무해하지만 비-silent 오류 페이지도 state 를 맞춘 뒤 보여주면 더 견고하다.","updated":"2026-09-14"},
+  {"title":"OIDC 로그인에 nonce 와 PKCE(S256) 추가","value":3,"risk":2,"size":"M","status":"pending","note":"현재 confidential client + state 만 쓴다. releasedock 처럼 code_challenge/nonce 를 붙이면 코드 가로채기 방어가 강해진다. 토큰 검증은 userinfo 위임 구조라 nonce 는 id_token 파싱이 필요해 범위가 커질 수 있음.","updated":"2026-09-14"},
+  {"title":"설정 화면에서 boolean 설정(oidc_auto_login)을 토글 UI 로 렌더링","value":2,"risk":1,"size":"S","status":"pending","note":"settings.html 은 모든 설정을 텍스트 입력으로 그린다. SettingDef 에 type 을 두고 체크박스로 그리면 오타(예: 'ture')로 꺼지는 실수를 줄인다.","updated":"2026-09-14"},
+  {"title":"docs/auth.md 채우기 — 로컬·SSO·MCP 키·마스터 토큰 인증 모델 문서","value":3,"risk":1,"size":"S","status":"pending","note":"docs/auth.md 가 0바이트다. auth.go 상단 주석의 인증 순서와 admin_guide 3.4 를 바탕으로 정리.","updated":"2026-09-14"},
+  {"title":"guard 리다이렉트 next= 에 절대 URI 형태(프록시 absolute-form 요청) 방어 테스트","value":1,"risk":1,"size":"S","status":"pending","note":"RequestURI 가 absolute-form 이면 login.html 의 safeNext 정규식이 걸러내지만 서버 테스트가 없다.","updated":"2026-09-14"}
+]

@@ -1,0 +1,192 @@
+{
+  "run_id": "2026-09-14-210213-sqlon-improve",
+  "generated": "2026-09-14T21:16:58+09:00",
+  "run": {
+    "run_id": "2026-09-14-210213-sqlon-improve",
+    "project": "sqlon",
+    "kind": "improve",
+    "started": "2026-09-14T21:02:13+09:00",
+    "model": "claude-opus-5",
+    "policy_version": "78619c0e",
+    "prompts_hash": "82f2440d4b2fef65",
+    "runner_version": "78619c0e",
+    "finished": "2026-09-14T21:16:58+09:00",
+    "outcome": "review-pending"
+  },
+  "record": {
+    "ts": "2026-09-14T21:16:58+09:00",
+    "date": "2026-09-14",
+    "project": "sqlon",
+    "result": "CI no-ci, PR open https://github.com/hkjang/sqlon/pull/2",
+    "outcome": "review-pending",
+    "run_id": "2026-09-14-210213-sqlon-improve",
+    "base_sha": "57f99b7233561729106c666369028763debb97b7",
+    "head_sha": "07e74de7c4fcff5ebd673ebcdc7bc88ad03a58f3",
+    "pr": "https://github.com/hkjang/sqlon/pull/2",
+    "stages": {
+      "base": {
+        "state": "pinned",
+        "reason": "main@57f99b7",
+        "at": "2026-09-14T21:02:15+09:00"
+      },
+      "autonomy": {
+        "state": "release",
+        "reason": "",
+        "at": "2026-09-14T21:02:15+09:00"
+      },
+      "verify": {
+        "state": "passed",
+        "reason": "검증 3개 통과 (auto)",
+        "at": "2026-09-14T21:10:25+09:00"
+      },
+      "pr": {
+        "state": "created",
+        "reason": "https://github.com/hkjang/sqlon/pull/2",
+        "at": "2026-09-14T21:10:32+09:00"
+      },
+      "review": {
+        "state": "approved",
+        "reason": "리뷰 승인 (risk=medium)",
+        "at": "2026-09-14T21:12:41+09:00"
+      },
+      "ci": {
+        "state": "no-ci",
+        "reason": "이 커밋에 검사가 없음 (정책 allow_merge_without_ci 가 없으면 차단)",
+        "at": "2026-09-14T21:16:58+09:00"
+      }
+    },
+    "campaign": "silent-sso-2026-09",
+    "autonomy": "release",
+    "files": 10,
+    "additions": 605,
+    "deletions": 18,
+    "tests": 2,
+    "title": "feat(auth): Keycloak 세션이 있으면 로그인 화면 없이 들어오는 silent SSO(prompt=none)를 추가합니다"
+  },
+  "stages": {
+    "base": {
+      "state": "pinned",
+      "reason": "main@57f99b7",
+      "at": "2026-09-14T21:02:15+09:00"
+    },
+    "autonomy": {
+      "state": "release",
+      "reason": "",
+      "at": "2026-09-14T21:02:15+09:00"
+    },
+    "verify": {
+      "state": "passed",
+      "reason": "검증 3개 통과 (auto)",
+      "at": "2026-09-14T21:10:25+09:00"
+    },
+    "pr": {
+      "state": "created",
+      "reason": "https://github.com/hkjang/sqlon/pull/2",
+      "at": "2026-09-14T21:10:32+09:00"
+    },
+    "review": {
+      "state": "approved",
+      "reason": "리뷰 승인 (risk=medium)",
+      "at": "2026-09-14T21:12:41+09:00"
+    },
+    "ci": {
+      "state": "no-ci",
+      "reason": "이 커밋에 검사가 없음 (정책 allow_merge_without_ci 가 없으면 차단)",
+      "at": "2026-09-14T21:16:58+09:00"
+    }
+  },
+  "provenance": {
+    "model": "claude-opus-5",
+    "policy_version": "78619c0e",
+    "prompts_hash": "82f2440d4b2fef65",
+    "runner_version": "78619c0e",
+    "base_sha": "57f99b7233561729106c666369028763debb97b7",
+    "head_sha": "07e74de7c4fcff5ebd673ebcdc7bc88ad03a58f3",
+    "pr": "https://github.com/hkjang/sqlon/pull/2"
+  },
+  "verification": {
+    "runner": {
+      "source": "auto",
+      "commands": [
+        {
+          "cmd": "go build ./...",
+          "exit": 0,
+          "seconds": 1
+        },
+        {
+          "cmd": "go vet ./...",
+          "exit": 0,
+          "seconds": 1
+        },
+        {
+          "cmd": "go test ./...",
+          "exit": 0,
+          "seconds": 6
+        }
+      ]
+    },
+    "runner_gate": {
+      "ok": true,
+      "state": "verified",
+      "reason": "검증 3개 통과 (auto)"
+    },
+    "after_rebase": null,
+    "review": {
+      "verdict": "approve",
+      "reasons": [],
+      "notes": [
+        "검증: go vet 통과, go test ./... 전체 통과(node 존재하여 silentsso_page_test 의 9개 브라우저 시나리오도 실제 실행됨). 새 테스트는 prompt=none 전달·sqlon_oauth_ctx 쿠키·/auth/me 의 sso_auto_login·콜백 거절 시 /auth/login?sso=none 리다이렉트 등 이번 변경으로만 생긴 동작을 단언하므로 수정 전 코드에서는 통과할 수 없음.",
+        "internal/mcp/auth.go:565-580 silent 거절 경로는 state 검증 전에 리다이렉트하지만, 목적지가 safeReturnTo 로 걸러진 same-origin /auth/login 이라 악용 여지 없음. 다만 이 경로에서 sqlon_oauth_state 쿠키는 지우지 않음(300초 후 자연 만료, 무해).",
+        "internal/mcp/webui/login.html:58 safeNext() 의 /^\\/(?!\\/)/ 는 백슬래시(예: next=/\\evil.com)를 통과시켜 브라우저가 //evil.com 으로 해석할 수 있는 기존(이번 PR 이전부터 있던) open-redirect 약점. 서버쪽 safeReturnTo 는 백슬래시를 거부하므로 이번 PR 이 새로 추가한 return_to 경로에서는 안전하나, 로컬 로그인 후 location.href=safeNext() 경로는 여전히 취약 — 후속 수정 권장.",
+        "동작 참고: 억제 플래그가 sessionStorage 라 로그아웃한 뒤 새 탭을 열면 Keycloak 세션이 남아 있는 한 다시 자동 로그인됨(문서에 '탭 세션당'이라고 명시되어 있어 설명과 일치). 거절 후 로그인 화면의 'Keycloak(SSO)으로 로그인' 버튼은 return_to 를 싣지 않아 딥링크 대신 /admin 으로 감(기존 동작).",
+        "범위: settings.go 상수 블록 정렬 변경은 gofmt 결과로 실질 변경 없음. 마이그레이션·외부 상태 변경 없음, 기본값 off 라 revert 가 쉬움."
+      ],
+      "risk": "medium"
+    },
+    "ci_gate": {
+      "ok": false,
+      "state": "no-ci",
+      "reason": "이 커밋에 검사가 없음 (정책 allow_merge_without_ci 가 없으면 차단)",
+      "checks": 0
+    }
+  },
+  "release": {
+    "result": null,
+    "assets_sha256": []
+  },
+  "approval": null,
+  "usage": [
+    {
+      "ts": "2026-09-14T21:10:16+09:00",
+      "date": "2026-09-14",
+      "project": "sqlon",
+      "phase": "improve",
+      "run_id": "2026-09-14-210213-sqlon-improve",
+      "campaign": "silent-sso-2026-09",
+      "subtype": "success",
+      "duration_ms": 517457,
+      "num_turns": 61,
+      "cost_usd": 4.1138355,
+      "input_tokens": 72,
+      "output_tokens": 37483,
+      "cache_read": 3711293,
+      "cache_create": 131651
+    },
+    {
+      "ts": "2026-09-14T21:12:41+09:00",
+      "date": "2026-09-14",
+      "project": "sqlon",
+      "phase": "review",
+      "run_id": "2026-09-14-210213-sqlon-improve",
+      "campaign": "silent-sso-2026-09",
+      "subtype": "success",
+      "duration_ms": 137429,
+      "num_turns": 8,
+      "cost_usd": 0.7584414999999999,
+      "input_tokens": 16,
+      "output_tokens": 8141,
+      "cache_read": 297241,
+      "cache_create": 40435
+    }
+  ]
+}
