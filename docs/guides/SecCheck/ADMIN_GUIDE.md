@@ -15,7 +15,7 @@
 | 증적 볼륨 (`/app/data`) | AES-256-GCM 으로 암호화된 증적 파일. UUID 파일명 | 데이터베이스와 **같은 시점**으로 백업해야 함 |
 | Reverse Proxy (권장) | TLS 종단, 접근 허용 목록 | `X-Forwarded-For` 를 `trusted_proxies` 에 등록해야 접속 IP 가 올바르게 기록됨 |
 | Keycloak / OIDC IdP (선택) | 사내 SSO | Authorization Code + PKCE. Callback `https://<host>/api/v1/auth/oidc/callback` |
-| SMTP 서버 (선택) | 이메일 알림 | 서비스 설정 > 알림. 없으면 인앱 알림만 남음 |
+| SMTP 릴레이 (선택) | 메일 알림 | 서비스 설정 > 메일. 사내 릴레이(포트 25·인증 없음·TLS 없음)가 기본이며 폐쇄망은 `postra` 를 권장. 없으면 인앱 알림만 남음 |
 | ClamAV `clamd` (선택) | 증적 악성코드 검사 | 서비스 설정 > 파일 보안. 없으면 검사를 건너뜀(`검사 안 함`) |
 
 Redis, 외부 CDN, 인터넷 연결은 필요하지 않습니다. UI, 한글 PDF 글꼴, 기본 체크리스트 workbook, 마이그레이션이 모두 이미지에 들어 있습니다.
@@ -24,7 +24,7 @@ Redis, 외부 CDN, 인터넷 연결은 필요하지 않습니다. UI, 한글 PDF
 
 ## 2. 설치
 
-릴리즈 자산 하나(`seccheck-v1.0.144.tar.gz`)로 처음부터 끝까지 올리는 순서입니다. 아래 명령은 그대로 붙여 넣을 수 있으며, 값은 예시이므로 실제 값으로 바꾸십시오.
+릴리즈 자산 하나(`seccheck-v1.0.145.tar.gz`)로 처음부터 끝까지 올리는 순서입니다. 아래 명령은 그대로 붙여 넣을 수 있으며, 값은 예시이므로 실제 값으로 바꾸십시오.
 
 ### 2-1. 요구 사항
 
@@ -39,9 +39,9 @@ Redis, 외부 CDN, 인터넷 연결은 필요하지 않습니다. UI, 한글 PDF
 ### 2-2. 이미지 적재
 
 ```bash
-sha256sum seccheck-v1.0.144.tar.gz   # 릴리즈 노트에 적힌 sha256 과 대조
-docker load -i seccheck-v1.0.144.tar.gz
-docker image inspect seccheck:v1.0.144 --format '{{index .Config.Labels "org.opencontainers.image.version"}}'
+sha256sum seccheck-v1.0.145.tar.gz   # 릴리즈 노트에 적힌 sha256 과 대조
+docker load -i seccheck-v1.0.145.tar.gz
+docker image inspect seccheck:v1.0.145 --format '{{index .Config.Labels "org.opencontainers.image.version"}}'
 ```
 
 ### 2-3. 데이터베이스 준비
@@ -60,7 +60,7 @@ CREATE EXTENSION IF NOT EXISTS pg_trgm;   -- 선택. 없으면 경고만 남기�
 ```yaml
 services:
   seccheck:
-    image: seccheck:v1.0.144
+    image: seccheck:v1.0.145
     container_name: seccheck
     restart: unless-stopped
     stop_grace_period: 25s
@@ -166,7 +166,6 @@ SECCHECK_SELFTEST_PASSWORD='<관리자 비밀번호>' docker compose exec secche
 | 화면 이름 | 키 | 기본값 | 설명 |
 | :--- | :--- | :--- | :--- |
 | 서비스명 | `service_name` | `SecCheck` | 로그인 화면과 메일에 표시. 화면에서는 고정값으로 보이며 바꿀 수 없습니다 |
-| 서비스 주소 | `base_url` | (비어 있음) | 알림 메일에 넣을 링크의 주소. 비우면 링크 없이 발송 |
 | 표시 시간대 | `timezone` | `Asia/Seoul` | 화면·내보내기·기한 판정·요약 메일·심의번호 연도에 모두 적용. IANA 이름 |
 | 세션 시간(분) | `session_minutes` | `480` | 15~10080 |
 | 보존 기간(일) | `retention_days` | `1825` | 서버 로그와 인앱 알림 보존. 감사로그는 삭제하지 않음 |
@@ -230,20 +229,27 @@ SECCHECK_SELFTEST_PASSWORD='<관리자 비밀번호>' docker compose exec secche
 | 관리자·검토자·승인자 계정에 일회용 코드(TOTP) 필수 | `require_totp_for_admins` | `false` | 대상 계정은 등록 전까지 계정 보안 화면 외 API 가 403 |
 | /metrics를 인증 없이 공개 | `metrics_public` | `true` | 끄면 읽기 범위 API 키로만 수집 |
 
-![서비스 관리자 설정 — 알림: SMTP 와 일일 요약 시각, 테스트 메일](screenshots/admin-settings-notification.png)
+![서비스 관리자 설정 — 메일: SMTP 릴레이, 보내는 이벤트, 테스트 메일, 발송 기록](screenshots/admin-settings-mail.png)
 
-**알림 (`notification`)**
+**메일 (`mail`)** — 키 이름은 사내 메일 알림 표준과 같습니다(`mail.enabled`, `mail.smtp_host`, …). 다른 서비스에서 릴레이를 붙여 본 운영자는 여기서도 같은 이름을 만납니다. 동작은 3-5 에 있습니다.
 
 | 화면 이름 | 키 | 기본값 | 설명 |
 | :--- | :--- | :--- | :--- |
-| 이메일 알림 활성화 | `email_enabled` | `false` | 서비스 전체 스위치. 꺼져 있으면 인앱 알림만 |
-| SMTP 호스트 / 포트 | `smtp_host` / `smtp_port` | (비어 있음) / `25` | |
-| SMTP 사용자 / 비밀번호 | `smtp_username` / `smtp_password` | (비어 있음) | 비밀번호는 마스터 키로 암호화 저장되며 다시 표시되지 않음 |
-| 전송 보안 | `smtp_tls_mode` | `starttls` | `starttls` · implicit TLS · 없음 |
-| 발신 주소 | `from` | (비어 있음) | |
+| 메일 알림 활성화 | `enabled` | `false` | 꺼짐이 기본. 새로 설치한 곳은 켜기 전까지 아무것도 보내지 않음 |
+| SMTP 호스트 / 포트 | `smtp_host` / `smtp_port` | (비어 있음) / `25` | 사내 릴레이 주소. 폐쇄망은 `postra` |
+| 전송 보안 | `security` | `auto` | `auto` 는 릴레이가 STARTTLS 를 알리면 쓰고 아니면 평문. `none` 평문 고정, `starttls` 필수, `tls` implicit TLS. 465 포트는 `auto` 가 `tls` 로 동작 |
+| TLS 인증서 검증 생략 | `skip_tls_verify` | `false` | 사내 인증서가 사설일 때만 |
+| SMTP 사용자 / 비밀번호 | `username` / `password` | (비어 있음) | 인증 없는 릴레이가 흔하므로 선택 사항. 비밀번호는 마스터 키로 암호화 저장되며 설정 API 가 돌려주지 않음 — 화면에는 `설정됨` 만 보이고 바꿀 때만 새 값을 받음. 로그·감사로그에도 남지 않음 |
+| 발신 주소 / 발신자 이름 | `from_address` / `from_name` | (비어 있음) / `SecCheck` | |
+| 서비스 주소 | `base_url` | (비어 있음) | 메일 속 바로가기 링크가 가리킬 이 서비스의 주소. 비우면 링크 없이 발송 |
+| 연결 제한 시간(초) | `timeout_seconds` | `10` | 릴레이 연결·응답 대기 |
 | 일일 요약 발송 시각 | `digest_hour` | `8` | 0~23. 요약 수신자에게 하루 한 번 |
+| 내 차례 | `notify_turn` | `true` | 이벤트 스위치. 3-5 의 표 |
+| 결과 | `notify_decision` | `true` | 이벤트 스위치 |
+| 기한 | `notify_deadline` | `true` | 이벤트 스위치 |
+| 장애 | `notify_failure` | `true` | 이벤트 스위치 |
 
-`테스트 메일 보내기` 는 저장된 설정으로 본인에게 1통을 보냅니다. 운영 전에 반드시 한 번 확인하십시오.
+`테스트 메일 보내기` 는 저장된 설정으로 본인 프로필의 이메일 주소에 1통을 보내고 결과를 그 자리에서, 그리고 아래 `메일 발송 기록` 에 남깁니다. 릴레이 설정은 한 번에 맞는 일이 드물므로 운영 전에 반드시 한 번 확인하십시오.
 
 **방문 추적 (`analytics`)** — 설정 절차와 콘텐츠 보안 정책은 3-4 절.
 
@@ -306,6 +312,31 @@ SECCHECK_SELFTEST_PASSWORD='<관리자 비밀번호>' docker compose exec secche
 **끄면 원래대로.** `방문 추적 스크립트 삽입` 을 끄면 다음 요청부터 스니펫이 사라지고 정책은 nonce·출처·`report-uri` 없이 처음 그대로가 됩니다. `/momento/*` 도 닫힙니다. 설정은 15초까지 캐시되지만 이 화면에서 저장하면 즉시 반영됩니다. 켜고 끄는 것과 `허용` 버튼은 모두 `UPDATE_SETTING`(대상 `analytics`)으로 감사로그에 남습니다.
 
 ---
+
+### 3-5. 메일 알림 (SMTP 릴레이)
+
+인앱 알림(종)은 항상 기록됩니다. 메일은 그 가운데 **사람이 실제로 기다리는 일**만 사내 SMTP 릴레이로 내보내는 길이며, 사내 메일 알림 표준을 따릅니다. 기본은 꺼짐입니다.
+
+**보내는 이벤트.** 기준은 하나입니다 — 이 메일이 오지 않으면 누군가 손해를 보거나 화면을 계속 새로고침한다. 그 기준으로 알림 유형을 네 묶음으로 나누고 묶음마다 스위치를 두었습니다. 스위치를 끄면 그 묶음만 멎고 종에는 그대로 남습니다.
+
+| 스위치 | 키 | 포함하는 알림 유형 | 왜 메일인가 |
+| :--- | :--- | :--- | :--- |
+| 내 차례 | `notify_turn` | `심의 제출·재제출`, `심의 배정`, `심의 요청자 인계`, `체크리스트 항목 배정`, `최종 승인 요청`, `보완 요청`, `보완 조치 완료`, `후속조치 이행 보고` | 내가 다음 일을 해야 심의가 움직인다. 오지 않으면 모두가 기다린다 |
+| 결과 | `notify_decision` | `심의 완료`, `심의 반려`, `심의 취소`, `결재 요청 회수`, `후속조치 이행 확인` | 요청자는 오픈 일정을 걸고 결과를 기다린다 |
+| 기한 | `notify_deadline` | `보완 기한 임박·초과`, `후속조치 기한`, `오픈 예정일 임박`, `심의 정체`, `API 키 만료 임박` | 놓치면 손해가 난다 |
+| 장애 | `notify_failure` | `작업 큐 정체`, `작업 재시도 소진`, `저장 공간 부족`, `증적 무결성 확인 실패`, `증적 악성코드 탐지`, `감사로그 무결성 실패`, `권한 계정 자동 잠금` | 운영자가 조치해야 멈춘 것이 풀린다 |
+
+`체크리스트 코멘트` 와 `API 키 폐기` 는 종에만 옵니다 — 코멘트는 열어 볼 때 읽는 대화이고, 폐기된 키는 쓰는 순간 스스로 알립니다.
+
+**시끄러우면 꺼집니다.** 자기가 한 일로 생긴 알림은 자기에게 메일로 보내지 않습니다(장애 묶음은 예외 — 검증 버튼을 눌러 체인 실패를 발견한 관리자도 그 메일을 받습니다). 사용자가 `수신 설정` 에서 하루 요약을 고르면 여러 알림을 `일일 요약 발송 시각` 이후 한 통으로 묶어 보내고, 유형별로 더 끌 수도 있습니다. 관리자 스위치·사용자 설정·요약 가운데 하나라도 막으면 그 메일은 나가지 않습니다.
+
+**요청을 막지 않습니다.** 메일은 `SEND_EMAIL` 작업으로 큐에 들어가 알림 발송 워커가 배경에서 보냅니다. 릴레이가 느리거나 죽어 있어도 댓글 하나, 제출 하나가 기다리지 않으며, 실패한 발송은 5-4 의 규칙대로 재시도됩니다. 유일한 예외는 `테스트 메일 보내기` — 관리자가 답을 기다리고 있으므로 그 자리에서 보내고 결과를 보여 줍니다.
+
+**나간 것을 기록합니다.** 릴레이에 넘긴 모든 시도가 `메일 발송 기록` 에 남습니다 — 언제, 어떤 이벤트로, 누구에게, 제목이 무엇이었고, `성공` · `실패`(릴레이의 오류 문구) · `건너뜀`(주소 없음, 유형 꺼짐 같은 이유) 가운데 무엇이었는지. 본문은 담지 않습니다 — 본문까지 담으면 이 기록이 그 자체로 유출 경로가 됩니다. "메일이 안 왔다" 는 문의는 여기서 답합니다. `GET /api/v1/admin/mail/deliveries` 로도 읽을 수 있고 `retention_days` 뒤에 정기 점검이 지웁니다.
+
+**사용자 명부는 새로 만들지 않습니다.** 받는 주소는 `사용자·역할` 의 이메일뿐입니다. 이메일이 비어 있는 계정은 종으로만 받고 발송 기록에 `건너뜀` 으로 남습니다.
+
+**켠 뒤 확인할 것.** ① `테스트 메일 보내기` 가 `성공` 으로 기록되고 실제로 도착하는지. ② 릴레이를 끊어 놓고 심의를 하나 제출해도 제출이 평소처럼 끝나고, 발송 기록에 `실패` 가 남으며, 릴레이가 돌아오면 재시도로 `성공` 이 붙는지. ③ 다른 사람이 배정한 심의는 메일이 오고 자기가 배정한 것은 오지 않는지.
 
 ## 4. 계정과 권한
 
@@ -420,7 +451,7 @@ SECCHECK_SELFTEST_PASSWORD='<관리자 비밀번호>' docker compose exec secche
 
 | 유형 | 내용 | 실패 시 |
 | :--- | :--- | :--- |
-| `SEND_EMAIL` | 인앱 알림의 이메일 발송 | SMTP 오류는 5회 재시도 후 `FAILED`. 수신자 이메일이 없거나 발송이 꺼진 경우처럼 재시도로 해결되지 않는 것은 재시도 없이 `COMPLETED` 로 끝내고 사유를 `마지막 오류` 에 남김 |
+| `SEND_EMAIL` | 인앱 알림의 메일 발송 | SMTP 오류는 5회 재시도 후 `FAILED`. 수신자 이메일이 없거나 발송·유형이 꺼진 경우처럼 재시도로 해결되지 않는 것은 재시도 없이 `COMPLETED` 로 끝내고 사유를 `마지막 오류` 에 남김. 시도마다 서비스 설정 > 메일의 `메일 발송 기록` 에도 남음 |
 | `SCAN_EVIDENCE` | 증적 악성코드 검사 | 5회 재시도 후 `FAILED`, 증적은 `ERROR`. 재시도하면 `PENDING` 으로 복귀 |
 
 상태 필터와 `10초 자동 새로고침`, 개별 재시도와 실패 전체 재시도가 있습니다. `검사 대기 증적` 카드가 줄지 않으면 clamd 연결을 먼저 확인하십시오. 재시작으로 `RUNNING` 에 남은 작업은 매시간 정기 점검이 15분 이상 된 것을 큐에 되돌립니다. 재시도를 모두 소진한 작업이 생기면 시스템 관리자에게 `작업이 재시도를 모두 소진했습니다` 알림이 옵니다.
@@ -436,6 +467,7 @@ SECCHECK_SELFTEST_PASSWORD='<관리자 비밀번호>' docker compose exec secche
 | `jobs` | 완료 7일·실패 90일 지난 작업 삭제 | 위와 같음 |
 | `application_logs` | `retention_days` 지난 서버 로그 삭제 | 위와 같음 |
 | `notifications` | `retention_days` 지난 알림 삭제 | 위와 같음 |
+| `mail_deliveries` | `retention_days` 지난 메일 발송 기록 삭제 | 위와 같음 |
 | `expired_lockouts` | 잠금 시간이 지난 계정의 실패 카운터·잠금 해제 | — |
 | `due_reminders` | 보완 요청 기한 임박·초과를 담당자에게 알림 | `보완 조치 기한 임박` · `보완 조치 기한 초과` |
 | `follow_up_reminders` | 후속조치 기한 임박·초과를 담당자에게 알림 | `후속조치 기한 임박` · `후속조치 기한 초과` |
@@ -485,7 +517,7 @@ docker compose exec seccheck /app/seccheck verify-evidence --sample 50   # 전�
 3. 새 이미지를 적재하고 `compose.yaml` 의 `image:` 태그를 새 태그로 바꿉니다. 2-4 절에 실은 본문은 이 가이드가 쓰인 버전의 것이므로, 새 릴리즈의 가이드에 실린 본문과 달라졌는지도 함께 봅니다.
    ```bash
    docker load -i seccheck-<새 태그>.tar.gz
-   sed -i 's/seccheck:v1.0.144/seccheck:<새 태그>/' compose.yaml
+   sed -i 's/seccheck:v1.0.145/seccheck:<새 태그>/' compose.yaml
    docker compose up -d
    ```
 4. 기동 로그에서 `SecCheck started` 를 확인하고 `/ready` 가 200 인지, `시스템 정보` 의 버전과 스키마 버전이 기대와 같은지 봅니다.
@@ -507,7 +539,7 @@ docker compose exec seccheck /app/seccheck verify-evidence --sample 50   # 전�
 | `/ready` 가 503 | `docker compose logs`, PostgreSQL 상태 | 연결 풀 고갈이면 `seccheck_db_connections` 의 `acquired` 가 `total` 에 붙어 있습니다. DSN 에 `pool_max_conns` 를 올리거나 오래 걸리는 내보내기를 줄입니다 |
 | 사용자 화면에 500, 서버 로그 `component=api` 에 `fields.error` | `서버 로그` 에서 요청 ID 로 검색 | `fields.code`·`fields.error` 의 원인(대개 데이터베이스)에 따라 조치 |
 | 증적이 `검사 중` 에서 안 움직임. `검사 대기 증적` 이 줄지 않음 | `작업 큐`, `서비스 설정 > 파일 보안` 의 `연결 테스트`, 서버 로그 `scanner` 의 `evidence scan failed` | clamd 주소·기동 확인. 검사를 쓰지 않을 거면 `ClamAV 악성코드 검사` 를 끕니다. `FAILED` 작업은 재시도 |
-| 알림 메일이 안 옴 | `작업 큐` 의 `SEND_EMAIL` 마지막 오류, 서버 로그 `notification` 의 `email notification failed` / `digest delivery failed` | `테스트 메일 보내기` 로 SMTP 경로 확인. 수신자에게 이메일이 없거나 `이메일 알림 활성화` 가 꺼져 있으면 재시도 없이 `COMPLETED` 로 끝납니다 |
+| 알림 메일이 안 옴 | 서비스 설정 > 메일의 `메일 발송 기록`(그 주소로 시도가 있었는지, `실패` 면 릴레이의 오류 문구, `건너뜀` 이면 사유), `작업 큐` 의 `SEND_EMAIL` 마지막 오류, 서버 로그 `notification` 의 `email notification failed` / `digest delivery failed` | 기록에 시도 자체가 없으면 3-5 의 스위치·수신 설정·자기 알림 규칙 가운데 무엇이 막았는지 확인. `테스트 메일 보내기` 로 릴레이 경로 확인. 수신자에게 이메일이 없거나 `메일 알림 활성화` 가 꺼져 있으면 재시도 없이 `COMPLETED` 로 끝납니다 |
 | `감사로그 체인 검증 실패` 알림, 서버 로그 `audit` 의 `audit chain verification failed` | `감사로그` 화면(알림의 링크가 멈춘 이벤트로 이동), 데이터베이스 직접 조작 이력 | 원인을 확인하고 백업과 대조한 뒤 `전체 재검증`. 데이터베이스를 직접 고친 적이 있는지부터 확인 |
 | `증적 무결성 확인 실패` 알림(`시스템 정보 열기`), `seccheck_evidence_unreadable > 0` | `시스템 정보 > 증적 무결성` 의 파일명·심의번호·사유 | 볼륨 백업에서 해당 파일 복구. `verify-evidence` 로 전체 확인 |
 | `증적 저장 공간이 부족합니다` 알림(`시스템 정보 열기`), 서버 로그 `maintenance` 의 `evidence volume is running out` | `시스템 정보 > 증적 저장소` 의 남은 공간 | 남은 공간이 10% 또는 2GB 아래입니다. 볼륨 확장. `삭제 증적 보관(일)` 을 줄이면 파기가 빨라집니다. 알림은 6시간에 한 번만 오므로 조치 뒤에는 화면으로 확인 |
