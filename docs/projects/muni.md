@@ -1,7 +1,7 @@
 ---
 title: "muni — 자율 개선 이력"
 description: "muni: 자율 개선 회차 17회, 릴리즈 12건. 최근 릴리즈 v0.39.0 (자산 1개)."
-last_modified_at: 2026-09-14 16:49:28 +0900
+last_modified_at: 2026-09-14 16:56:02 +0900
 ---
 {% raw %}
 <script type="application/ld+json">
@@ -18,7 +18,7 @@ last_modified_at: 2026-09-14 16:49:28 +0900
   "name": "hkjang",
   "url": "https://github.com/hkjang"
  },
- "dateModified": "2026-09-14T16:49:28+09:00",
+ "dateModified": "2026-09-14T16:56:02+09:00",
  "version": "0.39.0"
 }
 </script>

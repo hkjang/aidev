@@ -1,7 +1,7 @@
 ---
 title: "DartFly — 자율 개선 이력"
-description: "DartFly: 자율 개선 회차 3회, 릴리즈 0건. 최근 릴리즈 없음."
-last_modified_at: 2026-09-14 16:49:28 +0900
+description: "DartFly: 자율 개선 회차 4회, 릴리즈 1건. 최근 릴리즈 v2.68.0 (자산 2개)."
+last_modified_at: 2026-09-14 16:56:02 +0900
 ---
 {% raw %}
 <script type="application/ld+json">
@@ -11,37 +11,39 @@ last_modified_at: 2026-09-14 16:49:28 +0900
  "name": "DartFly",
  "codeRepository": "https://github.com/hkjang/DartFly",
  "url": "https://hkjang.github.io/aidev/projects/DartFly/",
- "description": "DartFly: 자율 개선 회차 3회, 릴리즈 0건. 최근 릴리즈 없음.",
+ "description": "DartFly: 자율 개선 회차 4회, 릴리즈 1건. 최근 릴리즈 v2.68.0 (자산 2개).",
  "inLanguage": "ko",
  "maintainer": {
   "@type": "Person",
   "name": "hkjang",
   "url": "https://github.com/hkjang"
  },
- "dateModified": "2026-09-14T16:49:28+09:00"
+ "dateModified": "2026-09-14T16:56:02+09:00",
+ "version": "2.68.0"
 }
 </script>
 
 # DartFly
 
-<p class="tldr"><strong>요약.</strong> DartFly: 자율 개선 회차 3회, 릴리즈 0건. 최근 릴리즈 없음. <span class="pill pill-merged" title="14일: 릴리즈 0, 실패 0, 경고 3, 회귀 0">건강 C</span> <span class="meta">14일: 릴리즈 0, 실패 0, 경고 3, 회귀 0</span></p>
+<p class="tldr"><strong>요약.</strong> DartFly: 자율 개선 회차 4회, 릴리즈 1건. 최근 릴리즈 v2.68.0 (자산 2개). <span class="pill pill-merged" title="14일: 릴리즈 1, 실패 0, 경고 3, 회귀 0">건강 C</span> <span class="meta">14일: 릴리즈 1, 실패 0, 경고 3, 회귀 0</span></p>
 
-<ul class="stats"><li><b>3</b><span>회차</span></li><li><b>1</b><span>프로젝트</span></li><li><b>0</b><span>배포 준비 완료</span></li><li><b>0</b><span>릴리즈 진행 중</span></li><li><b>0</b><span>병합 완료</span></li><li><b>3</b><span>검토 대기</span></li><li><b>0</b><span>검증 실패</span></li><li><b>0</b><span>변경 없음</span></li><li><b>0</b><span>실행 오류</span></li><li><b>$25.72</b><span>비용</span></li><li><b>50분</b><span>에이전트 시간</span></li></ul>
+<ul class="stats"><li><b>4</b><span>회차</span></li><li><b>1</b><span>프로젝트</span></li><li><b>1</b><span>배포 준비 완료</span></li><li><b>0</b><span>릴리즈 진행 중</span></li><li><b>0</b><span>병합 완료</span></li><li><b>3</b><span>검토 대기</span></li><li><b>0</b><span>검증 실패</span></li><li><b>0</b><span>변경 없음</span></li><li><b>0</b><span>실행 오류</span></li><li><b>$26.84</b><span>비용</span></li><li><b>54분</b><span>에이전트 시간</span></li></ul>
 
 ## 현황
 
 <dl class="kv">
 <dt>저장소</dt><dd><a href="https://github.com/hkjang/DartFly">https://github.com/hkjang/DartFly</a></dd>
-<dt>마지막 회차</dt><dd>2026-09-14 10:46 KST — <span class="pill pill-other">• 기타</span> <strong>guarded files</strong>, PR open <a href="https://github.com/hkjang/DartFly/pull/4">PR #4</a></dd>
+<dt>마지막 회차</dt><dd>2026-09-14 16:56 KST — <span class="pill pill-released">🚀 릴리즈</span> release-only, released <a href="https://github.com/hkjang/DartFly/releases/tag/v2.68.0">v2.68.0</a></dd>
+<dt>최근 릴리즈</dt><dd><a href="https://github.com/hkjang/DartFly/releases/tag/v2.68.0">v2.68.0</a> — released · 자산 2개 (이전 v2.67.0: 2개) <a href="https://github.com/hkjang/DartFly/releases">전체 릴리즈 →</a></dd>
 </dl>
 
 ## 회차 이력
 
-<div class="table-wrap"><table class="rt"><thead><tr><th>일시</th><th class="primary">프로젝트</th><th>결과</th></tr></thead><tbody><tr data-status="other"><td data-label="일시">2026-09-14 10:46</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/DartFly/">DartFly</a></td><td data-label="결과"><span class="pill pill-merged" title="outcome=review-pending">검토 대기</span> <strong>guarded files</strong>, PR open <a href="https://github.com/hkjang/DartFly/pull/4">PR #4</a><div class="meta">22파일 <span style="color:var(--good)">+1442</span>/<span style="color:var(--bad)">−22</span> · 테스트 4 — feat: 저장 결과를 다른 사내 서비스로 넘기기 (HANDOFF 표준 보내는 쪽, csv)</div></td></tr><tr data-status="other"><td data-label="일시">2026-09-14 08:32</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/DartFly/">DartFly</a></td><td data-label="결과"><span class="pill pill-merged" title="outcome=review-pending">검토 대기</span> <strong>guarded files</strong>, PR open <a href="https://github.com/hkjang/DartFly/pull/3">PR #3</a><div class="meta">19파일 <span style="color:var(--good)">+1955</span>/<span style="color:var(--bad)">−11</span> · 테스트 3 — feat: 관리자가 화면에서 방문 추적 스니펫을 붙일 수 있게 (nonce 기반 CSP, Momento 프록시)</div></td></tr><tr data-status="other"><td data-label="일시">2026-09-14 00:37</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/DartFly/">DartFly</a></td><td data-label="결과"><span class="pill pill-merged" title="outcome=review-pending">검토 대기</span> <strong>guarded files</strong>, PR open <a href="https://github.com/hkjang/DartFly/pull/2">PR #2</a><div class="meta">23파일 <span style="color:var(--good)">+718</span>/<span style="color:var(--bad)">−33</span> · 테스트 3 — feat: IdP 에 이미 로그인한 사람은 로그인 화면 없이 들어오게 (SSO auto_login, prompt=none)</div></td></tr></tbody></table></div>
+<div class="table-wrap"><table class="rt"><thead><tr><th>일시</th><th class="primary">프로젝트</th><th>결과</th></tr></thead><tbody><tr data-status="released"><td data-label="일시">2026-09-14 16:56</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/DartFly/">DartFly</a></td><td data-label="결과"><span class="pill pill-released" title="outcome=release-ready">배포 준비 완료</span> release-only, released <a href="https://github.com/hkjang/DartFly/releases/tag/v2.68.0">v2.68.0</a></td></tr><tr data-status="other"><td data-label="일시">2026-09-14 10:46</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/DartFly/">DartFly</a></td><td data-label="결과"><span class="pill pill-merged" title="outcome=review-pending">검토 대기</span> <strong>guarded files</strong>, PR open <a href="https://github.com/hkjang/DartFly/pull/4">PR #4</a><div class="meta">22파일 <span style="color:var(--good)">+1442</span>/<span style="color:var(--bad)">−22</span> · 테스트 4 — feat: 저장 결과를 다른 사내 서비스로 넘기기 (HANDOFF 표준 보내는 쪽, csv)</div></td></tr><tr data-status="other"><td data-label="일시">2026-09-14 08:32</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/DartFly/">DartFly</a></td><td data-label="결과"><span class="pill pill-merged" title="outcome=review-pending">검토 대기</span> <strong>guarded files</strong>, PR open <a href="https://github.com/hkjang/DartFly/pull/3">PR #3</a><div class="meta">19파일 <span style="color:var(--good)">+1955</span>/<span style="color:var(--bad)">−11</span> · 테스트 3 — feat: 관리자가 화면에서 방문 추적 스니펫을 붙일 수 있게 (nonce 기반 CSP, Momento 프록시)</div></td></tr><tr data-status="other"><td data-label="일시">2026-09-14 00:37</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/DartFly/">DartFly</a></td><td data-label="결과"><span class="pill pill-merged" title="outcome=review-pending">검토 대기</span> <strong>guarded files</strong>, PR open <a href="https://github.com/hkjang/DartFly/pull/2">PR #2</a><div class="meta">23파일 <span style="color:var(--good)">+718</span>/<span style="color:var(--bad)">−33</span> · 테스트 3 — feat: IdP 에 이미 로그인한 사람은 로그인 화면 없이 들어오게 (SSO auto_login, prompt=none)</div></td></tr></tbody></table></div>
 
 ## 비용·사용량
 
-<div class="table-wrap"><table class="rt"><caption class="meta">최근 30세션</caption><thead><tr><th>시각</th><th class="primary">프로젝트</th><th>단계</th><th class="num">시간</th><th class="num">턴</th><th class="num">비용</th><th class="num">토큰 입력/출력</th><th>종료</th></tr></thead><tbody><tr data-status="other"><td data-label="시각">10:46</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/DartFly/">DartFly</a></td><td data-label="단계">개선</td><td data-label="시간" class="num">15분</td><td data-label="턴" class="num">77</td><td data-label="비용" class="num">$8.29</td><td data-label="토큰 입력/출력" class="num">10.0M / 62K</td><td data-label="종료">success</td></tr><tr data-status="other"><td data-label="시각">08:32</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/DartFly/">DartFly</a></td><td data-label="단계">개선</td><td data-label="시간" class="num">21분</td><td data-label="턴" class="num">108</td><td data-label="비용" class="num">$9.59</td><td data-label="토큰 입력/출력" class="num">11.4M / 80K</td><td data-label="종료">success</td></tr><tr data-status="other"><td data-label="시각">00:36</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/DartFly/">DartFly</a></td><td data-label="단계">개선</td><td data-label="시간" class="num">15분</td><td data-label="턴" class="num">81</td><td data-label="비용" class="num">$7.84</td><td data-label="토큰 입력/출력" class="num">9.5M / 55K</td><td data-label="종료">success</td></tr></tbody></table></div>
+<div class="table-wrap"><table class="rt"><caption class="meta">최근 30세션</caption><thead><tr><th>시각</th><th class="primary">프로젝트</th><th>단계</th><th class="num">시간</th><th class="num">턴</th><th class="num">비용</th><th class="num">토큰 입력/출력</th><th>종료</th></tr></thead><tbody><tr data-status="other"><td data-label="시각">16:55</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/DartFly/">DartFly</a></td><td data-label="단계">릴리즈</td><td data-label="시간" class="num">4분</td><td data-label="턴" class="num">24</td><td data-label="비용" class="num">$1.12</td><td data-label="토큰 입력/출력" class="num">956K / 9K</td><td data-label="종료">success</td></tr><tr data-status="other"><td data-label="시각">10:46</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/DartFly/">DartFly</a></td><td data-label="단계">개선</td><td data-label="시간" class="num">15분</td><td data-label="턴" class="num">77</td><td data-label="비용" class="num">$8.29</td><td data-label="토큰 입력/출력" class="num">10.0M / 62K</td><td data-label="종료">success</td></tr><tr data-status="other"><td data-label="시각">08:32</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/DartFly/">DartFly</a></td><td data-label="단계">개선</td><td data-label="시간" class="num">21분</td><td data-label="턴" class="num">108</td><td data-label="비용" class="num">$9.59</td><td data-label="토큰 입력/출력" class="num">11.4M / 80K</td><td data-label="종료">success</td></tr><tr data-status="other"><td data-label="시각">00:36</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/DartFly/">DartFly</a></td><td data-label="단계">개선</td><td data-label="시간" class="num">15분</td><td data-label="턴" class="num">81</td><td data-label="비용" class="num">$7.84</td><td data-label="토큰 입력/출력" class="num">9.5M / 55K</td><td data-label="종료">success</td></tr></tbody></table></div>
 
 ## 아이디어 백로그 — 대기 10 / 전체 12
 
@@ -66,6 +68,8 @@ last_modified_at: 2026-09-14 16:49:28 +0900
 - 결과: 성공
 - 요약: DartFly 는 표준의 형식 표에 칸이 없어, 이 서비스가 가진 문서(저장 결과 `/saved`)로 보낼 수 있는 유일한 형식 `csv` 의 **보내는 쪽만** 온전히 만들었습니다(받는 쪽은 DartFly 에 자연스러운 대상이 없고 읽기 전용 원칙과도 맞지 않아 만들지 않음). 커밋 66d8ac9: 새 패키지 `internal/handoff`(메모리 표 저장소 — 128비트 난수·5분·단일 사용·사용자당 미사용 표 20개 상한, 허용 목록 검증 `NormalizeOrigin` 은 `스킴://호스트[:포트]` 만 허용, `Sendable` 은 csv 를 받는 곳만), `df_handoff_target` 표(002 DDL, 기존 설치는 기동 시 IF NOT EXISTS), 서버 `handoff.go`(`POST /api/v1/handoff/claims` 로그인+CSRF → 201 표준 응답, `GET /api/v1/handoff/claims/{claim}` 공개·404 무구별·`filename*=UTF-8''`, `GET /api/v1/handoff/targets`, `GET/PUT /api/v1/admin/handoff` 관리자), 표가 로그에 남지 않도록 요청 로그 경로를 `{claim}` 으로 가림, 내려받기 CSV 쓰기를 `writeCSV` 로 뽑아 두 경로가 같은 파일(BOM·수식 방지·마스킹된 저장본)을 내게 함. 화면은 `/saved` 에 "다른 서비스로 보내기" 드롭다운(허용 목록이 비면 단추 없음, 클릭 즉시 창을 열고 표를 받아 `{origin}/handoff?source=&claim=` 으로 이동 — 팝업 차단 회피, 실패 시 창 닫음), 관리 화면 `/admin/handoff`(표준 형식 표 프리셋 kanpic/ptium/muni/weekly, 오리진 입력, 받는 형식 체크). 검증: gofmt/vet/`go test -race ./...` 39개 패키지 통과(새 테스트 Go 8+8: 단일 사용·5분 만료·남의 문서 404·형식 검증·빈 목록 `[]`·csv 받는 곳만·관리자 전용·오리진 검증·로그 미기록·프록시 스킴, JS 1파일: 주소 모양·필터·창 열기/닫기), 라우트 게이트 테스트에 공개 경로 사유 등록. `test/smoke/run.sh` 실제 바이너리+MariaDB 통과 후 같은 서버에서 curl 로 표 발급→로그인 없이 받기(200, BOM·수식 방지 확인)→두 번째 404→xlsx 400, 서버 로그에 표 문자열 0건·경로 `{claim}` 확인, 실제 DB 에 표 자동 생성 확인, 실제 Chrome(CDP) 으로 허용 목록 있을 때 단추·메뉴·클릭 시 `https://kanpic.intra/handoff?source=…&claim=…` 열림, 목록 비우면 단추 사라짐, 관리 화면 렌더까지 스크린샷으로 확인. 관리자 가이드에 설정·동작·확인법을 더했습니다. 남은 검증 항목: "두 서비스를 실제로 띄워 확인"은 받는 쪽 서비스(kanpic/ptium)가 이 환경에 없어 하지 못했습니다.
 - 보류 아이디어: (1) 추적 설정·넘기기 허용 목록 변경을 `mgnt_audit_log` 에 남기기 — SSO 설정처럼 변경 전후 스냅샷(지금은 update_user·update_time 만), 2/1/S / (2) 조용한 SSO 시도의 IdP 오류값(login_required 외)을 Warn 로그로 구분 — 설정 문제 진단용, 2/1/S / (3) 로그인 페이지 조용한 SSO 시도 중 폼 깜빡임 제거 — auto_login 켜진 경우만 결정 전까지 카드 숨김, 2/1/S / (4) 401 리다이렉트 헬퍼를 layout.js api() 로 일원화 — app.js·resources.js·mcp.js·admin-*.js 중복 제거, 2/1/S
+
+- 릴리즈: v2.68.0 (2026-09-14, run 2026-09-14-165143-DartFly-release)
 
 
 [← 대시보드](https://hkjang.github.io/aidev/) · [교훈 모음](https://hkjang.github.io/aidev/lessons/)
