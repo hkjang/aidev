@@ -232,6 +232,7 @@ kubectl apply -f ptium-1.69.32.kubernetes.yaml
 | | `analytics.allowed_hosts` | (없음) | 스니펫에서 자동으로 못 읽은 출처를 더하는 자리. 쉼표·줄바꿈 구분 |
 | | `analytics.include_admin` | `false` | 관리 화면(`/admin`)도 추적할지 |
 | | `analytics.placement` | `head` | 스니펫 자리: `head` 또는 `body` |
+| 문서 넘기기 | `handoff.peers` | `[]` | 문서를 주고받을 사내 서비스. `이름=오리진` 한 줄씩. 비어 있으면 보내기 단추가 없고 어디서도 받지 않음. 저장 즉시 적용 |
 
 **AI 모델 연결.** `ai.provider` 를 `openai-compatible` 로 바꾸고 주소·모델을 넣은 뒤 **지금 확인**을
 누르면 저장된 설정 그대로 제공자에게 한 번 물어 응답 여부와 걸린 시간을 보여 줍니다 — 아무것도
@@ -325,6 +326,63 @@ nonce 가 붙고 스니펫 안의 `http(s)` 출처가 정책에 더해집니다.
 
 **켜기 전에 확인.** 저장한 뒤 로그인하지 않은 브라우저로 페이지를 한 번 열고, 수집기에 방문이 들어오는지와
 **차단된 출처**가 비어 있는지 봅니다. 막힌 것이 있으면 **허용**을 누르고 페이지를 다시 엽니다.
+
+### 3.4 문서 넘기기 (handoff)
+
+생각은 umm 의 캔버스에서 시작해 muni 의 문서가 되고 Ptium 의 슬라이드가 되어 weekly 의 보고로
+들어갑니다. 이 절의 설정이 비어 있는 동안은 단계마다 사람이 파일을 내려받아 다시 올려야 합니다.
+사내 서비스가 모두 같은 표준(HANDOFF-STANDARD)을 따르므로, **서비스 설정 → 문서 넘기기**에 상대
+서비스의 주소를 적으면 그때부터 파일을 거치지 않고 넘어갑니다.
+
+**Ptium 이 맡은 칸.** Ptium 은 덱을 **pptx** 로 보내고, **마크다운 · docx · csv · xlsx · txt** 를
+받습니다. 표준의 형식 표에서 pptx 를 받는 서비스는 weekly 뿐이므로, 보내기 단추는 목록에 `weekly` 가
+있을 때만 나타납니다. umm · muni · kanpic 은 Ptium 이 **받기만** 하는 서비스입니다.
+
+**허용 목록 설정.** 관리자 콘솔 **서비스 설정 → 문서 넘기기 → 서비스 목록**에 한 줄에 하나씩
+`이름=오리진` 을 적고 저장합니다. 재시작이 필요 없습니다.
+
+```
+umm=https://umm.intra
+muni=https://muni.intra
+kanpic=https://kanpic.intra
+weekly=https://weekly.intra
+```
+
+- 이름은 `umm` · `muni` · `kanpic` · `weekly` · `ptium` 가운데 하나여야 그 서비스가 받는 형식을 압니다.
+  다른 이름을 적으면 그 서비스에서 **받기만** 하고 보내지는 않습니다.
+- 오리진은 `https://host` 또는 `https://host:port` 꼴이어야 하며 경로·쿼리·자격 증명이 있으면 저장되지
+  않습니다. 브라우저가 들고 오는 `source` 와 **글자 그대로** 같아야 하므로, 상대 서비스가 사용자에게
+  보이는 주소(그쪽의 `PUBLIC_BASE_URL`)를 적습니다. `http://` 와 `https://`, 포트가 다른 주소는 다른
+  서비스입니다.
+- 같은 주소를 두 번 적을 수 없고, 50줄까지입니다. 한 줄이라도 틀리면 목록 전체가 저장되지 않습니다.
+- 목록이 비어 있으면(기본값) 편집기의 **내보내기**에 "다른 서비스로 보내기"가 보이지 않고, 어느
+  서비스에서 온 문서도 받지 않습니다. 새로 설치한 곳에서는 아무것도 달라지지 않습니다.
+
+**Ptium 의 주소.** 상대 서비스가 덱을 받아 갈 주소는 `PUBLIC_BASE_URL` 입니다. 비어 있으면 요청이
+들어온 주소(`X-Forwarded-Proto` · `X-Forwarded-Host` 또는 `Host`)를 씁니다. 리버스 프록시 뒤에 있으면
+`PUBLIC_BASE_URL` 을 두는 편이 확실하고, 상대 서비스의 허용 목록에 적힌 Ptium 주소와 같아야 합니다.
+
+**어떻게 넘어가는가.** 보내는 쪽은 로그인한 사용자로 `POST /api/v1/handoff/claims` 를 불러 **5분 동안
+한 번만** 쓸 수 있는 표(claim)를 받고, 받는 쪽의 `/handoff?source=…&claim=…` 을 새 창에서 엽니다. 받는
+쪽은 `source` 가 자기 허용 목록에 있을 때만 `GET /api/v1/handoff/claims/{claim}` 으로 원본에서 직접
+받아 갑니다 — 그 요청에는 로그인이 없고 표가 곧 자격이라, 표는 서버에 해시로만 저장되고 요청 로그에는
+`{claim}` 으로 가려 남습니다. 서비스끼리 서로의 자격 증명을 들고 있지 않습니다.
+
+**받는 쪽이 지키는 것.** `source` 는 밖에서 들어온 값이므로 허용 목록에 없으면 **요청조차 보내지 않고**
+거절합니다. 리다이렉트를 따르지 않고, 30초와 25MB(그리고 `generation.max_template_mb`)에서 끊으며,
+`Content-Type` 이 받는 형식이 아니면 버립니다. 받은 문서는 파일을 올린 것과 똑같이 슬라이드가 되고,
+어디서 왔는지가 덱의 브리프·도착 시 안내·감사 로그(`presentation.handoff_receive`, 출처 오리진과 파일
+이름)에 남습니다. 표를 발급하고 내준 기록은 `presentation.handoff_offer` · `presentation.handoff_served`
+입니다.
+
+**로그인이 필요한 경우.** 받는 사람이 로그인돼 있지 않으면 로그인 화면으로 갔다가 같은 `/handoff` 주소로
+돌아옵니다(`return_to`). 자동 로그인(3.2 절)을 켜 두면 화면 없이 이어집니다. 표는 5분짜리이므로 로그인이
+그보다 오래 걸리면 "표가 이미 쓰였거나 5분이 지났습니다"가 나오고, 보낸 쪽에서 다시 보내면 됩니다.
+
+**확인.** 목록을 저장한 뒤 편집기에서 덱을 열고 **내보내기**를 누르면 아래에 "다른 서비스로 보내기"가
+보여야 합니다(pptx 를 받는 서비스가 있을 때). 상대 서비스에서 Ptium 으로 보내 보고, 새 창이 Ptium 의
+편집기로 착지하며 안내에 "…에서 넘겨받은 …" 이 있는지 봅니다. 서버 로그에서 `/api/v1/handoff/claims/`
+줄에 표가 아니라 `{claim}` 이 찍히는지 확인합니다.
 
 ## 4. 계정과 권한
 
@@ -459,6 +517,9 @@ volume" 으로 답합니다 — 이미지가 있는 척하지 않습니다.
 | 컨테이너가 바로 종료 | 로그에 `OIDC_CLIENT_ID is required when OIDC_ISSUER_URL is set` 또는 `URL must use HTTPS (HTTP requires OIDC_ALLOW_HTTP=true)` | 클라이언트 ID 를 넣거나, 평가 환경에서만 `OIDC_ALLOW_HTTP=true` |
 | 컨테이너가 바로 종료 | 로그에 `image directory … is not writable` 또는 `… is not a directory` | `ASSET_DIR` 볼륨이 마운트되고 uid/gid 65532 가 쓸 수 있는지. 볼륨이 깨졌으면 첫 업로드가 아니라 기동이 멈추는 것이 의도된 동작 |
 | 아무도 로그인할 수 없음 | 로그에 `no interactive authentication is configured; set BOOTSTRAP_ADMIN and BOOTSTRAP_ADMIN_PASSWORD, or configure OIDC, before anyone can sign in` | 둘 중 하나를 설정하고 재시작 |
+| 다른 서비스에서 보낸 문서가 "허용된 곳이 아닙니다" | 서비스 설정 → 문서 넘기기 | 보낸 서비스의 오리진을 `이름=오리진` 으로 목록에 넣음. 스킴·포트까지 글자 그대로 같아야 함 |
+| 편집기 내보내기에 "다른 서비스로 보내기"가 없음 | `GET /api/v1/handoff/targets` 의 `targets` | 목록이 비었거나 pptx 를 받는 서비스(`weekly`)가 없음. 목록에 `weekly=…` 를 넣음 |
+| 상대 서비스가 Ptium 의 표를 받아 가지 못함(404 · 닿지 않음) | 표 응답의 `source`, 상대 서비스의 허용 목록 | `PUBLIC_BASE_URL` 을 상대가 닿을 수 있는 주소로 두고, 상대 목록의 Ptium 주소와 같게. 표는 5분·1회 |
 | 관리자 비밀번호 분실 | — | `BOOTSTRAP_ADMIN_PASSWORD` 를 새 값으로, `BOOTSTRAP_ADMIN_PASSWORD_RESET=true` 로 한 번 기동. 로그에 `bootstrap administrator ready`. 끝나면 두 변수를 원래대로 |
 | 비밀번호를 바꿨는데 재시작 후 그대로 | 로그에 `the bootstrap administrator already has a password; set BOOTSTRAP_ADMIN_PASSWORD_RESET=true to overwrite it` | 정상. 환경 변수는 계정 생성 시 한 번만 읽힘 |
 | 로그인에 `Too many sign-in attempts. Try again shortly.` | — | 같은 주소에서 실패가 반복돼 지연이 걸린 것(2초에서 시작해 최대 5분). 기다리면 풀림 |
