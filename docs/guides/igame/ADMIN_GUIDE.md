@@ -15,7 +15,7 @@
 
 | 구성 요소 | 형태 | 역할 | 비고 |
 | --- | --- | --- | --- |
-| `igame` | 컨테이너 1개 (`igame:v0.7.13`) | API·포털·게임 자산·MCP 엔드포인트를 모두 제공 | 최종 runtime은 `scratch` 기반. shell·패키지 매니저 없음 |
+| `igame` | 컨테이너 1개 (`igame:v0.7.14`) | API·포털·게임 자산·MCP 엔드포인트를 모두 제공 | 최종 runtime은 `scratch` 기반. shell·패키지 매니저 없음 |
 | PostgreSQL | 외부 서비스 | 사용자·설정·점수·감사 로그·게시 콘텐츠 전부 | 15 이상. 릴리스에 포함되지 않음 |
 | `igame-data` 볼륨 | Docker named volume | 컨테이너의 `/app/data` | 업로드 자산을 쓰는 배포에서만 내용이 생깁니다 |
 | Keycloak | 외부 서비스 (선택) | 사내 SSO(OIDC) | 없으면 로컬 아이디·비밀번호 로그인만 씁니다 |
@@ -56,10 +56,10 @@
 ### 2.2 이미지 로드
 
 ```bash
-sha256sum igame-v0.7.13.tar.gz
-gzip -t igame-v0.7.13.tar.gz
-gzip -dc igame-v0.7.13.tar.gz | docker load
-docker image inspect igame:v0.7.13 --format '{{json .RepoTags}}'
+sha256sum igame-v0.7.14.tar.gz
+gzip -t igame-v0.7.14.tar.gz
+gzip -dc igame-v0.7.14.tar.gz | docker load
+docker image inspect igame:v0.7.14 --format '{{json .RepoTags}}'
 ```
 
 ### 2.3 환경 파일
@@ -97,7 +97,7 @@ curl --fail --max-time 5 http://127.0.0.1:8080/readyz
 bash ./scripts/smoke-test.sh http://127.0.0.1:8080
 ```
 
-`/readyz`가 `{"service":"igame","status":"ok","version":"0.7.13"}`을 돌려주면 데이터베이스까지
+`/readyz`가 `{"service":"igame","status":"ok","version":"0.7.14"}`을 돌려주면 데이터베이스까지
 붙은 것입니다.
 
 ### 2.5 최초 관리자 계정
@@ -167,6 +167,25 @@ ID·이름·이메일·그룹·부서·팀 claim을 조직의 Keycloak 매핑에
 저장 화면은 Client Secret을 절대 되돌려 주지 않습니다. 그래서 secret 칸을 비운 채 저장하면
 저장된 값을 그대로 유지합니다. 서버가 기존 값을 읽지 못하면 지우지 않고
 `현재 저장된 OIDC 설정을 읽지 못해 저장하지 않았습니다.`로 거부합니다.
+
+**자동 로그인 (`auto_login`, 기본 꺼짐)**
+
+Keycloak에 이미 로그인한 사람이 igame을 열었을 때 로그인 화면을 건너뛰고 바로 본 화면으로
+들어가게 합니다. 켜면 브라우저가 화면을 그리기 전에 Keycloak에 `prompt=none`으로 한 번
+조용히 물어봅니다 — Keycloak은 이 요청에 화면을 절대 그리지 않고, 세션이 있으면 바로 로그인을
+끝내고 없으면 `login_required`로 돌려보냅니다. 돌려보내진 경우에는 평소의 로그인 화면이
+뜨며, 깊은 링크로 들어온 사람은 로그인 뒤 원래 가려던 화면으로 돌아갑니다.
+
+같은 탭에서 다시 묻지 않는 것이 이 기능의 핵심입니다. 세션이 없는데 새로고침할 때마다 다시
+물어보면 브라우저가 Keycloak과 igame 사이를 끝없이 오가며 화면이 깜빡이기만 합니다. 그래서
+시도는 **탭 세션마다 한 번**이고(새 탭을 열면 다시 한 번 시도), **로그아웃한 뒤에는 다시
+로그인할 때까지 시도하지 않으며**, 거절당해 도착한 주소(`/login?sso=none`)에서는 저장소가
+비워졌어도 시도하지 않습니다. 사생활 보호 모드처럼 브라우저 저장소를 읽을 수 없으면 "이미
+시도했다"로 간주합니다.
+
+이 설정이 꺼져 있으면 주소에 `?prompt=none`을 붙여도 서버가 평범한 로그인으로 바꿔 처리하므로,
+기본 설치에서는 아무것도 달라지지 않습니다. "사내 SSO로 계속" 버튼은 켜고 끔과 무관하게
+언제나 Keycloak 화면을 거칩니다.
 
 ![검토·승인 — 팀장 검토 단계 on/off와 자기 요청 승인 금지](assets/guide/admin-approvals.png)
 
@@ -398,7 +417,7 @@ RealmGuard와 Defense Series 콘텐츠는 Draft → Test → (승인) → 게시
 | 화면은 열리는데 저장만 `csrf_rejected` | 서버 로그의 `request origin rejected` 항목 — 받은 `origin`과 허용 목록을 함께 남깁니다 | `/admin/settings`의 공개 URL을 실제 주소로 맞추고, 프록시 뒤라면 **신뢰 프록시 헤더 사용**을 켭니다 |
 | 로그인 시도가 계속 막힘 | 로그의 `local sign-in throttled` (아이디와 접속 IP를 함께 남김) | 정상적인 잠금입니다. 급증하면 인증 공격을 의심합니다 |
 | 권한 오류가 잦음 | 로그의 `access denied` (경로·메서드 포함) | 역할 또는 개인 API 키 권한을 확인합니다 |
-| SSO redirect loop | 공개 URL, 프록시 forwarded header, redirect URI, 쿠키 secure 설정 | 공개 URL이 `https://`로 시작해야 세션 쿠키에 Secure가 붙습니다 |
+| SSO redirect loop | 공개 URL, 프록시 forwarded header, redirect URI, 쿠키 secure 설정 | 공개 URL이 `https://`로 시작해야 세션 쿠키에 Secure가 붙습니다. 자동 로그인을 켠 뒤라면 `/login?sso=none`에 멈추는 것이 정상이며, 그 주소에서 계속 오간다면 브라우저 콘솔의 리다이렉트 순서를 확인합니다 |
 | 토큰 검증 실패 | issuer/audience, JWKS 접근, 시계 오차, Keycloak key rotation | 호스트 시간 동기화를 먼저 확인합니다 |
 | AI 응답이 중간에 끊김 | provider 접근, timeout, 프록시 SSE buffering, 모델 token 상한 | SSE 경로의 proxy buffering을 끄고 idle timeout을 늘립니다 |
 | 게임 iframe이 차단됨 | 허용 Frame Origin, 게임 쪽 `frame-ancestors`/`X-Frame-Options` | `/admin/settings`의 허용 origin에 추가합니다 |
