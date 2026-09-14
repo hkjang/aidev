@@ -1,6 +1,6 @@
 # moyro 관리자 가이드
 
-대상 버전: **v0.2.29** · 이 문서는 저장소 정본입니다. PDF: [`ADMIN_GUIDE.pdf`](ADMIN_GUIDE.pdf)
+대상 버전: **v0.2.30** · 이 문서는 저장소 정본입니다. PDF: [`ADMIN_GUIDE.pdf`](ADMIN_GUIDE.pdf)
 
 화면을 쓰는 쪽 내용은 [사용자 가이드](USER_GUIDE.md)에 있습니다. 같은 내용을 두 번
 쓰지 않고 필요한 곳에서 가리킵니다. 오프라인 설치의 더 자세한 절차는
@@ -18,7 +18,7 @@ moyro는 **애플리케이션 컨테이너 한 개 + 외부 PostgreSQL** 로 동
 
 | 구성 요소 | 형태 | 필수 | 하는 일 |
 |---|---|---|---|
-| moyro 애플리케이션 | Docker 이미지 `moyro:v0.2.29` | 필수 | HTTP API(`/api/v4`, `/api/moyro/v1`), WebSocket, 웹 UI 정적 파일, 백그라운드 워커 |
+| moyro 애플리케이션 | Docker 이미지 `moyro:v0.2.30` | 필수 | HTTP API(`/api/v4`, `/api/moyro/v1`), WebSocket, 웹 UI 정적 파일, 백그라운드 워커 |
 | PostgreSQL | 조직이 운영하는 외부 서비스 | 필수 | 모든 상태. 메시지, 사용자, 설정, 작업/결정, 알림함, 감사 로그 |
 | 데이터 볼륨 `moyro-data` | Docker 볼륨 → `/var/lib/moyro` | 필수 | 업로드 파일(`files/`)과 플러그인(`plugins/`) |
 | 리버스 프록시 | 조직 표준 | 권장 | TLS 종료. moyro 자체는 평문 HTTP로 `8065`를 듣습니다 |
@@ -35,7 +35,7 @@ moyro는 **애플리케이션 컨테이너 한 개 + 외부 PostgreSQL** 로 동
 | 나감 | moyro → Outgoing Webhook 대상 | **허용 목록에 넣은 host 만** |
 | 나감 | moyro → Keycloak / AI endpoint | 켠 경우에만 |
 
-v0.2.29이 **지원하지 않는 것**을 먼저 확인하세요. 애플리케이션 컨테이너 다중 복제,
+v0.2.30이 **지원하지 않는 것**을 먼저 확인하세요. 애플리케이션 컨테이너 다중 복제,
 Redis fan-out, S3 파일 저장, SMTP 발송, 외부 링크 미리보기는 이 릴리즈의 범위 밖입니다.
 파일은 로컬 볼륨에 저장됩니다.
 
@@ -51,9 +51,9 @@ Redis fan-out, S3 파일 저장, SMTP 발송, 외부 링크 미리보기는 이 
 릴리즈 아카이브를 조직의 승인된 매체로 옮긴 뒤 릴리즈 노트의 SHA-256과 비교합니다.
 
 ```bash
-sha256sum moyro-v0.2.29.tar.gz
-docker load --input moyro-v0.2.29.tar.gz
-docker image inspect moyro:v0.2.29
+sha256sum moyro-v0.2.30.tar.gz
+docker load --input moyro-v0.2.30.tar.gz
+docker image inspect moyro:v0.2.30
 ```
 
 지원 플랫폼은 `linux/amd64` 입니다.
@@ -103,7 +103,7 @@ docker run -d \
   --env-file /etc/moyro/moyro.env \
   --mount type=volume,src=moyro-data,dst=/var/lib/moyro \
   --publish 8065:8065 \
-  moyro:v0.2.29
+  moyro:v0.2.30
 ```
 
 ### 2.5 기동 확인과 최초 관리자
@@ -243,6 +243,31 @@ authorization endpoint는 이 옵션과 무관하게 HTTPS여야 합니다. Keyc
 콜백은 재사용 가능한 세션 토큰을 URL이나 JavaScript 응답에 넣지 않습니다. 5분짜리
 브라우저 바인딩 코드를 교환하면 자격 증명은 HttpOnly·SameSite 쿠키로만 설정됩니다.
 응답이 유실되면 같은 브라우저가 60초 안에 재시도해 정확히 같은 세션을 받습니다.
+
+**자동 로그인(`auto_login`)** — Keycloak에 이미 로그인한 사람이 moyro를 열면 로그인
+화면 없이 바로 본 화면으로 들어가게 하는 옵션입니다. 화면의 **Keycloak 세션이
+있으면 로그인 화면 없이 바로 들어갑니다** 스위치이며 API 필드는 `auto_login`,
+**기본값은 꺼짐**입니다. 꺼진 설치에서는 아무것도 달라지지 않습니다.
+
+- 켜면 로그인하지 않은 브라우저가 앱 화면을 열 때 OIDC `prompt=none` 으로 한 번 조용히
+  시도합니다. `prompt=none` 은 화면을 그리지 않고 Keycloak 세션이 있으면 곧바로
+  로그인되며, 없으면 `login_required` 로 돌아옵니다. 이것은 실패가 아니라 평범한
+  답이므로 평소의 로그인 화면이 뜹니다. 숨은 iframe이 아니라 최상위 이동을 쓰므로
+  서드파티 쿠키가 막힌 브라우저에서도 동작하고 Keycloak의 프레임 허용 여부와 무관합니다.
+- 무한 루프를 막는 장치가 세 겹입니다. (1) 브라우저 탭 세션마다 한 번만 시도하고
+  그 사실을 `sessionStorage` 에 남깁니다 — 새 탭은 다시 시도하고, 거절된 뒤 새로고침은
+  다시 시도하지 않습니다. (2) 사용자가 스스로 로그아웃하면 다음 로그인 전까지 시도하지
+  않습니다. (3) Keycloak이 거절하면 콜백이 `/login?sso=none` 으로 보내 주소에도 표시를
+  남기므로 브라우저 저장소가 지워졌어도 다시 시도하지 않습니다. 저장소를 읽을 수 없는
+  사생활 보호 모드에서는 "이미 시도했다"로 간주합니다.
+- 서버는 이 설정이 꺼져 있으면 주소에 `?prompt=none` 을 붙여 와도 조용히 평범한
+  로그인으로 바꿉니다. 로그인·콜백·API·MCP·헬스 경로에서는 시도하지 않으며, 깊은
+  링크로 들어온 사람은 조용히 로그인한 뒤 그 자리로 돌아갑니다(`return_to` 는 `/` 로
+  시작하고 `//` 로 시작하지 않는 같은 오리진 경로만 받습니다).
+- 확인 순서: Keycloak에 로그인한 브라우저로 moyro를 열면 로그인 화면 없이 본 화면이
+  떠야 하고, 로그인하지 않은 브라우저로 열면 로그인 화면이 한 번에 뜨고 새로고침을
+  반복해도 깜빡이지 않아야 하며, 로그아웃한 뒤 다시 열어도 자동으로 로그인되지
+  않아야 합니다.
 
 ### 3.5 AI 공급자
 
@@ -386,7 +411,7 @@ moyro 의 웹 화면은 `script-src 'self' blob:` 으로 잠겨 있습니다. �
 |---|---|
 | 부트스트랩 관리자 | 사용자가 한 명도 없을 때 `BOOTSTRAP_ADMIN` 으로 1회 생성 |
 | 초대 링크 | 사이트 설정에서 발급. 만료·최대 사용 횟수를 정합니다. 게스트 링크는 채널·만료·파일 정책을 함께 지정 |
-| Keycloak SSO | 첫 로그인 시 자동 생성 여부와 검증된 email claim 요구 여부를 설정 |
+| Keycloak SSO | 첫 로그인 시 자동 생성 여부, 검증된 email claim 요구 여부, Keycloak 세션이 있을 때의 자동 로그인(`auto_login`, 기본 꺼짐)을 설정 |
 
 **로컬 계정 가입**은 기본적으로 닫혀 있습니다. 열면 URL을 아는 누구나 계정을 만들 수
 있으므로 초대 링크를 권장합니다.
