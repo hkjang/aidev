@@ -1409,3 +1409,79 @@ Fast-forward
 evidence: /mnt/c/Users/USER/projects/aidev/state/runs/2026-09-14-150414-moina-release/evidence.json
 reports: 13 day(s), 3 week(s), 1 month(s), 763 run(s), 877 usage row(s), 42 project page(s), 6 alert(s)
 notify: no new alerts
+[15:23:56] aidev synced: run(2026-09-14): moina — release-only, released v0.1.30
+[15:23:56] done
+[15:24:05] === AgentHub release-only (base=main, run 2026-09-14-152405-AgentHub-release)
+Preparing worktree (detached HEAD 3c0574b)
+Updating files:  36% (296/814)Updating files:  37% (302/814)Updating files:  38% (310/814)Updating files:  39% (318/814)Updating files:  40% (326/814)Updating files:  41% (334/814)Updating files:  42% (342/814)Updating files:  43% (351/814)Updating files:  44% (359/814)Updating files:  45% (367/814)Updating files:  46% (375/814)Updating files:  47% (383/814)Updating files:  48% (391/814)Updating files:  49% (399/814)Updating files:  50% (407/814)Updating files:  51% (416/814)Updating files:  52% (424/814)Updating files:  53% (432/814)Updating files:  54% (440/814)Updating files:  55% (448/814)Updating files:  56% (456/814)Updating files:  57% (464/814)Updating files:  58% (473/814)Updating files:  59% (481/814)Updating files:  60% (489/814)Updating files:  61% (497/814)Updating files:  62% (505/814)Updating files:  63% (513/814)Updating files:  64% (521/814)Updating files:  65% (530/814)Updating files:  66% (538/814)Updating files:  67% (546/814)Updating files:  68% (554/814)Updating files:  69% (562/814)Updating files:  70% (570/814)Updating files:  71% (578/814)Updating files:  72% (587/814)Updating files:  73% (595/814)Updating files:  74% (603/814)Updating files:  75% (611/814)Updating files:  76% (619/814)Updating files:  77% (627/814)Updating files:  78% (635/814)Updating files:  79% (644/814)Updating files:  80% (652/814)Updating files:  81% (660/814)Updating files:  82% (668/814)Updating files:  83% (676/814)Updating files:  84% (684/814)Updating files:  85% (692/814)Updating files:  86% (701/814)Updating files:  87% (709/814)Updating files:  88% (717/814)Updating files:  89% (725/814)Updating files:  90% (733/814)Updating files:  91% (741/814)Updating files:  92% (749/814)Updating files:  93% (758/814)Updating files:  94% (766/814)Updating files:  95% (774/814)Updating files:  96% (782/814)Updating files:  97% (790/814)Updating files:  98% (798/814)Updating files:  99% (806/814)Updating files: 100% (814/814)Updating files: 100% (814/814), done.
+HEAD is now at 3c0574b Merge pull request #26 from hkjang/auto/2026-09-13-2151
+[15:27:14] AgentHub: release — 19 turns, 3m, $0.93, success
+[15:27:17] AgentHub: waiting for CI on 62839a0 (no-ci)
+[15:29:44] AgentHub: [release] published — v0.246.0
+From https://github.com/hkjang/AgentHub
+ * branch            main       -> FETCH_HEAD
+Updating 8694407..62839a0
+Fast-forward
+ .github/workflows/ci.yaml                         |   4 +-
+ README.md                                         |   2 +-
+ VERSION                                           |   2 +-
+ cmd/agenthub/main.go                              |   5 +-
+ cmd/worker/main.go                                |  11 +-
+ compose.yaml                                      |   6 +-
+ deploy/kubernetes/agenthub.yaml                   |   4 +-
+ deploy/kubernetes/operator.yaml                   |   2 +-
+ deploy/kubernetes/worker.yaml                     |   2 +-
+ deploy/offline/.env.example                       |   2 +-
+ deploy/offline/compose.yaml                       |   4 +-
+ docs/ADMIN_GUIDE.md                               |  93 +++-
+ docs/ADMIN_GUIDE.pdf                              | Bin 5057978 -> 5158314 bytes
+ docs/index.html                                   |   2 +-
+ docs/offline-install.md                           |   2 +-
+ internal/api/auth.go                              | 140 +++++-
+ internal/api/background.go                        |   3 +
+ internal/api/catalog.go                           |   2 +
+ internal/api/mail.go                              |  92 ++++
+ internal/api/mail_live_test.go                    | 261 ++++++++++++
+ internal/api/readiness.go                         |  24 ++
+ internal/api/routes.go                            |  22 +-
+ internal/api/server.go                            |  11 +
+ internal/api/settingskeys_test.go                 |   7 +-
+ internal/api/silentsso_live_test.go               | 287 +++++++++++++
+ internal/api/silentsso_test.go                    | 163 +++++++
+ internal/api/toolapproval.go                      |   4 +
+ internal/execution/control.go                     |   7 +-
+ internal/execution/dependencywatch.go             |  15 +
+ internal/execution/orchestrator.go                |  12 +
+ internal/execution/worker.go                      |  28 ++
+ internal/mail/mail.go                             | 294 +++++++++++++
+ internal/mail/mail_test.go                        | 497 ++++++++++++++++++++++
+ internal/mail/service.go                          | 384 +++++++++++++++++
+ internal/mail/settings.go                         | 196 +++++++++
+ internal/store/approval.go                        |  22 +-
+ internal/store/mail.go                            | 192 +++++++++
+ internal/store/migrations/073_mail_deliveries.sql |  26 ++
+ internal/store/operations.go                      |   5 +
+ internal/store/retentioncoverage_test.go          |   1 +
+ web/package.json                                  |   1 +
+ web/scripts/silent-sso.test.mjs                   | 107 +++++
+ web/src/App.tsx                                   |  33 +-
+ web/src/pages/AdminSettings.tsx                   | 101 ++++-
+ web/src/pages/Login.tsx                           |  20 +-
+ web/src/silentSso.ts                              | 112 +++++
+ 46 files changed, 3141 insertions(+), 69 deletions(-)
+ create mode 100644 internal/api/mail.go
+ create mode 100644 internal/api/mail_live_test.go
+ create mode 100644 internal/api/silentsso_live_test.go
+ create mode 100644 internal/api/silentsso_test.go
+ create mode 100644 internal/mail/mail.go
+ create mode 100644 internal/mail/mail_test.go
+ create mode 100644 internal/mail/service.go
+ create mode 100644 internal/mail/settings.go
+ create mode 100644 internal/store/mail.go
+ create mode 100644 internal/store/migrations/073_mail_deliveries.sql
+ create mode 100644 web/scripts/silent-sso.test.mjs
+ create mode 100644 web/src/silentSso.ts
+[15:35:20] AgentHub: [assets] verified — v0.246.0 자산 8개 (이전 v0.245.0: 8)
+evidence: /mnt/c/Users/USER/projects/aidev/state/runs/2026-09-14-152405-AgentHub-release/evidence.json
+reports: 13 day(s), 3 week(s), 1 month(s), 764 run(s), 878 usage row(s), 42 project page(s), 6 alert(s)
+notify: no new alerts
