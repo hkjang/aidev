@@ -2948,3 +2948,98 @@ fatal: '/home/hkjang/.cache/auto-improve-wt/hunter' is not a working tree
 evidence: /mnt/c/Users/USER/projects/aidev/state/runs/2026-09-15-211609-hunter-improve/evidence.json
 reports: 14 day(s), 3 week(s), 1 month(s), 780 run(s), 912 usage row(s), 43 project page(s), 8 alert(s)
 notify: no new alerts
+[22:08:40] aidev synced: run(2026-09-15): hunter — merged https://github.com/hkjang/hunter/pull/2, release failed
+[22:08:40] done
+[22:12:01] skip aiportal-java: STOP
+[22:12:36] candidates(41): AgentHub Clustara DartFly Invenqor Kkiit Momento Quantoss ReSSO SecCheck Vendra ai-admin aiportal-front-admin aiportal-front aiportal-py appstore cutover dataworks git-ctx hunter igame jikim jupiq kanpic madi moina moyro muni nexabuilder orbit pii-masker postra ptium qurio releasedock relio seaton sqlon umm vibe-coders visitflow weekly
+[22:12:38] campaign 후보 4개 — silent-sso-2026-09 tracking-2026-09 handoff-2026-09 mail-2026-09 중 handoff-2026-09 차례 (마지막 회차 2026-09-14T22:03:12+09:00)
+[22:12:38] campaign handoff-2026-09: picked hunter
+[22:12:38] picked: hunter
+[22:12:39] === hunter (base=main, run 2026-09-15-221238-hunter-improve, 회차 예산 $30)
+Preparing worktree (new branch 'auto/2026-09-15-2212')
+HEAD is now at b7ff100 Merge pull request #2 from hkjang/auto/2026-09-15-2116
+[22:12:42] hunter: [base] pinned — main@b7ff100
+[22:12:42] hunter: [autonomy] release — 
+[22:40:04] hunter: improve — 107 turns, 27m, $10.01, success
+[22:40:07] hunter: verify `go build ./...` → exit 0 (2s)
+[22:40:08] hunter: verify `go vet ./...` → exit 0 (1s)
+[22:40:12] hunter: verify `go test ./...` → exit 0 (4s)
+[22:40:12] hunter: verify `cd web && [ -d node_modules ] || npm ci --no-audit --no-fund` → exit 0 (0s)
+[22:40:12] hunter: verify `cd web && npm test --silent` → exit 0 (0s)
+[22:40:12] hunter: verify `cd web && [ -d node_modules ] || npm ci --no-audit --no-fund` → exit 0 (0s)
+[22:40:13] hunter: verify `cd web && npm run typecheck --silent` → exit 0 (1s)
+[22:40:13] hunter: verify `cd web && [ -d node_modules ] || npm ci --no-audit --no-fund` → exit 0 (0s)
+[22:40:14] hunter: verify `cd web && npm run build --silent` → exit 0 (1s)
+[22:40:15] hunter: [verify] passed — 검증 9개 통과 (auto)
+branch 'auto/2026-09-15-2212' set up to track 'origin/auto/2026-09-15-2212'.
+[22:40:26] hunter: [pr] created — https://github.com/hkjang/hunter/pull/3
+[22:42:38] hunter: review — 18 turns, 2m, $1.09, success
+[22:42:38] hunter: [review] approved — 리뷰 승인 (risk=medium)
+[22:42:39] hunter: waiting for CI on 400811d (pending)
+[22:56:23] hunter: [ci] passed — 검사 1개 모두 success
+[22:56:28] hunter: [merge] done — 400811dac77ed918d569fabd456635a81ee12fb4
+From https://github.com/hkjang/hunter
+ * branch            main       -> FETCH_HEAD
+   b7ff100..12fcde6  main       -> origin/main
+Updating b7ff100..12fcde6
+Fast-forward
+ README.md                        |   1 +
+ docs/guides/admin-guide.html     |  81 +++++++++++
+ docs/guides/admin-guide.md       |  55 +++++++
+ docs/guides/admin-guide.pdf      | Bin 9771742 -> 9840176 bytes
+ docs/guides/user-guide.html      |   1 +
+ docs/guides/user-guide.md        |   2 +
+ docs/guides/user-guide.pdf       | Bin 8858706 -> 8860786 bytes
+ docs/llms.txt                    |   5 +
+ internal/app/handoff.go          | 301 +++++++++++++++++++++++++++++++++++++++
+ internal/app/handoff_test.go     | 165 +++++++++++++++++++++
+ internal/app/openapi.json        | 274 ++++++++++++++++++++++++++++++++++-
+ internal/app/server.go           |   5 +-
+ internal/app/settings.go         |   4 +
+ web/src/agent-controls.tsx       |  66 ++++++++-
+ web/src/handoff-settings.tsx     | 125 ++++++++++++++++
+ web/src/handoff-state.ts         |  73 ++++++++++
+ web/src/settings.tsx             |  27 +++-
+ web/tests/handoff-state.test.mjs |  64 +++++++++
+ 18 files changed, 1243 insertions(+), 6 deletions(-)
+ create mode 100644 internal/app/handoff.go
+ create mode 100644 internal/app/handoff_test.go
+ create mode 100644 web/src/handoff-settings.tsx
+ create mode 100644 web/src/handoff-state.ts
+ create mode 100644 web/tests/handoff-state.test.mjs
+Preparing worktree (detached HEAD 12fcde6)
+HEAD is now at 12fcde6 Merge pull request #3 from hkjang/auto/2026-09-15-2212
+[23:11:41] hunter: release — 34 turns, 15m, $2.28, success
+[23:11:48] hunter: waiting for CI on ef1af7f (no-ci)
+[23:32:07] hunter: [release] ci-blocked — 릴리즈 커밋 CI: timeout — 제한 시간 안에 CI 완료를 확인하지 못함 (태그 보류)
+From https://github.com/hkjang/hunter
+ * branch            main       -> FETCH_HEAD
+Updating 12fcde6..ef1af7f
+Fast-forward
+ README.md                    |  12 +++++++-----
+ VERSION                      |   2 +-
+ cmd/hunter/main.go           |   2 +-
+ compose.yaml                 |   2 +-
+ docs/guides/admin-guide.html |  26 +++++++++++++-------------
+ docs/guides/admin-guide.md   |  22 +++++++++++-----------
+ docs/guides/admin-guide.pdf  | Bin 9840176 -> 9840191 bytes
+ docs/guides/user-guide.html  |   6 +++---
+ docs/guides/user-guide.md    |   2 +-
+ docs/guides/user-guide.pdf   | Bin 8860786 -> 8860986 bytes
+ docs/index.html              |   8 ++++----
+ docs/llms.txt                |   4 ++--
+ docs/package-lock.json       |   4 ++--
+ docs/package.json            |   2 +-
+ docs/release-v1.11.0.md      |  24 ++++++++++++++++++++++++
+ docs/validation.md           |  15 +++++++++++++++
+ internal/app/openapi.json    |   2 +-
+ scripts/release-notes.py     |  18 +++++++++++++++++-
+ web/package-lock.json        |   4 ++--
+ web/package.json             |   2 +-
+ web/src/App.tsx              |   8 ++++----
+ 21 files changed, 111 insertions(+), 54 deletions(-)
+ create mode 100644 docs/release-v1.11.0.md
+fatal: '/home/hkjang/.cache/auto-improve-wt/hunter' is not a working tree
+evidence: /mnt/c/Users/USER/projects/aidev/state/runs/2026-09-15-221238-hunter-improve/evidence.json
+reports: 14 day(s), 3 week(s), 1 month(s), 781 run(s), 915 usage row(s), 43 project page(s), 8 alert(s)
+notify: no new alerts

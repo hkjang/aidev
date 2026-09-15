@@ -1,0 +1,269 @@
+{
+  "run_id": "2026-09-15-221238-hunter-improve",
+  "generated": "2026-09-15T23:32:13+09:00",
+  "run": {
+    "run_id": "2026-09-15-221238-hunter-improve",
+    "project": "hunter",
+    "kind": "improve",
+    "started": "2026-09-15T22:12:39+09:00",
+    "model": "claude-opus-5",
+    "policy_version": "78619c0e",
+    "prompts_hash": "82f2440d4b2fef65",
+    "runner_version": "b8f3f83f",
+    "finished": "2026-09-15T23:32:13+09:00",
+    "outcome": "releasing"
+  },
+  "record": {
+    "ts": "2026-09-15T23:32:13+09:00",
+    "date": "2026-09-15",
+    "project": "hunter",
+    "result": "merged https://github.com/hkjang/hunter/pull/3, release tag held (timeout)",
+    "outcome": "releasing",
+    "run_id": "2026-09-15-221238-hunter-improve",
+    "base_sha": "b7ff1007eae6d049ced96d4c49f6764a17c3cf34",
+    "head_sha": "400811dac77ed918d569fabd456635a81ee12fb4",
+    "pr": "https://github.com/hkjang/hunter/pull/3",
+    "stages": {
+      "base": {
+        "state": "pinned",
+        "reason": "main@b7ff100",
+        "at": "2026-09-15T22:12:42+09:00"
+      },
+      "autonomy": {
+        "state": "release",
+        "reason": "",
+        "at": "2026-09-15T22:12:42+09:00"
+      },
+      "verify": {
+        "state": "passed",
+        "reason": "검증 9개 통과 (auto)",
+        "at": "2026-09-15T22:40:15+09:00"
+      },
+      "pr": {
+        "state": "created",
+        "reason": "https://github.com/hkjang/hunter/pull/3",
+        "at": "2026-09-15T22:40:26+09:00"
+      },
+      "review": {
+        "state": "approved",
+        "reason": "리뷰 승인 (risk=medium)",
+        "at": "2026-09-15T22:42:38+09:00"
+      },
+      "ci": {
+        "state": "passed",
+        "reason": "검사 1개 모두 success",
+        "at": "2026-09-15T22:56:23+09:00"
+      },
+      "merge": {
+        "state": "done",
+        "reason": "400811dac77ed918d569fabd456635a81ee12fb4",
+        "at": "2026-09-15T22:56:28+09:00"
+      },
+      "release": {
+        "state": "ci-blocked",
+        "reason": "릴리즈 커밋 CI: timeout — 제한 시간 안에 CI 완료를 확인하지 못함 (태그 보류)",
+        "at": "2026-09-15T23:32:07+09:00"
+      }
+    },
+    "campaign": "handoff-2026-09",
+    "autonomy": "release",
+    "files": 18,
+    "additions": 1243,
+    "deletions": 6,
+    "tests": 2,
+    "title": "feat: hand agent run reports to allow-listed in-house services as one-time markdown claims"
+  },
+  "stages": {
+    "base": {
+      "state": "pinned",
+      "reason": "main@b7ff100",
+      "at": "2026-09-15T22:12:42+09:00"
+    },
+    "autonomy": {
+      "state": "release",
+      "reason": "",
+      "at": "2026-09-15T22:12:42+09:00"
+    },
+    "verify": {
+      "state": "passed",
+      "reason": "검증 9개 통과 (auto)",
+      "at": "2026-09-15T22:40:15+09:00"
+    },
+    "pr": {
+      "state": "created",
+      "reason": "https://github.com/hkjang/hunter/pull/3",
+      "at": "2026-09-15T22:40:26+09:00"
+    },
+    "review": {
+      "state": "approved",
+      "reason": "리뷰 승인 (risk=medium)",
+      "at": "2026-09-15T22:42:38+09:00"
+    },
+    "ci": {
+      "state": "passed",
+      "reason": "검사 1개 모두 success",
+      "at": "2026-09-15T22:56:23+09:00"
+    },
+    "merge": {
+      "state": "done",
+      "reason": "400811dac77ed918d569fabd456635a81ee12fb4",
+      "at": "2026-09-15T22:56:28+09:00"
+    },
+    "release": {
+      "state": "ci-blocked",
+      "reason": "릴리즈 커밋 CI: timeout — 제한 시간 안에 CI 완료를 확인하지 못함 (태그 보류)",
+      "at": "2026-09-15T23:32:07+09:00"
+    }
+  },
+  "provenance": {
+    "model": "claude-opus-5",
+    "policy_version": "78619c0e",
+    "prompts_hash": "82f2440d4b2fef65",
+    "runner_version": "b8f3f83f",
+    "base_sha": "b7ff1007eae6d049ced96d4c49f6764a17c3cf34",
+    "head_sha": "400811dac77ed918d569fabd456635a81ee12fb4",
+    "pr": "https://github.com/hkjang/hunter/pull/3"
+  },
+  "verification": {
+    "runner": {
+      "source": "auto",
+      "commands": [
+        {
+          "cmd": "go build ./...",
+          "exit": 0,
+          "seconds": 2
+        },
+        {
+          "cmd": "go vet ./...",
+          "exit": 0,
+          "seconds": 1
+        },
+        {
+          "cmd": "go test ./...",
+          "exit": 0,
+          "seconds": 4
+        },
+        {
+          "cmd": "cd web && [ -d node_modules ] || npm ci --no-audit --no-fund",
+          "exit": 0,
+          "seconds": 0
+        },
+        {
+          "cmd": "cd web && npm test --silent",
+          "exit": 0,
+          "seconds": 0
+        },
+        {
+          "cmd": "cd web && [ -d node_modules ] || npm ci --no-audit --no-fund",
+          "exit": 0,
+          "seconds": 0
+        },
+        {
+          "cmd": "cd web && npm run typecheck --silent",
+          "exit": 0,
+          "seconds": 1
+        },
+        {
+          "cmd": "cd web && [ -d node_modules ] || npm ci --no-audit --no-fund",
+          "exit": 0,
+          "seconds": 0
+        },
+        {
+          "cmd": "cd web && npm run build --silent",
+          "exit": 0,
+          "seconds": 1
+        }
+      ]
+    },
+    "runner_gate": {
+      "ok": true,
+      "state": "verified",
+      "reason": "검증 9개 통과 (auto)"
+    },
+    "after_rebase": null,
+    "review": {
+      "verdict": "approve",
+      "reasons": [],
+      "notes": [
+        "internal/app/handoff_test.go:67 통합 테스트는 자동 verify 에서 HUNTER_TEST_DSN 부재로 skip 되었으나, 리뷰 세션에서 CI 테스트 DB(hunter-release-pg, hunter_test, 격리 스키마)로 직접 실행해 3개 모두 통과 확인. 기본 미설정 404, 형식 필터, CSRF 403, 타인 실행 404, 1회 사용, 만료, 스윕, 감사 로그에 claim 미기록, viewer 403 을 실제 HTTP 로 검증하므로 수정 전 코드에서는 통과할 수 없음.",
+        "internal/app/handoff.go:274 GET /api/v1/handoff/claims/{claim} 은 로그인 없이 보고서 본문을 내주는 새 공개 엔드포인트. 256비트 난수·SHA-256 다이제스트 저장·DELETE…RETURNING 원자적 소비·5분 만료로 설계는 타당하나 별도 rate limit 은 없음(요청당 DB 조회 1회). 무차별 대입은 비현실적이므로 결함으로 보지 않음.",
+        "internal/app/handoff.go:126 public_url 미설정 시 r.TLS/r.Host 로 source 를 만들므로 리버스 프록시 뒤에서는 http:// 가 나올 수 있음. 문서(admin-guide §5.7)가 public_url 을 기준으로 안내하고 받는 쪽이 fail-closed 이므로 수용 가능.",
+        "internal/app/handoff.go:251 expires_at 은 앱의 time.Now(), 만료 판정은 DB now() — 앱/DB 시계가 어긋나면 TTL 이 약간 달라질 수 있으나 기존 코드 패턴과 동일.",
+        "커밋 메시지·admin-guide·user-guide·llms.txt·openapi.json(JSON 파싱 정상) 과 코드 동작 일치 확인. 언급된 HANDOFF-STANDARD.md 는 저장소에 없는 사내 외부 문서.",
+        "마이그레이션은 CREATE TABLE IF NOT EXISTS handoff_claims 추가뿐이며 기존 테이블 변경 없음. revert 시 테이블만 남고 기능 영향 없음. 설정 그룹 handoff 기본값은 빈 목록이라 기존 설치 동작 불변.",
+        "범위 이탈 없음: server.go 변경은 init/route 등록과 panic 로그 경로 마스킹뿐. PDF 바이너리 재생성은 가이드 갱신에 따른 것."
+      ],
+      "risk": "medium"
+    },
+    "ci_gate": {
+      "ok": true,
+      "state": "success",
+      "reason": "검사 1개 모두 success",
+      "checks": 1
+    }
+  },
+  "release": {
+    "result": {
+      "status": "released",
+      "version": "1.11.0",
+      "tag": "v1.11.0",
+      "title": "Hunter v1.11.0",
+      "notes_file": "/mnt/c/Users/USER/projects/aidev/state/runs/2026-09-15-221238-hunter-improve/release-notes-v1.11.0.md",
+      "github_release": false,
+      "assets": [],
+      "reason": ""
+    },
+    "assets_sha256": []
+  },
+  "approval": null,
+  "usage": [
+    {
+      "ts": "2026-09-15T22:40:04+09:00",
+      "date": "2026-09-15",
+      "project": "hunter",
+      "phase": "improve",
+      "run_id": "2026-09-15-221238-hunter-improve",
+      "campaign": "handoff-2026-09",
+      "subtype": "success",
+      "duration_ms": 1642493,
+      "num_turns": 107,
+      "cost_usd": 10.005987000000001,
+      "input_tokens": 190,
+      "output_tokens": 65835,
+      "cache_read": 12828856,
+      "cache_create": 193591
+    },
+    {
+      "ts": "2026-09-15T22:42:37+09:00",
+      "date": "2026-09-15",
+      "project": "hunter",
+      "phase": "review",
+      "run_id": "2026-09-15-221238-hunter-improve",
+      "campaign": "handoff-2026-09",
+      "subtype": "success",
+      "duration_ms": 129457,
+      "num_turns": 18,
+      "cost_usd": 1.0881915,
+      "input_tokens": 36,
+      "output_tokens": 8242,
+      "cache_read": 772213,
+      "cache_create": 49397
+    },
+    {
+      "ts": "2026-09-15T23:11:41+09:00",
+      "date": "2026-09-15",
+      "project": "hunter",
+      "phase": "release",
+      "run_id": "2026-09-15-221238-hunter-improve",
+      "campaign": "handoff-2026-09",
+      "subtype": "success",
+      "duration_ms": 905278,
+      "num_turns": 34,
+      "cost_usd": 2.275645999999999,
+      "input_tokens": 68,
+      "output_tokens": 18236,
+      "cache_read": 2179770,
+      "cache_create": 72223
+    }
+  ]
+}
