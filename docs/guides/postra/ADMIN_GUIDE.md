@@ -2,8 +2,8 @@
 
 **문서 관리 정보**
 - **소속**: AI Infra실 (AI Infra Department)
-- **문서 버전**: v0.10.5
-- **최종 수정일**: 2026년 7월 24일
+- **문서 버전**: v0.20.0
+- **최종 수정일**: 2026년 9월 15일
 - **대상**: 시스템 관리자, DevOps/Infra 엔지니어, 보안 담당자
 
 ---
@@ -45,7 +45,8 @@ Postra는 단일 바이너리 배포부터 K8s 기반 다중 노드 고가용성
 - `internal/adapters/mailparse`: RFC822/MIME 디코더 및 `bluemonday` HTML Safe 세니타이저
 - `internal/adapters/malware`: ClamAV 및 YARA 연동 첨부파일 보안 검사 엔진
 - `internal/transport/httpapi`: REST API 핸들러 (`/api/...`) 및 API 토큰 인증 미들웨어
-- `internal/transport/webui`: HTML 템플릿 웹 인터페이스 (`/ui/...`)
+- `internal/transport/spa`: Go에 포함된 React 워크스페이스 (`/app/...`)
+- `internal/transport/httpapi`: 공통 REST·`/auth/*` 인증·격리 HTML/추적 전송
 - `internal/transport/mcpserver`: Model Context Protocol SSE 및 Streamable HTTP 서비스 (`/mcp`)
 
 ---
@@ -96,9 +97,10 @@ Postra 기동 시 `bootstrapAdmin` 프로세스가 실행되어 어드민 계정
    ```
 2. 환경변수 설정 후 서버를 실행합니다:
    ```bash
-   export POSTRA_OIDC_ENABLED=true
+   export POSTRA_AUTH_ENABLED=true
    export POSTRA_OIDC_ISSUER="https://auth.company.com/realms/postra"
    export POSTRA_OIDC_CLIENT_ID="postra-client"
+   export POSTRA_OIDC_REDIRECT_URL="https://postra.company.com/auth/oidc/callback"
    export POSTRA_OIDC_CLIENT_SECRET_REF="sec_a1b2c3d4"
    ./postra serve
    ```
@@ -110,17 +112,17 @@ OIDC SSO)의 "이미 로그인한 사용자는 로그인 화면 없이 자동 �
 `POSTRA_OIDC_AUTO_LOGIN=true` 로 켭니다. 꺼져 있는 설치에서는 아무것도 달라지지 않습니다.
 
 동작 방식:
-- 로그인 화면이 열리면 브라우저가 `/ui/auth/oidc/start?prompt=none` 으로 **최상위 이동**합니다
+- 로그인 화면이 열리면 브라우저가 `/auth/oidc/start?prompt=none` 으로 **최상위 이동**합니다
   (숨은 iframe 이 아니므로 서드파티 쿠키 차단·프레임 정책과 무관합니다). `prompt=none` 은
   제공자 화면을 절대 그리지 않습니다 — Keycloak 세션이 있으면 인가 코드가 바로 돌아와 평소처럼
   로그인되고, 없으면 `error=login_required` 로 돌아옵니다. 이것은 실패가 아니라 평범한 대답이며,
-  서버는 `/ui/login?sso=none` 으로 보내 일반 로그인 화면을 보여 줍니다.
+  서버는 `/app/login?sso=none` 으로 보내 일반 로그인 화면을 보여 줍니다.
 - 서버는 `auto_login` 이 꺼져 있으면 `?prompt=none` 이 붙어 와도 조용히 평범한 로그인으로
   바꿉니다. 주소를 손봐서 흐름을 바꿀 수는 없습니다.
-- 깊은 링크(예: `/ui/messages/…`)로 들어온 사용자는 로그인 뒤 그 자리로 돌아갑니다.
-  `return_to` 는 `/` 로 시작하고 `//` 로 시작하지 않는 앱 내부 경로만 받습니다.
+- 깊은 링크(예: `/app/messages/…`)로 들어온 사용자는 로그인 뒤 그 자리로 돌아갑니다.
+  새 인증 전송의 `return_to`는 `/app` 내부의 정규화된 경로만 받습니다. 외부 URL, 상위 경로, 로그인 반복 경로는 거부합니다.
 - 거절이 아닌 **진짜 실패**(잘못된 client secret, 허용되지 않은 scope·redirect_uri, 비활성 사용자,
-  자동 생성 꺼짐 등)는 콜백 주소에 머무르지 않고 `/ui/login?sso=error` 로 보내며, 사유는
+  자동 생성 꺼짐 등)는 콜백 주소에 머무르지 않고 `/app/login?sso=error` 로 보내며, 사유는
   서명된 일회용 쿠키(`postra_oidc_error`, 60초)로 전달돼 로그인 화면에 한 번만 표시됩니다.
   콜백 주소(`code=…&state=…`)에 머무르면 새로고침마다 이미 쓴 코드를 다시 보내 장애 기록만
   쌓이므로 그 자리를 떠나는 것입니다. 사유는 서버 로그에 남고, 토큰 교환·검증 실패는 장애 화면에도 기록됩니다.
@@ -128,7 +130,7 @@ OIDC SSO)의 "이미 로그인한 사용자는 로그인 화면 없이 자동 �
 무한 루프 방지(세 겹): (1) 한 탭 세션에 한 번만 시도 — `sessionStorage` 표시, 새 탭은 다시
 시도하지만 거절 뒤 새로고침은 시도하지 않음. (2) 로그아웃 직후에는 시도하지 않음 —
 로그아웃 시 억제 표시를 남기고 세션이 다시 생기면 지움. (3) 콜백이 거절을 받으면
-`/ui/login?sso=none` 으로 보내 주소에도 표시를 남김 — 브라우저 저장소가 비워져도 재시도하지
+`/app/login?sso=none` 으로 보내 주소에도 표시를 남김 — 브라우저 저장소가 비워져도 재시도하지
 않음. 사생활 보호 모드처럼 저장소를 읽지 못하면 "이미 시도했다" 로 간주해 막히는 쪽으로
 실패합니다. `sso=` 표시(`none`·`error`·`signed_out`)가 붙은 로그인 화면과 오류 화면, API·MCP·
 헬스 경로에서는 시도하지 않습니다.
@@ -218,7 +220,7 @@ Postra는 메일 원문(RFC822 MIME) 및 첨부파일을 두 가지 어댑터 �
 Postra v0.10.0+는 장애 및 시스템 이벤트 추적 파이프라인을 지원합니다.
 
 ### 6.1 대시보드 및 REST API
-- **대시보드**: `http://<HOST>:8480/ui/admin/incidents`
+- **대시보드**: `http://<HOST>:8480/app/admin?category=system`
 - **REST API**: `GET /api/incidents?severity=error&limit=50`
 - **JSON 응답 구조**:
   ```json
@@ -240,54 +242,35 @@ Postra v0.10.0+는 장애 및 시스템 이벤트 추적 파이프라인을 지�
 - `postra_outbox_pending_messages`: 발송 대기 큐 크기
 - `postra_attachment_blocked_total`: 악성 첨부파일 차단 횟수
 
-### 6.3 방문 추적 스크립트와 콘텐츠 보안 정책(CSP)
+### 6.3 방문 추적과 콘텐츠 보안 정책(CSP)
 
-관리자는 `/ui/admin/settings` 의 **방문 추적** 카드에서 화면에 추적 도구를 붙일 수 있습니다. 설정은 시스템 설정 저장소(`tracking.*` 키)에 들어가며 REST `PATCH /api/admin/settings` 로도 바꿀 수 있습니다. **기본값은 꺼짐**입니다 — 새로 설치한 곳에서는 어떤 화면에도 스크립트가 붙지 않고, 정책도 달라지지 않습니다.
+`/app/admin/tracking`에서 추적 설정과 차단 출처를 관리합니다. 중앙 설정 API `PATCH /api/admin/configuration`의 `values`에 `tracking.*` 키를 넣어도 됩니다. 기본값은 꺼짐이며 브라우저에 외부 추적 코드를 로드하지 않습니다.
 
-| 설정 키 | 기본값 | 뜻 |
+| 설정 키 | 기본값 | 적용 |
 | --- | --- | --- |
-| `tracking.enabled` | `false` | 관리자가 켜야 스니펫이 붙습니다 |
-| `tracking.provider` | `none` | `momento` · `ga4` · `gtm` · `matomo` · `custom` |
-| `tracking.momento_url` · `tracking.momento_site_id` | (없음) | Momento 수집기 주소와 사이트 id |
-| `tracking.momento_proxy` | `true` | `/momento/*` 를 앱이 수집기로 넘기는 같은 오리진 프록시 |
-| `tracking.measurement_id` | (없음) | GA4 · GTM 의 id |
-| `tracking.matomo_url` · `tracking.matomo_site_id` | (없음) | Matomo 주소와 사이트 id |
-| `tracking.custom_snippet` | (없음) | 붙여넣은 스니펫. **8KB** 를 넘으면 저장되지 않습니다 |
-| `tracking.allowed_hosts` | (없음) | 스니펫에서 자동으로 읽지 못한 출처를 더하는 자리 (쉼표 구분) |
-| `tracking.include_admin` | `false` | `/ui/admin/*` 에서도 추적할지 |
-| `tracking.placement` | `head` | `head` 또는 `body` (문서 끝) |
+| `tracking.enabled` | `false` | 관리자 명시 활성화 |
+| `tracking.provider` | `none` | Momento·GA4·GTM·Matomo·custom |
+| `tracking.custom_snippet` | 빈 값 | 최대 8 KiB, 활성 provider 필수값 검증 |
+| `tracking.allowed_hosts` | 빈 값 | 명시적으로 허용할 HTTP(S) 출처 |
+| `tracking.include_admin` | `false` | 허용된 관리자 경로의 방문 측정 |
+| `tracking.placement` | `head` | 격리 문서 안의 head/body 배치 |
 
-**Momento 를 먼저 씁니다.** Momento 는 사내 자체 호스팅 수집기라 방문 데이터가 밖으로 나가지 않는 유일한 선택지입니다. 기본값인 프록시 모드에서는 스니펫이 `/momento/tracker.js` 를 부르고 `data-endpoint="/momento"` 로 신고하므로, 브라우저는 Postra 오리진하고만 통신하고 정책에 외부 출처가 아예 등장하지 않습니다. 프록시를 끄면 `tracking.momento_url` 의 출처가 정책에 더해집니다. 프록시로 넘길 때 세션 쿠키와 `Authorization` 헤더는 제거됩니다.
+추적 코드는 메인 React DOM에 삽입하지 않습니다. 별도 `/api/tracking/frame` 문서가 `sandbox="allow-scripts"` iframe으로 실행되며 **allow-same-origin을 부여하지 않습니다**. 따라서 로그인 쿠키·메일 DOM·상위 앱 storage에 접근하지 못합니다. nonce와 provider/허용 출처는 이 격리 문서의 CSP에만 적용되고 앱 전체 정책을 느슨하게 만들지 않습니다.
 
-```html
-<!-- 프록시 모드에서 실제로 나가는 마크업 -->
-<script nonce="…" async src="/momento/tracker.js" data-site-id="<site id>"
-        data-environment="prd" data-contract-version="1" data-endpoint="/momento"></script>
-```
+- 로그인·setup·오류·개인 설정·키 화면은 추적하지 않습니다. 허용된 업무 경로만 거친 정규화 형태로 전달하며 메일 ID나 검색 쿼리를 넘기지 않습니다.
+- `POST /tracking/csp-report`는 인증 없는 브라우저 보고를 제한된 크기로 받으며 차단 출처와 지시어만 메모리에 보관합니다. 문서/수집 URL의 상세 경로·검색어·비밀값은 저장하지 않습니다.
+- 관리 화면의 허용·기록 지우기는 관리자 권한과 CSRF를 검사합니다. 임의 JavaScript 출처는 거부합니다.
+- Momento 프록시 `/momento/*`는 고정된 관리자 수집기로만 전달하며 Cookie/Authorization/CSRF/Referer를 제거하고 응답 Set-Cookie를 폐기합니다. 서버가 자체 수집기를 사용하더라도 조직의 방문정보 고지·보존 정책을 적용하세요.
 
-**CSP 가 어려운 쪽입니다.** Postra 의 화면은 `script-src 'self'` 로 잠겨 있어 스니펫을 그냥 붙이면 브라우저가 조용히 막고, 관리자는 화면이 비어 있는 이유를 알 수 없습니다. Postra 는 다음과 같이 처리합니다.
+설정은 먼저 변경 확인으로 검토하고 저장합니다. provider 필수값 누락·과대 snippet은 400으로 거부하며 저장하지 않습니다. 끈 상태의 부분 설정은 보관할 수 있습니다. 추적 화면에서 차단된 출처를 확인하고 필요한 출처만 허용하세요.
 
-1. **요청마다 nonce** — 모든 UI 응답에 새 nonce 를 만들어 `script-src 'self' 'nonce-…'` 로 내보내고, 레이아웃의 자체 스크립트와 스니펫의 **모든** `<script>` 태그에 같은 nonce 를 붙입니다. `'unsafe-inline'` 은 쓰지 않습니다 — 한 번 풀면 그 앱의 모든 인라인 스크립트가 함께 허용되고, 추적을 끈 뒤에도 정책이 느슨한 채 남기 때문입니다. 추적을 끄면 정책은 원래대로 좁아집니다.
-2. **정책 출처는 스니펫에서 읽어 냅니다** — 붙여 넣은 스니펫에 적힌 `http(s)` 출처(로더 주소, 신고 endpoint, 픽셀)를 긁어 `script-src` · `connect-src` · `img-src` 에 더합니다. GA4 · GTM · Matomo 는 provider 에 맞는 출처가 자동으로 들어갑니다.
-3. **차단된 것을 기록해 보여 줍니다** — 추적이 켜져 있는 동안만 `report-uri /ui/csp-report` 를 정책에 넣습니다. 브라우저의 신고를 받아 **출처와 지시어**를 메모리에 기억(서로 다른 출처 최대 100개, DB 에 남기지 않음)하고, 설정 화면의 **차단된 출처** 표에 보여 줍니다. 한 줄의 **허용** 버튼을 누르면 그 출처가 `tracking.allowed_hosts` 에 들어가고, 이미 허용된 출처는 "허용됨" 으로 표시됩니다. **기록 지우기**로 비운 뒤 다시 띄워 보면 아직 막히는 것이 남았는지 확인할 수 있습니다.
-4. **붙이지 않는 곳** — `/api/*` · `/metrics` · `/ui/static/*` · `/ui/jobs/status` 같은 비화면 응답은 `default-src 'none'` 으로 더 좁게 잠급니다. `/ui/login` · `/ui/setup` · `/ui/auth/*` 처럼 자격 증명을 다루는 화면에는 절대 붙지 않고, 관리 화면(`/ui/admin/*`)은 `tracking.include_admin` 이 켜졌을 때만 붙습니다.
+### 6.4 v0.20 Web/Keycloak 이전
 
-화면 정책의 실제 모양(추적 켜짐, custom 스니펫이 `https://tracker.example` 을 부를 때):
+이전 Go 템플릿 `/ui`는 제거했습니다. 현재 운영 화면은 `/app/admin`이며 사용자 `?category=users`, SSO `?category=auth`, AI `?category=ai`, 동기화 `?category=sync`, 장애 `?category=system` 등으로 이동합니다. 프록시는 `/app`, `/auth`, `/api`, 필요 시 `/tracking`·`/momento`를 전달하고 공개 Host/프로토콜을 신뢰 가능한 값으로 설정하세요.
 
-```
-Content-Security-Policy: default-src 'self';
-  script-src 'self' 'nonce-<요청마다 다름>' https://tracker.example;
-  style-src 'self' 'unsafe-inline'; img-src 'self' data: https://tracker.example;
-  connect-src 'self' https://tracker.example; object-src 'none';
-  frame-ancestors 'none'; base-uri 'self'; report-uri /ui/csp-report
-```
+Keycloak에 새 `https://<host>/auth/oidc/callback` URI를 먼저 추가하고 Postra Redirect URL을 변경한 뒤 일반·자동 로그인·깊은 링크·로그아웃을 검증합니다. 기존 등록값은 자동 변경하지 않습니다. v0.20에서는 기존 `/ui/auth/oidc/callback`만 307 이동하며 토큰 교환의 `redirect_uri`는 저장된 기존값을 유지합니다. `/ui/`와 단일 메일 북마크도 301 이전용 shim을 제공하지만 나머지 이전 경로는 404이고, 이 shim은 v1에서 제거할 예정입니다.
 
-`style-src` 만 `'unsafe-inline'` 을 허용하는데, 이는 템플릿과 세니타이즈된 메일 본문이 style 속성을 쓰기 때문이며 스크립트 실행과는 무관합니다.
-
-**설정 절차**
-1. `/ui/admin/settings` → **방문 추적** 카드에서 provider 를 고르고 필요한 주소·id 를 채웁니다 (Momento: 수집기 주소 + 사이트 id, 프록시는 켜 둔 채로).
-2. **방문 추적 켜기**를 체크하고 저장합니다. provider 에 필요한 값이 비어 있거나 스니펫이 8KB 를 넘으면 저장이 거부되고 이유가 화면에 표시됩니다.
-3. 일반 화면(예: `/ui/`)을 띄워 수집기에 이벤트가 들어오는지 확인합니다. 들어오지 않으면 설정 화면의 **차단된 출처** 표를 보고 **허용**을 누른 뒤 다시 띄웁니다.
+사용자·메일·초안·KEK는 그대로 보존합니다. 관리자도 다른 사람의 메일을 열 수 없고, 이전 소유자의 데이터 정리는 별도 관리자 purge 확인 흐름을 사용합니다. [전체 이전 안내](REACT_WORKSPACE.md)와 [기능/보안 회귀 기록](LEGACY_PARITY.md)을 확인하세요.
 
 ---
 
@@ -323,4 +306,4 @@ Content-Security-Policy: default-src 'self';
 | **v0.10.5** | 2026-07-24 | 메일 본문 뷰어 가독성 폰트, 블루문데이 세니타이징 CSS 스타일 디자인 고도화 |
 
 ---
-*AI Infra실 — Postra 이메일 플랫폼 관리자 가이드 v0.10.5*
+*AI Infra실 — Postra 이메일 플랫폼 관리자 가이드 v0.20.0*
