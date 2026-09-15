@@ -1,7 +1,7 @@
 ---
 title: "orbit — 자율 개선 이력"
-description: "orbit: 자율 개선 회차 4회, 릴리즈 0건. 최근 릴리즈 없음."
-last_modified_at: 2026-09-15 21:00:29 +0900
+description: "orbit: 자율 개선 회차 1회, 릴리즈 0건. 최근 릴리즈 없음."
+last_modified_at: 2026-09-15 22:06:44 +0900
 ---
 {% raw %}
 <script type="application/ld+json">
@@ -11,37 +11,37 @@ last_modified_at: 2026-09-15 21:00:29 +0900
  "name": "orbit",
  "codeRepository": "https://github.com/hkjang/orbit",
  "url": "https://hkjang.github.io/aidev/projects/orbit/",
- "description": "orbit: 자율 개선 회차 4회, 릴리즈 0건. 최근 릴리즈 없음.",
+ "description": "orbit: 자율 개선 회차 1회, 릴리즈 0건. 최근 릴리즈 없음.",
  "inLanguage": "ko",
  "maintainer": {
   "@type": "Person",
   "name": "hkjang",
   "url": "https://github.com/hkjang"
  },
- "dateModified": "2026-09-15T21:00:29+09:00"
+ "dateModified": "2026-09-15T22:06:44+09:00"
 }
 </script>
 
 # orbit
 
-<p class="tldr"><strong>요약.</strong> orbit: 자율 개선 회차 4회, 릴리즈 0건. 최근 릴리즈 없음. <span class="pill pill-merged" title="14일: 릴리즈 0, 실패 0, 경고 0, 회귀 0">건강 B</span> <span class="meta">14일: 릴리즈 0, 실패 0, 경고 0, 회귀 0</span></p>
+<p class="tldr"><strong>요약.</strong> orbit: 자율 개선 회차 1회, 릴리즈 0건. 최근 릴리즈 없음. <span class="pill pill-merged" title="14일: 릴리즈 0, 실패 0, 경고 0, 회귀 0">건강 B</span> <span class="meta">14일: 릴리즈 0, 실패 0, 경고 0, 회귀 0</span></p>
 
-<ul class="stats"><li><b>4</b><span>회차</span></li><li><b>1</b><span>프로젝트</span></li><li><b>0</b><span>배포 준비 완료</span></li><li><b>0</b><span>릴리즈 진행 중</span></li><li><b>0</b><span>병합 완료</span></li><li><b>1</b><span>검토 대기</span></li><li><b>0</b><span>검증 실패</span></li><li><b>3</b><span>변경 없음</span></li><li><b>0</b><span>실행 오류</span></li><li><b>$6.10</b><span>비용</span></li><li><b>13분</b><span>에이전트 시간</span></li></ul>
+<ul class="stats"><li><b>1</b><span>회차</span></li><li><b>1</b><span>프로젝트</span></li><li><b>0</b><span>배포 준비 완료</span></li><li><b>0</b><span>릴리즈 진행 중</span></li><li><b>0</b><span>병합 완료</span></li><li><b>1</b><span>검토 대기</span></li><li><b>0</b><span>검증 실패</span></li><li><b>0</b><span>변경 없음</span></li><li><b>0</b><span>실행 오류</span></li><li><b>$6.10</b><span>비용</span></li><li><b>13분</b><span>에이전트 시간</span></li></ul>
 
 ## 현황
 
 <dl class="kv">
 <dt>저장소</dt><dd><a href="https://github.com/hkjang/orbit">https://github.com/hkjang/orbit</a></dd>
-<dt>마지막 회차</dt><dd>2026-09-15 11:02 KST — <span class="pill pill-nochange">➖ 변경 없음</span> no change</dd>
+<dt>마지막 회차</dt><dd>2026-09-14 09:51 KST — <span class="pill pill-other">• 기타</span> review held, PR open <a href="https://github.com/hkjang/orbit/pull/1">PR #1</a></dd>
 </dl>
 
 ## 회차 이력
 
-<div class="table-wrap"><table class="rt"><thead><tr><th>일시</th><th class="primary">프로젝트</th><th>결과</th></tr></thead><tbody><tr data-status="nochange"><td data-label="일시">2026-09-15 11:02</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/orbit/">orbit</a></td><td data-label="결과"><span class="pill pill-nochange" title="outcome=no-change">변경 없음</span> no change</td></tr><tr data-status="nochange"><td data-label="일시">2026-09-15 00:02</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/orbit/">orbit</a></td><td data-label="결과"><span class="pill pill-nochange" title="outcome=no-change">변경 없음</span> no change</td></tr><tr data-status="nochange"><td data-label="일시">2026-09-14 23:25</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/orbit/">orbit</a></td><td data-label="결과"><span class="pill pill-nochange" title="outcome=no-change">변경 없음</span> no change</td></tr><tr data-status="other"><td data-label="일시">2026-09-14 09:51</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/orbit/">orbit</a></td><td data-label="결과"><span class="pill pill-merged" title="outcome=review-pending">검토 대기</span> review held, PR open <a href="https://github.com/hkjang/orbit/pull/1">PR #1</a><div class="meta">13파일 <span style="color:var(--good)">+529</span>/<span style="color:var(--bad)">−21</span> · 테스트 2 — feat(auth): Keycloak에 이미 로그인한 사람은 로그인 화면 없이 들여보낸다</div></td></tr></tbody></table></div>
+<div class="table-wrap"><table class="rt"><thead><tr><th>일시</th><th class="primary">프로젝트</th><th>결과</th></tr></thead><tbody><tr data-status="other"><td data-label="일시">2026-09-14 09:51</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/orbit/">orbit</a></td><td data-label="결과"><span class="pill pill-merged" title="outcome=review-pending">검토 대기</span> review held, PR open <a href="https://github.com/hkjang/orbit/pull/1">PR #1</a><div class="meta">13파일 <span style="color:var(--good)">+529</span>/<span style="color:var(--bad)">−21</span> · 테스트 2 — feat(auth): Keycloak에 이미 로그인한 사람은 로그인 화면 없이 들여보낸다</div></td></tr></tbody></table></div>
 
 ## 비용·사용량
 
-<div class="table-wrap"><table class="rt"><caption class="meta">최근 30세션</caption><thead><tr><th>시각</th><th class="primary">프로젝트</th><th>단계</th><th class="num">시간</th><th class="num">턴</th><th class="num">비용</th><th class="num">토큰 입력/출력</th><th>종료</th></tr></thead><tbody><tr data-status="other"><td data-label="시각">11:02</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/orbit/">orbit</a></td><td data-label="단계">개선</td><td data-label="시간" class="num">0분</td><td data-label="턴" class="num">1</td><td data-label="비용" class="num">$0.00</td><td data-label="토큰 입력/출력" class="num">0 / 0</td><td data-label="종료">success</td></tr><tr data-status="other"><td data-label="시각">00:02</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/orbit/">orbit</a></td><td data-label="단계">개선</td><td data-label="시간" class="num">0분</td><td data-label="턴" class="num">1</td><td data-label="비용" class="num">$0.00</td><td data-label="토큰 입력/출력" class="num">0 / 0</td><td data-label="종료">success</td></tr><tr data-status="other"><td data-label="시각">23:25</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/orbit/">orbit</a></td><td data-label="단계">개선</td><td data-label="시간" class="num">4분</td><td data-label="턴" class="num">28</td><td data-label="비용" class="num">$1.79</td><td data-label="토큰 입력/출력" class="num">1.3M / 16K</td><td data-label="종료">success</td></tr><tr data-status="other"><td data-label="시각">09:51</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/orbit/">orbit</a></td><td data-label="단계">review</td><td data-label="시간" class="num">2분</td><td data-label="턴" class="num">9</td><td data-label="비용" class="num">$0.83</td><td data-label="토큰 입력/출력" class="num">388K / 9K</td><td data-label="종료">success</td></tr><tr data-status="other"><td data-label="시각">09:49</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/orbit/">orbit</a></td><td data-label="단계">개선</td><td data-label="시간" class="num">7분</td><td data-label="턴" class="num">64</td><td data-label="비용" class="num">$3.48</td><td data-label="토큰 입력/출력" class="num">3.1M / 34K</td><td data-label="종료">success</td></tr></tbody></table></div>
+<div class="table-wrap"><table class="rt"><caption class="meta">최근 30세션</caption><thead><tr><th>시각</th><th class="primary">프로젝트</th><th>단계</th><th class="num">시간</th><th class="num">턴</th><th class="num">비용</th><th class="num">토큰 입력/출력</th><th>종료</th></tr></thead><tbody><tr data-status="other"><td data-label="시각">23:25</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/orbit/">orbit</a></td><td data-label="단계">개선</td><td data-label="시간" class="num">4분</td><td data-label="턴" class="num">28</td><td data-label="비용" class="num">$1.79</td><td data-label="토큰 입력/출력" class="num">1.3M / 16K</td><td data-label="종료">success</td></tr><tr data-status="other"><td data-label="시각">09:51</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/orbit/">orbit</a></td><td data-label="단계">review</td><td data-label="시간" class="num">2분</td><td data-label="턴" class="num">9</td><td data-label="비용" class="num">$0.83</td><td data-label="토큰 입력/출력" class="num">388K / 9K</td><td data-label="종료">success</td></tr><tr data-status="other"><td data-label="시각">09:49</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/orbit/">orbit</a></td><td data-label="단계">개선</td><td data-label="시간" class="num">7분</td><td data-label="턴" class="num">64</td><td data-label="비용" class="num">$3.48</td><td data-label="토큰 입력/출력" class="num">3.1M / 34K</td><td data-label="종료">success</td></tr></tbody></table></div>
 
 ## 아이디어 백로그 — 대기 5 / 전체 6
 

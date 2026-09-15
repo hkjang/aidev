@@ -1,0 +1,268 @@
+{
+  "run_id": "2026-09-15-211609-hunter-improve",
+  "generated": "2026-09-15T22:06:43+09:00",
+  "run": {
+    "run_id": "2026-09-15-211609-hunter-improve",
+    "project": "hunter",
+    "kind": "improve",
+    "started": "2026-09-15T21:16:10+09:00",
+    "model": "claude-opus-5",
+    "policy_version": "78619c0e",
+    "prompts_hash": "82f2440d4b2fef65",
+    "runner_version": "b8f3f83f",
+    "finished": "2026-09-15T22:06:43+09:00",
+    "outcome": "merged"
+  },
+  "record": {
+    "ts": "2026-09-15T22:06:43+09:00",
+    "date": "2026-09-15",
+    "project": "hunter",
+    "result": "merged https://github.com/hkjang/hunter/pull/2, release failed",
+    "outcome": "merged",
+    "run_id": "2026-09-15-211609-hunter-improve",
+    "base_sha": "dec6c243c9a01c3844c0e9db217bb4eb2f6d2b4a",
+    "head_sha": "5bb067eccf790035f63855b3f8b011eee8b11c4e",
+    "pr": "https://github.com/hkjang/hunter/pull/2",
+    "stages": {
+      "base": {
+        "state": "pinned",
+        "reason": "main@dec6c24",
+        "at": "2026-09-15T21:16:13+09:00"
+      },
+      "autonomy": {
+        "state": "release",
+        "reason": "",
+        "at": "2026-09-15T21:16:13+09:00"
+      },
+      "verify": {
+        "state": "passed",
+        "reason": "검증 9개 통과 (auto)",
+        "at": "2026-09-15T21:37:07+09:00"
+      },
+      "pr": {
+        "state": "created",
+        "reason": "https://github.com/hkjang/hunter/pull/2",
+        "at": "2026-09-15T21:37:16+09:00"
+      },
+      "review": {
+        "state": "approved",
+        "reason": "리뷰 승인 (risk=low)",
+        "at": "2026-09-15T21:41:53+09:00"
+      },
+      "ci": {
+        "state": "passed",
+        "reason": "검사 1개 모두 success",
+        "at": "2026-09-15T21:59:13+09:00"
+      },
+      "merge": {
+        "state": "done",
+        "reason": "5bb067eccf790035f63855b3f8b011eee8b11c4e",
+        "at": "2026-09-15T21:59:18+09:00"
+      },
+      "release": {
+        "state": "failed",
+        "reason": "릴리즈 안 함: release in progress: verification not yet complete",
+        "at": "2026-09-15T22:06:42+09:00"
+      }
+    },
+    "campaign": "tracking-2026-09",
+    "autonomy": "release",
+    "files": 13,
+    "additions": 862,
+    "deletions": 3,
+    "tests": 2,
+    "title": "feat: record and surface tracking frame CSP violations for one-click allow"
+  },
+  "stages": {
+    "base": {
+      "state": "pinned",
+      "reason": "main@dec6c24",
+      "at": "2026-09-15T21:16:13+09:00"
+    },
+    "autonomy": {
+      "state": "release",
+      "reason": "",
+      "at": "2026-09-15T21:16:13+09:00"
+    },
+    "verify": {
+      "state": "passed",
+      "reason": "검증 9개 통과 (auto)",
+      "at": "2026-09-15T21:37:07+09:00"
+    },
+    "pr": {
+      "state": "created",
+      "reason": "https://github.com/hkjang/hunter/pull/2",
+      "at": "2026-09-15T21:37:16+09:00"
+    },
+    "review": {
+      "state": "approved",
+      "reason": "리뷰 승인 (risk=low)",
+      "at": "2026-09-15T21:41:53+09:00"
+    },
+    "ci": {
+      "state": "passed",
+      "reason": "검사 1개 모두 success",
+      "at": "2026-09-15T21:59:13+09:00"
+    },
+    "merge": {
+      "state": "done",
+      "reason": "5bb067eccf790035f63855b3f8b011eee8b11c4e",
+      "at": "2026-09-15T21:59:18+09:00"
+    },
+    "release": {
+      "state": "failed",
+      "reason": "릴리즈 안 함: release in progress: verification not yet complete",
+      "at": "2026-09-15T22:06:42+09:00"
+    }
+  },
+  "provenance": {
+    "model": "claude-opus-5",
+    "policy_version": "78619c0e",
+    "prompts_hash": "82f2440d4b2fef65",
+    "runner_version": "b8f3f83f",
+    "base_sha": "dec6c243c9a01c3844c0e9db217bb4eb2f6d2b4a",
+    "head_sha": "5bb067eccf790035f63855b3f8b011eee8b11c4e",
+    "pr": "https://github.com/hkjang/hunter/pull/2"
+  },
+  "verification": {
+    "runner": {
+      "source": "auto",
+      "commands": [
+        {
+          "cmd": "go build ./...",
+          "exit": 0,
+          "seconds": 1
+        },
+        {
+          "cmd": "go vet ./...",
+          "exit": 0,
+          "seconds": 1
+        },
+        {
+          "cmd": "go test ./...",
+          "exit": 0,
+          "seconds": 4
+        },
+        {
+          "cmd": "cd web && [ -d node_modules ] || npm ci --no-audit --no-fund",
+          "exit": 0,
+          "seconds": 0
+        },
+        {
+          "cmd": "cd web && npm test --silent",
+          "exit": 0,
+          "seconds": 0
+        },
+        {
+          "cmd": "cd web && [ -d node_modules ] || npm ci --no-audit --no-fund",
+          "exit": 0,
+          "seconds": 0
+        },
+        {
+          "cmd": "cd web && npm run typecheck --silent",
+          "exit": 0,
+          "seconds": 1
+        },
+        {
+          "cmd": "cd web && [ -d node_modules ] || npm ci --no-audit --no-fund",
+          "exit": 0,
+          "seconds": 0
+        },
+        {
+          "cmd": "cd web && npm run build --silent",
+          "exit": 0,
+          "seconds": 1
+        }
+      ]
+    },
+    "runner_gate": {
+      "ok": true,
+      "state": "verified",
+      "reason": "검증 9개 통과 (auto)"
+    },
+    "after_rebase": null,
+    "review": {
+      "verdict": "approve",
+      "reasons": [],
+      "notes": [
+        "검증: go vet 통과, HUNTER_TEST_DSN(로컬 테스트 PG)으로 go test ./... 전체 통과(신규 통합 테스트 TestTrackingViolationReportsRequireSessionAndAdminView 포함, skip 아님), web tsc --noEmit 통과, node --test tracking-state 4/4 통과.",
+        "테스트 유효성: tracking_violations_test.go 단위 테스트는 record/list/clear의 정규화·중복 집계·100개 축출·정렬을 실제 값으로 단언하고, 통합 테스트는 401/403(CSRF·API키·비관리자)/404(비활성+비관리자)/400(101건)/202/200 경로를 모두 실행하므로 무효화된 구현에서는 실패함.",
+        "설계상 유의(코드 결함 아님): POST /api/tracking/violations 는 로그인 세션이면 누구나 호출 가능하고 요청당 100건까지 받으므로, 일반 사용자가 임의 http(s) 출처를 주입하거나 진짜 항목을 축출할 수 있음. UI·문서가 '로그인 사용자 화면이 보낸 값이므로 확인 후 허용'이라고 경고하고 프레임이 sandbox·opaque origin 이라 영향 범위는 제한되지만, 유사 도메인 주입 후 관리자의 원클릭 허용을 유도하는 사회공학 여지는 남음(rate limit 없음).",
+        "문서/주석 불일치(경미): tracking_violations.go:117 주석과 admin-guide.md('추적이 꺼져 있으면 관리자 미리보기만 신고할 수 있습니다')는 미리보기가 서버에 신고한다고 읽히지만, web/src/tracking.tsx 의 미리보기 onViolation 은 로컬 state 만 갱신하고 POST 하지 않음. 서버의 관리자 예외 경로는 클라이언트에서 사용되지 않는 무해한 여유 경로임.",
+        "관리자가 작성한 추적 스크립트 자체가 프레임 안에서 hunter:tracking-violation 메시지를 위조할 수 있으나 신뢰 수준이 관리자와 동일하므로 상승 없음.",
+        "되돌리기: DB 마이그레이션 없음, 인메모리 상태만 추가, 외부 상태 변경 없음 → revert 로 완전 복구 가능. 범위 이탈 없음(docs pdf/html 재생성은 md 변경에 따른 것)."
+      ],
+      "risk": "low"
+    },
+    "ci_gate": {
+      "ok": true,
+      "state": "success",
+      "reason": "검사 1개 모두 success",
+      "checks": 1
+    }
+  },
+  "release": {
+    "result": {
+      "status": "failed",
+      "version": "1.11.0",
+      "tag": "v1.11.0",
+      "title": "Hunter v1.11.0",
+      "notes_file": "",
+      "github_release": false,
+      "assets": [],
+      "reason": "release in progress: verification not yet complete"
+    },
+    "assets_sha256": []
+  },
+  "approval": null,
+  "usage": [
+    {
+      "ts": "2026-09-15T21:36:56+09:00",
+      "date": "2026-09-15",
+      "project": "hunter",
+      "phase": "improve",
+      "run_id": "2026-09-15-211609-hunter-improve",
+      "campaign": "tracking-2026-09",
+      "subtype": "success",
+      "duration_ms": 1242824,
+      "num_turns": 103,
+      "cost_usd": 7.392203000000002,
+      "input_tokens": 158,
+      "output_tokens": 51449,
+      "cache_read": 8828598,
+      "cache_create": 168371
+    },
+    {
+      "ts": "2026-09-15T21:41:53+09:00",
+      "date": "2026-09-15",
+      "project": "hunter",
+      "phase": "review",
+      "run_id": "2026-09-15-211609-hunter-improve",
+      "campaign": "tracking-2026-09",
+      "subtype": "success",
+      "duration_ms": 274222,
+      "num_turns": 20,
+      "cost_usd": 1.2214919999999996,
+      "input_tokens": 40,
+      "output_tokens": 11367,
+      "cache_read": 878464,
+      "cache_create": 49607
+    },
+    {
+      "ts": "2026-09-15T22:06:42+09:00",
+      "date": "2026-09-15",
+      "project": "hunter",
+      "phase": "release",
+      "run_id": "2026-09-15-211609-hunter-improve",
+      "campaign": "tracking-2026-09",
+      "subtype": "success",
+      "duration_ms": 429923,
+      "num_turns": 39,
+      "cost_usd": 2.3436770000000005,
+      "input_tokens": 78,
+      "output_tokens": 17523,
+      "cache_read": 2369710,
+      "cache_create": 71355
+    }
+  ]
+}

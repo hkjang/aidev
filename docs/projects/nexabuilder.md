@@ -1,7 +1,7 @@
 ---
 title: "nexabuilder — 자율 개선 이력"
-description: "nexabuilder: 자율 개선 회차 5회, 릴리즈 1건. 최근 릴리즈 v1.16.0 (자산 1개)."
-last_modified_at: 2026-09-15 21:00:29 +0900
+description: "nexabuilder: 자율 개선 회차 3회, 릴리즈 1건. 최근 릴리즈 v1.16.0 (자산 1개)."
+last_modified_at: 2026-09-15 22:06:44 +0900
 ---
 {% raw %}
 <script type="application/ld+json">
@@ -11,39 +11,39 @@ last_modified_at: 2026-09-15 21:00:29 +0900
  "name": "nexabuilder",
  "codeRepository": "https://github.com/hkjang/nexabuilder",
  "url": "https://hkjang.github.io/aidev/projects/nexabuilder/",
- "description": "nexabuilder: 자율 개선 회차 5회, 릴리즈 1건. 최근 릴리즈 v1.16.0 (자산 1개).",
+ "description": "nexabuilder: 자율 개선 회차 3회, 릴리즈 1건. 최근 릴리즈 v1.16.0 (자산 1개).",
  "inLanguage": "ko",
  "maintainer": {
   "@type": "Person",
   "name": "hkjang",
   "url": "https://github.com/hkjang"
  },
- "dateModified": "2026-09-15T21:00:29+09:00",
+ "dateModified": "2026-09-15T22:06:44+09:00",
  "version": "1.16.0"
 }
 </script>
 
 # nexabuilder
 
-<p class="tldr"><strong>요약.</strong> nexabuilder: 자율 개선 회차 5회, 릴리즈 1건. 최근 릴리즈 v1.16.0 (자산 1개). <span class="pill pill-merged" title="14일: 릴리즈 1, 실패 0, 경고 2, 회귀 0">건강 C</span> <span class="meta">14일: 릴리즈 1, 실패 0, 경고 2, 회귀 0</span></p>
+<p class="tldr"><strong>요약.</strong> nexabuilder: 자율 개선 회차 3회, 릴리즈 1건. 최근 릴리즈 v1.16.0 (자산 1개). <span class="pill pill-merged" title="14일: 릴리즈 1, 실패 0, 경고 2, 회귀 0">건강 C</span> <span class="meta">14일: 릴리즈 1, 실패 0, 경고 2, 회귀 0</span></p>
 
-<ul class="stats"><li><b>5</b><span>회차</span></li><li><b>1</b><span>프로젝트</span></li><li><b>1</b><span>배포 준비 완료</span></li><li><b>0</b><span>릴리즈 진행 중</span></li><li><b>1</b><span>병합 완료</span></li><li><b>1</b><span>검토 대기</span></li><li><b>0</b><span>검증 실패</span></li><li><b>2</b><span>변경 없음</span></li><li><b>0</b><span>실행 오류</span></li><li><b>$4.14</b><span>비용</span></li><li><b>17분</b><span>에이전트 시간</span></li></ul>
+<ul class="stats"><li><b>3</b><span>회차</span></li><li><b>1</b><span>프로젝트</span></li><li><b>1</b><span>배포 준비 완료</span></li><li><b>0</b><span>릴리즈 진행 중</span></li><li><b>1</b><span>병합 완료</span></li><li><b>1</b><span>검토 대기</span></li><li><b>0</b><span>검증 실패</span></li><li><b>0</b><span>변경 없음</span></li><li><b>0</b><span>실행 오류</span></li><li><b>$4.14</b><span>비용</span></li><li><b>17분</b><span>에이전트 시간</span></li></ul>
 
 ## 현황
 
 <dl class="kv">
 <dt>저장소</dt><dd><a href="https://github.com/hkjang/nexabuilder">https://github.com/hkjang/nexabuilder</a></dd>
-<dt>마지막 회차</dt><dd>2026-09-15 15:12 KST — <span class="pill pill-nochange">➖ 변경 없음</span> no change</dd>
+<dt>마지막 회차</dt><dd>2026-09-14 12:52 KST — <span class="pill pill-released">🚀 릴리즈</span> release-only, released <a href="https://github.com/hkjang/nexabuilder/releases/tag/v1.16.0">v1.16.0</a></dd>
 <dt>최근 릴리즈</dt><dd><a href="https://github.com/hkjang/nexabuilder/releases/tag/v1.16.0">v1.16.0</a> — released · 자산 1개 (이전 v1.15.0: 1개) <a href="https://github.com/hkjang/nexabuilder/releases">전체 릴리즈 →</a></dd>
 </dl>
 
 ## 회차 이력
 
-<div class="table-wrap"><table class="rt"><thead><tr><th>일시</th><th class="primary">프로젝트</th><th>결과</th></tr></thead><tbody><tr data-status="nochange"><td data-label="일시">2026-09-15 15:12</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/nexabuilder/">nexabuilder</a></td><td data-label="결과"><span class="pill pill-nochange" title="outcome=no-change">변경 없음</span> no change</td></tr><tr data-status="nochange"><td data-label="일시">2026-09-15 12:02</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/nexabuilder/">nexabuilder</a></td><td data-label="결과"><span class="pill pill-nochange" title="outcome=no-change">변경 없음</span> no change</td></tr><tr data-status="released"><td data-label="일시">2026-09-14 12:52</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/nexabuilder/">nexabuilder</a></td><td data-label="결과"><span class="pill pill-released" title="outcome=release-ready">배포 준비 완료</span> release-only, released <a href="https://github.com/hkjang/nexabuilder/releases/tag/v1.16.0">v1.16.0</a></td></tr><tr data-status="other"><td data-label="일시">2026-09-14 11:28</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/nexabuilder/">nexabuilder</a></td><td data-label="결과"><span class="pill pill-merged" title="outcome=merged">병합 완료</span> release-only, <strong>release missing</strong></td></tr><tr data-status="other"><td data-label="일시">2026-09-13 15:20</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/nexabuilder/">nexabuilder</a></td><td data-label="결과"><span class="pill pill-merged" title="outcome=review-pending">검토 대기</span> fix-round: <strong>guarded files</strong>, PR open <a href="https://github.com/hkjang/nexabuilder/pull/13">PR #13</a><div class="meta">7파일 <span style="color:var(--good)">+23</span>/<span style="color:var(--bad)">−10</span> · <em>테스트 없음</em> — build(gradle): JDK 21 이 없는 머신에서도 툴체인을 내려받아 빌드되게 합니다</div></td></tr></tbody></table></div>
+<div class="table-wrap"><table class="rt"><thead><tr><th>일시</th><th class="primary">프로젝트</th><th>결과</th></tr></thead><tbody><tr data-status="released"><td data-label="일시">2026-09-14 12:52</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/nexabuilder/">nexabuilder</a></td><td data-label="결과"><span class="pill pill-released" title="outcome=release-ready">배포 준비 완료</span> release-only, released <a href="https://github.com/hkjang/nexabuilder/releases/tag/v1.16.0">v1.16.0</a></td></tr><tr data-status="other"><td data-label="일시">2026-09-14 11:28</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/nexabuilder/">nexabuilder</a></td><td data-label="결과"><span class="pill pill-merged" title="outcome=merged">병합 완료</span> release-only, <strong>release missing</strong></td></tr><tr data-status="other"><td data-label="일시">2026-09-13 15:20</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/nexabuilder/">nexabuilder</a></td><td data-label="결과"><span class="pill pill-merged" title="outcome=review-pending">검토 대기</span> fix-round: <strong>guarded files</strong>, PR open <a href="https://github.com/hkjang/nexabuilder/pull/13">PR #13</a><div class="meta">7파일 <span style="color:var(--good)">+23</span>/<span style="color:var(--bad)">−10</span> · <em>테스트 없음</em> — build(gradle): JDK 21 이 없는 머신에서도 툴체인을 내려받아 빌드되게 합니다</div></td></tr></tbody></table></div>
 
 ## 비용·사용량
 
-<div class="table-wrap"><table class="rt"><caption class="meta">최근 30세션</caption><thead><tr><th>시각</th><th class="primary">프로젝트</th><th>단계</th><th class="num">시간</th><th class="num">턴</th><th class="num">비용</th><th class="num">토큰 입력/출력</th><th>종료</th></tr></thead><tbody><tr data-status="other"><td data-label="시각">15:12</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/nexabuilder/">nexabuilder</a></td><td data-label="단계">개선</td><td data-label="시간" class="num">0분</td><td data-label="턴" class="num">1</td><td data-label="비용" class="num">$0.00</td><td data-label="토큰 입력/출력" class="num">0 / 0</td><td data-label="종료">success</td></tr><tr data-status="other"><td data-label="시각">12:02</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/nexabuilder/">nexabuilder</a></td><td data-label="단계">개선</td><td data-label="시간" class="num">0분</td><td data-label="턴" class="num">1</td><td data-label="비용" class="num">$0.00</td><td data-label="토큰 입력/출력" class="num">0 / 0</td><td data-label="종료">success</td></tr><tr data-status="other"><td data-label="시각">12:40</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/nexabuilder/">nexabuilder</a></td><td data-label="단계">릴리즈</td><td data-label="시간" class="num">8분</td><td data-label="턴" class="num">33</td><td data-label="비용" class="num">$1.79</td><td data-label="토큰 입력/출력" class="num">1.8M / 12K</td><td data-label="종료">success</td></tr><tr data-status="other"><td data-label="시각">11:28</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/nexabuilder/">nexabuilder</a></td><td data-label="단계">릴리즈</td><td data-label="시간" class="num">0분</td><td data-label="턴" class="num">0</td><td data-label="비용" class="num">$0.00</td><td data-label="토큰 입력/출력" class="num">0 / 0</td><td data-label="종료">unknown</td></tr><tr data-status="other"><td data-label="시각">15:20</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/nexabuilder/">nexabuilder</a></td><td data-label="단계">개선</td><td data-label="시간" class="num">9분</td><td data-label="턴" class="num">39</td><td data-label="비용" class="num">$2.35</td><td data-label="토큰 입력/출력" class="num">2.1M / 27K</td><td data-label="종료">success</td></tr></tbody></table></div>
+<div class="table-wrap"><table class="rt"><caption class="meta">최근 30세션</caption><thead><tr><th>시각</th><th class="primary">프로젝트</th><th>단계</th><th class="num">시간</th><th class="num">턴</th><th class="num">비용</th><th class="num">토큰 입력/출력</th><th>종료</th></tr></thead><tbody><tr data-status="other"><td data-label="시각">12:40</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/nexabuilder/">nexabuilder</a></td><td data-label="단계">릴리즈</td><td data-label="시간" class="num">8분</td><td data-label="턴" class="num">33</td><td data-label="비용" class="num">$1.79</td><td data-label="토큰 입력/출력" class="num">1.8M / 12K</td><td data-label="종료">success</td></tr><tr data-status="other"><td data-label="시각">11:28</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/nexabuilder/">nexabuilder</a></td><td data-label="단계">릴리즈</td><td data-label="시간" class="num">0분</td><td data-label="턴" class="num">0</td><td data-label="비용" class="num">$0.00</td><td data-label="토큰 입력/출력" class="num">0 / 0</td><td data-label="종료">unknown</td></tr><tr data-status="other"><td data-label="시각">15:20</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/nexabuilder/">nexabuilder</a></td><td data-label="단계">개선</td><td data-label="시간" class="num">9분</td><td data-label="턴" class="num">39</td><td data-label="비용" class="num">$2.35</td><td data-label="토큰 입력/출력" class="num">2.1M / 27K</td><td data-label="종료">success</td></tr></tbody></table></div>
 
 ## 아이디어 백로그 — 대기 6 / 전체 7
 
