@@ -1,0 +1,27 @@
+{
+  "base": {
+    "state": "pinned",
+    "reason": "main@a597951",
+    "at": "2026-09-16T07:02:35+09:00"
+  },
+  "autonomy": {
+    "state": "release",
+    "reason": "",
+    "at": "2026-09-16T07:02:35+09:00"
+  },
+  "verify": {
+    "state": "passed",
+    "reason": "검증 9개 통과 (auto)",
+    "at": "2026-09-16T07:12:57+09:00"
+  },
+  "pr": {
+    "state": "created",
+    "reason": "https://github.com/hkjang/postra/pull/11",
+    "at": "2026-09-16T07:13:05+09:00"
+  },
+  "review": {
+    "state": "rejected",
+    "reason": "리뷰 거절: internal/application/handoff.go:119 CollectHandoffClaim 은 로그인 없는 공개 경로(publicPath → 컨텍스트에 principal 없음)에서 실행되는데 a.audit(ctx, \"handoff_claim_collected\", …) 는 userIDFrom(ctx) 로 사용자를 정하므로 항상 DefaultUserID 로 기록됩니다. OIDC 다중 사용자 환경에서 다른 사용자의 메일이 수령되면 그 사건이 본인 감사 로그(SearchAudit 은 userIDFrom 으로 필터)에 남지 않고 기본 사용자 계정의 감사 로그에 남의 message ID 로 찍힙니다. 커밋 메시지·ADMIN_GUIDE 6.5 가 약속하는 '수령이 감사된다'는 설명과 어긋나며, 인증 없는 본문 반출 이벤트가 잘못된 주체에 귀속되는 보안 관련 결함입니다. claim.UserID 를 감사 이벤트의 UserID 로 넘겨야 합니다. 테스트 TestHandoffClaimIsSingleUse 는 DefaultUserID 로만 확인해서 이 경우를 잡지 못합니다.",
+    "at": "2026-09-16T07:15:50+09:00"
+  }
+}
