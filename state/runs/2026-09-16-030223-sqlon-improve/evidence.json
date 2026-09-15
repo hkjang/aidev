@@ -1,0 +1,194 @@
+{
+  "run_id": "2026-09-16-030223-sqlon-improve",
+  "generated": "2026-09-16T03:19:59+09:00",
+  "run": {
+    "run_id": "2026-09-16-030223-sqlon-improve",
+    "project": "sqlon",
+    "kind": "improve",
+    "started": "2026-09-16T03:02:23+09:00",
+    "model": "claude-opus-5",
+    "policy_version": "78619c0e",
+    "prompts_hash": "82f2440d4b2fef65",
+    "runner_version": "b8f3f83f",
+    "finished": "2026-09-16T03:19:58+09:00",
+    "outcome": "review-pending"
+  },
+  "record": {
+    "ts": "2026-09-16T03:19:58+09:00",
+    "date": "2026-09-16",
+    "project": "sqlon",
+    "result": "CI no-ci, PR open https://github.com/hkjang/sqlon/pull/4",
+    "outcome": "review-pending",
+    "run_id": "2026-09-16-030223-sqlon-improve",
+    "base_sha": "57f99b7233561729106c666369028763debb97b7",
+    "head_sha": "6cdb26c959de36fc613aa9e65f27473bb2b59767",
+    "pr": "https://github.com/hkjang/sqlon/pull/4",
+    "stages": {
+      "base": {
+        "state": "pinned",
+        "reason": "main@57f99b7",
+        "at": "2026-09-16T03:02:26+09:00"
+      },
+      "autonomy": {
+        "state": "release",
+        "reason": "",
+        "at": "2026-09-16T03:02:26+09:00"
+      },
+      "verify": {
+        "state": "passed",
+        "reason": "검증 3개 통과 (auto)",
+        "at": "2026-09-16T03:12:27+09:00"
+      },
+      "pr": {
+        "state": "created",
+        "reason": "https://github.com/hkjang/sqlon/pull/4",
+        "at": "2026-09-16T03:12:33+09:00"
+      },
+      "review": {
+        "state": "approved",
+        "reason": "리뷰 승인 (risk=medium)",
+        "at": "2026-09-16T03:15:23+09:00"
+      },
+      "ci": {
+        "state": "no-ci",
+        "reason": "이 커밋에 검사가 없음 (정책 allow_merge_without_ci 가 없으면 차단)",
+        "at": "2026-09-16T03:19:58+09:00"
+      }
+    },
+    "campaign": "handoff-2026-09",
+    "autonomy": "release",
+    "files": 10,
+    "additions": 1530,
+    "deletions": 754,
+    "tests": 1,
+    "title": "feat(handoff): DBA 다이제스트를 다른 서비스로 넘기는 단일 사용 표(claim) 발급 — HANDOFF-STANDARD 보내는 쪽"
+  },
+  "stages": {
+    "base": {
+      "state": "pinned",
+      "reason": "main@57f99b7",
+      "at": "2026-09-16T03:02:26+09:00"
+    },
+    "autonomy": {
+      "state": "release",
+      "reason": "",
+      "at": "2026-09-16T03:02:26+09:00"
+    },
+    "verify": {
+      "state": "passed",
+      "reason": "검증 3개 통과 (auto)",
+      "at": "2026-09-16T03:12:27+09:00"
+    },
+    "pr": {
+      "state": "created",
+      "reason": "https://github.com/hkjang/sqlon/pull/4",
+      "at": "2026-09-16T03:12:33+09:00"
+    },
+    "review": {
+      "state": "approved",
+      "reason": "리뷰 승인 (risk=medium)",
+      "at": "2026-09-16T03:15:23+09:00"
+    },
+    "ci": {
+      "state": "no-ci",
+      "reason": "이 커밋에 검사가 없음 (정책 allow_merge_without_ci 가 없으면 차단)",
+      "at": "2026-09-16T03:19:58+09:00"
+    }
+  },
+  "provenance": {
+    "model": "claude-opus-5",
+    "policy_version": "78619c0e",
+    "prompts_hash": "82f2440d4b2fef65",
+    "runner_version": "b8f3f83f",
+    "base_sha": "57f99b7233561729106c666369028763debb97b7",
+    "head_sha": "6cdb26c959de36fc613aa9e65f27473bb2b59767",
+    "pr": "https://github.com/hkjang/sqlon/pull/4"
+  },
+  "verification": {
+    "runner": {
+      "source": "auto",
+      "commands": [
+        {
+          "cmd": "go build ./...",
+          "exit": 0,
+          "seconds": 2
+        },
+        {
+          "cmd": "go vet ./...",
+          "exit": 0,
+          "seconds": 1
+        },
+        {
+          "cmd": "go test ./...",
+          "exit": 0,
+          "seconds": 1
+        }
+      ]
+    },
+    "runner_gate": {
+      "ok": true,
+      "state": "verified",
+      "reason": "검증 3개 통과 (auto)"
+    },
+    "after_rebase": null,
+    "review": {
+      "verdict": "approve",
+      "reasons": [],
+      "notes": [
+        "README.md·CHANGELOG.md 가 CRLF→LF 로 통째로 다시 쓰였습니다(실질 변경은 9줄/1줄, diff 는 1,500줄). main 의 최근 5개 커밋 모두 CRLF 였으므로 이번 커밋이 처음 뒤집은 것입니다. 기능 결함은 아니지만 범위 밖 포맷 변경이며 blame 을 오염시킵니다 — 머지 전 `git diff main...HEAD --ignore-all-space` 로 실질 diff 만 남기도록 CRLF 로 되돌리거나 .gitattributes 로 정책을 고정하길 권합니다.",
+        "internal/mcp/handoff.go:146-159 표 발급에 속도 제한이 없습니다. 인증된 사용자가 5분 안에 무한히 POST 하면 claims 맵이 다이제스트 본문(수 KB)만큼 커집니다. TTL 로 상한이 있고 인증 뒤라 낮은 위험이지만 참고.",
+        "internal/mcp/handoff.go:312 X-Forwarded-Host 를 무조건 신뢰합니다(기존 requestIsHTTPS 의 X-Forwarded-Proto 와 동일한 패턴). 값은 인증된 호출자에게 돌려주고 markdown 각주에 들어갈 뿐이며 handoff_public_url 로 덮어쓸 수 있어 수용 가능. 프록시 없이 인터넷에 직접 노출된 배포에서는 handoff_public_url 설정을 권장(가이드에 이미 명시).",
+        "internal/mcp/handoff.go:386,395 mdCell 은 `|` 와 공백만 정규화하고 백틱은 이스케이프하지 않습니다. DDL 은 인덱스 어드바이저가 생성하고 프로파일 id 는 ^[A-Za-z0-9._-]{1,64}$ 로 제한되어 실제로 문제되진 않지만, 임의 문자열이 셀에 들어오면 코드 스팬이 깨질 수 있음.",
+        "검증: go build ./... / go vet / go test ./internal/mcp 전부 통과(4.1s). 테스트는 실제 핸들러를 호출하며 단일 사용(2회째 404), 만료(가짜 시계 + 스토어 비움), 권한 결속(타인 비공개 프로파일 404, 익명 401), 형식 제한 400, 설정 파싱(kanpic·unknown·ftp·경로 제외, 대소문자, 마지막 승리), 감사 로그에 표 미노출 등을 단언합니다 — 수정 전 코드에서는 통과할 수 없는 단언들입니다.",
+        "권한 모델은 기존 POST /api/db/digest 와 동일합니다(profile 지정 시 canUseProfileID, 'dba-digest'(전체) 는 인증만). 새 무인증 엔드포인트 GET /api/v1/handoff/claims/{claim} 은 256비트 난수 표·1회 사용·5분 TTL·Cache-Control: no-store 로 보호되며, 표는 감사 로그에 기록되지 않습니다.",
+        "되돌리기: 인메모리 스토어와 설정 키 2개(handoff_targets·handoff_public_url) 추가뿐이며 마이그레이션·외부 상태 변경 없음. revert 로 완전히 복구됩니다(설정 테이블에 남은 키는 무해)."
+      ],
+      "risk": "medium"
+    },
+    "ci_gate": {
+      "ok": false,
+      "state": "no-ci",
+      "reason": "이 커밋에 검사가 없음 (정책 allow_merge_without_ci 가 없으면 차단)",
+      "checks": 0
+    }
+  },
+  "release": {
+    "result": null,
+    "assets_sha256": []
+  },
+  "approval": null,
+  "usage": [
+    {
+      "ts": "2026-09-16T03:12:23+09:00",
+      "date": "2026-09-16",
+      "project": "sqlon",
+      "phase": "improve",
+      "run_id": "2026-09-16-030223-sqlon-improve",
+      "campaign": "handoff-2026-09",
+      "subtype": "success",
+      "duration_ms": 597702,
+      "num_turns": 69,
+      "cost_usd": 5.174395,
+      "input_tokens": 110,
+      "output_tokens": 46412,
+      "cache_read": 5384124,
+      "cache_create": 131400
+    },
+    {
+      "ts": "2026-09-16T03:15:23+09:00",
+      "date": "2026-09-16",
+      "project": "sqlon",
+      "phase": "review",
+      "run_id": "2026-09-16-030223-sqlon-improve",
+      "campaign": "handoff-2026-09",
+      "subtype": "success",
+      "duration_ms": 168544,
+      "num_turns": 18,
+      "cost_usd": 1.0316280000000002,
+      "input_tokens": 36,
+      "output_tokens": 7809,
+      "cache_read": 748554,
+      "cache_create": 46013
+    }
+  ]
+}
