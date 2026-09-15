@@ -1,0 +1,153 @@
+{
+  "run_id": "2026-09-16-040228-weekly-improve",
+  "generated": "2026-09-16T04:49:38+09:00",
+  "run": {
+    "run_id": "2026-09-16-040228-weekly-improve",
+    "project": "weekly",
+    "kind": "improve",
+    "started": "2026-09-16T04:02:28+09:00",
+    "model": "claude-opus-5",
+    "policy_version": "78619c0e",
+    "prompts_hash": "82f2440d4b2fef65",
+    "runner_version": "b8f3f83f",
+    "finished": "2026-09-16T04:49:38+09:00",
+    "outcome": "error"
+  },
+  "record": {
+    "ts": "2026-09-16T04:49:38+09:00",
+    "date": "2026-09-16",
+    "project": "weekly",
+    "result": "error: agent produced no result (TIMEOUT )",
+    "outcome": "error",
+    "run_id": "2026-09-16-040228-weekly-improve",
+    "base_sha": "b83fed6853a445c74c655bfc93ddde13eab7744a",
+    "head_sha": "3b8ad49ac0da26aae14f0774ae1b6c2a922110e1",
+    "pr": "",
+    "stages": {
+      "base": {
+        "state": "pinned",
+        "reason": "main@b83fed6",
+        "at": "2026-09-16T04:02:33+09:00"
+      },
+      "autonomy": {
+        "state": "release",
+        "reason": "",
+        "at": "2026-09-16T04:02:33+09:00"
+      },
+      "improve": {
+        "state": "error",
+        "reason": "error: agent produced no result (TIMEOUT )",
+        "at": "2026-09-16T04:47:18+09:00"
+      },
+      "verify": {
+        "state": "passed",
+        "reason": "검증 7개 통과 (auto)",
+        "at": "2026-09-16T04:49:34+09:00"
+      }
+    },
+    "campaign": "tracking-2026-09",
+    "autonomy": "release",
+    "files": 15,
+    "additions": 1442,
+    "deletions": 8,
+    "tests": 1,
+    "title": "feat: 관리자가 화면에서 방문 추적 스크립트를 붙입니다"
+  },
+  "stages": {
+    "base": {
+      "state": "pinned",
+      "reason": "main@b83fed6",
+      "at": "2026-09-16T04:02:33+09:00"
+    },
+    "autonomy": {
+      "state": "release",
+      "reason": "",
+      "at": "2026-09-16T04:02:33+09:00"
+    },
+    "improve": {
+      "state": "error",
+      "reason": "error: agent produced no result (TIMEOUT )",
+      "at": "2026-09-16T04:47:18+09:00"
+    },
+    "verify": {
+      "state": "passed",
+      "reason": "검증 7개 통과 (auto)",
+      "at": "2026-09-16T04:49:34+09:00"
+    }
+  },
+  "provenance": {
+    "model": "claude-opus-5",
+    "policy_version": "78619c0e",
+    "prompts_hash": "82f2440d4b2fef65",
+    "runner_version": "b8f3f83f",
+    "base_sha": "b83fed6853a445c74c655bfc93ddde13eab7744a",
+    "head_sha": "3b8ad49ac0da26aae14f0774ae1b6c2a922110e1",
+    "pr": ""
+  },
+  "verification": {
+    "runner": {
+      "source": "auto",
+      "commands": [
+        {
+          "cmd": "go build ./...",
+          "exit": 0,
+          "seconds": 0
+        },
+        {
+          "cmd": "go vet ./...",
+          "exit": 0,
+          "seconds": 0
+        },
+        {
+          "cmd": "go test ./...",
+          "exit": 0,
+          "seconds": 132
+        },
+        {
+          "cmd": "cd frontend && [ -d node_modules ] || npm ci --no-audit --no-fund",
+          "exit": 0,
+          "seconds": 0
+        },
+        {
+          "cmd": "cd frontend && npm test --silent",
+          "exit": 0,
+          "seconds": 1
+        },
+        {
+          "cmd": "cd frontend && [ -d node_modules ] || npm ci --no-audit --no-fund",
+          "exit": 0,
+          "seconds": 0
+        },
+        {
+          "cmd": "cd frontend && npm run build --silent",
+          "exit": 0,
+          "seconds": 1
+        }
+      ]
+    },
+    "runner_gate": {
+      "ok": true,
+      "state": "verified",
+      "reason": "검증 7개 통과 (auto)"
+    },
+    "after_rebase": null,
+    "review": null,
+    "ci_gate": null
+  },
+  "release": {
+    "result": null,
+    "assets_sha256": []
+  },
+  "approval": null,
+  "usage": [
+    {
+      "ts": "2026-09-16T04:47:18+09:00",
+      "date": "2026-09-16",
+      "project": "weekly",
+      "phase": "improve",
+      "run_id": "2026-09-16-040228-weekly-improve",
+      "subtype": "unknown",
+      "cost_usd": null
+    }
+  ]
+}
