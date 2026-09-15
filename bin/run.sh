@@ -220,7 +220,51 @@ run_agent(){ # $1=단계 $2=프롬프트 $3=작업 디렉터리 $4=예산 $5=허
   ) > "$OUT/agent-$phase.json" 2>"$OUT/agent-$phase.txt"; local rc=$?
   [ $rc -eq 124 ] && { stage "$phase" timeout "단계 제한 시간 초과"; echo "TIMEOUT" >> "$OUT/agent-$phase.txt"; }
   [ $rc -ne 0 ] && [ $rc -ne 124 ] && log "$n: $phase agent exited $rc"
+  # Codex 폴백: 클로드가 사용량/토큰 한도로 결과를 못 내면 같은 프롬프트를 코덱스로 돌려 개선을 잇는다.
+  # 2026-09-15 오전 클로드 토큰이 완전 소진돼 하루 종일 개선이 0건이었다. 다른 엔진으로라도 잇는다.
+  # 끄려면 CODEX_FALLBACK=0 또는 state/NO-CODEX. 코덱스가 만든 변경도 이후 검증·비밀검사·CI·사람승인
+  # 게이트를 똑같이 거친다(게이트는 git diff 를 보므로 엔진과 무관하다).
+  local claude_ok=0; jq -e '.type=="result" and (.is_error!=true)' "$OUT/agent-$phase.json" >/dev/null 2>&1 && claude_ok=1
+  if [ "$claude_ok" = 0 ] && [ "${CODEX_FALLBACK:-1}" != 0 ] && [ ! -f "$STATE/NO-CODEX" ] \
+     && command -v codex >/dev/null 2>&1 \
+     && grep -qiE "usage limit|limit reached|rate.?limit|credit balance|quota|insufficient|overloaded|too many requests|resets? at|5-hour limit|weekly limit|\b429\b|\b529\b" "$OUT/agent-$phase.json" "$OUT/agent-$phase.txt" 2>/dev/null; then
+    log "$n: $phase — 클로드 사용량 한도 감지, 코덱스로 대체"
+    "$HERE/tg.sh" "🔁 $n $phase — 클로드 한도로 코덱스가 대신 진행합니다" >/dev/null 2>&1 &
+    run_codex "$phase" "$prompt" "$wd" || true
+  fi
   record_usage "$n" "$phase" "$OUT/agent-$phase.json" "$OUT/agent-$phase.txt"
+}
+# 대체 엔진(Codex): 클로드 한도 때 같은 프롬프트를 같은 워크트리에서 돌린다. 성공하면 클로드
+# 결과와 같은 모양의 result JSON 을 합성해 이후 흐름(diff→검증→PR)이 그대로 동작한다.
+run_codex(){ # $1=단계 $2=프롬프트 $3=작업 디렉터리
+  local phase=$1 prompt=$2 wd=$3
+  local tmo; tmo=$(policy "$n" ".timeouts.$phase" | grep -E '^[0-9]+$' || case "$phase" in improve) echo $T_IMPROVE;; review) echo $T_REVIEW;; release) echo $T_RELEASE;; *) echo $T_ASSETS;; esac)
+  local ev="$OUT/agent-$phase.codex.jsonl" lastmsg="$OUT/agent-$phase.codex.last"
+  ( cd "$wd" && env -i \
+      HOME="$OUT/home" USER="$USER" LANG=C.UTF-8 TERM=dumb PATH="$PATH" TMPDIR=/tmp \
+      CODEX_HOME="$REAL_HOME/.codex" \
+      GIT_AUTHOR_NAME="$GIT_AUTHOR_NAME" GIT_AUTHOR_EMAIL="$GIT_AUTHOR_EMAIL" GIT_COMMITTER_NAME="$GIT_COMMITTER_NAME" GIT_COMMITTER_EMAIL="$GIT_COMMITTER_EMAIL" \
+      GOPATH="$REAL_HOME/go" GOMODCACHE="$REAL_HOME/go/pkg/mod" GOCACHE="$REAL_HOME/.cache/go-build" \
+      npm_config_cache="$REAL_HOME/.npm" NVM_DIR="$REAL_HOME/.nvm" PIP_CACHE_DIR="$REAL_HOME/.cache/pip" \
+      DOCKER_HOST="${DOCKER_HOST:-}" AIDEV_OUT="$OUT" \
+      GIT_CONFIG_COUNT=2 GIT_CONFIG_KEY_0=remote.origin.pushurl GIT_CONFIG_VALUE_0=DISABLED GIT_CONFIG_KEY_1=credential.helper GIT_CONFIG_VALUE_1= \
+      timeout -k 30 "$tmo" \
+      codex exec -C "$wd" --dangerously-bypass-approvals-and-sandbox --skip-git-repo-check --ephemeral --json -o "$lastmsg" "$prompt" </dev/null \
+  ) > "$ev" 2>>"$OUT/agent-$phase.txt"; local rc=$?
+  [ $rc -eq 124 ] && echo "CODEX TIMEOUT" >> "$OUT/agent-$phase.txt"
+  if [ $rc -ne 0 ]; then log "$n: $phase — 코덱스 대체 실패 (rc=$rc)"; return 1; fi
+  local rtext it ct ot
+  rtext=$(jq -rs 'map(select(.type=="item.completed" and .item.type=="agent_message")|.item.text)|last // ""' "$ev" 2>/dev/null)
+  [ -n "$rtext" ] || rtext=$(tr '\n' ' ' < "$lastmsg" 2>/dev/null | head -c 4000)
+  [ -n "$rtext" ] || rtext="코덱스가 변경을 적용했습니다"
+  it=$(jq -rs 'map(select(.type=="turn.completed")|.usage.input_tokens)|last // 0' "$ev" 2>/dev/null); it=${it:-0}
+  ct=$(jq -rs 'map(select(.type=="turn.completed")|.usage.cached_input_tokens)|last // 0' "$ev" 2>/dev/null); ct=${ct:-0}
+  ot=$(jq -rs 'map(select(.type=="turn.completed")|.usage.output_tokens)|last // 0' "$ev" 2>/dev/null); ot=${ot:-0}
+  jq -cn --arg r "$rtext" --argjson it "${it:-0}" --argjson ct "${ct:-0}" --argjson ot "${ot:-0}" \
+    '{type:"result",subtype:"success",is_error:false,engine:"codex",result:("[codex] "+$r),total_cost_usd:null,num_turns:1,duration_ms:0,usage:{input_tokens:$it,output_tokens:$ot,cache_read_input_tokens:$ct,cache_creation_input_tokens:0}}' \
+    > "$OUT/agent-$phase.json"
+  log "$n: $phase — 코덱스 완료 (대체, in $it/out $ot tok)"
+  return 0
 }
 record_usage(){ # $1=프로젝트 $2=단계 $3=json $4=txt
   local n=$1 phase=$2 j=$3 t=$4
@@ -1195,13 +1239,13 @@ $(printf '%b' "$RUN_SPEC")
   run_agent improve "$prompt" "$wt" "$ibudget" "Bash,Read,Edit,Write,Glob,Grep,WebFetch,WebSearch"
   merge_outputs
   if ! jq -e '.type=="result"' "$OUT/agent-improve.json" >/dev/null 2>&1; then
-    # 모델 사용량/한도 때문에 에이전트가 뜨지도 못한 경우를 따로 가른다. 그냥 error 로
-    # 두면 10분마다 헛되이 다시 부르며 원장을 error 로 채우고, 캠페인 스트라이크까지
-    # 태운다. usage-limit 로 남기고(스트라이크 아님) 쿨다운을 걸어 잠시 쉰다 (2026-09-15).
+    # 여기 왔다는 것은 클로드가 한도로 결과를 못 냈고 코덱스 대체도 실패했다는 뜻이다
+    # (run_agent 가 코덱스 성공 시 result JSON 을 합성하므로). 두 엔진 다 안 되니 쿨다운을
+    # 걸어 잠시 쉰다 — usage-limit 로 남기고(스트라이크 아님) 10분마다 헛되이 재호출하지 않는다.
     if grep -qiE "usage limit|limit reached|rate.?limit|Credit balance|quota|insufficient|overloaded|too many requests|resets? at|\b429\b|\b529\b" "$OUT/agent-improve.txt" 2>/dev/null; then
-      OUTCOME=usage-limit; result="usage-limit: 모델 사용량 한도로 회차 중단 ($(head -c 100 "$OUT/agent-improve.txt" 2>/dev/null | tr '\n' ' '))"
+      OUTCOME=usage-limit; result="usage-limit: 클로드 한도 + 코덱스 대체 실패로 회차 보류 ($(head -c 90 "$OUT/agent-improve.txt" 2>/dev/null | tr '\n' ' '))"
       stage improve error "$result"; date -Iseconds > "$STATE/.usage-cooldown"
-      [ -f "$STATE/.usage-alert-$RUN_DATE" ] || { touch "$STATE/.usage-alert-$RUN_DATE"; "$HERE/tg.sh" "🪫 모델 사용량 한도 — 회차를 멈추고 ${USAGE_COOLDOWN_MIN:-60}분 쉽니다. 한도가 풀리면 자동으로 다시 시작합니다." >/dev/null 2>&1 & }
+      [ -f "$STATE/.usage-alert-$RUN_DATE" ] || { touch "$STATE/.usage-alert-$RUN_DATE"; "$HERE/tg.sh" "🪫 클로드 한도 + 코덱스 대체 실패 — 회차를 멈추고 ${USAGE_COOLDOWN_MIN:-60}분 쉽니다. 풀리면 자동 재개." >/dev/null 2>&1 & }
       git -C "$repo" worktree remove --force "$wt" >>"$LOG" 2>&1 || true
       git -C "$repo" branch -D "$slug" 2>/dev/null || true; rm -rf "$OUT/home"
       record_run "$n" "$result" "$OUTCOME"; sync_repo "run($RUN_DATE): $n — usage-limit"; return 0
