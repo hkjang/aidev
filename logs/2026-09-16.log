@@ -166,3 +166,28 @@ error: cannot delete branch 'auto/2026-09-16-0222' used by worktree at '/home/hk
 evidence: /mnt/c/Users/USER/projects/aidev/state/runs/2026-09-16-022227-cutover-improve/evidence.json
 reports: 15 day(s), 3 week(s), 1 month(s), 787 run(s), 924 usage row(s), 43 project page(s), 4 alert(s)
 notify: no new alerts
+[02:25:47] aidev synced: run(2026-09-16): cutover — no change
+[02:25:47] done
+[02:31:49] skip aiportal-java: STOP
+[02:32:22] candidates(41): AgentHub Clustara DartFly Invenqor Kkiit Momento Quantoss ReSSO SecCheck Vendra ai-admin aiportal-front-admin aiportal-front aiportal-py appstore cutover dataworks git-ctx hunter igame jikim jupiq kanpic madi moina moyro muni nexabuilder orbit pii-masker postra ptium qurio releasedock relio seaton sqlon umm vibe-coders visitflow weekly
+[02:32:26] campaign 후보 3개 — tracking-2026-09 handoff-2026-09 mail-2026-09 중 tracking-2026-09 차례 (마지막 회차 2026-09-16T01:19:21+09:00)
+[02:32:26] campaign tracking-2026-09: picked sqlon
+[02:32:26] picked: sqlon
+[02:32:26] === sqlon (base=main, run 2026-09-16-023226-sqlon-improve, 회차 예산 $28)
+Preparing worktree (new branch 'auto/2026-09-16-0232')
+HEAD is now at 57f99b7 release: v0.1.5
+[02:32:29] sqlon: [base] pinned — main@57f99b7
+[02:32:29] sqlon: [autonomy] release — 
+[02:48:30] sqlon: improve — 79 turns, 16m, $7.65, success
+[02:48:33] sqlon: verify `go build ./...` → exit 0 (2s)
+[02:48:33] sqlon: verify `go vet ./...` → exit 0 (0s)
+[02:48:34] sqlon: verify `go test ./...` → exit 0 (1s)
+[02:48:35] sqlon: [verify] passed — 검증 3개 통과 (auto)
+branch 'auto/2026-09-16-0232' set up to track 'origin/auto/2026-09-16-0232'.
+[02:48:42] sqlon: [pr] created — https://github.com/hkjang/sqlon/pull/3
+[02:51:48] sqlon: review — 20 turns, 3m, $1.38, success
+[02:51:48] sqlon: [review] rejected — 리뷰 거절: internal/mcp/webui/settings.html:159 + :177 — tracking_momento_proxy 는 서버에서 '빈값 = 켜짐'(internal/tracking/tracking.go:83, !IsFalse) 이고 도움말·admin_guide.md:179·커밋 메시지 모두 '기본 켜짐/프록시가 기본' 이라고 말하지만, bool 컨트롤은 미설정 값을 체크 해제로 그리고(159) save() 는 체크박스를 항상 'true'/'false' 로 보냅니다(177). 그래서 관리자가 설정 화면에서 무엇이든 저장하면(마스터 토큰만 바꿔도) tracking_momento_proxy='false' 가 영속화되어, momento 를 켜는 순간 같은 오리진 프록시가 꺼지고 수집기 주소가 스니펫과 CSP 에 직접 노출됩니다. 화면 경로로는 문서가 약속한 기본 동작에 도달할 수 없습니다. (테스트는 API 로 직접 PUT 하므로 이 경로를 검증하지 못함) / internal/mcp/authapi.go:272 vs internal/meta/settings.go:229 — openapi/커밋 메시지는 'tracking_* 키는 조합 전체를 검사해 잘못되면 아무것도 저장하지 않습니다' 라고 하지만, 조합 검증(Validate)은 꺼진 상태에서는 스니펫 크기만 보고 URL 형식은 보지 않으며, per-key Validate(validateOptionalURL) 는 저장 루프 안에서 키마다 실행됩니다. 예: {"tracking_enabled":"false","tracking_matomo_url":"ftp://x"} 는 map 순회 순서에 따라 tracking_enabled 는 저장되고 matomo_url 에서 400 이 나는 부분 저장이 발생합니다(비결정적).
+https://github.com/hkjang/sqlon/pull/3#issuecomment-5685243814
+evidence: /mnt/c/Users/USER/projects/aidev/state/runs/2026-09-16-023226-sqlon-improve/evidence.json
+reports: 15 day(s), 3 week(s), 1 month(s), 788 run(s), 926 usage row(s), 43 project page(s), 4 alert(s)
+notify: no new alerts

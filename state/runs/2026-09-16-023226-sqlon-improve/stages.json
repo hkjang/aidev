@@ -1,0 +1,27 @@
+{
+  "base": {
+    "state": "pinned",
+    "reason": "main@57f99b7",
+    "at": "2026-09-16T02:32:29+09:00"
+  },
+  "autonomy": {
+    "state": "release",
+    "reason": "",
+    "at": "2026-09-16T02:32:29+09:00"
+  },
+  "verify": {
+    "state": "passed",
+    "reason": "검증 3개 통과 (auto)",
+    "at": "2026-09-16T02:48:35+09:00"
+  },
+  "pr": {
+    "state": "created",
+    "reason": "https://github.com/hkjang/sqlon/pull/3",
+    "at": "2026-09-16T02:48:42+09:00"
+  },
+  "review": {
+    "state": "rejected",
+    "reason": "리뷰 거절: internal/mcp/webui/settings.html:159 + :177 — tracking_momento_proxy 는 서버에서 '빈값 = 켜짐'(internal/tracking/tracking.go:83, !IsFalse) 이고 도움말·admin_guide.md:179·커밋 메시지 모두 '기본 켜짐/프록시가 기본' 이라고 말하지만, bool 컨트롤은 미설정 값을 체크 해제로 그리고(159) save() 는 체크박스를 항상 'true'/'false' 로 보냅니다(177). 그래서 관리자가 설정 화면에서 무엇이든 저장하면(마스터 토큰만 바꿔도) tracking_momento_proxy='false' 가 영속화되어, momento 를 켜는 순간 같은 오리진 프록시가 꺼지고 수집기 주소가 스니펫과 CSP 에 직접 노출됩니다. 화면 경로로는 문서가 약속한 기본 동작에 도달할 수 없습니다. (테스트는 API 로 직접 PUT 하므로 이 경로를 검증하지 못함) / internal/mcp/authapi.go:272 vs internal/meta/settings.go:229 — openapi/커밋 메시지는 'tracking_* 키는 조합 전체를 검사해 잘못되면 아무것도 저장하지 않습니다' 라고 하지만, 조합 검증(Validate)은 꺼진 상태에서는 스니펫 크기만 보고 URL 형식은 보지 않으며, per-key Validate(validateOptionalURL) 는 저장 루프 안에서 키마다 실행됩니다. 예: {\"tracking_enabled\":\"false\",\"tracking_matomo_url\":\"ftp://x\"} 는 map 순회 순서에 따라 tracking_enabled 는 저장되고 matomo_url 에서 400 이 나는 부분 저장이 발생합니다(비결정적).",
+    "at": "2026-09-16T02:51:48+09:00"
+  }
+}

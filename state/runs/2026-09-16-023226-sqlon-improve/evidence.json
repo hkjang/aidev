@@ -1,0 +1,180 @@
+{
+  "run_id": "2026-09-16-023226-sqlon-improve",
+  "generated": "2026-09-16T02:51:50+09:00",
+  "run": {
+    "run_id": "2026-09-16-023226-sqlon-improve",
+    "project": "sqlon",
+    "kind": "improve",
+    "started": "2026-09-16T02:32:26+09:00",
+    "model": "claude-opus-5",
+    "policy_version": "78619c0e",
+    "prompts_hash": "82f2440d4b2fef65",
+    "runner_version": "b8f3f83f",
+    "finished": "2026-09-16T02:51:49+09:00",
+    "outcome": "review-pending"
+  },
+  "record": {
+    "ts": "2026-09-16T02:51:49+09:00",
+    "date": "2026-09-16",
+    "project": "sqlon",
+    "result": "review held, PR open https://github.com/hkjang/sqlon/pull/3",
+    "outcome": "review-pending",
+    "run_id": "2026-09-16-023226-sqlon-improve",
+    "base_sha": "57f99b7233561729106c666369028763debb97b7",
+    "head_sha": "d440ae9c24940498e84d4a1811306a1d263570ab",
+    "pr": "https://github.com/hkjang/sqlon/pull/3",
+    "stages": {
+      "base": {
+        "state": "pinned",
+        "reason": "main@57f99b7",
+        "at": "2026-09-16T02:32:29+09:00"
+      },
+      "autonomy": {
+        "state": "release",
+        "reason": "",
+        "at": "2026-09-16T02:32:29+09:00"
+      },
+      "verify": {
+        "state": "passed",
+        "reason": "검증 3개 통과 (auto)",
+        "at": "2026-09-16T02:48:35+09:00"
+      },
+      "pr": {
+        "state": "created",
+        "reason": "https://github.com/hkjang/sqlon/pull/3",
+        "at": "2026-09-16T02:48:42+09:00"
+      },
+      "review": {
+        "state": "rejected",
+        "reason": "리뷰 거절: internal/mcp/webui/settings.html:159 + :177 — tracking_momento_proxy 는 서버에서 '빈값 = 켜짐'(internal/tracking/tracking.go:83, !IsFalse) 이고 도움말·admin_guide.md:179·커밋 메시지 모두 '기본 켜짐/프록시가 기본' 이라고 말하지만, bool 컨트롤은 미설정 값을 체크 해제로 그리고(159) save() 는 체크박스를 항상 'true'/'false' 로 보냅니다(177). 그래서 관리자가 설정 화면에서 무엇이든 저장하면(마스터 토큰만 바꿔도) tracking_momento_proxy='false' 가 영속화되어, momento 를 켜는 순간 같은 오리진 프록시가 꺼지고 수집기 주소가 스니펫과 CSP 에 직접 노출됩니다. 화면 경로로는 문서가 약속한 기본 동작에 도달할 수 없습니다. (테스트는 API 로 직접 PUT 하므로 이 경로를 검증하지 못함) / internal/mcp/authapi.go:272 vs internal/meta/settings.go:229 — openapi/커밋 메시지는 'tracking_* 키는 조합 전체를 검사해 잘못되면 아무것도 저장하지 않습니다' 라고 하지만, 조합 검증(Validate)은 꺼진 상태에서는 스니펫 크기만 보고 URL 형식은 보지 않으며, per-key Validate(validateOptionalURL) 는 저장 루프 안에서 키마다 실행됩니다. 예: {\"tracking_enabled\":\"false\",\"tracking_matomo_url\":\"ftp://x\"} 는 map 순회 순서에 따라 tracking_enabled 는 저장되고 matomo_url 에서 400 이 나는 부분 저장이 발생합니다(비결정적).",
+        "at": "2026-09-16T02:51:48+09:00"
+      }
+    },
+    "campaign": "tracking-2026-09",
+    "autonomy": "release",
+    "files": 19,
+    "additions": 1830,
+    "deletions": 32,
+    "tests": 2,
+    "title": "feat(tracking): 관리자가 화면에서 붙이는 방문 추적 스크립트와 nonce 기반 CSP 를 추가합니다"
+  },
+  "stages": {
+    "base": {
+      "state": "pinned",
+      "reason": "main@57f99b7",
+      "at": "2026-09-16T02:32:29+09:00"
+    },
+    "autonomy": {
+      "state": "release",
+      "reason": "",
+      "at": "2026-09-16T02:32:29+09:00"
+    },
+    "verify": {
+      "state": "passed",
+      "reason": "검증 3개 통과 (auto)",
+      "at": "2026-09-16T02:48:35+09:00"
+    },
+    "pr": {
+      "state": "created",
+      "reason": "https://github.com/hkjang/sqlon/pull/3",
+      "at": "2026-09-16T02:48:42+09:00"
+    },
+    "review": {
+      "state": "rejected",
+      "reason": "리뷰 거절: internal/mcp/webui/settings.html:159 + :177 — tracking_momento_proxy 는 서버에서 '빈값 = 켜짐'(internal/tracking/tracking.go:83, !IsFalse) 이고 도움말·admin_guide.md:179·커밋 메시지 모두 '기본 켜짐/프록시가 기본' 이라고 말하지만, bool 컨트롤은 미설정 값을 체크 해제로 그리고(159) save() 는 체크박스를 항상 'true'/'false' 로 보냅니다(177). 그래서 관리자가 설정 화면에서 무엇이든 저장하면(마스터 토큰만 바꿔도) tracking_momento_proxy='false' 가 영속화되어, momento 를 켜는 순간 같은 오리진 프록시가 꺼지고 수집기 주소가 스니펫과 CSP 에 직접 노출됩니다. 화면 경로로는 문서가 약속한 기본 동작에 도달할 수 없습니다. (테스트는 API 로 직접 PUT 하므로 이 경로를 검증하지 못함) / internal/mcp/authapi.go:272 vs internal/meta/settings.go:229 — openapi/커밋 메시지는 'tracking_* 키는 조합 전체를 검사해 잘못되면 아무것도 저장하지 않습니다' 라고 하지만, 조합 검증(Validate)은 꺼진 상태에서는 스니펫 크기만 보고 URL 형식은 보지 않으며, per-key Validate(validateOptionalURL) 는 저장 루프 안에서 키마다 실행됩니다. 예: {\"tracking_enabled\":\"false\",\"tracking_matomo_url\":\"ftp://x\"} 는 map 순회 순서에 따라 tracking_enabled 는 저장되고 matomo_url 에서 400 이 나는 부분 저장이 발생합니다(비결정적).",
+      "at": "2026-09-16T02:51:48+09:00"
+    }
+  },
+  "provenance": {
+    "model": "claude-opus-5",
+    "policy_version": "78619c0e",
+    "prompts_hash": "82f2440d4b2fef65",
+    "runner_version": "b8f3f83f",
+    "base_sha": "57f99b7233561729106c666369028763debb97b7",
+    "head_sha": "d440ae9c24940498e84d4a1811306a1d263570ab",
+    "pr": "https://github.com/hkjang/sqlon/pull/3"
+  },
+  "verification": {
+    "runner": {
+      "source": "auto",
+      "commands": [
+        {
+          "cmd": "go build ./...",
+          "exit": 0,
+          "seconds": 2
+        },
+        {
+          "cmd": "go vet ./...",
+          "exit": 0,
+          "seconds": 0
+        },
+        {
+          "cmd": "go test ./...",
+          "exit": 0,
+          "seconds": 1
+        }
+      ]
+    },
+    "runner_gate": {
+      "ok": true,
+      "state": "verified",
+      "reason": "검증 3개 통과 (auto)"
+    },
+    "after_rebase": null,
+    "review": {
+      "verdict": "reject",
+      "reasons": [
+        "internal/mcp/webui/settings.html:159 + :177 — tracking_momento_proxy 는 서버에서 '빈값 = 켜짐'(internal/tracking/tracking.go:83, !IsFalse) 이고 도움말·admin_guide.md:179·커밋 메시지 모두 '기본 켜짐/프록시가 기본' 이라고 말하지만, bool 컨트롤은 미설정 값을 체크 해제로 그리고(159) save() 는 체크박스를 항상 'true'/'false' 로 보냅니다(177). 그래서 관리자가 설정 화면에서 무엇이든 저장하면(마스터 토큰만 바꿔도) tracking_momento_proxy='false' 가 영속화되어, momento 를 켜는 순간 같은 오리진 프록시가 꺼지고 수집기 주소가 스니펫과 CSP 에 직접 노출됩니다. 화면 경로로는 문서가 약속한 기본 동작에 도달할 수 없습니다. (테스트는 API 로 직접 PUT 하므로 이 경로를 검증하지 못함)",
+        "internal/mcp/authapi.go:272 vs internal/meta/settings.go:229 — openapi/커밋 메시지는 'tracking_* 키는 조합 전체를 검사해 잘못되면 아무것도 저장하지 않습니다' 라고 하지만, 조합 검증(Validate)은 꺼진 상태에서는 스니펫 크기만 보고 URL 형식은 보지 않으며, per-key Validate(validateOptionalURL) 는 저장 루프 안에서 키마다 실행됩니다. 예: {\"tracking_enabled\":\"false\",\"tracking_matomo_url\":\"ftp://x\"} 는 map 순회 순서에 따라 tracking_enabled 는 저장되고 matomo_url 에서 400 이 나는 부분 저장이 발생합니다(비결정적)."
+      ],
+      "notes": [
+        "internal/mcp/tracking.go:161 handleMomentoProxy 는 /momento/* 의 모든 메서드·경로를 인증 없이 사내 수집기로 그대로 넘깁니다. tracker.js 와 비콘 엔드포인트만 필요한데 수집기의 관리용 경로까지 공개 오리진에서 도달 가능해집니다(쿠키·인증 헤더는 제거됨). 경로 화이트리스트(예: /tracker.js, 비콘 경로)와 메서드 제한을 권합니다. 또 수집기의 Set-Cookie 응답 헤더가 이 오리진에 그대로 전달됩니다.",
+        "internal/tracking/policy.go:29-35 tracking_allowed_hosts 값은 검증 없이 CSP 헤더에 그대로 들어갑니다(관리자만 쓸 수 있고 줄바꿈은 SplitHosts 가 잘라 헤더 주입은 불가하나, ';' 로 지시어를 덧붙일 수 있음). /api/tracking/allow 경로는 http(s) 검증을 하지만 /api/settings 경로는 하지 않습니다.",
+        "POST /api/tracking/csp-report 는 무인증이며 100건 고리라 누구나 실제 기록을 밀어낼 수 있음 — 트러블슈팅 보조라는 설계 의도상 수용 가능.",
+        "테스트: internal/tracking 단위 테스트와 internal/mcp 엔드투엔드 테스트 모두 실제 핸들러·프록시·설정 저장을 실행하고 구체적 단언을 가짐. go build/vet/test ./... 전부 통과 확인.",
+        "docs/admin_guide.pdf, docs/reports/* 는 문서 재생성 — 커밋 메시지에 명시되어 범위 이탈 아님. 마이그레이션·외부 상태 변경 없음, revert 로 완전히 되돌아감(설정 키는 메타 DB 에 남지만 무시됨)."
+      ],
+      "risk": "medium"
+    },
+    "ci_gate": null
+  },
+  "release": {
+    "result": null,
+    "assets_sha256": []
+  },
+  "approval": null,
+  "usage": [
+    {
+      "ts": "2026-09-16T02:48:30+09:00",
+      "date": "2026-09-16",
+      "project": "sqlon",
+      "phase": "improve",
+      "run_id": "2026-09-16-023226-sqlon-improve",
+      "campaign": "tracking-2026-09",
+      "subtype": "success",
+      "duration_ms": 963038,
+      "num_turns": 79,
+      "cost_usd": 7.645577000000001,
+      "input_tokens": 138,
+      "output_tokens": 76234,
+      "cache_read": 8142194,
+      "cache_create": 166231
+    },
+    {
+      "ts": "2026-09-16T02:51:48+09:00",
+      "date": "2026-09-16",
+      "project": "sqlon",
+      "phase": "review",
+      "run_id": "2026-09-16-023226-sqlon-improve",
+      "campaign": "tracking-2026-09",
+      "subtype": "success",
+      "duration_ms": 184662,
+      "num_turns": 20,
+      "cost_usd": 1.3804145000000003,
+      "input_tokens": 40,
+      "output_tokens": 11573,
+      "cache_read": 950887,
+      "cache_create": 61363
+    }
+  ]
+}
