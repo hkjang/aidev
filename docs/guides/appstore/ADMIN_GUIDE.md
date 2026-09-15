@@ -1,6 +1,6 @@
 # AppStore 관리자 가이드
 
-대상 버전: **v2.7.0** · 실린 화면은 모두 이 버전을 실제로 띄워 찍은 것입니다.
+대상 버전: **v2.8.0** · 실린 화면은 모두 이 버전을 실제로 띄워 찍은 것입니다.
 
 화면을 쓰는 사람을 위한 설명은 [사용자 가이드](USER_GUIDE.md)에 있습니다. 이 문서는 그 화면을 띄워 놓고 지키는 사람을 위한 것입니다.
 
@@ -34,7 +34,7 @@ AppStore는 컨테이너 하나로 동작합니다. React SPA, REST API, OIDC �
 
 ## 2. 설치
 
-릴리스 자산 하나(`appstore-vX.Y.Z.tar.gz`)로 폐쇄망까지 반입할 수 있습니다. 아래는 v2.7.0 기준입니다.
+릴리스 자산 하나(`appstore-vX.Y.Z.tar.gz`)로 폐쇄망까지 반입할 수 있습니다. 아래는 v2.8.0 기준입니다.
 
 ### 2.1. 선행 조건
 
@@ -52,10 +52,10 @@ PostgreSQL 이미지는 릴리스에 포함되지 않습니다. 먼저 준비하
 ### 2.2. 이미지 반입과 검증
 
 ```bash
-sha256sum appstore-v2.7.0.tar.gz          # 릴리스 노트의 SHA-256과 대조
-gzip -t appstore-v2.7.0.tar.gz
-gzip -dc appstore-v2.7.0.tar.gz | docker load
-docker image inspect appstore:v2.7.0 \
+sha256sum appstore-v2.8.0.tar.gz          # 릴리스 노트의 SHA-256과 대조
+gzip -t appstore-v2.8.0.tar.gz
+gzip -dc appstore-v2.8.0.tar.gz | docker load
+docker image inspect appstore:v2.8.0 \
   --format '{{.RepoTags}} user={{.Config.User}} version={{index .Config.Labels "org.opencontainers.image.version"}}'
 ```
 
@@ -65,10 +65,10 @@ docker image inspect appstore:v2.7.0 \
 
 ```bash
 docker build \
-  --build-arg VERSION=v2.7.0 \
+  --build-arg VERSION=v2.8.0 \
   --build-arg COMMIT="$(git rev-parse HEAD)" \
   --build-arg BUILD_DATE="$(date -u +%Y-%m-%dT%H:%M:%SZ)" \
-  -t appstore:v2.7.0 .
+  -t appstore:v2.8.0 .
 ```
 
 ### 2.3. 환경 파일 준비
@@ -102,13 +102,13 @@ docker run -d \
   --security-opt no-new-privileges:true \
   --env-file ./appstore.env \
   -p 127.0.0.1:8080:8080 \
-  appstore:v2.7.0
+  appstore:v2.8.0
 ```
 
 Docker Compose (저장소의 `docker-compose.yml`):
 
 ```bash
-APPSTORE_VERSION=v2.7.0 docker compose up -d --no-build
+APPSTORE_VERSION=v2.8.0 docker compose up -d --no-build
 docker compose ps
 docker compose logs --tail 100 appstore
 ```
@@ -325,7 +325,8 @@ Keycloak 역할 이름은 코드에 고정돼 있지 않습니다. `인증·SSO`
 
 - **추천 우선순위** — 숫자가 작을수록 투데이의 추천 진열에서 먼저 나옵니다. 비워 두면 최근 변경순으로 이어집니다.
 - 게시를 멈추기만 하려면 상태를 **보관됨**으로 바꿉니다. 카탈로그에서 내려가지만 기록은 남습니다.
-- **앱 삭제**는 영구 삭제입니다. *앱과 함께 즐겨찾기, 검토 이력, 버전 기록이 모두 삭제되며 되돌릴 수 없습니다.*
+- **가이드 문서** — 앱마다 사용 설명서를 첨부합니다. PDF, Markdown, 텍스트, CSV, Word, PowerPoint, Excel, 한글 문서만 받고 파일당 20MB, 앱당 10개, 같은 파일 이름은 한 번까지입니다. 첨부와 삭제는 **변경 저장**을 눌러야 적용되고, 소유자와 `apps:manage` 권한을 가진 관리자만 바꿀 수 있습니다. 게시된 공개 앱의 문서는 **로그인 없이 누구나** 내려받으므로 사내 공개 범위의 문서만 올리도록 안내하세요. 미게시·비공개 앱의 문서는 소유자·관리자·검토자에게만 보입니다.
+- **앱 삭제**는 영구 삭제입니다. *앱과 함께 즐겨찾기, 검토 이력, 버전 기록이 모두 삭제되며 되돌릴 수 없습니다.* 첨부된 가이드 문서도 같이 사라집니다.
 
 ![관리자 앱 등록 — 검토 절차 없이 카탈로그에 앱을 직접 등록](assets/screenshots/captures/admin-app-new-desktop.webp)
 
@@ -435,7 +436,7 @@ docker compose logs --tail 200 appstore
 
 ### 5.3. 백업
 
-백업 대상은 **PostgreSQL과 `ENCRYPTION_KEY` 두 가지**이고, 서로 다른 저장소에 둡니다. 컨테이너에는 백업할 상태가 없습니다.
+백업 대상은 **PostgreSQL과 `ENCRYPTION_KEY` 두 가지**이고, 서로 다른 저장소에 둡니다. 컨테이너에는 백업할 상태가 없습니다. 로고·파비콘과 앱 가이드 문서도 파일 시스템이 아니라 데이터베이스에 있어 dump 하나로 함께 보존되지만, 그만큼 dump 크기가 첨부한 문서 용량만큼 커집니다.
 
 ```bash
 backup_stamp="$(date -u +%Y%m%dT%H%M%SZ)"
@@ -466,7 +467,7 @@ pg_restore --clean --if-exists --no-owner --no-privileges \
 4. 교체합니다.
 
 ```bash
-APPSTORE_VERSION=v2.7.0 docker compose up -d --no-build
+APPSTORE_VERSION=v2.8.0 docker compose up -d --no-build
 docker compose ps
 docker compose logs --tail 200 appstore
 ```
@@ -483,7 +484,7 @@ docker compose logs --tail 200 appstore
 
 ```bash
 docker rm -f appstore
-docker rename appstore-v2.6.1-stopped appstore
+docker rename appstore-v2.7.0-stopped appstore
 docker start appstore
 curl --fail http://127.0.0.1:8080/health/ready
 ```
