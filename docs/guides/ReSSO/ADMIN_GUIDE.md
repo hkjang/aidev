@@ -252,6 +252,32 @@ Client 등록 시 지켜야 하는 것:
 https://sso.example.com/realms/{realm}/.well-known/openid-configuration
 ```
 
+#### 로그인 화면 없이 들어가기 (silent SSO)
+
+ReSSO에 이미 로그인한 사람이 다른 사내 서비스를 열면 로그인 화면 없이 바로 들어가는 것은
+**그 서비스(RP)가** 인가 요청에 `prompt=none`을 붙여 시작합니다. ReSSO는 화면을 그리지 않고
+둘 중 하나로만 답합니다 — 이 브라우저에 SSO 세션이 있으면 곧바로 인가 코드, 없으면
+`error=login_required`. 뒤의 것은 실패가 아니라 "세션이 없다"는 평범한 답이고, 서비스는 자기
+로그인 화면을 보여 주고 거기서 멈춰야 합니다.
+
+- **켜고 끄는 설정(`auto_login`)은 ReSSO가 아니라 각 서비스에 있습니다.** 기본값은 꺼짐이며,
+  켠 서비스만 `prompt=none`을 보냅니다. ReSSO 쪽에는 그에 해당하는 설정이 없습니다 — 제공자가
+  받은 `prompt=none`을 무시하면 OIDC 사양을 어기는 것이고, 리다이렉트가 생기는 자리를 묶는
+  설정은 요청을 만드는 쪽에 있어야 합니다. 그래서 ReSSO에서 할 일은 Client를 평소처럼 등록하는
+  것뿐입니다.
+- **ReSSO 콘솔 자체는 설정 없이 이미 그렇게 동작합니다.** 콘솔과 OIDC SSO 세션이 같은 쿠키를
+  쓰므로, 어느 서비스를 통해서든 ReSSO에 로그인한 사람은 콘솔을 열면 로그인 화면 없이 들어갑니다.
+- **무한 루프를 보는 자리.** 거절(`login_required`)에 다시 `prompt=none`을 보내는 서비스는
+  브라우저를 ReSSO와 자기 사이에서 끝없이 오가게 하고, 사용자는 화면이 깜빡이는 것만 봅니다.
+  두 답이 모두 302라 요청 카운터에는 정상 인가로 보이며, `/metrics`의
+  `resso_silent_authentications_total{result="login_required"}` 급증만이 그것을 드러냅니다.
+  어느 서비스인지는 `서버 로그`에서 `a silent authentication found no session to reuse`의
+  `client_id`로 찾습니다 — 한 `remote_ip`에서 같은 `client_id`가 초당 여러 번이면 루프입니다.
+  고칠 곳은 그 서비스이며(한 탭 세션에 한 번만 시도, 로그아웃 뒤 억제, 거절을 주소에 남기기),
+  ReSSO에서 Client를 끄면 그 서비스의 로그인 전체가 멎으니 마지막 수단으로만 씁니다.
+- 서비스 개발자에게 알려 줄 규칙은 [호환 범위](compatibility.md)의 «RP가 silent SSO를
+  구현할 때»에 있습니다.
+
 ### 5-2. 세션
 
 ![SSO 세션 — 사용자·Session ID·IP·마지막 접근을 보고 강제로 종료한다](assets/guide/admin-sessions.png)
@@ -540,6 +566,7 @@ Realm별로 LDAP/Active Directory를 연결합니다. 등록 직후에는 `마�
 | 사용자가 "잠겼다"고 문의한다 | `사용자` 화면 → `잠김` 필터 | 목록에 있으면 그 줄에서 즉시 잠금 해제합니다. 없으면 잠긴 것이 아니므로 비밀번호 문제입니다 |
 | 로그인 화면에서 `로그인 요청을 확인하지 못했습니다…`를 봤다는 문의 | `서버 로그`의 그 Trace ID | **사용자를 애플리케이션으로 돌려보내지 마세요.** 요청은 살아 있으며 이쪽 장애가 걷히면 `다시 시도`로 이어집니다 |
 | 인가가 조용히 실패한다(사용자가 로그인 화면에 도달하지 못한다) | `/metrics`의 `resso_authorization_errors_total{stage=…}` | 이 계열은 대부분 302로 나가 성공한 인가와 HTTP 상태가 같습니다. `stage` 값이 어느 조회가 멈췄는지 가리킵니다 |
+| 어떤 서비스를 열면 화면이 깜빡이며 로그인 화면이 뜨지 않는다 | `/metrics`의 `resso_silent_authentications_total{result="login_required"}`, `서버 로그`의 `a silent authentication found no session to reuse` | 그 서비스가 `prompt=none` 거절에 다시 시도하는 루프입니다. 로그의 `client_id`로 서비스를 찾아 개발자에게 알립니다 — 고칠 곳은 ReSSO가 아니라 그 서비스입니다([5-1](#로그인-화면-없이-들어가기-silent-sso)) |
 | Token 발급이 실패한다 | `/metrics`의 `resso_token_errors_total{stage=…}` | 400 `invalid_grant`(호출자 문제)와 500 `server_error`(이쪽 문제)의 구분은 [운영 가이드](operations.md)에 있습니다 |
 | Prometheus가 `/metrics`에서 401·403을 받는다 | 스크레이프 설정의 Bearer token | `admin:read` 범위 개인 API 키인지, 만료되지 않았는지 확인합니다 |
 | 대시보드가 `HTTP Issuer 확인 필요`를 표시한다 | `Realm` 화면의 Issuer URL | 외부 HTTPS 주소로 바꿉니다 |
