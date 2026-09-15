@@ -3043,3 +3043,33 @@ fatal: '/home/hkjang/.cache/auto-improve-wt/hunter' is not a working tree
 evidence: /mnt/c/Users/USER/projects/aidev/state/runs/2026-09-15-221238-hunter-improve/evidence.json
 reports: 14 day(s), 3 week(s), 1 month(s), 781 run(s), 915 usage row(s), 43 project page(s), 8 alert(s)
 notify: no new alerts
+[23:34:14] aidev synced: run(2026-09-15): hunter — merged https://github.com/hkjang/hunter/pull/3, release tag held (timeout)
+[23:34:14] done
+[23:41:47] skip aiportal-java: STOP
+[23:42:21] candidates(41): AgentHub Clustara DartFly Invenqor Kkiit Momento Quantoss ReSSO SecCheck Vendra ai-admin aiportal-front-admin aiportal-front aiportal-py appstore cutover dataworks git-ctx hunter igame jikim jupiq kanpic madi moina moyro muni nexabuilder orbit pii-masker postra ptium qurio releasedock relio seaton sqlon umm vibe-coders visitflow weekly
+[23:42:24] campaign 후보 4개 — silent-sso-2026-09 tracking-2026-09 handoff-2026-09 mail-2026-09 중 mail-2026-09 차례 (마지막 회차 2026-09-14T22:47:09+09:00)
+[23:42:24] campaign mail-2026-09: picked dataworks
+[23:42:24] picked: dataworks
+[23:42:25] === dataworks (base=main, run 2026-09-15-234224-dataworks-improve, 회차 예산 $28)
+Preparing worktree (new branch 'auto/2026-09-15-2342')
+Updating files:  70% (692/978)Updating files:  71% (695/978)Updating files:  72% (705/978)Updating files:  73% (714/978)Updating files:  74% (724/978)Updating files:  75% (734/978)Updating files:  76% (744/978)Updating files:  77% (754/978)Updating files:  78% (763/978)Updating files:  79% (773/978)Updating files:  80% (783/978)Updating files:  81% (793/978)Updating files:  82% (802/978)Updating files:  83% (812/978)Updating files:  84% (822/978)Updating files:  85% (832/978)Updating files:  86% (842/978)Updating files:  87% (851/978)Updating files:  88% (861/978)Updating files:  89% (871/978)Updating files:  90% (881/978)Updating files:  91% (890/978)Updating files:  92% (900/978)Updating files:  93% (910/978)Updating files:  94% (920/978)Updating files:  95% (930/978)Updating files:  96% (939/978)Updating files:  97% (949/978)Updating files:  98% (959/978)Updating files:  99% (969/978)Updating files: 100% (978/978)Updating files: 100% (978/978), done.
+HEAD is now at 62b74b7 chore: release v0.9.54
+[23:42:29] dataworks: [base] pinned — main@62b74b7
+[23:42:29] dataworks: [autonomy] release — 
+[00:02:59] dataworks: improve — 81 turns, 20m, $8.82, success
+[00:03:01] dataworks: verify `go build ./...` → exit 0 (1s)
+[00:03:01] dataworks: verify `go vet ./...` → exit 0 (0s)
+[00:03:01] dataworks: verify `go test ./...` → exit 0 (0s)
+[00:03:01] dataworks: verify `cd web && [ -d node_modules ] || npm ci --no-audit --no-fund` → exit 0 (0s)
+[00:03:03] dataworks: verify `cd web && npm test --silent` → exit 0 (2s)
+[00:03:03] dataworks: verify `cd web && [ -d node_modules ] || npm ci --no-audit --no-fund` → exit 0 (0s)
+[00:03:06] dataworks: verify `cd web && npm run build --silent` → exit 0 (3s)
+[00:03:07] dataworks: [verify] passed — 검증 7개 통과 (auto)
+branch 'auto/2026-09-15-2342' set up to track 'origin/auto/2026-09-15-2342'.
+[00:03:16] dataworks: [pr] created — https://github.com/hkjang/dataworks/pull/21
+[00:07:32] dataworks: review — 28 turns, 4m, $2.02, success
+[00:07:32] dataworks: [review] rejected — 리뷰 거절: internal/proxy/mail.go:82,103,121,140 모든 알림 메일의 링크 Path 가 '/admin#approvals', '/admin#change-sets', '/admin#alerts' 인데 관리자 UI(internal/proxy/admin_ui.go parseHash)는 '#/…' 형식만 라우팅하며 실제 화면은 승인·알림 = '#/safety', 변경 세트 = '#/changesets' 입니다. 메일 속 링크가 전부 존재하지 않는 경로를 가리키고, internal/proxy/mail_test.go:220 은 이 잘못된 링크('/admin#change-sets')를 그대로 단언해 결함을 고정합니다. / internal/proxy/governance.go:575 + internal/proxy/mail.go:73 approval.requested 는 X-Governance-Approval-ID 헤더 없이 게이트에 걸린 모든 요청마다 새 approval 을 만들고 즉시 전체 활성 관리자에게 메일을 보냅니다. 같은 사용자·같은 요청의 재시도(클라이언트 루프, 에이전트 반복 호출)를 묶거나 제한하는 장치가 없어 API 키 하나로 관리자 전원에게 요청당 N통의 메일을 릴레이로 쏟아낼 수 있고, 발송 고루틴도 상한 없이 생성됩니다(죽은 릴레이면 각 고루틴이 2×timeout+15s 동안 남음). alert 는 윈도우로 디바운스한다고 설명했지만 승인 요청에는 아무 억제 규칙이 없습니다. / internal/proxy/mail.go:99 요청자 메일 본문 '같은 요청을 다시 보내면 이 승인으로 처리됩니다' 는 사실과 다릅니다. 게이트(governance.go:510)는 X-Governance-Approval-ID 헤더가 있어야 승인을 적용하며, 헤더 없이 다시 보내면 새 approval 이 생기고 관리자에게 또 메일이 갑니다(위 항목과 결합해 스팸을 유발). 관리자 UI 자체도 '헤더로 재전송' 이라고 안내합니다.
+https://github.com/hkjang/dataworks/pull/21#issuecomment-5682663950
+evidence: /mnt/c/Users/USER/projects/aidev/state/runs/2026-09-15-234224-dataworks-improve/evidence.json
+reports: 14 day(s), 3 week(s), 1 month(s), 782 run(s), 917 usage row(s), 43 project page(s), 8 alert(s)
+notify: no new alerts

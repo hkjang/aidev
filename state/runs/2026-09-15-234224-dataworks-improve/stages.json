@@ -1,0 +1,27 @@
+{
+  "base": {
+    "state": "pinned",
+    "reason": "main@62b74b7",
+    "at": "2026-09-15T23:42:29+09:00"
+  },
+  "autonomy": {
+    "state": "release",
+    "reason": "",
+    "at": "2026-09-15T23:42:29+09:00"
+  },
+  "verify": {
+    "state": "passed",
+    "reason": "검증 7개 통과 (auto)",
+    "at": "2026-09-16T00:03:07+09:00"
+  },
+  "pr": {
+    "state": "created",
+    "reason": "https://github.com/hkjang/dataworks/pull/21",
+    "at": "2026-09-16T00:03:16+09:00"
+  },
+  "review": {
+    "state": "rejected",
+    "reason": "리뷰 거절: internal/proxy/mail.go:82,103,121,140 모든 알림 메일의 링크 Path 가 '/admin#approvals', '/admin#change-sets', '/admin#alerts' 인데 관리자 UI(internal/proxy/admin_ui.go parseHash)는 '#/…' 형식만 라우팅하며 실제 화면은 승인·알림 = '#/safety', 변경 세트 = '#/changesets' 입니다. 메일 속 링크가 전부 존재하지 않는 경로를 가리키고, internal/proxy/mail_test.go:220 은 이 잘못된 링크('/admin#change-sets')를 그대로 단언해 결함을 고정합니다. / internal/proxy/governance.go:575 + internal/proxy/mail.go:73 approval.requested 는 X-Governance-Approval-ID 헤더 없이 게이트에 걸린 모든 요청마다 새 approval 을 만들고 즉시 전체 활성 관리자에게 메일을 보냅니다. 같은 사용자·같은 요청의 재시도(클라이언트 루프, 에이전트 반복 호출)를 묶거나 제한하는 장치가 없어 API 키 하나로 관리자 전원에게 요청당 N통의 메일을 릴레이로 쏟아낼 수 있고, 발송 고루틴도 상한 없이 생성됩니다(죽은 릴레이면 각 고루틴이 2×timeout+15s 동안 남음). alert 는 윈도우로 디바운스한다고 설명했지만 승인 요청에는 아무 억제 규칙이 없습니다. / internal/proxy/mail.go:99 요청자 메일 본문 '같은 요청을 다시 보내면 이 승인으로 처리됩니다' 는 사실과 다릅니다. 게이트(governance.go:510)는 X-Governance-Approval-ID 헤더가 있어야 승인을 적용하며, 헤더 없이 다시 보내면 새 approval 이 생기고 관리자에게 또 메일이 갑니다(위 항목과 결합해 스팸을 유발). 관리자 UI 자체도 '헤더로 재전송' 이라고 안내합니다.",
+    "at": "2026-09-16T00:07:32+09:00"
+  }
+}
