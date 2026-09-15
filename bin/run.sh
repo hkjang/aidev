@@ -491,7 +491,7 @@ pick_campaign(){
     for cp in $projs; do
       last_out=$(jq -r --arg id "$id" --arg p "$cp" 'select(.campaign==$id and .project==$p) | .outcome' "$DATA/runs.jsonl" 2>/dev/null | tail -1)
       case "$last_out" in
-        "") ;;                                    # 아직 안 함
+        ""|infra-error|usage-limit) ;;            # 아직 안 함, 또는 인프라·사용량 한도로 못 함 — 다시 잡는다
         error|verify-failed)
           # 세 번까지만 다시 한다. 같은 자리에서 실패하는 회차는 다시 돌린다고
           # 달라지지 않는데, 무한히 다시 잡으면 캠페인이 그 프로젝트에 갇히고
