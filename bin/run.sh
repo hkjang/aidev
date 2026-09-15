@@ -64,6 +64,18 @@ with_retry(){
   done
   RETRY_KIND=exhausted; return 1
 }
+# 워크트리를 확실히 비운다. 디렉터리가 사라졌는데 등록만 "locked" 로 남으면
+# `worktree remove --force` 한 번으로는 안 지워지고(잠금 해제에 --force 두 번 필요),
+# 그 뒤 `worktree add` 도 실패해 cd 가 깨진다 — 매 회차 같은 오류가 반복된다
+# (2026-09-15 postra: "missing but locked worktree" 로 5회 연속 실패).
+# unlock → 강제 제거 → 남은 디렉터리 직접 삭제 → prune 로 어떤 상태에서도 복구한다.
+wt_reset(){ # $1=저장소 $2=워크트리 경로
+  local repo=$1 wt=$2
+  git -C "$repo" worktree unlock "$wt" >/dev/null 2>&1 || true
+  git -C "$repo" worktree remove --force "$wt" >/dev/null 2>&1 || true
+  rm -rf "$wt" 2>/dev/null || true
+  git -C "$repo" worktree prune >/dev/null 2>&1 || true
+}
 # 회차 시작 전 인증 확인 — 없으면 아무것도 하지 않고 실행 오류로 남긴다
 gh auth status >/dev/null 2>&1 || { log "gh 인증 없음 — 회차를 시작하지 않는다"; exit 3; }
 
@@ -434,7 +446,7 @@ rebase_pr(){ # $1=PR url $2=base
   local pr=$1 base=$2 br rwt="$WT_BASE/$n-rebase" newsha
   br=$(cd "$repo" && gh pr view "$pr" --json headRefName --jq .headRefName 2>/dev/null); [ -n "$br" ] || return 0
   git -C "$repo" fetch -q origin "$base" "$br" >>"$LOG" 2>&1 || return 0
-  git -C "$repo" worktree remove --force "$rwt" 2>/dev/null || true
+  wt_reset "$repo" "$rwt"
   git -C "$repo" worktree add --detach "$rwt" "origin/$br" >>"$LOG" 2>&1 || return 0
   if { git -C "$rwt" rebase "origin/$base" >>"$LOG" 2>&1 || resolve_generated_conflicts "$rwt"; } \
      && wt="$rwt" run_verify "$rwt" "$OUT/verify-rebased.json"; then
@@ -853,7 +865,7 @@ release_project(){ # $1=base $2=변경 요약 [$3=assets] — 에이전트는 �
     mode_note="## 이번 세션은 자산만 만든다
 이미 태그 \`$latest\` 와 GitHub Release 가 나가 있지만 이전 릴리즈에 있던 자산이 빠졌다. **버전을 올리거나 커밋·태그를 만들지 말고**, 체크아웃된 \`$latest\` 로 이전 릴리즈와 같은 자산을 같은 방법·같은 이름 규칙으로 \`$OUT/assets/\` 에 만들어 \`assets\` 에 적기만 하라. JSON 의 \`status\` 는 \`released\`, \`tag\` 는 \`$latest\`, \`github_release\` 는 \`false\`."
   fi
-  git -C "$repo" worktree remove --force "$rwt" 2>/dev/null || true
+  wt_reset "$repo" "$rwt"
   git -C "$repo" worktree add --detach "$rwt" "$ref" >>"$LOG" 2>&1
   release_context
   rprompt=$(RELEASE_FILE="$rfile" OUT_DIR="$OUT" CHANGE_SUMMARY="$summary" MODE_NOTE="$mode_note" RELEASE_CONTEXT="$(cat "$OUT/release-context.md")" \
@@ -899,7 +911,7 @@ rollback_project(){ # $1=머지 커밋
   local sha=$1 rwt="$WT_BASE/$n-revert" br="revert/$RUN_DATE-$(date +%H%M)" url
   [ -n "$sha" ] || { log "$n: rollback skipped (no merge sha)"; return 0; }
   git -C "$repo" fetch -q origin "$base" >>"$LOG" 2>&1 || true
-  git -C "$repo" worktree remove --force "$rwt" 2>/dev/null || true
+  wt_reset "$repo" "$rwt"
   git -C "$repo" worktree add -b "$br" "$rwt" "origin/$base" >>"$LOG" 2>&1 || return 0
   if (cd "$rwt" && { git revert --no-edit -m 1 "$sha" || git revert --no-edit "$sha"; } >>"$LOG" 2>&1); then
     git -C "$rwt" push -u origin "$br" >>"$LOG" 2>&1
@@ -988,6 +1000,19 @@ if [ $DRY -eq 0 ]; then
   today_cost=$(jq -s --arg d "$RUN_DATE" '[.[]|select(.date==$d)|.cost_usd//0]|add // 0' "$DATA/usage.jsonl" 2>/dev/null || echo 0)
   today_rounds=$(jq -s --arg d "$RUN_DATE" '[.[]|select(.date==$d)]|length' "$DATA/runs.jsonl" 2>/dev/null || echo 0)
   today_rel=$(jq -s --arg d "$RUN_DATE" '[.[]|select(.date==$d)|select(.result|test("released v?[0-9]"))]|length' "$DATA/runs.jsonl" 2>/dev/null || echo 0)
+  # 산출물 없는 하루 감시: 회차는 상한까지 돌았는데 PR·머지·릴리즈가 하나도 없으면 알린다.
+  # 캠페인이 도는 날엔 아래 상한 기록 블록이 건너뛰어져 조용히 지나갈 수 있어 여기서 독립적으로 본다.
+  if [ ! -f "$STATE/.prodcheck-$RUN_DATE" ] && [ "${today_rounds:-0}" -ge "$MAX_DAILY_ROUNDS" ]; then
+    prod=$(jq -s --arg d "$RUN_DATE" '[.[]|select(.date==$d)|select((.pr//"")!="" or (.outcome|test("merged|release-ready|review-pending")))]|length' "$DATA/runs.jsonl" 2>/dev/null || echo 0)
+    if [ "${prod:-0}" -eq 0 ]; then
+      touch "$STATE/.prodcheck-$RUN_DATE"
+      nochg=$(jq -s --arg d "$RUN_DATE" '[.[]|select(.date==$d and .outcome=="no-change")]|length' "$DATA/runs.jsonl" 2>/dev/null || echo 0)
+      errs=$(jq -s --arg d "$RUN_DATE" '[.[]|select(.date==$d and (.outcome|test("error|verify-failed|usage-limit|infra-error")))]|length' "$DATA/runs.jsonl" 2>/dev/null || echo 0)
+      log "산출물 0건 경보: $today_rounds회차, no-change $nochg, 오류 $errs"
+      "$HERE/tg.sh" "⚠️ 오늘 산출물 0건 — $today_rounds회차를 돌았지만 PR·머지·릴리즈가 없습니다 (no-change $nochg · 오류 $errs). 대부분 휴면이거나 사용량 한도일 수 있습니다.
+https://hkjang.github.io/aidev/" >/dev/null 2>&1 &
+    fi
+  fi
   cap=""; awk -v c="$today_cost" -v m="$MAX_DAILY_COST" 'BEGIN{exit !(c>=m)}' && cap="비용 \$$today_cost ≥ \$$MAX_DAILY_COST"
   [ "${today_rounds:-0}" -ge "$MAX_DAILY_ROUNDS" ] && cap="회차 $today_rounds ≥ $MAX_DAILY_ROUNDS"
   [ "${today_rel:-0}" -ge "$MAX_DAILY_RELEASES" ] && cap="릴리즈 $today_rel ≥ $MAX_DAILY_RELEASES"
@@ -1013,6 +1038,19 @@ if [ $DRY -eq 0 ]; then
     exit 0
   fi
 fi
+# 사용량 한도 백오프: 모델을 부를 수 없었던 회차 뒤에는 잠시 쉰다. 10분마다 헛되이
+# 다시 부르며 원장을 채우는 것을 막는다. 승인 머지는 모델을 부르지 않으므로 이때도 잇는다.
+if [ $DRY -eq 0 ] && [ -f "$STATE/.usage-cooldown" ]; then
+  cd_ts=$(date -d "$(cat "$STATE/.usage-cooldown" 2>/dev/null)" +%s 2>/dev/null || echo 0)
+  cd_min=${USAGE_COOLDOWN_MIN:-60}; cd_elapsed=$(( ($(date +%s) - cd_ts) / 60 ))
+  if [ "$cd_ts" -gt 0 ] && [ "$cd_elapsed" -lt "$cd_min" ]; then
+    log "usage cooldown: 사용량 한도로 쉬는 중 (남은 $(( cd_min - cd_elapsed ))분) — 새 회차 생략, 승인만 처리"
+    if [ -z "$ONLY" ] && ! stopped start; then cd_release=$RELEASE; RELEASE=0; approvals; RELEASE=$cd_release; fi
+    exit 0
+  else
+    rm -f "$STATE/.usage-cooldown"; log "usage cooldown: 해제 — 정상 재개"
+  fi
+fi
 [ -z "$ONLY" ] && "$HERE/inbox.sh" >>"$LOG" 2>&1 || true
 if [ $DRY -eq 0 ]; then
   stopped start && { log "전체 중지 상태 — 새 회차를 시작하지 않는다 (bin/stop.sh all off 로 해제)"; exit 0; }
@@ -1029,7 +1067,17 @@ for d in "$ROOT"/*/; do
   [ -n "$ONLY" ] && [ "$n" != "$ONLY" ] && continue
   last=$(git -C "$d" log -1 --format=%ct 2>/dev/null || echo 0); [ "$last" -ge "$since" ] || continue
   git -C "$d" remote get-url origin >/dev/null 2>&1 || continue
-  [ -z "$(git -C "$d" status --porcelain 2>/dev/null)" ] || { log "skip $n: dirty working tree"; continue; }
+  # dirty 저장소는 사람이 손대던 작업을 덮지 않도록 건너뛴다. 단 프로젝트가
+  # policy.ignore_dirty 에 "늘 다시 쓰이는 생성물" 경로를 적어 두면 그 경로는 센다.
+  # Quantoss 는 data/·reports/ 의 시세·수급·리포트가 몇 분마다 갱신돼 늘 dirty 라
+  # 개선 회차가 영영 안 잡혔다. 러너는 원격 base 로 새 워크트리를 파므로 이 파일들은
+  # 회차에 영향을 주지 않는다 — 무시해도 사람 작업 보호에는 지장이 없다 (2026-09-15).
+  dirty=$(git -C "$d" status --porcelain 2>/dev/null)
+  if [ -n "$dirty" ]; then
+    excl=(); while IFS= read -r g; do [ -n "$g" ] && excl+=(":(exclude)$g"); done < <(policy "$n" '.ignore_dirty[]?' 2>/dev/null)
+    [ ${#excl[@]} -gt 0 ] && dirty=$(git -C "$d" status --porcelain -- . "${excl[@]}" 2>/dev/null)
+  fi
+  [ -z "$dirty" ] || { log "skip $n: dirty working tree"; continue; }
   [ -f "$STATE/STOP-$n" ] && { log "skip $n: STOP"; continue; }
   if [ -z "$ONLY" ] && [ -s "$DATA/runs.jsonl" ]; then
     read -r streak lastd < <(jq -rs --arg p "$n" --argjson k "$DORMANT_AFTER" '[.[]|select(.project==$p)] | (.[-$k:]) as $l | [(($l|length)==$k and all($l[]; .result|test("no change"))), ($l[-1].date // "")] | @tsv' "$DATA/runs.jsonl" 2>/dev/null || echo "false ")
@@ -1112,8 +1160,18 @@ round_body(){
   fi
   git -C "$repo" fetch -q origin "$base" >>"$LOG" 2>&1 || { stage improve error "fetch 실패"; record_run "$n" "error: fetch" "error"; return 0; }
   BASE_SHA=$(git -C "$repo" rev-parse "origin/$base"); slug="auto/$RUN_DATE-$(date +%H%M)"
-  git -C "$repo" worktree remove --force "$wt" 2>/dev/null || true
-  git -C "$repo" worktree add -b "$slug" "$wt" "$BASE_SHA" >>"$LOG" 2>&1
+  wt_reset "$repo" "$wt"
+  git -C "$repo" branch -D "$slug" 2>/dev/null || true
+  # worktree add 실패를 흘려보내면 다음 단계의 `cd "$wt"` 가 깨져 "agent produced no result"
+  # 로만 남았다. 그 실패가 error 로 기록돼 캠페인이 세 번 만에 그 프로젝트를 버렸다
+  # (2026-09-15 postra: 워크트리 디렉터리가 없어 다섯 번 error, 캠페인에서 제외됨).
+  # 인프라 실패는 프로젝트 잘못이 아니므로 error 가 아니라 infra-error 로 남긴다 —
+  # 캠페인 스트라이크(error·verify-failed)에도, triage 반복실패 집계에도 들지 않는다.
+  if ! git -C "$repo" worktree add -b "$slug" "$wt" "$BASE_SHA" >>"$LOG" 2>&1 || [ ! -d "$wt" ]; then
+    log "$n: worktree add 실패 ($wt) — 이 회차를 건너뛴다"; stage base error "worktree add 실패"
+    git -C "$repo" branch -D "$slug" 2>/dev/null || true; rm -rf "$OUT/home"
+    record_run "$n" "infra-error: worktree add 실패 ($wt)" "infra-error"; return 0
+  fi
   stage base pinned "$base@${BASE_SHA:0:7}"
 
   fix_note=""; [ "$n" = "$FIX_PROJECT" ] && fix_note="## 우선 과제 (자동 배정) — 이번 회차는 새 아이디어 대신 아래 실패를 고치세요
@@ -1136,7 +1194,20 @@ $(printf '%b' "$RUN_SPEC")
   stage autonomy "$AUTONOMY_NOW" "$(policy "$n" '.demoted_reason' 2>/dev/null)"
   run_agent improve "$prompt" "$wt" "$ibudget" "Bash,Read,Edit,Write,Glob,Grep,WebFetch,WebSearch"
   merge_outputs
-  jq -e '.type=="result"' "$OUT/agent-improve.json" >/dev/null 2>&1 || { OUTCOME=error; result="error: agent produced no result ($(head -c 120 "$OUT/agent-improve.txt" 2>/dev/null | tr '\n' ' '))"; stage improve error "$result"; }
+  if ! jq -e '.type=="result"' "$OUT/agent-improve.json" >/dev/null 2>&1; then
+    # 모델 사용량/한도 때문에 에이전트가 뜨지도 못한 경우를 따로 가른다. 그냥 error 로
+    # 두면 10분마다 헛되이 다시 부르며 원장을 error 로 채우고, 캠페인 스트라이크까지
+    # 태운다. usage-limit 로 남기고(스트라이크 아님) 쿨다운을 걸어 잠시 쉰다 (2026-09-15).
+    if grep -qiE "usage limit|limit reached|rate.?limit|Credit balance|quota|insufficient|overloaded|too many requests|resets? at|\b429\b|\b529\b" "$OUT/agent-improve.txt" 2>/dev/null; then
+      OUTCOME=usage-limit; result="usage-limit: 모델 사용량 한도로 회차 중단 ($(head -c 100 "$OUT/agent-improve.txt" 2>/dev/null | tr '\n' ' '))"
+      stage improve error "$result"; date -Iseconds > "$STATE/.usage-cooldown"
+      [ -f "$STATE/.usage-alert-$RUN_DATE" ] || { touch "$STATE/.usage-alert-$RUN_DATE"; "$HERE/tg.sh" "🪫 모델 사용량 한도 — 회차를 멈추고 ${USAGE_COOLDOWN_MIN:-60}분 쉽니다. 한도가 풀리면 자동으로 다시 시작합니다." >/dev/null 2>&1 & }
+      git -C "$repo" worktree remove --force "$wt" >>"$LOG" 2>&1 || true
+      git -C "$repo" branch -D "$slug" 2>/dev/null || true; rm -rf "$OUT/home"
+      record_run "$n" "$result" "$OUTCOME"; sync_repo "run($RUN_DATE): $n — usage-limit"; return 0
+    fi
+    OUTCOME=error; result="error: agent produced no result ($(head -c 120 "$OUT/agent-improve.txt" 2>/dev/null | tr '\n' ' '))"; stage improve error "$result"
+  fi
 
   ahead=$(git -C "$wt" rev-list --count "$BASE_SHA..HEAD")
   if [ "$AUTONOMY_NOW" = analyze ] && [ "$ahead" -gt 0 ]; then stage autonomy analyze-only "커밋 $ahead개는 버림 (분석 전용)"; result="analyze-only ($ahead commits discarded)"; ahead=0; fi
