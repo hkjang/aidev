@@ -1,0 +1,180 @@
+{
+  "run_id": "2026-09-15-204207-postra-improve",
+  "generated": "2026-09-15T21:00:28+09:00",
+  "run": {
+    "run_id": "2026-09-15-204207-postra-improve",
+    "project": "postra",
+    "kind": "improve",
+    "started": "2026-09-15T20:42:07+09:00",
+    "model": "claude-opus-5",
+    "policy_version": "78619c0e",
+    "prompts_hash": "82f2440d4b2fef65",
+    "runner_version": "f67654cf",
+    "finished": "2026-09-15T21:00:28+09:00",
+    "outcome": "review-pending"
+  },
+  "record": {
+    "ts": "2026-09-15T21:00:28+09:00",
+    "date": "2026-09-15",
+    "project": "postra",
+    "result": "merge stopped, PR open https://github.com/hkjang/postra/pull/10",
+    "outcome": "review-pending",
+    "run_id": "2026-09-15-204207-postra-improve",
+    "base_sha": "a59795183ff418588b96c27920c6e78622c40eee",
+    "head_sha": "6bb90f248865e38f95a8dafc919ab36d469701ef",
+    "pr": "https://github.com/hkjang/postra/pull/10",
+    "stages": {
+      "base": {
+        "state": "pinned",
+        "reason": "main@a597951",
+        "at": "2026-09-15T20:42:12+09:00"
+      },
+      "autonomy": {
+        "state": "release",
+        "reason": "",
+        "at": "2026-09-15T20:42:12+09:00"
+      },
+      "verify": {
+        "state": "passed",
+        "reason": "검증 9개 통과 (auto)",
+        "at": "2026-09-15T21:00:17+09:00"
+      },
+      "pr": {
+        "state": "created",
+        "reason": "https://github.com/hkjang/postra/pull/10",
+        "at": "2026-09-15T21:00:27+09:00"
+      },
+      "merge": {
+        "state": "stopped",
+        "reason": "긴급 중지",
+        "at": "2026-09-15T21:00:28+09:00"
+      }
+    },
+    "campaign": "mail-2026-09",
+    "autonomy": "release",
+    "files": 39,
+    "additions": 1525,
+    "deletions": 24,
+    "tests": 3,
+    "title": "feat(notify): send event notifications through a company SMTP relay"
+  },
+  "stages": {
+    "base": {
+      "state": "pinned",
+      "reason": "main@a597951",
+      "at": "2026-09-15T20:42:12+09:00"
+    },
+    "autonomy": {
+      "state": "release",
+      "reason": "",
+      "at": "2026-09-15T20:42:12+09:00"
+    },
+    "verify": {
+      "state": "passed",
+      "reason": "검증 9개 통과 (auto)",
+      "at": "2026-09-15T21:00:17+09:00"
+    },
+    "pr": {
+      "state": "created",
+      "reason": "https://github.com/hkjang/postra/pull/10",
+      "at": "2026-09-15T21:00:27+09:00"
+    },
+    "merge": {
+      "state": "stopped",
+      "reason": "긴급 중지",
+      "at": "2026-09-15T21:00:28+09:00"
+    }
+  },
+  "provenance": {
+    "model": "claude-opus-5",
+    "policy_version": "78619c0e",
+    "prompts_hash": "82f2440d4b2fef65",
+    "runner_version": "f67654cf",
+    "base_sha": "a59795183ff418588b96c27920c6e78622c40eee",
+    "head_sha": "6bb90f248865e38f95a8dafc919ab36d469701ef",
+    "pr": "https://github.com/hkjang/postra/pull/10"
+  },
+  "verification": {
+    "runner": {
+      "source": "auto",
+      "commands": [
+        {
+          "cmd": "go build ./...",
+          "exit": 0,
+          "seconds": 1
+        },
+        {
+          "cmd": "go vet ./...",
+          "exit": 0,
+          "seconds": 1
+        },
+        {
+          "cmd": "go test ./...",
+          "exit": 0,
+          "seconds": 24
+        },
+        {
+          "cmd": "cd web && [ -d node_modules ] || npm ci --no-audit --no-fund",
+          "exit": 0,
+          "seconds": 0
+        },
+        {
+          "cmd": "cd web && npm test --silent",
+          "exit": 0,
+          "seconds": 3
+        },
+        {
+          "cmd": "cd web && [ -d node_modules ] || npm ci --no-audit --no-fund",
+          "exit": 0,
+          "seconds": 0
+        },
+        {
+          "cmd": "cd web && npm run typecheck --silent",
+          "exit": 0,
+          "seconds": 3
+        },
+        {
+          "cmd": "cd web && [ -d node_modules ] || npm ci --no-audit --no-fund",
+          "exit": 0,
+          "seconds": 0
+        },
+        {
+          "cmd": "cd web && npm run build --silent",
+          "exit": 0,
+          "seconds": 4
+        }
+      ]
+    },
+    "runner_gate": {
+      "ok": true,
+      "state": "verified",
+      "reason": "검증 9개 통과 (auto)"
+    },
+    "after_rebase": null,
+    "review": null,
+    "ci_gate": null
+  },
+  "release": {
+    "result": null,
+    "assets_sha256": []
+  },
+  "approval": null,
+  "usage": [
+    {
+      "ts": "2026-09-15T20:59:40+09:00",
+      "date": "2026-09-15",
+      "project": "postra",
+      "phase": "improve",
+      "run_id": "2026-09-15-204207-postra-improve",
+      "campaign": "mail-2026-09",
+      "subtype": "success",
+      "duration_ms": 1046001,
+      "num_turns": 81,
+      "cost_usd": 11.258040000000001,
+      "input_tokens": 158,
+      "output_tokens": 75367,
+      "cache_read": 13811920,
+      "cache_create": 245744
+    }
+  ]
+}

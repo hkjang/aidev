@@ -1,27 +1,27 @@
 {
- "generated": "2026-09-15T15:42:37+09:00",
+ "generated": "2026-09-15T21:00:29+09:00",
  "site": "https://hkjang.github.io/aidev",
- "description": "Claude Code 자율 개선 에이전트가 hkjang 의 프로젝트를 개선·테스트·머지·릴리즈한 일일 보고. 오늘 102회차·릴리즈 0건, 누적 890회차·릴리즈 314건, 주의 필요 8건.",
+ "description": "Claude Code 자율 개선 에이전트가 hkjang 의 프로젝트를 개선·테스트·머지·릴리즈한 일일 보고. 오늘 103회차·릴리즈 0건, 누적 891회차·릴리즈 314건, 주의 필요 8건.",
  "today": {
   "date": "2026-09-15",
-  "total": 102,
+  "total": 103,
   "projects": 41,
   "released": 0,
   "merged": 0,
   "nochange": 97,
   "failed": 0,
-  "cost_usd": 0.0,
-  "minutes": 1,
-  "sessions": 102
+  "cost_usd": 11.26,
+  "minutes": 18,
+  "sessions": 103
  },
  "totals": {
-  "runs": 890,
+  "runs": 891,
   "released": 314,
   "days": 14,
-  "cost_usd": 2553.46,
-  "minutes": 6326,
-  "tokens_in": 2696529314,
-  "tokens_out": 20258307
+  "cost_usd": 2564.72,
+  "minutes": 6344,
+  "tokens_in": 2710587136,
+  "tokens_out": 20333674
  },
  "alerts": [
   {
@@ -83,13 +83,13 @@
  ],
  "fix_queue": [],
  "health": {
-  "checked": "2026-09-15T15:15:04+09:00",
-  "last_run": "2026-09-15T15:12:46+09:00",
-  "seconds_since_last": 135,
-  "runner_pid": "",
-  "runner_age_seconds": 0,
-  "scheduler_status": "준비",
-  "scheduler_next_run": "2026-09-15 오후 3:20:00",
+  "checked": "2026-09-15T20:45:03+09:00",
+  "last_run": "2026-09-15T15:42:36+09:00",
+  "seconds_since_last": 18145,
+  "runner_pid": "764289",
+  "runner_age_seconds": 317,
+  "scheduler_status": "실행 중",
+  "scheduler_next_run": "2026-09-15 오후 8:50:00",
   "disk_percent": 70,
   "ok": true,
   "problems": [],
@@ -285,6 +285,13 @@
    "project": "SecCheck",
    "kind": "security-gate",
    "detail": "컨테이너 취약점 게이트는 베이스 이미지가 태그된 날의 패키지를 그대로 들고 오는 것에서 막힌다. Dockerfile 에 apt-get upgrade 를 넣고, 의존성(golang.org/x/crypto 등)도 고칠 수 있는 버전이 있으면 올릴 것. 게이트를 푸는 것이 아니라 취약점을 고치는 쪽이 맞다."
+  },
+  {
+   "ts": "2026-09-15T18:51:26+09:00",
+   "date": "2026-09-15",
+   "project": "postra",
+   "kind": "infra-worktree-locked",
+   "detail": "러너 워크트리(~/.cache/auto-improve-wt/postra)가 디렉터리는 사라지고 등록만 locked 로 남아 worktree add 가 매 회차 실패했다(5회 연속, cd No such file or directory). remove --force 한 번으로는 locked 를 못 지운다 — wt_reset(unlock→remove→rm -rf→prune)으로 자체 복구하도록 run.sh 를 고침. 재발 시 같은 함수로 처리됨."
   }
  ],
  "caps": {
@@ -295,6 +302,19 @@
   "DORMANT_DAYS": 7
  },
  "inbox": [
+  {
+   "kind": "PR",
+   "project": "postra",
+   "title": "auto-improve: feat(notify): send event notifications through a company SMTP relay",
+   "url": "https://github.com/hkjang/postra/pull/10",
+   "sha": "6bb90f2",
+   "summary": "39파일 +1525/−24 · merge stopped, PR open https://github.com/hkjang/postra/pull/10",
+   "why": "merge: stopped — 긴급 중지",
+   "evidence": "https://github.com/hkjang/aidev/tree/main/state/runs/2026-09-15-204207-postra-improve",
+   "labels": "",
+   "action": "승인: PR 라벨 aidev-approved / 반려: aidev-rejected — 다음 회차에 러너가 승인 당시 커밋에만 CI 확인 후 머지·닫기",
+   "date": "2026-09-15"
+  },
   {
    "kind": "PR",
    "project": "qurio",
@@ -479,6 +499,10 @@
   }
  ],
  "stops": [
+  {
+   "scope": "all",
+   "note": "2026-09-15T20:52:48+09:00 by hkjang: 오늘 카운터 전부 리셋 후 재가동 (수동)"
+  },
   {
    "scope": "aiportal-java",
    "note": "2026-09-08T19:18:43+09:00 by hkjang: JDK 21(javac) 미설치로 gradle 검증 불가 — sudo apt install -y openjdk-21-jdk-headless 후 해제"
@@ -746,8 +770,8 @@
  "quality": [
   {
    "metric": "검증된 개선 완료율",
-   "value": "93%",
-   "detail": "관찰 24h 지난 머지 414건 중 회귀 없음 384건"
+   "value": "90%",
+   "detail": "관찰 24h 지난 머지 425건 중 회귀 없음 384건"
   },
   {
    "metric": "완전한 릴리즈 비율",
@@ -757,16 +781,16 @@
   {
    "metric": "사람의 재작업률",
    "value": "0%",
-   "detail": "되돌림·롤백 0건 / 관찰 머지 414건"
+   "detail": "되돌림·롤백 0건 / 관찰 머지 425건"
   },
   {
    "metric": "변경 후 회귀율",
    "value": "0%",
-   "detail": "회귀 0건 / 관찰 머지 414건"
+   "detail": "회귀 0건 / 관찰 머지 425건"
   },
   {
    "metric": "유효 개선당 비용",
-   "value": "$14.03",
+   "value": "$14.09",
    "detail": "비용 확인된 유효 개선 182건, 미확인 세션 13"
   },
   {
@@ -783,21 +807,21 @@
  "outcomes_today": {
   "no-change": 97,
   "error": 5,
+  "review-pending": 1,
   "release-ready": 0,
   "releasing": 0,
   "merged": 0,
-  "review-pending": 0,
   "verify-failed": 0
  },
  "days": [
   {
    "date": "2026-09-15",
-   "total": 102,
+   "total": 103,
    "released": 0,
    "merged": 0,
    "nochange": 97,
    "failed": 0,
-   "cost_usd": 0.0
+   "cost_usd": 11.26
   },
   {
    "date": "2026-09-14",
@@ -922,13 +946,13 @@
    "key": "2026-W38",
    "url": "https://hkjang.github.io/aidev/weekly/2026-W38/",
    "days": 2,
-   "total": 162,
+   "total": 163,
    "released": 27,
    "merged": 0,
    "nochange": 102,
    "failed": 1,
-   "cost": 294.07,
-   "minutes": 681
+   "cost": 305.33,
+   "minutes": 698
   },
   {
    "key": "2026-W37",
@@ -960,13 +984,13 @@
    "key": "2026-09",
    "url": "https://hkjang.github.io/aidev/monthly/2026-09/",
    "days": 14,
-   "total": 890,
+   "total": 891,
    "released": 314,
    "merged": 103,
    "nochange": 120,
    "failed": 15,
-   "cost": 2553.46,
-   "minutes": 6326
+   "cost": 2564.72,
+   "minutes": 6344
   }
  ],
  "projects": [
@@ -1624,24 +1648,24 @@
    "name": "postra",
    "repo": "https://github.com/hkjang/postra",
    "page": "https://hkjang.github.io/aidev/projects/postra/",
-   "runs": 11,
+   "runs": 12,
    "released": 3,
-   "last_ts": "2026-09-15T14:02:20+09:00",
+   "last_ts": "2026-09-15T21:00:28+09:00",
    "last_status": "other",
-   "last_result": "error: agent produced no result (/tmp/aidev-run.gXaoYX.sh: line 196: cd: /home/hkjang/.cache/auto-improve-wt/postra: No such file or directory )",
-   "cost": 32.3,
-   "minutes": 69,
+   "last_result": "merge stopped, PR open https://github.com/hkjang/postra/pull/10",
+   "cost": 43.56,
+   "minutes": 86,
    "grade": "C",
-   "grade_why": "14일: 릴리즈 3, 실패 2, 경고 2, 회귀 0",
-   "lessons": 0,
-   "ideas_pending": 10,
-   "ideas_total": 11,
+   "grade_why": "14일: 릴리즈 3, 실패 2, 경고 2, 회귀 1",
+   "lessons": 1,
+   "ideas_pending": 9,
+   "ideas_total": 15,
    "release": {
     "status": "released",
-    "version": "0.19.1",
-    "tag": "v0.19.1",
+    "version": "0.20.0",
+    "tag": "v0.20.0",
     "assets_count": 5,
-    "prev_tag": "v0.19.0",
+    "prev_tag": "v0.19.1",
     "prev_assets_count": 5
    }
   },
