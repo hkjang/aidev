@@ -1,0 +1,203 @@
+{
+  "run_id": "2026-09-16-102235-seaton-improve",
+  "generated": "2026-09-16T10:48:21+09:00",
+  "run": {
+    "run_id": "2026-09-16-102235-seaton-improve",
+    "project": "seaton",
+    "kind": "improve",
+    "started": "2026-09-16T10:22:36+09:00",
+    "model": "claude-opus-5",
+    "policy_version": "78619c0e",
+    "prompts_hash": "82f2440d4b2fef65",
+    "runner_version": "b8f3f83f",
+    "finished": "2026-09-16T10:48:20+09:00",
+    "outcome": "review-pending"
+  },
+  "record": {
+    "ts": "2026-09-16T10:48:20+09:00",
+    "date": "2026-09-16",
+    "project": "seaton",
+    "result": "review held, PR open https://github.com/hkjang/seaton/pull/28",
+    "outcome": "review-pending",
+    "run_id": "2026-09-16-102235-seaton-improve",
+    "base_sha": "0aff520d9e1ca4bdaee743e4b4f13b81b830c427",
+    "head_sha": "c45bb4b874c8a82f3ebbda77329f7dc47f0d007d",
+    "pr": "https://github.com/hkjang/seaton/pull/28",
+    "stages": {
+      "base": {
+        "state": "pinned",
+        "reason": "main@0aff520",
+        "at": "2026-09-16T10:22:39+09:00"
+      },
+      "autonomy": {
+        "state": "release",
+        "reason": "",
+        "at": "2026-09-16T10:22:39+09:00"
+      },
+      "verify": {
+        "state": "passed",
+        "reason": "검증 7개 통과 (auto)",
+        "at": "2026-09-16T10:44:12+09:00"
+      },
+      "pr": {
+        "state": "created",
+        "reason": "https://github.com/hkjang/seaton/pull/28",
+        "at": "2026-09-16T10:44:20+09:00"
+      },
+      "review": {
+        "state": "rejected",
+        "reason": "리뷰 거절: internal/mail/service.go:158-173 deliver() 가 발송용 컨텍스트(2*Timeout+15s)를 결과 기록(complete→store.Update)에도 그대로 쓴다. mail.go:158 이 연결마다 2*Timeout 마감을 두므로 TCP 는 받되 응답이 없는 릴레이(방화벽 블랙홀·멈춘 릴레이)에서는 1차 20s + 2s 대기 + 2차 20s = 42s > 35s 로 ctx 가 먼저 만료되고, Update 가 'context deadline exceeded' 로 실패해 mail_deliveries 행이 영원히 'queued'(대기) 로 남는다. 커밋 메시지·ADMIN_GUIDE 가 약속한 '시도마다 결과·시도 횟수·이유를 기록' 이 정확히 진단이 필요한 장애 상황에서 깨진다. 기록은 별도 컨텍스트(context.WithoutCancel 또는 새 타임아웃)로 해야 한다. / internal/mail/service.go:147-151 SendNow 도 같은 문제. sendContext 는 Timeout+5s(기본 15s)인데 Deliver 는 연결 마감 2*Timeout(20s)까지 매달릴 수 있어, 멈춘 릴레이로 시험 발송하면 HTTP 는 502 를 돌려주지만 complete(sendContext) 의 Update 가 실패해 발송 기록 표에는 '대기' 로 남는다(e2e 의 죽은 릴레이 케이스는 connection refused 라 즉시 실패해 이 경로를 타지 않는다). / internal/mail/message.go:183 만료 임박 메일이 '키를 회전하면 새 키가 발급' 된다고 안내하지만 internal/app/keys.go:94,118 의 회전은 옛 키의 expires_at 을 새 키에 그대로 복사한다. 안내대로 회전하면 새 키(expiry_notified_at NULL, 같은 만료일)가 30분 안에 다시 '만료 임박' 대상이 되어 같은 이름으로 메일이 또 오고, 회전을 반복해도 만료를 벗어나지 못한다. 안내 문구를 '새 키 발급' 으로 바꾸거나 회전 시 만료일을 새로 계산해야 한다.",
+        "at": "2026-09-16T10:48:18+09:00"
+      }
+    },
+    "campaign": "mail-2026-09",
+    "autonomy": "release",
+    "files": 25,
+    "additions": 2667,
+    "deletions": 24,
+    "tests": 4,
+    "title": "feat: 사내 SMTP 릴레이로 보내는 이벤트 메일 알림 (자리 배정·분석 완료·인사 연동 실패·API 키 만료 임박)"
+  },
+  "stages": {
+    "base": {
+      "state": "pinned",
+      "reason": "main@0aff520",
+      "at": "2026-09-16T10:22:39+09:00"
+    },
+    "autonomy": {
+      "state": "release",
+      "reason": "",
+      "at": "2026-09-16T10:22:39+09:00"
+    },
+    "verify": {
+      "state": "passed",
+      "reason": "검증 7개 통과 (auto)",
+      "at": "2026-09-16T10:44:12+09:00"
+    },
+    "pr": {
+      "state": "created",
+      "reason": "https://github.com/hkjang/seaton/pull/28",
+      "at": "2026-09-16T10:44:20+09:00"
+    },
+    "review": {
+      "state": "rejected",
+      "reason": "리뷰 거절: internal/mail/service.go:158-173 deliver() 가 발송용 컨텍스트(2*Timeout+15s)를 결과 기록(complete→store.Update)에도 그대로 쓴다. mail.go:158 이 연결마다 2*Timeout 마감을 두므로 TCP 는 받되 응답이 없는 릴레이(방화벽 블랙홀·멈춘 릴레이)에서는 1차 20s + 2s 대기 + 2차 20s = 42s > 35s 로 ctx 가 먼저 만료되고, Update 가 'context deadline exceeded' 로 실패해 mail_deliveries 행이 영원히 'queued'(대기) 로 남는다. 커밋 메시지·ADMIN_GUIDE 가 약속한 '시도마다 결과·시도 횟수·이유를 기록' 이 정확히 진단이 필요한 장애 상황에서 깨진다. 기록은 별도 컨텍스트(context.WithoutCancel 또는 새 타임아웃)로 해야 한다. / internal/mail/service.go:147-151 SendNow 도 같은 문제. sendContext 는 Timeout+5s(기본 15s)인데 Deliver 는 연결 마감 2*Timeout(20s)까지 매달릴 수 있어, 멈춘 릴레이로 시험 발송하면 HTTP 는 502 를 돌려주지만 complete(sendContext) 의 Update 가 실패해 발송 기록 표에는 '대기' 로 남는다(e2e 의 죽은 릴레이 케이스는 connection refused 라 즉시 실패해 이 경로를 타지 않는다). / internal/mail/message.go:183 만료 임박 메일이 '키를 회전하면 새 키가 발급' 된다고 안내하지만 internal/app/keys.go:94,118 의 회전은 옛 키의 expires_at 을 새 키에 그대로 복사한다. 안내대로 회전하면 새 키(expiry_notified_at NULL, 같은 만료일)가 30분 안에 다시 '만료 임박' 대상이 되어 같은 이름으로 메일이 또 오고, 회전을 반복해도 만료를 벗어나지 못한다. 안내 문구를 '새 키 발급' 으로 바꾸거나 회전 시 만료일을 새로 계산해야 한다.",
+      "at": "2026-09-16T10:48:18+09:00"
+    }
+  },
+  "provenance": {
+    "model": "claude-opus-5",
+    "policy_version": "78619c0e",
+    "prompts_hash": "82f2440d4b2fef65",
+    "runner_version": "b8f3f83f",
+    "base_sha": "0aff520d9e1ca4bdaee743e4b4f13b81b830c427",
+    "head_sha": "c45bb4b874c8a82f3ebbda77329f7dc47f0d007d",
+    "pr": "https://github.com/hkjang/seaton/pull/28"
+  },
+  "verification": {
+    "runner": {
+      "source": "auto",
+      "commands": [
+        {
+          "cmd": "go build ./...",
+          "exit": 0,
+          "seconds": 1
+        },
+        {
+          "cmd": "go vet ./...",
+          "exit": 0,
+          "seconds": 0
+        },
+        {
+          "cmd": "go test ./...",
+          "exit": 0,
+          "seconds": 1
+        },
+        {
+          "cmd": "cd web && [ -d node_modules ] || npm ci --no-audit --no-fund",
+          "exit": 0,
+          "seconds": 0
+        },
+        {
+          "cmd": "cd web && npm test --silent",
+          "exit": 0,
+          "seconds": 0
+        },
+        {
+          "cmd": "cd web && [ -d node_modules ] || npm ci --no-audit --no-fund",
+          "exit": 0,
+          "seconds": 0
+        },
+        {
+          "cmd": "cd web && npm run build --silent",
+          "exit": 0,
+          "seconds": 4
+        }
+      ]
+    },
+    "runner_gate": {
+      "ok": true,
+      "state": "verified",
+      "reason": "검증 7개 통과 (auto)"
+    },
+    "after_rebase": null,
+    "review": {
+      "verdict": "reject",
+      "reasons": [
+        "internal/mail/service.go:158-173 deliver() 가 발송용 컨텍스트(2*Timeout+15s)를 결과 기록(complete→store.Update)에도 그대로 쓴다. mail.go:158 이 연결마다 2*Timeout 마감을 두므로 TCP 는 받되 응답이 없는 릴레이(방화벽 블랙홀·멈춘 릴레이)에서는 1차 20s + 2s 대기 + 2차 20s = 42s > 35s 로 ctx 가 먼저 만료되고, Update 가 'context deadline exceeded' 로 실패해 mail_deliveries 행이 영원히 'queued'(대기) 로 남는다. 커밋 메시지·ADMIN_GUIDE 가 약속한 '시도마다 결과·시도 횟수·이유를 기록' 이 정확히 진단이 필요한 장애 상황에서 깨진다. 기록은 별도 컨텍스트(context.WithoutCancel 또는 새 타임아웃)로 해야 한다.",
+        "internal/mail/service.go:147-151 SendNow 도 같은 문제. sendContext 는 Timeout+5s(기본 15s)인데 Deliver 는 연결 마감 2*Timeout(20s)까지 매달릴 수 있어, 멈춘 릴레이로 시험 발송하면 HTTP 는 502 를 돌려주지만 complete(sendContext) 의 Update 가 실패해 발송 기록 표에는 '대기' 로 남는다(e2e 의 죽은 릴레이 케이스는 connection refused 라 즉시 실패해 이 경로를 타지 않는다).",
+        "internal/mail/message.go:183 만료 임박 메일이 '키를 회전하면 새 키가 발급' 된다고 안내하지만 internal/app/keys.go:94,118 의 회전은 옛 키의 expires_at 을 새 키에 그대로 복사한다. 안내대로 회전하면 새 키(expiry_notified_at NULL, 같은 만료일)가 30분 안에 다시 '만료 임박' 대상이 되어 같은 이름으로 메일이 또 오고, 회전을 반복해도 만료를 벗어나지 못한다. 안내 문구를 '새 키 발급' 으로 바꾸거나 회전 시 만료일을 새로 계산해야 한다."
+      ],
+      "notes": [
+        "테스트는 실제 코드를 실행하며 유의미하다: internal/mail 은 가짜 SMTP 서버로 봉투·점 채우기·Q 인코딩·거부·죽은 릴레이를, 서비스 테스트는 스위치·자기 제외·중복 제거·재시도·기록을 검증하고, internal/app 은 시험 발송 핸들러의 400/502/기본 수신자·기록 본문 미포함을 확인한다. go build/vet/test 모두 통과 확인.",
+        "비밀값 처리는 기존 settings 의 secret 경로(암호화 저장·'********' 마스킹·복호화는 loadMailValues 에서만)를 그대로 쓰며 로그에 password 가 나가는 경로는 없다. Subject 는 mime.QEncoding 으로 CR/LF 가 인코딩되고 MAIL/RCPT 는 net/smtp 의 validateLine 이 막아 헤더 주입 여지는 없다. 시험 발송 수신자도 서버에서 공백·CRLF·<>, 를 거른다.",
+        "internal/mail/mail.go:192 security=none(또는 STARTTLS 미지원 릴레이)에서 사용자 이름을 넣고 AUTH PLAIN 이 광고되면 Go 표준 smtp.PlainAuth 가 'unencrypted connection' 으로 거부한다(비밀번호 보호 차원에서 바람직). 반면 loginAuth(219-226) 는 server.Name==host 라 평문에서도 허용되어 두 방식의 정책이 다르다. 문서에는 '평문에서는 인증 불가' 언급이 없어 운영자가 헷갈릴 수 있다.",
+        "internal/app/mail.go:249 만료 임박 키는 발송 전에 expiry_notified_at 을 찍으므로 수신자 주소가 없거나 릴레이가 2회 모두 실패하면 그 키에 대한 안내는 영영 나가지 않는다. '키마다 한 번' 설계와 일치하지만 문서에 '시도 기준' 임을 적어 두는 편이 좋다.",
+        "internal/app/detection.go:320 주석은 '제한 시간에 걸려 끝난 잡도 알린다' 고 하지만 30분 잡 마감(analysisJobTimeout)에 걸리면 failAnalysis 가 이미 만료된 ctx 로 UPDATE 를 시도해 실패하고 상태가 'running' 으로 남아 notifyAnalysisFinished 가 아무것도 보내지 않는다(기존 failAnalysis 의 한계). VLM 자체 타임아웃(≤600s)은 정상 실패 경로라 메일이 간다.",
+        "internal/mail/mail.go:134 DATA 가 250 으로 수락된 뒤 QUIT 만 실패해도 오류로 돌아와 deliver() 가 재시도해 같은 메일이 두 번 갈 수 있다(드묾).",
+        "migrations.sql 변경은 컬럼 추가·표 추가·설정 시드뿐이라 되돌려도 데이터가 깨지지 않는다. 범위 이탈 없음(audit nil 가드·performAssignment 반환값 변경은 이 기능에 필요)."
+      ],
+      "risk": "medium"
+    },
+    "ci_gate": null
+  },
+  "release": {
+    "result": null,
+    "assets_sha256": []
+  },
+  "approval": null,
+  "usage": [
+    {
+      "ts": "2026-09-16T10:44:04+09:00",
+      "date": "2026-09-16",
+      "project": "seaton",
+      "phase": "improve",
+      "run_id": "2026-09-16-102235-seaton-improve",
+      "campaign": "mail-2026-09",
+      "subtype": "success",
+      "duration_ms": 1333287,
+      "num_turns": 74,
+      "cost_usd": 10.732702999999994,
+      "input_tokens": 144,
+      "output_tokens": 93284,
+      "cache_read": 12084948,
+      "cache_create": 234857
+    },
+    {
+      "ts": "2026-09-16T10:48:18+09:00",
+      "date": "2026-09-16",
+      "project": "seaton",
+      "phase": "review",
+      "run_id": "2026-09-16-102235-seaton-improve",
+      "campaign": "mail-2026-09",
+      "subtype": "success",
+      "duration_ms": 243925,
+      "num_turns": 27,
+      "cost_usd": 1.9589415000000001,
+      "input_tokens": 54,
+      "output_tokens": 15250,
+      "cache_read": 1608391,
+      "cache_create": 77141
+    }
+  ]
+}
