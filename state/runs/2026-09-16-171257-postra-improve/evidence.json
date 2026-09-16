@@ -1,0 +1,227 @@
+{
+  "run_id": "2026-09-16-171257-postra-improve",
+  "generated": "2026-09-16T17:28:05+09:00",
+  "run": {
+    "run_id": "2026-09-16-171257-postra-improve",
+    "project": "postra",
+    "kind": "improve",
+    "started": "2026-09-16T17:12:57+09:00",
+    "model": "claude-opus-5",
+    "policy_version": "78619c0e",
+    "prompts_hash": "82f2440d4b2fef65",
+    "runner_version": "b8f3f83f",
+    "finished": "2026-09-16T17:28:05+09:00",
+    "outcome": "verify-failed"
+  },
+  "record": {
+    "ts": "2026-09-16T17:28:05+09:00",
+    "date": "2026-09-16",
+    "project": "postra",
+    "result": "CI failed, PR open https://github.com/hkjang/postra/pull/14",
+    "outcome": "verify-failed",
+    "run_id": "2026-09-16-171257-postra-improve",
+    "base_sha": "dde3c87723e1980d0b6ba90d415332813ecff855",
+    "head_sha": "a8206bc419b0b1aa19afea8930fb10af1f1aec4e",
+    "pr": "https://github.com/hkjang/postra/pull/14",
+    "stages": {
+      "base": {
+        "state": "pinned",
+        "reason": "main@dde3c87",
+        "at": "2026-09-16T17:13:02+09:00"
+      },
+      "autonomy": {
+        "state": "release",
+        "reason": "",
+        "at": "2026-09-16T17:13:02+09:00"
+      },
+      "verify": {
+        "state": "passed",
+        "reason": "검증 9개 통과 (auto)",
+        "at": "2026-09-16T17:23:02+09:00"
+      },
+      "pr": {
+        "state": "created",
+        "reason": "https://github.com/hkjang/postra/pull/14",
+        "at": "2026-09-16T17:23:12+09:00"
+      },
+      "review": {
+        "state": "approved",
+        "reason": "리뷰 승인 (risk=medium)",
+        "at": "2026-09-16T17:27:27+09:00"
+      },
+      "ci": {
+        "state": "failed",
+        "reason": "성공이 아닌 검사: gosec=failure, gosec (medium+)=failure",
+        "at": "2026-09-16T17:28:04+09:00"
+      }
+    },
+    "campaign": "mail-2026-09",
+    "autonomy": "release",
+    "files": 42,
+    "additions": 2024,
+    "deletions": 41,
+    "tests": 3,
+    "title": "feat(notify): mail assignees about imminent and missed team-inbox deadlines"
+  },
+  "stages": {
+    "base": {
+      "state": "pinned",
+      "reason": "main@dde3c87",
+      "at": "2026-09-16T17:13:02+09:00"
+    },
+    "autonomy": {
+      "state": "release",
+      "reason": "",
+      "at": "2026-09-16T17:13:02+09:00"
+    },
+    "verify": {
+      "state": "passed",
+      "reason": "검증 9개 통과 (auto)",
+      "at": "2026-09-16T17:23:02+09:00"
+    },
+    "pr": {
+      "state": "created",
+      "reason": "https://github.com/hkjang/postra/pull/14",
+      "at": "2026-09-16T17:23:12+09:00"
+    },
+    "review": {
+      "state": "approved",
+      "reason": "리뷰 승인 (risk=medium)",
+      "at": "2026-09-16T17:27:27+09:00"
+    },
+    "ci": {
+      "state": "failed",
+      "reason": "성공이 아닌 검사: gosec=failure, gosec (medium+)=failure",
+      "at": "2026-09-16T17:28:04+09:00"
+    }
+  },
+  "provenance": {
+    "model": "claude-opus-5",
+    "policy_version": "78619c0e",
+    "prompts_hash": "82f2440d4b2fef65",
+    "runner_version": "b8f3f83f",
+    "base_sha": "dde3c87723e1980d0b6ba90d415332813ecff855",
+    "head_sha": "a8206bc419b0b1aa19afea8930fb10af1f1aec4e",
+    "pr": "https://github.com/hkjang/postra/pull/14"
+  },
+  "verification": {
+    "runner": {
+      "source": "auto",
+      "commands": [
+        {
+          "cmd": "go build ./...",
+          "exit": 0,
+          "seconds": 1
+        },
+        {
+          "cmd": "go vet ./...",
+          "exit": 0,
+          "seconds": 0
+        },
+        {
+          "cmd": "go test ./...",
+          "exit": 0,
+          "seconds": 31
+        },
+        {
+          "cmd": "cd web && [ -d node_modules ] || npm ci --no-audit --no-fund",
+          "exit": 0,
+          "seconds": 0
+        },
+        {
+          "cmd": "cd web && npm test --silent",
+          "exit": 0,
+          "seconds": 7
+        },
+        {
+          "cmd": "cd web && [ -d node_modules ] || npm ci --no-audit --no-fund",
+          "exit": 0,
+          "seconds": 0
+        },
+        {
+          "cmd": "cd web && npm run typecheck --silent",
+          "exit": 0,
+          "seconds": 2
+        },
+        {
+          "cmd": "cd web && [ -d node_modules ] || npm ci --no-audit --no-fund",
+          "exit": 0,
+          "seconds": 0
+        },
+        {
+          "cmd": "cd web && npm run build --silent",
+          "exit": 0,
+          "seconds": 5
+        }
+      ]
+    },
+    "runner_gate": {
+      "ok": true,
+      "state": "verified",
+      "reason": "검증 9개 통과 (auto)"
+    },
+    "after_rebase": null,
+    "review": {
+      "verdict": "approve",
+      "reasons": [],
+      "notes": [
+        "검증: go build ./..., go vet, go test -race ./internal/application ./internal/transport/httpapi ./internal/platform/notifymail 모두 통과. 새 테스트(notify_mail_test.go, notifymail_test.go, admin.test.tsx)는 실제 대상 코드를 실행하고 구체적 단언을 가짐 — 비밀번호 회전 테스트는 usable(first)==false 를 확인하므로 f423583 수정 없이는 실패함.",
+        "internal/application/notify_sla.go:89-98 — NotifyMail 이 cfg.Validate() 실패(켜져 있지만 host 비어 있음)로 조기 반환하면 delivery 로그 행 없이 sla_notified_at 만 기록됨. 주석('the attempt is in the delivery log')과 달리 이 경우 기록이 없고, 이미 지난 기한은 설정을 고친 뒤에도 다시 안내되지 않음. 잘못된 설정 상태의 엣지이며 경고 장애는 남으므로 거절 사유로는 보지 않음.",
+        "internal/application/collab.go:63-67 — 담당자를 바꿔도 sla_notified_at 이 초기화되지 않아, 임박 메일이 이미 나간 뒤 새 담당자로 바꾸면 새 담당자는 '지남' 메일만 받음. 문서(ADMIN_GUIDE 6.5 '기한을 바꾸면 다시 셈')와 모순되진 않지만 사용자 기대와 다를 수 있음.",
+        "internal/application/notify_sla.go:51 / persistence ListSLADueCollab — 임박 안내가 이미 나간(아직 기한 전) 행도 매 패스 쿼리에 포함돼 LIMIT 200 을 소모함. 24시간 창 안에 이미 안내된 행이 200건을 넘으면 뒤쪽 기한의 임박 안내가 기한 초과 시점까지 지연될 수 있음(유실은 아님).",
+        "mail_deliveries 테이블은 보존 기간·정리 로직이 없어 무한히 누적됨. 이벤트 빈도가 낮아 당장 문제는 아니나 후속으로 purge 가 필요.",
+        "internal/application/notify_mail.go:159-176 — 릴레이 세션은 net/smtp 특성상 연결 후 명령 단계에서 ctx 데드라인을 따르지 않으므로(기존 어댑터 동작과 동일), 응답을 멈춘 릴레이가 있으면 종료 시 workerGroup.Wait() 가 길게 막힐 수 있음.",
+        "internal/platform/notifymail/notifymail.go:173-179 — From 이름이 ASCII 이면서 따옴표·괄호 등 특수문자를 포함하면 Q-encoding 되지 않아 헤더가 비정형일 수 있음(CRLF 는 validateSetting 에서 차단됨).",
+        "internal/transport/spa/assets 의 번들이 함께 갱신됨(web/src 변경에 따른 재빌드로 보임). 소스와 일치하는지는 이 세션에서 재빌드로 확인하지 않음.",
+        "마이그레이션은 컬럼·테이블 추가만이라 코드 revert 후에도 기존 동작에 영향 없음. 비밀번호 SecretStore 참조 회전 로직은 기존 OIDC/Milvus 패턴을 따르며 테스트로 검증됨."
+      ],
+      "risk": "medium"
+    },
+    "ci_gate": {
+      "ok": false,
+      "state": "failed",
+      "reason": "성공이 아닌 검사: gosec=failure, gosec (medium+)=failure",
+      "checks": 10,
+      "bad": 2
+    }
+  },
+  "release": {
+    "result": null,
+    "assets_sha256": []
+  },
+  "approval": null,
+  "usage": [
+    {
+      "ts": "2026-09-16T17:22:14+09:00",
+      "date": "2026-09-16",
+      "project": "postra",
+      "phase": "improve",
+      "run_id": "2026-09-16-171257-postra-improve",
+      "campaign": "mail-2026-09",
+      "subtype": "success",
+      "duration_ms": 579421,
+      "num_turns": 64,
+      "cost_usd": 5.268549000000001,
+      "input_tokens": 128,
+      "output_tokens": 39645,
+      "cache_read": 5949228,
+      "cache_create": 128546
+    },
+    {
+      "ts": "2026-09-16T17:27:27+09:00",
+      "date": "2026-09-16",
+      "project": "postra",
+      "phase": "review",
+      "run_id": "2026-09-16-171257-postra-improve",
+      "campaign": "mail-2026-09",
+      "subtype": "success",
+      "duration_ms": 266444,
+      "num_turns": 20,
+      "cost_usd": 1.8368190000000002,
+      "input_tokens": 40,
+      "output_tokens": 12986,
+      "cache_read": 1273886,
+      "cache_create": 87321
+    }
+  ]
+}
