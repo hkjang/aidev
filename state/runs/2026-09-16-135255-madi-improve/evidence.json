@@ -1,0 +1,192 @@
+{
+  "run_id": "2026-09-16-135255-madi-improve",
+  "generated": "2026-09-16T14:23:18+09:00",
+  "run": {
+    "run_id": "2026-09-16-135255-madi-improve",
+    "project": "madi",
+    "kind": "improve",
+    "started": "2026-09-16T13:52:55+09:00",
+    "model": "claude-opus-5",
+    "policy_version": "78619c0e",
+    "prompts_hash": "82f2440d4b2fef65",
+    "runner_version": "b8f3f83f",
+    "finished": "2026-09-16T14:23:18+09:00",
+    "outcome": "review-pending"
+  },
+  "record": {
+    "ts": "2026-09-16T14:23:18+09:00",
+    "date": "2026-09-16",
+    "project": "madi",
+    "result": "review held, PR open https://github.com/hkjang/madi/pull/4",
+    "outcome": "review-pending",
+    "run_id": "2026-09-16-135255-madi-improve",
+    "base_sha": "fd2c3b5816080869c431d60366f1c696a17d2aa9",
+    "head_sha": "8ea418439af2cd9f7ab17b2cbc4255cb61b9228b",
+    "pr": "https://github.com/hkjang/madi/pull/4",
+    "stages": {
+      "base": {
+        "state": "pinned",
+        "reason": "main@fd2c3b5",
+        "at": "2026-09-16T13:52:59+09:00"
+      },
+      "autonomy": {
+        "state": "release",
+        "reason": "",
+        "at": "2026-09-16T13:52:59+09:00"
+      },
+      "verify": {
+        "state": "passed",
+        "reason": "검증 5개 통과 (auto)",
+        "at": "2026-09-16T14:16:18+09:00"
+      },
+      "pr": {
+        "state": "created",
+        "reason": "https://github.com/hkjang/madi/pull/4",
+        "at": "2026-09-16T14:16:24+09:00"
+      },
+      "review": {
+        "state": "rejected",
+        "reason": "리뷰 거절: internal/server/mail.go:350 mailLoginAuth.Start의 평문 차단 조건 `!server.TLS && server.Name != a.host`는 항상 거짓입니다. server.Name은 mailDial에서 smtp.NewClient(conn, cfg.Host)로 넘긴 cfg.Host이고 a.host도 cfg.Host이므로 같습니다. 그 결과 릴레이가 AUTH LOGIN만 광고하면(Exchange 등 흔함) TLS 없는 연결에서도 mail.username/mail.password가 base64 평문으로 전송됩니다. 임시 가짜 릴레이(AUTH LOGIN 광고, STARTTLS 없음)로 실제 확인: 서버가 \"madi\"/\"relay-secret\"을 그대로 수신했습니다. 기본값 mail.security=auto는 STARTTLS 미광고 시 평문으로 내려가므로 EHLO 응답에서 STARTTLS를 지운 중간자에게도 비밀번호가 노출됩니다. 기존 코드(notification_delivery_worker.go:315 `SMTP 인증 비밀은 TLS 연결에서만 전송합니다`)와 주석(mail.go:351 '신뢰할 수 있는 서버에서만')이 말하는 보호가 실제로는 없습니다. PLAIN은 stdlib가 막지만 LOGIN은 이 코드가 직접 구현했으므로 막히지 않습니다. / internal/server/mail_test.go:192 인증이 붙은 평문 연결(AUTH 광고 + STARTTLS 없음) 경로를 검증하는 테스트가 없습니다. 위 결함을 잡을 단언이 없어 회귀 방지가 되지 않습니다.",
+        "at": "2026-09-16T14:23:16+09:00"
+      }
+    },
+    "campaign": "mail-2026-09",
+    "autonomy": "release",
+    "files": 18,
+    "additions": 1645,
+    "deletions": 17,
+    "tests": 1,
+    "title": "feat: add SMTP relay event mail with delivery log and test send"
+  },
+  "stages": {
+    "base": {
+      "state": "pinned",
+      "reason": "main@fd2c3b5",
+      "at": "2026-09-16T13:52:59+09:00"
+    },
+    "autonomy": {
+      "state": "release",
+      "reason": "",
+      "at": "2026-09-16T13:52:59+09:00"
+    },
+    "verify": {
+      "state": "passed",
+      "reason": "검증 5개 통과 (auto)",
+      "at": "2026-09-16T14:16:18+09:00"
+    },
+    "pr": {
+      "state": "created",
+      "reason": "https://github.com/hkjang/madi/pull/4",
+      "at": "2026-09-16T14:16:24+09:00"
+    },
+    "review": {
+      "state": "rejected",
+      "reason": "리뷰 거절: internal/server/mail.go:350 mailLoginAuth.Start의 평문 차단 조건 `!server.TLS && server.Name != a.host`는 항상 거짓입니다. server.Name은 mailDial에서 smtp.NewClient(conn, cfg.Host)로 넘긴 cfg.Host이고 a.host도 cfg.Host이므로 같습니다. 그 결과 릴레이가 AUTH LOGIN만 광고하면(Exchange 등 흔함) TLS 없는 연결에서도 mail.username/mail.password가 base64 평문으로 전송됩니다. 임시 가짜 릴레이(AUTH LOGIN 광고, STARTTLS 없음)로 실제 확인: 서버가 \"madi\"/\"relay-secret\"을 그대로 수신했습니다. 기본값 mail.security=auto는 STARTTLS 미광고 시 평문으로 내려가므로 EHLO 응답에서 STARTTLS를 지운 중간자에게도 비밀번호가 노출됩니다. 기존 코드(notification_delivery_worker.go:315 `SMTP 인증 비밀은 TLS 연결에서만 전송합니다`)와 주석(mail.go:351 '신뢰할 수 있는 서버에서만')이 말하는 보호가 실제로는 없습니다. PLAIN은 stdlib가 막지만 LOGIN은 이 코드가 직접 구현했으므로 막히지 않습니다. / internal/server/mail_test.go:192 인증이 붙은 평문 연결(AUTH 광고 + STARTTLS 없음) 경로를 검증하는 테스트가 없습니다. 위 결함을 잡을 단언이 없어 회귀 방지가 되지 않습니다.",
+      "at": "2026-09-16T14:23:16+09:00"
+    }
+  },
+  "provenance": {
+    "model": "claude-opus-5",
+    "policy_version": "78619c0e",
+    "prompts_hash": "82f2440d4b2fef65",
+    "runner_version": "b8f3f83f",
+    "base_sha": "fd2c3b5816080869c431d60366f1c696a17d2aa9",
+    "head_sha": "8ea418439af2cd9f7ab17b2cbc4255cb61b9228b",
+    "pr": "https://github.com/hkjang/madi/pull/4"
+  },
+  "verification": {
+    "runner": {
+      "source": "auto",
+      "commands": [
+        {
+          "cmd": "go build ./...",
+          "exit": 0,
+          "seconds": 4
+        },
+        {
+          "cmd": "go vet ./...",
+          "exit": 0,
+          "seconds": 1
+        },
+        {
+          "cmd": "go test ./...",
+          "exit": 0,
+          "seconds": 5
+        },
+        {
+          "cmd": "cd web && [ -d node_modules ] || npm ci --no-audit --no-fund",
+          "exit": 0,
+          "seconds": 0
+        },
+        {
+          "cmd": "cd web && npm run build --silent",
+          "exit": 0,
+          "seconds": 19
+        }
+      ]
+    },
+    "runner_gate": {
+      "ok": true,
+      "state": "verified",
+      "reason": "검증 5개 통과 (auto)"
+    },
+    "after_rebase": null,
+    "review": {
+      "verdict": "reject",
+      "reasons": [
+        "internal/server/mail.go:350 mailLoginAuth.Start의 평문 차단 조건 `!server.TLS && server.Name != a.host`는 항상 거짓입니다. server.Name은 mailDial에서 smtp.NewClient(conn, cfg.Host)로 넘긴 cfg.Host이고 a.host도 cfg.Host이므로 같습니다. 그 결과 릴레이가 AUTH LOGIN만 광고하면(Exchange 등 흔함) TLS 없는 연결에서도 mail.username/mail.password가 base64 평문으로 전송됩니다. 임시 가짜 릴레이(AUTH LOGIN 광고, STARTTLS 없음)로 실제 확인: 서버가 \"madi\"/\"relay-secret\"을 그대로 수신했습니다. 기본값 mail.security=auto는 STARTTLS 미광고 시 평문으로 내려가므로 EHLO 응답에서 STARTTLS를 지운 중간자에게도 비밀번호가 노출됩니다. 기존 코드(notification_delivery_worker.go:315 `SMTP 인증 비밀은 TLS 연결에서만 전송합니다`)와 주석(mail.go:351 '신뢰할 수 있는 서버에서만')이 말하는 보호가 실제로는 없습니다. PLAIN은 stdlib가 막지만 LOGIN은 이 코드가 직접 구현했으므로 막히지 않습니다.",
+        "internal/server/mail_test.go:192 인증이 붙은 평문 연결(AUTH 광고 + STARTTLS 없음) 경로를 검증하는 테스트가 없습니다. 위 결함을 잡을 단언이 없어 회귀 방지가 되지 않습니다."
+      ],
+      "notes": [
+        "검증 방법: go build/vet, 프론트 tsc -b, scripts/build-docs.mjs(생성 HTML이 md와 일치) 통과. 임시 PostgreSQL 16 컨테이너로 TestPostgresMailEventDispatch 및 관련 통합 테스트 12건을 -race로 실행해 모두 통과. 테스트는 outbox 트리거·묶음 발송·자기 행동 제외·스위치·실패 기록·비밀번호 미노출을 실제 DB와 가짜 전송으로 검증하므로 수정 전 코드에서 통과할 수 없는 실질적 테스트입니다.",
+        "TestPostgresTaskReadBoundsZeroBudgetAndIndexes가 로컬 PG16에서 실패하지만 main에서도 동일하게 실패함(2001 vs 2000)을 확인했습니다. 이 PR과 무관합니다.",
+        "설계 참고: 기존 notification_channels(kind=smtp, allowed_hosts·평문 거부·개인 선택)와 별개의 두 번째 SMTP 파이프라인입니다. 문서(admin-guide.md)에 '별개로 동작'이라고 적혀 있으나, 두 시스템을 모두 켜면 같은 이벤트로 메일이 두 통 갈 수 있습니다.",
+        "accounts.go:61의 to_jsonb(n)로 알림 API 응답에 새 컬럼 mail_event·actor_id가 그대로 노출됩니다. 승인 결정자 ID가 요청자에게 보이는 것이 의도인지 확인 필요.",
+        "validateMailSettings의 mail.smtp_host가 ':'를 거부하므로 IPv6 리터럴 릴레이는 설정할 수 없습니다(사소).",
+        "dispatchMail은 mail.enabled이지만 설정이 불완전하면 outbox를 소비하고 경고만 남깁니다. 의도된 동작이며 주석·문서와 일치합니다.",
+        "되돌리기: ALTER TABLE notifications ADD COLUMN(IF NOT EXISTS)·새 테이블·트리거는 revert 후에도 DB에 남지만 무해합니다(트리거는 mail_event가 비어 있으면 아무것도 하지 않음)."
+      ],
+      "risk": "medium"
+    },
+    "ci_gate": null
+  },
+  "release": {
+    "result": null,
+    "assets_sha256": []
+  },
+  "approval": null,
+  "usage": [
+    {
+      "ts": "2026-09-16T14:15:46+09:00",
+      "date": "2026-09-16",
+      "project": "madi",
+      "phase": "improve",
+      "run_id": "2026-09-16-135255-madi-improve",
+      "campaign": "mail-2026-09",
+      "subtype": "success",
+      "duration_ms": 1431293,
+      "num_turns": 93,
+      "cost_usd": 10.744291,
+      "input_tokens": 184,
+      "output_tokens": 78721,
+      "cache_read": 13373310,
+      "cache_create": 208022
+    },
+    {
+      "ts": "2026-09-16T14:23:16+09:00",
+      "date": "2026-09-16",
+      "project": "madi",
+      "phase": "review",
+      "run_id": "2026-09-16-135255-madi-improve",
+      "campaign": "mail-2026-09",
+      "subtype": "success",
+      "duration_ms": 428303,
+      "num_turns": 34,
+      "cost_usd": 2.4735234999999993,
+      "input_tokens": 68,
+      "output_tokens": 17675,
+      "cache_read": 2347855,
+      "cache_create": 85556
+    }
+  ]
+}

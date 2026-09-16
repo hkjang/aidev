@@ -1,0 +1,27 @@
+{
+  "base": {
+    "state": "pinned",
+    "reason": "main@fd2c3b5",
+    "at": "2026-09-16T13:52:59+09:00"
+  },
+  "autonomy": {
+    "state": "release",
+    "reason": "",
+    "at": "2026-09-16T13:52:59+09:00"
+  },
+  "verify": {
+    "state": "passed",
+    "reason": "검증 5개 통과 (auto)",
+    "at": "2026-09-16T14:16:18+09:00"
+  },
+  "pr": {
+    "state": "created",
+    "reason": "https://github.com/hkjang/madi/pull/4",
+    "at": "2026-09-16T14:16:24+09:00"
+  },
+  "review": {
+    "state": "rejected",
+    "reason": "리뷰 거절: internal/server/mail.go:350 mailLoginAuth.Start의 평문 차단 조건 `!server.TLS && server.Name != a.host`는 항상 거짓입니다. server.Name은 mailDial에서 smtp.NewClient(conn, cfg.Host)로 넘긴 cfg.Host이고 a.host도 cfg.Host이므로 같습니다. 그 결과 릴레이가 AUTH LOGIN만 광고하면(Exchange 등 흔함) TLS 없는 연결에서도 mail.username/mail.password가 base64 평문으로 전송됩니다. 임시 가짜 릴레이(AUTH LOGIN 광고, STARTTLS 없음)로 실제 확인: 서버가 \"madi\"/\"relay-secret\"을 그대로 수신했습니다. 기본값 mail.security=auto는 STARTTLS 미광고 시 평문으로 내려가므로 EHLO 응답에서 STARTTLS를 지운 중간자에게도 비밀번호가 노출됩니다. 기존 코드(notification_delivery_worker.go:315 `SMTP 인증 비밀은 TLS 연결에서만 전송합니다`)와 주석(mail.go:351 '신뢰할 수 있는 서버에서만')이 말하는 보호가 실제로는 없습니다. PLAIN은 stdlib가 막지만 LOGIN은 이 코드가 직접 구현했으므로 막히지 않습니다. / internal/server/mail_test.go:192 인증이 붙은 평문 연결(AUTH 광고 + STARTTLS 없음) 경로를 검증하는 테스트가 없습니다. 위 결함을 잡을 단언이 없어 회귀 방지가 되지 않습니다.",
+    "at": "2026-09-16T14:23:16+09:00"
+  }
+}
