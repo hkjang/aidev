@@ -1,0 +1,170 @@
+{
+  "run_id": "2026-09-17-085302-releasedock-improve",
+  "generated": "2026-09-17T08:57:10+09:00",
+  "run": {
+    "run_id": "2026-09-17-085302-releasedock-improve",
+    "project": "releasedock",
+    "kind": "improve",
+    "started": "2026-09-17T08:53:02+09:00",
+    "model": "claude-opus-5",
+    "policy_version": "78619c0e",
+    "prompts_hash": "82f2440d4b2fef65",
+    "runner_version": "b8f3f83f",
+    "finished": "2026-09-17T08:57:10+09:00",
+    "outcome": "review-pending"
+  },
+  "record": {
+    "ts": "2026-09-17T08:57:10+09:00",
+    "date": "2026-09-17",
+    "project": "releasedock",
+    "result": "guarded files, PR open https://github.com/hkjang/releasedock/pull/17",
+    "outcome": "review-pending",
+    "run_id": "2026-09-17-085302-releasedock-improve",
+    "base_sha": "c0773a4f768647d7138d44dfca0fbd208e35596a",
+    "head_sha": "f700e87d50ab0da1112e6652d1a69acc2be7a98d",
+    "pr": "https://github.com/hkjang/releasedock/pull/17",
+    "stages": {
+      "base": {
+        "state": "pinned",
+        "reason": "main@c0773a4",
+        "at": "2026-09-17T08:53:06+09:00"
+      },
+      "autonomy": {
+        "state": "release",
+        "reason": "",
+        "at": "2026-09-17T08:53:06+09:00"
+      },
+      "verify": {
+        "state": "passed",
+        "reason": "검증 7개 통과 (auto)",
+        "at": "2026-09-17T08:57:01+09:00"
+      },
+      "pr": {
+        "state": "created",
+        "reason": "https://github.com/hkjang/releasedock/pull/17",
+        "at": "2026-09-17T08:57:07+09:00"
+      },
+      "guard": {
+        "state": "held",
+        "reason": ".github/workflows/ci.yml ",
+        "at": "2026-09-17T08:57:07+09:00"
+      }
+    },
+    "campaign": "",
+    "autonomy": "release",
+    "files": 3,
+    "additions": 18,
+    "deletions": 3,
+    "tests": 0,
+    "title": "chore: run gofmt and go vet before the tests in CI and make test"
+  },
+  "stages": {
+    "base": {
+      "state": "pinned",
+      "reason": "main@c0773a4",
+      "at": "2026-09-17T08:53:06+09:00"
+    },
+    "autonomy": {
+      "state": "release",
+      "reason": "",
+      "at": "2026-09-17T08:53:06+09:00"
+    },
+    "verify": {
+      "state": "passed",
+      "reason": "검증 7개 통과 (auto)",
+      "at": "2026-09-17T08:57:01+09:00"
+    },
+    "pr": {
+      "state": "created",
+      "reason": "https://github.com/hkjang/releasedock/pull/17",
+      "at": "2026-09-17T08:57:07+09:00"
+    },
+    "guard": {
+      "state": "held",
+      "reason": ".github/workflows/ci.yml ",
+      "at": "2026-09-17T08:57:07+09:00"
+    }
+  },
+  "provenance": {
+    "model": "claude-opus-5",
+    "policy_version": "78619c0e",
+    "prompts_hash": "82f2440d4b2fef65",
+    "runner_version": "b8f3f83f",
+    "base_sha": "c0773a4f768647d7138d44dfca0fbd208e35596a",
+    "head_sha": "f700e87d50ab0da1112e6652d1a69acc2be7a98d",
+    "pr": "https://github.com/hkjang/releasedock/pull/17"
+  },
+  "verification": {
+    "runner": {
+      "source": "auto",
+      "commands": [
+        {
+          "cmd": "cd backend && go build ./...",
+          "exit": 0,
+          "seconds": 1
+        },
+        {
+          "cmd": "cd backend && go vet ./...",
+          "exit": 0,
+          "seconds": 0
+        },
+        {
+          "cmd": "cd backend && go test ./...",
+          "exit": 0,
+          "seconds": 1
+        },
+        {
+          "cmd": "cd web && [ -d node_modules ] || npm ci --no-audit --no-fund",
+          "exit": 0,
+          "seconds": 0
+        },
+        {
+          "cmd": "cd web && npm test --silent",
+          "exit": 0,
+          "seconds": 2
+        },
+        {
+          "cmd": "cd web && [ -d node_modules ] || npm ci --no-audit --no-fund",
+          "exit": 0,
+          "seconds": 0
+        },
+        {
+          "cmd": "cd web && npm run build --silent",
+          "exit": 0,
+          "seconds": 5
+        }
+      ]
+    },
+    "runner_gate": {
+      "ok": true,
+      "state": "verified",
+      "reason": "검증 7개 통과 (auto)"
+    },
+    "after_rebase": null,
+    "review": null,
+    "ci_gate": null
+  },
+  "release": {
+    "result": null,
+    "assets_sha256": []
+  },
+  "approval": null,
+  "usage": [
+    {
+      "ts": "2026-09-17T08:56:52+09:00",
+      "date": "2026-09-17",
+      "project": "releasedock",
+      "phase": "improve",
+      "run_id": "2026-09-17-085302-releasedock-improve",
+      "campaign": "",
+      "subtype": "success",
+      "duration_ms": 222240,
+      "num_turns": 24,
+      "cost_usd": 1.3865235000000002,
+      "input_tokens": 48,
+      "output_tokens": 11707,
+      "cache_read": 1155269,
+      "cache_create": 50354
+    }
+  ]
+}

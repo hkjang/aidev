@@ -1,0 +1,11 @@
+## 2026-09-17
+- 선택: CI 와 `make test` 에 `gofmt`·`go vet` 정적 검사 단계 추가 (가치 3 / 위험 1 / 작업량 S)
+- 결과: 성공
+- 요약: `ci.yml` 은 `go test` 만 돌리고 Makefile 의 `test` 타깃도 마찬가지여서, 여섯 세션 연속으로 매번 `go vet` 을 손으로 실행해 왔고 vet 경고나 포맷이 깨진 파일이 main 에 들어가도 아무도 알 수 없었습니다. 지난 회차 기록의 "다음에는 단독 PR 로" 결정을 따라 이번에는 기능 변경과 섞지 않고 이 chore 만 했습니다. Makefile 에 `vet` 타깃을 두어 `gofmt -l backend runner` 결과가 비어 있지 않으면 파일 목록을 찍고 실패한 뒤 backend·runner 에 `go vet ./...` 을 돌리고, `test` 가 `vet` 에 의존하게 했으며, `ci.yml` 은 모듈 체크섬 검증 직후 `make vet` 을 호출해 npm ci·웹 빌드를 기다리지 않고 vet 실패를 보고합니다(help 문구와 README 개발 절도 갱신). 검증은 이 세션 전용 도커 PostgreSQL 16 컨테이너로 `TEST_POSTGRES_DSN` 을 채워 `make test`(vet → backend/runner `go test ./...` 통합 테스트 포함 → `npm test -- --run` 90건) 와 `npm run build`(tsc -b 포함) 를 통과했고, 일부러 포맷이 깨진 임시 Go 파일을 넣어 `make vet` 이 그 파일명을 찍으며 종료 코드 1 로 실패하는 것도 확인한 뒤 지웠습니다. `web/dist` 와 컨테이너는 커밋 전에 정리했고 VERSION 은 릴리즈 세션의 몫이라 건드리지 않았습니다. 2026-09-07 반려 PR 은 스테이지 상태에 `HELD` 를 새 마이그레이션으로 추가하는 접근이었음을 확인했으며, 그런 상태 모델 변경은 피했습니다.
+- 보류 아이디어: 진행 중 실행의 SSE 중복 제거가 `current.some(...)` 으로 줄마다 전체 배열을 훑어 긴 로그에서 O(n²) 이 됩니다 — 서버가 id 오름차순으로만 보내므로 마지막 id 비교로 충분합니다 (가치 2 / 위험 1 / S).
+- 보류 아이디어: 로그 한도를 넘긴 줄을 `payload[:allowed]` 로 자르면 UTF-8 문자가 중간에서 끊겨 마지막 줄이 깨진 글자로 끝납니다 — rune 경계까지 되감으면 되고 한글 출력에서 실제로 보입니다 (가치 1 / 위험 1 / S).
+- 보류 아이디어: `uploadHasFailedPackages` 가 `batch_id` 만 보고 actor 로 좁히지 않아 같은 식별자를 보낸 다른 사용자의 실패 실행이 남의 미뤄 둔 단계를 붙잡을 수 있습니다 — 다만 좁히면 안전 확인이 느슨해지고 randomUUID 충돌은 사실상 없습니다 (가치 2 / 위험 3 / S).
+- 보류 아이디어: 전체 모드 릴리즈·프리셋 업로드의 스트리밍 전환은 `persistArtifactTx` 가 `FOR UPDATE`/`FOR SHARE` 를 쥔 채 파일을 쓰므로 트랜잭션 밖 스테이징 후 rename 으로 durability 경로를 재설계해야 하는 L 작업입니다 (가치 3 / 위험 4 / L).
+- 보류 아이디어: `web/dist/assets/vendor` 청크가 617.30 kB(gzip 191.72 kB) 로 그대로이며 폐쇄망 초기 로딩 최적화 여지가 있으나 라우팅 구조까지 건드려야 합니다 (가치 2 / 위험 3 / M).
+- 보류 아이디어(신규): `make vet` 이 웹 쪽은 검사하지 않습니다 — `web` 에 ESLint/Prettier 설정이 없어 `tsc -b` 가 유일한 정적 검사이고, 그마저 `npm run build` 안에서만 돌아 `make test` 는 타입 오류를 잡지 못합니다. `typecheck` 스크립트(`tsc -b --noEmit`)를 두고 `make vet` 에 포함하면 됩니다 (가치 2 / 위험 1 / S).
+- 보류 아이디어(신규): `ci.yml` 과 `release.yml` 이 PostgreSQL 서비스·setup-go·setup-node 블록을 그대로 복제하고 있어 이미지 다이제스트나 액션 버전을 올릴 때 한쪽만 바뀔 수 있습니다 — 재사용 워크플로(`workflow_call`) 또는 composite action 으로 한 곳에 모을 수 있습니다 (가치 2 / 위험 2 / M).
