@@ -1,0 +1,243 @@
+{
+  "run_id": "2026-09-17-055310-moyro-improve",
+  "generated": "2026-09-17T06:37:44+09:00",
+  "run": {
+    "run_id": "2026-09-17-055310-moyro-improve",
+    "project": "moyro",
+    "kind": "improve",
+    "started": "2026-09-17T05:53:10+09:00",
+    "model": "claude-opus-5",
+    "policy_version": "78619c0e",
+    "prompts_hash": "82f2440d4b2fef65",
+    "runner_version": "b8f3f83f",
+    "finished": "2026-09-17T06:37:44+09:00",
+    "outcome": "release-ready"
+  },
+  "record": {
+    "ts": "2026-09-17T06:37:44+09:00",
+    "date": "2026-09-17",
+    "project": "moyro",
+    "result": "merged https://github.com/hkjang/moyro/pull/16, released v0.2.31",
+    "outcome": "release-ready",
+    "run_id": "2026-09-17-055310-moyro-improve",
+    "base_sha": "2e29a5d471e57379fc92dce771d9fd9161fa4421",
+    "head_sha": "645861ae70ffc252a03ab4d205363aff810dcf6f",
+    "pr": "https://github.com/hkjang/moyro/pull/16",
+    "stages": {
+      "base": {
+        "state": "pinned",
+        "reason": "main@2e29a5d",
+        "at": "2026-09-17T05:53:16+09:00"
+      },
+      "autonomy": {
+        "state": "release",
+        "reason": "",
+        "at": "2026-09-17T05:53:16+09:00"
+      },
+      "verify": {
+        "state": "passed",
+        "reason": "검증 2개 통과 (policy)",
+        "at": "2026-09-17T06:01:57+09:00"
+      },
+      "pr": {
+        "state": "created",
+        "reason": "https://github.com/hkjang/moyro/pull/16",
+        "at": "2026-09-17T06:02:06+09:00"
+      },
+      "review": {
+        "state": "approved",
+        "reason": "리뷰 승인 (risk=low)",
+        "at": "2026-09-17T06:04:24+09:00"
+      },
+      "ci": {
+        "state": "passed",
+        "reason": "검사 3개 모두 success",
+        "at": "2026-09-17T06:12:30+09:00"
+      },
+      "merge": {
+        "state": "done",
+        "reason": "645861ae70ffc252a03ab4d205363aff810dcf6f",
+        "at": "2026-09-17T06:12:34+09:00"
+      },
+      "release": {
+        "state": "published",
+        "reason": "v0.2.31",
+        "at": "2026-09-17T06:19:50+09:00"
+      },
+      "assets": {
+        "state": "verified",
+        "reason": "v0.2.31 자산 1개 (이전 v0.2.30: 1)",
+        "at": "2026-09-17T06:37:42+09:00"
+      }
+    },
+    "campaign": "",
+    "autonomy": "release",
+    "files": 3,
+    "additions": 207,
+    "deletions": 37,
+    "tests": 1,
+    "title": "fix: write only the caller's visible channels into sidebar categories, in one statement"
+  },
+  "stages": {
+    "base": {
+      "state": "pinned",
+      "reason": "main@2e29a5d",
+      "at": "2026-09-17T05:53:16+09:00"
+    },
+    "autonomy": {
+      "state": "release",
+      "reason": "",
+      "at": "2026-09-17T05:53:16+09:00"
+    },
+    "verify": {
+      "state": "passed",
+      "reason": "검증 2개 통과 (policy)",
+      "at": "2026-09-17T06:01:57+09:00"
+    },
+    "pr": {
+      "state": "created",
+      "reason": "https://github.com/hkjang/moyro/pull/16",
+      "at": "2026-09-17T06:02:06+09:00"
+    },
+    "review": {
+      "state": "approved",
+      "reason": "리뷰 승인 (risk=low)",
+      "at": "2026-09-17T06:04:24+09:00"
+    },
+    "ci": {
+      "state": "passed",
+      "reason": "검사 3개 모두 success",
+      "at": "2026-09-17T06:12:30+09:00"
+    },
+    "merge": {
+      "state": "done",
+      "reason": "645861ae70ffc252a03ab4d205363aff810dcf6f",
+      "at": "2026-09-17T06:12:34+09:00"
+    },
+    "release": {
+      "state": "published",
+      "reason": "v0.2.31",
+      "at": "2026-09-17T06:19:50+09:00"
+    },
+    "assets": {
+      "state": "verified",
+      "reason": "v0.2.31 자산 1개 (이전 v0.2.30: 1)",
+      "at": "2026-09-17T06:37:42+09:00"
+    }
+  },
+  "provenance": {
+    "model": "claude-opus-5",
+    "policy_version": "78619c0e",
+    "prompts_hash": "82f2440d4b2fef65",
+    "runner_version": "b8f3f83f",
+    "base_sha": "2e29a5d471e57379fc92dce771d9fd9161fa4421",
+    "head_sha": "645861ae70ffc252a03ab4d205363aff810dcf6f",
+    "pr": "https://github.com/hkjang/moyro/pull/16"
+  },
+  "verification": {
+    "runner": {
+      "source": "policy",
+      "commands": [
+        {
+          "cmd": "cd server && go build ./... && go vet ./... && go test ./...",
+          "exit": 0,
+          "seconds": 3
+        },
+        {
+          "cmd": "cd webapp && ([ -d node_modules ] || npm ci --no-audit --no-fund) && npm run typecheck --silent && npm test --silent",
+          "exit": 0,
+          "seconds": 27
+        }
+      ]
+    },
+    "runner_gate": {
+      "ok": true,
+      "state": "verified",
+      "reason": "검증 2개 통과 (policy)"
+    },
+    "after_rebase": null,
+    "review": {
+      "verdict": "approve",
+      "reasons": [],
+      "notes": [
+        "Verified the two new tests are real: ran them against a throwaway postgres:16 container — both PASS on HEAD and both FAIL on main's service.go (TestWriteKeepsOnlyChannelsTheUserCanSee hits the FK error on chan-ghost; TestUpdateOrderOnlyTouchesTheCallersCategories gets the old last-duplicate-wins order).",
+        "Full `go test ./...` passes without a DSN. With a DSN, unrelated workitems/ws Postgres tests failed only with 'out of shared memory' (max_locks_per_transaction on my ad-hoc container under parallel package runs) — infra, not this diff; sidebar package passed.",
+        "server/internal/httpapi/compat_wave_handlers_early.go:585 still says 'UpdateOrder issues one UPDATE per id.' — stale after the single-statement rewrite (the bulk handler comment at :698 was updated, this one was missed). Cosmetic.",
+        "Behavior change worth knowing: an unknown channel id in a Create/Update payload used to surface as a 500 (FK violation); now it is silently dropped, matching Mattermost's validateSidebarCategoryChannels. Callers relying on the error will not get one anymore.",
+        "Minor semantic divergence from Mattermost: the 'strip from other categories' DELETE at service.go:439 runs on the deduped list *before* the visibility filter, so an id that is then dropped by the insert (e.g. an archived channel parked in another category) is also removed from that other category. Invisible on read today (read side hides it anyway); only matters if the channel is later unarchived/rejoined, where it falls back to the default category instead of its previous custom one.",
+        "No migrations or external state; pure code change, trivially revertible."
+      ],
+      "risk": "low"
+    },
+    "ci_gate": {
+      "ok": true,
+      "state": "success",
+      "reason": "검사 3개 모두 success",
+      "checks": 3
+    }
+  },
+  "release": {
+    "result": {
+      "status": "released",
+      "version": "0.2.31",
+      "tag": "v0.2.31",
+      "title": "moyro v0.2.31",
+      "notes_file": "/mnt/c/Users/USER/projects/aidev/state/runs/2026-09-17-055310-moyro-improve/release-notes-v0.2.31.md",
+      "github_release": false,
+      "assets": [],
+      "reason": ""
+    },
+    "assets_sha256": []
+  },
+  "approval": null,
+  "usage": [
+    {
+      "ts": "2026-09-17T06:01:27+09:00",
+      "date": "2026-09-17",
+      "project": "moyro",
+      "phase": "improve",
+      "run_id": "2026-09-17-055310-moyro-improve",
+      "campaign": "",
+      "subtype": "success",
+      "duration_ms": 523700,
+      "num_turns": 29,
+      "cost_usd": 2.3909054999999997,
+      "input_tokens": 58,
+      "output_tokens": 20277,
+      "cache_read": 2050037,
+      "cache_create": 84116
+    },
+    {
+      "ts": "2026-09-17T06:04:24+09:00",
+      "date": "2026-09-17",
+      "project": "moyro",
+      "phase": "review",
+      "run_id": "2026-09-17-055310-moyro-improve",
+      "campaign": "",
+      "subtype": "success",
+      "duration_ms": 144430,
+      "num_turns": 15,
+      "cost_usd": 0.9383479999999998,
+      "input_tokens": 30,
+      "output_tokens": 6907,
+      "cache_read": 676194,
+      "cache_create": 42561
+    },
+    {
+      "ts": "2026-09-17T06:19:14+09:00",
+      "date": "2026-09-17",
+      "project": "moyro",
+      "phase": "release",
+      "run_id": "2026-09-17-055310-moyro-improve",
+      "campaign": "",
+      "subtype": "success",
+      "duration_ms": 417055,
+      "num_turns": 22,
+      "cost_usd": 1.217154,
+      "input_tokens": 44,
+      "output_tokens": 9783,
+      "cache_read": 1040888,
+      "cache_create": 44609
+    }
+  ]
+}
