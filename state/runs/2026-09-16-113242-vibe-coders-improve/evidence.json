@@ -1,0 +1,213 @@
+{
+  "run_id": "2026-09-16-113242-vibe-coders-improve",
+  "generated": "2026-09-16T12:02:06+09:00",
+  "run": {
+    "run_id": "2026-09-16-113242-vibe-coders-improve",
+    "project": "vibe-coders",
+    "kind": "improve",
+    "started": "2026-09-16T11:32:42+09:00",
+    "model": "claude-opus-5",
+    "policy_version": "78619c0e",
+    "prompts_hash": "82f2440d4b2fef65",
+    "runner_version": "b8f3f83f",
+    "finished": "2026-09-16T12:02:06+09:00",
+    "outcome": "review-pending"
+  },
+  "record": {
+    "ts": "2026-09-16T12:02:06+09:00",
+    "date": "2026-09-16",
+    "project": "vibe-coders",
+    "result": "review held, PR open https://github.com/hkjang/vibe-coders/pull/18",
+    "outcome": "review-pending",
+    "run_id": "2026-09-16-113242-vibe-coders-improve",
+    "base_sha": "d67267b5e47de66a45c35120c7465d85f5c009f9",
+    "head_sha": "f0b2f7e854f58878d4fc61e68272be86d7421a71",
+    "pr": "https://github.com/hkjang/vibe-coders/pull/18",
+    "stages": {
+      "base": {
+        "state": "pinned",
+        "reason": "master@d67267b",
+        "at": "2026-09-16T11:32:56+09:00"
+      },
+      "autonomy": {
+        "state": "release",
+        "reason": "",
+        "at": "2026-09-16T11:32:56+09:00"
+      },
+      "verify": {
+        "state": "passed",
+        "reason": "검증 9개 통과 (auto)",
+        "at": "2026-09-16T11:57:06+09:00"
+      },
+      "pr": {
+        "state": "created",
+        "reason": "https://github.com/hkjang/vibe-coders/pull/18",
+        "at": "2026-09-16T11:57:16+09:00"
+      },
+      "review": {
+        "state": "rejected",
+        "reason": "리뷰 거절: internal/mail/smtp.go:116-121 security=none(또는 STARTTLS 미지원 릴레이의 auto)에서 username 이 설정되면 PLAIN 을 우선 고르는데, Go 표준 smtp.PlainAuth.Start 는 TLS 없는 비-localhost 서버에 대해 'unencrypted connection' 을 반환하므로 인증이 항상 실패한다. 릴레이가 'AUTH PLAIN LOGIN' 을 함께 알려도 LOGIN(자체 구현, 평문 허용)으로 내려가지 않고 그대로 실패한다. 테스트(TestDeliverAuthenticatesOnlyWhenAUsernameIsSet)는 릴레이가 127.0.0.1 이라 localhost 예외로 통과할 뿐, 커밋 메시지·ADMIN_GUIDE 가 말하는 '인증 옵션 + no TLS' 조합은 실제 사내 호스트에서 동작하지 않는다. 또 loginAuth.Start 의 `server.Name != a.host` 검사는 NewClient 에 config.Host 를 넘기므로 항상 거짓이라 어떤 호스트로든 평문 LOGIN 이 나가, PLAIN 과 LOGIN 의 보안 정책이 서로 어긋난다. / internal/proxy/mail.go:385-391 + web/src/features/system/settings/MailTab.tsx:55-62 시험 발송 실패 시 400/502 에 `{\"sent\":false,\"error\":...}` 를 돌려주지만, 프론트 apiClient 는 non-2xx 를 AppError 로 throw 하고 OpenAI 오류 스키마(`error.message`)만 파싱한다(client.ts:302-319). 그래서 400 은 'HTTP 400'→fallback 문구, 502 는 '서버가 요청을 처리하지 못했습니다' 로 바뀌고, `lastResult` 는 onSuccess 에서만 세팅되며 `invalidates` 도 onSuccess 에서만 실행되어 발송 기록도 갱신되지 않는다. 화면·문서(ADMIN_GUIDE 3.7 '결과가 바로 표시되고 발송 기록에 한 줄이 남습니다')가 약속한 '실패 사유를 그 자리에서 보여 준다'가 정확히 실패 경우에 동작하지 않는다. 기존 /admin/notifications/mattermost/test 는 writeOpenAIError 로 사유를 돌려주는 관례를 따르고 있어 이 엔드포인트만 다르다. / internal/proxy/mail.go:248-253 report.failed 는 `report.CreatedBy == \"\"` 이면 조용히 반환하는데, 이 저장소에서 text2sql_saved_reports.created_by 를 채우는 코드 경로가 없다(admin_text2sql.go:723 promote 핸들러는 CreatedBy 를 비워 둔 채 Upsert, 다른 생성 경로 없음). 따라서 커밋 메시지·ADMIN_GUIDE 표·mail.notify_report 스위치가 약속하는 '예약 리포트 실패 → 작성자에게 하루 한 통' 은 실제 제품에서 한 번도 발송되지 않는다. TestReportFailureMailsTheAuthor 는 CreatedBy 를 직접 주입해 통과한다.",
+        "at": "2026-09-16T12:02:04+09:00"
+      }
+    },
+    "campaign": "mail-2026-09",
+    "autonomy": "release",
+    "files": 27,
+    "additions": 3186,
+    "deletions": 2,
+    "tests": 3,
+    "title": "feat(mail): send event notifications through the company SMTP relay"
+  },
+  "stages": {
+    "base": {
+      "state": "pinned",
+      "reason": "master@d67267b",
+      "at": "2026-09-16T11:32:56+09:00"
+    },
+    "autonomy": {
+      "state": "release",
+      "reason": "",
+      "at": "2026-09-16T11:32:56+09:00"
+    },
+    "verify": {
+      "state": "passed",
+      "reason": "검증 9개 통과 (auto)",
+      "at": "2026-09-16T11:57:06+09:00"
+    },
+    "pr": {
+      "state": "created",
+      "reason": "https://github.com/hkjang/vibe-coders/pull/18",
+      "at": "2026-09-16T11:57:16+09:00"
+    },
+    "review": {
+      "state": "rejected",
+      "reason": "리뷰 거절: internal/mail/smtp.go:116-121 security=none(또는 STARTTLS 미지원 릴레이의 auto)에서 username 이 설정되면 PLAIN 을 우선 고르는데, Go 표준 smtp.PlainAuth.Start 는 TLS 없는 비-localhost 서버에 대해 'unencrypted connection' 을 반환하므로 인증이 항상 실패한다. 릴레이가 'AUTH PLAIN LOGIN' 을 함께 알려도 LOGIN(자체 구현, 평문 허용)으로 내려가지 않고 그대로 실패한다. 테스트(TestDeliverAuthenticatesOnlyWhenAUsernameIsSet)는 릴레이가 127.0.0.1 이라 localhost 예외로 통과할 뿐, 커밋 메시지·ADMIN_GUIDE 가 말하는 '인증 옵션 + no TLS' 조합은 실제 사내 호스트에서 동작하지 않는다. 또 loginAuth.Start 의 `server.Name != a.host` 검사는 NewClient 에 config.Host 를 넘기므로 항상 거짓이라 어떤 호스트로든 평문 LOGIN 이 나가, PLAIN 과 LOGIN 의 보안 정책이 서로 어긋난다. / internal/proxy/mail.go:385-391 + web/src/features/system/settings/MailTab.tsx:55-62 시험 발송 실패 시 400/502 에 `{\"sent\":false,\"error\":...}` 를 돌려주지만, 프론트 apiClient 는 non-2xx 를 AppError 로 throw 하고 OpenAI 오류 스키마(`error.message`)만 파싱한다(client.ts:302-319). 그래서 400 은 'HTTP 400'→fallback 문구, 502 는 '서버가 요청을 처리하지 못했습니다' 로 바뀌고, `lastResult` 는 onSuccess 에서만 세팅되며 `invalidates` 도 onSuccess 에서만 실행되어 발송 기록도 갱신되지 않는다. 화면·문서(ADMIN_GUIDE 3.7 '결과가 바로 표시되고 발송 기록에 한 줄이 남습니다')가 약속한 '실패 사유를 그 자리에서 보여 준다'가 정확히 실패 경우에 동작하지 않는다. 기존 /admin/notifications/mattermost/test 는 writeOpenAIError 로 사유를 돌려주는 관례를 따르고 있어 이 엔드포인트만 다르다. / internal/proxy/mail.go:248-253 report.failed 는 `report.CreatedBy == \"\"` 이면 조용히 반환하는데, 이 저장소에서 text2sql_saved_reports.created_by 를 채우는 코드 경로가 없다(admin_text2sql.go:723 promote 핸들러는 CreatedBy 를 비워 둔 채 Upsert, 다른 생성 경로 없음). 따라서 커밋 메시지·ADMIN_GUIDE 표·mail.notify_report 스위치가 약속하는 '예약 리포트 실패 → 작성자에게 하루 한 통' 은 실제 제품에서 한 번도 발송되지 않는다. TestReportFailureMailsTheAuthor 는 CreatedBy 를 직접 주입해 통과한다.",
+      "at": "2026-09-16T12:02:04+09:00"
+    }
+  },
+  "provenance": {
+    "model": "claude-opus-5",
+    "policy_version": "78619c0e",
+    "prompts_hash": "82f2440d4b2fef65",
+    "runner_version": "b8f3f83f",
+    "base_sha": "d67267b5e47de66a45c35120c7465d85f5c009f9",
+    "head_sha": "f0b2f7e854f58878d4fc61e68272be86d7421a71",
+    "pr": "https://github.com/hkjang/vibe-coders/pull/18"
+  },
+  "verification": {
+    "runner": {
+      "source": "auto",
+      "commands": [
+        {
+          "cmd": "go build ./...",
+          "exit": 0,
+          "seconds": 0
+        },
+        {
+          "cmd": "go vet ./...",
+          "exit": 0,
+          "seconds": 0
+        },
+        {
+          "cmd": "go test ./...",
+          "exit": 0,
+          "seconds": 58
+        },
+        {
+          "cmd": "cd web && [ -d node_modules ] || npm ci --no-audit --no-fund",
+          "exit": 0,
+          "seconds": 0
+        },
+        {
+          "cmd": "cd web && npm test --silent",
+          "exit": 0,
+          "seconds": 50
+        },
+        {
+          "cmd": "cd web && [ -d node_modules ] || npm ci --no-audit --no-fund",
+          "exit": 0,
+          "seconds": 0
+        },
+        {
+          "cmd": "cd web && npm run typecheck --silent",
+          "exit": 0,
+          "seconds": 17
+        },
+        {
+          "cmd": "cd web && [ -d node_modules ] || npm ci --no-audit --no-fund",
+          "exit": 0,
+          "seconds": 0
+        },
+        {
+          "cmd": "cd web && npm run build --silent",
+          "exit": 0,
+          "seconds": 18
+        }
+      ]
+    },
+    "runner_gate": {
+      "ok": true,
+      "state": "verified",
+      "reason": "검증 9개 통과 (auto)"
+    },
+    "after_rebase": null,
+    "review": {
+      "verdict": "reject",
+      "reasons": [
+        "internal/mail/smtp.go:116-121 security=none(또는 STARTTLS 미지원 릴레이의 auto)에서 username 이 설정되면 PLAIN 을 우선 고르는데, Go 표준 smtp.PlainAuth.Start 는 TLS 없는 비-localhost 서버에 대해 'unencrypted connection' 을 반환하므로 인증이 항상 실패한다. 릴레이가 'AUTH PLAIN LOGIN' 을 함께 알려도 LOGIN(자체 구현, 평문 허용)으로 내려가지 않고 그대로 실패한다. 테스트(TestDeliverAuthenticatesOnlyWhenAUsernameIsSet)는 릴레이가 127.0.0.1 이라 localhost 예외로 통과할 뿐, 커밋 메시지·ADMIN_GUIDE 가 말하는 '인증 옵션 + no TLS' 조합은 실제 사내 호스트에서 동작하지 않는다. 또 loginAuth.Start 의 `server.Name != a.host` 검사는 NewClient 에 config.Host 를 넘기므로 항상 거짓이라 어떤 호스트로든 평문 LOGIN 이 나가, PLAIN 과 LOGIN 의 보안 정책이 서로 어긋난다.",
+        "internal/proxy/mail.go:385-391 + web/src/features/system/settings/MailTab.tsx:55-62 시험 발송 실패 시 400/502 에 `{\"sent\":false,\"error\":...}` 를 돌려주지만, 프론트 apiClient 는 non-2xx 를 AppError 로 throw 하고 OpenAI 오류 스키마(`error.message`)만 파싱한다(client.ts:302-319). 그래서 400 은 'HTTP 400'→fallback 문구, 502 는 '서버가 요청을 처리하지 못했습니다' 로 바뀌고, `lastResult` 는 onSuccess 에서만 세팅되며 `invalidates` 도 onSuccess 에서만 실행되어 발송 기록도 갱신되지 않는다. 화면·문서(ADMIN_GUIDE 3.7 '결과가 바로 표시되고 발송 기록에 한 줄이 남습니다')가 약속한 '실패 사유를 그 자리에서 보여 준다'가 정확히 실패 경우에 동작하지 않는다. 기존 /admin/notifications/mattermost/test 는 writeOpenAIError 로 사유를 돌려주는 관례를 따르고 있어 이 엔드포인트만 다르다.",
+        "internal/proxy/mail.go:248-253 report.failed 는 `report.CreatedBy == \"\"` 이면 조용히 반환하는데, 이 저장소에서 text2sql_saved_reports.created_by 를 채우는 코드 경로가 없다(admin_text2sql.go:723 promote 핸들러는 CreatedBy 를 비워 둔 채 Upsert, 다른 생성 경로 없음). 따라서 커밋 메시지·ADMIN_GUIDE 표·mail.notify_report 스위치가 약속하는 '예약 리포트 실패 → 작성자에게 하루 한 통' 은 실제 제품에서 한 번도 발송되지 않는다. TestReportFailureMailsTheAuthor 는 CreatedBy 를 직접 주입해 통과한다."
+      ],
+      "notes": [
+        "로컬 master(eee0ed4)가 origin/master(d67267b, PR #17 tracking 병합됨)보다 뒤처져 있어 `git diff master...HEAD` 에는 tracking 변경이 함께 잡힌다. 이번 심사는 실제 PR 범위인 origin/master...HEAD(커밋 f0b2f7e, 27 파일)만 대상으로 했다.",
+        "go build/vet, go test ./internal/mail ./internal/store ./internal/proxy -run Mail, web typecheck 및 신규 tsx/ts eslint 모두 통과.",
+        "기본값이 mail.enabled=false 라 기존 사용자 동작은 바뀌지 않는다. 마이그레이션은 CREATE TABLE IF NOT EXISTS 추가뿐이라 revert 해도 남는 테이블 외에 되돌리기 문제는 없다.",
+        "internal/mail/service.go:136-146 attemptedRecently 가 설정 미완성(invalid) 여부보다 먼저 24h 억제 키를 심는다. 켜 두고 host 를 비운 상태에서 key.blocked 가 한 번 발생하면 이후 관리자가 설정을 완성해도 같은 키·수신자는 24시간 동안 알림을 받지 못한다(ledger 의 failed 행도 '시도'로 집계됨).",
+        "internal/proxy/pipeline.go:199,420 + mail.go:236-245 mail 이 켜진 상태에서는 쿼터·예산 거절이 날 때마다 요청 경로에서 GetAPIKey 조회 + 고루틴 생성 + LookupUserEmails DB 조회가 동기/비동기로 매번 실행된다. 메일은 하루 한 통으로 억제되지만 DB 부하는 억제되지 않는다(dedupe 검사가 directory 조회 뒤에 있음).",
+        "Service.Wait() 가 종료 경로에 연결되어 있지 않다. 문서는 '재시작 뒤 queued 로 남은 행은 종료 시점에 끊긴 것' 이라고 인정하고 있어 불일치는 아니지만, graceful shutdown 훅이 없다.",
+        "web: MailTab 에 대한 프론트 테스트가 없다(SystemSettingsPage.test.tsx 의 추가분은 tracking 커밋 것). mail.test 엔드포인트에 errorSchemas 를 정의하거나 백엔드에서 writeOpenAIError 로 통일하면 두 번째 사유는 해소된다."
+      ],
+      "risk": "medium"
+    },
+    "ci_gate": null
+  },
+  "release": {
+    "result": null,
+    "assets_sha256": []
+  },
+  "approval": null,
+  "usage": [
+    {
+      "ts": "2026-09-16T11:54:40+09:00",
+      "date": "2026-09-16",
+      "project": "vibe-coders",
+      "phase": "improve",
+      "run_id": "2026-09-16-113242-vibe-coders-improve",
+      "campaign": "mail-2026-09",
+      "subtype": "success",
+      "duration_ms": 1357337,
+      "num_turns": 105,
+      "cost_usd": 13.149254500000001,
+      "input_tokens": 210,
+      "output_tokens": 93516,
+      "cache_read": 16918761,
+      "cache_create": 233626
+    },
+    {
+      "ts": "2026-09-16T12:02:04+09:00",
+      "date": "2026-09-16",
+      "project": "vibe-coders",
+      "phase": "review",
+      "run_id": "2026-09-16-113242-vibe-coders-improve",
+      "campaign": "mail-2026-09",
+      "subtype": "success",
+      "duration_ms": 297014,
+      "num_turns": 41,
+      "cost_usd": 2.8019620000000005,
+      "input_tokens": 82,
+      "output_tokens": 17342,
+      "cache_read": 2881766,
+      "cache_create": 92530
+    }
+  ]
+}
