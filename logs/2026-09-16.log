@@ -928,3 +928,35 @@ reports: 15 day(s), 3 week(s), 1 month(s), 810 run(s), 956 usage row(s), 43 proj
 notify: 1 new alert(s)
 notify: commented on issue #1
 notify: toast shown
+[14:57:05] aidev synced: run(2026-09-16): qurio — guarded files, PR open https://github.com/hkjang/qurio/pull/14
+[14:57:05] done
+[15:02:11] skip aiportal-java: STOP
+[15:02:46] candidates(41): AgentHub Clustara DartFly Invenqor Kkiit Momento Quantoss ReSSO SecCheck Vendra ai-admin aiportal-front-admin aiportal-front aiportal-py appstore cutover dataworks git-ctx hunter igame jikim jupiq kanpic madi moina moyro muni nexabuilder orbit pii-masker postra ptium qurio releasedock relio seaton sqlon umm vibe-coders visitflow weekly
+[15:02:49] campaign tracking-2026-09: 세 번 이상 실패해 더 잡지 않는 프로젝트 — weekly
+[15:02:51] campaign mail-2026-09: picked hunter
+[15:02:51] picked: hunter
+[15:02:52] === hunter (base=main, run 2026-09-16-150251-hunter-improve, 회차 예산 $28)
+Preparing worktree (new branch 'auto/2026-09-16-1502')
+Updating files:  99% (1039/1048)Updating files: 100% (1048/1048)Updating files: 100% (1048/1048), done.
+HEAD is now at ef1af7f chore: release v1.11.0 with one-time markdown report handoff and tracking CSP violation allow-listing
+[15:02:54] hunter: [base] pinned — main@ef1af7f
+[15:02:54] hunter: [autonomy] release — 
+[15:37:06] hunter: improve — 101 turns, 35m, $11.54, success
+[15:37:08] hunter: verify `go build ./...` → exit 0 (1s)
+[15:37:09] hunter: verify `go vet ./...` → exit 0 (1s)
+[15:37:13] hunter: verify `go test ./...` → exit 0 (4s)
+[15:37:13] hunter: verify `cd web && [ -d node_modules ] || npm ci --no-audit --no-fund` → exit 0 (0s)
+[15:37:13] hunter: verify `cd web && npm test --silent` → exit 0 (0s)
+[15:37:13] hunter: verify `cd web && [ -d node_modules ] || npm ci --no-audit --no-fund` → exit 0 (0s)
+[15:37:14] hunter: verify `cd web && npm run typecheck --silent` → exit 0 (1s)
+[15:37:14] hunter: verify `cd web && [ -d node_modules ] || npm ci --no-audit --no-fund` → exit 0 (0s)
+[15:37:15] hunter: verify `cd web && npm run build --silent` → exit 0 (1s)
+[15:37:16] hunter: [verify] passed — 검증 9개 통과 (auto)
+branch 'auto/2026-09-16-1502' set up to track 'origin/auto/2026-09-16-1502'.
+[15:37:25] hunter: [pr] created — https://github.com/hkjang/hunter/pull/4
+[15:44:17] hunter: review — 29 turns, 7m, $2.08, success
+[15:44:17] hunter: [review] rejected — 리뷰 거절: internal/app/mail.go:585-592 testMail 은 sendCtx(=WithTimeout(timeout+5s)) 로 sendSMTPNotification 을 호출한 뒤 같은 sendCtx 를 mailFinish 에 넘기고 오류를 버린다(`_ =`). 릴레이가 TCP 는 받되 배너/응답을 주지 않으면(타르핏·방화벽 half-open) sendSMTPNotification 은 conn.SetDeadline 때문에 정확히 sendCtx 만료 시점에 반환하고, 그 시점에 sendCtx.Err()!=nil 이므로 mailFinish 의 a.DB.Exec 가 즉시 실패한다. 결과: 시험 발송 행이 status='sending', body_encrypted='' 인 채로 남고(화면에는 '발송 중'), 2분 뒤 lease 만료로 mailDeliver(mail.go:414, event 필터 없음)가 이 행을 다시 집어 decrypt('') 실패 → 본문 '(본문을 읽지 못했습니다)' 인 시험 메일을 수신자에게 실제로 한 통 더 보낸다. 관리자에게는 이미 '실패' 응답을 돌려준 뒤이므로 기록과 실제 발송이 어긋난다. mailDeliver 쪽(mail.go:470)은 루프 ctx 를 쓰므로 정상이고, testMail 만 만료 가능한 ctx 를 기록 갱신에 재사용한 오류다. 수정은 mailFinish 에 context.WithoutCancel(r.Context()) 등 만료되지 않는 ctx 를 쓰거나, 최소한 mailDeliver 가 event='test' 행을 재청구하지 않게 하는 것.
+https://github.com/hkjang/hunter/pull/4#issuecomment-5693210000
+evidence: /mnt/c/Users/USER/projects/aidev/state/runs/2026-09-16-150251-hunter-improve/evidence.json
+reports: 15 day(s), 3 week(s), 1 month(s), 811 run(s), 958 usage row(s), 43 project page(s), 17 alert(s)
+notify: no new alerts

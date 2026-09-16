@@ -1,0 +1,27 @@
+{
+  "base": {
+    "state": "pinned",
+    "reason": "main@ef1af7f",
+    "at": "2026-09-16T15:02:54+09:00"
+  },
+  "autonomy": {
+    "state": "release",
+    "reason": "",
+    "at": "2026-09-16T15:02:54+09:00"
+  },
+  "verify": {
+    "state": "passed",
+    "reason": "검증 9개 통과 (auto)",
+    "at": "2026-09-16T15:37:16+09:00"
+  },
+  "pr": {
+    "state": "created",
+    "reason": "https://github.com/hkjang/hunter/pull/4",
+    "at": "2026-09-16T15:37:25+09:00"
+  },
+  "review": {
+    "state": "rejected",
+    "reason": "리뷰 거절: internal/app/mail.go:585-592 testMail 은 sendCtx(=WithTimeout(timeout+5s)) 로 sendSMTPNotification 을 호출한 뒤 같은 sendCtx 를 mailFinish 에 넘기고 오류를 버린다(`_ =`). 릴레이가 TCP 는 받되 배너/응답을 주지 않으면(타르핏·방화벽 half-open) sendSMTPNotification 은 conn.SetDeadline 때문에 정확히 sendCtx 만료 시점에 반환하고, 그 시점에 sendCtx.Err()!=nil 이므로 mailFinish 의 a.DB.Exec 가 즉시 실패한다. 결과: 시험 발송 행이 status='sending', body_encrypted='' 인 채로 남고(화면에는 '발송 중'), 2분 뒤 lease 만료로 mailDeliver(mail.go:414, event 필터 없음)가 이 행을 다시 집어 decrypt('') 실패 → 본문 '(본문을 읽지 못했습니다)' 인 시험 메일을 수신자에게 실제로 한 통 더 보낸다. 관리자에게는 이미 '실패' 응답을 돌려준 뒤이므로 기록과 실제 발송이 어긋난다. mailDeliver 쪽(mail.go:470)은 루프 ctx 를 쓰므로 정상이고, testMail 만 만료 가능한 ctx 를 기록 갱신에 재사용한 오류다. 수정은 mailFinish 에 context.WithoutCancel(r.Context()) 등 만료되지 않는 ctx 를 쓰거나, 최소한 mailDeliver 가 event='test' 행을 재청구하지 않게 하는 것.",
+    "at": "2026-09-16T15:44:17+09:00"
+  }
+}
