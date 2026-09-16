@@ -1,7 +1,7 @@
 ---
 title: "cutover — 자율 개선 이력"
-description: "cutover: 자율 개선 회차 5회, 릴리즈 2건. 최근 릴리즈 v1.6.0 (자산 1개)."
-last_modified_at: 2026-09-16 17:28:06 +0900
+description: "cutover: 자율 개선 회차 7회, 릴리즈 2건. 최근 릴리즈 v1.6.0 (자산 1개)."
+last_modified_at: 2026-09-17 00:09:29 +0900
 ---
 {% raw %}
 <script type="application/ld+json">
@@ -11,35 +11,35 @@ last_modified_at: 2026-09-16 17:28:06 +0900
  "name": "cutover",
  "codeRepository": "https://github.com/hkjang/cutover",
  "url": "https://hkjang.github.io/aidev/projects/cutover/",
- "description": "cutover: 자율 개선 회차 5회, 릴리즈 2건. 최근 릴리즈 v1.6.0 (자산 1개).",
+ "description": "cutover: 자율 개선 회차 7회, 릴리즈 2건. 최근 릴리즈 v1.6.0 (자산 1개).",
  "inLanguage": "ko",
  "maintainer": {
   "@type": "Person",
   "name": "hkjang",
   "url": "https://github.com/hkjang"
  },
- "dateModified": "2026-09-16T17:28:06+09:00",
+ "dateModified": "2026-09-17T00:09:29+09:00",
  "version": "1.6.0"
 }
 </script>
 
 # cutover
 
-<p class="tldr"><strong>요약.</strong> cutover: 자율 개선 회차 5회, 릴리즈 2건. 최근 릴리즈 v1.6.0 (자산 1개). <span class="pill pill-released" title="14일: 릴리즈 2, 실패 0, 경고 0, 회귀 0">건강 A</span> <span class="meta">14일: 릴리즈 2, 실패 0, 경고 0, 회귀 0</span></p>
+<p class="tldr"><strong>요약.</strong> cutover: 자율 개선 회차 7회, 릴리즈 2건. 최근 릴리즈 v1.6.0 (자산 1개). <span class="pill pill-released" title="14일: 릴리즈 2, 실패 0, 경고 0, 회귀 0">건강 A</span> <span class="meta">14일: 릴리즈 2, 실패 0, 경고 0, 회귀 0</span></p>
 
-<ul class="stats"><li><b>5</b><span>회차</span></li><li><b>1</b><span>프로젝트</span></li><li><b>2</b><span>배포 준비 완료</span></li><li><b>0</b><span>릴리즈 진행 중</span></li><li><b>0</b><span>병합 완료</span></li><li><b>2</b><span>검토 대기</span></li><li><b>0</b><span>검증 실패</span></li><li><b>1</b><span>변경 없음</span></li><li><b>0</b><span>실행 오류</span></li><li><b>$31.74</b><span>비용</span></li><li><b>1시간 27분</b><span>에이전트 시간</span></li></ul>
+<ul class="stats"><li><b>7</b><span>회차</span></li><li><b>1</b><span>프로젝트</span></li><li><b>2</b><span>배포 준비 완료</span></li><li><b>0</b><span>릴리즈 진행 중</span></li><li><b>0</b><span>병합 완료</span></li><li><b>2</b><span>검토 대기</span></li><li><b>0</b><span>검증 실패</span></li><li><b>1</b><span>변경 없음</span></li><li><b>2</b><span>실행 오류</span></li><li><b>$31.74</b><span>비용</span></li><li><b>1시간 27분</b><span>에이전트 시간</span></li></ul>
 
 ## 현황
 
 <dl class="kv">
 <dt>저장소</dt><dd><a href="https://github.com/hkjang/cutover">https://github.com/hkjang/cutover</a></dd>
-<dt>마지막 회차</dt><dd>2026-09-16 02:24 KST — <span class="pill pill-nochange">➖ 변경 없음</span> no change</dd>
+<dt>마지막 회차</dt><dd>2026-09-16 20:13 KST — <span class="pill pill-other">• 기타</span> hold: budget</dd>
 <dt>최근 릴리즈</dt><dd><a href="https://github.com/hkjang/cutover/releases/tag/v1.6.0">v1.6.0</a> — released · 자산 1개 (이전 v1.5.0: 1개) <a href="https://github.com/hkjang/cutover/releases">전체 릴리즈 →</a></dd>
 </dl>
 
 ## 회차 이력
 
-<div class="table-wrap"><table class="rt"><thead><tr><th>일시</th><th class="primary">프로젝트</th><th>결과</th></tr></thead><tbody><tr data-status="nochange"><td data-label="일시">2026-09-16 02:24</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/cutover/">cutover</a></td><td data-label="결과"><span class="pill pill-nochange" title="outcome=no-change">변경 없음</span> no change</td></tr><tr data-status="released"><td data-label="일시">2026-09-14 22:47</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/cutover/">cutover</a></td><td data-label="결과"><span class="pill pill-released" title="outcome=release-ready">배포 준비 완료</span> merged <a href="https://github.com/hkjang/cutover/pull/3">PR #3</a>, released <a href="https://github.com/hkjang/cutover/releases/tag/v1.6.0">v1.6.0</a><div class="meta">20파일 <span style="color:var(--good)">+2588</span>/<span style="color:var(--bad)">−3</span> · 테스트 6 — feat: 사내 SMTP 릴레이로 지연·지연 해소·작업 완료·훈련 완료를 알리는 메일 알림 체계</div></td></tr><tr data-status="released"><td data-label="일시">2026-09-14 12:30</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/cutover/">cutover</a></td><td data-label="결과"><span class="pill pill-released" title="outcome=release-ready">배포 준비 완료</span> release-only, released <a href="https://github.com/hkjang/cutover/releases/tag/v1.5.0">v1.5.0</a></td></tr><tr data-status="other"><td data-label="일시">2026-09-12 15:28</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/cutover/">cutover</a></td><td data-label="결과"><span class="pill pill-merged" title="outcome=review-pending">검토 대기</span> CI no-ci, PR open <a href="https://github.com/hkjang/cutover/pull/2">PR #2</a><div class="meta">19파일 <span style="color:var(--good)">+2130</span>/<span style="color:var(--bad)">−6</span> · 테스트 3 — feat: 관리자가 화면에서 붙이는 방문 추적 스크립트 체계와 nonce 기반 CSP</div></td></tr><tr data-status="other"><td data-label="일시">2026-09-11 20:31</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/cutover/">cutover</a></td><td data-label="결과"><span class="pill pill-merged" title="outcome=review-pending">검토 대기</span> CI no-ci, PR open <a href="https://github.com/hkjang/cutover/pull/1">PR #1</a><div class="meta">24파일 <span style="color:var(--good)">+677</span>/<span style="color:var(--bad)">−192</span> · 테스트 1 — docs: 사용자·관리자 가이드를 실제 화면 캡처가 들어간 표준 형식으로 재작성하고 PDF 추가</div></td></tr></tbody></table></div>
+<div class="table-wrap"><table class="rt"><thead><tr><th>일시</th><th class="primary">프로젝트</th><th>결과</th></tr></thead><tbody><tr data-status="other"><td data-label="일시">2026-09-16 20:13</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/cutover/">cutover</a></td><td data-label="결과"><span class="pill pill-failed" title="outcome=error">실행 오류</span> hold: budget</td></tr><tr data-status="other"><td data-label="일시">2026-09-16 18:03</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/cutover/">cutover</a></td><td data-label="결과"><span class="pill pill-failed" title="outcome=error">실행 오류</span> hold: budget</td></tr><tr data-status="nochange"><td data-label="일시">2026-09-16 02:24</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/cutover/">cutover</a></td><td data-label="결과"><span class="pill pill-nochange" title="outcome=no-change">변경 없음</span> no change</td></tr><tr data-status="released"><td data-label="일시">2026-09-14 22:47</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/cutover/">cutover</a></td><td data-label="결과"><span class="pill pill-released" title="outcome=release-ready">배포 준비 완료</span> merged <a href="https://github.com/hkjang/cutover/pull/3">PR #3</a>, released <a href="https://github.com/hkjang/cutover/releases/tag/v1.6.0">v1.6.0</a><div class="meta">20파일 <span style="color:var(--good)">+2588</span>/<span style="color:var(--bad)">−3</span> · 테스트 6 — feat: 사내 SMTP 릴레이로 지연·지연 해소·작업 완료·훈련 완료를 알리는 메일 알림 체계</div></td></tr><tr data-status="released"><td data-label="일시">2026-09-14 12:30</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/cutover/">cutover</a></td><td data-label="결과"><span class="pill pill-released" title="outcome=release-ready">배포 준비 완료</span> release-only, released <a href="https://github.com/hkjang/cutover/releases/tag/v1.5.0">v1.5.0</a></td></tr><tr data-status="other"><td data-label="일시">2026-09-12 15:28</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/cutover/">cutover</a></td><td data-label="결과"><span class="pill pill-merged" title="outcome=review-pending">검토 대기</span> CI no-ci, PR open <a href="https://github.com/hkjang/cutover/pull/2">PR #2</a><div class="meta">19파일 <span style="color:var(--good)">+2130</span>/<span style="color:var(--bad)">−6</span> · 테스트 3 — feat: 관리자가 화면에서 붙이는 방문 추적 스크립트 체계와 nonce 기반 CSP</div></td></tr><tr data-status="other"><td data-label="일시">2026-09-11 20:31</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/cutover/">cutover</a></td><td data-label="결과"><span class="pill pill-merged" title="outcome=review-pending">검토 대기</span> CI no-ci, PR open <a href="https://github.com/hkjang/cutover/pull/1">PR #1</a><div class="meta">24파일 <span style="color:var(--good)">+677</span>/<span style="color:var(--bad)">−192</span> · 테스트 1 — docs: 사용자·관리자 가이드를 실제 화면 캡처가 들어간 표준 형식으로 재작성하고 PDF 추가</div></td></tr></tbody></table></div>
 
 ## 비용·사용량
 

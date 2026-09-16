@@ -1,7 +1,7 @@
 ---
 title: "sqlon — 자율 개선 이력"
-description: "sqlon: 자율 개선 회차 5회, 릴리즈 1건. 최근 릴리즈 v0.1.5 (자산 6개)."
-last_modified_at: 2026-09-16 17:28:06 +0900
+description: "sqlon: 자율 개선 회차 7회, 릴리즈 1건. 최근 릴리즈 v0.1.5 (자산 6개)."
+last_modified_at: 2026-09-17 00:09:29 +0900
 ---
 {% raw %}
 <script type="application/ld+json">
@@ -11,35 +11,35 @@ last_modified_at: 2026-09-16 17:28:06 +0900
  "name": "sqlon",
  "codeRepository": "https://github.com/hkjang/sqlon",
  "url": "https://hkjang.github.io/aidev/projects/sqlon/",
- "description": "sqlon: 자율 개선 회차 5회, 릴리즈 1건. 최근 릴리즈 v0.1.5 (자산 6개).",
+ "description": "sqlon: 자율 개선 회차 7회, 릴리즈 1건. 최근 릴리즈 v0.1.5 (자산 6개).",
  "inLanguage": "ko",
  "maintainer": {
   "@type": "Person",
   "name": "hkjang",
   "url": "https://github.com/hkjang"
  },
- "dateModified": "2026-09-16T17:28:06+09:00",
+ "dateModified": "2026-09-17T00:09:29+09:00",
  "version": "0.1.5"
 }
 </script>
 
 # sqlon
 
-<p class="tldr"><strong>요약.</strong> sqlon: 자율 개선 회차 5회, 릴리즈 1건. 최근 릴리즈 v0.1.5 (자산 6개). <span class="pill pill-released" title="14일: 릴리즈 1, 실패 0, 경고 0, 회귀 0">건강 A</span> <span class="meta">14일: 릴리즈 1, 실패 0, 경고 0, 회귀 0</span></p>
+<p class="tldr"><strong>요약.</strong> sqlon: 자율 개선 회차 7회, 릴리즈 1건. 최근 릴리즈 v0.1.5 (자산 6개). <span class="pill pill-released" title="14일: 릴리즈 1, 실패 0, 경고 0, 회귀 0">건강 A</span> <span class="meta">14일: 릴리즈 1, 실패 0, 경고 0, 회귀 0</span></p>
 
-<ul class="stats"><li><b>5</b><span>회차</span></li><li><b>1</b><span>프로젝트</span></li><li><b>1</b><span>배포 준비 완료</span></li><li><b>0</b><span>릴리즈 진행 중</span></li><li><b>0</b><span>병합 완료</span></li><li><b>4</b><span>검토 대기</span></li><li><b>0</b><span>검증 실패</span></li><li><b>0</b><span>변경 없음</span></li><li><b>0</b><span>실행 오류</span></li><li><b>$32.90</b><span>비용</span></li><li><b>1시간 16분</b><span>에이전트 시간</span></li></ul>
+<ul class="stats"><li><b>7</b><span>회차</span></li><li><b>1</b><span>프로젝트</span></li><li><b>1</b><span>배포 준비 완료</span></li><li><b>0</b><span>릴리즈 진행 중</span></li><li><b>0</b><span>병합 완료</span></li><li><b>4</b><span>검토 대기</span></li><li><b>0</b><span>검증 실패</span></li><li><b>0</b><span>변경 없음</span></li><li><b>2</b><span>실행 오류</span></li><li><b>$32.90</b><span>비용</span></li><li><b>1시간 16분</b><span>에이전트 시간</span></li></ul>
 
 ## 현황
 
 <dl class="kv">
 <dt>저장소</dt><dd><a href="https://github.com/hkjang/sqlon">https://github.com/hkjang/sqlon</a></dd>
-<dt>마지막 회차</dt><dd>2026-09-16 16:38 KST — <span class="pill pill-other">• 기타</span> review held, PR open <a href="https://github.com/hkjang/sqlon/pull/5">PR #5</a></dd>
+<dt>마지막 회차</dt><dd>2026-09-16 21:23 KST — <span class="pill pill-other">• 기타</span> hold: budget</dd>
 <dt>최근 릴리즈</dt><dd><a href="https://github.com/hkjang/sqlon/releases/tag/v0.1.5">v0.1.5</a> — released · 자산 6개 (이전 v0.1.4: 6개) <a href="https://github.com/hkjang/sqlon/releases">전체 릴리즈 →</a></dd>
 </dl>
 
 ## 회차 이력
 
-<div class="table-wrap"><table class="rt"><thead><tr><th>일시</th><th class="primary">프로젝트</th><th>결과</th></tr></thead><tbody><tr data-status="other"><td data-label="일시">2026-09-16 16:38</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/sqlon/">sqlon</a></td><td data-label="결과"><span class="pill pill-merged" title="outcome=review-pending">검토 대기</span> review held, PR open <a href="https://github.com/hkjang/sqlon/pull/5">PR #5</a><div class="meta">23파일 <span style="color:var(--good)">+2329</span>/<span style="color:var(--bad)">−9</span> · 테스트 2 — feat(mail): 사내 SMTP 릴레이로 이벤트 알림 메일을 보냅니다 (기본 꺼짐)</div></td></tr><tr data-status="other"><td data-label="일시">2026-09-16 03:19</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/sqlon/">sqlon</a></td><td data-label="결과"><span class="pill pill-merged" title="outcome=review-pending">검토 대기</span> CI no-ci, PR open <a href="https://github.com/hkjang/sqlon/pull/4">PR #4</a><div class="meta">10파일 <span style="color:var(--good)">+1530</span>/<span style="color:var(--bad)">−754</span> · 테스트 1 — feat(handoff): DBA 다이제스트를 다른 서비스로 넘기는 단일 사용 표(claim) 발급 — HANDOFF-STANDARD 보내는 쪽</div></td></tr><tr data-status="other"><td data-label="일시">2026-09-16 02:51</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/sqlon/">sqlon</a></td><td data-label="결과"><span class="pill pill-merged" title="outcome=review-pending">검토 대기</span> review held, PR open <a href="https://github.com/hkjang/sqlon/pull/3">PR #3</a><div class="meta">19파일 <span style="color:var(--good)">+1830</span>/<span style="color:var(--bad)">−32</span> · 테스트 2 — feat(tracking): 관리자가 화면에서 붙이는 방문 추적 스크립트와 nonce 기반 CSP 를 추가합니다</div></td></tr><tr data-status="other"><td data-label="일시">2026-09-14 21:16</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/sqlon/">sqlon</a></td><td data-label="결과"><span class="pill pill-merged" title="outcome=review-pending">검토 대기</span> CI no-ci, PR open <a href="https://github.com/hkjang/sqlon/pull/2">PR #2</a><div class="meta">10파일 <span style="color:var(--good)">+605</span>/<span style="color:var(--bad)">−18</span> · 테스트 2 — feat(auth): Keycloak 세션이 있으면 로그인 화면 없이 들어오는 silent SSO(prompt=none)를 추가합니다</div></td></tr><tr data-status="released"><td data-label="일시">2026-09-14 11:53</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/sqlon/">sqlon</a></td><td data-label="결과"><span class="pill pill-released" title="outcome=release-ready">배포 준비 완료</span> release-only, released <a href="https://github.com/hkjang/sqlon/releases/tag/v0.1.5">v0.1.5</a></td></tr></tbody></table></div>
+<div class="table-wrap"><table class="rt"><thead><tr><th>일시</th><th class="primary">프로젝트</th><th>결과</th></tr></thead><tbody><tr data-status="other"><td data-label="일시">2026-09-16 21:23</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/sqlon/">sqlon</a></td><td data-label="결과"><span class="pill pill-failed" title="outcome=error">실행 오류</span> hold: budget</td></tr><tr data-status="other"><td data-label="일시">2026-09-16 19:13</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/sqlon/">sqlon</a></td><td data-label="결과"><span class="pill pill-failed" title="outcome=error">실행 오류</span> hold: budget</td></tr><tr data-status="other"><td data-label="일시">2026-09-16 16:38</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/sqlon/">sqlon</a></td><td data-label="결과"><span class="pill pill-merged" title="outcome=review-pending">검토 대기</span> review held, PR open <a href="https://github.com/hkjang/sqlon/pull/5">PR #5</a><div class="meta">23파일 <span style="color:var(--good)">+2329</span>/<span style="color:var(--bad)">−9</span> · 테스트 2 — feat(mail): 사내 SMTP 릴레이로 이벤트 알림 메일을 보냅니다 (기본 꺼짐)</div></td></tr><tr data-status="other"><td data-label="일시">2026-09-16 03:19</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/sqlon/">sqlon</a></td><td data-label="결과"><span class="pill pill-merged" title="outcome=review-pending">검토 대기</span> CI no-ci, PR open <a href="https://github.com/hkjang/sqlon/pull/4">PR #4</a><div class="meta">10파일 <span style="color:var(--good)">+1530</span>/<span style="color:var(--bad)">−754</span> · 테스트 1 — feat(handoff): DBA 다이제스트를 다른 서비스로 넘기는 단일 사용 표(claim) 발급 — HANDOFF-STANDARD 보내는 쪽</div></td></tr><tr data-status="other"><td data-label="일시">2026-09-16 02:51</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/sqlon/">sqlon</a></td><td data-label="결과"><span class="pill pill-merged" title="outcome=review-pending">검토 대기</span> review held, PR open <a href="https://github.com/hkjang/sqlon/pull/3">PR #3</a><div class="meta">19파일 <span style="color:var(--good)">+1830</span>/<span style="color:var(--bad)">−32</span> · 테스트 2 — feat(tracking): 관리자가 화면에서 붙이는 방문 추적 스크립트와 nonce 기반 CSP 를 추가합니다</div></td></tr><tr data-status="other"><td data-label="일시">2026-09-14 21:16</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/sqlon/">sqlon</a></td><td data-label="결과"><span class="pill pill-merged" title="outcome=review-pending">검토 대기</span> CI no-ci, PR open <a href="https://github.com/hkjang/sqlon/pull/2">PR #2</a><div class="meta">10파일 <span style="color:var(--good)">+605</span>/<span style="color:var(--bad)">−18</span> · 테스트 2 — feat(auth): Keycloak 세션이 있으면 로그인 화면 없이 들어오는 silent SSO(prompt=none)를 추가합니다</div></td></tr><tr data-status="released"><td data-label="일시">2026-09-14 11:53</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/sqlon/">sqlon</a></td><td data-label="결과"><span class="pill pill-released" title="outcome=release-ready">배포 준비 완료</span> release-only, released <a href="https://github.com/hkjang/sqlon/releases/tag/v0.1.5">v0.1.5</a></td></tr></tbody></table></div>
 
 ## 비용·사용량
 

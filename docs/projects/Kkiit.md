@@ -1,7 +1,7 @@
 ---
 title: "Kkiit — 자율 개선 이력"
-description: "Kkiit: 자율 개선 회차 5회, 릴리즈 1건. 최근 릴리즈 v0.4.0 (자산 1개)."
-last_modified_at: 2026-09-16 17:28:06 +0900
+description: "Kkiit: 자율 개선 회차 6회, 릴리즈 1건. 최근 릴리즈 v0.4.0 (자산 1개)."
+last_modified_at: 2026-09-17 00:09:29 +0900
 ---
 {% raw %}
 <script type="application/ld+json">
@@ -11,35 +11,35 @@ last_modified_at: 2026-09-16 17:28:06 +0900
  "name": "Kkiit",
  "codeRepository": "https://github.com/hkjang/Kkiit",
  "url": "https://hkjang.github.io/aidev/projects/Kkiit/",
- "description": "Kkiit: 자율 개선 회차 5회, 릴리즈 1건. 최근 릴리즈 v0.4.0 (자산 1개).",
+ "description": "Kkiit: 자율 개선 회차 6회, 릴리즈 1건. 최근 릴리즈 v0.4.0 (자산 1개).",
  "inLanguage": "ko",
  "maintainer": {
   "@type": "Person",
   "name": "hkjang",
   "url": "https://github.com/hkjang"
  },
- "dateModified": "2026-09-16T17:28:06+09:00",
+ "dateModified": "2026-09-17T00:09:29+09:00",
  "version": "0.4.0"
 }
 </script>
 
 # Kkiit
 
-<p class="tldr"><strong>요약.</strong> Kkiit: 자율 개선 회차 5회, 릴리즈 1건. 최근 릴리즈 v0.4.0 (자산 1개). <span class="pill pill-merged" title="14일: 릴리즈 1, 실패 0, 경고 3, 회귀 0">건강 C</span> <span class="meta">14일: 릴리즈 1, 실패 0, 경고 3, 회귀 0</span></p>
+<p class="tldr"><strong>요약.</strong> Kkiit: 자율 개선 회차 6회, 릴리즈 1건. 최근 릴리즈 v0.4.0 (자산 1개). <span class="pill pill-merged" title="14일: 릴리즈 1, 실패 0, 경고 3, 회귀 0">건강 C</span> <span class="meta">14일: 릴리즈 1, 실패 0, 경고 3, 회귀 0</span></p>
 
-<ul class="stats"><li><b>5</b><span>회차</span></li><li><b>1</b><span>프로젝트</span></li><li><b>1</b><span>배포 준비 완료</span></li><li><b>0</b><span>릴리즈 진행 중</span></li><li><b>0</b><span>병합 완료</span></li><li><b>4</b><span>검토 대기</span></li><li><b>0</b><span>검증 실패</span></li><li><b>0</b><span>변경 없음</span></li><li><b>0</b><span>실행 오류</span></li><li><b>$43.27</b><span>비용</span></li><li><b>1시간 27분</b><span>에이전트 시간</span></li></ul>
+<ul class="stats"><li><b>6</b><span>회차</span></li><li><b>1</b><span>프로젝트</span></li><li><b>1</b><span>배포 준비 완료</span></li><li><b>0</b><span>릴리즈 진행 중</span></li><li><b>0</b><span>병합 완료</span></li><li><b>4</b><span>검토 대기</span></li><li><b>0</b><span>검증 실패</span></li><li><b>0</b><span>변경 없음</span></li><li><b>1</b><span>실행 오류</span></li><li><b>$43.27</b><span>비용</span></li><li><b>1시간 27분</b><span>에이전트 시간</span></li></ul>
 
 ## 현황
 
 <dl class="kv">
 <dt>저장소</dt><dd><a href="https://github.com/hkjang/Kkiit">https://github.com/hkjang/Kkiit</a></dd>
-<dt>마지막 회차</dt><dd>2026-09-14 17:02 KST — <span class="pill pill-released">🚀 릴리즈</span> release-only, released <a href="https://github.com/hkjang/Kkiit/releases/tag/v0.4.0">v0.4.0</a></dd>
+<dt>마지막 회차</dt><dd>2026-09-16 19:42 KST — <span class="pill pill-other">• 기타</span> hold: budget</dd>
 <dt>최근 릴리즈</dt><dd><a href="https://github.com/hkjang/Kkiit/releases/tag/v0.4.0">v0.4.0</a> — released · 자산 1개 (이전 v0.3.0: 1개) <a href="https://github.com/hkjang/Kkiit/releases">전체 릴리즈 →</a></dd>
 </dl>
 
 ## 회차 이력
 
-<div class="table-wrap"><table class="rt"><thead><tr><th>일시</th><th class="primary">프로젝트</th><th>결과</th></tr></thead><tbody><tr data-status="released"><td data-label="일시">2026-09-14 17:02</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/Kkiit/">Kkiit</a></td><td data-label="결과"><span class="pill pill-released" title="outcome=release-ready">배포 준비 완료</span> release-only, released <a href="https://github.com/hkjang/Kkiit/releases/tag/v0.4.0">v0.4.0</a></td></tr><tr data-status="other"><td data-label="일시">2026-09-14 02:02</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/Kkiit/">Kkiit</a></td><td data-label="결과"><span class="pill pill-merged" title="outcome=review-pending">검토 대기</span> <strong>guarded files</strong>, PR open <a href="https://github.com/hkjang/Kkiit/pull/4">PR #4</a><div class="meta">35파일 <span style="color:var(--good)">+1857</span>/<span style="color:var(--bad)">−19</span> · 테스트 4 — feat: 사내 SMTP 릴레이로 사람이 기다리는 일만 메일로 알리다</div></td></tr><tr data-status="other"><td data-label="일시">2026-09-13 02:00</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/Kkiit/">Kkiit</a></td><td data-label="결과"><span class="pill pill-merged" title="outcome=review-pending">검토 대기</span> <strong>guarded files</strong>, PR open <a href="https://github.com/hkjang/Kkiit/pull/3">PR #3</a><div class="meta">24파일 <span style="color:var(--good)">+625</span>/<span style="color:var(--bad)">−31</span> · 테스트 3 — feat: Keycloak 세션이 있으면 로그인 화면 없이 들어오는 조용한 SSO(prompt=none)</div></td></tr><tr data-status="other"><td data-label="일시">2026-09-12 11:20</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/Kkiit/">Kkiit</a></td><td data-label="결과"><span class="pill pill-merged" title="outcome=review-pending">검토 대기</span> <strong>guarded files</strong>, PR open <a href="https://github.com/hkjang/Kkiit/pull/2">PR #2</a><div class="meta">28파일 <span style="color:var(--good)">+1619</span>/<span style="color:var(--bad)">−23</span> · 테스트 2 — feat: 관리자가 화면에서 방문 추적 스크립트를 붙일 수 있게 하다</div></td></tr><tr data-status="other"><td data-label="일시">2026-09-11 18:50</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/Kkiit/">Kkiit</a></td><td data-label="결과"><span class="pill pill-merged" title="outcome=review-pending">검토 대기</span> CI no-ci, PR open <a href="https://github.com/hkjang/Kkiit/pull/1">PR #1</a><div class="meta">45파일 <span style="color:var(--good)">+1272</span>/<span style="color:var(--bad)">−2</span> · <em>테스트 없음</em> — docs: 사용자·관리자 가이드에 실제 화면 캡처를 싣다</div></td></tr></tbody></table></div>
+<div class="table-wrap"><table class="rt"><thead><tr><th>일시</th><th class="primary">프로젝트</th><th>결과</th></tr></thead><tbody><tr data-status="other"><td data-label="일시">2026-09-16 19:42</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/Kkiit/">Kkiit</a></td><td data-label="결과"><span class="pill pill-failed" title="outcome=error">실행 오류</span> hold: budget</td></tr><tr data-status="released"><td data-label="일시">2026-09-14 17:02</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/Kkiit/">Kkiit</a></td><td data-label="결과"><span class="pill pill-released" title="outcome=release-ready">배포 준비 완료</span> release-only, released <a href="https://github.com/hkjang/Kkiit/releases/tag/v0.4.0">v0.4.0</a></td></tr><tr data-status="other"><td data-label="일시">2026-09-14 02:02</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/Kkiit/">Kkiit</a></td><td data-label="결과"><span class="pill pill-merged" title="outcome=review-pending">검토 대기</span> <strong>guarded files</strong>, PR open <a href="https://github.com/hkjang/Kkiit/pull/4">PR #4</a><div class="meta">35파일 <span style="color:var(--good)">+1857</span>/<span style="color:var(--bad)">−19</span> · 테스트 4 — feat: 사내 SMTP 릴레이로 사람이 기다리는 일만 메일로 알리다</div></td></tr><tr data-status="other"><td data-label="일시">2026-09-13 02:00</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/Kkiit/">Kkiit</a></td><td data-label="결과"><span class="pill pill-merged" title="outcome=review-pending">검토 대기</span> <strong>guarded files</strong>, PR open <a href="https://github.com/hkjang/Kkiit/pull/3">PR #3</a><div class="meta">24파일 <span style="color:var(--good)">+625</span>/<span style="color:var(--bad)">−31</span> · 테스트 3 — feat: Keycloak 세션이 있으면 로그인 화면 없이 들어오는 조용한 SSO(prompt=none)</div></td></tr><tr data-status="other"><td data-label="일시">2026-09-12 11:20</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/Kkiit/">Kkiit</a></td><td data-label="결과"><span class="pill pill-merged" title="outcome=review-pending">검토 대기</span> <strong>guarded files</strong>, PR open <a href="https://github.com/hkjang/Kkiit/pull/2">PR #2</a><div class="meta">28파일 <span style="color:var(--good)">+1619</span>/<span style="color:var(--bad)">−23</span> · 테스트 2 — feat: 관리자가 화면에서 방문 추적 스크립트를 붙일 수 있게 하다</div></td></tr><tr data-status="other"><td data-label="일시">2026-09-11 18:50</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/Kkiit/">Kkiit</a></td><td data-label="결과"><span class="pill pill-merged" title="outcome=review-pending">검토 대기</span> CI no-ci, PR open <a href="https://github.com/hkjang/Kkiit/pull/1">PR #1</a><div class="meta">45파일 <span style="color:var(--good)">+1272</span>/<span style="color:var(--bad)">−2</span> · <em>테스트 없음</em> — docs: 사용자·관리자 가이드에 실제 화면 캡처를 싣다</div></td></tr></tbody></table></div>
 
 ## 비용·사용량
 

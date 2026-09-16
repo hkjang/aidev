@@ -1,7 +1,7 @@
 ---
 title: "seaton — 자율 개선 이력"
-description: "seaton: 자율 개선 회차 4회, 릴리즈 2건. 최근 릴리즈 v1.4.3 (자산 1개)."
-last_modified_at: 2026-09-16 17:28:06 +0900
+description: "seaton: 자율 개선 회차 6회, 릴리즈 2건. 최근 릴리즈 v1.4.3 (자산 1개)."
+last_modified_at: 2026-09-17 00:09:29 +0900
 ---
 {% raw %}
 <script type="application/ld+json">
@@ -11,35 +11,35 @@ last_modified_at: 2026-09-16 17:28:06 +0900
  "name": "seaton",
  "codeRepository": "https://github.com/hkjang/seaton",
  "url": "https://hkjang.github.io/aidev/projects/seaton/",
- "description": "seaton: 자율 개선 회차 4회, 릴리즈 2건. 최근 릴리즈 v1.4.3 (자산 1개).",
+ "description": "seaton: 자율 개선 회차 6회, 릴리즈 2건. 최근 릴리즈 v1.4.3 (자산 1개).",
  "inLanguage": "ko",
  "maintainer": {
   "@type": "Person",
   "name": "hkjang",
   "url": "https://github.com/hkjang"
  },
- "dateModified": "2026-09-16T17:28:06+09:00",
+ "dateModified": "2026-09-17T00:09:29+09:00",
  "version": "1.4.3"
 }
 </script>
 
 # seaton
 
-<p class="tldr"><strong>요약.</strong> seaton: 자율 개선 회차 4회, 릴리즈 2건. 최근 릴리즈 v1.4.3 (자산 1개). <span class="pill pill-released" title="14일: 릴리즈 2, 실패 0, 경고 0, 회귀 0">건강 A</span> <span class="meta">14일: 릴리즈 2, 실패 0, 경고 0, 회귀 0</span></p>
+<p class="tldr"><strong>요약.</strong> seaton: 자율 개선 회차 6회, 릴리즈 2건. 최근 릴리즈 v1.4.3 (자산 1개). <span class="pill pill-released" title="14일: 릴리즈 2, 실패 0, 경고 0, 회귀 0">건강 A</span> <span class="meta">14일: 릴리즈 2, 실패 0, 경고 0, 회귀 0</span></p>
 
-<ul class="stats"><li><b>4</b><span>회차</span></li><li><b>1</b><span>프로젝트</span></li><li><b>2</b><span>배포 준비 완료</span></li><li><b>0</b><span>릴리즈 진행 중</span></li><li><b>0</b><span>병합 완료</span></li><li><b>2</b><span>검토 대기</span></li><li><b>0</b><span>검증 실패</span></li><li><b>0</b><span>변경 없음</span></li><li><b>0</b><span>실행 오류</span></li><li><b>$45.80</b><span>비용</span></li><li><b>1시간 46분</b><span>에이전트 시간</span></li></ul>
+<ul class="stats"><li><b>6</b><span>회차</span></li><li><b>1</b><span>프로젝트</span></li><li><b>2</b><span>배포 준비 완료</span></li><li><b>0</b><span>릴리즈 진행 중</span></li><li><b>0</b><span>병합 완료</span></li><li><b>2</b><span>검토 대기</span></li><li><b>0</b><span>검증 실패</span></li><li><b>0</b><span>변경 없음</span></li><li><b>2</b><span>실행 오류</span></li><li><b>$45.80</b><span>비용</span></li><li><b>1시간 46분</b><span>에이전트 시간</span></li></ul>
 
 ## 현황
 
 <dl class="kv">
 <dt>저장소</dt><dd><a href="https://github.com/hkjang/seaton">https://github.com/hkjang/seaton</a></dd>
-<dt>마지막 회차</dt><dd>2026-09-16 10:48 KST — <span class="pill pill-other">• 기타</span> review held, PR open <a href="https://github.com/hkjang/seaton/pull/28">PR #28</a></dd>
+<dt>마지막 회차</dt><dd>2026-09-16 21:23 KST — <span class="pill pill-other">• 기타</span> hold: budget</dd>
 <dt>최근 릴리즈</dt><dd><a href="https://github.com/hkjang/seaton/releases/tag/v1.4.3">v1.4.3</a> — released · 자산 1개 (이전 v1.4.2: 1개) <a href="https://github.com/hkjang/seaton/releases">전체 릴리즈 →</a></dd>
 </dl>
 
 ## 회차 이력
 
-<div class="table-wrap"><table class="rt"><thead><tr><th>일시</th><th class="primary">프로젝트</th><th>결과</th></tr></thead><tbody><tr data-status="other"><td data-label="일시">2026-09-16 10:48</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/seaton/">seaton</a></td><td data-label="결과"><span class="pill pill-merged" title="outcome=review-pending">검토 대기</span> review held, PR open <a href="https://github.com/hkjang/seaton/pull/28">PR #28</a><div class="meta">25파일 <span style="color:var(--good)">+2667</span>/<span style="color:var(--bad)">−24</span> · 테스트 4 — feat: 사내 SMTP 릴레이로 보내는 이벤트 메일 알림 (자리 배정·분석 완료·인사 연동 실패·API 키 만료 임박)</div></td></tr><tr data-status="released"><td data-label="일시">2026-09-13 19:41</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/seaton/">seaton</a></td><td data-label="결과"><span class="pill pill-released" title="outcome=release-ready">배포 준비 완료</span> merged <a href="https://github.com/hkjang/seaton/pull/27">PR #27</a>, released <a href="https://github.com/hkjang/seaton/releases/tag/v1.4.3">v1.4.3</a><div class="meta">20파일 <span style="color:var(--good)">+2106</span>/<span style="color:var(--bad)">−14</span> · 테스트 4 — feat: 관리자가 화면에서 붙이는 방문 추적 스니펫과 nonce 기반 CSP (Momento 같은 오리진 프록시)</div></td></tr><tr data-status="released"><td data-label="일시">2026-09-13 16:13</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/seaton/">seaton</a></td><td data-label="결과"><span class="pill pill-released" title="outcome=release-ready">배포 준비 완료</span> merged <a href="https://github.com/hkjang/seaton/pull/26">PR #26</a>, released <a href="https://github.com/hkjang/seaton/releases/tag/v1.4.2">v1.4.2</a><div class="meta">11파일 <span style="color:var(--good)">+522</span>/<span style="color:var(--bad)">−9</span> · 테스트 3 — feat: Keycloak 세션이 있으면 로그인 화면 없이 조용히 로그인(prompt=none)</div></td></tr><tr data-status="other"><td data-label="일시">2026-09-11 21:02</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/seaton/">seaton</a></td><td data-label="결과"><span class="pill pill-merged" title="outcome=review-pending">검토 대기</span> review held, PR open <a href="https://github.com/hkjang/seaton/pull/25">PR #25</a><div class="meta">31파일 <span style="color:var(--good)">+1214</span>/<span style="color:var(--bad)">−402</span> · <em>테스트 없음</em> — docs: 사용자·관리자 가이드를 실제 화면 캡처와 함께 표준 구성으로 정비</div></td></tr></tbody></table></div>
+<div class="table-wrap"><table class="rt"><thead><tr><th>일시</th><th class="primary">프로젝트</th><th>결과</th></tr></thead><tbody><tr data-status="other"><td data-label="일시">2026-09-16 21:23</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/seaton/">seaton</a></td><td data-label="결과"><span class="pill pill-failed" title="outcome=error">실행 오류</span> hold: budget</td></tr><tr data-status="other"><td data-label="일시">2026-09-16 19:13</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/seaton/">seaton</a></td><td data-label="결과"><span class="pill pill-failed" title="outcome=error">실행 오류</span> hold: budget</td></tr><tr data-status="other"><td data-label="일시">2026-09-16 10:48</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/seaton/">seaton</a></td><td data-label="결과"><span class="pill pill-merged" title="outcome=review-pending">검토 대기</span> review held, PR open <a href="https://github.com/hkjang/seaton/pull/28">PR #28</a><div class="meta">25파일 <span style="color:var(--good)">+2667</span>/<span style="color:var(--bad)">−24</span> · 테스트 4 — feat: 사내 SMTP 릴레이로 보내는 이벤트 메일 알림 (자리 배정·분석 완료·인사 연동 실패·API 키 만료 임박)</div></td></tr><tr data-status="released"><td data-label="일시">2026-09-13 19:41</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/seaton/">seaton</a></td><td data-label="결과"><span class="pill pill-released" title="outcome=release-ready">배포 준비 완료</span> merged <a href="https://github.com/hkjang/seaton/pull/27">PR #27</a>, released <a href="https://github.com/hkjang/seaton/releases/tag/v1.4.3">v1.4.3</a><div class="meta">20파일 <span style="color:var(--good)">+2106</span>/<span style="color:var(--bad)">−14</span> · 테스트 4 — feat: 관리자가 화면에서 붙이는 방문 추적 스니펫과 nonce 기반 CSP (Momento 같은 오리진 프록시)</div></td></tr><tr data-status="released"><td data-label="일시">2026-09-13 16:13</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/seaton/">seaton</a></td><td data-label="결과"><span class="pill pill-released" title="outcome=release-ready">배포 준비 완료</span> merged <a href="https://github.com/hkjang/seaton/pull/26">PR #26</a>, released <a href="https://github.com/hkjang/seaton/releases/tag/v1.4.2">v1.4.2</a><div class="meta">11파일 <span style="color:var(--good)">+522</span>/<span style="color:var(--bad)">−9</span> · 테스트 3 — feat: Keycloak 세션이 있으면 로그인 화면 없이 조용히 로그인(prompt=none)</div></td></tr><tr data-status="other"><td data-label="일시">2026-09-11 21:02</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/seaton/">seaton</a></td><td data-label="결과"><span class="pill pill-merged" title="outcome=review-pending">검토 대기</span> review held, PR open <a href="https://github.com/hkjang/seaton/pull/25">PR #25</a><div class="meta">31파일 <span style="color:var(--good)">+1214</span>/<span style="color:var(--bad)">−402</span> · <em>테스트 없음</em> — docs: 사용자·관리자 가이드를 실제 화면 캡처와 함께 표준 구성으로 정비</div></td></tr></tbody></table></div>
 
 ## 비용·사용량
 

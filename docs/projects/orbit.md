@@ -1,7 +1,7 @@
 ---
 title: "orbit — 자율 개선 이력"
-description: "orbit: 자율 개선 회차 4회, 릴리즈 0건. 최근 릴리즈 없음."
-last_modified_at: 2026-09-16 17:28:06 +0900
+description: "orbit: 자율 개선 회차 7회, 릴리즈 0건. 최근 릴리즈 없음."
+last_modified_at: 2026-09-17 00:09:29 +0900
 ---
 {% raw %}
 <script type="application/ld+json">
@@ -11,33 +11,33 @@ last_modified_at: 2026-09-16 17:28:06 +0900
  "name": "orbit",
  "codeRepository": "https://github.com/hkjang/orbit",
  "url": "https://hkjang.github.io/aidev/projects/orbit/",
- "description": "orbit: 자율 개선 회차 4회, 릴리즈 0건. 최근 릴리즈 없음.",
+ "description": "orbit: 자율 개선 회차 7회, 릴리즈 0건. 최근 릴리즈 없음.",
  "inLanguage": "ko",
  "maintainer": {
   "@type": "Person",
   "name": "hkjang",
   "url": "https://github.com/hkjang"
  },
- "dateModified": "2026-09-16T17:28:06+09:00"
+ "dateModified": "2026-09-17T00:09:29+09:00"
 }
 </script>
 
 # orbit
 
-<p class="tldr"><strong>요약.</strong> orbit: 자율 개선 회차 4회, 릴리즈 0건. 최근 릴리즈 없음. <span class="pill pill-merged" title="14일: 릴리즈 0, 실패 0, 경고 3, 회귀 0">건강 C</span> <span class="meta">14일: 릴리즈 0, 실패 0, 경고 3, 회귀 0</span></p>
+<p class="tldr"><strong>요약.</strong> orbit: 자율 개선 회차 7회, 릴리즈 0건. 최근 릴리즈 없음. <span class="pill pill-merged" title="14일: 릴리즈 0, 실패 0, 경고 3, 회귀 0">건강 C</span> <span class="meta">14일: 릴리즈 0, 실패 0, 경고 3, 회귀 0</span></p>
 
-<ul class="stats"><li><b>4</b><span>회차</span></li><li><b>1</b><span>프로젝트</span></li><li><b>0</b><span>배포 준비 완료</span></li><li><b>0</b><span>릴리즈 진행 중</span></li><li><b>0</b><span>병합 완료</span></li><li><b>4</b><span>검토 대기</span></li><li><b>0</b><span>검증 실패</span></li><li><b>0</b><span>변경 없음</span></li><li><b>0</b><span>실행 오류</span></li><li><b>$25.81</b><span>비용</span></li><li><b>57분</b><span>에이전트 시간</span></li></ul>
+<ul class="stats"><li><b>7</b><span>회차</span></li><li><b>1</b><span>프로젝트</span></li><li><b>0</b><span>배포 준비 완료</span></li><li><b>0</b><span>릴리즈 진행 중</span></li><li><b>0</b><span>병합 완료</span></li><li><b>4</b><span>검토 대기</span></li><li><b>0</b><span>검증 실패</span></li><li><b>0</b><span>변경 없음</span></li><li><b>3</b><span>실행 오류</span></li><li><b>$25.81</b><span>비용</span></li><li><b>57분</b><span>에이전트 시간</span></li></ul>
 
 ## 현황
 
 <dl class="kv">
 <dt>저장소</dt><dd><a href="https://github.com/hkjang/orbit">https://github.com/hkjang/orbit</a></dd>
-<dt>마지막 회차</dt><dd>2026-09-16 16:07 KST — <span class="pill pill-other">• 기타</span> <strong>guarded files</strong>, PR open <a href="https://github.com/hkjang/orbit/pull/4">PR #4</a></dd>
+<dt>마지막 회차</dt><dd>2026-09-16 21:02 KST — <span class="pill pill-other">• 기타</span> hold: budget</dd>
 </dl>
 
 ## 회차 이력
 
-<div class="table-wrap"><table class="rt"><thead><tr><th>일시</th><th class="primary">프로젝트</th><th>결과</th></tr></thead><tbody><tr data-status="other"><td data-label="일시">2026-09-16 16:07</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/orbit/">orbit</a></td><td data-label="결과"><span class="pill pill-merged" title="outcome=review-pending">검토 대기</span> <strong>guarded files</strong>, PR open <a href="https://github.com/hkjang/orbit/pull/4">PR #4</a><div class="meta">23파일 <span style="color:var(--good)">+2295</span>/<span style="color:var(--bad)">−4</span> · 테스트 3 — feat(mail): 사내 SMTP 릴레이로 검토 요청·검토 결과·계정 준비 알림을 보낸다</div></td></tr><tr data-status="other"><td data-label="일시">2026-09-16 01:44</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/orbit/">orbit</a></td><td data-label="결과"><span class="pill pill-merged" title="outcome=review-pending">검토 대기</span> <strong>guarded files</strong>, PR open <a href="https://github.com/hkjang/orbit/pull/3">PR #3</a><div class="meta">17파일 <span style="color:var(--good)">+1148</span>/<span style="color:var(--bad)">−3</span> · 테스트 2 — feat(handoff): 승인된 기억을 다른 사내 서비스로 넘긴다</div></td></tr><tr data-status="other"><td data-label="일시">2026-09-16 01:19</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/orbit/">orbit</a></td><td data-label="결과"><span class="pill pill-merged" title="outcome=review-pending">검토 대기</span> <strong>guarded files</strong>, PR open <a href="https://github.com/hkjang/orbit/pull/2">PR #2</a><div class="meta">15파일 <span style="color:var(--good)">+1913</span>/<span style="color:var(--bad)">−11</span> · 테스트 3 — feat(admin): 관리자가 화면에서 방문 추적 스크립트를 붙일 수 있게 한다</div></td></tr><tr data-status="other"><td data-label="일시">2026-09-14 09:51</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/orbit/">orbit</a></td><td data-label="결과"><span class="pill pill-merged" title="outcome=review-pending">검토 대기</span> review held, PR open <a href="https://github.com/hkjang/orbit/pull/1">PR #1</a><div class="meta">13파일 <span style="color:var(--good)">+529</span>/<span style="color:var(--bad)">−21</span> · 테스트 2 — feat(auth): Keycloak에 이미 로그인한 사람은 로그인 화면 없이 들여보낸다</div></td></tr></tbody></table></div>
+<div class="table-wrap"><table class="rt"><thead><tr><th>일시</th><th class="primary">프로젝트</th><th>결과</th></tr></thead><tbody><tr data-status="other"><td data-label="일시">2026-09-16 21:02</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/orbit/">orbit</a></td><td data-label="결과"><span class="pill pill-failed" title="outcome=error">실행 오류</span> hold: budget</td></tr><tr data-status="other"><td data-label="일시">2026-09-16 20:53</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/orbit/">orbit</a></td><td data-label="결과"><span class="pill pill-failed" title="outcome=error">실행 오류</span> hold: budget</td></tr><tr data-status="other"><td data-label="일시">2026-09-16 18:43</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/orbit/">orbit</a></td><td data-label="결과"><span class="pill pill-failed" title="outcome=error">실행 오류</span> hold: budget</td></tr><tr data-status="other"><td data-label="일시">2026-09-16 16:07</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/orbit/">orbit</a></td><td data-label="결과"><span class="pill pill-merged" title="outcome=review-pending">검토 대기</span> <strong>guarded files</strong>, PR open <a href="https://github.com/hkjang/orbit/pull/4">PR #4</a><div class="meta">23파일 <span style="color:var(--good)">+2295</span>/<span style="color:var(--bad)">−4</span> · 테스트 3 — feat(mail): 사내 SMTP 릴레이로 검토 요청·검토 결과·계정 준비 알림을 보낸다</div></td></tr><tr data-status="other"><td data-label="일시">2026-09-16 01:44</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/orbit/">orbit</a></td><td data-label="결과"><span class="pill pill-merged" title="outcome=review-pending">검토 대기</span> <strong>guarded files</strong>, PR open <a href="https://github.com/hkjang/orbit/pull/3">PR #3</a><div class="meta">17파일 <span style="color:var(--good)">+1148</span>/<span style="color:var(--bad)">−3</span> · 테스트 2 — feat(handoff): 승인된 기억을 다른 사내 서비스로 넘긴다</div></td></tr><tr data-status="other"><td data-label="일시">2026-09-16 01:19</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/orbit/">orbit</a></td><td data-label="결과"><span class="pill pill-merged" title="outcome=review-pending">검토 대기</span> <strong>guarded files</strong>, PR open <a href="https://github.com/hkjang/orbit/pull/2">PR #2</a><div class="meta">15파일 <span style="color:var(--good)">+1913</span>/<span style="color:var(--bad)">−11</span> · 테스트 3 — feat(admin): 관리자가 화면에서 방문 추적 스크립트를 붙일 수 있게 한다</div></td></tr><tr data-status="other"><td data-label="일시">2026-09-14 09:51</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/orbit/">orbit</a></td><td data-label="결과"><span class="pill pill-merged" title="outcome=review-pending">검토 대기</span> review held, PR open <a href="https://github.com/hkjang/orbit/pull/1">PR #1</a><div class="meta">13파일 <span style="color:var(--good)">+529</span>/<span style="color:var(--bad)">−21</span> · 테스트 2 — feat(auth): Keycloak에 이미 로그인한 사람은 로그인 화면 없이 들여보낸다</div></td></tr></tbody></table></div>
 
 ## 비용·사용량
 

@@ -1,7 +1,7 @@
 ---
 title: "qurio — 자율 개선 이력"
-description: "qurio: 자율 개선 회차 5회, 릴리즈 0건. 최근 릴리즈 v1.4.0."
-last_modified_at: 2026-09-16 17:28:06 +0900
+description: "qurio: 자율 개선 회차 8회, 릴리즈 0건. 최근 릴리즈 v1.4.0."
+last_modified_at: 2026-09-17 00:09:29 +0900
 ---
 {% raw %}
 <script type="application/ld+json">
@@ -11,35 +11,35 @@ last_modified_at: 2026-09-16 17:28:06 +0900
  "name": "qurio",
  "codeRepository": "https://github.com/hkjang/qurio",
  "url": "https://hkjang.github.io/aidev/projects/qurio/",
- "description": "qurio: 자율 개선 회차 5회, 릴리즈 0건. 최근 릴리즈 v1.4.0.",
+ "description": "qurio: 자율 개선 회차 8회, 릴리즈 0건. 최근 릴리즈 v1.4.0.",
  "inLanguage": "ko",
  "maintainer": {
   "@type": "Person",
   "name": "hkjang",
   "url": "https://github.com/hkjang"
  },
- "dateModified": "2026-09-16T17:28:06+09:00",
+ "dateModified": "2026-09-17T00:09:29+09:00",
  "version": "1.4.0"
 }
 </script>
 
 # qurio
 
-<p class="tldr"><strong>요약.</strong> qurio: 자율 개선 회차 5회, 릴리즈 0건. 최근 릴리즈 v1.4.0. <span class="pill pill-merged" title="14일: 릴리즈 0, 실패 0, 경고 3, 회귀 0">건강 C</span> <span class="meta">14일: 릴리즈 0, 실패 0, 경고 3, 회귀 0</span></p>
+<p class="tldr"><strong>요약.</strong> qurio: 자율 개선 회차 8회, 릴리즈 0건. 최근 릴리즈 v1.4.0. <span class="pill pill-merged" title="14일: 릴리즈 0, 실패 0, 경고 3, 회귀 0">건강 C</span> <span class="meta">14일: 릴리즈 0, 실패 0, 경고 3, 회귀 0</span></p>
 
-<ul class="stats"><li><b>5</b><span>회차</span></li><li><b>1</b><span>프로젝트</span></li><li><b>0</b><span>배포 준비 완료</span></li><li><b>1</b><span>릴리즈 진행 중</span></li><li><b>0</b><span>병합 완료</span></li><li><b>4</b><span>검토 대기</span></li><li><b>0</b><span>검증 실패</span></li><li><b>0</b><span>변경 없음</span></li><li><b>0</b><span>실행 오류</span></li><li><b>$37.10</b><span>비용</span></li><li><b>1시간 28분</b><span>에이전트 시간</span></li></ul>
+<ul class="stats"><li><b>8</b><span>회차</span></li><li><b>1</b><span>프로젝트</span></li><li><b>0</b><span>배포 준비 완료</span></li><li><b>1</b><span>릴리즈 진행 중</span></li><li><b>0</b><span>병합 완료</span></li><li><b>4</b><span>검토 대기</span></li><li><b>0</b><span>검증 실패</span></li><li><b>0</b><span>변경 없음</span></li><li><b>3</b><span>실행 오류</span></li><li><b>$37.10</b><span>비용</span></li><li><b>1시간 28분</b><span>에이전트 시간</span></li></ul>
 
 ## 현황
 
 <dl class="kv">
 <dt>저장소</dt><dd><a href="https://github.com/hkjang/qurio">https://github.com/hkjang/qurio</a></dd>
-<dt>마지막 회차</dt><dd>2026-09-16 14:55 KST — <span class="pill pill-other">• 기타</span> <strong>guarded files</strong>, PR open <a href="https://github.com/hkjang/qurio/pull/14">PR #14</a></dd>
+<dt>마지막 회차</dt><dd>2026-09-16 21:13 KST — <span class="pill pill-other">• 기타</span> hold: budget</dd>
 <dt>최근 릴리즈</dt><dd><a href="https://github.com/hkjang/qurio/releases/tag/v1.4.0">v1.4.0</a> — released <a href="https://github.com/hkjang/qurio/releases">전체 릴리즈 →</a></dd>
 </dl>
 
 ## 회차 이력
 
-<div class="table-wrap"><table class="rt"><thead><tr><th>일시</th><th class="primary">프로젝트</th><th>결과</th></tr></thead><tbody><tr data-status="other"><td data-label="일시">2026-09-16 14:55</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/qurio/">qurio</a></td><td data-label="결과"><span class="pill pill-merged" title="outcome=review-pending">검토 대기</span> <strong>guarded files</strong>, PR open <a href="https://github.com/hkjang/qurio/pull/14">PR #14</a><div class="meta">42파일 <span style="color:var(--good)">+2147</span>/<span style="color:var(--bad)">−54</span> · 테스트 2 — feat: add SMTP relay mail notifications for approvals, failed jobs, and expiring API keys</div></td></tr><tr data-status="other"><td data-label="일시">2026-09-14 22:03</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/qurio/">qurio</a></td><td data-label="결과"><span class="pill pill-merged" title="outcome=review-pending">검토 대기</span> <strong>guarded files</strong>, PR open <a href="https://github.com/hkjang/qurio/pull/13">PR #13</a><div class="meta">43파일 <span style="color:var(--good)">+1415</span>/<span style="color:var(--bad)">−51</span> · 테스트 6 — feat: hand saved CSV results to other intranet services with single-use claims</div></td></tr><tr data-status="other"><td data-label="일시">2026-09-14 19:43</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/qurio/">qurio</a></td><td data-label="결과"><span class="pill pill-merged" title="outcome=review-pending">검토 대기</span> review held, PR open <a href="https://github.com/hkjang/qurio/pull/12">PR #12</a><div class="meta">33파일 <span style="color:var(--good)">+1636</span>/<span style="color:var(--bad)">−30</span> · 테스트 5 — feat: add administrator-managed visitor tracking with CSP nonce and Momento proxy</div></td></tr><tr data-status="other"><td data-label="일시">2026-09-14 14:46</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/qurio/">qurio</a></td><td data-label="결과"><span class="pill pill-merged" title="outcome=releasing">릴리즈 진행 중</span> release-only, release tag held (timeout)</td></tr><tr data-status="other"><td data-label="일시">2026-09-14 04:37</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/qurio/">qurio</a></td><td data-label="결과"><span class="pill pill-merged" title="outcome=review-pending">검토 대기</span> <strong>guarded files</strong>, PR open <a href="https://github.com/hkjang/qurio/pull/10">PR #10</a><div class="meta">35파일 <span style="color:var(--good)">+700</span>/<span style="color:var(--bad)">−72</span> · 테스트 4 — feat: add silent OIDC sign-in with prompt=none loop guards</div></td></tr></tbody></table></div>
+<div class="table-wrap"><table class="rt"><thead><tr><th>일시</th><th class="primary">프로젝트</th><th>결과</th></tr></thead><tbody><tr data-status="other"><td data-label="일시">2026-09-16 21:13</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/qurio/">qurio</a></td><td data-label="결과"><span class="pill pill-failed" title="outcome=error">실행 오류</span> hold: budget</td></tr><tr data-status="other"><td data-label="일시">2026-09-16 19:02</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/qurio/">qurio</a></td><td data-label="결과"><span class="pill pill-failed" title="outcome=error">실행 오류</span> hold: budget</td></tr><tr data-status="other"><td data-label="일시">2026-09-16 18:53</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/qurio/">qurio</a></td><td data-label="결과"><span class="pill pill-failed" title="outcome=error">실행 오류</span> hold: budget</td></tr><tr data-status="other"><td data-label="일시">2026-09-16 14:55</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/qurio/">qurio</a></td><td data-label="결과"><span class="pill pill-merged" title="outcome=review-pending">검토 대기</span> <strong>guarded files</strong>, PR open <a href="https://github.com/hkjang/qurio/pull/14">PR #14</a><div class="meta">42파일 <span style="color:var(--good)">+2147</span>/<span style="color:var(--bad)">−54</span> · 테스트 2 — feat: add SMTP relay mail notifications for approvals, failed jobs, and expiring API keys</div></td></tr><tr data-status="other"><td data-label="일시">2026-09-14 22:03</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/qurio/">qurio</a></td><td data-label="결과"><span class="pill pill-merged" title="outcome=review-pending">검토 대기</span> <strong>guarded files</strong>, PR open <a href="https://github.com/hkjang/qurio/pull/13">PR #13</a><div class="meta">43파일 <span style="color:var(--good)">+1415</span>/<span style="color:var(--bad)">−51</span> · 테스트 6 — feat: hand saved CSV results to other intranet services with single-use claims</div></td></tr><tr data-status="other"><td data-label="일시">2026-09-14 19:43</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/qurio/">qurio</a></td><td data-label="결과"><span class="pill pill-merged" title="outcome=review-pending">검토 대기</span> review held, PR open <a href="https://github.com/hkjang/qurio/pull/12">PR #12</a><div class="meta">33파일 <span style="color:var(--good)">+1636</span>/<span style="color:var(--bad)">−30</span> · 테스트 5 — feat: add administrator-managed visitor tracking with CSP nonce and Momento proxy</div></td></tr><tr data-status="other"><td data-label="일시">2026-09-14 14:46</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/qurio/">qurio</a></td><td data-label="결과"><span class="pill pill-merged" title="outcome=releasing">릴리즈 진행 중</span> release-only, release tag held (timeout)</td></tr><tr data-status="other"><td data-label="일시">2026-09-14 04:37</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/qurio/">qurio</a></td><td data-label="결과"><span class="pill pill-merged" title="outcome=review-pending">검토 대기</span> <strong>guarded files</strong>, PR open <a href="https://github.com/hkjang/qurio/pull/10">PR #10</a><div class="meta">35파일 <span style="color:var(--good)">+700</span>/<span style="color:var(--bad)">−72</span> · 테스트 4 — feat: add silent OIDC sign-in with prompt=none loop guards</div></td></tr></tbody></table></div>
 
 ## 비용·사용량
 

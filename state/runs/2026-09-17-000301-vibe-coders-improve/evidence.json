@@ -1,0 +1,135 @@
+{
+  "run_id": "2026-09-17-000301-vibe-coders-improve",
+  "generated": "2026-09-17T00:09:28+09:00",
+  "run": {
+    "run_id": "2026-09-17-000301-vibe-coders-improve",
+    "project": "vibe-coders",
+    "kind": "improve",
+    "started": "2026-09-17T00:03:01+09:00",
+    "model": "claude-opus-5",
+    "policy_version": "78619c0e",
+    "prompts_hash": "82f2440d4b2fef65",
+    "runner_version": "b8f3f83f",
+    "finished": "2026-09-17T00:09:28+09:00",
+    "outcome": "verify-failed"
+  },
+  "record": {
+    "ts": "2026-09-17T00:09:28+09:00",
+    "date": "2026-09-17",
+    "project": "vibe-coders",
+    "result": "verify failed: 실패한 검증: cd web && [ -d node_modules ] || npm ci --no-audit --no-fund (exit 1)",
+    "outcome": "verify-failed",
+    "run_id": "2026-09-17-000301-vibe-coders-improve",
+    "base_sha": "d67267b5e47de66a45c35120c7465d85f5c009f9",
+    "head_sha": "a29586d4ffdd7146ecd5265c44d52e17a79c7671",
+    "pr": "",
+    "stages": {
+      "base": {
+        "state": "pinned",
+        "reason": "master@d67267b",
+        "at": "2026-09-17T00:03:13+09:00"
+      },
+      "autonomy": {
+        "state": "release",
+        "reason": "",
+        "at": "2026-09-17T00:03:13+09:00"
+      },
+      "verify": {
+        "state": "failed",
+        "reason": "실패한 검증: cd web && [ -d node_modules ] || npm ci --no-audit --no-fund (exit 1)",
+        "at": "2026-09-17T00:09:28+09:00"
+      }
+    },
+    "campaign": "",
+    "autonomy": "release",
+    "files": 3,
+    "additions": 79,
+    "deletions": 20,
+    "tests": 1,
+    "title": "fix(audit): cost versioned models at the most specific price"
+  },
+  "stages": {
+    "base": {
+      "state": "pinned",
+      "reason": "master@d67267b",
+      "at": "2026-09-17T00:03:13+09:00"
+    },
+    "autonomy": {
+      "state": "release",
+      "reason": "",
+      "at": "2026-09-17T00:03:13+09:00"
+    },
+    "verify": {
+      "state": "failed",
+      "reason": "실패한 검증: cd web && [ -d node_modules ] || npm ci --no-audit --no-fund (exit 1)",
+      "at": "2026-09-17T00:09:28+09:00"
+    }
+  },
+  "provenance": {
+    "model": "claude-opus-5",
+    "policy_version": "78619c0e",
+    "prompts_hash": "82f2440d4b2fef65",
+    "runner_version": "b8f3f83f",
+    "base_sha": "d67267b5e47de66a45c35120c7465d85f5c009f9",
+    "head_sha": "a29586d4ffdd7146ecd5265c44d52e17a79c7671",
+    "pr": ""
+  },
+  "verification": {
+    "runner": {
+      "source": "auto",
+      "commands": [
+        {
+          "cmd": "go build ./...",
+          "exit": 0,
+          "seconds": 1
+        },
+        {
+          "cmd": "go vet ./...",
+          "exit": 0,
+          "seconds": 1
+        },
+        {
+          "cmd": "go test ./...",
+          "exit": 0,
+          "seconds": 60
+        },
+        {
+          "cmd": "cd web && [ -d node_modules ] || npm ci --no-audit --no-fund",
+          "exit": 1,
+          "seconds": 0
+        }
+      ]
+    },
+    "runner_gate": {
+      "ok": false,
+      "state": "verify-failed",
+      "reason": "실패한 검증: cd web && [ -d node_modules ] || npm ci --no-audit --no-fund (exit 1)"
+    },
+    "after_rebase": null,
+    "review": null,
+    "ci_gate": null
+  },
+  "release": {
+    "result": null,
+    "assets_sha256": []
+  },
+  "approval": null,
+  "usage": [
+    {
+      "ts": "2026-09-17T00:08:26+09:00",
+      "date": "2026-09-17",
+      "project": "vibe-coders",
+      "phase": "improve",
+      "run_id": "2026-09-17-000301-vibe-coders-improve",
+      "campaign": "",
+      "subtype": "success",
+      "duration_ms": 331789,
+      "num_turns": 28,
+      "cost_usd": 1.6271509999999998,
+      "input_tokens": 56,
+      "output_tokens": 13891,
+      "cache_read": 1419012,
+      "cache_create": 55431
+    }
+  ]
+}
