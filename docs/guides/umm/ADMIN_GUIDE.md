@@ -280,7 +280,7 @@ psql "$POSTGRES_DSN" -v ON_ERROR_STOP=1 -f migrations/down/027_note_attachments.
   `/api/v1/metrics` 는 관리자 세션이나 `metrics:read` 키가 있어야 하지만 route 별 지연을 드러내므로 수집기에만 엽니다.
 - **Proxy** — `UMM_TRUSTED_PROXY_CIDRS` 를 proxy 의 실제 대역으로만. 비우면 forwarding header 를 전부 버리므로 잠금·요청
   제한이 proxy 주소 하나에 걸립니다. `0.0.0.0/0` 은 클라이언트가 주소를 위조하게 합니다.
-- **인증 연동** — Keycloak OIDC(부록 2). Client 는 Confidential, redirect URI 는 `https://<umm>/api/v1/auth/oidc/callback`.
+- **인증 연동** — Keycloak OIDC(부록 2). Client 는 Confidential, redirect URI 는 `https://<umm>/api/v1/auth/oidc/callback`. MCP 클라이언트의 Keycloak 로그인은 부록 2-2 — 별도의 Public Client 와 Audience 매퍼가 필요합니다.
   로컬 로그인은 남용 방지의 잠금 규칙을 따릅니다(부록 4-1).
 - **키** — `ENCRYPTION_KEY` 는 백업과 함께 별도 비밀 저장소에. 회전은 부록 8. API 키는 사용자가 만들되 스코프는
   관리자가 허용한 범위 안이고, `notes:read` 만으로는 외부 AI 호출이 일어나지 않습니다.
@@ -354,6 +354,64 @@ Keycloak 의 프레임 허용 여부와 무관합니다. 깊은 링크(`/space/<
 **확인.** Keycloak 에 로그인한 브라우저로 umm 을 열면 로그인 화면 없이 본 화면이 떠야 하고, 로그인하지 않은
 브라우저로 열면 로그인 화면이 한 번 뜬 뒤 새로고침을 반복해도 깜빡이지 않아야 하며, 로그아웃한 뒤 다시
 열어도 자동으로 로그인되지 않아야 합니다.
+
+### 부록 2-2. MCP 클라이언트의 Keycloak 로그인 (`mcp_oauth`)
+
+Claude Code·Claude Desktop·Cursor 같은 MCP 클라이언트가 **개인 키 없이** Keycloak 로그인으로 umm 에 연결하게 하는
+설정입니다. 스위치 이름은 **"MCP 클라이언트가 Keycloak 로그인으로 연결하기"**, 설정 키는 `oidc.mcp_oauth`, **기본값은
+꺼짐**입니다. 꺼진 동안 `/mcp` 는 예전 그대로 키만 받고, `/.well-known/oauth-protected-resource` 는 404 입니다. 켜도 키는
+그대로 동작합니다.
+
+**역할 분담.** umm 은 MCP 인가 흐름(RFC 9728 Protected Resource Metadata + OAuth 2.1)의 **리소스 서버**만 맡습니다. 클라이언트
+등록, 로그인 화면, 코드 교환, 토큰 갱신은 전부 Keycloak 과 클라이언트 사이에서 일어나고 umm 은 관여하지 않습니다. umm 이 하는
+일은 둘입니다 — 자격 없는 클라이언트에게 `401` 과 함께 어디서 로그인할지 알려 주고(`WWW-Authenticate: Bearer
+resource_metadata="<공개 URL>/.well-known/oauth-protected-resource/mcp"`), 돌아온 액세스 토큰을 검증합니다.
+
+**Keycloak 준비.** SSO 용 Confidential Client(부록 2)와는 별개로 세 가지가 필요합니다.
+
+1. **MCP 클라이언트용 Public Client** — 예: `umm-mcp`
+   - Client authentication: `OFF` (Public). MCP 클라이언트는 데스크톱 프로그램이라 secret 을 지킬 수 없습니다
+   - Standard Flow: `ON`, Advanced → *Proof Key for Code Exchange Code Challenge Method*: `S256`
+   - Valid redirect URIs: 클라이언트가 브라우저를 되돌려 받는 주소. 대개 `http://localhost:*` 또는 `http://127.0.0.1:*` 형태이며
+     정확한 값은 각 클라이언트 문서에 있습니다
+   - 클라이언트가 사전 등록된 Client ID 를 받지 않고 **동적 등록**(RFC 7591)만 지원한다면, Realm → Clients → *Client registration*
+     에서 Anonymous 정책(Trusted Hosts 등)을 열거나 Initial Access Token 을 발급합니다. 사전 등록이 되는 클라이언트라면 이 단계는
+     없습니다
+2. **Audience 매퍼** — 토큰의 `aud` 에 umm 을 넣습니다
+   - Client Scopes → `umm-mcp-dedicated`(또는 새 Client Scope) → Mappers → *Audience*
+   - Included Custom Audience: `https://<umm-domain>/mcp`. umm 설정의 **MCP 토큰 audience** 를 비워 두면 이 값이 기대값이고, 다른
+     값을 쓰려면 양쪽에 같은 값을 넣습니다
+   - `aud` 가 다른 토큰은 서명이 맞아도 거절됩니다. 같은 Realm 의 다른 서비스용 토큰이 umm 에서 통하지 않게 하는 것이 이 값의 역할입니다
+3. **이름이 곧 권한인 Client Scope** — `notes:read`, `notes:write`, `spaces:read`, `dreams:read`
+   - Client Scopes → Create: 이름을 정확히 이렇게, *Include in token scope*: `ON`, Type: `Optional`(클라이언트가 고르게) 또는
+     `Default`(항상)
+   - Public Client 에 이 scope 들을 붙입니다. 토큰의 `scope` 클레임에 이 이름이 실리면 umm 은 같은 이름의 키 권한으로 읽습니다
+   - **키 · 권한** 화면에서 허용하지 않은 scope 는 토큰에 있어도 무시됩니다. 이 스위치를 켠다고 키 정책이 느슨해지지 않습니다.
+     `/.well-known/oauth-protected-resource/mcp` 의 `scopes_supported` 에는 도구가 쓰는 scope 중 허용된 것만 실립니다
+
+**umm 설정.** Keycloak SSO 가 켜져 있어야 스위치가 켜집니다(같은 Issuer 의 키로 토큰을 검증하므로). *MCP 토큰 audience* 는
+위 매퍼의 값과 같아야 하며 보통 비워 둡니다. 공개 URL(일반 설정)이 곧 리소스 식별자이므로 정확해야 합니다.
+
+**사람 매핑.** 토큰의 `sub` 는 SSO 로그인과 같은 `oidc_subject` 입니다. 처음 보는 사람은 로그인 콜백과 같은 그룹 매핑(관리자
+그룹·팀장 그룹)으로 만들어지고 감사 로그에 `auth.oidc.mcp.provision` 으로 남습니다. **이미 있는 사람은 그대로**입니다 — 토큰은
+역할을 바꾸지 않고, 관리자가 비활성화한 계정은 토큰이 유효해도 거절되며 다시 활성화되지 않습니다. 사용자 화면에서 바꾼 것이
+언제나 우선합니다.
+
+**동작 확인.**
+
+```bash
+# 꺼짐: 404. 켜짐: resource · authorization_servers · scopes_supported
+curl -s https://<umm-domain>/.well-known/oauth-protected-resource/mcp
+# 자격 없는 호출은 401 과 함께 위 주소를 가리키는 WWW-Authenticate 를 받습니다
+curl -si -X POST https://<umm-domain>/mcp -H 'Content-Type: application/json' \
+  -d '{"jsonrpc":"2.0","id":1,"method":"tools/list"}' | grep -i www-authenticate
+```
+
+MCP 클라이언트에 `https://<umm-domain>/mcp` 를 등록하면 브라우저에 Keycloak 로그인 창이 열리고, 로그인 뒤 `tools/list` 가
+돌아와야 합니다. 거절된 토큰은 `401` 과 `error="invalid_token"` 만 받고 이유는 서버 로그(`MCP access token refused`)에 남습니다.
+가장 흔한 원인은 `aud` 불일치(매퍼 없음)와 scope 누락(Client Scope 를 클라이언트에 붙이지 않음)입니다. 발급자 Discovery 는
+10분 동안 캐시되므로 Keycloak 의 키를 회전한 직후 첫 토큰이 잠시 거절될 수 있습니다 — 낯선 `kid` 는 즉시 다시 받아오므로
+보통은 느끼지 못합니다.
 
 ---
 
