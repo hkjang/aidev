@@ -988,3 +988,28 @@ https://github.com/hkjang/orbit/pull/4#issuecomment-5693454692
 evidence: /mnt/c/Users/USER/projects/aidev/state/runs/2026-09-16-155252-orbit-improve/evidence.json
 reports: 15 day(s), 3 week(s), 1 month(s), 812 run(s), 959 usage row(s), 43 project page(s), 18 alert(s)
 notify: no new alerts
+[16:09:55] aidev synced: run(2026-09-16): orbit — guarded files, PR open https://github.com/hkjang/orbit/pull/4
+[16:09:55] done
+[16:12:15] skip aiportal-java: STOP
+[16:12:48] candidates(41): AgentHub Clustara DartFly Invenqor Kkiit Momento Quantoss ReSSO SecCheck Vendra ai-admin aiportal-front-admin aiportal-front aiportal-py appstore cutover dataworks git-ctx hunter igame jikim jupiq kanpic madi moina moyro muni nexabuilder orbit pii-masker postra ptium qurio releasedock relio seaton sqlon umm vibe-coders visitflow weekly
+[16:12:51] campaign tracking-2026-09: 세 번 이상 실패해 더 잡지 않는 프로젝트 — weekly
+[16:12:53] campaign mail-2026-09: picked sqlon
+[16:12:53] picked: sqlon
+[16:12:54] === sqlon (base=main, run 2026-09-16-161253-sqlon-improve, 회차 예산 $28)
+Preparing worktree (new branch 'auto/2026-09-16-1612')
+HEAD is now at 57f99b7 release: v0.1.5
+[16:12:56] sqlon: [base] pinned — main@57f99b7
+[16:12:56] sqlon: [autonomy] release — 
+[16:35:32] sqlon: improve — 85 turns, 23m, $10.05, success
+[16:35:35] sqlon: verify `go build ./...` → exit 0 (2s)
+[16:35:35] sqlon: verify `go vet ./...` → exit 0 (0s)
+[16:35:44] sqlon: verify `go test ./...` → exit 0 (9s)
+[16:35:45] sqlon: [verify] passed — 검증 3개 통과 (auto)
+branch 'auto/2026-09-16-1612' set up to track 'origin/auto/2026-09-16-1612'.
+[16:35:52] sqlon: [pr] created — https://github.com/hkjang/sqlon/pull/5
+[16:38:21] sqlon: review — 22 turns, 2m, $1.33, success
+[16:38:21] sqlon: [review] rejected — 리뷰 거절: internal/mcp/mail.go:118 notifyChange 는 `callErr==nil && p.State==ReviewRequired` 를 '제출' 이벤트로 간주하지만, Approve 후에도 승인이 아직 부족한 critical 플랜(required_approvals=2, change/service.go:254)은 state 가 review_required 에 머무릅니다. admin.go:454 / server.go:1696 의 approve 훅이 이 분기로 들어가 dba/admin 에게 '승인 요청' 메일을 한 번 더 보내고, 본문은 mail/message.go:39 의 문구대로 '<승인자> 님이 변경 계획 X 을(를) 제출했습니다' 라고 승인자를 제출자로 잘못 적습니다. 임시 테스트(critical 플랜 submit→dan approve)로 재현: mail 1: to=admin@corp.test subj='변경 계획 승인 요청' body='dan 님이 … 제출했습니다'. 커밋 메시지·nav.js 문서의 '승인 요청·실행 가능' 두 이벤트만 보낸다는 설명과도 어긋납니다. 승인 카운트가 늘었을 때만(예: len(p.Approvals)>0 이면 skip 또는 별도 '추가 승인 필요' 문구) 분기하도록 고쳐야 합니다. / internal/mcp/mail_test.go:184 TestMailChangeReviewGoesToApproversNotActor 는 risk=medium(승인 1건) 만 다뤄 위 중복·오표기 경로를 검증하지 않습니다. 부분 승인(critical) 케이스 테스트가 없습니다.
+https://github.com/hkjang/sqlon/pull/5#issuecomment-5693793814
+evidence: /mnt/c/Users/USER/projects/aidev/state/runs/2026-09-16-161253-sqlon-improve/evidence.json
+reports: 15 day(s), 3 week(s), 1 month(s), 813 run(s), 961 usage row(s), 43 project page(s), 18 alert(s)
+notify: no new alerts

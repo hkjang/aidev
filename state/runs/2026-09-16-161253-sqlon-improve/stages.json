@@ -1,0 +1,27 @@
+{
+  "base": {
+    "state": "pinned",
+    "reason": "main@57f99b7",
+    "at": "2026-09-16T16:12:56+09:00"
+  },
+  "autonomy": {
+    "state": "release",
+    "reason": "",
+    "at": "2026-09-16T16:12:56+09:00"
+  },
+  "verify": {
+    "state": "passed",
+    "reason": "검증 3개 통과 (auto)",
+    "at": "2026-09-16T16:35:45+09:00"
+  },
+  "pr": {
+    "state": "created",
+    "reason": "https://github.com/hkjang/sqlon/pull/5",
+    "at": "2026-09-16T16:35:52+09:00"
+  },
+  "review": {
+    "state": "rejected",
+    "reason": "리뷰 거절: internal/mcp/mail.go:118 notifyChange 는 `callErr==nil && p.State==ReviewRequired` 를 '제출' 이벤트로 간주하지만, Approve 후에도 승인이 아직 부족한 critical 플랜(required_approvals=2, change/service.go:254)은 state 가 review_required 에 머무릅니다. admin.go:454 / server.go:1696 의 approve 훅이 이 분기로 들어가 dba/admin 에게 '승인 요청' 메일을 한 번 더 보내고, 본문은 mail/message.go:39 의 문구대로 '<승인자> 님이 변경 계획 X 을(를) 제출했습니다' 라고 승인자를 제출자로 잘못 적습니다. 임시 테스트(critical 플랜 submit→dan approve)로 재현: mail 1: to=admin@corp.test subj='변경 계획 승인 요청' body='dan 님이 … 제출했습니다'. 커밋 메시지·nav.js 문서의 '승인 요청·실행 가능' 두 이벤트만 보낸다는 설명과도 어긋납니다. 승인 카운트가 늘었을 때만(예: len(p.Approvals)>0 이면 skip 또는 별도 '추가 승인 필요' 문구) 분기하도록 고쳐야 합니다. / internal/mcp/mail_test.go:184 TestMailChangeReviewGoesToApproversNotActor 는 risk=medium(승인 1건) 만 다뤄 위 중복·오표기 경로를 검증하지 않습니다. 부분 승인(critical) 케이스 테스트가 없습니다.",
+    "at": "2026-09-16T16:38:21+09:00"
+  }
+}

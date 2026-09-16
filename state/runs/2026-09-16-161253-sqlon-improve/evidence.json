@@ -1,0 +1,181 @@
+{
+  "run_id": "2026-09-16-161253-sqlon-improve",
+  "generated": "2026-09-16T16:38:22+09:00",
+  "run": {
+    "run_id": "2026-09-16-161253-sqlon-improve",
+    "project": "sqlon",
+    "kind": "improve",
+    "started": "2026-09-16T16:12:53+09:00",
+    "model": "claude-opus-5",
+    "policy_version": "78619c0e",
+    "prompts_hash": "82f2440d4b2fef65",
+    "runner_version": "b8f3f83f",
+    "finished": "2026-09-16T16:38:22+09:00",
+    "outcome": "review-pending"
+  },
+  "record": {
+    "ts": "2026-09-16T16:38:22+09:00",
+    "date": "2026-09-16",
+    "project": "sqlon",
+    "result": "review held, PR open https://github.com/hkjang/sqlon/pull/5",
+    "outcome": "review-pending",
+    "run_id": "2026-09-16-161253-sqlon-improve",
+    "base_sha": "57f99b7233561729106c666369028763debb97b7",
+    "head_sha": "f6f13b7b630e030387dffcae9dbfd3309bcde029",
+    "pr": "https://github.com/hkjang/sqlon/pull/5",
+    "stages": {
+      "base": {
+        "state": "pinned",
+        "reason": "main@57f99b7",
+        "at": "2026-09-16T16:12:56+09:00"
+      },
+      "autonomy": {
+        "state": "release",
+        "reason": "",
+        "at": "2026-09-16T16:12:56+09:00"
+      },
+      "verify": {
+        "state": "passed",
+        "reason": "검증 3개 통과 (auto)",
+        "at": "2026-09-16T16:35:45+09:00"
+      },
+      "pr": {
+        "state": "created",
+        "reason": "https://github.com/hkjang/sqlon/pull/5",
+        "at": "2026-09-16T16:35:52+09:00"
+      },
+      "review": {
+        "state": "rejected",
+        "reason": "리뷰 거절: internal/mcp/mail.go:118 notifyChange 는 `callErr==nil && p.State==ReviewRequired` 를 '제출' 이벤트로 간주하지만, Approve 후에도 승인이 아직 부족한 critical 플랜(required_approvals=2, change/service.go:254)은 state 가 review_required 에 머무릅니다. admin.go:454 / server.go:1696 의 approve 훅이 이 분기로 들어가 dba/admin 에게 '승인 요청' 메일을 한 번 더 보내고, 본문은 mail/message.go:39 의 문구대로 '<승인자> 님이 변경 계획 X 을(를) 제출했습니다' 라고 승인자를 제출자로 잘못 적습니다. 임시 테스트(critical 플랜 submit→dan approve)로 재현: mail 1: to=admin@corp.test subj='변경 계획 승인 요청' body='dan 님이 … 제출했습니다'. 커밋 메시지·nav.js 문서의 '승인 요청·실행 가능' 두 이벤트만 보낸다는 설명과도 어긋납니다. 승인 카운트가 늘었을 때만(예: len(p.Approvals)>0 이면 skip 또는 별도 '추가 승인 필요' 문구) 분기하도록 고쳐야 합니다. / internal/mcp/mail_test.go:184 TestMailChangeReviewGoesToApproversNotActor 는 risk=medium(승인 1건) 만 다뤄 위 중복·오표기 경로를 검증하지 않습니다. 부분 승인(critical) 케이스 테스트가 없습니다.",
+        "at": "2026-09-16T16:38:21+09:00"
+      }
+    },
+    "campaign": "mail-2026-09",
+    "autonomy": "release",
+    "files": 23,
+    "additions": 2329,
+    "deletions": 9,
+    "tests": 2,
+    "title": "feat(mail): 사내 SMTP 릴레이로 이벤트 알림 메일을 보냅니다 (기본 꺼짐)"
+  },
+  "stages": {
+    "base": {
+      "state": "pinned",
+      "reason": "main@57f99b7",
+      "at": "2026-09-16T16:12:56+09:00"
+    },
+    "autonomy": {
+      "state": "release",
+      "reason": "",
+      "at": "2026-09-16T16:12:56+09:00"
+    },
+    "verify": {
+      "state": "passed",
+      "reason": "검증 3개 통과 (auto)",
+      "at": "2026-09-16T16:35:45+09:00"
+    },
+    "pr": {
+      "state": "created",
+      "reason": "https://github.com/hkjang/sqlon/pull/5",
+      "at": "2026-09-16T16:35:52+09:00"
+    },
+    "review": {
+      "state": "rejected",
+      "reason": "리뷰 거절: internal/mcp/mail.go:118 notifyChange 는 `callErr==nil && p.State==ReviewRequired` 를 '제출' 이벤트로 간주하지만, Approve 후에도 승인이 아직 부족한 critical 플랜(required_approvals=2, change/service.go:254)은 state 가 review_required 에 머무릅니다. admin.go:454 / server.go:1696 의 approve 훅이 이 분기로 들어가 dba/admin 에게 '승인 요청' 메일을 한 번 더 보내고, 본문은 mail/message.go:39 의 문구대로 '<승인자> 님이 변경 계획 X 을(를) 제출했습니다' 라고 승인자를 제출자로 잘못 적습니다. 임시 테스트(critical 플랜 submit→dan approve)로 재현: mail 1: to=admin@corp.test subj='변경 계획 승인 요청' body='dan 님이 … 제출했습니다'. 커밋 메시지·nav.js 문서의 '승인 요청·실행 가능' 두 이벤트만 보낸다는 설명과도 어긋납니다. 승인 카운트가 늘었을 때만(예: len(p.Approvals)>0 이면 skip 또는 별도 '추가 승인 필요' 문구) 분기하도록 고쳐야 합니다. / internal/mcp/mail_test.go:184 TestMailChangeReviewGoesToApproversNotActor 는 risk=medium(승인 1건) 만 다뤄 위 중복·오표기 경로를 검증하지 않습니다. 부분 승인(critical) 케이스 테스트가 없습니다.",
+      "at": "2026-09-16T16:38:21+09:00"
+    }
+  },
+  "provenance": {
+    "model": "claude-opus-5",
+    "policy_version": "78619c0e",
+    "prompts_hash": "82f2440d4b2fef65",
+    "runner_version": "b8f3f83f",
+    "base_sha": "57f99b7233561729106c666369028763debb97b7",
+    "head_sha": "f6f13b7b630e030387dffcae9dbfd3309bcde029",
+    "pr": "https://github.com/hkjang/sqlon/pull/5"
+  },
+  "verification": {
+    "runner": {
+      "source": "auto",
+      "commands": [
+        {
+          "cmd": "go build ./...",
+          "exit": 0,
+          "seconds": 2
+        },
+        {
+          "cmd": "go vet ./...",
+          "exit": 0,
+          "seconds": 0
+        },
+        {
+          "cmd": "go test ./...",
+          "exit": 0,
+          "seconds": 9
+        }
+      ]
+    },
+    "runner_gate": {
+      "ok": true,
+      "state": "verified",
+      "reason": "검증 3개 통과 (auto)"
+    },
+    "after_rebase": null,
+    "review": {
+      "verdict": "reject",
+      "reasons": [
+        "internal/mcp/mail.go:118 notifyChange 는 `callErr==nil && p.State==ReviewRequired` 를 '제출' 이벤트로 간주하지만, Approve 후에도 승인이 아직 부족한 critical 플랜(required_approvals=2, change/service.go:254)은 state 가 review_required 에 머무릅니다. admin.go:454 / server.go:1696 의 approve 훅이 이 분기로 들어가 dba/admin 에게 '승인 요청' 메일을 한 번 더 보내고, 본문은 mail/message.go:39 의 문구대로 '<승인자> 님이 변경 계획 X 을(를) 제출했습니다' 라고 승인자를 제출자로 잘못 적습니다. 임시 테스트(critical 플랜 submit→dan approve)로 재현: mail 1: to=admin@corp.test subj='변경 계획 승인 요청' body='dan 님이 … 제출했습니다'. 커밋 메시지·nav.js 문서의 '승인 요청·실행 가능' 두 이벤트만 보낸다는 설명과도 어긋납니다. 승인 카운트가 늘었을 때만(예: len(p.Approvals)>0 이면 skip 또는 별도 '추가 승인 필요' 문구) 분기하도록 고쳐야 합니다.",
+        "internal/mcp/mail_test.go:184 TestMailChangeReviewGoesToApproversNotActor 는 risk=medium(승인 1건) 만 다뤄 위 중복·오표기 경로를 검증하지 않습니다. 부분 승인(critical) 케이스 테스트가 없습니다."
+      ],
+      "notes": [
+        "기본 mail.enabled=false 이고 회귀 테스트(internal/mail, internal/mcp -run Mail) 는 모두 통과합니다. 새 설치 동작 변화 없음 확인.",
+        "mail.go:143 PLAIN 인증은 net/smtp 정책상 TLS 없는 비-localhost 세션에서 항상 거부되고(loginAuth.Start 도 같은 규칙), security=none 인 25번 릴레이에 username 을 넣으면 매번 실패합니다. settings.go 의 mail.username 도움말('비우면 인증 없이')에 'TLS/STARTTLS 없이는 인증 불가' 경고를 넣는 편이 좋습니다.",
+        "mail.go:77 restActor 는 REST 변경 핸들러마다 authenticate 를 한 번 더 호출해 메타 DB 조회가 한 번 늘어납니다(세션/키 검증 재실행). 기능상 문제는 아님.",
+        "service.go:118 Notify 는 이벤트마다 EffectiveSettings 를 읽고 수신자 수만큼 goroutine 을 띄웁니다(dba/admin 수가 많으면 동시 SMTP 세션 수 = 수신자 수). 소규모 사내 릴레이에서는 무방.",
+        "되돌리기: 코드 revert 로 동작은 완전히 돌아오지만 메타 DB 에 저장된 mail.* 키와 data/mail/deliveries-*.jsonl 파일은 남습니다(무해). 외부 상태 변경 없음.",
+        "docs/admin_guide.pdf, docs/reports/admin_guide.pdf 가 각각 +210KB 바이너리로 재생성되었고 docs/reports/admin_guide.{md,html} 에 같은 내용이 중복 추가되었습니다. 커밋 메시지에 'PDF 재생성' 으로 명시되어 있어 범위 이탈은 아니지만 저장소 크기 부담."
+      ],
+      "risk": "medium"
+    },
+    "ci_gate": null
+  },
+  "release": {
+    "result": null,
+    "assets_sha256": []
+  },
+  "approval": null,
+  "usage": [
+    {
+      "ts": "2026-09-16T16:35:32+09:00",
+      "date": "2026-09-16",
+      "project": "sqlon",
+      "phase": "improve",
+      "run_id": "2026-09-16-161253-sqlon-improve",
+      "campaign": "mail-2026-09",
+      "subtype": "success",
+      "duration_ms": 1428094,
+      "num_turns": 85,
+      "cost_usd": 10.048504999999997,
+      "input_tokens": 170,
+      "output_tokens": 86605,
+      "cache_read": 11559108,
+      "cache_create": 209334
+    },
+    {
+      "ts": "2026-09-16T16:38:21+09:00",
+      "date": "2026-09-16",
+      "project": "sqlon",
+      "phase": "review",
+      "run_id": "2026-09-16-161253-sqlon-improve",
+      "campaign": "mail-2026-09",
+      "subtype": "success",
+      "duration_ms": 153938,
+      "num_turns": 22,
+      "cost_usd": 1.325934,
+      "input_tokens": 36,
+      "output_tokens": 8973,
+      "cache_read": 940846,
+      "cache_create": 62919
+    }
+  ]
+}
