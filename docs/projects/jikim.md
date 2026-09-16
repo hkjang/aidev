@@ -1,7 +1,7 @@
 ---
 title: "jikim — 자율 개선 이력"
 description: "jikim: 자율 개선 회차 17회, 릴리즈 10건. 최근 릴리즈 v0.2.13 (자산 2개)."
-last_modified_at: 2026-09-17 01:15:22 +0900
+last_modified_at: 2026-09-17 01:25:12 +0900
 ---
 {% raw %}
 <script type="application/ld+json">
@@ -18,7 +18,7 @@ last_modified_at: 2026-09-17 01:15:22 +0900
   "name": "hkjang",
   "url": "https://github.com/hkjang"
  },
- "dateModified": "2026-09-17T01:15:22+09:00",
+ "dateModified": "2026-09-17T01:25:12+09:00",
  "version": "0.2.13"
 }
 </script>

@@ -1,0 +1,15 @@
+Kkiit v0.4.1 — 관리자 가이드 보강
+
+v0.4.0 이후 들어온 문서 보강 하나와 수정 하나를 담는다.
+
+- 관리자 가이드에 방문 추적 절(옛 docs/TRACKING.md)을 옮기고 메일 알림·방문
+  추적 화면 캡처와 "추적을 켰는데 수집기에 아무것도 안 들어옴" 장애 대응 행을
+  더해 PDF 를 다시 굽는다. 캡처 스크립트는 메일·추적을 켠 상태로 찍고 종료 시
+  Chrome 프로필 삭제 경쟁(ENOTEMPTY)을 고친다.
+- 메일 설정을 저장하면 디스패처가 30초 캐시를 기다리지 않고 바로 다시 읽는다.
+  putSetting 이 Server.SettingSaved 훅을 부르고, 워커는 자기가 읽는 키일 때만
+  ReloadPolicy 한다.
+
+버전 표기(VERSION·compose·web/package·openapi·README)를 0.4.1 으로 올린다.
+
+go build · go vet · go test, web lint · test · build 전부 통과.
