@@ -586,6 +586,11 @@ kanpic은 AI 에이전트 및 LLM이 스프레드시트 데이터를 안전하�
 - MCP 요청은 HTTP Header `Authorization: Bearer <API_KEY>` 또는 `Authorization: Bearer <Keycloak 액세스 토큰>`을 통과해야 합니다. 토큰 로그인의 Keycloak 설정은 **4.2 MCP 클라이언트의 Keycloak OAuth 로그인**에 있습니다.
 - API 키는 `mcp.use` 스코프 권한을 보유해야 `/mcp` 엔드포인트를 호출할 수 있습니다. Keycloak 토큰은 받아들여지는 것 자체가 `mcp.use` 이며, 토큰에 kanpic scope 가 실려 있으면 그 scope 만큼만, 없으면 그 사용자의 권한만큼 움직입니다.
 - 자격 없이 `/mcp` 를 부르면 401 과 함께 `WWW-Authenticate: Bearer resource_metadata="…/.well-known/oauth-protected-resource/mcp"` 가 돌아가고, 그 주소는 RFC 9728 문서(`resource`, `authorization_servers`)를 내줍니다. OIDC 나 `auth.oidc.mcp_enabled` 가 꺼져 있으면 이 헤더도 문서도 없습니다.
+- `/mcp` 는 **POST 만** 받습니다. 서버→클라이언트 스트림(GET)과 세션 종료(DELETE)는 제공하지 않으므로 405 와 `Allow: POST` 로 답합니다. 상태를 두지 않으므로 `Mcp-Session-Id` 도 없습니다.
+- 프로토콜 버전은 `2024-11-05`, `2025-03-26`, `2025-06-18` 을 받습니다. `initialize` 는 클라이언트가 말한 버전을 알면 그대로, 모르면 `2025-06-18` 로 답하고, `MCP-Protocol-Version` 헤더에 모르는 버전이 오면 400 입니다. JSON-RPC 배치(배열)는 받지 않고 -32600 으로 거절합니다. `ping` 은 빈 결과로, `notifications/*` 와 id 없는 요청은 202 로 답합니다.
+- 도구 결과의 `structuredContent` 는 명세대로 **항상 객체**입니다. 목록을 돌려주는 도구(`*.list`)는 `{"items": [...]}`, 스칼라는 `{"value": ...}` 로 감싸고, `content[0].text` 에는 원래 JSON 이 그대로 있습니다. 없는 도구는 -32602 프로토콜 오류, 도구가 거절·실패한 것은 `isError: true` 결과입니다.
+- 브라우저에서 오는 요청은 `Origin` 을 검사합니다. 서버 자신의 오리진(`server.public_url` 또는 요청 Host)과 개발 서버(`localhost:5173`)만 통과하고 다른 오리진은 403 입니다. Origin 헤더가 없는 일반 클라이언트는 영향이 없습니다.
+- `mcp.enabled` 를 끄면 `/mcp` 는 503 으로 답합니다. 도구 실행 중 서버 오류가 나도 연결을 끊지 않고 -32603 으로 답하며, 원인은 서버 로그 `mcp handler panicked` 에 남습니다.
 - `spreadsheet.presentation.*` MCP 도구는 REST와 **같은** 워크북 권한 검사를 지납니다. 도구 인자 `sheet_id`·`workbook_id`·`presentation_id`가 각각 같은 리소스 해석표를 타므로 에이전트 경로가 공유 규칙을 우회하지 않습니다. API 키 scope는 `presentation.read`(미리보기·조회)와 `presentation.write`(만들기·다시 만들기)입니다. PPTX 내려받기는 MCP에 노출하지 않습니다.
 - 프레젠테이션 만들기는 원본 워크북의 **읽기** 권한으로 판정합니다. 덱을 내려받는 것도 마찬가지입니다 — 덱은 프레젠테이션 서비스의 공용 계정 아래 만들어지므로, kanpic이 `presentations` 테이블에 기록해 둔 워크북을 기준으로 권한을 따집니다. kanpic이 만들지 않은 덱은 어떤 사용자에게도 내려주지 않습니다.
 - 인쇄 문서는 `/print-frame` 에서 받은 빈 페이지 안에 만들어지며, 그 응답만 **자기 정책** 을 가집니다: `default-src 'none'; style-src 'unsafe-inline'; img-src data:; font-src data:`. 앱 본체의 정책은 그대로 인라인 스타일을 막습니다. 인쇄 문서에서는 스크립트도 바깥으로 나가는 연결도 허용되지 않으므로, 할 수 있는 일은 종이에 그리는 것뿐입니다.
