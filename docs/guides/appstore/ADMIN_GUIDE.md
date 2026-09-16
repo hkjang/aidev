@@ -1,6 +1,6 @@
 # AppStore 관리자 가이드
 
-대상 버전: **v2.10.0** · 실린 화면은 모두 이 버전을 실제로 띄워 찍은 것입니다.
+대상 버전: **v2.11.0** · 실린 화면은 모두 이 버전을 실제로 띄워 찍은 것입니다.
 
 화면을 쓰는 사람을 위한 설명은 [사용자 가이드](USER_GUIDE.md)에 있습니다. 이 문서는 그 화면을 띄워 놓고 지키는 사람을 위한 것입니다.
 
@@ -34,7 +34,7 @@ AppStore는 컨테이너 하나로 동작합니다. React SPA, REST API, OIDC �
 
 ## 2. 설치
 
-릴리스 자산 하나(`appstore-vX.Y.Z.tar.gz`)로 폐쇄망까지 반입할 수 있습니다. 아래는 v2.10.0 기준입니다.
+릴리스 자산 하나(`appstore-vX.Y.Z.tar.gz`)로 폐쇄망까지 반입할 수 있습니다. 아래는 v2.11.0 기준입니다.
 
 ### 2.1. 선행 조건
 
@@ -52,10 +52,10 @@ PostgreSQL 이미지는 릴리스에 포함되지 않습니다. 먼저 준비하
 ### 2.2. 이미지 반입과 검증
 
 ```bash
-sha256sum appstore-v2.10.0.tar.gz          # 릴리스 노트의 SHA-256과 대조
-gzip -t appstore-v2.10.0.tar.gz
-gzip -dc appstore-v2.10.0.tar.gz | docker load
-docker image inspect appstore:v2.10.0 \
+sha256sum appstore-v2.11.0.tar.gz          # 릴리스 노트의 SHA-256과 대조
+gzip -t appstore-v2.11.0.tar.gz
+gzip -dc appstore-v2.11.0.tar.gz | docker load
+docker image inspect appstore:v2.11.0 \
   --format '{{.RepoTags}} user={{.Config.User}} version={{index .Config.Labels "org.opencontainers.image.version"}}'
 ```
 
@@ -65,10 +65,10 @@ docker image inspect appstore:v2.10.0 \
 
 ```bash
 docker build \
-  --build-arg VERSION=v2.10.0 \
+  --build-arg VERSION=v2.11.0 \
   --build-arg COMMIT="$(git rev-parse HEAD)" \
   --build-arg BUILD_DATE="$(date -u +%Y-%m-%dT%H:%M:%SZ)" \
-  -t appstore:v2.10.0 .
+  -t appstore:v2.11.0 .
 ```
 
 ### 2.3. 환경 파일 준비
@@ -102,13 +102,13 @@ docker run -d \
   --security-opt no-new-privileges:true \
   --env-file ./appstore.env \
   -p 127.0.0.1:8080:8080 \
-  appstore:v2.10.0
+  appstore:v2.11.0
 ```
 
 Docker Compose (저장소의 `docker-compose.yml`):
 
 ```bash
-APPSTORE_VERSION=v2.10.0 docker compose up -d --no-build
+APPSTORE_VERSION=v2.11.0 docker compose up -d --no-build
 docker compose ps
 docker compose logs --tail 100 appstore
 ```
@@ -294,6 +294,10 @@ Keycloak 역할 이름은 코드에 고정돼 있지 않습니다. `인증·SSO`
 기본 역할이 함께 움직입니다 — 승인을 **켜면** SSO 로그인 사용자의 기본 역할이 `contributor`가 되어 누구나 제출할 수 있되 게시 전에 검토를 거칩니다. **꺼져 있으면** 제출이 곧 게시이므로 기본 역할은 조회 위주의 `user`로 유지되고 등록 권한은 역할 매핑으로만 부여됩니다. 기존 사용자에게는 다음 SSO 로그인부터 반영됩니다.
 
 승인이 켜져 있으면 반려된 앱은 소유자가 내용을 고쳐 저장하는 것만으로 다시 1단계 검토 대기로 돌아갑니다. 별도 재제출 조작이 없습니다.
+
+검토자가 보는 화면(`/review/{id}`)에는 결정에 필요한 것이 함께 실립니다 — 앱 카드와 상세 설명·태그·스크린샷, 첨부된 **가이드 문서**(내려받아 확인), **보안 심의** 상태와 심의 번호·SecCheck 링크, 등록자·담당팀·검토 단계·버전·서비스 URL, 그리고 같은 앱의 **이전 검토**와 그때 남긴 의견(최대 20건)입니다. 앱이나 보안 심의 정보를 불러오지 못해도 나머지는 그대로 보입니다.
+
+**검토 의견**은 승인과 반려 모두에 남길 수 있습니다. 반려는 사유가 필수이고(위 표의 *반려 사유 필수* 설정과 별개로 화면에서 먼저 막습니다), 승인은 선택입니다. 남긴 의견은 등록자의 내 앱·앱 수정 화면과 다음 단계 검토자의 이전 검토 목록에 그대로 보이며, 승인·반려 모두 감사 로그(`app.approve`, `app.reject`)에 남습니다.
 
 ![검토 관리 — 서비스 전체의 앱 검토 현황](assets/screenshots/captures/admin-reviews-desktop.webp)
 
@@ -494,7 +498,7 @@ pg_restore --clean --if-exists --no-owner --no-privileges \
 4. 교체합니다.
 
 ```bash
-APPSTORE_VERSION=v2.10.0 docker compose up -d --no-build
+APPSTORE_VERSION=v2.11.0 docker compose up -d --no-build
 docker compose ps
 docker compose logs --tail 200 appstore
 ```
@@ -512,7 +516,7 @@ docker compose logs --tail 200 appstore
 
 ```bash
 docker rm -f appstore
-docker rename appstore-v2.9.0-stopped appstore
+docker rename appstore-v2.10.0-stopped appstore
 docker start appstore
 curl --fail http://127.0.0.1:8080/health/ready
 ```
