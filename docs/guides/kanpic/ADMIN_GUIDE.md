@@ -362,10 +362,56 @@ flowchart LR
 | `auth.oidc.client_secret` | 빈 값 | Public Client는 비우고 Confidential Client만 입력하는 비밀 설정 |
 | `auth.oidc.scopes` | `openid, profile, email` | 요청할 OIDC scope 목록 |
 | `auth.oidc.admin_roles` | `kanpic-admin` | 관리자 권한으로 인정할 Keycloak role 목록 |
+| `auth.oidc.mcp_enabled` | `true` | MCP 클라이언트가 Keycloak 액세스 토큰으로 `/mcp` 를 부르게 허용. OIDC 가 켜져 있을 때만 효력 |
+| `auth.oidc.mcp_audiences` | 빈 목록 | MCP 토큰의 `aud` 로 받아들일 값. 비우면 Client ID 와 `/mcp` 주소 |
 | `auth.oidc.ca_pem` | 빈 값 | 폐쇄망 사설 CA 인증서 PEM 비밀 설정 |
 | `server.public_url` | 빈 값 | 리버스 프록시 외부 주소. 비우면 요청 Host 사용 |
 
 각 저장·수정·삭제는 설정 스냅샷 revision을 생성합니다. **전체 검증**으로 필수값과 타입을 확인한 뒤 **연결 테스트**로 Issuer discovery와 PostgreSQL 상태를 시험합니다. 문제가 생기면 설정 버전 목록에서 이전 revision을 복원할 수 있습니다. 서버 시작에 필요한 환경 변수는 `POSTGRES_DSN` 하나이며, bootstrap 로그인 보호가 필요할 때만 `BOOTSTRAP_ADMIN_ID`와 `BOOTSTRAP_ADMIN_PASSWORD`를 함께 추가합니다.
+
+### 4.2 MCP 클라이언트의 Keycloak OAuth 로그인
+
+Claude, Cursor 같은 MCP 클라이언트는 API 키 대신 **사용자의 Keycloak 로그인**으로 `/mcp` 를
+부를 수 있습니다. kanpic 은 MCP 인가 명세(2025-06-18)의 **OAuth 2.1 리소스 서버**로
+동작하고, 인가 서버는 이미 쓰고 있는 Keycloak Realm 입니다. 사람이 키를 만들어 붙여
+넣는 대신 브라우저에서 한 번 로그인하고, 토큰은 그 사람의 권한만큼만 움직입니다.
+
+```mermaid
+sequenceDiagram
+    participant C as MCP 클라이언트
+    participant K as kanpic /mcp
+    participant A as Keycloak
+    C->>K: POST /mcp (자격 없음)
+    K-->>C: 401 + WWW-Authenticate: Bearer resource_metadata="…/.well-known/oauth-protected-resource/mcp"
+    C->>K: GET /.well-known/oauth-protected-resource/mcp
+    K-->>C: { resource, authorization_servers: [issuer] }
+    C->>A: OIDC discovery → Authorization Code + PKCE (브라우저 로그인)
+    A-->>C: 액세스 토큰 (aud 에 kanpic 리소스)
+    C->>K: POST /mcp, Authorization: Bearer <토큰>
+    K->>A: JWKS 로 서명 확인 (캐시)
+    K-->>C: 그 사용자로 도구 실행
+```
+
+**Keycloak 쪽에서 할 일**
+
+1. **MCP 클라이언트용 Client 를 만듭니다.** Public client, Standard flow, PKCE `S256` 을 켜고 Redirect URI 에는 클라이언트 문서가 안내하는 값을 적습니다. 동적 클라이언트 등록(RFC 7591) 으로 스스로 등록하는 클라이언트를 쓰려면 Realm 의 *Client registration › Anonymous access policies* 에서 Trusted Hosts 를 그 클라이언트가 오는 곳으로 열어 둡니다.
+2. **토큰에 kanpic 을 받는 이로 적습니다.** 그 Client(또는 그 Client 의 dedicated scope)에 *Audience* 매퍼를 붙여 *Included Custom Audience* 에 `<server.public_url>/mcp` (예: `https://kanpic.example/mcp`) 를 넣거나, *Included Client Audience* 에 kanpic 의 Client ID 를 넣습니다. kanpic 은 `aud` 가 `auth.oidc.mcp_audiences`(비우면 Client ID 와 `/mcp` 주소) 중 하나와 정확히 같거나, `azp` 가 kanpic 의 Client ID 인 토큰만 받습니다. 다른 서비스용으로 발급된 토큰은 서명이 맞아도 거절됩니다.
+3. **(선택) 토큰을 좁힙니다.** `workbook.read`, `range.read` 같은 kanpic scope 이름으로 Client Scope 를 만들어 그 Client 에 붙이면 토큰의 `scope` 클레임에 실리고, kanpic 은 그 토큰을 **그 scope 만 가진 API 키처럼** 다룹니다(`mcp.use` 는 따로 필요하지 않습니다). kanpic scope 가 하나도 없는 토큰은 사용자가 웹에서 로그인했을 때와 같은 권한으로 움직입니다 — 워크북 공유 규칙과 `auth.oidc.admin_roles` 판정 모두 그대로입니다.
+
+**kanpic 쪽에서 확인할 것**
+
+- `auth.oidc.enabled` 가 켜져 있어야 합니다. 토큰을 확인할 곳이 Issuer 이기 때문입니다.
+  `auth.oidc.mcp_enabled` 는 기본 `true` 이고, 끄면 v0.246.0 과 같이 API 키만 받습니다.
+- 리버스 프록시 뒤라면 `server.public_url` 이 바깥 주소여야 합니다. 리소스 식별자와
+  메타데이터 주소가 이 값으로 만들어지고, Keycloak 매퍼에 적은 audience 와 같아야 합니다.
+- `GET /api/v1/auth/config` 와 MCP 도구 `platform.auth.config` 가 `mcp_oauth_enabled`,
+  `mcp_resource`, `mcp_resource_metadata_url` 을 알려 주므로 클라이언트에 적어 줄 값을
+  여기서 확인합니다.
+- 토큰은 `/mcp` 에서만 받습니다. REST 와 WebSocket 은 그대로 세션 쿠키와 API 키만 씁니다.
+- 검증 규칙: Issuer 의 JWKS 로 서명, `iss`, `exp`, `aud`/`azp` 를 확인하고 `typ` 이 `ID`
+  인 토큰(ID 토큰)은 액세스 토큰이 아니므로 거절합니다. 거절 이유는 서버 로그의
+  `mcp access token rejected` 에 남고, 클라이언트에는 `invalid_token` 만 나갑니다.
+  Issuer discovery 와 키는 서버가 캐시하므로 호출마다 Keycloak 을 부르지 않습니다.
 
 ---
 
@@ -537,8 +583,9 @@ DELETE /api/v1/admin/ai/actions?before=YYYY-MM-DD
 kanpic은 AI 에이전트 및 LLM이 스프레드시트 데이터를 안전하게 제어할 수 있도록 `/mcp` HTTP JSON-RPC 2.0 표준 엔드포인트를 제공합니다.
 
 ### 6.1 MCP 스코프 및 인증
-- MCP 요청은 HTTP Header `Authorization: Bearer <API_KEY>`를 통과해야 합니다.
-- 해당 API 키는 `mcp.use` 스코프 권한을 보유해야 `/mcp` 엔드포인트를 호출할 수 있습니다.
+- MCP 요청은 HTTP Header `Authorization: Bearer <API_KEY>` 또는 `Authorization: Bearer <Keycloak 액세스 토큰>`을 통과해야 합니다. 토큰 로그인의 Keycloak 설정은 **4.2 MCP 클라이언트의 Keycloak OAuth 로그인**에 있습니다.
+- API 키는 `mcp.use` 스코프 권한을 보유해야 `/mcp` 엔드포인트를 호출할 수 있습니다. Keycloak 토큰은 받아들여지는 것 자체가 `mcp.use` 이며, 토큰에 kanpic scope 가 실려 있으면 그 scope 만큼만, 없으면 그 사용자의 권한만큼 움직입니다.
+- 자격 없이 `/mcp` 를 부르면 401 과 함께 `WWW-Authenticate: Bearer resource_metadata="…/.well-known/oauth-protected-resource/mcp"` 가 돌아가고, 그 주소는 RFC 9728 문서(`resource`, `authorization_servers`)를 내줍니다. OIDC 나 `auth.oidc.mcp_enabled` 가 꺼져 있으면 이 헤더도 문서도 없습니다.
 - `spreadsheet.presentation.*` MCP 도구는 REST와 **같은** 워크북 권한 검사를 지납니다. 도구 인자 `sheet_id`·`workbook_id`·`presentation_id`가 각각 같은 리소스 해석표를 타므로 에이전트 경로가 공유 규칙을 우회하지 않습니다. API 키 scope는 `presentation.read`(미리보기·조회)와 `presentation.write`(만들기·다시 만들기)입니다. PPTX 내려받기는 MCP에 노출하지 않습니다.
 - 프레젠테이션 만들기는 원본 워크북의 **읽기** 권한으로 판정합니다. 덱을 내려받는 것도 마찬가지입니다 — 덱은 프레젠테이션 서비스의 공용 계정 아래 만들어지므로, kanpic이 `presentations` 테이블에 기록해 둔 워크북을 기준으로 권한을 따집니다. kanpic이 만들지 않은 덱은 어떤 사용자에게도 내려주지 않습니다.
 - 인쇄 문서는 `/print-frame` 에서 받은 빈 페이지 안에 만들어지며, 그 응답만 **자기 정책** 을 가집니다: `default-src 'none'; style-src 'unsafe-inline'; img-src data:; font-src data:`. 앱 본체의 정책은 그대로 인라인 스타일을 막습니다. 인쇄 문서에서는 스크립트도 바깥으로 나가는 연결도 허용되지 않으므로, 할 수 있는 일은 종이에 그리는 것뿐입니다.
@@ -735,7 +782,9 @@ curl -H "X-Kanpic-Actor: admin" \
 - 애플리케이션의 8080 은 리버스 프록시 뒤에만 둡니다. 밖에는 프록시의 443 만 엽니다.
 - 프록시 뒤에 둘 때는 `server.public_url` 을 실제 외부 주소로 맞춥니다. 비어 있으면 요청
   Host 를 그대로 쓰므로, OIDC redirect 와 메일 본문 링크가 내부 주소로 나갈 수 있습니다.
-- `/mcp` 는 API 키의 `mcp.use` scope 를 요구합니다. 쓰지 않는 배포에서는 `mcp.enabled` 를 끕니다.
+- `/mcp` 는 API 키의 `mcp.use` scope 또는 Keycloak 액세스 토큰을 요구합니다. 쓰지 않는 배포에서는
+  `mcp.enabled` 를 끄고, 키만 받게 하려면 `auth.oidc.mcp_enabled` 를 끕니다. 토큰은 `aud` 가
+  kanpic 을 가리킬 때만 받으므로 다른 서비스의 토큰을 들고 와도 통하지 않습니다.
 
 **인증 연동**
 
