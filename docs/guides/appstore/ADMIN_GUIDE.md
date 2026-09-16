@@ -1,6 +1,6 @@
 # AppStore 관리자 가이드
 
-대상 버전: **v2.9.0** · 실린 화면은 모두 이 버전을 실제로 띄워 찍은 것입니다.
+대상 버전: **v2.10.0** · 실린 화면은 모두 이 버전을 실제로 띄워 찍은 것입니다.
 
 화면을 쓰는 사람을 위한 설명은 [사용자 가이드](USER_GUIDE.md)에 있습니다. 이 문서는 그 화면을 띄워 놓고 지키는 사람을 위한 것입니다.
 
@@ -34,7 +34,7 @@ AppStore는 컨테이너 하나로 동작합니다. React SPA, REST API, OIDC �
 
 ## 2. 설치
 
-릴리스 자산 하나(`appstore-vX.Y.Z.tar.gz`)로 폐쇄망까지 반입할 수 있습니다. 아래는 v2.9.0 기준입니다.
+릴리스 자산 하나(`appstore-vX.Y.Z.tar.gz`)로 폐쇄망까지 반입할 수 있습니다. 아래는 v2.10.0 기준입니다.
 
 ### 2.1. 선행 조건
 
@@ -52,10 +52,10 @@ PostgreSQL 이미지는 릴리스에 포함되지 않습니다. 먼저 준비하
 ### 2.2. 이미지 반입과 검증
 
 ```bash
-sha256sum appstore-v2.9.0.tar.gz          # 릴리스 노트의 SHA-256과 대조
-gzip -t appstore-v2.9.0.tar.gz
-gzip -dc appstore-v2.9.0.tar.gz | docker load
-docker image inspect appstore:v2.9.0 \
+sha256sum appstore-v2.10.0.tar.gz          # 릴리스 노트의 SHA-256과 대조
+gzip -t appstore-v2.10.0.tar.gz
+gzip -dc appstore-v2.10.0.tar.gz | docker load
+docker image inspect appstore:v2.10.0 \
   --format '{{.RepoTags}} user={{.Config.User}} version={{index .Config.Labels "org.opencontainers.image.version"}}'
 ```
 
@@ -65,10 +65,10 @@ docker image inspect appstore:v2.9.0 \
 
 ```bash
 docker build \
-  --build-arg VERSION=v2.9.0 \
+  --build-arg VERSION=v2.10.0 \
   --build-arg COMMIT="$(git rev-parse HEAD)" \
   --build-arg BUILD_DATE="$(date -u +%Y-%m-%dT%H:%M:%SZ)" \
-  -t appstore:v2.9.0 .
+  -t appstore:v2.10.0 .
 ```
 
 ### 2.3. 환경 파일 준비
@@ -102,13 +102,13 @@ docker run -d \
   --security-opt no-new-privileges:true \
   --env-file ./appstore.env \
   -p 127.0.0.1:8080:8080 \
-  appstore:v2.9.0
+  appstore:v2.10.0
 ```
 
 Docker Compose (저장소의 `docker-compose.yml`):
 
 ```bash
-APPSTORE_VERSION=v2.9.0 docker compose up -d --no-build
+APPSTORE_VERSION=v2.10.0 docker compose up -d --no-build
 docker compose ps
 docker compose logs --tail 100 appstore
 ```
@@ -337,7 +337,33 @@ Keycloak 역할 이름은 코드에 고정돼 있지 않습니다. `인증·SSO`
 
 카테고리는 식별자(slug), 이름, 아이콘, 설명, 정렬 순서를 받습니다. 식별자와 이름은 비워 둘 수 없고, 아이콘을 비우면 `📦`가 기본값으로 들어갑니다. *사용 중인 카테고리는 삭제할 수 없습니다.*
 
-### 4.7. REST API · MCP · AI
+### 4.7. 보안 심의 연동 (SecCheck)
+
+![보안 심의 연동 — SecCheck 주소와 API Key, 보안 심의 필수 설정](assets/screenshots/captures/admin-security-check-desktop.webp)
+
+**Admin → 보안 심의 연동**(`/admin/security-check`)에서 SecCheck를 연결합니다. 기본값은 꺼짐이고, 켜기 전까지 등록 절차는 예전과 똑같습니다.
+
+| 항목 | 설명 |
+| --- | --- |
+| 보안 심의 필수 | 켜면 앱 등록·제출·게시가 SecCheck 최종 승인 확인을 거칩니다 |
+| SecCheck 주소 | 예: `https://seccheck.example.internal`. 인증정보·쿼리가 붙은 주소는 저장되지 않습니다 |
+| API Key | SecCheck에서 발급한 **read** 개인 API Key. `AUDITOR` 또는 `SECURITY_REVIEWER` 역할이 있어야 심의를 조회할 수 있습니다 |
+| 연결 제한 시간 | 1~60초. SecCheck 응답을 기다리는 시간입니다 |
+
+**연결 테스트**는 저장된 주소와 키로 SecCheck의 `/api/v1/me`를 조회해 계정과 역할을 확인합니다. API Key는 저장 뒤 화면으로 돌려주지 않고 **설정됨**으로만 표시되며, `ENCRYPTION_KEY`로 암호화되어 저장됩니다. 주소를 바꿀 때는 그 서비스의 키를 함께 입력해야 합니다 — 이전 서비스의 키가 새 주소로 전송되지 않게 하기 위해서입니다.
+
+동작은 이렇습니다.
+
+- 등록자가 앱을 등록하면 앱은 **초안**으로 남고 검토 대기로 가지 않습니다. 등록자는 앱마다 발급되는 **연동 정보**를 SecCheck 심의 설명에 붙여 넣고, 심의 ID로 승인 결과를 확인한 뒤 제출합니다.
+- AppStore는 심의를 **서버에서 직접 조회**합니다. 등록자가 보내는 값은 심의 ID뿐이고, 승인 여부·서비스명·미처리 항목 수는 모두 SecCheck의 응답에서 읽습니다.
+- 승인으로 인정하는 조건은 **status=APPROVED, final_result=APPROVED, 미검토·미확인 보완·판정 후 변경이 모두 0건**입니다. 조건부 승인(CONDITIONAL)과 종료(CLOSED)는 통과하지 못합니다.
+- 앱을 수정하면 연동 정보가 새로 발급되어 이전 승인은 무효가 되고, 앱은 다시 초안으로 돌아갑니다. 관리자도 승인 없이는 **게시**나 **검토 대기**로 상태를 바꿀 수 없습니다.
+- 이미 게시된 앱은 이 설정을 켜도 내려가지 않습니다. 다음에 수정할 때부터 적용됩니다.
+- SecCheck 주소나 키를 바꾸면 이전 연동에서 읽은 승인은 모두 무효가 됩니다.
+
+확인과 설정 변경은 모두 감사 로그(`security_check.settings.update`, `security_check.connection.test`, `security_check.verify`)에 남습니다.
+
+### 4.8. REST API · MCP · AI
 
 ![REST API — 공개 범위와 분당 요청 제한](assets/screenshots/captures/admin-api-desktop.webp)
 
@@ -362,13 +388,13 @@ MCP tool은 호출자의 권한에 따라 다르게 보입니다. 익명·인증
 
 Provider의 Base URL·API Key·기본 모델과, 모델별 Context Window / Max Input Tokens / Max Output Tokens를 따로 관리합니다. 최대 262,144 token까지 설정할 수 있고, *Model의 최대 입력·출력 token 합은 context window를 넘을 수 없습니다.* API Key는 `ENCRYPTION_KEY`로 암호화되어 저장되고 화면에는 마스크만 보입니다. Provider 한도와 모델 한도를 분리해 두어야 upstream이 지원하지 않는 값을 강제로 보내지 않습니다.
 
-### 4.8. 감사 로그
+### 4.9. 감사 로그
 
 ![감사 로그 — 삭제할 수 없는 관리자 행위 기록](assets/screenshots/captures/admin-audit-desktop.webp)
 
 로그인, 앱 변경, 승인·반려, 키 수명주기, 역할·설정 변경이 actor·대상·시각·요청 ID와 함께 남습니다. DB 트리거(`audit_logs_immutable`)가 UPDATE와 DELETE를 막으므로 **관리자에게도 삭제 기능이 없습니다.**
 
-### 4.9. 방문 추적과 콘텐츠 보안 정책
+### 4.10. 방문 추적과 콘텐츠 보안 정책
 
 ![방문 추적 — provider, Momento 프록시, 허용 출처와 정책이 차단한 출처](assets/screenshots/captures/admin-analytics-desktop.webp)
 
@@ -468,7 +494,7 @@ pg_restore --clean --if-exists --no-owner --no-privileges \
 4. 교체합니다.
 
 ```bash
-APPSTORE_VERSION=v2.9.0 docker compose up -d --no-build
+APPSTORE_VERSION=v2.10.0 docker compose up -d --no-build
 docker compose ps
 docker compose logs --tail 200 appstore
 ```
@@ -486,7 +512,7 @@ docker compose logs --tail 200 appstore
 
 ```bash
 docker rm -f appstore
-docker rename appstore-v2.8.0-stopped appstore
+docker rename appstore-v2.9.0-stopped appstore
 docker start appstore
 curl --fail http://127.0.0.1:8080/health/ready
 ```
@@ -542,7 +568,7 @@ curl --fail http://127.0.0.1:8080/health/ready
 
 컨테이너는 평문 HTTP 8080만 listen합니다. **8080을 외부에 직접 열지 말고** reverse proxy가 `127.0.0.1:8080`에 붙게 하세요(`-p 127.0.0.1:8080:8080`). PostgreSQL은 서비스 네트워크 안에만 두고 외부에 열지 않습니다.
 
-서비스가 스스로 붙이는 응답 헤더: `X-Content-Type-Options: nosniff`, `X-Frame-Options: DENY`, `Referrer-Policy: strict-origin-when-cross-origin`, `Permissions-Policy`(camera·microphone·geolocation·payment 모두 차단), `Cross-Origin-Opener-Policy: same-origin`, 그리고 `default-src 'self'` 기반 CSP(`frame-ancestors 'none'`, `object-src 'none'`, `script-src 'self'`). 방문 추적을 켜면 페이지 응답의 `script-src`에 요청마다 다른 `'nonce-…'`와 provider 출처가 더해지고(4.9), `/api/*`·`/mcp`·`/momento/*`는 `default-src 'none'`을 받습니다. reverse proxy에서 이 헤더를 약하게 덮어쓰거나 캐시하지 마세요 — nonce는 응답마다 달라야 합니다.
+서비스가 스스로 붙이는 응답 헤더: `X-Content-Type-Options: nosniff`, `X-Frame-Options: DENY`, `Referrer-Policy: strict-origin-when-cross-origin`, `Permissions-Policy`(camera·microphone·geolocation·payment 모두 차단), `Cross-Origin-Opener-Policy: same-origin`, 그리고 `default-src 'self'` 기반 CSP(`frame-ancestors 'none'`, `object-src 'none'`, `script-src 'self'`). 방문 추적을 켜면 페이지 응답의 `script-src`에 요청마다 다른 `'nonce-…'`와 provider 출처가 더해지고(4.10), `/api/*`·`/mcp`·`/momento/*`는 `default-src 'none'`을 받습니다. reverse proxy에서 이 헤더를 약하게 덮어쓰거나 캐시하지 마세요 — nonce는 응답마다 달라야 합니다.
 
 ### 7.3. 비밀값 취급
 
