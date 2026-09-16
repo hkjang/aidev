@@ -1,0 +1,170 @@
+{
+  "run_id": "2026-09-16-155252-orbit-improve",
+  "generated": "2026-09-16T16:07:56+09:00",
+  "run": {
+    "run_id": "2026-09-16-155252-orbit-improve",
+    "project": "orbit",
+    "kind": "improve",
+    "started": "2026-09-16T15:52:53+09:00",
+    "model": "claude-opus-5",
+    "policy_version": "78619c0e",
+    "prompts_hash": "82f2440d4b2fef65",
+    "runner_version": "b8f3f83f",
+    "finished": "2026-09-16T16:07:56+09:00",
+    "outcome": "review-pending"
+  },
+  "record": {
+    "ts": "2026-09-16T16:07:56+09:00",
+    "date": "2026-09-16",
+    "project": "orbit",
+    "result": "guarded files, PR open https://github.com/hkjang/orbit/pull/4",
+    "outcome": "review-pending",
+    "run_id": "2026-09-16-155252-orbit-improve",
+    "base_sha": "18b01ab909d9436bf773f4f13dbb5d3279c4afb6",
+    "head_sha": "8a533d1b6e161c8b08f3ddb06aa48dd6fdc7e534",
+    "pr": "https://github.com/hkjang/orbit/pull/4",
+    "stages": {
+      "base": {
+        "state": "pinned",
+        "reason": "main@18b01ab",
+        "at": "2026-09-16T15:52:55+09:00"
+      },
+      "autonomy": {
+        "state": "release",
+        "reason": "",
+        "at": "2026-09-16T15:52:55+09:00"
+      },
+      "verify": {
+        "state": "passed",
+        "reason": "검증 7개 통과 (auto)",
+        "at": "2026-09-16T16:07:47+09:00"
+      },
+      "pr": {
+        "state": "created",
+        "reason": "https://github.com/hkjang/orbit/pull/4",
+        "at": "2026-09-16T16:07:53+09:00"
+      },
+      "guard": {
+        "state": "held-expected",
+        "reason": "internal/store/migrations/008_mail_notifications.sql ",
+        "at": "2026-09-16T16:07:54+09:00"
+      }
+    },
+    "campaign": "mail-2026-09",
+    "autonomy": "release",
+    "files": 23,
+    "additions": 2295,
+    "deletions": 4,
+    "tests": 3,
+    "title": "feat(mail): 사내 SMTP 릴레이로 검토 요청·검토 결과·계정 준비 알림을 보낸다"
+  },
+  "stages": {
+    "base": {
+      "state": "pinned",
+      "reason": "main@18b01ab",
+      "at": "2026-09-16T15:52:55+09:00"
+    },
+    "autonomy": {
+      "state": "release",
+      "reason": "",
+      "at": "2026-09-16T15:52:55+09:00"
+    },
+    "verify": {
+      "state": "passed",
+      "reason": "검증 7개 통과 (auto)",
+      "at": "2026-09-16T16:07:47+09:00"
+    },
+    "pr": {
+      "state": "created",
+      "reason": "https://github.com/hkjang/orbit/pull/4",
+      "at": "2026-09-16T16:07:53+09:00"
+    },
+    "guard": {
+      "state": "held-expected",
+      "reason": "internal/store/migrations/008_mail_notifications.sql ",
+      "at": "2026-09-16T16:07:54+09:00"
+    }
+  },
+  "provenance": {
+    "model": "claude-opus-5",
+    "policy_version": "78619c0e",
+    "prompts_hash": "82f2440d4b2fef65",
+    "runner_version": "b8f3f83f",
+    "base_sha": "18b01ab909d9436bf773f4f13dbb5d3279c4afb6",
+    "head_sha": "8a533d1b6e161c8b08f3ddb06aa48dd6fdc7e534",
+    "pr": "https://github.com/hkjang/orbit/pull/4"
+  },
+  "verification": {
+    "runner": {
+      "source": "auto",
+      "commands": [
+        {
+          "cmd": "go build ./...",
+          "exit": 0,
+          "seconds": 2
+        },
+        {
+          "cmd": "go vet ./...",
+          "exit": 0,
+          "seconds": 0
+        },
+        {
+          "cmd": "go test ./...",
+          "exit": 0,
+          "seconds": 5
+        },
+        {
+          "cmd": "cd web && [ -d node_modules ] || npm ci --no-audit --no-fund",
+          "exit": 0,
+          "seconds": 0
+        },
+        {
+          "cmd": "cd web && npm test --silent",
+          "exit": 0,
+          "seconds": 2
+        },
+        {
+          "cmd": "cd web && [ -d node_modules ] || npm ci --no-audit --no-fund",
+          "exit": 0,
+          "seconds": 0
+        },
+        {
+          "cmd": "cd web && npm run build --silent",
+          "exit": 0,
+          "seconds": 3
+        }
+      ]
+    },
+    "runner_gate": {
+      "ok": true,
+      "state": "verified",
+      "reason": "검증 7개 통과 (auto)"
+    },
+    "after_rebase": null,
+    "review": null,
+    "ci_gate": null
+  },
+  "release": {
+    "result": null,
+    "assets_sha256": []
+  },
+  "approval": null,
+  "usage": [
+    {
+      "ts": "2026-09-16T16:07:35+09:00",
+      "date": "2026-09-16",
+      "project": "orbit",
+      "phase": "improve",
+      "run_id": "2026-09-16-155252-orbit-improve",
+      "campaign": "mail-2026-09",
+      "subtype": "success",
+      "duration_ms": 923858,
+      "num_turns": 58,
+      "cost_usd": 7.312793499999999,
+      "input_tokens": 114,
+      "output_tokens": 70244,
+      "cache_read": 7293233,
+      "cache_create": 190018
+    }
+  ]
+}
