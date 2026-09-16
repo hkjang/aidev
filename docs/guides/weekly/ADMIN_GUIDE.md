@@ -1,6 +1,6 @@
 # Weekly 관리자 가이드
 
-- **문서 버전**: v0.301.0
+- **문서 버전**: v0.302.0
 - **대상**: 시스템 관리자, Security/DevOps 엔지니어, 데이터 보안 담당자
 - **문서 개요**: 구성 요소, 릴리즈 자산으로 설치, 환경 변수와 관리자 설정, 계정과 권한, 운영(백업·상태·업그레이드), 장애 대응, 보안. 화면을 쓰는 사람의 안내는 [사용자 가이드](USER_GUIDE.md)에 있습니다.
 
@@ -28,14 +28,14 @@
 
 ## 2. 설치
 
-GitHub Release 에서 `weekly-v0.301.0.tar.gz` 하나만 반입합니다. 자세한 검증 근거(파일 해시와 이미지 다이제스트가 왜 둘 다 필요한지)는 [README 오프라인 설치](../README.md#오프라인-설치)에 있고, 여기서는 순서대로 붙여 넣을 명령만 적습니다.
+GitHub Release 에서 `weekly-v0.302.0.tar.gz` 하나만 반입합니다. 자세한 검증 근거(파일 해시와 이미지 다이제스트가 왜 둘 다 필요한지)는 [README 오프라인 설치](../README.md#오프라인-설치)에 있고, 여기서는 순서대로 붙여 넣을 명령만 적습니다.
 
 ```bash
 # 1. 파일이 온전히 왔는지 — 릴리즈에 적힌 SHA-256 과 비교
-sha256sum weekly-v0.301.0.tar.gz
+sha256sum weekly-v0.302.0.tar.gz
 
-# 2. 이미지 적재. 같은 버전의 weekly:v0.301.0 이 생깁니다
-gzip -dc weekly-v0.301.0.tar.gz | docker load
+# 2. 이미지 적재. 같은 버전의 weekly:v0.302.0 이 생깁니다
+gzip -dc weekly-v0.302.0.tar.gz | docker load
 
 # 3. 환경 파일. deploy/.env.example 을 복사해 값을 채웁니다
 cp deploy/.env.example deploy/.env
@@ -80,7 +80,7 @@ Kubernetes 는 `deploy/kubernetes.yaml`을 씁니다. `strategy: Recreate`와 `s
 | `WEEKLY_ENCRYPTION_KEY` | 없음 (볼륨의 `instance.key` 로 대체) | 강력 권장 | 관리자 화면에서 입력한 OIDC Client Secret·AI API Key·Confluence 비밀번호·ITSM 토큰·SMTP 비밀번호를 보호하는 마스터 키. `openssl rand -base64 32` 로 한 번 만들고 업그레이드마다 같은 값을 유지합니다. 비우면 키가 상태 볼륨에만 저장되는 하위 호환 모드이며 기동 로그가 그 사실을 적습니다 |
 | `WEEKLY_ALLOW_SECRET_RESET` | `false` | 선택 | 비밀 설정을 복호화할 수 없는 상태에서 기동을 강행하고 모두 다시 입력하기로 했을 때만 `true`. 기존 암호문은 지우지 않고 화면에 `다시 입력 필요`로 표시합니다 |
 
-Compose 파일은 `WEEKLY_VERSION`(이미지 태그, 기본 `0.301.0`)도 읽습니다. 이것은 프로세스가 아니라 `deploy/compose.yaml`의 변수입니다.
+Compose 파일은 `WEEKLY_VERSION`(이미지 태그, 기본 `0.302.0`)도 읽습니다. 이것은 프로세스가 아니라 `deploy/compose.yaml`의 변수입니다.
 
 ### 3.2 관리자 화면의 서비스 설정
 
@@ -240,19 +240,19 @@ MCP 인가 규격은 OAuth 2.1 입니다. 이 설정을 켜면 Weekly 는 **리�
 | 설정 | 뜻 |
 |---|---|
 | `MCP SSO(OAuth) 토큰 인증 사용` | 스위치. 기본 꺼짐. 켜려면 `인증 · Keycloak OIDC` 의 `Issuer URL` 이 있어야 합니다 |
-| `MCP 리소스 식별자` | 이 서버가 자신을 부르는 이름이자 토큰의 `aud` 가 가리켜야 하는 값. 비우면 요청에서 `https://<host>/mcp` 로 만듭니다. 프록시 뒤에서 호스트가 달리 보이면 여기 적으십시오 |
-| `추가 허용 대상(aud)` | 리소스 식별자와 웹 `Client ID` 외에 받아들일 `aud` 값(공백 구분). Audience 매퍼를 만들 수 없을 때의 우회로입니다 |
+| `MCP 리소스 식별자` | 이 서버가 자신을 부르는 이름이자 Audience 매퍼가 `aud` 에 넣어야 하는 값. 비우면 요청에서 `https://<host>/mcp` 로 만듭니다. 프록시 뒤에서 호스트가 달리 보이면 여기 적으십시오 |
+| `허용 대상(aud 또는 azp)` | 리소스 식별자와 웹 `Client ID` 외에 받아들일 값(공백 구분). 토큰의 `aud` 또는 발급받은 클라이언트(`azp`)와 맞추므로, **MCP 클라이언트의 Client ID 를 여기 적으면 매퍼 없이 연결됩니다** |
 | `SSO 토큰에 주는 범위` | 유효한 토큰이 할 수 있는 일. 기본 `mcp:read reports:read analytics:read`. 토큰 자체의 scope 는 보지 않습니다 — Keycloak 에 Weekly 의 범위 어휘를 만들지 않아도 되게 하기 위해서입니다 |
 
 **Keycloak 쪽에서 할 일**
 
-1. **토큰의 대상.** Keycloak 액세스 토큰의 `aud` 는 기본으로 `account` 뿐입니다. 클라이언트 스코프나 클라이언트에 **Audience 매퍼**(Mapper type: Audience)를 더해 `Included Custom Audience` 에 리소스 식별자(`https://<host>/mcp`)를 넣으십시오. 매퍼 없이도 웹 로그인 클라이언트(`Client ID`)로 발급된 토큰은 그 클라이언트 id 를 `aud` 에 담으므로 받아들입니다.
+1. **토큰이 누구를 위한 것인지.** 실제로 재 보면 Keycloak 26 액세스 토큰의 `aud` 는 `account` 뿐이고 발급받은 클라이언트는 `azp` 에 있습니다. 두 길 중 하나를 고르십시오. **(쉬운 길)** MCP 클라이언트의 Client ID(예: `mcp-client`)를 `허용 대상` 에 적습니다 — 매퍼가 필요 없습니다. **(규격의 길)** 클라이언트 스코프나 클라이언트에 **Audience 매퍼**(Mapper type: Audience, Included Custom Audience = `https://<host>/mcp`, Add to access token 켬)를 더합니다. 웹 로그인 클라이언트(`Client ID`)로 발급된 토큰은 언제나 받아들입니다.
 2. **MCP 클라이언트가 쓸 클라이언트.** 두 길이 있습니다.
    - **동적 등록(DCR)**: 대부분의 MCP 클라이언트는 인증 서버의 `registration_endpoint` 로 스스로 등록합니다. Keycloak 에서는 realm 의 `Client registration` → `Anonymous access policies` 에서 `Trusted Hosts` 로 허용 호스트를 열거나, 초기 접근 토큰(Initial access token)을 발급해 클라이언트에 줍니다.
    - **미리 만든 공개 클라이언트**: `Client authentication` 끔, `Standard flow` 켬, `PKCE Method` `S256`, `Valid redirect URIs` 에 클라이언트가 쓰는 루프백 주소(`http://127.0.0.1:*/callback` 등)를 넣고, 그 Client ID 를 MCP 클라이언트 설정에 지정합니다.
 3. **사용자.** 토큰은 **이미 등록된** Weekly 계정만 인증합니다(`sub` 또는 사용자명 claim 으로 찾음). 처음 쓰는 사람은 웹으로 한 번 로그인해 계정을 만들어 두어야 합니다.
 
-**확인하는 법**: `curl -i https://<host>/.well-known/oauth-protected-resource/mcp` 가 리소스와 인증 서버를 돌려주고, 토큰 없이 `curl -i -X POST https://<host>/mcp` 가 `401` 과 `WWW-Authenticate: Bearer … resource_metadata="…"` 를 돌려주면 클라이언트가 길을 찾을 수 있습니다. 토큰이 거부되면 응답 메시지가 이유를 말합니다 — 대상이 다르면 어느 값을 더해야 하는지까지.
+**확인하는 법**: `curl -i https://<host>/.well-known/oauth-protected-resource/mcp` 가 리소스와 인증 서버를 돌려주고, 토큰 없이 `curl -i -X POST https://<host>/mcp` 가 `401` 과 `WWW-Authenticate: Bearer … resource_metadata="…"` 를 돌려주면 클라이언트가 길을 찾을 수 있습니다. 토큰이 거부되면 응답 메시지가 이유를 말합니다 — 이 서버를 위한 토큰이 아니면 그 토큰의 `aud` 와 `azp` 가 무엇이었는지와 어느 값을 더해야 하는지까지. 이 절차는 실제 Keycloak 26 을 띄워 두 길(허용 대상, Audience 매퍼) 모두 확인한 것입니다.
 
 **보안**: SSO 토큰은 개인 키와 같은 읽기 전용 규칙을 따르고 계정을 만들지 않습니다. 검증은 Keycloak 의 JWKS 로 하며 발급자 정보는 서버가 한 번 읽어 두고 키가 바뀌면 다시 읽습니다. 이 서버는 토큰을 저장하지 않습니다.
 
@@ -286,7 +286,7 @@ MCP 인가 규격은 OAuth 2.1 입니다. 이 설정을 켜면 Weekly 는 **리�
 {"level":"INFO","msg":"bootstrap administrator ensured","username":"admin"}
 {"level":"INFO","msg":"database capabilities detected","pg_trgm":true,"pgvector":false}
 {"level":"INFO","msg":"password hashing pool sized","workers":8,"reserved_mib":512,"container_limit_mib":0}
-{"level":"INFO","msg":"Weekly started","address":":8080","version":"0.301.0"}
+{"level":"INFO","msg":"Weekly started","address":":8080","version":"0.302.0"}
 ```
 
 `key_source`가 `environment`가 아니라 볼륨이면 `WEEKLY_ENCRYPTION_KEY`가 없는 하위 호환 모드입니다. `container_limit_mib`가 0 이면 메모리 한도 없이 호스트 메모리를 상속한 것이니 Compose 의 `mem_limit`를 확인하십시오.
