@@ -1,0 +1,24 @@
+{
+  "verdict": "reject",
+  "recommend": "fix",
+  "reasons": [
+    "internal/mail/smtp.go:110-112,136 — 비-localhost 릴레이에서 STARTTLS 없이 AUTH 하면 두 방향 모두 잘못된다 (프로브로 실제 확인). (a) 릴레이가 `AUTH PLAIN LOGIN` 을 광고하면 PLAIN 분기가 선택되고 stdlib smtp.PlainAuth 가 `!server.TLS && !isLocalhost(server.Name)` 로 'unencrypted connection' 을 돌려줘 모든 발송이 실패한다. (b) 릴레이가 `AUTH LOGIN` 만 광고하면 loginAuth.Start 의 `!server.TLS && server.Name != a.host` 가드는 smtp.NewClient(conn, config.SMTPHost) 가 serverName 을 같은 값으로 두므로 항상 거짓이 되어 비밀번호(base64)가 평문 TCP 로 나간다. 캠페인 규칙 1 그대로. 고치는 법: 정책을 먼저 정한다 — 예: config 에 `allow_insecure_auth`(기본 false) 를 두고, TLS 가 아니고 localhost 도 아니면 그 플래그가 없는 한 `ErrInvalid: credentials over an unencrypted connection are refused; use starttls/tls or allow_insecure_auth` 로 명시적으로 거부하며 PLAIN·LOGIN 모두 같은 규칙을 따르게 한다(LOGIN 가드에서 `server.Name != a.host` 비교를 없애고 정책 판단으로 대체). 커밋 메시지·ADMIN_GUIDE 3.4 에 그 정책을 적는다.",
+    "internal/mail/mail_test.go:28,106,146-162 — 가짜 릴레이가 127.0.0.1 에 떠 있어 PlainAuth 의 localhost 예외로만 통과한다(캠페인 규칙 6 의 'localhost 예외'). smtp.NewClient(conn, \"relay.corp\") 처럼 비-localhost 호스트명으로 클라이언트를 만들어 startSession 을 직접 호출하는 테스트를 추가하고, (1) `AUTH LOGIN` 만 광고 + STARTTLS 없음 일 때 정책이 허용하지 않으면 AUTH 명령이 wire 에 나가지 않음, (2) `AUTH PLAIN LOGIN` 일 때 정책이 허용하면 실제로 인증이 되고 실패하지 않음을 단언한다. 지금 코드에서는 (1) 이 실패해야 정상이다.",
+    "internal/mail/service.go:160-176,179-191 — 발송 기록이 발송용 컨텍스트로 이뤄져 릴레이가 응답 없을 때 행이 영원히 'queued' 로 남을 수 있다(캠페인 규칙 2). deliver 의 예산은 2×timeout+15s 인데, 한 시도의 최악은 dial(net.Dialer.Timeout=T, smtp.go:62)+대화 데드라인(T, smtp.go:75)=2T 이고 두 시도+2s 백오프면 4T+2s (기본 T=10 이면 42s > 35s). 그 뒤 complete(ctx,…) 가 만료된 ctx 로 UPDATE 를 실행해 'mail delivery status was not recorded' 만 남고 status=queued, attempts=0 으로 고정된다. SendNow 도 같다(T+5s 예산 vs 2T 최악). 고치는 법: complete()/record() 는 `context.WithTimeout(context.WithoutCancel(ctx), 5*time.Second)` 처럼 발송과 독립된 컨텍스트로 실행하고, deliver 예산은 (dial T + 대화 T)×2 + 2s 이상으로 잡는다.",
+    "internal/mail/service.go:107-113,125-130 — 배경 발송 고루틴에 상한이 없다(캠페인 규칙 3). Notify 호출마다 고루틴 하나가 수신자 수만큼 순차 발송하므로 응답 없는 릴레이에서는 관리자 20명 × (2T+2s) ≈ 7분을 살아 있고, 그 사이 들어오는 요청마다 고루틴·TCP 연결이 무한히 쌓인다. 고치는 법: Service 에 세마포어(예: 4~8) 를 두고 상한을 넘으면 record() 로 'queued' 행만 즉시 남기고 슬롯이 날 때까지 대기시킨다. 테스트는 sender 를 막아 둔 채 Notify 를 상한+1 번 호출해 동시에 send 에 들어간 수가 상한을 넘지 않음을 단언한다.",
+    "internal/api/defense_admin.go:663-678, internal/api/realmguard_admin.go:896-913 — 이미 `pending_approval` 인 버전에 게시 요청을 다시 누르면(코드가 `approval_requested_at=COALESCE(...)` 로 이 재요청을 명시적으로 허용한다) 상태는 그대로인데 approval_requested 가 관리자 전원·팀장에게 매번 다시 나간다(캠페인 규칙 5: 상태가 아니라 전이로 판정). 고치는 법: FOR UPDATE 로 읽은 시점의 version.Status 가 'testing'→'pending_approval' 로 실제로 바뀔 때만 notifyReviewers 를 부르고, 같은 상태에 머무는 재요청은 보내지 않는다. 회귀 테스트로 pending_approval 상태에서 publish 를 두 번 호출해 두 번째에 mail 이 나가지 않음을 단언한다.",
+    "internal/api/defense_admin.go:678, internal/api/realmguard_admin.go:913 — Defense·RealmGuard 승인 요청 메일의 링크가 `/admin/defense`, `/admin/realmguard` 인데 그 경로는 web/src/App.tsx:79 RequireAdmin(admin·operator) 뒤에 있어 수신자인 팀장(manager) 은 '관리 권한이 필요합니다' 화면을 보고, 실제 검토 대기열(DefenseReviewQueue·RealmGuardReviewQueue) 은 web/src/pages/ReviewsPage.tsx 즉 `/reviews` 에 있다(캠페인 규칙 4). 본문 안내 '검토·승인 화면에서 승인하거나' 와도 맞지 않는다. 승인 요청 메일의 링크를 `/reviews` 로 바꾸고, 테스트 기대값은 App.tsx 라우트에서 가져온다.",
+    "internal/mail/mail_test.go:273-298 — 죽은 릴레이를 sender 스텁의 'connection refused' 오류로만 흉내 낸다(캠페인 규칙 6). net.Listen 으로 TCP 는 받되 아무것도 쓰지 않는 리스너를 띄워 실제 Deliver 를 Timeout=1 로 호출하고, (1) 'SMTP greeting failed' 로 T 안에 돌아오는지, (2) Service.deliver 뒤 complete 가 호출되어 status='failed' 로 기록되는지(pool 없는 테스트라면 complete 에 넘어간 ctx 가 만료되지 않았는지) 를 단언하는 테스트를 넣는다."
+  ],
+  "notes": [
+    "migrations/011_mail_deliveries.sql 은 CREATE TABLE IF NOT EXISTS / CREATE INDEX IF NOT EXISTS 만 있는 추가 전용 마이그레이션이라 사람 판단이 필요한 되돌릴 수 없는 변경은 없다. 코드 revert 후 표가 남아도 무해하다.",
+    "기본값은 꺼짐이 맞다: system_settings 에 'mail' 행이 없으면 mailConfig 가 Config{}.Normalized() (Enabled=false) 를 돌려주고 Notify 는 즉시 반환한다 (internal/api/mail.go:21-28, internal/mail/service.go:91).",
+    "비밀값: 비밀번호는 secretbox 로 봉인 저장, GET 은 password_configured 만 반환, 감사 로그는 settingSecretKeys['password'] 로 'replaced' 만 남긴다. 저장된 값이 열리지 않으면 503 으로 저장을 거부한다(테스트 있음). 시험 발송의 502 본문은 릴레이 오류 문자열만 담고 비밀번호는 실리지 않는다.",
+    "새 공개 경로 없음: /admin/mail/deliveries·/admin/mail/test 는 requireRole(\"admin\"), settings/mail 은 기존 admin 게이트 안. 권한 상승·계정 자동 생성 없음.",
+    "프론트 시험 발송 실패 처리는 맞다: writeError 의 {error:{code,message}} 를 client.ts request() 가 읽고, mail_send_failed 는 USER_FACING_MESSAGES 에 없어 릴레이 메시지가 그대로 표시되며 finally 에서 revision 을 올려 발송 기록을 다시 불러온다.",
+    "랭킹 조정 알림은 previous==status 면 보내지 않아 전이 기반이 맞고, 워크플로 검토는 단일 단계라 중복 문제 없음. apply 실패로 pending 으로 되돌아가는 경로에서는 결과 메일을 보내지 않는다(맞음).",
+    "mail_opt_out 은 UI 가 없고 PUT /api/v1/me/preferences 로만 넣을 수 있는데 ADMIN_GUIDE 가 그렇게 정직하게 적고 있어 문서-동작 불일치는 아니다.",
+    "go build ./..., go vet, internal/mail·internal/api 의 mail 관련 테스트 실행 통과. 위 1번 사유는 리뷰용 임시 프로브 테스트(제거함)로 실제 wire 에서 'unencrypted connection' 오류와 base64 비밀번호 송출을 각각 확인했다."
+  ],
+  "risk": "medium"
+}

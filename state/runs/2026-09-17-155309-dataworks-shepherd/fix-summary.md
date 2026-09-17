@@ -1,0 +1,7 @@
+# PR #21 fix summary (commit 016260b)
+
+- 문제 1·2 (평문 인증): `loginAuth.Start` 의 `!server.TLS && server.Name != a.host` 는 항상 거짓이라 TLS 없는 릴레이에 LOGIN 으로 비밀번호가 base64 평문으로 나갔고, PLAIN 은 표준 라이브러리가 무조건 거부해 릴레이가 광고하는 메커니즘에 따라 결과가 갈렸음. 재현 테스트(가짜 릴레이가 STARTTLS 없이 `AUTH LOGIN` 광고)로 확인 후, `startSession` 이 `client.TLSConnectionState()` 하나로 판정하도록 바꿈: TLS 면 PLAIN→LOGIN→CRAM-MD5, 평문이면 CRAM-MD5 만 허용하고 그 외는 `ErrInvalid`("TLS 없이는 인증하지 않습니다. mail.security 를 starttls 또는 tls 로 바꾸거나 사용자 이름을 비우세요"). `loginAuth.Start` 도 `!server.TLS` 만으로 거부. 정책은 docs/ADMIN_GUIDE.md 4.6 의 `mail.security`·`mail.username/password` 행에 명시(PDF 는 생성 도구가 저장소에 없어 갱신하지 않음).
+- 문제 3·4 (ctx 만료 뒤 기록 실패로 `queued` 영구 잔류): 재현 테스트(ctx 를 존중하는 memLedger + 예산을 넘겨 돌아오는 sender)로 'mail delivery status was not recorded error=context deadline exceeded' 와 Status:queued/Attempts:0 을 확인. `complete()` 가 발송 ctx 대신 `context.Background()` 기반 5s 별도 ctx 로 기록하게 함(deliver·SendNow·ErrBusy 경로 모두).
+- 추가로 예산이 최악 발송 시간을 덮도록 `Config.AttemptBudget()`(=2×Timeout: 연결 T + 세션 T) 을 도입해 deliver 는 `2×AttemptBudget + 2s + 1s`, SendNow 는 `AttemptBudget + 1s` 로 잡고, `Deliver` 가 `context.AfterFunc` 로 ctx 만료 시 연결을 닫아 세션 단계(EHLO/MAIL/RCPT/DATA)도 ctx 를 따르게 함(만료 시 `context.DeadlineExceeded` 를 감싼 오류 반환).
+- 회귀 테스트 추가: 평문 릴레이에서 LOGIN/PLAIN/DIGEST-MD5 광고 시 AUTH 가 한 줄도 나가지 않음, CRAM-MD5 는 평문에서 허용, STARTTLS·implicit TLS(자체 서명 인증서) 에서는 PLAIN/LOGIN 정상 인증, 예산 초과 후에도 행이 `failed` 로 기록됨, ctx 만료 시 세션이 즉시 끝남.
+- 검증: `go build ./...`, `go vet ./...`, `go test ./...`, `go run ./cmd/api-surface-audit` 모두 통과.
