@@ -1,6 +1,6 @@
 # moyro 관리자 가이드
 
-대상 버전: **v0.2.31** · 이 문서는 저장소 정본입니다. PDF: [`ADMIN_GUIDE.pdf`](ADMIN_GUIDE.pdf)
+대상 버전: **v0.2.32** · 이 문서는 저장소 정본입니다. PDF: [`ADMIN_GUIDE.pdf`](ADMIN_GUIDE.pdf)
 
 화면을 쓰는 쪽 내용은 [사용자 가이드](USER_GUIDE.md)에 있습니다. 같은 내용을 두 번
 쓰지 않고 필요한 곳에서 가리킵니다. 오프라인 설치의 더 자세한 절차는
@@ -18,7 +18,7 @@ moyro는 **애플리케이션 컨테이너 한 개 + 외부 PostgreSQL** 로 동
 
 | 구성 요소 | 형태 | 필수 | 하는 일 |
 |---|---|---|---|
-| moyro 애플리케이션 | Docker 이미지 `moyro:v0.2.31` | 필수 | HTTP API(`/api/v4`, `/api/moyro/v1`), WebSocket, 웹 UI 정적 파일, 백그라운드 워커 |
+| moyro 애플리케이션 | Docker 이미지 `moyro:v0.2.32` | 필수 | HTTP API(`/api/v4`, `/api/moyro/v1`), WebSocket, 웹 UI 정적 파일, 백그라운드 워커 |
 | PostgreSQL | 조직이 운영하는 외부 서비스 | 필수 | 모든 상태. 메시지, 사용자, 설정, 작업/결정, 알림함, 감사 로그 |
 | 데이터 볼륨 `moyro-data` | Docker 볼륨 → `/var/lib/moyro` | 필수 | 업로드 파일(`files/`)과 플러그인(`plugins/`) |
 | 리버스 프록시 | 조직 표준 | 권장 | TLS 종료. moyro 자체는 평문 HTTP로 `8065`를 듣습니다 |
@@ -35,7 +35,7 @@ moyro는 **애플리케이션 컨테이너 한 개 + 외부 PostgreSQL** 로 동
 | 나감 | moyro → Outgoing Webhook 대상 | **허용 목록에 넣은 host 만** |
 | 나감 | moyro → Keycloak / AI endpoint | 켠 경우에만 |
 
-v0.2.31이 **지원하지 않는 것**을 먼저 확인하세요. 애플리케이션 컨테이너 다중 복제,
+v0.2.32이 **지원하지 않는 것**을 먼저 확인하세요. 애플리케이션 컨테이너 다중 복제,
 Redis fan-out, S3 파일 저장, SMTP 발송, 외부 링크 미리보기는 이 릴리즈의 범위 밖입니다.
 파일은 로컬 볼륨에 저장됩니다.
 
@@ -51,9 +51,9 @@ Redis fan-out, S3 파일 저장, SMTP 발송, 외부 링크 미리보기는 이 
 릴리즈 아카이브를 조직의 승인된 매체로 옮긴 뒤 릴리즈 노트의 SHA-256과 비교합니다.
 
 ```bash
-sha256sum moyro-v0.2.31.tar.gz
-docker load --input moyro-v0.2.31.tar.gz
-docker image inspect moyro:v0.2.31
+sha256sum moyro-v0.2.32.tar.gz
+docker load --input moyro-v0.2.32.tar.gz
+docker image inspect moyro:v0.2.32
 ```
 
 지원 플랫폼은 `linux/amd64` 입니다.
@@ -103,7 +103,7 @@ docker run -d \
   --env-file /etc/moyro/moyro.env \
   --mount type=volume,src=moyro-data,dst=/var/lib/moyro \
   --publish 8065:8065 \
-  moyro:v0.2.31
+  moyro:v0.2.32
 ```
 
 ### 2.5 기동 확인과 최초 관리자
@@ -303,6 +303,103 @@ endpoint를 쓰세요.
 API 계약은 두 벌입니다. Mattermost 호환 `/api/v4` 는
 [`openapi-v4.yaml`](openapi-v4.yaml), moyro 전용 `/api/moyro/v1` 은
 [`openapi-moyro.yaml`](openapi-moyro.yaml)에 있습니다.
+
+#### 3.6.1 SSO(OAuth)로 MCP 연결 허용
+
+개인 키 체계는 그대로 두고, **Keycloak 액세스 토큰**으로도 `/mcp` 에 들어오게
+하는 세 번째 카드입니다. MCP 인가 규격(2025-06-18 이후)은 OAuth 2.1 이라
+클라이언트에 MCP 주소 하나만 주면 클라이언트가 스스로 Keycloak 로그인 창을
+띄우고 토큰을 받아 옵니다. 이미 로그인한 사람은 화면을 거의 보지 않습니다.
+
+이 서버는 **리소스 서버**입니다. 로그인·토큰 발급·클라이언트 등록은 Keycloak 이
+하고, moyro 는 `/authorize`·`/token`·동적 등록을 만들지 않습니다. 하는 일은 셋뿐입니다.
+
+1. `GET /.well-known/oauth-protected-resource` 와 `…/oauth-protected-resource/mcp`
+   에서 인증 없이 맨 JSON(RFC 9728)으로 `resource`·`authorization_servers`·
+   `bearer_methods_supported`·`scopes_supported` 를 냅니다. 꺼져 있으면 404 입니다.
+2. `/mcp` 의 401 응답에 `WWW-Authenticate: Bearer realm="moyro",
+   resource_metadata="…"` 를 붙입니다(토큰이 있었는데 거부했으면 `error="invalid_token"`
+   추가). **MCP 경로에서만** 붙고 REST 401 에는 붙지 않습니다.
+3. 같은 `Authorization: Bearer` 헤더에서 `moyro_` 접두사면 키, JWT 모양이면 SSO
+   토큰으로 검사합니다. 둘 다 아니면 지금과 같은 "잘못된 키" 응답입니다.
+
+**설정 표** (설정 저장소 `mcp` 섹션의 `oauth` 객체, 화면은 시스템 → MCP · API)
+
+| 키 | 기본값 | 뜻 |
+|---|---|---|
+| `mcp.oauth.enabled` | `false` | **꺼짐이 기본.** 켜면 SSO 토큰을 받습니다 |
+| `mcp.oauth.resource` | 빈 값 | 리소스 식별자. 비면 사이트 설정의 공개 주소 + `/mcp`. 클라이언트가 실제 접속하는 공개 HTTPS 주소여야 하고 `/mcp` 로 끝나야 합니다 |
+| `mcp.oauth.audience` | 빈 값 | Audience 매퍼 없이 쓸 때 허용할 MCP 클라이언트 ID 목록. 토큰의 `aud` 또는 `azp` 와 비교 |
+| `mcp.oauth.scopes` | `mcp_read` | SSO 주체에게 주는 범위. `mcp_read`·`mcp_write`·`request_approval`·`review_approval` 만 가능 |
+| (재사용) `oidc.issuer_url` · `oidc.client_id` | 3.4 절의 Keycloak 설정 | 발급자·JWKS 는 웹 로그인 설정을 그대로 씁니다 |
+
+저장 시점에 세 가지를 확인하고 하나라도 없으면 거부합니다 — Keycloak SSO 가 켜져 있고
+발견(discovery)이 성공한 상태, 리소스 식별자(직접 값 또는 공개 주소), 범위 하나 이상.
+저장 뒤 Keycloak 을 끄거나 MCP 를 끄면 스위치는 켜진 채로 남지만 토큰을 받지 않고
+메타데이터는 404 가 되며, 이유가 카드의 경고와 서버 로그
+(`MCP SSO is enabled but not accepting tokens`)에 남습니다.
+
+**토큰을 어떻게 믿는가.** 서명(Keycloak JWKS, RS/ES/PS/EdDSA 만 — `HS*`·`none` 거부),
+`iss`(= `oidc.issuer_url`), `exp`, `nbf`, `typ`(`ID` 면 거부 — ID 토큰은 로그인 증거지
+API 자격이 아닙니다), `cnf`(있으면 거부 — 검증할 수 없는 소지자 증명), `sub`(비면 거부),
+그리고 **대상**. 대상은 둘 중 하나가 맞아야 합니다: `aud` 에 리소스 식별자가 있거나,
+`aud` 또는 `azp` 가 `mcp.oauth.audience` 에 있어야 합니다. 실제 Keycloak 26 은 `aud` 에
+`account` 만 싣고 클라이언트 ID 는 `azp` 에 담으므로 매퍼 없이 쓰려면 후자로 갑니다.
+
+**계정은 만들지 않습니다.** 토큰의 `sub` 로 `user_identities` 에 이미 연결된 활성 계정만
+찾습니다. 그 연결은 사용자가 웹으로 Keycloak 로그인을 한 번 했을 때 생깁니다. 없거나
+비활성이면 거부하고 "웹으로 먼저 로그인하세요" 라고 답합니다. 이메일이나 사용자 이름이
+같다고 연결하지 않고, 토큰의 role 로 권한을 올리지도 않습니다 — SSO 주체는 그 사용자가
+키로 들어왔을 때와 같은 문(필수 key scope, RBAC 의 역할 교집합, 팀·채널 멤버십)을 지나며
+범위는 `mcp.oauth.scopes` 가 정합니다. OAuth 토큰은 `/mcp` 에서만 받습니다.
+REST·웹소켓·관리 API 는 지금처럼 키와 세션만 받습니다.
+
+**Keycloak 쪽 할 일**
+
+1. MCP 클라이언트용 **공개(public) 클라이언트**를 만듭니다. Standard Flow 켬, PKCE `S256`,
+   Direct Access Grants·Implicit·Service accounts 끔. 웹 로그인 클라이언트(3.4 절)와
+   **다른** 클라이언트입니다.
+2. Valid Redirect URIs 에 쓰는 MCP 클라이언트의 콜백을 정확히 적습니다(Claude 는
+   `https://claude.ai/api/mcp/auth_callback`, 로컬 클라이언트는 `http://127.0.0.1:*/callback`
+   류). `*` 하나로 다 여는 것은 금지입니다.
+3. 정식 경로: 그 클라이언트(또는 전용 client scope)에 **Audience 매퍼** —
+   Included Custom Audience = 리소스 식별자(카드의 "MCP 주소"), Add to access token 켬,
+   Add to ID token 끔. 호환 경로: 매퍼 없이 이 앱의 `mcp.oauth.audience` 에 그
+   클라이언트 ID 를 적습니다.
+4. 액세스 토큰 수명은 짧게(5분 안팎). 이 서버는 introspection 을 하지 않으므로
+   Keycloak 에서 로그아웃해도 이미 발급된 토큰은 만료까지 삽니다.
+
+**curl 로 확인**
+
+```bash
+# 1. 메타데이터 — 인증 없이 200, 봉투 없는 맨 JSON, CORS *
+curl -si https://chat.corp.example/.well-known/oauth-protected-resource/mcp
+# 2. 토큰 없는 /mcp 는 401 + WWW-Authenticate 에 resource_metadata
+curl -si -X POST https://chat.corp.example/mcp \
+  -H 'Content-Type: application/json' -H 'Accept: application/json, text/event-stream' \
+  -d '{"jsonrpc":"2.0","id":1,"method":"tools/list","params":{}}' | grep -i www-authenticate
+# 3. Keycloak 에서 받은 액세스 토큰으로 tools/list
+curl -s -X POST https://chat.corp.example/mcp -H "Authorization: Bearer $TOKEN" \
+  -H 'Content-Type: application/json' -H 'Accept: application/json, text/event-stream' \
+  -d '{"jsonrpc":"2.0","id":1,"method":"tools/list","params":{}}'
+# 4. REST 401 에는 헤더가 없어야 정상
+curl -si https://chat.corp.example/api/v4/users/me | grep -ci www-authenticate   # 0
+```
+
+**거부 메시지별 조치** (`/mcp` 의 401 본문 `message`; 정확한 원인은 서버 로그
+`MCP SSO token rejected` 의 `err` 에 남습니다)
+
+| 메시지 | 뜻 · 조치 |
+|---|---|
+| `the SSO token was not issued for this server (aud=[account], azp="claude-mcp"): add "claude-mcp" …` | 대상 불일치. 메시지에 적힌 `azp` 를 허용 대상에 더하거나 Keycloak 클라이언트에 Audience 매퍼로 리소스 식별자를 넣습니다 |
+| `the SSO access token is not valid (signature, issuer, expiry, or not-before)` | 만료·다른 realm·키 회전 직후·`HS256` 등. 클라이언트에서 다시 로그인. 로그의 `err` 로 구분합니다 |
+| `the bearer is an ID token` | 클라이언트가 ID 토큰을 보냈습니다. 액세스 토큰을 쓰도록 클라이언트 설정을 확인합니다 |
+| `… bound to a proof-of-possession key (cnf)` | DPoP/mTLS 바운드 토큰. 이 서버는 검증하지 못하므로 그 클라이언트 설정을 끕니다 |
+| `this SSO account is not registered here or is inactive; sign in to the web once first` | 사용자가 웹으로 한 번 Keycloak 로그인해 계정을 연결해야 합니다. 비활성 계정은 되살리지 않습니다 |
+| `MCP credential is missing required scope: …` (403) | `mcp.oauth.scopes` 에 3.6 의 필수 key scope 가 빠져 있습니다 |
+| 메타데이터가 404 | 스위치가 꺼져 있거나 Keycloak·MCP 가 꺼져 있거나 리소스 식별자가 없습니다. 카드의 경고를 봅니다 |
+
+사용자 안내는 [USER_GUIDE.md](USER_GUIDE.md) 의 "키 없이 SSO 로 연결하기" 절에 있습니다.
 
 ### 3.7 검토 · 승인
 
@@ -583,6 +680,7 @@ Implemented** 를 돌려줍니다. `PUT /config`, `PUT /config/patch`,
 | `GET /healthz` | 인증이 없습니다. 프로브 범위로 제한하세요 |
 | `POST /hooks/{hookID}` | URL만 알면 게시할 수 있습니다. 필요한 대역에서만 닿게 하세요 |
 | `POST /api/moyro/v1/tracking/csp-report` | 인증이 없는 브라우저 신고 수신처입니다. 본문 8 KB·메모리 100건으로 묶여 있고 추적이 꺼져 있으면 버립니다 |
+| `GET /.well-known/oauth-protected-resource[/mcp]` | 인증이 없지만 공개해도 되는 문서입니다(어디서 로그인하는지만 말합니다). MCP SSO 가 꺼져 있으면 404 |
 | `/momento/*` | 방문 추적의 Momento 프록시가 켜진 동안만 답합니다. 수집기가 아닌 곳으로는 전달하지 않습니다 |
 | PostgreSQL 5432 | 내부망 안에만 |
 | 컨테이너 8065 직접 노출 | 프록시 뒤에 두세요 |
