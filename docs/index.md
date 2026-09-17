@@ -1,7 +1,7 @@
 ---
 title: "aidev 자율 개선 대시보드"
 description: "Claude Code 자율 개선 에이전트가 hkjang 의 프로젝트를 개선·테스트·머지·릴리즈한 일일 보고. 오늘 5회차·릴리즈 1건, 누적 949회차·릴리즈 348건, 주의 필요 18건."
-last_modified_at: 2026-09-18 05:54:07 +0900
+last_modified_at: 2026-09-18 05:58:14 +0900
 ---
 {% raw %}
 <script type="application/ld+json">
@@ -17,7 +17,7 @@ last_modified_at: 2026-09-18 05:54:07 +0900
   "name": "hkjang",
   "url": "https://github.com/hkjang"
  },
- "dateModified": "2026-09-18T05:54:07+09:00"
+ "dateModified": "2026-09-18T05:58:14+09:00"
 }
 </script>
 
@@ -291,7 +291,7 @@ last_modified_at: 2026-09-18 05:54:07 +0900
 
 # aidev 자율 개선 대시보드
 
-<p class="tldr"><strong>한 줄 요약.</strong> Claude Code 자율 개선 에이전트가 hkjang 의 프로젝트를 개선·테스트·머지·릴리즈한 일일 보고. 오늘 5회차·릴리즈 1건, 누적 949회차·릴리즈 348건, 주의 필요 18건. 회차가 끝날 때마다 자동 갱신됩니다 (마지막 갱신 <time datetime="2026-09-18T05:54:07+09:00" data-rel>2026-09-18 05:54</time> KST).</p>
+<p class="tldr"><strong>한 줄 요약.</strong> Claude Code 자율 개선 에이전트가 hkjang 의 프로젝트를 개선·테스트·머지·릴리즈한 일일 보고. 오늘 5회차·릴리즈 1건, 누적 949회차·릴리즈 348건, 주의 필요 18건. 회차가 끝날 때마다 자동 갱신됩니다 (마지막 갱신 <time datetime="2026-09-18T05:58:14+09:00" data-rel>2026-09-18 05:58</time> KST).</p>
 
 <div class="alerts" role="alert"><strong>⚠️ 주의 필요 18건</strong> <span class="meta">— 새 경고는 GitHub Issue·Slack·이메일·Windows 알림으로도 보냅니다</span><ul><li><a href="https://hkjang.github.io/aidev/projects/ptium/">ptium</a> — 보호 파일 변경 — 자동 머지 안 함, 사람 검토 필요 <span class=meta>(2026-09-18 02:53)</span></li><li><a href="https://hkjang.github.io/aidev/projects/relio/">relio</a> — 보호 파일 변경 — 자동 머지 안 함, 사람 검토 필요 <span class=meta>(2026-09-18 03:43)</span></li><li><a href="https://hkjang.github.io/aidev/projects/visitflow/">visitflow</a> — 보호 파일 변경 — 자동 머지 안 함, 사람 검토 필요 <span class=meta>(2026-09-18 05:54)</span></li><li><a href="https://hkjang.github.io/aidev/projects/Momento/">Momento</a> — 보호 파일 변경 — 자동 머지 안 함, 사람 검토 필요 <span class=meta>(2026-09-17 01:12)</span></li><li><a href="https://hkjang.github.io/aidev/projects/aiportal-front-admin/">aiportal-front-admin</a> — 보호 파일 변경 — 자동 머지 안 함, 사람 검토 필요 <span class=meta>(2026-09-17 02:39)</span></li><li><a href="https://hkjang.github.io/aidev/projects/cutover/">cutover</a> — 보호 파일 변경 — 자동 머지 안 함, 사람 검토 필요 <span class=meta>(2026-09-17 04:00)</span></li><li><a href="https://hkjang.github.io/aidev/projects/git-ctx/">git-ctx</a> — 보호 파일 변경 — 자동 머지 안 함, 사람 검토 필요 <span class=meta>(2026-09-17 04:00)</span></li><li><a href="https://hkjang.github.io/aidev/projects/madi/">madi</a> — 보호 파일 변경 — 자동 머지 안 함, 사람 검토 필요 <span class=meta>(2026-09-17 05:21)</span></li><li><a href="https://hkjang.github.io/aidev/projects/jupiq/">jupiq</a> — 보호 파일 변경 — 자동 머지 안 함, 사람 검토 필요 <span class=meta>(2026-09-17 05:24)</span></li><li><a href="https://hkjang.github.io/aidev/projects/releasedock/">releasedock</a> — 보호 파일 변경 — 자동 머지 안 함, 사람 검토 필요 <span class=meta>(2026-09-17 08:57)</span></li><li><a href="https://hkjang.github.io/aidev/projects/relio/">relio</a> — 보호 파일 변경 — 자동 머지 안 함, 사람 검토 필요 <span class=meta>(2026-09-17 09:04)</span></li><li><a href="https://hkjang.github.io/aidev/projects/Invenqor/">Invenqor</a> — 보호 파일 변경 — 자동 머지 안 함, 사람 검토 필요 <span class=meta>(2026-09-17 14:40)</span></li><li><a href="https://hkjang.github.io/aidev/projects/Kkiit/">Kkiit</a> — 보호 파일 변경 — 자동 머지 안 함, 사람 검토 필요 <span class=meta>(2026-09-17 15:49)</span></li><li><a href="https://hkjang.github.io/aidev/projects/SecCheck/">SecCheck</a> — 보호 파일 변경 — 자동 머지 안 함, 사람 검토 필요 <span class=meta>(2026-09-17 16:44)</span></li><li><a href="https://hkjang.github.io/aidev/projects/Vendra/">Vendra</a> — 보호 파일 변경 — 자동 머지 안 함, 사람 검토 필요 <span class=meta>(2026-09-17 17:21)</span></li><li><a href="https://hkjang.github.io/aidev/projects/ai-admin/">ai-admin</a> — 보호 파일 변경 — 자동 머지 안 함, 사람 검토 필요 <span class=meta>(2026-09-17 17:53)</span></li><li><a href="https://hkjang.github.io/aidev/projects/appstore/">appstore</a> — 보호 파일 변경 — 자동 머지 안 함, 사람 검토 필요 <span class=meta>(2026-09-17 18:23)</span></li><li><a href="https://hkjang.github.io/aidev/projects/jupiq/">jupiq</a> — 보호 파일 변경 — 자동 머지 안 함, 사람 검토 필요 <span class=meta>(2026-09-17 23:05)</span></li></ul></div>
 
@@ -299,9 +299,9 @@ last_modified_at: 2026-09-18 05:54:07 +0900
 
 <div class="alerts" role="alert"><strong>⛔ 긴급 중지 중:</strong> <code>aiportal-java</code> — <a href="https://hkjang.github.io/aidev/inbox/">작업함</a></div>
 
-<p><a href="https://hkjang.github.io/aidev/inbox/"><strong>📥 작업함</strong></a> — 열린 러너 PR·복구·수정 과제 66건 (그중 사람 필요 19건)</p>
+<p><a href="https://hkjang.github.io/aidev/inbox/"><strong>📥 작업함</strong></a> — 열린 러너 PR·복구·수정 과제 66건 (그중 사람 필요 20건)</p>
 
-<p>🧹 <strong>PR 처리기</strong> — 매시간 검토 대기 PR 을 진단해 고치고 심사해 승인 · 마지막 실행 2026-09-18 04:40 · 오늘 승인 4 · 수정 푸시 6 · 사람 필요 8 <span class="meta">(기록: state/shepherd.jsonl)</span></p>
+<p>🧹 <strong>PR 처리기</strong> — 매시간 검토 대기 PR 을 진단해 고치고 심사해 승인 · 마지막 실행 2026-09-18 05:56 · 오늘 승인 4 · 수정 푸시 6 · 사람 필요 9 <span class="meta">(기록: state/shepherd.jsonl)</span></p>
 
 [운영 문서](https://github.com/hkjang/aidev#readme) · [원장](https://github.com/hkjang/aidev/tree/main/state) · [실행 이력](https://github.com/hkjang/aidev/commits/main) · [경고 이슈](https://github.com/hkjang/aidev/issues?q=label%3Aalert) · [교훈 25건](https://hkjang.github.io/aidev/lessons/) · [Atom 피드](https://hkjang.github.io/aidev/feed.xml) · [summary.json](https://hkjang.github.io/aidev/data/summary.json)
 
