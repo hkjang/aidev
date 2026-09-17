@@ -1,7 +1,7 @@
 ---
 title: "cutover — 자율 개선 이력"
 description: "cutover: 자율 개선 회차 8회, 릴리즈 2건. 최근 릴리즈 v1.6.0 (자산 1개)."
-last_modified_at: 2026-09-17 19:05:54 +0900
+last_modified_at: 2026-09-17 19:42:53 +0900
 ---
 {% raw %}
 <script type="application/ld+json">
@@ -18,7 +18,7 @@ last_modified_at: 2026-09-17 19:05:54 +0900
   "name": "hkjang",
   "url": "https://github.com/hkjang"
  },
- "dateModified": "2026-09-17T19:05:54+09:00",
+ "dateModified": "2026-09-17T19:42:53+09:00",
  "version": "1.6.0"
 }
 </script>
