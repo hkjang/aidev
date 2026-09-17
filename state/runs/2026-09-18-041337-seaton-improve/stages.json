@@ -1,0 +1,27 @@
+{
+  "base": {
+    "state": "pinned",
+    "reason": "main@3f3c8ab",
+    "at": "2026-09-18T04:13:39+09:00"
+  },
+  "autonomy": {
+    "state": "release",
+    "reason": "",
+    "at": "2026-09-18T04:13:39+09:00"
+  },
+  "verify": {
+    "state": "passed",
+    "reason": "검증 7개 통과 (auto)",
+    "at": "2026-09-18T04:35:25+09:00"
+  },
+  "pr": {
+    "state": "created",
+    "reason": "https://github.com/hkjang/seaton/pull/30",
+    "at": "2026-09-18T04:35:31+09:00"
+  },
+  "review": {
+    "state": "rejected",
+    "reason": "리뷰 거절: internal/app/mcpoauth.go:296-314 mcpOAuthScopes 가 교집합이 비면 빈 슬라이스를 돌려주는데, /mcp 는 빈 범위를 '세션 인증(무제한)'으로 해석한다(internal/app/mcp.go:30, :168 의 `len(scopes) > 0 && !containsString(...)`). 관리자 천장이 `read mcp` 일 때 scope 에 `write` 만 실린 Keycloak 토큰(또는 천장이 `mcp` 일 때 `read` 만 실린 토큰)은 narrowed=true → granted=[] → apiScopes 가 비어 mcp 범위 검사와 write 범위 검사를 모두 건너뛰고 쓰기 도구까지 전부 열린다. 주석·문서('관리자 설정이 천장')와 정반대의 권한 상승이며, TestMCPOAuthScopesAreCappedByAdmin 의 {\"read mcp\",\"write\",\"\"} 케이스는 이 빈 결과를 정답으로 고정해 버려 결함을 검증하지 못한다. 교집합이 비면 거절(403 insufficient_scope)하거나 최소한 비어 있지 않은 sentinel 을 넘겨야 한다.",
+    "at": "2026-09-18T04:37:54+09:00"
+  }
+}

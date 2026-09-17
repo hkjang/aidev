@@ -510,3 +510,34 @@ https://github.com/hkjang/seaton/pull/28#issuecomment-5719742030
 [04:04:31] shepherd: 처리 4건 — 승인 0 · 수정 푸시 1 · 사람 필요 1 (오늘 $36.2435235/$60)
 reports: 17 day(s), 3 week(s), 1 month(s), 947 run(s), 1179 usage row(s), 43 project page(s), 17 alert(s)
 notify: no new alerts
+[04:07:05] aidev sync FAILED: shepherd(2026-09-18): 4건 처리 — 승인 0 · 수정 1 · 사람 필요 1
+[04:07:05] done
+[04:12:55] skip aiportal-java: STOP
+[04:13:26] skip umm: dirty working tree
+[04:13:30] candidates(40): AgentHub Clustara DartFly Invenqor Kkiit Momento Quantoss ReSSO SecCheck Vendra ai-admin aiportal-front-admin aiportal-front aiportal-py appstore cutover dataworks git-ctx hunter igame jikim jupiq kanpic madi moina moyro muni nexabuilder orbit pii-masker postra ptium qurio releasedock relio seaton sqlon vibe-coders visitflow weekly
+[04:13:34] campaign tracking-2026-09: 세 번 이상 실패해 더 잡지 않는 프로젝트 — weekly
+[04:13:36] campaign mail-2026-09: 세 번 이상 실패해 더 잡지 않는 프로젝트 — postra
+[04:13:37] campaign mcp-oauth-2026-09: picked seaton
+[04:13:37] picked: seaton
+[04:13:37] === seaton (base=main, run 2026-09-18-041337-seaton-improve, 회차 예산 $30)
+Preparing worktree (new branch 'auto/2026-09-18-0413')
+HEAD is now at 3f3c8ab docs: v1.4.4 기준으로 문서 정비
+[04:13:39] seaton: [base] pinned — main@3f3c8ab
+[04:13:39] seaton: [autonomy] release — 
+[04:35:16] seaton: improve — 84 turns, 22m, $11.9, success
+[04:35:18] seaton: verify `go build ./...` → exit 0 (0s)
+[04:35:19] seaton: verify `go vet ./...` → exit 0 (1s)
+[04:35:19] seaton: verify `go test ./...` → exit 0 (0s)
+[04:35:19] seaton: verify `cd web && [ -d node_modules ] || npm ci --no-audit --no-fund` → exit 0 (0s)
+[04:35:20] seaton: verify `cd web && npm test --silent` → exit 0 (1s)
+[04:35:20] seaton: verify `cd web && [ -d node_modules ] || npm ci --no-audit --no-fund` → exit 0 (0s)
+[04:35:25] seaton: verify `cd web && npm run build --silent` → exit 0 (5s)
+[04:35:25] seaton: [verify] passed — 검증 7개 통과 (auto)
+branch 'auto/2026-09-18-0413' set up to track 'origin/auto/2026-09-18-0413'.
+[04:35:31] seaton: [pr] created — https://github.com/hkjang/seaton/pull/30
+[04:37:54] seaton: review — 15 turns, 2m, $1.17, success
+[04:37:54] seaton: [review] rejected — 리뷰 거절: internal/app/mcpoauth.go:296-314 mcpOAuthScopes 가 교집합이 비면 빈 슬라이스를 돌려주는데, /mcp 는 빈 범위를 '세션 인증(무제한)'으로 해석한다(internal/app/mcp.go:30, :168 의 `len(scopes) > 0 && !containsString(...)`). 관리자 천장이 `read mcp` 일 때 scope 에 `write` 만 실린 Keycloak 토큰(또는 천장이 `mcp` 일 때 `read` 만 실린 토큰)은 narrowed=true → granted=[] → apiScopes 가 비어 mcp 범위 검사와 write 범위 검사를 모두 건너뛰고 쓰기 도구까지 전부 열린다. 주석·문서('관리자 설정이 천장')와 정반대의 권한 상승이며, TestMCPOAuthScopesAreCappedByAdmin 의 {"read mcp","write",""} 케이스는 이 빈 결과를 정답으로 고정해 버려 결함을 검증하지 못한다. 교집합이 비면 거절(403 insufficient_scope)하거나 최소한 비어 있지 않은 sentinel 을 넘겨야 한다.
+https://github.com/hkjang/seaton/pull/30#issuecomment-5720140441
+evidence: /mnt/c/Users/USER/projects/aidev/state/runs/2026-09-18-041337-seaton-improve/evidence.json
+reports: 17 day(s), 3 week(s), 1 month(s), 948 run(s), 1183 usage row(s), 43 project page(s), 17 alert(s)
+notify: no new alerts

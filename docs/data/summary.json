@@ -1,27 +1,27 @@
 {
- "generated": "2026-09-18T04:04:32+09:00",
+ "generated": "2026-09-18T04:37:59+09:00",
  "site": "https://hkjang.github.io/aidev",
- "description": "Claude Code 자율 개선 에이전트가 hkjang 의 프로젝트를 개선·테스트·머지·릴리즈한 일일 보고. 오늘 3회차·릴리즈 1건, 누적 947회차·릴리즈 348건, 주의 필요 17건.",
+ "description": "Claude Code 자율 개선 에이전트가 hkjang 의 프로젝트를 개선·테스트·머지·릴리즈한 일일 보고. 오늘 4회차·릴리즈 1건, 누적 948회차·릴리즈 348건, 주의 필요 17건.",
  "today": {
   "date": "2026-09-18",
-  "total": 3,
-  "projects": 3,
+  "total": 4,
+  "projects": 4,
   "released": 1,
   "merged": 0,
   "nochange": 0,
   "failed": 0,
-  "cost_usd": 79.08,
-  "minutes": 155,
-  "sessions": 31
+  "cost_usd": 92.15,
+  "minutes": 180,
+  "sessions": 35
  },
  "totals": {
-  "runs": 947,
+  "runs": 948,
   "released": 348,
   "days": 17,
-  "cost_usd": 3396.26,
-  "minutes": 8206,
-  "tokens_in": 3620031537,
-  "tokens_out": 26682237
+  "cost_usd": 3409.33,
+  "minutes": 8231,
+  "tokens_in": 3635540050,
+  "tokens_out": 26780381
  },
  "alerts": [
   {
@@ -146,13 +146,13 @@
  ],
  "fix_queue": [],
  "health": {
-  "checked": "2026-09-18T03:45:03+09:00",
+  "checked": "2026-09-18T04:15:04+09:00",
   "last_run": "2026-09-18T03:43:45+09:00",
-  "seconds_since_last": 77,
-  "runner_pid": "3779268",
-  "runner_age_seconds": 1573,
+  "seconds_since_last": 1877,
+  "runner_pid": "3830812",
+  "runner_age_seconds": 314,
   "scheduler_status": "실행 중",
-  "scheduler_next_run": "2026-09-18 오전 3:50:00",
+  "scheduler_next_run": "2026-09-18 오전 4:20:00",
   "disk_percent": 72,
   "ok": true,
   "problems": [],
@@ -365,6 +365,21 @@
   "DORMANT_DAYS": 7
  },
  "inbox": [
+  {
+   "kind": "PR",
+   "project": "seaton",
+   "title": "auto-improve: feat: MCP 를 Keycloak 액세스 토큰(OAuth 2.1)으로도 열기 — 리소스 메타데이터·401 도전·토큰 검증·계정 매핑",
+   "url": "https://github.com/hkjang/seaton/pull/30",
+   "sha": "efc4874",
+   "summary": "20파일 +1716/−16 · review held, PR open https://github.com/hkjang/seaton/pull/30",
+   "why": "review: rejected — 리뷰 거절: internal/app/mcpoauth.go:296-314 mcpOAuthScopes 가 교집합이 비면 빈 슬라이스를 돌려주는데, ",
+   "evidence": "https://github.com/hkjang/aidev/tree/main/state/runs/2026-09-18-041337-seaton-improve",
+   "labels": "",
+   "action": "PR 처리기가 매시간 살핀다 (아직 순서가 오지 않음) · 승인: PR 라벨 aidev-approved / 반려: aidev-rejected — 다음 회차에 러너가 승인 당시 커밋에만 CI 확인 후 머지·닫기",
+   "date": "2026-09-18",
+   "shepherd": "",
+   "shepherd_action": ""
+  },
   {
    "kind": "PR",
    "project": "relio",
@@ -1767,13 +1782,13 @@
     "sqlon": "pr"
    },
    "lessons": [
-    "Content-Disposition 의 filename*=UTF-8''… 값을 경로용(PathEscape 류) 이스케이프로 만들지 말고 RFC 5987 attr-char 밖의 문자('=', '@', ':', 공백 등)를 모두 퍼센트 인코딩한다. 제출 전에 '='와 '@'가 섞인 제목으로 헤더를 만들어 표준 라이브러리의 media-type 파서(mime.ParseMediaType 등)에 통과시켜 확인한다.",
-    "일회용 claim 토큰이 포함된 URL 로 요청한 뒤 실패를 로그할 때 HTTP 클라이언트 오류 객체를 그대로 찍지 않는다. 오류 문자열에서 URL 을 제거하거나 origin 만 남기고 기록한다.",
-    "로그인 없는 공개 경로에서 감사 기록을 남길 때 요청 컨텍스트의 사용자(principal)로 주체를 정하지 않는다. 수령 대상 리소스의 실제 소유자로 귀속시킨다.",
-    "파일명에서 확장자를 붙이거나 떼어낼 때 형식 이름('.'+format)이 아니라 handoff 공유 모듈의 확장자 표를 쓴다.",
-    "window.open 에 noopener 를 주면 반환값이 항상 null 이므로 그 핸들로 새 탭을 navigate 하거나 닫는 설계를 쓰지 않는다. 먼저 URL 을 준비한 뒤 한 번에 열거나, 핸들이 필요하면 noopener 없이 열고 opener 를 직접 끊는다.",
-    "작업 시작 전에 저장소에 CI 워크플로가 있는지 확인하고, 없으면 워크플로를 추가하거나 머지 정책 파일에 CI 없이 머지 허용 플래그를 명시한다.",
-    "제출 직전에 최신 base 위로 리베이스하고 충돌을 직접 해결해 둔다. 가능하면 변경을 새 파일에 두고 자주 바뀌는 파일 수정은 최소화한다."
+    "filename*=UTF-8''… 값을 경로용 이스케이프(url.PathEscape 류)로 만들지 않는다. RFC 5987 attr-char 밖의 문자('=' '@' ':' 공백 포함)를 전부 퍼센트 인코딩하고, 제출 전에 '=' '@' ':' 가 들어간 제목으로 만든 헤더를 엄격한 파서(mime.ParseMediaType 등)에 다시 넣어 통과하는지 확인한다.",
+    "PR을 열기 전에 최신 base 위로 리베이스하고, 공용 파일(라우터·설정·문서 목차) 수정은 등록 한 줄 수준으로 최소화하며 새 기능은 새 파일에 둔다.",
+    "로그인 없는 공개 경로(수령·클레임 교환)에서 감사 로그를 남길 때 요청 컨텍스트에서 사용자를 꺼내지 않고, 클레임이 속한 실제 소유자 ID를 명시적으로 넘겨 기록한다. 공개 경로에서 기본 사용자로 찍히지 않는지 테스트로 확인한다.",
+    "클레임 URL 호출 실패를 로그에 남길 때 클라이언트 오류(*url.Error 등)를 그대로 찍지 않는다. URL/클레임을 벗겨내고 origin과 오류 종류만 기록하며, 보내는 서버를 끈 채 receive를 호출해 로그에 클레임 문자열이 없는지 확인한다.",
+    "받은 파일명에서 제목을 뽑을 때 형식 이름이 아니라 보낼 때 쓴 확장자 매핑으로 접미사를 자르고, 헤딩 없는 마크다운 문서를 받아 제목에 확장자가 남지 않는지 확인한다.",
+    "프론트의 '다른 서비스로 보내기'에서 window.open(..., 'noopener')의 반환값에 기대지 않는다(항상 null). 빈 탭을 먼저 열고 나중에 navigate/close 하는 패턴 대신 최종 URL이 확정된 시점에 한 번만 열고, 클릭마다 고아 탭이 남지 않는지 브라우저에서 확인한다.",
+    "첫 커밋을 올리기 전에 그 저장소에 커밋을 검사하는 CI 워크플로가 있는지 확인하고, 없으면 워크플로를 추가하거나 저장소 정책에 CI 없이 머지 허용을 명시한다."
    ]
   },
   {
@@ -1830,14 +1845,14 @@
     "sqlon": "pr"
    },
    "lessons": [
-    "TLS 없는 연결에서 자격증명을 보낼지 정책을 문서에 먼저 정하고, loginAuth 류 평문 가드는 smtp.NewClient 에 넘긴 host 와 비교 대상 host 가 같은 값이 아닌지 소스에서 확인한 뒤, STARTTLS 없이 AUTH LOGIN(또는 PLAIN LOGIN)만 광고하는 가짜 릴레이를 비-루프백 주소에 띄워 비밀번호가 평문으로 나가는지·인증이 아예 실패하는지 직접 돌려본다",
-    "발송 결과 기록(complete/UPDATE, 다음 수신자 INSERT)은 발송용 컨텍스트가 아니라 별도 컨텍스트(Background+짧은 자체 타임아웃)로 하고, 발송 예산은 '수신자 수 × 시도 수 × 연결 마감 + 재시도 대기' 를 실제로 계산해 정한다. 시험 발송(SendNow) 경로도 같은 기준으로 본다",
-    "발송 고루틴은 버퍼 채널 세마포어 등으로 동시 수를 제한하고, 상한 대기 중에도 기록 INSERT 는 즉시 남긴다",
-    "알림 이벤트 하나마다 코드를 쓰기 전에 (a) 어느 상태 전이가 발화시키는지 (b) 재시도·재승인·부분 승인·키 회전에서 다시 발화하는지 (c) 억제 규칙의 전제(다른 알림이 실제로 나간다, 조건 필드를 제품 코드가 채운다)를 소스에서 추적해 확인한다",
-    "메일 본문의 링크 경로는 프론트 라우터·해시 파서·백엔드 핸들러 소스에서 grep 으로 존재를 확인하고, 사용자 행동을 안내하는 문장('다시 보내면 처리됨','회전하면 새 키 발급')은 그 행동을 처리하는 코드로 사실 여부를 검증한다. 잘못된 링크를 그대로 단언하는 테스트를 만들지 않는다",
-    "테스트는 결함이 드러나는 조건으로 짠다: 가짜 릴레이는 127.0.0.1 이 아닌 비-루프백 주소에, 'connection refused' 외에 'Accept 후 침묵' 케이스, 평문 AUTH 광고 케이스, 부분 승인(승인 2건 필요) 케이스, 조건 필드를 직접 주입하지 않고 실제 제품 경로로 채우는 케이스를 넣는다",
-    "시험 발송 API 의 실패 응답 형식을 정하기 전에 프론트 API 클라이언트가 non-2xx 를 어떻게 처리하는지(throw 여부, 파싱하는 오류 스키마) 읽고, 실패 시에도 결과 표시와 발송 기록 갱신이 일어나도록 계약을 맞춘다",
-    "시작 전에 사람만 승인할 수 있는 보호 파일 목록을 확인해 그 파일을 수정하지 않는 설계를 택하고, base 와 일찍·자주 리베이스해 충돌을 수동 해결 전에 없앤다"
+    "평문(비-TLS) 연결에서 자격증명을 보낼지 정책을 먼저 정하고, LOGIN 인증 가드를 `!server.TLS && server.Name != host` 형태로 만들지 않는다. smtp.NewClient 에 넘긴 host 와 자기 host 는 항상 같아 그 조건은 항상 거짓이므로 `!server.TLS`(+localhost 예외)만으로 판단하고, 비-루프백 주소에 STARTTLS 없이 AUTH LOGIN 만 광고하는 가짜 릴레이 테스트로 비밀번호가 평문으로 나가지 않음을 고정한다.",
+    "TLS 없는 연결에서는 PLAIN 인증을 선택하지 않는다(표준 smtp.PlainAuth 는 비-localhost 평문 서버에 'unencrypted connection' 을 돌려줌). 릴레이가 PLAIN LOGIN 을 같이 광고해도 LOGIN 으로 내려가거나 명확히 거부하도록 하고, 127.0.0.1 릴레이 테스트로는 이를 검증할 수 없음을 안다.",
+    "발송 결과 기록(상태 UPDATE, 다음 수신자 INSERT)은 발송용 컨텍스트와 분리된 별도 컨텍스트로 하고 기록 오류를 버리지 않는다. 연결 마감×재시도×수신자 수를 합산해 발송 예산보다 길어질 수 있는지 계산하고, 시험 발송(SendNow) 경로도 같은 기준으로 본다.",
+    "테스트는 실제 장애 형태로 만든다: TCP 는 받되 응답하지 않는 릴레이, 비-루프백 주소·STARTTLS 없음·AUTH 광고 릴레이, 부분 승인 같은 중간 상태를 반드시 포함하고, 제품 코드가 채우지 않는 필드를 테스트에서 직접 주입해 통과시키지 않는다.",
+    "메일 속 링크 경로는 관리자 UI 라우터(해시 형식 포함)와 실제 화면 목록을 소스에서 대조하고, '이렇게 하면 된다' 는 안내 문구(재전송하면 승인 적용, 회전하면 새 키 발급 등)는 해당 핸들러 코드 경로를 추적해 사실인지 확인한 뒤 쓴다. 잘못된 링크를 테스트가 단언하지 않게 한다.",
+    "알림 발동·억제·중복 제거 조건은 실제 상태 전이와 대조한다. 이벤트별로 '누가·언제·몇 번 받는가' 를 표로 적고 각 칸을 코드 경로로 확인하며, 같은 상태가 여러 전이(제출/부분 승인)에서 나오는지, 억제 근거가 되는 다른 알림이 설정·다이제스트로 실제 발송되지 않을 수 있는지, 헤더 없는 재요청이 새 알림을 만드는지 본다.",
+    "발송 고루틴에 세마포어 등 동시 실행 상한을 두되 기록 INSERT 는 즉시 남기고, 사용자 행동(승인 요청 등)에서 유발되는 알림은 같은 사용자·같은 대상 재시도를 묶는 억제 규칙을 둔다.",
+    "시작 전에 사람만 승인할 수 있는 파일 목록을 확인해 손대지 않고, 변경을 메일 기능 범위의 파일로 한정하며, 제출 직전 최신 base 위에서 충돌 없이 적용되는지 다시 확인한다."
    ]
   },
   {
@@ -1892,17 +1907,17 @@
    "done": false,
    "until": "2026-12-31",
    "budget_usd": 600,
-   "spent_usd": 221.02,
+   "spent_usd": 234.09,
    "total": 31,
-   "processed": 16,
-   "pct": 51,
-   "runs": 17,
-   "last_ts": "2026-09-18T03:43:45+09:00",
+   "processed": 17,
+   "pct": 54,
+   "runs": 18,
+   "last_ts": "2026-09-18T04:37:56+09:00",
    "counts": {
     "done": 6,
-    "pr": 10,
+    "pr": 11,
     "retry": 1,
-    "todo": 14,
+    "todo": 13,
     "nochange": 0
    },
    "projects": {
@@ -1923,7 +1938,7 @@
     "moyro": "done",
     "ptium": "pr",
     "relio": "pr",
-    "seaton": "todo",
+    "seaton": "pr",
     "visitflow": "todo",
     "DartFly": "todo",
     "madi": "todo",
@@ -1992,7 +2007,7 @@
   {
    "metric": "검증된 개선 완료율",
    "value": "87%",
-   "detail": "관찰 24h 지난 머지 312건 중 회귀 없음 271건"
+   "detail": "관찰 24h 지난 머지 313건 중 회귀 없음 272건"
   },
   {
    "metric": "완전한 릴리즈 비율",
@@ -2002,17 +2017,17 @@
   {
    "metric": "사람의 재작업률",
    "value": "0%",
-   "detail": "되돌림·롤백 0건 / 관찰 머지 312건"
+   "detail": "되돌림·롤백 0건 / 관찰 머지 313건"
   },
   {
    "metric": "변경 후 회귀율",
    "value": "0%",
-   "detail": "회귀 0건 / 관찰 머지 312건"
+   "detail": "회귀 0건 / 관찰 머지 313건"
   },
   {
    "metric": "유효 개선당 비용",
-   "value": "$16.90",
-   "detail": "비용 확인된 유효 개선 201건, 미확인 세션 10"
+   "value": "$16.88",
+   "detail": "비용 확인된 유효 개선 202건, 미확인 세션 10"
   },
   {
    "metric": "예외 처리 소요 시간(중앙값)",
@@ -2027,7 +2042,7 @@
  ],
  "outcomes_today": {
   "release-ready": 1,
-  "review-pending": 2,
+  "review-pending": 3,
   "releasing": 0,
   "merged": 0,
   "verify-failed": 0,
@@ -2037,12 +2052,12 @@
  "days": [
   {
    "date": "2026-09-18",
-   "total": 3,
+   "total": 4,
    "released": 1,
    "merged": 0,
    "nochange": 0,
    "failed": 0,
-   "cost_usd": 79.08
+   "cost_usd": 92.15
   },
   {
    "date": "2026-09-17",
@@ -2194,13 +2209,13 @@
    "key": "2026-W38",
    "url": "https://hkjang.github.io/aidev/weekly/2026-W38/",
    "days": 5,
-   "total": 223,
+   "total": 224,
    "released": 61,
    "merged": 6,
    "nochange": 2,
    "failed": 5,
-   "cost": 1136.87,
-   "minutes": 2561
+   "cost": 1149.94,
+   "minutes": 2586
   },
   {
    "key": "2026-W37",
@@ -2232,13 +2247,13 @@
    "key": "2026-09",
    "url": "https://hkjang.github.io/aidev/monthly/2026-09/",
    "days": 17,
-   "total": 947,
+   "total": 948,
    "released": 348,
    "merged": 109,
    "nochange": 16,
    "failed": 19,
-   "cost": 3396.26,
-   "minutes": 8206
+   "cost": 3409.33,
+   "minutes": 8231
   }
  ],
  "projects": [
@@ -3072,18 +3087,18 @@
    "name": "seaton",
    "repo": "https://github.com/hkjang/seaton",
    "page": "https://hkjang.github.io/aidev/projects/seaton/",
-   "runs": 7,
+   "runs": 8,
    "released": 3,
-   "last_ts": "2026-09-17T09:24:50+09:00",
-   "last_status": "released",
-   "last_result": "merged https://github.com/hkjang/seaton/pull/29, released v1.4.4",
-   "cost": 56.24,
-   "minutes": 136,
+   "last_ts": "2026-09-18T04:37:56+09:00",
+   "last_status": "other",
+   "last_result": "review held, PR open https://github.com/hkjang/seaton/pull/30",
+   "cost": 69.3,
+   "minutes": 161,
    "grade": "A",
    "grade_why": "14일: 릴리즈 3, 실패 0, 경고 0, 회귀 0",
    "lessons": 0,
-   "ideas_pending": 12,
-   "ideas_total": 13,
+   "ideas_pending": 14,
+   "ideas_total": 15,
    "release": {
     "status": "released",
     "version": "1.4.4",
