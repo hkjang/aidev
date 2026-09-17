@@ -1,27 +1,27 @@
 {
- "generated": "2026-09-18T05:58:14+09:00",
+ "generated": "2026-09-18T06:39:36+09:00",
  "site": "https://hkjang.github.io/aidev",
- "description": "Claude Code 자율 개선 에이전트가 hkjang 의 프로젝트를 개선·테스트·머지·릴리즈한 일일 보고. 오늘 5회차·릴리즈 1건, 누적 949회차·릴리즈 348건, 주의 필요 18건.",
+ "description": "Claude Code 자율 개선 에이전트가 hkjang 의 프로젝트를 개선·테스트·머지·릴리즈한 일일 보고. 오늘 6회차·릴리즈 1건, 누적 950회차·릴리즈 348건, 주의 필요 19건.",
  "today": {
   "date": "2026-09-18",
-  "total": 5,
-  "projects": 5,
+  "total": 6,
+  "projects": 6,
   "released": 1,
   "merged": 0,
   "nochange": 0,
   "failed": 0,
-  "cost_usd": 120.4,
-  "minutes": 240,
-  "sessions": 45
+  "cost_usd": 132.87,
+  "minutes": 267,
+  "sessions": 47
  },
  "totals": {
-  "runs": 949,
+  "runs": 950,
   "released": 348,
   "days": 17,
-  "cost_usd": 3437.58,
-  "minutes": 8291,
-  "tokens_in": 3667251828,
-  "tokens_out": 26980321
+  "cost_usd": 3450.05,
+  "minutes": 8318,
+  "tokens_in": 3681977184,
+  "tokens_out": 27083952
  },
  "alerts": [
   {
@@ -44,6 +44,13 @@
    "project": "visitflow",
    "why": "보호 파일 변경 — 자동 머지 안 함, 사람 검토 필요",
    "result": "guarded files, PR open https://github.com/hkjang/visitflow/pull/18"
+  },
+  {
+   "date": "2026-09-18",
+   "time": "06:39",
+   "project": "DartFly",
+   "why": "보호 파일 변경 — 자동 머지 안 함, 사람 검토 필요",
+   "result": "guarded files, PR open https://github.com/hkjang/DartFly/pull/7"
   },
   {
    "date": "2026-09-17",
@@ -153,14 +160,14 @@
  ],
  "fix_queue": [],
  "health": {
-  "checked": "2026-09-18T05:45:04+09:00",
-  "last_run": "2026-09-18T04:37:56+09:00",
-  "seconds_since_last": 4025,
-  "runner_pid": "3901104",
-  "runner_age_seconds": 947,
+  "checked": "2026-09-18T06:15:04+09:00",
+  "last_run": "2026-09-18T05:54:06+09:00",
+  "seconds_since_last": 1255,
+  "runner_pid": "3936682",
+  "runner_age_seconds": 315,
   "scheduler_status": "실행 중",
-  "scheduler_next_run": "2026-09-18 오전 5:50:00",
-  "disk_percent": 72,
+  "scheduler_next_run": "2026-09-18 오전 6:20:00",
+  "disk_percent": 73,
   "ok": true,
   "problems": [],
   "actions": []
@@ -372,6 +379,21 @@
   "DORMANT_DAYS": 7
  },
  "inbox": [
+  {
+   "kind": "PR",
+   "project": "DartFly",
+   "title": "auto-improve: feat: /mcp 가 공유 토큰 외에 Keycloak(SSO) 액세스 토큰도 받게 (MCP OAuth 2.1 리소스 서버)",
+   "url": "https://github.com/hkjang/DartFly/pull/7",
+   "sha": "397002a",
+   "summary": "23파일 +1780/−24 · guarded files, PR open https://github.com/hkjang/DartFly/pull/7",
+   "why": "guard: held — internal/auth/service.go internal/sso/accesstoken.go internal/sso/accesstoken_te",
+   "evidence": "https://github.com/hkjang/aidev/tree/main/state/runs/2026-09-18-061339-DartFly-improve",
+   "labels": "",
+   "action": "PR 처리기가 매시간 살핀다 (아직 순서가 오지 않음) · 승인: PR 라벨 aidev-approved / 반려: aidev-rejected — 다음 회차에 러너가 승인 당시 커밋에만 CI 확인 후 머지·닫기",
+   "date": "2026-09-18",
+   "shepherd": "",
+   "shepherd_action": ""
+  },
   {
    "kind": "PR",
    "project": "visitflow",
@@ -1868,14 +1890,14 @@
     "sqlon": "pr"
    },
    "lessons": [
-    "평문 연결 인증 가드(`!server.TLS && server.Name != a.host`)를 참조 구현에서 베끼지 말고, 비교되는 두 값이 소스에서 어디서 오는지 추적해 실제로 달라질 수 있는지 확인한다. TLS 없는 연결에서 자격증명을 보낼지 정책을 먼저 정하고(auto는 STARTTLS 미광고 시 인증 거부+안내, none만 명시적 허용) 문서에 적는다.",
-    "인증 경로 테스트는 127.0.0.1이 아니라 비-루프백 주소에 바인드한 가짜 릴레이(STARTTLS 없음, AUTH LOGIN 또는 AUTH PLAIN LOGIN만 광고)로 돌리고, 자격증명이 선로에 나가지 않는 것과 인증이 실제로 되는 것을 둘 다 단언한다.",
-    "발송 결과 기록(UPDATE, 다음 수신자 INSERT)은 발송용 컨텍스트가 아닌 별도의 짧은 컨텍스트로 한다. 침묵 릴레이(accept 후 무응답) 기준 최악 소요(재시도 × 연결 마감 + 대기, timeout 설정 최댓값)를 계산해 발송 예산과 비교하고, 배너를 주지 않는 가짜 릴레이로 기록이 queued/sending에 남지 않는지 시험 발송 경로까지 테스트한다.",
-    "발송 고루틴에 상한(버퍼 채널 세마포어)을 두고 기록 INSERT는 상한과 무관하게 즉시 남긴다. 사용자가 반복 호출할 수 있는 트리거(승인 요청 등)는 같은 사용자·같은 요청을 묶거나 윈도우로 억제한다.",
-    "메일 트리거·억제 조건을 실제 상태 전이와 재시도 경로에 대조한다: '제출'로 간주한 상태가 부분 승인 뒤에도 유지되는지, 억제 근거로 삼은 다른 알림이 실제로 발송되는지(요약 묶음·사용자/관리자 설정), 헤더 없는 재요청이 새 승인을 만드는지 확인하고 그 경계 케이스를 테스트한다.",
-    "메일 본문의 링크와 안내 문구는 라우터 소스와 실제 동작을 확인한 뒤 쓴다. 링크는 프론트 라우터의 hash 형식·basename·자식 라우트 목록에서 실제 존재하는 경로만 쓰고, '다시 보내면 처리된다', '회전하면 새 키가 발급된다' 같은 문장은 그 동작을 하는 코드를 찾아 사실인지 확인한다. 잘못된 링크를 단언하는 테스트를 만들지 않는다.",
-    "기능이 의존하는 데이터 필드(예: 작성자)가 실제 제품 경로에서 채워지는지 grep으로 확인하고, 시험 발송 실패 응답은 프론트 apiClient가 non-2xx를 어떻게 파싱하고 onSuccess에서만 상태·기록을 갱신하는지 확인한 뒤 설계한다. 제출 전 저장소의 전체 검증(웹 typecheck 포함)을 돌린다.",
-    "시작 전에 캠페인의 사람 승인 전용 파일 목록을 확인하고 secret 관련 핸들러·테스트 파일은 건드리지 않는다. 필요하면 그 파일 밖에서 해결하거나 사람에게 넘긴다."
+    "평문(비-TLS) 연결에서 자격증명을 보낼지 정책을 먼저 정하고, `server.Name != 자기 host` 비교 가드는 쓰지 않는다. smtp.NewClient(conn, host)가 ServerInfo.Name에 넣는 값이 자기가 넘긴 host와 동일함을 소스에서 확인하고, server.TLS(TLSConnectionState)가 false이고 username이 있으면 인증하지 않고 명시적 오류를 낸다(사용자가 security=none을 명시했을 때만 허용). 비-루프백 주소에 STARTTLS 없이 AUTH LOGIN만 광고하",
+    "SMTP 인증 테스트는 127.0.0.1이 아니라 비-루프백 주소에 띄운 가짜 릴레이로 한다. 표준 smtp.PlainAuth의 localhost 예외를 확인하고, 릴레이가 AUTH PLAIN(LOGIN 포함)을 광고하는 경우와 AUTH LOGIN만 광고하는 경우를 각각 비-TLS로 돌려 실패/누출 동작을 테스트로 고정한다.",
+    "발송 결과 기록(UPDATE)과 다음 수신자 INSERT는 발송용 ctx와 분리해 별도의 짧은 Background 파생 ctx로 쓴다. 최악 발송 시간(재시도 횟수 × 연결 마감 + 재시도 대기, timeout 설정 최대값 기준)을 계산해 발송 예산보다 작은지 소스에서 확인하고, TCP는 받되 배너/응답을 주지 않는 릴레이 테스트로 행이 queued/sending에 영원히 남지 않음을 확인한다.",
+    "배경 발송 고루틴에 상한(버퍼 채널 세마포어)을 두고, 기록 INSERT는 즉시 남기되 실제 발송은 상한 안에서 대기시킨다. 고루틴 하나의 최대 수명(수신자 수 × 재시도 예산)을 계산해 요청 유입 속도와 비교한다.",
+    "메일 본문에 링크를 쓰기 전에 프론트 라우터 소스(해시 파서·basename·등록된 자식 경로)에서 그 경로가 실제로 존재하는지 확인하고, 테스트는 하드코딩 문자열이 아니라 라우터에 등록된 경로에 대해 단언한다.",
+    "메일 본문의 안내 문장('다시 보내면 이 승인으로 처리', '회전하면 새 키 발급', 'X 님이 제출')은 그 문장이 설명하는 코드 경로(게이트 조건·회전 로직·상태 전이)를 읽어 사실인지 검증한 뒤 쓴다.",
+    "이벤트→메일 트리거는 양방향으로 추적한다: (a) 같은 이벤트가 클라이언트 재시도·부분 승인·키 회전 등으로 반복 발화하면 사용자·대상 단위의 디바운스/dedupe를 두고, (b) 억제·발송 조건이 기대는 값(작성자 필드, '형제 알림이 실제로 나가는지', digest·설정 스위치)이 운영 코드 경로에서 실제로 채워지는지 확인한다. 테스트에서 그 값을 직접 주입해 통과시키지 않는다.",
+    "시작 전에 사람만 승인할 수 있는 보호 파일 목록(secret 핸들러·secret 필드 테스트 등)을 확인하고 그 파일은 수정하지 않는다. 그 파일을 건드려야 하는 설계라면 우회하거나 별도 인간 승인 항목으로 분리한다."
    ]
   },
   {
@@ -1930,17 +1952,17 @@
    "done": false,
    "until": "2026-12-31",
    "budget_usd": 600,
-   "spent_usd": 245.73,
+   "spent_usd": 258.2,
    "total": 31,
-   "processed": 18,
-   "pct": 58,
-   "runs": 19,
-   "last_ts": "2026-09-18T05:54:06+09:00",
+   "processed": 19,
+   "pct": 61,
+   "runs": 20,
+   "last_ts": "2026-09-18T06:39:35+09:00",
    "counts": {
     "done": 6,
-    "pr": 12,
+    "pr": 13,
     "retry": 1,
-    "todo": 12,
+    "todo": 11,
     "nochange": 0
    },
    "projects": {
@@ -1963,7 +1985,7 @@
     "relio": "pr",
     "seaton": "pr",
     "visitflow": "pr",
-    "DartFly": "todo",
+    "DartFly": "pr",
     "madi": "todo",
     "qurio": "todo",
     "ssak": "todo",
@@ -2031,7 +2053,7 @@
   {
    "metric": "검증된 개선 완료율",
    "value": "87%",
-   "detail": "관찰 24h 지난 머지 316건 중 회귀 없음 275건"
+   "detail": "관찰 24h 지난 머지 319건 중 회귀 없음 278건"
   },
   {
    "metric": "완전한 릴리즈 비율",
@@ -2041,17 +2063,17 @@
   {
    "metric": "사람의 재작업률",
    "value": "0%",
-   "detail": "되돌림·롤백 0건 / 관찰 머지 316건"
+   "detail": "되돌림·롤백 0건 / 관찰 머지 319건"
   },
   {
    "metric": "변경 후 회귀율",
    "value": "0%",
-   "detail": "회귀 0건 / 관찰 머지 316건"
+   "detail": "회귀 0건 / 관찰 머지 319건"
   },
   {
    "metric": "유효 개선당 비용",
-   "value": "$16.77",
-   "detail": "비용 확인된 유효 개선 205건, 미확인 세션 10"
+   "value": "$16.59",
+   "detail": "비용 확인된 유효 개선 208건, 미확인 세션 10"
   },
   {
    "metric": "예외 처리 소요 시간(중앙값)",
@@ -2066,7 +2088,7 @@
  ],
  "outcomes_today": {
   "release-ready": 1,
-  "review-pending": 4,
+  "review-pending": 5,
   "releasing": 0,
   "merged": 0,
   "verify-failed": 0,
@@ -2076,12 +2098,12 @@
  "days": [
   {
    "date": "2026-09-18",
-   "total": 5,
+   "total": 6,
    "released": 1,
    "merged": 0,
    "nochange": 0,
    "failed": 0,
-   "cost_usd": 120.4
+   "cost_usd": 132.87
   },
   {
    "date": "2026-09-17",
@@ -2233,13 +2255,13 @@
    "key": "2026-W38",
    "url": "https://hkjang.github.io/aidev/weekly/2026-W38/",
    "days": 5,
-   "total": 225,
+   "total": 226,
    "released": 61,
    "merged": 6,
    "nochange": 2,
    "failed": 5,
-   "cost": 1178.19,
-   "minutes": 2646
+   "cost": 1190.66,
+   "minutes": 2672
   },
   {
    "key": "2026-W37",
@@ -2271,13 +2293,13 @@
    "key": "2026-09",
    "url": "https://hkjang.github.io/aidev/monthly/2026-09/",
    "days": 17,
-   "total": 949,
+   "total": 950,
    "released": 348,
    "merged": 109,
    "nochange": 16,
    "failed": 19,
-   "cost": 3437.58,
-   "minutes": 8291
+   "cost": 3450.05,
+   "minutes": 8318
   }
  ],
  "projects": [
@@ -2498,17 +2520,17 @@
    "name": "DartFly",
    "repo": "https://github.com/hkjang/DartFly",
    "page": "https://hkjang.github.io/aidev/projects/DartFly/",
-   "runs": 7,
+   "runs": 8,
    "released": 2,
-   "last_ts": "2026-09-17T00:52:53+09:00",
-   "last_status": "released",
-   "last_result": "merged https://github.com/hkjang/DartFly/pull/6, released v2.69.0",
-   "cost": 45.89,
-   "minutes": 91,
+   "last_ts": "2026-09-18T06:39:35+09:00",
+   "last_status": "other",
+   "last_result": "guarded files, PR open https://github.com/hkjang/DartFly/pull/7",
+   "cost": 58.36,
+   "minutes": 118,
    "grade": "D",
-   "grade_why": "14일: 릴리즈 2, 실패 0, 경고 4, 회귀 0",
+   "grade_why": "14일: 릴리즈 2, 실패 0, 경고 5, 회귀 0",
    "lessons": 0,
-   "ideas_pending": 13,
+   "ideas_pending": 14,
    "ideas_total": 15,
    "release": {
     "status": "released",
