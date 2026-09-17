@@ -14,7 +14,7 @@ HERE="${AIDEV_BIN:-$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)}"
 REPO_DIR="$(cd "$HERE/.." && pwd)"
 STATE="${AIDEV_STATE:-$REPO_DIR/state}"; LOGS="${AIDEV_LOGS:-$REPO_DIR/logs}"; RUNS="$STATE/runs"; DATA="${AIDEV_DATA:-$REPO_DIR/docs/data}"
 WT_BASE="${WT_BASE:-$HOME/.cache/auto-improve-wt}"
-DAYS=30; COUNT=1; BUDGET=""; RBUDGET=""; DRY=0; ONLY=""; MERGE=1; SYNC=1; RELEASE=1; REVIEW=1; PARALLEL=0
+DAYS=30; COUNT=1; BUDGET=""; RBUDGET=""; DRY=0; ONLY=""; MERGE=1; SYNC=1; RELEASE=1; REVIEW=1; PARALLEL=0; FIXONLY=0
 MODEL="${MODEL:-claude-opus-5}"
 REAL_HOME="$HOME"; CLAUDE_CFG="${CLAUDE_CONFIG_DIR:-$REAL_HOME/.claude}"
 export GIT_AUTHOR_NAME=hkjang GIT_AUTHOR_EMAIL=gagagiga@naver.com GIT_COMMITTER_NAME=hkjang GIT_COMMITTER_EMAIL=gagagiga@naver.com
@@ -27,6 +27,7 @@ while [ $# -gt 0 ]; do case "$1" in
   --dry-run) DRY=1;; --count) COUNT=$2; shift;; --project) ONLY=$2; shift;; --days) DAYS=$2; shift;;
   --budget) BUDGET=$2; shift;; --release-budget) RBUDGET=$2; shift;;
   --no-merge) MERGE=0;; --no-sync) SYNC=0;; --no-release) RELEASE=0;; --no-review) REVIEW=0;; --parallel) PARALLEL=1;;
+  --fix-only) FIXONLY=1;;   # fix-queue 항목만 처리하는 전용 트랙 (bin/fixer.sh 가 쓴다) — 상한 우회, 비용가드 유지
   --release-only) RELEASE_ONLY=$2; shift;; --assets-only) ASSETS_ONLY=$2; shift;;
   *) echo "unknown arg $1"; exit 2;; esac; shift; done
 
@@ -1060,6 +1061,9 @@ https://hkjang.github.io/aidev/" >/dev/null 2>&1 &
   cap=""; awk -v c="$today_cost" -v m="$MAX_DAILY_COST" 'BEGIN{exit !(c>=m)}' && cap="비용 \$$today_cost ≥ \$$MAX_DAILY_COST"
   [ "${today_rounds:-0}" -ge "$MAX_DAILY_ROUNDS" ] && cap="회차 $today_rounds ≥ $MAX_DAILY_ROUNDS"
   [ "${today_rel:-0}" -ge "$MAX_DAILY_RELEASES" ] && cap="릴리즈 $today_rel ≥ $MAX_DAILY_RELEASES"
+  # fix-only(오류 대응 전용 트랙)는 일일 상한을 우회한다 — 오류 수정은 새 개선과 달리 미룰 수 없다.
+  # 비용은 회차마다 budget_ok 가 여전히 막으므로 폭주하지 않는다.
+  [ "${FIXONLY:-0}" -eq 1 ] && cap=""
   if [ -n "$cap" ] && campaign_room; then
     log "daily cap reached: $cap — 캠페인 회차만 이어서 돈다 (캠페인 자체 예산)"
     CAMPAIGN_ONLY=1; cap=""
@@ -1141,6 +1145,11 @@ if [ -z "$ONLY" ] && [ -s "$FIXQ" ]; then
   while IFS=$'\t' read -r fp fnote fsha; do [ -n "$fp" ] || continue
     if printf '%s\n' "${candidates[@]}" | grep -qx "$fp"; then picked=("$fp"); FIX_PROJECT="$fp"; FIX_NOTE_TEXT="$fnote"; FIX_SHA="${fsha:-}"; log "fix-queue: picked $fp"; break; fi
   done < "$FIXQ"
+fi
+# fix-only 전용 트랙: fix-queue 말고는 아무것도 시작하지 않는다. 처리할 항목이 없으면 조용히 끝낸다.
+# (FIX_PROJECT 가 잡히면 아래 run-queue·campaign 블록은 -z "$FIX_PROJECT" 가드로 자동 건너뛴다.)
+if [ "${FIXONLY:-0}" -eq 1 ]; then
+  [ -n "$FIX_PROJECT" ] || { log "fix-only: 처리할 fix-queue 항목이 없다 — 종료"; exit 0; }
 fi
 RUN_PROJECT=""; RUN_ISSUE=""; RUN_SPEC=""; RUNQ="$STATE/run-queue.tsv"
 if [ -z "$FIX_PROJECT" ] && [ -z "$ONLY" ] && [ -s "$RUNQ" ]; then
