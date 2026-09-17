@@ -1,0 +1,170 @@
+{
+  "run_id": "2026-09-17-224338-jupiq-improve",
+  "generated": "2026-09-17T23:05:56+09:00",
+  "run": {
+    "run_id": "2026-09-17-224338-jupiq-improve",
+    "project": "jupiq",
+    "kind": "improve",
+    "started": "2026-09-17T22:43:38+09:00",
+    "model": "claude-opus-5",
+    "policy_version": "78619c0e",
+    "prompts_hash": "90b6639bc42c5800",
+    "runner_version": "e4b56484",
+    "finished": "2026-09-17T23:05:56+09:00",
+    "outcome": "review-pending"
+  },
+  "record": {
+    "ts": "2026-09-17T23:05:56+09:00",
+    "date": "2026-09-17",
+    "project": "jupiq",
+    "result": "guarded files, PR open https://github.com/hkjang/jupiq/pull/18",
+    "outcome": "review-pending",
+    "run_id": "2026-09-17-224338-jupiq-improve",
+    "base_sha": "001e63712f5978de3760e2df6cf3f5b9b0aecee7",
+    "head_sha": "aa5e1711be3029d78de9ca6b6954dffb443c4067",
+    "pr": "https://github.com/hkjang/jupiq/pull/18",
+    "stages": {
+      "base": {
+        "state": "pinned",
+        "reason": "main@001e637",
+        "at": "2026-09-17T22:43:42+09:00"
+      },
+      "autonomy": {
+        "state": "release",
+        "reason": "",
+        "at": "2026-09-17T22:43:42+09:00"
+      },
+      "verify": {
+        "state": "passed",
+        "reason": "검증 7개 통과 (auto)",
+        "at": "2026-09-17T23:05:44+09:00"
+      },
+      "pr": {
+        "state": "created",
+        "reason": "https://github.com/hkjang/jupiq/pull/18",
+        "at": "2026-09-17T23:05:54+09:00"
+      },
+      "guard": {
+        "state": "held-expected",
+        "reason": "internal/auth/auth.go internal/auth/authtest/idp.go internal/auth/mcp_oauth.go internal/auth/mcp_oauth_test.go internal/auth/oidc.go internal/auth/oidc_identity_test.go ",
+        "at": "2026-09-17T23:05:54+09:00"
+      }
+    },
+    "campaign": "mcp-oauth-2026-09",
+    "autonomy": "release",
+    "files": 22,
+    "additions": 1556,
+    "deletions": 26,
+    "tests": 6,
+    "title": "docs: 관리자·사용자 가이드에 MCP SSO(OAuth) 설정과 연결 방법을 더한다"
+  },
+  "stages": {
+    "base": {
+      "state": "pinned",
+      "reason": "main@001e637",
+      "at": "2026-09-17T22:43:42+09:00"
+    },
+    "autonomy": {
+      "state": "release",
+      "reason": "",
+      "at": "2026-09-17T22:43:42+09:00"
+    },
+    "verify": {
+      "state": "passed",
+      "reason": "검증 7개 통과 (auto)",
+      "at": "2026-09-17T23:05:44+09:00"
+    },
+    "pr": {
+      "state": "created",
+      "reason": "https://github.com/hkjang/jupiq/pull/18",
+      "at": "2026-09-17T23:05:54+09:00"
+    },
+    "guard": {
+      "state": "held-expected",
+      "reason": "internal/auth/auth.go internal/auth/authtest/idp.go internal/auth/mcp_oauth.go internal/auth/mcp_oauth_test.go internal/auth/oidc.go internal/auth/oidc_identity_test.go ",
+      "at": "2026-09-17T23:05:54+09:00"
+    }
+  },
+  "provenance": {
+    "model": "claude-opus-5",
+    "policy_version": "78619c0e",
+    "prompts_hash": "90b6639bc42c5800",
+    "runner_version": "e4b56484",
+    "base_sha": "001e63712f5978de3760e2df6cf3f5b9b0aecee7",
+    "head_sha": "aa5e1711be3029d78de9ca6b6954dffb443c4067",
+    "pr": "https://github.com/hkjang/jupiq/pull/18"
+  },
+  "verification": {
+    "runner": {
+      "source": "auto",
+      "commands": [
+        {
+          "cmd": "go build ./...",
+          "exit": 0,
+          "seconds": 1
+        },
+        {
+          "cmd": "go vet ./...",
+          "exit": 0,
+          "seconds": 0
+        },
+        {
+          "cmd": "go test ./...",
+          "exit": 0,
+          "seconds": 1
+        },
+        {
+          "cmd": "cd web && [ -d node_modules ] || npm ci --no-audit --no-fund",
+          "exit": 0,
+          "seconds": 0
+        },
+        {
+          "cmd": "cd web && npm test --silent",
+          "exit": 0,
+          "seconds": 6
+        },
+        {
+          "cmd": "cd web && [ -d node_modules ] || npm ci --no-audit --no-fund",
+          "exit": 0,
+          "seconds": 0
+        },
+        {
+          "cmd": "cd web && npm run build --silent",
+          "exit": 0,
+          "seconds": 10
+        }
+      ]
+    },
+    "runner_gate": {
+      "ok": true,
+      "state": "verified",
+      "reason": "검증 7개 통과 (auto)"
+    },
+    "after_rebase": null,
+    "review": null,
+    "ci_gate": null
+  },
+  "release": {
+    "result": null,
+    "assets_sha256": []
+  },
+  "approval": null,
+  "usage": [
+    {
+      "ts": "2026-09-17T23:05:25+09:00",
+      "date": "2026-09-17",
+      "project": "jupiq",
+      "phase": "improve",
+      "run_id": "2026-09-17-224338-jupiq-improve",
+      "campaign": "mcp-oauth-2026-09",
+      "subtype": "success",
+      "duration_ms": 1347521,
+      "num_turns": 91,
+      "cost_usd": 13.496917500000006,
+      "input_tokens": 182,
+      "output_tokens": 91383,
+      "cache_read": 16983057,
+      "cache_create": 269796
+    }
+  ]
+}
