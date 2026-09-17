@@ -1,0 +1,187 @@
+{
+  "run_id": "2026-09-17-202329-igame-improve",
+  "generated": "2026-09-17T20:45:33+09:00",
+  "run": {
+    "run_id": "2026-09-17-202329-igame-improve",
+    "project": "igame",
+    "kind": "improve",
+    "started": "2026-09-17T20:23:30+09:00",
+    "model": "claude-opus-5",
+    "policy_version": "78619c0e",
+    "prompts_hash": "82f2440d4b2fef65",
+    "runner_version": "e4b56484",
+    "finished": "2026-09-17T20:45:33+09:00",
+    "outcome": "review-pending"
+  },
+  "record": {
+    "ts": "2026-09-17T20:45:33+09:00",
+    "date": "2026-09-17",
+    "project": "igame",
+    "result": "review held, PR open https://github.com/hkjang/igame/pull/20",
+    "outcome": "review-pending",
+    "run_id": "2026-09-17-202329-igame-improve",
+    "base_sha": "3aad11592cea254b0a14ecb2d72d2a534a4f4fd8",
+    "head_sha": "77587effed3048bda011ab3a2f267c496326973d",
+    "pr": "https://github.com/hkjang/igame/pull/20",
+    "stages": {
+      "base": {
+        "state": "pinned",
+        "reason": "main@3aad115",
+        "at": "2026-09-17T20:23:34+09:00"
+      },
+      "autonomy": {
+        "state": "release",
+        "reason": "",
+        "at": "2026-09-17T20:23:35+09:00"
+      },
+      "verify": {
+        "state": "passed",
+        "reason": "검증 4개 통과 (policy)",
+        "at": "2026-09-17T20:41:40+09:00"
+      },
+      "pr": {
+        "state": "created",
+        "reason": "https://github.com/hkjang/igame/pull/20",
+        "at": "2026-09-17T20:41:47+09:00"
+      },
+      "review": {
+        "state": "rejected",
+        "reason": "리뷰 거절: internal/api/mcp.go:60-67 mcpRefusal.Cause is never logged: when errors.As matches a refusal the branch only copies refusal.Message and skips logRequestError, so the underlying go-oidc verify error (which of signature/issuer/expiry/nbf failed) is dropped. internal/api/mcpoauth.go:173-174 promises \"The cause stays in the log; the message goes to the client\" and docs/ADMIN_GUIDE.md refusal table row `SSO access token is not valid …` tells operators \"서버 로그에 세부 원인이 남습니다\" — neither is true. The operator-facing message deliberately collapses four causes into one, so with no log entry there is no way to troubleshoot a rejected token; the auth feature's documented diagnosability is not implemented and no test covers it.",
+        "at": "2026-09-17T20:45:31+09:00"
+      }
+    },
+    "campaign": "mcp-oauth-2026-09",
+    "autonomy": "release",
+    "files": 15,
+    "additions": 1275,
+    "deletions": 17,
+    "tests": 3,
+    "title": "feat: let a Keycloak access token open /mcp beside the personal key"
+  },
+  "stages": {
+    "base": {
+      "state": "pinned",
+      "reason": "main@3aad115",
+      "at": "2026-09-17T20:23:34+09:00"
+    },
+    "autonomy": {
+      "state": "release",
+      "reason": "",
+      "at": "2026-09-17T20:23:35+09:00"
+    },
+    "verify": {
+      "state": "passed",
+      "reason": "검증 4개 통과 (policy)",
+      "at": "2026-09-17T20:41:40+09:00"
+    },
+    "pr": {
+      "state": "created",
+      "reason": "https://github.com/hkjang/igame/pull/20",
+      "at": "2026-09-17T20:41:47+09:00"
+    },
+    "review": {
+      "state": "rejected",
+      "reason": "리뷰 거절: internal/api/mcp.go:60-67 mcpRefusal.Cause is never logged: when errors.As matches a refusal the branch only copies refusal.Message and skips logRequestError, so the underlying go-oidc verify error (which of signature/issuer/expiry/nbf failed) is dropped. internal/api/mcpoauth.go:173-174 promises \"The cause stays in the log; the message goes to the client\" and docs/ADMIN_GUIDE.md refusal table row `SSO access token is not valid …` tells operators \"서버 로그에 세부 원인이 남습니다\" — neither is true. The operator-facing message deliberately collapses four causes into one, so with no log entry there is no way to troubleshoot a rejected token; the auth feature's documented diagnosability is not implemented and no test covers it.",
+      "at": "2026-09-17T20:45:31+09:00"
+    }
+  },
+  "provenance": {
+    "model": "claude-opus-5",
+    "policy_version": "78619c0e",
+    "prompts_hash": "82f2440d4b2fef65",
+    "runner_version": "e4b56484",
+    "base_sha": "3aad11592cea254b0a14ecb2d72d2a534a4f4fd8",
+    "head_sha": "77587effed3048bda011ab3a2f267c496326973d",
+    "pr": "https://github.com/hkjang/igame/pull/20"
+  },
+  "verification": {
+    "runner": {
+      "source": "policy",
+      "commands": [
+        {
+          "cmd": "make deps",
+          "exit": 0,
+          "seconds": 18
+        },
+        {
+          "cmd": "make test",
+          "exit": 0,
+          "seconds": 2
+        },
+        {
+          "cmd": "make build",
+          "exit": 0,
+          "seconds": 13
+        },
+        {
+          "cmd": "make check-contract",
+          "exit": 0,
+          "seconds": 0
+        }
+      ]
+    },
+    "runner_gate": {
+      "ok": true,
+      "state": "verified",
+      "reason": "검증 4개 통과 (policy)"
+    },
+    "after_rebase": null,
+    "review": {
+      "verdict": "reject",
+      "reasons": [
+        "internal/api/mcp.go:60-67 mcpRefusal.Cause is never logged: when errors.As matches a refusal the branch only copies refusal.Message and skips logRequestError, so the underlying go-oidc verify error (which of signature/issuer/expiry/nbf failed) is dropped. internal/api/mcpoauth.go:173-174 promises \"The cause stays in the log; the message goes to the client\" and docs/ADMIN_GUIDE.md refusal table row `SSO access token is not valid …` tells operators \"서버 로그에 세부 원인이 남습니다\" — neither is true. The operator-facing message deliberately collapses four causes into one, so with no log entry there is no way to troubleshoot a rejected token; the auth feature's documented diagnosability is not implemented and no test covers it."
+      ],
+      "notes": [
+        "Verified: go build/vet pass; all Go tests pass including the 6 PostgreSQL-backed MCP OAuth tests run against a throwaway postgres:16 container; web tsc --noEmit and the new vitest file pass.",
+        "Tests are substantive: fakeIdP signs real RS256 tokens, HS256 downgrade, forged issuer, expired/nbf, ID token, cnf, audience mismatch, account-not-created and REST-refusal cases all exercise the real /mcp handler and would fail without the new code.",
+        "mcpoauth.go:116-147 consults oidc.issuer but not oidc.enabled: disabling web OIDC login while leaving the issuer stored keeps MCP SSO tokens accepted. Documented as issuer-only, so consistent with the docs, but an admin who turns OIDC off to cut Keycloak trust may not expect /mcp to keep trusting it.",
+        "mcpoauth.go:93-98 MetadataURL: when mcp.oauth.resource is set without a /mcp suffix (validation allows any absolute URL) the challenge points at <public_url>/.well-known/oauth-protected-resource/mcp rather than the RFC 9728 path for that resource; only matters for an unusual configuration.",
+        "Principal.Can / requireRole switched from `AuthType != \"api_key\"` to `AuthType == \"session\"`; all Principal constructors set AuthType (session/api_key/oauth), so no existing path loses the admin bypass.",
+        "cache.go WithoutCancel also changes the existing web OIDC login provider creation; it is a correct fix (go-oidc RemoteKeySet fetches JWKS with its creation context) and values like the HTTP client survive WithoutCancel.",
+        "docs/ADMIN_GUIDE.pdf binary regenerated — matches the repo's established pattern (previous feature commits also rebuilt it).",
+        "Feature is off by default and only touches /mcp; revert is a plain code revert (new `mcp` setting row is inert once the code is gone)."
+      ],
+      "risk": "medium"
+    },
+    "ci_gate": null
+  },
+  "release": {
+    "result": null,
+    "assets_sha256": []
+  },
+  "approval": null,
+  "usage": [
+    {
+      "ts": "2026-09-17T20:41:05+09:00",
+      "date": "2026-09-17",
+      "project": "igame",
+      "phase": "improve",
+      "run_id": "2026-09-17-202329-igame-improve",
+      "campaign": "mcp-oauth-2026-09",
+      "subtype": "success",
+      "duration_ms": 1079240,
+      "num_turns": 78,
+      "cost_usd": 10.7700435,
+      "input_tokens": 156,
+      "output_tokens": 76198,
+      "cache_read": 13170355,
+      "cache_create": 225874
+    },
+    {
+      "ts": "2026-09-17T20:45:31+09:00",
+      "date": "2026-09-17",
+      "project": "igame",
+      "phase": "review",
+      "run_id": "2026-09-17-202329-igame-improve",
+      "campaign": "mcp-oauth-2026-09",
+      "subtype": "success",
+      "duration_ms": 226197,
+      "num_turns": 27,
+      "cost_usd": 2.0181449999999996,
+      "input_tokens": 54,
+      "output_tokens": 14810,
+      "cache_read": 1684818,
+      "cache_create": 80340
+    }
+  ]
+}

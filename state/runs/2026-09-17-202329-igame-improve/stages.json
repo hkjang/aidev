@@ -1,0 +1,27 @@
+{
+  "base": {
+    "state": "pinned",
+    "reason": "main@3aad115",
+    "at": "2026-09-17T20:23:34+09:00"
+  },
+  "autonomy": {
+    "state": "release",
+    "reason": "",
+    "at": "2026-09-17T20:23:35+09:00"
+  },
+  "verify": {
+    "state": "passed",
+    "reason": "검증 4개 통과 (policy)",
+    "at": "2026-09-17T20:41:40+09:00"
+  },
+  "pr": {
+    "state": "created",
+    "reason": "https://github.com/hkjang/igame/pull/20",
+    "at": "2026-09-17T20:41:47+09:00"
+  },
+  "review": {
+    "state": "rejected",
+    "reason": "리뷰 거절: internal/api/mcp.go:60-67 mcpRefusal.Cause is never logged: when errors.As matches a refusal the branch only copies refusal.Message and skips logRequestError, so the underlying go-oidc verify error (which of signature/issuer/expiry/nbf failed) is dropped. internal/api/mcpoauth.go:173-174 promises \"The cause stays in the log; the message goes to the client\" and docs/ADMIN_GUIDE.md refusal table row `SSO access token is not valid …` tells operators \"서버 로그에 세부 원인이 남습니다\" — neither is true. The operator-facing message deliberately collapses four causes into one, so with no log entry there is no way to troubleshoot a rejected token; the auth feature's documented diagnosability is not implemented and no test covers it.",
+    "at": "2026-09-17T20:45:31+09:00"
+  }
+}
