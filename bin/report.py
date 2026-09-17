@@ -261,6 +261,132 @@ def campaigns():
         return []
 
 
+# ---------- 캠페인 진행 ----------
+# 러너(bin/run.sh pick_campaign)와 같은 규칙으로 대상 프로젝트의 상태를 정한다:
+# 마지막 캠페인 회차의 outcome 이 비었거나 infra-error·usage-limit 이면 아직 안 한 것,
+# error·verify-failed 는 세 번까지 다시 하고 그 뒤로는 막힘, 나머지(PR 까지 감)는 처리된 것.
+CAMP_STATE = {  # key: (라벨, 알약 class, 막대 색, 정렬 순서)
+    "done":     ("완료",       "pill-released", "var(--good)",    0),
+    "pr":       ("검토 대기",  "pill-merged",   "var(--warn)",    1),
+    "nochange": ("변경 없음",  "pill-nochange", "var(--neutral)", 2),
+    "retry":    ("실패·재시도", "pill-failed",   "var(--bad)",     3),
+    "stuck":    ("막힘",       "pill-failed",   "var(--bad)",     4),
+    "todo":     ("미착수",     "pill-other",    "var(--card-2)",  5),
+}
+
+
+def campaign_progress(cmp, runs_all):
+    """캠페인 하나의 프로젝트별 상태와 집계. runs_all 은 전체 회차 목록."""
+    cid = cmp.get("id")
+    mine = [r for r in runs_all if r.get("campaign") == cid]
+    by_p = defaultdict(list)
+    for r in mine:
+        by_p[r.get("project")].append(r)
+    projects = []
+    for p in cmp.get("projects", []):
+        rs = by_p.get(p, [])
+        last = rs[-1] if rs else None
+        o = (last.get("outcome") or outcome_of(last)) if last else ""
+        fails = sum(1 for r in rs if (r.get("outcome") or outcome_of(r)) in ("error", "verify-failed"))
+        if not last or o in ("infra-error", "usage-limit"):
+            st = "todo"
+        elif o in ("error", "verify-failed"):
+            st = "stuck" if fails >= 3 else "retry"
+        elif o == "review-pending":
+            st = "pr"
+        elif o == "no-change":
+            st = "nochange"
+        else:
+            st = "done"
+        projects.append({"name": p, "state": st, "last": last, "runs": len(rs), "fails": fails})
+    n = defaultdict(int)
+    for x in projects:
+        n[x["state"]] += 1
+    total = len(projects)
+    processed = n["done"] + n["pr"] + n["nochange"]
+    return {"projects": projects, "counts": n, "total": total, "processed": processed,
+            "pct": int(processed / total * 100) if total else 0, "runs": len(mine),
+            "last_ts": max((r.get("ts") or "" for r in mine), default="")}
+
+
+def campaign_goal_line(goal):
+    """목표의 첫 문단 한 줄과, 표준 문서(…-STANDARD.md)가 있으면 그 링크."""
+    text = (goal or "").strip()
+    first = text.split("\n\n", 1)[0].replace("\n", " ").strip()
+    m = re.search(r"([A-Z0-9-]+-STANDARD\.md)", text)
+    std = f'<a href="{GH}/aidev/blob/main/{m.group(1)}">{esc(m.group(1))}</a>' if m else ""
+    return first, std
+
+
+def campaign_html(cmp, runs_all, usage_all):
+    cid = cmp.get("id", "")
+    pg = campaign_progress(cmp, runs_all)
+    spent = sum(float(u.get("cost_usd") or 0) for u in usage_all if u.get("campaign") == cid)
+    budget = float(cmp.get("budget_usd") or 0)
+    bpct = min(100, int(spent / budget * 100)) if budget else 0
+    bcol = "var(--bad)" if bpct >= 100 else ("var(--warn)" if bpct >= 80 else "var(--good)")
+    until = cmp.get("until") or ""
+    try:
+        dleft = (date.fromisoformat(until) - date.today()).days
+        until_s = f"{until} (D-{dleft})" if dleft >= 0 else f"{until} (기한 지남)"
+    except Exception:
+        dleft, until_s = None, until
+    done = bool(cmp.get("done"))
+    if done:
+        status = '<span class="pill pill-nochange">완료</span>'
+    elif dleft is not None and dleft < 0 or (budget and spent >= budget):
+        status = '<span class="pill pill-failed">종료 예정</span>'
+    else:
+        status = '<span class="pill pill-released">진행</span>'
+    first, std = campaign_goal_line(cmp.get("goal"))
+    n = pg["counts"]
+    # 진행 막대: 상태별 구간
+    segs = "".join(f'<span title="{esc(CAMP_STATE[k][0])} {n[k]}" style="width:{n[k]/pg["total"]*100 if pg["total"] else 0:.1f}%;background:{CAMP_STATE[k][2]}"></span>'
+                   for k in ("done", "pr", "nochange", "retry", "stuck", "todo") if n[k])
+    legend = " · ".join(f'<span class="pill {CAMP_STATE[k][1]}">{CAMP_STATE[k][0]} {n[k]}</span>'
+                        for k in ("done", "pr", "nochange", "retry", "stuck", "todo") if n[k])
+    # 프로젝트 알약: 상태 순, 같은 상태 안에서는 이름 순. PR·릴리즈가 있으면 그리로, 없으면 프로젝트 페이지로
+    chips = []
+    for x in sorted(pg["projects"], key=lambda x: (CAMP_STATE[x["state"]][3], x["name"].lower())):
+        last = x["last"] or {}
+        res = last.get("result") or ""
+        href = f"{SITE}/projects/{x['name']}/"
+        m = re.search(r"(https://github\.com/\S+?/pull/\d+)", res)
+        tag = released_tag(res)
+        if tag:
+            href = f"{GH}/{repo_name(x['name'], res)}/releases/tag/{tag}"
+        elif m:
+            href = m.group(1)
+        tip = CAMP_STATE[x["state"]][0] + (f" — {(last.get('ts') or '')[:10]} {res}" if last else " — 아직 회차가 없음")
+        if x["state"] in ("retry", "stuck"):
+            tip += f" (실패 {x['fails']}회)"
+        mark = {"done": "✓ ", "pr": "PR ", "nochange": "– ", "retry": "↻ ", "stuck": "⛔ ", "todo": ""}[x["state"]]
+        chips.append(f'<a class="chip {CAMP_STATE[x["state"]][1]}" href="{href}" title="{esc(tip)}">{mark}{esc(x["name"])}</a>')
+    stuck = [x["name"] for x in pg["projects"] if x["state"] == "stuck"]
+    stuck_s = (f'<p class="meta">⛔ 세 번 실패해 러너가 더 잡지 않는 프로젝트: <strong>{esc(", ".join(stuck))}</strong> — 사람이 원인을 봐야 다시 돈다.</p>' if stuck else "")
+    last_s = pg["last_ts"][:16].replace("T", " ") if pg["last_ts"] else "아직 없음"
+    return (f'<div class="camp" id="camp-{esc(cid)}">'
+            f'<div class="camp-head"><h3><a href="#camp-{esc(cid)}">{esc(cid)}</a> {status}</h3>'
+            f'<span class="meta">회차 {pg["runs"]} · 마지막 {esc(last_s)}</span></div>'
+            f'<p class="camp-goal">{esc(first)}' + (f' <span class="meta">표준: {std}</span>' if std else "") + "</p>"
+            f'<div class="camp-prog"><b>{pg["processed"]}/{pg["total"]}</b> 대상 처리 <span class="meta">({pg["pct"]}%)</span>'
+            f'<span class="segbar" role="img" aria-label="대상 {pg["total"]}개 중 {pg["processed"]}개 처리">{segs}</span></div>'
+            f'<p class="camp-legend">{legend}</p>'
+            f'<div class="camp-prog"><b>${spent:.0f}</b> / ${budget:.0f} 예산 <span class="meta">({bpct}%)</span>'
+            f'<span class="segbar" role="img" aria-label="예산 {bpct}% 사용"><span style="width:{bpct}%;background:{bcol}"></span></span>'
+            f' <span class="meta">기한 {esc(until_s)}</span></div>'
+            f'{stuck_s}<div class="chips">{"".join(chips)}</div></div>\n')
+
+
+def campaigns_html(camps, runs_all, usage_all):
+    active = [c for c in camps if not c.get("done")]
+    closed = [c for c in camps if c.get("done")]
+    out = [campaign_html(c, runs_all, usage_all) for c in active]
+    if closed:
+        out.append(f"<details><summary>완료된 캠페인 {len(closed)}개</summary>" + "".join(campaign_html(c, runs_all, usage_all) for c in closed) + "</details>\n")
+    return "".join(out)
+
+
 def stops():
     out = []
     for f in sorted(os.listdir(STATE)) if os.path.isdir(STATE) else []:
@@ -1017,12 +1143,12 @@ def write_index(by_day, days, by_day_usage, projects_info, alert_items, weeks, m
               f"claude -p 가 세션마다 보고한 추정값(정액제에서는 참고값). 회차별 내역은 각 일일 보고와 프로젝트 페이지, 원본은 [usage.jsonl]({SITE}/data/usage.jsonl).\n"]
     camps = [c for c in campaigns() if not str(c.get("id", "")).startswith("example-")]
     if camps:
-        rows = []
-        for cmp in camps:
-            spent = sum(float(u.get("cost_usd") or 0) for v in by_day_usage.values() for u in v if u.get("campaign") == cmp.get("id"))
-            n_runs = sum(1 for v in by_day.values() for r in v if r.get("campaign") == cmp.get("id"))
-            rows.append(("released" if not cmp.get("done") else "nochange", [esc(cmp.get("id", "")), esc(cmp.get("goal", ""))[:160], esc(", ".join(cmp.get("projects", []))), f"${spent:.2f} / ${cmp.get('budget_usd', 0)}", esc(cmp.get("until", "")), str(n_runs), "완료" if cmp.get("done") else "진행"]))
-        lines += ["## 개선 캠페인\n", table([("캠페인", "primary"), ("목표", ""), ("대상", ""), ("예산", "num"), ("기한", ""), ("회차", "num"), ("상태", "")], rows),
+        runs_all = [r for v in by_day.values() for r in v]
+        usage_all = [u for v in by_day_usage.values() for u in v]
+        lines += ["## 개선 캠페인\n",
+                  '<p class="meta">대상 프로젝트마다 한 번씩 해내면 끝나는 일감. 상태는 러너와 같은 규칙으로 센다 — PR 까지 가면 처리, '
+                  '실패는 세 번까지 다시 하고 그 뒤로는 막힘. 알약을 누르면 PR·릴리즈·프로젝트 페이지로 간다.</p>\n',
+                  campaigns_html(camps, runs_all, usage_all),
                   "설정: `state/campaigns.json`. 캠페인 대상은 수정·수동 큐 다음 순서로 우선 배정되고, 예산·기한이 다하면 자동 종료된다.\n"]
     lines.append("## FAQ\n")
     for q, a in FAQ:
@@ -1077,6 +1203,12 @@ def main():
                           "minutes": round(all_u["minutes"]), "tokens_in": int(all_u["in"]), "tokens_out": int(all_u["out"])},
                "alerts": alert_items, "fix_queue": fix_queue(), "health": health(), "lessons": lessons[-50:], "caps": caps(),
                "inbox": inbox_cache, "stops": stops(), "campaigns": campaigns(),
+               "campaign_progress": [{"id": cmp.get("id"), "done": bool(cmp.get("done")), "until": cmp.get("until"), "budget_usd": cmp.get("budget_usd"),
+                                      "spent_usd": round(sum(float(x.get("cost_usd") or 0) for v in by_day_usage.values() for x in v if x.get("campaign") == cmp.get("id")), 2),
+                                      **{k: pg[k] for k in ("total", "processed", "pct", "runs", "last_ts")}, "counts": dict(pg["counts"]),
+                                      "projects": {x["name"]: x["state"] for x in pg["projects"]}}
+                                     for cmp in campaigns() if not str(cmp.get("id", "")).startswith("example-")
+                                     for pg in [campaign_progress(cmp, [r for v in by_day.values() for r in v])]],
                "projects_autonomy": {p: policy_of(p).get("autonomy", "release") for p in by_project},
                "quality": [{"metric": k, "value": v, "detail": w} for k, v, w in quality_metrics([r for v in by_day.values() for r in v], [x for v in by_day_usage.values() for x in v], lessons, alert_history())],
                "outcomes_today": {k[2:]: v for k, v in c.items() if k.startswith("o:")},
