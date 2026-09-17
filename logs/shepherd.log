@@ -317,3 +317,32 @@ shepherd: 락을 3000초 안에 잡지 못했거나 처리 실패 — 다음 시
 [03:14:38] done
 ===== 2026-09-18 03:14:38 shepherd done
 ===== 2026-09-18 03:35:01 shepherd start
+[03:46:30] shepherd: 후보 187건 (한 번에 최대 4건, 오늘 $28.859266500000004/$60)
+[03:47:54] === shepherd weekly PR #15 (원인 conflict, run 2026-09-18-034754-weekly-shepherd)
+[03:47:58] weekly: [rebase] conflict — 자동 리베이스 실패 — 수동 해결 필요
+[03:47:59] weekly: [shepherd] PR #15 conflict → needs-human — base 와 충돌하는데 자동 리베이스로 풀리지 않음 — 수동 해결 필요 
+[03:48:02] === shepherd moyro PR #15 (원인 conflict, run 2026-09-18-034801-moyro-shepherd)
+[03:48:10] moyro: 리베이스 충돌이 만들어 낸 PDF 뿐이라 병합된 본문으로 다시 구웠다
+[03:48:20] moyro: verify `cd server && go build ./... && go vet ./... && go test ./...` → exit 0 (10s)
+[03:48:48] moyro: verify `cd webapp && ([ -d node_modules ] || npm ci --no-audit --no-fund) && npm run typecheck --silent && npm test --silent` → exit 0 (28s)
+[03:48:52] moyro: [rebase] pushed — 3a51b5d — 재검증 통과, 재승인 필요
+[03:48:55] moyro: [shepherd] PR #15 conflict → rebased — base 와 충돌해 리베이스함 (3a51b5d) 
+[03:52:23] moyro: review — 24 turns, 3m, $2.17, success
+[03:52:23] moyro: [shepherd] PR #15 conflict → review-reject — - server/internal/email/sender.go:142 loginAuth.Start 의 평문 가드 `!server.TLS && server.Name != a.host` 는 항상 거짓이다. server.Name 은 :129 `sm
+[03:52:27] === shepherd relio PR #23 (원인 guard, run 2026-09-18-035227-relio-shepherd)
+[03:56:09] relio: review — 20 turns, 3m, $1.83, success
+[03:56:09] relio: [shepherd] PR #23 guard → review-reject — - internal/mail/mail.go:223 loginAuth.Start 의 평문 가드 `!server.TLS && server.Name != a.host` 는 항상 거짓입니다. server.Name 은 dial() 의 smtp
+[03:56:13] === shepherd seaton PR #28 (원인 review, run 2026-09-18-035613-seaton-shepherd)
+[03:59:46] seaton: improve — 22 turns, 3m, $1.33, success
+[03:59:47] seaton: verify `go build ./...` → exit 0 (1s)
+[03:59:47] seaton: verify `go vet ./...` → exit 0 (0s)
+[03:59:47] seaton: verify `go test ./...` → exit 0 (0s)
+[03:59:59] seaton: verify `cd web && [ -d node_modules ] || npm ci --no-audit --no-fund` → exit 0 (12s)
+[04:00:00] seaton: verify `cd web && npm test --silent` → exit 0 (1s)
+[04:00:00] seaton: verify `cd web && [ -d node_modules ] || npm ci --no-audit --no-fund` → exit 0 (0s)
+[04:00:06] seaton: verify `cd web && npm run build --silent` → exit 0 (6s)
+[04:00:11] seaton: [shepherd] PR #28 review → fix-pushed — # PR #28 수정 요약  - 문제 1·2: `Service.deliver`/`SendNow` 가 발송용 컨텍스트를 `complete → store.Update` 에도 그대로 넘겨, 응답 없
+[04:04:30] seaton: review — 23 turns, 4m, $2.06, success
+[04:04:30] seaton: [shepherd] PR #28 review → review-reject — - internal/mail/mail.go:222 loginAuth.Start 의 평문 가드 `!server.TLS && server.Name != a.host` 는 항상 거짓이다 — mail.go:159 `smtp.NewClient(con
+[04:04:31] shepherd: 이번 시간 몫(4건)을 다 썼다 — 나머지는 다음 시간에
+[04:04:31] shepherd: 처리 4건 — 승인 0 · 수정 푸시 1 · 사람 필요 1 (오늘 $36.2435235/$60)

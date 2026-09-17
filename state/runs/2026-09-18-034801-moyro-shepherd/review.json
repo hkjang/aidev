@@ -1,0 +1,21 @@
+{
+  "verdict": "reject",
+  "recommend": "fix",
+  "reasons": [
+    "server/internal/email/sender.go:142 loginAuth.Start 의 평문 가드 `!server.TLS && server.Name != a.host` 는 항상 거짓이다. server.Name 은 :129 `smtp.NewClient(connection, configuration.host)` 에 넘긴 값이고 a.host 는 :155 에서 같은 configuration.host 를 넣으므로 두 값이 항상 같다. 실제로 확인함: 172.19.24.103(비-루프백)에 STARTTLS 없이 `250 AUTH LOGIN` 만 광고하는 가짜 릴레이를 띄우고 security=auto, username/password 로 Send 하니 AUTH LOGIN 뒤에 `cmVsYXktdXNlcg==` / `czNjcmV0LXB3` (base64 'relay-user' / 's3cret-pw') 가 평문 TCP 로 나갔고 Send 는 nil 을 반환했다. 캠페인 규칙에서 6개 저장소가 똑같이 걸린 결함이다.",
+    "server/internal/email/sender.go:131-137 authMechanism 은 PLAIN 이 광고되면 stdlib smtp.PlainAuth 를 쓰는데, stdlib 은 비-TLS·비-localhost 에서 무조건 `unencrypted connection` 으로 실패한다. 같은 가짜 릴레이가 `AUTH PLAIN` 또는 `AUTH PLAIN LOGIN` 을 광고하면 `smtp authenticate: unencrypted connection` 으로 인증이 아예 안 된다(직접 실행해 확인). 결과적으로 security=auto/none + 자격증명 조합의 동작이 릴레이가 광고하는 메커니즘에 따라 '비밀번호 평문 유출' 과 '항상 실패' 로 갈라진다. docs/ADMIN_GUIDE.md 3.10 의 `mail.username · mail.password` 행(\"PLAIN, 없으면 LOGIN 으로 인증합니다\") 은 TLS 없는 연결에서 자격증명을 보낼지에 대한 정책을 전혀 정하지 않는다.",
+    "고치는 방법: (1) 먼저 docs/ADMIN_GUIDE.md 3.10 에 정책을 적는다 — 권장은 'TLS(implicit 또는 STARTTLS 협상 성공) 없이 자격증명을 보내지 않는다'. (2) loginAuth.Start 는 `!server.TLS` 이면 무조건 오류(server.Name 비교 제거)로 바꿔 PlainAuth 와 같은 규칙을 강제하고, 오류 문구는 관리자가 원인을 알 수 있게 'security 를 starttls/tls 로 바꾸거나 자격증명을 비우라' 는 뜻으로 쓴다. 평문 인증을 꼭 허용해야 한다면 별도 명시적 opt-in 설정(예: mail.allow_insecure_auth, 기본 false)을 두고, 그 경우 PLAIN 도 동작하도록 stdlib PlainAuth 대신 자체 PLAIN 구현을 써서 두 메커니즘이 같은 정책을 따르게 한다. (3) Config.Validate 에서 username 이 있고 security=none 이면 opt-in 없이는 거절하는 것도 고려한다(auto 는 런타임에만 판단 가능).",
+    "server/internal/email/sender_test.go 에 loginAuth·authMechanism·TLSModeAuto 를 실행하는 테스트가 하나도 없다(grep loginAuth|LOGIN 결과 0건). 캠페인 규칙대로 127.0.0.1 이 아닌 비-루프백 인터페이스 주소에 묶은 가짜 릴레이로 (a) STARTTLS 없이 `AUTH LOGIN` 만 광고 → 비밀번호가 소켓에 나타나지 않고 Send 가 오류를 돌려주는지, (b) STARTTLS 없이 `AUTH PLAIN` 광고 → 정책대로 실패하는지, (c) STARTTLS 광고 시 auto 모드가 업그레이드 후 인증하는지를 단언하는 테스트를 추가한다. 수정 전 코드에서 (a) 가 실패해야 한다.",
+    "server/internal/mail/service.go:679 Notify 는 수신자마다 time.AfterFunc 고루틴을 띄우고 flush(:690) 는 릴레이 연결을 최대 2×timeout+2초 붙들지만 동시 발송 수 상한이 없다. 검토자가 많은 승인 요청이나 응답 없는 릴레이(Accept 후 침묵)에서는 서로 다른 수신자 수만큼 고루틴과 열린 TCP 연결이 동시에 쌓인다. 캠페인 규칙대로 send 호출 주위에 버퍼 채널 세마포어(예: 4~8)를 두되 record() INSERT 는 세마포어 대기 전에 즉시 남기도록 고친다. 우선순위는 위 자격증명 문제보다 낮다."
+  ],
+  "notes": [
+    "확인된 항목: 기본값 꺼짐(mail.Default Enabled=false, TestMailSettingsDefaultOffAndPasswordNeverReturned 로 실행 확인). 비밀번호는 secret 행에만 저장되고 GET/PATCH 응답·JSON 행·audit details 에 실리지 않음(테스트가 s3cret 부재를 단언). 새 경로 /admin/mail/deliveries, /admin/mail/test 는 모두 nativeRequire(manage_settings) 뒤에 있고 공개 경로 추가 없음.",
+    "마이그레이션 000018_mail_deliveries.up.sql 은 CREATE TABLE IF NOT EXISTS + 인덱스 2개로 추가만 하며 기존 열·표를 건드리지 않는다. 번호 충돌 없음(main 의 마지막이 000017).",
+    "발송 예산: flush 컨텍스트 2T+20초, 시도당 SMTPSender 가 T 로 제한(연결 deadline 설정됨), 2회 시도+2초 대기 = 2T+2초이므로 complete UPDATE 에 18초 여유. SendTest 는 WithoutCancel(ctx)+T+5초로 UPDATE 여유 5초. 기록 유실 문제는 없음.",
+    "트리거: approval_review 는 emitSubmitted 에서 제출 1회, decided 는 status 가 pending 을 벗어날 때만(부분 승인은 발화 안 함), task_assigned 는 생성·AssigneeChanged·spawn 시에만. 자기 행동은 Notify 에서 제외. 링크 /approvals/review, /approvals/mine, /my-work/tasks 는 AppRouter.tsx 에 존재.",
+    "프론트 시험 발송: transport.requestFrom 은 non-2xx 에서 body.message 를 APIError 로 throw 하고 MailSettingsPage.sendTest 의 catch 가 그 메시지를 표시하며 finally 에서 loadDeliveries() 를 호출하므로 실패 시에도 결과·기록이 갱신된다. POST 는 자동 재시도 대상이 아님.",
+    "go test ./internal/mail ./internal/email ./internal/httpapi(-run Mail) 통과. 위 평문 인증 검증은 임시 테스트 파일로 실행 후 삭제했고 작업 트리는 깨끗함.",
+    "risk 근거: 자격증명 유출 가능성이 있으나 기능 기본값이 꺼져 있고 마이그레이션은 추가만이라 medium."
+  ],
+  "risk": "medium"
+}
