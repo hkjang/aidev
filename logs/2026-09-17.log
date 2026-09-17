@@ -2399,3 +2399,83 @@ https://github.com/hkjang/orbit/pull/1#issuecomment-5707948085
 [12:20:02] 다른 러너(pid 2919028)가 실행 중 — 겹쳐 돌리지 않는다 (flock 뒤에서 실행하세요)
 reports: 16 day(s), 3 week(s), 1 month(s), 929 run(s), 1079 usage row(s), 43 project page(s), 12 alert(s)
 notify: no new alerts
+[12:23:59] aidev sync FAILED: shepherd(2026-09-17): 4건 처리 — 승인 3 · 수정 2 · 사람 필요 0
+[12:23:59] done
+[12:32:27] skip Quantoss: dirty working tree
+[12:32:34] skip aiportal-java: STOP
+[12:33:05] skip umm: dirty working tree
+[12:33:09] candidates(39): AgentHub Clustara DartFly Invenqor Kkiit Momento ReSSO SecCheck Vendra ai-admin aiportal-front-admin aiportal-front aiportal-py appstore cutover dataworks git-ctx hunter igame jikim jupiq kanpic madi moina moyro muni nexabuilder orbit pii-masker postra ptium qurio releasedock relio seaton sqlon vibe-coders visitflow weekly
+[12:33:12] campaign tracking-2026-09: 세 번 이상 실패해 더 잡지 않는 프로젝트 — weekly
+[12:33:14] campaign mail-2026-09: 세 번 이상 실패해 더 잡지 않는 프로젝트 — postra
+[12:33:14] campaign mcp-oauth-2026-09: picked AgentHub
+[12:33:14] picked: AgentHub
+[12:33:15] === AgentHub (base=main, run 2026-09-17-123314-AgentHub-improve, 회차 예산 $30)
+Preparing worktree (new branch 'auto/2026-09-17-1233')
+Updating files:  56% (465/816)Updating files:  57% (466/816)Updating files:  58% (474/816)Updating files:  59% (482/816)Updating files:  60% (490/816)Updating files:  61% (498/816)Updating files:  62% (506/816)Updating files:  63% (515/816)Updating files:  64% (523/816)Updating files:  65% (531/816)Updating files:  66% (539/816)Updating files:  67% (547/816)Updating files:  68% (555/816)Updating files:  69% (564/816)Updating files:  70% (572/816)Updating files:  71% (580/816)Updating files:  72% (588/816)Updating files:  73% (596/816)Updating files:  74% (604/816)Updating files:  75% (612/816)Updating files:  76% (621/816)Updating files:  77% (629/816)Updating files:  78% (637/816)Updating files:  79% (645/816)Updating files:  80% (653/816)Updating files:  81% (661/816)Updating files:  82% (670/816)Updating files:  83% (678/816)Updating files:  84% (686/816)Updating files:  85% (694/816)Updating files:  86% (702/816)Updating files:  87% (710/816)Updating files:  88% (719/816)Updating files:  89% (727/816)Updating files:  90% (735/816)Updating files:  91% (743/816)Updating files:  92% (751/816)Updating files:  93% (759/816)Updating files:  94% (768/816)Updating files:  95% (776/816)Updating files:  96% (784/816)Updating files:  97% (792/816)Updating files:  98% (800/816)Updating files:  99% (808/816)Updating files: 100% (816/816)Updating files: 100% (816/816), done.
+HEAD is now at 3fa7760 chore(release): 0.247.0
+[12:33:18] AgentHub: [base] pinned — main@3fa7760
+[12:33:18] AgentHub: [autonomy] release — 
+[12:50:07] AgentHub: improve — 81 turns, 16m, $9.41, success
+[12:50:10] AgentHub: verify `go build ./...` → exit 0 (2s)
+[12:50:10] AgentHub: verify `go vet ./...` → exit 0 (0s)
+[12:50:28] AgentHub: verify `go test ./...` → exit 0 (18s)
+[12:50:28] AgentHub: verify `cd web && [ -d node_modules ] || npm ci --no-audit --no-fund` → exit 0 (0s)
+[12:50:32] AgentHub: verify `cd web && npm run build --silent` → exit 0 (4s)
+[12:50:33] AgentHub: [verify] passed — 검증 5개 통과 (auto)
+branch 'auto/2026-09-17-1233' set up to track 'origin/auto/2026-09-17-1233'.
+[12:50:42] AgentHub: [pr] created — https://github.com/hkjang/AgentHub/pull/28
+[12:54:27] AgentHub: review — 24 turns, 3m, $1.8, success
+[12:54:27] AgentHub: [review] approved — 리뷰 승인 (risk=medium)
+[12:54:29] AgentHub: waiting for CI on ff2dd99 (success)
+[12:55:00] AgentHub: [ci] passed — 검사 1개 모두 success
+[12:55:04] AgentHub: [merge] done — ff2dd992316c4d1915af956fb0b796e7155cd108
+From https://github.com/hkjang/AgentHub
+ * branch            main       -> FETCH_HEAD
+   3fa7760..c33c73e  main       -> origin/main
+Updating 3fa7760..c33c73e
+Fast-forward
+ docs/ADMIN_GUIDE.md                |  87 ++++++++
+ docs/ADMIN_GUIDE.pdf               | Bin 5158314 -> 5250966 bytes
+ docs/USER_GUIDE.md                 |  14 ++
+ docs/USER_GUIDE.pdf                | Bin 7048472 -> 7055736 bytes
+ internal/api/auth.go               |   4 +-
+ internal/api/mcp.go                |  29 ++-
+ internal/api/mcpoauth.go           | 364 ++++++++++++++++++++++++++++++++
+ internal/api/mcpoauth_live_test.go | 420 +++++++++++++++++++++++++++++++++++++
+ internal/api/mcpoauth_test.go      | 121 +++++++++++
+ internal/api/routes.go             |  34 ++-
+ internal/api/server.go             |   8 +
+ internal/store/store.go            |  14 ++
+ web/src/enhancements.css           |   5 +
+ web/src/pages/AdminSettings.tsx    |  34 ++-
+ web/src/pages/Developer.tsx        |  17 +-
+ 15 files changed, 1136 insertions(+), 15 deletions(-)
+ create mode 100644 internal/api/mcpoauth.go
+ create mode 100644 internal/api/mcpoauth_live_test.go
+ create mode 100644 internal/api/mcpoauth_test.go
+Preparing worktree (detached HEAD c33c73e)
+HEAD is now at c33c73e Merge pull request #28 from hkjang/auto/2026-09-17-1233
+[12:57:43] AgentHub: release — 16 turns, 2m, $0.9, success
+[12:57:47] AgentHub: waiting for CI on d62bcbe (no-ci)
+[12:59:52] AgentHub: [release] published — v0.248.0
+From https://github.com/hkjang/AgentHub
+ * branch            main       -> FETCH_HEAD
+Updating c33c73e..d62bcbe
+Fast-forward
+ README.md                       | 2 +-
+ VERSION                         | 2 +-
+ compose.yaml                    | 6 +++---
+ deploy/kubernetes/agenthub.yaml | 4 ++--
+ deploy/kubernetes/operator.yaml | 2 +-
+ deploy/kubernetes/worker.yaml   | 2 +-
+ deploy/offline/.env.example     | 2 +-
+ deploy/offline/compose.yaml     | 4 ++--
+ docs/ADMIN_GUIDE.md             | 2 +-
+ docs/index.html                 | 2 +-
+ docs/offline-install.md         | 2 +-
+ 11 files changed, 15 insertions(+), 15 deletions(-)
+[13:04:42] AgentHub: [assets] verified — v0.248.0 자산 8개 (이전 v0.247.0: 8)
+fatal: '/home/hkjang/.cache/auto-improve-wt/AgentHub' is not a working tree
+evidence: /mnt/c/Users/USER/projects/aidev/state/runs/2026-09-17-123314-AgentHub-improve/evidence.json
+reports: 16 day(s), 3 week(s), 1 month(s), 930 run(s), 1086 usage row(s), 43 project page(s), 12 alert(s)
+notify: no new alerts
