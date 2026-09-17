@@ -1,0 +1,243 @@
+{
+  "run_id": "2026-09-18-012335-moyro-improve",
+  "generated": "2026-09-18T02:27:03+09:00",
+  "run": {
+    "run_id": "2026-09-18-012335-moyro-improve",
+    "project": "moyro",
+    "kind": "improve",
+    "started": "2026-09-18T01:23:35+09:00",
+    "model": "claude-opus-5",
+    "policy_version": "78619c0e",
+    "prompts_hash": "90b6639bc42c5800",
+    "runner_version": "e4b56484",
+    "finished": "2026-09-18T02:27:02+09:00",
+    "outcome": "release-ready"
+  },
+  "record": {
+    "ts": "2026-09-18T02:27:02+09:00",
+    "date": "2026-09-18",
+    "project": "moyro",
+    "result": "merged https://github.com/hkjang/moyro/pull/17, released v0.2.32",
+    "outcome": "release-ready",
+    "run_id": "2026-09-18-012335-moyro-improve",
+    "base_sha": "f29b741c1da5de78a4ee1a6a06e2e7ee1e76592c",
+    "head_sha": "9ccb886a3195b1fa1b9025eb7df928db1e9bba09",
+    "pr": "https://github.com/hkjang/moyro/pull/17",
+    "stages": {
+      "base": {
+        "state": "pinned",
+        "reason": "main@f29b741",
+        "at": "2026-09-18T01:23:39+09:00"
+      },
+      "autonomy": {
+        "state": "release",
+        "reason": "",
+        "at": "2026-09-18T01:23:39+09:00"
+      },
+      "verify": {
+        "state": "passed",
+        "reason": "검증 2개 통과 (policy)",
+        "at": "2026-09-18T01:44:07+09:00"
+      },
+      "pr": {
+        "state": "created",
+        "reason": "https://github.com/hkjang/moyro/pull/17",
+        "at": "2026-09-18T01:44:15+09:00"
+      },
+      "review": {
+        "state": "approved",
+        "reason": "리뷰 승인 (risk=medium)",
+        "at": "2026-09-18T01:48:30+09:00"
+      },
+      "ci": {
+        "state": "passed",
+        "reason": "검사 3개 모두 success",
+        "at": "2026-09-18T01:54:22+09:00"
+      },
+      "merge": {
+        "state": "done",
+        "reason": "9ccb886a3195b1fa1b9025eb7df928db1e9bba09",
+        "at": "2026-09-18T01:54:27+09:00"
+      },
+      "release": {
+        "state": "published",
+        "reason": "v0.2.32",
+        "at": "2026-09-18T02:02:22+09:00"
+      },
+      "assets": {
+        "state": "verified",
+        "reason": "v0.2.32 자산 1개 (이전 v0.2.31: 1)",
+        "at": "2026-09-18T02:27:00+09:00"
+      }
+    },
+    "campaign": "mcp-oauth-2026-09",
+    "autonomy": "release",
+    "files": 18,
+    "additions": 1689,
+    "deletions": 11,
+    "tests": 2,
+    "title": "feat: let Keycloak access tokens open /mcp next to personal keys (MCP OAuth resource server)"
+  },
+  "stages": {
+    "base": {
+      "state": "pinned",
+      "reason": "main@f29b741",
+      "at": "2026-09-18T01:23:39+09:00"
+    },
+    "autonomy": {
+      "state": "release",
+      "reason": "",
+      "at": "2026-09-18T01:23:39+09:00"
+    },
+    "verify": {
+      "state": "passed",
+      "reason": "검증 2개 통과 (policy)",
+      "at": "2026-09-18T01:44:07+09:00"
+    },
+    "pr": {
+      "state": "created",
+      "reason": "https://github.com/hkjang/moyro/pull/17",
+      "at": "2026-09-18T01:44:15+09:00"
+    },
+    "review": {
+      "state": "approved",
+      "reason": "리뷰 승인 (risk=medium)",
+      "at": "2026-09-18T01:48:30+09:00"
+    },
+    "ci": {
+      "state": "passed",
+      "reason": "검사 3개 모두 success",
+      "at": "2026-09-18T01:54:22+09:00"
+    },
+    "merge": {
+      "state": "done",
+      "reason": "9ccb886a3195b1fa1b9025eb7df928db1e9bba09",
+      "at": "2026-09-18T01:54:27+09:00"
+    },
+    "release": {
+      "state": "published",
+      "reason": "v0.2.32",
+      "at": "2026-09-18T02:02:22+09:00"
+    },
+    "assets": {
+      "state": "verified",
+      "reason": "v0.2.32 자산 1개 (이전 v0.2.31: 1)",
+      "at": "2026-09-18T02:27:00+09:00"
+    }
+  },
+  "provenance": {
+    "model": "claude-opus-5",
+    "policy_version": "78619c0e",
+    "prompts_hash": "90b6639bc42c5800",
+    "runner_version": "e4b56484",
+    "base_sha": "f29b741c1da5de78a4ee1a6a06e2e7ee1e76592c",
+    "head_sha": "9ccb886a3195b1fa1b9025eb7df928db1e9bba09",
+    "pr": "https://github.com/hkjang/moyro/pull/17"
+  },
+  "verification": {
+    "runner": {
+      "source": "policy",
+      "commands": [
+        {
+          "cmd": "cd server && go build ./... && go vet ./... && go test ./...",
+          "exit": 0,
+          "seconds": 4
+        },
+        {
+          "cmd": "cd webapp && ([ -d node_modules ] || npm ci --no-audit --no-fund) && npm run typecheck --silent && npm test --silent",
+          "exit": 0,
+          "seconds": 16
+        }
+      ]
+    },
+    "runner_gate": {
+      "ok": true,
+      "state": "verified",
+      "reason": "검증 2개 통과 (policy)"
+    },
+    "after_rebase": null,
+    "review": {
+      "verdict": "approve",
+      "reasons": [],
+      "notes": [
+        "Verified: go build/vet/gofmt clean; new Go tests (7 Postgres integration + 2 unit) run against a throwaway postgres:16 and pass; they exercise the production mcpAuthChain with a real RSA-signed fake IdP and assert on status/headers/body/log, so they would fail without the change. Full httpapi/oidcauth/apikeys packages pass; unrelated packages (teams, threads, sidebar, store, ws, webhooks, workitems) failed only with 'out of shared memory' under parallel package runs on the throwaway DB and pass serially — environment, not the PR. Webapp: tsc clean, MCPSettingsPage.test.tsx 5/5 pass.",
+        "Security review of the auth path: asymmetric-alg-only verifier (SkipClientIDCheck but SupportedSigningAlgs restricted), iss/exp/nbf via go-oidc, typ=ID/cnf/empty-sub refused, audience bound to resource or admin allow-list, only pre-linked active user_identities rows accepted (delete_at=0), principal is Restricted with admin scopes ∩ token scopes and RBAC intersects with live roles (rbac postgres also filters delete_at=0, so deferred approvals for deactivated SSO requesters are refused). WWW-Authenticate challenge is applied only on the /mcp route; tested that REST 401s stay clean. Challenge writer implements Flush/Unwrap for SSE.",
+        "Trade-off worth knowing (documented in ADMIN_GUIDE as the 'compat path'): when an admin lists a client id in mcp.oauth.audience instead of using an Audience mapper, a token for that client is valid on every moyro deployment in the same realm that lists it — RFC 8707 per-resource binding is only achieved via the mapper route.",
+        "Minor: nativeMCPChallenge adds a second mcp-settings DB read per /mcp request (nativeMCPGate already does one), even on key-only installs. Same pattern as existing gates; consider passing the loaded settings through context later.",
+        "Minor: AuthorizeApproved now looks up the channel before ResolveCurrent; behaviourally equivalent (both branches return false on failure).",
+        "Reverting is clean: no migrations; new settings live in the existing mcp JSON row under an 'oauth' key that older code ignores. docs/*.pdf regenerated as in prior release commits."
+      ],
+      "risk": "medium"
+    },
+    "ci_gate": {
+      "ok": true,
+      "state": "success",
+      "reason": "검사 1개 모두 success",
+      "checks": 1
+    }
+  },
+  "release": {
+    "result": {
+      "status": "released",
+      "version": "0.2.32",
+      "tag": "v0.2.32",
+      "title": "moyro v0.2.32",
+      "notes_file": "/mnt/c/Users/USER/projects/aidev/state/runs/2026-09-18-012335-moyro-improve/release-notes-v0.2.32.md",
+      "github_release": false,
+      "assets": [],
+      "reason": ""
+    },
+    "assets_sha256": []
+  },
+  "approval": null,
+  "usage": [
+    {
+      "ts": "2026-09-18T01:43:45+09:00",
+      "date": "2026-09-18",
+      "project": "moyro",
+      "phase": "improve",
+      "run_id": "2026-09-18-012335-moyro-improve",
+      "campaign": "mcp-oauth-2026-09",
+      "subtype": "success",
+      "duration_ms": 1256567,
+      "num_turns": 106,
+      "cost_usd": 14.157831000000003,
+      "input_tokens": 210,
+      "output_tokens": 93487,
+      "cache_read": 18463274,
+      "cache_create": 256644
+    },
+    {
+      "ts": "2026-09-18T01:48:30+09:00",
+      "date": "2026-09-18",
+      "project": "moyro",
+      "phase": "review",
+      "run_id": "2026-09-18-012335-moyro-improve",
+      "campaign": "mcp-oauth-2026-09",
+      "subtype": "success",
+      "duration_ms": 260214,
+      "num_turns": 31,
+      "cost_usd": 2.3124870000000004,
+      "input_tokens": 62,
+      "output_tokens": 15132,
+      "cache_read": 2124222,
+      "cache_create": 86995
+    },
+    {
+      "ts": "2026-09-18T02:00:47+09:00",
+      "date": "2026-09-18",
+      "project": "moyro",
+      "phase": "release",
+      "run_id": "2026-09-18-012335-moyro-improve",
+      "campaign": "mcp-oauth-2026-09",
+      "subtype": "success",
+      "duration_ms": 381543,
+      "num_turns": 20,
+      "cost_usd": 1.2134829999999996,
+      "input_tokens": 40,
+      "output_tokens": 10212,
+      "cache_read": 969348,
+      "cache_create": 46670
+    }
+  ]
+}

@@ -1,27 +1,27 @@
 {
- "generated": "2026-09-18T01:14:32+09:00",
+ "generated": "2026-09-18T02:27:05+09:00",
  "site": "https://hkjang.github.io/aidev",
- "description": "Claude Code 자율 개선 에이전트가 hkjang 의 프로젝트를 개선·테스트·머지·릴리즈한 일일 보고. 오늘 0회차·릴리즈 0건, 누적 944회차·릴리즈 347건, 주의 필요 19건.",
+ "description": "Claude Code 자율 개선 에이전트가 hkjang 의 프로젝트를 개선·테스트·머지·릴리즈한 일일 보고. 오늘 1회차·릴리즈 1건, 누적 945회차·릴리즈 348건, 주의 필요 15건.",
  "today": {
   "date": "2026-09-18",
-  "total": 0,
-  "projects": 0,
-  "released": 0,
+  "total": 1,
+  "projects": 1,
+  "released": 1,
   "merged": 0,
   "nochange": 0,
   "failed": 0,
-  "cost_usd": 22.54,
-  "minutes": 55,
-  "sessions": 15
+  "cost_usd": 40.22,
+  "minutes": 87,
+  "sessions": 20
  },
  "totals": {
-  "runs": 944,
-  "released": 347,
-  "days": 16,
-  "cost_usd": 3339.72,
-  "minutes": 8106,
-  "tokens_in": 3555886326,
-  "tokens_out": 26281932
+  "runs": 945,
+  "released": 348,
+  "days": 17,
+  "cost_usd": 3357.4,
+  "minutes": 8138,
+  "tokens_in": 3577833791,
+  "tokens_out": 26400763
  },
  "alerts": [
   {
@@ -128,45 +128,17 @@
    "project": "jupiq",
    "why": "보호 파일 변경 — 자동 머지 안 함, 사람 검토 필요",
    "result": "guarded files, PR open https://github.com/hkjang/jupiq/pull/18"
-  },
-  {
-   "date": "2026-09-16",
-   "time": "06:12",
-   "project": "jupiq",
-   "why": "보호 파일 변경 — 자동 머지 안 함, 사람 검토 필요",
-   "result": "guarded files, PR open https://github.com/hkjang/jupiq/pull/16"
-  },
-  {
-   "date": "2026-09-16",
-   "time": "10:12",
-   "project": "relio",
-   "why": "보호 파일 변경 — 자동 머지 안 함, 사람 검토 필요",
-   "result": "guarded files, PR open https://github.com/hkjang/relio/pull/23"
-  },
-  {
-   "date": "2026-09-16",
-   "time": "11:22",
-   "project": "umm",
-   "why": "보호 파일 변경 — 자동 머지 안 함, 사람 검토 필요",
-   "result": "guarded files, PR open https://github.com/hkjang/umm/pull/158"
-  },
-  {
-   "date": "2026-09-16",
-   "time": "14:55",
-   "project": "qurio",
-   "why": "보호 파일 변경 — 자동 머지 안 함, 사람 검토 필요",
-   "result": "guarded files, PR open https://github.com/hkjang/qurio/pull/14"
   }
  ],
  "fix_queue": [],
  "health": {
-  "checked": "2026-09-18T01:15:03+09:00",
+  "checked": "2026-09-18T02:15:05+09:00",
   "last_run": "2026-09-18T00:01:45+09:00",
-  "seconds_since_last": 4396,
-  "runner_pid": "",
-  "runner_age_seconds": 0,
-  "scheduler_status": "준비",
-  "scheduler_next_run": "2026-09-18 오전 1:20:00",
+  "seconds_since_last": 7996,
+  "runner_pid": "3680321",
+  "runner_age_seconds": 3446,
+  "scheduler_status": "실행 중",
+  "scheduler_next_run": "2026-09-18 오전 2:20:00",
   "disk_percent": 73,
   "ok": true,
   "problems": [],
@@ -1813,14 +1785,14 @@
     "sqlon": "pr"
    },
    "lessons": [
-    "TLS 없는 연결에서 자격증명을 보낼지 정책을 먼저 정하고, 자체 LOGIN 인증기의 평문 가드를 '서버 이름 ≠ 호스트' 비교로 만들지 않는다. smtp.NewClient(conn, host)에 넘긴 값이 그대로 ServerInfo.Name이 되어 항상 같으므로 server.TLS(또는 명시적 허용 설정)만으로 판단한다.",
-    "인증 경로는 127.0.0.1이 아닌 주소에 바인드한 가짜 릴레이(STARTTLS 없음, AUTH PLAIN/LOGIN 광고)로 실제 Deliver를 돌려 두 방향(평문 유출·항상 실패)을 모두 테스트한다.",
-    "발송 결과 기록(UPDATE, 다음 수신자 INSERT)은 발송용 컨텍스트와 분리한 별도의 짧은 컨텍스트로 수행하고 오류를 버리지 않는다. 재시도 횟수 × 연결 마감 + 대기시간을 계산해 발송 예산을 넘는지 확인한다.",
-    "발송 고루틴에 세마포어 상한을 두고, 상한을 넘는 작업은 대기시키되 기록 INSERT는 즉시 남긴다.",
-    "메일 속 링크 경로와 시험 발송 API의 오류 응답 형식은 소비하는 쪽(프론트 라우터·해시 파서, apiClient의 오류 파싱) 소스에서 확인하고, 추측한 값을 테스트에 단언하지 않는다.",
-    "메일 본문의 안내 문구(재전송하면 처리됨, 회전하면 새 키 발급, X 님이 제출)는 그 동작을 실제로 구현하는 코드를 읽고 사실인지 확인한다.",
-    "이벤트→메일 트리거 조건이 실제 상태 전이와 실제 데이터로 발화하는지 확인한다: 상태 머신의 모든 전이(부분 승인 등), 반복 요청 억제, 조건에 쓰는 컬럼을 채우는 코드 경로 존재 여부. 테스트가 데이터를 직접 주입해 통과하는지 경계한다.",
-    "시작 전에 사람만 승인할 수 있는 파일·디렉터리 목록을 확인하고 그 파일은 건드리지 않는다."
+    "TLS 없는 연결에서 자격증명을 보낼지 정책을 먼저 정하고, 평문 가드에 쓰는 두 값(server.Name, 설정 host)이 실제로 어디서 채워지는지 소스에서 추적해 조건이 항상 참/거짓이 아닌지 확인한다. PLAIN 분기(stdlib 가 비-localhost 평문에서 거부)와 LOGIN 분기 양쪽을 다루고, 테스트는 127.0.0.1 이 아닌 비-루프백 주소에 STARTTLS 없이 AUTH LOGIN / AUTH PLAIN LOGIN 을 광고하는 가짜 릴레이로 둔다.",
+    "발송 결과 기록(UPDATE/다음 수신자 INSERT)은 발송용 컨텍스트가 아니라 별도의 Background+짧은 타임아웃 컨텍스트로 하고 오류를 버리지 않는다. 최악 발송 시간(재시도 횟수 × 연결 마감 + 대기, timeout 설정 최대값 포함)을 계산해 발송 예산보다 작은지 확인하며, 테스트는 connection refused 가 아니라 TCP 는 받되 응답하지 않는 릴레이로 한다.",
+    "알림을 발화하거나 억제하는 조건(상태값, 다른 알림 행의 존재, 특정 필드가 채워져 있음)은 그 상태에 도달하는 모든 코드 경로와 그 필드를 실제로 채우는 경로를 grep 으로 확인하고, 데이터를 직접 주입하지 않고 실제 생성 경로를 거치는 테스트를 둔다.",
+    "메일 본문의 모든 안내·주장(다시 보내면 처리됨, 회전하면 새 키 발급, 누가 제출함)은 수신자가 그대로 행동했을 때의 코드 경로를 따라가 사실인지 확인하고 기존 UI 안내 문구와 일치시킨다.",
+    "동시 발송 고루틴 수를 버퍼 채널 세마포어로 제한하되 기록 INSERT 는 즉시 남기고, 클라이언트가 반복 호출할 수 있는 이벤트(헤더 없는 재시도 등)는 사용자·대상 단위로 묶거나 윈도우로 억제한다.",
+    "메일에 넣는 링크 경로는 쓰기 전에 UI 라우터 소스(해시 라우팅 형식 포함)에서 실제 존재하는 경로인지 grep 으로 확인하고, 테스트 기대값도 라우터에서 가져온다.",
+    "시험 발송 실패 시 돌려주는 non-2xx 응답 본문을 프론트 API 클라이언트가 실제로 파싱해 표시하는지, 실패 시에도 결과 상태와 발송 기록 재조회가 되는지 확인한다.",
+    "시작 전에 사람만 승인할 수 있는 보호 파일 목록을 확인하고 그 파일은 수정하지 않는다. 릴레이 자격증명 설정이 보호 파일에 걸리면 자동 처리 대신 사람에게 먼저 넘긴다."
    ]
   },
   {
@@ -1875,17 +1847,17 @@
    "done": false,
    "until": "2026-12-31",
    "budget_usd": 600,
-   "spent_usd": 178.18,
+   "spent_usd": 195.87,
    "total": 31,
-   "processed": 13,
-   "pct": 41,
-   "runs": 14,
-   "last_ts": "2026-09-18T00:01:45+09:00",
+   "processed": 14,
+   "pct": 45,
+   "runs": 15,
+   "last_ts": "2026-09-18T02:27:02+09:00",
    "counts": {
-    "done": 5,
+    "done": 6,
     "pr": 8,
     "retry": 1,
-    "todo": 17,
+    "todo": 16,
     "nochange": 0
    },
    "projects": {
@@ -1903,7 +1875,7 @@
     "jikim": "done",
     "jupiq": "pr",
     "moina": "done",
-    "moyro": "todo",
+    "moyro": "done",
     "ptium": "todo",
     "relio": "todo",
     "seaton": "todo",
@@ -1974,28 +1946,28 @@
  "quality": [
   {
    "metric": "검증된 개선 완료율",
-   "value": "86%",
-   "detail": "관찰 24h 지난 머지 303건 중 회귀 없음 262건"
+   "value": "87%",
+   "detail": "관찰 24h 지난 머지 307건 중 회귀 없음 266건"
   },
   {
    "metric": "완전한 릴리즈 비율",
    "value": "91%",
-   "detail": "릴리즈 시도 265건 중 자산 검증까지 240건"
+   "detail": "릴리즈 시도 266건 중 자산 검증까지 241건"
   },
   {
    "metric": "사람의 재작업률",
    "value": "0%",
-   "detail": "되돌림·롤백 0건 / 관찰 머지 303건"
+   "detail": "되돌림·롤백 0건 / 관찰 머지 307건"
   },
   {
    "metric": "변경 후 회귀율",
    "value": "0%",
-   "detail": "회귀 0건 / 관찰 머지 303건"
+   "detail": "회귀 0건 / 관찰 머지 307건"
   },
   {
    "metric": "유효 개선당 비용",
-   "value": "$17.39",
-   "detail": "비용 확인된 유효 개선 192건, 미확인 세션 10"
+   "value": "$17.13",
+   "detail": "비용 확인된 유효 개선 196건, 미확인 세션 10"
   },
   {
    "metric": "예외 처리 소요 시간(중앙값)",
@@ -2008,8 +1980,25 @@
    "detail": "최근 14일"
   }
  ],
- "outcomes_today": {},
+ "outcomes_today": {
+  "release-ready": 1,
+  "releasing": 0,
+  "merged": 0,
+  "review-pending": 0,
+  "verify-failed": 0,
+  "no-change": 0,
+  "error": 0
+ },
  "days": [
+  {
+   "date": "2026-09-18",
+   "total": 1,
+   "released": 1,
+   "merged": 0,
+   "nochange": 0,
+   "failed": 0,
+   "cost_usd": 40.22
+  },
   {
    "date": "2026-09-17",
    "total": 60,
@@ -2159,14 +2148,14 @@
   {
    "key": "2026-W38",
    "url": "https://hkjang.github.io/aidev/weekly/2026-W38/",
-   "days": 4,
-   "total": 220,
-   "released": 60,
+   "days": 5,
+   "total": 221,
+   "released": 61,
    "merged": 6,
    "nochange": 2,
    "failed": 5,
-   "cost": 1080.33,
-   "minutes": 2461
+   "cost": 1098.01,
+   "minutes": 2492
   },
   {
    "key": "2026-W37",
@@ -2197,14 +2186,14 @@
   {
    "key": "2026-09",
    "url": "https://hkjang.github.io/aidev/monthly/2026-09/",
-   "days": 16,
-   "total": 944,
-   "released": 347,
+   "days": 17,
+   "total": 945,
+   "released": 348,
    "merged": 109,
    "nochange": 16,
    "failed": 19,
-   "cost": 3339.72,
-   "minutes": 8106
+   "cost": 3357.4,
+   "minutes": 8138
   }
  ],
  "projects": [
@@ -2744,24 +2733,24 @@
    "name": "moyro",
    "repo": "https://github.com/hkjang/moyro",
    "page": "https://hkjang.github.io/aidev/projects/moyro/",
-   "runs": 26,
-   "released": 10,
-   "last_ts": "2026-09-17T06:37:44+09:00",
+   "runs": 27,
+   "released": 11,
+   "last_ts": "2026-09-18T02:27:02+09:00",
    "last_status": "released",
-   "last_result": "merged https://github.com/hkjang/moyro/pull/16, released v0.2.31",
-   "cost": 99.83,
-   "minutes": 261,
+   "last_result": "merged https://github.com/hkjang/moyro/pull/17, released v0.2.32",
+   "cost": 117.52,
+   "minutes": 292,
    "grade": "D",
-   "grade_why": "14일: 릴리즈 5, 실패 0, 경고 4, 회귀 1",
+   "grade_why": "14일: 릴리즈 6, 실패 0, 경고 4, 회귀 1",
    "lessons": 1,
    "ideas_pending": 13,
    "ideas_total": 14,
    "release": {
     "status": "released",
-    "version": "0.2.31",
-    "tag": "v0.2.31",
+    "version": "0.2.32",
+    "tag": "v0.2.32",
     "assets_count": 1,
-    "prev_tag": "v0.2.30",
+    "prev_tag": "v0.2.31",
     "prev_assets_count": 1
    }
   },
