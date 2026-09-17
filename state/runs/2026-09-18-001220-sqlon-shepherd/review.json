@@ -1,0 +1,16 @@
+{
+  "verdict": "reject",
+  "recommend": "fix",
+  "reasons": [
+    "internal/mcp/tracking.go:161-188 (handleMomentoProxy) — 캠페인 규칙 위반: /momento/* 를 경로·메서드 제한 없이 수집기로 그대로 넘깁니다. 실제로 확인함: 인증 없이 `DELETE /momento/api/admin/users/1` 을 보내면 수집기가 `DELETE <base>/api/admin/users/1` 을 받습니다(200). 수집기는 관리 API·로그인·health 를 같은 오리진에 내므로 익명 방문자가 프록시로 거기 닿을 수 있습니다. 고치는 법: path.Clean(strings.TrimPrefix(r.URL.Path, tracking.ProxyPath)) 이 허용 목록(`/tracker.js` 와 momento 계약(contract-version 1)에서 data-endpoint=`/momento` 로 트래커가 실제로 호출하는 수집 끝점의 정확 경로)과 정확히 일치할 때만 넘기고, 메서드도 tracker.js 는 GET/HEAD, 수집 끝점은 POST 만 허용하며 나머지는 404. base path 결합(pr.SetURL 이 target.Path 를 보존함)은 이미 맞으니 그대로 두되, 허용 목록 밖 경로가 404 이고 허용 경로가 base path 를 유지해 도달하는 것을 internal/mcp/tracking_test.go 의 프록시 테스트에 추가하세요.",
+    "internal/meta/settings.go:83-84 + internal/tracking/tracking.go:351-368 (SetAllowedHosts 에 Validate 없음, SplitHosts 토큰이 그대로 CSP 에 실림) — 캠페인 규칙 위반이자 README/admin_guide 의 \"'unsafe-inline' 은 쓰지 않음\" 과 불일치. 실제로 확인함: `PUT /api/settings {\"tracking_allowed_hosts\":\"'unsafe-inline' * data: x;default-src\"}` 가 200 으로 저장되고 페이지 CSP 가 `img-src 'self' data: blob: 'unsafe-inline' * data: x;default-src; connect-src ...` 로 나갑니다(`;` 로 지시어 주입까지 됨). /api/tracking/allow 는 http(s) 오리진만 받지만 /api/settings 경로는 아무 검증이 없습니다. 고치는 법: SetAllowedHosts 에 Validate 를 달아 토큰마다 `https?://host[:port]` 또는 `https://*.host` 형식만 허용(url.Parse 로 Host 검사, `*.` 접두 허용)하고 따옴표 키워드('unsafe-inline' 등)·단독 `*`·`data:`/`blob:`/스킴 키워드·`;`·공백 포함 토큰은 ErrInvalidSetting 으로 거부하세요. 거부되는 케이스와 `https://*.x.example.com` 이 통과하는 케이스를 TestTrackingSettingsValidation 에 넣으세요."
+  ],
+  "notes": [
+    "이전 거절 두 건은 고쳐졌음을 확인: settings.html control() 이 bool 미설정을 서버 default 로 그리고 save() 는 data-initial 과 다를 때만 체크박스를 보냄(마스터 토큰만 저장해도 tracking_momento_proxy 가 영속화되지 않음). authapi.go 는 validateTrackingChange + CheckSetting 을 저장 루프 앞에서 모두 끝내며 TestTrackingSettingsValidation 이 16회 반복으로 부분 저장이 없음을 확인함. 관련 테스트(internal/tracking, internal/meta, internal/mcp -run Tracking|Settings) 모두 통과, go vet 깨끗.",
+    "그 외 확인: 기본값 꺼짐(TestTrackingOffByDefault, zero Config), 인증 없는 신규 경로는 CSP report-uri 와 /momento/* 뿐이며 둘 다 추적이 꺼져 있으면 무응답/404. 관리 엔드포인트는 requireAdmin. 비밀값 노출 없음. indexFold 는 ASCII 전용 접기이고 İ/켈빈 K 테스트 있음. CI/릴리스 파일 미변경, 마이그레이션 없음, revert 로 되돌아감.",
+    "경미(거절 사유 아님): handleMomentoProxy 가 요청마다 httputil.ReverseProxy 를 새로 만들지만 Transport 는 nil → http.DefaultTransport(공유, IdleConnTimeout 90s) 라 연결·goroutine 누수는 없음. 위 프록시를 고칠 때 ReverseProxy 를 서버 필드로 한 번 만들어 두면 캠페인 규칙과도 맞음.",
+    "경미(거절 사유 아님): settings.html 의 select(tracking_provider/tracking_placement)는 미설정이어도 첫 옵션 값(none/head)을 매번 전송함. 서버 기본(none/head)과 같아 동작 차이는 없지만, 원한다면 data-initial 방식으로 건드리지 않은 select 는 보내지 않도록 맞출 수 있음.",
+    "테스트 실행에 쓴 임시 프로브 파일은 삭제했고 워킹 트리는 clean 임."
+  ],
+  "risk": "medium"
+}

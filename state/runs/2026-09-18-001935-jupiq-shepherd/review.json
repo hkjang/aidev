@@ -1,0 +1,18 @@
+{
+  "verdict": "reject",
+  "recommend": "fix",
+  "reasons": [
+    "internal/mail/mail.go:144-149 loginAuth.Start의 평문 가드 `!server.TLS && server.Name != a.host`는 항상 거짓이다 — server.Name은 dial()이 smtp.NewClient(connection, config.Host)로 넘긴 값이고 a.host도 config.Host라 같은 값이다. 비-루프백 주소(172.19.24.103)에 STARTTLS 없이 `AUTH LOGIN`만 광고하는 가짜 릴레이로 Deliver를 실제로 돌리니 비밀번호 'hunter2-secret'이 base64 평문으로 릴레이에 그대로 도착했다(캠페인 규칙 1, 정확히 같은 결함). 평문 연결에서 자격증명을 보낼지 정책을 먼저 정하고(예: server.TLS가 아니면 거부, 또는 명시적 allow_insecure_auth 설정), 그 정책을 코드로 옮기라.",
+    "internal/mail/mail.go:116-124 같은 조건(비-루프백·평문·STARTTLS 없음)에서 릴레이가 `AUTH PLAIN LOGIN`을 광고하면 switch가 PLAIN을 고르고 표준 smtp.PlainAuth가 'unencrypted connection'으로 실패해 EHLO→QUIT만 남기고 인증·발송이 전부 깨진다(실측). 즉 사용자 이름을 넣은 설정은 TLS 없는 릴레이에서는 절대 동작하지 않는데 검증·문서 어디에도 그 사실이 없다. 정책 결정 뒤 PLAIN/LOGIN 경로가 같은 규칙을 따르게 하고, 비-루프백 주소에 띄운 가짜 릴레이(STARTTLS 없음, AUTH LOGIN/PLAIN 광고)로 Deliver를 돌려 평문 전송 거부(또는 정책상 허용)와 인증 성공 여부를 단언하는 테스트를 추가하라. 현재 mail_test.go의 fakeRelay는 127.0.0.1에만 뜨고 AUTH를 광고하지 않아 이 경로를 전혀 검증하지 못한다.",
+    "internal/mail/service.go:161-177 deliver()가 발송과 기록(FinishMailDelivery)을 같은 컨텍스트로 쓰고, 예산 2×Timeout+15s는 최악값이 아니다. dial()은 net.Dialer.Timeout(=Timeout)으로 접속을 기다린 뒤 SetDeadline(now+Timeout)을 다시 걸므로 시도 하나가 최대 2×Timeout이고, 두 시도+2s 대기면 4×Timeout+2s다. 기본 Timeout 10s면 42s > 35s, 최대 120s면 482s > 255s라 두 번째 시도 중 컨텍스트가 끝나면 complete()의 UPDATE가 context deadline으로 실패해 행이 영원히 'queued'로 남는다(캠페인 규칙 2). 기록은 context.WithoutCancel/독립 컨텍스트로 하고, 예산은 (dial Timeout + 세션 Timeout)×재시도+대기로 계산하라. 그리고 TCP는 받되 응답이 없는 릴레이(greeting 없음) 테스트를 mail_test.go에 넣어 Attempts=2·status=failed가 기록되는지 단언하라(현재는 connection refused 케이스만 있다).",
+    "internal/mail/service.go:108-116 Notify가 수신자마다 무제한으로 고루틴을 띄운다. 승인 요청 한 건이 approval:approve 보유자 N명에게 N개 고루틴+TCP 연결을 만들고, 응답 없는 릴레이에서는 요청 속도만큼 계속 쌓인다(캠페인 규칙 3). 버퍼 채널 세마포어로 동시 발송 상한을 두고, 상한을 넘는 작업은 기록만 남기고 발송을 대기시키라."
+  ],
+  "notes": [
+    "확인된 것: 기본값 꺼짐(store.Seed enabled:false, ParseConfig(nil)→Enabled=false, 기존 설치는 mail 문서가 없어 꺼짐). 새 경로 2개는 모두 s.require(settings:read/write) 뒤에 있어 인증 우회 없음. 권한 확장 없음. 비밀번호는 secrets(mail.password)로만 저장되고 설정 문서·API에 실리지 않음(mail_integration_test.go가 단언). 마이그레이션 014는 CREATE TABLE IF NOT EXISTS + ADD COLUMN IF NOT EXISTS로 추가만 하며 되돌려도 데이터 손실 없음.",
+    "메일 링크 경로 /approvals, /hubs, /personal은 web/src/App.tsx 라우트 테이블에 실제로 존재함. Hub 상태 알림은 HubHealthChange가 상태 전이에서만 발화하고 테스트가 6가지 전이를 단언함. 키 만료는 api_keys.expiry_notified_at UPDATE…RETURNING으로 키당 한 번만 반환됨(통합 테스트가 두 번째 호출이 비는 것을 단언).",
+    "go build/vet/test(internal/mail, api, collector) 통과. 통합 테스트(JUPIQ_INTEGRATION_TEST_DSN)는 이 환경에서 실행하지 못했다.",
+    "시험 발송 실패 응답은 apiError(error:{code,message}) 형식이고 web/src/api/client.ts의 ApiError/errorMessage가 그 스키마를 파싱하므로 규칙 8은 충족한다.",
+    "sub-issue: dial()의 SecurityTLS 분기는 tls.DialWithDialer를 써서 ctx 취소를 무시한다. 위 예산 수정 때 tls.Dialer{NetDialer: dialer}.DialContext로 바꾸는 것이 좋다."
+  ],
+  "risk": "medium"
+}
