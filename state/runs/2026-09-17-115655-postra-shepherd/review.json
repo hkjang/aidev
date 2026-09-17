@@ -1,0 +1,16 @@
+{
+  "verdict": "approve",
+  "recommend": "merge",
+  "reasons": [],
+  "notes": [
+    "검증 실행: go build/vet OK, go test -race (platform/handoff, application, httpapi, webui, adapters/*) 전부 통과, gosec v2.28.0 -severity medium ./... Issues 0 (CI 와 같은 명령). 원래 CI 실패 원인 두 가지(G705 미주석, TestSmartTime 의 자정 직후 2시간 flake)는 7e0475d 로 해결됨을 로컬에서 확인.",
+    "테스트 유효성: persistence.ConsumeHandoffClaim 의 DELETE 를 무력화하는 변이를 넣자 application(TestHandoffClaimIsSingleUse)·httpapi(TestHandoffEndpoints) 테스트가 실제로 실패함 — 단일 사용 보장을 테스트가 진짜로 검증한다. 만료(TestHandoffClaimExpires), 남의 메일(TestHandoffClaimRefusesOtherUsersMessage), 잘못된 형식/빈 origin, 공개 경로 범위(TestHandoffPublicPathIsNarrow), 허용 목록 비어 있을 때 단추 없음(webui TestHandoffButtonsFollowTheAllowList) 등 거부 경로 테스트가 모두 실행됨.",
+    "보호 항목 확인: 기본값(handoff.targets / handoff.source_origin) 모두 빈 값 → 새 설치에서 단추·동작 변화 없음. 인증 없이 열리는 경로는 GET /api/v1/handoff/claims/{claim} 하나뿐이며 표준(HANDOFF-STANDARD.md '표를 내준다')이 요구하는 것. publicPath 는 prefix+비어있지 않은 나머지만 허용하고, 그 prefix 아래 등록된 핸들러는 collect 하나뿐. 권한 확대 없음(claim 은 발급자 userID+messageID 에 묶이고 수령 시 claim.UserID 로 재조회). 토큰은 DB 에 SHA-256 다이제스트만, 로그/감사에 미기록(테스트로 확인, 요청 경로 로깅 코드 없음, metrics 는 route pattern 으로 라벨). 마이그레이션은 CREATE TABLE IF NOT EXISTS / CREATE INDEX 추가만. 리다이렉트: 새 창 URL 의 origin 은 관리자 허용 목록에서 오고 http(s)+host 로만 정규화되므로 오픈 리다이렉트 발판 아님.",
+    "CSRF: POST /api/v1/handoff/claims 는 세션 쿠키로도 인증되지만 Content-Type 이 application/json 이 아니면 415 로 거절하고 서버에 CORS 헤더가 없으므로 cross-site 폼/fetch 로는 발급 불가. 기존 API 의 쿠키 인증 자세보다 오히려 엄격함.",
+    "확인하지 못한 것: pgstore/handoff_pg_test.go 는 POSTRA_TEST_PG 없이 skip 됨(로컬 Postgres 없음). 다만 Postgres consume 은 단일 DELETE … RETURNING 이라 원자성은 구조상 보장되고, SQLite 는 MaxOpenConns(1) 로 직렬화됨.",
+    "사소한 개선 여지(거절 사유 아님): CollectHandoffClaim 의 handoff_claim_collected 감사 이벤트는 공개 요청이라 principal 이 없어 UserID 가 DefaultUserID 로 기록됨 — 다중 사용자 환경에서 소유자 기준 감사 조회엔 안 잡히고 resource(message:ID)로만 추적 가능. claim.UserID 를 명시해 기록하면 더 정확함.",
+    "requestOrigin 은 X-Forwarded-Host/Proto 를 그대로 신뢰하지만, 그 값은 요청자 본인에게만 돌아가고 받는 쪽이 자기 허용 목록과 대조하므로 Postra 측 위험은 없음. 운영에서는 문서대로 handoff.source_origin 을 고정하는 것을 권장.",
+    "범위: TestSmartTime 수정은 handoff 와 무관하지만 CI 를 막던 기존 flake 의 최소 수정이라 허용. ADMIN_GUIDE.pdf 재생성은 되돌리기 쉬움."
+  ],
+  "risk": "medium"
+}
