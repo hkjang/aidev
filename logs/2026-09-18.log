@@ -752,3 +752,245 @@ https://github.com/hkjang/madi/pull/6#issuecomment-5721985565
 evidence: /mnt/c/Users/USER/projects/aidev/state/runs/2026-09-18-065350-madi-improve/evidence.json
 reports: 17 day(s), 3 week(s), 1 month(s), 951 run(s), 1197 usage row(s), 43 project page(s), 19 alert(s)
 notify: no new alerts
+[07:21:22] aidev sync FAILED: run(2026-09-18): madi — review held, PR open https://github.com/hkjang/madi/pull/6
+[07:21:22] done
+[07:32:57] skip aiportal-java: STOP
+[07:33:28] skip umm: dirty working tree
+[07:33:32] candidates(40): AgentHub Clustara DartFly Invenqor Kkiit Momento Quantoss ReSSO SecCheck Vendra ai-admin aiportal-front-admin aiportal-front aiportal-py appstore cutover dataworks git-ctx hunter igame jikim jupiq kanpic madi moina moyro muni nexabuilder orbit pii-masker postra ptium qurio releasedock relio seaton sqlon vibe-coders visitflow weekly
+[07:33:35] campaign tracking-2026-09: 세 번 이상 실패해 더 잡지 않는 프로젝트 — weekly
+[07:33:38] campaign mail-2026-09: 세 번 이상 실패해 더 잡지 않는 프로젝트 — postra
+[07:33:39] campaign mcp-oauth-2026-09: picked qurio
+[07:33:39] picked: qurio
+[07:33:40] === qurio (base=main, run 2026-09-18-073339-qurio-improve, 회차 예산 $30)
+Preparing worktree (new branch 'auto/2026-09-18-0733')
+Updating files:  91% (500/549)Updating files:  92% (506/549)Updating files:  93% (511/549)Updating files:  94% (517/549)Updating files:  95% (522/549)Updating files:  96% (528/549)Updating files:  97% (533/549)Updating files:  98% (539/549)Updating files:  99% (544/549)Updating files: 100% (549/549)Updating files: 100% (549/549), done.
+HEAD is now at a35efd8 chore: release Qurio v1.4.1
+[07:33:41] qurio: [base] pinned — main@a35efd8
+[07:33:42] qurio: [autonomy] release — 
+[07:56:26] qurio: improve — 101 turns, 24m, $14.76, success
+[07:56:28] qurio: verify `go build ./...` → exit 0 (1s)
+[07:56:29] qurio: verify `go vet ./...` → exit 0 (1s)
+[07:56:31] qurio: verify `go test ./...` → exit 0 (2s)
+[07:56:31] qurio: verify `cd web && [ -d node_modules ] || npm ci --no-audit --no-fund` → exit 0 (0s)
+[07:58:47] qurio: verify `cd web && npm test --silent` → exit 0 (136s)
+[07:58:47] qurio: verify `cd web && [ -d node_modules ] || npm ci --no-audit --no-fund` → exit 0 (0s)
+[07:58:50] qurio: verify `cd web && npm run typecheck --silent` → exit 0 (3s)
+[07:58:50] qurio: verify `cd web && [ -d node_modules ] || npm ci --no-audit --no-fund` → exit 0 (0s)
+[07:58:55] qurio: verify `cd web && npm run build --silent` → exit 0 (5s)
+[07:58:56] qurio: [verify] passed — 검증 9개 통과 (auto)
+branch 'auto/2026-09-18-0733' set up to track 'origin/auto/2026-09-18-0733'.
+[07:59:04] qurio: [pr] created — https://github.com/hkjang/qurio/pull/16
+[08:02:25] qurio: review — 26 turns, 3m, $2.39, success
+[08:02:25] qurio: [review] approved — 리뷰 승인 (risk=medium)
+[08:02:27] qurio: waiting for CI on 5b818fd (pending)
+[08:19:47] qurio: [ci] passed — 검사 1개 모두 success
+[08:19:52] qurio: [merge] done — 5b818fd43c951c7ea7402222be73a5d0a16812ad
+From https://github.com/hkjang/qurio
+ * branch            main       -> FETCH_HEAD
+   a35efd8..1ec9457  main       -> origin/main
+Updating a35efd8..1ec9457
+Fast-forward
+ cmd/qurio/main.go                                  |   4 +-
+ docs/guides/admin-guide.md                         |  83 ++++
+ docs/guides/api-mcp-guide.md                       |  17 +
+ internal/agentapi/repository.go                    |  24 +-
+ internal/authzread/guard.go                        |  20 +
+ internal/httpapi/mcp_oauth_integration_test.go     | 254 +++++++++++
+ internal/httpapi/middleware.go                     |  80 +++-
+ internal/httpapi/public_config_handlers.go         |  50 ++-
+ internal/httpapi/server.go                         |  15 +-
+ internal/httpapi/settings_handlers.go              |  89 ++++
+ internal/intelligenceapi/api.go                    |   5 +-
+ internal/legacyapi/code_remote_skills.go           |   2 +-
+ internal/legacyapi/embedding_security.go           |   2 +-
+ internal/legacyapi/http.go                         |  31 +-
+ internal/legacyapi/job_authorization.go            |   2 +-
+ internal/mcpoauth/mcpoauth.go                      | 478 +++++++++++++++++++++
+ internal/mcpoauth/mcpoauth_test.go                 | 313 ++++++++++++++
+ internal/mcpoauth/mcpoauthtest/idp.go              | 124 ++++++
+ internal/platformapi/api.go                        |   8 +-
+ internal/runtimeapi/api.go                         |   9 +-
+ internal/runtimeapi/backup.go                      |   9 +-
+ internal/runtimeapi/mcp.go                         |   8 +-
+ internal/runtimeapi/sql.go                         |   6 +-
+ internal/store/auth_oauth.go                       |  89 ++++
+ ...minPages-Bz_yhFUj.js => AdminPages-BYhJggWv.js} |   6 +-
+ ...k-mHfWq1.js => AnalyticsDetailPage-CORo4C_0.js} |   2 +-
+ ...AuthPages-CacMQEYS.js => AuthPages-uINgVnA3.js} |   2 +-
+ ...Page-Ba8bRxV-.js => CodeStudioPage-D0lu1frN.js} |   2 +-
+ ...bOckC.js => EvaluationCancelAction-7Vj_ex1l.js} |   2 +-
+ ...eft-DlLxqU8D.js => IconChevronLeft-LSbFY8vI.js} |   2 +-
+ ...ht-vzhxPIOr.js => IconChevronRight-f1EzyCxd.js} |   2 +-
+ ...IconTrash-t3Sbazxs.js => IconTrash-CDA3HaGN.js} |   2 +-
+ ...rdkcKZ5S.js => MetadataCatalogPage-CWS_x7IZ.js} |   2 +-
+ ...cePage-HCOs3F6G.js => ResourcePage-BtHYqJQm.js} |   2 +-
+ ...ge-C1q84AZm.js => SqlWorkbenchPage-CcI7TZDx.js} |   2 +-
+ .../{Textarea-CvfCSHp5.js => Textarea-B4--upFh.js} |   2 +-
+ ...DvkNrZaH.js => TopologyIndexesPage-22WTrIkZ.js} |   2 +-
+ ...wej.js => TopologyIntelligencePage-CQDh_ZR2.js} |   2 +-
+ ...ages-CHLwxALY.js => WorkspacePages-MyNBba7p.js} |   4 +-
+ .../{index-D-FLgzpt.js => index-3xmYKQ3s.js}       |   4 +-
+ internal/webui/dist/index.html                     |   2 +-
+ web/src/lib/api.ts                                 |   1 +
+ web/src/pages/AdminPages.tsx                       |  27 +-
+ web/src/pages/WorkspacePages.tsx                   |   3 +
+ 44 files changed, 1729 insertions(+), 66 deletions(-)
+ create mode 100644 internal/httpapi/mcp_oauth_integration_test.go
+ create mode 100644 internal/mcpoauth/mcpoauth.go
+ create mode 100644 internal/mcpoauth/mcpoauth_test.go
+ create mode 100644 internal/mcpoauth/mcpoauthtest/idp.go
+ create mode 100644 internal/store/auth_oauth.go
+ rename internal/webui/dist/assets/{AdminPages-Bz_yhFUj.js => AdminPages-BYhJggWv.js} (86%)
+ rename internal/webui/dist/assets/{AnalyticsDetailPage-k-mHfWq1.js => AnalyticsDetailPage-CORo4C_0.js} (99%)
+ rename internal/webui/dist/assets/{AuthPages-CacMQEYS.js => AuthPages-uINgVnA3.js} (96%)
+ rename internal/webui/dist/assets/{CodeStudioPage-Ba8bRxV-.js => CodeStudioPage-D0lu1frN.js} (99%)
+ rename internal/webui/dist/assets/{EvaluationCancelAction-ft9bOckC.js => EvaluationCancelAction-7Vj_ex1l.js} (97%)
+ rename internal/webui/dist/assets/{IconChevronLeft-DlLxqU8D.js => IconChevronLeft-LSbFY8vI.js} (96%)
+ rename internal/webui/dist/assets/{IconChevronRight-vzhxPIOr.js => IconChevronRight-f1EzyCxd.js} (98%)
+ rename internal/webui/dist/assets/{IconTrash-t3Sbazxs.js => IconTrash-CDA3HaGN.js} (98%)
+ rename internal/webui/dist/assets/{MetadataCatalogPage-rdkcKZ5S.js => MetadataCatalogPage-CWS_x7IZ.js} (99%)
+ rename internal/webui/dist/assets/{ResourcePage-HCOs3F6G.js => ResourcePage-BtHYqJQm.js} (99%)
+ rename internal/webui/dist/assets/{SqlWorkbenchPage-C1q84AZm.js => SqlWorkbenchPage-CcI7TZDx.js} (99%)
+ rename internal/webui/dist/assets/{Textarea-CvfCSHp5.js => Textarea-B4--upFh.js} (97%)
+ rename internal/webui/dist/assets/{TopologyIndexesPage-DvkNrZaH.js => TopologyIndexesPage-22WTrIkZ.js} (96%)
+ rename internal/webui/dist/assets/{TopologyIntelligencePage-mATeuwej.js => TopologyIntelligencePage-CQDh_ZR2.js} (98%)
+ rename internal/webui/dist/assets/{WorkspacePages-CHLwxALY.js => WorkspacePages-MyNBba7p.js} (82%)
+ rename internal/webui/dist/assets/{index-D-FLgzpt.js => index-3xmYKQ3s.js} (99%)
+Preparing worktree (detached HEAD 1ec9457)
+HEAD is now at 1ec9457 Merge pull request #16 from hkjang/auto/2026-09-18-0733
+[08:31:48] qurio: release — 37 turns, 12m, $2.41, success
+[08:31:55] qurio: waiting for CI on 8050111 (no-ci)
+[08:51:09] qurio: [release] ci-blocked — 릴리즈 커밋 CI: timeout — 제한 시간 안에 CI 완료를 확인하지 못함 (태그 보류)
+From https://github.com/hkjang/qurio
+ * branch            main       -> FETCH_HEAD
+Updating files:  64% (79/122)Updating files:  65% (80/122)Updating files:  66% (81/122)Updating files:  67% (82/122)Updating files:  68% (83/122)Updating files:  69% (85/122)Updating files:  70% (86/122)Updating files:  71% (87/122)Updating files:  72% (88/122)Updating files:  73% (90/122)Updating files:  74% (91/122)Updating files:  75% (92/122)Updating files:  76% (93/122)Updating files:  77% (94/122)Updating files:  78% (96/122)Updating files:  79% (97/122)Updating files:  80% (98/122)Updating files:  81% (99/122)Updating files:  82% (101/122)Updating files:  83% (102/122)Updating files:  84% (103/122)Updating files:  85% (104/122)Updating files:  86% (105/122)Updating files:  87% (107/122)Updating files:  88% (108/122)Updating files:  89% (109/122)Updating files:  90% (110/122)Updating files:  91% (112/122)Updating files:  92% (113/122)Updating files:  93% (114/122)Updating files:  94% (115/122)Updating files:  95% (116/122)Updating files:  96% (118/122)Updating files:  97% (119/122)Updating files:  98% (120/122)Updating files:  99% (121/122)Updating files: 100% (122/122)Updating files: 100% (122/122), done.
+Updating 1ec9457..8050111
+Fast-forward
+ README.md                                          |   4 ++--
+ VERSION                                            |   2 +-
+ compose.yml                                        |   2 +-
+ docs/assets/screenshots/admin-ai-models.png        | Bin 164976 -> 165118 bytes
+ docs/assets/screenshots/admin-ai-providers.png     | Bin 148998 -> 150345 bytes
+ docs/assets/screenshots/admin-ai-skills.png        | Bin 150051 -> 150187 bytes
+ .../screenshots/admin-analytics-adoption.png       | Bin 161603 -> 164749 bytes
+ docs/assets/screenshots/admin-analytics-asset.png  | Bin 161818 -> 161958 bytes
+ .../screenshots/admin-analytics-engagement.png     | Bin 163338 -> 166299 bytes
+ docs/assets/screenshots/admin-analytics-llm.png    | Bin 165947 -> 163272 bytes
+ .../screenshots/admin-analytics-operations.png     | Bin 166444 -> 166582 bytes
+ .../assets/screenshots/admin-analytics-quality.png | Bin 167956 -> 168091 bytes
+ docs/assets/screenshots/admin-analytics.png        | Bin 180255 -> 183199 bytes
+ docs/assets/screenshots/admin-approvals-review.png | Bin 132717 -> 131122 bytes
+ .../screenshots/admin-approvals-settings.png       | Bin 174308 -> 176018 bytes
+ docs/assets/screenshots/admin-approvals.png        | Bin 174320 -> 174388 bytes
+ docs/assets/screenshots/admin-audit.png            | Bin 134680 -> 136033 bytes
+ docs/assets/screenshots/admin-backup.png           | Bin 183047 -> 183145 bytes
+ docs/assets/screenshots/admin-databases.png        | Bin 169617 -> 172397 bytes
+ docs/assets/screenshots/admin-datasets.png         | Bin 148839 -> 149134 bytes
+ docs/assets/screenshots/admin-embedding.png        | Bin 144496 -> 144633 bytes
+ .../screenshots/admin-evaluation-results.png       | Bin 138071 -> 140112 bytes
+ .../screenshots/admin-evaluation-summary.png       | Bin 187303 -> 190173 bytes
+ docs/assets/screenshots/admin-evaluation.png       | Bin 134838 -> 136193 bytes
+ docs/assets/screenshots/admin-feedback.png         | Bin 204046 -> 204187 bytes
+ docs/assets/screenshots/admin-keys.png             | Bin 166030 -> 163776 bytes
+ docs/assets/screenshots/admin-mcp-policies.png     | Bin 154907 -> 155042 bytes
+ docs/assets/screenshots/admin-mcp-servers.png      | Bin 174654 -> 176821 bytes
+ docs/assets/screenshots/admin-mcp-tools.png        | Bin 155530 -> 153110 bytes
+ docs/assets/screenshots/admin-menu.png             | Bin 287794 -> 290955 bytes
+ docs/assets/screenshots/admin-metadata-codes.png   | Bin 147904 -> 149219 bytes
+ .../screenshots/admin-metadata-dictionaries.png    | Bin 135658 -> 135796 bytes
+ docs/assets/screenshots/admin-metadata-domains.png | Bin 148651 -> 150043 bytes
+ docs/assets/screenshots/admin-metadata-indexes.png | Bin 150892 -> 153423 bytes
+ .../screenshots/admin-metadata-logical-models.png  | Bin 149687 -> 148597 bytes
+ docs/assets/screenshots/admin-metadata-models.png  | Bin 136500 -> 136634 bytes
+ .../screenshots/admin-metadata-physical-models.png | Bin 147732 -> 149048 bytes
+ .../screenshots/admin-metadata-subject-areas.png   | Bin 148282 -> 148416 bytes
+ docs/assets/screenshots/admin-metadata-terms.png   | Bin 150930 -> 151062 bytes
+ .../admin-metadata-topology-intelligence.png       | Bin 212434 -> 212573 bytes
+ .../assets/screenshots/admin-metadata-topology.png | Bin 134581 -> 134716 bytes
+ .../admin-metadata-user-logical-models.png         | Bin 157632 -> 157771 bytes
+ .../admin-metadata-user-physical-models.png        | Bin 160239 -> 157911 bytes
+ docs/assets/screenshots/admin-metadata-words.png   | Bin 148340 -> 149721 bytes
+ docs/assets/screenshots/admin-metrics.png          | Bin 162637 -> 160859 bytes
+ docs/assets/screenshots/admin-oidc.png             | Bin 204401 -> 293706 bytes
+ docs/assets/screenshots/admin-overview.png         | Bin 198730 -> 201433 bytes
+ docs/assets/screenshots/admin-prompts.png          | Bin 131769 -> 131908 bytes
+ docs/assets/screenshots/admin-roles.png            | Bin 161067 -> 163308 bytes
+ docs/assets/screenshots/admin-schema.png           | Bin 149704 -> 152306 bytes
+ docs/assets/screenshots/admin-settings.png         | Bin 384546 -> 384773 bytes
+ docs/assets/screenshots/admin-system.png           | Bin 383917 -> 384153 bytes
+ docs/assets/screenshots/admin-teams.png            | Bin 148059 -> 148198 bytes
+ docs/assets/screenshots/admin-users.png            | Bin 160597 -> 161867 bytes
+ docs/assets/screenshots/admin-variables.png        | Bin 145509 -> 145646 bytes
+ docs/assets/screenshots/login.png                  | Bin 373626 -> 373778 bytes
+ docs/assets/screenshots/mobile-login.png           | Bin 707233 -> 707471 bytes
+ .../screenshots/workspace-approvals-review.png     | Bin 136685 -> 138842 bytes
+ docs/assets/screenshots/workspace-code.png         | Bin 186463 -> 186585 bytes
+ .../screenshots/workspace-dashboard-detail.png     | Bin 164986 -> 165133 bytes
+ docs/assets/screenshots/workspace-dashboard.png    | Bin 175403 -> 175545 bytes
+ docs/assets/screenshots/workspace-databases.png    | Bin 160396 -> 160531 bytes
+ docs/assets/screenshots/workspace-datasets.png     | Bin 132364 -> 133790 bytes
+ docs/assets/screenshots/workspace-evaluation.png   | Bin 134352 -> 134488 bytes
+ docs/assets/screenshots/workspace-history.png      | Bin 136004 -> 136142 bytes
+ docs/assets/screenshots/workspace-key-rotation.png | Bin 136629 -> 138893 bytes
+ docs/assets/screenshots/workspace-keys.png         | Bin 136629 -> 136763 bytes
+ docs/assets/screenshots/workspace-mcp.png          | Bin 137519 -> 137655 bytes
+ .../workspace-metadata-user-logical-models.png     | Bin 160386 -> 158458 bytes
+ .../workspace-metadata-user-physical-models.png    | Bin 158102 -> 160292 bytes
+ docs/assets/screenshots/workspace-metadata.png     | Bin 134377 -> 134518 bytes
+ docs/assets/screenshots/workspace-overview.png     | Bin 218188 -> 218324 bytes
+ docs/assets/screenshots/workspace-profile.png      | Bin 254527 -> 254796 bytes
+ docs/assets/screenshots/workspace-projects.png     | Bin 130673 -> 130818 bytes
+ docs/assets/screenshots/workspace-prompts.png      | Bin 133677 -> 132525 bytes
+ docs/assets/screenshots/workspace-results.png      | Bin 141348 -> 144064 bytes
+ docs/assets/screenshots/workspace-sql.png          | Bin 241861 -> 241965 bytes
+ .../screenshots/workspace-topology-indexes.png     | Bin 147001 -> 147142 bytes
+ .../workspace-topology-intelligence.png            | Bin 163532 -> 163668 bytes
+ docs/assets/screenshots/workspace-topology.png     | Bin 135051 -> 135187 bytes
+ docs/gallery.html                                  |   6 +++---
+ docs/guides/offline-install.md                     |   6 +++---
+ docs/index.html                                    |  10 ++++-----
+ docs/requirements.md                               |   6 +++---
+ ...minPages-BYhJggWv.js => AdminPages-DuwAT6Ae.js} |   2 +-
+ ...CORo4C_0.js => AnalyticsDetailPage-DZ68GrWp.js} |   2 +-
+ ...AuthPages-uINgVnA3.js => AuthPages-ClyWbbOb.js} |   2 +-
+ ...Page-D0lu1frN.js => CodeStudioPage-DBjJ3vE4.js} |   2 +-
+ ..._ex1l.js => EvaluationCancelAction-DZ-RcxJh.js} |   2 +-
+ ...eft-LSbFY8vI.js => IconChevronLeft-C7XIDDb-.js} |   2 +-
+ ...ht-f1EzyCxd.js => IconChevronRight-DA_zi1rN.js} |   2 +-
+ ...IconTrash-CDA3HaGN.js => IconTrash-DeRlg1WQ.js} |   2 +-
+ ...CWS_x7IZ.js => MetadataCatalogPage-UsyezXqU.js} |   2 +-
+ ...cePage-BtHYqJQm.js => ResourcePage-K7EhuMRI.js} |   2 +-
+ ...ge-CcI7TZDx.js => SqlWorkbenchPage-CBL0mY4b.js} |   2 +-
+ .../{Textarea-B4--upFh.js => Textarea-D7zOZmpt.js} |   2 +-
+ ...22WTrIkZ.js => TopologyIndexesPage-DIF3FrwL.js} |   2 +-
+ ...ZR2.js => TopologyIntelligencePage-Bm5cT6FO.js} |   2 +-
+ ...ages-MyNBba7p.js => WorkspacePages-CYcWIQbo.js} |   2 +-
+ .../{index-3xmYKQ3s.js => index-CsCANP1l.js}       |   4 ++--
+ internal/webui/dist/index.html                     |   2 +-
+ migrations/0036_release_1_4_2.sql                  |  23 +++++++++++++++++++++
+ web/e2e/application.spec.ts                        |   6 +++---
+ web/package-lock.json                              |   4 ++--
+ web/package.json                                   |   2 +-
+ web/src/App.test.tsx                               |   8 +++----
+ 106 files changed, 69 insertions(+), 46 deletions(-)
+ rename internal/webui/dist/assets/{AdminPages-BYhJggWv.js => AdminPages-DuwAT6Ae.js} (99%)
+ rename internal/webui/dist/assets/{AnalyticsDetailPage-CORo4C_0.js => AnalyticsDetailPage-DZ68GrWp.js} (99%)
+ rename internal/webui/dist/assets/{AuthPages-uINgVnA3.js => AuthPages-ClyWbbOb.js} (96%)
+ rename internal/webui/dist/assets/{CodeStudioPage-D0lu1frN.js => CodeStudioPage-DBjJ3vE4.js} (99%)
+ rename internal/webui/dist/assets/{EvaluationCancelAction-7Vj_ex1l.js => EvaluationCancelAction-DZ-RcxJh.js} (97%)
+ rename internal/webui/dist/assets/{IconChevronLeft-LSbFY8vI.js => IconChevronLeft-C7XIDDb-.js} (96%)
+ rename internal/webui/dist/assets/{IconChevronRight-f1EzyCxd.js => IconChevronRight-DA_zi1rN.js} (98%)
+ rename internal/webui/dist/assets/{IconTrash-CDA3HaGN.js => IconTrash-DeRlg1WQ.js} (98%)
+ rename internal/webui/dist/assets/{MetadataCatalogPage-CWS_x7IZ.js => MetadataCatalogPage-UsyezXqU.js} (99%)
+ rename internal/webui/dist/assets/{ResourcePage-BtHYqJQm.js => ResourcePage-K7EhuMRI.js} (99%)
+ rename internal/webui/dist/assets/{SqlWorkbenchPage-CcI7TZDx.js => SqlWorkbenchPage-CBL0mY4b.js} (99%)
+ rename internal/webui/dist/assets/{Textarea-B4--upFh.js => Textarea-D7zOZmpt.js} (97%)
+ rename internal/webui/dist/assets/{TopologyIndexesPage-22WTrIkZ.js => TopologyIndexesPage-DIF3FrwL.js} (96%)
+ rename internal/webui/dist/assets/{TopologyIntelligencePage-CQDh_ZR2.js => TopologyIntelligencePage-Bm5cT6FO.js} (98%)
+ rename internal/webui/dist/assets/{WorkspacePages-MyNBba7p.js => WorkspacePages-CYcWIQbo.js} (99%)
+ rename internal/webui/dist/assets/{index-3xmYKQ3s.js => index-CsCANP1l.js} (99%)
+ create mode 100644 migrations/0036_release_1_4_2.sql
+fatal: '/home/hkjang/.cache/auto-improve-wt/qurio' is not a working tree
+evidence: /mnt/c/Users/USER/projects/aidev/state/runs/2026-09-18-073339-qurio-improve/evidence.json
+reports: 17 day(s), 3 week(s), 1 month(s), 952 run(s), 1201 usage row(s), 43 project page(s), 19 alert(s)
+notify: no new alerts

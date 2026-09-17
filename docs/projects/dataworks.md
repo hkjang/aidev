@@ -1,7 +1,7 @@
 ---
 title: "dataworks — 자율 개선 이력"
 description: "dataworks: 자율 개선 회차 36회, 릴리즈 19건. 최근 릴리즈 v0.9.56 (자산 1개)."
-last_modified_at: 2026-09-18 07:18:48 +0900
+last_modified_at: 2026-09-18 08:51:16 +0900
 ---
 {% raw %}
 <script type="application/ld+json">
@@ -18,7 +18,7 @@ last_modified_at: 2026-09-18 07:18:48 +0900
   "name": "hkjang",
   "url": "https://github.com/hkjang"
  },
- "dateModified": "2026-09-18T07:18:48+09:00",
+ "dateModified": "2026-09-18T08:51:16+09:00",
  "version": "0.9.56"
 }
 </script>

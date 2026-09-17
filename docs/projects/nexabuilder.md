@@ -1,7 +1,7 @@
 ---
 title: "nexabuilder — 자율 개선 이력"
 description: "nexabuilder: 자율 개선 회차 6회, 릴리즈 2건. 최근 릴리즈 v1.17.0 (자산 1개)."
-last_modified_at: 2026-09-18 07:18:48 +0900
+last_modified_at: 2026-09-18 08:51:16 +0900
 ---
 {% raw %}
 <script type="application/ld+json">
@@ -18,7 +18,7 @@ last_modified_at: 2026-09-18 07:18:48 +0900
   "name": "hkjang",
   "url": "https://github.com/hkjang"
  },
- "dateModified": "2026-09-18T07:18:48+09:00",
+ "dateModified": "2026-09-18T08:51:16+09:00",
  "version": "1.17.0"
 }
 </script>
