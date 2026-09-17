@@ -1,7 +1,7 @@
 ---
 title: "DartFly — 자율 개선 이력"
 description: "DartFly: 자율 개선 회차 7회, 릴리즈 2건. 최근 릴리즈 v2.69.0 (자산 2개)."
-last_modified_at: 2026-09-17 17:21:19 +0900
+last_modified_at: 2026-09-17 17:53:44 +0900
 ---
 {% raw %}
 <script type="application/ld+json">
@@ -18,7 +18,7 @@ last_modified_at: 2026-09-17 17:21:19 +0900
   "name": "hkjang",
   "url": "https://github.com/hkjang"
  },
- "dateModified": "2026-09-17T17:21:19+09:00",
+ "dateModified": "2026-09-17T17:53:44+09:00",
  "version": "2.69.0"
 }
 </script>
