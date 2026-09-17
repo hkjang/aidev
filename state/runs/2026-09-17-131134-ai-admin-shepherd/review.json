@@ -1,0 +1,21 @@
+{
+  "verdict": "reject",
+  "recommend": "fix",
+  "reasons": [
+    "internal/mail/service.go:138-139,193,202 발송 결과 기록(complete→UPDATE)과 다음 수신자 INSERT 가 발송용 ctx(Background 의 2분 예산, sweepExpiringKeys 의 1분 ctx)를 그대로 쓴다. 릴레이가 TCP 는 받되 응답하지 않으면 수신자 1명당 2회×timeout+2s(기본 10s → 22s, timeout_seconds 는 최대 120s 허용)가 소요되어, 검토자 6명 이상이거나 timeout_seconds≥60 이면 예산이 먼저 만료되고 UPDATE 가 'context deadline exceeded' 로 실패해 기록이 영원히 'queued' 로 남으며 뒤 수신자는 INSERT 조차 안 된다(패키지 내 프로브로 재현: 응답 없는 릴레이 + 5s ctx + 수신자 2명 → rows={r1:queued}, r2 기록 없음, store 오류 3건). 기록 Update/Insert 는 context.WithoutCancel 기반의 별도 짧은 ctx 로 하고, 발송 ctx 마감은 (연결 마감×시도 횟수+대기)×수신자 수보다 크게 계산하거나 수신자별로 별도 ctx 를 잡을 것. 응답 없는 릴레이(Accept 후 침묵) 테스트를 추가해 status 가 queued 로 남지 않음을 단언할 것 (connection refused 테스트는 이 경로를 타지 않음).",
+    "internal/server/mail.go:197-198,245 위와 같은 원인으로 키 만료 스윕은 expiry_notified_at 을 먼저 찍은 뒤 1분 ctx 로 소유자별 순차 발송하므로, 응답 없는 릴레이에서 소유자 3명째부터는 ctx 만료로 발송·기록 모두 실패하고 키는 이미 '알림 완료'로 표시되어 경고가 영구히 유실된다. 발송이 실제로 시도되지 못한 키는 claim 을 되돌리거나 claim 을 발송 결과 뒤로 옮길 것.",
+    "internal/mail/mail.go:160 loginAuth.Start 의 평문 차단 조건 `!server.TLS && server.Name != a.host` 는 항상 거짓이다: server.Name 은 smtp.NewClient(conn, config.Host) 에 넘긴 config.Host 이고 a.host 도 config.Host 라서 같다. 실행으로 확인: ServerInfo{Name:\"relay.internal\", TLS:false} 에 대해 err=nil 로 LOGIN 진행 → 비-TLS 릴레이에 자격증명이 평문으로 나간다. 반면 mail.go:128 의 smtp.PlainAuth 는 비-localhost 평문에서 'unencrypted connection' 으로 거부한다(실행으로 확인). 즉 같은 설정(relay.internal, 25, auto, STARTTLS 없음, AUTH 있음)에서 PLAIN 광고 릴레이는 항상 인증 실패, LOGIN 만 광고하는 릴레이는 평문 유출로 동작이 갈린다. TLS 없는 연결에서 인증을 허용할지 결정하고(허용하지 않으면 두 경로 모두 ErrInvalid 로 안내, 허용하면 명시적 설정 뒤에서만) 일관되게 구현할 것.",
+    "internal/mail/mail_test.go:165-176 TestDeliverAuthenticatesWhenConfigured 는 호스트가 127.0.0.1 이라 net/smtp 의 localhost 예외로 통과하며 위 결함을 숨긴다. 비-localhost 호스트명(예: config.Host 를 hosts 별칭 없이 검사하려면 loginAuth.Start / startSession 을 ServerInfo 로 직접 호출)과 AUTH LOGIN 만 광고·STARTTLS 없음인 가짜 릴레이로, 자격증명이 평문으로 나가지 않거나(또는 결정한 정책대로 동작함을) 실제로 단언하는 테스트를 추가할 것.",
+    "internal/mail/mail.go:207-217 normalizeBody 가 점으로 시작하는 줄을 '..' 로 이스케이프하지만 smtp.Client.Data() 가 돌려주는 textproto DotWriter 가 이미 dot-stuffing 을 하므로 이중 이스케이프된다. 실행으로 확인: 본문 '.dot' 이 와이어에 '...dot' 으로 나가 수신자는 '..dot' 을 본다. mail_test.go:156 은 가짜 릴레이가 dot-unstuffing 을 하지 않는 채로 원문 '..점으로 시작' 포함만 확인해 잘못된 값을 고정하고 있다. normalizeBody 의 점 이스케이프를 제거하고, 테스트는 릴레이 쪽에서 unstuffing 한 결과가 원문 '.점으로 시작' 과 같음을 단언할 것.",
+    "internal/mail/service.go:103-111 Background 는 요청마다 상한 없이 고루틴을 띄우고 각 고루틴은 최대 2분(응답 없는 릴레이) 살아 있다. 승인 요청이 몰리면 발송 고루틴이 무한히 쌓이므로 세마포어 등으로 동시 발송 상한을 둘 것(캠페인 규칙 5)."
+  ],
+  "notes": [
+    "보호 파일 006_mail_delivery.sql 은 CREATE TABLE IF NOT EXISTS + CREATE INDEX IF NOT EXISTS + ADD COLUMN IF NOT EXISTS 로 추가만 하며 삭제·이름 변경이 없다 → 사람 결정 불필요, revert 가능(테이블·열이 남아도 무해).",
+    "기본값 확인: mail.enabled=false, 새 설치는 발송·기록 모두 없음(통합 테스트가 단언). 새 경로 /api/v1/mail/* 는 protected 그룹 + settings.read/settings.write + CSRF. mail.password 는 secret 로만 저장되고 Config JSON 태그 '-', 조회 응답은 configured 만. 로그·오류 메시지에 비밀번호 없음.",
+    "메일 링크 /admin/workflow, /personal/api-keys 는 web/src/App.tsx:109,114 라우트와 일치. 알림 트리거는 생성·단계 전이·최종 결정으로 전이 기준이며, decideApproval 의 pending 은 항상 current_level+1 이므로 같은 상태 반복 알림은 없음. 검토자 목록은 approval_action 으로 이미 처리한 검토자를 제외.",
+    "프론트 시험 발송 실패 처리: api/client.ts 가 non-2xx 본문 message 를 ApiError.message 로 파싱하고 onSettled 로 실패 시에도 발송 기록을 갱신함 → 캠페인 규칙 7 충족.",
+    "go test ./internal/mail 통과. PostgreSQL 통합 테스트(TEST_POSTGRES_DSN)는 이 환경에 DB 가 없어 실행하지 못했고 코드 읽기로만 확인했다. 검증용 프로브 테스트 파일은 실행 후 삭제했으며 브랜치 변경 없음(git status clean).",
+    "위 1·2번(기록이 queued 로 남고 만료 경고 유실)과 3·4번(평문 인증 정책 미결정과 localhost 예외로 통과하는 테스트)은 이번 캠페인에서 다른 저장소가 이미 걸린 규칙과 정확히 같은 결함이다."
+  ],
+  "risk": "medium"
+}
