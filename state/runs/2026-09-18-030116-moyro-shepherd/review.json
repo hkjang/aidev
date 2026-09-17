@@ -1,0 +1,21 @@
+{
+  "verdict": "reject",
+  "recommend": "fix",
+  "reasons": [
+    "server/internal/email/sender.go:266-271 loginAuth.Start 의 평문 가드 `!server.TLS && server.Name != a.host` 는 항상 거짓이다. sender.go:129 가 `smtp.NewClient(connection, configuration.host)` 로 server.Name 을 configuration.host 로 채우고, sender.go:262 가 loginAuth.host 에도 같은 configuration.host 를 넣으므로 두 값이 언제나 같다(stdlib net/smtp/smtp.go:71,202 확인). 결과: security=auto/none 에서 STARTTLS 를 광고하지 않고 AUTH LOGIN 만 광고하는 릴레이(Exchange 류 'AUTH GSSAPI NTLM LOGIN')에는 비밀번호가 평문 TCP 로 나간다. 캠페인 규칙 1번(6개 저장소에서 같은 결함) 그대로다.",
+    "server/internal/email/sender.go:258-264 authMechanism 이 PLAIN 을 우선하는데, stdlib PlainAuth.Start 는 TLS 없고 server.Name 이 localhost 가 아니면 'unencrypted connection' 으로 거부한다(net/smtp/auth.go:67). 즉 security=auto 로 STARTTLS 없는 릴레이가 'AUTH PLAIN LOGIN' 을 광고하면 인증이 항상 실패하고, docs/ADMIN_GUIDE.md 의 '`auto` 는 STARTTLS 없으면 평문… PLAIN, 없으면 LOGIN 으로 인증' 설명과 코드 동작이 다르다. 평문 연결에서 자격증명을 보낼지 정책을 하나로 정해(권장: TLS 없으면 PLAIN·LOGIN 모두 거부하고 명확한 오류 반환, 또는 명시적 opt-in 설정) PLAIN·LOGIN 두 분기에 동일하게 적용할 것.",
+    "server/internal/email/sender_test.go 는 이번 변경에서 전혀 수정되지 않아 새 authMechanism/loginAuth/TLSModeAuto 경로를 실행하는 테스트가 하나도 없다. 비-루프백 이름(예: Host를 'relay.corp.example' 로 두고 dialer 를 127.0.0.1 로 우회하거나 hosts 대체)으로 STARTTLS 없이 'AUTH LOGIN' 과 'AUTH PLAIN LOGIN' 을 각각 광고하는 가짜 릴레이를 두고, 평문에서 비밀번호가 소켓에 쓰이지 않는지(또는 정한 정책대로 동작하는지)와 TLS 뒤에서는 LOGIN 이 실제로 username/password 챌린지에 응답하는지 단언할 것. 127.0.0.1 만 쓰는 테스트는 isLocalhost 예외로 통과하므로 결함을 잡지 못한다.",
+    "server/internal/mail/service.go:184-196 Notify 가 수신자마다 time.AfterFunc 고루틴을 상한 없이 만들고 flush(202-251) 가 각각 릴레이 연결을 연다. 승인 정책의 검토자 전원이나 대량 작업 할당처럼 한 이벤트가 N 명에게 가면 N 개의 SMTP 연결이 동시에 열리고, 응답 없는 릴레이에서는 각 고루틴이 2×timeout+2s(timeout_seconds=120 이면 242s) 동안 유지된다. 캠페인 규칙 5번대로 버퍼 채널 세마포어로 동시 발송 수를 제한하되 기록 INSERT 는 즉시 남길 것. 이 항목도 테스트가 없다."
+  ],
+  "notes": [
+    "보호 파일 000018_mail_deliveries.up.sql 은 CREATE TABLE IF NOT EXISTS / CREATE INDEX IF NOT EXISTS 만 있는 추가 전용 마이그레이션이며 기존 열·표를 지우거나 이름을 바꾸지 않는다. revert 시 표만 남고 데이터 손상은 없다. 이 파일 자체는 머지 가능하다.",
+    "기본값은 꺼짐(mail.Default().Enabled=false)이며 TestMailSettingsDefaultOffAndPasswordNeverReturned 가 이를 실행으로 확인한다. 새 라우트(/admin/mail/deliveries, /admin/mail/test)는 모두 manage_settings 권한 뒤에 있고 인증 없는 경로는 늘지 않았다. 비밀번호는 secret 행에만 저장되고 GET/PATCH 응답·설정 JSON 행·감사 로그 어디에도 실리지 않는 것을 테스트가 확인한다.",
+    "메일 링크 /approvals/review, /approvals/mine, /my-work/tasks 는 webapp/src/app/AppRouter.tsx:211-214 의 /approvals/:tab, /my-work/:tab 에 실제로 존재한다. 본문 안내 '개인 설정 → 알림에서 끌 수 있습니다' 는 PersonalBasicsPages.tsx 의 새 스위치와 native_mail.go:205 의 events_enabled 필터로 실제 동작한다.",
+    "발화 조건 확인: approval_review 는 approval/service.go:357 에서 검토자마다 실제로 채워지고, TypeDecided 는 status != pending 일 때만(서비스 251, 323행) 한 번 발화하며, task_assigned 는 AssigneeChanged 게이트 뒤에 있다. 플러그인은 TypePluginEvent 만 emit 하므로 메일 대상이 아니다. 다만 activityevents.Emit 은 dedupe 충돌 시 기존 행을 오류 없이 돌려주므로 같은 dedupe_key 로 재발화하는 새 호출자가 생기면 인박스는 중복이 없어도 메일은 다시 나간다 — 이번 변경의 결함은 아니지만 realtimeActivityEmitter 에서 '새로 만들어진 행인지' 구분하는 편이 안전하다.",
+    "기록 컨텍스트: flush 는 2×timeout+20s 예산에 최악 발송 2×timeout+2s 이므로 complete() UPDATE 에 ~18s 여유가 있어 규칙 2번의 즉각 결함은 아니다. 다만 SendTest 의 첫 record(ctx) 는 요청 컨텍스트를 쓰고, 웹 클라이언트 요청 타임아웃이 30s(transport.ts DEFAULT_TIMEOUT_MS)라 timeout_seconds ≥ 25 이면 브라우저가 먼저 끊어 결과가 화면에 '네트워크 오류' 로만 보인다. 수정 세션에서 함께 손보면 좋다.",
+    "시험 발송 실패 응답(502 {sent:false,message}) 은 transport.ts:173-174 가 error.message 를 파싱하고, MailSettingsPage.tsx:162-166 이 catch 에서 표시하고 finally 에서 기록을 재조회하므로 규칙 7번은 충족한다.",
+    "범위: docs/ADMIN_GUIDE.pdf 재생성은 이 저장소의 이전 기능 커밋들(5476cfb, 2df5459)과 같은 관행이다. 무관한 리팩터는 없다.",
+    "실행 결과: go test ./internal/mail ./internal/email ./internal/httpapi -run Mail 통과. TestMailDeliveryLogAndDirectory 는 Postgres 가 없어 SKIP 되어 실제 DB 경로는 이 세션에서 확인하지 못했다."
+  ],
+  "risk": "medium"
+}

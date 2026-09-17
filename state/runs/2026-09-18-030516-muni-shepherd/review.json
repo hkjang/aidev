@@ -1,0 +1,17 @@
+{
+  "verdict": "approve",
+  "recommend": "merge",
+  "reasons": [],
+  "notes": [
+    "보호 파일 internal/database/migrations/019_mail.sql 확인: 추가만 한다 — app_settings 행의 key 이름 변경(smtp.* → mail.*, 새 이름이 이미 있으면 옛 행만 버림), mail_deliveries 표 신설, notifications 인덱스 추가. 열·표를 지우거나 이름을 바꾸는 문장은 없다. 봉인된 smtp.password 는 옮기지 않고 store.go 가 mail.password 없을 때 옛 키로 열며, 새 비밀번호 저장 시 옛 행을 지운다(TestMailKeysMigrateFromTheirOldNames 가 실제 파일을 두 번 실행해 멱등성까지 확인).",
+    "되돌리기: 코드만 revert 하면 옛 코드는 smtp.* 행을 못 찾아 메일이 '설정 안 됨'으로 꺼진다(값은 mail.* 아래 그대로 남아 있어 손실은 없고, 닫히는 방향으로 실패). 완전 복구엔 key 를 손으로 되돌리는 UPDATE 한 번이 필요하다.",
+    "기본값 꺼짐: mail.enabled 는 시드 행이 없어 false, 새 설치는 아무것도 보내지 않는다(TestMailStaysOffUntilAnAdministratorTurnsItOn). 다만 remindExpiringAPIKeys 는 mail.enabled 와 무관하게 앱 내 알림 행(API_KEY_EXPIRING)을 매시간 쓴다 — 메일이 아니라 앱 내 알림이고 키마다 한 번(NOT EXISTS + 인덱스)이며 notifications 를 지우는 코드는 없어 재발화하지 않는다.",
+    "평문 자격증명 가드: authenticate 가 security∈{starttls,tls} 또는 TLSConnectionState.HandshakeComplete 일 때만 AUTH 로 진행하고 그 전에 거절하므로 stdlib 의 localhost 예외나 server.Name 비교에 의존하지 않는다. auto 에서 STARTTLS 미광고+비밀번호 설정 시 거절되는 테스트(TestAutoStillKeepsCredentialsOffAClearConnection)가 서버에 AUTH 가 도달하지 않음을 단언한다.",
+    "발송 기록 컨텍스트: flushNotificationMail 은 서버 수명 ctx(마감 없음)로 기록·갱신하고, 발송은 연결 deadline(Timeout, 최대 300s)으로 끝나며 한 고루틴에서 직렬 처리라 고루틴·TCP 가 쌓이지 않는다. testMail 만 r.Context() 로 기록하므로 관리자가 응답 전에 창을 닫으면 그 시험 행이 경고 로그만 남기고 빠질 수 있다 — 시험 발송 한정, 사소함.",
+    "메일 링크 /docs/:id, /workspace/:id, /settings 는 frontend/src/App.tsx(BrowserRouter) 에 실제 존재하고 /settings 가 API 키 화면(PersonalSettingsPage)이다. 알림 type 값 APPROVAL_REQUEST/APPROVAL_DECISION/MENTION 은 workflow.go·comments.go 가 쓰는 값과 일치. 문서의 '자기가 한 일은 제외', '하루 3회 재시도' 주장은 코드(wm.user_id<>$2, id<>$4, maxEmailAttempts=3, outboxHorizon=24h)와 일치.",
+    "프론트 시험 발송 실패 경로: api() 가 {error:{code,message}} 를 ApiError 로 던지고 MailSettings 가 test.error 를 Alert 로 표시, onSettled 로 실패 시에도 발송 기록을 재조회한다.",
+    "실행 결과: 임시 postgres 컨테이너에 MUNI_TEST_DSN 을 붙여 `go test ./...` 전부 통과(httpapi 라이브 테스트 9건 포함: 묶음 발송·기록, 스위치별 차단, 죽은 릴레이에서 댓글 요청 비차단+실패 기록, 비밀번호 비노출, 마이그레이션, 시험 발송 200/502, API 키 1회 알림, 기록 API 401). frontend `npm run lint`(tsc -b) 와 MailSettings/notifications vitest 14건 통과. 컨테이너는 정리했다.",
+    "범위: docs/ADMIN_GUIDE.pdf 재생성은 이 저장소에서 가이드 수정마다 함께 커밋하는 관례(a8b253b, 33aacee 동일). retention.go 의 mail_deliveries 정리는 새 표의 보존 정책이라 목적 내."
+  ],
+  "risk": "medium"
+}
