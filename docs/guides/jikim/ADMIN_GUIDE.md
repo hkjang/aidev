@@ -1,6 +1,6 @@
 # jikim 관리자 가이드
 
-이 문서는 jikim `v0.2.14`을 설치하고 지키는 사람을 위한 것입니다. 화면 캡처는 모두
+이 문서는 jikim `v0.2.15`을 설치하고 지키는 사람을 위한 것입니다. 화면 캡처는 모두
 `jikim:v0.2.9` 이미지를 전용 PostgreSQL과 함께 띄운 뒤 데모 데이터를 넣고 찍은 것입니다.
 
 화면을 쓰는 방법은 [사용자 가이드](USER_GUIDE.md)에 있습니다. 같은 내용을 두 번 적지 않았으니
@@ -18,7 +18,7 @@ jikim은 컨테이너 하나와 외부 PostgreSQL 하나로 동작합니다. 서
 
 | 구성 요소 | 필수 | 제공 방식 | 하는 일 |
 | --- | --- | --- | --- |
-| `jikim` 컨테이너 | 필수 | 릴리스 이미지 `jikim:v0.2.14` | Go 서버 하나가 관리 API, OpenBao 제한 호환 API, MCP, React 정적 자산을 모두 제공 |
+| `jikim` 컨테이너 | 필수 | 릴리스 이미지 `jikim:v0.2.15` | Go 서버 하나가 관리 API, OpenBao 제한 호환 API, MCP, React 정적 자산을 모두 제공 |
 | PostgreSQL | 필수 | 사내 표준 인스턴스 | 사용자·정책·시크릿 암호문·감사 로그 저장 |
 | TLS Reverse Proxy | 운영 권장 | 사내 표준 | 외부 HTTPS 종단, `Host`·`X-Forwarded-Proto` 전달 |
 | Keycloak | 선택 | 사내 표준 | OIDC SSO 로그인 |
@@ -60,9 +60,9 @@ React 정적 자산은 이미지 안의 `/app/web`에 들어 있고 Go 서버가
 GitHub Release에 올라오는 자산은 두 개입니다.
 
 ```bash
-sha256sum --check jikim-v0.2.14.tar.gz.sha256
-docker load --input jikim-v0.2.14.tar.gz
-docker image inspect jikim:v0.2.14
+sha256sum --check jikim-v0.2.15.tar.gz.sha256
+docker load --input jikim-v0.2.15.tar.gz
+docker image inspect jikim:v0.2.15
 ```
 
 체크섬 확인 없이 적재하지 마십시오. 반입 경로에서 파일이 바뀌었는지 확인할 유일한 수단입니다.
@@ -116,7 +116,7 @@ curl --fail http://127.0.0.1:8080/v1/sys/health
 - `GET /healthz`는 프로세스가 살아 있는지만 답합니다.
 - `GET /readyz`는 PostgreSQL에 2초 제한으로 ping 한 뒤 답합니다. 저장소에 닿지 못하면 `503`과
   `not_ready`, `데이터베이스 연결을 확인할 수 없습니다`를 돌려줍니다.
-- `GET /v1/sys/health`는 OpenBao 클라이언트와 Load Balancer가 쓰는 경로입니다. `v0.2.14`은
+- `GET /v1/sys/health`는 OpenBao 클라이언트와 Load Balancer가 쓰는 경로입니다. `v0.2.15`은
   저장소 미도달을 seal과 같은 운영 상태로 보아 `"sealed": true`와 `503`을 반환합니다.
   probe 설정을 이식할 때는 `activecode`·`sealedcode` 쿼리로 상태 코드를 바꿀 수 있고,
   100\~599 정수가 아니면 조용히 무시하지 않고 `400`으로 거부합니다.
@@ -255,10 +255,98 @@ Keycloak에 이미 로그인한 사람이 jikim을 열면 로그인 화면을 �
 단말에서 앞사람의 Keycloak 세션으로 뒷사람이 들어가지 않도록 로그아웃 절차가 있는지입니다.
 jikim의 로그아웃은 Keycloak RP-initiated logout까지 이어지므로 화면의 로그아웃을 쓰면 됩니다.
 
+#### MCP를 SSO로 열기(`mcp.oauth`)
+
+`/mcp`는 기본적으로 개인 API 토큰(`hvs.…`)으로만 들어갑니다. 이 설정을 켜면 **같은
+`Authorization: Bearer` 헤더로 Keycloak 액세스 토큰도 받습니다.** MCP 인가 규격(2025-06-18
+이후)은 OAuth 2.1이라 Claude·Cursor 같은 클라이언트에 MCP 주소 하나만 주면 클라이언트가
+스스로 Keycloak 로그인을 띄우고 토큰을 받아 옵니다. jikim은 **리소스 서버**입니다 — 로그인과
+토큰 발급은 Keycloak이 하고, jikim은 `/authorize`·`/token`·동적 클라이언트 등록을 만들지
+않으며 토큰을 저장하거나 세션으로 바꾸지 않고 요청마다 검사합니다. **기본값은 OFF**이며 켜지
+않은 설치에서는 아무것도 달라지지 않습니다. 개인 토큰은 켜도 그대로 동작합니다.
+
+설정은 OIDC 탭의 **MCP SSO(OAuth)** 카드에 있고 `PATCH /api/v1/settings`의 `mcp.oauth`와
+같습니다.
+
+| 키 | 기본값 | 뜻 |
+| --- | --- | --- |
+| `mcp.oauth.enabled` | `false` | 스위치. Keycloak OIDC가 켜져 있고 Issuer URL이 있어야 저장됩니다(토큰은 그 Issuer의 JWKS로 검증). 저장 뒤 OIDC를 끄면 조용히 꺼진 것처럼 동작하고 토큰이 들어올 때 로그에 이유를 남깁니다 |
+| `mcp.oauth.resource` | 빈 값 | 리소스 식별자(RFC 8707). 클라이언트가 실제로 접속하는 **공개 주소 + `/mcp`**. 비우면 OIDC Callback URL(`oidc.redirect_url`)의 Origin + `/mcp`로 만들고, 그것도 없을 때만 요청의 `Host`를 씁니다 |
+| `mcp.oauth.audience` | 빈 값 | 공백 구분 허용 대상. 토큰의 `aud` **또는 `azp`**가 이 목록에 있으면 통과합니다. Audience 매퍼 없이 쓰는 호환 경로 |
+| `mcp.oauth.scopes` | `mcp:read` | 공백 구분. SSO 토큰 주체에게 주는 도구 범위. `mcp:read`=조회 도구(`dashboard.get`, `secrets.list`, `secrets.metadata`, `policies.list`, `audit.search`, `access.check`), `mcp:transit`=`transit.encrypt`, `transit.decrypt` |
+| (재사용) `oidc.issuer_url`, `oidc.client_id`, `oidc.redirect_url` | 3.3의 값 | 새로 만들지 않습니다 |
+
+**토큰을 어떻게 믿는가.** 서명(Keycloak JWKS, RS/ES/PS 계열만 — `HS*`·`none` 거부), `iss`(=
+Issuer URL), `exp`·`nbf`, `typ`(`ID`면 거부 — ID 토큰은 로그인 증거지 API 자격이 아닙니다),
+`cnf`(있으면 거부 — 검증할 수 없는 DPoP·mTLS 바인딩), `sub`(비면 거부), 그리고 **대상**을
+검사합니다. 대상은 다음 중 하나가 맞아야 합니다.
+
+- `aud`에 리소스 식별자가 있다 — Keycloak Audience 매퍼를 둔 정식 경로
+- `aud` 또는 `azp`가 `mcp.oauth.audience`에 있다 — 실제 Keycloak 26은 `aud`에 `account`만
+  싣고 클라이언트 ID는 `azp`에 담으므로, MCP 클라이언트 ID를 여기 적으면 매퍼 없이 됩니다
+
+**계정은 만들지 않습니다.** 토큰의 `sub`로 **이미 웹으로 로그인해 등록된 활성** OIDC 계정만
+찾고, 없으면 "먼저 웹으로 한 번 로그인하세요"로 거부합니다. 정지된 계정이 MCP로 되살아나거나
+토큰의 role claim으로 관리자가 되는 일은 없습니다 — 토큰의 role은 권한으로 옮기지 않습니다.
+OAuth로 들어온 주체는 그 사용자가 개인 토큰으로 들어왔을 때와 **같은 정책·감사**를 타되,
+도구 범위는 `mcp.oauth.scopes`가 정한 상한을 넘지 못합니다(토큰의 `scope`에 `mcp:*` 어휘가
+실려 오면 교집합). OAuth 토큰은 **`/mcp`에서만** 받습니다 — REST·OpenBao 호환 API·관리 API는
+지금처럼 개인 토큰과 세션만 받습니다.
+
+**Keycloak 쪽 할 일.**
+
+1. MCP 클라이언트용 **공개(public) 클라이언트**를 웹 로그인 클라이언트와 **따로** 만듭니다.
+   Standard Flow 켬, PKCE `S256`, Direct Access Grants·Implicit·Service accounts 끔.
+2. Valid Redirect URIs에 쓰는 MCP 클라이언트의 콜백을 정확히 적습니다(Claude는
+   `https://claude.ai/api/mcp/auth_callback`, 로컬 클라이언트는 `http://127.0.0.1:*/callback`
+   류). `*` 하나로 다 여는 것은 금지입니다.
+3. 정식 경로: 그 클라이언트(또는 전용 client scope)에 **Audience 매퍼**를 둡니다.
+
+   | Mapper 항목 | 값 |
+   | --- | --- |
+   | Mapper type | Audience |
+   | Included Custom Audience | 리소스 식별자(예: `https://vault.corp.example/mcp`) |
+   | Add to access token | ON |
+   | Add to ID token | OFF |
+
+   호환 경로: 매퍼 없이 jikim의 `mcp.oauth.audience`에 그 클라이언트 ID를 적습니다.
+4. 액세스 토큰 수명은 짧게(5분 안팎). jikim은 introspection을 하지 않으므로 Keycloak에서
+   로그아웃하거나 사용자를 끄더라도 **이미 발급된 토큰은 만료까지 삽니다.** 급하면 jikim의
+   사용자도 비활성화하십시오 — 비활성 계정은 토큰이 유효해도 거부됩니다.
+
+**확인 방법.** 메타데이터는 인증 없이, 봉투 없는 맨 JSON으로 읽힙니다.
+
+```bash
+curl -s https://vault.corp.example/.well-known/oauth-protected-resource/mcp
+# {"resource":"https://vault.corp.example/mcp","authorization_servers":["https://keycloak.corp.example/realms/corp"],
+#  "bearer_methods_supported":["header"],"scopes_supported":["mcp:read"],"resource_name":"jikim MCP"}
+
+curl -si -X POST https://vault.corp.example/mcp -H 'Content-Type: application/json' \
+  -H 'Accept: application/json, text/event-stream' \
+  -d '{"jsonrpc":"2.0","id":1,"method":"tools/list","params":{}}' | grep -i www-authenticate
+# WWW-Authenticate: Bearer realm="jikim", resource_metadata="https://vault.corp.example/.well-known/oauth-protected-resource/mcp"
+```
+
+꺼져 있으면 메타데이터는 `404`이고 401에 이 헤더가 붙지 않습니다. REST 401에는 켜도 붙지
+않습니다(붙으면 브라우저가 엉뚱한 곳으로 갑니다).
+
+**거부 메시지별 조치.** 401 본문의 `error.message`를 봅니다.
+
+| 메시지 | 조치 |
+| --- | --- |
+| `SSO 토큰이 이 서버를 위해 발급된 것이 아닙니다(aud=[account], azp="claude-mcp") …` | 메시지에 적힌 클라이언트 ID를 허용 대상에 더하거나, Audience 매퍼에 리소스 식별자를 넣습니다. 이 메시지 하나로 설정이 끝납니다 |
+| `SSO 액세스 토큰이 유효하지 않습니다(서명·발급자·만료)` | Issuer URL이 토큰의 `iss`와 같은지(realm 경로·후행 슬래시), 토큰이 만료되지 않았는지, 다른 realm의 토큰이 아닌지 확인합니다. 클라이언트에서 다시 로그인하면 대부분 풀립니다 |
+| `ID 토큰은 MCP 자격이 아닙니다` | 클라이언트가 `id_token`을 보내고 있습니다. 액세스 토큰을 보내도록 합니다 |
+| `소지자 증명(cnf)이 묶인 토큰은 받지 않습니다` | Keycloak 클라이언트의 DPoP·mTLS 바인딩을 끕니다 |
+| `이 SSO 계정은 jikim에 등록되지 않았거나 비활성입니다. 먼저 웹으로 한 번 로그인하세요` | 그 사용자가 jikim 웹에 Keycloak으로 한 번 로그인하게 합니다. 이미 있다면 4.2에서 활성 여부를 봅니다 |
+| `Keycloak 발급자 정보를 읽지 못해 SSO 토큰을 확인할 수 없습니다` | 컨테이너에서 Issuer의 `/.well-known/openid-configuration`과 JWKS에 닿는지, 내부 CA가 신뢰되는지(2.5) 봅니다 |
+| `세션이 만료되었거나 올바르지 않습니다` (JWT를 보냈는데) | 스위치가 꺼져 있거나 OIDC가 꺼져 조용히 잠든 상태입니다. 서버 로그의 `mcp oauth is switched on but dormant`를 봅니다 |
+| 도구 결과 `SSO 토큰의 범위로는 이 도구를 쓸 수 없습니다(필요한 범위: mcp:transit)` | 의도된 상한입니다. 필요하면 `mcp.oauth.scopes`에 그 범위를 더합니다 |
+
 ### 3.4 승인 워크플로
 
 기본값은 비활성입니다. 꺼져 있으면 생성·변경 작업에 검토 단계를 만들지 않고 즉시 반영합니다.
-`v0.2.14`에서 설정할 수 있는 것은 워크플로 사용 여부, 적용 작업(시크릿 생성·변경, 시크릿 폐기),
+`v0.2.15`에서 설정할 수 있는 것은 워크플로 사용 여부, 적용 작업(시크릿 생성·변경, 시크릿 폐기),
 검토 역할(`manager` 또는 `admin`)입니다.
 
 승인은 1인 검토이며 요청자 본인 승인은 항상 금지됩니다. 환경·위험 등급별 조건, 다단계 승인,
@@ -507,7 +595,7 @@ docker compose logs --follow jikim
 ```text
 {"level":"INFO","msg":"bootstrap 관리자 준비","username":"...","created":true}
 {"level":"INFO","msg":"웹 UI 활성화","directory":"/app/web"}
-{"level":"INFO","msg":"jikim 시작","address":":8080","version":"v0.2.14"}
+{"level":"INFO","msg":"jikim 시작","address":":8080","version":"v0.2.15"}
 ```
 
 종료 신호를 받으면 `종료 신호 수신`을 남기고 최대 20초 동안 진행 중인 요청을 마무리합니다.
@@ -573,7 +661,7 @@ docker compose logs --follow jikim
 
 | 증상 | 확인할 곳 | 조치 |
 | --- | --- | --- |
-| `/readyz`가 `503` + `데이터베이스 연결을 확인할 수 없습니다` | PostgreSQL 도달성, DSN, TLS 모드, 계정 권한 | 저장소를 복구합니다. `v0.2.14`은 DB 장애를 자격증명 거부로 접지 않고 `500`으로 구분해 보고합니다. |
+| `/readyz`가 `503` + `데이터베이스 연결을 확인할 수 없습니다` | PostgreSQL 도달성, DSN, TLS 모드, 계정 권한 | 저장소를 복구합니다. `v0.2.15`은 DB 장애를 자격증명 거부로 접지 않고 `500`으로 구분해 보고합니다. |
 | `아이디 또는 비밀번호가 올바르지 않습니다` | 사용자 관리 화면의 계정 상태 | 계정·비밀번호를 확인합니다. DB 장애일 때는 이 문구가 아니라 `500`이 나옵니다. |
 | `사용자 계정이 비활성화되었습니다` | 사용자 관리 화면 | 계정을 활성화합니다. |
 | `로컬 로그인이 비활성화되었습니다` | 보안 탭의 **로컬 로그인 허용** | OIDC로 들어가거나, 그것도 막혔으면 설정 값을 되돌려야 합니다. |
