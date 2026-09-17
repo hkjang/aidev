@@ -14,7 +14,7 @@ HERE="${AIDEV_BIN:-$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)}"
 REPO_DIR="$(cd "$HERE/.." && pwd)"
 STATE="${AIDEV_STATE:-$REPO_DIR/state}"; LOGS="${AIDEV_LOGS:-$REPO_DIR/logs}"; RUNS="$STATE/runs"; DATA="${AIDEV_DATA:-$REPO_DIR/docs/data}"
 WT_BASE="${WT_BASE:-$HOME/.cache/auto-improve-wt}"
-DAYS=30; COUNT=1; BUDGET=""; RBUDGET=""; DRY=0; ONLY=""; MERGE=1; SYNC=1; RELEASE=1; REVIEW=1; PARALLEL=0; FIXONLY=0
+DAYS=30; COUNT=1; BUDGET=""; RBUDGET=""; DRY=0; ONLY=""; MERGE=1; SYNC=1; RELEASE=1; REVIEW=1; PARALLEL=0; FIXONLY=0; SHEPHERD=0
 MODEL="${MODEL:-claude-opus-5}"
 REAL_HOME="$HOME"; CLAUDE_CFG="${CLAUDE_CONFIG_DIR:-$REAL_HOME/.claude}"
 export GIT_AUTHOR_NAME=hkjang GIT_AUTHOR_EMAIL=gagagiga@naver.com GIT_COMMITTER_NAME=hkjang GIT_COMMITTER_EMAIL=gagagiga@naver.com
@@ -28,6 +28,7 @@ while [ $# -gt 0 ]; do case "$1" in
   --budget) BUDGET=$2; shift;; --release-budget) RBUDGET=$2; shift;;
   --no-merge) MERGE=0;; --no-sync) SYNC=0;; --no-release) RELEASE=0;; --no-review) REVIEW=0;; --parallel) PARALLEL=1;;
   --fix-only) FIXONLY=1;;   # fix-queue 항목만 처리하는 전용 트랙 (bin/fixer.sh 가 쓴다) — 상한 우회, 비용가드 유지
+  --shepherd) SHEPHERD=1;;  # 검토 대기 PR 처리기 전용 트랙 (bin/shepherd.sh 가 매시간 부른다) — 상한 우회, 자체 예산
   --release-only) RELEASE_ONLY=$2; shift;; --assets-only) ASSETS_ONLY=$2; shift;;
   *) echo "unknown arg $1"; exit 2;; esac; shift; done
 
@@ -384,7 +385,9 @@ approvals(){
   local -a fetched=()
   pv=$(cd "$REPO_DIR" && git log -1 --format=%h -- state/default.policy.json state/default.guard 2>/dev/null)
   local -a items=(); local line
-  mapfile -t items < <(jq -r --arg s "$(date -d '-14 days' +%F)" 'select(.date >= $s and .outcome=="review-pending" and (.pr|length)>0) | "\(.project)\t\(.pr)"' "$DATA/runs.jsonl" 2>/dev/null | sort -u)
+  # verify-failed 도 본다: CI 가 실패해 멈춘 PR 을 PR 처리기가 고쳐 승인하면, 그 PR 의 마지막
+  # 회차는 verify-failed 다. review-pending 만 보면 라벨이 붙어도 아무도 머지하지 않는다.
+  mapfile -t items < <(jq -r --arg s "$(date -d '-14 days' +%F)" 'select(.date >= $s and (.outcome=="review-pending" or .outcome=="verify-failed") and (.pr|length)>0) | "\(.project)\t\(.pr)"' "$DATA/runs.jsonl" 2>/dev/null | sort -u)
   for line in "${items[@]}"; do
     IFS=$'\t' read -r n pr <<<"$line"
     repo="$ROOT/$n"; [ -d "$repo" ] || continue
@@ -1031,6 +1034,231 @@ resume_runs(){
 }
 [ $DRY -eq 1 ] || resume_runs
 
+# ================================================================ PR 처리기(shepherd)
+# 검토 대기로 멈춘 러너 PR 을 시간마다 살펴 원인을 진단하고, 고칠 수 있는 것은 고쳐 머지·릴리즈
+# 경로로 돌려보낸다. bin/shepherd.sh 가 매시간 `--shepherd` 로 부른다 (흐름은 그 파일 머리에).
+#
+# 원칙: 이 처리기는 사람이 하던 "PR 을 열어 보고 승인 라벨을 다는 일" 을 대신한다. 그래서
+#   - 결정은 엄격한 심사 세션(shepherd-review-prompt.md)이 하고, 불확실하면 거절한다.
+#   - 승인은 기존 승인 경로(approvals.jsonl + aidev-approved 라벨)로만 한다 — 머지는 승인 스윕이
+#     CI 를 확인하고 승인 커밋에만 한다. 처리기 자체는 머지 명령을 부르지 않는다.
+#   - 워크플로·비밀값·결제·LICENSE 를 건드린 PR, 자율화 단계가 approve 이하인 프로젝트,
+#     risk=high, CI 가 아예 없는 저장소, 두 번 고쳐도 안 되는 PR 은 손대지 않고 진단만 남긴다.
+#   - 자체 일일 예산(SHEPHERD_DAILY_BUDGET)을 넘기면 멈춘다. 기록은 state/shepherd.jsonl.
+#   - 끄기: state/NO-SHEPHERD. 설정: state/shepherd.env.
+SHEPHERD_MAX=${SHEPHERD_MAX:-4}                        # 한 번에 세션을 부르는 PR 수
+SHEPHERD_DAILY_BUDGET=${SHEPHERD_DAILY_BUDGET:-60}     # 하루에 처리기가 쓸 수 있는 돈 (일일 상한과 별도)
+SHEPHERD_TRIES=${SHEPHERD_TRIES:-2}                    # PR 하나에 수정 실패·심사 거절이 이만큼 쌓이면 사람에게
+SHEPHERD_FIX_BUDGET=${SHEPHERD_FIX_BUDGET:-8}; SHEPHERD_REVIEW_BUDGET=${SHEPHERD_REVIEW_BUDGET:-4}
+# 사람만 승인할 수 있는 경로 — 워크플로(비밀값이 새는 길)·결제·비밀값·라이선스
+SHEPHERD_NEVER_RE=${SHEPHERD_NEVER_RE:-'^\.github/workflows/|(^|/)(payment|billing|checkout)s?/|secret|credential|\.env(\.|$)|(^|/)LICENSE'}
+[ -f "$STATE/shepherd.env" ] && . "$STATE/shepherd.env"
+SHEPHERD_LOG="$STATE/shepherd.jsonl"
+
+shepherd_note(){ # $1=pr $2=sha $3=cause $4=action $5=detail
+  jq -cn --arg ts "$(date -Iseconds)" --arg d "$RUN_DATE" --arg p "$n" --arg pr "$1" --arg sha "$2" --arg c "$3" --arg a "$4" --arg det "$5" --arg rid "${RUN_ID:-}" \
+    '{ts:$ts,date:$d,project:$p,pr:$pr,sha:$sha,cause:$c,action:$a,detail:$det,run_id:$rid}' >> "$SHEPHERD_LOG"
+  log "$n: [shepherd] PR #${1##*/} $3 → $4 — $(tr '\n' ' ' <<<"$5" | cut -c1-160)"
+}
+shepherd_spent(){ jq -s --arg d "$RUN_DATE" '[.[]|select(.date==$d and ((.run_id//"")|endswith("-shepherd")))|.cost_usd//0]|add // 0' "$DATA/usage.jsonl" 2>/dev/null || echo 0; }
+shepherd_budget_ok(){ awk -v s="$(shepherd_spent)" -v b="${1:-0}" -v m="$SHEPHERD_DAILY_BUDGET" 'BEGIN{exit !(s+b<=m)}'; }
+shepherd_tries(){ jq -r --arg pr "$1" 'select(.pr==$pr and (.action=="fix-failed" or .action=="review-reject" or .action=="review-invalid")) | .pr' "$SHEPHERD_LOG" 2>/dev/null | wc -l; }
+shepherd_guard(){ # 지금 PR 이 건드리는 보호 파일 (회차 때 기록이 아니라 현재 브랜치 기준)
+  local pat; pat=$(cat "$STATE/default.guard" "$STATE/$n.guard" 2>/dev/null | grep -v '^#' | grep -v '^[[:space:]]*$')
+  [ -n "$pat" ] || return 0
+  git -C "$repo" fetch -q origin "$hbr" "$base" >>"$LOG" 2>&1 || return 0
+  git -C "$repo" diff --name-only "origin/$base...origin/$hbr" 2>/dev/null | grep -E -f <(printf '%s\n' "$pat") || true
+}
+shepherd_ci_note(){ # CI 실패 내용을 수정 세션에 줄 만큼만 모은다
+  local chk ids id name
+  chk=$(cd "$repo" && gh pr checks "$pr" 2>/dev/null | grep -viE "pass|success|skipping" | head -10)
+  echo "CI 검사 상태 (커밋 ${head:0:7}):"; echo "${chk:-(gh pr checks 결과 없음)}"
+  ids=$(cd "$repo" && gh run list --commit "$head" --limit 5 --json databaseId,conclusion,name --jq '.[]|select(.conclusion=="failure")|"\(.databaseId) \(.name)"' 2>/dev/null | head -2)
+  while read -r id name; do
+    [ -n "$id" ] || continue
+    echo; echo "### 실패한 워크플로 '$name' 의 실패 로그 (끝부분)"
+    (cd "$repo" && gh run view "$id" --log-failed 2>/dev/null | tail -c 6000)
+  done <<<"$ids"
+}
+shepherd_wt(){ # $1=브랜치 → $wt 를 origin/<브랜치> 로 준비 (detached)
+  wt="$WT_BASE/$n-shepherd"; wt_reset "$repo" "$wt"
+  git -C "$repo" fetch -q origin "$1" "$base" >>"$LOG" 2>&1 || return 1
+  git -C "$repo" worktree add --detach "$wt" "origin/$1" >>"$LOG" 2>&1 && [ -d "$wt" ]
+}
+shepherd_fix(){ # $1=pr $2=브랜치 $3=원인 설명 → 0=새 커밋을 검증해 푸시함 (head 갱신)
+  local pr=$1 br=$2 note=$3 before after prompt summ
+  shepherd_wt "$br" || { shepherd_note "$pr" "$head" "$cause" fix-failed "worktree 준비 실패"; return 1; }
+  before=$(git -C "$wt" rev-parse HEAD); BASE_SHA=$(git -C "$repo" rev-parse "origin/$base")
+  prompt=$(PR_URL="$pr" BASE="origin/$base" CAUSE_NOTE="$note" OUT_DIR="$OUT" envsubst '$PR_URL $BASE $CAUSE_NOTE $OUT_DIR' < "$REPO_DIR/shepherd-fix-prompt.md")
+  run_agent improve "$prompt" "$wt" "$SHEPHERD_FIX_BUDGET" "Bash,Read,Edit,Write,Glob,Grep"
+  after=$(git -C "$wt" rev-parse HEAD)
+  summ=$(head -c 600 "$OUT/fix-summary.md" 2>/dev/null | tr '\n' ' ')
+  if [ "$after" = "$before" ]; then
+    shepherd_note "$pr" "$head" "$cause" fix-failed "수정 세션이 커밋을 만들지 않음: ${summ:-이유 없음}"
+    git -C "$repo" worktree remove --force "$wt" >>"$LOG" 2>&1 || true; return 1
+  fi
+  if ! run_verify "$wt" "$OUT/verify.json"; then
+    shepherd_note "$pr" "$head" "$cause" fix-failed "고친 뒤 러너 검증 실패: $(jq -r .reason "$OUT/verify.gate.json" 2>/dev/null | cut -c1-200)"
+  elif [ -n "$(added_artifacts)" ]; then
+    shepherd_note "$pr" "$head" "$cause" fix-failed "빌드 산출물이 커밋됨: $(added_artifacts | tr '\n' ' ')"
+  elif ! git -C "$wt" diff "$before..$after" | secrets_gate "shepherd diff" -; then
+    shepherd_note "$pr" "$head" "$cause" fix-failed "수정 커밋에 비밀정보 의심 문자열"
+  elif with_retry "shepherd push" git -C "$wt" push origin "HEAD:refs/heads/$br"; then
+    head=$after
+    shepherd_note "$pr" "$head" "$cause" fix-pushed "${summ:-수정 커밋 푸시}"
+    (cd "$repo" && gh pr comment "$pr" --body "🔧 PR 처리기가 고쳐 올렸습니다 (${after:0:7}) — ${summ:-}
+
+이어서 심사합니다. (run $RUN_ID)" >>"$LOG" 2>&1) || true
+    git -C "$repo" worktree remove --force "$wt" >>"$LOG" 2>&1 || true; return 0
+  else
+    shepherd_note "$pr" "$head" "$cause" fix-failed "푸시 실패 ($RETRY_KIND)"
+  fi
+  git -C "$repo" worktree remove --force "$wt" >>"$LOG" 2>&1 || true; return 1
+}
+shepherd_review(){ # $1=pr $2=브랜치 $3=보류 사유 → SH_STATE(approved|rejected|invalid|missing) SH_RISK SH_REASON; 0=승인
+  local pr=$1 br=$2 note=$3 prompt g
+  SH_STATE=invalid; SH_RISK=""; SH_REASON=""
+  shepherd_wt "$br" || { SH_REASON="worktree 준비 실패"; return 1; }
+  rm -f "$OUT/review.json"
+  prompt=$(BASE="origin/$base" REVIEW_FILE="$OUT/review.json" HOLD_NOTE="$note" envsubst '$BASE $REVIEW_FILE $HOLD_NOTE' < "$REPO_DIR/shepherd-review-prompt.md")
+  run_agent review "$prompt" "$wt" "$SHEPHERD_REVIEW_BUDGET" "Bash,Read,Glob,Grep,Write"
+  git -C "$repo" worktree remove --force "$wt" >>"$LOG" 2>&1 || true
+  g=$($GATE review "$OUT/review.json" 2>/dev/null || true)
+  SH_STATE=$(jq -r '.state // "invalid"' <<<"$g" 2>/dev/null || echo invalid); SH_RISK=$(jq -r '.risk // ""' <<<"$g" 2>/dev/null); SH_REASON=$(jq -r '.reason // "리뷰 결과 없음"' <<<"$g" 2>/dev/null)
+  [ "$SH_STATE" = approved ]
+}
+shepherd(){
+  local items item pr rid stages outcome st labels mergeable hbr hold gfiles never tries autonomy_now note cause pv reasons last last_action last_sha
+  local done_n=0 approved=0 fixed=0 human=0
+  touch "$SHEPHERD_LOG"; date -Iseconds > "$STATE/.shepherd-last"
+  # 대상: 최근 14일 안에 열린 러너 PR 가운데, 그 PR 의 마지막 회차가 검토 대기·CI 실패로 끝난 것 (오래된 것부터)
+  mapfile -t items < <(jq -cs --arg s "$(date -d '-14 days' +%F)" '
+      [ .[] | select(.date >= $s and ((.pr//"")|length)>0 and (.project|type=="string") and (.project|startswith("(")|not)) ]
+      | group_by(.pr) | map(.[-1]) | map(select(.outcome=="review-pending" or .outcome=="verify-failed")) | sort_by(.ts) | .[]' "$DATA/runs.jsonl" 2>/dev/null)
+  log "shepherd: 후보 ${#items[@]}건 (한 번에 최대 $SHEPHERD_MAX건, 오늘 \$$(shepherd_spent)/\$$SHEPHERD_DAILY_BUDGET)"
+  for item in "${items[@]}"; do
+    [ "$done_n" -ge "$SHEPHERD_MAX" ] && { log "shepherd: 이번 시간 몫($SHEPHERD_MAX건)을 다 썼다 — 나머지는 다음 시간에"; break; }
+    RUN_ID=""; OUT=""; cause=""; note=""; hold=""
+    n=$(jq -r .project <<<"$item"); pr=$(jq -r .pr <<<"$item"); rid=$(jq -r '.run_id // ""' <<<"$item"); stages=$(jq -c '.stages // {}' <<<"$item"); outcome=$(jq -r .outcome <<<"$item")
+    repo="$ROOT/$n"; [ -d "$repo/.git" ] || continue
+    stopped merge "$n" && continue
+    read -r st head labels mergeable hbr < <(cd "$repo" && gh pr view "$pr" --json state,headRefOid,labels,mergeable,headRefName --jq '"\(.state) \(.headRefOid) \([.labels[].name]|join(",")|if .=="" then "-" else . end) \(.mergeable) \(.headRefName)"' 2>/dev/null || echo "UNKNOWN")
+    [ "$st" = OPEN ] && [ -n "${hbr:-}" ] || continue
+    [[ ",$labels," == *",aidev-rejected,"* ]] && continue
+    base=$(base_branch "$n")
+    if [[ ",$labels," == *",aidev-approved,"* ]]; then
+      # 승인 스윕이 처리한다. 다만 승인 뒤 CI 가 실패해 멈춘 것은 라벨을 떼고 고치는 쪽으로 돌린다
+      [ "$(jq -r '.ci.state // ""' <<<"$stages")" = failed ] || continue
+      (cd "$repo" && gh api -X DELETE "repos/{owner}/{repo}/issues/${pr##*/}/labels/aidev-approved" >/dev/null 2>&1) || true
+      labels="-"; log "$n: PR #${pr##*/} 승인 뒤 CI 실패 — 라벨을 떼고 고친다"
+    fi
+    # 같은 커밋에서 이미 결론을 냈으면 다시 보지 않는다 (사람에게 넘겼거나, 승인했는데 라벨이 사람 손에 떨어진 것)
+    last=$(jq -c --arg pr "$pr" 'select(.pr==$pr)' "$SHEPHERD_LOG" 2>/dev/null | tail -1); [ -n "$last" ] || last='{}'
+    last_action=$(jq -r '.action // ""' <<<"$last"); last_sha=$(jq -r '.sha // ""' <<<"$last")
+    if [ "$last_sha" = "$head" ]; then case "$last_action" in needs-human|approve) continue;; esac; fi
+    # ── 진단: 왜 멈춰 있나
+    gfiles=$(shepherd_guard)
+    if [ "$mergeable" = CONFLICTING ]; then cause=conflict
+    elif [ "$last_action" = review-reject ] && [ "$last_sha" = "$head" ]; then cause=review; note="PR 처리기의 심사가 거절함:
+$(jq -r '.detail' <<<"$last")"
+    elif [ "$(jq -r '.ci.state // ""' <<<"$stages")" = failed ] || [ "$outcome" = verify-failed ]; then cause=ci
+    elif [ "$(jq -r '.review.state // ""' <<<"$stages")" = rejected ] && [ "$last_sha" != "$head" ]; then cause=review; note="독립 리뷰가 거절함:
+$(jq -r '.reasons[]? | "- " + .' "$RUNS/$rid/review.json" 2>/dev/null | head -c 3000)"
+    elif [ -n "$gfiles" ]; then cause=guard
+    elif [ "$(jq -r '.autonomy.state // ""' <<<"$stages")" = held ]; then cause=autonomy
+    elif [ "$(jq -r '.ci.state // ""' <<<"$stages")" = no-ci ]; then cause=no-ci
+    elif [ "$(jq -r '.merge.state // ""' <<<"$stages")" = failed ] || [ "$(jq -r '.rebase.state // ""' <<<"$stages")" = conflict ]; then cause=conflict
+    else cause=review-missing; fi
+    # ── 사람만 할 수 있는 것은 진단만 남기고 넘어간다 (세션을 부르지 않으니 몫도 예산도 쓰지 않는다)
+    autonomy_now=$(autonomy "$n"); tries=$(shepherd_tries "$pr"); never=$(grep -E "$SHEPHERD_NEVER_RE" <<<"$gfiles" || true)
+    if ! autonomy_ge "$autonomy_now" low-risk; then
+      shepherd_note "$pr" "$head" "$cause" needs-human "자율화 단계 $autonomy_now — 이 프로젝트는 사람 승인(aidev-approved)만 받는다"; human=$((human+1)); continue
+    elif [ -n "$never" ]; then
+      shepherd_note "$pr" "$head" "$cause" needs-human "사람만 승인할 수 있는 파일을 건드림: $(tr '\n' ' ' <<<"$never")"; human=$((human+1)); continue
+    elif [ "$cause" = no-ci ]; then
+      shepherd_note "$pr" "$head" "$cause" needs-human "이 커밋에 CI 검사가 없음 — 워크플로를 두거나 state/$n.policy.json 에 allow_merge_without_ci=true 를 적어야 머지된다"; human=$((human+1)); continue
+    elif [ "$tries" -ge "$SHEPHERD_TRIES" ]; then
+      shepherd_note "$pr" "$head" "$cause" needs-human "수정·심사를 ${tries}번 시도했지만 통과하지 못함 — 사람이 봐야 한다"
+      (cd "$repo" && gh pr comment "$pr" --body "🙋 PR 처리기가 ${tries}번 시도했지만 통과시키지 못했습니다. 사람이 봐 주세요 — 직접 고치거나 \`aidev-rejected\` 로 닫아 주세요. 기록: https://hkjang.github.io/aidev/inbox/" >>"$LOG" 2>&1) || true
+      human=$((human+1)); continue
+    fi
+    shepherd_budget_ok "$SHEPHERD_FIX_BUDGET" || { log "shepherd: 오늘 예산 소진 (\$$(shepherd_spent)/\$$SHEPHERD_DAILY_BUDGET) — 여기서 멈춘다"; break; }
+    done_n=$((done_n+1)); new_run "$n" shepherd; RUN_META="{}"; result=""; BASE_SHA=""; HEAD_SHA=$head
+    log "=== shepherd $n PR #${pr##*/} (원인 $cause, run $RUN_ID)"
+    # ── 조치
+    case "$cause" in
+      conflict)
+        rebase_pr "$pr" "$base"
+        read -r head mergeable < <(cd "$repo" && gh pr view "$pr" --json headRefOid,mergeable --jq '"\(.headRefOid) \(.mergeable)"' 2>/dev/null || echo "$head CONFLICTING")
+        if [ "$mergeable" = CONFLICTING ]; then
+          shepherd_note "$pr" "$head" "$cause" needs-human "base 와 충돌하는데 자동 리베이스로 풀리지 않음 — 수동 해결 필요"; human=$((human+1)); rm -rf "$OUT/home"; continue
+        fi
+        shepherd_note "$pr" "$head" "$cause" rebased "base 와 충돌해 리베이스함 (${head:0:7})"; hold="base 와 충돌해 PR 처리기가 리베이스했다 (${head:0:7}). 러너 검증은 다시 통과했다.";;
+      ci)
+        note=$(shepherd_ci_note)
+        if shepherd_fix "$pr" "$hbr" "$note"; then fixed=$((fixed+1)); hold="CI 가 실패해 PR 처리기가 고쳐 올렸다 (${head:0:7}). 원래 실패:
+$(head -c 1500 <<<"$note")"
+        else rm -rf "$OUT/home"; continue; fi;;
+      review)
+        if shepherd_fix "$pr" "$hbr" "$note"; then fixed=$((fixed+1)); hold="이전 심사가 거절해 PR 처리기가 고쳐 올렸다 (${head:0:7}). 거절 사유:
+$(head -c 2500 <<<"$note")"
+        else rm -rf "$OUT/home"; continue; fi;;
+      guard) hold="보호 파일을 건드려 자동 머지가 막혔다 (사람이 보던 자리): $(tr '\n' ' ' <<<"$gfiles")";;
+      autonomy) hold="회차 당시 자율화 단계가 낮아 보류됐다 (지금은 $autonomy_now).";;
+      *) hold="회차 때 리뷰 결과가 없었다 (예산 부족·세션 오류).";;
+    esac
+    [ -n "$gfiles" ] && [ "$cause" != guard ] && hold="$hold
+보호 파일도 건드린다: $(tr '\n' ' ' <<<"$gfiles")"
+    # ── 심사: 사람 대신 결정한다. 통과하면 기존 승인 경로(라벨 + approvals.jsonl)로 넘긴다.
+    shepherd_budget_ok "$SHEPHERD_REVIEW_BUDGET" || { shepherd_note "$pr" "$head" "$cause" review-skipped "오늘 예산 소진 — 심사는 다음 날"; rm -rf "$OUT/home"; break; }
+    if shepherd_review "$pr" "$hbr" "$hold"; then
+      if [ "$SH_RISK" = high ]; then
+        shepherd_note "$pr" "$head" "$cause" needs-human "심사는 승인했지만 risk=high — 머지 여부는 사람이 정한다"
+        (cd "$repo" && gh pr comment "$pr" --body "🧐 PR 처리기 심사: 결함은 못 찾았지만 위험도가 높아(risk=high) 자동 승인하지 않습니다. 확인 후 \`aidev-approved\` 라벨을 달아 주세요.
+
+$(jq -r '.notes[]? | "- " + .' "$OUT/review.json" 2>/dev/null | head -8)
+(run $RUN_ID)" >>"$LOG" 2>&1) || true
+        human=$((human+1))
+      else
+        pv=$(cd "$REPO_DIR" && git log -1 --format=%h -- state/default.policy.json state/default.guard 2>/dev/null)
+        jq -cn --arg ts "$(date -Iseconds)" --arg pr "$pr" --arg sha "$head" --arg pv "$pv" --arg risk "$SH_RISK" --arg rid "$RUN_ID" \
+          '{ts:$ts,pr:$pr,sha:$sha,policy_version:$pv,by:"shepherd",risk:$risk,run_id:$rid}' >> "$STATE/approvals.jsonl"
+        (cd "$repo" && gh label create aidev-approved --color 0E8A16 --description "러너가 CI 확인 후 승인 커밋에만 머지" >/dev/null 2>&1
+         gh pr edit "$pr" --add-label aidev-approved >>"$LOG" 2>&1
+         gh pr comment "$pr" --body "✅ PR 처리기가 심사해 승인합니다 (${head:0:7}, risk=${SH_RISK:-?}) — 러너가 CI 를 확인한 뒤 이 커밋에만 머지하고 릴리즈합니다.
+
+멈춰 있던 이유: $(head -1 <<<"$hold")
+$(jq -r '.notes[]? | "- " + .' "$OUT/review.json" 2>/dev/null | head -8)
+(run $RUN_ID)" >>"$LOG" 2>&1) || true
+        shepherd_note "$pr" "$head" "$cause" approve "risk=${SH_RISK:-?} — $SH_REASON"; approved=$((approved+1))
+      fi
+    else
+      case "$SH_STATE" in
+        rejected)
+          reasons=$(jq -r '.reasons[]? | "- " + .' "$OUT/review.json" 2>/dev/null | head -c 3000)
+          shepherd_note "$pr" "$head" "$cause" review-reject "$reasons"
+          (cd "$repo" && gh pr comment "$pr" --body "🧐 PR 처리기 심사 거절 ($((tries+1))/$SHEPHERD_TRIES) — 다음 시간에 아래 사유를 고쳐 봅니다.
+
+$reasons
+(run $RUN_ID)" >>"$LOG" 2>&1) || true;;
+        *) shepherd_note "$pr" "$head" "$cause" review-invalid "$SH_REASON";;
+      esac
+    fi
+    rm -rf "$OUT/home"
+    [ -f "$OUT/run.json" ] && jq --arg f "$(date -Iseconds)" --arg o "$(jq -r --arg pr "$pr" 'select(.pr==$pr)|.action' "$SHEPHERD_LOG" | tail -1)" '.finished=$f | .outcome=$o' "$OUT/run.json" > "$OUT/run.json.tmp" && mv "$OUT/run.json.tmp" "$OUT/run.json"
+  done
+  log "shepherd: 처리 ${done_n}건 — 승인 $approved · 수정 푸시 $fixed · 사람 필요 $human (오늘 \$$(shepherd_spent)/\$$SHEPHERD_DAILY_BUDGET)"
+  if [ $((done_n+human)) -gt 0 ]; then
+    "$HERE/tg.sh" "🧹 PR 처리기 — 후보 ${#items[@]}건 중 ${done_n}건 처리
+승인 $approved · 수정 푸시 $fixed · 사람 필요 $human · 오늘 \$$(shepherd_spent)/\$$SHEPHERD_DAILY_BUDGET
+승인된 PR 은 승인 스윕이 CI 확인 뒤 머지·릴리즈합니다. 사람 필요는 작업함에: https://hkjang.github.io/aidev/inbox/" >/dev/null 2>&1 &
+  fi
+  # 승인한 것은 바로 스윕에 넘긴다 — CI 확인 뒤 승인 커밋에만 머지하고 릴리즈한다
+  [ "$approved" -gt 0 ] && ! stopped start && approvals
+  [ $((done_n+human)) -gt 0 ] && sync_repo "shepherd($RUN_DATE): ${done_n}건 처리 — 승인 $approved · 수정 $fixed · 사람 필요 $human"
+  return 0
+}
+
 # ================================================================ 단독 모드
 if [ -n "${ASSETS_ONLY:-}" ] || [ -n "${RELEASE_ONLY:-}" ]; then
   if [ -n "${ASSETS_ONLY:-}" ]; then n=${ASSETS_ONLY%%:*}; ASSETS_TAG=""; [[ "$ASSETS_ONLY" == *:* ]] && ASSETS_TAG=${ASSETS_ONLY#*:}; kind=assets; else n=$RELEASE_ONLY; kind=release; fi
@@ -1038,6 +1266,13 @@ if [ -n "${ASSETS_ONLY:-}" ] || [ -n "${RELEASE_ONLY:-}" ]; then
   new_run "$n" "$kind"; log "=== $n $kind-only (base=$base, run $RUN_ID)"
   if [ "$kind" = assets ]; then release_project "$base" "(자산 보충)" assets; else release_project "$base" "$(tail -n 8 "$STATE/$n.md" 2>/dev/null)"; fi
   rm -rf "$OUT/home"; record_run "$n" "$result" "${OUTCOME:-error}"; sync_repo "run($RUN_DATE): $n — $result"; log "done"; exit 0
+fi
+
+# PR 처리기 전용 트랙 — 일일 상한을 우회한다(자체 예산으로 막는다). 새 회차는 열지 않는다.
+if [ "${SHEPHERD:-0}" -eq 1 ]; then
+  [ -f "$STATE/NO-SHEPHERD" ] && { log "NO-SHEPHERD — PR 처리기 중지 상태"; exit 0; }
+  stopped start && { log "전체 중지 상태 — PR 처리기를 돌리지 않는다"; exit 0; }
+  shepherd; log "done"; exit 0
 fi
 
 # ================================================================ 일일 상한 · 큐 · 후보
@@ -1106,6 +1341,12 @@ if [ $DRY -eq 0 ]; then
   # 캠페인만 도는 회차에서도 쓸어 담는다. 승인 머지는 캠페인 예산을 쓰지 않고,
   # 빼 두면 캠페인이 도는 동안 승인된 PR 이 계속 쌓이기만 했다.
   [ -z "$ONLY" ] && approvals
+  # 예약된 PR 처리기(bin/shepherd.sh, 매시간)가 SHEPHERD_INLINE_AFTER_MIN 분 넘게 돌지 않았으면
+  # 회차가 대신 한 번 돌린다 — 작업 스케줄러가 죽어도 검토 대기 PR 이 쌓이지만 않게.
+  if [ -z "$ONLY" ] && [ -z "${AIDEV_SIM:-}" ] && [ ! -f "$STATE/NO-SHEPHERD" ] \
+     && [ $(( $(date +%s) - $(stat -c %Y "$STATE/.shepherd-last" 2>/dev/null || echo 0) )) -gt $(( ${SHEPHERD_INLINE_AFTER_MIN:-120} * 60 )) ]; then
+    log "shepherd: 예약 실행이 ${SHEPHERD_INLINE_AFTER_MIN:-120}분 넘게 없어 회차 안에서 돌린다"; shepherd
+  fi
 fi
 
 candidates=(); since=$(date -d "-$DAYS days" +%s); touch "$STATE/fix-queue.tsv" "$STATE/run-queue.tsv"

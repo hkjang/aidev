@@ -387,6 +387,49 @@ def campaigns_html(camps, runs_all, usage_all):
     return "".join(out)
 
 
+# ---------- PR 처리기(shepherd) ----------
+SHEPHERD_ACTION_KO = {"approve": "승인 → 스윕이 CI 확인 후 머지", "needs-human": "사람 필요", "review-reject": "심사 거절 → 다음 시간에 수정",
+                      "review-invalid": "심사 결과 없음 → 다시 시도", "review-skipped": "예산 소진 → 다음 날", "fix-pushed": "수정 푸시 → 심사",
+                      "fix-failed": "수정 실패 → 다음 시간에 재시도", "rebased": "리베이스 → 심사"}
+SHEPHERD_CAUSE_KO = {"guard": "보호 파일", "review": "리뷰 거절", "ci": "CI 실패", "conflict": "충돌", "autonomy": "자율화 보류", "no-ci": "CI 없음", "review-missing": "리뷰 없음"}
+
+
+def shepherd_log():
+    return load_jsonl(os.path.join(STATE, "shepherd.jsonl"))
+
+
+def shepherd_latest():
+    """PR → PR 처리기의 마지막 기록."""
+    out = {}
+    for r in shepherd_log():
+        if r.get("pr"):
+            out[r["pr"]] = r
+    return out
+
+
+def shepherd_line(sh):
+    if not sh:
+        return ""
+    return (f"{SHEPHERD_CAUSE_KO.get(sh.get('cause'), sh.get('cause', ''))} · {SHEPHERD_ACTION_KO.get(sh.get('action'), sh.get('action', ''))}"
+            f" ({(sh.get('ts') or '')[5:16].replace('T', ' ')}) — {(sh.get('detail') or '')[:160]}")
+
+
+def shepherd_summary():
+    rows = shepherd_log()
+    today = date.today().isoformat()
+    t = [r for r in rows if r.get("date") == today]
+    counts = defaultdict(int)
+    for r in t:
+        counts[r.get("action") or "?"] += 1
+    stamp = ""
+    try:
+        stamp = open(os.path.join(STATE, ".shepherd-last"), encoding="utf-8").read().strip()
+    except Exception:
+        pass
+    return {"last_pass": stamp, "enabled": not os.path.exists(os.path.join(STATE, "NO-SHEPHERD")), "today": dict(counts), "total": len(rows),
+            "pending_human": sum(1 for r in shepherd_latest().values() if r.get("action") == "needs-human")}
+
+
 def stops():
     out = []
     for f in sorted(os.listdir(STATE)) if os.path.isdir(STATE) else []:
@@ -960,6 +1003,7 @@ def inbox_items(by_day, days, alert_items):
     """사람이 판단해야 할 것: 열린 러너 PR(리뷰 보류·보호 파일·CI 실패·승인 대기), 배포 복구 이슈, 수정 큐."""
     items = []
     seen = set()
+    shep = shepherd_latest()
     cutoff = (date.today() - timedelta(days=14)).isoformat()
     for d in days:
         if d < cutoff:
@@ -977,9 +1021,19 @@ def inbox_items(by_day, days, alert_items):
                             if v.get("state") in ("held", "rejected", "failed", "no-ci", "pending", "timeout", "invalid", "missing", "conflict", "stopped") or k in ("guard", "review", "ci"))
             labels = ",".join(l.get("name", "") for l in info.get("labels", []))
             rec = "승인: PR 라벨 aidev-approved / 반려: aidev-rejected — 다음 회차에 러너가 승인 당시 커밋에만 CI 확인 후 머지·닫기"
+            sh = shep.get(pr)
+            if sh and sh.get("action") == "needs-human":
+                rec = f"PR 처리기가 사람에게 넘김 — {(sh.get('detail') or '')[:200]} · {rec}"
+            elif sh and sh.get("action") == "approve":
+                rec = "PR 처리기가 승인함 — 승인 스윕이 CI 확인 뒤 머지·릴리즈 (아직 열려 있으면 CI 를 기다리는 중)"
+            elif sh:
+                rec = f"PR 처리기가 다음 시간에 다시 시도 · {rec}"
+            else:
+                rec = f"PR 처리기가 매시간 살핀다 (아직 순서가 오지 않음) · {rec}"
             items.append({"kind": "PR", "project": r.get("project"), "title": info.get("title", ""), "url": pr, "sha": (info.get("headRefOid") or "")[:7],
                           "summary": f"{info.get('changedFiles', '?')}파일 +{info.get('additions', '?')}/−{info.get('deletions', '?')} · {(r.get('result') or '')[:90]}",
-                          "why": why or (r.get("result") or ""), "evidence": f"{GH}/aidev/tree/main/state/runs/{r.get('run_id', '')}", "labels": labels, "action": rec, "date": d})
+                          "why": why or (r.get("result") or ""), "evidence": f"{GH}/aidev/tree/main/state/runs/{r.get('run_id', '')}", "labels": labels, "action": rec, "date": d,
+                          "shepherd": shepherd_line(sh), "shepherd_action": (sh or {}).get("action", "")})
     for it in gh_json(["issue", "list", "-R", "hkjang/aidev", "--label", "deploy-recovery", "--state", "open", "--json", "number,title,url,createdAt"]) or []:
         items.append({"kind": "배포 복구", "project": re.sub(r"^.*?: ", "", it["title"]).split(" ")[0], "title": it["title"], "url": it["url"], "sha": "",
                       "summary": "이전 정상 릴리즈로 운영 복귀 여부 결정", "why": "롤백 PR 과 별개로 운영 환경 복구가 필요할 수 있음", "evidence": it["url"], "labels": "", "action": "이슈 안내대로 복구 후 이슈 닫기", "date": it["createdAt"][:10]})
@@ -1001,15 +1055,24 @@ def write_inbox(items, alert_items):
     lines.append("- **승인**: PR 에 라벨 `aidev-approved` → 다음 회차 시작 시 러너가 승인 당시 커밋(SHA)을 기록하고, CI 성공을 확인한 뒤 **그 커밋에만** 머지합니다. 승인 뒤 커밋이 바뀌면 라벨을 떼고 다시 물어봅니다. 승인은 정책 버전과 함께 `state/approvals.jsonl` 에 남습니다.\n"
                  "- **반려**: 라벨 `aidev-rejected` → PR 을 닫고 교훈으로 기록합니다.\n"
                  "- **재실행**: [수동 작업 요청 이슈](https://github.com/hkjang/aidev/issues/new?template=run.yml)로 문제·수용 기준·금지 범위를 적어 요청합니다.\n"
-                 "- **긴급 중지**: `bin/stop.sh all|merge|release|<프로젝트> on \"사유\"` 또는 라벨 `stop`, 제목 `stop: <범위>` 이슈.\n")
+                 "- **긴급 중지**: `bin/stop.sh all|merge|release|<프로젝트> on \"사유\"` 또는 라벨 `stop`, 제목 `stop: <범위>` 이슈.\n"
+                 "- **PR 처리기**: 매시간 `bin/shepherd.sh` 가 검토 대기 PR 을 진단해 충돌은 리베이스, CI 실패·리뷰 거절은 고쳐 올리고, 엄격 심사를 통과하면 사람 대신 승인합니다. "
+                 "워크플로·비밀값·결제·LICENSE 를 건드린 PR, 자율화 단계 approve 이하, 심사 risk=high, 2회 실패는 사람 몫으로 남깁니다(아래 표 'PR 처리기' 열). 끄기: `state/NO-SHEPHERD`.\n")
+    sh = shepherd_summary()
+    if sh["total"] or sh["last_pass"]:
+        t = sh["today"]
+        lines.append(f'<p class="meta">🧹 PR 처리기 {"켜짐" if sh["enabled"] else "꺼짐(NO-SHEPHERD)"} · 마지막 실행 {esc(sh["last_pass"][:16].replace("T", " ") or "아직 없음")} · '
+                     f'오늘 승인 {t.get("approve", 0)} · 수정 푸시 {t.get("fix-pushed", 0)} · 리베이스 {t.get("rebased", 0)} · 심사 거절 {t.get("review-reject", 0)} · 수정 실패 {t.get("fix-failed", 0)} · 사람 필요 {t.get("needs-human", 0)}</p>\n')
     if items:
         rows = []
-        for it in items:
-            rows.append(("failed" if it["kind"] == "배포 복구" else "merged",
+        for it in sorted(items, key=lambda x: (x.get("shepherd_action") != "needs-human", x["kind"] != "PR")):
+            rows.append(("failed" if it["kind"] == "배포 복구" or it.get("shepherd_action") == "needs-human" else ("released" if it.get("shepherd_action") == "approve" else "merged"),
                          [esc(it["kind"]), f'<a href="{SITE}/projects/{esc(it["project"])}/">{esc(it["project"])}</a> {autonomy_html(it["project"])}',
                           f'<a href="{esc(it["url"])}">{esc(it["title"])}</a>' + (f' <code>{esc(it["sha"])}</code>' if it["sha"] else "") + (f' <span class="meta">[{esc(it["labels"])}]</span>' if it["labels"] else ""),
-                          esc(it["summary"]), esc(it["why"]) + (f' · <a href="{esc(it["evidence"])}">증거</a>' if it["evidence"] else ""), esc(it["action"])]))
-        lines.append(table([("종류", ""), ("프로젝트", "primary"), ("항목", ""), ("변경 요약", ""), ("근거", ""), ("권장 조치", "")], rows, filterable=len(rows) > 6))
+                          esc(it["summary"]), esc(it["why"]) + (f' · <a href="{esc(it["evidence"])}">증거</a>' if it["evidence"] else ""),
+                          esc(it.get("shepherd") or "—"), esc(it["action"])]))
+        lines.append(table([("종류", ""), ("프로젝트", "primary"), ("항목", ""), ("변경 요약", ""), ("근거", ""), ("PR 처리기", ""), ("권장 조치", "")], rows, filterable=len(rows) > 6,
+                           caption="'사람 필요' 로 넘어온 항목이 위에 온다. 나머지 PR 은 처리기가 매시간 순서대로 살핀다."))
     else:
         lines.append('<div class="alerts ok" role="status"><strong>✅ 비어 있음</strong> — 사람이 판단할 항목이 없습니다.</div>\n')
     if alert_items:
@@ -1040,6 +1103,8 @@ FAQ = [
      "머지 2시간 뒤부터 main CI 실패와 되돌림 커밋을 확인해 '교훈'으로 기록하고, 그 프로젝트의 다음 회차 프롬프트에 주입해 같은 실수를 피하게 합니다. 릴리즈 워크플로가 반복 실패하고 수정 회차도 실패하면 원래 머지를 되돌리는 롤백 PR 을 자동으로 엽니다(머지는 사람). 프로젝트마다 최근 14일의 실패·경고·회귀로 건강 등급 A~D 를 매깁니다."),
     ("자율화 단계란 무엇인가요?",
      "프로젝트마다 러너 권한을 '분석만 → PR 생성 → 승인 후 병합 → 저위험 자동 병합 → 검증된 릴리즈 게시' 다섯 단계로 나눕니다. 단계를 올리는 것은 사람이 정책 파일(state/<프로젝트>.policy.json 의 autonomy)을 고쳐야 하고, 롤백이나 회귀가 생기면 러너가 한 단계 내립니다(⬇ 표시). 작업함에서 승인(aidev-approved)·반려(aidev-rejected) 라벨로 개별 PR 을 처리할 수 있습니다."),
+    ("검토 대기로 멈춘 PR 은 누가 처리하나요?",
+     "PR 처리기(bin/shepherd.sh)가 매시간 살핍니다. 왜 멈췄는지(보호 파일·리뷰 거절·CI 실패·충돌·자율화 보류)를 진단해 충돌은 리베이스하고, CI 실패와 리뷰 거절은 PR 브랜치 위에서 고쳐 검증 뒤 올리며, 사람 대신 엄격한 심사 세션을 돌려 통과하면 aidev-approved 라벨을 답니다. 그 뒤는 평소 승인 경로와 같아 CI 확인 뒤 승인 커밋에만 머지하고 릴리즈합니다. 워크플로·비밀값·결제·LICENSE 를 건드린 PR, 자율화 단계가 approve 이하인 프로젝트, 심사 위험도 high, 두 번 고쳐도 안 되는 PR 은 손대지 않고 작업함에 '사람 필요' 로 남깁니다. state/NO-SHEPHERD 파일을 만들면 멈춥니다."),
     ("긴급히 멈추려면?",
      "bin/stop.sh all|merge|release|<프로젝트> on \"사유\" 또는 aidev 저장소에 라벨 stop, 제목 stop: <범위> 이슈를 만들면 됩니다. 새 회차 시작뿐 아니라 진행 중인 회차도 에이전트 시작 전·머지 전·릴리즈 전 경계에서 멈춥니다."),
     ("비용은 어떻게 계산되나요?",
@@ -1080,7 +1145,11 @@ def write_index(by_day, days, by_day_usage, projects_info, alert_items, weeks, m
              f'(마지막 갱신 <time datetime="{NOW.isoformat(timespec="seconds")}" data-rel>{NOW.strftime("%Y-%m-%d %H:%M")}</time> KST).</p>\n',
              alerts_html(alert_items), health_html(health(), lessons),
              ('<div class="alerts" role="alert"><strong>⛔ 긴급 중지 중:</strong> ' + ", ".join(f"<code>{esc(x['scope'])}</code>" for x in stops()) + f' — <a href="{SITE}/inbox/">작업함</a></div>\n') if stops() else "",
-             f'<p><a href="{SITE}/inbox/"><strong>📥 작업함</strong></a> — 사람 판단이 필요한 PR·복구·수정 과제 {len(inbox_cache)}건</p>\n',
+             f'<p><a href="{SITE}/inbox/"><strong>📥 작업함</strong></a> — 열린 러너 PR·복구·수정 과제 {len(inbox_cache)}건'
+             f' (그중 사람 필요 {sum(1 for x in inbox_cache if x.get("shepherd_action") == "needs-human" or x["kind"] != "PR")}건)</p>\n',
+             (lambda sh: f'<p>🧹 <strong>PR 처리기</strong> — {"매시간 검토 대기 PR 을 진단해 고치고 심사해 승인" if sh["enabled"] else "꺼짐 (state/NO-SHEPHERD)"} · '
+                         f'마지막 실행 {esc(sh["last_pass"][:16].replace("T", " ") or "아직 없음")} · 오늘 승인 {sh["today"].get("approve", 0)} · 수정 푸시 {sh["today"].get("fix-pushed", 0)} · '
+                         f'사람 필요 {sh["today"].get("needs-human", 0)} <span class="meta">(기록: state/shepherd.jsonl)</span></p>\n')(shepherd_summary()),
              f"[운영 문서]({GH}/aidev#readme) · [원장]({GH}/aidev/tree/main/state) · [실행 이력]({GH}/aidev/commits/main) · [경고 이슈]({GH}/aidev/issues?q=label%3Aalert) · "
              f"[교훈 {len(lessons)}건]({SITE}/lessons/) · [Atom 피드]({SITE}/feed.xml) · [summary.json]({SITE}/data/summary.json)\n",
              f"## 오늘 ({today})\n"]
@@ -1202,7 +1271,7 @@ def main():
                "totals": {"runs": total_runs, "released": total_rel, "days": len(days), "cost_usd": round(all_u["cost"], 2),
                           "minutes": round(all_u["minutes"]), "tokens_in": int(all_u["in"]), "tokens_out": int(all_u["out"])},
                "alerts": alert_items, "fix_queue": fix_queue(), "health": health(), "lessons": lessons[-50:], "caps": caps(),
-               "inbox": inbox_cache, "stops": stops(), "campaigns": campaigns(),
+               "inbox": inbox_cache, "stops": stops(), "campaigns": campaigns(), "shepherd": shepherd_summary(),
                "campaign_progress": [{"id": cmp.get("id"), "done": bool(cmp.get("done")), "until": cmp.get("until"), "budget_usd": cmp.get("budget_usd"),
                                       "spent_usd": round(sum(float(x.get("cost_usd") or 0) for v in by_day_usage.values() for x in v if x.get("campaign") == cmp.get("id")), 2),
                                       **{k: pg[k] for k in ("total", "processed", "pct", "runs", "last_ts")}, "counts": dict(pg["counts"]),
