@@ -1,0 +1,19 @@
+{
+  "verdict": "reject",
+  "recommend": "fix",
+  "reasons": [
+    "internal/mail/mail.go:223 loginAuth.Start 의 조건 `!server.TLS && server.Name != a.host` 는 항상 거짓입니다. dial()(mail.go:164)이 smtp.NewClient(conn, config.Host) 로 server.Name 을 config.Host 로 두고, a.host 도 같은 config.Host 이므로 TLS 없는 연결에서도 LOGIN 이 그대로 진행됩니다. 실제로 확인했습니다: 이름이 relay.internal 이고 STARTTLS 없이 `250 AUTH LOGIN` 만 광고하는 가짜 릴레이에 startSession(Security=none, Username/Password 설정) 을 돌리면 릴레이가 `AUTH LOGIN|c3Zj|czNjcmV0LXB3`(= base64 'svc' / 's3cret-pw') 를 평문으로 받습니다. 판정은 server.TLS 만으로 하거나(평문이면 거부), 평문 인증을 허용하는 정책이라면 명시적으로 문서화하고 그 정책대로 일관되게 동작해야 합니다.",
+    "internal/mail/mail.go:197-200 같은 평문·비-localhost 릴레이에서 PLAIN 을 광고하면 표준 smtp.PlainAuth 가 'unencrypted connection' 으로 무조건 실패하고(확인함), LOGIN 을 광고하면 비밀번호가 평문으로 나갑니다. 릴레이가 어떤 메커니즘을 광고하느냐에 따라 '인증 불가'와 '비밀번호 평문 유출'로 갈리는데 어느 쪽도 의도된 정책이 아닙니다. docs/ADMIN_GUIDE.md 4.6 의 mail.security(`none`)·mail.username/password 행에 'TLS 없는 연결에서 자격증명을 보내는가' 에 대한 정책이 없습니다. 정책을 먼저 문서에 정하고(권장: TLS 없는 연결에서는 PLAIN/LOGIN 모두 거부하고 ErrInvalid 로 'TLS 없이는 인증하지 않습니다. starttls/tls 를 쓰거나 사용자 이름을 비우세요' 를 돌려주기; CRAM-MD5 는 허용 가능), PLAIN 과 LOGIN 이 같은 판정을 쓰게 하세요.",
+    "internal/mail/service.go:139,155 deliver() 는 발송용 ctx(예산 2×Timeout+15s)를 그대로 ledger.CompleteMailDelivery 에 넘깁니다. 최악 발송 시간은 예산을 넘습니다: 시도 1회 = DialContext(dialer Timeout, mail.go:149) 최대 T + 접속 후 절대 마감 SetDeadline(now+T)(mail.go:163) 최대 T = 2T, 두 번 시도 + 2s 대기 = 4T+2. 기본 T=10s 면 42s > 35s 예산이고, 세션 단계(EHLO/MAIL/RCPT/DATA)는 ctx 를 보지 않고 conn 마감만 따르므로 ctx 가 만료된 뒤에도 send 가 계속 돌다 돌아옵니다. 그 뒤 complete(ctx) 의 UPDATE 가 'context deadline exceeded' 로 실패하고 행이 영원히 `queued` 로 남습니다. ctx 를 존중하는 ledger + 예산보다 오래 붙잡는 sender 로 재현해 확인했습니다(로그 'mail delivery status was not recorded error=context deadline exceeded', 행 Status:queued Attempts:0). 기록은 context.Background() 기반의 짧은 별도 ctx(예: 5s)로 하세요.",
+    "internal/mail/service.go:129-132 SendNow 도 같은 문제입니다. 예산 Timeout+5s(기본 15s) 인데 한 번 시도의 최악은 dial T + 세션 T = 2T = 20s 라서(SYN 재전송으로 7s 만에 붙고 세션이 침묵하면 17s), 시험 발송이 화면에는 실패로 뜨지만 발송 기록에는 `queued` 로 남습니다. 기록 ctx 를 분리하고, 발송 예산은 최악 발송 시간보다 크게 잡으세요(또는 세션 마감을 ctx 마감과 맞추세요).",
+    "internal/mail/mail_test.go:193-215 memLedger 가 ctx 를 무시해 위 결함이 테스트를 그대로 통과합니다. 또한 fakeRelay 는 127.0.0.1 + AUTH 없음만 다루고, 'Accept 후 침묵'하는 릴레이로 실제 Deliver/deliver 를 태우는 테스트와 비-localhost 이름·평문·AUTH 광고 릴레이에서 실제 전송 내용을 확인하는 테스트가 없습니다. (a) ctx.Err() 를 검사하는 ledger + 침묵 릴레이로 '두 번 시도 후 failed 로 기록됨'을, (b) 비-localhost 이름의 평문 릴레이가 AUTH LOGIN/PLAIN 을 광고할 때 비밀번호가 전송되지 않고 정해진 오류가 나는 것을 각각 실제 조건으로 단언하세요."
+  ],
+  "notes": [
+    "이전 거절 사유 3건은 모두 고쳐졌고 소스로 확인했습니다: 링크 경로 '/admin#/safety', '/admin#/changesets' 는 admin_ui.go parseHash(1342,1361)와 renderSafety(승인 대기열·알림 규칙 렌더)에 실제로 존재; approval.requested 는 요청자(UserID→APIKeyID) 단위 10분 창으로 억제되고 /v1/chat/completions 재시도 3회 통합 테스트로 검증됨; 승인 결과 메일 본문은 X-Governance-Approval-ID 헤더 재전송을 안내하고 governance.go:511 의 게이트 동작과 일치.",
+    "정상 확인: 기본값 mail.enabled=false 로 새 설치에서 아무것도 바뀌지 않음; 새 경로 3개 모두 requireAdminAuthorization 뒤에 있음; 비밀번호는 설정 API·status 응답에 실리지 않음(테스트 있음); 마이그레이션은 CREATE TABLE/INDEX IF NOT EXISTS 추가만; approval.decided/change_set.submitted 는 pending 상태 검사 뒤에만 발화해 before→after 전이 조건 충족; 프론트 apiRequest 는 error.message 를 파싱하고 시험 발송 onSettled 에서 발송 기록을 갱신함; go vet 통과, internal/mail·internal/proxy 메일 관련 테스트 통과.",
+    "발송 고루틴 상한(MaxInFlight=64)은 '대기'가 아니라 즉시 failed(ErrBusy) 로 기록하는 방식입니다. 캠페인 규칙의 '대기시키되' 와 다르지만 무한 적체를 막는 목적은 달성하고 문서(ADMIN_GUIDE 4.6)와 일치하므로 거절 사유로 두지 않았습니다. 다만 죽은 릴레이에서 64통 이후의 알림이 곧바로 유실되는 설계라는 점은 알아 두세요.",
+    "경미: notifyApprovalRequested 는 관리자 수신자가 없거나 발송이 실패해도 요청자의 10분 창을 소비합니다. runMailDigest 는 파드 두 개가 같은 틱에 COUNT=0 을 읽으면 둘 다 보낼 수 있어 문서의 '파드가 여럿이어도 두 번 보내지 않음' 은 엄밀히는 보장이 아닙니다. 둘 다 이번 수정에 꼭 포함할 필요는 없습니다.",
+    "검증 중 임시 프로브 테스트 파일을 만들어 실행한 뒤 삭제했으며 작업 트리는 깨끗합니다."
+  ],
+  "risk": "medium"
+}
