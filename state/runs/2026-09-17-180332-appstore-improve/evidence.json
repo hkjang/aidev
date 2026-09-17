@@ -1,0 +1,170 @@
+{
+  "run_id": "2026-09-17-180332-appstore-improve",
+  "generated": "2026-09-17T18:23:51+09:00",
+  "run": {
+    "run_id": "2026-09-17-180332-appstore-improve",
+    "project": "appstore",
+    "kind": "improve",
+    "started": "2026-09-17T18:03:33+09:00",
+    "model": "claude-opus-5",
+    "policy_version": "78619c0e",
+    "prompts_hash": "82f2440d4b2fef65",
+    "runner_version": "e4b56484",
+    "finished": "2026-09-17T18:23:51+09:00",
+    "outcome": "review-pending"
+  },
+  "record": {
+    "ts": "2026-09-17T18:23:51+09:00",
+    "date": "2026-09-17",
+    "project": "appstore",
+    "result": "guarded files, PR open https://github.com/hkjang/appstore/pull/23",
+    "outcome": "review-pending",
+    "run_id": "2026-09-17-180332-appstore-improve",
+    "base_sha": "b3323ffad38e335d81d98f2019354a7b38b084e2",
+    "head_sha": "d74df7755a17e8735fdc6756486dd05fe3c44ef3",
+    "pr": "https://github.com/hkjang/appstore/pull/23",
+    "stages": {
+      "base": {
+        "state": "pinned",
+        "reason": "main@b3323ff",
+        "at": "2026-09-17T18:03:39+09:00"
+      },
+      "autonomy": {
+        "state": "release",
+        "reason": "",
+        "at": "2026-09-17T18:03:39+09:00"
+      },
+      "verify": {
+        "state": "passed",
+        "reason": "검증 7개 통과 (auto)",
+        "at": "2026-09-17T18:23:40+09:00"
+      },
+      "pr": {
+        "state": "created",
+        "reason": "https://github.com/hkjang/appstore/pull/23",
+        "at": "2026-09-17T18:23:49+09:00"
+      },
+      "guard": {
+        "state": "held-expected",
+        "reason": "internal/auth/access_token.go internal/auth/access_token_test.go internal/auth/authtest/idp.go ",
+        "at": "2026-09-17T18:23:49+09:00"
+      }
+    },
+    "campaign": "mcp-oauth-2026-09",
+    "autonomy": "release",
+    "files": 23,
+    "additions": 1806,
+    "deletions": 19,
+    "tests": 5,
+    "title": "feat: let a Keycloak access token open /mcp beside the personal key"
+  },
+  "stages": {
+    "base": {
+      "state": "pinned",
+      "reason": "main@b3323ff",
+      "at": "2026-09-17T18:03:39+09:00"
+    },
+    "autonomy": {
+      "state": "release",
+      "reason": "",
+      "at": "2026-09-17T18:03:39+09:00"
+    },
+    "verify": {
+      "state": "passed",
+      "reason": "검증 7개 통과 (auto)",
+      "at": "2026-09-17T18:23:40+09:00"
+    },
+    "pr": {
+      "state": "created",
+      "reason": "https://github.com/hkjang/appstore/pull/23",
+      "at": "2026-09-17T18:23:49+09:00"
+    },
+    "guard": {
+      "state": "held-expected",
+      "reason": "internal/auth/access_token.go internal/auth/access_token_test.go internal/auth/authtest/idp.go ",
+      "at": "2026-09-17T18:23:49+09:00"
+    }
+  },
+  "provenance": {
+    "model": "claude-opus-5",
+    "policy_version": "78619c0e",
+    "prompts_hash": "82f2440d4b2fef65",
+    "runner_version": "e4b56484",
+    "base_sha": "b3323ffad38e335d81d98f2019354a7b38b084e2",
+    "head_sha": "d74df7755a17e8735fdc6756486dd05fe3c44ef3",
+    "pr": "https://github.com/hkjang/appstore/pull/23"
+  },
+  "verification": {
+    "runner": {
+      "source": "auto",
+      "commands": [
+        {
+          "cmd": "go build ./...",
+          "exit": 0,
+          "seconds": 1
+        },
+        {
+          "cmd": "go vet ./...",
+          "exit": 0,
+          "seconds": 0
+        },
+        {
+          "cmd": "go test ./...",
+          "exit": 0,
+          "seconds": 2
+        },
+        {
+          "cmd": "cd web && [ -d node_modules ] || npm ci --no-audit --no-fund",
+          "exit": 0,
+          "seconds": 0
+        },
+        {
+          "cmd": "cd web && npm test --silent",
+          "exit": 0,
+          "seconds": 1
+        },
+        {
+          "cmd": "cd web && [ -d node_modules ] || npm ci --no-audit --no-fund",
+          "exit": 0,
+          "seconds": 0
+        },
+        {
+          "cmd": "cd web && npm run build --silent",
+          "exit": 0,
+          "seconds": 4
+        }
+      ]
+    },
+    "runner_gate": {
+      "ok": true,
+      "state": "verified",
+      "reason": "검증 7개 통과 (auto)"
+    },
+    "after_rebase": null,
+    "review": null,
+    "ci_gate": null
+  },
+  "release": {
+    "result": null,
+    "assets_sha256": []
+  },
+  "approval": null,
+  "usage": [
+    {
+      "ts": "2026-09-17T18:23:29+09:00",
+      "date": "2026-09-17",
+      "project": "appstore",
+      "phase": "improve",
+      "run_id": "2026-09-17-180332-appstore-improve",
+      "campaign": "mcp-oauth-2026-09",
+      "subtype": "success",
+      "duration_ms": 1210853,
+      "num_turns": 103,
+      "cost_usd": 14.37618699999999,
+      "input_tokens": 206,
+      "output_tokens": 89694,
+      "cache_read": 18942428,
+      "cache_create": 264109
+    }
+  ]
+}
