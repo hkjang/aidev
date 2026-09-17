@@ -1,0 +1,191 @@
+{
+  "run_id": "2026-09-18-065350-madi-improve",
+  "generated": "2026-09-18T07:18:47+09:00",
+  "run": {
+    "run_id": "2026-09-18-065350-madi-improve",
+    "project": "madi",
+    "kind": "improve",
+    "started": "2026-09-18T06:53:50+09:00",
+    "model": "claude-opus-5",
+    "policy_version": "78619c0e",
+    "prompts_hash": "90b6639bc42c5800",
+    "runner_version": "e4b56484",
+    "finished": "2026-09-18T07:18:47+09:00",
+    "outcome": "review-pending"
+  },
+  "record": {
+    "ts": "2026-09-18T07:18:47+09:00",
+    "date": "2026-09-18",
+    "project": "madi",
+    "result": "review held, PR open https://github.com/hkjang/madi/pull/6",
+    "outcome": "review-pending",
+    "run_id": "2026-09-18-065350-madi-improve",
+    "base_sha": "fd2c3b5816080869c431d60366f1c696a17d2aa9",
+    "head_sha": "af8e021b666bd5711600bf4d1a42794d5dfc3095",
+    "pr": "https://github.com/hkjang/madi/pull/6",
+    "stages": {
+      "base": {
+        "state": "pinned",
+        "reason": "main@fd2c3b5",
+        "at": "2026-09-18T06:53:54+09:00"
+      },
+      "autonomy": {
+        "state": "release",
+        "reason": "",
+        "at": "2026-09-18T06:53:54+09:00"
+      },
+      "verify": {
+        "state": "passed",
+        "reason": "검증 5개 통과 (auto)",
+        "at": "2026-09-18T07:14:17+09:00"
+      },
+      "pr": {
+        "state": "created",
+        "reason": "https://github.com/hkjang/madi/pull/6",
+        "at": "2026-09-18T07:14:23+09:00"
+      },
+      "review": {
+        "state": "rejected",
+        "reason": "리뷰 거절: internal/server/knowledge_package.go:506 `if current(r).TokenID != \"\"` 는 '외부 에이전트(bearer)에는 package 본문을 감추고 export_required 로 안내' 하는 게이트인데 OAuthSubject 원칙(TokenID==\"\")을 포함하도록 갱신되지 않았다. 같은 파일 packagePrincipal(128행)은 `|| initial.OAuthSubject != \"\"` 로 고쳤지만 이 분기는 누락. 결과: SSO 토큰으로 /mcp 에 붙은 클라이언트가 inspect_knowledge_package 를 호출하면 quotes(문서 원문)·prompt 를 포함한 package 전체가 반환되고 export_count 증가·target/consent 확인을 모두 우회한다. madi-review-pg(127.0.0.1:55450)에서 임시 테스트로 실행해 확인함: SSO create_knowledge_package → inspect_knowledge_package 응답에 원문 마커 포함, export_required 없음, export_count=0. 이는 도구 설명('원문은 반환하지 않습니다')과 커밋 메시지의 '키와 동일한 범위로 동작' 주장에 어긋나며, 같은 scope 의 madi_ 키보다 SSO 토큰이 더 넓은 권한을 갖게 되는 인증 변경상의 결함이다. 새 테스트(integrations_mcp_oauth_test.go)는 knowledge package 도구를 SSO 경로로 실행하지 않아 이를 잡지 못한다.",
+        "at": "2026-09-18T07:18:45+09:00"
+      }
+    },
+    "campaign": "mcp-oauth-2026-09",
+    "autonomy": "release",
+    "files": 17,
+    "additions": 1292,
+    "deletions": 14,
+    "tests": 1,
+    "title": "feat: accept Keycloak access tokens on /mcp (MCP OAuth resource server)"
+  },
+  "stages": {
+    "base": {
+      "state": "pinned",
+      "reason": "main@fd2c3b5",
+      "at": "2026-09-18T06:53:54+09:00"
+    },
+    "autonomy": {
+      "state": "release",
+      "reason": "",
+      "at": "2026-09-18T06:53:54+09:00"
+    },
+    "verify": {
+      "state": "passed",
+      "reason": "검증 5개 통과 (auto)",
+      "at": "2026-09-18T07:14:17+09:00"
+    },
+    "pr": {
+      "state": "created",
+      "reason": "https://github.com/hkjang/madi/pull/6",
+      "at": "2026-09-18T07:14:23+09:00"
+    },
+    "review": {
+      "state": "rejected",
+      "reason": "리뷰 거절: internal/server/knowledge_package.go:506 `if current(r).TokenID != \"\"` 는 '외부 에이전트(bearer)에는 package 본문을 감추고 export_required 로 안내' 하는 게이트인데 OAuthSubject 원칙(TokenID==\"\")을 포함하도록 갱신되지 않았다. 같은 파일 packagePrincipal(128행)은 `|| initial.OAuthSubject != \"\"` 로 고쳤지만 이 분기는 누락. 결과: SSO 토큰으로 /mcp 에 붙은 클라이언트가 inspect_knowledge_package 를 호출하면 quotes(문서 원문)·prompt 를 포함한 package 전체가 반환되고 export_count 증가·target/consent 확인을 모두 우회한다. madi-review-pg(127.0.0.1:55450)에서 임시 테스트로 실행해 확인함: SSO create_knowledge_package → inspect_knowledge_package 응답에 원문 마커 포함, export_required 없음, export_count=0. 이는 도구 설명('원문은 반환하지 않습니다')과 커밋 메시지의 '키와 동일한 범위로 동작' 주장에 어긋나며, 같은 scope 의 madi_ 키보다 SSO 토큰이 더 넓은 권한을 갖게 되는 인증 변경상의 결함이다. 새 테스트(integrations_mcp_oauth_test.go)는 knowledge package 도구를 SSO 경로로 실행하지 않아 이를 잡지 못한다.",
+      "at": "2026-09-18T07:18:45+09:00"
+    }
+  },
+  "provenance": {
+    "model": "claude-opus-5",
+    "policy_version": "78619c0e",
+    "prompts_hash": "90b6639bc42c5800",
+    "runner_version": "e4b56484",
+    "base_sha": "fd2c3b5816080869c431d60366f1c696a17d2aa9",
+    "head_sha": "af8e021b666bd5711600bf4d1a42794d5dfc3095",
+    "pr": "https://github.com/hkjang/madi/pull/6"
+  },
+  "verification": {
+    "runner": {
+      "source": "auto",
+      "commands": [
+        {
+          "cmd": "go build ./...",
+          "exit": 0,
+          "seconds": 1
+        },
+        {
+          "cmd": "go vet ./...",
+          "exit": 0,
+          "seconds": 1
+        },
+        {
+          "cmd": "go test ./...",
+          "exit": 0,
+          "seconds": 1
+        },
+        {
+          "cmd": "cd web && [ -d node_modules ] || npm ci --no-audit --no-fund",
+          "exit": 0,
+          "seconds": 0
+        },
+        {
+          "cmd": "cd web && npm run build --silent",
+          "exit": 0,
+          "seconds": 19
+        }
+      ]
+    },
+    "runner_gate": {
+      "ok": true,
+      "state": "verified",
+      "reason": "검증 5개 통과 (auto)"
+    },
+    "after_rebase": null,
+    "review": {
+      "verdict": "reject",
+      "reasons": [
+        "internal/server/knowledge_package.go:506 `if current(r).TokenID != \"\"` 는 '외부 에이전트(bearer)에는 package 본문을 감추고 export_required 로 안내' 하는 게이트인데 OAuthSubject 원칙(TokenID==\"\")을 포함하도록 갱신되지 않았다. 같은 파일 packagePrincipal(128행)은 `|| initial.OAuthSubject != \"\"` 로 고쳤지만 이 분기는 누락. 결과: SSO 토큰으로 /mcp 에 붙은 클라이언트가 inspect_knowledge_package 를 호출하면 quotes(문서 원문)·prompt 를 포함한 package 전체가 반환되고 export_count 증가·target/consent 확인을 모두 우회한다. madi-review-pg(127.0.0.1:55450)에서 임시 테스트로 실행해 확인함: SSO create_knowledge_package → inspect_knowledge_package 응답에 원문 마커 포함, export_required 없음, export_count=0. 이는 도구 설명('원문은 반환하지 않습니다')과 커밋 메시지의 '키와 동일한 범위로 동작' 주장에 어긋나며, 같은 scope 의 madi_ 키보다 SSO 토큰이 더 넓은 권한을 갖게 되는 인증 변경상의 결함이다. 새 테스트(integrations_mcp_oauth_test.go)는 knowledge package 도구를 SSO 경로로 실행하지 않아 이를 잡지 못한다."
+      ],
+      "notes": [
+        "internal/server/knowledge_actor.go:57 knowledgeActorTx 의 SSO 분기는 트랜잭션(FOR SHARE 행 잠금, learningTx 경로에서는 LOCK TABLE documents… SHARE MODE) 안에서 mcpOAuthPrincipal 을 호출한다. 프로바이더 캐시(5분) 만료·미지 kid 시 Keycloak 디스커버리/JWKS 네트워크 호출(최대 15s 타임아웃)이 DB 잠금을 쥔 채 일어난다. knowledge_paths_api.go 의 '잠금 중 provider 작업 없음' 주석과 어긋남. statement_timeout 12s 로 상한은 있음.",
+        "SSO 토큰 경로에는 키의 분당 rate_limit·ip_allowlist 가 적용되지 않는다(문서에 명시 없음). 또한 tools/call 마다 외부 auth + 내부 dispatch auth 로 JWT 검증·DB 조회가 2회 수행된다.",
+        "internal/server/integrations_mcp_oauth.go:247 mcpOAuthProvider 는 디스커버리 네트워크 호출(10s) 동안 뮤텍스를 쥐어 모든 SSO MCP 요청을 직렬화한다. 정확성 문제는 아님.",
+        "system_status_api.go:323 등 `TokenID != \"\"` 로 actor_kind 를 정하는 곳은 SSO 원칙에 'manual' 을 기록하지만, systemStatusReporter 가 !ScopeRestricted 를 요구해 SSO 로는 도달 불가로 보임. 향후 scope 확장 시 재점검 필요.",
+        "테스트: go build/vet 통과. TestMCPOAuthSettingsResourceAndValidation 통과. TestPostgresMCPOAuthTokens 는 DSN 없이는 skip 이며, 로컬 madi-review-pg 로 실행 시 통과(2.7s). 새 테스트는 실제 서명 검증·aud/azp·scope 교집합·비활성 계정·REST 거부를 실행하며 수정 전 코드에서는 통과할 수 없는 실질적 검증이다.",
+        "범위: 문서(md/html)·관리자 카드·키 페이지 변경은 모두 기능 범위 안. 무관한 리팩터/의존성 변경 없음.",
+        "되돌리기: 설정 키는 추가만이며 기본 off, 마이그레이션 없음. revert 안전."
+      ],
+      "risk": "medium"
+    },
+    "ci_gate": null
+  },
+  "release": {
+    "result": null,
+    "assets_sha256": []
+  },
+  "approval": null,
+  "usage": [
+    {
+      "ts": "2026-09-18T07:13:53+09:00",
+      "date": "2026-09-18",
+      "project": "madi",
+      "phase": "improve",
+      "run_id": "2026-09-18-065350-madi-improve",
+      "campaign": "mcp-oauth-2026-09",
+      "subtype": "success",
+      "duration_ms": 1266238,
+      "num_turns": 101,
+      "cost_usd": 13.684920500000004,
+      "input_tokens": 202,
+      "output_tokens": 88050,
+      "cache_read": 17858351,
+      "cache_create": 253910
+    },
+    {
+      "ts": "2026-09-18T07:18:45+09:00",
+      "date": "2026-09-18",
+      "project": "madi",
+      "phase": "review",
+      "run_id": "2026-09-18-065350-madi-improve",
+      "campaign": "mcp-oauth-2026-09",
+      "subtype": "success",
+      "duration_ms": 272014,
+      "num_turns": 26,
+      "cost_usd": 2.2205139999999997,
+      "input_tokens": 52,
+      "output_tokens": 16717,
+      "cache_read": 1837146,
+      "cache_create": 88193
+    }
+  ]
+}
