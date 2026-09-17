@@ -1,27 +1,27 @@
 {
- "generated": "2026-09-17T15:22:53+09:00",
+ "generated": "2026-09-17T15:49:28+09:00",
  "site": "https://hkjang.github.io/aidev",
- "description": "Claude Code 자율 개선 에이전트가 hkjang 의 프로젝트를 개선·테스트·머지·릴리즈한 일일 보고. 오늘 47회차·릴리즈 27건, 누적 931회차·릴리즈 343건, 주의 필요 13건.",
+ "description": "Claude Code 자율 개선 에이전트가 hkjang 의 프로젝트를 개선·테스트·머지·릴리즈한 일일 보고. 오늘 48회차·릴리즈 27건, 누적 932회차·릴리즈 343건, 주의 필요 14건.",
  "today": {
   "date": "2026-09-17",
-  "total": 47,
+  "total": 48,
   "projects": 40,
   "released": 27,
   "merged": 4,
   "nochange": 1,
   "failed": 1,
-  "cost_usd": 269.74,
-  "minutes": 734,
-  "sessions": 145
+  "cost_usd": 278.61,
+  "minutes": 749,
+  "sessions": 147
  },
  "totals": {
-  "runs": 931,
+  "runs": 932,
   "released": 343,
   "days": 16,
-  "cost_usd": 3147.69,
-  "minutes": 7747,
-  "tokens_in": 3340436468,
-  "tokens_out": 24844264
+  "cost_usd": 3156.56,
+  "minutes": 7763,
+  "tokens_in": 3350112575,
+  "tokens_out": 24917391
  },
  "alerts": [
   {
@@ -88,6 +88,13 @@
    "result": "guarded files, PR open https://github.com/hkjang/invenqor/pull/24"
   },
   {
+   "date": "2026-09-17",
+   "time": "15:49",
+   "project": "Kkiit",
+   "why": "보호 파일 변경 — 자동 머지 안 함, 사람 검토 필요",
+   "result": "guarded files, PR open https://github.com/hkjang/Kkiit/pull/6"
+  },
+  {
    "date": "2026-09-16",
    "time": "06:12",
    "project": "jupiq",
@@ -118,13 +125,13 @@
  ],
  "fix_queue": [],
  "health": {
-  "checked": "2026-09-17T15:15:03+09:00",
+  "checked": "2026-09-17T15:45:04+09:00",
   "last_run": "2026-09-17T14:40:13+09:00",
-  "seconds_since_last": 2088,
-  "runner_pid": "",
-  "runner_age_seconds": 0,
-  "scheduler_status": "준비",
-  "scheduler_next_run": "2026-09-17 오후 3:20:00",
+  "seconds_since_last": 3888,
+  "runner_pid": "3174171",
+  "runner_age_seconds": 902,
+  "scheduler_status": "실행 중",
+  "scheduler_next_run": "2026-09-17 오후 3:50:00",
   "disk_percent": 72,
   "ok": true,
   "problems": [],
@@ -337,6 +344,21 @@
   "DORMANT_DAYS": 7
  },
  "inbox": [
+  {
+   "kind": "PR",
+   "project": "Kkiit",
+   "title": "auto-improve: feat: /mcp 를 Keycloak 액세스 토큰(OAuth 2.1)으로도 열다 — 키 체계는 그대로",
+   "url": "https://github.com/hkjang/Kkiit/pull/6",
+   "sha": "ba57ae2",
+   "summary": "22파일 +1213/−31 · guarded files, PR open https://github.com/hkjang/Kkiit/pull/6",
+   "why": "guard: held-expected — internal/database/migrations/043_mcp_oauth.sql ",
+   "evidence": "https://github.com/hkjang/aidev/tree/main/state/runs/2026-09-17-153318-Kkiit-improve",
+   "labels": "",
+   "action": "PR 처리기가 매시간 살핀다 (아직 순서가 오지 않음) · 승인: PR 라벨 aidev-approved / 반려: aidev-rejected — 다음 회차에 러너가 승인 당시 커밋에만 CI 확인 후 머지·닫기",
+   "date": "2026-09-17",
+   "shepherd": "",
+   "shepherd_action": ""
+  },
   {
    "kind": "PR",
    "project": "Invenqor",
@@ -1650,14 +1672,14 @@
     "sqlon": "pr"
    },
    "lessons": [
-    "발송 결과 기록(UPDATE/INSERT)은 발송용 컨텍스트가 아니라 context.Background 기반의 짧은 별도 컨텍스트로 수행하고, 발송 예산은 (재시도 횟수 × 연결 마감 + 대기)보다 크게 잡으며 기록 오류를 버리지 않는다",
-    "TLS 없는 연결에서 자격증명을 보낼지 정책을 먼저 정하고, 'AUTH LOGIN만 광고 + STARTTLS 없음' 가짜 릴레이를 127.0.0.1이 아닌 주소에 띄워 평문 전송/인증 실패를 직접 확인한다",
-    "메일 본문의 링크 경로·안내 문구·행위자 표기를 쓰기 전에 UI 라우터의 실제 경로, 게이트/회전 등 도메인 로직의 실제 동작, 이벤트의 실제 행위자를 소스에서 대조한다",
-    "발송 고루틴에 세마포어 상한을 두되 기록은 즉시 남기고, 승인 요청 같은 이벤트도 같은 사용자·같은 요청의 재시도를 묶거나 억제하는 규칙을 둔다",
-    "알림 이벤트를 상태 스냅샷(state == X)이 아니라 실제 전이·행위로 판별하고, 부분 승인·헤더 없는 재요청 같은 중간 상태 케이스를 테스트한다",
-    "테스트 릴레이는 connection refused·Accept 후 침묵·AUTH만 광고(STARTTLS 없음) 3종을 갖추고, 잘못된 값을 단언하거나 제품에서 채워지지 않는 필드를 주입해 통과시키는 테스트를 만들지 않는다",
-    "알림 발송 조건에 쓰는 데이터 필드(작성자 등)가 실제 제품 코드 경로에서 채워지는지 확인하고, 비어 있으면 조용히 반환하지 않는다",
-    "시험 발송 실패 응답의 형식을 프론트 API 클라이언트의 non-2xx 오류 파싱 규약에 맞추고, 실패 시에도 결과 표시와 발송 기록 갱신이 실행되게 한다"
+    "TLS 없는 연결에서 자격증명을 보낼지 정책을 먼저 정하고, 참조 구현의 `!server.TLS && server.Name != host` 가드를 그대로 옮기지 않는다. 'AUTH LOGIN 만 광고 + STARTTLS 없음' 인 비-localhost 가짜 릴레이로 실제 전송 여부를 확인하는 테스트를 둔다.",
+    "발송 결과 기록(UPDATE·다음 수신자 INSERT)은 발송용 컨텍스트가 아니라 별도 컨텍스트로 하고, 발송 예산은 소스에서 '연결 마감×시도 횟수+백오프×수신자 수' 를 계산해 그보다 크게 잡는다.",
+    "배경 발송 고루틴에 세마포어 상한을 두고 상한 초과 시 기록만 즉시 남기고 발송은 대기시키며, 사용자 요청마다 발생하는 알림(승인 요청 등)은 같은 사용자·같은 요청의 재시도를 묶거나 제한한다.",
+    "메일 본문의 링크 경로와 '이렇게 하면 됩니다' 안내 문구는 쓰기 전에 UI 라우터와 실제 처리 코드에서 확인하고, 테스트 기대값도 라우터 소스에서 가져온다.",
+    "알림 트리거는 결과 상태가 아니라 일어난 전이(이벤트)로 판정하고, 상태 머신에 '같은 상태에 머무는 전이' 가 있는지 소스에서 먼저 확인한다.",
+    "테스트는 제품이 실제로 만드는 데이터와 경로로만 통과해야 한다. 제품이 채우지 않는 필드 주입, localhost 예외, 단일 승인만 다루는 케이스, connection refused 만으로 흉내 낸 죽은 릴레이를 피하고 'TCP 는 받되 응답 없음'·부분 승인·평문 AUTH 케이스를 필수로 넣는다.",
+    "수신자·작성자 등 메일 대상이 되는 필드는 제품 안에 실제로 그 값을 채우는 쓰기 경로가 있는지 소스에서 확인한 뒤 연결한다.",
+    "시험 발송 API 의 실패 응답 형식은 프론트 API 클라이언트가 실제로 파싱하는 오류 스키마와 맞추고, 실패 시에도 결과 표시와 발송 기록 목록 갱신이 일어나게 한다."
    ]
   },
   {
@@ -1712,22 +1734,22 @@
    "done": false,
    "until": "2026-12-31",
    "budget_usd": 600,
-   "spent_usd": 23.04,
+   "spent_usd": 31.91,
    "total": 31,
-   "processed": 2,
-   "pct": 6,
-   "runs": 2,
-   "last_ts": "2026-09-17T14:40:13+09:00",
+   "processed": 3,
+   "pct": 9,
+   "runs": 3,
+   "last_ts": "2026-09-17T15:49:27+09:00",
    "counts": {
     "done": 1,
-    "pr": 1,
-    "todo": 29,
+    "pr": 2,
+    "todo": 28,
     "nochange": 0
    },
    "projects": {
     "AgentHub": "done",
     "Invenqor": "pr",
-    "Kkiit": "todo",
+    "Kkiit": "pr",
     "SecCheck": "todo",
     "Vendra": "todo",
     "ai-admin": "todo",
@@ -1828,7 +1850,7 @@
   },
   {
    "metric": "유효 개선당 비용",
-   "value": "$16.74",
+   "value": "$16.79",
    "detail": "비용 확인된 유효 개선 188건, 미확인 세션 10"
   },
   {
@@ -1845,7 +1867,7 @@
  "outcomes_today": {
   "verify-failed": 4,
   "release-ready": 27,
-  "review-pending": 11,
+  "review-pending": 12,
   "merged": 3,
   "releasing": 1,
   "no-change": 1,
@@ -1854,12 +1876,12 @@
  "days": [
   {
    "date": "2026-09-17",
-   "total": 47,
+   "total": 48,
    "released": 27,
    "merged": 4,
    "nochange": 1,
    "failed": 1,
-   "cost_usd": 269.74
+   "cost_usd": 278.61
   },
   {
    "date": "2026-09-16",
@@ -2002,13 +2024,13 @@
    "key": "2026-W38",
    "url": "https://hkjang.github.io/aidev/weekly/2026-W38/",
    "days": 4,
-   "total": 207,
+   "total": 208,
    "released": 56,
    "merged": 6,
    "nochange": 2,
    "failed": 5,
-   "cost": 888.3,
-   "minutes": 2102
+   "cost": 897.17,
+   "minutes": 2117
   },
   {
    "key": "2026-W37",
@@ -2040,13 +2062,13 @@
    "key": "2026-09",
    "url": "https://hkjang.github.io/aidev/monthly/2026-09/",
    "days": 16,
-   "total": 931,
+   "total": 932,
    "released": 343,
    "merged": 109,
    "nochange": 16,
    "failed": 19,
-   "cost": 3147.69,
-   "minutes": 7747
+   "cost": 3156.56,
+   "minutes": 7763
   }
  ],
  "projects": [
@@ -2489,18 +2511,18 @@
    "name": "Kkiit",
    "repo": "https://github.com/hkjang/Kkiit",
    "page": "https://hkjang.github.io/aidev/projects/Kkiit/",
-   "runs": 7,
+   "runs": 8,
    "released": 2,
-   "last_ts": "2026-09-17T01:25:11+09:00",
-   "last_status": "released",
-   "last_result": "merged https://github.com/hkjang/Kkiit/pull/5, released v0.4.1",
-   "cost": 51.23,
-   "minutes": 107,
-   "grade": "C",
-   "grade_why": "14일: 릴리즈 2, 실패 0, 경고 3, 회귀 0",
+   "last_ts": "2026-09-17T15:49:27+09:00",
+   "last_status": "other",
+   "last_result": "guarded files, PR open https://github.com/hkjang/Kkiit/pull/6",
+   "cost": 60.1,
+   "minutes": 123,
+   "grade": "D",
+   "grade_why": "14일: 릴리즈 2, 실패 0, 경고 4, 회귀 0",
    "lessons": 0,
-   "ideas_pending": 12,
-   "ideas_total": 14,
+   "ideas_pending": 14,
+   "ideas_total": 15,
    "release": {
     "status": "released",
     "version": "0.4.1",
