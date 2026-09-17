@@ -274,6 +274,91 @@ Keycloak 쪽 준비는 평소 로그인과 같습니다. Valid redirect URIs에 
 | `oidc_client_auth_failed` | Keycloak의 Client authentication 설정과 저장된 Secret/Public client 설정이 어긋남 |
 | `oidc_code_rejected` | 만료·재사용된 코드, PKCE·Redirect URI 불일치 또는 서버 시간 문제 |
 
+#### MCP SSO(OAuth) — 키 없이 Keycloak 토큰으로 `/mcp` 연결
+
+MCP 인가 규격(2025-06-18 이후)은 OAuth 2.1입니다. 이 설정을 켜면 MCP 클라이언트(Claude,
+Cursor 등)에 **MCP 주소 하나**만 주면 클라이언트가 스스로 Keycloak 로그인 화면을 띄우고
+액세스 토큰을 받아 `/mcp`에 붙습니다. 개인 키(`mk_`)는 그대로 남고, 같은 `Authorization:
+Bearer` 헤더에서 접두사가 `mk_`면 키, JWT 모양이면 Keycloak 토큰으로 가립니다. **기본값은
+꺼짐**이고, MOINA는 리소스 서버일 뿐이라 `/authorize`·`/token`·클라이언트 등록을 만들지
+않습니다 — 로그인은 Keycloak이 합니다.
+
+같은 **Keycloak OIDC** 화면 아래 **MCP SSO(OAuth)** 카드에서 설정합니다(관리 API는 `PUT
+/api/v1/admin/oidc`의 `mcpOauth` 객체).
+
+| 표준 이름 | 화면 항목 / 필드 | 기본값 | 뜻 |
+| --- | --- | --- | --- |
+| `mcp.oauth.enabled` | Keycloak 토큰으로 MCP 연결 / `mcpOauth.enabled` | 꺼짐 | 켜려면 Issuer URL과 Client ID가 있어야 하며 저장 시 검증합니다. 웹 로그인 스위치와 별개입니다 |
+| `mcp.oauth.resource` | 리소스 식별자 / `mcpOauth.resource` | 빈 값 | 토큰의 `aud`가 가리켜야 하는 공개 MCP 주소. 비우면 **일반 설정의 사이트 기본 주소 + `/mcp`**, 둘 다 없으면 요청 주소(마지막 수단) |
+| `mcp.oauth.audience` | 허용 대상(aud/azp) / `mcpOauth.audience` | 빈 값 | 공백 구분. 토큰의 `aud` 또는 `azp`가 이 목록에 있으면 통과. 보통 MCP 클라이언트의 Client ID |
+| `mcp.oauth.scopes` | SSO 주체 권한 범위 / `mcpOauth.scopes` | `posts:read mcp:use` | 토큰으로 들어온 사용자에게 주는 권한 상한. 역할 권한과 교집합만 적용됩니다. `mcp:use`가 빠지면 MCP를 열 수 없습니다 |
+| (재사용) `oidc.issuer_url`·`oidc.client_id` | Issuer URL·Client ID | — | 새로 만들지 않습니다. 발급자 검사와 discovery·JWKS 조회에 씁니다 |
+
+켜져 있어도 issuer·리소스 식별자·MCP(API 접근 설정의 MCP 스위치) 중 하나가 없으면 조용히
+꺼진 것처럼 동작하고 카드와 서버 로그에 이유를 남깁니다. 리소스 식별자는 프록시 뒤 주소가
+아니라 클라이언트가 실제로 접속하는 공개 HTTPS 주소여야 하므로 **일반 설정의 사이트 기본
+주소를 먼저 채우세요.**
+
+서버가 토큰을 받아들이는 조건은 다음 전부입니다.
+
+- Keycloak JWKS로 서명이 맞고 알고리즘이 RS/ES/PS 계열(HS·none 거부), `iss`가 Issuer URL과
+  같고, `exp`·`nbf`가 유효하다.
+- `typ`이 `ID`가 아니고(ID 토큰은 로그인 증거이지 API 자격이 아닙니다), `cnf`가 없고, `sub`가 있다.
+- **대상**: `aud`에 리소스 식별자가 있거나, `aud` 또는 `azp`가 허용 대상(또는 웹 로그인
+  Client ID)에 있다. 실제 Keycloak 26은 `aud`에 `account`만 싣고 클라이언트 ID를 `azp`에
+  담으므로 매퍼 없이 쓰려면 허용 대상에 MCP 클라이언트 ID를 적으면 됩니다.
+- `sub`로 **이미 웹 로그인으로 연결된 활성 계정**이 있다. 계정을 만들거나 정지된 계정을
+  되살리거나 토큰의 role로 권한을 올리는 일은 없습니다. 권한은 `mcp.oauth.scopes` ∩ 역할
+  권한이고, 요청 한도는 키와 같은 분당 값을 사용자별로 씁니다.
+
+토큰은 `/mcp`·`/api/v1/mcp`에서만 받습니다. REST·WebSocket·관리 API는 지금처럼 키와 세션만
+받으며, 유효한 토큰을 REST에 보내도 평범한 401입니다. 토큰을 저장하거나 세션으로 바꾸지
+않고 요청마다 검사하므로 Keycloak에서 로그아웃해도 **이미 발급된 토큰은 만료까지 삽니다** —
+액세스 토큰 수명을 짧게(5분 안팎) 두세요.
+
+**Keycloak 쪽 할 일**
+
+1. MCP 클라이언트용 **Public client**를 웹 로그인 클라이언트와 **따로** 만듭니다. Standard
+   flow 켬, PKCE `S256`, Direct access grants·Implicit·Service accounts 끔.
+2. Valid redirect URIs에 쓰는 MCP 클라이언트의 콜백을 **정확히** 적습니다(Claude는
+   `https://claude.ai/api/mcp/auth_callback`, 로컬 클라이언트는 `http://127.0.0.1:*/callback`
+   류). `*` 하나로 다 여는 것은 금지입니다.
+3. 정식 경로: 그 클라이언트(또는 전용 client scope)에 **Audience 매퍼** — Included Custom
+   Audience = 리소스 식별자(`https://<공개 주소>/mcp`), Add to access token 켬, Add to ID token
+   끔. 호환 경로: 매퍼 없이 MOINA의 **허용 대상**에 그 클라이언트 ID를 적습니다.
+4. 액세스 토큰 수명을 짧게 둡니다.
+
+**확인 방법**
+
+```bash
+# 1. 메타데이터 — 인증 없이 맨 JSON. 꺼져 있으면 404 mcp_oauth_disabled
+curl --silent https://moina.example/.well-known/oauth-protected-resource/mcp
+# {"resource":"https://moina.example/mcp","authorization_servers":["https://keycloak.internal/realms/moina"],
+#  "bearer_methods_supported":["header"],"scopes_supported":["posts:read","mcp:use"],"resource_name":"moina MCP"}
+
+# 2. 401이 길을 가리키는지 — MCP 경로에서만 WWW-Authenticate가 붙습니다
+curl --silent --include -X POST https://moina.example/mcp -H 'Content-Type: application/json' \
+  --data '{"jsonrpc":"2.0","id":1,"method":"tools/list"}' | grep -i www-authenticate
+# WWW-Authenticate: Bearer realm="MOINA", resource_metadata="https://moina.example/.well-known/oauth-protected-resource/mcp"
+
+# 3. 토큰으로 tools/list — 거부되면 본문 message가 이유를 말합니다
+curl --silent -X POST https://moina.example/mcp -H "Authorization: Bearer $ACCESS_TOKEN" \
+  -H 'Content-Type: application/json' --data '{"jsonrpc":"2.0","id":1,"method":"tools/list"}'
+```
+
+**거부 메시지별 조치** (`401`, `code: invalid_token`, 헤더에 `error="invalid_token"`; 원인은
+서버 로그 `MCP SSO 토큰 거부`의 `reason`·`error`에 남습니다)
+
+| 메시지 | 뜻 | 조치 |
+| --- | --- | --- |
+| 이 서버를 위해 발급된 것이 아닙니다(aud=…, azp=…) | 다른 앱용 토큰이거나 매퍼·허용 대상이 없음 | 메시지가 말하는 `azp` 값을 **허용 대상**에 적거나, Keycloak 클라이언트에 Audience 매퍼로 리소스 식별자를 넣습니다 |
+| 유효하지 않습니다(서명·발급자·만료·nbf·알고리즘) | JWKS로 서명이 안 맞거나, `iss`가 다르거나, 만료 | Issuer URL이 realm과 정확히 같은지, 서버 시간이 맞는지, 클라이언트가 이 realm에서 받은 토큰인지 확인합니다 |
+| ID 토큰은 로그인 증거이지 API 자격이 아닙니다 | 클라이언트가 `id_token`을 보냄 | 클라이언트가 `access_token`을 쓰도록 합니다 |
+| 소지자 증명(cnf)이 묶인 토큰 | DPoP·mTLS 바인딩 토큰 | 그 클라이언트에는 바인딩 없는 토큰을 발급합니다 |
+| 등록되지 않았거나 비활성입니다. 먼저 웹으로 한 번 로그인하세요 | `sub`에 연결된 활성 계정이 없음 | 그 사용자가 웹에서 SSO로 한 번 로그인하게 하거나(연결이 생깁니다) 계정을 활성화합니다 |
+| Keycloak 발급자 정보를 읽지 못해… | discovery 실패 | OIDC 허용 Host·사설망 설정과 **저장 후 연결 테스트**를 확인합니다 |
+| `403 forbidden` | 토큰은 통과했지만 범위에 `mcp:use`가 없음 | **SSO 주체 권한 범위**에 `mcp:use`를 넣습니다 |
+
 > 긴급 접근을 위해 로컬 최고 관리자 계정을 최소 한 개 유지하고, 강한 비밀번호와 접근 통제를
 > 적용하세요.
 
@@ -451,7 +536,8 @@ API는 `GET`·`PUT /api/v1/admin/analytics`, `GET`·`DELETE /api/v1/admin/analyt
 키는 소유자별로 hash만 저장하고 원문은 생성·회전 직후 한 번만 표시됩니다. 만료와 최근 사용
 시각이 함께 기록되므로 장기 미사용 키와 만료 없는 키를 주기적으로 검토하세요. MCP도 같은
 권한 체계와 요청 한도를 씁니다. 역할을 바꾸면 활성 session과 키의 유효 권한에 즉시
-반영됩니다.
+반영됩니다. Keycloak을 쓰는 곳은 3.4절의 **MCP SSO(OAuth)**를 켜면 사용자가 키 없이 SSO
+토큰으로 `/mcp`에 붙을 수 있습니다 — 키 체계는 그대로 남습니다.
 
 ---
 
