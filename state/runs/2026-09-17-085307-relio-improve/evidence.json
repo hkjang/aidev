@@ -1,0 +1,180 @@
+{
+  "run_id": "2026-09-17-085307-relio-improve",
+  "generated": "2026-09-17T09:04:13+09:00",
+  "run": {
+    "run_id": "2026-09-17-085307-relio-improve",
+    "project": "relio",
+    "kind": "improve",
+    "started": "2026-09-17T08:53:07+09:00",
+    "model": "claude-opus-5",
+    "policy_version": "78619c0e",
+    "prompts_hash": "82f2440d4b2fef65",
+    "runner_version": "b8f3f83f",
+    "finished": "2026-09-17T09:04:13+09:00",
+    "outcome": "review-pending"
+  },
+  "record": {
+    "ts": "2026-09-17T09:04:13+09:00",
+    "date": "2026-09-17",
+    "project": "relio",
+    "result": "guarded files, PR open https://github.com/hkjang/relio/pull/24",
+    "outcome": "review-pending",
+    "run_id": "2026-09-17-085307-relio-improve",
+    "base_sha": "a3e749039900204bc5acbb2fb62482335669a2da",
+    "head_sha": "cc288f3324d969e1116bd09d8e588a9f7eb67fbf",
+    "pr": "https://github.com/hkjang/relio/pull/24",
+    "stages": {
+      "base": {
+        "state": "pinned",
+        "reason": "main@a3e7490",
+        "at": "2026-09-17T08:53:12+09:00"
+      },
+      "autonomy": {
+        "state": "low-risk",
+        "reason": "롤백 PR ",
+        "at": "2026-09-17T08:53:12+09:00"
+      },
+      "verify": {
+        "state": "passed",
+        "reason": "검증 9개 통과 (auto)",
+        "at": "2026-09-17T09:04:05+09:00"
+      },
+      "pr": {
+        "state": "created",
+        "reason": "https://github.com/hkjang/relio/pull/24",
+        "at": "2026-09-17T09:04:11+09:00"
+      },
+      "guard": {
+        "state": "held",
+        "reason": ".github/workflows/ci.yml internal/auth/login_test.go internal/auth/service.go ",
+        "at": "2026-09-17T09:04:11+09:00"
+      }
+    },
+    "campaign": "",
+    "autonomy": "low-risk",
+    "files": 6,
+    "additions": 163,
+    "deletions": 18,
+    "tests": 2,
+    "title": "ci: fail the build on gofmt violations"
+  },
+  "stages": {
+    "base": {
+      "state": "pinned",
+      "reason": "main@a3e7490",
+      "at": "2026-09-17T08:53:12+09:00"
+    },
+    "autonomy": {
+      "state": "low-risk",
+      "reason": "롤백 PR ",
+      "at": "2026-09-17T08:53:12+09:00"
+    },
+    "verify": {
+      "state": "passed",
+      "reason": "검증 9개 통과 (auto)",
+      "at": "2026-09-17T09:04:05+09:00"
+    },
+    "pr": {
+      "state": "created",
+      "reason": "https://github.com/hkjang/relio/pull/24",
+      "at": "2026-09-17T09:04:11+09:00"
+    },
+    "guard": {
+      "state": "held",
+      "reason": ".github/workflows/ci.yml internal/auth/login_test.go internal/auth/service.go ",
+      "at": "2026-09-17T09:04:11+09:00"
+    }
+  },
+  "provenance": {
+    "model": "claude-opus-5",
+    "policy_version": "78619c0e",
+    "prompts_hash": "82f2440d4b2fef65",
+    "runner_version": "b8f3f83f",
+    "base_sha": "a3e749039900204bc5acbb2fb62482335669a2da",
+    "head_sha": "cc288f3324d969e1116bd09d8e588a9f7eb67fbf",
+    "pr": "https://github.com/hkjang/relio/pull/24"
+  },
+  "verification": {
+    "runner": {
+      "source": "auto",
+      "commands": [
+        {
+          "cmd": "go build ./...",
+          "exit": 0,
+          "seconds": 1
+        },
+        {
+          "cmd": "go vet ./...",
+          "exit": 0,
+          "seconds": 0
+        },
+        {
+          "cmd": "go test ./...",
+          "exit": 0,
+          "seconds": 1
+        },
+        {
+          "cmd": "cd web && [ -d node_modules ] || npm ci --no-audit --no-fund",
+          "exit": 0,
+          "seconds": 0
+        },
+        {
+          "cmd": "cd web && npm test --silent",
+          "exit": 0,
+          "seconds": 1
+        },
+        {
+          "cmd": "cd web && [ -d node_modules ] || npm ci --no-audit --no-fund",
+          "exit": 0,
+          "seconds": 0
+        },
+        {
+          "cmd": "cd web && npm run typecheck --silent",
+          "exit": 0,
+          "seconds": 2
+        },
+        {
+          "cmd": "cd web && [ -d node_modules ] || npm ci --no-audit --no-fund",
+          "exit": 0,
+          "seconds": 0
+        },
+        {
+          "cmd": "cd web && npm run build --silent",
+          "exit": 0,
+          "seconds": 4
+        }
+      ]
+    },
+    "runner_gate": {
+      "ok": true,
+      "state": "verified",
+      "reason": "검증 9개 통과 (auto)"
+    },
+    "after_rebase": null,
+    "review": null,
+    "ci_gate": null
+  },
+  "release": {
+    "result": null,
+    "assets_sha256": []
+  },
+  "approval": null,
+  "usage": [
+    {
+      "ts": "2026-09-17T09:03:55+09:00",
+      "date": "2026-09-17",
+      "project": "relio",
+      "phase": "improve",
+      "run_id": "2026-09-17-085307-relio-improve",
+      "campaign": "",
+      "subtype": "success",
+      "duration_ms": 640377,
+      "num_turns": 56,
+      "cost_usd": 4.027823,
+      "input_tokens": 112,
+      "output_tokens": 32597,
+      "cache_read": 4445692,
+      "cache_create": 96580
+    }
+  ]
+}
