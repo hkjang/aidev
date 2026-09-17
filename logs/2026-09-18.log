@@ -541,3 +541,110 @@ https://github.com/hkjang/seaton/pull/30#issuecomment-5720140441
 evidence: /mnt/c/Users/USER/projects/aidev/state/runs/2026-09-18-041337-seaton-improve/evidence.json
 reports: 17 day(s), 3 week(s), 1 month(s), 948 run(s), 1183 usage row(s), 43 project page(s), 17 alert(s)
 notify: no new alerts
+[04:40:35] aidev sync FAILED: run(2026-09-18): seaton — review held, PR open https://github.com/hkjang/seaton/pull/30
+[04:40:35] done
+[04:40:42] shepherd: 후보 188건 (한 번에 최대 4건, 오늘 $36.2435235/$60)
+[04:42:01] moyro: [shepherd] PR #15 review → needs-human — 수정·심사를 2번 시도했지만 통과하지 못함 — 사람이 봐야 한다 
+https://github.com/hkjang/moyro/pull/15#issuecomment-5720190117
+[04:42:06] === shepherd relio PR #23 (원인 review, run 2026-09-18-044206-relio-shepherd)
+Preparing worktree (detached HEAD 98b6fae)
+Updating files:  95% (281/293)Updating files:  96% (282/293)Updating files:  97% (285/293)Updating files:  98% (288/293)Updating files:  99% (291/293)Updating files: 100% (293/293)Updating files: 100% (293/293), done.
+HEAD is now at 98b6fae feat(mail): send event notifications through a company SMTP relay
+[04:49:41] relio: improve — 42 turns, 7m, $3.12, success
+[04:49:43] relio: verify `go build ./...` → exit 0 (2s)
+[04:49:43] relio: verify `go vet ./...` → exit 0 (0s)
+[04:49:49] relio: verify `go test ./...` → exit 0 (6s)
+[04:49:50] relio: verify `cd web && [ -d node_modules ] || npm ci --no-audit --no-fund` → exit 0 (0s)
+[04:49:50] relio: verify `cd web && npm test --silent` → exit 0 (0s)
+[04:49:50] relio: verify `cd web && [ -d node_modules ] || npm ci --no-audit --no-fund` → exit 0 (0s)
+[04:49:53] relio: verify `cd web && npm run typecheck --silent` → exit 0 (2s)
+[04:49:53] relio: verify `cd web && [ -d node_modules ] || npm ci --no-audit --no-fund` → exit 0 (0s)
+[04:49:56] relio: verify `cd web && npm run build --silent` → exit 0 (3s)
+[04:50:00] relio: [shepherd] PR #23 review → fix-pushed — # PR #23 fix summary (commit 417b9fe on the PR branch)  - 재현: 172.19.24.103(비-루프백)에 가짜 릴레이를 띄워 확인 — LOGIN 만 광고하면 `
+https://github.com/hkjang/relio/pull/23#issuecomment-5720287543
+[04:50:02] 다른 러너(pid 3856946)가 실행 중 — 겹쳐 돌리지 않는다 (flock 뒤에서 실행하세요)
+Preparing worktree (detached HEAD 417b9fe)
+HEAD is now at 417b9fe fix(mail): send SMTP credentials only over TLS unless security=none, and record renewal notices only for accepted deliveries
+[04:54:33] relio: review — 27 turns, 4m, $2.63, success
+GraphQL: Projects (classic) is being deprecated in favor of the new Projects experience, see: https://github.blog/changelog/2024-05-23-sunset-notice-projects-classic/. (repository.pullRequest.projectCards)
+https://github.com/hkjang/relio/pull/23#issuecomment-5720346370
+[04:54:36] relio: [shepherd] PR #23 review → approve — risk=medium — 리뷰 승인 (risk=medium) 
+[04:54:38] === shepherd seaton PR #28 (원인 conflict, run 2026-09-18-045438-seaton-shepherd)
+Preparing worktree (detached HEAD 82caf4d)
+HEAD is now at 82caf4d fix(mail): 멈춘 릴레이로 발송 컨텍스트가 소진돼도 결과를 기록하고, 만료 임박 메일은 회전 대신 새 키 발급을 안내
+Rebasing (1/2)Auto-merging README.md
+Auto-merging docs/ADMIN_GUIDE.html
+Auto-merging docs/ADMIN_GUIDE.md
+warning: Cannot merge binary files: docs/ADMIN_GUIDE.pdf (HEAD vs. c45bb4b (feat: 사내 SMTP 릴레이로 보내는 이벤트 메일 알림 (자리 배정·분석 완료·인사 연동 실패·API 키 만료 임박)))
+Auto-merging docs/ADMIN_GUIDE.pdf
+CONFLICT (content): Merge conflict in docs/ADMIN_GUIDE.pdf
+Auto-merging docs/API_AND_MCP.md
+Auto-merging internal/app/openapi.go
+Auto-merging internal/app/server.go
+error: could not apply c45bb4b... feat: 사내 SMTP 릴레이로 보내는 이벤트 메일 알림 (자리 배정·분석 완료·인사 연동 실패·API 키 만료 임박)
+hint: Resolve all conflicts manually, mark them as resolved with
+hint: "git add/rm <conflicted_files>", then run "git rebase --continue".
+hint: You can instead skip this commit: run "git rebase --skip".
+hint: To abort and get back to the state before "git rebase", run "git rebase --abort".
+Could not apply c45bb4b... feat: 사내 SMTP 릴레이로 보내는 이벤트 메일 알림 (자리 배정·분석 완료·인사 연동 실패·API 키 만료 임박)
+[detached HEAD c52a1dc] feat: 사내 SMTP 릴레이로 보내는 이벤트 메일 알림 (자리 배정·분석 완료·인사 연동 실패·API 키 만료 임박)
+ 25 files changed, 2667 insertions(+), 24 deletions(-)
+ create mode 100644 docs/assets/guide/admin-settings-mail.png
+ create mode 100644 internal/app/mail.go
+ create mode 100644 internal/app/mail_test.go
+ create mode 100644 internal/mail/config.go
+ create mode 100644 internal/mail/mail.go
+ create mode 100644 internal/mail/mail_test.go
+ create mode 100644 internal/mail/message.go
+ create mode 100644 internal/mail/service.go
+ create mode 100644 web/e2e/mail.spec.ts
+ create mode 100644 web/src/lib/mail.test.ts
+ create mode 100644 web/src/lib/mail.ts
+Rebasing (2/2)[KSuccessfully rebased and updated detached HEAD.
+/home/hkjang/.cache/auto-improve-wt/seaton-rebase/docs/ADMIN_GUIDE.pdf (2100KB)
+[osc] Running Open Code Review...
+[04:54:45] seaton: 리베이스 충돌이 만들어 낸 PDF 뿐이라 병합된 본문으로 다시 구웠다
+[04:54:46] seaton: verify `go build ./...` → exit 0 (1s)
+[04:54:46] seaton: verify `go vet ./...` → exit 0 (0s)
+[04:54:59] seaton: verify `go test ./...` → exit 0 (13s)
+[04:55:10] seaton: verify `cd web && [ -d node_modules ] || npm ci --no-audit --no-fund` → exit 0 (11s)
+[04:55:11] seaton: verify `cd web && npm test --silent` → exit 0 (1s)
+[04:55:11] seaton: verify `cd web && [ -d node_modules ] || npm ci --no-audit --no-fund` → exit 0 (0s)
+[04:55:16] seaton: verify `cd web && npm run build --silent` → exit 0 (5s)
+To https://github.com/hkjang/seaton.git
+ + 82caf4d...61bca8b HEAD -> auto/2026-09-16-1022 (forced update)
+[04:55:21] seaton: [rebase] pushed — 61bca8b — 재검증 통과, 재승인 필요
+[04:55:24] seaton: [shepherd] PR #28 conflict → rebased — base 와 충돌해 리베이스함 (61bca8b) 
+Preparing worktree (detached HEAD 61bca8b)
+HEAD is now at 61bca8b Rebuild the guide PDFs from the merged text
+[04:58:32] seaton: review — 22 turns, 3m, $1.77, success
+[04:58:32] seaton: [shepherd] PR #28 conflict → review-reject — - internal/mail/mail.go:191-197 loginAuth.Start 의 평문 가드 `!server.TLS && server.Name != a.host` 는 항상 거짓이다 — server.Name 은 dial() 의 
+https://github.com/hkjang/seaton/pull/28#issuecomment-5720417549
+[04:58:37] umm: [shepherd] PR #158 guard → needs-human — 사람만 승인할 수 있는 파일을 건드림: internal/httpapi/secret_fields_test.go  
+[04:58:41] === shepherd vibe-coders PR #18 (원인 review, run 2026-09-18-045840-vibe-coders-shepherd)
+Preparing worktree (detached HEAD f0b2f7e)
+Updating files:  27% (368/1333)Updating files:  28% (374/1333)Updating files:  29% (387/1333)Updating files:  30% (400/1333)Updating files:  31% (414/1333)Updating files:  32% (427/1333)Updating files:  33% (440/1333)Updating files:  34% (454/1333)Updating files:  35% (467/1333)Updating files:  36% (480/1333)Updating files:  37% (494/1333)Updating files:  38% (507/1333)Updating files:  39% (520/1333)Updating files:  40% (534/1333)Updating files:  41% (547/1333)Updating files:  42% (560/1333)Updating files:  43% (574/1333)Updating files:  44% (587/1333)Updating files:  45% (600/1333)Updating files:  46% (614/1333)Updating files:  47% (627/1333)Updating files:  48% (640/1333)Updating files:  49% (654/1333)Updating files:  50% (667/1333)Updating files:  51% (680/1333)Updating files:  52% (694/1333)Updating files:  53% (707/1333)Updating files:  54% (720/1333)Updating files:  55% (734/1333)Updating files:  56% (747/1333)Updating files:  57% (760/1333)Updating files:  58% (774/1333)Updating files:  58% (784/1333)Updating files:  59% (787/1333)Updating files:  60% (800/1333)Updating files:  61% (814/1333)Updating files:  62% (827/1333)Updating files:  63% (840/1333)Updating files:  64% (854/1333)Updating files:  65% (867/1333)Updating files:  66% (880/1333)Updating files:  67% (894/1333)Updating files:  68% (907/1333)Updating files:  69% (920/1333)Updating files:  70% (934/1333)Updating files:  71% (947/1333)Updating files:  72% (960/1333)Updating files:  73% (974/1333)Updating files:  74% (987/1333)Updating files:  75% (1000/1333)Updating files:  76% (1014/1333)Updating files:  77% (1027/1333)Updating files:  78% (1040/1333)Updating files:  79% (1054/1333)Updating files:  80% (1067/1333)Updating files:  80% (1073/1333)Updating files:  81% (1080/1333)Updating files:  82% (1094/1333)Updating files:  83% (1107/1333)Updating files:  84% (1120/1333)Updating files:  85% (1134/1333)Updating files:  86% (1147/1333)Updating files:  87% (1160/1333)Updating files:  88% (1174/1333)Updating files:  89% (1187/1333)Updating files:  90% (1200/1333)Updating files:  91% (1214/1333)Updating files:  92% (1227/1333)Updating files:  93% (1240/1333)Updating files:  94% (1254/1333)Updating files:  95% (1267/1333)Updating files:  96% (1280/1333)Updating files:  97% (1294/1333)Updating files:  98% (1307/1333)Updating files:  99% (1320/1333)Updating files: 100% (1333/1333)Updating files: 100% (1333/1333), done.
+HEAD is now at f0b2f7e feat(mail): send event notifications through the company SMTP relay
+[05:00:02] 다른 러너(pid 3856946)가 실행 중 — 겹쳐 돌리지 않는다 (flock 뒤에서 실행하세요)
+[05:10:02] 다른 러너(pid 3856946)가 실행 중 — 겹쳐 돌리지 않는다 (flock 뒤에서 실행하세요)
+[05:16:20] vibe-coders: improve — 81 turns, 18m, $6.88, success
+[05:16:21] vibe-coders: verify `go build ./...` → exit 0 (1s)
+[05:16:22] vibe-coders: verify `go vet ./...` → exit 0 (1s)
+[05:17:20] vibe-coders: verify `go test ./...` → exit 0 (58s)
+[05:17:20] vibe-coders: verify `cd web && [ -d node_modules ] || pnpm install --frozen-lockfile` → exit 0 (0s)
+[05:18:11] vibe-coders: verify `cd web && pnpm test --silent` → exit 0 (51s)
+[05:18:11] vibe-coders: verify `cd web && [ -d node_modules ] || pnpm install --frozen-lockfile` → exit 0 (0s)
+[05:18:12] vibe-coders: verify `cd web && pnpm run typecheck --silent` → exit 1 (1s)
+[05:18:12] vibe-coders: [shepherd] PR #18 review → fix-failed — 고친 뒤 러너 검증 실패: 실패한 검증: cd web && pnpm run typecheck --silent (exit 1) 
+[05:18:16] === shepherd visitflow PR #15 (원인 guard, run 2026-09-18-051815-visitflow-shepherd)
+Preparing worktree (detached HEAD 7be35b6)
+Updating files:  71% (125/174)Updating files:  72% (126/174)Updating files:  73% (128/174)Updating files:  74% (129/174)Updating files:  75% (131/174)Updating files:  76% (133/174)Updating files:  77% (134/174)Updating files:  78% (136/174)Updating files:  79% (138/174)Updating files:  80% (140/174)Updating files:  81% (141/174)Updating files:  82% (143/174)Updating files:  83% (145/174)Updating files:  84% (147/174)Updating files:  85% (148/174)Updating files:  86% (150/174)Updating files:  87% (152/174)Updating files:  88% (154/174)Updating files:  89% (155/174)Updating files:  90% (157/174)Updating files:  91% (159/174)Updating files:  92% (161/174)Updating files:  93% (162/174)Updating files:  94% (164/174)Updating files:  95% (166/174)Updating files:  96% (168/174)Updating files:  97% (169/174)Updating files:  98% (171/174)Updating files:  99% (173/174)Updating files: 100% (174/174)Updating files: 100% (174/174), done.
+HEAD is now at 7be35b6 feat(mail): follow the company mail standard for SMTP event notifications
+[05:20:02] 다른 러너(pid 3856946)가 실행 중 — 겹쳐 돌리지 않는다 (flock 뒤에서 실행하세요)
+[05:22:45] visitflow: review — 22 turns, 4m, $2.21, success
+[05:22:45] visitflow: [shepherd] PR #15 guard → review-reject — - internal/platform/mail.go:121-138 보안 방식 'auto'(신규 기본값)가 STARTTLS 를 광고하지 않는 릴레이를 만나면 평문 세션에서 그대
+https://github.com/hkjang/visitflow/pull/15#issuecomment-5720721265
+[05:22:46] shepherd: 이번 시간 몫(4건)을 다 썼다 — 나머지는 다음 시간에
+[05:22:46] shepherd: 처리 4건 — 승인 1 · 수정 푸시 1 · 사람 필요 2 (오늘 $52.8529085/$60)
+reports: 17 day(s), 3 week(s), 1 month(s), 948 run(s), 1191 usage row(s), 43 project page(s), 17 alert(s)
+notify: no new alerts

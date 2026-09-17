@@ -1,0 +1,7 @@
+# PR #23 fix summary (commit 417b9fe on the PR branch)
+
+- 재현: 172.19.24.103(비-루프백)에 가짜 릴레이를 띄워 확인 — LOGIN 만 광고하면 `Deliver` 가 err=nil 로 평문 `AUTH LOGIN` 을 보냈고(loginAuth 의 `server.Name != a.host` 가드는 두 값이 모두 config.Host 라 항상 거짓), PLAIN 만 광고하면 stdlib PlainAuth 가 `unencrypted connection` 으로 거부했습니다. digest.go 는 `dispatch` 의 반환값(기록된 행 수)을 '통보됨' 으로 해석해 릴레이가 죽어도 mail_notices 에 INSERT 했고, PruneNotices 는 호출처가 없었습니다.
+- 정책을 docs/ADMIN_GUIDE.md 3.6 에 명시: 자격증명은 TLS/STARTTLS 위에서만 보내고, 평문은 관리자가 `mail.security=none` 을 명시했을 때만(loopback 예외 없음); CRAM-MD5 는 비밀번호를 그대로 보내지 않으므로 평문에서도 허용. 설정 UI 의 비밀번호 필드 안내와 문제 해결 표에도 같은 문구를 추가했습니다.
+- mail.go: `startSession` 이 `client.TLSConnectionState()` 로 암호화 여부를 직접 판단해 PLAIN·LOGIN 에 같은 규칙을 적용하고, 거부 시 `ErrInvalid: 암호화되지 않은 연결에서는 자격증명을 보내지 않습니다 … mail.security=none 을 명시하세요` 로 정책을 설명합니다. stdlib PlainAuth 는 `none` 을 표현할 수 없어(비-localhost 는 무조건 거부) 패키지 내 `plainAuth` 로 바꿨고, loginAuth 의 host 비교 가드는 정책 플래그 검사로 교체했습니다.
+- service.go/digest.go: `deliver` 가 마지막 시도의 오류를 돌려주고 `dispatch` 는 `sent` 로 끝난 건수만 반환하므로 실패한 갱신 알림은 원장에 남지 않아 다음 주기에 재시도합니다(문서에 기재). `PruneNotices` 는 `NotifyRenewals` 가 매 주기 호출합니다.
+- 테스트: 가짜 릴레이를 net.InterfaceAddrs 의 비-루프백 주소에 띄우고(없으면 t.Skip) (a) PLAIN 만 (b) LOGIN 만 (c) 자체 서명 STARTTLS (d) Accept 후 침묵, 추가로 CRAM-MD5·명시적 none 경우를 단언(transcript 에 AUTH/base64 비밀번호 없음, TLS 위에서는 STARTTLS 뒤에 AUTH). 기존 loopback 테스트는 auto+STARTTLS 없음 → 거부, none → PLAIN 으로 바꿨습니다. 새 테스트는 수정 전 코드에서 정확히 지적된 자리에서 실패함을 확인했고, `go test -race ./...`, `go vet ./...`, gofmt, check-env-contract.sh, check-static-assets.sh, `npm run typecheck`, `npm test` 모두 통과합니다.

@@ -1,0 +1,18 @@
+{
+  "verdict": "reject",
+  "recommend": "fix",
+  "reasons": [
+    "internal/mail/mail.go:191-197 loginAuth.Start 의 평문 가드 `!server.TLS && server.Name != a.host` 는 항상 거짓이다 — server.Name 은 dial() 의 smtp.NewClient(connection, config.Host) 에서 온 config.Host 이고 a.host 도 config.Host 라 같은 값이다. 실제로 확인: 172.19.24.103(비-루프백)에 STARTTLS 없이 `AUTH LOGIN` 만 광고하는 가짜 릴레이를 띄우고 Deliver 를 부르면 err=nil 이고 릴레이가 받은 줄에 `aHVudGVyMi1zZWNyZXQ=`(=base64 'hunter2-secret') 가 그대로 도착한다. 캠페인 규칙 1 그대로의 결함. 고치려면 TLS 없는 연결에서 자격증명을 보낼지 정책을 먼저 정해 문서화하고(권장: server.TLS 가 아니면 LOGIN 도 거부하고 `mail.security=none` 인증은 명시적 opt-in 설정으로만 허용), 그 정책대로 가드를 고친다.",
+    "internal/mail/mail.go:158-160 릴레이가 PLAIN 을 광고하면 smtp.PlainAuth 를 고르는데, 표준 PlainAuth.Start 는 `!server.TLS && !isLocalhost(server.Name)` 이면 'unencrypted connection' 으로 거절한다(go1.26 net/smtp/auth.go). 실제로 확인: 비-루프백 주소에 `AUTH PLAIN LOGIN` 을 광고하는 릴레이(TLS 없음)로 자격증명을 넣으면 항상 `SMTP 인증 실패: unencrypted connection` 이다. docs/ADMIN_GUIDE.md:252 는 'auto 는 STARTTLS 가 없으면 평문으로 갑니다' 라 하고 :401 은 인증 실패를 '자격 증명' 문제로 안내하므로 문서와 동작이 어긋난다. 정책을 정한 뒤 PLAIN 선택 조건(TLS 세션에서만)과 문서·오류 문구를 맞춘다.",
+    "internal/mail/mail_test.go 에 인증 경로 테스트가 하나도 없고(fakeRelay 는 AUTH 를 광고하지 않음) 릴레이는 :29 에서 127.0.0.1 에만 묶여 있어 위 두 결함이 모두 가려졌다. 비-루프백 주소(예: net.InterfaceAddrs 로 고른 사설 주소, 없으면 t.Skip)에 (a) `AUTH LOGIN` 만 광고하는 릴레이 → 비밀번호 base64 가 절대 도착하지 않음(또는 정책상 허용이면 명시 설정이 켜진 경우에만 도착), (b) `AUTH PLAIN LOGIN` 광고 → 정책에 맞는 결과, (c) STARTTLS 가 있는 릴레이 → 인증 성공, 을 실제 Deliver 로 단언하는 테스트를 추가한다.",
+    "internal/mail/service.go:128-136 Notify 는 수신자마다 상한 없이 고루틴을 띄운다. seats.go:415-417 일괄 등록은 직원 수만큼, mail.go:229 인사 연동 실패는 관리자 전원에게 각각 고루틴+TCP 연결을 만들고, 응답 없는 릴레이면 한 건당 최대 약 42초(연결 마감 2×Timeout ×2회 +2초) 매달린다. 캠페인 규칙 3 대로 발송 고루틴에 세마포어(예: 4~8)를 두고 기록 INSERT 는 지금처럼 즉시 남기되, 세마포어 대기 중인 건도 결과가 기록되는지 테스트한다."
+  ],
+  "notes": [
+    "기본값은 꺼짐(mail.enabled=false, migrations.sql:295)이고 마이그레이션은 열·표 추가만이라 되돌리기 쉽다. 새 경로 2개는 모두 system_admin 그룹 안(server.go:127-128)이고 mail.password 는 secret=true 로 설정 API 가 `********` 만 돌려준다(settings.go:38-40). 로그·응답에 비밀번호가 실리는 곳은 찾지 못했다.",
+    "발송 결과 기록은 context.WithoutCancel 로 분리(service.go:186-190)되어 있고 멈춘 릴레이 테스트(TestStalledRelayOutcomeIsStillRecorded)가 실제 deliver/SendNow 를 통과한다. 다만 deliver 의 예산 2×Timeout+15s 는 최악값(연결 Timeout + 세션 마감 2×Timeout)×2+2s ≈ 6×Timeout+2s 보다 작다. Deliver 가 ctx 를 DialContext 에서만 쓰기 때문에 결과는 기록되지만, 두 번째 시도가 ctx 만료로 즉시 실패하는 경우가 생긴다 — 위 수정 때 예산을 최악값보다 크게 잡는 것을 권한다.",
+    "메일 본문 안내 문장은 확인했다: 키 회전이 expires_at 을 그대로 물려주는 것(keys.go:118), '저장 후 지금 동기화' 버튼(SettingsPage.tsx:1114), 실패한 도면이 다시 분석 가능한 것(재분석 게이트는 in-memory claim 뿐), 링크 경로 `/`, `/admin/maps`, `/admin/settings`, `/profile/keys` 가 App.tsx 라우트에 모두 존재.",
+    "사소: notifyExpiringAPIKeys(mail.go:255) 는 주소가 없는 사용자의 키에도 expiry_notified_at 을 찍어 이후 주소를 채워도 다시 알리지 않는다. 차단 사유는 아니다.",
+    "실행: go build ./..., go vet, go test ./internal/mail ./internal/app 모두 통과. 검증용 임시 테스트 파일은 실행 후 삭제했고 워크트리는 깨끗하다."
+  ],
+  "risk": "medium"
+}
