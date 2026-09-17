@@ -7,6 +7,9 @@
 # 회차는 단계마다 이 스크립트를 부르므로 실패에 관대해야 한다: 타임아웃을 짧게 잡고,
 # 텔레그램이 죽어 있어도 러너를 붙잡지 않는다.
 set -uo pipefail
+# 모의 실행(tests/test_sim.py)에서는 보내지 않는다 — 가짜 PR "hkjang/sim" 머지 알림이 사람에게 가서
+# 해킹으로 오인됐다 (2026-09-17). 모의 실행은 상태·원격을 격리하지만 알림 채널은 실제였다.
+[ -n "${AIDEV_SIM:-}" ] && exit 0
 [ -f "$HOME/.auto-improve/notify.env" ] && { set -a; . "$HOME/.auto-improve/notify.env"; set +a; }
 : "${AIDEV_TELEGRAM_TOKEN:=}"; : "${AIDEV_TELEGRAM_CHAT:=}"
 [ -n "$AIDEV_TELEGRAM_TOKEN" ] && [ -n "$AIDEV_TELEGRAM_CHAT" ] || exit 0
