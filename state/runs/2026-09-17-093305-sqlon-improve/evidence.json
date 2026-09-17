@@ -1,0 +1,192 @@
+{
+  "run_id": "2026-09-17-093305-sqlon-improve",
+  "generated": "2026-09-17T09:43:07+09:00",
+  "run": {
+    "run_id": "2026-09-17-093305-sqlon-improve",
+    "project": "sqlon",
+    "kind": "improve",
+    "started": "2026-09-17T09:33:05+09:00",
+    "model": "claude-opus-5",
+    "policy_version": "78619c0e",
+    "prompts_hash": "82f2440d4b2fef65",
+    "runner_version": "b8f3f83f",
+    "finished": "2026-09-17T09:43:07+09:00",
+    "outcome": "review-pending"
+  },
+  "record": {
+    "ts": "2026-09-17T09:43:07+09:00",
+    "date": "2026-09-17",
+    "project": "sqlon",
+    "result": "CI no-ci, PR open https://github.com/hkjang/sqlon/pull/6",
+    "outcome": "review-pending",
+    "run_id": "2026-09-17-093305-sqlon-improve",
+    "base_sha": "57f99b7233561729106c666369028763debb97b7",
+    "head_sha": "a47973b73adf790186412210400cc3f8a4fd16c0",
+    "pr": "https://github.com/hkjang/sqlon/pull/6",
+    "stages": {
+      "base": {
+        "state": "pinned",
+        "reason": "main@57f99b7",
+        "at": "2026-09-17T09:33:08+09:00"
+      },
+      "autonomy": {
+        "state": "release",
+        "reason": "",
+        "at": "2026-09-17T09:33:08+09:00"
+      },
+      "verify": {
+        "state": "passed",
+        "reason": "검증 3개 통과 (auto)",
+        "at": "2026-09-17T09:37:11+09:00"
+      },
+      "pr": {
+        "state": "created",
+        "reason": "https://github.com/hkjang/sqlon/pull/6",
+        "at": "2026-09-17T09:37:18+09:00"
+      },
+      "review": {
+        "state": "approved",
+        "reason": "리뷰 승인 (risk=low)",
+        "at": "2026-09-17T09:38:31+09:00"
+      },
+      "ci": {
+        "state": "no-ci",
+        "reason": "이 커밋에 검사가 없음 (정책 allow_merge_without_ci 가 없으면 차단)",
+        "at": "2026-09-17T09:43:07+09:00"
+      }
+    },
+    "campaign": "",
+    "autonomy": "release",
+    "files": 4,
+    "additions": 154,
+    "deletions": 63,
+    "tests": 1,
+    "title": "fix(mcp): REST 변경 관리 승인·감사 행위자를 인증 사용자로 기록합니다"
+  },
+  "stages": {
+    "base": {
+      "state": "pinned",
+      "reason": "main@57f99b7",
+      "at": "2026-09-17T09:33:08+09:00"
+    },
+    "autonomy": {
+      "state": "release",
+      "reason": "",
+      "at": "2026-09-17T09:33:08+09:00"
+    },
+    "verify": {
+      "state": "passed",
+      "reason": "검증 3개 통과 (auto)",
+      "at": "2026-09-17T09:37:11+09:00"
+    },
+    "pr": {
+      "state": "created",
+      "reason": "https://github.com/hkjang/sqlon/pull/6",
+      "at": "2026-09-17T09:37:18+09:00"
+    },
+    "review": {
+      "state": "approved",
+      "reason": "리뷰 승인 (risk=low)",
+      "at": "2026-09-17T09:38:31+09:00"
+    },
+    "ci": {
+      "state": "no-ci",
+      "reason": "이 커밋에 검사가 없음 (정책 allow_merge_without_ci 가 없으면 차단)",
+      "at": "2026-09-17T09:43:07+09:00"
+    }
+  },
+  "provenance": {
+    "model": "claude-opus-5",
+    "policy_version": "78619c0e",
+    "prompts_hash": "82f2440d4b2fef65",
+    "runner_version": "b8f3f83f",
+    "base_sha": "57f99b7233561729106c666369028763debb97b7",
+    "head_sha": "a47973b73adf790186412210400cc3f8a4fd16c0",
+    "pr": "https://github.com/hkjang/sqlon/pull/6"
+  },
+  "verification": {
+    "runner": {
+      "source": "auto",
+      "commands": [
+        {
+          "cmd": "go build ./...",
+          "exit": 0,
+          "seconds": 1
+        },
+        {
+          "cmd": "go vet ./...",
+          "exit": 0,
+          "seconds": 1
+        },
+        {
+          "cmd": "go test ./...",
+          "exit": 0,
+          "seconds": 0
+        }
+      ]
+    },
+    "runner_gate": {
+      "ok": true,
+      "state": "verified",
+      "reason": "검증 3개 통과 (auto)"
+    },
+    "after_rebase": null,
+    "review": {
+      "verdict": "approve",
+      "reasons": [],
+      "notes": [
+        "internal/mcp/changes_api_test.go:88 새 테스트는 수정 전 코드(admin.go/dbaapi.go 를 main 으로 되돌린 상태)에서 실제로 실패함을 확인(136행: 첫 승인 actor 가 \"dba\" 로 기록됨). HEAD 에서는 통과. 전체 `go test ./...` 통과.",
+        "internal/mcp/admin.go:1117 requireDBA 는 인증 실패/권한 부족 경로에서 원본 r 을 반환하고 401/403 판정은 변경 없음. standalone(master-token) 경로는 컨텍스트에 사용자를 싣지 않으므로 기존 \"dba\" 폴백이 그대로 유지됨 — 회귀 없음.",
+        "호출부 12곳 모두 `r, ok := s.requireDBA(w, r)` 로 갱신됨(총 13회 출현 = 정의 1 + 호출 12, 커밋 메시지와 일치).",
+        "CHANGELOG.md 의 97줄 diff 중 실제 내용 변경은 5줄 추가뿐이며 나머지는 상단 49줄의 LF→CRLF 개행 정규화(main 은 혼합 개행, HEAD 는 전체 CRLF). 변경 목적과 무관한 노이즈이나 결함은 아님. 향후 .gitattributes 로 개행을 고정하는 것을 권장.",
+        "submit/cancel 핸들러는 여전히 행위자를 기록하지 않음(기존 동작, 이번 범위 밖)."
+      ],
+      "risk": "low"
+    },
+    "ci_gate": {
+      "ok": false,
+      "state": "no-ci",
+      "reason": "이 커밋에 검사가 없음 (정책 allow_merge_without_ci 가 없으면 차단)",
+      "checks": 0
+    }
+  },
+  "release": {
+    "result": null,
+    "assets_sha256": []
+  },
+  "approval": null,
+  "usage": [
+    {
+      "ts": "2026-09-17T09:37:08+09:00",
+      "date": "2026-09-17",
+      "project": "sqlon",
+      "phase": "improve",
+      "run_id": "2026-09-17-093305-sqlon-improve",
+      "campaign": "",
+      "subtype": "success",
+      "duration_ms": 237939,
+      "num_turns": 38,
+      "cost_usd": 2.355877,
+      "input_tokens": 60,
+      "output_tokens": 16774,
+      "cache_read": 1894300,
+      "cache_create": 97751
+    },
+    {
+      "ts": "2026-09-17T09:38:31+09:00",
+      "date": "2026-09-17",
+      "project": "sqlon",
+      "phase": "review",
+      "run_id": "2026-09-17-093305-sqlon-improve",
+      "campaign": "",
+      "subtype": "success",
+      "duration_ms": 69163,
+      "num_turns": 8,
+      "cost_usd": 0.5588164999999999,
+      "input_tokens": 16,
+      "output_tokens": 3934,
+      "cache_read": 282561,
+      "cache_create": 31729
+    }
+  ]
+}
