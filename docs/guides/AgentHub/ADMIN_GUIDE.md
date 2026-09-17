@@ -37,7 +37,7 @@
 compose 로 띄우고 → 첫 관리자 비밀번호를 바꾸는** 순서입니다.
 
 ```bash
-export AGENTHUB_VERSION=v0.247.0
+export AGENTHUB_VERSION=v0.248.0
 
 # 1) 반입한 아카이브를 적재한다 (helper 가 검증까지 함께 한다)
 cd agenthub-offline
@@ -225,6 +225,93 @@ Keycloak 에 이미 로그인한 사람이 AgentHub 를 열면 **로그인 화�
 번에 떠야 하며(새로고침을 여러 번 해도 리다이렉트가 반복되지 않음), 로그아웃한 뒤 다시
 열어도 자동으로 로그인되지 않아야 합니다. Keycloak 이 아닌 오류(클라이언트 설정 오류,
 사용자의 취소)는 `/login?sso=error` 로 돌아와 로그인 화면에 안내문이 뜹니다.
+
+### 4.5 MCP SSO (OAuth) — 키 없이 Keycloak 토큰으로 `/mcp` 열기
+
+`/mcp` 는 개인 API 키로 들어옵니다. 이 설정은 **키 체계를 그대로 둔 채** Keycloak 액세스
+토큰으로도 들어올 수 있게 합니다. MCP 인가 규격(2025-06-18 이후)은 OAuth 2.1 이라, MCP
+클라이언트(Claude·Cursor 등)에 MCP URL 하나만 주면 클라이언트가 401 의 안내를 읽어 스스로
+Keycloak 로그인 화면을 띄우고 토큰을 받아 옵니다. 이미 Keycloak 에 로그인한 사람은 화면을
+거의 보지 않습니다. **관리자 ▸ 시스템 설정 ▸ MCP SSO** 카드이며, **기본값은 꺼짐**입니다.
+
+**이 서버는 리소스 서버입니다.** 로그인은 Keycloak 이 하고, AgentHub 는 토큰을 받아 검사하는
+쪽입니다. `/authorize`·`/token`·동적 클라이언트 등록은 만들지 않고, 토큰을 저장하거나 세션으로
+바꾸지 않으며, 요청마다 검사합니다.
+
+| 설정 | 저장 키 | 기본값 | 뜻 |
+| --- | --- | --- | --- |
+| Keycloak 토큰으로 MCP 열기 | `mcp.oauth.enabled` | 꺼짐 | 켜면 메타데이터가 서빙되고 `/mcp` 가 JWT 를 검사합니다 |
+| 리소스 식별자 | `mcp.oauth.resource` | 빈 값 | 클라이언트가 실제로 접속하는 **공개 HTTPS 주소 + `/mcp`**. 비우면 General 의 Public URL 에 `/mcp` 를 붙입니다. 프록시 뒤의 내부 주소가 아닙니다 |
+| 허용 대상 | `mcp.oauth.audience` | 빈 값 | 공백 구분. 토큰의 `aud` **또는 `azp`** 가 여기 있으면 통과. MCP 클라이언트 ID 를 적는 자리 |
+| 범위 | `mcp.oauth.scopes` | `mcp:read` | 공백 구분. SSO 로 들어온 사람에게 주는 권한 범위의 **상한**. 값은 API 키와 같은 어휘(`api:read` `mcp:read` `runtime:manage` `agent:write`) |
+| (재사용) Issuer URL | `authentication.issuerUrl` | 웹 로그인 설정 | 새로 만들지 않습니다. 토큰의 `iss` 와 서명 키(JWKS)는 이 Issuer 에서 읽습니다 |
+
+켜지는 조건은 셋이 다 있을 때입니다 — Authentication 에서 Keycloak OIDC 가 켜져 있고 Issuer 가
+있음, 리소스 식별자를 만들 수 있음(설정 또는 Public URL), 그리고 스위치. 저장 시점에 앞의
+둘이 없으면 거절하고 이유를 보여 줍니다. 저장 뒤에 OIDC 를 끄면 스위치가 켜져 있어도 꺼진
+것처럼 동작하고(메타데이터 404, 토큰 거절) 로그에 이유를 남깁니다 — 메타데이터가 있는데
+토큰을 거부하면 클라이언트가 로그인 루프에 빠지기 때문입니다.
+
+**무엇을 검사하는가.** 서명(Keycloak JWKS, RS/ES/PS 계열만 — `HS*`·`none` 거부) · `iss`(Issuer
+URL 과 같음) · `exp`·`nbf` · `typ`(`ID` 면 거부 — ID 토큰은 로그인 증거지 API 자격이 아님) ·
+`cnf`(있으면 거부 — 검증할 수 없는 소지자 증명이 묶인 토큰) · `sub`(비면 거부) · **대상**. 대상은
+둘 중 하나가 맞아야 합니다: `aud` 에 리소스 식별자가 있거나(Audience 매퍼를 둔 정식 경로),
+`aud` 또는 `azp` 가 허용 대상 목록에 있거나(매퍼 없이 쓰는 호환 경로). 실제 Keycloak 26 은
+액세스 토큰의 `aud` 에 `account` 만 싣고 클라이언트 ID 는 `azp` 에 담으므로, MCP 클라이언트
+ID 를 허용 대상에 적는 것이 가장 짧은 길입니다.
+
+**계정은 만들지 않습니다.** 토큰의 `sub` 로 **이미 등록된 활성** 계정만 찾습니다 — 웹 로그인이
+만든 연결과 같은 연결이며, username claim 으로 로컬 계정을 찾지는 않습니다. 없으면 "먼저
+웹으로 한 번 로그인하세요" 로 거부합니다. 정지된 계정은 토큰이 유효해도 열리지 않고, 토큰의
+role claim 으로 권한이 올라가지 않습니다. SSO 로 들어온 사람은 **그 사람이 키를 만들어
+들어왔을 때와 같은 문**을 지나며 — 같은 범위 검사, 같은 도구 목록 — 범위는 토큰의 `scope`
+가 아니라 위의 `mcp.oauth.scopes` 가 정합니다(토큰이 이 어휘를 싣고 오면 교집합). OAuth
+토큰은 **`/mcp` 에서만** 받습니다. REST·관리 API 는 지금처럼 키와 세션만 받습니다.
+
+**Keycloak 쪽 할 일.**
+
+1. MCP 클라이언트용 **공개(public) 클라이언트** 를 만듭니다. Standard Flow 켬, PKCE `S256`,
+   Direct Access Grants·Implicit·Service accounts 끔. 웹 로그인용 Confidential 클라이언트와
+   **다른** 클라이언트입니다.
+2. Valid Redirect URIs 에 쓰는 MCP 클라이언트의 콜백을 정확히 적습니다 — Claude 는
+   `https://claude.ai/api/mcp/auth_callback`, 로컬 클라이언트는 `http://127.0.0.1:*/callback`
+   류. `*` 하나로 다 여는 것은 금지입니다.
+3. 정식 경로: 그 클라이언트(또는 전용 client scope)에 **Audience 매퍼** — Mapper type
+   `Audience`, Included Custom Audience = 리소스 식별자(예 `https://agenthub.company.local/mcp`),
+   Add to access token 켬, Add to ID token 끔. 호환 경로: 매퍼 없이 AgentHub 의 허용 대상에
+   그 클라이언트 ID 를 적습니다.
+4. 액세스 토큰 수명은 짧게(5분 안팎). AgentHub 는 introspection 을 하지 않으므로 Keycloak 에서
+   로그아웃해도 이미 발급된 토큰은 만료까지 삽니다.
+
+**확인하는 방법.**
+
+```bash
+# 켜져 있으면 맨 JSON(resource, authorization_servers, …), 꺼져 있으면 404
+curl -s https://agenthub.company.local/.well-known/oauth-protected-resource/mcp
+# /mcp 의 401 에 resource_metadata= 가 붙어 있어야 합니다
+curl -si -X POST https://agenthub.company.local/mcp | grep -i www-authenticate
+# Keycloak 에서 받은 액세스 토큰으로 tools/list
+curl -s -X POST https://agenthub.company.local/mcp -H "Authorization: Bearer $TOKEN" \
+  -H 'Content-Type: application/json' \
+  -d '{"jsonrpc":"2.0","id":1,"method":"tools/list","params":{}}'
+```
+
+REST 401(`curl -si https://agenthub.company.local/api/v1/me`)에는 `WWW-Authenticate` 가 붙지
+않아야 합니다. 실제 MCP 클라이언트에서는 MCP URL 만 넣고 연결해 보면 됩니다 — 로그인 창이
+뜨고, 끝나면 도구 목록이 보입니다.
+
+**거부 메시지별 조치.** 모두 `/mcp` 의 401 본문 `error.message` 에 옵니다.
+
+| 메시지 | 뜻 | 조치 |
+| --- | --- | --- |
+| `API Key가 유효하지 않습니다.` (JWT 를 보냈는데) | MCP SSO 가 꺼져 있거나 OIDC 가 구성되지 않음 | 카드의 스위치와 Authentication 의 OIDC 를 확인 |
+| `SSO 토큰이 이 서버를 위해 발급된 것이 아닙니다(aud=[…], azp="…")` | 대상 검사 실패. 메시지에 본 값과 고칠 값이 있음 | 허용 대상에 그 `azp` 를 더하거나 Keycloak 클라이언트에 Audience 매퍼로 리소스 식별자를 넣기 |
+| `SSO 액세스 토큰이 유효하지 않습니다(서명·발급자·만료)` | 서명·`iss`·`exp` 검사 실패 | Issuer URL 이 토큰의 `iss` 와 정확히 같은지(realm 경로, 끝의 `/`), 토큰이 만료되지 않았는지 |
+| `ID 토큰은 MCP 자격이 아닙니다` | 클라이언트가 액세스 토큰 대신 ID 토큰을 보냄 | 클라이언트 설정을 확인. 액세스 토큰을 보내야 함 |
+| `소지자 증명(cnf)이 묶인 토큰은 받지 않습니다` | DPoP·mTLS 로 묶인 토큰 | 그 클라이언트에서 DPoP 를 끄거나 일반 Bearer 토큰을 쓰게 |
+| `아직 유효하지 않습니다(nbf)` | 서버 시계가 Keycloak 보다 1분 넘게 늦음 | NTP 확인 |
+| `이 SSO 계정은 AgentHub 에 등록되지 않았거나 비활성입니다` | `sub` 로 활성 계정을 찾지 못함 | 그 사람이 웹으로 한 번 로그인. 정지된 계정이면 사용자 관리에서 상태 확인 |
+| `Keycloak 발급자 정보를 읽지 못해…` | AgentHub 가 Issuer 의 discovery 문서를 읽지 못함 | 컨트롤 플레인에서 Issuer URL 로의 네트워크·인증서 확인 |
 
 ---
 
