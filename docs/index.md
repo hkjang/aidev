@@ -1,7 +1,7 @@
 ---
 title: "aidev 자율 개선 대시보드"
 description: "Claude Code 자율 개선 에이전트가 hkjang 의 프로젝트를 개선·테스트·머지·릴리즈한 일일 보고. 오늘 45회차·릴리즈 26건, 누적 929회차·릴리즈 342건, 주의 필요 12건."
-last_modified_at: 2026-09-17 11:47:42 +0900
+last_modified_at: 2026-09-17 11:53:40 +0900
 ---
 {% raw %}
 <script type="application/ld+json">
@@ -17,7 +17,7 @@ last_modified_at: 2026-09-17 11:47:42 +0900
   "name": "hkjang",
   "url": "https://github.com/hkjang"
  },
- "dateModified": "2026-09-17T11:47:42+09:00"
+ "dateModified": "2026-09-17T11:53:40+09:00"
 }
 </script>
 
@@ -111,7 +111,7 @@ last_modified_at: 2026-09-17 11:47:42 +0900
    "name": "검토 대기로 멈춘 PR 은 누가 처리하나요?",
    "acceptedAnswer": {
     "@type": "Answer",
-    "text": "PR 처리기(bin/shepherd.sh)가 매시간 살핍니다. 왜 멈췄는지(보호 파일·리뷰 거절·CI 실패·충돌·자율화 보류)를 진단해 충돌은 리베이스하고, CI 실패와 리뷰 거절은 PR 브랜치 위에서 고쳐 검증 뒤 올리며, 사람 대신 엄격한 심사 세션을 돌려 통과하면 aidev-approved 라벨을 답니다. 그 뒤는 평소 승인 경로와 같아 CI 확인 뒤 승인 커밋에만 머지하고 릴리즈합니다. 워크플로·비밀값·결제·LICENSE 를 건드린 PR, 자율화 단계가 approve 이하인 프로젝트, 심사 위험도 high, 두 번 고쳐도 안 되는 PR 은 손대지 않고 작업함에 '사람 필요' 로 남깁니다. state/NO-SHEPHERD 파일을 만들면 멈춥니다."
+    "text": "PR 처리기(bin/shepherd.sh)가 매시간 살핍니다. 왜 멈췄는지(보호 파일·리뷰 거절·CI 실패·충돌·자율화 보류)를 진단해 충돌은 리베이스하고, CI 실패와 리뷰 거절은 PR 브랜치 위에서 고쳐 검증 뒤 올리며, 사람 대신 엄격한 심사 세션을 돌리고, 러너는 심사자의 권고(merge/fix/human)를 그대로 따릅니다 — merge 면 aidev-approved 라벨을 달고, 그 뒤는 평소 승인 경로와 같아 CI 확인 뒤 승인 커밋에만 머지하고 릴리즈합니다. 워크플로·비밀값·결제·LICENSE 를 건드린 PR, 자율화 단계가 approve 이하인 프로젝트, 심사자가 사람이 정하라고 한 것, 두 번 고쳐도 안 되는 PR 은 손대지 않고 작업함에 '사람 필요' 로 남깁니다. state/NO-SHEPHERD 파일을 만들면 멈춥니다."
    }
   },
   {
@@ -285,7 +285,7 @@ last_modified_at: 2026-09-17 11:47:42 +0900
 
 # aidev 자율 개선 대시보드
 
-<p class="tldr"><strong>한 줄 요약.</strong> Claude Code 자율 개선 에이전트가 hkjang 의 프로젝트를 개선·테스트·머지·릴리즈한 일일 보고. 오늘 45회차·릴리즈 26건, 누적 929회차·릴리즈 342건, 주의 필요 12건. 회차가 끝날 때마다 자동 갱신됩니다 (마지막 갱신 <time datetime="2026-09-17T11:47:42+09:00" data-rel>2026-09-17 11:47</time> KST).</p>
+<p class="tldr"><strong>한 줄 요약.</strong> Claude Code 자율 개선 에이전트가 hkjang 의 프로젝트를 개선·테스트·머지·릴리즈한 일일 보고. 오늘 45회차·릴리즈 26건, 누적 929회차·릴리즈 342건, 주의 필요 12건. 회차가 끝날 때마다 자동 갱신됩니다 (마지막 갱신 <time datetime="2026-09-17T11:53:40+09:00" data-rel>2026-09-17 11:53</time> KST).</p>
 
 <div class="alerts" role="alert"><strong>⚠️ 주의 필요 12건</strong> <span class="meta">— 새 경고는 GitHub Issue·Slack·이메일·Windows 알림으로도 보냅니다</span><ul><li><a href="https://hkjang.github.io/aidev/projects/Momento/">Momento</a> — 보호 파일 변경 — 자동 머지 안 함, 사람 검토 필요 <span class=meta>(2026-09-17 01:12)</span></li><li><a href="https://hkjang.github.io/aidev/projects/aiportal-front-admin/">aiportal-front-admin</a> — 보호 파일 변경 — 자동 머지 안 함, 사람 검토 필요 <span class=meta>(2026-09-17 02:39)</span></li><li><a href="https://hkjang.github.io/aidev/projects/cutover/">cutover</a> — 보호 파일 변경 — 자동 머지 안 함, 사람 검토 필요 <span class=meta>(2026-09-17 04:00)</span></li><li><a href="https://hkjang.github.io/aidev/projects/git-ctx/">git-ctx</a> — 보호 파일 변경 — 자동 머지 안 함, 사람 검토 필요 <span class=meta>(2026-09-17 04:00)</span></li><li><a href="https://hkjang.github.io/aidev/projects/madi/">madi</a> — 보호 파일 변경 — 자동 머지 안 함, 사람 검토 필요 <span class=meta>(2026-09-17 05:21)</span></li><li><a href="https://hkjang.github.io/aidev/projects/jupiq/">jupiq</a> — 보호 파일 변경 — 자동 머지 안 함, 사람 검토 필요 <span class=meta>(2026-09-17 05:24)</span></li><li><a href="https://hkjang.github.io/aidev/projects/releasedock/">releasedock</a> — 보호 파일 변경 — 자동 머지 안 함, 사람 검토 필요 <span class=meta>(2026-09-17 08:57)</span></li><li><a href="https://hkjang.github.io/aidev/projects/relio/">relio</a> — 보호 파일 변경 — 자동 머지 안 함, 사람 검토 필요 <span class=meta>(2026-09-17 09:04)</span></li><li><a href="https://hkjang.github.io/aidev/projects/jupiq/">jupiq</a> — 보호 파일 변경 — 자동 머지 안 함, 사람 검토 필요 <span class=meta>(2026-09-16 06:12)</span></li><li><a href="https://hkjang.github.io/aidev/projects/relio/">relio</a> — 보호 파일 변경 — 자동 머지 안 함, 사람 검토 필요 <span class=meta>(2026-09-16 10:12)</span></li><li><a href="https://hkjang.github.io/aidev/projects/umm/">umm</a> — 보호 파일 변경 — 자동 머지 안 함, 사람 검토 필요 <span class=meta>(2026-09-16 11:22)</span></li><li><a href="https://hkjang.github.io/aidev/projects/qurio/">qurio</a> — 보호 파일 변경 — 자동 머지 안 함, 사람 검토 필요 <span class=meta>(2026-09-16 14:55)</span></li></ul></div>
 
@@ -295,7 +295,7 @@ last_modified_at: 2026-09-17 11:47:42 +0900
 
 <p><a href="https://hkjang.github.io/aidev/inbox/"><strong>📥 작업함</strong></a> — 열린 러너 PR·복구·수정 과제 53건 (그중 사람 필요 1건)</p>
 
-<p>🧹 <strong>PR 처리기</strong> — 매시간 검토 대기 PR 을 진단해 고치고 심사해 승인 · 마지막 실행 아직 없음 · 오늘 승인 0 · 수정 푸시 0 · 사람 필요 0 <span class="meta">(기록: state/shepherd.jsonl)</span></p>
+<p>🧹 <strong>PR 처리기</strong> — 매시간 검토 대기 PR 을 진단해 고치고 심사해 승인 · 마지막 실행 2026-09-17 11:50 · 오늘 승인 0 · 수정 푸시 0 · 사람 필요 0 <span class="meta">(기록: state/shepherd.jsonl)</span></p>
 
 [운영 문서](https://github.com/hkjang/aidev#readme) · [원장](https://github.com/hkjang/aidev/tree/main/state) · [실행 이력](https://github.com/hkjang/aidev/commits/main) · [경고 이슈](https://github.com/hkjang/aidev/issues?q=label%3Aalert) · [교훈 25건](https://hkjang.github.io/aidev/lessons/) · [Atom 피드](https://hkjang.github.io/aidev/feed.xml) · [summary.json](https://hkjang.github.io/aidev/data/summary.json)
 
@@ -343,7 +343,7 @@ last_modified_at: 2026-09-17 11:47:42 +0900
 
 ## 품질 지표 (최근 14일)
 
-<ul class="stats"><li title="관찰 24h 지난 머지 387건 중 회귀 없음 346건"><b>89%</b><span>검증된 개선 완료율</span></li><li title="릴리즈 시도 323건 중 자산 검증까지 297건"><b>92%</b><span>완전한 릴리즈 비율</span></li><li title="되돌림·롤백 0건 / 관찰 머지 387건"><b>0%</b><span>사람의 재작업률</span></li><li title="회귀 0건 / 관찰 머지 387건"><b>0%</b><span>변경 후 회귀율</span></li><li title="비용 확인된 유효 개선 188건, 미확인 세션 10"><b>$16.40</b><span>유효 개선당 비용</span></li><li title="해결된 경고 105건"><b>8.2시간</b><span>예외 처리 소요 시간(중앙값)</span></li><li title="최근 14일"><b>139</b><span>실행 오류</span></li></ul>
+<ul class="stats"><li title="관찰 24h 지난 머지 387건 중 회귀 없음 346건"><b>89%</b><span>검증된 개선 완료율</span></li><li title="릴리즈 시도 323건 중 자산 검증까지 297건"><b>92%</b><span>완전한 릴리즈 비율</span></li><li title="되돌림·롤백 0건 / 관찰 머지 387건"><b>0%</b><span>사람의 재작업률</span></li><li title="회귀 0건 / 관찰 머지 387건"><b>0%</b><span>변경 후 회귀율</span></li><li title="비용 확인된 유효 개선 188건, 미확인 세션 10"><b>$16.40</b><span>유효 개선당 비용</span></li><li title="해결된 경고 107건"><b>8.2시간</b><span>예외 처리 소요 시간(중앙값)</span></li><li title="최근 14일"><b>139</b><span>실행 오류</span></li></ul>
 
 '검증된 개선'은 머지 후 24시간 관찰에서 회귀(main CI 실패·되돌림·롤백)가 없는 변경. '완전한 릴리즈'는 태그·Release·필수 자산 검증까지 끝난 것. 비용이 확인되지 않은 세션은 0이 아니라 '미확인'으로 뺀다.
 
@@ -379,7 +379,7 @@ claude -p 가 세션마다 보고한 추정값(정액제에서는 참고값). �
 <details><summary>머지 전에 검토는 없나요?</summary><p>있습니다. 구현과 다른 세션의 리뷰 에이전트가 diff 만 읽고 &#x27;머지하면 안 되는 이유&#x27;(검증하지 않는 테스트, 논리 오류, 설명과 다른 동작, 위험한 변경)를 찾습니다. 거절하면 PR 에 사유를 달고 열어 둡니다. 또 워크플로·마이그레이션·인증·결제·배포 파일(보호 파일)을 건드린 PR 은 자동 머지하지 않습니다.</p></details>
 <details><summary>깨진 변경은 어떻게 되나요?</summary><p>머지 2시간 뒤부터 main CI 실패와 되돌림 커밋을 확인해 &#x27;교훈&#x27;으로 기록하고, 그 프로젝트의 다음 회차 프롬프트에 주입해 같은 실수를 피하게 합니다. 릴리즈 워크플로가 반복 실패하고 수정 회차도 실패하면 원래 머지를 되돌리는 롤백 PR 을 자동으로 엽니다(머지는 사람). 프로젝트마다 최근 14일의 실패·경고·회귀로 건강 등급 A~D 를 매깁니다.</p></details>
 <details><summary>자율화 단계란 무엇인가요?</summary><p>프로젝트마다 러너 권한을 &#x27;분석만 → PR 생성 → 승인 후 병합 → 저위험 자동 병합 → 검증된 릴리즈 게시&#x27; 다섯 단계로 나눕니다. 단계를 올리는 것은 사람이 정책 파일(state/&lt;프로젝트&gt;.policy.json 의 autonomy)을 고쳐야 하고, 롤백이나 회귀가 생기면 러너가 한 단계 내립니다(⬇ 표시). 작업함에서 승인(aidev-approved)·반려(aidev-rejected) 라벨로 개별 PR 을 처리할 수 있습니다.</p></details>
-<details><summary>검토 대기로 멈춘 PR 은 누가 처리하나요?</summary><p>PR 처리기(bin/shepherd.sh)가 매시간 살핍니다. 왜 멈췄는지(보호 파일·리뷰 거절·CI 실패·충돌·자율화 보류)를 진단해 충돌은 리베이스하고, CI 실패와 리뷰 거절은 PR 브랜치 위에서 고쳐 검증 뒤 올리며, 사람 대신 엄격한 심사 세션을 돌려 통과하면 aidev-approved 라벨을 답니다. 그 뒤는 평소 승인 경로와 같아 CI 확인 뒤 승인 커밋에만 머지하고 릴리즈합니다. 워크플로·비밀값·결제·LICENSE 를 건드린 PR, 자율화 단계가 approve 이하인 프로젝트, 심사 위험도 high, 두 번 고쳐도 안 되는 PR 은 손대지 않고 작업함에 &#x27;사람 필요&#x27; 로 남깁니다. state/NO-SHEPHERD 파일을 만들면 멈춥니다.</p></details>
+<details><summary>검토 대기로 멈춘 PR 은 누가 처리하나요?</summary><p>PR 처리기(bin/shepherd.sh)가 매시간 살핍니다. 왜 멈췄는지(보호 파일·리뷰 거절·CI 실패·충돌·자율화 보류)를 진단해 충돌은 리베이스하고, CI 실패와 리뷰 거절은 PR 브랜치 위에서 고쳐 검증 뒤 올리며, 사람 대신 엄격한 심사 세션을 돌리고, 러너는 심사자의 권고(merge/fix/human)를 그대로 따릅니다 — merge 면 aidev-approved 라벨을 달고, 그 뒤는 평소 승인 경로와 같아 CI 확인 뒤 승인 커밋에만 머지하고 릴리즈합니다. 워크플로·비밀값·결제·LICENSE 를 건드린 PR, 자율화 단계가 approve 이하인 프로젝트, 심사자가 사람이 정하라고 한 것, 두 번 고쳐도 안 되는 PR 은 손대지 않고 작업함에 &#x27;사람 필요&#x27; 로 남깁니다. state/NO-SHEPHERD 파일을 만들면 멈춥니다.</p></details>
 <details><summary>긴급히 멈추려면?</summary><p>bin/stop.sh all|merge|release|&lt;프로젝트&gt; on &quot;사유&quot; 또는 aidev 저장소에 라벨 stop, 제목 stop: &lt;범위&gt; 이슈를 만들면 됩니다. 새 회차 시작뿐 아니라 진행 중인 회차도 에이전트 시작 전·머지 전·릴리즈 전 경계에서 멈춥니다.</p></details>
 <details><summary>비용은 어떻게 계산되나요?</summary><p>각 회차의 claude -p 세션이 보고한 추정 비용(USD)과 소요 시간·턴 수·토큰을 그대로 합산합니다. 정액제 구독에서는 실제 청구가 아닌 참고값입니다.</p></details>
 <details><summary>원본 데이터는 어디서 보나요?</summary><p>회차 기록은 runs.jsonl, 사용량은 usage.jsonl, 요약은 data/summary.json, 프로젝트별 원장은 GitHub 저장소 hkjang/aidev 의 state/ 폴더, 러너와 프롬프트는 같은 저장소의 bin/ 과 prompt.md 에 있습니다.</p></details>

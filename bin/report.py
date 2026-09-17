@@ -1057,7 +1057,7 @@ def write_inbox(items, alert_items):
                  "- **재실행**: [수동 작업 요청 이슈](https://github.com/hkjang/aidev/issues/new?template=run.yml)로 문제·수용 기준·금지 범위를 적어 요청합니다.\n"
                  "- **긴급 중지**: `bin/stop.sh all|merge|release|<프로젝트> on \"사유\"` 또는 라벨 `stop`, 제목 `stop: <범위>` 이슈.\n"
                  "- **PR 처리기**: 매시간 `bin/shepherd.sh` 가 검토 대기 PR 을 진단해 충돌은 리베이스, CI 실패·리뷰 거절은 고쳐 올리고, 엄격 심사를 통과하면 사람 대신 승인합니다. "
-                 "워크플로·비밀값·결제·LICENSE 를 건드린 PR, 자율화 단계 approve 이하, 심사 risk=high, 2회 실패는 사람 몫으로 남깁니다(아래 표 'PR 처리기' 열). 끄기: `state/NO-SHEPHERD`.\n")
+                 "러너는 심사자의 권고(merge/fix/human)를 그대로 따릅니다. 워크플로·비밀값·결제·LICENSE 를 건드린 PR, 자율화 단계 approve 이하, 심사자가 human 이라 한 것, 2회 실패는 사람 몫으로 남깁니다(아래 표 'PR 처리기' 열). 끄기: `state/NO-SHEPHERD`.\n")
     sh = shepherd_summary()
     if sh["total"] or sh["last_pass"]:
         t = sh["today"]
@@ -1104,7 +1104,7 @@ FAQ = [
     ("자율화 단계란 무엇인가요?",
      "프로젝트마다 러너 권한을 '분석만 → PR 생성 → 승인 후 병합 → 저위험 자동 병합 → 검증된 릴리즈 게시' 다섯 단계로 나눕니다. 단계를 올리는 것은 사람이 정책 파일(state/<프로젝트>.policy.json 의 autonomy)을 고쳐야 하고, 롤백이나 회귀가 생기면 러너가 한 단계 내립니다(⬇ 표시). 작업함에서 승인(aidev-approved)·반려(aidev-rejected) 라벨로 개별 PR 을 처리할 수 있습니다."),
     ("검토 대기로 멈춘 PR 은 누가 처리하나요?",
-     "PR 처리기(bin/shepherd.sh)가 매시간 살핍니다. 왜 멈췄는지(보호 파일·리뷰 거절·CI 실패·충돌·자율화 보류)를 진단해 충돌은 리베이스하고, CI 실패와 리뷰 거절은 PR 브랜치 위에서 고쳐 검증 뒤 올리며, 사람 대신 엄격한 심사 세션을 돌려 통과하면 aidev-approved 라벨을 답니다. 그 뒤는 평소 승인 경로와 같아 CI 확인 뒤 승인 커밋에만 머지하고 릴리즈합니다. 워크플로·비밀값·결제·LICENSE 를 건드린 PR, 자율화 단계가 approve 이하인 프로젝트, 심사 위험도 high, 두 번 고쳐도 안 되는 PR 은 손대지 않고 작업함에 '사람 필요' 로 남깁니다. state/NO-SHEPHERD 파일을 만들면 멈춥니다."),
+     "PR 처리기(bin/shepherd.sh)가 매시간 살핍니다. 왜 멈췄는지(보호 파일·리뷰 거절·CI 실패·충돌·자율화 보류)를 진단해 충돌은 리베이스하고, CI 실패와 리뷰 거절은 PR 브랜치 위에서 고쳐 검증 뒤 올리며, 사람 대신 엄격한 심사 세션을 돌리고, 러너는 심사자의 권고(merge/fix/human)를 그대로 따릅니다 — merge 면 aidev-approved 라벨을 달고, 그 뒤는 평소 승인 경로와 같아 CI 확인 뒤 승인 커밋에만 머지하고 릴리즈합니다. 워크플로·비밀값·결제·LICENSE 를 건드린 PR, 자율화 단계가 approve 이하인 프로젝트, 심사자가 사람이 정하라고 한 것, 두 번 고쳐도 안 되는 PR 은 손대지 않고 작업함에 '사람 필요' 로 남깁니다. state/NO-SHEPHERD 파일을 만들면 멈춥니다."),
     ("긴급히 멈추려면?",
      "bin/stop.sh all|merge|release|<프로젝트> on \"사유\" 또는 aidev 저장소에 라벨 stop, 제목 stop: <범위> 이슈를 만들면 됩니다. 새 회차 시작뿐 아니라 진행 중인 회차도 에이전트 시작 전·머지 전·릴리즈 전 경계에서 멈춥니다."),
     ("비용은 어떻게 계산되나요?",

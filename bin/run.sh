@@ -1042,8 +1042,10 @@ resume_runs(){
 #   - 결정은 엄격한 심사 세션(shepherd-review-prompt.md)이 하고, 불확실하면 거절한다.
 #   - 승인은 기존 승인 경로(approvals.jsonl + aidev-approved 라벨)로만 한다 — 머지는 승인 스윕이
 #     CI 를 확인하고 승인 커밋에만 한다. 처리기 자체는 머지 명령을 부르지 않는다.
+#   - 심사자의 권고(recommend: merge|fix|human)를 그대로 따른다. 위험도가 높아도 심사자가 merge 라
+#     하면 승인하고, 심사자가 human 이라 하면 사람에게 넘긴다 — 결정은 심사자가 한다 (hkjang, 2026-09-17).
 #   - 워크플로·비밀값·결제·LICENSE 를 건드린 PR, 자율화 단계가 approve 이하인 프로젝트,
-#     risk=high, CI 가 아예 없는 저장소, 두 번 고쳐도 안 되는 PR 은 손대지 않고 진단만 남긴다.
+#     CI 가 아예 없는 저장소, 두 번 고쳐도 안 되는 PR 은 손대지 않고 진단만 남긴다.
 #   - 자체 일일 예산(SHEPHERD_DAILY_BUDGET)을 넘기면 멈춘다. 기록은 state/shepherd.jsonl.
 #   - 끄기: state/NO-SHEPHERD. 설정: state/shepherd.env.
 SHEPHERD_MAX=${SHEPHERD_MAX:-4}                        # 한 번에 세션을 부르는 PR 수
@@ -1125,6 +1127,8 @@ shepherd_review(){ # $1=pr $2=브랜치 $3=보류 사유 → SH_STATE(approved|r
   git -C "$repo" worktree remove --force "$wt" >>"$LOG" 2>&1 || true
   g=$($GATE review "$OUT/review.json" 2>/dev/null || true)
   SH_STATE=$(jq -r '.state // "invalid"' <<<"$g" 2>/dev/null || echo invalid); SH_RISK=$(jq -r '.risk // ""' <<<"$g" 2>/dev/null); SH_REASON=$(jq -r '.reason // "리뷰 결과 없음"' <<<"$g" 2>/dev/null)
+  # 심사자의 권고(merge|fix|human). 러너는 이것을 그대로 따른다 — 심사자가 결정하는 자리다 (hkjang, 2026-09-17).
+  SH_REC=$(jq -r '.recommend // ""' "$OUT/review.json" 2>/dev/null); case "$SH_REC" in merge|fix|human) ;; *) SH_REC=$( [ "$SH_STATE" = approved ] && echo merge || echo fix );; esac
   [ "$SH_STATE" = approved ]
 }
 shepherd(){
@@ -1211,10 +1215,11 @@ $(head -c 2500 <<<"$note")"
 보호 파일도 건드린다: $(tr '\n' ' ' <<<"$gfiles")"
     # ── 심사: 사람 대신 결정한다. 통과하면 기존 승인 경로(라벨 + approvals.jsonl)로 넘긴다.
     shepherd_budget_ok "$SHEPHERD_REVIEW_BUDGET" || { shepherd_note "$pr" "$head" "$cause" review-skipped "오늘 예산 소진 — 심사는 다음 날"; rm -rf "$OUT/home"; break; }
+    # 심사자의 권고를 그대로 따른다: merge → 승인(위험도와 무관), fix → 다음 시간에 고침, human → 사람에게.
     if shepherd_review "$pr" "$hbr" "$hold"; then
-      if [ "$SH_RISK" = high ]; then
-        shepherd_note "$pr" "$head" "$cause" needs-human "심사는 승인했지만 risk=high — 머지 여부는 사람이 정한다"
-        (cd "$repo" && gh pr comment "$pr" --body "🧐 PR 처리기 심사: 결함은 못 찾았지만 위험도가 높아(risk=high) 자동 승인하지 않습니다. 확인 후 \`aidev-approved\` 라벨을 달아 주세요.
+      if [ "$SH_REC" = human ]; then
+        shepherd_note "$pr" "$head" "$cause" needs-human "심사는 결함을 못 찾았지만 사람이 정하라고 권함 (risk=${SH_RISK:-?}): $(jq -r '.notes[]?' "$OUT/review.json" 2>/dev/null | head -c 400 | tr '\n' ' ')"
+        (cd "$repo" && gh pr comment "$pr" --body "🧐 PR 처리기 심사: 결함은 못 찾았지만 심사자가 사람이 정해야 한다고 권합니다 (risk=${SH_RISK:-?}). 확인 후 \`aidev-approved\` 라벨을 달아 주세요.
 
 $(jq -r '.notes[]? | "- " + .' "$OUT/review.json" 2>/dev/null | head -8)
 (run $RUN_ID)" >>"$LOG" 2>&1) || true
@@ -1236,11 +1241,20 @@ $(jq -r '.notes[]? | "- " + .' "$OUT/review.json" 2>/dev/null | head -8)
       case "$SH_STATE" in
         rejected)
           reasons=$(jq -r '.reasons[]? | "- " + .' "$OUT/review.json" 2>/dev/null | head -c 3000)
-          shepherd_note "$pr" "$head" "$cause" review-reject "$reasons"
-          (cd "$repo" && gh pr comment "$pr" --body "🧐 PR 처리기 심사 거절 ($((tries+1))/$SHEPHERD_TRIES) — 다음 시간에 아래 사유를 고쳐 봅니다.
+          if [ "$SH_REC" = human ]; then
+            shepherd_note "$pr" "$head" "$cause" needs-human "심사 거절, 사람이 봐야 한다고 권함: $(head -c 400 <<<"$reasons" | tr '\n' ' ')"
+            (cd "$repo" && gh pr comment "$pr" --body "🙋 PR 처리기 심사: 결함이 있고, 심사자가 사람이 봐야 한다고 권합니다 — 직접 고치거나 \`aidev-rejected\` 로 닫아 주세요.
 
 $reasons
-(run $RUN_ID)" >>"$LOG" 2>&1) || true;;
+(run $RUN_ID)" >>"$LOG" 2>&1) || true
+            human=$((human+1))
+          else
+            shepherd_note "$pr" "$head" "$cause" review-reject "$reasons"
+            (cd "$repo" && gh pr comment "$pr" --body "🧐 PR 처리기 심사 거절 ($((tries+1))/$SHEPHERD_TRIES) — 다음 시간에 아래 사유를 고쳐 봅니다.
+
+$reasons
+(run $RUN_ID)" >>"$LOG" 2>&1) || true
+          fi;;
         *) shepherd_note "$pr" "$head" "$cause" review-invalid "$SH_REASON";;
       esac
     fi

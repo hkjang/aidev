@@ -9,11 +9,11 @@
 #   흐름: run.sh --shepherd
 #     대상 수집(최근 14일 review-pending·verify-failed PR) → 진단(충돌/CI 실패/리뷰 거절/보호 파일/자율화 단계)
 #     → 충돌은 리베이스, CI 실패·리뷰 거절은 PR 브랜치 위에서 수정 세션 → 재검증 → 푸시
-#     → 엄격한 심사 세션(shepherd-review-prompt.md) → approve & risk≠high 면 aidev-approved 라벨 + 승인 기록
-#     → 승인 스윕(approvals)이 CI 확인 뒤 승인 커밋에만 머지하고 릴리즈
+#     → 엄격한 심사 세션(shepherd-review-prompt.md) → 심사자의 권고(merge|fix|human)를 그대로 따른다:
+#       merge 면 aidev-approved 라벨 + 승인 기록 → 승인 스윕(approvals)이 CI 확인 뒤 승인 커밋에만 머지하고 릴리즈
 #
 # 사람만 승인할 수 있는 것(워크플로·비밀값·결제·LICENSE 를 건드린 PR, 자율화 단계가 approve 이하인
-# 프로젝트, 심사 risk=high, 두 번 고쳐도 안 되는 것)은 건드리지 않고 진단만 남긴다 → 작업함에 표시.
+# 프로젝트, 심사자가 human 이라 한 것, 두 번 고쳐도 안 되는 것)은 건드리지 않고 진단만 남긴다 → 작업함에 표시.
 #
 # 락: 메인 러너·fixer 와 같은 run.lock 을 공유한다. 회차가 도는 중이면 끝날 때까지 기다린다
 # (최대 SHEPHERD_LOCK_WAIT 초, 기본 50분). 스케줄: Windows 작업 스케줄러 AutoImproveShepherd (매시간).
