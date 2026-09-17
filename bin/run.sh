@@ -576,9 +576,11 @@ pick_campaign(){
         # 캠페인부터 차례를 준다.
         cand_id+=("$id"); cand_project+=("$best"); cand_budget+=("$budget")
         cand_ibudget+=("$ibudget"); cand_guard+=("$guardpat")
+        # 캠페인 교훈(bin/campaign-lessons.sh): 다른 저장소가 이미 걸린 것을 시작 전에 읽게 한다
         cand_note+=("## 개선 캠페인 \"$id\" (자동 배정) — 새 아이디어 대신 이 목표를 우선하세요
 $goal
-예산: \$$spent / \$$budget 사용, 기한 $until. 이 목표와 무관한 변경은 만들지 마세요.")
+예산: \$$spent / \$$budget 사용, 기한 $until. 이 목표와 무관한 변경은 만들지 마세요.
+$(cat "$STATE/campaign-lessons/$id.md" 2>/dev/null)")
         # 이 캠페인이 마지막으로 돈 시각. 한 번도 안 돌았으면 빈 값이고, 빈 값이
         # 가장 앞선다.
         cand_last+=("$(jq -r --arg id "$id" 'select(.campaign==$id) | .ts' "$DATA/runs.jsonl" 2>/dev/null | tail -1)")
@@ -1213,6 +1215,11 @@ $(head -c 2500 <<<"$note")"
     esac
     [ -n "$gfiles" ] && [ "$cause" != guard ] && hold="$hold
 보호 파일도 건드린다: $(tr '\n' ' ' <<<"$gfiles")"
+    # 캠페인 교훈: 같은 캠페인의 다른 저장소가 걸린 자리를 심사자가 먼저 본다
+    camp=$(jq -r '.campaign // ""' <<<"$item")
+    [ -n "$camp" ] && [ -s "$STATE/campaign-lessons/$camp.md" ] && hold="$hold
+
+$(cat "$STATE/campaign-lessons/$camp.md")"
     # ── 심사: 사람 대신 결정한다. 통과하면 기존 승인 경로(라벨 + approvals.jsonl)로 넘긴다.
     shepherd_budget_ok "$SHEPHERD_REVIEW_BUDGET" || { shepherd_note "$pr" "$head" "$cause" review-skipped "오늘 예산 소진 — 심사는 다음 날"; rm -rf "$OUT/home"; break; }
     # 심사자의 권고를 그대로 따른다: merge → 승인(위험도와 무관), fix → 다음 시간에 고침, human → 사람에게.

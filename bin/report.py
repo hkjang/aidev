@@ -309,6 +309,13 @@ def campaign_progress(cmp, runs_all):
             "last_ts": max((r.get("ts") or "" for r in mine), default="")}
 
 
+def campaign_lessons(cid):
+    try:
+        return json.load(open(os.path.join(STATE, "campaign-lessons", f"{cid}.json"), encoding="utf-8"))
+    except Exception:
+        return {}
+
+
 def campaign_goal_line(goal):
     """목표의 첫 문단 한 줄과, 표준 문서(…-STANDARD.md)가 있으면 그 링크."""
     text = (goal or "").strip()
@@ -364,6 +371,13 @@ def campaign_html(cmp, runs_all, usage_all):
         chips.append(f'<a class="chip {CAMP_STATE[x["state"]][1]}" href="{href}" title="{esc(tip)}">{mark}{esc(x["name"])}</a>')
     stuck = [x["name"] for x in pg["projects"] if x["state"] == "stuck"]
     stuck_s = (f'<p class="meta">⛔ 세 번 실패해 러너가 더 잡지 않는 프로젝트: <strong>{esc(", ".join(stuck))}</strong> — 사람이 원인을 봐야 다시 돈다.</p>' if stuck else "")
+    # 캠페인 교훈 (bin/campaign-lessons.sh): 다른 저장소가 걸린 것을 규칙으로 정제해 다음 회차·심사에 붙인다
+    cl = campaign_lessons(cid)
+    if cl.get("rules"):
+        stuck_s += (f'<details class="camp-lessons"><summary>📚 캠페인 교훈 {len(cl["rules"])}개 — 리뷰·심사 거절·회귀 {cl.get("items", 0)}건에서 정제, '
+                    f'다음 저장소 회차와 PR 처리기 심사에 자동 주입 <span class="meta">({esc((cl.get("generated") or "")[:16].replace("T", " "))})</span></summary><ul>'
+                    + "".join(f'<li><strong>{esc(r.get("rule", ""))}</strong> — {esc(r.get("why", ""))} <span class="meta">({esc(", ".join(r.get("projects") or []))}{", " if r.get("projects") else ""}{r.get("count", 1)}회)</span></li>' for r in cl["rules"])
+                    + "</ul></details>")
     last_s = pg["last_ts"][:16].replace("T", " ") if pg["last_ts"] else "아직 없음"
     return (f'<div class="camp" id="camp-{esc(cid)}">'
             f'<div class="camp-head"><h3><a href="#camp-{esc(cid)}">{esc(cid)}</a> {status}</h3>'
@@ -1275,7 +1289,8 @@ def main():
                "campaign_progress": [{"id": cmp.get("id"), "done": bool(cmp.get("done")), "until": cmp.get("until"), "budget_usd": cmp.get("budget_usd"),
                                       "spent_usd": round(sum(float(x.get("cost_usd") or 0) for v in by_day_usage.values() for x in v if x.get("campaign") == cmp.get("id")), 2),
                                       **{k: pg[k] for k in ("total", "processed", "pct", "runs", "last_ts")}, "counts": dict(pg["counts"]),
-                                      "projects": {x["name"]: x["state"] for x in pg["projects"]}}
+                                      "projects": {x["name"]: x["state"] for x in pg["projects"]},
+                                      "lessons": [r.get("rule") for r in campaign_lessons(cmp.get("id")).get("rules", [])]}
                                      for cmp in campaigns() if not str(cmp.get("id", "")).startswith("example-")
                                      for pg in [campaign_progress(cmp, [r for v in by_day.values() for r in v])]],
                "projects_autonomy": {p: policy_of(p).get("autonomy", "release") for p in by_project},
