@@ -1,0 +1,14 @@
+# appstore 프로필 (2026-09-19)
+- 목적: 사내 앱 카탈로그(등록·검토 워크플로·게시) + 개인 API 키/MCP 서버 + Keycloak SSO, 오프라인 로딩 가능한 단일 Docker 이미지로 배포.
+- 스택: Go(단일 바이너리 `cmd/server`, chi 계열 httpapi, go-oidc, PostgreSQL + golang-migrate `migrations/`), React + Vite + TypeScript(`web/`, vitest, Playwright), OpenAPI(`openapi/`), 정적 문서 사이트(`docs/`, GitHub Pages).
+- 구조:
+  - `internal/httpapi` — REST 핸들러·미들웨어(CSP, rate limit, MCP OAuth), `internal/mcp` — MCP 서버, `internal/auth` — 세션·OIDC·액세스 토큰(보호 경로)
+  - `internal/store` — DB 접근(통합 테스트는 `APPSTORE_TEST_POSTGRES_DSN` 있을 때만), `internal/model`, `internal/workflow` — 검토 단계, `internal/seccheck`, `internal/mail`, `internal/analytics`, `internal/guides`
+  - `internal/webui` — 임베드된 React 빌드(`dist` 는 커밋에서 손대지 않는 관례), `web/src/{app,pages,features,lib}`
+  - `scripts/` — check-env-contract.sh(환경변수 4개 계약), check-docs.sh(docs 사이트·스크린샷 manifest), check-offline-assets.sh, release-image.sh, smoke-image.sh, embed-web.sh
+  - `docs/` — ADMIN_GUIDE.md·USER_GUIDE.md(+PDF, 공용 aidev/tools/guide/md2pdf.mjs 로 재생성), 화면 캡처 manifest
+- 빌드·테스트: `go test . ./cmd/... ./internal/... ./migrations/... ./openapi/...`(CI 는 `-race`), `npm --prefix web test`, `npm --prefix web run lint`, `npm --prefix web run build` 뒤 `./scripts/check-offline-assets.sh web/dist`, `./scripts/check-env-contract.sh`, `./scripts/check-docs.sh`, `go build ./cmd/server`. Playwright(`npm run test:e2e`, Chromium 필요)와 `make screenshots VERSION=vX.Y.Z` 는 오래 걸림. 통합 테스트는 임시 `postgres:16-alpine` 컨테이너 + DSN 으로.
+- 관례: 커밋 메시지 영어 `feat:`/`fix:`/`docs:`/`chore(release):`, PR 은 `auto/<날짜>` 브랜치 → main, 릴리즈는 태그 `vX.Y.Z` 로 release.yml 이 이미지 아카이브를 GitHub Release 자산 1개로 올림. 설정은 `system_settings` 행(JSON)에 두고 환경변수는 4개로 고정. 새 라우트는 check-docs.sh 가 캡처를 요구. 가이드 변경 시 PDF 재생성.
+- 위험 구역: `internal/auth/*`(guard 가 자동 머지를 막고 사람이 머지), `migrations/`, `.github/workflows/*`, 세션·CSRF·rate limit(`internal/httpapi/ratelimit.go`), 암호화된 비밀(OIDC secret·mail.password, `ENCRYPTION_KEY`).
+- 자주 깨지는 곳: 검증 하드닝(입력 길이·제어문자) PR 은 사람이 반려함(2026-09-08/10) — 다시 고르지 말 것. 로그인 rate limit 통합 테스트가 분 경계에서 흔들림(DSN 있을 때만). 캡처가 렌더링 흔들림으로 바뀌면 의도한 장만 남기고 HEAD 로 되돌리는 관례.
+- 검증 함정: CI 는 DSN 이 없어 store/httpapi 통합 테스트를 건너뛴다. 러너의 `error` 는 예산 보류(`stages.json` improve.hold)일 수 있으니 워크플로 실패로 단정하지 말고 상태 파일부터 볼 것(2026-09-18 사례). `gh` 는 정찰 세션에서 승인이 필요할 수 있다.
