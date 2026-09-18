@@ -1,6 +1,6 @@
 # Weekly 관리자 가이드
 
-- **문서 버전**: v0.303.0
+- **문서 버전**: v0.304.0
 - **대상**: 시스템 관리자, Security/DevOps 엔지니어, 데이터 보안 담당자
 - **문서 개요**: 구성 요소, 릴리즈 자산으로 설치, 환경 변수와 관리자 설정, 계정과 권한, 운영(백업·상태·업그레이드), 장애 대응, 보안. 화면을 쓰는 사람의 안내는 [사용자 가이드](USER_GUIDE.md)에 있습니다.
 
@@ -28,14 +28,14 @@
 
 ## 2. 설치
 
-GitHub Release 에서 `weekly-v0.303.0.tar.gz` 하나만 반입합니다. 자세한 검증 근거(파일 해시와 이미지 다이제스트가 왜 둘 다 필요한지)는 [README 오프라인 설치](../README.md#오프라인-설치)에 있고, 여기서는 순서대로 붙여 넣을 명령만 적습니다.
+GitHub Release 에서 `weekly-v0.304.0.tar.gz` 하나만 반입합니다. 자세한 검증 근거(파일 해시와 이미지 다이제스트가 왜 둘 다 필요한지)는 [README 오프라인 설치](../README.md#오프라인-설치)에 있고, 여기서는 순서대로 붙여 넣을 명령만 적습니다.
 
 ```bash
 # 1. 파일이 온전히 왔는지 — 릴리즈에 적힌 SHA-256 과 비교
-sha256sum weekly-v0.303.0.tar.gz
+sha256sum weekly-v0.304.0.tar.gz
 
-# 2. 이미지 적재. 같은 버전의 weekly:v0.303.0 이 생깁니다
-gzip -dc weekly-v0.303.0.tar.gz | docker load
+# 2. 이미지 적재. 같은 버전의 weekly:v0.304.0 이 생깁니다
+gzip -dc weekly-v0.304.0.tar.gz | docker load
 
 # 3. 환경 파일. deploy/.env.example 을 복사해 값을 채웁니다
 cp deploy/.env.example deploy/.env
@@ -80,7 +80,7 @@ Kubernetes 는 `deploy/kubernetes.yaml`을 씁니다. `strategy: Recreate`와 `s
 | `WEEKLY_ENCRYPTION_KEY` | 없음 (볼륨의 `instance.key` 로 대체) | 강력 권장 | 관리자 화면에서 입력한 OIDC Client Secret·AI API Key·Confluence 비밀번호·ITSM 토큰·SMTP 비밀번호를 보호하는 마스터 키. `openssl rand -base64 32` 로 한 번 만들고 업그레이드마다 같은 값을 유지합니다. 비우면 키가 상태 볼륨에만 저장되는 하위 호환 모드이며 기동 로그가 그 사실을 적습니다 |
 | `WEEKLY_ALLOW_SECRET_RESET` | `false` | 선택 | 비밀 설정을 복호화할 수 없는 상태에서 기동을 강행하고 모두 다시 입력하기로 했을 때만 `true`. 기존 암호문은 지우지 않고 화면에 `다시 입력 필요`로 표시합니다 |
 
-Compose 파일은 `WEEKLY_VERSION`(이미지 태그, 기본 `0.303.0`)도 읽습니다. 이것은 프로세스가 아니라 `deploy/compose.yaml`의 변수입니다.
+Compose 파일은 `WEEKLY_VERSION`(이미지 태그, 기본 `0.304.0`)도 읽습니다. 이것은 프로세스가 아니라 `deploy/compose.yaml`의 변수입니다.
 
 ### 3.2 관리자 화면의 서비스 설정
 
@@ -242,7 +242,7 @@ MCP 인가 규격은 OAuth 2.1 입니다. 이 설정을 켜면 Weekly 는 **리�
 | `MCP SSO(OAuth) 토큰 인증 사용` | 스위치. 기본 꺼짐. 켜려면 `인증 · Keycloak OIDC` 의 `Issuer URL` 이 있어야 합니다 |
 | `MCP 리소스 식별자` | 이 서버가 자신을 부르는 이름이자 Audience 매퍼가 `aud` 에 넣어야 하는 값. 비우면 요청에서 `https://<host>/mcp` 로 만듭니다. 프록시 뒤에서 호스트가 달리 보이면 여기 적으십시오 |
 | `허용 대상(aud 또는 azp)` | 리소스 식별자와 웹 `Client ID` 외에 받아들일 값(공백 구분). 토큰의 `aud` 또는 발급받은 클라이언트(`azp`)와 맞추므로, **MCP 클라이언트의 Client ID 를 여기 적으면 매퍼 없이 연결됩니다** |
-| `SSO 토큰에 주는 범위` | 유효한 토큰이 할 수 있는 일. 기본 `mcp:read reports:read analytics:read`. 토큰 자체의 scope 는 보지 않습니다 — Keycloak 에 Weekly 의 범위 어휘를 만들지 않아도 되게 하기 위해서입니다 |
+| `SSO 토큰에 주는 범위` | 유효한 토큰이 할 수 있는 일. 기본 `mcp:read reports:read analytics:read`. 토큰 자체의 scope 는 보지 않습니다 — Keycloak 에 Weekly 의 범위 어휘를 만들지 않아도 되게 하기 위해서입니다. `mcp:write` 를 더하면 SSO 로 연결한 사람이 MCP 로 **본인** 주간보고를 만들고 고칠 수 있습니다(제출은 화면에서) |
 
 **Keycloak 쪽에서 할 일**
 
@@ -286,7 +286,7 @@ MCP 인가 규격은 OAuth 2.1 입니다. 이 설정을 켜면 Weekly 는 **리�
 {"level":"INFO","msg":"bootstrap administrator ensured","username":"admin"}
 {"level":"INFO","msg":"database capabilities detected","pg_trgm":true,"pgvector":false}
 {"level":"INFO","msg":"password hashing pool sized","workers":8,"reserved_mib":512,"container_limit_mib":0}
-{"level":"INFO","msg":"Weekly started","address":":8080","version":"0.303.0"}
+{"level":"INFO","msg":"Weekly started","address":":8080","version":"0.304.0"}
 ```
 
 `key_source`가 `environment`가 아니라 볼륨이면 `WEEKLY_ENCRYPTION_KEY`가 없는 하위 호환 모드입니다. `container_limit_mib`가 0 이면 메모리 한도 없이 호스트 메모리를 상속한 것이니 Compose 의 `mem_limit`를 확인하십시오.
