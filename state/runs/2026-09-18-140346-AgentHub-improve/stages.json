@@ -1,0 +1,27 @@
+{
+  "base": {
+    "state": "pinned",
+    "reason": "main@d62bcbe",
+    "at": "2026-09-18T14:03:49+09:00"
+  },
+  "autonomy": {
+    "state": "release",
+    "reason": "",
+    "at": "2026-09-18T14:03:49+09:00"
+  },
+  "verify": {
+    "state": "passed",
+    "reason": "검증 5개 통과 (auto)",
+    "at": "2026-09-18T14:12:56+09:00"
+  },
+  "pr": {
+    "state": "created",
+    "reason": "https://github.com/hkjang/AgentHub/pull/29",
+    "at": "2026-09-18T14:13:05+09:00"
+  },
+  "review": {
+    "state": "rejected",
+    "reason": "리뷰 거절: internal/dlp/dlp.go:514-516 Reported() copies a Pod-controlled `Class` string verbatim into both Class and Label of the filed finding when the class is unknown (verified: Reported(Finding{Class:\"900101-1234568\"}) files {Class:900101-1234568 Label:900101-1234568}). The change closes the sample/label channel but opens/keeps an equally writable one in the same JSON blob that goes to audit_events and every CSV export; a finding of an unknown class should be dropped or filed under a fixed class name, not echoed. / docs/ADMIN_GUIDE.md:174-176 states 'Pod 가 무엇을 보내든 트레일에 값이 실리지 않습니다' — false. `class`, `server`, `tool`, `direction` in internal/api/dlp.go:209-211 are still filed as sent with no validation or length bound; the doc (and the PDF rebuilt from it) over-promises a security property the code does not have. / internal/dlp/dlp.go:482-486,505-507 the comment/commit claim that re-masking 'changes nothing on a sample the scanner really produced' and that no genuine sample reaches 64 runes is false: the secret pattern `sk-[A-Za-z0-9]{16,}` and the email pattern are unbounded. Verified: a genuine 83-rune sk- key sample is refiled at 64 runes (Reported(s) != s). TestAReportedFindingIsFiledAsTheScannerWouldHaveFiledIt only uses a 22-char key, so the stated invariant is not actually tested at the boundary.",
+    "at": "2026-09-18T14:14:43+09:00"
+  }
+}
