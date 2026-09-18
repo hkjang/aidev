@@ -1,0 +1,17 @@
+# ai-admin 프로필 (2026-09-19)
+- 목적: 사내 레거시 Java 시스템 옆에 붙는 AI 관리 콘솔 — 사용자·역할·API 키·AI 공급자 프록시(chat/models)·승인 워크플로·감사·MCP(`/mcp`)·Keycloak OIDC/SSO·메일 알림·방문 추적 CSP를 한 바이너리로 제공(현재 v1.2.21).
+- 스택: Go 1.26(chi, pgx, go-oidc) · PostgreSQL 16(`ai_admin` 스키마 + 읽기 전용 레거시 스키마) · React/TypeScript/Vite/antd(`web/`, vitest) · 단일 Docker 이미지(오프라인 tar.gz 배포).
+- 구조:
+  - `cmd/ai-admin` 진입점, `internal/config`(환경 변수 4개), `internal/buildinfo`(ldflags 버전)
+  - `internal/server` 핸들러 대부분: `server.go`(라우트), `users.go`, `providers.go`(chat 프록시), `workflow.go`(승인), `audit_events.go`, `legacy.go`, `mcp.go`, `oidc.go`, `auth_handlers.go`, `settings*.go`(설정 카탈로그, `system_setting`)
+  - `internal/auth`(Principal, loadGrants), `internal/tracking`(CSP·스니펫), `internal/mail`(SMTP 릴레이·`mail_delivery`), `internal/db`+migrations, `internal/ui/dist`(빌드된 SPA, 커밋 산출물 — 실수로 섞이지 않게 `git status` 확인)
+  - `web/src` SPA(`components/AppShell.tsx`, `pages/*`, `utils/silentSso.ts`)
+  - `docs/`: `api.md`, `security.md`, `mcp.md`, `ADMIN_GUIDE.md`/`USER_GUIDE.md`(+PDF, 정본 하나), `screenshots/`, `index.html`(GitHub Pages) · `scripts/`: `verify-version.sh`, `package-offline.sh`, `verify-offline.sh`, `capture-screenshots.mjs`
+- 빌드·테스트:
+  - `make lint` = `gofmt -l .` + `go vet ./...` + `scripts/verify-version.sh` (CI lint job과 동일)
+  - `go test -race -count=1 ./...` — `TEST_POSTGRES_DSN`이 있어야 통합 테스트가 돈다(없으면 skip). Docker `postgres:16-alpine`으로 띄우면 `internal/server` 약 60~65s. `TEST_KEYCLOAK_ISSUER`가 있으면 `oidc_keycloak_e2e_test.go`도 실행(CI는 Keycloak 26 컨테이너를 띄움; 로컬엔 보통 없음).
+  - `cd web && npm ci && npm test`(vitest 약 80개) · `npm run build` · `make build`(웹 빌드 후 `internal/ui/dist` 복사 + Go 빌드)
+- 관례: 커밋 메시지는 `fix:`/`feat:`/`docs:`/`chore:` 접두 + 한국어 또는 영어 요약; 브랜치 `auto/YYYY-MM-DD-HHMM` → PR → main; 릴리즈는 `chore: release ai-admin vX.Y.Z`(VERSION·CHANGELOG·docs 버전 표기 동시 bump, 개선 회차는 건드리지 않음). 설정은 `system_setting` 카탈로그(시드 자동 삽입, 기본 꺼짐). 마이그레이션은 `internal/db` 번호순 SQL(현재 006까지). API 변경은 `docs/api.md`에 계약을 적는다. 오류 응답은 `writeError(w, status, code, 한국어 메시지)`.
+- 위험 구역: `internal/auth`·`auth_handlers.go`·`oidc.go`(세션·SSO), `mcpAuthenticate`(OAuth 리소스 서버), `workflow.go`(승인 실행), `internal/db` 마이그레이션, `.github/workflows/release.yml`·`scripts/verify-version.sh`(릴리즈 안전장치 — 완화 금지), `internal/ui/dist`(빌드 산출물).
+- 자주 깨지는 곳: 조회 실패를 0/빈 목록으로 감추는 `_ = ...` 패턴(dashboard에서 한 번 고침, `available_models` JSON 파싱에 아직 남음); 검증 없이 DB 제약에 맡겨 500이 되는 입력(locale/timezone, createKey userId — 둘 다 고침); 조회 파라미터 길이 상한 불일치(users `q`).
+- 검증 함정: 통합 테스트는 DSN 없이는 조용히 skip되므로 "통과"가 실제 실행을 뜻하지 않을 수 있음 — `-v`로 skip 여부 확인. Keycloak e2e는 로컬에 없으면 skip. 러너는 일일 비용 상한을 넘으면 `hold: budget`으로 회차를 시작하지 않는다(코드 결함 아님 — 2026-09-18 회차). `gh` CLI는 정찰 세션에서 승인 없이 못 씀.
