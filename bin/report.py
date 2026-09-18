@@ -472,7 +472,11 @@ def agent_scorecard(runs_all, usage_all, lessons, days_window=14):
     sc = [r for r in runs if st(r, "scout")]
     sc_done = [r for r in sc if st(r, "scout") == "done"]
     sc_prod = [r for r in sc_done if outcome_of(r) in ("review-pending",) + merged_out]
-    rows.append({"role": "정찰 scout", "calls": len(sc), "metric": f"과제서 {pct(len(sc_done), len(sc))} · 과제서 회차의 PR 도달 {pct(len(sc_prod), len(sc_done))}", "cost": cost("scout")})
+    bv = [r for r in sc_done if st(r, "brief") in ("accepted", "fallback", "rejected")]
+    bv_ok = [r for r in bv if st(r, "brief") == "accepted"]
+    rows.append({"role": "정찰 scout", "calls": len(sc), "metric": f"과제서 {pct(len(sc_done), len(sc))} · 구현자 채택 {pct(len(bv_ok), len(bv))} · 과제서 회차의 PR 도달 {pct(len(sc_prod), len(sc_done))}", "cost": cost("scout")})
+    if len(bv) >= 5 and len(bv_ok) / len(bv) < 0.5:
+        advice.append("구현자가 정찰 과제서를 자주 기각·차선 처리한다 — agents/scout.md 의 과제서 근거 요구를 강화하거나 정찰 예산을 올린다.")
     bd = [r for r in runs if st(r, "verify")]
     bd_ok = [r for r in bd if st(r, "verify") == "passed"]
     nochange = [r for r in runs if outcome_of(r) == "no-change" and (r.get("run_id") or "").endswith("-improve")]

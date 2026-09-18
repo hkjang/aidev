@@ -137,6 +137,9 @@ stage_ko(){ # $1=단계 $2=상태
     "pr push-failed")         echo "브랜치를 푸시하지 못했습니다";;
     "guard held")             echo "보호 파일을 건드려 자동 머지하지 않습니다 (사람 검토 필요)";;
     "scout done")             echo "정찰이 과제를 정했습니다";;
+    "brief accepted")         echo "구현자가 정찰 과제서를 채택했습니다";;
+    "brief fallback")         echo "구현자가 정찰의 차선 후보를 골랐습니다";;
+    "brief rejected")         echo "구현자가 정찰 과제서를 기각했습니다";;
     "scout failed"|"scout hold") echo "정찰 없이 구현자가 직접 고릅니다";;
     "review approved")        echo "독립 리뷰가 승인했습니다";;
     "review rejected")        echo "독립 리뷰가 거절했습니다";;
@@ -193,6 +196,9 @@ stage(){ # $1=단계 $2=상태 $3=사유 — $OUT/stages.json 에 누적
   local f="$OUT/stages.json"; [ -f "$f" ] || echo '{}' > "$f"
   jq --arg k "$1" --arg s "$2" --arg r "$3" --arg t "$(date -Iseconds)" '.[$k]={state:$s,reason:$r,at:$t}' "$f" > "$f.tmp" && mv "$f.tmp" "$f"
   log "$n: [$1] $2 — $3"
+  # 회차 노트(journal.md)에도 남긴다 — 에이전트들이 서로 남기는 노트 사이에 러너의 판정이 시간순으로 끼어든다
+  [ -f "$OUT/journal.md" ] && printf -- '- [러너 %s] %s %s — %s\n' "$(date +%H:%M)" "$1" "$2" "$(printf '%s' "${3:-}" | tr '\n' ' ' | sed -E 's/\b([0-9a-f]{7})[0-9a-f]{25,}\b/\1/g' | cut -c1-200)" >> "$OUT/journal.md"
+  case "$1" in brief) return 0;; esac   # 과제서 판정은 노트·성적표용이다 — 알림까지 보내지 않는다
   # 단계마다 알린다. tg.sh 는 설정이 없으면 조용히 넘어가고 실패해도 회차를 붙잡지 않는다.
   # 40자리 커밋 해시는 앞 7자만 남긴다 — 알림에서 전체 해시는 읽을 것이 아니라 벽이다.
   # 부르는 쪽이 따로 요약을 보내는 상태는 여기서 알리지 않는다.
@@ -711,7 +717,8 @@ review_gate(){ # $1=base $2=PR url(비면 판정만) → 0=승인
   local rprompt g rb; rb=$(policy "$n" '.budget_usd.review'); rb=${rb:-4}
   budget_ok "$rb" || { stage review hold "예산 부족으로 리뷰를 돌리지 못함"; CRITIC_STATE=hold; return 1; }
   rm -f "$OUT/review.json"
-  rprompt=$(BASE="$1" REVIEW_FILE="$OUT/review.json" PROFILE="$(cat "$STATE/$n.profile.md" 2>/dev/null)" envsubst '$BASE $REVIEW_FILE $PROFILE' < "$REPO_DIR/review-prompt.md")
+  rprompt=$(BASE="$1" REVIEW_FILE="$OUT/review.json" PROFILE="$(cat "$STATE/$n.profile.md" 2>/dev/null)" JOURNAL="$(journal_text)" JOURNAL_FILE="$OUT/journal.md" \
+            ARBITER_HISTORY="$(arbiter_history)" envsubst '$BASE $REVIEW_FILE $PROFILE $JOURNAL $JOURNAL_FILE $ARBITER_HISTORY' < "$REPO_DIR/review-prompt.md")
   run_agent review "$rprompt" "$wt" "$rb" "Bash,Read,Glob,Grep,Write"
   g=$($GATE review "$OUT/review.json" 2>/dev/null || true); printf '%s\n' "$g" > "$OUT/review.gate.json"
   if jq -e .ok <<<"$g" >/dev/null 2>&1; then stage review approved "$(jq -r .reason <<<"$g")"; CRITIC_STATE=approved; return 0; fi
@@ -719,6 +726,27 @@ review_gate(){ # $1=base $2=PR url(비면 판정만) → 0=승인
   stage review "$CRITIC_STATE" "$(jq -r '.reason // "리뷰 결과 없음"' <<<"$g" 2>/dev/null || echo '리뷰 결과 없음')"
   [ -n "${2:-}" ] && review_comment "$2"
   return 1
+}
+# ── 회차 노트: 한 회차의 모든 역할이 한 파일에 차례로 적는다. 다음 역할은 앞선 노트를 먼저 읽는다.
+journal_seed(){ # $1=제목
+  printf '# %s\n정찰 → 구현 → 비평 → 수리 → 중재 → 릴리즈가 차례로 적는다. 다음 역할은 앞선 노트를 먼저 읽는다. [러너] 줄은 러너의 단계 판정이다.\n' "$1" > "$OUT/journal.md"
+}
+journal_text(){ cat "$OUT/journal.md" 2>/dev/null || echo "(없음)"; }
+journal_safe(){ # 비밀값 검사를 통과한 노트만 밖(PR·릴리즈 노트)으로 낸다
+  if [ -s "$OUT/journal.md" ] && $GATE secrets "$OUT/journal.md" >/dev/null 2>&1; then head -c "${1:-4000}" "$OUT/journal.md"; else echo "(회차 노트 생략 — 없거나 비밀값 의심 문자열 포함)"; fi
+}
+brief_history(){ # 이 저장소에서 최근 정찰 과제서가 어떻게 됐나 — 정찰이 자기 과제서의 결과를 배운다
+  jq -r --arg p "$n" 'select(.project==$p and .stages.scout.state=="done") | "- \(.date) 「\(.stages.scout.reason|.[0:80])」 → 구현 판정: \(.stages.brief.reason // "미기록") → 회차 결과: \(.outcome)"' "$DATA/runs.jsonl" 2>/dev/null | tail -6
+}
+arbiter_history(){ # 이 저장소에서 중재가 비평을 뒤집은 사례 — 비평이 자기 엄격함을 보정한다
+  local rid
+  jq -r --arg p "$n" 'select(.project==$p and .stages.arbiter.state=="approved") | .run_id' "$DATA/runs.jsonl" 2>/dev/null | tail -5 | while read -r rid; do
+    [ -f "$RUNS/$rid/arbiter.json" ] && jq -r '.reasons[]? | "- " + (.|.[0:220])' "$RUNS/$rid/arbiter.json" 2>/dev/null
+  done
+}
+change_summary(){ # 릴리즈 에이전트에게 주는 "무엇이 바뀌었나": 원장 항목 + 구현·비평 노트
+  tail -n 8 "$OUT/ledger-entry.md" 2>/dev/null
+  if [ -s "$OUT/journal.md" ]; then printf '\n회차 노트(구현·비평·수리가 남긴 것):\n'; grep -v '^- \[러너' "$OUT/journal.md" | head -c 2500; fi
 }
 review_comment(){ # $1=PR url — 마지막 비평 결과를 PR 에 남긴다
   local g; g=$(cat "$OUT/review.gate.json" 2>/dev/null)
@@ -740,7 +768,8 @@ repair_round(){ # $1=시도 번호 → 0=고쳐서 검증 통과(HEAD 갱신)
   before=$(git -C "$wt" rev-parse HEAD); rm -f "$OUT/fix-summary.md"
   note="독립 비평가가 거절함 (수리 시도 $1):
 $(jq -r '.reasons[]? | "- " + .' "$OUT/review.json" 2>/dev/null | head -c 3000)"
-  prompt=$(PR_URL="(아직 없음 — PR 을 열기 전입니다)" BASE="$BASE_SHA" CAUSE_NOTE="$note" OUT_DIR="$OUT" PROFILE="$(cat "$STATE/$n.profile.md" 2>/dev/null)" envsubst '$PR_URL $BASE $CAUSE_NOTE $OUT_DIR $PROFILE' < "$REPO_DIR/agents/repairer.md")
+  prompt=$(PR_URL="(아직 없음 — PR 을 열기 전입니다)" BASE="$BASE_SHA" CAUSE_NOTE="$note" OUT_DIR="$OUT" PROFILE="$(cat "$STATE/$n.profile.md" 2>/dev/null)" \
+           JOURNAL="$(journal_text)" JOURNAL_FILE="$OUT/journal.md" envsubst '$PR_URL $BASE $CAUSE_NOTE $OUT_DIR $PROFILE $JOURNAL $JOURNAL_FILE' < "$REPO_DIR/agents/repairer.md")
   run_agent repair "$prompt" "$wt" "$rbud" "Bash,Read,Edit,Write,Glob,Grep"
   summ=$(head -c 200 "$OUT/fix-summary.md" 2>/dev/null | tr '\n' ' ')
   if [ "$(git -C "$wt" rev-parse HEAD)" = "$before" ]; then REPAIR_RESULT=nothing; stage repair nothing "수리 에이전트가 커밋을 만들지 않음: ${summ:-이유 없음}"; return 1; fi
@@ -757,7 +786,8 @@ arbiter_round(){ # → 0=승인(CRITIC_STATE=approved)
   rm -f "$OUT/arbiter.json"
   prompt=$(BASE="$BASE_SHA" ARBITER_FILE="$OUT/arbiter.json" CRITIC_REASONS="$(jq -r '.reasons[]? | "- " + .' "$OUT/review.json" 2>/dev/null)" \
            REPAIRER_NOTE="$(cat "$OUT/fix-summary.md" 2>/dev/null)" PROFILE="$(cat "$STATE/$n.profile.md" 2>/dev/null)" \
-           envsubst '$BASE $ARBITER_FILE $CRITIC_REASONS $REPAIRER_NOTE $PROFILE' < "$REPO_DIR/agents/arbiter.md")
+           JOURNAL="$(journal_text)" JOURNAL_FILE="$OUT/journal.md" \
+           envsubst '$BASE $ARBITER_FILE $CRITIC_REASONS $REPAIRER_NOTE $PROFILE $JOURNAL $JOURNAL_FILE' < "$REPO_DIR/agents/arbiter.md")
   run_agent arbiter "$prompt" "$wt" "$abud" "Bash,Read,Glob,Grep,Write"
   g=$($GATE review "$OUT/arbiter.json" 2>/dev/null || true)
   if jq -e .ok <<<"$g" >/dev/null 2>&1; then
@@ -1162,7 +1192,8 @@ shepherd_fix(){ # $1=pr $2=브랜치 $3=원인 설명 → 0=새 커밋을 검증
   local pr=$1 br=$2 note=$3 before after prompt summ
   shepherd_wt "$br" || { shepherd_note "$pr" "$head" "$cause" fix-failed "worktree 준비 실패"; return 1; }
   before=$(git -C "$wt" rev-parse HEAD); BASE_SHA=$(git -C "$repo" rev-parse "origin/$base")
-  prompt=$(PR_URL="$pr" BASE="origin/$base" CAUSE_NOTE="$note" OUT_DIR="$OUT" PROFILE="$(cat "$STATE/$n.profile.md" 2>/dev/null)" envsubst '$PR_URL $BASE $CAUSE_NOTE $OUT_DIR $PROFILE' < "$REPO_DIR/agents/repairer.md")
+  prompt=$(PR_URL="$pr" BASE="origin/$base" CAUSE_NOTE="$note" OUT_DIR="$OUT" PROFILE="$(cat "$STATE/$n.profile.md" 2>/dev/null)" \
+           JOURNAL="$(journal_text)" JOURNAL_FILE="$OUT/journal.md" envsubst '$PR_URL $BASE $CAUSE_NOTE $OUT_DIR $PROFILE $JOURNAL $JOURNAL_FILE' < "$REPO_DIR/agents/repairer.md")
   run_agent improve "$prompt" "$wt" "$SHEPHERD_FIX_BUDGET" "Bash,Read,Edit,Write,Glob,Grep"
   after=$(git -C "$wt" rev-parse HEAD)
   summ=$(head -c 600 "$OUT/fix-summary.md" 2>/dev/null | tr '\n' ' ')
@@ -1193,7 +1224,8 @@ shepherd_review(){ # $1=pr $2=브랜치 $3=보류 사유 → SH_STATE(approved|r
   SH_STATE=invalid; SH_RISK=""; SH_REASON=""
   shepherd_wt "$br" || { SH_REASON="worktree 준비 실패"; return 1; }
   rm -f "$OUT/review.json"
-  prompt=$(BASE="origin/$base" REVIEW_FILE="$OUT/review.json" HOLD_NOTE="$note" envsubst '$BASE $REVIEW_FILE $HOLD_NOTE' < "$REPO_DIR/shepherd-review-prompt.md")
+  prompt=$(BASE="origin/$base" REVIEW_FILE="$OUT/review.json" HOLD_NOTE="$note" JOURNAL="$(journal_text)" JOURNAL_FILE="$OUT/journal.md" \
+           PROFILE="$(cat "$STATE/$n.profile.md" 2>/dev/null)" envsubst '$BASE $REVIEW_FILE $HOLD_NOTE $JOURNAL $JOURNAL_FILE $PROFILE' < "$REPO_DIR/shepherd-review-prompt.md")
   run_agent review "$prompt" "$wt" "$SHEPHERD_REVIEW_BUDGET" "Bash,Read,Glob,Grep,Write"
   git -C "$repo" worktree remove --force "$wt" >>"$LOG" 2>&1 || true
   g=$($GATE review "$OUT/review.json" 2>/dev/null || true)
@@ -1259,6 +1291,9 @@ $(jq -r '.reasons[]? | "- " + .' "$RUNS/$rid/review.json" 2>/dev/null | head -c 
     fi
     shepherd_budget_ok "$SHEPHERD_FIX_BUDGET" || { log "shepherd: 오늘 예산 소진 (\$$(shepherd_spent)/\$$SHEPHERD_DAILY_BUDGET) — 여기서 멈춘다"; break; }
     done_n=$((done_n+1)); new_run "$n" shepherd; RUN_META="{}"; result=""; BASE_SHA=""; HEAD_SHA=$head
+    journal_seed "PR 처리기 노트 $RUN_ID — $n PR #${pr##*/}"
+    # PR 을 연 회차의 노트를 이어받는다 — 그때 구현자가 확신 없다고 적은 곳, 비평이 우려한 곳을 심사가 먼저 본다
+    [ -n "$rid" ] && [ -s "$RUNS/$rid/journal.md" ] && { printf '\n## PR 을 연 회차의 노트 (%s)\n' "$rid"; cat "$RUNS/$rid/journal.md"; } >> "$OUT/journal.md"
     log "=== shepherd $n PR #${pr##*/} (원인 $cause, run $RUN_ID)"
     # ── 조치
     case "$cause" in
@@ -1520,7 +1555,7 @@ round_body(){
   local n=$1 remote_head
   repo="$ROOT/$n"; ledger="$STATE/$n.md"; wt="$WT_BASE/$n"; result="no change"; OUTCOME=no-change; RUN_META="{}"; HEAD_SHA=""; BASE_SHA=""; url=""
   base=$(base_branch "$n")
-  new_run "$n" improve
+  new_run "$n" improve; journal_seed "회차 노트 $RUN_ID — $n"
   ibudget=$(policy "$n" '.budget_usd.improve'); [ -n "$BUDGET" ] && ibudget=$BUDGET; ibudget=${ibudget:-8}
   # 캠페인이 개선 예산을 따로 정했으면 그것을 쓴다. 캠페인 한 회차의 일감은 평소
   # 개선과 크기가 다르다 — 가이드 회차는 앱을 띄우고 화면 서른 장을 찍고 문서 둘을
@@ -1589,8 +1624,9 @@ $(printf '%b' "$RUN_SPEC")
 $request_note}${campaign_note:+
 $campaign_note}" BRIEF_FILE="$OUT/brief.md" IDEAS_FILE="$OUT/ideas.json" OUT_DIR="$OUT" RUN_DATE="$RUN_DATE" \
                PROFILE="$(cat "$STATE/$n.profile.md" 2>/dev/null || echo '(없음)')" PROFILE_AGE="$profile_age" PROFILE_FILE="$OUT/profile.md" \
+               JOURNAL="$(journal_text)" JOURNAL_FILE="$OUT/journal.md" BRIEF_HISTORY="$(brief_history)" \
                LESSONS="${lessons:-(없음)}" IDEAS_CONTENT="${ideas:-(없음)}" OPERATOR_PREFS="$prefs_md" LEDGER_CONTENT="$(tail -n 60 "$ledger" 2>/dev/null || echo '(없음)')" \
-               envsubst '$TASK_NOTE $BRIEF_FILE $IDEAS_FILE $OUT_DIR $RUN_DATE $PROFILE $PROFILE_AGE $PROFILE_FILE $LESSONS $IDEAS_CONTENT $OPERATOR_PREFS $LEDGER_CONTENT' < "$REPO_DIR/agents/scout.md")
+               envsubst '$TASK_NOTE $BRIEF_FILE $IDEAS_FILE $OUT_DIR $RUN_DATE $PROFILE $PROFILE_AGE $PROFILE_FILE $JOURNAL $JOURNAL_FILE $BRIEF_HISTORY $LESSONS $IDEAS_CONTENT $OPERATOR_PREFS $LEDGER_CONTENT' < "$REPO_DIR/agents/scout.md")
       run_agent scout "$sprompt" "$wt" "$sbud" "Read,Glob,Grep,Write,Bash(git log:*),Bash(git show:*),Bash(git diff:*),Bash(ls:*),Bash(cat:*),Bash(wc:*),Bash(find:*),Bash(go test:*),Bash(npm test:*)"
       # 정찰은 읽기만 한다 — 작업 트리에 무엇을 남겼든 버린다
       git -C "$wt" reset -q --hard "$BASE_SHA" >>"$LOG" 2>&1; git -C "$wt" clean -qfd >>"$LOG" 2>&1
@@ -1609,11 +1645,16 @@ $(cat "$OUT/brief.md")"
   fi
   prompt=$(LEDGER_FILE="$OUT/ledger-entry.md" IDEAS_FILE="$OUT/ideas.json" OUT_DIR="$OUT" RUN_DATE="$RUN_DATE" FIX_NOTE="$fix_note" LESSONS="${lessons:-(없음)}" IDEAS_CONTENT="${ideas:-(없음)}" \
            REQUEST_NOTE="$request_note" CAMPAIGN_NOTE="$campaign_note" BRIEF="$brief" \
-           OPERATOR_PREFS="$prefs_md" PROFILE="$(cat "$STATE/$n.profile.md" 2>/dev/null)" \
+           OPERATOR_PREFS="$prefs_md" PROFILE="$(cat "$STATE/$n.profile.md" 2>/dev/null)" JOURNAL="$(journal_text)" JOURNAL_FILE="$OUT/journal.md" \
            LEDGER_CONTENT="$(tail -n 60 "$ledger" 2>/dev/null || echo '(없음)')" \
-           envsubst '$LEDGER_FILE $IDEAS_FILE $OUT_DIR $RUN_DATE $LEDGER_CONTENT $FIX_NOTE $LESSONS $IDEAS_CONTENT $REQUEST_NOTE $CAMPAIGN_NOTE $OPERATOR_PREFS $BRIEF $PROFILE' < "$REPO_DIR/prompt.md")
+           envsubst '$LEDGER_FILE $IDEAS_FILE $OUT_DIR $RUN_DATE $LEDGER_CONTENT $FIX_NOTE $LESSONS $IDEAS_CONTENT $REQUEST_NOTE $CAMPAIGN_NOTE $OPERATOR_PREFS $BRIEF $PROFILE $JOURNAL $JOURNAL_FILE' < "$REPO_DIR/prompt.md")
   run_agent improve "$prompt" "$wt" "$ibudget" "Bash,Read,Edit,Write,Glob,Grep,WebFetch,WebSearch"
   merge_outputs
+  # 구현자가 정찰 과제서를 어떻게 봤나 — 정찰이 다음에 자기 과제서의 결과를 읽고, 성적표가 채택률을 센다
+  if [ -n "$brief" ]; then
+    bv=$(grep -m1 '^- 과제서:' "$OUT/ledger-entry.md" 2>/dev/null | sed 's/^- 과제서: *//' | cut -c1-160)
+    case "$bv" in 채택*) stage brief accepted "$bv";; 차선*) stage brief fallback "$bv";; 기각*) stage brief rejected "$bv";; *) stage brief unstated "구현자가 과제서 판정을 적지 않음";; esac
+  fi
   if ! jq -e '.type=="result"' "$OUT/agent-improve.json" >/dev/null 2>&1; then
     # 여기 왔다는 것은 클로드가 한도로 결과를 못 냈고 코덱스 대체도 실패했다는 뜻이다
     # (run_agent 가 코덱스 성공 시 result JSON 을 합성하므로). 두 엔진 다 안 되니 쿨다운을
@@ -1660,7 +1701,7 @@ $(cat "$OUT/brief.md")"
         done
       fi
       with_retry "branch push" git -C "$wt" push -u origin "$slug" || { stage pr push-failed "브랜치 푸시 실패 ($RETRY_KIND)"; result="error: push ($RETRY_KIND)"; OUTCOME=error; }
-      body=$(printf '자율 개선 에이전트가 생성한 PR입니다. (run %s, base %s)\n\n%s\n\n🤖 auto-improve %s · https://hkjang.github.io/aidev/projects/%s/' "$RUN_ID" "${BASE_SHA:0:7}" "$(tail -n 12 "$OUT/ledger-entry.md" 2>/dev/null)" "$RUN_DATE" "$n")
+      body=$(printf '자율 개선 에이전트가 생성한 PR입니다. (run %s, base %s)\n\n%s\n\n<details><summary>회차 노트 — 정찰·구현·비평·수리가 서로 남긴 것</summary>\n\n%s\n\n</details>\n\n🤖 auto-improve %s · https://hkjang.github.io/aidev/projects/%s/' "$RUN_ID" "${BASE_SHA:0:7}" "$(tail -n 12 "$OUT/ledger-entry.md" 2>/dev/null)" "$(journal_safe 4000)" "$RUN_DATE" "$n")
       url=""; [ "$OUTCOME" != error ] && { url=$(cd "$repo" && gh pr list --head "$slug" --json url --jq '.[0].url // empty' 2>/dev/null); }   # 재개 시 중복 생성 방지
       [ -n "$url" ] || [ "$OUTCOME" = error ] || url=$(cd "$repo" && gh pr create --base "$base" --head "$slug" --title "auto-improve: $(git -C "$wt" log -1 --format=%s)" --body "$body" 2>>"$LOG" || true)
       [ -n "$url" ] && { stage pr created "$url"; result="PR $url"; OUTCOME=review-pending; } || { [ "$OUTCOME" = error ] || { stage pr create-failed "gh pr create 실패"; result="error: pr create"; OUTCOME=error; }; }
@@ -1719,7 +1760,7 @@ $(sed 's/^/- /' <<<"$guarded")
             stage merge done "$HEAD_SHA"; result="merged $url"; OUTCOME=merged
             git -C "$repo" pull --ff-only origin "$base" >>"$LOG" 2>&1 || true
             if [ "$RELEASE" -eq 1 ] && [ "$(policy "$n" '.release')" = true ] && [ "$AUTONOMY_NOW" = release ]; then
-              stopped release "$n" && { stage release stopped "긴급 중지"; result="$result, release stopped"; } || release_project "$base" "$(tail -n 8 "$OUT/ledger-entry.md" 2>/dev/null)"
+              stopped release "$n" && { stage release stopped "긴급 중지"; result="$result, release stopped"; } || release_project "$base" "$(change_summary)"
             else stage release skipped "자율화 단계 $AUTONOMY_NOW — 릴리즈는 사람이"; fi
           else stage merge failed "gh pr merge 실패 (커밋 불일치 또는 충돌)"; result="merge failed $url"; OUTCOME=review-pending; fi
         else stage ci "$CI_STATE" "$CI_REASON"; result="CI ${CI_STATE}, PR open $url"; OUTCOME=$( [ "$CI_STATE" = failed ] && echo verify-failed || echo review-pending ); fi
