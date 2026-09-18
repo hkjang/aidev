@@ -1,0 +1,7 @@
+# fix-summary (commit 0d5e4c5)
+
+1. **재현**: `loginAuth{host:"smtp.corp.local"}.Start(&ServerInfo{Name:"smtp.corp.local",TLS:false})` → `proto="LOGIN", err=nil` 확인. `dial()`이 `smtp.NewClient(conn, cfg.Host)`라 Name 비교는 항상 거짓이었음.
+2. **평문 AUTH 차단** (`internal/mail/mail.go`): `startSession`이 `cfg.Username != ""`이고 `c.TLSConnectionState()`가 TLS 아님 + `cfg.Security != none`이면 AUTH 확장 조회·전송 전에 `ErrInvalid`("STARTTLS 없이 인증 정보를 보낼 수 없습니다…")로 실패. `loginAuth`의 host 비교를 없애고 `allowPlaintext`(= security==none) 필드로 교체, PLAIN도 stdlib의 localhost 예외 대신 같은 규칙을 쓰는 자체 `plainAuth`로 바꿔 판정이 주소가 아닌 세션 TLS 상태와 `cfg.Security`로만 이뤄지게 함. 정책은 `docs/admin_guide.md`(및 reports 사본 md/html)의 `mail.security` 행에 먼저 적음.
+3. **동시 발송 상한** (`internal/mail/service.go`): `Service.inflight = make(chan struct{}, maxInFlight=8)` 세마포어. `Notify`는 `log.Add`(queued)를 즉시 남기고 goroutine 안에서 슬롯을 얻은 뒤 `deliver`.
+4. **회귀 테스트** (`internal/mail/mail_test.go`): `TestAuthMechanismsRefusePlaintextSession`(Name="smtp.corp.local", TLS=false → LOGIN/PLAIN 모두 거부, TLS=true·allowPlaintext는 통과), `TestAuthNeverSentOverPlaintextUnlessSecurityNone`(127.0.0.1 가짜 릴레이, STARTTLS 없이 `AUTH PLAIN LOGIN`/`AUTH LOGIN`만 광고: auto·starttls + username → Deliver/Verify ErrInvalid & AUTH 줄 0개 & 메시지 0개; none 명시 → 통과, LOGIN 은 base64 사용자/비밀번호 교환까지 단언), `TestNotifyCapsConcurrentDeliveries`(Accept만 하고 220을 안 보내는 리스너, 수신자 16명: Notify 직후 queued 16 기록, 붙잡힌 연결이 정확히 8, 릴레이를 닫으면 16건 모두 failed). 세 테스트 모두 원본 코드에서 실패함을 확인.
+5. **검증**: `go build ./... && go vet ./... && go test ./... -count=1` 전부 통과(`internal/mail`은 `-race`로도 통과). PDF 산출물은 재생성하지 않음.
