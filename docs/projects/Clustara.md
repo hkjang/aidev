@@ -1,7 +1,7 @@
 ---
 title: "Clustara — 자율 개선 이력"
 description: "Clustara: 자율 개선 회차 33회, 릴리즈 21건. 최근 릴리즈 v0.9.283 (자산 3개)."
-last_modified_at: 2026-09-18 12:03:51 +0900
+last_modified_at: 2026-09-18 12:32:41 +0900
 ---
 {% raw %}
 <script type="application/ld+json">
@@ -18,7 +18,7 @@ last_modified_at: 2026-09-18 12:03:51 +0900
   "name": "hkjang",
   "url": "https://github.com/hkjang"
  },
- "dateModified": "2026-09-18T12:03:51+09:00",
+ "dateModified": "2026-09-18T12:32:41+09:00",
  "version": "0.9.283"
 }
 </script>
