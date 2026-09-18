@@ -1,0 +1,14 @@
+# ReSSO 프로필 (2026-09-19)
+- 목적: 사내용 OIDC 제공자(SSO) + 관리 콘솔 — Realm/Client/사용자/세션/API 키/승인 요청, LDAP User Federation, 메일 알림, 방문 추적. RP 코드는 없다(제공자 쪽만).
+- 스택: Go(go.mod toolchain 기준, `go test -race`), PostgreSQL(마이그레이션 SQL), 프런트 `web/`(Vite+React+TS, vitest, eslint), 단일 바이너리에 `webui/dist` 임베드, Docker 오프라인 이미지.
+- 구조:
+  - `cmd/resso` 진입점, `internal/config` 환경 변수 8개(`POSTGRES_DSN`, `BOOTSTRAP_ADMIN*`, `ENCRYPTION_KEY` 등)
+  - `internal/httpserver` 라우트·핸들러(`server.go`, `admin.go`, `auth.go` 로그인, `oidc.go` 인가/토큰/로그아웃, `middleware.go`, `context.go`), 연동 테스트 `integration_test.go`(수천 줄)
+  - `internal/store` PostgreSQL 저장소 + `migrations/` (최신 017_mail_deliveries.sql)
+  - `internal/oidc` 토큰·id_token_hint, `internal/federation` LDAP, `internal/mail` SMTP, `internal/tracking` CSP/스니펫, `internal/observability` 지표, `internal/backchannel`, `internal/password`, `internal/ratelimit`
+  - `web/src` 콘솔(페이지 테스트 `*.test.tsx`, 09-17 기준 29파일/158테스트), `scripts/`(smoke-test.sh, offline-load.sh, release-image.sh, test-services.sh, guide-screenshots.mjs), `docs/`(USER_GUIDE·ADMIN_GUIDE+PDF, operations, compatibility, user-federation)
+- 빌드·테스트: `make lint`(golangci-lint v2.13.1 + govulncheck + eslint; 도구는 `$(go env GOPATH)/bin`), `make test`(`go test -race ./...` — httpserver ~2분, store ~1.5분 — + go vet + vitest + vite build; 끝나면 `webui/dist/index.html` 변경을 되돌릴 것), `make build VERSION=vX.Y.Z`. 연동 테스트는 `eval "$(scripts/test-services.sh)"`로 컨테이너(Postgres·LDAP 등) 변수 네 개를 세워야 SKIP 0.
+- 관례: 커밋은 영문 `fix:`/`feat:`/`release:` 접두어 + 이유가 드러나는 한 문장; 브랜치 `auto/YYYY-MM-DD-HHMM` → PR → main; 릴리즈는 태그 `v*.*.*`로 `release.yaml`이 이미지 빌드·스모크·역적재·GitHub Release 첨부. 설정은 환경 변수 + `platform_settings` 표(키마다 한 행). 문서는 `docs/`가 정본, README는 개발·연동 참고. 주석은 "왜"를 길게 적는 스타일.
+- 위험 구역: `internal/httpserver/auth.go`(로그인 답 code·쿠키 — 화면 문구와 문서가 code에 묶여 있음), `oidc.go`(prompt=none·max_age·id_token_hint 분기, `login_required` vs `server_error` 구분), `internal/store/migrations`(번호 순, 유지보수 스윕 문장 순서를 테스트가 잠금 — `TestIntegrationTheRetentionSweepSaysOnlyWhatItSkipped`), `.github/workflows/release.yaml`(느슨하게 만들지 말 것), CSRF/API 키 라우트 예외 목록(신고·login POST).
+- 자주 깨지는 곳: gofmt 정렬(`make lint` 첫 실행), `webui/dist/index.html`이 빌드로 바뀌어 커밋에 섞임, 테스트 컨테이너의 bind mount 인증서 디렉터리가 비어 LDAPS 연동 테스트 실패(새 인증서 디렉터리로 재기동), 연동 테스트에서 상태 코드 짐작(409 vs 400)이 틀림 — 테스트로 먼저 확인.
+- 검증 함정: CI는 golangci-lint를 프런트 설치 **전**에 돌려 `web/node_modules`의 vendored Go 패키지를 안 본다(로컬은 `GO_PACKAGES`로 한정). 서비스 변수 없으면 연동 테스트가 조용히 SKIP되고 `go test`는 ok로 보인다 — `make test`가 SKIP 수를 찍는다. 정찰 세션은 승인 제한으로 `gh`·`go build`를 못 돌릴 수 있다(2026-09-19 미확인). 러너 일일 예산 hold는 저장소 실패가 아니다(2026-09-18 회차).
