@@ -1,0 +1,170 @@
+{
+  "run_id": "2026-09-18-103332-orbit-improve",
+  "generated": "2026-09-18T10:51:45+09:00",
+  "run": {
+    "run_id": "2026-09-18-103332-orbit-improve",
+    "project": "orbit",
+    "kind": "improve",
+    "started": "2026-09-18T10:33:32+09:00",
+    "model": "claude-opus-5",
+    "policy_version": "312eebbf",
+    "prompts_hash": "90b6639bc42c5800",
+    "runner_version": "312eebbf",
+    "finished": "2026-09-18T10:51:44+09:00",
+    "outcome": "review-pending"
+  },
+  "record": {
+    "ts": "2026-09-18T10:51:44+09:00",
+    "date": "2026-09-18",
+    "project": "orbit",
+    "result": "guarded files, PR open https://github.com/hkjang/orbit/pull/6",
+    "outcome": "review-pending",
+    "run_id": "2026-09-18-103332-orbit-improve",
+    "base_sha": "6a013f9256d04eaab7901895209b63e33a351ffc",
+    "head_sha": "6c897ffffed67b72ede57eecda92a95a3ebb495b",
+    "pr": "https://github.com/hkjang/orbit/pull/6",
+    "stages": {
+      "base": {
+        "state": "pinned",
+        "reason": "main@6a013f9",
+        "at": "2026-09-18T10:33:35+09:00"
+      },
+      "autonomy": {
+        "state": "release",
+        "reason": "",
+        "at": "2026-09-18T10:33:35+09:00"
+      },
+      "verify": {
+        "state": "passed",
+        "reason": "검증 7개 통과 (auto)",
+        "at": "2026-09-18T10:51:35+09:00"
+      },
+      "pr": {
+        "state": "created",
+        "reason": "https://github.com/hkjang/orbit/pull/6",
+        "at": "2026-09-18T10:51:42+09:00"
+      },
+      "guard": {
+        "state": "held-expected",
+        "reason": "internal/store/migrations/009_mcp_oauth.sql ",
+        "at": "2026-09-18T10:51:42+09:00"
+      }
+    },
+    "campaign": "mcp-oauth-2026-09",
+    "autonomy": "release",
+    "files": 16,
+    "additions": 1642,
+    "deletions": 12,
+    "tests": 2,
+    "title": "feat(mcp): 개인 키 없이 Keycloak 액세스 토큰으로 /mcp 에 들어올 수 있게 한다"
+  },
+  "stages": {
+    "base": {
+      "state": "pinned",
+      "reason": "main@6a013f9",
+      "at": "2026-09-18T10:33:35+09:00"
+    },
+    "autonomy": {
+      "state": "release",
+      "reason": "",
+      "at": "2026-09-18T10:33:35+09:00"
+    },
+    "verify": {
+      "state": "passed",
+      "reason": "검증 7개 통과 (auto)",
+      "at": "2026-09-18T10:51:35+09:00"
+    },
+    "pr": {
+      "state": "created",
+      "reason": "https://github.com/hkjang/orbit/pull/6",
+      "at": "2026-09-18T10:51:42+09:00"
+    },
+    "guard": {
+      "state": "held-expected",
+      "reason": "internal/store/migrations/009_mcp_oauth.sql ",
+      "at": "2026-09-18T10:51:42+09:00"
+    }
+  },
+  "provenance": {
+    "model": "claude-opus-5",
+    "policy_version": "312eebbf",
+    "prompts_hash": "90b6639bc42c5800",
+    "runner_version": "312eebbf",
+    "base_sha": "6a013f9256d04eaab7901895209b63e33a351ffc",
+    "head_sha": "6c897ffffed67b72ede57eecda92a95a3ebb495b",
+    "pr": "https://github.com/hkjang/orbit/pull/6"
+  },
+  "verification": {
+    "runner": {
+      "source": "auto",
+      "commands": [
+        {
+          "cmd": "go build ./...",
+          "exit": 0,
+          "seconds": 1
+        },
+        {
+          "cmd": "go vet ./...",
+          "exit": 0,
+          "seconds": -1
+        },
+        {
+          "cmd": "go test ./...",
+          "exit": 0,
+          "seconds": 2
+        },
+        {
+          "cmd": "cd web && [ -d node_modules ] || npm ci --no-audit --no-fund",
+          "exit": 0,
+          "seconds": 0
+        },
+        {
+          "cmd": "cd web && npm test --silent",
+          "exit": 0,
+          "seconds": 2
+        },
+        {
+          "cmd": "cd web && [ -d node_modules ] || npm ci --no-audit --no-fund",
+          "exit": 0,
+          "seconds": 0
+        },
+        {
+          "cmd": "cd web && npm run build --silent",
+          "exit": 0,
+          "seconds": 2
+        }
+      ]
+    },
+    "runner_gate": {
+      "ok": true,
+      "state": "verified",
+      "reason": "검증 7개 통과 (auto)"
+    },
+    "after_rebase": null,
+    "review": null,
+    "ci_gate": null
+  },
+  "release": {
+    "result": null,
+    "assets_sha256": []
+  },
+  "approval": null,
+  "usage": [
+    {
+      "ts": "2026-09-18T10:51:27+09:00",
+      "date": "2026-09-18",
+      "project": "orbit",
+      "phase": "improve",
+      "run_id": "2026-09-18-103332-orbit-improve",
+      "campaign": "mcp-oauth-2026-09",
+      "subtype": "success",
+      "duration_ms": 1137359,
+      "num_turns": 59,
+      "cost_usd": 8.231079500000003,
+      "input_tokens": 118,
+      "output_tokens": 79571,
+      "cache_read": 8233143,
+      "cache_create": 210965
+    }
+  ]
+}
