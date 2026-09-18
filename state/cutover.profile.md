@@ -1,0 +1,15 @@
+# cutover 프로필 (2026-09-19)
+- 목적: 재해복구 모의훈련(컷오버) 상황판 — Task/Activity 트리의 상태(대기·진행·완료·지연)를 관리자가 갱신하고 모두가 보는 대시보드. 사내 폐쇄망 Docker 배포.
+- 스택: TypeScript, Next.js 16.3.3(App Router, `proxy.ts` = Next 16 Proxy, Node 런타임), React 19, Tailwind 4, zustand/swr. DB 없음 — `data/*.json` 파일 저장. 의존성 최소 주의(nodemailer 대신 node:net/tls 직접 구현).
+- 구조:
+  - `app/page.tsx` 대시보드, `app/pc`·`app/admin` 관리 콘솔, `app/momento/[...path]` 추적 프록시
+  - `app/api/activities`(GET/PUT, PUT 뒤 `after()` 로 메일 배경 발송), `app/api/auth/login·session`(공유 비밀번호 + HMAC 쿠키 `cutover_admin_session`), `app/api/tracking`(+violations), `app/api/csp-report`, `app/api/mail`(GET/PUT, test, deliveries)
+  - `lib/activityData.ts`(파일 읽기/쓰기·백업·`validateActivityImport`), `lib/treeUtils.ts`(트리 조작, ID 접두사 기반 하위 탐색), `lib/adminSession.ts`(비밀번호·쿠키 서명), `lib/tracking/*`(CSP nonce·스니펫·위반 버퍼), `lib/mail/*`(config·events·message·smtp·store·service·testing 가짜 릴레이)
+  - `components/` ActivityTree, ActivityJsonImporter, TrackingSettings, MailSettings, TrackingSnippet
+  - `docs/` USER_GUIDE.md·ADMIN_GUIDE.md(+PDF, `docs/assets/guide/` 캡처), EXECUTIVE_REPORT.md; `scripts/guide-screenshots/` Playwright 캡처
+  - 잔존 미사용: `lib/s3.ts`, `amplify.yml`, `next.config.js_bak_bak`, `next.config.ts_bak`, `@aws-sdk/client-s3`
+- 빌드·테스트: `npm run lint`(eslint 9) · `npx tsc --noEmit` · `npm run test:unit`(`node --test "lib/**/*.test.ts"`, Node 22 strip-types, 테스트는 `'./x.ts'` 확장자 import) · `npm run test:e2e`(Playwright, e2e/*.spec.ts 4개, global-setup 으로 자체 dev 서버; 이 환경은 ms-playwright 없음 → `PLAYWRIGHT_CHROMIUM_PATH=/usr/bin/google-chrome` 필요) · `npm run build`(수 분). 릴리즈·CI 워크플로 파일은 저장소에 없음(러너가 밖에서 수행).
+- 관례: 커밋 메시지 한국어 `feat:`/`docs:` 접두. 설정은 환경 변수(ADMIN_PASSWORD/USER_PASSWORD/AUTH_SECRET/ACTIVITY_DATA_FILE, NEXT_PUBLIC_* 는 Dockerfile 기본값) + 관리 화면 저장 JSON(`data/tracking.json`, `data/mail.json`, 기본 꺼짐·파일 없으면 만들지 않음). 마이그레이션 없음. 문서 변경 시 ADMIN_GUIDE 환경 변수 표·README 를 함께 갱신, PDF 는 md2pdf 가 개선 환경에 없어 어긋난 채 남음(2.4절).
+- 위험 구역: `lib/adminSession.ts`·`app/api/auth/**`(인증; 미머지 브랜치 `auto/2026-09-17-0353` 이 손댐 — 충돌 주의), `Dockerfile` 의 NEXT_PUBLIC_*_PASSWORD 기본값(admin1234/1234 — 제거 시 하위 호환 깨짐), `proxy.ts` CSP(고치면 Next 인라인 스크립트 nonce 깨질 수 있음), `lib/activityData.ts` writeActivityData(백업·원자 쓰기).
+- 자주 깨지는 곳: e2e 가 브라우저 부재로 실패(환경 변수로 해결). 러너 예산 보류가 'error' 로 적재됨(2026-09-18: 코드 결함 아님). 삭제·상태 전파가 ID 접두사에 의존해 업로드 JSON 의 자식이 고아가 되는 잠재 버그(미수정).
+- 검증 함정: 실제 사내 SMTP 릴레이·Momento 수집기는 이 환경에서 닿지 않아 가짜(lib/mail/testing.ts, e2e 내 가짜 수집기)로 대신함. 운영 빌드(NODE_ENV=production)는 Secure 쿠키 때문에 평문 HTTP LAN 에서 관리자 세션이 안 됨(09-17 브랜치가 고침, 미머지). e2e 는 격리 데이터 파일을 쓰므로 실행 뒤 `git status` 깨끗한지 확인.
