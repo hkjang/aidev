@@ -1,0 +1,18 @@
+# Quantoss 프로필 (2026-09-18)
+- 목적: 토스증권 Open API 로 국내(KR)·미국(US) 종목을 자동 매매하고(실거래/모의), 백테스트·스윙/라오어 모의 실행기로 전략을 전진 검증하며 GitHub 이슈·Pages 대시보드·텔레그램으로 기록·알림하는 단일 바이너리 Go 에이전트.
+- 스택: Go 1.26, 외부 의존은 `github.com/coder/websocket` 하나. DB 없음 — `data/` 아래 JSONL/JSON 파일(저널·자산곡선·일봉 캐시·토큰 캐시). 프런트는 `docs/` 정적 GitHub Pages(JSON 읽는 대시보드).
+- 구조:
+  - `cmd/quantoss/` — 단일 CLI. main.go(agent/backtest/optimize/paper 등) + research_*.go(연구 서브커맨드) + swingrun/laoerrun(일봉 모의 실행기) + copilot/doctor/verify.
+  - `internal/config` — `.env`(`QUANTOSS_*`, `TOSS_*`) → Config, `ForMarket(KR|US)` 로 시장별 전략·시간대 확정, `Validate`.
+  - `internal/toss` — 토스 REST/WS 클라이언트(토큰 캐시 `data/.token.json`, client 당 토큰 1개).
+  - `internal/engine`·`broker`·`risk`·`strategy`·`indicators` — 분봉 실시간 매매 루프, 2단 매도(지정가→시장가)+서버 손절 예약, 전략 Registry.
+  - `internal/swing`(runner/laoer)·`backtest`·`exitlab`·`selection`·`evaluation` — 일봉 스윙/라오어 시뮬레이션과 모의 실행기(데이터 로더 `PoolFn/DailyFn/BarsFn` 주입 가능).
+  - `internal/agent`·`github`·`report`·`notify`·`journal` — 실시간 루프, GitHub 이슈/파일 커밋, 리포트·대시보드 JSON, 텔레그램/슬랙, 저널 JSONL.
+  - `internal/universe`·`yahoo`·`catalyst`·`fundamentals`·`stockinfo`·`ontology` — 종목 풀·일봉 수집·공시(DART)·펀더멘털.
+  - `internal/zz_dbg` — 운영자 디버그 스크래치(실API·절대경로·토큰 캐시 공유, 단언 없음). 2026-09-18 기준 `go test ./...` 에 포함돼 172초 소요.
+  - `scripts/` — run.sh/boot.sh/lab.sh(연구 배치)/quantoss.service. `.github/workflows` 없음.
+- 빌드·테스트: `go build ./...` · `go vet ./...` · `gofmt -l .` · `go test -count=1 ./...`(zz_dbg 제외 시 <5초, 포함 시 ~3분 — 외부 API 대기). `-race` 도 통과 이력.
+- 관례: 커밋 메시지 한국어 한 줄(자동 커밋 `live.json: 실시간 현황` 이 로그 대부분). 설정은 `.env` 환경변수만, 마이그레이션 없음. 문서는 README.md(한국어, 기능표·알려진 한계) + `docs/reports/research/`, `reports/`(자동 커밋 리포트).
+- 위험 구역: `internal/broker`(Sell 2단 매도·서버 손절 재예약 `reguard` — 이중 매도/유령 예약 이력), `internal/toss` 토큰(같은 키로 두 프로세스면 서로 무효화), `internal/swing/runner.go`(최근 5회 이상 재작성, 충돌 잦음), `internal/config.ForMarket` 전략 우선순위(PaperStrategy > USStrategy > Strategy, 멱등).
+- 자주 깨지는 곳: 가격 포맷 `%.0f`(US 종목 — `market.FormatPrice/Money` 사용), 구조체 리터럴로 만든 클라이언트의 nil 필드 패닉(toss limiter·notify http — 지연 초기화 패턴), 스윙 실행기 "마지막 봉만 판정" 가정.
+- 검증 함정: `go test ./...` 가 `internal/zz_dbg` 를 통해 실토스·DART API 와 운영자 PC 절대경로(`/mnt/c/Users/USER/projects/Quantoss/.env`)에 의존 — CI/다른 머신에서 결과 다름, 라이브 에이전트 실행 중 돌리면 토큰 충돌 가능. `.github/workflows` 추가는 푸시 토큰 `workflow` 스코프 미확인이라 회차 유실 위험.
