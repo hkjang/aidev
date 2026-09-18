@@ -1,0 +1,17 @@
+# aiportal-front 프로필 (2026-09-19)
+- 목적: KCB 사내 AI 포털 프런트엔드(챗봇·전문가 AI·노트북/업무도구·OCR·문서 뷰어)의 Vue SPA. package.json name `kcb_ai`, version 0.0.0(릴리즈 관례 없음).
+- 스택: JavaScript(ESM, `"type": "module"`) · Vue 3.5 · Vite 7 · Pinia 3 · vue-router 4 · axios · marked/highlight.js/dompurify · monaco-editor · pdfjs-dist · milkdown 7.21.1(overrides 고정) · mermaid · vitest 4 + jsdom. Node ^20.19 || >=22.12. TypeScript·ESLint·Prettier 없음(탭 들여쓰기 위주, 스페이스 혼재).
+- 구조:
+  - `src/api/common/interceptors.js` — 모든 API 가 지나는 axios 인터셉터(토큰 리프레시 락, 2026-09-06 수정·테스트 있음)
+  - `src/storage/*.js` — sessionStorage/localStorage 래퍼(authStorage, userStorage, commonStorage, sessionChatStroage, myNoteBookStorage, appDefaultStorage, useOpenAppStroage, chatTransitionStorage, ocrStatusCheckStore). 2026-09-07~17 회차에서 대부분 정리·테스트됨
+  - `src/utils/` — common.js(라우팅·파일명·날짜 헬퍼), appList.js, appUpdateLog.js, globalLoading.js(boolean 스피너), eventBus.js(mitt)
+  - `src/composables/` — useAppList.js, useFileAccept/useFileAttach 등
+  - `src/components/layout/` — Header.vue(OCR 3초 폴링 시작), Sidemenu.vue, MainLayout
+  - `src/views/` — Home, Chat/Main.vue·Chat/Index.vue(채팅 핵심, 1,700행대), ChatStorage, MyAgent, Support(OCR/Img 목록)
+  - `tests/unit/*.spec.js` — 순수 헬퍼·스토리지 모듈 테스트 18개 파일(2026-09-17 기준 408건). `tests/` 상위의 xlsx/csv/json 은 수동 QA 시나리오 데이터
+  - `vitest.config.js` — 테스트 전용 설정(vite.config.js 는 https 인증서 의존이라 분리), include `tests/unit/**/*.spec.js`, jsdom, `@` alias
+- 빌드·테스트: `npm ci` → `npm test`(vitest run, 수십 초) · `npm run build:dev`(vite build --mode dev, 1~2분, 500kB 초과 청크 경고는 정상·dist 는 커밋 전 삭제). 모드별 빌드 스크립트(core/ofc/dev/int ± _dev)는 .env 파일에 의존.
+- 관례: 커밋 메시지 한국어 `fix: …`/`feat: …` 접두. 작업 브랜치 `auto/YYYY-MM-DD-HHMM` → `main` 으로 PR 머지(#15 까지). 마이그레이션 없음(프런트 전용). 문서는 README.md 뿐(버전 표는 템플릿 플레이스홀더). CI 워크플로(.github/workflows)·CHANGELOG·태그 없음 — 러너가 자체 verify/review/ci 게이트로 검증.
+- 위험 구역: `src/api/common/interceptors.js`(인증 토큰 리프레시 — 잘못되면 전 API 401 루프), `src/storage/authStorage.js`·`userStorage.js`(로그아웃/탭 동기화 플래그 `window._userStorageSyncInitialized` 등 모듈별 전용 플래그 유지 필요), `Chat/Index.vue`·`Chat/Main.vue`(세션 로드/재전송 로직, 컴포넌트 테스트 불가), 로그아웃 경로 2곳(`HeaderSetting.logout`, `common.redirectToLogin`)은 clearUser/clearAuth/clearMyNoteBookCache/clearSessionChat/clearCommonUserData 를 모두 불러야 함.
+- 자주 깨지는 곳: 서버 응답 shape 가정(body 배열/객체, app_id 숫자/문자열, serviceCode 대소문자 표기 myNoteBook/MyNotebook) · storage JSON.parse 미방어 · `String(x) ?? ''` 류의 nullish 오용 · 2026-09-08 release→low-risk 강등(회귀 revert) 이력 있음 — 표시값·타임존(`parseUtcToKstDate`) 등 광범위 영향 변경은 피할 것.
+- 검증 함정: 컴포넌트(.vue) 테스트 환경 없음 — .vue 수정은 순수 헬퍼 추출 + 테스트로만 증명 가능. 워크트리에 node_modules 가 없을 수 있어 `npm ci` 선행 필요. 러너 회차 예산 상한($22)에 걸리면 코드와 무관하게 `error: hold: budget` 으로 끝난다(2026-09-18) — 큰 탐색·L 과제 지양.
