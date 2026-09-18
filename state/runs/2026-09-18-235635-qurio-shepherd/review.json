@@ -1,0 +1,20 @@
+{
+  "verdict": "reject",
+  "recommend": "fix",
+  "reasons": [
+    "internal/mail/mail.go:196-207,222-227 평문 연결 인증 정책이 캠페인 규칙 1을 그대로 위반한다. (a) loginAuth.Start의 가드 `!server.TLS && server.Name != a.host`는 항상 거짓이다 — stdlib smtp.NewClient(conn, config.Host)가 serverName=host로 넣고 Client.Auth가 ServerInfo{Name: c.serverName, TLS: c.tls}를 그대로 전달하므로(GOROOT/src/net/smtp/smtp.go:71,202 확인) server.Name == config.Host가 언제나 성립한다. 따라서 security=auto/none이고 username이 설정된 상태에서 STARTTLS를 광고하지 않고 AUTH LOGIN만 광고하는 릴레이에는 mail.password가 base64 평문으로 전송된다. (b) 같은 조건에서 AUTH PLAIN을 광고하는 릴레이에는 smtp.PlainAuth가 `!server.TLS && !isLocalhost(server.Name)`로 'unencrypted connection'을 반환해 인증이 항상 실패한다(auth.go:67). 고칠 것: 인증 여부를 server.TLS(실제 TLS 상태)로만 판단한다. security=auto/starttls/tls에서 TLS 없이 AUTH가 필요하면 자격증명을 보내지 말고 '릴레이가 STARTTLS를 지원하지 않아 평문으로는 인증하지 않습니다. 평문 인증이 정말 필요하면 mail.security=none을 지정하세요' 같은 명확한 오류를 내며, security=none을 명시했을 때만 평문 인증을 허용한다(이때 PlainAuth 대신 TLS 검사를 하지 않는 자체 PLAIN/LOGIN 구현을 쓴다). 검증은 비-루프백 주소(예: 127.0.0.2가 아닌 실제 인터페이스 IP 또는 hosts 이름)에 바인드하고 STARTTLS 없이 'AUTH PLAIN LOGIN'만 광고하는 가짜 릴레이로: auto+username → 오류이며 AUTH 명령이 수신되지 않았음을 단언, none+username → AUTH가 수신됨을 단언. 현재 mail_test.go에는 인증 경로 테스트가 하나도 없다.",
+    "internal/mail/service.go:150-153 SendNow가 발송용 sendContext를 s.complete(sendContext, …)에 재사용한다(캠페인 규칙 2 위반). dial()이 연결 데드라인을 ctx.Deadline()과 같은 시각으로 잡으므로(mail.go:157-161) TCP는 받지만 응답이 없는 릴레이에서는 send가 예산 전체를 소진하고 돌아오며, 그 직후 만료된 컨텍스트로 UPDATE를 실행해 실패한다 → 행이 영원히 'queued'로 남아 '시도마다 기록' 약속이 정확히 진단이 필요한 장애에서 깨진다. deliver()(service.go:159-176)도 바깥 ctx(2T+15s)를 complete에 재사용하며 최악 소비량 2×(T+5)+2 = 2T+12s라 UPDATE에 3초만 남는다. 고칠 것: complete()는 항상 context.WithoutCancel 기반의 새 짧은 컨텍스트(예: 10s)로 UPDATE를 수행하고, 발송 예산은 (연결 데드라인×재시도 횟수+대기 시간)보다 넉넉히 크게 잡는다. 테스트: ctx.Done()까지 블록하는 sender와 ctx.Err()!=nil이면 오류를 돌려주는 DeliveryStore 스텁으로 SendNow/Notify 후 상태가 failed로 기록됨을 단언(수정 전에는 queued로 남아 실패해야 함).",
+    "internal/mail/service.go:127-135 Notify가 수신자마다 고루틴을 상한 없이 띄운다(캠페인 규칙 5 위반). 죽은 릴레이에서는 고루틴 하나가 최대 2T+15s(기본 35초) 살아남으므로 승인 요청·키 만료 스캔이 그보다 잦으면 고루틴과 TCP 연결이 쌓인다. 고칠 것: 발송 고루틴 수에 세마포어 상한(예: 4)을 두고, 상한을 넘는 작업은 슬롯을 기다리되 기록 INSERT(s.record)는 지금처럼 즉시 남긴다. 테스트: sender가 블록하는 동안 N+1개 Notify 후 동시에 실행 중인 sender 수가 N을 넘지 않고, 기록은 N+1개가 queued로 존재함을 단언.",
+    "internal/mail/message.go:85 승인 요청 메일 링크 `/admin/approvals/review`는 web/src/App.tsx:136-143에서 RequireAdmin 아래에 있어 role!=='admin'이면 `/workspace`로 리다이렉트된다(App.tsx:63-66). 이 메일의 수신자는 검토 팀의 MANAGER/REVIEWER(events.go:98-101)로 관리자가 아닌 경우가 대부분이므로 링크가 검토함이 아니라 워크스페이스 첫 화면으로 떨어진다(캠페인 규칙 3 위반). 모든 로그인 사용자가 열 수 있는 `/workspace/approvals/review`(App.tsx:129)로 바꾸고, 잘못된 링크를 그대로 단언하는 mail_test.go:184(TestActorIsNotMailedAboutOwnAction)도 함께 고친다."
+  ],
+  "notes": [
+    "보호 파일 migrations/0035_mail_notifications.sql은 CREATE TABLE IF NOT EXISTS / CREATE INDEX IF NOT EXISTS / INSERT … ON CONFLICT DO NOTHING만 있어 추가 전용이며, value_type 'SECRET_REF'·section 등은 0002의 CHECK 제약과 맞는다. mail.enabled를 'false'로 심어 기본값은 꺼짐. 되돌려도 남는 표·행은 무해하다.",
+    "비밀 처리: mail.password는 기존 settingSpec Secret 경로(settings_handlers.go:186-195, 252-268)를 그대로 타 암호화 저장·GET 미반환이 유지되고, SettingsMap이 복호화해 읽는다. 비밀 처리기 자체는 수정되지 않았다.",
+    "새 경로 GET /admin/mail/deliveries(settings.read)·POST /admin/mail/test(settings.write)는 모두 admin 그룹 인증·권한 미들웨어 아래에 있어 인증 없이 열리는 경로는 늘지 않았다.",
+    "반복 트리거 확인: createApprovalRequest는 xmax=0(inserted)일 때만 알림, decideApproval은 PENDING_REVIEW 행만 FOR UPDATE로 잠그므로 최종 상태 이후 재요청은 오류로 끝나 중복 메일이 없다. 부분 승인은 status가 PENDING_REVIEW로 남아 알림하지 않는다. API 키 만료는 qurio_mail_deliveries.details->'apiKeyIds' 포함 여부로 키당 1회 억제된다.",
+    "go build ./... 및 go test ./internal/mail/ 통과. 다만 인증 경로·컨텍스트 만료 후 기록 경로에 대한 테스트가 없어 위 결함들이 테스트로 드러나지 않았다.",
+    "job.failed는 runner.finalize에서 attempts>=MaxAttempts로 FAILED 확정 후에만 호출되어 '마지막 시도 후' 설명과 일치한다. 다른 링크(/workspace/history, /workspace/evaluation, /admin/backup, /workspace/datasets, /workspace/topology, /admin/embedding, /workspace/keys)는 라우터에 존재하며 /admin/backup·/admin/embedding은 관리자 전용 작업(백업·임베딩)의 소유자에게만 간다.",
+    "제출 전 origin/main 위로 리베이스되어 있는지(현재 origin/main..HEAD 1커밋) 재심사 시 다시 확인할 것."
+  ],
+  "risk": "medium"
+}

@@ -1,0 +1,21 @@
+{
+  "verdict": "reject",
+  "recommend": "fix",
+  "reasons": [
+    "internal/server/mail.go:305-333 (mailSession) 평문 연결에서 자격증명을 보내는 정책이 없다. 캠페인 규칙 1 그대로의 결함을 실행으로 확인함: 127.0.0.2에 바인드한 가짜 릴레이(STARTTLS 없음)에 mail.username/password를 주고 mailDeliver를 호출하면 (a) 릴레이가 'AUTH PLAIN LOGIN'을 알리고 security=auto → stdlib PlainAuth가 'SMTP 인증 실패: unencrypted connection'으로 항상 실패, (b) 'AUTH PLAIN' + security=none(명시) → 같은 이유로 항상 실패(none을 골라도 PLAIN 인증은 불가능), (c) 'AUTH LOGIN' + security=auto(기본값) → 릴레이가 'U:bWFkaQ== / P:cmVsYXktc2VjcmV0'(base64 평문 비밀번호)를 수신. 고칠 것: server.TLS(연결이 TLS로 올라갔는지)만 보고 판단한다. auto/starttls/tls에서 TLS가 아니면 인증하지 않고 '릴레이가 STARTTLS를 지원하지 않아 자격증명을 보내지 않았습니다. 평문 인증을 허용하려면 mail.security=none' 같은 명확한 errMailInvalid를 반환한다. security=none이 명시된 경우에만 평문 인증을 허용하되 stdlib smtp.PlainAuth는 비-localhost 평문에서 거부하므로 PLAIN도 자체 구현(mailLoginAuth처럼)으로 같은 정책을 적용한다.",
+    "internal/server/mail.go:350 (mailLoginAuth.Start) `!server.TLS && server.Name != a.host` 가드는 항상 거짓이다. mail.go:290에서 smtp.NewClient(conn, cfg.Host)로 serverName=cfg.Host가 들어가고 stdlib smtp.go:202가 ServerInfo{c.serverName,...}를 넘기므로 server.Name == a.host가 항상 성립한다(위 (c)에서 실증). 가드를 server.TLS 기반 정책(위 항목)으로 교체하고 host 비교는 제거한다.",
+    "internal/server/mail_test.go:134-190 (fakeSMTPRelay) 인증 정책을 검증하는 테스트가 없다. 가짜 릴레이는 127.0.0.1에 바인드되고 AUTH를 알리지 않아 '서버가 인증을 지원하지 않습니다' 분기만 지난다. 캠페인 규칙대로 비-루프백 주소(예: 127.0.0.2, stdlib isLocalhost 목록 밖)에 바인드하고 STARTTLS 없이 'AUTH PLAIN LOGIN'을 알리는 가짜 릴레이를 추가해 (1) auto+자격증명 → 인증 시도 없이 명확한 오류이고 릴레이가 AUTH 명령을 받지 않았음, (2) none+자격증명 → 인증이 실제로 성공함(PLAIN·LOGIN 둘 다), (3) STARTTLS를 알리는 릴레이에서는 auto가 TLS 승격 후 인증함을 단언한다.",
+    "internal/server/mail.go:51,431 mailEventRunbookFinished의 화면 경로와 알 수 없는 이벤트의 기본 경로가 '/app/inbox'인데, web/src/App.tsx:1143의 /app/inbox는 InboxPage(개인 수집함: /captures, '아직 분류하지 않은 기록')이고 알림 목록이 아니다. 알림은 FocusedHome(/app, web/src/navigation/FocusedHome.tsx:267 api('/notifications'))에 표시된다. 런북 완료 메일의 '바로 열기' 링크를 '/app'(또는 문서 링크 `/app/documents/<id>/runbook`, App.tsx:973 존재)으로 바꾸고, 기본 경로 fallback도 '/app'으로 바꾼 뒤 TestMailComposeAndRender에 runbook 이벤트 링크 단언을 추가한다.",
+    "internal/server/mail_dispatch.go:136-138 발송 고루틴에 상한이 없다. 틱마다 최대 200개 번들이 각각 `go s.deliverMail`로 뜨고, 죽은 릴레이(TCP만 받는 경우)에서는 고루틴 하나가 2*timeout+15초(최대 255초)까지 살아 있어 5초 틱마다 쌓인다. 캠페인 규칙 5대로 Server에 세마포어(예: chan struct{} 크기 4~8)를 두고 상한 초과분은 대기시키되 mail_deliveries INSERT(queued)는 지금처럼 커밋 시점에 즉시 남긴다.",
+    "internal/server/mail_dispatch.go:161,194 completeMail(UPDATE mail_deliveries)이 발송용 ctx를 그대로 재사용한다. 예산(2T+15s, T+5s)이 최악 합(2T+2s, T)보다 크긴 하나 캠페인 규칙 2는 결과 기록을 별도의 짧은 컨텍스트(context.Background()+수 초)로 수행하라고 명시한다. completeMail 내부에서 새 컨텍스트를 만들도록 바꿔 행이 영원히 'queued'로 남는 경로를 없앤다.",
+    "docs/admin-guide.md:18 (및 docs/manuals/admin-guide.html 동일 표) mail.security=auto 설명 '서버가 STARTTLS를 알리면 쓰고 아니면 평문'을 위 정책에 맞게 고친다: auto는 STARTTLS가 없으면 자격증명을 보내지 않고 실패하며, 평문 인증은 none을 명시할 때만."
+  ],
+  "notes": [
+    "실행 결과: go vet 통과, 단위 테스트 5건 통과, MADI_TEST_POSTGRES_DSN(madi-review-pg 컨테이너)으로 TestPostgresMailEventDispatch 통과(5.4s). 통합 테스트는 실제 HTTP·트리거·아웃박스·dispatchMail·전달 기록·시험 발송·403을 진짜 경로로 검증하고 있어 배선 자체는 건전하다. 인증 정책 결함은 이 테스트들이 닿지 않는 분기라 통과했다.",
+    "인증 없는 릴레이(기본 경로, username 빈 값)만 쓰는 사이트에서는 결함 (1)(2)가 발현되지 않는다. 결함은 mail.username을 채운 경우에만 해당한다.",
+    "확인한 것: mail.enabled 기본값 false, 새 공개 경로 없음(두 API 모두 s.admin), mail.password는 secretSettings에 추가되어 redactSettings가 *_configured 플래그로 대체하고 빈 값 저장 시 기존 값 유지(통합 테스트에서 GET/PUT 응답에 평문 없음 확인). 오류 메시지에 자격증명이 실리는 경로 없음. mail.sql은 컬럼·표·트리거 추가만이고 revert 후에도 트리거는 mail_event가 NULL이면 아무것도 하지 않아 안전. 메일 링크 /app/approvals, /app/access-requests, /app/tasks, /app/knowledge-time, /app/documents/:id는 App.tsx 라우터에 존재 확인. 자기 행위 억제(actor_id==user_id), 이벤트별 스위치, read_at·disabled·kind='user'·madi_document_allowed 조건 모두 실제 스키마/함수 존재 확인.",
+    "internal/server/admin.go:20 secretSettings 목록에 'mail.password' 한 항목이 추가되었다. 캠페인 규칙 8(비밀 처리기 파일은 사람 승인)에 해당할 수 있어 기록한다. 이 세션에서 변경이 추가 한 줄뿐이고 기존 redact/merge 로직을 바꾸지 않았으며 테스트가 누출 없음을 증명하는 것을 확인했으므로 이 항목만으로 사람에게 넘기지는 않는다.",
+    "범위 이탈 없음: 기존 notifications INSERT 지점에 mail_event/actor_id 두 컬럼을 덧붙인 변경뿐이고 리팩터·포맷·의존성 변경은 없다."
+  ],
+  "risk": "medium"
+}

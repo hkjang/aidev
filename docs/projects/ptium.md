@@ -1,7 +1,7 @@
 ---
 title: "ptium — 자율 개선 이력"
 description: "ptium: 자율 개선 회차 36회, 릴리즈 14건. 최근 릴리즈 v1.69.41 (자산 7개)."
-last_modified_at: 2026-09-18 23:47:27 +0900
+last_modified_at: 2026-09-19 00:13:13 +0900
 ---
 {% raw %}
 <script type="application/ld+json">
@@ -18,14 +18,14 @@ last_modified_at: 2026-09-18 23:47:27 +0900
   "name": "hkjang",
   "url": "https://github.com/hkjang"
  },
- "dateModified": "2026-09-18T23:47:27+09:00",
+ "dateModified": "2026-09-19T00:13:13+09:00",
  "version": "1.69.41"
 }
 </script>
 
 # ptium
 
-<p class="tldr"><strong>요약.</strong> ptium: 자율 개선 회차 36회, 릴리즈 14건. 최근 릴리즈 v1.69.41 (자산 7개). <span class="pill pill-failed" title="14일: 릴리즈 11, 실패 0, 경고 3, 회귀 2">건강 D</span> <span class="meta">14일: 릴리즈 11, 실패 0, 경고 3, 회귀 2</span></p>
+<p class="tldr"><strong>요약.</strong> ptium: 자율 개선 회차 36회, 릴리즈 14건. 최근 릴리즈 v1.69.41 (자산 7개). <span class="pill pill-failed" title="14일: 릴리즈 8, 실패 0, 경고 2, 회귀 2">건강 D</span> <span class="meta">14일: 릴리즈 8, 실패 0, 경고 2, 회귀 2</span></p>
 
 <ul class="stats"><li><b>36</b><span>회차</span></li><li><b>1</b><span>프로젝트</span></li><li><b>14</b><span>배포 준비 완료</span></li><li><b>0</b><span>릴리즈 진행 중</span></li><li><b>2</b><span>병합 완료</span></li><li><b>9</b><span>검토 대기</span></li><li><b>2</b><span>검증 실패</span></li><li><b>7</b><span>변경 없음</span></li><li><b>2</b><span>실행 오류</span></li><li><b>$129.77</b><span>비용</span></li><li><b>4시간 41분</b><span>에이전트 시간</span></li></ul>
 
