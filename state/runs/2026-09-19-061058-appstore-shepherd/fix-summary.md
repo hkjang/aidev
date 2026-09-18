@@ -1,0 +1,6 @@
+# fix-summary — PR #23 (e42bc01 on top of d74df77)
+
+1. **Problem:** `mcp_oauth_integration_test.go` built the Server with a nil logger, so `oauthPrincipal`'s `MCP SSO token rejected` log (mcp_oauth.go:221) — the line ADMIN_GUIDE.md:434 sends admins to — was not pinned by any test.
+2. **Fix:** Server now logs to a `bytes.Buffer`; each verify refusal (expired / other issuer / typ ID / HS256 / cnf) asserts 401 + client message, `msg="MCP SSO token rejected"`, a cause substring (`expired`, `signature`, `ID tokens`, `HS256`, `proof of possession`), `request_id=` equal to the response `X-Request-ID`, and that the raw token is absent from the log.
+3. **Verified:** ran against a throwaway `postgres:17-alpine` — test passes; mutation check (log call removed) fails all 5 cases; full CI suite `go test -race . ./cmd/... ./internal/... ./migrations/... ./openapi/...` green, gofmt clean.
+4. **Commit-message inventory (rule 4):** amend/rebase is forbidden for this agent, so the AuthMethod-"oauth" branch inventory (auth_middleware.go:159, auth_handlers.go:48, ratelimit.go:83/89, server.go:292, APIKeyID unused elsewhere — none needs a change) is in the body of e42bc01; the PR description should carry the same list when the runner pushes.

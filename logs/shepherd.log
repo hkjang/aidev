@@ -719,3 +719,66 @@ commit ba43d11e642b5cc55572a78df2ec25cf043eb13a.
 [05:18:09] done
 ===== 2026-09-19 05:18:09 shepherd done
 ===== 2026-09-19 05:35:02 shepherd start
+[05:35:58] shepherd: 후보 199건 (한 번에 최대 6건, 오늘 $38.02310550000001/$150)
+[05:37:37] === shepherd SecCheck PR #7 (원인 review, run 2026-09-19-053736-SecCheck-shepherd)
+[05:46:32] SecCheck: improve — 45 turns, 9m, $3.08, success
+[05:46:32] SecCheck: verify `go build ./...` → exit 0 (0s)
+[05:46:32] SecCheck: verify `go vet ./...` → exit 0 (0s)
+[05:46:32] SecCheck: verify `go test ./...` → exit 0 (0s)
+[05:46:36] SecCheck: verify `cd web && [ -d node_modules ] || npm ci --no-audit --no-fund` → exit 0 (4s)
+[05:46:36] SecCheck: verify `cd web && npm test --silent` → exit 0 (0s)
+[05:46:36] SecCheck: verify `cd web && [ -d node_modules ] || npm ci --no-audit --no-fund` → exit 0 (0s)
+[05:46:37] SecCheck: verify `cd web && npm run build --silent` → exit 0 (1s)
+[05:46:45] SecCheck: [shepherd] PR #7 review → fix-pushed — # fix-summary — PR #7 (commit 5a96fe0 on top of a6bcb07)  - **Problem:** `authenticateMCPToken` logged every refusal with `request_id=""` and five refusal bra
+[05:49:53] SecCheck: review — 17 turns, 3m, $1.43, success
+[05:49:53] SecCheck: [shepherd] PR #7 review → review-reject — - internal/auth/mcpoauth.go:172-190 mcpProvider 가 a.providers.mu 를 잡은 채 oidc.NewProvider(http.Client Timeout 10초, context.WithoutCancel 이라 클�
+[05:49:58] === shepherd Vendra PR #125 (원인 review, run 2026-09-19-054958-Vendra-shepherd)
+[05:54:38] Vendra: improve — 33 turns, 4m, $2.33, success
+[05:54:39] Vendra: verify `go build ./...` → exit 0 (1s)
+[05:54:39] Vendra: verify `go vet ./...` → exit 0 (0s)
+[05:54:41] Vendra: verify `go test ./...` → exit 0 (2s)
+[05:54:45] Vendra: verify `cd web && [ -d node_modules ] || npm ci --no-audit --no-fund` → exit 0 (4s)
+[05:54:48] Vendra: verify `cd web && npm test --silent` → exit 0 (3s)
+[05:54:48] Vendra: verify `cd web && [ -d node_modules ] || npm ci --no-audit --no-fund` → exit 0 (0s)
+[05:54:52] Vendra: verify `cd web && npm run build --silent` → exit 0 (4s)
+[05:54:58] Vendra: [shepherd] PR #125 review → fix-pushed — # fix-summary (ea4644a, PR #125)  - 문제 1(로그 미고정): `mcpChallenge` 의 `slog.Warn("mcp oauth token refused", "detail", …)` 과 `fromOAuthToken` �
+[05:59:26] Vendra: review — 32 turns, 4m, $2.32, success
+[05:59:29] Vendra: [shepherd] PR #125 review → approve — risk=medium — 리뷰 승인 (risk=medium) 
+[05:59:32] === shepherd ai-admin PR #25 (원인 review, run 2026-09-19-055931-ai-admin-shepherd)
+[06:04:26] ai-admin: improve — 31 turns, 5m, $1.91, success
+[06:04:27] ai-admin: verify `go build ./...` → exit 0 (0s)
+[06:04:27] ai-admin: verify `go vet ./...` → exit 0 (0s)
+[06:04:29] ai-admin: verify `go test ./...` → exit 0 (2s)
+[06:04:37] ai-admin: verify `cd web && [ -d node_modules ] || npm ci --no-audit --no-fund` → exit 0 (8s)
+[06:04:44] ai-admin: verify `cd web && npm test --silent` → exit 0 (7s)
+[06:04:44] ai-admin: verify `cd web && [ -d node_modules ] || npm ci --no-audit --no-fund` → exit 0 (0s)
+[06:04:48] ai-admin: verify `cd web && npm run build --silent` → exit 0 (4s)
+[06:04:52] ai-admin: [shepherd] PR #25 review → fix-pushed — # fix-summary (commit 0cb4bd2)  - 문제 1: `mcpAuthenticate`가 SSO 토큰 거부(`mcpOAuthRefusal`)를 401로 내보낼 때 로그 호출이 없어 go-oidc �
+[06:10:52] ai-admin: review — 25 turns, 6m, $2.34, success
+[06:10:55] ai-admin: [shepherd] PR #25 review → approve — risk=medium — 리뷰 승인 (risk=medium) 
+[06:10:58] === shepherd appstore PR #23 (원인 review, run 2026-09-19-061058-appstore-shepherd)
+[06:14:37] appstore: improve — 30 turns, 3m, $1.45, success
+[06:14:38] appstore: verify `go build ./...` → exit 0 (1s)
+[06:14:38] appstore: verify `go vet ./...` → exit 0 (0s)
+[06:14:39] appstore: verify `go test ./...` → exit 0 (1s)
+[06:14:45] appstore: verify `cd web && [ -d node_modules ] || npm ci --no-audit --no-fund` → exit 0 (6s)
+[06:14:44] appstore: verify `cd web && npm test --silent` → exit 0 (-1s)
+[06:14:44] appstore: verify `cd web && [ -d node_modules ] || npm ci --no-audit --no-fund` → exit 0 (0s)
+[06:14:49] appstore: verify `cd web && npm run build --silent` → exit 0 (5s)
+[06:14:54] appstore: [shepherd] PR #23 review → fix-pushed — # fix-summary — PR #23 (e42bc01 on top of d74df77)  1. **Problem:** `mcp_oauth_integration_test.go` built the Server with a nil logger, so `oauthPrincipal`'s 
+[06:20:05] appstore: review — 33 turns, 5m, $2.4, success
+[06:20:08] appstore: [shepherd] PR #23 review → approve — risk=medium — 리뷰 승인 (risk=medium) 
+[06:20:10] === shepherd igame PR #20 (원인 review, run 2026-09-19-062010-igame-shepherd)
+[06:23:52] igame: improve — 34 turns, 3m, $1.79, success
+[06:24:08] igame: verify `make deps` → exit 0 (16s)
+[06:24:11] igame: verify `make test` → exit 0 (3s)
+[06:24:22] igame: verify `make build` → exit 0 (11s)
+[06:24:23] igame: verify `make check-contract` → exit 0 (1s)
+[06:24:26] igame: [shepherd] PR #20 review → fix-pushed — # fix-summary  - 문제: `requireMCPAuth`(internal/api/mcp.go)가 `mcpRefusal`을 만나면 `Message`만 클라이언트로 보내고 `Cause`(go-oidc 검증 오
+[06:28:10] igame: review — 24 turns, 3m, $2.09, success
+[06:28:13] igame: [shepherd] PR #20 review → approve — risk=medium — 리뷰 승인 (risk=medium) 
+[06:28:17] === shepherd vibe-coders PR #19 (원인 review-missing, run 2026-09-19-062816-vibe-coders-shepherd)
+[06:32:41] vibe-coders: review — 14 turns, 4m, $0.73, success
+[06:32:44] vibe-coders: [shepherd] PR #19 review-missing → approve — risk=low — 리뷰 승인 (risk=low) 
+[06:32:45] shepherd: 이번 시간 몫(6건)을 다 썼다 — 나머지는 다음 시간에
+[06:32:46] shepherd: 처리 6건 — 승인 5 · 수정 푸시 5 · 사람 필요 0 (오늘 $59.9165155/$150)
