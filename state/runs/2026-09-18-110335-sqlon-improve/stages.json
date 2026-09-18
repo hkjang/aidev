@@ -1,0 +1,27 @@
+{
+  "base": {
+    "state": "pinned",
+    "reason": "main@57f99b7",
+    "at": "2026-09-18T11:03:38+09:00"
+  },
+  "autonomy": {
+    "state": "release",
+    "reason": "",
+    "at": "2026-09-18T11:03:38+09:00"
+  },
+  "verify": {
+    "state": "passed",
+    "reason": "검증 3개 통과 (auto)",
+    "at": "2026-09-18T11:26:08+09:00"
+  },
+  "pr": {
+    "state": "created",
+    "reason": "https://github.com/hkjang/sqlon/pull/7",
+    "at": "2026-09-18T11:26:13+09:00"
+  },
+  "review": {
+    "state": "rejected",
+    "reason": "리뷰 거절: internal/meta/settings.go:72 기존 SettingDef `{Key: SetCacheTTL, Label: \"쿼리 결과 캐시 TTL(초)\", Group: \"성능\"}` 항목이 MCP SSO 항목을 끼워넣으면서 삭제됨(diff -/+ 확인, 파일 어디에도 다시 등장하지 않음). 결과: /admin/settings 및 GET /api/settings 에서 캐시 TTL 설정이 사라지고, PUT /api/settings {\"cache_ttl_seconds\": ...} 는 settingDef() 미발견 → ErrNotFound → 400 'unknown or invalid setting' 으로 거부됨. 이미 저장된 값은 EffectiveSettings 를 통해 계속 적용되지만 콘솔/API 로 바꾸거나 비울 수 없게 되는 회귀. 커밋 메시지·CHANGELOG 어디에도 언급 없음 — 의도치 않은 삭제로 판단. / internal/mcp/openapi.go:189 와 internal/mcp/authapi.go:270-282 불일치. OpenAPI 설명은 '값 검증에 실패하면 400 과 사유를 돌려주고 아무것도 저장하지 않습니다' 라고 하지만, PUT 핸들러는 map 을 순회하며 키마다 즉시 Store.SetSetting 을 호출하고 뒤늦게 실패한 키에서 400 을 반환함. 순회 순서가 무작위이므로 같은 요청이라도 일부 키는 저장되고(ApplySettings 는 호출되지 않아 런타임 미반영) 다음 저장/재기동 때 조용히 적용됨. 이번 PR 이 Validate 를 도입하면서 새로 생긴 부분 저장 경로이며 문서가 이를 반대로 기술함.",
+    "at": "2026-09-18T11:29:11+09:00"
+  }
+}

@@ -1,0 +1,181 @@
+{
+  "run_id": "2026-09-18-110335-sqlon-improve",
+  "generated": "2026-09-18T11:29:12+09:00",
+  "run": {
+    "run_id": "2026-09-18-110335-sqlon-improve",
+    "project": "sqlon",
+    "kind": "improve",
+    "started": "2026-09-18T11:03:35+09:00",
+    "model": "claude-opus-5",
+    "policy_version": "312eebbf",
+    "prompts_hash": "90b6639bc42c5800",
+    "runner_version": "312eebbf",
+    "finished": "2026-09-18T11:29:12+09:00",
+    "outcome": "review-pending"
+  },
+  "record": {
+    "ts": "2026-09-18T11:29:12+09:00",
+    "date": "2026-09-18",
+    "project": "sqlon",
+    "result": "review held, PR open https://github.com/hkjang/sqlon/pull/7",
+    "outcome": "review-pending",
+    "run_id": "2026-09-18-110335-sqlon-improve",
+    "base_sha": "57f99b7233561729106c666369028763debb97b7",
+    "head_sha": "d209d657b9a54a58d8d08d9db1342a7e39c88b71",
+    "pr": "https://github.com/hkjang/sqlon/pull/7",
+    "stages": {
+      "base": {
+        "state": "pinned",
+        "reason": "main@57f99b7",
+        "at": "2026-09-18T11:03:38+09:00"
+      },
+      "autonomy": {
+        "state": "release",
+        "reason": "",
+        "at": "2026-09-18T11:03:38+09:00"
+      },
+      "verify": {
+        "state": "passed",
+        "reason": "검증 3개 통과 (auto)",
+        "at": "2026-09-18T11:26:08+09:00"
+      },
+      "pr": {
+        "state": "created",
+        "reason": "https://github.com/hkjang/sqlon/pull/7",
+        "at": "2026-09-18T11:26:13+09:00"
+      },
+      "review": {
+        "state": "rejected",
+        "reason": "리뷰 거절: internal/meta/settings.go:72 기존 SettingDef `{Key: SetCacheTTL, Label: \"쿼리 결과 캐시 TTL(초)\", Group: \"성능\"}` 항목이 MCP SSO 항목을 끼워넣으면서 삭제됨(diff -/+ 확인, 파일 어디에도 다시 등장하지 않음). 결과: /admin/settings 및 GET /api/settings 에서 캐시 TTL 설정이 사라지고, PUT /api/settings {\"cache_ttl_seconds\": ...} 는 settingDef() 미발견 → ErrNotFound → 400 'unknown or invalid setting' 으로 거부됨. 이미 저장된 값은 EffectiveSettings 를 통해 계속 적용되지만 콘솔/API 로 바꾸거나 비울 수 없게 되는 회귀. 커밋 메시지·CHANGELOG 어디에도 언급 없음 — 의도치 않은 삭제로 판단. / internal/mcp/openapi.go:189 와 internal/mcp/authapi.go:270-282 불일치. OpenAPI 설명은 '값 검증에 실패하면 400 과 사유를 돌려주고 아무것도 저장하지 않습니다' 라고 하지만, PUT 핸들러는 map 을 순회하며 키마다 즉시 Store.SetSetting 을 호출하고 뒤늦게 실패한 키에서 400 을 반환함. 순회 순서가 무작위이므로 같은 요청이라도 일부 키는 저장되고(ApplySettings 는 호출되지 않아 런타임 미반영) 다음 저장/재기동 때 조용히 적용됨. 이번 PR 이 Validate 를 도입하면서 새로 생긴 부분 저장 경로이며 문서가 이를 반대로 기술함.",
+        "at": "2026-09-18T11:29:11+09:00"
+      }
+    },
+    "campaign": "mcp-oauth-2026-09",
+    "autonomy": "release",
+    "files": 23,
+    "additions": 2916,
+    "deletions": 1068,
+    "tests": 2,
+    "title": "feat(mcp): Keycloak 액세스 토큰으로도 /mcp 에 들어오게 하는 MCP SSO(OAuth 2.1) 지원"
+  },
+  "stages": {
+    "base": {
+      "state": "pinned",
+      "reason": "main@57f99b7",
+      "at": "2026-09-18T11:03:38+09:00"
+    },
+    "autonomy": {
+      "state": "release",
+      "reason": "",
+      "at": "2026-09-18T11:03:38+09:00"
+    },
+    "verify": {
+      "state": "passed",
+      "reason": "검증 3개 통과 (auto)",
+      "at": "2026-09-18T11:26:08+09:00"
+    },
+    "pr": {
+      "state": "created",
+      "reason": "https://github.com/hkjang/sqlon/pull/7",
+      "at": "2026-09-18T11:26:13+09:00"
+    },
+    "review": {
+      "state": "rejected",
+      "reason": "리뷰 거절: internal/meta/settings.go:72 기존 SettingDef `{Key: SetCacheTTL, Label: \"쿼리 결과 캐시 TTL(초)\", Group: \"성능\"}` 항목이 MCP SSO 항목을 끼워넣으면서 삭제됨(diff -/+ 확인, 파일 어디에도 다시 등장하지 않음). 결과: /admin/settings 및 GET /api/settings 에서 캐시 TTL 설정이 사라지고, PUT /api/settings {\"cache_ttl_seconds\": ...} 는 settingDef() 미발견 → ErrNotFound → 400 'unknown or invalid setting' 으로 거부됨. 이미 저장된 값은 EffectiveSettings 를 통해 계속 적용되지만 콘솔/API 로 바꾸거나 비울 수 없게 되는 회귀. 커밋 메시지·CHANGELOG 어디에도 언급 없음 — 의도치 않은 삭제로 판단. / internal/mcp/openapi.go:189 와 internal/mcp/authapi.go:270-282 불일치. OpenAPI 설명은 '값 검증에 실패하면 400 과 사유를 돌려주고 아무것도 저장하지 않습니다' 라고 하지만, PUT 핸들러는 map 을 순회하며 키마다 즉시 Store.SetSetting 을 호출하고 뒤늦게 실패한 키에서 400 을 반환함. 순회 순서가 무작위이므로 같은 요청이라도 일부 키는 저장되고(ApplySettings 는 호출되지 않아 런타임 미반영) 다음 저장/재기동 때 조용히 적용됨. 이번 PR 이 Validate 를 도입하면서 새로 생긴 부분 저장 경로이며 문서가 이를 반대로 기술함.",
+      "at": "2026-09-18T11:29:11+09:00"
+    }
+  },
+  "provenance": {
+    "model": "claude-opus-5",
+    "policy_version": "312eebbf",
+    "prompts_hash": "90b6639bc42c5800",
+    "runner_version": "312eebbf",
+    "base_sha": "57f99b7233561729106c666369028763debb97b7",
+    "head_sha": "d209d657b9a54a58d8d08d9db1342a7e39c88b71",
+    "pr": "https://github.com/hkjang/sqlon/pull/7"
+  },
+  "verification": {
+    "runner": {
+      "source": "auto",
+      "commands": [
+        {
+          "cmd": "go build ./...",
+          "exit": 0,
+          "seconds": 2
+        },
+        {
+          "cmd": "go vet ./...",
+          "exit": 0,
+          "seconds": 0
+        },
+        {
+          "cmd": "go test ./...",
+          "exit": 0,
+          "seconds": 0
+        }
+      ]
+    },
+    "runner_gate": {
+      "ok": true,
+      "state": "verified",
+      "reason": "검증 3개 통과 (auto)"
+    },
+    "after_rebase": null,
+    "review": {
+      "verdict": "reject",
+      "reasons": [
+        "internal/meta/settings.go:72 기존 SettingDef `{Key: SetCacheTTL, Label: \"쿼리 결과 캐시 TTL(초)\", Group: \"성능\"}` 항목이 MCP SSO 항목을 끼워넣으면서 삭제됨(diff -/+ 확인, 파일 어디에도 다시 등장하지 않음). 결과: /admin/settings 및 GET /api/settings 에서 캐시 TTL 설정이 사라지고, PUT /api/settings {\"cache_ttl_seconds\": ...} 는 settingDef() 미발견 → ErrNotFound → 400 'unknown or invalid setting' 으로 거부됨. 이미 저장된 값은 EffectiveSettings 를 통해 계속 적용되지만 콘솔/API 로 바꾸거나 비울 수 없게 되는 회귀. 커밋 메시지·CHANGELOG 어디에도 언급 없음 — 의도치 않은 삭제로 판단.",
+        "internal/mcp/openapi.go:189 와 internal/mcp/authapi.go:270-282 불일치. OpenAPI 설명은 '값 검증에 실패하면 400 과 사유를 돌려주고 아무것도 저장하지 않습니다' 라고 하지만, PUT 핸들러는 map 을 순회하며 키마다 즉시 Store.SetSetting 을 호출하고 뒤늦게 실패한 키에서 400 을 반환함. 순회 순서가 무작위이므로 같은 요청이라도 일부 키는 저장되고(ApplySettings 는 호출되지 않아 런타임 미반영) 다음 저장/재기동 때 조용히 적용됨. 이번 PR 이 Validate 를 도입하면서 새로 생긴 부분 저장 경로이며 문서가 이를 반대로 기술함."
+      ],
+      "notes": [
+        "internal/mcp/mcpoauth.go:536-557 jwksCache.key 는 mutex 를 잡은 채 discovery+JWKS 두 번의 네트워크 왕복(각 10초 타임아웃)을 수행하므로 Keycloak 이 느리거나 죽으면 모든 SSO 토큰 요청이 최대 ~20초씩 직렬화됨. 또한 TTL(1h) 만료 후에는 unknown-kid 스로틀(nextRefetch)이 적용되지 않아 fetch 실패 시 요청마다 재조회를 반복함(기존 키를 폴백으로 쓰지 않음). 키(ssk_) 경로는 영향 없음.",
+        "internal/mcp/mcpoauth.go:133-137 메타데이터 경로는 Options.Endpoint 로 등록되지만 MetadataURL() 은 mcp.oauth.resource 의 path 로 계산됨. 리버스 프록시 prefix 등으로 두 path 가 다르면 401 도전이 가리키는 URL 이 404 가 됨. 문서에 주의 문구 권장.",
+        "internal/mcp/mcpoauth_test.go:544-549 스로틀 단언은 fetch 가 실제로 일어났더라도 참이 되는 상태 검사(nextRefetch 갱신·키 수 2)라서 '재조회가 없었다'를 증명하지 못함. IdP 측 요청 카운터로 보강 권장. 나머지 테스트 9개는 실제 RSA 서명·discovery·JWKS 를 프로덕션 경로로 통과시키며 단언이 실질적임.",
+        "범위 이탈: README.md·CHANGELOG.md·webui/keys.html·webui/settings.html 이 CRLF→LF 로 통째 변환되어 diff 가 2,900 줄로 부풀었음(실질 변경은 --ignore-all-space 기준 115 줄). 저장소는 혼합 개행(admin.html 은 CRLF 유지)이라 규칙 없이 일부만 바뀜. docs/*.pdf·reports/*.html 재생성 바이너리 포함.",
+        "보안 검토: alg 화이트리스트(RS/PS/ES), jwks_uri 발급자 호스트 한정, redirect 미추적, 32KiB 상한, cnf 거부, azp/aud 검사, 계정 미생성·비활성 거부, /mcp 외 경로 미수용 — 모두 코드와 테스트에서 확인됨. 기본 꺼짐이며 revert 로 완전히 되돌릴 수 있음(마이그레이션·외부 상태 변경 없음).",
+        "go vet ./... 및 go test ./internal/... 통과 확인."
+      ],
+      "risk": "medium"
+    },
+    "ci_gate": null
+  },
+  "release": {
+    "result": null,
+    "assets_sha256": []
+  },
+  "approval": null,
+  "usage": [
+    {
+      "ts": "2026-09-18T11:26:03+09:00",
+      "date": "2026-09-18",
+      "project": "sqlon",
+      "phase": "improve",
+      "run_id": "2026-09-18-110335-sqlon-improve",
+      "campaign": "mcp-oauth-2026-09",
+      "subtype": "success",
+      "duration_ms": 1430097,
+      "num_turns": 73,
+      "cost_usd": 10.446710499999998,
+      "input_tokens": 146,
+      "output_tokens": 88223,
+      "cache_read": 11701839,
+      "cache_create": 237317
+    },
+    {
+      "ts": "2026-09-18T11:29:10+09:00",
+      "date": "2026-09-18",
+      "project": "sqlon",
+      "phase": "review",
+      "run_id": "2026-09-18-110335-sqlon-improve",
+      "campaign": "mcp-oauth-2026-09",
+      "subtype": "success",
+      "duration_ms": 184288,
+      "num_turns": 19,
+      "cost_usd": 1.5718809999999999,
+      "input_tokens": 38,
+      "output_tokens": 11155,
+      "cache_read": 1122380,
+      "cache_create": 72977
+    }
+  ]
+}

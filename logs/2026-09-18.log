@@ -1136,3 +1136,34 @@ reports: 17 day(s), 3 week(s), 1 month(s), 954 run(s), 1205 usage row(s), 43 pro
 notify: 1 new alert(s)
 notify: commented on issue #1
 notify: toast shown
+[10:54:18] aidev synced: run(2026-09-18): orbit — guarded files, PR open https://github.com/hkjang/orbit/pull/6
+[10:54:18] done
+[10:54:25] shepherd: 후보 192건 (한 번에 최대 4건, 오늘 $52.8529085/$60)
+[10:55:45] shepherd: 오늘 예산 소진 ($52.8529085/$60) — 여기서 멈춘다
+[10:55:45] shepherd: 처리 0건 — 승인 0 · 수정 푸시 0 · 사람 필요 0 (오늘 $52.8529085/$60)
+[10:55:45] done
+[11:02:52] skip aiportal-java: STOP
+[11:03:24] skip umm: dirty working tree
+[11:03:28] candidates(40): AgentHub Clustara DartFly Invenqor Kkiit Momento Quantoss ReSSO SecCheck Vendra ai-admin aiportal-front-admin aiportal-front aiportal-py appstore cutover dataworks git-ctx hunter igame jikim jupiq kanpic madi moina moyro muni nexabuilder orbit pii-masker postra ptium qurio releasedock relio seaton sqlon vibe-coders visitflow weekly
+[11:03:31] campaign tracking-2026-09: 세 번 이상 실패해 더 잡지 않는 프로젝트 — weekly
+[11:03:34] campaign mail-2026-09: 세 번 이상 실패해 더 잡지 않는 프로젝트 — postra
+[11:03:35] campaign mcp-oauth-2026-09: picked sqlon
+[11:03:35] picked: sqlon
+[11:03:35] === sqlon (base=main, run 2026-09-18-110335-sqlon-improve, 회차 예산 $30)
+Preparing worktree (new branch 'auto/2026-09-18-1103')
+HEAD is now at 57f99b7 release: v0.1.5
+[11:03:38] sqlon: [base] pinned — main@57f99b7
+[11:03:38] sqlon: [autonomy] release — 
+[11:26:03] sqlon: improve — 73 turns, 23m, $10.45, success
+[11:26:06] sqlon: verify `go build ./...` → exit 0 (2s)
+[11:26:06] sqlon: verify `go vet ./...` → exit 0 (0s)
+[11:26:06] sqlon: verify `go test ./...` → exit 0 (0s)
+[11:26:08] sqlon: [verify] passed — 검증 3개 통과 (auto)
+branch 'auto/2026-09-18-1103' set up to track 'origin/auto/2026-09-18-1103'.
+[11:26:13] sqlon: [pr] created — https://github.com/hkjang/sqlon/pull/7
+[11:29:10] sqlon: review — 19 turns, 3m, $1.57, success
+[11:29:11] sqlon: [review] rejected — 리뷰 거절: internal/meta/settings.go:72 기존 SettingDef `{Key: SetCacheTTL, Label: "쿼리 결과 캐시 TTL(초)", Group: "성능"}` 항목이 MCP SSO 항목을 끼워넣으면서 삭제됨(diff -/+ 확인, 파일 어디에도 다시 등장하지 않음). 결과: /admin/settings 및 GET /api/settings 에서 캐시 TTL 설정이 사라지고, PUT /api/settings {"cache_ttl_seconds": ...} 는 settingDef() 미발견 → ErrNotFound → 400 'unknown or invalid setting' 으로 거부됨. 이미 저장된 값은 EffectiveSettings 를 통해 계속 적용되지만 콘솔/API 로 바꾸거나 비울 수 없게 되는 회귀. 커밋 메시지·CHANGELOG 어디에도 언급 없음 — 의도치 않은 삭제로 판단. / internal/mcp/openapi.go:189 와 internal/mcp/authapi.go:270-282 불일치. OpenAPI 설명은 '값 검증에 실패하면 400 과 사유를 돌려주고 아무것도 저장하지 않습니다' 라고 하지만, PUT 핸들러는 map 을 순회하며 키마다 즉시 Store.SetSetting 을 호출하고 뒤늦게 실패한 키에서 400 을 반환함. 순회 순서가 무작위이므로 같은 요청이라도 일부 키는 저장되고(ApplySettings 는 호출되지 않아 런타임 미반영) 다음 저장/재기동 때 조용히 적용됨. 이번 PR 이 Validate 를 도입하면서 새로 생긴 부분 저장 경로이며 문서가 이를 반대로 기술함.
+https://github.com/hkjang/sqlon/pull/7#issuecomment-5724236628
+evidence: /mnt/c/Users/USER/projects/aidev/state/runs/2026-09-18-110335-sqlon-improve/evidence.json
+reports: 17 day(s), 3 week(s), 1 month(s), 955 run(s), 1207 usage row(s), 43 project page(s), 20 alert(s)
+notify: no new alerts
