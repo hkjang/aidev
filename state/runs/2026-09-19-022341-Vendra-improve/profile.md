@@ -1,0 +1,20 @@
+# Vendra 프로필 (2026-09-19)
+- 목적: 공급업체·소싱(RFQ/견적/비교 Matrix)·계약·리스크·결재를 한 화면에서 다루는 구매 관리 시스템. MCP 서버(/mcp)로 AI 클라이언트에도 열린다.
+- 스택: Go 1.24(net/http 표준 mux, pgx) + PostgreSQL 16 / React + TypeScript + Vite(web/, Vitest) / 단일 Docker 이미지(alpine, 비루트 vendra 사용자, TZ=Asia/Seoul).
+- 구조:
+  - `cmd/vendra/main.go` — 진입점(테스트 파일 없음)
+  - `internal/httpapi/` — 거의 모든 핸들러·라우팅(app.go)·인증(authenticate, oidc*, mcpoauth.go)·업무 객체·소싱·생산성(productivity.go: 초안·작업 항목)·통합 테스트(`*_integration_test.go`, 실제 DB 필요)
+  - `internal/db/migrations/NNN_*.sql` — 번호 순 마이그레이션(현재 main 은 017 까지; 018 은 PR #125 가 들고 있음 — 번호 충돌 주의)
+  - `internal/config` — 환경 변수 네 개(os.Getenv 는 이 패키지에만)
+  - `internal/tracking`, `internal/mail`(mail 은 main 에 미병합, afe168f) — 독립 패키지
+  - `web/src/` — 화면(Objects.tsx, Sourcing.tsx, Portal.tsx, Admin*.tsx), `silentSso.ts` 같은 규칙 모듈, `*.test.tsx`
+  - `docs/` — USER_GUIDE.md·ADMIN_GUIDE.md(정본, PDF 는 공용 md2pdf 로 재생성)·images/guide·architecture/security/operations
+  - `scripts/` — offline-release.sh(이미지 tar.gz), guide-screenshots.mjs(CDP 캡처)
+- 빌드·테스트:
+  - `gofmt -l internal cmd`, `go vet ./internal/... ./cmd/...`, `go test ./internal/... ./cmd/... -count=1` — 통합 테스트는 `VENDRA_TEST_DSN`·`VENDRA_TEST_MIGRATE_DSN`·`VENDRA_TEST_UPGRADE_DSN` 세 DSN(각각 다른 DB) 이 있어야 돌고 **없으면 조용히 skip** 한다. docker postgres:16-alpine 으로 CI 와 같게 만든다(brief 참조). 전체 수 분.
+  - web: `npm ci --ignore-scripts && npx tsc -b --noEmit && npx eslint src --max-warnings 0 && npm test && npm run build` (Vitest 는 /mnt/c 에서 못 돌아 ~/.cache/vendra-web-test 복사본에서 돈다)
+  - 릴리즈: 태그 v* push → release.yml → `sh scripts/offline-release.sh <ver>` (docker build, 수 분) → gzip -t·image inspect → softprops/action-gh-release. 러너는 github_release=false 로 태그만 민다.
+- 관례: 커밋 제목은 영어 문장형(가끔 한국어), 본문에 「왜」를 길게. 설정은 settings 표의 행(camelCase JSON 행 또는 `mail.*` 식 점 키), 비밀은 secret_value 에 ENCRYPTION_KEY 로 암호화. 사용자 메시지·오류 문구는 한국어. 테스트 이름은 행동을 문장으로(`TestARejectedCurrencyNamesTheBox`). 가이드 문장은 코드에서 확인해 쓰고 `*_docs_test.go` 가 코드와 묶는다.
+- 위험 구역: `internal/httpapi/authenticate`·oidc*·mcpoauth.go(인증), `internal/db/migrations`(guard 가 사람 대기로 올림), `.github/workflows`(느슨하게 하면 반려), 스코프(data_scope: company/division/department/own — 레코드를 나르는 모든 표면에 검사 필요), 통화·금액 컬럼(2026-09-10 반려 이력).
+- 자주 깨지는 곳: 통화 검증 접근(2e1abb1 반려), 러너 비밀정보 검사(스크립트·테스트의 12자 이상 리터럴), 마이그레이션 번호 충돌(병렬 PR), t.Cleanup 에서 취소된 ctx 로 DB 정리가 no-op 되어 다음 실행이 409.
+- 검증 함정: CI go job 은 `./internal/...` 만 돈다(`./cmd/...` 제외, Makefile 과 불일치). DSN 없이 `go test` 가 초록이어도 통합 테스트는 안 돈 것. gh CLI 는 정찰 세션에서 거부될 수 있어 Actions 결과는 구현자가 직접 봐야 함. Keycloak·SMTP 는 가짜 서버로 갈음.
