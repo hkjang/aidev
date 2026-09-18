@@ -786,7 +786,8 @@ def usage_table(rows, caption=None):
     out = []
     for u in rows:
         out.append(("other", [esc((u.get("ts") or "")[11:16]), f'<a href="{SITE}/projects/{esc(u.get("project",""))}/">{esc(u.get("project",""))}</a>',
-                              esc({"improve": "개선", "release": "릴리즈", "assets": "자산"}.get(u.get("phase"), u.get("phase", ""))),
+                              esc({"improve": "개선", "release": "릴리즈", "assets": "자산", "scout": "정찰", "review": "비평", "repair": "수리",
+                                   "copilot": "코파일럿", "campaign-lessons": "캠페인 교훈", "operator-prefs": "운영자 취향", "campaign-draft": "캠페인 초안"}.get(u.get("phase"), u.get("phase", ""))),
                               fmt_min(float(u.get("duration_ms") or 0) / 60000), str(u.get("num_turns") or 0),
                               f"${float(u.get('cost_usd') or 0):.2f}",
                               fmt_tok(int(u.get("input_tokens") or 0) + int(u.get("cache_read") or 0) + int(u.get("cache_create") or 0)) + " / " + fmt_tok(u.get("output_tokens") or 0),

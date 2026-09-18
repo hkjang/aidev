@@ -107,7 +107,7 @@ new_run(){ # $1=프로젝트 $2=종류 → RUN_ID, OUT 설정
   RUN_ID="$RUN_DATE-$(date +%H%M%S)-$1-$2"; OUT="$RUNS/$RUN_ID"; mkdir -p "$OUT/assets" "$OUT/home"
   local pv; pv=$(cd "$REPO_DIR" && git log -1 --format=%h -- prompt.md review-prompt.md release-prompt.md state/default.policy.json state/default.guard 2>/dev/null)
   jq -cn --arg rid "$RUN_ID" --arg p "$1" --arg k "$2" --arg st "$(date -Iseconds)" --arg m "$MODEL" --arg pv "${pv:-}" \
-     --arg ph "$(sha256sum "$REPO_DIR/prompt.md" "$REPO_DIR/review-prompt.md" "$REPO_DIR/release-prompt.md" 2>/dev/null | sha256sum | cut -c1-16)" \
+     --arg ph "$(sha256sum "$REPO_DIR/prompt.md" "$REPO_DIR/review-prompt.md" "$REPO_DIR/release-prompt.md" "$REPO_DIR"/agents/*.md 2>/dev/null | sha256sum | cut -c1-16)" \
      --arg rv "$(cd "$REPO_DIR" && git log -1 --format=%h -- bin/run.sh bin/gate.py 2>/dev/null)" \
      '{run_id:$rid,project:$p,kind:$k,started:$st,model:$m,policy_version:$pv,prompts_hash:$ph,runner_version:$rv}' > "$OUT/run.json"
 }
@@ -136,9 +136,13 @@ stage_ko(){ # $1=단계 $2=상태
     "pr create-failed")       echo "PR 을 열지 못했습니다";;
     "pr push-failed")         echo "브랜치를 푸시하지 못했습니다";;
     "guard held")             echo "보호 파일을 건드려 자동 머지하지 않습니다 (사람 검토 필요)";;
+    "scout done")             echo "정찰이 과제를 정했습니다";;
+    "scout failed"|"scout hold") echo "정찰 없이 구현자가 직접 고릅니다";;
     "review approved")        echo "독립 리뷰가 승인했습니다";;
     "review rejected")        echo "독립 리뷰가 거절했습니다";;
     "review hold")            echo "리뷰를 돌리지 못했습니다";;
+    "repair done")            echo "비평 사유대로 고쳐 재검증을 통과했습니다";;
+    "repair nothing"|"repair failed"|"repair hold") echo "수리하지 못해 PR 을 열고 보류합니다";;
     "ci passed")              echo "CI 검사를 통과했습니다";;
     "ci failed")              echo "CI 검사에 실패했습니다";;
     "ci stale"|"ci timeout")  echo "CI 결과를 제때 받지 못했습니다";;
@@ -203,6 +207,11 @@ $ctx}" >/dev/null 2>&1 &
 # 에이전트 세션: 임시 HOME(→ gh 미인증, git 자격증명 없음, 홈의 비밀 파일 없음), 토큰 환경변수 제거, 결과는 $OUT 에만.
 # push 차단은 GIT_CONFIG_* 환경변수로 이 프로세스에만 건다 — `git remote set-url` 은 저장소 공통 설정이라 사용자 체크아웃까지 막는다(2026-09-07 사고).
 # Claude 자체 설정은 CLAUDE_CONFIG_DIR 로 넘긴다. 빌드 캐시는 실제 경로(비밀 아님)로 연결해 속도를 유지한다.
+# 역할별 모델: agents/registry.json 의 model 이 비어 있으면 MODEL 기본값. 단계 이름(scout/improve/review/repair/release/assets)으로 찾는다.
+agent_model(){
+  local m; m=$(jq -r --arg ph "$1" '[.agents[] | select(.phase==$ph) | .model] | map(select(length>0)) | first // empty' "$REPO_DIR/agents/registry.json" 2>/dev/null)
+  printf '%s' "${m:-$MODEL}"
+}
 run_agent(){ # $1=단계 $2=프롬프트 $3=작업 디렉터리 $4=예산 $5=허용 도구
   local phase=$1 prompt=$2 wd=$3 budget=$4 tools=$5 envfile="$STATE/$n.env"
   # 임시 홈에는 Claude 의 계정 설정(~/.claude.json)만 복사한다 — 자격증명은 CLAUDE_CONFIG_DIR/.credentials.json 에서 읽는다
@@ -216,8 +225,8 @@ run_agent(){ # $1=단계 $2=프롬프트 $3=작업 디렉터리 $4=예산 $5=허
       DOCKER_HOST="${DOCKER_HOST:-}" AIDEV_OUT="$OUT" \
       GIT_CONFIG_COUNT=2 GIT_CONFIG_KEY_0=remote.origin.pushurl GIT_CONFIG_VALUE_0=DISABLED GIT_CONFIG_KEY_1=credential.helper GIT_CONFIG_VALUE_1= \
       bash -c '[ -f "$0" ] && { set -a; . "$0"; set +a; }; exec "$@"' "$envfile" \
-      timeout -k 30 "$(policy "$n" ".timeouts.$phase" | grep -E '^[0-9]+$' || case "$phase" in improve) echo $T_IMPROVE;; review) echo $T_REVIEW;; release) echo $T_RELEASE;; *) echo $T_ASSETS;; esac)" \
-      claude -p "$prompt" --model "$MODEL" --settings "$CLAUDE_SETTINGS" --permission-mode acceptEdits \
+      timeout -k 30 "$(policy "$n" ".timeouts.$phase" | grep -E '^[0-9]+$' || case "$phase" in improve|repair) echo $T_IMPROVE;; review) echo $T_REVIEW;; scout) echo ${T_SCOUT:-600};; release) echo $T_RELEASE;; *) echo $T_ASSETS;; esac)" \
+      claude -p "$prompt" --model "$(agent_model "$phase")" --settings "$CLAUDE_SETTINGS" --permission-mode acceptEdits \
         --allowedTools "$tools" --add-dir "$OUT" --max-budget-usd "$budget" --output-format json \
   ) > "$OUT/agent-$phase.json" 2>"$OUT/agent-$phase.txt"; local rc=$?
   [ $rc -eq 124 ] && { stage "$phase" timeout "단계 제한 시간 초과"; echo "TIMEOUT" >> "$OUT/agent-$phase.txt"; }
@@ -685,19 +694,49 @@ guarded_files(){ # $1=base
   [ -n "$pat" ] || return 0
   git -C "$wt" diff --name-only "$1..HEAD" 2>/dev/null | grep -E -f <(printf '%s\n' "$pat") || true
 }
-review_gate(){ # $1=base $2=PR url → 0=승인
+# 비평가(critic): 구현과 다른 세션이 diff 만 읽고 머지하면 안 되는 이유를 찾는다. PR url 이 비어 있으면
+# (PR 을 열기 전) 판정만 하고, 코멘트는 나중에 review_comment 로 남긴다. 결과는 CRITIC_STATE 에.
+review_gate(){ # $1=base $2=PR url(비면 판정만) → 0=승인
   local rprompt g rb; rb=$(policy "$n" '.budget_usd.review'); rb=${rb:-4}
-  budget_ok "$rb" || { stage review hold "예산 부족으로 리뷰를 돌리지 못함"; return 1; }
+  budget_ok "$rb" || { stage review hold "예산 부족으로 리뷰를 돌리지 못함"; CRITIC_STATE=hold; return 1; }
+  rm -f "$OUT/review.json"
   rprompt=$(BASE="$1" REVIEW_FILE="$OUT/review.json" envsubst '$BASE $REVIEW_FILE' < "$REPO_DIR/review-prompt.md")
   run_agent review "$rprompt" "$wt" "$rb" "Bash,Read,Glob,Grep,Write"
-  g=$($GATE review "$OUT/review.json" 2>/dev/null || true)
-  if jq -e .ok <<<"$g" >/dev/null 2>&1; then stage review approved "$(jq -r .reason <<<"$g")"; return 0; fi
-  stage review "$(jq -r '.state // "invalid"' <<<"$g" 2>/dev/null || echo invalid)" "$(jq -r '.reason // "리뷰 결과 없음"' <<<"$g" 2>/dev/null || echo '리뷰 결과 없음')"
-  (cd "$repo" && gh pr comment "$2" --body "🧐 리뷰 게이트 보류 — $(jq -r '.reason // "리뷰 결과 없음"' <<<"$g" 2>/dev/null)
+  g=$($GATE review "$OUT/review.json" 2>/dev/null || true); printf '%s\n' "$g" > "$OUT/review.gate.json"
+  if jq -e .ok <<<"$g" >/dev/null 2>&1; then stage review approved "$(jq -r .reason <<<"$g")"; CRITIC_STATE=approved; return 0; fi
+  CRITIC_STATE=$(jq -r '.state // "invalid"' <<<"$g" 2>/dev/null || echo invalid)
+  stage review "$CRITIC_STATE" "$(jq -r '.reason // "리뷰 결과 없음"' <<<"$g" 2>/dev/null || echo '리뷰 결과 없음')"
+  [ -n "${2:-}" ] && review_comment "$2"
+  return 1
+}
+review_comment(){ # $1=PR url — 마지막 비평 결과를 PR 에 남긴다
+  local g; g=$(cat "$OUT/review.gate.json" 2>/dev/null)
+  (cd "$repo" && gh pr comment "$1" --body "🧐 리뷰 게이트 보류 — $(jq -r '.reason // "리뷰 결과 없음"' <<<"$g" 2>/dev/null)
 
 $(jq -r '.reasons[]? | "- " + .' "$OUT/review.json" 2>/dev/null)
 (run $RUN_ID, 자율 개선 러너)" >>"$LOG" 2>&1) || true
-  return 1
+}
+# 변경 크기 요약 (runs.jsonl 의 files/additions/deletions/tests/title)
+run_meta(){
+  RUN_META=$(git -C "$wt" diff --numstat "$BASE_SHA..HEAD" | awk 'BEGIN{f=0;a=0;d=0;t=0} {f++; a+=$1; d+=$2; if ($3 ~ /(^|\/)(test|tests|spec|__tests__)\/|_test\.|\.test\.|\.spec\.|Test\.java|test_.*\.py/) t++} END{printf "{\"files\":%d,\"additions\":%d,\"deletions\":%d,\"tests\":%d}", f,a,d,t}')
+  RUN_META=$(jq -c --arg t "$(git -C "$wt" log -1 --format=%s)" '. + {title:$t}' <<<"$RUN_META" 2>/dev/null || echo "{}")
+}
+# 수리 에이전트(repairer): 비평가가 거절한 사유대로 같은 회차에서 고치고 재검증한다. 실패하면 원래 커밋으로 되돌린다.
+repair_round(){ # $1=시도 번호 → 0=고쳐서 검증 통과(HEAD 갱신)
+  local before rbud note prompt summ
+  rbud=$(policy "$n" '.budget_usd.repair'); rbud=${rbud:-6}
+  budget_ok "$rbud" || { stage repair hold "예산 부족으로 수리를 돌리지 못함"; return 1; }
+  before=$(git -C "$wt" rev-parse HEAD); rm -f "$OUT/fix-summary.md"
+  note="독립 비평가가 거절함 (수리 시도 $1):
+$(jq -r '.reasons[]? | "- " + .' "$OUT/review.json" 2>/dev/null | head -c 3000)"
+  prompt=$(PR_URL="(아직 없음 — PR 을 열기 전입니다)" BASE="$BASE_SHA" CAUSE_NOTE="$note" OUT_DIR="$OUT" envsubst '$PR_URL $BASE $CAUSE_NOTE $OUT_DIR' < "$REPO_DIR/agents/repairer.md")
+  run_agent repair "$prompt" "$wt" "$rbud" "Bash,Read,Edit,Write,Glob,Grep"
+  summ=$(head -c 200 "$OUT/fix-summary.md" 2>/dev/null | tr '\n' ' ')
+  if [ "$(git -C "$wt" rev-parse HEAD)" = "$before" ]; then stage repair nothing "수리 에이전트가 커밋을 만들지 않음: ${summ:-이유 없음}"; return 1; fi
+  if run_verify "$wt" "$OUT/verify-repair$1.json" && [ -z "$(added_artifacts)" ] && git -C "$wt" diff "$before..HEAD" | secrets_gate "repair diff" -; then
+    HEAD_SHA=$(git -C "$wt" rev-parse HEAD); run_meta; stage repair done "${summ:-고침}"; return 0
+  fi
+  git -C "$wt" reset -q --hard "$before"; stage repair failed "고친 뒤 검증 실패 — 수리 커밋을 버림"; return 1
 }
 secrets_gate(){ # $1=설명 $2=파일(- 는 stdin)
   local g; g=$($GATE secrets "$2" 2>/dev/null || true)
@@ -1095,7 +1134,7 @@ shepherd_fix(){ # $1=pr $2=브랜치 $3=원인 설명 → 0=새 커밋을 검증
   local pr=$1 br=$2 note=$3 before after prompt summ
   shepherd_wt "$br" || { shepherd_note "$pr" "$head" "$cause" fix-failed "worktree 준비 실패"; return 1; }
   before=$(git -C "$wt" rev-parse HEAD); BASE_SHA=$(git -C "$repo" rev-parse "origin/$base")
-  prompt=$(PR_URL="$pr" BASE="origin/$base" CAUSE_NOTE="$note" OUT_DIR="$OUT" envsubst '$PR_URL $BASE $CAUSE_NOTE $OUT_DIR' < "$REPO_DIR/shepherd-fix-prompt.md")
+  prompt=$(PR_URL="$pr" BASE="origin/$base" CAUSE_NOTE="$note" OUT_DIR="$OUT" envsubst '$PR_URL $BASE $CAUSE_NOTE $OUT_DIR' < "$REPO_DIR/agents/repairer.md")
   run_agent improve "$prompt" "$wt" "$SHEPHERD_FIX_BUDGET" "Bash,Read,Edit,Write,Glob,Grep"
   after=$(git -C "$wt" rev-parse HEAD)
   summ=$(head -c 600 "$OUT/fix-summary.md" 2>/dev/null | tr '\n' ' ')
@@ -1459,7 +1498,7 @@ round_body(){
   # 개선과 크기가 다르다 — 가이드 회차는 앱을 띄우고 화면 서른 장을 찍고 문서 둘을
   # 쓰므로, 기본 $8 로는 문서를 쓰다 중간에 끊긴다 (2026-09-10 AgentHub, $8.06 소진).
   [ -n "${CAMPAIGN_IMPROVE_BUDGET:-}" ] && [ "$n" = "${CAMPAIGN_PROJECT:-}" ] && ibudget=$CAMPAIGN_IMPROVE_BUDGET
-  round_budget=$(awk -v a="$ibudget" -v b="$(policy "$n" '.budget_usd.review')" -v c="$(policy "$n" '.budget_usd.release')" 'BEGIN{print a+b+c}')
+  round_budget=$(awk -v a="$ibudget" -v b="$(policy "$n" '.budget_usd.review')" -v c="$(policy "$n" '.budget_usd.release')" -v s="$(policy "$n" '.budget_usd.scout')" -v r="$(policy "$n" '.budget_usd.repair')" 'BEGIN{print a+b+c+s+r}')
   log "=== $n (base=$base, run $RUN_ID, 회차 예산 \$$round_budget)"
   "$HERE/tg.sh" "▶ $n — 개선 회차를 시작합니다${CAMPAIGN_ID:+
 캠페인: $CAMPAIGN_ID}
@@ -1508,12 +1547,35 @@ $(printf '%b' "$RUN_SPEC")
   [ "$AUTONOMY_NOW" = analyze ] && request_note="$request_note
 ## 분석 전용 단계
 이 프로젝트는 자율화 단계 'analyze' 입니다. 아이디어와 원장만 남기고 **코드를 바꾸거나 커밋하지 마세요** (커밋해도 버려집니다)."
-  prompt=$(LEDGER_FILE="$OUT/ledger-entry.md" IDEAS_FILE="$OUT/ideas.json" OUT_DIR="$OUT" RUN_DATE="$RUN_DATE" FIX_NOTE="$fix_note" LESSONS="${lessons:-(없음)}" IDEAS_CONTENT="${ideas:-(없음)}" \
-           REQUEST_NOTE="$request_note" CAMPAIGN_NOTE="$campaign_note" \
-           OPERATOR_PREFS="$(cat "$STATE/operator-preferences.md" 2>/dev/null)" \
-           LEDGER_CONTENT="$(tail -n 60 "$ledger" 2>/dev/null || echo '(없음)')" \
-           envsubst '$LEDGER_FILE $IDEAS_FILE $OUT_DIR $RUN_DATE $LEDGER_CONTENT $FIX_NOTE $LESSONS $IDEAS_CONTENT $REQUEST_NOTE $CAMPAIGN_NOTE $OPERATOR_PREFS' < "$REPO_DIR/prompt.md")
   stage autonomy "$AUTONOMY_NOW" "$(policy "$n" '.demoted_reason' 2>/dev/null)"
+  # ── 정찰(scout): 읽기만 하는 에이전트가 먼저 과제서를 쓴다. 구현자는 그 과제만 한다 —
+  #    "무엇을 할지" 와 "어떻게 하는지" 를 다른 세션이 맡으면 서로의 실수를 잡는다 (AGENTS.md).
+  brief=""; prefs_md="$(cat "$STATE/operator-preferences.md" 2>/dev/null)"
+  if [ "$(policy "$n" '.agents.scout')" != false ] && [ "${SCOUT:-1}" != 0 ] && [ "$AUTONOMY_NOW" != analyze ]; then
+    sbud=$(policy "$n" '.budget_usd.scout'); sbud=${sbud:-2}
+    if budget_ok "$sbud"; then
+      sprompt=$(TASK_NOTE="${fix_note}${request_note:+
+$request_note}${campaign_note:+
+$campaign_note}" BRIEF_FILE="$OUT/brief.md" IDEAS_FILE="$OUT/ideas.json" OUT_DIR="$OUT" RUN_DATE="$RUN_DATE" \
+               LESSONS="${lessons:-(없음)}" IDEAS_CONTENT="${ideas:-(없음)}" OPERATOR_PREFS="$prefs_md" LEDGER_CONTENT="$(tail -n 60 "$ledger" 2>/dev/null || echo '(없음)')" \
+               envsubst '$TASK_NOTE $BRIEF_FILE $IDEAS_FILE $OUT_DIR $RUN_DATE $LESSONS $IDEAS_CONTENT $OPERATOR_PREFS $LEDGER_CONTENT' < "$REPO_DIR/agents/scout.md")
+      run_agent scout "$sprompt" "$wt" "$sbud" "Read,Glob,Grep,Write,Bash(git log:*),Bash(git show:*),Bash(git diff:*),Bash(ls:*),Bash(cat:*),Bash(wc:*),Bash(find:*),Bash(go test:*),Bash(npm test:*)"
+      # 정찰은 읽기만 한다 — 작업 트리에 무엇을 남겼든 버린다
+      git -C "$wt" reset -q --hard "$BASE_SHA" >>"$LOG" 2>&1; git -C "$wt" clean -qfd >>"$LOG" 2>&1
+      if [ -s "$OUT/brief.md" ] && grep -q '^- 과제:' "$OUT/brief.md"; then
+        stage scout done "$(grep -m1 '^- 과제:' "$OUT/brief.md" | sed 's/^- 과제: *//' | cut -c1-140)"
+        brief="## 정찰 에이전트가 정한 이번 회차 과제 — 새로 고르지 말고 이대로 구현하세요
+(과제서의 근거가 지금 코드와 맞지 않으면 그 이유를 원장에 적고 '차선 후보' 를 고르세요. 절차 1~3은 과제서로 갈음합니다.)
+$(cat "$OUT/brief.md")"
+        [ -s "$OUT/ideas.json" ] && $GATE ideas "$OUT/ideas.json" >/dev/null 2>&1 && ideas=$(jq -r '.[]? | select(.status=="pending") | "- [\(.value)/\(.risk)/\(.size)] \(.title) — \(.note // "")"' "$OUT/ideas.json" 2>/dev/null | head -n 12)
+      else stage scout failed "과제서 없음 — 구현자가 직접 고른다"; fi
+    else stage scout hold "예산 부족 — 구현자가 직접 고른다"; fi
+  fi
+  prompt=$(LEDGER_FILE="$OUT/ledger-entry.md" IDEAS_FILE="$OUT/ideas.json" OUT_DIR="$OUT" RUN_DATE="$RUN_DATE" FIX_NOTE="$fix_note" LESSONS="${lessons:-(없음)}" IDEAS_CONTENT="${ideas:-(없음)}" \
+           REQUEST_NOTE="$request_note" CAMPAIGN_NOTE="$campaign_note" BRIEF="$brief" \
+           OPERATOR_PREFS="$prefs_md" \
+           LEDGER_CONTENT="$(tail -n 60 "$ledger" 2>/dev/null || echo '(없음)')" \
+           envsubst '$LEDGER_FILE $IDEAS_FILE $OUT_DIR $RUN_DATE $LEDGER_CONTENT $FIX_NOTE $LESSONS $IDEAS_CONTENT $REQUEST_NOTE $CAMPAIGN_NOTE $OPERATOR_PREFS $BRIEF' < "$REPO_DIR/prompt.md")
   run_agent improve "$prompt" "$wt" "$ibudget" "Bash,Read,Edit,Write,Glob,Grep,WebFetch,WebSearch"
   merge_outputs
   if ! jq -e '.type=="result"' "$OUT/agent-improve.json" >/dev/null 2>&1; then
@@ -1534,9 +1596,7 @@ $(printf '%b' "$RUN_SPEC")
   ahead=$(git -C "$wt" rev-list --count "$BASE_SHA..HEAD")
   if [ "$AUTONOMY_NOW" = analyze ] && [ "$ahead" -gt 0 ]; then stage autonomy analyze-only "커밋 $ahead개는 버림 (분석 전용)"; result="analyze-only ($ahead commits discarded)"; ahead=0; fi
   if [ "$ahead" -gt 0 ]; then
-    HEAD_SHA=$(git -C "$wt" rev-parse HEAD)
-    RUN_META=$(git -C "$wt" diff --numstat "$BASE_SHA..HEAD" | awk 'BEGIN{f=0;a=0;d=0;t=0} {f++; a+=$1; d+=$2; if ($3 ~ /(^|\/)(test|tests|spec|__tests__)\/|_test\.|\.test\.|\.spec\.|Test\.java|test_.*\.py/) t++} END{printf "{\"files\":%d,\"additions\":%d,\"deletions\":%d,\"tests\":%d}", f,a,d,t}')
-    RUN_META=$(jq -c --arg t "$(git -C "$wt" log -1 --format=%s)" '. + {title:$t}' <<<"$RUN_META" 2>/dev/null || echo "{}")
+    HEAD_SHA=$(git -C "$wt" rev-parse HEAD); run_meta
     # 1) 러너 직접 검증  2) 비밀정보 검사  — 둘 다 통과해야 PR 을 연다
     if ! run_verify "$wt" "$OUT/verify.json"; then
       stage verify failed "$(jq -r .reason "$OUT/verify.gate.json" 2>/dev/null || echo '검증 실패')"; result="verify failed: $(jq -r .reason "$OUT/verify.gate.json" 2>/dev/null | cut -c1-120)"; OUTCOME=verify-failed
@@ -1546,6 +1606,19 @@ $(printf '%b' "$RUN_SPEC")
       stage verify failed "변경에 비밀정보 의심 문자열"; result="verify failed: secrets in diff"; OUTCOME=verify-failed
     else
       stage verify passed "$(jq -r .reason "$OUT/verify.gate.json")"
+      # ── 비평 → 수리 루프 (PR 을 열기 전): 자동 머지할 변경이면 비평가가 먼저 보고, 거절하면 수리
+      #    에이전트가 사유대로 고쳐 다시 비평받는다(repair_max 번). 여기서 걸러진 만큼 검토 대기 PR 이 줄어든다.
+      #    보호 파일을 건드린 변경은 어차피 사람(또는 PR 처리기)이 보므로 여기서는 돌리지 않는다.
+      CRITIC_STATE=""
+      if [ "$REVIEW" -eq 1 ] && [ "$MERGE" -eq 1 ] && [ "$(policy "$n" '.auto_merge')" = true ] && autonomy_ge "$AUTONOMY_NOW" low-risk \
+         && [ -z "$(guarded_files "$BASE_SHA")" ] && ! stopped merge "$n"; then
+        repair_max=$(policy "$n" '.agents.repair_max' | grep -E '^[0-9]+$' || echo 1); attempt=0
+        while :; do
+          review_gate "$base" "" && break
+          { [ "$CRITIC_STATE" = rejected ] && [ "$attempt" -lt "${repair_max:-1}" ]; } || break
+          attempt=$((attempt+1)); repair_round "$attempt" || break
+        done
+      fi
       with_retry "branch push" git -C "$wt" push -u origin "$slug" || { stage pr push-failed "브랜치 푸시 실패 ($RETRY_KIND)"; result="error: push ($RETRY_KIND)"; OUTCOME=error; }
       body=$(printf '자율 개선 에이전트가 생성한 PR입니다. (run %s, base %s)\n\n%s\n\n🤖 auto-improve %s · https://hkjang.github.io/aidev/projects/%s/' "$RUN_ID" "${BASE_SHA:0:7}" "$(tail -n 12 "$OUT/ledger-entry.md" 2>/dev/null)" "$RUN_DATE" "$n")
       url=""; [ "$OUTCOME" != error ] && { url=$(cd "$repo" && gh pr list --head "$slug" --json url --jq '.[0].url // empty' 2>/dev/null); }   # 재개 시 중복 생성 방지
@@ -1577,7 +1650,10 @@ https://hkjang.github.io/aidev/" >/dev/null 2>&1 &
 $(sed 's/^/- /' <<<"$guarded")
 
 (run $RUN_ID)" >>"$LOG" 2>&1) || true; merge_ok=0
-        elif [ "$REVIEW" -eq 1 ] && ! review_gate "$base" "$url"; then result="review held, PR open $url"; merge_ok=0
+        elif [ "$REVIEW" -eq 1 ] && [ "${CRITIC_STATE:-}" != approved ]; then
+          # 비평이 PR 전에 이미 돌았으면 그 결과를 PR 에 남기고, 아직이면 지금 돌린다
+          if [ -n "${CRITIC_STATE:-}" ]; then review_comment "$url"; result="review held, PR open $url"; merge_ok=0
+          elif ! review_gate "$base" "$url"; then result="review held, PR open $url"; merge_ok=0; fi
         elif [ "$AUTONOMY_NOW" = low-risk ]; then
           local_risk=$(jq -r '.risk // "unknown"' "$OUT/review.json" 2>/dev/null); local_files=$(jq -r '.files // 0' <<<"$RUN_META")
           if [ "$local_risk" != low ] || [ "${local_files:-0}" -gt "$(policy "$n" '.auto_merge_max_files')" ]; then

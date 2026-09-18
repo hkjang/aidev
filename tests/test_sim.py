@@ -52,6 +52,34 @@ class HappyPath(unittest.TestCase):
         self.assertIn("simproj-v0.0.2.tar.gz", names)
 
 
+class Agents(unittest.TestCase):
+    """정찰 → 구현 → 비평 → 수리 가 한 회차 안에서 맞물리는지."""
+    def test_scout_brief_then_critic_rejects_once_and_repairer_fixes(self):
+        r = run(scn(review="reject-once"))
+        self.assertEqual(r["outcome"], "release-ready", r)
+        self.assertEqual(r["stages"].get("scout"), "done")
+        self.assertEqual(r["stages"].get("repair"), "done")
+        self.assertEqual(r["stages"].get("review"), "approved")
+        self.assertEqual(r["prs"][0]["state"], "MERGED")
+
+    def test_repair_gives_up_when_critic_keeps_rejecting(self):
+        r = run(scn(review="reject"))
+        self.assertEqual(r["outcome"], "review-pending", r)
+        self.assertEqual(r["stages"].get("repair"), "done")
+        self.assertEqual(r["stages"].get("review"), "rejected")
+        self.assertEqual(r["prs"][0]["state"], "OPEN")
+
+    def test_scout_leftovers_are_discarded(self):
+        r = run(scn(scout_dirty=True))
+        self.assertEqual(r["outcome"], "release-ready", r)
+        self.assertEqual(r["stages"].get("scout"), "done")
+
+    def test_repairer_that_makes_no_commit_holds_pr(self):
+        r = run(scn(review="reject", repair="none"))
+        self.assertEqual(r["outcome"], "review-pending", r)
+        self.assertEqual(r["stages"].get("repair"), "nothing")
+
+
 class Blocking(unittest.TestCase):
     def test_ci_api_error_blocks_merge(self):
         r = run(scn(ci="api-error"))

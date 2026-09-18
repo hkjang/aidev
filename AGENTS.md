@@ -1,0 +1,76 @@
+# aidev 의 에이전트들 — 서로를 보완하는 구조
+
+한 세션이 파악·선택·구현·검증·기록을 다 하던 구조를, 역할이 다른 여러 세션이 서로의
+산출물을 검사하는 구조로 바꿨다 (2026-09-18). 원칙은 셋이다.
+
+1. **만드는 자와 검사하는 자를 분리한다.** 구현자는 자기 코드를 승인하지 못한다. 비평가는 코드를 고치지 못한다.
+2. **읽기만 하는 자가 방향을 정한다.** 정찰은 커밋할 수 없으므로 "고치기 쉬운 것" 이 아니라 "고칠 가치가 있는 것" 을 고른다.
+3. **배우는 자가 모두에게 되먹인다.** 거절·회귀·반려는 원장에 묻히지 않고 규칙이 되어 다음 정찰·구현·비평이 먼저 읽는다.
+
+명부는 `agents/registry.json`, 예산은 `state/default.policy.json` 의 `budget_usd`, 역할별 켜고 끄기는 정책의 `agents` 다.
+
+## 한 회차 (bin/run.sh round_body)
+
+```
+정찰(scout) ──brief.md──▶ 구현(builder) ──commits──▶ 러너 검증(verify/secrets/artifacts)
+    ▲ ideas.json                                            │ 통과
+    │                                                        ▼
+    │                      ┌──── 거절(reasons) ────  비평(critic) ── 승인 ──▶ PR ──▶ CI ──▶ 머지 ──▶ 릴리즈(releaser)
+    │                      ▼                             ▲
+    │                 수리(repairer) ──commit──▶ 재검증 ──┘  (repair_max 번)
+    │
+  기록·학습(historian): campaign-lessons / operator-preferences ──▶ 정찰·구현·비평·PR 심사의 프롬프트에 주입
+```
+
+| 역할 | 파일 | 할 수 있는 것 | 만드는 것 | 누가 검사하나 |
+|---|---|---|---|---|
+| **정찰** scout | `agents/scout.md` | 읽기, 테스트 실행. **커밋 불가**(남긴 변경은 러너가 버림) | `brief.md`(과제·수용 기준·검증 명령·건드릴 파일·차선), `ideas.json` 재평가 | 구현자가 과제서의 근거를 코드로 확인. 맞지 않으면 차선을 고르고 원장에 이유 |
+| **구현** builder | `prompt.md` | 편집·실행·커밋 | 커밋, `ledger-entry.md`, `ideas.json` | 러너 검증 → 비평가 |
+| **비평** critic | `review-prompt.md` | 읽기·실행. **편집 불가** | `review.json`(verdict·reasons·risk) | `gate.py review` 가 형식 검사. 승인만 머지로 |
+| **수리** repairer | `agents/repairer.md` | 편집·커밋(지적된 결함만) | 수리 커밋, `fix-summary.md` | 재검증 → 비평가가 다시 본다. 실패하면 러너가 수리 커밋을 버림 |
+| **릴리즈** releaser | `release-prompt.md` | 관례대로 버전·태그·자산 | `release.json`, 태그, 자산 | `gate.py release`, 자산 매니페스트, 워크플로 결과 |
+
+- 정찰이 실패하거나 예산이 없으면 구현자가 예전처럼 직접 고른다(`stage scout failed|hold`).
+- 비평·수리 루프는 **자동 머지할 변경**에만 돈다(자율화 low-risk 이상, 보호 파일 없음). 보호 파일을 건드린 변경은 사람 또는 PR 처리기가 본다.
+- 수리가 `repair_max`(기본 1)번 안에 비평을 통과하지 못하면 PR 을 열고 `review held` 로 보류한다 — 그러면 PR 처리기가 한 시간 뒤 다시 잡는다.
+
+## PR 이 열린 뒤 (bin/run.sh shepherd, 매시간)
+
+| 역할 | 파일 | 하는 일 | 누가 검사하나 |
+|---|---|---|---|
+| **PR 수리** shepherd-fixer | `agents/repairer.md` (PR 브랜치 위) | CI 실패·심사 거절 사유대로 고쳐 푸시 | 러너 검증 → PR 심사 |
+| **PR 심사** shepherd-reviewer | `shepherd-review-prompt.md` | 사람 대신 결정. `recommend`(merge/fix/human)를 러너가 그대로 따른다 | 승인 스윕이 CI 확인 뒤 승인 커밋에만 머지 |
+
+## 회차 밖 (헬스체크·코파일럿)
+
+| 역할 | 파일 | 하는 일 | 되먹임 |
+|---|---|---|---|
+| **기록·학습** historian | `bin/campaign-lessons.sh`, `bin/operator-prefs.sh` | 리뷰·심사 거절, 회귀, 사람 반려를 규칙으로 정제 | 정찰·구현 프롬프트, PR 심사의 HOLD_NOTE |
+| **캠페인 설계** planner | `bin/campaign-draft.sh` | 목표 한 문장 → 조사·표준·대상·예산 초안 | 사람이 `activate-campaign` 으로 시작 |
+| **진단** triager | `bin/ask-claude.sh` | 러너가 설명 못 하는 이상을 읽고 원인·다음 일 제안 | 사람 |
+| **코파일럿** copilot | `bin/copilot.sh` + `bin/ops.sh` | 텔레그램 답장을 운영 동사로 | 사람(대화), 동사 목록이 권한 경계 |
+
+## 누가 누구를 보완하나
+
+- 정찰 ↔ 구현: 정찰은 고르기만 하니 "쉬운 것" 에 끌리지 않고, 구현은 과제서를 코드로 검증하니 정찰의 오판을 잡는다.
+- 구현 ↔ 비평: 비평은 diff 만 읽고 "머지하면 안 되는 이유" 를 찾는다. 자기 코드를 스스로 승인하는 일이 없다.
+- 비평 ↔ 수리: 수리는 지적된 결함만 고치고, 지적이 틀렸으면 근거를 적고 손대지 않는다. 비평가가 그 근거를 다시 읽는다.
+- 회차 안 비평·수리 ↔ PR 처리기: 회차 안에서 못 푼 것은 한 시간 뒤 다른 세션이 다시 본다. 같은 세션의 고집이 이어지지 않는다.
+- 기록·학습 ↔ 모두: 한 저장소에서 걸린 것이 규칙이 되어 나머지 저장소의 정찰·구현·비평이 먼저 읽는다. 사람의 반려 기준도 같은 길로 들어온다.
+- 코파일럿 ↔ 사람: 사람이 봇에 말하면 동사가 되고, 그 말은 다시 운영자 취향으로 학습된다.
+
+## 비용 (회차당 기본)
+
+| 단계 | 예산 | 비고 |
+|---|---|---|
+| 정찰 | $2 | 읽기 전용, 10분 |
+| 구현 | $8 (캠페인은 12~18) | |
+| 비평 | $4 | 자동 머지할 때만 |
+| 수리 | $6 | 비평이 거절했을 때만, 최대 repair_max 번 |
+| 릴리즈 | $10 | |
+
+`state/<프로젝트>.policy.json` 에서 `budget_usd.scout`·`budget_usd.repair`·`agents.scout`·`agents.repair_max` 를 덮어쓴다. 모델을 역할별로 바꾸려면 `agents/registry.json` 의 `model` 을 채운다(비면 러너 기본 `MODEL`).
+
+## 검증
+
+`python3 tests/test_sim.py` 의 `Agents` 시나리오: 정찰 과제서 → 비평 1회 거절 → 수리 → 비평 승인 → 릴리즈, 비평이 계속 거절하면 PR 보류, 정찰이 남긴 변경은 버려짐, 수리가 커밋을 못 만들면 보류.

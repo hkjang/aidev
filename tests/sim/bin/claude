@@ -7,6 +7,8 @@ prompt=""; budget=0; while [ $# -gt 0 ]; do case "$1" in -p) prompt=$2; shift 2;
 sc(){ jq -r "$1" "$SC" 2>/dev/null; }
 phase=improve
 grep -q "리뷰어입니다" <<<"$prompt" && phase=review
+grep -q "정찰 에이전트입니다" <<<"$prompt" && phase=scout
+grep -q "수리 에이전트입니다" <<<"$prompt" && phase=repair
 grep -q "릴리즈를 대신 수행" <<<"$prompt" && phase=release
 grep -q "이번 세션은 자산만" <<<"$prompt" && phase=assets
 result(){ jq -n --arg r "$1" --arg ph "$phase" '{type:"result",subtype:"success",duration_ms:1200,num_turns:3,total_cost_usd:0.42,usage:{input_tokens:100,output_tokens:50,cache_read_input_tokens:0,cache_creation_input_tokens:0},result:$r}'; }
@@ -20,8 +22,19 @@ case $phase in
     printf '## %s\n- 선택: 모의 변경 (가치 3 / 위험 1 / 작업량 S)\n- 결과: 성공\n- 요약: 시뮬레이션.\n- 보류 아이디어: 없음\n' "$(date +%F)" > "$OUT/ledger-entry.md"
     echo '[{"title":"sim idea","value":3,"risk":1,"size":"S","status":"pending","note":"","updated":"2026-01-01"}]' > "$OUT/ideas.json"
     result "done";;
+  scout)
+    printf -- '- 과제: 모의 과제 (가치 3 / 위험 1 / 작업량 S)\n- 왜: 시뮬레이션\n- 수용 기준: 1) 파일이 생긴다\n- 건드릴 파일: feature.txt\n- 검증 명령: true\n- 위험과 피할 것: 없음\n- 차선 후보: 없음\n' > "$OUT/brief.md"
+    echo '[{"title":"sim idea","value":3,"risk":1,"size":"S","status":"pending","note":"","updated":"2026-01-01"}]' > "$OUT/ideas.json"
+    [ "$(sc '.scout_dirty // false')" = true ] && { echo junk > scout-junk.txt; }   # 정찰이 실수로 남긴 변경은 러너가 버려야 한다
+    result "scouted";;
+  repair)
+    if [ "$(sc '.repair // "fix"')" = fix ]; then echo fixed > repaired.txt; git add -A >/dev/null 2>&1; git -c commit.gpgsign=false commit -qm "fix: simulated repair" >/dev/null 2>&1; fi
+    echo "모의 수리" > "$OUT/fix-summary.md"
+    result "repaired";;
   review)
-    case "$(sc '.review // "approve"')" in
+    rv=$(sc '.review // "approve"')
+    if [ "$rv" = reject-once ]; then c=$(( $(cat "$STATE/.review-calls" 2>/dev/null || echo 0) + 1 )); echo "$c" > "$STATE/.review-calls"; [ "$c" -le 1 ] && rv=reject || rv=approve; fi
+    case "$rv" in
       missing) : ;;
       invalid) echo '{"verdict":"maybe"}' > "$OUT/review.json";;
       broken) echo '{not json' > "$OUT/review.json";;
