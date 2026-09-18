@@ -1,0 +1,17 @@
+# dataworks 프로필 (2026-09-19)
+- 목적: 데이터 상품(Data Product) 카탈로그·계약·접근권·게이트·운영 콘솔을 제공하는 단일 Go 서버 + React 워크벤치("Data Works"), MCP·OpenAI 호환 프록시 포함.
+- 스택: Go 1.25(단일 바이너리, `go:embed` 로 SPA 포함), SQLite 기본/PostgreSQL 선택(`internal/store`), React 19 + Vite + TypeScript + Tailwind + TanStack(`web/`), Playwright(e2e·가이드 캡처), Node 24, Docker distroless.
+- 구조:
+  - `cmd/` — 서버 진입점, `cmd/api-surface-audit`(CLI·SDK·OpenAPI·라우트 정합성 감사, gap 0 유지)
+  - `internal/proxy/` — HTTP 라우팅·인증·관리 API·MCP·Keycloak OIDC(`keycloak*.go`, `mcp_oauth.go`)·SPA 서빙·설정 레지스트리
+  - `internal/dataworks/` — 도메인 규칙(`domain.go`: publish gate, retirement, fit score, snapshot diff)
+  - `internal/store/` — DB 접근·마이그레이션·엔타이틀먼트/계약 활성 판정(`EntitlementActive`)
+  - `internal/tracking/`·`internal/mail/`(main 기준 존재 여부는 브랜치마다 확인)·`internal/config/`(env 137개)·`internal/audit/`·`internal/secret/`
+  - `web/` — SPA(`src/features/*`), `web/e2e/workbench.spec.ts`, `web/capture/`(가이드 캡처 픽스처), `web/embed.go`(`//go:embed all:dist`), `web/dist/.gitkeep` 만 추적
+  - `docs/` — USER_GUIDE·ADMIN_GUIDE(.md 정본 + .pdf)·OPERATIONS·RELEASE_GUIDE·GitHub Pages 산출물
+  - `scripts/` — release.sh/ps1, gh_release.ps1, backup, golden-regression, changelog.txt
+- 빌드·테스트: `go build ./... && go vet ./... && go test ./...`(약 2분) · `go run ./cmd/api-surface-audit` · `cd web && npm ci && npm run lint && npm test && npm run build`(빌드 = `tsc -b && vite build`) · e2e `npm run test:e2e`(CI 미포함) · 캡처 `npm run capture:docs`.
+- 관례: 커밋 제목 영어 conventional(`feat(mcp): …`, `fix: …`, `chore: release vX.Y.Z`), 본문/문서/원장은 한국어. 설정은 env(`internal/config`) + admin settings 레지스트리(DB 오버라이드, `reloadRuntimeConfig` 스냅샷, 멀티 파드 폴링). 마이그레이션은 `internal/store` 내 코드. 기능 추가 시 `docs/ADMIN_GUIDE.md`/`OPERATIONS.md` 갱신 + PDF 재생성(`aidev/tools/guide/md2pdf.mjs`). 일부 파일(`dataworks_runtime.go`)은 CRLF.
+- 위험 구역: `internal/proxy/keycloak*.go`·`mcp_oauth.go`·`authenticateProxyContext`(인증), `internal/store` 마이그레이션, `admin settings` 레지스트리 검증(잘못 넓히면 fail-open), `.github/workflows/ci.yml`(느슨하게 만들기 금지), `web/embed.go`/`.gitignore` 의 dist 처리.
+- 자주 깨지는 곳: `npm run build` 가 `web/dist/.gitkeep` 삭제(모든 회차에서 수동 복원) · 브랜치 간 기능 병합 지연(메일 알림 18d8ec0 가 main 에 없던 시기) · 러너 예산 홀드가 "error" 로 원장에 실림(코드 결함 아님, 2026-09-18).
+- 검증 함정: CI 는 go 잡·web 잡만 실행하고 Playwright e2e·캡처는 돌지 않음. 외부 Keycloak·SMTP 는 없어 테스트는 인프로세스 가짜 IdP/릴레이 사용. `go test ./...` 는 sqlite 인메모리로 충분. Windows 마운트(`/mnt/c`) 경로는 느리고 CRLF 파일 존재.
