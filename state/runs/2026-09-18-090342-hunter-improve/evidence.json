@@ -1,0 +1,272 @@
+{
+  "run_id": "2026-09-18-090342-hunter-improve",
+  "generated": "2026-09-18T10:17:11+09:00",
+  "run": {
+    "run_id": "2026-09-18-090342-hunter-improve",
+    "project": "hunter",
+    "kind": "improve",
+    "started": "2026-09-18T09:03:42+09:00",
+    "model": "claude-opus-5",
+    "policy_version": "312eebbf",
+    "prompts_hash": "90b6639bc42c5800",
+    "runner_version": "312eebbf",
+    "finished": "2026-09-18T10:17:11+09:00",
+    "outcome": "releasing"
+  },
+  "record": {
+    "ts": "2026-09-18T10:17:11+09:00",
+    "date": "2026-09-18",
+    "project": "hunter",
+    "result": "merged https://github.com/hkjang/hunter/pull/6, release tag held (timeout)",
+    "outcome": "releasing",
+    "run_id": "2026-09-18-090342-hunter-improve",
+    "base_sha": "ef1af7ff99c13843edc33f9d62f86bb3f7479686",
+    "head_sha": "ce0c53a80f8d6c40bb6f090a0f68b607af2d2087",
+    "pr": "https://github.com/hkjang/hunter/pull/6",
+    "stages": {
+      "base": {
+        "state": "pinned",
+        "reason": "main@ef1af7f",
+        "at": "2026-09-18T09:03:46+09:00"
+      },
+      "autonomy": {
+        "state": "release",
+        "reason": "",
+        "at": "2026-09-18T09:03:46+09:00"
+      },
+      "verify": {
+        "state": "passed",
+        "reason": "검증 9개 통과 (auto)",
+        "at": "2026-09-18T09:24:24+09:00"
+      },
+      "pr": {
+        "state": "created",
+        "reason": "https://github.com/hkjang/hunter/pull/6",
+        "at": "2026-09-18T09:24:32+09:00"
+      },
+      "review": {
+        "state": "approved",
+        "reason": "리뷰 승인 (risk=medium)",
+        "at": "2026-09-18T09:30:56+09:00"
+      },
+      "ci": {
+        "state": "passed",
+        "reason": "검사 1개 모두 success",
+        "at": "2026-09-18T09:41:59+09:00"
+      },
+      "merge": {
+        "state": "done",
+        "reason": "ce0c53a80f8d6c40bb6f090a0f68b607af2d2087",
+        "at": "2026-09-18T09:42:04+09:00"
+      },
+      "release": {
+        "state": "ci-blocked",
+        "reason": "릴리즈 커밋 CI: timeout — 제한 시간 안에 CI 완료를 확인하지 못함 (태그 보류)",
+        "at": "2026-09-18T10:17:05+09:00"
+      }
+    },
+    "campaign": "mcp-oauth-2026-09",
+    "autonomy": "release",
+    "files": 20,
+    "additions": 1595,
+    "deletions": 17,
+    "tests": 2,
+    "title": "docs: describe MCP SSO connection for administrators, users and the OpenAPI contract"
+  },
+  "stages": {
+    "base": {
+      "state": "pinned",
+      "reason": "main@ef1af7f",
+      "at": "2026-09-18T09:03:46+09:00"
+    },
+    "autonomy": {
+      "state": "release",
+      "reason": "",
+      "at": "2026-09-18T09:03:46+09:00"
+    },
+    "verify": {
+      "state": "passed",
+      "reason": "검증 9개 통과 (auto)",
+      "at": "2026-09-18T09:24:24+09:00"
+    },
+    "pr": {
+      "state": "created",
+      "reason": "https://github.com/hkjang/hunter/pull/6",
+      "at": "2026-09-18T09:24:32+09:00"
+    },
+    "review": {
+      "state": "approved",
+      "reason": "리뷰 승인 (risk=medium)",
+      "at": "2026-09-18T09:30:56+09:00"
+    },
+    "ci": {
+      "state": "passed",
+      "reason": "검사 1개 모두 success",
+      "at": "2026-09-18T09:41:59+09:00"
+    },
+    "merge": {
+      "state": "done",
+      "reason": "ce0c53a80f8d6c40bb6f090a0f68b607af2d2087",
+      "at": "2026-09-18T09:42:04+09:00"
+    },
+    "release": {
+      "state": "ci-blocked",
+      "reason": "릴리즈 커밋 CI: timeout — 제한 시간 안에 CI 완료를 확인하지 못함 (태그 보류)",
+      "at": "2026-09-18T10:17:05+09:00"
+    }
+  },
+  "provenance": {
+    "model": "claude-opus-5",
+    "policy_version": "312eebbf",
+    "prompts_hash": "90b6639bc42c5800",
+    "runner_version": "312eebbf",
+    "base_sha": "ef1af7ff99c13843edc33f9d62f86bb3f7479686",
+    "head_sha": "ce0c53a80f8d6c40bb6f090a0f68b607af2d2087",
+    "pr": "https://github.com/hkjang/hunter/pull/6"
+  },
+  "verification": {
+    "runner": {
+      "source": "auto",
+      "commands": [
+        {
+          "cmd": "go build ./...",
+          "exit": 0,
+          "seconds": 2
+        },
+        {
+          "cmd": "go vet ./...",
+          "exit": 0,
+          "seconds": 1
+        },
+        {
+          "cmd": "go test ./...",
+          "exit": 0,
+          "seconds": 4
+        },
+        {
+          "cmd": "cd web && [ -d node_modules ] || npm ci --no-audit --no-fund",
+          "exit": 0,
+          "seconds": 0
+        },
+        {
+          "cmd": "cd web && npm test --silent",
+          "exit": 0,
+          "seconds": 0
+        },
+        {
+          "cmd": "cd web && [ -d node_modules ] || npm ci --no-audit --no-fund",
+          "exit": 0,
+          "seconds": 0
+        },
+        {
+          "cmd": "cd web && npm run typecheck --silent",
+          "exit": 0,
+          "seconds": 1
+        },
+        {
+          "cmd": "cd web && [ -d node_modules ] || npm ci --no-audit --no-fund",
+          "exit": 0,
+          "seconds": 0
+        },
+        {
+          "cmd": "cd web && npm run build --silent",
+          "exit": 0,
+          "seconds": 1
+        }
+      ]
+    },
+    "runner_gate": {
+      "ok": true,
+      "state": "verified",
+      "reason": "검증 9개 통과 (auto)"
+    },
+    "after_rebase": null,
+    "review": {
+      "verdict": "approve",
+      "reasons": [],
+      "notes": [
+        "검증: internal/app 전체 Go 테스트(HUNTER_TEST_DSN=로컬 hunter-oauth-pg 컨테이너) 통과(127s), TestMCP* 단독 통과, go build/vet 통과, web tsc --noEmit 통과, web/tests/mcp-oauth-state.test.mjs 2/2 통과. gofmt 이슈 없음, go.mod/package.json 의존성 변경 없음.",
+        "테스트 실효성: mcp_oauth_test.go 는 실제 RSA 키로 서명한 JWT·가짜 Keycloak discovery/JWKS 를 띄워 200 통과 경로와 expired/nbf/타 issuer/typ=ID/cnf/sub 없음/미등록/HS256/비활성 계정/교집합 공집합/REST 경로 거부/스위치 오프를 각각 단언함. 수정 전 코드에서는 /.well-known 404·토큰 401 로 즉시 실패하므로 변경을 실제로 검증함.",
+        "internal/app/mcp_oauth.go:339-347 호환 경로 — aud 가 이 서버를 가리키지 않아도 azp(또는 aud)가 관리자 허용 대상이거나 oidc.client_id(웹 로그인 클라이언트)와 같으면 통과. MCP 인가 규격의 RFC 8707 엄격 바인딩보다 느슨하지만 관리자 opt-in 이고 admin-guide 15.6 표에 명시돼 있음. 웹 로그인 클라이언트 ID 가 목록 없이 항상 허용되는 점은 운영자가 인지할 필요 있음.",
+        "internal/app/mcp_oauth.go:211-236 provider 캐시 — a.MCPOAuth.mu 를 잡은 채 discovery(최대 15s) 수행. Keycloak 이 죽어 있으면 SSO 토큰 요청들이 뮤텍스 뒤에서 직렬로 최대 15s 씩 대기(키 인증 경로는 영향 없음). 캐시 교체 시 이전 http.Transport 의 유휴 연결을 닫지 않음(설정 변경 시에만, 미미).",
+        "internal/app/mcp_oauth.go:162 — enabled 인데 전제가 빠진 상태에서는 /mcp 401 도전과 /api/settings/public 호출마다 slog.Warn 이 찍힘(로그 소음, 기능 결함 아님).",
+        "internal/app/server.go:44-47 — Auth=\"oauth\" 주체는 KeyID 가 비어 있음. 현재 /mcp 도구(RequestScan/List*/Components/FindingQueue/Campaigns)는 KeyID 로 권한을 재도출하지 않음을 확인했으나, 향후 KeyID==\"\" 를 브라우저 세션으로 간주하는 finding_bulk/agents_control 류 경로가 MCP 에 노출되면 role 전체 권한으로 넓어질 수 있음. 주석으로 경고돼 있음.",
+        "internal/app/settings.go:130 — mcp_sso_url 은 resource 식별자를 그대로 내보냄. 관리자가 실제 접속 주소와 다른 커스텀 resource 를 두면 키 페이지 안내 주소가 접속 불가 주소가 될 수 있음(관리자 가이드는 공개 접속 주소를 쓰라고 안내).",
+        "되돌리기: DB 마이그레이션 없음(settings 그룹 'mcp' 기본값만 추가), 외부 상태 변경 없음. revert 로 완전 복귀 가능.",
+        "범위: docs/guides/*.pdf 바이너리(≈10MB×2) 재생성이 포함되나 이 저장소의 문서 파이프라인 관행에 부합. 무관한 리팩터·의존성 갱신 없음."
+      ],
+      "risk": "medium"
+    },
+    "ci_gate": {
+      "ok": false,
+      "state": "pending",
+      "reason": "완료되지 않은 검사: verify",
+      "checks": 2,
+      "pending": 1
+    }
+  },
+  "release": {
+    "result": {
+      "status": "released",
+      "version": "1.12.0",
+      "tag": "v1.12.0",
+      "title": "Hunter v1.12.0",
+      "notes_file": "/mnt/c/Users/USER/projects/aidev/state/runs/2026-09-18-090342-hunter-improve/release-notes-v1.12.0.md",
+      "github_release": false,
+      "assets": [],
+      "reason": ""
+    },
+    "assets_sha256": []
+  },
+  "approval": null,
+  "usage": [
+    {
+      "ts": "2026-09-18T09:24:12+09:00",
+      "date": "2026-09-18",
+      "project": "hunter",
+      "phase": "improve",
+      "run_id": "2026-09-18-090342-hunter-improve",
+      "campaign": "mcp-oauth-2026-09",
+      "subtype": "success",
+      "duration_ms": 1294059,
+      "num_turns": 98,
+      "cost_usd": 12.082819500000001,
+      "input_tokens": 172,
+      "output_tokens": 87624,
+      "cache_read": 15058823,
+      "cache_create": 234453
+    },
+    {
+      "ts": "2026-09-18T09:30:56+09:00",
+      "date": "2026-09-18",
+      "project": "hunter",
+      "phase": "review",
+      "run_id": "2026-09-18-090342-hunter-improve",
+      "campaign": "mcp-oauth-2026-09",
+      "subtype": "success",
+      "duration_ms": 402542,
+      "num_turns": 32,
+      "cost_usd": 2.3808545000000008,
+      "input_tokens": 64,
+      "output_tokens": 16392,
+      "cache_read": 2237999,
+      "cache_create": 84992
+    },
+    {
+      "ts": "2026-09-18T09:57:46+09:00",
+      "date": "2026-09-18",
+      "project": "hunter",
+      "phase": "release",
+      "run_id": "2026-09-18-090342-hunter-improve",
+      "campaign": "mcp-oauth-2026-09",
+      "subtype": "success",
+      "duration_ms": 989126,
+      "num_turns": 43,
+      "cost_usd": 3.2247709999999996,
+      "input_tokens": 86,
+      "output_tokens": 20407,
+      "cache_read": 3536736,
+      "cache_create": 93755
+    }
+  ]
+}

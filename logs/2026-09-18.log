@@ -994,3 +994,108 @@ fatal: '/home/hkjang/.cache/auto-improve-wt/qurio' is not a working tree
 evidence: /mnt/c/Users/USER/projects/aidev/state/runs/2026-09-18-073339-qurio-improve/evidence.json
 reports: 17 day(s), 3 week(s), 1 month(s), 952 run(s), 1201 usage row(s), 43 project page(s), 19 alert(s)
 notify: no new alerts
+[08:53:52] aidev sync FAILED: run(2026-09-18): qurio — merged https://github.com/hkjang/qurio/pull/16, release tag held (timeout)
+[08:53:52] done
+[08:53:57] shepherd: 후보 191건 (한 번에 최대 4건, 오늘 $52.8529085/$60)
+[08:55:20] shepherd: 오늘 예산 소진 ($52.8529085/$60) — 여기서 멈춘다
+[08:55:20] shepherd: 처리 0건 — 승인 0 · 수정 푸시 0 · 사람 필요 0 (오늘 $52.8529085/$60)
+[08:55:20] done
+[09:02:52] skip Quantoss: dirty working tree
+[09:03:00] skip aiportal-java: STOP
+[09:03:31] skip umm: dirty working tree
+[09:03:35] candidates(39): AgentHub Clustara DartFly Invenqor Kkiit Momento ReSSO SecCheck Vendra ai-admin aiportal-front-admin aiportal-front aiportal-py appstore cutover dataworks git-ctx hunter igame jikim jupiq kanpic madi moina moyro muni nexabuilder orbit pii-masker postra ptium qurio releasedock relio seaton sqlon vibe-coders visitflow weekly
+[09:03:38] campaign tracking-2026-09: 세 번 이상 실패해 더 잡지 않는 프로젝트 — weekly
+[09:03:41] campaign mail-2026-09: 세 번 이상 실패해 더 잡지 않는 프로젝트 — postra
+[09:03:42] campaign mcp-oauth-2026-09: picked hunter
+[09:03:42] picked: hunter
+[09:03:42] === hunter (base=main, run 2026-09-18-090342-hunter-improve, 회차 예산 $30)
+Preparing worktree (new branch 'auto/2026-09-18-0903')
+Updating files:  98% (1035/1048)Updating files:  99% (1038/1048)Updating files: 100% (1048/1048)Updating files: 100% (1048/1048), done.
+HEAD is now at ef1af7f chore: release v1.11.0 with one-time markdown report handoff and tracking CSP violation allow-listing
+[09:03:46] hunter: [base] pinned — main@ef1af7f
+[09:03:46] hunter: [autonomy] release — 
+[09:24:12] hunter: improve — 98 turns, 21m, $12.08, success
+[09:24:15] hunter: verify `go build ./...` → exit 0 (2s)
+[09:24:16] hunter: verify `go vet ./...` → exit 0 (1s)
+[09:24:20] hunter: verify `go test ./...` → exit 0 (4s)
+[09:24:20] hunter: verify `cd web && [ -d node_modules ] || npm ci --no-audit --no-fund` → exit 0 (0s)
+[09:24:20] hunter: verify `cd web && npm test --silent` → exit 0 (0s)
+[09:24:20] hunter: verify `cd web && [ -d node_modules ] || npm ci --no-audit --no-fund` → exit 0 (0s)
+[09:24:21] hunter: verify `cd web && npm run typecheck --silent` → exit 0 (1s)
+[09:24:21] hunter: verify `cd web && [ -d node_modules ] || npm ci --no-audit --no-fund` → exit 0 (0s)
+[09:24:22] hunter: verify `cd web && npm run build --silent` → exit 0 (1s)
+[09:24:24] hunter: [verify] passed — 검증 9개 통과 (auto)
+branch 'auto/2026-09-18-0903' set up to track 'origin/auto/2026-09-18-0903'.
+[09:24:32] hunter: [pr] created — https://github.com/hkjang/hunter/pull/6
+[09:30:56] hunter: review — 32 turns, 6m, $2.38, success
+[09:30:56] hunter: [review] approved — 리뷰 승인 (risk=medium)
+[09:30:58] hunter: waiting for CI on ce0c53a (pending)
+[09:41:59] hunter: [ci] passed — 검사 1개 모두 success
+[09:42:04] hunter: [merge] done — ce0c53a80f8d6c40bb6f090a0f68b607af2d2087
+From https://github.com/hkjang/hunter
+ * branch            main       -> FETCH_HEAD
+   ef1af7f..42d45b0  main       -> origin/main
+Updating ef1af7f..42d45b0
+Fast-forward
+ AGENTS.md                          |   1 +
+ README.md                          |   4 +-
+ docs/guides/admin-guide.html       | 203 +++++++++++++++++-
+ docs/guides/admin-guide.md         |  91 +++++++-
+ docs/guides/admin-guide.pdf        | Bin 9840191 -> 9954257 bytes
+ docs/guides/user-guide.html        |  10 +-
+ docs/guides/user-guide.md          |  12 +-
+ docs/guides/user-guide.pdf         | Bin 8860986 -> 8868232 bytes
+ docs/llms.txt                      |   1 +
+ internal/app/auth.go               |  11 +
+ internal/app/mcp.go                |  35 ++-
+ internal/app/mcp_oauth.go          | 427 +++++++++++++++++++++++++++++++++++++
+ internal/app/mcp_oauth_test.go     | 361 +++++++++++++++++++++++++++++++
+ internal/app/openapi.json          | 127 ++++++++++-
+ internal/app/server.go             |   6 +
+ internal/app/settings.go           |  19 +-
+ web/src/mcp-oauth-settings.tsx     | 153 +++++++++++++
+ web/src/mcp-oauth-state.ts         |  51 +++++
+ web/src/settings.tsx               |  46 +++-
+ web/tests/mcp-oauth-state.test.mjs |  54 +++++
+ 20 files changed, 1595 insertions(+), 17 deletions(-)
+ create mode 100644 internal/app/mcp_oauth.go
+ create mode 100644 internal/app/mcp_oauth_test.go
+ create mode 100644 web/src/mcp-oauth-settings.tsx
+ create mode 100644 web/src/mcp-oauth-state.ts
+ create mode 100644 web/tests/mcp-oauth-state.test.mjs
+Preparing worktree (detached HEAD 42d45b0)
+HEAD is now at 42d45b0 Merge pull request #6 from hkjang/auto/2026-09-18-0903
+[09:57:46] hunter: release — 43 turns, 16m, $3.22, success
+[09:57:53] hunter: waiting for CI on 96f7414 (no-ci)
+[10:17:05] hunter: [release] ci-blocked — 릴리즈 커밋 CI: timeout — 제한 시간 안에 CI 완료를 확인하지 못함 (태그 보류)
+From https://github.com/hkjang/hunter
+ * branch            main       -> FETCH_HEAD
+Updating 42d45b0..96f7414
+Fast-forward
+ README.md                    |  12 +++++++-----
+ VERSION                      |   2 +-
+ cmd/hunter/main.go           |   2 +-
+ compose.yaml                 |   2 +-
+ docs/guides/admin-guide.html |  26 +++++++++++++-------------
+ docs/guides/admin-guide.md   |  22 +++++++++++-----------
+ docs/guides/admin-guide.pdf  | Bin 9954257 -> 9954523 bytes
+ docs/guides/user-guide.html  |   6 +++---
+ docs/guides/user-guide.md    |   2 +-
+ docs/guides/user-guide.pdf   | Bin 8868232 -> 8868494 bytes
+ docs/index.html              |   8 ++++----
+ docs/llms.txt                |   4 ++--
+ docs/package-lock.json       |   4 ++--
+ docs/package.json            |   2 +-
+ docs/release-v1.12.0.md      |  24 ++++++++++++++++++++++++
+ docs/validation.md           |  14 ++++++++++++++
+ internal/app/openapi.json    |   2 +-
+ scripts/release-notes.py     |  18 +++++++++++++++++-
+ web/package-lock.json        |   4 ++--
+ web/package.json             |   2 +-
+ web/src/App.tsx              |   8 ++++----
+ 21 files changed, 110 insertions(+), 54 deletions(-)
+ create mode 100644 docs/release-v1.12.0.md
+fatal: '/home/hkjang/.cache/auto-improve-wt/hunter' is not a working tree
+evidence: /mnt/c/Users/USER/projects/aidev/state/runs/2026-09-18-090342-hunter-improve/evidence.json
+reports: 17 day(s), 3 week(s), 1 month(s), 953 run(s), 1204 usage row(s), 43 project page(s), 19 alert(s)
+notify: no new alerts
