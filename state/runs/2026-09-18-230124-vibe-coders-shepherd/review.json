@@ -1,0 +1,24 @@
+{
+  "verdict": "reject",
+  "recommend": "fix",
+  "reasons": [
+    "internal/mail/smtp.go:147 loginAuth.Start 의 가드 `!server.TLS && server.Name != a.host` 는 항상 거짓이다. net/smtp/smtp.go:71 은 `serverName: host` 로 NewClient 에 넘긴 host 를 그대로 ServerInfo.Name 에 넣으므로(우리는 config.Host 를 넘김) Name == a.host 가 언제나 성립한다. 실제로 비-루프백 주소(172.19.24.103)에 `250-AUTH LOGIN` 만 광고하는 가짜 릴레이를 띄우고 security=none·username/password 를 설정해 Deliver 를 돌리면 전송 기록에 `AUTH LOGIN`, `c3Zj`(svc), `c2VjcmV0`(secret) 가 그대로 찍힌다 — 비밀번호가 base64 평문으로 나간다. 고치는 방법: server.TLS 가 false 이고 username 이 있으면 인증하지 않고 명시적 오류를 반환한다(사용자가 security=none 을 명시했을 때만 예외 허용 여부를 정해서 문서화). Name 비교 가드는 제거한다.",
+    "internal/mail/smtp.go:116-117 PLAIN 분기는 비-TLS·비-루프백 릴레이에서 절대 성공하지 못한다. 표준 smtp.PlainAuth 는 `!server.TLS && !isLocalhost(server.Name)` 이면 'unencrypted connection' 을 반환한다(net/smtp/auth.go:67). 같은 비-루프백 가짜 릴레이에 `250-AUTH PLAIN LOGIN` 을 광고하고 돌리면 `SMTP 인증 실패: unencrypted connection` 으로 EHLO→QUIT 만 하고 끝난다. 커밋 메시지·docs/ADMIN_GUIDE.md 가 약속하는 '포트 25 + PLAIN/LOGIN 선택 인증' 은 실제 사내 릴레이에서 PLAIN 은 항상 실패, LOGIN 은 평문 누출이 된다. 정책(비-TLS 에서 자격증명 전송 금지, 또는 security=none 명시 시에만 허용)을 정하고 두 분기를 그 정책에 맞춰 통일한다.",
+    "internal/mail/mail_test.go:30,217-237 TestDeliverAuthenticatesOnlyWhenAUsernameIsSet 은 127.0.0.1 에 릴레이를 띄우므로 smtp.PlainAuth 의 localhost 예외로 통과하며 위 두 결함을 모두 못 본다(수정 전 코드에서도 통과). 비-루프백 주소(net.InterfaceAddrs 에서 고른 사설 IP, 없으면 t.Skip)에 릴레이를 띄워 (a) AUTH PLAIN LOGIN 광고 + 비-TLS, (b) AUTH LOGIN 만 광고 + 비-TLS 두 경우를 각각 돌리고, 전송 기록에 base64(password) 가 없고 명시적 오류가 나는 것을 단언하는 테스트로 바꾼다.",
+    "internal/mail/service.go:235-257 + internal/mail/smtp.go:77-78 응답 없는 릴레이에서 기록 UPDATE 가 영구히 실패한다. deliver 의 ctx 예산은 2*Timeout+20s 인데 dial 은 소켓 데드라인을 config.Timeout 이 아니라 그 ctx 데드라인 전체로 잡으므로, TCP 는 받되 배너를 주지 않는 릴레이에서 1차 시도가 예산을 다 쓰고 반환하고, 2차 시도·complete(ctx, …) 는 이미 만료된 ctx 로 실행돼 CompleteMailDelivery 가 context deadline exceeded 로 실패한다. 실제로 accept 후 침묵하는 리스너로 Notify 를 돌리면 22초 뒤 `mail delivery status was not recorded error=\"context deadline exceeded\"` 가 나고 행은 status=queued attempts=0 으로 남는다(Timeout 최대 300s 면 620초). docs/ADMIN_GUIDE.md 의 '시도마다 기록합니다 / queued 로 남은 행은 종료 시점에 끊긴 것' 약속이 깨진다. 고치는 방법: (1) dial 의 소켓 데드라인은 min(ctx 데드라인, now+config.Timeout) 로 잡아 시도당 상한을 config.Timeout 으로 고정하고, (2) complete() 의 기록 UPDATE 는 발송 ctx 와 분리해 context.Background() 에서 파생한 짧은(예: 5s) ctx 로 실행한다. SendNow(service.go:161-165) 도 같은 ctx 를 complete 에 넘기므로 동일하게 분리한다. 침묵 릴레이 테스트로 행이 failed/attempts=2 로 닫히는 것을 고정한다.",
+    "internal/proxy/governance.go:615-617 + internal/mail/message.go:82-106 approval.requested 에는 dedupe 가 없다. 승인 헤더 없이 같은 요청을 재시도하면 매번 새 approval 행이 생기고(SubjectID 가 새 approval id 라 RepeatAfter 를 걸 키가 없음) mailApprovers 전원에게 메일이 간다. 15초 배치 창은 한 창 안의 폭주만 한 통으로 접을 뿐이라, 차단된 호출을 루프로 재시도하는 IDE 에이전트 하나가 API 키 하나로 관리자 전원에게 15초마다 메일을 무한히 보낼 수 있다. 사용자(approval.UserID 또는 APIKeyID)·SubjectID(governance.go:173 의 요청 해시) 단위로 RepeatAfter 성 억제(예: 같은 requester+subject 는 1시간에 한 통)를 두고, 같은 요청을 N 번 게이트에 보내도 관리자 메일이 한 통만 기록되는 테스트를 추가한다.",
+    "internal/mail/service.go:119-127,232-238 배경 발송 고루틴에 상한이 없다. 위 결함과 겹치면 응답 없는 릴레이에서 요청마다 고루틴과 열린 TCP 연결이 2*Timeout+20s 동안 쌓인다. 버퍼 채널 세마포어(예: 8)로 실제 발송을 상한 안에서 기다리게 하되 record(INSERT) 는 즉시 남긴다.",
+    "internal/proxy/mail_test.go:309,327,353 approval.requested·key.blocked·report.failed 세 이벤트 테스트는 hook 메서드를 손으로 만든 구조체로 직접 호출한다. 게이트(governanceApprovalGate)·파이프라인(stepQuota/stepCost)·스케줄러(runScheduledReport) 배선은 어떤 테스트도 통과하지 않는다. 적어도 approval.requested 는 실제 /v1 요청이 승인 게이트에 걸리는 경로로(위 dedupe 테스트와 겸해서), key.blocked 는 쿼터 초과 응답(429) 경로로 배선을 증명한다."
+  ],
+  "notes": [
+    "기본값 꺼짐 확인: mail.enabled=false, 새 설치에서 아무것도 보내지 않음(internal/proxy/mail.go:73, TestMailIsOffByDefaultAndTellsWhy).",
+    "비밀값: mail.password 는 Secret=true 로 마스킹되고 mailStatus 는 password_set 만 노출(mail.go:300). TestMailPasswordIsNeverReturned 로 고정됨. 오류 메시지에 비밀번호가 실리는 경로 없음.",
+    "마이그레이션은 CREATE TABLE/INDEX IF NOT EXISTS 추가만(sqlstore.go:2353-2372). 되돌리기 쉬움.",
+    "새 공개 경로 없음: /admin/mail/* 두 경로 모두 authorizeAdmin 뒤에 있음.",
+    "메일 링크 4개(/app/governance/policies, /app/me, /app/text2sql, /app/system/settings?tab=mail)는 web/src/config/migration-registry.ts 의 appPath 와 SystemSettingsPage 의 tabIds('mail') 에 실제로 존재함을 확인.",
+    "ApprovalDecided 의 '헤더를 붙여 다시 보내면 통과' 문장은 governance.go:553-584 의 매칭(SubjectID=요청 본문 해시, key/user/team 일치)과 일치함.",
+    "기존 테스트 실행: go test ./internal/mail ./internal/store ./internal/proxy -run Mail|Deliver|Notify|… 전부 통과. 위 결함들은 그 테스트가 루프백·즉시 응답 릴레이만 쓰기 때문에 못 잡는 것이며, 임시 probe 테스트로 재현한 뒤 삭제했다(트리 클린).",
+    "범위 이탈 없음: 변경은 모두 메일 기능에 한정, OpenAPI 스냅샷 재생성 포함."
+  ],
+  "risk": "medium"
+}
