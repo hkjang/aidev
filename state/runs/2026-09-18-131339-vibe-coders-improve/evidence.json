@@ -1,0 +1,228 @@
+{
+  "run_id": "2026-09-18-131339-vibe-coders-improve",
+  "generated": "2026-09-18T13:54:54+09:00",
+  "run": {
+    "run_id": "2026-09-18-131339-vibe-coders-improve",
+    "project": "vibe-coders",
+    "kind": "improve",
+    "started": "2026-09-18T13:13:39+09:00",
+    "model": "claude-opus-5",
+    "policy_version": "312eebbf",
+    "prompts_hash": "90b6639bc42c5800",
+    "runner_version": "312eebbf",
+    "finished": "2026-09-18T13:54:54+09:00",
+    "outcome": "review-pending"
+  },
+  "record": {
+    "ts": "2026-09-18T13:54:54+09:00",
+    "date": "2026-09-18",
+    "project": "vibe-coders",
+    "result": "CI timeout, PR open https://github.com/hkjang/vibe-coders/pull/20",
+    "outcome": "review-pending",
+    "run_id": "2026-09-18-131339-vibe-coders-improve",
+    "base_sha": "d67267b5e47de66a45c35120c7465d85f5c009f9",
+    "head_sha": "92bc502788b0eb1de3b86ccf61477b783c360601",
+    "pr": "https://github.com/hkjang/vibe-coders/pull/20",
+    "stages": {
+      "base": {
+        "state": "pinned",
+        "reason": "master@d67267b",
+        "at": "2026-09-18T13:13:50+09:00"
+      },
+      "autonomy": {
+        "state": "release",
+        "reason": "",
+        "at": "2026-09-18T13:13:50+09:00"
+      },
+      "verify": {
+        "state": "passed",
+        "reason": "검증 9개 통과 (auto)",
+        "at": "2026-09-18T13:32:11+09:00"
+      },
+      "pr": {
+        "state": "created",
+        "reason": "https://github.com/hkjang/vibe-coders/pull/20",
+        "at": "2026-09-18T13:32:20+09:00"
+      },
+      "review": {
+        "state": "approved",
+        "reason": "리뷰 승인 (risk=medium)",
+        "at": "2026-09-18T13:35:48+09:00"
+      },
+      "ci": {
+        "state": "timeout",
+        "reason": "제한 시간 안에 CI 완료를 확인하지 못함",
+        "at": "2026-09-18T13:54:53+09:00"
+      }
+    },
+    "campaign": "mcp-oauth-2026-09",
+    "autonomy": "release",
+    "files": 22,
+    "additions": 2058,
+    "deletions": 11,
+    "tests": 3,
+    "title": "build(web): accept a forwarded --silent in the typecheck and build scripts"
+  },
+  "stages": {
+    "base": {
+      "state": "pinned",
+      "reason": "master@d67267b",
+      "at": "2026-09-18T13:13:50+09:00"
+    },
+    "autonomy": {
+      "state": "release",
+      "reason": "",
+      "at": "2026-09-18T13:13:50+09:00"
+    },
+    "verify": {
+      "state": "passed",
+      "reason": "검증 9개 통과 (auto)",
+      "at": "2026-09-18T13:32:11+09:00"
+    },
+    "pr": {
+      "state": "created",
+      "reason": "https://github.com/hkjang/vibe-coders/pull/20",
+      "at": "2026-09-18T13:32:20+09:00"
+    },
+    "review": {
+      "state": "approved",
+      "reason": "리뷰 승인 (risk=medium)",
+      "at": "2026-09-18T13:35:48+09:00"
+    },
+    "ci": {
+      "state": "timeout",
+      "reason": "제한 시간 안에 CI 완료를 확인하지 못함",
+      "at": "2026-09-18T13:54:53+09:00"
+    }
+  },
+  "provenance": {
+    "model": "claude-opus-5",
+    "policy_version": "312eebbf",
+    "prompts_hash": "90b6639bc42c5800",
+    "runner_version": "312eebbf",
+    "base_sha": "d67267b5e47de66a45c35120c7465d85f5c009f9",
+    "head_sha": "92bc502788b0eb1de3b86ccf61477b783c360601",
+    "pr": "https://github.com/hkjang/vibe-coders/pull/20"
+  },
+  "verification": {
+    "runner": {
+      "source": "auto",
+      "commands": [
+        {
+          "cmd": "go build ./...",
+          "exit": 0,
+          "seconds": 0
+        },
+        {
+          "cmd": "go vet ./...",
+          "exit": 0,
+          "seconds": 1
+        },
+        {
+          "cmd": "go test ./...",
+          "exit": 0,
+          "seconds": 58
+        },
+        {
+          "cmd": "cd web && [ -d node_modules ] || pnpm install --frozen-lockfile",
+          "exit": 0,
+          "seconds": 0
+        },
+        {
+          "cmd": "cd web && pnpm test --silent",
+          "exit": 0,
+          "seconds": 51
+        },
+        {
+          "cmd": "cd web && [ -d node_modules ] || pnpm install --frozen-lockfile",
+          "exit": 0,
+          "seconds": 0
+        },
+        {
+          "cmd": "cd web && pnpm run typecheck --silent",
+          "exit": 0,
+          "seconds": 18
+        },
+        {
+          "cmd": "cd web && [ -d node_modules ] || pnpm install --frozen-lockfile",
+          "exit": 0,
+          "seconds": 0
+        },
+        {
+          "cmd": "cd web && pnpm run build --silent",
+          "exit": 0,
+          "seconds": 18
+        }
+      ]
+    },
+    "runner_gate": {
+      "ok": true,
+      "state": "verified",
+      "reason": "검증 9개 통과 (auto)"
+    },
+    "after_rebase": null,
+    "review": {
+      "verdict": "approve",
+      "reasons": [],
+      "notes": [
+        "Local master is stale (eee0ed4); origin/master already contains PR #17 (tracking). Reviewed the 3 commits after d67267b: e5d68a5 (MCP SSO tokens), 5036325 (empty-intersection refusal, cause logging, SSO principal re-entry), 92bc502 (web run-tool.mjs).",
+        "Verified: go test ./internal/proxy (full package, 63s) passes; gofmt/go vet clean; node --test web/scripts/run-tool.test.mjs passes (4/4).",
+        "Tests genuinely exercise the change: TestMCPOAuthEmptyScopeIntersectionIsRefusedNotUnscoped hits /mcp/gateway (apiScopeForRequest returns \"\" there), which pre-fix would have passed an empty-scope principal through; TestMCPOAuthGatewayToolsRunAsTheSSOSubject proves gateway_chat runs only via the context principal (no key exists for the subject) and that the REST door still 401s the same token; TestMCPOAuthRefusalLogsTheCause asserts the slog line by code+cause.",
+        "Feature is default-off (mcp.oauth.enabled=false) and additionally gated on AUTH_ENABLED + Keycloak issuer; key auth path is byte-for-byte unchanged when off. Context principal (mcpPrincipalKey) can only be set by handleGatewayMCP after authenticateMCP succeeded — no external request can inject it. Reversible by revert; new settings rows are inert when the code is gone.",
+        "internal/proxy/mcp_oauth.go:343 — the web sign-in client id (SSO_KEYCLOAK_CLIENT_ID) is always an accepted aud/azp, so any access token Keycloak mints for the console client opens /mcp. Documented and intentional, but an operator who wants MCP restricted to a dedicated client cannot switch this off.",
+        "internal/proxy/mcp_oauth.go:433 — a Keycloak discovery/JWKS outage is returned as a 401 issuer_unavailable refusal (authDenied) rather than authUnavailable/503; clients will treat a transient IdP outage as a bad credential. Design choice, not a defect.",
+        "internal/proxy/mcp_oauth.go:181 — when both mcp.oauth.resource and the Keycloak redirect URI are empty the resource identifier falls back to the request Host, which is caller-influenced; only matters if Keycloak were also configured to mint tokens for that aud. Docs already call it a last resort.",
+        "internal/proxy/mcp_oauth.go:490 — WWW-Authenticate error_description carries Korean text; Go sends it, but non-ASCII header values are outside RFC 9110's safe set and some proxies/clients may mangle it.",
+        "internal/proxy/mcp_oauth_test.go:645 — TestMCPOAuthRefusalLogsTheCause swaps slog.Default; safe today because the package's tests are not t.Parallel, but would race if that changes.",
+        "web/package.json build script: with `pnpm run build --silent` only the trailing `vite build` segment receives the flag (pnpm appends to the end of the script line), which is what run-tool strips — tsc segment never sees it. Consistent with the commit's description."
+      ],
+      "risk": "medium"
+    },
+    "ci_gate": {
+      "ok": false,
+      "state": "pending",
+      "reason": "완료되지 않은 검사: build · vet · test",
+      "checks": 9,
+      "pending": 1
+    }
+  },
+  "release": {
+    "result": null,
+    "assets_sha256": []
+  },
+  "approval": null,
+  "usage": [
+    {
+      "ts": "2026-09-18T13:29:42+09:00",
+      "date": "2026-09-18",
+      "project": "vibe-coders",
+      "phase": "improve",
+      "run_id": "2026-09-18-131339-vibe-coders-improve",
+      "campaign": "mcp-oauth-2026-09",
+      "subtype": "success",
+      "duration_ms": 1013935,
+      "num_turns": 66,
+      "cost_usd": 7.145058000000001,
+      "input_tokens": 132,
+      "output_tokens": 47392,
+      "cache_read": 8295560,
+      "cache_create": 178560
+    },
+    {
+      "ts": "2026-09-18T13:35:47+09:00",
+      "date": "2026-09-18",
+      "project": "vibe-coders",
+      "phase": "review",
+      "run_id": "2026-09-18-131339-vibe-coders-improve",
+      "campaign": "mcp-oauth-2026-09",
+      "subtype": "success",
+      "duration_ms": 216130,
+      "num_turns": 26,
+      "cost_usd": 2.1410150000000003,
+      "input_tokens": 52,
+      "output_tokens": 11820,
+      "cache_read": 1840252,
+      "cache_create": 92325
+    }
+  ]
+}
