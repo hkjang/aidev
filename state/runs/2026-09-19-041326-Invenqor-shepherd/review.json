@@ -1,0 +1,18 @@
+{
+  "verdict": "reject",
+  "recommend": "fix",
+  "reasons": [
+    "server/internal/httpapi/mcp_oauth.go:390-395 (and 397-402) — provider.Verifier(...).Verify(ctx, token) 의 err 를 버리고 'signature, issuer, or expiry' 라는 합성 메시지만 돌려준다. s.logger 호출이 없고 writeAPIError(auth.go:462) 도 로그를 남기지 않으므로 운영자는 서명/발급자/만료 중 무엇이 실패했는지 알 수 없다 (캠페인 규칙: 토큰 검증 오류를 클라이언트용 메시지로 바꾸는 분기는 원인을 반드시 로그에 남기고 테스트로 확인). 고침: 이 분기에서 s.logger.Warn(\"mcp_oauth_token_rejected\", \"request_id\", ..., \"issuer\", state.issuer(), \"error\", err) 를 남기고(토큰 원문·클레임은 넣지 말 것), mcp_oauth_test.go 의 expired/other issuer/hmac 케이스에서 테스트용 로거 핸들러로 해당 원인 문자열이 찍히는지 단언한다. 같은 이유로 AUDIENCE_REJECTED/ACCOUNT_UNKNOWN/ACCOUNT_INACTIVE 분기도 request_id 와 사유를 로그에 남길 것.",
+    "docs/ADMIN_GUIDE.md 16.4 '계정은 만들지 않습니다' 문단 마지막 문장 — \"감사 기록에는 행위자가 `sso:<username>` 으로 남습니다\" 는 실제 코드 경로가 없다. /mcp 의 tools/call 은 감사 기록을 쓰지 않으며(internal/httpapi/mcp.go 에 audit 호출 없음), principal.User.Username 이 감사에 실리는 곳은 assets.go:816·updates.go:132 뿐이고 둘 다 /mcp 에서 도달하지 않는다. mcp_oauth_test.go:372 의 주석 'A tool call is recorded against the SSO subject' 도 단언이 없다. 고침: 문장을 삭제하거나(권장), 실제로 MCP 도구 호출을 감사에 남기고 테스트에서 audit_logs 행의 actor_name='sso:admin.user' 를 단언한다. 문서 약속과 코드가 다르면 안 된다는 캠페인 규칙 위반.",
+    "server/internal/httpapi/mcp_oauth.go:270-274, 413-419 — mcp.oauth.resource 도 비고 Keycloak RedirectURI 도 파싱되지 않으면 resource 가 요청의 Host 헤더에서 만들어지고, 그 값이 그대로 accepted aud 목록에 들어가 토큰의 aud 와 비교된다. 주석 스스로 'anybody can set a Host header' 라고 적고도 인증 경계 판정에 쓴다: 같은 realm 의 다른 배포(예: 스테이징 https://staging.example/mcp)용 토큰을 Host: staging.example 로 보내면 통과한다. RedirectURI 는 OIDCSettings.Validate 가 Enabled=false 일 때 검사하지 않으므로(auth/oidc.go:142-152) 비어 있을 수 있다. 고침: 설정에서 resource 를 만들 수 없으면 mcpOAuthState.Active=false 로 두고 Inactive 에 'resource identifier is required' 를 적어 메타데이터·토큰 검증 모두 닫고, updateMCPOAuthSettings 에서도 enabled=true 저장 시 400 으로 거부한다. Host 폴백은 aud 비교에서 제거하고 ADMIN_GUIDE 16.4 설정 표의 '그것도 없으면 요청의 Host 로 만듭니다(마지막 수단)' 문장을 그에 맞게 고친다. 테스트: RedirectURI 를 비운 상태에서 enabled 저장이 거부되는지, 또는 Host 를 바꾼 요청의 토큰이 거부되는지 단언."
+  ],
+  "notes": [
+    "실행 확인: go build ./..., go vet, go test ./internal/httpapi/ ./internal/auth/ ./internal/apikeys/ 모두 통과. 새 테스트 4개는 실제 라우터·authenticateAPIKey 미들웨어·TLS httptest JWKS 발급자·SQLite 를 통과하는 end-to-end 테스트이며 expired/nbf/other issuer/ID typ/cnf/no sub/HS256/garbage/foreign azp/unknown subject/inactive account/REST 경로/끄기 후 거부를 모두 단언한다. 거부 경로 테스트는 충분하다.",
+    "기본값 꺼짐 확인: settings 행이 없으면 defaultMCPOAuthConfig()(Enabled=false), 읽기는 아무것도 쓰지 않음(테스트에서 행 수 0 단언), 꺼져 있으면 메타데이터 404·토큰은 기존 INVALID_API_KEY 와 동일한 응답·기존 WWW-Authenticate 그대로.",
+    "권한 확대 없음: Principal.User.SuperAdmin 을 세팅하지 않고 Permissions 만 (mcp.oauth.scopes ∩ 계정 권한) 으로 채우며, auth/model.go:59 HasPermission 은 빈 목록을 '권한 없음' 으로 읽으므로(캠페인 규칙 1 확인) 교집합이 비면 mcp.access 부재로 403 이다. 계정 생성·비활성 복구 없음(SubjectUser 는 SELECT 만). 주체 종류 판정 게이트를 grep 한 결과 apiKeyFromContext 는 미사용이고 SessionID 를 보는 곳은 auth/service.go:390 의 uuid.Parse 뿐이라 'oauth:<id>' 도 안전하다(캠페인 규칙 2 확인).",
+    "비밀값 누출 없음: GET /admin/settings/mcp-oauth 응답·감사 before/after 값·로그에 client secret·토큰 원문이 실리지 않는다. 공개 경로 추가는 RFC 9728 메타데이터 두 경로뿐이고 꺼져 있으면 404. 마이그레이션 없음, revert 로 완전히 돌아온다. 설정 일괄 저장은 validate 후 단일 트랜잭션(캠페인 규칙 4 확인), diff 에 삭제된 기존 항목 없음(규칙 5 확인).",
+    "참고(차단 아님): external_api.go:21 이후 모든 외부 API 401 경로에서 mcpOAuthState (settings 테이블 조회 + oidcService.Settings) 를 호출한다. /mcp 가 아니면 결과를 쓰지 않으므로 r.URL.Path == mcpPath 일 때만 조회하도록 좁히면 잘못된 키 폭주 시 DB 부하를 피할 수 있다. auth/mcp_oauth.go:43 AccessTokenProvider 는 discovery(최대 15초) 동안 mutex 를 잡으므로 Keycloak 장애 시 JWT 모양 bearer 요청들이 직렬로 대기한다 — 캐시 성공 후에는 문제없음.",
+    "참고: 웹 로그인 이전의 legacy external_identities 행(issuer='')은 provisionUser 가 로그인 시 승격하지만 SubjectUser 는 보지 않으므로 그 사용자는 웹 콘솔 재로그인 전까지 ACCOUNT_UNKNOWN 을 받는다. 메시지가 그렇게 안내하므로 허용 가능."
+  ],
+  "risk": "medium"
+}

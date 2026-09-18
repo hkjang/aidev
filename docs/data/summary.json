@@ -1,5 +1,5 @@
 {
- "generated": "2026-09-19T03:51:11+09:00",
+ "generated": "2026-09-19T04:21:33+09:00",
  "site": "https://hkjang.github.io/aidev",
  "description": "Claude Code 자율 개선 에이전트가 hkjang 의 프로젝트를 개선·테스트·머지·릴리즈한 일일 보고. 오늘 4회차·릴리즈 3건, 누적 1030회차·릴리즈 357건, 주의 필요 23건.",
  "today": {
@@ -10,18 +10,18 @@
   "merged": 0,
   "nochange": 0,
   "failed": 1,
-  "cost_usd": 43.24,
-  "minutes": 121,
-  "sessions": 33
+  "cost_usd": 51.82,
+  "minutes": 145,
+  "sessions": 40
  },
  "totals": {
   "runs": 1030,
   "released": 357,
   "days": 18,
-  "cost_usd": 3659.25,
-  "minutes": 8832,
-  "tokens_in": 3904393600,
-  "tokens_out": 28621690
+  "cost_usd": 3667.83,
+  "minutes": 8856,
+  "tokens_in": 3911488879,
+  "tokens_out": 28688211
  },
  "alerts": [
   {
@@ -269,17 +269,19 @@
   }
  ],
  "health": {
-  "checked": "2026-09-19T03:45:04+09:00",
-  "last_run": "2026-09-19T02:38:36+09:00",
-  "seconds_since_last": 3985,
-  "runner_pid": "973539",
-  "runner_age_seconds": 1642,
-  "scheduler_status": "실행 중",
-  "scheduler_next_run": "2026-09-19 오전 3:50:00",
+  "checked": "2026-09-19T04:15:04+09:00",
+  "last_run": "2026-09-19T03:51:10+09:00",
+  "seconds_since_last": 1431,
+  "runner_pid": "",
+  "runner_age_seconds": 0,
+  "scheduler_status": "준비",
+  "scheduler_next_run": "2026-09-19 오전 4:20:00",
   "disk_percent": 72,
   "ok": true,
   "problems": [],
-  "actions": []
+  "actions": [
+   "소유 프로세스 없는 잠금 파일을 제거했다"
+  ]
  },
  "lessons": [
   {
@@ -828,10 +830,10 @@
    "why": "guard: held-expected — server/internal/auth/mcp_oauth.go server/internal/auth/oidc.go ",
    "evidence": "https://github.com/hkjang/aidev/tree/main/state/runs/2026-09-17-142314-Invenqor-improve",
    "labels": "",
-   "action": "PR 처리기가 매시간 살핀다 (아직 순서가 오지 않음) · 승인: PR 라벨 aidev-approved / 반려: aidev-rejected — 다음 회차에 러너가 승인 당시 커밋에만 CI 확인 후 머지·닫기",
+   "action": "PR 처리기가 다음 시간에 다시 시도 · 승인: PR 라벨 aidev-approved / 반려: aidev-rejected — 다음 회차에 러너가 승인 당시 커밋에만 CI 확인 후 머지·닫기",
    "date": "2026-09-17",
-   "shepherd": "",
-   "shepherd_action": ""
+   "shepherd": "보호 파일 · 심사 거절 → 다음 시간에 수정 (09-19 04:18) — - server/internal/httpapi/mcp_oauth.go:390-395 (and 397-402) — provider.Verifier(...).Verify(ctx, token) 의 err 를 버리고 'signature, issuer, or expiry' 라는 합성 메시지만 돌",
+   "shepherd_action": "review-reject"
   },
   {
    "kind": "PR",
@@ -843,10 +845,10 @@
    "why": "review: approved — 리뷰 승인 (risk=low); ci: no-ci — 이 커밋에 검사가 없음 (정책 allow_merge_without_ci 가 없으면 차단)",
    "evidence": "https://github.com/hkjang/aidev/tree/main/state/runs/2026-09-17-093305-sqlon-improve",
    "labels": "",
-   "action": "PR 처리기가 매시간 살핀다 (아직 순서가 오지 않음) · 승인: PR 라벨 aidev-approved / 반려: aidev-rejected — 다음 회차에 러너가 승인 당시 커밋에만 CI 확인 후 머지·닫기",
+   "action": "PR 처리기가 사람에게 넘김 — 이 커밋에 CI 검사가 없음 — 워크플로를 두거나 state/sqlon.policy.json 에 allow_merge_without_ci=true 를 적어야 머지된다 · 승인: PR 라벨 aidev-approved / 반려: aidev-rejected — 다음 회차에 러너가 승인 당시 커밋에만 CI 확인 후 머지·닫기",
    "date": "2026-09-17",
-   "shepherd": "",
-   "shepherd_action": ""
+   "shepherd": "CI 없음 · 사람 필요 (09-19 04:13) — 이 커밋에 CI 검사가 없음 — 워크플로를 두거나 state/sqlon.policy.json 에 allow_merge_without_ci=true 를 적어야 머지된다",
+   "shepherd_action": "needs-human"
   },
   {
    "kind": "PR",
@@ -858,10 +860,10 @@
    "why": "guard: held — .github/workflows/ci.yml internal/auth/login_test.go internal/auth/service.go ",
    "evidence": "https://github.com/hkjang/aidev/tree/main/state/runs/2026-09-17-085307-relio-improve",
    "labels": "",
-   "action": "PR 처리기가 매시간 살핀다 (아직 순서가 오지 않음) · 승인: PR 라벨 aidev-approved / 반려: aidev-rejected — 다음 회차에 러너가 승인 당시 커밋에만 CI 확인 후 머지·닫기",
+   "action": "PR 처리기가 사람에게 넘김 — 사람만 승인할 수 있는 파일을 건드림: .github/workflows/ci.yml  · 승인: PR 라벨 aidev-approved / 반려: aidev-rejected — 다음 회차에 러너가 승인 당시 커밋에만 CI 확인 후 머지·닫기",
    "date": "2026-09-17",
-   "shepherd": "",
-   "shepherd_action": ""
+   "shepherd": "보호 파일 · 사람 필요 (09-19 04:13) — 사람만 승인할 수 있는 파일을 건드림: .github/workflows/ci.yml ",
+   "shepherd_action": "needs-human"
   },
   {
    "kind": "PR",
@@ -873,10 +875,10 @@
    "why": "guard: held — .github/workflows/ci.yml ",
    "evidence": "https://github.com/hkjang/aidev/tree/main/state/runs/2026-09-17-085302-releasedock-improve",
    "labels": "",
-   "action": "PR 처리기가 매시간 살핀다 (아직 순서가 오지 않음) · 승인: PR 라벨 aidev-approved / 반려: aidev-rejected — 다음 회차에 러너가 승인 당시 커밋에만 CI 확인 후 머지·닫기",
+   "action": "PR 처리기가 사람에게 넘김 — 사람만 승인할 수 있는 파일을 건드림: .github/workflows/ci.yml  · 승인: PR 라벨 aidev-approved / 반려: aidev-rejected — 다음 회차에 러너가 승인 당시 커밋에만 CI 확인 후 머지·닫기",
    "date": "2026-09-17",
-   "shepherd": "",
-   "shepherd_action": ""
+   "shepherd": "보호 파일 · 사람 필요 (09-19 04:13) — 사람만 승인할 수 있는 파일을 건드림: .github/workflows/ci.yml ",
+   "shepherd_action": "needs-human"
   },
   {
    "kind": "PR",
@@ -888,10 +890,10 @@
    "why": "guard: held — internal/auth/auth.go internal/auth/oidc.go internal/auth/oidc_provider.go inter",
    "evidence": "https://github.com/hkjang/aidev/tree/main/state/runs/2026-09-17-051320-jupiq-improve",
    "labels": "",
-   "action": "PR 처리기가 매시간 살핀다 (아직 순서가 오지 않음) · 승인: PR 라벨 aidev-approved / 반려: aidev-rejected — 다음 회차에 러너가 승인 당시 커밋에만 CI 확인 후 머지·닫기",
+   "action": "PR 처리기가 승인함 — 승인 스윕이 CI 확인 뒤 머지·릴리즈 (아직 열려 있으면 CI 를 기다리는 중)",
    "date": "2026-09-17",
-   "shepherd": "",
-   "shepherd_action": ""
+   "shepherd": "보호 파일 · 승인 → 스윕이 CI 확인 후 머지 (09-19 04:13) — risk=medium — 리뷰 승인 (risk=medium)",
+   "shepherd_action": "approve"
   },
   {
    "kind": "PR",
@@ -903,25 +905,25 @@
    "why": "guard: held — web/src/auth/silentSso.ts ",
    "evidence": "https://github.com/hkjang/aidev/tree/main/state/runs/2026-09-17-051330-madi-improve",
    "labels": "",
-   "action": "PR 처리기가 매시간 살핀다 (아직 순서가 오지 않음) · 승인: PR 라벨 aidev-approved / 반려: aidev-rejected — 다음 회차에 러너가 승인 당시 커밋에만 CI 확인 후 머지·닫기",
+   "action": "PR 처리기가 승인함 — 승인 스윕이 CI 확인 뒤 머지·릴리즈 (아직 열려 있으면 CI 를 기다리는 중)",
    "date": "2026-09-17",
-   "shepherd": "",
-   "shepherd_action": ""
+   "shepherd": "보호 파일 · 승인 → 스윕이 CI 확인 후 머지 (09-19 04:10) — risk=medium — 리뷰 승인 (risk=medium)",
+   "shepherd_action": "approve"
   },
   {
    "kind": "PR",
    "project": "hunter",
    "title": "auto-improve: feat: suggest allowed origins found in the tracking snippet with ASCII-only scheme matching",
    "url": "https://github.com/hkjang/hunter/pull/5",
-   "sha": "7933580",
-   "summary": "8파일 +140/−6 · review held, PR open https://github.com/hkjang/hunter/pull/5",
+   "sha": "845b6b2",
+   "summary": "8파일 +139/−6 · review held, PR open https://github.com/hkjang/hunter/pull/5",
    "why": "review: rejected — 리뷰 거절: web/src/tracking.tsx:272 addOrigin()에 새로 추가된 setPreview(null)이 기존 기능을 퇴행시",
    "evidence": "https://github.com/hkjang/aidev/tree/main/state/runs/2026-09-17-042306-hunter-improve",
    "labels": "",
-   "action": "PR 처리기가 매시간 살핀다 (아직 순서가 오지 않음) · 승인: PR 라벨 aidev-approved / 반려: aidev-rejected — 다음 회차에 러너가 승인 당시 커밋에만 CI 확인 후 머지·닫기",
+   "action": "PR 처리기가 승인함 — 승인 스윕이 CI 확인 뒤 머지·릴리즈 (아직 열려 있으면 CI 를 기다리는 중)",
    "date": "2026-09-17",
-   "shepherd": "",
-   "shepherd_action": ""
+   "shepherd": "리뷰 거절 · 승인 → 스윕이 CI 확인 후 머지 (09-19 04:08) — risk=low — 리뷰 승인 (risk=low)",
+   "shepherd_action": "approve"
   },
   {
    "kind": "PR",
@@ -933,10 +935,10 @@
    "why": "guard: held — internal/contentsecurity/credential_shapes_test.go ",
    "evidence": "https://github.com/hkjang/aidev/tree/main/state/runs/2026-09-17-035313-git-ctx-improve",
    "labels": "",
-   "action": "PR 처리기가 매시간 살핀다 (아직 순서가 오지 않음) · 승인: PR 라벨 aidev-approved / 반려: aidev-rejected — 다음 회차에 러너가 승인 당시 커밋에만 CI 확인 후 머지·닫기",
+   "action": "PR 처리기가 사람에게 넘김 — 사람만 승인할 수 있는 파일을 건드림: internal/contentsecurity/credential_shapes_test.go  · 승인: PR 라벨 aidev-approved / 반려: aidev-rejected — 다음 회차에 러너가 승인 당시 커밋에만 CI 확인 후 머지·닫기",
    "date": "2026-09-17",
-   "shepherd": "",
-   "shepherd_action": ""
+   "shepherd": "보호 파일 · 사람 필요 (09-19 04:04) — 사람만 승인할 수 있는 파일을 건드림: internal/contentsecurity/credential_shapes_test.go ",
+   "shepherd_action": "needs-human"
   },
   {
    "kind": "PR",
@@ -948,10 +950,10 @@
    "why": "guard: held — app/api/auth/login/route.ts app/api/auth/session/route.ts ",
    "evidence": "https://github.com/hkjang/aidev/tree/main/state/runs/2026-09-17-035302-cutover-improve",
    "labels": "",
-   "action": "PR 처리기가 매시간 살핀다 (아직 순서가 오지 않음) · 승인: PR 라벨 aidev-approved / 반려: aidev-rejected — 다음 회차에 러너가 승인 당시 커밋에만 CI 확인 후 머지·닫기",
+   "action": "PR 처리기가 승인함 — 승인 스윕이 CI 확인 뒤 머지·릴리즈 (아직 열려 있으면 CI 를 기다리는 중)",
    "date": "2026-09-17",
-   "shepherd": "",
-   "shepherd_action": ""
+   "shepherd": "보호 파일 · 승인 → 스윕이 CI 확인 후 머지 (09-19 04:04) — risk=medium — 리뷰 승인 (risk=medium)",
+   "shepherd_action": "approve"
   },
   {
    "kind": "PR",
@@ -963,10 +965,10 @@
    "why": "guard: held — upgrade/admin-v2/src/auth/session.test.ts upgrade/admin-v2/src/auth/session.ts u",
    "evidence": "https://github.com/hkjang/aidev/tree/main/state/runs/2026-09-17-023310-aiportal-front-admin-improve",
    "labels": "",
-   "action": "PR 처리기가 매시간 살핀다 (아직 순서가 오지 않음) · 승인: PR 라벨 aidev-approved / 반려: aidev-rejected — 다음 회차에 러너가 승인 당시 커밋에만 CI 확인 후 머지·닫기",
+   "action": "PR 처리기가 승인함 — 승인 스윕이 CI 확인 뒤 머지·릴리즈 (아직 열려 있으면 CI 를 기다리는 중)",
    "date": "2026-09-17",
-   "shepherd": "",
-   "shepherd_action": ""
+   "shepherd": "보호 파일 · 승인 → 스윕이 CI 확인 후 머지 (09-19 03:57) — risk=medium — 리뷰 승인 (risk=medium)",
+   "shepherd_action": "approve"
   },
   {
    "kind": "PR",
@@ -2105,16 +2107,16 @@
   }
  ],
  "shepherd": {
-  "last_pass": "2026-09-19T02:41:11+09:00",
+  "last_pass": "2026-09-19T03:53:43+09:00",
   "enabled": true,
   "today": {
-   "needs-human": 6,
-   "review-reject": 4,
-   "fix-pushed": 5,
-   "approve": 3
+   "needs-human": 10,
+   "review-reject": 5,
+   "fix-pushed": 6,
+   "approve": 8
   },
-  "total": 103,
-  "pending_human": 30
+  "total": 114,
+  "pending_human": 34
  },
  "agents": {
   "rows": [
@@ -2128,13 +2130,13 @@
     "role": "구현 builder",
     "calls": 502,
     "metric": "러너 검증 통과 88% · 변경 없음 3",
-    "cost": 2799.27
+    "cost": 2799.87
    },
    {
     "role": "비평 critic",
     "calls": 327,
     "metric": "최종 승인 81% · 한 번이라도 거절 60 · 승인·머지 뒤 회귀 0/225",
-    "cost": 473.87
+    "cost": 481.86
    },
    {
     "role": "수리 repairer",
@@ -2156,14 +2158,14 @@
    },
    {
     "role": "PR 심사 shepherd-reviewer",
-    "calls": 75,
-    "metric": "승인 13 · 거절 32 · 사람 필요 30 · 승인 뒤 회귀 0",
-    "cost": 136.3
+    "calls": 85,
+    "metric": "승인 18 · 거절 33 · 사람 필요 34 · 승인 뒤 회귀 0",
+    "cost": 144.88
    },
    {
     "role": "PR 수리 shepherd-fixer",
-    "calls": 24,
-    "metric": "고쳐서 푸시 79%",
+    "calls": 25,
+    "metric": "고쳐서 푸시 80%",
     "cost": null
    },
    {
@@ -2591,13 +2593,13 @@
   },
   {
    "metric": "유효 개선당 비용",
-   "value": "$16.34",
+   "value": "$16.37",
    "detail": "비용 확인된 유효 개선 224건, 미확인 세션 13"
   },
   {
    "metric": "예외 처리 소요 시간(중앙값)",
-   "value": "9.0시간",
-   "detail": "해결된 경고 126건"
+   "value": "8.9시간",
+   "detail": "해결된 경고 127건"
   },
   {
    "metric": "실행 오류",
@@ -2622,7 +2624,7 @@
    "merged": 0,
    "nochange": 0,
    "failed": 1,
-   "cost_usd": 43.24
+   "cost_usd": 51.82
   },
   {
    "date": "2026-09-18",
@@ -2788,8 +2790,8 @@
    "merged": 9,
    "nochange": 2,
    "failed": 6,
-   "cost": 1399.86,
-   "minutes": 3186
+   "cost": 1408.44,
+   "minutes": 3211
   },
   {
    "key": "2026-W37",
@@ -2826,8 +2828,8 @@
    "merged": 112,
    "nochange": 16,
    "failed": 20,
-   "cost": 3659.25,
-   "minutes": 8832
+   "cost": 3667.83,
+   "minutes": 8856
   }
  ],
  "projects": [
@@ -2912,8 +2914,8 @@
    "last_ts": "2026-09-18T16:23:45+09:00",
    "last_status": "other",
    "last_result": "hold: budget",
-   "cost": 37.87,
-   "minutes": 92,
+   "cost": 38.79,
+   "minutes": 94,
    "grade": "C",
    "grade_why": "14일: 릴리즈 0, 실패 0, 경고 2, 회귀 0",
    "lessons": 0,
@@ -3028,8 +3030,8 @@
    "last_ts": "2026-09-18T16:33:57+09:00",
    "last_status": "other",
    "last_result": "hold: budget",
-   "cost": 34.3,
-   "minutes": 94,
+   "cost": 36.16,
+   "minutes": 101,
    "grade": "B",
    "grade_why": "14일: 릴리즈 2, 실패 0, 경고 1, 회귀 0",
    "lessons": 0,
@@ -3128,8 +3130,8 @@
    "last_ts": "2026-09-18T16:43:51+09:00",
    "last_status": "other",
    "last_result": "hold: budget",
-   "cost": 73.53,
-   "minutes": 239,
+   "cost": 75.13,
+   "minutes": 243,
    "grade": "B",
    "grade_why": "14일: 릴리즈 1, 실패 0, 경고 1, 회귀 0",
    "lessons": 0,
@@ -3175,8 +3177,8 @@
    "last_ts": "2026-09-18T15:46:15+09:00",
    "last_status": "released",
    "last_result": "merged https://github.com/hkjang/invenqor/pull/25, released v0.2.37",
-   "cost": 146.93,
-   "minutes": 475,
+   "cost": 149.19,
+   "minutes": 481,
    "grade": "D",
    "grade_why": "14일: 릴리즈 11, 실패 2, 경고 8, 회귀 0",
    "lessons": 0,
@@ -3243,8 +3245,8 @@
    "last_ts": "2026-09-18T16:53:57+09:00",
    "last_status": "other",
    "last_result": "hold: budget",
-   "cost": 110.01,
-   "minutes": 231,
+   "cost": 111.01,
+   "minutes": 234,
    "grade": "D",
    "grade_why": "14일: 릴리즈 8, 실패 0, 경고 5, 회귀 0",
    "lessons": 0,
@@ -3318,8 +3320,8 @@
    "last_ts": "2026-09-18T17:03:54+09:00",
    "last_status": "other",
    "last_result": "hold: budget",
-   "cost": 62.59,
-   "minutes": 151,
+   "cost": 63.53,
+   "minutes": 153,
    "grade": "C",
    "grade_why": "14일: 릴리즈 0, 실패 0, 경고 3, 회귀 0",
    "lessons": 0,
