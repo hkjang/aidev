@@ -89,6 +89,8 @@ fi
 # 캠페인 교훈: 리뷰·심사 거절과 회귀를 캠페인마다 일반 규칙으로 정제해 다음 저장소 회차에 붙인다.
 # 증거가 바뀌었을 때만 모델을 부른다 (입력 해시 비교).
 "$HERE/campaign-lessons.sh" >>"$REPO_DIR/logs/campaign-lessons.log" 2>&1 || true
+# 운영자 취향: 사람의 반려 사유·중지 사유·코파일럿 지시를 규칙으로 정제해 모든 회차·심사에 붙인다.
+"$HERE/operator-prefs.sh" >>"$REPO_DIR/logs/operator-prefs.log" 2>&1 || true
 
 # 프로젝트별 가이드를 docs/guides 로 모은다 — 25개 저장소를 열어 보지 않고 한곳에서 본다.
 # 내용이 같으면 git 이 새 blob 을 만들지 않으므로, 회차가 문서를 다시 쓸 때만 늘어난다.

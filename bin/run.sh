@@ -331,7 +331,7 @@ campaign_claim(){ # $1=프로젝트
     printf '%s\n' $projs | grep -qx "$1" || continue
     CAMPAIGN_ID=$id; CAMPAIGN_PROJECT=$1; CAMPAIGN_BUDGET=$budget; CAMPAIGN_IMPROVE_BUDGET=$ibudget; CAMPAIGN_EXPECTED_GUARD=$guardpat
     return 0
-  done < <(jq -r '.campaigns[]? | select(.done!=true) | "\(.id)\t\(.budget_usd)\t\(.until)\t\(.improve_budget_usd // "")\t\((.expected_guard // [])|join(" "))\t\(.projects|join(" "))"' "$cj" 2>/dev/null)
+  done < <(jq -r '.campaigns[]? | select(.done!=true and .paused!=true) | "\(.id)\t\(.budget_usd)\t\(.until)\t\(.improve_budget_usd // "")\t\((.expected_guard // [])|join(" "))\t\(.projects|join(" "))"' "$cj" 2>/dev/null)
   return 1
 }
 
@@ -344,7 +344,7 @@ campaign_room(){
     [[ "$until" < "$RUN_DATE" ]] && continue
     spent=$(jq -s --arg id "$id" '[.[]|select(.campaign==$id)|.cost_usd//0]|add // 0' "$DATA/usage.jsonl" 2>/dev/null || echo 0)
     awk -v s="$spent" -v b="$budget" 'BEGIN{exit !(s<b)}' && return 0
-  done < <(jq -r '.campaigns[]? | select(.done!=true) | "\(.id)\t\(.budget_usd)\t\(.until)"' "$cj" 2>/dev/null)
+  done < <(jq -r '.campaigns[]? | select(.done!=true and .paused!=true) | "\(.id)\t\(.budget_usd)\t\(.until)"' "$cj" 2>/dev/null)
   return 1
 }
 
@@ -412,8 +412,10 @@ approvals(){
       continue
     fi
     if [[ ",$labels," == *",aidev-rejected,"* ]]; then
+      # 사람이 남긴 마지막 코멘트를 교훈에 싣는다 — "반려함" 만 남으면 운영자 취향(operator-prefs)이 배울 것이 없다
+      rwhy=$(cd "$repo" && gh pr view "$pr" --json comments,title --jq '"「" + .title + "」 " + ([.comments[] | select(.author.login=="hkjang")] | last | .body // "")' 2>/dev/null | tr '\n' ' ' | head -c 400)
       (cd "$repo" && gh pr close "$pr" --comment "사람이 반려(aidev-rejected)했습니다 — 자율 개선 러너가 닫습니다." >/dev/null 2>&1) && log "$n: PR $pr 반려로 닫음"
-      jq -cn --arg ts "$(date -Iseconds)" --arg d "$RUN_DATE" --arg p "$n" --arg pr "$pr" --arg detail "사람이 PR 을 반려함. 같은 접근은 피할 것." '{ts:$ts,date:$d,project:$p,kind:"rejected-by-human",pr:$pr,detail:$detail}' >> "$STATE/lessons.jsonl"
+      jq -cn --arg ts "$(date -Iseconds)" --arg d "$RUN_DATE" --arg p "$n" --arg pr "$pr" --arg detail "사람이 PR 을 반려함. 같은 접근은 피할 것. ${rwhy:-}" '{ts:$ts,date:$d,project:$p,kind:"rejected-by-human",pr:$pr,detail:$detail}' >> "$STATE/lessons.jsonl"
       continue
     fi
     [[ ",$labels," == *",aidev-approved,"* ]] || continue
@@ -588,7 +590,7 @@ $(cat "$STATE/campaign-lessons/$id.md" 2>/dev/null)")
     # 목표는 base64 로 싣는다. 여러 줄짜리 목표를 그대로 넣으면 TSV 한 줄이 쪼개져
     # budget·until·projects 가 통째로 비고, 빈 until 이 기한 지난 것으로 읽혀 캠페인이
     # 시작하자마자 "기한 종료" 로 꺼졌다 (2026-09-10 guides-2026-09).
-  done < <(jq -r --arg d "$RUN_DATE" '.campaigns[]? | select(.done!=true) | "\(.id)\t\(.goal|@base64)\t\(.budget_usd)\t\(.until)\t\(.improve_budget_usd // "")\t\((.expected_guard // [])|join(" "))\t\(.projects|join(" "))"' "$cj" 2>/dev/null)
+  done < <(jq -r --arg d "$RUN_DATE" '.campaigns[]? | select(.done!=true and .paused!=true) | "\(.id)\t\(.goal|@base64)\t\(.budget_usd)\t\(.until)\t\(.improve_budget_usd // "")\t\((.expected_guard // [])|join(" "))\t\(.projects|join(" "))"' "$cj" 2>/dev/null)
 
   [ ${#cand_id[@]} -gt 0 ] || return 0
 
@@ -1220,6 +1222,10 @@ $(head -c 2500 <<<"$note")"
     [ -n "$camp" ] && [ -s "$STATE/campaign-lessons/$camp.md" ] && hold="$hold
 
 $(cat "$STATE/campaign-lessons/$camp.md")"
+    # 운영자 취향(bin/operator-prefs.sh): 사람이 반려하던 기준을 심사자가 먼저 적용한다
+    [ -s "$STATE/operator-preferences.md" ] && hold="$hold
+
+$(cat "$STATE/operator-preferences.md")"
     # ── 심사: 사람 대신 결정한다. 통과하면 기존 승인 경로(라벨 + approvals.jsonl)로 넘긴다.
     shepherd_budget_ok "$SHEPHERD_REVIEW_BUDGET" || { shepherd_note "$pr" "$head" "$cause" review-skipped "오늘 예산 소진 — 심사는 다음 날"; rm -rf "$OUT/home"; break; }
     # 심사자의 권고를 그대로 따른다: merge → 승인(위험도와 무관), fix → 다음 시간에 고침, human → 사람에게.
@@ -1504,8 +1510,9 @@ $(printf '%b' "$RUN_SPEC")
 이 프로젝트는 자율화 단계 'analyze' 입니다. 아이디어와 원장만 남기고 **코드를 바꾸거나 커밋하지 마세요** (커밋해도 버려집니다)."
   prompt=$(LEDGER_FILE="$OUT/ledger-entry.md" IDEAS_FILE="$OUT/ideas.json" OUT_DIR="$OUT" RUN_DATE="$RUN_DATE" FIX_NOTE="$fix_note" LESSONS="${lessons:-(없음)}" IDEAS_CONTENT="${ideas:-(없음)}" \
            REQUEST_NOTE="$request_note" CAMPAIGN_NOTE="$campaign_note" \
+           OPERATOR_PREFS="$(cat "$STATE/operator-preferences.md" 2>/dev/null)" \
            LEDGER_CONTENT="$(tail -n 60 "$ledger" 2>/dev/null || echo '(없음)')" \
-           envsubst '$LEDGER_FILE $IDEAS_FILE $OUT_DIR $RUN_DATE $LEDGER_CONTENT $FIX_NOTE $LESSONS $IDEAS_CONTENT $REQUEST_NOTE $CAMPAIGN_NOTE' < "$REPO_DIR/prompt.md")
+           envsubst '$LEDGER_FILE $IDEAS_FILE $OUT_DIR $RUN_DATE $LEDGER_CONTENT $FIX_NOTE $LESSONS $IDEAS_CONTENT $REQUEST_NOTE $CAMPAIGN_NOTE $OPERATOR_PREFS' < "$REPO_DIR/prompt.md")
   stage autonomy "$AUTONOMY_NOW" "$(policy "$n" '.demoted_reason' 2>/dev/null)"
   run_agent improve "$prompt" "$wt" "$ibudget" "Bash,Read,Edit,Write,Glob,Grep,WebFetch,WebSearch"
   merge_outputs

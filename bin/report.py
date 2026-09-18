@@ -341,6 +341,8 @@ def campaign_html(cmp, runs_all, usage_all):
     done = bool(cmp.get("done"))
     if done:
         status = '<span class="pill pill-nochange">완료</span>'
+    elif cmp.get("paused"):
+        status = '<span class="pill pill-merged">일시 정지</span>'
     elif dleft is not None and dleft < 0 or (budget and spent >= budget):
         status = '<span class="pill pill-failed">종료 예정</span>'
     else:
