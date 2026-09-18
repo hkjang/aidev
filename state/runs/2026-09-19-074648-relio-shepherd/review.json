@@ -1,0 +1,19 @@
+{
+  "verdict": "reject",
+  "recommend": "fix",
+  "reasons": [
+    "internal/oidc/mcp_oauth.go:261 거부 로그 `mcp oauth token refused` 에 요청 ID 가 없다. 미들웨어(internal/server/server.go:353-359)가 X-Request-ID 를 ctx 에 넣어 두고 AuthenticateMCPToken(ctx, raw) 도 ctx 를 받지만 httpx.RequestID(ctx) 를 읽지 않고 \"error\" 하나만 남긴다. 캠페인 규칙(4개 저장소 거절 사유)대로 `\"request_id\", httpx.RequestID(ctx)` 를 함께 남기고, 원본 검증 오류(서명·발급자·만료·nbf 원문 = Refusal.Cause)가 detail 로 들어가게 하라. 빈 requestID 를 넘기는 호출도 남기지 말 것(ctx 에 없으면 그 사실이 드러나도록).",
+    "internal/oidc/mcp_oauth_test.go 어떤 테스트도 실제 로거를 주입해 출력을 캡처하지 않는다. 모든 케이스가 svc := &Service{} (Log nil → slog.Default) 로 verifyMCPToken 을 직접 부르며, 로그를 남기는 AuthenticateMCPToken 은 한 번도 실행되지 않는다. slog.New(slog.NewTextHandler(&buf, nil)) 을 Service.Log 에 넣고 httpx.WithRequestID 로 만든 ctx 로 AuthenticateMCPToken 을 호출해, 만료·발급자·서명 각 원인의 원문이 로그에 찍히고 요청 ID 가 찍히는지 단언하는 테스트를 추가하라(Service.DB 가 필요하면 settings/DB 조회를 주입 가능하게 분리).",
+    "internal/oidc/mcp_oauth.go:473-474, 487-501, 511 mcpSigningKey 가 c.mu 를 잡은 채 fetchDiscovery 와 fetchSigningKeys(네트워크, newHTTPClient 타임아웃 12초)를 호출한다. Keycloak 이 닿지 않으면 JWT 모양 bearer 를 실은 모든 /mcp 요청이 뮤텍스 뒤에서 12초씩 직렬화되고, 첫 discovery 가 실패한 상태(discoveredAt zero)에서는 음성 캐시가 없어 요청마다 다시 시도한다. 캠페인 규칙: 뮤텍스는 캐시 읽기·쓰기에만 잡고 네트워크 호출은 밖에서(singleflight 등으로 중복만 합치기), 실패한 discovery 는 짧은 TTL(예 30초)로 음성 캐시하고, ctx 취소를 존중하라. 이 동작을 테스트로 고정할 것(응답이 느린 fake IdP 에 동시 요청 N 개를 보내 직렬화되지 않음을 단언).",
+    "internal/server/server.go:155 `GET /.well-known/oauth-protected-resource/{resource...}` 가 어떤 경로든(예 /.well-known/oauth-protected-resource/anything) /mcp 의 문서를 그대로 돌려준다. RFC 9728 은 경로별 메타데이터가 그 리소스의 것이어야 하므로, 요청 경로가 settings.Resource 의 path(/mcp) 와 같을 때(및 루트 변형)만 200, 그 외는 404 로 답하라."
+  ],
+  "notes": [
+    "확인된 것: 기본값 꺼짐(015 seed 'false', Active() 가 issuer·resource·mcp.enabled 를 모두 요구); 메타데이터 경로는 RFC 9728 이 요구하는 공개 경로 하나뿐이며 꺼지면 404; SSO 토큰은 AuthenticateMCP 에서만 소비되고 REST/admin 은 consult 하지 않음(테스트 있음); 계정은 oidc_subject+active=true 조회만, 생성·재활성화 없음; role 클레임은 권한이 되지 않음; 리소스 식별자는 설정(mcp.oauth.resource 또는 system.service_url)에서만 만들고 Host 헤더 대체 없음; HS*/none 거부, alg-키 유형 바인딩, jwks_uri 동일 출처 검사, kid 재조회 1초 스로틀; 만료·발급자·서명·aud·typ=ID·cnf·sub 없음 거부 테스트가 실제 RSA/EC 키와 fake IdP 로 실행됨(go test 통과). 토큰 원문은 로그·응답에 실리지 않음(테스트로 단언).",
+    "마이그레이션 015 는 INSERT … ON CONFLICT DO NOTHING 만 — 추가 전용, revert 로 되돌아옴.",
+    "KeyID==\"\" 센티널 점검: OAuth 주체는 KeyID=\"sso\" 와 비지 않는 KeyScopes(mcp:use 가 항상 포함)로 들어오므로 Has/ChannelAllowed 의 빈 값=세션 분기를 물려받지 않는다. 단 grantedScopes 는 토큰 scope 와 상한의 교집합이 비면 거부 대신 상한 전체를 준다(Keycloak 기본 'openid profile email' 을 위한 설계). 상한을 넘지는 않으므로 결함으로 보지 않았지만, 캠페인 규칙 문구와는 다르므로 다음 심사자가 알고 있을 것.",
+    "동작 변경: origin/main 에서는 relio_ 접두사가 아닌 bearer 가 모든 문(REST·admin 포함)에서 OIDCValidator 로 검증됐다. 이 PR 은 그 경로를 제거하고 /mcp 로 좁혔다(커밋 메시지에 명시, 문서화된 적 없는 경로). 권한 축소 방향이라 결함은 아니지만 릴리즈 노트에 적을 것.",
+    "web/src/pages/AdminPages.tsx OIDC save 는 /admin/oidc PUT 뒤 4개 설정을 Promise.all 로 각각 PUT 한다. 하나가 실패하면 나머지는 저장된 채 남을 수 있다(서버 일괄 저장 핸들러는 아니므로 거절 사유로 두지 않음).",
+    "보호 파일 중 internal/auth/service.go·principal_test.go 변경은 위의 항목 외에 결함 없음; migrations/015 는 추가 전용."
+  ],
+  "risk": "medium"
+}

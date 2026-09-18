@@ -1,0 +1,17 @@
+{
+  "verdict": "reject",
+  "recommend": "fix",
+  "reasons": [
+    "internal/app/mcpoauth.go:92-97, :264-265 대상(aud) 검사의 허용값이 요청 Host 로 만들어진다. mcp.oauth.resource 가 비어 있으면(마이그레이션 기본값이자 UI 가 허용하는 설정) resource() 가 requestBaseURL(r)+\"/mcp\" 즉 Host / X-Forwarded-Host 헤더로 리소스 식별자를 만들고 그 값이 accepted 목록의 첫 항목이 된다. 임시 테스트로 확인: enabledValues(idp,nil)(resource·audience 모두 빈 기본값) + aud=[\"https://other-app.intra/mcp\"] 인 토큰에 req.Host=\"other-app.intra\" 를 붙이면 verifyMCPAccessToken 이 refusal=nil, Scopes=[read mcp] 로 통과한다 — 같은 realm 의 다른 리소스 서버용 토큰이 Host 헤더 하나로 이 서버에 들어온다. 캠페인 규칙(jupiq) 그대로: 리소스 식별자와 aud 허용값은 설정값에서만 만들고, 설정이 비면 Host 로 대체하지 말 것. 고침 방향: validate() 에서 Enabled 일 때 Resource 또는 Audiences 중 하나를 필수로 요구하고, active() 에서도 둘 다 비면 꺼진 것으로 취급하며, 대상 검사(verifyMCPAccessToken)와 메타데이터의 resource 는 설정값만 쓰도록 하고 Host 기반 fallback 을 제거한다. 그리고 그 케이스(설정 비어 있음 + Host 조작)가 거부되는 테스트를 추가한다. TestProtectedResourceMetadata:161-164 의 'resource 비어 있으면 프록시 주소로 만든다' 단언은 이 결함을 정답으로 고정하고 있으니 함께 바꿔야 한다.",
+    "internal/app/mcpoauth.go:170-187 oauthProvider 가 sync.Mutex 를 잡은 채 oidc.NewProvider(discovery 네트워크 왕복)를 하고, context.WithoutCancel 로 요청 취소·데드라인까지 떼어 낸다. IdP 가 응답하지 않으면 JWT 모양 bearer 를 실은 모든 /mcp 요청이 뮤텍스 뒤에서 직렬로 대기하며, WithoutCancel + http.DefaultClient(타임아웃 없음)라 상한도 없다. 실패한 discovery 는 캐시되지 않아 요청마다 다시 시도한다. 캠페인 규칙(SecCheck) 그대로: 뮤텍스 밖에서(또는 singleflight 로) discovery 하고, 요청 컨텍스트를 존중하되 provider 가 뒤에 쓸 컨텍스트는 요청과 분리된 서버 수명 컨텍스트(예: context.Background + 타임아웃 붙은 http.Client)로 주며, 실패는 짧은 TTL(예: 30s)로 음성 캐시해 503 을 즉시 돌려준다. TestDiscoveryFailureIsNotAnInvalidToken 을 확장해 두 번째 요청이 IdP 를 다시 두드리지 않는지(fake IdP 호출 횟수)로 음성 캐시를 고정한다.",
+    "internal/app/mcpoauth.go:361 refuseMCPToken 의 거부 로그에 요청 ID 가 없다. server.go:57 의 middleware.RequestID 가 이미 X-Request-ID 를 채우므로 middleware.GetReqID(r.Context()) 를 \"request_id\" 로 함께 남겨야 한다(캠페인 규칙 1: 합성 문구를 돌려주는 모든 분기에서 원문 오류와 요청 ID 를 로그에). 원문 cause 는 남기고 있으니 request_id 만 추가하면 된다. 아울러 TestRefusedTokenGetsChallengeAndLoggedCause 는 만료 하나만 라우터를 지나 캡처된 로그로 확인하고 발급자·서명 원인은 TestVerifyMCPAccessToken 이 refusal 구조체 필드로만 본다 — 캠페인 규칙 2 에 맞게 만료·발급자(different provider)·서명(signature/HS256) 세 원인 각각을 실제 로거 버퍼에서 단언하고, 로그에 request_id 가 찍히는지도 단언한다(요청에 X-Request-ID 헤더를 넣고 그 값이 로그에 있는지).",
+    "internal/app/mcpoauth.go:312-313 mcpOAuthScopes 는 configured 가 비어 있으면 여전히 빈 슬라이스를 돌려준다(임시 테스트: mcpOAuthScopes(nil, [openid]) → granted=[] refusal=nil). validate() 가 저장 시 mcp 포함을 요구하지만 같은 파일 :85-87 주석이 인정하듯 옛 데이터·SQL 로 넣은 값은 검증을 거치지 않으며, active() 는 Scopes 를 보지 않는다. 그 경로로 빈 범위가 auth.go:146 apiScopes 에 실리면 mcp.go:30/:168 의 len(scopes)>0 센티널을 다시 지나 이전 심사 거절 사유와 같은 무제한 권한이 된다. 캠페인 규칙 3: 빈 값을 세션으로 읽는 분기를 새 주체가 물려받지 않게, mcpOAuthScopes(또는 oauthPrincipal)에서 최종 granted 가 비면 항상 insufficient_scope 로 거절하고(configured 가 비어도), active() 에 containsString(Scopes,\"mcp\") 를 포함시킨다. 테스트 케이스 {configured:\"\", carried:\"\" → refused} 를 TestMCPOAuthScopesAreCappedByAdmin 에 추가한다."
+  ],
+  "notes": [
+    "이전 거절 사유(교집합 비면 빈 범위)는 c075f4f 로 고쳐졌고 TestTokenOutsideAdminScopeCeilingIsRefused 가 실제 라우터를 지나 403 insufficient_scope 를 확인한다 — go test ./internal/app 통과 확인.",
+    "기본값 확인: mcp.oauth.enabled 기본 'false', 마이그레이션은 INSERT … ON CONFLICT DO NOTHING 추가만. 공개 경로는 RFC 9728 메타데이터 두 개뿐이며 꺼져 있으면 404. REST 경로는 토큰을 받지 않고 REST 401 에 도전 헤더가 붙지 않음을 테스트가 확인. 계정 자동 생성·role 승격·비활성 계정 복구 없음(source='oidc' AND active=true 조회). 설정 일괄 저장은 트랜잭션 안에서 전체 검증 후 커밋.",
+    "SettingsPage.tsx 의 삭제(-) 줄은 라벨 삼항식 재들여쓰기뿐이고 기존 설정 항목은 사라지지 않았다.",
+    "위 1·2번은 캠페인 규칙(jupiq, SecCheck)에 명시된 패턴 그대로이며, 1번은 실제 실행으로 우회를 재현했다. 고침 세션은 review.json 원문의 네 항목을 모두 처리한 뒤 다시 심사받을 것."
+  ],
+  "risk": "high"
+}

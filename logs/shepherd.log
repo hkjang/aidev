@@ -786,3 +786,34 @@ commit ba43d11e642b5cc55572a78df2ec25cf043eb13a.
 [06:38:07] done
 ===== 2026-09-19 06:38:07 shepherd done
 ===== 2026-09-19 07:35:01 shepherd start
+[07:35:26] shepherd: 후보 199건 (한 번에 최대 6건, 오늘 $59.9165155/$150)
+[07:37:04] SecCheck: [shepherd] PR #7 review → needs-human — 수정·심사를 2번 시도했지만 통과하지 못함 — 사람이 봐야 한다 
+[07:37:09] === shepherd jupiq PR #18 (원인 guard, run 2026-09-19-073709-jupiq-shepherd)
+[07:42:06] jupiq: review — 24 turns, 5m, $2.24, success
+[07:42:06] jupiq: [shepherd] PR #18 guard → review-reject — - internal/auth/mcp_oauth.go:312-320,282-283 (Resource()·authenticateMCPOAuth) mcp.oauth.resource가 비어 있으면 리소스 식별자를 요청의 Host 헤
+[07:42:10] === shepherd ptium PR #25 (원인 guard, run 2026-09-19-074210-ptium-shepherd)
+[07:46:45] ptium: review — 29 turns, 4m, $2.5, success
+[07:46:45] ptium: [shepherd] PR #25 guard → review-reject — - server/internal/httpapi/mcpoauth_test.go:30 — 캠페인 규칙 2 위반. /mcp 의 토큰 거부 로그(server.go:455 OnError: request_id · path · error)�
+[07:46:48] === shepherd relio PR #25 (원인 guard, run 2026-09-19-074648-relio-shepherd)
+[07:50:10] relio: review — 15 turns, 3m, $1.61, success
+[07:50:10] relio: [shepherd] PR #25 guard → review-reject — - internal/oidc/mcp_oauth.go:261 거부 로그 `mcp oauth token refused` 에 요청 ID 가 없다. 미들웨어(internal/server/server.go:353-359)가 X-Request-
+[07:50:13] === shepherd seaton PR #30 (원인 review, run 2026-09-19-075013-seaton-shepherd)
+[07:52:50] seaton: improve — 21 turns, 2m, $1.32, success
+[07:52:51] seaton: verify `go build ./...` → exit 0 (1s)
+[07:52:51] seaton: verify `go vet ./...` → exit 0 (0s)
+[07:52:51] seaton: verify `go test ./...` → exit 0 (0s)
+[07:53:02] seaton: verify `cd web && [ -d node_modules ] || npm ci --no-audit --no-fund` → exit 0 (11s)
+[07:53:03] seaton: verify `cd web && npm test --silent` → exit 0 (1s)
+[07:53:03] seaton: verify `cd web && [ -d node_modules ] || npm ci --no-audit --no-fund` → exit 0 (0s)
+[07:53:09] seaton: verify `cd web && npm run build --silent` → exit 0 (6s)
+[07:53:12] seaton: [shepherd] PR #30 review → fix-pushed — # fix-summary (commit c075f4f)  - 문제: `mcpOAuthScopes` 가 토큰 범위와 관리자 천장의 교집합이 비면 `[]` 를 돌려주고, `/mcp` 는 빈 �
+[07:55:42] seaton: review — 12 turns, 2m, $1.04, success
+[07:55:42] seaton: [shepherd] PR #30 review → review-reject — - internal/app/mcpoauth.go:92-97, :264-265 대상(aud) 검사의 허용값이 요청 Host 로 만들어진다. mcp.oauth.resource 가 비어 있으면(마이그
+[07:55:45] === shepherd visitflow PR #18 (원인 guard, run 2026-09-19-075545-visitflow-shepherd)
+[07:58:33] visitflow: review — 17 turns, 2m, $1.58, success
+[07:58:33] visitflow: [shepherd] PR #18 guard → review-reject — - internal/app/mcpoauth.go:103-108 (mcpResource) + internal/app/auth.go:604-614 (requestBaseURL): the resource identifier used for the aud check falls back to t
+[07:58:39] === shepherd DartFly PR #7 (원인 guard, run 2026-09-19-075838-DartFly-shepherd)
+[08:02:05] DartFly: review — 17 turns, 3m, $1.62, success
+[08:02:06] DartFly: [shepherd] PR #7 guard → review-reject — - internal/sso/accesstoken.go:183-199 keySet.lookup 이 s.mu 를 잡은 채 fetch(네트워크, 클라이언트 타임아웃 10초)를 부릅니다. 캐시된 k
+[08:02:07] shepherd: 이번 시간 몫(6건)을 다 썼다 — 나머지는 다음 시간에
+[08:02:07] shepherd: 처리 6건 — 승인 0 · 수정 푸시 1 · 사람 필요 1 (오늘 $71.826821/$150)

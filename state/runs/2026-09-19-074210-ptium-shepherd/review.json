@@ -1,0 +1,19 @@
+{
+  "verdict": "reject",
+  "recommend": "fix",
+  "reasons": [
+    "server/internal/httpapi/mcpoauth_test.go:30 — 캠페인 규칙 2 위반. /mcp 의 토큰 거부 로그(server.go:455 OnError: request_id · path · error)를 고정하는 테스트가 없다. ssoServer() 는 slog.DiscardHandler 를 쓰고, 어떤 테스트도 로그 출력을 캡처해 원문 err(Refusal.Cause, 예: \"sso token refused: audience …\")와 비어 있지 않은 request_id 가 들어 있음을 단언하지 않는다. 이 저장소의 기존 패턴은 internal/httpapi/handoff_test.go:187 의 `server.logger = slog.New(slog.NewTextHandler(&lines, nil))` 이다 — 그대로 써서, Authorization: Bearer a.b.c 로 /mcp 를 두드린 뒤 lines 에 `msg=\"authentication failed\"`, `request_id=<응답 body 의 requestId 와 같은 값>`, `error=\"sso token refused: audience\"` 가 있음을 단언하는 테스트를 추가할 것. (검토 세션에서 같은 시나리오를 임시 테스트로 실행해 로그가 실제로 request_id=6cb7…, error=\"sso token refused: audience\" 를 남기는 것은 확인했다 — 동작은 맞고 테스트만 빠졌다.)",
+    "server/internal/mcpoauth/authenticator_test.go:116 — 같은 규칙. Authenticator 픽스처가 Logger 를 nil 로 두어 authenticator.go:84-87 의 'MCP SSO is switched on but cannot take tokens' 경고(스위치는 켰는데 issuer/resource 가 없는 경우)가 어떤 테스트에도 잡히지 않는다. 픽스처에 bytes.Buffer 기반 slog.NewTextHandler 로거를 넣고, TestSwitchedOffATokenIsRefusedLikeABadKeyAndKeysAreUntouched 의 `f.policy = Policy{Enabled: true}` 분기에서 실제로 토큰을 한 번 보내 그 경고와 reason(\"resource identifier\")이 로그에 남음을 단언할 것. 또한 Enabled=false 일 때는 그 경고가 남지 않음도 함께 단언."
+  ],
+  "notes": [
+    "코드 자체는 결함을 찾지 못했다. 다음 세션은 설계를 바꾸지 말고 위 두 테스트만 보태면 된다.",
+    "확인한 것: 기본값 꺼짐(migrations.go mcp.oauth.enabled=false, Policy.Read 는 설정 읽기 실패 시 끄인 채 유지); 새 공개 경로는 RFC 9728 메타데이터 두 개뿐이며 SSO 비활성 시 404; 계정 자동 생성 없음(GetUserBySubject 만, identityMiddleware 는 ptium_user_id 로 GetUser); 정지 계정 거부; role 은 계정에서만(토큰 realm_access 무시, 테스트 있음); 비밀값 노출 없음(adminMCPOAuth 는 issuer/resource/audience/scopes 만); 거부 경로 테스트(만료·nbf·다른 issuer·HS256·타 키 서명·ID 토큰·cnf·sub 없음·다른 aud/azp·미등록·정지) 는 진짜 RSA 키와 가짜 IdP 로 실제 검증기를 통과함; 설정 저장은 validateSettingRelationships → PutBatch 순서로 전부 검증 후 저장; defaultSettings/OpenAPI enum 은 추가만(삭제된 항목 없음); 마이그레이션은 기본 설정 4개 추가뿐이라 revert 로 돌아옴.",
+    "주체 판별 분기(캠페인 규칙 3) 전수 확인: allowScope 는 api_key 와 mcp_oauth 를 같이 묶어 scope 로 제한하고, mcp_adapter 의 모든 도구 게이트가 allowScope 를 지난다. handlers_keys.go(scopesToGrant/mayGrant)·handlers_auth.go(세션 발급)의 api_key 전용 분기는 REST 체인에만 있고 mcp_oauth 주체는 /mcp 체인에서만 생기므로 도달 불가.",
+    "scope 규칙(캠페인 규칙 4): 이 저장소는 빈 scope 를 '무제한' 으로 읽지 않는다 — grantedScopes 는 항상 mcp:use + 관리자 목록(또는 토큰과의 교집합)을 돌려주고, 관리자 목록이 비면 저장 자체가 거부된다(validateSettingValue). 교집합이 비는 경우는 '토큰이 이 제품 어휘를 전혀 말하지 않음' 으로 보고 관리자 목록 전체를 주는데, 이는 설계 의도로 문서·주석·테스트가 일치한다.",
+    "JWKS(캠페인 규칙 5): jwks.go 의 refreshMu 는 단일 비행(single-flight) 잠금이고 캐시 읽기는 RWMutex 로 분리돼 있으며, 시작 시 키를 반드시 적재하고 강제 갱신은 5초 비율 제한이 있다. 이 PR 이 바꾼 부분이 아니고 /mcp 는 이전에도 같은 검증기를 지났으며, 이제는 policy.Active 를 먼저 보므로 SSO 꺼짐 상태에서는 JWKS 를 건드리지 않는다.",
+    "동작 변화(문서와 일치, 참고): (1) 웹 로그인 OIDC 검증기가 azp≠ClientID 인 토큰을 새로 거부한다 — OIDC 규격상 ID 토큰의 azp 는 client_id 여야 하므로 정상 배포에는 영향이 없지만, azp 가 다른 클라이언트를 가리키는 비표준 제공자 구성이라면 웹 로그인이 막힌다. (2) /mcp 체인에서 웹 로그인용 OIDC 검증기가 빠져, 이전에 (문서화되지 않은 채) 웹 토큰으로 /mcp 를 쓰던 클라이언트는 SSO 를 켜고 audience 를 등록해야 한다.",
+    "성능 참고: mcpoauth.Read 는 요청마다 설정 4개를 DB 에서 읽는다(JWT 를 실은 /mcp 요청, /mcp 401 챌린지, 메타데이터 조회). handoff.peers·mail 과 같은 저장소 관례라 결함으로 보지 않는다.",
+    "web/src/pages/mcpsso.test.ts 는 워크트리에 node_modules 가 없어 실행하지 못했다(소스는 읽어 확인). Go: build·vet·auth/httpapi/mcpoauth/settings 테스트 전부 통과."
+  ],
+  "risk": "medium"
+}

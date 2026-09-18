@@ -1,5 +1,5 @@
 {
- "generated": "2026-09-19T07:32:59+09:00",
+ "generated": "2026-09-19T08:02:07+09:00",
  "site": "https://hkjang.github.io/aidev",
  "description": "Claude Code 자율 개선 에이전트가 hkjang 의 프로젝트를 개선·테스트·머지·릴리즈한 일일 보고. 오늘 8회차·릴리즈 4건, 누적 1034회차·릴리즈 358건, 주의 필요 19건.",
  "today": {
@@ -10,18 +10,18 @@
   "merged": 3,
   "nochange": 0,
   "failed": 1,
-  "cost_usd": 103.1,
-  "minutes": 274,
-  "sessions": 77
+  "cost_usd": 115.01,
+  "minutes": 299,
+  "sessions": 85
  },
  "totals": {
   "runs": 1034,
   "released": 358,
   "days": 18,
-  "cost_usd": 3719.11,
-  "minutes": 8984,
-  "tokens_in": 3956631459,
-  "tokens_out": 29079012
+  "cost_usd": 3731.02,
+  "minutes": 9010,
+  "tokens_in": 3965513225,
+  "tokens_out": 29168551
  },
  "alerts": [
   {
@@ -221,17 +221,19 @@
   }
  ],
  "health": {
-  "checked": "2026-09-19T07:15:03+09:00",
-  "last_run": "2026-09-19T06:54:17+09:00",
-  "seconds_since_last": 1243,
-  "runner_pid": "1163800",
-  "runner_age_seconds": 987,
-  "scheduler_status": "실행 중",
-  "scheduler_next_run": "2026-09-19 오전 7:20:00",
+  "checked": "2026-09-19T07:45:03+09:00",
+  "last_run": "2026-09-19T07:32:58+09:00",
+  "seconds_since_last": 722,
+  "runner_pid": "",
+  "runner_age_seconds": 0,
+  "scheduler_status": "준비",
+  "scheduler_next_run": "2026-09-19 오전 7:50:00",
   "disk_percent": 72,
   "ok": true,
   "problems": [],
-  "actions": []
+  "actions": [
+   "소유 프로세스 없는 잠금 파일을 제거했다"
+  ]
  },
  "lessons": [
   {
@@ -585,10 +587,10 @@
    "why": "guard: held — internal/auth/service.go internal/sso/accesstoken.go internal/sso/accesstoken_te",
    "evidence": "https://github.com/hkjang/aidev/tree/main/state/runs/2026-09-18-061339-DartFly-improve",
    "labels": "",
-   "action": "PR 처리기가 매시간 살핀다 (아직 순서가 오지 않음) · 승인: PR 라벨 aidev-approved / 반려: aidev-rejected — 다음 회차에 러너가 승인 당시 커밋에만 CI 확인 후 머지·닫기",
+   "action": "PR 처리기가 다음 시간에 다시 시도 · 승인: PR 라벨 aidev-approved / 반려: aidev-rejected — 다음 회차에 러너가 승인 당시 커밋에만 CI 확인 후 머지·닫기",
    "date": "2026-09-18",
-   "shepherd": "",
-   "shepherd_action": ""
+   "shepherd": "보호 파일 · 심사 거절 → 다음 시간에 수정 (09-19 08:02) — - internal/sso/accesstoken.go:183-199 keySet.lookup 이 s.mu 를 잡은 채 fetch(네트워크, 클라이언트 타임아웃 10초)를 부릅니다. 캐시된 kid 의 조회도 같은 mu.Lock() 을 지나므로, 모르는 kid 토큰 하나가 JWKS 를 읽는",
+   "shepherd_action": "review-reject"
   },
   {
    "kind": "PR",
@@ -600,25 +602,25 @@
    "why": "guard: held-expected — internal/database/migrations/0016_mcp_oauth.sql ",
    "evidence": "https://github.com/hkjang/aidev/tree/main/state/runs/2026-09-18-053340-visitflow-improve",
    "labels": "",
-   "action": "PR 처리기가 매시간 살핀다 (아직 순서가 오지 않음) · 승인: PR 라벨 aidev-approved / 반려: aidev-rejected — 다음 회차에 러너가 승인 당시 커밋에만 CI 확인 후 머지·닫기",
+   "action": "PR 처리기가 다음 시간에 다시 시도 · 승인: PR 라벨 aidev-approved / 반려: aidev-rejected — 다음 회차에 러너가 승인 당시 커밋에만 CI 확인 후 머지·닫기",
    "date": "2026-09-18",
-   "shepherd": "",
-   "shepherd_action": ""
+   "shepherd": "보호 파일 · 심사 거절 → 다음 시간에 수정 (09-19 07:58) — - internal/app/mcpoauth.go:103-108 (mcpResource) + internal/app/auth.go:604-614 (requestBaseURL): the resource identifier used for the aud check falls back to t",
+   "shepherd_action": "review-reject"
   },
   {
    "kind": "PR",
    "project": "seaton",
    "title": "auto-improve: feat: MCP 를 Keycloak 액세스 토큰(OAuth 2.1)으로도 열기 — 리소스 메타데이터·401 도전·토큰 검증·계정 매핑",
    "url": "https://github.com/hkjang/seaton/pull/30",
-   "sha": "efc4874",
-   "summary": "20파일 +1716/−16 · review held, PR open https://github.com/hkjang/seaton/pull/30",
+   "sha": "c075f4f",
+   "summary": "20파일 +1761/−16 · review held, PR open https://github.com/hkjang/seaton/pull/30",
    "why": "review: rejected — 리뷰 거절: internal/app/mcpoauth.go:296-314 mcpOAuthScopes 가 교집합이 비면 빈 슬라이스를 돌려주는데, ",
    "evidence": "https://github.com/hkjang/aidev/tree/main/state/runs/2026-09-18-041337-seaton-improve",
    "labels": "",
-   "action": "PR 처리기가 매시간 살핀다 (아직 순서가 오지 않음) · 승인: PR 라벨 aidev-approved / 반려: aidev-rejected — 다음 회차에 러너가 승인 당시 커밋에만 CI 확인 후 머지·닫기",
+   "action": "PR 처리기가 다음 시간에 다시 시도 · 승인: PR 라벨 aidev-approved / 반려: aidev-rejected — 다음 회차에 러너가 승인 당시 커밋에만 CI 확인 후 머지·닫기",
    "date": "2026-09-18",
-   "shepherd": "",
-   "shepherd_action": ""
+   "shepherd": "리뷰 거절 · 심사 거절 → 다음 시간에 수정 (09-19 07:55) — - internal/app/mcpoauth.go:92-97, :264-265 대상(aud) 검사의 허용값이 요청 Host 로 만들어진다. mcp.oauth.resource 가 비어 있으면(마이그레이션 기본값이자 UI 가 허용하는 설정) resource() 가 requestBaseURL(",
+   "shepherd_action": "review-reject"
   },
   {
    "kind": "PR",
@@ -630,10 +632,10 @@
    "why": "guard: held-expected — internal/auth/principal_test.go internal/auth/service.go migrations/015_mcp_oaut",
    "evidence": "https://github.com/hkjang/aidev/tree/main/state/runs/2026-09-18-032335-relio-improve",
    "labels": "",
-   "action": "PR 처리기가 매시간 살핀다 (아직 순서가 오지 않음) · 승인: PR 라벨 aidev-approved / 반려: aidev-rejected — 다음 회차에 러너가 승인 당시 커밋에만 CI 확인 후 머지·닫기",
+   "action": "PR 처리기가 다음 시간에 다시 시도 · 승인: PR 라벨 aidev-approved / 반려: aidev-rejected — 다음 회차에 러너가 승인 당시 커밋에만 CI 확인 후 머지·닫기",
    "date": "2026-09-18",
-   "shepherd": "",
-   "shepherd_action": ""
+   "shepherd": "보호 파일 · 심사 거절 → 다음 시간에 수정 (09-19 07:50) — - internal/oidc/mcp_oauth.go:261 거부 로그 `mcp oauth token refused` 에 요청 ID 가 없다. 미들웨어(internal/server/server.go:353-359)가 X-Request-ID 를 ctx 에 넣어 두고 AuthenticateM",
+   "shepherd_action": "review-reject"
   },
   {
    "kind": "PR",
@@ -645,10 +647,10 @@
    "why": "guard: held-expected — server/internal/auth/middleware.go server/internal/auth/oidc.go server/internal/",
    "evidence": "https://github.com/hkjang/aidev/tree/main/state/runs/2026-09-18-023331-ptium-improve",
    "labels": "",
-   "action": "PR 처리기가 매시간 살핀다 (아직 순서가 오지 않음) · 승인: PR 라벨 aidev-approved / 반려: aidev-rejected — 다음 회차에 러너가 승인 당시 커밋에만 CI 확인 후 머지·닫기",
+   "action": "PR 처리기가 다음 시간에 다시 시도 · 승인: PR 라벨 aidev-approved / 반려: aidev-rejected — 다음 회차에 러너가 승인 당시 커밋에만 CI 확인 후 머지·닫기",
    "date": "2026-09-18",
-   "shepherd": "",
-   "shepherd_action": ""
+   "shepherd": "보호 파일 · 심사 거절 → 다음 시간에 수정 (09-19 07:46) — - server/internal/httpapi/mcpoauth_test.go:30 — 캠페인 규칙 2 위반. /mcp 의 토큰 거부 로그(server.go:455 OnError: request_id · path · error)를 고정하는 테스트가 없다. ssoServer() 는 slog",
+   "shepherd_action": "review-reject"
   },
   {
    "kind": "PR",
@@ -660,10 +662,10 @@
    "why": "guard: held-expected — internal/auth/auth.go internal/auth/authtest/idp.go internal/auth/mcp_oauth.go i",
    "evidence": "https://github.com/hkjang/aidev/tree/main/state/runs/2026-09-17-224338-jupiq-improve",
    "labels": "",
-   "action": "PR 처리기가 매시간 살핀다 (아직 순서가 오지 않음) · 승인: PR 라벨 aidev-approved / 반려: aidev-rejected — 다음 회차에 러너가 승인 당시 커밋에만 CI 확인 후 머지·닫기",
+   "action": "PR 처리기가 다음 시간에 다시 시도 · 승인: PR 라벨 aidev-approved / 반려: aidev-rejected — 다음 회차에 러너가 승인 당시 커밋에만 CI 확인 후 머지·닫기",
    "date": "2026-09-17",
-   "shepherd": "",
-   "shepherd_action": ""
+   "shepherd": "보호 파일 · 심사 거절 → 다음 시간에 수정 (09-19 07:42) — - internal/auth/mcp_oauth.go:312-320,282-283 (Resource()·authenticateMCPOAuth) mcp.oauth.resource가 비어 있으면 리소스 식별자를 요청의 Host 헤더로 만들고, 그 값을 그대로 aud 허용값으로 쓴다(mcpAu",
+   "shepherd_action": "review-reject"
   },
   {
    "kind": "PR",
@@ -750,10 +752,10 @@
    "why": "guard: held-expected — internal/auth/auth.go internal/auth/mcpoauth.go internal/auth/mcpoauth_test.go i",
    "evidence": "https://github.com/hkjang/aidev/tree/main/state/runs/2026-09-17-162321-SecCheck-improve",
    "labels": "",
-   "action": "PR 처리기가 다음 시간에 다시 시도 · 승인: PR 라벨 aidev-approved / 반려: aidev-rejected — 다음 회차에 러너가 승인 당시 커밋에만 CI 확인 후 머지·닫기",
+   "action": "PR 처리기가 사람에게 넘김 — 수정·심사를 2번 시도했지만 통과하지 못함 — 사람이 봐야 한다 · 승인: PR 라벨 aidev-approved / 반려: aidev-rejected — 다음 회차에 러너가 승인 당시 커밋에만 CI 확인 후 머지·닫기",
    "date": "2026-09-17",
-   "shepherd": "리뷰 거절 · 심사 거절 → 다음 시간에 수정 (09-19 05:49) — - internal/auth/mcpoauth.go:172-190 mcpProvider 가 a.providers.mu 를 잡은 채 oidc.NewProvider(http.Client Timeout 10초, context.WithoutCancel 이라 클라이언트가 끊어도 안 풀림)를 호출하",
-   "shepherd_action": "review-reject"
+   "shepherd": "리뷰 거절 · 사람 필요 (09-19 07:37) — 수정·심사를 2번 시도했지만 통과하지 못함 — 사람이 봐야 한다",
+   "shepherd_action": "needs-human"
   },
   {
    "kind": "PR",
@@ -2005,16 +2007,16 @@
   }
  ],
  "shepherd": {
-  "last_pass": "2026-09-19T05:35:58+09:00",
+  "last_pass": "2026-09-19T07:35:25+09:00",
   "enabled": true,
   "today": {
-   "needs-human": 11,
-   "review-reject": 10,
-   "fix-pushed": 11,
+   "needs-human": 12,
+   "review-reject": 16,
+   "fix-pushed": 12,
    "approve": 14
   },
-  "total": 131,
-  "pending_human": 35
+  "total": 139,
+  "pending_human": 36
  },
  "agents": {
   "rows": [
@@ -2028,13 +2030,13 @@
     "role": "구현 builder",
     "calls": 506,
     "metric": "러너 검증 통과 88% · 변경 없음 3",
-    "cost": 2816.1
+    "cost": 2817.42
    },
    {
     "role": "비평 critic",
     "calls": 331,
     "metric": "최종 승인 82% · 한 번이라도 거절 61 · 승인·머지 뒤 회귀 0/229",
-    "cost": 507.9
+    "cost": 518.48
    },
    {
     "role": "수리 repairer",
@@ -2056,19 +2058,19 @@
    },
    {
     "role": "PR 심사 shepherd-reviewer",
-    "calls": 97,
-    "metric": "승인 24 · 거절 38 · 사람 필요 35 · 승인 뒤 회귀 0",
-    "cost": 178.76
+    "calls": 104,
+    "metric": "승인 24 · 거절 44 · 사람 필요 36 · 승인 뒤 회귀 0",
+    "cost": 190.67
    },
    {
     "role": "PR 수리 shepherd-fixer",
-    "calls": 30,
+    "calls": 31,
     "metric": "고쳐서 푸시 83%",
     "cost": null
    },
    {
     "role": "기록·학습 historian",
-    "calls": 48,
+    "calls": 49,
     "metric": "캠페인 교훈 37개 · 운영자 규칙 10개",
     "cost": 0.27
    },
@@ -2413,14 +2415,14 @@
     "git-ctx": "pr"
    },
    "lessons": [
-    "토큰 검증 오류(서명·발급자·만료·nbf·audience)를 클라이언트용 합성 메시지로 바꾸는 분기를 쓰기 전에, 이 저장소의 요청 ID 를 미들웨어가 어디에 채우고 핸들러가 어떻게 읽는지 소스에서 찾아, 그 분기에서 원문 err 와 요청 ID 를 반드시 운영 로그로 남긴다(401 을 쓰는 공용 헬퍼가 로그를 남기지 않는지도 확인).",
-    "토큰 거부 로그는 테스트에서 실제 로그 출력을 캡처해 원문 err 와 요청 ID 가 들어 있음을 단언한다. 이 저장소의 기존 테스트에서 로그 캡처 패턴(기본 로거 교체, 버퍼 핸들러 등)을 먼저 찾아 그대로 쓰고, 테스트 생성자에 nil logger 를 넘기지 않는다.",
-    "SSO 토큰이라는 새 주체를 추가할 때, 기존 코드가 '토큰 ID 유무', 'bearer 여부', '외부 에이전트 여부' 로 판단하는 모든 분기를 grep 으로 전부 나열하고 하나씩 새 주체에도 맞게 갱신한다. 한 곳만 고치고 나머지를 남기면 안 된다.",
-    "scope 교집합·축소를 구현하기 전에 이 저장소가 '빈 scope' 를 무엇으로 해석하는지(무제한인지, 거부인지) 소스에서 확인하고, 관리자 천장과 토큰 scope 의 교집합이 비면 빈 목록을 돌려주지 말고 명시적으로 거부한다. 교집합이 비는 경우를 테스트로 고정한다.",
-    "OIDC discovery 나 JWKS 조회 같은 네트워크 호출은 공유 뮤텍스를 쥔 채 하지 않는다(잠금은 캐시 읽기/쓰기에만). 실패한 discovery 도 짧은 TTL 로 캐시(negative cache)하고, 요청 컨텍스트 취소를 끊지 않는다.",
-    "설정 저장 API 에 검증을 넣을 때는 모든 키를 먼저 검증하고 하나라도 실패하면 아무것도 저장하지 않는 순서로 구현하며, 순회 중 즉시 저장하지 않는다. OpenAPI/문서에 적은 원자성 약속과 실제 핸들러 동작이 일치하는지 리뷰 전에 대조한다.",
-    "기존 설정 정의·메타데이터 목록에 새 항목을 끼워넣을 때는 diff 를 보고 삭제(-)된 기존 항목이 없는지 확인한다. 변경은 추가만이어야 하고, 기존 키가 여전히 API/콘솔에서 조회·수정되는지 테스트로 확인한다.",
-    "시작 전에 최신 base 위로 브랜치를 맞추고, 이전 심사 결과가 있으면 처리기가 요약한 것이 아니라 review.json 원문을 끝까지 읽어 사유 목록을 모두 나열한 뒤 각각 '고침' 또는 '이유와 함께 보류' 로 처리한다. 잘린 사유를 'Not addressed' 로 남긴 채 재제출하지 않는다."
+    "토큰 검증 실패를 클라이언트용 합성 문구로 바꾸는 모든 분기에서 원본 검증 오류(서명·발급자·만료·nbf 원문)와 요청 ID 를 로그에 남긴다. 요청 ID 는 미들웨어가 이미 채운 X-Request-ID 를 읽어 인증 함수까지 넘기고, 빈 문자열을 넘기는 로그 호출을 남기지 않는다.",
+    "그 거부 로그 호출을 테스트로 고정한다: 실제 로거를 주입해 출력을 버퍼로 캡처하고, 만료·발급자·서명 각 원인의 원문이 detail 에 들어가는지와 요청 ID 가 찍히는지를 단언한다. 테스트에서 nil 로거로 서버를 만들지 않는다.",
+    "새 주체 유형(SSO subject)이나 범위 교집합을 도입하기 전에, 기존 코드에서 '빈 값'을 세션·내부 사용자로 해석하는 분기(TokenID==\"\", len(scopes)==0 등)를 전부 grep 해서 새 주체를 포함하도록 고친다. 범위 교집합이 비면 빈 슬라이스가 아니라 거부를 돌려준다.",
+    "리소스 식별자와 aud 허용값은 설정값에서만 만든다. 설정이 비어 있을 때 요청의 Host 헤더로 대체하지 말고, 기능을 끄거나 시작 시 오류로 거부한다.",
+    "OIDC provider discovery 같은 네트워크 호출을 뮤텍스를 잡은 채 하지 않는다. 요청 컨텍스트 취소를 존중하고(WithoutCancel 금지), 실패한 discovery 도 짧은 TTL 로 음성 캐시한다.",
+    "설정 일괄 저장 핸들러는 모든 키를 먼저 검증한 뒤에만 저장한다. map 을 순회하며 키마다 즉시 저장하지 않고, 문서가 약속한 '실패 시 아무것도 저장하지 않음'과 실제 동작이 일치하는지 확인한다.",
+    "기존 설정 정의 목록에 새 항목을 끼워넣을 때 diff 의 삭제(-) 줄을 확인해 기존 항목이 사라지지 않았는지 검사하고, 기존 키의 GET/PUT 가 여전히 동작하는지 테스트한다.",
+    "고침 커밋을 만들기 전에 이전 심사 사유를 처리기 요약이 아니라 원문(review.json)에서 끝까지 다시 읽고, fix-summary 에 'Not addressed' 항목이 남지 않게 한다."
    ]
   }
  ],
@@ -2493,13 +2495,13 @@
   },
   {
    "metric": "유효 개선당 비용",
-   "value": "$16.60",
+   "value": "$16.66",
    "detail": "비용 확인된 유효 개선 224건, 미확인 세션 13"
   },
   {
    "metric": "예외 처리 소요 시간(중앙값)",
    "value": "8.5시간",
-   "detail": "해결된 경고 130건"
+   "detail": "해결된 경고 131건"
   },
   {
    "metric": "실행 오류",
@@ -2524,7 +2526,7 @@
    "merged": 3,
    "nochange": 0,
    "failed": 1,
-   "cost_usd": 103.1
+   "cost_usd": 115.01
   },
   {
    "date": "2026-09-18",
@@ -2690,8 +2692,8 @@
    "merged": 12,
    "nochange": 2,
    "failed": 6,
-   "cost": 1459.72,
-   "minutes": 3339
+   "cost": 1471.63,
+   "minutes": 3364
   },
   {
    "key": "2026-W37",
@@ -2728,8 +2730,8 @@
    "merged": 115,
    "nochange": 16,
    "failed": 20,
-   "cost": 3719.11,
-   "minutes": 8984
+   "cost": 3731.02,
+   "minutes": 9010
   }
  ],
  "projects": [
@@ -2955,8 +2957,8 @@
    "last_ts": "2026-09-18T15:32:29+09:00",
    "last_status": "released",
    "last_result": "merged https://github.com/hkjang/DartFly/pull/8, released v2.70.0",
-   "cost": 66.1,
-   "minutes": 137,
+   "cost": 67.72,
+   "minutes": 140,
    "grade": "D",
    "grade_why": "14일: 릴리즈 3, 실패 0, 경고 5, 회귀 0",
    "lessons": 0,
@@ -3145,8 +3147,8 @@
    "last_ts": "2026-09-18T16:53:57+09:00",
    "last_status": "other",
    "last_result": "hold: budget",
-   "cost": 111.01,
-   "minutes": 234,
+   "cost": 113.24,
+   "minutes": 239,
    "grade": "D",
    "grade_why": "14일: 릴리즈 8, 실패 0, 경고 5, 회귀 0",
    "lessons": 0,
@@ -3442,8 +3444,8 @@
    "last_ts": "2026-09-18T02:53:40+09:00",
    "last_status": "other",
    "last_result": "guarded files, PR open https://github.com/hkjang/ptium/pull/25",
-   "cost": 129.77,
-   "minutes": 281,
+   "cost": 132.27,
+   "minutes": 285,
    "grade": "D",
    "grade_why": "14일: 릴리즈 8, 실패 0, 경고 2, 회귀 2",
    "lessons": 2,
@@ -3536,8 +3538,8 @@
    "last_ts": "2026-09-18T03:43:45+09:00",
    "last_status": "other",
    "last_result": "guarded files, PR open https://github.com/hkjang/relio/pull/25",
-   "cost": 107.72,
-   "minutes": 226,
+   "cost": 109.33,
+   "minutes": 229,
    "grade": "D",
    "grade_why": "14일: 릴리즈 5, 실패 0, 경고 9, 회귀 3",
    "lessons": 3,
@@ -3586,8 +3588,8 @@
    "last_ts": "2026-09-18T04:37:56+09:00",
    "last_status": "other",
    "last_result": "review held, PR open https://github.com/hkjang/seaton/pull/30",
-   "cost": 71.07,
-   "minutes": 164,
+   "cost": 73.43,
+   "minutes": 170,
    "grade": "A",
    "grade_why": "14일: 릴리즈 3, 실패 0, 경고 0, 회귀 0",
    "lessons": 0,
@@ -3751,8 +3753,8 @@
    "last_ts": "2026-09-18T05:54:06+09:00",
    "last_status": "other",
    "last_result": "guarded files, PR open https://github.com/hkjang/visitflow/pull/18",
-   "cost": 72.06,
-   "minutes": 213,
+   "cost": 73.65,
+   "minutes": 216,
    "grade": "D",
    "grade_why": "14일: 릴리즈 5, 실패 1, 경고 5, 회귀 0",
    "lessons": 0,
