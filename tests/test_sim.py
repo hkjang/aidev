@@ -78,6 +78,19 @@ class Agents(unittest.TestCase):
         r = run(scn(review="reject", repair="none"))
         self.assertEqual(r["outcome"], "review-pending", r)
         self.assertEqual(r["stages"].get("repair"), "nothing")
+        self.assertEqual(r["stages"].get("arbiter"), "rejected")
+
+    def test_arbiter_sides_with_repairer_and_merges(self):
+        r = run(scn(review="reject", repair="none", arbiter="approve"))
+        self.assertEqual(r["outcome"], "release-ready", r)
+        self.assertEqual(r["stages"].get("repair"), "nothing")
+        self.assertEqual(r["stages"].get("arbiter"), "approved")
+        self.assertEqual(r["prs"][0]["state"], "MERGED")
+
+    def test_no_arbiter_without_repairer_rebuttal(self):
+        r = run(scn(review="reject", repair="none", repair_note=False, arbiter="approve"))
+        self.assertEqual(r["outcome"], "review-pending", r)
+        self.assertNotIn("arbiter", r["stages"])
 
 
 class Blocking(unittest.TestCase):

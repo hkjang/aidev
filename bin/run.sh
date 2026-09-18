@@ -142,6 +142,8 @@ stage_ko(){ # $1=단계 $2=상태
     "review rejected")        echo "독립 리뷰가 거절했습니다";;
     "review hold")            echo "리뷰를 돌리지 못했습니다";;
     "repair done")            echo "비평 사유대로 고쳐 재검증을 통과했습니다";;
+    "arbiter approved")       echo "중재자가 수리 쪽 손을 들어 승인했습니다";;
+    "arbiter rejected")       echo "중재자가 비평 쪽 손을 들어 보류합니다";;
     "repair nothing"|"repair failed"|"repair hold") echo "수리하지 못해 PR 을 열고 보류합니다";;
     "ci passed")              echo "CI 검사를 통과했습니다";;
     "ci failed")              echo "CI 검사에 실패했습니다";;
@@ -212,10 +214,9 @@ agent_model(){
   local m; m=$(jq -r --arg ph "$1" '[.agents[] | select(.phase==$ph) | .model] | map(select(length>0)) | first // empty' "$REPO_DIR/agents/registry.json" 2>/dev/null)
   printf '%s' "${m:-$MODEL}"
 }
-run_agent(){ # $1=단계 $2=프롬프트 $3=작업 디렉터리 $4=예산 $5=허용 도구
-  local phase=$1 prompt=$2 wd=$3 budget=$4 tools=$5 envfile="$STATE/$n.env"
-  # 임시 홈에는 Claude 의 계정 설정(~/.claude.json)만 복사한다 — 자격증명은 CLAUDE_CONFIG_DIR/.credentials.json 에서 읽는다
-  mkdir -p "$OUT/home"; [ -f "$REAL_HOME/.claude.json" ] && cp "$REAL_HOME/.claude.json" "$OUT/home/.claude.json"
+# 한 번의 claude 호출. run_agent 의 지역 변수(phase·prompt·wd·budget·tools·envfile)를 그대로 쓴다.
+run_claude_once(){ # $1=모델
+  local mdl=$1
   ( cd "$wd" && env -i \
       HOME="$OUT/home" USER="$USER" LANG=C.UTF-8 TERM=dumb PATH="$PATH" \
       CLAUDE_CONFIG_DIR="$CLAUDE_CFG" \
@@ -225,10 +226,20 @@ run_agent(){ # $1=단계 $2=프롬프트 $3=작업 디렉터리 $4=예산 $5=허
       DOCKER_HOST="${DOCKER_HOST:-}" AIDEV_OUT="$OUT" \
       GIT_CONFIG_COUNT=2 GIT_CONFIG_KEY_0=remote.origin.pushurl GIT_CONFIG_VALUE_0=DISABLED GIT_CONFIG_KEY_1=credential.helper GIT_CONFIG_VALUE_1= \
       bash -c '[ -f "$0" ] && { set -a; . "$0"; set +a; }; exec "$@"' "$envfile" \
-      timeout -k 30 "$(policy "$n" ".timeouts.$phase" | grep -E '^[0-9]+$' || case "$phase" in improve|repair) echo $T_IMPROVE;; review) echo $T_REVIEW;; scout) echo ${T_SCOUT:-600};; release) echo $T_RELEASE;; *) echo $T_ASSETS;; esac)" \
-      claude -p "$prompt" --model "$(agent_model "$phase")" --settings "$CLAUDE_SETTINGS" --permission-mode acceptEdits \
+      timeout -k 30 "$(policy "$n" ".timeouts.$phase" | grep -E '^[0-9]+$' || case "$phase" in improve|repair) echo $T_IMPROVE;; review|arbiter) echo $T_REVIEW;; scout) echo ${T_SCOUT:-600};; release) echo $T_RELEASE;; *) echo $T_ASSETS;; esac)" \
+      claude -p "$prompt" --model "$mdl" --settings "$CLAUDE_SETTINGS" --permission-mode acceptEdits \
         --allowedTools "$tools" --add-dir "$OUT" --max-budget-usd "$budget" --output-format json \
-  ) > "$OUT/agent-$phase.json" 2>"$OUT/agent-$phase.txt"; local rc=$?
+  ) > "$OUT/agent-$phase.json" 2>"$OUT/agent-$phase.txt"
+}
+run_agent(){ # $1=단계 $2=프롬프트 $3=작업 디렉터리 $4=예산 $5=허용 도구
+  local phase=$1 prompt=$2 wd=$3 budget=$4 tools=$5 envfile="$STATE/$n.env" mdl rc
+  # 임시 홈에는 Claude 의 계정 설정(~/.claude.json)만 복사한다 — 자격증명은 CLAUDE_CONFIG_DIR/.credentials.json 에서 읽는다
+  mkdir -p "$OUT/home"; [ -f "$REAL_HOME/.claude.json" ] && cp "$REAL_HOME/.claude.json" "$OUT/home/.claude.json"
+  mdl=$(agent_model "$phase"); run_claude_once "$mdl"; rc=$?
+  # 역할별 모델(agents/registry.json)이 막혀 있으면 기본 모델로 한 번 더 — 명부에 모델을 잘못 적어도 회차가 죽지 않는다
+  if [ "$mdl" != "$MODEL" ] && [ $rc -ne 124 ] && grep -qiE "model.*(not found|unknown|invalid|unsupported|not available|does not exist)|not_found_error" "$OUT/agent-$phase.json" "$OUT/agent-$phase.txt" 2>/dev/null; then
+    log "$n: $phase — 모델 '$mdl' 사용 불가, 기본 모델($MODEL)로 다시 돌린다"; run_claude_once "$MODEL"; rc=$?
+  fi
   [ $rc -eq 124 ] && { stage "$phase" timeout "단계 제한 시간 초과"; echo "TIMEOUT" >> "$OUT/agent-$phase.txt"; }
   [ $rc -ne 0 ] && [ $rc -ne 124 ] && log "$n: $phase agent exited $rc"
   # Codex 폴백: 클로드가 사용량/토큰 한도로 결과를 못 내면 같은 프롬프트를 코덱스로 돌려 개선을 잇는다.
@@ -700,7 +711,7 @@ review_gate(){ # $1=base $2=PR url(비면 판정만) → 0=승인
   local rprompt g rb; rb=$(policy "$n" '.budget_usd.review'); rb=${rb:-4}
   budget_ok "$rb" || { stage review hold "예산 부족으로 리뷰를 돌리지 못함"; CRITIC_STATE=hold; return 1; }
   rm -f "$OUT/review.json"
-  rprompt=$(BASE="$1" REVIEW_FILE="$OUT/review.json" envsubst '$BASE $REVIEW_FILE' < "$REPO_DIR/review-prompt.md")
+  rprompt=$(BASE="$1" REVIEW_FILE="$OUT/review.json" PROFILE="$(cat "$STATE/$n.profile.md" 2>/dev/null)" envsubst '$BASE $REVIEW_FILE $PROFILE' < "$REPO_DIR/review-prompt.md")
   run_agent review "$rprompt" "$wt" "$rb" "Bash,Read,Glob,Grep,Write"
   g=$($GATE review "$OUT/review.json" 2>/dev/null || true); printf '%s\n' "$g" > "$OUT/review.gate.json"
   if jq -e .ok <<<"$g" >/dev/null 2>&1; then stage review approved "$(jq -r .reason <<<"$g")"; CRITIC_STATE=approved; return 0; fi
@@ -729,14 +740,31 @@ repair_round(){ # $1=시도 번호 → 0=고쳐서 검증 통과(HEAD 갱신)
   before=$(git -C "$wt" rev-parse HEAD); rm -f "$OUT/fix-summary.md"
   note="독립 비평가가 거절함 (수리 시도 $1):
 $(jq -r '.reasons[]? | "- " + .' "$OUT/review.json" 2>/dev/null | head -c 3000)"
-  prompt=$(PR_URL="(아직 없음 — PR 을 열기 전입니다)" BASE="$BASE_SHA" CAUSE_NOTE="$note" OUT_DIR="$OUT" envsubst '$PR_URL $BASE $CAUSE_NOTE $OUT_DIR' < "$REPO_DIR/agents/repairer.md")
+  prompt=$(PR_URL="(아직 없음 — PR 을 열기 전입니다)" BASE="$BASE_SHA" CAUSE_NOTE="$note" OUT_DIR="$OUT" PROFILE="$(cat "$STATE/$n.profile.md" 2>/dev/null)" envsubst '$PR_URL $BASE $CAUSE_NOTE $OUT_DIR $PROFILE' < "$REPO_DIR/agents/repairer.md")
   run_agent repair "$prompt" "$wt" "$rbud" "Bash,Read,Edit,Write,Glob,Grep"
   summ=$(head -c 200 "$OUT/fix-summary.md" 2>/dev/null | tr '\n' ' ')
-  if [ "$(git -C "$wt" rev-parse HEAD)" = "$before" ]; then stage repair nothing "수리 에이전트가 커밋을 만들지 않음: ${summ:-이유 없음}"; return 1; fi
+  if [ "$(git -C "$wt" rev-parse HEAD)" = "$before" ]; then REPAIR_RESULT=nothing; stage repair nothing "수리 에이전트가 커밋을 만들지 않음: ${summ:-이유 없음}"; return 1; fi
   if run_verify "$wt" "$OUT/verify-repair$1.json" && [ -z "$(added_artifacts)" ] && git -C "$wt" diff "$before..HEAD" | secrets_gate "repair diff" -; then
-    HEAD_SHA=$(git -C "$wt" rev-parse HEAD); run_meta; stage repair done "${summ:-고침}"; return 0
+    HEAD_SHA=$(git -C "$wt" rev-parse HEAD); run_meta; REPAIR_RESULT=done; stage repair done "${summ:-고침}"; return 0
   fi
-  git -C "$wt" reset -q --hard "$before"; stage repair failed "고친 뒤 검증 실패 — 수리 커밋을 버림"; return 1
+  git -C "$wt" reset -q --hard "$before"; REPAIR_RESULT=failed; stage repair failed "고친 뒤 검증 실패 — 수리 커밋을 버림"; return 1
+}
+# 중재자(arbiter): 비평가가 거절했는데 수리 에이전트가 "지적이 틀렸다" 며 근거만 남기고 손대지 않았을 때,
+# 제3의 세션이 양쪽 주장을 읽고 코드로 확인해 판정한다. 승인이면 비평 승인과 같이 취급한다.
+arbiter_round(){ # → 0=승인(CRITIC_STATE=approved)
+  local abud prompt g; abud=$(policy "$n" '.budget_usd.arbiter'); abud=${abud:-3}
+  budget_ok "$abud" || { stage arbiter hold "예산 부족으로 중재를 돌리지 못함"; return 1; }
+  rm -f "$OUT/arbiter.json"
+  prompt=$(BASE="$BASE_SHA" ARBITER_FILE="$OUT/arbiter.json" CRITIC_REASONS="$(jq -r '.reasons[]? | "- " + .' "$OUT/review.json" 2>/dev/null)" \
+           REPAIRER_NOTE="$(cat "$OUT/fix-summary.md" 2>/dev/null)" PROFILE="$(cat "$STATE/$n.profile.md" 2>/dev/null)" \
+           envsubst '$BASE $ARBITER_FILE $CRITIC_REASONS $REPAIRER_NOTE $PROFILE' < "$REPO_DIR/agents/arbiter.md")
+  run_agent arbiter "$prompt" "$wt" "$abud" "Bash,Read,Glob,Grep,Write"
+  g=$($GATE review "$OUT/arbiter.json" 2>/dev/null || true)
+  if jq -e .ok <<<"$g" >/dev/null 2>&1; then
+    cp "$OUT/arbiter.json" "$OUT/review.json"; printf '%s\n' "$g" > "$OUT/review.gate.json"
+    stage arbiter approved "$(jq -r .reason <<<"$g")"; CRITIC_STATE=approved; return 0
+  fi
+  stage arbiter "$(jq -r '.state // "invalid"' <<<"$g" 2>/dev/null || echo invalid)" "$(jq -r '.reason // "중재 결과 없음"' <<<"$g" 2>/dev/null || echo '중재 결과 없음')"; return 1
 }
 secrets_gate(){ # $1=설명 $2=파일(- 는 stdin)
   local g; g=$($GATE secrets "$2" 2>/dev/null || true)
@@ -1134,7 +1162,7 @@ shepherd_fix(){ # $1=pr $2=브랜치 $3=원인 설명 → 0=새 커밋을 검증
   local pr=$1 br=$2 note=$3 before after prompt summ
   shepherd_wt "$br" || { shepherd_note "$pr" "$head" "$cause" fix-failed "worktree 준비 실패"; return 1; }
   before=$(git -C "$wt" rev-parse HEAD); BASE_SHA=$(git -C "$repo" rev-parse "origin/$base")
-  prompt=$(PR_URL="$pr" BASE="origin/$base" CAUSE_NOTE="$note" OUT_DIR="$OUT" envsubst '$PR_URL $BASE $CAUSE_NOTE $OUT_DIR' < "$REPO_DIR/agents/repairer.md")
+  prompt=$(PR_URL="$pr" BASE="origin/$base" CAUSE_NOTE="$note" OUT_DIR="$OUT" PROFILE="$(cat "$STATE/$n.profile.md" 2>/dev/null)" envsubst '$PR_URL $BASE $CAUSE_NOTE $OUT_DIR $PROFILE' < "$REPO_DIR/agents/repairer.md")
   run_agent improve "$prompt" "$wt" "$SHEPHERD_FIX_BUDGET" "Bash,Read,Edit,Write,Glob,Grep"
   after=$(git -C "$wt" rev-parse HEAD)
   summ=$(head -c 600 "$OUT/fix-summary.md" 2>/dev/null | tr '\n' ' ')
@@ -1551,17 +1579,25 @@ $(printf '%b' "$RUN_SPEC")
   # ── 정찰(scout): 읽기만 하는 에이전트가 먼저 과제서를 쓴다. 구현자는 그 과제만 한다 —
   #    "무엇을 할지" 와 "어떻게 하는지" 를 다른 세션이 맡으면 서로의 실수를 잡는다 (AGENTS.md).
   brief=""; prefs_md="$(cat "$STATE/operator-preferences.md" 2>/dev/null)"
+  # 프로젝트 프로필: 정찰이 유지하는 저장소 요약(목적·스택·구조·검증 명령·관례·위험 구역). 14일이 지나면 정찰이 다시 쓴다.
+  # 매 회차 45분 중 10분을 "파악" 에 쓰던 것을 줄이고, 구현·비평·수리·심사가 같은 그림을 본다.
+  profile_age=999; [ -f "$STATE/$n.profile.md" ] && profile_age=$(( ( $(date +%s) - $(stat -c %Y "$STATE/$n.profile.md") ) / 86400 ))
   if [ "$(policy "$n" '.agents.scout')" != false ] && [ "${SCOUT:-1}" != 0 ] && [ "$AUTONOMY_NOW" != analyze ]; then
     sbud=$(policy "$n" '.budget_usd.scout'); sbud=${sbud:-2}
     if budget_ok "$sbud"; then
       sprompt=$(TASK_NOTE="${fix_note}${request_note:+
 $request_note}${campaign_note:+
 $campaign_note}" BRIEF_FILE="$OUT/brief.md" IDEAS_FILE="$OUT/ideas.json" OUT_DIR="$OUT" RUN_DATE="$RUN_DATE" \
+               PROFILE="$(cat "$STATE/$n.profile.md" 2>/dev/null || echo '(없음)')" PROFILE_AGE="$profile_age" PROFILE_FILE="$OUT/profile.md" \
                LESSONS="${lessons:-(없음)}" IDEAS_CONTENT="${ideas:-(없음)}" OPERATOR_PREFS="$prefs_md" LEDGER_CONTENT="$(tail -n 60 "$ledger" 2>/dev/null || echo '(없음)')" \
-               envsubst '$TASK_NOTE $BRIEF_FILE $IDEAS_FILE $OUT_DIR $RUN_DATE $LESSONS $IDEAS_CONTENT $OPERATOR_PREFS $LEDGER_CONTENT' < "$REPO_DIR/agents/scout.md")
+               envsubst '$TASK_NOTE $BRIEF_FILE $IDEAS_FILE $OUT_DIR $RUN_DATE $PROFILE $PROFILE_AGE $PROFILE_FILE $LESSONS $IDEAS_CONTENT $OPERATOR_PREFS $LEDGER_CONTENT' < "$REPO_DIR/agents/scout.md")
       run_agent scout "$sprompt" "$wt" "$sbud" "Read,Glob,Grep,Write,Bash(git log:*),Bash(git show:*),Bash(git diff:*),Bash(ls:*),Bash(cat:*),Bash(wc:*),Bash(find:*),Bash(go test:*),Bash(npm test:*)"
       # 정찰은 읽기만 한다 — 작업 트리에 무엇을 남겼든 버린다
       git -C "$wt" reset -q --hard "$BASE_SHA" >>"$LOG" 2>&1; git -C "$wt" clean -qfd >>"$LOG" 2>&1
+      # 정찰이 프로필을 새로 썼으면(비밀값 없을 때만) 영구 기록으로 — 다음 회차의 모든 역할이 읽는다
+      if [ -s "$OUT/profile.md" ] && [ "$(wc -l < "$OUT/profile.md")" -le 120 ] && $GATE secrets "$OUT/profile.md" >/dev/null 2>&1; then
+        cp "$OUT/profile.md" "$STATE/$n.profile.md"; log "$n: 프로젝트 프로필 갱신 ($(wc -l < "$OUT/profile.md")줄, 이전 ${profile_age}일)"
+      fi
       if [ -s "$OUT/brief.md" ] && grep -q '^- 과제:' "$OUT/brief.md"; then
         stage scout done "$(grep -m1 '^- 과제:' "$OUT/brief.md" | sed 's/^- 과제: *//' | cut -c1-140)"
         brief="## 정찰 에이전트가 정한 이번 회차 과제 — 새로 고르지 말고 이대로 구현하세요
@@ -1573,9 +1609,9 @@ $(cat "$OUT/brief.md")"
   fi
   prompt=$(LEDGER_FILE="$OUT/ledger-entry.md" IDEAS_FILE="$OUT/ideas.json" OUT_DIR="$OUT" RUN_DATE="$RUN_DATE" FIX_NOTE="$fix_note" LESSONS="${lessons:-(없음)}" IDEAS_CONTENT="${ideas:-(없음)}" \
            REQUEST_NOTE="$request_note" CAMPAIGN_NOTE="$campaign_note" BRIEF="$brief" \
-           OPERATOR_PREFS="$prefs_md" \
+           OPERATOR_PREFS="$prefs_md" PROFILE="$(cat "$STATE/$n.profile.md" 2>/dev/null)" \
            LEDGER_CONTENT="$(tail -n 60 "$ledger" 2>/dev/null || echo '(없음)')" \
-           envsubst '$LEDGER_FILE $IDEAS_FILE $OUT_DIR $RUN_DATE $LEDGER_CONTENT $FIX_NOTE $LESSONS $IDEAS_CONTENT $REQUEST_NOTE $CAMPAIGN_NOTE $OPERATOR_PREFS $BRIEF' < "$REPO_DIR/prompt.md")
+           envsubst '$LEDGER_FILE $IDEAS_FILE $OUT_DIR $RUN_DATE $LEDGER_CONTENT $FIX_NOTE $LESSONS $IDEAS_CONTENT $REQUEST_NOTE $CAMPAIGN_NOTE $OPERATOR_PREFS $BRIEF $PROFILE' < "$REPO_DIR/prompt.md")
   run_agent improve "$prompt" "$wt" "$ibudget" "Bash,Read,Edit,Write,Glob,Grep,WebFetch,WebSearch"
   merge_outputs
   if ! jq -e '.type=="result"' "$OUT/agent-improve.json" >/dev/null 2>&1; then
@@ -1616,7 +1652,11 @@ $(cat "$OUT/brief.md")"
         while :; do
           review_gate "$base" "" && break
           { [ "$CRITIC_STATE" = rejected ] && [ "$attempt" -lt "${repair_max:-1}" ]; } || break
-          attempt=$((attempt+1)); repair_round "$attempt" || break
+          attempt=$((attempt+1)); REPAIR_RESULT=""
+          repair_round "$attempt" && continue
+          # 수리가 "지적이 틀렸다" 고 근거만 남기고 손대지 않았으면 중재자가 양쪽을 읽고 판정한다
+          if [ "${REPAIR_RESULT:-}" = nothing ] && [ -s "$OUT/fix-summary.md" ] && [ "$(policy "$n" '.agents.arbiter')" != false ]; then arbiter_round || true; fi
+          break
         done
       fi
       with_retry "branch push" git -C "$wt" push -u origin "$slug" || { stage pr push-failed "브랜치 푸시 실패 ($RETRY_KIND)"; result="error: push ($RETRY_KIND)"; OUTCOME=error; }

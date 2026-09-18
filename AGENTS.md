@@ -28,8 +28,11 @@
 | **구현** builder | `prompt.md` | 편집·실행·커밋 | 커밋, `ledger-entry.md`, `ideas.json` | 러너 검증 → 비평가 |
 | **비평** critic | `review-prompt.md` | 읽기·실행. **편집 불가** | `review.json`(verdict·reasons·risk) | `gate.py review` 가 형식 검사. 승인만 머지로 |
 | **수리** repairer | `agents/repairer.md` | 편집·커밋(지적된 결함만) | 수리 커밋, `fix-summary.md` | 재검증 → 비평가가 다시 본다. 실패하면 러너가 수리 커밋을 버림 |
+| **중재** arbiter | `agents/arbiter.md` | 읽기·실행. **편집 불가** | `arbiter.json`(verdict·사유별 확인/반증) | `gate.py review`. 승인이면 비평 승인과 같이 취급 |
 | **릴리즈** releaser | `release-prompt.md` | 관례대로 버전·태그·자산 | `release.json`, 태그, 자산 | `gate.py release`, 자산 매니페스트, 워크플로 결과 |
 
+- **프로젝트 프로필** `state/<프로젝트>.profile.md`: 정찰이 유지하는 저장소 요약(목적·스택·구조·검증 명령·관례·위험 구역·자주 깨지는 곳·검증 함정, 60줄 안). 없거나 14일이 지나면 정찰이 다시 쓰고, 비밀값 검사를 통과한 것만 저장된다. 구현·비평·수리·중재·PR 수리가 모두 이것부터 읽는다 — 매 회차 "파악" 에 쓰던 시간을 줄이고 모든 역할이 같은 그림을 본다.
+- **중재**: 비평가가 거절했는데 수리 에이전트가 "지적이 틀렸다" 며 `fix-summary.md` 에 근거만 남기고 손대지 않았을 때만 돈다. 제3의 세션이 양쪽 주장을 읽고 코드로 확인해 판정한다. 읽기만으로 판단할 수 없는 사유는 비평가 편이다. 끄기: 정책 `agents.arbiter: false`.
 - 정찰이 실패하거나 예산이 없으면 구현자가 예전처럼 직접 고른다(`stage scout failed|hold`).
 - 비평·수리 루프는 **자동 머지할 변경**에만 돈다(자율화 low-risk 이상, 보호 파일 없음). 보호 파일을 건드린 변경은 사람 또는 PR 처리기가 본다.
 - 수리가 `repair_max`(기본 1)번 안에 비평을 통과하지 못하면 PR 을 열고 `review held` 로 보류한다 — 그러면 PR 처리기가 한 시간 뒤 다시 잡는다.
@@ -69,7 +72,13 @@
 | 수리 | $6 | 비평이 거절했을 때만, 최대 repair_max 번 |
 | 릴리즈 | $10 | |
 
-`state/<프로젝트>.policy.json` 에서 `budget_usd.scout`·`budget_usd.repair`·`agents.scout`·`agents.repair_max` 를 덮어쓴다. 모델을 역할별로 바꾸려면 `agents/registry.json` 의 `model` 을 채운다(비면 러너 기본 `MODEL`).
+| 중재 | $3 | 비평·수리가 맞설 때만 |
+
+`state/<프로젝트>.policy.json` 에서 `budget_usd.scout/repair/arbiter`·`agents.scout`·`agents.repair_max`·`agents.arbiter` 를 덮어쓴다. 모델을 역할별로 바꾸려면 `agents/registry.json` 의 `model` 을 채운다(비면 러너 기본 `MODEL`). 적은 모델을 쓸 수 없으면(없는 모델·막힘) 러너가 기본 모델로 한 번 더 돌리므로 회차가 죽지 않는다.
+
+## 성적표
+
+대시보드 '에이전트 성적표(최근 14일)' 와 `summary.json` 의 `agents` 에 역할별 호출 수·핵심 지표·비용이 실린다: 정찰의 과제서 작성률과 그 회차의 PR 도달률, 구현의 검증 통과율, 비평의 최종 승인률과 승인·머지 뒤 회귀, 수리의 재검증 통과율, 중재가 어느 편을 들었는지, PR 심사의 승인·거절·사람 필요와 승인 뒤 회귀, 각 역할의 비용. 지표가 어긋나면(수리 성공률 30% 미만, 비평 승인 뒤 회귀 15% 초과, 중재가 70% 넘게 수리 편 등) 무엇을 조정할지 '권장' 으로 적는다. 정책을 자동으로 바꾸지는 않는다 — 조정은 사람이 한다.
 
 ## 검증
 

@@ -446,6 +446,81 @@ def shepherd_summary():
             "pending_human": sum(1 for r in shepherd_latest().values() if r.get("action") == "needs-human")}
 
 
+# ---------- 에이전트 성적표 ----------
+REGRESS_KINDS = {"rolled-back", "reverted", "demoted", "regression", "main-ci-failed", "release-workflow-failed"}
+
+
+def agent_scorecard(runs_all, usage_all, lessons, days_window=14):
+    """역할별로 몇 번 불렸고, 무엇을 얼마나 해냈고, 얼마를 썼는지. 회차 기록의 stages 와 shepherd.jsonl, usage.jsonl 에서 센다."""
+    cutoff = (date.today() - timedelta(days=days_window)).isoformat()
+    runs = [r for r in runs_all if (r.get("date") or "") >= cutoff and isinstance(r.get("project"), str) and not r["project"].startswith("(")]
+    usage = [u for u in usage_all if (u.get("date") or "") >= cutoff]
+    shep = [s for s in shepherd_log() if (s.get("date") or "") >= cutoff]
+    regressed = {l.get("pr") for l in lessons if l.get("kind") in REGRESS_KINDS and l.get("pr")}
+
+    def st(r, k):
+        return ((r.get("stages") or {}).get(k) or {}).get("state")
+
+    def cost(*phases):
+        return round(sum(float(u.get("cost_usd") or 0) for u in usage if u.get("phase") in phases), 2)
+
+    def pct(a, b):
+        return f"{int(a / b * 100)}%" if b else "—"
+
+    merged_out = ("merged", "releasing", "release-ready")
+    rows, advice = [], []
+    sc = [r for r in runs if st(r, "scout")]
+    sc_done = [r for r in sc if st(r, "scout") == "done"]
+    sc_prod = [r for r in sc_done if outcome_of(r) in ("review-pending",) + merged_out]
+    rows.append({"role": "정찰 scout", "calls": len(sc), "metric": f"과제서 {pct(len(sc_done), len(sc))} · 과제서 회차의 PR 도달 {pct(len(sc_prod), len(sc_done))}", "cost": cost("scout")})
+    bd = [r for r in runs if st(r, "verify")]
+    bd_ok = [r for r in bd if st(r, "verify") == "passed"]
+    nochange = [r for r in runs if outcome_of(r) == "no-change" and (r.get("run_id") or "").endswith("-improve")]
+    rows.append({"role": "구현 builder", "calls": len(bd) + len(nochange), "metric": f"러너 검증 통과 {pct(len(bd_ok), len(bd))} · 변경 없음 {len(nochange)}", "cost": cost("improve")})
+    rv = [r for r in runs if st(r, "review") in ("approved", "rejected")]
+    rv_ok = [r for r in rv if st(r, "review") == "approved"]
+    rv_rej_once = [r for r in rv if st(r, "review") == "rejected" or st(r, "repair")]
+    appr_merged = [r for r in rv_ok if outcome_of(r) in merged_out]
+    regress = [r for r in appr_merged if r.get("pr") in regressed]
+    rows.append({"role": "비평 critic", "calls": len(rv), "metric": f"최종 승인 {pct(len(rv_ok), len(rv))} · 한 번이라도 거절 {len(rv_rej_once)} · 승인·머지 뒤 회귀 {len(regress)}/{len(appr_merged)}", "cost": cost("review")})
+    rp = [r for r in runs if st(r, "repair")]
+    rp_ok = [r for r in rp if st(r, "repair") == "done"]
+    rows.append({"role": "수리 repairer", "calls": len(rp), "metric": f"고쳐서 재검증 통과 {pct(len(rp_ok), len(rp))} · 손대지 않음 {sum(1 for r in rp if st(r, 'repair') == 'nothing')}", "cost": cost("repair")})
+    ab = [r for r in runs if st(r, "arbiter")]
+    ab_ok = [r for r in ab if st(r, "arbiter") == "approved"]
+    rows.append({"role": "중재 arbiter", "calls": len(ab), "metric": f"수리 편 {len(ab_ok)} · 비평 편 {len(ab) - len(ab_ok)}", "cost": cost("arbiter")})
+    mg = [r for r in runs if outcome_of(r) in merged_out]
+    rl = [r for r in mg if outcome_of(r) == "release-ready"]
+    rows.append({"role": "릴리즈 releaser", "calls": len(mg), "metric": f"완전한 릴리즈 {pct(len(rl), len(mg))}", "cost": cost("release", "assets")})
+    s_appr = [s for s in shep if s.get("action") == "approve"]
+    s_rej = [s for s in shep if s.get("action") == "review-reject"]
+    s_hum = [s for s in shep if s.get("action") == "needs-human"]
+    s_fix = [s for s in shep if s.get("action") == "fix-pushed"]
+    s_fixf = [s for s in shep if s.get("action") == "fix-failed"]
+    s_regress = [s for s in s_appr if s.get("pr") in regressed]
+    shep_cost = round(sum(float(u.get("cost_usd") or 0) for u in usage if (u.get("run_id") or "").endswith("-shepherd")), 2)
+    rows.append({"role": "PR 심사 shepherd-reviewer", "calls": len(s_appr) + len(s_rej) + len(s_hum), "metric": f"승인 {len(s_appr)} · 거절 {len(s_rej)} · 사람 필요 {len(s_hum)} · 승인 뒤 회귀 {len(s_regress)}", "cost": shep_cost})
+    rows.append({"role": "PR 수리 shepherd-fixer", "calls": len(s_fix) + len(s_fixf), "metric": f"고쳐서 푸시 {pct(len(s_fix), len(s_fix) + len(s_fixf))}", "cost": None})
+    try:
+        op_rules = len(json.load(open(os.path.join(STATE, "operator-preferences.json"), encoding="utf-8")).get("rules", []))
+    except Exception:
+        op_rules = 0
+    rows.append({"role": "기록·학습 historian", "calls": sum(1 for u in usage if u.get("phase") in ("campaign-lessons", "operator-prefs")),
+                 "metric": f"캠페인 교훈 {sum(len(campaign_lessons(c.get('id')).get('rules', [])) for c in campaigns())}개 · 운영자 규칙 {op_rules}개", "cost": cost("campaign-lessons", "operator-prefs")})
+    rows.append({"role": "코파일럿 copilot", "calls": sum(1 for u in usage if u.get("phase") == "copilot"), "metric": "텔레그램 답장", "cost": cost("copilot")})
+    if len(rp) >= 5 and len(rp_ok) / len(rp) < 0.3:
+        advice.append("수리 성공률이 낮다 — 정책 agents.repair_max 를 0 으로 두고 PR 처리기에 맡기는 편이 쌀 수 있다.")
+    if len(sc) >= 5 and len(sc_done) / len(sc) < 0.6:
+        advice.append("정찰이 과제서를 자주 못 낸다 — budget_usd.scout 를 올리거나 T_SCOUT 를 늘린다.")
+    if appr_merged and len(regress) / len(appr_merged) > 0.15:
+        advice.append("비평 승인 뒤 회귀가 잦다 — review-prompt.md 의 검증 항목을 강화하거나 low-risk 자동 머지 범위(auto_merge_max_files)를 줄인다.")
+    if s_appr and len(s_regress) / len(s_appr) > 0.15:
+        advice.append("PR 심사 승인 뒤 회귀가 잦다 — shepherd-review-prompt.md 를 조이거나 SHEPHERD_NEVER_RE 를 넓힌다.")
+    if len(ab) >= 3 and len(ab_ok) / len(ab) > 0.7:
+        advice.append("중재가 대부분 수리 편을 든다 — 비평이 지나치게 엄격할 수 있다. review-prompt.md 의 '불확실하면 approve' 기준을 확인한다.")
+    return rows, advice
+
+
 def stops():
     out = []
     for f in sorted(os.listdir(STATE)) if os.path.isdir(STATE) else []:
@@ -1222,6 +1297,13 @@ def write_index(by_day, days, by_day_usage, projects_info, alert_items, weeks, m
     lines += ["## 품질 지표 (최근 14일)\n",
               '<ul class="stats">' + "".join(f'<li title="{esc(w)}"><b>{esc(v)}</b><span>{esc(k)}</span></li>' for k, v, w in qm) + "</ul>\n",
               "'검증된 개선'은 머지 후 24시간 관찰에서 회귀(main CI 실패·되돌림·롤백)가 없는 변경. '완전한 릴리즈'는 태그·Release·필수 자산 검증까지 끝난 것. 비용이 확인되지 않은 세션은 0이 아니라 '미확인'으로 뺀다.\n"]
+    sc_rows, sc_advice = agent_scorecard([r for v in by_day.values() for r in v], [x for v in by_day_usage.values() for x in v], lessons)
+    lines += ["## 에이전트 성적표 (최근 14일)\n",
+              '<p class="meta">한 회차는 정찰 → 구현 → 검증 → 비평 → (수리 → 중재) → PR → 릴리즈 순으로 여러 세션이 나눠 맡는다 (<a href="https://github.com/hkjang/aidev/blob/main/AGENTS.md">AGENTS.md</a>). 역할마다 몇 번 불렸고 무엇을 해냈는지.</p>\n',
+              table([("역할", "primary"), ("호출", "num"), ("지표", ""), ("비용", "num")],
+                    [("released" if r["calls"] else "nochange", [esc(r["role"]), str(r["calls"]), esc(r["metric"]), "" if r["cost"] is None else f"${r['cost']:.2f}"]) for r in sc_rows])]
+    if sc_advice:
+        lines += ["<p><strong>권장:</strong></p><ul>" + "".join(f"<li>{esc(a)}</li>" for a in sc_advice) + "</ul>\n"]
     lines += ["## 비용·사용량\n",
               f'<ul class="stats"><li><b>${u["cost"]:.2f}</b><span>오늘 비용</span></li><li><b>{fmt_min(u["minutes"])}</b><span>오늘 에이전트 시간</span></li>'
               f'<li><b>{int(u["sessions"])}</b><span>오늘 세션</span></li><li><b>${all_u["cost"]:.2f}</b><span>누적 비용</span></li>'
@@ -1289,6 +1371,7 @@ def main():
                           "minutes": round(all_u["minutes"]), "tokens_in": int(all_u["in"]), "tokens_out": int(all_u["out"])},
                "alerts": alert_items, "fix_queue": fix_queue(), "health": health(), "lessons": lessons[-50:], "caps": caps(),
                "inbox": inbox_cache, "stops": stops(), "campaigns": campaigns(), "shepherd": shepherd_summary(),
+               "agents": (lambda rows_advice: {"rows": rows_advice[0], "advice": rows_advice[1]})(agent_scorecard([r for v in by_day.values() for r in v], [x for v in by_day_usage.values() for x in v], lessons)),
                "campaign_progress": [{"id": cmp.get("id"), "done": bool(cmp.get("done")), "until": cmp.get("until"), "budget_usd": cmp.get("budget_usd"),
                                       "spent_usd": round(sum(float(x.get("cost_usd") or 0) for v in by_day_usage.values() for x in v if x.get("campaign") == cmp.get("id")), 2),
                                       **{k: pg[k] for k in ("total", "processed", "pct", "runs", "last_ts")}, "counts": dict(pg["counts"]),

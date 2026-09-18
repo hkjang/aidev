@@ -12,7 +12,8 @@
     "release": 10,
     "assets": 15,
     "scout": 2,
-    "repair": 6
+    "repair": 6,
+    "arbiter": 3
   },
   "autonomy": "release",
   "_autonomy": "analyze(아이디어·원장만, 커밋 버림) < pr(PR 만) < approve(사람이 PR 에 aidev-approved 라벨 → 러너가 CI 후 머지) < low-risk(리뷰 risk=low 이고 파일≤auto_merge_max_files 이며 보호 파일 없을 때만 자동 머지) < release(검증된 릴리즈까지 자동). 단계 상승은 이 파일을 사람이 고쳐야 하고, 롤백·회귀가 생기면 러너가 한 단계 내린다(demoted_reason 기록).",
@@ -20,7 +21,8 @@
   "campaign": "",
   "agents": {
     "scout": true,
-    "repair_max": 1
+    "repair_max": 1,
+    "arbiter": true
   },
-  "_agents": "scout: 정찰 에이전트(읽기 전용)가 과제서를 먼저 쓴다(false 면 구현자가 직접 고른다). repair_max: 비평가가 거절하면 수리 에이전트가 이만큼 고쳐 다시 비평받는다(0 이면 PR 을 열고 보류)."
+  "_agents": "scout: 정찰 에이전트(읽기 전용)가 과제서를 먼저 쓴다(false 면 구현자가 직접 고른다). repair_max: 비평가가 거절하면 수리 에이전트가 이만큼 고쳐 다시 비평받는다(0 이면 PR 을 열고 보류). arbiter: 수리가 \"지적이 틀렸다\" 고 근거만 남기면 제3 세션이 판정한다(false 면 보류)."
 }

@@ -1,16 +1,184 @@
 {
   "_comment": "aidev 에이전트 명부. 러너(bin/run.sh)는 여기서 역할별 model 을 읽는다(비면 MODEL 기본값). 예산·제한 시간은 state/default.policy.json 과 프로젝트 정책이 우선한다. 역할과 손발이 맞물리는 구조는 AGENTS.md 에.",
   "agents": {
-    "scout":            {"name": "정찰",        "file": "agents/scout.md",              "phase": "scout",   "model": "", "budget_key": "scout",   "tools": "read-only + Write($OUT)", "produces": ["brief.md", "ideas.json"],           "checked_by": ["builder"]},
-    "builder":          {"name": "구현",        "file": "prompt.md",                    "phase": "improve", "model": "", "budget_key": "improve", "tools": "Bash,Read,Edit,Write,Glob,Grep,WebFetch,WebSearch", "produces": ["commits", "ledger-entry.md", "ideas.json"], "checked_by": ["verify", "critic"]},
-    "critic":           {"name": "비평",        "file": "review-prompt.md",             "phase": "review",  "model": "", "budget_key": "review",  "tools": "Bash,Read,Glob,Grep,Write", "produces": ["review.json"],                     "checked_by": ["gate.py review"]},
-    "repairer":         {"name": "수리",        "file": "agents/repairer.md",           "phase": "repair",  "model": "", "budget_key": "repair",  "tools": "Bash,Read,Edit,Write,Glob,Grep", "produces": ["commits", "fix-summary.md"], "checked_by": ["verify", "critic"]},
-    "releaser":         {"name": "릴리즈",      "file": "release-prompt.md",            "phase": "release", "model": "", "budget_key": "release", "tools": "Bash,Read,Edit,Write,Glob,Grep", "produces": ["release.json", "tag", "assets"], "checked_by": ["gate.py release", "manifest"]},
-    "shepherd-reviewer":{"name": "PR 심사",     "file": "shepherd-review-prompt.md",    "phase": "review",  "model": "", "budget_key": "shepherd_review", "tools": "Bash,Read,Glob,Grep,Write", "produces": ["review.json(recommend)"], "checked_by": ["approvals(CI)"]},
-    "shepherd-fixer":   {"name": "PR 수리",     "file": "agents/repairer.md",           "phase": "improve", "model": "", "budget_key": "shepherd_fix", "tools": "Bash,Read,Edit,Write,Glob,Grep", "produces": ["commits on PR branch"], "checked_by": ["verify", "shepherd-reviewer"]},
-    "historian":        {"name": "기록·학습",   "file": "bin/campaign-lessons.sh, bin/operator-prefs.sh", "phase": "campaign-lessons|operator-prefs", "model": "", "budget_key": "", "tools": "none", "produces": ["campaign-lessons/*.md", "operator-preferences.md"], "checked_by": ["hash cache"]},
-    "planner":          {"name": "캠페인 설계", "file": "bin/campaign-draft.sh",        "phase": "campaign-draft", "model": "", "budget_key": "", "tools": "read-only + Write(drafts/)", "produces": ["drafts/<slug>/"], "checked_by": ["human (activate-campaign)"]},
-    "triager":          {"name": "진단",        "file": "bin/ask-claude.sh",            "phase": "ask",     "model": "", "budget_key": "", "tools": "read-only", "produces": ["diagnoses.jsonl"], "checked_by": ["human"]},
-    "copilot":          {"name": "코파일럿",    "file": "bin/copilot.sh",               "phase": "copilot", "model": "", "budget_key": "", "tools": "bin/ops.sh only", "produces": ["ops actions"], "checked_by": ["human (chat)"]}
+    "scout": {
+      "name": "정찰",
+      "file": "agents/scout.md",
+      "phase": "scout",
+      "model": "",
+      "budget_key": "scout",
+      "tools": "read-only + Write($OUT)",
+      "produces": [
+        "brief.md",
+        "ideas.json"
+      ],
+      "checked_by": [
+        "builder"
+      ]
+    },
+    "builder": {
+      "name": "구현",
+      "file": "prompt.md",
+      "phase": "improve",
+      "model": "",
+      "budget_key": "improve",
+      "tools": "Bash,Read,Edit,Write,Glob,Grep,WebFetch,WebSearch",
+      "produces": [
+        "commits",
+        "ledger-entry.md",
+        "ideas.json"
+      ],
+      "checked_by": [
+        "verify",
+        "critic"
+      ]
+    },
+    "critic": {
+      "name": "비평",
+      "file": "review-prompt.md",
+      "phase": "review",
+      "model": "",
+      "budget_key": "review",
+      "tools": "Bash,Read,Glob,Grep,Write",
+      "produces": [
+        "review.json"
+      ],
+      "checked_by": [
+        "gate.py review"
+      ]
+    },
+    "repairer": {
+      "name": "수리",
+      "file": "agents/repairer.md",
+      "phase": "repair",
+      "model": "",
+      "budget_key": "repair",
+      "tools": "Bash,Read,Edit,Write,Glob,Grep",
+      "produces": [
+        "commits",
+        "fix-summary.md"
+      ],
+      "checked_by": [
+        "verify",
+        "critic"
+      ]
+    },
+    "releaser": {
+      "name": "릴리즈",
+      "file": "release-prompt.md",
+      "phase": "release",
+      "model": "",
+      "budget_key": "release",
+      "tools": "Bash,Read,Edit,Write,Glob,Grep",
+      "produces": [
+        "release.json",
+        "tag",
+        "assets"
+      ],
+      "checked_by": [
+        "gate.py release",
+        "manifest"
+      ]
+    },
+    "shepherd-reviewer": {
+      "name": "PR 심사",
+      "file": "shepherd-review-prompt.md",
+      "phase": "review",
+      "model": "",
+      "budget_key": "shepherd_review",
+      "tools": "Bash,Read,Glob,Grep,Write",
+      "produces": [
+        "review.json(recommend)"
+      ],
+      "checked_by": [
+        "approvals(CI)"
+      ]
+    },
+    "shepherd-fixer": {
+      "name": "PR 수리",
+      "file": "agents/repairer.md",
+      "phase": "improve",
+      "model": "",
+      "budget_key": "shepherd_fix",
+      "tools": "Bash,Read,Edit,Write,Glob,Grep",
+      "produces": [
+        "commits on PR branch"
+      ],
+      "checked_by": [
+        "verify",
+        "shepherd-reviewer"
+      ]
+    },
+    "historian": {
+      "name": "기록·학습",
+      "file": "bin/campaign-lessons.sh, bin/operator-prefs.sh",
+      "phase": "campaign-lessons|operator-prefs",
+      "model": "",
+      "budget_key": "",
+      "tools": "none",
+      "produces": [
+        "campaign-lessons/*.md",
+        "operator-preferences.md"
+      ],
+      "checked_by": [
+        "hash cache"
+      ]
+    },
+    "planner": {
+      "name": "캠페인 설계",
+      "file": "bin/campaign-draft.sh",
+      "phase": "campaign-draft",
+      "model": "",
+      "budget_key": "",
+      "tools": "read-only + Write(drafts/)",
+      "produces": [
+        "drafts/<slug>/"
+      ],
+      "checked_by": [
+        "human (activate-campaign)"
+      ]
+    },
+    "triager": {
+      "name": "진단",
+      "file": "bin/ask-claude.sh",
+      "phase": "ask",
+      "model": "",
+      "budget_key": "",
+      "tools": "read-only",
+      "produces": [
+        "diagnoses.jsonl"
+      ],
+      "checked_by": [
+        "human"
+      ]
+    },
+    "copilot": {
+      "name": "코파일럿",
+      "file": "bin/copilot.sh",
+      "phase": "copilot",
+      "model": "",
+      "budget_key": "",
+      "tools": "bin/ops.sh only",
+      "produces": [
+        "ops actions"
+      ],
+      "checked_by": [
+        "human (chat)"
+      ]
+    },
+    "arbiter": {
+      "name": "중재",
+      "file": "agents/arbiter.md",
+      "phase": "arbiter",
+      "model": "",
+      "budget_key": "arbiter",
+      "tools": "Bash,Read,Glob,Grep,Write",
+      "produces": [
+        "arbiter.json"
+      ],
+      "checked_by": [
+        "gate.py review"
+      ]
+    }
   }
 }

@@ -280,7 +280,7 @@ SEO / AEO / 모바일:
 | 단계 | 파일 | 동작 |
 |---|---|---|
 | **회귀 감시** | `bin/regress.sh` (회차마다) | 머지 2~48시간 뒤 머지 커밋의 CI 실패·되돌림 커밋을 확인해 `state/lessons.jsonl` 에 교훈 기록 → `prompt.md` `$LESSONS` 로 그 프로젝트 다음 회차에 주입, `/lessons/` 페이지 |
-| **에이전트 분업** | `AGENTS.md`, `agents/registry.json`, `agents/scout.md`, `agents/repairer.md`, 정책 `agents.scout`·`agents.repair_max`·`budget_usd.scout/repair` | 한 회차가 정찰(읽기 전용, 과제서 `brief.md`) → 구현(과제서대로) → 러너 검증 → 비평(diff 만) → 거절이면 수리(지적된 결함만, 재검증) → 비평 재심 → PR 순으로 돈다. 만드는 자와 검사하는 자를 분리하고, 회차 안에서 못 푼 것은 PR 처리기가 한 시간 뒤 다른 세션으로 다시 본다. 기록·학습(캠페인 교훈·운영자 취향)이 모든 역할의 프롬프트에 되먹인다 |
+| **에이전트 분업** | `AGENTS.md`, `agents/registry.json`, `agents/{scout,repairer,arbiter}.md`, 정책 `agents.scout`·`agents.repair_max`·`agents.arbiter`·`budget_usd.scout/repair/arbiter` | 한 회차가 정찰(읽기 전용, 과제서 `brief.md` + 프로젝트 프로필 `state/<p>.profile.md` 유지) → 구현(과제서대로) → 러너 검증 → 비평(diff 만) → 거절이면 수리(지적된 결함만, 재검증) → 수리가 반론만 남기면 중재(제3 세션이 코드로 판정) → PR 순으로 돈다. 만드는 자와 검사하는 자를 분리하고, 회차 안에서 못 푼 것은 PR 처리기가 한 시간 뒤 다른 세션으로 다시 본다. 기록·학습(캠페인 교훈·운영자 취향)이 모든 역할의 프롬프트에 되먹인다. 역할별 모델은 `registry.json` 에서, 못 쓰는 모델이면 기본 모델로 자동 폴백. 대시보드 '에이전트 성적표' 가 역할별 호출·지표·비용과 조정 권장을 보여 준다 |
 | **리뷰 게이트** | `review-prompt.md`, `review_pr()` | PR 생성 후 CI 대기 전에 별도 세션이 diff 만 읽고 거절 사유 탐색(검증 안 하는 테스트·논리 오류·설명 불일치·위험 변경). reject → PR 코멘트 + 열어 둠(`review rejected`). `--no-review`, 예산 `RVBUDGET`(기본 $4) |
 | **보호 파일** | `state/default.guard`, `state/<프로젝트>.guard` | 정규식에 걸리는 파일(workflows, migrations, auth, payment, Dockerfile/compose, deploy, secret, LICENSE)을 건드리면 자동 머지 안 함 + PR 코멘트(`guarded files`) |
 | **자동 롤백** | `rollback_project()` | 수정 회차(fix-round)까지 머지에 실패하면 큐에 저장된 원래 머지 커밋을 `git revert` 한 PR 을 열고 교훈 기록(`rollback PR`). 머지는 사람 |
