@@ -1,0 +1,15 @@
+# aiportal-py 프로필 (2026-09-19)
+- 목적: KCB AI 포털의 Python 백엔드 — Confluence/법령 문서를 Milvus 에 색인하고 RAG 검색·추천 질문·피드백 배치를 FastAPI 로 제공.
+- 스택: Python 3 · FastAPI/uvicorn · pymilvus(Milvus) · psycopg2(PostgreSQL) · requests · kiwipiepy. 프런트 없음(API 전용).
+- 구조:
+  - `api.py` — 모든 라우트와 `lifespan`(백그라운드 task 3개 등록: question_refresh / m2m_token_refresh / feedback_batch), `/health`.
+  - `service/` — `feedbackservice.py`(피드백 배치·루프), `pipelineservice.py`(Confluence 페이지/스페이스 첨부 색인).
+  - `util/` — `task_supervisor.py`(task 종료·heartbeat 관측), `feedback_batch.py`(A-114 helper), `space_file_indexer.py`(A-111/113 helper), `milvus_confluence.py`(insert/delete), `token_store.py`, `startup_wait.py`.
+  - `pipeline/law/library/` — XML/JSON 법령 변환(테스트 없음).
+  - `tests/unit/` — 설정·pymilvus·psycopg2 비의존 단위 테스트. import 불가한 파일(`api.py`, `service/*.py`, `util/token_store.py`)은 AST 정적 검사로 커버.
+  - `docs/` — CURRENT_STATE_AUDIT(감사 A-번호 원장), OPERATIONS, API_REFERENCE, CODEBASE_MAP, PIPELINE, TESTING.
+- 빌드·테스트: `python3 -m pytest -q`(직전 기록 1025 passed, 수 초~수십 초), `python -m pyflakes .` undefined name 0건. 별도 빌드 없음. (이번 회차는 실행 승인이 없어 미확인.)
+- 관례: 커밋은 한국어 `fix: … (감사 A-nnn)`; 브랜치 `auto/YYYY-MM-DD-HHMM` → PR → main. 설정은 환경변수(`ENV_STATE` 등). 마이그레이션 없음. 감사 항목은 `docs/CURRENT_STATE_AUDIT.md` 에 A-번호로 누적.
+- 위험 구역: `.gitlab-ci.yml`(deploy 전용, main/develop push 즉시 `git reset --hard`+재시작 — 테스트 stage 없음, 건드리지 말 것); `util/token_store.py`(M2M 토큰); `api.py` 파이프라인 라우트(bare except·traceback 응답 잔존, 응답 계약 변경 시 클라이언트 영향).
+- 자주 깨지는 곳: 백그라운드 task 종료 판정(교훈: `_shutting_down` 플래그로, FakeTask 대역 금지); 실패를 반환값/빈 목록으로 삼키는 패턴(A-113/114 로 insert·fetch 는 고침, delete 경로 잔존).
+- 검증 함정: CI 에 테스트가 없어 로컬 pytest 가 유일한 검증; `api.py`/`service/*` 는 의존성 미설치로 import 불가 → AST 검사 helper(`_find_function`, `_call_name`, `_statement_calls`)가 `tests/unit/test_feedback_batch.py`·`test_task_supervisor.py` 에 있음. 러너 예산(`hold: budget`)으로 회차가 끊긴 이력이 있으니 과제는 S, docs 갱신은 최소로.
