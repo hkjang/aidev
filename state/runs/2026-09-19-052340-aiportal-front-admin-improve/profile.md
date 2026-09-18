@@ -1,0 +1,17 @@
+# aiportal-front-admin 프로필 (2026-09-19)
+- 목적: AI 포털 관리자 프런트. 루트는 레거시 Vue 앱, `upgrade/admin-v2` 가 자동 개선 회차가 작업하는 신규 관리자 화면(오프라인망 배포 전제).
+- 스택: Vue 3.5 + vue-router 4 + axios 1.19, TypeScript(vue-tsc), Vite, vitest(+ jsdom, @vue/test-utils — 파일 단위 `// @vitest-environment jsdom`). backend 는 Java/Python API(`/monitoring`, `/sso/ssologin` 등). DB 없음.
+- 구조:
+  - `upgrade/admin-v2/src/api/` — http.ts(apiGet 등)·monitoring.ts·models.ts·mock.ts(mockMode 응답)·paging.ts 계약
+  - `upgrade/admin-v2/src/auth/` — session.ts(캐시·만료 handler·storage 이벤트), guard.ts(`resolveAdminAccess`), ssoRedirect.ts, storage.ts
+  - `upgrade/admin-v2/src/app/router.ts` — beforeEach guard + 만료 handler 배선(router.test.ts 8개)
+  - `upgrade/admin-v2/src/modules/{overview,operations,policy,catalog,directory,content}/` — 화면 + 같은 폴더의 `*.test.ts`
+  - `upgrade/admin-v2/src/shared/` — async.ts(`createRequestGuard`), routeQuery.ts(`useRouteQuerySync`), paging.ts, format.ts, notifications.ts
+  - `upgrade/admin-v2/scripts/*.mjs` — runtime-config 검증, offline 검사, integrity manifest 생성·검증
+  - `upgrade/admin-v2/docs/ARCHITECTURE.md` — 화면 계약(범위 밖 페이지·자동 갱신·딥링크 query·세션 만료 신호·initialLoading/refreshing) 정본
+  - 루트 `src/`, `package.json` — 레거시 앱, 테스트 없음, `crypto-js` 를 local tarball 로 참조해 `npm ci` 불가
+- 빌드·테스트 (`upgrade/admin-v2` 에서): `npm run verify` = vue-tsc + `vitest run`(09-17 기준 156개, 1분 내). `npm run build` = verify → vite build → validate-runtime-config → verify-offline → integrity manifest(19개) → verify-integrity (수 분). 루트 앱은 `npm run build:ofc|core|*_dev` 만 있고 검증 없음.
+- 관례: 커밋 메시지 한국어 `fix(admin-v2): …` 한 줄 + 본문. 브랜치 `auto/YYYY-MM-DD-HHMM`, GitHub PR 로 main 병합. 화면 계약을 바꾸면 ARCHITECTURE.md 에 절을 추가. 회귀 테스트는 "수정을 되돌려 실제로 실패하는지" 를 직접 확인해 요약에 적는 것이 관행.
+- 위험 구역: `src/auth/*`·`src/app/router.ts`(세션·SSO 왕복 제한 — 잘못 건드리면 로그인 루프), `.gitlab-ci.yml`(사내 배포 파이프라인; GitLab PAT 평문 포함 — 값을 절대 복사하지 말 것), `scripts/*.mjs`(오프라인 검사·integrity 는 배포 게이트).
+- 자주 깨지는 곳: 성공한 커밋이 로컬 `auto/*` 브랜치에만 남고 main 에 안 들어가 같은 버그가 되살아난 일이 두 번(ad2f001, e425b54). 회차 시작 시 `git branch --no-merged main` 과 원장 '성공' 기록을 대조할 것. 09-17 커밋 304e89e 도 2026-09-19 현재 main 미병합(shepherd approve 상태).
+- 검증 함정: 러너의 `hold: budget` 이 원장에 `outcome: error` 로 적혀 "실패" 로 보일 수 있다 — `evidence.json` 의 `stages.*.reason` 을 먼저 볼 것. 컴포넌트 테스트는 mount 한 wrapper 를 `afterEach` 로 unmount 하지 않으면 document/window 구독이 다음 테스트로 샌다(Operations·Overview·Policy 는 정리함, Catalog·Directory·ContentAccess 는 아직). 날짜 테스트는 시간대 의존 — 이미 TZ 무관하게 고정됨.
