@@ -1,0 +1,242 @@
+{
+  "run_id": "2026-09-18-151351-Kkiit-improve",
+  "generated": "2026-09-18T15:24:12+09:00",
+  "run": {
+    "run_id": "2026-09-18-151351-Kkiit-improve",
+    "project": "Kkiit",
+    "kind": "improve",
+    "started": "2026-09-18T15:13:51+09:00",
+    "model": "claude-opus-5",
+    "policy_version": "312eebbf",
+    "prompts_hash": "90b6639bc42c5800",
+    "runner_version": "312eebbf",
+    "finished": "2026-09-18T15:24:12+09:00",
+    "outcome": "release-ready"
+  },
+  "record": {
+    "ts": "2026-09-18T15:24:12+09:00",
+    "date": "2026-09-18",
+    "project": "Kkiit",
+    "result": "merged https://github.com/hkjang/Kkiit/pull/7, released v0.4.2",
+    "outcome": "release-ready",
+    "run_id": "2026-09-18-151351-Kkiit-improve",
+    "base_sha": "0b5950137021b259eb8421c7c7bc1462174514b0",
+    "head_sha": "ec146c373c960050c88bd36c2c9043df2d84480b",
+    "pr": "https://github.com/hkjang/Kkiit/pull/7",
+    "stages": {
+      "base": {
+        "state": "pinned",
+        "reason": "main@0b59501",
+        "at": "2026-09-18T15:13:56+09:00"
+      },
+      "autonomy": {
+        "state": "release",
+        "reason": "",
+        "at": "2026-09-18T15:13:56+09:00"
+      },
+      "verify": {
+        "state": "passed",
+        "reason": "검증 2개 통과 (policy)",
+        "at": "2026-09-18T15:19:01+09:00"
+      },
+      "pr": {
+        "state": "created",
+        "reason": "https://github.com/hkjang/Kkiit/pull/7",
+        "at": "2026-09-18T15:19:08+09:00"
+      },
+      "review": {
+        "state": "approved",
+        "reason": "리뷰 승인 (risk=low)",
+        "at": "2026-09-18T15:19:53+09:00"
+      },
+      "ci": {
+        "state": "passed",
+        "reason": "검사 없음 — 정책으로 허용",
+        "at": "2026-09-18T15:20:22+09:00"
+      },
+      "merge": {
+        "state": "done",
+        "reason": "ec146c373c960050c88bd36c2c9043df2d84480b",
+        "at": "2026-09-18T15:20:28+09:00"
+      },
+      "release": {
+        "state": "published",
+        "reason": "v0.4.2",
+        "at": "2026-09-18T15:23:07+09:00"
+      },
+      "assets": {
+        "state": "verified",
+        "reason": "v0.4.2 자산 1개 (이전 v0.4.1: 1)",
+        "at": "2026-09-18T15:24:10+09:00"
+      }
+    },
+    "campaign": "",
+    "autonomy": "release",
+    "files": 2,
+    "additions": 14,
+    "deletions": 2,
+    "tests": 1,
+    "title": "fix: 운영 대시보드 누적 결제가 결제 상태를 잘못 읽어 늘 0원이던 것을 고치다"
+  },
+  "stages": {
+    "base": {
+      "state": "pinned",
+      "reason": "main@0b59501",
+      "at": "2026-09-18T15:13:56+09:00"
+    },
+    "autonomy": {
+      "state": "release",
+      "reason": "",
+      "at": "2026-09-18T15:13:56+09:00"
+    },
+    "verify": {
+      "state": "passed",
+      "reason": "검증 2개 통과 (policy)",
+      "at": "2026-09-18T15:19:01+09:00"
+    },
+    "pr": {
+      "state": "created",
+      "reason": "https://github.com/hkjang/Kkiit/pull/7",
+      "at": "2026-09-18T15:19:08+09:00"
+    },
+    "review": {
+      "state": "approved",
+      "reason": "리뷰 승인 (risk=low)",
+      "at": "2026-09-18T15:19:53+09:00"
+    },
+    "ci": {
+      "state": "passed",
+      "reason": "검사 없음 — 정책으로 허용",
+      "at": "2026-09-18T15:20:22+09:00"
+    },
+    "merge": {
+      "state": "done",
+      "reason": "ec146c373c960050c88bd36c2c9043df2d84480b",
+      "at": "2026-09-18T15:20:28+09:00"
+    },
+    "release": {
+      "state": "published",
+      "reason": "v0.4.2",
+      "at": "2026-09-18T15:23:07+09:00"
+    },
+    "assets": {
+      "state": "verified",
+      "reason": "v0.4.2 자산 1개 (이전 v0.4.1: 1)",
+      "at": "2026-09-18T15:24:10+09:00"
+    }
+  },
+  "provenance": {
+    "model": "claude-opus-5",
+    "policy_version": "312eebbf",
+    "prompts_hash": "90b6639bc42c5800",
+    "runner_version": "312eebbf",
+    "base_sha": "0b5950137021b259eb8421c7c7bc1462174514b0",
+    "head_sha": "ec146c373c960050c88bd36c2c9043df2d84480b",
+    "pr": "https://github.com/hkjang/Kkiit/pull/7"
+  },
+  "verification": {
+    "runner": {
+      "source": "policy",
+      "commands": [
+        {
+          "cmd": "go build ./... && go vet ./... && go test ./...",
+          "exit": 0,
+          "seconds": 1
+        },
+        {
+          "cmd": "cd web && npm ci --no-audit --no-fund && npm run build --silent",
+          "exit": 0,
+          "seconds": 17
+        }
+      ]
+    },
+    "runner_gate": {
+      "ok": true,
+      "state": "verified",
+      "reason": "검증 2개 통과 (policy)"
+    },
+    "after_rebase": null,
+    "review": {
+      "verdict": "approve",
+      "reasons": [],
+      "notes": [
+        "internal/httpapi/admin_operations.go:24 — payments 는 orders.go:321 에서 오직 'captured' 로만 INSERT 되고 UPDATE payments 가 없어 'succeeded' 합산은 항상 0 이었음. 주문 케이스(admin_operations.go:318)·회원 상세(admin_users.go:207)·분쟁(disputes.go:424) 과 동일 상태를 읽도록 맞춘 한 줄 수정으로 커밋 메시지와 일치함.",
+        "internal/httpapi/integration_test.go:4757-4769 — 수정 전 코드에서는 gmv 가 결제 전후 모두 0 이고 paid>0 이므로 `after.gmv != paidBefore+paid` 로 반드시 실패함. 새 단언이 실제 변경을 검증함.",
+        "테스트는 t.Parallel 없이 순차 실행되고 기존 overdue_orders 의 before+1 단언과 같은 격리 전제를 씀. 공유 DB 에서 병렬 실행 시 깨질 수 있으나 기존 패턴과 동일.",
+        "환급된 결제도 'captured' 로 남아 누적 결제에 포함됨. '누적 결제' 라는 라벨과 주문 케이스의 paid 정의와 일치하므로 결함은 아니나, 순매출로 읽히면 오해 소지.",
+        "KKIIT_TEST_DSN 이 없어 통합 테스트는 실행하지 못했고 go vet 만 통과 확인. 범위 이탈·마이그레이션·권한 변경 없음, revert 로 완전히 되돌릴 수 있음."
+      ],
+      "risk": "low"
+    },
+    "ci_gate": {
+      "ok": false,
+      "state": "no-ci",
+      "reason": "이 커밋에 검사가 없음 (정책 allow_merge_without_ci 가 없으면 차단)",
+      "checks": 0
+    }
+  },
+  "release": {
+    "result": {
+      "status": "released",
+      "version": "0.4.2",
+      "tag": "v0.4.2",
+      "title": "Kkiit v0.4.2",
+      "notes_file": "/mnt/c/Users/USER/projects/aidev/state/runs/2026-09-18-151351-Kkiit-improve/release-notes-v0.4.2.md",
+      "github_release": false,
+      "assets": [],
+      "reason": ""
+    },
+    "assets_sha256": []
+  },
+  "approval": null,
+  "usage": [
+    {
+      "ts": "2026-09-18T15:18:42+09:00",
+      "date": "2026-09-18",
+      "project": "Kkiit",
+      "phase": "improve",
+      "run_id": "2026-09-18-151351-Kkiit-improve",
+      "campaign": "",
+      "subtype": "success",
+      "duration_ms": 302691,
+      "num_turns": 28,
+      "cost_usd": 1.662327,
+      "input_tokens": 56,
+      "output_tokens": 13540,
+      "cache_read": 1466194,
+      "cache_create": 57421
+    },
+    {
+      "ts": "2026-09-18T15:19:52+09:00",
+      "date": "2026-09-18",
+      "project": "Kkiit",
+      "phase": "review",
+      "run_id": "2026-09-18-151351-Kkiit-improve",
+      "campaign": "",
+      "subtype": "success",
+      "duration_ms": 43956,
+      "num_turns": 7,
+      "cost_usd": 0.3404615,
+      "input_tokens": 14,
+      "output_tokens": 2515,
+      "cache_read": 185055,
+      "cache_create": 18317
+    },
+    {
+      "ts": "2026-09-18T15:22:34+09:00",
+      "date": "2026-09-18",
+      "project": "Kkiit",
+      "phase": "release",
+      "run_id": "2026-09-18-151351-Kkiit-improve",
+      "campaign": "",
+      "subtype": "success",
+      "duration_ms": 122221,
+      "num_turns": 15,
+      "cost_usd": 0.7232394999999999,
+      "input_tokens": 30,
+      "output_tokens": 6220,
+      "cache_read": 533307,
+      "cache_create": 29534
+    }
+  ]
+}
