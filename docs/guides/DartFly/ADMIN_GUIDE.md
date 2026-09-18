@@ -56,6 +56,11 @@ Keycloak 클라이언트에서 따로 켤 것은 없습니다. Valid redirect UR
 등록되어 있으면 됩니다. API·MCP·헬스 경로는 이 흐름과 무관합니다 — 브라우저 화면 이동에만
 해당합니다.
 
+관리 화면 없이 환경변수(`DARTFLY_OIDC_*`)로만 SSO 를 구성한 배포에서는
+`DARTFLY_OIDC_AUTO_LOGIN=true` 가 같은 스위치입니다. 환경변수는 화면에 저장된 설정이
+하나도 없을 때만 읽으므로, 화면에서 한 번 저장한 뒤에는 화면의 값이 이깁니다
+([환경변수 1.5](environment-variables.md#15-ssooidc-설정)).
+
 #### 확인하는 법
 
 - IdP 에 로그인한 상태로 DartFly 를 열면 로그인 화면 없이 본 화면이 뜬다.
