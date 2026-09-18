@@ -1,0 +1,16 @@
+# SecCheck 프로필 (2026-09-19)
+- 목적: 보안 심의(검토 요청·항목·증적·승인) 관리 웹 서비스. 오프라인 사이트에 tar.gz 도커 이미지로 배포.
+- 스택: Go(단일 모듈, `internal/…`, Postgres 16, 마이그레이션은 `internal/store/migrations/NNN_*.sql` 순번 SQL), 프런트 React+TypeScript+Vite(`web/`, vitest), Keycloak OIDC(go-oidc), MCP 서버(`/mcp`), SMTP 릴레이(`internal/mail`).
+- 구조:
+  - `internal/web` — HTTP 서버·핸들러(`server.go` 의 `s.handle` 라우트 등록, `payloads.go` 요청 본문 표, `docs_test.go` 가 가이드↔코드 양방향 대조)
+  - `internal/auth` — 세션·OIDC(`auth.go`), MCP OAuth(`mcpoauth.go`, PR #7 미병합) — **보호 경로**
+  - `internal/store` — DB·마이그레이션·알림(`notifyTx`)·워커(`worker.go` Sweep) — migrations 는 **보호 경로**
+  - `internal/analytics`(방문 추적·CSP nonce), `internal/mail`(SMTP·mail_deliveries)
+  - `web/src/pages/Settings.tsx` 탭형 설정 화면, `web/src/lib/payloads.test.ts` 본문 키 대조
+  - `docs/` — ADMIN_GUIDE.md·USER_GUIDE.md·features.md·api-guide·operations.md + PDF(md2pdf 로 재생성, precheck 가 신선도 검사), 캡처는 `scripts/capture_all.js`(Playwright 1440x900)
+  - `.github/workflows/ci.yml`(security-ci: test-build-scan·build·deploy) · `release.yml`(태그 push → CI green 요구 → go test+npm build+docker build → 이미지 selftest → trivy CRITICAL/HIGH 게이트 → package-image.sh → GitHub Release 자산 1개)
+- 빌드·테스트: `bash scripts/precheck.sh`(gofmt·go vet·go test·tsc+vitest+vite build·가이드 그림 1440px·PDF 신선도·gitleaks). `go test ./...` 는 `TEST_POSTGRES_DSN` 이 있어야 통합 테스트가 돌며 약 3분; 없으면 조용히 건너뜀. 프런트: `cd web && npm ci && npx tsc --noEmit && npm test --silent && npm run build`.
+- 관례: 커밋 제목은 영어 서술문(가끔 한국어 `docs:`), 가이드·화면 문구는 한국어. 설정은 `settings` 표의 평면 JSON 행 하나(`mail`·`oidc`·`analytics`·`mcp`), 새 키는 마이그레이션 시드 + Settings.tsx + ADMIN_GUIDE 3-2 표 세 곳을 docs_test 가 양방향 대조. 버전은 `VERSION` 파일과 태그 `vX.Y.Z` 가 일치해야 release.yml 통과.
+- 위험 구역: `internal/auth/*`·`internal/store/migrations/*` 는 러너 guard 가 사람 심사로 홀드. `.github/workflows/*` 완화 금지. 세션 미들웨어의 `WithActor` 는 자기 알림 억제와 연결.
+- 자주 깨지는 곳: 파괴적 확인(`git checkout -- 파일`) 전 WIP 커밋을 안 만들어 편집을 날린 사례 3회; `pkill -f <경로>` 가 자기 셸을 죽임(코드 144); 가이드 원고를 바꾸면 PDF 재생성·docs_test 표 갱신이 따라옴; 컨테이너 trivy 게이트는 베이스 이미지 패키지·x/crypto 로 막힘(Dockerfile apt-get upgrade 로 고침).
+- 검증 함정: 러너의 `error` 가 저장소 실패가 아닐 수 있음 — 2026-09-18 은 일일 예산 홀드(1초 종료). 정찰 환경에서는 `gh`·외부 curl 이 승인 거부될 수 있으니 원격 워크플로 결과는 구현자가 `gh run list --workflow=release.yml` 로 직접 확인. 러너 release.json 의 `github_release:false` 는 워크플로 실패의 증거가 아님(GitHub Release 는 release.yml 이 만듦).
