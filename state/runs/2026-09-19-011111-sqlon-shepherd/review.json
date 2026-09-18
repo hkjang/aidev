@@ -1,0 +1,16 @@
+{
+  "verdict": "reject",
+  "recommend": "fix",
+  "reasons": [
+    "internal/mail/mail.go:157 loginAuth.Start 의 가드 `!info.TLS && info.Name != a.host` 는 항상 거짓입니다. dial()(mail.go:109) 이 smtp.NewClient(conn, cfg.Host) 로 세션을 열어 net/smtp 가 Auth.Start 에 넘기는 ServerInfo.Name 이 언제나 cfg.Host 와 같기 때문입니다. 임시 테스트로 재현: loginAuth{host:\"smtp.corp.local\"}.Start(&smtp.ServerInfo{Name:\"smtp.corp.local\", TLS:false}) → proto=\"LOGIN\", err=nil; STARTTLS 를 알리지 않고 AUTH LOGIN 만 알리는 릴레이에 security=auto + username 을 두고 Verify() 하면 비밀번호 \"pw\" 가 base64 평문으로 그대로 전송됩니다. 캠페인 규칙(12개 저장소 동일 결함) 그대로입니다. 고칠 것: (a) docs/admin_guide.md 의 mail.security 표에 '평문(TLS 없는) 세션에서는 자격증명을 보내지 않는다. security=none 을 명시적으로 고른 경우에만 허용' 정책을 먼저 적고, (b) startSession(mail.go:133) 에서 cfg.Username != \"\" 이고 세션이 TLS 가 아니면(c.TLSConnectionState() 로 확인) security=none 이 아닌 한 AUTH 를 시도하지 말고 ErrInvalid 로 감싼 명확한 오류(예: 'STARTTLS 없이 인증 정보를 보낼 수 없습니다. mail.security=starttls/tls 또는 명시적 none')로 실패시키며, (c) 이 가드는 loginAuth.Start 의 Name 비교 대신 세션 상태로 두고 PLAIN(stdlib 는 비-localhost 평문에서 거부)과 LOGIN 이 같은 정책을 따르게 하세요.",
+    "internal/mail/mail_test.go:138 TestDeliverAuthenticatesOnlyWhenUsernameSet 는 127.0.0.1 로만 시험해 localhost 예외 때문에 위 결함을 잡지 못하고, AUTH LOGIN 경로는 아예 테스트가 없습니다. 회귀 테스트를 추가하세요: (1) loginAuth.Start 에 ServerInfo{Name:\"smtp.corp.local\", TLS:false} 를 넣으면 오류가 나야 하고, (2) AUTH LOGIN(및 PLAIN)만 알리고 STARTTLS 는 없는 가짜 릴레이에 대해 security=auto + username 으로 Deliver/Verify 하면 AUTH 명령이 한 줄도 전송되지 않고 오류를 돌려주며, security=none 을 명시하면 통과하는 것을 단언하세요. 릴레이가 127.0.0.1 이어야 하므로 loginAuth/startSession 의 판정이 주소가 아니라 세션 TLS 상태와 cfg.Security 로만 이뤄지게 하고 그 값을 테스트하세요.",
+    "internal/mail/service.go:122-130 Notify 는 수신자마다 goroutine 을 상한 없이 띄우고 각 goroutine 은 deliver()(service.go:158) 에서 2*Timeout+15s(기본 35초) 동안 TCP 연결을 붙들 수 있습니다. 응답 없는 릴레이(연결은 받고 인사말을 보내지 않는 리스너)에서는 변경 제출·승인·비동기 쿼리 완료·스케줄러 이벤트가 오는 속도만큼 goroutine 과 열린 연결이 쌓입니다(캠페인 규칙, 2개 저장소). Service 에 버퍼 채널 세마포어(예: 8~16)를 두고 상한을 넘으면 발송만 대기시키되 log.Add 의 queued 기록은 지금처럼 즉시 남기세요. 테스트: Accept 만 하고 응답하지 않는 리스너를 릴레이로 두고 Notify 를 상한보다 많이 호출해, 동시에 Accept 된 연결 수가 상한 이하이고 Deliveries() 에는 호출 즉시 모든 건이 queued 로 보이는 것을 단언하세요.",
+    "internal/mail/mail.go:102-108 주석은 '세션 전체가 timeout 으로 묶인다'고 하지만 ctx 에 마감이 있으면 그 마감(deliver 에서는 2*Timeout+15s, SendNow 에서는 Timeout+5s)을 conn 마감으로 씁니다. 그래서 인사말을 보내지 않는 릴레이에 대해 첫 시도가 35초를 다 쓰고 재시도 없이 끝납니다. 세션 마감은 min(ctx 마감, now+cfg.Timeout) 으로 잡아 시도당 Timeout 안에 끊기고 두 번째 시도가 실제로 일어나게 하거나, 주석과 재시도 설명(service.go:155)을 실제 동작에 맞추세요. 위 세마포어 테스트에서 각 시도가 Timeout 안에 failed 로 기록되는 것까지 단언하면 함께 덮입니다."
+  ],
+  "notes": [
+    "355cd50 의 수정 자체는 맞습니다. change/service.go 에서 Approvals 는 Create 시 nil 이고 Submit 은 Draft 에서만 가능하며 재제출 경로가 없어 review_required && len(Approvals)==0 은 정확히 '제출' 한 번에만 참입니다. TestMailPartialApprovalOfCriticalPlanIsSilent 를 수정 전 notifyChange(f6f13b7) 위에서 돌리면 실패하고, 수정본에서는 통과함을 확인했습니다(go test ./internal/mail ./internal/mcp 전부 통과, merge-tree 충돌 없음, origin/main 최신 위에 있음).",
+    "확인한 항목: 기본값 꺼짐(mail.enabled=false, 메타 DB 없으면 s.Mail=nil), 공개 경로 없음(/api/mail/* 는 requireMeta+requireAdmin), 비밀번호는 Config json:\"-\" 와 SettingDef Secret:true 로 API·설정 조회에 실리지 않음, 시험 발송 실패 502 {ok:false,error} 는 settings.html api() 의 data.error 파싱과 맞음, 메일 본문 링크 /admin/changes·/admin/db·/admin 은 nav.js 의 실제 라우트, 마이그레이션 없음, 되돌리기는 revert 로 충분(파일 로그 data/mail/*.jsonl 만 남음).",
+    "사소: docs/admin_guide.md 의 '또돌려주지' 오타(→ '되돌려주지'). 이번 거절 사유는 아닙니다."
+  ],
+  "risk": "medium"
+}

@@ -1,0 +1,21 @@
+{
+  "verdict": "reject",
+  "recommend": "fix",
+  "reasons": [
+    "internal/mail/mail.go:221 loginAuth.Start 의 가드 `!server.TLS && server.Name != a.host` 는 항상 거짓이다 — dial() 이 smtp.NewClient(connection, config.Host) 로 ServerInfo.Name 에 같은 host 를 넣기 때문. 실제 확인: loginAuth{host:\"relay.corp.example\"}.Start(&smtp.ServerInfo{Name:\"relay.corp.example\", TLS:false}) 가 nil 오류로 통과했다. 비-루프백 릴레이가 STARTTLS 없이 `AUTH LOGIN` 만 알리면(Exchange 류) 비밀번호가 base64 평문으로 나간다. 캠페인 규칙 1번(12개 저장소 동일 결함) 그대로다. 고치기: TLS 없고 username 이 있으면 인증하지 말고 ErrInvalid 계열 명확한 오류로 실패시키고(security=none 을 명시적으로 고른 경우에만 허용), docs/ADMIN_GUIDE.md 에 평문 연결에서의 자격증명 정책을 먼저 적는다. 회귀 테스트는 비-루프백 host 로 loginAuth.Start(ServerInfo{TLS:false}) 와 PLAIN 선택 경로가 거부되는지 단언한다 — 기존 TestDeliverAuthenticatesWhenCredentialsGiven 은 127.0.0.1 이라 localhost 예외로 잡지 못한다.",
+    "internal/mail/service.go:153-170 deliver() 가 발송용 ctx(2×Timeout+15s)로 s.complete(ctx, …) 까지 호출한다. dial() 이 연결 마감을 ctx.Deadline 으로 잡으므로 응답 없는 TCP 리스너를 릴레이로 두면 1회차 시도가 예산 전체를 먹고, 2회차는 즉시 실패, 이어지는 log.Complete(UPDATE) 가 `context deadline exceeded` 로 실패해 기록이 영원히 status=queued, attempts=0 으로 남는다. 실제 확인: 연결만 받고 말이 없는 리스너 + Timeout=1s 로 Notify→Wait 하면 17.0s 뒤 status=queued, completeErr=context deadline exceeded. 캠페인 규칙 2번 그대로다. SendNow(131-135) 도 sendContext 로 complete 를 호출해 같은 문제. 고치기: complete() 는 만료되지 않은 별도 컨텍스트(context.WithTimeout(context.Background(), 짧은 시간))로 UPDATE 하고, 응답 없는 TCP 리스너를 릴레이로 둔 테스트를 추가해 status=failed 를 단언한다.",
+    "internal/mail/log.go:29 RecentlyNotified 가 status IN ('queued','sent') 를 '보냈음'으로 친다. 위 결함으로 queued 에 박힌 행이 있으면 같은 검토자에게 approval.requested 가 15분간 억제되어, 정확히 릴레이 장애 상황에서 실제로 받지 못한 사람에게 알림이 계속 빠진다. 위 결함을 고치면 자연히 완화되지만, 묶어 보내기 판정에서 queued 를 어떻게 다룰지(완료 기록 실패 시 포함) 함께 결정하고 테스트로 고정할 것.",
+    "internal/mail/service.go:109-113 Notify 가 수신자마다 무제한으로 고루틴을 띄운다. 배경 발송 상한(버퍼 채널 세마포어)이 없어 응답 없는 릴레이에서 열린 TCP 연결과 고루틴이 요청 속도만큼 쌓인다. 캠페인 규칙 3번. 고치기: 세마포어로 동시 발송 수를 제한하되 record(queued) 는 즉시 남기고 발송만 대기시킨다.",
+    "브랜치 base 가 18b01ab(v0.5.0)이고 origin/main 은 6a013f9(v0.6.0). `git merge-tree --write-tree origin/main HEAD` 가 internal/server/server.go 에서 CONFLICT (Server 구조체 필드·New() 초기화 — main 의 loginThrottle 추가와 겹침). 캠페인 규칙 4번: 제출 전 origin/main 위로 rebase 하고 merge-tree 로 충돌 없음을 확인한 뒤 낼 것. 충돌 자체는 두 필드를 모두 남기는 사소한 병합이다."
+  ],
+  "notes": [
+    "보호 파일 internal/store/migrations/008_mail_notifications.sql 은 확인했다: CREATE TABLE IF NOT EXISTS / CREATE INDEX IF NOT EXISTS / INSERT … ON CONFLICT DO NOTHING 만 있어 추가 전용이고 열·표 삭제·이름 변경 없음. revert 해도 남는 표와 설정 행은 옛 바이너리가 읽지 않으므로 무해. 마이그레이션 자체는 승인 가능하다.",
+    "기본값 꺼짐 확인: DefaultSettings().Enabled=false, Bootstrap 과 008 의 seed 모두 enabled:false. Notify 는 Enabled=false 면 기록도 남기지 않는다(테스트 TestNotifyDoesNothingWhenDisabled 통과).",
+    "인증 없는 공개 경로 추가 없음. /admin/mail/* 는 기존 admin 그룹(requiredScope → session-only) 안에 있어 API 키로 닿지 않는다. 권한 상승·계정 자동 생성 없음.",
+    "비밀값: 비밀번호는 encrypted_value 에만 저장되고 GET 은 has_password 만 돌려준다(TestMailSettingsViewNeverReturnsPassword). 시험 발송 오류 문구(502)는 릴레이 응답만 담는다.",
+    "메일 링크 /approvals, /memories, /login 은 web/src/App.tsx 라우트에 모두 존재한다. 이벤트 배선은 상태 전이 코드에서 직접 호출한다(createMemory/mcpCreateMemory 의 requiresApproval 분기, reviewApproval 의 memory 분기, createUser). 제출자→검토자, 검토자→요청자, 관리자→새 계정 방향이 맞고 행위자 본인은 제외된다.",
+    "go build / go vet / go test ./internal/mail ./internal/server 모두 통과. 위 결함 1·2 는 임시 테스트를 써서 실제 실행으로 재현한 뒤 파일을 지웠다(작업 트리 깨끗함).",
+    "사소: dial() 의 security=tls 경로는 tls.DialWithDialer 라 ctx 취소를 보지 않는다(Dialer.Timeout 은 적용됨). 응답 없는 릴레이에서는 1회차가 예산을 다 써 '한 번 더 시도한다' 는 주석·커밋 메시지와 달리 2회차가 사실상 없다 — 결함 2 를 고칠 때 시도별 마감(Timeout 단위)으로 나누면 함께 해결된다."
+  ],
+  "risk": "medium"
+}

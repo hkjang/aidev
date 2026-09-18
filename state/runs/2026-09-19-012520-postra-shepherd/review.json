@@ -1,0 +1,20 @@
+{
+  "verdict": "reject",
+  "recommend": "fix",
+  "reasons": [
+    "(base) 브랜치가 origin/main(49edf02, 5커밋 앞)보다 뒤에 있고 `git merge-tree --write-tree origin/main HEAD` 가 internal/transport/spa/assets/assets/*.js 17개 rename/rename 충돌을 낸다. origin/main 위로 rebase 한 뒤 `cd web && npm ci && npm run build` 로 SPA 자산을 다시 빌드해 커밋하고(main 쪽 해시 자산은 버림), merge-tree 가 깨끗한지 확인한 뒤 제출할 것. Go 소스 파일은 모두 auto-merge 된다.",
+    "internal/adapters/smtp/client.go:78-105 (authenticate) + internal/application/notify_mail.go:193-205: `mail.security=auto` + `mail.username` 설정에서 릴레이가 STARTTLS 를 광고하지 않으면 세션이 평문으로 남는데 authenticate 는 TLS 상태를 전혀 확인하지 않는다. 비-루프백 주소에 띄운 가짜 릴레이로 재현함 — (a) `250 AUTH LOGIN` 만 광고: 와이어에 `AUTH LOGIN` → `cmVsYXl1c2Vy` → `aHVudGVyMg==`(=hunter2) 가 base64 평문으로 나가고 TestConnection 이 ok=true. (b) `250 AUTH PLAIN LOGIN` 광고: stdlib PlainAuth 가 'unencrypted connection' 으로 거절해 AuthError(영구 실패) → 이 구성의 알림은 전부 failed. 고칠 것: 자격증명을 보내기 전 `c.TLSConnectionState()` 로만 평문 여부를 판단하고(server.Name 비교 금지), TLS 없음 + username 설정이면 auto 는 인증을 거부하고(명확한 오류로 failed 기록) 명시적 `none` 에서만 허용하는 정책을 docs/ADMIN_GUIDE.md 6.5 에 먼저 적은 뒤 구현할 것. loginAuth.Start 도 `!server.TLS` 이면 오류를 반환하도록 할 것.",
+    "internal/adapters/smtp/ 에 테스트가 하나도 없고 internal/application/notify_mail_test.go 는 전부 fakeSMTP 를 거친다(smtp.lastOpts 검사만). 비-루프백 주소(127.0.0.1 아님)에 바인드한 가짜 릴레이로 `AUTH PLAIN LOGIN` 광고 / `AUTH LOGIN` 만 광고 두 케이스를 두고, 평문 세션에서 비밀번호가 와이어에 나가지 않는 것과 STARTTLS 세션에서는 인증이 성공하는 것(항상 실패가 아님)을 둘 다 단언하는 어댑터 테스트를 추가할 것.",
+    "internal/application/notify_mail.go:159-187 + internal/adapters/smtp/client.go:37-58: ctx 는 DialContext 에만 쓰이고 conn 에 SetDeadline 이 없어 TCP 만 받고 응답하지 않는 릴레이에서는 smtp.NewClient 의 배너 읽기가 영원히 블록한다(고루틴·workerGroup 누수, 종료 시 Wait 가 안 끝남). 나중에 반환되더라도 completeNotifyMail 이 이미 만료된 발송용 ctx 로 CompleteMailDelivery 를 호출해 실패하고 행은 영원히 'queued' 로 남는다(AdminSendTestMail:293-296 도 동일). 고칠 것: connect 에서 ctx 마감으로 conn.SetDeadline 을 걸고(또는 ctx 만료 시 conn.Close), 결과 기록은 context.Background()+짧은 타임아웃의 별도 컨텍스트로 수행하며, 발송 예산은 시도 수×(연결+응답 제한) 으로 계산하고, accept 만 하고 응답하지 않는 리스너로 재현 테스트를 둘 것. docs/ADMIN_GUIDE.md 의 `mail.timeout_seconds` = '연결·응답 제한 시간' 설명은 현재 코드(연결 제한만)와 다르므로 구현에 맞출 것.",
+    "internal/application/notify_mail.go:70-91: 수신자마다 고루틴을 즉시 띄우고 동시 수 제한이 없다. 심각 장애 1건 = 활성 관리자 수만큼, 죽은/느린 릴레이가 겹치면 고루틴·TCP 연결이 무한히 쌓인다. 기록(RecordMailDelivery)은 즉시 남기되 실제 발송은 세마포어(예: 4)로 제한할 것.",
+    "internal/application/notify_mail.go:191-214: 다른 모든 SMTP 경로가 거치는 조직 정책 게이트(app.go:296-317 checkInsecureAllowed — `mail.tls_required`, AllowInsecureMail, validateMailHost)를 릴레이 경로는 하나도 적용하지 않는다. `mail.tls_required=true` 인 조직에서도 `mail.security=auto/none` 이나 `mail.skip_tls_verify=true` 로 평문/무검증 발송이 된다. Config.Validate 또는 sendNotifyMail 에서 `mail.tls_required` 가 켜져 있으면 auto/none/skip_verify 를 거부(사유를 notify-mail 경고 장애로 기록)하고, 그 규칙을 ADMIN_GUIDE 6.5 에 적을 것."
+  ],
+  "notes": [
+    "확인된 것: 기본값 꺼짐(mail.enabled=false, TestNotifyMailOffByDefault… 통과), 마이그레이션은 추가만(mail_deliveries 신규 테이블, message_collab.sla_notified_at 컬럼 추가; SQLite/PG 모두), 새 API 2개는 모두 requireAdmin 을 거침, 비밀번호는 SecretStore 참조로만 저장되고 회전 시 옛 참조 폐기 테스트 통과, 메일 링크 경로(/app/sent, /app/mail/:id, /app/accounts/:id, /app/admin?category=, /app/team?message=)는 web/src/app/App.tsx 라우터와 OperationsConsole/TeamPage 의 쿼리 처리에 실제로 존재함.",
+    "go build ./... / go vet / go test ./internal/application -run 'NotifyMail|SLA|Incident|SendFailure|AssignMessage|AdminSendTestMail' 및 ./internal/platform/notifymail 모두 로컬 통과. 프론트 typecheck 는 node_modules 가 없어 이 세션에서는 실행하지 못했음 — 수정 세션은 `npm run typecheck`·`npm test` 까지 돌릴 것.",
+    "f51281a 는 gosec G101 오탐에 대한 주석(#nosec) 추가만이라 동작 변경 없음.",
+    "SLA 알림 로직(notify_sla.go + ListSLADueCollab 의 sla_notified_at<sla_due 조건)은 임박 1회·초과 1회·기한 변경 시 재시작이 테스트로 검증되며 결함 없음. mutateCollab 의 읽기-쓰기 사이에 notifier 가 MarkSLANotified 한 값이 UpsertMessageCollab 에 덮어써질 수 있는 작은 경합이 있으나 최악의 경우 한 번 더 메일이 가는 정도라 이번 거절 사유에는 넣지 않음.",
+    "재현에 쓴 임시 테스트 파일은 삭제했고 작업 트리는 깨끗함."
+  ],
+  "risk": "medium"
+}

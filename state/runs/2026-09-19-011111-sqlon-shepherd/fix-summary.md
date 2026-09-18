@@ -1,0 +1,5 @@
+- 문제: `notifyChange` 가 `state==review_required` 만 보고 '제출'로 판단해, critical(승인 2건) 플랜의 첫 Approve 뒤에도 dba/admin 에게 '승인 요청' 메일을 다시 보내고 본문에 승인자를 "제출했습니다" 로 적음. 새 테스트로 재현 확인(dan approve → admin 에게 'dan 님이 … 제출했습니다').
+- 수정(internal/mcp/mail.go): review_required 분기에 `len(p.Approvals)==0` 조건을 추가해 승인이 하나라도 붙은 부분 승인은 아무것도 보내지 않음. 문서대로 '승인 요청'(제출 시 1회)·'실행 가능'(마지막 승인 시 1회) 두 이벤트만 나감.
+- 테스트(internal/mcp/mail_test.go): `TestMailPartialApprovalOfCriticalPlanIsSilent` 추가 — critical 제출→dan REST approve(1/2, 무발송·기록 없음)→admin MCP `approve_change`(2/2, dan 에게 '실행 가능' 1통, '제출했습니다' 문구 없음, 발송 기록 actor=admin) 를 단언. REST/MCP 두 훅 모두 통과.
+- 검증: `go build ./...`, `go vet`(mcp/mail), `go test ./... -count=1` 전부 통과. gofmt 는 변경 파일 두 개 모두 깨끗함(목록에 뜨는 것은 이 브랜치와 무관한 기존 파일).
+- 커밋: 355cd50 (브랜치 위 새 커밋, push 안 함).

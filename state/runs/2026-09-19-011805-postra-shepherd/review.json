@@ -1,0 +1,19 @@
+{
+  "verdict": "reject",
+  "recommend": "fix",
+  "reasons": [
+    "internal/adapters/smtp/client.go:78-101 (authenticate) + internal/application/notify_mail.go:171-181 (sendNotifyMail): 평문 연결에서 자격증명을 보내는 가드가 없다. 기본값 mail.security=auto 에 mail.username 을 설정하고 릴레이가 STARTTLS 를 광고하지 않으면 그대로 authenticate 로 진입한다. 비-루프백 주소에 바인드한 가짜 릴레이로 실제 어댑터를 실행해 확인함 — 'AUTH LOGIN' 만 광고하는 릴레이: loginAuth 가 비밀번호를 base64 평문(P:aHVudGVyMg== = hunter2)으로 전송했고 Send 는 성공을 반환. 'AUTH PLAIN LOGIN' 광고 릴레이: stdlib PlainAuth 가 'smtp auth: unencrypted connection' 으로 거부해 알림 메일 인증이 항상 실패. 수정: (1) docs/ADMIN_GUIDE.md 6.5 에 'TLS 없이 username 이 설정되면 auto 는 인증을 거부하고 명시적 none 에서만 인증 없이 보낸다' 정책을 먼저 적고, (2) authenticate 에서 username 이 있을 때 c.TLSConnectionState() 의 ok 로만 평문 여부를 판단해 TLS 가 아니면 (server.Name/host 비교 금지) 오류를 반환하고 비밀번호를 Reveal 하지 않는다. 이 어댑터는 계정 발송 경로와 공유되므로 기존 계정 경로에 회귀가 없는지 함께 확인.",
+    "internal/application/notify_mail_test.go 전체: 모든 테스트가 fakeSMTP(옵션만 기록)로 끝나고 실제 어댑터의 인증 경로를 한 번도 실행하지 않는다. 127.0.0.1 이 아닌 비-루프백 주소에 바인드한 가짜 릴레이로 (a) 'AUTH PLAIN LOGIN' 광고, (b) 'AUTH LOGIN' 만 광고 두 케이스를 두고, STARTTLS 없는 릴레이에는 비밀번호가 와이어에 나가지 않는 것과 STARTTLS 있는 릴레이에서는 인증이 성공하는 것(항상 실패가 아님)을 둘 다 단언하는 테스트를 추가할 것.",
+    "internal/adapters/smtp/client.go:46-58 + internal/application/notify_mail.go:154-170 (deliverNotifyMail/completeNotifyMail): TCP 만 받고 응답하지 않는 릴레이에서 기록이 영원히 'queued' 로 남는다. 어댑터는 Dialer.Timeout 으로 접속만 제한하고 연결 후 SetDeadline 을 걸지 않아 ctx 만료가 읽기를 깨우지 못한다 — 2초 ctx 로 실행했을 때 Send 가 상대가 끊을 때까지 20초 블록되는 것을 확인함. 그 뒤 completeNotifyMail 이 이미 만료된 같은 ctx 로 CompleteMailDelivery 를 호출해 UPDATE 가 실패하고(로그만 남김) 행은 queued 로 고정되며, workerGroup 도 빠지지 않아 종료가 막힌다. 수정: 어댑터에서 ctx 데드라인(없으면 ConnectTimeoutSec 기반)으로 conn.SetDeadline 을 걸어 greeting/EHLO/DATA 읽기가 만료되게 하고, 결과 기록(UPDATE)은 발송 ctx 와 분리된 새 컨텍스트(context.WithoutCancel + 짧은 timeout)로 수행하며, 응답하지 않는 리스너로 재현하는 테스트를 두어 failed 로 기록되는 것을 단언할 것.",
+    "internal/application/notify_mail.go:83-96 (NotifyMail): 수신자마다 고루틴을 제한 없이 띄운다. 위 항목과 결합하면 죽은/침묵하는 릴레이에서 고루틴과 TCP 연결이 요청마다 무한히 쌓인다. 수정: 발송 고루틴 동시 수를 세마포어(버퍼 채널)로 제한하되 기록(RecordMailDelivery)은 즉시 남기고 발송만 대기시킬 것.",
+    "저장소 전체: `git merge-tree --write-tree origin/main HEAD` 가 충돌을 보고한다 — internal/transport/spa/assets/assets/*.js 의 rename/rename 충돌(ai-, compose-, drafts-, index-, jobs-, rules-, settings-, work- 해시 파일), mcp-*.js rename/delete, internal/transport/spa/assets/index.html 내용 충돌. main 이 v0.23.0(49edf02) 으로 전진했다. origin/main 최신 위로 rebase 한 뒤 SPA 에셋을 다시 빌드해 커밋하고 merge-tree 가 깨끗한지 확인할 것."
+  ],
+  "notes": [
+    "확인된 것: 기본값 mail.enabled=false 이며 새 설치에서 아무것도 보내지 않음(TestNotifyMailOffByDefaultAndSilentWhenDisabled). 비밀번호는 SecretStore 참조로만 저장되고 설정 조회·감사 로그에 노출되지 않음(TestNotifyMailPasswordIsWriteOnly, 로테이션 시 이전 참조 폐기 확인). 관리자 전용 엔드포인트(/api/admin/mail/*)는 requireAdmin 으로 보호되고 비관리자 거부 테스트가 실행됨. 마이그레이션은 mail_deliveries 테이블·인덱스 추가만(CREATE IF NOT EXISTS) — 되돌리기 가능.",
+    "메일 본문 링크 경로(/app/sent, /app/mail/:id, /app/accounts/:id, /app/admin?category=system)는 web/src/app/App.tsx 라우트와 OperationsConsole categories 에 실제 존재함을 확인. '비밀번호를 다시 등록하면 수집이 재개됩니다' 문구는 계정 폼이 credential_error 상태에서 status=active 를 기본 제출하므로 사실임.",
+    "심각 장애 알림은 RecordIncident 의 fingerprint 폴딩으로 새 행일 때만 한 번 발송됨(TestCriticalIncidentMailsAdminsOnce 통과). NotifyMail 내부의 설정 불완전 incident 는 warning 이라 재귀 발송 없음.",
+    "실행한 검증: go vet, go test ./internal/platform/notifymail ./internal/transport/... 및 application 의 notify-mail 관련 테스트 모두 통과. 프론트 typecheck 는 워크트리에 node_modules 가 없어 실행 못 함. gosec 은 로컬에 없고 GitHub 접근 권한이 없어 c60def7(#nosec G101 주석 추가)로 CI 가 실제로 녹색이 됐는지 확인하지 못함 — 다음 세션은 CI 상태를 확인할 것.",
+    "리뷰 중 임시로 만든 프로브 테스트 파일(internal/adapters/smtp/zz_review_tmp_test.go)은 삭제했고 워크트리는 깨끗함."
+  ],
+  "risk": "medium"
+}
