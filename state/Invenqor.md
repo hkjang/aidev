@@ -796,3 +796,4 @@
   `go vet`, `gofmt`, `go build`. 버전 범프·릴리즈 노트·PDF 재생성은 하지 않았다.
 - 보류 아이디어: 여러 목록 핸들러가 `rows.Err()` 를 확인하지 않아 부분 결과를 200 으로 돌려줌 — listAgents·settings·자산 상세 sources/history/relations, 실패 주입 수단이 선행 과제 (가치 3 / 위험 1 / M) · cargo audit·govulncheck 를 main 에 대해 매일 cron 으로도 돌리기 — ci.yml 에 schedule 트리거 추가 (가치 3 / 위험 1 / S) · MCP `asset_get` 이 병합된 자산에 "asset not found" 만 답함 — `merged_into` 로 primary 안내 (가치 3 / 위험 2 / M) · 콘솔·외부 REST `assetRelations` 가 상한 없이 모든 edge 를 돌려줌 — MCP 와 같은 `limit`/`offset`·`has_more`, 콘솔 관계 패널 수정 동반 (가치 3 / 위험 2 / M) · Query DSL 화면의 limit 입력이 0·빈값·501 을 그대로 보내 Server 가 100/500 으로 고쳐 돌려줌 — 입력 시점에 1~500 으로 맞추고 되돌려 준 `limit` 을 편집기에도 반영 (가치 2 / 위험 1 / S)
 
+- 릴리즈: v0.2.37 (2026-09-18, run 2026-09-18-151346-Invenqor-improve)
