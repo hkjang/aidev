@@ -1,0 +1,22 @@
+{
+  "verdict": "reject",
+  "recommend": "fix",
+  "reasons": [
+    "internal/auth/mcpoauth.go:255,260,270,299,316 모든 Store.Log 호출이 requestID 인자에 \"\" 를 넘긴다. Authenticate(r) 는 X-Request-ID 를 이미 갖고 있다(internal/web/server.go:338-343 미들웨어가 채우고 requestID(r) 로 읽음). 캠페인 규칙 1(Invenqor·igame 회귀) 위반. 고치기: Authenticate 에서 r.Header.Get(\"X-Request-ID\") 를 authenticateMCPToken(ctx, requestID, token) 으로 넘기고 모든 Store.Log 의 두 번째 인자로 쓴다.",
+    "internal/auth/mcpoauth.go:275,280,283,289,292 claims 디코드 실패·ID 토큰·nbf·cnf·sub 없음 거부 분기는 클라이언트용 합성 메시지만 돌려주고 로그를 전혀 남기지 않는다. 같은 규칙 위반이며 docs/ADMIN_GUIDE.md 의 '서버 로그 mcp_oauth 구성요소에 같은 이유가 남습니다' 문장이 이 다섯 경로에서 거짓이 된다. 고치기: 각 분기에 Store.Log(ctx, \"INFO\", requestID, \"mcp_oauth\", \"sso token refused: <nbf|id_token|cnf|no_sub|claims>\", {sub, aud, azp, 원인}) 를 넣는다(토큰 원문은 넣지 말 것).",
+    "internal/web/mcp_oauth_test.go 어느 테스트도 application_logs 행을 단언하지 않아 로그 호출이 있음이 고정되지 않는다(캠페인 규칙 1·2). 고치기: TestTokensThatAreNotThisServersAreRefused 의 각 케이스(expired/other issuer/other key/nbf/ID token/cnf/no subject/no audience/HS256/unknown person) 뒤에 integration_test.go:2213 의 방식대로 SELECT message, request_id, fields FROM application_logs WHERE component='mcp_oauth' 를 조회해 (a) 행이 있고 (b) request_id 가 응답의 X-Request-ID 헤더와 같고 (c) fields->>'error' 또는 message 에 원인(서명/발급자/만료/nbf 중 무엇인지)이 있음을 단언한다. 기능 꺼짐(feature off) 경로도 TestAFreshInstallation 에서 같은 방식으로 'sso token refused: feature off' 행을 단언한다.",
+    "docs/ADMIN_GUIDE.md 3-6 '토큰 검사' 문단의 '`HS*`·`none` 거부' 중 none 알고리즘은 테스트가 없다(HS256 만 있음). 캠페인 규칙 2: alg=none 토큰(서명 부분 비움 또는 임의 문자열)이 401 인 케이스를 TestTokensThatAreNotThisServersAreRefused 에 추가하거나 문장에서 none 을 지운다.",
+    "internal/auth/mcpoauth.go:105-107 username_claim 이 비어 있을 때 MCP 경로는 'preferred_username' 으로 기본 처리하지만 웹 로그인(internal/auth/auth.go:622-625)은 claims[\"\"] 실패 → sub 로 떨어진다. 같은 설정값을 두 경로가 다르게 읽어 같은 사람이 웹으로는 sub 이름의 계정을 만들고 토큰으로는 preferred_username 계정을 찾게 된다(운영자 규칙: 같은 값을 읽는 경로는 같게). 고치기: 기본값 주입을 없애고 웹 로그인과 동일한 순서(claims[cfg.UsernameClaim] → sub)로 맞추거나, 두 곳이 같은 헬퍼를 쓰게 한다. 테스트: username_claim=\"\" 로 저장한 뒤 sub 이름의 oidc 계정이 토큰으로 열리는지 단언.",
+    "internal/auth/mcpoauth.go:173-191 mcpProvider 가 뮤텍스를 잡은 채 oidc.NewProvider(최대 10초 네트워크 왕복)를 호출하고 실패는 캐시하지 않는다. Keycloak 이 닿지 않을 때 토큰을 실은 /mcp 요청이 모두 이 잠금 뒤에 직렬화되어 N번째 요청은 N×10초를 기다린다. 고치기: 잠금은 맵 조회·저장에만 쓰고 discovery 는 잠금 밖에서(또는 issuer 별 singleflight 로) 하며, 실패는 짧게(예: 30초) 기억해 즉시 거부한다."
+  ],
+  "notes": [
+    "실행 확인: 임시 Postgres 16 컨테이너에 TEST_POSTGRES_DSN 을 주고 go build ./..., go vet, go test ./... 전부 통과(12 패키지, internal/web 187s). 새 테스트 6+2 개는 진짜 RS256 키·discovery·JWKS 를 서빙하는 가짜 IdP 로 프로덕션 검증 경로를 통과한다 — 대역이 아님.",
+    "보호 파일 항목 확인 결과: 기본값 꺼짐(037 마이그레이션 INSERT … ON CONFLICT DO NOTHING, 추가만·삭제 없음·되돌리기 쉬움). 새 공개 경로는 RFC 9728 메타데이터 두 개뿐이고 꺼져 있으면 404, 전역 rate limiter(server.go:368) 아래에 있음. 토큰은 r.URL.Path==/mcp 에서만 검사되고 REST 는 키 조회로 떨어져 'invalid API key' 와 동일 응답(테스트로 고정). 계정 생성·비활성 복구·토큰 role 반영 없음(테스트로 고정). 비밀값 노출 없음(mcp 행은 sensitive=false 이고 시크릿 없음, 응답·로그에 토큰 원문 없음). 리다이렉트 없음. WWW-Authenticate 는 /mcp 401 에만.",
+    "캠페인 규칙 3(빈 scope 교집합) 확인: grantedScopes 가 [] 를 돌려줄 수 있으나 callMCPTool(mcp.go:204)·require(server.go:292) 는 read:write 가 없으면 거부하므로 빈 목록은 읽기 전용이지 무제한이 아니다. 권한 상승 없음.",
+    "캠페인 규칙 4(새 주체 종류) 확인: Session.APIKey 로 분기하는 곳 전부 — server.go:280(비밀번호 변경 게이트), server.go:292(쓰기 범위), server.go:297(CSRF 면제), server.go:626(recordDenial), core_handlers.go:272(비밀번호 변경 거부), mcp.go:204(도구별 쓰기 범위) — 를 SSO 세션이 APIKey=true 로 통과하므로 키와 같은 규칙을 받는다. sess.ID 를 쓰는 account.go 경로는 REST 라 토큰이 도달하지 못한다. 커밋 메시지에 이 목록이 없으니 다음 세션은 PR 설명에 붙일 것.",
+    "캠페인 규칙 6(정의 목록 삭제) 확인: admin.go allowed 맵과 Settings.tsx tabs 배열 모두 기존 항목 유지, 삭제 줄 없음.",
+    "docs/*.pdf 4개 재생성은 scripts/build_docs_pdf.sh 의 산출물이라 범위 이탈이 아님. analytics.go 의 /.well-known/ 제외는 새 경로에 따른 것으로 범위 안.",
+    "reasons 1~3 이 핵심(캠페인 규칙 1·2 직접 위반). 4~6 은 같은 PR 에서 함께 고치면 되는 부수 결함. 방향 자체는 문제없고 되돌리기 쉬우므로 human 이 아니라 fix."
+  ],
+  "risk": "medium"
+}
