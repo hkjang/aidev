@@ -26,3 +26,5 @@
 - 다음 회차: admin-users.png 는 이진 교체라 미머지 브랜치가 같은 PNG 를 굽으면 충돌 — 릴리즈 문서 정비 회차에서 PDF 와 함께 한 번에 굽는 편이 안전. A 가 마지막 다른 관리자 B 를 강등하는 것은 여전히 허용(범위 밖).
 - [러너 03:49] review approved — 리뷰 승인 (risk=low)
 - [러너 03:49] pr created — https://github.com/hkjang/seaton/pull/31
+- [러너 03:53] ci passed — 검사 2개 모두 success
+- [러너 03:53] merge done — 1a64524
