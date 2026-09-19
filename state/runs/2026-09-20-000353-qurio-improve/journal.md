@@ -26,3 +26,4 @@
 - 릴리즈/다음 회차: (1) qurio_audit_logs 보존·정리 잡 없음(기존 문제) → 보류 목록 추가 권장, (2) 기존 mcp_oauth/api_key 통합 테스트가 api_request_logs 에 20행을 남김(이번 PR 은 0행) → 정리 대상, (3) 릴리즈 노트에 "느린 조용 SSO 는 auth.oidc.failed 로 보일 수 있음" 한 줄.
 - [러너 00:23] review approved — 리뷰 승인 (risk=low)
 - [러너 00:23] pr created — https://github.com/hkjang/qurio/pull/17
+- [러너 00:42] ci timeout — 제한 시간 안에 CI 완료를 확인하지 못함
