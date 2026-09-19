@@ -1,0 +1,14 @@
+# igame 프로필 (2026-09-19)
+- 목적: 사내 미니게임 포털 — 게임 카탈로그·세션·랭킹·업적, RealmGuard/Defense 시리즈 콘텐츠, 관리자 설정(OIDC·추적·MCP SSO), 단일 오프라인 Docker 이미지로 배포.
+- 스택: Go 1.26(chi, go-oidc, PostgreSQL 17) 백엔드에 React 19 + Vite 7 + vitest 5 포털을 embed. JS Game SDK(`sdk/gamehub-js`). Node 22 / npm 10.9.8.
+- 구조:
+  - `cmd/igame` — 진입점, listen 주소 `:8080` 고정.
+  - `internal/api` — 핸들러 전부(auth.go, admin.go, catalog.go, content.go, defense.go, realmguard.go, auditexport.go, mcpoauth.go 등). `*_pg_test.go` 는 `IGAME_TEST_DSN` 있을 때만 돈다.
+  - `internal/database`(Migrate·체크섬), `internal/config`(환경 변수), `internal/tracking`(CSP nonce·스니펫), `internal/secretbox`, `internal/web`(SPA 셸), `internal/battle/realmguard`.
+  - `migrations/` — 번호 SQL(최근 010_silent_sso). `web/` 포털, `sdk/gamehub-js` SDK, `scripts/` smoke·release·guide-capture, `docs/` 가이드(ADMIN_GUIDE.md/USER_GUIDE.md + PDF, api.md, operations.md).
+  - `.github/workflows/ci.yml`(PR 게이트), `release.yml`(태그 푸시 → 테스트·audit·govulncheck·이미지 빌드·grype·smoke·릴리즈 게시).
+- 빌드·테스트: `make deps`(npm ci ×2, 느림) / `make lint` / `make test`(Go + SDK 9 + web ~247) / `go test -race ./cmd/... ./internal/... ./migrations/...` / `make test-db DSN=postgres://…`(docker postgres:17-alpine 필요) / `make web-build`(오프라인 번들 검사) / `bash scripts/check-release-contract.sh` / `make docker-build`(느림).
+- 관례: 커밋 메시지 영어 `feat:`/`fix:`/`docs:`, 릴리즈는 `feat: release igame vX.Y.Z` + VERSION 파일. 설정은 키마다 JSON 오브젝트(`tracking`, `oidc`, `mail`, `mcp`). 비밀은 암호화 저장·API 미반환. 문서는 docs/ 정본 하나, PDF 는 공용 `tools/guide/md2pdf.mjs` 로 재생성.
+- 위험 구역: `internal/api/auth.go`(OIDC/세션), `mcpoauth.go`(토큰 검증·Principal.Can 관리자 우회 조건), `migrations/`(체크섬 검증), `.github/workflows/*`(게이트 완화 금지), `scripts/capture-guide-screenshots.sh`(파괴적, 전용 배포 전용).
+- 자주 깨지는 곳: 릴리즈 `Audit locked Node dependencies`(dev 포함 --audit-level=low; CI 는 --omit=dev 라 PR 은 초록) — 2026-09-10 2회, 2026-09-19 다시 2회 실패 보고(원인 미확인). vitest 4.x 는 npm 10.9.8 에서 설치 크래시. 관리자 라우트 등록 누락(chi.Walk 테스트로 방지).
+- 검증 함정: PG 테스트는 DSN 없으면 조용히 skip. `:8080` 고정이라 로컬 smoke 가 다른 프로젝트와 충돌. release.yml 은 `go1.26.6` 문자열을 하드코딩(122·133행). 캡처 도구는 실행 금지(파괴적). 정찰 세션에는 gh/npm/네트워크 승인이 없을 수 있음 — 워크플로 로그 확인은 구현자 몫.
