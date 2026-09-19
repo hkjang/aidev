@@ -1,0 +1,16 @@
+# git-ctx 프로필 (2026-09-19)
+- 목적: 여러 git 저장소를 색인해 MCP/REST 로 코드·의존성 컨텍스트를 제공하는 온프레미스 서버(관리 콘솔 포함).
+- 스택: Go 1.25(toolchain 1.26.6), SQLite FTS5(`-tags sqlite_fts5`) 또는 PostgreSQL+pgvector, Vault(선택), Keycloak OIDC, 바닐라 JS 관리 콘솔(`web/`), Docker 오프라인 이미지.
+- 구조:
+  - `cmd/git-ctx` — 진입점. `internal/version/version.go` 의 `const Version` 이 릴리즈 단일 출처.
+  - `internal/manifest` — 매니페스트·락파일 파서(`manifest.go`, `lockfile.go`), 의존성 인벤토리. 최근 회차의 주 작업지.
+  - `internal/contentsecurity` — `sanitize.go` 자격증명 마스킹 규칙(줄 수 보존 불변식).
+  - `internal/mcp` — MCP 도구·정책·예산(`budget.go`, `policy.go`). `internal/auth` — OIDC·리소스 토큰. `internal/app` — HTTP 배선·테스트.
+  - `internal/indexer`, `internal/search`, `internal/store` — 색인·검색·DB(마이그레이션·빌드모드 교차 테스트 `test/store/*.sh`).
+  - `scripts/` — `release.sh`(검증→커밋→태그→푸시), `verify-version-sync.sh`, `package-offline-image.sh`, `verify-offline-image.sh`.
+  - `test/release/version-sync.test.sh`, `test/web/*.test.js`(콘솔 계약 테스트·render-sweep), `docs/`(release-notes-vX.md, completion-audit.md, openapi.yaml), `deploy/kubernetes`.
+- 빌드·테스트: `gofmt -l ./cmd ./internal`, `go build -tags sqlite_fts5 ./...`, `go vet ./...`, `go test -tags sqlite_fts5 ./...`(전체 수 분), `-race` 는 더 오래 걸림. 콘솔: `node --check web/*.js`, `node test/web/*.test.js`. 통합: `GIT_CTX_TEST_POSTGRES_DSN`/`PGVECTOR_DSN`/`VAULT_URL` 설정 시만 `-run Integration`.
+- 관례: 커밋 메시지 영어 `fix(pkg): …`/`release: vX.Y.Z`; 릴리즈는 `scripts/release.sh` 로만; 버전 올릴 때 8개 문서·설정 파일을 함께 동기화(`verify-version-sync.sh` 가 강제); 설정은 카테고리별 JSON(`keycloak.*`, `mcp.*`); 문서는 `docs/`(configuration.md, operations.md, mcp-client-compatibility.md).
+- 위험 구역: `.github/workflows/{ci,release}.yml`(검사 완화 금지), `internal/auth`·`internal/app` 인증 경로(SSO·API 키·`Principal.Restricted()`), `internal/store` 마이그레이션(업그레이드 테스트가 옛 태그 바이너리로 DB 를 만들어 열어봄), `internal/version/version.go`(태그와 묶임).
+- 자주 깨지는 곳: 릴리즈 시 태그가 검증 실패한 이전 커밋을 가리킨 일 2회(release.sh 주석); 매니페스트 파서 확장 PR 반려 2건(fbcff94·214bf01); 마스킹 규칙이 줄바꿈을 삼켜 줄 번호 어긋남(여러 번 수정).
+- 검증 함정: CI/릴리즈는 `govulncheck@v1.7.0` 을 매번 돌려 취약점 DB 갱신만으로도 같은 태그가 실패할 수 있음; 통합 테스트는 로컬에서 조용히 skip; Dockerfile 이 테스트를 다시 돌리고 VERSION 인자와 소스 버전 불일치를 거부; 이 정찰 환경은 GitHub·네트워크 접근 없음.
