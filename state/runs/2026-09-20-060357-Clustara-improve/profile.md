@@ -1,0 +1,13 @@
+# Clustara 프로필 (2026-09-20)
+- 목적: 폐쇄망용 Kubernetes 운영 허브 — 멀티 클러스터 인벤토리 수집·보안 포스처(SEC-xx)·용량(SCALE-xx)·Action Center 승인·MCP/LLM 프록시·ClickHouse DW·Mattermost 알림을 한 바이너리로 제공.
+- 스택: Go 단일 모듈(`clustara`), net/http mux(internal/proxy/server.go), PostgreSQL(internal/store), ClickHouse 선택, 관리 UI 는 internal/proxy/admin_ui.go 안의 인라인 JS(SPA, 한국어). CLAUDE.md 없음.
+- 구조:
+  - cmd/ — 엔트리. internal/proxy — 모든 HTTP 핸들러(admin_k8s*.go, k8s_notify.go, admin_k8s_dw.go, mcp_oauth.go) + admin_ui.go(2만 줄대 UI).
+  - internal/analyzer — 순수 분석 함수(security.go SEC-01/02/06, tls.go SEC-07, rbac/diff SEC-08, capacity.go, connectivity.go, exposure.go, policy.go 가드레일, podowner.go). 핸들러는 여기 결과를 그대로 JSON 으로 냄.
+  - internal/kube — 인벤토리 수집(inventoryFromObject, ownerReferences 를 Spec 에 저장). internal/store — DB 접근·K8sInventoryItem(ClusterID 포함).
+  - internal/action — 승인 영향도. internal/collector, prometheus, harbor, gitprovider — 외부 연동. docs/ — ADMIN_GUIDE.md·USER_GUIDE.md·K8S_OPERATIONS_HUB.md(API 표).
+- 빌드·테스트: `go build ./... && go vet ./... && go test ./...` — 캐시 없이 약 80초(proxy 60s, store 16s), 20 패키지. 개별: `go test ./internal/analyzer/`(수 초). `.github` 에 CI 없음(FUNDING.yml 뿐).
+- 관례: 커밋 메시지 영어 `fix(security): …`/`feat(mcp): …`, 릴리즈는 `chore: release v0.9.N` 로 별도 커밋(세션은 버전·changelog·docs 마커를 건드리지 않음). 설정은 런타임 설정 레지스트리 + 환경변수(MCP_OAUTH_* 등). 코드 주석은 영어, UI·메시지 문자열은 한국어. 결과 타입에 `cluster_id` 는 `omitempty` 로 additive 추가하는 것이 반복된 패턴.
+- 위험 구역: internal/proxy/mcp_oauth.go·authenticateProxyContext·currentAccessClaims(인증), analyzer/policy.go 의 가드레일(enforce_pss_restricted 가 restrictedProfileViolations 를 공유 — 포스처 판정을 바꾸면 Deny 게이트가 같이 바뀜), summarize 점수(포스처 점수·알림 라우팅에 쓰임), DW 테이블 DDL(k8sFactColumns).
+- 자주 깨지는 곳: 전 클러스터 보기(cluster_id 선택 파라미터)에서 이름만으로 교차 참조하거나 요청 파라미터의 cluster_id 를 결과에 적는 자리 — v0.9.278/281/282/이번 회차 모두 이 유형. map 순회 순서 비결정.
+- 검증 함정: 종단 테스트는 실제 API 객체를 `kube.InventoryFromObject` 로 저장해 핸들러를 호출하는 방식이 선호됨(대역 주입 금지). 문서 참조 테스트가 백틱 경로를 라우트로 읽으므로 docs 에 가짜 경로를 쓰지 말 것. gofmt -l 은 기존 미포맷 파일이 많아 손댄 파일만 검사.

@@ -1,0 +1,326 @@
+{
+  "run_id": "2026-09-20-060357-Clustara-improve",
+  "generated": "2026-09-20T06:27:11+09:00",
+  "run": {
+    "run_id": "2026-09-20-060357-Clustara-improve",
+    "project": "Clustara",
+    "kind": "improve",
+    "started": "2026-09-20T06:03:58+09:00",
+    "model": "claude-opus-5",
+    "policy_version": "ecd4b546e",
+    "prompts_hash": "30c37184f081815d",
+    "runner_version": "ecd4b546e",
+    "arm": "no-arbiter",
+    "experiment": "roles-2026-09",
+    "finished": "2026-09-20T06:27:11+09:00",
+    "outcome": "release-ready"
+  },
+  "record": {
+    "ts": "2026-09-20T06:27:11+09:00",
+    "date": "2026-09-20",
+    "project": "Clustara",
+    "result": "merged https://github.com/hkjang/clustara/pull/24, released v0.9.285",
+    "outcome": "release-ready",
+    "run_id": "2026-09-20-060357-Clustara-improve",
+    "base_sha": "ef51e282add2b4bb4e63fb315d8bd71e8d71e6de",
+    "head_sha": "215f6043c19e0132cefc3bfdf5ae53efa23dd35a",
+    "pr": "https://github.com/hkjang/clustara/pull/24",
+    "stages": {
+      "base": {
+        "state": "pinned",
+        "reason": "main@ef51e28",
+        "at": "2026-09-20T06:04:03+09:00"
+      },
+      "autonomy": {
+        "state": "release",
+        "reason": "",
+        "at": "2026-09-20T06:04:03+09:00"
+      },
+      "scout": {
+        "state": "done",
+        "reason": "SEC-01 Pod Security 결과에 `cluster_id` 가 없어 UI YAML 딥링크가 빈 클러스터로 가고, DW security_finding·notify scan 이 ",
+        "at": "2026-09-20T06:07:48+09:00"
+      },
+      "brief": {
+        "state": "accepted",
+        "reason": "채택 — 과제서의 근거(UI 가 읽는 `p.cluster_id` 부재, 요청 clusterID 를 적는 DW 행·notify 키)가 코드와 정확히 맞았고 RCA 타입(",
+        "at": "2026-09-20T06:15:10+09:00"
+      },
+      "verify": {
+        "state": "passed",
+        "reason": "검증 3개 통과 (policy)",
+        "at": "2026-09-20T06:16:11+09:00"
+      },
+      "review": {
+        "state": "approved",
+        "reason": "리뷰 승인 (risk=low)",
+        "at": "2026-09-20T06:18:42+09:00"
+      },
+      "pr": {
+        "state": "created",
+        "reason": "https://github.com/hkjang/clustara/pull/24",
+        "at": "2026-09-20T06:18:49+09:00"
+      },
+      "ci": {
+        "state": "passed",
+        "reason": "검사 없음 — 정책으로 허용",
+        "at": "2026-09-20T06:19:21+09:00"
+      },
+      "merge": {
+        "state": "done",
+        "reason": "215f6043c19e0132cefc3bfdf5ae53efa23dd35a",
+        "at": "2026-09-20T06:19:25+09:00"
+      },
+      "release": {
+        "state": "published",
+        "reason": "v0.9.285",
+        "at": "2026-09-20T06:26:56+09:00"
+      },
+      "gh-release": {
+        "state": "created",
+        "reason": "GitHub Release v0.9.285",
+        "at": "2026-09-20T06:27:01+09:00"
+      },
+      "manifest": {
+        "state": "ok",
+        "reason": "clustara-v0.9.285.tar.gz clustara-v0.9.285.tar.gz.sha256 README-offline-v0.9.285.md ",
+        "at": "2026-09-20T06:27:02+09:00"
+      },
+      "assets": {
+        "state": "verified",
+        "reason": "v0.9.285 자산 3개 (이전 v0.9.284: 3)",
+        "at": "2026-09-20T06:27:10+09:00"
+      }
+    },
+    "campaign": "",
+    "autonomy": "release",
+    "arm": "no-arbiter",
+    "experiment": "roles-2026-09",
+    "files": 6,
+    "additions": 231,
+    "deletions": 16,
+    "tests": 3,
+    "title": "fix(security): pod_security rows carry cluster_id, and DW security_finding and notify scan key each finding by its own cluster"
+  },
+  "stages": {
+    "base": {
+      "state": "pinned",
+      "reason": "main@ef51e28",
+      "at": "2026-09-20T06:04:03+09:00"
+    },
+    "autonomy": {
+      "state": "release",
+      "reason": "",
+      "at": "2026-09-20T06:04:03+09:00"
+    },
+    "scout": {
+      "state": "done",
+      "reason": "SEC-01 Pod Security 결과에 `cluster_id` 가 없어 UI YAML 딥링크가 빈 클러스터로 가고, DW security_finding·notify scan 이 ",
+      "at": "2026-09-20T06:07:48+09:00"
+    },
+    "brief": {
+      "state": "accepted",
+      "reason": "채택 — 과제서의 근거(UI 가 읽는 `p.cluster_id` 부재, 요청 clusterID 를 적는 DW 행·notify 키)가 코드와 정확히 맞았고 RCA 타입(",
+      "at": "2026-09-20T06:15:10+09:00"
+    },
+    "verify": {
+      "state": "passed",
+      "reason": "검증 3개 통과 (policy)",
+      "at": "2026-09-20T06:16:11+09:00"
+    },
+    "review": {
+      "state": "approved",
+      "reason": "리뷰 승인 (risk=low)",
+      "at": "2026-09-20T06:18:42+09:00"
+    },
+    "pr": {
+      "state": "created",
+      "reason": "https://github.com/hkjang/clustara/pull/24",
+      "at": "2026-09-20T06:18:49+09:00"
+    },
+    "ci": {
+      "state": "passed",
+      "reason": "검사 없음 — 정책으로 허용",
+      "at": "2026-09-20T06:19:21+09:00"
+    },
+    "merge": {
+      "state": "done",
+      "reason": "215f6043c19e0132cefc3bfdf5ae53efa23dd35a",
+      "at": "2026-09-20T06:19:25+09:00"
+    },
+    "release": {
+      "state": "published",
+      "reason": "v0.9.285",
+      "at": "2026-09-20T06:26:56+09:00"
+    },
+    "gh-release": {
+      "state": "created",
+      "reason": "GitHub Release v0.9.285",
+      "at": "2026-09-20T06:27:01+09:00"
+    },
+    "manifest": {
+      "state": "ok",
+      "reason": "clustara-v0.9.285.tar.gz clustara-v0.9.285.tar.gz.sha256 README-offline-v0.9.285.md ",
+      "at": "2026-09-20T06:27:02+09:00"
+    },
+    "assets": {
+      "state": "verified",
+      "reason": "v0.9.285 자산 3개 (이전 v0.9.284: 3)",
+      "at": "2026-09-20T06:27:10+09:00"
+    }
+  },
+  "provenance": {
+    "model": "claude-opus-5",
+    "policy_version": "ecd4b546e",
+    "prompts_hash": "30c37184f081815d",
+    "runner_version": "ecd4b546e",
+    "base_sha": "ef51e282add2b4bb4e63fb315d8bd71e8d71e6de",
+    "head_sha": "215f6043c19e0132cefc3bfdf5ae53efa23dd35a",
+    "pr": "https://github.com/hkjang/clustara/pull/24"
+  },
+  "verification": {
+    "runner": {
+      "source": "policy",
+      "commands": [
+        {
+          "cmd": "go build ./...",
+          "exit": 0,
+          "seconds": 1
+        },
+        {
+          "cmd": "go vet ./...",
+          "exit": 0,
+          "seconds": 1
+        },
+        {
+          "cmd": "go test -count=1 ./...",
+          "exit": 0,
+          "seconds": 59
+        }
+      ]
+    },
+    "runner_gate": {
+      "ok": true,
+      "state": "verified",
+      "reason": "검증 3개 통과 (policy)"
+    },
+    "after_rebase": null,
+    "review": {
+      "verdict": "approve",
+      "reasons": [],
+      "notes": [
+        "internal/proxy/k8s_notify.go:108-123 — 전 클러스터 스캔(cluster_id 없이)의 dedup 키가 `|podsec/...` → `<finding cluster>|podsec/...` 로 바뀌므로 배포 직후 6시간 창 안에서도 클러스터별로 한 번씩 재알림이 감. 단일 클러스터 요청은 items/events 가 clusterID 로 필터되어 키 동일. 릴리즈 노트에 적을 것.",
+        "internal/proxy/k8s_notify.go:163-164 — handleK8sNotifyConfig 의 공백 2줄은 gofmt 정렬만이고 동작 변화 없음(범위 밖 포맷 변경이지만 무해).",
+        "검증: 새 테스트 3개를 main 의 k8s_notify.go/admin_k8s_dw.go 로 되돌린 상태에서 실행해 TestK8sSecurityRowsUseFindingCluster·TestK8sNotifyScanRoutesEachFindingToItsOwnCluster(sent=1) 가 실패함을 직접 확인; HEAD 에서 go build/vet, go test ./... 20 패키지 통과, 손댄 6개 파일 gofmt -l 깨끗.",
+        "DW security_finding DDL(k8sFactColumns)은 손대지 않았고 cluster_id 는 이미 공통 컬럼(k8sFactDDL) — 마이그레이션 없음, revert 로 완전히 돌아옴.",
+        "보안: 핸들러 인가(authorizeAdmin) 불변, cluster 값은 요청 파라미터가 아니라 DB 에 저장된 inventory 의 ClusterID 에서 오며 k8sDeepLink 는 url.Values 로 인코딩 — 새 입력 경로·PII 없음.",
+        "notify 종단 테스트는 webhook 수신을 3초 타임아웃으로 기다림 — 로컬 0.1s 로 여유 크지만 매우 느린 CI 에선 flaky 가능(현재 CI 없음)."
+      ],
+      "risk": "low",
+      "blocking": []
+    },
+    "ci_gate": {
+      "ok": true,
+      "state": "success",
+      "reason": "검사 3개 모두 success",
+      "checks": 3
+    }
+  },
+  "release": {
+    "result": {
+      "status": "released",
+      "version": "0.9.285",
+      "tag": "v0.9.285",
+      "title": "v0.9.285",
+      "notes_file": "/mnt/c/Users/USER/projects/aidev/state/runs/2026-09-20-060357-Clustara-improve/release-notes-v0.9.285.md",
+      "github_release": true,
+      "assets": [
+        "/mnt/c/Users/USER/projects/aidev/state/runs/2026-09-20-060357-Clustara-improve/assets/clustara-v0.9.285.tar.gz",
+        "/mnt/c/Users/USER/projects/aidev/state/runs/2026-09-20-060357-Clustara-improve/assets/clustara-v0.9.285.tar.gz.sha256",
+        "/mnt/c/Users/USER/projects/aidev/state/runs/2026-09-20-060357-Clustara-improve/assets/README-offline-v0.9.285.md"
+      ],
+      "reason": ""
+    },
+    "assets_sha256": [
+      {
+        "sha256": "2aac25e04f054edba5ccdb4188ac09f3a259876935b2e69fab88ea169dc55821",
+        "name": "clustara-v0.9.285.tar.gz"
+      },
+      {
+        "sha256": "fd436a3bae4727db1d48cb990cff1a50b5df8a6d64508fce882e966b6f3f70ec",
+        "name": "clustara-v0.9.285.tar.gz.sha256"
+      },
+      {
+        "sha256": "323e345475ff01a1ce14ab6aa66affc85072039a412ef2496f6590f974d83e04",
+        "name": "README-offline-v0.9.285.md"
+      }
+    ]
+  },
+  "approval": null,
+  "usage": [
+    {
+      "ts": "2026-09-20T06:07:48+09:00",
+      "date": "2026-09-20",
+      "project": "Clustara",
+      "phase": "scout",
+      "run_id": "2026-09-20-060357-Clustara-improve",
+      "campaign": "",
+      "subtype": "success",
+      "duration_ms": 221364,
+      "num_turns": 26,
+      "cost_usd": 1.8830925,
+      "input_tokens": 42,
+      "output_tokens": 14709,
+      "cache_read": 1442715,
+      "cache_create": 79380
+    },
+    {
+      "ts": "2026-09-20T06:15:10+09:00",
+      "date": "2026-09-20",
+      "project": "Clustara",
+      "phase": "improve",
+      "run_id": "2026-09-20-060357-Clustara-improve",
+      "campaign": "",
+      "subtype": "success",
+      "duration_ms": 438055,
+      "num_turns": 54,
+      "cost_usd": 3.0146465000000005,
+      "input_tokens": 64,
+      "output_tokens": 24223,
+      "cache_read": 2805483,
+      "cache_create": 100601
+    },
+    {
+      "ts": "2026-09-20T06:18:42+09:00",
+      "date": "2026-09-20",
+      "project": "Clustara",
+      "phase": "review",
+      "run_id": "2026-09-20-060357-Clustara-improve",
+      "campaign": "",
+      "subtype": "success",
+      "duration_ms": 146304,
+      "num_turns": 22,
+      "cost_usd": 1.0699614999999998,
+      "input_tokens": 34,
+      "output_tokens": 7051,
+      "cache_read": 823033,
+      "cache_create": 48200
+    },
+    {
+      "ts": "2026-09-20T06:25:16+09:00",
+      "date": "2026-09-20",
+      "project": "Clustara",
+      "phase": "release",
+      "run_id": "2026-09-20-060357-Clustara-improve",
+      "campaign": "",
+      "subtype": "success",
+      "duration_ms": 337393,
+      "num_turns": 36,
+      "cost_usd": 1.954424,
+      "input_tokens": 56,
+      "output_tokens": 17665,
+      "cache_read": 1682958,
+      "cache_create": 67104
+    }
+  ]
+}

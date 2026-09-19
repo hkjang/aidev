@@ -1,0 +1,12 @@
+# DartFly 프로필 (2026-09-20)
+- 목적: 사내 여러 DBMS(MariaDB·PostgreSQL·SQL Server·Oracle)를 읽기 전용으로 질의·마스킹·감사하는 통합 데이터베이스 운영 플랫폼(Tadpole 메타 DB 위에서 동작, 단일 Go 바이너리 + 임베드 웹 UI).
+- 스택: Go 1.25(표준 net/http ServeMux 패턴 라우팅, database/sql), 메타 DB MariaDB(tadpole_* + df_* 표), 프런트는 프레임워크 없는 ES 모듈 JS + 정적 HTML(`internal/webui/pages`, `internal/webui/js`), 테스트는 Go + Node(v22) `.test.mjs`, 브라우저 스모크는 Python playwright.
+- 구조:
+  - `cmd/dartfly` 진입점, `internal/app` 기동·env 읽기(runtime.go, `ssoEnvFallback`), `internal/server` HTTP 라우팅·핸들러(http.go 2,200줄이 중심, sessions.go·middleware.go·sessionguard.go)
+  - `internal/auth`(비밀번호·서명 세션 토큰, `Sessions` 는 무상태 서명 토큰이라 Delete 는 noop), `internal/sso`·`internal/ssoconfig`(OIDC 표준 라이브러리 구현, df_sso_config), `internal/rbac`·`access`·`governance`·`settlement`(권한·결재), `internal/masking`·`query`·`dbconn`(실행·마스킹), `internal/retention`(감사 이력 보존 정리), `internal/mcphub`·`apihub`(MCP·공개 API), `internal/webui`(임베드 자산, 라우팅 표 `assets.go`, JS 테스트 러너 `jstest_test.go`)
+  - `docs/` 관리자 가이드(ADMIN_GUIDE.md)·환경변수(environment-variables.md)·보증 문서들, `deploy/` 배포, `test/js` JS 회귀, `test/livedb` 실제 DB 시드, `test/smoke` 실제 바이너리+MariaDB+Chromium 하네스
+- 빌드·테스트: `gofmt -l . && go vet ./... && go test -race ./...`(약 1~2분; JS 테스트도 여기서 node 로 함께 돔), `go build ./cmd/dartfly`, `go test -tags livedb ./...`(`bash test/livedb/setup.sh --fast` 로 PG·MariaDB 컨테이너 먼저), `bash test/smoke/run.sh`(오래 걸림: 컨테이너+playwright, 31페이지 방문)
+- 관례: 커밋 메시지 한국어 `feat:`/`fix:` + 사용자 관점 한 줄, PR 은 `auto/날짜-시각` 브랜치→main. 설정은 환경변수(`DARTFLY_*`, `_FILE` 접미사)와 관리 화면(df_sso_config 등) 병행, 저장된 화면 설정이 env 를 이김. 스키마는 002 DDL + 기동 시 `ensureColumn`/IF NOT EXISTS 양쪽에 두고 일치 테스트로 묶음. 공개 라우트는 `routeguard_test.go` 의 `publicRoutes` 에 사유와 함께 등록해야 함(HandleFunc 만 검사). 문서는 docs/ 에 한국어.
+- 위험 구역: `internal/auth`·`internal/server/sessions.go`·`sessionguard.go`(세션·계정 권위 재확인 `applyAuthority`), `internal/sso`·http.go 의 SSO 콜백(`safeReturnTo`, 흐름 쿠키 `df_sso_flow` — 여러 경로가 같은 값을 읽음), `internal/masking`·`read-only` 보증(docs/*-guarantees.md 가 계약), 002 DDL·ensureColumn(기존 설치 ALTER 경로), `internal/webui/assets.go` 라우팅 표(스모크가 여기서 경로를 읽음).
+- 자주 깨지는 곳: 임베드·정적 라우팅은 모의 서버에서 멀쩡해 보이다 배포에서만 깨짐(v1.56~v1.78) → 실제 바이너리 스모크 필수. livedb 검증은 태그 뒤라 조용히 썩음. 새 라우트를 게이트 없이 추가하면 화면은 되지만 권한 우회(v2.12.0).
+- 검증 함정: 이 워크트리 브랜치는 main 기준이라 메일·추적·넘기기·MCP OAuth 코드가 없음(다른 브랜치). 스모크 MariaDB 컨테이너가 "TLS certificate is not yet valid" 로 가끔 기동 실패(WSL 시계) → 재시도. JS 테스트는 node 가 없으면 Skip 되어 통과처럼 보임. 스모크 브라우저 단계는 playwright+chromium 설치 필요(`DF_SMOKE_REQUIRE_BROWSER=1` 로 강제).
