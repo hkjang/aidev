@@ -19,3 +19,4 @@
 - 보류 아이디어: `POST /api/v1/builder/lists/{listId}/data`(UiBuilderController→NexaUiService.listData)도 soft-delete 목록의 행을 그대로 돌려줌 — 빌더 미리보기 호출자 확인 후 통일(3/3/M) / CI 에 gradle/actions/wrapper-validation 추가 + docker-publish checkout v6 정렬 + gradlew +x 로 chmod 스텝 제거(3/1/S) / ListExportController 의 OpenPDF 3 deprecated API 정리 — 이번 빌드에서도 경고 확인, 새 테스트가 안전망(2/2/S) / listDefinition·formDefinition·resolveExportable 의 "X not found" 판정을 한 헬퍼로 모으고 404 전용 예외로 전환(2/3/S) / agent.md 낡은 환경 메모 갱신(2/1/S)
 - 과제서: 채택 — 과제서의 근거(세 엔드포인트가 deletedAt 을 안 봄, 테스트 0건, 400/403 매핑 경로)가 코드와 전부 일치해 그대로 구현했다.
 
+- 릴리즈: v1.18.0 (2026-09-19, run 2026-09-19-195356-nexabuilder-improve)

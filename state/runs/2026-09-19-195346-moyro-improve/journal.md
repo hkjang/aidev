@@ -28,3 +28,4 @@
 - [러너 20:07] pr created — https://github.com/hkjang/moyro/pull/18
 - [러너 20:19] ci passed — 검사 3개 모두 success
 - [러너 20:19] merge done — 0665ae3
+- [러너 20:35] release published — v0.2.33

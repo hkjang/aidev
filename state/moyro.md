@@ -151,3 +151,4 @@
 - 보류 아이디어: (1) `updateSidebarCategoriesBulk` 가 카테고리마다 별도 tx 라 두 번째 항목이 404/400 이면 첫 항목의 변경이 남은 채 오류가 나감 — `Update` 를 tx 인자 받는 형태로 나눠 단일 tx 로(M). (2) `getSidebarCategory` 가 DB 장애도 404 로 냄 — `Get` 이 이제 `ErrNotFound` 를 돌려주므로 `writeSidebarError` 로 바꾸면 한 줄(S). (3) `postacks`/channel-views 등 30여 곳의 `ok, _ := h.channels.IsMember` 가 DB 오류를 403 으로 위장 — `compat_wave_handlers_final.go` 5곳 + 통합 테스트로 S 범위 한정 가능. (4) `getPreferenceByName` 404/500 분리 — 미머지 브랜치 auto/2026-09-07-0240 뒤에(이번 sentinel+errors.Is 패턴 재사용). (5) 자동화 dead run 시 소유자 메일(automation_failed) — 메일 브랜치 auto/2026-09-16-0812 머지 뒤에.
 - 과제서: 채택 — 과제서의 근거(무검증 UPDATE·ErrNoRows→400·Get 은 404)가 코드와 정확히 일치했고 수용 기준 1~5 를 모두 충족했다.
 
+- 릴리즈: v0.2.33 (2026-09-19, run 2026-09-19-195346-moyro-improve)
