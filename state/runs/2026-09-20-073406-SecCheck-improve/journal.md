@@ -24,3 +24,4 @@
 - 판정: approve, risk low, blocking 없음.
 - [러너 07:46] review approved — 리뷰 승인 (risk=low)
 - [러너 07:46] pr created — https://github.com/hkjang/SecCheck/pull/13
+- [러너 07:51] ci failed — 성공이 아닌 검사: test-build-scan=failure
