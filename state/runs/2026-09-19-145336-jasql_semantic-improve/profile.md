@@ -1,0 +1,15 @@
+# jasql_semantic 프로필 (2026-09-19)
+- 목적: Oracle DW 메타(카탈로그·조인 토폴로지·지표 사전·골든셋)를 읽어 자연어 질문에 맞는 테이블·컬럼·조인 경로와 SQL 스켈레톤을 돌려주는 MCP 서버(+REST 관리 콘솔). 폐쇄망 배포용.
+- 스택: Go 1.25 단일 모듈 `jasql`, 외부 의존성 없음(go.sum 비어 있음). 데이터는 `data/kcb/*.json`. 프런트는 `internal/mcp` 가 내장한 정적 관리 페이지. 배포는 Docker(`Dockerfile`, Oracle Instant Client 내장 `Dockerfile.oracle`).
+- 구조:
+  - `cmd/jasql-mcp` 서버 진입점, `cmd/jasql-eval` 골든셋 평가 CLI, `cmd/jasql-goldgen` 골든셋 생성
+  - `internal/catalog` 핵심: `catalog.go` 로드, `search.go` SearchSchema(테이블·컬럼 점수), `graph.go` RetrieveContext(시드+1홉 조인 확장), `eval.go`/`eval_retrieval.go` 골든셋 평가, `learn*.go` 룰 승격, `timeparse.go`
+  - `internal/mcp` stdio/HTTP MCP 서버, `admin*.go` REST 관리(requireAdmin+adminAudit 필수), `openapi.go`, `server.go` 의 `const Version` 이 릴리즈 버전 원본
+  - `internal/meta`, `internal/oracle` 메타 모델·오라클 커넥터
+  - `docs/` 정본 문서(development.md, evaluation.md, deploy-offline.md 등) + GitHub Pages `index.html`
+  - `scripts/build.sh`(3플랫폼 바이너리), `scripts/release-image.sh`(버전을 server.go 에서 읽어 이미지 tar.gz 하나 생성)
+- 빌드·테스트: `go build ./...`, `go vet ./...`, `go test ./...` — **실측 ~67s** (catalog 57s: TestEvaluateRetrievalOnGoldenSet 29s, TestGoldenEvaluation 14s; mcp 9s). development.md 의 "~17초" 는 낡았음. 부분 실행 `go test ./internal/mcp -run TestAdmin -v`.
+- 관례: 커밋 제목은 영어 소문자 명령문, PR 제목은 한국어. 릴리즈는 `server.go` Version 범프 → "vX.Y.Z — 요약" PR. 설정은 JSON 파일(`data/<dataset>/`). 마이그레이션 없음. 문서는 `docs/`, 코드 주석은 한국어·영어 혼용. 도구 추가 시 `internal/mcp/stdio_test.go` 의 도구 수 단정 갱신 필요.
+- 위험 구역: `internal/mcp/admin*.go` 관리 REST(관리자 전용 계약, 읽기 전용 우회가 리뷰에서 4건 잡힌 이력), 세션·토큰 정책(`server_test.go`), 정보영역(schema) 게이트(`search.go` schemaGate — 모든 카탈로그 진입 경로에 동일 적용해야 함), `scripts/release-image.sh`.
+- 자주 깨지는 곳: 검색 점수·순위는 stable sort 동점에 민감 — 점수 계산 순서 변경 시 골든셋 지표가 흔들린다. 게이트를 한 경로만 고치면 다른 경로가 어긋난다(v0.29.3 교훈).
+- 검증 함정: CI 없음(`.github/workflows` 없음) — 로컬 `go test ./...` 가 유일한 게이트. 골든셋 테스트는 `data/kcb/golden_queries.json` 이 없으면 skip 되므로 통과가 곧 검증은 아님. Oracle 연결 테스트는 없다(커넥터 테스트 0.01s). 러너 파이프라인은 단계마다 전체 테스트를 다시 돌리므로 테스트 시간이 회차 예산에 직접 영향.
