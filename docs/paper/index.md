@@ -7,7 +7,7 @@ description: "An experience report from 18 days, 46 repositories, 1,031 runner r
 
 **An experience report from the aidev runner (2026-09-02 → 2026-09-19)**
 
-*hkjang · with Claude (Fable 5.1) as co-author of the system and of this report · draft v1, 2026-09-19 · Korean version: [한국어](./ko/) · PDF: [English](./aidev-complementary-agents-en.pdf) · [한국어](./aidev-complementary-agents-ko.pdf)*
+*hkjang · with Claude (Fable 5.1) as co-author of the system and of this report · draft v2, 2026-09-19 · Korean version: [한국어](./ko/) · PDF: [English](./aidev-complementary-agents-en.pdf) · [한국어](./aidev-complementary-agents-ko.pdf)*
 
 ---
 
@@ -32,7 +32,7 @@ This report makes four contributions.
 1. **An architecture for complementary agents** in which the roles that make changes and the roles that judge changes are different sessions with different tools, and no role can approve its own output (§3).
 2. **A safety envelope for unattended merging** built from cheap mechanical gates rather than from model judgment alone (§4).
 3. **Campaigns**: a way to roll one feature across many repositories using a written standard and a reference implementation, with campaign-level lessons distilled from the first repositories' failures and injected into the later ones (§5).
-4. **Measurements and incidents** from 1,031 rounds, including what the numbers do and do not support (§6, §7), and the operational know-how we would give anyone building the same thing (§8).
+4. **Measurements, two experiments and incidents** from 1,031 rounds — including a cross-model critic study and a 30-day post-merge maintenance measurement — with what the numbers do and do not support (§6, §7), and the operational know-how we would give anyone building the same thing (§8).
 
 Everything described here is in the repository `hkjang/aidev` (runner `bin/run.sh`, prompts in `prompt.md`, `review-prompt.md`, `agents/*.md`, documentation in `AGENTS.md` and `README.md`), and the raw data behind the numbers is published as `docs/data/runs.jsonl` and `docs/data/usage.jsonl`.
 
@@ -133,6 +133,10 @@ Two offline distillers turn evidence into rules that the working agents read bef
 **Campaign lessons.** For each campaign, the historian collects the critic's rejection reasons, the shepherd's rejections and the post-merge regressions of every repository in that campaign, hashes them, and — only when the hash changed — asks a model to distill at most eight *general* rules ("before X, confirm Y in the source", not "in repo Z, line 40"). The rules are injected into the campaign note of every subsequent round and into the shepherd reviewer's hold note. The first distillation (2026-09-17) produced 25 rules from 36 pieces of evidence; one of them — "do not apply byte offsets from a lower-cased copy to the original string; test with U+0130 and U+212A" — had been found independently, and expensively, in two repositories before the rule existed.
 
 **Operator preferences.** The same mechanism applied to the operator's own words: reasons attached to human rejections (the runner now records the operator's last PR comment into the lesson), emergency-stop reasons, and instructions given to the copilot. Ten rules came out of nineteen pieces of evidence, including "prove behavior through the production wiring, not through hand-injected doubles," and "changes that do not alter observable behavior are grounds for rejection". These are prepended to the builder's and reviewer's prompts, so the operator does not have to say the same thing twice.
+
+### 3.7 What the literature changed (2026-09-19)
+
+Three mechanisms were added after reading the related work in §9, and are measured in §6.6–6.8: a per-project `critic_engine` switch that routes the critic to a different model family (Codex) to counter self-preference in judgment [10, 11]; a 30-day post-merge corrective-maintenance measurement, prompted by the finding that agentic code carries more post-merge maintenance than merge rates suggest [24, 25]; and a MAST-based failure view on the scorecard [16]. The first two are also the first places where aidev's own numbers can be compared with the published field studies.
 
 ## 4. The safety envelope
 
@@ -242,11 +246,59 @@ Twenty-five approvals in two days against a backlog that had not moved in a week
 
 The scout/critic/repair loop had run for one day at the time of writing: 11 scout sessions (9 briefs produced, 2 failures), 2 in-round repairs, both successful. This is too little to conclude anything about the loop's effect on the rejection rate; we report it because the mechanism is in place and the scorecard on the dashboard will accumulate it.
 
+### 6.6 Experiment E1 — cross-model critic
+
+**Question.** aidev's builder and critic are the same model family. LLM judges prefer familiar text [10, 11]; does a critic from another family disagree with ours, and if so, in which direction?
+
+**Method.** We took the six most recent PRs the Claude critic had *approved* and that were then merged, and the six most recent it had *rejected* (2026-09-12 → 09-19, 12 repositories). For each, an OpenAI Codex session (codex-cli 0.154, read-only sandbox, no notes) received the identical `review-prompt.md` at the PR head against the pinned base and returned the same JSON. Script: `bin/exp-cross-critic.sh`; raw results: `docs/paper/experiments/cross-critic.jsonl`.
+
+**Result.**
+
+| Claude critic said | n | Codex approve | Codex reject |
+|---|---|---|---|
+| approve (and merged) | 6 | 4 | **2** |
+| reject | 6 | 0 | 6 |
+
+Verdict agreement was 10/12. On the six rejections, Codex rejected all six; in three (seaton's empty-scope bypass, sqlon's deleted setting definition, AgentHub's unvalidated DLP class) it named the *same* primary defect at the same line, and in the other three it rejected for a different concrete reason. On the six approvals, Codex rejected two with specific, checkable findings that the Claude critic had not raised: in aiportal-py, a shutdown ordering in which the executor keeps running after the feedback task is cancelled and the DB pool closed, so a batch returning late fails to persist its results; in aiportal-front, a test that "proves" a new direct dependency is needed but passes on the transitive one already in the lockfile. Both are plausible real defects; neither has yet caused an observed regression. Codex sessions took a median of 72 s and ~200k input tokens.
+
+**Reading.** In this small sample the two families agree on what is clearly broken and the second family is *stricter* on what the first passed, consistent with a self-preference effect on the approve side. It supports two decisions we have taken: keeping a second, differently-sourced look on merged code (the shepherd reviewer and the post-merge measurement below), and adding a `critic_engine` option so a project can route its critic to the other family. It does not tell us the false-reject rate of the second family; that needs the arbiter's verdict on those two cases, which we have queued.
+
+### 6.7 Failure taxonomy (MAST view)
+
+Applying the three MAST categories [16] to the 14-day window (n = 299 failure events; a round can count in more than one):
+
+| Category | Count | What it is in aidev |
+|---|---|---|
+| System design / infrastructure | 154 | budget holds, usage limits, wedged worktrees, scheduler kills |
+| Inter-agent misalignment | 59 | critic rejections, briefs the builder rejected or fell back from, repairs that changed nothing |
+| Verification / termination | 86 | runner verification failures, CI failures and timeouts, arbiter rejections |
+
+Half of our failures are the runner's own plumbing, not the agents — which is consistent with §8.1 and with Cemri et al.'s finding that many multi-agent failures are specification and system-design problems rather than model errors. The taxonomy is now a standing row on the dashboard's scorecard.
+
+### 6.8 Experiment E2 — post-merge corrective maintenance
+
+**Question.** Xia and Miller [24] found agentic code needs more corrective maintenance after merge. Our regression watcher looks only 2–48 hours out. What does a 30-day window show for aidev's merged changes?
+
+**Method.** For each PR the runner merged (n = 244; 166 observed ≥ 7 days), `bin/postmerge.py` takes the files the PR touched and counts later commits on the default branch, within 30 days, that touch any of those files and whose subject reads as a fix (fix, hotfix, revert, bug, regress, or the Korean equivalents). Because the runner's own later rounds are biased toward "bug fix" tasks, commits are split into those made by later runner PRs and those made by the human.
+
+**Result.**
+
+| | PRs with such a commit | rate |
+|---|---|---|
+| Any fix-titled commit on the same files within 30 days | 118 / 166 | 71% |
+| … of which by the human (not a later runner round) | 45 / 166 | 27% |
+| by approval source: auto-merged / human-approved | 40/155 / 5/11 | 26% / 45% |
+| by critic risk label: low / medium | 36/137 / 4/17 | 26% / 24% |
+| median days to first fix-titled commit | 4 | |
+
+**Reading.** This is an *upper bound* on "the merged change had to be corrected": a later fix that touches the same file is not necessarily a fix *of* that change, and one broad human fix (Vendra's permission tightening) counts against six PRs at once. Even so, a quarter of merged changes sit in files a human had to fix within a month, and the critic's risk label did not separate them (26% vs 24%). We therefore treat the 0-regression figure of §6.2 as what it is — a 48-hour statement — and now publish the 30-day number on the dashboard with its caveat. Two follow-ups are queued: attributing fixes to changes by line (blame) rather than by file, and using the 30-day rate per project to set the observation window before autonomy is raised.
+
 ## 7. Threats to validity
 
 - **One operator, one stack.** Forty-six repositories by one person with a shared Go/React/Keycloak stack is a narrow population. The campaigns in particular exploit that homogeneity.
 - **Short window, moving system.** Eighteen days, during which the runner changed almost daily. Numbers aggregate several versions of the system.
-- **Regression observation is short.** "No reviewed change has been reverted" is measured with a 2–48 hour watcher and eighteen days of history. Latent defects in merged code will not show up in these figures.
+- **Regression observation is short.** "No reviewed change has been reverted" is measured with a 2–48 hour watcher and eighteen days of history. §6.8 shows that a 30-day, file-level view is much less flattering (a quarter of merged changes sit in files a human fixed within a month), and that view is itself only an upper bound.
+- **Small experiments.** E1 has twelve PRs and one alternate model; E2 attributes fixes by file, not by line. Both are designed to be re-run as the data grows (`bin/exp-cross-critic.sh`, `bin/postmerge.py`).
 - **Self-reported cost.** Session costs are model estimates on a flat-rate plan.
 - **Human review of AI approvals is thin.** The operator explicitly delegated approval of protected-path PRs to the shepherd reviewer. We cannot yet say whether that reviewer is as good as the human it replaced; the scorecard tracks "approved then regressed" for exactly this reason, and it reads zero so far.
 - **The critic and the code come from the same model family.** Independence is procedural (different session, different tools, diff-only view), not epistemic.
