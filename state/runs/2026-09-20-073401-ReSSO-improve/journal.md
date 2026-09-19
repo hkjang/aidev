@@ -27,3 +27,8 @@
 - 릴리즈 노트: "UserInfo POST가 본문 access_token(RFC 6750 §2.2)을 받음, 헤더+본문 동시 전송은 400 invalid_request" 한 줄이면 됨. 작업 트리의 webui/dist/index.html 변경은 커밋 밖이니 릴리즈 전에 되돌릴 것.
 - [러너 07:46] review approved — 리뷰 승인 (risk=low)
 - [러너 07:47] pr created — https://github.com/hkjang/ReSSO/pull/24
+- [러너 07:55] ci passed — 검사 2개 모두 success
+- [러너 07:55] merge done — 76f5974
+- [러너 08:08] release published — v0.9.87
+- [러너 08:09] gh-release created — GitHub Release v0.9.87
+- [러너 08:13] assets verified — v0.9.87 자산 2개 (이전 v0.9.86: 2)

@@ -225,3 +225,4 @@
 - 보류 아이디어: 인가 접근 로그에 `client_id` 남기기 — 인가 Endpoint일 때만, 길이 제한(가치 2/위험 1/S) / UserInfo 거절 카운터 — 다른 세 errors_total 계열과 같은 모양이 userinfo에는 없어 잘못 붙인 SDK의 반복 401을 볼 자리가 없다(가치 2/위험 1/S) / 폼을 읽는 프로토콜 Endpoint 다섯에 `http.MaxBytesReader` 상한 — ParseForm은 10MB까지 읽는다, 전역 상한 유무 미확인(가치 2/위험 2/S, 새 아이디어) / `oidcLogout`이 `id_token_hint`의 `sub`를 쿠키 세션과 대조하지 않는다(가치 2/위험 2/M) / UserInfo POST에 폼이 아닌 Content-Type으로 보낸 토큰이 조용히 401이 된다 — 400 `invalid_request`로(가치 1/위험 1/S, 새 아이디어)
 - 과제서: 채택 — 과제서의 근거(POST 라우트 등록·bearerToken 헤더만)가 코드와 정확히 맞았고 수용 기준 셋을 그대로 구현했다; 토큰 취득은 과제서가 가리킨 9106행 테스트와 같은 `IssueUserTokens`(실제 저장소·서명 키를 지나는 프로덕션 발급 경로)로 했다.
 
+- 릴리즈: v0.9.87 (2026-09-20, run 2026-09-20-073401-ReSSO-improve)
