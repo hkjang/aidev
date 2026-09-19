@@ -1,7 +1,7 @@
 ---
 title: "jupiq — 자율 개선 이력"
 description: "jupiq: 자율 개선 회차 25회, 릴리즈 10건. 최근 릴리즈 v1.7.0 (자산 1개)."
-last_modified_at: 2026-09-19 13:14:19 +0900
+last_modified_at: 2026-09-19 14:43:57 +0900
 ---
 {% raw %}
 <script type="application/ld+json">
@@ -18,7 +18,7 @@ last_modified_at: 2026-09-19 13:14:19 +0900
   "name": "hkjang",
   "url": "https://github.com/hkjang"
  },
- "dateModified": "2026-09-19T13:14:19+09:00",
+ "dateModified": "2026-09-19T14:43:57+09:00",
  "version": "1.7.0"
 }
 </script>

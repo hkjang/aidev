@@ -1553,3 +1553,111 @@ fatal: '/home/hkjang/.cache/auto-improve-wt/igame' is not a working tree
 evidence: /mnt/c/Users/USER/projects/aidev/state/runs/2026-09-19-122335-igame-improve/evidence.json
 reports: 18 day(s), 3 week(s), 1 month(s), 1039 run(s), 1371 usage row(s), 44 project page(s), 13 alert(s)
 notify: no new alerts
+[13:16:42] aidev synced: run(2026-09-19): igame — fix-round: merged https://github.com/hkjang/igame/pull/21, released v0.7.16
+[13:16:42] done
+[13:16:47] shepherd: 후보 199건 (한 번에 최대 6건, 오늘 $112.52412749999999/$150)
+[13:18:32] === shepherd madi PR #6 (원인 review-missing, run 2026-09-19-131831-madi-shepherd)
+Preparing worktree (detached HEAD af8e021)
+Updating files:  55% (943/1684)Updating files:  56% (944/1684)Updating files:  57% (960/1684)Updating files:  58% (977/1684)Updating files:  59% (994/1684)Updating files:  60% (1011/1684)Updating files:  61% (1028/1684)Updating files:  62% (1045/1684)Updating files:  63% (1061/1684)Updating files:  64% (1078/1684)Updating files:  65% (1095/1684)Updating files:  66% (1112/1684)Updating files:  67% (1129/1684)Updating files:  68% (1146/1684)Updating files:  69% (1162/1684)Updating files:  70% (1179/1684)Updating files:  71% (1196/1684)Updating files:  72% (1213/1684)Updating files:  73% (1230/1684)Updating files:  74% (1247/1684)Updating files:  75% (1263/1684)Updating files:  76% (1280/1684)Updating files:  77% (1297/1684)Updating files:  78% (1314/1684)Updating files:  79% (1331/1684)Updating files:  80% (1348/1684)Updating files:  81% (1365/1684)Updating files:  82% (1381/1684)Updating files:  83% (1398/1684)Updating files:  84% (1415/1684)Updating files:  85% (1432/1684)Updating files:  86% (1449/1684)Updating files:  87% (1466/1684)Updating files:  88% (1482/1684)Updating files:  89% (1499/1684)Updating files:  90% (1516/1684)Updating files:  91% (1533/1684)Updating files:  92% (1550/1684)Updating files:  93% (1567/1684)Updating files:  94% (1583/1684)Updating files:  95% (1600/1684)Updating files:  96% (1617/1684)Updating files:  97% (1634/1684)Updating files:  98% (1651/1684)Updating files:  99% (1668/1684)Updating files: 100% (1684/1684)Updating files: 100% (1684/1684), done.
+HEAD is now at af8e021 feat: accept Keycloak access tokens on /mcp (MCP OAuth resource server)
+[13:22:26] madi: review — 26 turns, 4m, $2.19, success
+[13:22:26] madi: [shepherd] PR #6 review-missing → review-reject — - internal/server/knowledge_package.go:506 `if current(r).TokenID != ""` 게이트가 새 SSO 주체(OAuthSubject != "", TokenID == "")를 빼먹었다. 같은 
+https://github.com/hkjang/madi/pull/6#issuecomment-5739316770
+[13:22:29] === shepherd orbit PR #6 (원인 review, run 2026-09-19-132229-orbit-shepherd)
+Preparing worktree (detached HEAD 6c897ff)
+HEAD is now at 6c897ff feat(mcp): 개인 키 없이 Keycloak 액세스 토큰으로 /mcp 에 들어올 수 있게 한다
+[13:29:36] orbit: improve — 37 turns, 7m, $3.05, success
+[13:29:37] orbit: verify `go build ./...` → exit 0 (1s)
+[13:29:37] orbit: verify `go vet ./...` → exit 0 (0s)
+[13:29:40] orbit: verify `go test ./...` → exit 0 (3s)
+[13:29:54] orbit: verify `cd web && [ -d node_modules ] || npm ci --no-audit --no-fund` → exit 0 (14s)
+[13:29:55] orbit: verify `cd web && npm test --silent` → exit 0 (1s)
+[13:29:55] orbit: verify `cd web && [ -d node_modules ] || npm ci --no-audit --no-fund` → exit 0 (0s)
+[13:29:56] orbit: verify `cd web && npm run build --silent` → exit 0 (1s)
+[13:29:59] orbit: [shepherd] PR #6 review → fix-pushed — # 수리 요약 — orbit PR #6 (커밋 486045d)  - 로그: auth.go 의 "mcp oauth token refused" 와 "mcp oauth settings unreadable" 두 slog.Warn 에 `request
+https://github.com/hkjang/orbit/pull/6#issuecomment-5739354154
+Preparing worktree (detached HEAD 486045d)
+HEAD is now at 486045d fix(mcp): 토큰 거부 로그에 request_id 를 붙이고, discovery 를 락 밖에서 합쳐 실행하며 실패를 잠시 기억하고, 메타데이터 경로를 리소스 경로대로 서빙한다
+[13:33:54] orbit: review — 24 turns, 4m, $1.9, success
+GraphQL: Projects (classic) is being deprecated in favor of the new Projects experience, see: https://github.blog/changelog/2024-05-23-sunset-notice-projects-classic/. (repository.pullRequest.projectCards)
+https://github.com/hkjang/orbit/pull/6#issuecomment-5739372469
+[13:33:56] orbit: [shepherd] PR #6 review → approve — risk=medium — 리뷰 승인 (risk=medium) 
+[13:33:59] === shepherd sqlon PR #7 (원인 review, run 2026-09-19-133358-sqlon-shepherd)
+Preparing worktree (detached HEAD 750a3d8)
+HEAD is now at 750a3d8 fix(settings): 실수로 지워진 캐시 TTL 설정 항목을 되살리고, PUT /api/settings 가 전체 검증 뒤에만 저장하도록 고침
+[13:45:09] sqlon: improve — 30 turns, 12m, $2.79, success
+[13:45:11] sqlon: verify `go build ./...` → exit 0 (2s)
+[13:45:12] sqlon: verify `go vet ./...` → exit 0 (0s)
+[13:45:12] sqlon: verify `go test ./...` → exit 0 (0s)
+[13:45:16] sqlon: [shepherd] PR #7 review → fix-pushed — # 수리 요약 — sqlon PR #7 (커밋 7f72223)  - 문제 1·2 (jwksCache.key): 뮤텍스를 잡은 채 discovery+JWKS 를 받아 캐시된 kid 의 정상 검�
+https://github.com/hkjang/sqlon/pull/7#issuecomment-5739431336
+Preparing worktree (detached HEAD 7f72223)
+HEAD is now at 7f72223 fix(mcp): JWKS 를 캐시 락 밖에서 받고 실패도 스로틀하며, 거부 로그에 request_id·sub 를 남기고 문서·웹UI 의 CRLF 줄끝을 원래대로 되돌림
+[13:49:52] sqlon: review — 17 turns, 4m, $1.86, success
+[13:49:52] sqlon: [shepherd] PR #7 review → review-reject — - internal/mcp/mcpoauth.go:597-613 jwksCache.key 가 '보유 중이지만 TTL 이 지난 kid' 를 in-flight fetch 뒤에 줄세움. 599행의 신선도 검사(n
+https://github.com/hkjang/sqlon/pull/7#issuecomment-5739454557
+[13:49:56] === shepherd Momento PR #14 (원인 review, run 2026-09-19-134956-Momento-shepherd)
+Preparing worktree (detached HEAD cf5525a)
+Updating files:  61% (277/453)Updating files:  62% (281/453)Updating files:  63% (286/453)Updating files:  64% (290/453)Updating files:  65% (295/453)Updating files:  66% (299/453)Updating files:  67% (304/453)Updating files:  68% (309/453)Updating files:  69% (313/453)Updating files:  70% (318/453)Updating files:  71% (322/453)Updating files:  72% (327/453)Updating files:  73% (331/453)Updating files:  74% (336/453)Updating files:  75% (340/453)Updating files:  76% (345/453)Updating files:  77% (349/453)Updating files:  78% (354/453)Updating files:  79% (358/453)Updating files:  80% (363/453)Updating files:  81% (367/453)Updating files:  82% (372/453)Updating files:  83% (376/453)Updating files:  84% (381/453)Updating files:  85% (386/453)Updating files:  86% (390/453)Updating files:  87% (395/453)Updating files:  88% (399/453)Updating files:  89% (404/453)Updating files:  90% (408/453)Updating files:  91% (413/453)Updating files:  92% (417/453)Updating files:  93% (422/453)Updating files:  94% (426/453)Updating files:  95% (431/453)Updating files:  96% (435/453)Updating files:  97% (440/453)Updating files:  98% (444/453)Updating files:  99% (449/453)Updating files: 100% (453/453)Updating files: 100% (453/453), done.
+HEAD is now at cf5525a feat(mcp): Keycloak 액세스 토큰으로도 /mcp 에 들어올 수 있게 합니다
+[13:50:00] 다른 러너(pid 1626820)가 실행 중 — 겹쳐 돌리지 않는다 (flock 뒤에서 실행하세요)
+[14:00:00] 다른 러너(pid 1626820)가 실행 중 — 겹쳐 돌리지 않는다 (flock 뒤에서 실행하세요)
+[14:01:55] Momento: improve — 50 turns, 13m, $4.38, success
+[14:01:55] Momento: verify `go build ./...` → exit 0 (0s)
+[14:01:56] Momento: verify `go vet ./...` → exit 0 (1s)
+[14:01:57] Momento: verify `go test ./...` → exit 0 (1s)
+[14:02:13] Momento: verify `cd web && [ -d node_modules ] || npm ci --no-audit --no-fund` → exit 0 (16s)
+[14:02:14] Momento: verify `cd web && npm test --silent` → exit 0 (1s)
+[14:02:14] Momento: verify `cd web && [ -d node_modules ] || npm ci --no-audit --no-fund` → exit 0 (0s)
+[14:02:19] Momento: verify `cd web && npm run build --silent` → exit 0 (5s)
+[14:02:24] Momento: [shepherd] PR #14 review → fix-pushed — # 수리 요약 — PR #14 (커밋 23a78df)  1. **Host 로 만든 aud (재현됨: 임시 테스트로 200 tools/list 확인)** — `mcpResource` 의 r.Host 폴�
+https://github.com/hkjang/Momento/pull/14#issuecomment-5739517341
+Preparing worktree (detached HEAD 23a78df)
+Updating files:  59% (270/453)Updating files:  60% (272/453)Updating files:  61% (277/453)Updating files:  62% (281/453)Updating files:  63% (286/453)Updating files:  64% (290/453)Updating files:  65% (295/453)Updating files:  66% (299/453)Updating files:  67% (304/453)Updating files:  68% (309/453)Updating files:  69% (313/453)Updating files:  70% (318/453)Updating files:  71% (322/453)Updating files:  72% (327/453)Updating files:  73% (331/453)Updating files:  74% (336/453)Updating files:  75% (340/453)Updating files:  76% (345/453)Updating files:  77% (349/453)Updating files:  78% (354/453)Updating files:  79% (358/453)Updating files:  80% (363/453)Updating files:  81% (367/453)Updating files:  82% (372/453)Updating files:  83% (376/453)Updating files:  84% (381/453)Updating files:  85% (386/453)Updating files:  86% (390/453)Updating files:  87% (395/453)Updating files:  88% (399/453)Updating files:  89% (404/453)Updating files:  90% (408/453)Updating files:  91% (413/453)Updating files:  92% (417/453)Updating files:  93% (422/453)Updating files:  94% (426/453)Updating files:  95% (431/453)Updating files:  96% (435/453)Updating files:  97% (440/453)Updating files:  98% (444/453)Updating files:  99% (449/453)Updating files: 100% (453/453)Updating files: 100% (453/453), done.
+HEAD is now at 23a78df fix(mcp): 리소스 식별자 없이는 SSO 토큰을 받지 않고, discovery 를 락 밖에서 한 번만 하며, 거절 로그에 request_id 를 남깁니다
+[14:05:01] 다른 러너(pid 1626820)가 실행 중 — 겹쳐 돌리지 않는다 (flock 뒤에서 실행하세요)
+[14:09:01] Momento: review — 32 turns, 7m, $2.37, success
+GraphQL: Projects (classic) is being deprecated in favor of the new Projects experience, see: https://github.blog/changelog/2024-05-23-sunset-notice-projects-classic/. (repository.pullRequest.projectCards)
+https://github.com/hkjang/Momento/pull/14#issuecomment-5739551558
+[14:09:04] Momento: [shepherd] PR #14 review → approve — risk=medium — 리뷰 승인 (risk=medium) 
+[14:09:06] === shepherd releasedock PR #18 (원인 review, run 2026-09-19-140906-releasedock-shepherd)
+Preparing worktree (detached HEAD d0a9bdc)
+HEAD is now at d0a9bdc feat: let /mcp accept a Keycloak access token beside the personal key
+[14:10:00] 다른 러너(pid 1626820)가 실행 중 — 겹쳐 돌리지 않는다 (flock 뒤에서 실행하세요)
+[14:15:03] 다른 러너(pid 1626820)가 실행 중 — 겹쳐 돌리지 않는다 (flock 뒤에서 실행하세요)
+[14:17:02] releasedock: improve — 40 turns, 8m, $3.64, success
+[14:17:03] releasedock: verify `cd backend && go build ./...` → exit 0 (0s)
+[14:17:03] releasedock: verify `cd backend && go vet ./...` → exit 0 (0s)
+[14:17:06] releasedock: verify `cd backend && go test ./...` → exit 0 (3s)
+[14:17:18] releasedock: verify `cd web && [ -d node_modules ] || npm ci --no-audit --no-fund` → exit 0 (12s)
+[14:17:20] releasedock: verify `cd web && npm test --silent` → exit 0 (2s)
+[14:17:20] releasedock: verify `cd web && [ -d node_modules ] || npm ci --no-audit --no-fund` → exit 0 (0s)
+[14:17:26] releasedock: verify `cd web && npm run build --silent` → exit 0 (6s)
+[14:17:30] releasedock: [shepherd] PR #18 review → fix-pushed — # 수리 요약 — PR #18 (commit ff47e4e)  1. **Host 스푸핑 (mcpResource)**: `requestOrigin()` 폴백을 삭제하고 `mcpOAuthConfig(From)` 에서 `*http.
+https://github.com/hkjang/releasedock/pull/18#issuecomment-5739599034
+Preparing worktree (detached HEAD ff47e4e)
+HEAD is now at ff47e4e fix: never derive the MCP OAuth resource from the request, log refusals with the request ID, and fetch signing keys outside the cache lock with a throttle on failures
+[14:20:00] 다른 러너(pid 1626820)가 실행 중 — 겹쳐 돌리지 않는다 (flock 뒤에서 실행하세요)
+[14:23:27] releasedock: review — 26 turns, 6m, $2.44, success
+[14:23:28] releasedock: [shepherd] PR #18 review → review-reject — - backend/internal/server/mcpoauth.go:668-680 (needsFetch) + :696-735 (mcpSigningKey): once the key set is older than mcpOAuthKeyTTL (5 min), needsFetch returns
+https://github.com/hkjang/releasedock/pull/18#issuecomment-5739632773
+[14:23:32] === shepherd git-ctx PR #30 (원인 review, run 2026-09-19-142331-git-ctx-shepherd)
+Preparing worktree (detached HEAD 82421f5)
+HEAD is now at 82421f5 feat(mcp): accept Keycloak SSO access tokens at /mcp as an OAuth 2.1 resource server
+[14:30:00] 다른 러너(pid 1626820)가 실행 중 — 겹쳐 돌리지 않는다 (flock 뒤에서 실행하세요)
+[14:33:54] git-ctx: improve — 43 turns, 11m, $3.38, success
+[14:33:57] git-ctx: verify `go build ./...` → exit 0 (3s)
+[14:33:58] git-ctx: verify `go vet ./...` → exit 0 (1s)
+[14:35:33] git-ctx: verify `go test ./...` → exit 0 (95s)
+[14:35:37] git-ctx: [shepherd] PR #30 review → fix-pushed — # 수리 요약 — PR #30 (커밋 f4e558f)  - request_id: `logOAuthRefusal(w, r, …)` 가 미들웨어가 응답에 찍은 `X-Request-ID` 를 `request_id` 필
+https://github.com/hkjang/git-ctx/pull/30#issuecomment-5739693256
+Preparing worktree (detached HEAD f4e558f)
+HEAD is now at f4e558f fix(mcp): log request_id on SSO refusals, drop Host-derived resource identifier, and run resource-token discovery outside the verifier lock with failure caching
+[14:40:00] 다른 러너(pid 1626820)가 실행 중 — 겹쳐 돌리지 않는다 (flock 뒤에서 실행하세요)
+[14:41:19] git-ctx: review — 26 turns, 6m, $2.58, success
+[14:41:19] git-ctx: [shepherd] PR #30 review → review-reject — - internal/app/mcpoauth.go:303-306 oauthPrincipal 의 계정 조회가 `u.subject=? OR (?<>'' AND u.username=?)` 로 username 폴백을 한다. 웹 로그인(in
+https://github.com/hkjang/git-ctx/pull/30#issuecomment-5739717558
+[14:41:20] shepherd: 이번 시간 몫(6건)을 다 썼다 — 나머지는 다음 시간에
+[14:41:20] shepherd: 처리 6건 — 승인 2 · 수정 푸시 5 · 사람 필요 0 (오늘 $143.099127/$150)
+reports: 18 day(s), 3 week(s), 1 month(s), 1039 run(s), 1384 usage row(s), 44 project page(s), 13 alert(s)
+notify: no new alerts

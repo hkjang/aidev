@@ -1,5 +1,5 @@
 {
- "generated": "2026-09-19T13:14:19+09:00",
+ "generated": "2026-09-19T14:43:57+09:00",
  "site": "https://hkjang.github.io/aidev",
  "description": "Claude Code 자율 개선 에이전트가 hkjang 의 프로젝트를 개선·테스트·머지·릴리즈한 일일 보고. 오늘 13회차·릴리즈 7건, 누적 1039회차·릴리즈 361건, 주의 필요 13건.",
  "today": {
@@ -10,18 +10,18 @@
   "merged": 3,
   "nochange": 2,
   "failed": 1,
-  "cost_usd": 186.56,
-  "minutes": 501,
-  "sessions": 123
+  "cost_usd": 217.13,
+  "minutes": 587,
+  "sessions": 136
  },
  "totals": {
   "runs": 1039,
   "released": 361,
   "days": 18,
-  "cost_usd": 3802.57,
-  "minutes": 9211,
-  "tokens_in": 4032430501,
-  "tokens_out": 29736112
+  "cost_usd": 3833.15,
+  "minutes": 9297,
+  "tokens_in": 4060510806,
+  "tokens_out": 29996717
  },
  "alerts": [
   {
@@ -154,13 +154,13 @@
   }
  ],
  "health": {
-  "checked": "2026-09-19T13:15:02+09:00",
+  "checked": "2026-09-19T14:45:01+09:00",
   "last_run": "2026-09-19T13:14:17+09:00",
-  "seconds_since_last": 42,
-  "runner_pid": "1593823",
-  "runner_age_seconds": 3628,
-  "scheduler_status": "실행 중",
-  "scheduler_next_run": "2026-09-19 오후 1:20:00",
+  "seconds_since_last": 5442,
+  "runner_pid": "",
+  "runner_age_seconds": 0,
+  "scheduler_status": "준비",
+  "scheduler_next_run": "2026-09-19 오후 2:50:00",
   "disk_percent": 73,
   "ok": true,
   "problems": [],
@@ -423,14 +423,14 @@
    "project": "git-ctx",
    "title": "auto-improve: feat(mcp): accept Keycloak SSO access tokens at /mcp as an OAuth 2.1 resource server",
    "url": "https://github.com/hkjang/git-ctx/pull/30",
-   "sha": "82421f5",
-   "summary": "18파일 +1246/−67 · guarded files, PR open https://github.com/hkjang/git-ctx/pull/30",
+   "sha": "f4e558f",
+   "summary": "20파일 +1537/−68 · guarded files, PR open https://github.com/hkjang/git-ctx/pull/30",
    "why": "guard: held-expected — internal/auth/oidc.go internal/auth/principal.go internal/auth/resourcetoken.go ",
    "evidence": "https://github.com/hkjang/aidev/tree/main/state/runs/2026-09-18-124341-git-ctx-improve",
    "labels": "",
    "action": "PR 처리기가 다음 시간에 다시 시도 · 승인: PR 라벨 aidev-approved / 반려: aidev-rejected — 다음 회차에 러너가 승인 당시 커밋에만 CI 확인 후 머지·닫기",
    "date": "2026-09-18",
-   "shepherd": "보호 파일 · 심사 거절 → 다음 시간에 수정 (09-19 11:47) — - internal/app/mcpoauth.go:325-327 logOAuthRefusal 이 reason 과 client_ip 만 남기고 request_id 를 남기지 않는다. 캠페인 규칙 1(5개 저장소 거절 사유) 위반. 미들웨어(internal/app/httpx.go:183-18",
+   "shepherd": "리뷰 거절 · 심사 거절 → 다음 시간에 수정 (09-19 14:41) — - internal/app/mcpoauth.go:303-306 oauthPrincipal 의 계정 조회가 `u.subject=? OR (?<>'' AND u.username=?)` 로 username 폴백을 한다. 웹 로그인(internal/app/auth.go:1012 upsertId",
    "shepherd_action": "review-reject"
   },
   {
@@ -438,14 +438,14 @@
    "project": "releasedock",
    "title": "auto-improve: feat: let /mcp accept a Keycloak access token beside the personal key",
    "url": "https://github.com/hkjang/releasedock/pull/18",
-   "sha": "d0a9bdc",
-   "summary": "14파일 +1769/−9 · guarded files, PR open https://github.com/hkjang/releasedock/pull/18",
+   "sha": "ff47e4e",
+   "summary": "14파일 +2061/−9 · guarded files, PR open https://github.com/hkjang/releasedock/pull/18",
    "why": "guard: held-expected — backend/internal/store/migrations/025_mcp_oauth.sql ",
    "evidence": "https://github.com/hkjang/aidev/tree/main/state/runs/2026-09-18-121339-releasedock-improve",
    "labels": "",
    "action": "PR 처리기가 다음 시간에 다시 시도 · 승인: PR 라벨 aidev-approved / 반려: aidev-rejected — 다음 회차에 러너가 승인 당시 커밋에만 CI 확인 후 머지·닫기",
    "date": "2026-09-18",
-   "shepherd": "보호 파일 · 심사 거절 → 다음 시간에 수정 (09-19 11:42) — - backend/internal/server/mcpoauth.go:106-110 (mcpResource) + :376 (mcpAudienceAccepted): when mcp.oauth.resource is empty and general publicUrl is empty, the r",
+   "shepherd": "리뷰 거절 · 심사 거절 → 다음 시간에 수정 (09-19 14:23) — - backend/internal/server/mcpoauth.go:668-680 (needsFetch) + :696-735 (mcpSigningKey): once the key set is older than mcpOAuthKeyTTL (5 min), needsFetch returns",
    "shepherd_action": "review-reject"
   },
   {
@@ -453,29 +453,29 @@
    "project": "Momento",
    "title": "auto-improve: feat(mcp): Keycloak 액세스 토큰으로도 /mcp 에 들어올 수 있게 합니다",
    "url": "https://github.com/hkjang/Momento/pull/14",
-   "sha": "cf5525a",
-   "summary": "14파일 +1451/−13 · guarded files, PR open https://github.com/hkjang/Momento/pull/14",
+   "sha": "23a78df",
+   "summary": "14파일 +1783/−13 · guarded files, PR open https://github.com/hkjang/Momento/pull/14",
    "why": "guard: held-expected — internal/auth/auth.go internal/database/migrations/018_mcp_oauth.sql ",
    "evidence": "https://github.com/hkjang/aidev/tree/main/state/runs/2026-09-18-114337-Momento-improve",
    "labels": "",
-   "action": "PR 처리기가 다음 시간에 다시 시도 · 승인: PR 라벨 aidev-approved / 반려: aidev-rejected — 다음 회차에 러너가 승인 당시 커밋에만 CI 확인 후 머지·닫기",
+   "action": "PR 처리기가 승인함 — 승인 스윕이 CI 확인 뒤 머지·릴리즈 (아직 열려 있으면 CI 를 기다리는 중)",
    "date": "2026-09-18",
-   "shepherd": "보호 파일 · 심사 거절 → 다음 시간에 수정 (09-19 11:37) — - internal/httpapi/mcp_oauth.go:135-144,270-272 mcpResource 가 mcp.oauth.resource 와 general.public_url 이 모두 비면 요청의 r.Host 로 리소스 식별자를 만들고, 272행이 그 값을 aud 허용값으로 쓴다",
-   "shepherd_action": "review-reject"
+   "shepherd": "리뷰 거절 · 승인 → 스윕이 CI 확인 후 머지 (09-19 14:09) — risk=medium — 리뷰 승인 (risk=medium)",
+   "shepherd_action": "approve"
   },
   {
    "kind": "PR",
    "project": "sqlon",
    "title": "auto-improve: feat(mcp): Keycloak 액세스 토큰으로도 /mcp 에 들어오게 하는 MCP SSO(OAuth 2.1) 지원",
    "url": "https://github.com/hkjang/sqlon/pull/7",
-   "sha": "750a3d8",
-   "summary": "23파일 +2976/−1067 · review held, PR open https://github.com/hkjang/sqlon/pull/7",
+   "sha": "7f72223",
+   "summary": "23파일 +2245/−22 · review held, PR open https://github.com/hkjang/sqlon/pull/7",
    "why": "review: rejected — 리뷰 거절: internal/meta/settings.go:72 기존 SettingDef `{Key: SetCacheTTL, Label: \"쿼리",
    "evidence": "https://github.com/hkjang/aidev/tree/main/state/runs/2026-09-18-110335-sqlon-improve",
    "labels": "",
    "action": "PR 처리기가 다음 시간에 다시 시도 · 승인: PR 라벨 aidev-approved / 반려: aidev-rejected — 다음 회차에 러너가 승인 당시 커밋에만 CI 확인 후 머지·닫기",
    "date": "2026-09-18",
-   "shepherd": "리뷰 거절 · 심사 거절 → 다음 시간에 수정 (09-19 11:32) — - internal/mcp/mcpoauth.go:535-558 jwksCache.key 가 c.mu.Lock() 을 잡은 채 fetchJWKS(discovery + jwks, 각각 10초 타임아웃의 네트워크 호출)를 실행함. 캠페인 규칙(JWKS/discovery 를 캐시 뮤텍스 안에서",
+   "shepherd": "리뷰 거절 · 심사 거절 → 다음 시간에 수정 (09-19 13:49) — - internal/mcp/mcpoauth.go:597-613 jwksCache.key 가 '보유 중이지만 TTL 이 지난 kid' 를 in-flight fetch 뒤에 줄세움. 599행의 신선도 검사(now.Sub(fetchedAt) <= jwksTTL)에 걸리면 604행의 infli",
    "shepherd_action": "review-reject"
   },
   {
@@ -483,15 +483,15 @@
    "project": "orbit",
    "title": "auto-improve: feat(mcp): 개인 키 없이 Keycloak 액세스 토큰으로 /mcp 에 들어올 수 있게 한다",
    "url": "https://github.com/hkjang/orbit/pull/6",
-   "sha": "6c897ff",
-   "summary": "16파일 +1642/−12 · guarded files, PR open https://github.com/hkjang/orbit/pull/6",
+   "sha": "486045d",
+   "summary": "16파일 +2011/−12 · guarded files, PR open https://github.com/hkjang/orbit/pull/6",
    "why": "guard: held-expected — internal/store/migrations/009_mcp_oauth.sql ",
    "evidence": "https://github.com/hkjang/aidev/tree/main/state/runs/2026-09-18-103332-orbit-improve",
    "labels": "",
-   "action": "PR 처리기가 다음 시간에 다시 시도 · 승인: PR 라벨 aidev-approved / 반려: aidev-rejected — 다음 회차에 러너가 승인 당시 커밋에만 CI 확인 후 머지·닫기",
+   "action": "PR 처리기가 승인함 — 승인 스윕이 CI 확인 뒤 머지·릴리즈 (아직 열려 있으면 CI 를 기다리는 중)",
    "date": "2026-09-18",
-   "shepherd": "보호 파일 · 심사 거절 → 다음 시간에 수정 (09-19 11:26) — - internal/server/auth.go:172 토큰 거부 로그(slog.Warn \"mcp oauth token refused\")에 request_id 가 없다. 이 저장소는 server.go:31 에서 chi middleware.RequestID 를 이미 쓰므로 middlewar",
-   "shepherd_action": "review-reject"
+   "shepherd": "리뷰 거절 · 승인 → 스윕이 CI 확인 후 머지 (09-19 13:33) — risk=medium — 리뷰 승인 (risk=medium)",
+   "shepherd_action": "approve"
   },
   {
    "kind": "PR",
@@ -505,8 +505,8 @@
    "labels": "",
    "action": "PR 처리기가 다음 시간에 다시 시도 · 승인: PR 라벨 aidev-approved / 반려: aidev-rejected — 다음 회차에 러너가 승인 당시 커밋에만 CI 확인 후 머지·닫기",
    "date": "2026-09-18",
-   "shepherd": "리뷰 거절 · 수정 실패 → 다음 시간에 재시도 (09-19 11:22) — 고친 뒤 러너 검증 실패: 실패한 검증: go build ./... (exit 1)",
-   "shepherd_action": "fix-failed"
+   "shepherd": "리뷰 없음 · 심사 거절 → 다음 시간에 수정 (09-19 13:22) — - internal/server/knowledge_package.go:506 `if current(r).TokenID != \"\"` 게이트가 새 SSO 주체(OAuthSubject != \"\", TokenID == \"\")를 빼먹었다. 같은 파일 128행(packagePrincipal)은 O",
+   "shepherd_action": "review-reject"
   },
   {
    "kind": "PR",
@@ -1873,16 +1873,16 @@
   }
  ],
  "shepherd": {
-  "last_pass": "2026-09-19T11:08:03+09:00",
+  "last_pass": "2026-09-19T13:16:47+09:00",
   "enabled": true,
   "today": {
    "needs-human": 14,
-   "review-reject": 22,
-   "fix-pushed": 18,
-   "approve": 18,
+   "review-reject": 26,
+   "fix-pushed": 23,
+   "approve": 20,
    "fix-failed": 1
   },
-  "total": 158,
+  "total": 169,
   "pending_human": 38
  },
  "agents": {
@@ -1897,13 +1897,13 @@
     "role": "구현 builder",
     "calls": 511,
     "metric": "러너 검증 통과 88% · 변경 없음 5",
-    "cost": 2851.53
+    "cost": 2868.77
    },
    {
     "role": "비평 critic",
     "calls": 334,
     "metric": "최종 승인 82% · 한 번이라도 거절 61 · 승인·머지 뒤 회귀 0/232",
-    "cost": 543.35
+    "cost": 556.68
    },
    {
     "role": "수리 repairer",
@@ -1925,19 +1925,19 @@
    },
    {
     "role": "PR 심사 shepherd-reviewer",
-    "calls": 116,
-    "metric": "승인 28 · 거절 50 · 사람 필요 38 · 승인 뒤 회귀 0",
-    "cost": 231.37
+    "calls": 122,
+    "metric": "승인 30 · 거절 54 · 사람 필요 38 · 승인 뒤 회귀 0",
+    "cost": 261.94
    },
    {
     "role": "PR 수리 shepherd-fixer",
-    "calls": 38,
-    "metric": "고쳐서 푸시 84%",
+    "calls": 43,
+    "metric": "고쳐서 푸시 86%",
     "cost": null
    },
    {
     "role": "기록·학습 historian",
-    "calls": 54,
+    "calls": 56,
     "metric": "캠페인 교훈 37개 · 운영자 규칙 10개",
     "cost": 0.27
    },
@@ -2294,14 +2294,14 @@
     "git-ctx": "pr"
    },
    "lessons": [
-    "토큰 검증 오류를 클라이언트용 문구로 바꾸는 분기에서는 반드시 원문 err(서명·발급자·만료·nbf·aud 중 무엇인지)와 request_id 를 서버 로그에 남긴다. 시작 전에 이 저장소의 요청 ID 미들웨어(헤더·ctx·chi 등)를 소스에서 확인하고, 로그 함수에 빈 requestID 를 넘기는 호출을 남기지 않는다.",
-    "거부 로그를 저장소의 기존 로그 캡처 패턴으로 핸들러 전체를 통과하는 테스트에서 고정하고, 원문 err 와 비어 있지 않은 request_id 두 가지를 모두 단언한다. 테스트가 nil/Discard 로거를 쓰면 이 검증이 빠진다.",
-    "aud 검사 허용값을 요청의 Host/X-Forwarded-Host 에서 만들지 않는다. 시작 전에 resource·public URL 설정의 마이그레이션 기본값이 빈 값인지, UI 가 빈 값을 허용하는지 확인하고, 둘 다 비면 SSO 를 거부하거나 켜지 못하게 한다. 다른 aud 토큰 + 조작된 Host 로 401 이 나는 테스트를 넣는다.",
-    "JWKS·OIDC discovery 같은 네트워크 호출을 캐시 뮤텍스를 잡은 채 하지 않는다. 락 안에서는 조회만 하고, 락을 푼 뒤 요청 ctx 로 fetch 한 다음 다시 잠가 저장한다(singleflight 가능). context.WithoutCancel 을 쓰지 말고 실패한 discovery 도 짧게 캐시한다.",
-    "관리자 천장과 토큰 scope 의 교집합이 비면 빈 슬라이스를 돌려주지 말고 거부한다. 시작 전에 기존 코드가 빈 범위를 '세션 인증(무제한)'으로 해석하는 분기(len(scopes) > 0 && ... 패턴)가 있는지 확인한다.",
-    "새 SSO 주체를 도입하면 '외부 bearer 호출인가'를 판별하는 모든 게이트(TokenID != \"\" 같은 조건)를 전부 grep 해서 빠짐없이 새 주체를 포함하도록 갱신한다.",
-    "정적 설정 항목 목록(SettingDef 등)에 새 항목을 끼워넣은 뒤 diff 의 '-' 줄에 캠페인과 무관한 기존 항목이 지워지지 않았는지 확인한다.",
-    "설정 PUT 에 검증을 추가할 때는 모든 키를 먼저 검증한 뒤 저장하도록 순서를 바꾸고, OpenAPI/문서의 '실패하면 아무것도 저장하지 않는다' 설명과 실제 동작이 일치하는지 확인한다."
+    "SSO 토큰을 거부해 401을 내는 모든 분기는 클라이언트에는 합성 문구를 주되 로그에는 검증 라이브러리의 원문 오류(서명·발급자·만료·nbf·aud 중 무엇인지)와 비어 있지 않은 request_id를 함께 남긴다. 구현 전에 이 저장소의 request ID 미들웨어가 값을 어디에 두는지(ctx 헬퍼, chi GetReqID, 응답 헤더 등)와 기존 로그가 그것을 어떻게 읽는지 소스에서 확인해 같은 방식으로 꺼내고, requestID 인자에 빈 문자열을 넘기는 호출을 남기지 않는다.",
+    "토큰 거부 로그는 테스트로 고정한다: 이 저장소에 이미 있는 로그 캡처 패턴(예: 버퍼를 받는 텍스트 핸들러를 로거로 주입)을 찾아 재사용하고, 거부 테스트에서 메시지·원문 오류·비어 있지 않은 request_id 세 가지가 출력에 들어 있음을 단언한다. 테스트 서버를 nil 로거나 Discard 핸들러로 만들면 이 검증이 불가능하므로 쓰지 않는다.",
+    "aud 검사의 허용값을 요청의 Host / X-Forwarded-Host / Origin 같은 클라이언트 제어 헤더로부터 만들지 않는다. 리소스 식별자 설정과 공개 URL 설정이 모두 비어 있으면(마이그레이션 기본값이 보통 그렇다) 요청 Host로 대체하지 말고 SSO 인증을 거부하거나 설정 오류로 처리한다. 구현 전에 설정 기본값과 UI가 빈 값을 허용하는지 소스에서 확인하고, 다른 aud를 가진 토큰 + 그 aud와 같은 Host 헤더로 401이 나는 테스트를 넣는다.",
+    "JWKS·OIDC discovery 같은 네트워크 호출은 캐시 뮤텍스를 잡은 채 하지 않는다. 락 안에서는 캐시 조회만 하고, 락을 푼 뒤 요청 ctx로 fetch하며(WithoutCancel 금지), 보유 중인 kid는 TTL이 지났어도 in-flight fetch를 기다리지 않고 즉시 돌려주고, 실패한 discovery도 짧게 캐시해 재시도 폭주를 막는다. 캐시된 kid 조회가 진행 중인 unknown kid fetch에 블록되지 않음을 테스트로 확인한다.",
+    "SSO 주체를 새로 추가하면 기존 주체 종류를 식별자 필드로 판별하는 모든 분기(예: 키 ID 가 비어 있지 않은지로 '외부 bearer 클라이언트'를 가르는 게이트)를 grep으로 전부 찾아 새 주체도 포함하도록 넓힌다. 하나만 고치고 끝내지 말고, SSO 주체로 각 게이트를 통과하는 테스트를 추가한다.",
+    "토큰 scope와 관리자 천장의 교집합이 비면 거부하거나 명시적 '권한 없음' 값을 쓴다. 빈 범위 목록을 기존 코드가 어떻게 해석하는지(무제한인지 아닌지) 소스에서 먼저 확인하고, 천장 밖 scope만 실린 토큰이 쓰기 도구에 접근하지 못함을 테스트한다.",
+    "설정 정의 목록·마이그레이션·문서 표에 SSO 항목을 끼워넣을 때 diff가 추가만인지 확인한다. 삭제(-)된 기존 항목이 있으면 그 키가 파일 어디에도 다시 등장하지 않는지 검사하고, 기존 설정을 GET/PUT하는 테스트가 통과하는지 본다.",
+    "설정 PUT 핸들러에 검증을 추가할 때는 모든 키를 먼저 검증한 뒤 저장하고(검증 실패 시 아무것도 쓰지 않음), map 순회 중 즉시 저장하는 구조를 남기지 않는다. OpenAPI/문서가 약속하는 동작과 실제 핸들러 순서가 일치하는지 대조하고, 일부 키만 실패하는 요청으로 부분 저장이 없음을 테스트한다."
    ]
   }
  ],
@@ -2355,7 +2355,7 @@
   {
    "metric": "검증된 개선 완료율",
    "value": "86%",
-   "detail": "관찰 24h 지난 머지 295건 중 회귀 없음 254건"
+   "detail": "관찰 24h 지난 머지 296건 중 회귀 없음 255건"
   },
   {
    "metric": "완전한 릴리즈 비율",
@@ -2365,22 +2365,22 @@
   {
    "metric": "사람의 재작업률",
    "value": "0%",
-   "detail": "되돌림·롤백 0건 / 관찰 머지 295건"
+   "detail": "되돌림·롤백 0건 / 관찰 머지 296건"
   },
   {
    "metric": "변경 후 회귀율",
    "value": "0%",
-   "detail": "회귀 0건 / 관찰 머지 295건"
+   "detail": "회귀 0건 / 관찰 머지 296건"
   },
   {
    "metric": "유효 개선당 비용",
-   "value": "$16.83",
-   "detail": "비용 확인된 유효 개선 226건, 미확인 세션 13"
+   "value": "$16.89",
+   "detail": "비용 확인된 유효 개선 227건, 미확인 세션 13"
   },
   {
    "metric": "예외 처리 소요 시간(중앙값)",
    "value": "9.0시간",
-   "detail": "해결된 경고 136건"
+   "detail": "해결된 경고 137건"
   },
   {
    "metric": "실행 오류",
@@ -2405,7 +2405,7 @@
    "merged": 3,
    "nochange": 2,
    "failed": 1,
-   "cost_usd": 186.56
+   "cost_usd": 217.13
   },
   {
    "date": "2026-09-18",
@@ -2571,8 +2571,8 @@
    "merged": 12,
    "nochange": 4,
    "failed": 6,
-   "cost": 1543.18,
-   "minutes": 3566
+   "cost": 1573.76,
+   "minutes": 3652
   },
   {
    "key": "2026-W37",
@@ -2609,8 +2609,8 @@
    "merged": 115,
    "nochange": 18,
    "failed": 20,
-   "cost": 3802.57,
-   "minutes": 9211
+   "cost": 3833.15,
+   "minutes": 9297
   }
  ],
  "projects": [
@@ -2886,8 +2886,8 @@
    "last_ts": "2026-09-19T11:05:29+09:00",
    "last_status": "released",
    "last_result": "fix-round: merged https://github.com/hkjang/git-ctx/pull/31, released v0.77.14",
-   "cost": 61.76,
-   "minutes": 234,
+   "cost": 67.72,
+   "minutes": 251,
    "grade": "D",
    "grade_why": "14일: 릴리즈 8, 실패 0, 경고 6, 회귀 2",
    "lessons": 2,
@@ -3101,8 +3101,8 @@
    "last_ts": "2026-09-18T17:03:54+09:00",
    "last_status": "other",
    "last_result": "hold: budget",
-   "cost": 65.49,
-   "minutes": 167,
+   "cost": 67.68,
+   "minutes": 171,
    "grade": "C",
    "grade_why": "14일: 릴리즈 0, 실패 0, 경고 3, 회귀 0",
    "lessons": 0,
@@ -3148,8 +3148,8 @@
    "last_ts": "2026-09-18T22:56:55+09:00",
    "last_status": "released",
    "last_result": "fix-round: merged https://github.com/hkjang/Momento/pull/15, released v0.34.41",
-   "cost": 60.49,
-   "minutes": 214,
+   "cost": 67.24,
+   "minutes": 235,
    "grade": "D",
    "grade_why": "14일: 릴리즈 2, 실패 8, 경고 11, 회귀 0",
    "lessons": 0,
@@ -3248,8 +3248,8 @@
    "last_ts": "2026-09-18T10:51:44+09:00",
    "last_status": "other",
    "last_result": "guarded files, PR open https://github.com/hkjang/orbit/pull/6",
-   "cost": 48.12,
-   "minutes": 112,
+   "cost": 53.07,
+   "minutes": 123,
    "grade": "D",
    "grade_why": "14일: 릴리즈 1, 실패 0, 경고 4, 회귀 0",
    "lessons": 0,
@@ -3392,8 +3392,8 @@
    "last_ts": "2026-09-18T12:32:39+09:00",
    "last_status": "other",
    "last_result": "guarded files, PR open https://github.com/hkjang/releasedock/pull/18",
-   "cost": 53.96,
-   "minutes": 131,
+   "cost": 60.03,
+   "minutes": 146,
    "grade": "C",
    "grade_why": "14일: 릴리즈 8, 실패 0, 경고 3, 회귀 1",
    "lessons": 1,
@@ -3517,8 +3517,8 @@
    "last_ts": "2026-09-18T11:29:12+09:00",
    "last_status": "other",
    "last_result": "review held, PR open https://github.com/hkjang/sqlon/pull/7",
-   "cost": 66.59,
-   "minutes": 150,
+   "cost": 71.23,
+   "minutes": 167,
    "grade": "A",
    "grade_why": "14일: 릴리즈 1, 실패 0, 경고 0, 회귀 0",
    "lessons": 0,

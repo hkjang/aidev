@@ -1,0 +1,6 @@
+# 수리 요약 — PR #30 (커밋 f4e558f)
+
+- request_id: `logOAuthRefusal(w, r, …)` 가 미들웨어가 응답에 찍은 `X-Request-ID` 를 `request_id` 필드로 남김. 테스트는 `mcp sso token refused` 줄 자체에 `request_id=<rec 헤더값>` 이 있는지 단언(버퍼 전체 검색은 `http_request` 줄 때문에 통과해 버리므로 줄 단위로 검사; 필드 제거 시 실패 확인).
+- Host 유래 aud: `mcpResource` 의 `r.Host` 분기를 삭제. 식별자는 `mcp.oauthResource` → `ui.publicUrl`+`/mcp` 순이고, 둘 다 없으면(`cfg.PublicURL` 이 새 상수 `config.DefaultPublicURL` 그대로면) `mcpOAuthActive` 가 "no resource identifier" 비활성 사유를 돌려줌. `mcpOAuthActive` 가 해석된 Resource 를 settings 에 채워 주므로 메타데이터·챌린지·oauthPrincipal 은 `r` 없이 `settings.Resource` 만 씀. 새 테스트 `TestSSOStaysInactiveWithoutAResourceIdentifier`: 기본 공개주소 + oauthEnabled=true 에서 메타데이터 404, Host 를 맞춘 토큰도 거부·챌린지 없음, `ui.publicUrl` 저장 뒤 활성. docs/configuration.md 표 한 줄에 이 조건을 적음.
+- resourceVerifier: 락 안에서는 캐시 조회/저장만, discovery 는 락 밖에서 요청 ctx 로(`oidcContext(ctx)`), 성공 시 키셋용 verifier 만 `WithoutCancel` ctx 로 만들어 락 잡고 저장. 실패는 30초(`resourceDiscoveryFailureTTL`) 캐시하되 호출자 자신의 ctx 취소(`ctx.Err()!=nil`)는 캐시하지 않음. 새 테스트 `TestResourceVerifierDiscoveryHonoursTheCallerAndCachesFailure`: 매달린 discovery 중 `mu.TryLock` 성공·300ms 데드라인에 `DeadlineExceeded` 로 복귀·취소는 캐시 안 됨·502 는 1회만 요청·TTL 지나면 재시도(원본 코드에 대해 돌리면 락 보유로 실패, 30초 걸림 확인).
+- 검증: gofmt·`go build`·`go vet`·`go test -tags sqlite_fts5 ./...` 전부 통과, `-race` 로 internal/auth 와 SSO 테스트 통과.
