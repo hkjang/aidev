@@ -28,3 +28,11 @@
 - [러너 03:49] pr created — https://github.com/hkjang/seaton/pull/31
 - [러너 03:53] ci passed — 검사 2개 모두 success
 - [러너 03:53] merge done — 1a64524
+
+## 릴리즈 노트
+- 방식: 이전 릴리즈(v1.4.2~v1.4.4)와 동일 — 버전 파일은 따로 없고 README·ADMIN_GUIDE·USER_GUIDE·ROADMAP_PLAN 의 버전 표기만 올린 뒤 `docs: vX 기준으로 문서 정비` 커밋에 경량 태그를 붙인다. 태그 푸시 시 release.yml 이 이미지를 빌드해 `SeatOn-vX.tar.gz` 를 붙인 GitHub Release 를 `--generate-notes` 로 만들므로 사람이 올릴 자산은 없다(assets 빈 배열, github_release=false).
+- 한 것: 1.4.4→1.4.5 (패치 — 최근 넷이 모두 패치 증가). README 8줄·ADMIN_GUIDE 9줄·USER_GUIDE 1줄·ROADMAP_PLAN 1줄, build-docs.py 로 HTML 재생성, 09-20 기능 회차가 미룬 ADMIN_GUIDE.pdf·USER_GUIDE.pdf 를 md2pdf 로 구움(ADMIN_GUIDE.pdf 에 self_demotion 포함 확인). EXECUTIVE_REPORT·USER_GROUPS_ANALYSIS 는 build-docs.py 가 CSS 차이로 다시 만들었지만 이전 릴리즈 커밋 범위 밖이라 되돌렸다. 커밋 e0956e1, 경량 태그 v1.4.5(이전 태그도 경량).
+- 검증: go vet·go test ./...·gofmt 통과, README 의 로컬 검증 `scripts/release-image.sh 1.4.5` + `gzip -t` 통과(47.6MB). 산출물·로컬 이미지는 지웠다. 스크립트에 실행 비트가 없어 `bash` 로 호출했다.
+- 푸시·Release 생성은 러너 몫. release.json 은 released.
+- [러너 04:00] release published — v1.4.5
+- [러너 04:01] assets verified — v1.4.5 자산 1개 (이전 v1.4.4: 1)
