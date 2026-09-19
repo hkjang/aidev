@@ -8,7 +8,9 @@
 # 적용은 사람이 한다: 코파일럿에 "board apply 1 3" (authority: proposes — 제안은 하되 스스로 적용하지 않는다).
 #
 # 산출물: state/board/<ISO주>.md (메모), state/board/<ISO주>.json (제안 목록). 헬스체크가 주마다 한 번 부른다.
-#   bin/board.sh [--force]
+#   bin/board.sh            이번 주 이사회 (이미 열렸으면 건너뜀)
+#   bin/board.sh --force    다시 연다
+#   bin/board.sh --reparse  메모는 그대로 두고 제안 목록만 다시 뽑는다 (파서를 고쳤을 때)
 set -uo pipefail
 export HOME="${HOME:-/home/hkjang}"
 export PATH="$HOME/.local/bin:$HOME/.nvm/versions/node/v22.23.1/bin:/usr/local/bin:/usr/bin:/bin"
@@ -17,7 +19,8 @@ STATE="$REPO_DIR/state"; DATA="$REPO_DIR/docs/data"; ROOT="${ROOT:-/mnt/c/Users/
 HEADCOUNT_DIR="${HEADCOUNT_DIR:-$ROOT/headcount}"
 OUTD="$STATE/board"; mkdir -p "$OUTD"; WEEK=$(date +%G-W%V); MD="$OUTD/$WEEK.md"; JS="$OUTD/$WEEK.json"
 MODEL="${MODEL:-claude-opus-5}"; BUDGET="${AIDEV_BOARD_BUDGET:-4}"
-[ "${1:-}" = --force ] || { [ -f "$JS" ] && { echo "이번 주($WEEK) 이사회는 이미 열렸다: $JS"; exit 0; }; }
+MODE=${1:-}
+case "$MODE" in --force|--reparse) ;; *) [ -f "$JS" ] && { echo "이번 주($WEEK) 이사회는 이미 열렸다: $JS"; exit 0; };; esac
 [ -f "$STATE/NO-BOARD" ] && { echo "NO-BOARD — 이사회 중지"; exit 0; }
 command -v claude >/dev/null || { echo "claude 없음"; exit 1; }
 
@@ -61,40 +64,28 @@ $verbs
 5. 파일을 쓰거나 명령을 실행하지 마세요. 읽고 판단만 합니다.
 
 ## 출력
-먼저 한국어 메모(제목 '# 이사회 $WEEK', 절: 상황 / 이번 주의 제약 / 결정 제안 / 하지 않는 것 / 역할 권고, 40줄 안)를 쓰고, 마지막 줄에 다음 JSON 한 줄만 쓰세요(코드펜스 없이):
+한국어 메모를 쓰세요: 제목 '# 이사회 $WEEK', 절은 '## 상황' / '## 이번 주의 제약' / '## 결정 제안' / '## 하지 않는 것' / '## 역할 권고', 40줄 안. **결정 제안은 반드시** \`N. \\\`동사 인자...\\\` — 왜. 포기: ... 되돌림: \\\`동사 인자...\\\`\` 꼴의 번호 목록으로 쓰세요(백틱 안이 그대로 실행되는 명령입니다). 메모 뒤 마지막 줄에 다음 JSON 한 줄을 덧붙이세요(코드펜스 없이):
 {\"constraint\":\"한 문장\",\"proposals\":[{\"n\":1,\"cmd\":[\"campaign\",\"budget\",\"<id>\",\"<usd>\"],\"why\":\"근거\",\"gives_up\":\"포기하는 것\",\"revert\":\"되돌리는 법\"}],\"not_doing\":[\"...\"],\"role_advice\":[\"...\"]}"
-out=$(mktemp)
-( cd "$REPO_DIR" && timeout -k 30 900 claude -p "$prompt" --model "$MODEL" --settings '{"attribution":{"commit":"","pr":""}}' \
-    --permission-mode plan --allowedTools "Read Grep Glob Skill" --max-budget-usd "$BUDGET" --output-format json ${pargs[@]+"${pargs[@]}"} </dev/null >"$out" 2>>"$REPO_DIR/logs/board.err" )
-text=$(jq -r '.result // ""' "$out" 2>/dev/null); cost=$(jq -r '.total_cost_usd // 0' "$out" 2>/dev/null); cost=${cost:-0}; rm -f "$out"
-[ -n "$text" ] || { echo "이사회 세션이 답을 내지 못함"; exit 1; }
-js=$(python3 - "$text" <<'PY'
-import json, sys
-t = sys.argv[1]; m = None
-for start in [i for i, ch in enumerate(t) if ch == "{"]:
-    for end in range(len(t), start, -1):
-        if t[end-1] != "}": continue
-        try: d = json.loads(t[start:end])
-        except Exception: continue
-        if isinstance(d, dict) and isinstance(d.get("proposals"), list): m = d; break
-    if m: break
-if not m: sys.exit(1)
-allowed = {"campaign", "shepherd", "stop", "resume", "run", "draft-campaign", "activate-campaign", "discard-draft"}
-props = []
-for i, p in enumerate(m["proposals"], 1):
-    cmd = [str(x) for x in (p.get("cmd") or [])]
-    if not cmd or cmd[0] not in allowed: continue
-    props.append({"n": i, "cmd": cmd, "why": str(p.get("why", ""))[:400], "gives_up": str(p.get("gives_up", ""))[:200], "revert": str(p.get("revert", ""))[:200], "applied": None})
-print(json.dumps({"constraint": str(m.get("constraint", ""))[:300], "proposals": props, "not_doing": [str(x)[:200] for x in (m.get("not_doing") or [])][:8], "role_advice": [str(x)[:300] for x in (m.get("role_advice") or [])][:8]}, ensure_ascii=False))
-PY
-) || js=""
-# 메모: JSON 줄을 뺀 본문
+
+if [ "$MODE" = --reparse ] && [ -s "$MD" ]; then
+  text=$(cat "$MD"); cost=$(jq -r '.cost_usd // 0' "$JS" 2>/dev/null); cost=${cost:-0}
+else
+  out=$(mktemp)
+  ( cd "$REPO_DIR" && timeout -k 30 900 claude -p "$prompt" --model "$MODEL" --settings '{"attribution":{"commit":"","pr":""}}' \
+      --permission-mode plan --allowedTools "Read Grep Glob Skill" --max-budget-usd "$BUDGET" --output-format json ${pargs[@]+"${pargs[@]}"} </dev/null >"$out" 2>>"$REPO_DIR/logs/board.err" )
+  text=$(jq -r '.result // ""' "$out" 2>/dev/null); cost=$(jq -r '.total_cost_usd // 0' "$out" 2>/dev/null); cost=${cost:-0}; rm -f "$out"
+  [ -n "$text" ] || { echo "이사회 세션이 답을 내지 못함"; exit 1; }
+fi
+
+# 제안 목록: 마지막 줄의 JSON 이 있으면 그것을, 없으면 메모의 "N. `동사 ...` — 이유" 줄에서 뽑는다 (모델이 JSON 을 빼먹어도 제안은 남는다)
+js=$(python3 "$HERE/board-parse.py" <<<"$text") || js=""
+[ -n "$js" ] || js='{"constraint":"","proposals":[],"not_doing":[],"role_advice":[]}'
 printf '%s\n' "$text" | grep -v '^{"constraint"' > "$MD"
-jq -n --arg w "$WEEK" --arg ts "$(date -Iseconds)" --argjson c "$cost" --argjson body "${js:-{\"constraint\":\"\",\"proposals\":[],\"not_doing\":[],\"role_advice\":[]}}" '{week:$w, generated:$ts, cost_usd:$c} + $body' > "$JS"
-jq -cn --arg ts "$(date -Iseconds)" --arg d "$(date +%F)" --argjson c "$cost" '{ts:$ts,date:$d,project:"(board)",phase:"board",run_id:"",campaign:"",subtype:"success",cost_usd:$c}' >> "$DATA/usage.jsonl"
+jq -n --arg w "$WEEK" --arg ts "$(date -Iseconds)" --argjson c "$cost" --argjson body "$js" '{week:$w, generated:$ts, cost_usd:$c} + $body' > "$JS"
+[ "$MODE" = --reparse ] || jq -cn --arg ts "$(date -Iseconds)" --arg d "$(date +%F)" --argjson c "$cost" '{ts:$ts,date:$d,project:"(board)",phase:"board",run_id:"",campaign:"",subtype:"success",cost_usd:$c}' >> "$DATA/usage.jsonl"
 n=$(jq -r '.proposals|length' "$JS")
 echo "이사회 $WEEK: 제안 $n건 (\$$cost) → $MD"
-"$HERE/tg.sh" "🏛 이사회 $WEEK — 이번 주의 제약: $(jq -r '.constraint' "$JS")
+"$HERE/tg.sh" "🏛 이사회 $WEEK — 이번 주의 제약: $(jq -r '.constraint' "$JS" | head -c 200)
 $(jq -r '.proposals[] | "\(.n). \(.cmd|join(" ")) — \(.why|.[0:110])"' "$JS")
 하지 않는 것: $(jq -r '.not_doing|join(" · ")' "$JS" | head -c 300)
 
