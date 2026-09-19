@@ -1,0 +1,13 @@
+# seaton 프로필 (2026-09-20)
+- 목적: 사무실 도면 위에 좌석을 그리고 직원을 배정·검색하는 좌석 관리 서비스(SeatOn). 도면 AI 분석(VLM), 인사 연동, Keycloak SSO, API 키·MCP 제공.
+- 스택: Go 1.24(chi v5, pgx v5, go-oidc v3) + PostgreSQL 16 / React + TypeScript + MUI(Vite, vitest, Playwright) / 단일 Docker 이미지(compose.yaml).
+- 구조:
+  - `cmd/` 진입점, `internal/app/` HTTP 핸들러 전부(server.go 라우팅, auth.go 로그인·OIDC·사용자, seats.go 좌석·배정, maps.go/analyzer.go/vlm.go 도면 분석, keys.go API 키, mcp.go MCP, settings.go 설정 키 시드·검증, background.go 주기 작업, openapi.go 문서, tracking.go 방문 추적)
+  - `internal/database/` pool + `migrations.sql`(기동 시 통째로 실행하는 멱등 SQL, 별도 마이그레이션 도구 없음), `internal/platform/` 설정·암호화, `internal/tracking/` 스니펫·CSP nonce
+  - `web/src/pages/` 화면 9개(SeatMapPage, SettingsPage, UsersPage …), `web/src/lib/` 화면 규칙 순수 함수(+ *.test.ts), `web/src/api.ts` fetch 래퍼, `web/e2e/` Playwright spec·seed.mjs·guide-shots.mjs(캡처)
+  - `docs/` USER_GUIDE·ADMIN_GUIDE(md → html 은 `scripts/build-docs.py`, pdf 는 공용 md2pdf), API_AND_MCP.md, assets/guide/*.png
+- 빌드·테스트: `go test ./... && go vet ./...`(빠름, DB 불필요 — 핸들러 테스트는 httptest·가짜 서버) / `cd web && npm ci && npm test`(vitest) `npm run lint`(tsc -b) `npm run build` / e2e 는 CI 처럼 `docker build -t seaton:e2e .` 후 postgres:16 + `docker run --network host -e POSTGRES_DSN -e BOOTSTRAP_ADMIN(_PASSWORD)` 를 띄우고 `E2E_BASE_URL=http://127.0.0.1:8080 E2E_USERNAME/PASSWORD` 로 `npx playwright test`(수 분, 이미지 빌드 포함 10분+). 호스트 8080 이 막히면 브리지 + `--add-host=host.docker.internal:host-gateway`.
+- 관례: 커밋 메시지는 한국어, `feat:`/`fix:`/`docs:`/`test:`/`chore:` 접두. 브랜치 `auto/YYYY-MM-DD-HHMM` → PR → main, 릴리즈 뒤 `docs: vX.Y.Z 기준으로 문서 정비` 회차가 PDF 를 굽는다. 설정은 환경 변수 3개 외에는 모두 `settings` 테이블 키(settings.go 에서 시드·검증, 시스템 설정 화면 탭). 오류 응답은 `writeError(w, status, code, message)` 의 `{error:{code,message}}` 꼴이고 화면 규칙은 서버 검증과 같은 판단을 `web/src/lib/*.ts` 순수 함수로 복제해 단위 테스트한다. 주석·문서·테스트 이름 모두 한국어.
+- 위험 구역: `internal/app/auth.go` `authenticate`(세션·API 키·CSRF 면제 — 미머지 MCP OAuth 브랜치가 고치는 자리), OIDC 콜백·returnTo 검증, `migrations.sql`(기동마다 실행되므로 멱등이어야 함), `internal/app/mcp.go` 범위 검사, tracking 의 CSP 문자열(꺼짐 상태 불변 테스트 있음).
+- 자주 깨지는 곳: 아직 기록된 롤백 없음. 미머지 브랜치 둘(auto/2026-09-16-1022 메일 알림, auto/2026-09-18-0413 MCP OAuth)이 settings.go·SettingsPage.tsx·openapi.go·API_AND_MCP.md·ADMIN_GUIDE 를 함께 고치므로 같은 파일을 만질 때는 기존 줄 수정·목록 끝 추가만 하고 PDF 는 굽지 않는다.
+- 검증 함정: Playwright 는 실제 docker 이미지 + PostgreSQL 이 필요(단위 테스트로 대체 불가, 운영자 규칙상 대역 금지). 외부 Keycloak·SMTP·Momento·VLM 은 이 환경에 없어 가짜 서버(Node/httptest)로만 확인 가능. CI 의 e2e 는 `--network host`. 정찰 세션에는 npm 실행 권한이 없을 수 있어 vitest 는 구현자가 직접 돌려야 한다.

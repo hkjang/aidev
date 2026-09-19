@@ -1,0 +1,13 @@
+# sqlon 프로필 (2026-09-20)
+- 목적: DB(PG/MySQL/MariaDB/Oracle) 위에 SQL 생성·실행 가드·메타데이터·DBA 운영(변경 관리·인시던트·워크로드)을 얹은 MCP 서버 + REST + 관리 콘솔(Web UI).
+- 스택: Go 1.25 단일 모듈(`module sqlon`), 외부 프레임워크 없이 `net/http` mux(Go 1.22 패턴 라우팅), 메타 DB 는 PostgreSQL 또는 메모리(`internal/meta/mem.go`), 프런트는 embed 된 정적 HTML 33개(`internal/mcp/webui`, 인라인 스크립트·`onclick=` 다수, 빌드 없음).
+- 구조:
+  - `cmd/sqlon` 서버 진입(플래그·env → `internal/app`), `cmd/jamypg-*` 평가·골든셋 도구.
+  - `internal/mcp` — 핵심. `server.go`(MCP HTTP/stdio, `/mcp` 는 `withUser` 로 사용자 컨텍스트), `admin.go`(REST `/api/*` 대부분 + `requireAdmin`/`requireDBA`/`adminAudit`), `auth.go`/`authapi.go`(세션·MCP 키 `ssk_`·마스터 토큰·`guard`·`canUseProfileID`), `dbaapi.go`/`dbatools.go`(DBA 콘솔), `openapi.go`, `audit.go`(JSONL 감사).
+  - `internal/meta` — 사용자·역할(user/dba/admin)·프로파일·그랜트·설정(`settings.go` `SettingDefs`)·세션. `internal/change` 변경 관리 상태기계(risk→필요 승인 수, critical=2). `internal/dbconn`/`engine`/`catalog`/`metasync`/`fleet`/`observability`/`collector` 등 도메인 패키지.
+  - `docs/` 가이드 md + PDF(`docs/reports/generate_docs.py` 로 생성), `test/integration`(build tag `integration`, 실제 DB 필요), `deploy/`, `scripts/build*.sh`.
+- 빌드·테스트: `go build ./cmd/sqlon`; `go vet ./... && go test ./...`(골든셋 포함, 수 분 미확인); 패키지 단위 `go test ./internal/mcp/ -run 'TestX' -count=1` 은 수 초. 통합 테스트 `go test -tags integration ./test/integration -v` 는 DB 컨테이너 필요(로컬에서 보통 못 돌림). CI 워크플로 없음(`.github` 에는 FUNDING.yml 뿐).
+- 관례: 커밋 메시지 `type(scope): 한국어 문장` (예 `fix(mcp): …합니다`), 영어도 섞임. 설정은 플래그/env(`SQLON_*`) 기본값 층 + 메타 DB 저장 설정(`meta.SettingDefs`, `/admin/settings`, `PUT /api/settings`)이 우선. 메타 DB 마이그레이션은 `internal/meta/pg.go` 내부 버전 스텝. 변경 이력은 `CHANGELOG.md` Unreleased. 문서는 `docs/admin_guide.md`·`user_guide.md`·README(한국어). REST 테스트는 `newFixtureServer`/`newAuthServer`(authhttp_test.go) + `doReq` 로 실제 mux 를 친다.
+- 위험 구역: `internal/mcp/auth.go`(세션·키·guard 리다이렉트), `authapi.go`(OIDC 콜백·프로파일 권한 `canUseProfileID` — `u==nil` 을 신뢰로 봄), `internal/meta/pg.go`(스키마 마이그레이션), `execguard.go`/`changeexecutor.go`(실제 DB 에 DDL/DML 실행). `/api/*` 는 미들웨어 없이 각 핸들러가 `requireAdmin`/`requireDBA`/`requireActor` 를 직접 부르므로 새 엔드포인트는 게이트를 빠뜨리기 쉽다.
+- 자주 깨지는 곳: `/api/*` 핸들러에 사용자 컨텍스트가 없어 actor 가 고정값("dba")으로 남는 문제(2026-09-17 브랜치에서 고쳤으나 main 미머지). 이전 캠페인 커밋들(silent SSO·tracking·handoff·mail·mcp-oauth, `auto/2026-09-1x-*` 로컬 브랜치)이 전부 main 에 없으므로 회차 기록의 보류 아이디어 다수가 main 에서는 대상 코드가 없다.
+- 검증 함정: Go 파일 ~90개가 CRLF 라 저장소 전체 `gofmt -l` 은 항상 실패 — 손댄 파일만 검사. `go test ./...` 에 골든 쿼리 평가가 포함되어 시간이 걸린다(미확인). PDF 재생성은 playwright/Chrome 이 필요해 로컬에서 자주 못 함. 브라우저 UI 자동 테스트 없음(인라인 스크립트는 `node --check` 정도).

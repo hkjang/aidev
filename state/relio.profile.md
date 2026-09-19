@@ -1,0 +1,15 @@
+# relio 프로필 (2026-09-20)
+- 목적: 사내 B2B CRM — 고객·영업기회·계약·VOC·승인 워크플로와 딜 헬스/코칭 인텔리전스를 REST·MCP·웹 UI 로 제공하는 단일 Go 바이너리.
+- 스택: Go 1.24(`net/http` 표준 mux, pgx/pgxpool, slog) · PostgreSQL 17 · React 19 + Vite + TypeScript(`web/`, 빌드 결과를 `internal/webui/dist` 에 `//go:embed`) · Keycloak OIDC.
+- 구조:
+  - `cmd/relio` 진입점 · `internal/server` HTTP 핸들러(`server.go` 라우트 등록, `admin_*.go`, `public.go` 로그인, `keys_approval.go`)
+  - `internal/auth`(세션·키·Principal) · `internal/oidc`(SSO) · `internal/audit`(`Record` → `audit_logs`) · `internal/admin`(system_settings)
+  - `internal/crm`·`intelligence`·`relationship`·`voice`·`approval`·`apikey`·`mcp`·`analytics`·`job`(틱 잡) · `internal/api/openapi.go`(OpenAPI 문서 — 계약 테스트가 라우트와 대조)
+  - `internal/platform`(httpx·ids·secrets 등 공용) · `internal/webui`(SPA 서빙, `dist/README` 앵커가 커밋돼 빌드 전에도 embed 매치)
+  - `migrations/*.sql`(embed, 번호 순, main 기준 마지막 014) · `web/src/pages/*.tsx`(극단적 한 줄 압축 스타일, 포매터 금지) · `web/test`(node --test, tsc 밖)
+  - `docs/`(USER_GUIDE·ADMIN_GUIDE md+pdf, api-mcp.md, security.md, releases/) · `scripts/`(check-*.sh, guide/screenshots.mjs, md2pdf)
+- 빌드·테스트: `go build ./...` · `go test -race ./...`(약 1~2분) · `go vet ./...` · `gofmt -l` · `cd web && npm ci && npm run typecheck && npm run build && npm test` · `./scripts/check-env-contract.sh`(환경 변수 정확히 4개) · `./scripts/check-static-assets.sh` · `./scripts/previous-release-tag-test.sh` · CI 는 추가로 `docker build` + `run-offline-container-test.sh`(오래 걸림).
+- 관례: 커밋 메시지 `type(scope): 영어 요약` 또는 한국어 요약 혼용(release/docs 는 한국어). 설정은 DB `system_settings`(namespace.key) 로 두고 환경 변수 계약을 넓히지 않음. 스키마 변경은 새 번호의 SQL 파일. 문서 정본은 `docs/ADMIN_GUIDE.md`·`USER_GUIDE.md`(PDF 는 md2pdf 로 재생성, 그림은 실제 캡처만). 새 순수 함수로 결정 로직을 빼내 DB 없이 테스트하는 패턴(`scoreDealHealth`, `admitLocal`).
+- 위험 구역: `internal/auth`·`internal/oidc`·`internal/server/public.go`(로그인·세션·SSO), `migrations/`(되돌릴 수 없음, 미머지 브랜치 98b6fae 가 015 번호를 이미 씀), `.github/workflows/release.yml`(2026-09-06 릴리즈 2회 실패·롤백·강등 이력), `internal/audit/service.go` 쓰기 경로(감사 details 에 원문 금지).
+- 자주 깨지는 곳: 새 worktree 에서 web build 없이 `go build` — 앵커로 해결됐으나 build 뒤 `git status` 가 깨끗한지 확인 필요. 이전 회차 커밋(98b6fae 메일, 0eb10f5 로그인 열거, cc288f3 gofmt CI, e74e752 MCP OAuth)은 main 에 미머지 — 그것에 의존하는 아이디어는 이 브랜치에서 착수 불가.
+- 검증 함정: server 패키지에 DB 통합 테스트 없음(전부 단위) — DB 의존 동작은 이전 회차처럼 throwaway PostgreSQL 컨테이너로 직접 확인해야 하며 CI 에는 없음. OpenAPI 계약 테스트는 `openapi.go` 에 없는 라우트/파라미터를 잡음. 러너 검증 순서는 `go build` → web build 순.
