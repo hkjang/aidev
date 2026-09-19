@@ -42,3 +42,10 @@
 - 보류 아이디어: 승인 대기열 정책 카드에 조건(min_amount·service_types) 표시 — ApprovalAdmin 카드에 여전히 조건 없음 (가치 3 / 위험 1 / S) · 정지된 계정 로그인 거부 문구를 README 설명과 맞추기 — `auth.go:105` 가 status='active' 로 걸러 invalid_credentials (가치 3 / 위험 2 / S) · 인증 연동 페이지 "MCP 를 SSO 로 연결" 카드 캡처를 `scripts/guide-screenshots.mjs` 에 추가하고 대시보드 캡처도 이번 수정 뒤 값으로 갱신 (가치 3 / 위험 1 / S) · `gofmt -l` 이 `silent_sso_integration_test.go` 를 지적함 — 포맷하고 `make check` 에 gofmt 검사 추가 (가치 2 / 위험 1 / S) · Momento 프록시 응답의 상류 CSP·Set-Cookie 제거와 ResponseHeaderTimeout — `analytics.go` 에 ModifyResponse 없음 (가치 2 / 위험 1 / S)
 
 - 릴리즈: v0.4.2 (2026-09-18, run 2026-09-18-151351-Kkiit-improve)
+## 2026-09-20
+- 선택: Momento 프록시가 수집기 응답의 Set-Cookie·보안 헤더를 이 출처로 흘리고 응답 없는 수집기에 무한정 매달리던 것을 고치기 (가치 2 / 위험 1 / 작업량 S)
+- 결과: 성공
+- 요약: `internal/httpapi/analytics.go` 의 `/momento/*` ReverseProxy 는 요청 쪽 Cookie·Authorization 만 떼고 응답은 그대로 복사해, 수집기가 보낸 `Set-Cookie` 가 Kkiit 오리진에 심기고 `Content-Security-Policy`·`X-Frame-Options` 등이 `securityHeaders` 가 세운 값 옆에 두 번째 값으로 붙었으며(기존 테스트는 `Header().Get` 이라 첫 값만 봐서 못 잡음), Transport 가 기본값이라 수집기가 침묵하면 서버 WriteTimeout 60초까지 핸들러가 잡혀 있었다. `ModifyResponse` 로 Set-Cookie 와 보안 헤더 8종을 버리고(Cache-Control 등 평범한 헤더는 통과), 기존 `netguard.Client(10s, allowPrivate=true)` 의 Transport 를 빌려 dial 5초·응답 헤더 10초 상한을 두어 502 로 끊게 했다. 검증은 TDD 로 — httptest 상류가 쿠키·보안 헤더를 보내는 테스트와 응답하지 않는 수집기 테스트를 먼저 써서 실제 `Handler()` 라우터를 통과시켜 각각 `Set-Cookie 새어 나옴`·8초 timeout 으로 실패함을 확인한 뒤 수정 후 통과(0.3초). `go vet`·`go test ./cmd/... ./internal/...`·임시 postgres:16-alpine 으로 통합 전체(79초) 통과, 컨테이너 삭제. ADMIN_GUIDE 방문 추적 절에 한 문장 추가하고 md2pdf 로 PDF 재생성(28쪽). 별도 커밋으로 `gofmt -l` 이 지적하던 `silent_sso_integration_test.go` 를 포맷하고 `make check` 첫 줄에 gofmt 검사를 넣었다(어긋난 파일을 임시로 만들어 Error 1 로 멈추는 것 확인, README 한 줄).
+- 보류 아이디어: 승인 대기열 정책 카드에 조건(min_amount·service_types) 표시 — dist 재빌드 필요 (가치 3 / 위험 1 / S) · 정지된 계정 로그인 거부 문구를 README 설명과 맞추기 — 계정 열거 위험 고려한 문구 설계 필요 (가치 3 / 위험 2 / S) · 인증 연동 페이지 "MCP 를 SSO 로 연결" 카드 캡처를 guide-screenshots.mjs 에 추가하고 대시보드 캡처 갱신 (가치 3 / 위험 1 / S) · 가이드의 API 메서드·경로를 openapi_test 방식으로 라우터와 대조 (가치 2 / 위험 1 / S) · Node 요구사항을 22.18+ 로 낮추고 make check 에서 검사 (가치 2 / 위험 1 / S)
+
+- 릴리즈: v0.4.3 (2026-09-20, run 2026-09-20-064416-Kkiit-improve)

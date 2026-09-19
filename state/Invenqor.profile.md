@@ -1,0 +1,15 @@
+# Invenqor 프로필 (2026-09-20)
+- 목적: 에이전트(Rust)가 호스트·프로세스·소프트웨어를 수집해 Server(Go)로 보내고, 관리 콘솔(React)·REST·MCP 로 IT 자산 인벤토리를 조회·관리하는 시스템.
+- 스택: Agent — Rust 1.85(`src/`, `Cargo.toml`, `tests/`). Server — Go(`server/`, chi 라우터, PostgreSQL 기본 + SQLite 폴백, go-oidc). 콘솔 — React+Vite+TypeScript(`web/`), 빌드 산출물을 `server/internal/webui/dist` 에 체크인해 임베드. 문서 — `docs/*.md` + PDF.
+- 구조:
+  - `server/cmd/invenqor-server` 진입점, `server/internal/httpapi` 가 REST·MCP·콘솔 핸들러 전부(`server.go` 라우팅, `assets.go`, `mcp.go`, `query.go`, `settings.go`, `auth.go`, `mcp_oauth.go`).
+  - `server/internal/querydsl` Query DSL → SQL(postgres bool 로 방언 분기), `storage`(Runtime, Mode, LIKE 헬퍼), `storagetest`(테스트용 Runtime), `auth`(계정·OIDC·TOTP), `apikeys`, `ingest`, `softwarecatalog`, `mail`, `tracking`, `updates`.
+  - `server/migrations/{postgres,sqlite}/NNN_*.sql` 두 방언 마이그레이션.
+  - `web/src` 콘솔, `web/scripts/sync-embedded.mjs` 가 dist 를 server 로 복사.
+  - `scripts/` 릴리즈·PDF·캡처(`capture-guide-screenshots.mjs`, headless Chrome)·`test-postgres.sh`·e2e.
+  - `openapi.yaml` 공개 계약(`openapi_routes_test.go` 가 라우터와 대조), `docs/API_MCP_GUIDE.md` 의 MCP 도구 표는 `mcp_tool_docs_test.go` 가 소스와 대조.
+- 빌드·테스트: `cd server && go test ./... && go vet ./... && go build ./cmd/invenqor-server`(SQLite, 수십 초). `scripts/test-postgres.sh`(docker 컨테이너 postgres:17, 수 분). `cd web && npm ci && npm test && npm run build`(build 뒤 `git diff --exit-code -- server/internal/webui/dist` 가 비어야 CI 통과). Rust: `cargo fmt --check`, `cargo clippy --all-targets -D warnings`, `cargo test --all-targets`(오래 걸림). `npx @redocly/cli@2.47.0 lint openapi.yaml`.
+- 관례: 커밋 메시지는 한국어 또는 영어 문장형(`fix: …`, `feat: …`, `chore: release vX`), 릴리즈는 별도 회차(`docs/RELEASE_NOTES_vX.md`, 버전 범프·PDF 재생성은 구현 회차에서 하지 않음). 설정은 `settings` 표 행(`mail.*`, `mcp.oauth.*`)과 전용 관리 API. 가이드 그림은 캡처 스크립트·`docs/assets/guide`·가이드 본문 세 곳을 `TestGuideScreenshotsMatchCaptureScript` 가 대조.
+- 위험 구역: `httpapi/auth.go`·`auth/`(세션·OIDC·API key 인증, `authenticateAPIKey` 는 `/mcp` OAuth 분기 포함), `migrations/`(두 방언 동시 유지), `mergeAssets`/`splitAsset`(트랜잭션·asset_changes 기록), `webui/dist`(손으로 고치면 CI 실패), `.github/workflows`.
+- 자주 깨지는 곳: SQLite 에서 통과하고 PostgreSQL 에서 깨지는 SQL — JSONB 열에 LIKE(42883), 한 파라미터를 두 열에 재사용(타입 추론 충돌), LIKE 대소문자 차이. `attributes_json` 은 방언별 표현(`querydsl/query.go attributeExpressions`). 시간 열은 방언별로 문자열/time.Time 으로 스캔되므로 `any` + `apiTime()` 로 정규화.
+- 검증 함정: 기본 `go test` 는 SQLite 폴백이라 PostgreSQL 결함을 못 본다 → 실 PostgreSQL 로도 돌릴 것(이 환경에 docker 있음). 실제 Keycloak·실제 MCP 클라이언트는 이 환경에 없음. 테스트는 프로덕션 배선(실제 REST 핸들러·실제 Runtime)을 통과해야 하고 손으로 INSERT 한 대역은 반려 사유.

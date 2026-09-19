@@ -1,0 +1,17 @@
+# Momento 프로필 (2026-09-20)
+- 목적: 사내 웹 서비스용 자체 호스팅 제품 분석(이벤트 수집 → 세그먼트·퍼널·방문자 추적·거버넌스 콘솔, MCP 로 LLM 접근).
+- 스택: Go 1.26(net/http, pgx, go-oidc, bcrypt) + PostgreSQL 17 / React + TypeScript + MUI + Vite + @tanstack/react-query (web/) / SQL 마이그레이션(migrations/NNN_*.sql, 마지막 001_initial 외 다수, 018 까지 나온 기록) / Docker compose.
+- 구조:
+  - cmd/ — 서버 진입점
+  - internal/httpapi — REST·MCP 핸들러(admin.go, analytics.go, visitor_trace.go, enterprise_governance.go, maintenance.go 등)와 통합 테스트(integration_*.go, seed 를 쓰는 테스트 81개)
+  - internal/auth, segment(LikeLiteral 등), database(Migrate), privacy, insight, service, model, config, secret, version
+  - web/src/pages — 화면(*.tsx)과 화면 옆 순수 로직 모듈(*.ts: visitorTrace, aggregateJobStatus, queryPolicyForm, passwordRule …)
+  - web/src/components — DataTable, States(Empty/ErrorState/Loading/NoSite), queryError(policyRange, describeQueryError), csvExport
+  - web/test/*.test.mjs — node:test 로 순수 모듈만 검사(React 없음; .ts 를 직접 import)
+  - docs/ — ADMIN_GUIDE.md(+pdf, md2pdf), USER_GUIDE, MCP.md, ARCHITECTURE, ROADMAP, openapi.yaml(계약 테스트가 라우터와 대조)
+  - scripts/guide — 가이드 캡처 스크립트; sdk/ — 수집 SDK; testdata/
+- 빌드·테스트: `go vet ./cmd/... ./internal/...`; `go test -race ./cmd/... ./internal/...`(httpapi 통합 테스트는 `MOMENTO_TEST_POSTGRES_DSN` 이 있어야 돌고 로컬 Postgres 17 컨테이너 기준 약 60~70초, 없으면 skip); web 은 `cd web && npm ci && npm run lint && npx prettier --check src test && npm test && npm run build`(tsc -b && vite build). Makefile: test/build/dev/docker/release-image.
+- 관례: 커밋은 한국어 conventional(`fix(console): …`, `feat(web): …`, `release: vX.Y.Z`); 설정은 DB settings 테이블(그룹.키, 콘솔 SettingsAdmin/putSetting) + 환경변수; 마이그레이션은 번호 SQL 파일 + advisory lock 으로 한 번에 하나; 화면 로직은 pages/*.ts 순수 모듈로 빼서 node:test; 문서 정본은 docs/*.md(PDF 는 릴리즈 때 재생성).
+- 위험 구역: internal/auth·admin.go(users/password/role 게이트, ROLE_ABOVE_CALLER), httpapi 인증 게이트(requireAuth/requireMCPAuth, Programmatic()), migrations/, .github/workflows(ci.yml·release.yml — 운영자가 워크플로 변경을 꺼림), docs/openapi.yaml(계약 테스트가 깨짐).
+- 자주 깨지는 곳: seed 비용으로 httpapi 패키지가 CI 10분 제한을 넘긴 적 있음(pgx.Batch 로 해결); TestRetentionReportsEachUnattendedPass 가 전체 -race 실행 중 가끔 finished_at<started_at 플레이크(단독 통과); gofmt -l 에 internal/segment/segment_test.go 가 항상 나옴(한글 폭 정렬, CI 는 gofmt 안 돌림).
+- 검증 함정: CI 는 Postgres 서비스가 있어 통합 테스트가 실제로 돌지만 로컬은 DSN 없으면 조용히 skip → 반드시 DSN 을 주고 돌릴 것; CI 는 `npm audit` 도 실패 조건; 미머지 브랜치(auto/2026-09-18-1143 MCP OAuth 등)가 남아 있을 수 있으니 같은 파일을 만지기 전에 `git branch -r` 확인.
