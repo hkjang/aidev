@@ -26,3 +26,4 @@
 - 다음 회차: README.md:855·:892 가 여전히 "(postgres)" 로 적혀 있어 한 줄 수정 필요. 6bbc8fc(run-tool.mjs) 는 범위 밖 cherry-pick 이지만 09-18 선례와 동일하고 검증 통과.
 - [러너 04:42] review approved — 리뷰 승인 (risk=low)
 - [러너 04:43] pr created — https://github.com/hkjang/vibe-coders/pull/21
+- [러너 05:03] ci timeout — 제한 시간 안에 CI 완료를 확인하지 못함
