@@ -19,7 +19,7 @@ MODEL="${MODEL:-claude-opus-5}"
 REAL_HOME="$HOME"; CLAUDE_CFG="${CLAUDE_CONFIG_DIR:-$REAL_HOME/.claude}"
 export GIT_AUTHOR_NAME=hkjang GIT_AUTHOR_EMAIL=gagagiga@naver.com GIT_COMMITTER_NAME=hkjang GIT_COMMITTER_EMAIL=gagagiga@naver.com
 CLAUDE_SETTINGS='{"attribution":{"commit":"","pr":""}}'
-EXCLUDE_RE='^(aidev|Naviq|sqlpad|_tmp.*|visitflow-node-modules.*|새 폴더)$'
+EXCLUDE_RE='^(aidev|headcount|Naviq|sqlpad|_tmp.*|visitflow-node-modules.*|새 폴더)$'
 MAX_DAILY_COST=300; MAX_DAILY_ROUNDS=60; MAX_DAILY_RELEASES=40; DORMANT_AFTER=3; DORMANT_DAYS=7
 [ -f "$STATE/caps.env" ] && . "$STATE/caps.env"
 
@@ -238,6 +238,26 @@ $ctx}" >/dev/null 2>&1 &
 # 에이전트 세션: 임시 HOME(→ gh 미인증, git 자격증명 없음, 홈의 비밀 파일 없음), 토큰 환경변수 제거, 결과는 $OUT 에만.
 # push 차단은 GIT_CONFIG_* 환경변수로 이 프로세스에만 건다 — `git remote set-url` 은 저장소 공통 설정이라 사용자 체크아웃까지 막는다(2026-09-07 사고).
 # Claude 자체 설정은 CLAUDE_CONFIG_DIR 로 넘긴다. 빌드 캐시는 실제 경로(비밀 아님)로 연결해 속도를 유지한다.
+# ---------------------------------------------------------------- 부서 (headcount, cbrock84/headcount, MIT)
+# 역할마다 소속 부서의 스킬 플러그인을 세션에 싣는다(--plugin-dir). 비평·PR 심사는 security·legal-risk 를
+# 검토 부서(reviewer-class)로 싣고, 그 차단 소견은 수리·중재로 풀 수 없다 — 운영자가 위험을 수용(risk-accepted)
+# 해야만 지나간다. 조직도와 권한은 COMPANY.md. 끄기: state/NO-HEADCOUNT 또는 정책 agents.headcount=false.
+HEADCOUNT_DIR="${HEADCOUNT_DIR:-$ROOT/headcount}"
+agent_plugin_args(){ # $1=단계 → 줄마다 --plugin-dir / 경로
+  [ -f "$STATE/NO-HEADCOUNT" ] && return 0
+  [ "$(policy "$n" '.agents.headcount')" = false ] && return 0
+  local d
+  for d in $(jq -r --arg ph "$1" '[.agents[] | select(.phase==$ph) | .departments[]?] | unique | .[]' "$REPO_DIR/agents/registry.json" 2>/dev/null); do
+    [ -f "$HEADCOUNT_DIR/plugins/$d/.claude-plugin/plugin.json" ] && printf -- '--plugin-dir\n%s\n' "$HEADCOUNT_DIR/plugins/$d"
+  done
+}
+dept_note(){ # $1=단계 → 프롬프트 머리에 붙일 부서 안내
+  local depts skills
+  depts=$(jq -r --arg ph "$1" '[.agents[] | select(.phase==$ph) | .departments[]?] | unique | join(", ")' "$REPO_DIR/agents/registry.json" 2>/dev/null)
+  skills=$(jq -r --arg ph "$1" '[.agents[] | select(.phase==$ph) | .skills[]?] | unique | map("`" + . + "`") | join(", ")' "$REPO_DIR/agents/registry.json" 2>/dev/null)
+  [ -n "$skills" ] || return 0
+  printf '## 소속 부서와 스킬 (회사 조직 — headcount)\n이 세션에는 회사의 %s 부서 스킬이 실려 있습니다. 시작하기 전에 Skill 도구로 다음을 불러 그 절차와 반환 형식을 따르세요: %s. 스킬의 요구와 이 프롬프트의 절차가 겹치면 둘 다 만족시키세요.\n\n' "$depts" "$skills"
+}
 # 역할별 모델: agents/registry.json 의 model 이 비어 있으면 MODEL 기본값. 단계 이름(scout/improve/review/repair/release/assets)으로 찾는다.
 agent_model(){
   local m; m=$(jq -r --arg ph "$1" '[.agents[] | select(.phase==$ph) | .model] | map(select(length>0)) | first // empty' "$REPO_DIR/agents/registry.json" 2>/dev/null)
@@ -257,13 +277,17 @@ run_claude_once(){ # $1=모델
       bash -c '[ -f "$0" ] && { set -a; . "$0"; set +a; }; exec "$@"' "$envfile" \
       timeout -k 30 "$(policy "$n" ".timeouts.$phase" | grep -E '^[0-9]+$' || case "$phase" in improve|repair) echo $T_IMPROVE;; review|arbiter) echo $T_REVIEW;; scout) echo ${T_SCOUT:-600};; release) echo $T_RELEASE;; *) echo $T_ASSETS;; esac)" \
       claude -p "$prompt" --model "$mdl" --settings "$CLAUDE_SETTINGS" --permission-mode acceptEdits \
-        --allowedTools "$tools" --add-dir "$OUT" --max-budget-usd "$budget" --output-format json \
+        --allowedTools "$tools" --add-dir "$OUT" --max-budget-usd "$budget" --output-format json ${pargs[@]+"${pargs[@]}"} \
   ) > "$OUT/agent-$phase.json" 2>"$OUT/agent-$phase.txt"
 }
 run_agent(){ # $1=단계 $2=프롬프트 $3=작업 디렉터리 $4=예산 $5=허용 도구
   local phase=$1 prompt=$2 wd=$3 budget=$4 tools=$5 envfile="$STATE/$n.env" mdl rc
+  local -a pargs=()
   # 임시 홈에는 Claude 의 계정 설정(~/.claude.json)만 복사한다 — 자격증명은 CLAUDE_CONFIG_DIR/.credentials.json 에서 읽는다
   mkdir -p "$OUT/home"; [ -f "$REAL_HOME/.claude.json" ] && cp "$REAL_HOME/.claude.json" "$OUT/home/.claude.json"
+  # 소속 부서의 스킬 플러그인을 싣고, 프롬프트 머리에 어느 스킬을 먼저 부를지 적는다
+  mapfile -t pargs < <(agent_plugin_args "$phase")
+  if [ ${#pargs[@]} -gt 0 ]; then prompt="$(dept_note "$phase")$prompt"; case ",$tools," in *,Skill,*) ;; *) tools="$tools,Skill";; esac; fi
   mdl=$(agent_model "$phase"); run_claude_once "$mdl"; rc=$?
   # 역할별 모델(agents/registry.json)이 막혀 있으면 기본 모델로 한 번 더 — 명부에 모델을 잘못 적어도 회차가 죽지 않는다
   if [ "$mdl" != "$MODEL" ] && [ $rc -ne 124 ] && grep -qiE "model.*(not found|unknown|invalid|unsupported|not available|does not exist)|not_found_error" "$OUT/agent-$phase.json" "$OUT/agent-$phase.txt" 2>/dev/null; then
@@ -766,9 +790,14 @@ PY
     run_agent review "$rprompt" "$wt" "$rb" "Bash,Read,Glob,Grep,Write"
   fi
   g=$($GATE review "$OUT/review.json" 2>/dev/null || true); printf '%s\n' "$g" > "$OUT/review.gate.json"
-  if jq -e .ok <<<"$g" >/dev/null 2>&1; then stage review approved "$(jq -r .reason <<<"$g")"; CRITIC_STATE=approved; return 0; fi
+  if jq -e .ok <<<"$g" >/dev/null 2>&1; then stage review approved "$(jq -r .reason <<<"$g")"; CRITIC_STATE=approved; CRITIC_BLOCKING=""; return 0; fi
   CRITIC_STATE=$(jq -r '.state // "invalid"' <<<"$g" 2>/dev/null || echo invalid)
   stage review "$CRITIC_STATE" "$(jq -r '.reason // "리뷰 결과 없음"' <<<"$g" 2>/dev/null || echo '리뷰 결과 없음')"
+  # 검토 부서(security·legal)의 차단 소견: 수리·중재로 풀 수 없다. PR 을 열고 운영자에게 넘긴다 (COMPANY.md).
+  CRITIC_BLOCKING=$(jq -r '(.blocking // []) | map(tostring) | join(",")' "$OUT/review.json" 2>/dev/null)
+  if [ "$CRITIC_STATE" = rejected ] && [ -n "$CRITIC_BLOCKING" ]; then
+    CRITIC_STATE=blocked; stage review blocked "검토 부서 차단 소견($CRITIC_BLOCKING) — 수리·중재 없이 운영자의 위험 수용(risk-accepted) 필요"
+  fi
   [ -n "${2:-}" ] && review_comment "$2"
   return 1
 }
@@ -800,6 +829,8 @@ review_comment(){ # $1=PR url — 마지막 비평 결과를 PR 에 남긴다
   (cd "$repo" && gh pr comment "$1" --body "🧐 리뷰 게이트 보류 — $(jq -r '.reason // "리뷰 결과 없음"' <<<"$g" 2>/dev/null)
 
 $(jq -r '.reasons[]? | "- " + .' "$OUT/review.json" 2>/dev/null)
+${CRITIC_BLOCKING:+
+🛑 검토 부서($CRITIC_BLOCKING)의 차단 소견입니다. 구현·수리·중재로는 풀 수 없고 PR 처리기도 승인하지 않습니다. 운영자가 위험을 수용하려면 이 PR 에 \`risk-accepted\` 라벨을 달고 이름·사유·만료를 코멘트로 남기세요 — 조용한 하향은 없습니다.}
 (run $RUN_ID, 자율 개선 러너)" >>"$LOG" 2>&1) || true
 }
 # 변경 크기 요약 (runs.jsonl 의 files/additions/deletions/tests/title)
@@ -1277,6 +1308,7 @@ shepherd_review(){ # $1=pr $2=브랜치 $3=보류 사유 → SH_STATE(approved|r
   git -C "$repo" worktree remove --force "$wt" >>"$LOG" 2>&1 || true
   g=$($GATE review "$OUT/review.json" 2>/dev/null || true)
   SH_STATE=$(jq -r '.state // "invalid"' <<<"$g" 2>/dev/null || echo invalid); SH_RISK=$(jq -r '.risk // ""' <<<"$g" 2>/dev/null); SH_REASON=$(jq -r '.reason // "리뷰 결과 없음"' <<<"$g" 2>/dev/null)
+  SH_BLOCKING=$(jq -r '(.blocking // []) | map(tostring) | join(",")' "$OUT/review.json" 2>/dev/null)
   # 심사자의 권고(merge|fix|human). 러너는 이것을 그대로 따른다 — 심사자가 결정하는 자리다 (hkjang, 2026-09-17).
   SH_REC=$(jq -r '.recommend // ""' "$OUT/review.json" 2>/dev/null); case "$SH_REC" in merge|fix|human) ;; *) SH_REC=$( [ "$SH_STATE" = approved ] && echo merge || echo fix );; esac
   [ "$SH_STATE" = approved ]
@@ -1403,7 +1435,15 @@ $(jq -r '.notes[]? | "- " + .' "$OUT/review.json" 2>/dev/null | head -8)
       case "$SH_STATE" in
         rejected)
           reasons=$(jq -r '.reasons[]? | "- " + .' "$OUT/review.json" 2>/dev/null | head -c 3000)
-          if [ "$SH_REC" = human ]; then
+          # 검토 부서의 차단 소견은 운영자가 risk-accepted 라벨로 위험을 수용하지 않는 한 자동으로 풀지 않는다
+          if [ -n "${SH_BLOCKING:-}" ] && [[ ",$labels," != *",risk-accepted,"* ]]; then
+            shepherd_note "$pr" "$head" "$cause" needs-human "검토 부서 차단 소견($SH_BLOCKING) — 운영자 위험 수용(risk-accepted 라벨) 필요: $(head -c 300 <<<"$reasons" | tr '\n' ' ')"
+            (cd "$repo" && gh pr comment "$pr" --body "🛑 PR 처리기 심사: 검토 부서($SH_BLOCKING)의 차단 소견이라 자동으로 풀지 않습니다. 위험을 수용하려면 \`risk-accepted\` 라벨을 달고 이름·사유·만료를 코멘트로 남기세요. 아니면 \`aidev-rejected\` 로 닫아 주세요.
+
+$reasons
+(run $RUN_ID)" >>"$LOG" 2>&1) || true
+            human=$((human+1))
+          elif [ "$SH_REC" = human ]; then
             shepherd_note "$pr" "$head" "$cause" needs-human "심사 거절, 사람이 봐야 한다고 권함: $(head -c 400 <<<"$reasons" | tr '\n' ' ')"
             (cd "$repo" && gh pr comment "$pr" --body "🙋 PR 처리기 심사: 결함이 있고, 심사자가 사람이 봐야 한다고 권합니다 — 직접 고치거나 \`aidev-rejected\` 로 닫아 주세요.
 

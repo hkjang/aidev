@@ -44,7 +44,10 @@ $PROFILE
 - `fix` — 결함이 있지만 `reasons` 대로 고치면 된다. 다음 세션이 이 브랜치 위에서 고쳐 다시 심사받는다. (`verdict: reject` 와 함께)
 - `human` — 코드 문제가 아니라 사람이 정해야 할 일이다: 되돌릴 수 없는 마이그레이션, 제품 방향·정책 판단, 외부 시스템 설정이 먼저 필요한 변경, 고쳐도 될 것 같지 않은 방향 자체의 문제. `notes`(승인 시) 또는 `reasons`(거절 시)에 무엇을 결정해야 하는지 적으세요.
 
+## 검토 부서의 차단 소견 (reviewer-class: security · legal)
+이 세션에는 보안(security)과 법무·리스크(legal-risk) 부서가 검토 부서로 실려 있습니다. 인가 없이 열리는 경로, 다른 사용자 데이터에 닿는 식별자, 비밀값 노출, 신뢰할 수 없는 입력이 쿼리·명령·서버 측 요청에 닿는 것, 손으로 만든 암호 비교, 권한 확대는 `security`; 목적·보존·접근 통제 없는 개인정보 처리, 라이선스가 맞지 않는 의존성은 `legal` 로 `blocking` 에 적고 `verdict` 는 `reject`, `recommend` 는 `human` 입니다. 차단 소견은 수리·중재·처리기가 풀 수 없고 운영자가 `risk-accepted` 라벨로 위험을 수용해야만 지나갑니다. 공격 경로가 없는 우려는 `notes` 입니다.
+
 반드시 `$REVIEW_FILE` 에 JSON 한 개를 쓰세요(다른 내용 없이):
 ```
-{"verdict":"approve|reject","recommend":"merge|fix|human","reasons":["<파일:줄> <이유>", ...],"notes":["<참고>", ...],"risk":"low|medium|high"}
+{"verdict":"approve|reject","recommend":"merge|fix|human","reasons":["<파일:줄> <이유>", ...],"notes":["<참고>", ...],"risk":"low|medium|high","blocking":[]}
 ```

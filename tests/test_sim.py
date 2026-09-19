@@ -102,6 +102,17 @@ class Experiment(unittest.TestCase):
         self.assertEqual(r.get("arm"), "no-scout")
 
 
+class ReviewerClass(unittest.TestCase):
+    """검토 부서(security·legal)의 차단 소견은 수리·중재로 풀지 않고 PR 을 열어 사람에게 넘긴다."""
+    def test_blocking_finding_skips_repair_and_holds_pr(self):
+        r = run(scn(review="reject-blocking", arbiter="approve"))
+        self.assertEqual(r["outcome"], "review-pending", r)
+        self.assertEqual(r["stages"].get("review"), "blocked")
+        self.assertNotIn("repair", r["stages"])
+        self.assertNotIn("arbiter", r["stages"])
+        self.assertEqual(r["prs"][0]["state"], "OPEN")
+
+
 class Blocking(unittest.TestCase):
     def test_ci_api_error_blocks_merge(self):
         r = run(scn(ci="api-error"))

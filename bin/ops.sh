@@ -8,6 +8,7 @@
 #   실행:  approve <PR url|이름> · reject <PR url|이름> [사유] · run <이름> [요청 명세] · stop <all|merge|release|이름> [사유] · resume <범위>
 #          campaign add|remove <id> <이름> · campaign pause|resume <id> · campaign budget <id> <usd> · campaign until <id> <YYYY-MM-DD>
 #          shepherd on|off · release <이름> · draft-campaign "<목표 문장>" · activate-campaign <slug> · discard-draft <slug>
+#          board (이번 주 이사회 제안 보기) · board apply <번호...|all> (제안 적용) · board open (지금 열기)
 set -uo pipefail
 export HOME="${HOME:-/home/hkjang}"
 export PATH="$HOME/.local/bin:$HOME/.nvm/versions/node/v22.23.1/bin:/usr/local/bin:/usr/bin:/bin"
@@ -159,5 +160,24 @@ activate-campaign)
   echo "캠페인 시작: $id — 대상 $(jq -r '.projects|length' "$f")개, \$$(jq -r .budget_usd "$f"), 기한 $(jq -r .until "$f")${std:+, 표준 $std}. 다음 회차부터 배정됨."; sync_state "campaign activate $id"
   ;;
 discard-draft) need "${1:-}" "discard-draft <slug>"; rm -rf "$REPO_DIR/drafts/$1" && echo "초안 삭제: $1"; sync_state "discard draft $1" ;;
+board)
+  # 이사회(bin/board.sh) 제안을 보고 적용한다. 제안은 ops.sh 동사라 여기서 그대로 실행한다.
+  bd="$STATE/board"; latest=$(ls -1 "$bd"/*.json 2>/dev/null | tail -1)
+  case "${1:-}" in
+    "") [ -n "$latest" ] || { echo "이사회 기록 없음 (bin/board.sh 로 연다)"; exit 0; }
+        echo "이사회 $(jq -r .week "$latest") — 제약: $(jq -r .constraint "$latest")"
+        jq -r '.proposals[] | "\(.n). [\(if .applied then "적용됨 " + .applied[0:10] else "대기" end)] \(.cmd|join(" ")) — \(.why|.[0:140])\n    포기: \(.gives_up|.[0:100]) · 되돌리기: \(.revert|.[0:100])"' "$latest"
+        echo "하지 않는 것: $(jq -r '.not_doing|join(" · ")' "$latest")"; echo "역할 권고: $(jq -r '.role_advice|join(" · ")' "$latest")"; echo "메모: ${latest%.json}.md";;
+    open) bash "$HERE/board.sh" --force ;;
+    apply) shift; [ -n "$latest" ] || { echo "이사회 기록 없음"; exit 1; }
+        sel="$*"; [ -n "$sel" ] || { echo "board apply <번호...|all>"; exit 2; }
+        for n_ in $( [ "$sel" = all ] && jq -r '.proposals[]|.n' "$latest" || echo "$sel" ); do
+          mapfile -t cmd < <(jq -r --argjson n "$n_" '.proposals[]|select(.n==$n)|.cmd[]' "$latest")
+          [ ${#cmd[@]} -gt 0 ] || { echo "$n_: 없는 제안"; continue; }
+          echo "▶ $n_: ${cmd[*]}"; bash "$0" "${cmd[@]}" 2>&1 | sed 's/^/   /'
+          jq --argjson n "$n_" --arg ts "$(date -Iseconds)" '(.proposals[]|select(.n==$n)).applied=$ts' "$latest" > "$latest.tmp" && mv "$latest.tmp" "$latest"
+        done; sync_state "board apply $sel" ;;
+    *) echo "board [open|apply <번호...|all>]"; exit 2;;
+  esac ;;
 *) echo "모르는 동사: $verb"; bash "$0" help; exit 2;;
 esac

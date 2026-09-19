@@ -95,6 +95,8 @@ fi
 pm="$REPO_DIR/docs/data/postmerge.json"
 if [ ! -f "$pm" ] || [ $(( now - $(stat -c %Y "$pm" 2>/dev/null || echo 0) )) -gt 21600 ]; then
   python3 "$HERE/postmerge.py" >>"$REPO_DIR/logs/postmerge.log" 2>&1 || true
+  # 이사회: 주마다 한 번, 경영진 부서 세션이 회사 상태를 읽고 다음 주 결정을 제안한다 (적용은 사람: ops.sh board apply)
+  [ -f "$REPO_DIR/state/board/$(date +%G-W%V).json" ] || "$HERE/board.sh" >>"$REPO_DIR/logs/board.log" 2>&1 || true
   # 비교 실험(state/experiment.json)이 켜져 있으면 arm 별 지표 표를 같이 갱신한다
   [ "$(jq -r '.enabled // false' "$REPO_DIR/state/experiment.json" 2>/dev/null)" = true ] && python3 "$HERE/exp-analyze.py" >>"$REPO_DIR/logs/exp-analyze.log" 2>&1 || true
 fi

@@ -47,6 +47,7 @@ case $phase in
       invalid) echo '{"verdict":"maybe"}' > "$OUT/review.json";;
       broken) echo '{not json' > "$OUT/review.json";;
       reject) echo '{"verdict":"reject","reasons":["a.go:1 테스트가 대상을 실행하지 않음"],"notes":[],"risk":"medium"}' > "$OUT/review.json";;
+      reject-blocking) echo '{"verdict":"reject","reasons":["auth.go:9 인가 검사 없이 열리는 경로"],"notes":[],"risk":"high","blocking":["security"]}' > "$OUT/review.json";;
       *) echo "{\"verdict\":\"approve\",\"reasons\":[],\"notes\":[],\"risk\":\"$(sc '.review_risk // "low"')\"}" > "$OUT/review.json";;
     esac
     result "reviewed";;
