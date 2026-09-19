@@ -27,3 +27,7 @@
 - 다음 회차: 필터·쪽 넘김 붙일 때 paging-check 규칙(`total` → offset) 기억. admin-settings.png 갱신 미룸.
 - [러너 04:56] review approved — 리뷰 승인 (risk=low)
 - [러너 04:56] pr created — https://github.com/hkjang/weekly/pull/19
+- [러너 05:19] ci passed — 검사 1개 모두 success
+- [러너 05:19] merge done — 8809c1f
+- [러너 05:39] release published — v0.306.0
+- [러너 05:40] assets verified — v0.306.0 자산 1개 (이전 v0.305.0: 1)

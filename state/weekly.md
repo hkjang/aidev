@@ -196,3 +196,4 @@
 - 보류 아이디어: db_integration_test 나머지 7개 + authfailure·participationfairness·searchranking 12곳이 공유 DSN 을 직접 엶 — createScratchDatabase 로, weekly_u_ 정리와 한 회차에 (3/1/S) · 관리자 카드에서 실패한 발송을 '다시 시도' 로 큐에 되돌리기 — team_reminder 는 수동 권고가 FAILED 를 되살리는 코드가 이미 있음 (3/2/S) · [새] 발송 기록 표의 status/kind 필터(실패만 보기) — 50건 안에 SENT 가 대부분이면 FAILED 를 찾기 어려움 (2/1/S) · 메일 발송 기록 목록에 offset 쪽 넘김 — 50건 넘는 실패를 훑을 때 (2/1/S) · [새] adminMailHealth 가 UNION 서브쿼리를 집계·사유 두 번 훑음 — 14일 창이라 지금은 무해 (1/1/S) · [주의] 캠페인 tracking·handoff·mail 표준 키의 커밋은 각 auto/2026-09-16-* 브랜치에 있고 main 에 없음 — 이번 변경은 `mail.go` 의 health 문단 아래와 `AdminPage.tsx` 의 health 문단 뒤에만 덧붙여 설정 키·select 와 겹치지 않음
 - 과제서: 채택 — 과제서의 근거(adminMailHealth 가 report_mail_deliveries 만 집계, 세 표의 열 이름 차이, 가이드 3.7 문장)가 코드와 정확히 맞았고 마이그레이션 없이 수용 기준 4개를 모두 채웠음.
 
+- 릴리즈: v0.306.0 (2026-09-20, run 2026-09-20-042359-weekly-improve)
