@@ -1,0 +1,17 @@
+# madi 프로필 (2026-09-19)
+- 목적: 사내 지식 문서 서비스 — 문서·검색·RAG·MCP·SSO(OIDC/SAML)·관리자 설정을 하나의 Go 바이너리 + PostgreSQL 로 오프라인 배포.
+- 스택: Go(`cmd/`, `internal/server`, go.mod 기준 버전), PostgreSQL 17(테스트는 `MADI_TEST_POSTGRES_DSN`), React+TypeScript(`web/`, npm build=tsc), Node 22 테스트(`tests/*.mjs`, Playwright Chromium), Docker 이미지(`scripts/release-image.sh`).
+- 구조:
+  - `internal/server/*.go` — 거의 모든 서버 로직이 한 패키지. 기능별 파일(`integrations_oidc.go`, `identity_saml.go`, `handoff.go`, `tracking.go`, `integrations_mcp_oauth.go`(PR #6 브랜치)).
+  - `internal/server/*.sql` — 스키마. 마이그레이션 도구 없이 `CREATE TABLE IF NOT EXISTS` + `ALTER TABLE … ADD COLUMN IF NOT EXISTS` 를 기동 시 적용.
+  - `internal/server/backup_tables.go` — 백업 포함/임시 테이블 목록(새 테이블은 여기 등록 필수, 테스트가 검사).
+  - `internal/server/maintenance.go` — 만료 행 정리 루프.
+  - `web/src/` — 화면(`App.tsx` 로그인, AdminPages/PersonalPages), `web/src/auth/silentSso.ts` 순수 함수.
+  - `docs/` — admin-guide.md·api-guide.md 정본, `scripts/build-docs.mjs` 로 manuals HTML 재생성.
+  - `tests/` — node 단위(`silent-sso.mjs`, `natural-date.mjs`) 와 `docs.mjs`(Chromium 필요).
+  - `.github/workflows/` — ci.yml, compatibility.yml, release.yml(태그 v* 에 VERSION 일치 검사 → 전 브라우저 모듈 env 켜고 `go test -race -timeout 45m ./...` → verify-browser.sh → 이미지 빌드·검증·gh release).
+- 빌드·테스트: `go build ./... && go vet ./...`; 단위 `go test ./...`(비DB, 수 분); DB 통합은 `TestPostgres*` 접두사로 DSN 필요; **전체 `go test -race ./internal/server` 는 10분 넘음(45m 플래그)**; `cd web && npm ci && npm run build`; `node --test tests/silent-sso.mjs …`; 브라우저 시험은 `MADI_BROWSER_*=1` env 게이트.
+- 관례: 커밋 메시지 영어 conventional(`feat:`/`fix:`/`docs:`), 사용자 문구·오류 메시지는 한국어, 설정은 `settings` jsonb 평면 키(기본 꺼짐), 비밀은 `secretSettings`, 문서는 docs/*.md 정본 하나.
+- 위험 구역: `identity_saml.go`·`integrations_oidc.go`·`server.go` 인증 미들웨어(`tokenPrincipal`, 401 도전), `knowledge_package.go` 의 `TokenID != ""` 게이트(외부 에이전트 원문 차단 — PR #6 에서 한 번 누락됨), `backup_tables.go` 목록, 워크플로 파일(느슨하게 금지).
+- 자주 깨지는 곳: 같은 값을 읽는 경로가 여럿(packagePrincipal 128행 vs getKnowledgePackage 506행) 한쪽만 고치기; 검증 범위를 전체 스위트로 잡아 러너 예산(`hold: budget`) 소진 — 2026-09-19 두 회차.
+- 검증 함정: CI 는 실제 PostgreSQL 서비스 + Chromium 이 있고 로컬 임시 홈엔 Playwright Chromium 이 없을 수 있음(`tests/docs.mjs` 스크린샷 재생성은 무관한 바이너리 diff 를 만들므로 되돌릴 것); `-race` 전체는 기본 타임아웃 초과; `gh` 는 이 환경에서 승인 없이는 못 씀.
