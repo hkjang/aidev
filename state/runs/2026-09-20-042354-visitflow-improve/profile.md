@@ -1,0 +1,14 @@
+# VisitFlow 프로필 (2026-09-20)
+- 목적: 사내 방문자 예약·승인·QR 방문증·로비 체크인·알림을 한 컨테이너로 제공하는 방문 관리 시스템(Go API + React SPA 임베드, MCP 서버 포함).
+- 스택: Go(chi, pgx, go-oidc, excelize) · PostgreSQL 14+ · React + Vite + Material UI(TypeScript) · vitest(단위) · Playwright(e2e·가이드 캡처) · Docker 단일 이미지.
+- 구조:
+  - `cmd/` 진입점, `internal/app/` 모든 HTTP 핸들러·미들웨어·MCP·백그라운드 워커(파일당 도메인: visits.go, admin.go, auth.go, import.go, exports.go, mail.go, tracking.go, mcp.go, settings.go, events.go(SSE)).
+  - `internal/platform/` 설정(config.go)·메일 발송(mail.go)·키/암호화, `internal/database/migrations/NNNN_*.sql` 순번 마이그레이션(빈 번호 허용).
+  - `internal/app/integration_test.go` — `newTestEnv`가 테스트마다 무작위 DB를 만들고 `do`/`doWithContext`가 30초 데드라인으로 요청. 단위 테스트는 같은 패키지에 `_test.go`로 DB 없이 돈다.
+  - `web/src/pages/*.tsx` 화면(SettingsPage·AdminPage·VisitFormPage 등), `web/src/*.test.ts` vitest, `web/screenshots/guide.spec.ts` 가이드 캡처.
+  - `docs/` USER_GUIDE.md·ADMIN_GUIDE.md(+PDF, 저장소 밖 `aidev/tools/guide/md2pdf.mjs`로 생성)·API_AND_MCP.md·ARCHITECTURE.md·assets/guide/*.png.
+- 빌드·테스트: `go vet ./...`, `go test ./... -count=1`(통합은 `VISITFLOW_TEST_DSN` 없으면 skip; postgres:16-alpine 띄우면 internal/app 약 50초), `cd web && npm ci && npm run lint && npm test && npm run build`, `docker build`. CI(.github/workflows)는 이 순서 그대로 + e2e 잡.
+- 관례: 커밋은 영어 conventional(`fix(import): …`, `feat(auth): …`), 릴리즈는 `chore(release): VisitFlow vX.Y.Z`. 설정은 `settings` 표 키(`oidc.*`, `mail.*`, `tracking.*`)와 마이그레이션으로 기본값 추가, `validateSettingValue`로 검증. 오류는 `writeError(w, code, "snake_code", 한국어 메시지)`. 문서·UI 문구는 한국어. 회차 기록에서 반복 확인된 검증 습관: 변이(mutation)로 새 테스트가 실제로 실패하는지 확인.
+- 위험 구역: `auth.go`(세션·OIDC·silent SSO), `keys.go`/`platform` 암호화 키(전화·이메일 암호문과 해시 — `normalizePhone` 결과가 해시 입력), `migrations/`(순번 충돌), `settings.go`·`server.go`(라우팅·설정 검증), `events.go` SSE(httptest에서 영구 대기 — 테스트에 데드라인 필수).
+- 자주 깨지는 곳: 미머지 브랜치 충돌 — 2026-09-20 현재 `origin/auto/2026-09-16-1212`(메일 표준, 0015)와 `origin/auto/2026-09-18-0533`(MCP OAuth, 0016)이 main(v2.8.2)에 없고 admin.go·settings.go·server.go·auth.go·keys.go·integration_test.go·SettingsPage.tsx·AdminPage.tsx·KeysPage.tsx·ADMIN_GUIDE·API_AND_MCP를 바꾼다. 변이 되돌리기에 `git checkout -- 파일`을 써서 미커밋 편집을 잃은 사고가 두 번 있었다.
+- 검증 함정: 통합 테스트는 DSN 없으면 조용히 skip 되어 "통과"처럼 보인다. `go test` 패키지 제한 10분 — 클라이언트 이탈을 기다리는 핸들러는 `do` 헬퍼(30초)로만 호출. 실제 Keycloak·SMTP·Momento는 환경에 없어 가짜 서버로만 확인 가능. excelize `GetRows`는 서식 적용된 표시값을 돌려준다(숫자 셀 앞 0 탈락, 지수 서식은 자릿수 손실).

@@ -1,0 +1,13 @@
+# vibe-coders 프로필 (2026-09-20)
+- 목적: 사내 LLM 게이트웨이 — OpenAI 호환 프록시(`/v1/*`)·MCP 게이트웨이·Text2SQL·감사/비용 리포트·관리 콘솔을 한 바이너리로 제공.
+- 스택: Go 1.2x(단일 모듈 `vibe-coders`, database/sql + modernc sqlite/pgx/go-sql-driver mysql), React+TypeScript+Vite(`web/`, pnpm 11 via corepack, Vitest·Playwright), OpenAPI 스냅샷(`web` 의 `openapi:check`).
+- 구조:
+  - `cmd/` 진입점·`api-surface-audit` 도구 / `internal/proxy` 핸들러 대부분(admin_*.go, text2sql_handler.go, mcp_*.go, auth.go, pipeline.go — 가장 큰 패키지)
+  - `internal/config` 환경변수(`config.go`, 121개 env) / `internal/store` DB·마이그레이션 / `internal/audit` 비용·언어 추론(`lookupPrice`, `language.go`)
+  - `internal/text2sql` SQL 검증기(`ValidateSQL`) / `internal/tracking` 방문 추적 CSP / `internal/appui` `/app` 정적 서빙 / `internal/secret` 암호화
+  - `web/src` 신규 콘솔 `/app`(레거시 `/admin` 은 `admin_ui.go` 단일 HTML) / `docs/` USER_GUIDE·ADMIN_GUIDE(+PDF, `md2pdf.mjs`)·images/guide 캡처 / `scripts/` 릴리즈·캡처 스크립트 / `tests/` golden
+- 빌드·테스트: `go build ./... && go vet ./... && go test ./... -count=1`(12 패키지, 1~3분). 프런트: `cd web && corepack pnpm install --frozen-lockfile && pnpm lint && pnpm format:check && pnpm typecheck && pnpm test && pnpm build && pnpm openapi:check`(test 약 50초). OpenAPI 스냅샷 재생성은 빈 포트에 실제 게이트웨이를 띄워 `pnpm openapi:snapshot`(다른 프로젝트 게이트웨이가 18080 을 점유할 수 있음 — 빈 포트 쓸 것).
+- 관례: 커밋 메시지 영어 conventional(`feat(scope): …`, `docs: …`), Co-Authored-By 트레일러 금지. 런타임 설정은 `settingDef` 레지스트리(DB 저장, 두 콘솔 자동 노출, 감사·버전). 마이그레이션은 `internal/store`. 문서 정본은 `docs/*.md` 하나(옛 통합 가이드 만들지 말 것). `.env.example` 수정 금지. 기본 브랜치 `master`.
+- 위험 구역: `internal/proxy/auth.go`(roleScopes·apiScopeForRequest)·Keycloak OIDC(`keycloak*`)·`internal/store` 마이그레이션·`pipeline.go`(쿼터·예산 가드)·`.github/workflows`(ci.yml·golden-regression 만 있음, 릴리즈 워크플로 없음).
+- 자주 깨지는 곳: 러너 verify 자동감지가 `pnpm run typecheck --silent` 를 만들어 pnpm 에서 exit 1(수정 964d2b0 는 master 미병합). 과거 브랜치(가격 prefix, mail, MCP SSO, run-tool.mjs)가 master 에 미병합인 채로 남는 일이 반복 — 작업 전 `git merge-base` 로 병합 여부 확인.
+- 검증 함정: Keycloak·MySQL·PostgreSQL·SMTP·Momento 실서버는 이 환경에 없음(가짜 IdP·가짜 SMTP·sqlite 로 대체). `web/dist`·`node_modules` 는 gitignore. 워크트리에서 SBOM 재생성 시 phantom 패키지 생김.

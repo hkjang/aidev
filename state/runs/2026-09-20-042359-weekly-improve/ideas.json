@@ -1,0 +1,164 @@
+[
+  {
+    "title": "관리자 메일 발송 현황이 세 큐(제출·팀 권고·마감 알림)를 모두 세고 최근 발송 기록 목록(GET /api/v1/admin/mail/deliveries)을 보여 줌",
+    "value": 4,
+    "risk": 1,
+    "size": "M",
+    "status": "done",
+    "note": "2026-09-20 구현. adminMailHealth 가 세 표 UNION ALL 위에서 집계하고 byKind 추가, GET /admin/mail/deliveries 가 같은 창의 최근 50건(total 없음), 관리자 카드 표, ADMIN_GUIDE 3.7. 마이그레이션 없음",
+    "updated": "2026-09-20"
+  },
+  {
+    "title": "db_integration_test 나머지 7개 + authfailure·participationfairness·searchranking 시험 12곳이 공유 DSN 을 직접 엶 — createScratchDatabase 로",
+    "value": 3,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "차선 후보. openDatabase(ctx, dsn) 12곳 치환. weekly_u_ 정리 항목과 한 회차에",
+    "updated": "2026-09-20"
+  },
+  {
+    "title": "upgrade_test 의 weekly_u_* 가 sweepAbandonedDatabases 정리 대상에 없음",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "harnessNameStamp(httpharness_test.go:410) 는 tmpl_·h_ 만 봄. 위 항목과 묶어서",
+    "updated": "2026-09-20"
+  },
+  {
+    "title": "캠페인 mail-2026-09 — 이벤트 알림 셋(반려/수정 요청·검토 대기 묶음·Import 실패)",
+    "value": 4,
+    "risk": 2,
+    "size": "M",
+    "status": "pending",
+    "note": "mail 표준 키 브랜치가 main 에 아직 없음(이 트리는 mail.host·migration 030) — 머지 뒤",
+    "updated": "2026-09-20"
+  },
+  {
+    "title": "mail.base_url — 메일 속 링크 주소",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "이벤트 알림 회차와 함께",
+    "updated": "2026-09-20"
+  },
+  {
+    "title": "mailstandard_test 가드에 mutation-check --test",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "mail 브랜치 머지 뒤",
+    "updated": "2026-09-20"
+  },
+  {
+    "title": "캠페인 handoff-2026-09 — 보내는 쪽(PPTX)",
+    "value": 3,
+    "risk": 2,
+    "size": "M",
+    "status": "pending",
+    "note": "handoff 브랜치 main 에 없음, 받는 서비스가 weekly 뿐",
+    "updated": "2026-09-20"
+  },
+  {
+    "title": "캠페인 handoff-2026-09 — 받는 쪽(markdown·docx)",
+    "value": 3,
+    "risk": 3,
+    "size": "L",
+    "status": "pending",
+    "note": "워커·검증·화면이 PPTX 전제. 머지 뒤",
+    "updated": "2026-09-20"
+  },
+  {
+    "title": "handoff_test 가드에 mutation-check --test",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "머지 뒤",
+    "updated": "2026-09-20"
+  },
+  {
+    "title": "ImportPage handoff 카드에 '다시 시도' 없음",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "머지 뒤",
+    "updated": "2026-09-20"
+  },
+  {
+    "title": "scripts/authz-check.py 가 40분 넘게 소스를 제자리에서 고쳐 쓰는데 README·CHECKS.md 에 '혼자 돌려라' 경고가 없음",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "CHECKS.md 는 '수 분'. mutation-check 와 같은 자리에 경고 + 실행 중 표식 파일",
+    "updated": "2026-09-20"
+  },
+  {
+    "title": "deadlineRule 에 Closed(week, now) 메서드 — SQL deadlinePassedFor 와 같은 값",
+    "value": 2,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "읽는 곳이 시험 하나뿐이라 아직 옮기지 않음. 참여 카드 openWeeks 과제와 함께",
+    "updated": "2026-09-20"
+  },
+  {
+    "title": "참여 카드 ThisWeek* 가 달력의 이번 주만 말해 월요일에 지난주 마지막 기회를 못 봄 — openWeeks 목록",
+    "value": 3,
+    "risk": 2,
+    "size": "M",
+    "status": "pending",
+    "note": "participation.go 와 화면 둘 다. deadlineRule.Closed 와 함께",
+    "updated": "2026-09-20"
+  },
+  {
+    "title": "[새] 메일 발송 기록 목록에 offset 쪽 넘김 — 50건 넘는 실패를 훑을 때",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "이번 회차가 total 없이 50건으로 두는 것의 후속. paging-check 규칙대로 offset 을 실어야",
+    "updated": "2026-09-20"
+  },
+  {
+    "title": "[새] 관리자 카드에서 실패한 발송을 '다시 시도' 로 큐에 되돌리기",
+    "value": 3,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "team_reminder 는 수동 권고가 FAILED 를 되살리는 코드가 이미 있음(weekly_automation_test.go:746). report_mail 은 사용자 시험 발송뿐. 목록 회차 뒤",
+    "updated": "2026-09-20"
+  },
+  {
+    "title": "[새] 관리자 OIDC 카드에 auto_login 한 줄 도움말",
+    "value": 1,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "프런트 한 줄",
+    "updated": "2026-09-20"
+  },
+  {
+    "title": "[새] 메일 발송 기록 표의 status/kind 필터 — 실패만 보기",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "50건 안에 SENT 가 대부분이면 FAILED 를 찾기 어려움. 서버 query 파라미터 하나(status=FAILED)면 됨. 가드 시험에 한 사례",
+    "updated": "2026-09-20"
+  },
+  {
+    "title": "[새] adminMailHealth 의 마지막 실패 사유 질의를 집계 질의와 한 번에 — UNION 서브쿼리를 두 번 훑음",
+    "value": 1,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "세 표를 두 번 스캔. 14일 창이라 행이 적어 지금은 무해. 큐가 커지면 created_at 인덱스 확인",
+    "updated": "2026-09-20"
+  }
+]

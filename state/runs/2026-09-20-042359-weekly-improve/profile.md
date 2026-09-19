@@ -1,0 +1,14 @@
+# weekly 프로필 (2026-09-20)
+- 목적: 사내 주간보고를 쓰고·검토하고·PPTX/메일로 내보내며, 업무 상황판·MCP·Confluence 수집을 곁들인 단일 바이너리 웹 서비스.
+- 스택: Go 1.24 (`net/http` 표준 mux, pgx/pgxpool), PostgreSQL(pg_trgm·pgvector 선택), React+TypeScript SPA(해시 라우팅, vitest, `tsc -b` 가 lint), 프런트 산출물을 Go 가 `cmd/weekly/web` 로 내장.
+- 구조:
+  - `internal/app/` — 거의 모든 서버 코드가 한 꾸러미. `app.go` 경로 등록, `auth.go`, `admin.go`, `mail.go`(SMTP·큐·`mailWorker`·`adminMailHealth`), `weekly_automation.go`(팀 권고), `schedulereminder.go`, `participation.go`, `tracking`·`handoff` 는 main 에 없음.
+  - `internal/app/migrations/NNN_*.sql` — 내장 마이그레이션, main 은 030 까지. `migrations.sums` 체크섬(출하된 파일은 수정 금지 시험).
+  - `frontend/src/pages/*.tsx`, `frontend/src/types.ts` — 화면과 API 타입.
+  - `docs/` — README·ADMIN_GUIDE.md(+html/pdf, `scripts/render-docs.py NAME` 로 재생성)·USER_GUIDE·openapi.yaml·CHECKS.md(검사 스크립트 설명).
+  - `scripts/` — guard-check·openapi-check·paging-check·modal-close-check·mutation-check·authz-check·version-check 등.
+- 빌드·테스트: `go build ./... && go vet ./... && go test ./... -count=1`(실제 DB `WEEKLY_TEST_POSTGRES_DSN` 있으면 약 145초; 없으면 DB 시험 skip). `cd frontend && npm run lint && npm run build && npm test`. `python3 scripts/guard-check.py --changed main`(1분 미만; 전체는 7분). `mutation-check.py --test NAME --budget N` 은 소스를 제자리에서 고쳐 쓰므로 **커밋 뒤에만, 혼자**. `authz-check.py` 는 40분 넘게 소스를 고쳐 씀 — 회차 안에서 돌리지 말 것.
+- 관례: 커밋 메시지 한국어 "feat:/fix:/test:/docs:/chore: … 합니다" 체. 설정은 `settingDefinitions`(app_settings 표) + 관리자 카드. 시험 함수 이름은 문장(`TestTheOperatorCanSeeWhatHappenedToTheMail`), `// guards: fn` 주석으로 가드 대상을 적음. HTTP 시험은 `newTestServer(t)`(템플릿 DB 복사 스크래치, `createScratchDatabase`), 가짜 릴레이 `startFakeRelay`. 목록 응답에 `total` 을 넣으면 paging-check 가 쪽 넘김을 요구. openapi 경로 수는 openapi-check 가 맞춰 봄. 버전은 `VERSION` 과 아홉 곳(version-check.sh).
+- 위험 구역: `auth.go`·OIDC·MCP OAuth(세션·토큰), `migrations/`(번호 충돌 — 미머지 브랜치가 031~033 을 씀), `.github/workflows`, `crypto.go`(비밀 암호화), 메일 비밀번호(설정 API 가 돌려주지 않음).
+- 자주 깨지는 곳: 공유 시험 DB 에 다른 브랜치의 마이그레이션이 남아 `schema_migrations` 시험이 틀림(58851d1 로 스크래치 DB 로 옮김; 나머지 통합 시험 12곳은 아직 공유 DSN). 날짜 의존 시험(마감 규칙·주 시작 요일). M 과제의 45분 시간 초과(세 캠페인 모두) — 20분 안에 첫 커밋.
+- 검증 함정: GitHub release.yaml 은 DB 없이 돌아 DB 시험을 건너뜀 — 로컬 실제 DB 통과가 곧 증거. psql 이 로컬에 없어 backup-check 는 CI 몫. a11y/failstate/scale-check 는 배포+브라우저 필요. 캠페인 브랜치(tracking·handoff·mail 표준 키) 는 `origin/auto/2026-09-16-*` 에만 있고 main 에 없음 — 그 후속 과제는 머지 뒤에만.
