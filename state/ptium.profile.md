@@ -1,0 +1,14 @@
+# ptium 프로필 (2026-09-20)
+- 목적: 한국어 브리프·문서(CSV/XLSX/PDF/PPTX)에서 슬라이드 덱을 AI 로 만들어 편집·공유·PPTX 내보내기까지 하는 자체 호스팅 서비스.
+- 스택: Go 서버(`server/`, chi 류 httpapi · PostgreSQL · 자체 pptx 렌더러) + React/TypeScript 웹(`web/`, vite · vitest) + OpenAPI(`api/`) + MCP 엔드포인트(`/mcp`).
+- 구조:
+  - `server/cmd/ptium` 진입, `server/internal/httpapi` 라우트·핸들러(`server.go` 에 라우트 등록), `auth`(세션·OIDC·API 키·mcpoauth), `db/migrations.go`(마이그레이션 + `defaultSettings` 설정 시드), `settings`(Flags/Words/Numbers 등록·검증), `store`.
+  - `deck`(덱 소스 문법 파서 `source.go`·컴파일 `compile.go`·pptx 가져오기 `importdeck.go`), `pptx`(렌더·블록 종류·SanitizeBlock), `docs`(CSV/XLSX→소스, `tables.go` 의 `amountOf`/`allNumeric` 분류기), `generation`(워커·모델 호출), `golden`(골든 덱 회귀).
+  - 기능 패키지: `analytics`(방문 추적 CSP), `handoff`(다른 서비스와 문서 주고받기), `mail`(SMTP 알림), `mcp`, `export`, `pdf`/`pdftext`, `korean`.
+  - `web/src/pages`(AdminSettingsPage 가 설정 영역 8개), `web/src/auth`(PKCE·silentSso), `web/src/api/client.ts`, `errors.ts`(서버 문구 번역 — codecover 테스트가 빠진 문구를 잡음).
+  - `scripts/e2e/api.py`(실서버 대상 900+ 검사), `scripts/guide/screenshots.py`(playwright 캡처), `docs/ADMIN_GUIDE.md`·`USER_GUIDE.md`(+PDF, 공용 md2pdf.mjs), `docs/deck-source.md`(덱 문법).
+- 빌드·테스트: `make test` = `go test -race ./...`(25개 패키지, DSN 없이 통과; DB 필요 테스트는 스킵) + `go vet` + `npm run typecheck && npm run build`. 웹 단위: `cd web && npx vitest run`(47파일 266개). 워크트리에 `node_modules` 가 없으면 `npm ci` 먼저(수 분). e2e 는 실서버·DB 필요.
+- 관례: 커밋 제목은 영어 한 문장, 사람이 읽는 서술체("Leave a sheet … the table it was"), 도구 서명 없음. 코드 주석은 영어 산문, 테스트 이름은 문장형(`TestAChartOfWordsBecomesATable`). 회차 기록·가이드는 한국어. 설정은 DB `settings` 표(`defaultSettings` 시드 → `settings.Flags/Words/Numbers` 등록 → `validateSettingValue`/`validateSettingRelationships` → openapi 스키마 → AdminSettingsPage) 다섯 곳을 같이 고친다. 버전은 `VERSION`(1.69.41) 과 릴리즈 노트 — 구현 단계에서는 손대지 않음.
+- 위험 구역: `auth/`(세션·OIDC·mcpoauth 인증 체인 — `/mcp` 와 REST 체인이 다름), `db/migrations.go`, `httpapi/server.go` 라우트, `handoff` 표 발급(단일 사용·404 규칙), `mail.password` 같은 Sensitive 설정.
+- 자주 깨지는 곳: 숫자 읽기 — `deck.parseNumber`(공백에서 끊음, 쉼표 무시) · `docs.amountOf`(분류기) · `deck.parseBareNumber`/`seriesFromRows`(`::line` 만 씀) 세 파서가 서로 달라 표↔차트 판정이 어긋남(2026-09-10 회차, 이번 과제). 웹 `korean.test.ts` 가 조사(`이/가`) 를 잡음; `errors.ts` 에 서버 문구를 안 넣으면 codecover 실패.
+- 검증 함정: DB 마이그레이션 테스트는 DSN 없으면 스킵되어 로컬 통과가 곧 DB 통과가 아님(postgres:16-alpine 버림 컨테이너로 확인하는 선례). 8099 포트는 다른 세션이 쓸 수 있음. 컨테이너 안 서버는 호스트 loopback 을 못 봄(`PTIUM_E2E_PEER_HOST`). e2e `call()` 은 `headers={}` 를 기본 신원으로 취급 — 무인증은 `NOBODY`.

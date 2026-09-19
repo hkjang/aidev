@@ -1,0 +1,17 @@
+# Qurio 프로필 (2026-09-20)
+- 목적: 오프라인(사내망) 배포용 AI SQL 워크벤치·데이터 카탈로그 서비스 — 거버넌스(승인 워크플로·API 키·감사 로그)와 MCP/REST API 를 갖춘 단일 Go 바이너리 + 임베디드 React SPA.
+- 스택: Go 1.27(모듈 `github.com/hkjang/qurio`, pgx/v5, 표준 log/slog), PostgreSQL 17(CI)/16·17(로컬 도커), React + TypeScript + Mantine + Vite, vitest(컴포넌트), Playwright(e2e). 컨테이너 배포(Dockerfile, compose.yml). CLAUDE.md 없음.
+- 구조:
+  - `cmd/qurio/` — main, 시간별 정리 루프(`cleanupExpired`), 설치/마이그레이션 통합 테스트
+  - `internal/httpapi/` — 라우터·미들웨어·인증 핸들러(`auth_handlers.go`: 로컬 로그인, OIDC 시작/콜백, `auditSecurity`), 설정·키·프로필 핸들러, SPA 서빙, 공개 설정
+  - `internal/oidcauth/` — OIDC 매니저(discovery, PKCE, state, `Abandon`, `SafeReturnTo`); `internal/mcpoauth/` — /mcp OAuth 2.1 리소스 서버
+  - `internal/store/` — `*store.Store`(구체 타입, 인터페이스 없음) 위에 settings/auth/api_keys/approvals/audit(`qurio_audit_logs`)/OIDC state(`qurio_oidc_states`)
+  - `internal/{legacyapi,platformapi,runtimeapi,agentapi,intelligenceapi}/` — 기능별 API 그룹; `internal/authzread/` 민감 GET 가드; `internal/jobs/` 배경 작업
+  - `migrations/` — 번호 매긴 SQL(최근 0035), `store.RunMigrations(ctx, pool, migrations.FS, ".")`
+  - `web/` — SPA(`src/pages/*.tsx`, `src/lib/silentSso.ts`, `src/context/AuthContext`); 빌드 산출물은 `internal/webui/dist` 에 복사해 임베드
+  - `docs/guides/` — admin-guide.md, api-mcp-guide.md, user-guide.md, offline-install.md (GitHub Pages 로 배포)
+- 빌드·테스트: `make lint`(go vet + npm lint + typecheck), `make test-go`(`go test ./...`, 1~2분), `make test-web`(vitest), `make test-e2e`(Playwright, 느림·브라우저 필요), `make build`(SPA 빌드 → 임베드 → go build). 통합 테스트는 `-tags=integration` 과 `QURIO_TEST_POSTGRES_DSN`(일부는 `QURIO_INTEGRATION_DSN`) 필요; 없으면 skip. 로컬은 `docker run -d -e POSTGRES_USER=qurio -e POSTGRES_PASSWORD=qurio-test -e POSTGRES_DB=qurio -p 127.0.0.1:55432:5432 postgres:17-alpine` 로 띄워 왔음.
+- 관례: 커밋 메시지는 영어 conventional(`feat:`/`fix:`/`chore: release Qurio vX.Y.Z`), 자동 브랜치 `auto/YYYY-MM-DD-HHMM` → PR → main. 코드 주석은 영어, UI 문자열·문서는 한국어. 관리 설정은 `qurio_settings` 키(`auth.oidc.*`, `mcp.oauth.*`, `service.public_url`), Secret 은 `cryptox` 로 암호화. 마이그레이션은 새 번호 파일 추가만. 통합 테스트 파일명 `*_integration_test.go` + `//go:build integration`, 고유 nonce 로 행을 만들고 `t.Cleanup` 으로 지움.
+- 위험 구역: `internal/httpapi/auth_handlers.go`·`middleware.go`(세션·쿠키·CSRF·Bearer 분기), `internal/oidcauth`·`internal/mcpoauth`(토큰 검증·권한 천장 — OAuth 주체 재검증 분기가 여러 패키지에 흩어져 있음), `internal/store/api_key_rate.go`(내구 리스), `migrations/`, `.github/workflows/`. `auditSecurity` 는 `*store.Store` 를 직접 부르므로 store 없는 단위 테스트 서버에서는 패닉.
+- 자주 깨지는 곳: (기록된 교훈 없음) 단위 테스트가 `httpapi.New(Options{})` 를 store 없이 만들어 쓰는 곳이 있어 핸들러에 감사/DB 호출을 더하면 nil 역참조가 난다. 같은 값(권한·설정)을 읽는 경로가 여러 패키지에 복제되어 있어 한쪽만 고치기 쉽다.
+- 검증 함정: CI 는 `go test -race -p=1 -tags=integration ./...` 를 하나의 공유 DB 로 직렬 실행 — 통합 테스트 정리 누락이 다른 패키지를 오염시킴. 로컬 `go test ./...` 는 통합 테스트를 전혀 돌리지 않으므로 통합은 반드시 도커로 별도 실행. CI 는 `go vet` 만 돌리고 `gofmt` 드리프트는 못 잡음. SPA 변경 시 `internal/webui/dist` 재빌드를 잊으면 바이너리에 반영 안 됨. `npm audit --omit=dev --audit-level=high` 가 CI 에서 실패 원인이 될 수 있음.

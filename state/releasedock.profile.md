@@ -1,0 +1,15 @@
+# releasedock 프로필 (2026-09-20)
+- 목적: 폐쇄망용 릴리즈 패키지 업로드·배포 도구 — 전체 모드(릴리즈/프리셋/Harbor)와 단순 모드(패키지 올리고 대상 디렉터리에서 스크립트 실행, 실행 로그 SSE 스트리밍).
+- 스택: Go(backend API 서버 + runner), PostgreSQL(pgx, SQL 마이그레이션), React+TypeScript(Vite, vitest) 웹, SPA 는 백엔드에 임베드. main 은 v0.5.15.
+- 구조:
+  - `backend/internal/server/` — HTTP 핸들러 전부. `simple.go`(단순 모드 업로드·실행·로그·SSE), `releases.go`/`presets.go`(전체 모드), `auth.go`/`oidc.go`/`rbac_policy.go`(인증·권한), `mcp.go`, `admin*.go`.
+  - `backend/internal/store/migrations/NNN_*.sql` — 번호 순 마이그레이션(017 이 단순 모드 표).
+  - `runner/` — 별도 Go 모듈, 실행기.
+  - `web/src/pages/simple/` — 단순 모드 화면(`SimpleRunDetailPage.tsx` 가 로그 뷰).
+  - `docs/` — architecture.md, simple-mode.md(사용자 동작 약속·한도 절 322행 부근), offline-install.md, quick-deploy.md. CLAUDE.md 없음.
+  - `scripts/`, `deploy/` — 빌드·패키징·systemd 없는 standalone 제어.
+- 빌드·테스트: `make test` = backend `go test ./...` → runner `go test ./...` → `cd web && npm test -- --run`(약 90건). 통합 테스트는 `TEST_POSTGRES_DSN` 이 있어야 돌고 없으면 skip — CI(`.github/workflows/ci.yml`)는 PostgreSQL 서비스 컨테이너로 `postgres://postgres:releasedock-ci-password@127.0.0.1:5432/postgres?sslmode=disable` 를 준다. 로컬은 도커 PostgreSQL 16 을 세션 전용으로 띄우는 관례. `npm run build` 가 `tsc -b` 를 포함(타입 검사는 여기서만). `make vet` 은 이 main 에 없음(auto/2026-09-17-0853 브랜치에만, 머지 미확인).
+- 관례: 커밋 메시지는 영어 `fix:`/`feat:`/`chore:` 한 줄. 회차 노트·문서는 한국어. 테스트 이름은 문장형(`TestSimpleRunLoggerKeepsBlankLines`), 스키마 격리 fixture(`newSimpleBatchFixture`, `seedSimpleRun`, `storedLogLines`). 릴리즈는 `chore: release vX.Y.Z` 로 VERSION 만 올림 — 개선 세션은 VERSION 을 건드리지 않음. `web/dist` 는 커밋하지 않음.
+- 위험 구역: `auth.go`/`oidc.go`/`rbac_policy.go`(주체·권한 게이트가 여러 곳), 마이그레이션(번호 충돌 — 미머지 브랜치가 025 를 씀), `.github/workflows/release.yml`(태그 푸시로만 검증), `persistArtifactTx`(릴리즈 행 FOR UPDATE 를 쥔 채 파일 씀).
+- 자주 깨지는 곳: 단순 모드 실행 로그 예산 회계(`logBudget.take`/`append`) — 세 회차 연속 손댄 자리, 빈 줄·한도 안내·log_bytes 규칙이 테스트로 고정돼 있음. 2026-09-07 반려 PR 은 스테이지 상태에 `HELD` 를 추가하는 상태 모델 변경이었음 — 상태 enum 확장 금지.
+- 검증 함정: 통합 테스트가 DSN 없이 조용히 skip 되므로 "통과" 가 DB 없이 돈 결과일 수 있음 — `-v` 로 SKIP 여부 확인. 웹 타입 오류는 `npm test` 가 못 잡고 `npm run build`/`npx tsc -b --noEmit` 만 잡음. 이 정찰 환경은 `go` 실행 권한이 막혀 있었음.
