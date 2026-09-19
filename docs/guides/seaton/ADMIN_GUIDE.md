@@ -1,6 +1,6 @@
 # SeatOn 관리자 가이드
 
-SeatOn v1.4.4 기준. 화면을 쓰는 사람을 위한 조작법은 [사용자 가이드](USER_GUIDE.md)에 있으며, 이 문서는 그 화면을 띄워 놓고 지키는 사람을 위한 것입니다. API 세부는 [API_AND_MCP.md](API_AND_MCP.md), 내부 구조는 [ARCHITECTURE.md](ARCHITECTURE.md)를 봅니다.
+SeatOn v1.4.5 기준. 화면을 쓰는 사람을 위한 조작법은 [사용자 가이드](USER_GUIDE.md)에 있으며, 이 문서는 그 화면을 띄워 놓고 지키는 사람을 위한 것입니다. API 세부는 [API_AND_MCP.md](API_AND_MCP.md), 내부 구조는 [ARCHITECTURE.md](ARCHITECTURE.md)를 봅니다.
 
 ## 1. 구성 요소
 
@@ -19,7 +19,7 @@ SeatOn v1.4.4 기준. 화면을 쓰는 사람을 위한 조작법은 [사용자 
 
 ## 2. 설치
 
-릴리즈 자산 `SeatOn-v1.4.4.tar.gz`(GitHub Release 첨부)와 이 저장소의 `compose.yaml` 하나면 됩니다. PostgreSQL은 외부 또는 사내 것을 준비합니다(빈 데이터베이스와 소유 계정만 있으면 스키마는 SeatOn이 만듭니다).
+릴리즈 자산 `SeatOn-v1.4.5.tar.gz`(GitHub Release 첨부)와 이 저장소의 `compose.yaml` 하나면 됩니다. PostgreSQL은 외부 또는 사내 것을 준비합니다(빈 데이터베이스와 소유 계정만 있으면 스키마는 SeatOn이 만듭니다).
 
 | 항목 | 값 |
 | --- | --- |
@@ -32,14 +32,14 @@ SeatOn v1.4.4 기준. 화면을 쓰는 사람을 위한 조작법은 [사용자 
 ### 2.1 처음부터 끝까지
 
 ```bash
-# 1. 이미지 적재 — seaton:v1.4.4 태그가 생긴다
-docker load < SeatOn-v1.4.4.tar.gz
+# 1. 이미지 적재 — seaton:v1.4.5 태그가 생긴다
+docker load < SeatOn-v1.4.5.tar.gz
 
 # 2. 필수 환경변수 3개 + Compose 이미지 태그
 export POSTGRES_DSN='postgres://seaton:change-db-password@postgres.intra:5432/seaton?sslmode=require'
 export BOOTSTRAP_ADMIN='admin'
 export BOOTSTRAP_ADMIN_PASSWORD='change-this-strong-password'   # 12자 이상
-export SEATON_IMAGE_TAG='v1.4.4'
+export SEATON_IMAGE_TAG='v1.4.5'
 
 # 3. 기동
 docker compose up -d
@@ -239,7 +239,7 @@ Keycloak에 이미 로그인한 사람이 SeatOn을 열었을 때 로그인 화�
 
 ![사용자 권한 — 사용자, 메일 주소, 로그인 방식(Local/SSO), 최근 로그인, 권한 선택, 사용 스위치. 새 설치에는 부트스트랩 관리자만 있다](assets/guide/admin-users.png)
 
-**사용자 권한**(`/admin/users`)에서 역할을 바로 바꾸고, **사용** 스위치로 계정을 막거나 다시 엽니다(비활성 사용자는 로그인·세션·API 키가 모두 거부됩니다). 자기 계정은 끌 수 없습니다 — 마지막 관리자가 스스로를 잠그면 화면으로는 되돌릴 길이 없기 때문입니다. 화면에는 계정 만들기가 없습니다 — 로컬 계정은 부트스트랩 관리자 하나뿐이고, 나머지 사용자는 SSO 첫 로그인 때 생깁니다.
+**사용자 권한**(`/admin/users`)에서 역할을 바로 바꾸고, **사용** 스위치로 계정을 막거나 다시 엽니다(비활성 사용자는 로그인·세션·API 키가 모두 거부됩니다). 자기 계정은 끌 수도, 권한을 낮출 수도 없습니다(API 로 보내면 `400 self_deactivation`·`400 self_demotion`) — 마지막 관리자가 스스로를 잠그거나 직원으로 내리면 이 화면을 더는 열 수 없어 되돌릴 길이 없기 때문입니다. 화면에는 계정 만들기가 없습니다 — 로컬 계정은 부트스트랩 관리자 하나뿐이고, 나머지 사용자는 SSO 첫 로그인 때 생깁니다.
 
 **메일 주소**는 알림 메일이 닿는 곳입니다. 부트스트랩 관리자 같은 로컬 계정은 처음부터 주소가 없으므로 연필 단추로 넣어 두어야 하고(비우면 지웁니다), SSO 사용자의 주소는 로그인할 때마다 Keycloak 프로필에서 가져오므로 화면에서는 고칠 수 없습니다(Keycloak 쪽에서 바꿉니다). 같은 일을 API 로 하려면 `PATCH /api/v1/users/{id}`에 `{"email": "…"}`·`{"active": false}`를 보냅니다.
 
@@ -255,7 +255,7 @@ Keycloak에 이미 로그인한 사람이 SeatOn을 열었을 때 로그인 화�
 | --- | --- | --- | --- |
 | `/healthz` | GET | 없음 | 프로세스 살아 있음 `{"status":"ok"}`. 컨테이너 헬스체크가 이걸 봄 |
 | `/readyz` | GET | 없음 | DB `Ping` 성공 시 `{"status":"ready"}`, 실패 시 `503 database_unavailable` |
-| `/api/v1/version` | GET | 없음 | `{"name":"SeatOn","version":"1.4.4","commit":"…","builtAt":"…"}` |
+| `/api/v1/version` | GET | 없음 | `{"name":"SeatOn","version":"1.4.5","commit":"…","builtAt":"…"}` |
 | `/api/v1/dashboard` | GET | 좌석 관리자 | 운영 준비도·연동 상태·처리 필요 건수 |
 
 처리필요 화면의 **운영 준비도**와 **연동 상태**가 같은 정보를 사람이 보기 좋게 보여 줍니다.
@@ -267,7 +267,7 @@ Keycloak에 이미 로그인한 사람이 SeatOn을 열었을 때 로그인 화�
 표준 출력에 JSON 한 줄씩(`log/slog`) 찍힙니다. `docker compose logs -f seaton`으로 봅니다. 요청마다 `"msg":"request"`에 메서드·경로·소요 시간·`request_id`가 남습니다.
 
 ```json
-{"time":"2026-09-11T11:41:57Z","level":"INFO","msg":"SeatOn started","address":":8080","version":"1.4.4","commit":"…"}
+{"time":"2026-09-11T11:41:57Z","level":"INFO","msg":"SeatOn started","address":":8080","version":"1.4.5","commit":"…"}
 {"time":"…","level":"INFO","msg":"request","method":"GET","path":"/readyz","duration_ms":0,"request_id":"…"}
 {"time":"…","level":"INFO","msg":"도면 분석 완료","jobId":"…","floorMapId":"…","engine":"cv","detected":30,"review":6}
 ```
@@ -322,11 +322,11 @@ curl -s http://127.0.0.1:8080/api/v1/version    # "version":"1.5.0"
 되돌릴 때는 태그를 이전 값으로 바꿔 다시 올립니다. 새 버전이 스키마를 바꾼 뒤라면 이전 바이너리가 그 스키마를 이해한다는 보장이 없으므로, 백업한 덤프를 먼저 복원합니다.
 
 ```bash
-export SEATON_IMAGE_TAG='v1.4.4'
+export SEATON_IMAGE_TAG='v1.4.5'
 docker compose up -d
 ```
 
-분석이 진행 중일 때 재시작하면 그 잡은 실패로 정리되고 도면은 다시 분석할 수 있는 상태로 돌아옵니다. 릴리즈 자산은 `SeatOn-v<버전>.tar.gz` → `seaton:v<버전>` 이름 규칙을 따르고, 애플리케이션이 알리는 버전 문자열은 `v` 없는 `1.4.4`입니다.
+분석이 진행 중일 때 재시작하면 그 잡은 실패로 정리되고 도면은 다시 분석할 수 있는 상태로 돌아옵니다. 릴리즈 자산은 `SeatOn-v<버전>.tar.gz` → `seaton:v<버전>` 이름 규칙을 따르고, 애플리케이션이 알리는 버전 문자열은 `v` 없는 `1.4.5`입니다.
 
 ## 6. 장애 대응
 
