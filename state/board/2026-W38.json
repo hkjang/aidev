@@ -1,0 +1,72 @@
+{
+  "week": "2026-W38",
+  "generated": "2026-09-19T15:06:00+09:00",
+  "cost_usd": 0,
+  "constraint": "사람 한 명의 머지 처리량.** 열린 캠페인 PR 117 + 사람 대기 38 은 하루 3~7건 머지 속도로는 몇 주치 적체다. 이 상태에서 남은 캠페인 예산 $2,397 은 추가 개선이 아니라 대기열 뒤에 줄 서는 PR·수리 회차를 산다.",
+  "proposals": [
+    {
+      "cmd": [
+        "campaign",
+        "budget",
+        "mcp-oauth-2026-09",
+        "500"
+      ],
+      "why": "지출 $373, todo 3, 열린 PR 20. 여유 $627 은 머지될 곳이 없다. 포기: 수리·재시도 여유. 되돌림: `campaign budget mcp-oauth-2026-09 1000`.",
+      "gives_up": "수리·재시도 여유",
+      "revert": "campaign budget mcp-oauth-2026-09 1000",
+      "n": 1,
+      "applied": null
+    },
+    {
+      "cmd": [
+        "campaign",
+        "budget",
+        "mail-2026-09",
+        "450"
+      ],
+      "why": "지출 $356, done 2 / PR 27 로 전환율이 가장 나쁨. 포기: 동일. 되돌림: `campaign budget mail-2026-09 900`.",
+      "gives_up": "동일",
+      "revert": "campaign budget mail-2026-09 900",
+      "n": 2,
+      "applied": null
+    },
+    {
+      "cmd": [
+        "campaign",
+        "budget",
+        "tracking-2026-09",
+        "450"
+      ],
+      "why": "지출 $360, 10-31 마감, todo 3. 포기: 동일. 되돌림: `campaign budget tracking-2026-09 800`.",
+      "gives_up": "동일",
+      "revert": "campaign budget tracking-2026-09 800",
+      "n": 3,
+      "applied": null
+    },
+    {
+      "cmd": [
+        "run",
+        "SecCheck",
+        "PR #8 한정: 09-13 교훈대로 Dockerfile apt-get upgrade 와 golang.org/x/crypto 상향으로 컨테이너 취약점 게이트 통과. 게이트를 로컬에서 재현해 통과시킨 뒤 푸시. 다른 파일 변경 금지"
+      ],
+      "why": "이미 교훈이 있는 실패를 한 번만 더. 포기: ~$15~20. 되돌림: `reject https://github.com/hkjang/SecCheck/pull/8 \"게이트 2회 실패\"`.",
+      "gives_up": "~$15~20",
+      "revert": "reject https://github.com/hkjang/SecCheck/pull/8 \"게이트 2회 실패\"",
+      "n": 4,
+      "applied": null
+    }
+  ],
+  "not_doing": [
+    "`draft-campaign` 신규 없음 — 열린 캠페인 PR 이 40건 아래로 내려올 때까지. WIP 를 더 늘리지 않는다.",
+    "`shepherd off` 안 함 — 승인 뒤 회귀 0/30, 수정 푸시 86%. 유일하게 대기열을 줄이는 역할이다.",
+    "어떤 캠페인도 pause/remove 안 함 — todo 가 14건뿐이라 절감이 없고, pause 는 수리 회차까지 멈춰 머지를 늦춘다. guides 는 done 이지만 열린 PR 16건 소화를 위해 10-15 까지 둔다.",
+    "예산 인상·마감 연장 없음. 실험 roles-2026-09 는 0회차라 아무 판단도 하지 않는다."
+  ],
+  "role_advice": [
+    "critic: 위험도 low 137·medium 17·high 0 — 사람 수정률이 low 26% / medium 24% 로 구분력이 없다. 위험도를 게이트 근거로 쓰지 말고 루브릭 재보정 권고.",
+    "shepherd-reviewer: 사람 필요 38/122(31%). 보호 파일 건은 심사 전에 builder 가 보호 파일을 건드리지 않도록 교훈 주입이 먼저다.",
+    "historian: guides 캠페인이 stuck 2·retry 1 인데 교훈 0 — 완료 캠페인의 교훈 추출 누락 점검 권고.",
+    "data: 릴리즈 92% vs 72% 분모 정합, 머지 뒤 수정률을 파일 단위가 아니라 PR 라인 단위로 재정의 권고. 사람 승인 45% vs 자동 26% 는 n=11 이라 결론 보류.",
+    "scout·repairer·arbiter: 표본 14/2/0 으로 성적 없음. 실험이 돌기 전까지 등급 매기지 않는다."
+  ]
+}
