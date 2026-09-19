@@ -1,0 +1,15 @@
+# hunter 프로필 (2026-09-19)
+- 목적: 오프라인 사내망용 지속 보안 검증 플랫폼 — 자산·발견 건·진단·캠페인·SBOM·알림·PentAGI 기반 에이전트를 단일 Go 이미지로 제공.
+- 스택: Go 1.26(net/http, PostgreSQL 단일 DSN), React·TypeScript·Mantine(web/), Vite, Node 26, PentAGI 원본 코어(third_party/pentagi, replace 로컬 모듈), Docker 단일 이미지(UID 10001, 읽기 전용).
+- 구조:
+  - `cmd/hunter/main.go` 서버·워커 진입, 환경변수 4개(POSTGRES_DSN, BOOTSTRAP_ADMIN, BOOTSTRAP_ADMIN_PASSWORD, ENCRYPTION_KEY)만 사용.
+  - `internal/app` HTTP API·인증·권한·설정·모든 도메인 로직(agents_*, finding_*, notification_*, mcp_oauth.go, tracking*, handoff.go, auth_oidc*). `openapi.json` 이 API 계약.
+  - `internal/pentagicore` 원본 코어 어댑터; `third_party/pentagi` 는 바이트 보존(UPSTREAM.json 해시 312파일).
+  - `web/src` 화면(한국어), `web/tests` 프런트 테스트; 빌드 결과를 `internal/webassets/dist` 에 복사해 Go 에 임베드.
+  - `docs` GitHub Pages·가이드(md→html/pdf 재생성 `scripts/render-guides.mjs`), `scripts` 릴리즈·라이선스·원본 검증.
+  - `.github/workflows`: ci.yml(verify), pages.yml(deploy), release.yml(태그 `v*` → `scripts/release.sh` → `scripts/release-notes.py` → `gh release create --verify-tag` 단일 자산 `hunter-vX.tar.gz`).
+- 빌드·테스트: `npm --prefix web ci && npm --prefix web test`(≈93개, 빠름) · `npm --prefix web run build` · `cp -a web/dist/. internal/webassets/dist/` · `go vet ./... && go build ./cmd/hunter` · `go test -race ./internal/app`(**650초+, `-timeout 45m` 필요**, `HUNTER_TEST_DSN` 없으면 DB 테스트 skip) · `node scripts/verify-pentagi.mjs` · `node scripts/check-docs.mjs` · `bash scripts/release.sh "$(cat VERSION)"`(Docker, 수 분).
+- 관례: 커밋 메시지 영어 conventional(feat:/fix:/docs:/chore: release vX). 설정은 DB 설정 그룹(관리 화면 PUT /api/settings/<group>)이며 새 환경변수 금지. 마이그레이션은 서버 시작 시 Go 코드(internal/app)에서 처리. 문서는 docs/ 가이드 + README + llms.txt + AGENTS.md 를 함께 갱신. 버전은 VERSION·web/docs package.json·가이드 예시를 동시에 맞춤.
+- 위험 구역: `internal/app/auth*`, `mcp_oauth.go`(KeyID=="" 센티널로 키/세션 판정하는 지연 재인가 6곳), `finding_bulk.go`(원자 롤백), `campaigns.go`, `notifications*`(암호화 큐), `third_party/pentagi`(수정 금지), `.github/workflows`(검증 완화 금지), `scripts/release.sh`(단일 자산 규칙).
+- 자주 깨지는 곳: 회차가 배경 테스트를 기다리다 커밋 없이 끝남(2026-09-14 §4 유실) → **먼저 커밋**; 범위 밖 한 줄(`setPreview(null)`)이 비평에서 걸림(2026-09-19 shepherd); 회차 예산 hold(2026-09-18-164351, $22 초과) → 전체 Go 스위트를 불필요하게 돌리지 말 것.
+- 검증 함정: Go 전체 테스트가 기본 10분 timeout 을 넘음; DB 테스트는 DSN 없으면 skip 되므로 통과로 보고 금지; 프런트 변경 후 Go 검증은 dist 재복사 필요; 정찰 샌드박스는 gh·curl·python3 실행이 차단될 수 있음(이번 회차) — 워크플로 상태는 구현 단계에서 `gh run list` 로 확인.
