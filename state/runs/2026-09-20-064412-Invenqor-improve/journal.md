@@ -16,3 +16,14 @@
 - 다음 역할이 조심할 것: `mcp_asset_get_merged_test.go` 는 `authenticateInitialAdmin` + 실제 REST merge 를 거치므로 `testServer` 가 필요하고 PostgreSQL 에서도 돌아야 한다(`scripts/test-postgres.sh`; 기본 포트 55432 는 이 머신에서 다른 컨테이너가 쓰고 있어 `POSTGRES_CONTAINER`/`POSTGRES_PORT` 를 따로 줬음). 조회 SQL 의 `after_json` 은 JSONB — LIKE 로 바꾸면 `TestNoTextOperatorIsAppliedToAJsonbColumnWithoutACast` 와 실 PostgreSQL 이 함께 깨진다. 릴리즈(버전·노트·PDF)는 하지 않았다.
 - [러너 06:58] brief accepted — 채택 — 과제서의 근거(`mcpAssetGet` 의 `deleted_at IS NULL` 필터, `mergeAssets` 의 asset_changes 기록 모양, 문서 대조 테스트가 입력 �
 - [러너 06:58] verify passed — 검증 8개 통과 (auto)
+
+## 비평 노트
+- 확인함: 새 테스트 2개를 base mcp.go 로 되돌려 빨강(asset not found)·HEAD 초록을 직접 확인, SQLite 와 postgres:17-alpine(별도 포트) 양쪽 통과, httpapi 패키지 전체(문서·openapi 대조 포함) SQLite 통과. JSONB 분기(@> + $1::text 단일 사용)·REST merge 경로 사용·"asset not found" 유지 모두 코드로 확인.
+- 못 봄: 실제 MCP 클라이언트가 `asset` 없는 응답을 받아 merged_into 로 재호출하는지(환경에 클라이언트 없음).
+- 보안·법무: 권한 확대 없음(REST GET 은 이미 병합 자산을 status='merged' 로 반환), 입력은 파라미터 바인딩만, 개인정보 신규 수집 없음 → 차단 없음.
+- 남는 우려: mergeAssets 가 이미 병합된 자산을 primary 로 삼거나 primary 를 secondary_ids 에 남기는 것을 막지 않아 억지 요청 뒤 자기 참조 힌트가 가능(콘솔 경로로는 비현실적); 대문자 UUID 옛 데이터는 예전 답 유지.
+- 릴리즈 노트에 넣을 것: asset_get 이 `asset` 없이 `{merged_into, merged_at, message}` 만 답하는 새 응답 모양 — asset 키를 전제한 클라이언트는 대응 필요.
+- [러너 07:02] review approved — 리뷰 승인 (risk=low)
+- [러너 07:02] pr created — https://github.com/hkjang/invenqor/pull/26
+- [러너 07:06] ci passed — 검사 11개 모두 success
+- [러너 07:07] merge done — 145f932

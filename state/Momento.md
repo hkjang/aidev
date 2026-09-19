@@ -85,3 +85,4 @@
 - 보류 아이디어: 사용자 편집 다이얼로그가 호출자보다 높은 역할의 계정에 편집 버튼을 숨기고 권한 select 도 호출자 역할까지만 나열 (가치 2 / 위험 1 / S); visitor-search 의 ID·부서 일치가 기간 무관인 점을 문구에 나누어 적거나 서버 조회에 기간을 넣는다 (가치 2 / 위험 1 / S); web 에 prettier 를 devDependency·설정으로 고정하거나 검증 절차에서 prettier --check 를 뺀다 — 지금은 npx 최신판 기본 설정으로 main 이 이미 23개 파일 실패 (가치 2 / 위험 1 / S); visitor-search 응답에 실제 window(from/to)를 넣어 화면이 서버가 쓴 기간을 그대로 보여준다 — openapi 계약 갱신 필요 (가치 2 / 위험 2 / S); visitor-search LIMIT 60 잘림을 화면에 알린다 (가치 2 / 위험 1 / S).
 - 과제서: 채택 — 과제서의 근거(69행 policyRange, 165-176행 분기, DataTable 기본 Empty, 서버 응답에 기간 없음)가 코드와 모두 맞았고 수용 기준 3개를 그대로 구현·증명했다; 추가로 필요했던 것은 node ESM 이 확장자 없는 import 를 못 찾아 tsconfig.app.json 한 줄과 `.ts` 확장자 명시뿐이다.
 
+- 릴리즈: v0.34.42 (2026-09-20, run 2026-09-20-064421-Momento-improve)

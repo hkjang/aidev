@@ -24,3 +24,7 @@
 - 판정 approve / risk low / blocking 없음.
 - [러너 06:58] review approved — 리뷰 승인 (risk=low)
 - [러너 06:58] pr created — https://github.com/hkjang/Momento/pull/16
+- [러너 07:04] ci passed — 검사 1개 모두 success
+- [러너 07:05] merge done — eaa214e
+- [러너 07:14] release published — v0.34.42
+- [러너 07:15] assets verified — v0.34.42 자산 2개 (이전 v0.34.41: 2)
