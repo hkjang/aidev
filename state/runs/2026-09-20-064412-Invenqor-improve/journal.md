@@ -27,3 +27,8 @@
 - [러너 07:02] pr created — https://github.com/hkjang/invenqor/pull/26
 - [러너 07:06] ci passed — 검사 11개 모두 success
 - [러너 07:07] merge done — 145f932
+- [러너 07:22] release published — v0.2.38
+- [러너 07:22] gh-release created — GitHub Release v0.2.38
+- [러너 07:22] manifest ok — ADMIN_GUIDE.md ADMIN_GUIDE.pdf API_MCP_GUIDE.md API_MCP_GUIDE.pdf compose.invenqor-0.2.38.yaml compose.offline.yaml EXECUTIVE_REPORT.md EXECUTIVE_REPORT.pdf invenqor-0.2.38.env.example invenqor-0.2.38
+- [러너 07:23] assets uploaded — 29개
+- [러너 07:23] assets verified — v0.2.38 자산 29개 (이전 v0.2.37: 29)

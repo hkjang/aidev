@@ -822,3 +822,4 @@
 - 보류 아이디어: mergeAssets 가 primary·secondary 존재를 확인하지 않아 없는 secondary 는 조용히 성공·없는 primary 는 PostgreSQL 에서 FK 500/SQLite 성공으로 두 저장 모드가 갈림 — 트랜잭션 첫머리 존재 확인 (가치 3 / 위험 2 / S) · 콘솔·외부 REST `assetRelations` 가 상한 없이 모든 edge 를 돌려줌 — MCP 와 같은 `limit`/`offset`·`has_more`, 콘솔 관계 패널 수정 동반 (가치 3 / 위험 2 / M) · 여러 목록 핸들러가 `rows.Err()` 를 확인하지 않아 부분 결과를 200 으로 돌려줌 — 실패 주입 수단이 선행 과제 (가치 3 / 위험 1 / M) · Query DSL 화면의 limit 입력이 0·빈값·501 을 그대로 보내 Server 가 100/500 으로 고쳐 돌려줌 — 입력 시점에 1~500 으로 맞추고 되돌려 준 `limit` 을 편집기에 반영 (가치 2 / 위험 1 / S) · mergeAssets 가 secondary_ids 를 보낸 글자 그대로 저장해 대문자 UUID 병합은 `merged_into` 조회가 못 찾음 — 쓰기 시 소문자 정규화 (가치 2 / 위험 1 / S)
 - 과제서: 채택 — 과제서의 근거(`mcpAssetGet` 의 `deleted_at IS NULL` 필터, `mergeAssets` 의 asset_changes 기록 모양, 문서 대조 테스트가 입력 열만 보는 것)가 모두 코드와 일치해 그대로 구현했고, 유일한 이탈은 조회 오류를 not found 로 접지 않고 돌려주는 것.
 
+- 릴리즈: v0.2.38 (2026-09-20, run 2026-09-20-064412-Invenqor-improve)
