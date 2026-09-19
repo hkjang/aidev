@@ -1,0 +1,8 @@
+# 수리 요약 (커밋 a1dcba5)
+
+1. **Host 기반 aud 허용(audience confusion)** — 맞는 지적. `authenticateMCPOAuth`가 `settings.Resource(r)`(빈 설정이면 Host로 만든 값)을 `mcpAudienceAccepted`의 첫 분기에 넘겼다. 고침: 새 `AudienceResource()`(= `Config.Resource`만)를 대상 검사에 쓰고, 비어 있으면 aud 비교를 건너뛰어 `mcp.oauth.audience` 목록만 본다(`mcpAudienceAccepted`도 `resource != ""` 가드). `Resource(r)`는 메타데이터·WWW-Authenticate 표시용으로만 남김. 테스트 `TestMCPOAuthEmptyResourceDoesNotTrustTheHostHeader`(빈 resource + `Host: other.example.test` + `aud=https://other.example.test/mcp` 토큰 → "not accepted" 거부, 도전 헤더는 여전히 Host를 따름)와 `TestMCPOAuthAudienceRules`에 빈 resource 3사례 추가. ADMIN_GUIDE.md 표·SettingsPage 힌트도 같은 뜻으로 고침(PDF는 재생성하지 않음).
+2. **Discovery 실패 미캐시** — 맞는 지적. `mcpProviderEntry`에 `err`를 두고 실패는 `mcpProviderFailureTTL=30s`로 negative cache; 잠금은 맵 읽기/쓰기에만. 동시에 뛴 다른 Discovery가 성공해 둔 항목은 실패로 덮어쓰지 않는다. `authtest.FakeIDP`에 `DiscoveryRequests` 카운터와 `DiscoveryDown` 스위치를 더해 `TestMCPOAuthDiscoveryFailureIsCachedBriefly`가 "실패 뒤 3회 호출 + 토큰 1회 검증에 IdP 호출 0회·1초 안 응답, 항목 만료 후 정확히 1회 재시도"를 단언.
+3. **계정 조회 오류 원문 유출** — 맞는 지적. `refuse("계정 정보를 확인할 수 없습니다. 잠시 후 다시 시도하세요.", fmt.Errorf("mcp oauth account lookup: %w", err))`로 감싸 Cause는 로그에만. (저장소를 끊는 단위 테스트 수단이 없어 이 항목은 테스트 없이 고침.)
+4. **request_id 미단언** — 맞는 지적. 단위 테스트는 `X-Request-ID`를 넣고 "mcp oauth token refused" 줄이 `request_id=req-mcp-unit-1`을 싣는지, 통합 테스트는 응답의 `X-Request-ID`와 같은 `request_id=`를 가진 거부 로그 줄에 "not accepted"가 있는지 단언.
+
+검증: `gofmt`·`go vet`·`go test ./...`·`go test -race ./internal/auth ./internal/api` 통과, Postgres 16 컨테이너로 CI와 같은 `go test -count=1 -p=1 -run Integration ./internal/store ./internal/api`(-race 포함) 통과, `npm run lint`·`npm test`(83/83)·`check-screenshots.mjs` 통과.

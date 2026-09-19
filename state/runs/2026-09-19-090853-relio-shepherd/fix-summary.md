@@ -1,0 +1,7 @@
+# fix-summary — PR #25 (commit 07c60fa on top of e74e752)
+
+1. **거절 로그**: `AuthenticateMCPToken` 이 `request_id`(ctx 에 없으면 `missing`), 클라이언트가 받은 `message`, 원본 검증 오류 `detail`(Refusal.Cause: 서명·발급자·exp·nbf 원문)을 남깁니다. 비-Refusal 오류(스위치 꺼짐 등)는 `request_id` + `error`. ADMIN_GUIDE 의 `error`→`detail` 문장도 맞췄습니다.
+2. **로그 테스트**: `TestARefusedTokenIsLoggedWithItsCauseAndTheRequestID` 가 `slog.NewTextHandler(&buf)` 를 `Service.Log` 에 넣고 `httpx.WithRequestID` ctx 로 실제 `AuthenticateMCPToken` 을 호출해 만료·nbf·발급자·서명·미지 kid·미등록 계정 각각의 원문과 `request_id=req-N` 을 단언합니다(수락 시 무로그, ctx 에 ID 없으면 `request_id=missing`). DB 두 조회(설정·계정)는 `Service.mcpSettings`/`mcpAccountLookup` 훅으로 분리(nil 이면 기존 쿼리).
+3. **뮤텍스 밖 네트워크**: `mcpSigningKey` → `mcpDiscovery` + `mcpKey`. 잠금은 캐시 읽기·쓰기에만; 진행 중 round trip 은 `fetch`(done 채널)로 공유해 동시 호출을 하나로 합치고, 고루틴은 `context.WithoutCancel` 로 분리(대기자는 자기 ctx.Done 존중). 실패한 discovery 는 `discoveryRetry`=30초 음성 캐시(기존 문서 있으면 그걸로 계속, 없으면 같은 Refusal 즉답; jwks_uri 타 origin 이면 캐시도 버림). `TestConcurrentCallersShareOneRoundTripToTheProvider` 가 느린/죽은 fake IdP 에 8 동시 요청 → discovery 1회·경과 < 3×delay, 음성 캐시 즉답, 복구 후 1회 재시도, 취소된 호출자는 즉시 반환·그 round trip 은 다음 호출자가 재사용을 단언(-race 6회 통과).
+4. **RFC 9728 경로**: `serveProtectedResourceMetadata` 가 `metadataPathServes(path, resource)` 로 루트(`/.well-known/oauth-protected-resource[/]`)와 리소스 path(`…/mcp[/]`, 접두 리소스면 그 path)만 200, 그 외 404 `not_found`(올바른 경로 안내). `TestProtectedResourceMetadataAnswersOnlyForTheResourcePath` 추가.
+5. 검증: `gofmt -l` 없음, `go vet ./...`, `go test -race ./...` 전부 통과. 지적 4건 모두 맞았음; 틀린 지적 없음.

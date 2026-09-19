@@ -1,5 +1,5 @@
 {
- "generated": "2026-09-19T09:37:37+09:00",
+ "generated": "2026-09-19T09:56:29+09:00",
  "site": "https://hkjang.github.io/aidev",
  "description": "Claude Code 자율 개선 에이전트가 hkjang 의 프로젝트를 개선·테스트·머지·릴리즈한 일일 보고. 오늘 10회차·릴리즈 5건, 누적 1036회차·릴리즈 359건, 주의 필요 17건.",
  "today": {
@@ -10,18 +10,18 @@
   "merged": 3,
   "nochange": 1,
   "failed": 1,
-  "cost_usd": 142.72,
-  "minutes": 369,
-  "sessions": 99
+  "cost_usd": 150.8,
+  "minutes": 389,
+  "sessions": 102
  },
  "totals": {
   "runs": 1036,
   "released": 359,
   "days": 18,
-  "cost_usd": 3758.74,
-  "minutes": 9079,
-  "tokens_in": 3990369299,
-  "tokens_out": 29407468
+  "cost_usd": 3766.82,
+  "minutes": 9099,
+  "tokens_in": 3998026817,
+  "tokens_out": 29471961
  },
  "alerts": [
   {
@@ -197,18 +197,18 @@
   }
  ],
  "health": {
-  "checked": "2026-09-19T09:15:03+09:00",
+  "checked": "2026-09-19T09:45:02+09:00",
   "last_run": "2026-09-19T08:44:25+09:00",
-  "seconds_since_last": 1835,
+  "seconds_since_last": 3635,
   "runner_pid": "",
   "runner_age_seconds": 0,
   "scheduler_status": "준비",
-  "scheduler_next_run": "2026-09-19 오전 9:20:00",
+  "scheduler_next_run": "2026-09-19 오전 9:50:00",
   "disk_percent": 73,
   "ok": true,
   "problems": [],
   "actions": [
-   "소유 프로세스 없는 잠금 파일을 제거했다"
+   "회차가 60분째 없어 AutoImprove 를 직접 실행했다"
   ]
  },
  "lessons": [
@@ -563,24 +563,24 @@
    "why": "guard: held — internal/auth/service.go internal/sso/accesstoken.go internal/sso/accesstoken_te",
    "evidence": "https://github.com/hkjang/aidev/tree/main/state/runs/2026-09-18-061339-DartFly-improve",
    "labels": "",
-   "action": "PR 처리기가 다음 시간에 다시 시도 · 승인: PR 라벨 aidev-approved / 반려: aidev-rejected — 다음 회차에 러너가 승인 당시 커밋에만 CI 확인 후 머지·닫기",
+   "action": "PR 처리기가 사람에게 넘김 — base 와 충돌하는데 자동 리베이스로 풀리지 않음 — 수동 해결 필요 · 승인: PR 라벨 aidev-approved / 반려: aidev-rejected — 다음 회차에 러너가 승인 당시 커밋에만 CI 확인 후 머지·닫기",
    "date": "2026-09-18",
-   "shepherd": "보호 파일 · 심사 거절 → 다음 시간에 수정 (09-19 08:02) — - internal/sso/accesstoken.go:183-199 keySet.lookup 이 s.mu 를 잡은 채 fetch(네트워크, 클라이언트 타임아웃 10초)를 부릅니다. 캐시된 kid 의 조회도 같은 mu.Lock() 을 지나므로, 모르는 kid 토큰 하나가 JWKS 를 읽는",
-   "shepherd_action": "review-reject"
+   "shepherd": "충돌 · 사람 필요 (09-19 09:53) — base 와 충돌하는데 자동 리베이스로 풀리지 않음 — 수동 해결 필요",
+   "shepherd_action": "needs-human"
   },
   {
    "kind": "PR",
    "project": "visitflow",
    "title": "auto-improve: feat(mcp): accept Keycloak access tokens on /mcp alongside personal keys",
    "url": "https://github.com/hkjang/visitflow/pull/18",
-   "sha": "c10f7b5",
-   "summary": "12파일 +1072/−21 · guarded files, PR open https://github.com/hkjang/visitflow/pull/18",
+   "sha": "715a242",
+   "summary": "12파일 +1338/−21 · guarded files, PR open https://github.com/hkjang/visitflow/pull/18",
    "why": "guard: held-expected — internal/database/migrations/0016_mcp_oauth.sql ",
    "evidence": "https://github.com/hkjang/aidev/tree/main/state/runs/2026-09-18-053340-visitflow-improve",
    "labels": "",
    "action": "PR 처리기가 다음 시간에 다시 시도 · 승인: PR 라벨 aidev-approved / 반려: aidev-rejected — 다음 회차에 러너가 승인 당시 커밋에만 CI 확인 후 머지·닫기",
    "date": "2026-09-18",
-   "shepherd": "보호 파일 · 심사 거절 → 다음 시간에 수정 (09-19 07:58) — - internal/app/mcpoauth.go:103-108 (mcpResource) + internal/app/auth.go:604-614 (requestBaseURL): the resource identifier used for the aud check falls back to t",
+   "shepherd": "리뷰 거절 · 심사 거절 → 다음 시간에 수정 (09-19 09:53) — - internal/app/mcpoauth_test.go:409-432 (TestMCPOAuthRefusesBadTokensAndLogsWhichCheckFailed) captures the refusal log and asserts the message and the original ",
    "shepherd_action": "review-reject"
   },
   {
@@ -593,10 +593,10 @@
    "why": "review: rejected — 리뷰 거절: internal/app/mcpoauth.go:296-314 mcpOAuthScopes 가 교집합이 비면 빈 슬라이스를 돌려주는데, ",
    "evidence": "https://github.com/hkjang/aidev/tree/main/state/runs/2026-09-18-041337-seaton-improve",
    "labels": "",
-   "action": "PR 처리기가 다음 시간에 다시 시도 · 승인: PR 라벨 aidev-approved / 반려: aidev-rejected — 다음 회차에 러너가 승인 당시 커밋에만 CI 확인 후 머지·닫기",
+   "action": "PR 처리기가 승인함 — 승인 스윕이 CI 확인 뒤 머지·릴리즈 (아직 열려 있으면 CI 를 기다리는 중)",
    "date": "2026-09-18",
-   "shepherd": "리뷰 거절 · 수정 푸시 → 심사 (09-19 09:34) — # 수리 요약 (커밋 517bd11, PR #30)  1. **aud 허용값이 Host 로 만들어짐(맞는 지적, 재현함)** — `enabledValues(idp,nil)` + `Host: other-app.intra` + `aud=[\"https://other-app.intra/mcp\"",
-   "shepherd_action": "fix-pushed"
+   "shepherd": "리뷰 거절 · 승인 → 스윕이 CI 확인 후 머지 (09-19 09:39) — risk=medium — 리뷰 승인 (risk=medium)",
+   "shepherd_action": "approve"
   },
   {
    "kind": "PR",
@@ -1960,13 +1960,13 @@
   "last_pass": "2026-09-19T08:46:58+09:00",
   "enabled": true,
   "today": {
-   "needs-human": 12,
-   "review-reject": 16,
-   "fix-pushed": 16,
+   "needs-human": 13,
+   "review-reject": 17,
+   "fix-pushed": 17,
    "approve": 18
   },
-  "total": 147,
-  "pending_human": 36
+  "total": 150,
+  "pending_human": 37
  },
  "agents": {
   "rows": [
@@ -1980,13 +1980,13 @@
     "role": "구현 builder",
     "calls": 508,
     "metric": "러너 검증 통과 88% · 변경 없음 4",
-    "cost": 2832.34
+    "cost": 2835.71
    },
    {
     "role": "비평 critic",
     "calls": 332,
     "metric": "최종 승인 82% · 한 번이라도 거절 61 · 승인·머지 뒤 회귀 0/230",
-    "cost": 526.86
+    "cost": 531.57
    },
    {
     "role": "수리 repairer",
@@ -2008,14 +2008,14 @@
    },
    {
     "role": "PR 심사 shepherd-reviewer",
-    "calls": 108,
-    "metric": "승인 28 · 거절 44 · 사람 필요 36 · 승인 뒤 회귀 0",
-    "cost": 210.45
+    "calls": 110,
+    "metric": "승인 28 · 거절 45 · 사람 필요 37 · 승인 뒤 회귀 0",
+    "cost": 218.53
    },
    {
     "role": "PR 수리 shepherd-fixer",
-    "calls": 35,
-    "metric": "고쳐서 푸시 85%",
+    "calls": 36,
+    "metric": "고쳐서 푸시 86%",
     "cost": null
    },
    {
@@ -2457,7 +2457,7 @@
   },
   {
    "metric": "유효 개선당 비용",
-   "value": "$16.71",
+   "value": "$16.74",
    "detail": "비용 확인된 유효 개선 225건, 미확인 세션 13"
   },
   {
@@ -2488,7 +2488,7 @@
    "merged": 3,
    "nochange": 1,
    "failed": 1,
-   "cost_usd": 142.72
+   "cost_usd": 150.8
   },
   {
    "date": "2026-09-18",
@@ -2654,8 +2654,8 @@
    "merged": 12,
    "nochange": 3,
    "failed": 6,
-   "cost": 1499.35,
-   "minutes": 3434
+   "cost": 1507.43,
+   "minutes": 3454
   },
   {
    "key": "2026-W37",
@@ -2692,8 +2692,8 @@
    "merged": 115,
    "nochange": 17,
    "failed": 20,
-   "cost": 3758.74,
-   "minutes": 9079
+   "cost": 3766.82,
+   "minutes": 9099
   }
  ],
  "projects": [
@@ -3550,8 +3550,8 @@
    "last_ts": "2026-09-18T04:37:56+09:00",
    "last_status": "other",
    "last_result": "review held, PR open https://github.com/hkjang/seaton/pull/30",
-   "cost": 76.96,
-   "minutes": 179,
+   "cost": 79.61,
+   "minutes": 184,
    "grade": "A",
    "grade_why": "14일: 릴리즈 3, 실패 0, 경고 0, 회귀 0",
    "lessons": 0,
@@ -3715,8 +3715,8 @@
    "last_ts": "2026-09-18T05:54:06+09:00",
    "last_status": "other",
    "last_result": "guarded files, PR open https://github.com/hkjang/visitflow/pull/18",
-   "cost": 73.65,
-   "minutes": 216,
+   "cost": 79.07,
+   "minutes": 231,
    "grade": "D",
    "grade_why": "14일: 릴리즈 5, 실패 1, 경고 5, 회귀 0",
    "lessons": 0,
