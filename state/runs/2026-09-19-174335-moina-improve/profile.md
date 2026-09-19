@@ -1,0 +1,17 @@
+# moina 프로필 (2026-09-19)
+- 목적: 사내 마이크로블로그(Moin/Echo/Signal) — 승인 워크플로·알림·Keycloak SSO·MCP 서버를 갖춘 단일 이미지 오프라인 배포 앱.
+- 스택: Go(backend, pgx, go-oidc, go-jose) · PostgreSQL 17 · React+TypeScript+Vite(frontend, vitest, ESLint) · Playwright e2e(시각 회귀·접근성·smoke) · Docker 단일 이미지.
+- 구조:
+  - `backend/internal/httpapi/` — 라우트·핸들러(`server.go` 라우트 등록, `posts.go`, `auth.go`, `oidc.go`, `mcp_oauth.go`, `analytics.go`, `security_notice.go`), integration 테스트는 PostgreSQL DSN 없으면 skip
+  - `backend/internal/analytics/`, `model`, migrations(`0NN_*.sql`, 최근 014 `mail_deliveries`)
+  - `frontend/` — 웹 앱, `API_CONTRACT.md` 가 API 계약 사본
+  - `api/openapi.yaml` — 정본 API 계약(route 계약 120개, `scripts/check-openapi-routes.mjs` 로 검사)
+  - `e2e/` — `visual-regression.mjs`(52장 베이스라인, `MOINA_VISUAL_ONLY` 부분 갱신), `VISUAL_REGRESSION.md`
+  - `scripts/` — `qa-api-smoke.sh`, `check-*.mjs`, `qa-pages.mjs`, `package-image.sh`, `verify-image-package.sh`
+  - `docs/` — `USER_GUIDE.md/.pdf`, `ADMIN_GUIDE.md/.pdf` 정본(공용 md2pdf로 PDF 재생성), `api-mcp.md`, `assets/screenshots`
+  - `deploy/` — `docker-compose.offline.yml`(image 태그 v0.1.12로 낡음, 릴리즈 세션 몫)
+- 빌드·테스트: `make fmt` · `make check`(런타임 계약·route·브랜드·Pages QA) · `go test -race ./...`(integration은 PostgreSQL DSN 필요, throwaway docker `postgres:17-alpine`) · `go vet`·staticcheck · frontend `npm run lint`(경고 상한 40, 0 error)·`vitest`·`npm run build` · `make image`(느림) · e2e `npm test --prefix e2e`(앱 18080에 띄운 뒤, 느림).
+- 관례: 커밋 메시지 한국어 `feat:/fix:/release:` 접두 · 설정은 키 하나의 JSON 문서(API camelCase) · 관리 설정 전용 API(`/admin/*`, DisallowUnknownFields) · 새 기능은 기본 꺼짐 · 가이드 표에 표준 이름 ↔ 화면 필드 1:1 대응 · 문서 정본은 하나(옛 사본엔 안내만).
+- 위험 구역: `httpapi/auth.go`·`oidc.go`·`mcp_oauth.go`(인증·토큰 검증) · migrations(추가만, 수정 금지) · `.github/workflows/release.yml`(느슨하게 하기 금지) · `securityHeaders`/CSP nonce(`serveSPA`) · 아웃바운드 정책이 loopback을 막아 테스트는 httptest/net.Pipe 대체.
+- 자주 깨지는 곳: 시각 회귀 베이스라인(관리 화면 문구·카드 추가 시 admin-settings 4장) — 반드시 공식 Playwright 이미지 + `127.0.0.1:18080` origin에서만 갱신 · e2e 로그인 IP당 5회/5분 제한(429) · PDF 재생성 시 표지 부제.
+- 검증 함정: 로컬 WSL Chromium은 한글 폰트가 달라 52장 전부 어긋남(CI renderer로만 판단) · `make test`는 `-race` 없음(CI는 `-race`) · Makefile `check`는 있으나 자동 러너 세션에서 `make`/`bash scripts/*` 실행이 승인 거절될 수 있어 검증은 구현 세션에서 반드시 직접 실행 · 이 환경에 Keycloak·SMTP 릴레이·Momento 없음.

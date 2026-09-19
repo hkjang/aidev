@@ -1,7 +1,7 @@
 ---
 title: "ai-admin — 자율 개선 이력"
 description: "ai-admin: 자율 개선 회차 30회, 릴리즈 14건. 최근 릴리즈 v1.2.22 (자산 2개)."
-last_modified_at: 2026-09-19 17:33:01 +0900
+last_modified_at: 2026-09-19 18:28:17 +0900
 ---
 {% raw %}
 <script type="application/ld+json">
@@ -18,7 +18,7 @@ last_modified_at: 2026-09-19 17:33:01 +0900
   "name": "hkjang",
   "url": "https://github.com/hkjang"
  },
- "dateModified": "2026-09-19T17:33:01+09:00",
+ "dateModified": "2026-09-19T18:28:17+09:00",
  "version": "1.2.22"
 }
 </script>
