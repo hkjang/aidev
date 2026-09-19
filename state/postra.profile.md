@@ -1,0 +1,15 @@
+# postra 프로필 (2026-09-19)
+- 목적: 사내 메일(IMAP/POP3/SMTP)을 팀 작업 공간·MCP 도구·AI 보조로 다루는 자체 호스팅 메일 서비스(현재 v0.23.0, main@49edf02).
+- 스택: Go 1.26(`go.mod` toolchain 고정, net/smtp 등 표준 라이브러리 중심) · SQLite/PostgreSQL(pgvector) · React+TypeScript(`web/`, vitest·playwright) · MCP 서버(Keycloak OAuth/DCR 프록시).
+- 구조:
+  - `cmd/postra`(서버 바이너리) · `cmd/postra-contracts`(OpenAPI/TS 계약 생성·`-check`)
+  - `internal/domain` 포트·엔티티(`account.go` 의 `SMTPSendOptions`/`SMTPClient`, `SecretHandle`)
+  - `internal/application` 유스케이스(send.go 아웃박스 재시도, oidc*.go, incidents, scheduler/live worker, 설정 카탈로그)
+  - `internal/adapters/{imap,pop3,smtp,ai,persistence,pgstore,secretstore,objectstore,malware,mailparse}` — smtp 는 `client.go` 하나
+  - `internal/transport/{httpapi,mcpserver,spa}` — REST(`/api/v1/...`, 레거시 `/api/admin/settings`), MCP, 임베드된 `/app` 번들(`spa/assets`, 커밋 대상)
+  - `internal/platform/*` 공용(빌드 버전, tracking 등), `web/` 프런트 소스, `docs/`(ADMIN_GUIDE·NOTIFICATIONS·MCP_OAUTH·releases/), `api/` 계약, `dist/`
+- 빌드·테스트: `go build ./... && go vet ./... && go test -race ./...`(수 분) · `make test` 동일 · `go run ./cmd/postra-contracts -check` · `cd web && npm run typecheck && npm test && npm run build`(번들 바뀌면 커밋 필수, CI 가 `git status` 로 검증) · Postgres 통합은 CI `postgres-integration` 잡(로컬은 pgvector 컨테이너 필요).
+- 관례: 커밋 메시지 영어 conventional(`feat(mcp): … for v0.23.0`), 코드 주석 영어·운영 문서와 회차 기록은 한국어. 설정은 `settings_catalog` 에 키 등록(비밀은 `Secret` 로 SecretStore 참조만 저장). 마이그레이션은 SQLite·PostgreSQL 양쪽 스토어에 각각 추가. 릴리즈는 버전 범프 + `docs/releases/` 노트 + 주석 태그 → GH Actions(`release.yml`).
+- 위험 구역: `internal/application/oidc*.go`·`transport/httpapi/browser_auth.go`(세션·SSO 루프 방지) · `mcpserver` OAuth/DCR 프록시(v0.22~0.23 신규) · persistence/pgstore 스키마(다중 replica, 리더 노드 워커) · `spa/assets` 번들(소스와 어긋나면 CI 실패) · secretstore(평문 누출 금지, 감사 로그엔 식별자만).
+- 자주 깨지는 곳: 별도 브랜치(notifymail `auto/2026-09-16-*`, handoff `auto/2026-09-16-0702`)가 main 에 머지되지 않아 그 위에 얹은 과제가 매번 무효화됨 — main 기준으로만 과제를 고를 것. ADMIN_GUIDE 6.5 절 번호 충돌 가능. 러너 워크트리 잠금 문제(run.sh 에서 자체 복구).
+- 검증 함정: `gofmt -l` 은 CI 에 없음(로컬에서 직접 확인). 브라우저 e2e(`npm run test:e2e`) 는 Chromium 필요. 실제 SMTP/IMAP 서버가 없어 어댑터 검증은 127.0.0.1 net.Listen 스크립트 서버까지만. `TestConnection` 은 DNS 조회를 먼저 하므로 테스트 Host 는 `127.0.0.1`. PDF 재생성(`scripts/build_docs.py`) 은 Chromium 필요.

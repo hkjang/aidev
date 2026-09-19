@@ -1,0 +1,15 @@
+# orbit 프로필 (2026-09-19)
+- 목적: 개인의 인간관계를 '궤도'(거리·움직임·상태)로 보여 주고 기억·교류를 기록·승인·AI/MCP 로 꺼내 쓰는 자체 호스팅 웹 앱.
+- 스택: Go 1.26(chi v5, pgx v5, go-oidc v3) + PostgreSQL(compose 는 postgres:18-alpine) + React 19/TypeScript 6/Vite 8/MUI 9, 테스트는 Go 표준 + vitest 4(jsdom, testing-library). 단일 바이너리에 웹 UI 임베드(`internal/webui/dist`).
+- 구조:
+  - `cmd/orbit` — 진입점, 빌드 정보(version/commit/builtAt ldflags).
+  - `internal/server` — HTTP 전부: `server.go`(라우팅·미들웨어), `auth.go`(로컬 로그인·OIDC·세션·API 키), `throttle.go`(로그인 잠금), `data.go`(사람·교류·기억·/orbit·/rediscover), `timetravel.go`(과거 시점 궤도·`orbitRange`), `ai.go`/`mcp.go`(AI·MCP 도구), `settings.go`(관리자 설정), `workflow.go`(승인), `personal.go`/`export.go`(내 기록 내보내기), `openapi.go`, `grammar.go`(궤도 상태 문법).
+  - `internal/store` — DB 연결·`migrations/*.sql`(001~005, embed, `schema_migrations` 표로 순서 적용)·Bootstrap 기본값.
+  - `internal/config`, `internal/secure`(암호화), `internal/id`.
+  - `web/src` — `pages/*`(Orbit/People/Person/Memories/Approvals/AI/Admin/Personal/Login), `components/*`(OrbitCanvas 등), 순수 로직은 `*.ts` 로 분리(`eclipse.ts`, `forecast.ts`, `gravityAssist.ts`, `orbitGrammar.ts`, `peopleView.ts`)하고 옆에 `*.test.ts`.
+  - `docs/` — API.md, ARCHITECTURE.md, guide.md, cru-manual.md, OFFLINE.md, PDF 세 종(다시 굽지 않음).
+- 빌드·테스트: `go test ./...`(빠름, 수 초; `-race` 는 CI), `cd web && npm ci && npx vitest --run`(95개), `cd web && npm run build`(`tsc -b && vite build`), `make build`(web 빌드→dist 복사→Go 빌드), `make docker`. 워크트리에는 `web/node_modules` 가 없을 수 있어 `npm ci` 먼저.
+- 관례: 커밋 메시지는 `feat(scope): 한국어 한 줄`/`fix(...)`/`perf(...)`/`chore(release): vX.Y.Z`; 릴리즈는 `VERSION` 파일 + `chore(release)` 커밋. 설정은 `settings` 표(`system:*`, `oidc:*` 같은 키) + 관리 콘솔 탭. 마이그레이션은 `internal/store/migrations/NNN_name.sql` 순번(다음은 006 — 단, 미머지 브랜치들이 006~009 를 이미 씀). 코드 주석·문서는 한국어. 브랜치는 `auto/YYYY-MM-DD-HHMM`, PR 로 main 머지.
+- 위험 구역: `internal/server/auth.go`(세션·OIDC·API 키 — 인증 게이트), `throttle.go`(잠금 규칙, 감사 로그 계약), `internal/store/migrations`(번호 충돌: 미머지 SSO/추적/handoff/메일/MCP OAuth 브랜치가 006~009 를 선점), `internal/secure`(사용자 키 암호화 — 기억 본문), `.github/workflows`.
+- 자주 깨지는 곳: 이 회차까지 교훈 기록 없음. 주의 포인트는 (1) 미머지 브랜치(auto/2026-09-14-0941 SSO, 09-16-0102 추적, 09-16-0132 handoff, 09-16-1552 메일, 09-18-1033 MCP OAuth)가 각각 `docs/ADMIN_GUIDE.md` 와 마이그레이션을 새로 만들어 머지 시 충돌 예정; (2) 보류 아이디어 중 `newDBServer`/`ORBIT_TEST_DATABASE_URL`/`fakeIDP` 에 기대는 것은 **main 에 없다**(09-18 브랜치에만).
+- 검증 함정: main 에는 DB 를 끼는 테스트가 없다 — SQL 변경은 `go test` 로 못 잡는다(정적 검토 또는 docker postgres 수동). CI 는 Go `-race` + vitest + vite build + docker build 이며 postgres 서비스 없음. `web` 의 `npm run lint` 는 eslint 미설치라 실패(CI 에도 없음). WSL 에서 `/mnt/c` 경로면 vite 가 폴링 감시로 전환.

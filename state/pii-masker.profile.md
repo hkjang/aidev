@@ -1,0 +1,18 @@
+# pii-masker 프로필 (2026-09-19)
+- 목적: PDF/PNG/JPG 업로드를 Upstage 호환 문서 추론 엔드포인트로 보내 PII 필드를 검출하고 해당 영역을 마스킹한 파일을 돌려주는 독립형 HTTP API(동기 `/v1/mask`, 비동기 `/v1/jobs`) + 내장 Playground UI.
+- 스택: Go 1.25 단일 모듈(`module pii-masker`), `gorilla/mux` 라우터, 의존성은 `vendor/`에 고정(`go.mod`에서 `golang.org/x/text`는 indirect). DB 없음 — job은 디스크(`<root>/jobs/<id>/job.json` + `input_*`/`output_*`)에 저장. 프런트는 `internal/httpapi/static/index.html` 단일 파일. Dockerfile·docker-compose 있음. CI 워크플로(`.github/`) 없음 — 검증은 로컬 명령이 전부.
+- 구조:
+  - `cmd/pii-masker/main.go` — 진입점, `signal.NotifyContext`로 graceful shutdown.
+  - `internal/app` — `App.Run/Serve`: http.Server 타임아웃, `svc.Shutdown` 배출. 통합 테스트(실제 리스너·job 라이프사이클).
+  - `internal/config` — 환경변수 `PII_MASKER_*` 로드·정규화(`Load`, `normalize*`, `env*`). 테스트는 타임아웃 3개뿐.
+  - `internal/httpapi` — `server.go` 라우트·핸들러(`readProcessInput`, `handleGetJobResult`는 `ServeContent` 스트리밍, `historyLimit`, `attachmentDisposition` RFC 6266), `documentResponse` 래퍼(no-store). `integration_test.go`가 mock 업스트림으로 전 경로 검증.
+  - `internal/service` — `Service`: 동기/비동기 슬롯(`syncSlots`/`jobSlots`), `CreateJob`→`startJobRunner`→`runJob`, draining/`Shutdown`, 보존 스위퍼, 오류 매핑.
+  - `internal/jobs` — `Store`: 메모리 맵 + `job.json` 영속, `load()`가 기동 시 queued/running→`job_interrupted`, 고아 디렉터리 삭제, `DeleteExpired`.
+  - `internal/upstage` — 추론 클라이언트(`performParseRequest`, 8MB 응답 상한, `classifyHTTPError`, allow-host 검사, `TestConnection`).
+  - `internal/masking`, `internal/document` — 필드 검출 정책·엔진, PDF/이미지 첨부 파싱·마스킹 렌더.
+  - `internal/mock` — 테스트용 업스트림 mock 서버. `internal/core` — 공용 타입(`JobRecord`, `ProcessMetadata`, `APIError`).
+- 빌드·테스트: `go build ./...`, `go vet ./...`, `gofmt -l ./cmd ./internal`, `go test -count=1 ./...`(전체 약 2초), `go test -race -count=3 ./...`(플래키 확인용, 수십 초). `scripts/smoke-test.ps1`·`export-image.ps1`은 Windows 수동용, `scripts/run-from-archive.sh`는 도커 이미지 아카이브 실행.
+- 관례: 커밋 메시지는 영어 명령문 한 줄("Stream job results from disk instead of buffering them"). 코드 주석·README·API 오류 메시지는 한국어(오류 `Message`)와 영어(코드 주석) 혼용 — 주석은 "왜"를 길게 적는 스타일. 설정은 환경변수만(`PII_MASKER_*`), 기본값은 `internal/config/config.go`. 마이그레이션 없음. 문서는 README.md 하나(기능 목록 → 제한·정책 문단 순). 테스트는 `t.Parallel()` + `t.TempDir()`, 헬퍼 `seedJob`/`writeOrphanDir`(jobs), 통합은 httptest + mock 업스트림. 매 회차 "이전 구현으로 되돌려 새 테스트가 실패하는지" 확인하고 요약에 적는 관례.
+- 위험 구역: `internal/upstage` allow-host·API 키 처리(외부 호출 보안), `internal/service.Shutdown`/draining 채널·WaitGroup(경합에 민감, `-race`로 확인), `internal/jobs.load()`의 고아 삭제(`os.RemoveAll` — 판정 조건을 넓히면 사용자 데이터 삭제), `readProcessInput`의 본문 상한(메모리 상한 정책).
+- 자주 깨지는 곳: 과거 실패 기록 없음(교훈 비어 있음). 다만 job 상태 전이(`queued/running/failed/completed`)와 `UpdatedAt` 의미(보존 기한 기준)를 여러 곳(`load`, `markJobInterrupted`, `DeleteExpired`, `runJob`)이 각자 다루므로 한쪽만 고치면 어긋남.
+- 검증 함정: CI 없음 — 로컬 통과가 곧 검증. `internal/app`·`service` 테스트는 실제 고루틴·채널 타이밍에 의존하므로 `-race -count=3` 이상으로 확인. 테스트가 root로 돌면 chmod 기반 실패 유도는 무효(파일 자리에 디렉터리를 두는 방식 사용). `go mod tidy/vendor`는 네트워크 필요 — 새 직접 의존성 추가는 피할 것. Windows 대상 스크립트가 있으나 테스트는 WSL Linux에서만 실행됨(미확인: Windows에서의 테스트 통과 여부).
