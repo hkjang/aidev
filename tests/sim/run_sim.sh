@@ -24,6 +24,7 @@ jq -n --argjson v "$(jq -c '.verify // ["true"]' "$SCN")" --argjson nc "$(jq -c 
 for a in $(jq -r '.prev_release_assets[]? // empty' "$SCN"); do mkdir -p "$AIDEV_SIM/releases/v0.0.1/assets"; head -c 2048 /dev/urandom > "$AIDEV_SIM/releases/v0.0.1/assets/$a"; done
 [ -d "$AIDEV_SIM/releases/v0.0.1" ] && jq -n '{tagName:"v0.0.1",name:"v0.0.1",publishedAt:"2026-01-01T00:00:00+09:00",isPrerelease:false,body:""}' > "$AIDEV_SIM/releases/v0.0.1/meta.json"
 [ "$(jq -r '.tag_exists // false' "$SCN")" = true ] && { git -C "$ROOT/$proj" tag -a "$(jq -r '.release.tag // "v0.0.2"' "$SCN")" -m x; git -C "$ROOT/$proj" push -q origin "$(jq -r '.release.tag // "v0.0.2"' "$SCN")"; }
+[ "$(jq -r '.experiment // empty' "$SCN")" != "" ] && jq '.experiment' "$SCN" > "$AIDEV_STATE/experiment.json"
 for st in $(jq -r '.stops[]? // empty' "$SCN"); do touch "$AIDEV_STATE/STOP$( [ "$st" = all ] && echo "" || echo "-$st")"; done
 [ "$(jq -r '.duplicate_pr // false' "$SCN")" = true ] && export AIDEV_SIM_DUP=1
 touch "$AIDEV_DATA/runs.jsonl" "$AIDEV_DATA/usage.jsonl"
@@ -37,7 +38,7 @@ rc=$?
   --argjson prs "$(for f in "$AIDEV_SIM"/prs/*.json; do [ -f "$f" ] && jq -c '{url,state,head}' "$f"; done | jq -s '.')" \
   --argjson rels "$(for f in "$AIDEV_SIM"/releases/*/meta.json; do [ -f "$f" ] && jq -c --arg d "$(dirname "$f")/assets" '{tag:.tagName, assets:[]}' "$f" | jq -c --arg d "$(dirname "$f")/assets" '.assets=[($d|.)]' ; done | jq -s '.')" \
   --arg tags "$(git --git-dir="$origin" tag | tr '\n' ' ')" --arg gh "$(grep -c . "$AIDEV_SIM/log/gh.log" 2>/dev/null || echo 0)" \
-  '{rc:$rc, outcome, result, stages:((.stages // {})|map_values(.state)), prs:$prs, releases:$rels, remote_tags:$tags, gh_calls:($gh|tonumber), tmp:$t}'
+  '{rc:$rc, outcome, result, arm, stages:((.stages // {})|map_values(.state)), prs:$prs, releases:$rels, remote_tags:$tags, gh_calls:($gh|tonumber), tmp:$t}'
 for r in "$AIDEV_SIM"/releases/*/assets; do [ -d "$r" ] && printf '{"release_assets":"%s","names":"%s"}\n' "$(basename "$(dirname "$r")")" "$(ls "$r" | tr '\n' ' ')"; done
 [ -n "$KEEP" ] || rm -rf "$T"
 exit 0

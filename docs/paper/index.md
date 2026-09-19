@@ -7,7 +7,7 @@ description: "An experience report from 18 days, 46 repositories, 1,031 runner r
 
 **An experience report from the aidev runner (2026-09-02 → 2026-09-19)**
 
-*hkjang · with Claude (Fable 5.1) as co-author of the system and of this report · draft v2, 2026-09-19 · Korean version: [한국어](./ko/) · PDF: [English](./aidev-complementary-agents-en.pdf) · [한국어](./aidev-complementary-agents-ko.pdf)*
+*hkjang · with Claude (Fable 5.1) as co-author of the system and of this report · draft v3, 2026-09-19 · Korean version: [한국어](./ko/) · PDF: [English](./aidev-complementary-agents-en.pdf) · [한국어](./aidev-complementary-agents-ko.pdf)*
 
 ---
 
@@ -17,7 +17,7 @@ We report on eighteen days of operating **aidev**, a runner that autonomously ma
 
 The central design question was not "can a model write a patch" but "how do we keep a fleet of unattended patches honest." Our answer evolved from a single all-purpose agent into a set of **complementary agents** that cannot approve their own work: a read-only *scout* that writes the task brief, a *builder* that implements it, a *critic* that reads only the diff, a *repairer* that fixes only what the critic named, an *arbiter* that settles disagreements, a *releaser*, an hourly *shepherd* pair that unsticks pull requests, and *historians* that distill rejections and regressions into rules the other agents read before they start. The agents collaborate through a per-round journal in which each role records what it did and, importantly, what it is unsure about.
 
-We describe the architecture, the safety envelope that made unattended operation tolerable (pinned bases, runner-side verification, secret and artifact gates, protected paths, autonomy levels with automatic demotion, SHA-pinned approvals, budgets, kill switches), the *campaign* mechanism for rolling one feature across thirty repositories with a written standard and a reference implementation, and the measurements we have. We then list the failures that actually happened and the operational know-how they produced. Most of the hard-won lessons are not about prompting; they are about plumbing: stdin consumed inside loops, scheduler processes killed mid-round, a tab-separated field that closed four campaigns at once, and notifications that looked like an intrusion.
+We describe the architecture, the safety envelope that made unattended operation tolerable (pinned bases, runner-side verification, secret and artifact gates, protected paths, autonomy levels with automatic demotion, SHA-pinned approvals, budgets, kill switches), the *campaign* mechanism for rolling one feature across thirty repositories with a written standard and a reference implementation, and the measurements we have. Because the system changed daily, observational before/after numbers cannot attribute effects to roles; we therefore define and start a **randomized within-fleet experiment** (seven arms that each remove one judgment role: scout, in-round repair, arbiter, same-family critic, shared journal, distilled lessons) and report two pilot studies — a cross-model critic comparison (12 PRs: the second family agreed on every rejection and additionally rejected 2 of 6 approvals) and a 30-day post-merge maintenance measurement (27% of merged changes sit in files a human fixed within a month). We then list the failures that actually happened and the operational know-how they produced. Most of the hard-won lessons are not about prompting; they are about plumbing: stdin consumed inside loops, scheduler processes killed mid-round, a tab-separated field that closed four campaigns at once, and notifications that looked like an intrusion.
 
 ---
 
@@ -32,7 +32,7 @@ This report makes four contributions.
 1. **An architecture for complementary agents** in which the roles that make changes and the roles that judge changes are different sessions with different tools, and no role can approve its own output (§3).
 2. **A safety envelope for unattended merging** built from cheap mechanical gates rather than from model judgment alone (§4).
 3. **Campaigns**: a way to roll one feature across many repositories using a written standard and a reference implementation, with campaign-level lessons distilled from the first repositories' failures and injected into the later ones (§5).
-4. **Measurements, two experiments and incidents** from 1,031 rounds — including a cross-model critic study and a 30-day post-merge maintenance measurement — with what the numbers do and do not support (§6, §7), and the operational know-how we would give anyone building the same thing (§8).
+4. **A randomized within-fleet experiment** (seven arms, RQ1–RQ5, running since 2026-09-19) that removes one judgment role at a time, with two pilot studies — a cross-model critic comparison and a 30-day post-merge maintenance measurement — and 18 days of observational data on what the numbers do and do not support (§6, §7), plus the operational know-how we would give anyone building the same thing (§8).
 
 Everything described here is in the repository `hkjang/aidev` (runner `bin/run.sh`, prompts in `prompt.md`, `review-prompt.md`, `agents/*.md`, documentation in `AGENTS.md` and `README.md`), and the raw data behind the numbers is published as `docs/data/runs.jsonl` and `docs/data/usage.jsonl`.
 
@@ -185,11 +185,27 @@ Two things stand out. First, the rate at which campaigns *reached a PR* was high
 
 Three campaign-specific incidents shaped the mechanism. A goal written on multiple lines broke a tab-separated parse so that `until` read as empty and the campaign closed itself as expired the moment it started (fixed by base64-encoding goals). A column mismatch in the same parse made four campaigns report "all targets done" and close at once (fixed by refusing to close on an empty target list). And a worktree that lost its directory but kept a `locked` registration made one repository fail five rounds in a row and get struck from the campaign; the fix distinguished `infra-error` from `error`, so that infrastructure failures do not count as strikes.
 
-## 6. Measurements
+## 6. Experimental design and measurements
 
-All numbers are from `runs.jsonl` and `usage.jsonl` as of 2026-09-19 (18 days). The first three days predate the structured outcome field, so 249 early rounds are classified from their result string.
+### 6.0 A randomized within-fleet comparison (RQ1–RQ5)
 
-### 6.1 Volume
+Everything before this section describes a system that changed almost daily; before/after comparisons across those changes would be time comparisons, not treatment comparisons. From 2026-09-19 the runner therefore runs a **randomized experiment**: every improvement round is assigned to one of seven *arms* by a hash of its run id, the arm overrides the project policy for that round only, and the arm is recorded with the round. Arms remove one judgment role at a time; none of them removes a mechanical safety gate (verification, protected paths, CI, SHA-pinned approval).
+
+| Arm | Override | Answers |
+|---|---|---|
+| baseline (weight 2) | none: scout, critic, one repair, arbiter, journal, lessons, Claude critic | reference |
+| no-scout | builder chooses its own task | **RQ1** Does a read-only scout choosing the task improve verification pass, PR reach and brief adoption? |
+| no-repair | critic rejection opens the PR held, no in-round repair | **RQ2** What do in-round repair and arbitration change in review-pending backlog, merge rate and cost? |
+| no-arbiter | repair, but no third session when repairer and critic disagree | RQ2 |
+| codex-critic | the critic is an OpenAI Codex session | **RQ3** Does a critic from a different model family reject more, and do its approvals fare better after merge? |
+| no-journal | roles do not see earlier roles' notes | **RQ4** Does reading the builder's "unsure" notes change critic rejections and repair success? |
+| no-lessons | no campaign lessons or operator preferences injected | **RQ5** Does distilled feedback reduce repeat rejections of the same kind? |
+
+Assignment is stratified implicitly by repository and campaign (both recorded), and the analysis (`bin/exp-analyze.py`) reports, per arm, verification pass rate, critic-rejection rate, PR reach, merge rate, review-pending rate, cost per round and per merged change, brief adoption, repair success, arbiter outcomes, and the 30-day post-merge human-fix rate from §6.8, with bootstrap 95% confidence intervals and differences from baseline. At ~60 rounds a day the design yields roughly 100–200 rounds per arm in two weeks; RQ3 and RQ5 outcomes mature 30 days after merge, so we plan a first read-out at month end and a second in mid-October. The pilot studies E1 and E2 below were run before the experiment started and are reported as such. The experiment definition is `state/experiment.json`; results will be published under `docs/paper/experiments/ab-roles-2026-09.md`.
+
+### 6.1 Volume (observational, 2026-09-02 → 09-19)
+
+All numbers below are from `runs.jsonl` and `usage.jsonl` as of 2026-09-19 (18 days). The first three days predate the structured outcome field, so 249 early rounds are classified from their result string. They describe the system as it was operated; they do not compare treatments.
 
 | | |
 |---|---|
@@ -246,7 +262,7 @@ Twenty-five approvals in two days against a backlog that had not moved in a week
 
 The scout/critic/repair loop had run for one day at the time of writing: 11 scout sessions (9 briefs produced, 2 failures), 2 in-round repairs, both successful. This is too little to conclude anything about the loop's effect on the rejection rate; we report it because the mechanism is in place and the scorecard on the dashboard will accumulate it.
 
-### 6.6 Experiment E1 — cross-model critic
+### 6.6 Pilot E1 — cross-model critic
 
 **Question.** aidev's builder and critic are the same model family. LLM judges prefer familiar text [10, 11]; does a critic from another family disagree with ours, and if so, in which direction?
 
@@ -275,7 +291,7 @@ Applying the three MAST categories [16] to the 14-day window (n = 299 failure ev
 
 Half of our failures are the runner's own plumbing, not the agents — which is consistent with §8.1 and with Cemri et al.'s finding that many multi-agent failures are specification and system-design problems rather than model errors. The taxonomy is now a standing row on the dashboard's scorecard.
 
-### 6.8 Experiment E2 — post-merge corrective maintenance
+### 6.8 Pilot E2 — post-merge corrective maintenance
 
 **Question.** Xia and Miller [24] found agentic code needs more corrective maintenance after merge. Our regression watcher looks only 2–48 hours out. What does a 30-day window show for aidev's merged changes?
 
@@ -362,7 +378,7 @@ Anthropic's engineering guidance on agent workflow patterns [26] names the evalu
 
 ## 10. Future work
 
-- **Evidence for the loop.** Accumulate the scout/critic/repair/arbiter scorecard for a month and test whether in-round repair actually lowers the review-pending backlog and at what cost.
+- **Read out the experiment.** First read-out of RQ1–RQ5 at month end (~100–200 rounds per arm), second in mid-October when 30-day post-merge outcomes mature; then drop the arms that lose and promote the ones that win into the default policy.
 - **Regression predictor.** Use files touched, protected paths, review risk, test count and project health to route each change to auto-merge, shepherd or human, and to choose the observation window.
 - **Cheaper roles.** The scout and the critic are read-only and short; they are candidates for smaller models. The registry supports per-role models with automatic fallback, but we have not measured quality at lower cost.
 - **Longer memory.** Profiles and lessons are the first two forms of cross-round memory. Per-project "what the last three critics worried about" and per-campaign "what humans rejected" are obvious next ones.

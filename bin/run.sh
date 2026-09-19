@@ -83,8 +83,31 @@ gh auth status >/dev/null 2>&1 || { log "gh 인증 없음 — 회차를 시작�
 
 # ---------------------------------------------------------------- 정책 · 실행 단위
 # 정책: default.policy.json 위에 <프로젝트>.policy.json 을 덮는다. 에이전트는 이 파일들을 보지 못한다.
-policy(){ # $1=프로젝트 $2=jq 경로 (예: .base_branch)
-  jq -r "$2 // empty" <(jq -s '.[0] * (.[1] // {})' "$STATE/default.policy.json" <([ -f "$STATE/$1.policy.json" ] && cat "$STATE/$1.policy.json" || echo '{}')) 2>/dev/null
+policy(){ # $1=프로젝트 $2=jq 경로 (예: .base_branch) — 기본 정책 < 프로젝트 정책 < 실험 arm 덮어쓰기(EXP_OVERRIDES)
+  # `// empty` 는 false 를 없는 값으로 취급해 agents.scout=false 같은 스위치가 영영 읽히지 않았다 (2026-09-19) — null 만 비운다
+  jq -r "($2) | if . == null then empty else . end" <(jq -s '.[0] * (.[1] // {}) * (.[2] // {})' "$STATE/default.policy.json" <([ -f "$STATE/$1.policy.json" ] && cat "$STATE/$1.policy.json" || echo '{}') <(printf '%s' "${EXP_OVERRIDES:-{\}}")) 2>/dev/null
+}
+# ---------------------------------------------------------------- 비교 실험 (state/experiment.json)
+# 회차마다 arm 을 무작위로 배정해 정책을 덮어쓴다 — "정찰을 넣었더니 좋아졌다" 를 시점 비교가 아니라
+# 같은 저장소·같은 기간의 짝지은 비교로 말하기 위해서다. 배정은 run_id 해시로 결정론적이고, 기록은
+# runs.jsonl 의 arm 필드. 어떤 arm 도 안전 울타리(검증·보호 경로·CI·승인 SHA)는 끄지 않는다 — 끄는 것은
+# 판단 역할(정찰·수리·중재·비평 엔진·노트·교훈)뿐이다. 분석은 bin/exp-analyze.py.
+EXP_OVERRIDES='{}'; ARM=""; EXP_ID=""
+exp_assign(){ # $1=프로젝트 $2=run_id → ARM, EXP_OVERRIDES, EXP_ID 설정
+  local f="$STATE/experiment.json" total pick h acc=0 name w
+  ARM=""; EXP_OVERRIDES='{}'; EXP_ID=""
+  [ -f "$f" ] && [ "$(jq -r '.enabled // false' "$f")" = true ] || return 0
+  # 제외: 실험이 제외한 프로젝트, 자율화 analyze
+  jq -e --arg p "$1" '(.exclude // []) | index($p)' "$f" >/dev/null 2>&1 && return 0
+  total=$(jq -r '[.arms[].weight // 1] | add' "$f"); [ "${total:-0}" -gt 0 ] || return 0
+  h=$(printf '%s' "$2" | sha256sum | cut -c1-8); pick=$(( 0x$h % total ))
+  while IFS=$'\t' read -r name w; do
+    acc=$((acc + w)); [ "$pick" -lt "$acc" ] && { ARM=$name; break; }
+  done < <(jq -r '.arms | to_entries[] | "\(.key)\t\(.value.weight // 1)"' "$f")
+  [ -n "$ARM" ] || return 0
+  EXP_ID=$(jq -r '.id' "$f"); EXP_OVERRIDES=$(jq -c --arg a "$ARM" '.arms[$a].overrides // {}' "$f")
+  [ -f "$OUT/run.json" ] && jq --arg a "$ARM" --arg e "$EXP_ID" '.arm=$a | .experiment=$e' "$OUT/run.json" > "$OUT/run.json.tmp" && mv "$OUT/run.json.tmp" "$OUT/run.json"
+  log "$n: 실험 $EXP_ID arm=$ARM ($EXP_OVERRIDES)"
 }
 # 기준 브랜치를 정한다: 정책에 적혀 있으면 그것, 없으면 저장소에 물어본다.
 #
@@ -753,7 +776,9 @@ PY
 journal_seed(){ # $1=제목
   printf '# %s\n정찰 → 구현 → 비평 → 수리 → 중재 → 릴리즈가 차례로 적는다. 다음 역할은 앞선 노트를 먼저 읽는다. [러너] 줄은 러너의 단계 판정이다.\n' "$1" > "$OUT/journal.md"
 }
-journal_text(){ cat "$OUT/journal.md" 2>/dev/null || echo "(없음)"; }
+journal_text(){ # 실험 arm 이 노트 주입을 껐으면(agents.journal=false) 앞선 역할의 노트를 보여 주지 않는다 (기록은 계속 쌓인다)
+  if [ "$(policy "$n" '.agents.journal')" = false ]; then echo "(이 회차에는 앞선 역할의 노트를 주지 않습니다)"; else cat "$OUT/journal.md" 2>/dev/null || echo "(없음)"; fi
+}
 journal_safe(){ # 비밀값 검사를 통과한 노트만 밖(PR·릴리즈 노트)으로 낸다
   if [ -s "$OUT/journal.md" ] && $GATE secrets "$OUT/journal.md" >/dev/null 2>&1; then head -c "${1:-4000}" "$OUT/journal.md"; else echo "(회차 노트 생략 — 없거나 비밀값 의심 문자열 포함)"; fi
 }
@@ -849,8 +874,8 @@ record_run(){ # $1=프로젝트 $2=결과 문장 $3=outcome
   local st='{}'; [ -f "${OUT:-/nonexistent}/stages.json" ] && st=$(cat "$OUT/stages.json")
   jq -cn --arg ts "$(date -Iseconds)" --arg d "$RUN_DATE" --arg p "$1" --arg r "$2" --arg o "$3" --arg rid "${RUN_ID:-}" \
      --arg b "${BASE_SHA:-}" --arg h "${HEAD_SHA:-}" --arg pr "$pr" --argjson m "${RUN_META:-{\}}" --argjson st "$st" \
-     --arg camp "${CAMPAIGN_ID:-}" --arg au "${AUTONOMY_NOW:-}" \
-     '{ts:$ts,date:$d,project:$p,result:$r,outcome:$o,run_id:$rid,base_sha:$b,head_sha:$h,pr:$pr,stages:$st,campaign:$camp,autonomy:$au} + $m' >> "$DATA/runs.jsonl"
+     --arg camp "${CAMPAIGN_ID:-}" --arg au "${AUTONOMY_NOW:-}" --arg arm "${ARM:-}" --arg exp "${EXP_ID:-}" \
+     '{ts:$ts,date:$d,project:$p,result:$r,outcome:$o,run_id:$rid,base_sha:$b,head_sha:$h,pr:$pr,stages:$st,campaign:$camp,autonomy:$au,arm:$arm,experiment:$exp} + $m' >> "$DATA/runs.jsonl"
   local mark outcome_ko
   case "$3" in
     release-ready) mark="🎉"; outcome_ko="머지하고 릴리즈까지 끝냈습니다";;
@@ -1578,6 +1603,7 @@ round_body(){
   repo="$ROOT/$n"; ledger="$STATE/$n.md"; wt="$WT_BASE/$n"; result="no change"; OUTCOME=no-change; RUN_META="{}"; HEAD_SHA=""; BASE_SHA=""; url=""
   base=$(base_branch "$n")
   new_run "$n" improve; journal_seed "회차 노트 $RUN_ID — $n"
+  exp_assign "$n" "$RUN_ID"
   ibudget=$(policy "$n" '.budget_usd.improve'); [ -n "$BUDGET" ] && ibudget=$BUDGET; ibudget=${ibudget:-8}
   # 캠페인이 개선 예산을 따로 정했으면 그것을 쓴다. 캠페인 한 회차의 일감은 평소
   # 개선과 크기가 다르다 — 가이드 회차는 앱을 띄우고 화면 서른 장을 찍고 문서 둘을
@@ -1636,6 +1662,10 @@ $(printf '%b' "$RUN_SPEC")
   # ── 정찰(scout): 읽기만 하는 에이전트가 먼저 과제서를 쓴다. 구현자는 그 과제만 한다 —
   #    "무엇을 할지" 와 "어떻게 하는지" 를 다른 세션이 맡으면 서로의 실수를 잡는다 (AGENTS.md).
   brief=""; prefs_md="$(cat "$STATE/operator-preferences.md" 2>/dev/null)"
+  # 실험 arm 이 교훈 되먹임을 껐으면(agents.lessons=false) 운영자 취향·캠페인 교훈을 이 회차에는 주지 않는다
+  if [ "$(policy "$n" '.agents.lessons')" = false ]; then
+    prefs_md=""; campaign_note=$(sed '/^## 이 캠페인에서 다른 저장소가 이미 걸린 것/,$d' <<<"$campaign_note"); lessons="(이 회차에는 교훈을 주지 않습니다)"
+  fi
   # 프로젝트 프로필: 정찰이 유지하는 저장소 요약(목적·스택·구조·검증 명령·관례·위험 구역). 14일이 지나면 정찰이 다시 쓴다.
   # 매 회차 45분 중 10분을 "파악" 에 쓰던 것을 줄이고, 구현·비평·수리·심사가 같은 그림을 본다.
   profile_age=999; [ -f "$STATE/$n.profile.md" ] && profile_age=$(( ( $(date +%s) - $(stat -c %Y "$STATE/$n.profile.md") ) / 86400 ))

@@ -95,6 +95,8 @@ fi
 pm="$REPO_DIR/docs/data/postmerge.json"
 if [ ! -f "$pm" ] || [ $(( now - $(stat -c %Y "$pm" 2>/dev/null || echo 0) )) -gt 21600 ]; then
   python3 "$HERE/postmerge.py" >>"$REPO_DIR/logs/postmerge.log" 2>&1 || true
+  # 비교 실험(state/experiment.json)이 켜져 있으면 arm 별 지표 표를 같이 갱신한다
+  [ "$(jq -r '.enabled // false' "$REPO_DIR/state/experiment.json" 2>/dev/null)" = true ] && python3 "$HERE/exp-analyze.py" >>"$REPO_DIR/logs/exp-analyze.log" 2>&1 || true
 fi
 
 # 프로젝트별 가이드를 docs/guides 로 모은다 — 25개 저장소를 열어 보지 않고 한곳에서 본다.

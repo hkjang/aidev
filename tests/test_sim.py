@@ -93,6 +93,15 @@ class Agents(unittest.TestCase):
         self.assertNotIn("arbiter", r["stages"])
 
 
+class Experiment(unittest.TestCase):
+    """비교 실험 배정: arm 의 overrides 가 정책을 덮어쓰고 runs.jsonl 에 arm 이 기록된다."""
+    def test_arm_overrides_disable_scout_and_are_recorded(self):
+        r = run(scn(experiment={"id": "sim-exp", "enabled": True, "arms": {"no-scout": {"weight": 1, "overrides": {"agents": {"scout": False}}}}}))
+        self.assertEqual(r["outcome"], "release-ready", r)
+        self.assertNotIn("scout", r["stages"])
+        self.assertEqual(r.get("arm"), "no-scout")
+
+
 class Blocking(unittest.TestCase):
     def test_ci_api_error_blocks_merge(self):
         r = run(scn(ci="api-error"))
