@@ -719,7 +719,29 @@ review_gate(){ # $1=base $2=PR url(비면 판정만) → 0=승인
   rm -f "$OUT/review.json"
   rprompt=$(BASE="$1" REVIEW_FILE="$OUT/review.json" PROFILE="$(cat "$STATE/$n.profile.md" 2>/dev/null)" JOURNAL="$(journal_text)" JOURNAL_FILE="$OUT/journal.md" \
             ARBITER_HISTORY="$(arbiter_history)" envsubst '$BASE $REVIEW_FILE $PROFILE $JOURNAL $JOURNAL_FILE $ARBITER_HISTORY' < "$REPO_DIR/review-prompt.md")
-  run_agent review "$rprompt" "$wt" "$rb" "Bash,Read,Glob,Grep,Write"
+  # 비평 엔진: 기본은 Claude. 정책 agents.critic_engine=codex 면 다른 계열(OpenAI Codex)이 심사한다 —
+  # 같은 계열이 만들고 같은 계열이 판정할 때의 자기 선호 편향(Zheng et al. 2023; Wataoka et al. 2024)을
+  # 피하려는 선택지다. 교차 모델 실험(bin/exp-cross-critic.sh)으로 일치도를 잰 뒤 켠다.
+  if [ "$(policy "$n" '.agents.critic_engine')" = codex ] && command -v codex >/dev/null 2>&1 && [ ! -f "$STATE/NO-CODEX" ]; then
+    run_codex review "$rprompt" "$wt" || true
+    if [ ! -s "$OUT/review.json" ] && [ -s "$OUT/agent-review.codex.last" ]; then
+      python3 - "$OUT/agent-review.codex.last" "$OUT/review.json" <<'PY'
+import json, sys
+t = open(sys.argv[1], encoding="utf-8", errors="replace").read(); m = None
+for start in [i for i, ch in enumerate(t) if ch == "{"]:
+    for end in range(len(t), start, -1):
+        if t[end-1] != "}": continue
+        try: d = json.loads(t[start:end])
+        except Exception: continue
+        if isinstance(d, dict) and d.get("verdict") in ("approve", "reject"): m = d; break
+    if m: break
+if m: json.dump(m, open(sys.argv[2], "w", encoding="utf-8"), ensure_ascii=False)
+PY
+    fi
+    record_usage "$n" review "$OUT/agent-review.json" "$OUT/agent-review.txt"
+  else
+    run_agent review "$rprompt" "$wt" "$rb" "Bash,Read,Glob,Grep,Write"
+  fi
   g=$($GATE review "$OUT/review.json" 2>/dev/null || true); printf '%s\n' "$g" > "$OUT/review.gate.json"
   if jq -e .ok <<<"$g" >/dev/null 2>&1; then stage review approved "$(jq -r .reason <<<"$g")"; CRITIC_STATE=approved; return 0; fi
   CRITIC_STATE=$(jq -r '.state // "invalid"' <<<"$g" 2>/dev/null || echo invalid)

@@ -450,6 +450,13 @@ def shepherd_summary():
 REGRESS_KINDS = {"rolled-back", "reverted", "demoted", "regression", "main-ci-failed", "release-workflow-failed"}
 
 
+def postmerge():
+    try:
+        return json.load(open(os.path.join(DOCS, "data", "postmerge.json"), encoding="utf-8"))
+    except Exception:
+        return {}
+
+
 def agent_scorecard(runs_all, usage_all, lessons, days_window=14):
     """역할별로 몇 번 불렸고, 무엇을 얼마나 해냈고, 얼마를 썼는지. 회차 기록의 stages 와 shepherd.jsonl, usage.jsonl 에서 센다."""
     cutoff = (date.today() - timedelta(days=days_window)).isoformat()
@@ -512,6 +519,31 @@ def agent_scorecard(runs_all, usage_all, lessons, days_window=14):
     rows.append({"role": "기록·학습 historian", "calls": sum(1 for u in usage if u.get("phase") in ("campaign-lessons", "operator-prefs")),
                  "metric": f"캠페인 교훈 {sum(len(campaign_lessons(c.get('id')).get('rules', [])) for c in campaigns())}개 · 운영자 규칙 {op_rules}개", "cost": cost("campaign-lessons", "operator-prefs")})
     rows.append({"role": "코파일럿 copilot", "calls": sum(1 for u in usage if u.get("phase") == "copilot"), "metric": "텔레그램 답장", "cost": cost("copilot")})
+    # 머지 뒤 수정 필요율 (bin/postmerge.py): 리뷰가 승인해 머지한 것이 30일 안에 다시 고쳐졌나
+    pm = postmerge()
+    if pm.get("summary", {}).get("all", {}).get("n"):
+        s = pm["summary"]
+        def fmt(x):
+            return f"{x['with_fix']}/{x['n']}" if x and x.get("n") else "—"
+        def fmt_h(x):
+            return f"{x['with_human_fix']}/{x['n']}" if x and x.get("n") else "—"
+        rows.append({"role": "머지 뒤 30일 (postmerge)", "calls": s["all"]["n"], "cost": None,
+                     "metric": f"같은 파일에 fix 커밋 {fmt(s['all'])} (그중 사람이 고친 것 {fmt_h(s['all'])}) · 승인 주체별 사람 수정: 자동 {fmt_h(s['by_approval'].get('auto'))} / 사람 승인 {fmt_h(s['by_approval'].get('human'))} / 처리기 {fmt_h(s['by_approval'].get('shepherd'))}"
+                               f" · 비평 위험도별 사람 수정: low {fmt_h(s['by_risk'].get('low'))} / medium {fmt_h(s['by_risk'].get('medium'))} · 첫 수정까지 중앙값 {s.get('median_days_to_first_fix', '—')}일 (상한 추정: 같은 파일을 고친 것이지 그 PR 을 고친 것은 아닐 수 있다)"})
+        if s["all"].get("human_rate") is not None and s["all"]["human_rate"] > 0.3:
+            advice.append("머지 뒤 30일 안에 사람이 같은 파일을 다시 고친 PR 이 30% 를 넘는다 — 비평 승인 기준과 테스트 요구를 강화하거나 자동 머지 범위를 줄인다.")
+    # 실패 분류 (MAST, Cemri et al. 2025): 시스템 설계 / 에이전트 간 불일치 / 검증·종료
+    fails = {"system": 0, "misalignment": 0, "verification": 0}
+    for r in runs:
+        o = outcome_of(r); res = r.get("result") or ""
+        if o in ("infra-error", "usage-limit") or "hold: budget" in res or r.get("outcome") in ("infra-error", "usage-limit"):
+            fails["system"] += 1
+        if st(r, "review") == "rejected" or st(r, "brief") in ("rejected", "fallback") or st(r, "repair") in ("failed", "nothing"):
+            fails["misalignment"] += 1
+        if st(r, "verify") == "failed" or st(r, "ci") in ("failed", "timeout") or st(r, "arbiter") == "rejected":
+            fails["verification"] += 1
+    rows.append({"role": "실패 분류 (MAST)", "calls": sum(fails.values()), "cost": None,
+                 "metric": f"시스템 설계·인프라 {fails['system']} · 에이전트 간 불일치(비평 거절·과제서 기각·수리 실패) {fails['misalignment']} · 검증·종료(러너 검증·CI·중재 거절) {fails['verification']}"})
     if len(rp) >= 5 and len(rp_ok) / len(rp) < 0.3:
         advice.append("수리 성공률이 낮다 — 정책 agents.repair_max 를 0 으로 두고 PR 처리기에 맡기는 편이 쌀 수 있다.")
     if len(sc) >= 5 and len(sc_done) / len(sc) < 0.6:

@@ -91,6 +91,11 @@ fi
 "$HERE/campaign-lessons.sh" >>"$REPO_DIR/logs/campaign-lessons.log" 2>&1 || true
 # 운영자 취향: 사람의 반려 사유·중지 사유·코파일럿 지시를 규칙으로 정제해 모든 회차·심사에 붙인다.
 "$HERE/operator-prefs.sh" >>"$REPO_DIR/logs/operator-prefs.log" 2>&1 || true
+# 머지 뒤 수정 필요율: 러너가 머지한 PR 이 건드린 파일이 30일 안에 다시 고쳐졌는지 (6시간마다).
+pm="$REPO_DIR/docs/data/postmerge.json"
+if [ ! -f "$pm" ] || [ $(( now - $(stat -c %Y "$pm" 2>/dev/null || echo 0) )) -gt 21600 ]; then
+  python3 "$HERE/postmerge.py" >>"$REPO_DIR/logs/postmerge.log" 2>&1 || true
+fi
 
 # 프로젝트별 가이드를 docs/guides 로 모은다 — 25개 저장소를 열어 보지 않고 한곳에서 본다.
 # 내용이 같으면 git 이 새 blob 을 만들지 않으므로, 회차가 문서를 다시 쓸 때만 늘어난다.

@@ -296,7 +296,17 @@ aidev 는 이 일감을 LLM 에이전트에게 넘기되 *무엇을 무인으로
 
 ## 9. 관련 연구
 
-이 글은 벤치마크가 아니라 경험 보고다. 개별 장치들에는 선례가 있다. 에이전트의 패치 생성과 저장소 수준 과제 해결(SWE-agent, AutoCodeRover, SWE-bench 계열 평가), 자기 비판과 정제 루프(Self-Refine, Reflexion), 역할 구조의 다중 에이전트 소프트웨어 프로세스(MetaGPT, ChatDev), 코드 리뷰를 위한 LLM 심판. 우리가 더하는 것은 운영이다. 실제 포트폴리오에서 몇 주 동안 무인으로 돈 머지·릴리즈 파이프라인 전체, 그것을 견딜 만하게 만든 안전 울타리, 정제된 교훈을 가진 저장소 간 전개 장치, 그리고 사고 기록. 그 시스템들과의 비교는 일부러 하지 않는다. 우리의 일감 — 릴리즈까지 포함한, 많은 저장소에 걸친 많은 작은 정형 변경 — 은 그 벤치마크가 재는 것이 아니다.
+이 글은 벤치마크가 아니라 경험 보고다. 네 갈래의 연구와 견주어 자리를 잡는다.
+
+**저장소 수준 코딩 에이전트.** SWE-bench [1] 가 실제 저장소의 이슈 해결을 표준 과제로 세웠고, SWE-agent [2] 는 모델에게 어떤 명령과 화면을 주는가 — *에이전트·컴퓨터 인터페이스* — 가 모델만큼 중요함을 보였다. AutoCodeRover [3] 와 Agentless [4] 는 자유로운 에이전트보다 구조화된 파이프라인(위치 찾기 → 수리 → 검증)을 주장했고, 특히 Agentless 는 고정된 3단계로 에이전트 시스템들과 맞먹는 성능을 훨씬 적은 비용에 냈다. OpenHands [5] 와 RepairAgent [6] 는 같은 공간의 열린 플랫폼과 에이전트다. aidev 의 정찰 → 구현 → 검증 구조는 자유 에이전트보다 Agentless 에 가깝다. *회차* 는 고정 파이프라인이고 구현 단계만 긴 지평의 에이전트다. 우리의 기여는 더 나은 해결기가 아니라 패치가 *생긴 뒤* 에 일어나는 일 — 리뷰, 머지, 릴리즈, 그리고 무엇이 잘못됐는지의 회계 — 이다.
+
+**비판, 정제, 판정.** Self-Refine [7] 과 Reflexion [8] 은 모델이 자기 피드백이나 언어 피드백으로 출력을 개선할 수 있음을 보였다. 우리의 수리자와 프로젝트별 교훈은 그 생각의 운영 형태이되, 피드백이 편집할 수 없는 *다른* 세션에서 온다는 점이 다르다. CriticGPT [9] 는 훈련된 LLM 비평가가 모델이 쓴 코드의 버그를 유료 인간 리뷰어보다 더 많이 잡지만 사소한 지적을 지어내기도 함을 발견했다 — 우리 중재자의 동기다. LLM-as-a-judge [10] 는 위치·장황함·자기 강화 편향을 기록했고, Wataoka 외 [11] 는 심판이 낮은 perplexity(익숙한) 텍스트를 선호하는 자기 선호 편향을 정량화했다. aidev 의 구현자와 비평가는 같은 모델 계열이므로 §6.6 에서 교차 모델 일치도를 직접 잰다.
+
+**다중 에이전트 소프트웨어 프로세스.** MetaGPT [12] 와 ChatDev [13] 는 사람의 소프트웨어 역할(PM, 엔지니어, 리뷰어)을 표준 운영 절차를 가진 에이전트로 부호화했고, AutoGen [14] 과 Magentic-One [15] 은 대화·오케스트레이터 기반 프레임워크를 제공한다. 가장 관련 깊은 최근 결과는 *다중 에이전트 LLM 시스템은 왜 실패하는가* [16] 로, MAST 분류는 실패를 시스템 설계, 에이전트 간 불일치, 과제 검증·종료로 귀속시킨다. 우리는 그 분류를 우리 실패를 보는 관점으로 채택했다 (§6.7). Geng 과 Neubig [17] 은 git worktree, 격리 실행, 테스트 기반 통합으로 조정되는 비동기 에이전트를 제안하는데, aidev 가 병렬 회차에 쓰는 것과 같은 원시 요소다. Tang 과 Runkler [18], De Oliveira 외 [19] 는 설계 공간을 조사하고 프레임워크 선택을 보고하며, 후자는 대부분의 프레임워크에 에이전트 텔레메트리가 아직 없다고 지적한다 — 우리의 단계 기록, 노트, 성적표가 채우는 자리다.
+
+**야생의 에이전트 PR.** 2025~2026년의 실증 연구들은 GitHub 에서 에이전트가 쓴 PR 에 무슨 일이 일어나는지를 다룬다. Li, Zhang, Hassan [20, 21] 은 AIDev 데이터셋(116,211개 저장소의 에이전트 PR 932,791건)을 공개하고 에이전트가 사람보다 빠르지만 덜 수용됨을 발견했다. Peralta 외 [22] 는 사람이 리뷰한 에이전트 PR 9,799건을 분석해 반려의 35.7% 만이 명백한 에이전트 실패였고, 31.2% 는 워크플로 제약, 33.1% 는 기록된 근거가 없었으며, 수용된 PR 의 15.4% 도 리뷰어의 명시적 개입이 필요했음을 보였다. Nachuma 와 Zibran [23] 은 리뷰어 참여가 통합의 가장 강한 상관 요인이고 force push 와 큰 diff 가 그것을 줄임을 발견했다. Xia 와 Miller [24] 는 머지 뒤 운명을 추적해 에이전트 기여가 더 많은 수정 유지보수를 필요로 하고 보안·의존성 결함을 더 들여오며, 프로젝트의 무리뷰 비율이 10%p 오를 때마다 유지보수 부담이 약 6% 늘어남을 보였다. Kraishan [25] 은 에이전트별로 다른 되돌림률(6.1~14.5%)과 긴 리뷰 지연을 발견했다. 이 결과들이 우리 장치 셋의 직접적 동기다. aidev 의 모든 보류는 기계가 읽을 수 있는 사유를 가지고(33% 의 "근거 없음" 에 대한 답), 처리기는 새 PR 을 여는 대신 PR 안에서 리뷰 피드백에 답하며, §6.8 은 우리 데이터에 30일 머지 뒤 수정 유지보수 측정을 더한다.
+
+Anthropic 의 에이전트 워크플로 패턴 안내 [26] 는 우리가 쓰는 평가자·최적화자와 오케스트레이터·워커 패턴을 이름 짓고 단순하게 시작하라고 권한다. 우리의 이력(§3.1)은 운영 압력 아래 하나의 에이전트에서 그 패턴에 도달한 사례다.
 
 ## 10. 앞으로
 
@@ -305,6 +315,35 @@ aidev 는 이 일감을 LLM 에이전트에게 넘기되 *무엇을 무인으로
 - **더 싼 역할.** 정찰과 비평은 읽기 전용이고 짧다. 더 작은 모델의 후보다. 명부는 자동 폴백이 있는 역할별 모델을 지원하지만 낮은 비용에서의 품질은 아직 재지 않았다.
 - **더 긴 기억.** 프로필과 교훈이 회차를 넘는 기억의 첫 두 형태다. 프로젝트별 "최근 비평 셋이 걱정한 것", 캠페인별 "사람이 반려한 것" 이 다음 후보다.
 - **두 번째 운영자.** 여기 모든 것은 소유자 한 명을 가정한다. 취향, 자율화, 승인에 신원이 필요해진다.
+
+## 참고 문헌
+
+1. C. E. Jimenez, J. Yang, A. Wettig, S. Yao, K. Pei, O. Press, K. Narasimhan. *SWE-bench: Can Language Models Resolve Real-World GitHub Issues?* ICLR 2024. arXiv:2310.06770.
+2. J. Yang, C. E. Jimenez, A. Wettig, K. Lieret, S. Yao, K. Narasimhan, O. Press. *SWE-agent: Agent-Computer Interfaces Enable Automated Software Engineering.* NeurIPS 2024. arXiv:2405.15793.
+3. Y. Zhang, H. Ruan, Z. Fan, A. Roychoudhury. *AutoCodeRover: Autonomous Program Improvement.* ISSTA 2024. arXiv:2404.05427.
+4. C. S. Xia, Y. Deng, S. Dunn, L. Zhang. *Agentless: Demystifying LLM-based Software Engineering Agents.* FSE 2025 (Proc. ACM Softw. Eng.). arXiv:2407.01489.
+5. X. Wang et al. *OpenHands: An Open Platform for AI Software Developers as Generalist Agents.* ICLR 2025. arXiv:2407.16741.
+6. I. Bouzenia, P. Devanbu, M. Pradel. *RepairAgent: An Autonomous, LLM-Based Agent for Program Repair.* ICSE 2025. arXiv:2403.17134.
+7. A. Madaan et al. *Self-Refine: Iterative Refinement with Self-Feedback.* NeurIPS 2023. arXiv:2303.17651.
+8. N. Shinn, F. Cassano, A. Gopinath, K. Narasimhan, S. Yao. *Reflexion: Language Agents with Verbal Reinforcement Learning.* NeurIPS 2023. arXiv:2303.11366.
+9. N. McAleese, R. M. Pokorny, J. F. Cerón Uribe, E. Nitishinskaya, M. Trebacz, J. Leike. *LLM Critics Help Catch LLM Bugs.* arXiv:2407.00215, 2024.
+10. L. Zheng et al. *Judging LLM-as-a-Judge with MT-Bench and Chatbot Arena.* NeurIPS 2023 Datasets & Benchmarks. arXiv:2306.05685.
+11. K. Wataoka, T. Takahashi, R. Ri. *Self-Preference Bias in LLM-as-a-Judge.* NeurIPS 2024 Safe Generative AI Workshop. arXiv:2410.21819.
+12. S. Hong et al. *MetaGPT: Meta Programming for a Multi-Agent Collaborative Framework.* ICLR 2024 (oral). arXiv:2308.00352.
+13. C. Qian et al. *ChatDev: Communicative Agents for Software Development.* ACL 2024. arXiv:2307.07924.
+14. Q. Wu et al. *AutoGen: Enabling Next-Gen LLM Applications via Multi-Agent Conversation.* arXiv:2308.08155, 2023 (COLM 2024).
+15. A. Fourney et al. *Magentic-One: A Generalist Multi-Agent System for Solving Complex Tasks.* arXiv:2411.04468, 2024.
+16. M. Cemri, M. Z. Pan, S. Yang, et al. *Why Do Multi-Agent LLM Systems Fail?* NeurIPS 2025. arXiv:2503.13657.
+17. J. Geng, G. Neubig. *Effective Strategies for Asynchronous Software Engineering Agents.* arXiv:2603.21489, 2026.
+18. Y. Tang, T. Runkler. *LLM-Based Agentic Systems for Software Engineering: Challenges and Opportunities.* GenSE 2026 workshop. arXiv:2601.09822.
+19. M. C. S. De Oliveira, M. O. Ibiyo, M. Gianrusso, C. Di Sipio, D. Di Ruscio, P. T. Nguyen. *Developing LLM-based Multi-Agent Systems in Software Engineering: A Mixed-Method Experience Report.* arXiv:2608.11965, 2026.
+20. H. Li, H. Zhang, A. E. Hassan. *The Rise of AI Teammates in Software Engineering (SE) 3.0: How Autonomous Coding Agents Are Reshaping Software Engineering.* arXiv:2507.15003, 2025.
+21. H. Li, H. Zhang, A. E. Hassan. *AIDev: Studying AI Coding Agents on GitHub.* MSR 2026. arXiv:2602.09185.
+22. S. R. O. Peralta, F. Hoshi, H. Washizaki, N. Ubayashi, et al. *Why Are Agentic Pull Requests Merged or Rejected? An Empirical Study.* arXiv:2605.22534, 2026.
+23. C. Nachuma, M. Zibran. *When AI Teammates Meet Code Review: Collaboration Signals Shaping the Integration of Agent-Authored Pull Requests.* arXiv:2602.19441, 2026.
+24. C. S. Xia, C. Miller. *Do These Violent Delights Have Violent Ends? Measuring the Post-Merge Fate of Agentic Code.* arXiv:2607.09902, 2026.
+25. O. Kraishan. *Not All Agents Are Equal: Code Quality and Post-Merge Maintenance Across Five Autonomous Coding Agents in the Wild.* arXiv:2609.17598, 2026.
+26. Anthropic. *Building Effective Agents.* Engineering blog, December 2024. https://www.anthropic.com/engineering/building-effective-agents
 
 ## 부록 A. 회차 기록 (발췌)
 

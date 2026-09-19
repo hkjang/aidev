@@ -296,7 +296,17 @@ The list below is what we would hand to anyone building an unattended agent runn
 
 ## 9. Related work
 
-This report is an experience report, not a benchmark. The individual mechanisms have precedents: agentic patch generation and repository-level task solving (SWE-agent, AutoCodeRover, and the SWE-bench line of evaluation); self-critique and refinement loops (Self-Refine, Reflexion); role-structured multi-agent software processes (MetaGPT, ChatDev); and LLM-as-a-judge for code review. What we add is operational: a full merge-and-release pipeline run unattended on a real portfolio for weeks, the safety envelope that made that tolerable, the campaign mechanism for cross-repository rollout with distilled lessons, and the incident record. We deliberately do not compare against those systems, because our workload — many small routine changes across many repositories with releases — is not what their benchmarks measure.
+This report is an experience report, not a benchmark. We position it against four lines of work.
+
+**Repository-level coding agents.** SWE-bench [1] established issue resolution on real repositories as the standard task, and SWE-agent [2] showed that the *agent–computer interface* — what commands and views the model is given — matters as much as the model. AutoCodeRover [3] and Agentless [4] argued for structured pipelines (localize → repair → validate) over free-form agency; Agentless in particular matched agent systems at a fraction of the cost with a fixed three-phase process. OpenHands [5] and RepairAgent [6] are open platforms and agents in the same space. aidev's scout → builder → verify structure is closer to Agentless than to a free agent: the *round* is a fixed pipeline, and only the builder step is a long-horizon agent. Our contribution is not a better resolver but what happens *after* a patch exists — review, merge, release, and the accounting of what went wrong.
+
+**Critique, refinement and judgment.** Self-Refine [7] and Reflexion [8] showed that a model can improve its output from its own or verbal feedback; our repairer and the per-project lessons are the operational form of that idea, with the difference that the feedback comes from a *different* session that cannot edit. CriticGPT [9] found that trained LLM critics catch more bugs in model-written code than paid human reviewers, but also hallucinate nitpicks — the motivation for our arbiter. LLM-as-a-judge [10] documented position, verbosity and self-enhancement biases, and Wataoka et al. [11] quantified self-preference bias, finding judges favor low-perplexity (familiar) text. Because aidev's builder and critic are the same model family, §6.6 measures cross-model agreement directly.
+
+**Multi-agent software processes.** MetaGPT [12] and ChatDev [13] encode human software roles (product manager, engineer, reviewer) as agents with standard operating procedures; AutoGen [14] and Magentic-One [15] provide conversation- and orchestrator-based frameworks. The most relevant recent result is *Why do multi-agent LLM systems fail?* [16], whose MAST taxonomy attributes failures to system design, inter-agent misalignment, and task verification/termination. We adopted that taxonomy as a view on our own failures (§6.7). Geng and Neubig [17] propose asynchronous agents coordinated through git worktrees, isolated execution and test-based integration — the same primitives aidev uses for parallel rounds. Tang and Runkler [18] and De Oliveira et al. [19] survey the design space and report on framework choice; the latter note that agent telemetry is still missing from most frameworks, which is what our stages, journal and scorecard supply.
+
+**Agentic pull requests in the wild.** A 2025–2026 line of empirical work studies what happens to agent-authored PRs on GitHub. Li, Zhang and Hassan [20, 21] released the AIDev dataset (932,791 agent PRs across 116,211 repositories) and found agents are faster than humans but accepted less often. Peralta et al. [22] analysed 9,799 human-reviewed agentic PRs and found that only 35.7% of rejections reflected clear agent failures — 31.2% were workflow constraints and 33.1% had no recorded rationale — and that 15.4% of accepted PRs needed explicit reviewer intervention. Nachuma and Zibran [23] found reviewer engagement to be the strongest correlate of integration, and force pushes and large diffs to reduce it. Xia and Miller [24] tracked post-merge fate and found agentic contributions need more corrective maintenance and introduce more security and dependency findings, with each 10-point increase in a project's no-review rate associated with roughly 6% more maintenance burden; Kraishan [25] found revert rates that differ by agent (6.1% to 14.5%) and long review latencies. These results directly motivated three of our mechanisms: every hold in aidev carries a machine-readable reason (against the 33% "no rationale"), the shepherd answers review feedback in-PR rather than opening new PRs, and §6.8 adds a 30-day post-merge corrective-maintenance measurement to our own data.
+
+Anthropic's engineering guidance on agent workflow patterns [26] names the evaluator–optimizer and orchestrator–worker patterns we use, and recommends starting simple; our history (§3.1) is a case of arriving at those patterns from a single agent under operational pressure.
 
 ## 10. Future work
 
@@ -305,6 +315,35 @@ This report is an experience report, not a benchmark. The individual mechanisms 
 - **Cheaper roles.** The scout and the critic are read-only and short; they are candidates for smaller models. The registry supports per-role models with automatic fallback, but we have not measured quality at lower cost.
 - **Longer memory.** Profiles and lessons are the first two forms of cross-round memory. Per-project "what the last three critics worried about" and per-campaign "what humans rejected" are obvious next ones.
 - **A second operator.** Everything here assumes one owner. Preferences, autonomy and approvals would need identity.
+
+## References
+
+1. C. E. Jimenez, J. Yang, A. Wettig, S. Yao, K. Pei, O. Press, K. Narasimhan. *SWE-bench: Can Language Models Resolve Real-World GitHub Issues?* ICLR 2024. arXiv:2310.06770.
+2. J. Yang, C. E. Jimenez, A. Wettig, K. Lieret, S. Yao, K. Narasimhan, O. Press. *SWE-agent: Agent-Computer Interfaces Enable Automated Software Engineering.* NeurIPS 2024. arXiv:2405.15793.
+3. Y. Zhang, H. Ruan, Z. Fan, A. Roychoudhury. *AutoCodeRover: Autonomous Program Improvement.* ISSTA 2024. arXiv:2404.05427.
+4. C. S. Xia, Y. Deng, S. Dunn, L. Zhang. *Agentless: Demystifying LLM-based Software Engineering Agents.* FSE 2025 (Proc. ACM Softw. Eng.). arXiv:2407.01489.
+5. X. Wang et al. *OpenHands: An Open Platform for AI Software Developers as Generalist Agents.* ICLR 2025. arXiv:2407.16741.
+6. I. Bouzenia, P. Devanbu, M. Pradel. *RepairAgent: An Autonomous, LLM-Based Agent for Program Repair.* ICSE 2025. arXiv:2403.17134.
+7. A. Madaan et al. *Self-Refine: Iterative Refinement with Self-Feedback.* NeurIPS 2023. arXiv:2303.17651.
+8. N. Shinn, F. Cassano, A. Gopinath, K. Narasimhan, S. Yao. *Reflexion: Language Agents with Verbal Reinforcement Learning.* NeurIPS 2023. arXiv:2303.11366.
+9. N. McAleese, R. M. Pokorny, J. F. Cerón Uribe, E. Nitishinskaya, M. Trebacz, J. Leike. *LLM Critics Help Catch LLM Bugs.* arXiv:2407.00215, 2024.
+10. L. Zheng et al. *Judging LLM-as-a-Judge with MT-Bench and Chatbot Arena.* NeurIPS 2023 Datasets & Benchmarks. arXiv:2306.05685.
+11. K. Wataoka, T. Takahashi, R. Ri. *Self-Preference Bias in LLM-as-a-Judge.* NeurIPS 2024 Safe Generative AI Workshop. arXiv:2410.21819.
+12. S. Hong et al. *MetaGPT: Meta Programming for a Multi-Agent Collaborative Framework.* ICLR 2024 (oral). arXiv:2308.00352.
+13. C. Qian et al. *ChatDev: Communicative Agents for Software Development.* ACL 2024. arXiv:2307.07924.
+14. Q. Wu et al. *AutoGen: Enabling Next-Gen LLM Applications via Multi-Agent Conversation.* arXiv:2308.08155, 2023 (COLM 2024).
+15. A. Fourney et al. *Magentic-One: A Generalist Multi-Agent System for Solving Complex Tasks.* arXiv:2411.04468, 2024.
+16. M. Cemri, M. Z. Pan, S. Yang, et al. *Why Do Multi-Agent LLM Systems Fail?* NeurIPS 2025. arXiv:2503.13657.
+17. J. Geng, G. Neubig. *Effective Strategies for Asynchronous Software Engineering Agents.* arXiv:2603.21489, 2026.
+18. Y. Tang, T. Runkler. *LLM-Based Agentic Systems for Software Engineering: Challenges and Opportunities.* GenSE 2026 workshop. arXiv:2601.09822.
+19. M. C. S. De Oliveira, M. O. Ibiyo, M. Gianrusso, C. Di Sipio, D. Di Ruscio, P. T. Nguyen. *Developing LLM-based Multi-Agent Systems in Software Engineering: A Mixed-Method Experience Report.* arXiv:2608.11965, 2026.
+20. H. Li, H. Zhang, A. E. Hassan. *The Rise of AI Teammates in Software Engineering (SE) 3.0: How Autonomous Coding Agents Are Reshaping Software Engineering.* arXiv:2507.15003, 2025.
+21. H. Li, H. Zhang, A. E. Hassan. *AIDev: Studying AI Coding Agents on GitHub.* MSR 2026. arXiv:2602.09185.
+22. S. R. O. Peralta, F. Hoshi, H. Washizaki, N. Ubayashi, et al. *Why Are Agentic Pull Requests Merged or Rejected? An Empirical Study.* arXiv:2605.22534, 2026.
+23. C. Nachuma, M. Zibran. *When AI Teammates Meet Code Review: Collaboration Signals Shaping the Integration of Agent-Authored Pull Requests.* arXiv:2602.19441, 2026.
+24. C. S. Xia, C. Miller. *Do These Violent Delights Have Violent Ends? Measuring the Post-Merge Fate of Agentic Code.* arXiv:2607.09902, 2026.
+25. O. Kraishan. *Not All Agents Are Equal: Code Quality and Post-Merge Maintenance Across Five Autonomous Coding Agents in the Wild.* arXiv:2609.17598, 2026.
+26. Anthropic. *Building Effective Agents.* Engineering blog, December 2024. https://www.anthropic.com/engineering/building-effective-agents
 
 ## Appendix A. Round record (excerpt)
 

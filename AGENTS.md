@@ -96,6 +96,12 @@
 
 `state/<프로젝트>.policy.json` 에서 `budget_usd.scout/repair/arbiter`·`agents.scout`·`agents.repair_max`·`agents.arbiter` 를 덮어쓴다. 모델을 역할별로 바꾸려면 `agents/registry.json` 의 `model` 을 채운다(비면 러너 기본 `MODEL`). 적은 모델을 쓸 수 없으면(없는 모델·막힘) 러너가 기본 모델로 한 번 더 돌리므로 회차가 죽지 않는다.
 
+## 문헌에서 가져온 것 (2026-09-19)
+
+- **교차 모델 비평** — 정책 `agents.critic_engine: codex` 면 비평을 Claude 대신 OpenAI Codex 가 한다. 같은 계열이 만들고 판정할 때의 자기 선호 편향(Zheng et al. 2023; Wataoka et al. 2024)을 피하는 선택지. 켜기 전에 `bin/exp-cross-critic.sh` 로 두 비평가의 일치도를 잰다(결과는 `docs/paper/experiments/`).
+- **머지 뒤 수정 필요율** — `bin/postmerge.py`(헬스체크, 6시간마다)가 러너가 머지한 PR 이 건드린 파일이 30일 안에 fix/revert 류 커밋으로 다시 고쳐졌는지를 세어 `docs/data/postmerge.json` 에 둔다. 에이전트 PR 이 머지 뒤 더 많은 수정 유지보수를 필요로 한다는 보고(Xia & Miller 2026)에 대한 우리 쪽 측정. 성적표에 승인 주체별·비평 위험도별로 나온다.
+- **MAST 실패 분류** — 성적표가 실패를 Cemri et al. (2025) 의 세 범주(시스템 설계·인프라 / 에이전트 간 불일치 / 검증·종료)로 나눠 센다.
+
 ## 성적표
 
 대시보드 '에이전트 성적표(최근 14일)' 와 `summary.json` 의 `agents` 에 역할별 호출 수·핵심 지표·비용이 실린다: 정찰의 과제서 작성률과 그 회차의 PR 도달률, 구현의 검증 통과율, 비평의 최종 승인률과 승인·머지 뒤 회귀, 수리의 재검증 통과율, 중재가 어느 편을 들었는지, PR 심사의 승인·거절·사람 필요와 승인 뒤 회귀, 각 역할의 비용. 지표가 어긋나면(수리 성공률 30% 미만, 비평 승인 뒤 회귀 15% 초과, 중재가 70% 넘게 수리 편 등) 무엇을 조정할지 '권장' 으로 적는다. 정책을 자동으로 바꾸지는 않는다 — 조정은 사람이 한다.
