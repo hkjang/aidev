@@ -26,3 +26,4 @@
 - 사소한 관찰(비차단): `serve` 의 defer 순서상 `finished` 신호가 `conn.Close()` 보다 먼저 나가나 기록은 이미 끝난 뒤라 무해. 릴리즈 노트엔 "테스트만 추가, 동작 변화 없음" 으로 적으면 됨.
 - [러너 23:15] review approved — 리뷰 승인 (risk=low)
 - [러너 23:15] pr created — https://github.com/hkjang/postra/pull/16
+- [러너 23:20] ci failed — 성공이 아닌 검사: gosec (medium+)=failure
