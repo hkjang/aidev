@@ -42,3 +42,4 @@
 - 보류 아이디어: orbitRange 의 `people LEFT JOIN interactions` 데카르트 곱을 두 서브쿼리 least 로 (가치 3/위험 1/S, main 에 DB 테스트 없어 정적 검토만); `/rediscover` 를 `load` 에서 떼어 시점 변경 때는 `/orbit` 만 다시 부르기 — 로딩·오류 처리 묶음을 나눠야 해 이번엔 안 함 (가치 2/위험 2/S); OrbitPage 통합 테스트 — `api` 를 모킹해 역순 응답에서 마지막 시점의 nodes 만 남는지 페이지 수준으로 고정 (가치 2/위험 1/S); web `npm run lint` 가 eslint 미설치로 실패 — devDependencies 추가 또는 스크립트 제거 (가치 2/위험 1/S); CI postgres 서비스·OIDC 콜백 DB 테스트·MCP 연결 확인 등 미머지 브랜치 의존 항목은 그대로 보류
 - 과제서: 채택 — 근거(칸마다 `setTravelTo`→`load` 재실행으로 두 요청, 응답 역전 가능)가 코드와 일치했고 선택 항목(컴포넌트 분리로 3(c) 테스트)까지 그대로 구현했다. 단 MUI 9 는 mouse 가 아니라 pointer 이벤트를 쓰고 jsdom 에 `hasPointerCapture` 가 없어 스텁이 필요했으며, 커밋 값은 놓는 좌표가 아니라 마지막 `onChange` 값(`lastChangedValueRef`)이다.
 
+- 릴리즈: v0.6.1 (2026-09-19, run 2026-09-19-230348-orbit-improve)
