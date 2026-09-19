@@ -1,0 +1,11 @@
+# jikim 프로필 (2026-09-19)
+- 목적: 폐쇄망용 Secret/Transit 관리 서버 — OpenBao 호환 `/v1/*` API, 자체 REST `/api/v1/*`, MCP `/mcp`, React 관리 화면을 단일 Go 바이너리로 제공.
+- 스택: Go(단일 모듈 `github.com/hkjang/jikim`, go-oidc, pgx), PostgreSQL 16/17, React+Vite+vitest+Playwright(`web/`), Docker(멀티스테이지, 오프라인 번들).
+- 구조:
+  - `cmd/server` — 진입점. `internal/httpapi` — 모든 HTTP 핸들러(REST·OpenBao 호환·MCP·OIDC·tracking·mail 훅). `internal/store` — pgx 저장소(settings 키→JSON, users, secrets, transit, audit). `internal/cryptox`·`password`·`ids`·`config`·`tracking`·`mail`·`version`.
+  - `migrations/` — SQL 마이그레이션(embed). `web/` — SPA(관리 화면·E2E spec). `docs/` — ADMIN_GUIDE·USER_GUIDE(md+pdf)·홍보 페이지·screenshots. `scripts/` — verify/version/smoke/e2e/package 스크립트.
+- 빌드·테스트: `./scripts/verify.sh`(bash -n, gofmt, go test/vet, npm ci/test/lint/build, verify-docs.mjs, compose config; 2~5분) / `--smoke`(docker build+폐쇄망 스모크) / `./scripts/e2e-docker.sh IMAGE`(Playwright, 오래 걸림) / `make release-check`(전부, 10분+). Go 단위 테스트는 hook/seam 기반이라 DB 불필요.
+- 관례: 커밋 메시지 영어 conventional(feat/fix), 스크립트·문서·UI는 한국어. 버전은 `scripts/version.sh`의 상수 하나(v0.2.15), 릴리즈 세션이 올리고 태그·CHANGELOG 갱신. 설정은 store의 키→JSON 객체(`oidc`, `mcp`, `tracking`, `mail`, `security` 등), 파생 필드는 GET에서 주입. 오류 매핑 관례: sentinel(ErrNotFound/ErrUnauthorized)만 4xx, 그 외 저장소 장애는 500(driver 문자열 미노출).
+- 위험 구역: `internal/httpapi/auth*`·`oidc*.go`·`mcp_oauth*`(인증), `store/users.go`(세션), `migrations/`, `resource_handlers.go` settings()/updateSettings()(여러 PR이 같은 함수를 만짐), `.github/workflows/release.yml`(태그·버전 일치·release 덮어쓰기 금지 검사 — 느슨하게 하지 말 것).
+- 자주 깨지는 곳: settings 핸들러·`SettingsPage.tsx`의 인접 hunk 충돌(메일·MCP OAuth PR), 오류 매핑에서 장애를 거부로 접는 패턴(v0.2.5~v0.2.14에 걸쳐 반복 수정).
+- 검증 함정: 릴리즈 체인 출력이 매우 길어 자동 세션이 budget hold로 끊김(2026-09-19 두 회차). Keycloak·실제 SMTP·MCP 클라이언트는 이 환경에 없어 E2E 불가(가짜 IdP·stub SMTP로 단위 검증). Playwright는 chromium 설치 필요. `gh`·디렉터리 나열은 이 정찰 환경에서 승인이 필요해 Actions 이력 확인 불가.
