@@ -1,0 +1,15 @@
+# nexabuilder 프로필 (2026-09-19)
+- 목적: 메타데이터(엔티티·폼·목록·워크플로)로 업무 화면을 만들어 내는 Spring Boot 로우코드 빌더 + 관리 콘솔(권한·감사·LLM·모니터링).
+- 스택: Java 21, Spring Boot 4.1.1(Framework 7, Jackson 2 호환층 `spring-boot-jackson2`), Spring Security/OAuth2 client, JPA + JdbcTemplate, H2(기본 프로필, 테스트) / 외부 DB(운영), Thymeleaf + htmx + jQuery 4(+migrate) + jqWidgets 웹자르, Groovy 플러그인, OpenPDF 3.0.5 / POI 5.3.0(내보내기), Micrometer+OTel.
+- 구조:
+  - `src/main/java/com/nexabuilder/core/*` — 도메인별 서비스(entity, ui, permission, workflow, audit, ai/llm, menu, backup, session, …). `core/ui/NexaUiService` 가 런타임 목록·폼 정의와 데이터 조회의 관문.
+  - `api/controller` — REST(`/api/v1/...`), `GlobalExceptionHandler`(IllegalArgumentException→400 JSON, AccessDenied→AccessAuditHandler). `web/controller` — Thymeleaf 화면(`/app/list/<id>` 등).
+  - `infra/security` — `AccessAuditHandler`(`/api/` 는 403 JSON, 그 외 `/error/403` 포워드), 세션 user 는 `nexabuilder.user` 속성.
+  - `plugin/groovy` — 스크립트 실행. `src/main/resources/db/migration` 류 마이그레이션(027 이 soft-delete `deleted_at`; 위치 미확인).
+  - `src/test/java/com/nexabuilder/api/*IntegrationTest` — 149개 파일, 거의 전부 `@SpringBootTest + @AutoConfigureMockMvc + @WithMockUser` 로 H2 를 실제로 타는 통합 테스트. 픽스처는 UUID 접미사로 격리, 정리 안 함.
+  - `docs/` — 사용자·관리자·개발자 문서(한/영 혼재), `docs/operations/deployment.md` 에 낡은 버전 표기 있음. `agent.md` 는 옛 Windows 환경 메모(Boot 3.4.4 라고 적혀 있어 낡음).
+- 빌드·테스트: `./gradlew --no-daemon test`(전체 568개, 컨텍스트 기동 22회, 힙 2g, 수 분) / 단일: `--tests 'com.nexabuilder.api.XxxTest'` / `./gradlew --no-daemon bootJar -x test`(릴리즈 검증과 동일). 툴체인은 foojay 리졸버가 Temurin 21 을 내려받음. 저장소의 `gradlew` 는 100644 라 로컬에서 `sh ./gradlew` 필요.
+- 관례: 커밋 메시지는 한국어 `type(scope): …합니다` 체(예: `test(workflow): … 않게 합니다`), 코드 주석은 영어·한국어 혼용이며 "왜" 를 길게 적는 편. 설정은 `nexa_config` 테이블(런타임 편집)이 프로퍼티보다 우선. 이슈 번호를 `(#N)` 로 주석·Javadoc 에 남김.
+- 위험 구역: `core/auth`, `core/session`, `infra/security`, `core/permission`(ScreenPermissionService — ADMIN 우회·"행 없으면 열림" 규칙), DB 마이그레이션, `core/workflow`(비동기 감사 기록과 컨텍스트 종료 경합 이력), `Jackson2JsonConfig`(Jackson 3 이전은 L 작업).
+- 자주 깨지는 곳: 테스트 컨텍스트 재생성(`@DirtiesContext`)이 힙·시간을 잡아먹음 — 붙이지 말 것. 웹자르 경로에 버전을 박으면 조용히 404(#14). jQuery 4 는 migrate 없이는 jqWidgets 가 첫 줄에서 죽음(#15).
+- 검증 함정: CI 는 `actions/setup-java@v5` Temurin 21 + `chmod +x ./gradlew` 스텝; 로컬은 JRE 만 있어도 foojay 가 JDK 를 받음. CodeQL 워크플로는 사설 저장소에서 꺼져 있음(#11). 외부 서비스 의존 테스트 없음(LLM 은 dry-run/가짜 provider). PDF 한글 글리프는 CJK 폰트 팩 유무에 따라 달라지므로 테스트에서 검사하지 말 것.

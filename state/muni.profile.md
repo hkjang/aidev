@@ -1,0 +1,16 @@
+# muni 프로필 (2026-09-19)
+- 목적: 사내용 협업 문서 편집기 — 문서를 만들고 공동 편집·댓글·검토·버전 관리하며 .docx/.hwp/.hwpx/PDF/Markdown/HTML 로 가져오고 내보내는 단일 바이너리 서비스 (v0.40.0).
+- 스택: Go 1.27(순수, CGO 없음) + PostgreSQL 16(pgx) / React + TypeScript + Vite + Tiptap 편집기 / 프런트 빌드 산출물을 `webui/` 에 임베드해 바이너리 하나로 배포. Chromium(headless) 으로 PDF 내보내기.
+- 구조:
+  - `cmd/muni` — 진입점. `internal/config` 환경 변수, `internal/database` 마이그레이션(`migrations/NNN_*.sql`, 018 까지 확인, 019 mail 은 미확인 위치).
+  - `internal/httpapi` — 거의 모든 서버 로직(라우트·auth·documents·export/import·handoff·notify(outbox)·tracking·admin_*). `render.go` 가 HTML/Markdown/PlainText 내보내기, `import_*.go` 가 형식별 가져오기, `parseUpload` 가 확장자→파서의 한 자리.
+  - `internal/richdoc` — 문서 JSON(Tiptap 스키마) 의 Go 모델(`Node`, `PlainText`, `Headings`, block ID).
+  - `internal/docx`·`hwp`·`hwpx`·`hangul`·`pdfx` — 형식 리더/라이터. `hangul` 이 두 한글 형식의 공통 판단(BlockStyle·RuleBorder).
+  - `internal/handoff`(peer 허용 목록·Fetch), `mailer`, `tracking`, `settings`(app_settings 키), `realtime`(협업).
+  - `frontend/src` — pages(EditorPage 등)·components·features·lib(`silentSso.ts`, `handoff.ts`)·`e2e/muni.spec.ts`(playwright, CI 미실행)·`scripts/guide-screenshots.mjs`.
+  - `docs/` — USER_GUIDE·ADMIN_GUIDE(md+pdf), OPERATIONS, ARCHITECTURE, MCP, `releases/vX.Y.Z.md`.
+- 빌드·테스트: `gofmt -l .`, `go vet ./...`, `go test ./...`(live 테스트는 `MUNI_TEST_DSN` 없으면 skip — postgres:16 컨테이너 필요, CI 는 `postgres://postgres:muni@127.0.0.1:5432/muni?sslmode=disable`), `cd frontend && npm run lint && npm test`(vitest ~290개) && `npm run build`(typecheck 포함, 수 분), `scripts/check-webui-placeholder.sh`(빌드 산출물이 커밋에 섞였는지). `make test` 가 이 대부분을 묶음. e2e 는 `npm run test:e2e` 로 띄워 둔 서버(admin@example.com / Integration-Admin-Password-2026 / v0.1.0-test) 를 겨냥.
+- 관례: 커밋 메시지 한국어 `feat:`/`fix:`/`docs:`/`build:` + 사용자 관점 한 문장, Co-Authored-By 없음. 릴리스는 `VERSION` 올리고 `docs/releases/` 노트 + 태그. 설정은 `settings.All.*`(app_settings 표, 관리자 화면 탭)와 환경 변수(`internal/config`) 두 층. 코드 주석은 영어 산문, 오류 문구는 한국어. 문서 사실은 코드에서 읽어 적고 겹치는 절은 링크로 정본 하나.
+- 위험 구역: `httpapi/auth.go`(로컬·OIDC·silent SSO, oidc_states), `settings` 봉인 비밀값(키 이름이 AAD 라 키를 바꾸면 못 연다 — mail 마이그레이션의 교훈), `internal/database/migrations`(번호 순, 재실행 안전해야 함), `.github/workflows/ci.yml`, `handoff.go`(표를 로그·감사에 남기지 않는 규칙), CSP/nonce (`servePage`).
+- 자주 깨지는 곳: 형식 왕복(리더가 읽지 않는 속성을 라이터가 쓰거나 반대) — 테스트 픽스처는 리더에 맞춰 짓지 말고 실제 앱이 쓴 파일 모양을 복사할 것; 편집기 하드 로드(lazy 청크 + useEditor 타이밍, v0.40.0 에서 고침); `useEditor` 효과가 destroy 된 편집기를 드는 경우.
+- 검증 함정: live 테스트가 DSN 없이 조용히 skip 되므로 "go test 통과" 만으로는 SQL 을 검증한 것이 아님; 프런트 typecheck 는 `npm run build` 가 하고 `npx tsc --noEmit` 은 아님; e2e 는 CI 가 돌리지 않음; PDF 테스트는 Chromium 필요; 8080 포트를 다른 프로세스가 쥐고 있을 수 있음(이전 회차는 컨테이너 네임스페이스에 붙여 띄움).

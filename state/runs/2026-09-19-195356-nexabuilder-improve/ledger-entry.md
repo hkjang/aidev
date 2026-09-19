@@ -1,0 +1,6 @@
+## 2026-09-19
+- 선택: 목록 내보내기(CSV/XLSX/PDF)가 휴지통(soft-delete)에 든 목록도 내려주는 것을 막고, 내보내기 3종에 통합 테스트를 처음으로 붙인다 (가치 4 / 위험 2 / 작업량 M)
+- 결과: 성공
+- 요약: `ListExportController` 의 세 엔드포인트는 `findById` 만 하고 `deletedAt` 을 보지 않아, 런타임 `/app/list/<id>` 가 "List not found" 로 막는 목록의 데이터를 내보내기 URL 로는 계속 받을 수 있었다. 세 곳에 복붙된 조회·권한 블록을 `resolveExportable()` 하나로 모으고 거기서 `NexaUiService.listDefinition` 과 똑같은 `IllegalArgumentException("List not found: …")` 을 던져(응답 스트림을 열기 전) 400 JSON 으로 끝나게 했다. `ListExportIntegrationTest` 5건을 새로 붙였고(실제 H2·ScreenPermissionService·POI·OpenPDF, 목 없음), 컨트롤러를 고치기 전 단독 실행에서 `softDeletedListIsNotExportableInAnyFormat` 만 "expected 400 but was 200" 으로 빨간 것을 확인한 뒤 고쳐 초록. `cleanTest test` 전체 573개(568+5) 통과, `bootJar -x test` 성공. 커밋 3bd46b2.
+- 보류 아이디어: `POST /api/v1/builder/lists/{listId}/data`(UiBuilderController→NexaUiService.listData)도 soft-delete 목록의 행을 그대로 돌려줌 — 빌더 미리보기 호출자 확인 후 통일(3/3/M) / CI 에 gradle/actions/wrapper-validation 추가 + docker-publish checkout v6 정렬 + gradlew +x 로 chmod 스텝 제거(3/1/S) / ListExportController 의 OpenPDF 3 deprecated API 정리 — 이번 빌드에서도 경고 확인, 새 테스트가 안전망(2/2/S) / listDefinition·formDefinition·resolveExportable 의 "X not found" 판정을 한 헬퍼로 모으고 404 전용 예외로 전환(2/3/S) / agent.md 낡은 환경 메모 갱신(2/1/S)
+- 과제서: 채택 — 과제서의 근거(세 엔드포인트가 deletedAt 을 안 봄, 테스트 0건, 400/403 매핑 경로)가 코드와 전부 일치해 그대로 구현했다.

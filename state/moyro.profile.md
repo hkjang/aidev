@@ -1,0 +1,16 @@
+# moyro 프로필 (2026-09-19)
+- 목적: Mattermost v4 API 호환 사내 채팅 서버 + 승인·작업·자동화·지식·MCP 를 얹은 협업 앱.
+- 스택: Go(chi, pgx v5, PostgreSQL 15/16) 서버 / React+TypeScript+Vite 웹앱(Redux, Playwright e2e) / Docker 배포.
+- 구조:
+  - `server/cmd/moyro` 진입점, `server/cmd/fakeoidc` 테스트용 IdP
+  - `server/internal/httpapi` 라우터·핸들러(`compat_*` = Mattermost 호환, `native_*` = moyro 고유 `/api/moyro/v1`)
+  - `server/internal/<도메인>` 서비스(channels, sidebar, posts, approval, automations, mail(미머지), tracking, oidcauth, mcpserver …)
+  - `server/internal/store` DB 풀·마이그레이션(`migrations/0000NN_*.up.sql`, 000018 까지 사용됨)
+  - `server/internal/pluginhost` → `rpcbridge` 플러그인 훅; `webapp/src/plugins/runtime.ts` → `registry.ts`
+  - `webapp/src/api/compat.ts` 호환 API 클라이언트, `webapp/src/features/*` 화면, `webapp/e2e` Playwright
+  - `docs/` USER_GUIDE·ADMIN_GUIDE(md+pdf 정본), openapi-*.yaml, 사이트 HTML; `scripts/` 검증 스크립트
+- 빌드·테스트: `server/`: `go vet ./...`, `MOYRO_TEST_POSTGRES_DSN=… go test -race -p 1 ./...`(수 분; DSN 없으면 DB 테스트가 조용히 skip). `webapp/`: `npm run typecheck`, `npm test`(vitest), `npm run build`. 루트: `bash scripts/check-source-sizes.sh`, `node scripts/verify-pages.mjs`(관리 라우트마다 캡처 강제 — 관리 화면 라우트 추가 시 이미지 빌드·캡처 필요, 매우 비쌈).
+- 관례: 커밋 메시지 영어 `feat:/fix:/test:/docs:/release:`; 오류는 `writeError(w, code, "api.<area>.<op>.<reason>", msg)`; 설정은 settings 저장소 섹션 JSON + 환경변수(`config/config.go`); 요청 본문은 `decodeCollectionBody`/`decodeCappedBody` + `tooManyBatchItems`; 통합 테스트는 `*_postgres_test.go` 로 DSN 환경변수 게이트; LIKE 는 `store.EscapeLike`.
+- 위험 구역: `httpapi/principal.go`·`auth`·`oidcauth`·`native_mcp_oauth.go`(인증), `store/migrations`(baseline 000001 절대 수정 금지), `.github/workflows/*`, `ws` 허브(재연결 단일 소유), `pluginhost` 훅 순서 결정성.
+- 자주 깨지는 곳: 미머지 auto/* 브랜치(preferences·reminders·ws presence·mail)와 같은 파일을 만지면 충돌; `ok, _ := IsMember` 식 오류 삼킴이 httpapi 전반에 관례처럼 퍼져 있음; 핸들러가 서비스 오류를 일괄 400 으로 냄.
+- 검증 함정: CI 는 PostgreSQL 15·16 매트릭스로 전 패키지 DB 테스트를 돌림 — 로컬은 docker `postgres:16-alpine` 을 직접 띄워 DSN 을 줘야 같은 결과; `-p 1` 필수(공유 DB). webapp 의 `tsconfig.node.json` 이 e2e 도 타입체크함. Windows 에서는 `C:\Program Files\nodejs\npm.cmd` 사용.

@@ -1,0 +1,41 @@
+release: carry release markers to v0.2.33
+
+v0.2.33 ships the sidebar category validation fix already merged to main.
+`sidebar.Update` wrote whatever `display_name` and `sorting` the client
+sent — a blank name on a custom category, a sorting value outside
+alpha/recent/manual that the webapp reads as a closed union, and a new name
+for the three default categories (favorites, channels, direct_messages)
+that Mattermost keeps unchanged for every non-custom type — and `Update`
+and `Delete` surfaced the raw `pgx.ErrNoRows` for an id the caller cannot
+see, which the handlers turned into 400 "no rows in result set" while `Get`
+answered 404 for the same id, with every storage fault leaving as 400 too.
+`Update` now checks sorting up front (an empty value keeps the stored one,
+matching Mattermost's `""` default), locks the row with `SELECT type … FOR
+UPDATE` to learn its type, refuses a blank name only for custom categories,
+and preserves the default names inside the UPDATE itself through
+`display_name = CASE WHEN type = 'custom' …` and
+`sorting = COALESCE(NULLIF(…, ''), sorting)`, so a rejected payload leaves
+the row untouched, `update_at` included. The service exposes `ErrNotFound`
+and `ErrInvalid`: `Create`'s blank-name and `Delete`'s only-custom errors
+wrap `ErrInvalid`, `Get` and `Delete` map `ErrNoRows` to `ErrNotFound`, and
+the four write handlers share one `writeSidebarError` that picks 404, 400
+or 500 with `errors.Is` while keeping the existing error ids, response
+shape and `/api/v4` paths. Two Postgres integration tests pin the
+validation, the preserved default names and the not-found identity for
+missing, foreign-user and foreign-team ids, and a table test pins the
+handler status mapping. `replaceChannelsTx` and `UpdateOrder` from v0.2.31
+are untouched, and the bulk update route still runs one transaction per
+category.
+
+Release markers move to v0.2.33 across the README, the product site and
+guides, the canonical user and administrator guides, the OpenAPI contracts,
+the offline deployment guide, the plugin SDK and sample plugin, the pages
+gate, and the web package and its version surfaces. The two guides keep
+naming the v0.2.27 image as the origin of their screen captures, which is
+still true for the existing captures, and their PDFs are left as rendered
+because the md2pdf converter that produced them lives outside this
+repository. Verified at this tree: the pages gate, `go test -race -p 1 ./...`
+against a local postgres:16-alpine and `go vet ./...` for the server, the
+Go plugin SDK tests and vet, 48 webapp test files with 221 tests, typecheck
+across both projects, build, both npm audits at zero, and the source-size
+ratchets.

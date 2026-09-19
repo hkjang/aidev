@@ -142,3 +142,11 @@
 - 보류 아이디어: CI 에 e2e(playwright) 를 넣기 — `page.reload()` 를 도는 e2e 가 있는데 CI 가 돌리지 않아 이 결함이 여섯 릴리즈를 살아남음, ci.yml 에 postgres 서비스가 이미 있으니 빌드한 바이너리를 띄워 `npm run test:e2e` 한 단계면 됨 (4/2/M) / outbox 의 첫 시도를 알림이 쓰인 직후로 당기기 — 채널로 깨우면 '내 차례' 메일이 즉시 나감 (3/2/S) / 마크다운 가져오기·넘겨받기에서 첫 H1 이 제목과 같으면 본문에서 덜어내기 (3/1/S) / 관리자 가이드에 「메일 알림」·「문서 넘기기」 탭 캡처 싣기 — shootTracking 틀 (2/1/S) / 관리 화면 「운영 현황」에 메일 실패 수 보이기 (2/1/S)
 
 - 릴리즈: v0.40.0 (2026-09-17, run 2026-09-17-055315-muni-improve)
+## 2026-09-19
+- 선택: 마크다운 가져오기·넘겨받기에서 첫 H1 이 문서 제목과 같으면 본문에서 덜어내기 (가치 3 / 위험 1 / 작업량 S)
+- 결과: 성공
+- 요약: muni 의 마크다운 내보내기는 제목을 첫 줄 `# 제목` 으로 적고 파일 이름도 제목으로 짓는데, 가져오기(`importDocument`)와 넘겨받기(`storeHandoff`)는 제목을 파일 이름 스템에서 정하고 H1 은 본문에 그대로 두어 다시 가져온 문서와 다른 muni 에서 넘겨받은 문서에 제목이 두 번 보였습니다. `import_markdown.go` 에 `dropLeadingTitle(content, title)` 을 두어 첫 블록이 level-1 `heading` 이고 그 `PlainText()` 를 TrimSpace 한 값이 확정된 제목과 **정확히** 같을 때만 그 블록을 빼며(아니면 content 를 바이트 그대로 돌려줌, H1 하나뿐이던 문서는 `richdoc.JSON()` 이 빈 문단 하나로 만듦), `upload` 에 `markdown` 플래그를 두어 두 자리에서 제목 확정 직후·`extractDocumentText` 직전에 적용해 검색 텍스트에도 제목이 두 번 남지 않습니다. `importIntoDocument`(끼워 넣기)·`renderMarkdown`·다른 형식은 손대지 않았습니다. 검증: 단위 4(왕복에서 H1 만 사라지고 나머지 블록 JSON 동일 / 다른 제목·H2·문단 뒤 H1·`safeFilename` 으로 바뀐 제목은 바이트 그대로 / `A_B*C` 이스케이프 제목 일치 / H1 만 있던 문서는 빈 문단) + live 2(`.md` 업로드로 첫 블록이 문단이 되고 content_text 에 제목 없음, 폼 title 이 다르면 heading 유지, 끼워 넣기는 heading 유지 / 넘겨받기에서 `# <파일 이름 스템>` 으로 시작하는 본문의 첫 블록이 문단, 기존 case 는 heading 유지). 헬퍼를 비활성화한 채 셋이 각각 제 이유로 실패하는 것을 먼저 확인했고, `gofmt -l`·`go vet ./...`·`go test ./...`(postgres:16-alpine 컨테이너에 MUNI_TEST_DSN 을 주어 httpapi 패키지 SKIP 0)·`scripts/check-webui-placeholder.sh` 통과. 사용자 가이드 「받은 파일을 muni 문서로 만들기」 절에 두 줄. 커밋 e8c53e9.
+- 보류 아이디어: CI 에 e2e(playwright) 단계 넣기 (4/2/M) — workflows 보호 경로, 시드 계정 마련 필요 / outbox 의 첫 시도를 알림이 쓰인 직후로 당기기 (3/2/S) — 채널로 깨우기, 동시성 주의 / 관리 화면 「운영 현황」에 메일 실패 수 보이기 (2/1/S) — 차선 후보였음 / 마크다운 가져오기에서 첫 H1 을 제목 후보로 올리기 — 폼 title 이 비고 파일 이름이 뻔할 때로 제한해야 기존 H1 을 지우지 않음 (2/2/S)
+- 과제서: 채택 — 과제서의 근거(parseUpload 가 .md 에 embeddedTitle 을 만들지 않음, heading 타입·level attr 이름, 빈 content 를 JSON() 이 빈 문단으로 메움)가 모두 코드와 맞아 그대로 구현했습니다.
+
+- 릴리즈: v0.41.0 (2026-09-19, run 2026-09-19-195351-muni-improve)
