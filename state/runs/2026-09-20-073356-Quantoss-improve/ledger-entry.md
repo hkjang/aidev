@@ -1,0 +1,10 @@
+## 2026-09-20
+- 선택: `toss.Client` 재시도 백오프의 `time.Sleep` 을 클라이언트 필드로 주입 가능하게 해서 `internal/broker` 테스트의 벽시계 31초 제거 (가치 3 / 위험 2 / 작업량 S)
+- 결과: 성공
+- 요약: 전체 검증 `go test -count=1 ./...` ~35s 중 31.8s 가 `TestSellUnknownResultIsResolvedBeforeNewOrder` 하나가 진짜 `toss.Client` 의 5xx 재시도 백오프(1·2·4·8s + 난수, 조회 2회분)를 실제로 자는 비용이었다. `Client` 에 `Sleep func(time.Duration)` 필드(nil 이면 `time.Sleep` — limiter nil 관례와 동일, `NewClient` 는 채우지 않아 운영 경로 불변)를 추가하고 패키지 함수 `backoff` 를 `(c *Client) backoff` 메서드로 바꿔 `request()` 의 network/429/5xx 호출부 3곳이 `c.sleep()` 을 타게 했다 — 대기식·`maxAttempts`·`재시도 대기` 로그는 그대로. `sell_test.go` 의 `sellAPI.client()` 에 `c.Sleep = func(time.Duration) {}` 한 줄만 주입(테스트 서버·statuses 시퀀스·단언 불변 — 재시도 5회는 여전히 `f.getCalls` 로 실제 관찰). 검증(TDD — 테스트 먼저 써서 컴파일 실패 Red 확인 후 구현): 신규 `internal/toss/client_test.go` 2테스트 — httptest 가 503 2회 후 200 을 주면 주입 Sleep 이 정확히 2회, `[1s,1.5s)`·`[2s,2.5s)` 로 호출되고 3회 요청·`ok=true`; `&Client{}` 의 nil Sleep 이 `time.Sleep` 으로 떨어지며 `backoff(0,0,…)` 이 0.5s 미만 대기. `gofmt -l .` 출력 없음, `go vet ./...`·`go build ./...` 통과, `go test -count=1 -race ./internal/toss/ ./internal/broker/` 통과, `time go test -count=1 ./...` **35s → 8.3s(real)**, 문제 테스트 31.8s → 2.68s. 회귀 확인: 주입 줄을 지우고 같은 테스트를 돌리면 **32.1s** 로 되돌아감을 실측(주입이 실제 재시도 경로를 탄다는 증거) 후 복원. 커밋 31b8bce9. 남은 broker 7.7s 는 `live.go` 의 별개 sleep(`waitFill` 1초 폴링·`createIdempotent` attempt+1 초)과 `limiter.acquire` TPS 대기 — 과제서 범위 밖이라 후속으로 남김.
+- 보류 아이디어:
+  - `Config.Validate` 가 gap_reclaim 파라미터(GapMin/GapMax/GapPullMin/GapVolMult)를 검사하지 않음 — `0 < GapMin < GapMax`, `GapPullMin >= 0`, `GapVolMult > 0` + config 테스트 (가치 3 / 위험 1 / S)
+  - `scripts/check.sh` — gofmt/vet/build/test -race 로컬 검증 스크립트, 이제 전체 8초라 실용적 (가치 3 / 위험 1 / S)
+  - `broker/live.go` 의 `waitFill`(1초 폴링)·`createIdempotent`(attempt+1 초) sleep 도 `Live` 필드로 주입 가능하게 — broker 잔여 7.7s 제거, toss 와 같은 nil→time.Sleep 패턴 (가치 2 / 위험 2 / S)
+  - `internal/toss` request() 의 429 Retry-After·401 재발급·network 오류 경로 단위 테스트 — Sleep 주입 덕에 벽시계 없이 가능 (가치 3 / 위험 1 / S)
+- 과제서: 채택 — 과제서의 근거(31.8s 실측, backoff 패키지 함수·호출부 3곳)가 코드와 정확히 일치했고 수용 기준 1~5 를 모두 만족(단, "broker 테스트 1초 미만" 은 `limiter` TPS 대기 때문에 2.68s — 과제서가 스스로 범위 밖으로 둔 부분).
