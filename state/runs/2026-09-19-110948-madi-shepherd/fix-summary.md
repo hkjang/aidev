@@ -1,0 +1,5 @@
+- 지적은 맞음: `getKnowledgePackage`(knowledge_package.go:506)의 `TokenID != ""` 게이트가 OAuthSubject 원칙을 빠뜨려, SSO 토큰으로 `inspect_knowledge_package` 를 부르면 quotes·prompt 를 포함한 package 전체가 반환되고 export_required·export_count·target/consent 확인이 모두 우회됐다.
+- 재현: `TestPostgresMCPOAuthTokens` 에 SSO 경로로 create → inspect → export 를 실행하는 단계를 추가하니 inspect 응답에 `OAUTH_PUBLIC_MARK` 원문이 그대로 나와 실패함(madi-review-pg 로 확인).
+- 수정: 게이트를 `p.TokenID != "" || p.OAuthSubject != ""` 로 바꿔 packagePrincipal(128행)과 같은 조건으로 맞춤. 다른 코드는 손대지 않음.
+- 테스트: SSO inspect 는 원문 없음 + export_required + export_count=0, consent:false export 는 isError, target+consent export 는 원문 반환 + export_count=1 을 단언. 수정 없이 돌리면 inspect 단언에서 실패하는 것도 확인함.
+- 검증: gofmt/go vet 통과, `TestPostgresMCPOAuthTokens`·`TestPostgresKnowledgePackage*` 통과, 전체 `go test ./...` 결과는 아래 수리 노트 참고.
