@@ -1247,7 +1247,7 @@ def write_index(by_day, days, by_day_usage, projects_info, alert_items, weeks, m
                          f'마지막 실행 {esc(sh["last_pass"][:16].replace("T", " ") or "아직 없음")} · 오늘 승인 {sh["today"].get("approve", 0)} · 수정 푸시 {sh["today"].get("fix-pushed", 0)} · '
                          f'사람 필요 {sh["today"].get("needs-human", 0)} <span class="meta">(기록: state/shepherd.jsonl)</span></p>\n')(shepherd_summary()),
              f"[운영 문서]({GH}/aidev#readme) · [원장]({GH}/aidev/tree/main/state) · [실행 이력]({GH}/aidev/commits/main) · [경고 이슈]({GH}/aidev/issues?q=label%3Aalert) · "
-             f"[교훈 {len(lessons)}건]({SITE}/lessons/) · [Atom 피드]({SITE}/feed.xml) · [summary.json]({SITE}/data/summary.json)\n",
+             f"[교훈 {len(lessons)}건]({SITE}/lessons/) · [경험 보고 논문]({SITE}/paper/ko/) ([EN]({SITE}/paper/)) · [Atom 피드]({SITE}/feed.xml) · [summary.json]({SITE}/data/summary.json)\n",
              f"## 오늘 ({today})\n"]
     if tr:
         lines += [stats_html(c, u), f"[{today} 보고 자세히 보기 →]({SITE}/reports/{today}/)\n", runs_table(tr, caption="오늘 전체 회차 (KST)")]
