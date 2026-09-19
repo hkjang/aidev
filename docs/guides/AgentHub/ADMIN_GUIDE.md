@@ -37,7 +37,7 @@
 compose 로 띄우고 → 첫 관리자 비밀번호를 바꾸는** 순서입니다.
 
 ```bash
-export AGENTHUB_VERSION=v0.248.0
+export AGENTHUB_VERSION=v0.249.0
 
 # 1) 반입한 아카이브를 적재한다 (helper 가 검증까지 함께 한다)
 cd agenthub-offline
@@ -267,6 +267,9 @@ role claim 으로 권한이 올라가지 않습니다. SSO 로 들어온 사람�
 들어왔을 때와 같은 문**을 지나며 — 같은 범위 검사, 같은 도구 목록 — 범위는 토큰의 `scope`
 가 아니라 위의 `mcp.oauth.scopes` 가 정합니다(토큰이 이 어휘를 싣고 오면 교집합). OAuth
 토큰은 **`/mcp` 에서만** 받습니다. REST·관리 API 는 지금처럼 키와 세션만 받습니다.
+어느 문으로 들어왔는지는 감사 트레일에 남습니다 — 성공한 도구 호출의 `mcp.tool_call` 항목
+details 에 `auth`(`key` 또는 `oauth`)가 항상, SSO 토큰이면 그 토큰을 낸 클라이언트 ID(`azp`)가
+`client` 로 실리므로, 어느 MCP 클라이언트가 무엇을 불렀는지 트레일에서 볼 수 있습니다.
 
 **Keycloak 쪽 할 일.**
 
