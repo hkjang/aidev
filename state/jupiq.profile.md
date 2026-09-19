@@ -1,0 +1,13 @@
+# jupiq 프로필 (2026-09-19)
+- 목적: JupyterHub·Kubernetes 자원을 한 화면에서 보고 서버 시작·정지·승인 흐름을 관리하는 관리 콘솔(오프라인망 반입용 단일 Docker 이미지로 배포).
+- 스택: Go 1.26(net/http 표준 mux, go-oidc), PostgreSQL 14+(마이그레이션은 `migrations/` SQL, 기동 시 자동 적용), React+TypeScript+Vite(`web/`, vitest), OpenAPI(`openapi/`).
+- 구조:
+  - `cmd/jupiq` 진입점 / `internal/api` HTTP 핸들러·라우트·설정 검증(helpers.go, request_limiter.go) / `internal/auth` 세션·OIDC(oidc.go, oidc_provider.go 캐시, mcp_oauth.go, authtest 가짜 제공자)
+  - `internal/store` PostgreSQL 조회(통합 테스트는 `JUPIQ_INTEGRATION_TEST_DSN` 있을 때만) / `internal/collector` 주기 수집 / `internal/integration` JupyterHub·K8s 클라이언트(SafeHTTPClient·ValidateEndpoint: loopback·metadata 차단)
+  - `internal/analytics` 방문 추적 스니펫·CSP nonce / `internal/secure` 암호화 / `internal/config` 환경변수 / `internal/version`
+  - `web/src` SPA(auth/silentSso.ts, 관리자 설정 탭) / `docs/` USER_GUIDE.md·ADMIN_GUIDE.md(정본)+PDF(공용 md2pdf로 생성) / `scripts/` check-version.sh, check-screenshots.mjs, capture-screenshots.mjs, build-image.sh, package-offline.sh, verify-offline.sh, offline-smoke-test.sh, npm-audit-retry.sh
+- 빌드·테스트: `make lint`(check-version + check-screenshots + go vet + npm lint), `make test`(go test ./... + npm test), `make build`, `make package`/`verify`. 통합: `JUPIQ_INTEGRATION_TEST_DSN=postgres://… go test -count=1 -p=1 -run Integration ./internal/store ./internal/api`(postgres:16-alpine 컨테이너 필요). CI 는 `go test -race`, govulncheck(네트워크 필요), npm audit high. release.yml 은 여기에 docker 이미지 빌드·오프라인 tar.gz·스모크 테스트까지(느림, 수 분).
+- 관례: 커밋 메시지 한국어 `type: 설명`(feat/fix/test/ci). 설정은 `settings` 테이블의 JSON 문서(auth.oidc, mcp.oauth, analytics, mail 등), 비밀값은 `secrets` 암호화 키(`allowedSettingsSecretKeys`). 새 기능 기본값은 꺼짐. 릴리즈는 VERSION 파일 + `v*.*.*` 태그(check-version.sh 가 코드·문서·배포 파일 버전 일치 검사). 가이드 캡처는 manifest 로 관리(check-screenshots.mjs 가 개수·경로 검사).
+- 위험 구역: `internal/auth/*`(세션·OIDC·MCP OAuth — fail-closed 규칙, 계정 자동 생성 금지), `migrations/`, `.github/workflows/*`, 설정 검증(`internal/api` 의 settings 영역 — 잘못 넓히면 SSRF 방어 무력화), `internal/integration` 의 SafeHTTPClient/ValidateEndpoint.
+- 자주 깨지는 곳: Go mux 등록 충돌(메서드 없는 패턴과 `GET /` 충돌로 기동 panic 전례), docs PDF 가 .md 와 어긋난 채 남는 것(가이드 수정 시 md2pdf 재생성 여부 명시), VERSION 을 올리면 표지·OpenAPI·compose 등 여러 파일을 check-version.sh 가 함께 요구.
+- 검증 함정: 통합 테스트는 DSN 없으면 조용히 skip(통과처럼 보임). `authtest` 가짜 OIDC 제공자는 비loopback 로컬 인터페이스가 없으면 skip. 실제 Keycloak·SMTP 는 환경에 없어 가짜로만 검증됨. 이 러너 환경에서는 `go test` 외 다수 명령이 승인 필요라 회차가 `hold: budget` 으로 끊기기 쉬움 — 검증은 명령 수를 줄여 한 번에.

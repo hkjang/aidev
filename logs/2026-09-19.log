@@ -1759,3 +1759,96 @@ https://github.com/hkjang/jikim/pull/36#issuecomment-5740030982
 evidence: /mnt/c/Users/USER/projects/aidev/state/runs/2026-09-19-152756-jikim-improve/evidence.json
 reports: 18 day(s), 3 week(s), 1 month(s), 1041 run(s), 1395 usage row(s), 44 project page(s), 11 alert(s)
 notify: no new alerts
+[15:51:21] aidev synced: run(2026-09-19): jikim — fix-round: review held, PR open https://github.com/hkjang/jikim/pull/36
+[15:51:21] done
+[15:51:27] shepherd: 후보 200건 (한 번에 최대 6건, 오늘 $143.099127/$150)
+[15:53:12] shepherd: 오늘 예산 소진 ($143.099127/$150) — 여기서 멈춘다
+[15:53:12] shepherd: 처리 0건 — 승인 0 · 수정 푸시 0 · 사람 필요 0 (오늘 $143.099127/$150)
+[15:53:12] done
+[16:03:02] skip aiportal-java: STOP
+[16:03:34] skip umm: dirty working tree
+[16:03:35] candidates(41): AgentHub Clustara DartFly Invenqor Kkiit Momento Quantoss ReSSO SecCheck Vendra ai-admin aiportal-front-admin aiportal-front aiportal-py appstore cutover dataworks git-ctx hunter igame jasql jikim jupiq kanpic madi moina moyro muni nexabuilder orbit pii-masker postra ptium qurio releasedock relio seaton sqlon vibe-coders visitflow weekly
+[16:03:35] fix-queue: picked jupiq
+[16:03:35] picked: jupiq
+[16:03:36] jupiq: 실험 roles-2026-09 arm=baseline ({})
+[16:03:36] === jupiq (base=main, run 2026-09-19-160336-jupiq-improve, 회차 예산 $30)
+Preparing worktree (new branch 'auto/2026-09-19-1603')
+HEAD is now at 001e637 feat: release jupiq v1.7.0
+[16:03:39] jupiq: [base] pinned — main@001e637
+[16:03:39] jupiq: [autonomy] release — 
+[16:07:29] jupiq: scout — 24 turns, 4m, $1.45, success
+[16:07:30] jupiq: 프로젝트 프로필 갱신 (13줄, 이전 999일)
+[16:07:30] jupiq: [scout] done — 릴리즈 검증 단계를 한 번에 재현하는 `make test-integration`·`make release-check` 타깃과 실행법 문서화 [수정 과�
+[16:10:53] jupiq: improve — 23 turns, 3m, $1.48, success
+[16:10:53] jupiq: [brief] accepted — 채택 — 과제서의 진단(결함 미재현, 예산 홀드가 원인)이 코드와 일치했고 수용 기준 5개를 모두 그대로 충족했다.
+[16:10:55] jupiq: verify `go build ./...` → exit 0 (1s)
+[16:10:55] jupiq: verify `go vet ./...` → exit 0 (0s)
+[16:10:56] jupiq: verify `go test ./...` → exit 0 (1s)
+[16:10:56] jupiq: verify `cd web && [ -d node_modules ] || npm ci --no-audit --no-fund` → exit 0 (0s)
+[16:11:02] jupiq: verify `cd web && npm test --silent` → exit 0 (6s)
+[16:11:02] jupiq: verify `cd web && [ -d node_modules ] || npm ci --no-audit --no-fund` → exit 0 (0s)
+[16:11:12] jupiq: verify `cd web && npm run build --silent` → exit 0 (10s)
+[16:11:12] jupiq: [verify] passed — 검증 7개 통과 (auto)
+[16:12:49] jupiq: review — 16 turns, 1m, $0.87, success
+[16:12:49] jupiq: [review] rejected — 리뷰 거절: README.md:114 존재하지 않는 패키지 `internal/auth/authtest`를 가짜 OIDC 제공자의 위치로 안내한다. 저장소에 `internal/auth/authtest` 디렉터리는 없고(internal/auth 는 auth.go·oidc.go·*_test.go 뿐), 비loopback IPv4 가 없을 때 skip 하는 코드는 `internal/api/integration_preflight_test.go:374` 의 `nonLoopbackIPv4` 헬퍼다. 이번 PR 의 절반이 정본 README 문서이고 독자가 그 경로를 찾아가면 없으므로 동작과 설명의 불일치 — 경로를 `internal/api` 통합 테스트(integration_preflight_test.go 의 nonLoopbackIPv4)로 고치면 해제된다.
+[16:13:53] jupiq: repair — 18 turns, 1m, $0.54, success
+[16:13:54] jupiq: verify `go build ./...` → exit 0 (1s)
+[16:13:54] jupiq: verify `go vet ./...` → exit 0 (0s)
+[16:13:55] jupiq: verify `go test ./...` → exit 0 (1s)
+[16:13:55] jupiq: verify `cd web && [ -d node_modules ] || npm ci --no-audit --no-fund` → exit 0 (0s)
+[16:14:01] jupiq: verify `cd web && npm test --silent` → exit 0 (6s)
+[16:14:01] jupiq: verify `cd web && [ -d node_modules ] || npm ci --no-audit --no-fund` → exit 0 (0s)
+[16:14:08] jupiq: verify `cd web && npm run build --silent` → exit 0 (7s)
+[16:14:09] jupiq: [repair] done — # 수리 요약 (시도 1) - 문제: README.md:114 이 존재하지 않는 `internal/auth/authtest`(가짜 OIDC 제공자)를 skip 되는 테스트의 위치로 안내했다. 실제로 `internal/auth`
+[16:15:50] jupiq: review — 15 turns, 1m, $0.78, success
+[16:15:51] jupiq: [review] approved — 리뷰 승인 (risk=low)
+branch 'auto/2026-09-19-1603' set up to track 'origin/auto/2026-09-19-1603'.
+[16:15:55] jupiq: [pr] created — https://github.com/hkjang/jupiq/pull/19
+[16:15:58] jupiq: waiting for CI on f5ee3bc (no-ci)
+[16:19:13] jupiq: [ci] passed — 검사 3개 모두 success
+[16:19:18] jupiq: [merge] done — f5ee3bccf1a1aaa1cc8fc87832268e9690354bd1
+From https://github.com/hkjang/jupiq
+ * branch            main       -> FETCH_HEAD
+   001e637..e0ba96e  main       -> origin/main
+Updating 001e637..e0ba96e
+Fast-forward
+ Makefile  | 38 ++++++++++++++++++++++++++++++++++++--
+ README.md | 15 +++++++++++++++
+ 2 files changed, 51 insertions(+), 2 deletions(-)
+Preparing worktree (detached HEAD e0ba96e)
+HEAD is now at e0ba96e Merge pull request #19 from hkjang/auto/2026-09-19-1603
+[16:25:10] jupiq: release — 26 turns, 6m, $1.64, success
+[16:25:15] jupiq: waiting for CI on 52fb7f9 (no-ci)
+[16:28:33] jupiq: [release] published — v1.7.1
+From https://github.com/hkjang/jupiq
+ * branch            main       -> FETCH_HEAD
+Updating e0ba96e..52fb7f9
+Fast-forward
+ README.md                    | 12 ++++++------
+ VERSION                      |  2 +-
+ compose.example.yaml         |  2 +-
+ docs/ADMIN_GUIDE.md          | 12 ++++++------
+ docs/USER_GUIDE.md           |  2 +-
+ docs/admin-guide/index.html  |  2 +-
+ docs/api-mcp/index.html      |  2 +-
+ docs/architecture/index.html |  2 +-
+ docs/features/index.html     |  2 +-
+ docs/index.html              |  8 ++++----
+ docs/install/index.html      | 12 ++++++------
+ docs/offline/index.html      |  6 +++---
+ docs/releases/index.html     | 22 +++++++++++-----------
+ docs/screenshots/index.html  |  2 +-
+ docs/security/index.html     |  2 +-
+ docs/user-guide/index.html   |  2 +-
+ internal/version/version.go  |  2 +-
+ openapi/openapi.yaml         |  2 +-
+ web/package-lock.json        |  4 ++--
+ web/package.json             |  2 +-
+ 20 files changed, 51 insertions(+), 51 deletions(-)
+[16:31:30] jupiq: [assets] verified — v1.7.1 자산 1개 (이전 v1.7.0: 1)
+fatal: '/home/hkjang/.cache/auto-improve-wt/jupiq' is not a working tree
+evidence: /mnt/c/Users/USER/projects/aidev/state/runs/2026-09-19-160336-jupiq-improve/evidence.json
+reports: 18 day(s), 3 week(s), 1 month(s), 1042 run(s), 1401 usage row(s), 44 project page(s), 11 alert(s)
+notify: 1 new alert(s)
+notify: commented on issue #1
+notify: toast shown
