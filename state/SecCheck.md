@@ -156,3 +156,13 @@
 - 보류 아이디어: golang/vulndb 에 GO-2026-6452 `fixed: 2.11.0` 이벤트를 더하는 PR 제출 — outward-facing, 운영자 결정 (가치 5 / 위험 2 / S); 러너가 ci.yml 실패 step 이 'Go vulnerability scan' 이고 vulndb fixed 가 없으면 수정 과제를 자동 배정하지 않도록 판정 규칙 추가 — 저장소 밖(러너) 변경 (가치 4 / 위험 1 / S); excelize 다음 태그가 나오면 pseudo-version 을 태그로 되돌리고 같은 회귀 테스트로 확인 — 09-20 기준 v2.11.0 뒤 태그 없음 (가치 3 / 위험 1 / S); api.ts 의 download(path) 호출을 PR #13 라우트 스캐너에 넣기 — 게이트 풀린 뒤 (가치 2 / 위험 1 / S); docs/user-guide.md(대체된 옛 통합 가이드, 참조 0건) 제거해 USER_GUIDE.md 하나만 정본으로 — 게이트 풀린 뒤 (가치 2 / 위험 1 / S)
 - 과제서: 채택 — 0단계 세 판정((a) fixed 없음, (b) PR #13=auto/2026-09-20-0734 이고 web/ 만 변경, (c) 실패 step=7 Go vulnerability scan, origin/main 에서도 exit 3)이 모두 과제서의 예상(경로 B)과 맞아, 커밋을 하나도 만들지 않고 외부 차단으로만 기록하고 vulndb-fix-proposal.md 를 남겼다.
 
+## 2026-09-20
+- 선택: 필수 technology 스킬 제공 여부 확인 및 구현 보류 (가치 4 / 위험 1 / 작업량 S)
+- 결과: 변경없음
+- 요약: 사용자가 선행 조건으로 지정한 technology:completion-verification, technology:systematic-debugging, technology:test-driven-development를 도구 목록 및 로컬 스킬 경로에서 찾지 못했다. 다른 플러그인의 동명 스킬 두 개만 발견했으며 completion-verification은 없어서 필수 스킬 부재 시 중단하라는 세션 지침에 따라 구현·검증·커밋을 진행하지 않았다. 취약점 DB·CI 최신 상태와 기존 아이디어의 코드상 타당성은 이번 회차에 재검증하지 않았고, 기존 12개 후보를 pending으로 보존하고 새 제안 2개를 추가했다.
+- 보류 아이디어:
+  - 필수 technology 스킬 제공 여부를 러너 시작 전에 점검 (가치 4 / 위험 1 / 작업량 S)
+  - DB 통합 테스트 실행 여부를 검증 결과에 명시 (가치 3 / 위험 1 / 작업량 S)
+  - GO-2026-6452 fixed 이벤트 추가 제안 — 운영자 결정 (가치 5 / 위험 2 / 작업량 S)
+  - 외부 취약점 DB 차단 시 반복 과제 배정을 막는 러너 규칙 (가치 4 / 위험 1 / 작업량 S)
+
