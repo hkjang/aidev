@@ -28,3 +28,5 @@
 - 실제 Excel 수식 해석은 미검증이며 boolean·선행 공백 헤더는 helper 검증만 있으므로 다음 회차에서 참고하세요.
 - [러너 07:49] review approved — 리뷰 승인 (risk=low)
 - [러너 07:49] pr created — https://github.com/hkjang/DartFly/pull/11
+- [러너 07:54] ci passed — 검사 3개 모두 success
+- [러너 07:54] merge done — e6bd782
