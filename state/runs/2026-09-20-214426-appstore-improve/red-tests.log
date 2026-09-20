@@ -1,0 +1,95 @@
+
+> appstore-web@2.11.3 test
+> vitest run src/pages/personal-pages.test.tsx src/pages/public-pages.test.tsx
+
+
+ RUN  v3.2.7 /home/hkjang/.cache/auto-improve-wt/appstore/web
+
+ ✓ src/pages/public-pages.test.tsx (4 tests) 192ms
+ ❯ src/pages/personal-pages.test.tsx (16 tests | 10 failed) 363ms
+   ✓ My applications > labels each card with the status the owner cannot otherwise see 60ms
+   ✓ My applications > opens the edit screen from a card the public detail route would 404 on 37ms
+   ✓ My applications > shows why a rejected app was sent back 25ms
+   ✓ My applications > keeps a superseded reason hidden once the app is back in review 12ms
+   × Owner favorites on /my/apps > hides both favorite actions for draft/public and preserves storage 22ms
+     → expected <button type="button" …(3)>…(1)</button> to be null
+   × Owner favorites on /my/apps > hides both favorite actions for pending_review/public and preserves storage 17ms
+     → expected <button type="button" …(3)>…(1)</button> to be null
+   × Owner favorites on /my/apps > hides both favorite actions for rejected/public and preserves storage 18ms
+     → expected <button type="button" …(3)>…(1)</button> to be null
+   × Owner favorites on /my/apps > hides both favorite actions for archived/public and preserves storage 15ms
+     → expected <button type="button" …(3)>…(1)</button> to be null
+   × Owner favorites on /my/apps > hides both favorite actions for published/private and preserves storage 15ms
+     → expected <button type="button" …(3)>…(1)</button> to be null
+   ✓ Owner favorites on /my/apps > keeps the published public card's favorite toggle and detail links 40ms
+   × Owner favorites on /my > hides both favorite actions for draft/public and preserves storage 16ms
+     → expected <button type="button" …(3)>…(1)</button> to be null
+   × Owner favorites on /my > hides both favorite actions for pending_review/public and preserves storage 14ms
+     → expected <button type="button" …(3)>…(1)</button> to be null
+   × Owner favorites on /my > hides both favorite actions for rejected/public and preserves storage 14ms
+     → expected <button type="button" …(3)>…(1)</button> to be null
+   × Owner favorites on /my > hides both favorite actions for archived/public and preserves storage 14ms
+     → expected <button type="button" …(3)>…(1)</button> to be null
+   × Owner favorites on /my > hides both favorite actions for published/private and preserves storage 13ms
+     → expected <button type="button" …(3)>…(1)</button> to be null
+   ✓ Owner favorites on /my > keeps the published public card's favorite toggle and detail links 30ms
+
+⎯⎯⎯⎯⎯⎯ Failed Tests 10 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/pages/personal-pages.test.tsx > Owner favorites on /my/apps > hides both favorite actions for draft/public and preserves storage
+ FAIL  src/pages/personal-pages.test.tsx > Owner favorites on /my/apps > hides both favorite actions for pending_review/public and preserves storage
+ FAIL  src/pages/personal-pages.test.tsx > Owner favorites on /my/apps > hides both favorite actions for rejected/public and preserves storage
+ FAIL  src/pages/personal-pages.test.tsx > Owner favorites on /my/apps > hides both favorite actions for archived/public and preserves storage
+ FAIL  src/pages/personal-pages.test.tsx > Owner favorites on /my/apps > hides both favorite actions for published/private and preserves storage
+ FAIL  src/pages/personal-pages.test.tsx > Owner favorites on /my > hides both favorite actions for draft/public and preserves storage
+ FAIL  src/pages/personal-pages.test.tsx > Owner favorites on /my > hides both favorite actions for pending_review/public and preserves storage
+ FAIL  src/pages/personal-pages.test.tsx > Owner favorites on /my > hides both favorite actions for rejected/public and preserves storage
+ FAIL  src/pages/personal-pages.test.tsx > Owner favorites on /my > hides both favorite actions for archived/public and preserves storage
+ FAIL  src/pages/personal-pages.test.tsx > Owner favorites on /my > hides both favorite actions for published/private and preserves storage
+AssertionError: expected <button type="button" …(3)>…(1)</button> to be null
+
+- Expected: 
+null
+
++ Received: 
+<button
+  aria-label="Saved App 즐겨찾기 해제"
+  aria-pressed="true"
+  class="button button-ghost button-sm"
+  type="button"
+>
+  <svg
+    aria-hidden="true"
+    class="lucide lucide-heart"
+    fill="currentColor"
+    height="17"
+    stroke="currentColor"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+    stroke-width="2"
+    viewBox="0 0 24 24"
+    width="17"
+    xmlns="http://www.w3.org/2000/svg"
+  >
+    <path
+      d="M2 9.5a5.5 5.5 0 0 1 9.591-3.676.56.56 0 0 0 .818 0A5.49 5.49 0 0 1 22 9.5c0 2.29-1.5 4-3 5.5l-5.492 5.313a2 2 0 0 1-3 .019L5 15c-1.5-1.5-3-3.2-3-5.5"
+    />
+  </svg>
+</button>
+
+ ❯ src/pages/personal-pages.test.tsx:191:60
+    189|       const heading = await screen.findByRole("heading", { name });
+    190|       const card = within(heading.closest("article")!);
+    191|       expect(card.queryByRole("button", { name: /즐겨찾기/ })).toBeNull();
+       |                                                            ^
+    192|       expect(heading.querySelector("a")).toHaveAttribute("href", `/my/…
+    193|       expect(card.getByText(label)).toBeVisible();
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/10]⎯
+
+
+ Test Files  1 failed | 1 passed (2)
+      Tests  10 failed | 10 passed (20)
+   Start at  21:50:42
+   Duration  1.07s (transform 187ms, setup 147ms, collect 432ms, tests 555ms, environment 396ms, prepare 77ms)
+

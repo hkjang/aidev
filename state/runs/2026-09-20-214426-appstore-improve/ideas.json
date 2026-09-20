@@ -1,0 +1,128 @@
+[
+  {
+    "title": "소유자 카드의 즐겨찾기 하트가 게시되지 않은 앱에서 조용한 no-op",
+    "value": 3,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "이번 선택. AppCard 하트는 무조건 렌더되고 FavoritesProvider가 localStorage를 바꾸지만 AppsPage favoritesOnly는 공개 결과만 필터링. 기존 viewable 재사용.",
+    "updated": "2026-09-20"
+  },
+  {
+    "title": "MCP SSO 의 JWKS 재요청 제한(초당 1회 RoundTripper) + discovery 실패 backoff/lock 밖",
+    "value": 2,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "현재 internal/auth/access_token.go 및 MCP OAuth 구현 없음. PR #23 실제 원격 상태는 미확인; 현재 HEAD에 선행 구현이 없어 보류.",
+    "updated": "2026-09-20"
+  },
+  {
+    "title": "validateMCPOAuth 저장 시 422 경로의 핸들러 수준 Go 테스트",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "현재 validateMCPOAuth 코드 없음. 선행 MCP OAuth 구현 뒤 재평가.",
+    "updated": "2026-09-20"
+  },
+  {
+    "title": "개인 API 키 만료 임박 메일(key.expiring)",
+    "value": 3,
+    "risk": 3,
+    "size": "L",
+    "status": "pending",
+    "note": "이전 추정 수정: 현재 internal/mail과 migration 000005도 없다. 메일 기반+스케줄러+마이그레이션 선행 필요하여 45분 범위 초과.",
+    "updated": "2026-09-20"
+  },
+  {
+    "title": "로그인 rate limit 통합 테스트가 분 경계에 걸리면 실패 — 고정 시각 주입",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "fixedWindowLimiter.allow는 now를 받는다. 과거 DSN 실행에서의 분 경계 실패는 이번 재현 미확인; 사용자 영향 있는 과제 우선.",
+    "updated": "2026-09-20"
+  },
+  {
+    "title": "clientAddress 가 RemoteAddr 만 보아 reverse proxy 뒤에서 rate limit 이 전역",
+    "value": 3,
+    "risk": 3,
+    "size": "M",
+    "status": "pending",
+    "note": "ratelimit.go:clientAddress가 RemoteAddr 사용. 신뢰 프록시 정책 설정 필요, 인증 관련 위험이 높아 이번 제외.",
+    "updated": "2026-09-20"
+  },
+  {
+    "title": "소유자가 볼 수 있는 검토 이력이 마지막 한 건뿐 — /me/apps/{id}/reviews",
+    "value": 2,
+    "risk": 2,
+    "size": "M",
+    "status": "pending",
+    "note": "personal_handlers.go:myApps가 LatestReviewsByApp 결과 하나를 싣는다. 권한·API·화면 계약을 함께 변경해야 함.",
+    "updated": "2026-09-20"
+  },
+  {
+    "title": "pending_review 앱을 수정해도 검토가 level 1 로 되돌아가지 않음",
+    "value": 2,
+    "risk": 3,
+    "size": "S",
+    "status": "pending",
+    "note": "UpdateApp은 보안 관련 변경 시 rotateAppChallenge를 호출한다. 검토 레벨 재설정 정책은 미확인; 정책 없이 자율 변경 금지.",
+    "updated": "2026-09-20"
+  },
+  {
+    "title": "방문 추적 화면에 현재 설정이 만들 CSP 문자열 미리보기",
+    "value": 2,
+    "risk": 2,
+    "size": "M",
+    "status": "pending",
+    "note": "analytics_handlers.go:pagePolicy 존재. 저장 전 입력을 GET으로 어떻게 전달할지와 nonce 표현 계약이 필요해 S 추정 대신 M.",
+    "updated": "2026-09-20"
+  },
+  {
+    "title": "LoginPage 렌더 테스트 — 기본 상태 3종(SSO만·bootstrap만·둘 다) 커버",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "auth-pages.test.tsx는 거절 안내 4건이고 renderLogin의 bootstrapAvailable=false 고정. 차선 후보.",
+    "updated": "2026-09-20"
+  },
+  {
+    "title": "silent-sso.ts 가 sso=error 마커를 인식하지만 서버는 만들지 않음",
+    "value": 1,
+    "risk": 2,
+    "size": "S",
+    "status": "rejected",
+    "note": "서버 silentRefusalPath는 sso=none만 생성. 사용자 동작 개선 근거 없이 분기 제거/오류 발급 정책을 바꾸는 접근은 이번 후보에서 기각.",
+    "updated": "2026-09-20"
+  },
+  {
+    "title": "USER_GUIDE 2.2 의 silent SSO 안내 문단에 /login?sso=none 캡처가 없음",
+    "value": 1,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "visual.spec.ts 로그인 route에 sso=none 없음. 다음 전체 캡처 갱신 때 함께 처리.",
+    "updated": "2026-09-20"
+  },
+  {
+    "title": "즐겨찾기 화면의 개수·페이지 탐색이 공개 카탈로그 전체 기준인 문제",
+    "value": 3,
+    "risk": 2,
+    "size": "M",
+    "status": "pending",
+    "note": "신규. AppsPage는 pageSize=100 결과를 로컬 slugs로 거르지만 개수 표시는 apps.data.total. 전체 즐겨찾기 수/100개 밖 앱을 함께 검증해야 하므로 숫자만 수정하지 말 것.",
+    "updated": "2026-09-20"
+  },
+  {
+    "title": "USER_GUIDE의 로그인하면 즐겨찾기가 기기 간 동기화된다는 안내 수정",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "신규. USER_GUIDE 4.2는 다른 기기에서도 같게 보려면 로그인하라고 하나 FavoritesProvider는 인증과 무관한 localStorage이고 web/src/lib/api.ts는 즐겨찾기 API 연결 없음. 서버에는 /me/favorites 존재하므로 문서 수정과 프런트 동기화 기능을 구분; 문서/PDF만 바로잡는 작은 과제로 가능.",
+    "updated": "2026-09-20"
+  }
+]
