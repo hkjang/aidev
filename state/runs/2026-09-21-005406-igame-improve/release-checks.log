@@ -1,0 +1,338 @@
+go mod download
+npm --prefix sdk/gamehub-js ci
+
+added 180 packages, and audited 181 packages in 2s
+
+53 packages are looking for funding
+  run `npm fund` for details
+
+found 0 vulnerabilities
+npm --prefix web ci
+npm warn deprecated whatwg-encoding@3.1.1: Use @exodus/bytes instead for a more spec-conformant and faster implementation
+
+added 312 packages, and audited 314 packages in 17s
+
+72 packages are looking for funding
+  run `npm fund` for details
+
+found 0 vulnerabilities
+bash ./scripts/check-release-contract.sh
+Release contract verified for igame:v0.7.18
+go vet ./cmd/... ./internal/... ./migrations/...
+npm --prefix sdk/gamehub-js run lint
+
+> @igame/gamehub-js@0.7.18 lint
+> eslint src --max-warnings=0
+
+npm --prefix web run lint
+
+> igame-web@0.7.18 lint
+> eslint . --max-warnings=0
+
+go test ./cmd/... ./internal/... ./migrations/...
+ok  	github.com/hkjang/igame/cmd/igame	(cached)
+ok  	github.com/hkjang/igame/internal/api	0.316s
+ok  	github.com/hkjang/igame/internal/battle/realmguard	0.089s
+ok  	github.com/hkjang/igame/internal/config	(cached)
+ok  	github.com/hkjang/igame/internal/database	0.003s
+ok  	github.com/hkjang/igame/internal/secretbox	(cached)
+ok  	github.com/hkjang/igame/internal/tracking	(cached)
+?   	github.com/hkjang/igame/internal/version	[no test files]
+ok  	github.com/hkjang/igame/internal/web	(cached)
+?   	github.com/hkjang/igame/migrations	[no test files]
+npm --prefix sdk/gamehub-js test
+
+> @igame/gamehub-js@0.7.18 test
+> vitest run
+
+
+ RUN  v5.0.0 /home/hkjang/.cache/auto-improve-wt/igame-release/sdk/gamehub-js
+
+
+ Test Files  1 passed (1)
+      Tests  9 passed (9)
+   Start at  01:13:51
+   Duration  129ms (transform 56%, tests 30%, import 11%, worker 3%)
+
+npm --prefix web test
+
+> igame-web@0.7.18 test
+> vitest run
+
+
+ RUN  v5.0.0 /home/hkjang/.cache/auto-improve-wt/igame-release/web
+
+Error: Not implemented: HTMLCanvasElement.prototype.getContext (without installing the canvas npm package)
+    at module.exports (/home/hkjang/.cache/auto-improve-wt/igame-release/web/node_modules/jsdom/lib/jsdom/browser/not-implemented.js:9:17)
+    at HTMLCanvasElementImpl.getContext (/home/hkjang/.cache/auto-improve-wt/igame-release/web/node_modules/jsdom/lib/jsdom/living/nodes/HTMLCanvasElement-impl.js:42:5)
+    at HTMLCanvasElement.getContext (/home/hkjang/.cache/auto-improve-wt/igame-release/web/node_modules/jsdom/lib/jsdom/living/generated/HTMLCanvasElement.js:131:58)
+    at /home/hkjang/.cache/auto-improve-wt/igame-release/web/src/games/realmguard/EnemyPortrait.tsx:24:29
+    at Object.react_stack_bottom_frame (/home/hkjang/.cache/auto-improve-wt/igame-release/web/node_modules/react-dom/cjs/react-dom-client.development.js:25989:20)
+    at runWithFiberInDEV (/home/hkjang/.cache/auto-improve-wt/igame-release/web/node_modules/react-dom/cjs/react-dom-client.development.js:874:13)
+    at commitHookEffectListMount (/home/hkjang/.cache/auto-improve-wt/igame-release/web/node_modules/react-dom/cjs/react-dom-client.development.js:13249:29)
+    at commitHookPassiveMountEffects (/home/hkjang/.cache/auto-improve-wt/igame-release/web/node_modules/react-dom/cjs/react-dom-client.development.js:13336:11)
+    at commitPassiveMountOnFiber (/home/hkjang/.cache/auto-improve-wt/igame-release/web/node_modules/react-dom/cjs/react-dom-client.development.js:15484:13)
+    at recursivelyTraversePassiveMountEffects (/home/hkjang/.cache/auto-improve-wt/igame-release/web/node_modules/react-dom/cjs/react-dom-client.development.js:15439:11) undefined
+Error: Not implemented: HTMLCanvasElement.prototype.getContext (without installing the canvas npm package)
+    at module.exports (/home/hkjang/.cache/auto-improve-wt/igame-release/web/node_modules/jsdom/lib/jsdom/browser/not-implemented.js:9:17)
+    at HTMLCanvasElementImpl.getContext (/home/hkjang/.cache/auto-improve-wt/igame-release/web/node_modules/jsdom/lib/jsdom/living/nodes/HTMLCanvasElement-impl.js:42:5)
+    at HTMLCanvasElement.getContext (/home/hkjang/.cache/auto-improve-wt/igame-release/web/node_modules/jsdom/lib/jsdom/living/generated/HTMLCanvasElement.js:131:58)
+    at /home/hkjang/.cache/auto-improve-wt/igame-release/web/src/games/realmguard/EnemyPortrait.tsx:24:29
+    at Object.react_stack_bottom_frame (/home/hkjang/.cache/auto-improve-wt/igame-release/web/node_modules/react-dom/cjs/react-dom-client.development.js:25989:20)
+    at runWithFiberInDEV (/home/hkjang/.cache/auto-improve-wt/igame-release/web/node_modules/react-dom/cjs/react-dom-client.development.js:874:13)
+    at commitHookEffectListMount (/home/hkjang/.cache/auto-improve-wt/igame-release/web/node_modules/react-dom/cjs/react-dom-client.development.js:13249:29)
+    at commitHookPassiveMountEffects (/home/hkjang/.cache/auto-improve-wt/igame-release/web/node_modules/react-dom/cjs/react-dom-client.development.js:13336:11)
+    at commitPassiveMountOnFiber (/home/hkjang/.cache/auto-improve-wt/igame-release/web/node_modules/react-dom/cjs/react-dom-client.development.js:15484:13)
+    at recursivelyTraversePassiveMountEffects (/home/hkjang/.cache/auto-improve-wt/igame-release/web/node_modules/react-dom/cjs/react-dom-client.development.js:15439:11) undefined
+Error: Not implemented: HTMLCanvasElement.prototype.getContext (without installing the canvas npm package)
+    at module.exports (/home/hkjang/.cache/auto-improve-wt/igame-release/web/node_modules/jsdom/lib/jsdom/browser/not-implemented.js:9:17)
+    at HTMLCanvasElementImpl.getContext (/home/hkjang/.cache/auto-improve-wt/igame-release/web/node_modules/jsdom/lib/jsdom/living/nodes/HTMLCanvasElement-impl.js:42:5)
+    at HTMLCanvasElement.getContext (/home/hkjang/.cache/auto-improve-wt/igame-release/web/node_modules/jsdom/lib/jsdom/living/generated/HTMLCanvasElement.js:131:58)
+    at /home/hkjang/.cache/auto-improve-wt/igame-release/web/src/games/realmguard/EnemyPortrait.tsx:24:29
+    at Object.react_stack_bottom_frame (/home/hkjang/.cache/auto-improve-wt/igame-release/web/node_modules/react-dom/cjs/react-dom-client.development.js:25989:20)
+    at runWithFiberInDEV (/home/hkjang/.cache/auto-improve-wt/igame-release/web/node_modules/react-dom/cjs/react-dom-client.development.js:874:13)
+    at commitHookEffectListMount (/home/hkjang/.cache/auto-improve-wt/igame-release/web/node_modules/react-dom/cjs/react-dom-client.development.js:13249:29)
+    at commitHookPassiveMountEffects (/home/hkjang/.cache/auto-improve-wt/igame-release/web/node_modules/react-dom/cjs/react-dom-client.development.js:13336:11)
+    at commitPassiveMountOnFiber (/home/hkjang/.cache/auto-improve-wt/igame-release/web/node_modules/react-dom/cjs/react-dom-client.development.js:15484:13)
+    at recursivelyTraversePassiveMountEffects (/home/hkjang/.cache/auto-improve-wt/igame-release/web/node_modules/react-dom/cjs/react-dom-client.development.js:15439:11) undefined
+Error: Not implemented: HTMLCanvasElement.prototype.getContext (without installing the canvas npm package)
+    at module.exports (/home/hkjang/.cache/auto-improve-wt/igame-release/web/node_modules/jsdom/lib/jsdom/browser/not-implemented.js:9:17)
+    at HTMLCanvasElementImpl.getContext (/home/hkjang/.cache/auto-improve-wt/igame-release/web/node_modules/jsdom/lib/jsdom/living/nodes/HTMLCanvasElement-impl.js:42:5)
+    at HTMLCanvasElement.getContext (/home/hkjang/.cache/auto-improve-wt/igame-release/web/node_modules/jsdom/lib/jsdom/living/generated/HTMLCanvasElement.js:131:58)
+    at /home/hkjang/.cache/auto-improve-wt/igame-release/web/src/games/realmguard/EnemyPortrait.tsx:24:29
+    at Object.react_stack_bottom_frame (/home/hkjang/.cache/auto-improve-wt/igame-release/web/node_modules/react-dom/cjs/react-dom-client.development.js:25989:20)
+    at runWithFiberInDEV (/home/hkjang/.cache/auto-improve-wt/igame-release/web/node_modules/react-dom/cjs/react-dom-client.development.js:874:13)
+    at commitHookEffectListMount (/home/hkjang/.cache/auto-improve-wt/igame-release/web/node_modules/react-dom/cjs/react-dom-client.development.js:13249:29)
+    at commitHookPassiveMountEffects (/home/hkjang/.cache/auto-improve-wt/igame-release/web/node_modules/react-dom/cjs/react-dom-client.development.js:13336:11)
+    at commitPassiveMountOnFiber (/home/hkjang/.cache/auto-improve-wt/igame-release/web/node_modules/react-dom/cjs/react-dom-client.development.js:15484:13)
+    at recursivelyTraversePassiveMountEffects (/home/hkjang/.cache/auto-improve-wt/igame-release/web/node_modules/react-dom/cjs/react-dom-client.development.js:15439:11) undefined
+Error: Not implemented: HTMLCanvasElement.prototype.getContext (without installing the canvas npm package)
+    at module.exports (/home/hkjang/.cache/auto-improve-wt/igame-release/web/node_modules/jsdom/lib/jsdom/browser/not-implemented.js:9:17)
+    at HTMLCanvasElementImpl.getContext (/home/hkjang/.cache/auto-improve-wt/igame-release/web/node_modules/jsdom/lib/jsdom/living/nodes/HTMLCanvasElement-impl.js:42:5)
+    at HTMLCanvasElement.getContext (/home/hkjang/.cache/auto-improve-wt/igame-release/web/node_modules/jsdom/lib/jsdom/living/generated/HTMLCanvasElement.js:131:58)
+    at /home/hkjang/.cache/auto-improve-wt/igame-release/web/src/games/realmguard/EnemyPortrait.tsx:24:29
+    at Object.react_stack_bottom_frame (/home/hkjang/.cache/auto-improve-wt/igame-release/web/node_modules/react-dom/cjs/react-dom-client.development.js:25989:20)
+    at runWithFiberInDEV (/home/hkjang/.cache/auto-improve-wt/igame-release/web/node_modules/react-dom/cjs/react-dom-client.development.js:874:13)
+    at commitHookEffectListMount (/home/hkjang/.cache/auto-improve-wt/igame-release/web/node_modules/react-dom/cjs/react-dom-client.development.js:13249:29)
+    at commitHookPassiveMountEffects (/home/hkjang/.cache/auto-improve-wt/igame-release/web/node_modules/react-dom/cjs/react-dom-client.development.js:13336:11)
+    at commitPassiveMountOnFiber (/home/hkjang/.cache/auto-improve-wt/igame-release/web/node_modules/react-dom/cjs/react-dom-client.development.js:15484:13)
+    at recursivelyTraversePassiveMountEffects (/home/hkjang/.cache/auto-improve-wt/igame-release/web/node_modules/react-dom/cjs/react-dom-client.development.js:15439:11) undefined
+Error: Not implemented: HTMLCanvasElement.prototype.getContext (without installing the canvas npm package)
+    at module.exports (/home/hkjang/.cache/auto-improve-wt/igame-release/web/node_modules/jsdom/lib/jsdom/browser/not-implemented.js:9:17)
+    at HTMLCanvasElementImpl.getContext (/home/hkjang/.cache/auto-improve-wt/igame-release/web/node_modules/jsdom/lib/jsdom/living/nodes/HTMLCanvasElement-impl.js:42:5)
+    at HTMLCanvasElement.getContext (/home/hkjang/.cache/auto-improve-wt/igame-release/web/node_modules/jsdom/lib/jsdom/living/generated/HTMLCanvasElement.js:131:58)
+    at /home/hkjang/.cache/auto-improve-wt/igame-release/web/src/games/realmguard/EnemyPortrait.tsx:24:29
+    at Object.react_stack_bottom_frame (/home/hkjang/.cache/auto-improve-wt/igame-release/web/node_modules/react-dom/cjs/react-dom-client.development.js:25989:20)
+    at runWithFiberInDEV (/home/hkjang/.cache/auto-improve-wt/igame-release/web/node_modules/react-dom/cjs/react-dom-client.development.js:874:13)
+    at commitHookEffectListMount (/home/hkjang/.cache/auto-improve-wt/igame-release/web/node_modules/react-dom/cjs/react-dom-client.development.js:13249:29)
+    at commitHookPassiveMountEffects (/home/hkjang/.cache/auto-improve-wt/igame-release/web/node_modules/react-dom/cjs/react-dom-client.development.js:13336:11)
+    at commitPassiveMountOnFiber (/home/hkjang/.cache/auto-improve-wt/igame-release/web/node_modules/react-dom/cjs/react-dom-client.development.js:15484:13)
+    at recursivelyTraversePassiveMountEffects (/home/hkjang/.cache/auto-improve-wt/igame-release/web/node_modules/react-dom/cjs/react-dom-client.development.js:15439:11) undefined
+Error: Not implemented: HTMLCanvasElement.prototype.getContext (without installing the canvas npm package)
+    at module.exports (/home/hkjang/.cache/auto-improve-wt/igame-release/web/node_modules/jsdom/lib/jsdom/browser/not-implemented.js:9:17)
+    at HTMLCanvasElementImpl.getContext (/home/hkjang/.cache/auto-improve-wt/igame-release/web/node_modules/jsdom/lib/jsdom/living/nodes/HTMLCanvasElement-impl.js:42:5)
+    at HTMLCanvasElement.getContext (/home/hkjang/.cache/auto-improve-wt/igame-release/web/node_modules/jsdom/lib/jsdom/living/generated/HTMLCanvasElement.js:131:58)
+    at /home/hkjang/.cache/auto-improve-wt/igame-release/web/src/games/realmguard/EnemyPortrait.tsx:24:29
+    at Object.react_stack_bottom_frame (/home/hkjang/.cache/auto-improve-wt/igame-release/web/node_modules/react-dom/cjs/react-dom-client.development.js:25989:20)
+    at runWithFiberInDEV (/home/hkjang/.cache/auto-improve-wt/igame-release/web/node_modules/react-dom/cjs/react-dom-client.development.js:874:13)
+    at commitHookEffectListMount (/home/hkjang/.cache/auto-improve-wt/igame-release/web/node_modules/react-dom/cjs/react-dom-client.development.js:13249:29)
+    at commitHookPassiveMountEffects (/home/hkjang/.cache/auto-improve-wt/igame-release/web/node_modules/react-dom/cjs/react-dom-client.development.js:13336:11)
+    at commitPassiveMountOnFiber (/home/hkjang/.cache/auto-improve-wt/igame-release/web/node_modules/react-dom/cjs/react-dom-client.development.js:15484:13)
+    at recursivelyTraversePassiveMountEffects (/home/hkjang/.cache/auto-improve-wt/igame-release/web/node_modules/react-dom/cjs/react-dom-client.development.js:15439:11) undefined
+Error: Not implemented: HTMLCanvasElement.prototype.getContext (without installing the canvas npm package)
+    at module.exports (/home/hkjang/.cache/auto-improve-wt/igame-release/web/node_modules/jsdom/lib/jsdom/browser/not-implemented.js:9:17)
+    at HTMLCanvasElementImpl.getContext (/home/hkjang/.cache/auto-improve-wt/igame-release/web/node_modules/jsdom/lib/jsdom/living/nodes/HTMLCanvasElement-impl.js:42:5)
+    at HTMLCanvasElement.getContext (/home/hkjang/.cache/auto-improve-wt/igame-release/web/node_modules/jsdom/lib/jsdom/living/generated/HTMLCanvasElement.js:131:58)
+    at /home/hkjang/.cache/auto-improve-wt/igame-release/web/src/games/realmguard/EnemyPortrait.tsx:24:29
+    at Object.react_stack_bottom_frame (/home/hkjang/.cache/auto-improve-wt/igame-release/web/node_modules/react-dom/cjs/react-dom-client.development.js:25989:20)
+    at runWithFiberInDEV (/home/hkjang/.cache/auto-improve-wt/igame-release/web/node_modules/react-dom/cjs/react-dom-client.development.js:874:13)
+    at commitHookEffectListMount (/home/hkjang/.cache/auto-improve-wt/igame-release/web/node_modules/react-dom/cjs/react-dom-client.development.js:13249:29)
+    at commitHookPassiveMountEffects (/home/hkjang/.cache/auto-improve-wt/igame-release/web/node_modules/react-dom/cjs/react-dom-client.development.js:13336:11)
+    at commitPassiveMountOnFiber (/home/hkjang/.cache/auto-improve-wt/igame-release/web/node_modules/react-dom/cjs/react-dom-client.development.js:15484:13)
+    at recursivelyTraversePassiveMountEffects (/home/hkjang/.cache/auto-improve-wt/igame-release/web/node_modules/react-dom/cjs/react-dom-client.development.js:15439:11) undefined
+Error: Not implemented: HTMLCanvasElement.prototype.getContext (without installing the canvas npm package)
+    at module.exports (/home/hkjang/.cache/auto-improve-wt/igame-release/web/node_modules/jsdom/lib/jsdom/browser/not-implemented.js:9:17)
+    at HTMLCanvasElementImpl.getContext (/home/hkjang/.cache/auto-improve-wt/igame-release/web/node_modules/jsdom/lib/jsdom/living/nodes/HTMLCanvasElement-impl.js:42:5)
+    at HTMLCanvasElement.getContext (/home/hkjang/.cache/auto-improve-wt/igame-release/web/node_modules/jsdom/lib/jsdom/living/generated/HTMLCanvasElement.js:131:58)
+    at /home/hkjang/.cache/auto-improve-wt/igame-release/web/src/games/realmguard/EnemyPortrait.tsx:24:29
+    at Object.react_stack_bottom_frame (/home/hkjang/.cache/auto-improve-wt/igame-release/web/node_modules/react-dom/cjs/react-dom-client.development.js:25989:20)
+    at runWithFiberInDEV (/home/hkjang/.cache/auto-improve-wt/igame-release/web/node_modules/react-dom/cjs/react-dom-client.development.js:874:13)
+    at commitHookEffectListMount (/home/hkjang/.cache/auto-improve-wt/igame-release/web/node_modules/react-dom/cjs/react-dom-client.development.js:13249:29)
+    at commitHookPassiveMountEffects (/home/hkjang/.cache/auto-improve-wt/igame-release/web/node_modules/react-dom/cjs/react-dom-client.development.js:13336:11)
+    at commitPassiveMountOnFiber (/home/hkjang/.cache/auto-improve-wt/igame-release/web/node_modules/react-dom/cjs/react-dom-client.development.js:15484:13)
+    at recursivelyTraversePassiveMountEffects (/home/hkjang/.cache/auto-improve-wt/igame-release/web/node_modules/react-dom/cjs/react-dom-client.development.js:15439:11) undefined
+Error: Not implemented: HTMLCanvasElement.prototype.getContext (without installing the canvas npm package)
+    at module.exports (/home/hkjang/.cache/auto-improve-wt/igame-release/web/node_modules/jsdom/lib/jsdom/browser/not-implemented.js:9:17)
+    at HTMLCanvasElementImpl.getContext (/home/hkjang/.cache/auto-improve-wt/igame-release/web/node_modules/jsdom/lib/jsdom/living/nodes/HTMLCanvasElement-impl.js:42:5)
+    at HTMLCanvasElement.getContext (/home/hkjang/.cache/auto-improve-wt/igame-release/web/node_modules/jsdom/lib/jsdom/living/generated/HTMLCanvasElement.js:131:58)
+    at /home/hkjang/.cache/auto-improve-wt/igame-release/web/src/games/realmguard/EnemyPortrait.tsx:24:29
+    at Object.react_stack_bottom_frame (/home/hkjang/.cache/auto-improve-wt/igame-release/web/node_modules/react-dom/cjs/react-dom-client.development.js:25989:20)
+    at runWithFiberInDEV (/home/hkjang/.cache/auto-improve-wt/igame-release/web/node_modules/react-dom/cjs/react-dom-client.development.js:874:13)
+    at commitHookEffectListMount (/home/hkjang/.cache/auto-improve-wt/igame-release/web/node_modules/react-dom/cjs/react-dom-client.development.js:13249:29)
+    at commitHookPassiveMountEffects (/home/hkjang/.cache/auto-improve-wt/igame-release/web/node_modules/react-dom/cjs/react-dom-client.development.js:13336:11)
+    at commitPassiveMountOnFiber (/home/hkjang/.cache/auto-improve-wt/igame-release/web/node_modules/react-dom/cjs/react-dom-client.development.js:15484:13)
+    at recursivelyTraversePassiveMountEffects (/home/hkjang/.cache/auto-improve-wt/igame-release/web/node_modules/react-dom/cjs/react-dom-client.development.js:15439:11) undefined
+Error: Not implemented: HTMLCanvasElement.prototype.getContext (without installing the canvas npm package)
+    at module.exports (/home/hkjang/.cache/auto-improve-wt/igame-release/web/node_modules/jsdom/lib/jsdom/browser/not-implemented.js:9:17)
+    at HTMLCanvasElementImpl.getContext (/home/hkjang/.cache/auto-improve-wt/igame-release/web/node_modules/jsdom/lib/jsdom/living/nodes/HTMLCanvasElement-impl.js:42:5)
+    at HTMLCanvasElement.getContext (/home/hkjang/.cache/auto-improve-wt/igame-release/web/node_modules/jsdom/lib/jsdom/living/generated/HTMLCanvasElement.js:131:58)
+    at /home/hkjang/.cache/auto-improve-wt/igame-release/web/src/games/realmguard/EnemyPortrait.tsx:24:29
+    at Object.react_stack_bottom_frame (/home/hkjang/.cache/auto-improve-wt/igame-release/web/node_modules/react-dom/cjs/react-dom-client.development.js:25989:20)
+    at runWithFiberInDEV (/home/hkjang/.cache/auto-improve-wt/igame-release/web/node_modules/react-dom/cjs/react-dom-client.development.js:874:13)
+    at commitHookEffectListMount (/home/hkjang/.cache/auto-improve-wt/igame-release/web/node_modules/react-dom/cjs/react-dom-client.development.js:13249:29)
+    at commitHookPassiveMountEffects (/home/hkjang/.cache/auto-improve-wt/igame-release/web/node_modules/react-dom/cjs/react-dom-client.development.js:13336:11)
+    at commitPassiveMountOnFiber (/home/hkjang/.cache/auto-improve-wt/igame-release/web/node_modules/react-dom/cjs/react-dom-client.development.js:15484:13)
+    at recursivelyTraversePassiveMountEffects (/home/hkjang/.cache/auto-improve-wt/igame-release/web/node_modules/react-dom/cjs/react-dom-client.development.js:15439:11) undefined
+Error: Not implemented: HTMLCanvasElement.prototype.getContext (without installing the canvas npm package)
+    at module.exports (/home/hkjang/.cache/auto-improve-wt/igame-release/web/node_modules/jsdom/lib/jsdom/browser/not-implemented.js:9:17)
+    at HTMLCanvasElementImpl.getContext (/home/hkjang/.cache/auto-improve-wt/igame-release/web/node_modules/jsdom/lib/jsdom/living/nodes/HTMLCanvasElement-impl.js:42:5)
+    at HTMLCanvasElement.getContext (/home/hkjang/.cache/auto-improve-wt/igame-release/web/node_modules/jsdom/lib/jsdom/living/generated/HTMLCanvasElement.js:131:58)
+    at /home/hkjang/.cache/auto-improve-wt/igame-release/web/src/games/realmguard/EnemyPortrait.tsx:24:29
+    at Object.react_stack_bottom_frame (/home/hkjang/.cache/auto-improve-wt/igame-release/web/node_modules/react-dom/cjs/react-dom-client.development.js:25989:20)
+    at runWithFiberInDEV (/home/hkjang/.cache/auto-improve-wt/igame-release/web/node_modules/react-dom/cjs/react-dom-client.development.js:874:13)
+    at commitHookEffectListMount (/home/hkjang/.cache/auto-improve-wt/igame-release/web/node_modules/react-dom/cjs/react-dom-client.development.js:13249:29)
+    at commitHookPassiveMountEffects (/home/hkjang/.cache/auto-improve-wt/igame-release/web/node_modules/react-dom/cjs/react-dom-client.development.js:13336:11)
+    at commitPassiveMountOnFiber (/home/hkjang/.cache/auto-improve-wt/igame-release/web/node_modules/react-dom/cjs/react-dom-client.development.js:15484:13)
+    at recursivelyTraversePassiveMountEffects (/home/hkjang/.cache/auto-improve-wt/igame-release/web/node_modules/react-dom/cjs/react-dom-client.development.js:15439:11) undefined
+Error: Not implemented: HTMLCanvasElement.prototype.getContext (without installing the canvas npm package)
+    at module.exports (/home/hkjang/.cache/auto-improve-wt/igame-release/web/node_modules/jsdom/lib/jsdom/browser/not-implemented.js:9:17)
+    at HTMLCanvasElementImpl.getContext (/home/hkjang/.cache/auto-improve-wt/igame-release/web/node_modules/jsdom/lib/jsdom/living/nodes/HTMLCanvasElement-impl.js:42:5)
+    at HTMLCanvasElement.getContext (/home/hkjang/.cache/auto-improve-wt/igame-release/web/node_modules/jsdom/lib/jsdom/living/generated/HTMLCanvasElement.js:131:58)
+    at /home/hkjang/.cache/auto-improve-wt/igame-release/web/src/games/realmguard/EnemyPortrait.tsx:24:29
+    at Object.react_stack_bottom_frame (/home/hkjang/.cache/auto-improve-wt/igame-release/web/node_modules/react-dom/cjs/react-dom-client.development.js:25989:20)
+    at runWithFiberInDEV (/home/hkjang/.cache/auto-improve-wt/igame-release/web/node_modules/react-dom/cjs/react-dom-client.development.js:874:13)
+    at commitHookEffectListMount (/home/hkjang/.cache/auto-improve-wt/igame-release/web/node_modules/react-dom/cjs/react-dom-client.development.js:13249:29)
+    at commitHookPassiveMountEffects (/home/hkjang/.cache/auto-improve-wt/igame-release/web/node_modules/react-dom/cjs/react-dom-client.development.js:13336:11)
+    at commitPassiveMountOnFiber (/home/hkjang/.cache/auto-improve-wt/igame-release/web/node_modules/react-dom/cjs/react-dom-client.development.js:15484:13)
+    at recursivelyTraversePassiveMountEffects (/home/hkjang/.cache/auto-improve-wt/igame-release/web/node_modules/react-dom/cjs/react-dom-client.development.js:15439:11) undefined
+Error: Not implemented: HTMLCanvasElement.prototype.getContext (without installing the canvas npm package)
+    at module.exports (/home/hkjang/.cache/auto-improve-wt/igame-release/web/node_modules/jsdom/lib/jsdom/browser/not-implemented.js:9:17)
+    at HTMLCanvasElementImpl.getContext (/home/hkjang/.cache/auto-improve-wt/igame-release/web/node_modules/jsdom/lib/jsdom/living/nodes/HTMLCanvasElement-impl.js:42:5)
+    at HTMLCanvasElement.getContext (/home/hkjang/.cache/auto-improve-wt/igame-release/web/node_modules/jsdom/lib/jsdom/living/generated/HTMLCanvasElement.js:131:58)
+    at /home/hkjang/.cache/auto-improve-wt/igame-release/web/src/games/realmguard/EnemyPortrait.tsx:24:29
+    at Object.react_stack_bottom_frame (/home/hkjang/.cache/auto-improve-wt/igame-release/web/node_modules/react-dom/cjs/react-dom-client.development.js:25989:20)
+    at runWithFiberInDEV (/home/hkjang/.cache/auto-improve-wt/igame-release/web/node_modules/react-dom/cjs/react-dom-client.development.js:874:13)
+    at commitHookEffectListMount (/home/hkjang/.cache/auto-improve-wt/igame-release/web/node_modules/react-dom/cjs/react-dom-client.development.js:13249:29)
+    at commitHookPassiveMountEffects (/home/hkjang/.cache/auto-improve-wt/igame-release/web/node_modules/react-dom/cjs/react-dom-client.development.js:13336:11)
+    at commitPassiveMountOnFiber (/home/hkjang/.cache/auto-improve-wt/igame-release/web/node_modules/react-dom/cjs/react-dom-client.development.js:15484:13)
+    at recursivelyTraversePassiveMountEffects (/home/hkjang/.cache/auto-improve-wt/igame-release/web/node_modules/react-dom/cjs/react-dom-client.development.js:15439:11) undefined
+
+ Test Files  40 passed (40)
+      Tests  241 passed (241)
+   Start at  01:13:51
+   Duration  2.75s (environment 68%, transform 13%, setup 10%, import 7%, tests 2%, worker 1%)
+
+Environment  jsdom was created 40 times · 44.20s total, 68% of tracked time
+             create it once per worker with pool: 'vmThreads' (keeps per-file isolation) or isolate: false (shares it across files)
+             learn more: https://vitest.dev/guide/improving-performance#test-environments
+
+go test -race ./cmd/... ./internal/... ./migrations/...
+ok  	github.com/hkjang/igame/cmd/igame	(cached)
+ok  	github.com/hkjang/igame/internal/api	1.568s
+ok  	github.com/hkjang/igame/internal/battle/realmguard	1.530s
+ok  	github.com/hkjang/igame/internal/config	(cached)
+ok  	github.com/hkjang/igame/internal/database	1.027s
+ok  	github.com/hkjang/igame/internal/secretbox	(cached)
+ok  	github.com/hkjang/igame/internal/tracking	(cached)
+?   	github.com/hkjang/igame/internal/version	[no test files]
+ok  	github.com/hkjang/igame/internal/web	(cached)
+?   	github.com/hkjang/igame/migrations	[no test files]
+npm --prefix sdk/gamehub-js run build
+
+> @igame/gamehub-js@0.7.18 build
+> tsup src/index.ts --format esm,cjs --dts --clean
+
+CLI Building entry: src/index.ts
+CLI Using tsconfig: tsconfig.json
+CLI tsup v8.5.1
+CLI Target: es2022
+CLI Cleaning output folder
+ESM Build start
+CJS Build start
+CJS dist/index.cjs 10.33 KB
+CJS ⚡️ Build success in 14ms
+ESM dist/index.js 9.24 KB
+ESM ⚡️ Build success in 17ms
+DTS Build start
+DTS ⚡️ Build success in 653ms
+DTS dist/index.d.ts  4.86 KB
+DTS dist/index.d.cts 4.86 KB
+npm --prefix web run build
+
+> igame-web@0.7.18 build
+> tsc -b && vite build
+
+vite v7.3.6 building client environment for production...
+transforming...
+✓ 1127 modules transformed.
+rendering chunks...
+computing gzip size...
+dist/index.html                                       0.60 kB │ gzip:   0.40 kB
+dist/assets/index-Cm-5-y8F.css                        0.63 kB │ gzip:   0.29 kB
+dist/assets/gameLinks-C-KPRkwU.js                     0.17 kB │ gzip:   0.15 kB
+dist/assets/AddRounded-CsFawHex.js                    0.23 kB │ gzip:   0.18 kB
+dist/assets/ArrowBackRounded-D-ilzJ8d.js              0.28 kB │ gzip:   0.21 kB
+dist/assets/EditRounded-CqwWJQQG.js                   0.29 kB │ gzip:   0.23 kB
+dist/assets/BoltRounded-CNjXRTgo.js                   0.31 kB │ gzip:   0.25 kB
+dist/assets/CheckCircleRounded-BQgGxtON.js            0.31 kB │ gzip:   0.23 kB
+dist/assets/SaveRounded-A_swscKR.js                   0.33 kB │ gzip:   0.24 kB
+dist/assets/DeleteOutlineRounded-CeS1KLH5.js          0.37 kB │ gzip:   0.26 kB
+dist/assets/SchoolRounded-CUaJCRAu.js                 0.40 kB │ gzip:   0.27 kB
+dist/assets/OpenInNewRounded-DjWoRr6x.js              0.41 kB │ gzip:   0.27 kB
+dist/assets/RefreshRounded-BU7fJ9ar.js                0.44 kB │ gzip:   0.31 kB
+dist/assets/useRetainFocus-CTTX7kbU.js                0.56 kB │ gzip:   0.30 kB
+dist/assets/DialogContentText-B_g4yipQ.js             0.62 kB │ gzip:   0.40 kB
+dist/assets/labels-C2--Z4zJ.js                        1.16 kB │ gzip:   0.79 kB
+dist/assets/AdminAnalyticsPage-CbHP936R.js            1.39 kB │ gzip:   0.86 kB
+dist/assets/api-DRvwavRH.js                           1.45 kB │ gzip:   0.52 kB
+dist/assets/CardActionArea-DjJ452Q4.js                1.57 kB │ gzip:   0.77 kB
+dist/assets/NoticesPage-D5xL3DTp.js                   2.28 kB │ gzip:   1.40 kB
+dist/assets/DefensePreviewPage-CzuqtAKu.js            2.37 kB │ gzip:   1.37 kB
+dist/assets/RealmGuardPreviewPage-U_VCFbr7.js         2.39 kB │ gzip:   1.37 kB
+dist/assets/Checkbox-BpteYU81.js                      2.79 kB │ gzip:   1.27 kB
+dist/assets/JsonSubField-DRoK_ujz.js                  3.00 kB │ gzip:   1.60 kB
+dist/assets/AIGameLabPage-CDxdi8YY.js                 3.94 kB │ gzip:   2.20 kB
+dist/assets/Switch-ApQGsVtK.js                        4.59 kB │ gzip:   1.76 kB
+dist/assets/ReviewQueue-CWH9XwYg.js                   4.79 kB │ gzip:   2.34 kB
+dist/assets/FormControlLabel-CX3792H7.js              4.87 kB │ gzip:   2.08 kB
+dist/assets/DialogTitle-DU88xFbw.js                   6.97 kB │ gzip:   2.40 kB
+dist/assets/ProfileOverviewPage-aOPHHgKw.js           7.20 kB │ gzip:   2.94 kB
+dist/assets/AdminDashboardPage-CSaW2-3V.js            7.70 kB │ gzip:   2.94 kB
+dist/assets/content-ChdQSuMr.js                       7.98 kB │ gzip:   3.83 kB
+dist/assets/ReviewsPage-DmvtR5UJ.js                   8.56 kB │ gzip:   2.59 kB
+dist/assets/PersonalKeysPage-Ct6CDwRE.js              8.58 kB │ gzip:   3.60 kB
+dist/assets/DeveloperPage-Cg6ZJgUr.js                 8.65 kB │ gzip:   3.56 kB
+dist/assets/api-CN8MsKko.js                          11.79 kB │ gzip:   4.51 kB
+dist/assets/RealmGuardDesignerPage-31mgUOyl.js       13.59 kB │ gzip:   5.32 kB
+dist/assets/content-JH7vh64B.js                      15.06 kB │ gzip:   6.54 kB
+dist/assets/api-BgbKKveH.js                          17.02 kB │ gzip:   6.41 kB
+dist/assets/DefenseContentStudioPage-DGmVuGDd.js     19.20 kB │ gzip:   7.40 kB
+dist/assets/PreferencesPage-D0YvLtfa.js              22.60 kB │ gzip:   8.31 kB
+dist/assets/RealmGuardGame-ByjqZfj6.js               22.95 kB │ gzip:   8.66 kB
+dist/assets/AdminResourcePage-DzEB3GqM.js            24.69 kB │ gzip:   8.94 kB
+dist/assets/GamePlayPage-9qg_bQVU.js                 26.99 kB │ gzip:  10.07 kB
+dist/assets/AdminSettingsPage-BOW2KuYU.js            29.47 kB │ gzip:   9.83 kB
+dist/assets/StageRoster-PcCIFdhO.js                  31.12 kB │ gzip:  11.74 kB
+dist/assets/DefenseSeriesGame-CM7FbOCe.js            35.57 kB │ gzip:  12.86 kB
+dist/assets/index-SaXEKO_m.js                       651.65 kB │ gzip: 204.98 kB
+dist/assets/RealmGuardScene-DW4GVGfH.js           1,253.22 kB │ gzip: 346.38 kB
+
+(!) Some chunks are larger than 900 kB after minification. Consider:
+- Using dynamic import() to code-split the application
+- Use build.rollupOptions.output.manualChunks to improve chunking: https://rollupjs.org/configuration-options/#output-manualchunks
+- Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.
+✓ built in 5.87s
+bash ./scripts/check-offline-bundle.sh
+Offline RealmGuard 0.3.1 and Defense Series 0.4.0 bundles verified (igame 0.7.18, Phaser 3.90.0).
+bash ./scripts/build-local.sh "0.7.18" "100490dd6a6c" "2026-09-20T16:13:55Z"
+found 0 vulnerabilities
+found 0 vulnerabilities
+=== Symbol Results ===
+
+No vulnerabilities found.
+
+Your code is affected by 0 vulnerabilities.
+This scan also found 0 vulnerabilities in packages you import and 3
+vulnerabilities in modules you require, but your code doesn't appear to call
+these vulnerabilities.
+Use '-show verbose' for more details.

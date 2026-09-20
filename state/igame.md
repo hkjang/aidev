@@ -171,3 +171,4 @@
 - 과제서: 채택 — 현재 Migrate 및 010 SQL이 과제서와 일치하며 실제 PostgreSQL 격리 fixture를 준비해 세 수용 계약을 모두 검증했다.
 - 스킬: technology:completion-verification, technology:systematic-debugging, technology:test-driven-development는 현재 도구 목록 및 로컬 스킬 경로에서 찾지 못해 미적용; 사용자 절차로 구현·실DB 검증했다.
 
+- 릴리즈: v0.7.18 (2026-09-21, run 2026-09-21-005406-igame-improve)

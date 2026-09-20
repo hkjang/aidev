@@ -1,0 +1,21 @@
+feat: release igame v0.7.18
+
+Ships as a patch release the migration regression coverage landed since
+v0.7.17. Three PostgreSQL tests execute Migrate and embedded SQL in UUID
+schemas, verifying checksum, applied_at and seed invariance on rerun,
+checksum tampering rejection and recovery, and migration 010 DDL/history
+rollback on history INSERT failure with earlier commits preserved and retry
+successful. make test-db includes the database package; README documents
+pgcrypto preparation in a dedicated extension schema and the search path.
+
+Moves VERSION, the Compose image tag and the web and SDK package versions
+together as the release contract requires, updates release documentation,
+and rebuilds the two enterprise manuals for v0.7.18. The administrator
+guide examples move with them while the photographed v0.7.11 provenance
+and the two separately published guide PDFs remain intact. RealmGuard
+content 0.3.1 and Defense Series content 0.4.0 are retained.
+
+Validated with make check-contract, make lint, make test, make test-race,
+make build, full PostgreSQL 17 make test-db, both npm dependency audits,
+govulncheck v1.6.0 and make docs-pdf. The tag-triggered workflow builds and
+verifies the offline image, SBOM and browser gates before publication.

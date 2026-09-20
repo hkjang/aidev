@@ -30,3 +30,5 @@
 - [러너 01:06] pr created — https://github.com/hkjang/igame/pull/23
 - [러너 01:11] ci passed — 검사 1개 모두 success
 - [러너 01:11] merge done — 1ac69f4
+- [러너 01:21] release published — v0.7.18
+- [러너 01:37] assets verified — v0.7.18 자산 1개 (이전 v0.7.17: 1)
