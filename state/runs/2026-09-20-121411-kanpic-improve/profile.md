@@ -1,0 +1,17 @@
+# kanpic 프로필 (2026-09-20)
+- 목적: 사내용 웹 스프레드시트(워크북·수식 엔진·가져오기/내보내기·협업·AI·다른 사내 서비스와의 문서 핸드오프)를 Go 서버 하나와 React 프런트로 제공한다.
+- 스택: Go 1.26(모듈 `kanpic`, `cmd/api` 단일 바이너리) · PostgreSQL(`migrations/NNN_*.sql`, 최근 041) · 웹은 `web/` 의 React 19 + Vite + TypeScript + zustand + @tanstack/react-query, 테스트 vitest, E2E Playwright · 배포는 Dockerfile·compose.yaml, GitHub Actions(ci.yml·release.yml)로 이미지 tar.gz 를 릴리즈 자산으로.
+- 구조:
+  - `internal/formula` — 수식 엔진. `DecimalNumber`/`decimalText`(수처럼 생긴 글자의 자), `valueOfText`(VALUE·NUMBERVALUE 는 넓게), 서식(`format_fraction.go` 등).
+  - `internal/importexport` — 업로드 가져오기(csv/tsv/xlsx)·내보내기. `parseScalar`·`parseXLSXValue` 가 파일 값을 칸에 담는 규칙. `exportDelimited` 는 UTF-8 BOM 을 붙인다.
+  - `internal/external` — IMPORTDATA 등 원격 가져오기(`fetcher.go`), 허용 호스트·캐시·크기 상한.
+  - `internal/delimited` — 업로드·IMPORTDATA·사용자 명단이 함께 쓰는 구분자 추정(`Delimiter`)과 BOM 기반 인코딩 변환(`ToUTF8`). "같은 파일은 어느 문으로 들어오든 같은 표" 의 공용 자리.
+  - `internal/httpapi` — 라우트·핸들러(관리자 사용자 일괄 등록 `parseUserCSV`, `handoff.go`, 워크북 API). `internal/handoff` — 사내 서비스 간 문서 주고받기(허용 목록 `handoff.peers`, claim 저장소).
+  - `internal/auth`·`apikey`·`settings`·`database`·`workbook`·`collaboration`·`ai`·`automation`·`analytics`·`mail`·`observability`·`presentation`·`buildinfo`, `internal/integration`(실 DB 통합 테스트, `-tags integration`).
+  - `web/src/lib` — 격자 쪽 규칙(`spreadsheetNumber.ts`, `cellFormat.ts`, `fileText.ts`, `handoff.ts`). `testdata/*.json` 은 서버·격자가 같은 답을 내야 하는 공용 픽스처(numeric-text.json, cell-formats.json).
+  - `docs/` — USER_GUIDE.md/ADMIN_GUIDE.md(+PDF, `docs/images/guide/`), `docs/releases/`, 로드맵·보고서.
+- 빌드·테스트: `gofmt -l internal/`, `go vet ./...`, `go build ./...`, `go test ./...`(1~2분), `go test -tags=integration ./internal/...`(PostgreSQL 필요), `cd web && npm ci && npm run lint && npm test && npm run build`, Playwright는 `npm run test:e2e`(로컬 설정은 메모리 참조). 릴리즈 전 `scripts/check-release-docs.sh`·`scripts/check-commit-identities.sh HEAD`.
+- 관례: 커밋 메시지는 한국어, `fix(범위): …`/`feat: …`/`docs: …`, Claude 공동 저자 표기 없음. 코드 주석은 "왜" 를 한국어(일부 영어)로 길게 적는 문화 — 규칙을 넓히거나 좁힌 이유를 반드시 적는다. 설정은 `internal/settings` 키(`external.*`, `handoff.peers` 등). 마이그레이션은 번호 순 SQL 파일 추가. 문서를 고치면 PDF 도 다시 굽는다(메모리 kanpic-pdf-regeneration).
+- 위험 구역: `internal/auth`·세션·API 키·`migrations/`·`.github/workflows/`·`internal/handoff`(외부 오리진과 통신, 단일 사용 표) — 되도록 피한다. `formula.DecimalNumber`/`decimalText` 와 `web/src/lib/spreadsheetNumber.ts` 는 한 쌍이라 한쪽만 바꾸면 =SUM 과 상태 줄 합계가 갈린다.
+- 자주 깨지는 곳: 같은 값을 읽는 경로가 여럿(업로드·IMPORTDATA·사용자 명단·격자·서버 formatValue)인데 한쪽만 고쳐 어긋나는 것 — 지난 여섯 회차가 거의 모두 이 종류였다(구분자·BOM·accept 목록). 규칙을 넓히는 변경은 반려 위험이 크고, 두 문을 일치시키는 변경은 통과했다.
+- 검증 함정: CI 는 `-tags integration` 과 스크립트 실행 비트를 보지만 로컬은 그냥 지나간다(메모리 kanpic-ci-blind-spots). `gh run watch` 는 API 한도를 태운다. 다른 봇이 main 에 태그를 끊으므로 VERSION 올리기 전 태그 확인. 러너의 `hold: budget` 은 저장소 실패가 아니다.
