@@ -1,21 +1,12 @@
 [
   {
-    "title": "canUseProfileID 의 u==nil 신뢰 규칙 — 프로파일 카탈로그 API 인증 게이트 추가",
-    "value": 5,
-    "risk": 2,
-    "size": "M",
-    "status": "done",
-    "note": "GET 5개에 requireActor를 연결하고 상세 3개 ACL에 반환된 actor를 전달했다. 실제 로그인 쿠키·발급 MCP 키·메타 모드 마스터 토큰, JSON 401/403, 실제 workspace summary/content, 단독 모드 회귀 통과. 공통 nil 신뢰는 유지했다.",
-    "updated": "2026-09-20"
-  },
-  {
     "title": "requireAdmin 도 인증 사용자를 컨텍스트에 실어 admin:* 감사 전체에 actor 남기기",
     "value": 3,
     "risk": 1,
     "size": "M",
     "status": "pending",
-    "note": "현 HEAD에서는 requireAdmin/requireDBA 모두 bool 반환이며 adminAudit에도 actor가 없다. 이전 성공 변경은 미반영. 선행 감사 변경의 통합 여부를 먼저 확인하고 별도 회차에 진행.",
-    "updated": "2026-09-20"
+    "note": "현 HEAD requireAdmin/requireDBA는 bool, adminAudit actor 선행 변경 미통합. 지난 성공 과제를 다시 수행하지 않고 통합 뒤 별도 진행.",
+    "updated": "2026-09-21"
   },
   {
     "title": "docs/auth.md·rest-api.md·security.md 채우기 — 인증 모델·REST·보안 문서",
@@ -23,8 +14,8 @@
     "risk": 1,
     "size": "M",
     "status": "pending",
-    "note": "세 파일 모두 0바이트 재확인. 3개 정본 전체는 S보다 M이 현실적. MCP OAuth/추적/메일/SSO 자동로그인 캠페인 코드는 현재 없음.",
-    "updated": "2026-09-20"
+    "note": "세 파일 모두 0바이트. 실제 라우트/인증 모델 확인이 필요하여 이번 작은 버그보다 후순위.",
+    "updated": "2026-09-21"
   },
   {
     "title": "GitHub Actions CI 추가 — go vet + go test ./... (통합 테스트 제외)",
@@ -32,8 +23,8 @@
     "risk": 1,
     "size": "S",
     "status": "pending",
-    "note": ".github/FUNDING.yml만 존재. 이번 vet 및 전체 test 통과. workflows 보호 경로이며 이번 범위 밖.",
-    "updated": "2026-09-20"
+    "note": ".github/FUNDING.yml만 존재. test/vet 통과 재확인. workflows 보호 경로라 후순위.",
+    "updated": "2026-09-21"
   },
   {
     "title": "changes.html 에서 승인자 이름 표시와 이미 승인한 사용자의 승인 단추 비활성화",
@@ -41,8 +32,8 @@
     "risk": 1,
     "size": "S",
     "status": "pending",
-    "note": "승인 이력 표의 a.actor 이름 표시는 이미 구현됨. 중복 승인 버튼 비활성화만 미완료. 현 HEAD의 REST actor 고정값 선행 수정이 통합되어야 의미 있음.",
-    "updated": "2026-09-20"
+    "note": "a.actor 표시는 이미 구현. 승인 단추는 review_required만 검사. actor 수정 미통합이므로 남은 단추 작업 보류.",
+    "updated": "2026-09-21"
   },
   {
     "title": "화면의 인라인 이벤트 핸들러를 걷어내고 script-src nonce 정책 강제",
@@ -50,8 +41,8 @@
     "risk": 3,
     "size": "L",
     "status": "pending",
-    "note": "인라인 이벤트 유지, tracking/CSP 캠페인 코드 없음. 45분 범위 초과이므로 보류.",
-    "updated": "2026-09-20"
+    "note": "changes.html 인라인 이벤트 유지. 이전 tracking 미통합이며 45분 범위를 넘음.",
+    "updated": "2026-09-21"
   },
   {
     "title": "OIDC 콜백의 error 분기에서 state 쿠키 일치 확인",
@@ -59,8 +50,8 @@
     "risk": 1,
     "size": "S",
     "status": "pending",
-    "note": "auth.go:handleSSOCallback에서 error 분기가 state 쿠키 검증보다 앞섬 재확인. auth 보호 경로, 이번 조회 인증 배선보다 후순위.",
-    "updated": "2026-09-20"
+    "note": "auth.go:handleSSOCallback error 분기가 state 검증보다 앞선 상태. auth 보호 경로라 후순위.",
+    "updated": "2026-09-21"
   },
   {
     "title": "OIDC 로그인에 nonce 와 PKCE(S256) 추가",
@@ -68,17 +59,8 @@
     "risk": 2,
     "size": "M",
     "status": "pending",
-    "note": "handleSSOLogin에 nonce/code_challenge 없음. mcpoauth.go도 없음. id_token 검증 등 범위 확장 위험, 재견적 필요.",
-    "updated": "2026-09-20"
-  },
-  {
-    "title": "guard 리다이렉트 next= 절대 URI 형태 방어 테스트",
-    "value": 1,
-    "risk": 1,
-    "size": "S",
-    "status": "rejected",
-    "note": "현재 guard는 RequestURI가 아니라 url.QueryEscape(r.URL.Path)를 사용한다. 이전 아이디어의 RequestURI 전제가 현재 코드와 다르며 실질 동작 변화 근거가 없어 기각.",
-    "updated": "2026-09-20"
+    "note": "auth.go에 nonce/code_challenge 없음. 인증 계약 확장 위험 때문에 별도 회차 필요.",
+    "updated": "2026-09-21"
   },
   {
     "title": ".gitattributes 로 Go 파일 LF 고정 + 일괄 gofmt",
@@ -86,26 +68,8 @@
     "risk": 2,
     "size": "M",
     "status": "pending",
-    "note": "metasync/service.go 등 CRLF와 CHANGELOG 혼합 줄바꿈 확인. 대규모 diff 및 미통합 브랜치 충돌 위험으로 별도 회차.",
-    "updated": "2026-09-20"
-  },
-  {
-    "title": "프로파일 카탈로그 목록 GET에 인증 사용자 컨텍스트 전달",
-    "value": 4,
-    "risk": 1,
-    "size": "S",
-    "status": "done",
-    "note": "이번 과제에 포함해 완료. withUser로 목록에 actor를 전달하며 소유·shared·use grant만 포함하고 count 및 상세/데이터셋 접근과 일치함을 HTTP 검증했다.",
-    "updated": "2026-09-20"
-  },
-  {
-    "title": "활성 카탈로그 GET의 운영 경로 공개를 인증으로 제한",
-    "value": 3,
-    "risk": 1,
-    "size": "S",
-    "status": "done",
-    "note": "이번 과제에 포함해 완료. 익명/무효/폐기 키는 JSON 401, 인증된 무프로파일 일반 사용자도 기존 active 정보에 접근 가능. 임의 profile ACL은 추가하지 않았다.",
-    "updated": "2026-09-20"
+    "note": "metasync/service.go 197 CRLF, CHANGELOG 혼합 줄바꿈 재확인. 대규모 diff·미통합 브랜치 충돌 때문에 보류; 위험을 1에서 2로 조정.",
+    "updated": "2026-09-21"
   },
   {
     "title": "빈 docs/README.md를 실제 문서 색인으로 채우기",
@@ -113,7 +77,25 @@
     "risk": 1,
     "size": "S",
     "status": "pending",
-    "note": "새 아이디어이자 차선. README의 상세 문서 진입 링크 대상이 0바이트. admin_guide/user_guide/executive_report 등 존재하는 비어 있지 않은 문서만 연결. 가이드의 SQLite 표현은 소스와 달라 그대로 반복하지 말 것.",
-    "updated": "2026-09-20"
+    "note": "0바이트이며 README 상세 문서 링크가 이 파일로 향함. 현재 차선. 세 비어 있지 않은 가이드는 구버전 주의 필요.",
+    "updated": "2026-09-21"
+  },
+  {
+    "title": "비동기 쿼리 잡의 10분 만료를 조회·취소 경로에서도 적용",
+    "value": 4,
+    "risk": 1,
+    "size": "S",
+    "status": "done",
+    "note": "c941cb9: jobView/cancelJob의 기존 mutex 안에서 공통 prune 호출. 실제 로그인→Register mux→HTTP 제출→백그라운드 실행으로 수정 전 첫 GET/취소 200을 재현하고 수정 후 404·저장소 제거 검증. 미만료 소유자/admin·401/403/404 권한 및 실제 TCP 연결 중인 오래된 잡 유지 검증. 대상 test/race, 전체 test/vet/build, diff 검사 통과.",
+    "updated": "2026-09-21"
+  },
+  {
+    "title": "관리자 가이드의 메타 저장소·감사 로그 저장 설명을 실제 소스에 맞추기",
+    "value": 3,
+    "risk": 2,
+    "size": "M",
+    "status": "pending",
+    "note": "신규. docs/admin_guide.md는 Built-in MetaDB/SQLite와 감사 암호화를 주장하지만 internal/meta/pg.go는 PostgreSQL을 연다. 감사 암호화 전체 경로는 미확인. reports 중복 정본/PDF 생성 범위를 먼저 정해야 하므로 이번에는 제외.",
+    "updated": "2026-09-21"
   }
 ]

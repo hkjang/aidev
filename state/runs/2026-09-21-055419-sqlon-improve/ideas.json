@@ -85,8 +85,8 @@
     "value": 4,
     "risk": 1,
     "size": "S",
-    "status": "pending",
-    "note": "신규·이번 선택. asyncquery.go의 prune이 제출에서만 호출되고 jobView/cancelJob에 만료 검사가 없다. API 계약상 만료 404와 어긋남. 실제 새 HTTP 재현은 구현 단계에 필요.",
+    "status": "done",
+    "note": "c941cb9: jobView/cancelJob의 기존 mutex 안에서 공통 prune 호출. 실제 로그인→Register mux→HTTP 제출→백그라운드 실행으로 수정 전 첫 GET/취소 200을 재현하고 수정 후 404·저장소 제거 검증. 미만료 소유자/admin·401/403/404 권한 및 실제 TCP 연결 중인 오래된 잡 유지 검증. 대상 test/race, 전체 test/vet/build, diff 검사 통과.",
     "updated": "2026-09-21"
   },
   {
