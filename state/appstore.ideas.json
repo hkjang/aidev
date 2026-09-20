@@ -1,137 +1,17 @@
 [
-  {
-    "title": "[수정 과제] 2026-09-18 error 원인 확정 — 러너 예산 보류이며 릴리즈 워크플로 실패 아님(변경 없음, 릴리즈 검증 로컬 재현 + 원장 기록)",
-    "value": 3,
-    "risk": 1,
-    "size": "S",
-    "status": "done",
-    "note": "stages.json improve.hold '회차 예산($22)이 오늘 남은 상한을 넘음', run.json started==finished(16:33:52). v2.11.1 은 published+assets verified. 릴리즈 'Install and test' 7개 명령을 HEAD b3323ff 에서 재현해 모두 exit 0. 워크플로 파일 변경 없음. gh run list 는 인증 없어 미확인.",
-    "updated": "2026-09-19"
-  },
-  {
-    "title": "streamAiChat 이 스트림 종료 시 \\n\\n 없이 끝난 마지막 SSE event 를 버림",
-    "value": 2,
-    "risk": 2,
-    "size": "S",
-    "status": "done",
-    "note": "커밋 67e1f2b. 블록 파서를 emitSseBlock 으로 빼고 done 뒤 decoder.decode() flush + 남은 buffer 파싱. api.test.ts 에 3건 추가(HEAD 에서 2건 실패 확인). Go 쪽 stream_test.go:147 이 이미 허용하던 경우와 대칭이 됨.",
-    "updated": "2026-09-19"
-  },
-  {
-    "title": "silent SSO 거절 뒤 로그인 화면이 sso=none 을 받아도 아무 안내가 없음",
-    "value": 2,
-    "risk": 1,
-    "size": "S",
-    "status": "pending",
-    "note": "LoginPage 가 useSearchParams 를 쓴다(2026-09-17 기준, 이번 회차 미재확인). '회사 계정 세션이 없어 자동 로그인하지 않았습니다' 한 줄 notice. 다음 회차 1순위 후보.",
-    "updated": "2026-09-19"
-  },
-  {
-    "title": "MCP SSO 의 JWKS 재요청 제한(초당 1회 RoundTripper)",
-    "value": 2,
-    "risk": 1,
-    "size": "S",
-    "status": "pending",
-    "note": "PR #23(mcp-oauth, d74df77) 이 2026-09-19 06:20 shepherd 에서 approve 판정을 받았으나 아직 main 에 머지되지 않음 — 선행. internal/auth 는 보호 경로. shepherd 참고의 provider() 가 discovery 중 mutex 를 잡고 실패를 캐시하지 않는 문제와 같이 다룰 것.",
-    "updated": "2026-09-19"
-  },
-  {
-    "title": "MCP OAuth provider discovery 실패 backoff / lock 밖 discovery",
-    "value": 2,
-    "risk": 2,
-    "size": "S",
-    "status": "pending",
-    "note": "internal/auth/access_token.go:56-78 이 Keycloak 장애 시 JWT 든 /mcp 요청을 15초씩 직렬 대기. PR #23 머지 뒤. internal/auth 는 보호 경로.",
-    "updated": "2026-09-19"
-  },
-  {
-    "title": "validateMCPOAuth 저장 시 422 경로의 핸들러 수준 Go 테스트",
-    "value": 2,
-    "risk": 1,
-    "size": "S",
-    "status": "pending",
-    "note": "admin_settings_handlers.go:388 의 issuer 없음·리소스 미도출·미지의 scope 422 에 핸들러 테스트 없음. PR #23 머지 뒤.",
-    "updated": "2026-09-19"
-  },
-  {
-    "title": "개인 API 키 만료 임박 메일(key.expiring)",
-    "value": 3,
-    "risk": 2,
-    "size": "M",
-    "status": "pending",
-    "note": "배경 스케줄러 없음 + api_keys.expiry_notified_at 컬럼 필요. 메일 커밋 746e0a0 머지 여부 미확인(migration 000005). 선행 작업 둘.",
-    "updated": "2026-09-19"
-  },
-  {
-    "title": "로그인 rate limit 통합 테스트가 분 경계에 걸리면 실패 — 고정 시각 주입",
-    "value": 2,
-    "risk": 1,
-    "size": "S",
-    "status": "pending",
-    "note": "fixedWindowLimiter.allow 가 now 를 받으므로 테스트가 고정 시각을 주입하거나 핸들러가 주입 가능한 clock 을 쓰면 됨. CI 는 DSN 없어 건너뜀.",
-    "updated": "2026-09-19"
-  },
-  {
-    "title": "clientAddress 가 RemoteAddr 만 보아 reverse proxy 뒤에서 rate limit 이 전역",
-    "value": 3,
-    "risk": 3,
-    "size": "M",
-    "status": "pending",
-    "note": "신뢰 프록시 설정을 system_settings 에 두는 쪽이 관례. 환경변수 계약 4개 고정.",
-    "updated": "2026-09-19"
-  },
-  {
-    "title": "소유자가 볼 수 있는 검토 이력이 마지막 한 건뿐 — /me/apps/{id}/reviews",
-    "value": 2,
-    "risk": 1,
-    "size": "M",
-    "status": "pending",
-    "note": "읽기 경로 + OpenAPI + 화면. 새 라우트는 check-docs.sh 가 캡처를 요구.",
-    "updated": "2026-09-19"
-  },
-  {
-    "title": "pending_review 상태의 앱을 수정해도 검토가 level 1 로 되돌아가지 않음",
-    "value": 2,
-    "risk": 3,
-    "size": "S",
-    "status": "pending",
-    "note": "정책 결정 먼저 필요.",
-    "updated": "2026-09-19"
-  },
-  {
-    "title": "branding URL 가져오기 오류 메시지에 upstream 상태 코드·err 원문이 샘",
-    "value": 2,
-    "risk": 2,
-    "size": "S",
-    "status": "pending",
-    "note": "settings:write 권한자만 봄. 검증 하드닝 반려 전례(PR 6854375)로 우선순위 낮음.",
-    "updated": "2026-09-19"
-  },
-  {
-    "title": "방문 추적 화면에 현재 설정이 만들 CSP 문자열 미리보기",
-    "value": 2,
-    "risk": 1,
-    "size": "S",
-    "status": "pending",
-    "note": "pagePolicy 가 순수 함수라 GET 한 개와 <code> 블록이면 됨.",
-    "updated": "2026-09-19"
-  },
-  {
-    "title": "소유자 카드의 즐겨찾기 하트가 게시되지 않은 앱에서 조용한 no-op",
-    "value": 2,
-    "risk": 1,
-    "size": "S",
-    "status": "pending",
-    "note": "publiclyViewable 로 소유자 문맥에서 숨기면 됨.",
-    "updated": "2026-09-19"
-  },
-  {
-    "title": "검증 하드닝 계열(adminUpdateUser·개인 키 이름·roleRequest·관리자 write path param)",
-    "value": 2,
-    "risk": 1,
-    "size": "S",
-    "status": "rejected",
-    "note": "사람이 같은 접근의 PR 6854375 를 반려(2026-09-08/10). 다시 고르지 말 것.",
-    "updated": "2026-09-19"
-  }
+  {"title":"silent SSO 거절 뒤 /login?sso=none 에 '자동 로그인하지 않았습니다' 안내 한 줄","value":3,"risk":1,"size":"S","status":"done","note":"2026-09-20 구현(커밋 5b6fae4, dcf0264). auth-pages.tsx 가 oidcEnabled && sso=none 일 때만 role=status notice 를 SSO 버튼 위에 그림. vitest 4건 + Playwright core.spec 1건. 캡처는 손대지 않음.","updated":"2026-09-20"},
+  {"title":"소유자 카드의 즐겨찾기 하트가 게시되지 않은 앱에서 조용한 no-op","value":2,"risk":1,"size":"S","status":"pending","note":"app-card.tsx:14 publiclyViewable, 32행 viewable 이 이미 있어 하트를 viewable 일 때만 그리면 됨. 이번 회차 차선이었으나 과제서 채택으로 남김. 공개 카탈로그(showStatus 아님)는 변하지 않아야 함.","updated":"2026-09-20"},
+  {"title":"MCP SSO 의 JWKS 재요청 제한(초당 1회 RoundTripper) + discovery 실패 backoff/lock 밖","value":2,"risk":2,"size":"S","status":"pending","note":"2026-09-20: main 로그에 PR #23(d74df77) 머지 흔적 없음(#21,#22,#24 만). 여전히 선행 필요. internal/auth 보호 경로.","updated":"2026-09-20"},
+  {"title":"validateMCPOAuth 저장 시 422 경로의 핸들러 수준 Go 테스트","value":2,"risk":1,"size":"S","status":"pending","note":"PR #23 미머지라 대상 코드가 main 에 없음. 머지 뒤.","updated":"2026-09-20"},
+  {"title":"개인 API 키 만료 임박 메일(key.expiring)","value":3,"risk":2,"size":"M","status":"pending","note":"배경 스케줄러 + api_keys.expiry_notified_at migration 필요. 메일 커밋 746e0a0 은 v2.7.0 로그에 있으나 이번 회차 미재확인. migrations 는 보호 경로.","updated":"2026-09-20"},
+  {"title":"로그인 rate limit 통합 테스트가 분 경계에 걸리면 실패 — 고정 시각 주입","value":2,"risk":1,"size":"S","status":"pending","note":"fixedWindowLimiter.allow 가 now 를 받음. CI 는 DSN 없어 건너뜀이라 사용자 영향 없음 → 운영자 선호(사용자 영향 있는 결함)와 맞지 않아 후순위.","updated":"2026-09-20"},
+  {"title":"clientAddress 가 RemoteAddr 만 보아 reverse proxy 뒤에서 rate limit 이 전역","value":3,"risk":3,"size":"M","status":"pending","note":"신뢰 프록시 설정을 system_settings 에. ratelimit 은 위험 구역, 한 세션에 M 이상.","updated":"2026-09-20"},
+  {"title":"소유자가 볼 수 있는 검토 이력이 마지막 한 건뿐 — /me/apps/{id}/reviews","value":2,"risk":1,"size":"M","status":"pending","note":"읽기 경로 + OpenAPI + 화면. 새 라우트는 check-docs.sh 가 캡처 요구.","updated":"2026-09-20"},
+  {"title":"pending_review 앱을 수정해도 검토가 level 1 로 되돌아가지 않음","value":2,"risk":3,"size":"S","status":"pending","note":"정책 결정 먼저 필요. 자율 회차에서 고르지 않음.","updated":"2026-09-20"},
+  {"title":"branding URL 가져오기 오류 메시지에 upstream 상태 코드·err 원문이 샘","value":2,"risk":2,"size":"S","status":"rejected","note":"검증 하드닝·메시지 다듬기 류는 사람이 두 번 반려(2026-09-08/10). settings:write 권한자만 보므로 실사용 영향 없음 → 기각.","updated":"2026-09-20"},
+  {"title":"방문 추적 화면에 현재 설정이 만들 CSP 문자열 미리보기","value":2,"risk":1,"size":"S","status":"pending","note":"pagePolicy 순수 함수, GET 하나 + <code>. 새 API 오퍼레이션이라 OpenAPI 갱신 필요.","updated":"2026-09-20"},
+  {"title":"LoginPage 렌더 테스트 — 기본 상태 3종(SSO만·bootstrap만·둘 다) 커버","value":2,"risk":1,"size":"S","status":"pending","note":"2026-09-20: auth-pages.test.tsx 가 생겼고 renderLogin(url, configOverrides) 헬퍼가 public config 를 덮어쓸 수 있으므로 케이스만 더하면 됨(session mock 의 bootstrapAvailable 도 헬퍼 인자로 빼야 함).","updated":"2026-09-20"},
+  {"title":"silent-sso.ts 가 sso=error 마커를 인식하지만 서버는 만들지 않음 — 죽은 분기 정리 또는 콜백 오류 경로에서 sso=error 발급","value":1,"risk":2,"size":"S","status":"pending","note":"2026-09-20 신규. 서버 auth_handlers.go 는 sso=none 만 생성. 효과 없는 변경이 되기 쉬움(운영자 지침) → 콜백 오류 경로 정책이 정해지기 전엔 손대지 말 것. 이번 회차도 sso=error 문구는 만들지 않았다.","updated":"2026-09-20"},
+  {"title":"USER_GUIDE 2.2 의 silent SSO 안내 문단에 /login?sso=none 캡처가 없음","value":1,"risk":1,"size":"S","status":"pending","note":"2026-09-20 신규. visual.spec 의 login 캡처는 /login?returnTo=%2Fsubmit 만 찍음. manifest 항목 추가 + make screenshots 전체 갱신이 필요하므로 다음 캡처 갱신 회차에 같이.","updated":"2026-09-20"},
+  {"title":"e2e mock-api 의 /public/config 가 oidcAutoLogin 을 싣지 않아 Playwright 가 silent SSO 시도 경로(SilentSsoEffect → window.location.assign)를 한 번도 지나지 않음","value":2,"risk":2,"size":"S","status":"pending","note":"2026-09-20 신규. 단위 테스트(silent-sso.test·providers wiring)만 있고 실제 브라우저에서 sessionStorage 한 번 시도·/login 제외가 도는지 e2e 가 없다. mock 에서 oidcAutoLogin:true 인 별도 시나리오와 /api/v1/auth/oidc/login 을 /login?sso=none 으로 302 시키는 route 가 필요. 기존 캡처 시나리오에는 켜지 말 것(리다이렉트로 캡처가 깨짐).","updated":"2026-09-20"}
 ]
