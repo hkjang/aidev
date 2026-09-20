@@ -1,0 +1,29 @@
+# VisitFlow 프로필 (2026-09-21)
+- 목적: 사내 방문 예약·승인·QR 방문증·로비 체크인·알림을 단일 컨테이너로 제공하는 방문 관리 시스템.
+- 스택: Go 1.24(go.mod), chi·pgx·go-oidc·excelize 2.9.1, PostgreSQL 14+, React 19·TypeScript·Vite·Material UI 7, vitest·Playwright.
+- 기준: HEAD 6a3ed81, 표시 버전 v2.8.3. README·최근 git log 30건·docs 문서 및 관련 절·테스트 구성·CI를 확인했다.
+- 구조:
+  - cmd/visitflow/: 서버 진입점·임베드 webdist. 기본 webdist와 실제 프런트 빌드를 구분한다.
+  - internal/app/: HTTP·MCP·SSE·백그라운드 처리. visits.go는 referenceData/createVisitRecord/전화 정규화, import.go는 CSV/XLSX 미리보기.
+  - internal/app/import_test.go: production 파서를 지나는 CSV/excelize 워크북 회귀와 실제 라우터 HTTP 업로드 테스트.
+  - internal/app/integration_test.go: newTestEnv가 테스트별 DB 생성·정리. do와 uploadImport가 요청 데드라인을 적용한다.
+  - internal/platform/: 환경설정·SMTP 발송·암호화. internal/database/: 연결·트랜잭션 마이그레이션 로더.
+  - internal/database/migrations/: 번호별 SQL, HEAD 최신 0014_tracking.sql.
+  - web/src/: 화면·공통 컴포넌트·타입·vitest; web/e2e/: 실제 서버 Playwright; web/screenshots/: 가이드 캡처.
+  - docs/: USER_GUIDE·ADMIN_GUIDE(Markdown/PDF), API_AND_MCP·ARCHITECTURE와 assets/guide.
+- 빌드·테스트: 루트 `go test ./... -count=1` 정찰 통과(app 0.135s). VISITFLOW_TEST_DSN 미설정이라 DB 통합 SKIP. `go vet ./...`는 이번 미실행.
+- 빌드·테스트: `cd web && npm ci && npm run lint && npm test && npm run build`. 이번 프런트 미실행; lint는 ESLint가 아니라 tsc -b. vitest는 src/**/*.test.ts만 수집.
+- 빌드·테스트: DB 통합은 CREATE DATABASE 권한 필요. CI DSN은 postgres://visitflow:visitflow@127.0.0.1:5432/visitflow?sslmode=disable. 전체 통합 과거 기록 약 45~57초, 이번 측정 없음.
+- 빌드·테스트: CI test 잡은 PostgreSQL Go 테스트/vet → npm ci/test/build → Docker build. 별도 e2e 잡은 실제 web/dist를 cmd/visitflow/webdist로 복사하고 서버·Chromium을 실행한다.
+- 빌드·테스트: `docker build -t visitflow:dev .`; 실제 서버·DB·Chromium 준비 후 `cd web && npm run test:e2e`(상대적으로 오래 걸림). 이번 Docker/E2E 미실행.
+- 관례: 최근 영어 conventional 커밋, 릴리즈 chore(release). UI/가이드 한국어. settings 표에 정책을 저장하고 번호별 SQL 트랜잭션으로 이관한다.
+- 관례: writeError의 HTTP 상태·snake_case 코드·한국어 메시지. 현재 메일 설정은 smtp.*, mail.*는 미머지 브랜치.
+- 위험 구역: auth.go(세션/OIDC), keys.go/암호화, migrations/, settings.go·server.go, 개인정보·감사. normalizePhone은 전화 해시 입력이므로 가져오기만을 위해 변경하지 않는다.
+- 위험 구역: origin/auto/2026-09-16-1212(메일)와 origin/auto/2026-09-18-0533(MCP OAuth)는 HEAD 미머지. 해당 후속 작업·겹치는 화면/설정/인증 파일을 이번에 선택하지 않는다.
+- 자주 깨지는 곳: 과거 변이 복구에 git checkout -- 파일을 써 미커밋 편집을 두 번 잃음. SSE는 컨텍스트 종료가 없으면 계속 대기 가능.
+- 검증 함정: Go PASS는 DB 통합 실행을 보장하지 않는다. 최신 uploadImport는 requestContext와 requestTimedOut을 적용하여 이전 프로필의 데드라인 누락 설명은 더 이상 맞지 않는다.
+- 검증 함정: excelize GetRows는 표시 서식을 적용한다. HEAD는 복원 불가 지수 전화에 경고를 내고 원문을 보존한다. 이전 프로필의 경고 누락은 해결됨.
+- 검증 함정: importHeaders는 별칭 정규화 후 마지막 열 우선이며 중복 안내가 없다. importWarnings는 화면에 처음 5개와 나머지 개수만 표시한다.
+- 검증 함정: 실제 Excel·Keycloak·SMTP·Momento·브라우저는 이번 미확인. PDF 도구는 README상 저장소 밖 aidev/tools/guide/md2pdf.mjs이며 실행 가능 여부 미확인.
+- 문서 상태: 이번 저장소 검색에 CLAUDE.md/AGENTS.md/별도 로드맵·TODO 파일 및 TODO/FIXME 결과 없음.
+- 정찰 스킬: 요청한 회사 pmo/technology 세 스킬은 현재 도구·확인한 로컬 경로에서 찾지 못해 원문 절차는 미확인.
