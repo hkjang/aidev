@@ -1,0 +1,26 @@
+# Vendra 프로필 (2026-09-20)
+- 목적: 공급업체·구매 수명주기·소싱·계약·리스크·결재를 통합하고 조회 전용 MCP를 제공하는 오프라인 대응 구매 관리 시스템.
+- 스택: Go 1.24, net/http, pgx/PostgreSQL(README 15+, CI 16-alpine), React 19·TypeScript 6·Vite 8, Vitest/jsdom.
+- 구조:
+  - `cmd/vendra` — 서버 진입점, 현재 테스트 파일 없음.
+  - `internal/httpapi` — 라우팅·인증·업무·MCP·백그라운드 작업 및 실제 DB 통합 테스트.
+  - `internal/httpapi/productivity.go` — 업무 관제탑·저장 보기·초안; 관제탑 단계 스냅샷 누락을 이번 회차 과제로 선정(아직 미구현).
+  - `internal/httpapi/workflows.go` — 승인함·승인 처리; instanceSteps가 상신 스냅샷 우선/구형 정의 fallback을 제공.
+  - `internal/db/migrations` — SQL embed·기동 시 advisory lock/트랜잭션 적용. 최종 번호 017은 role_permissions/tracking 둘; 키는 전체 파일명.
+  - `internal/config`, `security`, `observability`, `tracking` — 설정 네 환경 변수·암호화·로그·방문 추적.
+  - `web/src` — React 화면과 Vitest 테스트; `web/vitest.config.ts`는 jsdom.
+  - `docs` — USER_GUIDE/ADMIN_GUIDE 및 PDF·images/guide, architecture/security/operations/ROADMAP_PLAN.
+  - `scripts` — guide-screenshots.mjs·offline-release.sh; `.github/workflows` — Go/웹 CI 및 태그 릴리즈.
+- 빌드·테스트:
+  - `go test ./internal/... ./cmd/... -count=1` — 이번 정찰 통과(httpapi 1.444s). 세 DSN unset이어서 DB 통합 테스트는 skip.
+  - `go vet ./internal/... ./cmd/...`, `gofmt -l internal cmd` — 저장소 CI 검증 명령. 이번 정찰에서는 별도 실행하지 않음.
+  - 실제 통합 검증에는 VENDRA_TEST_DSN, VENDRA_TEST_MIGRATE_DSN, VENDRA_TEST_UPGRADE_DSN 필요. 뒤의 둘은 각각 별도 빈 DB. Docker daemon 사용 가능 확인.
+  - 웹 CI: `cd web`, `npm ci --ignore-scripts`, `npx tsc -b --noEmit`, `npx eslint src --max-warnings 0`, `npm test`, `npm run build`. 이번 정찰 웹 실행 안 함.
+  - `make build`는 웹 설치/빌드 후 Go 바이너리 생성; `sh scripts/offline-release.sh <version>`은 Docker 이미지 아카이브 생성(수 분).
+- 관례: 최근 커밋은 영어 행동형 제목(fix/test/docs), 사용자 메시지는 한국어. 설정은 settings JSON 행, 비밀은 암호화 저장. SQL 마이그레이션은 기존 파일을 재작성하지 않는다. docs 가드가 코드/가이드 일치를 검사한다.
+- 위험 구역: authenticate·oidc·세션, 데이터 스코프, migrations, .github/workflows, 통화·금액 보존, 승인 단계 및 역할. 보호 경로 밖의 기존 helper 재사용을 우선한다.
+- 자주 깨지는 곳: 통화 수정 반려 이력, 새 비밀번호 상수의 비밀정보 검사, 중복 마이그레이션 번호, 취소된 ctx를 cleanup에 써 데이터가 남는 문제. cleanup은 context.Background 사용.
+- 검증 함정: CI go test는 ./internal/...만, vet는 ./cmd/...도 포함. DSN 없는 초록은 DB 검증 아님. 세 테스트 DB를 공유하지 않는다. 이전 /mnt/c Vitest 문제는 기록상 존재하나 현재 작업 경로는 Linux cache이고 재현 미확인.
+- 현재 기준: main@daca28f. 초안 축출·SSO 복귀·가이드 가드 반영. internal/mail 및 mcpoauth.go는 현재 없음(과거 성공 기록을 병합 사실로 간주하지 말 것).
+- 이전 프로필 정정: 견적 currency_mismatch 검증은 sourcing.go에 이미 존재하며, 통화 생략 시 기존 단위 보존 수정도 반영됨. 구형 혼합통화 데이터의 정책은 별개다.
+- 계획 문서 주의: ROADMAP_PLAN.md는 2026-08-13 비전 문서이며 v1/v3 단계 표기는 현재 배포 버전 확인 근거가 아니다.
