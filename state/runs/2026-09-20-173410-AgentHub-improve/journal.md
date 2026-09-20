@@ -28,3 +28,5 @@
 - 요청한 3부서 스킬/Skill 도구 미발견으로 전용 절차 준수를 주장하지 않음. 코드 수정 없이 심사 산출물만 기록.
 - [러너 17:48] review approved — 리뷰 승인 (risk=low)
 - [러너 17:48] pr created — https://github.com/hkjang/AgentHub/pull/31
+- [러너 17:50] ci passed — 검사 1개 모두 success
+- [러너 17:50] merge done — 50441aa

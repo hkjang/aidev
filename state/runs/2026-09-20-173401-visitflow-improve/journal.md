@@ -28,3 +28,6 @@
 - 요청된 세 부서 스킬/Skill 도구는 도구·리소스·로컬 검색에서 없어 적용 못함; 사용자 심사 기준으로 검토했고 저장소 코드는 수정하지 않음.
 - [러너 17:45] review approved — 리뷰 승인 (risk=low)
 - [러너 17:45] pr created — https://github.com/hkjang/visitflow/pull/20
+- [러너 17:49] ci passed — 검사 2개 모두 success
+- [러너 17:49] merge done — 1c8e2c7
+- [러너 17:50] release missing — 릴리즈 결과 없음/손상: missing
