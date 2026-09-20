@@ -26,3 +26,7 @@
 - 다음 회차: 미머지 09-18 브랜치의 `newDBServer` 와 같은 환경변수·다른 헬퍼(openTestStore)가 공존하게 된다 — 머지 시 한쪽으로 합칠 것.
 - [러너 14:35] review approved — 리뷰 승인 (risk=low)
 - [러너 14:35] pr created — https://github.com/hkjang/orbit/pull/8
+- [러너 14:37] ci passed — 검사 1개 모두 success
+- [러너 14:37] merge done — 1ab369a
+- [러너 14:42] release published — v0.6.2
+- [러너 14:43] assets verified — v0.6.2 자산 1개 (이전 v0.6.1: 1)

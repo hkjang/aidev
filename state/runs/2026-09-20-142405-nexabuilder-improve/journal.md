@@ -16,3 +16,12 @@
 - 일부러 하지 않은 것: `GET /api/v1/data/lists/{id}`(`DataAdapterService.queryList`, core/data)에 같은 구멍이 있는 것을 발견했지만 과제서 범위 밖·다른 서비스라 손대지 않고 ideas.json 에 3/2/S 로 올림. `/data` 에 ScreenPermissionService 게이트도 넣지 않음(과제서 지시). `formDefinition` 은 안 건드림.
 - 다음 역할이 조심할 것: 새 테스트 `BuilderListDataSoftDeleteIntegrationTest` 는 실제 H2 컨텍스트가 필요(`@SpringBootTest`, `@DirtiesContext` 없음, UUID 접미사 픽스처·정리 안 함). 검증 명령: `sh ./gradlew --no-daemon cleanTest test` → 575개 통과, `sh ./gradlew --no-daemon bootJar -x test` 성공. 빌드 경고(deprecated API, unchecked)는 이전과 동일하고 이번 변경으로 늘지 않음.
 - [러너 14:37] brief accepted — 채택 — 근거(listData 가 deletedAt 을 안 봄, 세 곳의 중복 판정, 호출자 범위)가 코드와 전부 일치했고 선택 항목(resolveExportab
+- [러너 14:43] verify passed — 검증 1개 통과 (auto)
+
+## 비평 노트
+- 확인: diff 3파일 전부 읽음. `listData` 호출자는 `UiBuilderController:223`(/data)와 `ListExportController` 3곳뿐(grep), 제거한 `NexaListRepository` 필드의 잔여 사용처 없음. 새 테스트는 수정 전 `listData`(findById 만)에서 200 이 나와 400 단언에 반드시 빨갛게 되는 구조. 이 세션에서 `--tests BuilderListDataSoftDeleteIntegrationTest` 직접 실행 → 2/2 통과(JUnit XML 확인).
+- 못 본 것: 런타임 뷰 7개 템플릿의 브라우저 동작(코드상 정의 호출이 먼저 막으므로 변화 없음), 전체 575개 재실행(구현 노트의 결과를 신뢰).
+- 승인이지만 남는 우려: (1) `/api/v1/builder/lists/{id}/data` 는 여전히 `ScreenPermissionService` 게이트 없이 인증만으로 행을 준다 — 이번 범위 밖(과제서 지시)이나 다음 회차 후보. (2) `GET /api/v1/data/lists/{id}`(`DataAdapterService:63`)는 같은 soft-delete 구멍이 그대로(ideas.json 등재됨). (3) `requireLiveList` Javadoc 의 "404-ish" 문구는 실제 400 매핑과 어긋나는 옛 주석 잔재 — 취향 수준.
+- 릴리즈 노트: 휴지통 목록의 `/data` 가 200→400 으로 바뀌므로 정의 호출 없이 `/data` 만 치던 외부 클라이언트가 있다면 응답이 달라짐(의도된 변경).
+- [러너 14:44] review approved — 리뷰 승인 (risk=low)
+- [러너 14:44] pr created — https://github.com/hkjang/nexabuilder/pull/28
