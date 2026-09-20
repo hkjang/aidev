@@ -1,5 +1,5 @@
 {
- "generated": "2026-09-21T06:28:44+09:00",
+ "generated": "2026-09-21T06:37:33+09:00",
  "site": "https://hkjang.github.io/aidev",
  "description": "Claude Code 자율 개선 에이전트가 hkjang 의 프로젝트를 개선·테스트·머지·릴리즈한 일일 보고. 오늘 25회차·릴리즈 3건, 누적 1157회차·릴리즈 407건, 주의 필요 6건.",
  "today": {
@@ -12,7 +12,7 @@
   "failed": 0,
   "cost_usd": 0.0,
   "minutes": 0,
-  "sessions": 83
+  "sessions": 84
  },
  "totals": {
   "runs": 1157,
@@ -304,10 +304,10 @@
    "why": "review: rejected — 리뷰 거절: internal/server/momento.go:126 [P2·정확성·머지 차단] ResponseHeaderTimeout만 설정되어",
    "evidence": "https://github.com/hkjang/aidev/tree/main/state/runs/2026-09-21-055409-relio-improve",
    "labels": "",
-   "action": "PR 처리기가 매시간 살핀다 (아직 순서가 오지 않음) · 승인: PR 라벨 aidev-approved / 반려: aidev-rejected — 다음 회차에 러너가 승인 당시 커밋에만 CI 확인 후 머지·닫기",
+   "action": "PR 처리기가 다음 시간에 다시 시도 · 승인: PR 라벨 aidev-approved / 반려: aidev-rejected — 다음 회차에 러너가 승인 당시 커밋에만 CI 확인 후 머지·닫기",
    "date": "2026-09-21",
-   "shepherd": "",
-   "shepherd_action": ""
+   "shepherd": "리뷰 거절 · 수정 실패 → 다음 시간에 재시도 (09-21 06:37) — 수정 세션이 커밋을 만들지 않음: 이유 없음",
+   "shepherd_action": "fix-failed"
   },
   {
    "kind": "PR",
@@ -319,10 +319,10 @@
    "why": "review: approved — 리뷰 승인 (risk=low); ci: no-ci — 이 커밋에 검사가 없음 (정책 allow_merge_without_ci 가 없으면 차단)",
    "evidence": "https://github.com/hkjang/aidev/tree/main/state/runs/2026-09-21-055419-sqlon-improve",
    "labels": "",
-   "action": "PR 처리기가 매시간 살핀다 (아직 순서가 오지 않음) · 승인: PR 라벨 aidev-approved / 반려: aidev-rejected — 다음 회차에 러너가 승인 당시 커밋에만 CI 확인 후 머지·닫기",
+   "action": "PR 처리기가 사람에게 넘김 — 이 커밋에 CI 검사가 없음 — 워크플로를 두거나 state/sqlon.policy.json 에 allow_merge_without_ci=true 를 적어야 머지된다 · 승인: PR 라벨 aidev-approved / 반려: aidev-rejected — 다음 회차에 러너가 승인 당시 커밋에만 CI 확인 후 머지·닫기",
    "date": "2026-09-21",
-   "shepherd": "",
-   "shepherd_action": ""
+   "shepherd": "CI 없음 · 사람 필요 (09-21 06:37) — 이 커밋에 CI 검사가 없음 — 워크플로를 두거나 state/sqlon.policy.json 에 allow_merge_without_ci=true 를 적어야 머지된다",
+   "shepherd_action": "needs-human"
   },
   {
    "kind": "PR",
@@ -2211,14 +2211,15 @@
   }
  ],
  "shepherd": {
-  "last_pass": "2026-09-21T05:42:55+09:00",
+  "last_pass": "2026-09-21T06:35:11+09:00",
   "enabled": true,
   "today": {
-   "needs-human": 5,
-   "review-invalid": 4
+   "needs-human": 6,
+   "review-invalid": 4,
+   "fix-failed": 1
   },
-  "total": 240,
-  "pending_human": 62
+  "total": 242,
+  "pending_human": 63
  },
  "agents": {
   "rows": [
@@ -2260,14 +2261,14 @@
    },
    {
     "role": "PR 심사 shepherd-reviewer",
-    "calls": 162,
-    "metric": "승인 44 · 거절 56 · 사람 필요 62 · 승인 뒤 회귀 0",
+    "calls": 163,
+    "metric": "승인 44 · 거절 56 · 사람 필요 63 · 승인 뒤 회귀 0",
     "cost": 296.66
    },
    {
     "role": "PR 수리 shepherd-fixer",
-    "calls": 62,
-    "metric": "고쳐서 푸시 66%",
+    "calls": 63,
+    "metric": "고쳐서 푸시 65%",
     "cost": null
    },
    {
@@ -2691,7 +2692,7 @@
   {
    "metric": "검증된 개선 완료율",
    "value": "100%",
-   "detail": "관찰 24h 지난 머지 286건 중 회귀 없음 286건"
+   "detail": "관찰 24h 지난 머지 288건 중 회귀 없음 288건"
   },
   {
    "metric": "완전한 릴리즈 비율",
@@ -2701,22 +2702,22 @@
   {
    "metric": "사람의 재작업률",
    "value": "0%",
-   "detail": "되돌림·롤백 0건 / 관찰 머지 286건"
+   "detail": "되돌림·롤백 0건 / 관찰 머지 288건"
   },
   {
    "metric": "변경 후 회귀율",
    "value": "0%",
-   "detail": "회귀 0건 / 관찰 머지 286건"
+   "detail": "회귀 0건 / 관찰 머지 288건"
   },
   {
    "metric": "유효 개선당 비용",
-   "value": "$14.27",
-   "detail": "비용 확인된 유효 개선 281건, 미확인 세션 175"
+   "value": "$14.17",
+   "detail": "비용 확인된 유효 개선 283건, 미확인 세션 175"
   },
   {
    "metric": "예외 처리 소요 시간(중앙값)",
    "value": "8.9시간",
-   "detail": "해결된 경고 165건"
+   "detail": "해결된 경고 166건"
   },
   {
    "metric": "실행 오류",
