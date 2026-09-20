@@ -1,11 +1,11 @@
 # MOINA 관리자 가이드
 
-버전 `v0.1.33` · linux/amd64 단일 컨테이너 · 외부 PostgreSQL · 폐쇄망 운영
+버전 `v0.1.34` · linux/amd64 단일 컨테이너 · 외부 PostgreSQL · 폐쇄망 운영
 
 이 문서는 MOINA를 **설치하고 지키는 사람**을 위한 안내입니다. 화면을 쓰는 방법은
 [사용자 가이드](USER_GUIDE.md)에 있으니 사용자에게는 그 문서를 안내하세요.
 
-이 문서의 화면 캡처는 `v0.1.33` 서비스를 실제로 띄워 캡처 전용 데이터베이스에서 찍은
+이 문서의 화면 캡처는 `v0.1.34` 서비스를 실제로 띄워 캡처 전용 데이터베이스에서 찍은
 것이며, 화면에 보이는 계정·주소는 모두 예시입니다.
 
 ---
@@ -14,7 +14,7 @@
 
 | 구성 | 내용 |
 | --- | --- |
-| 서비스 컨테이너 | `moina:v0.1.33` 하나. distroless·non-root·read-only로 실행하며 Go 서버와 React 웹 앱을 함께 담고 있습니다. |
+| 서비스 컨테이너 | `moina:v0.1.34` 하나. distroless·non-root·read-only로 실행하며 Go 서버와 React 웹 앱을 함께 담고 있습니다. |
 | 데이터 저장소 | **외부 PostgreSQL**. 이미지에 포함되지 않으므로 기관 표준 PostgreSQL을 먼저 준비합니다. 미디어는 Large Object로 저장합니다. |
 | 노출 포트 | 컨테이너 `8080`(HTTP). 기본 compose는 `127.0.0.1:8080`에만 bind합니다. |
 | 앞단 | 기관 표준 TLS reverse proxy. WebSocket과 SSE를 통과시켜야 합니다. |
@@ -48,16 +48,16 @@ CREATE EXTENSION IF NOT EXISTS pg_trgm;
 
 ## 2. 설치
 
-GitHub Release에는 서비스 이미지 `moina-v0.1.33.tar.gz` 하나만 올라가고 SHA256 값은 릴리스
+GitHub Release에는 서비스 이미지 `moina-v0.1.34.tar.gz` 하나만 올라가고 SHA256 값은 릴리스
 본문에 적힙니다. 파일과 해시를 서로 다른 경로로 반입하세요.
 
 ### 2.1 이미지 반입과 확인
 
 ```bash
-sha256sum moina-v0.1.33.tar.gz
-gzip -t moina-v0.1.33.tar.gz
-gzip -dc moina-v0.1.33.tar.gz | docker image load
-docker image inspect moina:v0.1.33 --format '{{.Os}}/{{.Architecture}} {{.Config.User}}'
+sha256sum moina-v0.1.34.tar.gz
+gzip -t moina-v0.1.34.tar.gz
+gzip -dc moina-v0.1.34.tar.gz | docker image load
+docker image inspect moina:v0.1.34 --format '{{.Os}}/{{.Architecture}} {{.Config.User}}'
 ```
 
 마지막 명령의 결과는 `linux/amd64 nonroot:nonroot`여야 합니다.
@@ -84,7 +84,7 @@ docker compose --env-file .env \
 ```
 
 `deploy/docker-compose.offline.yml`의 `image:` 줄에는 태그가 고정되어 있습니다. 반입한
-태그(`moina:v0.1.33`)와 다르면 그 줄을 반입한 버전으로 맞춘 뒤 기동하세요. `pull_policy: never`
+태그(`moina:v0.1.34`)와 다르면 그 줄을 반입한 버전으로 맞춘 뒤 기동하세요. `pull_policy: never`
 이므로 이미지가 로컬에 없으면 그 자리에서 실패합니다.
 
 사설 CA가 필요하면 기관의 **전체** PEM CA bundle을 mount합니다. 추가 환경변수는 없습니다.
@@ -151,7 +151,7 @@ CI에서 검사합니다. 나머지는 전부 PostgreSQL에 저장되고 관리 
 | `MOINA_ENCRYPTION_KEY` | 없음 | 필수 | 저장 비밀값을 보호하는 32바이트 root key(base64). `openssl rand -base64 32`로 만들고 DB backup과 **다른 곳**에 보관합니다. |
 
 > `MOINA_ENCRYPTION_KEY`를 잃으면 암호화된 OIDC·AI·SMTP 비밀과 기존 session·API key 검증
-> 정보를 복구할 수 없습니다. `v0.1.33`은 온라인 root key 교체를 제공하지 않으므로 값을 바꾸지
+> 정보를 복구할 수 없습니다. `v0.1.34`은 온라인 root key 교체를 제공하지 않으므로 값을 바꾸지
 > 마세요.
 
 ### 3.2 일반 설정
@@ -560,7 +560,7 @@ API는 `GET`·`PUT /api/v1/admin/analytics`, `GET`·`DELETE /api/v1/admin/analyt
 ![신고·제재 — 접수된 신고를 검토·해결·기각한다](assets/screenshots/desktop-admin-reports.webp)
 
 **신고·제재**에서는 접수된 신고를 검토해 해결하거나 기각하고, 필요하면 사용자 활성 상태를
-바꾸거나 게시물을 지웁니다. `v0.1.33`은 신고 유형·우선순위·SLA를 사용자 정의하는 설정을
+바꾸거나 게시물을 지웁니다. `v0.1.34`은 신고 유형·우선순위·SLA를 사용자 정의하는 설정을
 제공하지 않으므로, 기관별 기준과 escalation은 별도 운영 정책으로 관리하고 검토 메모에
 판단 근거를 남기세요. 반복 패턴은 관찰하되 자동 판단만으로 영구 제재하지 않습니다.
 
@@ -599,7 +599,7 @@ Dead Letter로 떨어진 비동기 event는 같은 화면 위쪽 **실패 이벤
   (`pg_dump -b` 등)을 명시합니다.
 - 같은 시점의 `MOINA_ENCRYPTION_KEY`와 현재 이미지 `tar.gz`를 **서로 다른 보안 영역**에
   보관합니다.
-- 복구 훈련에서 미디어·DB backup·원래 key가 함께 유효한지 확인합니다. `v0.1.33`은 온라인
+- 복구 훈련에서 미디어·DB backup·원래 key가 함께 유효한지 확인합니다. `v0.1.34`은 온라인
   root key 교체를 제공하지 않습니다.
 
 ### 5.6 업그레이드와 되돌리기
