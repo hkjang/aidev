@@ -21,3 +21,7 @@
 - 승인이어도 남는 우려: (1) 허용 MIME 목록이 social.go:642 인라인 슬라이스와 `mediaFilenameExtensions` 맵 두 곳에 있어 형식을 추가할 때 어긋날 수 있음(맵에 없으면 확장자 없이 저장). (2) `.hidden`처럼 점으로 시작하는 이름은 stem이 비어 `image.jpg`로 바뀜(정보 손실이지만 무해). (3) 릴리즈 노트: 새 업로드부터 `clip.mov`→`clip.mp4`, `.m4v`·`.jpe` 별칭은 교체됨; 기존 행은 그대로.
 - [러너 13:15] review approved — 리뷰 승인 (risk=low)
 - [러너 13:15] pr created — https://github.com/hkjang/moina/pull/27
+- [러너 13:23] ci passed — 검사 2개 모두 success
+- [러너 13:23] merge done — 09cbdec
+- [러너 13:36] release published — v0.1.34
+- [러너 13:41] assets verified — v0.1.34 자산 1개 (이전 v0.1.33: 1)

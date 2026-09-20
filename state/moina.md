@@ -166,3 +166,4 @@
 - 보류 아이디어: Makefile `test`가 CI와 달리 `-race` 미사용 — CI 동등성(가치 2 / 위험 1 / S) · 가이드 3.4절 Keycloak OIDC(MCP SSO 카드)·3.6절 SMTP·3.8절 방문 추적 화면 재캡처 — mail 캠페인 머지 뒤 `make image` + docker PostgreSQL + capture:web(가치 3 / 위험 1 / M) · 관리 설정 "사이트 기본 주소" placeholder가 요청 origin이라 시각 회귀 베이스라인이 캡처 포트에 결합됨 — `normalizeDynamicContent` 정규화 후 `MOINA_VISUAL_ONLY=admin-settings` 재승인(가치 2 / 위험 1 / S) · 업로드가 이미지 dimension만 읽어 동영상은 width·height가 항상 0 — MP4 moov/tkhd·WebM EBML 파싱(가치 2 / 위험 2 / M)
 - 과제서: 채택 — 과제서의 근거(social.go:732·호출 자리 하나·`filepath.Base` 결과)가 코드와 맞았고 수용 기준 1·2·3(a)·(b)를 그대로 구현했으며, 유일한 차이는 `filename=""`이 Go 파서에서 파일로 도달할 수 없어 integration 빈 이름 케이스를 `..`로 바꾼 것
 
+- 릴리즈: v0.1.34 (2026-09-20, run 2026-09-20-130404-moina-improve)

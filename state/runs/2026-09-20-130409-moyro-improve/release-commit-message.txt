@@ -1,0 +1,43 @@
+release: carry release markers to v0.2.34
+
+v0.2.34 ships the transactional bulk sidebar category update already
+merged to main. `PUT /api/v4/users/{uid}/teams/{tid}/channels/categories`
+called `sidebar.Update` once per array item and each call committed its
+own transaction, so when the Nth item was refused — a missing, foreign-user
+or foreign-team id (404), a sorting value outside alpha/recent/manual
+(400), or a storage fault (500) — items 1..N-1 had already committed their
+`display_name`, `sorting`, `muted`, `collapsed` and channel placement
+behind the error response, and no `sidebar_categories_updated` event told
+other tabs about the half-applied state. The body of `Update` now lives in
+`updateTx(ctx, tx, …)` (sorting check, `SELECT type … FOR UPDATE`, the
+UPDATE, then `replaceChannelsTx`), the single-item `Update` keeps its
+signature and behaviour, and a new `UpdateMany` runs the whole array on
+one transaction and re-reads each category with `Get` after the commit in
+input order, opening no transaction for an empty array. The sentinel
+errors survive unchanged, so `writeSidebarError` still picks 404, 400 or
+500 the same way and the error ids, response shape, `tooManyBatchItems`
+caps and event name are as before. `getSidebarCategory` now goes through
+the same mapping, so only `ErrNotFound` answers 404 and a storage fault
+answers 500 instead of posing as a missing category, with the
+`api.sidebar.get.not_found` id kept. Two Postgres integration tests on the
+service pin the rollback of every item when one is refused (missing id and
+bogus sorting, with the first row's `display_name`, `update_at` and channel
+list unchanged) and the input-order result including the empty array, and
+two on the real handler pin the 404/400 responses that leave nothing
+behind, the 200 with input order for a valid array, and the 404-only-for-
+missing-rows split for `Get`; all four failed against the previous code.
+`replaceChannelsTx`, `UpdateOrder` and the single-category write handlers
+from v0.2.31 and v0.2.33 are untouched, and there is no web change.
+
+Release markers move to v0.2.34 across the README, the product site and
+guides, the canonical user and administrator guides, the OpenAPI contracts,
+the offline deployment guide, the plugin SDK and sample plugin, the pages
+gate, and the web package and its version surfaces. The two guides keep
+naming the v0.2.27 image as the origin of their screen captures, which is
+still true for the existing captures, and their PDFs are left as rendered
+because the md2pdf converter that produced them lives outside this
+repository. Verified at this tree: the pages gate, `go test -race -p 1 ./...`
+against a local postgres:16-alpine and `go vet ./...` for the server, the
+Go plugin SDK tests and vet, 48 webapp test files with 221 tests, typecheck
+across both projects, build, both npm audits at zero, and the source-size
+ratchets.
