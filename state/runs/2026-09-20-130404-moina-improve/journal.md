@@ -19,3 +19,5 @@
 - 직접 돌린 것: 단위 테스트·`go vet` 통과, throwaway `postgres:17-alpine`(자동 포트, 컨테이너 삭제)으로 `TestPostgreSQLUploadMediaFilenameFollowsDetectedMIME`을 `-race`로 돌려 3 케이스 PASS. 응답 filename·DB 행·Content-Disposition·Content-Type 모두 단언됨.
 - 못 본 것: `make check`·frontend vitest·e2e는 돌리지 않음(프런트는 filename을 표시 fallback으로만 쓰고 e2e에 filename 단언 없음을 grep으로 확인). 보안·법무 관점: 새 수집·전송 없음, 사용자 이름 입력의 폴리글롯(x.html 저장) 표면이 오히려 줄어듦 — 차단 사유 없음.
 - 승인이어도 남는 우려: (1) 허용 MIME 목록이 social.go:642 인라인 슬라이스와 `mediaFilenameExtensions` 맵 두 곳에 있어 형식을 추가할 때 어긋날 수 있음(맵에 없으면 확장자 없이 저장). (2) `.hidden`처럼 점으로 시작하는 이름은 stem이 비어 `image.jpg`로 바뀜(정보 손실이지만 무해). (3) 릴리즈 노트: 새 업로드부터 `clip.mov`→`clip.mp4`, `.m4v`·`.jpe` 별칭은 교체됨; 기존 행은 그대로.
+- [러너 13:15] review approved — 리뷰 승인 (risk=low)
+- [러너 13:15] pr created — https://github.com/hkjang/moina/pull/27
