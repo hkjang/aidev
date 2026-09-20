@@ -1,7 +1,7 @@
 ---
 title: "vibe-coders — 자율 개선 이력"
 description: "vibe-coders: 자율 개선 회차 56회, 릴리즈 3건. 최근 릴리즈 v0.85.3."
-last_modified_at: 2026-09-20 18:01:10 +0900
+last_modified_at: 2026-09-20 18:06:24 +0900
 ---
 {% raw %}
 <script type="application/ld+json">
@@ -18,7 +18,7 @@ last_modified_at: 2026-09-20 18:01:10 +0900
   "name": "hkjang",
   "url": "https://github.com/hkjang"
  },
- "dateModified": "2026-09-20T18:01:10+09:00",
+ "dateModified": "2026-09-20T18:06:24+09:00",
  "version": "0.85.3"
 }
 </script>
@@ -35,6 +35,7 @@ last_modified_at: 2026-09-20 18:01:10 +0900
 <dt>저장소</dt><dd><a href="https://github.com/hkjang/vibe-coders">https://github.com/hkjang/vibe-coders</a></dd>
 <dt>마지막 회차</dt><dd>2026-09-20 17:15 KST — <span class="pill pill-other">• 기타</span> verify failed: 실패한 검증: cd web &amp;&amp; pnpm run typecheck --silent (exit 1)</dd>
 <dt>최근 릴리즈</dt><dd><a href="https://github.com/hkjang/vibe-coders/releases/tag/v0.85.3">v0.85.3</a> — released <a href="https://github.com/hkjang/vibe-coders/releases">전체 릴리즈 →</a></dd>
+<dt>수정 과제</dt><dd>⚠️ 오류 대응(자동 적재): 마지막 회차가 &#x27;verify-failed&#x27; 로 끝났습니다. verify failed: 실패한 검증: cd web &amp;&amp; pnpm run typecheck --silent (exit 1)</dd>
 </dl>
 
 ## 회차 이력
