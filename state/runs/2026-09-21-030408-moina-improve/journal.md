@@ -27,3 +27,5 @@
 - 릴리즈 주의: 로컬 main=95255f3이라 main...HEAD는 74개 파일; 상세 승인은 회차 고정 base 이후 변경에 한정하며 이전 변경 전체 재심사는 아님.
 - [러너 03:12] review approved — 리뷰 승인 (risk=low)
 - [러너 03:12] pr created — https://github.com/hkjang/moina/pull/28
+- [러너 03:21] ci passed — 검사 2개 모두 success
+- [러너 03:21] merge done — 1bd4408
