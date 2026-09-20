@@ -16,3 +16,6 @@
 - 일부러 하지 않은 것: 과제서가 금지한 `RequireAuth`·`silentSso.ts`·`AuthContext`·`auth_handlers.go` 는 안 건드림; `/login?sso=none` 의 return_to 손실은 범위 밖; PublicOnly/LoginPage 의 목적지 계산을 한 함수로 합치는 정리는 동작 변화 없는 리팩터라 보류 아이디어로만 남김.
 - 다음 역할이 조심할 것: 과제서의 "App.tsx 손대지 말 것" 을 `PublicOnly` 5줄에 한해 넘었다 — 그 수정 없이는 실제 App 테스트(`returns to the protected page …`)가 red 이고, 운영자 규칙(같은 값을 읽는 경로 전부 같게)에 해당해 의도적으로 넘은 것이다. 테스트는 DB 없이 vitest 만으로 돈다(`npm --prefix web test -- --run src/App.test.tsx`, node_modules 는 `npm --prefix web ci` 선행). `LocationProbe` 는 `useLocation` 만 읽는 형제 컴포넌트로 App 라우트를 바꾸지 않는다.
 - [러너 16:40] brief accepted — 채택 — 과제서의 근거(LoginPage.tsx:47 returnTo·81 /workspace 고정, RequireAuth state.from, 두 하네스)가 모두 코드와 일치했고 수용 �
+- [러너 16:42] verify passed — 검증 9개 통과 (auto)
+- [러너 16:42] review missing — 리뷰 결과 없음/손상: missing — 보류
+- [러너 16:42] pr created — https://github.com/hkjang/qurio/pull/18
