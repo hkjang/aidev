@@ -28,3 +28,5 @@
 - 릴리즈 주의: 로컬 main=baa3415는 오래되어 요청 diff가 이전 릴리즈까지 포함한다. 이번 판정은 회차에 고정된 88f853a...1e9045a에 한정한다. 세 부서 스킬은 전용 도구 부재로 headcount 원문을 읽었다.
 - [러너 23:36] review approved — 리뷰 승인 (risk=low)
 - [러너 23:36] pr created — https://github.com/hkjang/dataworks/pull/26
+- [러너 23:38] ci passed — 검사 2개 모두 success
+- [러너 23:39] merge done — 1e9045a
