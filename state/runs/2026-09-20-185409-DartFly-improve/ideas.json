@@ -1,0 +1,128 @@
+[
+  {
+    "title": "로그인 페이지 조용한 SSO 시도 중 폼 깜빡임 제거",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "login.js는 system/info 및 hasSession을 기다리는 동안 폼을 숨기지 않는다. 서버 loginPageHandler가 기존 세션을 302 처리하므로 남는 효용이 작다.",
+    "updated": "2026-09-20"
+  },
+  {
+    "title": "401 리다이렉트 헬퍼 일원화(layout.js api())",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "layout.js api, resources.js, mcp.js의 401 처리 중복 확인. loginUrl은 이미 공유하고 있어 동작 변화 없는 정리 우선순위 낮음.",
+    "updated": "2026-09-20"
+  },
+  {
+    "title": "스모크 하네스에서 MariaDB 컨테이너 기동 실패(TLS 시각 flake)를 한 번 재시도",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "run.sh에 일반 재시도 추가보다 실패 원인 한정이 필요. 이번 정찰은 컨테이너 미실행이라 재현 미확인; 과거 1회 근거만으로 선택하지 않음.",
+    "updated": "2026-09-20"
+  },
+  {
+    "title": "로그인 폼 429(속도 제한) 응답의 Retry-After를 카운트다운으로 보여 주고 단추 비활성",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "loginHandler는 Retry-After 제공, login.js catch는 즉시 단추 활성화함을 재확인. 차선 후보; Enter 재제출 및 잘못된 헤더의 영구 잠금 방지 필요.",
+    "updated": "2026-09-20"
+  },
+  {
+    "title": "세션 만료 임박 알림과 저장 안 된 SQL 안내",
+    "value": 3,
+    "risk": 2,
+    "size": "M",
+    "status": "pending",
+    "note": "meHandler의 expires_at 확인, layout.js/app.js에 expires_at 및 beforeunload 검색 결과 없음. 알림 정책·SQL 보존 범위가 넓어 이번에는 보류.",
+    "updated": "2026-09-20"
+  },
+  {
+    "title": "MCP SSO의 실제 Keycloak·실제 MCP 클라이언트 연결 확인",
+    "value": 3,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "internal에서 mcp_oauth 검색 결과 없음. 현재 main에는 대상 기능 부재; 병합 및 외부 IdP/클라이언트 준비 후 재평가.",
+    "updated": "2026-09-20"
+  },
+  {
+    "title": "메일 발송 기록(df_mail_delivery)을 보존 정리(retention) 대상에 넣기",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "internal에서 df_mail_delivery 검색 결과 없음. 대상 코드 병합 후 재평가.",
+    "updated": "2026-09-20"
+  },
+  {
+    "title": "메일 알림 이벤트 추가 — DB 권한(terms_end) 만료 임박 알림",
+    "value": 3,
+    "risk": 2,
+    "size": "M",
+    "status": "pending",
+    "note": "현재 main에는 메일 기능 부재. 이전 기록의 미병합 상태와 일치하며 알림 기반 마련 후 재평가.",
+    "updated": "2026-09-20"
+  },
+  {
+    "title": "메일 설정에 받는 사람이 직접 끄기(사용자별 구독 해제)",
+    "value": 2,
+    "risk": 2,
+    "size": "M",
+    "status": "pending",
+    "note": "현재 main에는 메일 설정/발송 코드 부재. 대상 기능 병합 전 실행 불가.",
+    "updated": "2026-09-20"
+  },
+  {
+    "title": "로그아웃 시 IdP end_session(RP-initiated logout) 호출",
+    "value": 3,
+    "risk": 3,
+    "size": "M",
+    "status": "pending",
+    "note": "internal의 end_session 검색 결과 없음. IdP 설정과 기존 로그아웃 억제 계약에 영향; 이번 안전한 소규모 수정 범위 밖.",
+    "updated": "2026-09-20"
+  },
+  {
+    "title": "추적 설정·넘기기 허용 목록 변경을 mgnt_audit_log에 남기기",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "internal에서 df_tracking_config 및 df_handoff_target 검색 결과 없음. 관련 브랜치 병합 후 재평가.",
+    "updated": "2026-09-20"
+  },
+  {
+    "title": "로그인 페이지에서 'sso=none' 거절 뒤 SSO 단추에 '자동 로그인이 거절됨' 안내 표시",
+    "value": 1,
+    "risk": 1,
+    "size": "S",
+    "status": "rejected",
+    "note": "ADMIN_GUIDE는 세션 없음이 정상 응답이며 오류 메시지 없이 평소 폼을 표시한다고 명시한다. 정상 흐름을 거절로 안내할 근거가 약해 기각.",
+    "updated": "2026-09-20"
+  },
+  {
+    "title": "저장 결과 상세의 늦은 응답과 이전 선택의 작업 단추가 남는 문제 수정",
+    "value": 4,
+    "risk": 1,
+    "size": "M",
+    "status": "pending",
+    "note": "이번 선택(신규). saved.js 원본을 Node vm+DOM/API 대역으로 실행하여 로딩/실패 뒤 이전 current 유지와 응답 역순 덮어쓰기를 재현. 삭제 진행 중 후속 선택 보존도 같은 상태 관리 범위에서 검증.",
+    "updated": "2026-09-20"
+  },
+  {
+    "title": "저장 결과 목록에서 200건 이후 결과를 탐색할 수 있게 페이지 이동 추가",
+    "value": 3,
+    "risk": 2,
+    "size": "M",
+    "status": "pending",
+    "note": "신규. saved.js loadList는 limit=200 한 번만 조회하고 total/offset을 사용하지 않음. resultsave.Service.List/SavedPage는 total/limit/offset 제공. 검색이 현재 로드한 목록에만 적용되므로 UI 검색 범위를 명확히 할 설계 필요.",
+    "updated": "2026-09-20"
+  }
+]

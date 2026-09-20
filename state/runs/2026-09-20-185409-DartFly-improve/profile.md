@@ -1,0 +1,22 @@
+# DartFly 프로필 (2026-09-20)
+- 목적: 기존 Tadpole 메타 DB를 활용해 여러 DBMS 탐색·읽기 전용 SQL 실행·마스킹·감사·운영 관리를 제공하는 단일 바이너리 웹 플랫폼.
+- 스택: go.mod Go 1.25.7, 표준 net/http·database/sql, MariaDB 메타 DB, MariaDB/MySQL·PostgreSQL·Oracle·SQL Server 드라이버. 프런트는 임베드 HTML/CSS와 ES 모듈 JS, Node 테스트 및 Python Playwright 스모크.
+- 구조:
+  - cmd/dartfly: 실행 진입점; internal/app: 환경변수·서비스 기동.
+  - internal/server: HTTP 라우팅·핸들러·세션 게이트; http.go에 로그인/SSO, resultsave.go에 저장 결과 API.
+  - internal/auth·sso·ssoconfig: 로그인·서명 토큰·OIDC·SSO 설정.
+  - internal/query·dbconn·masking: DB 실행과 정책·마스킹; internal/resultsave: 결과 저장·목록·상세·삭제.
+  - internal/access·rbac·governance·settlement: 권한·거버넌스·결재; retention: 감사 보존 정리.
+  - internal/store/mariadb: 메타 DB 저장소·마이그레이션; internal/apihub·mcphub: 외부 API/MCP.
+  - internal/webui: pages/js/css 임베드; assets.go의 pageRoutes와 디렉터리별 정적 서빙.
+  - test/js: Node 회귀, test/livedb: 실제 DB, test/smoke: 바이너리·이미지·Chromium 검증; docs: 보증·설정·관리 가이드; deploy: 배포.
+- 빌드·테스트: `go test -race ./...`, `go vet ./...`, `gofmt -l .`, `go build ./cmd/dartfly`; 이번 정찰은 race 전체 테스트만 실행해 통과(일부 캐시). 로컬 Go 1.26.7·Node 22.23.1, CI Go 1.25.x.
+- 빌드·테스트: 화면 변경은 `DF_SMOKE_REQUIRE_BROWSER=1 bash test/smoke/run.sh`(Docker·playwright·Chromium 필요, 수분). livedb는 `bash test/livedb/setup.sh --fast` 뒤 `/tmp/dartfly-livedb.env`를 export하여 `go test -tags livedb ./...`; Oracle/SQL Server 포함 준비는 오래 걸림.
+- 관례: 한국어 feat:/fix:/test: 커밋과 PR 병합. 설정은 DARTFLY_*·_FILE 및 관리 화면; SSO 저장 설정이 env 폴백보다 우선. 기존 프로필의 002 DDL/기동 시 ALTER 병행 관례는 이번 회차 상세 재검증하지 않음.
+- 위험 구역: auth·session·SSO 리다이렉트/return_to, 정책·마스킹·권한 보증, internal/store/mariadb/migrations 및 기동 시 ALTER, .github/workflows. 이번 선택은 saved.js와 JS 회귀 테스트에 한정 가능.
+- 자주 깨지는 곳: 과거 임베드 자산 누락은 실제 배포에서만 발견됨. livedb가 태그 뒤에서 방치돼 회귀 누적. 과거 로그아웃/폐기 시각 정밀도 문제는 authentication-hardening.md 참조.
+- 검증 함정: jstest_test.go는 node가 없으면 Skip; test/js/*.test.mjs를 자동 실행. 기존 load.mjs만으로 DOM 의존 페이지 모듈을 바로 시험하기는 어려워 DOM/API 대역 필요. 단순 페이지 스모크는 비동기 응답 역순/삭제 경합까지 확인하지 않음.
+- 검증 함정: smoke는 로컬에서 브라우저가 없으면 생략 가능하므로 REQUIRE_BROWSER=1 사용. MariaDB TLS 시각 실패는 과거 기록만 있고 이번 재현 미확인. 정찰은 스모크 미실행.
+- 현재 기준: main@0c256cc. 메일·추적·넘기기·MCP OAuth의 다른 브랜치 개선 기록을 현행 구현으로 취급하지 말 것(관련 식별자 internal 검색 결과 없음).
+- 정찰 발견: saved.js showDetail의 최신 요청 판정과 이전 상세 초기화가 없어 잘못된 작업 대상이 남음(Node 대역 재현). 목록은 limit=200 고정이며 API의 total/offset을 쓰지 않음.
+- 문서 상태: README·docs·최근 git log -30·CI 확인. 저장소에서 CLAUDE.md·AGENTS.md·로드맵 파일과 TODO/FIXME 검색 결과 없음. 이전 프로필의 0일 조건에 따라 갱신.
