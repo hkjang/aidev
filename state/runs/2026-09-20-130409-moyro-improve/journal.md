@@ -28,3 +28,4 @@
 - [러너 13:30] ci passed — 검사 3개 모두 success
 - [러너 13:30] merge done — ad4c266
 - [러너 13:37] release published — v0.2.34
+- [러너 13:55] assets verified — v0.2.34 자산 1개 (이전 v0.2.33: 1)
