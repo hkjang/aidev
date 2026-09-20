@@ -1,0 +1,14 @@
+DartFly v2.72.0 오프라인 배포
+
+1) 이미지 로드
+   gunzip -c dartfly-v2.72.0.tar.gz | docker load
+
+2) 실행 (예시)
+   docker run -d --name dartfly -p 9898:9898 \
+     -e DARTFLY_ADDR=0.0.0.0:9898 \
+     -e DARTFLY_META_DSN='user:pass@tcp(HOST:3306)/tadpole?parseTime=true&charset=utf8mb4' \
+     -e DARTFLY_AUTO_MIGRATE=true \
+     -e DARTFLY_MASTER_KEY_FILE=/app/startService.tdb.son \
+     dartfly:v2.72.0
+
+무결성 확인: sha256sum -c dartfly-v2.72.0.tar.gz.sha256

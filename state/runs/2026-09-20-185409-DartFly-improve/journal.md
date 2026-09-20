@@ -30,3 +30,14 @@
 - [러너 19:08] pr created — https://github.com/hkjang/DartFly/pull/10
 - [러너 19:13] ci passed — 검사 3개 모두 success
 - [러너 19:13] merge done — 5cd5ca0
+
+## 릴리즈 노트
+- v2.72.0: 기존 관례대로 머지 커밋 f09cfc0에 경량 태그 생성(별도 릴리즈 커밋·버전 파일 수정 없음).
+- Go race·vet·gofmt·build, JS 테스트, Chromium 31페이지·편집기 스모크, 배포 이미지 실기동 검사 통과. 브라우저 캐시 경로 수정 후 재검증.
+- 기존 deploy/build-release.sh로 tar.gz·sha256 생성 및 무결성 확인. release.json과 한국어 release-notes.md 작성. 원격 푸시·업로드 없음.
+- 요청한 두 회사 스킬은 도구·로컬에 없어 적용 불가. 실제 저장 데이터 삭제 종단 검증 미실행이라는 한계 유지.
+- [러너 19:18] release published — v2.72.0
+- [러너 19:18] gh-release created — GitHub Release v2.72.0
+- [러너 19:18] manifest ok — dartfly-v2.72.0.tar.gz dartfly-v2.72.0.tar.gz.sha256 
+- [러너 19:18] assets uploaded — 2개
+- [러너 19:18] assets verified — v2.72.0 자산 2개 (이전 v2.71.0: 2)
