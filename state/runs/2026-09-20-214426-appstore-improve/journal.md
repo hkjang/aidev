@@ -28,3 +28,4 @@
 - 후속 참고: 비활성 카테고리의 공개 조건 차이·100개 밖 즐겨찾기·기존 저장값 유지 문제는 기존 제약이며 이번 수정 범위 밖.
 - [러너 21:55] review approved — 리뷰 승인 (risk=low)
 - [러너 21:56] pr created — https://github.com/hkjang/appstore/pull/26
+- [러너 22:00] ci failed — 성공이 아닌 검사: Go, React, E2E, and offline checks=failure
