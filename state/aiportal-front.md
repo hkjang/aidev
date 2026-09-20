@@ -238,3 +238,22 @@
 - 이번 확인: git status --short 빈 출력. 기록 작성 후 Python으로 JSON 필수 필드·허용 값·17개 기존 아이디어 보존·원장 단일 항목·구현 노트 8줄 이내를 검사하고 git diff --check 및 git status --short를 실행한다. 이는 기록 검증이며 릴리즈 수용 기준 검증이 아니다.
 - 저장소·버전·태그·정본·실패 JSON·외부 러너·게이트 무변경, 커밋·원격 전송·배포 없음. 새 아이디어 선정 절차는 정찰 과제서로 갈음하여 기존 17개를 보존한다.
 
+## 2026-09-21
+- 선택: [수정 과제] 릴리즈 버전 결정 입력 결손 해소 (가치 5 / 위험 2 / 작업량 S)
+- 결과: 변경없음
+- 요약: 수정 과제는 필수 정책 출처가 제공되지 않아 수정 미완료/BLOCKED다. 과제서의 명시적 진입 조건에 따라 동일 조사·gate 재현·구현을 반복하지 않았으며 저장소 변경과 커밋은 없다. 요구 스킬 원문과 AGENTS.md·docs/RELEASE.md·회차 기록을 읽고 기록 형식과 작업 트리만 확인했으며, 릴리즈 해결 검증은 수행하지 않았다.
+- 보류 아이디어:
+  - 릴리즈 정책 입력 복구: pending/BLOCKED; 다음 버전·증가 단위·릴리즈 커밋·태그 사용/형식/종류·노트·자산 방식의 출처 필요.
+  - 외부 Codex 폴백 경로 전달: pending; 외부 소유이며 최신 실패 해법으로 재선정하지 않음.
+  - useAppList 비배열 캐시 방어: pending; 이번 고정 과제 대체 금지.
+  - globalLoading 병렬 요청 참조 카운트: pending; 호출 짝 감사와 실제 병렬 요청 검증 선행.
+- 과제서: 채택 — 새 입력 없이는 반복 조사나 구현 없이 BLOCKED로 종료하라는 조건을 적용했다.
+
+검증 및 스킬 반환 기록:
+- callable Skill 도구 없음. /mnt/c/Users/USER/projects/headcount/plugins/technology/skills/completion-verification/SKILL.md, /mnt/c/Users/USER/projects/headcount/plugins/technology/skills/systematic-debugging/SKILL.md, /mnt/c/Users/USER/projects/headcount/plugins/technology/skills/test-driven-development/SKILL.md 원문을 실제 읽었다. 파일 읽기는 성공한 Skill 호출이 아니다.
+- 재현·원인: 정찰의 정책 입력 결손 진단을 인계받았으며 이번 독립 재현·원인 입증·다른 원인 배제는 미수행이다. 앱 CI나 gate 결함으로 재분류하지 않는다.
+- 수정·검증: 코드 수정·추가 테스트 없음. 수용 기준 1 출처 미확보로 2·3 미착수이며 Red/Green 및 되돌림 인과 검증은 수행하지 않았다.
+- 의도적 미검증: 사용자 반복 실행 금지에 따라 npm ci/test/build, gate 단위 테스트·release, sim, 실제 releaser 미실행. 원격 이력 미확인. 과거 결과를 이번 통과 근거로 사용하지 않는다.
+- 이번 기록 검사: Python JSON 파싱·필수 필드/허용 값·기존 19개 아이디어 보존·원장 단일 항목·구현 노트 8줄 이내 검사, git diff --check 및 git status --short. 릴리즈 통과 검증이 아니다.
+- 버전·태그·정본 문서·실패 JSON·외부 러너·게이트 무변경, 커밋·배포·원격 쓰기 없음. 아이디어 선정은 과제서로 갈음하고 기존 19개를 보존했다.
+
