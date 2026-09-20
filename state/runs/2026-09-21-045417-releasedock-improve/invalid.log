@@ -1,0 +1,87 @@
+cd backend && go test ./...
+?   	github.com/hkjang/releasedock/backend/cmd/server	[no test files]
+ok  	github.com/hkjang/releasedock/backend/cmd/test-postgres-warning	0.003s
+ok  	github.com/hkjang/releasedock/backend/internal/config	(cached)
+ok  	github.com/hkjang/releasedock/backend/internal/localexec	(cached)
+ok  	github.com/hkjang/releasedock/backend/internal/secure	(cached)
+--- FAIL: TestAIHTTPStreamingPolicyAuditAndCleanupIntegration (0.00s)
+    ai_integration_test.go:107: create integration schema: failed to connect to `user=invalid database=postgres`: 127.0.0.1:1 (127.0.0.1): dial error: dial tcp 127.0.0.1:1: connect: connection refused
+--- FAIL: TestQuickReleaseNoApprovalQueuesExactlyOneJobIntegration (0.00s)
+    presets_test.go:243: create integration schema: failed to connect to `user=invalid database=postgres`: 127.0.0.1:1 (127.0.0.1): dial error: dial tcp 127.0.0.1:1: connect: connection refused
+--- FAIL: TestQuickReleaseAutoApprovalIsAtomicAndReplaySafeIntegration (0.00s)
+    presets_test.go:284: create integration schema: failed to connect to `user=invalid database=postgres`: 127.0.0.1:1 (127.0.0.1): dial error: dial tcp 127.0.0.1:1: connect: connection refused
+--- FAIL: TestQuickReleaseRejectsRawPathFilenameIntegration (0.00s)
+    presets_test.go:342: create integration schema: failed to connect to `user=invalid database=postgres`: 127.0.0.1:1 (127.0.0.1): dial error: dial tcp 127.0.0.1:1: connect: connection refused
+--- FAIL: TestQuickReleaseArtifactCannotBeReplacedByOperationsAPIIntegration (0.00s)
+    presets_test.go:362: create integration schema: failed to connect to `user=invalid database=postgres`: 127.0.0.1:1 (127.0.0.1): dial error: dial tcp 127.0.0.1:1: connect: connection refused
+--- FAIL: TestQuickReleaseAutoApprovalFailureRollsBackApprovalIntegration (0.00s)
+    presets_test.go:399: create integration schema: failed to connect to `user=invalid database=postgres`: 127.0.0.1:1 (127.0.0.1): dial error: dial tcp 127.0.0.1:1: connect: connection refused
+--- FAIL: TestQuickReleaseAutoApprovalRejectsChangedDeploymentHeadIntegration (0.00s)
+    presets_test.go:431: create integration schema: failed to connect to `user=invalid database=postgres`: 127.0.0.1:1 (127.0.0.1): dial error: dial tcp 127.0.0.1:1: connect: connection refused
+--- FAIL: TestQuickReleaseManualEnqueueRejectsChangedDeploymentHeadIntegration (0.00s)
+    presets_test.go:450: create integration schema: failed to connect to `user=invalid database=postgres`: 127.0.0.1:1 (127.0.0.1): dial error: dial tcp 127.0.0.1:1: connect: connection refused
+--- FAIL: TestQuickReleaseNoApprovalRejectsBusyTargetWithoutDeadlockIntegration (0.00s)
+    presets_test.go:473: create integration schema: failed to connect to `user=invalid database=postgres`: 127.0.0.1:1 (127.0.0.1): dial error: dial tcp 127.0.0.1:1: connect: connection refused
+--- FAIL: TestQuickReleaseAutoApprovalRejectsBusyTargetWithoutDeadlockIntegration (0.00s)
+    presets_test.go:499: create integration schema: failed to connect to `user=invalid database=postgres`: 127.0.0.1:1 (127.0.0.1): dial error: dial tcp 127.0.0.1:1: connect: connection refused
+--- FAIL: TestQuickQueueSeesJobCreatedAfterEarlierStatementAndDoesNotDeadlockIntegration (0.00s)
+    presets_test.go:541: create integration schema: failed to connect to `user=invalid database=postgres`: 127.0.0.1:1 (127.0.0.1): dial error: dial tcp 127.0.0.1:1: connect: connection refused
+--- FAIL: TestReleaseJobTargetTriggerRejectsDirectActiveTargetIntegration (0.00s)
+    presets_test.go:631: create integration schema: failed to connect to `user=invalid database=postgres`: 127.0.0.1:1 (127.0.0.1): dial error: dial tcp 127.0.0.1:1: connect: connection refused
+--- FAIL: TestQuickReleaseRejectsStalePresetAndCleansArtifactsIntegration (0.00s)
+    presets_test.go:688: create integration schema: failed to connect to `user=invalid database=postgres`: 127.0.0.1:1 (127.0.0.1): dial error: dial tcp 127.0.0.1:1: connect: connection refused
+--- FAIL: TestQuickReleaseOversizeIs413AndLeavesNoStateIntegration (0.00s)
+    presets_test.go:717: create integration schema: failed to connect to `user=invalid database=postgres`: 127.0.0.1:1 (127.0.0.1): dial error: dial tcp 127.0.0.1:1: connect: connection refused
+--- FAIL: TestQuickReleaseDowngradeRejectedInPreflightAndLockedUploadIntegration (0.00s)
+    presets_test.go:736: create integration schema: failed to connect to `user=invalid database=postgres`: 127.0.0.1:1 (127.0.0.1): dial error: dial tcp 127.0.0.1:1: connect: connection refused
+--- FAIL: TestQuickReleaseDatabaseRejectsMismatchedPresetSnapshotIntegration (0.00s)
+    presets_test.go:772: create integration schema: failed to connect to `user=invalid database=postgres`: 127.0.0.1:1 (127.0.0.1): dial error: dial tcp 127.0.0.1:1: connect: connection refused
+--- FAIL: TestDeploymentPresetAdminCRUDRBACAndAuditIntegration (0.00s)
+    presets_test.go:796: create integration schema: failed to connect to `user=invalid database=postgres`: 127.0.0.1:1 (127.0.0.1): dial error: dial tcp 127.0.0.1:1: connect: connection refused
+--- FAIL: TestRollbackRetryApprovalIntegration (0.00s)
+    server_test.go:589: create integration schema: failed to connect to `user=invalid database=postgres`: 127.0.0.1:1 (127.0.0.1): dial error: dial tcp 127.0.0.1:1: connect: connection refused
+--- FAIL: TestRollbackRetryRejectionRestoresBaseIntegration (0.00s)
+    server_test.go:612: create integration schema: failed to connect to `user=invalid database=postgres`: 127.0.0.1:1 (127.0.0.1): dial error: dial tcp 127.0.0.1:1: connect: connection refused
+--- FAIL: TestRollbackRetryApprovalRejectsNewerDeploymentIntegration (0.00s)
+    server_test.go:632: create integration schema: failed to connect to `user=invalid database=postgres`: 127.0.0.1:1 (127.0.0.1): dial error: dial tcp 127.0.0.1:1: connect: connection refused
+--- FAIL: TestDeployRetryRejectionRestoresSelfApprovalIdentityIntegration (0.00s)
+    server_test.go:672: create integration schema: failed to connect to `user=invalid database=postgres`: 127.0.0.1:1 (127.0.0.1): dial error: dial tcp 127.0.0.1:1: connect: connection refused
+--- FAIL: TestProfileTargetCredentialBindPreserveAndClearIntegration (0.00s)
+    server_test.go:721: create integration schema: failed to connect to `user=invalid database=postgres`: 127.0.0.1:1 (127.0.0.1): dial error: dial tcp 127.0.0.1:1: connect: connection refused
+--- FAIL: TestProfileWriteWithoutCredentialPermissionIntegration (0.00s)
+    server_test.go:769: create integration schema: failed to connect to `user=invalid database=postgres`: 127.0.0.1:1 (127.0.0.1): dial error: dial tcp 127.0.0.1:1: connect: connection refused
+--- FAIL: TestModernAndLegacyMCPHTTPIntegration (0.00s)
+    server_test.go:885: create integration schema: failed to connect to `user=invalid database=postgres`: 127.0.0.1:1 (127.0.0.1): dial error: dial tcp 127.0.0.1:1: connect: connection refused
+--- FAIL: TestUploadHasFailedPackagesLooksAtTheRestOfTheBatch (0.00s)
+    simple_batch_test.go:90: create integration schema: failed to connect to `user=invalid database=postgres`: 127.0.0.1:1 (127.0.0.1): dial error: dial tcp 127.0.0.1:1: connect: connection refused
+--- FAIL: TestCreateSimpleRunReportsARunAlreadyInFlightAsAConflict (0.00s)
+    simple_conflict_test.go:110: create integration schema: failed to connect to `user=invalid database=postgres`: 127.0.0.1:1 (127.0.0.1): dial error: dial tcp 127.0.0.1:1: connect: connection refused
+--- FAIL: TestCreateSimpleRunDoesNotBlameARunInFlightForAnotherFailure (0.00s)
+    simple_conflict_test.go:133: create integration schema: failed to connect to `user=invalid database=postgres`: 127.0.0.1:1 (127.0.0.1): dial error: dial tcp 127.0.0.1:1: connect: connection refused
+--- FAIL: TestSimpleRunLoggerKeepsBlankLines (0.00s)
+    simple_logger_test.go:48: create integration schema: failed to connect to `user=invalid database=postgres`: 127.0.0.1:1 (127.0.0.1): dial error: dial tcp 127.0.0.1:1: connect: connection refused
+--- FAIL: TestSimpleRunLoggerDoesNotInventATrailingBlankLine (0.00s)
+    simple_logger_test.go:76: create integration schema: failed to connect to `user=invalid database=postgres`: 127.0.0.1:1 (127.0.0.1): dial error: dial tcp 127.0.0.1:1: connect: connection refused
+--- FAIL: TestSimpleRunLoggerChargesTheCapNotice (0.00s)
+    simple_logger_test.go:95: create integration schema: failed to connect to `user=invalid database=postgres`: 127.0.0.1:1 (127.0.0.1): dial error: dial tcp 127.0.0.1:1: connect: connection refused
+--- FAIL: TestSimpleRunLoggerCutsTheCappedLineOnACharacterBoundary (0.00s)
+    simple_logger_test.go:127: create integration schema: failed to connect to `user=invalid database=postgres`: 127.0.0.1:1 (127.0.0.1): dial error: dial tcp 127.0.0.1:1: connect: connection refused
+--- FAIL: TestListBatchSiblingsReturnsTheRestOfTheUpload (0.00s)
+    simple_siblings_test.go:34: create integration schema: failed to connect to `user=invalid database=postgres`: 127.0.0.1:1 (127.0.0.1): dial error: dial tcp 127.0.0.1:1: connect: connection refused
+--- FAIL: TestListBatchSiblingsIsRestrictedToTheRunsActor (0.00s)
+    simple_siblings_test.go:70: create integration schema: failed to connect to `user=invalid database=postgres`: 127.0.0.1:1 (127.0.0.1): dial error: dial tcp 127.0.0.1:1: connect: connection refused
+--- FAIL: TestListBatchSiblingsSkipsARunWithNoBatch (0.00s)
+    simple_siblings_test.go:88: create integration schema: failed to connect to `user=invalid database=postgres`: 127.0.0.1:1 (127.0.0.1): dial error: dial tcp 127.0.0.1:1: connect: connection refused
+--- FAIL: TestGetSimpleRunReportsTheUpload (0.00s)
+    simple_siblings_test.go:103: create integration schema: failed to connect to `user=invalid database=postgres`: 127.0.0.1:1 (127.0.0.1): dial error: dial tcp 127.0.0.1:1: connect: connection refused
+--- FAIL: TestCreateSimpleRunStoresThePackageAndTheBatchFieldsSentAfterIt (0.00s)
+    simple_upload_test.go:190: create integration schema: failed to connect to `user=invalid database=postgres`: 127.0.0.1:1 (127.0.0.1): dial error: dial tcp 127.0.0.1:1: connect: connection refused
+FAIL
+FAIL	github.com/hkjang/releasedock/backend/internal/server	0.071s
+--- FAIL: TestFreshDatabaseMigrationsAndBootstrap (0.00s)
+    store_integration_test.go:38: create integration schema: failed to connect to `user=invalid database=postgres`: 127.0.0.1:1 (127.0.0.1): dial error: dial tcp 127.0.0.1:1: connect: connection refused
+FAIL
+FAIL	github.com/hkjang/releasedock/backend/internal/store	0.005s
+ok  	github.com/hkjang/releasedock/backend/internal/webassets	(cached)
+FAIL
+make: *** [Makefile:22: test] Error 1

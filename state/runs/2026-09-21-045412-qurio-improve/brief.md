@@ -1,0 +1,23 @@
+- 과제: dbexec PostgreSQL 통합 테스트의 명시적 테스트 DB 선택과 연결 실패 판정 바로잡기 (가치 3 / 위험 1 / 작업량 S)
+- 왜: `internal/domain/dbexec/manager_integration_test.go:integrationConnection`은 `POSTGRES_DSN`만 읽고 없으면 127.0.0.1:55432로 접속하여, `QURIO_TEST_POSTGRES_DSN`으로 다른 포트를 지정한 실행에서도 엉뚱한 DB를 사용한다. 또한 초기 연결 실패를 Skip으로 처리하는 분기가 있어 회귀를 놓칠 수 있으므로, 전용 테스트 DSN이 없을 때만 명시적으로 건너뛰고 지정한 DB에 연결하지 못하면 실패하게 만들어 검증 결과를 신뢰할 수 있게 한다.
+- 수용 기준:
+  1) `integrationConnection`은 공백을 제거한 `QURIO_TEST_POSTGRES_DSN`만 사용한다. 미설정/빈 문자열/공백이면 연결 전에 안내와 함께 Skip하고 `POSTGRES_DSN` 및 하드코딩된 55432로 폴백하지 않는다. CI/release는 이미 전용 변수를 설정하므로 workflow 변경은 필요 없다. 이는 dbexec 테스트에 한정한 계약이며 다른 패키지 전체의 설정 통일은 제외한다.
+  2) 전용 DSN이 지정되면 기존 URL의 사용자·비밀번호·호스트·포트·DB·sslmode 매핑을 보존한다. 초기 `manager.Upsert` 및 `open` 실패에 쓰인 "Qurio integration PostgreSQL is not running" Skipf 7곳은 실패로 판정한다. `open`은 sql.Open이라 실제 접속이 지연됨에 유의한다. 뒤의 Exec/Upsert 실패도 기존 Fatal을 유지한다. 권한 부족 시 pg_catalog 검증 일부를 생략하는 별도 Logf는 이번 대상이 아니다.
+  3) DB 없는 회귀 테스트가 전용 DSN 선택(서로 다른 POSTGRES_DSN이 있어도 전용 값 우선), 비표준 포트/URL 인코딩 자격정보/sslmode 보존, 미설정 시 Skip을 증명한다. 짧은 하위 테스트 프로세스 또는 기존 테스트 바이너리 재실행으로 대표 `TestPostgresReadOnlyPagingAndCancellation`에 접속 불가한 루프백 주소를 명시했을 때 Skip/PASS가 아닌 실패 종료임을 검증한다. 실패를 기대하는 하위 프로세스가 부모 스위트를 실패시키지 않게 한다. 테스트 보조 함수는 integration 태그의 *_test.go에만 두고 새 런타임 설정이나 범용 테스트 프레임워크는 만들지 않는다.
+  4) 격리된 PostgreSQL에 기존 마이그레이션 부트스트랩을 실행한 뒤 `TestPostgres*` 7개가 실제 실행되어 통과한다. DB 미설정의 전체 Skip은 실제 DB 검증 통과로 보고하지 않는다. README Development에 전용 DSN, 부트스트랩, 폐기 가능한 DB 사용을 짧게 설명한다.
+- 건드릴 파일:
+  - `internal/domain/dbexec/manager_integration_test.go:integrationConnection` — 전용 DSN 선택, 없을 때 Skip, 하드코딩된 55432 DSN 폴백 제거(명시 URL의 포트 생략 시 기존 5432 기본값은 유지); 위 파일의 TestPostgresReadOnlyPagingAndCancellation / TestPostgresLiveValidationAndSchemaExploration / TestPostgresTargetedSchemaExplorationFindsPostPrefixPKAndFK / TestPostgresRejectsImplicitUserCodeDispatch / TestPostgresRejectsNonInitdbCatalogOverridesAndBuiltinCasts / TestPostgresRelationGraphDeduplicatesAndStopsAtLimit / TestPostgresPreflightStatementTimeoutRestoresConfiguredLimit — 초기 오류 판정만 수정하고 SQL 안전 정책 검증은 보존.
+  - 같은 파일 또는 새 `internal/domain/dbexec/integration_config_test.go`(신규, `//go:build integration`) — 위 계약의 회귀 테스트. 새 파일명/새 테스트 함수명은 구현자가 정한다.
+  - `README.md:Development` — dbexec 통합 테스트 실행 예시와 전용 테스트 DSN 계약.
+- 검증 명령 (저장소 루트):
+  - 정찰에서 실행해 통과: `go test ./internal/domain/dbexec ./internal/config` (캐시), `go test -tags=integration ./internal/domain/dbexec -run '^$'` (태그 포함 컴파일만, DB 검증 아님). `gofmt -l cmd internal` 출력 없음.
+  - 구현 후 DB 없이: `env -u QURIO_TEST_POSTGRES_DSN -u POSTGRES_DSN go test -tags=integration ./internal/domain/dbexec -count=1 -v` — 기존 PostgreSQL 테스트는 Skip, 새 DB 독립 계약 테스트는 실행. Oracle 전용 환경변수가 없으면 기존 Oracle 테스트는 Skip.
+  - 격리 DB 검증 예시(아래는 정찰에서 미실행): `docker run -d --name qurio-scout-dbexec-check -e POSTGRES_USER=qurio -e POSTGRES_PASSWORD=qurio-test -e POSTGRES_DB=qurio -p 127.0.0.1::5432 postgres:17-alpine`; `docker port qurio-scout-dbexec-check 5432/tcp`로 할당 포트를 읽고 `docker exec qurio-scout-dbexec-check pg_isready -U qurio` 성공을 기다린다. 해당 포트로 `export QURIO_TEST_POSTGRES_DSN='postgres://qurio:qurio-test@127.0.0.1:<할당포트>/qurio?sslmode=disable'`를 설정한다(<할당포트>는 실제 출력으로 대체).
+  - `POSTGRES_DSN="$QURIO_TEST_POSTGRES_DSN" go test -tags=integration ./cmd/qurio -run '^TestIntegrationDatabaseMigrations$' -count=1` — 실제 읽어 본 bootstrap 테스트이며 users 등 기존 테이블이 필요하다.
+  - `env -u POSTGRES_DSN go test -race -tags=integration ./internal/domain/dbexec -run '^TestPostgres' -count=1 -v` — 전용 DSN만으로 실제 7개 테스트 통과 확인. 새 계약 테스트도 별도 또는 전체 패키지 실행으로 확인.
+  - `go vet -tags=integration ./internal/domain/dbexec`; `go test ./...`. 종료 시 자신이 만든 위 컨테이너만 `docker rm -f qurio-scout-dbexec-check`로 제거한다.
+- 위험과 피할 것: production `manager.go`, auth/session/OIDC, migrations, .github/workflows, Oracle 테스트, SPA/dist는 수정하지 않는다. 이전 98602d8·79ce48f 개선은 성공 기록이 있지만 main@8050111에 아직 없어 재구현하지 않는다. dbexec 테스트는 고정 이름 테이블·함수·캐스트를 CREATE/DROP하므로 반드시 자신의 폐기 DB를 쓰고 공유 DB에서 병렬 실행하지 않는다. 기존 다른 패키지는 여전히 POSTGRES_DSN/다른 전용 변수를 읽으므로 전체 통합 스위트를 검증하려면 세 변수를 같은 폐기 DB로 설정해야 한다. DSN 원문이나 비밀번호를 실패 메시지에 새로 출력하지 않는다. URL 외 keyword DSN 지원 확대, 전체 테스트 헬퍼 추출은 범위 밖이다.
+- 차선 후보: `make lint`에 읽기 전용 gofmt 검사 추가 — 1순위가 이미 다른 변경에서 해결된 경우만 선택. Makefile에 실패 종료하는 검사 타깃을 추가하고 lint에서 호출한다. gofmt -l 자체는 드리프트에도 종료값 0이므로 목록이 비어 있음을 검사해야 하며 자동 수정은 금지한다. 현재 드리프트 0건 확인. workflow 보호 경로는 이번 차선 범위에서 제외하고 CI 연결은 후속으로 남긴다.
+
+추정·실행 순서: 계약 및 오류 분기 수정 8분 → 회귀 테스트 12분 → README/격리 DB 검증 15분 → 예비 10분, 총 45분. DB 기동 실패 시 DB 독립 검증까지 남기고 실제 통합은 미확인으로 보고하며 Skip을 성공으로 바꾸지 않는다.
+정찰 한계: 요청된 pmo:estimating-and-contingency, technology:implementation-planning, technology:solution-exploration은 제공 도구/스킬 목록 및 로컬 검색에서 발견되지 않아 해당 스킬 절차·반환 형식은 미확인이다. 사용자 지정 절차에 따라 작성했다. 실제 DB 및 프런트/전체 Go 스위트는 이번 정찰에서 실행하지 않았다.

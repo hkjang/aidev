@@ -48,3 +48,13 @@
 - 보류 아이디어: `gofmt -l` 검사를 `make lint`/CI 에 추가(가치 2/위험 1/S); `PublicOnly`·`LoginPage` 가 각자 계산하는 로그인 뒤 목적지를 `postLoginTarget(session, state)` 한 함수로 합쳐 두 경로 중복 제거(가치 2/위험 1/S); `/login?sso=none` 복귀가 `return_to` 를 잃는 서버 측 수정 — 98602d8 머지 뒤(가치 2/위험 2/S); App.test.tsx 에 `RequireAdmin`(비관리자 `/admin/*` → `/workspace`)·세션 있는 상태의 `/login` 직접 진입(`PublicOnly` → `/workspace`) 가드 케이스 보강(가치 2/위험 1/S); `/login` 새로고침으로 `history.state` 가 사라져도 딥링크를 잃지 않게 `from` 을 sessionStorage 에 잠시 두기(가치 2/위험 2/S)
 - 과제서: 채택 — 과제서의 근거(LoginPage.tsx:47 returnTo·81 /workspace 고정, RequireAuth state.from, 두 하네스)가 모두 코드와 일치했고 수용 기준 1~7 을 구현했다. 단 과제서가 "미확인" 으로 표시한 `PublicOnly` 상호작용이 실제로 깨져 있어(위 요약의 startTransition 순서) "App.tsx 손대지 말 것" 을 `PublicOnly` 5줄에 한해 넘었다 — 차선(gofmt)으로 내리지 않은 이유는 운영자 규칙 "같은 값을 읽는 경로가 여럿이면 모든 경로가 같게 읽도록 end-to-end 로 고칠 것" 이 바로 이 상황이고, 실제 App 통과 테스트가 그 수정 없이는 red 로 남아 과제 자체가 성립하지 않기 때문.
 
+## 2026-09-21
+- 선택: dbexec PostgreSQL 통합 테스트의 명시적 테스트 DB 선택과 연결 실패 판정 바로잡기 (가치 3 / 위험 1 / 작업량 S)
+- 결과: 성공
+- 요약: QURIO_TEST_POSTGRES_DSN만 trim해 사용하고 미설정일 때만 Skip하도록 바꾸었으며 초기 오류 7곳을 Fatal로 전환했다; README에 폐기 DB와 bootstrap 절차를 설명했다. 회귀 테스트가 수정 전 잘못된 DSN 선택·미설정 처리·자식 프로세스 Skip/PASS를 재현했고 수정 후 통과했으며, PostgreSQL 17 격리 DB bootstrap 후 기존 7개 통합 테스트와 새 계약 테스트가 -race로 통과했다. DB 없는 dbexec 전체 테스트, go vet -tags=integration ./internal/domain/dbexec, go test ./..., go build ./..., gofmt 검사 통과; 컨테이너 제거 완료, 커밋 9a9577b.
+- 보류 아이디어: gofmt 읽기 전용 검사를 make lint에 추가 (가치 2 / 위험 1 / S)
+- 보류 아이디어: dbexec 고정 이름 fixture 충돌 격리 (가치 3 / 위험 2 / M)
+- 보류 아이디어: Go 지시 버전과 컨테이너 Go 버전 구분 안내 (가치 1 / 위험 1 / S)
+- 보류 아이디어: mail 머지 후 만료된 승인 알림 훅 연결 (가치 3 / 위험 1 / S)
+- 과제서: 채택 — 현재 코드에서 전용 DSN 무시와 초기 오류 Skip 7곳이 그대로 확인되어 지정 범위와 수용 기준을 구현했다.
+

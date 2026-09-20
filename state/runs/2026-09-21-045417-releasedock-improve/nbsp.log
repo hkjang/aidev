@@ -1,0 +1,49 @@
+WARN: TEST_POSTGRES_DSN is unset or blank; PostgreSQL integration tests will be skipped (see README development section).
+cd backend && go test ./...
+?   	github.com/hkjang/releasedock/backend/cmd/server	[no test files]
+ok  	github.com/hkjang/releasedock/backend/cmd/test-postgres-warning	(cached)
+ok  	github.com/hkjang/releasedock/backend/internal/config	(cached)
+ok  	github.com/hkjang/releasedock/backend/internal/localexec	(cached)
+ok  	github.com/hkjang/releasedock/backend/internal/secure	(cached)
+ok  	github.com/hkjang/releasedock/backend/internal/server	(cached)
+ok  	github.com/hkjang/releasedock/backend/internal/store	(cached)
+ok  	github.com/hkjang/releasedock/backend/internal/webassets	(cached)
+cd runner && go test ./...
+?   	github.com/hkjang/releasedock/runner/cmd/executor	[no test files]
+?   	github.com/hkjang/releasedock/runner/cmd/runner	[no test files]
+ok  	github.com/hkjang/releasedock/runner/internal/archive	(cached)
+?   	github.com/hkjang/releasedock/runner/internal/config	[no test files]
+ok  	github.com/hkjang/releasedock/runner/internal/crypto	(cached)
+ok  	github.com/hkjang/releasedock/runner/internal/executor	(cached)
+ok  	github.com/hkjang/releasedock/runner/internal/health	(cached)
+ok  	github.com/hkjang/releasedock/runner/internal/logstream	(cached)
+ok  	github.com/hkjang/releasedock/runner/internal/manifest	(cached)
+?   	github.com/hkjang/releasedock/runner/internal/model	[no test files]
+ok  	github.com/hkjang/releasedock/runner/internal/pipeline	(cached)
+ok  	github.com/hkjang/releasedock/runner/internal/runtime	(cached)
+ok  	github.com/hkjang/releasedock/runner/internal/store	(cached)
+cd web && npm test -- --run
+
+> releasedock-web@0.5.17 test
+> vitest run --run
+
+
+ RUN  v3.2.7 /home/hkjang/.cache/auto-improve-wt/releasedock/web
+
+ ✓ src/utils/releasePackage.test.ts (17 tests) 15ms
+ ✓ src/auth/silentSso.test.ts (8 tests) 15ms
+ ✓ src/api/client.test.ts (14 tests) 29ms
+ ✓ src/pages/simple/SimpleDeployPage.test.ts (9 tests) 12ms
+ ✓ src/components/GuideBody.test.tsx (6 tests) 44ms
+ ✓ src/components/StatusChip.test.tsx (10 tests) 78ms
+ ✓ src/pages/admin/AdminResourcePage.test.ts (6 tests) 11ms
+ ✓ src/pages/simple/SimpleRunDetailPage.test.ts (16 tests) 16ms
+ ✓ src/app/App.test.tsx (2 tests) 338ms
+ ✓ src/pages/releases/NewReleasePage.test.tsx (6 tests) 909ms
+   ✓ quick release page > resolves a package and requests deployment with one primary action  341ms
+
+ Test Files  10 passed (10)
+      Tests  94 passed (94)
+   Start at  05:07:23
+   Duration  2.05s (transform 527ms, setup 836ms, collect 3.04s, tests 1.47s, environment 2.39s, prepare 658ms)
+
