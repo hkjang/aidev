@@ -19,3 +19,14 @@
 - 다음 역할 주의: 새 통합 테스트는 실제 로컬 HTTP 리스너를 사용하고 외부 Upstage는 필요 없다. 릴리즈/원격 작업은 하지 않았다.
 - [러너 04:31] brief accepted — 채택 — 상태와 무관한 결과 경로 복구와 HTTP 공개가 현재 코드에 남아 있었고 새 회귀 테스트로 재현했다.
 - [러너 04:31] verify passed — 검증 3개 통과 (policy)
+
+## 비평 노트
+- approve / low / blocking 없음. 변경 파일·복구·조회·이력·GET/HEAD·보존 및 revert 가능성을 확인했고 실제 결함은 발견하지 못했다.
+- 새 테스트는 main 구현 overlay에서 실패, HEAD에서 전체 test·vet·build·대상 race 3회·diff --check 통과. 코드 수정 없음.
+- SIGKILL·디스크 가득 참 직접 주입 및 Windows·Go 1.25는 미검증. 기존 Save 실패의 메모리/디스크 불일치·fsync 부재는 다음 회차 참고.
+- 요청한 회사 스킬 3종과 Skill 도구를 찾지 못해 전용 절차·형식은 미확인; 프롬프트 기준으로 심사했다.
+- [러너 04:33] review approved — 리뷰 승인 (risk=low)
+- [러너 04:33] pr created — https://github.com/hkjang/pii-masker/pull/22
+- [러너 04:34] ci passed — 검사 없음 — 정책으로 허용
+- [러너 04:34] merge done — 68f61d2
+- [러너 04:34] release missing — 릴리즈 결과 없음/손상: missing
