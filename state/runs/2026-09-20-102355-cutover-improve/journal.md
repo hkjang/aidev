@@ -28,3 +28,8 @@
 - [러너 10:35] pr created — https://github.com/hkjang/cutover/pull/5
 - [러너 10:36] ci passed — 검사 없음 — 정책으로 허용
 - [러너 10:36] merge done — a24c58d
+- [러너 10:41] release published — v1.7.0
+- [러너 10:41] gh-release created — GitHub Release v1.7.0
+- [러너 10:41] manifest ok — cutover-v1.7.0.tar.gz 
+- [러너 10:41] assets uploaded — 1개
+- [러너 10:41] assets verified — v1.7.0 자산 1개 (이전 v1.6.0: 1)

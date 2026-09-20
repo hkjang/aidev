@@ -50,3 +50,4 @@
 - 보류 아이디어: (1) 관리 화면 삭제·이동·상태변경 fetch 응답 실패 표시(+401 이면 로그인 화면) 와 삭제 확인창 중복 제거를 한 회차로 — 가치 3 / 위험 1 / S. (2) validateActivityImport 단위 테스트 — 선행 조건: `lib/activityData.ts:4` 의 `'./types'` import 에 `.ts` 확장자(이번에 treeUtils 에서 같은 이유로 고침) — 가치 3 / 위험 1 / S. (3) eslint globalIgnores 에 `playwright-report/**`·`test-results/**` 추가 — 실패 trace 가 남은 뒤 lint 가 trace 뷰어 번들로 3천 건을 냄(이번 회차 실측) — 가치 2 / 위험 1 / S. (4) 상태 전파 규칙을 `lib/treeUtils propagateStatus` 순수 함수로 옮겨 API 의 `{targetId,newStatus}` 분기도 같은 규칙을 쓰게 — 가치 3 / 위험 2 / S. (5) Dockerfile 의 NEXT_PUBLIC_*_PASSWORD 빌드 기본값 제거로 fail-closed — 가치 4 / 위험 2 / S.
 - 과제서: 채택 — 과제서의 근거(treeUtils.ts:66·admin/page.tsx:230 의 startsWith, validateActivityImport 의 400)가 코드와 정확히 일치했고 수용 기준 1~5 를 모두 충족했다(5 의 ADMIN_GUIDE grep 결과 187·326행에 접두사 제약이 실제로 있어 고침).
 
+- 릴리즈: v1.7.0 (2026-09-20, run 2026-09-20-102355-cutover-improve)
