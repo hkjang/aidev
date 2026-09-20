@@ -1,0 +1,19 @@
+release: moina v0.1.35
+
+v0.1.35 releases the multipart upload body-limit fix merged after v0.1.34.
+ParseMultipartForm errors matching *http.MaxBytesError through errors.As
+now return 413 media_too_large with the existing size error message.
+Other parsing failures keep 400 invalid_media. Ten real multipart/httptest
+cases cover known and unknown ContentLength, and OpenAPI describes the
+body-limit response. Upload limits, MIME, filename, storage and auth
+policies are unchanged.
+
+This commit carries the version bump across the existing 24 release files
+and updates the Korean README release paragraph. Existing PDF guides and
+screenshot binaries are unchanged, following the previous releases.
+
+Verified with make fmt, make check, strict screenshot Pages QA, go build,
+go test -race with a throwaway PostgreSQL and no skipped tests, go vet,
+staticcheck, 250 frontend tests, ESLint within its 40 warning budget and
+a v0.1.35 production build. The tag workflow builds and verifies the image,
+runs runtime/browser smoke and publishes the single offline image asset.
