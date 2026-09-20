@@ -1,6 +1,6 @@
 # AppStore 관리자 가이드
 
-대상 버전: **v2.11.2** · 실린 화면은 모두 이 버전을 실제로 띄워 찍은 것입니다.
+대상 버전: **v2.11.3** · 실린 화면은 모두 이 버전을 실제로 띄워 찍은 것입니다.
 
 화면을 쓰는 사람을 위한 설명은 [사용자 가이드](USER_GUIDE.md)에 있습니다. 이 문서는 그 화면을 띄워 놓고 지키는 사람을 위한 것입니다.
 
@@ -34,7 +34,7 @@ AppStore는 컨테이너 하나로 동작합니다. React SPA, REST API, OIDC �
 
 ## 2. 설치
 
-릴리스 자산 하나(`appstore-vX.Y.Z.tar.gz`)로 폐쇄망까지 반입할 수 있습니다. 아래는 v2.11.2 기준입니다.
+릴리스 자산 하나(`appstore-vX.Y.Z.tar.gz`)로 폐쇄망까지 반입할 수 있습니다. 아래는 v2.11.3 기준입니다.
 
 ### 2.1. 선행 조건
 
@@ -52,10 +52,10 @@ PostgreSQL 이미지는 릴리스에 포함되지 않습니다. 먼저 준비하
 ### 2.2. 이미지 반입과 검증
 
 ```bash
-sha256sum appstore-v2.11.2.tar.gz          # 릴리스 노트의 SHA-256과 대조
-gzip -t appstore-v2.11.2.tar.gz
-gzip -dc appstore-v2.11.2.tar.gz | docker load
-docker image inspect appstore:v2.11.2 \
+sha256sum appstore-v2.11.3.tar.gz          # 릴리스 노트의 SHA-256과 대조
+gzip -t appstore-v2.11.3.tar.gz
+gzip -dc appstore-v2.11.3.tar.gz | docker load
+docker image inspect appstore:v2.11.3 \
   --format '{{.RepoTags}} user={{.Config.User}} version={{index .Config.Labels "org.opencontainers.image.version"}}'
 ```
 
@@ -65,10 +65,10 @@ docker image inspect appstore:v2.11.2 \
 
 ```bash
 docker build \
-  --build-arg VERSION=v2.11.2 \
+  --build-arg VERSION=v2.11.3 \
   --build-arg COMMIT="$(git rev-parse HEAD)" \
   --build-arg BUILD_DATE="$(date -u +%Y-%m-%dT%H:%M:%SZ)" \
-  -t appstore:v2.11.2 .
+  -t appstore:v2.11.3 .
 ```
 
 ### 2.3. 환경 파일 준비
@@ -102,13 +102,13 @@ docker run -d \
   --security-opt no-new-privileges:true \
   --env-file ./appstore.env \
   -p 127.0.0.1:8080:8080 \
-  appstore:v2.11.2
+  appstore:v2.11.3
 ```
 
 Docker Compose (저장소의 `docker-compose.yml`):
 
 ```bash
-APPSTORE_VERSION=v2.11.2 docker compose up -d --no-build
+APPSTORE_VERSION=v2.11.3 docker compose up -d --no-build
 docker compose ps
 docker compose logs --tail 100 appstore
 ```
@@ -498,7 +498,7 @@ pg_restore --clean --if-exists --no-owner --no-privileges \
 4. 교체합니다.
 
 ```bash
-APPSTORE_VERSION=v2.11.2 docker compose up -d --no-build
+APPSTORE_VERSION=v2.11.3 docker compose up -d --no-build
 docker compose ps
 docker compose logs --tail 200 appstore
 ```
@@ -516,7 +516,7 @@ docker compose logs --tail 200 appstore
 
 ```bash
 docker rm -f appstore
-docker rename appstore-v2.11.1-stopped appstore
+docker rename appstore-v2.11.2-stopped appstore
 docker start appstore
 curl --fail http://127.0.0.1:8080/health/ready
 ```
@@ -536,7 +536,7 @@ curl --fail http://127.0.0.1:8080/health/ready
 | `/health/live`는 200인데 `/health/ready`가 503 `{"status":"not_ready"}` | PostgreSQL, 네트워크 | DB가 죽었거나 연결이 끊겼습니다. 2초 안에 ping이 되어야 합니다 |
 | 사용자에게 500과 요청 ID가 보인다 | `docker logs`에서 `request_id`로 검색 | `panic recovered`면 `stack`을, 아니면 해당 `http request`의 `status`와 `path`를 봅니다 |
 | SSO 로그인이 안 된다 | 관리자 → 인증·SSO → **연결 테스트** | 3.3의 실패 메시지 표를 따릅니다 |
-| 자동 로그인을 켰는데 로그인 화면이 뜬다 | 같은 브라우저 탭에서 Keycloak에 로그인돼 있는지, 주소에 `sso=none`이 붙어 있는지 | 탭 세션당 한 번만 시도합니다. 새 탭에서 열거나 Keycloak에 먼저 로그인한 뒤 다시 엽니다. 로그아웃 직후에는 의도적으로 시도하지 않습니다 |
+| 자동 로그인을 켰는데 로그인 화면이 뜬다 | 같은 브라우저 탭에서 Keycloak에 로그인돼 있는지, 주소에 `sso=none`이 붙어 있는지(로그인 화면에 "자동으로 로그인하지 않았습니다" 안내가 떠 있으면 그 경우입니다) | 탭 세션당 한 번만 시도합니다. 새 탭에서 열거나 Keycloak에 먼저 로그인한 뒤 다시 엽니다. 로그아웃 직후에는 의도적으로 시도하지 않습니다 |
 | 자동 로그인을 켠 뒤 화면이 깜빡이며 반복된다 | Keycloak의 Valid Redirect URIs, `docker logs`의 `/api/v1/auth/oidc/callback` 줄 | 정상이라면 일어나지 않습니다. 콜백이 `/login?sso=none`으로 302를 돌려주는지 확인하고, 아니면 자동 로그인을 끄고 연결 테스트부터 다시 합니다 |
 | 로그인은 되는데 화면이 403 | 사용자 → 역할, 인증·SSO → Role Mapping | 외부 역할 값과 Role Claim Path가 실제 token과 맞는지 확인합니다 |
 | 익명 사용자가 아무 화면도 못 본다 | 시스템 설정 → 공개 모드 | 꺼져 있으면 익명 탐색이 차단됩니다 |
