@@ -1,0 +1,263 @@
+{
+  "run_id": "2026-09-20-232418-hunter-improve",
+  "generated": "2026-09-20T23:54:42+09:00",
+  "run": {
+    "run_id": "2026-09-20-232418-hunter-improve",
+    "project": "hunter",
+    "kind": "improve",
+    "started": "2026-09-20T23:24:18+09:00",
+    "model": "claude-opus-5",
+    "policy_version": "ecd4b546e",
+    "prompts_hash": "30c37184f081815d",
+    "runner_version": "ecd4b546e",
+    "arm": "baseline",
+    "experiment": "roles-2026-09",
+    "finished": "2026-09-20T23:54:42+09:00",
+    "outcome": "review-pending"
+  },
+  "record": {
+    "ts": "2026-09-20T23:54:42+09:00",
+    "date": "2026-09-20",
+    "project": "hunter",
+    "result": "CI timeout, PR open https://github.com/hkjang/hunter/pull/8",
+    "outcome": "review-pending",
+    "run_id": "2026-09-20-232418-hunter-improve",
+    "base_sha": "96f7414d45ce8d2f962703b33d6859c04e501b04",
+    "head_sha": "74f07c7d511302330d159e7c1f3c7774d3b3987c",
+    "pr": "https://github.com/hkjang/hunter/pull/8",
+    "stages": {
+      "base": {
+        "state": "pinned",
+        "reason": "main@96f7414",
+        "at": "2026-09-20T23:24:21+09:00"
+      },
+      "autonomy": {
+        "state": "release",
+        "reason": "",
+        "at": "2026-09-20T23:24:21+09:00"
+      },
+      "scout": {
+        "state": "done",
+        "reason": "서버 CSV 보고서의 공백·제어 문자 뒤 수식 접두사 보호를 목록 CSV와 일치시키기 (가치 4 / 위험 1 / 작업량 ",
+        "at": "2026-09-20T23:28:41+09:00"
+      },
+      "brief": {
+        "state": "accepted",
+        "reason": "채택 — 현재 csvSafe와 웹 판정의 차이가 과제서와 일치했고 실제 서버 HTTP 실패로 확정했다.",
+        "at": "2026-09-20T23:33:16+09:00"
+      },
+      "verify": {
+        "state": "passed",
+        "reason": "검증 9개 통과 (auto)",
+        "at": "2026-09-20T23:33:38+09:00"
+      },
+      "review": {
+        "state": "approved",
+        "reason": "리뷰 승인 (risk=low)",
+        "at": "2026-09-20T23:35:10+09:00"
+      },
+      "pr": {
+        "state": "created",
+        "reason": "https://github.com/hkjang/hunter/pull/8",
+        "at": "2026-09-20T23:35:15+09:00"
+      },
+      "ci": {
+        "state": "timeout",
+        "reason": "제한 시간 안에 CI 완료를 확인하지 못함",
+        "at": "2026-09-20T23:54:41+09:00"
+      }
+    },
+    "campaign": "",
+    "autonomy": "release",
+    "arm": "baseline",
+    "experiment": "roles-2026-09",
+    "files": 4,
+    "additions": 590,
+    "deletions": 1,
+    "tests": 2,
+    "title": "fix: align report CSV formula safety with list exports"
+  },
+  "stages": {
+    "base": {
+      "state": "pinned",
+      "reason": "main@96f7414",
+      "at": "2026-09-20T23:24:21+09:00"
+    },
+    "autonomy": {
+      "state": "release",
+      "reason": "",
+      "at": "2026-09-20T23:24:21+09:00"
+    },
+    "scout": {
+      "state": "done",
+      "reason": "서버 CSV 보고서의 공백·제어 문자 뒤 수식 접두사 보호를 목록 CSV와 일치시키기 (가치 4 / 위험 1 / 작업량 ",
+      "at": "2026-09-20T23:28:41+09:00"
+    },
+    "brief": {
+      "state": "accepted",
+      "reason": "채택 — 현재 csvSafe와 웹 판정의 차이가 과제서와 일치했고 실제 서버 HTTP 실패로 확정했다.",
+      "at": "2026-09-20T23:33:16+09:00"
+    },
+    "verify": {
+      "state": "passed",
+      "reason": "검증 9개 통과 (auto)",
+      "at": "2026-09-20T23:33:38+09:00"
+    },
+    "review": {
+      "state": "approved",
+      "reason": "리뷰 승인 (risk=low)",
+      "at": "2026-09-20T23:35:10+09:00"
+    },
+    "pr": {
+      "state": "created",
+      "reason": "https://github.com/hkjang/hunter/pull/8",
+      "at": "2026-09-20T23:35:15+09:00"
+    },
+    "ci": {
+      "state": "timeout",
+      "reason": "제한 시간 안에 CI 완료를 확인하지 못함",
+      "at": "2026-09-20T23:54:41+09:00"
+    }
+  },
+  "provenance": {
+    "model": "claude-opus-5",
+    "policy_version": "ecd4b546e",
+    "prompts_hash": "30c37184f081815d",
+    "runner_version": "ecd4b546e",
+    "base_sha": "96f7414d45ce8d2f962703b33d6859c04e501b04",
+    "head_sha": "74f07c7d511302330d159e7c1f3c7774d3b3987c",
+    "pr": "https://github.com/hkjang/hunter/pull/8"
+  },
+  "verification": {
+    "runner": {
+      "source": "auto",
+      "commands": [
+        {
+          "cmd": "go build ./...",
+          "exit": 0,
+          "seconds": 1
+        },
+        {
+          "cmd": "go vet ./...",
+          "exit": 0,
+          "seconds": 0
+        },
+        {
+          "cmd": "go test ./...",
+          "exit": 0,
+          "seconds": 3
+        },
+        {
+          "cmd": "cd web && [ -d node_modules ] || npm ci --no-audit --no-fund",
+          "exit": 0,
+          "seconds": 13
+        },
+        {
+          "cmd": "cd web && npm test --silent",
+          "exit": 0,
+          "seconds": 0
+        },
+        {
+          "cmd": "cd web && [ -d node_modules ] || npm ci --no-audit --no-fund",
+          "exit": 0,
+          "seconds": 0
+        },
+        {
+          "cmd": "cd web && npm run typecheck --silent",
+          "exit": 0,
+          "seconds": 1
+        },
+        {
+          "cmd": "cd web && [ -d node_modules ] || npm ci --no-audit --no-fund",
+          "exit": 0,
+          "seconds": 0
+        },
+        {
+          "cmd": "cd web && npm run build --silent",
+          "exit": 0,
+          "seconds": 1
+        }
+      ]
+    },
+    "runner_gate": {
+      "ok": true,
+      "state": "verified",
+      "reason": "검증 9개 통과 (auto)"
+    },
+    "after_rebase": null,
+    "review": {
+      "verdict": "approve",
+      "reasons": [],
+      "notes": [
+        "main...HEAD의 74f07c7 및 변경 4파일을 검토했다. 운영 변경은 csvSafe에 한정되며 기존 직접 수식·탭/CR/LF 보호를 유지하고 웹과 동일한 공백/C0 접두사 판정을 추가한다. 새 개인정보 처리·의존성·권한 확대·마이그레이션은 없다.",
+        "Go1.26.7에서 TestCSVSafeSharedVectors 83사례 통과, Node22.23.1에서 convenience.test.mjs 5개 통과, git diff --check 통과. 테스트는 실제 Go/TS 함수를 호출하며 기존 구현은 공백 뒤 수식 사례의 기대값을 만족하지 못한다.",
+        "TestReportCSVFormulaSafety는 실제 라우트·격리 스키마·CSV/JSON 응답을 검사하지만 이번 리뷰에서는 HUNTER_TEST_DSN 미설정으로 skip됐다. 구현 노트의 DB 통과 기록을 독립 재현한 것으로 취급하지 않는다.",
+        "Excel/LibreOffice 실제 실행, CRLF 왕복 보존, 전체 Go 테스트·CI·배포는 미검증이다. 릴리즈 설명에서 모든 스프레드시트의 수식 실행 차단을 실증했다고 표현하지 않아야 한다.",
+        "요청한 legal-risk:privacy-and-data-protection, security:security-architecture-review, technology:code-review와 Skill 도구를 제공 도구 및 로컬 경로에서 찾지 못해 회사 고유 절차·반환 형식은 적용하지 못했다. 사용자 지정 심사 기준과 JSON 형식을 적용했다."
+      ],
+      "risk": "low",
+      "blocking": []
+    },
+    "ci_gate": {
+      "ok": true,
+      "state": "success",
+      "reason": "검사 1개 모두 success",
+      "checks": 1
+    }
+  },
+  "release": {
+    "result": null,
+    "assets_sha256": []
+  },
+  "approval": null,
+  "usage": [
+    {
+      "ts": "2026-09-20T23:28:40+09:00",
+      "date": "2026-09-20",
+      "project": "hunter",
+      "phase": "scout",
+      "run_id": "2026-09-20-232418-hunter-improve",
+      "campaign": "",
+      "subtype": "success",
+      "duration_ms": 0,
+      "num_turns": 1,
+      "cost_usd": null,
+      "input_tokens": 1025167,
+      "output_tokens": 7062,
+      "cache_read": 925312,
+      "cache_create": 0
+    },
+    {
+      "ts": "2026-09-20T23:33:16+09:00",
+      "date": "2026-09-20",
+      "project": "hunter",
+      "phase": "improve",
+      "run_id": "2026-09-20-232418-hunter-improve",
+      "campaign": "",
+      "subtype": "success",
+      "duration_ms": 0,
+      "num_turns": 1,
+      "cost_usd": null,
+      "input_tokens": 986230,
+      "output_tokens": 7072,
+      "cache_read": 918912,
+      "cache_create": 0
+    },
+    {
+      "ts": "2026-09-20T23:35:10+09:00",
+      "date": "2026-09-20",
+      "project": "hunter",
+      "phase": "review",
+      "run_id": "2026-09-20-232418-hunter-improve",
+      "campaign": "",
+      "subtype": "success",
+      "duration_ms": 0,
+      "num_turns": 1,
+      "cost_usd": null,
+      "input_tokens": 287429,
+      "output_tokens": 1925,
+      "cache_read": 245760,
+      "cache_create": 0
+    }
+  ]
+}

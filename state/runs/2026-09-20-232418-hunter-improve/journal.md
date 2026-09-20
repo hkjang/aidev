@@ -28,3 +28,4 @@
 - 요청 회사 스킬3종/Skill 도구는 제공 도구·로컬 검색에서 찾지 못해 미적용; 사용자 지정 심사 형식 적용.
 - [러너 23:35] review approved — 리뷰 승인 (risk=low)
 - [러너 23:35] pr created — https://github.com/hkjang/hunter/pull/8
+- [러너 23:54] ci timeout — 제한 시간 안에 CI 완료를 확인하지 못함
