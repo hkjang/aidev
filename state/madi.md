@@ -62,3 +62,12 @@
 - 보류 아이디어: 러너 검증 예산·web/dist 자리표시자·apk lock 드리프트 관례를 CLAUDE.md 로 명문화(3/1/S, 차선이었음); SAML `/auth/saml/start` return_to 보존 재시도 뒤 `IdentityLogin.tsx` SAML 링크에도 같은 방식 적용(2/2/S); 로그인 화면 OIDC 링크 href 를 브라우저 시험으로 확인(2/1/S, 새); 비밀번호 로그인과 OIDC 복귀 규칙 통일 — 서버 저장 `preferences.last_path` 와 관리자 `/admin` 복귀(2/2/S); Playwright 시험에 silent SSO 루프 방지 + 안내 문구 시나리오(3/2/M).
 - 과제서: 채택 — 파일·행 근거(App.tsx:402 href 고정, oidcStart 75행의 return_to, 테스트 388행 근처의 비조용+safe 공백, e8e0960 충돌 없음)가 모두 코드와 일치했고 수용 기준 1~5 를 그대로 구현했다. 세부 판단 하나: `/app` 정확히 한 값과 `/apple` 같은 접두사 오탐은 미부착으로 좁혔고 `/app?query` 는 부착한다(App 이 pathname+search 를 저장하므로).
 
+## 2026-09-21
+- 선택: 필수 technology 스킬 가용성 확인 — 구현 과제 미선택 (가치 1 / 위험 1 / 작업량 S)
+- 결과: 변경없음
+- 요약: 요청된 Skill 도구와 technology 스킬 세 개가 제공되지 않았으며, 로컬 대체 경로에서도 completion-verification을 찾지 못했다. 필수 스킬이 없으면 중단하라는 세션 지침에 따라 구현·테스트·커밋을 수행하지 않았다. 기존 보류 항목은 미평가 pending으로 유지했으며 신규 아이디어 선정도 수행하지 않았다.
+- 보류 아이디어: CLAUDE.md 검증 관례 명문화 (3/1/S), 미평가
+- 보류 아이디어: apk lock 사전 점검 스크립트 (3/1/S), 미평가
+- 보류 아이디어: SAML return_to 보존 (2/2/S), 기존 선행 조건 유지
+- 보류 아이디어: 메일 알림 브라우저 시험 (3/2/M), 기존 선행 조건 유지
+
