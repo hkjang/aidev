@@ -28,3 +28,4 @@
 - 요청한 세 부서 스킬/Skill 도구를 발견하지 못해 고유 절차 준수는 미확인; 신규 개인정보 처리·의존성·마이그레이션 변경은 없다.
 - [러너 17:17] review approved — 리뷰 승인 (risk=low)
 - [러너 17:17] pr created — https://github.com/hkjang/sqlon/pull/9
+- [러너 17:22] ci no-ci — 이 커밋에 검사가 없음 (정책 allow_merge_without_ci 가 없으면 차단)

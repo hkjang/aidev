@@ -1,18 +1,128 @@
 [
-  {"title":"사용자 권한 화면에서 자기 계정의 권한 강등 막기 (self_demotion)","value":3,"risk":1,"size":"S","status":"done","note":"2026-09-20 구현(커밋 1a64524). validateUserPatch 400 self_demotion + UsersPage 자기 행 Select disabled(canChangeRole) + Go 표 3건·vitest 3건·admin.spec e2e(실서버, v1.4.4 이미지에서 실패 확인). 문서 기존 줄만 수정, PDF 미굽기.","updated":"2026-09-20"},
-  {"title":"좌석맵에서 배정 해제 단추","value":3,"risk":2,"size":"S","status":"pending","note":"DELETE /api/v1/seat-assignments/{seatID} 를 쓰는 UI 없음. 메일 브랜치가 seats.go 배정 경로를 고치므로 머지 뒤가 충돌이 적음. 2026-09-20: 메일 브랜치 여전히 미머지 — 차선 후보로만.","updated":"2026-09-20"},
-  {"title":"좌석 상세 편집 창에서 조직 구역 지정","value":3,"risk":2,"size":"S","status":"pending","note":"seats PATCH organizationId 는 있으나 화면은 처리필요의 영역 맞춤으로만. 2026-09-20 재확인: 여전히 타당.","updated":"2026-09-20"},
-  {"title":"로그인 화면 SSO 단추가 깊은 링크 returnTo 를 들고 가게","value":3,"risk":1,"size":"S","status":"pending","note":"'사내 SSO로 로그인' href 가 /api/v1/auth/oidc/start 고정. Protected 가 /login 으로 보낼 때 원래 경로를 state 로 넘겨 safeReturnTo 재사용. auth.go oidcStart 를 만지는데 MCP OAuth 브랜치가 auth.go authenticate 를 고치므로 머지 뒤 권장.","updated":"2026-09-20"},
-  {"title":"만료 임박 알림 표시를 받는 사람이 해석됐을 때만 남기기","value":3,"risk":1,"size":"S","status":"pending","note":"notifyExpiringAPIKeys 는 메일 브랜치(auto/2026-09-16-1022)에만 있음. 2026-09-20 재확인: main 에 여전히 메일 코드 없음 — 머지 뒤에만 가능.","updated":"2026-09-20"},
-  {"title":"PATCH /users/{id} 가 없는 id 에도 204 를 돌려주는 것 고치기","value":2,"risk":1,"size":"S","status":"pending","note":"2026-09-20 구현 중 발견: updateUser 의 UPDATE Exec 가 영향 행 수를 안 봐 role·active 만 보내면 없는 id 에 204(email 이 있으면 SELECT source 가 404). RowsAffected()==0 → 404 로 맞추고 auth_test 에 httptest 케이스. 감사 로그도 없는 대상에 남는 중.","updated":"2026-09-20"},
-  {"title":"CI 에 guide-shots 스모크 추가","value":2,"risk":2,"size":"S","status":"pending","note":"e2e 잡 뒤 guide-shots.mjs 를 돌려 셀렉터 변경으로 깨지지 않는지 확인. 산출물 미커밋. 워크플로 파일(보호 경로) 수정 필요.","updated":"2026-09-20"},
-  {"title":"build-docs.py 파서 단위 테스트","value":2,"risk":1,"size":"S","status":"pending","note":"이미지 블록·번호 목록 이어 세기 회귀 방지. 저장소에 Python 테스트 러너·CI 단계가 없어 CI 배선까지 필요.","updated":"2026-09-20"},
-  {"title":"세션 만료(401) 뒤에도 auto_login 이면 조용한 재로그인 시도","value":2,"risk":3,"size":"S","status":"pending","note":"sessionStorage 표시와 충돌·루프 위험. 신중히.","updated":"2026-09-20"},
-  {"title":"비화면 경로(/api·/mcp·/healthz·/readyz·/.well-known)의 CSP 를 default-src 'none' 으로 좁히기","value":2,"risk":2,"size":"S","status":"pending","note":"/floor-maps/{id}/content 의 PDF <object> 렌더링을 실제 브라우저로 먼저 확인하거나 그 경로만 예외.","updated":"2026-09-20"},
-  {"title":"방문 추적 설정 저장 뒤 수집기 연결 시험 단추","value":2,"risk":1,"size":"S","status":"pending","note":"GET <momento_url>/tracker.js 200 확인. SettingsPage 는 두 미머지 브랜치가 크게 고치므로 머지 뒤.","updated":"2026-09-20"},
-  {"title":"메일 알림 수신 선택(이벤트별 끄기)","value":2,"risk":2,"size":"M","status":"pending","note":"메일 브랜치 머지 뒤, 첫 주 반응을 본 뒤.","updated":"2026-09-20"},
-  {"title":"tracking.spec 브리지 네트워크 안내 보강","value":1,"risk":1,"size":"S","status":"pending","note":"mcp-oauth.spec 주석과 같게 E2E_COLLECTOR_HOST=host.docker.internal + --add-host 를 적기. 2026-09-20 에도 브리지에서 이 변수 없이는 tracking.spec 1건 실패 — 문서화 가치 확인. OAuth 브랜치 머지 뒤 한 번에.","updated":"2026-09-20"},
-  {"title":"MCP SSO 의 JWKS 재요청 제한","value":2,"risk":2,"size":"S","status":"pending","note":"위조 토큰 연타가 Keycloak 을 두드리지 않게(postra 의 1초 1회). OAuth 브랜치 머지 뒤에만 가능.","updated":"2026-09-20"},
-  {"title":"비활성 SSO 사용자가 다시 로그인해도 active 가 되살아나지 않는 동작 명시·처리","value":2,"risk":2,"size":"S","status":"pending","note":"2026-09-18 관찰: OIDC upsert(auth.go:413-415)가 active 를 건드리지 않아 세션만 생기고 아무것도 못 함. 콜백에서 active=false 면 /login?sso=none&error=inactive 로 보내는 쪽이 안전. auth.go 라 OAuth 브랜치 머지 뒤.","updated":"2026-09-20"},
-  {"title":"listUsers 의 scanUser 오류를 삼키지 않게","value":1,"risk":1,"size":"S","status":"pending","note":"auth.go:493-498 이 스캔 실패 행을 조용히 건너뜀. 실제로 실패할 열은 없어 효과가 보이지 않는 변경이 될 수 있음 — 운영자 규칙(효과 없는 수정 금지)상 보류.","updated":"2026-09-20"}
+  {
+    "title": "좌석맵에서 배정 해제 단추",
+    "value": 3,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "DELETE API는 있고 좌석 상세에는 편집·삭제만 있다. 메일 브랜치가 seats.go 배정 경로를 변경하므로 후순위.",
+    "updated": "2026-09-20"
+  },
+  {
+    "title": "좌석 상세 편집 창에서 조직 구역 지정",
+    "value": 3,
+    "risk": 2,
+    "size": "M",
+    "status": "done",
+    "note": "38c5383: 기존 SeatEditor에 조직 구역 선택과 미지정 해제를 연결. POST null/PATCH 빈 문자열, 실제 PostgreSQL·SeatOn·Playwright로 생성/수정/취소/재개방 및 직원 불변·색·구역·불일치 검증 완료.",
+    "updated": "2026-09-20"
+  },
+  {
+    "title": "로그인 화면 SSO 단추가 깊은 링크 returnTo 를 들고 가게",
+    "value": 3,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "LoginPage href 고정, App Protected는 state 없이 /login으로 이동. 여전히 타당하나 인증 경로와 미머지 OAuth 변경 때문에 보류.",
+    "updated": "2026-09-20"
+  },
+  {
+    "title": "만료 임박 알림 표시를 받는 사람이 해석됐을 때만 남기기",
+    "value": 3,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "main에 internal/app/mail.go 및 notifyExpiringAPIKeys 없음. 메일 브랜치 auto/2026-09-16-1022 미머지. 선행 머지 필요.",
+    "updated": "2026-09-20"
+  },
+  {
+    "title": "PATCH /users/{id} 가 없는 id 에도 204 를 돌려주는 것 고치기",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "updateUser가 UPDATE 영향 행 수를 버린다. email 포함 시 SELECT는 404지만 role/active만은 204 및 감사 기록. 차선; httptest 대역 대신 실제 DB e2e 필요.",
+    "updated": "2026-09-20"
+  },
+  {
+    "title": "CI 에 guide-shots 스모크 추가",
+    "value": 2,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "ci.yml은 Playwright만 실행하고 guide-shots는 실행하지 않는다. 보호 경로 변경과 캡처 환경 비용 때문에 보류.",
+    "updated": "2026-09-20"
+  },
+  {
+    "title": "build-docs.py 파서 단위 테스트",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "parse_markdown 이미지·목록 처리 존재, Python 테스트 파일/CI 단계 없음. 기존 CI 변경을 피하려고 후순위.",
+    "updated": "2026-09-20"
+  },
+  {
+    "title": "세션 만료(401) 뒤에도 auto_login 이면 조용한 재로그인 시도",
+    "value": 2,
+    "risk": 3,
+    "size": "S",
+    "status": "pending",
+    "note": "AuthProvider의 세션 종료 콜백은 사용자/CSRF 초기화와 안내만 수행. 재시도·로그아웃 억제 계약과 루프 위험 때문에 보류.",
+    "updated": "2026-09-20"
+  },
+  {
+    "title": "비화면 경로(/api·/mcp·/healthz·/readyz·/.well-known)의 CSP 를 default-src 'none' 으로 좁히기",
+    "value": 2,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "tracking.go basePolicy는 self 기반 그대로. PDF 응답의 브라우저 호환성 미확인. 보호 성격 변경보다 UI 과제를 우선.",
+    "updated": "2026-09-20"
+  },
+  {
+    "title": "방문 추적 설정 저장 뒤 수집기 연결 시험 단추",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "SettingsPage에 Keycloak/VLM 시험은 있으나 수집기 시험 없음. 미머지 두 브랜치의 SettingsPage 변경과 겹쳐 보류.",
+    "updated": "2026-09-20"
+  },
+  {
+    "title": "메일 알림 수신 선택(이벤트별 끄기)",
+    "value": 2,
+    "risk": 2,
+    "size": "M",
+    "status": "pending",
+    "note": "main에 메일 기능이 없어 적용 불가. 메일 브랜치 머지 및 실제 사용자 반응 이후 재평가.",
+    "updated": "2026-09-20"
+  },
+  {
+    "title": "tracking.spec 브리지 네트워크 안내 보강",
+    "value": 1,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "현재 주석에 Docker Desktop host.docker.internal은 있으나 Linux --add-host 안내가 없다. 부분 설명만 존재하므로 완료 아님. 이번 브리지 실패 재현은 미실행.",
+    "updated": "2026-09-20"
+  },
+  {
+    "title": "신뢰도 0 좌석도 검토 필요 필터에 포함",
+    "value": 3,
+    "risk": 2,
+    "size": "M",
+    "status": "pending",
+    "note": "새 후보. seats.ts needsReviewSeat는 confidence truthiness 때문에 0을 제외하지만 dashboard.go SQL 및 상세 AI 표시는 0을 포함한다. 0이 생성되는 실제 분석 fixture 확보 및 화면/큐 일치 e2e가 선행되어야 한다.",
+    "updated": "2026-09-20"
+  },
+  {
+    "title": "좌석 상세에서 직원 소속과 지정 구역을 구분해 표시",
+    "value": 3,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "새 후보. SeatMapPage의 배정자 Info 조직은 selected.organizationName(구역)을 직원 소속보다 우선한다. 직원 실제 소속(employeeOrganizationName)과 지정 구역을 각각 표시하는 별도 후속 과제로 두며 이번 편집 기능에 섞지 않는다.",
+    "updated": "2026-09-20"
+  }
 ]
