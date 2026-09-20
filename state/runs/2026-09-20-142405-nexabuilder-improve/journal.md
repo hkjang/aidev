@@ -25,3 +25,7 @@
 - 릴리즈 노트: 휴지통 목록의 `/data` 가 200→400 으로 바뀌므로 정의 호출 없이 `/data` 만 치던 외부 클라이언트가 있다면 응답이 달라짐(의도된 변경).
 - [러너 14:44] review approved — 리뷰 승인 (risk=low)
 - [러너 14:44] pr created — https://github.com/hkjang/nexabuilder/pull/28
+- [러너 14:53] ci passed — 검사 2개 모두 success
+- [러너 14:53] merge done — fa42f66
+- [러너 15:13] release published — v1.19.0
+- [러너 15:14] assets verified — v1.19.0 자산 1개 (이전 v1.18.0: 1)

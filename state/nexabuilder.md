@@ -27,3 +27,4 @@
 - 보류 아이디어: `GET /api/v1/data/lists/{id}`(DataAdapterService.queryList, jqxgrid 어댑터·nexa-data.js)도 findById 만 해서 같은 구멍 — requireLiveList 로 통일(3/2/S, 이번에 새로 발견) / CI 에 gradle/actions/wrapper-validation 추가 + docker-publish checkout v6 정렬 + gradlew +x 로 chmod 스텝 3곳 제거(3/1/S) / ListExportController 의 OpenPDF 3 deprecated API 정리 — 이번 빌드에서도 경고(2/2/S) / 폼 쪽 soft-delete 판정도 requireLiveForm(formId, includeInactive) 꼴 헬퍼로(2/2/S) / `/builder/lists/{id}/data` 에 ScreenPermissionService 게이트 없음 — 테스트로 세션 user 없이 200 확인, permission 은 위험 구역이라 별도 회차(3/4/M)
 - 과제서: 채택 — 근거(listData 가 deletedAt 을 안 봄, 세 곳의 중복 판정, 호출자 범위)가 코드와 전부 일치했고 선택 항목(resolveExportable 도 헬퍼 사용)까지 포함해 그대로 구현했다. 과제서가 미확인이라 한 "/data 가 세션 user 없이 200 인지"는 테스트로 확인(200, sessionAttr 불필요).
 
+- 릴리즈: v1.19.0 (2026-09-20, run 2026-09-20-142405-nexabuilder-improve)
