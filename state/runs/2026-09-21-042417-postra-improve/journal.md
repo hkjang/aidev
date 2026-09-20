@@ -28,3 +28,6 @@
 - 요청된 부서 스킬 3개와 Skill 도구 미발견으로 원문 절차는 미확인; 사용자 기준으로 검토, 보안·법무 차단 근거 없음.
 - [러너 04:33] review approved — 리뷰 승인 (risk=low)
 - [러너 04:33] pr created — https://github.com/hkjang/postra/pull/19
+- [러너 04:39] ci passed — 검사 10개 모두 success
+- [러너 04:39] merge done — 0bbff34
+- [러너 04:39] release missing — 릴리즈 결과 없음/손상: missing
