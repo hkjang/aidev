@@ -11,4 +11,27 @@
 - 비교: 회사 필수 안내는 API·UI·브라우저 검증까지 필요해 M, 헤더 행/미인식 열 응답 확대는 새 응답·UI 계약이 필요해 M, 이메일 경고는 허용 주소 계약 미정으로 위험 2다. 중복 경고는 이미 있는 warnings 배선을 쓰므로 S로 선정했다.
 - 45분 예산(추정): 재현·테스트 10분, 파서 수정 10분, 실제 HTTP/전체 Go 검증 10분, 문서 5분, 예비 10분. DB 준비가 지연되면 기능 범위를 늘리지 말고 검증 미완료를 명시한다.
 - 정찰 검증: `go test ./... -count=1` 통과(app 0.135s). VISITFLOW_TEST_DSN 미설정으로 DB 통합은 SKIP. 프런트 빌드·브라우저·vet는 이번 정찰에서 미실행이다.
-- 스킬 제약: 요청된 pmo:estimating-and-contingency, technology:implementation-planning, technology:solution-exploration을 제공하는 Skill/skills 도구가 현재 목록에 없고 확인한 로컬 스킬 경로에서도 찾지 못했다. 해당 절차·반환 형식은 미확인이고 준수를 주장하지 않는다. 사용자 지정 형식에 선택 근거·구현 순서·예비 시간을 보완했다.
+- 적용 스킬: [pmo:estimating-and-contingency](/mnt/c/Users/USER/projects/headcount/plugins/pmo/skills/estimating-and-contingency/SKILL.md), [technology:implementation-planning](/mnt/c/Users/USER/projects/headcount/plugins/technology/skills/implementation-planning/SKILL.md), [technology:solution-exploration](/mnt/c/Users/USER/projects/headcount/plugins/technology/skills/solution-exploration/SKILL.md). Skill 도구는 없으나 확장 검색으로 원문을 찾아 읽고 적용했다.
+
+접근 선택(solution-exploration)
+- 원하는 결과: 업로드한 사용자가 중복 열 때문에 어떤 값이 채택됐는지 제출 전에 알 수 있어야 한다. 기존 API 소비자와 일반/현장 신청 화면은 visitors/warnings 응답과 마지막 열 우선 결과를 사용한다.
+- 선택 A: 기존 warnings에 중복 필드와 채택 열 안내(S). 응답 확장이 없고 기존 UI가 곧바로 표시한다. 자동 복구를 제공하지 못하지만 호환성이 가장 높다.
+- 대안 B: 중복 헤더 파일을 invalid_import로 거절(S). 모호한 데이터를 확실히 막지만 지금 허용되는 파일을 깨뜨린다. 중복 금지가 제품 요구로 명시될 때만 적합하다.
+- 대안 C: 열 매핑 미리보기와 사용자 선택 UI(M~L). 앞으로 다양한 공급업체 서식을 지원한다면 적합하지만 새 응답·화면 상태·검증이 필요해 45분 범위를 넘는다.
+- 대안 D: 문서에 오른쪽 열 규칙만 설명(S). 런타임 변화는 없지만 문서를 읽지 않는 업로더의 실수는 계속된다. 사용자 영향이 없다고 확인된 경우에만 충분하다.
+- A를 권고한다. 가장 중요한 가정은 마지막 열 우선 호환성과 사용자 확인이 자동 차단보다 적합하다는 점이다. 이것은 운영자에게 확인된 요구가 아니라 정찰 판단이다. 구현 중 이 가정에 반하는 저장소 계약을 발견하면 과제서를 수정하고 차선 판단 근거를 남긴다.
+
+실행 순서와 검증 지점(모두 구현자 진행 전)
+1. [pending] 재현·환경 확인: import.go의 실제 선택 규칙과 import_test.go 헬퍼를 재확인하고 서로 다른 값을 가진 CSV/XLSX fixture를 설계한다. 증명: `go test ./internal/app -run 'Test(VisitorImportRows|ImportFindsHeaderBelowTitleRows|ImportScientificPhoneFiles)' -count=1 -v`. 현재 기준 통과와 DB 준비 여부를 기록한 뒤 다음 단계로 간다. 사람 승인 지점 없음.
+2. [pending] 파서와 회귀 테스트를 한 단계로 완성: import.go에서 동일한 헤더 정규화 규칙으로 중복 경고를 만들고 import_test.go에 실제 파일 및 DB HTTP 테스트를 추가한다. 증명: `go test ./internal/app -run 'Test(ImportDuplicateHeaders|VisitorImportDuplicateHeaders|VisitorImportAcceptsExcelExports)' -count=1 -v`를 VISITFLOW_TEST_DSN이 설정된 상태에서 실행한다. 중복/무중복과 실제 결과 선택까지 통과해야 다음 단계로 간다. 사람 승인 지점 없음.
+3. [pending] USER_GUIDE/API_AND_MCP 안내를 맞추고 범위·회귀를 확인한다. 증명: DB가 설정된 `go test ./... -count=1`, `go vet ./...`, `git diff --check`. 문서의 경고 설명을 실제 응답과 대조한다. PDF를 갱신하지 못하면 결과에 명시한다. 사람 승인 지점 없음; 이후 정규 비평 단계에 전달한다.
+각 지점은 검증 실패 시 원인을 해결하거나 과제서를 고친 뒤 진행한다. 상태는 구현자가 증명 명령을 실제 실행한 뒤에만 done으로 기록한다.
+
+추정 근거(estimating-and-contingency)
+- 방법: 위 작업의 bottom-up 합계 35분을 중심값으로 잡았다(재현/테스트 10 + 구현 10 + 통합 검증 10 + 문서 5). 추정 입력은 이번 코드 탐색과 제공된 이전 회차 기록이며 시간 실측 데이터는 아니다.
+- 교차 확인: 이전 지수 전화 경고 작업도 import.go/import_test.go와 가이드·실제 파일/HTTP 경로를 다뤘으므로 유사 추정으로 S 범위는 지지된다. 이전 구현의 총 소요 분은 제공되지 않아 독립적인 수치 추정이나 두 방법의 25% 차이 판정은 불가능하다.
+- 범위: 기존 의존성과 테스트용 DB를 바로 사용할 수 있다는 조건에서 30~45분, 주관적 약 70% 신뢰 범위이며 통계적 보장은 아니다. DB 환경 신규 구축·새 UI·CSV 물리 행 번호 수정·PDF 도구 설치는 포함하지 않는다.
+- contingency: 알려진 변동인 별칭 중복 경계 5분과 DB 연결/fixture 보정 5분, 합계 최대 10분을 35분 밖에 한 번만 잡는다. 각 작업 시간에는 별도 예비분을 중복 포함하지 않았다.
+- management reserve: 미발견 범위에 대한 예산은 이 회차에 배정하지 않는다(0분). 범위 추가가 필요하면 보류 아이디어로 남기고 45분 제한 안에 몰래 끼워 넣지 않는다.
+- 첫 실제 파일 재현과 첫 HTTP 통합 완료 시 추정을 다시 확인한다. DB 환경이 준비되지 않으면 45분 신뢰 가정이 깨진 것으로 명시하고 검증을 완료했다고 보고하지 않는다.
+- 방법론 참고: 작업 분해·가정·위험 분석·실측에 따른 추정 갱신 원칙은 [US GAO Cost Estimating and Assessment Guide](https://www.gao.gov/products/gao-20-195g)의 공개 개요를 확인했다. 위 분 단위 수치는 GAO 수치가 아니라 이번 정찰의 조건부 판단이다.

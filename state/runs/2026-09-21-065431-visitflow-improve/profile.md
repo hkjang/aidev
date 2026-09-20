@@ -26,4 +26,4 @@
 - 검증 함정: importHeaders는 별칭 정규화 후 마지막 열 우선이며 중복 안내가 없다. importWarnings는 화면에 처음 5개와 나머지 개수만 표시한다.
 - 검증 함정: 실제 Excel·Keycloak·SMTP·Momento·브라우저는 이번 미확인. PDF 도구는 README상 저장소 밖 aidev/tools/guide/md2pdf.mjs이며 실행 가능 여부 미확인.
 - 문서 상태: 이번 저장소 검색에 CLAUDE.md/AGENTS.md/별도 로드맵·TODO 파일 및 TODO/FIXME 결과 없음.
-- 정찰 스킬: 요청한 회사 pmo/technology 세 스킬은 현재 도구·확인한 로컬 경로에서 찾지 못해 원문 절차는 미확인.
+- 정찰 스킬: 요청한 세 회사 스킬은 /mnt/c/Users/USER/projects/headcount/plugins/{pmo,technology}/skills/ 아래에서 확장 검색으로 찾아 읽었고 과제서에 대안·순서·검증 지점·추정 범위·예비분을 반영했다.
