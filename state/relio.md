@@ -239,3 +239,13 @@
 - 보류 아이디어: 감사 목록 검색 `q` 가 `metadata::text ILIKE` 도 훑게 하기 — DB 통합 테스트가 없어 throwaway PostgreSQL 로 증명 필요 (가치 2 / 위험 1 / S) · 감사 화면 Frame 부제("Web, API, MCP, Admin, Login과 Key 작업을…") 도 실제 채널값으로 맞추기 — 이번엔 과제서 범위 밖이라 두었음, 한 줄 (가치 1 / 위험 1 / S) · `ClientIP` 가 `X-Forwarded-For`/`Forwarded` 를 읽지 않아 프록시 뒤에서 로그인 리미터·감사 IP 가 프록시 주소 하나로 묶임 — 신뢰 프록시 설정과 함께 (가치 4 / 위험 2 / M) · 감사 목록 기간 필터(from/to) — openapi·계약 테스트·httpx 헬퍼까지 번져 M (가치 3 / 위험 1 / M) · `security.allowed_origins` 시드 행 제거 — main 마지막 마이그레이션 014, 미머지 브랜치가 015 를 쓰므로 머지 뒤 016 (가치 2 / 위험 1 / S)
 - 과제서: 채택 — 과제서의 근거(`date()` 27행, select 573행, 모달 575행, 채널 producer 목록, `auditItem` 의 `userAgent`/`occurredAt` 키, `.audit-meta` CSS, 가이드 319행)가 코드와 전부 일치했고 수용 기준 1~5 를 그대로 구현·검증했으며 `../src/api.ts` 의 Node 최상위 import 는 우회 없이 통과했다.
 
+## 2026-09-21
+- 선택: JSON 본문 크기 초과를 두 디코딩 단계 모두에서 413으로 응답하기 (가치 3 / 위험 1 / 작업량 S)
+- 결과: 성공
+- 요약: 정상 JSON 뒤 공백으로 2MiB를 넘기면 두 번째 Decode의 MaxBytesError가 400으로 분류되는 문제를 overlay 및 새 테스트로 재현하고, 기존 스트리밍 흐름에 413/request_too_large 분기 5줄을 추가했다. 실제 MaxBytesReader·json.Decoder를 거치는 18개 케이스로 정확한 한도·알 수 없는 길이·기존 400 메시지·requestId를 확인하고, 실제 createCustomer 2개 케이스로 CRM·DB 없이 초과를 거절함을 검증했으며 분기 제거 시 재실패도 확인했다. go test ./internal/platform/httpx ./internal/server, go test -race ./..., go vet ./..., go build ./..., 지정 파일 gofmt -l 및 git diff --check 모두 통과; 커밋 b497df5, 인증 미들웨어·배포 검증은 미실시.
+- 보류 아이디어: 감사 화면 Frame 부제를 실제 채널값으로 맞추기 (가치 1 / 위험 1 / S)
+- 보류 아이디어: security.allowed_origins 시드 행 제거 (가치 2 / 위험 1 / S)
+- 보류 아이디어: ClientIP 신뢰 프록시 설정과 전달 IP 처리 (가치 4 / 위험 3 / M)
+- 보류 아이디어: DealsAtRisk·Coaching 열린 딜 커서 페이징 (가치 3 / 위험 2 / M)
+- 과제서: 채택 — 기준 코드와 overlay 재현 결과가 과제서와 일치하여 지정된 공용 오류 분류와 회귀 테스트만 구현했다.
+

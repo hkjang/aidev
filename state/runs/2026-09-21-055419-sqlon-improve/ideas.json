@@ -1,0 +1,101 @@
+[
+  {
+    "title": "requireAdmin 도 인증 사용자를 컨텍스트에 실어 admin:* 감사 전체에 actor 남기기",
+    "value": 3,
+    "risk": 1,
+    "size": "M",
+    "status": "pending",
+    "note": "현 HEAD requireAdmin/requireDBA는 bool, adminAudit actor 선행 변경 미통합. 지난 성공 과제를 다시 수행하지 않고 통합 뒤 별도 진행.",
+    "updated": "2026-09-21"
+  },
+  {
+    "title": "docs/auth.md·rest-api.md·security.md 채우기 — 인증 모델·REST·보안 문서",
+    "value": 3,
+    "risk": 1,
+    "size": "M",
+    "status": "pending",
+    "note": "세 파일 모두 0바이트. 실제 라우트/인증 모델 확인이 필요하여 이번 작은 버그보다 후순위.",
+    "updated": "2026-09-21"
+  },
+  {
+    "title": "GitHub Actions CI 추가 — go vet + go test ./... (통합 테스트 제외)",
+    "value": 3,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": ".github/FUNDING.yml만 존재. test/vet 통과 재확인. workflows 보호 경로라 후순위.",
+    "updated": "2026-09-21"
+  },
+  {
+    "title": "changes.html 에서 승인자 이름 표시와 이미 승인한 사용자의 승인 단추 비활성화",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "a.actor 표시는 이미 구현. 승인 단추는 review_required만 검사. actor 수정 미통합이므로 남은 단추 작업 보류.",
+    "updated": "2026-09-21"
+  },
+  {
+    "title": "화면의 인라인 이벤트 핸들러를 걷어내고 script-src nonce 정책 강제",
+    "value": 4,
+    "risk": 3,
+    "size": "L",
+    "status": "pending",
+    "note": "changes.html 인라인 이벤트 유지. 이전 tracking 미통합이며 45분 범위를 넘음.",
+    "updated": "2026-09-21"
+  },
+  {
+    "title": "OIDC 콜백의 error 분기에서 state 쿠키 일치 확인",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "auth.go:handleSSOCallback error 분기가 state 검증보다 앞선 상태. auth 보호 경로라 후순위.",
+    "updated": "2026-09-21"
+  },
+  {
+    "title": "OIDC 로그인에 nonce 와 PKCE(S256) 추가",
+    "value": 3,
+    "risk": 2,
+    "size": "M",
+    "status": "pending",
+    "note": "auth.go에 nonce/code_challenge 없음. 인증 계약 확장 위험 때문에 별도 회차 필요.",
+    "updated": "2026-09-21"
+  },
+  {
+    "title": ".gitattributes 로 Go 파일 LF 고정 + 일괄 gofmt",
+    "value": 3,
+    "risk": 2,
+    "size": "M",
+    "status": "pending",
+    "note": "metasync/service.go 197 CRLF, CHANGELOG 혼합 줄바꿈 재확인. 대규모 diff·미통합 브랜치 충돌 때문에 보류; 위험을 1에서 2로 조정.",
+    "updated": "2026-09-21"
+  },
+  {
+    "title": "빈 docs/README.md를 실제 문서 색인으로 채우기",
+    "value": 3,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "0바이트이며 README 상세 문서 링크가 이 파일로 향함. 현재 차선. 세 비어 있지 않은 가이드는 구버전 주의 필요.",
+    "updated": "2026-09-21"
+  },
+  {
+    "title": "비동기 쿼리 잡의 10분 만료를 조회·취소 경로에서도 적용",
+    "value": 4,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "신규·이번 선택. asyncquery.go의 prune이 제출에서만 호출되고 jobView/cancelJob에 만료 검사가 없다. API 계약상 만료 404와 어긋남. 실제 새 HTTP 재현은 구현 단계에 필요.",
+    "updated": "2026-09-21"
+  },
+  {
+    "title": "관리자 가이드의 메타 저장소·감사 로그 저장 설명을 실제 소스에 맞추기",
+    "value": 3,
+    "risk": 2,
+    "size": "M",
+    "status": "pending",
+    "note": "신규. docs/admin_guide.md는 Built-in MetaDB/SQLite와 감사 암호화를 주장하지만 internal/meta/pg.go는 PostgreSQL을 연다. 감사 암호화 전체 경로는 미확인. reports 중복 정본/PDF 생성 범위를 먼저 정해야 하므로 이번에는 제외.",
+    "updated": "2026-09-21"
+  }
+]
