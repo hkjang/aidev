@@ -23,3 +23,7 @@
 - 남는 우려(기존과 동일): app_user 행은 잠기지 않아 상태 조회~commit 사이의 비활성화 경쟁 창이 발급·회전 즉시 경로에 남음 — 다음 회차 후보. 릴리즈 노트에는 회전 소유자 검사와 회전 승인 실행의 key_conflict→key_target_unavailable 재분류를 모두 적을 것.
 - [러너 09:06] review approved — 리뷰 승인 (risk=low)
 - [러너 09:06] pr created — https://github.com/hkjang/ai-admin/pull/27
+- [러너 09:13] ci passed — 검사 2개 모두 success
+- [러너 09:13] merge done — d8a9ad0
+- [러너 09:22] release published — v1.2.23
+- [러너 09:24] assets verified — v1.2.23 자산 2개 (이전 v1.2.22: 2)

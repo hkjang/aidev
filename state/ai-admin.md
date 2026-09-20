@@ -216,3 +216,4 @@
 - 보류 아이디어: `safeCSVCell`이 선행 tab(0x09)·CR(0x0D)을 중화하지 않음 — `audit_events.go:220` `"=+-@"`에 `\t`·`\r` 추가 + 표 테스트 (가치 2 / 위험 1 / S) · `loadGrants`가 map 순회로 roles·permissions 순서를 무작위화 (가치 2 / 위험 1 / S) · `decideApproval`이 `decision_comment`를 trim·길이 제한 없이 저장 (가치 2 / 위험 1 / S) · `loadProvider`·`aiModels`·`aiCatalog`의 `_ = json.Unmarshal` 4곳 + `users.go:66` roles 파싱 실패 무시 (가치 2 / 위험 1 / S) · 새 아이디어: `errKeyStale` 반환 지점이 회전 분기에 10곳 이상이라 검토자가 "무엇이 바뀌었는지" 알 수 없음 — payload 필드별(이름·scope·만료) 세부 코드 또는 details 추가 (가치 2 / 위험 1 / S) · 새 아이디어: `revokeKey`는 `UPDATE ... RowsAffected()==0`을 모두 404로 뭉개 이미 폐기된 키와 권한 없는 키를 구별 못 함 — 조회 후 409 `key_not_active`/403 분리 (가치 1 / 위험 1 / S)
 - 과제서: 채택 — 결함·파일·재사용 셋업 모두 코드와 일치했고, 유일한 어긋남(workflow 회전 분기가 "검사 없음"이 아니라 "검사하되 `errKeyStale`로 오분류")은 같은 수정 범위 안에서 해결됐다.
 
+- 릴리즈: v1.2.23 (2026-09-20, run 2026-09-20-085355-ai-admin-improve)
