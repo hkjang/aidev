@@ -30,3 +30,4 @@
 - [러너 07:49] pr created — https://github.com/hkjang/DartFly/pull/11
 - [러너 07:54] ci passed — 검사 3개 모두 success
 - [러너 07:54] merge done — e6bd782
+- [러너 07:55] release missing — 릴리즈 결과 없음/손상: missing
