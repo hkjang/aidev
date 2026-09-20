@@ -17,3 +17,5 @@
 실행 순서·견적: 회귀 fixture 작성 및 수정 전 실패 확인 10분 → 키/직접 필터 수정 10분 → 종단 회귀·기존 fixture 보정 10분 → 전체 검증 5분, 예상 35분 + 예비 10분. 빌드 실패 시 rcaKey 호출 누락과 ClusterID 미설정 fixture를 먼저 확인한다. 45분 안에 끝내기 위해 별도 노드/자원 조인·정렬·알림 범위 변경을 합치지 않는다.
 대안 비교: notify Kind 충돌은 더 작지만 영향이 한 알림 종류에 국한된다. 인벤토리 kind 축소는 RCA Node 포함 범위 설계가 필요하고, PSS 변경은 Deny 게이트·점수·알림 파급이 있어 이번 낮은 위험 과제보다 후순위다.
 스킬 제한: 요청한 pmo:estimating-and-contingency, technology:implementation-planning, technology:solution-exploration은 세션 Skill 도구/카탈로그와 /home/hkjang/.codex·.claude 검색에서 발견하지 못했다. 해당 절차·반환 형식은 미확인으로 남기며, 사용자 지정 과제서 형식과 후보 비교·견적·예비 시간으로 정찰을 진행했다.
+
+정찰 검증 기록: `go build ./...` 및 `go vet ./...` exit 0. `go test ./internal/analyzer ./internal/proxy` exit 0(analyzer cached, proxy 58.193s). `git status --short` 출력 없음: 저장소 코드 수정·커밋 없음. ideas.json 18개 항목·필수 키 및 profile.md 20줄 검증 완료.

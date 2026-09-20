@@ -1,13 +1,20 @@
 # Clustara 프로필 (2026-09-20)
-- 목적: 폐쇄망용 Kubernetes 운영 허브 — 멀티 클러스터 인벤토리 수집·보안 포스처(SEC-xx)·용량(SCALE-xx)·Action Center 승인·MCP/LLM 프록시·ClickHouse DW·Mattermost 알림을 한 바이너리로 제공.
-- 스택: Go 단일 모듈(`clustara`), net/http mux(internal/proxy/server.go), PostgreSQL(internal/store), ClickHouse 선택, 관리 UI 는 internal/proxy/admin_ui.go 안의 인라인 JS(SPA, 한국어). CLAUDE.md 없음.
+- 목적: 폐쇄망용 Kubernetes 운영 허브로 멀티 클러스터 수집·장애/보안/용량/비용 분석·승인 액션·LLM/MCP 프록시·알림을 제공한다.
+- 스택: Go 단일 모듈 clustara(go.mod 1.25, 현재 로컬 Go 1.26.7), net/http, 기본 SQLite(modernc)·PostgreSQL 지원, 선택 ClickHouse, 인라인 바닐라 JS SPA(한국어).
 - 구조:
-  - cmd/ — 엔트리. internal/proxy — 모든 HTTP 핸들러(admin_k8s*.go, k8s_notify.go, admin_k8s_dw.go, mcp_oauth.go) + admin_ui.go(2만 줄대 UI).
-  - internal/analyzer — 순수 분석 함수(security.go SEC-01/02/06, tls.go SEC-07, rbac/diff SEC-08, capacity.go, connectivity.go, exposure.go, policy.go 가드레일, podowner.go). 핸들러는 여기 결과를 그대로 JSON 으로 냄.
-  - internal/kube — 인벤토리 수집(inventoryFromObject, ownerReferences 를 Spec 에 저장). internal/store — DB 접근·K8sInventoryItem(ClusterID 포함).
-  - internal/action — 승인 영향도. internal/collector, prometheus, harbor, gitprovider — 외부 연동. docs/ — ADMIN_GUIDE.md·USER_GUIDE.md·K8S_OPERATIONS_HUB.md(API 표).
-- 빌드·테스트: `go build ./... && go vet ./... && go test ./...` — 캐시 없이 약 80초(proxy 60s, store 16s), 20 패키지. 개별: `go test ./internal/analyzer/`(수 초). `.github` 에 CI 없음(FUNDING.yml 뿐).
-- 관례: 커밋 메시지 영어 `fix(security): …`/`feat(mcp): …`, 릴리즈는 `chore: release v0.9.N` 로 별도 커밋(세션은 버전·changelog·docs 마커를 건드리지 않음). 설정은 런타임 설정 레지스트리 + 환경변수(MCP_OAUTH_* 등). 코드 주석은 영어, UI·메시지 문자열은 한국어. 결과 타입에 `cluster_id` 는 `omitempty` 로 additive 추가하는 것이 반복된 패턴.
-- 위험 구역: internal/proxy/mcp_oauth.go·authenticateProxyContext·currentAccessClaims(인증), analyzer/policy.go 의 가드레일(enforce_pss_restricted 가 restrictedProfileViolations 를 공유 — 포스처 판정을 바꾸면 Deny 게이트가 같이 바뀜), summarize 점수(포스처 점수·알림 라우팅에 쓰임), DW 테이블 DDL(k8sFactColumns).
-- 자주 깨지는 곳: 전 클러스터 보기(cluster_id 선택 파라미터)에서 이름만으로 교차 참조하거나 요청 파라미터의 cluster_id 를 결과에 적는 자리 — v0.9.278/281/282/이번 회차 모두 이 유형. map 순회 순서 비결정.
-- 검증 함정: 종단 테스트는 실제 API 객체를 `kube.InventoryFromObject` 로 저장해 핸들러를 호출하는 방식이 선호됨(대역 주입 금지). 문서 참조 테스트가 백틱 경로를 라우트로 읽으므로 docs 에 가짜 경로를 쓰지 말 것. gofmt -l 은 기존 미포맷 파일이 많아 손댄 파일만 검사.
+  - cmd/ — clustara 서버·CLI·에이전트 엔트리.
+  - internal/proxy/ — HTTP mux/핸들러, admin_ui.go의 SPA, MCP/SSO, Mattermost, DW 조립.
+  - internal/analyzer/ — RCA·security·capacity·cost 등 순수 분석 함수와 단위 테스트.
+  - internal/store/ — SQLStore·인벤토리/이벤트/리비전·승인 원장; sqlstore.go의 DDL.
+  - internal/kube/, internal/collector/ — API 객체 변환·수집·exec; ownerReferences를 Spec에 보존.
+  - internal/action/ — 승인 영향도 및 액션; prometheus/harbor/gitprovider 등은 외부 연동.
+  - docs/ — 운영·관리·사용자 가이드, API 표, K8S_PHASE2_PLAN.md(완료된 계획이므로 현재 구현은 코드 우선).
+  - scripts/, deploy/, sdk/ — 릴리즈·운영 배포·클라이언트 SDK.
+- 빌드·테스트: `go build ./...`, `go vet ./...`, `go test ./...`. 이번 정찰 build/vet 및 `go test ./internal/analyzer ./internal/proxy` 통과(analyzer cached, proxy 58.193초). 전체 테스트는 과거 약 80초이며 이번 전체 실행 미실시.
+- 관례: 영어 fix(scope)/feat(scope) 커밋, 별도 chore 릴리즈. 런타임 설정 레지스트리·환경변수. SQL은 SQLite/PG 호환 bind 및 CREATE TABLE IF NOT EXISTS 패턴. 코드 주석 영어·UI 한국어. 버전/changelog/docs 마커는 개선 구현과 분리.
+- 위험 구역: proxy/server.go의 currentAccessClaims·인증, mcp_oauth.go·keycloak*.go, analyzer/policy.go의 Deny 게이트, store/sqlstore.go의 DDL, DW fact 스키마. restrictedProfileViolations는 포스처와 정책 공용.
+- 자주 깨지는 곳: 전 클러스터 분석에서 namespace/name/nodeName만으로 조인·dedup하는 코드. 이번 RCA 이벤트/리비전 키도 같은 유형이며 자원 태그·NodePressure Pod 집계는 별도 보류. map 순회 순서에 의존하는 테스트를 피한다.
+- 검증 함정: .github에는 FUNDING.yml만 있고 CI workflow 없음. proxy 테스트는 openTestStore의 t.TempDir SQLite와 httptest를 사용; 실 PostgreSQL·Kubernetes·Keycloak·ClickHouse 검증을 대신하지 않는다.
+- 검증 함정: 기존 TestEnrichWithConfigChanges와 TestAttachFindingResources는 finding만 c1이고 대응 객체의 ClusterID가 비어 있다. 클러스터 격리 구현 시 fixture를 수정하고 빈 cluster wildcard를 만들지 않는다.
+- 검증 함정: docs 경로를 검사하는 repository audit 및 버전 일치 테스트가 있다. gofmt는 수정 파일만 검사(기존 미포맷은 이전 기록 보고, 이번 전수 미확인).
+- 정찰 환경: CLAUDE.md/AGENTS.md는 작업 트리·부모 검색에서 미발견. 요청된 회사 스킬 3종과 Skill 도구도 미발견(절차 미확인).

@@ -1,0 +1,89 @@
+==> Docker 이미지 빌드: dartfly:v2.72.0
+#0 building with "default" instance using docker driver
+
+#1 [internal] load build definition from Dockerfile
+#1 transferring dockerfile: 1.05kB done
+#1 DONE 0.0s
+
+#2 resolve image config for docker-image://docker.io/docker/dockerfile:1
+#2 DONE 0.9s
+
+#3 docker-image://docker.io/docker/dockerfile:1@sha256:ecfaec9ed6d810b56388c508f4121597bfbba70d41a6dfeee4d8cad5f295fc32
+#3 resolve docker.io/docker/dockerfile:1@sha256:ecfaec9ed6d810b56388c508f4121597bfbba70d41a6dfeee4d8cad5f295fc32 0.0s done
+#3 CACHED
+
+#4 [internal] load metadata for gcr.io/distroless/static-debian12:nonroot
+#4 DONE 0.5s
+
+#5 [internal] load metadata for docker.io/library/golang:1.25-bookworm
+#5 DONE 0.9s
+
+#6 [internal] load .dockerignore
+#6 transferring context: 114B done
+#6 DONE 0.0s
+
+#7 [stage-1 1/4] FROM gcr.io/distroless/static-debian12:nonroot@sha256:afa5c872c891853ca7fcf1f12c3edb23f7eeef36189728842dd51042ff57f7ab
+#7 resolve gcr.io/distroless/static-debian12:nonroot@sha256:afa5c872c891853ca7fcf1f12c3edb23f7eeef36189728842dd51042ff57f7ab 0.0s done
+#7 DONE 0.0s
+
+#8 [build 1/6] FROM docker.io/library/golang:1.25-bookworm@sha256:3b4a11519ad929d1e1d261a12cff056f0c85b735253d7d861346b9c6f8b36437
+#8 resolve docker.io/library/golang:1.25-bookworm@sha256:3b4a11519ad929d1e1d261a12cff056f0c85b735253d7d861346b9c6f8b36437 0.0s done
+#8 DONE 0.0s
+
+#9 [internal] load build context
+#9 transferring context: 3.72MB 0.1s done
+#9 DONE 0.1s
+
+#10 [build 2/6] WORKDIR /src
+#10 CACHED
+
+#11 [build 3/6] COPY go.mod go.sum ./
+#11 DONE 0.0s
+
+#12 [build 4/6] RUN go mod download
+#12 DONE 5.9s
+
+#13 [build 5/6] COPY . .
+#13 DONE 0.2s
+
+#14 [build 6/6] RUN CGO_ENABLED=0 GOOS=linux go build -trimpath     -ldflags="-s -w -X github.com/hkjang/dartfly/internal/server.Version=v2.72.0"     -o /out/dartfly ./cmd/dartfly
+#14 DONE 15.4s
+
+#15 [stage-1 2/4] WORKDIR /app
+#15 CACHED
+
+#16 [stage-1 3/4] COPY --from=build /out/dartfly /app/dartfly
+#16 DONE 0.1s
+
+#17 [stage-1 4/4] COPY deploy/master.key /app/master.key
+#17 DONE 0.0s
+
+#18 exporting to image
+#18 exporting layers
+#18 exporting layers 1.1s done
+#18 exporting manifest sha256:ffb7dad2b8aff94ef87cc84ac6dbe69869b6bc59dbc6e2e9f706a1c3a44b4931 0.0s done
+#18 exporting config sha256:b7cf6949dcc4e9a339b914d9262027c9668a27c8bc601bcae2f4309609b24b28 0.0s done
+#18 exporting attestation manifest sha256:fcecaebfd4378ec24775b4454ab97b8465f86f73751c44d00bff96815c1153c6 0.0s done
+#18 exporting manifest list sha256:66d846bfd4b7fce8caa2fdab2058dd67e1662b48738bead332f9d98178663868 0.0s done
+#18 naming to docker.io/library/dartfly:v2.72.0 done
+#18 unpacking to docker.io/library/dartfly:v2.72.0
+#18 unpacking to docker.io/library/dartfly:v2.72.0 0.2s done
+#18 DONE 1.3s
+==> 배포 이미지 점검
+== 배포 이미지 확인(빌드 건너뜀): dartfly:v2.72.0 ==
+== 메타 DB 기동 ==
+== 이미지 기동 ==
+== 확인 ==
+  healthz/readyz 응답
+  임베드 정적 자산
+  로그인
+  내장 마스터 키로 질의 실행
+  TZ 적용
+== 통과 ==
+==> 이미지 저장(tar.gz): /mnt/c/Users/USER/projects/aidev/state/runs/2026-09-20-185409-DartFly-improve/assets/dartfly-v2.72.0.tar.gz
+==> 체크섬 생성
+==> 완료
+total 12M
+-rwxrwxrwx 1 hkjang hkjang 482 Sep 20  2026 LOAD_OFFLINE.txt
+-rwxrwxrwx 1 hkjang hkjang 12M Sep 20  2026 dartfly-v2.72.0.tar.gz
+-rwxrwxrwx 1 hkjang hkjang  89 Sep 20  2026 dartfly-v2.72.0.tar.gz.sha256

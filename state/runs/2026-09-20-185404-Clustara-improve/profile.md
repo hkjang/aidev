@@ -10,7 +10,7 @@
   - internal/action/ — 승인 영향도 및 액션; prometheus/harbor/gitprovider 등은 외부 연동.
   - docs/ — 운영·관리·사용자 가이드, API 표, K8S_PHASE2_PLAN.md(완료된 계획이므로 현재 구현은 코드 우선).
   - scripts/, deploy/, sdk/ — 릴리즈·운영 배포·클라이언트 SDK.
-- 빌드·테스트: `go build ./...`, `go vet ./...`, `go test ./...`. 이번 정찰 build/vet 통과, `go test ./internal/analyzer` 캐시 통과; proxy 테스트 결과는 brief.md 기록 참조. 전체 테스트는 과거 약 80초이며 이번 전체 실행 미실시.
+- 빌드·테스트: `go build ./...`, `go vet ./...`, `go test ./...`. 이번 정찰 build/vet 및 `go test ./internal/analyzer ./internal/proxy` 통과(analyzer cached, proxy 58.193초). 전체 테스트는 과거 약 80초이며 이번 전체 실행 미실시.
 - 관례: 영어 fix(scope)/feat(scope) 커밋, 별도 chore 릴리즈. 런타임 설정 레지스트리·환경변수. SQL은 SQLite/PG 호환 bind 및 CREATE TABLE IF NOT EXISTS 패턴. 코드 주석 영어·UI 한국어. 버전/changelog/docs 마커는 개선 구현과 분리.
 - 위험 구역: proxy/server.go의 currentAccessClaims·인증, mcp_oauth.go·keycloak*.go, analyzer/policy.go의 Deny 게이트, store/sqlstore.go의 DDL, DW fact 스키마. restrictedProfileViolations는 포스처와 정책 공용.
 - 자주 깨지는 곳: 전 클러스터 분석에서 namespace/name/nodeName만으로 조인·dedup하는 코드. 이번 RCA 이벤트/리비전 키도 같은 유형이며 자원 태그·NodePressure Pod 집계는 별도 보류. map 순회 순서에 의존하는 테스트를 피한다.

@@ -1,0 +1,76 @@
+TAP version 13
+# Subtest: selection clears old SQL, table and actions during loading and failure
+ok 1 - selection clears old SQL, table and actions during loading and failure
+  ---
+  duration_ms: 5.075441
+  type: 'test'
+  ...
+# Subtest: late success cannot replace the latest detail
+ok 2 - late success cannot replace the latest detail
+  ---
+  duration_ms: 3.461393
+  type: 'test'
+  ...
+# Subtest: late failure cannot replace the latest detail
+ok 3 - late failure cannot replace the latest detail
+  ---
+  duration_ms: 2.198148
+  type: 'test'
+  ...
+# Subtest: same ID selected twice still ignores the earlier response
+ok 4 - same ID selected twice still ignores the earlier response
+  ---
+  duration_ms: 2.195901
+  type: 'test'
+  ...
+# Subtest: delete fixes its ID, blocks duplicates and preserves B (loading)
+ok 5 - delete fixes its ID, blocks duplicates and preserves B (loading)
+  ---
+  duration_ms: 2.409452
+  type: 'test'
+  ...
+# Subtest: delete fixes its ID, blocks duplicates and preserves B (ready)
+ok 6 - delete fixes its ID, blocks duplicates and preserves B (ready)
+  ---
+  duration_ms: 2.542698
+  type: 'test'
+  ...
+# Subtest: deleting A invalidates an in-flight re-selection of A
+ok 7 - deleting A invalidates an in-flight re-selection of A
+  ---
+  duration_ms: 2.2489
+  type: 'test'
+  ...
+# Subtest: delete failure re-enables retry without clearing the current detail
+ok 8 - delete failure re-enables retry without clearing the current detail
+  ---
+  duration_ms: 1.994557
+  type: 'test'
+  ...
+# Subtest: successful deletion clears A and removes its card before list refresh
+ok 9 - successful deletion clears A and removes its card before list refresh
+  ---
+  duration_ms: 2.205029
+  type: 'test'
+  ...
+# Subtest: delete failure preserves a later selection and allows deleting its own ID
+ok 10 - delete failure preserves a later selection and allows deleting its own ID
+  ---
+  duration_ms: 2.225993
+  type: 'test'
+  ...
+# Subtest: late success cannot revive A after the latest selection failed
+ok 11 - late success cannot revive A after the latest selection failed
+  ---
+  duration_ms: 2.052227
+  type: 'test'
+  ...
+1..11
+# tests 11
+# suites 0
+# pass 11
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 32.716741

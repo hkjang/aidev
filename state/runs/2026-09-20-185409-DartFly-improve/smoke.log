@@ -1,0 +1,114 @@
+== 빌드 ==
+== 메타 DB 기동 ==
+== 서버 기동 ==
+== 정적 자산 ==
+== HTML 직접 접근 차단 ==
+== 로그인 ==
+  반복 실패 차단됨(429)
+== 페이지 라우트 ==
+== 로그인한 채로 /login ==
+== 감사 사슬 ==
+  기록 실패가 /metrics·/readyz 에 드러남
+== 사용 시간대 정책의 적용 범위 ==
+  질의·탐색기 모두 차단됨(403)
+== 자기 신청 자기 승인 차단 ==
+  본인 승인 거부됨(400)
+== 계정 차단의 즉시 반영 ==
+  차단 즉시 반영됨(200 -> 401)
+== 데이터 뷰어의 암호문 노출 ==
+  암호문 노출 없음
+== 큰 정수가 화면까지 그대로 ==
+  BIGINT 가 화면에서도 정확함
+== 값이 큰 결과의 상한 ==
+  응답 33607903바이트로 끊기고 이유가 화면·내려받기에 남음
+== 저장할 수 없는 크기의 안내 ==
+  세 번 모두 같은 안내, 주소 노출·빈 항목 없음
+== 메타 DB 가 죽었을 때 ==
+  readyz 503 -> 복구 후 200, 주소 노출 없음
+== 외부로 나가는 내용의 마스킹 ==
+  전역 패턴이 AI 경로에도 적용됨
+  세션 목록의 질의문에도 적용됨
+== 브라우저 점검 ==
+Traceback (most recent call last):
+  File "/home/hkjang/.cache/auto-improve-wt/DartFly/test/smoke/pages.py", line 77, in <module>
+    sys.exit(main())
+             ~~~~^^
+  File "/home/hkjang/.cache/auto-improve-wt/DartFly/test/smoke/pages.py", line 37, in main
+    browser = play.chromium.launch(args=["--no-sandbox"])
+  File "/home/hkjang/miniconda3/lib/python3.13/site-packages/playwright/sync_api/_generated.py", line 16814, in launch
+    self._sync(
+    ~~~~~~~~~~^
+        self._impl_obj.launch(
+        ^^^^^^^^^^^^^^^^^^^^^^
+    ...<17 lines>...
+        )
+        ^
+    )
+    ^
+  File "/home/hkjang/miniconda3/lib/python3.13/site-packages/playwright/_impl/_sync_base.py", line 115, in _sync
+    return task.result()
+           ~~~~~~~~~~~^^
+  File "/home/hkjang/miniconda3/lib/python3.13/site-packages/playwright/_impl/_browser_type.py", line 101, in launch
+    await self._channel.send(
+        "launch", TimeoutSettings.launch_timeout, params
+    )
+  File "/home/hkjang/miniconda3/lib/python3.13/site-packages/playwright/_impl/_connection.py", line 76, in send
+    return await self._connection.wrap_api_call(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<3 lines>...
+    )
+    ^
+  File "/home/hkjang/miniconda3/lib/python3.13/site-packages/playwright/_impl/_connection.py", line 632, in wrap_api_call
+    raise rewrite_error(error, f"{parsed_st['apiName']}: {error}") from None
+playwright._impl._errors.Error: BrowserType.launch: Executable doesn't exist at /mnt/c/Users/USER/projects/aidev/state/runs/2026-09-20-185409-DartFly-improve/home/.cache/ms-playwright/chromium_headless_shell-1243/chrome-headless-shell-linux64/chrome-headless-shell
+╔════════════════════════════════════════════════════════════╗
+║ Looks like Playwright was just installed or updated.       ║
+║ Please run the following command to download new browsers: ║
+║                                                            ║
+║     playwright install                                     ║
+║                                                            ║
+║ <3 Playwright Team                                         ║
+╚════════════════════════════════════════════════════════════╝
+== 편집기 점검 ==
+Traceback (most recent call last):
+  File "/home/hkjang/.cache/auto-improve-wt/DartFly/test/smoke/editor.py", line 139, in <module>
+    sys.exit(main())
+             ~~~~^^
+  File "/home/hkjang/.cache/auto-improve-wt/DartFly/test/smoke/editor.py", line 37, in main
+    browser = play.chromium.launch(args=["--no-sandbox"])
+  File "/home/hkjang/miniconda3/lib/python3.13/site-packages/playwright/sync_api/_generated.py", line 16814, in launch
+    self._sync(
+    ~~~~~~~~~~^
+        self._impl_obj.launch(
+        ^^^^^^^^^^^^^^^^^^^^^^
+    ...<17 lines>...
+        )
+        ^
+    )
+    ^
+  File "/home/hkjang/miniconda3/lib/python3.13/site-packages/playwright/_impl/_sync_base.py", line 115, in _sync
+    return task.result()
+           ~~~~~~~~~~~^^
+  File "/home/hkjang/miniconda3/lib/python3.13/site-packages/playwright/_impl/_browser_type.py", line 101, in launch
+    await self._channel.send(
+        "launch", TimeoutSettings.launch_timeout, params
+    )
+  File "/home/hkjang/miniconda3/lib/python3.13/site-packages/playwright/_impl/_connection.py", line 76, in send
+    return await self._connection.wrap_api_call(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<3 lines>...
+    )
+    ^
+  File "/home/hkjang/miniconda3/lib/python3.13/site-packages/playwright/_impl/_connection.py", line 632, in wrap_api_call
+    raise rewrite_error(error, f"{parsed_st['apiName']}: {error}") from None
+playwright._impl._errors.Error: BrowserType.launch: Executable doesn't exist at /mnt/c/Users/USER/projects/aidev/state/runs/2026-09-20-185409-DartFly-improve/home/.cache/ms-playwright/chromium_headless_shell-1243/chrome-headless-shell-linux64/chrome-headless-shell
+╔════════════════════════════════════════════════════════════╗
+║ Looks like Playwright was just installed or updated.       ║
+║ Please run the following command to download new browsers: ║
+║                                                            ║
+║     playwright install                                     ║
+║                                                            ║
+║ <3 Playwright Team                                         ║
+╚════════════════════════════════════════════════════════════╝
+서버를 http://127.0.0.1:9911 에 띄워 뒀습니다(admin@example.com / Smoke-Test-1234). 정리: bash test/smoke/run.sh --down
+== 실패 ==
