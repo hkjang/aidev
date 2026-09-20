@@ -30,3 +30,4 @@
 - [러너 21:25] pr created — https://github.com/hkjang/aiportal-front/pull/18
 - [러너 21:26] ci passed — 검사 없음 — 정책으로 허용
 - [러너 21:26] merge done — 9dde1cf
+- [러너 21:28] release failed — 릴리즈 안 함: 필수 marketing:product-launch 및 technology:release-and-deployment 스킬과 Skill 도구를 제공된 도구 목록 및 로컬 스킬 경로에서 찾지 못해 요구 절차와
