@@ -1,0 +1,1004 @@
+--- FAIL: TestParseTimeExpressionsCalendar (0.00s)
+    --- FAIL: TestParseTimeExpressionsCalendar/2025-02-30 (0.00s)
+        eval_test.go:263: invalid date yielded ranges: [{Expression:2025-02-30 Start:20250230 End:20250230 Granularity:day Comparison: Note:}]
+    --- FAIL: TestParseTimeExpressionsCalendar/2025-02-29 (0.00s)
+        eval_test.go:263: invalid date yielded ranges: [{Expression:2025-02-29 Start:20250229 End:20250229 Granularity:day Comparison: Note:}]
+    --- FAIL: TestParseTimeExpressionsCalendar/2025-04-31 (0.00s)
+        eval_test.go:263: invalid date yielded ranges: [{Expression:2025-04-31 Start:20250431 End:20250431 Granularity:day Comparison: Note:}]
+    --- FAIL: TestParseTimeExpressionsCalendar/2025-01-00 (0.00s)
+        eval_test.go:263: invalid date yielded ranges: [{Expression:2025-01-00 Start:20250100 End:20250100 Granularity:day Comparison: Note:}]
+    --- FAIL: TestParseTimeExpressionsCalendar/2025.02.30 (0.00s)
+        eval_test.go:263: invalid date yielded ranges: [{Expression:2025.02.30 Start:20250230 End:20250230 Granularity:day Comparison: Note:}]
+    --- FAIL: TestParseTimeExpressionsCalendar/2025.02.29 (0.00s)
+        eval_test.go:263: invalid date yielded ranges: [{Expression:2025.02.29 Start:20250229 End:20250229 Granularity:day Comparison: Note:}]
+    --- FAIL: TestParseTimeExpressionsCalendar/2025.04.31 (0.00s)
+        eval_test.go:263: invalid date yielded ranges: [{Expression:2025.04.31 Start:20250431 End:20250431 Granularity:day Comparison: Note:}]
+    --- FAIL: TestParseTimeExpressionsCalendar/2025.01.00 (0.00s)
+        eval_test.go:263: invalid date yielded ranges: [{Expression:2025.01.00 Start:20250100 End:20250100 Granularity:day Comparison: Note:}]
+    --- FAIL: TestParseTimeExpressionsCalendar/2025/02/30 (0.00s)
+        eval_test.go:263: invalid date yielded ranges: [{Expression:2025/02/30 Start:20250230 End:20250230 Granularity:day Comparison: Note:}]
+    --- FAIL: TestParseTimeExpressionsCalendar/2025/02/29 (0.00s)
+        eval_test.go:263: invalid date yielded ranges: [{Expression:2025/02/29 Start:20250229 End:20250229 Granularity:day Comparison: Note:}]
+    --- FAIL: TestParseTimeExpressionsCalendar/2025/04/31 (0.00s)
+        eval_test.go:263: invalid date yielded ranges: [{Expression:2025/04/31 Start:20250431 End:20250431 Granularity:day Comparison: Note:}]
+    --- FAIL: TestParseTimeExpressionsCalendar/2025/01/00 (0.00s)
+        eval_test.go:263: invalid date yielded ranges: [{Expression:2025/01/00 Start:20250100 End:20250100 Granularity:day Comparison: Note:}]
+    --- FAIL: TestParseTimeExpressionsCalendar/20250230 (0.00s)
+        eval_test.go:263: invalid date yielded ranges: [{Expression:20250230 Start:20250230 End:20250230 Granularity:day Comparison: Note:}]
+    --- FAIL: TestParseTimeExpressionsCalendar/20250229 (0.00s)
+        eval_test.go:263: invalid date yielded ranges: [{Expression:20250229 Start:20250229 End:20250229 Granularity:day Comparison: Note:}]
+    --- FAIL: TestParseTimeExpressionsCalendar/20250431 (0.00s)
+        eval_test.go:263: invalid date yielded ranges: [{Expression:20250431 Start:20250431 End:20250431 Granularity:day Comparison: Note:}]
+    --- FAIL: TestParseTimeExpressionsCalendar/20250100 (0.00s)
+        eval_test.go:263: invalid date yielded ranges: [{Expression:20250100 Start:20250100 End:20250100 Granularity:day Comparison: Note:}]
+FAIL
+FAIL	jasql/internal/catalog	0.005s
+--- FAIL: TestTimeCalendarTools (0.09s)
+    --- FAIL: TestTimeCalendarTools/DATE_YYYYMMDD (0.02s)
+        --- FAIL: TestTimeCalendarTools/DATE_YYYYMMDD/2025-02-30/resolve_time (0.00s)
+            timeparse_test.go:110: ranges = [{Expression:2025-02-30 Start:20250230 End:20250230 Granularity:day Comparison: Note:}]
+        --- FAIL: TestTimeCalendarTools/DATE_YYYYMMDD/2025-02-30/get_schema_context (0.00s)
+            timeparse_test.go:131: hint = {Expression:2025-02-30 Column:BS_DT Condition:BS_DT = '20250230'}
+        --- FAIL: TestTimeCalendarTools/DATE_YYYYMMDD/2025-02-30/build_sql_skeleton (0.00s)
+            timeparse_test.go:144: invalid date in SQL: SELECT /* SLOT: 출력 컬럼 (차원 먼저, 지표 다음) */
+                FROM TS.CAL0 T1
+                WHERE T1.BS_DT = '20250230'
+                  AND /* SLOT: 추가 필터 조건 */
+                /* SLOT: GROUP BY 차원 (SELECT의 비집계 컬럼과 동일해야 함) */
+                /* SLOT: ORDER BY */
+                FETCH FIRST 1000 ROWS ONLY
+        --- FAIL: TestTimeCalendarTools/DATE_YYYYMMDD/2025-02-30_및_2024-02-29/resolve_time (0.00s)
+            timeparse_test.go:110: ranges = [{Expression:2025-02-30 Start:20250230 End:20250230 Granularity:day Comparison: Note:} {Expression:2024-02-29 Start:20240229 End:20240229 Granularity:day Comparison: Note:}]
+        --- FAIL: TestTimeCalendarTools/DATE_YYYYMMDD/2025-02-30_및_2024-02-29/get_schema_context (0.00s)
+            timeparse_test.go:131: hint = {Expression:2025-02-30 Column:BS_DT Condition:BS_DT = '20250230'}
+        --- FAIL: TestTimeCalendarTools/DATE_YYYYMMDD/2025-02-30_및_2024-02-29/build_sql_skeleton (0.00s)
+            timeparse_test.go:144: invalid date in SQL: SELECT /* SLOT: 출력 컬럼 (차원 먼저, 지표 다음) */
+                FROM TS.CAL0 T1
+                WHERE T1.BS_DT = '20250230'
+                  AND /* SLOT: 추가 필터 조건 */
+                /* SLOT: GROUP BY 차원 (SELECT의 비집계 컬럼과 동일해야 함) */
+                /* SLOT: ORDER BY */
+                FETCH FIRST 1000 ROWS ONLY
+        --- FAIL: TestTimeCalendarTools/DATE_YYYYMMDD/2025-02-29/resolve_time (0.00s)
+            timeparse_test.go:110: ranges = [{Expression:2025-02-29 Start:20250229 End:20250229 Granularity:day Comparison: Note:}]
+        --- FAIL: TestTimeCalendarTools/DATE_YYYYMMDD/2025-02-29/get_schema_context (0.00s)
+            timeparse_test.go:131: hint = {Expression:2025-02-29 Column:BS_DT Condition:BS_DT = '20250229'}
+        --- FAIL: TestTimeCalendarTools/DATE_YYYYMMDD/2025-02-29/build_sql_skeleton (0.00s)
+            timeparse_test.go:144: invalid date in SQL: SELECT /* SLOT: 출력 컬럼 (차원 먼저, 지표 다음) */
+                FROM TS.CAL0 T1
+                WHERE T1.BS_DT = '20250229'
+                  AND /* SLOT: 추가 필터 조건 */
+                /* SLOT: GROUP BY 차원 (SELECT의 비집계 컬럼과 동일해야 함) */
+                /* SLOT: ORDER BY */
+                FETCH FIRST 1000 ROWS ONLY
+        --- FAIL: TestTimeCalendarTools/DATE_YYYYMMDD/2025-02-29_및_2024-02-29/resolve_time (0.00s)
+            timeparse_test.go:110: ranges = [{Expression:2025-02-29 Start:20250229 End:20250229 Granularity:day Comparison: Note:} {Expression:2024-02-29 Start:20240229 End:20240229 Granularity:day Comparison: Note:}]
+        --- FAIL: TestTimeCalendarTools/DATE_YYYYMMDD/2025-02-29_및_2024-02-29/get_schema_context (0.00s)
+            timeparse_test.go:131: hint = {Expression:2025-02-29 Column:BS_DT Condition:BS_DT = '20250229'}
+        --- FAIL: TestTimeCalendarTools/DATE_YYYYMMDD/2025-02-29_및_2024-02-29/build_sql_skeleton (0.00s)
+            timeparse_test.go:144: invalid date in SQL: SELECT /* SLOT: 출력 컬럼 (차원 먼저, 지표 다음) */
+                FROM TS.CAL0 T1
+                WHERE T1.BS_DT = '20250229'
+                  AND /* SLOT: 추가 필터 조건 */
+                /* SLOT: GROUP BY 차원 (SELECT의 비집계 컬럼과 동일해야 함) */
+                /* SLOT: ORDER BY */
+                FETCH FIRST 1000 ROWS ONLY
+        --- FAIL: TestTimeCalendarTools/DATE_YYYYMMDD/2025-04-31/resolve_time (0.00s)
+            timeparse_test.go:110: ranges = [{Expression:2025-04-31 Start:20250431 End:20250431 Granularity:day Comparison: Note:}]
+        --- FAIL: TestTimeCalendarTools/DATE_YYYYMMDD/2025-04-31/get_schema_context (0.00s)
+            timeparse_test.go:131: hint = {Expression:2025-04-31 Column:BS_DT Condition:BS_DT = '20250431'}
+        --- FAIL: TestTimeCalendarTools/DATE_YYYYMMDD/2025-04-31/build_sql_skeleton (0.00s)
+            timeparse_test.go:144: invalid date in SQL: SELECT /* SLOT: 출력 컬럼 (차원 먼저, 지표 다음) */
+                FROM TS.CAL0 T1
+                WHERE T1.BS_DT = '20250431'
+                  AND /* SLOT: 추가 필터 조건 */
+                /* SLOT: GROUP BY 차원 (SELECT의 비집계 컬럼과 동일해야 함) */
+                /* SLOT: ORDER BY */
+                FETCH FIRST 1000 ROWS ONLY
+        --- FAIL: TestTimeCalendarTools/DATE_YYYYMMDD/2025-04-31_및_2024-02-29/resolve_time (0.00s)
+            timeparse_test.go:110: ranges = [{Expression:2025-04-31 Start:20250431 End:20250431 Granularity:day Comparison: Note:} {Expression:2024-02-29 Start:20240229 End:20240229 Granularity:day Comparison: Note:}]
+        --- FAIL: TestTimeCalendarTools/DATE_YYYYMMDD/2025-04-31_및_2024-02-29/get_schema_context (0.00s)
+            timeparse_test.go:131: hint = {Expression:2025-04-31 Column:BS_DT Condition:BS_DT = '20250431'}
+        --- FAIL: TestTimeCalendarTools/DATE_YYYYMMDD/2025-04-31_및_2024-02-29/build_sql_skeleton (0.00s)
+            timeparse_test.go:144: invalid date in SQL: SELECT /* SLOT: 출력 컬럼 (차원 먼저, 지표 다음) */
+                FROM TS.CAL0 T1
+                WHERE T1.BS_DT = '20250431'
+                  AND /* SLOT: 추가 필터 조건 */
+                /* SLOT: GROUP BY 차원 (SELECT의 비집계 컬럼과 동일해야 함) */
+                /* SLOT: ORDER BY */
+                FETCH FIRST 1000 ROWS ONLY
+        --- FAIL: TestTimeCalendarTools/DATE_YYYYMMDD/2025-01-00/resolve_time (0.00s)
+            timeparse_test.go:110: ranges = [{Expression:2025-01-00 Start:20250100 End:20250100 Granularity:day Comparison: Note:}]
+        --- FAIL: TestTimeCalendarTools/DATE_YYYYMMDD/2025-01-00/get_schema_context (0.00s)
+            timeparse_test.go:131: hint = {Expression:2025-01-00 Column:BS_DT Condition:BS_DT = '20250100'}
+        --- FAIL: TestTimeCalendarTools/DATE_YYYYMMDD/2025-01-00/build_sql_skeleton (0.00s)
+            timeparse_test.go:144: invalid date in SQL: SELECT /* SLOT: 출력 컬럼 (차원 먼저, 지표 다음) */
+                FROM TS.CAL0 T1
+                WHERE T1.BS_DT = '20250100'
+                  AND /* SLOT: 추가 필터 조건 */
+                /* SLOT: GROUP BY 차원 (SELECT의 비집계 컬럼과 동일해야 함) */
+                /* SLOT: ORDER BY */
+                FETCH FIRST 1000 ROWS ONLY
+        --- FAIL: TestTimeCalendarTools/DATE_YYYYMMDD/2025-01-00_및_2024-02-29/resolve_time (0.00s)
+            timeparse_test.go:110: ranges = [{Expression:2025-01-00 Start:20250100 End:20250100 Granularity:day Comparison: Note:} {Expression:2024-02-29 Start:20240229 End:20240229 Granularity:day Comparison: Note:}]
+        --- FAIL: TestTimeCalendarTools/DATE_YYYYMMDD/2025-01-00_및_2024-02-29/get_schema_context (0.00s)
+            timeparse_test.go:131: hint = {Expression:2025-01-00 Column:BS_DT Condition:BS_DT = '20250100'}
+        --- FAIL: TestTimeCalendarTools/DATE_YYYYMMDD/2025-01-00_및_2024-02-29/build_sql_skeleton (0.00s)
+            timeparse_test.go:144: invalid date in SQL: SELECT /* SLOT: 출력 컬럼 (차원 먼저, 지표 다음) */
+                FROM TS.CAL0 T1
+                WHERE T1.BS_DT = '20250100'
+                  AND /* SLOT: 추가 필터 조건 */
+                /* SLOT: GROUP BY 차원 (SELECT의 비집계 컬럼과 동일해야 함) */
+                /* SLOT: ORDER BY */
+                FETCH FIRST 1000 ROWS ONLY
+        --- FAIL: TestTimeCalendarTools/DATE_YYYYMMDD/2025.02.30/resolve_time (0.00s)
+            timeparse_test.go:110: ranges = [{Expression:2025.02.30 Start:20250230 End:20250230 Granularity:day Comparison: Note:}]
+        --- FAIL: TestTimeCalendarTools/DATE_YYYYMMDD/2025.02.30/get_schema_context (0.00s)
+            timeparse_test.go:131: hint = {Expression:2025.02.30 Column:BS_DT Condition:BS_DT = '20250230'}
+        --- FAIL: TestTimeCalendarTools/DATE_YYYYMMDD/2025.02.30/build_sql_skeleton (0.00s)
+            timeparse_test.go:144: invalid date in SQL: SELECT /* SLOT: 출력 컬럼 (차원 먼저, 지표 다음) */
+                FROM TS.CAL0 T1
+                WHERE T1.BS_DT = '20250230'
+                  AND /* SLOT: 추가 필터 조건 */
+                /* SLOT: GROUP BY 차원 (SELECT의 비집계 컬럼과 동일해야 함) */
+                /* SLOT: ORDER BY */
+                FETCH FIRST 1000 ROWS ONLY
+        --- FAIL: TestTimeCalendarTools/DATE_YYYYMMDD/2025.02.30_및_2024.02.29/resolve_time (0.00s)
+            timeparse_test.go:110: ranges = [{Expression:2025.02.30 Start:20250230 End:20250230 Granularity:day Comparison: Note:} {Expression:2024.02.29 Start:20240229 End:20240229 Granularity:day Comparison: Note:}]
+        --- FAIL: TestTimeCalendarTools/DATE_YYYYMMDD/2025.02.30_및_2024.02.29/get_schema_context (0.00s)
+            timeparse_test.go:131: hint = {Expression:2025.02.30 Column:BS_DT Condition:BS_DT = '20250230'}
+        --- FAIL: TestTimeCalendarTools/DATE_YYYYMMDD/2025.02.30_및_2024.02.29/build_sql_skeleton (0.00s)
+            timeparse_test.go:144: invalid date in SQL: SELECT /* SLOT: 출력 컬럼 (차원 먼저, 지표 다음) */
+                FROM TS.CAL0 T1
+                WHERE T1.BS_DT = '20250230'
+                  AND /* SLOT: 추가 필터 조건 */
+                /* SLOT: GROUP BY 차원 (SELECT의 비집계 컬럼과 동일해야 함) */
+                /* SLOT: ORDER BY */
+                FETCH FIRST 1000 ROWS ONLY
+        --- FAIL: TestTimeCalendarTools/DATE_YYYYMMDD/2025.02.29/resolve_time (0.00s)
+            timeparse_test.go:110: ranges = [{Expression:2025.02.29 Start:20250229 End:20250229 Granularity:day Comparison: Note:}]
+        --- FAIL: TestTimeCalendarTools/DATE_YYYYMMDD/2025.02.29/get_schema_context (0.00s)
+            timeparse_test.go:131: hint = {Expression:2025.02.29 Column:BS_DT Condition:BS_DT = '20250229'}
+        --- FAIL: TestTimeCalendarTools/DATE_YYYYMMDD/2025.02.29/build_sql_skeleton (0.00s)
+            timeparse_test.go:144: invalid date in SQL: SELECT /* SLOT: 출력 컬럼 (차원 먼저, 지표 다음) */
+                FROM TS.CAL0 T1
+                WHERE T1.BS_DT = '20250229'
+                  AND /* SLOT: 추가 필터 조건 */
+                /* SLOT: GROUP BY 차원 (SELECT의 비집계 컬럼과 동일해야 함) */
+                /* SLOT: ORDER BY */
+                FETCH FIRST 1000 ROWS ONLY
+        --- FAIL: TestTimeCalendarTools/DATE_YYYYMMDD/2025.02.29_및_2024.02.29/resolve_time (0.00s)
+            timeparse_test.go:110: ranges = [{Expression:2025.02.29 Start:20250229 End:20250229 Granularity:day Comparison: Note:} {Expression:2024.02.29 Start:20240229 End:20240229 Granularity:day Comparison: Note:}]
+        --- FAIL: TestTimeCalendarTools/DATE_YYYYMMDD/2025.02.29_및_2024.02.29/get_schema_context (0.00s)
+            timeparse_test.go:131: hint = {Expression:2025.02.29 Column:BS_DT Condition:BS_DT = '20250229'}
+        --- FAIL: TestTimeCalendarTools/DATE_YYYYMMDD/2025.02.29_및_2024.02.29/build_sql_skeleton (0.00s)
+            timeparse_test.go:144: invalid date in SQL: SELECT /* SLOT: 출력 컬럼 (차원 먼저, 지표 다음) */
+                FROM TS.CAL0 T1
+                WHERE T1.BS_DT = '20250229'
+                  AND /* SLOT: 추가 필터 조건 */
+                /* SLOT: GROUP BY 차원 (SELECT의 비집계 컬럼과 동일해야 함) */
+                /* SLOT: ORDER BY */
+                FETCH FIRST 1000 ROWS ONLY
+        --- FAIL: TestTimeCalendarTools/DATE_YYYYMMDD/2025.04.31/resolve_time (0.00s)
+            timeparse_test.go:110: ranges = [{Expression:2025.04.31 Start:20250431 End:20250431 Granularity:day Comparison: Note:}]
+        --- FAIL: TestTimeCalendarTools/DATE_YYYYMMDD/2025.04.31/get_schema_context (0.00s)
+            timeparse_test.go:131: hint = {Expression:2025.04.31 Column:BS_DT Condition:BS_DT = '20250431'}
+        --- FAIL: TestTimeCalendarTools/DATE_YYYYMMDD/2025.04.31/build_sql_skeleton (0.00s)
+            timeparse_test.go:144: invalid date in SQL: SELECT /* SLOT: 출력 컬럼 (차원 먼저, 지표 다음) */
+                FROM TS.CAL0 T1
+                WHERE T1.BS_DT = '20250431'
+                  AND /* SLOT: 추가 필터 조건 */
+                /* SLOT: GROUP BY 차원 (SELECT의 비집계 컬럼과 동일해야 함) */
+                /* SLOT: ORDER BY */
+                FETCH FIRST 1000 ROWS ONLY
+        --- FAIL: TestTimeCalendarTools/DATE_YYYYMMDD/2025.04.31_및_2024.02.29/resolve_time (0.00s)
+            timeparse_test.go:110: ranges = [{Expression:2025.04.31 Start:20250431 End:20250431 Granularity:day Comparison: Note:} {Expression:2024.02.29 Start:20240229 End:20240229 Granularity:day Comparison: Note:}]
+        --- FAIL: TestTimeCalendarTools/DATE_YYYYMMDD/2025.04.31_및_2024.02.29/get_schema_context (0.00s)
+            timeparse_test.go:131: hint = {Expression:2025.04.31 Column:BS_DT Condition:BS_DT = '20250431'}
+        --- FAIL: TestTimeCalendarTools/DATE_YYYYMMDD/2025.04.31_및_2024.02.29/build_sql_skeleton (0.00s)
+            timeparse_test.go:144: invalid date in SQL: SELECT /* SLOT: 출력 컬럼 (차원 먼저, 지표 다음) */
+                FROM TS.CAL0 T1
+                WHERE T1.BS_DT = '20250431'
+                  AND /* SLOT: 추가 필터 조건 */
+                /* SLOT: GROUP BY 차원 (SELECT의 비집계 컬럼과 동일해야 함) */
+                /* SLOT: ORDER BY */
+                FETCH FIRST 1000 ROWS ONLY
+        --- FAIL: TestTimeCalendarTools/DATE_YYYYMMDD/2025.01.00/resolve_time (0.00s)
+            timeparse_test.go:110: ranges = [{Expression:2025.01.00 Start:20250100 End:20250100 Granularity:day Comparison: Note:}]
+        --- FAIL: TestTimeCalendarTools/DATE_YYYYMMDD/2025.01.00/get_schema_context (0.00s)
+            timeparse_test.go:131: hint = {Expression:2025.01.00 Column:BS_DT Condition:BS_DT = '20250100'}
+        --- FAIL: TestTimeCalendarTools/DATE_YYYYMMDD/2025.01.00/build_sql_skeleton (0.00s)
+            timeparse_test.go:144: invalid date in SQL: SELECT /* SLOT: 출력 컬럼 (차원 먼저, 지표 다음) */
+                FROM TS.CAL0 T1
+                WHERE T1.BS_DT = '20250100'
+                  AND /* SLOT: 추가 필터 조건 */
+                /* SLOT: GROUP BY 차원 (SELECT의 비집계 컬럼과 동일해야 함) */
+                /* SLOT: ORDER BY */
+                FETCH FIRST 1000 ROWS ONLY
+        --- FAIL: TestTimeCalendarTools/DATE_YYYYMMDD/2025.01.00_및_2024.02.29/resolve_time (0.00s)
+            timeparse_test.go:110: ranges = [{Expression:2025.01.00 Start:20250100 End:20250100 Granularity:day Comparison: Note:} {Expression:2024.02.29 Start:20240229 End:20240229 Granularity:day Comparison: Note:}]
+        --- FAIL: TestTimeCalendarTools/DATE_YYYYMMDD/2025.01.00_및_2024.02.29/get_schema_context (0.00s)
+            timeparse_test.go:131: hint = {Expression:2025.01.00 Column:BS_DT Condition:BS_DT = '20250100'}
+        --- FAIL: TestTimeCalendarTools/DATE_YYYYMMDD/2025.01.00_및_2024.02.29/build_sql_skeleton (0.00s)
+            timeparse_test.go:144: invalid date in SQL: SELECT /* SLOT: 출력 컬럼 (차원 먼저, 지표 다음) */
+                FROM TS.CAL0 T1
+                WHERE T1.BS_DT = '20250100'
+                  AND /* SLOT: 추가 필터 조건 */
+                /* SLOT: GROUP BY 차원 (SELECT의 비집계 컬럼과 동일해야 함) */
+                /* SLOT: ORDER BY */
+                FETCH FIRST 1000 ROWS ONLY
+        --- FAIL: TestTimeCalendarTools/DATE_YYYYMMDD/2025/02/30/resolve_time (0.00s)
+            timeparse_test.go:110: ranges = [{Expression:2025/02/30 Start:20250230 End:20250230 Granularity:day Comparison: Note:}]
+        --- FAIL: TestTimeCalendarTools/DATE_YYYYMMDD/2025/02/30/get_schema_context (0.00s)
+            timeparse_test.go:131: hint = {Expression:2025/02/30 Column:BS_DT Condition:BS_DT = '20250230'}
+        --- FAIL: TestTimeCalendarTools/DATE_YYYYMMDD/2025/02/30/build_sql_skeleton (0.00s)
+            timeparse_test.go:144: invalid date in SQL: SELECT /* SLOT: 출력 컬럼 (차원 먼저, 지표 다음) */
+                FROM TS.CAL0 T1
+                WHERE T1.BS_DT = '20250230'
+                  AND /* SLOT: 추가 필터 조건 */
+                /* SLOT: GROUP BY 차원 (SELECT의 비집계 컬럼과 동일해야 함) */
+                /* SLOT: ORDER BY */
+                FETCH FIRST 1000 ROWS ONLY
+        --- FAIL: TestTimeCalendarTools/DATE_YYYYMMDD/2025/02/30_및_2024/02/29/resolve_time (0.00s)
+            timeparse_test.go:110: ranges = [{Expression:2025/02/30 Start:20250230 End:20250230 Granularity:day Comparison: Note:} {Expression:2024/02/29 Start:20240229 End:20240229 Granularity:day Comparison: Note:}]
+        --- FAIL: TestTimeCalendarTools/DATE_YYYYMMDD/2025/02/30_및_2024/02/29/get_schema_context (0.00s)
+            timeparse_test.go:131: hint = {Expression:2025/02/30 Column:BS_DT Condition:BS_DT = '20250230'}
+        --- FAIL: TestTimeCalendarTools/DATE_YYYYMMDD/2025/02/30_및_2024/02/29/build_sql_skeleton (0.00s)
+            timeparse_test.go:144: invalid date in SQL: SELECT /* SLOT: 출력 컬럼 (차원 먼저, 지표 다음) */
+                FROM TS.CAL0 T1
+                WHERE T1.BS_DT = '20250230'
+                  AND /* SLOT: 추가 필터 조건 */
+                /* SLOT: GROUP BY 차원 (SELECT의 비집계 컬럼과 동일해야 함) */
+                /* SLOT: ORDER BY */
+                FETCH FIRST 1000 ROWS ONLY
+        --- FAIL: TestTimeCalendarTools/DATE_YYYYMMDD/2025/02/29/resolve_time (0.00s)
+            timeparse_test.go:110: ranges = [{Expression:2025/02/29 Start:20250229 End:20250229 Granularity:day Comparison: Note:}]
+        --- FAIL: TestTimeCalendarTools/DATE_YYYYMMDD/2025/02/29/get_schema_context (0.00s)
+            timeparse_test.go:131: hint = {Expression:2025/02/29 Column:BS_DT Condition:BS_DT = '20250229'}
+        --- FAIL: TestTimeCalendarTools/DATE_YYYYMMDD/2025/02/29/build_sql_skeleton (0.00s)
+            timeparse_test.go:144: invalid date in SQL: SELECT /* SLOT: 출력 컬럼 (차원 먼저, 지표 다음) */
+                FROM TS.CAL0 T1
+                WHERE T1.BS_DT = '20250229'
+                  AND /* SLOT: 추가 필터 조건 */
+                /* SLOT: GROUP BY 차원 (SELECT의 비집계 컬럼과 동일해야 함) */
+                /* SLOT: ORDER BY */
+                FETCH FIRST 1000 ROWS ONLY
+        --- FAIL: TestTimeCalendarTools/DATE_YYYYMMDD/2025/02/29_및_2024/02/29/resolve_time (0.00s)
+            timeparse_test.go:110: ranges = [{Expression:2025/02/29 Start:20250229 End:20250229 Granularity:day Comparison: Note:} {Expression:2024/02/29 Start:20240229 End:20240229 Granularity:day Comparison: Note:}]
+        --- FAIL: TestTimeCalendarTools/DATE_YYYYMMDD/2025/02/29_및_2024/02/29/get_schema_context (0.00s)
+            timeparse_test.go:131: hint = {Expression:2025/02/29 Column:BS_DT Condition:BS_DT = '20250229'}
+        --- FAIL: TestTimeCalendarTools/DATE_YYYYMMDD/2025/02/29_및_2024/02/29/build_sql_skeleton (0.00s)
+            timeparse_test.go:144: invalid date in SQL: SELECT /* SLOT: 출력 컬럼 (차원 먼저, 지표 다음) */
+                FROM TS.CAL0 T1
+                WHERE T1.BS_DT = '20250229'
+                  AND /* SLOT: 추가 필터 조건 */
+                /* SLOT: GROUP BY 차원 (SELECT의 비집계 컬럼과 동일해야 함) */
+                /* SLOT: ORDER BY */
+                FETCH FIRST 1000 ROWS ONLY
+        --- FAIL: TestTimeCalendarTools/DATE_YYYYMMDD/2025/04/31/resolve_time (0.00s)
+            timeparse_test.go:110: ranges = [{Expression:2025/04/31 Start:20250431 End:20250431 Granularity:day Comparison: Note:}]
+        --- FAIL: TestTimeCalendarTools/DATE_YYYYMMDD/2025/04/31/get_schema_context (0.00s)
+            timeparse_test.go:131: hint = {Expression:2025/04/31 Column:BS_DT Condition:BS_DT = '20250431'}
+        --- FAIL: TestTimeCalendarTools/DATE_YYYYMMDD/2025/04/31/build_sql_skeleton (0.00s)
+            timeparse_test.go:144: invalid date in SQL: SELECT /* SLOT: 출력 컬럼 (차원 먼저, 지표 다음) */
+                FROM TS.CAL0 T1
+                WHERE T1.BS_DT = '20250431'
+                  AND /* SLOT: 추가 필터 조건 */
+                /* SLOT: GROUP BY 차원 (SELECT의 비집계 컬럼과 동일해야 함) */
+                /* SLOT: ORDER BY */
+                FETCH FIRST 1000 ROWS ONLY
+        --- FAIL: TestTimeCalendarTools/DATE_YYYYMMDD/2025/04/31_및_2024/02/29/resolve_time (0.00s)
+            timeparse_test.go:110: ranges = [{Expression:2025/04/31 Start:20250431 End:20250431 Granularity:day Comparison: Note:} {Expression:2024/02/29 Start:20240229 End:20240229 Granularity:day Comparison: Note:}]
+        --- FAIL: TestTimeCalendarTools/DATE_YYYYMMDD/2025/04/31_및_2024/02/29/get_schema_context (0.00s)
+            timeparse_test.go:131: hint = {Expression:2025/04/31 Column:BS_DT Condition:BS_DT = '20250431'}
+        --- FAIL: TestTimeCalendarTools/DATE_YYYYMMDD/2025/04/31_및_2024/02/29/build_sql_skeleton (0.00s)
+            timeparse_test.go:144: invalid date in SQL: SELECT /* SLOT: 출력 컬럼 (차원 먼저, 지표 다음) */
+                FROM TS.CAL0 T1
+                WHERE T1.BS_DT = '20250431'
+                  AND /* SLOT: 추가 필터 조건 */
+                /* SLOT: GROUP BY 차원 (SELECT의 비집계 컬럼과 동일해야 함) */
+                /* SLOT: ORDER BY */
+                FETCH FIRST 1000 ROWS ONLY
+        --- FAIL: TestTimeCalendarTools/DATE_YYYYMMDD/2025/01/00/resolve_time (0.00s)
+            timeparse_test.go:110: ranges = [{Expression:2025/01/00 Start:20250100 End:20250100 Granularity:day Comparison: Note:}]
+        --- FAIL: TestTimeCalendarTools/DATE_YYYYMMDD/2025/01/00/get_schema_context (0.00s)
+            timeparse_test.go:131: hint = {Expression:2025/01/00 Column:BS_DT Condition:BS_DT = '20250100'}
+        --- FAIL: TestTimeCalendarTools/DATE_YYYYMMDD/2025/01/00/build_sql_skeleton (0.00s)
+            timeparse_test.go:144: invalid date in SQL: SELECT /* SLOT: 출력 컬럼 (차원 먼저, 지표 다음) */
+                FROM TS.CAL0 T1
+                WHERE T1.BS_DT = '20250100'
+                  AND /* SLOT: 추가 필터 조건 */
+                /* SLOT: GROUP BY 차원 (SELECT의 비집계 컬럼과 동일해야 함) */
+                /* SLOT: ORDER BY */
+                FETCH FIRST 1000 ROWS ONLY
+        --- FAIL: TestTimeCalendarTools/DATE_YYYYMMDD/2025/01/00_및_2024/02/29/resolve_time (0.00s)
+            timeparse_test.go:110: ranges = [{Expression:2025/01/00 Start:20250100 End:20250100 Granularity:day Comparison: Note:} {Expression:2024/02/29 Start:20240229 End:20240229 Granularity:day Comparison: Note:}]
+        --- FAIL: TestTimeCalendarTools/DATE_YYYYMMDD/2025/01/00_및_2024/02/29/get_schema_context (0.00s)
+            timeparse_test.go:131: hint = {Expression:2025/01/00 Column:BS_DT Condition:BS_DT = '20250100'}
+        --- FAIL: TestTimeCalendarTools/DATE_YYYYMMDD/2025/01/00_및_2024/02/29/build_sql_skeleton (0.00s)
+            timeparse_test.go:144: invalid date in SQL: SELECT /* SLOT: 출력 컬럼 (차원 먼저, 지표 다음) */
+                FROM TS.CAL0 T1
+                WHERE T1.BS_DT = '20250100'
+                  AND /* SLOT: 추가 필터 조건 */
+                /* SLOT: GROUP BY 차원 (SELECT의 비집계 컬럼과 동일해야 함) */
+                /* SLOT: ORDER BY */
+                FETCH FIRST 1000 ROWS ONLY
+        --- FAIL: TestTimeCalendarTools/DATE_YYYYMMDD/20250230/resolve_time (0.00s)
+            timeparse_test.go:110: ranges = [{Expression:20250230 Start:20250230 End:20250230 Granularity:day Comparison: Note:}]
+        --- FAIL: TestTimeCalendarTools/DATE_YYYYMMDD/20250230/get_schema_context (0.00s)
+            timeparse_test.go:131: hint = {Expression:20250230 Column:BS_DT Condition:BS_DT = '20250230'}
+        --- FAIL: TestTimeCalendarTools/DATE_YYYYMMDD/20250230/build_sql_skeleton (0.00s)
+            timeparse_test.go:144: invalid date in SQL: SELECT /* SLOT: 출력 컬럼 (차원 먼저, 지표 다음) */
+                FROM TS.CAL0 T1
+                WHERE T1.BS_DT = '20250230'
+                  AND /* SLOT: 추가 필터 조건 */
+                /* SLOT: GROUP BY 차원 (SELECT의 비집계 컬럼과 동일해야 함) */
+                /* SLOT: ORDER BY */
+                FETCH FIRST 1000 ROWS ONLY
+        --- FAIL: TestTimeCalendarTools/DATE_YYYYMMDD/20250230_및_20240229/resolve_time (0.00s)
+            timeparse_test.go:110: ranges = [{Expression:20250230 Start:20250230 End:20250230 Granularity:day Comparison: Note:} {Expression:20240229 Start:20240229 End:20240229 Granularity:day Comparison: Note:}]
+        --- FAIL: TestTimeCalendarTools/DATE_YYYYMMDD/20250230_및_20240229/get_schema_context (0.00s)
+            timeparse_test.go:131: hint = {Expression:20250230 Column:BS_DT Condition:BS_DT = '20250230'}
+        --- FAIL: TestTimeCalendarTools/DATE_YYYYMMDD/20250230_및_20240229/build_sql_skeleton (0.00s)
+            timeparse_test.go:144: invalid date in SQL: SELECT /* SLOT: 출력 컬럼 (차원 먼저, 지표 다음) */
+                FROM TS.CAL0 T1
+                WHERE T1.BS_DT = '20250230'
+                  AND /* SLOT: 추가 필터 조건 */
+                /* SLOT: GROUP BY 차원 (SELECT의 비집계 컬럼과 동일해야 함) */
+                /* SLOT: ORDER BY */
+                FETCH FIRST 1000 ROWS ONLY
+        --- FAIL: TestTimeCalendarTools/DATE_YYYYMMDD/20250229/resolve_time (0.00s)
+            timeparse_test.go:110: ranges = [{Expression:20250229 Start:20250229 End:20250229 Granularity:day Comparison: Note:}]
+        --- FAIL: TestTimeCalendarTools/DATE_YYYYMMDD/20250229/get_schema_context (0.00s)
+            timeparse_test.go:131: hint = {Expression:20250229 Column:BS_DT Condition:BS_DT = '20250229'}
+        --- FAIL: TestTimeCalendarTools/DATE_YYYYMMDD/20250229/build_sql_skeleton (0.00s)
+            timeparse_test.go:144: invalid date in SQL: SELECT /* SLOT: 출력 컬럼 (차원 먼저, 지표 다음) */
+                FROM TS.CAL0 T1
+                WHERE T1.BS_DT = '20250229'
+                  AND /* SLOT: 추가 필터 조건 */
+                /* SLOT: GROUP BY 차원 (SELECT의 비집계 컬럼과 동일해야 함) */
+                /* SLOT: ORDER BY */
+                FETCH FIRST 1000 ROWS ONLY
+        --- FAIL: TestTimeCalendarTools/DATE_YYYYMMDD/20250229_및_20240229/resolve_time (0.00s)
+            timeparse_test.go:110: ranges = [{Expression:20250229 Start:20250229 End:20250229 Granularity:day Comparison: Note:} {Expression:20240229 Start:20240229 End:20240229 Granularity:day Comparison: Note:}]
+        --- FAIL: TestTimeCalendarTools/DATE_YYYYMMDD/20250229_및_20240229/get_schema_context (0.00s)
+            timeparse_test.go:131: hint = {Expression:20250229 Column:BS_DT Condition:BS_DT = '20250229'}
+        --- FAIL: TestTimeCalendarTools/DATE_YYYYMMDD/20250229_및_20240229/build_sql_skeleton (0.00s)
+            timeparse_test.go:144: invalid date in SQL: SELECT /* SLOT: 출력 컬럼 (차원 먼저, 지표 다음) */
+                FROM TS.CAL0 T1
+                WHERE T1.BS_DT = '20250229'
+                  AND /* SLOT: 추가 필터 조건 */
+                /* SLOT: GROUP BY 차원 (SELECT의 비집계 컬럼과 동일해야 함) */
+                /* SLOT: ORDER BY */
+                FETCH FIRST 1000 ROWS ONLY
+        --- FAIL: TestTimeCalendarTools/DATE_YYYYMMDD/20250431/resolve_time (0.00s)
+            timeparse_test.go:110: ranges = [{Expression:20250431 Start:20250431 End:20250431 Granularity:day Comparison: Note:}]
+        --- FAIL: TestTimeCalendarTools/DATE_YYYYMMDD/20250431/get_schema_context (0.00s)
+            timeparse_test.go:131: hint = {Expression:20250431 Column:BS_DT Condition:BS_DT = '20250431'}
+        --- FAIL: TestTimeCalendarTools/DATE_YYYYMMDD/20250431/build_sql_skeleton (0.00s)
+            timeparse_test.go:144: invalid date in SQL: SELECT /* SLOT: 출력 컬럼 (차원 먼저, 지표 다음) */
+                FROM TS.CAL0 T1
+                WHERE T1.BS_DT = '20250431'
+                  AND /* SLOT: 추가 필터 조건 */
+                /* SLOT: GROUP BY 차원 (SELECT의 비집계 컬럼과 동일해야 함) */
+                /* SLOT: ORDER BY */
+                FETCH FIRST 1000 ROWS ONLY
+        --- FAIL: TestTimeCalendarTools/DATE_YYYYMMDD/20250431_및_20240229/resolve_time (0.00s)
+            timeparse_test.go:110: ranges = [{Expression:20250431 Start:20250431 End:20250431 Granularity:day Comparison: Note:} {Expression:20240229 Start:20240229 End:20240229 Granularity:day Comparison: Note:}]
+        --- FAIL: TestTimeCalendarTools/DATE_YYYYMMDD/20250431_및_20240229/get_schema_context (0.00s)
+            timeparse_test.go:131: hint = {Expression:20250431 Column:BS_DT Condition:BS_DT = '20250431'}
+        --- FAIL: TestTimeCalendarTools/DATE_YYYYMMDD/20250431_및_20240229/build_sql_skeleton (0.00s)
+            timeparse_test.go:144: invalid date in SQL: SELECT /* SLOT: 출력 컬럼 (차원 먼저, 지표 다음) */
+                FROM TS.CAL0 T1
+                WHERE T1.BS_DT = '20250431'
+                  AND /* SLOT: 추가 필터 조건 */
+                /* SLOT: GROUP BY 차원 (SELECT의 비집계 컬럼과 동일해야 함) */
+                /* SLOT: ORDER BY */
+                FETCH FIRST 1000 ROWS ONLY
+        --- FAIL: TestTimeCalendarTools/DATE_YYYYMMDD/20250100/resolve_time (0.00s)
+            timeparse_test.go:110: ranges = [{Expression:20250100 Start:20250100 End:20250100 Granularity:day Comparison: Note:}]
+        --- FAIL: TestTimeCalendarTools/DATE_YYYYMMDD/20250100/get_schema_context (0.00s)
+            timeparse_test.go:131: hint = {Expression:20250100 Column:BS_DT Condition:BS_DT = '20250100'}
+        --- FAIL: TestTimeCalendarTools/DATE_YYYYMMDD/20250100/build_sql_skeleton (0.00s)
+            timeparse_test.go:144: invalid date in SQL: SELECT /* SLOT: 출력 컬럼 (차원 먼저, 지표 다음) */
+                FROM TS.CAL0 T1
+                WHERE T1.BS_DT = '20250100'
+                  AND /* SLOT: 추가 필터 조건 */
+                /* SLOT: GROUP BY 차원 (SELECT의 비집계 컬럼과 동일해야 함) */
+                /* SLOT: ORDER BY */
+                FETCH FIRST 1000 ROWS ONLY
+        --- FAIL: TestTimeCalendarTools/DATE_YYYYMMDD/20250100_및_20240229/resolve_time (0.00s)
+            timeparse_test.go:110: ranges = [{Expression:20250100 Start:20250100 End:20250100 Granularity:day Comparison: Note:} {Expression:20240229 Start:20240229 End:20240229 Granularity:day Comparison: Note:}]
+        --- FAIL: TestTimeCalendarTools/DATE_YYYYMMDD/20250100_및_20240229/get_schema_context (0.00s)
+            timeparse_test.go:131: hint = {Expression:20250100 Column:BS_DT Condition:BS_DT = '20250100'}
+        --- FAIL: TestTimeCalendarTools/DATE_YYYYMMDD/20250100_및_20240229/build_sql_skeleton (0.00s)
+            timeparse_test.go:144: invalid date in SQL: SELECT /* SLOT: 출력 컬럼 (차원 먼저, 지표 다음) */
+                FROM TS.CAL0 T1
+                WHERE T1.BS_DT = '20250100'
+                  AND /* SLOT: 추가 필터 조건 */
+                /* SLOT: GROUP BY 차원 (SELECT의 비집계 컬럼과 동일해야 함) */
+                /* SLOT: ORDER BY */
+                FETCH FIRST 1000 ROWS ONLY
+    --- FAIL: TestTimeCalendarTools/MONTH_YYYYMM (0.02s)
+        --- FAIL: TestTimeCalendarTools/MONTH_YYYYMM/2025-02-30/resolve_time (0.00s)
+            timeparse_test.go:110: ranges = [{Expression:2025-02-30 Start:20250230 End:20250230 Granularity:day Comparison: Note:}]
+        --- FAIL: TestTimeCalendarTools/MONTH_YYYYMM/2025-02-30/get_schema_context (0.00s)
+            timeparse_test.go:131: hint = {Expression:2025-02-30 Column:BS_YR_MON Condition:BS_YR_MON = '202502'}
+        --- FAIL: TestTimeCalendarTools/MONTH_YYYYMM/2025-02-30/build_sql_skeleton (0.00s)
+            timeparse_test.go:144: invalid date in SQL: SELECT /* SLOT: 출력 컬럼 (차원 먼저, 지표 다음) */
+                FROM TS.CAL1 T1
+                WHERE T1.BS_YR_MON = '202502'
+                  AND /* SLOT: 추가 필터 조건 */
+                /* SLOT: GROUP BY 차원 (SELECT의 비집계 컬럼과 동일해야 함) */
+                /* SLOT: ORDER BY */
+                FETCH FIRST 1000 ROWS ONLY
+        --- FAIL: TestTimeCalendarTools/MONTH_YYYYMM/2025-02-30_및_2024-02-29/resolve_time (0.00s)
+            timeparse_test.go:110: ranges = [{Expression:2025-02-30 Start:20250230 End:20250230 Granularity:day Comparison: Note:} {Expression:2024-02-29 Start:20240229 End:20240229 Granularity:day Comparison: Note:}]
+        --- FAIL: TestTimeCalendarTools/MONTH_YYYYMM/2025-02-30_및_2024-02-29/get_schema_context (0.00s)
+            timeparse_test.go:131: hint = {Expression:2025-02-30 Column:BS_YR_MON Condition:BS_YR_MON = '202502'}
+        --- FAIL: TestTimeCalendarTools/MONTH_YYYYMM/2025-02-30_및_2024-02-29/build_sql_skeleton (0.00s)
+            timeparse_test.go:144: invalid date in SQL: SELECT /* SLOT: 출력 컬럼 (차원 먼저, 지표 다음) */
+                FROM TS.CAL1 T1
+                WHERE T1.BS_YR_MON = '202502'
+                  AND /* SLOT: 추가 필터 조건 */
+                /* SLOT: GROUP BY 차원 (SELECT의 비집계 컬럼과 동일해야 함) */
+                /* SLOT: ORDER BY */
+                FETCH FIRST 1000 ROWS ONLY
+        --- FAIL: TestTimeCalendarTools/MONTH_YYYYMM/2025-02-29/resolve_time (0.00s)
+            timeparse_test.go:110: ranges = [{Expression:2025-02-29 Start:20250229 End:20250229 Granularity:day Comparison: Note:}]
+        --- FAIL: TestTimeCalendarTools/MONTH_YYYYMM/2025-02-29/get_schema_context (0.00s)
+            timeparse_test.go:131: hint = {Expression:2025-02-29 Column:BS_YR_MON Condition:BS_YR_MON = '202502'}
+        --- FAIL: TestTimeCalendarTools/MONTH_YYYYMM/2025-02-29/build_sql_skeleton (0.00s)
+            timeparse_test.go:144: invalid date in SQL: SELECT /* SLOT: 출력 컬럼 (차원 먼저, 지표 다음) */
+                FROM TS.CAL1 T1
+                WHERE T1.BS_YR_MON = '202502'
+                  AND /* SLOT: 추가 필터 조건 */
+                /* SLOT: GROUP BY 차원 (SELECT의 비집계 컬럼과 동일해야 함) */
+                /* SLOT: ORDER BY */
+                FETCH FIRST 1000 ROWS ONLY
+        --- FAIL: TestTimeCalendarTools/MONTH_YYYYMM/2025-02-29_및_2024-02-29/resolve_time (0.00s)
+            timeparse_test.go:110: ranges = [{Expression:2025-02-29 Start:20250229 End:20250229 Granularity:day Comparison: Note:} {Expression:2024-02-29 Start:20240229 End:20240229 Granularity:day Comparison: Note:}]
+        --- FAIL: TestTimeCalendarTools/MONTH_YYYYMM/2025-02-29_및_2024-02-29/get_schema_context (0.00s)
+            timeparse_test.go:131: hint = {Expression:2025-02-29 Column:BS_YR_MON Condition:BS_YR_MON = '202502'}
+        --- FAIL: TestTimeCalendarTools/MONTH_YYYYMM/2025-02-29_및_2024-02-29/build_sql_skeleton (0.00s)
+            timeparse_test.go:144: invalid date in SQL: SELECT /* SLOT: 출력 컬럼 (차원 먼저, 지표 다음) */
+                FROM TS.CAL1 T1
+                WHERE T1.BS_YR_MON = '202502'
+                  AND /* SLOT: 추가 필터 조건 */
+                /* SLOT: GROUP BY 차원 (SELECT의 비집계 컬럼과 동일해야 함) */
+                /* SLOT: ORDER BY */
+                FETCH FIRST 1000 ROWS ONLY
+        --- FAIL: TestTimeCalendarTools/MONTH_YYYYMM/2025-04-31/resolve_time (0.00s)
+            timeparse_test.go:110: ranges = [{Expression:2025-04-31 Start:20250431 End:20250431 Granularity:day Comparison: Note:}]
+        --- FAIL: TestTimeCalendarTools/MONTH_YYYYMM/2025-04-31/get_schema_context (0.00s)
+            timeparse_test.go:131: hint = {Expression:2025-04-31 Column:BS_YR_MON Condition:BS_YR_MON = '202504'}
+        --- FAIL: TestTimeCalendarTools/MONTH_YYYYMM/2025-04-31/build_sql_skeleton (0.00s)
+            timeparse_test.go:144: invalid date in SQL: SELECT /* SLOT: 출력 컬럼 (차원 먼저, 지표 다음) */
+                FROM TS.CAL1 T1
+                WHERE T1.BS_YR_MON = '202504'
+                  AND /* SLOT: 추가 필터 조건 */
+                /* SLOT: GROUP BY 차원 (SELECT의 비집계 컬럼과 동일해야 함) */
+                /* SLOT: ORDER BY */
+                FETCH FIRST 1000 ROWS ONLY
+        --- FAIL: TestTimeCalendarTools/MONTH_YYYYMM/2025-04-31_및_2024-02-29/resolve_time (0.00s)
+            timeparse_test.go:110: ranges = [{Expression:2025-04-31 Start:20250431 End:20250431 Granularity:day Comparison: Note:} {Expression:2024-02-29 Start:20240229 End:20240229 Granularity:day Comparison: Note:}]
+        --- FAIL: TestTimeCalendarTools/MONTH_YYYYMM/2025-04-31_및_2024-02-29/get_schema_context (0.00s)
+            timeparse_test.go:131: hint = {Expression:2025-04-31 Column:BS_YR_MON Condition:BS_YR_MON = '202504'}
+        --- FAIL: TestTimeCalendarTools/MONTH_YYYYMM/2025-04-31_및_2024-02-29/build_sql_skeleton (0.00s)
+            timeparse_test.go:144: invalid date in SQL: SELECT /* SLOT: 출력 컬럼 (차원 먼저, 지표 다음) */
+                FROM TS.CAL1 T1
+                WHERE T1.BS_YR_MON = '202504'
+                  AND /* SLOT: 추가 필터 조건 */
+                /* SLOT: GROUP BY 차원 (SELECT의 비집계 컬럼과 동일해야 함) */
+                /* SLOT: ORDER BY */
+                FETCH FIRST 1000 ROWS ONLY
+        --- FAIL: TestTimeCalendarTools/MONTH_YYYYMM/2025-01-00/resolve_time (0.00s)
+            timeparse_test.go:110: ranges = [{Expression:2025-01-00 Start:20250100 End:20250100 Granularity:day Comparison: Note:}]
+        --- FAIL: TestTimeCalendarTools/MONTH_YYYYMM/2025-01-00/get_schema_context (0.00s)
+            timeparse_test.go:131: hint = {Expression:2025-01-00 Column:BS_YR_MON Condition:BS_YR_MON = '202501'}
+        --- FAIL: TestTimeCalendarTools/MONTH_YYYYMM/2025-01-00/build_sql_skeleton (0.00s)
+            timeparse_test.go:144: invalid date in SQL: SELECT /* SLOT: 출력 컬럼 (차원 먼저, 지표 다음) */
+                FROM TS.CAL1 T1
+                WHERE T1.BS_YR_MON = '202501'
+                  AND /* SLOT: 추가 필터 조건 */
+                /* SLOT: GROUP BY 차원 (SELECT의 비집계 컬럼과 동일해야 함) */
+                /* SLOT: ORDER BY */
+                FETCH FIRST 1000 ROWS ONLY
+        --- FAIL: TestTimeCalendarTools/MONTH_YYYYMM/2025-01-00_및_2024-02-29/resolve_time (0.00s)
+            timeparse_test.go:110: ranges = [{Expression:2025-01-00 Start:20250100 End:20250100 Granularity:day Comparison: Note:} {Expression:2024-02-29 Start:20240229 End:20240229 Granularity:day Comparison: Note:}]
+        --- FAIL: TestTimeCalendarTools/MONTH_YYYYMM/2025-01-00_및_2024-02-29/get_schema_context (0.00s)
+            timeparse_test.go:131: hint = {Expression:2025-01-00 Column:BS_YR_MON Condition:BS_YR_MON = '202501'}
+        --- FAIL: TestTimeCalendarTools/MONTH_YYYYMM/2025-01-00_및_2024-02-29/build_sql_skeleton (0.00s)
+            timeparse_test.go:144: invalid date in SQL: SELECT /* SLOT: 출력 컬럼 (차원 먼저, 지표 다음) */
+                FROM TS.CAL1 T1
+                WHERE T1.BS_YR_MON = '202501'
+                  AND /* SLOT: 추가 필터 조건 */
+                /* SLOT: GROUP BY 차원 (SELECT의 비집계 컬럼과 동일해야 함) */
+                /* SLOT: ORDER BY */
+                FETCH FIRST 1000 ROWS ONLY
+        --- FAIL: TestTimeCalendarTools/MONTH_YYYYMM/2025.02.30/resolve_time (0.00s)
+            timeparse_test.go:110: ranges = [{Expression:2025.02.30 Start:20250230 End:20250230 Granularity:day Comparison: Note:}]
+        --- FAIL: TestTimeCalendarTools/MONTH_YYYYMM/2025.02.30/get_schema_context (0.00s)
+            timeparse_test.go:131: hint = {Expression:2025.02.30 Column:BS_YR_MON Condition:BS_YR_MON = '202502'}
+        --- FAIL: TestTimeCalendarTools/MONTH_YYYYMM/2025.02.30/build_sql_skeleton (0.00s)
+            timeparse_test.go:144: invalid date in SQL: SELECT /* SLOT: 출력 컬럼 (차원 먼저, 지표 다음) */
+                FROM TS.CAL1 T1
+                WHERE T1.BS_YR_MON = '202502'
+                  AND /* SLOT: 추가 필터 조건 */
+                /* SLOT: GROUP BY 차원 (SELECT의 비집계 컬럼과 동일해야 함) */
+                /* SLOT: ORDER BY */
+                FETCH FIRST 1000 ROWS ONLY
+        --- FAIL: TestTimeCalendarTools/MONTH_YYYYMM/2025.02.30_및_2024.02.29/resolve_time (0.00s)
+            timeparse_test.go:110: ranges = [{Expression:2025.02.30 Start:20250230 End:20250230 Granularity:day Comparison: Note:} {Expression:2024.02.29 Start:20240229 End:20240229 Granularity:day Comparison: Note:}]
+        --- FAIL: TestTimeCalendarTools/MONTH_YYYYMM/2025.02.30_및_2024.02.29/get_schema_context (0.00s)
+            timeparse_test.go:131: hint = {Expression:2025.02.30 Column:BS_YR_MON Condition:BS_YR_MON = '202502'}
+        --- FAIL: TestTimeCalendarTools/MONTH_YYYYMM/2025.02.30_및_2024.02.29/build_sql_skeleton (0.00s)
+            timeparse_test.go:144: invalid date in SQL: SELECT /* SLOT: 출력 컬럼 (차원 먼저, 지표 다음) */
+                FROM TS.CAL1 T1
+                WHERE T1.BS_YR_MON = '202502'
+                  AND /* SLOT: 추가 필터 조건 */
+                /* SLOT: GROUP BY 차원 (SELECT의 비집계 컬럼과 동일해야 함) */
+                /* SLOT: ORDER BY */
+                FETCH FIRST 1000 ROWS ONLY
+        --- FAIL: TestTimeCalendarTools/MONTH_YYYYMM/2025.02.29/resolve_time (0.00s)
+            timeparse_test.go:110: ranges = [{Expression:2025.02.29 Start:20250229 End:20250229 Granularity:day Comparison: Note:}]
+        --- FAIL: TestTimeCalendarTools/MONTH_YYYYMM/2025.02.29/get_schema_context (0.00s)
+            timeparse_test.go:131: hint = {Expression:2025.02.29 Column:BS_YR_MON Condition:BS_YR_MON = '202502'}
+        --- FAIL: TestTimeCalendarTools/MONTH_YYYYMM/2025.02.29/build_sql_skeleton (0.00s)
+            timeparse_test.go:144: invalid date in SQL: SELECT /* SLOT: 출력 컬럼 (차원 먼저, 지표 다음) */
+                FROM TS.CAL1 T1
+                WHERE T1.BS_YR_MON = '202502'
+                  AND /* SLOT: 추가 필터 조건 */
+                /* SLOT: GROUP BY 차원 (SELECT의 비집계 컬럼과 동일해야 함) */
+                /* SLOT: ORDER BY */
+                FETCH FIRST 1000 ROWS ONLY
+        --- FAIL: TestTimeCalendarTools/MONTH_YYYYMM/2025.02.29_및_2024.02.29/resolve_time (0.00s)
+            timeparse_test.go:110: ranges = [{Expression:2025.02.29 Start:20250229 End:20250229 Granularity:day Comparison: Note:} {Expression:2024.02.29 Start:20240229 End:20240229 Granularity:day Comparison: Note:}]
+        --- FAIL: TestTimeCalendarTools/MONTH_YYYYMM/2025.02.29_및_2024.02.29/get_schema_context (0.00s)
+            timeparse_test.go:131: hint = {Expression:2025.02.29 Column:BS_YR_MON Condition:BS_YR_MON = '202502'}
+        --- FAIL: TestTimeCalendarTools/MONTH_YYYYMM/2025.02.29_및_2024.02.29/build_sql_skeleton (0.00s)
+            timeparse_test.go:144: invalid date in SQL: SELECT /* SLOT: 출력 컬럼 (차원 먼저, 지표 다음) */
+                FROM TS.CAL1 T1
+                WHERE T1.BS_YR_MON = '202502'
+                  AND /* SLOT: 추가 필터 조건 */
+                /* SLOT: GROUP BY 차원 (SELECT의 비집계 컬럼과 동일해야 함) */
+                /* SLOT: ORDER BY */
+                FETCH FIRST 1000 ROWS ONLY
+        --- FAIL: TestTimeCalendarTools/MONTH_YYYYMM/2025.04.31/resolve_time (0.00s)
+            timeparse_test.go:110: ranges = [{Expression:2025.04.31 Start:20250431 End:20250431 Granularity:day Comparison: Note:}]
+        --- FAIL: TestTimeCalendarTools/MONTH_YYYYMM/2025.04.31/get_schema_context (0.00s)
+            timeparse_test.go:131: hint = {Expression:2025.04.31 Column:BS_YR_MON Condition:BS_YR_MON = '202504'}
+        --- FAIL: TestTimeCalendarTools/MONTH_YYYYMM/2025.04.31/build_sql_skeleton (0.00s)
+            timeparse_test.go:144: invalid date in SQL: SELECT /* SLOT: 출력 컬럼 (차원 먼저, 지표 다음) */
+                FROM TS.CAL1 T1
+                WHERE T1.BS_YR_MON = '202504'
+                  AND /* SLOT: 추가 필터 조건 */
+                /* SLOT: GROUP BY 차원 (SELECT의 비집계 컬럼과 동일해야 함) */
+                /* SLOT: ORDER BY */
+                FETCH FIRST 1000 ROWS ONLY
+        --- FAIL: TestTimeCalendarTools/MONTH_YYYYMM/2025.04.31_및_2024.02.29/resolve_time (0.00s)
+            timeparse_test.go:110: ranges = [{Expression:2025.04.31 Start:20250431 End:20250431 Granularity:day Comparison: Note:} {Expression:2024.02.29 Start:20240229 End:20240229 Granularity:day Comparison: Note:}]
+        --- FAIL: TestTimeCalendarTools/MONTH_YYYYMM/2025.04.31_및_2024.02.29/get_schema_context (0.00s)
+            timeparse_test.go:131: hint = {Expression:2025.04.31 Column:BS_YR_MON Condition:BS_YR_MON = '202504'}
+        --- FAIL: TestTimeCalendarTools/MONTH_YYYYMM/2025.04.31_및_2024.02.29/build_sql_skeleton (0.00s)
+            timeparse_test.go:144: invalid date in SQL: SELECT /* SLOT: 출력 컬럼 (차원 먼저, 지표 다음) */
+                FROM TS.CAL1 T1
+                WHERE T1.BS_YR_MON = '202504'
+                  AND /* SLOT: 추가 필터 조건 */
+                /* SLOT: GROUP BY 차원 (SELECT의 비집계 컬럼과 동일해야 함) */
+                /* SLOT: ORDER BY */
+                FETCH FIRST 1000 ROWS ONLY
+        --- FAIL: TestTimeCalendarTools/MONTH_YYYYMM/2025.01.00/resolve_time (0.00s)
+            timeparse_test.go:110: ranges = [{Expression:2025.01.00 Start:20250100 End:20250100 Granularity:day Comparison: Note:}]
+        --- FAIL: TestTimeCalendarTools/MONTH_YYYYMM/2025.01.00/get_schema_context (0.00s)
+            timeparse_test.go:131: hint = {Expression:2025.01.00 Column:BS_YR_MON Condition:BS_YR_MON = '202501'}
+        --- FAIL: TestTimeCalendarTools/MONTH_YYYYMM/2025.01.00/build_sql_skeleton (0.00s)
+            timeparse_test.go:144: invalid date in SQL: SELECT /* SLOT: 출력 컬럼 (차원 먼저, 지표 다음) */
+                FROM TS.CAL1 T1
+                WHERE T1.BS_YR_MON = '202501'
+                  AND /* SLOT: 추가 필터 조건 */
+                /* SLOT: GROUP BY 차원 (SELECT의 비집계 컬럼과 동일해야 함) */
+                /* SLOT: ORDER BY */
+                FETCH FIRST 1000 ROWS ONLY
+        --- FAIL: TestTimeCalendarTools/MONTH_YYYYMM/2025.01.00_및_2024.02.29/resolve_time (0.00s)
+            timeparse_test.go:110: ranges = [{Expression:2025.01.00 Start:20250100 End:20250100 Granularity:day Comparison: Note:} {Expression:2024.02.29 Start:20240229 End:20240229 Granularity:day Comparison: Note:}]
+        --- FAIL: TestTimeCalendarTools/MONTH_YYYYMM/2025.01.00_및_2024.02.29/get_schema_context (0.00s)
+            timeparse_test.go:131: hint = {Expression:2025.01.00 Column:BS_YR_MON Condition:BS_YR_MON = '202501'}
+        --- FAIL: TestTimeCalendarTools/MONTH_YYYYMM/2025.01.00_및_2024.02.29/build_sql_skeleton (0.00s)
+            timeparse_test.go:144: invalid date in SQL: SELECT /* SLOT: 출력 컬럼 (차원 먼저, 지표 다음) */
+                FROM TS.CAL1 T1
+                WHERE T1.BS_YR_MON = '202501'
+                  AND /* SLOT: 추가 필터 조건 */
+                /* SLOT: GROUP BY 차원 (SELECT의 비집계 컬럼과 동일해야 함) */
+                /* SLOT: ORDER BY */
+                FETCH FIRST 1000 ROWS ONLY
+        --- FAIL: TestTimeCalendarTools/MONTH_YYYYMM/2025/02/30/resolve_time (0.00s)
+            timeparse_test.go:110: ranges = [{Expression:2025/02/30 Start:20250230 End:20250230 Granularity:day Comparison: Note:}]
+        --- FAIL: TestTimeCalendarTools/MONTH_YYYYMM/2025/02/30/get_schema_context (0.00s)
+            timeparse_test.go:131: hint = {Expression:2025/02/30 Column:BS_YR_MON Condition:BS_YR_MON = '202502'}
+        --- FAIL: TestTimeCalendarTools/MONTH_YYYYMM/2025/02/30/build_sql_skeleton (0.00s)
+            timeparse_test.go:144: invalid date in SQL: SELECT /* SLOT: 출력 컬럼 (차원 먼저, 지표 다음) */
+                FROM TS.CAL1 T1
+                WHERE T1.BS_YR_MON = '202502'
+                  AND /* SLOT: 추가 필터 조건 */
+                /* SLOT: GROUP BY 차원 (SELECT의 비집계 컬럼과 동일해야 함) */
+                /* SLOT: ORDER BY */
+                FETCH FIRST 1000 ROWS ONLY
+        --- FAIL: TestTimeCalendarTools/MONTH_YYYYMM/2025/02/30_및_2024/02/29/resolve_time (0.00s)
+            timeparse_test.go:110: ranges = [{Expression:2025/02/30 Start:20250230 End:20250230 Granularity:day Comparison: Note:} {Expression:2024/02/29 Start:20240229 End:20240229 Granularity:day Comparison: Note:}]
+        --- FAIL: TestTimeCalendarTools/MONTH_YYYYMM/2025/02/30_및_2024/02/29/get_schema_context (0.00s)
+            timeparse_test.go:131: hint = {Expression:2025/02/30 Column:BS_YR_MON Condition:BS_YR_MON = '202502'}
+        --- FAIL: TestTimeCalendarTools/MONTH_YYYYMM/2025/02/30_및_2024/02/29/build_sql_skeleton (0.00s)
+            timeparse_test.go:144: invalid date in SQL: SELECT /* SLOT: 출력 컬럼 (차원 먼저, 지표 다음) */
+                FROM TS.CAL1 T1
+                WHERE T1.BS_YR_MON = '202502'
+                  AND /* SLOT: 추가 필터 조건 */
+                /* SLOT: GROUP BY 차원 (SELECT의 비집계 컬럼과 동일해야 함) */
+                /* SLOT: ORDER BY */
+                FETCH FIRST 1000 ROWS ONLY
+        --- FAIL: TestTimeCalendarTools/MONTH_YYYYMM/2025/02/29/resolve_time (0.00s)
+            timeparse_test.go:110: ranges = [{Expression:2025/02/29 Start:20250229 End:20250229 Granularity:day Comparison: Note:}]
+        --- FAIL: TestTimeCalendarTools/MONTH_YYYYMM/2025/02/29/get_schema_context (0.00s)
+            timeparse_test.go:131: hint = {Expression:2025/02/29 Column:BS_YR_MON Condition:BS_YR_MON = '202502'}
+        --- FAIL: TestTimeCalendarTools/MONTH_YYYYMM/2025/02/29/build_sql_skeleton (0.00s)
+            timeparse_test.go:144: invalid date in SQL: SELECT /* SLOT: 출력 컬럼 (차원 먼저, 지표 다음) */
+                FROM TS.CAL1 T1
+                WHERE T1.BS_YR_MON = '202502'
+                  AND /* SLOT: 추가 필터 조건 */
+                /* SLOT: GROUP BY 차원 (SELECT의 비집계 컬럼과 동일해야 함) */
+                /* SLOT: ORDER BY */
+                FETCH FIRST 1000 ROWS ONLY
+        --- FAIL: TestTimeCalendarTools/MONTH_YYYYMM/2025/02/29_및_2024/02/29/resolve_time (0.00s)
+            timeparse_test.go:110: ranges = [{Expression:2025/02/29 Start:20250229 End:20250229 Granularity:day Comparison: Note:} {Expression:2024/02/29 Start:20240229 End:20240229 Granularity:day Comparison: Note:}]
+        --- FAIL: TestTimeCalendarTools/MONTH_YYYYMM/2025/02/29_및_2024/02/29/get_schema_context (0.00s)
+            timeparse_test.go:131: hint = {Expression:2025/02/29 Column:BS_YR_MON Condition:BS_YR_MON = '202502'}
+        --- FAIL: TestTimeCalendarTools/MONTH_YYYYMM/2025/02/29_및_2024/02/29/build_sql_skeleton (0.00s)
+            timeparse_test.go:144: invalid date in SQL: SELECT /* SLOT: 출력 컬럼 (차원 먼저, 지표 다음) */
+                FROM TS.CAL1 T1
+                WHERE T1.BS_YR_MON = '202502'
+                  AND /* SLOT: 추가 필터 조건 */
+                /* SLOT: GROUP BY 차원 (SELECT의 비집계 컬럼과 동일해야 함) */
+                /* SLOT: ORDER BY */
+                FETCH FIRST 1000 ROWS ONLY
+        --- FAIL: TestTimeCalendarTools/MONTH_YYYYMM/2025/04/31/resolve_time (0.00s)
+            timeparse_test.go:110: ranges = [{Expression:2025/04/31 Start:20250431 End:20250431 Granularity:day Comparison: Note:}]
+        --- FAIL: TestTimeCalendarTools/MONTH_YYYYMM/2025/04/31/get_schema_context (0.00s)
+            timeparse_test.go:131: hint = {Expression:2025/04/31 Column:BS_YR_MON Condition:BS_YR_MON = '202504'}
+        --- FAIL: TestTimeCalendarTools/MONTH_YYYYMM/2025/04/31/build_sql_skeleton (0.00s)
+            timeparse_test.go:144: invalid date in SQL: SELECT /* SLOT: 출력 컬럼 (차원 먼저, 지표 다음) */
+                FROM TS.CAL1 T1
+                WHERE T1.BS_YR_MON = '202504'
+                  AND /* SLOT: 추가 필터 조건 */
+                /* SLOT: GROUP BY 차원 (SELECT의 비집계 컬럼과 동일해야 함) */
+                /* SLOT: ORDER BY */
+                FETCH FIRST 1000 ROWS ONLY
+        --- FAIL: TestTimeCalendarTools/MONTH_YYYYMM/2025/04/31_및_2024/02/29/resolve_time (0.00s)
+            timeparse_test.go:110: ranges = [{Expression:2025/04/31 Start:20250431 End:20250431 Granularity:day Comparison: Note:} {Expression:2024/02/29 Start:20240229 End:20240229 Granularity:day Comparison: Note:}]
+        --- FAIL: TestTimeCalendarTools/MONTH_YYYYMM/2025/04/31_및_2024/02/29/get_schema_context (0.00s)
+            timeparse_test.go:131: hint = {Expression:2025/04/31 Column:BS_YR_MON Condition:BS_YR_MON = '202504'}
+        --- FAIL: TestTimeCalendarTools/MONTH_YYYYMM/2025/04/31_및_2024/02/29/build_sql_skeleton (0.00s)
+            timeparse_test.go:144: invalid date in SQL: SELECT /* SLOT: 출력 컬럼 (차원 먼저, 지표 다음) */
+                FROM TS.CAL1 T1
+                WHERE T1.BS_YR_MON = '202504'
+                  AND /* SLOT: 추가 필터 조건 */
+                /* SLOT: GROUP BY 차원 (SELECT의 비집계 컬럼과 동일해야 함) */
+                /* SLOT: ORDER BY */
+                FETCH FIRST 1000 ROWS ONLY
+        --- FAIL: TestTimeCalendarTools/MONTH_YYYYMM/2025/01/00/resolve_time (0.00s)
+            timeparse_test.go:110: ranges = [{Expression:2025/01/00 Start:20250100 End:20250100 Granularity:day Comparison: Note:}]
+        --- FAIL: TestTimeCalendarTools/MONTH_YYYYMM/2025/01/00/get_schema_context (0.00s)
+            timeparse_test.go:131: hint = {Expression:2025/01/00 Column:BS_YR_MON Condition:BS_YR_MON = '202501'}
+        --- FAIL: TestTimeCalendarTools/MONTH_YYYYMM/2025/01/00/build_sql_skeleton (0.00s)
+            timeparse_test.go:144: invalid date in SQL: SELECT /* SLOT: 출력 컬럼 (차원 먼저, 지표 다음) */
+                FROM TS.CAL1 T1
+                WHERE T1.BS_YR_MON = '202501'
+                  AND /* SLOT: 추가 필터 조건 */
+                /* SLOT: GROUP BY 차원 (SELECT의 비집계 컬럼과 동일해야 함) */
+                /* SLOT: ORDER BY */
+                FETCH FIRST 1000 ROWS ONLY
+        --- FAIL: TestTimeCalendarTools/MONTH_YYYYMM/2025/01/00_및_2024/02/29/resolve_time (0.00s)
+            timeparse_test.go:110: ranges = [{Expression:2025/01/00 Start:20250100 End:20250100 Granularity:day Comparison: Note:} {Expression:2024/02/29 Start:20240229 End:20240229 Granularity:day Comparison: Note:}]
+        --- FAIL: TestTimeCalendarTools/MONTH_YYYYMM/2025/01/00_및_2024/02/29/get_schema_context (0.00s)
+            timeparse_test.go:131: hint = {Expression:2025/01/00 Column:BS_YR_MON Condition:BS_YR_MON = '202501'}
+        --- FAIL: TestTimeCalendarTools/MONTH_YYYYMM/2025/01/00_및_2024/02/29/build_sql_skeleton (0.00s)
+            timeparse_test.go:144: invalid date in SQL: SELECT /* SLOT: 출력 컬럼 (차원 먼저, 지표 다음) */
+                FROM TS.CAL1 T1
+                WHERE T1.BS_YR_MON = '202501'
+                  AND /* SLOT: 추가 필터 조건 */
+                /* SLOT: GROUP BY 차원 (SELECT의 비집계 컬럼과 동일해야 함) */
+                /* SLOT: ORDER BY */
+                FETCH FIRST 1000 ROWS ONLY
+        --- FAIL: TestTimeCalendarTools/MONTH_YYYYMM/20250230/resolve_time (0.00s)
+            timeparse_test.go:110: ranges = [{Expression:20250230 Start:20250230 End:20250230 Granularity:day Comparison: Note:}]
+        --- FAIL: TestTimeCalendarTools/MONTH_YYYYMM/20250230/get_schema_context (0.00s)
+            timeparse_test.go:131: hint = {Expression:20250230 Column:BS_YR_MON Condition:BS_YR_MON = '202502'}
+        --- FAIL: TestTimeCalendarTools/MONTH_YYYYMM/20250230/build_sql_skeleton (0.00s)
+            timeparse_test.go:144: invalid date in SQL: SELECT /* SLOT: 출력 컬럼 (차원 먼저, 지표 다음) */
+                FROM TS.CAL1 T1
+                WHERE T1.BS_YR_MON = '202502'
+                  AND /* SLOT: 추가 필터 조건 */
+                /* SLOT: GROUP BY 차원 (SELECT의 비집계 컬럼과 동일해야 함) */
+                /* SLOT: ORDER BY */
+                FETCH FIRST 1000 ROWS ONLY
+        --- FAIL: TestTimeCalendarTools/MONTH_YYYYMM/20250230_및_20240229/resolve_time (0.00s)
+            timeparse_test.go:110: ranges = [{Expression:20250230 Start:20250230 End:20250230 Granularity:day Comparison: Note:} {Expression:20240229 Start:20240229 End:20240229 Granularity:day Comparison: Note:}]
+        --- FAIL: TestTimeCalendarTools/MONTH_YYYYMM/20250230_및_20240229/get_schema_context (0.00s)
+            timeparse_test.go:131: hint = {Expression:20250230 Column:BS_YR_MON Condition:BS_YR_MON = '202502'}
+        --- FAIL: TestTimeCalendarTools/MONTH_YYYYMM/20250230_및_20240229/build_sql_skeleton (0.00s)
+            timeparse_test.go:144: invalid date in SQL: SELECT /* SLOT: 출력 컬럼 (차원 먼저, 지표 다음) */
+                FROM TS.CAL1 T1
+                WHERE T1.BS_YR_MON = '202502'
+                  AND /* SLOT: 추가 필터 조건 */
+                /* SLOT: GROUP BY 차원 (SELECT의 비집계 컬럼과 동일해야 함) */
+                /* SLOT: ORDER BY */
+                FETCH FIRST 1000 ROWS ONLY
+        --- FAIL: TestTimeCalendarTools/MONTH_YYYYMM/20250229/resolve_time (0.00s)
+            timeparse_test.go:110: ranges = [{Expression:20250229 Start:20250229 End:20250229 Granularity:day Comparison: Note:}]
+        --- FAIL: TestTimeCalendarTools/MONTH_YYYYMM/20250229/get_schema_context (0.00s)
+            timeparse_test.go:131: hint = {Expression:20250229 Column:BS_YR_MON Condition:BS_YR_MON = '202502'}
+        --- FAIL: TestTimeCalendarTools/MONTH_YYYYMM/20250229/build_sql_skeleton (0.00s)
+            timeparse_test.go:144: invalid date in SQL: SELECT /* SLOT: 출력 컬럼 (차원 먼저, 지표 다음) */
+                FROM TS.CAL1 T1
+                WHERE T1.BS_YR_MON = '202502'
+                  AND /* SLOT: 추가 필터 조건 */
+                /* SLOT: GROUP BY 차원 (SELECT의 비집계 컬럼과 동일해야 함) */
+                /* SLOT: ORDER BY */
+                FETCH FIRST 1000 ROWS ONLY
+        --- FAIL: TestTimeCalendarTools/MONTH_YYYYMM/20250229_및_20240229/resolve_time (0.00s)
+            timeparse_test.go:110: ranges = [{Expression:20250229 Start:20250229 End:20250229 Granularity:day Comparison: Note:} {Expression:20240229 Start:20240229 End:20240229 Granularity:day Comparison: Note:}]
+        --- FAIL: TestTimeCalendarTools/MONTH_YYYYMM/20250229_및_20240229/get_schema_context (0.00s)
+            timeparse_test.go:131: hint = {Expression:20250229 Column:BS_YR_MON Condition:BS_YR_MON = '202502'}
+        --- FAIL: TestTimeCalendarTools/MONTH_YYYYMM/20250229_및_20240229/build_sql_skeleton (0.00s)
+            timeparse_test.go:144: invalid date in SQL: SELECT /* SLOT: 출력 컬럼 (차원 먼저, 지표 다음) */
+                FROM TS.CAL1 T1
+                WHERE T1.BS_YR_MON = '202502'
+                  AND /* SLOT: 추가 필터 조건 */
+                /* SLOT: GROUP BY 차원 (SELECT의 비집계 컬럼과 동일해야 함) */
+                /* SLOT: ORDER BY */
+                FETCH FIRST 1000 ROWS ONLY
+        --- FAIL: TestTimeCalendarTools/MONTH_YYYYMM/20250431/resolve_time (0.00s)
+            timeparse_test.go:110: ranges = [{Expression:20250431 Start:20250431 End:20250431 Granularity:day Comparison: Note:}]
+        --- FAIL: TestTimeCalendarTools/MONTH_YYYYMM/20250431/get_schema_context (0.00s)
+            timeparse_test.go:131: hint = {Expression:20250431 Column:BS_YR_MON Condition:BS_YR_MON = '202504'}
+        --- FAIL: TestTimeCalendarTools/MONTH_YYYYMM/20250431/build_sql_skeleton (0.00s)
+            timeparse_test.go:144: invalid date in SQL: SELECT /* SLOT: 출력 컬럼 (차원 먼저, 지표 다음) */
+                FROM TS.CAL1 T1
+                WHERE T1.BS_YR_MON = '202504'
+                  AND /* SLOT: 추가 필터 조건 */
+                /* SLOT: GROUP BY 차원 (SELECT의 비집계 컬럼과 동일해야 함) */
+                /* SLOT: ORDER BY */
+                FETCH FIRST 1000 ROWS ONLY
+        --- FAIL: TestTimeCalendarTools/MONTH_YYYYMM/20250431_및_20240229/resolve_time (0.00s)
+            timeparse_test.go:110: ranges = [{Expression:20250431 Start:20250431 End:20250431 Granularity:day Comparison: Note:} {Expression:20240229 Start:20240229 End:20240229 Granularity:day Comparison: Note:}]
+        --- FAIL: TestTimeCalendarTools/MONTH_YYYYMM/20250431_및_20240229/get_schema_context (0.00s)
+            timeparse_test.go:131: hint = {Expression:20250431 Column:BS_YR_MON Condition:BS_YR_MON = '202504'}
+        --- FAIL: TestTimeCalendarTools/MONTH_YYYYMM/20250431_및_20240229/build_sql_skeleton (0.00s)
+            timeparse_test.go:144: invalid date in SQL: SELECT /* SLOT: 출력 컬럼 (차원 먼저, 지표 다음) */
+                FROM TS.CAL1 T1
+                WHERE T1.BS_YR_MON = '202504'
+                  AND /* SLOT: 추가 필터 조건 */
+                /* SLOT: GROUP BY 차원 (SELECT의 비집계 컬럼과 동일해야 함) */
+                /* SLOT: ORDER BY */
+                FETCH FIRST 1000 ROWS ONLY
+        --- FAIL: TestTimeCalendarTools/MONTH_YYYYMM/20250100/resolve_time (0.00s)
+            timeparse_test.go:110: ranges = [{Expression:20250100 Start:20250100 End:20250100 Granularity:day Comparison: Note:}]
+        --- FAIL: TestTimeCalendarTools/MONTH_YYYYMM/20250100/get_schema_context (0.00s)
+            timeparse_test.go:131: hint = {Expression:20250100 Column:BS_YR_MON Condition:BS_YR_MON = '202501'}
+        --- FAIL: TestTimeCalendarTools/MONTH_YYYYMM/20250100/build_sql_skeleton (0.00s)
+            timeparse_test.go:144: invalid date in SQL: SELECT /* SLOT: 출력 컬럼 (차원 먼저, 지표 다음) */
+                FROM TS.CAL1 T1
+                WHERE T1.BS_YR_MON = '202501'
+                  AND /* SLOT: 추가 필터 조건 */
+                /* SLOT: GROUP BY 차원 (SELECT의 비집계 컬럼과 동일해야 함) */
+                /* SLOT: ORDER BY */
+                FETCH FIRST 1000 ROWS ONLY
+        --- FAIL: TestTimeCalendarTools/MONTH_YYYYMM/20250100_및_20240229/resolve_time (0.00s)
+            timeparse_test.go:110: ranges = [{Expression:20250100 Start:20250100 End:20250100 Granularity:day Comparison: Note:} {Expression:20240229 Start:20240229 End:20240229 Granularity:day Comparison: Note:}]
+        --- FAIL: TestTimeCalendarTools/MONTH_YYYYMM/20250100_및_20240229/get_schema_context (0.00s)
+            timeparse_test.go:131: hint = {Expression:20250100 Column:BS_YR_MON Condition:BS_YR_MON = '202501'}
+        --- FAIL: TestTimeCalendarTools/MONTH_YYYYMM/20250100_및_20240229/build_sql_skeleton (0.00s)
+            timeparse_test.go:144: invalid date in SQL: SELECT /* SLOT: 출력 컬럼 (차원 먼저, 지표 다음) */
+                FROM TS.CAL1 T1
+                WHERE T1.BS_YR_MON = '202501'
+                  AND /* SLOT: 추가 필터 조건 */
+                /* SLOT: GROUP BY 차원 (SELECT의 비집계 컬럼과 동일해야 함) */
+                /* SLOT: ORDER BY */
+                FETCH FIRST 1000 ROWS ONLY
+    --- FAIL: TestTimeCalendarTools/DATE (0.02s)
+        --- FAIL: TestTimeCalendarTools/DATE/2025-02-30/resolve_time (0.00s)
+            timeparse_test.go:110: ranges = [{Expression:2025-02-30 Start:20250230 End:20250230 Granularity:day Comparison: Note:}]
+        --- FAIL: TestTimeCalendarTools/DATE/2025-02-30_및_2024-02-29/resolve_time (0.00s)
+            timeparse_test.go:110: ranges = [{Expression:2025-02-30 Start:20250230 End:20250230 Granularity:day Comparison: Note:} {Expression:2024-02-29 Start:20240229 End:20240229 Granularity:day Comparison: Note:}]
+        --- FAIL: TestTimeCalendarTools/DATE/2025-02-29/resolve_time (0.00s)
+            timeparse_test.go:110: ranges = [{Expression:2025-02-29 Start:20250229 End:20250229 Granularity:day Comparison: Note:}]
+        --- FAIL: TestTimeCalendarTools/DATE/2025-02-29_및_2024-02-29/resolve_time (0.00s)
+            timeparse_test.go:110: ranges = [{Expression:2025-02-29 Start:20250229 End:20250229 Granularity:day Comparison: Note:} {Expression:2024-02-29 Start:20240229 End:20240229 Granularity:day Comparison: Note:}]
+        --- FAIL: TestTimeCalendarTools/DATE/2025-04-31/resolve_time (0.00s)
+            timeparse_test.go:110: ranges = [{Expression:2025-04-31 Start:20250431 End:20250431 Granularity:day Comparison: Note:}]
+        --- FAIL: TestTimeCalendarTools/DATE/2025-04-31_및_2024-02-29/resolve_time (0.00s)
+            timeparse_test.go:110: ranges = [{Expression:2025-04-31 Start:20250431 End:20250431 Granularity:day Comparison: Note:} {Expression:2024-02-29 Start:20240229 End:20240229 Granularity:day Comparison: Note:}]
+        --- FAIL: TestTimeCalendarTools/DATE/2025-01-00/resolve_time (0.00s)
+            timeparse_test.go:110: ranges = [{Expression:2025-01-00 Start:20250100 End:20250100 Granularity:day Comparison: Note:}]
+        --- FAIL: TestTimeCalendarTools/DATE/2025-01-00_및_2024-02-29/resolve_time (0.00s)
+            timeparse_test.go:110: ranges = [{Expression:2025-01-00 Start:20250100 End:20250100 Granularity:day Comparison: Note:} {Expression:2024-02-29 Start:20240229 End:20240229 Granularity:day Comparison: Note:}]
+        --- FAIL: TestTimeCalendarTools/DATE/2025.02.30/resolve_time (0.00s)
+            timeparse_test.go:110: ranges = [{Expression:2025.02.30 Start:20250230 End:20250230 Granularity:day Comparison: Note:}]
+        --- FAIL: TestTimeCalendarTools/DATE/2025.02.30_및_2024.02.29/resolve_time (0.00s)
+            timeparse_test.go:110: ranges = [{Expression:2025.02.30 Start:20250230 End:20250230 Granularity:day Comparison: Note:} {Expression:2024.02.29 Start:20240229 End:20240229 Granularity:day Comparison: Note:}]
+        --- FAIL: TestTimeCalendarTools/DATE/2025.02.29/resolve_time (0.00s)
+            timeparse_test.go:110: ranges = [{Expression:2025.02.29 Start:20250229 End:20250229 Granularity:day Comparison: Note:}]
+        --- FAIL: TestTimeCalendarTools/DATE/2025.02.29_및_2024.02.29/resolve_time (0.00s)
+            timeparse_test.go:110: ranges = [{Expression:2025.02.29 Start:20250229 End:20250229 Granularity:day Comparison: Note:} {Expression:2024.02.29 Start:20240229 End:20240229 Granularity:day Comparison: Note:}]
+        --- FAIL: TestTimeCalendarTools/DATE/2025.04.31/resolve_time (0.00s)
+            timeparse_test.go:110: ranges = [{Expression:2025.04.31 Start:20250431 End:20250431 Granularity:day Comparison: Note:}]
+        --- FAIL: TestTimeCalendarTools/DATE/2025.04.31_및_2024.02.29/resolve_time (0.00s)
+            timeparse_test.go:110: ranges = [{Expression:2025.04.31 Start:20250431 End:20250431 Granularity:day Comparison: Note:} {Expression:2024.02.29 Start:20240229 End:20240229 Granularity:day Comparison: Note:}]
+        --- FAIL: TestTimeCalendarTools/DATE/2025.01.00/resolve_time (0.00s)
+            timeparse_test.go:110: ranges = [{Expression:2025.01.00 Start:20250100 End:20250100 Granularity:day Comparison: Note:}]
+        --- FAIL: TestTimeCalendarTools/DATE/2025.01.00_및_2024.02.29/resolve_time (0.00s)
+            timeparse_test.go:110: ranges = [{Expression:2025.01.00 Start:20250100 End:20250100 Granularity:day Comparison: Note:} {Expression:2024.02.29 Start:20240229 End:20240229 Granularity:day Comparison: Note:}]
+        --- FAIL: TestTimeCalendarTools/DATE/2025/02/30/resolve_time (0.00s)
+            timeparse_test.go:110: ranges = [{Expression:2025/02/30 Start:20250230 End:20250230 Granularity:day Comparison: Note:}]
+        --- FAIL: TestTimeCalendarTools/DATE/2025/02/30_및_2024/02/29/resolve_time (0.00s)
+            timeparse_test.go:110: ranges = [{Expression:2025/02/30 Start:20250230 End:20250230 Granularity:day Comparison: Note:} {Expression:2024/02/29 Start:20240229 End:20240229 Granularity:day Comparison: Note:}]
+        --- FAIL: TestTimeCalendarTools/DATE/2025/02/29/resolve_time (0.00s)
+            timeparse_test.go:110: ranges = [{Expression:2025/02/29 Start:20250229 End:20250229 Granularity:day Comparison: Note:}]
+        --- FAIL: TestTimeCalendarTools/DATE/2025/02/29_및_2024/02/29/resolve_time (0.00s)
+            timeparse_test.go:110: ranges = [{Expression:2025/02/29 Start:20250229 End:20250229 Granularity:day Comparison: Note:} {Expression:2024/02/29 Start:20240229 End:20240229 Granularity:day Comparison: Note:}]
+        --- FAIL: TestTimeCalendarTools/DATE/2025/04/31/resolve_time (0.00s)
+            timeparse_test.go:110: ranges = [{Expression:2025/04/31 Start:20250431 End:20250431 Granularity:day Comparison: Note:}]
+        --- FAIL: TestTimeCalendarTools/DATE/2025/04/31_및_2024/02/29/resolve_time (0.00s)
+            timeparse_test.go:110: ranges = [{Expression:2025/04/31 Start:20250431 End:20250431 Granularity:day Comparison: Note:} {Expression:2024/02/29 Start:20240229 End:20240229 Granularity:day Comparison: Note:}]
+        --- FAIL: TestTimeCalendarTools/DATE/2025/01/00/resolve_time (0.00s)
+            timeparse_test.go:110: ranges = [{Expression:2025/01/00 Start:20250100 End:20250100 Granularity:day Comparison: Note:}]
+        --- FAIL: TestTimeCalendarTools/DATE/2025/01/00_및_2024/02/29/resolve_time (0.00s)
+            timeparse_test.go:110: ranges = [{Expression:2025/01/00 Start:20250100 End:20250100 Granularity:day Comparison: Note:} {Expression:2024/02/29 Start:20240229 End:20240229 Granularity:day Comparison: Note:}]
+        --- FAIL: TestTimeCalendarTools/DATE/20250230/resolve_time (0.00s)
+            timeparse_test.go:110: ranges = [{Expression:20250230 Start:20250230 End:20250230 Granularity:day Comparison: Note:}]
+        --- FAIL: TestTimeCalendarTools/DATE/20250230_및_20240229/resolve_time (0.00s)
+            timeparse_test.go:110: ranges = [{Expression:20250230 Start:20250230 End:20250230 Granularity:day Comparison: Note:} {Expression:20240229 Start:20240229 End:20240229 Granularity:day Comparison: Note:}]
+        --- FAIL: TestTimeCalendarTools/DATE/20250229/resolve_time (0.00s)
+            timeparse_test.go:110: ranges = [{Expression:20250229 Start:20250229 End:20250229 Granularity:day Comparison: Note:}]
+        --- FAIL: TestTimeCalendarTools/DATE/20250229_및_20240229/resolve_time (0.00s)
+            timeparse_test.go:110: ranges = [{Expression:20250229 Start:20250229 End:20250229 Granularity:day Comparison: Note:} {Expression:20240229 Start:20240229 End:20240229 Granularity:day Comparison: Note:}]
+        --- FAIL: TestTimeCalendarTools/DATE/20250431/resolve_time (0.00s)
+            timeparse_test.go:110: ranges = [{Expression:20250431 Start:20250431 End:20250431 Granularity:day Comparison: Note:}]
+        --- FAIL: TestTimeCalendarTools/DATE/20250431_및_20240229/resolve_time (0.00s)
+            timeparse_test.go:110: ranges = [{Expression:20250431 Start:20250431 End:20250431 Granularity:day Comparison: Note:} {Expression:20240229 Start:20240229 End:20240229 Granularity:day Comparison: Note:}]
+        --- FAIL: TestTimeCalendarTools/DATE/20250100/resolve_time (0.00s)
+            timeparse_test.go:110: ranges = [{Expression:20250100 Start:20250100 End:20250100 Granularity:day Comparison: Note:}]
+        --- FAIL: TestTimeCalendarTools/DATE/20250100_및_20240229/resolve_time (0.00s)
+            timeparse_test.go:110: ranges = [{Expression:20250100 Start:20250100 End:20250100 Granularity:day Comparison: Note:} {Expression:20240229 Start:20240229 End:20240229 Granularity:day Comparison: Note:}]
+    --- FAIL: TestTimeCalendarTools/TIMESTAMP (0.02s)
+        --- FAIL: TestTimeCalendarTools/TIMESTAMP/2025-02-30/resolve_time (0.00s)
+            timeparse_test.go:110: ranges = [{Expression:2025-02-30 Start:20250230 End:20250230 Granularity:day Comparison: Note:}]
+        --- FAIL: TestTimeCalendarTools/TIMESTAMP/2025-02-30_및_2024-02-29/resolve_time (0.00s)
+            timeparse_test.go:110: ranges = [{Expression:2025-02-30 Start:20250230 End:20250230 Granularity:day Comparison: Note:} {Expression:2024-02-29 Start:20240229 End:20240229 Granularity:day Comparison: Note:}]
+        --- FAIL: TestTimeCalendarTools/TIMESTAMP/2025-02-29/resolve_time (0.00s)
+            timeparse_test.go:110: ranges = [{Expression:2025-02-29 Start:20250229 End:20250229 Granularity:day Comparison: Note:}]
+        --- FAIL: TestTimeCalendarTools/TIMESTAMP/2025-02-29_및_2024-02-29/resolve_time (0.00s)
+            timeparse_test.go:110: ranges = [{Expression:2025-02-29 Start:20250229 End:20250229 Granularity:day Comparison: Note:} {Expression:2024-02-29 Start:20240229 End:20240229 Granularity:day Comparison: Note:}]
+        --- FAIL: TestTimeCalendarTools/TIMESTAMP/2025-04-31/resolve_time (0.00s)
+            timeparse_test.go:110: ranges = [{Expression:2025-04-31 Start:20250431 End:20250431 Granularity:day Comparison: Note:}]
+        --- FAIL: TestTimeCalendarTools/TIMESTAMP/2025-04-31_및_2024-02-29/resolve_time (0.00s)
+            timeparse_test.go:110: ranges = [{Expression:2025-04-31 Start:20250431 End:20250431 Granularity:day Comparison: Note:} {Expression:2024-02-29 Start:20240229 End:20240229 Granularity:day Comparison: Note:}]
+        --- FAIL: TestTimeCalendarTools/TIMESTAMP/2025-01-00/resolve_time (0.00s)
+            timeparse_test.go:110: ranges = [{Expression:2025-01-00 Start:20250100 End:20250100 Granularity:day Comparison: Note:}]
+        --- FAIL: TestTimeCalendarTools/TIMESTAMP/2025-01-00_및_2024-02-29/resolve_time (0.00s)
+            timeparse_test.go:110: ranges = [{Expression:2025-01-00 Start:20250100 End:20250100 Granularity:day Comparison: Note:} {Expression:2024-02-29 Start:20240229 End:20240229 Granularity:day Comparison: Note:}]
+        --- FAIL: TestTimeCalendarTools/TIMESTAMP/2025.02.30/resolve_time (0.00s)
+            timeparse_test.go:110: ranges = [{Expression:2025.02.30 Start:20250230 End:20250230 Granularity:day Comparison: Note:}]
+        --- FAIL: TestTimeCalendarTools/TIMESTAMP/2025.02.30_및_2024.02.29/resolve_time (0.00s)
+            timeparse_test.go:110: ranges = [{Expression:2025.02.30 Start:20250230 End:20250230 Granularity:day Comparison: Note:} {Expression:2024.02.29 Start:20240229 End:20240229 Granularity:day Comparison: Note:}]
+        --- FAIL: TestTimeCalendarTools/TIMESTAMP/2025.02.29/resolve_time (0.00s)
+            timeparse_test.go:110: ranges = [{Expression:2025.02.29 Start:20250229 End:20250229 Granularity:day Comparison: Note:}]
+        --- FAIL: TestTimeCalendarTools/TIMESTAMP/2025.02.29_및_2024.02.29/resolve_time (0.00s)
+            timeparse_test.go:110: ranges = [{Expression:2025.02.29 Start:20250229 End:20250229 Granularity:day Comparison: Note:} {Expression:2024.02.29 Start:20240229 End:20240229 Granularity:day Comparison: Note:}]
+        --- FAIL: TestTimeCalendarTools/TIMESTAMP/2025.04.31/resolve_time (0.00s)
+            timeparse_test.go:110: ranges = [{Expression:2025.04.31 Start:20250431 End:20250431 Granularity:day Comparison: Note:}]
+        --- FAIL: TestTimeCalendarTools/TIMESTAMP/2025.04.31_및_2024.02.29/resolve_time (0.00s)
+            timeparse_test.go:110: ranges = [{Expression:2025.04.31 Start:20250431 End:20250431 Granularity:day Comparison: Note:} {Expression:2024.02.29 Start:20240229 End:20240229 Granularity:day Comparison: Note:}]
+        --- FAIL: TestTimeCalendarTools/TIMESTAMP/2025.01.00/resolve_time (0.00s)
+            timeparse_test.go:110: ranges = [{Expression:2025.01.00 Start:20250100 End:20250100 Granularity:day Comparison: Note:}]
+        --- FAIL: TestTimeCalendarTools/TIMESTAMP/2025.01.00_및_2024.02.29/resolve_time (0.00s)
+            timeparse_test.go:110: ranges = [{Expression:2025.01.00 Start:20250100 End:20250100 Granularity:day Comparison: Note:} {Expression:2024.02.29 Start:20240229 End:20240229 Granularity:day Comparison: Note:}]
+        --- FAIL: TestTimeCalendarTools/TIMESTAMP/2025/02/30/resolve_time (0.00s)
+            timeparse_test.go:110: ranges = [{Expression:2025/02/30 Start:20250230 End:20250230 Granularity:day Comparison: Note:}]
+        --- FAIL: TestTimeCalendarTools/TIMESTAMP/2025/02/30_및_2024/02/29/resolve_time (0.00s)
+            timeparse_test.go:110: ranges = [{Expression:2025/02/30 Start:20250230 End:20250230 Granularity:day Comparison: Note:} {Expression:2024/02/29 Start:20240229 End:20240229 Granularity:day Comparison: Note:}]
+        --- FAIL: TestTimeCalendarTools/TIMESTAMP/2025/02/29/resolve_time (0.00s)
+            timeparse_test.go:110: ranges = [{Expression:2025/02/29 Start:20250229 End:20250229 Granularity:day Comparison: Note:}]
+        --- FAIL: TestTimeCalendarTools/TIMESTAMP/2025/02/29_및_2024/02/29/resolve_time (0.00s)
+            timeparse_test.go:110: ranges = [{Expression:2025/02/29 Start:20250229 End:20250229 Granularity:day Comparison: Note:} {Expression:2024/02/29 Start:20240229 End:20240229 Granularity:day Comparison: Note:}]
+        --- FAIL: TestTimeCalendarTools/TIMESTAMP/2025/04/31/resolve_time (0.00s)
+            timeparse_test.go:110: ranges = [{Expression:2025/04/31 Start:20250431 End:20250431 Granularity:day Comparison: Note:}]
+        --- FAIL: TestTimeCalendarTools/TIMESTAMP/2025/04/31_및_2024/02/29/resolve_time (0.00s)
+            timeparse_test.go:110: ranges = [{Expression:2025/04/31 Start:20250431 End:20250431 Granularity:day Comparison: Note:} {Expression:2024/02/29 Start:20240229 End:20240229 Granularity:day Comparison: Note:}]
+        --- FAIL: TestTimeCalendarTools/TIMESTAMP/2025/01/00/resolve_time (0.00s)
+            timeparse_test.go:110: ranges = [{Expression:2025/01/00 Start:20250100 End:20250100 Granularity:day Comparison: Note:}]
+        --- FAIL: TestTimeCalendarTools/TIMESTAMP/2025/01/00_및_2024/02/29/resolve_time (0.00s)
+            timeparse_test.go:110: ranges = [{Expression:2025/01/00 Start:20250100 End:20250100 Granularity:day Comparison: Note:} {Expression:2024/02/29 Start:20240229 End:20240229 Granularity:day Comparison: Note:}]
+        --- FAIL: TestTimeCalendarTools/TIMESTAMP/20250230/resolve_time (0.00s)
+            timeparse_test.go:110: ranges = [{Expression:20250230 Start:20250230 End:20250230 Granularity:day Comparison: Note:}]
+        --- FAIL: TestTimeCalendarTools/TIMESTAMP/20250230_및_20240229/resolve_time (0.00s)
+            timeparse_test.go:110: ranges = [{Expression:20250230 Start:20250230 End:20250230 Granularity:day Comparison: Note:} {Expression:20240229 Start:20240229 End:20240229 Granularity:day Comparison: Note:}]
+        --- FAIL: TestTimeCalendarTools/TIMESTAMP/20250229/resolve_time (0.00s)
+            timeparse_test.go:110: ranges = [{Expression:20250229 Start:20250229 End:20250229 Granularity:day Comparison: Note:}]
+        --- FAIL: TestTimeCalendarTools/TIMESTAMP/20250229_및_20240229/resolve_time (0.00s)
+            timeparse_test.go:110: ranges = [{Expression:20250229 Start:20250229 End:20250229 Granularity:day Comparison: Note:} {Expression:20240229 Start:20240229 End:20240229 Granularity:day Comparison: Note:}]
+        --- FAIL: TestTimeCalendarTools/TIMESTAMP/20250431/resolve_time (0.00s)
+            timeparse_test.go:110: ranges = [{Expression:20250431 Start:20250431 End:20250431 Granularity:day Comparison: Note:}]
+        --- FAIL: TestTimeCalendarTools/TIMESTAMP/20250431_및_20240229/resolve_time (0.00s)
+            timeparse_test.go:110: ranges = [{Expression:20250431 Start:20250431 End:20250431 Granularity:day Comparison: Note:} {Expression:20240229 Start:20240229 End:20240229 Granularity:day Comparison: Note:}]
+        --- FAIL: TestTimeCalendarTools/TIMESTAMP/20250100/resolve_time (0.00s)
+            timeparse_test.go:110: ranges = [{Expression:20250100 Start:20250100 End:20250100 Granularity:day Comparison: Note:}]
+        --- FAIL: TestTimeCalendarTools/TIMESTAMP/20250100_및_20240229/resolve_time (0.00s)
+            timeparse_test.go:110: ranges = [{Expression:20250100 Start:20250100 End:20250100 Granularity:day Comparison: Note:} {Expression:20240229 Start:20240229 End:20240229 Granularity:day Comparison: Note:}]
+    --- FAIL: TestTimeCalendarTools/DATETIME_YYYYMMDDHH24MISS (0.02s)
+        --- FAIL: TestTimeCalendarTools/DATETIME_YYYYMMDDHH24MISS/2025-02-30/resolve_time (0.00s)
+            timeparse_test.go:110: ranges = [{Expression:2025-02-30 Start:20250230 End:20250230 Granularity:day Comparison: Note:}]
+        --- FAIL: TestTimeCalendarTools/DATETIME_YYYYMMDDHH24MISS/2025-02-30_및_2024-02-29/resolve_time (0.00s)
+            timeparse_test.go:110: ranges = [{Expression:2025-02-30 Start:20250230 End:20250230 Granularity:day Comparison: Note:} {Expression:2024-02-29 Start:20240229 End:20240229 Granularity:day Comparison: Note:}]
+        --- FAIL: TestTimeCalendarTools/DATETIME_YYYYMMDDHH24MISS/2025-02-29/resolve_time (0.00s)
+            timeparse_test.go:110: ranges = [{Expression:2025-02-29 Start:20250229 End:20250229 Granularity:day Comparison: Note:}]
+        --- FAIL: TestTimeCalendarTools/DATETIME_YYYYMMDDHH24MISS/2025-02-29_및_2024-02-29/resolve_time (0.00s)
+            timeparse_test.go:110: ranges = [{Expression:2025-02-29 Start:20250229 End:20250229 Granularity:day Comparison: Note:} {Expression:2024-02-29 Start:20240229 End:20240229 Granularity:day Comparison: Note:}]
+        --- FAIL: TestTimeCalendarTools/DATETIME_YYYYMMDDHH24MISS/2025-04-31/resolve_time (0.00s)
+            timeparse_test.go:110: ranges = [{Expression:2025-04-31 Start:20250431 End:20250431 Granularity:day Comparison: Note:}]
+        --- FAIL: TestTimeCalendarTools/DATETIME_YYYYMMDDHH24MISS/2025-04-31_및_2024-02-29/resolve_time (0.00s)
+            timeparse_test.go:110: ranges = [{Expression:2025-04-31 Start:20250431 End:20250431 Granularity:day Comparison: Note:} {Expression:2024-02-29 Start:20240229 End:20240229 Granularity:day Comparison: Note:}]
+        --- FAIL: TestTimeCalendarTools/DATETIME_YYYYMMDDHH24MISS/2025-01-00/resolve_time (0.00s)
+            timeparse_test.go:110: ranges = [{Expression:2025-01-00 Start:20250100 End:20250100 Granularity:day Comparison: Note:}]
+        --- FAIL: TestTimeCalendarTools/DATETIME_YYYYMMDDHH24MISS/2025-01-00_및_2024-02-29/resolve_time (0.00s)
+            timeparse_test.go:110: ranges = [{Expression:2025-01-00 Start:20250100 End:20250100 Granularity:day Comparison: Note:} {Expression:2024-02-29 Start:20240229 End:20240229 Granularity:day Comparison: Note:}]
+        --- FAIL: TestTimeCalendarTools/DATETIME_YYYYMMDDHH24MISS/2025.02.30/resolve_time (0.00s)
+            timeparse_test.go:110: ranges = [{Expression:2025.02.30 Start:20250230 End:20250230 Granularity:day Comparison: Note:}]
+        --- FAIL: TestTimeCalendarTools/DATETIME_YYYYMMDDHH24MISS/2025.02.30_및_2024.02.29/resolve_time (0.00s)
+            timeparse_test.go:110: ranges = [{Expression:2025.02.30 Start:20250230 End:20250230 Granularity:day Comparison: Note:} {Expression:2024.02.29 Start:20240229 End:20240229 Granularity:day Comparison: Note:}]
+        --- FAIL: TestTimeCalendarTools/DATETIME_YYYYMMDDHH24MISS/2025.02.29/resolve_time (0.00s)
+            timeparse_test.go:110: ranges = [{Expression:2025.02.29 Start:20250229 End:20250229 Granularity:day Comparison: Note:}]
+        --- FAIL: TestTimeCalendarTools/DATETIME_YYYYMMDDHH24MISS/2025.02.29_및_2024.02.29/resolve_time (0.00s)
+            timeparse_test.go:110: ranges = [{Expression:2025.02.29 Start:20250229 End:20250229 Granularity:day Comparison: Note:} {Expression:2024.02.29 Start:20240229 End:20240229 Granularity:day Comparison: Note:}]
+        --- FAIL: TestTimeCalendarTools/DATETIME_YYYYMMDDHH24MISS/2025.04.31/resolve_time (0.00s)
+            timeparse_test.go:110: ranges = [{Expression:2025.04.31 Start:20250431 End:20250431 Granularity:day Comparison: Note:}]
+        --- FAIL: TestTimeCalendarTools/DATETIME_YYYYMMDDHH24MISS/2025.04.31_및_2024.02.29/resolve_time (0.00s)
+            timeparse_test.go:110: ranges = [{Expression:2025.04.31 Start:20250431 End:20250431 Granularity:day Comparison: Note:} {Expression:2024.02.29 Start:20240229 End:20240229 Granularity:day Comparison: Note:}]
+        --- FAIL: TestTimeCalendarTools/DATETIME_YYYYMMDDHH24MISS/2025.01.00/resolve_time (0.00s)
+            timeparse_test.go:110: ranges = [{Expression:2025.01.00 Start:20250100 End:20250100 Granularity:day Comparison: Note:}]
+        --- FAIL: TestTimeCalendarTools/DATETIME_YYYYMMDDHH24MISS/2025.01.00_및_2024.02.29/resolve_time (0.00s)
+            timeparse_test.go:110: ranges = [{Expression:2025.01.00 Start:20250100 End:20250100 Granularity:day Comparison: Note:} {Expression:2024.02.29 Start:20240229 End:20240229 Granularity:day Comparison: Note:}]
+        --- FAIL: TestTimeCalendarTools/DATETIME_YYYYMMDDHH24MISS/2025/02/30/resolve_time (0.00s)
+            timeparse_test.go:110: ranges = [{Expression:2025/02/30 Start:20250230 End:20250230 Granularity:day Comparison: Note:}]
+        --- FAIL: TestTimeCalendarTools/DATETIME_YYYYMMDDHH24MISS/2025/02/30_및_2024/02/29/resolve_time (0.00s)
+            timeparse_test.go:110: ranges = [{Expression:2025/02/30 Start:20250230 End:20250230 Granularity:day Comparison: Note:} {Expression:2024/02/29 Start:20240229 End:20240229 Granularity:day Comparison: Note:}]
+        --- FAIL: TestTimeCalendarTools/DATETIME_YYYYMMDDHH24MISS/2025/02/29/resolve_time (0.00s)
+            timeparse_test.go:110: ranges = [{Expression:2025/02/29 Start:20250229 End:20250229 Granularity:day Comparison: Note:}]
+        --- FAIL: TestTimeCalendarTools/DATETIME_YYYYMMDDHH24MISS/2025/02/29_및_2024/02/29/resolve_time (0.00s)
+            timeparse_test.go:110: ranges = [{Expression:2025/02/29 Start:20250229 End:20250229 Granularity:day Comparison: Note:} {Expression:2024/02/29 Start:20240229 End:20240229 Granularity:day Comparison: Note:}]
+        --- FAIL: TestTimeCalendarTools/DATETIME_YYYYMMDDHH24MISS/2025/04/31/resolve_time (0.00s)
+            timeparse_test.go:110: ranges = [{Expression:2025/04/31 Start:20250431 End:20250431 Granularity:day Comparison: Note:}]
+        --- FAIL: TestTimeCalendarTools/DATETIME_YYYYMMDDHH24MISS/2025/04/31_및_2024/02/29/resolve_time (0.00s)
+            timeparse_test.go:110: ranges = [{Expression:2025/04/31 Start:20250431 End:20250431 Granularity:day Comparison: Note:} {Expression:2024/02/29 Start:20240229 End:20240229 Granularity:day Comparison: Note:}]
+        --- FAIL: TestTimeCalendarTools/DATETIME_YYYYMMDDHH24MISS/2025/01/00/resolve_time (0.00s)
+            timeparse_test.go:110: ranges = [{Expression:2025/01/00 Start:20250100 End:20250100 Granularity:day Comparison: Note:}]
+        --- FAIL: TestTimeCalendarTools/DATETIME_YYYYMMDDHH24MISS/2025/01/00_및_2024/02/29/resolve_time (0.00s)
+            timeparse_test.go:110: ranges = [{Expression:2025/01/00 Start:20250100 End:20250100 Granularity:day Comparison: Note:} {Expression:2024/02/29 Start:20240229 End:20240229 Granularity:day Comparison: Note:}]
+        --- FAIL: TestTimeCalendarTools/DATETIME_YYYYMMDDHH24MISS/20250230/resolve_time (0.00s)
+            timeparse_test.go:110: ranges = [{Expression:20250230 Start:20250230 End:20250230 Granularity:day Comparison: Note:}]
+        --- FAIL: TestTimeCalendarTools/DATETIME_YYYYMMDDHH24MISS/20250230_및_20240229/resolve_time (0.00s)
+            timeparse_test.go:110: ranges = [{Expression:20250230 Start:20250230 End:20250230 Granularity:day Comparison: Note:} {Expression:20240229 Start:20240229 End:20240229 Granularity:day Comparison: Note:}]
+        --- FAIL: TestTimeCalendarTools/DATETIME_YYYYMMDDHH24MISS/20250229/resolve_time (0.00s)
+            timeparse_test.go:110: ranges = [{Expression:20250229 Start:20250229 End:20250229 Granularity:day Comparison: Note:}]
+        --- FAIL: TestTimeCalendarTools/DATETIME_YYYYMMDDHH24MISS/20250229_및_20240229/resolve_time (0.00s)
+            timeparse_test.go:110: ranges = [{Expression:20250229 Start:20250229 End:20250229 Granularity:day Comparison: Note:} {Expression:20240229 Start:20240229 End:20240229 Granularity:day Comparison: Note:}]
+        --- FAIL: TestTimeCalendarTools/DATETIME_YYYYMMDDHH24MISS/20250431/resolve_time (0.00s)
+            timeparse_test.go:110: ranges = [{Expression:20250431 Start:20250431 End:20250431 Granularity:day Comparison: Note:}]
+        --- FAIL: TestTimeCalendarTools/DATETIME_YYYYMMDDHH24MISS/20250431_및_20240229/resolve_time (0.00s)
+            timeparse_test.go:110: ranges = [{Expression:20250431 Start:20250431 End:20250431 Granularity:day Comparison: Note:} {Expression:20240229 Start:20240229 End:20240229 Granularity:day Comparison: Note:}]
+        --- FAIL: TestTimeCalendarTools/DATETIME_YYYYMMDDHH24MISS/20250100/resolve_time (0.00s)
+            timeparse_test.go:110: ranges = [{Expression:20250100 Start:20250100 End:20250100 Granularity:day Comparison: Note:}]
+        --- FAIL: TestTimeCalendarTools/DATETIME_YYYYMMDDHH24MISS/20250100_및_20240229/resolve_time (0.00s)
+            timeparse_test.go:110: ranges = [{Expression:20250100 Start:20250100 End:20250100 Granularity:day Comparison: Note:} {Expression:20240229 Start:20240229 End:20240229 Granularity:day Comparison: Note:}]
+FAIL
+FAIL	jasql/internal/mcp	0.092s
+FAIL

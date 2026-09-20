@@ -1,0 +1,226 @@
+{
+  "run_id": "2026-09-21-005416-jikim-improve",
+  "generated": "2026-09-21T01:03:29+09:00",
+  "run": {
+    "run_id": "2026-09-21-005416-jikim-improve",
+    "project": "jikim",
+    "kind": "improve",
+    "started": "2026-09-21T00:54:16+09:00",
+    "model": "claude-opus-5",
+    "policy_version": "ecd4b546e",
+    "prompts_hash": "30c37184f081815d",
+    "runner_version": "ecd4b546e",
+    "arm": "no-arbiter",
+    "experiment": "roles-2026-09",
+    "finished": "2026-09-21T01:03:29+09:00",
+    "outcome": "review-pending"
+  },
+  "record": {
+    "ts": "2026-09-21T01:03:29+09:00",
+    "date": "2026-09-21",
+    "project": "jikim",
+    "result": "review held, PR open https://github.com/hkjang/jikim/pull/38",
+    "outcome": "review-pending",
+    "run_id": "2026-09-21-005416-jikim-improve",
+    "base_sha": "9ea43d0e73afbc1ef94e5487d34cfa0aa692f81d",
+    "head_sha": "d6dd63ff742e0fac3297e9fe6b1cb20aaa530f60",
+    "pr": "https://github.com/hkjang/jikim/pull/38",
+    "stages": {
+      "base": {
+        "state": "pinned",
+        "reason": "main@9ea43d0",
+        "at": "2026-09-21T00:54:19+09:00"
+      },
+      "autonomy": {
+        "state": "release",
+        "reason": "",
+        "at": "2026-09-21T00:54:19+09:00"
+      },
+      "scout": {
+        "state": "done",
+        "reason": "AI 채팅의 HTTP 오류 처리와 세션 만료 처리를 일반 API 클라이언트와 일치시키기 (가치 3 / 위험 1 / 작업량 S)",
+        "at": "2026-09-21T00:58:42+09:00"
+      },
+      "brief": {
+        "state": "accepted",
+        "reason": "채택 — 현재 코드에도 streamChat의 JSON 오류 원문 노출·401 알림 누락이 남아 있었고 실제 HTTP 및 AuthProvider 실패 테스트로 �",
+        "at": "2026-09-21T01:03:01+09:00"
+      },
+      "verify": {
+        "state": "passed",
+        "reason": "검증 7개 통과 (auto)",
+        "at": "2026-09-21T01:03:16+09:00"
+      },
+      "review": {
+        "state": "missing",
+        "reason": "리뷰 결과 없음/손상: missing — 보류",
+        "at": "2026-09-21T01:03:22+09:00"
+      },
+      "pr": {
+        "state": "created",
+        "reason": "https://github.com/hkjang/jikim/pull/38",
+        "at": "2026-09-21T01:03:26+09:00"
+      }
+    },
+    "campaign": "",
+    "autonomy": "release",
+    "arm": "no-arbiter",
+    "experiment": "roles-2026-09",
+    "files": 5,
+    "additions": 160,
+    "deletions": 15,
+    "tests": 3,
+    "title": "fix: align AI chat HTTP errors with API session handling"
+  },
+  "stages": {
+    "base": {
+      "state": "pinned",
+      "reason": "main@9ea43d0",
+      "at": "2026-09-21T00:54:19+09:00"
+    },
+    "autonomy": {
+      "state": "release",
+      "reason": "",
+      "at": "2026-09-21T00:54:19+09:00"
+    },
+    "scout": {
+      "state": "done",
+      "reason": "AI 채팅의 HTTP 오류 처리와 세션 만료 처리를 일반 API 클라이언트와 일치시키기 (가치 3 / 위험 1 / 작업량 S)",
+      "at": "2026-09-21T00:58:42+09:00"
+    },
+    "brief": {
+      "state": "accepted",
+      "reason": "채택 — 현재 코드에도 streamChat의 JSON 오류 원문 노출·401 알림 누락이 남아 있었고 실제 HTTP 및 AuthProvider 실패 테스트로 �",
+      "at": "2026-09-21T01:03:01+09:00"
+    },
+    "verify": {
+      "state": "passed",
+      "reason": "검증 7개 통과 (auto)",
+      "at": "2026-09-21T01:03:16+09:00"
+    },
+    "review": {
+      "state": "missing",
+      "reason": "리뷰 결과 없음/손상: missing — 보류",
+      "at": "2026-09-21T01:03:22+09:00"
+    },
+    "pr": {
+      "state": "created",
+      "reason": "https://github.com/hkjang/jikim/pull/38",
+      "at": "2026-09-21T01:03:26+09:00"
+    }
+  },
+  "provenance": {
+    "model": "claude-opus-5",
+    "policy_version": "ecd4b546e",
+    "prompts_hash": "30c37184f081815d",
+    "runner_version": "ecd4b546e",
+    "base_sha": "9ea43d0e73afbc1ef94e5487d34cfa0aa692f81d",
+    "head_sha": "d6dd63ff742e0fac3297e9fe6b1cb20aaa530f60",
+    "pr": "https://github.com/hkjang/jikim/pull/38"
+  },
+  "verification": {
+    "runner": {
+      "source": "auto",
+      "commands": [
+        {
+          "cmd": "go build ./...",
+          "exit": 0,
+          "seconds": 1
+        },
+        {
+          "cmd": "go vet ./...",
+          "exit": 0,
+          "seconds": 0
+        },
+        {
+          "cmd": "go test ./...",
+          "exit": 0,
+          "seconds": 1
+        },
+        {
+          "cmd": "cd web && [ -d node_modules ] || npm ci --no-audit --no-fund",
+          "exit": 0,
+          "seconds": 0
+        },
+        {
+          "cmd": "cd web && npm test --silent",
+          "exit": 0,
+          "seconds": 9
+        },
+        {
+          "cmd": "cd web && [ -d node_modules ] || npm ci --no-audit --no-fund",
+          "exit": 0,
+          "seconds": 0
+        },
+        {
+          "cmd": "cd web && npm run build --silent",
+          "exit": 0,
+          "seconds": 3
+        }
+      ]
+    },
+    "runner_gate": {
+      "ok": true,
+      "state": "verified",
+      "reason": "검증 7개 통과 (auto)"
+    },
+    "after_rebase": null,
+    "review": null,
+    "ci_gate": null
+  },
+  "release": {
+    "result": null,
+    "assets_sha256": []
+  },
+  "approval": null,
+  "usage": [
+    {
+      "ts": "2026-09-21T00:58:42+09:00",
+      "date": "2026-09-21",
+      "project": "jikim",
+      "phase": "scout",
+      "run_id": "2026-09-21-005416-jikim-improve",
+      "campaign": "",
+      "subtype": "success",
+      "duration_ms": 0,
+      "num_turns": 1,
+      "cost_usd": null,
+      "input_tokens": 728583,
+      "output_tokens": 7594,
+      "cache_read": 653952,
+      "cache_create": 0
+    },
+    {
+      "ts": "2026-09-21T01:03:00+09:00",
+      "date": "2026-09-21",
+      "project": "jikim",
+      "phase": "improve",
+      "run_id": "2026-09-21-005416-jikim-improve",
+      "campaign": "",
+      "subtype": "success",
+      "duration_ms": 0,
+      "num_turns": 1,
+      "cost_usd": null,
+      "input_tokens": 1201492,
+      "output_tokens": 6350,
+      "cache_read": 1133696,
+      "cache_create": 0
+    },
+    {
+      "ts": "2026-09-21T01:03:22+09:00",
+      "date": "2026-09-21",
+      "project": "jikim",
+      "phase": "review",
+      "run_id": "2026-09-21-005416-jikim-improve",
+      "campaign": "",
+      "subtype": "success",
+      "duration_ms": 571,
+      "num_turns": 1,
+      "cost_usd": 0,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read": 0,
+      "cache_create": 0
+    }
+  ]
+}

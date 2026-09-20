@@ -1,0 +1,404 @@
+
+> jikim-web@0.2.16 test
+> vitest run src/lib/api.test.ts src/lib/api.auth.test.tsx --maxWorkers=1
+
+
+ RUN  v4.1.11 /home/hkjang/.cache/auto-improve-wt/jikim/web
+
+ ❯ src/lib/api.test.ts (31 tests | 12 failed) 75ms
+     × streamChat JSON HTTP 400 계약 7ms
+     × streamChat JSON HTTP 401 계약 2ms
+     × streamChat JSON HTTP 403 계약 2ms
+     × streamChat JSON HTTP 429 계약 2ms
+     × streamChat JSON HTTP 500 계약 2ms
+     × streamChat JSON HTTP 503 계약 2ms
+     × streamChat 오류 본문 text/plain 일시적인 장애 2ms
+     × streamChat 오류 본문 text/plain  1ms
+     × streamChat 오류 본문 application/json {"message":"상위 메시지","error":{"message":"하위"}} 2ms
+     × streamChat 오류 본문 application/json {"error":"문자열 오류"} 2ms
+     × streamChat 오류 본문 application/json {"errors":["첫 오류","다음 오류"]} 1ms
+     × streamChat 오류 본문 application/json {} 1ms
+ ❯ src/lib/api.auth.test.tsx (12 tests | 1 failed) 104ms
+     × streamChat HTTP 401의 세션 처리 6ms
+
+⎯⎯⎯⎯⎯⎯ Failed Tests 13 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/lib/api.auth.test.tsx > HTTP 오류와 실제 AuthProvider > streamChat HTTP 401의 세션 처리
+TestingLibraryElementError: Unable to find an element with the text: guest. This could be because the text is broken up by multiple elements. In this case, you can provide a function for your text matcher to make your matcher more flexible.
+
+Ignored nodes: comments, script, style
+[36m<body>[39m
+  [36m<div>[39m
+    [36m<div>[39m
+      [0mtester[0m
+    [36m</div>[39m
+  [36m</div>[39m
+[36m</body>[39m
+ ❯ Object.getElementError node_modules/@testing-library/dom/dist/config.js:37:19
+ ❯ node_modules/@testing-library/dom/dist/query-helpers.js:76:38
+ ❯ node_modules/@testing-library/dom/dist/query-helpers.js:52:17
+ ❯ node_modules/@testing-library/dom/dist/query-helpers.js:95:19
+ ❯ src/lib/api.auth.test.tsx:36:23
+     34|           await expect(request).rejects.toMatchObject({ status });
+     35|         });
+     36|         expect(screen.getByText(status === 401 ? 'guest' : 'tester')).…
+       |                       ^
+     37|         expect(events).toBe(status === 401 ? 1 : 0);
+     38|       } finally {
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/13]⎯
+
+ FAIL  src/lib/api.test.ts > 실제 HTTP API 오류와 SSE > streamChat JSON HTTP 400 계약
+AssertionError: expected ApiError: {"error":{"code":"request_faile… { …(2) } to match object { message: '요청을 처리할 수 없습니다', …(2) }
+(1 matching property omitted from actual)
+
+- Expected
++ Received
+
+- {
+-   "details": {
+-     "error": {
+-       "code": "request_failed",
+-       "message": "요청을 처리할 수 없습니다",
+-     },
+-     "request_id": "test",
+-   },
+-   "message": "요청을 처리할 수 없습니다",
++ ApiError {
++   "details": undefined,
+    "status": 400,
+  }
+
+ ❯ src/lib/api.test.ts:60:30
+     58|         const request = client === 'api' ? api('/ai/chat') : streamCha…
+     59|         await expect(request).rejects.toBeInstanceOf(ApiError);
+     60|         await expect(request).rejects.toMatchObject({ message: details…
+       |                              ^
+     61|         expect(events).toBe(status === 401 ? 1 : 0);
+     62|       } finally {
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/13]⎯
+
+ FAIL  src/lib/api.test.ts > 실제 HTTP API 오류와 SSE > streamChat JSON HTTP 401 계약
+AssertionError: expected ApiError: {"error":{"code":"request_faile… { …(2) } to match object { message: '요청을 처리할 수 없습니다', …(2) }
+(1 matching property omitted from actual)
+
+- Expected
++ Received
+
+- {
+-   "details": {
+-     "error": {
+-       "code": "request_failed",
+-       "message": "요청을 처리할 수 없습니다",
+-     },
+-     "request_id": "test",
+-   },
+-   "message": "요청을 처리할 수 없습니다",
++ ApiError {
++   "details": undefined,
+    "status": 401,
+  }
+
+ ❯ src/lib/api.test.ts:60:30
+     58|         const request = client === 'api' ? api('/ai/chat') : streamCha…
+     59|         await expect(request).rejects.toBeInstanceOf(ApiError);
+     60|         await expect(request).rejects.toMatchObject({ message: details…
+       |                              ^
+     61|         expect(events).toBe(status === 401 ? 1 : 0);
+     62|       } finally {
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/13]⎯
+
+ FAIL  src/lib/api.test.ts > 실제 HTTP API 오류와 SSE > streamChat JSON HTTP 403 계약
+AssertionError: expected ApiError: {"error":{"code":"request_faile… { …(2) } to match object { message: '요청을 처리할 수 없습니다', …(2) }
+(1 matching property omitted from actual)
+
+- Expected
++ Received
+
+- {
+-   "details": {
+-     "error": {
+-       "code": "request_failed",
+-       "message": "요청을 처리할 수 없습니다",
+-     },
+-     "request_id": "test",
+-   },
+-   "message": "요청을 처리할 수 없습니다",
++ ApiError {
++   "details": undefined,
+    "status": 403,
+  }
+
+ ❯ src/lib/api.test.ts:60:30
+     58|         const request = client === 'api' ? api('/ai/chat') : streamCha…
+     59|         await expect(request).rejects.toBeInstanceOf(ApiError);
+     60|         await expect(request).rejects.toMatchObject({ message: details…
+       |                              ^
+     61|         expect(events).toBe(status === 401 ? 1 : 0);
+     62|       } finally {
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/13]⎯
+
+ FAIL  src/lib/api.test.ts > 실제 HTTP API 오류와 SSE > streamChat JSON HTTP 429 계약
+AssertionError: expected ApiError: {"error":{"code":"request_faile… { …(2) } to match object { message: '요청을 처리할 수 없습니다', …(2) }
+(1 matching property omitted from actual)
+
+- Expected
++ Received
+
+- {
+-   "details": {
+-     "error": {
+-       "code": "request_failed",
+-       "message": "요청을 처리할 수 없습니다",
+-     },
+-     "request_id": "test",
+-   },
+-   "message": "요청을 처리할 수 없습니다",
++ ApiError {
++   "details": undefined,
+    "status": 429,
+  }
+
+ ❯ src/lib/api.test.ts:60:30
+     58|         const request = client === 'api' ? api('/ai/chat') : streamCha…
+     59|         await expect(request).rejects.toBeInstanceOf(ApiError);
+     60|         await expect(request).rejects.toMatchObject({ message: details…
+       |                              ^
+     61|         expect(events).toBe(status === 401 ? 1 : 0);
+     62|       } finally {
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/13]⎯
+
+ FAIL  src/lib/api.test.ts > 실제 HTTP API 오류와 SSE > streamChat JSON HTTP 500 계약
+AssertionError: expected ApiError: {"error":{"code":"request_faile… { …(2) } to match object { message: '요청을 처리할 수 없습니다', …(2) }
+(1 matching property omitted from actual)
+
+- Expected
++ Received
+
+- {
+-   "details": {
+-     "error": {
+-       "code": "request_failed",
+-       "message": "요청을 처리할 수 없습니다",
+-     },
+-     "request_id": "test",
+-   },
+-   "message": "요청을 처리할 수 없습니다",
++ ApiError {
++   "details": undefined,
+    "status": 500,
+  }
+
+ ❯ src/lib/api.test.ts:60:30
+     58|         const request = client === 'api' ? api('/ai/chat') : streamCha…
+     59|         await expect(request).rejects.toBeInstanceOf(ApiError);
+     60|         await expect(request).rejects.toMatchObject({ message: details…
+       |                              ^
+     61|         expect(events).toBe(status === 401 ? 1 : 0);
+     62|       } finally {
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[6/13]⎯
+
+ FAIL  src/lib/api.test.ts > 실제 HTTP API 오류와 SSE > streamChat JSON HTTP 503 계약
+AssertionError: expected ApiError: {"error":{"code":"request_faile… { …(2) } to match object { message: '요청을 처리할 수 없습니다', …(2) }
+(1 matching property omitted from actual)
+
+- Expected
++ Received
+
+- {
+-   "details": {
+-     "error": {
+-       "code": "request_failed",
+-       "message": "요청을 처리할 수 없습니다",
+-     },
+-     "request_id": "test",
+-   },
+-   "message": "요청을 처리할 수 없습니다",
++ ApiError {
++   "details": undefined,
+    "status": 503,
+  }
+
+ ❯ src/lib/api.test.ts:60:30
+     58|         const request = client === 'api' ? api('/ai/chat') : streamCha…
+     59|         await expect(request).rejects.toBeInstanceOf(ApiError);
+     60|         await expect(request).rejects.toMatchObject({ message: details…
+       |                              ^
+     61|         expect(events).toBe(status === 401 ? 1 : 0);
+     62|       } finally {
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[7/13]⎯
+
+ FAIL  src/lib/api.test.ts > 실제 HTTP API 오류와 SSE > streamChat 오류 본문 text/plain 일시적인 장애
+AssertionError: expected ApiError: 일시적인 장애 { status: 503, …(1) } to match object { message: '일시적인 장애', …(2) }
+(1 matching property omitted from actual)
+
+- Expected
++ Received
+
+- {
+-   "details": "일시적인 장애",
+-   "message": "일시적인 장애",
++ ApiError {
++   "details": undefined,
+    "status": 503,
+  }
+
+ ❯ src/lib/api.test.ts:82:30
+     80|       try {
+     81|         const request = client === 'api' ? api('/ai/chat') : streamCha…
+     82|         await expect(request).rejects.toMatchObject({ message, status:…
+       |                              ^
+     83|       } finally { await stop(); }
+     84|     });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[8/13]⎯
+
+ FAIL  src/lib/api.test.ts > 실제 HTTP API 오류와 SSE > streamChat 오류 본문 text/plain 
+AssertionError: expected ApiError: AI 스트리밍 연결을 시작할 수 없습니다. { …(2) } to match object { message: '요청을 처리하지 못했습니다.', …(2) }
+(1 matching property omitted from actual)
+
+- Expected
++ Received
+
+- {
+-   "details": "",
+-   "message": "요청을 처리하지 못했습니다.",
++ ApiError {
++   "details": undefined,
+    "status": 503,
+  }
+
+ ❯ src/lib/api.test.ts:82:30
+     80|       try {
+     81|         const request = client === 'api' ? api('/ai/chat') : streamCha…
+     82|         await expect(request).rejects.toMatchObject({ message, status:…
+       |                              ^
+     83|       } finally { await stop(); }
+     84|     });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[9/13]⎯
+
+ FAIL  src/lib/api.test.ts > 실제 HTTP API 오류와 SSE > streamChat 오류 본문 application/json {"message":"상위 메시지","error":{"message":"하위"}}
+AssertionError: expected ApiError: {"message":"상위 메시지","error":{"m… { …(2) } to match object { Object (message, status, ...) }
+(1 matching property omitted from actual)
+
+- Expected
++ Received
+
+- {
+-   "details": {
+-     "error": {
+-       "message": "하위",
+-     },
+-     "message": "상위 메시지",
+-   },
+-   "message": "상위 메시지",
++ ApiError {
++   "details": undefined,
+    "status": 503,
+  }
+
+ ❯ src/lib/api.test.ts:82:30
+     80|       try {
+     81|         const request = client === 'api' ? api('/ai/chat') : streamCha…
+     82|         await expect(request).rejects.toMatchObject({ message, status:…
+       |                              ^
+     83|       } finally { await stop(); }
+     84|     });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[10/13]⎯
+
+ FAIL  src/lib/api.test.ts > 실제 HTTP API 오류와 SSE > streamChat 오류 본문 application/json {"error":"문자열 오류"}
+AssertionError: expected ApiError: {"error":"문자열 오류"} { …(2) } to match object { Object (message, status, ...) }
+(1 matching property omitted from actual)
+
+- Expected
++ Received
+
+- {
+-   "details": {
+-     "error": "문자열 오류",
+-   },
+-   "message": "문자열 오류",
++ ApiError {
++   "details": undefined,
+    "status": 503,
+  }
+
+ ❯ src/lib/api.test.ts:82:30
+     80|       try {
+     81|         const request = client === 'api' ? api('/ai/chat') : streamCha…
+     82|         await expect(request).rejects.toMatchObject({ message, status:…
+       |                              ^
+     83|       } finally { await stop(); }
+     84|     });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[11/13]⎯
+
+ FAIL  src/lib/api.test.ts > 실제 HTTP API 오류와 SSE > streamChat 오류 본문 application/json {"errors":["첫 오류","다음 오류"]}
+AssertionError: expected ApiError: {"errors":["첫 오류","다음 오류"]} { …(2) } to match object { message: '첫 오류, 다음 오류', …(2) }
+(1 matching property omitted from actual)
+
+- Expected
++ Received
+
+- {
+-   "details": {
+-     "errors": [
+-       "첫 오류",
+-       "다음 오류",
+-     ],
+-   },
+-   "message": "첫 오류, 다음 오류",
++ ApiError {
++   "details": undefined,
+    "status": 503,
+  }
+
+ ❯ src/lib/api.test.ts:82:30
+     80|       try {
+     81|         const request = client === 'api' ? api('/ai/chat') : streamCha…
+     82|         await expect(request).rejects.toMatchObject({ message, status:…
+       |                              ^
+     83|       } finally { await stop(); }
+     84|     });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[12/13]⎯
+
+ FAIL  src/lib/api.test.ts > 실제 HTTP API 오류와 SSE > streamChat 오류 본문 application/json {}
+AssertionError: expected ApiError: {} { status: 503, …(1) } to match object { message: '요청을 처리하지 못했습니다.', …(2) }
+(1 matching property omitted from actual)
+
+- Expected
++ Received
+
+- {
+-   "details": {},
+-   "message": "요청을 처리하지 못했습니다.",
++ ApiError {
++   "details": undefined,
+    "status": 503,
+  }
+
+ ❯ src/lib/api.test.ts:82:30
+     80|       try {
+     81|         const request = client === 'api' ? api('/ai/chat') : streamCha…
+     82|         await expect(request).rejects.toMatchObject({ message, status:…
+       |                              ^
+     83|       } finally { await stop(); }
+     84|     });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[13/13]⎯
+
+
+ Test Files  2 failed (2)
+      Tests  13 failed | 30 passed (43)
+   Start at  01:00:42
+   Duration  1.20s (transform 125ms, setup 87ms, import 142ms, tests 179ms, environment 615ms)
+

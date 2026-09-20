@@ -159,3 +159,15 @@
 - 보류 아이디어: 비-silent OIDC 제공자 오류가 브라우저 탭에 401 JSON으로 보임(auth.go oidcCallback → `/login?sso=error` 302) / 릴리즈 audit 게이트(두 트리 `npm audit --audit-level=low`)를 한 번에 재현하는 `make audit-release` 타깃 / 게임의 `achievement_enabled`가 꺼져 있어도 그 게임 업적을 클라이언트가 해금할 수 있음(unlockAchievement가 games 표를 보지 않음 — 정책 확인 뒤) / Migrate 체크섬 불일치·트랜잭션 경계 통합 테스트(IGAME_TEST_DSN, make test-db 타깃 범위 확장) / 동점 개인 랭킹을 먼저 세운 기록이 앞서도록 catalog·defense도 RealmGuard 규칙으로 통일(운영자 판단 뒤)
 
 - 릴리즈: v0.7.17 (2026-09-20, run 2026-09-20-110400-igame-improve)
+## 2026-09-21
+- 선택: Migrate의 체크섬 거부·DDL 롤백·재실행 안전성을 실제 PostgreSQL로 검증 (가치 4 / 위험 1 / 작업량 M)
+- 결과: 성공
+- 요약: 실제 Migrate와 embedded SQL을 UUID 전용 스키마에서 실행하는 PostgreSQL 테스트 3개를 추가하고 make test-db에 database 패키지를 연결했다(커밋 1ac69f4). SHA-256·applied_at·seed 불변, 체크섬 변조 거부/복구, 010의 실제 이력 INSERT 실패 시 DDL/이력 롤백과 앞선 commit 보존·재시도를 검증했으며, pgcrypto digest 의존성 때문에 확장 전용 스키마 사전 설치와 검색 경로를 README에 명시했다. PostgreSQL 17에서 신규 테스트·전체 test-db·race 3회, 기본 Go 테스트·vet·build·릴리즈 계약 검사 통과; DSN 미설정 가드와 설정 후 연결 실패도 확인했고 잔여 테스트 스키마 0개 및 확장 보존을 확인했다.
+- 보류 아이디어:
+  - 릴리즈 audit 재현 make 타깃 (가치 3 / 위험 1 / 작업량 S)
+  - bootstrap 암호 bcrypt 최대 바이트 길이 사전 검증 (가치 2 / 위험 1 / 작업량 S)
+  - API PostgreSQL fixture의 테스트별 스키마 격리 (가치 3 / 위험 2 / 작업량 M)
+  - Migrate context 취소의 롤백·재시도 계약 검증 (가치 3 / 위험 1 / 작업량 M)
+- 과제서: 채택 — 현재 Migrate 및 010 SQL이 과제서와 일치하며 실제 PostgreSQL 격리 fixture를 준비해 세 수용 계약을 모두 검증했다.
+- 스킬: technology:completion-verification, technology:systematic-debugging, technology:test-driven-development는 현재 도구 목록 및 로컬 스킬 경로에서 찾지 못해 미적용; 사용자 절차로 구현·실DB 검증했다.
+
