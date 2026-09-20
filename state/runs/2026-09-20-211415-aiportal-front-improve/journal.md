@@ -29,3 +29,4 @@
 - [러너 21:25] review approved — 리뷰 승인 (risk=low)
 - [러너 21:25] pr created — https://github.com/hkjang/aiportal-front/pull/18
 - [러너 21:26] ci passed — 검사 없음 — 정책으로 허용
+- [러너 21:26] merge done — 9dde1cf
