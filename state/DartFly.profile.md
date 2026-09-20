@@ -1,12 +1,22 @@
 # DartFly 프로필 (2026-09-20)
-- 목적: 사내 여러 DBMS(MariaDB·PostgreSQL·SQL Server·Oracle)를 읽기 전용으로 질의·마스킹·감사하는 통합 데이터베이스 운영 플랫폼(Tadpole 메타 DB 위에서 동작, 단일 Go 바이너리 + 임베드 웹 UI).
-- 스택: Go 1.25(표준 net/http ServeMux 패턴 라우팅, database/sql), 메타 DB MariaDB(tadpole_* + df_* 표), 프런트는 프레임워크 없는 ES 모듈 JS + 정적 HTML(`internal/webui/pages`, `internal/webui/js`), 테스트는 Go + Node(v22) `.test.mjs`, 브라우저 스모크는 Python playwright.
+- 목적: 기존 Tadpole 메타 DB를 활용해 여러 DBMS 탐색·읽기 전용 SQL 실행·마스킹·감사·운영 관리를 제공하는 단일 바이너리 웹 플랫폼.
+- 스택: go.mod Go 1.25.7, 표준 net/http·database/sql, MariaDB 메타 DB, MariaDB/MySQL·PostgreSQL·Oracle·SQL Server 드라이버. 프런트는 임베드 HTML/CSS와 ES 모듈 JS, Node 테스트 및 Python Playwright 스모크.
 - 구조:
-  - `cmd/dartfly` 진입점, `internal/app` 기동·env 읽기(runtime.go, `ssoEnvFallback`), `internal/server` HTTP 라우팅·핸들러(http.go 2,200줄이 중심, sessions.go·middleware.go·sessionguard.go)
-  - `internal/auth`(비밀번호·서명 세션 토큰, `Sessions` 는 무상태 서명 토큰이라 Delete 는 noop), `internal/sso`·`internal/ssoconfig`(OIDC 표준 라이브러리 구현, df_sso_config), `internal/rbac`·`access`·`governance`·`settlement`(권한·결재), `internal/masking`·`query`·`dbconn`(실행·마스킹), `internal/retention`(감사 이력 보존 정리), `internal/mcphub`·`apihub`(MCP·공개 API), `internal/webui`(임베드 자산, 라우팅 표 `assets.go`, JS 테스트 러너 `jstest_test.go`)
-  - `docs/` 관리자 가이드(ADMIN_GUIDE.md)·환경변수(environment-variables.md)·보증 문서들, `deploy/` 배포, `test/js` JS 회귀, `test/livedb` 실제 DB 시드, `test/smoke` 실제 바이너리+MariaDB+Chromium 하네스
-- 빌드·테스트: `gofmt -l . && go vet ./... && go test -race ./...`(약 1~2분; JS 테스트도 여기서 node 로 함께 돔), `go build ./cmd/dartfly`, `go test -tags livedb ./...`(`bash test/livedb/setup.sh --fast` 로 PG·MariaDB 컨테이너 먼저), `bash test/smoke/run.sh`(오래 걸림: 컨테이너+playwright, 31페이지 방문)
-- 관례: 커밋 메시지 한국어 `feat:`/`fix:` + 사용자 관점 한 줄, PR 은 `auto/날짜-시각` 브랜치→main. 설정은 환경변수(`DARTFLY_*`, `_FILE` 접미사)와 관리 화면(df_sso_config 등) 병행, 저장된 화면 설정이 env 를 이김. 스키마는 002 DDL + 기동 시 `ensureColumn`/IF NOT EXISTS 양쪽에 두고 일치 테스트로 묶음. 공개 라우트는 `routeguard_test.go` 의 `publicRoutes` 에 사유와 함께 등록해야 함(HandleFunc 만 검사). 문서는 docs/ 에 한국어.
-- 위험 구역: `internal/auth`·`internal/server/sessions.go`·`sessionguard.go`(세션·계정 권위 재확인 `applyAuthority`), `internal/sso`·http.go 의 SSO 콜백(`safeReturnTo`, 흐름 쿠키 `df_sso_flow` — 여러 경로가 같은 값을 읽음), `internal/masking`·`read-only` 보증(docs/*-guarantees.md 가 계약), 002 DDL·ensureColumn(기존 설치 ALTER 경로), `internal/webui/assets.go` 라우팅 표(스모크가 여기서 경로를 읽음).
-- 자주 깨지는 곳: 임베드·정적 라우팅은 모의 서버에서 멀쩡해 보이다 배포에서만 깨짐(v1.56~v1.78) → 실제 바이너리 스모크 필수. livedb 검증은 태그 뒤라 조용히 썩음. 새 라우트를 게이트 없이 추가하면 화면은 되지만 권한 우회(v2.12.0).
-- 검증 함정: 이 워크트리 브랜치는 main 기준이라 메일·추적·넘기기·MCP OAuth 코드가 없음(다른 브랜치). 스모크 MariaDB 컨테이너가 "TLS certificate is not yet valid" 로 가끔 기동 실패(WSL 시계) → 재시도. JS 테스트는 node 가 없으면 Skip 되어 통과처럼 보임. 스모크 브라우저 단계는 playwright+chromium 설치 필요(`DF_SMOKE_REQUIRE_BROWSER=1` 로 강제).
+  - cmd/dartfly: 실행 진입점; internal/app: 환경변수·서비스 기동.
+  - internal/server: HTTP 라우팅·핸들러·세션 게이트; http.go에 로그인/SSO, resultsave.go에 저장 결과 API.
+  - internal/auth·sso·ssoconfig: 로그인·서명 토큰·OIDC·SSO 설정.
+  - internal/query·dbconn·masking: DB 실행과 정책·마스킹; internal/resultsave: 결과 저장·목록·상세·삭제.
+  - internal/access·rbac·governance·settlement: 권한·거버넌스·결재; retention: 감사 보존 정리.
+  - internal/store/mariadb: 메타 DB 저장소·마이그레이션; internal/apihub·mcphub: 외부 API/MCP.
+  - internal/webui: pages/js/css 임베드; assets.go의 pageRoutes와 디렉터리별 정적 서빙.
+  - test/js: Node 회귀, test/livedb: 실제 DB, test/smoke: 바이너리·이미지·Chromium 검증; docs: 보증·설정·관리 가이드; deploy: 배포.
+- 빌드·테스트: `go test -race ./...`, `go vet ./...`, `gofmt -l .`, `go build ./cmd/dartfly`; 이번 정찰은 race 전체 테스트만 실행해 통과(일부 캐시). 로컬 Go 1.26.7·Node 22.23.1, CI Go 1.25.x.
+- 빌드·테스트: 화면 변경은 `DF_SMOKE_REQUIRE_BROWSER=1 bash test/smoke/run.sh`(Docker·playwright·Chromium 필요, 수분). livedb는 `bash test/livedb/setup.sh --fast` 뒤 `/tmp/dartfly-livedb.env`를 export하여 `go test -tags livedb ./...`; Oracle/SQL Server 포함 준비는 오래 걸림.
+- 관례: 한국어 feat:/fix:/test: 커밋과 PR 병합. 설정은 DARTFLY_*·_FILE 및 관리 화면; SSO 저장 설정이 env 폴백보다 우선. 기존 프로필의 002 DDL/기동 시 ALTER 병행 관례는 이번 회차 상세 재검증하지 않음.
+- 위험 구역: auth·session·SSO 리다이렉트/return_to, 정책·마스킹·권한 보증, internal/store/mariadb/migrations 및 기동 시 ALTER, .github/workflows. 이번 선택은 saved.js와 JS 회귀 테스트에 한정 가능.
+- 자주 깨지는 곳: 과거 임베드 자산 누락은 실제 배포에서만 발견됨. livedb가 태그 뒤에서 방치돼 회귀 누적. 과거 로그아웃/폐기 시각 정밀도 문제는 authentication-hardening.md 참조.
+- 검증 함정: jstest_test.go는 node가 없으면 Skip; test/js/*.test.mjs를 자동 실행. 기존 load.mjs만으로 DOM 의존 페이지 모듈을 바로 시험하기는 어려워 DOM/API 대역 필요. 단순 페이지 스모크는 비동기 응답 역순/삭제 경합까지 확인하지 않음.
+- 검증 함정: smoke는 로컬에서 브라우저가 없으면 생략 가능하므로 REQUIRE_BROWSER=1 사용. MariaDB TLS 시각 실패는 과거 기록만 있고 이번 재현 미확인. 정찰은 스모크 미실행.
+- 현재 기준: main@0c256cc. 메일·추적·넘기기·MCP OAuth의 다른 브랜치 개선 기록을 현행 구현으로 취급하지 말 것(관련 식별자 internal 검색 결과 없음).
+- 정찰 발견: saved.js showDetail의 최신 요청 판정과 이전 상세 초기화가 없어 잘못된 작업 대상이 남음(Node 대역 재현). 목록은 limit=200 고정이며 API의 total/offset을 쓰지 않음.
+- 문서 상태: README·docs·최근 git log -30·CI 확인. 저장소에서 CLAUDE.md·AGENTS.md·로드맵 파일과 TODO/FIXME 검색 결과 없음. 이전 프로필의 0일 조건에 따라 갱신.
