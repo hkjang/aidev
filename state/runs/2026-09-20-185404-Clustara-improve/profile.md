@@ -1,0 +1,20 @@
+# Clustara 프로필 (2026-09-20)
+- 목적: 폐쇄망용 Kubernetes 운영 허브로 멀티 클러스터 수집·장애/보안/용량/비용 분석·승인 액션·LLM/MCP 프록시·알림을 제공한다.
+- 스택: Go 단일 모듈 clustara(go.mod 1.25, 현재 로컬 Go 1.26.7), net/http, 기본 SQLite(modernc)·PostgreSQL 지원, 선택 ClickHouse, 인라인 바닐라 JS SPA(한국어).
+- 구조:
+  - cmd/ — clustara 서버·CLI·에이전트 엔트리.
+  - internal/proxy/ — HTTP mux/핸들러, admin_ui.go의 SPA, MCP/SSO, Mattermost, DW 조립.
+  - internal/analyzer/ — RCA·security·capacity·cost 등 순수 분석 함수와 단위 테스트.
+  - internal/store/ — SQLStore·인벤토리/이벤트/리비전·승인 원장; sqlstore.go의 DDL.
+  - internal/kube/, internal/collector/ — API 객체 변환·수집·exec; ownerReferences를 Spec에 보존.
+  - internal/action/ — 승인 영향도 및 액션; prometheus/harbor/gitprovider 등은 외부 연동.
+  - docs/ — 운영·관리·사용자 가이드, API 표, K8S_PHASE2_PLAN.md(완료된 계획이므로 현재 구현은 코드 우선).
+  - scripts/, deploy/, sdk/ — 릴리즈·운영 배포·클라이언트 SDK.
+- 빌드·테스트: `go build ./...`, `go vet ./...`, `go test ./...`. 이번 정찰 build/vet 통과, `go test ./internal/analyzer` 캐시 통과; proxy 테스트 결과는 brief.md 기록 참조. 전체 테스트는 과거 약 80초이며 이번 전체 실행 미실시.
+- 관례: 영어 fix(scope)/feat(scope) 커밋, 별도 chore 릴리즈. 런타임 설정 레지스트리·환경변수. SQL은 SQLite/PG 호환 bind 및 CREATE TABLE IF NOT EXISTS 패턴. 코드 주석 영어·UI 한국어. 버전/changelog/docs 마커는 개선 구현과 분리.
+- 위험 구역: proxy/server.go의 currentAccessClaims·인증, mcp_oauth.go·keycloak*.go, analyzer/policy.go의 Deny 게이트, store/sqlstore.go의 DDL, DW fact 스키마. restrictedProfileViolations는 포스처와 정책 공용.
+- 자주 깨지는 곳: 전 클러스터 분석에서 namespace/name/nodeName만으로 조인·dedup하는 코드. 이번 RCA 이벤트/리비전 키도 같은 유형이며 자원 태그·NodePressure Pod 집계는 별도 보류. map 순회 순서에 의존하는 테스트를 피한다.
+- 검증 함정: .github에는 FUNDING.yml만 있고 CI workflow 없음. proxy 테스트는 openTestStore의 t.TempDir SQLite와 httptest를 사용; 실 PostgreSQL·Kubernetes·Keycloak·ClickHouse 검증을 대신하지 않는다.
+- 검증 함정: 기존 TestEnrichWithConfigChanges와 TestAttachFindingResources는 finding만 c1이고 대응 객체의 ClusterID가 비어 있다. 클러스터 격리 구현 시 fixture를 수정하고 빈 cluster wildcard를 만들지 않는다.
+- 검증 함정: docs 경로를 검사하는 repository audit 및 버전 일치 테스트가 있다. gofmt는 수정 파일만 검사(기존 미포맷은 이전 기록 보고, 이번 전수 미확인).
+- 정찰 환경: CLAUDE.md/AGENTS.md는 작업 트리·부모 검색에서 미발견. 요청된 회사 스킬 3종과 Skill 도구도 미발견(절차 미확인).

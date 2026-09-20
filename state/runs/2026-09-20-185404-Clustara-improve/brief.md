@@ -1,0 +1,19 @@
+- 과제: RCA 이벤트·리비전 연결과 중복 제거를 클러스터별로 격리 (가치 4 / 위험 1 / 작업량 M)
+- 왜: 전 클러스터 RCA 요청에서 `rcaKey(namespace, kind, name)`가 클러스터를 구분하지 않아 다른 클러스터의 이벤트가 증적·Pending 원인으로 붙고, probe 장애가 하나로 합쳐지며, 다른 클러스터의 변경 때문에 severity가 올라가거나 배포 후 오류가 생성된다. 이벤트와 리비전을 동일 클러스터 안에서만 연결하면 장애 누락과 잘못된 변경 원인 추정을 함께 줄일 수 있다.
+- 수용 기준:
+  1) prod/dr에 namespace·kind·name이 같은 Pod와 Deployment/Job이 있어도 각 finding의 Evidence와 Pending Cause에는 자기 클러스터 이벤트만 들어간다. Deployment의 메시지 기반 fallback(`workloadRelatedEvents`)도 동일하게 격리한다.
+  2) 두 클러스터의 동명 Pod에서 동일한 LivenessProbeFailed 이벤트가 발생하면 finding은 클러스터별로 1개씩, 같은 클러스터 내 반복 이벤트는 계속 1개다. Config 변경은 같은 클러스터의 최근 리비전만 붙이며, 다른 클러스터 리비전만 있는 medium finding은 medium을 유지한다. PostDeploymentErrors는 클러스터별 최신 리비전을 보존하고 해당 클러스터의 배포 후 Warning만 연결한다.
+  3) 회귀 테스트가 위 결함을 수정 전 코드에서 실패로 드러내고 수정 후 통과한다. 단일 클러스터 동작·lookback·created 리비전 제외·배포 이전 이벤트 제외·Normal 이벤트 무시를 유지한다. 빈 ClusterID는 빈 값끼리만 매칭하고 비어 있지 않은 클러스터의 wildcard로 취급하지 않는다.
+- 건드릴 파일:
+  - `internal/analyzer/rca.go`: `rcaKey`에 clusterID를 추가하고 `AnalyzeRCA`, `analyzeProbeAndDNSEvents`, `EnrichWithConfigChanges`, `AnalyzePostDeploymentErrors`의 모든 호출에 실제 입력 객체의 ClusterID를 전달한다. `workloadRelatedEvents`와 `AnalyzePostDeploymentErrors` 내부 이벤트 루프에도 cluster 동등 조건을 넣는다. 메모리 내 키이므로 DB 마이그레이션·영구 dedup 키 변경은 필요 없다.
+  - `internal/analyzer/workload.go`: `analyzeRolloutAndJobs`가 동일한 rcaKey를 사용하는 두 자리를 함께 변경한다. `rolloutFinding`·`jobFinding`의 판정은 유지한다.
+  - `internal/analyzer/rca_test.go`: 위 수용 기준의 다중 클러스터 회귀를 추가한다. 기존 `TestEnrichWithConfigChanges`는 finding에 c1이 있지만 두 revision에는 ClusterID가 없다. 같은 클러스터 fixture에 c1을 채워 테스트 의도를 보존하고, 이를 통과시키려고 빈 cluster wildcard fallback을 추가하지 않는다. 신규 테스트는 결과 순서 대신 cluster+condition으로 비교한다.
+  - `internal/analyzer/workload_test.go`: 동명 Deployment/Job의 증적 격리 회귀를 추가한다.
+  - `internal/proxy/k8s_notify_scan_test.go`: 기존 `TestK8sNotifyScanRoutesEachFindingToItsOwnCluster`의 openTestStore/testConfig/httptest webhook 설정을 참고해 RCA liveness 이벤트용 종단 테스트를 추가한다. `db.InsertK8sEvent`로 두 클러스터의 동명 Pod Warning 이벤트를 넣고, POST `/admin/k8s/notify/scan`이 각 클러스터 링크·채널로 두 알림을 보내는지 확인한다. PodSecurity 신호가 섞이지 않도록 이벤트만으로 재현 가능하다. 기존 Pod Security 테스트는 유지한다.
+- 검증 명령: 저장소 루트에서 `go test ./internal/analyzer ./internal/proxy`, `go build ./...`, `go vet ./...`, 최종 `go test ./...`. 수정 파일에 한해 `gofmt -l internal/analyzer/rca.go internal/analyzer/workload.go internal/analyzer/rca_test.go internal/analyzer/workload_test.go internal/proxy/k8s_notify_scan_test.go`. 정찰에서는 build/vet 및 analyzer 테스트 통과를 확인했고 proxy 테스트 결과는 아래 검증 기록 참조. 전체 go test는 구현 후 실행할 명령이며 이번 정찰에서 실행하지 않았다.
+- 위험과 피할 것: auth·session·migrations·.github/workflows·버전·changelog·문서 버전 마커는 건드리지 않는다. Severity 기준, 이벤트 메시지/접두사 추정 규칙, lookback 및 타임스탬프 정책, 알림 영구 dedup 키와 알림 카테고리는 유지한다. `rcaKey`는 rca.go 밖 workload.go에서도 사용하므로 전 호출을 수정해야 한다. `AttachFindingResources`의 자원 조인과 `analyzeNodeConditions`의 Pod/노드 조인은 별도 보류 후보이며 이번 범위에 합치지 않는다. notify 인벤토리에 SecurityRelevantKinds만 적용하면 NodePressure 분석의 Node가 빠지므로 그 보류 아이디어를 함께 실행하지 않는다. 실클러스터 재현은 미확인이다.
+- 차선 후보: notify scan의 Pod Security dedup 키에 Kind 포함 (가치 2 / 위험 1 / S) — 1순위가 이미 수정됐거나 재현되지 않을 때만. `internal/proxy/k8s_notify.go:handleK8sNotifyScan`의 `podsec/namespace/name`을 kind까지 구분하고 동명 Pod/Deployment 각각 알림 및 두 번째 스캔 중복 억제를 검증한다. 변경 직후 기존 6시간 dedup 기록과 한 번 불일치하는 영향은 기록한다.
+
+실행 순서·견적: 회귀 fixture 작성 및 수정 전 실패 확인 10분 → 키/직접 필터 수정 10분 → 종단 회귀·기존 fixture 보정 10분 → 전체 검증 5분, 예상 35분 + 예비 10분. 빌드 실패 시 rcaKey 호출 누락과 ClusterID 미설정 fixture를 먼저 확인한다. 45분 안에 끝내기 위해 별도 노드/자원 조인·정렬·알림 범위 변경을 합치지 않는다.
+대안 비교: notify Kind 충돌은 더 작지만 영향이 한 알림 종류에 국한된다. 인벤토리 kind 축소는 RCA Node 포함 범위 설계가 필요하고, PSS 변경은 Deny 게이트·점수·알림 파급이 있어 이번 낮은 위험 과제보다 후순위다.
+스킬 제한: 요청한 pmo:estimating-and-contingency, technology:implementation-planning, technology:solution-exploration은 세션 Skill 도구/카탈로그와 /home/hkjang/.codex·.claude 검색에서 발견하지 못했다. 해당 절차·반환 형식은 미확인으로 남기며, 사용자 지정 과제서 형식과 후보 비교·견적·예비 시간으로 정찰을 진행했다.
