@@ -1,0 +1,26 @@
+# Kkiit 프로필 (2026-09-20)
+- 목적: 사람·기업·AI Agent의 전문 서비스를 주문·납품·구매확정·정산으로 연결하는 오프라인 운영 가능 마켓플레이스.
+- 스택: Go 1.26, net/http, pgx/v5, PostgreSQL 16+, React 19·TypeScript 5.9·MUI 7·Vite 8; React 빌드 결과를 Go에 embed.
+- 기준: main@a7b2366, VERSION v0.4.3. 이전 기록의 MCP OAuth 구현은 이 체크아웃에 없음(관련 mcpoauth.go·설정·카드·문서 없음). 병합 여부는 미확인.
+- 구조:
+  - cmd/kkiit: 프로세스 시작·종료 및 서버/워커 배선.
+  - internal/httpapi: REST/MCP 라우터, 인증·권한, 거래·승인·관리 기능, 통합 테스트.
+  - internal/database/migrations: 번호 SQL; 시작 시 advisory lock 안에서 자동 적용.
+  - internal/worker: Outbox·알림·웹훅·메일 전달, 위험/정산/신뢰 점수 배경 처리.
+  - internal/analytics, internal/mail, internal/netguard: 방문 추적, SMTP, 외부 연결 보호.
+  - internal/config, internal/cryptox, internal/password: 환경 구성·암호화·비밀번호.
+  - web/src: SPA·페이지·컴포넌트; AdminPage.tsx에 여러 관리자 섹션 포함.
+  - internal/ui/dist: git 추적되는 embed 번들; 프런트 변경 후 반드시 재빌드.
+  - docs: USER_GUIDE/ADMIN_GUIDE(md·pdf), architecture.md, mcp.md, openapi.yaml, 화면 자산.
+  - scripts: 가이드 시드/캡처, 오프라인 release/load 스크립트.
+- 빌드·테스트: `go test ./cmd/... ./internal/...`; `npm --prefix web test`; `make check`는 gofmt·Go test/vet·npm ci·lint·test·build(설치/빌드 시간 필요); `make build`는 웹 설치/빌드 후 bin/kkiit 생성.
+- 통합 검증: `make test-integration KKIIT_TEST_DSN=postgres://...` (버릴 PostgreSQL 필수, timeout 300s). 계정·주문을 남기므로 운영 DB 금지. 과거 전체 약 55~84초, 이번 미실행.
+- 이번 확인: Go 1.26.7·Node 22.23.1; Go 테스트 통과, 프런트 silent SSO 테스트 10개 통과. node_modules 없음; lint/build·실제 브라우저·DB는 미검증.
+- 관례: 최근 커밋은 fix/feat/chore/docs + 한국어 설명, 릴리스는 Kkiit vX.Y.Z. 변경 가능한 정책은 system_settings JSONB, 비밀은 ENCRYPTION_KEY로 암호화.
+- 설정: 필수 POSTGRES_DSN/BOOTSTRAP_ADMIN/BOOTSTRAP_ADMIN_PASSWORD/ENCRYPTION_KEY + 선택 SHUTDOWN_DRAIN_SECONDS(기본5,0~120). README의 ‘네 개뿐’ 표현은 실제 Load와 불일치.
+- 위험 구역: internal/httpapi/auth.go·middleware.go·identity.go(세션/SSO/RBAC), orders.go·finance.go(정산 원장), internal/database/migrations(번호 충돌), .github/workflows/release.yml(배포).
+- 자주 깨지는 곳: 기록상 040 중복 마이그레이션→041 분리 이력; 결제 state captured와 대시보드 succeeded 불일치 수정; Momento 응답 다중 보안 헤더·Set-Cookie 누출 수정; 헤더 검사에는 Get뿐 아니라 전체 값 확인 필요.
+- 검증 함정: KKIIT_TEST_DSN 없으면 통합 테스트 skip. 프런트 기존 테스트는 SSO 순수 로직만 검증하며 실제 승인 UI 배선을 보장하지 않음. make check는 추적 번들을 다시 쓴다.
+- CI 차이: 유일한 .github/workflows/release.yml은 v* 태그에서 Docker 빌드·archive 재로드·Release 수행, make check/통합 테스트 단계 없음. Docker는 Node24.18.0/Go1.26.0, README는 Node24+.
+- 캡처 함정: scripts/guide-screenshots.mjs는 루프백+전용 환경 자격증명을 요구하고 시드·결제·설정 쓰기를 수행; 실제 운영 대상 금지. Chrome/Chromium과 Docker 실행 파일 존재, daemon/브라우저 실행은 미확인.
+- 문서/기록: CLAUDE.md·AGENTS.md·별도 로드맵·TODO/FIXME 검색 결과 없음. 요청된 회사 스킬 3개는 도구·파일 부재로 읽지 못함.
