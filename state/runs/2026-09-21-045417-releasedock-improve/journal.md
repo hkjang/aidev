@@ -42,3 +42,14 @@
 - 요청한 세 스킬 로컬 원문 적용. 새 개인정보 처리·비밀값 출력·권한/의존성/외부 상태 변경 없음; 저장소 코드 수정 없음.
 - [러너 05:10] review approved — 리뷰 승인 (risk=low)
 - [러너 05:10] pr created — https://github.com/hkjang/releasedock/pull/21
+- [러너 05:13] ci passed — 검사 1개 모두 success
+- [러너 05:13] merge done — abf29bc
+
+## 릴리즈 노트
+- marketing:product-launch 및 technology:release-and-deployment 로컬 SKILL.md 적용(전용 Skill 도구 없음). Tier 3 개선으로 기존 영어 GitHub Release 양식의 노트를 회차 폴더에 보존. 대상은 make test 실행 개발자이며 운영 기능·DB 스키마 변경 없음.
+- 최근 3개 주석 태그/릴리즈 커밋과 6개 버전 파일 관례를 확인해 0.5.18로 갱신. detached HEAD 31f64a9, 주석 태그 v0.5.18 작성; 환경의 hkjang 작성자 유지.
+- Go 모듈 검증, PostgreSQL 16 연결 전체 Go 테스트, 웹 94건, 웹/서버/runner/executor 빌드, 패키지 SHA256 및 내부 MANIFEST 전체 검증 통과. 두 지정 DB 테스트도 -count=1 -v로 SKIP 없이 PASS. 상세 로그: release-validation.log.
+- 태그 워크플로가 GitHub Release 및 tar.gz/sha256을 자동 생성하므로 github_release=false, assets=[]. 로컬 패키지는 검증용이며 배포 산출물은 CI가 빌드·검증한 것을 게시. 원격 푸시/게시 없음.
+- 중단 기준: 검증 하나라도 실패하면 태그 게시 중단(판정: 릴리즈 에이전트, 후속 실행: 러너). 게시 후 경고 누락/중복 보고 시 후속 패치 또는 v0.5.17 복귀 판단; 실제 게시·운영 관측은 이 세션 범위 밖. 기존 npm moderate 2건은 변경하지 않음.
+- [러너 05:19] release published — v0.5.18
+- [러너 05:21] assets verified — v0.5.18 자산 2개 (이전 v0.5.17: 2)

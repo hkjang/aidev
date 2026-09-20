@@ -28,3 +28,5 @@
 - 지정 부서 스킬 3개와 Skill 도구 미발견으로 사용자 절차 적용; 코드 수정 없음.
 - [러너 05:05] review approved — 리뷰 승인 (risk=low)
 - [러너 05:05] pr created — https://github.com/hkjang/qurio/pull/19
+- [러너 05:23] ci passed — 검사 1개 모두 success
+- [러너 05:23] merge done — 9a9577b
