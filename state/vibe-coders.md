@@ -112,3 +112,16 @@
   - .mjs·.cjs·.mts·.cts 언어 확장자 지원 (가치 2 / 위험 2 / 작업량 S).
 - 과제서: 채택 — 높은 신뢰도에서 evidence가 덮어써지는 근거가 현재 코드와 일치했고 공개 추론·감사 두 경로·실제 비동기 저장에서 수용 기준을 검증했다.
 
+## 2026-09-20
+- 선택: 수정 과제 — 미병합 pnpm 전달 옵션 호환 수정 복원 (가치 5 / 위험 1 / 작업량 S)
+- 결과: 성공
+- 요약: 기존 수정 964d2b01de1f22359b1d5896d624edd9f5dc9ea6은 시작 HEAD d67267b의 조상이 아니었다(`git merge-base --is-ancestor` exit 1); 해당 세 파일 diff만 복원하고 실제 TypeScript 프로젝트에 임시 타입 오류를 넣는 회귀 및 실제 Vite·tsc의 미지원/중간 옵션 거부 검증을 보강했다. 동일 명령 `cd web && pnpm run typecheck --silent`는 수정 전 exit 1/TS5072에서 수정 후 exit 0으로, `cd web && pnpm run build --silent`는 수정 전 exit 1/CACError Unknown option --silent에서 수정 후 exit 0으로 바뀌었으며 dist/index.html·비어 있지 않은 assets를 확인했다; 의도적 TS2322 입력에서는 두 명령 모두 exit 2이고 Vite 빌드로 실패가 덮이지 않으며 try/finally로 fixture 제거 후 두 명령이 다시 통과했다. frozen install, 독립 node:test 6개, pnpm test --silent(Vitest 908개+node:test 10개), 옵션 없는 pnpm typecheck/build, lint, format:check, openapi:check, go build/vet/test ./... 모두 exit 0; 커밋 3a17c4f이며 병합·푸시·릴리즈 완료를 뜻하지 않는다.
+- 보류 아이디어:
+  - tracking.custom_snippet 전용 textarea (가치 3 / 위험 2 / 작업량 M).
+  - captureSsoFragment의 sso=error 마커 보존 (가치 2 / 위험 1 / 작업량 S).
+  - APP_UI_ROADMAP의 추적 활성 페이지 캐시 설명 정정 (가치 2 / 위험 1 / 작업량 S).
+  - README에 nvm 전환 뒤 pnpm shim 확인 절차 명시 (가치 2 / 위험 1 / 작업량 S).
+- 과제서: 채택 — 현재 스크립트·워크플로와 외부 run_verify의 인자 전달 원인이 일치하여 지정된 세 파일만 복원하고 실제 실패 보존 증거를 추가했다.
+- 검증 한계: 회사 technology:completion-verification, technology:systematic-debugging, technology:test-driven-development는 Skill 도구 및 로컬 파일 검색에서 발견되지 않아 고유 절차·반환 형식을 확인하지 못했다. Docker·브라우저 E2E·전체 race·PostgreSQL CI 서비스·취약점/SBOM 게이트는 이번 로컬 검증 범위 밖이다. 기존 jsdom canvas/navigation 경고는 있었으나 테스트 실패는 없었다.
+- 증거: before-typecheck.log, before-build.log, web-results.json, web-0.log~web-7.log, go-results.json 및 go-build.log/go-vet.log/go-test.log(모두 이번 회차 디렉터리).
+

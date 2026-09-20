@@ -1,0 +1,5 @@
+- P1/P2 모두 재현: 정상 응답 뒤 연결 잔류, 헤더 후 본문 정지 시 10초를 넘어 13초 클라이언트 제한까지 대기.
+- 요청별 Transport에 defer CloseIdleConnections를 추가하고 전달 요청 context에 10초 deadline을 적용.
+- 실제 HTTP 수집기로 4회 연결 종료 및 정지 본문의 10초 중단·수집기 취소를 검증하는 회귀 테스트 추가; 수정 전 실패, 수정 후 통과.
+- go test ./... -count=1, go build ./..., go vet ./..., Momento 선별 race 검사 통과. 커밋 f201cf5; push 없음.
+- 회사 스킬 3종은 도구·로컬 파일 미발견으로 고유 절차 미확인. 전체 race/PostgreSQL CI/Docker/E2E 미실행.
