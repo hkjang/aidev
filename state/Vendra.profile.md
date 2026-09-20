@@ -1,20 +1,26 @@
-# Vendra 프로필 (2026-09-19)
-- 목적: 공급업체·소싱(RFQ/견적/비교 Matrix)·계약·리스크·결재를 한 화면에서 다루는 구매 관리 시스템. MCP 서버(/mcp)로 AI 클라이언트에도 열린다.
-- 스택: Go 1.24(net/http 표준 mux, pgx) + PostgreSQL 16 / React + TypeScript + Vite(web/, Vitest) / 단일 Docker 이미지(alpine, 비루트 vendra 사용자, TZ=Asia/Seoul).
+# Vendra 프로필 (2026-09-20)
+- 목적: 공급업체·구매 수명주기·소싱·계약·리스크·결재를 통합하고 조회 전용 MCP를 제공하는 오프라인 대응 구매 관리 시스템.
+- 스택: Go 1.24, net/http, pgx/PostgreSQL(README 15+, CI 16-alpine), React 19·TypeScript 6·Vite 8, Vitest/jsdom.
 - 구조:
-  - `cmd/vendra/main.go` — 진입점(테스트 파일 없음)
-  - `internal/httpapi/` — 거의 모든 핸들러·라우팅(app.go)·인증(authenticate, oidc*, mcpoauth.go)·업무 객체·소싱·생산성(productivity.go: 초안·작업 항목)·통합 테스트(`*_integration_test.go`, 실제 DB 필요)
-  - `internal/db/migrations/NNN_*.sql` — 번호 순 마이그레이션(현재 main 은 017 까지; 018 은 PR #125 가 들고 있음 — 번호 충돌 주의)
-  - `internal/config` — 환경 변수 네 개(os.Getenv 는 이 패키지에만)
-  - `internal/tracking`, `internal/mail`(mail 은 main 에 미병합, afe168f) — 독립 패키지
-  - `web/src/` — 화면(Objects.tsx, Sourcing.tsx, Portal.tsx, Admin*.tsx), `silentSso.ts` 같은 규칙 모듈, `*.test.tsx`
-  - `docs/` — USER_GUIDE.md·ADMIN_GUIDE.md(정본, PDF 는 공용 md2pdf 로 재생성)·images/guide·architecture/security/operations
-  - `scripts/` — offline-release.sh(이미지 tar.gz), guide-screenshots.mjs(CDP 캡처)
+  - `cmd/vendra` — 서버 진입점, 현재 테스트 파일 없음.
+  - `internal/httpapi` — 라우팅·인증·업무·MCP·백그라운드 작업 및 실제 DB 통합 테스트.
+  - `internal/httpapi/productivity.go` — 업무 관제탑·저장 보기·초안; 관제탑 단계 스냅샷 누락을 이번 회차 과제로 선정(아직 미구현).
+  - `internal/httpapi/workflows.go` — 승인함·승인 처리; instanceSteps가 상신 스냅샷 우선/구형 정의 fallback을 제공.
+  - `internal/db/migrations` — SQL embed·기동 시 advisory lock/트랜잭션 적용. 최종 번호 017은 role_permissions/tracking 둘; 키는 전체 파일명.
+  - `internal/config`, `security`, `observability`, `tracking` — 설정 네 환경 변수·암호화·로그·방문 추적.
+  - `web/src` — React 화면과 Vitest 테스트; `web/vitest.config.ts`는 jsdom.
+  - `docs` — USER_GUIDE/ADMIN_GUIDE 및 PDF·images/guide, architecture/security/operations/ROADMAP_PLAN.
+  - `scripts` — guide-screenshots.mjs·offline-release.sh; `.github/workflows` — Go/웹 CI 및 태그 릴리즈.
 - 빌드·테스트:
-  - `gofmt -l internal cmd`, `go vet ./internal/... ./cmd/...`, `go test ./internal/... ./cmd/... -count=1` — 통합 테스트는 `VENDRA_TEST_DSN`·`VENDRA_TEST_MIGRATE_DSN`·`VENDRA_TEST_UPGRADE_DSN` 세 DSN(각각 다른 DB) 이 있어야 돌고 **없으면 조용히 skip** 한다. docker postgres:16-alpine 으로 CI 와 같게 만든다(brief 참조). 전체 수 분.
-  - web: `npm ci --ignore-scripts && npx tsc -b --noEmit && npx eslint src --max-warnings 0 && npm test && npm run build` (Vitest 는 /mnt/c 에서 못 돌아 ~/.cache/vendra-web-test 복사본에서 돈다)
-  - 릴리즈: 태그 v* push → release.yml → `sh scripts/offline-release.sh <ver>` (docker build, 수 분) → gzip -t·image inspect → softprops/action-gh-release. 러너는 github_release=false 로 태그만 민다.
-- 관례: 커밋 제목은 영어 문장형(가끔 한국어), 본문에 「왜」를 길게. 설정은 settings 표의 행(camelCase JSON 행 또는 `mail.*` 식 점 키), 비밀은 secret_value 에 ENCRYPTION_KEY 로 암호화. 사용자 메시지·오류 문구는 한국어. 테스트 이름은 행동을 문장으로(`TestARejectedCurrencyNamesTheBox`). 가이드 문장은 코드에서 확인해 쓰고 `*_docs_test.go` 가 코드와 묶는다.
-- 위험 구역: `internal/httpapi/authenticate`·oidc*·mcpoauth.go(인증), `internal/db/migrations`(guard 가 사람 대기로 올림), `.github/workflows`(느슨하게 하면 반려), 스코프(data_scope: company/division/department/own — 레코드를 나르는 모든 표면에 검사 필요), 통화·금액 컬럼(2026-09-10 반려 이력).
-- 자주 깨지는 곳: 통화 검증 접근(2e1abb1 반려), 러너 비밀정보 검사(스크립트·테스트의 12자 이상 리터럴), 마이그레이션 번호 충돌(병렬 PR), t.Cleanup 에서 취소된 ctx 로 DB 정리가 no-op 되어 다음 실행이 409.
-- 검증 함정: CI go job 은 `./internal/...` 만 돈다(`./cmd/...` 제외, Makefile 과 불일치). DSN 없이 `go test` 가 초록이어도 통합 테스트는 안 돈 것. gh CLI 는 정찰 세션에서 거부될 수 있어 Actions 결과는 구현자가 직접 봐야 함. Keycloak·SMTP 는 가짜 서버로 갈음.
+  - `go test ./internal/... ./cmd/... -count=1` — 이번 정찰 통과(httpapi 1.444s). 세 DSN unset이어서 DB 통합 테스트는 skip.
+  - `go vet ./internal/... ./cmd/...`, `gofmt -l internal cmd` — 저장소 CI 검증 명령. 이번 정찰에서는 별도 실행하지 않음.
+  - 실제 통합 검증에는 VENDRA_TEST_DSN, VENDRA_TEST_MIGRATE_DSN, VENDRA_TEST_UPGRADE_DSN 필요. 뒤의 둘은 각각 별도 빈 DB. Docker daemon 사용 가능 확인.
+  - 웹 CI: `cd web`, `npm ci --ignore-scripts`, `npx tsc -b --noEmit`, `npx eslint src --max-warnings 0`, `npm test`, `npm run build`. 이번 정찰 웹 실행 안 함.
+  - `make build`는 웹 설치/빌드 후 Go 바이너리 생성; `sh scripts/offline-release.sh <version>`은 Docker 이미지 아카이브 생성(수 분).
+- 관례: 최근 커밋은 영어 행동형 제목(fix/test/docs), 사용자 메시지는 한국어. 설정은 settings JSON 행, 비밀은 암호화 저장. SQL 마이그레이션은 기존 파일을 재작성하지 않는다. docs 가드가 코드/가이드 일치를 검사한다.
+- 위험 구역: authenticate·oidc·세션, 데이터 스코프, migrations, .github/workflows, 통화·금액 보존, 승인 단계 및 역할. 보호 경로 밖의 기존 helper 재사용을 우선한다.
+- 자주 깨지는 곳: 통화 수정 반려 이력, 새 비밀번호 상수의 비밀정보 검사, 중복 마이그레이션 번호, 취소된 ctx를 cleanup에 써 데이터가 남는 문제. cleanup은 context.Background 사용.
+- 검증 함정: CI go test는 ./internal/...만, vet는 ./cmd/...도 포함. DSN 없는 초록은 DB 검증 아님. 세 테스트 DB를 공유하지 않는다. 이전 /mnt/c Vitest 문제는 기록상 존재하나 현재 작업 경로는 Linux cache이고 재현 미확인.
+- 현재 기준: main@daca28f. 초안 축출·SSO 복귀·가이드 가드 반영. internal/mail 및 mcpoauth.go는 현재 없음(과거 성공 기록을 병합 사실로 간주하지 말 것).
+- 이전 프로필 정정: 견적 currency_mismatch 검증은 sourcing.go에 이미 존재하며, 통화 생략 시 기존 단위 보존 수정도 반영됨. 구형 혼합통화 데이터의 정책은 별개다.
+- 계획 문서 주의: ROADMAP_PLAN.md는 2026-08-13 비전 문서이며 v1/v3 단계 표기는 현재 배포 버전 확인 근거가 아니다.

@@ -1,7 +1,7 @@
 ---
 title: "postra — 자율 개선 이력"
 description: "postra: 자율 개선 회차 15회, 릴리즈 5건. 최근 릴리즈 v0.23.1 (자산 5개)."
-last_modified_at: 2026-09-20 20:15:42 +0900
+last_modified_at: 2026-09-20 20:27:45 +0900
 ---
 {% raw %}
 <script type="application/ld+json">
@@ -18,7 +18,7 @@ last_modified_at: 2026-09-20 20:15:42 +0900
   "name": "hkjang",
   "url": "https://github.com/hkjang"
  },
- "dateModified": "2026-09-20T20:15:42+09:00",
+ "dateModified": "2026-09-20T20:27:45+09:00",
  "version": "0.23.1"
 }
 </script>
