@@ -1,0 +1,15 @@
+# jasql 프로필 (2026-09-20)
+- 목적: KCB 메타데이터 기반 NL2SQL MCP 서버 — JSON 메타를 카탈로그·검색·조인그래프·가드레일로 컴파일해 MCP 도구/REST/웹 콘솔로 노출하고, Oracle 프로파일로 읽기 전용 실행까지 한다. 현재 v0.31.0.
+- 스택: Go 1.25 (godror Oracle 드라이버 — 빌드 태그 없으면 stub, pgx 메타 DB, x/crypto). 프런트는 `internal/mcp/webui` go:embed 정적 HTML/JS. Docker 단일 이미지 배포.
+- 구조:
+  - `cmd/jasql-mcp` 서버 진입점(플래그·env), `cmd/jasql-eval` 골든셋 평가, `cmd/jasql-goldgen` 골든셋 생성
+  - `internal/catalog` 도메인 전부(mcp 비의존, DB 비연결): load/search/join/validate/skeleton/semantic/templates
+  - `internal/mcp` 트랜스포트(stdio/http)·도구 디스패치(server.go)·REST(admin.go, dbapi.go, authapi.go)·SSO/OAuth(auth.go, oauth.go)·실행 가드(execguard.go)·webui
+  - `internal/meta` 메타 DB 저장소(mem/pg): 사용자·세션·설정·프로파일·템플릿
+  - `internal/oracle` 프로파일 저장·매니저(풀·브레이커)·sqlguard(읽기 전용 검사, WrapLimit)·explain
+  - `data/kcb` 실데이터셋(테스트가 이 데이터를 읽음), `docs/` 한국어 문서 정본, `scripts/`
+- 빌드·테스트: `go build ./...`, `go vet ./...`, `go test ./...`(≈60초, catalog 골든셋 ≈52초, mcp ≈9초, oracle/meta 즉시). 부분: `go test ./internal/mcp/ -run TestAdmin -v`. 2026-09-20 기준 전부 통과.
+- 관례: 커밋 제목은 영어 소문자 명령문(PR 머지 제목은 한국어). 릴리즈는 `bump to vX.Y.Z` + README 상단에 버전별 요약 추가. 문서는 `docs/*.md` 한국어. 설정은 플래그·env·메타 DB settings 3중(예: `-oidc-silent-sso`/`JASQL_OIDC_SILENT_SSO`/`oidc_silent_sso`). 변경 동작 테스트는 반드시 `t.TempDir()` 픽스처(`newFixtureServer`), 실데이터 무손상. 새 도구 추가 시 `stdio_test.go` 도구 수 단정 갱신.
+- 위험 구역: `internal/mcp/auth.go`·`oauth.go`·`authapi.go`(세션·SSO·OAuth 리소스 서버 — 리다이렉트 루프·open redirect 주의), `internal/mcp/execguard.go`·`internal/oracle/sqlguard.go`(DB 실행 정책 경계 — 넓히지 말 것), `internal/mcp/dbapi.go`(plain: 비밀번호 마스킹·blank ref 유지), `internal/meta/pg.go`(스키마), 전역 카탈로그 mutation의 admin-only 계약.
+- 자주 깨지는 곳: (기록 없음 — 첫 회차) 가능성: 검증(`ValidateReadOnlySQL`)과 실행(`WrapLimit`/`Count`/`Explain`)이 SQL 끝의 `;`·주석을 서로 다르게 읽는 지점.
+- 검증 함정: Oracle 실 실행은 stub 드라이버라 로컬/CI에서 불가(`driver_stub.go`) — 실행 경로는 문자열 단위 테스트까지만 증명 가능. CI 워크플로 파일 미확인(`.github/workflows` 없음). catalog 테스트는 `data/kcb` 실데이터에 의존해 느림.
