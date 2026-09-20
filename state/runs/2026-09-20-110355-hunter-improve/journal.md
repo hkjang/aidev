@@ -26,3 +26,4 @@
 - 미확인: DB 통합 재현·실제 브라우저 오류 표시·PDF 육안·전체 회귀·배포; 코드 변경 없음. 상세 판정은 review.json.
 - [러너 11:13] review approved — 리뷰 승인 (risk=low)
 - [러너 11:13] pr created — https://github.com/hkjang/hunter/pull/7
+- [러너 11:34] ci timeout — 제한 시간 안에 CI 완료를 확인하지 못함
