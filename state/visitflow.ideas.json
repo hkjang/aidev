@@ -3,19 +3,19 @@
     "title": "가져오기 미리보기 응답에 인식된 헤더 행 번호와 무시된 열 이름을 함께 돌려주기",
     "value": 2,
     "risk": 1,
-    "size": "S",
+    "size": "M",
     "status": "pending",
-    "note": "importHeaders가 미인식 열을 버리고 previewVisitorImport 응답은 visitors/warnings뿐이다. VisitFormPage의 importVisitors 연결 필요. 차선.",
-    "updated": "2026-09-20"
+    "note": "importHeaders는 미인식 열을 버리고 previewVisitorImport는 visitors/warnings만 반환. VisitFormPage 연결까지 필요하여 S에서 M으로 재평가.",
+    "updated": "2026-09-21"
   },
   {
     "title": "방문 신청 화면에 회사명 필수 정책(visit.company_required) 안내가 없는 문제",
     "value": 2,
     "risk": 1,
-    "size": "S",
+    "size": "M",
     "status": "pending",
-    "note": "VisitFormPage 회사명 필드에는 required가 없고 createVisitRecord에서 정책을 검사한다. ReferenceData 타입에도 정책 전달이 없어 서버/프런트 연동 필요.",
-    "updated": "2026-09-20"
+    "note": "referenceData/ReferenceData에 정책이 없고 VisitFormPage 회사명 required와 제출 검사도 없음. createVisitRecord는 검사. API·일반/현장 화면·실제 브라우저 검증 때문에 M; 차선.",
+    "updated": "2026-09-21"
   },
   {
     "title": "MCP OAuth 후속 — 관리 화면 카드 '설정 확인' 버튼과 SSO 주체의 MCP 감사 source 구분(mcp-oauth)",
@@ -23,17 +23,8 @@
     "risk": 1,
     "size": "S",
     "status": "pending",
-    "note": "origin/auto/2026-09-18-0533는 HEAD 미머지. 해당 SettingsPage에 설정 확인 버튼 검색 결과 없음. 감사 source 상세 배선은 미확인; 머지 뒤 재평가.",
-    "updated": "2026-09-20"
-  },
-  {
-    "title": "MCP OAuth 후속 — Discovery 캐시 mutex를 issuer별 loading 채널로 풀기",
-    "value": 2,
-    "risk": 2,
-    "size": "S",
-    "status": "done",
-    "note": "미머지 origin/auto/2026-09-18-0533의 715a242에서 이미 해결: mcpOAuthProvider가 oauthInFlight[issuer]/done 채널과 ctx.Done을 사용하고 discoverOAuthProvider가 잠금 밖에서 discovery. main 반영은 아직이나 재구현 금지.",
-    "updated": "2026-09-20"
+    "note": "origin/auto/2026-09-18-0533는 HEAD 미머지, 해당 SettingsPage에 설정 확인 버튼 없음. 감사 source 배선은 이번 미확인. 머지 뒤 평가.",
+    "updated": "2026-09-21"
   },
   {
     "title": "STARTTLS 가짜 릴레이로 auto의 TLS 승격과 암호화 시 PLAIN 선택을 고정하는 테스트",
@@ -41,8 +32,8 @@
     "risk": 1,
     "size": "S",
     "status": "pending",
-    "note": "메일 브랜치 미머지. 해당 mail_test.go는 auto 평문 성공과 starttls 미광고 실패만 검증한다. 인증서 기반 승격 테스트는 머지 뒤.",
-    "updated": "2026-09-20"
+    "note": "메일 브랜치 미머지. 해당 internal/app/mail_test.go의 TestSendMailAutoSecurityFollowsTheRelay는 평문 auto/STARTTLS 미광고 실패만 검사. 머지 뒤.",
+    "updated": "2026-09-21"
   },
   {
     "title": "v2.8.0 이하 설정 내보내기 파일의 smtp.* 키를 mail.*로 매핑",
@@ -50,8 +41,8 @@
     "risk": 1,
     "size": "S",
     "status": "pending",
-    "note": "HEAD smtpConfig는 아직 smtp.*를 읽는다. mail.* 이관 브랜치 머지 전에는 이 과제를 적용할 필요 없음; 브랜치 settings.go alias 검색 결과 없음.",
-    "updated": "2026-09-20"
+    "note": "HEAD internal/app/mail.go:smtpConfig는 smtp.* 사용. 메일 브랜치 settings.go에서 smtp/alias 검색 결과 없음. 머지 전 적용할 과제 아님.",
+    "updated": "2026-09-21"
   },
   {
     "title": "비밀번호 재설정 메일이 요청 안에서 동기 발송돼 죽은 릴레이면 요청이 제한 시간까지 걸리는 문제",
@@ -59,8 +50,8 @@
     "risk": 2,
     "size": "M",
     "status": "pending",
-    "note": "HEAD issuePasswordReset에서 platform.SendMail을 동기 호출함을 확인. 해당 파일이 메일 브랜치와 겹치므로 머지 뒤.",
-    "updated": "2026-09-20"
+    "note": "internal/app/mail.go:issuePasswordReset에서 platform.SendMail 동기 호출. 메일 브랜치와 충돌하므로 보류.",
+    "updated": "2026-09-21"
   },
   {
     "title": "운영 → 알림 화면에 채널(email) 필터 추가",
@@ -68,8 +59,8 @@
     "risk": 1,
     "size": "S",
     "status": "pending",
-    "note": "AdminPage 통계·알림 테이블에 channel 표시는 있으나 채널 선택 필터는 없음. 메일 브랜치가 같은 파일을 바꾸므로 머지 뒤.",
-    "updated": "2026-09-20"
+    "note": "AdminPage 통계·알림 화면은 상태 필터만 제공하고 channel을 표에 표시. 미머지 메일 브랜치와 겹치므로 보류.",
+    "updated": "2026-09-21"
   },
   {
     "title": "방문 이력 CSV 상한 경계에서 한 방문의 동행자가 잘려 인원이 부분만 나오는 문제",
@@ -77,8 +68,8 @@
     "risk": 2,
     "size": "M",
     "status": "pending",
-    "note": "exportVisitsCSV의 JOIN 결과 참가자 행에 LIMIT가 적용됨을 확인. 현 가이드는 참가자 행 상한과 잘림 안내를 명시하므로 계약 변경 필요성을 먼저 판단해야 함; 이번 제외.",
-    "updated": "2026-09-20"
+    "note": "exportVisitsCSV는 방문자 JOIN 행에 LIMIT 적용. ADMIN_GUIDE에 행 상한과 잘림 안내가 있어 계약 변경 수요 판단 전 보류.",
+    "updated": "2026-09-21"
   },
   {
     "title": "가이드 캡처를 CI에서 릴리즈 이미지로 자동 갱신",
@@ -86,8 +77,8 @@
     "risk": 2,
     "size": "M",
     "status": "pending",
-    "note": "ci.yml은 E2E만 실행, release.yml은 이미지 아카이브만 생성. screenshots 별도 명령은 존재. 설정 화면 변경 브랜치 머지 뒤가 효율적.",
-    "updated": "2026-09-20"
+    "note": "ci.yml은 E2E, release.yml은 이미지 아카이브. screenshots 스크립트 존재. 설정 화면 브랜치 머지 뒤가 효율적.",
+    "updated": "2026-09-21"
   },
   {
     "title": "가져오기 XLSX에서 첫 시트가 아니라 '이름·휴대전화' 헤더가 있는 시트를 고르기",
@@ -95,8 +86,8 @@
     "risk": 1,
     "size": "S",
     "status": "pending",
-    "note": "readVisitorImportRows는 sheets[0]만 읽음. 현재 문서도 첫 시트 계약을 명시하며 실제 다중 시트 템플릿 수요 미확인. 자동 선택의 모호성 때문에 우선순위 낮음.",
-    "updated": "2026-09-20"
+    "note": "readVisitorImportRows는 sheets[0], USER_GUIDE/API는 첫 시트 계약. 수요 미확인, 자동 선택 모호성이 있어 보류.",
+    "updated": "2026-09-21"
   },
   {
     "title": "가져오기 미리보기 100명 상한을 넘을 때 몇 명이 있었는지 오류 메시지에 적기",
@@ -104,8 +95,8 @@
     "risk": 1,
     "size": "S",
     "status": "pending",
-    "note": "visitorInputsFromRows가 101번째에서 즉시 반환하므로 총 인원을 모름. 해결되지 않았으나 효용 작음.",
-    "updated": "2026-09-20"
+    "note": "visitorInputsFromRows는 101번째 방문자에서 즉시 오류. 총원 집계는 여전히 없지만 효용 낮음.",
+    "updated": "2026-09-21"
   },
   {
     "title": "가져오기 이메일 열 형식 검사 경고",
@@ -113,25 +104,43 @@
     "risk": 2,
     "size": "S",
     "status": "pending",
-    "note": "신규 구조화: visitorInputsFromRows가 email 셀을 그대로 반환하고 형식 경고가 없음. platform.SendMail은 mail.ParseAddress를 사용한다. 허용 주소 형식 계약과 선택 입력 공백을 정해야 해서 이번 제외.",
-    "updated": "2026-09-20"
+    "note": "visitorInputsFromRows는 email 그대로 반환, platform.SendMail은 mail.ParseAddress 사용. 선택 공백과 표시명 포함 주소 계약 먼저 결정 필요.",
+    "updated": "2026-09-21"
   },
   {
-    "title": "CSV·XLSX 가져오기에서 복원하지 못한 지수 표기 전화번호의 경고 누락 수정",
+    "title": "동일 필드 중복 헤더의 조용한 덮어쓰기 안내",
     "value": 3,
     "risk": 1,
     "size": "S",
     "status": "done",
-    "note": "복원 후 importScientific에 남는 전화에는 원문을 보존하면서 전용 한국어 경고를 표시. 실제 CSV·excelize XLSX 파일 파서와 PostgreSQL 연결 multipart HTTP 응답에서 수정 전 실패·수정 후 통과를 확인. 이름/동의 누락 경고와 100명 제한 유지.",
-    "updated": "2026-09-20"
+    "note": "8cc7374: 선택된 헤더의 동일 정규화 메타데이터로 중복 열·마지막 선택 열을 필드당 한 번 경고. 실제 CSV/excelize 및 PostgreSQL HTTP 24개 하위 테스트에서 오른쪽 값/빈 값/동의/경고 순서 확인. 수정 전 실패, 수정 후 통과, 복사본 복구 방식 재변이 실패 확인.",
+    "updated": "2026-09-21"
   },
   {
-    "title": "가져오기에서 동일 필드의 중복 헤더를 경고해 앞 열의 조용한 덮어쓰기를 알리기",
+    "title": "CSV 물리적 빈 줄 뒤 경고 행 번호가 실제 파일 행과 어긋나는 문제",
+    "value": 2,
+    "risk": 2,
+    "size": "M",
+    "status": "pending",
+    "note": "신규. readVisitorImportRows의 csv.ReadAll과 visitorInputsFromRows의 슬라이스 인덱스 기반 행 번호 결합이 원인으로 추정. 설치된 encoding/csv 소스에 empty line skip 확인. 실제 CSV 재현 및 XLSX와 의미 정렬은 미확인; FieldPos를 사용한 위치 보존 검토 필요.",
+    "updated": "2026-09-21"
+  },
+  {
+    "title": "파일을 연속으로 가져올 때 늦게 끝난 이전 요청이 최신 방문자 목록을 덮어쓰는 문제",
     "value": 2,
     "risk": 1,
     "size": "S",
     "status": "pending",
-    "note": "신규: importHeaders의 headers[canonical]=index가 이름/name 또는 휴대전화/mobile 중 마지막 열을 선택한다. 현재는 중복 안내 없음. 첫 열/마지막 열 정책은 유지하고 경고만 추가하는 방향; 실제 사용자 파일 수요 미확인.",
-    "updated": "2026-09-20"
+    "note": "신규. VisitFormPage:importVisitors는 요청 순서/취소/업로드 busy 없이 await 후 setVisitors. 응답 역전 시 가능하다는 코드 추론이며 브라우저 재현 미확인. 실제 서버·브라우저로 검증 가능한 작업에서 수행.",
+    "updated": "2026-09-21"
+  },
+  {
+    "title": "가져오기 전화번호 숫자 서식 복원과 복원 불가 지수 표기 경고",
+    "value": 3,
+    "risk": 1,
+    "size": "S",
+    "status": "done",
+    "note": "기존 개선 6f8ed16/1c8e2c7이 HEAD에 포함. importPhone 및 scientific 경고, scientificPhoneFiles 실제 워크북 회귀 테스트 확인. 재선정 금지.",
+    "updated": "2026-09-21"
   }
 ]
