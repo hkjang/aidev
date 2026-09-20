@@ -1,0 +1,27 @@
+# kanpic 프로필 (2026-09-21)
+- 목적: 온프레미스·폐쇄망용 웹 AI 스프레드시트와 데이터 협업을 제공한다.
+- 스택: Go 1.26(module kanpic), PostgreSQL/pgx, excelize; React 19·TypeScript·Vite·zustand·React Query, Vitest/jsdom·Playwright; Docker 배포.
+- 구조:
+  - cmd/api — 서버 진입점; internal/httpapi — REST·MCP·handoff 핸들러.
+  - internal/workbook·collaboration — 저장소·워크북 작업·협업; internal/auth·apikey — 인증/인가.
+  - internal/formula — 수식 계산·TEXT/서식; DecimalNumber는 셈의 숫자 규칙.
+  - internal/delimited — Delimiter·ToUTF8·Number·HasSignificantLeadingZero 공통 파일 규칙.
+  - internal/importexport — CSV/TSV/XLSX 업로드/내보내기; parseScalar·parseXLSXValue.
+  - internal/external — 원격 수식 가져오기, Fetcher.Resolve·parseCSV·SSRF 정책·캐시.
+  - internal/handoff — 문서 교환/단일 사용 claim; internal/integration — 실제 PostgreSQL 테스트.
+  - web/src/pages — 홈·편집기·관리; web/src/lib — 숫자·붙여넣기·셀 서식·파일 디코딩.
+  - testdata — Go/TS 공용 JSON 픽스처; migrations — 번호별 SQL(041까지); docs — 가이드/PDF/로드맵/릴리즈.
+- 빌드·테스트: go test ./internal/delimited ./internal/external ./internal/importexport; go test ./... (이번 정찰 통과, 대부분 캐시); go vet ./...; go build ./...; gofmt -l ./cmd ./internal ./pkg.
+- 웹 검증: cd web && npm ci && npm run lint && npm test && npm run build (설치/빌드 시간 필요; 이번 정찰 미실행).
+- 통합 검증: POSTGRES_DSN=postgres://... go test -tags=integration ./internal/... (실 DB 필요, 이번 미실행).
+- 브라우저 검증: 실행 중 서버와 Chromium 준비 후 cd web && npm run test:e2e; KANPIC_E2E_BASE_URL 기본 http://localhost:8080. playwright.config.ts는 서버를 자동 실행하지 않는다.
+- 릴리즈 검사: ./scripts/check-release-docs.sh; ./scripts/check-commit-identities.sh HEAD (이번 둘 다 통과).
+- 관례: 한국어 fix/feat/docs 커밋, 규칙의 이유를 주석으로 설명. 설정은 internal/settings/관리자 콘솔, 필수 서버 환경은 POSTGRES_DSN. 번호순 SQL 마이그레이션. 가이드 PDF 동반 갱신은 이전 회차 관례.
+- 위험 구역: internal/auth·apikey·migrations·.github/workflows·handoff와 외부 SSRF/캐시 정책. formula.DecimalNumber와 web/src/lib/spreadsheetNumber.ts의 셈 규칙은 함께 검증한다.
+- 자주 깨지는 곳: 같은 자료의 업로드/IMPORTDATA/격자 규칙을 한쪽만 변경하는 것. 모든 파서가 같은 계약은 아니므로 무조건 통합하지 않는다.
+- 중요 수정 이력: b52a394는 XLSX CellTypeUnset에 15자리 제한을 적용했다가 되돌렸다. 엑셀 raw 2.2000000000000002는 이미 실수이므로 수로 남겨야 한다. 현재 이 분기는 HasSignificantLeadingZero만 검사한 후 DecimalNumber를 쓴다. CellTypeNumber에도 파일 숫자 길이 제한을 적용하지 않는다.
+- 현재 CSV 계약: parseScalar는 unguard→대소문자 무시 true/false→Number, trim 없음. IMPORTDATA parseCSV는 TrimSpace→Number, 실패 시 원문; 불리언 판정 없음. 이번 과제는 불리언만 일치시키는 것.
+- 검증 함정: CI는 Go1.26/Node24/Postgres17, -tags integration, 실제 서버 E2E까지 실행. 로컬 go test만으로 DB/웹을 검증했다고 하지 않는다. E2E 일부는 전역 설정을 바꾸므로 workers=1; 버려도 되는 배포 사용.
+- 검증 함정: 테스트 helper에서만 루프백/자체 서명 TLS를 허용한다. production 허용 정책을 바꿔 테스트를 통과시키지 않는다. 러너 hold: budget은 저장소 실패가 아니다.
+- 문서 상태: README/v0.251.0 릴리즈 노트는 최신. ROADMAP_PLAN.md는 2026-07-31/v0.3.0 기준 장기 계획이므로 현재 미구현 목록으로 단정하지 않는다. 저장소 내 CLAUDE.md/AGENTS.md는 검색 결과 없음; internal/web/src/scripts 및 Markdown의 TODO/FIXME도 검색 결과 없음.
+- 이번 확인 범위: git log -30, CI/release, README/로드맵/가이드 관련 절, 파서·테스트·서식·handoff 코드. 외부 서비스 왕복·DB 통합·브라우저 실행은 미확인.

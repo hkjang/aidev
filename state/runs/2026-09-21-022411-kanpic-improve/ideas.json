@@ -1,0 +1,137 @@
+[
+  {
+    "title": "IMPORTDATA 는 \"true\"/\"false\" 를 글자로 두고 업로드 parseScalar 는 불리언으로 읽는다",
+    "value": 3,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "이번 선택. parseScalar의 lower 분기와 parseCSV의 Number만 호출하는 코드를 확인. Scalar 전체 통합 대신 원문을 받는 공통 Boolean 판정만 추출하여 기존 trim/아포스트로피 정책 보존.",
+    "updated": "2026-09-21"
+  },
+  {
+    "title": "서버 delimited.Number 와 격자 clipboardNumber.ts parsePastedNumber 의 열다섯 자리 한도를 공용 픽스처로 못 박는다",
+    "value": 3,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "차선. testdata에는 numeric-text/cell-formats/sort-order/validation-dates만 존재. decomposeNumberText와 Number의 계약은 전체가 같지 않으므로 공통 평문 숫자 경계만 검증; 파서 통합 금지.",
+    "updated": "2026-09-21"
+  },
+  {
+    "title": "워크북 GET 응답에 넘겨받은 출처를 실어 편집기가 열릴 때마다 404 요청 하나를 더 보내지 않게 한다",
+    "value": 2,
+    "risk": 2,
+    "size": "M",
+    "status": "pending",
+    "note": "server.go:getWorkbook은 출처를 넣지 않고 EditorPage.tsx:250은 별도 query 사용. 저장소 결합과 기존 API 호환 검증이 필요해 이전 S/위험1에서 M/위험2로 상향.",
+    "updated": "2026-09-21"
+  },
+  {
+    "title": "홈 화면 워크북 카드에도 넘겨받은 출처를 표시한다",
+    "value": 2,
+    "risk": 2,
+    "size": "M",
+    "status": "pending",
+    "note": "HomePage.tsx 카드는 Grid2X2/시트 수이며 출처 없음. 목록 API에서 한 번에 제공해야 하므로 GET 출처 설계 후 검토; 카드별 fetch 금지.",
+    "updated": "2026-09-21"
+  },
+  {
+    "title": "허용 목록 줄에 받는 형식을 적을 수 있게 한다",
+    "value": 2,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "internal/handoff/handoff.go:receivesByService 고정 표 확인. 현재 표준 변경 요구는 미확인. 필요가 입증될 때만 수행.",
+    "updated": "2026-09-21"
+  },
+  {
+    "title": "csvNumber 자리(formula.DecimalNumber)가 IMPORTDATA 의 \"1,200\"·\"12%\"·통화 기호를 글자로 남긴다",
+    "value": 2,
+    "risk": 3,
+    "size": "S",
+    "status": "rejected",
+    "note": "두 경로 모두 delimited.Number를 사용하고 업로드 가이드도 장식 숫자의 글자 보존을 명시. 파서를 넓히는 변경은 결함 수정이 아니다; 경고 UI는 별도 요구로 다룬다.",
+    "updated": "2026-09-21"
+  },
+  {
+    "title": "서버 formatValue 와 격자가 숫자처럼 생긴 글자 값에서 갈린다",
+    "value": 3,
+    "risk": 3,
+    "size": "M",
+    "status": "pending",
+    "note": "functions_text.go:formatValue는 toNumber, cellFormat.ts:formatCellValue는 typeof number 판정. 차이는 코드로 확인했으나 TEXT 수식과 셀 표시의 의도적 계약 차이인지 미확인; 동작을 무조건 통합하지 않는다.",
+    "updated": "2026-09-21"
+  },
+  {
+    "title": "파이프(|)로 가른 파일을 후보에 넣지 않는다",
+    "value": 2,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "delimiter.go separators는 쉼표/세미콜론/탭. 미지원 확인; ASCII/마크다운 표 오탐 우려와 실제 사용자 수요는 미확인.",
+    "updated": "2026-09-21"
+  },
+  {
+    "title": "detectDelimiter 는 CR 만 쓰는 옛 파일을 한 줄로 읽는다",
+    "value": 1,
+    "risk": 2,
+    "size": "M",
+    "status": "pending",
+    "note": "headLines는 LF 기준. 구분자 감지만 변경해서 해결되지 않으며 파서 입력 정규화와 quoted CR 보존 검증이 필요해 범위 M으로 재평가.",
+    "updated": "2026-09-21"
+  },
+  {
+    "title": "분수 서식의 ? 자리 맞추기 빈칸을 그리지 않는다",
+    "value": 2,
+    "risk": 2,
+    "size": "M",
+    "status": "pending",
+    "note": "format_fraction.go는 자리 개수를 분모 상한에만 사용하고 fractionText는 숫자만 이어 붙임. Go/TS 동시 변경과 정확한 기대값 근거 필요; 45분 안전 작업으로는 불확실해 상향.",
+    "updated": "2026-09-21"
+  },
+  {
+    "title": "가이드 캡처를 CI 나 릴리즈 절차에서 다시 찍게 한다",
+    "value": 2,
+    "risk": 2,
+    "size": "M",
+    "status": "pending",
+    "note": "README에 수동 캡처 명령 있고 ci/release에 자동 캡처 없음. DB/실 서버/테스트 데이터 비용이 있어 보류; workflow는 이번 범위 밖.",
+    "updated": "2026-09-21"
+  },
+  {
+    "title": "IMPORTDATA 와 업로드의 앞뒤 빈칸 처리를 맞춘다",
+    "value": 1,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "parseCSV는 수 판정 전 TrimSpace, parseScalar는 trim 없음 확인. 원격의 기존 숫자 변환에 영향이 있어 위험 상향; 이번 불리언 작업에 끼워 넣지 않는다.",
+    "updated": "2026-09-21"
+  },
+  {
+    "title": "IMPORTDATA가 잘못된 UTF-8·지원하지 않는 UTF-32를 글자로 받아들이는 경로를 검증한다",
+    "value": 3,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "새 아이디어. ToUTF8는 UTF-32LE를 그대로 돌려주고 업로드 parseDelimited는 utf8.Valid로 거절하나 external.parseCSV에는 유효성 검사가 없음. HTTP→Resolve 결과/JSON 직렬화에서 손상 양상을 재현한 뒤 #VALUE! 정책 검토; 실행 재현 미확인.",
+    "updated": "2026-09-21"
+  },
+  {
+    "title": "따옴표 안 여러 줄이 있는 CSV의 구분자 감지 회귀 사례를 추가한다",
+    "value": 2,
+    "risk": 2,
+    "size": "M",
+    "status": "pending",
+    "note": "새 아이디어. delimiter.go:countOutsideQuotes가 물리적 줄마다 quoted 상태를 초기화해 quoted 여러 줄에서 잘못 센 후보가 이길 가능성. 실제 반례는 미확인; 10줄 샘플 비용 상한을 유지할 설계가 필요.",
+    "updated": "2026-09-21"
+  },
+  {
+    "title": "XLSX 형식 없는 칸에도 delimited.Number의 15자리 한도를 적용한다",
+    "value": 1,
+    "risk": 4,
+    "size": "S",
+    "status": "rejected",
+    "note": "실제 b52a394와 v0.251.0 노트에서 되돌린 접근. 17자리 raw 실수가 글자로 바뀌므로 재시도 금지; 앞자리 0 가드와 DecimalNumber 유지.",
+    "updated": "2026-09-21"
+  }
+]
