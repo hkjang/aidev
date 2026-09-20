@@ -1,0 +1,18 @@
+{
+  "verdict": "reject",
+  "recommend": "human",
+  "reasons": [
+    "internal/httpapi/handoff.go:181 [security] handoff.Fetch의 연결 실패 오류를 err.Error() 그대로 기록합니다. internal/handoff/handoff.go:268에서 bearer claim을 요청 URL 경로에 넣고 :275에서 client.Do의 URL 포함 오류를 그대로 감싸므로, 허용된 송신 서버의 연결 실패 시 원문 claim이 로그에 남습니다. 로그 열람자가 아직 소비되지 않은 유효 claim으로 송신 서버에서 문서를 가져갈 수 있습니다. claim 없는 오류 분류만 기록하고 실제 HTTP 연결 실패 경로의 로그 비노출 테스트가 필요합니다. 이번 ZIP diff 이전부터 존재한 결함이지만 앞선 security 차단이 그대로 남아 있으므로, 지정된 절차에 따라 운영자가 risk-accepted 여부를 결정해야 합니다."
+  ],
+  "notes": [
+    "검토 기준은 로컬 origin/main=1547faa, HEAD=9ded7a4입니다. 변경은 workspace_export.go와 workspace_export_live_test.go 두 파일뿐입니다. ZIP 이름 예약·본문 보존·안내 참조에 결함을 발견하지 못했고, 인증·권한·스키마·의존성 변경이나 비가역 외부 상태 변경은 없습니다.",
+    "전용 PostgreSQL 16에서 새 통합 테스트의 default/md/html/txt 모두 PASS, MUNI_TEST_DSN을 설정한 go test ./... -count=1 PASS, go vet ./..., placeholder 검사, gofmt, git diff --check 통과. 테스트는 실제 관리자 로그인과 등록 HTTP 라우트를 실행하고 ZIP 중복·본문 일대일 대응·안내 참조를 검증합니다.",
+    "수정 전 재실행은 코드 변경 금지에 따라 수행하지 않았습니다. 예약 전에는 루트 목록 문서와 안내 파일이 동일 목록.md가 되어 새 테스트의 중복 항목 단언에 걸리는 것을 코드로 확인했습니다.",
+    "요청된 legal-risk:privacy-and-data-protection, security:security-architecture-review, technology:code-review 및 Skill 도구를 도구 목록과 로컬 스킬 검색에서 찾지 못하여 해당 스킬 절차·반환 형식은 적용하지 못했습니다. 사용자 프롬프트 기준으로 심사했습니다.",
+    "브라우저·외부 ZIP 소비자의 고정 파일명 의존·외부 서비스 통합은 미검증입니다. handoff 로그 노출은 이번 세션에서 소스 경로로 확인했으며 별도 런타임 재현은 수행하지 않았습니다. 기존 보안 차단은 ZIP 변경과 별개이며 심사자가 해제하지 않습니다."
+  ],
+  "risk": "medium",
+  "blocking": [
+    "security"
+  ]
+}
