@@ -1,0 +1,16 @@
+{
+  "verdict": "approve",
+  "recommend": "merge",
+  "reasons": [],
+  "notes": [
+    "심사 대상 f6b35f07a0f863bb03ee3e14ce21cea915250937, 기준 origin/main a858bf4. 4파일 변경을 검토했으며 차단 결함 없음.",
+    "정확성·테스트: 기존 viewable 조건으로 소유자 카드 하트만 숨긴다. 두 실제 소유자 페이지와 FavoritesProvider를 실행하는 5상태×2페이지 테스트의 버튼 부재 단언은 수정 전 무조건 렌더링을 검출한다. 공개 앱 추가→즐겨찾기→해제→새로고침은 실제 번들로 desktop/mobile 모두 통과했다.",
+    "직접 검증: React 73/73, 전체 Playwright 69 통과·기존 desktop 모바일 전용 1 제외, lint, TypeScript/Vite 빌드, offline assets, git diff --check 통과. 모바일 메뉴를 실제 버튼으로 열고 링크를 클릭하므로 원래 CI 실패 원인을 해결한다.",
+    "보안: 인증·인가·서버 입력·비밀값·의존성 변경 없음. 새 공격 경로나 권한 확대가 없어 severity별 차단 소견 없음. 범위 이탈·마이그레이션·외부 상태 변경이 없고 revert 가능하다.",
+    "개인정보 데이터 맵: 사용자가 선택한 앱 slug는 기존 동일 origin localStorage의 즐겨찾기 표시에 사용되며 계정과 무관하다. 토글 해제·브라우저 저장소 삭제까지 유지되는 기존 구조이며 신규 서버/제3자 전송이나 수집 확대 없음. 기존 저장 slug를 자동 청소하지 않는 것은 이번 범위 밖이다.",
+    "기존 제약: 비활성 카테고리 공개 조건 차이와 공개 목록 100개 밖 즐겨찾기는 이번 변경에서 확대되지 않았다. API fixture E2E이므로 실제 DB/Keycloak 통합 증거는 아니며 Go·컨테이너 smoke·시각 이미지 수동 검토는 이번 심사에서 재실행하지 않았다.",
+    "Skill 도구는 미제공. 확장 검색으로 /mnt/c/Users/USER/projects/headcount/plugins 아래 legal-risk/privacy-and-data-protection, security/security-architecture-review, technology/code-review의 SKILL.md 원본을 찾아 읽고 적용했다. 보안·법무 sources 목록도 확인했으며 관할 법률 적합성 판단은 수행하지 않았다."
+  ],
+  "risk": "low",
+  "blocking": []
+}

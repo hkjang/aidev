@@ -1,0 +1,5 @@
+- 원본 모바일 즐겨찾기 E2E를 실행해 core.spec.ts:584에서 화면 밖 링크 클릭으로 30초 타임아웃되는 CI 실패를 재현했다.
+- 메뉴 열기 버튼이 표시되면 실제 클릭하고 사이드바 open 상태를 확인한 뒤 즐겨찾기로 이동하도록 7줄 추가했다. 기존 단언·제품 코드·CI는 유지했다.
+- 전체 E2E 69 passed / 1 skipped; React 73개, Go -race, lint, build, Prettier, offline/env/docs 계약 및 diff --check 통과.
+- 새 커밋 f6b35f0 (E2E 파일 1개); push 및 빌드 산출물 커밋 없음.
+- Skill 도구와 technology 스킬 3종은 제공 목록·로컬 검색에서 찾지 못해 고유 절차/반환 형식은 미확인. 실제 DB/Keycloak 및 이미지 smoke는 미검증.

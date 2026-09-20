@@ -1,0 +1,47 @@
+# PR 처리기 노트 2026-09-20-223716-appstore-shepherd — appstore PR #26
+정찰 → 구현 → 비평 → 수리 → 중재 → 릴리즈가 차례로 적는다. 다음 역할은 앞선 노트를 먼저 읽는다. [러너] 줄은 러너의 단계 판정이다.
+
+## PR 을 연 회차의 노트 (2026-09-20-214426-appstore-improve)
+# 회차 노트 2026-09-20-214426-appstore-improve — appstore
+정찰 → 구현 → 비평 → 수리 → 중재 → 릴리즈가 차례로 적는다. 다음 역할은 앞선 노트를 먼저 읽는다. [러너] 줄은 러너의 단계 판정이다.
+- [러너 21:44] base pinned — main@a858bf4
+- [러너 21:44] autonomy release — 
+
+## 정찰 노트
+- 비공개·미게시 소유자 카드의 하트가 저장만 하고 공개 즐겨찾기에는 나타나지 않는 결함을 선택: 기존 viewable 재사용으로 인증·DB 변경 없이 사용자 혼란을 줄인다.
+- 프록시 제한·메일·OAuth는 위험/선행 구현 때문에, 로그인 테스트는 사용자 동작 개선이 작아 후순위; 신규 아이디어는 즐겨찾기 개수/페이지와 기기 동기화 안내 오류다.
+- Go·환경·문서 검사 통과; 프런트는 node_modules 부재로 실행 불가. 부서 스킬 3종도 제공 도구/로컬 검색에서 없어 형식 준수 미확인. 기존 프로필의 메일·OAuth 존재 가정은 수정했다.
+- 구현자는 실제 FavoritesProvider와 두 소유자 페이지, 브라우저의 추가→즐겨찾기→해제를 검증할 것; 저장값 청소·동기화·전체 페이지 문제·보호 경로로 범위를 넓히지 말 것.
+- [러너 21:48] scout done — 공개 화면이 없는 소유자 앱 카드에서 즐겨찾기 버튼 숨기기 (가치 3 / 위험 1 / 작업량 S)
+
+## 구현 노트
+- a4d9997: AppCard 하트만 기존 viewable로 감쌌다. 공개 화면이 없는 소유자 앱을 저장해도 즐겨찾기에 나타나지 않는 혼란을 제거했다.
+- 두 생산 소유자 페이지 × 5상태 × 저장/미저장 카드로 버튼 부재·링크·배지·관리 바로가기·저장 원문 보존 검증; 변경 전 10건 실패, 변경 후 전체 Vitest 73건 통과.
+- npm ci·test·lint·build, Prettier, 오프라인 자산·환경·문서 검사, Go 패키지 테스트(캐시) 통과. Chromium 설치 후 desktop core 31 통과·모바일 전용 1 제외.
+- 실제 번들 E2E에서 /my/apps·/my 숨김 및 /my/apps·/my·/apps 각각 추가→메뉴 /favorites→해제→새로고침 확인.
+- 확신 없는 곳·미검증: 실제 DB/Keycloak 통합·모바일 전체·시각 캡처는 미실행. 요청된 technology 스킬/Skill 도구는 없었으며 로컬 superpowers 동등 지침 3종으로 보완(원본 반환 형식 준수 미확인).
+- 일부러 하지 않은 것: 저장값 정리·계정 동기화·100개 밖 즐겨찾기·카테고리 공개 계약 확장·internal/webui/dist·문서/캡처 변경은 과제 범위 밖.
+- 다음 역할: E2E는 API fixture 기반이다. 빌드 산출물은 기존 ignore 대상이며 커밋은 소스/테스트 4파일만 포함한다.
+- [러너 21:54] brief accepted — 채택 — 기존 AppCard 하트의 무조건 노출과 공개 결과만 거르는 AppsPage가 현재 코드와 일치하여 지정한 viewable 조건만 재사
+- [러너 21:54] verify passed — 검증 7개 통과 (auto)
+
+## 비평 노트
+- approve / low, blocking 없음: 4파일 diff·커밋·실제 카드/두 소유자 화면/저장 provider/공개 조회 조건 확인; 신규 보안·개인정보·비가역 변경 없음.
+- 변경된 Vitest 2파일 20건 및 diff --check 직접 통과; 숨김 단언은 수정 전 버튼 노출을 잡고 공개 토글 단언은 기존 동작을 보존한다.
+- E2E·모바일·시각 캡처·DB/Keycloak은 재실행하지 않음. 요청 부서 스킬 3종/Skill 도구는 검색해도 없어 고유 형식 준수 미확인.
+- 후속 참고: 비활성 카테고리의 공개 조건 차이·100개 밖 즐겨찾기·기존 저장값 유지 문제는 기존 제약이며 이번 수정 범위 밖.
+- [러너 21:55] review approved — 리뷰 승인 (risk=low)
+- [러너 21:56] pr created — https://github.com/hkjang/appstore/pull/26
+- [러너 22:00] ci failed — 성공이 아닌 검사: Go, React, E2E, and offline checks=failure
+
+## 수리 노트
+- 맞았던 지적: 모바일 메뉴를 열지 않아 화면 밖 즐겨찾기 링크 클릭이 실패함을 원본 584행에서 재현했다. 틀린 지적은 확인되지 않았다.
+- 수정: 메뉴 버튼이 보이면 클릭하고 사이드바 open 상태를 단언; 기존 추가→목록→해제→새로고침 검증 유지. f6b35f0 커밋, push 없음.
+- 검증: 전체 E2E 69 통과/기존 1 제외, React 73 통과, Go -race·lint·프런트/Go 빌드·Prettier·offline/env/docs·diff 검사 통과.
+- 한계: technology 스킬/Skill 도구 부재로 고유 형식 미확인; E2E는 mock API이며 실제 DB/Keycloak·이미지 smoke는 미검증.
+
+## 심사 노트
+- approve / merge / low, blocking 없음: f6b35f0의 4파일·두 소유자 페이지·실제 provider·공개 조회·모바일 메뉴 배선을 확인했다.
+- 직접 검증: React 73 통과, 전체 desktop/mobile E2E 69 통과·기존 1 제외, lint·프런트 빌드·offline·diff 검사 통과; 원래 모바일 실패 해결 확인.
+- 세 부서 SKILL.md를 headcount/plugins에서 찾아 읽고 적용했다(Skill 도구 미제공). 새 인증·권한·개인정보 전송·의존성·비가역 변경 없음.
+- 미검증: 실제 DB/Keycloak·컨테이너 smoke·Go 재실행·시각 수동 검토. API fixture 한계를 구분했으며 기존 카테고리/100개/저장값 제약은 범위 밖; 코드 변경 없이 머지를 권고한다.
