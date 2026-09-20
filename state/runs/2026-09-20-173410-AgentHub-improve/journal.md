@@ -30,3 +30,11 @@
 - [러너 17:48] pr created — https://github.com/hkjang/AgentHub/pull/31
 - [러너 17:50] ci passed — 검사 1개 모두 success
 - [러너 17:50] merge done — 50441aa
+
+## 릴리즈 노트
+- 로컬 릴리즈 준비 완료: 94e9b5e `chore(release): 0.250.0`, 경량 태그 `v0.250.0`. 기존과 동일한 11파일·15개 버전 참조 갱신.
+- 전체 Go race/빌드, 웹 ci/lint/build, SSO 12건·게이트웨이 18건·구문 검사, 카탈로그·버전 일치·Kubernetes/Compose/오프라인 DSN 검사 통과.
+- 릴리즈 본문은 release-notes.md, 결과는 release.json에 저장. 워크플로가 모든 기존 자산과 GitHub Release를 생성하므로 assets=[], github_release=false.
+- 실제 Ready Langflow/클러스터 브라우저 검사는 실행 환경이 없어 생략. 릴리즈 세션의 DB 의존 테스트는 DSN 없이 생략(구현 단계의 격리 DB 검증은 통과). 요청된 marketing:product-launch 및 technology:release-and-deployment 스킬과 Skill 도구를 제공 목록·로컬에서 찾지 못함. 자산 빌드·SBOM·서명·GitHub Release 게시는 태그 푸시 후 기존 CI가 수행하며 이 세션에서는 원격 전송하지 않음.
+- [러너 17:56] release published — v0.250.0
+- [러너 18:01] assets verified — v0.250.0 자산 8개 (이전 v0.249.0: 8)
