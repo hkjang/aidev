@@ -35,3 +35,8 @@
 - go build ./..., CLI 빌드, go vet ./..., go test ./... 및 버전·산출물 이름 게이트와 diff 검사 통과.
 - scripts/release.sh로 linux/amd64 자산 3종 생성; 지정 assets 경로에 복사 후 SHA256·manifest·가이드 검증. release.json과 release-notes.md 확정.
 - 실 Kubernetes·PostgreSQL·브라우저·운영 배포 점검 미실행. 요청 회사 스킬·Skill 도구 미발견.
+- [러너 07:51] release published — v0.9.287
+- [러너 07:51] gh-release created — GitHub Release v0.9.287
+- [러너 07:51] manifest ok — clustara-v0.9.287.tar.gz clustara-v0.9.287.tar.gz.sha256 README-offline-v0.9.287.md 
+- [러너 07:51] assets uploaded — 3개
+- [러너 07:51] assets verified — v0.9.287 자산 3개 (이전 v0.9.286: 3)
