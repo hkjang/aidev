@@ -1,0 +1,148 @@
+go test ./cmd/... ./internal/...
+?   	github.com/hkjang/Kkiit/cmd/kkiit	[no test files]
+ok  	github.com/hkjang/Kkiit/internal/analytics	(cached)
+ok  	github.com/hkjang/Kkiit/internal/config	(cached)
+ok  	github.com/hkjang/Kkiit/internal/cryptox	(cached)
+ok  	github.com/hkjang/Kkiit/internal/database	(cached)
+ok  	github.com/hkjang/Kkiit/internal/httpapi	0.339s
+ok  	github.com/hkjang/Kkiit/internal/mail	(cached)
+?   	github.com/hkjang/Kkiit/internal/mail/mailtest	[no test files]
+ok  	github.com/hkjang/Kkiit/internal/netguard	(cached)
+ok  	github.com/hkjang/Kkiit/internal/password	(cached)
+?   	github.com/hkjang/Kkiit/internal/ui	[no test files]
+ok  	github.com/hkjang/Kkiit/internal/worker	(cached)
+go vet ./cmd/... ./internal/...
+cd web && npm ci --ignore-scripts && npm run lint && npm test && npm run build
+
+added 214 packages, and audited 215 packages in 12s
+
+57 packages are looking for funding
+  run `npm fund` for details
+
+found 0 vulnerabilities
+
+> kkiit-web@0.4.4 lint
+> eslint . --max-warnings=0
+
+
+> kkiit-web@0.4.4 test
+> node --test "src/**/*.test.ts"
+
+TAP version 13
+# Subtest: shouldAttemptSilentSso
+    # Subtest: tries once on an ordinary page
+    ok 1 - tries once on an ordinary page
+      ---
+      duration_ms: 0.675301
+      type: 'test'
+      ...
+    # Subtest: never starts from the login screen, the callback, or a non-page path
+    ok 2 - never starts from the login screen, the callback, or a non-page path
+      ---
+      duration_ms: 0.148627
+      type: 'test'
+      ...
+    # Subtest: does not retry when the address carries a refusal marker
+    ok 3 - does not retry when the address carries a refusal marker
+      ---
+      duration_ms: 0.14134
+      type: 'test'
+      ...
+    # Subtest: does not retry within the same tab session
+    ok 4 - does not retry within the same tab session
+      ---
+      duration_ms: 0.171811
+      type: 'test'
+      ...
+    # Subtest: does not sign a person back in after they signed out, until a session exists again
+    ok 5 - does not sign a person back in after they signed out, until a session exists again
+      ---
+      duration_ms: 0.23747
+      type: 'test'
+      ...
+    # Subtest: fails closed when storage cannot be read
+    ok 6 - fails closed when storage cannot be read
+      ---
+      duration_ms: 0.314049
+      type: 'test'
+      ...
+    1..6
+ok 1 - shouldAttemptSilentSso
+  ---
+  duration_ms: 2.258676
+  type: 'suite'
+  ...
+# Subtest: beginSilentSso
+    # Subtest: navigates at the top level with prompt=none and the deep link
+    ok 1 - navigates at the top level with prompt=none and the deep link
+      ---
+      duration_ms: 0.984903
+      type: 'test'
+      ...
+    # Subtest: refuses to carry an off-site return_to
+    ok 2 - refuses to carry an off-site return_to
+      ---
+      duration_ms: 0.224485
+      type: 'test'
+      ...
+    1..2
+ok 2 - beginSilentSso
+  ---
+  duration_ms: 1.384967
+  type: 'suite'
+  ...
+# Subtest: safeReturnTo
+    # Subtest: accepts only same-origin paths
+    ok 1 - accepts only same-origin paths
+      ---
+      duration_ms: 0.099533
+      type: 'test'
+      ...
+    1..1
+ok 3 - safeReturnTo
+  ---
+  duration_ms: 0.139994
+  type: 'suite'
+  ...
+# Subtest: autoLoginProvider
+    # Subtest: picks only a provider the administrator turned auto_login on for
+    ok 1 - picks only a provider the administrator turned auto_login on for
+      ---
+      duration_ms: 0.130933
+      type: 'test'
+      ...
+    1..1
+ok 4 - autoLoginProvider
+  ---
+  duration_ms: 0.195549
+  type: 'suite'
+  ...
+1..4
+# tests 10
+# suites 4
+# pass 10
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 76.816269
+
+> kkiit-web@0.4.4 build
+> tsc -b && vite build
+
+vite v8.2.1 building client environment for production...
+[2Ktransforming...✓ 1002 modules transformed.
+rendering chunks...
+computing gzip size...
+../internal/ui/dist/index.html                                 1.40 kB │ gzip:   0.79 kB
+../internal/ui/dist/assets/index-PGJBh3nL.css                  0.75 kB │ gzip:   0.43 kB
+../internal/ui/dist/assets/rolldown-runtime-CbXtAM7H.js        0.58 kB │ gzip:   0.36 kB
+../internal/ui/dist/assets/NotificationSettings-8p6zP-wR.js   11.34 kB │ gzip:   4.10 kB
+../internal/ui/dist/assets/OrderWorkspacePage-u9NTqJ7z.js     12.84 kB │ gzip:   4.77 kB
+../internal/ui/dist/assets/index-DI12F1r4.js                  54.82 kB │ gzip:  16.12 kB
+../internal/ui/dist/assets/ProfilePage-CygoPM0J.js            64.73 kB │ gzip:  15.32 kB
+../internal/ui/dist/assets/AdminPage-G4s9R7LY.js             126.52 kB │ gzip:  30.04 kB
+../internal/ui/dist/assets/react-BpAwSB6l.js                 217.70 kB │ gzip:  69.89 kB
+../internal/ui/dist/assets/mui-DcfJFnN5.js                   377.45 kB │ gzip: 115.34 kB
+
+✓ built in 273ms

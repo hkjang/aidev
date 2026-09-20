@@ -1,10 +1,107 @@
 [
   {
+    "stage": "POST -> GET",
+    "name": "제한 없음",
+    "conditions": {}
+  },
+  {
+    "stage": "POST -> GET",
+    "name": "최소 금액 0",
+    "conditions": {
+      "min_amount": 0
+    }
+  },
+  {
+    "stage": "POST -> GET",
+    "name": "금액 경계",
+    "conditions": {
+      "max_amount": 9876543,
+      "min_amount": 123456
+    }
+  },
+  {
+    "stage": "POST -> GET",
+    "name": "복수 유형과 등급",
+    "conditions": {
+      "seller_levels": [
+        "NEW",
+        "RISING",
+        "PRO",
+        "ELITE"
+      ],
+      "service_types": [
+        "HUMAN",
+        "AI",
+        "HYBRID"
+      ]
+    }
+  },
+  {
+    "stage": "POST -> GET",
+    "name": "품질 0",
+    "conditions": {
+      "quality_score_below": 0
+    }
+  },
+  {
+    "stage": "POST -> GET",
+    "name": "품질 임계값",
+    "conditions": {
+      "quality_score_below": 75.5
+    }
+  },
+  {
+    "stage": "POST -> GET",
+    "name": "빈 배열",
+    "conditions": {
+      "seller_levels": [],
+      "service_types": []
+    }
+  },
+  {
+    "stage": "POST -> GET",
+    "name": "최대 금액 0",
+    "conditions": {
+      "max_amount": 0
+    }
+  },
+  {
+    "stage": "POST -> GET",
+    "name": "알 수 없는 키",
+    "conditions": {
+      "future_condition": true
+    }
+  },
+  {
+    "stage": "POST -> GET",
+    "name": "잘못된 배열",
+    "conditions": {
+      "seller_levels": [
+        1,
+        null
+      ],
+      "service_types": "AI"
+    }
+  },
+  {
+    "stage": "POST -> GET",
+    "name": "정상 조건과 잘못된 조건",
+    "conditions": {
+      "min_amount": 0,
+      "service_types": [
+        "AI",
+        1
+      ]
+    }
+  },
+  {
+    "stage": "rendered card",
     "name": "제한 없음",
     "conditions": {},
     "card": "제한 없음\n\ntalent_publish · 우선순위 100\n\n조건 없음 · 모든 상품에 적용\n\n비활성"
   },
   {
+    "stage": "rendered card",
     "name": "최소 금액 0",
     "conditions": {
       "min_amount": 0
@@ -12,28 +109,34 @@
     "card": "최소 금액 0\n\ntalent_publish · 우선순위 100\n\n최소 금액 0원 이상\n\n비활성"
   },
   {
+    "stage": "rendered card",
     "name": "금액 경계",
     "conditions": {
       "min_amount": 123456,
       "max_amount": 9876543
     },
-    "card": "금액 경계\n\ntalent_publish · 우선순위 100\n\n최대 금액 9,876,543원 이하\n\n최소 금액 123,456원 이상\n\n비활성"
+    "card": "금액 경계\n\ntalent_publish · 우선순위 100\n\n최소 금액 123,456원 이상\n\n최대 금액 9,876,543원 이하\n\n비활성"
   },
   {
+    "stage": "rendered card",
     "name": "복수 유형과 등급",
     "conditions": {
       "service_types": [
         "HUMAN",
-        "AI"
+        "AI",
+        "HYBRID"
       ],
       "seller_levels": [
         "NEW",
-        "PRO"
+        "RISING",
+        "PRO",
+        "ELITE"
       ]
     },
-    "card": "복수 유형과 등급\n\ntalent_publish · 우선순위 100\n\n판매자 등급 NEW, PRO\n\n서비스 유형 HUMAN, AI\n\n비활성"
+    "card": "복수 유형과 등급\n\ntalent_publish · 우선순위 100\n\n서비스 유형 HUMAN, AI, HYBRID\n\n판매자 등급 NEW, RISING, PRO, ELITE\n\n비활성"
   },
   {
+    "stage": "rendered card",
     "name": "품질 0",
     "conditions": {
       "quality_score_below": 0
@@ -41,6 +144,7 @@
     "card": "품질 0\n\ntalent_publish · 우선순위 100\n\n품질 점수 0 미만 (미산정 상품 포함)\n\n비활성"
   },
   {
+    "stage": "rendered card",
     "name": "품질 임계값",
     "conditions": {
       "quality_score_below": 75.5
@@ -48,6 +152,7 @@
     "card": "품질 임계값\n\ntalent_publish · 우선순위 100\n\n품질 점수 75.5 미만 (미산정 상품 포함)\n\n비활성"
   },
   {
+    "stage": "rendered card",
     "name": "빈 배열",
     "conditions": {
       "service_types": [],
@@ -56,6 +161,15 @@
     "card": "빈 배열\n\ntalent_publish · 우선순위 100\n\n조건 없음 · 모든 상품에 적용\n\n비활성"
   },
   {
+    "stage": "rendered card",
+    "name": "최대 금액 0",
+    "conditions": {
+      "max_amount": 0
+    },
+    "card": "최대 금액 0\n\ntalent_publish · 우선순위 100\n\n최대 금액 0원 이하\n\n비활성"
+  },
+  {
+    "stage": "rendered card",
     "name": "알 수 없는 키",
     "conditions": {
       "future_condition": true
@@ -63,6 +177,7 @@
     "card": "알 수 없는 키\n\ntalent_publish · 우선순위 100\n\n일부 조건 확인 필요\n\n비활성"
   },
   {
+    "stage": "rendered card",
     "name": "잘못된 배열",
     "conditions": {
       "service_types": "AI",
@@ -74,6 +189,7 @@
     "card": "잘못된 배열\n\ntalent_publish · 우선순위 100\n\n일부 조건 확인 필요\n\n비활성"
   },
   {
+    "stage": "rendered card",
     "name": "정상 조건과 잘못된 조건",
     "conditions": {
       "min_amount": 0,
@@ -99,6 +215,12 @@
     }
   },
   {
+    "stage": "edit -> save -> GET",
+    "name": "제한 없음",
+    "conditions": {}
+  },
+  {
+    "stage": "rendered card",
     "name": "제한 없음",
     "conditions": {},
     "card": "제한 없음\n\ntalent_publish · 우선순위 100\n\n조건 없음 · 모든 상품에 적용\n\n비활성"
@@ -118,6 +240,14 @@
     }
   },
   {
+    "stage": "edit -> save -> GET",
+    "name": "최소 금액 0",
+    "conditions": {
+      "min_amount": 0
+    }
+  },
+  {
+    "stage": "rendered card",
     "name": "최소 금액 0",
     "conditions": {
       "min_amount": 0
@@ -139,12 +269,21 @@
     }
   },
   {
+    "stage": "edit -> save -> GET",
+    "name": "금액 경계",
+    "conditions": {
+      "max_amount": 9876543,
+      "min_amount": 123456
+    }
+  },
+  {
+    "stage": "rendered card",
     "name": "금액 경계",
     "conditions": {
       "min_amount": 123456,
       "max_amount": 9876543
     },
-    "card": "금액 경계\n\ntalent_publish · 우선순위 100\n\n최대 금액 9,876,543원 이하\n\n최소 금액 123,456원 이상\n\n비활성"
+    "card": "금액 경계\n\ntalent_publish · 우선순위 100\n\n최소 금액 123,456원 이상\n\n최대 금액 9,876,543원 이하\n\n비활성"
   },
   {
     "name": "복수 유형과 등급",
@@ -154,25 +293,46 @@
       "최소 금액": "",
       "최대 금액": "",
       "품질 점수가 이 값 미만": "",
-      "서비스 유형": "HUMAN, AI",
-      "판매자 등급": "NEW, PRO",
+      "서비스 유형": "HUMAN, AI, HYBRID",
+      "판매자 등급": "NEW, RISING, PRO, ELITE",
       "승인 역할": "operator",
       "필요 승인 수": "1"
     }
   },
   {
+    "stage": "edit -> save -> GET",
+    "name": "복수 유형과 등급",
+    "conditions": {
+      "seller_levels": [
+        "NEW",
+        "RISING",
+        "PRO",
+        "ELITE"
+      ],
+      "service_types": [
+        "HUMAN",
+        "AI",
+        "HYBRID"
+      ]
+    }
+  },
+  {
+    "stage": "rendered card",
     "name": "복수 유형과 등급",
     "conditions": {
       "service_types": [
         "HUMAN",
-        "AI"
+        "AI",
+        "HYBRID"
       ],
       "seller_levels": [
         "NEW",
-        "PRO"
+        "RISING",
+        "PRO",
+        "ELITE"
       ]
     },
-    "card": "복수 유형과 등급\n\ntalent_publish · 우선순위 100\n\n판매자 등급 NEW, PRO\n\n서비스 유형 HUMAN, AI\n\n비활성"
+    "card": "복수 유형과 등급\n\ntalent_publish · 우선순위 100\n\n서비스 유형 HUMAN, AI, HYBRID\n\n판매자 등급 NEW, RISING, PRO, ELITE\n\n비활성"
   },
   {
     "name": "품질 0",
@@ -189,6 +349,14 @@
     }
   },
   {
+    "stage": "edit -> save -> GET",
+    "name": "품질 0",
+    "conditions": {
+      "quality_score_below": 0
+    }
+  },
+  {
+    "stage": "rendered card",
     "name": "품질 0",
     "conditions": {
       "quality_score_below": 0
@@ -210,6 +378,14 @@
     }
   },
   {
+    "stage": "edit -> save -> GET",
+    "name": "품질 임계값",
+    "conditions": {
+      "quality_score_below": 75.5
+    }
+  },
+  {
+    "stage": "rendered card",
     "name": "품질 임계값",
     "conditions": {
       "quality_score_below": 75.5
@@ -231,11 +407,97 @@
     }
   },
   {
+    "stage": "edit -> save -> GET",
+    "name": "빈 배열",
+    "conditions": {}
+  },
+  {
+    "stage": "rendered card",
     "name": "빈 배열",
     "conditions": {
       "service_types": [],
       "seller_levels": []
     },
     "card": "빈 배열\n\ntalent_publish · 우선순위 100\n\n조건 없음 · 모든 상품에 적용\n\n비활성"
+  },
+  {
+    "name": "최대 금액 0",
+    "form": {
+      "정책 이름": "최대 금액 0",
+      "우선순위": "100",
+      "최소 금액": "",
+      "최대 금액": "0",
+      "품질 점수가 이 값 미만": "",
+      "서비스 유형": "",
+      "판매자 등급": "",
+      "승인 역할": "operator",
+      "필요 승인 수": "1"
+    }
+  },
+  {
+    "stage": "edit -> save -> GET",
+    "name": "최대 금액 0",
+    "conditions": {
+      "max_amount": 0
+    }
+  },
+  {
+    "stage": "rendered card",
+    "name": "최대 금액 0",
+    "conditions": {
+      "max_amount": 0
+    },
+    "card": "최대 금액 0\n\ntalent_publish · 우선순위 100\n\n최대 금액 0원 이하\n\n비활성"
+  },
+  {
+    "stage": "rendered card",
+    "name": "화면 생성과 편집",
+    "conditions": {
+      "max_amount": 2000000,
+      "min_amount": 0,
+      "quality_score_below": 75.5,
+      "seller_levels": [
+        "NEW",
+        "PRO"
+      ],
+      "service_types": [
+        "HUMAN",
+        "AI"
+      ]
+    },
+    "card": "화면 생성과 편집\n\ntalent_publish · 우선순위 100\n\n최소 금액 0원 이상\n\n최대 금액 2,000,000원 이하\n\n서비스 유형 HUMAN, AI\n\n판매자 등급 NEW, PRO\n\n품질 점수 75.5 미만 (미산정 상품 포함)\n\n활성"
+  },
+  {
+    "stage": "rendered card",
+    "name": "화면 생성과 편집",
+    "conditions": {
+      "max_amount": 2000000,
+      "min_amount": 1000,
+      "quality_score_below": 0,
+      "seller_levels": [
+        "NEW",
+        "PRO"
+      ],
+      "service_types": [
+        "HUMAN",
+        "AI"
+      ]
+    },
+    "card": "화면 생성과 편집\n\ntalent_publish · 우선순위 100\n\n최소 금액 1,000원 이상\n\n최대 금액 2,000,000원 이하\n\n서비스 유형 HUMAN, AI\n\n판매자 등급 NEW, PRO\n\n품질 점수 0 미만 (미산정 상품 포함)\n\n활성"
+  },
+  {
+    "request": "approved",
+    "quality_score": null,
+    "matched_policy": "9edf1be1-8d40-4047-a529-fb3fe43d2c4e"
+  },
+  {
+    "request": "rejected",
+    "quality_score": null,
+    "matched_policy": "9edf1be1-8d40-4047-a529-fb3fe43d2c4e"
+  },
+  {
+    "controls": "UI create/change, toggle on/off preserving array conditions, delete, approve/reject passed",
+    "viewport": "375px: no overlap or card overflow",
+    "browserErrors": []
   }
 ]
