@@ -1,7 +1,7 @@
 ---
 title: "aidev 자율 개선 대시보드"
 description: "Claude Code 자율 개선 에이전트가 hkjang 의 프로젝트를 개선·테스트·머지·릴리즈한 일일 보고. 오늘 17회차·릴리즈 2건, 누적 1149회차·릴리즈 406건, 주의 필요 6건."
-last_modified_at: 2026-09-21 04:39:33 +0900
+last_modified_at: 2026-09-21 04:45:19 +0900
 ---
 {% raw %}
 <script type="application/ld+json">
@@ -17,7 +17,7 @@ last_modified_at: 2026-09-21 04:39:33 +0900
   "name": "hkjang",
   "url": "https://github.com/hkjang"
  },
- "dateModified": "2026-09-21T04:39:33+09:00"
+ "dateModified": "2026-09-21T04:45:19+09:00"
 }
 </script>
 
@@ -309,17 +309,17 @@ last_modified_at: 2026-09-21 04:39:33 +0900
 
 # aidev 자율 개선 대시보드
 
-<p class="tldr"><strong>한 줄 요약.</strong> Claude Code 자율 개선 에이전트가 hkjang 의 프로젝트를 개선·테스트·머지·릴리즈한 일일 보고. 오늘 17회차·릴리즈 2건, 누적 1149회차·릴리즈 406건, 주의 필요 6건. 회차가 끝날 때마다 자동 갱신됩니다 (마지막 갱신 <time datetime="2026-09-21T04:39:33+09:00" data-rel>2026-09-21 04:39</time> KST).</p>
+<p class="tldr"><strong>한 줄 요약.</strong> Claude Code 자율 개선 에이전트가 hkjang 의 프로젝트를 개선·테스트·머지·릴리즈한 일일 보고. 오늘 17회차·릴리즈 2건, 누적 1149회차·릴리즈 406건, 주의 필요 6건. 회차가 끝날 때마다 자동 갱신됩니다 (마지막 갱신 <time datetime="2026-09-21T04:45:19+09:00" data-rel>2026-09-21 04:45</time> KST).</p>
 
 <div class="alerts" role="alert"><strong>⚠️ 주의 필요 6건</strong> <span class="meta">— 새 경고는 GitHub Issue·Slack·이메일·Windows 알림으로도 보냅니다</span><ul><li><a href="https://hkjang.github.io/aidev/projects/SecCheck/">SecCheck</a> — CI 실패로 PR 미머지 <span class=meta>(2026-09-20 07:51)</span></li><li><a href="https://hkjang.github.io/aidev/projects/git-ctx/">git-ctx</a> — 보호 파일 변경 — 자동 머지 안 함, 사람 검토 필요 <span class=meta>(2026-09-20 10:35)</span></li><li><a href="https://hkjang.github.io/aidev/projects/madi/">madi</a> — 보호 파일 변경 — 자동 머지 안 함, 사람 검토 필요 <span class=meta>(2026-09-20 13:13)</span></li><li><a href="https://hkjang.github.io/aidev/projects/appstore/">appstore</a> — CI 실패로 PR 미머지 <span class=meta>(2026-09-20 22:00)</span></li><li><a href="https://hkjang.github.io/aidev/projects/git-ctx/">git-ctx</a> — 보호 파일 변경 — 자동 머지 안 함, 사람 검토 필요 <span class=meta>(2026-09-20 23:35)</span></li><li><a href="https://hkjang.github.io/aidev/projects/jasql_semantic/">jasql_semantic</a> — 수정 과제 대기 중 — 오류 대응(자동 적재): 마지막 회차가 &#x27;error&#x27; 로 끝났습니다. fix-round: error: pr create</li></ul></div>
 
-<div class="alerts ok" role="status"><strong>🩺 러너 정상</strong> <span class="meta">— 마지막 회차 0분 전 · 스케줄러 준비 · 다음 실행 2026-09-21 오전 4:20:00 · 디스크 74% · 최근 7일 회귀 1건 · 점검 04:15</span><ul><li>조치: 소유 프로세스 없는 잠금 파일을 제거했다</li></ul></div>
+<div class="alerts ok" role="status"><strong>🩺 러너 정상</strong> <span class="meta">— 마지막 회차 5분 전 · 스케줄러 준비 · 다음 실행 2026-09-21 오전 4:50:00 · 디스크 74% · 최근 7일 회귀 1건 · 점검 04:45</span><ul><li>조치: 소유 프로세스 없는 잠금 파일을 제거했다</li></ul></div>
 
 <div class="alerts" role="alert"><strong>⛔ 긴급 중지 중:</strong> <code>aiportal-java</code> — <a href="https://hkjang.github.io/aidev/inbox/">작업함</a></div>
 
 <p><a href="https://hkjang.github.io/aidev/inbox/"><strong>📥 작업함</strong></a> — 열린 러너 PR·복구·수정 과제 108건 (그중 사람 필요 63건)</p>
 
-<p>🧹 <strong>PR 처리기</strong> — 매시간 검토 대기 PR 을 진단해 고치고 심사해 승인 · 마지막 실행 2026-09-21 03:41 · 오늘 승인 0 · 수정 푸시 0 · 사람 필요 4 <span class="meta">(기록: state/shepherd.jsonl)</span></p>
+<p>🧹 <strong>PR 처리기</strong> — 매시간 검토 대기 PR 을 진단해 고치고 심사해 승인 · 마지막 실행 2026-09-21 04:43 · 오늘 승인 0 · 수정 푸시 0 · 사람 필요 4 <span class="meta">(기록: state/shepherd.jsonl)</span></p>
 
 [운영 문서](https://github.com/hkjang/aidev#readme) · [원장](https://github.com/hkjang/aidev/tree/main/state) · [실행 이력](https://github.com/hkjang/aidev/commits/main) · [경고 이슈](https://github.com/hkjang/aidev/issues?q=label%3Aalert) · [교훈 25건](https://hkjang.github.io/aidev/lessons/) · [경험 보고 논문](https://hkjang.github.io/aidev/paper/ko/) ([EN](https://hkjang.github.io/aidev/paper/)) · [Atom 피드](https://hkjang.github.io/aidev/feed.xml) · [summary.json](https://hkjang.github.io/aidev/data/summary.json)
 
@@ -379,7 +379,7 @@ last_modified_at: 2026-09-21 04:39:33 +0900
 
 ## 비용·사용량
 
-<ul class="stats"><li><b>$0.00</b><span>오늘 비용</span></li><li><b>0분</b><span>오늘 에이전트 시간</span></li><li><b>54</b><span>오늘 세션</span></li><li><b>$4251.06</b><span>누적 비용</span></li><li><b>172시간 49분</b><span>누적 시간</span></li><li><b>4596.3M/34.0M</b><span>누적 토큰 입력/출력</span></li></ul>
+<ul class="stats"><li><b>$0.00</b><span>오늘 비용</span></li><li><b>0분</b><span>오늘 에이전트 시간</span></li><li><b>55</b><span>오늘 세션</span></li><li><b>$4251.06</b><span>누적 비용</span></li><li><b>172시간 49분</b><span>누적 시간</span></li><li><b>4596.3M/34.0M</b><span>누적 토큰 입력/출력</span></li></ul>
 
 claude -p 가 세션마다 보고한 추정값(정액제에서는 참고값). 회차별 내역은 각 일일 보고와 프로젝트 페이지, 원본은 [usage.jsonl](https://hkjang.github.io/aidev/data/usage.jsonl).
 
