@@ -27,3 +27,6 @@
 - 요청한 세 부서 스킬/Skill 도구 부재로 고유 절차 미적용; 릴리즈는 탭/CR 처리 추가로 한정하고 제품별 안전성 보장은 피할 것.
 - [러너 21:25] review approved — 리뷰 승인 (risk=low)
 - [러너 21:26] pr created — https://github.com/hkjang/ai-admin/pull/28
+- [러너 21:33] ci passed — 검사 2개 모두 success
+- [러너 21:33] merge done — 42c62bc
+- [러너 21:33] release missing — 릴리즈 결과 없음/손상: missing
