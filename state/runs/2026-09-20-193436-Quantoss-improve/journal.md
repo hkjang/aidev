@@ -26,3 +26,4 @@
 - 로컬 main(3868b282)은 고정 base(584e700)보다 오래되어 추가 백오프/zzdbg 코드도 검토; 기존 시간 상한 테스트의 부하 시 불안정 가능성은 참고 사항.
 - 세 회사 스킬 미발견. 운영 갭 값·실API·race·브라우저/PDF 미검증; 비갭 전략도 잘못된 갭 설정이면 시작 거부되므로 릴리즈에 명시할 것.
 - [러너 19:43] review approved — 리뷰 승인 (risk=low)
+- [러너 19:43] pr created — https://github.com/hkjang/Quantoss/pull/75
