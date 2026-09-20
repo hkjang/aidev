@@ -1,0 +1,16 @@
+{
+  "verdict": "reject",
+  "reasons": [
+    "internal/httpapi/handoff.go:181 [P1/security] 넘겨받기 요청의 연결·TLS·타임아웃 오류를 err.Error() 그대로 경고 로그에 기록합니다. internal/handoff/handoff.go:275가 보존하는 http.Client.Do의 *url.Error는 /api/v1/handoff/claims/<claim> 전체 URL을 포함합니다(사용 중인 Go 표준 라이브러리 구현까지 확인). 원본에 도달하기 전 실패하면 표가 소비되지 않으므로, 문서 권한 없이 수신 서버 로그만 읽을 수 있는 사람이 유효기간 안에 원본의 GET claims/<claim>을 호출하여 문서를 탈취할 수 있습니다. URL이나 원문 오류를 기록하지 않고 허용된 오류 분류만 남기고, 전송 실패 시 경고 로그에 claim이 없는지 검증해야 합니다. 요청 경로의 logPath 마스킹은 이 별도 경고 로그에 적용되지 않습니다."
+  ],
+  "notes": [
+    "검토 기준 불일치: 실제 로컬 main은 1045e13이며 회차 노트의 pinned base는 1547faa입니다. 명시된 main...HEAD 전체(41개 파일)를 기준으로 판정했습니다. 위 차단 결함은 a8b253b에서 들어온 이전 문서 넘기기 변경이며 1547faa에도 존재합니다. 이번 36dccc6 HTML 변경만에서는 머지 차단 결함을 찾지 못했습니다.",
+    "전용 PostgreSQL 16에서 MUNI_TEST_DSN을 설정해 go test ./internal/httpapi ./internal/handoff -count=1 실행: 하위 테스트 포함 PASS 259, FAIL 0, SKIP 0. 변경 관련 프런트 테스트 4개 파일 20개 통과. 전체 프런트 빌드·브라우저 E2E·PDF 문서 시각 검증은 재실행하지 않았습니다.",
+    "TestHTMLRoundTripDropsTheTitleHeading은 기존 변환 규칙을 직접 호출하므로 변경 전에도 통과하지만, TestAnExportedHTMLFileImportsWithoutItsTitleTwice는 실제 업로드 경로와 저장 결과를 검사해 HTML 플래그 회귀를 검출합니다. 끼워 넣기 단언은 heading 존재만 확인하여 본문의 다른 H1 때문에 제목 삭제를 놓칠 수 있습니다. 현재 importIntoDocument에는 제목 제거 호출이 없음을 별도로 확인했습니다.",
+    "이번 HTML 변경에는 마이그레이션·의존성 변경이 없습니다. 같은 제목인 첫 블록의 H1만 제거하며 DOCX 중복 제목은 기존 상태로 남습니다. 초기부터 있던 webui/dist/index.html 작업 트리 변경은 HEAD diff와 구분했고 수정하지 않았습니다."
+  ],
+  "risk": "high",
+  "blocking": [
+    "security"
+  ]
+}

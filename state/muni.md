@@ -150,3 +150,10 @@
 - 과제서: 채택 — 과제서의 근거(parseUpload 가 .md 에 embeddedTitle 을 만들지 않음, heading 타입·level attr 이름, 빈 content 를 JSON() 이 빈 문단으로 메움)가 모두 코드와 맞아 그대로 구현했습니다.
 
 - 릴리즈: v0.41.0 (2026-09-19, run 2026-09-19-195351-muni-improve)
+## 2026-09-20
+- 선택: HTML 가져오기도 제목과 같은 첫 H1 을 본문에서 뺀다 (가치 3 / 위험 1 / 작업량 S)
+- 결과: 성공
+- 요약: muni 의 HTML 내보내기(`fullHTMLWithDrawing`)는 `<title>` 과 `<body>` 첫 `<h1 class="doc-title">` 에 제목을 적고 파일 이름도 제목으로 짓는데, 가져오기는 `head`·`title` 을 버리고 `h1` 을 level-1 heading 으로 만들어 내보낸 `.html` 을 다시 올리면 제목이 두 번 보이고 검색 텍스트에도 두 번 들어갔습니다(지난 회차가 `.md` 에 고친 것과 같은 결함). `upload.markdown` 플래그를 `titleInBody` 로 이름을 바꿔 `parseUpload` 의 `.html/.htm` 에서도 참으로 두었고, 기존 `dropLeadingTitle` 규칙(정확히 같을 때만, 아니면 바이트 그대로)을 그대로 씁니다 — 새 판단 없음, `<title>`·`doc-title` 클래스는 읽지 않음, `importIntoDocument`·`renderHTML`·`fullHTMLWithDrawing`·넘겨받기(markdown 만 받음)는 동작 불변. 검증: live 테스트 하나(`fullHTMLWithDrawing` 실제 출력으로 만든 파일을 `회의록.html` 로 올려 첫 블록이 문단·content_text 에 제목 없음 / 폼 title `9월 회의` 면 heading 유지 / `.txt` 는 첫 줄 유지 / 끼워 넣기는 heading 유지)가 고치기 전 "first block = heading, search text = 회의록 …" 로 실패하는 것을 먼저 보고 고쳐 통과, 단위 왕복 하나(`fullHTMLWithDrawing`→`htmlDocument`→`dropLeadingTitle` 에서 첫 블록만 빠지고 나머지 블록 JSON 이 동일, 다른 제목이면 바이트 동일), `gofmt -l`·`go vet ./...`·`go test ./...`(postgres:16-alpine 에 MUNI_TEST_DSN, httpapi SKIP 0, handoff live 4 통과)·`check-webui-placeholder.sh` 통과. 사용자 가이드에 한 구절. 커밋 36dccc6.
+- 보류 아이디어: `.docx` 가져오기도 같은 이중 제목 — docx 내보내기가 `Title` 스타일 문단을 쓰고(`docx/export.go:141`) 리더가 그 스타일을 level-1 heading 으로 읽음(`import_blocks.go:383`), `titleInBody` 를 `.docx` 에도 켜면 됨 (3/1/S) / PDF 가져오기에서 본문 첫 줄이 metadata 제목과 같으면 빼기 — pdfImport 가 첫 줄을 heading 으로 내는지 미확인 (2/2/S) / HTML 가져오기에서 `<title>` 을 embeddedTitle 로 올리기 — 저장한 웹 페이지의 `<title>` 은 '글 - 사이트' 꼴이라 doc-title 이 있을 때로 제한 필요 (2/2/S) / CI 에 e2e(playwright) 단계 넣기 (4/2/M) — workflows 보호 경로 / silent SSO 성공 경로 브라우저 확인과 OIDC 탭 캡처 (3/1/S)
+- 과제서: 채택 — 근거(export.go 의 `<h1 class="doc-title">`, import_html 이 head/title 을 버리고 h1 을 heading 으로 냄, 빈 블록을 끼우지 않음)가 모두 코드·실행과 맞아 그대로 구현했고, 정찰이 걱정한 "h1 앞 빈 블록" 은 없었음(고치기 전 실패 메시지가 첫 블록 = heading).
+
