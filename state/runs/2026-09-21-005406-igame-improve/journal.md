@@ -28,3 +28,5 @@
 - 조직 스킬 3개는 도구/로컬 경로에 없어 미적용; 사용자 기준으로 검토했으며 security/legal 차단 없음.
 - [러너 01:05] review approved — 리뷰 승인 (risk=low)
 - [러너 01:06] pr created — https://github.com/hkjang/igame/pull/23
+- [러너 01:11] ci passed — 검사 1개 모두 success
+- [러너 01:11] merge done — 1ac69f4

@@ -28,3 +28,4 @@
 - Oracle/PostgreSQL 실 DB·실사용 빈도 및 전체 build/vet/test 재실행은 미검증; 릴리즈에는 불가능한 날짜를 무시하여 날짜 조건이 생략되는 동작을 명시할 것.
 - [러너 01:04] review approved — 리뷰 승인 (risk=low)
 - [러너 01:05] pr created — https://github.com/hkjang/jasql/pull/2
+- [러너 01:09] ci no-ci — 이 커밋에 검사가 없음 (정책 allow_merge_without_ci 가 없으면 차단)
