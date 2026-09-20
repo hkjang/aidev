@@ -127,3 +127,11 @@
 - 과제서: 채택 — 과제서의 근거(`persistLocked` 제자리 쓰기 + 2026-09-17 이후 잘린 기록은 디렉터리째 삭제)가 코드와 정확히 일치했고, 확신 없다던 두 지점(기존 Create 테스트가 rename에서도 통과 / `internal/app`·`httpapi` 통합 테스트가 디렉터리 항목 수를 세지 않음)을 직접 실행·열람해 확인했다.
 
 - 릴리즈: v1.0.23 (2026-09-19, run 2026-09-19-230353-pii-masker-improve)
+## 2026-09-20
+- 선택: `/v1/jobs/{job_id}/result`에 `HEAD` 메서드 허용 (가치 3 / 위험 1 / 작업량 S)
+- 결과: 성공
+- 요약: `routes()`가 결과 다운로드 라우트를 `Methods(http.MethodGet)`으로만 등록해 gorilla/mux가 `HEAD`를 `Allow` 헤더도 없이 `405`로 거절했고(`documentResponse` 래퍼에도 닿지 않아 `Cache-Control`·`Content-Length` 모두 빈 값), 다운로드 관리자·`curl -I`·프록시의 존재/크기 프로브가 실패했습니다. 핸들러가 이미 `http.ServeContent`를 쓰므로 라우트에 `http.MethodHead`를 더하는 한 줄(이유 주석 포함)로 GET과 같은 헤더를 본문 없이 돌려주게 했고, JSON 라우트는 `Content-Length`를 직접 계산하지 않아 HEAD 의미가 달라 그대로 두었습니다. 검증은 프로덕션 배선(실제 리스너 + mock 업스트림)을 지나는 통합 테스트 `TestJobResultAnswersHeadProbes` 1개(완료된 PDF job에 GET으로 본문 길이를 잰 뒤 HEAD → `200`, `resp.ContentLength`가 GET 본문 길이와 같고 본문 0바이트, `Accept-Ranges: bytes`·`Cache-Control: no-store`·`X-Content-Type-Options: nosniff`·`Content-Disposition`·`Content-Type`이 GET과 동일 / 없는 job ID에 HEAD → `404`)를 먼저 써서 405로 실패하는 것을 본 뒤 라우트를 고쳤고, 기존 `TestJobResultServesRangeRequests`·`TestJobResultReturnsNotFoundWhenFileIsGone`·`TestJobResultSanitizesInjectedUploadFilename`은 수정 없이 통과, `gofmt -l`(무출력)·`go vet ./...`·`go build ./...`·`go test -count=1 ./...`·`go test -race -count=3 ./internal/httpapi/...` 전부 통과, 라우트를 `Methods(http.MethodGet)`으로 임시 되돌려 새 테스트가 실제로 `unexpected head status 405 (allow="")`로 실패하는 것까지 확인하고 원복했습니다. README 엔드포인트 목록에 HEAD 허용 한 줄을 더했습니다.
+- 보류 아이디어: `internal/config`의 나머지 순수 함수(`normalizeAllowHosts`, `normalizeEndpointURL`, `normalizePIILang/Schema`, `envInt/envNonNegativeInt/envBool`) `t.Setenv`+`Load()` 경유 테이블 테스트 / gorilla/mux 405 응답에 `Allow` 헤더 부재(RFC 9110 위반, `MethodNotAllowedHandler`는 라우터 전체 변경이라 분리) / `runJob`이 `_ = s.jobStore.Save(job)`로 Save 실패를 조용히 버림(최소 `log.Printf`, 출력 변화가 로그뿐이라 우선순위 낮음) / 비동기 job의 `ParseOptions`를 `job.json`에 영속(이력 조회·재개의 선행 조건) / 동기 슬롯 대기열의 메모리 상한(대기 요청이 이미 읽은 업로드 바이트 보유, M/위험 3)
+- 과제서: 채택 — 과제서의 근거(`server.go:85` `Methods(GET)`만 등록, `ServeContent`가 HEAD 처리)가 코드와 정확히 일치했고, 정찰이 확신 없다던 두 지점(Go 클라이언트가 HEAD 응답의 `Content-Length`를 `resp.ContentLength`로 노출 / 없는 job의 HEAD가 404로 도착)을 통합 테스트로 직접 실행해 확인했다.
+
+- 릴리즈: v1.0.24 (2026-09-20, run 2026-09-20-153358-pii-masker-improve)

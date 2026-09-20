@@ -1,0 +1,17 @@
+[
+  {"title":"SMTP Send/TestConnection 에 CommandTimeoutSec 와 ctx 취소를 dial 이후 단계까지 전파","value":3,"risk":2,"size":"S","status":"pending","note":"client.go 는 ctx·ConnectTimeout 을 dial 에만 씀. 아웃박스 워커 ProcessRetries(scheduler.go:90~117) 가 직렬·무타임아웃이라 릴레이 한 대가 MAIL 뒤 침묵하면 리더 노드 아웃박스 전체가 멈춤. IMAP/POP3 는 이미 SetDeadline 사용. 기존 sync.command_timeout_sec 재사용, 새 설정 키 없음. 이번 회차 선택.","updated":"2026-09-20"},
+  {"title":"Makefile 에 CI 와 같은 플래그의 gosec@v2.28.0 lint 타깃(+gofmt -l)","value":3,"risk":1,"size":"S","status":"pending","note":"v0.23.0 이 gosec 을 깨뜨린 채 main 에 들어가 후속 PR 이 verify-failed. 로컬 재현: gosec -severity medium -exclude-dir=scripts ./... . 이번 회차 차선 후보.","updated":"2026-09-20"},
+  {"title":"CI 에 gofmt -l 검사 추가","value":2,"risk":1,"size":"S","status":"pending","note":"ci.yml build-test 잡 Vet 앞 한 단계. 2026-09-20 gofmt -l ./cmd ./internal 빈 출력. Makefile lint 타깃과 묶어도 됨.","updated":"2026-09-20"},
+  {"title":"gosec 잡에 -stdout 추가해 잡 로그에도 결과 표시","value":2,"risk":1,"size":"S","status":"pending","note":"잡 로그 API 가 admin 권한 필요(403). -stdout 은 출력만 늘리고 exit code 불변.","updated":"2026-09-20"},
+  {"title":"pop3 어댑터 테스트 — smtp fakeRelay/recorded 패턴 이식","value":2,"risk":1,"size":"M","status":"pending","note":"main 에 smtp client_test.go 머지됨(bf4e5a9). LIST/RETR/DELE/QUIT·AuthError·STLS. pop3/client.go 는 테스트 없음(미확인: [no test files] 여부).","updated":"2026-09-20"},
+  {"title":"smtp isConnectionLost 를 errors.Is(syscall.ECONNRESET) 로 보강","value":1,"risk":2,"size":"S","status":"pending","note":"client.go:231. 효과가 관측 가능한지 dropAfterData+SetLinger(0) 변형 테스트로 먼저 증명. 효과 없는 변경 금지 규칙 주의.","updated":"2026-09-20"},
+  {"title":"OIDC runtime 을 한 번만 읽기 — OIDCConfigured + OIDCAutoLoginEnabled 통합 헬퍼","value":2,"risk":1,"size":"S","status":"pending","note":"browser_auth.go:99-101. 효과 작음.","updated":"2026-09-20"},
+  {"title":"mail_deliveries 90일 보존 reaper","value":2,"risk":1,"size":"S","status":"pending","note":"notifymail 이 main(0356555) 에 여전히 없음(grep NotifyMail 0건). 머지 뒤에만.","updated":"2026-09-20"},
+  {"title":"시험 발송·Validate 에서 mail.username 만 있고 비밀번호 참조가 없으면 경고","value":2,"risk":1,"size":"S","status":"pending","note":"notifymail 머지 뒤.","updated":"2026-09-20"},
+  {"title":"기한 알림 임박 창(24h)·확인 주기(5분)를 설정 키로 노출","value":1,"risk":1,"size":"S","status":"pending","note":"notifymail 머지 뒤, 운영 피드백 있을 때만.","updated":"2026-09-20"},
+  {"title":"스레드 화면에도 handoff 단추","value":3,"risk":2,"size":"M","status":"pending","note":"handoff 가 main 에 없음. 머지 뒤.","updated":"2026-09-20"},
+  {"title":"handoff DTO 를 contracts.Registry 에 올려 OpenAPI/TS 계약에 포함","value":2,"risk":1,"size":"S","status":"pending","note":"handoff 머지 뒤.","updated":"2026-09-20"},
+  {"title":"ADMIN_GUIDE.pdf 재생성","value":1,"risk":1,"size":"S","status":"pending","note":"Chromium 필요. notifymail·handoff 머지 뒤 절 번호 정리와 함께.","updated":"2026-09-20"},
+  {"title":"아웃박스 재시도 워커 ProcessRetries 에 항목당 상한 시간(WithTimeout) 부여","value":2,"risk":2,"size":"S","status":"pending","note":"신규. 어댑터 데드라인이 들어가면 필요성이 줄지만, 워커 수준 방어선으로 항목당 ctx 타임아웃(예: connect+command×N)을 두면 어댑터 교체와 무관하게 안전. 1순위 과제 이후 재평가.","updated":"2026-09-20"},
+  {"title":"SMTP 어댑터 DATA 업로드를 청크 단위로 돌리며 진행 중이면 데드라인 갱신","value":1,"risk":2,"size":"S","status":"pending","note":"신규. 1순위 과제의 후속 — 큰 첨부가 command timeout(60s) 안에 못 끝나는 느린 릴레이에서만 의미. 운영 보고 있을 때.","updated":"2026-09-20"}
+]

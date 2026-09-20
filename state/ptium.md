@@ -230,3 +230,10 @@
 - 과제서: 채택 — 근거(compile.go:1371 의 join-then-split)가 코드와 정확히 맞았고 권장 방식 그대로 구현했다; `100,200,300` 판단은 정찰 노트대로 한 점으로 두고 테스트 주석·문법 문서에 적었다.
 
 - 릴리즈: v1.69.42 (2026-09-20, run 2026-09-20-000349-ptium-improve)
+## 2026-09-20
+- 선택: xlsx 가져오기에서 숨긴 행·열(`hidden="1"`)을 표에 넣지 않고, 뺐다고 경고 한 줄로 알리기 (가치 3 / 위험 2 / 작업량 S)
+- 결과: 성공
+- 요약: `docs/workbook.go` 의 `worksheet` 가 `<row hidden>` 과 `<cols><col min max hidden>` 을 읽지 않아 필터로 걸러 낸 행·접어 둔 보조 열이 그대로 표에 들어가고, 숫자 보조 열 하나가 2열 차트를 3열 표로 바꾸던 것을 고쳤다. 구조체에 두 속성을 더하고 새 `onScreen(sheet, grid)` 이 `gridOf` 가 위치를 확정한 **뒤**에 숨긴 행을 빼고 숨긴 열 인덱스(min-1..max-1)를 각 줄에서 제거(빈칸 아님)하며, 셀이 있는 행·쓰인 셀이 있는 열만 세어(`min=5 max=16384` 같은 끝까지 범위가 "열 16380개" 가 되지 않게) `writeSheet` 가 슬라이드를 실제로 쓴 시트에만 `<시트>의 숨긴 행 2개와 열 1개는 가져오지 않았습니다` 한 줄을 붙인다. `"1"|"true"` 규칙은 `counts1904` 에서 `switchedOn` 으로 빼내 재사용. `gridOf` 시그니처·숫자 파서·`allNumeric` 은 손대지 않았다. TDD: 새 `sheetconcealed_test.go` 5개(숨긴 행 제거+순서+경고 / 숨긴 열 범위 제거·A와 D 가 붙고 출처가 A1:B3 / 보조 열을 숨기면 같은 행이 `::table`→`::columns` 로 바뀌는 것을 `Read()` 끝까지 통과한 `Source` 로, 숨김 없음·hidden="0"·범위 없음은 경고 0건 / 행+열 한 줄 경고 하나 / 전부 숨긴 시트는 기존 "읽을 표가 없습니다")를 먼저 넣어 고치기 전 코드에서 전부 실패함을 확인한 뒤 구현해 통과. `korean` 패키지의 소스 검사 `TestNoMessageChoosesAParticleForAValueItCannotSee` 가 `%s는` 을 잡아 조사를 고정 단위 "개" 뒤에 붙이도록 고쳤다. `go vet ./...` 통과, `go test -race ./...` 25개 패키지 전부 통과(`golden`·기존 `sheethidden_test.go`·`sheetcells_test.go` 그대로). `docs/USER_GUIDE.md` 의 xlsx 행에 "숨긴 시트·행·열은 … 가져오지 않고, 뺐다고 알려 줍니다" 를 더했고(`told_test.go` 통과) PDF 는 다시 굽지 않았다. 웹 변경 없음(경고 문구는 웹에서 매칭하지 않음)이라 `make test` 의 웹 단계는 건너뜀. 커밋 8977346. 버전·릴리스 노트는 손대지 않았다.
+- 보류 아이디어: deck 의 세 숫자 파서(parseNumber·parseBareNumber/chartFields·docs.amountOf) 계약을 한 표 테스트로 묶기 — 테스트만 (2/1/S) · 메일 후속: 한 리뷰어의 연속 댓글을 30초 지연으로 묶어 한 통으로 (3/2/M) · 메일 후속: 관리자에게 새 critical 인시던트를 메일로 (3/2/M) · xlsx 가져오기: `width="0"`·collapsed·outlineLevel 로 접힌 열/행도 숨김으로 볼지 — 실제 파일로 확인 뒤 (2/2/S)
+- 과제서: 채택 — 근거(worksheet 가 hidden 을 안 읽음, gridOf 뒤에서 열을 제거해야 trimGrid 이 가운데 빈 열을 남기지 않음)가 코드와 정확히 맞았고 권장 방식(새 함수를 `rows := gridOf(...)` 바로 뒤에 적용, 셀 있는 행만 세기, count>0 일 때만 경고) 그대로 구현했다.
+
