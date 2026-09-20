@@ -1,7 +1,7 @@
 ---
 title: "SecCheck — 자율 개선 이력"
 description: "SecCheck: 자율 개선 회차 31회, 릴리즈 2건. 최근 릴리즈 v1.0.146 (자산 1개)."
-last_modified_at: 2026-09-21 07:55:14 +0900
+last_modified_at: 2026-09-21 08:01:00 +0900
 ---
 {% raw %}
 <script type="application/ld+json">
@@ -18,7 +18,7 @@ last_modified_at: 2026-09-21 07:55:14 +0900
   "name": "hkjang",
   "url": "https://github.com/hkjang"
  },
- "dateModified": "2026-09-21T07:55:14+09:00",
+ "dateModified": "2026-09-21T08:01:00+09:00",
  "version": "1.0.146"
 }
 </script>
