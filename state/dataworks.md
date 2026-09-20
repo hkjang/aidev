@@ -173,3 +173,4 @@
 - 보류 아이디어: action center 가 상품이 사라진 고아 Contract Scope·Entitlement 도 집계(차선 후보, S) / 동일 API 키에 활성 엔타이틀먼트가 둘 이상일 때 운영 화면 경고 / `EvaluatePublishGateV2` 비엄격 분기도 누락 항목을 Warnings/MissingEvidence 로 보고(화면 문구 바뀜, 별도 판단) / `EvaluatePublishGateV2` masking 민감도 키워드와 `RequiresStrictPublishGate` 키워드를 한 상수로 공유(동작 불변 정리라 테스트로 고정하는 형태여야 함) / 실제 MCP 클라이언트 흐름 e2e 를 스텁 Keycloak + Playwright 로 web/e2e 에 편입
 - 과제서: 채택 — 과제서의 두 불일치(비엄격 pricing 술어·`expiredAt` vs `EntitlementActive`)가 코드와 정확히 일치했고 수용 기준 1~3 을 모두 그대로 구현했다.
 
+- 릴리즈: v0.9.58 (2026-09-20, run 2026-09-20-102400-dataworks-improve)
