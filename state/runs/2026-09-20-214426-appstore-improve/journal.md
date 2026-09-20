@@ -27,3 +27,4 @@
 - E2E·모바일·시각 캡처·DB/Keycloak은 재실행하지 않음. 요청 부서 스킬 3종/Skill 도구는 검색해도 없어 고유 형식 준수 미확인.
 - 후속 참고: 비활성 카테고리의 공개 조건 차이·100개 밖 즐겨찾기·기존 저장값 유지 문제는 기존 제약이며 이번 수정 범위 밖.
 - [러너 21:55] review approved — 리뷰 승인 (risk=low)
+- [러너 21:56] pr created — https://github.com/hkjang/appstore/pull/26
