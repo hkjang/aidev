@@ -200,3 +200,22 @@
 - 실행 명령과 전체 출력: 같은 회차 implementation-checks.json. PYTHONDONTWRITEBYTECODE=1 및 TMPDIR=이번 회차 assets로 gate 27건 실행. 이번 실행에서 경고에 나온 임시 자산 디렉터리는 삭제했다.
 - 앱 npm ci/test/build, 전체 releaser, 원격 게시·배포 미실행. 코드·버전·태그·문서·외부 러너·게이트·실패 JSON 무변경, 커밋 없음. released/skipped/수정 완료로 판정하지 않는다.
 
+## 2026-09-21
+- 선택: [수정 과제] 릴리즈 실패의 필수 정책 입력 결손 해소 (가치 5 / 위험 2 / 작업량 S)
+- 결과: 변경없음
+- 요약: 수정 과제는 BLOCKED이며 수정 미완료다. 새 승인 원문이나 실제 릴리즈 이력이 제공되지 않아 과제서의 명시적 중단 조건에 따라 구현·동일 재조사에 진입하지 않았고, 저장소와 외부 러너를 변경하지 않았다. 이번에는 요구 스킬 원문·AGENTS.md·docs/RELEASE.md·회차 기록을 읽고 작업 트리 무변경과 기록 형식을 확인했으며, 정찰의 gate 27건 및 실패 두 건 차단 결과는 이번 실행 결과가 아니다.
+- 보류 아이디어:
+  - 릴리즈 정책 입력 확보: pending/BLOCKED; 다음 버전·증가 단위·커밋·태그 사용/형식/종류·노트·자산 방식의 실제 출처 필요.
+  - 외부 Codex 폴백 경로 전달: pending; 외부 aidev 소유이며 최신 실패 해법으로 재선정 금지.
+  - useAppList 비배열 캐시 방어: pending; 이번 고정 과제의 대체 후보 아님.
+  - globalLoading 병렬 요청 참조 카운트: pending; 호출 짝과 실제 병렬 요청 검증 선행.
+- 과제서: 채택 — 새 근거 없이는 구현·동일 재조사를 반복하지 말라는 진입 조건에 따라 차단 상태로 인계했다.
+
+검증 및 스킬 반환 기록:
+- callable Skill 도구 없음. /mnt/c/Users/USER/projects/headcount/plugins/technology/skills/{completion-verification,systematic-debugging,test-driven-development}/SKILL.md 실제 원문을 읽고 적용했다. 파일 읽기는 Skill 호출 성공이 아니다.
+- 재현/원인: 과제서의 필수 정책 입력 결손과 정찰 재현 결과를 인계받았다. 이번 독립 재현 및 새로운 원인 입증은 수행하지 않았으며, 앱 CI 결함이나 gate 결함으로 재분류하지 않았다.
+- 수정/인과 검증: 없음. 수용 기준 1의 출처 미확보로 2·3 미착수. Red/Green 및 수정 되돌림 검증 미실행, 장애 해결 완료 주장 없음.
+- 추가 테스트: 없음. 실행 코드 변경이 없고 반복 조사 금지에 따라 앱 npm ci/test/build, gate, sim, 실제 releaser를 재실행하지 않았다. 기존 정찰 결과는 scout-checks.json에 보존한다.
+- 이번 확인: git status --short 빈 출력. 기록 작성 후 JSON 파싱·15개 기존 아이디어 보존·허용 상태 및 필수 필드·원장 단일 항목·구현 노트 8줄 이내 검사를 수행한다. 이는 릴리즈 통과 검증이 아니다.
+- 버전·태그·정본 문서·실패 JSON·외부 게이트·원격 무변경, 커밋 없음. 원격 이력은 여전히 미확인이다. 차단은 사용자 과제서와 AGENTS.md의 새 관례 금지에 따른 것이며 새 승인 요청은 하지 않았다.
+
