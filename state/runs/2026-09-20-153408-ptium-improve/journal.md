@@ -37,3 +37,10 @@
 - 실제 Excel 파일·실서버·전체 테스트는 미실행, USER_GUIDE PDF 미갱신. 코드 수정 없음; 경고 개수 정책은 구현과 테스트가 일치한다.
 - [러너 15:53] review approved — 리뷰 승인 (risk=low)
 - [러너 15:53] pr created — https://github.com/hkjang/ptium/pull/27
+- [러너 15:56] ci passed — 검사 1개 모두 success
+- [러너 15:56] merge done — 2e3a62e
+- [러너 16:05] release published — v1.69.43
+- [러너 16:05] gh-release created — GitHub Release v1.69.43
+- [러너 16:05] manifest ok — ptium-1.69.43.tar.gz ptium-1.69.43.tar.gz.sha256 docker-compose.ptium-1.69.43.yml ptium-1.69.43.env.example load-ptium-1.69.43.ps1 load-ptium-1.69.43.sh ptium-1.69.43.kubernetes.yaml 
+- [러너 16:05] assets uploaded — 7개
+- [러너 16:05] assets verified — v1.69.43 자산 7개 (이전 v1.69.42: 7)

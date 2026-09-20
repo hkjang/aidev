@@ -1,0 +1,416 @@
+{
+  "run_id": "2026-09-20-153408-ptium-improve",
+  "generated": "2026-09-20T16:05:50+09:00",
+  "run": {
+    "run_id": "2026-09-20-153408-ptium-improve",
+    "project": "ptium",
+    "kind": "improve",
+    "started": "2026-09-20T15:34:09+09:00",
+    "model": "claude-opus-5",
+    "policy_version": "ecd4b546e",
+    "prompts_hash": "30c37184f081815d",
+    "runner_version": "ecd4b546e",
+    "arm": "codex-critic",
+    "experiment": "roles-2026-09",
+    "finished": "2026-09-20T16:05:50+09:00",
+    "outcome": "release-ready"
+  },
+  "record": {
+    "ts": "2026-09-20T16:05:50+09:00",
+    "date": "2026-09-20",
+    "project": "ptium",
+    "result": "merged https://github.com/hkjang/ptium/pull/27, released v1.69.43",
+    "outcome": "release-ready",
+    "run_id": "2026-09-20-153408-ptium-improve",
+    "base_sha": "57680a6ddc4e79e5b24ea397b49e31f11673d8c6",
+    "head_sha": "2e3a62eb7ff4b77bae6c69b7219b5be88abe7bfb",
+    "pr": "https://github.com/hkjang/ptium/pull/27",
+    "stages": {
+      "base": {
+        "state": "pinned",
+        "reason": "main@57680a6",
+        "at": "2026-09-20T15:34:17+09:00"
+      },
+      "autonomy": {
+        "state": "release",
+        "reason": "",
+        "at": "2026-09-20T15:34:17+09:00"
+      },
+      "scout": {
+        "state": "done",
+        "reason": "xlsx 가져오기에서 숨긴 행·열(`hidden=\"1\"`)을 표에 넣지 않고, 뺐다고 경고 한 줄로 알리기 (가치 3 / 위험 2 / ",
+        "at": "2026-09-20T15:38:01+09:00"
+      },
+      "brief": {
+        "state": "accepted",
+        "reason": "채택 — 근거(worksheet 가 hidden 을 안 읽음, gridOf 뒤에서 열을 제거해야 trimGrid 이 가운데 빈 열을 남기지 않음)가 코드와 정",
+        "at": "2026-09-20T15:43:21+09:00"
+      },
+      "verify": {
+        "state": "passed",
+        "reason": "검증 9개 통과 (auto)",
+        "at": "2026-09-20T15:43:33+09:00"
+      },
+      "review": {
+        "state": "approved",
+        "reason": "리뷰 승인 (risk=low)",
+        "at": "2026-09-20T15:53:07+09:00"
+      },
+      "repair": {
+        "state": "done",
+        "reason": "# 수리 요약 (커밋 2e3a62e)  - P1(workbook.go:273) 맞음. `ulimit -v 3GB` 아래에서 `<col min=\"3\" max=\"4294967295\" hidden=\"1\"/>` 6셀 시트를 `Read()` 하니 `onScreen` 에서 `fatal error:",
+        "at": "2026-09-20T15:51:51+09:00"
+      },
+      "pr": {
+        "state": "created",
+        "reason": "https://github.com/hkjang/ptium/pull/27",
+        "at": "2026-09-20T15:53:21+09:00"
+      },
+      "ci": {
+        "state": "passed",
+        "reason": "검사 1개 모두 success",
+        "at": "2026-09-20T15:56:54+09:00"
+      },
+      "merge": {
+        "state": "done",
+        "reason": "2e3a62eb7ff4b77bae6c69b7219b5be88abe7bfb",
+        "at": "2026-09-20T15:56:58+09:00"
+      },
+      "release": {
+        "state": "published",
+        "reason": "v1.69.43",
+        "at": "2026-09-20T16:05:28+09:00"
+      },
+      "gh-release": {
+        "state": "created",
+        "reason": "GitHub Release v1.69.43",
+        "at": "2026-09-20T16:05:34+09:00"
+      },
+      "manifest": {
+        "state": "ok",
+        "reason": "ptium-1.69.43.tar.gz ptium-1.69.43.tar.gz.sha256 docker-compose.ptium-1.69.43.yml ptium-1.69.43.env.example load-ptium-1.69.43.ps1 load-ptium-1.69.43.sh ptium-1.69.43.kubernetes.yaml ",
+        "at": "2026-09-20T16:05:36+09:00"
+      },
+      "assets": {
+        "state": "verified",
+        "reason": "v1.69.43 자산 7개 (이전 v1.69.42: 7)",
+        "at": "2026-09-20T16:05:49+09:00"
+      }
+    },
+    "campaign": "",
+    "autonomy": "release",
+    "arm": "codex-critic",
+    "experiment": "roles-2026-09",
+    "files": 5,
+    "additions": 454,
+    "deletions": 22,
+    "tests": 2,
+    "title": "Ask a hidden column range per column and cite where the shown rows and columns were on the sheet"
+  },
+  "stages": {
+    "base": {
+      "state": "pinned",
+      "reason": "main@57680a6",
+      "at": "2026-09-20T15:34:17+09:00"
+    },
+    "autonomy": {
+      "state": "release",
+      "reason": "",
+      "at": "2026-09-20T15:34:17+09:00"
+    },
+    "scout": {
+      "state": "done",
+      "reason": "xlsx 가져오기에서 숨긴 행·열(`hidden=\"1\"`)을 표에 넣지 않고, 뺐다고 경고 한 줄로 알리기 (가치 3 / 위험 2 / ",
+      "at": "2026-09-20T15:38:01+09:00"
+    },
+    "brief": {
+      "state": "accepted",
+      "reason": "채택 — 근거(worksheet 가 hidden 을 안 읽음, gridOf 뒤에서 열을 제거해야 trimGrid 이 가운데 빈 열을 남기지 않음)가 코드와 정",
+      "at": "2026-09-20T15:43:21+09:00"
+    },
+    "verify": {
+      "state": "passed",
+      "reason": "검증 9개 통과 (auto)",
+      "at": "2026-09-20T15:43:33+09:00"
+    },
+    "review": {
+      "state": "approved",
+      "reason": "리뷰 승인 (risk=low)",
+      "at": "2026-09-20T15:53:07+09:00"
+    },
+    "repair": {
+      "state": "done",
+      "reason": "# 수리 요약 (커밋 2e3a62e)  - P1(workbook.go:273) 맞음. `ulimit -v 3GB` 아래에서 `<col min=\"3\" max=\"4294967295\" hidden=\"1\"/>` 6셀 시트를 `Read()` 하니 `onScreen` 에서 `fatal error:",
+      "at": "2026-09-20T15:51:51+09:00"
+    },
+    "pr": {
+      "state": "created",
+      "reason": "https://github.com/hkjang/ptium/pull/27",
+      "at": "2026-09-20T15:53:21+09:00"
+    },
+    "ci": {
+      "state": "passed",
+      "reason": "검사 1개 모두 success",
+      "at": "2026-09-20T15:56:54+09:00"
+    },
+    "merge": {
+      "state": "done",
+      "reason": "2e3a62eb7ff4b77bae6c69b7219b5be88abe7bfb",
+      "at": "2026-09-20T15:56:58+09:00"
+    },
+    "release": {
+      "state": "published",
+      "reason": "v1.69.43",
+      "at": "2026-09-20T16:05:28+09:00"
+    },
+    "gh-release": {
+      "state": "created",
+      "reason": "GitHub Release v1.69.43",
+      "at": "2026-09-20T16:05:34+09:00"
+    },
+    "manifest": {
+      "state": "ok",
+      "reason": "ptium-1.69.43.tar.gz ptium-1.69.43.tar.gz.sha256 docker-compose.ptium-1.69.43.yml ptium-1.69.43.env.example load-ptium-1.69.43.ps1 load-ptium-1.69.43.sh ptium-1.69.43.kubernetes.yaml ",
+      "at": "2026-09-20T16:05:36+09:00"
+    },
+    "assets": {
+      "state": "verified",
+      "reason": "v1.69.43 자산 7개 (이전 v1.69.42: 7)",
+      "at": "2026-09-20T16:05:49+09:00"
+    }
+  },
+  "provenance": {
+    "model": "claude-opus-5",
+    "policy_version": "ecd4b546e",
+    "prompts_hash": "30c37184f081815d",
+    "runner_version": "ecd4b546e",
+    "base_sha": "57680a6ddc4e79e5b24ea397b49e31f11673d8c6",
+    "head_sha": "2e3a62eb7ff4b77bae6c69b7219b5be88abe7bfb",
+    "pr": "https://github.com/hkjang/ptium/pull/27"
+  },
+  "verification": {
+    "runner": {
+      "source": "auto",
+      "commands": [
+        {
+          "cmd": "cd server && go build ./...",
+          "exit": 0,
+          "seconds": 1
+        },
+        {
+          "cmd": "cd server && go vet ./...",
+          "exit": 0,
+          "seconds": 0
+        },
+        {
+          "cmd": "cd server && go test ./...",
+          "exit": 0,
+          "seconds": 3
+        },
+        {
+          "cmd": "cd web && [ -d node_modules ] || npm ci --no-audit --no-fund",
+          "exit": 0,
+          "seconds": 4
+        },
+        {
+          "cmd": "cd web && npm test --silent",
+          "exit": 0,
+          "seconds": 2
+        },
+        {
+          "cmd": "cd web && [ -d node_modules ] || npm ci --no-audit --no-fund",
+          "exit": 0,
+          "seconds": 0
+        },
+        {
+          "cmd": "cd web && npm run typecheck --silent",
+          "exit": 0,
+          "seconds": 1
+        },
+        {
+          "cmd": "cd web && [ -d node_modules ] || npm ci --no-audit --no-fund",
+          "exit": 0,
+          "seconds": 0
+        },
+        {
+          "cmd": "cd web && npm run build --silent",
+          "exit": 0,
+          "seconds": 1
+        }
+      ]
+    },
+    "runner_gate": {
+      "ok": true,
+      "state": "verified",
+      "reason": "검증 9개 통과 (auto)"
+    },
+    "after_rebase": null,
+    "review": {
+      "verdict": "approve",
+      "reasons": [],
+      "notes": [
+        "숨김 열 범위 전체를 펼치던 메모리 문제는 제거됐고, 새 Read 통합 테스트가 숨김 제거·차트 판정·원본 열/행 좌표 및 거대 범위를 검증한다. docs/korean 테스트를 캐시 없이 통과했고 race 검사도 통과했다(docs race 결과는 캐시).",
+        "workbook.go의 placement 행 번호는 XML row 순서를 사용한다. 생략된 빈 행의 r 좌표를 잃는 한계는 main에도 존재하며 이번 변경의 회귀로 판단하지 않았다. A1 시작 범위도 기존 관례다.",
+        "계속 슬라이드의 출처 끝 행은 누적 원본 행으로 개선되지만 이를 직접 단언하는 테스트는 없다. 숨긴 행에만 값이 있는 열을 별도로 세지 않는 경고 정책은 코드와 테스트가 일치한다.",
+        "실제 Excel 생성 파일·실서버 e2e·전체 테스트는 이번 리뷰에서 실행하지 않았다. USER_GUIDE PDF는 갱신되지 않았다. 인증·권한·마이그레이션·의존성 변경이나 되돌릴 수 없는 외부 상태 변경은 없다."
+      ],
+      "risk": "low",
+      "blocking": []
+    },
+    "ci_gate": {
+      "ok": true,
+      "state": "success",
+      "reason": "검사 1개 모두 success",
+      "checks": 1
+    }
+  },
+  "release": {
+    "result": {
+      "status": "released",
+      "version": "1.69.43",
+      "tag": "v1.69.43",
+      "title": "Ptium v1.69.43",
+      "notes_file": "/mnt/c/Users/USER/projects/aidev/state/runs/2026-09-20-153408-ptium-improve/release-notes-v1.69.43.md",
+      "github_release": true,
+      "assets": [
+        "/mnt/c/Users/USER/projects/aidev/state/runs/2026-09-20-153408-ptium-improve/assets/ptium-1.69.43.tar.gz",
+        "/mnt/c/Users/USER/projects/aidev/state/runs/2026-09-20-153408-ptium-improve/assets/ptium-1.69.43.tar.gz.sha256",
+        "/mnt/c/Users/USER/projects/aidev/state/runs/2026-09-20-153408-ptium-improve/assets/docker-compose.ptium-1.69.43.yml",
+        "/mnt/c/Users/USER/projects/aidev/state/runs/2026-09-20-153408-ptium-improve/assets/ptium-1.69.43.env.example",
+        "/mnt/c/Users/USER/projects/aidev/state/runs/2026-09-20-153408-ptium-improve/assets/load-ptium-1.69.43.ps1",
+        "/mnt/c/Users/USER/projects/aidev/state/runs/2026-09-20-153408-ptium-improve/assets/load-ptium-1.69.43.sh",
+        "/mnt/c/Users/USER/projects/aidev/state/runs/2026-09-20-153408-ptium-improve/assets/ptium-1.69.43.kubernetes.yaml"
+      ],
+      "reason": ""
+    },
+    "assets_sha256": [
+      {
+        "sha256": "e21895a53580c95af6494c1a442c6aaa42cd23a99bd3eb09e2d2e1bdd6856f8d",
+        "name": "ptium-1.69.43.tar.gz"
+      },
+      {
+        "sha256": "ff7b1c5ad1a16cd5a8929fc4fc6b316673cc4524b978b978703bc269268555a7",
+        "name": "ptium-1.69.43.tar.gz.sha256"
+      },
+      {
+        "sha256": "b6ce45f8947db18ec86bee35d76cf1a9ab2a675865c94c7578e1ba657245a9b9",
+        "name": "docker-compose.ptium-1.69.43.yml"
+      },
+      {
+        "sha256": "b8ba900800f0995a0e795443e220fce78a6b739aec8cba5f85d7693823d0ea00",
+        "name": "ptium-1.69.43.env.example"
+      },
+      {
+        "sha256": "5beaa9b18c470379a3d1e419f36c3f4774080eae3e386a585d159ae1ac2b53b6",
+        "name": "load-ptium-1.69.43.ps1"
+      },
+      {
+        "sha256": "0f37ad7e0812f7f1ecfeb2af6cdc5c38cc06e4920d3d671af7f044a8a30aad67",
+        "name": "load-ptium-1.69.43.sh"
+      },
+      {
+        "sha256": "2e545b4c6e9d58c091c879df7793eb46ccba5d5547d9e811fb2dc2efb35cf0ed",
+        "name": "ptium-1.69.43.kubernetes.yaml"
+      }
+    ]
+  },
+  "approval": null,
+  "usage": [
+    {
+      "ts": "2026-09-20T15:38:00+09:00",
+      "date": "2026-09-20",
+      "project": "ptium",
+      "phase": "scout",
+      "run_id": "2026-09-20-153408-ptium-improve",
+      "campaign": "",
+      "subtype": "success",
+      "duration_ms": 226656,
+      "num_turns": 23,
+      "cost_usd": 1.4950515,
+      "input_tokens": 36,
+      "output_tokens": 12369,
+      "cache_read": 1098513,
+      "cache_create": 63639
+    },
+    {
+      "ts": "2026-09-20T15:43:20+09:00",
+      "date": "2026-09-20",
+      "project": "ptium",
+      "phase": "improve",
+      "run_id": "2026-09-20-153408-ptium-improve",
+      "campaign": "",
+      "subtype": "success",
+      "duration_ms": 325279,
+      "num_turns": 42,
+      "cost_usd": 2.5706814999999996,
+      "input_tokens": 54,
+      "output_tokens": 20129,
+      "cache_read": 2255233,
+      "cache_create": 93957
+    },
+    {
+      "ts": "2026-09-20T15:45:09+09:00",
+      "date": "2026-09-20",
+      "project": "ptium",
+      "phase": "review",
+      "run_id": "2026-09-20-153408-ptium-improve",
+      "campaign": "",
+      "subtype": "success",
+      "duration_ms": 0,
+      "num_turns": 1,
+      "cost_usd": null,
+      "input_tokens": 219055,
+      "output_tokens": 2501,
+      "cache_read": 189824,
+      "cache_create": 0
+    },
+    {
+      "ts": "2026-09-20T15:51:46+09:00",
+      "date": "2026-09-20",
+      "project": "ptium",
+      "phase": "repair",
+      "run_id": "2026-09-20-153408-ptium-improve",
+      "campaign": "",
+      "subtype": "success",
+      "duration_ms": 404986,
+      "num_turns": 44,
+      "cost_usd": 2.768678,
+      "input_tokens": 78,
+      "output_tokens": 25453,
+      "cache_read": 2688746,
+      "cache_create": 78759
+    },
+    {
+      "ts": "2026-09-20T15:53:07+09:00",
+      "date": "2026-09-20",
+      "project": "ptium",
+      "phase": "review",
+      "run_id": "2026-09-20-153408-ptium-improve",
+      "campaign": "",
+      "subtype": "success",
+      "duration_ms": 0,
+      "num_turns": 1,
+      "cost_usd": null,
+      "input_tokens": 257648,
+      "output_tokens": 1773,
+      "cache_read": 221824,
+      "cache_create": 0
+    },
+    {
+      "ts": "2026-09-20T16:00:51+09:00",
+      "date": "2026-09-20",
+      "project": "ptium",
+      "phase": "release",
+      "run_id": "2026-09-20-153408-ptium-improve",
+      "campaign": "",
+      "subtype": "success",
+      "duration_ms": 215724,
+      "num_turns": 27,
+      "cost_usd": 1.433624,
+      "input_tokens": 46,
+      "output_tokens": 10113,
+      "cache_read": 1243018,
+      "cache_create": 55906
+    }
+  ]
+}

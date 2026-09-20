@@ -237,3 +237,4 @@
 - 보류 아이디어: deck 의 세 숫자 파서(parseNumber·parseBareNumber/chartFields·docs.amountOf) 계약을 한 표 테스트로 묶기 — 테스트만 (2/1/S) · 메일 후속: 한 리뷰어의 연속 댓글을 30초 지연으로 묶어 한 통으로 (3/2/M) · 메일 후속: 관리자에게 새 critical 인시던트를 메일로 (3/2/M) · xlsx 가져오기: `width="0"`·collapsed·outlineLevel 로 접힌 열/행도 숨김으로 볼지 — 실제 파일로 확인 뒤 (2/2/S)
 - 과제서: 채택 — 근거(worksheet 가 hidden 을 안 읽음, gridOf 뒤에서 열을 제거해야 trimGrid 이 가운데 빈 열을 남기지 않음)가 코드와 정확히 맞았고 권장 방식(새 함수를 `rows := gridOf(...)` 바로 뒤에 적용, 셀 있는 행만 세기, count>0 일 때만 경고) 그대로 구현했다.
 
+- 릴리즈: v1.69.43 (2026-09-20, run 2026-09-20-153408-ptium-improve)
