@@ -1181,3 +1181,41 @@ notify: no new alerts
 [06:04:00] sqlon: [verify] passed — 검증 3개 통과 (auto)
 [06:04:09] sqlon: review agent exited 1
 [06:04:09] sqlon: review — 클로드 사용량 한도 감지, 코덱스로 대체
+[06:04:38] aidev sync FAILED: run(2026-09-21): seaton — no change
+[06:05:36] relio: review — 코덱스 완료 (대체, in 606604/out 4045 tok)
+[06:05:36] relio: review — 1 turns, 0m, $0, success
+[06:05:36] relio: [review] rejected — 리뷰 거절: web/src/App.tsx:33 [P2·정확성·머지 차단] SSO가 활성화된 로그인 화면은 web/src/pages/Login.tsx:35에서 렌더링 도중 pendingReturn()을 호출한다. sessionStorage 접근/getItem이 SecurityError를 던지는 저장소 차단 환경에서는 예외가 처리되지 않아 로그인 화면 렌더링이 실패한다(autoLogin=false여도 발생). 기존 main의 SSO 링크는 렌더링 중 저장소를 읽지 않았다. 실제 pendingReturn 함수에 예외를 던지는 저장소를 전달해 예외 전파를 재현했다. 저장소 읽기와 URL 파싱 실패 시 /app/dashboard로 대체하고 로그인 렌더 경로의 회귀 테스트를 추가해야 한다.
+[06:05:37] sqlon: review — 코덱스 완료 (대체, in 241776/out 1936 tok)
+[06:05:37] sqlon: review — 1 turns, 0m, $0, success
+[06:05:37] sqlon: [review] approved — 리뷰 승인 (risk=low)
+branch 'auto/2026-09-21-0554' set up to track 'origin/auto/2026-09-21-0554'.
+[06:05:41] relio: repair agent exited 1
+[06:05:41] relio: repair — 클로드 사용량 한도 감지, 코덱스로 대체
+[06:05:43] sqlon: [pr] created — https://github.com/hkjang/sqlon/pull/10
+[06:05:45] sqlon: waiting for CI on c941cb9 (no-ci)
+[06:08:24] relio: repair — 코덱스 완료 (대체, in 621453/out 3575 tok)
+[06:08:24] relio: repair — 1 turns, 0m, $0, success
+[06:08:25] relio: verify `go build ./...` → exit 0 (1s)
+[06:08:25] relio: verify `go vet ./...` → exit 0 (0s)
+[06:08:26] relio: verify `go test ./...` → exit 0 (1s)
+[06:08:26] relio: verify `cd web && [ -d node_modules ] || npm ci --no-audit --no-fund` → exit 0 (0s)
+[06:08:26] relio: verify `cd web && npm test --silent` → exit 0 (0s)
+[06:08:26] relio: verify `cd web && [ -d node_modules ] || npm ci --no-audit --no-fund` → exit 0 (0s)
+[06:08:29] relio: verify `cd web && npm run typecheck --silent` → exit 0 (3s)
+[06:08:29] relio: verify `cd web && [ -d node_modules ] || npm ci --no-audit --no-fund` → exit 0 (0s)
+[06:08:32] relio: verify `cd web && npm run build --silent` → exit 0 (3s)
+[06:08:33] relio: [repair] done — - 재현: 실제 Login 렌더링에서 sessionStorage 접근/getItem의 SecurityError 및 잘못된 URL로 6개 테스트 실패(autoLogin false/true). - 원인·수정: pendingReturn의 저장소 읽
+[06:08:39] relio: review agent exited 1
+[06:08:39] relio: review — 클로드 사용량 한도 감지, 코덱스로 대체
+[06:10:03] sqlon: [ci] no-ci — 이 커밋에 검사가 없음 (정책 allow_merge_without_ci 가 없으면 차단)
+evidence: /mnt/c/Users/USER/projects/aidev/state/runs/2026-09-21-055419-sqlon-improve/evidence.json
+[06:11:22] relio: review — 코덱스 완료 (대체, in 593735/out 4165 tok)
+[06:11:22] relio: review — 1 turns, 0m, $0, success
+[06:11:22] relio: [review] rejected — 리뷰 거절: internal/server/momento.go:126 [P2·정확성·머지 차단] ResponseHeaderTimeout만 설정되어 수집기가 헤더를 보낸 뒤 본문 전송을 멈추면 문서의 10초 제한이 적용되지 않는다. 실제 httptest 수집기와 프록시로 200 헤더 후 본문을 정지시켰을 때 11.012초까지 끝나지 않고 클라이언트 취소로만 종료됨을 재현했다. 이 경우 추적기 요청과 서버의 upstream 연결·본문 복사 goroutine이 계속 점유된다. ServeHTTP에 전달하는 요청에 전체 upstream 작업을 제한하는 context.WithTimeout 및 cancel을 적용하고, 헤더 후 본문 정지 회귀 테스트를 추가해야 한다. 이미 응답 헤더가 전달된 경우에는 스트림을 종료하도록 처리한다.
+branch 'auto/2026-09-21-0554' set up to track 'origin/auto/2026-09-21-0554'.
+[06:11:28] relio: [pr] created — https://github.com/hkjang/relio/pull/28
+https://github.com/hkjang/relio/pull/28#issuecomment-5752689872
+evidence: /mnt/c/Users/USER/projects/aidev/state/runs/2026-09-21-055409-relio-improve/evidence.json
+notify: 1 new alert(s)
+notify: commented on issue #1
+notify: toast shown

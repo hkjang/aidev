@@ -1,0 +1,15 @@
+{
+  "verdict": "reject",
+  "reasons": [
+    "internal/server/momento.go:126 [P2·정확성·머지 차단] ResponseHeaderTimeout만 설정되어 수집기가 헤더를 보낸 뒤 본문 전송을 멈추면 문서의 10초 제한이 적용되지 않는다. 실제 httptest 수집기와 프록시로 200 헤더 후 본문을 정지시켰을 때 11.012초까지 끝나지 않고 클라이언트 취소로만 종료됨을 재현했다. 이 경우 추적기 요청과 서버의 upstream 연결·본문 복사 goroutine이 계속 점유된다. ServeHTTP에 전달하는 요청에 전체 upstream 작업을 제한하는 context.WithTimeout 및 cancel을 적용하고, 헤더 후 본문 정지 회귀 테스트를 추가해야 한다. 이미 응답 헤더가 전달된 경우에는 스트림을 종료하도록 처리한다."
+  ],
+  "notes": [
+    "검토 HEAD=82980bf76e160fd315e6b74971a8cfd16ae19d8c, 로컬 main=6bfe9bf8ec25a27d3271ab1b76b54c4415119734. 명시된 main...HEAD는 33개 파일이며 위 결함은 기존 Momento 커밋 01aba63에 속한다. 회차 pinned base 38c88ce...HEAD의 JSON 수정 및 SSO 수리 5개 파일 자체에서는 새 결함을 찾지 못했다. 최종 PR의 실제 base SHA를 정합하게 맞출 필요가 있다.",
+    "go test ./... 및 웹 테스트 23개, npm run typecheck, git diff --check 통과. 임시 overlay에서 수정 전 httpx로 새 후행 공백 테스트가 400으로 실패했고, 임시 복사본의 수리 전 App으로 실제 Login 렌더 테스트 6개가 실패해 회귀 검증의 유효성을 확인했다. 저장소 코드는 수정하지 않았다.",
+    "실제 브라우저·Keycloak·전체 인증 라우트·배포·실제 DB/마이그레이션 실행 및 외부 소비자의 기존 400 의존은 미검증이다. 실제 createCustomer 테스트는 DB 이전 입력 거절만 검증한다.",
+    "개인정보 흐름: 기존 감사 IP·User-Agent·metadata는 관리자 감사 조회로 제공되고 Momento 프록시는 방문 IP·이벤트를 설정된 수집기로 전달한다. 설정 권한과 자격 증명 헤더 제거를 확인했으나 수집기 보존·접근·계약·국외 이전 조건은 확인하지 못했다. 구체적인 security/legal 부서 차단 근거는 확정하지 않았다.",
+    "Skill 도구 미노출로 headcount의 legal-risk:privacy-and-data-protection, security:security-architecture-review, technology:code-review SKILL.md를 직접 읽고 적용했다."
+  ],
+  "risk": "medium",
+  "blocking": []
+}

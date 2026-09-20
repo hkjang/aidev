@@ -1,0 +1,5 @@
+- 재현: 실제 Login 렌더링에서 sessionStorage 접근/getItem의 SecurityError 및 잘못된 URL로 6개 테스트 실패(autoLogin false/true).
+- 원인·수정: pendingReturn의 저장소 읽기·URL 파싱 예외를 처리해 /app/dashboard로 대체; 정상 복귀 경로 유지.
+- 검증: 수정 후 npm test 23/23, 수정 제거 시 동일 6개 재실패; npm ci/typecheck/build, go test ./..., 정적 자산·README 일치·diff 검사 통과.
+- 커밋: 82980bf; App.tsx와 실제 Login 렌더링 회귀 테스트만 변경, 산출물 제외·push 안 함.
+- 한계: 브라우저/Keycloak 연동 미검증; 빌드의 analytics·청크 크기 경고 존재. 결함은 지정 base에도 있던 SSO 코드이며 이번 JSON 변경에서 생긴 것은 아님.

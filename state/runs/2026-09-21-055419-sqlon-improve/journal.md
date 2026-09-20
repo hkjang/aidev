@@ -19,3 +19,12 @@
 - 스킬: technology 3종과 callable Skill 도구는 제공 목록·로컬 검색에서 미발견. 로컬 superpowers systematic-debugging/test-driven-development/verification-before-completion SKILL.md를 읽어 보조 적용했으며 technology 원문의 절차·반환 형식 준수는 확인 불가.
 - [러너 06:03] brief accepted — 채택 — 현 코드의 결함을 실제 HTTP 회귀로 재현했고 두 접근 경로에 최소 수정으로 만료 계약을 적용했다.
 - [러너 06:04] verify passed — 검증 3개 통과 (auto)
+
+## 비평 노트
+- approve / low, blocking 없음. diff·로그·HTTP 인증/인가 배선·만료 잠금/경계·테스트 단언·CHANGELOG·범위와 revert 가능성 확인; 새로 도입된 결함 없음.
+- 전체 test, 대상 TestAsync race(15.228초), vet, diff --check 통과. 수정 전에는 첫 접근의 404·저장소 삭제 단언을 만족하지 못함을 코드로 확인(수정 전 재실행은 하지 않음).
+- 라이브 DB 성공 결과행·integration·브라우저 미검증; 성공/실패 공통 FinishedAt 삭제 경로 확인. 요청 없는 동안 정기 청소는 없으므로 릴리즈에서 물리적 10분 삭제 보장으로 확대 금지.
+- 요청한 세 부서 스킬과 Skill 도구는 제공 목록·검색한 로컬 경로에서 미발견하여 원문 절차/반환 형식 준수 확인 불가; 사용자 지정 심사 기준 적용.
+- [러너 06:05] review approved — 리뷰 승인 (risk=low)
+- [러너 06:05] pr created — https://github.com/hkjang/sqlon/pull/10
+- [러너 06:10] ci no-ci — 이 커밋에 검사가 없음 (정책 allow_merge_without_ci 가 없으면 차단)
