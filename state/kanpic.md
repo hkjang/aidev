@@ -204,3 +204,4 @@
 - 보류 아이디어: IMPORTDATA 는 "true"/"false" 를 글자로 두고 업로드 `parseScalar` 는 불리언으로 읽는다 — 같은 종류의 어긋남 하나 더(가치 3/위험 1/S) / IMPORTDATA 와 업로드의 앞뒤 빈칸 처리를 맞춘다 — 이번에 확인: 업로드 " 12" 는 글자, IMPORTDATA 는 수 12 / 서버 `delimited.Number` 와 격자 `clipboardNumber.ts parsePastedNumber` 의 열다섯 자리 한도를 공용 픽스처(testdata)로 못 박는다 — 지금은 주석으로만 짝지어 있다 / 워크북 GET 응답에 넘겨받은 출처를 실어 편집기가 열릴 때마다 404 요청 하나를 덜 보낸다 / `parseXLSXValue` 의 `CellTypeNumber` 갈래에 너무 긴 수 가드를 적용하는 것은 rejected — 엑셀이 수라고 밝힌 칸은 이미 실수라 효과 없는 변경이다
 - 과제서: 채택 — 근거가 코드와 정확히 맞았고(정규식 `\d+`, 테스트로 123 재현), 건드릴 파일·검증 명령·피할 것 모두 그대로 따랐다.
 
+- 릴리즈: v0.251.0 (2026-09-20, run 2026-09-20-121411-kanpic-improve)
