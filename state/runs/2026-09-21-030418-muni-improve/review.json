@@ -1,0 +1,18 @@
+{
+  "verdict": "reject",
+  "reasons": [
+    "internal/httpapi/handoff.go:181 [security] handoff.Fetch의 연결 실패 오류를 그대로 기록해 bearer claim이 로그에 노출됩니다. internal/handoff/handoff.go:275가 client.Do의 *url.Error(토큰을 포함한 전체 GET URL)를 문자열에 넣습니다. 요청이 송신 서비스에 도달하기 전 일시적 연결 실패가 나면 토큰은 아직 유효하므로, 문서 권한 없이 수신 서버 로그를 읽는 사람이 만료 전 원본 /api/v1/handoff/claims/{claim}을 호출해 문서를 탈취할 수 있습니다. 복사한 실제 Fetch 코드와 실패 transport로 claim exposed: true를 재현했습니다. URL을 포함하지 않는 오류 분류만 기록하거나 URL/claim을 제거하고, 연결 실패 로그에도 토큰이 없다는 회귀 검증을 추가해야 합니다."
+  ],
+  "notes": [
+    "실제 비교 범위는 main@1045e13...HEAD@9ded7a4입니다. 회차 노트의 pinned base 1547faa와 달라 SSO·handoff·마이그레이션 등 이전 변경까지 포함합니다. 차단 결함은 a8b253b의 handoff에 있으며 이번 ZIP 수정만의 결함은 아닙니다.",
+    "ZIP manifestName 선예약 및 실제 라우트를 사용하는 새 테스트의 중복 항목·본문 일대일 대응·안내 참조 단언을 확인했고 이 수정 자체에서 결함은 찾지 못했습니다.",
+    "go test ./... 및 관련 프런트 4개 파일 20개 테스트 통과, git diff --check 통과. MUNI_TEST_DSN 미설정으로 live DB/HTTP 테스트는 SKIP이며 브라우저·PDF·실제 외부 서비스 통합은 재검증하지 않았습니다.",
+    "요청한 legal-risk:privacy-and-data-protection, security:security-architecture-review, technology:code-review 스킬과 Skill 도구를 현재 도구/스킬 목록 및 검색 경로에서 찾지 못해 해당 절차·반환 형식을 적용하지 못했습니다. 판정은 프롬프트의 명시적 기준을 적용했습니다.",
+    "017·018은 추가형 스키마 변경으로 코드 revert가 DB 스키마와 저장된 handoff 본문을 제거하지 않습니다. 만료 본문 청소는 다음 claim 발급 시에만 수행됩니다.",
+    "검토 시작부터 webui/dist/index.html에 미커밋 변경이 있었습니다. 수정하지 않았으며 HEAD 판정 대상에 포함하지 않았습니다."
+  ],
+  "risk": "high",
+  "blocking": [
+    "security"
+  ]
+}

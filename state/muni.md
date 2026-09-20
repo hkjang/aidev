@@ -157,3 +157,14 @@
 - 보류 아이디어: `.docx` 가져오기도 같은 이중 제목 — docx 내보내기가 `Title` 스타일 문단을 쓰고(`docx/export.go:141`) 리더가 그 스타일을 level-1 heading 으로 읽음(`import_blocks.go:383`), `titleInBody` 를 `.docx` 에도 켜면 됨 (3/1/S) / PDF 가져오기에서 본문 첫 줄이 metadata 제목과 같으면 빼기 — pdfImport 가 첫 줄을 heading 으로 내는지 미확인 (2/2/S) / HTML 가져오기에서 `<title>` 을 embeddedTitle 로 올리기 — 저장한 웹 페이지의 `<title>` 은 '글 - 사이트' 꼴이라 doc-title 이 있을 때로 제한 필요 (2/2/S) / CI 에 e2e(playwright) 단계 넣기 (4/2/M) — workflows 보호 경로 / silent SSO 성공 경로 브라우저 확인과 OIDC 탭 캡처 (3/1/S)
 - 과제서: 채택 — 근거(export.go 의 `<h1 class="doc-title">`, import_html 이 head/title 을 버리고 h1 을 heading 으로 냄, 빈 블록을 끼우지 않음)가 모두 코드·실행과 맞아 그대로 구현했고, 정찰이 걱정한 "h1 앞 빈 블록" 은 없었음(고치기 전 실패 메시지가 첫 블록 = heading).
 
+## 2026-09-21
+- 선택: 워크스페이스 ZIP의 목록.md와 동명 문서가 충돌하지 않게 하기 (가치 4 / 위험 1 / 작업량 S)
+- 결과: 성공
+- 요약: exportWorkspace에서 고정 안내 파일 이름을 먼저 예약하고 마지막 생성에도 같은 지역 상수를 사용하여 동명 문서 본문이 덮이지 않게 했습니다. PostgreSQL 16 전용 DB와 등록된 인증 HTTP 라우트의 ZIP에서 수정 전 중복 실패, 수정 후 기본/md/html/txt의 이름·본문·목록 참조 보존을 확인했고, 수정만 되돌려 같은 실패도 재현했습니다. MUNI_TEST_DSN을 설정한 go test ./... 및 go vet ./...·gofmt 검사·placeholder 검사가 모두 통과했습니다.
+- 보류 아이디어:
+  - DOCX 가져오기 첫 제목 중복 제거 (3/1/S): 실제 writer 출력의 live 검증 필요.
+  - CI Playwright e2e 추가 (4/2/M): 보호 경로와 전용 계정 준비 때문에 보류.
+  - PostgreSQL 백업·복구 안내와 외부 DB 예제 정합성 (3/2/S): 운영 명령 계약 별도 검토.
+  - README make test 설명 보완 (1/1/S): 다른 문서 수정 시 함께 처리.
+- 과제서: 채택 — 코드에서 안내 파일만 이름 중복 추적을 우회했고 실제 HTTP ZIP에서도 동일 결함이 재현되어 지정한 최소 수정을 적용했습니다.
+
