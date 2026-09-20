@@ -176,3 +176,14 @@
 - 보류 아이디어: CatalogView·DirectoryView·ContentAccessView 기존 테스트의 `afterEach` wrapper 정리 — 신규 테스트만 unmount 했고 기존 18개는 그대로 (2/1/S) · AdvancedPolicyView가 저장·새로고침마다 `hydrate()`로 form 전체를 서버 값으로 되돌려 미저장 편집이 사라짐 (3/2/M) · CatalogView 상세(`selectLibrary`)와 목록 조회가 `tabError.library`를 공유 — 이번 회차 코드로 확인(:92-106): 상세 실패가 "콘텐츠 조회 실패" 배너로 뜨고 다음 목록 조회가 지움 (2/2/S) · 세 목록 화면 테스트가 api 모듈을 통째로 대역으로 바꿔 `unwrapPageEnvelope`·`lastPageWhenOutOfRange` 배선을 지나지 않음 — `apiGet`만 막는 end-to-end 1개씩 (2/1/S) · Catalog·Content `applyRouteQuery`가 활성 탭의 조건이 안 바뀌어도 `loadX()`를 다시 부름(예: `/catalog?userId=A`→`/catalog?userId=B`는 자료실 탭 조건이 같은데 자료실을 재조회) (2/1/S)
 - 과제서: 채택 — 근거(세 화면 `changeTab`의 `!items.length` 판단, 헬퍼·mock 위치, 행 번호)가 코드와 정확히 일치했고 base에서 기존 18개 테스트가 통과함을 먼저 확인했다. 정찰이 "추측"으로 적은 `applyRouteQuery`의 `tabLoaded.shared=false`는 필요했다(userId가 바뀌었는데 tab이 library로 가는 갈래에서 이전 사용자 결과가 남는다) — Content에도 같은 이유로 `tabLoaded.access=false`를 넣고 둘 다 테스트로 고정했다.
 
+## 2026-09-20
+- 선택: 자료실 상세 조회 실패를 상세 패널에서 알리고 이전 게시물 본문이 다시 나타나지 않게 한다 (가치 3 / 위험 1 / 작업량 M)
+- 결과: 성공
+- 요약: 상세 전용 detailError를 분리하고 새 선택 시 이전 결과·오류를 비우며, 닫기·목록 재조회·query 변경에서 결과·오류·진행 중 요청을 함께 초기화했다. 실제 CatalogView → api/catalog → HTTP 경계를 지나는 신규 12개 테스트로 A 성공 후 B 실패, 최초 실패·닫기·재시도, 이전 요청의 늦은 성공/실패 무시를 검증했고 수정 전에는 10개가 실패했다. admin-v2에서 npm ci, 대상 테스트 21개, npm run build(타입 검사·전체 173개 테스트·Vite·runtime-config·offline·integrity 19개) 통과 후 f3016f9로 커밋했다; 요청된 technology 스킬 3개는 도구/로컬 검색에서 찾지 못해 적용하지 않았으며 실제 서버와 envelope 파서는 이번 테스트 범위 밖이다.
+- 보류 아이디어:
+  - AdvancedPolicyView 미저장 편집 보존 (가치 3 / 위험 2 / 작업량 M)
+  - Catalog·Directory·Content 기존 테스트 wrapper 정리 (가치 2 / 위험 1 / 작업량 S)
+  - 세 목록 화면 재조회 중 표 유지 (가치 2 / 위험 2 / 작업량 M)
+  - 실제 HTTP envelope부터 Catalog 범위 밖 페이지 복구 검증 (가치 2 / 위험 1 / 작업량 S)
+- 과제서: 채택 — 현재 코드가 상세 실패 시 이전 결과를 유지하고 목록 오류에 기록하는 근거와 일치했으며 수정 전 컴포넌트 테스트에서도 재현했다.
+

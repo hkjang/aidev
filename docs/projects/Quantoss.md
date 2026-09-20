@@ -1,7 +1,7 @@
 ---
 title: "Quantoss — 자율 개선 이력"
 description: "Quantoss: 자율 개선 회차 20회, 릴리즈 0건. 최근 릴리즈 없음."
-last_modified_at: 2026-09-20 21:03:43 +0900
+last_modified_at: 2026-09-20 21:24:04 +0900
 ---
 {% raw %}
 <script type="application/ld+json">
@@ -18,7 +18,7 @@ last_modified_at: 2026-09-20 21:03:43 +0900
   "name": "hkjang",
   "url": "https://github.com/hkjang"
  },
- "dateModified": "2026-09-20T21:03:43+09:00"
+ "dateModified": "2026-09-20T21:24:04+09:00"
 }
 </script>
 

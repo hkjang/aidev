@@ -128,3 +128,14 @@
 - 보류 아이디어: Header.vue 가 OCR 사용 여부와 무관하게 마운트 즉시 3초 폴링을 시작하는 문제(대기 항목 없으면 중단 + 60초 유예, 서버 status semantics 미확인) (가치 3 / 위험 3 / M) · globalLoading 참조 카운트 부재로 병렬 요청 중 스피너 조기 종료(호출부 153곳 짝 감사 선행) (가치 3 / 위험 3 / S) · PopWorkFlow.getMyNoteBookProjectId 가 팝업을 열 때마다 appListGet 을 직접 호출 — myNoteBookStorage 캐시가 appList 만 저장하고 project_id 는 저장하지 않아 재사용 불가 (가치 2 / 위험 2 / S) · MyAgentList 의 receiveProjectId 는 menuName '나의 노트북' 정확 일치 행에서, PopWorkFlow 의 project_id 는 serviceCode 일치 첫 행에서 고르므로 두 경로가 project_id 를 다르게 고를 수 있음(서버 menuName 변동 시 receiveProjectId 만 null) (가치 2 / 위험 2 / S) · MyAgentList 의 'MyAvatar'/'etc' 비교도 매처로 통일(표기 불일치 증거 없음 — 서버 응답 확인 후) (가치 2 / 위험 2 / S)
 - 과제서: 채택 — 과제서의 근거(PopWorkFlow.vue:118 'myNoteBook' / MyAgentList.vue:301,307 'MyNotebook' 정확 일치 비교)가 현 코드와 정확히 일치했고 수용 기준 1~3 을 모두 충족해 그대로 구현했다.
 
+## 2026-09-20
+- 선택: usePaging.resetPageAndGet의 페이지 초기화 후 중복 목록 조회 제거 (가치 4 / 위험 2 / 작업량 S)
+- 결과: 성공
+- 요약: 초기화 횟수를 page와 함께 관찰하여 직접 조회한 1페이지의 watcher 중복 호출을 없애고, 같은 tick에서 다른 페이지로 이동하는 조회 및 원래 값/Promise 반환을 유지했다. 실제 Vue ref/watch/nextTick/effectScope와 native Promise 테스트로 수정 전 5건 실패를 확인했고, npm ci 후 페이지 테스트 16건·전체 424건 및 build:dev가 통과했다. 회사 technology 스킬/Skill 도구는 발견하지 못했으며 별도 로컬 superpowers systematic-debugging·test-driven-development 지침을 대체 사용했다(회사 스킬 반환 형식 준수는 주장하지 않음).
+- 보류 아이디어:
+  - useAppList 비배열 SIDEMENU_APP_LIST 캐시 방어 (가치 3 / 위험 2 / 작업량 S)
+  - 테스트 가이드의 없는 문서 링크 정리 (가치 2 / 위험 1 / 작업량 S)
+  - OCR 미사용 시 Header 폴링 조정 (가치 3 / 위험 3 / 작업량 M; 서버 계약 확인 선행)
+  - globalLoading 병렬 요청 참조 카운트 (가치 3 / 위험 3 / 작업량 S; 호출 짝 감사 선행)
+- 과제서: 채택 — 실제 코드와 수정 전 Vue 테스트에서 직접 호출 및 watcher의 중복 조회를 확인했고 지정된 두 파일만 변경했다.
+
