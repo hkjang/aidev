@@ -36,3 +36,4 @@
 - 희소 row r 좌표 손실은 main에도 있는 한계; 계속 슬라이드 출처 계산은 타당하나 직접 단언 테스트가 없어 후속 보강 대상이다.
 - 실제 Excel 파일·실서버·전체 테스트는 미실행, USER_GUIDE PDF 미갱신. 코드 수정 없음; 경고 개수 정책은 구현과 테스트가 일치한다.
 - [러너 15:53] review approved — 리뷰 승인 (risk=low)
+- [러너 15:53] pr created — https://github.com/hkjang/ptium/pull/27
