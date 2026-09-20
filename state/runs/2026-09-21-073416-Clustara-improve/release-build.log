@@ -1,0 +1,86 @@
+[1/4] docker build clustara:v0.9.287 (platform=linux/amd64)
+#0 building with "default" instance using docker driver
+
+#1 [internal] load build definition from Dockerfile
+#1 transferring dockerfile: 912B done
+#1 DONE 0.0s
+
+#2 resolve image config for docker-image://docker.io/docker/dockerfile:1.7
+#2 DONE 1.1s
+
+#3 docker-image://docker.io/docker/dockerfile:1.7@sha256:a57df69d0ea827fb7266491f2813635de6f17269be881f696fbfdf2d83dda33e
+#3 resolve docker.io/docker/dockerfile:1.7@sha256:a57df69d0ea827fb7266491f2813635de6f17269be881f696fbfdf2d83dda33e 0.0s done
+#3 CACHED
+
+#4 [internal] load metadata for docker.io/library/golang:1.25-alpine
+#4 ...
+
+#5 [internal] load metadata for gcr.io/distroless/static:nonroot
+#5 DONE 0.5s
+
+#4 [internal] load metadata for docker.io/library/golang:1.25-alpine
+#4 DONE 1.0s
+
+#6 [internal] load .dockerignore
+#6 transferring context: 180B done
+#6 DONE 0.0s
+
+#7 [runtime 1/4] FROM gcr.io/distroless/static:nonroot@sha256:e2e927ec666bae08560abb3c55d0659eceabb657f56b6782ab500a9fc7f555e3
+#7 resolve gcr.io/distroless/static:nonroot@sha256:e2e927ec666bae08560abb3c55d0659eceabb657f56b6782ab500a9fc7f555e3 0.0s done
+#7 DONE 0.0s
+
+#8 [build 1/7] FROM docker.io/library/golang:1.25-alpine@sha256:1ae0735f00daffa3aaf1363a5184c0d2dc55c78e3db4ec70241cdac97bf84b59
+#8 resolve docker.io/library/golang:1.25-alpine@sha256:1ae0735f00daffa3aaf1363a5184c0d2dc55c78e3db4ec70241cdac97bf84b59 0.0s done
+#8 DONE 0.0s
+
+#9 [internal] load build context
+#9 transferring context: 14.74MB 0.1s done
+#9 DONE 0.1s
+
+#10 [build 2/7] WORKDIR /src
+#10 CACHED
+
+#11 [build 3/7] COPY go.mod go.sum ./
+#11 CACHED
+
+#12 [build 4/7] RUN go mod download
+#12 CACHED
+
+#13 [build 5/7] COPY . .
+#13 DONE 0.2s
+
+#14 [build 6/7] RUN GOOS=linux GOARCH=amd64     go build -ldflags "-s -w -X main.version=v0.9.287" -o /out/clustara ./cmd/clustara
+#14 DONE 14.9s
+
+#15 [build 7/7] RUN GOOS=linux GOARCH=amd64     go build -ldflags "-s -w" -o /out/clustara-agent ./cmd/clustara-agent
+#15 DONE 0.6s
+
+#16 [runtime 2/4] WORKDIR /app
+#16 CACHED
+
+#17 [runtime 3/4] COPY --from=build /out/clustara /app/clustara
+#17 DONE 0.1s
+
+#18 [runtime 4/4] COPY --from=build /out/clustara-agent /app/clustara-agent
+#18 DONE 0.0s
+
+#19 exporting to image
+#19 exporting layers
+#19 exporting layers 0.5s done
+#19 exporting manifest sha256:f0eaa994b30cc4c69ab836f6e4bfbe8c0d826bae3f50d0be25f5d4a966ba99e8 0.0s done
+#19 exporting config sha256:40e93551a1fcfba5ac73ff63cc309ee406fd9b209a0fc9d52d8bfd2c89036ce8 0.0s done
+#19 exporting attestation manifest sha256:60d93f4fe555c74bb2c8ff79450944fd833cb5b99042b84f1a074da9bd46940d 0.0s done
+#19 exporting manifest list sha256:d07718c78ec15b7646efcf7f8214e7c5d680b469caca606d3d728c9709006dff 0.0s done
+#19 naming to docker.io/library/clustara:v0.9.287 done
+#19 unpacking to docker.io/library/clustara:v0.9.287
+#19 unpacking to docker.io/library/clustara:v0.9.287 0.2s done
+#19 DONE 0.8s
+[2/4] docker save -> /home/hkjang/.cache/auto-improve-wt/Clustara-release/release/clustara-v0.9.287.tar
+[3/4] gzip 압축 -> /home/hkjang/.cache/auto-improve-wt/Clustara-release/release/clustara-v0.9.287.tar.gz
+[4/4] 오프라인 가이드 생성 -> /home/hkjang/.cache/auto-improve-wt/Clustara-release/release/README-offline-v0.9.287.md
+
+릴리즈 완료
+  이미지   : clustara:v0.9.287
+  파일     : /home/hkjang/.cache/auto-improve-wt/Clustara-release/release/clustara-v0.9.287.tar.gz
+  SHA256   : /home/hkjang/.cache/auto-improve-wt/Clustara-release/release/clustara-v0.9.287.tar.gz.sha256
+  가이드   : /home/hkjang/.cache/auto-improve-wt/Clustara-release/release/README-offline-v0.9.287.md
