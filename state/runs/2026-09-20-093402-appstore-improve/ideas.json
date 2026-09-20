@@ -1,0 +1,15 @@
+[
+  {"title":"silent SSO 거절 뒤 /login?sso=none 에 '자동 로그인하지 않았습니다' 안내 한 줄","value":3,"risk":1,"size":"S","status":"pending","note":"2026-09-20 재확인: auth-pages.tsx LoginPage 가 useSearchParams 로 returnTo 만 읽고 sso 는 안 읽음. 서버는 sso=none 만 만든다(auth_handlers.go:124). 이번 회차 1순위.","updated":"2026-09-20"},
+  {"title":"소유자 카드의 즐겨찾기 하트가 게시되지 않은 앱에서 조용한 no-op","value":2,"risk":1,"size":"S","status":"pending","note":"app-card.tsx:14 publiclyViewable, 32행 viewable 이 이미 있어 하트를 viewable 일 때만 그리면 됨. 이번 회차 차선.","updated":"2026-09-20"},
+  {"title":"MCP SSO 의 JWKS 재요청 제한(초당 1회 RoundTripper) + discovery 실패 backoff/lock 밖","value":2,"risk":2,"size":"S","status":"pending","note":"2026-09-20: main 로그에 PR #23(d74df77) 머지 흔적 없음(#21,#22,#24 만). 여전히 선행 필요. internal/auth 보호 경로.","updated":"2026-09-20"},
+  {"title":"validateMCPOAuth 저장 시 422 경로의 핸들러 수준 Go 테스트","value":2,"risk":1,"size":"S","status":"pending","note":"PR #23 미머지라 대상 코드가 main 에 없음. 머지 뒤.","updated":"2026-09-20"},
+  {"title":"개인 API 키 만료 임박 메일(key.expiring)","value":3,"risk":2,"size":"M","status":"pending","note":"배경 스케줄러 + api_keys.expiry_notified_at migration 필요. 메일 커밋 746e0a0 은 v2.7.0 로그에 있으나 이번 회차 미재확인. migrations 는 보호 경로.","updated":"2026-09-20"},
+  {"title":"로그인 rate limit 통합 테스트가 분 경계에 걸리면 실패 — 고정 시각 주입","value":2,"risk":1,"size":"S","status":"pending","note":"fixedWindowLimiter.allow 가 now 를 받음. CI 는 DSN 없어 건너뜀이라 사용자 영향 없음 → 운영자 선호(사용자 영향 있는 결함)와 맞지 않아 후순위.","updated":"2026-09-20"},
+  {"title":"clientAddress 가 RemoteAddr 만 보아 reverse proxy 뒤에서 rate limit 이 전역","value":3,"risk":3,"size":"M","status":"pending","note":"신뢰 프록시 설정을 system_settings 에. ratelimit 은 위험 구역, 한 세션에 M 이상.","updated":"2026-09-20"},
+  {"title":"소유자가 볼 수 있는 검토 이력이 마지막 한 건뿐 — /me/apps/{id}/reviews","value":2,"risk":1,"size":"M","status":"pending","note":"읽기 경로 + OpenAPI + 화면. 새 라우트는 check-docs.sh 가 캡처 요구.","updated":"2026-09-20"},
+  {"title":"pending_review 앱을 수정해도 검토가 level 1 로 되돌아가지 않음","value":2,"risk":3,"size":"S","status":"pending","note":"정책 결정 먼저 필요. 자율 회차에서 고르지 않음.","updated":"2026-09-20"},
+  {"title":"branding URL 가져오기 오류 메시지에 upstream 상태 코드·err 원문이 샘","value":2,"risk":2,"size":"S","status":"rejected","note":"검증 하드닝·메시지 다듬기 류는 사람이 두 번 반려(2026-09-08/10). settings:write 권한자만 보므로 실사용 영향 없음 → 기각.","updated":"2026-09-20"},
+  {"title":"방문 추적 화면에 현재 설정이 만들 CSP 문자열 미리보기","value":2,"risk":1,"size":"S","status":"pending","note":"pagePolicy 순수 함수, GET 하나 + <code>. 새 API 오퍼레이션이라 OpenAPI 갱신 필요.","updated":"2026-09-20"},
+  {"title":"LoginPage 렌더 테스트 자체가 없음(auth-pages.test.tsx 부재) — 기본 상태 3종(SSO만·bootstrap만·둘 다) 커버","value":2,"risk":1,"size":"S","status":"pending","note":"2026-09-20 신규. 이번 과제가 auth-pages.test.tsx 를 만들면서 sso=none 케이스 3건을 넣으므로 그 뒤 기본 상태만 더하면 됨.","updated":"2026-09-20"},
+  {"title":"silent-sso.ts 가 sso=error 마커를 인식하지만 서버는 만들지 않음 — 죽은 분기 정리 또는 콜백 오류 경로에서 sso=error 발급","value":1,"risk":2,"size":"S","status":"pending","note":"2026-09-20 신규. 서버 auth_handlers.go 는 sso=none 만 생성. 효과 없는 변경이 되기 쉬움(운영자 지침) → 콜백 오류 경로 정책이 정해지기 전엔 손대지 말 것.","updated":"2026-09-20"}
+]

@@ -190,3 +190,14 @@
 - 보류 아이디어: A-105 후속 — 공통 오류 응답 model 도입과 traceback 노출 제거(A-106 연계, `/run_confluence_pipeline_spacefile` 의 `return traceback.format_exc()` 등) — 가치 4 / 위험 3 / L
 - 보류 아이디어: bare except → 구체 예외로 범위 축소(`service/pipelineservice.confluence_pipeline_kcblaw`, `api.py` 파이프라인 라우트 잔여) — 가치 3 / 위험 3 / M
 
+## 2026-09-20
+- 선택: Milvus 스페이스 첨부 삭제 실패가 `None` 반환으로 성공 보고되던 문제 수정 (감사 A-116, A-113 후속) (가치 3 / 위험 2 / 작업량 S)
+- 결과: 성공
+- 요약: `util/milvus_confluence.delete_to_milvus_space_file` 은 두 except 절(`KeyError`·`Exception`)에서 `logger.error` 만 남기고 `None` 을 반환했고, `service/pipelineservice.confluence_pipeline_delete_spacefile` 은 그 값을 그대로 돌려주며 `api.py` 의 `/run_confluence_pipeline_delete_spacefile` 은 "문서첨부 삭제 종료" INFO 뒤 `null` 을 200 으로 응답했다 — Milvus 가 죽어 있어도 삭제가 끝난 것처럼 보이고, 이어 재색인을 돌리면 기존 attachment 와 중복 entity 가 쌓인다(A-111 이 없앤 중복이 다른 경로로 재발). `MilvusInsertError` 옆에 `MilvusDeleteError(RuntimeError)` 를 두고 두 except 절이 원인을 체이닝해(`raise ... from e`) 올리게 했으며(`delete_to_milvus` 는 try 가 없어 이미 전파되므로 손대지 않음), 라우트는 기존 bare except 가 `Exception occurred` ERROR(`exc_info`)와 traceback 문자열 응답으로 실패를 드러낸다(응답 형식 자체는 A-105 범위라 건드리지 않음). 검증은 pymilvus 로 import 불가한 두 파일에 대한 AST 정적 검사 4건(`tests/unit/test_milvus_delete_failure.py`: 두 삭제 함수의 모든 except 절이 raise·traceback 반환 금지·`MilvusDeleteError` 와 `from` 체이닝·라우트의 삭제 호출이 try 안에 있고 except 절에 성공 문구 없음)으로 했고, 수정 전 코드에서 핵심 2건이 실제로 실패함을 먼저 확인했다(Red → Green). `python3 -m pytest -q` 1040 passed(기존 1032), `python3 -m pyflakes .` undefined name 0건. docs 2종(CURRENT_STATE_AUDIT/TESTING)만 갱신. 커밋 `2e2959b`.
+- 보류 아이디어: `process_feedback_single` 이 policy token 부재 시 `Bearer None` 으로 행마다 401 — 배치 시작 시 토큰 없으면 전용 예외로 한 번에 실패 (A-114 와 나란히) — 가치 2 / 위험 1 / S
+- 보류 아이디어: `/run_confluence_pipeline_delete_spacefile` 성공 응답이 pymilvus `MutationResult` 객체 그대로라 JSON 직렬화 여부가 불확실 — `{"space_key", "delete_count"}` dict 로 바꾸면 응답 계약 변경이라 클라이언트 확인 필요 (A-116 후속, 신규) — 가치 2 / 위험 2 / S
+- 보류 아이디어: run_in_executor 로 넘긴 피드백 배치 스레드가 shutdown 시 끝까지 도는 문제 — 중단 요청 플래그를 배치에 넘겨 행 사이에서 멈추게 (A-115 후속) — 가치 2 / 위험 2 / S
+- 보류 아이디어: A-105 후속 — 공통 오류 응답 model 도입과 traceback 노출 제거(A-106 연계) — 가치 4 / 위험 3 / L
+- 보류 아이디어: bare except → 구체 예외로 범위 축소(`service/pipelineservice.confluence_pipeline_kcblaw`, `api.py` 파이프라인 라우트 잔여) — 가치 3 / 위험 3 / M
+- 과제서: 채택 — 정찰의 1순위 후보(Milvus 삭제 경로 예외화)를 그대로 구현했고, `delete_to_milvus` 는 코드 확인 결과 이미 전파되므로 범위에서 뺐다.
+
