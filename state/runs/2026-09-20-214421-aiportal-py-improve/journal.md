@@ -28,3 +28,5 @@
 - 남는 제한: 기존 색인 자동 교정 없음. 운영 빈도·UI 영향·외부 API/DB/Milvus 통합·전체 API startup 미검증.
 - [러너 21:52] review approved — 리뷰 승인 (risk=low)
 - [러너 21:52] pr created — https://github.com/hkjang/aiportal-py/pull/21
+- [러너 21:53] ci passed — 검사 없음 — 정책으로 허용
+- [러너 21:53] merge done — f92d240
