@@ -30,3 +30,8 @@
 - [러너 23:36] pr created — https://github.com/hkjang/dataworks/pull/26
 - [러너 23:38] ci passed — 검사 2개 모두 success
 - [러너 23:39] merge done — 1e9045a
+- [러너 23:47] release published — v0.9.59
+- [러너 23:47] gh-release created — GitHub Release v0.9.59
+- [러너 23:47] manifest ok — dataworks-v0.9.59.tar.gz 
+- [러너 23:47] assets uploaded — 1개
+- [러너 23:47] assets verified — v0.9.59 자산 1개 (이전 v0.9.58: 1)
