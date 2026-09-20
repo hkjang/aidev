@@ -1,0 +1,11 @@
+## 2026-09-20
+- 선택: 공개 화면이 없는 소유자 앱 카드에서 즐겨찾기 버튼 숨기기 (가치 3 / 위험 1 / 작업량 S)
+- 결과: 성공
+- 요약: AppCard의 하트 Button만 기존 viewable 조건으로 감싸 /my/apps와 /my의 draft·pending_review·rejected·archived·published+private 카드에서 추가/해제를 숨겼고, 공개 카드·링크·상태 배지·관리 바로가기와 기존 localStorage 문자열은 유지했다. 실제 페이지·FavoritesProvider·localStorage를 쓰는 상태별 테스트 10건이 수정 전에 하트 노출로 실패하고 수정 뒤 통과했으며, 전체 Vitest 73건·린트·빌드·Prettier·오프라인 자산·환경·문서 검사·Go 테스트(대부분 캐시)가 통과했다. Chromium 부재로 첫 E2E 실행은 실패했으나 설치 후 desktop core 31건 통과(모바일 전용 1건 제외); 실제 번들·브라우저에서 소유자 두 화면의 숨김/저장값 보존과 /my/apps·/my·/apps 각각의 공개 앱 추가→메뉴로 /favorites→해제→새로고침을 검증하고 a4d9997로 커밋했다.
+- 보류 아이디어: LoginPage 기본 상태 3종 렌더 테스트 (가치 2 / 위험 1 / 작업량 S) — 이번 과제의 차선으로 유지.
+- 보류 아이디어: 즐겨찾기 개수·100개 밖 앱의 페이지 탐색 문제 (가치 3 / 위험 2 / 작업량 M) — 전체 조회 계약을 함께 검증해야 하므로 별도 과제.
+- 보류 아이디어: USER_GUIDE의 로그인하면 기기 간 즐겨찾기가 같아진다는 안내 수정 (가치 2 / 위험 1 / 작업량 S) — 현 UI는 localStorage이며 문서/PDF 정정은 별도 과제.
+- 보류 아이디어: /login?sso=none 안내 화면 캡처 (가치 1 / 위험 1 / 작업량 S) — 다음 전체 캡처 갱신 때 처리.
+- 과제서: 채택 — 기존 AppCard 하트의 무조건 노출과 공개 결과만 거르는 AppsPage가 현재 코드와 일치하여 지정한 viewable 조건만 재사용했다.
+- 스킬: callable Skill 도구 및 요청한 technology:completion-verification·technology:systematic-debugging·technology:test-driven-development 원본을 찾지 못해 해당 반환 형식 준수는 미확인; 로컬 superpowers의 systematic-debugging·test-driven-development·verification-before-completion 및 testing-anti-patterns를 읽고 원인 추적·실패 선확인·최소 수정·실행 결과 확인 지침을 적용했다.
+- 검증 한계: E2E는 API fixture를 사용하는 실제 프런트 번들·Chromium 검증이며 실제 DB/Keycloak 통합은 이번에 실행하지 않았다. 모바일 전체 및 시각 캡처는 이번 범위에서 실행/변경하지 않았다.

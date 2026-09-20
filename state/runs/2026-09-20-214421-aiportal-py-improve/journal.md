@@ -30,3 +30,4 @@
 - [러너 21:52] pr created — https://github.com/hkjang/aiportal-py/pull/21
 - [러너 21:53] ci passed — 검사 없음 — 정책으로 허용
 - [러너 21:53] merge done — f92d240
+- [러너 21:53] release missing — 릴리즈 결과 없음/손상: missing
