@@ -1,0 +1,71 @@
+
+> appstore-web@2.11.3 test:e2e
+> playwright test core.spec.ts --project=mobile -g 공개 앱 즐겨찾기는
+
+[WebServer] (node:4030455) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+Running 1 test using 1 worker
+
+(node:4030483) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✘  1 [mobile] › e2e/core.spec.ts:567:1 › 공개 앱 즐겨찾기는 소유자와 공개 목록에서 추가하고 즐겨찾기에서 해제한다 (30.2s)
+
+
+  1) [mobile] › e2e/core.spec.ts:567:1 › 공개 앱 즐겨찾기는 소유자와 공개 목록에서 추가하고 즐겨찾기에서 해제한다 ──────────────────
+
+    Test timeout of 30000ms exceeded.
+
+    Error: locator.click: Test timeout of 30000ms exceeded.
+    Call log:
+      - waiting for getByRole('link', { name: '즐겨찾기', exact: true })
+        - locator resolved to <a class="nav-link" href="/favorites" data-discover="true">…</a>
+      - attempting click action
+        2 × waiting for element to be visible, enabled and stable
+          - element is visible, enabled and stable
+          - scrolling into view if needed
+          - done scrolling
+          - element is outside of the viewport
+        - retrying click action
+        - waiting 20ms
+        2 × waiting for element to be visible, enabled and stable
+          - element is visible, enabled and stable
+          - scrolling into view if needed
+          - done scrolling
+          - element is outside of the viewport
+        - retrying click action
+          - waiting 100ms
+        57 × waiting for element to be visible, enabled and stable
+           - element is visible, enabled and stable
+           - scrolling into view if needed
+           - done scrolling
+           - element is outside of the viewport
+         - retrying click action
+           - waiting 500ms
+
+
+      582 |       ),
+      583 |     ).toEqual(["agent-hub"]);
+    > 584 |     await page.getByRole("link", { name: "즐겨찾기", exact: true }).click();
+          |                                                                 ^
+      585 |     await expect(page).toHaveURL("/favorites");
+      586 |     await expect(
+      587 |       page.getByRole("heading", { name: "Agent Hub" }),
+        at /home/hkjang/.cache/auto-improve-wt/appstore/web/e2e/core.spec.ts:584:65
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/core-공개-앱-즐겨찾기는-소유자와-공개-목록에서-추가하고-즐겨찾기에서-해제한다-mobile/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/core-공개-앱-즐겨찾기는-소유자와-공개-목록에서-추가하고-즐겨찾기에서-해제한다-mobile/error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/core-공개-앱-즐겨찾기는-소유자와-공개-목록에서-추가하고-즐겨찾기에서-해제한다-mobile/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/core-공개-앱-즐겨찾기는-소유자와-공개-목록에서-추가하고-즐겨찾기에서-해제한다-mobile/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  1 failed
+    [mobile] › e2e/core.spec.ts:567:1 › 공개 앱 즐겨찾기는 소유자와 공개 목록에서 추가하고 즐겨찾기에서 해제한다 ───────────────────

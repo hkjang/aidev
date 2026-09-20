@@ -1,0 +1,47 @@
+[
+  {
+    "name": "focused",
+    "command": "npm --prefix web run test:e2e -- core.spec.ts -g '공개 앱 즐겨찾기는|게시되지 않은 내 앱'",
+    "exit_code": 0
+  },
+  {
+    "name": "e2e",
+    "command": "CI=true npm --prefix web run test:e2e",
+    "exit_code": 0
+  },
+  {
+    "name": "react-final",
+    "command": "npm --prefix web test",
+    "exit_code": 0
+  },
+  {
+    "name": "lint",
+    "command": "npm --prefix web run lint",
+    "exit_code": 0
+  },
+  {
+    "name": "prettier",
+    "command": "cd web && npx prettier --check e2e/core.spec.ts",
+    "exit_code": 0
+  },
+  {
+    "name": "offline",
+    "command": "./scripts/check-offline-assets.sh web/dist",
+    "exit_code": 0
+  },
+  {
+    "name": "env",
+    "command": "./scripts/check-env-contract.sh",
+    "exit_code": 0
+  },
+  {
+    "name": "docs",
+    "command": "./scripts/check-docs.sh",
+    "exit_code": 0
+  },
+  {
+    "name": "diff",
+    "command": "git diff --check",
+    "exit_code": 0
+  }
+]

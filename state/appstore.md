@@ -196,3 +196,20 @@
 - 스킬: callable Skill 도구 및 요청한 technology:completion-verification·technology:systematic-debugging·technology:test-driven-development 원본을 찾지 못해 해당 반환 형식 준수는 미확인; 로컬 superpowers의 systematic-debugging·test-driven-development·verification-before-completion 및 testing-anti-patterns를 읽고 원인 추적·실패 선확인·최소 수정·실행 결과 확인 지침을 적용했다.
 - 검증 한계: E2E는 API fixture를 사용하는 실제 프런트 번들·Chromium 검증이며 실제 DB/Keycloak 통합은 이번에 실행하지 않았다. 모바일 전체 및 시각 캡처는 이번 범위에서 실행/변경하지 않았다.
 
+## 2026-09-20
+- 선택: [수정 과제] PR #26 즐겨찾기 E2E의 모바일 메뉴 탐색 누락 수정 (가치 5 / 위험 1 / 작업량 S)
+- 결과: 성공
+- 요약: main a858bf4에서 시작했고 a4d9997은 HEAD의 조상이 아니므로 PR 원본 변경을 현재 브랜치에 적용했다(git diff --cached a4d9997 결과 없음). 모바일의 닫힌 sidebar가 translateX(-105%)로 viewport 밖에 있는데 새 E2E가 메뉴를 열지 않고 링크를 클릭한 것이 원인이다. core.spec.ts의 해당 반복문에 testInfo 기반 모바일 메뉴 열기→주 메뉴 open→즐겨찾기 링크 toBeInViewport 확인만 추가하고 기존 aria-pressed·실제 localStorage·메뉴 이동·해제·reload 빈 상태 단언을 모두 유지했다; 전체 검증 후 e2f099f로 커밋했다.
+- 과제서: 채택 — 원본 584행 실패를 재현했으며 지정된 한 테스트만 PR 원본 대비 수정했다. main 기반 커밋에는 기능 보존을 위해 기존 PR의 네 파일 변경도 포함한다. 브랜치 전환·push·PR 생성·릴리즈는 하지 않았다.
+- 보류 아이디어: LoginPage 기본 상태 3종 렌더 테스트 (가치 2 / 위험 1 / 작업량 S).
+- 보류 아이디어: 즐겨찾기 개수·100개 밖 앱 페이지 탐색 (가치 3 / 위험 2 / 작업량 M).
+- 보류 아이디어: USER_GUIDE의 기기 간 즐겨찾기 동기화 안내 정정 (가치 2 / 위험 1 / 작업량 S).
+- 보류 아이디어: /login?sso=none 화면 캡처 (가치 1 / 위험 1 / 작업량 S).
+- 스킬: Skill 호출 도구는 없었으며 headcount/plugins/technology/skills의 completion-verification, systematic-debugging, test-driven-development 원본을 읽고 적용했다. 새 테스트를 별도로 만들지 않고 기존 실패 E2E로 red→최소 수정 green→수정 철회 red→복원 후 전체 green을 확인했다.
+- 수정 전 명령: `npm --prefix web run test:e2e -- core.spec.ts --project=mobile -g '공개 앱 즐겨찾기는'` → exit 1, 1 failed, core.spec.ts:584:65의 element is outside of the viewport/30000ms timeout (impl-red-ready.log). 설치 완료 전 첫 실행은 브라우저 실행 파일 부재였으므로 제품 실패 증거에서 제외(impl-red.log). 수정 후 같은 명령 → exit 0, 1 passed (impl-green-mobile.log). 수정만 철회한 동일 명령도 exit 1, 같은 584행 실패(impl-revert-red.log); 이후 수정본 복원.
+- 수정 후 명령: `npm --prefix web run test:e2e -- core.spec.ts -g '공개 앱 즐겨찾기는|게시되지 않은 내 앱'` → exit 0, desktop/mobile 4 passed. 공개 앱 세 경로 전체와 소유자 비공개 카드 숨김·기존 저장 문자열 보존을 검증(impl-focused.log).
+- 전체 검증: `CI=true npm --prefix web run test:e2e` → exit 0, 69 passed / 1 skipped, 재시도 실패 없음(impl-e2e.log). skipped는 기존 모바일 전용 메뉴 테스트의 desktop 제외. workflow·retry·timeout·skip·viewport 설정 변경 없음.
+- 나머지 명령: `npm --prefix web ci --no-audit --no-fund`, `npm --prefix web run build`, `(cd web && npx playwright install chromium)`, `npm --prefix web test`(73 passed), `npm --prefix web run lint`, `(cd web && npx prettier --check e2e/core.spec.ts)`, `./scripts/check-offline-assets.sh web/dist`, `./scripts/check-env-contract.sh`, `./scripts/check-docs.sh`, `git diff --check`, `git diff --cached --check`, `go test -race . ./cmd/... ./internal/... ./migrations/... ./openapi/...` → 모두 exit 0. impl-*.log 및 impl-check-results.json에 결과 보관. 기본 4173 포트 사용; 전역 설정 변경 없음. npm 설치의 기존 deprecated whatwg-encoding 경고와 E2E의 NO_COLOR/FORCE_COLOR 경고가 있었으나 검사 실패 없음.
+- 검증 한계: 원격 최신 SHA/CI 재실행은 GitHub 인증 부재로 재조회하지 않았고 제공된 정찰 로그를 사용했다. 확인된 원격 실패는 ci.yml 실행 1건 안 최초+retry 2회이며 release.yml 별도 2회 실패는 미확인이다. 실제 DB/Keycloak 통합·Docker 이미지 smoke/릴리즈는 실행하지 않았다. E2E는 API fixture와 실제 production frontend 번들/Chromium을 사용하며 Go DSN 의존 통합 테스트는 환경 미설정으로 제외된다. 빌드·캡처 산출물은 기존 ignore 대상이며 커밋하지 않았다.
+- 체크포인트: 1 기준/원본 실패 재현 완료; 2 최소 수정/양 프로젝트 회귀 완료; 3 전체 검증/기록/커밋 완료. 아이디어 done은 모든 검증 완료 뒤 갱신.
+
