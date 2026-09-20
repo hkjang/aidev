@@ -1,0 +1,125 @@
+go test -race ./... 2>&1 | tee /tmp/resso-go-test.log; \
+	status=$?; \
+	skipped=$(go test ./internal/... -run 'TestIntegration|TestDirectory' -v 2>&1 | grep -c '^--- SKIP' || true); \
+	if [ "$skipped" -gt 0 ]; then \
+		echo; \
+		echo "$skipped integration test(s) did not run: their services were not reachable."; \
+		echo "Start them with: eval \"\$(scripts/test-services.sh)\""; \
+	fi; \
+	exit $status
+ok  	github.com/hkjang/ReSSO/cmd/resso	1.119s
+ok  	github.com/hkjang/ReSSO/internal/backchannel	(cached)
+ok  	github.com/hkjang/ReSSO/internal/config	(cached)
+ok  	github.com/hkjang/ReSSO/internal/cryptoutil	(cached)
+?   	github.com/hkjang/ReSSO/internal/domain	[no test files]
+ok  	github.com/hkjang/ReSSO/internal/federation	(cached)
+ok  	github.com/hkjang/ReSSO/internal/httpserver	116.637s
+ok  	github.com/hkjang/ReSSO/internal/mail	(cached)
+ok  	github.com/hkjang/ReSSO/internal/observability	(cached)
+ok  	github.com/hkjang/ReSSO/internal/oidc	(cached)
+ok  	github.com/hkjang/ReSSO/internal/password	(cached)
+ok  	github.com/hkjang/ReSSO/internal/ratelimit	(cached)
+ok  	github.com/hkjang/ReSSO/internal/store	82.261s
+ok  	github.com/hkjang/ReSSO/internal/tracking	(cached)
+?   	github.com/hkjang/ReSSO/internal/version	[no test files]
+?   	github.com/hkjang/ReSSO/web/node_modules/flatted/golang/pkg/flatted	[no test files]
+?   	github.com/hkjang/ReSSO/webui	[no test files]
+go vet ./...
+cd web && npm run test && npm run build
+
+> resso-web@0.9.88 test
+> vitest run
+
+
+ RUN  v4.1.10 /home/hkjang/.cache/auto-improve-wt/ReSSO-release/web
+
+
+ Test Files  29 passed (29)
+      Tests  161 passed (161)
+   Start at  20:43:52
+   Duration  5.68s (transform 4.90s, setup 4.66s, import 13.79s, tests 27.84s, environment 21.69s)
+
+
+> resso-web@0.9.88 build
+> tsc --noEmit && vite build
+
+vite v7.3.6 building client environment for production...
+transforming...
+✓ 1078 modules transformed.
+rendering chunks...
+computing gzip size...
+../webui/dist/index.html                               0.84 kB │ gzip:   0.46 kB
+../webui/dist/assets/index-CwPuC8Os.css                1.30 kB │ gzip:   0.67 kB
+../webui/dist/assets/email-A_wmU_0X.js                 0.08 kB │ gzip:   0.10 kB
+../webui/dist/assets/sort-D-EA9Kdi.js                  0.27 kB │ gzip:   0.20 kB
+../webui/dist/assets/format-EQBXOaiE.js                0.34 kB │ gzip:   0.21 kB
+../webui/dist/assets/SortableTable-8yYICsnW.js         0.70 kB │ gzip:   0.44 kB
+../webui/dist/assets/device-BCnIHzKk.js                0.82 kB │ gzip:   0.50 kB
+../webui/dist/assets/DetailDrawer-CJGN7h86.js          0.85 kB │ gzip:   0.54 kB
+../webui/dist/assets/realms-C5wixdvC.js                0.88 kB │ gzip:   0.51 kB
+../webui/dist/assets/RealmPicker-DXtDggkk.js           0.92 kB │ gzip:   0.54 kB
+../webui/dist/assets/approvals-DtJzivMw.js             0.98 kB │ gzip:   0.57 kB
+../webui/dist/assets/Page-BMMUGiBe.js                  1.14 kB │ gzip:   0.64 kB
+../webui/dist/assets/RealmAPIKeysPage-BnsPv3NQ.js      2.99 kB │ gzip:   1.54 kB
+../webui/dist/assets/IntegrationsPage-CKrq9ubX.js      3.54 kB │ gzip:   1.66 kB
+../webui/dist/assets/KeysPage-DW5Vfq5l.js              3.66 kB │ gzip:   1.82 kB
+../webui/dist/assets/ApprovalsPage-Bkp7nTEL.js         4.85 kB │ gzip:   2.24 kB
+../webui/dist/assets/DashboardPage-C3CqpW2H.js         5.49 kB │ gzip:   2.37 kB
+../webui/dist/assets/RolesPage-CItHvTBK.js             5.61 kB │ gzip:   2.26 kB
+../webui/dist/assets/SessionsPage-BHpLlqy0.js          7.59 kB │ gzip:   3.22 kB
+../webui/dist/assets/RealmsPage-bJxmy0vj.js            8.21 kB │ gzip:   3.35 kB
+../webui/dist/assets/TrackingPage-i4XBIUy3.js          9.04 kB │ gzip:   3.67 kB
+../webui/dist/assets/MailPage-DdCIB8ue.js              9.37 kB │ gzip:   3.68 kB
+../webui/dist/assets/OperationsPages-DMMCPtdu.js       9.63 kB │ gzip:   3.60 kB
+../webui/dist/assets/ClientsPage-BeziRO35.js          12.45 kB │ gzip:   4.32 kB
+../webui/dist/assets/UsersPage-DXTB5zx0.js            14.89 kB │ gzip:   5.21 kB
+../webui/dist/assets/PersonalPages-CtOuKcKC.js        18.57 kB │ gzip:   6.01 kB
+../webui/dist/assets/UserFederationPage-DYwTGIs0.js   21.19 kB │ gzip:   6.98 kB
+../webui/dist/assets/query-DtLCQplV.js                36.37 kB │ gzip:  10.82 kB
+../webui/dist/assets/react-BVWi1DzO.js                49.99 kB │ gzip:  17.77 kB
+../webui/dist/assets/index-CCQJV15Y.js               220.03 kB │ gzip:  70.68 kB
+../webui/dist/assets/mui-D3p--42L.js                 394.81 kB │ gzip: 120.56 kB
+✓ built in 7.16s
+cd web && npm run build
+
+> resso-web@0.9.88 build
+> tsc --noEmit && vite build
+
+vite v7.3.6 building client environment for production...
+transforming...
+✓ 1078 modules transformed.
+rendering chunks...
+computing gzip size...
+../webui/dist/index.html                               0.84 kB │ gzip:   0.46 kB
+../webui/dist/assets/index-CwPuC8Os.css                1.30 kB │ gzip:   0.67 kB
+../webui/dist/assets/email-A_wmU_0X.js                 0.08 kB │ gzip:   0.10 kB
+../webui/dist/assets/sort-D-EA9Kdi.js                  0.27 kB │ gzip:   0.20 kB
+../webui/dist/assets/format-EQBXOaiE.js                0.34 kB │ gzip:   0.21 kB
+../webui/dist/assets/SortableTable-8yYICsnW.js         0.70 kB │ gzip:   0.44 kB
+../webui/dist/assets/device-BCnIHzKk.js                0.82 kB │ gzip:   0.50 kB
+../webui/dist/assets/DetailDrawer-CJGN7h86.js          0.85 kB │ gzip:   0.54 kB
+../webui/dist/assets/realms-C5wixdvC.js                0.88 kB │ gzip:   0.51 kB
+../webui/dist/assets/RealmPicker-DXtDggkk.js           0.92 kB │ gzip:   0.54 kB
+../webui/dist/assets/approvals-DtJzivMw.js             0.98 kB │ gzip:   0.57 kB
+../webui/dist/assets/Page-BMMUGiBe.js                  1.14 kB │ gzip:   0.64 kB
+../webui/dist/assets/RealmAPIKeysPage-BnsPv3NQ.js      2.99 kB │ gzip:   1.54 kB
+../webui/dist/assets/IntegrationsPage-CKrq9ubX.js      3.54 kB │ gzip:   1.66 kB
+../webui/dist/assets/KeysPage-DW5Vfq5l.js              3.66 kB │ gzip:   1.82 kB
+../webui/dist/assets/ApprovalsPage-Bkp7nTEL.js         4.85 kB │ gzip:   2.24 kB
+../webui/dist/assets/DashboardPage-C3CqpW2H.js         5.49 kB │ gzip:   2.37 kB
+../webui/dist/assets/RolesPage-CItHvTBK.js             5.61 kB │ gzip:   2.26 kB
+../webui/dist/assets/SessionsPage-BHpLlqy0.js          7.59 kB │ gzip:   3.22 kB
+../webui/dist/assets/RealmsPage-bJxmy0vj.js            8.21 kB │ gzip:   3.35 kB
+../webui/dist/assets/TrackingPage-i4XBIUy3.js          9.04 kB │ gzip:   3.67 kB
+../webui/dist/assets/MailPage-DdCIB8ue.js              9.37 kB │ gzip:   3.68 kB
+../webui/dist/assets/OperationsPages-DMMCPtdu.js       9.63 kB │ gzip:   3.60 kB
+../webui/dist/assets/ClientsPage-BeziRO35.js          12.45 kB │ gzip:   4.32 kB
+../webui/dist/assets/UsersPage-DXTB5zx0.js            14.89 kB │ gzip:   5.21 kB
+../webui/dist/assets/PersonalPages-CtOuKcKC.js        18.57 kB │ gzip:   6.01 kB
+../webui/dist/assets/UserFederationPage-DYwTGIs0.js   21.19 kB │ gzip:   6.98 kB
+../webui/dist/assets/query-DtLCQplV.js                36.37 kB │ gzip:  10.82 kB
+../webui/dist/assets/react-BVWi1DzO.js                49.99 kB │ gzip:  17.77 kB
+../webui/dist/assets/index-CCQJV15Y.js               220.03 kB │ gzip:  70.68 kB
+../webui/dist/assets/mui-D3p--42L.js                 394.81 kB │ gzip: 120.56 kB
+✓ built in 5.78s
+CGO_ENABLED=0 go build -trimpath -ldflags="-s -w -X github.com/hkjang/ReSSO/internal/version.Version=v0.9.88 -X github.com/hkjang/ReSSO/internal/version.Commit=c6e2e24eda78 -X github.com/hkjang/ReSSO/internal/version.BuildTime=2026-09-20T11:44:17Z" -o build/resso ./cmd/resso

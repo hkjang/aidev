@@ -28,3 +28,7 @@
 - 세 스킬은 Skill 도구 부재로 headcount 원문 적용. 릴리즈 시 폼 1MiB 초과의 400 변경을 안내; 데이터 변경 없이 revert 가능.
 - [러너 20:28] review approved — 리뷰 승인 (risk=low)
 - [러너 20:28] pr created — https://github.com/hkjang/ReSSO/pull/25
+- [러너 20:37] ci passed — 검사 2개 모두 success
+- [러너 20:37] merge done — 3060a9b
+- [러너 20:53] release published — v0.9.88
+- [러너 20:58] assets verified — v0.9.88 자산 2개 (이전 v0.9.87: 2)

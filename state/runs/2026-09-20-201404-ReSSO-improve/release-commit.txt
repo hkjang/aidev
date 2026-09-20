@@ -1,0 +1,8 @@
+release: ReSSO v0.9.88
+
+The UserInfo POST endpoint lacked the 1 MiB form-body limit used by the
+other protocol POST handlers. It now rejects oversized encoded forms with
+400 invalid_request before parsing, for both header and body tokens and
+fixed-length and chunked transfers. Exactly 1 MiB remains accepted.
+Stamps the version in the Makefile, console package metadata and both
+compose files, and documents the boundary and rollback behavior.
