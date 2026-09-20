@@ -1,17 +1,27 @@
-# kanpic 프로필 (2026-09-20)
-- 목적: 사내용 웹 스프레드시트(워크북·수식 엔진·가져오기/내보내기·협업·AI·다른 사내 서비스와의 문서 핸드오프)를 Go 서버 하나와 React 프런트로 제공한다.
-- 스택: Go 1.26(모듈 `kanpic`, `cmd/api` 단일 바이너리) · PostgreSQL(`migrations/NNN_*.sql`, 최근 041) · 웹은 `web/` 의 React 19 + Vite + TypeScript + zustand + @tanstack/react-query, 테스트 vitest, E2E Playwright · 배포는 Dockerfile·compose.yaml, GitHub Actions(ci.yml·release.yml)로 이미지 tar.gz 를 릴리즈 자산으로.
+# kanpic 프로필 (2026-09-21)
+- 목적: 온프레미스·폐쇄망용 웹 AI 스프레드시트와 데이터 협업을 제공한다.
+- 스택: Go 1.26(module kanpic), PostgreSQL/pgx, excelize; React 19·TypeScript·Vite·zustand·React Query, Vitest/jsdom·Playwright; Docker 배포.
 - 구조:
-  - `internal/formula` — 수식 엔진. `DecimalNumber`/`decimalText`(수처럼 생긴 글자의 자), `valueOfText`(VALUE·NUMBERVALUE 는 넓게), 서식(`format_fraction.go` 등).
-  - `internal/importexport` — 업로드 가져오기(csv/tsv/xlsx)·내보내기. `parseScalar`·`parseXLSXValue` 가 파일 값을 칸에 담는 규칙. `exportDelimited` 는 UTF-8 BOM 을 붙인다.
-  - `internal/external` — IMPORTDATA 등 원격 가져오기(`fetcher.go`), 허용 호스트·캐시·크기 상한.
-  - `internal/delimited` — 업로드·IMPORTDATA·사용자 명단이 함께 쓰는 구분자 추정(`Delimiter`)과 BOM 기반 인코딩 변환(`ToUTF8`). "같은 파일은 어느 문으로 들어오든 같은 표" 의 공용 자리.
-  - `internal/httpapi` — 라우트·핸들러(관리자 사용자 일괄 등록 `parseUserCSV`, `handoff.go`, 워크북 API). `internal/handoff` — 사내 서비스 간 문서 주고받기(허용 목록 `handoff.peers`, claim 저장소).
-  - `internal/auth`·`apikey`·`settings`·`database`·`workbook`·`collaboration`·`ai`·`automation`·`analytics`·`mail`·`observability`·`presentation`·`buildinfo`, `internal/integration`(실 DB 통합 테스트, `-tags integration`).
-  - `web/src/lib` — 격자 쪽 규칙(`spreadsheetNumber.ts`, `cellFormat.ts`, `fileText.ts`, `handoff.ts`). `testdata/*.json` 은 서버·격자가 같은 답을 내야 하는 공용 픽스처(numeric-text.json, cell-formats.json).
-  - `docs/` — USER_GUIDE.md/ADMIN_GUIDE.md(+PDF, `docs/images/guide/`), `docs/releases/`, 로드맵·보고서.
-- 빌드·테스트: `gofmt -l internal/`, `go vet ./...`, `go build ./...`, `go test ./...`(1~2분), `go test -tags=integration ./internal/...`(PostgreSQL 필요), `cd web && npm ci && npm run lint && npm test && npm run build`, Playwright는 `npm run test:e2e`(로컬 설정은 메모리 참조). 릴리즈 전 `scripts/check-release-docs.sh`·`scripts/check-commit-identities.sh HEAD`.
-- 관례: 커밋 메시지는 한국어, `fix(범위): …`/`feat: …`/`docs: …`, Claude 공동 저자 표기 없음. 코드 주석은 "왜" 를 한국어(일부 영어)로 길게 적는 문화 — 규칙을 넓히거나 좁힌 이유를 반드시 적는다. 설정은 `internal/settings` 키(`external.*`, `handoff.peers` 등). 마이그레이션은 번호 순 SQL 파일 추가. 문서를 고치면 PDF 도 다시 굽는다(메모리 kanpic-pdf-regeneration).
-- 위험 구역: `internal/auth`·세션·API 키·`migrations/`·`.github/workflows/`·`internal/handoff`(외부 오리진과 통신, 단일 사용 표) — 되도록 피한다. `formula.DecimalNumber`/`decimalText` 와 `web/src/lib/spreadsheetNumber.ts` 는 한 쌍이라 한쪽만 바꾸면 =SUM 과 상태 줄 합계가 갈린다.
-- 자주 깨지는 곳: 같은 값을 읽는 경로가 여럿(업로드·IMPORTDATA·사용자 명단·격자·서버 formatValue)인데 한쪽만 고쳐 어긋나는 것 — 지난 여섯 회차가 거의 모두 이 종류였다(구분자·BOM·accept 목록). 규칙을 넓히는 변경은 반려 위험이 크고, 두 문을 일치시키는 변경은 통과했다.
-- 검증 함정: CI 는 `-tags integration` 과 스크립트 실행 비트를 보지만 로컬은 그냥 지나간다(메모리 kanpic-ci-blind-spots). `gh run watch` 는 API 한도를 태운다. 다른 봇이 main 에 태그를 끊으므로 VERSION 올리기 전 태그 확인. 러너의 `hold: budget` 은 저장소 실패가 아니다.
+  - cmd/api — 서버 진입점; internal/httpapi — REST·MCP·handoff 핸들러.
+  - internal/workbook·collaboration — 저장소·워크북 작업·협업; internal/auth·apikey — 인증/인가.
+  - internal/formula — 수식 계산·TEXT/서식; DecimalNumber는 셈의 숫자 규칙.
+  - internal/delimited — Delimiter·ToUTF8·Number·HasSignificantLeadingZero 공통 파일 규칙.
+  - internal/importexport — CSV/TSV/XLSX 업로드/내보내기; parseScalar·parseXLSXValue.
+  - internal/external — 원격 수식 가져오기, Fetcher.Resolve·parseCSV·SSRF 정책·캐시.
+  - internal/handoff — 문서 교환/단일 사용 claim; internal/integration — 실제 PostgreSQL 테스트.
+  - web/src/pages — 홈·편집기·관리; web/src/lib — 숫자·붙여넣기·셀 서식·파일 디코딩.
+  - testdata — Go/TS 공용 JSON 픽스처; migrations — 번호별 SQL(041까지); docs — 가이드/PDF/로드맵/릴리즈.
+- 빌드·테스트: go test ./internal/delimited ./internal/external ./internal/importexport; go test ./... (이번 정찰 통과, 대부분 캐시); go vet ./...; go build ./...; gofmt -l ./cmd ./internal ./pkg.
+- 웹 검증: cd web && npm ci && npm run lint && npm test && npm run build (설치/빌드 시간 필요; 이번 정찰 미실행).
+- 통합 검증: POSTGRES_DSN=postgres://... go test -tags=integration ./internal/... (실 DB 필요, 이번 미실행).
+- 브라우저 검증: 실행 중 서버와 Chromium 준비 후 cd web && npm run test:e2e; KANPIC_E2E_BASE_URL 기본 http://localhost:8080. playwright.config.ts는 서버를 자동 실행하지 않는다.
+- 릴리즈 검사: ./scripts/check-release-docs.sh; ./scripts/check-commit-identities.sh HEAD (이번 둘 다 통과).
+- 관례: 한국어 fix/feat/docs 커밋, 규칙의 이유를 주석으로 설명. 설정은 internal/settings/관리자 콘솔, 필수 서버 환경은 POSTGRES_DSN. 번호순 SQL 마이그레이션. 가이드 PDF 동반 갱신은 이전 회차 관례.
+- 위험 구역: internal/auth·apikey·migrations·.github/workflows·handoff와 외부 SSRF/캐시 정책. formula.DecimalNumber와 web/src/lib/spreadsheetNumber.ts의 셈 규칙은 함께 검증한다.
+- 자주 깨지는 곳: 같은 자료의 업로드/IMPORTDATA/격자 규칙을 한쪽만 변경하는 것. 모든 파서가 같은 계약은 아니므로 무조건 통합하지 않는다.
+- 중요 수정 이력: b52a394는 XLSX CellTypeUnset에 15자리 제한을 적용했다가 되돌렸다. 엑셀 raw 2.2000000000000002는 이미 실수이므로 수로 남겨야 한다. 현재 이 분기는 HasSignificantLeadingZero만 검사한 후 DecimalNumber를 쓴다. CellTypeNumber에도 파일 숫자 길이 제한을 적용하지 않는다.
+- 현재 CSV 계약: parseScalar는 unguard→대소문자 무시 true/false→Number, trim 없음. IMPORTDATA parseCSV는 TrimSpace→Number, 실패 시 원문; 불리언 판정 없음. 이번 과제는 불리언만 일치시키는 것.
+- 검증 함정: CI는 Go1.26/Node24/Postgres17, -tags integration, 실제 서버 E2E까지 실행. 로컬 go test만으로 DB/웹을 검증했다고 하지 않는다. E2E 일부는 전역 설정을 바꾸므로 workers=1; 버려도 되는 배포 사용.
+- 검증 함정: 테스트 helper에서만 루프백/자체 서명 TLS를 허용한다. production 허용 정책을 바꿔 테스트를 통과시키지 않는다. 러너 hold: budget은 저장소 실패가 아니다.
+- 문서 상태: README/v0.251.0 릴리즈 노트는 최신. ROADMAP_PLAN.md는 2026-07-31/v0.3.0 기준 장기 계획이므로 현재 미구현 목록으로 단정하지 않는다. 저장소 내 CLAUDE.md/AGENTS.md는 검색 결과 없음; internal/web/src/scripts 및 Markdown의 TODO/FIXME도 검색 결과 없음.
+- 이번 확인 범위: git log -30, CI/release, README/로드맵/가이드 관련 절, 파서·테스트·서식·handoff 코드. 외부 서비스 왕복·DB 통합·브라우저 실행은 미확인.
