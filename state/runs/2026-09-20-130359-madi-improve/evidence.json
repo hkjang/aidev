@@ -1,0 +1,200 @@
+{
+  "run_id": "2026-09-20-130359-madi-improve",
+  "generated": "2026-09-20T13:13:08+09:00",
+  "run": {
+    "run_id": "2026-09-20-130359-madi-improve",
+    "project": "madi",
+    "kind": "improve",
+    "started": "2026-09-20T13:03:59+09:00",
+    "model": "claude-opus-5",
+    "policy_version": "ecd4b546e",
+    "prompts_hash": "30c37184f081815d",
+    "runner_version": "ecd4b546e",
+    "arm": "codex-critic",
+    "experiment": "roles-2026-09",
+    "finished": "2026-09-20T13:13:07+09:00",
+    "outcome": "review-pending"
+  },
+  "record": {
+    "ts": "2026-09-20T13:13:07+09:00",
+    "date": "2026-09-20",
+    "project": "madi",
+    "result": "guarded files, PR open https://github.com/hkjang/madi/pull/9",
+    "outcome": "review-pending",
+    "run_id": "2026-09-20-130359-madi-improve",
+    "base_sha": "fd2c3b5816080869c431d60366f1c696a17d2aa9",
+    "head_sha": "5dc7f95c639094803db99ccaf4729833e6769cb9",
+    "pr": "https://github.com/hkjang/madi/pull/9",
+    "stages": {
+      "base": {
+        "state": "pinned",
+        "reason": "main@fd2c3b5",
+        "at": "2026-09-20T13:04:03+09:00"
+      },
+      "autonomy": {
+        "state": "release",
+        "reason": "",
+        "at": "2026-09-20T13:04:03+09:00"
+      },
+      "scout": {
+        "state": "done",
+        "reason": "로그인 화면 \"회사 계정으로 로그인\"(OIDC) 링크에 마지막 경로를 `return_to` 로 전달해 SSO 로그인 뒤 원래 보�",
+        "at": "2026-09-20T13:07:35+09:00"
+      },
+      "brief": {
+        "state": "accepted",
+        "reason": "채택 — 파일·행 근거(App.tsx:402 href 고정, oidcStart 75행의 return_to, 테스트 388행 근처의 비조용+safe 공백, e8e0960 충돌 없음)가",
+        "at": "2026-09-20T13:12:36+09:00"
+      },
+      "verify": {
+        "state": "passed",
+        "reason": "검증 5개 통과 (auto)",
+        "at": "2026-09-20T13:13:00+09:00"
+      },
+      "pr": {
+        "state": "created",
+        "reason": "https://github.com/hkjang/madi/pull/9",
+        "at": "2026-09-20T13:13:05+09:00"
+      },
+      "guard": {
+        "state": "held",
+        "reason": "web/src/auth/silentSso.ts ",
+        "at": "2026-09-20T13:13:06+09:00"
+      }
+    },
+    "campaign": "",
+    "autonomy": "release",
+    "arm": "codex-critic",
+    "experiment": "roles-2026-09",
+    "files": 10,
+    "additions": 77,
+    "deletions": 4,
+    "tests": 2,
+    "title": "feat: carry last /app path into OIDC login link"
+  },
+  "stages": {
+    "base": {
+      "state": "pinned",
+      "reason": "main@fd2c3b5",
+      "at": "2026-09-20T13:04:03+09:00"
+    },
+    "autonomy": {
+      "state": "release",
+      "reason": "",
+      "at": "2026-09-20T13:04:03+09:00"
+    },
+    "scout": {
+      "state": "done",
+      "reason": "로그인 화면 \"회사 계정으로 로그인\"(OIDC) 링크에 마지막 경로를 `return_to` 로 전달해 SSO 로그인 뒤 원래 보�",
+      "at": "2026-09-20T13:07:35+09:00"
+    },
+    "brief": {
+      "state": "accepted",
+      "reason": "채택 — 파일·행 근거(App.tsx:402 href 고정, oidcStart 75행의 return_to, 테스트 388행 근처의 비조용+safe 공백, e8e0960 충돌 없음)가",
+      "at": "2026-09-20T13:12:36+09:00"
+    },
+    "verify": {
+      "state": "passed",
+      "reason": "검증 5개 통과 (auto)",
+      "at": "2026-09-20T13:13:00+09:00"
+    },
+    "pr": {
+      "state": "created",
+      "reason": "https://github.com/hkjang/madi/pull/9",
+      "at": "2026-09-20T13:13:05+09:00"
+    },
+    "guard": {
+      "state": "held",
+      "reason": "web/src/auth/silentSso.ts ",
+      "at": "2026-09-20T13:13:06+09:00"
+    }
+  },
+  "provenance": {
+    "model": "claude-opus-5",
+    "policy_version": "ecd4b546e",
+    "prompts_hash": "30c37184f081815d",
+    "runner_version": "ecd4b546e",
+    "base_sha": "fd2c3b5816080869c431d60366f1c696a17d2aa9",
+    "head_sha": "5dc7f95c639094803db99ccaf4729833e6769cb9",
+    "pr": "https://github.com/hkjang/madi/pull/9"
+  },
+  "verification": {
+    "runner": {
+      "source": "auto",
+      "commands": [
+        {
+          "cmd": "go build ./...",
+          "exit": 0,
+          "seconds": 1
+        },
+        {
+          "cmd": "go vet ./...",
+          "exit": 0,
+          "seconds": 1
+        },
+        {
+          "cmd": "go test ./...",
+          "exit": 0,
+          "seconds": 1
+        },
+        {
+          "cmd": "cd web && [ -d node_modules ] || npm ci --no-audit --no-fund",
+          "exit": 0,
+          "seconds": 0
+        },
+        {
+          "cmd": "cd web && npm run build --silent",
+          "exit": 0,
+          "seconds": 19
+        }
+      ]
+    },
+    "runner_gate": {
+      "ok": true,
+      "state": "verified",
+      "reason": "검증 5개 통과 (auto)"
+    },
+    "after_rebase": null,
+    "review": null,
+    "ci_gate": null
+  },
+  "release": {
+    "result": null,
+    "assets_sha256": []
+  },
+  "approval": null,
+  "usage": [
+    {
+      "ts": "2026-09-20T13:07:35+09:00",
+      "date": "2026-09-20",
+      "project": "madi",
+      "phase": "scout",
+      "run_id": "2026-09-20-130359-madi-improve",
+      "campaign": "",
+      "subtype": "success",
+      "duration_ms": 212402,
+      "num_turns": 20,
+      "cost_usd": 1.6453840000000002,
+      "input_tokens": 30,
+      "output_tokens": 13915,
+      "cache_read": 973338,
+      "cache_create": 81069
+    },
+    {
+      "ts": "2026-09-20T13:12:36+09:00",
+      "date": "2026-09-20",
+      "project": "madi",
+      "phase": "improve",
+      "run_id": "2026-09-20-130359-madi-improve",
+      "campaign": "",
+      "subtype": "success",
+      "duration_ms": 305187,
+      "num_turns": 44,
+      "cost_usd": 2.4172819999999993,
+      "input_tokens": 72,
+      "output_tokens": 17227,
+      "cache_read": 2466274,
+      "cache_create": 75311
+    }
+  ]
+}
