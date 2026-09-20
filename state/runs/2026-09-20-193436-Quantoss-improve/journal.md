@@ -27,3 +27,6 @@
 - 세 회사 스킬 미발견. 운영 갭 값·실API·race·브라우저/PDF 미검증; 비갭 전략도 잘못된 갭 설정이면 시작 거부되므로 릴리즈에 명시할 것.
 - [러너 19:43] review approved — 리뷰 승인 (risk=low)
 - [러너 19:43] pr created — https://github.com/hkjang/Quantoss/pull/75
+- [러너 19:43] ci passed — 검사 없음 — 정책으로 허용
+- [러너 19:43] merge done — df5f77e
+- [러너 19:45] release skipped — 릴리즈 안 함: 태그·제품 버전 파일·릴리즈 노트가 없으며 최근 60개 커밋에서 릴리즈 양식을 찾지 못했다. 제공된 GitHub Release 목록과 저장소 워크플로
