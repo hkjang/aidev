@@ -28,3 +28,6 @@
 - 미검증: 이 세션의 실서버 E2E 재실행, 별도 seat_manager 계정, Chromium 외 브라우저. 구현자의 실행 보고와 구분하며 후속 검증 대상으로 남긴다.
 - [러너 17:21] review approved — 리뷰 승인 (risk=low)
 - [러너 17:21] pr created — https://github.com/hkjang/seaton/pull/32
+- [러너 17:25] ci passed — 검사 2개 모두 success
+- [러너 17:25] merge done — 38c5383
+- [러너 17:26] release missing — 릴리즈 결과 없음/손상: missing
