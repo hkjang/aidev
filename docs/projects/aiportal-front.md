@@ -1,7 +1,7 @@
 ---
 title: "aiportal-front — 자율 개선 이력"
 description: "aiportal-front: 자율 개선 회차 27회, 릴리즈 0건. 최근 릴리즈 없음."
-last_modified_at: 2026-09-20 23:54:43 +0900
+last_modified_at: 2026-09-21 00:06:00 +0900
 ---
 {% raw %}
 <script type="application/ld+json">
@@ -18,7 +18,7 @@ last_modified_at: 2026-09-20 23:54:43 +0900
   "name": "hkjang",
   "url": "https://github.com/hkjang"
  },
- "dateModified": "2026-09-20T23:54:43+09:00"
+ "dateModified": "2026-09-21T00:06:00+09:00"
 }
 </script>
 
@@ -35,6 +35,7 @@ last_modified_at: 2026-09-20 23:54:43 +0900
 <dt>마지막 회차</dt><dd>2026-09-20 23:11 KST — <span class="pill pill-nochange">➖ 변경 없음</span> fix-round: no change</dd>
 <dt>최근 릴리즈</dt><dd>failed — failed</dd>
 <dt>사유</dt><dd>필수 marketing:product-launch 및 technology:release-and-deployment 스킬과 Skill 도구를 제공된 도구 목록 및 로컬 스킬 경로에서 찾지 못해 요구 절차와 반환 형식을 확인할 수 없음. 전체 로컬 Git 이력(shallow 아님)에 태그가 없고 최근 60개 커밋에 릴리즈 메시지가 없으며, 제공된 GitHub Release 및 워크플로 목록도 비어 있음. package.json 및 package-lock.json의 루트 버전은 최초 커밋부터 0.0.0이지만 README.md와 docs/01-시작하기.md에는 0.0.1 초기 릴리스(2025-01-01)가 기록되어 있어 다음 버전 증가 및 커밋 관례를 확정할 수 없음. 버전 파일과 초기 릴리스 기록이 있으므로 절차 5의 이력 전무 skipped 조건에는 해당하지 않음. 별도 릴리즈 스크립트·검사·자산 생성 관례는 발견되지 않았으며 실제 .gitlab-ci.yml은 main/develop 브랜치의 전용 Runner에서 빌드 및 서버 디렉터리 복사를 수행함. 원격 서비스 배포는 이 세션에서 수행하지 않음. 저장소 변경·커밋·태그·원격 전송 없이 종료; 이번 세션에서 빌드/테스트는 실행하지 않음.</dd>
+<dt>수정 과제</dt><dd>⚠️ 오류 대응(자동 적재): 릴리즈 실패(). 필수 marketing:product-launch 및 technology:release-and-deployment 스킬과 Skill 도구를 제공된 도구 목록 및 로컬 스킬 경로에서 찾지 못해 요구 절차와 반환 형식을 확인할 수 없음. 전체 로컬 Git 이력(shallow 아님)에 태그가 없고 최근 60개 커밋에 릴리즈 메시지가 없으며, 제공된 GitHub Release 및 워크플로 목록도 비어 있음. package.json 및 package-lock.json의 루트 버전은 최초 커밋부터 0.0.0이지만 README.md와 docs/01-시작하기.md에는 0.0.1 초기 릴리스(2025-01-01)가 기록되어 있어 다음 버전 증가 및 커밋 관례를 확정할 수 없음. 버전 파일과 초기 릴리스 기록이 있으므로 절차 5의 이력 전무 skipped 조건에는 해당하지 않음. 별도 릴리즈 스크립트·검사·자산 생성 관례는 발견되지 않았으며 실제 .gitlab-ci.yml은 main/develop 브랜치의 전용 Runner에서 빌드 및 서버 디렉터리 복사를 수행함. 원격 서비스 배포는 이 세션에서 수행하지 않음. 저장소 변경·커밋·태그·원격 전송 없이 종료; 이번 세션에서 빌드/테스트는 실행하지 않음.</dd>
 </dl>
 
 ## 회차 이력

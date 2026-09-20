@@ -1,7 +1,7 @@
 ---
 title: "ai-admin — 자율 개선 이력"
 description: "ai-admin: 자율 개선 회차 32회, 릴리즈 15건. 최근 릴리즈 없음."
-last_modified_at: 2026-09-20 23:54:43 +0900
+last_modified_at: 2026-09-21 00:06:00 +0900
 ---
 {% raw %}
 <script type="application/ld+json">
@@ -18,13 +18,13 @@ last_modified_at: 2026-09-20 23:54:43 +0900
   "name": "hkjang",
   "url": "https://github.com/hkjang"
  },
- "dateModified": "2026-09-20T23:54:43+09:00"
+ "dateModified": "2026-09-21T00:06:00+09:00"
 }
 </script>
 
 # ai-admin
 
-<p class="tldr"><strong>요약.</strong> ai-admin: 자율 개선 회차 32회, 릴리즈 15건. 최근 릴리즈 없음. <span class="pill pill-failed" title="14일: 릴리즈 9, 실패 0, 경고 9, 회귀 0">건강 D</span> <span class="meta">14일: 릴리즈 9, 실패 0, 경고 9, 회귀 0</span></p>
+<p class="tldr"><strong>요약.</strong> ai-admin: 자율 개선 회차 32회, 릴리즈 15건. 최근 릴리즈 없음. <span class="pill pill-failed" title="14일: 릴리즈 9, 실패 0, 경고 8, 회귀 0">건강 D</span> <span class="meta">14일: 릴리즈 9, 실패 0, 경고 8, 회귀 0</span></p>
 
 <ul class="stats"><li><b>32</b><span>회차</span></li><li><b>1</b><span>프로젝트</span></li><li><b>13</b><span>배포 준비 완료</span></li><li><b>2</b><span>릴리즈 진행 중</span></li><li><b>2</b><span>병합 완료</span></li><li><b>10</b><span>검토 대기</span></li><li><b>2</b><span>검증 실패</span></li><li><b>0</b><span>변경 없음</span></li><li><b>3</b><span>실행 오류</span></li><li><b>$147.34</b><span>비용</span></li><li><b>5시간 7분</b><span>에이전트 시간</span></li></ul>
 
