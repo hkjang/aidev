@@ -1,15 +1,12 @@
 {
-  "verdict": "reject",
-  "reasons": [
-    "server/internal/docs/workbook.go:273 [P1] 숨긴 열의 min/max를 검증·제한하지 않고 범위 전체를 map으로 펼칩니다. presentations:write 사용자가 POST /api/v1/presentations/import에 작은 XLSX의 <col min=\"3\" max=\"4294967295\" hidden=\"1\"/>를 넣으면 셀 수와 무관하게 수십억 번 할당하여 서버 메모리 고갈을 유발할 수 있습니다. 업로드 바이트 제한과 동시 가져오기 예산은 이 단일 요청의 팽창을 막지 못합니다. 원본 함수를 추출한 안전한 축소 재현에서 2열·2행 입력에 max=1000000만으로 75,518,744바이트가 할당됐습니다. 실제 그리드 폭으로 범위를 제한하거나 범위 포함 여부만 검사해야 합니다.",
-    "server/internal/docs/workbook.go:136 [P2] 숨긴 행·열을 제거한 그리드를 원본 좌표 정보 없이 writeSheet에 넘겨 출처가 다른 셀을 가리킵니다. 신규 TestAHiddenColumnIsCutOutOfEveryRow는 원본 A·D열을 가져오면서 !A1:B3을 단언합니다(sheetconcealed_test.go:116). B열은 숨긴 코드 열이고 실제 가져온 D열은 출처 범위 밖입니다. 숨긴 중간 행도 같은 문제가 생깁니다. USER_GUIDE.md:278의 원본 파일 안 위치라는 설명과 어긋나므로 원본 좌표를 보존해 출처를 만들고 잘못된 단언을 수정해야 합니다."
-  ],
+  "verdict": "approve",
+  "reasons": [],
   "notes": [
-    "go test ./internal/docs ./internal/korean 통과. 신규 테스트는 Read를 호출하고 실제 소스·경고를 단언하므로 핵심 숨김 동작을 검증하지만, 과도한 열 범위는 검증하지 않습니다.",
-    "숨긴 행에만 값이 있는 숨긴 열을 경고 개수에서 제외하는 정책은 거절 사유로 보지 않았습니다. 다만 TestHiddenRowsAndColumnsAreCountedInOneLine에는 그 조건의 셀이 실제로 없어 구현 노트의 해당 검증 주장은 부정확합니다.",
-    "실제 Excel 생성 파일, 실서버 업로드, 전체 테스트는 이번 리뷰에서 실행하지 않았습니다. USER_GUIDE PDF도 갱신되지 않았습니다. 인증·마이그레이션·의존성·외부 상태 변경은 없고 코드 revert가 가능합니다.",
-    "부서 차단은 부여하지 않았습니다. 자원 고갈은 구체적인 구현 결함으로 수리 후 재검토할 사항입니다."
+    "숨김 열 범위 전체를 펼치던 메모리 문제는 제거됐고, 새 Read 통합 테스트가 숨김 제거·차트 판정·원본 열/행 좌표 및 거대 범위를 검증한다. docs/korean 테스트를 캐시 없이 통과했고 race 검사도 통과했다(docs race 결과는 캐시).",
+    "workbook.go의 placement 행 번호는 XML row 순서를 사용한다. 생략된 빈 행의 r 좌표를 잃는 한계는 main에도 존재하며 이번 변경의 회귀로 판단하지 않았다. A1 시작 범위도 기존 관례다.",
+    "계속 슬라이드의 출처 끝 행은 누적 원본 행으로 개선되지만 이를 직접 단언하는 테스트는 없다. 숨긴 행에만 값이 있는 열을 별도로 세지 않는 경고 정책은 코드와 테스트가 일치한다.",
+    "실제 Excel 생성 파일·실서버 e2e·전체 테스트는 이번 리뷰에서 실행하지 않았다. USER_GUIDE PDF는 갱신되지 않았다. 인증·권한·마이그레이션·의존성 변경이나 되돌릴 수 없는 외부 상태 변경은 없다."
   ],
-  "risk": "high",
+  "risk": "low",
   "blocking": []
 }
