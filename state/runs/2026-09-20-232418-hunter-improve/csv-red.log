@@ -1,0 +1,294 @@
+=== RUN   TestCSVSafeSharedVectors
+=== RUN   TestCSVSafeSharedVectors/empty
+=== RUN   TestCSVSafeSharedVectors/korean
+=== RUN   TestCSVSafeSharedVectors/cve
+=== RUN   TestCSVSafeSharedVectors/quoted
+=== RUN   TestCSVSafeSharedVectors/multiline
+=== RUN   TestCSVSafeSharedVectors/protected
+=== RUN   TestCSVSafeSharedVectors/space-text
+=== RUN   TestCSVSafeSharedVectors/space-tab-text
+=== RUN   TestCSVSafeSharedVectors/direct-=
+=== RUN   TestCSVSafeSharedVectors/space-=
+    report_csv_test.go:40: csvSafe(" =1+1") = " =1+1", want "' =1+1"
+=== RUN   TestCSVSafeSharedVectors/space-tab-=
+    report_csv_test.go:40: csvSafe(" \t=1+1") = " \t=1+1", want "' \t=1+1"
+=== RUN   TestCSVSafeSharedVectors/mixed-=
+    report_csv_test.go:40: csvSafe(" \x01\v\u00a0=1+1") = " \x01\v\u00a0=1+1", want "' \x01\v\u00a0=1+1"
+=== RUN   TestCSVSafeSharedVectors/direct-+
+=== RUN   TestCSVSafeSharedVectors/space-+
+    report_csv_test.go:40: csvSafe(" +1+1") = " +1+1", want "' +1+1"
+=== RUN   TestCSVSafeSharedVectors/space-tab-+
+    report_csv_test.go:40: csvSafe(" \t+1+1") = " \t+1+1", want "' \t+1+1"
+=== RUN   TestCSVSafeSharedVectors/mixed-+
+    report_csv_test.go:40: csvSafe(" \x01\v\u00a0+1+1") = " \x01\v\u00a0+1+1", want "' \x01\v\u00a0+1+1"
+=== RUN   TestCSVSafeSharedVectors/direct--
+=== RUN   TestCSVSafeSharedVectors/space--
+    report_csv_test.go:40: csvSafe(" -1+1") = " -1+1", want "' -1+1"
+=== RUN   TestCSVSafeSharedVectors/space-tab--
+    report_csv_test.go:40: csvSafe(" \t-1+1") = " \t-1+1", want "' \t-1+1"
+=== RUN   TestCSVSafeSharedVectors/mixed--
+    report_csv_test.go:40: csvSafe(" \x01\v\u00a0-1+1") = " \x01\v\u00a0-1+1", want "' \x01\v\u00a0-1+1"
+=== RUN   TestCSVSafeSharedVectors/direct-@
+=== RUN   TestCSVSafeSharedVectors/space-@
+    report_csv_test.go:40: csvSafe(" @1+1") = " @1+1", want "' @1+1"
+=== RUN   TestCSVSafeSharedVectors/space-tab-@
+    report_csv_test.go:40: csvSafe(" \t@1+1") = " \t@1+1", want "' \t@1+1"
+=== RUN   TestCSVSafeSharedVectors/mixed-@
+    report_csv_test.go:40: csvSafe(" \x01\v\u00a0@1+1") = " \x01\v\u00a0@1+1", want "' \x01\v\u00a0@1+1"
+=== RUN   TestCSVSafeSharedVectors/c0-00
+    report_csv_test.go:40: csvSafe("\x00=1+1") = "\x00=1+1", want "'\x00=1+1"
+=== RUN   TestCSVSafeSharedVectors/c0-01
+    report_csv_test.go:40: csvSafe("\x01=1+1") = "\x01=1+1", want "'\x01=1+1"
+=== RUN   TestCSVSafeSharedVectors/c0-02
+    report_csv_test.go:40: csvSafe("\x02=1+1") = "\x02=1+1", want "'\x02=1+1"
+=== RUN   TestCSVSafeSharedVectors/c0-03
+    report_csv_test.go:40: csvSafe("\x03=1+1") = "\x03=1+1", want "'\x03=1+1"
+=== RUN   TestCSVSafeSharedVectors/c0-04
+    report_csv_test.go:40: csvSafe("\x04=1+1") = "\x04=1+1", want "'\x04=1+1"
+=== RUN   TestCSVSafeSharedVectors/c0-05
+    report_csv_test.go:40: csvSafe("\x05=1+1") = "\x05=1+1", want "'\x05=1+1"
+=== RUN   TestCSVSafeSharedVectors/c0-06
+    report_csv_test.go:40: csvSafe("\x06=1+1") = "\x06=1+1", want "'\x06=1+1"
+=== RUN   TestCSVSafeSharedVectors/c0-07
+    report_csv_test.go:40: csvSafe("\a=1+1") = "\a=1+1", want "'\a=1+1"
+=== RUN   TestCSVSafeSharedVectors/c0-08
+    report_csv_test.go:40: csvSafe("\b=1+1") = "\b=1+1", want "'\b=1+1"
+=== RUN   TestCSVSafeSharedVectors/c0-09
+=== RUN   TestCSVSafeSharedVectors/c0-0a
+=== RUN   TestCSVSafeSharedVectors/c0-0b
+    report_csv_test.go:40: csvSafe("\v=1+1") = "\v=1+1", want "'\v=1+1"
+=== RUN   TestCSVSafeSharedVectors/c0-0c
+    report_csv_test.go:40: csvSafe("\f=1+1") = "\f=1+1", want "'\f=1+1"
+=== RUN   TestCSVSafeSharedVectors/c0-0d
+=== RUN   TestCSVSafeSharedVectors/c0-0e
+    report_csv_test.go:40: csvSafe("\x0e=1+1") = "\x0e=1+1", want "'\x0e=1+1"
+=== RUN   TestCSVSafeSharedVectors/c0-0f
+    report_csv_test.go:40: csvSafe("\x0f=1+1") = "\x0f=1+1", want "'\x0f=1+1"
+=== RUN   TestCSVSafeSharedVectors/c0-10
+    report_csv_test.go:40: csvSafe("\x10=1+1") = "\x10=1+1", want "'\x10=1+1"
+=== RUN   TestCSVSafeSharedVectors/c0-11
+    report_csv_test.go:40: csvSafe("\x11=1+1") = "\x11=1+1", want "'\x11=1+1"
+=== RUN   TestCSVSafeSharedVectors/c0-12
+    report_csv_test.go:40: csvSafe("\x12=1+1") = "\x12=1+1", want "'\x12=1+1"
+=== RUN   TestCSVSafeSharedVectors/c0-13
+    report_csv_test.go:40: csvSafe("\x13=1+1") = "\x13=1+1", want "'\x13=1+1"
+=== RUN   TestCSVSafeSharedVectors/c0-14
+    report_csv_test.go:40: csvSafe("\x14=1+1") = "\x14=1+1", want "'\x14=1+1"
+=== RUN   TestCSVSafeSharedVectors/c0-15
+    report_csv_test.go:40: csvSafe("\x15=1+1") = "\x15=1+1", want "'\x15=1+1"
+=== RUN   TestCSVSafeSharedVectors/c0-16
+    report_csv_test.go:40: csvSafe("\x16=1+1") = "\x16=1+1", want "'\x16=1+1"
+=== RUN   TestCSVSafeSharedVectors/c0-17
+    report_csv_test.go:40: csvSafe("\x17=1+1") = "\x17=1+1", want "'\x17=1+1"
+=== RUN   TestCSVSafeSharedVectors/c0-18
+    report_csv_test.go:40: csvSafe("\x18=1+1") = "\x18=1+1", want "'\x18=1+1"
+=== RUN   TestCSVSafeSharedVectors/c0-19
+    report_csv_test.go:40: csvSafe("\x19=1+1") = "\x19=1+1", want "'\x19=1+1"
+=== RUN   TestCSVSafeSharedVectors/c0-1a
+    report_csv_test.go:40: csvSafe("\x1a=1+1") = "\x1a=1+1", want "'\x1a=1+1"
+=== RUN   TestCSVSafeSharedVectors/c0-1b
+    report_csv_test.go:40: csvSafe("\x1b=1+1") = "\x1b=1+1", want "'\x1b=1+1"
+=== RUN   TestCSVSafeSharedVectors/c0-1c
+    report_csv_test.go:40: csvSafe("\x1c=1+1") = "\x1c=1+1", want "'\x1c=1+1"
+=== RUN   TestCSVSafeSharedVectors/c0-1d
+    report_csv_test.go:40: csvSafe("\x1d=1+1") = "\x1d=1+1", want "'\x1d=1+1"
+=== RUN   TestCSVSafeSharedVectors/c0-1e
+    report_csv_test.go:40: csvSafe("\x1e=1+1") = "\x1e=1+1", want "'\x1e=1+1"
+=== RUN   TestCSVSafeSharedVectors/c0-1f
+    report_csv_test.go:40: csvSafe("\x1f=1+1") = "\x1f=1+1", want "'\x1f=1+1"
+=== RUN   TestCSVSafeSharedVectors/tab
+=== RUN   TestCSVSafeSharedVectors/cr
+=== RUN   TestCSVSafeSharedVectors/lf
+=== RUN   TestCSVSafeSharedVectors/js-space-0020
+    report_csv_test.go:40: csvSafe(" =1+1") = " =1+1", want "' =1+1"
+=== RUN   TestCSVSafeSharedVectors/js-space-00a0
+    report_csv_test.go:40: csvSafe("\u00a0=1+1") = "\u00a0=1+1", want "'\u00a0=1+1"
+=== RUN   TestCSVSafeSharedVectors/js-space-1680
+    report_csv_test.go:40: csvSafe("\u1680=1+1") = "\u1680=1+1", want "'\u1680=1+1"
+=== RUN   TestCSVSafeSharedVectors/js-space-2000
+    report_csv_test.go:40: csvSafe("\u2000=1+1") = "\u2000=1+1", want "'\u2000=1+1"
+=== RUN   TestCSVSafeSharedVectors/js-space-2001
+    report_csv_test.go:40: csvSafe("\u2001=1+1") = "\u2001=1+1", want "'\u2001=1+1"
+=== RUN   TestCSVSafeSharedVectors/js-space-2002
+    report_csv_test.go:40: csvSafe("\u2002=1+1") = "\u2002=1+1", want "'\u2002=1+1"
+=== RUN   TestCSVSafeSharedVectors/js-space-2003
+    report_csv_test.go:40: csvSafe("\u2003=1+1") = "\u2003=1+1", want "'\u2003=1+1"
+=== RUN   TestCSVSafeSharedVectors/js-space-2004
+    report_csv_test.go:40: csvSafe("\u2004=1+1") = "\u2004=1+1", want "'\u2004=1+1"
+=== RUN   TestCSVSafeSharedVectors/js-space-2005
+    report_csv_test.go:40: csvSafe("\u2005=1+1") = "\u2005=1+1", want "'\u2005=1+1"
+=== RUN   TestCSVSafeSharedVectors/js-space-2006
+    report_csv_test.go:40: csvSafe("\u2006=1+1") = "\u2006=1+1", want "'\u2006=1+1"
+=== RUN   TestCSVSafeSharedVectors/js-space-2007
+    report_csv_test.go:40: csvSafe("\u2007=1+1") = "\u2007=1+1", want "'\u2007=1+1"
+=== RUN   TestCSVSafeSharedVectors/js-space-2008
+    report_csv_test.go:40: csvSafe("\u2008=1+1") = "\u2008=1+1", want "'\u2008=1+1"
+=== RUN   TestCSVSafeSharedVectors/js-space-2009
+    report_csv_test.go:40: csvSafe("\u2009=1+1") = "\u2009=1+1", want "'\u2009=1+1"
+=== RUN   TestCSVSafeSharedVectors/js-space-200a
+    report_csv_test.go:40: csvSafe("\u200a=1+1") = "\u200a=1+1", want "'\u200a=1+1"
+=== RUN   TestCSVSafeSharedVectors/js-space-2028
+    report_csv_test.go:40: csvSafe("\u2028=1+1") = "\u2028=1+1", want "'\u2028=1+1"
+=== RUN   TestCSVSafeSharedVectors/js-space-2029
+    report_csv_test.go:40: csvSafe("\u2029=1+1") = "\u2029=1+1", want "'\u2029=1+1"
+=== RUN   TestCSVSafeSharedVectors/js-space-202f
+    report_csv_test.go:40: csvSafe("\u202f=1+1") = "\u202f=1+1", want "'\u202f=1+1"
+=== RUN   TestCSVSafeSharedVectors/js-space-205f
+    report_csv_test.go:40: csvSafe("\u205f=1+1") = "\u205f=1+1", want "'\u205f=1+1"
+=== RUN   TestCSVSafeSharedVectors/js-space-3000
+    report_csv_test.go:40: csvSafe("\u3000=1+1") = "\u3000=1+1", want "'\u3000=1+1"
+=== RUN   TestCSVSafeSharedVectors/js-space-feff
+    report_csv_test.go:40: csvSafe("\ufeff=1+1") = "\ufeff=1+1", want "'\ufeff=1+1"
+=== RUN   TestCSVSafeSharedVectors/non-js-space-007f
+=== RUN   TestCSVSafeSharedVectors/non-js-space-0085
+=== RUN   TestCSVSafeSharedVectors/non-js-space-180e
+=== RUN   TestCSVSafeSharedVectors/non-js-space-200b
+--- FAIL: TestCSVSafeSharedVectors (0.00s)
+    --- PASS: TestCSVSafeSharedVectors/empty (0.00s)
+    --- PASS: TestCSVSafeSharedVectors/korean (0.00s)
+    --- PASS: TestCSVSafeSharedVectors/cve (0.00s)
+    --- PASS: TestCSVSafeSharedVectors/quoted (0.00s)
+    --- PASS: TestCSVSafeSharedVectors/multiline (0.00s)
+    --- PASS: TestCSVSafeSharedVectors/protected (0.00s)
+    --- PASS: TestCSVSafeSharedVectors/space-text (0.00s)
+    --- PASS: TestCSVSafeSharedVectors/space-tab-text (0.00s)
+    --- PASS: TestCSVSafeSharedVectors/direct-= (0.00s)
+    --- FAIL: TestCSVSafeSharedVectors/space-= (0.00s)
+    --- FAIL: TestCSVSafeSharedVectors/space-tab-= (0.00s)
+    --- FAIL: TestCSVSafeSharedVectors/mixed-= (0.00s)
+    --- PASS: TestCSVSafeSharedVectors/direct-+ (0.00s)
+    --- FAIL: TestCSVSafeSharedVectors/space-+ (0.00s)
+    --- FAIL: TestCSVSafeSharedVectors/space-tab-+ (0.00s)
+    --- FAIL: TestCSVSafeSharedVectors/mixed-+ (0.00s)
+    --- PASS: TestCSVSafeSharedVectors/direct-- (0.00s)
+    --- FAIL: TestCSVSafeSharedVectors/space-- (0.00s)
+    --- FAIL: TestCSVSafeSharedVectors/space-tab-- (0.00s)
+    --- FAIL: TestCSVSafeSharedVectors/mixed-- (0.00s)
+    --- PASS: TestCSVSafeSharedVectors/direct-@ (0.00s)
+    --- FAIL: TestCSVSafeSharedVectors/space-@ (0.00s)
+    --- FAIL: TestCSVSafeSharedVectors/space-tab-@ (0.00s)
+    --- FAIL: TestCSVSafeSharedVectors/mixed-@ (0.00s)
+    --- FAIL: TestCSVSafeSharedVectors/c0-00 (0.00s)
+    --- FAIL: TestCSVSafeSharedVectors/c0-01 (0.00s)
+    --- FAIL: TestCSVSafeSharedVectors/c0-02 (0.00s)
+    --- FAIL: TestCSVSafeSharedVectors/c0-03 (0.00s)
+    --- FAIL: TestCSVSafeSharedVectors/c0-04 (0.00s)
+    --- FAIL: TestCSVSafeSharedVectors/c0-05 (0.00s)
+    --- FAIL: TestCSVSafeSharedVectors/c0-06 (0.00s)
+    --- FAIL: TestCSVSafeSharedVectors/c0-07 (0.00s)
+    --- FAIL: TestCSVSafeSharedVectors/c0-08 (0.00s)
+    --- PASS: TestCSVSafeSharedVectors/c0-09 (0.00s)
+    --- PASS: TestCSVSafeSharedVectors/c0-0a (0.00s)
+    --- FAIL: TestCSVSafeSharedVectors/c0-0b (0.00s)
+    --- FAIL: TestCSVSafeSharedVectors/c0-0c (0.00s)
+    --- PASS: TestCSVSafeSharedVectors/c0-0d (0.00s)
+    --- FAIL: TestCSVSafeSharedVectors/c0-0e (0.00s)
+    --- FAIL: TestCSVSafeSharedVectors/c0-0f (0.00s)
+    --- FAIL: TestCSVSafeSharedVectors/c0-10 (0.00s)
+    --- FAIL: TestCSVSafeSharedVectors/c0-11 (0.00s)
+    --- FAIL: TestCSVSafeSharedVectors/c0-12 (0.00s)
+    --- FAIL: TestCSVSafeSharedVectors/c0-13 (0.00s)
+    --- FAIL: TestCSVSafeSharedVectors/c0-14 (0.00s)
+    --- FAIL: TestCSVSafeSharedVectors/c0-15 (0.00s)
+    --- FAIL: TestCSVSafeSharedVectors/c0-16 (0.00s)
+    --- FAIL: TestCSVSafeSharedVectors/c0-17 (0.00s)
+    --- FAIL: TestCSVSafeSharedVectors/c0-18 (0.00s)
+    --- FAIL: TestCSVSafeSharedVectors/c0-19 (0.00s)
+    --- FAIL: TestCSVSafeSharedVectors/c0-1a (0.00s)
+    --- FAIL: TestCSVSafeSharedVectors/c0-1b (0.00s)
+    --- FAIL: TestCSVSafeSharedVectors/c0-1c (0.00s)
+    --- FAIL: TestCSVSafeSharedVectors/c0-1d (0.00s)
+    --- FAIL: TestCSVSafeSharedVectors/c0-1e (0.00s)
+    --- FAIL: TestCSVSafeSharedVectors/c0-1f (0.00s)
+    --- PASS: TestCSVSafeSharedVectors/tab (0.00s)
+    --- PASS: TestCSVSafeSharedVectors/cr (0.00s)
+    --- PASS: TestCSVSafeSharedVectors/lf (0.00s)
+    --- FAIL: TestCSVSafeSharedVectors/js-space-0020 (0.00s)
+    --- FAIL: TestCSVSafeSharedVectors/js-space-00a0 (0.00s)
+    --- FAIL: TestCSVSafeSharedVectors/js-space-1680 (0.00s)
+    --- FAIL: TestCSVSafeSharedVectors/js-space-2000 (0.00s)
+    --- FAIL: TestCSVSafeSharedVectors/js-space-2001 (0.00s)
+    --- FAIL: TestCSVSafeSharedVectors/js-space-2002 (0.00s)
+    --- FAIL: TestCSVSafeSharedVectors/js-space-2003 (0.00s)
+    --- FAIL: TestCSVSafeSharedVectors/js-space-2004 (0.00s)
+    --- FAIL: TestCSVSafeSharedVectors/js-space-2005 (0.00s)
+    --- FAIL: TestCSVSafeSharedVectors/js-space-2006 (0.00s)
+    --- FAIL: TestCSVSafeSharedVectors/js-space-2007 (0.00s)
+    --- FAIL: TestCSVSafeSharedVectors/js-space-2008 (0.00s)
+    --- FAIL: TestCSVSafeSharedVectors/js-space-2009 (0.00s)
+    --- FAIL: TestCSVSafeSharedVectors/js-space-200a (0.00s)
+    --- FAIL: TestCSVSafeSharedVectors/js-space-2028 (0.00s)
+    --- FAIL: TestCSVSafeSharedVectors/js-space-2029 (0.00s)
+    --- FAIL: TestCSVSafeSharedVectors/js-space-202f (0.00s)
+    --- FAIL: TestCSVSafeSharedVectors/js-space-205f (0.00s)
+    --- FAIL: TestCSVSafeSharedVectors/js-space-3000 (0.00s)
+    --- FAIL: TestCSVSafeSharedVectors/js-space-feff (0.00s)
+    --- PASS: TestCSVSafeSharedVectors/non-js-space-007f (0.00s)
+    --- PASS: TestCSVSafeSharedVectors/non-js-space-0085 (0.00s)
+    --- PASS: TestCSVSafeSharedVectors/non-js-space-180e (0.00s)
+    --- PASS: TestCSVSafeSharedVectors/non-js-space-200b (0.00s)
+=== RUN   TestReportCSVFormulaSafety
+    report_csv_test.go:107: js-space-feff: CSV row ["73bc0bea-2ae3-48aa-a2f7-ea0e0bb01de4" "\ufeff=1+1" "8e2a9320-ba41-4fde-a2e6-2b1fc15dba94" "high" "candidate" "manual" "CVE-2026-1234" "0"], want ["73bc0bea-2ae3-48aa-a2f7-ea0e0bb01de4" "'\ufeff=1+1" "8e2a9320-ba41-4fde-a2e6-2b1fc15dba94" "high" "candidate" "manual" "CVE-2026-1234" "0"]
+    report_csv_test.go:107: js-space-3000: CSV row ["9be5f6ea-2e1f-40fc-b432-164e2c1b4f88" "\u3000=1+1" "8e2a9320-ba41-4fde-a2e6-2b1fc15dba94" "high" "candidate" "manual" "CVE-2026-1234" "0"], want ["9be5f6ea-2e1f-40fc-b432-164e2c1b4f88" "'\u3000=1+1" "8e2a9320-ba41-4fde-a2e6-2b1fc15dba94" "high" "candidate" "manual" "CVE-2026-1234" "0"]
+    report_csv_test.go:107: js-space-205f: CSV row ["f112448e-0514-4eeb-b91a-e6e24bf8401c" "\u205f=1+1" "8e2a9320-ba41-4fde-a2e6-2b1fc15dba94" "high" "candidate" "manual" "CVE-2026-1234" "0"], want ["f112448e-0514-4eeb-b91a-e6e24bf8401c" "'\u205f=1+1" "8e2a9320-ba41-4fde-a2e6-2b1fc15dba94" "high" "candidate" "manual" "CVE-2026-1234" "0"]
+    report_csv_test.go:107: js-space-202f: CSV row ["2e564ad1-9e56-442c-afe6-332a5d23f711" "\u202f=1+1" "8e2a9320-ba41-4fde-a2e6-2b1fc15dba94" "high" "candidate" "manual" "CVE-2026-1234" "0"], want ["2e564ad1-9e56-442c-afe6-332a5d23f711" "'\u202f=1+1" "8e2a9320-ba41-4fde-a2e6-2b1fc15dba94" "high" "candidate" "manual" "CVE-2026-1234" "0"]
+    report_csv_test.go:107: js-space-2029: CSV row ["8e03f8a7-7c2b-4140-9667-34f1b355cc2d" "\u2029=1+1" "8e2a9320-ba41-4fde-a2e6-2b1fc15dba94" "high" "candidate" "manual" "CVE-2026-1234" "0"], want ["8e03f8a7-7c2b-4140-9667-34f1b355cc2d" "'\u2029=1+1" "8e2a9320-ba41-4fde-a2e6-2b1fc15dba94" "high" "candidate" "manual" "CVE-2026-1234" "0"]
+    report_csv_test.go:107: js-space-2028: CSV row ["40583540-1d2f-40f3-8ee9-84d234fc1573" "\u2028=1+1" "8e2a9320-ba41-4fde-a2e6-2b1fc15dba94" "high" "candidate" "manual" "CVE-2026-1234" "0"], want ["40583540-1d2f-40f3-8ee9-84d234fc1573" "'\u2028=1+1" "8e2a9320-ba41-4fde-a2e6-2b1fc15dba94" "high" "candidate" "manual" "CVE-2026-1234" "0"]
+    report_csv_test.go:107: js-space-200a: CSV row ["88d45f9b-c271-47fb-a2be-0730241f1876" "\u200a=1+1" "8e2a9320-ba41-4fde-a2e6-2b1fc15dba94" "high" "candidate" "manual" "CVE-2026-1234" "0"], want ["88d45f9b-c271-47fb-a2be-0730241f1876" "'\u200a=1+1" "8e2a9320-ba41-4fde-a2e6-2b1fc15dba94" "high" "candidate" "manual" "CVE-2026-1234" "0"]
+    report_csv_test.go:107: js-space-2009: CSV row ["bdb2f04d-c801-4120-ad89-8430743c52fe" "\u2009=1+1" "8e2a9320-ba41-4fde-a2e6-2b1fc15dba94" "high" "candidate" "manual" "CVE-2026-1234" "0"], want ["bdb2f04d-c801-4120-ad89-8430743c52fe" "'\u2009=1+1" "8e2a9320-ba41-4fde-a2e6-2b1fc15dba94" "high" "candidate" "manual" "CVE-2026-1234" "0"]
+    report_csv_test.go:107: js-space-2008: CSV row ["a00dd570-ac42-490a-bcc4-081e5eabf761" "\u2008=1+1" "8e2a9320-ba41-4fde-a2e6-2b1fc15dba94" "high" "candidate" "manual" "CVE-2026-1234" "0"], want ["a00dd570-ac42-490a-bcc4-081e5eabf761" "'\u2008=1+1" "8e2a9320-ba41-4fde-a2e6-2b1fc15dba94" "high" "candidate" "manual" "CVE-2026-1234" "0"]
+    report_csv_test.go:107: js-space-2007: CSV row ["dd31b0a0-fd5f-4a60-a1d3-0da5c4743d84" "\u2007=1+1" "8e2a9320-ba41-4fde-a2e6-2b1fc15dba94" "high" "candidate" "manual" "CVE-2026-1234" "0"], want ["dd31b0a0-fd5f-4a60-a1d3-0da5c4743d84" "'\u2007=1+1" "8e2a9320-ba41-4fde-a2e6-2b1fc15dba94" "high" "candidate" "manual" "CVE-2026-1234" "0"]
+    report_csv_test.go:107: js-space-2006: CSV row ["2b325767-a138-47a9-b29e-07a54aad2d25" "\u2006=1+1" "8e2a9320-ba41-4fde-a2e6-2b1fc15dba94" "high" "candidate" "manual" "CVE-2026-1234" "0"], want ["2b325767-a138-47a9-b29e-07a54aad2d25" "'\u2006=1+1" "8e2a9320-ba41-4fde-a2e6-2b1fc15dba94" "high" "candidate" "manual" "CVE-2026-1234" "0"]
+    report_csv_test.go:107: js-space-2005: CSV row ["7dbf7569-e122-4aab-80e2-2853240708e8" "\u2005=1+1" "8e2a9320-ba41-4fde-a2e6-2b1fc15dba94" "high" "candidate" "manual" "CVE-2026-1234" "0"], want ["7dbf7569-e122-4aab-80e2-2853240708e8" "'\u2005=1+1" "8e2a9320-ba41-4fde-a2e6-2b1fc15dba94" "high" "candidate" "manual" "CVE-2026-1234" "0"]
+    report_csv_test.go:107: js-space-2004: CSV row ["166b6296-d206-4308-b996-f581d3664103" "\u2004=1+1" "8e2a9320-ba41-4fde-a2e6-2b1fc15dba94" "high" "candidate" "manual" "CVE-2026-1234" "0"], want ["166b6296-d206-4308-b996-f581d3664103" "'\u2004=1+1" "8e2a9320-ba41-4fde-a2e6-2b1fc15dba94" "high" "candidate" "manual" "CVE-2026-1234" "0"]
+    report_csv_test.go:107: js-space-2003: CSV row ["7f0b0b5b-e892-4897-b58a-065a663c3682" "\u2003=1+1" "8e2a9320-ba41-4fde-a2e6-2b1fc15dba94" "high" "candidate" "manual" "CVE-2026-1234" "0"], want ["7f0b0b5b-e892-4897-b58a-065a663c3682" "'\u2003=1+1" "8e2a9320-ba41-4fde-a2e6-2b1fc15dba94" "high" "candidate" "manual" "CVE-2026-1234" "0"]
+    report_csv_test.go:107: js-space-2002: CSV row ["0dd55913-f75a-4ae5-a271-01374a472a0c" "\u2002=1+1" "8e2a9320-ba41-4fde-a2e6-2b1fc15dba94" "high" "candidate" "manual" "CVE-2026-1234" "0"], want ["0dd55913-f75a-4ae5-a271-01374a472a0c" "'\u2002=1+1" "8e2a9320-ba41-4fde-a2e6-2b1fc15dba94" "high" "candidate" "manual" "CVE-2026-1234" "0"]
+    report_csv_test.go:107: js-space-2001: CSV row ["3233e351-a7fa-4579-bba6-f317bf89106e" "\u2001=1+1" "8e2a9320-ba41-4fde-a2e6-2b1fc15dba94" "high" "candidate" "manual" "CVE-2026-1234" "0"], want ["3233e351-a7fa-4579-bba6-f317bf89106e" "'\u2001=1+1" "8e2a9320-ba41-4fde-a2e6-2b1fc15dba94" "high" "candidate" "manual" "CVE-2026-1234" "0"]
+    report_csv_test.go:107: js-space-2000: CSV row ["7358f3ab-c8f3-4a45-812d-77cc39ad74c4" "\u2000=1+1" "8e2a9320-ba41-4fde-a2e6-2b1fc15dba94" "high" "candidate" "manual" "CVE-2026-1234" "0"], want ["7358f3ab-c8f3-4a45-812d-77cc39ad74c4" "'\u2000=1+1" "8e2a9320-ba41-4fde-a2e6-2b1fc15dba94" "high" "candidate" "manual" "CVE-2026-1234" "0"]
+    report_csv_test.go:107: js-space-1680: CSV row ["ac174656-2547-4e18-861a-7a279e4b1473" "\u1680=1+1" "8e2a9320-ba41-4fde-a2e6-2b1fc15dba94" "high" "candidate" "manual" "CVE-2026-1234" "0"], want ["ac174656-2547-4e18-861a-7a279e4b1473" "'\u1680=1+1" "8e2a9320-ba41-4fde-a2e6-2b1fc15dba94" "high" "candidate" "manual" "CVE-2026-1234" "0"]
+    report_csv_test.go:107: js-space-00a0: CSV row ["2d7bd94f-8f21-4036-9fbc-b74dc4551942" "\u00a0=1+1" "8e2a9320-ba41-4fde-a2e6-2b1fc15dba94" "high" "candidate" "manual" "CVE-2026-1234" "0"], want ["2d7bd94f-8f21-4036-9fbc-b74dc4551942" "'\u00a0=1+1" "8e2a9320-ba41-4fde-a2e6-2b1fc15dba94" "high" "candidate" "manual" "CVE-2026-1234" "0"]
+    report_csv_test.go:107: js-space-0020: CSV row ["a9adee06-9399-4747-88a0-d3ad78ae88ae" " =1+1" "8e2a9320-ba41-4fde-a2e6-2b1fc15dba94" "high" "candidate" "manual" "CVE-2026-1234" "0"], want ["a9adee06-9399-4747-88a0-d3ad78ae88ae" "' =1+1" "8e2a9320-ba41-4fde-a2e6-2b1fc15dba94" "high" "candidate" "manual" "CVE-2026-1234" "0"]
+    report_csv_test.go:107: c0-1f: CSV row ["faf7663c-ef52-427b-a5a1-c1dd1d5f5f17" "\x1f=1+1" "8e2a9320-ba41-4fde-a2e6-2b1fc15dba94" "high" "candidate" "manual" "CVE-2026-1234" "0"], want ["faf7663c-ef52-427b-a5a1-c1dd1d5f5f17" "'\x1f=1+1" "8e2a9320-ba41-4fde-a2e6-2b1fc15dba94" "high" "candidate" "manual" "CVE-2026-1234" "0"]
+    report_csv_test.go:107: c0-1e: CSV row ["566e560e-ce83-4206-8407-be741b15c81b" "\x1e=1+1" "8e2a9320-ba41-4fde-a2e6-2b1fc15dba94" "high" "candidate" "manual" "CVE-2026-1234" "0"], want ["566e560e-ce83-4206-8407-be741b15c81b" "'\x1e=1+1" "8e2a9320-ba41-4fde-a2e6-2b1fc15dba94" "high" "candidate" "manual" "CVE-2026-1234" "0"]
+    report_csv_test.go:107: c0-1d: CSV row ["2a778848-b22a-446e-bf35-98aad4cd4690" "\x1d=1+1" "8e2a9320-ba41-4fde-a2e6-2b1fc15dba94" "high" "candidate" "manual" "CVE-2026-1234" "0"], want ["2a778848-b22a-446e-bf35-98aad4cd4690" "'\x1d=1+1" "8e2a9320-ba41-4fde-a2e6-2b1fc15dba94" "high" "candidate" "manual" "CVE-2026-1234" "0"]
+    report_csv_test.go:107: c0-1c: CSV row ["e4257d32-f159-4229-805e-9af3f7fcce0c" "\x1c=1+1" "8e2a9320-ba41-4fde-a2e6-2b1fc15dba94" "high" "candidate" "manual" "CVE-2026-1234" "0"], want ["e4257d32-f159-4229-805e-9af3f7fcce0c" "'\x1c=1+1" "8e2a9320-ba41-4fde-a2e6-2b1fc15dba94" "high" "candidate" "manual" "CVE-2026-1234" "0"]
+    report_csv_test.go:107: c0-1b: CSV row ["6214b7cb-7d05-45f1-af36-75fc2abefc4f" "\x1b=1+1" "8e2a9320-ba41-4fde-a2e6-2b1fc15dba94" "high" "candidate" "manual" "CVE-2026-1234" "0"], want ["6214b7cb-7d05-45f1-af36-75fc2abefc4f" "'\x1b=1+1" "8e2a9320-ba41-4fde-a2e6-2b1fc15dba94" "high" "candidate" "manual" "CVE-2026-1234" "0"]
+    report_csv_test.go:107: c0-1a: CSV row ["99f4113c-bfeb-48bc-bd29-78d88a554e2e" "\x1a=1+1" "8e2a9320-ba41-4fde-a2e6-2b1fc15dba94" "high" "candidate" "manual" "CVE-2026-1234" "0"], want ["99f4113c-bfeb-48bc-bd29-78d88a554e2e" "'\x1a=1+1" "8e2a9320-ba41-4fde-a2e6-2b1fc15dba94" "high" "candidate" "manual" "CVE-2026-1234" "0"]
+    report_csv_test.go:107: c0-19: CSV row ["03ca8d4d-d21a-4413-8fa3-ad42c300cdf6" "\x19=1+1" "8e2a9320-ba41-4fde-a2e6-2b1fc15dba94" "high" "candidate" "manual" "CVE-2026-1234" "0"], want ["03ca8d4d-d21a-4413-8fa3-ad42c300cdf6" "'\x19=1+1" "8e2a9320-ba41-4fde-a2e6-2b1fc15dba94" "high" "candidate" "manual" "CVE-2026-1234" "0"]
+    report_csv_test.go:107: c0-18: CSV row ["2cb8f512-8452-469d-89b2-527f6114f347" "\x18=1+1" "8e2a9320-ba41-4fde-a2e6-2b1fc15dba94" "high" "candidate" "manual" "CVE-2026-1234" "0"], want ["2cb8f512-8452-469d-89b2-527f6114f347" "'\x18=1+1" "8e2a9320-ba41-4fde-a2e6-2b1fc15dba94" "high" "candidate" "manual" "CVE-2026-1234" "0"]
+    report_csv_test.go:107: c0-17: CSV row ["f21de474-6632-41ed-8575-b35c0878a87c" "\x17=1+1" "8e2a9320-ba41-4fde-a2e6-2b1fc15dba94" "high" "candidate" "manual" "CVE-2026-1234" "0"], want ["f21de474-6632-41ed-8575-b35c0878a87c" "'\x17=1+1" "8e2a9320-ba41-4fde-a2e6-2b1fc15dba94" "high" "candidate" "manual" "CVE-2026-1234" "0"]
+    report_csv_test.go:107: c0-16: CSV row ["4ecc7eda-a1e7-4632-869c-450680436b3c" "\x16=1+1" "8e2a9320-ba41-4fde-a2e6-2b1fc15dba94" "high" "candidate" "manual" "CVE-2026-1234" "0"], want ["4ecc7eda-a1e7-4632-869c-450680436b3c" "'\x16=1+1" "8e2a9320-ba41-4fde-a2e6-2b1fc15dba94" "high" "candidate" "manual" "CVE-2026-1234" "0"]
+    report_csv_test.go:107: c0-15: CSV row ["518e9c65-db78-46bc-90d2-c5c1407be33e" "\x15=1+1" "8e2a9320-ba41-4fde-a2e6-2b1fc15dba94" "high" "candidate" "manual" "CVE-2026-1234" "0"], want ["518e9c65-db78-46bc-90d2-c5c1407be33e" "'\x15=1+1" "8e2a9320-ba41-4fde-a2e6-2b1fc15dba94" "high" "candidate" "manual" "CVE-2026-1234" "0"]
+    report_csv_test.go:107: c0-14: CSV row ["a5dfdd62-6d56-4005-813c-12343463d65f" "\x14=1+1" "8e2a9320-ba41-4fde-a2e6-2b1fc15dba94" "high" "candidate" "manual" "CVE-2026-1234" "0"], want ["a5dfdd62-6d56-4005-813c-12343463d65f" "'\x14=1+1" "8e2a9320-ba41-4fde-a2e6-2b1fc15dba94" "high" "candidate" "manual" "CVE-2026-1234" "0"]
+    report_csv_test.go:107: c0-13: CSV row ["3b77e016-0ec7-4901-b621-b497f37985e7" "\x13=1+1" "8e2a9320-ba41-4fde-a2e6-2b1fc15dba94" "high" "candidate" "manual" "CVE-2026-1234" "0"], want ["3b77e016-0ec7-4901-b621-b497f37985e7" "'\x13=1+1" "8e2a9320-ba41-4fde-a2e6-2b1fc15dba94" "high" "candidate" "manual" "CVE-2026-1234" "0"]
+    report_csv_test.go:107: c0-12: CSV row ["7eea18a3-100c-4004-a3f1-3dac89d74419" "\x12=1+1" "8e2a9320-ba41-4fde-a2e6-2b1fc15dba94" "high" "candidate" "manual" "CVE-2026-1234" "0"], want ["7eea18a3-100c-4004-a3f1-3dac89d74419" "'\x12=1+1" "8e2a9320-ba41-4fde-a2e6-2b1fc15dba94" "high" "candidate" "manual" "CVE-2026-1234" "0"]
+    report_csv_test.go:107: c0-11: CSV row ["e81f2b18-57e7-4525-bcfb-4ad5ae748c93" "\x11=1+1" "8e2a9320-ba41-4fde-a2e6-2b1fc15dba94" "high" "candidate" "manual" "CVE-2026-1234" "0"], want ["e81f2b18-57e7-4525-bcfb-4ad5ae748c93" "'\x11=1+1" "8e2a9320-ba41-4fde-a2e6-2b1fc15dba94" "high" "candidate" "manual" "CVE-2026-1234" "0"]
+    report_csv_test.go:107: c0-10: CSV row ["6b5c0b2d-b89b-42ae-8a02-9bc84e085aa8" "\x10=1+1" "8e2a9320-ba41-4fde-a2e6-2b1fc15dba94" "high" "candidate" "manual" "CVE-2026-1234" "0"], want ["6b5c0b2d-b89b-42ae-8a02-9bc84e085aa8" "'\x10=1+1" "8e2a9320-ba41-4fde-a2e6-2b1fc15dba94" "high" "candidate" "manual" "CVE-2026-1234" "0"]
+    report_csv_test.go:107: c0-0f: CSV row ["57e6dc23-736b-4341-9410-812f2ee1ef91" "\x0f=1+1" "8e2a9320-ba41-4fde-a2e6-2b1fc15dba94" "high" "candidate" "manual" "CVE-2026-1234" "0"], want ["57e6dc23-736b-4341-9410-812f2ee1ef91" "'\x0f=1+1" "8e2a9320-ba41-4fde-a2e6-2b1fc15dba94" "high" "candidate" "manual" "CVE-2026-1234" "0"]
+    report_csv_test.go:107: c0-0e: CSV row ["7b127dc1-5bda-4cf7-867d-192d68abef5b" "\x0e=1+1" "8e2a9320-ba41-4fde-a2e6-2b1fc15dba94" "high" "candidate" "manual" "CVE-2026-1234" "0"], want ["7b127dc1-5bda-4cf7-867d-192d68abef5b" "'\x0e=1+1" "8e2a9320-ba41-4fde-a2e6-2b1fc15dba94" "high" "candidate" "manual" "CVE-2026-1234" "0"]
+    report_csv_test.go:107: c0-0c: CSV row ["67599254-9d96-4470-b02d-e2392ec7e942" "\f=1+1" "8e2a9320-ba41-4fde-a2e6-2b1fc15dba94" "high" "candidate" "manual" "CVE-2026-1234" "0"], want ["67599254-9d96-4470-b02d-e2392ec7e942" "'\f=1+1" "8e2a9320-ba41-4fde-a2e6-2b1fc15dba94" "high" "candidate" "manual" "CVE-2026-1234" "0"]
+    report_csv_test.go:107: c0-0b: CSV row ["7822f17c-aca0-4637-be86-2ed61a913d16" "\v=1+1" "8e2a9320-ba41-4fde-a2e6-2b1fc15dba94" "high" "candidate" "manual" "CVE-2026-1234" "0"], want ["7822f17c-aca0-4637-be86-2ed61a913d16" "'\v=1+1" "8e2a9320-ba41-4fde-a2e6-2b1fc15dba94" "high" "candidate" "manual" "CVE-2026-1234" "0"]
+    report_csv_test.go:107: c0-08: CSV row ["6faaf4a7-3407-4322-8004-45573ed0423e" "\b=1+1" "8e2a9320-ba41-4fde-a2e6-2b1fc15dba94" "high" "candidate" "manual" "CVE-2026-1234" "0"], want ["6faaf4a7-3407-4322-8004-45573ed0423e" "'\b=1+1" "8e2a9320-ba41-4fde-a2e6-2b1fc15dba94" "high" "candidate" "manual" "CVE-2026-1234" "0"]
+    report_csv_test.go:107: c0-07: CSV row ["cda74726-e579-431d-a0d5-5445a6c15d06" "\a=1+1" "8e2a9320-ba41-4fde-a2e6-2b1fc15dba94" "high" "candidate" "manual" "CVE-2026-1234" "0"], want ["cda74726-e579-431d-a0d5-5445a6c15d06" "'\a=1+1" "8e2a9320-ba41-4fde-a2e6-2b1fc15dba94" "high" "candidate" "manual" "CVE-2026-1234" "0"]
+    report_csv_test.go:107: c0-06: CSV row ["0cbfc9c1-d77b-48ae-a879-e2eb414c6e32" "\x06=1+1" "8e2a9320-ba41-4fde-a2e6-2b1fc15dba94" "high" "candidate" "manual" "CVE-2026-1234" "0"], want ["0cbfc9c1-d77b-48ae-a879-e2eb414c6e32" "'\x06=1+1" "8e2a9320-ba41-4fde-a2e6-2b1fc15dba94" "high" "candidate" "manual" "CVE-2026-1234" "0"]
+    report_csv_test.go:107: c0-05: CSV row ["544fbcf9-db99-436a-b804-49e837020bdf" "\x05=1+1" "8e2a9320-ba41-4fde-a2e6-2b1fc15dba94" "high" "candidate" "manual" "CVE-2026-1234" "0"], want ["544fbcf9-db99-436a-b804-49e837020bdf" "'\x05=1+1" "8e2a9320-ba41-4fde-a2e6-2b1fc15dba94" "high" "candidate" "manual" "CVE-2026-1234" "0"]
+    report_csv_test.go:107: c0-04: CSV row ["4c0fb6c6-0b61-4538-ad1b-0264ea887c48" "\x04=1+1" "8e2a9320-ba41-4fde-a2e6-2b1fc15dba94" "high" "candidate" "manual" "CVE-2026-1234" "0"], want ["4c0fb6c6-0b61-4538-ad1b-0264ea887c48" "'\x04=1+1" "8e2a9320-ba41-4fde-a2e6-2b1fc15dba94" "high" "candidate" "manual" "CVE-2026-1234" "0"]
+    report_csv_test.go:107: c0-03: CSV row ["2d4cc60b-1ea5-4e46-941a-388ce82416e5" "\x03=1+1" "8e2a9320-ba41-4fde-a2e6-2b1fc15dba94" "high" "candidate" "manual" "CVE-2026-1234" "0"], want ["2d4cc60b-1ea5-4e46-941a-388ce82416e5" "'\x03=1+1" "8e2a9320-ba41-4fde-a2e6-2b1fc15dba94" "high" "candidate" "manual" "CVE-2026-1234" "0"]
+    report_csv_test.go:107: c0-02: CSV row ["a8412946-1572-4801-8656-ba799f4be20e" "\x02=1+1" "8e2a9320-ba41-4fde-a2e6-2b1fc15dba94" "high" "candidate" "manual" "CVE-2026-1234" "0"], want ["a8412946-1572-4801-8656-ba799f4be20e" "'\x02=1+1" "8e2a9320-ba41-4fde-a2e6-2b1fc15dba94" "high" "candidate" "manual" "CVE-2026-1234" "0"]
+    report_csv_test.go:107: c0-01: CSV row ["d34b4abf-9e4e-4854-82ec-e3de4e3c8377" "\x01=1+1" "8e2a9320-ba41-4fde-a2e6-2b1fc15dba94" "high" "candidate" "manual" "CVE-2026-1234" "0"], want ["d34b4abf-9e4e-4854-82ec-e3de4e3c8377" "'\x01=1+1" "8e2a9320-ba41-4fde-a2e6-2b1fc15dba94" "high" "candidate" "manual" "CVE-2026-1234" "0"]
+    report_csv_test.go:107: mixed-@: CSV row ["25cf744e-be3d-4a2b-b046-82f895c26a7f" " \x01\v\u00a0@1+1" "8e2a9320-ba41-4fde-a2e6-2b1fc15dba94" "high" "candidate" "manual" "CVE-2026-1234" "0"], want ["25cf744e-be3d-4a2b-b046-82f895c26a7f" "' \x01\v\u00a0@1+1" "8e2a9320-ba41-4fde-a2e6-2b1fc15dba94" "high" "candidate" "manual" "CVE-2026-1234" "0"]
+    report_csv_test.go:107: space-tab-@: CSV row ["8f408c43-94fb-4e01-89e5-1e70965e2fad" " \t@1+1" "8e2a9320-ba41-4fde-a2e6-2b1fc15dba94" "high" "candidate" "manual" "CVE-2026-1234" "0"], want ["8f408c43-94fb-4e01-89e5-1e70965e2fad" "' \t@1+1" "8e2a9320-ba41-4fde-a2e6-2b1fc15dba94" "high" "candidate" "manual" "CVE-2026-1234" "0"]
+    report_csv_test.go:107: space-@: CSV row ["6b85fd9d-c7ac-4b36-96b0-85fd17ab95c8" " @1+1" "8e2a9320-ba41-4fde-a2e6-2b1fc15dba94" "high" "candidate" "manual" "CVE-2026-1234" "0"], want ["6b85fd9d-c7ac-4b36-96b0-85fd17ab95c8" "' @1+1" "8e2a9320-ba41-4fde-a2e6-2b1fc15dba94" "high" "candidate" "manual" "CVE-2026-1234" "0"]
+    report_csv_test.go:107: mixed--: CSV row ["47a66013-0f55-4cb7-bea6-8740e381fc4b" " \x01\v\u00a0-1+1" "8e2a9320-ba41-4fde-a2e6-2b1fc15dba94" "high" "candidate" "manual" "CVE-2026-1234" "0"], want ["47a66013-0f55-4cb7-bea6-8740e381fc4b" "' \x01\v\u00a0-1+1" "8e2a9320-ba41-4fde-a2e6-2b1fc15dba94" "high" "candidate" "manual" "CVE-2026-1234" "0"]
+    report_csv_test.go:107: space-tab--: CSV row ["fa3e846f-0739-4cd4-8169-af3f631b0907" " \t-1+1" "8e2a9320-ba41-4fde-a2e6-2b1fc15dba94" "high" "candidate" "manual" "CVE-2026-1234" "0"], want ["fa3e846f-0739-4cd4-8169-af3f631b0907" "' \t-1+1" "8e2a9320-ba41-4fde-a2e6-2b1fc15dba94" "high" "candidate" "manual" "CVE-2026-1234" "0"]
+    report_csv_test.go:107: space--: CSV row ["224567e5-a74f-4bfd-aab9-f59cf34e5201" " -1+1" "8e2a9320-ba41-4fde-a2e6-2b1fc15dba94" "high" "candidate" "manual" "CVE-2026-1234" "0"], want ["224567e5-a74f-4bfd-aab9-f59cf34e5201" "' -1+1" "8e2a9320-ba41-4fde-a2e6-2b1fc15dba94" "high" "candidate" "manual" "CVE-2026-1234" "0"]
+    report_csv_test.go:107: mixed-+: CSV row ["9906b486-115a-4981-9131-111d4d216ee3" " \x01\v\u00a0+1+1" "8e2a9320-ba41-4fde-a2e6-2b1fc15dba94" "high" "candidate" "manual" "CVE-2026-1234" "0"], want ["9906b486-115a-4981-9131-111d4d216ee3" "' \x01\v\u00a0+1+1" "8e2a9320-ba41-4fde-a2e6-2b1fc15dba94" "high" "candidate" "manual" "CVE-2026-1234" "0"]
+    report_csv_test.go:107: space-tab-+: CSV row ["7184c7f7-2f4f-4a54-b676-fc1da1b5dc5d" " \t+1+1" "8e2a9320-ba41-4fde-a2e6-2b1fc15dba94" "high" "candidate" "manual" "CVE-2026-1234" "0"], want ["7184c7f7-2f4f-4a54-b676-fc1da1b5dc5d" "' \t+1+1" "8e2a9320-ba41-4fde-a2e6-2b1fc15dba94" "high" "candidate" "manual" "CVE-2026-1234" "0"]
+    report_csv_test.go:107: space-+: CSV row ["53894fd0-05d9-4301-8d9e-c572fab1f3dc" " +1+1" "8e2a9320-ba41-4fde-a2e6-2b1fc15dba94" "high" "candidate" "manual" "CVE-2026-1234" "0"], want ["53894fd0-05d9-4301-8d9e-c572fab1f3dc" "' +1+1" "8e2a9320-ba41-4fde-a2e6-2b1fc15dba94" "high" "candidate" "manual" "CVE-2026-1234" "0"]
+    report_csv_test.go:107: mixed-=: CSV row ["5721abbd-a238-4563-b2a2-6341d599e0e3" " \x01\v\u00a0=1+1" "8e2a9320-ba41-4fde-a2e6-2b1fc15dba94" "high" "candidate" "manual" "CVE-2026-1234" "0"], want ["5721abbd-a238-4563-b2a2-6341d599e0e3" "' \x01\v\u00a0=1+1" "8e2a9320-ba41-4fde-a2e6-2b1fc15dba94" "high" "candidate" "manual" "CVE-2026-1234" "0"]
+    report_csv_test.go:107: space-tab-=: CSV row ["4a647df9-088e-4837-971a-ef372eefb8f7" " \t=1+1" "8e2a9320-ba41-4fde-a2e6-2b1fc15dba94" "high" "candidate" "manual" "CVE-2026-1234" "0"], want ["4a647df9-088e-4837-971a-ef372eefb8f7" "' \t=1+1" "8e2a9320-ba41-4fde-a2e6-2b1fc15dba94" "high" "candidate" "manual" "CVE-2026-1234" "0"]
+    report_csv_test.go:107: space-=: CSV row ["be642e7d-b676-4027-8b60-a9678eebe401" " =1+1" "8e2a9320-ba41-4fde-a2e6-2b1fc15dba94" "high" "candidate" "manual" "CVE-2026-1234" "0"], want ["be642e7d-b676-4027-8b60-a9678eebe401" "' =1+1" "8e2a9320-ba41-4fde-a2e6-2b1fc15dba94" "high" "candidate" "manual" "CVE-2026-1234" "0"]
+--- FAIL: TestReportCSVFormulaSafety (1.93s)
+FAIL
+FAIL	github.com/hkjang/hunter/internal/app	1.957s
+FAIL
