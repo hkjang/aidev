@@ -1,0 +1,128 @@
+[
+  {
+    "title": "internal/config 나머지 순수 함수 단위 테스트",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "재확인: config_test.go는 서버 timeout 3개뿐. Load+t.Setenv 경유 정규화·기본값 검사. 차선 후보.",
+    "updated": "2026-09-21"
+  },
+  {
+    "title": "gorilla/mux 405 응답에 Allow 헤더 부재",
+    "value": 1,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "routes에 Methods만 있으며 MethodNotAllowedHandler 없음. 라우터 전체 영향으로 후순위. 이번 런타임 405 미재현.",
+    "updated": "2026-09-21"
+  },
+  {
+    "title": "동기 슬롯 대기열의 메모리 상한",
+    "value": 3,
+    "risk": 3,
+    "size": "M",
+    "status": "pending",
+    "note": "readProcessInput에서 io.ReadAll 후 ProcessSync/acquireSyncSlot 진입. 본문 읽기 전 admission 설계 필요, 이번 저위험 범위 제외.",
+    "updated": "2026-09-21"
+  },
+  {
+    "title": "업로드 파일명 유니코드 정규화(NFC)",
+    "value": 2,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "attachment.go는 unsafe rune 제거와 UTF-8 안전 절단만 수행. 실제 파일 재조회 장애는 미확인. x/text 직접 의존화까지 고려해야 하므로 후순위.",
+    "updated": "2026-09-21"
+  },
+  {
+    "title": "종료 시 interrupted로 표시된 job의 재개",
+    "value": 3,
+    "risk": 3,
+    "size": "M",
+    "status": "pending",
+    "note": "load는 queued/running을 failed로 전환. 옵션 영속과 재시도 정책 선행이 필요하여 이번 제외.",
+    "updated": "2026-09-21"
+  },
+  {
+    "title": "TestConnection 성공 메시지에 32KB 응답 본문 그대로 노출",
+    "value": 1,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "TestConnection은 32KB LimitReader 결과를 성공 Message로 반환. 요약은 PII 스크럽이 아니며 보안 해결로 표현하지 않을 것.",
+    "updated": "2026-09-21"
+  },
+  {
+    "title": "runJob이 Save 실패를 조용히 버림",
+    "value": 2,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "runJob/markJobInterrupted의 _ = Save 유지. Store.Save는 맵을 먼저 변경. 로그만 추가하면 가치 낮고 일관성 정책 변경은 별도 설계 필요.",
+    "updated": "2026-09-21"
+  },
+  {
+    "title": "비동기 job의 ParseOptions를 job.json에 영속",
+    "value": 2,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "JobRecord에 Options 없음, CreateJob→startJobRunner→runJob 인자로 전달. 아직 재개 기능이 없어 저장 계약 확장 우선순위 낮음.",
+    "updated": "2026-09-21"
+  },
+  {
+    "title": "업스트림 진단 문자열 절단의 UTF-8 경계 보존",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "이번 선택. 실제 바이너리+HTTP 업스트림으로 연결 점검/마스킹 오류 detail 및 성공 debug.body의 U+FFFD 손상을 재현. 공통 truncateString에서 바이트 상한을 유지하며 경계 보존.",
+    "updated": "2026-09-21"
+  },
+  {
+    "title": "설정 시간·크기 단위 변환의 정수 오버플로 방어",
+    "value": 2,
+    "risk": 2,
+    "size": "M",
+    "status": "pending",
+    "note": "새 후보: Load/envSeconds가 Atoi 양수 후 time.Duration*Second/Hour, int64*MiB 변환의 상한을 검사하지 않음. 극단적인 운영자 설정에서 음수·wrap 가능성은 코드 근거이며 실제 런타임 영향은 미확인. 여러 설정의 fallback 정책을 함께 정의해야 함.",
+    "updated": "2026-09-21"
+  },
+  {
+    "title": "이력 조회에서 전체 job 복제 전 상위 limit 선별",
+    "value": 2,
+    "risk": 2,
+    "size": "M",
+    "status": "pending",
+    "note": "새 후보: Store.List는 모든 job을 cloneJob/정렬한 뒤 limit으로 자름. HTTP 100개 제한이 내부 메모리·정렬 비용을 제한하지 않음. 많은 job 기준 벤치마크와 동률 순서 계약이 선행, 현재 성능 병목은 미측정.",
+    "updated": "2026-09-21"
+  },
+  {
+    "title": "job.json을 임시 파일 + os.Rename으로 원자적으로 기록",
+    "value": 3,
+    "risk": 1,
+    "size": "S",
+    "status": "done",
+    "note": "이전 성공 기록 및 persistLocked의 job.json.tmp→Rename 재확인. 재선정 금지.",
+    "updated": "2026-09-21"
+  },
+  {
+    "title": "/v1/jobs/{job_id}/result에 HEAD 메서드 허용",
+    "value": 3,
+    "risk": 1,
+    "size": "S",
+    "status": "done",
+    "note": "routes의 GET,HEAD 및 TestJobResultAnswersHeadProbes 확인. 재선정 금지.",
+    "updated": "2026-09-21"
+  },
+  {
+    "title": "재기동 후 미완료 job의 잔여 결과 파일 다운로드 차단",
+    "value": 4,
+    "risk": 2,
+    "size": "M",
+    "status": "done",
+    "note": "3487570에 반영. Store.load와 조회/이력/결과의 completed 조건 및 TestReloadedJobResultsRequireCompletion 확인. 이전 프로필의 미수정 문구 교정.",
+    "updated": "2026-09-21"
+  }
+]

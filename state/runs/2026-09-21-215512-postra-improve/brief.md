@@ -1,0 +1,22 @@
+- 과제: POP3 본문 수신에 MaxMessageBytes 상한 적용 — 긴 단일 행까지 제한하고 실제 TCP·동기화 배선으로 검증 (가치 4 / 위험 2 / 작업량 M)
+- 왜: `App.dialInbound`가 설정의 `MaxMessageBytes`를 전달하지만 POP3 `Dialer.Dial`은 이를 보관하지 않고 `session.retrBody`가 전체 본문을 무제한 `bytes.Buffer`에 쌓으므로, LIST 크기를 작게 알리는 서버는 상위 `ingestOne`/`fetchRaw`의 LimitReader 검사 전에 메모리를 소모하게 한다. 실제 수신 단계에서 상한을 지키면 과대 본문과 개행 없는 긴 행을 조기에 차단하면서 정상 메일의 원문·중복 방지 동작을 보존할 수 있다.
+- 수용 기준:
+  1) 양수 MaxMessageBytes를 세션에 보관하고 RETR와 TOP이 공유하는 본문 읽기에 적용한다. dot-unstuffing 이후 반환될 CRLF 포함 바이트 수를 기준으로 상한까지는 허용하고 초과는 오류로 거절한다; 0은 기존 포트 계약대로 무제한이다. 초과 시 부분 본문을 성공으로 돌려주지 않고 연결을 닫아 남은 본문이 다음 명령 응답으로 해석되지 않게 한다. 오류에는 크기 정보만 담고 본문·자격증명을 넣지 않는다.
+  2) 행 전체를 읽은 후 길이만 검사하는 구현은 불충분하다. 고정 크기 조각으로 읽으며 상한을 검사하여 CRLF나 최종 점 행이 오지 않아도 상한 초과가 확인되면 반환한다. 유한 상한에서 임시 메모리는 상한에 비례하고 단일 행 길이에 비례해 무제한 증가하지 않아야 한다. 기존 dot-unstuffing·빈 행·CRLF·정상 종료 후 다음 명령 경계 및 명령 데드라인을 유지한다.
+  3) 실제 `net.Listen("tcp", "127.0.0.1:0")` 서버와 실제 `pop3.Dialer{}.Dial`/세션으로 정상·정확히 상한·상한 초과·MaxMessageBytes=0·점으로 시작하는 행·TOP 동일 제한을 증명한다. 핵심 회귀는 서버가 상한보다 많은 개행 없는 바이트를 보낸 뒤 CRLF/종료 점을 보내지 않고 기다리는 경우다: 클라이언트가 명령 타임아웃보다 먼저 크기 오류로 반환하고 서버가 연결 종료를 관찰해야 한다. 작은 상한으로 재현하며 실제 OOM이나 거대한 할당은 금지한다. 서버/테스트 양쪽에 유한 종료 기한과 cleanup을 둔다.
+  4) `internal/application` 통합 테스트는 `newTestApp`의 실제 저장소·작업 루프를 사용하되 POP3 포트를 실제 `pop3.Dialer{}`로 연결한다(수집 세션 대역 금지). `CreateAccount`의 임시 포트 → `StartSync`/`syncAndWait` → `dialInbound` → TCP RETR까지 통과시킨다. 서버가 UIDL/LIST에는 작은 크기를 주고 실제 본문은 설정 한도를 초과하게 하여 수집이 종료되고 해당 메일이 검색/저장되지 않으며 실패 건수가 기록됨을 확인한다. 정상 메일은 저장되고 재수집 때 중복되지 않는 대조 시나리오도 둔다. 이 통합 테스트는 app→adapter의 상한 배선 제거도 잡아야 한다.
+- 건드릴 파일:
+  - `internal/adapters/pop3/client.go`: `Dialer.Dial`, `session`, `session.retrBody` — 옵션 보관, 메모리 제한을 지키는 공통 RETR/TOP 읽기와 초과 시 연결 종료. `Retrieve`/`Top`의 반환 계약 유지.
+  - `internal/adapters/pop3/client_test.go` (신규): 위 실제 TCP 경계 테스트. 참고용으로 실제 열어 본 `internal/adapters/smtp/client_test.go`의 `fakeRelay`, `recorded`, 종료 동기화 패턴을 사용하되 SMTP 픽스처 자체는 바꾸지 않는다.
+  - `internal/application/pop3_sync_test.go` (신규): 실제 POP3를 통한 정상/과대 본문 동기화. 열어 본 `app_test.go`의 `newTestApp`, `testMail`, `syncAndWait` 재사용. 기본 테스트 설정은 MaxMessageBytes=1MiB, AllowInsecureMail/AllowPrivateHosts=true다. 계정 등록 때 POP3Port를 실제 listener 포트로 지정한다.
+  - 읽기 참고(수정 불필요): `internal/domain/account.go:POP3DialOptions`, `internal/application/app.go:App.dialInbound`, `internal/application/sync.go:runSync/ingestOne/fetchRaw`, `internal/adapters/imap/client.go:session.exec`, `internal/adapters/imap/client_test.go:TestIMAPRejectsOversizeLiteral`.
+- 검증 명령: 저장소 루트에서 `go test -race -count=3 -timeout 90s ./internal/adapters/pop3`; `go test -race -count=1 -timeout 90s ./internal/application -run 'TestPOP3|TestSync(Idempotent|WithoutUIDL)$'` (신규 통합 테스트명은 TestPOP3 접두); `make lint`; `go build ./...`; `go vet ./...`; `go test -race ./...`; `go run ./cmd/postra-contracts -check`; `git diff --check`.
+- 위험과 피할 것: `textproto.DotReader`는 줄바꿈 표현을 바꿀 수 있으므로 무심코 교체하여 MIME 해시·본문 바이트를 바꾸지 않는다. `ReadLineBytes` 완료 후 검사만으로 긴 행 문제를 해결했다고 하지 않는다. 초과 본문을 끝까지 drain하는 방법은 무한 전송에 막히므로 사용하지 않는다. 연결을 닫으면 이후 같은 세션의 메시지 처리는 실패할 수 있으며 이번에는 자동 재연결·재시도 정책을 추가하지 않는다. 현재 `runSync`는 개별 Retrieve 오류를 stats.failed로 집계한 뒤 JobSucceeded로 끝낼 수 있으므로 JobFailed/oversize 증가를 강제하는 별도 정책 변경도 금지한다. auth/session·SecretStore·DB/migrations·workflows·IMAP·SMTP·생성 프런트 자산·의존성은 범위 밖이다. 과거 SMTP timeout 작업은 이 베이스에 미병합이며 재구현/cherry-pick하지 않는다.
+- 차선 후보: POP3 실제 TCP 기본 프로토콜 회귀 테스트 — 상한 결함이 구현 착수 베이스에서 이미 해결된 경우에만 LIST/UIDL/RETR/TOP의 원문·dot-unstuffing, DELE/QUIT 명령 및 USER/PASS AuthError·무인증을 실제 어댑터로 검증한다. 최대 45분, TLS 전체 조합은 별도 보류.
+
+근거·추정과 작업 순서:
+- 확인 베이스 main@5dd0099(v0.23.3). 위 결함은 함수 본문과 호출 배선의 정적 확인이며, 과대 응답의 실행 재현·OOM·정확한 메모리 수치는 정찰에서 미확인이다. 구현자는 먼저 작은 상한의 실제 TCP 실패 테스트로 수정 전 결함을 재현한다.
+- 정찰 실행: `go test -race -count=1 ./internal/adapters/pop3 ./internal/adapters/smtp`는 POP3 no test files / SMTP 통과. `go test -race -count=1 ./internal/application -run 'TestSync(Idempotent|WithoutUIDL)$'`, `make lint-format`, 계약 `-check` 통과. 기존 application 테스트 두 개는 fakePOP3여서 이 결함의 증거가 아니다.
+- 최종 정찰 검증: `go test -race ./...` exit 0 (일부 캐시, application 59.053s). 외부 PostgreSQL·브라우저 활성화 실행 여부는 이 결과로 확인하지 않았다. 마지막 `git status --porcelain` 빈 출력, 코드 수정·커밋 없음.
+- 예상 35분 + 예비 10분: 실패 재현·테스트 서버 10분, 제한 읽기 구현 12분, 실제 application 배선 테스트 8분, 집중 검증 5분, 전체 검사/수리 예비 10분. 이는 스킬 기반 산정이 아닌 정찰자의 추정이다. 45분을 넘길 TLS 확대·새 공용 프로토콜 프레임워크는 추가하지 않는다.
+- 요청된 `pmo:estimating-and-contingency`, `technology:implementation-planning`, `technology:solution-exploration`은 callable Skill 도구 및 /home/hkjang/.codex·.claude의 SKILL.md 검색에서 발견하지 못했다. 원문 절차·반환 형식은 미확인이고 적용했다고 주장하지 않는다. 사용자 제공 절차로 과제서를 작성했다.
