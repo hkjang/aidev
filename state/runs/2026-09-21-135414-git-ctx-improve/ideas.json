@@ -1,0 +1,137 @@
+[
+  {
+    "title": "Sanitize의 finding이 가장 심각한 규칙이 아니라 마지막에 실행된 규칙을 보고",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "Sanitize 각 콜백의 finding 덮어쓰기가 그대로 있다. 공식 심각도 순위 계약 미확인이라 우선순위 변경은 선택하지 않음.",
+    "updated": "2026-09-21"
+  },
+  {
+    "title": "따옴표로 감싼 GitHub Actions 표현식이 여전히 마스킹됨",
+    "value": 2,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "secretAssignmentRE가 quoted 값을 가림. 이 기준에는 placeholderRE도 없으며 이전 변수 참조 작업은 성공 기록만 있고 main 반영 안 됨. 정책 결정 전 보류.",
+    "updated": "2026-09-21"
+  },
+  {
+    "title": "릴리즈 워크플로 실패 원인 제거 — 전체 go test 부하 아래서만 깨지는 internal/app flaky 테스트",
+    "value": 3,
+    "risk": 2,
+    "size": "M",
+    "status": "pending",
+    "note": "이전 4회 재현 실패; 이번 app 테스트 미실행. grpc 수정은 main에 반영. 실패 테스트 이름 확보 전 선택하지 않음.",
+    "updated": "2026-09-21"
+  },
+  {
+    "title": "OIDCVerifier.get이 첫 요청 컨텍스트로 만든 verifier를 캐시",
+    "value": 3,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "oidc.go:get이 요청 ctx 기반 VerifierContext를 10분 캐시함을 재확인. 취소/키 회전 재현 미실행, 보호 인증 경로라 보류.",
+    "updated": "2026-09-21"
+  },
+  {
+    "title": "SSO 주체는 키별 rate limit을 타지 않아 사용자별 호출량 제한이 없음",
+    "value": 2,
+    "risk": 2,
+    "size": "M",
+    "status": "pending",
+    "note": "현재 main은 제공된 MCP OAuth 캠페인 반영 이전. 해당 리소스 토큰 경로에 대한 런타임 재현 미확인; 선행 기능 반영 뒤 재평가.",
+    "updated": "2026-09-21"
+  },
+  {
+    "title": "go.mod replace 지시어가 인벤토리에 반영되지 않아 require 버전으로 판정함",
+    "value": 3,
+    "risk": 2,
+    "size": "M",
+    "status": "pending",
+    "note": "manifest.go:parseGoMod는 require만 읽음을 재확인. 파서 확장 반려 이력 때문에 이번 선택 제외.",
+    "updated": "2026-09-21"
+  },
+  {
+    "title": "clampResponse의 truncation notice 예약치 320B 부족",
+    "value": 2,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "budget.go 예약치 320과 fence/notice 추가 그대로. truncation_test.go는 budget+320 허용. 이번 실제 초과 바이트는 미측정.",
+    "updated": "2026-09-21"
+  },
+  {
+    "title": "parsePOM이 dependencyManagement 선언까지 실제 의존성으로 집계",
+    "value": 3,
+    "risk": 3,
+    "size": "M",
+    "status": "pending",
+    "note": "문서 전체 pomDependency 정규식 순회로 상위 컨텍스트 미구분. 반려된 파서 확장 유사 유형이므로 보류.",
+    "updated": "2026-09-21"
+  },
+  {
+    "title": "package.json의 overrides·resolutions·workspaces가 인벤토리에 반영되지 않음",
+    "value": 2,
+    "risk": 2,
+    "size": "M",
+    "status": "pending",
+    "note": "parsePackageJSON은 네 dependencies 필드만 디코드. 설치 결과와 선언을 어떻게 구분할지 계약 미확인.",
+    "updated": "2026-09-21"
+  },
+  {
+    "title": "Gradle 버전 카탈로그를 매니페스트로 인식하지 않음",
+    "value": 4,
+    "risk": 3,
+    "size": "M",
+    "status": "pending",
+    "note": "Recognize에서 libs.versions.toml 미지원 재확인. 214bf01 반려 사유 미확인; 선택 금지 유지.",
+    "updated": "2026-09-21"
+  },
+  {
+    "title": "mcp.filterLibraries / cacheKey가 호출자 슬라이스를 제자리 변경",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "filterLibraries items[:0], cacheKey의 principalACLs→WithUnrestricted 반환값 정렬 재확인. 차선은 cacheKey 복사만으로 제한. 실제 경합은 미확인.",
+    "updated": "2026-09-21"
+  },
+  {
+    "title": "YAML 리스트 블록 스칼라가 형제 필드까지 과마스킹",
+    "value": 3,
+    "risk": 2,
+    "size": "M",
+    "status": "pending",
+    "note": "이번 선택. 원본 Sanitize 실행으로 name·port 소실 및 빈 본문에서 허위 finding 확인. 키 열 계산과 지문 갱신, 회귀 테스트로 한정.",
+    "updated": "2026-09-21"
+  },
+  {
+    "title": "finishCall 예산 적용 후 진단 추가의 최종 응답 크기 검증",
+    "value": 2,
+    "risk": 2,
+    "size": "M",
+    "status": "pending",
+    "note": "이전 회차 노트 후보 유지. dispatch.go:finishCall에서 clampResponse 후 argumentNotes/freshnessNote 추가를 재확인. 최종 크기 계약·실제 초과량 미확인.",
+    "updated": "2026-09-21"
+  },
+  {
+    "title": "접두부가 있는 YAML 블록 비밀 키의 탐지 공백",
+    "value": 3,
+    "risk": 2,
+    "size": "M",
+    "status": "pending",
+    "note": "신규. 단일 행 대입은 DB_PASSWORD를 지원하지만 blockScalarSecretRE는 행 시작에서 secretNames 전체 키만 받으므로 DB_PASSWORD: | 본문이 탐지되지 않을 가능성. 정규식 확인, 런타임 미검증. 이번 경계 수정과 묶지 않음.",
+    "updated": "2026-09-21"
+  },
+  {
+    "title": "시험 계획의 FTS5 검증 명령을 CI와 일치시키기",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "신규 DX. docs/test-plan.md는 go test -race ./...를 기본으로 제시하지만 ci.yml은 -tags sqlite_fts5를 명시하고 별도 build-mode crossover도 실행한다. 두 모드의 목적을 문서에 구분하면 재현성이 좋아짐; 이번 기능 결함보다 후순위.",
+    "updated": "2026-09-21"
+  }
+]
