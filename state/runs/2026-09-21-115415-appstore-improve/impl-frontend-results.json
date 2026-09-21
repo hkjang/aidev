@@ -38,5 +38,16 @@
     "check": "e2e",
     "command": "npm --prefix web run test:e2e",
     "exit": 1
+  },
+  {
+    "check": "browser-install",
+    "command": "(cd web && npx playwright install chromium)",
+    "exit": 0
+  },
+  {
+    "check": "e2e-ready",
+    "command": "npm --prefix web run test:e2e",
+    "exit": 0,
+    "result": "71 passed / 1 skipped (existing mobile-only test excluded on desktop)"
   }
 ]

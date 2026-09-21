@@ -5,8 +5,8 @@
     "risk": 2,
     "size": "S",
     "status": "pending",
-    "note": "process_feedback_single이 policy_token을 그대로 Bearer에 넣고 process_feedback_batch에는 사전검사 없음. 실제 서비스 배선 import 제약과 빈 배치 의미를 고려해 위험 1→2; 토큰 원문 로그 금지.",
-    "updated": "2026-09-20"
+    "note": "service/feedbackservice.py:process_feedback_single은 policy_token을 Bearer에 그대로 사용하고 process_feedback_batch는 사전검사 없이 위임. 빈 배치 계약·실제 서비스 import 검증 필요.",
+    "updated": "2026-09-21"
   },
   {
     "title": "/run_confluence_pipeline_delete_spacefile MutationResult 성공 응답 직렬화 확인",
@@ -14,8 +14,8 @@
     "risk": 2,
     "size": "S",
     "status": "pending",
-    "note": "삭제 helper와 서비스가 결과를 그대로 반환. 실제 pymilvus 직렬화와 운영 클라이언트는 미확인; dict 응답 변경은 보류.",
-    "updated": "2026-09-20"
+    "note": "delete_to_milvus_space_file→서비스가 결과를 그대로 반환. pymilvus 실제 직렬화와 운영 클라이언트 미확인; 응답 변경 보류.",
+    "updated": "2026-09-21"
   },
   {
     "title": "executor 피드백 배치 shutdown 시 행 사이 중단 요청",
@@ -23,8 +23,8 @@
     "risk": 2,
     "size": "M",
     "status": "pending",
-    "note": "run_batch_off_loop 문서·코드상 await 취소 뒤 worker는 계속 실행. 스레드/풀 종료 배선까지 실제 Task 검증이 필요해 S→M.",
-    "updated": "2026-09-20"
+    "note": "util/feedback_batch.py:run_batch_off_loop는 await 취소 후 worker 계속 실행을 명시. 실제 Task와 DB 풀 종료 배선 검증 필요.",
+    "updated": "2026-09-21"
   },
   {
     "title": "A-105 후속 공통 오류 응답 model과 traceback 노출 제거",
@@ -32,8 +32,8 @@
     "risk": 3,
     "size": "L",
     "status": "pending",
-    "note": "api.py 잔여 오류 응답과 감사 A-105/A-106에서 미해결 확인. 전면 변경은 45분 범위 밖.",
-    "updated": "2026-09-20"
+    "note": "api.py에 traceback.format_exc 응답 잔존. 공통 계약 변경은 45분 범위 밖.",
+    "updated": "2026-09-21"
   },
   {
     "title": "스페이스 첨부 재색인 시 삭제→색인 순서 보장",
@@ -41,8 +41,8 @@
     "risk": 3,
     "size": "M",
     "status": "pending",
-    "note": "confluence_pipeline_spacefile_detail은 index_space_files 위임, 삭제는 별도 함수. A-116 반영됐지만 삭제 후 적재 실패의 데이터 손실 고려 필요.",
-    "updated": "2026-09-20"
+    "note": "confluence_pipeline_spacefile_detail은 index_space_files 위임, 삭제는 별도 함수. 적재 실패 시 데이터 손실 계약 미확인.",
+    "updated": "2026-09-21"
   },
   {
     "title": "A-102/A-206 추천 질문·토큰 캐시 프로세스 간 공유",
@@ -50,8 +50,8 @@
     "risk": 3,
     "size": "L",
     "status": "pending",
-    "note": "프로세스 로컬 캐시 및 감사 A-102 잔존. 외부 캐시/라우팅 협의가 필요해 M→L, 이번 회차 제외.",
-    "updated": "2026-09-20"
+    "note": "api.py question_store 전역 및 감사 A-102 잔존. 외부 공유 저장소·라우팅 협의 필요.",
+    "updated": "2026-09-21"
   },
   {
     "title": "A-107 idempotent 호출 제한 재시도·circuit breaker·requests.Session",
@@ -59,8 +59,8 @@
     "risk": 3,
     "size": "M",
     "status": "pending",
-    "note": "감사 A-107은 timeout만 해결. 멱등성 및 서비스별 재시도 계약 필요; 현재 세션 선택 제외.",
-    "updated": "2026-09-20"
+    "note": "감사 A-107은 timeout 부분 해결 상태. 서비스별 멱등성 계약 필요.",
+    "updated": "2026-09-21"
   },
   {
     "title": "bare except를 구체 예외로 축소",
@@ -68,8 +68,8 @@
     "risk": 3,
     "size": "M",
     "status": "pending",
-    "note": "service/pipelineservice.py confluence_pipeline_kcblaw 및 api.py 잔여. 취소/오류 계약을 실제 검증할 경로별 과제로 좁혀야 함.",
-    "updated": "2026-09-20"
+    "note": "service/pipelineservice.py:confluence_pipeline_kcblaw 및 api.py 잔여 확인. 경로별 취소 계약의 실제 실행 검증 필요.",
+    "updated": "2026-09-21"
   },
   {
     "title": "A-104 collection allowlist와 field 타입 검증",
@@ -77,8 +77,8 @@
     "risk": 2,
     "size": "M",
     "status": "pending",
-    "note": "get_all_rows_loop 등 Collection(collection_name) 전달 확인; expression escaping 해결과 별개. 허용 목록 운영 계약 미확인.",
-    "updated": "2026-09-20"
+    "note": "get_all_rows_loop의 Collection(collection_name) 직접 전달 잔존. 허용 목록 운영 계약 미확인.",
+    "updated": "2026-09-21"
   },
   {
     "title": "법령 xml_parser_core·json_formatter 단위 테스트",
@@ -86,8 +86,8 @@
     "risk": 1,
     "size": "M",
     "status": "pending",
-    "note": "이번 A-117에서 가지조문·일반 조문·장/절 전환·source_seq 변환 회귀 8건 보강. 일반 fixture·장문 청킹·별표 범위는 계속 보류.",
-    "updated": "2026-09-20"
+    "note": "가지조문 및 별표·부칙 장문 source 청킹 실제 변환 회귀 확보. 일반 법률/행정규칙 fixture 확대는 남아 있어 pending 유지.",
+    "updated": "2026-09-21"
   },
   {
     "title": "Milvus collection·confluence·pipeline default alias ensure_connection 통일",
@@ -95,8 +95,8 @@
     "risk": 2,
     "size": "M",
     "status": "pending",
-    "note": "util/milvus_confluence의 Collection(name=...) 및 pipelineservice의 Collection(collection_name) 잔존. 검색 연결 해결과 구분; 범위 넓음.",
-    "updated": "2026-09-20"
+    "note": "util/milvus_confluence.py 및 service/pipelineservice.py에 using 없는 Collection 잔존. 검색 경로 해결과 별도.",
+    "updated": "2026-09-21"
   },
   {
     "title": "GitLab CI deploy 앞단 test stage 추가",
@@ -104,34 +104,34 @@
     "risk": 3,
     "size": "L",
     "status": "pending",
-    "note": ".gitlab-ci.yml deploy stage만 존재. 여전히 타당하나 보호 경로여서 자동 회차 선택 금지.",
-    "updated": "2026-09-20"
+    "note": ".gitlab-ci.yml stages는 deploy 하나. 여전히 타당하나 보호 경로라 이번 선택 제외.",
+    "updated": "2026-09-21"
   },
   {
-    "title": "행정규칙 가지조문 hierarchy_path 표기 불일치 수정",
-    "value": 3,
-    "risk": 1,
-    "size": "S",
-    "status": "done",
-    "note": "A-117: 파서 계층 표시만 수정. 실제 XML→source→RAG 회귀 8건, 수정 전 가지조문 4건 실패/수정 후 통과. 전체 1052 passed; UUID·seq·본문·메타데이터 보존 확인.",
-    "updated": "2026-09-20"
-  },
-  {
-    "title": "CODEBASE_MAP의 테스트·pytest.ini 부재 문구 정정",
+    "title": "CODEBASE_MAP의 tests·pytest.ini 부재 문구 정정",
     "value": 2,
     "risk": 1,
     "size": "S",
     "status": "pending",
-    "note": "신규. docs/CODEBASE_MAP.md 현재 없는 구조에 tests/와 pytest.ini가 없다고 적으나 파일 존재 및 1040 tests 통과. 같은 문서 상단과도 모순; 문서 사실 정정만으로 가능.",
-    "updated": "2026-09-20"
+    "note": "docs/CODEBASE_MAP.md 현재 없는 구조와 CURRENT_STATE_AUDIT A-201에 부재 서술 잔존. TESTING에는 실제 테스트 구성 있음. 차선 후보.",
+    "updated": "2026-09-21"
   },
   {
-    "title": "Milvus 스페이스 첨부 삭제 실패 예외 전파",
+    "title": "법령 별표·부칙의 긴 한 줄이 source 청크 길이 제한을 우회하는 오류 수정",
     "value": 3,
-    "risk": 2,
+    "risk": 1,
     "size": "S",
     "status": "done",
-    "note": "과거 기록 확인용. A-116 두 except에서 MilvusDeleteError raise from 확인. 이미 끝난 접근을 다시 선택하지 않음.",
-    "updated": "2026-09-20"
+    "note": "짧은 버퍼를 확정·초기화한 뒤 긴 줄 강제 분할. 실제 XML→source→RAG 15건에서 수정 전 8 실패/7 통과, 수정 후 15 통과. 전체 1071 통과; source_seq·문자 순서·짧은 출력 계약 확인.",
+    "updated": "2026-09-21"
+  },
+  {
+    "title": "빈 부칙 RAG 레코드의 결정적 id 누락 보완",
+    "value": 1,
+    "risk": 1,
+    "size": "S",
+    "status": "rejected",
+    "note": "신규 검토. 빈 부칙 XML→formatter 결과에 id 없음 재현했으나 ingest_pipeline_task가 모든 RAG id를 uuid4로 덮어쓴다. 현재 적재 출력 개선이 입증되지 않아 효과 없는 수정 회피; 다른 소비자는 미확인.",
+    "updated": "2026-09-21"
   }
 ]
