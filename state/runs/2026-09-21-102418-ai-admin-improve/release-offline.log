@@ -198,3 +198,37 @@ Version metadata is consistent: 1.2.24
 #23 DONE 0.1s
 
 #24 [go-build 8/9] RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -trimpath     -ldflags="-s -w -X github.com/hkjang/ai-admin/internal/buildinfo.Version=v1.2.24 -X github.com/hkjang/ai-admin/internal/buildinfo.Commit=c6ffc8b07f56 -X github.com/hkjang/ai-admin/internal/buildinfo.BuildTime=2026-09-21T01:43:56Z"     -o /out/ai-admin ./cmd/ai-admin
+#24 DONE 5.2s
+
+#25 [go-build 9/9] RUN set -eu;     mkdir -p /licenses/go;     printf 'module\tversion\tlicense_file\n' > /licenses/go/MANIFEST.tsv;     toolchain_version=$(go env GOVERSION);     for toolchain_file in LICENSE PATENTS; do       source_file="/usr/local/go/${toolchain_file}";       [ -f "$source_file" ] || { echo "Missing Go toolchain ${toolchain_file}" >&2; exit 1; };       destination="go-toolchain-${toolchain_version}-${toolchain_file}";       cp "$source_file" "/licenses/go/$destination";       printf 'go.dev/toolchain\t%s\t%s\n' "$toolchain_version" "$destination" >> /licenses/go/MANIFEST.tsv;     done;     go version -m /out/ai-admin | awk '$1 == "dep" { print $2 "|" $3 }' |     while IFS='|' read -r module module_version; do       [ -n "$module" ] || continue;       module_dir=$(go list -m -f '{{.Dir}}' "${module}@${module_version}");       [ -n "$module_dir" ] || { echo "No module directory for ${module}@${module_version}" >&2; exit 1; };       license_files=$(find "$module_dir" -maxdepth 1 -type f ( -iname 'LICENSE*' -o -iname 'COPYING*' -o -iname 'NOTICE*' ) | sort);       [ -n "$license_files" ] || { echo "No license file for ${module}@${module_version}" >&2; exit 1; };       safe_name=$(printf '%s@%s' "$module" "$module_version" | tr '/.' '__');       printf '%s\n' "$license_files" | while IFS= read -r license_file; do         destination="${safe_name}-$(basename "$license_file")";         cp "$license_file" "/licenses/go/$destination";         printf '%s\t%s\t%s\n' "$module" "$module_version" "$destination" >> /licenses/go/MANIFEST.tsv;       done;     done
+#25 DONE 0.3s
+
+#26 [stage-2 2/6] COPY --from=go-build /out/ai-admin /ai-admin
+#26 DONE 0.0s
+
+#27 [stage-2 3/6] COPY LICENSE THIRD_PARTY_NOTICES.md /usr/share/licenses/ai-admin/
+#27 DONE 0.0s
+
+#28 [stage-2 4/6] COPY web/public/fonts/OFL-Pretendard.txt /usr/share/licenses/ai-admin/fonts/OFL-Pretendard.txt
+#28 DONE 0.0s
+
+#29 [stage-2 5/6] COPY --from=web-build /licenses/npm /usr/share/licenses/ai-admin/npm
+#29 DONE 0.0s
+
+#30 [stage-2 6/6] COPY --from=go-build /licenses/go /usr/share/licenses/ai-admin/go
+#30 DONE 0.0s
+
+#31 exporting to image
+#31 exporting layers
+#31 exporting layers 0.5s done
+#31 exporting manifest sha256:59945770cb9a7e06304470e5feccc6aa4953f7a9f97e22929128246e46fbe996 0.0s done
+#31 exporting config sha256:aca6e732097a90e41e4e8a44eb7fe41b1212471e122f8923d0fc7d789ac272ca 0.0s done
+#31 exporting attestation manifest sha256:0e6c34790641ab4d12765579e04953b1c6cb7cffa509bf690246151a4b9613bb 0.0s done
+#31 exporting manifest list sha256:fcf51f15be616f909cf1a35bf64a7d5f807f93b0fab1414a6716e13981a015a8 done
+#31 naming to docker.io/library/ai-admin:v1.2.24 done
+#31 unpacking to docker.io/library/ai-admin:v1.2.24
+#31 unpacking to docker.io/library/ai-admin:v1.2.24 0.2s done
+#31 DONE 0.8s
+Created /home/hkjang/.cache/auto-improve-wt/ai-admin-release/release/ai-admin-v1.2.24.tar.gz (11201597 bytes)
+Image: ai-admin:v1.2.24
+Digest: ai-admin@sha256:fcf51f15be616f909cf1a35bf64a7d5f807f93b0fab1414a6716e13981a015a8
