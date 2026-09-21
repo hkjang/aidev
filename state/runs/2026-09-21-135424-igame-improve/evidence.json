@@ -1,0 +1,224 @@
+{
+  "run_id": "2026-09-21-135424-igame-improve",
+  "generated": "2026-09-21T14:03:22+09:00",
+  "run": {
+    "run_id": "2026-09-21-135424-igame-improve",
+    "project": "igame",
+    "kind": "improve",
+    "started": "2026-09-21T13:54:24+09:00",
+    "model": "claude-opus-5",
+    "policy_version": "ecd4b546e",
+    "prompts_hash": "30c37184f081815d",
+    "runner_version": "ecd4b546e",
+    "arm": "no-repair",
+    "experiment": "roles-2026-09",
+    "finished": "2026-09-21T14:03:22+09:00",
+    "outcome": "review-pending"
+  },
+  "record": {
+    "ts": "2026-09-21T14:03:22+09:00",
+    "date": "2026-09-21",
+    "project": "igame",
+    "result": "review held, PR open https://github.com/hkjang/igame/pull/24",
+    "outcome": "review-pending",
+    "run_id": "2026-09-21-135424-igame-improve",
+    "base_sha": "abd8579fa6e3c65d3630251351a8f343d1fdba1d",
+    "head_sha": "f22a60dd4a39a5e3167047ba48e579aa09823401",
+    "pr": "https://github.com/hkjang/igame/pull/24",
+    "stages": {
+      "base": {
+        "state": "pinned",
+        "reason": "main@abd8579",
+        "at": "2026-09-21T13:54:28+09:00"
+      },
+      "autonomy": {
+        "state": "release",
+        "reason": "",
+        "at": "2026-09-21T13:54:28+09:00"
+      },
+      "scout": {
+        "state": "done",
+        "reason": "릴리즈 의존성 감사 재현용 make audit-release 추가와 감사 범위 문서 정정 (가치 3 / 위험 1 / 작업량 S)",
+        "at": "2026-09-21T13:58:37+09:00"
+      },
+      "brief": {
+        "state": "accepted",
+        "reason": "채택 — 기존 타깃 부재 및 workflow 감사 범위의 문서 불일치를 확인하여 지정된 세 파일만 수정했다.",
+        "at": "2026-09-21T14:00:58+09:00"
+      },
+      "verify": {
+        "state": "passed",
+        "reason": "검증 4개 통과 (policy)",
+        "at": "2026-09-21T14:01:32+09:00"
+      },
+      "review": {
+        "state": "rejected",
+        "reason": "리뷰 거절: Makefile:20-21 [P2] dev 포함 전체 감사를 보장하지 않습니다. NODE_ENV=production 또는 npm_config_omit=dev가 설정된 로컬 환경에서는 npm audit가 dev 의존성을 제외하여 릴리즈 감사 재현이라는 목적과 README/docs 설명을 위반합니다. 실제 npm과 로컬 모의 감사 서버로 SDK 명령을 실행했을 때 기본 환경은 227개 패키지를 조회했지만 NODE_ENV=production에서는 감사 요청 없이 found 0 vulnerabilities 및 exit 0이 나왔습니다(SDK 의존성은 모두 dev). 같은 환경에서 --include=dev를 추가하면 227개가 다시 조회됩니다. 두 npm 명령에 --include=dev를 명시하고 production/omit 설정에서도 dev 패키지가 감사되는지 검증해야 합니다.",
+        "at": "2026-09-21T14:03:13+09:00"
+      },
+      "pr": {
+        "state": "created",
+        "reason": "https://github.com/hkjang/igame/pull/24",
+        "at": "2026-09-21T14:03:19+09:00"
+      }
+    },
+    "campaign": "",
+    "autonomy": "release",
+    "arm": "no-repair",
+    "experiment": "roles-2026-09",
+    "files": 3,
+    "additions": 13,
+    "deletions": 2,
+    "tests": 0,
+    "title": "feat: add local release dependency audit target"
+  },
+  "stages": {
+    "base": {
+      "state": "pinned",
+      "reason": "main@abd8579",
+      "at": "2026-09-21T13:54:28+09:00"
+    },
+    "autonomy": {
+      "state": "release",
+      "reason": "",
+      "at": "2026-09-21T13:54:28+09:00"
+    },
+    "scout": {
+      "state": "done",
+      "reason": "릴리즈 의존성 감사 재현용 make audit-release 추가와 감사 범위 문서 정정 (가치 3 / 위험 1 / 작업량 S)",
+      "at": "2026-09-21T13:58:37+09:00"
+    },
+    "brief": {
+      "state": "accepted",
+      "reason": "채택 — 기존 타깃 부재 및 workflow 감사 범위의 문서 불일치를 확인하여 지정된 세 파일만 수정했다.",
+      "at": "2026-09-21T14:00:58+09:00"
+    },
+    "verify": {
+      "state": "passed",
+      "reason": "검증 4개 통과 (policy)",
+      "at": "2026-09-21T14:01:32+09:00"
+    },
+    "review": {
+      "state": "rejected",
+      "reason": "리뷰 거절: Makefile:20-21 [P2] dev 포함 전체 감사를 보장하지 않습니다. NODE_ENV=production 또는 npm_config_omit=dev가 설정된 로컬 환경에서는 npm audit가 dev 의존성을 제외하여 릴리즈 감사 재현이라는 목적과 README/docs 설명을 위반합니다. 실제 npm과 로컬 모의 감사 서버로 SDK 명령을 실행했을 때 기본 환경은 227개 패키지를 조회했지만 NODE_ENV=production에서는 감사 요청 없이 found 0 vulnerabilities 및 exit 0이 나왔습니다(SDK 의존성은 모두 dev). 같은 환경에서 --include=dev를 추가하면 227개가 다시 조회됩니다. 두 npm 명령에 --include=dev를 명시하고 production/omit 설정에서도 dev 패키지가 감사되는지 검증해야 합니다.",
+      "at": "2026-09-21T14:03:13+09:00"
+    },
+    "pr": {
+      "state": "created",
+      "reason": "https://github.com/hkjang/igame/pull/24",
+      "at": "2026-09-21T14:03:19+09:00"
+    }
+  },
+  "provenance": {
+    "model": "claude-opus-5",
+    "policy_version": "ecd4b546e",
+    "prompts_hash": "30c37184f081815d",
+    "runner_version": "ecd4b546e",
+    "base_sha": "abd8579fa6e3c65d3630251351a8f343d1fdba1d",
+    "head_sha": "f22a60dd4a39a5e3167047ba48e579aa09823401",
+    "pr": "https://github.com/hkjang/igame/pull/24"
+  },
+  "verification": {
+    "runner": {
+      "source": "policy",
+      "commands": [
+        {
+          "cmd": "make deps",
+          "exit": 0,
+          "seconds": 19
+        },
+        {
+          "cmd": "make test",
+          "exit": 0,
+          "seconds": 2
+        },
+        {
+          "cmd": "make build",
+          "exit": 0,
+          "seconds": 12
+        },
+        {
+          "cmd": "make check-contract",
+          "exit": 0,
+          "seconds": 0
+        }
+      ]
+    },
+    "runner_gate": {
+      "ok": true,
+      "state": "verified",
+      "reason": "검증 4개 통과 (policy)"
+    },
+    "after_rebase": null,
+    "review": {
+      "verdict": "reject",
+      "reasons": [
+        "Makefile:20-21 [P2] dev 포함 전체 감사를 보장하지 않습니다. NODE_ENV=production 또는 npm_config_omit=dev가 설정된 로컬 환경에서는 npm audit가 dev 의존성을 제외하여 릴리즈 감사 재현이라는 목적과 README/docs 설명을 위반합니다. 실제 npm과 로컬 모의 감사 서버로 SDK 명령을 실행했을 때 기본 환경은 227개 패키지를 조회했지만 NODE_ENV=production에서는 감사 요청 없이 found 0 vulnerabilities 및 exit 0이 나왔습니다(SDK 의존성은 모두 dev). 같은 환경에서 --include=dev를 추가하면 227개가 다시 조회됩니다. 두 npm 명령에 --include=dev를 명시하고 production/omit 설정에서도 dev 패키지가 감사되는지 검증해야 합니다."
+      ],
+      "notes": [
+        "조직 스킬 legal-risk:privacy-and-data-protection, security:security-architecture-review, technology:code-review는 사용 가능한 도구와 로컬 경로에서 찾지 못해 해당 절차를 확인하지 못했습니다. 프롬프트의 검토 기준을 적용했습니다.",
+        "git diff main...HEAD 및 git log main..HEAD 확인: f22a60d의 Makefile/README.md/docs/release.md 세 파일만 변경되었습니다. CI와 release workflow를 직접 대조했고 범위 이탈, 런타임·권한·개인정보·라이선스·마이그레이션 변경은 없습니다. revert로 되돌릴 수 있습니다.",
+        "make help/dry-run 및 git diff --check 통과. 임시 npm/go 실행 대역으로 실제 make audit-release의 성공 경로와 SDK/Web/Go 각각 실패 시 make exit 2 및 후속 명령 미실행을 확인했습니다. 새 영구 테스트는 없습니다.",
+        "이 리뷰에서 온라인 취약점 DB 감사, 실제 Go 검사, PostgreSQL/Web/SDK 테스트, 컨테이너·smoke 및 원격 CI는 재실행하지 않았습니다. 모의 서버 실험은 감사 대상 범위 검증이며 실제 취약점 0건의 증거가 아닙니다. 직접적인 공격 경로 또는 법무 차단 요건은 확인하지 못했습니다."
+      ],
+      "risk": "medium",
+      "blocking": []
+    },
+    "ci_gate": null
+  },
+  "release": {
+    "result": null,
+    "assets_sha256": []
+  },
+  "approval": null,
+  "usage": [
+    {
+      "ts": "2026-09-21T13:58:35+09:00",
+      "date": "2026-09-21",
+      "project": "igame",
+      "phase": "scout",
+      "run_id": "2026-09-21-135424-igame-improve",
+      "campaign": "",
+      "subtype": "success",
+      "duration_ms": 0,
+      "num_turns": 1,
+      "cost_usd": null,
+      "input_tokens": 660670,
+      "output_tokens": 6796,
+      "cache_read": 595072,
+      "cache_create": 0
+    },
+    {
+      "ts": "2026-09-21T14:00:58+09:00",
+      "date": "2026-09-21",
+      "project": "igame",
+      "phase": "improve",
+      "run_id": "2026-09-21-135424-igame-improve",
+      "campaign": "",
+      "subtype": "success",
+      "duration_ms": 0,
+      "num_turns": 1,
+      "cost_usd": null,
+      "input_tokens": 500050,
+      "output_tokens": 3438,
+      "cache_read": 458368,
+      "cache_create": 0
+    },
+    {
+      "ts": "2026-09-21T14:03:13+09:00",
+      "date": "2026-09-21",
+      "project": "igame",
+      "phase": "review",
+      "run_id": "2026-09-21-135424-igame-improve",
+      "campaign": "",
+      "subtype": "success",
+      "duration_ms": 0,
+      "num_turns": 1,
+      "cost_usd": null,
+      "input_tokens": 208842,
+      "output_tokens": 2667,
+      "cache_read": 174976,
+      "cache_create": 0
+    }
+  ]
+}

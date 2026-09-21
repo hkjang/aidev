@@ -1,0 +1,11 @@
+# 검증 결과
+- 수정 전 회귀: exit 1, Sanitize 16개 조합·Revision·ReadFile 실패(red-tests.log).
+- go test -tags sqlite_fts5 ./internal/contentsecurity ./internal/indexer ./internal/search ./internal/mcp: exit 0.
+- go test -tags sqlite_fts5 -count=1 ./internal/contentsecurity ./internal/search: exit 0.
+- go test -tags sqlite_fts5 -race ./internal/contentsecurity ./internal/search: exit 0.
+- go test -tags sqlite_fts5 ./...: exit 0(full-tests.log).
+- go vet ./...: exit 0.
+- go build -tags sqlite_fts5 ./...: exit 0.
+- gofmt -l internal/contentsecurity internal/search: exit 0, 출력 없음.
+- git diff --check: exit 0.
+- Revision: 74c72e911ce2; 반복 호출 안정성 및 규칙 변경 추적 테스트 통과.

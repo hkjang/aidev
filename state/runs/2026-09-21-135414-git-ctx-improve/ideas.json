@@ -23,7 +23,7 @@
     "risk": 2,
     "size": "M",
     "status": "pending",
-    "note": "이전 4회 재현 실패; 이번 app 테스트 미실행. grpc 수정은 main에 반영. 실패 테스트 이름 확보 전 선택하지 않음.",
+    "note": "이전 4회 재현 실패. 이번 전체 go test -tags sqlite_fts5 ./...도 통과(app 101.256s). 실패 테스트 이름 확보 전 선택하지 않음.",
     "updated": "2026-09-21"
   },
   {
@@ -103,8 +103,8 @@
     "value": 3,
     "risk": 2,
     "size": "M",
-    "status": "pending",
-    "note": "이번 선택. 원본 Sanitize 실행으로 name·port 소실 및 빈 본문에서 허위 finding 확인. 키 열 계산과 지문 갱신, 회귀 테스트로 한정.",
+    "status": "done",
+    "note": "키 앞 접두부(선행 공백·선택적 대시·뒤 공백) 길이로 경계를 계산하도록 최소 수정. 전체 출력 24개 조합·멱등성 및 SQLite/가짜 source ReadFile 회귀의 수정 전 실패/수정 후 통과 확인. Revision 74c72e911ce2. commit 70074df; 지정 검증 명령 모두 통과.",
     "updated": "2026-09-21"
   },
   {

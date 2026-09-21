@@ -13,5 +13,25 @@
     "state": "done",
     "reason": "릴리즈 의존성 감사 재현용 make audit-release 추가와 감사 범위 문서 정정 (가치 3 / 위험 1 / 작업량 S)",
     "at": "2026-09-21T13:58:37+09:00"
+  },
+  "brief": {
+    "state": "accepted",
+    "reason": "채택 — 기존 타깃 부재 및 workflow 감사 범위의 문서 불일치를 확인하여 지정된 세 파일만 수정했다.",
+    "at": "2026-09-21T14:00:58+09:00"
+  },
+  "verify": {
+    "state": "passed",
+    "reason": "검증 4개 통과 (policy)",
+    "at": "2026-09-21T14:01:32+09:00"
+  },
+  "review": {
+    "state": "rejected",
+    "reason": "리뷰 거절: Makefile:20-21 [P2] dev 포함 전체 감사를 보장하지 않습니다. NODE_ENV=production 또는 npm_config_omit=dev가 설정된 로컬 환경에서는 npm audit가 dev 의존성을 제외하여 릴리즈 감사 재현이라는 목적과 README/docs 설명을 위반합니다. 실제 npm과 로컬 모의 감사 서버로 SDK 명령을 실행했을 때 기본 환경은 227개 패키지를 조회했지만 NODE_ENV=production에서는 감사 요청 없이 found 0 vulnerabilities 및 exit 0이 나왔습니다(SDK 의존성은 모두 dev). 같은 환경에서 --include=dev를 추가하면 227개가 다시 조회됩니다. 두 npm 명령에 --include=dev를 명시하고 production/omit 설정에서도 dev 패키지가 감사되는지 검증해야 합니다.",
+    "at": "2026-09-21T14:03:13+09:00"
+  },
+  "pr": {
+    "state": "created",
+    "reason": "https://github.com/hkjang/igame/pull/24",
+    "at": "2026-09-21T14:03:19+09:00"
   }
 }
