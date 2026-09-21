@@ -147,3 +147,4 @@
   - baoKVWrite create/update 판정 TOCTOU (3/3/M): 트랜잭션·동시성 검증 필요.
 - 과제서: 채택 — HEAD 9ea43d0의 catch 범위와 실제 HTTP 실패 재현이 과제서 근거에 일치했고 최소 경계 수정으로 수용 기준을 충족했다.
 
+- 릴리즈: v0.2.17 (2026-09-21, run 2026-09-21-160426-jikim-improve)

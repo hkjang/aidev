@@ -1,0 +1,15 @@
+fix: release stream chat callback error propagation for v0.2.17
+
+AI 채팅 스트림의 JSON 파싱과 청크 소비자를 함께 감싸던 catch가 소비자 예외를
+파싱 오류로 오인해 같은 이벤트를 다시 전달하거나 성공으로 처리했습니다.
+PR #39는 catch를 JSON.parse로 좁혀 Error와 SyntaxError를 동일 객체로
+전파하고 중복 호출 및 뒤 이벤트 전달을 막습니다. JSON null의 기존 원문
+폴백과 뒤 정상 이벤트 전달도 보존하며 실제 HTTP/native fetch 회귀 테스트로
+검증합니다.
+
+기존 패치 릴리스와 같은 방식으로 버전 파일, 문서 프로파일, CHANGELOG와
+두 가이드 PDF를 v0.2.17로 갱신했습니다. 캡처 출처와 매니페스트는 실제로
+찍은 v0.2.9를 유지합니다. Node 24.21.0에서 ./scripts/verify.sh 전체
+(Go test·vet·gofmt, React 44개 테스트·lint·build, 문서·Compose)가 통과했습니다.
+태그 푸시 이후 이미지 빌드·스모크·브라우저 E2E·번들 생성 및 게시 작업은
+기존 release.yml이 수행합니다.

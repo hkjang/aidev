@@ -44,3 +44,13 @@
 - [러너 16:18] pr created — https://github.com/hkjang/jikim/pull/39
 - [러너 16:22] ci passed — 검사 2개 모두 success
 - [러너 16:22] merge done — 55926ad
+
+## 릴리즈 노트
+- v0.2.17 로컬 릴리즈 완료: detached HEAD 74f771c, hkjang 작성, 주석 태그 메시지 `jikim v0.2.17`; 원격 전송 없음.
+- 최근 세 태그·커밋·22개 파일 변경 관례와 release.yml 확인. 버전·한국어 CHANGELOG·문서·공통 변환기 PDF(사용자 19쪽/관리자 28쪽)를 갱신하고 실제 캡처 v0.2.9 유지.
+- Node 24.21.0 verify.sh 전체 통과(프런트 44개, Go test/vet/gofmt, lint/build, 문서/Compose). release-verify.log 참고. 버전/태그/HEAD 일치 및 clean tree 확인. 기존 Vite 청크 크기 경고 유지.
+- release.yml이 태그 푸시 후 이미지·스모크·브라우저 E2E·번들·GitHub Release 게시를 담당하므로 github_release=false, assets=[]; 이번 세션은 해당 Docker/브라우저 검증을 실행하지 않음.
+- 지정 marketing:product-launch, technology:release-and-deployment 및 Skill 도구가 제공 목록과 로컬 검색에서 발견되지 않아 저장소 절차와 사용자 절차로 수행.
+- release.json 및 release-notes-v0.2.17.md 인계 완료.
+- [러너 16:30] release published — v0.2.17
+- [러너 16:33] assets verified — v0.2.17 자산 2개 (이전 v0.2.16: 2)
