@@ -1,29 +1,31 @@
-# Vendra 프로필 (2026-09-21)
+# Vendra 프로필 (2026-09-22)
 - 목적: 공급업체·구매 수명주기·소싱·계약·리스크·결재를 통합하고 조회 전용 MCP를 제공하는 오프라인 대응 구매 관리 시스템.
 - 스택: Go 1.24, net/http, pgx/PostgreSQL(README 15+, CI 16-alpine), React 19·TypeScript 6·Vite 8, Vitest/jsdom.
 - 구조:
-  - cmd/vendra — 서버 진입점, 테스트 파일 없음.
+  - cmd/vendra — 단일 서버 진입점, 테스트 파일 없음.
   - internal/httpapi — 라우팅·업무·인증·MCP·백그라운드 작업 및 실제 DB 통합 테스트.
-  - internal/httpapi/productivity.go — 관제탑·보기·초안; workInbox 스냅샷 수정은 이미 main에 반영, instanceSteps 사용.
-  - internal/httpapi/integrations.go — AI 및 MCP; search_suppliers 번호 검색 누락을 이번 정찰 과제로 선정(아직 미구현).
-  - internal/httpapi/suppliers.go 및 analytics.go — 목록·통합 검색은 이미 공급업체 번호 ILIKE 조건 포함.
-  - internal/db/migrations — embed SQL, 기동 시 advisory lock; 최종 번호 017 두 개, 키는 전체 파일명.
+  - internal/httpapi/productivity.go — 관제탑·저장 보기·초안; workInbox는 instanceSteps 스냅샷 사용, 초안은 현재 저장 키 우선 축출 보호.
+  - internal/httpapi/integrations.go — AI 및 11개 MCP 도구. 공급업체 번호 검색 반영 완료. limit 공개한 3도구의 SQL은 아직 100/100/50 고정.
+  - internal/httpapi/suppliers.go, analytics.go — 공급업체·통합 검색·지출·추천; 조직/담당 범위와 필드 권한 주의.
+  - internal/db/migrations — embed SQL, advisory lock; 최종 번호 017 두 개, 전체 파일명이 이력 키.
   - internal/config, security, observability, tracking — 환경 설정·암호화·로그·방문 추적.
-  - web/src — React 화면·Vitest 테스트; web/vitest.config.ts는 jsdom.
+  - web/src — React 화면 및 테스트; web/vitest.config.ts는 jsdom.
   - docs — 정본 USER_GUIDE/ADMIN_GUIDE와 PDF·images/guide, architecture/security/operations/ROADMAP_PLAN.
   - scripts 및 .github/workflows — 캡처·오프라인 이미지 아카이브·CI·태그 릴리즈.
 - 빌드·테스트:
-  - go test ./internal/... ./cmd/... -count=1 — 이번 정찰 통과(httpapi 1.436s); DSN 세 개 unset으로 DB 통합 테스트는 skip.
-  - go vet ./internal/... ./cmd/..., gofmt -l internal cmd — CI 검증 명령, 이번 정찰 별도 실행 안 함.
-  - API 통합 테스트 VENDRA_TEST_DSN, 마이그레이션 VENDRA_TEST_MIGRATE_DSN, 업그레이드 VENDRA_TEST_UPGRADE_DSN; 서로 다른 전용 DB, 뒤 둘은 빈 DB 필요.
-  - 웹 CI(Node 22): cd web 후 npm ci --ignore-scripts, npx tsc -b --noEmit, npx eslint src --max-warnings 0, npm test, npm run build. 정찰 미실행.
-  - make build는 웹 설치/빌드와 Go 바이너리 생성. sh scripts/offline-release.sh <version>은 Docker 이미지 아카이브(수 분).
-- 관례: 최근 영어 행동형 fix/test/docs 커밋, 사용자 문구는 한국어. settings JSON 행, secret 암호화 저장. SQL 과거 마이그레이션은 재작성하지 않음. 루트 CLAUDE.md·AGENTS.md 없음; TODO/FIXME 검색 결과 없음.
-- 위험 구역: 인증·OIDC·세션, 데이터 스코프, 승인 단계·역할, migrations, .github/workflows, 통화·금액 보존. 기존 helper와 보호 경로 밖 수정을 우선.
+  - go test ./internal/... ./cmd/... -count=1 — 이번 정찰 통과(httpapi 1.459초); DSN 세 개 unset, DB 통합 테스트는 skip.
+  - go vet ./internal/... ./cmd/..., gofmt -l internal cmd — CI 검증 명령; 이번 정찰 별도 실행 안 함.
+  - API VENDRA_TEST_DSN, 마이그레이션 VENDRA_TEST_MIGRATE_DSN, 업그레이드 VENDRA_TEST_UPGRADE_DSN; 전용 DB 세 개, 뒤 둘은 빈 DB 필요.
+  - 웹 CI(Node 22): cd web 후 npm ci --ignore-scripts, npx tsc -b --noEmit, npx eslint src --max-warnings 0, npm test, npm run build. 이번 정찰 미실행.
+  - make build는 웹 설치/빌드와 Go 바이너리 생성; sh scripts/offline-release.sh <version>은 Docker 아카이브 생성(수 분).
+- 관례: 최근 영어 행동형 fix/test/docs 커밋, 사용자 문구 한국어. settings JSON 행, secret 암호화 저장. 과거 SQL migration 재작성 금지. 루트 CLAUDE.md·AGENTS.md 없음; internal/web/src/docs TODO/FIXME 검색 결과 없음.
+- 위험 구역: 인증·OIDC·세션, 데이터 스코프, 승인 단계·역할, migrations, .github/workflows, 통화·금액 보존.
 - 자주 깨지는 곳: 반려된 통화 접근 반복 금지, 비밀번호 리터럴 비밀정보 검사, 중복 migration 번호, 취소된 ctx cleanup. cleanup은 context.Background 사용.
-- 검증 함정: CI go test는 internal만, vet는 cmd 포함. DSN 없는 초록은 DB 검증 아님. newScopeWorld는 업체 번호/사업자번호/이름을 같게 시드하므로 필드별 검색 회귀는 세 값을 분리해야 함. SC- 번호를 바꾸면 wipe가 놓칠 수 있음; fixture 병렬 실행 금지.
-- 검증 함정: MCP structuredContent 및 content.text, REST 목록 items, 통합 검색 type=supplier의 ID를 검사; 응답 전체 정렬·상한은 서로 다름. globalSearch는 두 글자 미만 검색을 생략.
-- 현재 기준: main@715bf95. 초안 축출·SSO 복귀·가이드 가드·관제탑 스냅샷 반영. internal/mail, mcpoauth.go 부재 재확인. 과거 회차 성공 기록만으로 병합을 추정하지 말 것.
-- 미확인: 이번 Docker/실제 DB 가용성과 웹 실행 상태, 원격 PR/릴리즈 현황. 과거 /mnt/c Vitest 문제는 현재 Linux cache 경로에서 재현 미확인.
-- 계획 문서: ROADMAP_PLAN.md는 2026-08-13 비전 문서; v1/v3 단계 표기를 현재 배포 버전으로 해석하지 않음.
-- 스킬: 요청된 PMO/technology 세 스킬은 현재 노출 도구·로컬 경로에서 발견하지 못해 절차/형식 미확인.
+- 검증 함정: CI go test는 internal만, vet는 cmd 포함. DSN 없는 초록은 DB 검증 아님. newScopeWorld는 번호/사업자번호/이름을 같게 시드하므로 검색 회귀는 필드를 분리해야 함.
+- 검증 함정: scopeWorld/wipe는 SC- 접두사로 청소; fixture 병렬 실행 금지. 실제 Handler 인증 세션을 사용하고 직접 Principal 대입이나 SQL 소스 문자열만으로 배선을 증명하지 않음.
+- 검증 함정: MCP toolRows는 structuredContent만 읽음. content.text 일치도 별도 검사. analyze_spend share는 접근 가능한 전체 지출 분모이며 limit 적용으로 바꾸면 안 됨.
+- 현재 기준: main@28cd677. a05402d 공급업체 번호 MCP 검색 병합 확인. internal/mail, mcpoauth.go 부재 재확인. 과거 성공 기록은 현재 병합 증거가 아님.
+- 계획 문서: ROADMAP_PLAN.md는 2026-08-13 비전 문서; 단계 v1/v3 표기를 현재 배포 버전으로 해석하지 않음.
+- 환경·미확인: Docker ps 실행 가능, Vendra 전용 DB 준비/DB 회귀/웹 실행/원격 PR·릴리즈 상태는 이번 정찰 미확인. 다른 프로젝트 DB 컨테이너 재사용 금지.
+- 이번 과제: MCP 세 도구의 limit 적용(brief.md). intNumber 경계 보호가 필요하며 days 180/3650 정책은 유지. 구현 전 상태임.
+- 스킬: 요청된 PMO/technology 세 스킬을 노출 도구·로컬 경로에서 찾지 못했으며 고유 절차/반환 형식 미확인.

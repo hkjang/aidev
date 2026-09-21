@@ -8,3 +8,4 @@
 - 세 도구(search_suppliers/analyze_spend/recommend_suppliers)를 함께 처리하며 기본값·상한·지출 share 분모를 보존한다.
 - 정찰 전체 Go 테스트 통과, DSN 없어 DB 테스트 skip; 실제 실패 재현·큰 수 API 동작은 미확인이므로 구현자가 실제 DB/Handler로 먼저 증명할 것.
 - 스킬 세 개는 도구·로컬 경로에서 미발견. auth/migrations/workflows·통화 계산은 피하고 SC- fixture 정리 및 context.Background cleanup을 유지할 것.
+- [러너 07:59] scout done — MCP가 공개한 limit 인자를 세 공급업체 조회 도구에서 실제로 적용하기 (가치 3 / 위험 2 / 작업량 M)
