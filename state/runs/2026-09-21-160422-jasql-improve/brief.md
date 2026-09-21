@@ -1,0 +1,13 @@
+- 과제: jasql-goldgen의 음수 -keep/-n을 파일 접근 전에 거부 (가치 3 / 위험 1 / 작업량 S)
+- 왜: 현재 `-keep -1`은 기존 골든셋을 읽은 뒤 `existing[:keep]`에서 panic이 나고, `-n -1 -keep 0`은 성공 종료하며 빈 골든셋 파일을 생성한다. 숫자 인자를 먼저 검증하면 입력 실수를 명확히 안내하고 잘못된 인자로 기존 평가 데이터를 덮어쓰는 일을 막을 수 있다.
+- 수용 기준: 1) `-keep < 0` 또는 `-n < 0`이면 catalog.Load 및 파일 읽기/쓰기 전에 해당 플래그와 허용 범위(0 이상)를 설명하는 stderr 메시지와 비정상 종료를 반환하고 panic/스택 추적을 출력하지 않는다. 2) 거부 시 기존 출력 파일의 바이트가 그대로이고, 없는 출력 파일은 생성하지 않는다. `-keep 0`, `-n 0`, `keep > 기존 개수`의 clamp 및 `n < 보존 개수`일 때 보존분을 유지하는 기존 동작은 바꾸지 않는다. 3) 실제 CLI main을 통과하는 subprocess 테스트로 두 음수 플래그 각각의 오류·파일 무변경, 존재하지 않는 data 경로에서도 입력 오류가 먼저 나오는 것, 유효한 0/양수 인자의 정상 JSON 생성과 보존 동작을 증명한다. 순수 검증 헬퍼 테스트만으로 끝내지 않는다.
+- 건드릴 파일: `cmd/jasql-goldgen/main.go:main` — flag.Parse 직후 total/keep 음수 검증만 추가하고 이후 로드·선별·저장 알고리즘은 유지; `cmd/jasql-goldgen/main_test.go` (신규) — 실제 CLI subprocess 회귀 테스트; `docs/evaluation.md:골든셋 확장 — jasql-goldgen` — 두 인자의 0 이상 제약을 짧게 설명.
+- 검증 명령: 저장소 루트에서 `go test ./cmd/jasql-goldgen -count=1`, `go build ./...`, `go vet ./...`, `go test ./...`, `git diff --check`. 정찰에서 build/vet와 전체 test 통과(catalog 53.670초, mcp 9.270초, meta/oracle cached); goldgen 패키지는 현재 테스트 없음. 신규 CLI 테스트 결과는 구현자가 확인해야 한다.
+- 위험과 피할 것: data/kcb 파일을 절대 수정하지 말 것. 테스트는 t.TempDir에 최소 물리/논리 JSON 및 기존 골든셋을 만들어 실제 catalog.Load/CLI를 실행한다. fixture 형식은 열어 본 `internal/mcp/datasets_test.go:newFixtureServer`를 참고하되 mcp 테스트 헬퍼를 가져오지 않는다. 테스트 바이너리 또는 goldgen 바이너리를 임시 디렉터리에 한 번 빌드해 실제 프로세스를 실행할 수 있다. 기본 출력 경로와 명시적 -out 둘 다 안전하게 검증하되 실제 저장소 기본 골든셋에 쓰지 않는다. 테스트 대역·소스 문자열 검사를 근거로 삼지 말 것. -n을 양수만 허용하도록 넓히거나 keep<=n 제약을 새로 넣지 않는다. 인자 파싱 전체 리팩터, 원자적 저장/백업 정책 변경, 다른 CLI, auth/meta 스키마/workflows는 범위 밖이다. 이전 성공 기록의 SQL 정리·날짜 검증을 다시 구현하지 않는다.
+- 차선 후보: 개발자 가이드의 Go 버전·의존성·MCP 도구 수 갱신 — 1순위가 다른 변경으로 이미 해결된 경우에만 `docs/development.md`를 go.mod, Dockerfile, `internal/mcp/server.go:tools/toolsForActor/callTool`, `internal/mcp/stdio_test.go:TestServeStdio`와 대조해 수정한다. Go 선언 1.25.0/빌더 1.26, 외부 의존성 및 go.sum 존재, 전체 도구 42개(권한 필터링 가능), 확장 예시의 24→25까지 함께 정정한다.
+
+확인 근거와 구현 순서:
+- 기준 HEAD e9f3fb2. `go run ./cmd/jasql-goldgen -keep -1`은 main.go:55의 slice bounds out of range [:-1]을 재현했다(파일 쓰기 전에 종료).
+- `go run ./cmd/jasql-goldgen -n -1 -keep 0 -out /mnt/c/Users/USER/projects/aidev/state/runs/2026-09-21-160422-jasql-improve/assets/negative-n.json`은 종료 코드 0, 0 cases를 출력했고 별도 경로에 빈 배열을 썼다. 기존 파일 덮어쓰기는 직접 재현하지 않았으나 main의 동일 os.WriteFile 경로를 확인했다.
+- 예상 35분 + 예비 10분: 실제 CLI 실패 회귀 테스트 15분 → main 입력 가드/짧은 문서 5분 → 정상 경계 테스트 및 전체 검증 15분. 기존 큰 실데이터 대신 최소 fixture로 테스트 시간을 제한한다.
+- 요청한 pmo:estimating-and-contingency, technology:implementation-planning, technology:solution-exploration은 callable Skill 도구/스킬 목록 및 로컬 .codex/.claude 검색에서 발견되지 않았다. 해당 스킬의 원문 절차·반환 형식은 미확인이다. 사용자 정찰 절차에 따라 후보 평가·범위·검증·예비 시간을 작성했다.

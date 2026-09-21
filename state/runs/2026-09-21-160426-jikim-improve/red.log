@@ -1,0 +1,49 @@
+
+> jikim-web@0.2.16 test
+> vitest run src/lib/api.stream-callback.test.ts --maxWorkers=1
+
+
+ RUN  v4.1.11 /home/hkjang/.cache/auto-improve-wt/jikim/web
+
+ ❯ src/lib/api.stream-callback.test.ts (9 tests | 6 failed) 39ms
+       × function Error() { [native code] }를 재호출 없이 원래 객체로 전파하고 뒤 이벤트를 전달하지 않는다 18ms
+       × function SyntaxError() { [native code] }를 재호출 없이 원래 객체로 전파하고 뒤 이벤트를 전달하지 않는다 5ms
+       × function Error() { [native code] }를 재호출 없이 원래 객체로 전파하고 뒤 이벤트를 전달하지 않는다 3ms
+       × function SyntaxError() { [native code] }를 재호출 없이 원래 객체로 전파하고 뒤 이벤트를 전달하지 않는다 2ms
+       × function Error() { [native code] }를 재호출 없이 원래 객체로 전파하고 뒤 이벤트를 전달하지 않는다 2ms
+       × function SyntaxError() { [native code] }를 재호출 없이 원래 객체로 전파하고 뒤 이벤트를 전달하지 않는다 2ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 6 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/lib/api.stream-callback.test.ts > streamChat 실제 HTTP 스트림 콜백 > content 이벤트 > function Error() { [native code] }를 재호출 없이 원래 객체로 전파하고 뒤 이벤트를 전달하지 않는다
+ FAIL  src/lib/api.stream-callback.test.ts > streamChat 실제 HTTP 스트림 콜백 > content 이벤트 > function SyntaxError() { [native code] }를 재호출 없이 원래 객체로 전파하고 뒤 이벤트를 전달하지 않는다
+ FAIL  src/lib/api.stream-callback.test.ts > streamChat 실제 HTTP 스트림 콜백 > delta 이벤트 > function Error() { [native code] }를 재호출 없이 원래 객체로 전파하고 뒤 이벤트를 전달하지 않는다
+ FAIL  src/lib/api.stream-callback.test.ts > streamChat 실제 HTTP 스트림 콜백 > delta 이벤트 > function SyntaxError() { [native code] }를 재호출 없이 원래 객체로 전파하고 뒤 이벤트를 전달하지 않는다
+ FAIL  src/lib/api.stream-callback.test.ts > streamChat 실제 HTTP 스트림 콜백 > choices 이벤트 > function Error() { [native code] }를 재호출 없이 원래 객체로 전파하고 뒤 이벤트를 전달하지 않는다
+ FAIL  src/lib/api.stream-callback.test.ts > streamChat 실제 HTTP 스트림 콜백 > choices 이벤트 > function SyntaxError() { [native code] }를 재호출 없이 원래 객체로 전파하고 뒤 이벤트를 전달하지 않는다
+AssertionError: promise resolved "undefined" instead of rejecting
+
+- Expected:
+Error {
+  "message": "rejected promise",
+}
+
++ Received:
+undefined
+
+ ❯ src/lib/api.stream-callback.test.ts:62:27
+     60|       });
+     61|
+     62|       await expect(result).rejects.toBe(sentinel);
+       |                           ^
+     63|       expect(chunks).toEqual(['hello']);
+     64|     });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/6]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  6 failed | 3 passed (9)
+   Start at  16:10:09
+   Duration  507ms (transform 26ms, setup 44ms, import 19ms, tests 39ms, environment 305ms)
+

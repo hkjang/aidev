@@ -1,0 +1,32 @@
+{
+  "base": {
+    "state": "pinned",
+    "reason": "main@9ea43d0",
+    "at": "2026-09-21T16:04:30+09:00"
+  },
+  "autonomy": {
+    "state": "release",
+    "reason": "",
+    "at": "2026-09-21T16:04:30+09:00"
+  },
+  "scout": {
+    "state": "done",
+    "reason": "streamChat의 콜백 예외를 JSON 파싱 오류로 오인해 원문을 다시 전달하는 문제 수정 (가치 2 / 위험 1 / 작업량 ",
+    "at": "2026-09-21T16:08:38+09:00"
+  },
+  "brief": {
+    "state": "accepted",
+    "reason": "채택 — HEAD 9ea43d0의 catch 범위와 실제 HTTP 실패 재현이 과제서 근거에 일치했고 최소 경계 수정으로 수용 기준을 충족했�",
+    "at": "2026-09-21T16:12:41+09:00"
+  },
+  "verify": {
+    "state": "passed",
+    "reason": "검증 7개 통과 (auto)",
+    "at": "2026-09-21T16:12:53+09:00"
+  },
+  "review": {
+    "state": "rejected",
+    "reason": "리뷰 거절: web/src/lib/api.ts:87 [P2] JSON null SSE 이벤트가 전체 응답을 중단하는 회귀. 실제 loopback HTTP/native fetch에서 data: null 뒤 data: {\"content\":\"later\"}를 보내면 main은 [\"null\",\"later\"]를 전달하고 정상 종료하지만 HEAD는 event.content 접근에서 TypeError로 reject하여 뒤 정상 응답을 잃는다. 서버 internal/httpapi/ai.go는 공급자 SSE 본문을 그대로 전달하므로 이 입력이 클라이언트까지 도달한다. 콜백 예외 전파는 유지하되 null의 기존 원문 폴백을 보존하고 후속 이벤트 전달 회귀 테스트를 추가해야 한다.",
+    "at": "2026-09-21T16:14:58+09:00"
+  }
+}
