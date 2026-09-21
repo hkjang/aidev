@@ -1,0 +1,42 @@
+[
+  {
+    "check": "react",
+    "command": "npm --prefix web test",
+    "exit": 0
+  },
+  {
+    "check": "lint",
+    "command": "npm --prefix web run lint",
+    "exit": 0
+  },
+  {
+    "check": "format",
+    "command": "npx --prefix web prettier --check web/src/pages/auth-pages.test.tsx web/e2e/core.spec.ts",
+    "exit": 0
+  },
+  {
+    "check": "build",
+    "command": "npm --prefix web run build",
+    "exit": 0
+  },
+  {
+    "check": "offline",
+    "command": "./scripts/check-offline-assets.sh web/dist",
+    "exit": 0
+  },
+  {
+    "check": "env",
+    "command": "./scripts/check-env-contract.sh",
+    "exit": 0
+  },
+  {
+    "check": "docs",
+    "command": "./scripts/check-docs.sh",
+    "exit": 0
+  },
+  {
+    "check": "e2e",
+    "command": "npm --prefix web run test:e2e",
+    "exit": 1
+  }
+]

@@ -1,0 +1,128 @@
+[
+  {
+    "title": "MCP SSO 의 JWKS 재요청 제한(초당 1회 RoundTripper) + discovery 실패 backoff/lock 밖",
+    "value": 2,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "internal/auth/access_token.go와 MCP OAuth 구현이 현재 HEAD에 없음. 선행 구현 후 재평가.",
+    "updated": "2026-09-21"
+  },
+  {
+    "title": "validateMCPOAuth 저장 시 422 경로의 핸들러 수준 Go 테스트",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "validateMCPOAuth가 현재 코드에 없어 선행 MCP OAuth 구현 필요.",
+    "updated": "2026-09-21"
+  },
+  {
+    "title": "개인 API 키 만료 임박 메일(key.expiring)",
+    "value": 3,
+    "risk": 3,
+    "size": "L",
+    "status": "pending",
+    "note": "internal/mail 및 migration 000005 부재. 메일 기반과 스케줄러부터 필요하여 이번 범위 초과.",
+    "updated": "2026-09-21"
+  },
+  {
+    "title": "로그인 rate limit 통합 테스트가 분 경계에 걸리면 실패 — 고정 시각 주입",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "auth_handlers.go는 time.Now(), limiter는 now 인자를 사용. DSN 미제공으로 과거 실패 재현은 하지 않음.",
+    "updated": "2026-09-21"
+  },
+  {
+    "title": "clientAddress 가 RemoteAddr 만 보아 reverse proxy 뒤에서 rate limit 이 전역",
+    "value": 3,
+    "risk": 3,
+    "size": "M",
+    "status": "pending",
+    "note": "ratelimit.go의 RemoteAddr 사용 확인. 신뢰 프록시 정책 결정이 필요한 인증 변경.",
+    "updated": "2026-09-21"
+  },
+  {
+    "title": "소유자가 볼 수 있는 검토 이력이 마지막 한 건뿐 — /me/apps/{id}/reviews",
+    "value": 2,
+    "risk": 2,
+    "size": "M",
+    "status": "pending",
+    "note": "personal_handlers.go의 LatestReviewsByApp 사용 확인. 권한/API/화면 계약 동시 변경 필요.",
+    "updated": "2026-09-21"
+  },
+  {
+    "title": "pending_review 앱을 수정해도 검토가 level 1 로 되돌아가지 않음",
+    "value": 2,
+    "risk": 3,
+    "size": "S",
+    "status": "pending",
+    "note": "UpdateApp과 rotateAppChallenge는 보안 심의 nonce와 review ID만 변경. 검토 단계 재설정은 정책 미확인으로 보류.",
+    "updated": "2026-09-21"
+  },
+  {
+    "title": "방문 추적 화면에 현재 설정이 만들 CSP 문자열 미리보기",
+    "value": 2,
+    "risk": 2,
+    "size": "M",
+    "status": "pending",
+    "note": "pagePolicy 존재 확인. 저장 전 입력 전달과 nonce 표현 계약 필요.",
+    "updated": "2026-09-21"
+  },
+  {
+    "title": "LoginPage 렌더 테스트 — 기본 상태 3종(SSO만·bootstrap만·둘 다) 커버",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "선택. 기존 4건은 bootstrapAvailable=false 고정. 실제 AuthProvider/API 경유 테스트와 두 브라우저 프로젝트 검증 진행 중.",
+    "updated": "2026-09-21"
+  },
+  {
+    "title": "USER_GUIDE 2.2 의 silent SSO 안내 문단에 /login?sso=none 캡처가 없음",
+    "value": 1,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "캡처 전체 갱신 시 함께 처리. 이번에는 시각 자산 변경하지 않음.",
+    "updated": "2026-09-21"
+  },
+  {
+    "title": "즐겨찾기 화면의 개수·페이지 탐색이 공개 카탈로그 전체 기준인 문제",
+    "value": 3,
+    "risk": 2,
+    "size": "M",
+    "status": "pending",
+    "note": "public-pages.tsx는 pageSize=100을 로컬 slugs로 거르고 total과 pagination은 서버 전체 값 사용. 일부 숫자만 수정하지 말 것.",
+    "updated": "2026-09-21"
+  },
+  {
+    "title": "USER_GUIDE의 로그인하면 즐겨찾기가 기기 간 동기화된다는 안내 수정",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "USER_GUIDE 3.6과 4.2 및 FavoritesProvider 확인. 로그인 무관 localStorage인데 문서에는 동기화 안내가 남음. 두 문단과 PDF를 함께 수정해야 함.",
+    "updated": "2026-09-21"
+  },
+  {
+    "title": "E2E mock API의 public config override가 기본값을 실제로 덮어쓰도록 정리",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "신규. mock-api.ts는 ...options.config 뒤에 oidcEnabled 등 기본값을 써 호출자가 지정한 값을 덮음. 이번 신규 테스트는 별도 HTTP route 응답으로 우회; 공용 fixture 변경은 별도 영향 검증 필요.",
+    "updated": "2026-09-21"
+  },
+  {
+    "title": "로그인 방식이 모두 없는 설치의 브라우저 안내 검증",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "신규. 기존 Vitest의 안내 검증은 있으나 production bundle의 둘 다 비활성 상태 E2E는 없음. 이번 3종 계약과 분리하여 다음에 검토.",
+    "updated": "2026-09-21"
+  }
+]
