@@ -1828,3 +1828,14 @@ notify: toast shown
 [09:07:43] SecCheck: [verify] passed — 검증 7개 통과 (auto)
 [09:07:49] SecCheck: review agent exited 1
 [09:07:49] SecCheck: review — 클로드 사용량 한도 감지, 코덱스로 대체
+[09:09:30] aidev sync FAILED: run(2026-09-21): Quantoss — merged https://github.com/hkjang/Quantoss/pull/78, release skipped
+[09:10:44] SecCheck: review — 코덱스 완료 (대체, in 680544/out 4298 tok)
+[09:10:44] SecCheck: review — 1 turns, 0m, $0, success
+[09:10:44] SecCheck: [review] rejected — 리뷰 거절: internal/web/analytics.go:211 [P1 보안·릴리즈 차단] Momento 프록시가 활성화되면 server.go:245의 비인증 라우트가 방문자의 임의 경로·쿼리·HTTP 메서드를 내부 수집기로 전달한다. 전용 PostgreSQL 및 NewServer와 모의 수집기로 비로그인 GET/DELETE /momento/private/admin?export=all이 수집기의 GET/DELETE /private/admin?export=all로 도달하고 응답을 그대로 받는 것을 재현했다. 공격자는 SecCheck 서버의 네트워크 접근권을 이용해 추적 수집 외의 내부 엔드포인트에 접근할 수 있으며, 네트워크 제한에 의존하는 수집기 API는 조회·변조에 노출된다. 수집기 자체 인증의 우회나 실제 운영 데이터 피해는 확인하지 않았다. 프록시를 추적에 필요한 정확한 경로·메서드 허용 목록으로 제한하고 나머지를 거부하며, 관리 경로 및 변조 메서드의 익명 요청 차단 회귀 테스트를 추가해야 한다.
+[09:10:44] SecCheck: [review] blocked — 검토 부서 차단 소견(security) — 수리·중재 없이 운영자의 위험 수용(risk-accepted) 필요
+branch 'auto/2026-09-21-0854' set up to track 'origin/auto/2026-09-21-0854'.
+[09:10:53] SecCheck: [pr] created — https://github.com/hkjang/SecCheck/pull/14
+https://github.com/hkjang/SecCheck/pull/14#issuecomment-5753752612
+evidence: /mnt/c/Users/USER/projects/aidev/state/runs/2026-09-21-085420-SecCheck-improve/evidence.json
+reports: 20 day(s), 4 week(s), 1 month(s), 1170 run(s), 1877 usage row(s), 45 project page(s), 7 alert(s)
+notify: no new alerts

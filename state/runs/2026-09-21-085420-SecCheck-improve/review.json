@@ -1,0 +1,20 @@
+{
+  "verdict": "reject",
+  "reasons": [
+    "internal/web/analytics.go:211 [P1 보안·릴리즈 차단] Momento 프록시가 활성화되면 server.go:245의 비인증 라우트가 방문자의 임의 경로·쿼리·HTTP 메서드를 내부 수집기로 전달한다. 전용 PostgreSQL 및 NewServer와 모의 수집기로 비로그인 GET/DELETE /momento/private/admin?export=all이 수집기의 GET/DELETE /private/admin?export=all로 도달하고 응답을 그대로 받는 것을 재현했다. 공격자는 SecCheck 서버의 네트워크 접근권을 이용해 추적 수집 외의 내부 엔드포인트에 접근할 수 있으며, 네트워크 제한에 의존하는 수집기 API는 조회·변조에 노출된다. 수집기 자체 인증의 우회나 실제 운영 데이터 피해는 확인하지 않았다. 프록시를 추적에 필요한 정확한 경로·메서드 허용 목록으로 제한하고 나머지를 거부하며, 관리 경로 및 변조 메서드의 익명 요청 차단 회귀 테스트를 추가해야 한다."
+  ],
+  "notes": [
+    "범위: 실제 로컬 main=c32eec770c581e9676a83b6d7bc79949d2cc3bc4, HEAD=350d36c. journal의 pinned base eb2a3b0와 다르다. 요청된 git diff main...HEAD 및 git log main..HEAD로 시작했으며, 차단 소견은 누적 변경 523cd0f의 프록시에 해당한다. 날짜 수정 350d36c 단독에서는 머지 차단 결함을 발견하지 못했다. 로컬 ref를 변경하거나 원격 조회하지 않았다.",
+    "필수 privacy-and-data-protection, security-architecture-review, code-review SKILL.md를 실제 경로에서 읽고 적용했다. 전용 Skill 도구는 제공되지 않았다. 보안 검증 참고: OWASP ASVS https://owasp.org/ASVS/ ; 구체적 판정 근거는 저장소 코드와 로컬 HTTP 재현이다.",
+    "전용 postgres:16-alpine에서 TestReportDateFilter*, TestReviewReportSummarisesAPeriod, TestVisitorTrackingIsOffUntilAnAdministratorTurnsItOn 실행 PASS(4.428s). 날짜 테스트는 실제 서버·SQL·XLSX를 실행하고 비정규 날짜, 역전 범위, 윤년, 서울 날짜 경계, 일반 DB 오류 비공개를 단언한다. 기존 코드에서도 통과하는 무의미한 테스트로 보이지 않는다. 구현자의 Red/Green 기록은 읽었으나 이 세션에서 수정 전 재실행은 하지 않았다.",
+    "보안 재현은 저장소를 수정하지 않는 /tmp/seccheck-review-kj07yupw/overlay.json의 Go overlay로 실행했고 TestReviewAnonymousCollectorProxy PASS(0.751s)는 취약 경로 도달 성공을 뜻한다. 기존 tracking_test.go는 정상 tracker.js 전달과 쿠키 제거를 확인하지만 임의 경로·메서드 거부는 검증하지 않는다. 전용 DB 컨테이너는 종료·제거했다.",
+    "MCP의 문자열 아닌 날짜는 기존 stringValue에서 빈 문자열로 처리되어 날짜 제한이 생략된다. 이번 변경이 도입한 회귀는 아니므로 참고로 남긴다. 스키마 타입 검증 및 해당 사례 테스트는 후속 검토 대상이다.",
+    "개인정보 흐름: 메일 기록은 수신자 ID·이메일·제목·오류를 DB에 보관하며 관리자 전용 조회와 retention_days 정리 작업이 존재한다. 방문 추적은 기본 꺼짐이나 활성화한 공급자의 수집 필드·보존·계약·국외 이전 조건은 저장소만으로 확인하지 못했다. 확인되지 않은 법 위반을 차단 소견으로 단정하지 않았다.",
+    "누적 diff에는 인증·마이그레이션·워크플로·의존성·문서 변경도 포함된다. 036은 notification 설정 삭제 및 mail로 이전하므로 단순 코드 revert만으로 과거 설정·스키마로 복귀하지 않는다. 이 회차 날짜 변경 자체에는 스키마·외부 상태 변경이 없다.",
+    "검토 한계: 누적 147개 파일의 모든 행·PDF·스크린샷 및 모든 권한 조합을 전수 검증하지 않았다. 원격 CI, govulncheck, 전체 race, 브라우저, 프런트 빌드, 운영 수집기는 미검증이다. main...HEAD diff --check의 docs/index.html 후행 공백은 스타일 문제이며 거절 사유가 아니다. eb2a3b0..HEAD diff --check는 통과했다."
+  ],
+  "risk": "high",
+  "blocking": [
+    "security"
+  ]
+}

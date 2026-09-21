@@ -20,3 +20,12 @@
 - 상세 증거: verification.md와 baseline/red/reverted-red/green/race/all-tests/vet.log. Skill 전용 도구 부재로 지정된 세 technology SKILL.md 원문을 직접 읽고 적용했다.
 - [러너 09:07] brief accepted — 채택 — 날짜 검증 누락과 두 호출자 배선이 현재 코드와 일치했고 전용 DB에서 500 및 비정규 날짜·역전 기간의 잘못된 �
 - [러너 09:07] verify passed — 검증 7개 통과 (auto)
+
+## 비평 노트
+- reject / security: internal/web/analytics.go:211 및 server.go:245부터 확인. Momento 활성 시 익명 GET·DELETE 임의 수집기 경로 전달을 실제 HTTP로 재현했다.
+- 로컬 main=c32eec7은 pinned eb2a3b0와 다름: 차단은 main...HEAD 누적 변경에 있고 날짜 수정 350d36c 단독의 차단 결함은 찾지 못했다.
+- 전용 PostgreSQL 16에서 날짜·리포트·추적 회귀 PASS, 저장소 무수정 Go overlay 보안 재현 PASS; 테스트 컨테이너 제거.
+- 원격 CI·govulncheck·브라우저·누적 변경 전수 검증 및 공급자 개인정보 계약은 미확인; MCP 비문자열 날짜 누락과 036 롤백 제약은 review.json에 남김.
+- [러너 09:10] review rejected — 리뷰 거절: internal/web/analytics.go:211 [P1 보안·릴리즈 차단] Momento 프록시가 활성화되면 server.go:245의 비인증 라우트가 방문자의 임의 경로·쿼리·HTTP 메서�
+- [러너 09:10] review blocked — 검토 부서 차단 소견(security) — 수리·중재 없이 운영자의 위험 수용(risk-accepted) 필요
+- [러너 09:10] pr created — https://github.com/hkjang/SecCheck/pull/14
