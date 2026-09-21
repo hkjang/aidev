@@ -20,3 +20,5 @@
 - Skill 도구가 없어 headcount/plugins/technology/skills의 completion-verification, systematic-debugging, test-driven-development 원문을 직접 읽어 적용. 테스트 작성 중 ByteOrder 인터페이스 컴파일 오류는 AppendByteOrder로 수정 후 의도한 실패를 확인했으며 mutation 출력의 UTF-8 디코딩 오류는 backslashreplace로 해결해 재검증함.
 - [러너 18:14] brief accepted — 채택 — 현재 코드와 재현 결과가 과제서와 일치했으며 디코더·숫자·캐시·운영 TLS 정책을 바꾸지 않고 지정한 두 파일�
 - [러너 18:14] verify passed — 검증 7개 통과 (auto)
+- [러너 18:14] review missing — 리뷰 결과 없음/손상: missing — 보류
+- [러너 18:14] pr created — https://github.com/hkjang/kanpic/pull/29
