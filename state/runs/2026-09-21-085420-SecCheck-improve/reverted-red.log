@@ -1,0 +1,322 @@
+=== RUN   TestReviewReportSummarisesAPeriod
+2026/09/21 09:02:57 INFO request method=POST path=/api/v1/auth/login status=200 duration_ms=12 request_id=c3d0a7c5-eaf3-45b3-8e73-81d96ffa6ce0
+2026/09/21 09:02:57 INFO request method=POST path=/api/v1/auth/login status=200 duration_ms=7 request_id=2d8da861-2f5b-48db-9edc-138a87e1326a
+2026/09/21 09:02:57 INFO request method=GET path=/api/v1/me status=200 duration_ms=3 request_id=2766b885-99bb-45e2-af45-3adc7a7ba0c2
+2026/09/21 09:02:57 INFO request method=POST path=/api/v1/review-requests status=201 duration_ms=70 request_id=40749831-935a-4fdf-ad17-32377cd8bc02
+2026/09/21 09:02:57 INFO request method=GET path=/api/v1/me status=200 duration_ms=2 request_id=44c801fb-ea3e-4ee2-9d87-eed36faf614a
+2026/09/21 09:02:57 INFO request method=POST path=/api/v1/review-requests status=201 duration_ms=65 request_id=323765b1-01a4-4caf-9c08-7b3db019eac1
+2026/09/21 09:02:57 INFO request method=GET path=/api/v1/reports/reviews status=200 duration_ms=15 request_id=b69acff9-099e-4b8d-bf6f-5c94ddfa99f1
+2026/09/21 09:02:57 INFO request method=GET path=/api/v1/reports/reviews status=200 duration_ms=7 request_id=4b6a2d25-bf0d-49fc-90e4-e6fc958e33f3
+2026/09/21 09:02:57 INFO request method=GET path=/api/v1/reports/reviews status=200 duration_ms=14 request_id=6b26d66c-342d-4104-8aca-e280f227ee8c
+2026/09/21 09:02:57 INFO request method=POST path=/api/v1/auth/login status=200 duration_ms=6 request_id=d835b03f-7848-4a80-9616-a9ca5fe48752
+2026/09/21 09:02:57 INFO request method=GET path=/api/v1/reports/reviews status=403 duration_ms=3 request_id=178be52d-a3e0-425b-841b-04317c37fd7a
+--- PASS: TestReviewReportSummarisesAPeriod (0.94s)
+=== RUN   TestReportDateFilterRejectsInvalidDates
+2026/09/21 09:02:58 INFO request method=POST path=/api/v1/auth/login status=200 duration_ms=13 request_id=891dd10e-da6f-4a40-bb37-604321f876f6
+=== RUN   TestReportDateFilterRejectsInvalidDates/from_not-a-date
+=== RUN   TestReportDateFilterRejectsInvalidDates/from_not-a-date/json
+2026/09/21 09:02:58 INFO request method=GET path=/api/v1/reports/reviews status=500 duration_ms=5 request_id=f35346f3-919f-43cf-b2dc-355b20c03ead
+    report_filter_test.go:67: want 422 VALIDATION_FAILED, got 500 code=QUERY_FAILED
+=== RUN   TestReportDateFilterRejectsInvalidDates/from_not-a-date/xlsx
+2026/09/21 09:02:58 INFO request method=GET path=/api/v1/reports/reviews status=500 duration_ms=4 request_id=56cf4473-4151-403c-9317-109ecb277846
+    report_filter_test.go:67: want 422 VALIDATION_FAILED, got 500 code=QUERY_FAILED
+=== RUN   TestReportDateFilterRejectsInvalidDates/from_not-a-date/mcp
+2026/09/21 09:02:58 INFO request method=POST path=/mcp status=200 duration_ms=2 request_id=bd142370-017c-46d2-9c7d-ffe30afada85
+    report_filter_test.go:88: missing safe date guidance: 도구 실행에 실패했습니다.
+=== RUN   TestReportDateFilterRejectsInvalidDates/to_not-a-date
+=== RUN   TestReportDateFilterRejectsInvalidDates/to_not-a-date/json
+2026/09/21 09:02:58 INFO request method=GET path=/api/v1/reports/reviews status=500 duration_ms=4 request_id=7da61487-a409-4310-a128-427c51ac5304
+    report_filter_test.go:67: want 422 VALIDATION_FAILED, got 500 code=QUERY_FAILED
+=== RUN   TestReportDateFilterRejectsInvalidDates/to_not-a-date/xlsx
+2026/09/21 09:02:58 INFO request method=GET path=/api/v1/reports/reviews status=500 duration_ms=4 request_id=3cbde4c9-a3de-4a78-ab0c-1f95624a0508
+    report_filter_test.go:67: want 422 VALIDATION_FAILED, got 500 code=QUERY_FAILED
+=== RUN   TestReportDateFilterRejectsInvalidDates/to_not-a-date/mcp
+2026/09/21 09:02:58 INFO request method=POST path=/mcp status=200 duration_ms=3 request_id=d1dfd316-1c72-4355-88e0-13ff1042ceae
+    report_filter_test.go:88: missing safe date guidance: 도구 실행에 실패했습니다.
+=== RUN   TestReportDateFilterRejectsInvalidDates/from_2026-02-30
+=== RUN   TestReportDateFilterRejectsInvalidDates/from_2026-02-30/json
+2026/09/21 09:02:58 INFO request method=GET path=/api/v1/reports/reviews status=500 duration_ms=3 request_id=08a3251f-2791-4ee3-8aab-04f78dfeba8d
+    report_filter_test.go:67: want 422 VALIDATION_FAILED, got 500 code=QUERY_FAILED
+=== RUN   TestReportDateFilterRejectsInvalidDates/from_2026-02-30/xlsx
+2026/09/21 09:02:58 INFO request method=GET path=/api/v1/reports/reviews status=500 duration_ms=3 request_id=68e99fb6-f4b6-4acc-a3dc-0aaa1b2d791d
+    report_filter_test.go:67: want 422 VALIDATION_FAILED, got 500 code=QUERY_FAILED
+=== RUN   TestReportDateFilterRejectsInvalidDates/from_2026-02-30/mcp
+2026/09/21 09:02:58 INFO request method=POST path=/mcp status=200 duration_ms=2 request_id=7edc72dd-57c2-4640-9ded-796f999093bb
+    report_filter_test.go:88: missing safe date guidance: 도구 실행에 실패했습니다.
+=== RUN   TestReportDateFilterRejectsInvalidDates/to_2026-02-30
+=== RUN   TestReportDateFilterRejectsInvalidDates/to_2026-02-30/json
+2026/09/21 09:02:58 INFO request method=GET path=/api/v1/reports/reviews status=500 duration_ms=3 request_id=f2516458-5151-4b67-893b-c115b8b17d35
+    report_filter_test.go:67: want 422 VALIDATION_FAILED, got 500 code=QUERY_FAILED
+=== RUN   TestReportDateFilterRejectsInvalidDates/to_2026-02-30/xlsx
+2026/09/21 09:02:58 INFO request method=GET path=/api/v1/reports/reviews status=500 duration_ms=4 request_id=f386621a-2a38-4858-89c0-aaae17a2a028
+    report_filter_test.go:67: want 422 VALIDATION_FAILED, got 500 code=QUERY_FAILED
+=== RUN   TestReportDateFilterRejectsInvalidDates/to_2026-02-30/mcp
+2026/09/21 09:02:58 INFO request method=POST path=/mcp status=200 duration_ms=2 request_id=b9ee6d2c-4f9c-41ee-9044-d7880479d8c7
+    report_filter_test.go:88: missing safe date guidance: 도구 실행에 실패했습니다.
+=== RUN   TestReportDateFilterRejectsInvalidDates/from_0000-01-01
+=== RUN   TestReportDateFilterRejectsInvalidDates/from_0000-01-01/json
+2026/09/21 09:02:58 INFO request method=GET path=/api/v1/reports/reviews status=500 duration_ms=3 request_id=fa167e75-a2d8-4cbe-9458-159a71f4af94
+    report_filter_test.go:67: want 422 VALIDATION_FAILED, got 500 code=QUERY_FAILED
+=== RUN   TestReportDateFilterRejectsInvalidDates/from_0000-01-01/xlsx
+2026/09/21 09:02:58 INFO request method=GET path=/api/v1/reports/reviews status=500 duration_ms=4 request_id=0d1ab6c1-cb77-4fef-8b09-38821181bbef
+    report_filter_test.go:67: want 422 VALIDATION_FAILED, got 500 code=QUERY_FAILED
+=== RUN   TestReportDateFilterRejectsInvalidDates/from_0000-01-01/mcp
+2026/09/21 09:02:58 INFO request method=POST path=/mcp status=200 duration_ms=2 request_id=ca32e63c-9984-4d01-a9fb-748f275a9eb6
+    report_filter_test.go:88: missing safe date guidance: 도구 실행에 실패했습니다.
+=== RUN   TestReportDateFilterRejectsInvalidDates/to_0000-01-01
+=== RUN   TestReportDateFilterRejectsInvalidDates/to_0000-01-01/json
+2026/09/21 09:02:58 INFO request method=GET path=/api/v1/reports/reviews status=500 duration_ms=4 request_id=3ce8b64f-f785-4e89-a395-a8367e611a17
+    report_filter_test.go:67: want 422 VALIDATION_FAILED, got 500 code=QUERY_FAILED
+=== RUN   TestReportDateFilterRejectsInvalidDates/to_0000-01-01/xlsx
+2026/09/21 09:02:58 INFO request method=GET path=/api/v1/reports/reviews status=500 duration_ms=3 request_id=cdbbcb5b-6ff3-46dc-abce-109955f9add3
+    report_filter_test.go:67: want 422 VALIDATION_FAILED, got 500 code=QUERY_FAILED
+=== RUN   TestReportDateFilterRejectsInvalidDates/to_0000-01-01/mcp
+2026/09/21 09:02:58 INFO request method=POST path=/mcp status=200 duration_ms=2 request_id=d4604237-d4e8-4ce0-ae67-50a8ab1a8c76
+    report_filter_test.go:88: missing safe date guidance: 도구 실행에 실패했습니다.
+=== RUN   TestReportDateFilterRejectsInvalidDates/from_2026-2-03
+=== RUN   TestReportDateFilterRejectsInvalidDates/from_2026-2-03/json
+2026/09/21 09:02:58 INFO request method=GET path=/api/v1/reports/reviews status=200 duration_ms=18 request_id=b2c8a547-b472-470c-9c59-c57968b62248
+    report_filter_test.go:67: want 422 VALIDATION_FAILED, got 200 code=
+=== RUN   TestReportDateFilterRejectsInvalidDates/from_2026-2-03/xlsx
+2026/09/21 09:02:58 INFO request method=GET path=/api/v1/reports/reviews status=200 duration_ms=14 request_id=74634ea1-e717-42ef-b000-8e6a49a6d707
+    report_filter_test.go:67: want 422 VALIDATION_FAILED, got 200 code=
+=== RUN   TestReportDateFilterRejectsInvalidDates/from_2026-2-03/mcp
+2026/09/21 09:02:58 INFO request method=POST path=/mcp status=200 duration_ms=11 request_id=e2f802e9-8efd-443d-99fd-da9a75446c56
+    report_filter_test.go:80: want tool error, got map[content:[map[text:{"from":"2026-2-03","to":"","totals":{"completed":0,"created":0,"in_progress":0,"rejected":0,"submitted":0},"cycle_time":{"average_days":0,"measured":0,"median_days":0,"p90_days":0},"by_status":[],"by_department":[],"by_result":[],"recurring_findings":[],"repeated_findings":[],"follow_ups":[],"follow_ups_total":0,"aging":[]} type:text]] resultType:complete structuredContent:map[aging:[] by_department:[] by_result:[] by_status:[] cycle_time:map[average_days:0 measured:0 median_days:0 p90_days:0] follow_ups:[] follow_ups_total:0 from:2026-2-03 recurring_findings:[] repeated_findings:[] to: totals:map[completed:0 created:0 in_progress:0 rejected:0 submitted:0]]]
+=== RUN   TestReportDateFilterRejectsInvalidDates/to_2026-2-03
+=== RUN   TestReportDateFilterRejectsInvalidDates/to_2026-2-03/json
+2026/09/21 09:02:58 INFO request method=GET path=/api/v1/reports/reviews status=200 duration_ms=13 request_id=39c6ac7c-dff4-4c97-b987-d7a8bc8bf086
+    report_filter_test.go:67: want 422 VALIDATION_FAILED, got 200 code=
+=== RUN   TestReportDateFilterRejectsInvalidDates/to_2026-2-03/xlsx
+2026/09/21 09:02:58 INFO request method=GET path=/api/v1/reports/reviews status=200 duration_ms=14 request_id=615baab2-0ee9-4732-9bbb-4cfa6bea446d
+    report_filter_test.go:67: want 422 VALIDATION_FAILED, got 200 code=
+=== RUN   TestReportDateFilterRejectsInvalidDates/to_2026-2-03/mcp
+2026/09/21 09:02:58 INFO request method=POST path=/mcp status=200 duration_ms=11 request_id=8ab6e46c-929a-49d3-9520-5b616dcd2eab
+    report_filter_test.go:80: want tool error, got map[content:[map[text:{"from":"","to":"2026-2-03","totals":{"completed":0,"created":0,"in_progress":0,"rejected":0,"submitted":0},"cycle_time":{"average_days":0,"measured":0,"median_days":0,"p90_days":0},"by_status":[],"by_department":[],"by_result":[],"recurring_findings":[],"repeated_findings":[],"follow_ups":[],"follow_ups_total":0,"aging":[]} type:text]] resultType:complete structuredContent:map[aging:[] by_department:[] by_result:[] by_status:[] cycle_time:map[average_days:0 measured:0 median_days:0 p90_days:0] follow_ups:[] follow_ups_total:0 from: recurring_findings:[] repeated_findings:[] to:2026-2-03 totals:map[completed:0 created:0 in_progress:0 rejected:0 submitted:0]]]
+=== RUN   TestReportDateFilterRejectsInvalidDates/from_2026-02-3
+=== RUN   TestReportDateFilterRejectsInvalidDates/from_2026-02-3/json
+2026/09/21 09:02:58 INFO request method=GET path=/api/v1/reports/reviews status=200 duration_ms=8 request_id=8686c4bc-67d8-4b5c-8315-2b91438f50d7
+    report_filter_test.go:67: want 422 VALIDATION_FAILED, got 200 code=
+=== RUN   TestReportDateFilterRejectsInvalidDates/from_2026-02-3/xlsx
+2026/09/21 09:02:58 INFO request method=GET path=/api/v1/reports/reviews status=200 duration_ms=13 request_id=cba5f071-0dd7-4048-8bb4-7129f0ae136d
+    report_filter_test.go:67: want 422 VALIDATION_FAILED, got 200 code=
+=== RUN   TestReportDateFilterRejectsInvalidDates/from_2026-02-3/mcp
+2026/09/21 09:02:58 INFO request method=POST path=/mcp status=200 duration_ms=10 request_id=ecf461ce-3444-4b47-9d0a-c4f9c457ddbf
+    report_filter_test.go:80: want tool error, got map[content:[map[text:{"from":"2026-02-3","to":"","totals":{"completed":0,"created":0,"in_progress":0,"rejected":0,"submitted":0},"cycle_time":{"average_days":0,"measured":0,"median_days":0,"p90_days":0},"by_status":[],"by_department":[],"by_result":[],"recurring_findings":[],"repeated_findings":[],"follow_ups":[],"follow_ups_total":0,"aging":[]} type:text]] resultType:complete structuredContent:map[aging:[] by_department:[] by_result:[] by_status:[] cycle_time:map[average_days:0 measured:0 median_days:0 p90_days:0] follow_ups:[] follow_ups_total:0 from:2026-02-3 recurring_findings:[] repeated_findings:[] to: totals:map[completed:0 created:0 in_progress:0 rejected:0 submitted:0]]]
+=== RUN   TestReportDateFilterRejectsInvalidDates/to_2026-02-3
+=== RUN   TestReportDateFilterRejectsInvalidDates/to_2026-02-3/json
+2026/09/21 09:02:58 INFO request method=GET path=/api/v1/reports/reviews status=200 duration_ms=8 request_id=c76ee1a8-3917-44d7-bad3-e179d3ab9110
+    report_filter_test.go:67: want 422 VALIDATION_FAILED, got 200 code=
+=== RUN   TestReportDateFilterRejectsInvalidDates/to_2026-02-3/xlsx
+2026/09/21 09:02:58 INFO request method=GET path=/api/v1/reports/reviews status=200 duration_ms=12 request_id=a8943bcd-d3fb-416e-8cc6-ddbcf169e838
+    report_filter_test.go:67: want 422 VALIDATION_FAILED, got 200 code=
+=== RUN   TestReportDateFilterRejectsInvalidDates/to_2026-02-3/mcp
+2026/09/21 09:02:58 INFO request method=POST path=/mcp status=200 duration_ms=11 request_id=61d0edcb-5819-4f69-9522-b7bbe9fa4f48
+    report_filter_test.go:80: want tool error, got map[content:[map[text:{"from":"","to":"2026-02-3","totals":{"completed":0,"created":0,"in_progress":0,"rejected":0,"submitted":0},"cycle_time":{"average_days":0,"measured":0,"median_days":0,"p90_days":0},"by_status":[],"by_department":[],"by_result":[],"recurring_findings":[],"repeated_findings":[],"follow_ups":[],"follow_ups_total":0,"aging":[]} type:text]] resultType:complete structuredContent:map[aging:[] by_department:[] by_result:[] by_status:[] cycle_time:map[average_days:0 measured:0 median_days:0 p90_days:0] follow_ups:[] follow_ups_total:0 from: recurring_findings:[] repeated_findings:[] to:2026-02-3 totals:map[completed:0 created:0 in_progress:0 rejected:0 submitted:0]]]
+=== RUN   TestReportDateFilterRejectsInvalidDates/from_2026-02-03T00:00:00Z
+=== RUN   TestReportDateFilterRejectsInvalidDates/from_2026-02-03T00:00:00Z/json
+2026/09/21 09:02:58 INFO request method=GET path=/api/v1/reports/reviews status=200 duration_ms=6 request_id=0fa3c853-2de7-420c-a671-eda2fa9948bd
+    report_filter_test.go:67: want 422 VALIDATION_FAILED, got 200 code=
+=== RUN   TestReportDateFilterRejectsInvalidDates/from_2026-02-03T00:00:00Z/xlsx
+2026/09/21 09:02:58 INFO request method=GET path=/api/v1/reports/reviews status=200 duration_ms=10 request_id=c8dbe309-496d-4377-8bd0-40f0a3e784c2
+    report_filter_test.go:67: want 422 VALIDATION_FAILED, got 200 code=
+=== RUN   TestReportDateFilterRejectsInvalidDates/from_2026-02-03T00:00:00Z/mcp
+2026/09/21 09:02:58 INFO request method=POST path=/mcp status=200 duration_ms=8 request_id=9a9017d3-7500-46e9-814a-441efc092348
+    report_filter_test.go:80: want tool error, got map[content:[map[text:{"from":"2026-02-03T00:00:00Z","to":"","totals":{"completed":0,"created":0,"in_progress":0,"rejected":0,"submitted":0},"cycle_time":{"average_days":0,"measured":0,"median_days":0,"p90_days":0},"by_status":[],"by_department":[],"by_result":[],"recurring_findings":[],"repeated_findings":[],"follow_ups":[],"follow_ups_total":0,"aging":[]} type:text]] resultType:complete structuredContent:map[aging:[] by_department:[] by_result:[] by_status:[] cycle_time:map[average_days:0 measured:0 median_days:0 p90_days:0] follow_ups:[] follow_ups_total:0 from:2026-02-03T00:00:00Z recurring_findings:[] repeated_findings:[] to: totals:map[completed:0 created:0 in_progress:0 rejected:0 submitted:0]]]
+=== RUN   TestReportDateFilterRejectsInvalidDates/to_2026-02-03T00:00:00Z
+=== RUN   TestReportDateFilterRejectsInvalidDates/to_2026-02-03T00:00:00Z/json
+2026/09/21 09:02:58 INFO request method=GET path=/api/v1/reports/reviews status=200 duration_ms=6 request_id=762d20a1-a1e2-4bbd-a9d7-40ea387468d3
+    report_filter_test.go:67: want 422 VALIDATION_FAILED, got 200 code=
+=== RUN   TestReportDateFilterRejectsInvalidDates/to_2026-02-03T00:00:00Z/xlsx
+2026/09/21 09:02:58 INFO request method=GET path=/api/v1/reports/reviews status=200 duration_ms=10 request_id=ff12a746-4af3-4fb9-ba9d-919e75a5dd80
+    report_filter_test.go:67: want 422 VALIDATION_FAILED, got 200 code=
+=== RUN   TestReportDateFilterRejectsInvalidDates/to_2026-02-03T00:00:00Z/mcp
+2026/09/21 09:02:58 INFO request method=POST path=/mcp status=200 duration_ms=8 request_id=51765276-aa95-4264-8360-1a10547c8e26
+    report_filter_test.go:80: want tool error, got map[content:[map[text:{"from":"","to":"2026-02-03T00:00:00Z","totals":{"completed":0,"created":0,"in_progress":0,"rejected":0,"submitted":0},"cycle_time":{"average_days":0,"measured":0,"median_days":0,"p90_days":0},"by_status":[],"by_department":[],"by_result":[],"recurring_findings":[],"repeated_findings":[],"follow_ups":[],"follow_ups_total":0,"aging":[]} type:text]] resultType:complete structuredContent:map[aging:[] by_department:[] by_result:[] by_status:[] cycle_time:map[average_days:0 measured:0 median_days:0 p90_days:0] follow_ups:[] follow_ups_total:0 from: recurring_findings:[] repeated_findings:[] to:2026-02-03T00:00:00Z totals:map[completed:0 created:0 in_progress:0 rejected:0 submitted:0]]]
+=== RUN   TestReportDateFilterRejectsInvalidDates/from_10000-01-01
+=== RUN   TestReportDateFilterRejectsInvalidDates/from_10000-01-01/json
+2026/09/21 09:02:58 INFO request method=GET path=/api/v1/reports/reviews status=200 duration_ms=5 request_id=2eda3c94-7dba-405d-ab22-e0c676ae548a
+    report_filter_test.go:67: want 422 VALIDATION_FAILED, got 200 code=
+=== RUN   TestReportDateFilterRejectsInvalidDates/from_10000-01-01/xlsx
+2026/09/21 09:02:58 INFO request method=GET path=/api/v1/reports/reviews status=200 duration_ms=10 request_id=453d26b6-9641-4ee3-bd18-9e7f164a43ba
+    report_filter_test.go:67: want 422 VALIDATION_FAILED, got 200 code=
+=== RUN   TestReportDateFilterRejectsInvalidDates/from_10000-01-01/mcp
+2026/09/21 09:02:58 INFO request method=POST path=/mcp status=200 duration_ms=8 request_id=5845bc4f-35ce-4cd0-97d3-4266a565a9df
+    report_filter_test.go:80: want tool error, got map[content:[map[text:{"from":"10000-01-01","to":"","totals":{"completed":0,"created":0,"in_progress":0,"rejected":0,"submitted":0},"cycle_time":{"average_days":0,"measured":0,"median_days":0,"p90_days":0},"by_status":[],"by_department":[],"by_result":[],"recurring_findings":[],"repeated_findings":[],"follow_ups":[],"follow_ups_total":0,"aging":[]} type:text]] resultType:complete structuredContent:map[aging:[] by_department:[] by_result:[] by_status:[] cycle_time:map[average_days:0 measured:0 median_days:0 p90_days:0] follow_ups:[] follow_ups_total:0 from:10000-01-01 recurring_findings:[] repeated_findings:[] to: totals:map[completed:0 created:0 in_progress:0 rejected:0 submitted:0]]]
+=== RUN   TestReportDateFilterRejectsInvalidDates/to_10000-01-01
+=== RUN   TestReportDateFilterRejectsInvalidDates/to_10000-01-01/json
+2026/09/21 09:02:58 INFO request method=GET path=/api/v1/reports/reviews status=200 duration_ms=5 request_id=e49b6d93-0298-4134-b086-63018f2b9dc8
+    report_filter_test.go:67: want 422 VALIDATION_FAILED, got 200 code=
+=== RUN   TestReportDateFilterRejectsInvalidDates/to_10000-01-01/xlsx
+2026/09/21 09:02:58 INFO request method=GET path=/api/v1/reports/reviews status=200 duration_ms=10 request_id=4bad17cd-d292-4ff7-a907-b4ccfd183cb6
+    report_filter_test.go:67: want 422 VALIDATION_FAILED, got 200 code=
+=== RUN   TestReportDateFilterRejectsInvalidDates/to_10000-01-01/mcp
+2026/09/21 09:02:58 INFO request method=POST path=/mcp status=200 duration_ms=7 request_id=949b433f-32be-483e-aaef-1ca41011a946
+    report_filter_test.go:80: want tool error, got map[content:[map[text:{"from":"","to":"10000-01-01","totals":{"completed":0,"created":0,"in_progress":0,"rejected":0,"submitted":0},"cycle_time":{"average_days":0,"measured":0,"median_days":0,"p90_days":0},"by_status":[],"by_department":[],"by_result":[],"recurring_findings":[],"repeated_findings":[],"follow_ups":[],"follow_ups_total":0,"aging":[]} type:text]] resultType:complete structuredContent:map[aging:[] by_department:[] by_result:[] by_status:[] cycle_time:map[average_days:0 measured:0 median_days:0 p90_days:0] follow_ups:[] follow_ups_total:0 from: recurring_findings:[] repeated_findings:[] to:10000-01-01 totals:map[completed:0 created:0 in_progress:0 rejected:0 submitted:0]]]
+=== RUN   TestReportDateFilterRejectsInvalidDates/from_2025-02-29
+=== RUN   TestReportDateFilterRejectsInvalidDates/from_2025-02-29/json
+2026/09/21 09:02:58 INFO request method=GET path=/api/v1/reports/reviews status=500 duration_ms=3 request_id=3ed65d4a-4f82-496e-8bb5-02c2a31ae41e
+    report_filter_test.go:67: want 422 VALIDATION_FAILED, got 500 code=QUERY_FAILED
+=== RUN   TestReportDateFilterRejectsInvalidDates/from_2025-02-29/xlsx
+2026/09/21 09:02:58 INFO request method=GET path=/api/v1/reports/reviews status=500 duration_ms=4 request_id=d056c1dc-deee-42e1-908e-beda81d9a555
+    report_filter_test.go:67: want 422 VALIDATION_FAILED, got 500 code=QUERY_FAILED
+=== RUN   TestReportDateFilterRejectsInvalidDates/from_2025-02-29/mcp
+2026/09/21 09:02:58 INFO request method=POST path=/mcp status=200 duration_ms=2 request_id=20ed0255-a8ae-4776-8524-3877bdad207f
+    report_filter_test.go:88: missing safe date guidance: 도구 실행에 실패했습니다.
+=== RUN   TestReportDateFilterRejectsInvalidDates/to_2025-02-29
+=== RUN   TestReportDateFilterRejectsInvalidDates/to_2025-02-29/json
+2026/09/21 09:02:58 INFO request method=GET path=/api/v1/reports/reviews status=500 duration_ms=3 request_id=1f327c7a-7ebe-4b5a-b3ae-b24cfb362ce9
+    report_filter_test.go:67: want 422 VALIDATION_FAILED, got 500 code=QUERY_FAILED
+=== RUN   TestReportDateFilterRejectsInvalidDates/to_2025-02-29/xlsx
+2026/09/21 09:02:58 INFO request method=GET path=/api/v1/reports/reviews status=500 duration_ms=3 request_id=c053ca8e-5b30-4f9c-947e-5385c841eb86
+    report_filter_test.go:67: want 422 VALIDATION_FAILED, got 500 code=QUERY_FAILED
+=== RUN   TestReportDateFilterRejectsInvalidDates/to_2025-02-29/mcp
+2026/09/21 09:02:58 INFO request method=POST path=/mcp status=200 duration_ms=2 request_id=6b5bde9a-9114-4d34-a7e8-163300e5ba5e
+    report_filter_test.go:88: missing safe date guidance: 도구 실행에 실패했습니다.
+=== RUN   TestReportDateFilterRejectsInvalidDates/reversed
+=== RUN   TestReportDateFilterRejectsInvalidDates/reversed/json
+2026/09/21 09:02:58 INFO request method=GET path=/api/v1/reports/reviews status=200 duration_ms=13 request_id=a41e061e-8157-4175-8616-93994a0020b0
+    report_filter_test.go:67: want 422 VALIDATION_FAILED, got 200 code=
+=== RUN   TestReportDateFilterRejectsInvalidDates/reversed/xlsx
+2026/09/21 09:02:58 INFO request method=GET path=/api/v1/reports/reviews status=200 duration_ms=15 request_id=1045b4f0-2efa-403f-8b3c-e7560ee50215
+    report_filter_test.go:67: want 422 VALIDATION_FAILED, got 200 code=
+=== RUN   TestReportDateFilterRejectsInvalidDates/reversed/mcp
+2026/09/21 09:02:58 INFO request method=POST path=/mcp status=200 duration_ms=12 request_id=9401f0fb-92fd-49da-a4cc-21a06b96729b
+    report_filter_test.go:80: want tool error, got map[content:[map[text:{"from":"2026-03-02","to":"2026-03-01","totals":{"completed":0,"created":0,"in_progress":0,"rejected":0,"submitted":0},"cycle_time":{"average_days":0,"measured":0,"median_days":0,"p90_days":0},"by_status":[],"by_department":[],"by_result":[],"recurring_findings":[],"repeated_findings":[],"follow_ups":[],"follow_ups_total":0,"aging":[]} type:text]] resultType:complete structuredContent:map[aging:[] by_department:[] by_result:[] by_status:[] cycle_time:map[average_days:0 measured:0 median_days:0 p90_days:0] follow_ups:[] follow_ups_total:0 from:2026-03-02 recurring_findings:[] repeated_findings:[] to:2026-03-01 totals:map[completed:0 created:0 in_progress:0 rejected:0 submitted:0]]]
+=== RUN   TestReportDateFilterRejectsInvalidDates/both_invalid
+=== RUN   TestReportDateFilterRejectsInvalidDates/both_invalid/json
+2026/09/21 09:02:58 INFO request method=GET path=/api/v1/reports/reviews status=500 duration_ms=3 request_id=726a34a3-d1f8-40ff-bbfd-9f2988fed42a
+    report_filter_test.go:67: want 422 VALIDATION_FAILED, got 500 code=QUERY_FAILED
+=== RUN   TestReportDateFilterRejectsInvalidDates/both_invalid/xlsx
+2026/09/21 09:02:58 INFO request method=GET path=/api/v1/reports/reviews status=500 duration_ms=3 request_id=59045667-27ee-461e-82ca-5e7eadcfc73f
+    report_filter_test.go:67: want 422 VALIDATION_FAILED, got 500 code=QUERY_FAILED
+=== RUN   TestReportDateFilterRejectsInvalidDates/both_invalid/mcp
+2026/09/21 09:02:58 INFO request method=POST path=/mcp status=200 duration_ms=2 request_id=f41e648a-22c5-4f43-b23c-cb2dc6714ed8
+    report_filter_test.go:88: missing safe date guidance: 도구 실행에 실패했습니다.
+--- FAIL: TestReportDateFilterRejectsInvalidDates (1.19s)
+    --- FAIL: TestReportDateFilterRejectsInvalidDates/from_not-a-date (0.02s)
+        --- FAIL: TestReportDateFilterRejectsInvalidDates/from_not-a-date/json (0.01s)
+        --- FAIL: TestReportDateFilterRejectsInvalidDates/from_not-a-date/xlsx (0.01s)
+        --- FAIL: TestReportDateFilterRejectsInvalidDates/from_not-a-date/mcp (0.00s)
+    --- FAIL: TestReportDateFilterRejectsInvalidDates/to_not-a-date (0.02s)
+        --- FAIL: TestReportDateFilterRejectsInvalidDates/to_not-a-date/json (0.01s)
+        --- FAIL: TestReportDateFilterRejectsInvalidDates/to_not-a-date/xlsx (0.01s)
+        --- FAIL: TestReportDateFilterRejectsInvalidDates/to_not-a-date/mcp (0.01s)
+    --- FAIL: TestReportDateFilterRejectsInvalidDates/from_2026-02-30 (0.02s)
+        --- FAIL: TestReportDateFilterRejectsInvalidDates/from_2026-02-30/json (0.01s)
+        --- FAIL: TestReportDateFilterRejectsInvalidDates/from_2026-02-30/xlsx (0.01s)
+        --- FAIL: TestReportDateFilterRejectsInvalidDates/from_2026-02-30/mcp (0.00s)
+    --- FAIL: TestReportDateFilterRejectsInvalidDates/to_2026-02-30 (0.02s)
+        --- FAIL: TestReportDateFilterRejectsInvalidDates/to_2026-02-30/json (0.01s)
+        --- FAIL: TestReportDateFilterRejectsInvalidDates/to_2026-02-30/xlsx (0.01s)
+        --- FAIL: TestReportDateFilterRejectsInvalidDates/to_2026-02-30/mcp (0.00s)
+    --- FAIL: TestReportDateFilterRejectsInvalidDates/from_0000-01-01 (0.02s)
+        --- FAIL: TestReportDateFilterRejectsInvalidDates/from_0000-01-01/json (0.01s)
+        --- FAIL: TestReportDateFilterRejectsInvalidDates/from_0000-01-01/xlsx (0.01s)
+        --- FAIL: TestReportDateFilterRejectsInvalidDates/from_0000-01-01/mcp (0.00s)
+    --- FAIL: TestReportDateFilterRejectsInvalidDates/to_0000-01-01 (0.02s)
+        --- FAIL: TestReportDateFilterRejectsInvalidDates/to_0000-01-01/json (0.01s)
+        --- FAIL: TestReportDateFilterRejectsInvalidDates/to_0000-01-01/xlsx (0.01s)
+        --- FAIL: TestReportDateFilterRejectsInvalidDates/to_0000-01-01/mcp (0.00s)
+    --- FAIL: TestReportDateFilterRejectsInvalidDates/from_2026-2-03 (0.05s)
+        --- FAIL: TestReportDateFilterRejectsInvalidDates/from_2026-2-03/json (0.02s)
+        --- FAIL: TestReportDateFilterRejectsInvalidDates/from_2026-2-03/xlsx (0.02s)
+        --- FAIL: TestReportDateFilterRejectsInvalidDates/from_2026-2-03/mcp (0.01s)
+    --- FAIL: TestReportDateFilterRejectsInvalidDates/to_2026-2-03 (0.04s)
+        --- FAIL: TestReportDateFilterRejectsInvalidDates/to_2026-2-03/json (0.01s)
+        --- FAIL: TestReportDateFilterRejectsInvalidDates/to_2026-2-03/xlsx (0.02s)
+        --- FAIL: TestReportDateFilterRejectsInvalidDates/to_2026-2-03/mcp (0.01s)
+    --- FAIL: TestReportDateFilterRejectsInvalidDates/from_2026-02-3 (0.04s)
+        --- FAIL: TestReportDateFilterRejectsInvalidDates/from_2026-02-3/json (0.01s)
+        --- FAIL: TestReportDateFilterRejectsInvalidDates/from_2026-02-3/xlsx (0.02s)
+        --- FAIL: TestReportDateFilterRejectsInvalidDates/from_2026-02-3/mcp (0.01s)
+    --- FAIL: TestReportDateFilterRejectsInvalidDates/to_2026-02-3 (0.04s)
+        --- FAIL: TestReportDateFilterRejectsInvalidDates/to_2026-02-3/json (0.01s)
+        --- FAIL: TestReportDateFilterRejectsInvalidDates/to_2026-02-3/xlsx (0.01s)
+        --- FAIL: TestReportDateFilterRejectsInvalidDates/to_2026-02-3/mcp (0.01s)
+    --- FAIL: TestReportDateFilterRejectsInvalidDates/from_2026-02-03T00:00:00Z (0.03s)
+        --- FAIL: TestReportDateFilterRejectsInvalidDates/from_2026-02-03T00:00:00Z/json (0.01s)
+        --- FAIL: TestReportDateFilterRejectsInvalidDates/from_2026-02-03T00:00:00Z/xlsx (0.01s)
+        --- FAIL: TestReportDateFilterRejectsInvalidDates/from_2026-02-03T00:00:00Z/mcp (0.01s)
+    --- FAIL: TestReportDateFilterRejectsInvalidDates/to_2026-02-03T00:00:00Z (0.03s)
+        --- FAIL: TestReportDateFilterRejectsInvalidDates/to_2026-02-03T00:00:00Z/json (0.01s)
+        --- FAIL: TestReportDateFilterRejectsInvalidDates/to_2026-02-03T00:00:00Z/xlsx (0.01s)
+        --- FAIL: TestReportDateFilterRejectsInvalidDates/to_2026-02-03T00:00:00Z/mcp (0.01s)
+    --- FAIL: TestReportDateFilterRejectsInvalidDates/from_10000-01-01 (0.03s)
+        --- FAIL: TestReportDateFilterRejectsInvalidDates/from_10000-01-01/json (0.01s)
+        --- FAIL: TestReportDateFilterRejectsInvalidDates/from_10000-01-01/xlsx (0.01s)
+        --- FAIL: TestReportDateFilterRejectsInvalidDates/from_10000-01-01/mcp (0.01s)
+    --- FAIL: TestReportDateFilterRejectsInvalidDates/to_10000-01-01 (0.03s)
+        --- FAIL: TestReportDateFilterRejectsInvalidDates/to_10000-01-01/json (0.01s)
+        --- FAIL: TestReportDateFilterRejectsInvalidDates/to_10000-01-01/xlsx (0.01s)
+        --- FAIL: TestReportDateFilterRejectsInvalidDates/to_10000-01-01/mcp (0.01s)
+    --- FAIL: TestReportDateFilterRejectsInvalidDates/from_2025-02-29 (0.01s)
+        --- FAIL: TestReportDateFilterRejectsInvalidDates/from_2025-02-29/json (0.00s)
+        --- FAIL: TestReportDateFilterRejectsInvalidDates/from_2025-02-29/xlsx (0.01s)
+        --- FAIL: TestReportDateFilterRejectsInvalidDates/from_2025-02-29/mcp (0.00s)
+    --- FAIL: TestReportDateFilterRejectsInvalidDates/to_2025-02-29 (0.01s)
+        --- FAIL: TestReportDateFilterRejectsInvalidDates/to_2025-02-29/json (0.00s)
+        --- FAIL: TestReportDateFilterRejectsInvalidDates/to_2025-02-29/xlsx (0.01s)
+        --- FAIL: TestReportDateFilterRejectsInvalidDates/to_2025-02-29/mcp (0.00s)
+    --- FAIL: TestReportDateFilterRejectsInvalidDates/reversed (0.05s)
+        --- FAIL: TestReportDateFilterRejectsInvalidDates/reversed/json (0.02s)
+        --- FAIL: TestReportDateFilterRejectsInvalidDates/reversed/xlsx (0.02s)
+        --- FAIL: TestReportDateFilterRejectsInvalidDates/reversed/mcp (0.01s)
+    --- FAIL: TestReportDateFilterRejectsInvalidDates/both_invalid (0.01s)
+        --- FAIL: TestReportDateFilterRejectsInvalidDates/both_invalid/json (0.00s)
+        --- FAIL: TestReportDateFilterRejectsInvalidDates/both_invalid/xlsx (0.01s)
+        --- FAIL: TestReportDateFilterRejectsInvalidDates/both_invalid/mcp (0.00s)
+=== RUN   TestReportDateFilterKeepsAllTransportsInAgreement
+2026/09/21 09:02:59 INFO request method=POST path=/api/v1/auth/login status=200 duration_ms=11 request_id=1615d4db-e58b-455a-b953-ff28289f21b4
+2026/09/21 09:02:59 INFO request method=POST path=/api/v1/auth/login status=200 duration_ms=6 request_id=9c32fd48-0aa3-4d58-bc05-f2a404e5334e
+2026/09/21 09:02:59 INFO request method=GET path=/api/v1/me status=200 duration_ms=3 request_id=194db357-3efd-45c7-9258-3da3ebd2ca87
+2026/09/21 09:02:59 INFO request method=POST path=/api/v1/review-requests status=201 duration_ms=65 request_id=0bb342a3-3552-424c-bec5-28bf5a953119
+2026/09/21 09:02:59 INFO request method=GET path=/api/v1/me status=200 duration_ms=1 request_id=0624180a-2a1a-4103-bf8f-cbf3a52a77a6
+2026/09/21 09:02:59 INFO request method=POST path=/api/v1/review-requests status=201 duration_ms=61 request_id=43bf1e60-165b-4bef-aee8-07089ea0dcb3
+2026/09/21 09:02:59 INFO request method=GET path=/api/v1/me status=200 duration_ms=1 request_id=62b805aa-a091-4657-aa2c-0721542ce453
+2026/09/21 09:02:59 INFO request method=POST path=/api/v1/review-requests status=201 duration_ms=62 request_id=e14435b0-e382-41b7-b2b4-602c37fbc485
+2026/09/21 09:02:59 INFO request method=GET path=/api/v1/me status=200 duration_ms=1 request_id=b7241d8c-c5e0-44b0-8005-5c582ab1e208
+2026/09/21 09:02:59 INFO request method=POST path=/api/v1/review-requests status=201 duration_ms=62 request_id=bec3d7d3-01fe-4805-b692-deb05d110c77
+=== RUN   TestReportDateFilterKeepsAllTransportsInAgreement/unbounded
+2026/09/21 09:02:59 INFO request method=GET path=/api/v1/reports/reviews status=200 duration_ms=13 request_id=37996e9c-5e59-4fe0-8d93-136c306d5d03
+2026/09/21 09:02:59 INFO request method=POST path=/mcp status=200 duration_ms=7 request_id=5f76709c-cf48-48d2-9af6-a98670a8e331
+2026/09/21 09:02:59 INFO request method=GET path=/api/v1/reports/reviews status=200 duration_ms=10 request_id=52103a1b-6bad-4ec1-b933-32b4e0b131cb
+=== RUN   TestReportDateFilterKeepsAllTransportsInAgreement/blank
+2026/09/21 09:02:59 INFO request method=GET path=/api/v1/reports/reviews status=200 duration_ms=5 request_id=8c06d9da-45eb-40cb-91f2-9ff0c0539b16
+2026/09/21 09:02:59 INFO request method=POST path=/mcp status=200 duration_ms=7 request_id=6d48436d-2091-47da-b9b6-268226e31aae
+2026/09/21 09:02:59 INFO request method=GET path=/api/v1/reports/reviews status=200 duration_ms=9 request_id=7a8f4e61-468b-418f-8043-5c72a62bd567
+=== RUN   TestReportDateFilterKeepsAllTransportsInAgreement/from_only
+2026/09/21 09:02:59 INFO request method=GET path=/api/v1/reports/reviews status=200 duration_ms=12 request_id=7dce016b-867b-4625-ada1-1266531d7e1c
+2026/09/21 09:02:59 INFO request method=POST path=/mcp status=200 duration_ms=10 request_id=3a5951ae-1a23-473a-9fe6-c71adc1f8a48
+2026/09/21 09:02:59 INFO request method=GET path=/api/v1/reports/reviews status=200 duration_ms=12 request_id=7bcdfe33-7125-4ec9-9626-bc4c337a63e8
+=== RUN   TestReportDateFilterKeepsAllTransportsInAgreement/to_only
+2026/09/21 09:02:59 INFO request method=GET path=/api/v1/reports/reviews status=200 duration_ms=12 request_id=c725cea3-95a1-4b35-9182-d44334960aac
+2026/09/21 09:02:59 INFO request method=POST path=/mcp status=200 duration_ms=9 request_id=74e0c8c4-5106-44d2-940c-f3273166b1da
+2026/09/21 09:02:59 INFO request method=GET path=/api/v1/reports/reviews status=200 duration_ms=12 request_id=ea0f49ab-8afa-4d41-a384-6ff84c45ae87
+=== RUN   TestReportDateFilterKeepsAllTransportsInAgreement/same_leap_day
+2026/09/21 09:02:59 INFO request method=GET path=/api/v1/reports/reviews status=200 duration_ms=12 request_id=6f9aec8f-1760-460c-995e-0ffb17e37c10
+2026/09/21 09:02:59 INFO request method=POST path=/mcp status=200 duration_ms=10 request_id=5d2d3202-93fa-4ee0-b68c-df9c33b01c2b
+2026/09/21 09:02:59 INFO request method=GET path=/api/v1/reports/reviews status=200 duration_ms=12 request_id=3a8a9128-79a4-4347-9ba6-b014f65743a8
+=== RUN   TestReportDateFilterKeepsAllTransportsInAgreement/trimmed
+2026/09/21 09:02:59 INFO request method=GET path=/api/v1/reports/reviews status=200 duration_ms=8 request_id=5af7fa3e-3ff4-4248-b6b0-b2f8e97a6e60
+2026/09/21 09:02:59 INFO request method=POST path=/mcp status=200 duration_ms=10 request_id=34f1783f-35b1-4bad-a062-9d0409aee70b
+2026/09/21 09:02:59 INFO request method=GET path=/api/v1/reports/reviews status=200 duration_ms=12 request_id=01b4c85b-7b2a-4c49-978d-0f0510750ecc
+=== RUN   TestReportDateFilterKeepsAllTransportsInAgreement/year_bounds
+2026/09/21 09:02:59 INFO request method=GET path=/api/v1/reports/reviews status=200 duration_ms=6 request_id=b967fbc3-6feb-49ad-b244-ea31d273c848
+2026/09/21 09:02:59 INFO request method=POST path=/mcp status=200 duration_ms=8 request_id=4de52d63-c0b2-4bab-be30-b815964dfe0e
+2026/09/21 09:02:59 INFO request method=GET path=/api/v1/reports/reviews status=200 duration_ms=9 request_id=3d20bda0-14ca-434a-8025-4bc362bf9009
+--- PASS: TestReportDateFilterKeepsAllTransportsInAgreement (1.22s)
+    --- PASS: TestReportDateFilterKeepsAllTransportsInAgreement/unbounded (0.04s)
+    --- PASS: TestReportDateFilterKeepsAllTransportsInAgreement/blank (0.03s)
+    --- PASS: TestReportDateFilterKeepsAllTransportsInAgreement/from_only (0.04s)
+    --- PASS: TestReportDateFilterKeepsAllTransportsInAgreement/to_only (0.04s)
+    --- PASS: TestReportDateFilterKeepsAllTransportsInAgreement/same_leap_day (0.04s)
+    --- PASS: TestReportDateFilterKeepsAllTransportsInAgreement/trimmed (0.04s)
+    --- PASS: TestReportDateFilterKeepsAllTransportsInAgreement/year_bounds (0.03s)
+=== RUN   TestReportDateFilterDoesNotExposeDatabaseErrors
+2026/09/21 09:03:00 INFO request method=POST path=/api/v1/auth/login status=200 duration_ms=11 request_id=b002733c-7550-4337-91f0-3cd8ef074840
+2026/09/21 09:03:00 INFO request method=POST path=/mcp status=200 duration_ms=3 request_id=7a838eff-c789-43c3-9f1b-18adcb3dc76e
+--- PASS: TestReportDateFilterDoesNotExposeDatabaseErrors (0.69s)
+FAIL
+FAIL	github.com/hkjang/SecCheck/internal/web	4.082s
+FAIL
