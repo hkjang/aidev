@@ -13,3 +13,5 @@ HTTP fixture: `internal/proxy/server_test.go:openTestStore`(t.TempDir SQLite), `
 예상 시간: 재현 테스트 15분 + 두 키 변경 5분 + 관련/전체 검증 15분 + 실패 분석 여유 10분 = 45분. 외부 서비스 연결·새 의존성·UI 변경 없음. 정찰에서는 소스의 키 누락과 실제 호출 경로를 확인했으며 신규 실패 테스트를 만들거나 실행하지 않았다(코드 수정 금지).
 
 스킬 가용성: 요청된 pmo:estimating-and-contingency, technology:implementation-planning, technology:solution-exploration과 Skill 도구는 현재 도구 카탈로그 및 /home/hkjang/.codex·/home/hkjang/.claude 로컬 파일 검색에서 미발견. 전용 절차와 반환 형식은 미확인. 사용자 지정 과제서 형식에 따라 대안·범위·시간·예비시간·검증을 기록했다.
+
+정찰 검증 상태: `go test ./internal/analyzer ./internal/proxy` 성공(analyzer cached, proxy 59.579초, Go 1.26.7). 이는 기존 테스트의 상태이며 신규 NodePressure 클러스터 회귀가 이미 증명됐다는 뜻은 아니다. `git status --short` 및 `git diff --stat`는 비어 있었고 코드 변경·커밋 없음.
