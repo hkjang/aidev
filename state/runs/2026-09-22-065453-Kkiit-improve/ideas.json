@@ -1,0 +1,155 @@
+[
+  {
+    "title": "인증 연동 페이지의 MCP 를 SSO 로 연결 카드 캡처를 가이드에 싣고 scripts/guide-screenshots.mjs 에 추가",
+    "value": 3,
+    "risk": 1,
+    "size": "S",
+    "status": "rejected",
+    "note": "현재 main에 mcpoauth·mcp.oauth 설정·해당 카드가 없다. 현재 회차에는 대상 부재; 기능 병합 시 재등록.",
+    "updated": "2026-09-22"
+  },
+  {
+    "title": "OAuth 로 들어온 MCP 호출을 감사 로그·개인화 페이지에서 키 호출과 구분해 보여 주기",
+    "value": 2,
+    "risk": 3,
+    "size": "M",
+    "status": "rejected",
+    "note": "현재 체크아웃에는 MCP OAuth 구현이 없어 현 과제로 성립하지 않는다. 과거 성공 기록과 main의 차이를 확인.",
+    "updated": "2026-09-22"
+  },
+  {
+    "title": "OrderOverdue 를 mail.notify_order_overdue 로 추가할지 검토",
+    "value": 2,
+    "risk": 2,
+    "size": "M",
+    "status": "pending",
+    "note": "internal/mail/config.go 이벤트 목록에 없다. 발송 이벤트 확대와 수신 대상 결정이 필요해 이번보다 위험이 크다.",
+    "updated": "2026-09-22"
+  },
+  {
+    "title": "정지된 계정 로그인 거부 문구를 README 의 설명과 맞추기",
+    "value": 3,
+    "risk": 3,
+    "size": "M",
+    "status": "pending",
+    "note": "auth.go login은 active만 조회해 invalid_credentials. README는 로그인 거부 화면을 언급한다. 계정 열거·인증 변경 위험으로 보류.",
+    "updated": "2026-09-22"
+  },
+  {
+    "title": "가이드에 적힌 API 메서드·경로를 openapi 일치 테스트처럼 라우터와 대조",
+    "value": 2,
+    "risk": 2,
+    "size": "M",
+    "status": "pending",
+    "note": "가이드에 명시된 API와 router.go 존재 확인. openapi_test는 경로만 비교한다. 가이드 메서드 전체 대조는 미실행; 소스 문자열 테스트만을 런타임 검증으로 삼지 말 것.",
+    "updated": "2026-09-22"
+  },
+  {
+    "title": "Node 요구사항을 Makefile/문서에서 검사·명시",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "README Node24+, Docker24.18.0, package.json engines 없음, Makefile 선행 검사 없음. 로컬22.23.1 테스트는 통과했으나 전체 빌드 최소 버전은 미확인; 무조건22.18로 낮추지 말 것.",
+    "updated": "2026-09-22"
+  },
+  {
+    "title": "/login?sso=none 화면 안내와 자동 로그인 제공자 우선 배치",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "LoginPage.tsx에 sso 쿼리 안내 없이 providers.map 순서대로 표시. 인증 서버 변경 없이 가능하나 실제 브라우저 검증 필요.",
+    "updated": "2026-09-22"
+  },
+  {
+    "title": "조용한 로그인 시작 실패를 JSON 오류 대신 /login?sso=error 로 보내기",
+    "value": 2,
+    "risk": 3,
+    "size": "M",
+    "status": "pending",
+    "note": "auth.go:oauthStart는 제공자 설정 실패에 JSON502를 반환한다. silent/link 분기와 리다이렉트 회귀 검증 필요.",
+    "updated": "2026-09-22"
+  },
+  {
+    "title": "개인 알림 설정 화면에 메일 채널 표시",
+    "value": 2,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "NotificationSettings.tsx는 웹 알림 위주 설명. notifications.go는 notification.channels를 반환하고 mail 설정과 분리돼 있어 서버/UI 함께 검토 필요.",
+    "updated": "2026-09-22"
+  },
+  {
+    "title": "CSP 신고 분당 60 제한의 호출자 구분과 프록시 뒤 X-Forwarded-For 처리 명시",
+    "value": 2,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "router.go throttle 배선 및 ratelimit.go 계정 우선/IP 대체 확인. middleware.go:clientIP는 RemoteAddr만 읽는다. 프록시 신뢰 정책 확대는 피하고 설명 범위로 제한.",
+    "updated": "2026-09-22"
+  },
+  {
+    "title": "Momento 프록시로 넘기는 요청 본문 크기 상한",
+    "value": 2,
+    "risk": 2,
+    "size": "M",
+    "status": "pending",
+    "note": "analytics.go:momentoProxy에 본문 크기 상한 없음. 실제 수집기 계약과 적정 상한은 미확인; 기존 응답 헤더 수정과 중복하지 않는다.",
+    "updated": "2026-09-22"
+  },
+  {
+    "title": "README 환경변수 네 개뿐 표현을 선택 종료 설정과 일치시키기",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "차선. README와 config.Config 주석이 네 개라 하지만 Load는 SHUTDOWN_DRAIN_SECONDS도 읽는다. 5 기본값·0~120·오류시5 확인.",
+    "updated": "2026-09-22"
+  },
+  {
+    "title": "승인 정책 배열 조건 타입의 서버 저장 검증",
+    "value": 3,
+    "risk": 2,
+    "size": "M",
+    "status": "pending",
+    "note": "이번 선택. validateApprovalPolicy 숫자만 검증, approvalConditionsMatch 비배열 조건 건너뜀. 두 API 저장 경로와 공개/재검토 경로 통합 검증 필요. 구현 단계: 필수 technology 스킬 3개를 로드할 수 없어 착수 중단. 구현·DB 재현·검증 미실행이며 pending 유지.",
+    "updated": "2026-09-22"
+  },
+  {
+    "title": "알 수 없는 승인 조건을 편집할 때 유실 안내/보존",
+    "value": 3,
+    "risk": 2,
+    "size": "M",
+    "status": "pending",
+    "note": "AdminPage approvalForm/save가 알려진5개 조건만 재구성하므로 미지 키 유실 가능. 이번 API 타입 검증과 분리해 보류.",
+    "updated": "2026-09-22"
+  },
+  {
+    "title": "승인 정책 카드에 적용 조건 표시",
+    "value": 3,
+    "risk": 1,
+    "size": "S",
+    "status": "done",
+    "note": "v0.4.4 ApprovalConditions에서 금액·유형·등급·품질·미지 조건 경고 확인; 활성 전환도 저장 필드만 전송한다.",
+    "updated": "2026-09-22"
+  },
+  {
+    "title": "승인 정책 편집 시 복수 승인 단계 유실 방지",
+    "value": 3,
+    "risk": 2,
+    "size": "M",
+    "status": "pending",
+    "note": "새 후보. approvalForm은 steps[0]만 읽고 save는 한 단계 배열로 재작성한다. 실제 다단계 집행 의미는 미확인; 우선 유실 안내/보존 범위 검토.",
+    "updated": "2026-09-22"
+  },
+  {
+    "title": "개인 알림 설정에서 새 이벤트의 한국어 이름 표시",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "새 후보. NotificationSettings.tsx:eventLabels에 QuoteAccepted·DisputeOpened·DisputeResolved·SettlementHeld 등이 없어 eventLabel이 원시 키를 보여준다. 메일 이벤트 목록과 대조해 표시 개선 가능; 이번보다 영향 작음.",
+    "updated": "2026-09-22"
+  }
+]
