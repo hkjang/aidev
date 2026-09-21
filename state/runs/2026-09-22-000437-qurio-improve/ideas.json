@@ -14,7 +14,7 @@
     "risk": 1,
     "size": "S",
     "status": "pending",
-    "note": "internal/mail 없음. 기존 만료 전이는 이전 기록상 완료; 메일 선행 머지 필요.",
+    "note": "internal/mail 없음. 기존 만료 전이는 완료; 메일 선행 머지 필요.",
     "updated": "2026-09-22"
   },
   {
@@ -50,7 +50,7 @@
     "risk": 3,
     "size": "M",
     "status": "pending",
-    "note": "OIDC 인증 보호 경로와 설정 변경. 45분 범위 불확실, 이번 선택 제외.",
+    "note": "OIDC 인증 보호 경로와 설정 변경. 이번 범위 제외.",
     "updated": "2026-09-22"
   },
   {
@@ -59,7 +59,7 @@
     "risk": 2,
     "size": "S",
     "status": "pending",
-    "note": "App.tsx에 경로 유지 확인. 외부 링크 호환성 미확인이라 삭제 근거 부족.",
+    "note": "외부 링크 호환성 미확인이라 삭제 근거 부족.",
     "updated": "2026-09-22"
   },
   {
@@ -76,8 +76,8 @@
     "value": 2,
     "risk": 1,
     "size": "S",
-    "status": "pending",
-    "note": "이번 선택: Makefile check-go-format과 lint 배선만. cmd/internal/migrations/scripts 드리프트 0건. CI는 보호 경로여서 이번 제외.",
+    "status": "done",
+    "note": "a432f3f: check-go-format과 lint 선행 조건, help/README 완료. 실제 make/gofmt 34건 및 전체 lint 통과. CI는 합의한 범위 밖이며 변경하지 않음.",
     "updated": "2026-09-22"
   },
   {
@@ -86,7 +86,7 @@
     "risk": 3,
     "size": "M",
     "status": "pending",
-    "note": "이전 기록의 설계 차이 유지. 리스 상세 이번 미확인, 인증·영속 정책 설계 범위로 보류.",
+    "note": "인증·영속 정책 설계 범위로 보류.",
     "updated": "2026-09-22"
   },
   {
@@ -95,7 +95,7 @@
     "risk": 2,
     "size": "S",
     "status": "pending",
-    "note": "handleOIDCCallback에서 리다이렉트만 확인. 98602d8 미머지와 함수 충돌, 실패 재현 설계 부담.",
+    "note": "98602d8 미머지와 함수 충돌, 실패 재현 설계 부담.",
     "updated": "2026-09-22"
   },
   {
@@ -104,61 +104,25 @@
     "risk": 2,
     "size": "S",
     "status": "pending",
-    "note": "handleOIDCCallback의 return_to 없는 복귀 확인. LoginPage/PublicOnly 선행 개선 미머지라 보류.",
+    "note": "LoginPage/PublicOnly 선행 개선 미머지라 보류.",
     "updated": "2026-09-22"
   },
   {
-    "title": "dbexec PostgreSQL 통합 테스트의 명시적 테스트 DB 선택과 연결 실패 판정",
+    "title": "TestUserProfilePreferencesPostgres의 pool 종료와 fixture 정리 순서 바로잡기",
     "value": 3,
-    "risk": 1,
+    "risk": 2,
     "size": "S",
-    "status": "done",
-    "note": "9a9577b가 88a90a2로 머지됨. integrationConnection 전용 DSN 계약 테스트 이번 통과. 반복하지 않음.",
+    "status": "pending",
+    "note": "정찰 차선 후보. 실제 PostgreSQL에서 잔존 재현부터 필요; 이번에는 DB 검증하지 않음.",
     "updated": "2026-09-22"
   },
   {
-    "title": "dbexec 고정 이름 fixture 충돌 격리",
+    "title": "store 통합 테스트의 명시적 DB 연결 오류 Skip 판정 개선",
     "value": 3,
     "risk": 2,
     "size": "M",
     "status": "pending",
-    "note": "manager_integration_test.go의 public 고정명 테이블/함수 및 pg_catalog 함수·캐스트 CREATE/DROP 확인. 단순 스키마 분리로 전부 해결되지 않아 보류.",
-    "updated": "2026-09-22"
-  },
-  {
-    "title": "Go 지시 버전과 컨테이너 Go 버전 구분 안내",
-    "value": 1,
-    "risk": 1,
-    "size": "S",
-    "status": "pending",
-    "note": "go.mod 1.26.6, 로컬 1.26.7, Dockerfile 1.27.1 확인. 중요도 낮아 보류.",
-    "updated": "2026-09-22"
-  },
-  {
-    "title": "store 통합 테스트의 명시적 DB 설정 및 연결 오류 실패 처리",
-    "value": 3,
-    "risk": 2,
-    "size": "M",
-    "status": "pending",
-    "note": "새 후보. user_preferences/passwords/approvals/api_keys 등은 POSTGRES_DSN 또는 55432 기본값, 연결 실패 Skip. dbexec 개선과 별도 범위이며 여러 파일 조정 필요.",
-    "updated": "2026-09-22"
-  },
-  {
-    "title": "TestUserProfilePreferencesPostgres fixture 정리가 pool 종료 뒤 실행되는 순서 수정",
-    "value": 3,
-    "risk": 2,
-    "size": "S",
-    "status": "pending",
-    "note": "새 후보·차선. user_preferences_integration_test.go에서 defer pool.Close와 t.Cleanup 데이터 삭제 확인; 삭제 오류도 무시함. Go cleanup 순서상 문제이며 실제 DB 잔존 재현은 미확인.",
-    "updated": "2026-09-22"
-  },
-  {
-    "title": "App RequireAdmin 및 로그인 직접 접근 가드 테스트 보강",
-    "value": 2,
-    "risk": 1,
-    "size": "S",
-    "status": "pending",
-    "note": "App.tsx RequireAdmin/PublicOnly 및 App.test.tsx 확인. 실제 App/AuthProvider 경유 검증 필요. 79ce48f 대기 테스트와 충돌 가능해 보류.",
+    "note": "정찰 신규 후보. dbexec와 달리 설정된 DB 연결 실패를 Skip하는 경로를 실제 DB와 프로세스로 재현한 뒤 범위를 결정.",
     "updated": "2026-09-22"
   }
 ]

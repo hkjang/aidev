@@ -5,8 +5,8 @@
     "risk": 1,
     "size": "S",
     "status": "pending",
-    "note": "internal/mail 없음. 3c5da14 선행 머지 필요; 현재 착수 불가.",
-    "updated": "2026-09-21"
+    "note": "internal/mail 없음. 3c5da14 선행 머지 후 재평가.",
+    "updated": "2026-09-22"
   },
   {
     "title": "ExpireApprovalRequests 반환 id로 approval.decided(EXPIRED) 알림 훅 연결",
@@ -14,8 +14,8 @@
     "risk": 1,
     "size": "S",
     "status": "pending",
-    "note": "internal/mail 없음. 기존 만료 전이 구현은 있으나 알림 선행 조건 미충족.",
-    "updated": "2026-09-21"
+    "note": "internal/mail 없음. 기존 만료 전이는 완료; 메일 선행 머지 필요.",
+    "updated": "2026-09-22"
   },
   {
     "title": "Handoff 받는 쪽 — GET /handoff?source&claim 으로 csv 들이기",
@@ -24,7 +24,7 @@
     "size": "M",
     "status": "pending",
     "note": "internal/handoff 없음. 1d00e6b 선행 머지 필요.",
-    "updated": "2026-09-21"
+    "updated": "2026-09-22"
   },
   {
     "title": "-tags=integration 스위트에 handoff 표 발급 통합 테스트",
@@ -33,7 +33,7 @@
     "size": "S",
     "status": "pending",
     "note": "internal/handoff 없음. 선행 머지 뒤 재평가.",
-    "updated": "2026-09-21"
+    "updated": "2026-09-22"
   },
   {
     "title": "Momento 수집기 연결 검사 버튼(/admin/tracking)",
@@ -42,7 +42,7 @@
     "size": "S",
     "status": "pending",
     "note": "internal/tracking 없음. 112061d 선행 머지 필요.",
-    "updated": "2026-09-21"
+    "updated": "2026-09-22"
   },
   {
     "title": "Keycloak RP-initiated logout(end_session_endpoint) 연동",
@@ -50,8 +50,8 @@
     "risk": 3,
     "size": "M",
     "status": "pending",
-    "note": "auth 보호 경로와 설정 추가, 45분 경계; 대기 중 auth 개선과 겹쳐 보류.",
-    "updated": "2026-09-21"
+    "note": "OIDC 인증 보호 경로와 설정 변경. 이번 범위 제외.",
+    "updated": "2026-09-22"
   },
   {
     "title": "미사용 SPA /auth/oidc/callback 페이지 정리",
@@ -59,8 +59,8 @@
     "risk": 2,
     "size": "S",
     "status": "pending",
-    "note": "App.tsx에 라우트 존재. 외부 북마크 호환성 미확인이라 삭제 타당성 미확정.",
-    "updated": "2026-09-21"
+    "note": "외부 링크 호환성 미확인이라 삭제 근거 부족.",
+    "updated": "2026-09-22"
   },
   {
     "title": "/admin/tracking·/admin/mail 갤러리 스크린샷",
@@ -68,17 +68,17 @@
     "risk": 1,
     "size": "S",
     "status": "pending",
-    "note": "해당 기능 패키지가 현재 main에 없음. 머지 후 진행.",
-    "updated": "2026-09-21"
+    "note": "해당 기능 패키지 없음. 기능 선행 머지 필요.",
+    "updated": "2026-09-22"
   },
   {
     "title": "gofmt -l 검사를 make lint/CI 에 추가",
     "value": 2,
     "risk": 1,
     "size": "S",
-    "status": "pending",
-    "note": "Makefile lint와 CI에 포맷 검사 없음, gofmt -l cmd internal 출력 0건 확인. 차선은 Makefile만, CI는 후속.",
-    "updated": "2026-09-21"
+    "status": "done",
+    "note": "a432f3f: check-go-format과 lint 선행 조건, help/README 완료. 실제 make/gofmt 34건 및 전체 lint 통과. CI는 합의한 범위 밖이며 변경하지 않음.",
+    "updated": "2026-09-22"
   },
   {
     "title": "OAuth(/mcp) 주체에 사용자 단위 호출 한도(user_id durable lease)",
@@ -86,8 +86,8 @@
     "risk": 3,
     "size": "M",
     "status": "pending",
-    "note": "이전 기록의 알려진 차이. api_key_rate.go 리스 상세는 이번 회차 재검토 미실시; 보호 경로·설계 범위로 보류.",
-    "updated": "2026-09-21"
+    "note": "인증·영속 정책 설계 범위로 보류.",
+    "updated": "2026-09-22"
   },
   {
     "title": "OIDC 콜백 CreateSession 실패(/login?error=session) 감사 이벤트 + 로그",
@@ -95,8 +95,8 @@
     "risk": 2,
     "size": "S",
     "status": "pending",
-    "note": "handleOIDCCallback에 리다이렉트만 존재 확인. 98602d8 대기 변경과 동일 함수 충돌·실패 유도 설계로 보류.",
-    "updated": "2026-09-21"
+    "note": "98602d8 미머지와 함수 충돌, 실패 재현 설계 부담.",
+    "updated": "2026-09-22"
   },
   {
     "title": "조용한 SSO 실패 복귀(/login?sso=none)가 return_to 딥링크를 잃음",
@@ -104,34 +104,25 @@
     "risk": 2,
     "size": "S",
     "status": "pending",
-    "note": "handleOIDCCallback이 return_to 없이 리다이렉트 확인. 현재 main에는 PublicOnly/LoginPage 이전 개선도 아직 없어 선행 머지 필요.",
-    "updated": "2026-09-21"
+    "note": "LoginPage/PublicOnly 선행 개선 미머지라 보류.",
+    "updated": "2026-09-22"
   },
   {
-    "title": "dbexec PostgreSQL 통합 테스트의 명시적 테스트 DB 선택과 연결 실패 판정 바로잡기",
+    "title": "TestUserProfilePreferencesPostgres의 pool 종료와 fixture 정리 순서 바로잡기",
     "value": 3,
-    "risk": 1,
+    "risk": 2,
     "size": "S",
-    "status": "done",
-    "note": "9a9577b: 전용 DSN trim 및 미설정 Skip, 초기 오류 7곳 Fatal, DB 독립 계약 회귀 테스트와 README 추가. PostgreSQL 17 폐기 DB bootstrap 후 기존 7개 실제 통합 테스트 및 새 계약 테스트 -race 통과.",
-    "updated": "2026-09-21"
+    "status": "pending",
+    "note": "정찰 차선 후보. 실제 PostgreSQL에서 잔존 재현부터 필요; 이번에는 DB 검증하지 않음.",
+    "updated": "2026-09-22"
   },
   {
-    "title": "dbexec PostgreSQL 통합 테스트의 고정 이름 fixture 충돌 격리",
+    "title": "store 통합 테스트의 명시적 DB 연결 오류 Skip 판정 개선",
     "value": 3,
     "risk": 2,
     "size": "M",
     "status": "pending",
-    "note": "신규. TestPostgresTargetedSchemaExplorationFindsPostPrefixPKAndFK 등 고정 public 테이블을 DROP/CREATE함. nonce 식별자나 DB 격리 가능성 검토; 현재 CI는 -p=1이라 우선순위 낮음.",
-    "updated": "2026-09-21"
-  },
-  {
-    "title": "일반 개발 안내에 Go 지시 버전과 컨테이너 Go 버전 구분 명시",
-    "value": 1,
-    "risk": 1,
-    "size": "S",
-    "status": "pending",
-    "note": "신규. go.mod는 1.26.6, 로컬 go1.26.7, 이전 프로필은 Go 1.27로 단정. 프로필은 이번 갱신하되 개발 문서 보강은 후순위.",
-    "updated": "2026-09-21"
+    "note": "정찰 신규 후보. dbexec와 달리 설정된 DB 연결 실패를 Skip하는 경로를 실제 DB와 프로세스로 재현한 뒤 범위를 결정.",
+    "updated": "2026-09-22"
   }
 ]

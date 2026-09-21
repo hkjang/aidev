@@ -1,0 +1,236 @@
+{
+  "run_id": "2026-09-22-000433-ptium-improve",
+  "generated": "2026-09-22T00:12:51+09:00",
+  "run": {
+    "run_id": "2026-09-22-000433-ptium-improve",
+    "project": "ptium",
+    "kind": "improve",
+    "started": "2026-09-22T00:04:34+09:00",
+    "model": "claude-opus-5",
+    "policy_version": "ecd4b546e",
+    "prompts_hash": "30c37184f081815d",
+    "runner_version": "ecd4b546e",
+    "arm": "baseline",
+    "experiment": "roles-2026-09",
+    "finished": "2026-09-22T00:12:51+09:00",
+    "outcome": "review-pending"
+  },
+  "record": {
+    "ts": "2026-09-22T00:12:51+09:00",
+    "date": "2026-09-22",
+    "project": "ptium",
+    "result": "review held, PR open https://github.com/hkjang/ptium/pull/29",
+    "outcome": "review-pending",
+    "run_id": "2026-09-22-000433-ptium-improve",
+    "base_sha": "905a9c599bb1e95ebf5f195f9a4f8ed2fb329e0c",
+    "head_sha": "3c3493ffb0574abb57b6d48382087df486e81d01",
+    "pr": "https://github.com/hkjang/ptium/pull/29",
+    "stages": {
+      "base": {
+        "state": "pinned",
+        "reason": "main@905a9c5",
+        "at": "2026-09-22T00:04:42+09:00"
+      },
+      "autonomy": {
+        "state": "release",
+        "reason": "",
+        "at": "2026-09-22T00:04:42+09:00"
+      },
+      "scout": {
+        "state": "done",
+        "reason": "XLSX에서 생략된 행의 실제 r 좌표를 슬라이드 출처에 반영 (가치 3 / 위험 2 / 작업량 S)",
+        "at": "2026-09-22T00:09:00+09:00"
+      },
+      "brief": {
+        "state": "accepted",
+        "reason": "채택 — 배열 index만 출처에 기록하는 결함이 현재 코드와 신규 ZIP 기반 실패 재현에서 확인되어 지정된 placement 매핑만 �",
+        "at": "2026-09-22T00:12:23+09:00"
+      },
+      "verify": {
+        "state": "passed",
+        "reason": "검증 9개 통과 (auto)",
+        "at": "2026-09-22T00:12:34+09:00"
+      },
+      "review": {
+        "state": "missing",
+        "reason": "리뷰 결과 없음/손상: missing — 보류",
+        "at": "2026-09-22T00:12:40+09:00"
+      },
+      "pr": {
+        "state": "created",
+        "reason": "https://github.com/hkjang/ptium/pull/29",
+        "at": "2026-09-22T00:12:49+09:00"
+      }
+    },
+    "campaign": "",
+    "autonomy": "release",
+    "arm": "baseline",
+    "experiment": "roles-2026-09",
+    "files": 2,
+    "additions": 160,
+    "deletions": 1,
+    "tests": 1,
+    "title": "Keep original worksheet row coordinates in slide sources"
+  },
+  "stages": {
+    "base": {
+      "state": "pinned",
+      "reason": "main@905a9c5",
+      "at": "2026-09-22T00:04:42+09:00"
+    },
+    "autonomy": {
+      "state": "release",
+      "reason": "",
+      "at": "2026-09-22T00:04:42+09:00"
+    },
+    "scout": {
+      "state": "done",
+      "reason": "XLSX에서 생략된 행의 실제 r 좌표를 슬라이드 출처에 반영 (가치 3 / 위험 2 / 작업량 S)",
+      "at": "2026-09-22T00:09:00+09:00"
+    },
+    "brief": {
+      "state": "accepted",
+      "reason": "채택 — 배열 index만 출처에 기록하는 결함이 현재 코드와 신규 ZIP 기반 실패 재현에서 확인되어 지정된 placement 매핑만 �",
+      "at": "2026-09-22T00:12:23+09:00"
+    },
+    "verify": {
+      "state": "passed",
+      "reason": "검증 9개 통과 (auto)",
+      "at": "2026-09-22T00:12:34+09:00"
+    },
+    "review": {
+      "state": "missing",
+      "reason": "리뷰 결과 없음/손상: missing — 보류",
+      "at": "2026-09-22T00:12:40+09:00"
+    },
+    "pr": {
+      "state": "created",
+      "reason": "https://github.com/hkjang/ptium/pull/29",
+      "at": "2026-09-22T00:12:49+09:00"
+    }
+  },
+  "provenance": {
+    "model": "claude-opus-5",
+    "policy_version": "ecd4b546e",
+    "prompts_hash": "30c37184f081815d",
+    "runner_version": "ecd4b546e",
+    "base_sha": "905a9c599bb1e95ebf5f195f9a4f8ed2fb329e0c",
+    "head_sha": "3c3493ffb0574abb57b6d48382087df486e81d01",
+    "pr": "https://github.com/hkjang/ptium/pull/29"
+  },
+  "verification": {
+    "runner": {
+      "source": "auto",
+      "commands": [
+        {
+          "cmd": "cd server && go build ./...",
+          "exit": 0,
+          "seconds": 1
+        },
+        {
+          "cmd": "cd server && go vet ./...",
+          "exit": 0,
+          "seconds": 0
+        },
+        {
+          "cmd": "cd server && go test ./...",
+          "exit": 0,
+          "seconds": 2
+        },
+        {
+          "cmd": "cd web && [ -d node_modules ] || npm ci --no-audit --no-fund",
+          "exit": 0,
+          "seconds": 5
+        },
+        {
+          "cmd": "cd web && npm test --silent",
+          "exit": 0,
+          "seconds": 2
+        },
+        {
+          "cmd": "cd web && [ -d node_modules ] || npm ci --no-audit --no-fund",
+          "exit": 0,
+          "seconds": 0
+        },
+        {
+          "cmd": "cd web && npm run typecheck --silent",
+          "exit": 0,
+          "seconds": 0
+        },
+        {
+          "cmd": "cd web && [ -d node_modules ] || npm ci --no-audit --no-fund",
+          "exit": 0,
+          "seconds": 0
+        },
+        {
+          "cmd": "cd web && npm run build --silent",
+          "exit": 0,
+          "seconds": 1
+        }
+      ]
+    },
+    "runner_gate": {
+      "ok": true,
+      "state": "verified",
+      "reason": "검증 9개 통과 (auto)"
+    },
+    "after_rebase": null,
+    "review": null,
+    "ci_gate": null
+  },
+  "release": {
+    "result": null,
+    "assets_sha256": []
+  },
+  "approval": null,
+  "usage": [
+    {
+      "ts": "2026-09-22T00:08:59+09:00",
+      "date": "2026-09-22",
+      "project": "ptium",
+      "phase": "scout",
+      "run_id": "2026-09-22-000433-ptium-improve",
+      "campaign": "",
+      "subtype": "success",
+      "duration_ms": 0,
+      "num_turns": 1,
+      "cost_usd": null,
+      "input_tokens": 644224,
+      "output_tokens": 6915,
+      "cache_read": 570880,
+      "cache_create": 0
+    },
+    {
+      "ts": "2026-09-22T00:12:22+09:00",
+      "date": "2026-09-22",
+      "project": "ptium",
+      "phase": "improve",
+      "run_id": "2026-09-22-000433-ptium-improve",
+      "campaign": "",
+      "subtype": "success",
+      "duration_ms": 0,
+      "num_turns": 1,
+      "cost_usd": null,
+      "input_tokens": 829079,
+      "output_tokens": 4855,
+      "cache_read": 758144,
+      "cache_create": 0
+    },
+    {
+      "ts": "2026-09-22T00:12:39+09:00",
+      "date": "2026-09-22",
+      "project": "ptium",
+      "phase": "review",
+      "run_id": "2026-09-22-000433-ptium-improve",
+      "campaign": "",
+      "subtype": "success",
+      "duration_ms": 670,
+      "num_turns": 1,
+      "cost_usd": 0,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read": 0,
+      "cache_create": 0
+    }
+  ]
+}
