@@ -20,3 +20,18 @@
 - 다음 역할 주의: engine.debug.response는 JSON 문자열이므로 재디코딩한 body를 검사해야 하며 JSON 유효성만으로는 손상을 찾지 못한다.
 - [러너 22:03] brief accepted — 채택 — 바이트 인덱스 절단이 현재 코드에 남아 있었고 실제 HTTP 세 경로의 새 회귀 테스트로 진단 손상을 재현했다.
 - [러너 22:03] verify passed — 검증 3개 통과 (policy)
+
+## 비평 노트
+- approve / low, blocking 없음: 변경 3개 파일·호출 경로·경계·범위·보안/개인정보 영향·revert 가능성을 확인했고 실제 결함을 찾지 못했다.
+- main client.go의 Go overlay에서 새 단위 및 HTTP 세 경로 테스트 실패를 재현; HEAD 전체 race 테스트·vet·build·gofmt·diff --check 통과. 저장소 코드 수정 없음.
+- Windows 실행 미검증; 원래 비정상 UTF-8·읽기 상한 절단·오류 debug 전달은 기존 한계로 남으며 이번 릴리즈를 전체 UTF-8 정규화나 PII 보호 개선으로 표현하지 말 것.
+- 요청한 legal-risk/security/technology 세 스킬 및 Skill 도구 미발견으로 스킬 절차·반환 형식은 미적용; 프롬프트 기준으로 심사했다.
+- [러너 22:04] review approved — 리뷰 승인 (risk=low)
+- [러너 22:04] pr created — https://github.com/hkjang/pii-masker/pull/23
+- [러너 22:05] ci passed — 검사 없음 — 정책으로 허용
+- [러너 22:05] merge done — 7511062
+- [러너 22:08] release published — v1.0.25
+- [러너 22:08] gh-release created — GitHub Release v1.0.25
+- [러너 22:08] manifest ok — pii-masker-image.tar.gz 
+- [러너 22:08] assets uploaded — 1개
+- [러너 22:08] assets verified — v1.0.25 자산 1개 (이전 v1.0.24: 1)

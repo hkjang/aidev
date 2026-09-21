@@ -23,7 +23,7 @@
     "risk": 1,
     "size": "M",
     "status": "pending",
-    "note": "POP3 no test files 재확인. 이번 과제에는 크기 제한 관련 TCP 테스트만 포함; 전체 프로토콜/TLS 행렬은 남는다. 차선 후보.",
+    "note": "이번에 실제 TCP RETR/TOP 크기 경계·dot-unstuffing·CRLF·DELE/QUIT 응답 경계·명령 deadline, application LIST/UIDL 수집을 검증. USER/PASS AuthError 및 TLS 전체 행렬은 별도 보류.",
     "updated": "2026-09-21"
   },
   {
@@ -112,8 +112,8 @@
     "value": 4,
     "risk": 2,
     "size": "M",
-    "status": "pending",
-    "note": "이번 선택(신규). app.go:dialInbound 전달값을 POP3 Dial/retrBody가 사용하지 않음. 긴 단일 행까지 제한하고 실제 TCP·application 배선으로 증명. 동적 과대응답 재현은 구현자 첫 단계.",
+    "status": "done",
+    "note": "실제 TCP로 수정 전 상한 무시·개행 없는 행의 타임아웃을 재현. 세션 상한 보관 및 고정 버퍼 ReadByte 검사, 초과 즉시 연결 종료 구현. RETR/TOP 경계와 실제 application 수집·원문/해시·UIDL 유무 중복 방지 통과. app→adapter 상한 제거 변이도 통합 테스트가 검출.",
     "updated": "2026-09-21"
   },
   {

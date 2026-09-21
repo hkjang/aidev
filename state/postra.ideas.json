@@ -1,20 +1,11 @@
 [
   {
-    "title": "Makefile 에 CI 와 같은 플래그의 gosec@v2.28.0 lint 타깃(+gofmt -l)",
-    "value": 3,
-    "risk": 1,
-    "size": "S",
-    "status": "done",
-    "note": "커밋 0bbff34. 실제 Make 세 타깃 정상 통과, 포맷/G306 위반과 실행 오류 실패 전파 및 파일 불변 검증 완료.",
-    "updated": "2026-09-21"
-  },
-  {
     "title": "CI 에 gofmt -l 검사 추가",
     "value": 2,
     "risk": 1,
     "size": "S",
     "status": "pending",
-    "note": "CI 검사 없음. 로컬 타깃을 추가했으며 workflows는 이번 범위 제외.",
+    "note": "ci.yml에 포맷 단계 없음. Makefile lint-format은 병합됨; workflows 변경은 후순위.",
     "updated": "2026-09-21"
   },
   {
@@ -23,7 +14,7 @@
     "risk": 1,
     "size": "S",
     "status": "pending",
-    "note": "CI Scan은 SARIF -out만 사용. 로그 API 권한 문제와 별개이며 workflows 변경은 후순위.",
+    "note": "ci.yml Scan은 SARIF -out만 사용. 이번엔 workflows를 피한다.",
     "updated": "2026-09-21"
   },
   {
@@ -32,7 +23,7 @@
     "risk": 1,
     "size": "M",
     "status": "pending",
-    "note": "전체 테스트에서도 POP3 [no test files]. 실제 TCP 기반 프로토콜 회귀 검증 차선 유지.",
+    "note": "이번에 실제 TCP RETR/TOP 크기 경계·dot-unstuffing·CRLF·DELE/QUIT 응답 경계·명령 deadline, application LIST/UIDL 수집을 검증. USER/PASS AuthError 및 TLS 전체 행렬은 별도 보류.",
     "updated": "2026-09-21"
   },
   {
@@ -41,7 +32,7 @@
     "risk": 2,
     "size": "S",
     "status": "pending",
-    "note": "기존 문자열 판정과 다른 실제 동작을 재현한 뒤 착수.",
+    "note": "client.go는 EOF/Closed/net.Error.Timeout/connection reset 문자열 판정. 다른 관찰 가능한 실패 재현 전 착수 금지.",
     "updated": "2026-09-21"
   },
   {
@@ -50,7 +41,7 @@
     "risk": 1,
     "size": "S",
     "status": "pending",
-    "note": "정찰의 중복 조회 근거 유지. auth 보호 경로라 이번에 수정하지 않음.",
+    "note": "browser_auth.go 두 호출 및 oidc.go 각각 oidcRuntime 호출 확인. auth 보호 경로라 보류.",
     "updated": "2026-09-21"
   },
   {
@@ -59,7 +50,7 @@
     "risk": 1,
     "size": "S",
     "status": "pending",
-    "note": "notifymail main 병합 전 착수 금지. 이번 범위에서 재구현하지 않음.",
+    "note": "internal/web/src 검색에 notifymail/mail_deliveries 구현 없음. main 병합 전 착수 금지.",
     "updated": "2026-09-21"
   },
   {
@@ -68,7 +59,7 @@
     "risk": 1,
     "size": "S",
     "status": "pending",
-    "note": "notifymail 병합 뒤 재평가.",
+    "note": "notifymail/mail.username 구현 없음. 병합 후 재평가.",
     "updated": "2026-09-21"
   },
   {
@@ -77,7 +68,7 @@
     "risk": 1,
     "size": "S",
     "status": "pending",
-    "note": "notifymail 병합 및 운영 피드백 뒤 판단.",
+    "note": "sla_notified_at 구현 없음. notifymail 병합·운영 피드백 뒤 판단.",
     "updated": "2026-09-21"
   },
   {
@@ -86,7 +77,7 @@
     "risk": 2,
     "size": "M",
     "status": "pending",
-    "note": "handoff main 병합 전 착수 금지.",
+    "note": "internal 및 web/src의 handoff 검색 결과 없음. 관련 브랜치 재적용 금지.",
     "updated": "2026-09-21"
   },
   {
@@ -95,7 +86,7 @@
     "risk": 1,
     "size": "S",
     "status": "pending",
-    "note": "handoff 병합 후 실제 DTO부터 재확인.",
+    "note": "handoff 미병합. docs/API_CONTRACTS.md의 현재 부분 계약 범위 확인; 병합 후 실제 DTO부터 확인.",
     "updated": "2026-09-21"
   },
   {
@@ -104,7 +95,7 @@
     "risk": 1,
     "size": "S",
     "status": "pending",
-    "note": "관련 기능 정본 통합 뒤 재생성. Chromium 미확인.",
+    "note": "md/pdf 존재 확인. Chromium 실행 가능 여부 미확인, 관련 정본 통합 뒤 재평가.",
     "updated": "2026-09-21"
   },
   {
@@ -113,16 +104,88 @@
     "risk": 1,
     "size": "S",
     "status": "pending",
-    "note": "이번 읽기에서 README @latest와 CI v1.6.0 차이 확인. gosec 과제와 별도 후속.",
+    "note": "README:303 @latest / ci.yml v1.6.0 불일치 그대로. 유효하나 수신 메모리 제한보다 가치 낮음.",
     "updated": "2026-09-21"
   },
   {
-    "title": "Make lint 실제 위반 입력 회귀 검증 자동화",
-    "value": 2,
-    "risk": 1,
+    "title": "POP3 본문 수신에 MaxMessageBytes 상한 적용",
+    "value": 4,
+    "risk": 2,
+    "size": "M",
+    "status": "done",
+    "note": "실제 TCP로 수정 전 상한 무시·개행 없는 행의 타임아웃을 재현. 세션 상한 보관 및 고정 버퍼 ReadByte 검사, 초과 즉시 연결 종료 구현. RETR/TOP 경계와 실제 application 수집·원문/해시·UIDL 유무 중복 방지 통과. app→adapter 상한 제거 변이도 통합 테스트가 검출.",
+    "updated": "2026-09-21"
+  },
+  {
+    "title": "POP3 명령 대기 중 context 취소 전파",
+    "value": 3,
+    "risk": 2,
     "size": "M",
     "status": "pending",
-    "note": "이번 실행 기록의 임시 복제본 기반 검증을 재사용 가능한 프로젝트 검사로 만들지 검토. 대역 도구 없이 실제 gofmt/gosec 사용.",
+    "note": "신규. List/UIDL/Retrieve/Top/Delete/Quit의 ctx가 사용되지 않고 명령 deadline만 적용됨. 별도 실제 TCP 취소 재현 필요; 이번 크기 제한 작업과 합치지 않음.",
+    "updated": "2026-09-21"
+  },
+  {
+    "title": "Makefile CI 고정 gosec 및 읽기 전용 포맷 검사",
+    "value": 3,
+    "risk": 1,
+    "size": "S",
+    "status": "done",
+    "note": "0bbff34 병합 및 현재 Makefile lint/lint-format/lint-security 확인. make lint-format 이번 통과.",
+    "updated": "2026-09-21"
+  },
+  {
+    "title": "tracking 차단 출처 REST 노출",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "done",
+    "note": "기존 요구 기능은 GET /api/admin/tracking의 adminTracking이 violations를 반환하여 충족. /api/admin/tracking/violations는 DELETE만 있음; 과거 기록의 GET 경로를 그대로 쓰지 말 것.",
+    "updated": "2026-09-21"
+  },
+  {
+    "title": "OIDC discovery/콜백 제공자 오류 incident 기록",
+    "value": 3,
+    "risk": 1,
+    "size": "S",
+    "status": "done",
+    "note": "c57fb2a 병합 및 v0.22.1 릴리즈 기록 확인. 재선택 금지.",
+    "updated": "2026-09-21"
+  },
+  {
+    "title": "mail.password 교체 시 이전 SecretStore 참조 폐기",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "과거 브랜치에서 완료됐으나 현 main에는 notifymail 없음. 재구현하지 말고 병합 후 확인.",
+    "updated": "2026-09-21"
+  },
+  {
+    "title": "SLA 기한 임박·초과 알림 워커",
+    "value": 3,
+    "risk": 2,
+    "size": "M",
+    "status": "pending",
+    "note": "과거 브랜치 성공을 main 반영과 혼동 금지. 현 main에 sla_notified_at 없음; 재적용 금지.",
+    "updated": "2026-09-21"
+  },
+  {
+    "title": "SMTP Send/TestConnection 명령 시간제한과 ctx 취소 전파",
+    "value": 3,
+    "risk": 2,
+    "size": "M",
+    "status": "pending",
+    "note": "과거 회차 review-pending. 현재 smtp/client.go SetDeadline/CommandTimeoutSec 없음. 같은 작업 새 회차 중복 금지.",
+    "updated": "2026-09-21"
+  },
+  {
+    "title": "아웃박스 ProcessRetries 항목당 context 시간제한",
+    "value": 2,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "scheduler.go:ProcessRetries 확인. 기존 SMTP timeout 작업 병합 전 중복 방어 추가는 보류.",
     "updated": "2026-09-21"
   }
 ]
