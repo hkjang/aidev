@@ -28,3 +28,5 @@
 - 기존 작업 트리의 webui/dist/index.html 수정은 HEAD diff 밖이며 건드리지 않았다. 저장소·공유 서비스 변경 없음.
 - [러너 09:06] review approved — 리뷰 승인 (risk=low)
 - [러너 09:06] pr created — https://github.com/hkjang/ReSSO/pull/26
+- [러너 09:14] ci passed — 검사 2개 모두 success
+- [러너 09:14] merge done — 92ccbb9
