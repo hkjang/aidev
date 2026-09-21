@@ -42,3 +42,5 @@
 - 연결 취소/reader 정리·EOF·DONE의 기존 제한은 후속 과제; 이번 변경에서 추가 거절 사유는 발견하지 못함.
 - [러너 16:18] review approved — 리뷰 승인 (risk=low)
 - [러너 16:18] pr created — https://github.com/hkjang/jikim/pull/39
+- [러너 16:22] ci passed — 검사 2개 모두 success
+- [러너 16:22] merge done — 55926ad
