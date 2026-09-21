@@ -1,26 +1,30 @@
-# weekly 프로필 (2026-09-20)
+# weekly 프로필 (2026-09-22)
 - 목적: 사내 주간보고 작성·검토·PPTX/메일 내보내기와 업무 상황판·MCP·Confluence 수집을 제공하는 단일 바이너리 웹 서비스.
-- 스택: Go 1.24, net/http, pgx/pgxpool, PostgreSQL(pg_trgm·pgvector 선택), React 19·TypeScript·Vite, vitest. 프런트를 cmd/weekly/web에 내장.
+- 스택: Go 1.24, net/http, pgx/pgxpool, PostgreSQL(pg_trgm·pgvector 선택), React 19·TypeScript·Vite·vitest. 프런트를 cmd/weekly/web에 내장.
 - 구조:
-  - internal/app/ — 서버·핸들러·워커·대부분의 시험. app.go 라우팅, auth.go 인증, mail.go SMTP와 세 큐 현황·최근 50건 목록.
-  - internal/app/migrations/ — 현재 001~030 SQL, migrations.sums 체크섬. 이미 출하한 SQL 수정 금지.
-  - internal/app/httpharness_test.go — 스키마 템플릿 복사 createScratchDatabase, TestMain 정리, 오래된 tmpl_/h_ DB 청소.
-  - internal/app/mcpwrite.go — mcp:write 범위로 본인 주간보고 생성·수정. REST 개인 키는 조회 전용. README와 MCP 가이드 도입부에는 옛 읽기 전용 설명 잔존.
-  - frontend/src/pages/·types.ts — React SPA 화면·API 타입, 해시 라우팅.
-  - docs/ — ADMIN_GUIDE·USER_GUIDE·MCP·OPERATIONS·openapi.yaml·CHECKS·ROADMAP_PLAN. 일부 로드맵 서두는 오래된 상태 설명.
-  - scripts/ — guard/openapi/paging/modal-close/version 및 mutation/authz 검사, build·문서 렌더 도구.
-  - .github/workflows/ — ci.yaml은 실제 PostgreSQL 서비스, release.yaml은 DB 없이 검증 후 오프라인 이미지 출하.
-- 빌드·테스트: 루트 `go build ./...`, `go vet ./...`, `go test ./... -count=1`; 프런트 `npm --prefix frontend run lint`, `npm --prefix frontend run build`, `npm --prefix frontend test`(서울·뉴욕 TZ 각 실행).
-- 빌드·테스트: `python3 scripts/guard-check.py --changed main`은 변경 가드 확인. 전체 guard는 과거 기록상 약 7분. 실제 DB 전체 시험은 과거 약 130~160초.
-- 정찰 검증: main@0253313(v0.306.0), `go test ./... -count=1` 통과(internal/app 2.802초). 이번 환경에는 WEEKLY_TEST_POSTGRES_DSN 미설정, DB 시험은 skip. 실제 DB·프런트 빌드는 이번 정찰 미실행.
-- 관례: 한국어 feat:/fix:/test:/docs:/chore: 커밋, settingDefinitions + app_settings 설정, 문장형 Test 이름과 제품 함수 // guards 표시. _test.go 하네스 함수에는 guards를 달지 않음.
-- 관례: 관리자 발송 health와 목록은 mailDeliveriesUnion과 같은 14일 창을 사용. 목록은 최대 50건, total·쪽 넘김·필터 없음.
-- 위험 구역: auth.go·OIDC·MCP OAuth(세션/토큰/권한), crypto.go(비밀), migrations/(출하 체크섬·미머지 번호 충돌), .github/workflows/.
-- 자주 깨지는 곳: 공유 DB에 다른 브랜치 마이그레이션·fixture가 남음. db_integration 8 + authfailure 1 + participationfairness 2 + searchranking 1 = 12개 시험이 아직 공유 DSN 직접 사용.
-- 자주 깨지는 곳: upgrade_test emptyScratchDatabase의 weekly_u_*는 sweep 후보 및 이름 파서에서 빠짐. 청소 확대는 강제 삭제 범위 변경이므로 따로 검증 필요.
-- 자주 깨지는 곳: 날짜·마감 경계. 참여 기록 시험은 closedWeekStart와 13일 규칙으로 보강됨. ThisWeek* 표시는 달력의 이번 주만 포함.
-- 검증 함정: release의 DB 없는 통과는 통합 시험 통과 증거가 아님. ci.yaml은 pgvector/pgvector:pg16 사용. scratch 하네스는 URL DSN 및 CREATE DATABASE 권한 요구.
-- 검증 함정: mutation/authz 스크립트는 소스를 제자리에서 수정. authz에는 표식·자체 중복 실행 거부가 이미 있으나 CHECKS 시간 안내는 낡음. 같은 체크아웃의 빌드/시험과 동시에 실행 금지.
-- 검증 함정: tracking·handoff·mail 표준 키 후속은 main에 구현 파일이 없음(mail.host·migration 030 확인). 이전 성공 기록만 믿고 후속 구현하지 말 것.
-- 검증 함정: 배포/브라우저가 필요한 a11y·failstate·scale 검사, 문서 PDF 생성은 별도 환경 확인. 이번 psql 가용성은 미확인.
-- 로컬 지침: 저장소/상위 경로의 CLAUDE.md·AGENTS.md는 발견하지 못함. 요청된 회사 스킬 세 개도 현재 도구/로컬 경로에서 찾지 못해 원문 미확인.
+  - internal/app/ — 서버·핸들러·워커·대부분의 시험. app.go 라우팅, mail.go 세 큐 현황·최근 발송 목록.
+  - internal/app/migrations/ — 001~030 SQL 및 migrations.sums 체크섬. 출하 SQL 수정 금지.
+  - internal/app/httpharness_test.go — newTestServer·createScratchDatabase·템플릿 복사·오래된 시험 DB 청소.
+  - internal/app/upgrade_test.go — emptyScratchDatabase·업그레이드 검사. weekly_u_*는 공통 sweep에서 빠짐.
+  - internal/app/mcpwrite.go — mcpMayWrite·mcpWriteTools·callMCPWriteTool. 세션 또는 mcp:write 연결의 본인 보고서 쓰기.
+  - frontend/src/pages/·types.ts — SPA 화면·API 타입. AdminPage.tsx:SettingsTab에 메일 카드·설정이 함께 있음.
+  - docs/ — ADMIN_GUIDE·USER_GUIDE·MCP·OPERATIONS·CHECKS·ROADMAP_PLAN·openapi.yaml. 로드맵 서두의 WorkItem 미구현 서술은 낡음.
+  - scripts/ — guard/openapi/paging/modal-close/version, mutation/authz 검사 및 문서 렌더러.
+  - .github/workflows/ — ci.yaml PostgreSQL 서비스; release.yaml DB 서비스 없이 소스 검증·오프라인 이미지 출하.
+- 빌드·테스트: `go build ./...`, `go vet ./...`, `go test ./... -count=1`.
+- 빌드·테스트: `npm --prefix frontend ci`, `npm --prefix frontend run lint`, `npm --prefix frontend test`(서울·뉴욕 TZ), `npm --prefix frontend run build`.
+- 빌드·테스트: `python3 scripts/openapi-check.py`, `python3 scripts/paging-check.py`, `python3 scripts/guard-check.py --changed main`. 전체 guard는 문서상 약 7분.
+- 빌드·테스트: `python3 scripts/render-docs.py ADMIN_GUIDE`는 HTML 생성; 가이드 PDF는 별도 도구. 불필요한 다른 문서 재생성 피할 것.
+- 정찰 검증: pinned main@0253313 / v0.306.0. 전체 Go 시험 통과(internal/app 2.891초), openapi 119개·paging 10곳 통과. 작업 트리 깨끗함.
+- 정찰 한계: WEEKLY_TEST_POSTGRES_DSN 미설정이라 DB 시험 skip. 실제 DB·프런트·브라우저 검증 및 psql/docker 가용성은 미확인.
+- 관례: 한국어 feat:/fix:/test:/docs:/chore: 커밋. settingDefinitions + app_settings 설정. 제품 함수에 // guards 시험 주석; 하네스 함수에는 불필요.
+- 관례: 메일 health·목록은 mailDeliveriesUnion과 14일 창 공유. 목록 최대 50건, total·쪽 넘김·필터 없음. SMTP 키는 아직 mail.host/port/from.
+- 위험 구역: auth.go·OIDC·MCP OAuth(권한/세션/토큰), crypto.go(비밀), migrations/(출하 체크섬), .github/workflows/.
+- 자주 깨지는 곳: 공유 DB에 다른 브랜치 스키마·fixture 잔존. 12개 시험 격리는 기록상 e909ca0에서 성공했으나 현재 main에는 없음. 중복 구현 금지.
+- 자주 깨지는 곳: 주차·마감 경계. deadlineRule.instant와 deadlinePassedFor는 days+hours를 더함. 기본 월요일+7일+24시=다음 화요일 0시. 관리자 도움말에는 다른 설명 잔존.
+- 자주 깨지는 곳: 참여 기록 시험은 closedWeekStart·13일 규칙으로 보강됨. 제품 ThisWeek*는 달력 이번 주만 표시.
+- 검증 함정: DB 없는 통과는 통합 시험 증거가 아님. ci.yaml은 pgvector/pgvector:pg16. scratch는 URL DSN 및 CREATE DATABASE 권한 필요.
+- 검증 함정: mutation/authz 스크립트는 소스를 제자리 수정하므로 같은 체크아웃의 빌드·시험과 병행 금지. authz 서두는 40분 이상이나 CHECKS 표는 수 분으로 낡음.
+- 검증 함정: tracking·handoff·mail 표준 작업은 성공 기록만 있고 현재 트리에 기반 없음. 후속 기능은 코드 존재를 먼저 확인.
+- 검증 함정: a11y·failstate는 배포·브라우저 필요. 프런트 기존 시험은 vitest이며 일부 SSR·fetch 대역이 있으나 실제 배선 검증을 대체하지 않음.
+- 로컬 지침: 저장소와 조사한 상위 경로에서 CLAUDE.md·AGENTS.md 미발견. 요청 회사 스킬 3개 및 Skill 도구 미발견; 원문 절차·반환 형식 적용 미확인.

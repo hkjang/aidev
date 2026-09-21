@@ -8,7 +8,7 @@
   - internal/app/import.go·import_test.go: CSV/XLSX 읽기와 실제 파일/HTTP 회귀. 가져오기는 첫 시트·앞 10행 헤더 탐색 계약.
   - internal/app/integration_test.go: newTestEnv가 테스트별 DB 생성·정리. do/doForwarded 및 uploadImport는 요청 데드라인을 사용한다.
   - internal/platform/: 환경설정·SMTP 발송·암호화. internal/database/: 연결과 번호별 트랜잭션 마이그레이션.
-  - internal/database/migrations/: 현재 main은 0014_tracking까지(직전 프로필 및 현재 미머지 브랜치 대조; 이번 전체 목록 별도 재열람 없음).
+  - internal/database/migrations/: 현재 HEAD의 파일 목록상 최신은 0014_tracking.sql.
   - web/src/: 화면·타입·vitest. VisitFormPage가 /visits/new와 /lobby/walk-in을 공유한다.
   - web/e2e/: 실제 서버 Playwright. web/screenshots/: 가이드 캡처. docs/: USER/ADMIN GUIDE·API_AND_MCP·ARCHITECTURE·PDF·assets/guide.
 - 빌드·테스트: 이번 `go test ./... -count=1` 통과(app 0.137s). VISITFLOW_TEST_DSN 미설정으로 PostgreSQL 통합 SKIP. vet/build는 이번 미실행.
