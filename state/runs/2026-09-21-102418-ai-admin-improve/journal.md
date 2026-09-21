@@ -30,3 +30,5 @@
 - [러너 10:35] pr created — https://github.com/hkjang/ai-admin/pull/29
 - [러너 10:41] ci passed — 검사 2개 모두 success
 - [러너 10:41] merge done — 54afcc5
+- [러너 10:54] release published — v1.2.24
+- [러너 10:56] assets verified — v1.2.24 자산 2개 (이전 v1.2.23: 2)
