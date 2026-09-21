@@ -5,8 +5,8 @@
     "risk": 2,
     "size": "S",
     "status": "pending",
-    "note": "cmd/runtime-proxy/dlp.go:send는 Body.Close만 호출. 현재도 유효; BASE_VERSION 변경 부담.",
-    "updated": "2026-09-21"
+    "note": "cmd/runtime-proxy/dlp.go:send는 Body.Close만 호출. 유효하나 BASE_VERSION 부담으로 후순위.",
+    "updated": "2026-09-22"
   },
   {
     "title": "받는 사람이 스스로 메일을 끄는 사용자 설정(구독 해제)",
@@ -14,8 +14,8 @@
     "risk": 2,
     "size": "M",
     "status": "pending",
-    "note": "store/mail.go:UserEmails는 active/email만 필터; mail/service.go:Notify는 관리자 이벤트 설정만 검사. 스키마/API/UI 추가 필요.",
-    "updated": "2026-09-21"
+    "note": "store/mail.go:UserEmails는 active/email만, mail/service.go:Notify는 관리자 설정을 검사. 스키마/API/UI 범위로 후순위.",
+    "updated": "2026-09-22"
   },
   {
     "title": "이벤트 전달 실패(dead letter)를 메일 이벤트로",
@@ -23,8 +23,8 @@
     "risk": 2,
     "size": "M",
     "status": "pending",
-    "note": "execution/dispatcher.go:retry는 DeadLetterEvent 이후 CreateNotification만 호출. 실제 메일 큐 배선 검증 필요.",
-    "updated": "2026-09-21"
+    "note": "execution/dispatcher.go:retry는 DeadLetterEvent와 CreateNotification만 호출. 메일 배선 설계 필요.",
+    "updated": "2026-09-22"
   },
   {
     "title": "클러스터 배포에서 세션·실행 Pod 화면을 가이드에 실음",
@@ -32,8 +32,8 @@
     "risk": 2,
     "size": "L",
     "status": "pending",
-    "note": "docs/decisions/cluster-verification.md에 과거 클러스터 관찰은 있으나 현재 환경 가용성 미확인. 45분 범위 밖.",
-    "updated": "2026-09-21"
+    "note": "USER_GUIDE 서두에서 현재 캡처 배포는 클러스터 없음 명시. 현재 클러스터 가용성 미확인, 45분 범위 밖.",
+    "updated": "2026-09-22"
   },
   {
     "title": "결정 기록 내보내기가 정책에 거절돼도 provenance 화면이 건수를 세지 않음",
@@ -41,8 +41,8 @@
     "risk": 2,
     "size": "M",
     "status": "pending",
-    "note": "AdminProvenance.tsx는 provenance.withheld 감사 링크만 제공. 별도 건수 API 계약 확인이 필요해 S에서 M으로 재평가.",
-    "updated": "2026-09-21"
+    "note": "AdminProvenance.tsx는 withheld 감사 링크 안내. 별도 집계 계약 미확인.",
+    "updated": "2026-09-22"
   },
   {
     "title": "live 테스트를 CI 에서 postgres service 로 돌림",
@@ -50,8 +50,8 @@
     "risk": 3,
     "size": "M",
     "status": "pending",
-    "note": "ci.yaml은 DSN/Postgres 없이 Go race 실행; TestLangflowSettings도 DSN 없으면 Skip. workflows 보호 경로와 패키지 동시 DB 오염 위험.",
-    "updated": "2026-09-21"
+    "note": "ci.yaml은 DSN/Postgres 없이 race 실행. workflows 보호 경로 및 공유 DB 병렬 실행 위험.",
+    "updated": "2026-09-22"
   },
   {
     "title": "dlp.tool 보고의 server·tool·direction 문자열 길이 상한",
@@ -59,17 +59,17 @@
     "risk": 2,
     "size": "S",
     "status": "pending",
-    "note": "api/dlp.go:reportDLPEvent는 해당 값을 details와 로그에 그대로 사용. 길이 제한과 원문 보호는 별개; 선택하지 않음.",
-    "updated": "2026-09-21"
+    "note": "reportDLPEvent에서 문자열을 그대로 details/로그에 사용. 현행 유효.",
+    "updated": "2026-09-22"
   },
   {
     "title": "dlp.tool 보고의 findings.sample 을 컨트롤 플레인이 다시 마스킹",
     "value": 3,
     "risk": 2,
     "size": "S",
-    "status": "pending",
-    "note": "현재도 result.Findings를 그대로 파일. bf1e062 포함 브랜치는 auto/2026-09-18-1403만 확인; 사람 판정 미확인으로 재선택 금지.",
-    "updated": "2026-09-21"
+    "status": "rejected",
+    "note": "현재 main에서도 원문 findings 사용이지만 bf1e062로 이미 구현한 이력과 미확인 사람 판정이 있어 중복 과제로 재선택 금지. 해결 완료를 뜻하지 않음.",
+    "updated": "2026-09-22"
   },
   {
     "title": "mcp.tool_call 키 경로에 API 키 이름/ID 도 남김",
@@ -77,17 +77,8 @@
     "risk": 2,
     "size": "S",
     "status": "pending",
-    "note": "mcpPrincipal/mcpCallDetails는 auth/client만 기록. 키 조회 반환형과 호출 경로 확대 필요.",
-    "updated": "2026-09-21"
-  },
-  {
-    "title": "Langflow runtime-settings 백업 실패 시 전역 프로필 덮어쓰기 중단",
-    "value": 5,
-    "risk": 1,
-    "size": "M",
-    "status": "done",
-    "note": "withRuntimeSettings가 2xx·JSON·settings.profiles 배열을 확인하고 깊은 복사본으로 finally 복원한다. 실제 Handler+격리 PostgreSQL+Node에서 정상/예외/일부 PUT 실패/401/빈 배열 검증 통과. 복원 및 이중 오류는 Node 회귀로 보강.",
-    "updated": "2026-09-21"
+    "note": "mcpCallDetails는 auth/client만 기록. 키 조회 반환형 확장 필요.",
+    "updated": "2026-09-22"
   },
   {
     "title": "릴리즈 검증에도 silent SSO Node 테스트 포함",
@@ -95,17 +86,17 @@
     "risk": 2,
     "size": "S",
     "status": "pending",
-    "note": "ci.yaml에는 test:sso가 있고 release.yaml에는 없음. workflows 보호 경로라 제외.",
-    "updated": "2026-09-21"
+    "note": "release.yaml에는 test:sso 없음. workflows 보호 경로 때문에 제외.",
+    "updated": "2026-09-22"
   },
   {
     "title": "guide-shots 전역 설정 백업 실패 시 seed 중단",
     "value": 4,
     "risk": 1,
     "size": "M",
-    "status": "pending",
-    "note": "guide-shots.mjs:121 실패 후 continue, 누락 값도 복원 생략한 채 seed/captureTracking 진행. 네 설정 계약 때문에 이번 차선.",
-    "updated": "2026-09-21"
+    "status": "done",
+    "note": "af47666: 실제 guide-shots가 withGuideSettings를 사용. 네 값의 HTTP/JSON/구조 검증·깊은 복제 완료 전 작업/복원 금지. 신규 Node 52건 포함 전체 109건 통과; DB·브라우저 실물 검증 미실행.",
+    "updated": "2026-09-22"
   },
   {
     "title": "guide-shots 복원 한 건이 네트워크 오류여도 나머지 설정 복원을 계속함",
@@ -113,34 +104,34 @@
     "risk": 1,
     "size": "M",
     "status": "pending",
-    "note": "신규. guide-shots.mjs:135~139의 복원 for 루프에 개별 try/catch가 없어 첫 PUT throw로 이후 복원 누락. 오류를 모아 보고하는 실제 배선 검증 필요; 백업 과제와 함께할 후속 범위.",
-    "updated": "2026-09-21"
+    "note": "finally의 순차 PUT에 개별 catch 없음. 현행 유효, 이번 차선으로만 유지.",
+    "updated": "2026-09-22"
   },
   {
-    "title": "sessionGateway Node 장애 회귀 테스트를 기본 검증 명령에 포함",
-    "value": 2,
-    "risk": 2,
-    "size": "S",
-    "status": "pending",
-    "note": "이번 구조화 목록 신규 편입(직전 회차 요약에 언급). package.json은 test:sso만 기본 Node 테스트로 노출하고 CI도 그 명령만 실행. 18개 장애 회귀가 기본 검증에서 빠짐; workflows 제외.",
-    "updated": "2026-09-21"
+    "title": "Langflow runtime-settings 백업 실패 시 전역 프로필 덮어쓰기 중단",
+    "value": 5,
+    "risk": 1,
+    "size": "M",
+    "status": "done",
+    "note": "a439f88이 d42cc59에 병합됨. withRuntimeSettings의 settings.profiles 검증/finally 및 호출 배선 확인, 기존 Node 회귀 통과.",
+    "updated": "2026-09-22"
   },
   {
-    "title": "guide-shots 추적 캡처가 기존 CSP 위반 기록까지 지우는 동작을 줄임",
+    "title": "guide-shots API 호출에 제한 시간을 두어 복원 진입이 무한정 지연되지 않게 함",
     "value": 3,
     "risk": 2,
     "size": "M",
     "status": "pending",
-    "note": "신규. captureTracking의 finally가 DELETE /api/v1/admin/tracking/violations 전체 삭제를 호출. 선별 삭제 API 여부는 미확인; 일회용 배포 조건을 고려해 후순위.",
-    "updated": "2026-09-21"
+    "note": "신규. call의 page.evaluate fetch에 AbortSignal/timeout 없음. settle의 바깥 기한도 단일 get 대기를 중단 못함. 복원 요청별 기한과 실제 취소 테스트 필요.",
+    "updated": "2026-09-22"
   },
   {
-    "title": "Langflow sessionGateway 설정을 검증된 백업으로 복원",
-    "value": 4,
-    "risk": 1,
+    "title": "guide-shots 추적 캡처가 기존 CSP 위반 기록 전체를 지우지 않게 함",
+    "value": 3,
+    "risk": 2,
     "size": "M",
-    "status": "done",
-    "note": "이전 기록 완료 재확인: withSessionGateway 호출, 깊은 복제 및 finally 복원, TestLangflowSettings live 배선 존재. Node 18건 통과; 재구현 금지.",
-    "updated": "2026-09-21"
+    "status": "pending",
+    "note": "신규. captureTracking finally가 DELETE /admin/tracking/violations 호출, clearTrackingViolations는 violations.Forget()으로 전체 삭제. 폐기 배포 전제라 이번보다 우선순위 낮음; 개별 삭제 API 확장 없이 전체 삭제 생략 방안 평가.",
+    "updated": "2026-09-22"
   }
 ]
