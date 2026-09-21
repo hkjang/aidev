@@ -1,31 +1,37 @@
-# ptium 프로필 (2026-09-21)
+# ptium 프로필 (2026-09-22)
 - 목적: 한국어 브리프와 기존 문서를 슬라이드 덱으로 만들어 편집·공유·PPTX/PDF 내보내기까지 하는 자체 호스팅 서비스.
-- 스택: Go 1.24 모듈·net/http 기반 서버, PostgreSQL(pgx/v5), 자체 PPTX/SVG/PDF 렌더러; React 19·TypeScript 7·Vite 8·Vitest 3.
+- 스택: Go 1.24·net/http, PostgreSQL(pgx/v5), 자체 PPTX/SVG/PDF 처리; React 19·TypeScript 7·Vite 8·Vitest 3.
 - 구조:
-  - server/cmd/ptium: 서버 진입; internal/httpapi: REST와 MCP 배선; internal/auth: 세션·OIDC·API 키 인증.
-  - server/internal/db/migrations.go: 자동 마이그레이션·defaultSettings 시드; settings: 설정 등록·검증; store: 영속화.
-  - server/internal/docs: CSV/XLSX/DOCX/PDF/텍스트를 덱 소스로; Read가 확장자별 진입점.
-  - server/internal/deck: ParseSource·Compile·PPTX 가져오기; pptx: 템플릿 분석·미리보기·내보내기; golden: 출력 회귀.
-  - server/internal/generation: 모델·로컬 생성과 워커; mail/analytics/handoff: 알림·방문 추적·서비스 간 문서 전달.
-  - web/src/pages·components: 사용자 편집기·관리 화면; auth: PKCE/silent SSO; api: 클라이언트·오류 번역.
-  - api/openapi.yaml: REST 계약; docs: 가이드·문법·설계·릴리즈 노트; scripts/e2e: 실서버/브라우저 검증.
-- 빌드·테스트: make test = server의 go test -race ./... + go vet ./... + web의 npm run typecheck && npm run build.
-  - 2026-09-21 정찰에서 cd server && go test -race ./... 통과(캐시 일부 사용). DB 연결 검증은 미확인.
-  - 웹 단위는 cd web && npm test; 이번 워크트리에 node_modules 없음, 설치 시 npm ci 필요. 이번 웹 검증은 미실시.
-  - CI는 Go race/vet, Node 22에서 npm ci/typecheck/build/audit --audit-level=high, Docker 빌드; Vitest는 CI에 없음.
-  - make build는 서버 바이너리와 웹 번들 생성. 전체 e2e·Docker 빌드는 외부 환경 준비 때문에 오래 걸릴 수 있음.
-- 관례: 커밋 제목은 영어 서술문, 코드 주석·테스트 이름도 문장형. 한국어 사용자 가이드와 영문 덱 문법 문서가 docs에 있음.
-  - 설정은 defaultSettings→settings 등록→API 검증→OpenAPI→관리 화면까지 맞춘다. 마이그레이션은 Go로 기동 시 실행.
-  - 현재 VERSION 1.69.43, HEAD 4b552d1. 구현 단계에서 VERSION·릴리즈 노트 변경하지 않음.
-- 위험 구역: auth·httpapi 인증 체인, db/migrations.go, 단일 사용 handoff claims, SMTP 비밀 설정, 감사 로그 스크럽 경계.
-- 자주 깨지는 곳: docs.amountOf와 deck.parseNumber·parseBareNumber/chartFields는 별개 계약이다. 통합·구분자 확장 금지, 분류기만 좁혀 안전하게 표로 남기는 방향.
-  - 회계 음수 파싱만 바꿔도 math.Abs 기반 막대는 부호를 표현하지 못한다는 반려 이력이 있음.
-  - korean 패키지가 한국어 조사를 검사하며 웹 errors.ts 번역 누락은 codecover에서 실패할 수 있음.
-- 최신 XLSX 상태: gridOf 뒤 onScreen이 숨긴 행·열을 제거하고 placement로 원래 출처를 전달한다. 숨긴 열 범위를 개별 열로 전개하지 않음(2e3a62e).
-  - tables.go:trimmed가 kept 행 인덱스를 반환하므로 명시적 빈 행 제거는 추적됨. 다만 worksheet.Rows.Reference는 좌표에 쓰지 않아 생략된 XML 행 문제는 남음.
-  - sharedStrings는 rich text r>t를 합치지만 inlineStr은 is>t만 읽음. 이번 과제는 인라인 문자열의 글자 보존.
-- 검증 함정: PTIUM_TEST_DSN 없으면 DB 테스트가 Skip하므로 전체 Go 통과를 마이그레이션 실검증으로 해석하지 말 것.
-  - scripts/e2e/api.py:call은 headers={}를 기본 개발 신원으로 바꿈. 무인증은 기존 NOBODY 관례 이용.
-  - 이전 기록상 8099 충돌 및 컨테이너 loopback 차이 주의; PTIUM_E2E_PEER_HOST가 상대 테스트 서버 주소를 지정.
-  - docs/roadmap-v2.md는 v0.44 시점 계획으로 일부 미완료 표기가 현재 README의 구현 기능과 어긋남. 코드 우선 확인.
-  - 저장소 및 확인한 상위 경로에서 CLAUDE.md·AGENTS.md 발견 못 함. server/web/src/scripts TODO/FIXME 검색 결과 없음.
+  - server/cmd/ptium: 진입점; internal/httpapi: REST 배선; internal/mcp: MCP; internal/auth: 인증.
+  - internal/db/migrations.go: 기동 마이그레이션·설정 시드; settings: 설정 검증; store: 영속화.
+  - internal/docs: Read를 통해 CSV/XLSX/DOCX/PDF/텍스트를 덱 소스로 변환.
+  - internal/deck: ParseSource·Compile; pptx: 템플릿·렌더링·내보내기; golden: 출력 회귀.
+  - internal/generation: 생성과 워커; mail/analytics/handoff: 알림·추적·문서 전달.
+  - web/src/pages·components: 편집기·관리 화면; auth: PKCE/silent SSO; api: 클라이언트.
+  - api/openapi.yaml: API 계약; docs: 가이드·문법·설계·릴리즈 노트; scripts/e2e: 실서버 검증.
+- 빌드·테스트: make test = server에서 go test -race ./... + go vet ./... + web typecheck/build.
+  - 이번 정찰에서 cd server && go test -race ./... 및 go vet ./... 통과(캐시 포함).
+  - docs 집중 검증: cd server && go test ./internal/docs. make build는 Go 바이너리와 웹 번들.
+  - 웹 단위: cd web && npm test. 현재 node_modules 없음; npm ci 필요. 이번 웹 검증 미실시.
+  - CI: Go race/vet, Node 22 npm ci/typecheck/build/audit --audit-level=high, Docker build. Vitest 단계 없음.
+  - 실서버/브라우저 e2e·Docker 빌드는 서비스·환경 준비로 오래 걸릴 수 있음.
+- 관례: 영어 문장형 커밋·테스트 이름, 한국어 사용자 가이드와 영문 문법 문서.
+  - 설정은 defaultSettings→settings→API 검증→OpenAPI→관리 화면을 맞춘다. 마이그레이션은 Go로 기동 시 실행.
+  - 현재 VERSION 1.69.43, HEAD 905a9c5. 정찰·구현에서 버전·릴리즈 노트 변경하지 않음.
+- 위험 구역: auth·httpapi 인증, db/migrations.go, 단일 사용 handoff claims, SMTP 비밀, 감사 로그 스크럽.
+- 자주 깨지는 곳: docs.amountOf와 deck 숫자 파서는 서로 다른 계약. 통합·구분자 확장 금지, 분류기를 좁히는 방향.
+  - 음수 파싱만으로 막대 시각 의미를 고쳤다고 주장하지 말 것. 렌더러 개선은 별도 과제.
+  - korean 패키지는 조사 검사, 웹 errors.ts 번역 누락은 codecover에서 실패 가능.
+- 최신 XLSX 상태: 숨김은 gridOf 뒤 onScreen에서 제거하고 placement로 출처를 전달. 숨긴 열 범위는 전개하지 않음.
+  - inlineStr rich text는 InlineRuns를 Join해 보존함(8739ec8); 이전 프로필의 미구현 설명은 낡음.
+  - 생략 XML 행의 r은 아직 출처에 반영되지 않음. onScreen은 행 배열 index를 기록하며 이번 선정 과제임.
+  - columnOf/gridOf의 과도한 열 번호 할당과 columnLetter의 세 글자 열 표기는 보류 후보.
+- 기록 불일치: 과거 노트의 MCP OAuth 캠페인 구현은 이 고정 HEAD에 없음.
+  - server·web/src·api/openapi.yaml·ADMIN_GUIDE에서 mcp.oauth/mcpoauth/oauth-protected-resource 없음. 미반영 이유는 미확인.
+  - 따라서 MCP OAuth 가이드·설정·메타데이터 후속을 이미 구현된 기능으로 가정하지 않는다. silent SSO는 존재.
+- 검증 함정: PTIUM_TEST_DSN 없으면 DB 테스트 Skip. 이번 DB 연결 검증은 미확인.
+  - scripts/e2e/api.py:call은 headers={}를 개발 신원으로 바꿈. 무인증 검사에 기존 NOBODY 관례 확인.
+  - 8099 충돌·컨테이너 loopback 주의; handoff e2e는 PTIUM_E2E_PEER_HOST로 상대 주소 지정.
+  - docs/roadmap-v2.md는 v0.44 계획으로 일부 미완료 표기가 현재 구현과 다름. 코드 우선.
+  - CLAUDE.md·AGENTS.md는 저장소와 확인한 상위 경로에서 발견 못 함. TODO/FIXME 검색 결과 없음.
+  - 요청한 pmo/technology 스킬 3종은 도구·로컬 경로에 없어 절차·반환 형식 미확인.
