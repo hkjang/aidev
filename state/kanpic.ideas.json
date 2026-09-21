@@ -1,20 +1,11 @@
 [
   {
-    "title": "IMPORTDATA 는 \"true\"/\"false\" 를 글자로 두고 업로드 parseScalar 는 불리언으로 읽는다",
-    "value": 3,
-    "risk": 1,
-    "size": "S",
-    "status": "done",
-    "note": "719aec5: 공통 Boolean 판정으로 두 호출부 연결. 실제 HTTPS→Resolve와 같은 바이트 Parse를 좌표별 Go 타입/JSON 값으로 비교하여 실패→통과→분기 제거 시 재실패 확인. 숫자·공백·아포스트로피·빈칸 정책 유지.",
-    "updated": "2026-09-21"
-  },
-  {
     "title": "서버 delimited.Number 와 격자 clipboardNumber.ts parsePastedNumber 의 열다섯 자리 한도를 공용 픽스처로 못 박는다",
     "value": 3,
     "risk": 1,
     "size": "S",
     "status": "pending",
-    "note": "차선. testdata에는 numeric-text/cell-formats/sort-order/validation-dates만 존재. decomposeNumberText와 Number의 계약은 전체가 같지 않으므로 공통 평문 숫자 경계만 검증; 파서 통합 금지.",
+    "note": "차선. testdata 4종에 파일 숫자 전용 공용 픽스처 없음. numberEntry.agreement는 웹 내부 경로만 비교. 공통 평문 경계만 대상으로 하고 파서 통합 금지.",
     "updated": "2026-09-21"
   },
   {
@@ -23,7 +14,7 @@
     "risk": 2,
     "size": "M",
     "status": "pending",
-    "note": "server.go:getWorkbook은 출처를 넣지 않고 EditorPage.tsx:250은 별도 query 사용. 저장소 결합과 기존 API 호환 검증이 필요해 이전 S/위험1에서 M/위험2로 상향.",
+    "note": "server.go:getWorkbook에 출처 없음, EditorPage.tsx의 별도 query 유지. API/저장소 결합 때문에 후순위.",
     "updated": "2026-09-21"
   },
   {
@@ -32,7 +23,7 @@
     "risk": 2,
     "size": "M",
     "status": "pending",
-    "note": "HomePage.tsx 카드는 Grid2X2/시트 수이며 출처 없음. 목록 API에서 한 번에 제공해야 하므로 GET 출처 설계 후 검토; 카드별 fetch 금지.",
+    "note": "HomePage.tsx 카드에 Grid2X2/시트 수만 표시. 출처 일괄 목록 API 설계가 선행되어야 함; 카드별 fetch 금지.",
     "updated": "2026-09-21"
   },
   {
@@ -41,16 +32,7 @@
     "risk": 2,
     "size": "S",
     "status": "pending",
-    "note": "internal/handoff/handoff.go:receivesByService 고정 표 확인. 현재 표준 변경 요구는 미확인. 필요가 입증될 때만 수행.",
-    "updated": "2026-09-21"
-  },
-  {
-    "title": "csvNumber 자리(formula.DecimalNumber)가 IMPORTDATA 의 \"1,200\"·\"12%\"·통화 기호를 글자로 남긴다",
-    "value": 2,
-    "risk": 3,
-    "size": "S",
-    "status": "rejected",
-    "note": "두 경로 모두 delimited.Number를 사용하고 업로드 가이드도 장식 숫자의 글자 보존을 명시. 파서를 넓히는 변경은 결함 수정이 아니다; 경고 UI는 별도 요구로 다룬다.",
+    "note": "handoff.go:receivesByService 고정 표 유지. 표준 변경 요구 미확인; 이번에는 선택하지 않음.",
     "updated": "2026-09-21"
   },
   {
@@ -59,7 +41,7 @@
     "risk": 3,
     "size": "M",
     "status": "pending",
-    "note": "functions_text.go:formatValue는 toNumber, cellFormat.ts:formatCellValue는 typeof number 판정. 차이는 코드로 확인했으나 TEXT 수식과 셀 표시의 의도적 계약 차이인지 미확인; 동작을 무조건 통합하지 않는다.",
+    "note": "functions_text.go:formatValue와 cellFormat.ts:formatCellValue의 판정 차이 유지. TEXT 수식과 셀 표시 계약의 의도 차이 미확인; 무조건 통합 금지.",
     "updated": "2026-09-21"
   },
   {
@@ -68,7 +50,7 @@
     "risk": 2,
     "size": "S",
     "status": "pending",
-    "note": "delimiter.go separators는 쉼표/세미콜론/탭. 미지원 확인; ASCII/마크다운 표 오탐 우려와 실제 사용자 수요는 미확인.",
+    "note": "delimiter.go separators는 쉼표/세미콜론/탭. 실제 수요 미확인이고 표/로그 오탐 우려.",
     "updated": "2026-09-21"
   },
   {
@@ -77,7 +59,7 @@
     "risk": 2,
     "size": "M",
     "status": "pending",
-    "note": "headLines는 LF 기준. 구분자 감지만 변경해서 해결되지 않으며 파서 입력 정규화와 quoted CR 보존 검증이 필요해 범위 M으로 재평가.",
+    "note": "headLines의 LF 기준 유지. 감지만 수정해 해결되지 않음; quoted CR 보존 포함 정규화 필요.",
     "updated": "2026-09-21"
   },
   {
@@ -86,7 +68,7 @@
     "risk": 2,
     "size": "M",
     "status": "pending",
-    "note": "format_fraction.go는 자리 개수를 분모 상한에만 사용하고 fractionText는 숫자만 이어 붙임. Go/TS 동시 변경과 정확한 기대값 근거 필요; 45분 안전 작업으로는 불확실해 상향.",
+    "note": "format_fraction.go:fractionText는 숫자만 이어 붙임. Go/TS 및 공용 서식 픽스처 동시 변경과 기대값 근거 필요.",
     "updated": "2026-09-21"
   },
   {
@@ -95,7 +77,7 @@
     "risk": 2,
     "size": "M",
     "status": "pending",
-    "note": "README에 수동 캡처 명령 있고 ci/release에 자동 캡처 없음. DB/실 서버/테스트 데이터 비용이 있어 보류; workflow는 이번 범위 밖.",
+    "note": "README 수동 명령 존재; ci/release 자동 캡처 없음. DB·서버·데이터 비용, 보호 workflow 변경으로 보류.",
     "updated": "2026-09-21"
   },
   {
@@ -104,16 +86,16 @@
     "risk": 2,
     "size": "S",
     "status": "pending",
-    "note": "parseCSV는 수 판정 전 TrimSpace, parseScalar는 trim 없음 확인. 원격의 기존 숫자 변환에 영향이 있어 위험 상향; 이번 불리언 작업에 끼워 넣지 않는다.",
+    "note": "parseCSV 숫자 TrimSpace 및 parseScalar 무trim 유지. 최신 불리언 비교 테스트에서 의도적으로 차이를 고정했으므로 별도 요구 없이는 변경하지 않는다.",
     "updated": "2026-09-21"
   },
   {
     "title": "IMPORTDATA가 잘못된 UTF-8·지원하지 않는 UTF-32를 글자로 받아들이는 경로를 검증한다",
     "value": 3,
-    "risk": 2,
+    "risk": 1,
     "size": "S",
-    "status": "pending",
-    "note": "새 아이디어. ToUTF8는 UTF-32LE를 그대로 돌려주고 업로드 parseDelimited는 utf8.Valid로 거절하나 external.parseCSV에는 유효성 검사가 없음. HTTP→Resolve 결과/JSON 직렬화에서 손상 양상을 재현한 뒤 #VALUE! 정책 검토; 실행 재현 미확인.",
+    "status": "done",
+    "note": "0a21ce7: ToUTF8 직후 UTF-8 유효성 검사 추가. 실제 HTTPS→Resolve와 업로드로 invalid UTF-8/BOM UTF-8 및 BOM UTF-32LE/BE 거절, 정상 인코딩 4종의 좌표별 타입·값·JSON/기존 공백 계약 검증. 수정 전 실패→통과 및 검사 제거 재실패 확인.",
     "updated": "2026-09-21"
   },
   {
@@ -122,16 +104,34 @@
     "risk": 2,
     "size": "M",
     "status": "pending",
-    "note": "새 아이디어. delimiter.go:countOutsideQuotes가 물리적 줄마다 quoted 상태를 초기화해 quoted 여러 줄에서 잘못 센 후보가 이길 가능성. 실제 반례는 미확인; 10줄 샘플 비용 상한을 유지할 설계가 필요.",
+    "note": "countOutsideQuotes가 물리 줄마다 상태 초기화. 반례 실행은 미확인; maxSampledLines=10과 불균형 따옴표 복구 계약을 유지해야 함.",
     "updated": "2026-09-21"
   },
   {
-    "title": "XLSX 형식 없는 칸에도 delimited.Number의 15자리 한도를 적용한다",
-    "value": 1,
-    "risk": 4,
+    "title": "관리자 가이드의 외부 호출 오류 코드 안내를 실제 #N/A와 맞춘다",
+    "value": 2,
+    "risk": 1,
     "size": "S",
-    "status": "rejected",
-    "note": "실제 b52a394와 v0.251.0 노트에서 되돌린 접근. 17자리 raw 실수가 글자로 바뀌므로 재시도 금지; 앞자리 0 가드와 DecimalNumber 유지.",
+    "status": "pending",
+    "note": "새 아이디어. ADMIN_GUIDE.md:755는 비활성/허용 목록 문제를 #VALUE! 행에서 설명하나 Fetcher.Resolve/one은 #N/A 반환. PDF 동반 재생성 도구/시간 미확인; 코드 메서드와 메시지 대조 후 수정.",
+    "updated": "2026-09-21"
+  },
+  {
+    "title": "깨진 UTF-16 복구 계약을 원격과 업로드의 실제 입구에서 고정한다",
+    "value": 2,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "새 아이디어. encoding.go:fromUTF16는 홀수 끝 바이트 삭제·고립 surrogate U+FFFD 복구. encoding_test는 홀수 사례만 직접 검증하고 외부 UTF16 테스트는 parseCSV 직접 호출. 정상 인코딩 외 손상 UTF16 입력까지 양쪽 입구 회귀 검증은 미확인; 이번 유효성 거절 범위와 혼합해 정책을 바꾸지 말 것.",
+    "updated": "2026-09-21"
+  },
+  {
+    "title": "IMPORTDATA도 업로드처럼 true/false를 불리언으로 읽는다",
+    "value": 3,
+    "risk": 1,
+    "size": "S",
+    "status": "done",
+    "note": "719aec5가 delimited.Boolean을 두 경로에 연결했고 TestImportDataReadsBooleansLikeUpload 존재. 이번 과제로 다시 고르지 않는다.",
     "updated": "2026-09-21"
   }
 ]
