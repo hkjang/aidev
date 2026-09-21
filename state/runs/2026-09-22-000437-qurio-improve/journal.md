@@ -28,3 +28,4 @@
 - 요청한 세 회사 스킬과 Skill 도구는 검색에서 찾지 못해 적용 불가; 사용자 제공 기준으로 심사했으며 저장소 코드는 수정하지 않음.
 - [러너 00:15] review approved — 리뷰 승인 (risk=low)
 - [러너 00:15] pr created — https://github.com/hkjang/qurio/pull/20
+- [러너 00:34] ci timeout — 제한 시간 안에 CI 완료를 확인하지 못함
