@@ -1,0 +1,164 @@
+[
+  {
+    "title": "deck 의 세 숫자 파서(parseNumber·parseBareNumber/chartFields·docs.amountOf) 계약을 한 표 테스트로 묶기",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "sheetamounts_test.go와 sheetrichtext_test.go에 Read→ParseSource 수치 검증이 있고 line 회귀도 반영됨. 추가 가치 낮음; 파서 통합 금지.",
+    "updated": "2026-09-22"
+  },
+  {
+    "title": "e2e 후속: scripts/e2e/api.py 의 call() 이 headers={} 를 기본 신원으로 바꾸는 함정 제거",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "call의 if headers 분기 그대로. 실서버·DB 및 빈 dict 호출 의도 전수 확인 필요.",
+    "updated": "2026-09-22"
+  },
+  {
+    "title": "MCP SSO 후속: ADMIN_GUIDE PDF 재생성과 릴리즈 뒤 MCP·SSO/메일/추적/넘기기 화면 캡처",
+    "value": 2,
+    "risk": 1,
+    "size": "M",
+    "status": "pending",
+    "note": "screenshots.py에 해당 admin-settings 이름 없음. PDF 최신성 미확인. 현 HEAD에는 mcp.oauth/메타데이터 구현과 가이드 절 자체가 없으므로 MCP 부분 제외 또는 해당 구현 반영 뒤 수행; 메일·추적·넘기기는 유효.",
+    "updated": "2026-09-22"
+  },
+  {
+    "title": "MCP SSO 후속: e2e 에 메타데이터 404·/mcp 401 헤더·켜면 재시작 없이 바뀌는지 절 추가",
+    "value": 2,
+    "risk": 2,
+    "size": "M",
+    "status": "rejected",
+    "note": "현재 905a9c5의 server/web/src/OpenAPI/ADMIN_GUIDE에 mcp.oauth·mcpoauth·oauth-protected-resource 없음. 기록의 구현을 전제한 후속 과제로는 부적합. 실제 구현 반영 후 재평가.",
+    "updated": "2026-09-22"
+  },
+  {
+    "title": "메일 후속: 한 리뷰어의 연속 댓글을 30초 지연으로 묶어 한 통으로",
+    "value": 3,
+    "risk": 3,
+    "size": "M",
+    "status": "pending",
+    "note": "mail/service.go:Notify는 수신자마다 즉시 goroutine, Wait는 pending.Wait. 지연·종료 flush 및 중복 처리로 45분 위험 높음.",
+    "updated": "2026-09-22"
+  },
+  {
+    "title": "메일 후속: 관리자에게 새 critical 인시던트를 메일로",
+    "value": 3,
+    "risk": 3,
+    "size": "M",
+    "status": "pending",
+    "note": "store/admin.go:CaptureIncident는 error만 반환하고 upsert. 신규 여부·중복 방지와 스크럽 경계 검증 필요.",
+    "updated": "2026-09-22"
+  },
+  {
+    "title": "handoff 후속: 넘겨받은 덱의 출처를 편집기 정보 대화상자에도",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "EditorPage의 handoff 검색 결과는 내보내기 targets/URL/대화상자 배선. 받기 출처 표시 위치와 정보 대화상자 데이터 전체는 미확인.",
+    "updated": "2026-09-22"
+  },
+  {
+    "title": "handoff 후속: 형식 표를 handoff.peers 목록 줄에 적을 수 있게",
+    "value": 2,
+    "risk": 2,
+    "size": "M",
+    "status": "pending",
+    "note": "handoff.go의 고정 table과 ParsePeers name=origin 계약 확인. 서버·웹·문서 변경 필요.",
+    "updated": "2026-09-22"
+  },
+  {
+    "title": "추적 후속: SPA 안에서 /admin 이동 시 이미 붙은 스니펫이 남는 문제",
+    "value": 2,
+    "risk": 2,
+    "size": "M",
+    "status": "pending",
+    "note": "ADMIN_GUIDE 337행에 기존 제한 명시. 도구별 중지 API가 필요해 우선순위 낮음.",
+    "updated": "2026-09-22"
+  },
+  {
+    "title": "silent SSO 후속: e2e 에 autoLogin 게시 확인",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "silent SSO 실제 구현 있음, scripts/e2e에 autoLogin 검사 없음. MCP OAuth와 달리 독립적으로 유효한 후보.",
+    "updated": "2026-09-22"
+  },
+  {
+    "title": "회계 음수를 막대가 math.Abs 로 그려 부호가 사라지는 문제",
+    "value": 3,
+    "risk": 3,
+    "size": "M",
+    "status": "pending",
+    "note": "tables.go의 분류기 계약과 과거 반려 교훈 유지. 이번 렌더러 전체 재검증 미확인; 파싱만 바꾸는 접근 금지.",
+    "updated": "2026-09-22"
+  },
+  {
+    "title": "docs.Read 의 xlsx 가져오기에서 병합 셀(mergeCells)의 값을 병합 범위 첫 칸 외에도 채울지",
+    "value": 2,
+    "risk": 2,
+    "size": "M",
+    "status": "pending",
+    "note": "worksheet에 mergeCells 없음. 값 복제 정책·사용자 파일 미확인이라 보류.",
+    "updated": "2026-09-22"
+  },
+  {
+    "title": "XLSX 생략 행의 실제 r 좌표를 출처에 반영",
+    "value": 3,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "이번 선택. worksheet.Rows.Reference를 읽지만 onScreen은 at.rows에 index만 추가. 기존 placement를 채우면 국소 수정 가능하여 M에서 S로 재평가.",
+    "updated": "2026-09-22"
+  },
+  {
+    "title": "XLSX 과도한 열 번호로 생기는 대규모 할당 제한",
+    "value": 4,
+    "risk": 3,
+    "size": "M",
+    "status": "pending",
+    "note": "columnOf에 길이/열 상한 없고 gridOf가 widest+1만큼 할당. 열 유효성·누락 셀 정책까지 정해야 하므로 이번에는 보류; 위험 입력 실행하지 않음.",
+    "updated": "2026-09-22"
+  },
+  {
+    "title": "XLSX 인라인 서식 문자열의 텍스트 조각을 합쳐 셀 내용 손실 막기",
+    "value": 4,
+    "risk": 1,
+    "size": "S",
+    "status": "done",
+    "note": "8739ec8 반영 확인. InlineRuns 및 fallback Join과 sheetrichtext_test.go 존재, 전체 race 통과.",
+    "updated": "2026-09-22"
+  },
+  {
+    "title": "XLSX 출처의 AAA 이상 열 이름을 올바르게 표기",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "신규·차선. tables.go:columnLetter가 두 문자 식만 사용, columnOf는 세 문자도 읽음. 숨긴 A:ZZ 뒤 AAA가 남으면 실제 출처가 잘못됨. ZIP 기반 신규 실행 재현은 미실시.",
+    "updated": "2026-09-22"
+  },
+  {
+    "title": "XLSX ZIP 전체 해제 크기와 불필요한 파트 읽기 제한",
+    "value": 4,
+    "risk": 3,
+    "size": "M",
+    "status": "pending",
+    "note": "신규. readWorkbook은 모든 archive.File을 각 32MiB LimitReader로 읽어 parts에 보관하며 전체 예산은 없음. 전체 파트 예산·사용 파트 선별과 오류 정책을 별도 설계해야 하므로 보류.",
+    "updated": "2026-09-22"
+  },
+  {
+    "title": "xlsx 가져오기: width=\"0\"·collapsed·outlineLevel 로 접힌 열/행도 숨김으로 볼지",
+    "value": 2,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "이전 개선 기록 보존. 현재 Hidden 속성만 읽음. 실제 파일의 표시 의미 검증 전에는 확대하지 않음.",
+    "updated": "2026-09-22"
+  }
+]
