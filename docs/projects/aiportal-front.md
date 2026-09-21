@@ -1,7 +1,7 @@
 ---
 title: "aiportal-front — 자율 개선 이력"
 description: "aiportal-front: 자율 개선 회차 45회, 릴리즈 0건. 최근 릴리즈 없음."
-last_modified_at: 2026-09-21 19:59:06 +0900
+last_modified_at: 2026-09-21 20:06:59 +0900
 ---
 {% raw %}
 <script type="application/ld+json">
@@ -18,7 +18,7 @@ last_modified_at: 2026-09-21 19:59:06 +0900
   "name": "hkjang",
   "url": "https://github.com/hkjang"
  },
- "dateModified": "2026-09-21T19:59:06+09:00"
+ "dateModified": "2026-09-21T20:06:59+09:00"
 }
 </script>
 
@@ -35,6 +35,7 @@ last_modified_at: 2026-09-21 19:59:06 +0900
 <dt>마지막 회차</dt><dd>2026-09-21 19:10 KST — <span class="pill pill-nochange">➖ 변경 없음</span> fix-round: no change</dd>
 <dt>최근 릴리즈</dt><dd>failed — failed</dd>
 <dt>사유</dt><dd>다음 버전 및 릴리즈 커밋·태그 관례를 확정할 근거 부족. docs/RELEASE.md와 실제 Git/JSON 재조회: non-shallow 저장소의 로컬 태그 0개, 최근 37개 커밋에 실제 릴리즈 관례 없음, package.json 및 lock 두 필드 현재 0.0.0이며 패키지 이력에도 증가 없음. 최초 lock 두 필드는 부재. 기존 0.0.1/2025-01-01 문구는 실제 릴리즈 미확인이고 다른 1.0 기록은 문서 버전임. 제공된 GitHub Release 목록은 비어 있고 GitHub 워크플로·릴리즈 자산 생성 스크립트·전용 릴리즈 검사 없음. GitLab CI는 main/develop 전용 Runner의 브랜치 빌드·복사 배포이며 버전 릴리즈 증거가 아님. 버전 파일이 있으므로 skipped 조건 불충족. 사용자 지시와 정본에 따라 새 관례를 만들지 않음. marketing:product-launch 및 technology:release-and-deployment는 Skill 도구 부재로 /mnt/c/Users/USER/projects/headcount/plugins/{marketing/skills/product-launch,technology/skills/release-and-deployment}/SKILL.md 및 각 references/sources.md 원문을 읽고 적용(성공한 Skill 호출 아님, 별도 반환 스키마 없음). 문서 개선은 Tier 3이며 외부 발표·채택·출시 성공을 주장하지 않음. 버전 결정 단계에서 중단되어 앱 test/build·외부 사용자 검증·전용 Runner 배포는 미실행; 앱 CI 실패로 분류하지 않음. 저장소 변경·커밋·태그·자산 생성·원격 전송 없음. version은 새 릴리즈가 아닌 확인된 현재 값.</dd>
+<dt>수정 과제</dt><dd>⚠️ 오류 대응(자동 적재): 릴리즈 실패(). 다음 버전 및 릴리즈 커밋·태그 관례를 확정할 근거 부족. docs/RELEASE.md와 실제 Git/JSON 재조회: non-shallow 저장소의 로컬 태그 0개, 최근 37개 커밋에 실제 릴리즈 관례 없음, package.json 및 lock 두 필드 현재 0.0.0이며 패키지 이력에도 증가 없음. 최초 lock 두 필드는 부재. 기존 0.0.1/2025-01-01 문구는 실제 릴리즈 미확인이고 다른 1.0 기록은 문서 버전임. 제공된 GitHub Release 목록은 비어 있고 GitHub 워크플로·릴리즈 자산 생성 스크립트·전용 릴리즈 검사 없음. GitLab CI는 main/develop 전용 Runner의 브랜치 빌드·복사 배포이며 버전 릴리즈 증거가 아님. 버전 파일이 있으므로 skipped 조건 불충족. 사용자 지시와 정본에 따라 새 관례를 만들지 않음. marketing:product-launch 및 technology:release-and-deployment는 Skill 도구 부재로 /mnt/c/Users/USER/projects/headcount/plugins/{marketing/skills/product-launch,technology/skills/release-and-deployment}/SKILL.md 및 각 references/sources.md 원문을 읽고 적용(성공한 Skill 호출 아님, 별도 반환 스키마 없음). 문서 개선은 Tier 3이며 외부 발표·채택·출시 성공을 주장하지 않음. 버전 결정 단계에서 중단되어 앱 test/build·외부 사용자 검증·전용 Runner 배포는 미실행; 앱 CI 실패로 분류하지 않음. 저장소 변경·커밋·태그·자산 생성·원격 전송 없음. version은 새 릴리즈가 아닌 확인된 현재 값.</dd>
 </dl>
 
 ## 회차 이력
