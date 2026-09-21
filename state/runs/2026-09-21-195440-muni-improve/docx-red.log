@@ -1,0 +1,35 @@
+=== RUN   TestDOCXFileImportsWithoutItsTitleTwice
+    import_docx_live_test.go:21: first block = "heading", search text = "회의록 첫 문단 안건 항목"
+    import_docx_live_test.go:32: initial revision differs or retains title: {"type": "doc", "content": [{"type": "heading", "attrs": {"level": 1, "blockId": "blk_0mub4xjfjxo2iij1fhf"}, "content": [{"text": "회의록", "type": "text"}]}, {"type": "paragraph", "attrs": {"blockId": "blk_0mub4xjfj6bnxp55ikw"}, "content": [{"text": "첫 문단", "type": "text", "marks": [{"type": "bold"}]}]}, {"type": "heading", "attrs": {"level": 2, "blockId": "blk_0mub4xjfjvwuiqlvq68"}, "content": [{"text": "안건", "type": "text"}]}, {"type": "bulletList", "content": [{"type": "listItem", "attrs": {"blockId": "blk_0mub4xjfj16cthhp2gq"}, "content": [{"type": "paragraph", "attrs": {"blockId": "blk_0mub4xjfj069dti5053"}, "content": [{"text": "항목", "type": "text"}]}]}]}]}, text="회의록 첫 문단 안건 항목"
+--- FAIL: TestDOCXFileImportsWithoutItsTitleTwice (0.53s)
+=== RUN   TestDOCXImportPreservesUnmatchedAndLaterHeadings
+=== RUN   TestDOCXImportPreservesUnmatchedAndLaterHeadings/different_form_title
+=== RUN   TestDOCXImportPreservesUnmatchedAndLaterHeadings/H2_first
+=== RUN   TestDOCXImportPreservesUnmatchedAndLaterHeadings/paragraph_before_H1
+=== RUN   TestDOCXImportPreservesUnmatchedAndLaterHeadings/consecutive_matching_H1
+    import_docx_live_test.go:88: body changed: got {"type":"doc","content":[{"type":"heading","attrs":{"level":1},"content":[{"type":"text","text":"회의록"}]},{"type":"heading","attrs":{"level":1},"content":[{"type":"text","text":"회의록"}]}]}, want {"type":"doc","content":[{"type":"heading","attrs":{"level":1},"content":[{"type":"text","text":"회의록"}]}]}
+=== RUN   TestDOCXImportPreservesUnmatchedAndLaterHeadings/normalized_filename
+=== RUN   TestDOCXImportPreservesUnmatchedAndLaterHeadings/truncated_title
+--- FAIL: TestDOCXImportPreservesUnmatchedAndLaterHeadings (0.14s)
+    --- PASS: TestDOCXImportPreservesUnmatchedAndLaterHeadings/different_form_title (0.02s)
+    --- PASS: TestDOCXImportPreservesUnmatchedAndLaterHeadings/H2_first (0.01s)
+    --- PASS: TestDOCXImportPreservesUnmatchedAndLaterHeadings/paragraph_before_H1 (0.01s)
+    --- FAIL: TestDOCXImportPreservesUnmatchedAndLaterHeadings/consecutive_matching_H1 (0.01s)
+    --- PASS: TestDOCXImportPreservesUnmatchedAndLaterHeadings/normalized_filename (0.01s)
+    --- PASS: TestDOCXImportPreservesUnmatchedAndLaterHeadings/truncated_title (0.01s)
+=== RUN   TestDOCXImportIntoDocumentKeepsTitle
+--- PASS: TestDOCXImportIntoDocumentKeepsTitle (0.08s)
+=== RUN   TestDOCXTitleOnlyImportsAsEmptyParagraph
+    import_docx_live_test.go:121: first="heading" text="회의록"
+--- FAIL: TestDOCXTitleOnlyImportsAsEmptyParagraph (0.07s)
+=== RUN   TestDOCXExportImportRoundTrip
+--- PASS: TestDOCXExportImportRoundTrip (0.00s)
+=== RUN   TestDOCXRoundTripDropsOnlyTheTitleHeading
+    import_export_test.go:514: stored 4 blocks, want the three original body blocks
+--- FAIL: TestDOCXRoundTripDropsOnlyTheTitleHeading (0.00s)
+=== RUN   TestDOCXTitleOnlyLeavesAnEmptyDocument
+    import_export_test.go:543: want one empty paragraph: {"type":"doc","content":[{"type":"heading","attrs":{"level":1},"content":[{"type":"text","text":"회의록"}]}]}
+--- FAIL: TestDOCXTitleOnlyLeavesAnEmptyDocument (0.00s)
+FAIL
+FAIL	github.com/hkjang/muni/internal/httpapi	0.841s
+FAIL

@@ -1,0 +1,146 @@
+[
+  {
+    "title": ".docx 가져오기도 제목과 같은 첫 heading 을 본문에서 뺀다 (titleInBody 를 .docx 에)",
+    "value": 3,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "이번 선택. Build의 Title 문단과 importer.paragraph의 H1 변환, parseUpload의 markdown 전용 플래그 확인. 실제 writer의 HTTP 업로드 회귀 테스트 필수.",
+    "updated": "2026-09-21"
+  },
+  {
+    "title": "HTML 가져오기에서 <title> 을 embeddedTitle 로 올리기(폼 title 이 비었을 때)",
+    "value": 2,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "현재 HTML embeddedTitle 없음. 파일명 우선 계약 변경과 웹페이지 제목 품질 문제로 보류; 지난 HTML 과제 재수행 금지.",
+    "updated": "2026-09-21"
+  },
+  {
+    "title": "PDF 가져오기에서 본문 첫 줄이 metadata 제목과 같으면 빼기",
+    "value": 2,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "pdfImport는 metadata 제목 사용, pdfx/layout.go headingLevel은 크기 추론. 실제 muni PDF 첫 블록 형태는 미확인.",
+    "updated": "2026-09-21"
+  },
+  {
+    "title": "마크다운 가져오기에서 첫 H1 을 embeddedTitle 로 올리기(제목 없이 올렸을 때만)",
+    "value": 2,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "parseUpload의 MD embeddedTitle은 여전히 빈 값. 파일명과 본문 제목 우선순위 계약 변경이라 보류.",
+    "updated": "2026-09-21"
+  },
+  {
+    "title": "CI 에 e2e(playwright) 단계 넣기",
+    "value": 4,
+    "risk": 2,
+    "size": "M",
+    "status": "pending",
+    "note": "ci.yml은 프런트 build/unit와 Go DB 테스트만 실행. Playwright는 서버 외부 준비 필요; workflows 보호 경로와 계정 시드 때문에 제외.",
+    "updated": "2026-09-21"
+  },
+  {
+    "title": "outbox 의 첫 시도를 알림이 쓰인 직후로 당기기",
+    "value": 3,
+    "risk": 3,
+    "size": "M",
+    "status": "pending",
+    "note": "notify.go outboxInterval=time.Minute, all.SMTP 유지. 과거 mail 캠페인 부재/처분 미확인으로 충돌 위험 3으로 상향.",
+    "updated": "2026-09-21"
+  },
+  {
+    "title": "관리자 가이드에 「메일 알림」·「문서 넘기기」 탭 캡처 싣기",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "AdminSettingsPage.tsx에 두 탭 존재, guide-screenshots.mjs에 shootTracking 존재. 실제 서버 캡처 준비는 미확인.",
+    "updated": "2026-09-21"
+  },
+  {
+    "title": "silent SSO 성공 경로를 RS256 가짜 issuer 로 브라우저 확인하고 OIDC 탭 캡처",
+    "value": 3,
+    "risk": 3,
+    "size": "M",
+    "status": "pending",
+    "note": "기존 성공 경로 검증 공백 기록 유지. 이번 브라우저 검증은 미실행, issuer와 서버 준비 비용 때문에 보류.",
+    "updated": "2026-09-21"
+  },
+  {
+    "title": "가이드에 못 실은 화면 채우기(검토·승인, AI 패널, 발표자료, AI 호출 감사)",
+    "value": 3,
+    "risk": 1,
+    "size": "M",
+    "status": "pending",
+    "note": "shootTracking 저장/복원 패턴 재사용 가능. 외부 AI/Ptium 응답 및 각 화면 최신 캡처 여부는 이번 회차 미확인.",
+    "updated": "2026-09-21"
+  },
+  {
+    "title": "parseUpload 의 확장자별 플래그(titleInBody·embeddedTitle)를 표로 못 박는 단위 테스트",
+    "value": 1,
+    "risk": 1,
+    "size": "S",
+    "status": "rejected",
+    "note": "플래그 대입을 그대로 따라가는 독립 과제는 가치 낮음. 실제 DOCX 업로드 결과 검증에 포함하고 별도 개선에서는 제외.",
+    "updated": "2026-09-21"
+  },
+  {
+    "title": "방문 추적 설정의 짧은 캐시(settings.GetAll)",
+    "value": 2,
+    "risk": 2,
+    "size": "M",
+    "status": "pending",
+    "note": "tracking.go의 GetAll 호출 유지. 병목 측정 없고 설정 즉시 반영·캐시 무효화 계약 확인이 필요.",
+    "updated": "2026-09-21"
+  },
+  {
+    "title": "live 테스트가 패키지 단위로 sealer 키 하나를 공유하기",
+    "value": 2,
+    "risk": 3,
+    "size": "S",
+    "status": "pending",
+    "note": "provision_live_test.go liveServer의 매번 임의 키 생성 확인. 테스트 격리 변경 위험 때문에 보류.",
+    "updated": "2026-09-21"
+  },
+  {
+    "title": "Markdown 표 마지막 셀의 이스케이프된 끝 파이프 보존",
+    "value": 3,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "새 후보/차선. splitTableRow의 무조건 TrimSuffix가 tail\\|의 파이프를 먼저 제거한다. 동적 재현 미확인; 일반 끝 구분자와 역슬래시 회귀 검증 필요.",
+    "updated": "2026-09-21"
+  },
+  {
+    "title": "워크스페이스 ZIP의 문서 한도 초과 안내를 실제 초과 때만 표시",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "새 후보. exportWorkspace는 LIMIT 2000과 len(items)==2000만으로 2000건을 넘었다고 표시하여 정확히 2000건에도 경고한다. 2001건 조회 후 한도 적용 등 작은 수정 가능; 지난 목록.md 충돌 과제와 별개.",
+    "updated": "2026-09-21"
+  },
+  {
+    "title": "PostgreSQL 백업·복구 안내와 외부 DB 예제 정합성",
+    "value": 3,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "이전 회차 기록에서 승계. OPERATIONS는 compose postgres 서비스와 볼륨 삭제를 가정하나 compose.example.yaml에는 muni만 있음. 운영 명령 실행 검증/복구 절차 검토 필요.",
+    "updated": "2026-09-21"
+  },
+  {
+    "title": "README make test 설명 보완",
+    "value": 1,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "이전 회차 기록에서 승계. Makefile은 npm test도 실행하나 README 명령 주석은 프런트 타입체크까지만 기재. 독립 선택보다 관련 문서 작업에 병합 권장.",
+    "updated": "2026-09-21"
+  }
+]

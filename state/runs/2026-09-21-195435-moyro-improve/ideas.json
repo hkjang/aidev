@@ -1,0 +1,137 @@
+[
+  {
+    "title": "postacks/channel-views 등 IsMember DB 오류의 403 위장 분리",
+    "value": 2,
+    "risk": 1,
+    "size": "M",
+    "status": "pending",
+    "note": "이번 회차에서 listChannelViews/createChannelView/listChannelTimezones 세 곳 해결. 관리자 예외 두 핸들러와 late.go postacks는 범위 밖이며 후속 검토 필요.",
+    "updated": "2026-09-21"
+  },
+  {
+    "title": "getPreferenceByName 404/500 분리 (+ upsert/delete 400→500 분리)",
+    "value": 3,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "early.go GetByName 오류 전체 404 재확인. auto/2026-09-07-0240 존재; 옛 PR 반려 여부 미확인이라 재시도 보류. 상한 변경 제외.",
+    "updated": "2026-09-21"
+  },
+  {
+    "title": "자동화 dead run 시 규칙 소유자에게 메일(automation_failed)",
+    "value": 3,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "server/internal/mail 부재 재확인; auto/2026-09-16-0812 브랜치 존재. main 머지 전 선행 조건 미충족.",
+    "updated": "2026-09-21"
+  },
+  {
+    "title": "작업 마감 임박(task_due_soon) 메일 — due_at 스캔 워커",
+    "value": 3,
+    "risk": 2,
+    "size": "M",
+    "status": "pending",
+    "note": "메일 패키지 부재. 작업 due 워커 전체는 이번에 미확인; 선행 기능과 범위 때문에 보류.",
+    "updated": "2026-09-21"
+  },
+  {
+    "title": "e2e sso-oidc.spec에 silent SSO 거절 시나리오 추가",
+    "value": 3,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "스펙에 단일 수동 OIDC 흐름만 있고 auto_login/sso=none 없음 재확인. fakeoidc prompt=none 거절 구현 존재. 브라우저 준비 비용으로 미선택.",
+    "updated": "2026-09-21"
+  },
+  {
+    "title": "MCP SSO 후속: fakeoidc access token으로 401→메타데이터→토큰→tools/list e2e",
+    "value": 2,
+    "risk": 1,
+    "size": "M",
+    "status": "pending",
+    "note": "cmd/fakeoidc/main.go:189 access_token=randomValue(32) 재확인. 서명 액세스 토큰 발급까지 필요하므로 기존 S를 M으로 재평가.",
+    "updated": "2026-09-21"
+  },
+  {
+    "title": "방문 추적 후속: Momento 연결 확인 버튼 + SPA include_admin=false 준수",
+    "value": 2,
+    "risk": 2,
+    "size": "M",
+    "status": "pending",
+    "note": "TrackingSettingsPage에 연결 확인 버튼 없음, tracking.Config.Active는 서버 요청 경로만 검사. SPA 런타임 미검증; 두 계층 변경과 스크립트 해제 정책이 필요해 S/위험1에서 M/2로 조정.",
+    "updated": "2026-09-21"
+  },
+  {
+    "title": "지식 검색(/knowledge) 화면 캡처 카탈로그 추가",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "product-pages.spec.ts에서 knowledge 검색 결과 없음 재확인. 실제 이미지/캡처 실행은 미실행; 비용 때문에 보류.",
+    "updated": "2026-09-21"
+  },
+  {
+    "title": "scripts/verify-product-ui.sh의 관리자 비밀번호·암호화 키 상수 제거",
+    "value": 2,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "70~71행 개발 검증용 상수 유지 확인. 실제 운영 자격증명으로 단정하지 않음. CI/릴리즈 계약 검증 부담으로 보류.",
+    "updated": "2026-09-21"
+  },
+  {
+    "title": "post_reminders 사용자당·remind_at 상한",
+    "value": 3,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "reminders.Service.Create의 무상한 INSERT 재확인. auto/2026-09-08-2109 존재·반려 여부 미확인; 과거 접근 재시도 금지.",
+    "updated": "2026-09-21"
+  },
+  {
+    "title": "manual 프레즌스 상태가 영구 고정",
+    "value": 2,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "userstatus.Service.Set은 manual과 시간을 저장하고 Get은 그대로 조회. 전체 ws 시간 경과 경로 미검증. auto/2026-09-09-0201의 판정 미확인으로 보류.",
+    "updated": "2026-09-21"
+  },
+  {
+    "title": "전달 중인 리마인더가 소유자에게 보이지도 지워지지도 않음",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "ClaimDue delivered_at=-1, ListPending/Delete =0만 취급 재확인. 리스·취소 중 전달 경쟁 정책을 먼저 정해야 하므로 보류.",
+    "updated": "2026-09-21"
+  },
+  {
+    "title": "팀 이미지 업로드 스텁의 초과 본문 성공 응답 제거",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "신규/차선: final.go uploadTeamImage의 MaxBytesReader(10<<20) 뒤 io.Copy 오류 무시로 초과 본문도 200/성공 감사 경로. 본문 크기 오류만 413으로 분리하는 국소 수정 후보. 런타임 재현은 미실행.",
+    "updated": "2026-09-21"
+  },
+  {
+    "title": "로드맵의 이미 구현된 inbox·작업·결정·검색 선행 과제 정리",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "신규: docs/roadmap.md 3절 Next polish는 durable API/검색을 미래 작업으로 표기하지만 README와 현 internal 도메인/라우팅은 이미 구현을 설명한다. 정본 코드 대조 후 해당 두 항목만 갱신하는 DX 후보; 현 기능 전체 수용 범위는 미확인.",
+    "updated": "2026-09-21"
+  },
+  {
+    "title": "사이드바 재정렬 PUT 응답·WebSocket 이벤트를 실제 저장된 전체 순서로 통일",
+    "value": 3,
+    "risk": 1,
+    "size": "S",
+    "status": "done",
+    "note": "기록 보존: 사용자 제공 직전 회차 구현·검증 성공에 근거한 done. 현재 pinned base 9acbddd early.go는 여전히 입력 에코이므로 main 반영 완료를 뜻하지 않음; 이미 수행된 접근이라 재선택 금지.",
+    "updated": "2026-09-21"
+  }
+]
