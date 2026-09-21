@@ -21,3 +21,4 @@
 - [러너 02:02] brief accepted — 채택 — 현재 코드에서 결함을 실제 HTTP로 재현했고 지정된 3개 파일만 수정하여 생성 기본값과 공개 범위 변경 권한 계�
 - [러너 02:02] verify passed — 검증 3개 통과 (auto)
 - [러너 02:02] review missing — 리뷰 결과 없음/손상: missing — 보류
+- [러너 02:02] pr created — https://github.com/hkjang/sqlon/pull/11
