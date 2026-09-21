@@ -28,3 +28,5 @@
 - 요청 세 스킬/Skill 도구를 찾지 못해 고유 절차 미적용. OFFSET 동시 쓰기 일관성은 기존 한계이며 릴리즈에서 이를 해결했다고 표현하지 말 것.
 - [러너 10:34] review approved — 리뷰 승인 (risk=low)
 - [러너 10:35] pr created — https://github.com/hkjang/ai-admin/pull/29
+- [러너 10:41] ci passed — 검사 2개 모두 success
+- [러너 10:41] merge done — 54afcc5

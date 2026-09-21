@@ -37,3 +37,4 @@
 - CI가 GitHub Release와 자산 생성: github_release=false, assets=[]. 원격 전송 없음.
 - 요청된 marketing/technology 스킬 미발견; 사용자 절차 적용. release.json과 release-notes.md, release-audit.md 및 검증 로그를 회차 디렉터리에 저장.
 - [러너 10:40] release published — v0.7.57
+- [러너 10:41] assets verified — v0.7.57 자산 1개 (이전 v0.7.56: 1)
