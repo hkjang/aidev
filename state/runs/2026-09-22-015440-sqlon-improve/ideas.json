@@ -1,0 +1,110 @@
+[
+  {
+    "title": "requireAdmin 도 인증 사용자를 컨텍스트에 실어 admin:* 감사 전체에 actor 남기기",
+    "value": 3,
+    "risk": 1,
+    "size": "M",
+    "status": "pending",
+    "note": "requireAdmin/requireDBA는 여전히 bool이고 adminAudit actor 선행 변경 미통합. 성공 과제 재수행 금지; 통합 후 진행.",
+    "updated": "2026-09-22"
+  },
+  {
+    "title": "docs/auth.md·rest-api.md·security.md 채우기 — 인증 모델·REST·보안 문서",
+    "value": 3,
+    "risk": 1,
+    "size": "M",
+    "status": "pending",
+    "note": "세 파일 0바이트 재확인. 실제 라우트 검증 필요.",
+    "updated": "2026-09-22"
+  },
+  {
+    "title": "GitHub Actions CI 추가 — go vet + go test ./... (통합 테스트 제외)",
+    "value": 3,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": ".github/FUNDING.yml만 존재. 이번 test/vet 통과. workflows 보호 경로로 보류.",
+    "updated": "2026-09-22"
+  },
+  {
+    "title": "changes.html 에서 승인자 이름 표시와 이미 승인한 사용자의 승인 단추 비활성화",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "a.actor 표시는 이미 구현; 승인 단추는 review_required만 검사. 남은 비활성화는 actor 변경 통합 후 진행하므로 부분 완료·pending 유지.",
+    "updated": "2026-09-22"
+  },
+  {
+    "title": "화면의 인라인 이벤트 핸들러를 걷어내고 script-src nonce 정책 강제",
+    "value": 4,
+    "risk": 3,
+    "size": "L",
+    "status": "pending",
+    "note": "화면 이벤트·tracking 선행 변경 미통합. 45분 범위를 초과하여 보류.",
+    "updated": "2026-09-22"
+  },
+  {
+    "title": "OIDC 콜백의 error 분기에서 state 쿠키 일치 확인",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "handleSSOCallback에서 error 분기가 state 검사보다 앞섬을 재확인. auth 보호 경로.",
+    "updated": "2026-09-22"
+  },
+  {
+    "title": "OIDC 로그인에 nonce 와 PKCE(S256) 추가",
+    "value": 3,
+    "risk": 2,
+    "size": "M",
+    "status": "pending",
+    "note": "auth.go의 nonce/code_challenge 없음. 인증 계약 확장이므로 별도 회차.",
+    "updated": "2026-09-22"
+  },
+  {
+    "title": ".gitattributes 로 Go 파일 LF 고정 + 일괄 gofmt",
+    "value": 3,
+    "risk": 2,
+    "size": "M",
+    "status": "pending",
+    "note": "기존 CRLF 파일과 미통합 브랜치가 존재하여 전체 diff/충돌 위험. 보류 유지.",
+    "updated": "2026-09-22"
+  },
+  {
+    "title": "빈 docs/README.md를 실제 문서 색인으로 채우기",
+    "value": 3,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "0바이트이며 루트 README 링크 대상임을 재확인. 차선 후보. 비어 있지 않은 세 가이드는 v0.1.2임을 명시.",
+    "updated": "2026-09-22"
+  },
+  {
+    "title": "관리자 가이드의 메타 저장소·감사 로그 저장 설명을 실제 소스에 맞추기",
+    "value": 3,
+    "risk": 2,
+    "size": "M",
+    "status": "pending",
+    "note": "admin_guide.md의 감사 암호화 주장과 PostgreSQL 저장 경로 확인. 감사 암호화 전체 경로는 미확인; reports/PDF 정본 범위를 먼저 정해야 함.",
+    "updated": "2026-09-22"
+  },
+  {
+    "title": "프로파일 PUT에서 visibility 생략 시 기존 공개 범위를 보존",
+    "value": 4,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "신규·이번 선택. upsertProfileMeta가 생략을 private으로 바꾸고 manage 수임자 검사도 건너뜀. HTTP 신규 재현은 구현 첫 단계; 응답/저장/다른 사용자의 목록까지 검증.",
+    "updated": "2026-09-22"
+  },
+  {
+    "title": "관리자 가이드의 DB 프로파일 생성 curl을 실제 POST /api/db-profiles 계약으로 교정",
+    "value": 3,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "신규. admin_guide.md §3.2는 POST /api/fleet/instances 및 다른 필드명을 안내하지만 admin.go에는 해당 GET만 있고 registerDBAPI에 POST /api/db-profiles가 존재. reports 중복 정본/PDF 범위 정리가 필요해 후순위.",
+    "updated": "2026-09-22"
+  }
+]
