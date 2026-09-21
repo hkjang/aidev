@@ -1,0 +1,5 @@
+- 지적 확인: JSON null SSE의 event.content 접근이 TypeError를 일으켜 후속 이벤트가 유실됨.
+- 실제 loopback HTTP/native fetch 회귀 테스트에서 수정 전 3개 실패를 재현함.
+- null을 원문으로 전달하는 분기를 추가하고, 후속 later 전달 및 Error/SyntaxError 콜백 예외 전파를 검증함.
+- Node 24.21.0: 전체 테스트 44개, npm lint, 버전 지정 build 및 git diff --check 통과(기존 청크 크기 경고).
+- 새 커밋 55926ad; push 없음. 지정 technology 스킬과 Skill 도구는 미발견.
