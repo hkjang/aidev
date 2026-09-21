@@ -28,3 +28,7 @@
 - 실제 DB/Keycloak·Docker smoke 미검증. 릴리즈 노트는 로그인 버그 수정이 아닌 테스트 보강으로 기술할 것.
 - [러너 12:03] review approved — 리뷰 승인 (risk=low)
 - [러너 12:03] pr created — https://github.com/hkjang/appstore/pull/28
+- [러너 12:10] ci passed — 검사 2개 모두 success
+- [러너 12:10] merge done — 721ad4a
+- [러너 12:19] release published — v2.11.4
+- [러너 12:22] assets verified — v2.11.4 자산 1개 (이전 v2.11.3: 1)

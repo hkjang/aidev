@@ -224,3 +224,4 @@
 - 스킬: headcount/plugins/technology/skills의 completion-verification·systematic-debugging·test-driven-development 원본을 읽음. Skill 호출 도구는 제공되지 않았음. 기존 정상 동작의 테스트 보강이므로 최초 테스트는 통과했으며 제품 버그의 TDD red 재현으로 주장하지 않음; mutation 실패와 원본 복원 통과로 회귀 감지력을 확인.
 - 검증 한계: 초기 E2E는 임시 HOME에 Chromium 실행 파일이 없어 시작 실패, 설치 후 전체 재실행 통과. 기존 모바일 전용 테스트의 desktop 제외 1건이며 retry 없이 71개 통과. 실제 DB/Keycloak·Docker 이미지 smoke는 실행하지 않았고 DSN 미설정으로 DB 통합 테스트는 제외됨. E2E는 HTTP fixture와 실제 번들/Chromium을 사용. 빌드 산출물·버전·릴리즈·원격 변경 없음.
 
+- 릴리즈: v2.11.4 (2026-09-21, run 2026-09-21-115415-appstore-improve)

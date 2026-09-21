@@ -1,0 +1,29 @@
+chore(release): AppStore v2.11.4
+
+SSO 전용·Bootstrap 전용·병행 설치의 로그인 UI 회귀 검증을 보강한 patch
+릴리스입니다. 실제 AuthProvider/API 경유 Vitest 5건과 production bundle
+E2E 2건을 추가한 변경을 포함하며 제품 코드는 v2.11.3과 같습니다.
+
+Version
+
+web/package.json, package-lock.json, docker-compose.yml, README, GitHub Pages
+문서와 두 가이드의 버전 표기를 v2.11.4로 올렸습니다. 관리자 가이드의 롤백
+예시는 appstore-v2.11.3-stopped로 맞췄습니다. 공용 md2pdf 변환기로 두 PDF를
+다시 생성하고 표지 버전을 확인했습니다(사용자 27쪽, 관리자 36쪽).
+화면 변경이 없어 캡처와 SHA-256을 유지하고 manifest 버전만 갱신했습니다.
+
+Migration
+
+제품 코드와 schema 변경이 없습니다. 기존 설치는 image만 교체하면 됩니다.
+
+Embedded bundle
+
+internal/webui/dist는 기존 관례대로 유지합니다. Dockerfile이 production
+bundle을 새로 빌드합니다.
+
+검증: 실제 PostgreSQL 16 통합 테스트를 포함한 go test -race -count=1 릴리스
+패키지 목록, go vet, gofmt, go build, npm test 65건, lint, Prettier, build,
+오프라인/환경/문서 검사 통과. Playwright desktop/mobile은 임시 HOME의 Chromium
+부재를 설치로 해결한 뒤 전체 재실행하여 retry 없이 71 passed/1 skipped.
+Docker image build/load/smoke와 GitHub Release 게시·SHA-256 생성은 기존 태그
+워크플로가 수행합니다. 이 세션에서는 원격 전송을 수행하지 않았습니다.
