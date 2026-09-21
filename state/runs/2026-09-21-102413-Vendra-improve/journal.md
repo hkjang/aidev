@@ -30,3 +30,10 @@
 - [러너 10:34] pr created — https://github.com/hkjang/Vendra/pull/129
 - [러너 10:36] ci passed — 검사 2개 모두 success
 - [러너 10:36] merge done — a05402d
+
+## 릴리즈 노트
+- v0.7.57 경량 태그를 28cd677에 생성; 최근 관례대로 별도 릴리즈 커밋·버전 파일 변경 없음. #128·#129 포함.
+- Docker 빌드·아카이브 검증, 전용 PostgreSQL 16 세 DB Go 테스트·vet·gofmt, 웹 93개 테스트·타입·lint·빌드 통과.
+- CI가 GitHub Release와 자산 생성: github_release=false, assets=[]. 원격 전송 없음.
+- 요청된 marketing/technology 스킬 미발견; 사용자 절차 적용. release.json과 release-notes.md, release-audit.md 및 검증 로그를 회차 디렉터리에 저장.
+- [러너 10:40] release published — v0.7.57
