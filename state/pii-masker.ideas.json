@@ -5,7 +5,7 @@
     "risk": 1,
     "size": "S",
     "status": "pending",
-    "note": "재열람: config_test.go는 서버 타임아웃 테스트 3개뿐. Load 경유 t.Setenv로 normalizeAllowHosts/normalizeEndpointURL/normalizePIILang/normalizePIISchema/envInt/envNonNegativeInt/envBool 검증. 차선 후보.",
+    "note": "재확인: config_test.go는 서버 timeout 3개뿐. Load+t.Setenv 경유 정규화·기본값 검사. 차선 후보.",
     "updated": "2026-09-21"
   },
   {
@@ -14,7 +14,7 @@
     "risk": 2,
     "size": "S",
     "status": "pending",
-    "note": "routes에 Methods만 등록되고 MethodNotAllowedHandler 없음. 이전 회차 allow 빈 값 관찰과 일치. 라우터 전체에 영향을 주어 후순위.",
+    "note": "routes에 Methods만 있으며 MethodNotAllowedHandler 없음. 라우터 전체 영향으로 후순위. 이번 런타임 405 미재현.",
     "updated": "2026-09-21"
   },
   {
@@ -23,7 +23,7 @@
     "risk": 3,
     "size": "M",
     "status": "pending",
-    "note": "readProcessInput io.ReadAll 뒤 ProcessSync/acquireSyncSlot 호출 확인. 본문 읽기 전 admission 설계 필요, 45분 저위험 범위에서 제외.",
+    "note": "readProcessInput에서 io.ReadAll 후 ProcessSync/acquireSyncSlot 진입. 본문 읽기 전 admission 설계 필요, 이번 저위험 범위 제외.",
     "updated": "2026-09-21"
   },
   {
@@ -32,7 +32,7 @@
     "risk": 2,
     "size": "S",
     "status": "pending",
-    "note": "attachment.go는 unsafe rune 제거와 UTF-8 안전 절단만 하며 NFC 없음. x/text indirect 유지. 서로 다른 이름이 실제 어떤 문제를 일으키는지는 미확인, 우선순위 낮음.",
+    "note": "attachment.go는 unsafe rune 제거와 UTF-8 안전 절단만 수행. 실제 파일 재조회 장애는 미확인. x/text 직접 의존화까지 고려해야 하므로 후순위.",
     "updated": "2026-09-21"
   },
   {
@@ -41,7 +41,7 @@
     "risk": 3,
     "size": "M",
     "status": "pending",
-    "note": "load는 중단 작업을 failed로 전환; CreateJob/startJobRunner는 ParseOptions를 인자로만 전달. 옵션 영속과 재시도 정책이 선행, 이번 범위 제외.",
+    "note": "load는 queued/running을 failed로 전환. 옵션 영속과 재시도 정책 선행이 필요하여 이번 제외.",
     "updated": "2026-09-21"
   },
   {
@@ -50,7 +50,7 @@
     "risk": 1,
     "size": "S",
     "status": "pending",
-    "note": "client.go TestConnection 재열람: 32KB LimitReader 결과를 성공 Message로 그대로 반환. summarizeResponseBody는 280바이트 요약. 요약은 PII 스크럽이 아니므로 보안 해결로 표현하지 말 것.",
+    "note": "TestConnection은 32KB LimitReader 결과를 성공 Message로 반환. 요약은 PII 스크럽이 아니며 보안 해결로 표현하지 않을 것.",
     "updated": "2026-09-21"
   },
   {
@@ -59,7 +59,7 @@
     "risk": 2,
     "size": "S",
     "status": "pending",
-    "note": "service.go runJob/markJobInterrupted의 _ = s.jobStore.Save(job) 확인. Store.Save는 맵을 먼저 바꾸고 persistLocked 반환. 로그만 추가하는 과제는 효과가 작고 복구 정책 변경은 위험.",
+    "note": "runJob/markJobInterrupted의 _ = Save 유지. Store.Save는 맵을 먼저 변경. 로그만 추가하면 가치 낮고 일관성 정책 변경은 별도 설계 필요.",
     "updated": "2026-09-21"
   },
   {
@@ -68,7 +68,52 @@
     "risk": 2,
     "size": "S",
     "status": "pending",
-    "note": "core.JobRecord에 Options 없음, CreateJob→startJobRunner→runJob 인자로만 전달됨 확인. 저장 계약 확장과 기본값 재현 범위 정의 필요.",
+    "note": "JobRecord에 Options 없음, CreateJob→startJobRunner→runJob 인자로 전달. 아직 재개 기능이 없어 저장 계약 확장 우선순위 낮음.",
+    "updated": "2026-09-21"
+  },
+  {
+    "title": "업스트림 진단 문자열 절단의 UTF-8 경계 보존",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "done",
+    "note": "7511062: 바이트 예산을 유지하며 UTF-8 문자 경계로 절단. 단위 경계 테이블과 app.New 실제 HTTP 연결 점검/마스킹 오류 detail 및 성공 debug.body에서 수정 전 실패·수정 후 통과 확인.",
+    "updated": "2026-09-21"
+  },
+  {
+    "title": "설정 시간·크기 단위 변환의 정수 오버플로 방어",
+    "value": 2,
+    "risk": 2,
+    "size": "M",
+    "status": "pending",
+    "note": "새 후보: Load/envSeconds가 Atoi 양수 후 time.Duration*Second/Hour, int64*MiB 변환의 상한을 검사하지 않음. 극단적인 운영자 설정에서 음수·wrap 가능성은 코드 근거이며 실제 런타임 영향은 미확인. 여러 설정의 fallback 정책을 함께 정의해야 함.",
+    "updated": "2026-09-21"
+  },
+  {
+    "title": "이력 조회에서 전체 job 복제 전 상위 limit 선별",
+    "value": 2,
+    "risk": 2,
+    "size": "M",
+    "status": "pending",
+    "note": "새 후보: Store.List는 모든 job을 cloneJob/정렬한 뒤 limit으로 자름. HTTP 100개 제한이 내부 메모리·정렬 비용을 제한하지 않음. 많은 job 기준 벤치마크와 동률 순서 계약이 선행, 현재 성능 병목은 미측정.",
+    "updated": "2026-09-21"
+  },
+  {
+    "title": "job.json을 임시 파일 + os.Rename으로 원자적으로 기록",
+    "value": 3,
+    "risk": 1,
+    "size": "S",
+    "status": "done",
+    "note": "이전 성공 기록 및 persistLocked의 job.json.tmp→Rename 재확인. 재선정 금지.",
+    "updated": "2026-09-21"
+  },
+  {
+    "title": "/v1/jobs/{job_id}/result에 HEAD 메서드 허용",
+    "value": 3,
+    "risk": 1,
+    "size": "S",
+    "status": "done",
+    "note": "routes의 GET,HEAD 및 TestJobResultAnswersHeadProbes 확인. 재선정 금지.",
     "updated": "2026-09-21"
   },
   {
@@ -77,16 +122,7 @@
     "risk": 2,
     "size": "M",
     "status": "done",
-    "note": "Store.load는 completed만 OutputPath를 복구하고 미완료 저장 URL을 비운다. HTTP 조회·이력·GET/HEAD도 completed와 경로 조건을 적용. 실제 디스크→app.New→HTTP 통합에서 5가지 상태/파일 조합을 두 번 로드해 검증; 전체 테스트·vet·build·대상 race 3회 통과.",
-    "updated": "2026-09-21"
-  },
-  {
-    "title": "업스트림 진단 문자열 절단의 UTF-8 경계 보존",
-    "value": 2,
-    "risk": 1,
-    "size": "S",
-    "status": "pending",
-    "note": "새 후보. client.go truncateString이 value[:maxLength-3]로 바이트 절단하여 한글/다중바이트 문자를 자를 수 있음. summarizeResponseBody(280), formatDebugBody(16KB) 모두 영향; 실제 HTTP 오류 JSON의 진단 손상 재현 테스트 필요. 정찰에서는 런타임 미재현.",
+    "note": "3487570에 반영. Store.load와 조회/이력/결과의 completed 조건 및 TestReloadedJobResultsRequireCompletion 확인. 이전 프로필의 미수정 문구 교정.",
     "updated": "2026-09-21"
   }
 ]
