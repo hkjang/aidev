@@ -1,0 +1,20 @@
+{
+  "verdict": "reject",
+  "recommend": "human",
+  "reasons": [
+    "internal/handoff/handoff.go:275 및 internal/httpapi/handoff.go:181 [P1][security·릴리즈 차단] 실제 client.Do 연결 실패의 URL 포함 오류를 그대로 로깅하여 bearer claim 전체가 노출됩니다. 전용 PostgreSQL, 실제 로그인 및 /handoff 라우트, 기본 HTTP transport, 닫힌 로컬 TCP 서버로 독립 재현했으며 토큰 로그 부재 단언이 실패했습니다(대역 transport 없음). 원본에 도달하지 못한 claim은 소비되지 않으므로 수신 서버 로그 열람자는 남은 유효기간에 원본 GET /api/v1/handoff/claims/{claim}을 인증 없이 호출하여 문서를 획득할 수 있습니다. 오류의 원문 URL을 제거하고 고정 오류 분류만 기록하며 연결/TLS/timeout 실패의 실제 HTTP 로그에서 claim 부재를 검증해야 합니다. 이번 DOCX 커밋이 새로 만든 결함은 아니지만 기존 security 차단이 HEAD에도 남아 있습니다. 사용자 지정 차단 규칙상 자동 수리·중재로 해제할 수 없으며 운영자가 risk-accepted 위험 수용 여부를 결정해야 합니다."
+  ],
+  "notes": [
+    "요청된 privacy-and-data-protection, security-architecture-review, code-review SKILL.md와 관련 sources.md를 로컬 headcount/plugins에서 읽었습니다. 전용 Skill 도구는 제공되지 않았습니다. 법률 적용 판단은 하지 않았습니다.",
+    "심사 기준 origin/main=1547faa, HEAD=7d406c5. git diff origin/main...HEAD 및 git log origin/main..HEAD 확인: DOCX 관련 6파일·1커밋이며 이전 심사의 로컬 main 기준 누적 diff와 다릅니다. 현재 diff에 auth/session/라우트/마이그레이션/의존성 변경은 없습니다. 기존 보안 차단 존속과 신규 DOCX 변경의 품질을 구분했습니다.",
+    "독립 검증: 전용 PostgreSQL 16에서 go test -count=1 -v ./internal/httpapi ./internal/handoff ./internal/docx 통과. HTTP 테스트 SKIP 0; docx의 선택적 샘플 생성 TestWriteSampleForInspection 1건만 SKIP. 신규 DOCX HTTP 4개와 단위 2개, 기존 Markdown/handoff, 타인 문서 접근 거부·미등록 source·무세션·만료/재사용 claim 검사를 실행했습니다. git diff --check 통과. 테스트 로그: /tmp/muni-shepherd-204926-tests.log.",
+    "새 테스트는 실제 DOCX writer→reader→인증 multipart HTTP→PostgreSQL 저장을 실행하고 첫 H1 제거, 본문 구조, 검색 텍스트, 최초 revision, 다른 제목/H2/후속 H1/절단/파일명 정규화/끼워 넣기 보존을 단언합니다. 구현자의 docx-revert.log에서 제거 활성화를 되돌리면 해당 단언이 실패함을 확인했습니다. 본 세션에서는 코드를 되돌려 실행하지 않았습니다.",
+    "보안 재현은 저장소 파일을 수정하지 않는 /tmp Go overlay로 실제 receiveHandoff와 logger를 실행했습니다. 합성 claim만 사용했고 운영 데이터는 사용하지 않았습니다. 브라우저·프런트 빌드·외부 Word·배포 환경은 미검증입니다.",
+    "데이터 흐름: 사용자 업로드/허용 peer→본문·첨부·검색 텍스트·최초 revision의 PostgreSQL 저장. 신규 개인정보 항목·외부 수신자·보존 정책 변경은 없습니다. 기존 handoff 만료 스냅샷 정리가 다음 발급 시에만 실행되는 점은 보존 정책 후속 확인 사항이며 별도 legal 차단 근거로 삼지 않았습니다.",
+    "DOCX 코드 변경은 마이그레이션 없이 revert 가능하나 이미 가져온 본문은 자동 복원되지 않습니다. 코드 자체의 추가 결함·무관한 리팩터는 발견하지 못했습니다."
+  ],
+  "risk": "high",
+  "blocking": [
+    "security"
+  ]
+}
