@@ -1,0 +1,191 @@
+[
+  {
+    "title": "관리 API currentAccessClaims 가 Keycloak 액세스 토큰을 role 매핑으로 받아들임 — MCP-OAUTH 표준과 어긋남",
+    "value": 3,
+    "risk": 3,
+    "size": "M",
+    "status": "pending",
+    "note": "server.go:currentAccessClaims의 Keycloak fallback과 keycloak.go:verifyKeycloakAccessToken 유지. 표준 부적합 여부는 이번 미확인; 인증 계약 검토가 먼저다.",
+    "updated": "2026-09-22"
+  },
+  {
+    "title": "MCP SSO 토큰 검증이 RS256 만 받음 — PS256/ES256 추가",
+    "value": 2,
+    "risk": 2,
+    "size": "M",
+    "status": "pending",
+    "note": "keycloak.go:keycloakVerifyJWT의 RS256 제한 확인. realm 수요·키 타입 호환 미확인으로 보류.",
+    "updated": "2026-09-22"
+  },
+  {
+    "title": ".github 에 CI 워크플로 없음 — build/vet/test 게이트 추가",
+    "value": 3,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": ".github는 FUNDING.yml만 존재. 보호 경로여서 미선택.",
+    "updated": "2026-09-22"
+  },
+  {
+    "title": "PSS Restricted 검사에 seccompProfile 항목 추가",
+    "value": 3,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "security.go:restrictedProfileViolations에 seccomp 검사 없음. enforce_pss_restricted 공용 게이트 영향·표준 조사는 미확인.",
+    "updated": "2026-09-22"
+  },
+  {
+    "title": "SEC-01 classifyPodSecurity 가 hostPath·hostPort·baseline 밖 capability 를 baseline 레벨로 둠 — PSS 대로 privileged 로",
+    "value": 3,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "security.go:classifyPodSecurity의 baseline append 유지 확인. 표준의 capability별 정확한 범위는 미확인. 점수·알림에 영향이 있어 보류.",
+    "updated": "2026-09-22"
+  },
+  {
+    "title": "취약점 import 가 파싱 못 한 아티팩트를 '취약점 0건 완료' 로 저장",
+    "value": 3,
+    "risk": 3,
+    "size": "S",
+    "status": "pending",
+    "note": "vulnerability.go:NormalizeVulnerabilityScan의 fallback/parse_notice와 admin_k8s_security_vuln.go:handleK8sSecurityScansImport의 completed 기본값 유지. 미인식 유효 JSON과 JSON 구문 오류를 구분해야 한다.",
+    "updated": "2026-09-22"
+  },
+  {
+    "title": "SEC-02 rbac-secret-access 가 resourceNames 한정 Role 도 high 로 셈",
+    "value": 2,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "security.go:rbacFindings는 secrets get/list/watch 위험 판정에서 resourceNames를 읽지 않음. severity 변경 의도 미확인.",
+    "updated": "2026-09-22"
+  },
+  {
+    "title": "capacity GPU 집계는 nvidia 만, node_monitoring 은 amd·intel 도 셈",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "capacity.go:podRequestGPU와 allocGPU는 nvidia만, node_monitoring.go는 3종 합산. 비용 등 다른 소비 경로까지 검증 필요.",
+    "updated": "2026-09-22"
+  },
+  {
+    "title": "isSensitivePath 가 substring 매칭이라 참조 이름까지 마스킹",
+    "value": 2,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "admin_k8s_timeline.go:isSensitivePath가 strings.Contains 유지. 범위 축소 시 비밀 노출 위험.",
+    "updated": "2026-09-22"
+  },
+  {
+    "title": "스캔 목록 UI·DW export 에 scanner fallback 배지",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "vulnerability.go의 scanner_detected 유지. admin_ui.go/admin_k8s_dw.go에서 직접 scanner_detected·parse_notice 참조 미발견. 동적 summary 표시 범위는 미확인.",
+    "updated": "2026-09-22"
+  },
+  {
+    "title": "터미널 allowlist 가 체이닝 뒤 명령을 대조하지 않음",
+    "value": 2,
+    "risk": 3,
+    "size": "M",
+    "status": "pending",
+    "note": "admin_k8s_terminal.go:terminalCommandMatches의 prefix/substring 허용 확인. 별도 classifyTerminalCommandRisk→ParseCommandRisk가 존재하므로 실제 우회는 미확인.",
+    "updated": "2026-09-22"
+  },
+  {
+    "title": "notify scan 의 podsec dedup 키에 Kind 가 없음",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "k8s_notify.go:handleK8sNotifyScan은 podsec/namespace/name 유지. 같은 클러스터 동명 Pod·Deployment 합쳐질 수 있음. 차선; 기존 6시간 키와 일회성 중복 고려.",
+    "updated": "2026-09-22"
+  },
+  {
+    "title": "NodePressure 영향 Pod의 클러스터별 집계",
+    "value": 3,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "이번 선택. workload.go:analyzeNodeConditions의 podsByNode 생성/조회 모두 nodeName 단독. 기존 nodeKey(cluster,node)로 수정하고 AnalyzeRCA·RCA API·홈 HTTP로 검증.",
+    "updated": "2026-09-22"
+  },
+  {
+    "title": "RCA 자원 태그의 클러스터별 조인",
+    "value": 3,
+    "risk": 1,
+    "size": "S",
+    "status": "done",
+    "note": "rca.go:AttachFindingResources 생성/조회 모두 rcaKey에 ClusterID 포함. TestK8sHomeResourcesStayInCluster 존재, 7a66433으로 해결.",
+    "updated": "2026-09-22"
+  },
+  {
+    "title": "notify scan 인벤토리 Limit 2000·kind 범위 개선",
+    "value": 3,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "k8s_notify.go의 kind 없는 Limit 2000 유지. SecurityRelevantKinds만 사용하면 RCA Node를 잃을 수 있어 조회 범위 설계 필요.",
+    "updated": "2026-09-22"
+  },
+  {
+    "title": "알림 quiet_hours 숫자 범위 검증",
+    "value": 3,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "k8s_notify.go:inQuietHours는 Atoi 후 범위 검사 없이 비교하고 handleK8sNotifyConfig는 TrimSpace만 저장. 24시 종료 계약은 미확인.",
+    "updated": "2026-09-22"
+  },
+  {
+    "title": "운영 홈 인벤토리 조회 상한 도달 시 분석 범위 안내",
+    "value": 2,
+    "risk": 1,
+    "size": "M",
+    "status": "pending",
+    "note": "admin_k8s_home.go:handleK8sHome의 Limit 4000과 data_freshness.InventoryItems 확인. 잘린 결과임을 명시하는 출력은 없음. UI 계약 설계 필요.",
+    "updated": "2026-09-22"
+  },
+  {
+    "title": "notify scan Images/Secrets/Network finding 알림 범위 명시",
+    "value": 2,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "k8s_notify.go는 RCA/RBAC/privileged Pod만 순회하고 evaluated_security도 RBAC+PodSecurity만 합산. 의도와 알림 소음 영향 미확인.",
+    "updated": "2026-09-22"
+  },
+  {
+    "title": "PodSecurity 결과·DW·notify의 클러스터 식별자 전달",
+    "value": 3,
+    "risk": 1,
+    "size": "S",
+    "status": "done",
+    "note": "이전 성공 기록 및 security.go:classifyPodSecurity의 ClusterID, k8s_notify.go finding별 cluster 전달 확인. 이번 재구현 금지. DW 전체 경로 재검증은 미실시.",
+    "updated": "2026-09-22"
+  },
+  {
+    "title": "README 라이선스 링크를 저장소 상대 경로로 수정",
+    "value": 1,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "신규. README.md의 LICENSE 링크가 file:///d:/project/clustara/LICENSE인데 루트 LICENSE가 존재. GitHub/다른 OS에서 사용할 수 있는 상대 링크로 교체하는 DX 후보.",
+    "updated": "2026-09-22"
+  },
+  {
+    "title": "알림 비활성 상태의 scan이 6시간 dedup 창을 소모하지 않도록 수정",
+    "value": 3,
+    "risk": 2,
+    "size": "M",
+    "status": "pending",
+    "note": "신규. k8s_notify.go에서 ShouldSendK8sNotification으로 먼저 기록하고 sent++한다. mattermost.go:notifyMattermostTo는 disabled/빈 webhook/차단 category이면 반환하므로 실제 전송 없이 기록이 남는다. k8s_meta.go가 선기록하는 것 확인. 성공 전송 보장·재시도 설계까지 확장하지 말고 실제 HTTP·webhook으로 활성화 전후 회귀 필요.",
+    "updated": "2026-09-22"
+  }
+]

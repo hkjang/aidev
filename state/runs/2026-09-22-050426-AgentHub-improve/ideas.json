@@ -1,0 +1,137 @@
+[
+  {
+    "title": "게이트웨이 reporter.send 가 응답 코드를 보지 않아 거절된 보고가 Pod 로그에 남지 않음",
+    "value": 2,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "cmd/runtime-proxy/dlp.go:send는 Body.Close만 호출. 유효하나 BASE_VERSION 부담으로 후순위.",
+    "updated": "2026-09-22"
+  },
+  {
+    "title": "받는 사람이 스스로 메일을 끄는 사용자 설정(구독 해제)",
+    "value": 3,
+    "risk": 2,
+    "size": "M",
+    "status": "pending",
+    "note": "store/mail.go:UserEmails는 active/email만, mail/service.go:Notify는 관리자 설정을 검사. 스키마/API/UI 범위로 후순위.",
+    "updated": "2026-09-22"
+  },
+  {
+    "title": "이벤트 전달 실패(dead letter)를 메일 이벤트로",
+    "value": 2,
+    "risk": 2,
+    "size": "M",
+    "status": "pending",
+    "note": "execution/dispatcher.go:retry는 DeadLetterEvent와 CreateNotification만 호출. 메일 배선 설계 필요.",
+    "updated": "2026-09-22"
+  },
+  {
+    "title": "클러스터 배포에서 세션·실행 Pod 화면을 가이드에 실음",
+    "value": 3,
+    "risk": 2,
+    "size": "L",
+    "status": "pending",
+    "note": "USER_GUIDE 서두에서 현재 캡처 배포는 클러스터 없음 명시. 현재 클러스터 가용성 미확인, 45분 범위 밖.",
+    "updated": "2026-09-22"
+  },
+  {
+    "title": "결정 기록 내보내기가 정책에 거절돼도 provenance 화면이 건수를 세지 않음",
+    "value": 3,
+    "risk": 2,
+    "size": "M",
+    "status": "pending",
+    "note": "AdminProvenance.tsx는 withheld 감사 링크 안내. 별도 집계 계약 미확인.",
+    "updated": "2026-09-22"
+  },
+  {
+    "title": "live 테스트를 CI 에서 postgres service 로 돌림",
+    "value": 3,
+    "risk": 3,
+    "size": "M",
+    "status": "pending",
+    "note": "ci.yaml은 DSN/Postgres 없이 race 실행. workflows 보호 경로 및 공유 DB 병렬 실행 위험.",
+    "updated": "2026-09-22"
+  },
+  {
+    "title": "dlp.tool 보고의 server·tool·direction 문자열 길이 상한",
+    "value": 2,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "reportDLPEvent에서 문자열을 그대로 details/로그에 사용. 현행 유효.",
+    "updated": "2026-09-22"
+  },
+  {
+    "title": "dlp.tool 보고의 findings.sample 을 컨트롤 플레인이 다시 마스킹",
+    "value": 3,
+    "risk": 2,
+    "size": "S",
+    "status": "rejected",
+    "note": "현재 main에서도 원문 findings 사용이지만 bf1e062로 이미 구현한 이력과 미확인 사람 판정이 있어 중복 과제로 재선택 금지. 해결 완료를 뜻하지 않음.",
+    "updated": "2026-09-22"
+  },
+  {
+    "title": "mcp.tool_call 키 경로에 API 키 이름/ID 도 남김",
+    "value": 2,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "mcpCallDetails는 auth/client만 기록. 키 조회 반환형 확장 필요.",
+    "updated": "2026-09-22"
+  },
+  {
+    "title": "릴리즈 검증에도 silent SSO Node 테스트 포함",
+    "value": 2,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "release.yaml에는 test:sso 없음. workflows 보호 경로 때문에 제외.",
+    "updated": "2026-09-22"
+  },
+  {
+    "title": "guide-shots 전역 설정 백업 실패 시 seed 중단",
+    "value": 4,
+    "risk": 1,
+    "size": "M",
+    "status": "pending",
+    "note": "이번 선택. 원본 백업/복원 블록을 vm으로 실행해 모든 GET 500에도 seed/capture/captureTracking 호출 재현. 네 설정 검증 후 쓰기 진입.",
+    "updated": "2026-09-22"
+  },
+  {
+    "title": "guide-shots 복원 한 건이 네트워크 오류여도 나머지 설정 복원을 계속함",
+    "value": 3,
+    "risk": 1,
+    "size": "M",
+    "status": "pending",
+    "note": "finally의 순차 PUT에 개별 catch 없음. 현행 유효, 이번 차선으로만 유지.",
+    "updated": "2026-09-22"
+  },
+  {
+    "title": "Langflow runtime-settings 백업 실패 시 전역 프로필 덮어쓰기 중단",
+    "value": 5,
+    "risk": 1,
+    "size": "M",
+    "status": "done",
+    "note": "a439f88이 d42cc59에 병합됨. withRuntimeSettings의 settings.profiles 검증/finally 및 호출 배선 확인, 기존 Node 회귀 통과.",
+    "updated": "2026-09-22"
+  },
+  {
+    "title": "guide-shots API 호출에 제한 시간을 두어 복원 진입이 무한정 지연되지 않게 함",
+    "value": 3,
+    "risk": 2,
+    "size": "M",
+    "status": "pending",
+    "note": "신규. call의 page.evaluate fetch에 AbortSignal/timeout 없음. settle의 바깥 기한도 단일 get 대기를 중단 못함. 복원 요청별 기한과 실제 취소 테스트 필요.",
+    "updated": "2026-09-22"
+  },
+  {
+    "title": "guide-shots 추적 캡처가 기존 CSP 위반 기록 전체를 지우지 않게 함",
+    "value": 3,
+    "risk": 2,
+    "size": "M",
+    "status": "pending",
+    "note": "신규. captureTracking finally가 DELETE /admin/tracking/violations 호출, clearTrackingViolations는 violations.Forget()으로 전체 삭제. 폐기 배포 전제라 이번보다 우선순위 낮음; 개별 삭제 API 확장 없이 전체 삭제 생략 방안 평가.",
+    "updated": "2026-09-22"
+  }
+]

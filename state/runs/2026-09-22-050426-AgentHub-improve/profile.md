@@ -1,0 +1,34 @@
+# AgentHub 프로필 (2026-09-22)
+- 목적: 사용자별 격리 AI 런타임과 자동 작업을 정책·승인·DLP·감사로 통제하는 사내 플랫폼.
+- 스택: Go 모듈 1.25.0(chi, pgx, go-oidc, OpenTelemetry), PostgreSQL, React/TypeScript/Vite, Kubernetes, Playwright/Node 22.
+- 구조:
+  - cmd/: control-plane·worker·runtime-proxy·offline 진입점.
+  - internal/api/: catalog.go 라우트, 인증·게이트웨이·핸들러·live 테스트.
+  - internal/store/: PostgreSQL 저장·마이그레이션·감사·메일 큐.
+  - internal/execution/, internal/mail/: 자동 실행·이벤트 전달 및 SMTP 큐.
+  - internal/runtimecfg/, internal/operator/: 런타임 설정 문서·Kubernetes 적용.
+  - internal/dlp/, internal/tracking/: 내용 검사와 방문 추적/CSP.
+  - web/src/, web/scripts/: 콘솔·브라우저 e2e·Node 회귀·가이드 촬영.
+  - deploy/, scripts/: Kubernetes/offline 배포와 이미지 릴리즈 검사.
+  - docs/: ADMIN_GUIDE.md·USER_GUIDE.md/PDF, architecture.md, decisions/검토 기록.
+- 빌드·테스트: 이번 정찰 `go test ./internal/api ./cmd/runtime-proxy` 통과. DSN 미설정으로 DB live 실행 안 됨.
+- 빌드·테스트: `node --test web/scripts/session-gateway-check.test.mjs web/scripts/runtime-settings-check.test.mjs web/scripts/silent-sso.test.mjs` 57건 통과; `node --check web/scripts/guide-shots.mjs` 통과.
+- 빌드·테스트: CI는 `go test -race ./cmd/... ./internal/...`; web에서 `npm ci && npm run lint && npm run test:sso && npm run build`; `bash scripts/release-catalog-images.sh check-versions`; kustomize/compose 검사.
+- 빌드·테스트: DB live에는 격리 AGENTHUB_TEST_DSN 및 base64 32바이트 AGENTHUB_ENCRYPTION_KEY 필요. 이전 기록의 패키지 동시 DB 오염 때문에 `-p 1` 권장.
+- 빌드·테스트: .github/workflows/live-agents.yaml은 실제 이미지 빌드+실행으로 최대 90분. make build는 README의 로컬 빌드 명령(이번 미실행).
+- 관례: 한국어 문장/영어 conventional 커밋 혼용; 설정은 system_settings 키별 JSON과 별도 secret 슬롯; 정본 문서는 docs 대문자 가이드.
+- 관례: 현재 HEAD d42cc59, VERSION 0.250.0, BASE_VERSION 0.26.0. 런타임 base 소스 변경 시 이미지 버전 가드 주의.
+- 위험 구역: auth.go·mcpoauth.go·session gateway·store migrations·.github/workflows. 이전 프로필의 actor/owner 규약은 변경 전 해당 코드 재확인.
+- 위험 구역: bf1e062 DLP 재마스킹은 현재 main에 적용 안 됨. 이미 구현한 이력/사람 판정 미확인이므로 재구현 과제로 고르지 않는다.
+- 위험 구역: policy/DLP/runtime-settings PUT은 실행 중 런타임에 영향을 줄 수 있다. 설정 스크립트 검증은 격리 배포에서만 한다.
+- 자주 깨지는 곳: API 래퍼와 스크립트 불일치, 전역 설정 백업/복원, DLP 복사 필드, 문서 HTTP 메서드.
+- 검증 함정: runtime-settings GET은 {settings:{profiles:[]},suggestions,runtimes,targets}, PUT은 {profiles:[]}.
+- 검증 함정: Langflow runtime-settings 손실 문제는 a439f88 병합으로 해결. withRuntimeSettings가 검증·깊은 복제·finally 복원하며 Node 27건 및 TestLangflowRuntimeSettings가 있다.
+- 검증 함정: sessionGateway는 withSessionGateway로 해결; TestLangflowSettings가 실제 Handler+DB+Node 패턴 제공. 관리자 API는 관리자 세션+CSRF 필요(API 키 불가).
+- 검증 함정: 일반 설정은 전체 GET body[key], 키별 PUT {value:...}. policy는 GET document/PUT document, DLP는 GET settings/PUT settings.
+- 검증 함정: guide-shots는 백업 GET 실패에도 seed/captureTracking 실행(이번 선택, 아직 미해결). 원본 블록 vm 재현으로 GET 모두 500이어도 콜백 실행 확인.
+- 검증 함정: guide-shots 복원 중 첫 PUT throw가 이후 복원을 막음. tracking 캡처는 위반 기록 전체를 삭제하고 fetch에는 명시적 제한 시간이 없음(별도 보류).
+- 검증 함정: web/node_modules 없음. eslint는 src TS만 검사. CI test:sso는 다른 Node 회귀 두 파일을 포함하지 않으며 release에는 test:sso도 없음.
+- 검증 함정: 로컬 Node v22.23.1/Go go1.26.7. DSN 없는 Go 성공은 DB 동작의 증명이 아님.
+- 미확인: 클러스터·Keycloak·SMTP 가용성과 이번 DB live 동작. 이전 회차 성공을 현재 환경 확인으로 쓰지 않는다.
+- 미확인: 요청된 세 부서 스킬은 callable 도구 및 로컬 SKILL.md 경로 검색에서 미발견. CLAUDE.md·AGENTS.md·별도 roadmap도 저장소 검색 미발견; 대상 코드·docs TODO/FIXME 검색 결과 없음.
