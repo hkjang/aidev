@@ -8,3 +8,4 @@
 - RCA 자원 태그는 해결(done); 기존 보류 항목 유지·재평가 및 신규 README 링크/비활성 알림 dedup 후보를 추가했다.
 - 신규 실패 재현은 미실행(읽기 전용 정찰); 회사 스킬 3종·Skill 도구와 09-07 반려의 구체 접근은 미확인이다.
 - 구현자는 빈 ClusterID를 wildcard로 쓰지 말고 실제 SQLite·변환기·Server.Routes로 RCA/홈 증적과 영향 수를 검증한다.
+- [러너 05:09] scout done — NodePressure 영향 Pod 집계를 클러스터별로 격리 (가치 3 / 위험 1 / 작업량 S)

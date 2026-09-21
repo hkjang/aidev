@@ -1,22 +1,26 @@
-# Clustara 프로필 (2026-09-21)
+# Clustara 프로필 (2026-09-22)
 - 목적: 폐쇄망 Kubernetes 운영 허브로 멀티 클러스터 수집·장애/보안/용량/비용 분석·승인 액션·LLM/MCP 프록시·알림을 제공한다.
-- 스택: Go 단일 모듈 clustara(go.mod 1.25, 정찰 환경 Go 1.26.7), net/http, 기본 SQLite(modernc)·PostgreSQL 지원, 선택 ClickHouse, 인라인 바닐라 JS SPA(한국어).
+- 스택: Go 단일 모듈 clustara(go.mod 1.25, 정찰 Go 1.26.7), net/http, 기본 SQLite(modernc)·PostgreSQL 지원, 선택 ClickHouse, 인라인 바닐라 JS 한국어 SPA.
 - 구조:
-  - cmd/ — 서버·CLI·에이전트 엔트리.
+  - cmd/ — 서버·CLI·에이전트·API surface audit 엔트리.
   - internal/proxy/ — HTTP mux/핸들러, admin_ui.go SPA, MCP/SSO·Mattermost·DW 조립.
   - internal/analyzer/ — 순수 분석 함수와 단위 테스트(RCA·security·capacity·cost 등).
-  - internal/store/ — SQLStore, 인벤토리·이벤트·리비전·승인 원장, sqlstore.go DDL.
+  - internal/store/ — SQLStore, 인벤토리·이벤트·리비전·승인 원장; sqlstore.go DDL.
   - internal/kube/, internal/collector/ — Kubernetes 객체 변환·수집·exec.
-  - internal/action/ — 승인 영향도·액션; 외부 연동은 harbor/gitprovider 등 별도 패키지.
-  - docs/ — 운영·관리·사용자 가이드, K8S_PHASE2_PLAN.md는 완료 이력과 오래된 설명이 섞여 코드 우선.
+  - internal/action/ — 승인 영향도·액션; harbor/gitprovider 등은 별도 연동 패키지.
+  - docs/ — 운영·관리·사용자·릴리즈 가이드; K8S_PHASE2_PLAN.md와 ARCHITECTURE_MODULES.md에는 오래된 설명이 있어 코드 우선.
   - scripts/, deploy/, sdk/ — 릴리즈·배포·클라이언트 SDK.
-- 빌드·테스트: `go build ./...`, `go vet ./...`, `go test ./internal/analyzer ./internal/proxy` 이번 정찰 통과(analyzer cached, proxy 61.874초). 최종 게이트 `go test ./...`는 이번 미실행이며 과거 약 80초.
-- 관례: 영어 fix(scope)/feat(scope) 커밋, 별도 chore 릴리즈. 런타임 설정 레지스트리·환경변수. SQLite/PG 호환 bind·CREATE TABLE IF NOT EXISTS 방식. UI 한국어, 코드 주석 영어. 버전/changelog/docs 마커 변경은 개선 구현과 분리.
-- 위험 구역: proxy/server.go의 currentAccessClaims 및 mcp_oauth.go·keycloak*.go 인증, analyzer/policy.go Deny 게이트, store/sqlstore.go DDL, DW fact 스키마. restrictedProfileViolations는 포스처와 정책 공용.
-- 자주 깨지는 곳: 전 클러스터 입력의 namespace/name/nodeName 단독 조인·dedup. RCA 이벤트·리비전과 PodSecurity/DW/notify의 cluster 전달은 v0.9.285~286에서 해결됨. 자원 태그·NodePressure Pod 집계는 현재도 미해결.
-- 이번 과제: AttachFindingResources의 클러스터별 조인. 실제 호출은 handleK8sHome, UI failRows는 k8sResTags(f.resources)를 렌더한다. NodePressure는 별도 차선.
-- 검증 함정: TestAttachFindingResources는 finding만 c1이고 대응 inventory의 ClusterID는 비어 있다. fixture를 맞추고 빈 ID wildcard를 만들지 않는다.
-- 검증 함정: openTestStore는 t.TempDir SQLite, testConfig는 스케줄러 테스트 간섭을 막는 설정. TestK8sHomeAggregates의 실제 snapshot API·Server.Routes·httptest 패턴을 활용한다.
-- 검증 함정: .github에는 FUNDING.yml만 있고 CI workflow가 없다. SQLite/httptest 통과는 실 PostgreSQL·Kubernetes·Keycloak·ClickHouse 검증을 대신하지 않는다. map/DB 반환 순서에 의존하지 않는다.
+- 빌드·테스트: `go test ./internal/analyzer ./internal/proxy` 이번 정찰 통과(analyzer cached, proxy 59.579초). `go build ./...`, `go vet ./...`, `go test ./...`는 구현 최종 게이트이며 이번 미실행(이전 회차 통과; 전체 테스트 과거 약 80초).
+- 관례: 영어 fix(scope)/feat(scope) 커밋, 별도 chore 릴리즈. 런타임 설정 레지스트리·환경변수. SQLite/PG 호환 bind·CREATE TABLE IF NOT EXISTS 방식. 코드 주석 영어·UI 한국어. 버전/changelog/docs 마커는 개선 구현과 분리.
+- 위험 구역: proxy/server.go:currentAccessClaims 및 mcp_oauth.go·keycloak*.go 인증; analyzer/policy.go Deny 게이트; store/sqlstore.go DDL; DW fact 스키마. restrictedProfileViolations는 포스처·정책 공용.
+- 자주 깨지는 곳: 전 클러스터 입력을 namespace/name/nodeName 단독으로 조인·dedup하는 경로. RCA 이벤트·리비전과 PodSecurity/DW/notify cluster 전달은 v0.9.285~286에서 해결됐으며 AttachFindingResources도 v0.9.287(7a66433)에서 해결됨.
+- 이번 과제: workload.go:analyzeNodeConditions의 podsByNode가 여전히 nodeName만 사용한다. 생성·조회 양쪽에 node_monitoring.go:nodeKey(cluster,node)를 적용하는 클러스터별 영향 Pod 집계. 구현 전 상태이며 pending.
+- 검증 배선: rca.go:AnalyzeRCA→analyzeNodeConditions; proxy/admin_k8s.go:handleK8sRCA→candidates, admin_k8s_home.go:handleK8sHome→failure_candidates. 실제 HTTP 두 경로에서 영향 수·증적 격리 확인.
+- 검증 함정: 기존 TestAnalyzeNodeConditions는 빈 ClusterID 단일 클러스터 fixture여서 교차 오염을 잡지 못한다. 빈 ID는 독립 식별자이며 wildcard로 취급하지 않는다.
+- 검증 함정: openTestStore는 t.TempDir SQLite, testConfig는 스케줄러 비활성. TestK8sHomeResourcesStayInCluster의 Server.Routes·httptest 구성과 k8s_notify_scan_test.go의 kube.InventoryFromObject→UpsertK8sInventory 패턴을 활용한다. 변환 뒤 ID/ClusterID를 지정한다.
+- 검증 함정: Node status.conditions는 StatusObject에 저장된다. 홈 회귀는 risk_scope=all 및 적은 수의 healthy Pod fixture로 scope/TOP10 영향을 피한다. map/DB/Pod 증적 순서에 의존하지 않는다.
+- 검증 함정: .github에는 FUNDING.yml만 있고 CI workflow가 없다. SQLite·httptest 통과는 실 PostgreSQL·Kubernetes·Keycloak·ClickHouse·브라우저 검증을 대신하지 않는다.
 - 검증 함정: 문서 API 경로·버전 일치 repository audit 테스트가 있어 무관한 문서/버전 편집을 피한다. gofmt는 수정 파일만 적용한다.
-- 정찰 범위: README·docs 아키텍처/플랜·릴리즈 검증 안내, TODO/FIXME, git log -30 확인. 작업 트리 변경 없음. CLAUDE.md/AGENTS.md 및 요청된 회사 스킬 3종·Skill 도구는 검색 범위에서 미발견, 전용 절차 미확인.
+- 보류: notify podsec dedup의 Kind 누락, 인벤토리 상한, quiet_hours 숫자 범위, GPU 공급자 집계 차이. 신규: README의 로컬 file:// LICENSE 링크, 알림 비활성 scan의 dedup 선기록.
+- 정찰 범위: README·docs 아키텍처/플랜·릴리즈 검증 안내, TODO/FIXME, git log -30, 관련 분석기/HTTP/테스트 읽음. main@8b05683, 작업 트리 변경 없음.
+- 환경 한계: CLAUDE.md/AGENTS.md는 저장소 및 확인한 상위 경로에서 미발견. 회사 pmo/technology 스킬 3종·Skill 도구도 현재 카탈로그와 .codex/.claude 검색에서 미발견, 전용 절차 미확인. 2026-09-07 반려 접근의 구체 내용은 제공 기록에서 미확인.
