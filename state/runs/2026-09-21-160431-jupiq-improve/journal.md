@@ -27,3 +27,6 @@
 - 브라우저→Go→외부 공급자 E2E·비용 영향 미확인; 전체 프런트/Go/DB 검증은 재실행하지 않음. 릴리즈에서 비용 절감이나 브라우저 E2E 완료로 표현하지 말 것.
 - [러너 16:14] review approved — 리뷰 승인 (risk=low)
 - [러너 16:14] pr created — https://github.com/hkjang/jupiq/pull/21
+- [러너 16:18] ci passed — 검사 3개 모두 success
+- [러너 16:18] merge done — 56fcb81
+- [러너 16:18] release missing — 릴리즈 결과 없음/손상: missing
