@@ -1,7 +1,7 @@
 ---
 title: "aidev 자율 개선 대시보드"
 description: "Claude Code 자율 개선 에이전트가 hkjang 의 프로젝트를 개선·테스트·머지·릴리즈한 일일 보고. 오늘 72회차·릴리즈 9건, 누적 1204회차·릴리즈 413건, 주의 필요 6건."
-last_modified_at: 2026-09-21 19:30:20 +0900
+last_modified_at: 2026-09-21 19:39:46 +0900
 ---
 {% raw %}
 <script type="application/ld+json">
@@ -17,7 +17,7 @@ last_modified_at: 2026-09-21 19:30:20 +0900
   "name": "hkjang",
   "url": "https://github.com/hkjang"
  },
- "dateModified": "2026-09-21T19:30:20+09:00"
+ "dateModified": "2026-09-21T19:39:46+09:00"
 }
 </script>
 
@@ -309,7 +309,7 @@ last_modified_at: 2026-09-21 19:30:20 +0900
 
 # aidev 자율 개선 대시보드
 
-<p class="tldr"><strong>한 줄 요약.</strong> Claude Code 자율 개선 에이전트가 hkjang 의 프로젝트를 개선·테스트·머지·릴리즈한 일일 보고. 오늘 72회차·릴리즈 9건, 누적 1204회차·릴리즈 413건, 주의 필요 6건. 회차가 끝날 때마다 자동 갱신됩니다 (마지막 갱신 <time datetime="2026-09-21T19:30:20+09:00" data-rel>2026-09-21 19:30</time> KST).</p>
+<p class="tldr"><strong>한 줄 요약.</strong> Claude Code 자율 개선 에이전트가 hkjang 의 프로젝트를 개선·테스트·머지·릴리즈한 일일 보고. 오늘 72회차·릴리즈 9건, 누적 1204회차·릴리즈 413건, 주의 필요 6건. 회차가 끝날 때마다 자동 갱신됩니다 (마지막 갱신 <time datetime="2026-09-21T19:39:46+09:00" data-rel>2026-09-21 19:39</time> KST).</p>
 
 <div class="alerts" role="alert"><strong>⚠️ 주의 필요 6건</strong> <span class="meta">— 새 경고는 GitHub Issue·Slack·이메일·Windows 알림으로도 보냅니다</span><ul><li><a href="https://hkjang.github.io/aidev/projects/git-ctx/">git-ctx</a> — 보호 파일 변경 — 자동 머지 안 함, 사람 검토 필요 <span class=meta>(2026-09-21 14:05)</span></li><li><a href="https://hkjang.github.io/aidev/projects/SecCheck/">SecCheck</a> — CI 실패로 PR 미머지 <span class=meta>(2026-09-20 07:51)</span></li><li><a href="https://hkjang.github.io/aidev/projects/git-ctx/">git-ctx</a> — 보호 파일 변경 — 자동 머지 안 함, 사람 검토 필요 <span class=meta>(2026-09-20 10:35)</span></li><li><a href="https://hkjang.github.io/aidev/projects/madi/">madi</a> — 보호 파일 변경 — 자동 머지 안 함, 사람 검토 필요 <span class=meta>(2026-09-20 13:13)</span></li><li><a href="https://hkjang.github.io/aidev/projects/git-ctx/">git-ctx</a> — 보호 파일 변경 — 자동 머지 안 함, 사람 검토 필요 <span class=meta>(2026-09-20 23:35)</span></li><li><a href="https://hkjang.github.io/aidev/projects/jasql_semantic/">jasql_semantic</a> — 수정 과제 대기 중 — 오류 대응(자동 적재): 마지막 회차가 &#x27;error&#x27; 로 끝났습니다. fix-round: error: pr create</li></ul></div>
 
@@ -319,7 +319,7 @@ last_modified_at: 2026-09-21 19:30:20 +0900
 
 <p><a href="https://hkjang.github.io/aidev/inbox/"><strong>📥 작업함</strong></a> — 열린 러너 PR·복구·수정 과제 116건 (그중 사람 필요 71건)</p>
 
-<p>🧹 <strong>PR 처리기</strong> — 매시간 검토 대기 PR 을 진단해 고치고 심사해 승인 · 마지막 실행 2026-09-21 18:47 · 오늘 승인 0 · 수정 푸시 0 · 사람 필요 12 <span class="meta">(기록: state/shepherd.jsonl)</span></p>
+<p>🧹 <strong>PR 처리기</strong> — 매시간 검토 대기 PR 을 진단해 고치고 심사해 승인 · 마지막 실행 2026-09-21 19:37 · 오늘 승인 0 · 수정 푸시 0 · 사람 필요 12 <span class="meta">(기록: state/shepherd.jsonl)</span></p>
 
 [운영 문서](https://github.com/hkjang/aidev#readme) · [원장](https://github.com/hkjang/aidev/tree/main/state) · [실행 이력](https://github.com/hkjang/aidev/commits/main) · [경고 이슈](https://github.com/hkjang/aidev/issues?q=label%3Aalert) · [교훈 25건](https://hkjang.github.io/aidev/lessons/) · [경험 보고 논문](https://hkjang.github.io/aidev/paper/ko/) ([EN](https://hkjang.github.io/aidev/paper/)) · [Atom 피드](https://hkjang.github.io/aidev/feed.xml) · [summary.json](https://hkjang.github.io/aidev/data/summary.json)
 
@@ -367,7 +367,7 @@ last_modified_at: 2026-09-21 19:30:20 +0900
 
 ## 품질 지표 (최근 14일)
 
-<ul class="stats"><li title="관찰 24h 지난 머지 317건 중 회귀 없음 317건"><b>100%</b><span>검증된 개선 완료율</span></li><li title="릴리즈 시도 267건 중 자산 검증까지 255건"><b>96%</b><span>완전한 릴리즈 비율</span></li><li title="되돌림·롤백 0건 / 관찰 머지 317건"><b>0%</b><span>사람의 재작업률</span></li><li title="회귀 0건 / 관찰 머지 317건"><b>0%</b><span>변경 후 회귀율</span></li><li title="비용 확인된 유효 개선 309건, 미확인 세션 283"><b>$12.98</b><span>유효 개선당 비용</span></li><li title="해결된 경고 181건"><b>7.9시간</b><span>예외 처리 소요 시간(중앙값)</span></li><li title="최근 14일"><b>197</b><span>실행 오류</span></li></ul>
+<ul class="stats"><li title="관찰 24h 지난 머지 317건 중 회귀 없음 317건"><b>100%</b><span>검증된 개선 완료율</span></li><li title="릴리즈 시도 267건 중 자산 검증까지 255건"><b>96%</b><span>완전한 릴리즈 비율</span></li><li title="되돌림·롤백 0건 / 관찰 머지 317건"><b>0%</b><span>사람의 재작업률</span></li><li title="회귀 0건 / 관찰 머지 317건"><b>0%</b><span>변경 후 회귀율</span></li><li title="비용 확인된 유효 개선 309건, 미확인 세션 283"><b>$12.98</b><span>유효 개선당 비용</span></li><li title="해결된 경고 182건"><b>7.9시간</b><span>예외 처리 소요 시간(중앙값)</span></li><li title="최근 14일"><b>197</b><span>실행 오류</span></li></ul>
 
 '검증된 개선'은 머지 후 24시간 관찰에서 회귀(main CI 실패·되돌림·롤백)가 없는 변경. '완전한 릴리즈'는 태그·Release·필수 자산 검증까지 끝난 것. 비용이 확인되지 않은 세션은 0이 아니라 '미확인'으로 뺀다.
 
@@ -379,7 +379,7 @@ last_modified_at: 2026-09-21 19:30:20 +0900
 
 ## 비용·사용량
 
-<ul class="stats"><li><b>$0.00</b><span>오늘 비용</span></li><li><b>0분</b><span>오늘 에이전트 시간</span></li><li><b>208</b><span>오늘 세션</span></li><li><b>$4251.06</b><span>누적 비용</span></li><li><b>172시간 49분</b><span>누적 시간</span></li><li><b>4734.1M/34.6M</b><span>누적 토큰 입력/출력</span></li></ul>
+<ul class="stats"><li><b>$0.00</b><span>오늘 비용</span></li><li><b>0분</b><span>오늘 에이전트 시간</span></li><li><b>209</b><span>오늘 세션</span></li><li><b>$4251.06</b><span>누적 비용</span></li><li><b>172시간 49분</b><span>누적 시간</span></li><li><b>4734.1M/34.6M</b><span>누적 토큰 입력/출력</span></li></ul>
 
 claude -p 가 세션마다 보고한 추정값(정액제에서는 참고값). 회차별 내역은 각 일일 보고와 프로젝트 페이지, 원본은 [usage.jsonl](https://hkjang.github.io/aidev/data/usage.jsonl).
 
