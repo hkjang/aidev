@@ -13,8 +13,8 @@
     "value": 3,
     "risk": 1,
     "size": "M",
-    "status": "pending",
-    "note": "이번 선택. referenceData/ReferenceData에 정책 없음, VisitFormPage의 회사명 required/제출 검사 없음, createVisitRecord는 공백 회사 거절. 일반·현장 공유 화면 및 실제 API/브라우저 검증 포함.",
+    "status": "done",
+    "note": "c9f53e3: reference-data boolean과 일반·현장 공유 폼 필수 안내/제출 검사를 연결. 실제 PostgreSQL 라우터 false→true→false, 두 화면 수동·CSV 및 일반 템플릿 검증, 전체 E2E 10개 통과.",
     "updated": "2026-09-22"
   },
   {
@@ -186,6 +186,24 @@
     "size": "M",
     "status": "pending",
     "note": "이전 장기 기록 후보 보존. 이번 추적 코드의 SPA 런타임 동작은 미확인. 브라우저 검증과 provider 계약 확인 전 착수하지 않는다.",
+    "updated": "2026-09-22"
+  },
+  {
+    "title": "방문 시작보다 이르거나 같은 종료 시각을 제출 전에 차단",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "visits.go는 EndAt.After(StartAt)를 검사하지만 VisitFormPage 제출 조건에는 날짜 순서가 없다. 소스로 확인했으며 실제 브라우저 재현은 미실행. 이번 회사명 범위와 분리.",
+    "updated": "2026-09-22"
+  },
+  {
+    "title": "기준 정보 로드 실패 시 신청 화면에서 다시 불러오기 제공",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "VisitFormPage reference-data 요청 실패는 오류만 표시하고 재시도 동작이 없다. 네트워크 복구 뒤 전체 새로고침 없이 재시도하는 소규모 개선 후보; 실제 장애 재현 전.",
     "updated": "2026-09-22"
   }
 ]
