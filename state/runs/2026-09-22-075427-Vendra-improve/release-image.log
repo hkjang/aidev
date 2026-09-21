@@ -1,0 +1,172 @@
+#0 building with "default" instance using docker driver
+
+#1 [internal] load build definition from Dockerfile
+#1 transferring dockerfile: 1.85kB done
+#1 DONE 0.0s
+
+#2 resolve image config for docker-image://docker.io/docker/dockerfile:1.7
+#2 DONE 1.2s
+
+#3 docker-image://docker.io/docker/dockerfile:1.7@sha256:a57df69d0ea827fb7266491f2813635de6f17269be881f696fbfdf2d83dda33e
+#3 resolve docker.io/docker/dockerfile:1.7@sha256:a57df69d0ea827fb7266491f2813635de6f17269be881f696fbfdf2d83dda33e 0.0s done
+#3 CACHED
+
+#4 [internal] load metadata for docker.io/library/alpine:3.22
+#4 ...
+
+#5 [internal] load metadata for docker.io/library/node:22-alpine
+#5 DONE 1.2s
+
+#4 [internal] load metadata for docker.io/library/alpine:3.22
+#4 DONE 1.2s
+
+#6 [internal] load metadata for docker.io/library/golang:1.26-alpine
+#6 DONE 1.5s
+
+#7 [internal] load .dockerignore
+#7 transferring context: 111B done
+#7 DONE 0.0s
+
+#8 [internal] load build context
+#8 DONE 0.0s
+
+#9 [stage-2 1/6] FROM docker.io/library/alpine:3.22@sha256:5291449c3df73caf6ed85e649dec1b9e818b39a5d8c871e97afc13e9cd5e8fa8
+#9 resolve docker.io/library/alpine:3.22@sha256:5291449c3df73caf6ed85e649dec1b9e818b39a5d8c871e97afc13e9cd5e8fa8 0.0s done
+#9 DONE 0.0s
+
+#10 [backend 1/8] FROM docker.io/library/golang:1.26-alpine@sha256:8ac98ca534ac3f51e1f420a1dd2c15e74c75cfa0f23f3ad27eb5d7236c349a0c
+#10 resolve docker.io/library/golang:1.26-alpine@sha256:8ac98ca534ac3f51e1f420a1dd2c15e74c75cfa0f23f3ad27eb5d7236c349a0c 0.0s done
+#10 DONE 0.0s
+
+#11 [backend 2/8] WORKDIR /src
+#11 CACHED
+
+#12 [web 1/6] FROM docker.io/library/node:22-alpine@sha256:b6f26b36c8ff49624cfdac716b8ea1138d606df02586a77d364bb5536a634f85
+#12 resolve docker.io/library/node:22-alpine@sha256:b6f26b36c8ff49624cfdac716b8ea1138d606df02586a77d364bb5536a634f85 0.0s done
+#12 DONE 0.0s
+
+#8 [internal] load build context
+#8 transferring context: 2.27MB 0.0s done
+#8 DONE 0.1s
+
+#13 [web 3/6] COPY web/package.json web/package-lock.json ./
+#13 CACHED
+
+#14 [web 2/6] WORKDIR /src/web
+#14 CACHED
+
+#15 [web 4/6] RUN npm ci --ignore-scripts
+#15 CACHED
+
+#16 [web 5/6] COPY web/ ./
+#16 DONE 0.1s
+
+#17 [backend 3/8] RUN apk add --no-cache ca-certificates git
+#17 0.822 ( 1/12) Installing brotli-libs (1.2.0-r1)
+#17 0.867 ( 2/12) Installing c-ares (1.34.8-r0)
+#17 0.882 ( 3/12) Installing libunistring (1.4.2-r0)
+#17 0.954 ( 4/12) Installing libidn2 (2.3.8-r0)
+#17 0.969 ( 5/12) Installing nghttp2-libs (1.69.0-r0)
+#17 0.982 ( 6/12) Installing libpsl (0.21.5-r3)
+#17 0.992 ( 7/12) Installing zstd-libs (1.5.7-r2)
+#17 1.033 ( 8/12) Installing libcurl (8.22.0-r0)
+#17 1.071 ( 9/12) Installing libexpat (2.8.4-r0)
+#17 1.082 (10/12) Installing pcre2 (10.48-r0)
+#17 1.117 (11/12) Installing git (2.54.0-r0)
+#17 1.452 (12/12) Installing git-init-template (2.54.0-r0)
+#17 1.461 Executing busybox-1.37.0-r31.trigger
+#17 1.471 OK: 20.6 MiB in 29 packages
+#17 DONE 1.5s
+
+#18 [backend 4/8] COPY go.mod go.sum ./
+#18 DONE 0.0s
+
+#19 [web 6/6] RUN npm run build
+#19 0.433 
+#19 0.433 > vendra-web@0.6.21 build
+#19 0.433 > tsc -b && vite build
+#19 0.433 
+#19 ...
+
+#20 [backend 5/8] RUN go mod download
+#20 DONE 0.6s
+
+#21 [backend 6/8] COPY cmd/ cmd/
+#21 DONE 0.1s
+
+#22 [backend 7/8] COPY internal/ internal/
+#22 DONE 0.1s
+
+#19 [web 6/6] RUN npm run build
+#19 ...
+
+#23 [backend 8/8] RUN CGO_ENABLED=0 GOOS=linux go build -trimpath     -ldflags "-s -w -X github.com/hkjang/Vendra/internal/httpapi.Version=0.7.58 -X github.com/hkjang/Vendra/internal/httpapi.Commit=5ed444c -X github.com/hkjang/Vendra/internal/httpapi.BuildTime=2026-09-21T23:09:42Z"     -o /out/vendra ./cmd/vendra
+#23 ...
+
+#19 [web 6/6] RUN npm run build
+#19 3.605 vite v8.2.1 building client environment for production...
+#19 3.618 [2Ktransforming...✓ 1825 modules transformed.
+#19 4.155 rendering chunks...
+#19 4.252 computing gzip size...
+#19 4.265 dist/index.html                               0.58 kB │ gzip:  0.35 kB
+#19 4.265 dist/assets/index-BPVkzUSl.css               97.21 kB │ gzip: 20.00 kB
+#19 4.265 dist/assets/chevron-right-CipYM15Q.js         0.12 kB │ gzip:  0.13 kB
+#19 4.265 dist/assets/plus-DrKRsHhf.js                  0.14 kB │ gzip:  0.14 kB
+#19 4.265 dist/assets/arrow-left-CjvYGV0h.js            0.15 kB │ gzip:  0.15 kB
+#19 4.265 dist/assets/download-pAuY1CrQ.js              0.22 kB │ gzip:  0.18 kB
+#19 4.265 dist/assets/activity-CITIduvm.js              0.22 kB │ gzip:  0.19 kB
+#19 4.265 dist/assets/circle-dollar-sign-C7d2xdZf.js    0.23 kB │ gzip:  0.19 kB
+#19 4.265 dist/assets/list-checks-CPkgFOv5.js           0.26 kB │ gzip:  0.18 kB
+#19 4.265 dist/assets/send-HCKZzWfc.js                  0.28 kB │ gzip:  0.22 kB
+#19 4.265 dist/assets/users-DnXOIKmm.js                 0.29 kB │ gzip:  0.21 kB
+#19 4.265 dist/assets/trash-2-BU_zcqGJ.js               0.31 kB │ gzip:  0.20 kB
+#19 4.265 dist/assets/key-round-BJuKlt3b.js             0.34 kB │ gzip:  0.25 kB
+#19 4.265 dist/assets/file-search-Hx2-Anr7.js           0.36 kB │ gzip:  0.25 kB
+#19 4.265 dist/assets/calendar-clock-C7sNsGVF.js        0.37 kB │ gzip:  0.24 kB
+#19 4.265 dist/assets/earth-Cys9KYyk.js                 0.38 kB │ gzip:  0.26 kB
+#19 4.265 dist/assets/sparkles-evm5oY2m.js              0.48 kB │ gzip:  0.27 kB
+#19 4.265 dist/assets/AIAnalyst-AyEMnefz.js             5.22 kB │ gzip:  2.41 kB
+#19 4.265 dist/assets/SupplierNetwork-DL0sfOlY.js       6.04 kB │ gzip:  2.53 kB
+#19 4.265 dist/assets/Approvals-RWTsRTiD.js             7.98 kB │ gzip:  2.78 kB
+#19 4.265 dist/assets/Dashboard-Cxbor-EG.js             8.94 kB │ gzip:  2.99 kB
+#19 4.265 dist/assets/WorkInbox-DzHmU6MJ.js             9.51 kB │ gzip:  3.71 kB
+#19 4.265 dist/assets/Profile-BU1SBbDb.js              13.05 kB │ gzip:  4.37 kB
+#19 4.265 dist/assets/Sourcing-C8CrYtN_.js             14.17 kB │ gzip:  4.32 kB
+#19 4.265 dist/assets/Portal-BxrMkf0G.js               28.17 kB │ gzip:  8.00 kB
+#19 4.265 dist/assets/Objects-BZYsvDy2.js              32.22 kB │ gzip: 10.08 kB
+#19 4.265 dist/assets/Suppliers-DoJqTtY5.js            42.86 kB │ gzip: 10.85 kB
+#19 4.265 dist/assets/Admin-CiJ2imTA.js                60.96 kB │ gzip: 15.94 kB
+#19 4.265 dist/assets/index-wm1NZnGn.js               281.17 kB │ gzip: 89.63 kB
+#19 4.265 
+#19 4.266 ✓ built in 660ms
+#19 DONE 4.4s
+
+#23 [backend 8/8] RUN CGO_ENABLED=0 GOOS=linux go build -trimpath     -ldflags "-s -w -X github.com/hkjang/Vendra/internal/httpapi.Version=0.7.58 -X github.com/hkjang/Vendra/internal/httpapi.Commit=5ed444c -X github.com/hkjang/Vendra/internal/httpapi.BuildTime=2026-09-21T23:09:42Z"     -o /out/vendra ./cmd/vendra
+#23 DONE 6.3s
+
+#24 [stage-2 2/6] RUN apk add --no-cache ca-certificates tzdata && addgroup -S vendra && adduser -S -G vendra -h /app vendra
+#24 CACHED
+
+#25 [stage-2 3/6] WORKDIR /app
+#25 CACHED
+
+#26 [stage-2 4/6] COPY --from=backend --chown=vendra:vendra /out/vendra /app/vendra
+#26 DONE 0.0s
+
+#27 [stage-2 5/6] COPY --from=web --chown=vendra:vendra /src/web/dist /app/web/dist
+#27 DONE 0.1s
+
+#28 [stage-2 6/6] RUN mkdir -p /var/lib/vendra/documents && chown -R vendra:vendra /var/lib/vendra
+#28 DONE 0.2s
+
+#29 exporting to image
+#29 exporting layers
+#29 exporting layers 0.4s done
+#29 exporting manifest sha256:4f2ae97b2316cfc0653ae55bf9268dee86ef31e444575d7e81dfb81f761d2e99 0.0s done
+#29 exporting config sha256:1cbac9c441e81950ad52158d9b0ae1f86f88aa481b05506ab59dc796693b43fa 0.0s done
+#29 exporting attestation manifest sha256:90db583182807d7d933b8f593054619a7e309026bcd7d1de5c3f68d97a4b9052 0.0s done
+#29 exporting manifest list sha256:b8d5665a39c5b80f7f8db79d2696573b94900ebdc0159dd92ac0e0b0b83af16d 0.0s done
+#29 naming to docker.io/library/vendra:v0.7.58 done
+#29 unpacking to docker.io/library/vendra:v0.7.58 0.1s done
+#29 DONE 0.6s
+dist/vendra-v0.7.58.tar.gz

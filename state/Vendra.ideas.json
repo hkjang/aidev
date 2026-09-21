@@ -5,8 +5,8 @@
     "risk": 1,
     "size": "S",
     "status": "pending",
-    "note": "ci.yml go test는 internal만, vet는 cmd 포함. cmd 테스트 없음 확인; 보호 경로 대비 현재 가치 낮음.",
-    "updated": "2026-09-21"
+    "note": "ci.yml go test는 internal만, vet는 cmd 포함. cmd 테스트 없음; 현재 가치 낮고 workflows 보호 경로.",
+    "updated": "2026-09-22"
   },
   {
     "title": "MCP OAuth 후속 — JWKS 재요청 제한과 디스커버리 실패 짧은 부정 캐시",
@@ -14,8 +14,8 @@
     "risk": 2,
     "size": "S",
     "status": "pending",
-    "note": "mcpoauth.go 부재 재확인. 선행 기능 병합 후 재평가; 원격 PR 상태 미확인.",
-    "updated": "2026-09-21"
+    "note": "internal/httpapi/mcpoauth.go 없음. 선행 기능 병합 필요; 과거 성공 기록만으로 현재 기능 존재를 추정하지 않음.",
+    "updated": "2026-09-22"
   },
   {
     "title": "메일 알림 후속 — 포털 담당자 RFQ 초대·마감 임박, 수신자별 구독 규칙",
@@ -23,8 +23,8 @@
     "risk": 3,
     "size": "M",
     "status": "pending",
-    "note": "internal/mail 부재 재확인. 선행 기능과 외부 발송 정책 필요.",
-    "updated": "2026-09-21"
+    "note": "internal/mail 없음. 선행 기능과 외부 발송 정책 필요.",
+    "updated": "2026-09-22"
   },
   {
     "title": "캡처 스크립트 진입점 — make guide-screenshots 타깃",
@@ -32,8 +32,8 @@
     "risk": 1,
     "size": "S",
     "status": "pending",
-    "note": "Makefile에 타깃 없음. 사용자 버그보다 후순위.",
-    "updated": "2026-09-21"
+    "note": "Makefile에 타깃 없음 재확인. 실제 응답 오류보다 후순위.",
+    "updated": "2026-09-22"
   },
   {
     "title": "공급업체 연간 지출·지출 리포트가 통화를 섞어 더함",
@@ -41,8 +41,8 @@
     "risk": 3,
     "size": "M",
     "status": "pending",
-    "note": "analytics.go sum(t.amount), annual_spend 갱신 확인. 통화 정책 결정 필요; 반려된 통화 접근 반복 금지.",
-    "updated": "2026-09-21"
+    "note": "analytics.go sum(t.amount) 및 annual_spend 갱신 존재. 정책 결정 필요; 과거 반려 접근 반복 금지.",
+    "updated": "2026-09-22"
   },
   {
     "title": "업무 객체 status 가 임의 문자열",
@@ -50,8 +50,8 @@
     "risk": 3,
     "size": "M",
     "status": "pending",
-    "note": "objects.go에 결재 상태 보호 존재. 일반 상태 전체 어휘 제한은 없으며 도메인 계약 변경 위험.",
-    "updated": "2026-09-21"
+    "note": "objects.go workflowOwnedStatus 보호는 존재. 일반 상태는 문자열 저장; 도메인 계약 변경 위험.",
+    "updated": "2026-09-22"
   },
   {
     "title": "업무 객체 data jsonb 블롭 무검증",
@@ -59,8 +59,8 @@
     "risk": 3,
     "size": "M",
     "status": "pending",
-    "note": "objects.go 가변 data 저장 및 supplierVisibleData 경로 존재. 전체 블롭 검증은 라우팅/도메인 계약 위험으로 보류.",
-    "updated": "2026-09-21"
+    "note": "objects.go 가변 data 저장 및 supplierVisibleData 경로 존재. 일괄 검증은 계약 변경 위험.",
+    "updated": "2026-09-22"
   },
   {
     "title": "공급업체 담당자·조직 이관이 API 로 불가능",
@@ -68,8 +68,8 @@
     "risk": 3,
     "size": "M",
     "status": "pending",
-    "note": "suppliers.go:updateSupplier SET에 owner_id/organization_id 없음 재확인; 스코프 검증 설계 동반 필요.",
-    "updated": "2026-09-21"
+    "note": "suppliers.go:updateSupplier SET에 owner_id/organization_id 없음. 데이터 스코프 설계 동반 필요.",
+    "updated": "2026-09-22"
   },
   {
     "title": "작업 항목 상태 배치의 상한 문서화·테스트",
@@ -77,8 +77,8 @@
     "risk": 1,
     "size": "S",
     "status": "pending",
-    "note": "updateWorkItemState 1~100, app.go POST 경로, OpenAPI 요약만 확인. 기존 malformed notification batch 테스트는 있으나 100/101 경계 전수는 미확인.",
-    "updated": "2026-09-21"
+    "note": "updateWorkItemState는 1~100 제한. openapi.go에는 요약만 있음. malformed notification batch 테스트 존재; 100/101 전용 경계 테스트는 검색상 찾지 못함.",
+    "updated": "2026-09-22"
   },
   {
     "title": "마이그레이션 번호 중복 가드",
@@ -86,8 +86,8 @@
     "risk": 2,
     "size": "S",
     "status": "pending",
-    "note": "017 두 파일 유지. db.Migrate는 전체 파일명 키와 사전순 정렬; 번호 변경 금지, 미래 규칙 합의 필요.",
-    "updated": "2026-09-21"
+    "note": "017 두 파일 존재, db.Migrate는 전체 파일명을 키로 정렬/실행. 기존 번호 변경 금지; 미래 명명 규칙 합의 필요.",
+    "updated": "2026-09-22"
   },
   {
     "title": "가이드 가드 확장 — 사용자 가이드 MCP 도구표를 tools/list 응답과 묶기",
@@ -95,8 +95,8 @@
     "risk": 1,
     "size": "S",
     "status": "pending",
-    "note": "mcpTools 열한 도구와 USER_GUIDE 4.6 표 있음; guide_docs_test는 그림/환경 변수만 검사. 차선 후보; 실제 Handler 응답 사용.",
-    "updated": "2026-09-21"
+    "note": "차선. USER_GUIDE 4.6의 11개 표와 실제 Handler tools/list를 비교. guide_docs_test는 그림/환경 변수만 검사. Handler 인증 통과에는 DB 세션이 필요.",
+    "updated": "2026-09-22"
   },
   {
     "title": "업무 관제탑 결재 목록에서 역할 필터보다 먼저 적용되는 200건 상한 보완",
@@ -104,8 +104,44 @@
     "risk": 3,
     "size": "M",
     "status": "pending",
-    "note": "productivity.go LIMIT 200 뒤 instanceSteps와 역할 검사 확인. 스냅샷 수정 후에도 남음; 누락 재현은 미실행, 이번 범위 제외.",
-    "updated": "2026-09-21"
+    "note": "productivity.go LIMIT 200 뒤 instanceSteps/역할 검사 존재. 누락 DB 재현 미실행. 상한/스코프 변경 위험으로 후순위.",
+    "updated": "2026-09-22"
+  },
+  {
+    "title": "MCP search_suppliers와 analyze_spend의 limit 인자 반영",
+    "value": 3,
+    "risk": 2,
+    "size": "M",
+    "status": "done",
+    "note": "2e67eec: search_suppliers/analyze_spend/recommend_suppliers SQL LIMIT 바인딩과 추천 스키마 1~50 적용. 105개 적격 업체 및 실제 로그인/API로 수정 전 실패·수정 후 경계/스코프/share/두 응답 형식 검증.",
+    "updated": "2026-09-22"
+  },
+  {
+    "title": "get_expiring_contracts의 days 공개 범위와 실행 상한 일치",
+    "value": 2,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "신규. mcpTools maximum=730이지만 runMCPTool은 intNumber(...,180,3650). 올바른 정책을 결정한 뒤 스키마·실제 날짜 경계 일치 검증; 이번 limit 과제에는 포함하지 않음.",
+    "updated": "2026-09-22"
+  },
+  {
+    "title": "compare_suppliers의 입력 ID 개수와 응답 크기 상한",
+    "value": 2,
+    "risk": 3,
+    "size": "M",
+    "status": "pending",
+    "note": "신규. supplierIds 스키마는 minItems=2만 있고 runMCPTool SQL에는 LIMIT 없음. 기존 대량 비교 계약 확인 필요; 무조건 100으로 잘라 사용자가 지정한 업체를 누락시키는 접근은 피함.",
+    "updated": "2026-09-22"
+  },
+  {
+    "title": "MCP intNumber의 큰 수 정수 변환 및 1 미만 양수 경계",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "done",
+    "note": "2e67eec: 변환 전 상한 검사, 1 미만 양수 기본값 처리. 0.5 및 1e100의 helper 실패 재현 뒤 세 도구 실제 API와 days 180/3650 경계 통과.",
+    "updated": "2026-09-22"
   },
   {
     "title": "MCP search_suppliers가 공급업체 번호로도 검색되게 하기",
@@ -113,17 +149,8 @@
     "risk": 1,
     "size": "S",
     "status": "done",
-    "note": "a05402d: 검색 괄호 안 supplier_number ILIKE 추가. 실제 PostgreSQL·로그인·Handler의 세 API ID 회귀로 수정 전 실패와 수정 후 성공 확인. 전체·부분·대소문자 번호, 이름·사업자번호, 부서·own·삭제 제외 및 MCP 구조화/텍스트 응답 검증.",
-    "updated": "2026-09-21"
-  },
-  {
-    "title": "MCP search_suppliers와 analyze_spend가 광고하는 limit 인자 반영",
-    "value": 2,
-    "risk": 2,
-    "size": "S",
-    "status": "pending",
-    "note": "신규. mcpTools inputSchema에는 limit가 있으나 두 runMCPTool SQL은 고정 LIMIT 100이고 args.limit를 읽지 않는다. 1~100 계약과 실제 반환량 회귀를 별도 회차로 검토; 이번 번호 수정에 끼워 넣지 말 것.",
-    "updated": "2026-09-21"
+    "note": "28cd677에 a05402d 병합. SQL supplier_number ILIKE 및 mcp_supplier_search_test.go 회귀 확인.",
+    "updated": "2026-09-22"
   },
   {
     "title": "초안 축출이 방금 저장한 초안 자신을 버릴 수 있음",
@@ -131,8 +158,8 @@
     "risk": 1,
     "size": "S",
     "status": "done",
-    "note": "이전 기록 보존. 9133186 병합, 현재 putFormDraft 우선순위 수정 및 회귀 존재.",
-    "updated": "2026-09-21"
+    "note": "putFormDraft ORDER BY (draft_key=$3) DESC, updated_at DESC 확인. maintenance는 나이 기준 삭제만 담당.",
+    "updated": "2026-09-22"
   },
   {
     "title": "가이드 표류 가드 — 참조된 그림 전수와 환경 변수 표를 코드에 묶기",
@@ -140,8 +167,8 @@
     "risk": 1,
     "size": "S",
     "status": "done",
-    "note": "b676548 병합, guide_docs_test.go 두 가드 확인.",
-    "updated": "2026-09-21"
+    "note": "guide_docs_test.go의 그림 양방향 검사와 config.Load 환경 변수 가드 존재; 이번 비DB Go 테스트 통과.",
+    "updated": "2026-09-22"
   },
   {
     "title": "업무 관제탑의 결재 항목도 상신 당시 단계 스냅샷을 따르게 하기",
@@ -149,7 +176,16 @@
     "risk": 2,
     "size": "M",
     "status": "done",
-    "note": "1303bf1 및 715bf95 병합 확인. workInbox가 i.context 조회 후 instanceSteps 사용.",
-    "updated": "2026-09-21"
+    "note": "productivity.go workInbox에서 context 스냅샷 조회 및 instanceSteps 사용 확인.",
+    "updated": "2026-09-22"
+  },
+  {
+    "title": "릴리즈 워크플로 2회 실패 수정",
+    "value": 4,
+    "risk": 2,
+    "size": "S",
+    "status": "rejected",
+    "note": "이전 정찰에서 전제 불성립으로 기각됨. 이번 원격 실행 현황 미확인; 같은 접근 재선정하지 않음.",
+    "updated": "2026-09-22"
   }
 ]
