@@ -1,0 +1,18 @@
+{
+  "verdict": "reject",
+  "recommend": "human",
+  "reasons": [
+    "internal/web/analytics.go:208-218; internal/web/server.go:245 [P1/security, 기존 차단 유지] Momento 추적과 프록시가 활성화되면 로그인하지 않은 호출자가 /momento/<임의 경로>에 임의 HTTP 메서드를 보내 설정된 수집기의 같은 경로에 서버 측 요청을 전달할 수 있습니다. 경로·메서드 허용 목록이 없어 수집기의 추적 이외 API까지 네트워크 접근을 중계합니다(수집기 자체 인증 우회까지 확인한 것은 아님). 추적에 필요한 경로·메서드만 허용하고 나머지 요청이 upstream에 도달하지 않는 것을 NewServer와 실제 HTTP로 검증해야 합니다. 이 코드는 origin/main에도 존재하여 이번 MCP 커밋의 신규 결함은 아니지만, 회차에 이미 기록된 security 차단은 미해결입니다. 사용자 지정 절차상 처리기가 해제할 수 없으므로 운영자가 해당 위험의 risk-accepted 수용 여부를 결정해야 합니다."
+  ],
+  "notes": [
+    "비교 기준 origin/main=eb2a3b044befe7e87bf3ead007b8a72b81f7105f, HEAD=837d1e8127cd1c8e6b3cd5aad3dfdb798554ad5c. 실제 diff는 mcp.go 7줄과 mcp_report_arguments_test.go뿐입니다. 이전 비평의 로컬 main 기준 146파일 및 마이그레이션 변경은 이번 비교 범위에 포함되지 않습니다.",
+    "legal-risk:privacy-and-data-protection, security:security-architecture-review, technology:code-review SKILL.md와 두 references/sources.md를 직접 읽었습니다. Skill 호출 도구는 제공되지 않았습니다. 법률 적합성에 대한 별도 판단은 하지 않았습니다.",
+    "MCP 변경은 기존 역할 검사 뒤 from/to/department의 비문자열과 null을 거부하며 입력 원문을 오류에 넣지 않습니다. 신규 개인정보 수집·외부 전송·보존·권한 확대·마이그레이션·의존성 변경은 없습니다. 기존 정상 호출 감사 정책은 변경하지 않습니다.",
+    "전용 PostgreSQL 16에서 go test -race ./internal/web -run '^(TestMCPReviewReportArguments|TestReviewReportSummarisesAPeriod)$' -count=1 -v 통과(4.225s, SKIP 없음). 실제 로그인/NewServer/HTTP/SQL을 통해 두 프로토콜의 잘못된 타입 30건, 정상 필터 9조건의 REST/MCP 일치, 권한 거부와 감사 기록을 검증했습니다. 테스트는 수정 전 비문자열 성공 응답을 실패로 잡는 단언을 포함하지만 이번 세션에서 수정 전 실행은 하지 않았습니다.",
+    "git diff --check 통과, 소스 수정 없음. 전체 테스트·전체 race·프런트/PDF·원격 CI·최신 취약점 DB·실제 Momento 수집기 공격은 미검증입니다. 기존 추적 기본값은 enabled=false이나 활성화 후 프록시 공격 경로는 남습니다."
+  ],
+  "risk": "medium",
+  "blocking": [
+    "security"
+  ]
+}
