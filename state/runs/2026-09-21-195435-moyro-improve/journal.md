@@ -28,3 +28,6 @@
 - 전체 라우터 인증 실행·웹·실제 플러그인 archive는 미검증. 운영 저장/마이그레이션 변경 없어 코드 revert 가능.
 - [러너 20:07] review approved — 리뷰 승인 (risk=low)
 - [러너 20:08] pr created — https://github.com/hkjang/moyro/pull/21
+- [러너 20:20] ci passed — 검사 3개 모두 success
+- [러너 20:21] merge done — 761c3ae
+- [러너 20:21] release missing — 릴리즈 결과 없음/손상: missing
