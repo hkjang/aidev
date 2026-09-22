@@ -23,7 +23,7 @@
     "risk": 2,
     "size": "M",
     "status": "pending",
-    "note": "grpc v1.83.2는 go.mod 반영 확인. 별도 flake는 이전 4회 재현 실패, 이번 app 미실행. 실패 이름 확보 전 보류.",
+    "note": "grpc v1.83.2 반영 확인. 이번 전체 sqlite_fts5 suite에서 internal/app 101.576s 통과; 별도 flake는 이번에도 재현 안 됨. 실패 테스트 이름 확보 전 보류.",
     "updated": "2026-09-22"
   },
   {
@@ -130,8 +130,8 @@
     "value": 3,
     "risk": 1,
     "size": "S",
-    "status": "pending",
-    "note": "신규·이번 선택. cutAtBoundary가 잘린 window를 같은 길이로 runeSafeCut에 넘겨 검사 우회. 원본 함수 복사 실행에서 3001/3002 예산의 invalid UTF-8와 JSON U+FFFD 재현. 실제 HTTP 배선 회귀는 구현자가 추가.",
+    "status": "done",
+    "note": "cutAtBoundary fallback만 원본 text/limit로 수정. 운영 함수 전 바이트 경계 및 실제 SQLite→ServeHTTP read-file의 3000~3011 예산×4 문자 조합×캐시 미스/히트에서 수정 전 U+FFFD·원문 접두부 손상 실패와 수정 후 통과 확인. 경계 선호·60% 활용·펜스·Notes 보존.",
     "updated": "2026-09-22"
   },
   {
@@ -141,6 +141,15 @@
     "size": "M",
     "status": "pending",
     "note": "신규. cacheKey는 ACL/저장소 목록을 strings.Join으로 연결. 쉼표를 포함한 단일 principal과 여러 principal의 직렬화 모호성 존재. aclRevision도 키에 포함되므로 실제 권한 혼동 및 입력 허용 여부는 미확인; 취약점으로 단정하지 않고 보류.",
+    "updated": "2026-09-22"
+  },
+  {
+    "title": "ReadFile 자체 192KiB 본문 제한의 UTF-8 경계 검증",
+    "value": 3,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "배선 추적 중 internal/search/service.go의 body[:readFileByteBudget] 확인. MCP보다 앞선 별도 절단 경로이며 이번 입력은 192KiB 미만. 실제 초과 입력 HTTP 재현과 원문 접두부 검증 전에는 결함 범위를 단정하지 않음; 이번 MCP 호출 위치 수정과 분리.",
     "updated": "2026-09-22"
   }
 ]

@@ -5,8 +5,8 @@
     "risk": 2,
     "size": "S",
     "status": "pending",
-    "note": "ci.yml production-only 게이트/dev 보고, release.yml 전체 low 게이트 유지. 이번 두 npm audit 0건. 정책 변경은 보류; 선택 과제는 로컬 재현만 추가.",
-    "updated": "2026-09-21"
+    "note": "정찰 확인 유지. 정책 변경이며 지난 audit-release 접근을 반복하지 않음.",
+    "updated": "2026-09-22"
   },
   {
     "title": "비-silent OIDC 제공자 오류가 브라우저 탭에 401 JSON으로 보임",
@@ -14,8 +14,8 @@
     "risk": 2,
     "size": "S",
     "status": "pending",
-    "note": "auth.go oidcCallback의 401 oidc_error 확인. auth 보호 경로라 제외.",
-    "updated": "2026-09-21"
+    "note": "인증 보호 경로로 이번 범위에서 제외.",
+    "updated": "2026-09-22"
   },
   {
     "title": "동점 개인 랭킹을 먼저 세운 기록(created_at)이 앞서도록 catalog·defense도 RealmGuard 규칙으로 통일",
@@ -23,8 +23,8 @@
     "risk": 2,
     "size": "S",
     "status": "pending",
-    "note": "catalog/defense score,id와 RealmGuard score,created_at,id 확인. 결정성 수정은 완료되었으며 이 후보는 정책 변경.",
-    "updated": "2026-09-21"
+    "note": "식별자 정렬은 해결됨. 시간 기준 통일은 별도 정책 변경.",
+    "updated": "2026-09-22"
   },
   {
     "title": "메일 수신 거부(mail_opt_out)를 환경설정 화면에 스위치로 노출",
@@ -32,8 +32,8 @@
     "risk": 1,
     "size": "S",
     "status": "pending",
-    "note": "internal/mail 없음, PreferencesPage는 표시 설정만 관리. 메일 브랜치 머지 전 차단 상태 유지.",
-    "updated": "2026-09-21"
+    "note": "현재 main에 메일 소스 없음. 관련 브랜치 머지 후 재평가.",
+    "updated": "2026-09-22"
   },
   {
     "title": "이벤트 알림 digest 경로",
@@ -41,8 +41,8 @@
     "risk": 2,
     "size": "M",
     "status": "pending",
-    "note": "현재 메일 구현 없음. 기반 기능 머지 전 실행 불가.",
-    "updated": "2026-09-21"
+    "note": "메일 기반 소스 미포함으로 차단.",
+    "updated": "2026-09-22"
   },
   {
     "title": "방문 추적·OIDC 자동 로그인·MCP SSO·메일 화면 캡처를 관리자 가이드에 추가",
@@ -50,8 +50,8 @@
     "risk": 2,
     "size": "M",
     "status": "pending",
-    "note": "capture.mjs admin/security 존재, tracking 장면 없음. MCP OAuth·메일 소스 없음. 폐기 가능한 배포 가드 필요.",
-    "updated": "2026-09-21"
+    "note": "MCP OAuth·메일 부재 및 전용 폐기 배포 필요.",
+    "updated": "2026-09-22"
   },
   {
     "title": "끝난 세션에 계속 result를 덧붙일 수 있음",
@@ -59,26 +59,17 @@
     "risk": 2,
     "size": "S",
     "status": "pending",
-    "note": "catalog.go finishGameSession은 active/finished 및 result||$4 유지. 재시도 계약 확인 없이는 변경하지 않음.",
-    "updated": "2026-09-21"
+    "note": "재시도 정책 확정 전 변경하지 않음.",
+    "updated": "2026-09-22"
   },
   {
-    "title": "릴리즈 audit 게이트를 한 번에 재현하는 make 타깃(audit-release)",
+    "title": "bootstrap 암호의 bcrypt 최대 바이트 길이를 설정 단계에서 검증",
     "value": 3,
     "risk": 1,
     "size": "S",
     "status": "done",
-    "note": "f22a60d: 직렬 make audit-release와 CI/release 감사 범위 문서 정정 완료. 실제 두 npm 감사 및 govulncheck@v1.6.0 통과; 실제 npm 연결 거부 시 make exit 2 및 후속 검사 미실행 확인.",
-    "updated": "2026-09-21"
-  },
-  {
-    "title": "bootstrap 암호의 bcrypt 최대 바이트 길이를 설정 단계에서 검증",
-    "value": 2,
-    "risk": 1,
-    "size": "S",
-    "status": "pending",
-    "note": "config.Load는 최소 12 rune만 검사; EnsureBootstrapAdmin은 bcrypt.GenerateFromPassword 사용. 72-byte 오류 실제 재현은 이번에도 미실행.",
-    "updated": "2026-09-21"
+    "note": "bc8791d: 최소 12 rune 이후 최대 72 bytes 검사. 환경변수 테스트 및 실제 main 기동 5종 통과.",
+    "updated": "2026-09-22"
   },
   {
     "title": "README의 RealmGuard 서버 재현 설명과 구형 telemetry 설명 정합성 개선",
@@ -86,8 +77,8 @@
     "risk": 1,
     "size": "S",
     "status": "pending",
-    "note": "README 상충 문장과 realmguard.go replayRealmGuardBattle, docs/realmguard.md의 server_replay_v1 확인. 이번 차선.",
-    "updated": "2026-09-21"
+    "note": "차선 유지. 주 과제 유효하여 이번 수정 제외. 버전 변경은 릴리즈 역할 범위.",
+    "updated": "2026-09-22"
   },
   {
     "title": "PostgreSQL 회귀 테스트를 PR 단계에서 실행하는 배선",
@@ -95,8 +86,8 @@
     "risk": 2,
     "size": "M",
     "status": "pending",
-    "note": "CI IGAME_TEST_DSN 미설정, release는 Defense seed 전용 DSN만 존재. 보호 workflow 변경이라 제외.",
-    "updated": "2026-09-21"
+    "note": "workflow 보호 경로로 이번 제외.",
+    "updated": "2026-09-22"
   },
   {
     "title": "serviceLocation 설정 읽기 실패 시 시간대가 조용히 바뀌는 문제",
@@ -104,17 +95,8 @@
     "risk": 2,
     "size": "M",
     "status": "pending",
-    "note": "extended.go serviceLocation 오류 무시와 Asia/Seoul 폴백 확인. 모든 소비 경로 및 오류 정책 설계가 필요.",
-    "updated": "2026-09-21"
-  },
-  {
-    "title": "Migrate 체크섬 불일치·트랜잭션 경계 통합 테스트",
-    "value": 4,
-    "risk": 1,
-    "size": "M",
-    "status": "done",
-    "note": "1ac69f4가 HEAD에 포함. database_pg_test.go 3개와 Makefile test-db의 database 패키지 연결 확인. 재선택 금지.",
-    "updated": "2026-09-21"
+    "note": "다수 소비 경로 및 오류 정책 설계 필요.",
+    "updated": "2026-09-22"
   },
   {
     "title": "API PostgreSQL fixture의 테스트별 스키마 격리",
@@ -122,8 +104,8 @@
     "risk": 2,
     "size": "M",
     "status": "pending",
-    "note": "admin_pg_test.go migratedPool은 DSN 기본 스키마를 공유. database migrationPool만 UUID 스키마 격리. 기존 fixture 소비 범위가 커 이번 제외.",
-    "updated": "2026-09-21"
+    "note": "기본 스키마 공유 fixture의 영향 범위가 커 이번 제외.",
+    "updated": "2026-09-22"
   },
   {
     "title": "Migrate context 취소의 롤백·재시도 계약 검증",
@@ -131,25 +113,16 @@
     "risk": 1,
     "size": "M",
     "status": "pending",
-    "note": "기존 PG 3개는 정상 재실행·체크섬·INSERT 실패를 다룸; 취소 전용 계약은 없음. 직전 migration 작업과 구분되지만 이번에는 다른 영역 선택.",
-    "updated": "2026-09-21"
+    "note": "이전 기록의 미완료 후보 유지. 실제 PostgreSQL fixture로 후속 검증 필요.",
+    "updated": "2026-09-22"
   },
   {
-    "title": "README 개발 절의 하드코딩된 서비스 버전 드리프트 제거",
+    "title": "architecture 문서의 비밀 저장·키 회전 설명을 실제 구현과 대조",
     "value": 2,
     "risk": 1,
     "size": "S",
     "status": "pending",
-    "note": "신규. README 마지막 버전 정렬 문장이 0.7.17인데 VERSION 및 SDK/Web은 0.7.18. 반복 릴리즈 시 stale해지는 문장을 VERSION 참조로 바꾸는 후보.",
-    "updated": "2026-09-21"
-  },
-  {
-    "title": "make test-db 도움말에 pgcrypto 전용 스키마 사전조건 안내",
-    "value": 2,
-    "risk": 1,
-    "size": "S",
-    "status": "pending",
-    "note": "신규. Makefile help는 DSN만 요구하지만 database migrationPool은 public의 pgcrypto를 거부. 이미 정확한 README 절을 help에서 안내하면 준비 실패를 줄일 수 있음; 실제 테스트 설계 변경 불필요.",
-    "updated": "2026-09-21"
+    "note": "프로필에 기록된 DEK·개인키 암호화·유예 회전 불일치 후보. 후속 회차에서 소스 재확인 필요.",
+    "updated": "2026-09-22"
   }
 ]
