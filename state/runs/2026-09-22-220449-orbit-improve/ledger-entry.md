@@ -1,0 +1,6 @@
+## 2026-09-22
+- 선택: 미래 시각으로 들어온 교류 기록을 거부하고, 교류 입력 검증을 이름 있는 순수 함수로 묶기 (가치 3 / 위험 2 / 작업량 S)
+- 결과: 성공
+- 요약: `POST /api/v1/people/{personID}/interactions` 의 `occurred_at` 에 상한이 없어 미래 값 한 건이 relationshipMetrics(`math.Max(0,days)` → 만점 가중치)·`last_interaction_at`(max)·Time Travel(`occurred_at<=at` 이라 안 보임)에서 서로 다르게 읽혔다. 핸들러 안 익명 구조체를 파일 수준 `interactionInput` 으로 올리고 흩어진 검증(kind 화이트리스트·zero 보정·weight 보정)을 `validateInteractionInput(in *interactionInput, now time.Time) error` 로 뺀 뒤 `interactionFutureSkew = 5 * time.Minute` 를 넘는 미래를 `400 validation_error` 로 거부한다(과거 하한·weight 보정 동작은 그대로). 검증: 고치기 전 실제 핸들러 테스트가 `data.go:437`(사람 존재 확인 쿼리)에서 nil store 패닉으로 빨갛게 되는 것을 먼저 확인해 "검증이 DB 앞에서 끝나지 않는다"를 재현했고, 고친 뒤 `gofmt -l internal/server`(출력 없음)·`go vet ./...`·`go test -race -count=1 -v ./internal/server -run Interaction`(7 PASS)·`go test -race ./...` 모두 초록.
+- 보류 아이디어: orbitAt 포함 규칙과 기억 수 시점 필터를 실제 postgres 로 고정 (3/1/M); Time Travel API(/orbit?at=, earliest_at, historical)를 openapi.go·API.md 에 문서화 (2/1/S); parseOrbitAt 이 미래 시각을 거부 — 이제 interactionFutureSkew 를 재사용할 수 있다 (2/2/S); date-only ?at= 의 UTC 자정 해석을 문서화 (2/2/S); InteractionDialog 의 datetime-local 에 max 를 두어 왕복 전에 막기 — 이번에 선택 항목으로 남겨 뒀다 (2/1/S)
+- 과제서: 채택 — 근거(상한 없음, 세 경로가 같은 값을 다르게 읽음, INSERT 경로는 data.go 한 곳)가 지금 코드와 정확히 일치해 수용 기준 1~3 을 그대로 구현했다.

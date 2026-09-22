@@ -28,3 +28,10 @@
 - 과제서: 채택 — 근거(listData 가 deletedAt 을 안 봄, 세 곳의 중복 판정, 호출자 범위)가 코드와 전부 일치했고 선택 항목(resolveExportable 도 헬퍼 사용)까지 포함해 그대로 구현했다. 과제서가 미확인이라 한 "/data 가 세션 user 없이 200 인지"는 테스트로 확인(200, sessionAttr 불필요).
 
 - 릴리즈: v1.19.0 (2026-09-20, run 2026-09-20-142405-nexabuilder-improve)
+## 2026-09-22
+- 선택: `GET /api/v1/data/lists/{listId}`(jqxgrid 어댑터)의 휴지통 목록 구멍을 `requireLiveList` 로 막고 null `pageSize` NPE(500)를 함께 고친다 (가치 4 / 위험 2 / 작업량 S)
+- 결과: 성공
+- 요약: `DataAdapterService.queryList` 는 `findById` 만 하고 `deletedAt` 을 보지 않아, 정의 조회·`/builder/lists/{id}/data`·내보내기 3종이 모두 "List not found" 로 막는 목록의 행을 이 어댑터 URL 로는 계속 읽을 수 있었고, 같은 줄에서 nullable 한 `page_size` 를 `int` 로 언박싱해 `page_size` 가 빈 목록은 무조건 500 이었다. 판정을 `NexaUiService.requireLiveList` 로 넘겨(이제 `listDefinition`·`listData`·`resolveExportable`·`queryList` 네 경로가 전부 같은 헬퍼 하나를 통과 — grep 으로 확인) 예외 타입·문구·400 매핑을 그대로 맞추고, `parse` 의 두 번째 인자를 `Integer` 로 바꿔 기존 `> 0` 분기를 null 까지 확장해 `listData` 와 같은 100 으로 떨어지게 했다. 신규 `DataAdapterListSoftDeleteIntegrationTest` 3건(실제 H2·MockMvc)을 수정 전에 단독 실행해 null pageSize 는 `expected:<200> but was:<500>`(스택트레이스로 `getPageSize()` 언박싱 NPE at DataAdapterService.java:65 확인), 휴지통 목록은 `expected:<400> but was:<200>` 으로 빨간 것을 먼저 보고 고쳐 초록; `cleanTest test` 전체 578건(575+3) 통과·0 skip, `bootJar -x test` 성공. 커밋 5c65840.
+- 보류 아이디어: `DataAdapterService.parse` 의 페이지 입력 음수·오버플로 검증(`pagenum=-1` → subList 음수 인덱스, `pagesize=0` → SQL 백엔드 전체 행) — 계약을 먼저 정할 것(3/2/M) / `/api/v1/data/lists/{id}` 에 ScreenPermissionService 게이트 없음 — permission 은 위험 구역이라 별도 회차(3/4/M) / CI 에 wrapper-validation 추가 + docker-publish checkout v6 정렬 + gradlew 실행 비트(3/1/S) / 폼 쪽 soft-delete 판정을 requireLiveForm 헬퍼로 통일 — 현재 관찰 가능한 버그는 없음(2/2/S) / ListExportController 의 OpenPDF 3 deprecated API 정리 — 이번 빌드에서도 deprecation note 확인(2/2/S)
+- 과제서: 채택 — 근거 3가지(`queryList:63-65` 가 deletedAt 미검사, 같은 줄 Integer→int 언박싱, 성공/실패 봉투가 다름)가 코드와 전부 일치했고 지정한 파일·기본값 100·`@DirtiesContext` 금지까지 그대로 따랐다. 다만 과제서가 "휴지통 케이스는 지금 200" 이라 한 것은 그 픽스처(pageSize null)에서는 NPE 가 먼저 터져 500 이었으므로, 휴지통 테스트만 `pageSize(10)` 으로 씨딩해 빨간 이유가 구멍(200+행) 자체가 되도록 바로잡았다.
+
