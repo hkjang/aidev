@@ -1,7 +1,7 @@
 ---
 title: "orbit — 자율 개선 이력"
 description: "orbit: 자율 개선 회차 14회, 릴리즈 4건. 최근 릴리즈 v0.6.3 (자산 1개)."
-last_modified_at: 2026-09-22 22:57:12 +0900
+last_modified_at: 2026-09-22 23:27:53 +0900
 ---
 {% raw %}
 <script type="application/ld+json">
@@ -18,7 +18,7 @@ last_modified_at: 2026-09-22 22:57:12 +0900
   "name": "hkjang",
   "url": "https://github.com/hkjang"
  },
- "dateModified": "2026-09-22T22:57:12+09:00",
+ "dateModified": "2026-09-22T23:27:53+09:00",
  "version": "0.6.3"
 }
 </script>
