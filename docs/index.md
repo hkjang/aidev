@@ -1,7 +1,7 @@
 ---
 title: "aidev 자율 개선 대시보드"
 description: "Claude Code 자율 개선 에이전트가 hkjang 의 프로젝트를 개선·테스트·머지·릴리즈한 일일 보고. 오늘 49회차·릴리즈 4건, 누적 1266회차·릴리즈 418건, 주의 필요 2건."
-last_modified_at: 2026-09-22 13:33:12 +0900
+last_modified_at: 2026-09-22 13:43:10 +0900
 ---
 {% raw %}
 <script type="application/ld+json">
@@ -17,7 +17,7 @@ last_modified_at: 2026-09-22 13:33:12 +0900
   "name": "hkjang",
   "url": "https://github.com/hkjang"
  },
- "dateModified": "2026-09-22T13:33:12+09:00"
+ "dateModified": "2026-09-22T13:43:10+09:00"
 }
 </script>
 
@@ -315,17 +315,17 @@ last_modified_at: 2026-09-22 13:33:12 +0900
 
 # aidev 자율 개선 대시보드
 
-<p class="tldr"><strong>한 줄 요약.</strong> Claude Code 자율 개선 에이전트가 hkjang 의 프로젝트를 개선·테스트·머지·릴리즈한 일일 보고. 오늘 49회차·릴리즈 4건, 누적 1266회차·릴리즈 418건, 주의 필요 2건. 회차가 끝날 때마다 자동 갱신됩니다 (마지막 갱신 <time datetime="2026-09-22T13:33:12+09:00" data-rel>2026-09-22 13:33</time> KST).</p>
+<p class="tldr"><strong>한 줄 요약.</strong> Claude Code 자율 개선 에이전트가 hkjang 의 프로젝트를 개선·테스트·머지·릴리즈한 일일 보고. 오늘 49회차·릴리즈 4건, 누적 1266회차·릴리즈 418건, 주의 필요 2건. 회차가 끝날 때마다 자동 갱신됩니다 (마지막 갱신 <time datetime="2026-09-22T13:43:10+09:00" data-rel>2026-09-22 13:43</time> KST).</p>
 
 <div class="alerts" role="alert"><strong>⚠️ 주의 필요 2건</strong> <span class="meta">— 새 경고는 GitHub Issue·Slack·이메일·Windows 알림으로도 보냅니다</span><ul><li><a href="https://hkjang.github.io/aidev/projects/jasql_semantic/">jasql_semantic</a> — 수정 과제 대기 중 — 오류 대응(자동 적재): 마지막 회차가 &#x27;error&#x27; 로 끝났습니다. fix-round: error: pr create</li><li><a href="https://hkjang.github.io/aidev/projects/aiportal-front/">aiportal-front</a> — 수정 과제 대기 중 — 오류 대응(자동 적재): 릴리즈 실패(). 다음 버전 및 릴리즈 커밋·태그 관례를 확정할 근거 부족. docs/RELEASE.md와 실제 Git/JSON 재조회: non-shallow 저장소의 로컬 태그 0개, 최근 37개 커밋에 실제 릴리즈 관례 없음, package.json 및 lo</li></ul></div>
 
-<div class="alerts ok" role="status"><strong>🩺 러너 정상</strong> <span class="meta">— 마지막 회차 2분 전 · 스케줄러 실행 중 · 다음 실행 2026-09-22 오후 1:20:00 · 디스크 74% · 최근 7일 회귀 1건 · 점검 13:15</span></div>
+<div class="alerts ok" role="status"><strong>🩺 러너 정상</strong> <span class="meta">— 마지막 회차 11분 전 · 스케줄러 준비 · 다음 실행 2026-09-22 오후 1:50:00 · 디스크 74% · 최근 7일 회귀 1건 · 점검 13:45</span><ul><li>조치: 소유 프로세스 없는 잠금 파일을 제거했다</li></ul></div>
 
 <div class="alerts" role="alert"><strong>⛔ 긴급 중지 중:</strong> <code>aiportal-java</code> — <a href="https://hkjang.github.io/aidev/inbox/">작업함</a></div>
 
-<p><a href="https://hkjang.github.io/aidev/inbox/"><strong>📥 작업함</strong></a> — 열린 러너 PR·복구·수정 과제 124건 (그중 사람 필요 78건)</p>
+<p><a href="https://hkjang.github.io/aidev/inbox/"><strong>📥 작업함</strong></a> — 열린 러너 PR·복구·수정 과제 124건 (그중 사람 필요 79건)</p>
 
-<p>🧹 <strong>PR 처리기</strong> — 매시간 검토 대기 PR 을 진단해 고치고 심사해 승인 · 마지막 실행 2026-09-22 12:35 · 오늘 승인 1 · 수정 푸시 0 · 사람 필요 4 <span class="meta">(기록: state/shepherd.jsonl)</span></p>
+<p>🧹 <strong>PR 처리기</strong> — 매시간 검토 대기 PR 을 진단해 고치고 심사해 승인 · 마지막 실행 2026-09-22 13:40 · 오늘 승인 1 · 수정 푸시 0 · 사람 필요 5 <span class="meta">(기록: state/shepherd.jsonl)</span></p>
 
 [운영 문서](https://github.com/hkjang/aidev#readme) · [원장](https://github.com/hkjang/aidev/tree/main/state) · [실행 이력](https://github.com/hkjang/aidev/commits/main) · [경고 이슈](https://github.com/hkjang/aidev/issues?q=label%3Aalert) · [교훈 25건](https://hkjang.github.io/aidev/lessons/) · [경험 보고 논문](https://hkjang.github.io/aidev/paper/ko/) ([EN](https://hkjang.github.io/aidev/paper/)) · [Atom 피드](https://hkjang.github.io/aidev/feed.xml) · [summary.json](https://hkjang.github.io/aidev/data/summary.json)
 
@@ -373,7 +373,7 @@ last_modified_at: 2026-09-22 13:33:12 +0900
 
 ## 품질 지표 (최근 14일)
 
-<ul class="stats"><li title="관찰 24h 지난 머지 318건 중 회귀 없음 318건"><b>100%</b><span>검증된 개선 완료율</span></li><li title="릴리즈 시도 261건 중 자산 검증까지 249건"><b>95%</b><span>완전한 릴리즈 비율</span></li><li title="되돌림·롤백 0건 / 관찰 머지 318건"><b>0%</b><span>사람의 재작업률</span></li><li title="회귀 0건 / 관찰 머지 318건"><b>0%</b><span>변경 후 회귀율</span></li><li title="비용 확인된 유효 개선 294건, 미확인 세션 418"><b>$13.18</b><span>유효 개선당 비용</span></li><li title="해결된 경고 208건"><b>5.7시간</b><span>예외 처리 소요 시간(중앙값)</span></li><li title="최근 14일"><b>196</b><span>실행 오류</span></li></ul>
+<ul class="stats"><li title="관찰 24h 지난 머지 318건 중 회귀 없음 318건"><b>100%</b><span>검증된 개선 완료율</span></li><li title="릴리즈 시도 261건 중 자산 검증까지 249건"><b>95%</b><span>완전한 릴리즈 비율</span></li><li title="되돌림·롤백 0건 / 관찰 머지 318건"><b>0%</b><span>사람의 재작업률</span></li><li title="회귀 0건 / 관찰 머지 318건"><b>0%</b><span>변경 후 회귀율</span></li><li title="비용 확인된 유효 개선 294건, 미확인 세션 418"><b>$13.18</b><span>유효 개선당 비용</span></li><li title="해결된 경고 209건"><b>5.6시간</b><span>예외 처리 소요 시간(중앙값)</span></li><li title="최근 14일"><b>196</b><span>실행 오류</span></li></ul>
 
 '검증된 개선'은 머지 후 24시간 관찰에서 회귀(main CI 실패·되돌림·롤백)가 없는 변경. '완전한 릴리즈'는 태그·Release·필수 자산 검증까지 끝난 것. 비용이 확인되지 않은 세션은 0이 아니라 '미확인'으로 뺀다.
 
@@ -381,7 +381,7 @@ last_modified_at: 2026-09-22 13:33:12 +0900
 
 <p class="meta">한 회차는 정찰 → 구현 → 검증 → 비평 → (수리 → 중재) → PR → 릴리즈 순으로 여러 세션이 나눠 맡는다 (<a href="https://github.com/hkjang/aidev/blob/main/AGENTS.md">AGENTS.md</a>). 역할마다 몇 번 불렸고 무엇을 해냈는지.</p>
 
-<div class="table-wrap"><table class="rt"><thead><tr><th class="primary">역할</th><th class="num">호출</th><th>지표</th><th class="num">비용</th></tr></thead><tbody><tr data-status="released"><td data-label="역할" class="primary">정찰 scout</td><td data-label="호출" class="num">217</td><td data-label="지표">과제서 97% · 구현자 채택 96% · 과제서 회차의 PR 도달 62%</td><td data-label="비용" class="num">$116.54</td></tr><tr data-status="released"><td data-label="역할" class="primary">구현 builder</td><td data-label="호출" class="num">656</td><td data-label="지표">러너 검증 통과 94% · 변경 없음 93</td><td data-label="비용" class="num">$2772.75</td></tr><tr data-status="released"><td data-label="역할" class="primary">비평 critic</td><td data-label="호출" class="num">401</td><td data-label="지표">최종 승인 85% · 한 번이라도 거절 65 · 승인·머지 뒤 회귀 0/289</td><td data-label="비용" class="num">$579.09</td></tr><tr data-status="released"><td data-label="역할" class="primary">수리 repairer</td><td data-label="호출" class="num">11</td><td data-label="지표">고쳐서 재검증 통과 100% · 손대지 않음 0</td><td data-label="비용" class="num">$8.04</td></tr><tr data-status="nochange"><td data-label="역할" class="primary">중재 arbiter</td><td data-label="호출" class="num">0</td><td data-label="지표">수리 편 0 · 비평 편 0</td><td data-label="비용" class="num">$0.00</td></tr><tr data-status="released"><td data-label="역할" class="primary">릴리즈 releaser</td><td data-label="호출" class="num">332</td><td data-label="지표">완전한 릴리즈 75%</td><td data-label="비용" class="num">$397.74</td></tr><tr data-status="released"><td data-label="역할" class="primary">PR 심사 shepherd-reviewer</td><td data-label="호출" class="num">176</td><td data-label="지표">승인 45 · 거절 56 · 사람 필요 75 · 승인 뒤 회귀 0</td><td data-label="비용" class="num">$296.66</td></tr><tr data-status="released"><td data-label="역할" class="primary">PR 수리 shepherd-fixer</td><td data-label="호출" class="num">64</td><td data-label="지표">고쳐서 푸시 64%</td><td data-label="비용" class="num"></td></tr><tr data-status="released"><td data-label="역할" class="primary">기록·학습 historian</td><td data-label="호출" class="num">59</td><td data-label="지표">캠페인 교훈 37개 · 운영자 규칙 10개</td><td data-label="비용" class="num">$0.27</td></tr><tr data-status="nochange"><td data-label="역할" class="primary">코파일럿 copilot</td><td data-label="호출" class="num">0</td><td data-label="지표">텔레그램 답장</td><td data-label="비용" class="num">$0.00</td></tr><tr data-status="released"><td data-label="역할" class="primary">머지 뒤 30일 (postmerge)</td><td data-label="호출" class="num">187</td><td data-label="지표">같은 파일에 fix 커밋 132/187 (그중 사람이 고친 것 49/187) · 승인 주체별 사람 수정: 자동 44/174 / 사람 승인 5/13 / 처리기 — · 비평 위험도별 사람 수정: low 36/143 / medium 8/29 · 첫 수정까지 중앙값 6일 (상한 추정: 같은 파일을 고친 것이지 그 PR 을 고친 것은 아닐 수 있다)</td><td data-label="비용" class="num"></td></tr><tr data-status="released"><td data-label="역할" class="primary">실패 분류 (MAST)</td><td data-label="호출" class="num">288</td><td data-label="지표">시스템 설계·인프라 154 · 에이전트 간 불일치(비평 거절·과제서 기각·수리 실패) 64 · 검증·종료(러너 검증·CI·중재 거절) 70</td><td data-label="비용" class="num"></td></tr></tbody></table></div>
+<div class="table-wrap"><table class="rt"><thead><tr><th class="primary">역할</th><th class="num">호출</th><th>지표</th><th class="num">비용</th></tr></thead><tbody><tr data-status="released"><td data-label="역할" class="primary">정찰 scout</td><td data-label="호출" class="num">217</td><td data-label="지표">과제서 97% · 구현자 채택 96% · 과제서 회차의 PR 도달 62%</td><td data-label="비용" class="num">$116.54</td></tr><tr data-status="released"><td data-label="역할" class="primary">구현 builder</td><td data-label="호출" class="num">656</td><td data-label="지표">러너 검증 통과 94% · 변경 없음 93</td><td data-label="비용" class="num">$2772.75</td></tr><tr data-status="released"><td data-label="역할" class="primary">비평 critic</td><td data-label="호출" class="num">401</td><td data-label="지표">최종 승인 85% · 한 번이라도 거절 65 · 승인·머지 뒤 회귀 0/289</td><td data-label="비용" class="num">$579.09</td></tr><tr data-status="released"><td data-label="역할" class="primary">수리 repairer</td><td data-label="호출" class="num">11</td><td data-label="지표">고쳐서 재검증 통과 100% · 손대지 않음 0</td><td data-label="비용" class="num">$8.04</td></tr><tr data-status="nochange"><td data-label="역할" class="primary">중재 arbiter</td><td data-label="호출" class="num">0</td><td data-label="지표">수리 편 0 · 비평 편 0</td><td data-label="비용" class="num">$0.00</td></tr><tr data-status="released"><td data-label="역할" class="primary">릴리즈 releaser</td><td data-label="호출" class="num">332</td><td data-label="지표">완전한 릴리즈 75%</td><td data-label="비용" class="num">$397.74</td></tr><tr data-status="released"><td data-label="역할" class="primary">PR 심사 shepherd-reviewer</td><td data-label="호출" class="num">177</td><td data-label="지표">승인 45 · 거절 56 · 사람 필요 76 · 승인 뒤 회귀 0</td><td data-label="비용" class="num">$296.66</td></tr><tr data-status="released"><td data-label="역할" class="primary">PR 수리 shepherd-fixer</td><td data-label="호출" class="num">64</td><td data-label="지표">고쳐서 푸시 64%</td><td data-label="비용" class="num"></td></tr><tr data-status="released"><td data-label="역할" class="primary">기록·학습 historian</td><td data-label="호출" class="num">59</td><td data-label="지표">캠페인 교훈 37개 · 운영자 규칙 10개</td><td data-label="비용" class="num">$0.27</td></tr><tr data-status="nochange"><td data-label="역할" class="primary">코파일럿 copilot</td><td data-label="호출" class="num">0</td><td data-label="지표">텔레그램 답장</td><td data-label="비용" class="num">$0.00</td></tr><tr data-status="released"><td data-label="역할" class="primary">머지 뒤 30일 (postmerge)</td><td data-label="호출" class="num">187</td><td data-label="지표">같은 파일에 fix 커밋 132/187 (그중 사람이 고친 것 49/187) · 승인 주체별 사람 수정: 자동 44/174 / 사람 승인 5/13 / 처리기 — · 비평 위험도별 사람 수정: low 36/143 / medium 8/29 · 첫 수정까지 중앙값 6일 (상한 추정: 같은 파일을 고친 것이지 그 PR 을 고친 것은 아닐 수 있다)</td><td data-label="비용" class="num"></td></tr><tr data-status="released"><td data-label="역할" class="primary">실패 분류 (MAST)</td><td data-label="호출" class="num">288</td><td data-label="지표">시스템 설계·인프라 154 · 에이전트 간 불일치(비평 거절·과제서 기각·수리 실패) 64 · 검증·종료(러너 검증·CI·중재 거절) 70</td><td data-label="비용" class="num"></td></tr></tbody></table></div>
 
 ## 비용·사용량
 
