@@ -189,3 +189,4 @@
 - 보류 아이디어: preferences upsert/delete 의 400 을 원인별 400/500 으로 분리(서비스 ErrInvalid 센티널 필요, M) / uploadTeamImage 가 10MB 초과 본문에도 200 + 감사 로그(차선 후보, 스텁이라 '효과 없는 정리' 소지) / postacks·관리자 예외 경로의 IsMember DB 오류 403 위장 분리(권한 예외 설계 선행, M) / 자동화 dead run 시 소유자 메일(automation_failed — mail 패키지가 아직 main 에 없어 선행 브랜치 머지 후) / e2e sso-oidc.spec 의 silent SSO 거절 시나리오(브라우저 준비 비용).
 - 과제서: 채택 — 과제서의 근거(핸들러가 모든 오류를 404 로 접고 서비스는 이미 pgx.ErrNoRows 를 구분)가 현재 코드와 정확히 일치했고 수용 기준 1~4 를 실제 DB 회귀로 충족했다.
 
+- 릴리즈: v0.2.35 (2026-09-22, run 2026-09-22-200440-moyro-improve)
