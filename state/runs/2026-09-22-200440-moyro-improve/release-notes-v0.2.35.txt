@@ -1,0 +1,17 @@
+moyro v0.2.35
+
+Preference reads now answer by cause.
+`GET /api/v4/users/{user_id}/preferences/{category}/name/{name}` mapped every
+`prefs.GetByName` failure to 404 `api.preference.get.not_found`, so a
+connection failure, a broken table or a cancelled context looked to a client
+exactly like "you never saved this setting" and the official clients silently
+fell back to defaults — a lost theme or sidebar setting instead of a visible
+outage — while the sibling list endpoints on the same resource already
+reported storage faults as 500. Only `pgx.ErrNoRows`, which the service
+already returns for a missing row, keeps the 404, with the error id, message
+and response shape unchanged because clients match on them, and every other
+failure answers 500 `api.preference.get.app_error` like the list paths. The
+service contract, the `/api/v4` paths and `pluginhost`'s
+`GetPreferenceForUser` are untouched, and there is no web change. A Postgres
+integration test pins the 200/404/500 split through the real handler and the
+real service.

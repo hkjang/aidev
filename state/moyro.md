@@ -182,3 +182,10 @@
   - getPreferenceByName 404/500 분리 (가치 3 / 위험 2 / 작업량 S): 옛 PR 반려 여부 확인 전 재시도 금지.
 - 과제서: 채택 — 현재 코드에 세 오류 무시가 존재했으며 지정된 국소 수정과 실제 DB 회귀로 수용 기준을 검증했다.
 
+## 2026-09-22
+- 선택: getPreferenceByName 이 DB 장애까지 404 로 내던 것을 404/500 으로 분리 (가치 3 / 위험 1 / 작업량 S)
+- 결과: 성공
+- 요약: `GET /api/v4/users/{user_id}/preferences/{category}/name/{name}` 핸들러가 `prefs.GetByName` 의 오류를 종류와 무관하게 404 `api.preference.get.not_found` 로 바꿔, 연결 실패·테이블 장애·컨텍스트 취소도 클라이언트에는 "그런 설정은 없다"로 보이고 공식 클라이언트가 조용히 기본값으로 넘어갔다(같은 리소스의 list 경로들은 이미 500 을 낸다). 서비스가 이미 구분해 돌려주는 `pgx.ErrNoRows` 만 404 로 두고(본문 id·메시지 그대로) 나머지는 500 `api.preference.get.app_error` 로 갈랐으며, 서비스 계약은 건드리지 않아 `pluginhost` 의 `GetPreferenceForUser` 는 영향이 없다. 검증: 신규 파일 `preferences_errors_postgres_test.go` 의 회귀 테스트(실제 PostgreSQL 16 격리 스키마 + 실제 `preferences.Service` + 실제 핸들러로 200/404/`DROP TABLE preferences CASCADE` 후 500)를 수정 전 코드에서 먼저 돌려 500 자리가 404 로 실패하는 것을 확인했고, 수정 후 통과 및 404 분기를 무력화하면 404 단언이 깨지는 것까지 확인했다. `go vet ./...`, `go build ./...`, DSN 을 준 `go test -race -p 1 -count=1 ./internal/httpapi/`, 전체 `go test -race -p 1 ./...`, 루트 `bash scripts/check-source-sizes.sh`(early.go 54325/58000) 통과. 웹 변경 없음.
+- 보류 아이디어: preferences upsert/delete 의 400 을 원인별 400/500 으로 분리(서비스 ErrInvalid 센티널 필요, M) / uploadTeamImage 가 10MB 초과 본문에도 200 + 감사 로그(차선 후보, 스텁이라 '효과 없는 정리' 소지) / postacks·관리자 예외 경로의 IsMember DB 오류 403 위장 분리(권한 예외 설계 선행, M) / 자동화 dead run 시 소유자 메일(automation_failed — mail 패키지가 아직 main 에 없어 선행 브랜치 머지 후) / e2e sso-oidc.spec 의 silent SSO 거절 시나리오(브라우저 준비 비용).
+- 과제서: 채택 — 과제서의 근거(핸들러가 모든 오류를 404 로 접고 서비스는 이미 pgx.ErrNoRows 를 구분)가 현재 코드와 정확히 일치했고 수용 기준 1~4 를 실제 DB 회귀로 충족했다.
+
