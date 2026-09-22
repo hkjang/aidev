@@ -1,7 +1,7 @@
 ---
 title: "aiportal-front-admin — 자율 개선 이력"
 description: "aiportal-front-admin: 자율 개선 회차 55회, 릴리즈 0건. 최근 릴리즈 없음."
-last_modified_at: 2026-09-22 17:03:04 +0900
+last_modified_at: 2026-09-22 17:30:12 +0900
 ---
 {% raw %}
 <script type="application/ld+json">
@@ -18,7 +18,7 @@ last_modified_at: 2026-09-22 17:03:04 +0900
   "name": "hkjang",
   "url": "https://github.com/hkjang"
  },
- "dateModified": "2026-09-22T17:03:04+09:00"
+ "dateModified": "2026-09-22T17:30:12+09:00"
 }
 </script>
 
@@ -35,6 +35,7 @@ last_modified_at: 2026-09-22 17:03:04 +0900
 <dt>마지막 회차</dt><dd>2026-09-22 17:03 KST — <span class="pill pill-nochange">➖ 변경 없음</span> fix-round: no change</dd>
 <dt>최근 릴리즈</dt><dd>failed — failed</dd>
 <dt>사유</dt><dd>요청된 marketing:product-launch 및 technology:release-and-deployment 스킬과 Skill 호출 도구를 사용 가능한 도구 및 로컬 스킬 경로에서 찾지 못했다. 전체 로컬 Git 이력에 태그, 릴리즈 커밋, 버전 증가 이력, CHANGELOG/릴리즈 노트가 없고 제공된 GitHub Release 목록 및 GitHub workflows도 없다. 루트 package.json/package-lock.json은 최초부터 0.0.0, upgrade/admin-v2의 두 파일은 최초부터 0.1.0이어서 절차 5의 버전 파일도 없는 skipped 조건에는 해당하지 않는다. 문서는 GitLab 브랜치 기반 정적 파일 배포와 npm cache 반입만 설명하며 다음 버전·태그·릴리즈 노트 관례를 정할 근거가 없다. 새 관례를 임의로 만들지 않고 릴리즈를 중단했다. 저장소 변경·커밋·태그·자산 생성·원격 전송은 없으며 빌드/테스트 및 실제 서버/UAT는 이번 세션에서 실행하지 않았다.</dd>
+<dt>수정 과제</dt><dd>⚠️ 오류 대응(자동 적재): 릴리즈 실패(). 요청된 marketing:product-launch 및 technology:release-and-deployment 스킬과 Skill 호출 도구를 사용 가능한 도구 및 로컬 스킬 경로에서 찾지 못했다. 전체 로컬 Git 이력에 태그, 릴리즈 커밋, 버전 증가 이력, CHANGELOG/릴리즈 노트가 없고 제공된 GitHub Release 목록 및 GitHub workflows도 없다. 루트 package.json/package-lock.json은 최초부터 0.0.0, upgrade/admin-v2의 두 파일은 최초부터 0.1.0이어서 절차 5의 버전 파일도 없는 skipped 조건에는 해당하지 않는다. 문서는 GitLab 브랜치 기반 정적 파일 배포와 npm cache 반입만 설명하며 다음 버전·태그·릴리즈 노트 관례를 정할 근거가 없다. 새 관례를 임의로 만들지 않고 릴리즈를 중단했다. 저장소 변경·커밋·태그·자산 생성·원격 전송은 없으며 빌드/테스트 및 실제 서버/UAT는 이번 세션에서 실행하지 않았다.</dd>
 </dl>
 
 ## 회차 이력
