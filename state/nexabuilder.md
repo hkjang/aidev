@@ -35,3 +35,4 @@
 - 보류 아이디어: `DataAdapterService.parse` 의 페이지 입력 음수·오버플로 검증(`pagenum=-1` → subList 음수 인덱스, `pagesize=0` → SQL 백엔드 전체 행) — 계약을 먼저 정할 것(3/2/M) / `/api/v1/data/lists/{id}` 에 ScreenPermissionService 게이트 없음 — permission 은 위험 구역이라 별도 회차(3/4/M) / CI 에 wrapper-validation 추가 + docker-publish checkout v6 정렬 + gradlew 실행 비트(3/1/S) / 폼 쪽 soft-delete 판정을 requireLiveForm 헬퍼로 통일 — 현재 관찰 가능한 버그는 없음(2/2/S) / ListExportController 의 OpenPDF 3 deprecated API 정리 — 이번 빌드에서도 deprecation note 확인(2/2/S)
 - 과제서: 채택 — 근거 3가지(`queryList:63-65` 가 deletedAt 미검사, 같은 줄 Integer→int 언박싱, 성공/실패 봉투가 다름)가 코드와 전부 일치했고 지정한 파일·기본값 100·`@DirtiesContext` 금지까지 그대로 따랐다. 다만 과제서가 "휴지통 케이스는 지금 200" 이라 한 것은 그 픽스처(pageSize null)에서는 NPE 가 먼저 터져 500 이었으므로, 휴지통 테스트만 `pageSize(10)` 으로 씨딩해 빨간 이유가 구멍(200+행) 자체가 되도록 바로잡았다.
 
+- 릴리즈: v1.20.0 (2026-09-22, run 2026-09-22-220444-nexabuilder-improve)
