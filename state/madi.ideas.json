@@ -5,26 +5,26 @@
     "risk": 1,
     "size": "S",
     "status": "pending",
-    "note": "기존 후보·점수·상태·병합 선행 조건 유지. 구현 단계에서도 필수 technology 스킬 원문과 로딩 수단 미확인으로 코드 재평가·신규 후보 선정 미실시.",
-    "updated": "2026-09-21"
+    "note": "CLAUDE.md 없음. README는 웹 빌드 선행을 명시하며 .gitkeep은 현재 미추적. 존재하지 않는 자리표시자를 이미 적용됐다고 쓰지 않는 조건으로 차선.",
+    "updated": "2026-09-22"
   },
   {
     "title": "apk lock 드리프트를 PR 전에 잡는 scripts/check-apk-lock.sh (apk add --simulate)",
     "value": 3,
     "risk": 1,
-    "size": "S",
-    "status": "pending",
-    "note": "기존 후보·점수·상태·병합 선행 조건 유지. 구현 단계에서도 필수 technology 스킬 원문과 로딩 수단 미확인으로 코드 재평가·신규 후보 선정 미실시.",
-    "updated": "2026-09-21"
+    "size": "M",
+    "status": "done",
+    "note": "2fd17bf: Dockerfile runtime-base 조회, 읽기 전용 lock과 실제 APK 시뮬레이션, 입력 검증 및 실컨테이너 회귀 완료. busybox 양성/음성·프록시 연결 실패·해시/git diff 불변 통과. 기본 lock 충돌은 그대로 탐지.",
+    "updated": "2026-09-22"
   },
   {
     "title": "SAML /auth/saml/start 에도 return_to 보존 적용 (83239b9 설계 재시도)",
     "value": 2,
     "risk": 2,
     "size": "S",
-    "status": "pending",
-    "note": "기존 후보·점수·상태·병합 선행 조건 유지. 구현 단계에서도 필수 technology 스킬 원문과 로딩 수단 미확인으로 코드 재평가·신규 후보 선정 미실시.",
-    "updated": "2026-09-21"
+    "status": "rejected",
+    "note": "samlACS는 여전히 /app 고정이나 83239b9와 동일 접근 재시도는 운영자 지시상 이번 후보에서 제외. 미병합을 해결 완료로 보지 않음.",
+    "updated": "2026-09-22"
   },
   {
     "title": "메일 알림 Playwright 브라우저 시험",
@@ -32,8 +32,8 @@
     "risk": 2,
     "size": "M",
     "status": "pending",
-    "note": "기존 후보·점수·상태·병합 선행 조건 유지. 구현 단계에서도 필수 technology 스킬 원문과 로딩 수단 미확인으로 코드 재평가·신규 후보 선정 미실시.",
-    "updated": "2026-09-21"
+    "note": "별도 메일 발송 기록 기능의 파일/mail_deliveries가 현재 없음. 기존 notification-browser.mjs와 별개이며 해당 브랜치 병합 뒤 재평가.",
+    "updated": "2026-09-22"
   },
   {
     "title": "메일 발송 기록 보존 기간 정리(mail_deliveries)",
@@ -41,8 +41,8 @@
     "risk": 1,
     "size": "S",
     "status": "pending",
-    "note": "기존 후보·점수·상태·병합 선행 조건 유지. 구현 단계에서도 필수 technology 스킬 원문과 로딩 수단 미확인으로 코드 재평가·신규 후보 선정 미실시.",
-    "updated": "2026-09-21"
+    "note": "internal/web/tests 검색과 maintenance/backup_tables에서 대상 mail_deliveries 부재. 병합 선행 조건 유지.",
+    "updated": "2026-09-22"
   },
   {
     "title": "Playwright 시험에 silent SSO 루프 방지 + ?sso=none/error 안내 시나리오",
@@ -50,8 +50,8 @@
     "risk": 2,
     "size": "M",
     "status": "pending",
-    "note": "기존 후보·점수·상태·병합 선행 조건 유지. 구현 단계에서도 필수 technology 스킬 원문과 로딩 수단 미확인으로 코드 재평가·신규 후보 선정 미실시.",
-    "updated": "2026-09-21"
+    "note": "순수 함수 tests/silent-sso.mjs는 통과. loginSsoNotice 및 일반 로그인 sso=error 응답은 현재 없음. 기존 안내 변경 병합 후 전체 시나리오 착수; 이번에는 인증과 브라우저 환경 위험으로 후순위.",
+    "updated": "2026-09-22"
   },
   {
     "title": "SAML ACS 제공자 오류(Responder/AuthnFailed)도 /login?sso=error 로 안내",
@@ -59,8 +59,8 @@
     "risk": 2,
     "size": "S",
     "status": "pending",
-    "note": "기존 후보·점수·상태·병합 선행 조건 유지. 구현 단계에서도 필수 technology 스킬 원문과 로딩 수단 미확인으로 코드 재평가·신규 후보 선정 미실시.",
-    "updated": "2026-09-21"
+    "note": "samlACS가 현재 JSON 오류를 반환하고 프런트 오류 안내도 미병합. 상관관계/서명 검증 유지 설계와 안내 기능이 먼저 필요.",
+    "updated": "2026-09-22"
   },
   {
     "title": "OpenAPI 카탈로그에 OIDC/SAML start 파라미터 설명 추가",
@@ -68,8 +68,8 @@
     "risk": 1,
     "size": "S",
     "status": "pending",
-    "note": "기존 후보·점수·상태·병합 선행 조건 유지. 구현 단계에서도 필수 technology 스킬 원문과 로딩 수단 미확인으로 코드 재평가·신규 후보 선정 미실시.",
-    "updated": "2026-09-21"
+    "note": "openAPI는 302 응답만 기술. oidcStart의 prompt/return_to만 지금 유효하며 SAML return_to는 미지원이므로 문서화 금지.",
+    "updated": "2026-09-22"
   },
   {
     "title": "/handoff 비로그인 도착 시 로그인 뒤 return_to 복귀",
@@ -77,8 +77,8 @@
     "risk": 2,
     "size": "S",
     "status": "pending",
-    "note": "기존 후보·점수·상태·병합 선행 조건 유지. 구현 단계에서도 필수 technology 스킬 원문과 로딩 수단 미확인으로 코드 재평가·신규 후보 선정 미실시.",
-    "updated": "2026-09-21"
+    "note": "현재 handoff 파일·라우트 검색 결과 없음. 해당 브랜치 병합 뒤 재평가.",
+    "updated": "2026-09-22"
   },
   {
     "title": "문서 넘기기 브라우저 시험",
@@ -86,8 +86,8 @@
     "risk": 2,
     "size": "M",
     "status": "pending",
-    "note": "기존 후보·점수·상태·병합 선행 조건 유지. 구현 단계에서도 필수 technology 스킬 원문과 로딩 수단 미확인으로 코드 재평가·신규 후보 선정 미실시.",
-    "updated": "2026-09-21"
+    "note": "현재 handoff 구현 없음. 기능 병합 전에는 실행 과제로 선택 불가.",
+    "updated": "2026-09-22"
   },
   {
     "title": "OIDC 콜백 madi 쪽 검증 오류(400/409)도 /login?error= 로 안내",
@@ -95,8 +95,8 @@
     "risk": 2,
     "size": "S",
     "status": "pending",
-    "note": "기존 후보·점수·상태·병합 선행 조건 유지. 구현 단계에서도 필수 technology 스킬 원문과 로딩 수단 미확인으로 코드 재평가·신규 후보 선정 미실시.",
-    "updated": "2026-09-21"
+    "note": "oidcCallback의 상태/만료 400과 일반 제공자 401 JSON을 확인. 인증 오류 의미와 사용자 안내가 얽혀 독립 DX보다 위험이 큼.",
+    "updated": "2026-09-22"
   },
   {
     "title": "비밀번호 로그인과 OIDC 복귀 규칙 통일: preferences.last_path 를 OIDC 콜백 뒤에도 적용(관리자 /admin 복귀 포함)",
@@ -104,7 +104,25 @@
     "risk": 2,
     "size": "S",
     "status": "pending",
-    "note": "기존 후보·점수·상태·병합 선행 조건 유지. 구현 단계에서도 필수 technology 스킬 원문과 로딩 수단 미확인으로 코드 재평가·신규 후보 선정 미실시.",
-    "updated": "2026-09-21"
+    "note": "App.tsx는 preferences.last_path/localStorage를 읽으나 OIDC 링크는 고정 URL. 선행 OIDC 링크 PR과 중복 방지 필요, 관리자 정책 확대는 보류.",
+    "updated": "2026-09-22"
+  },
+  {
+    "title": "자연어 날짜에서 한국어·하이픈 혼합 구분자 입력 거부",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "신규. suggestDate가 2026년9-22와 2026-9월22일을 승인함을 직접 재현. 의도된 허용인지 요구 미확인이라 버그로 단정하지 않고 좁은 형식 계약 확인 후 진행.",
+    "updated": "2026-09-22"
+  },
+  {
+    "title": "자연어 날짜의 연도 경계·상한 회귀 보강",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "신규. naturalDate.ts는 1000~9999 가드를 갖지만 tests/natural-date.mjs에 12/31→1/1 및 9999 상대일 경계가 없음. 실제 suggestDate를 실행하는 표 기반 검증으로 보강 가능; 현재 장애 재현이 있는 APK 후보보다 후순위.",
+    "updated": "2026-09-22"
   }
 ]
