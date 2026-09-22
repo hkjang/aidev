@@ -28,3 +28,6 @@
 - 릴리즈 참고: PDF 작성일만 추가 갱신, 내장 PDF 동기화는 범위 밖. PDF 임시 file URI 5개는 기존 결함이며 번호만 바뀜(URI 유지 주장 정정). Skill 도구가 없어 요청한 세 스킬 원문을 직접 적용.
 - [러너 10:05] review approved — 리뷰 승인 (risk=low)
 - [러너 10:05] pr created — https://github.com/hkjang/appstore/pull/29
+- [러너 10:10] ci passed — 검사 2개 모두 success
+- [러너 10:10] merge done — 7170190
+- [러너 10:10] release missing — 릴리즈 결과 없음/손상: missing
