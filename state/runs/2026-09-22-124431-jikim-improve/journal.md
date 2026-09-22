@@ -30,3 +30,14 @@
 - [러너 12:57] pr created — https://github.com/hkjang/jikim/pull/40
 - [러너 13:00] ci passed — 검사 2개 모두 success
 - [러너 13:00] merge done — 7f171d0
+
+## 릴리즈 노트
+- v0.2.18 로컬 릴리즈 완료: detached HEAD bb652c9, hkjang 작성, 주석 태그 메시지 `jikim v0.2.18`; 원격 전송 없음.
+- 최근 세 릴리즈 관례대로 22개 파일의 버전·한국어 CHANGELOG·문서·두 PDF 갱신. 의존성 버전과 실제 캡처 출처 v0.2.9 유지.
+- Node 24.21.0에서 최종 verify.sh exit 0: Go test/vet/gofmt, 웹 53개 테스트, lint/build, 문서/Compose. release-verify.log 참고. 기존 번들 크기 경고 유지.
+- PDF 공통 변환기 사용, 사용자 19쪽/관리자 28쪽과 표지 버전·캡처 출처 확인. 태그/소스 버전/HEAD 일치 및 clean tree 확인.
+- release.yml이 태그 푸시 후 Docker 이미지·스모크·브라우저 E2E·오프라인 번들·GitHub Release를 생성하므로 github_release=false, assets=[]. 해당 CI 단계는 로컬 미실행.
+- 요청한 두 부서 스킬 및 Skill 도구 미발견으로 사용자 절차와 저장소 관례 적용.
+- release.json 및 release-notes-v0.2.18.md 인계 완료.
+- [러너 13:09] release published — v0.2.18
+- [러너 13:12] assets verified — v0.2.18 자산 2개 (이전 v0.2.17: 2)
