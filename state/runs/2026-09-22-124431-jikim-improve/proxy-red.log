@@ -1,0 +1,54 @@
+
+> jikim-web@0.2.17 test
+> vitest run src/lib/vite-proxy.test.ts
+
+
+ RUN  v4.1.11 /home/hkjang/.cache/auto-improve-wt/jikim/web
+
+ ❯ src/lib/vite-proxy.test.ts (9 tests | 2 failed) 1406ms
+     × forwards OpenAPI with Accept: text/html 29ms
+     × forwards OpenAPI with Accept: application/json 4ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/lib/vite-proxy.test.ts > Vite development proxy over HTTP > forwards OpenAPI with Accept: text/html
+AssertionError: expected 'text/html' to contain 'application/json'
+
+Expected: "application/json"
+Received: "text/html"
+
+ ❯ src/lib/vite-proxy.test.ts:80:50
+     78|     const body = await response.text();
+     79|     expect(response.status).toBe(200);
+     80|     expect(response.headers.get('content-type')).toContain('applicatio…
+       |                                                  ^
+     81|     const arrival = { method: 'GET', url: path, accept };
+     82|     expect(received.slice(start)).toEqual([arrival]);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+ FAIL  src/lib/vite-proxy.test.ts > Vite development proxy over HTTP > forwards OpenAPI with Accept: application/json
+AssertionError: expected 404 to be 200 // Object.is equality
+
+- Expected
++ Received
+
+- 200
++ 404
+
+ ❯ src/lib/vite-proxy.test.ts:79:29
+     77|     const response = await fetch(origin + path, { headers: { Accept: a…
+     78|     const body = await response.text();
+     79|     expect(response.status).toBe(200);
+       |                             ^
+     80|     expect(response.headers.get('content-type')).toContain('applicatio…
+     81|     const arrival = { method: 'GET', url: path, accept };
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  2 failed | 7 passed (9)
+   Start at  12:52:18
+   Duration  1.64s (transform 25ms, setup 62ms, import 78ms, tests 1.41s, environment 0ms)
+
