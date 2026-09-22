@@ -362,6 +362,7 @@ flowchart LR
 | `auth.oidc.client_secret` | 빈 값 | Public Client는 비우고 Confidential Client만 입력하는 비밀 설정 |
 | `auth.oidc.scopes` | `openid, profile, email` | 요청할 OIDC scope 목록 |
 | `auth.oidc.admin_roles` | `kanpic-admin` | 관리자 권한으로 인정할 Keycloak role 목록 |
+| `auth.oidc.auto_login` | `false` | 자동 로그인(Silent SSO). Keycloak 에 이미 로그인한 사람을 로그인 화면 없이 바로 들여보냄. 아래 *자동 로그인* 참조 |
 | `auth.oidc.mcp_enabled` | `true` | MCP 클라이언트가 Keycloak 액세스 토큰으로 `/mcp` 를 부르게 허용. OIDC 가 켜져 있을 때만 효력 |
 | `auth.oidc.mcp_audiences` | 빈 목록 | MCP 토큰의 `aud` 로 받아들일 값. 비우면 Client ID 와 `/mcp` 주소 |
 | `auth.oidc.ca_pem` | 빈 값 | 폐쇄망 사설 CA 인증서 PEM 비밀 설정 |
@@ -369,7 +370,36 @@ flowchart LR
 
 각 저장·수정·삭제는 설정 스냅샷 revision을 생성합니다. **전체 검증**으로 필수값과 타입을 확인한 뒤 **연결 테스트**로 Issuer discovery와 PostgreSQL 상태를 시험합니다. 문제가 생기면 설정 버전 목록에서 이전 revision을 복원할 수 있습니다. 서버 시작에 필요한 환경 변수는 `POSTGRES_DSN` 하나이며, bootstrap 로그인 보호가 필요할 때만 `BOOTSTRAP_ADMIN_ID`와 `BOOTSTRAP_ADMIN_PASSWORD`를 함께 추가합니다.
 
-### 4.2 MCP 클라이언트의 Keycloak OAuth 로그인
+### 4.2 자동 로그인 (Silent SSO)
+
+사내 앱을 여럿 오가는 사람이 앱마다 같은 로그인 화면을 지나지 않도록, OIDC 의 `prompt=none`
+으로 **조용히** 로그인을 시도하는 기능입니다. 기본값은 꺼짐이며, 켜기 전까지는 아무것도
+달라지지 않습니다.
+
+켜면 이렇게 동작합니다.
+
+1. 로그인하지 않은 브라우저가 화면을 열면 SPA 가 로그인 화면 대신 "회사 계정으로 자동 로그인하는 중…" 을 잠깐 보이고 `/auth/login?prompt=none&return_to=<원래 경로>` 로 **최상위 이동**합니다. 숨은 iframe 을 쓰지 않으므로 서드파티 쿠키가 막힌 브라우저에서도 동작하고 Keycloak 이 프레임을 허용하는지 신경 쓰지 않아도 됩니다.
+2. Keycloak 에 세션이 있으면 인가 코드가 곧바로 돌아와 평소 로그인과 같은 절차로 세션이 만들어지고, 사람은 **처음 열었던 경로**로 돌아갑니다(`return_to` 는 `/` 로 시작하고 `//` 로 시작하지 않는 값만 받습니다).
+3. 세션이 없으면 Keycloak 이 화면을 그리지 않고 `error=login_required` 로 돌아옵니다. 이것은 실패가 아니라 평범한 대답이라, 콜백은 `/login?sso=none` 으로 보내 "회사 계정 세션이 없어 자동으로 로그인하지 않았습니다" 안내와 함께 로그인 화면을 보여 줍니다.
+
+같은 시도가 반복되면 브라우저가 Keycloak 과 kanpic 사이를 끝없이 오가므로, 되풀이를 막는
+장치가 세 겹 있습니다 — 탭 세션당 한 번만 시도(`sessionStorage`), 스스로 로그아웃한 뒤에는
+시도하지 않음(다시 로그인하면 풀림), 거절당한 주소의 `sso=none` 표시. 브라우저 저장소를 읽지
+못하는 사생활 보호 모드에서는 "이미 시도했다" 로 간주해 시도하지 않습니다. 로그인 화면과
+`/api`·`/auth`·`/mcp`·`/ws` 경로에서는 시도하지 않습니다.
+
+서버는 이 설정이 꺼져 있으면 주소에 `?prompt=none` 이 붙어 와도 조용히 평범한 로그인으로
+바꿉니다. 리다이렉트가 생기는 자리는 관리자 설정에만 묶입니다. 시도가 조용한 것이었는지는
+`auth_transactions.silent`(마이그레이션 044)에 적어 두었다가 콜백에서 읽습니다.
+
+> Keycloak 계정이 없는 방문자도 있는 설치라면 그 사람들은 탭당 한 번 Keycloak 을 거쳐
+> 돌아오게 되므로, 그런 곳에서는 이 설정을 끄는 편이 맞습니다.
+
+**로그인 화면.** OIDC 를 켜면 로그인 화면의 첫 단추는 **회사 계정으로 SSO 로그인**이고,
+bootstrap 관리자 로그인은 그 아래 **관리자 계정으로 로그인**을 눌러야 펼쳐집니다. Keycloak 이
+멎었을 때의 복구 통로로 남겨 둔 것이며, 평소에는 회사 계정으로 들어가게 하려는 배치입니다.
+
+### 4.3 MCP 클라이언트의 Keycloak OAuth 로그인
 
 Claude, Cursor 같은 MCP 클라이언트는 API 키 대신 **사용자의 Keycloak 로그인**으로 `/mcp` 를
 부를 수 있습니다. kanpic 은 MCP 인가 명세(2025-06-18)의 **OAuth 2.1 리소스 서버**로
@@ -583,7 +613,7 @@ DELETE /api/v1/admin/ai/actions?before=YYYY-MM-DD
 kanpic은 AI 에이전트 및 LLM이 스프레드시트 데이터를 안전하게 제어할 수 있도록 `/mcp` HTTP JSON-RPC 2.0 표준 엔드포인트를 제공합니다.
 
 ### 6.1 MCP 스코프 및 인증
-- MCP 요청은 HTTP Header `Authorization: Bearer <API_KEY>` 또는 `Authorization: Bearer <Keycloak 액세스 토큰>`을 통과해야 합니다. 토큰 로그인의 Keycloak 설정은 **4.2 MCP 클라이언트의 Keycloak OAuth 로그인**에 있습니다.
+- MCP 요청은 HTTP Header `Authorization: Bearer <API_KEY>` 또는 `Authorization: Bearer <Keycloak 액세스 토큰>`을 통과해야 합니다. 토큰 로그인의 Keycloak 설정은 **4.3 MCP 클라이언트의 Keycloak OAuth 로그인**에 있습니다.
 - API 키는 `mcp.use` 스코프 권한을 보유해야 `/mcp` 엔드포인트를 호출할 수 있습니다. Keycloak 토큰은 받아들여지는 것 자체가 `mcp.use` 이며, 토큰에 kanpic scope 가 실려 있으면 그 scope 만큼만, 없으면 그 사용자의 권한만큼 움직입니다.
 - 자격 없이 `/mcp` 를 부르면 401 과 함께 `WWW-Authenticate: Bearer resource_metadata="…/.well-known/oauth-protected-resource/mcp"` 가 돌아가고, 그 주소는 RFC 9728 문서(`resource`, `authorization_servers`)를 내줍니다. OIDC 나 `auth.oidc.mcp_enabled` 가 꺼져 있으면 이 헤더도 문서도 없습니다.
 - `/mcp` 는 **POST 만** 받습니다. 서버→클라이언트 스트림(GET)과 세션 종료(DELETE)는 제공하지 않으므로 405 와 `Allow: POST` 로 답합니다. 상태를 두지 않으므로 `Mcp-Session-Id` 도 없습니다.
