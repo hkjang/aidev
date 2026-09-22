@@ -1,0 +1,35 @@
+# igame 프로필 (2026-09-22)
+- 목적: 폐쇄망 사내 게임 포털의 카탈로그·세션·랭킹·업적 및 RealmGuard/Defense를 단일 오프라인 이미지로 제공한다.
+- 기준: pinned main@abd8579, VERSION 0.7.18; 최근 git log -30 확인. 별도 브랜치 성공 기록은 현재 main 기능과 구분한다.
+- 스택: Go 1.26.6(go.mod), chi/pgx/go-oidc, PostgreSQL, React19/TypeScript/Vite7/MUI7/Phaser3.90, vitest5, JS SDK. CI Node22·release PG17.
+- 구조:
+  - cmd/igame — config.Load → DB Open → Migrate → EnsureBootstrapAdmin → :8080 기동, healthcheck 및 정리 루프.
+  - internal/api — REST/SSE/MCP, 인증·관리·카탈로그·랭킹·게임; 실제 Router/PostgreSQL 회귀 테스트.
+  - internal/config — 네 bootstrap 환경변수 검증. internal/secretbox — 설치키 하나로 AES-GCM v1 암호문 생성.
+  - internal/database — 연결 pool, embedded SQL 정렬·체크섬·파일별 transaction 및 bootstrap 관리자 보장.
+  - migrations — 001~010 embedded SQL, 마지막 010_silent_sso.sql; 배포된 파일 checksum 불변.
+  - internal/battle/realmguard·web/src/games — Go/TS 결정론적 전투 kernel·fixture, 서버 replay 및 게임 화면.
+  - internal/web·tracking — SPA embed와 nonce/CSP 추적. web·sdk/gamehub-js — 포털 및 SDK.
+  - scripts·docs·.github/workflows — 빌드·검증·smoke·운영 문서·CI/릴리즈.
+- 현재 미포함: internal/mail, internal/api/mcpoauth.go, make audit-release. audit-release는 이전 성공 커밋 f22a60d가 있지만 pinned main에는 없어 재구현하지 않는다.
+- 빌드·테스트: make deps(Go download+npm ci 두 트리, 네트워크), make lint, make test, make test-race, make web-build, make build; make docker-build/release는 느림.
+- 이번 실제 검증: go test ./cmd/... ./internal/... ./migrations/... 및 bash scripts/check-release-contract.sh 통과. 로컬 Go1.26.7·Node22.23.1.
+- 이번 제한: IGAME_TEST_DSN 미설정(PG 테스트 skip), Web/SDK node_modules 없음(프런트 미실행). 실DB·Docker·외부 audit·원격 CI 상태 미확인.
+- DB 검증: make test-db DSN='postgres://…'는 internal/api와 internal/database 모두 실행한다. 전체 DB를 일회용으로 준비한다.
+- DB 준비: README 절차대로 pgcrypto를 별도 확장 스키마에 사전 설치하고 DSN search_path에 포함한다. database migrationPool은 UUID 스키마를 삭제하되 확장은 보존하고 public을 피한다.
+- API DB fixture: admin_pg_test.go migratedPool은 기본 스키마를 공유하므로 운영 DB 사용 금지. DSN 미설정은 skip, 설정 후 연결 실패는 실패다.
+- DB 기존 품질: Migrate 재실행 이력/seed 불변, checksum 거부/복구, 010 DDL·이력 INSERT 롤백/재시도 테스트 3개가 main에 있다. context 취소 경로는 별도 공백.
+- 관례: 영어 feat:/fix:/test:/docs: 커밋; VERSION과 web/SDK 버전 정렬. 게임 콘텐츠 버전은 별개. 설정은 DB 키별 JSON, 비밀은 API 미반환.
+- 런타임: POSTGRES_DSN·BOOTSTRAP_ADMIN·BOOTSTRAP_ADMIN_PASSWORD·ENCRYPTION_KEY 네 변수만 허용. listen :8080 고정, 새 설정 변수 금지.
+- 선택 과제 근거: config.Load는 최소12 rune만 검사. ASCII73/한글75바이트로 실제 main 실행 시 DSN 파싱까지 도달함; bcrypt v0.55.0 TestPasswordTooLong은 73바이트 거부를 확인한다.
+- 비밀 계약: secretbox는 설치키 직접 AES-GCM; 개인 API 키는 SHA256 보관, rotateAPIKey는 기존 키 즉시 폐기. docs/architecture.md의 DEK·개인키 암호화·유예 회전 주장은 실제 코드와 불일치.
+- 문서: docs/USER_GUIDE.md·ADMIN_GUIDE.md/PDF가 가이드 정본. make docs-pdf는 architecture/cru-manual PDF용이며 가이드 PDF와 별개다.
+- 위험 구역: auth/session/개인키 권한, migrations/*.sql checksum, .github/workflows 게이트, RealmGuard TS/Go 동치성. 이번 과제는 config와 설명·경계 테스트에 한정.
+- 위험 도구: guide 캡처는 seed 변경이 있어 IGAME_GUIDE_CAPTURE_DISPOSABLE=yes인 전용 폐기 배포에서만 실행.
+- 자주 깨지는 곳: 09-10 dev 의존성 audit 릴리즈 실패. 09-19 재실패 진단은 실제 실패 run 부재로 기각됐으므로 새 증거 없이 반복하지 않는다.
+- 검증 함정: CI npm audit은 --omit=dev 차단/dev 보고; release는 dev 포함 low 차단. 현재 docs/release.md의 같은 범위 설명은 오래됐다(이전 audit-release 작업과 중복 수정 금지).
+- 검증 함정: CI 일반 make test는 IGAME_TEST_DSN 없음. release의 DEFENSE_TEST_DSN은 seed 전용이라 전체 PG 회귀를 대신하지 않는다.
+- 검증 함정: :8080 병행 smoke 충돌 가능. 감사 명령의 네트워크 실패를 취약점 없음으로 판단하지 않는다. 고정 버전 검사는 image Go1.26.6.
+- 남은 불일치: README RealmGuard 문단의 구형 telemetry-only 설명과 마지막 서비스 버전 0.7.17. 실제 결과는 server_replay_v1+보조 telemetry, Defense 계약과 구분한다.
+- 이전 해결: 랭킹 동점 식별자 정렬·포털 공통 업적 해금·마이그레이션 실제 PG 테스트를 반복하지 않는다. 전날 열린 세션을 오늘 한도에서 제외하는 기존 정책도 유지한다.
+- 로컬 지침: rg 검색상 CLAUDE.md/AGENTS.md/별도 roadmap 및 소스 TODO/FIXME 없음. 요청 조직 스킬 3개는 도구·로컬 검색에서 찾지 못해 절차 미확인.

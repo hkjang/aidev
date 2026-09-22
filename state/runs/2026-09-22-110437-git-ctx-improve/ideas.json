@@ -1,0 +1,146 @@
+[
+  {
+    "title": "Sanitize의 finding이 가장 심각한 규칙이 아니라 마지막에 실행된 규칙을 보고",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "Sanitize 콜백별 finding 덮어쓰기 확인. 공식 심각도 계약 미확인으로 보류.",
+    "updated": "2026-09-22"
+  },
+  {
+    "title": "따옴표로 감싼 GitHub Actions 표현식이 여전히 마스킹됨",
+    "value": 2,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "secretAssignmentRE quoted 분기 확인. HEAD에 placeholderRE 없음. 기존 변수 참조 작업 재시도 금지, 표현식 예외 정책 미확인.",
+    "updated": "2026-09-22"
+  },
+  {
+    "title": "릴리즈 워크플로 실패 원인 제거 — 전체 go test 부하 아래서만 깨지는 internal/app flaky 테스트",
+    "value": 3,
+    "risk": 2,
+    "size": "M",
+    "status": "pending",
+    "note": "grpc v1.83.2는 go.mod 반영 확인. 별도 flake는 이전 4회 재현 실패, 이번 app 미실행. 실패 이름 확보 전 보류.",
+    "updated": "2026-09-22"
+  },
+  {
+    "title": "OIDCVerifier.get이 첫 요청 컨텍스트로 만든 verifier를 캐시",
+    "value": 3,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "oidc.go:get에서 요청 ctx VerifierContext와 10분 캐시 확인. 키 회전/취소 런타임 미확인, 보호 경로여서 보류.",
+    "updated": "2026-09-22"
+  },
+  {
+    "title": "SSO 주체는 키별 rate limit을 타지 않아 사용자별 호출량 제한이 없음",
+    "value": 2,
+    "risk": 2,
+    "size": "M",
+    "status": "pending",
+    "note": "HEAD는 MCP OAuth 캠페인 이전; policy.go는 KeyID 판정 유지. 선행 캠페인 반영 뒤 재평가, 런타임 미확인.",
+    "updated": "2026-09-22"
+  },
+  {
+    "title": "go.mod replace 지시어가 인벤토리에 반영되지 않아 require 버전으로 판정함",
+    "value": 3,
+    "risk": 2,
+    "size": "M",
+    "status": "pending",
+    "note": "manifest.go:parseGoMod require 전용 확인. 반려된 파서 확장 접근 사유 확인 전 선택하지 않음.",
+    "updated": "2026-09-22"
+  },
+  {
+    "title": "clampResponse의 truncation notice 예약치 320B 부족",
+    "value": 2,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "budget.go 320 예약 및 fence/notice 조립 그대로. 기존 테스트 budget+320 허용. 이번 UTF-8 재현은 예산 이하였으며 초과량 재현은 미실행.",
+    "updated": "2026-09-22"
+  },
+  {
+    "title": "parsePOM이 dependencyManagement 선언까지 실제 의존성으로 집계",
+    "value": 3,
+    "risk": 3,
+    "size": "M",
+    "status": "pending",
+    "note": "parsePOM 문서 전체 dependency 정규식 확인. 반려된 파서 확장 유사 유형으로 보류.",
+    "updated": "2026-09-22"
+  },
+  {
+    "title": "package.json의 overrides·resolutions·workspaces가 인벤토리에 반영되지 않음",
+    "value": 2,
+    "risk": 2,
+    "size": "M",
+    "status": "pending",
+    "note": "parsePackageJSON 네 dependencies 필드만 확인. 선언/설치결과 계약 미확인, 보류.",
+    "updated": "2026-09-22"
+  },
+  {
+    "title": "Gradle 버전 카탈로그를 매니페스트로 인식하지 않음",
+    "value": 4,
+    "risk": 3,
+    "size": "M",
+    "status": "pending",
+    "note": "Recognize에 libs.versions.toml 없음. 214bf01 반려 사유 미확인; 선택 금지 유지.",
+    "updated": "2026-09-22"
+  },
+  {
+    "title": "mcp.filterLibraries / cacheKey가 호출자 슬라이스를 제자리 변경",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "args.go items[:0], cache.go sort.Strings(principalACLs(p)) 확인. 비관리자는 WithUnrestricted가 원본 반환. 차선은 cacheKey 복사에만 제한; 실제 경합 미확인.",
+    "updated": "2026-09-22"
+  },
+  {
+    "title": "finishCall 예산 적용 후 진단 추가의 최종 응답 크기 검증",
+    "value": 2,
+    "risk": 2,
+    "size": "M",
+    "status": "pending",
+    "note": "dispatch.go finishCall에서 clampResponse 후 argumentNotes/freshnessNote 추가 확인. 오류/빈 응답도 별도 분기; 이번 최종 예산 초과 재현 미실행.",
+    "updated": "2026-09-22"
+  },
+  {
+    "title": "시험 계획의 FTS5 검증 명령을 CI와 일치시키기",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "이전 회차 노트 후보 보존. docs/test-plan.md는 go test -race ./..., CI는 -tags sqlite_fts5와 별도 build-mode 검증. 둘의 목적을 구분해 문서 정리 가능.",
+    "updated": "2026-09-22"
+  },
+  {
+    "title": "Pipfile 매니페스트의 packages·dev-packages 인식",
+    "value": 2,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "과거 기록 후보 보존. Recognize에 Pipfile 없음, Pipfile.lock은 이미 지원. 파서 확장 반려 이력으로 이번 제외.",
+    "updated": "2026-09-22"
+  },
+  {
+    "title": "MCP 긴 한 줄 응답 절단 시 UTF-8 글자 경계 보존",
+    "value": 3,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "신규·이번 선택. cutAtBoundary가 잘린 window를 같은 길이로 runeSafeCut에 넘겨 검사 우회. 원본 함수 복사 실행에서 3001/3002 예산의 invalid UTF-8와 JSON U+FFFD 재현. 실제 HTTP 배선 회귀는 구현자가 추가.",
+    "updated": "2026-09-22"
+  },
+  {
+    "title": "MCP 캐시 키의 쉼표 구분 ACL 직렬화 충돌 검증",
+    "value": 3,
+    "risk": 3,
+    "size": "M",
+    "status": "pending",
+    "note": "신규. cacheKey는 ACL/저장소 목록을 strings.Join으로 연결. 쉼표를 포함한 단일 principal과 여러 principal의 직렬화 모호성 존재. aclRevision도 키에 포함되므로 실제 권한 혼동 및 입력 허용 여부는 미확인; 취약점으로 단정하지 않고 보류.",
+    "updated": "2026-09-22"
+  }
+]

@@ -1,0 +1,164 @@
+[
+  {
+    "title": "dev 의존성 권고가 CI에서는 보고만 되고 릴리즈에서만 빨개지는 구조적 공백",
+    "value": 4,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "ci.yml production-only 차단/dev 보고와 release.yml 전체 low 차단 확인. 정책 변경이므로 보류. 이전 audit-release 작업과 혼동하지 말 것.",
+    "updated": "2026-09-22"
+  },
+  {
+    "title": "비-silent OIDC 제공자 오류가 브라우저 탭에 401 JSON으로 보임",
+    "value": 3,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "auth.go oidcCallback의 401 oidc_error 유지. 인증 보호 경로이므로 이번 제외.",
+    "updated": "2026-09-22"
+  },
+  {
+    "title": "동점 개인 랭킹을 먼저 세운 기록(created_at)이 앞서도록 catalog·defense도 RealmGuard 규칙으로 통일",
+    "value": 3,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "현재 결정적 식별자 정렬은 해결됨. created_at 통일은 별도 정책 변경이므로 이번 제외.",
+    "updated": "2026-09-22"
+  },
+  {
+    "title": "메일 수신 거부(mail_opt_out)를 환경설정 화면에 스위치로 노출",
+    "value": 3,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "internal/mail 없음 및 PreferencesPage 표시 설정만 관리 확인. 과거 메일 브랜치 머지 후 재평가.",
+    "updated": "2026-09-22"
+  },
+  {
+    "title": "이벤트 알림 digest 경로",
+    "value": 2,
+    "risk": 2,
+    "size": "M",
+    "status": "pending",
+    "note": "메일 기반 소스 미포함으로 차단. 성공 회차 기록을 현재 main 기능으로 간주하지 않는다.",
+    "updated": "2026-09-22"
+  },
+  {
+    "title": "방문 추적·OIDC 자동 로그인·MCP SSO·메일 화면 캡처를 관리자 가이드에 추가",
+    "value": 2,
+    "risk": 2,
+    "size": "M",
+    "status": "pending",
+    "note": "capture 스크립트의 폐기 배포 가드 확인. MCP OAuth·메일 소스 부재로 묶음 과제 실행 불가. 실제 배포 미확인.",
+    "updated": "2026-09-22"
+  },
+  {
+    "title": "끝난 세션에 계속 result를 덧붙일 수 있음",
+    "value": 2,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "catalog.go finishGameSession은 active/finished와 result||$4 유지. 재시도 정책 확정 없이는 바꾸지 않는다.",
+    "updated": "2026-09-22"
+  },
+  {
+    "title": "bootstrap 암호의 bcrypt 최대 바이트 길이를 설정 단계에서 검증",
+    "value": 3,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "이번 선택. 실제 cmd/igame 실행에서 ASCII73·한글75바이트가 config를 통과해 DSN 파싱에 도달함 확인. x/crypto 고정 버전의 73바이트 거부 테스트 통과. 이전 가치2에서 재현 증거와 DB 초기화 전 차단 효과로 3으로 상향.",
+    "updated": "2026-09-22"
+  },
+  {
+    "title": "README의 RealmGuard 서버 재현 설명과 구형 telemetry 설명 정합성 개선",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "차선. README 내부 상충, realmguard.go replayRealmGuardBattle 호출, docs/realmguard.md server_replay_v1 확인. README 끝 서비스 버전도 0.7.17로 오래됨.",
+    "updated": "2026-09-22"
+  },
+  {
+    "title": "PostgreSQL 회귀 테스트를 PR 단계에서 실행하는 배선",
+    "value": 4,
+    "risk": 2,
+    "size": "M",
+    "status": "pending",
+    "note": "CI IGAME_TEST_DSN 없음. release는 Defense seed 전용 DSN. workflow 보호 경로라 제외.",
+    "updated": "2026-09-22"
+  },
+  {
+    "title": "serviceLocation 설정 읽기 실패 시 시간대가 조용히 바뀌는 문제",
+    "value": 3,
+    "risk": 2,
+    "size": "M",
+    "status": "pending",
+    "note": "extended.go serviceLocation이 setting 오류 무시 및 Asia/Seoul 폴백. 다수 소비 경로 및 오류 정책 설계가 필요.",
+    "updated": "2026-09-22"
+  },
+  {
+    "title": "API PostgreSQL fixture의 테스트별 스키마 격리",
+    "value": 3,
+    "risk": 2,
+    "size": "M",
+    "status": "pending",
+    "note": "admin_pg_test.go migratedPool은 기본 스키마 사용. database migrationPool만 UUID 격리. 영향 범위 커 이번 제외.",
+    "updated": "2026-09-22"
+  },
+  {
+    "title": "릴리즈 audit 게이트 재현용 make audit-release 추가",
+    "value": 3,
+    "risk": 1,
+    "size": "S",
+    "status": "done",
+    "note": "2026-09-21 성공 기록 f22a60d 기준 작업 완료. 현재 pinned main@abd8579의 Makefile에는 미포함이므로 실행 가능하다고 적지 않는다. 같은 작업 재선정 금지.",
+    "updated": "2026-09-22"
+  },
+  {
+    "title": "Migrate context 취소의 롤백·재시도 계약 검증",
+    "value": 3,
+    "risk": 1,
+    "size": "M",
+    "status": "pending",
+    "note": "database_pg_test.go는 실제 SQL 오류 롤백만 검증. 취소 context로 Rollback 호출되는 경로는 미검증. 별도 실DB 타이밍 동기화 필요해 이번 제외.",
+    "updated": "2026-09-22"
+  },
+  {
+    "title": "게임의 achievement_enabled가 꺼졌을 때 클라이언트 업적 해금 정책 확인",
+    "value": 2,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "unlockAchievement가 games 표를 읽지 않는 점 확인. 표시 플래그인지 서버 금지 정책인지 미확인; 정책 추측으로 변경 금지.",
+    "updated": "2026-09-22"
+  },
+  {
+    "title": "마이그레이션 체크섬·DDL 롤백·재실행 PostgreSQL 테스트",
+    "value": 4,
+    "risk": 1,
+    "size": "M",
+    "status": "done",
+    "note": "database_pg_test.go 실제 Migrate 기반 테스트 3개 및 make test-db 배선이 main에 존재. 재시도 과제 중복 금지.",
+    "updated": "2026-09-22"
+  },
+  {
+    "title": "아키텍처 백서의 봉투 암호화·API 키 보관·무중단 회전 설명 정정",
+    "value": 3,
+    "risk": 1,
+    "size": "M",
+    "status": "pending",
+    "note": "새 후보. docs/architecture.md는 사용자별 DEK/개인키 암호화/유예 회전을 주장하나 secretbox.New/Seal은 단일 설치키 AES-GCM, createAPIKey는 SHA256, rotateAPIKey는 이전 키 즉시 폐기. docs/security.md와 대조해 Markdown/PDF 정합성 필요; 암호화 구현 변경 금지.",
+    "updated": "2026-09-22"
+  },
+  {
+    "title": "healthcheck의 컨텍스트 취소 시 종료 계약 회귀 테스트",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "새 후보. cmd/igame/main.go checkHealth는 NewRequestWithContext와 client.Do 사용; main_test.go는 204·503·연결 실패만 검사. 실제 httptest 서버가 요청을 받은 뒤 context를 취소하는 테스트로 빠른 반환과 서버 요청 취소를 검증할 수 있음. 결함 재현은 없으며 테스트 공백 후보로만 기록.",
+    "updated": "2026-09-22"
+  }
+]
