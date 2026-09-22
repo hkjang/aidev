@@ -1,7 +1,7 @@
 ---
 title: "jasql — 자율 개선 이력"
 description: "jasql: 자율 개선 회차 4회, 릴리즈 0건. 최근 릴리즈 없음."
-last_modified_at: 2026-09-22 18:34:14 +0900
+last_modified_at: 2026-09-22 18:50:38 +0900
 ---
 {% raw %}
 <script type="application/ld+json">
@@ -18,7 +18,7 @@ last_modified_at: 2026-09-22 18:34:14 +0900
   "name": "hkjang",
   "url": "https://github.com/hkjang"
  },
- "dateModified": "2026-09-22T18:34:14+09:00"
+ "dateModified": "2026-09-22T18:50:38+09:00"
 }
 </script>
 
