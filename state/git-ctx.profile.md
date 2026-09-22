@@ -1,29 +1,30 @@
-# git-ctx 프로필 (2026-09-21)
+# git-ctx 프로필 (2026-09-22)
 - 목적: 사내 GitLab·Bitbucket 코드와 문서를 색인해 ACL을 지키는 MCP/REST 개발 컨텍스트와 관리 콘솔을 제공한다.
-- 스택: Go 1.25.0, toolchain go1.26.6; SQLite(FTS5 태그)·PostgreSQL, 선택적 pgvector/Milvus/OpenSearch·Vault, Keycloak OIDC, 바닐라 JS, Docker/Kubernetes.
-- 기준: main@cf3b598, v0.77.14. 기록상 성공과 main 반영은 별개이며 ${VAR} 예외·Authorization 개행·curl 접두부·MCP OAuth 캠페인은 이 기준에 없음. 이미 수행된 과제를 재선택하지 않는다.
+- 스택: Go 1.25.0/toolchain go1.26.6(go.mod), 이번 로컬 go1.26.7; SQLite(FTS5)·PostgreSQL, 선택적 pgvector/Milvus/OpenSearch·Vault, Keycloak OIDC, 바닐라 JS, Docker/Kubernetes.
+- 기준: HEAD cf3b598, v0.77.14. 과거 개선 성공과 main 반영은 별개. Authorization 개행·변수 참조·curl 접두부·YAML 리스트·MCP OAuth 작업은 기록에 있으나 이 HEAD에 미반영; 재선택하지 않는다.
 - 구조:
   - cmd/git-ctx — 실행 진입점; internal/version — 릴리즈 버전.
-  - internal/contentsecurity — Sanitize·Revision, 마스킹 및 규칙 지문.
-  - internal/indexer — 수집·청킹·정책; Policy.Revision은 마스킹 지문도 포함.
+  - internal/contentsecurity — Sanitize·Revision; internal/indexer — 수집·청킹·정책·재색인 지문.
   - internal/search — ACL 검색·원격 소스·ReadFile·의존성 분석.
   - internal/manifest — 매니페스트·락파일 인벤토리.
-  - internal/mcp — 도구 dispatch·응답 예산·캐시; internal/app·auth — HTTP·OIDC·키·세션.
+  - internal/mcp — HTTP/JSON-RPC dispatch·응답 예산·캐시·감사; budget.go의 cutAtBoundary가 이번 과제.
+  - internal/app·auth — HTTP·OIDC·키·세션.
   - internal/store — SQLite/PostgreSQL 스키마·migration; test/store — 빌드 모드 교차·구버전 업그레이드.
   - web·test/web — 관리 콘솔·계약 테스트·실제 브라우저 sweep.
   - docs — requirements·configuration·operations·test-plan·completion-audit·openapi·릴리즈 노트.
   - scripts·.github/workflows — 버전 동기화·오프라인 패키지·CI·릴리즈.
-- 빌드·테스트: `go build -tags sqlite_fts5 ./...`; `go vet ./...`; `go test -tags sqlite_fts5 ./...`(수 분), `go test -tags sqlite_fts5 -race ./...`(더 오래 걸림). 이번 정찰 전체 검증 미실행.
-- 빠른 검증: `go test -tags sqlite_fts5 ./internal/contentsecurity ./internal/indexer ./internal/search ./internal/mcp` 이번 exit 0(search 1.278s, 나머지 캐시). 변경 후 -count=1로 회귀 재확인 권장.
-- 형식·JS: `gofmt -l ./cmd ./internal` 출력 없음이 성공; `node --check web/app.js`; `for file in test/web/*.test.js; do node "$file"; done`.
+- 빌드·테스트: go build -tags sqlite_fts5 ./...; go vet ./...; go test -tags sqlite_fts5 ./...(수 분); go test -tags sqlite_fts5 -race ./...(더 오래 걸림). 이번 전체 검증 미실행.
+- 빠른 검증: go test -tags sqlite_fts5 ./internal/mcp ./internal/search ./internal/contentsecurity ./internal/manifest 이번 exit 0(search 1.336s, 나머지 캐시). 변경 후 -count=1 회귀 권장.
+- 형식·JS: gofmt -l ./cmd ./internal 출력 없어야 성공; node --check web/app.js; for file in test/web/*.test.js; do node "$file"; done.
 - 관례: 영어 fix(scope): … / release: vX.Y.Z 커밋. 카테고리별 JSON 설정, store가 migration 관리. scripts/verify-version-sync.sh·scripts/release.sh, 문서는 docs.
-- 위험 구역: internal/auth·app 인증/세션/ACL, internal/store migration·백업 복원, .github/workflows·릴리즈 scripts, internal/version 및 버전 연결 문서.
-- 자주 깨지는 곳: 마스킹이 줄바꿈이나 비밀 아닌 내용을 삭제함. 콜백만 바꾸면 Revision이 그대로여서 구색인에 수정이 적용되지 않음. 파서 확장 반려 이력은 사유 확인 전 재시도 금지.
-- 이번 확인: maskBlockScalars는 리스트 대시 앞 공백을 깊이로 사용해 name·port 형제 필드까지 가림. 본문 없는 경우에도 허위 finding. 원본 복사 실행 재현, 아직 미수정.
-- 검증 함정: 기존 블록 테스트는 일반 매핑 중심으로 리스트 형제 필드 전체 보존을 놓침. ReadFile은 Sanitize 뒤 CRLF를 LF로 정규화하므로 CRLF 계약은 Sanitize에서 검사.
-- 검증 함정: truncation_test는 budget+320을 허용; finishCall은 clampResponse 뒤 진단을 추가. 최종 응답 크기 미측정.
-- 검증 함정: CI 통합은 GIT_CTX_TEST_POSTGRES_DSN·GIT_CTX_TEST_PGVECTOR_DSN·GIT_CTX_TEST_VAULT_URL/TOKEN 필요, 로컬 미설정 시 skip. 외부 DB·Vault는 이번 미검증.
-- 검증 함정: docs/test-plan.md 기본 명령에는 FTS5 태그가 없지만 CI는 태그 포함 suite와 별도 build-mode 검증을 실행. Docker·실브라우저·옛 태그 업그레이드도 별도 CI 단계.
-- 검증 함정: govulncheck@v1.7.0은 변화하는 외부 DB에 의존. grpc v1.83.2 반영됨; app 부하 flake는 이전 4회 재현 실패로 실패 이름 확인 전 보류.
-- 정찰 환경: 저장소 내부 CLAUDE.md·AGENTS.md·별도 roadmap은 발견 못함. requirements·completion-audit를 계획 자료로 확인. internal/cmd/web/scripts TODO/FIXME 검색은 결과 없음.
-- 스킬: 요청한 pmo/technology 3개와 Skill 도구를 찾지 못했으며 절차·반환 형식 미확인. 산출물 상위 aidev/AGENTS.md는 역할 분리·정찰 읽기 전용을 규정.
+- 위험 구역: internal/auth·app 인증/세션/ACL, internal/store migration·백업 복원, .github/workflows·릴리즈 scripts, internal/version 및 연결 문서.
+- 자주 깨지는 곳: 마스킹이 비밀 아닌 내용·개행을 삭제함. 콜백만 바꾸면 Revision이 같아 구색인 미갱신. 파서 확장 반려 이력은 사유 확인 전 재시도 금지.
+- 이번 확인: cutAtBoundary는 runeSafeCut(window,len(window))로 이미 잘린 문자열을 통과시킨다. 원본 함수 복사 실행에서 budget 3000은 유효, 3001·3002는 invalid UTF-8이고 JSON 왕복 후 U+FFFD 발생. 실제 HTTP 경로 재현은 미확인.
+- 검증 함정: TestTruncationKeepsTextValid의 dense 한글 입력은 3000 예산에서 우연히 rune 경계가 맞음. HTTP 응답의 utf8.ValidString만 보면 JSON 인코더가 대체한 손상을 놓친다. U+FFFD·원문 접두부 검사 필요.
+- 검증 함정: truncation_test는 budget+320 허용; finishCall은 clampResponse 뒤 진단 추가. 최종 응답 예산 초과 문제는 별도 미검증.
+- 검증 함정: mcp fixture는 공유 in-memory SQLite 이름 사용. 병렬 테스트 추가 주의. 실 SQLite+ServeHTTP/callAs로 운영 배선 검증 가능.
+- 검증 함정: CI 통합은 GIT_CTX_TEST_POSTGRES_DSN·GIT_CTX_TEST_PGVECTOR_DSN·GIT_CTX_TEST_VAULT_URL/TOKEN 필요; 외부 DB·Vault 이번 미검증.
+- 검증 함정: test-plan 기본 go test에는 FTS5 태그가 없지만 CI는 태그 포함 suite 및 별도 build-mode 검증. Docker·실브라우저·옛 태그 업그레이드 별도 CI 단계.
+- 검증 함정: govulncheck는 외부 DB에 의존. grpc v1.83.2 반영 확인; app flake는 이전 4회 재현 실패로 실패 이름 확인 전 보류.
+- 정찰 환경: 저장소 내부 CLAUDE.md·AGENTS.md·별도 roadmap 미발견. requirements·completion-audit를 계획 자료로 확인. cmd/internal/web/scripts TODO/FIXME 검색 결과 없음.
+- 스킬: 요청한 pmo/technology 3개 및 Skill 도구 미발견, 절차/반환 형식 미확인. 산출물 상위 aidev/AGENTS.md의 역할 분리·정찰 읽기 전용 준수.

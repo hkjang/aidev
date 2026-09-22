@@ -8,3 +8,4 @@
 - Go 전체 테스트·릴리즈 계약·bcrypt 초과 길이 테스트 통과; 실DB 전체 bootstrap, Web/SDK, 외부 감사·원격 CI는 미확인.
 - 암호 원문·공백·다국어를 보존하고 12 rune 최소/72 byte 최대를 구분한다. auth/migrations/workflows 및 지난 audit-release 작업 재구현 금지.
 - 조직 스킬 3개는 도구·로컬 경로에서 미발견으로 절차 미확인. 차선은 소스와 대조한 README 서버 재현 설명 정정이다.
+- [러너 11:09] scout done — bootstrap 암호의 bcrypt 72바이트 상한을 DB 초기화 전에 검증 (가치 3 / 위험 1 / 작업량 S)
