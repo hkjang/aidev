@@ -1,7 +1,7 @@
 ---
 title: "작업함 — 사람 판단 필요"
 description: "사람이 판단해야 할 항목 124건 — 열린 PR(리뷰 보류·보호 파일·CI 실패·승인 대기), 배포 복구, 수정 과제. 각 항목에 변경 요약·실패 근거·권장 조치가 붙어 있다."
-last_modified_at: 2026-09-22 11:20:13 +0900
+last_modified_at: 2026-09-22 11:55:38 +0900
 type: report
 ---
 {% raw %}
@@ -25,7 +25,6 @@ type: report
 
 ## 현재 경고
 
-- **git-ctx** — 보호 파일 변경 — 자동 머지 안 함, 사람 검토 필요
 - **jasql_semantic** — 수정 과제 대기 중 — 오류 대응(자동 적재): 마지막 회차가 &#x27;error&#x27; 로 끝났습니다. fix-round: error: pr create
 - **aiportal-front-admin** — 수정 과제 대기 중 — 오류 대응(자동 적재): 릴리즈 실패(). 요청된 marketing:product-launch 및 technology:release-and-deployment 스킬과 Skill 호출 도구를 사용 가능한 도구 및 로컬 스킬 경로에서 찾지 못했다. 전체 로컬 Git 이력에 태그, 릴리즈 커
 - **aiportal-front** — 수정 과제 대기 중 — 오류 대응(자동 적재): 릴리즈 실패(). 다음 버전 및 릴리즈 커밋·태그 관례를 확정할 근거 부족. docs/RELEASE.md와 실제 Git/JSON 재조회: non-shallow 저장소의 로컬 태그 0개, 최근 37개 커밋에 실제 릴리즈 관례 없음, package.json 및 lo

@@ -28,3 +28,7 @@
 - 다음 회차: 최종 응답 예산(320B 예약/진단 추가)·ReadFile 192KiB 절단은 기존 별도 과제; 릴리즈에는 긴 줄의 UTF-8 경계 보존 수정으로 설명할 것.
 - [러너 11:18] review approved — 리뷰 승인 (risk=low)
 - [러너 11:18] pr created — https://github.com/hkjang/git-ctx/pull/36
+- [러너 11:27] ci passed — 검사 5개 모두 success
+- [러너 11:27] merge done — 1dd6363
+- [러너 11:43] release published — v0.77.15
+- [러너 11:55] assets verified — v0.77.15 자산 2개 (이전 v0.77.14: 2)
