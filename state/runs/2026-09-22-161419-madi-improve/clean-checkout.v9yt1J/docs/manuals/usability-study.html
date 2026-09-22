@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#164e43">
+<title>madi 사용성 관찰 프로토콜 — madi</title><meta name="description" content="madi 사용성 관찰 프로토콜. madi의 실제 설정 방법, 사용자 권한, 기능 흐름과 운영상 주의점을 안내합니다."><link rel="canonical" href="https://hkjang.github.io/madi/manuals/usability-study.html"><link rel="icon" href="../assets/favicon.svg" type="image/svg+xml"><link rel="stylesheet" href="../assets/style.css">
+<meta property="og:type" content="website"><meta property="og:locale" content="ko_KR"><meta property="og:site_name" content="madi"><meta property="og:title" content="madi 사용성 관찰 프로토콜 — madi"><meta property="og:description" content="madi 사용성 관찰 프로토콜. madi의 실제 설정 방법, 사용자 권한, 기능 흐름과 운영상 주의점을 안내합니다."><meta property="og:url" content="https://hkjang.github.io/madi/manuals/usability-study.html"><meta property="og:image" content="https://hkjang.github.io/madi/screenshots/workspace.png"><meta name="twitter:card" content="summary_large_image">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"madi 사용성 관찰 프로토콜","description":"madi 사용성 관찰 프로토콜. madi의 실제 설정 방법, 사용자 권한, 기능 흐름과 운영상 주의점을 안내합니다.","inLanguage":"ko","url":"https://hkjang.github.io/madi/manuals/usability-study.html","isPartOf":{"@type":"WebSite","name":"madi","url":"https://hkjang.github.io/madi/"}}</script></head>
+<body><a class="skip" href="#main">본문으로 바로가기</a><header class="site-header"><div class="container header-inner"><a class="brand" href="../index.html" aria-label="madi 홈"><img src="../assets/logo.svg" alt="madi" width="113" height="40"></a><button class="mobile-toggle" type="button" aria-expanded="false" aria-controls="navigation" aria-label="탐색 메뉴 열기">☰</button><nav class="nav" id="navigation" aria-label="주 탐색"><a href="../index.html#features">기능</a><a href="../screenshots.html">화면 둘러보기</a><a href="../guide.html">시작 가이드</a><a href="../manuals.html">전체 매뉴얼</a><a href="../api.html">API · MCP</a><a href="https://github.com/hkjang/madi">GitHub ↗</a></nav></div></header>
+<main id="main" class="container"><div class="page-hero"><a class="crumb" href="../manuals.html">madi / 전체 매뉴얼</a><p>madi 사용성 관찰 프로토콜. madi의 실제 설정 방법, 사용자 권한, 기능 흐름과 운영상 주의점을 안내합니다.</p><a href="../usability-study.md" download>Markdown 원문 내려받기</a></div><div class="guide-layout"><aside class="guide-sidebar" aria-label="문서 목차"><strong>이 문서의 내용</strong><a href="#현재-증거의-한계">현재 증거의 한계</a><a href="#동일-과제와-조건">동일 과제와 조건</a><a href="#동의와-기록-방법">동의와 기록 방법</a><a href="#집계와-공개">집계와 공개</a></aside><article class="prose manual-prose"><h1 id="madi-사용성-관찰-프로토콜">madi 사용성 관찰 프로토콜</h1>
+<h2 id="현재-증거의-한계">현재 증거의 한계</h2>
+<p>실제 신규·기존 사용자를 모집한 관찰은 <strong>아직 실시하지 않았습니다</strong>. 과제 완료율·완료시간 개선·도움 감소·공유 오해 감소에 관한 사람 측정 결과는 없습니다. PostgreSQL·Playwright의 통과와 실행 시간은 제품의 자동 회귀 증거이며 사람의 사용성을 대신하지 않습니다. 아래 도구는 관찰을 수행하고 결과를 구분하여 기록하기 위한 준비물입니다.</p>
+<h2 id="동일-과제와-조건">동일 과제와 조건</h2>
+<p>프로토콜 버전은 <code>madi-usability-1</code>입니다. 신규 사용자는 이전 madi 사용 경험이 없는 사람, 기존 사용자는 서로 다른 날 3회 이상 사용한 사람으로 정의합니다. 두 집단에 동일한 6개 과제와 동등한 샘플 문서·동료 계정·권한·AI 설정·DB를 제공합니다. 실제 기밀 자료 대신 관찰 전용 워크스페이스를 사용하세요.</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>과제</th>
+<th>수행</th>
+<th>완료 기준</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>개인 메모</td>
+<td>홈에서 개인 메모 작성·저장 확인</td>
+<td>나만 보기, 두 문장의 서버 저장 확인</td>
+</tr>
+<tr>
+<td>찾기</td>
+<td>지정 문서 검색·미리보기·돌아오기</td>
+<td>올바른 자료, 검색 조건·선택 유지</td>
+</tr>
+<tr>
+<td>공유</td>
+<td>지정 동료에게만 읽기 공유</td>
+<td>실제 동료 열람, 외부 링크 없음, 저장·내부 공유·게시·외부 링크 구분</td>
+</tr>
+<tr>
+<td>선택 AI</td>
+<td>한 문단 다듬기·비교·취소·다시 적용</td>
+<td>전송 범위 이해, 취소 시 불변, 선택 범위만 적용</td>
+</tr>
+<tr>
+<td>데이터베이스</td>
+<td>세 셀·잘못된 옵션 수정·개인 보기 저장</td>
+<td>타입 정확, 팀 보기 불변, 새로고침 유지</td>
+</tr>
+<tr>
+<td>업무 복원</td>
+<td>문서 위치·DB 필터를 작업 묶음으로 보관·다시 열기</td>
+<td>현재 권한 아래 문서 위치와 DB 구성 복원</td>
+</tr>
+</tbody></table></div>
+<p>과제별 설명과 완료 기준은 <code>tests/usability/model.mjs</code>의 동일 목록을 기록기가 표시합니다. 테스트 순서는 고정하거나 사전에 균형 배정하고, 비교 중 설명·도움 기준을 바꾸지 않습니다. 동일인 전후 비교는 학습 효과가 있으므로 별도 표시하며 무작위 배정 없이 개선의 인과관계를 주장하지 않습니다. 빌드 ID·집단·화면·과제별 표본 수를 함께 보고하고 소수 표본을 전체 사용자로 일반화하지 않습니다.</p>
+<h2 id="동의와-기록-방법">동의와 기록 방법</h2>
+<p>참여자에게 목적, 중단 권리, 익명 기록 항목, 조직의 파일 보관·삭제 담당을 설명하고 동의를 받습니다. 동의 없이는 시작할 수 없습니다. 실명·메일·문서 ID·원문·키 입력·화면 녹화는 이 도구가 수집하지 않습니다. 참가자 번호 <code>P001</code>처럼 이름과 무관한 식별자를 사용하고 대응표가 필요하면 기록과 별도로 통제합니다.</p>
+<p>저장소 루트에서 다음 명령을 실행하면 <code>127.0.0.1</code>의 임의 포트에 로컬 관찰 기록기를 엽니다. 표시된 주소를 제품과 <strong>별도 창</strong>에서 여세요. 외부 인터페이스에 바인딩하지 않고 4개 정적 파일만 읽습니다.</p>
+<pre><code class="language-sh">node tests/usability/serve.mjs
+</code></pre>
+<p>관찰자는 설명을 마친 뒤 <strong>과제 시작</strong>, 끝나거나 중단되면 <strong>과제 시간 종료</strong>를 누릅니다. 도움·되돌림을 관찰할 때 각각 기록하고 결과·공유 오해 여부를 선택합니다. <strong>실제 사람의 수행을 관찰했다는 확인</strong> 후 기록을 추가합니다. 완료 기준에 못 미치면 <code>부분 완료</code> 또는 <code>중단</code>이며 완료로 보정하지 않습니다. 기록기는 제품을 자동 조작하거나 사람의 성공 여부를 추론하지 않습니다.</p>
+<p>측정 시간은 설명을 제외하고 도움·오류·되돌림을 포함한 과제 전체의 단조시계 경과 시간입니다. 중간에 브라우저나 기기를 정지시키지 마세요. 진행 중 실수로 종료했으면 해당 시도를 부분/중단으로 보존하고 새 시도 번호로 다시 측정합니다. 도움은 관찰자가 구체적 경로·행동을 알려준 한 번의 개입, 되돌림은 잘못된 변경·공유·탐색을 인지하고 복구한 한 번의 시도로 정의합니다. 단순 취소가 과제 자체라면 되돌림으로 세지 않습니다.</p>
+<p>공유 오해는 참가자가 설명한 범위와 실제 권한·상태가 다른 경우입니다. 직접 확인하지 못했다면 <strong>평가하지 않음</strong>이며 오해 없음으로 취급하지 않습니다. 최종 평가는 제품 서버에 저장된 상태와 동료 계정에서의 실제 열람으로 확인합니다.</p>
+<h2 id="집계와-공개">집계와 공개</h2>
+<p>기록은 창 메모리에만 있으며 <strong>익명 관찰 JSON 내려받기</strong>를 명시적으로 눌러 파일을 만듭니다. 네트워크 전송·localStorage·sessionStorage는 사용하지 않습니다. 새로고침·닫기 전 내려받고 조직의 통제된 경로에 보관하세요. <strong>현재 기록 지우기</strong>는 창 메모리만 지우고 내려받은 파일은 삭제하지 않습니다. 파일의 외부 게시나 서비스 반입은 자동 수행하지 않습니다.</p>
+<pre><code class="language-sh">node tests/usability/summarize.mjs /승인된/관찰/기록.json
+node tests/usability/model.test.mjs
+node tests/usability/recorder.test.mjs
+</code></pre>
+<p>집계는 표준 출력으로만 나옵니다. <code>human_observation</code>과 <code>automated_probe</code>, 빌드·집단·화면·과제를 절대 합치지 않습니다. 사람 기록은 동의·관찰자 확인이 모두 필요하고 자동시험은 둘 다 false여야 합니다. 자유 메모·허용하지 않은 필드·식별자 형식·중복 시도·음수/무한 시간·10MiB/10,000건 초과를 거절합니다.</p>
+<p>완료율의 분모는 중단·부분 완료를 포함한 모든 시도입니다. 전체 시도 시간 중앙값과 완료 시도만의 중앙값을 구분하고, 도움·되돌림 합계와 참가자 수·시도 수를 함께 표시합니다. 공유 오해율의 분모는 직접 평가한 시도뿐입니다. 미실시 집단은 0% 성공이 아니라 <strong>관찰 미실시</strong>, 평가가 없으면 <code>null</code>입니다. 집계 도구는 통계적 유의성·인과관계·효과 크기를 자동 주장하지 않습니다.</p>
+<p>도구의 자동 테스트에는 가상 입력을 사용합니다. 실제 사람으로 표시되는 경로의 유효성도 가상 입력으로 검사하지만, 그 파일은 임시 브라우저 컨텍스트에서 폐기하고 관찰 증거로 게시하지 않습니다. 실제 관찰 전에는 자동 테스트 결과를 이 문서의 사람 측정 표로 옮기지 마세요.</p>
+</article></div></main>
+<footer class="site-footer"><div class="container"><div class="footer-top"><a class="brand" href="../index.html"><img src="../assets/logo.svg" alt="madi" width="90" height="32"></a><div class="footer-links"><a href="../manuals.html">사용자·관리자 매뉴얼</a><a href="../screenshots.html">실제 화면</a><a href="https://github.com/hkjang/madi">소스 저장소 ↗</a></div></div><p class="footer-bottom">madi v0.3.0 · 우리 조직의 지식이 연결되는 공간.</p></div></footer>
+<dialog class="lightbox" aria-label="서비스 화면 확대"><img alt=""><div class="lightbox-caption"><span data-caption></span><button class="lightbox-close" type="button">닫기 ×</button></div></dialog><script src="../assets/site.js" defer></script></body></html>

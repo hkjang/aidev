@@ -1,0 +1,136 @@
+<!doctype html>
+<html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#164e43">
+<title>PostgreSQL·브라우저 호환성 검증 — madi</title><meta name="description" content="PostgreSQL·브라우저 호환성 검증. madi의 실제 설정 방법, 사용자 권한, 기능 흐름과 운영상 주의점을 안내합니다."><link rel="canonical" href="https://hkjang.github.io/madi/manuals/compatibility-guide.html"><link rel="icon" href="../assets/favicon.svg" type="image/svg+xml"><link rel="stylesheet" href="../assets/style.css">
+<meta property="og:type" content="website"><meta property="og:locale" content="ko_KR"><meta property="og:site_name" content="madi"><meta property="og:title" content="PostgreSQL·브라우저 호환성 검증 — madi"><meta property="og:description" content="PostgreSQL·브라우저 호환성 검증. madi의 실제 설정 방법, 사용자 권한, 기능 흐름과 운영상 주의점을 안내합니다."><meta property="og:url" content="https://hkjang.github.io/madi/manuals/compatibility-guide.html"><meta property="og:image" content="https://hkjang.github.io/madi/screenshots/workspace.png"><meta name="twitter:card" content="summary_large_image">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"PostgreSQL·브라우저 호환성 검증","description":"PostgreSQL·브라우저 호환성 검증. madi의 실제 설정 방법, 사용자 권한, 기능 흐름과 운영상 주의점을 안내합니다.","inLanguage":"ko","url":"https://hkjang.github.io/madi/manuals/compatibility-guide.html","isPartOf":{"@type":"WebSite","name":"madi","url":"https://hkjang.github.io/madi/"}}</script></head>
+<body><a class="skip" href="#main">본문으로 바로가기</a><header class="site-header"><div class="container header-inner"><a class="brand" href="../index.html" aria-label="madi 홈"><img src="../assets/logo.svg" alt="madi" width="113" height="40"></a><button class="mobile-toggle" type="button" aria-expanded="false" aria-controls="navigation" aria-label="탐색 메뉴 열기">☰</button><nav class="nav" id="navigation" aria-label="주 탐색"><a href="../index.html#features">기능</a><a href="../screenshots.html">화면 둘러보기</a><a href="../guide.html">시작 가이드</a><a href="../manuals.html">전체 매뉴얼</a><a href="../api.html">API · MCP</a><a href="https://github.com/hkjang/madi">GitHub ↗</a></nav></div></header>
+<main id="main" class="container"><div class="page-hero"><a class="crumb" href="../manuals.html">madi / 전체 매뉴얼</a><p>PostgreSQL·브라우저 호환성 검증. madi의 실제 설정 방법, 사용자 권한, 기능 흐름과 운영상 주의점을 안내합니다.</p><a href="../compatibility-guide.md" download>Markdown 원문 내려받기</a></div><div class="guide-layout"><aside class="guide-sidebar" aria-label="문서 목차"><strong>이 문서의 내용</strong><a href="#main태그-호환성-검증">main·태그 호환성 검증</a><a href="#이전-by2-로컬-재검증">이전 By2 로컬 재검증</a><a href="#이전-b2-후보-재검사">이전 B2 후보 재검사</a><a href="#이전-첫-검사-기록">이전 첫 검사 기록</a><a href="#무엇을-확인했나요">무엇을 확인했나요?</a><a href="#재현-방법">재현 방법</a><a href="#로컬-격리와-한계">로컬 격리와 한계</a></aside><article class="prose manual-prose"><h1 id="postgresql브라우저-호환성-검증">PostgreSQL·브라우저 호환성 검증</h1>
+<p>게시된 버전 <code>0.2.0</code>의 대표 사용자 흐름을 PostgreSQL 17·18과 Playwright Chromium·Firefox·WebKit의 6개 조합에서 검증했습니다. main CI와 태그 릴리즈의 재검사·이미지 재반입·폐쇄망 검증을 통과했습니다. 이 결과는 전체 기능을 모든 OS에서 인증했다는 뜻이 아닙니다. 실제 macOS/iOS Safari, Windows/macOS 한글 IME, 터치 키보드는 별도 실기기 검증 대상입니다.</p>
+<h2 id="main태그-호환성-검증">main·태그 호환성 검증</h2>
+<p>커밋 <code>aff3ee1f6d48f895b0d1461dafdf2711638eb0ce</code>·번들 <code>main-BPw-YbqO.js</code>의 <a href="https://github.com/hkjang/madi/actions/runs/34363815488">호환성 CI 34363815488</a>에서 6개 조합이 모두 통과했습니다. JavaScript 오류·HTTP 5xx·외부 페이지 요청은 0건이었으며, <code>requestfailed</code> 이벤트는 이번 원격 검사에서 수집하지 않았으므로 모든 네트워크 실패가 0건이라고 표현하지 않습니다. 같은 SHA의 main 전체 Go·35개 독립 브라우저 옵션과 shared25도 통과했습니다. 이후 <a href="https://github.com/hkjang/madi/actions/runs/34369441095">태그 릴리즈 34369441095</a>의 호환성6조합과 나머지 릴리즈 검증도 통과하여 v0.2.0 단일 이미지 아카이브가 게시됐습니다. 아래 수치와 JSON은 해당 main 호환성 CI의 원본이며 태그 재실행 시간으로 바꾸지 않습니다.</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>PostgreSQL</th>
+<th>Chromium 153.0.8010.12</th>
+<th>Firefox 155.0</th>
+<th>WebKit 26.6</th>
+<th>Go <code>-race</code> 패키지 실행</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>17.11</td>
+<td>통과 · 9.568초</td>
+<td>통과 · 12.798초</td>
+<td>통과 · 18.365초</td>
+<td>통과 · 46.305초</td>
+</tr>
+<tr>
+<td>18.6</td>
+<td>통과 · 8.462초</td>
+<td>통과 · 14.072초</td>
+<td>통과 · 17.765초</td>
+<td>통과 · 46.326초</td>
+</tr>
+</tbody></table></div>
+<p>CI 아티팩트의 원본 JSON 내용은 <a href="../benchmarks/compatibility-pg17-v0.2.0-ci34363815488-aff3ee1f.json">PG17 CI 결과</a>, <a href="../benchmarks/compatibility-pg18-v0.2.0-ci34363815488-aff3ee1f.json">PG18 CI 결과</a>에 변경 없이 보존했습니다. <code>verified_at</code>은 각각 <code>2026-09-09T14:30:31.232Z</code>, <code>2026-09-09T14:32:32.967Z</code>입니다. 원격 환경은 Linux/amd64·Go 1.26.8·논리 CPU 4개, 커널 <code>6.17.0-1022-azure</code>이며 두 작업 모두 private sysroot 없이 실행했습니다. 아래 로컬 환경·이전 수치·캡처를 이 CI 결과로 덮어쓰지 않습니다. 최신 전체 상태는 <a href="deployment-verification.html">배포 검증 기록</a>에서 확인하세요.</p>
+<p>태그 릴리즈의 별도 6조합 재검사도 모두 통과했으며 PostgreSQL17·18의 Go 패키지 시간은 각각 47.390초·89.407초였습니다. 이는 위 main CI의 46.305초·46.326초와 다른 실행입니다. 두 실행의 시간을 성능 개선·저하나 운영 응답시간 보증으로 해석하지 않습니다.</p>
+<h2 id="이전-by2-로컬-재검증">이전 By2 로컬 재검증</h2>
+<p>2026년 9월 9일 후보 웹 번들 <code>main-By2nz__J.js</code>를 기준으로 PostgreSQL 17·18의 격리 스키마에서 세 엔진을 각각 순차 재실행했습니다. 당시 6개 조합 모두 통과했으며 JavaScript 오류·HTTP 5xx·페이지 외부 요청은 0건입니다. 같은 번들의 shared25 7차와 문서 경합 전체 2회도 별도 로컬 검사에서 통과했습니다. 이 수치는 아래 원본 보고서의 해당 후보 결과입니다.</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>PostgreSQL</th>
+<th>Chromium 153.0.8010.12</th>
+<th>Firefox 155.0</th>
+<th>WebKit 26.6</th>
+<th>Go <code>-race</code> 시험 / 패키지 실행</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>17.11</td>
+<td>통과 · 16.205초</td>
+<td>통과 · 30.672초</td>
+<td>통과 · 25.486초</td>
+<td>통과 · 78.30초 / 79.435초</td>
+</tr>
+<tr>
+<td>18.6</td>
+<td>통과 · 10.636초</td>
+<td>통과 · 14.248초</td>
+<td>통과 · 12.920초</td>
+<td>통과 · 42.09초 / 43.160초</td>
+</tr>
+</tbody></table></div>
+<p>당시 실제 보고서를 <a href="../benchmarks/compatibility-pg17-v0.2.0-By2nz__J.json">PostgreSQL 17 By2 후보 결과</a>, <a href="../benchmarks/compatibility-pg18-v0.2.0-By2nz__J.json">PostgreSQL 18 By2 후보 결과</a>에 별도로 보존했습니다. <code>verified_at</code> 값은 각각 <code>2026-09-09T11:57:51.849Z</code>, <code>2026-09-09T11:59:35.939Z</code>입니다. Go 시험·패키지 실행 시간은 <code>.local/compatibility-pg17-latest-By2nz__J.log</code>와 PG18 로그의 마지막 PASS·<code>ok</code> 행을 대조한 값입니다.</p>
+<p>네트워크 진단에는 PG17 WebKit의 동일 출처 <code>PUT /api/v1/profile</code> 요청 취소가 2건 있습니다(<code>Load request cancelled</code>). 따라서 모든 네트워크 실패가 0건이라고 표현하지 않습니다. 원본은 <code>test-results/compatibility-latest-By2nz__J/pg17/webkit/diagnostics.json</code>에 보존했고, 각 조합의 진단과 기능 검증 결과를 구분합니다.</p>
+<h2 id="이전-b2-후보-재검사">이전 B2 후보 재검사</h2>
+<p>앞선 <code>main-B2VqUvBo.js</code>의 PG17·18 재검사도 6개 조합이 통과했으며 Go 패키지 시간은 각각 63.534초·38.349초였습니다. 당시 <a href="../benchmarks/compatibility-pg17-v0.2.0-final.json">PostgreSQL 17 보고서</a>, <a href="../benchmarks/compatibility-pg18-v0.2.0-final.json">PostgreSQL 18 보고서</a>는 원본 그대로 유지합니다. 파일명의 <code>final</code>은 당시 후보 명칭이며 후속 결과로 덮어쓰거나 현재 최종 릴리즈 통과 근거로 해석하지 않습니다. B2·CBN·Brs 실행 원본도 별도 시험 결과 경로에 보존합니다.</p>
+<h2 id="이전-첫-검사-기록">이전 첫 검사 기록</h2>
+<p>아래는 같은 날 처음 완료한 6개 조합의 기록입니다. 당시 두 PostgreSQL 시험은 같은 호스트에서 병렬 수행했고, 각 PostgreSQL의 세 엔진은 순차 실행했습니다. 이전 보고서를 최신 번들의 결과로 덮어쓰지 않습니다.</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>PostgreSQL</th>
+<th>Chromium 153.0.8010.12</th>
+<th>Firefox 155.0</th>
+<th>WebKit 26.6</th>
+<th>Go <code>-race</code> 시험</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>17.11</td>
+<td>통과 · 13.093초</td>
+<td>통과 · 20.011초</td>
+<td>통과 · 15.117초</td>
+<td>통과 · 51.45초</td>
+</tr>
+<tr>
+<td>18.6</td>
+<td>통과 · 12.951초</td>
+<td>통과 · 19.111초</td>
+<td>통과 · 15.730초</td>
+<td>통과 · 51.11초</td>
+</tr>
+</tbody></table></div>
+<p>이전 원본 보고서는 <a href="../benchmarks/compatibility-pg17.json">PostgreSQL 17 첫 검사 결과</a>, <a href="../benchmarks/compatibility-pg18.json">PostgreSQL 18 첫 검사 결과</a>에 그대로 보존했습니다. 두 표의 시간은 각 격리 표본의 관측값이며 서비스 응답시간 보증이나 부하 성능 수치가 아닙니다. 호스트의 동시 작업 조건도 달라 두 실행의 시간을 성능 개선 수치로 비교하지 않습니다.</p>
+<p>이전 로컬 시험 환경은 Linux/amd64, Ubuntu 26.04 사용자 공간, WSL2 커널 <code>6.6.87.2-microsoft-standard-WSL2</code>, Go <code>1.26.8</code>, Node <code>26.7.0</code>, Intel i7-8700의 논리 CPU 4개·메모리 약 15.62GiB입니다. CI는 별도로 Node 22와 PostgreSQL 17/18 서비스 컨테이너를 사용하며, 실제 원격 실행 결과와 엔진 버전을 아티팩트로 보존합니다. 로컬 결과와 원격 결과의 환경·시간·수집 범위를 구분합니다.</p>
+<h2 id="무엇을-확인했나요">무엇을 확인했나요?</h2>
+<ul>
+<li>실제 로그인 폼과 후보 <code>VERSION</code>에 일치하는 로그인·프로필 버전 표시</li>
+<li>문서의 Markdown 원문 편집, 한글·이모지 저장 후 API 정본과 새로고침 결과 비교</li>
+<li>한글 태그 추가·보존, 합성 composition 이벤트의 조합 중 Enter가 미완성 태그를 만들지 않는지 확인</li>
+<li>데이터베이스 항목의 단일 선택과 체크박스 다중 선택·해제, 저장 후 정본 값 비교</li>
+<li>모달 안 Tab 초점, Escape·닫기 버튼 후 원래 버튼으로 초점 복귀</li>
+<li>프로필 글꼴의 native select 저장·새로고침 반영</li>
+<li>390×844 화면의 문서·데이터베이스, 가로 넘침과 모달 경계, 모바일 선택 입력</li>
+</ul>
+<p>한글 시험은 브라우저의 Unicode 입력과 합성 조합 이벤트를 검사합니다. OS 입력기 자체의 조합·변환·후보 창까지 자동화한 시험은 아닙니다. 작은 화면은 뷰포트 변경이며 iPhone·Android 하드웨어 검증과 구분합니다. Playwright의 각 버전은 특정 엔진 바이너리를 사용하므로, 엔진 버전과 실제 Chrome·Firefox·Safari 배포 제품의 버전을 혼동하지 않습니다. <a href="https://playwright.dev/docs/browsers">Playwright 브라우저 안내</a></p>
+<p>아래 공개 화면은 <code>main-By2nz__J.js</code>·PostgreSQL 18.6 재검사의 실제 캡처입니다. Chromium 한글 원문, Firefox 선택 입력, WebKit 모바일 선택 화면을 시각 검토한 뒤 원본 PNG 그대로 반영했습니다. 검증 시점은 공개 폴더로 복사된 파일의 생성·수정 시각이 아니라 <code>test-results/compatibility-latest-By2nz__J/pg18/</code>의 원본 보고서 시각과 엔진별 캡처 경로를 기준으로 확인합니다.</p>
+<p><a href="../screenshots/verification-v0.2.0-shared.json">shared25 공개 검증 목록</a>은 이 호환성 시험 및 원격 CI와 별개인 로컬 BPw 배치 <code>9ae61b64-ed0c-40e6-9193-4f65482e3410</code>의 정상 157장 근거입니다. <a href="../screenshots/verification-v0.2.0-By2nz__J.json">이전 By2 목록</a>도 당시 시각·해시로 보존합니다. 전체 갤러리나 여기의 별도 호환성 캡처까지 모두 같은 배치에서 검증했다는 뜻은 아니며, 기존 <code>verification.json</code>의 과거 기록도 유지합니다.</p>
+<p><img src="../screenshots/compatibility-chromium-korean.png" alt="Chromium에서 한글 원문과 태그 저장"></p>
+<p><img src="../screenshots/compatibility-firefox-select.png" alt="Firefox에서 단일·다중 선택 입력"></p>
+<p><img src="../screenshots/compatibility-webkit-mobile.png" alt="WebKit 390px 화면의 선택 입력"></p>
+<h2 id="재현-방법">재현 방법</h2>
+<p>시험 코드는 <code>internal/server/compatibility_browser_test.go</code>와 <code>tests/compatibility-browser.mjs</code>입니다. 기본 Go 회귀에서는 건너뛰고 명시적으로 활성화합니다. 전용 시험 DB에만 연결하세요. 기존 통합 시험 도우미가 임의 이름의 격리 스키마를 만들고 종료 시 해당 스키마만 정리합니다. 실행 중인 개발 서버의 8080 포트를 사용하지 않습니다.</p>
+<pre><code class="language-sh">npm --prefix web ci
+npm --prefix web run build
+npm --prefix tests ci
+node tests/node_modules/playwright/cli.js install --with-deps chromium firefox webkit
+
+MADI_TEST_POSTGRES_DSN=&#39;postgres://madi:test-password@127.0.0.1:5432/madi_test?sslmode=disable&#39; \
+MADI_BROWSER_COMPATIBILITY=1 \
+MADI_COMPAT_PG_MAJOR=17 \
+MADI_COMPAT_BROWSERS=chromium,firefox,webkit \
+go test -race ./internal/server -run &#39;^TestBrowserCompatibility$&#39; -count=1 -timeout=8m
+</code></pre>
+<p>PostgreSQL 18의 전용 DB에서도 DSN과 <code>MADI_COMPAT_PG_MAJOR=18</code>을 바꿔 반복합니다. 연결된 실제 메이저 버전이 요청 값과 다르면 즉시 실패합니다. 위 변수는 개발·CI 시험 전용이며 제품 런타임 환경변수 네 개 계약을 바꾸지 않습니다. 브라우저와 빌드 의존성 다운로드는 연결된 빌드 환경에서 수행합니다.</p>
+<p>기본 결과 경로는 <code>internal/server/test-results/compatibility/pg17/</code> 또는 <code>pg18/</code>입니다. <code>report.json</code>에 실제 PostgreSQL·엔진·Go 버전과 환경·항목별 결과를 기록하고 엔진별 PNG를 보관합니다. 실패 캡처는 진단용이며 공개 갤러리에 포함하지 않습니다. <code>.github/workflows/compatibility.yml</code>은 동일 시험을 PG17/18 행렬로 실행하고 릴리즈가 해당 검증을 선행 조건으로 사용합니다.</p>
+<h2 id="로컬-격리와-한계">로컬 격리와 한계</h2>
+<p>이번 PG17은 시스템 패키지를 설치하거나 기존 DB를 재시작하지 않고, 공식 PGDG 저장소의 서명된 메타데이터와 패키지 SHA-256을 검증한 후 전용 0700 임시 디렉터리에 추출했습니다. PostgreSQL 공식 Ubuntu 저장소는 이 배포판을 지원합니다. <a href="https://www.postgresql.org/download/linux/ubuntu/">공식 PGDG 설치 안내</a></p>
+<p>실제 서버 패키지는 <code>postgresql-17 17.11-1.pgdg26.04+2</code>이고 SHA-256은 <code>4b2abeefb22fdfb35b2d3dffd26305c07e61f7f9cc22007197819ccac2044585</code>입니다. 시험 클러스터는 loopback에만 바인딩했고 완료 후 종료와 포트 해제를 확인했습니다. 기존 PG18·Docker Desktop·WSL 설정은 변경하지 않았습니다.</p>
+<p>로컬 WebKit은 호스트 라이브러리 부족으로 공식 Ubuntu 패키지를 전용 sysroot에 추출해 사용했습니다. <code>MADI_COMPAT_WEBKIT_BUNDLE</code> 시험 옵션은 설치된 동일 Playwright MiniBrowser 바이너리와 해당 라이브러리를 직접 지정하며, 결과의 <code>private_dependency_sysroot</code>로 구분합니다. 바이너리·브라우저 보안 옵션을 수정하지 않았습니다. 일반 CI는 <code>install --with-deps</code>로 준비하므로 이 우회 옵션이 필요하지 않습니다. 이 로컬 조합이 다른 배포판의 모든 라이브러리 조합을 보증하지는 않습니다.</p>
+<p>PDF/OCR·외부 모델·Git·SSO 등 선택 기능 전체를 이 작은 행렬에서 재시험하지는 않습니다. 기능별 보안·프로토콜 시험과 <a href="attachment-extraction-guide.html">첨부 본문 검증</a>, <a href="deployment-verification.html">오프라인 배포 검증</a>을 함께 확인하세요.</p>
+</article></div></main>
+<footer class="site-footer"><div class="container"><div class="footer-top"><a class="brand" href="../index.html"><img src="../assets/logo.svg" alt="madi" width="90" height="32"></a><div class="footer-links"><a href="../manuals.html">사용자·관리자 매뉴얼</a><a href="../screenshots.html">실제 화면</a><a href="https://github.com/hkjang/madi">소스 저장소 ↗</a></div></div><p class="footer-bottom">madi v0.3.0 · 우리 조직의 지식이 연결되는 공간.</p></div></footer>
+<dialog class="lightbox" aria-label="서비스 화면 확대"><img alt=""><div class="lightbox-caption"><span data-caption></span><button class="lightbox-close" type="button">닫기 ×</button></div></dialog><script src="../assets/site.js" defer></script></body></html>

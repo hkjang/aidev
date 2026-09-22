@@ -1,0 +1,60 @@
+name: Browser and PostgreSQL compatibility
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_call:
+permissions:
+  contents: read
+jobs:
+  compatibility:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    strategy:
+      fail-fast: false
+      matrix:
+        postgres: ['17', '18']
+    services:
+      postgres:
+        image: postgres:${{ matrix.postgres }}-alpine
+        env:
+          POSTGRES_DB: madi
+          POSTGRES_USER: madi
+          POSTGRES_PASSWORD: test-password
+        ports: ['5432:5432']
+        options: >-
+          --health-cmd "pg_isready -U madi -d madi"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: web/package-lock.json
+      - uses: actions/setup-go@v5
+        with:
+          go-version-file: go.mod
+          cache: true
+      - run: npm ci && npm run build
+        working-directory: web
+      - run: npm ci
+        working-directory: tests
+      - run: npx playwright install --with-deps chromium firefox webkit
+        working-directory: tests
+      - name: Verify representative UI against all three browser engines
+        env:
+          MADI_TEST_POSTGRES_DSN: postgres://madi:test-password@localhost:5432/madi?sslmode=disable
+          MADI_BROWSER_COMPATIBILITY: '1'
+          MADI_COMPAT_PG_MAJOR: ${{ matrix.postgres }}
+          MADI_COMPAT_BROWSERS: chromium,firefox,webkit
+        run: go test -race ./internal/server -run '^TestBrowserCompatibility$' -count=1 -timeout=8m
+      - name: Keep exact browser and database versions and results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: compatibility-postgres-${{ matrix.postgres }}
+          path: internal/server/test-results/compatibility*/
+          if-no-files-found: ignore

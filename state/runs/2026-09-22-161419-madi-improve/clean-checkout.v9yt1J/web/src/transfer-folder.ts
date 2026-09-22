@@ -1,0 +1,8 @@
+export async function archiveFolder(files:File[],signal:AbortSignal):Promise<File>{
+ if(!files.length||files.length>5000)throw new Error('폴더 파일은 1~5,000개까지 선택할 수 있습니다');
+ if(files.reduce((sum,file)=>sum+file.size,0)>48*1024*1024)throw new Error('폴더 업로드는 ZIP 여유분을 포함하여 원본 합계 48MB까지입니다');
+ const data:Record<string,Uint8Array>={},seen=new Set<string>();
+ for(const file of files){if(signal.aborted)throw new Error('폴더 준비가 취소되었습니다');const path=file.webkitRelativePath||file.name;if(path.startsWith('/')||path.split('/').some(x=>!x||x==='.'||x==='..'||x.includes(':')||x.includes('\\'))||seen.has(path.toLowerCase()))throw new Error('중복되거나 안전하지 않은 폴더 경로입니다');seen.add(path.toLowerCase());data[path]=new Uint8Array(await file.arrayBuffer())}
+ if(signal.aborted)throw new Error('폴더 준비가 취소되었습니다');
+ return new Promise((resolve,reject)=>{const worker=new Worker(new URL('./transfer-archive.worker.ts',import.meta.url),{type:'module'});const clean=()=>{worker.terminate();signal.removeEventListener('abort',abort)};const abort=()=>{clean();reject(new Error('폴더 준비가 취소되었습니다'))};signal.addEventListener('abort',abort,{once:true});worker.onerror=()=>{clean();reject(new Error('폴더 압축 작업을 시작하지 못했습니다'))};worker.onmessage=(event:MessageEvent<{data?:Uint8Array;error?:string}>)=>{clean();if(event.data.error||!event.data.data){reject(new Error(event.data.error||'폴더 ZIP이 없습니다'));return};if(event.data.data.byteLength>50*1024*1024){reject(new Error('ZIP 결과가 50MB를 초과합니다'));return};resolve(new File([event.data.data.buffer as ArrayBuffer],'madi-folder.zip',{type:'application/zip'}))};worker.postMessage(data,Object.values(data).map(x=>x.buffer as ArrayBuffer))});
+}

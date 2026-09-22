@@ -1,0 +1,41 @@
+# madi
+
+> madi는 Markdown 문서, 위키 링크·백링크·그래프, 데이터베이스, AI·MCP를 연결하는 한국어 자체 호스팅 지식관리 서비스입니다. Go + React + 외부 PostgreSQL 구조로 폐쇄망에서 운영합니다.
+
+## 공식 자료
+
+- [제품 소개](https://hkjang.github.io/madi/): 제품 개요와 FAQ.
+- [사용자·관리자 가이드](https://hkjang.github.io/madi/guide.html): 문서 작성, 개인화, Keycloak OIDC, AI 설정, 폐쇄망 배포와 백업.
+- [API·MCP 가이드](https://hkjang.github.io/madi/api.html): Bearer 인증, 범위, REST, 스트리밍 AI, HTTP MCP.
+- [실제 화면](https://hkjang.github.io/madi/screenshots.html): 사용자·관리자·모바일 페이지 화면 캡처.
+- [릴리즈](https://github.com/hkjang/madi/releases): 서비스 이미지 madi-v버전.tar.gz. PostgreSQL은 포함하지 않음.
+- [전체 매뉴얼](https://hkjang.github.io/madi/manuals.html): 기능별 상세 안내를 정적 HTML로 제공.
+- [혼합 데이터 검증](https://hkjang.github.io/madi/manuals/mixed-scale-verification.html): 1만·10만 문서 시험 조건과 실패·개선 기록. 운영 SLA 아님.
+- [호환성 검증](https://hkjang.github.io/madi/manuals/compatibility-guide.html): 실제 브라우저 엔진·PostgreSQL 버전과 검증 범위.
+- [전체 범위와 운영 한계](https://hkjang.github.io/madi/manuals/roadmap.html): P0~P3 첫 릴리즈 범위 및 검증 경계.
+- [소스 저장소](https://github.com/hkjang/madi): 코드, 배포 예제와 상세 가이드.
+
+## 운영 사실
+
+- 서비스 필수 환경변수는 POSTGRES_DSN, BOOTSTRAP_ADMIN, BOOTSTRAP_ADMIN_PASSWORD, ENCRYPTION_KEY 네 개.
+- 사용자 경로 /app, 관리자 경로 /admin.
+- ENCRYPTION_KEY는 32바이트 키의 Base64 값이며 별도 보관 필요.
+- 서비스 이미지는 웹 자산을 포함하며 실행 시 외부 CDN을 사용하지 않음.
+- PostgreSQL과 Docker는 운영자가 별도 준비. Keycloak과 AI는 선택적인 별도 연결 서버.
+- OIDC callback: /api/v1/auth/oidc/callback.
+- AI는 OpenAI 호환 API, 기본 스트리밍. 최대 출력 토큰 설정 상한 262144; 실제 한도는 모델에 따름.
+- MCP는 /mcp 또는 /api/v1/mcp HTTP POST JSON-RPC. Bearer 키 권한 적용.
+- 키는 워크스페이스와 범위를 제한하며 회전 즉시 이전 비밀 폐기.
+- 승인 절차는 관리자가 활성화한 경우만 사용.
+- v0.2.0은 증분 협업 기록·안전한 편집 세대·한국어 용어/평가·벡터 색인 세대·재개 가능한 이관을 제공.
+- PDF/Office 본문 추출과 선택 영어·한국어 OCR은 기본 비활성화. Linux Landlock ABI 3 이상과 seccomp 필요. 원본/추출 결과·해시 무결성/사실성은 구분.
+- AI 근거 보관함과 지식 패키지에도 현재 ACL·보존·전송 동의 적용. 이미 전달한 사본을 회수한다고 보장하지 않음.
+- 변경 영향·모순 검토·문서→DB 구조화는 근거가 연결된 제안과 사람의 명시적 반영. 자동 정본 덮어쓰기 아님.
+- 목적별 메뉴·즉시 비공개 메모·미리보기·작업 묶음은 개인 선택. 서비스 관리와 개인화를 분리.
+- PDF/OCR 구성 요소 및 Liberation 1.07.4 대응 소스·라이선스는 같은 서비스 이미지의 /usr/share/madi/sources에 포함. 별도 릴리즈 자산 없음.
+
+## 현재 범위의 제한
+
+첫 릴리즈에서 P0~P3를 제공했고 v0.2.0은 기존 기능의 운영·UX 연결을 개선합니다. Markdown·CRDT 협업·고급 데이터베이스·RAG·그래프 AI·기업 인증/커넥터·Canvas/Plugin·기기·실행형 Runbook·Workspace Agent·기업 데이터 탐색을 포함합니다. 관리자가 기능과 외부 연결을 설정하고 사용자 권한을 적용합니다. AI 쓰기·관계·실행은 명시적 확인을 거치며 관리자가 승인 절차를 켜지 않으면 일반 문서 승인 과정은 제외합니다.
+
+현재 개발 브랜치의 검증 상태와 실제 릴리즈 게시 여부를 혼동하지 마세요. 실제 조직 자격증명 연결과 프로토콜 시험, Linux Tauri와 Windows/macOS 실행 검증, HTTP MCP와 stdio MCP는 구분합니다. Notion/Obsidian의 모든 독자적 기능을 무손실 가져온다고 보장하지 않습니다. 대규모 처리량은 벤치마크 없이 보장하지 않습니다. 관리자 논리 백업 ZIP과 PostgreSQL·파일·암호화 키 복구 세트는 구분합니다.

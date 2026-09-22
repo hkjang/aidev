@@ -1,0 +1,178 @@
+.mobile-core-actions {
+  display: none;
+}
+.sidebar-mobile-close {
+  display: none;
+}
+@media (max-width: 800px) {
+  .sidebar-mobile-close {
+    display: flex;
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    z-index: 1;
+    color: white;
+  }
+  .sidebar .brand {
+    padding-right: 48px;
+  }
+  .app-layout:not(.mobile-open) .sidebar {
+    visibility: hidden;
+  }
+  .app-layout.mobile-open .sidebar {
+    visibility: visible;
+  }
+}
+.natural-date-field details {
+  margin-top: 6px;
+  min-width: 0;
+}
+.natural-date-field summary {
+  min-height: 44px;
+  padding: 9px 0;
+  cursor: pointer;
+  font-size: 16px;
+}
+.natural-date-field details > label {
+  display: block;
+  margin: 8px 0;
+  font-size: 16px;
+}
+.natural-date-field small {
+  display: block;
+  margin-top: 8px;
+}
+.natural-date-field input {
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  font-size: 16px;
+}
+.natural-date-field p {
+  overflow-wrap: anywhere;
+}
+:root[data-density="compact"] {
+  --madi-row-padding: 8px;
+  --madi-panel-padding: 16px;
+}
+:root[data-density="comfortable"] {
+  --madi-row-padding: 12px;
+  --madi-panel-padding: 22px;
+}
+:root[data-density="relaxed"] {
+  --madi-row-padding: 18px;
+  --madi-panel-padding: 28px;
+}
+:root[data-density] .panel.padded {
+  padding: var(--madi-panel-padding);
+}
+:root[data-density]
+  :is(
+    .document-list-row,
+    .database-edit-grid .data-table td,
+    .database-edit-grid .data-table th
+  ) {
+  padding-block: var(--madi-row-padding);
+}
+:root[data-density] :is(.button, .icon-button, .cell-button) {
+  min-height: 44px;
+}
+:root[data-density] .icon-button {
+  min-width: 44px;
+}
+.mobile-database-presentation {
+  display: none;
+}
+@media (max-width: 640px) {
+  .mobile-core-actions:not([hidden]) {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 35;
+    background: var(--surface, #fff);
+    border-top: 1px solid var(--border);
+    padding: 6px 8px max(6px, env(safe-area-inset-bottom));
+    box-shadow: 0 -4px 20px #153d2910;
+  }
+  .mobile-core-actions :is(a, button) {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    align-items: center;
+    justify-content: center;
+    min-height: 54px;
+    min-width: 44px;
+    padding: 4px;
+    font: inherit;
+    font-size: 16px;
+    border: 0;
+    background: transparent;
+    border-radius: 8px;
+    color: var(--text);
+    text-decoration: none;
+  }
+  .mobile-core-actions a.active {
+    color: var(--accent, #0f766e);
+    background: var(--accent-soft, #eaf5f0);
+  }
+  .mobile-core-actions button:disabled {
+    opacity: 0.5;
+  }
+  :root[data-mobile-actions="visible"] .page-content {
+    padding-bottom: calc(96px + env(safe-area-inset-bottom));
+  }
+  :root[data-mobile-actions="visible"] {
+    scroll-padding-bottom: 100px;
+  }
+  :root[data-mobile-actions="visible"] .pwa-banner {
+    bottom: calc(74px + env(safe-area-inset-bottom));
+  }
+  .mobile-database-presentation {
+    display: flex;
+    gap: 12px;
+    align-items: end;
+    margin-block: 12px;
+    flex-wrap: wrap;
+  }
+  .mobile-database-presentation .field {
+    flex: 1 1 180px;
+    margin: 0;
+  }
+  .mobile-database-cards {
+    display: grid;
+    gap: 12px;
+  }
+  .mobile-database-cards article {
+    padding: 16px;
+    min-width: 0;
+  }
+  .mobile-database-cards dl {
+    display: grid;
+    grid-template-columns: minmax(80px, 1fr) minmax(0, 2fr);
+    gap: 12px;
+    margin: 12px 0;
+    font-size: 16px;
+  }
+  .mobile-database-cards :is(dt, dd) {
+    margin: 0;
+    min-width: 0;
+    overflow-wrap: anywhere;
+  }
+  .mobile-database-cards dt {
+    color: var(--muted);
+  }
+  .mobile-database-cards .button {
+    width: 100%;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .mobile-core-actions *,
+  .mobile-database-cards * {
+    animation: none !important;
+    transition: none !important;
+    scroll-behavior: auto !important;
+  }
+}

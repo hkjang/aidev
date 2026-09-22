@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>madi 클리퍼 연결 설정</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <main>
+      <header>
+        <img src="icon-192.png" alt="" />
+        <h1>madi 클리퍼 연결 설정</h1>
+      </header>
+      <p>
+        개인화 → API 키에서 필요한 워크스페이스의 document:read, document:write
+        권한 키를 발급하세요. 연결을 허용한 madi 서버에만 키를 전송합니다.
+      </p>
+      <div id="error" class="error" role="alert" hidden></div>
+      <form id="connect">
+        <label for="server">madi 서버 주소</label
+        ><input
+          id="server"
+          type="url"
+          placeholder="https://madi.company.local"
+          required
+        /><label class="check"
+          ><input id="http" type="checkbox" /><span
+            >HTTPS를 지원하지 않는 신뢰된 사내 HTTP 서버에 연결합니다. API 키와
+            문서가 암호화되지 않는 위험을 확인했습니다.</span
+          ></label
+        ><label for="token">개인 API 키</label
+        ><input id="token" type="password" autocomplete="off" required />
+        <div class="actions">
+          <button>서버 연결 권한 허용·확인</button
+          ><button id="disconnect" type="button" class="secondary">
+            연결 해제·키 삭제
+          </button>
+        </div>
+      </form>
+      <form id="workspace-form" hidden>
+        <label for="workspace">기본 워크스페이스</label
+        ><select id="workspace" required></select>
+        <div class="actions"><button>워크스페이스 저장</button></div>
+      </form>
+      <p id="status" role="status"></p>
+      <div class="note">
+        키와 아직 전송하지 않은 미리보기는 확장 프로그램의 세션 저장소에만
+        보관합니다. 브라우저를 종료하면 삭제됩니다. 연결 해제 시 부여한 서버
+        접근 권한도 회수합니다. 웹사이트 전체 접근 권한은 설치 시 요구하지
+        않습니다.
+      </div>
+    </main>
+    <script type="module" src="options.js"></script>
+  </body>
+</html>

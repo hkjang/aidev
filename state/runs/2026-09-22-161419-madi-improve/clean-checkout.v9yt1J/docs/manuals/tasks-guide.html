@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#164e43">
+<title>할 일과 통합 일정 — madi</title><meta name="description" content="할 일과 통합 일정. madi의 실제 설정 방법, 사용자 권한, 기능 흐름과 운영상 주의점을 안내합니다."><link rel="canonical" href="https://hkjang.github.io/madi/manuals/tasks-guide.html"><link rel="icon" href="../assets/favicon.svg" type="image/svg+xml"><link rel="stylesheet" href="../assets/style.css">
+<meta property="og:type" content="website"><meta property="og:locale" content="ko_KR"><meta property="og:site_name" content="madi"><meta property="og:title" content="할 일과 통합 일정 — madi"><meta property="og:description" content="할 일과 통합 일정. madi의 실제 설정 방법, 사용자 권한, 기능 흐름과 운영상 주의점을 안내합니다."><meta property="og:url" content="https://hkjang.github.io/madi/manuals/tasks-guide.html"><meta property="og:image" content="https://hkjang.github.io/madi/screenshots/workspace.png"><meta name="twitter:card" content="summary_large_image">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"할 일과 통합 일정","description":"할 일과 통합 일정. madi의 실제 설정 방법, 사용자 권한, 기능 흐름과 운영상 주의점을 안내합니다.","inLanguage":"ko","url":"https://hkjang.github.io/madi/manuals/tasks-guide.html","isPartOf":{"@type":"WebSite","name":"madi","url":"https://hkjang.github.io/madi/"}}</script></head>
+<body><a class="skip" href="#main">본문으로 바로가기</a><header class="site-header"><div class="container header-inner"><a class="brand" href="../index.html" aria-label="madi 홈"><img src="../assets/logo.svg" alt="madi" width="113" height="40"></a><button class="mobile-toggle" type="button" aria-expanded="false" aria-controls="navigation" aria-label="탐색 메뉴 열기">☰</button><nav class="nav" id="navigation" aria-label="주 탐색"><a href="../index.html#features">기능</a><a href="../screenshots.html">화면 둘러보기</a><a href="../guide.html">시작 가이드</a><a href="../manuals.html">전체 매뉴얼</a><a href="../api.html">API · MCP</a><a href="https://github.com/hkjang/madi">GitHub ↗</a></nav></div></header>
+<main id="main" class="container"><div class="page-hero"><a class="crumb" href="../manuals.html">madi / 전체 매뉴얼</a><p>할 일과 통합 일정. madi의 실제 설정 방법, 사용자 권한, 기능 흐름과 운영상 주의점을 안내합니다.</p><a href="../tasks-guide.md" download>Markdown 원문 내려받기</a></div><div class="guide-layout"><aside class="guide-sidebar" aria-label="문서 목차"><strong>이 문서의 내용</strong><a href="#문서와-연결된-할-일">문서와 연결된 할 일</a><a href="#내-할-일과-팀-업무">내 할 일과 팀 업무</a><a href="#통합-캘린더">통합 캘린더</a><a href="#rest-연동">REST 연동</a><a href="#검증">검증</a></aside><article class="prose manual-prose"><h1 id="할-일과-통합-일정">할 일과 통합 일정</h1>
+<p><code>/app/tasks</code>에서 문서의 체크리스트를 목록·칸반·통합 캘린더로 볼 수 있습니다. 화면의 보기·검색어·담당 범위·달력 월은 URL에 보존되어 새로고침이나 링크 공유 후에도 유지됩니다.</p>
+<h2 id="문서와-연결된-할-일">문서와 연결된 할 일</h2>
+<p>Markdown의 <code>- [ ]</code>, <code>- [x]</code>와 중첩·번호 목록 체크리스트, 편집기가 만든 HTML 표 안의 할 일을 함께 모읍니다. 코드 예제나 일반 HTML 입력 필드는 할 일로 취급하지 않습니다. 원본 문서 접근 권한을 그대로 적용합니다.</p>
+<ol>
+<li><strong>속성</strong>에서 담당자·마감일·우선순위·진행 상태를 선택합니다. 담당자를 지정해도 문서 공유 권한은 추가되지 않습니다. 담당자는 그 문서를 읽을 수 있어야 합니다.</li>
+<li>처음 속성을 저장하면 Markdown 원문에 <code>[작업](/app/tasks?task=UUID)</code> 링크를 넣습니다. HTML 표에는 같은 주소의 HTML 링크를 보존합니다. 할 일 이름이나 위치를 바꾸어도 이 링크를 유지하면 담당자·기한이 연결됩니다.</li>
+<li>같은 고유 링크를 복제한 경우 임의로 한 항목을 선택하지 않습니다. 속성에서 <strong>별도 작업으로 분리</strong>를 확인해야 새 ID를 발급합니다.</li>
+<li>완료 체크 또는 칸반의 드래그 손잡이·상태 선택으로 원문 체크박스를 함께 바꿉니다. 다른 사용자가 문서를 수정한 경우 저장을 거부하고 현재 목록을 다시 불러오도록 안내합니다.</li>
+</ol>
+<p>할 일 상세 속성은 PostgreSQL에 저장하며 서비스 백업으로 보존합니다. 단순 Markdown 파일만 내보내면 원문과 고유 참조 링크는 남지만 별도 담당자·우선순위 메타데이터의 복원까지 보장하지 않습니다.</p>
+<p>담당자가 퇴사하거나 권한을 잃으면 속성에 재지정 필요 상태를 표시합니다. 관리자가 검토 프로세스를 켜지 않으면 ‘검토 대기’ 선택을 노출하지 않습니다. 할 일 상태는 문서 게시 승인이나 실행 권한을 대신하지 않습니다.</p>
+<h2 id="내-할-일과-팀-업무">내 할 일과 팀 업무</h2>
+<p>내 담당·개인 할 일, 팀 담당, 미완료, 완료, 기한 초과, 오늘 및 이번 주 마감으로 좁힐 수 있습니다. 마감일은 날짜 단위이며 오늘 기준은 개인 설정의 시간대에 따릅니다. 문서에 쓴 <code>2026-09-20</code>과 고유하게 식별되는 <code>@사용자명</code>도 초기 속성으로 읽습니다. 이후 속성 저장 값이 우선합니다.</p>
+<h2 id="통합-캘린더">통합 캘린더</h2>
+<p>할 일 마감일, 문서의 Front Matter <code>date</code>, 날짜 이름의 일일 노트, 데이터베이스의 날짜 속성, 직접 등록한 회의·마일스톤을 함께 표시합니다. 모바일에서는 7열 요약 달력의 날짜를 누르고 아래에서 상세 일정을 봅니다.</p>
+<p>회의·마일스톤은 기본 ‘나만 보기’이며 기간은 366일 이내입니다. 워크스페이스 공유를 선택해도 연결 문서가 비공개이면 해당 문서를 읽을 수 있는 사람에게만 보입니다. 소유자만 직접 등록한 일정을 수정·삭제할 수 있습니다. 일정을 삭제해도 연결 문서와 할 일은 삭제하지 않습니다.</p>
+<p>키 호출에서는 <code>document:read</code>가 필요하고 DB 일정은 추가로 <code>database:read</code>가 있어야 나타납니다. 수정은 <code>document:write</code>와 현재 사용자 ACL을 모두 검사합니다.</p>
+<h2 id="rest-연동">REST 연동</h2>
+<ul>
+<li><code>GET /api/v1/tasks/board?workspace_id=UUID</code>: 할 일·현재 문서 버전·줄·<code>source_start</code>·고유 ID·상세 속성. <code>document_id</code>와 <code>task</code> 필터를 지원합니다.</li>
+<li><code>PUT /api/v1/tasks/details</code>: <code>document_id</code>, <code>version</code>, <code>line</code>, <code>source_start</code>, 기존 <code>task_id</code>, <code>status</code>, <code>priority</code>, <code>assignee_id</code>, <code>due_date</code>. 동일 HTML 줄의 여러 항목은 <code>source_start</code>로 구분합니다. 오래된 위치·버전은 HTTP 409입니다.</li>
+<li><code>GET /api/v1/tasks/calendar?workspace_id=UUID&amp;month=2026-09</code>: 현재 권한 내 통합 일정입니다.</li>
+<li><code>POST /api/v1/tasks/calendar/events</code>, <code>PUT/DELETE /api/v1/tasks/calendar/events/UUID</code>: 회의·마일스톤 관리입니다. 변경 요청에는 기존 일정 <code>version</code>이 필요합니다.</li>
+</ul>
+<p>통합 조회는 최근 접근 가능한 문서 최대 2,000개·본문 합계 16MiB·할 일 10,000개, DB 날짜 2,000개로 제한합니다. 한도를 넘으면 응답의 <code>truncated</code>와 화면 안내가 표시됩니다. 모든 대규모 문서를 인덱싱했다고 오인하지 않도록 조회 범위를 명시합니다.</p>
+<p>할 일 보드는 현재 문서 권한을 통과한 최신 문서 2,001개까지만 확인하고, 마지막 한 개는 상한 도달 판단에만 사용합니다. <code>total_documents_exact=true</code>인 경우에만 <code>total_documents</code>를 정확한 문서 수로 읽으세요. <code>false</code>이면 확인한 하한이며 <code>total_documents_is_lower_bound=true</code>로 함께 표시합니다. 열람할 수 없는 문서 수를 포함하거나 정확한 전체 총수를 세기 위해 응답을 지연시키지 않습니다. 화면은 결과가 제한되면 ‘전체 할 일’ 대신 ‘조회한 할 일’로 표시합니다.</p>
+<p>특정 문서의 <code>document_id</code> 필터는 서버에서 조회 상한보다 먼저 적용되므로 워크스페이스의 최신 문서 2,000개 밖에 있는 오래된 문서도 직접 확인할 수 있습니다. 문서 필터가 잘못되면 전체 할 일로 대신 조회하지 않고 오류를 표시합니다. Markdown 정본과 현재 버전으로 수정하는 경로, 할 일 고유 ID·중복 구분·현재 담당자 권한 검사는 그대로 유지합니다.</p>
+<p>달력의 <code>document_id</code> 필터도 같은 문서에 적용됩니다. 그 문서의 날짜·할 일, 실제 <code>document_id</code>로 연결한 회의·마일스톤만 현재 권한으로 조회하며, 독립 일정이나 DB 날짜 행을 임의로 연결하지 않습니다. <code>task</code> 링크는 특정 할 일을 찾아 편집하는 맥락이고 전체 달력의 모든 종류를 그 할 일로 제한한다는 뜻은 아닙니다.</p>
+<h2 id="검증">검증</h2>
+<p><code>tests/tasks.mjs</code>는 실제 서비스에서 담당자/마감일/우선순위 선택, 원문 고유 참조, 칸반 손잡이 드래그, URL 상태 유지, 문서·DB·회의 일정, PC·모바일 레이아웃을 확인합니다. PostgreSQL 회귀 시험은 비공개 ACL·담당자 권한 회수·버전 충돌·중복 참조 분리·동일 줄의 HTML 표 할 일·완료 outbox의 트랜잭션 정합성을 검증합니다.</p>
+</article></div></main>
+<footer class="site-footer"><div class="container"><div class="footer-top"><a class="brand" href="../index.html"><img src="../assets/logo.svg" alt="madi" width="90" height="32"></a><div class="footer-links"><a href="../manuals.html">사용자·관리자 매뉴얼</a><a href="../screenshots.html">실제 화면</a><a href="https://github.com/hkjang/madi">소스 저장소 ↗</a></div></div><p class="footer-bottom">madi v0.3.0 · 우리 조직의 지식이 연결되는 공간.</p></div></footer>
+<dialog class="lightbox" aria-label="서비스 화면 확대"><img alt=""><div class="lightbox-caption"><span data-caption></span><button class="lightbox-close" type="button">닫기 ×</button></div></dialog><script src="../assets/site.js" defer></script></body></html>

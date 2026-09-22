@@ -1,0 +1,122 @@
+.worksets-layout {
+  display: grid;
+  grid-template-columns: minmax(200px, 280px) minmax(0, 1fr);
+  gap: 24px;
+  align-items: start;
+}
+.worksets-list {
+  display: grid;
+  gap: 8px;
+}
+.worksets-list a {
+  display: grid;
+  gap: 4px;
+  padding: 16px;
+  min-height: 64px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  text-decoration: none;
+  color: var(--text);
+  background: var(--surface);
+}
+.worksets-list a.active {
+  border-color: var(--primary);
+  background: var(--primary-soft, #edf6f2);
+}
+.workset-items {
+  display: grid;
+  gap: 12px;
+}
+.workset-item {
+  padding: 18px;
+  min-width: 0;
+}
+.workset-item h3 {
+  font-size: 18px;
+  overflow-wrap: anywhere;
+  margin: 0 0 8px;
+}
+.workset-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 14px;
+}
+.workset-comparison {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+  margin-block: 20px;
+}
+.workset-compare-slot {
+  min-width: 0;
+}
+.workset-compare-slot > label {
+  display: block;
+  margin-block: 8px;
+}
+.workset-compare-slot > select {
+  max-width: 100%;
+  width: 100%;
+  min-width: 0;
+  font-size: 16px;
+}
+.workset-comparison .document-preview-panel {
+  min-width: 0;
+}
+.document-passport dl {
+  display: grid;
+  grid-template-columns: minmax(90px, 1fr) minmax(0, 2fr);
+  gap: 12px;
+}
+.document-passport :is(dt, dd) {
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+.workset-cleanup pre {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  max-height: 280px;
+  overflow: auto;
+  font-size: 16px;
+}
+.workset-cleanup .checkbox-options {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+.workset-cleanup .checkbox-options label {
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+@media (max-width: 800px) {
+  .worksets-page > .page-heading,
+  .worksets-layout .page-heading {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 16px;
+  }
+  .worksets-page > .page-heading .button {
+    white-space: nowrap;
+    min-width: 160px;
+  }
+  .worksets-layout .page-heading .workset-actions {
+    margin-top: 0;
+  }
+  .worksets-layout,
+  .workset-comparison {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .worksets-list {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .workset-actions .button {
+    flex: 1 1 auto;
+  }
+  .worksets-list a {
+    padding: 12px;
+    overflow-wrap: anywhere;
+  }
+}

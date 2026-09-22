@@ -1,0 +1,198 @@
+<!doctype html>
+<html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#164e43">
+<title>가져오기·내보내기 가이드 — madi</title><meta name="description" content="가져오기·내보내기 가이드. madi의 실제 설정 방법, 사용자 권한, 기능 흐름과 운영상 주의점을 안내합니다."><link rel="canonical" href="https://hkjang.github.io/madi/manuals/transfer-guide.html"><link rel="icon" href="../assets/favicon.svg" type="image/svg+xml"><link rel="stylesheet" href="../assets/style.css">
+<meta property="og:type" content="website"><meta property="og:locale" content="ko_KR"><meta property="og:site_name" content="madi"><meta property="og:title" content="가져오기·내보내기 가이드 — madi"><meta property="og:description" content="가져오기·내보내기 가이드. madi의 실제 설정 방법, 사용자 권한, 기능 흐름과 운영상 주의점을 안내합니다."><meta property="og:url" content="https://hkjang.github.io/madi/manuals/transfer-guide.html"><meta property="og:image" content="https://hkjang.github.io/madi/screenshots/workspace.png"><meta name="twitter:card" content="summary_large_image">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"가져오기·내보내기 가이드","description":"가져오기·내보내기 가이드. madi의 실제 설정 방법, 사용자 권한, 기능 흐름과 운영상 주의점을 안내합니다.","inLanguage":"ko","url":"https://hkjang.github.io/madi/manuals/transfer-guide.html","isPartOf":{"@type":"WebSite","name":"madi","url":"https://hkjang.github.io/madi/"}}</script></head>
+<body><a class="skip" href="#main">본문으로 바로가기</a><header class="site-header"><div class="container header-inner"><a class="brand" href="../index.html" aria-label="madi 홈"><img src="../assets/logo.svg" alt="madi" width="113" height="40"></a><button class="mobile-toggle" type="button" aria-expanded="false" aria-controls="navigation" aria-label="탐색 메뉴 열기">☰</button><nav class="nav" id="navigation" aria-label="주 탐색"><a href="../index.html#features">기능</a><a href="../screenshots.html">화면 둘러보기</a><a href="../guide.html">시작 가이드</a><a href="../manuals.html">전체 매뉴얼</a><a href="../api.html">API · MCP</a><a href="https://github.com/hkjang/madi">GitHub ↗</a></nav></div></header>
+<main id="main" class="container"><div class="page-hero"><a class="crumb" href="../manuals.html">madi / 전체 매뉴얼</a><p>가져오기·내보내기 가이드. madi의 실제 설정 방법, 사용자 권한, 기능 흐름과 운영상 주의점을 안내합니다.</p><a href="../transfer-guide.md" download>Markdown 원문 내려받기</a></div><div class="guide-layout"><aside class="guide-sidebar" aria-label="문서 목차"><strong>이 문서의 내용</strong><a href="#재개-가능한-가져오기">재개 가능한 가져오기</a><a href="#변환과-보존">변환과 보존</a><a href="#한도재시작폐기">한도·재시작·폐기</a><a href="#검증과-재현">검증과 재현</a><a href="#zip-기존-형식-호환-가져오기">ZIP · 기존 형식 호환 가져오기</a><a href="#내보내기">내보내기</a><a href="#관리자와-복원">관리자와 복원</a><a href="#api">API</a></aside><article class="prose manual-prose"><h1 id="가져오기내보내기-가이드">가져오기·내보내기 가이드</h1>
+<p>왼쪽 메뉴의 <strong>가져오기</strong>(<code>/app/import</code>) 한 곳에서 <strong>파일 / 폴더 / 다른 서비스</strong>를 선택합니다. <code>/app/migrations</code>, <code>/admin/migration</code>도 호환됩니다. <code>/app/export</code>는 개인 내보내기 센터, <code>/admin/exports</code>는 관리자 정책입니다.</p>
+<h2 id="재개-가능한-가져오기">재개 가능한 가져오기</h2>
+<p>새 기본 경로는 <code>원본 업로드 → 항목별 준비·검증 → 변환 품질·자료형 검토 → IMPORT 확정</code>입니다. 큰 ZIP의 제한을 늘리는 방식이 아닙니다. 압축을 푼 폴더의 개별 파일을 처리하고, 파일 SHA-256 및 1MiB 청크 체크섬과 PostgreSQL 체크포인트로 이어받습니다. HTTP에서도 동작하며 해시 라이브러리는 서비스에 번들됩니다.</p>
+<ol>
+<li><strong>원본 식별자</strong>(예: <code>플랫폼팀-위키</code>)를 정합니다. 같은 사용자가 같은 워크스페이스에서 동일 원본을 다시 가져올 때 유지하세요. 원본 ID·파일 경로와 본문 해시로 신규 / 변경 / 동일 / 충돌을 판정합니다.</li>
+<li>파일 또는 폴더를 선택하고 <strong>암호화 원본 업로드</strong>를 누릅니다. 새 세션 URL이 즉시 남습니다. 연결이 끊기거나 새로고침한 뒤 같은 세션에서 같은 파일을 다시 선택하면 확인된 청크를 건너뜁니다. 다른 바이트로 기존 청크를 교체할 수 없습니다.</li>
+<li><strong>준비·검증 실행</strong>을 누릅니다. 원본·정본은 DB에서 암호화해 보관하며 문서·DB·첨부 목록에는 아직 게시하지 않습니다. 서버 프로세스가 재시작하면 작업 리스를 회수해 완료된 항목의 체크포인트 다음부터 진행합니다.</li>
+<li>각 항목의 <strong>원문 · 변환 검토</strong>에서 원본/정본, 줄 단위 비교, 링크 복원·미해결 개수, 호환성 경고를 확인합니다. 화면 원문은 앞 256KiB이며 전체 원본/Markdown을 내려받을 수 있습니다. 큰 diff는 줄 수·계산 한도를 표시하고 생략합니다.</li>
+<li>CSV의 추론 결과를 확인하고 자료형을 선택한 뒤 <strong>자료형 확인 저장</strong>을 누릅니다. 전화번호 선행 <code>0</code>, 부정확해질 큰 정수·긴 소수는 텍스트로 남깁니다. 추론은 제안일 뿐이며 숫자·날짜·선택 등으로 바꾸면 모든 셀을 검증합니다. CSV를 제외하고 다른 항목만 가져올 수도 있습니다.</li>
+<li>변경 목록과 <code>IMPORT</code>를 확인합니다. 작업 큐에서 현재 세션·키·권한, 원본 바인딩, 대상 버전/내용, 정보보호와 저장소 정책을 다시 검사한 후 <strong>한 트랜잭션으로 전부 반영하거나 전부 취소</strong>합니다. 새 문서는 비공개 초안이고, 기존 문서를 바꿀 때는 원래 공개 범위를 유지하되 검토 전 초안으로 돌립니다. 관리자의 승인 정책을 우회해 게시하지 않습니다.</li>
+</ol>
+<p>반복 이관은 기존 사용자의 수정이나 이동을 자동 덮어쓰지 않습니다. 충돌 항목을 제외하거나 별도의 원본 식별자로 새 비공개 사본을 준비하세요. 자동 폴더는 하위 경로를 보호하기 위해 개별 제외할 수 없습니다. 참조 중인 첨부도 참조 문서와 함께 처리해야 합니다. 외부 <code>id</code>, <code>owner</code>, 공개 범위는 기존 madi 객체를 변경할 권한으로 사용하지 않습니다.</p>
+<h3 id="변환과-보존">변환과 보존</h3>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>입력</th>
+<th>재개 경로의 처리</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Markdown / Obsidian 폴더</td>
+<td>원본 바이트를 보관하며 YAML 제목·태그·별칭, 폴더, Wiki/Markdown 링크와 첨부 참조를 새 내부 ID에 연결합니다. 코드 예시의 링크는 바꾸지 않습니다.</td>
+</tr>
+<tr>
+<td>Notion Markdown/HTML 폴더</td>
+<td>일반 파일·HTML·CSV를 항목별로 검토합니다. Notion 고유 권한·수식·전용 블록은 자동 복제하지 않습니다.</td>
+</tr>
+<tr>
+<td>HTML</td>
+<td>제목, GFM 표, 중첩 목록, 인용, 코드, 로컬 이미지를 변환합니다. 병합 셀·CSS·폼 의미는 단순화되며 손실 카운트와 원문 비교를 제공합니다. 스크립트/iframe/SVG 실행 및 외부 이미지 자동 수집은 하지 않습니다.</td>
+</tr>
+<tr>
+<td>CSV</td>
+<td>최대 100열/100,000행. 텍스트·숫자·체크박스·날짜·선택·URL·이메일을 추론하고 사용자 확인 후 DB/행으로 반영합니다. 셀은 64KiB 이내입니다.</td>
+</tr>
+<tr>
+<td>madi JSON 보관함</td>
+<td><code>madi-json-vault</code> v1의 파일 바이트와 <code>madi-vault</code> v1 manifest를 검증합니다. 원래 ID는 새 객체에 대응하는 원본 식별 힌트이며 권한이 아닙니다.</td>
+</tr>
+<tr>
+<td>일반 JSON 문서 목록</td>
+<td><code>title</code>, <code>markdown</code>, <code>tags</code>, <code>aliases</code>, 선택적 <code>source_id</code>만 허용합니다. 개별 항목을 <code>madi-migration-document</code> v1로 정규화한 JSON이 원본 비교 대상입니다. 컨테이너의 공백/키 순서까지 보존하는 백업 형식은 아닙니다.</td>
+</tr>
+<tr>
+<td>기타 첨부</td>
+<td>원본 바이트를 보관합니다. 문서마다 독립 파일을 갖게 하므로 한 문서의 파일 삭제가 다른 문서의 첨부를 깨뜨리지 않습니다. 바이너리 내부 의미·민감정보를 완벽히 해석한다고 보장하지 않습니다.</td>
+</tr>
+</tbody></table></div>
+<p>링크 복원·HTML 변환·정보보호 마스킹이 일어난 <strong>정본</strong>은 입력 파일과 달라질 수 있습니다. 이 차이를 확정 전에 검토합니다. 내보내기 ‘Markdown 원문’은 입력 파일을 되돌리는 기능이 아니라 <strong>현재 저장 정본의 바이트를 그대로</strong> 내보냅니다.</p>
+<h3 id="한도재시작폐기">한도·재시작·폐기</h3>
+<p>기본 세션 원본 1GiB, 사용자 미만료 원본 합계 2GiB, 세션 50,000항목(자동 폴더 포함), 개인 100개 활성 세션, 비교 자료 7일입니다. 관리자는 화면 하단 <strong>관리자 · 재개 이관 보관 한도</strong>에서 세션 1MiB<del>8GiB, 개인 합계 최대 16GiB, 항목 최대 100,000개, 보관 1</del>30일로 조절할 수 있습니다. 이는 저장 허용 한도이며 특정 용량의 처리시간/SLA를 보장하는 성능 측정값이 아닙니다.</p>
+<p>문서 4MiB, 개별 첨부/CSV 50MiB, 트리 20단계 제한은 유지합니다. JSON 컨테이너는 50MiB·해제 합계 100MiB이며 더 큰 자료는 원본 폴더를 사용하세요. 하나의 문서에서 첨부 참조는 최대 10,000개, 한 번의 이관이 만드는 실제 첨부 복제량도 세션 바이트 한도/100,000객체를 넘을 수 없습니다. 경로 탈출·중복·예약 경로와 다른 내용의 중복 청크는 거절합니다.</p>
+<p>확정 전 비공개 첨부의 정확한 객체 키를 먼저 기록합니다. 중단 후에는 같은 키의 크기/SHA-256을 확인하고 <strong>자기 이관의 미공개 객체만</strong> 복구합니다. 전송 재시도를 다 사용한 경우 원래 검토 정본을 유지한 채 다시 확인할 수 있습니다. 정책·정본을 바꿔야 하면 기존 세션을 취소하고 새로 준비하세요. 취소/보관 만료 시 청크·정본을 폐기하고, 현재 저장소 지문과 일치하는 자기 미공개 파일만 정리합니다. 이미 게시된 문서는 세션 취소로 삭제하지 않습니다. 완료된 원본 비교 자료도 보관일 이후 폐기됩니다.</p>
+<p>최종 전체 반영은 단일 트랜잭션이므로 실행 중 공간·공유 권한 관리 변경이 잠시 기다릴 수 있습니다. 화면에 <strong>첨부 준비 / 권한 잠금·최종 반영</strong> 단계를 표시합니다. 권한 잠금 대기는 5초, 개별 DB 명령은 10분, 전체 작업은 1시간 제한이며 취소·시간 초과 시 원자적으로 되돌립니다. 100,000항목 설정은 무제한·무대기 게시 성능을 보장하지 않습니다. 운영 환경에서는 먼저 작은 묶음으로 변환 품질과 잠금 시간을 측정하세요.</p>
+<h3 id="검증과-재현">검증과 재현</h3>
+<p>격리 PostgreSQL 시험은 프로세스 재초기화 후 체크포인트 보존, 동일 청크 재전송, 중간 첨부 복구, 최종 민감정보 정책/세션 변경 시 전체 취소, 링크 대상 제외, 만료 폐기, 반복 이관 충돌과 CSV 자료형 변경을 확인합니다. 실제 브라우저는 업로드 중단·재개, 새로고침, 명시적 CSV 확인, 원문 비교, 수정 후 JSON 내보내기·재가져오기 및 모바일 화면을 확인합니다.</p>
+<p>규모 시험은 기존 사용자 데이터가 아닌 임의 격리 스키마에 작은 Markdown/HTML 문서와 CSV·첨부를 만듭니다. 2026-09-08 공유 4논리CPU/Go 1.26.8 환경의 실측 결과입니다.</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>항목 수</th>
+<th>업로드</th>
+<th>준비</th>
+<th>명시 검토</th>
+<th>원자 확정</th>
+<th>전체 처리</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>1,000</td>
+<td>3.94초</td>
+<td>2.14초</td>
+<td>0.03초</td>
+<td>4.14초</td>
+<td>10.25초</td>
+</tr>
+<tr>
+<td>10,000</td>
+<td>39.97초</td>
+<td>23.06초</td>
+<td>0.12초</td>
+<td>43.44초</td>
+<td>106.59초</td>
+</tr>
+<tr>
+<td>100,000</td>
+<td>386.20초</td>
+<td>224.17초</td>
+<td>1.00초</td>
+<td>453.46초</td>
+<td>1,064.84초</td>
+</tr>
+</tbody></table></div>
+<p>100,000항목에서는 99,998개 비공개 초안·CSV 데이터베이스 1개·첨부 1개를 모두 확인했습니다. 종료 후 Go heap-in-use는 약 375MB였으며 이는 최고 메모리 사용량이 아닙니다. 작은 원문 혼합 표본이며 최대 파일 크기, 동시 작업, 후속 알림 배송이나 운영 SLA 측정이 아닙니다. 최대 원문·계층·첨부 복제 조합의 성능은 별도로 측정해야 합니다. 위 원자 확정 시간에는 권한 잠금 구간이 포함됩니다.</p>
+<p><code>MADI_TEST_POSTGRES_DSN</code>에 테스트 전용 DB를 지정하고 <code>MADI_MIGRATION_SCALE_ITEMS=1000</code>(또는 <code>10000</code>, <code>100000</code>)으로 <code>go test ./internal/server -run &#39;^TestResumableMigrationScale$&#39; -count=1 -timeout=45m -v</code>를 실행합니다. 선택적인 <code>MADI_MIGRATION_SCALE_REPORT</code>는 JSON 결과 경로입니다. 이 변수들은 개발 검증에만 쓰며 서비스의 네 환경변수 계약을 늘리지 않습니다.</p>
+<h2 id="zip-기존-형식-호환-가져오기">ZIP · 기존 형식 호환 가져오기</h2>
+<p>같은 화면의 접힌 <strong>ZIP · 기존 JSON 형식 호환 가져오기</strong>를 열면 이전 한 번 업로드 경로를 이용할 수 있습니다. 이 경로에는 파일별 재개/신규·변경 바인딩이 없습니다. 대규모 자료에는 위 재개 경로를 사용하세요.</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>형식</th>
+<th>실제 처리</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Markdown / Obsidian</td>
+<td><code>.md</code>, <code>.markdown</code>, ZIP 또는 폴더. 트리, YAML 제목·태그·별칭, Wiki Link, Markdown 링크, 로컬 첨부를 가져옵니다.</td>
+</tr>
+<tr>
+<td>Notion</td>
+<td>Markdown/HTML ZIP. HTML을 안전한 Markdown으로 바꾸고 로컬 이미지와 HTML 문서 링크를 복원합니다. CSV는 원본 첨부와 텍스트 속성 데이터베이스를 함께 만듭니다.</td>
+</tr>
+<tr>
+<td>HTML</td>
+<td>단일 HTML 또는 로컬 첨부를 담은 ZIP/폴더. 외부 이미지를 자동 다운로드하지 않고 스크립트·iframe·SVG 실행을 제외합니다.</td>
+</tr>
+<tr>
+<td>CSV</td>
+<td>UTF-8, 첫 행은 중복 없는 열 이름. 새 데이터베이스의 텍스트 속성과 행을 만듭니다.</td>
+</tr>
+<tr>
+<td>JSON</td>
+<td><code>madi-json-vault</code> 버전 1 보관함 또는 <code>title</code>, <code>markdown</code>, <code>tags</code>, <code>aliases</code> 문서 배열.</td>
+</tr>
+</tbody></table></div>
+<ol>
+<li>형식과 <strong>대상 공간</strong>을 선택합니다. CSV 데이터베이스는 대상 공간의 ACL을 따릅니다. 제한 자료에는 제한 공간을 먼저 지정하세요.</li>
+<li>파일 또는 폴더를 선택하고 <strong>미리보기 만들기</strong>를 누릅니다. 미리보기는 문서를 변경하지 않습니다.</li>
+<li>문서·폴더·첨부·DB·행 개수와 동명 문서 안내를 확인합니다.</li>
+<li><code>IMPORT</code>를 입력하고 <strong>확인한 데이터 가져오기</strong>를 누른 뒤 결과를 확인합니다.</li>
+</ol>
+<p>파일 업로드 50MB, ZIP 해제 합계 100MB, 항목 5,000개, Markdown 4MB, 문서 트리 20단계까지입니다. 폴더 선택은 원본 합계 48MB까지이며 브라우저의 별도 Worker에서 ZIP을 준비합니다. CSV는 파일당 5,000행·100열, Notion 혼합 ZIP은 CSV DB 20개까지입니다. 큰 저장소는 나누어 옮기세요.</p>
+<p>원본은 DB에 암호화하여 최대 7일 보관합니다. 완료·취소·기간 만료 시 원본을 폐기합니다. 기존 동명 문서를 덮어쓰지 않습니다. JSON의 원래 ID는 새 ID로 대응시키며 기존 사용자·문서의 권한을 덮어쓰지 않습니다. JSON 문서는 새 비공개 초안입니다. 일반 Markdown/Obsidian manifest와 Front Matter의 공개 범위는 기존 가져오기 규칙을 따릅니다. 승인 정책이 켜져 있으면 일반 가져오기의 게시·검토·반려 상태도 초안으로 바뀝니다.</p>
+<p>문서·CSV·첨부는 현재 쓰기 권한과 민감정보 정책을 적용하며 혼합 가져오기도 한 트랜잭션에서 완료하거나 실패합니다. Notion의 독점 블록·수식·권한 설정을 모두 재현하지는 않습니다. 복잡한 HTML 표·중첩 목록은 Markdown으로 단순화될 수 있습니다. 플러그인 설정과 Canvas 파일을 자동 실행하거나 설치하지 않습니다.</p>
+<h2 id="내보내기">내보내기</h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>형식</th>
+<th>보존 범위</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Markdown 원문 ZIP</td>
+<td>저장된 Markdown/Front Matter <strong>바이트 그대로</strong> 기록합니다. 링크 문자열도 바꾸지 않습니다. 별도 manifest에 문서·첨부 관계를 기록합니다.</td>
+</tr>
+<tr>
+<td>Markdown 이동용 ZIP</td>
+<td>다른 Markdown 도구를 위해 문서·첨부 링크를 상대 경로로 바꿉니다. 원문 바이트와 다를 수 있습니다.</td>
+</tr>
+<tr>
+<td>HTML 읽기 전용 ZIP</td>
+<td><code>index.html</code>, 개별 HTML과 로컬 첨부. 로컬 스타일만 쓰고 원격 이미지 자동 로딩·스크립트 실행을 차단합니다.</td>
+</tr>
+<tr>
+<td>JSON 지식 보관함</td>
+<td><code>format: &quot;madi-json-vault&quot;</code>, <code>version: 1</code>, <code>manifest</code>, <code>files: [{path,data_base64}]</code>. Markdown·첨부 바이트와 폴더·관계를 보존합니다.</td>
+</tr>
+<tr>
+<td>데이터베이스 CSV</td>
+<td>저장된 속성 값, UTF-8 BOM. 배열은 JSON 텍스트로 기록합니다. 가상 수식·롤업 계산값은 저장값 내보내기에 포함하지 않습니다. 위험한 수식 시작 문자 <code>= + - @</code>는 작은따옴표로 이스케이프합니다.</td>
+</tr>
+</tbody></table></div>
+<p>문서를 직접 선택하고 결과 생성 버튼을 누릅니다. 문서 1,000개, 파일 5,000개, CSV 10,000행, 원본/결과 최대 100MB 범위에서 처리합니다. 관리자는 최대 크기를 1~100MB로 줄일 수 있습니다. JSON은 base64 때문에 ZIP보다 크며 다시 가져올 때는 업로드 50MB 한도도 적용됩니다.</p>
+<p>문서 화면의 단일 Markdown 다운로드도 현재 정본을 제공합니다. <strong>PDF는 문서의 인쇄 메뉴에서 브라우저 ‘PDF로 저장’을 사용합니다. 서버 PDF 생성 작업이 아닙니다.</strong></p>
+<p>내보내기는 PostgreSQL 작업 큐에서 수행합니다. 결과는 ENCRYPTION_KEY로 암호화해 24시간 보관합니다. 개인당 대기 작업 5개·준비 결과 합계 200MB까지이며 취소 버튼으로 폐기할 수 있습니다. 원본 버전·첨부·권한·저장소 연결 설정이 달라지면 생성/다운로드 검사를 통과하지 못합니다. 원래 세션 만료, API 키 삭제·회전·스코프 축소, 플러그인 승인 폐기, 관리자 정책 변경 시 다시 생성하세요.</p>
+<p>이미 내려받은 사본에는 후속 권한 변경·삭제·만료를 강제 적용할 수 없습니다. 사본을 별도로 안전하게 보관하고 폐기하세요.</p>
+<h2 id="관리자와-복원">관리자와 복원</h2>
+<p><code>/admin/exports</code>에서 사용 여부와 최대 크기를 설정합니다. 정책 변경은 이전 결과의 정책 지문을 바꾸므로 재생성이 필요합니다. 변경과 다운로드는 감사 기록을 남깁니다.</p>
+<p>내보내기 결과는 <strong>다시 만들 수 있는 임시 파일이며 서비스 백업이 아닙니다</strong>. 논리 백업에는 설정·이력을 포함하지만 임시 암호화 Blob은 제외합니다. 복원하면 대기·실행 작업 취소, 준비 결과 만료, Blob 삭제, 기능 중지를 수행합니다. 관리자가 현재 정책을 확인한 뒤 다시 켜세요. 전체 복구는 PostgreSQL·첨부·설정·별도로 보관한 ENCRYPTION_KEY가 필요합니다.</p>
+<h2 id="api">API</h2>
+<p>재개 경로는 <code>/api/v1/migrations/sessions</code> 아래입니다.</p>
+<ol>
+<li><code>POST /sessions</code>에 <code>{workspace_id,space_id?,source_key,label,format}</code>을 보냅니다.</li>
+<li><code>POST /sessions/{id}/items</code>에 <code>{items:[{source_id,path,kind,bytes,sha256,parent_source_id?,metadata?}]}</code>를 보냅니다. 한 번에 최대 100개이며 응답에 안정적인 item ID가 있습니다. <code>kind</code>는 <code>document|attachment|csv</code>입니다. 메타데이터는 <code>title/tags/aliases/icon</code>만 허용합니다.</li>
+<li><code>GET /sessions/{id}/items/{item}/chunks</code>의 체크섬과 비교하고, 누락 청크만 <code>PUT .../chunks/{ordinal}</code>에 octet-stream으로 보냅니다. 마지막 청크 외 크기는 정확히 1MiB입니다.</li>
+<li><code>POST /sessions/{id}/prepare</code>에 <code>{revision}</code>을 보냅니다. 세션 GET과 항목 GET(<code>?offset=0</code>, 100개씩)으로 진행을 확인합니다.</li>
+<li>단건 GET <code>/sessions/{id}/items/{item}</code>은 별도 권한 검사 후 원문/정본/diff/추론 결과를 반환합니다. <code>PUT .../review</code>에 <code>{revision,plan_hash,decision:&quot;apply&quot;|&quot;skip&quot;,types?,confirm_types?}</code>를 보냅니다. CSV apply에는 확인된 열 목록이 필수입니다.</li>
+<li><code>POST /sessions/{id}/commit</code>에 <code>{revision,plan_hash,confirmation:&quot;IMPORT&quot;}</code>를 보냅니다. 체크포인트나 검토 내용이 달라지면 <code>409</code>입니다. <code>DELETE /sessions/{id}</code>는 미완료 세션을 취소합니다.</li>
+</ol>
+<p>모든 단계는 본인 세션 및 현재 워크스페이스/공간 문서 쓰기 권한을 검사합니다. CSV는 DB 쓰기 scope가 추가로 필요합니다. 원본/정본 목록 응답은 암호문 본문이나 비밀을 포함하지 않습니다. 관리자 정책은 <code>GET/PUT /api/v1/admin/migration/settings</code>이며 로그인한 서비스 관리자만 revision CAS로 변경합니다.</p>
+<p>복원 시 이관 원본 바인딩 이력은 유지하지만 진행 세션은 취소하고 청크·준비 데이터를 폐기합니다. 복원된 파일 키로 외부 저장소에 자동 쓰기·삭제하지 않습니다. 새로운 세션에서 현재 소스와 권한을 다시 확인해야 합니다.</p>
+<p><code>POST /api/v1/migrations?workspace_id=UUID&amp;space_id=UUID&amp;format=markdown|obsidian|notion|html|csv|json</code>은 multipart <code>file</code>을 받습니다. <code>GET /migrations/{id}</code>로 미리보기를 확인하고 <code>POST /migrations/{id}/run</code>에 <code>{&quot;confirmation&quot;:&quot;IMPORT&quot;}</code>를 보냅니다. <code>DELETE /migrations/{id}</code>는 미완료 작업을 취소합니다. 문서 쓰기 scope, CSV는 DB 쓰기 scope도 필요합니다.</p>
+<pre><code class="language-json">{&quot;workspace_id&quot;:&quot;UUID&quot;,&quot;format&quot;:&quot;markdown&quot;,&quot;document_ids&quot;:[&quot;UUID&quot;]}
+</code></pre>
+<p>위 값을 <code>POST /api/v1/exports</code>로 보냅니다. CSV는 <code>format: &quot;csv&quot;</code>, <code>database_id: &quot;UUID&quot;</code>를 사용합니다. <code>GET /exports/{id}</code>에서 <code>status: &quot;ready&quot;</code>를 확인하고 <code>/exports/{id}/download</code>로 받습니다. <code>DELETE /exports/{id}</code>는 작업·임시 파일을 폐기합니다. 문서 형식은 <code>document:read</code>, CSV는 <code>database:read</code>와 현재 실제 ACL이 필요합니다. 원래 키와 다른 키로 기존 결과를 받지 못합니다. 원문 지문 변경은 <code>409</code>, 취소·접근 불가·폐기 자료는 <code>404</code> 또는 <code>410</code>입니다.</p>
+<p>직접 <code>/api/v1/import</code>, <code>/api/v1/export</code>는 호환용으로 남아 있습니다. 새 화면과 자동화에는 작업 기반 API를 사용하세요. 기계 판독 명세는 <code>/api/v1/openapi.json</code>입니다.</p>
+</article></div></main>
+<footer class="site-footer"><div class="container"><div class="footer-top"><a class="brand" href="../index.html"><img src="../assets/logo.svg" alt="madi" width="90" height="32"></a><div class="footer-links"><a href="../manuals.html">사용자·관리자 매뉴얼</a><a href="../screenshots.html">실제 화면</a><a href="https://github.com/hkjang/madi">소스 저장소 ↗</a></div></div><p class="footer-bottom">madi v0.3.0 · 우리 조직의 지식이 연결되는 공간.</p></div></footer>
+<dialog class="lightbox" aria-label="서비스 화면 확대"><img alt=""><div class="lightbox-caption"><span data-caption></span><button class="lightbox-close" type="button">닫기 ×</button></div></dialog><script src="../assets/site.js" defer></script></body></html>

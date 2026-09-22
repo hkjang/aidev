@@ -1,0 +1,135 @@
+.organizer-toolbar {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+.organizer-toolbar label {
+  display: flex;
+  gap: 7px;
+  align-items: center;
+  font-size: 14px;
+}
+.organizer-toolbar select {
+  width: auto;
+  padding: 8px;
+}
+.organizer-list {
+  max-height: 52vh;
+  overflow: auto;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+}
+.organizer-row {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  border-bottom: 1px solid var(--border);
+  padding: 10px;
+  min-height: 60px;
+}
+.organizer-row.selected {
+  background: var(--soft);
+}
+.organizer-row > div {
+  flex: 1;
+  min-width: 0;
+}
+.organizer-row strong {
+  font-size: 15px;
+  font-weight: 550;
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.organizer-row small {
+  font-size: 12px;
+  color: var(--muted);
+  display: block;
+  margin-top: 5px;
+}
+.organizer-grip {
+  cursor: grab;
+  flex-shrink: 0;
+}
+.organizer-row > .button {
+  flex-shrink: 0;
+}
+.presentation-view {
+  position: fixed;
+  inset: 0;
+  background: var(--bg);
+  z-index: 90;
+  display: flex;
+  flex-direction: column;
+}
+.presentation-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px 24px;
+  border-bottom: 1px solid var(--border);
+  background: var(--surface);
+}
+.presentation-toolbar strong {
+  flex: 1;
+}
+.presentation-slide {
+  overflow: auto;
+  flex: 1;
+  padding: clamp(24px, 6vw, 90px);
+  max-width: 1300px;
+  width: 100%;
+  margin: 0 auto;
+  font-size: clamp(18px, 2vw, 25px);
+}
+.presentation-slide h1 {
+  font-size: clamp(30px, 4vw, 56px);
+}
+.presentation-slide h2 {
+  font-size: clamp(26px, 3vw, 42px);
+}
+.presentation-slide .markdown-view {
+  font-size: inherit;
+}
+.presentation-slide-count {
+  color: var(--muted);
+  font-size: 14px;
+}
+.presentation-nav {
+  padding: 16px;
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+}
+@media (max-width: 600px) {
+  .organizer-row > .button {
+    font-size: 0;
+    padding: 7px;
+    min-width: 30px;
+  }
+  .organizer-toolbar .button {
+    font-size: 13px;
+    padding: 8px;
+  }
+  .presentation-toolbar {
+    padding: 12px;
+    flex-wrap: wrap;
+  }
+}
+@media print {
+  .presentation-toolbar,
+  .presentation-nav {
+    display: none !important;
+  }
+  .presentation-view {
+    position: static;
+  }
+  .presentation-slide {
+    overflow: visible;
+    padding: 0;
+    max-width: none;
+  }
+}

@@ -1,0 +1,50 @@
+{
+  "id": "knowledge-helper",
+  "name": "지식 도우미",
+  "version": "1.0.0",
+  "api_version": 1,
+  "description": "문서를 찾고, 오늘의 기록을 작성하고, Markdown을 안전하게 주고받는 오프라인 확장 예제입니다.",
+  "author": "madi",
+  "entry": "main.js",
+  "style": "style.css",
+  "capabilities": [
+    "document:read",
+    "document:write",
+    "ai:execute",
+    "storage:personal",
+    "ui:notify",
+    "ui:navigate",
+    "file:import",
+    "file:export"
+  ],
+  "contributions": {
+    "blocks": [{ "id": "summary-card", "title": "지식 요약 카드" }],
+    "commands": [
+      { "id": "recent", "title": "최근 문서 찾기" },
+      { "id": "create-note", "title": "오늘의 기록 만들기" }
+    ],
+    "sidebars": [{ "id": "knowledge-sidebar", "title": "지식 탐색" }],
+    "menus": [{ "id": "my-preferences", "title": "나의 확장 설정" }],
+    "importers": [
+      {
+        "id": "markdown",
+        "title": "Markdown 가져오기",
+        "extensions": [".md", ".txt"]
+      }
+    ],
+    "exporters": [
+      {
+        "id": "document-list",
+        "title": "문서 목록 내보내기",
+        "extensions": [".md"]
+      }
+    ],
+    "ai_providers": [
+      {
+        "id": "workspace-ai",
+        "title": "관리자 설정 AI",
+        "provider": "workspace"
+      }
+    ]
+  }
+}

@@ -1,0 +1,231 @@
+.rag-layout {
+  display: grid;
+  grid-template-columns: 245px minmax(0, 1fr);
+  gap: 26px;
+  align-items: start;
+}
+.rag-overview {
+  position: sticky;
+  top: 24px;
+  overflow-wrap: anywhere;
+}
+.rag-overview > svg {
+  color: var(--primary);
+}
+.rag-overview h2 {
+  font-size: 19px;
+  margin: 15px 0;
+}
+.rag-overview p,
+.rag-overview .notice {
+  font-size: 14px;
+  line-height: 1.8;
+}
+.rag-overview p {
+  color: var(--muted);
+}
+.rag-overview .badge {
+  white-space: normal;
+  line-height: 1.6;
+}
+.rag-form-sections {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  max-width: 950px;
+  min-width: 0;
+}
+.rag-settings-page .field > label,
+.rag-settings-page input,
+.rag-settings-page select,
+.rag-settings-page textarea,
+.rag-settings-page .button {
+  font-size: 15px;
+}
+.rag-settings-page .field small,
+.rag-settings-page .settings-section-title p {
+  font-size: 13px;
+  line-height: 1.8;
+}
+.rag-settings-page .settings-section-title h2 {
+  font-size: 20px;
+}
+.rag-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0 22px;
+}
+.rag-setting {
+  min-width: 0;
+  margin-bottom: 20px;
+}
+.rag-setting .field {
+  margin-bottom: 0;
+}
+.rag-override {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 10px;
+}
+.rag-override > label {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  font-size: 12px;
+  color: var(--muted);
+  max-width: 100%;
+}
+.rag-override select {
+  font-size: 13px;
+  min-height: 36px;
+  padding: 6px 28px 6px 10px;
+  border-radius: 7px;
+  max-width: 100%;
+}
+.rag-setting.inherited input:disabled,
+.rag-setting.inherited select:disabled,
+.rag-setting.inherited textarea:disabled {
+  opacity: 1;
+  color: var(--muted);
+  background: var(--soft);
+}
+.rag-secret {
+  display: flex;
+  flex-direction: column;
+  gap: 11px;
+}
+.rag-secret-status {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  color: var(--muted);
+}
+.rag-checkbox {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 14px;
+  line-height: 1.7;
+}
+.rag-settings-page .rag-checkbox input {
+  width: 17px;
+  height: 17px;
+  flex: none;
+  margin: 0;
+}
+.rag-pending {
+  font-size: 13px;
+  color: var(--muted);
+  line-height: 1.7;
+  margin: 10px 0 0;
+}
+.rag-diagnostic h2 {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  font-size: 20px;
+}
+.rag-diagnostic p {
+  font-size: 14px;
+  line-height: 1.9;
+  color: var(--muted);
+}
+.rag-test-result {
+  margin-top: 22px;
+  border-top: 1px solid var(--border);
+  padding-top: 20px;
+}
+.rag-test-result dl {
+  margin: 18px 0 0;
+  font-size: 14px;
+  line-height: 1.8;
+}
+.rag-test-result dl > div {
+  display: grid;
+  grid-template-columns: 90px minmax(0, 1fr);
+  gap: 12px;
+  margin-top: 10px;
+}
+.rag-test-result dt {
+  color: var(--muted);
+}
+.rag-test-result dd {
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+.rag-settings-page .notice.warning {
+  color: #875217;
+  background: #fff6df;
+  border: 1px solid #f0d597;
+  line-height: 1.8;
+  font-size: 14px;
+}
+.rag-save {
+  margin: 0;
+  flex-wrap: wrap;
+  gap: 15px;
+}
+.rag-save > span {
+  font-size: 13px;
+}
+.rag-save > div {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+[data-theme="dark"] .rag-settings-page .notice.warning {
+  background: #3c3120;
+  color: #f0cf8c;
+  border-color: #735c31;
+}
+@media (max-width: 1150px) {
+  .rag-layout {
+    grid-template-columns: 1fr;
+  }
+  .rag-overview {
+    position: static;
+  }
+  .rag-form-sections {
+    max-width: none;
+  }
+  .rag-overview .notice {
+    margin: 15px 0;
+  }
+  .rag-overview > p:last-child {
+    margin-bottom: 0;
+  }
+}
+@media (max-width: 650px) {
+  .rag-grid {
+    grid-template-columns: 1fr;
+  }
+  .rag-settings-page .panel.padded {
+    padding: 22px 18px;
+  }
+  .rag-override {
+    justify-content: stretch;
+  }
+  .rag-override > label {
+    width: 100%;
+  }
+  .rag-layout {
+    gap: 20px;
+  }
+  .rag-save > div {
+    width: 100%;
+  }
+  .rag-save .button {
+    flex: 1;
+  }
+  .rag-secret-status {
+    align-items: flex-start;
+  }
+  .rag-secret-status svg {
+    flex: none;
+    margin-top: 3px;
+  }
+  .rag-settings-page .page-heading .heading-actions {
+    width: 100%;
+  }
+}

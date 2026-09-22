@@ -1,0 +1,213 @@
+.discussion-panel {
+  margin-top: 40px;
+  padding-top: 26px;
+  border-top: 1px solid var(--border);
+  font-size: 16px;
+}
+.discussion-heading {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+}
+.discussion-heading h3 {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  font-size: 21px;
+  margin: 0;
+}
+.discussion-heading h3 > span {
+  color: var(--muted);
+  font-size: 16px;
+}
+.discussion-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 20px 0;
+}
+.discussion-filters button {
+  border: 1px solid var(--border);
+  background: transparent;
+  padding: 8px 14px;
+  border-radius: 20px;
+  color: var(--muted);
+  font-size: 15px;
+  cursor: pointer;
+}
+.discussion-filters button.active {
+  background: var(--soft);
+  color: var(--primary);
+  border-color: var(--primary);
+}
+.discussion-comment {
+  display: flex;
+  gap: 12px;
+  margin-left: calc(var(--thread-depth, 0) * 20px);
+  padding: 20px 0;
+  border-top: 1px solid var(--border);
+  min-width: 0;
+}
+.discussion-content {
+  min-width: 0;
+  flex: 1;
+}
+.discussion-content header {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+.discussion-content time,
+.discussion-content header > small {
+  font-size: 14px;
+  color: var(--muted);
+}
+.discussion-content p {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  line-height: 1.8;
+  margin: 10px 0;
+}
+.discussion-content blockquote {
+  padding: 10px 14px;
+  border-left: 3px solid var(--primary);
+  margin: 12px 0;
+  background: var(--soft);
+  color: var(--muted);
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  font-size: 15px;
+}
+.discussion-content blockquote svg {
+  margin-right: 8px;
+}
+.discussion-mention {
+  display: inline;
+  border-radius: 4px;
+  background: var(--soft);
+  color: var(--primary);
+  font-weight: 550;
+  padding: 2px 4px;
+}
+.discussion-parent,
+.discussion-assignee {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--muted);
+  font-size: 14px;
+  margin-top: 7px;
+}
+.discussion-anchor-warning {
+  display: block;
+  color: var(--muted);
+  margin-top: 8px;
+  font-size: 14px;
+}
+.discussion-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 7px;
+  margin-top: 14px;
+}
+.discussion-actions > button {
+  border: 1px solid var(--border);
+  background: transparent;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  border-radius: 7px;
+  color: var(--muted);
+  font-size: 14px;
+  min-height: 34px;
+  padding: 4px 8px;
+  cursor: pointer;
+}
+.discussion-actions > button.active {
+  background: var(--soft);
+  border-color: var(--primary);
+}
+.discussion-actions > button:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+.discussion-composer {
+  margin-top: 26px;
+}
+.discussion-composer > textarea {
+  width: 100%;
+  font-size: 16px;
+  min-height: 104px;
+  line-height: 1.7;
+}
+.discussion-tools {
+  display: flex;
+  align-items: flex-end;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 12px;
+}
+.discussion-tools > .field {
+  flex: 1;
+  min-width: 180px;
+  margin: 0;
+}
+.discussion-tools > .button {
+  flex-shrink: 0;
+}
+.discussion-anchor-form {
+  padding: 20px;
+  margin-top: 18px;
+  background: var(--soft);
+  border-radius: 12px;
+}
+.discussion-replying {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
+  color: var(--muted);
+}
+.discussion-composer .field:last-child {
+  margin-bottom: 0;
+}
+.discussion-avatar {
+  flex-shrink: 0;
+}
+.discussion-content header strong {
+  overflow-wrap: anywhere;
+}
+.discussion-comment.resolved .discussion-avatar {
+  background: var(--soft);
+}
+@media (max-width: 600px) {
+  .discussion-comment {
+    margin-left: calc(var(--thread-depth, 0) * 8px);
+    gap: 9px;
+  }
+  .discussion-heading h3 {
+    font-size: 18px;
+  }
+  .discussion-content header {
+    gap: 5px;
+  }
+  .discussion-content time {
+    flex-basis: 100%;
+  }
+  .discussion-tools > .field {
+    flex-basis: 100%;
+  }
+  .discussion-tools > .button {
+    flex: 1;
+  }
+  .discussion-replying {
+    align-items: flex-start;
+  }
+  .discussion-anchor-form {
+    padding: 16px;
+  }
+}

@@ -1,0 +1,100 @@
+# 먼저 deploy/README.md에 따라 madi-secrets Secret을 생성하고
+# madi:v0.3.0 이미지를 모든 스케줄 대상 노드에 반입하세요.
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: madi-data
+spec:
+  accessModes: [ReadWriteOnce]
+  resources:
+    requests:
+      storage: 20Gi
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: madi
+  labels:
+    app: madi
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app: madi
+  template:
+    metadata:
+      labels:
+        app: madi
+    spec:
+      terminationGracePeriodSeconds: 30
+      securityContext:
+        fsGroup: 10001
+        runAsUser: 10001
+        runAsGroup: 10001
+        runAsNonRoot: true
+      containers:
+        - name: madi
+          image: madi:v0.3.0
+          imagePullPolicy: Never
+          ports:
+            - containerPort: 8080
+              name: http
+          envFrom:
+            - secretRef:
+                name: madi-secrets
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities:
+              drop: [ALL]
+          resources:
+            requests:
+              cpu: 100m
+              memory: 512Mi
+            limits:
+              cpu: "2"
+              memory: 4Gi
+          startupProbe:
+            httpGet:
+              path: /readyz
+              port: http
+            failureThreshold: 30
+            periodSeconds: 5
+          readinessProbe:
+            httpGet:
+              path: /readyz
+              port: http
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /healthz
+              port: http
+            periodSeconds: 30
+          volumeMounts:
+            - name: data
+              mountPath: /var/lib/madi
+            - name: temporary
+              mountPath: /tmp
+      volumes:
+        - name: data
+          persistentVolumeClaim:
+            claimName: madi-data
+        - name: temporary
+          emptyDir:
+            # Disk-backed staging, not an in-memory emptyDir.
+            sizeLimit: 2Gi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: madi
+spec:
+  selector:
+    app: madi
+  ports:
+    - port: 8080
+      targetPort: http
+      name: http
+  type: ClusterIP

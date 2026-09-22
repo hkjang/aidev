@@ -1,0 +1,133 @@
+{
+  "created_at": "2026-09-08T06:27:32Z",
+  "document_body_bytes": 6505,
+  "go_version": "go1.26.0",
+  "goarch": "amd64",
+  "gomaxprocs": 4,
+  "goos": "linux",
+  "host_memory_kb": 16379120,
+  "limitations": [
+    "10 concurrent readers, 60 timed requests per endpoint; not a capacity guarantee",
+    "Go API and PostgreSQL on shared host; unrelated tasks can affect latency",
+    "single-level document ACL, 20% private hidden from viewer",
+    "native document FTS only; no semantic provider or derived block index workload",
+    "seed writes and normal GET audit logs are restricted to a disposable schema",
+    "no browser rendering, TLS proxy, network latency or attachments measured",
+    "Go race detector overhead depends on invocation; run without -race for representative timing"
+  ],
+  "logical_cpus": 4,
+  "postgres_pool_max_connections": 4,
+  "postgres_version": "18.6 (Ubuntu 18.6-0ubuntu0.26.04.1)",
+  "private_document_percent": 20,
+  "results": [
+    {
+      "documents": 1000,
+      "endpoint": "/api/v1/documents",
+      "concurrency": 10,
+      "requests": 60,
+      "p50_ms": 116.744,
+      "p95_ms": 150.258,
+      "max_ms": 161.045,
+      "errors": 0,
+      "error_rate": 0,
+      "mean_response_bytes": 89014,
+      "max_response_bytes": 89014,
+      "http_statuses": {
+        "200": 60
+      },
+      "go_heap_bytes_after": 6640624,
+      "process_rss_kb_after": 43172
+    },
+    {
+      "documents": 1000,
+      "endpoint": "/api/v1/search",
+      "concurrency": 10,
+      "requests": 60,
+      "p50_ms": 182.114,
+      "p95_ms": 277.609,
+      "max_ms": 296.788,
+      "errors": 0,
+      "error_rate": 0,
+      "mean_response_bytes": 57222,
+      "max_response_bytes": 57226,
+      "http_statuses": {
+        "200": 60
+      },
+      "go_heap_bytes_after": 4130432,
+      "process_rss_kb_after": 42460
+    },
+    {
+      "documents": 1000,
+      "endpoint": "/api/v1/documents/{id}",
+      "concurrency": 10,
+      "requests": 60,
+      "p50_ms": 7.086,
+      "p95_ms": 9.986,
+      "max_ms": 10.266,
+      "errors": 0,
+      "error_rate": 0,
+      "mean_response_bytes": 7046,
+      "max_response_bytes": 7046,
+      "http_statuses": {
+        "200": 60
+      },
+      "go_heap_bytes_after": 5614240,
+      "process_rss_kb_after": 42460
+    },
+    {
+      "documents": 10000,
+      "endpoint": "/api/v1/documents",
+      "concurrency": 10,
+      "requests": 60,
+      "p50_ms": 110.853,
+      "p95_ms": 145.02,
+      "max_ms": 160.814,
+      "errors": 0,
+      "error_rate": 0,
+      "mean_response_bytes": 89202,
+      "max_response_bytes": 89202,
+      "http_statuses": {
+        "200": 60
+      },
+      "go_heap_bytes_after": 7883504,
+      "process_rss_kb_after": 45128
+    },
+    {
+      "documents": 10000,
+      "endpoint": "/api/v1/search",
+      "concurrency": 10,
+      "requests": 60,
+      "p50_ms": 1606.843,
+      "p95_ms": 2654.1,
+      "max_ms": 2742.985,
+      "errors": 0,
+      "error_rate": 0,
+      "mean_response_bytes": 57256,
+      "max_response_bytes": 57259,
+      "http_statuses": {
+        "200": 60
+      },
+      "go_heap_bytes_after": 3654344,
+      "process_rss_kb_after": 44016
+    },
+    {
+      "documents": 10000,
+      "endpoint": "/api/v1/documents/{id}",
+      "concurrency": 10,
+      "requests": 60,
+      "p50_ms": 7.428,
+      "p95_ms": 9.066,
+      "max_ms": 10.675,
+      "errors": 0,
+      "error_rate": 0,
+      "mean_response_bytes": 7046,
+      "max_response_bytes": 7046,
+      "http_statuses": {
+        "200": 60
+      },
+      "go_heap_bytes_after": 4714096,
+      "process_rss_kb_after": 44016
+    }
+  ],
+  "warmup_requests_per_endpoint": 5
+}

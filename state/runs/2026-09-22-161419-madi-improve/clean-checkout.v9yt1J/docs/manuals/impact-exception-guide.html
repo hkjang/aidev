@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#164e43">
+<title>변경 영향 예외 승인 — madi</title><meta name="description" content="변경 영향 예외 승인. madi의 실제 설정 방법, 사용자 권한, 기능 흐름과 운영상 주의점을 안내합니다."><link rel="canonical" href="https://hkjang.github.io/madi/manuals/impact-exception-guide.html"><link rel="icon" href="../assets/favicon.svg" type="image/svg+xml"><link rel="stylesheet" href="../assets/style.css">
+<meta property="og:type" content="website"><meta property="og:locale" content="ko_KR"><meta property="og:site_name" content="madi"><meta property="og:title" content="변경 영향 예외 승인 — madi"><meta property="og:description" content="변경 영향 예외 승인. madi의 실제 설정 방법, 사용자 권한, 기능 흐름과 운영상 주의점을 안내합니다."><meta property="og:url" content="https://hkjang.github.io/madi/manuals/impact-exception-guide.html"><meta property="og:image" content="https://hkjang.github.io/madi/screenshots/workspace.png"><meta name="twitter:card" content="summary_large_image">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"변경 영향 예외 승인","description":"변경 영향 예외 승인. madi의 실제 설정 방법, 사용자 권한, 기능 흐름과 운영상 주의점을 안내합니다.","inLanguage":"ko","url":"https://hkjang.github.io/madi/manuals/impact-exception-guide.html","isPartOf":{"@type":"WebSite","name":"madi","url":"https://hkjang.github.io/madi/"}}</script></head>
+<body><a class="skip" href="#main">본문으로 바로가기</a><header class="site-header"><div class="container header-inner"><a class="brand" href="../index.html" aria-label="madi 홈"><img src="../assets/logo.svg" alt="madi" width="113" height="40"></a><button class="mobile-toggle" type="button" aria-expanded="false" aria-controls="navigation" aria-label="탐색 메뉴 열기">☰</button><nav class="nav" id="navigation" aria-label="주 탐색"><a href="../index.html#features">기능</a><a href="../screenshots.html">화면 둘러보기</a><a href="../guide.html">시작 가이드</a><a href="../manuals.html">전체 매뉴얼</a><a href="../api.html">API · MCP</a><a href="https://github.com/hkjang/madi">GitHub ↗</a></nav></div></header>
+<main id="main" class="container"><div class="page-hero"><a class="crumb" href="../manuals.html">madi / 전체 매뉴얼</a><p>변경 영향 예외 승인. madi의 실제 설정 방법, 사용자 권한, 기능 흐름과 운영상 주의점을 안내합니다.</p><a href="../impact-exception-guide.md" download>Markdown 원문 내려받기</a></div><div class="guide-layout"><aside class="guide-sidebar" aria-label="문서 목차"><strong>이 문서의 내용</strong><a href="#관리자-설정">관리자 설정</a><a href="#요청자와-검토자">요청자와 검토자</a><a href="#현재-유효-여부">현재 유효 여부</a><a href="#api와-mcp">API와 MCP</a><a href="#검증">검증</a></aside><article class="prose manual-prose"><h1 id="변경-영향-예외-승인">변경 영향 예외 승인</h1>
+<p>변경 영향 검토의 <code>예외 요청</code>은 승인 완료가 아닙니다. 별도 승인 정책과 실제 검토자의 결정이 있어야 하며, 이 결정도 문서 본문·게시 상태·Runbook 실행 권한을 바꾸지 않습니다.</p>
+<h2 id="관리자-설정">관리자 설정</h2>
+<ol>
+<li>서비스 설정에서 검토·승인 기능을 켭니다. 설정이 꺼져 있으면 예외 요청·결정 화면을 제공하지 않습니다.</li>
+<li><strong>승인 정책 관리 → 변경 영향 예외</strong>에서 워크스페이스 또는 공간의 정책을 등록합니다.</li>
+<li>지정 사용자·역할·팀에 따른 단계와 병렬 검토 대상을 선택합니다. 변경 원문과 대상 문서를 모두 읽을 수 있는 현재 사용자가 실제 검토 대상입니다.</li>
+</ol>
+<p>이 리소스에는 문서 게시용 기본 <code>reviewer_role</code>을 자동 적용하지 않습니다. 명시된 예외 정책이 없으면 신청을 차단합니다. 신청자와 대상 담당자는 자신을 승인할 수 없습니다.</p>
+<h2 id="요청자와-검토자">요청자와 검토자</h2>
+<ol>
+<li><strong>변경 영향</strong>에서 연결 문서의 검토 결과를 <code>예외 요청</code>으로 저장합니다.</li>
+<li>해당 검토의 <strong>예외 승인·이력</strong>을 열고 현재 검토 revision, 변경 원문·대상 버전을 확인합니다.</li>
+<li>대체 절차·적용 이유를 적고 1~90일의 유효기간을 선택합니다. 명시 확인 후 <strong>예외 승인 요청</strong>을 누릅니다.</li>
+<li>독립 검토자는 <strong>검토 처리함</strong>에서 고정된 버전·기한·실제 예외 근거를 읽고 단계별 승인 또는 반려를 처리합니다.</li>
+<li>반려 후에는 근거를 보강해 새 요청을 보낼 수 있습니다. 이전 요청과 결정 이력은 그대로 남습니다. 처리 중 요청은 신청자·담당자가 취소할 수 있습니다.</li>
+</ol>
+<p>선택 상자의 값이나 문서·검토·요청 상태가 바뀌면 확인 선택을 해제합니다. 화면에 <code>승인 완료</code> 이력이 남아도 <code>현재 무효</code>라면 적용 가능한 예외가 아닙니다.</p>
+<h2 id="현재-유효-여부">현재 유효 여부</h2>
+<p>현재 유효한 예외는 다음 조건을 모두 만족해야 합니다.</p>
+<ul>
+<li>변경 원문과 대상 문서의 현재 접근 권한</li>
+<li>승인 당시 원문·대상 버전, 검토 revision·상태·담당자 일치</li>
+<li>원문·대상 제목/본문/태그/별칭의 SHA-256 무결성 해시 일치</li>
+<li>직접 의존 관계 및 관계 생성 기록 일치</li>
+<li>승인 당시의 명시 정책·전역 승인 설정 revision 일치</li>
+<li>독립 검토자의 실제 승인 완료와 만료 전 유효기간</li>
+</ul>
+<p>원문 수정, 검토 수정, 관계 삭제·재연결, 정책 변경, 만료 후에는 과거 승인을 재사용하지 않습니다. 복원 시 진행 중·승인 완료 예외를 취소 이력으로 보존해 다른 설치 환경에서 부활시키지 않습니다. 문서가 비공개로 바뀌어 현재 권한을 잃으면 근거와 이력을 더 이상 표시하지 않습니다.</p>
+<p>이 기능은 대체 절차의 적절성을 자동 검증하지 않으며, 외부 시스템이나 조직의 별도 법적·운영적 승인을 대체하지 않습니다.</p>
+<h2 id="api와-mcp">API와 MCP</h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>경로</th>
+<th>용도</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>GET /api/v1/knowledge/impact-reviews/{id}/exceptions</code></td>
+<td>현재 권한으로 최근 20개 요청, 요청 가능 여부</td>
+</tr>
+<tr>
+<td><code>POST /api/v1/knowledge/impact-reviews/{id}/exceptions</code></td>
+<td>버전 CAS와 명시 확인에 따른 새 신청</td>
+</tr>
+<tr>
+<td><code>GET /api/v1/knowledge/impact-exceptions/{id}</code></td>
+<td>실제 근거·과거 결과·현재 <code>effective</code></td>
+</tr>
+<tr>
+<td><code>GET /api/v1/approvals/requests/{id}</code></td>
+<td>고정 snapshot과 현재 ACL의 <code>review_context</code></td>
+</tr>
+<tr>
+<td><code>POST /api/v1/approvals/requests/{id}/decisions</code></td>
+<td>기존 승인 엔진의 승인·반려·취소</td>
+</tr>
+</tbody></table></div>
+<p>신청에는 <code>review_revision</code>, <code>source_version</code>, <code>target_version</code>, <code>reason</code>, <code>valid_until</code>(RFC3339), <code>confirm:true</code>가 필요합니다. 동일 현재 검토의 동시 신청은 한 건만 확정되고 나머지는 409입니다. 응답을 잃으면 먼저 GET으로 기존 요청을 확인합니다. 자동 재신청하지 않습니다.</p>
+<p>조회는 <code>document:read</code> 키와 양쪽 문서의 현재 ACL 교집합으로 제한합니다. 신청·결정은 실제 사용자의 로그인 세션에서만 가능합니다. 서비스 계정·개인 API 키·플러그인으로 사람의 확인을 대신할 수 없습니다. MCP <code>get_impact_exception</code>은 동일 REST 경계의 읽기 전용 도구이며, 예외 신청·승인 도구는 제공하지 않습니다.</p>
+<p>사유는 암호화 저장하고, 일반 승인 snapshot과 감사 로그에는 원문 사유를 넣지 않습니다. 현재 정보보호 정책이 사유·결정 의견의 표시나 저장을 금지하면 차단합니다. 잠금 대기 뒤에도 세션·키 만료와 현재 권한을 재확인합니다.</p>
+<h2 id="검증">검증</h2>
+<p>2026-09-09, 작업용 PostgreSQL 18.6의 격리 스키마에서 다음 회귀를 실행했습니다. 운영 데이터베이스나 인증 정책은 변경하지 않았습니다.</p>
+<pre><code class="language-bash">MADI_TEST_POSTGRES_DSN=&#39;postgres://…/madi_test?sslmode=disable&#39; \
+  go test -race ./internal/server \
+  -run &#39;TestPostgresImpactException|TestPostgresApprovalSessionExpiresBehindResourceLock&#39;
+</code></pre>
+<p>초기 예외/기존 고급 승인/Runbook 교차 시험 37.678초 통과. 실제 HTTP의 문서 submit·리소스 조회·요청 조회·승인 결정이 행 잠금에서 기다리는 동안 세션을 만료시킨 부정 시험과 예외 회귀는 26.698초 통과했습니다. 이 수치는 단일 개발 환경의 회귀 실행 시간이며 운영 지연 SLA가 아닙니다.</p>
+<p>추가 키/MCP·시간 만료·정보보호·동시 신청·기존 Text2SQL/전체 배포 승인 교차 회귀도 38.167초 통과했습니다. 실제 Chromium의 작성자/검토자 별도 세션, 확인 선택·셀렉트, 자기 승인 차단, 독립 승인, 원문 불변, 현재 무효 표시, 접근 회수 후 화면 제거와 390px 화면을 검사했습니다. 운영 현황 화면을 포함한 브라우저 회귀 합계 35.364초 통과(<code>main-C6aNRXQA.js</code> 기준).</p>
+<p>승인 근거 단락의 전용 배치를 보강한 최종 <code>main-B0QpEkx9.js</code>에서도 19.262초 통과했습니다. 실제 단락 너비·16px 글자 크기를 검사했으며 정상 화면으로 캡처를 갱신했습니다. 무결성 해시와 generic 승인 조회의 만료 상태를 포함한 후속 PG-race는 31.709초 통과했습니다.</p>
+<p>화면: <a href="../screenshots/impact-exception-request.png">명시 예외 요청</a>, <a href="../screenshots/impact-exception-review.png">별도 검토자의 근거 확인</a>, <a href="../screenshots/impact-exception-approved.png">현재 유효한 승인</a>, <a href="../screenshots/impact-exception-mobile.png">모바일 승인 상태</a>.</p>
+</article></div></main>
+<footer class="site-footer"><div class="container"><div class="footer-top"><a class="brand" href="../index.html"><img src="../assets/logo.svg" alt="madi" width="90" height="32"></a><div class="footer-links"><a href="../manuals.html">사용자·관리자 매뉴얼</a><a href="../screenshots.html">실제 화면</a><a href="https://github.com/hkjang/madi">소스 저장소 ↗</a></div></div><p class="footer-bottom">madi v0.3.0 · 우리 조직의 지식이 연결되는 공간.</p></div></footer>
+<dialog class="lightbox" aria-label="서비스 화면 확대"><img alt=""><div class="lightbox-caption"><span data-caption></span><button class="lightbox-close" type="button">닫기 ×</button></div></dialog><script src="../assets/site.js" defer></script></body></html>

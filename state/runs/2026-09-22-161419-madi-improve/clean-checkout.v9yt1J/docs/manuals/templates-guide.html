@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#164e43">
+<title>사용자 템플릿 라이브러리 — madi</title><meta name="description" content="사용자 템플릿 라이브러리. madi의 실제 설정 방법, 사용자 권한, 기능 흐름과 운영상 주의점을 안내합니다."><link rel="canonical" href="https://hkjang.github.io/madi/manuals/templates-guide.html"><link rel="icon" href="../assets/favicon.svg" type="image/svg+xml"><link rel="stylesheet" href="../assets/style.css">
+<meta property="og:type" content="website"><meta property="og:locale" content="ko_KR"><meta property="og:site_name" content="madi"><meta property="og:title" content="사용자 템플릿 라이브러리 — madi"><meta property="og:description" content="사용자 템플릿 라이브러리. madi의 실제 설정 방법, 사용자 권한, 기능 흐름과 운영상 주의점을 안내합니다."><meta property="og:url" content="https://hkjang.github.io/madi/manuals/templates-guide.html"><meta property="og:image" content="https://hkjang.github.io/madi/screenshots/workspace.png"><meta name="twitter:card" content="summary_large_image">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"사용자 템플릿 라이브러리","description":"사용자 템플릿 라이브러리. madi의 실제 설정 방법, 사용자 권한, 기능 흐름과 운영상 주의점을 안내합니다.","inLanguage":"ko","url":"https://hkjang.github.io/madi/manuals/templates-guide.html","isPartOf":{"@type":"WebSite","name":"madi","url":"https://hkjang.github.io/madi/"}}</script></head>
+<body><a class="skip" href="#main">본문으로 바로가기</a><header class="site-header"><div class="container header-inner"><a class="brand" href="../index.html" aria-label="madi 홈"><img src="../assets/logo.svg" alt="madi" width="113" height="40"></a><button class="mobile-toggle" type="button" aria-expanded="false" aria-controls="navigation" aria-label="탐색 메뉴 열기">☰</button><nav class="nav" id="navigation" aria-label="주 탐색"><a href="../index.html#features">기능</a><a href="../screenshots.html">화면 둘러보기</a><a href="../guide.html">시작 가이드</a><a href="../manuals.html">전체 매뉴얼</a><a href="../api.html">API · MCP</a><a href="https://github.com/hkjang/madi">GitHub ↗</a></nav></div></header>
+<main id="main" class="container"><div class="page-hero"><a class="crumb" href="../manuals.html">madi / 전체 매뉴얼</a><p>사용자 템플릿 라이브러리. madi의 실제 설정 방법, 사용자 권한, 기능 흐름과 운영상 주의점을 안내합니다.</p><a href="../templates-guide.md" download>Markdown 원문 내려받기</a></div><div class="guide-layout"><aside class="guide-sidebar" aria-label="문서 목차"><strong>이 문서의 내용</strong><a href="#템플릿-만들기와-공유">템플릿 만들기와 공유</a><a href="#기본-템플릿과-문서-생성">기본 템플릿과 문서 생성</a><a href="#검색-버전과-휴지통">검색, 버전과 휴지통</a><a href="#api">API</a></aside><article class="prose manual-prose"><h1 id="사용자-템플릿-라이브러리">사용자 템플릿 라이브러리</h1>
+<p><code>/app/templates</code>에서 기본 템플릿과 워크스페이스의 사용자 템플릿을 구분해 관리합니다. 기존 홈·명령 팔레트의 일일 노트는 그대로 사용할 수 있습니다.</p>
+<h2 id="템플릿-만들기와-공유">템플릿 만들기와 공유</h2>
+<ol>
+<li><strong>새 템플릿</strong>에서 이름, 설명, 분류, 문서 종류와 Markdown 원문을 입력합니다.</li>
+<li>공개 범위는 기본적으로 <strong>나만 보기</strong>입니다. <strong>워크스페이스 공유</strong>는 구성원에게, <strong>공간 공유</strong>는 선택한 공간의 현재 열람 권한이 있는 구성원에게 노출됩니다. 공간을 지정하면 모든 공개 범위에 공간 권한을 함께 적용합니다.</li>
+<li><strong>미리보기</strong>로 확인한 다음 <strong>템플릿 저장</strong>을 누릅니다. YAML Front Matter는 Markdown 원문에 보존됩니다. 원문에 <code>tags</code>가 있으면 별도 태그 입력보다 우선합니다.</li>
+</ol>
+<p>템플릿은 소유자이면서 현재 작성 권한이 있는 사용자만 수정·삭제·복원할 수 있습니다. 서비스 관리자도 다른 사람의 비공개 템플릿 내용을 우회해서 열람하지 못합니다. 공유 사용자는 열람 가능한 템플릿을 자신의 비공개 사본으로 복제할 수 있습니다.</p>
+<h2 id="기본-템플릿과-문서-생성">기본 템플릿과 문서 생성</h2>
+<p>기본 제공 모음에는 회의록, 의사결정 기록(ADR), 운영 런북, 일일 노트, 프로젝트 계획, 주간 회고, 지식 정리가 있습니다. 기본 템플릿 자체는 읽기 전용이며 <strong>내 템플릿으로 복제</strong>한 후 수정할 수 있습니다.</p>
+<p><strong>이 템플릿으로 문서 만들기</strong>에서 제목, 공간, 상위 문서와 공개 범위를 확인합니다. 새 문서도 기본적으로 비공개이며 초안으로 생성합니다. 일반 문서와 동일한 작성 권한, 민감정보 보호, 게시·승인 정책이 적용됩니다. 템플릿의 원문은 생성한 문서에 복사되며 이후 템플릿 수정이 기존 문서를 자동으로 바꾸지 않습니다.</p>
+<p>문서를 만들 때 다음 두 변수만 개인 시간대 기준으로 치환합니다. 다른 표현이나 스크립트는 실행하지 않습니다.</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>변수</th>
+<th>예시</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>{{date}}</code></td>
+<td><code>2026-09-08</code></td>
+</tr>
+<tr>
+<td><code>{{datetime}}</code></td>
+<td><code>2026-09-08T14:30:00+09:00</code></td>
+</tr>
+</tbody></table></div>
+<p>템플릿 미리보기에는 원문의 변수를 그대로 표시합니다. 위키 링크는 새 문서가 속한 워크스페이스의 문서와 연결됩니다.</p>
+<h2 id="검색-버전과-휴지통">검색, 버전과 휴지통</h2>
+<ul>
+<li>이름·설명·태그 검색과 분류·공개 범위·모음 선택은 URL에 유지되어 새로고침 후 복원됩니다.</li>
+<li>다른 창에서 템플릿이 변경되면 오래된 저장 요청은 <code>409</code>로 중단하고 현재 입력을 유지합니다. 새 버전을 확인한 뒤 다시 작업하세요.</li>
+<li><strong>변경 이력</strong>에는 최근 100개 버전의 메타데이터를 표시합니다. 복원하면 당시 이름·내용·태그·공개 범위·공간을 새 버전으로 저장하고 현재 권한·보호 정책을 다시 검사합니다. 이력은 소유자만 확인할 수 있습니다.</li>
+<li><strong>휴지통으로 이동</strong>은 복구 가능한 삭제입니다. 템플릿 휴지통에서 소유자가 복원할 수 있으며, 이미 만든 문서는 영향을 받지 않습니다.</li>
+</ul>
+<p>템플릿의 이름·설명·분류·아이콘·태그·원문에는 서비스 민감정보 보호 정책을 적용합니다. 마스킹 모드에서는 정리된 결과만 현재 저장본과 새 버전 이력에 기록합니다. 차단 모드에서는 저장 전체를 중단합니다. 템플릿과 버전 이력은 서비스 논리 백업·복원의 대상입니다.</p>
+<h2 id="api">API</h2>
+<p>개인 API 키 사용 시 열람에는 <code>document:read</code>, 변경에는 <code>document:write</code>가 필요하며 기존 사용자·워크스페이스·공간 권한을 함께 적용합니다. 읽은 템플릿을 복제하거나 문서로 만들려면 두 범위를 모두 부여하세요.</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>경로</th>
+<th>동작</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>GET /api/v1/templates/builtins?workspace_id=UUID</code></td>
+<td>기본 템플릿</td>
+</tr>
+<tr>
+<td><code>GET /api/v1/templates?workspace_id=UUID</code></td>
+<td>현재 권한의 목록, 원문 제외</td>
+</tr>
+<tr>
+<td><code>POST /api/v1/templates</code></td>
+<td>사용자 템플릿 저장</td>
+</tr>
+<tr>
+<td><code>GET /api/v1/templates/{id}</code></td>
+<td>현재 원문과 메타데이터</td>
+</tr>
+<tr>
+<td><code>PUT /api/v1/templates/{id}</code></td>
+<td><code>version</code>을 포함한 전체 내용 수정</td>
+</tr>
+<tr>
+<td><code>POST /api/v1/templates/{id}/duplicate</code></td>
+<td><code>workspace_id</code>, <code>expected_version</code>으로 비공개 사본 생성</td>
+</tr>
+<tr>
+<td><code>POST /api/v1/templates/{id}/documents</code></td>
+<td><code>workspace_id</code>, <code>expected_version</code>과 목적지 설정으로 새 문서 생성</td>
+</tr>
+<tr>
+<td><code>DELETE /api/v1/templates/{id}?version=N</code></td>
+<td>휴지통 이동</td>
+</tr>
+<tr>
+<td><code>POST /api/v1/templates/{id}/restore</code></td>
+<td>현재 <code>version</code>으로 휴지통 복원</td>
+</tr>
+<tr>
+<td><code>GET /api/v1/templates/{id}/versions</code></td>
+<td>소유자용 이력 메타데이터</td>
+</tr>
+<tr>
+<td><code>POST /api/v1/templates/{id}/versions/{N}/restore</code></td>
+<td>현재 <code>version</code>을 포함해 과거 저장본 복원</td>
+</tr>
+</tbody></table></div>
+<p>목록은 기본 50개, 최대 100개씩 반환하며 <code>items</code>, <code>has_more</code>, <code>offset</code>, <code>limit</code>을 제공합니다. <code>q</code>, <code>category</code>, <code>scope</code>, <code>trash=1</code>로 필터링합니다. 원문은 최대 4MB입니다. 같은 워크스페이스의 현재 열람 가능한 템플릿만 문서 생성에 사용할 수 있습니다.</p>
+</article></div></main>
+<footer class="site-footer"><div class="container"><div class="footer-top"><a class="brand" href="../index.html"><img src="../assets/logo.svg" alt="madi" width="90" height="32"></a><div class="footer-links"><a href="../manuals.html">사용자·관리자 매뉴얼</a><a href="../screenshots.html">실제 화면</a><a href="https://github.com/hkjang/madi">소스 저장소 ↗</a></div></div><p class="footer-bottom">madi v0.3.0 · 우리 조직의 지식이 연결되는 공간.</p></div></footer>
+<dialog class="lightbox" aria-label="서비스 화면 확대"><img alt=""><div class="lightbox-caption"><span data-caption></span><button class="lightbox-close" type="button">닫기 ×</button></div></dialog><script src="../assets/site.js" defer></script></body></html>

@@ -1,0 +1,409 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#164e43" />
+    <title>REST API와 MCP 연동 — madi 개발자 가이드</title>
+    <meta
+      name="description"
+      content="madi REST API, 범위 제한 Bearer 키, 키 회전, SSE 스트리밍 AI와 HTTP MCP를 연결하는 방법. 외부 에이전트에도 사용자 문서 권한을 적용합니다."
+    />
+    <link rel="canonical" href="https://hkjang.github.io/madi/api.html" />
+    <link rel="icon" type="image/svg+xml" href="assets/favicon.svg" />
+    <link rel="stylesheet" href="assets/style.css" />
+    <meta property="og:type" content="article" />
+    <meta property="og:locale" content="ko_KR" />
+    <meta property="og:title" content="REST API와 MCP 연동 — madi" />
+    <meta
+      property="og:description"
+      content="조직의 지식을 외부 시스템과 AI 에이전트에 연결하세요."
+    />
+    <meta property="og:url" content="https://hkjang.github.io/madi/api.html" />
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "TechArticle",
+        "headline": "madi REST API와 HTTP MCP 연동 가이드",
+        "inLanguage": "ko",
+        "url": "https://hkjang.github.io/madi/api.html",
+        "description": "Bearer 키 범위, REST 경로, SSE 스트리밍 AI, MCP 도구와 권한 안내."
+      }
+    </script>
+  </head>
+  <body>
+    <a class="skip" href="#main">본문으로 바로가기</a>
+    <header class="site-header">
+      <div class="container header-inner">
+        <a class="brand" href="./" aria-label="madi 홈"
+          ><img src="assets/logo.svg" alt="madi" width="113" height="40" /></a
+        ><button
+          class="mobile-toggle"
+          type="button"
+          aria-expanded="false"
+          aria-controls="navigation"
+          aria-label="탐색 메뉴 열기"
+        >
+          ☰
+        </button>
+        <nav class="nav" id="navigation" aria-label="주 탐색">
+          <a href="index.html#features">기능</a
+          ><a href="screenshots.html">화면 둘러보기</a
+          ><a href="guide.html">사용 가이드</a
+          ><a href="api.html" aria-current="page">API · MCP</a
+          ><a class="nav-github" href="https://github.com/hkjang/madi"
+            >GitHub ↗</a
+          >
+        </nav>
+      </div>
+    </header>
+    <main id="main" class="container">
+      <div class="page-hero">
+        <a class="crumb" href="./">madi / 개발자 가이드</a>
+        <h1>지식의 다음 연결,<br />API와 MCP.</h1>
+        <p>
+          외부 시스템과 에이전트가 같은 지식을 활용할 수 있도록. 사용자 권한을
+          따르는 API 키로 필요한 범위만 연결하세요.
+        </p>
+        <div class="doc-links">
+          <a href="https://github.com/hkjang/madi/blob/main/docs/api-guide.md"
+            >전체 API 문서 ↗</a
+          ><a href="guide.html#personal">API 키 발급과 회전</a>
+        </div>
+      </div>
+      <div class="guide-layout">
+        <aside class="guide-sidebar" aria-label="API 목차">
+          <strong>DEVELOPER GUIDE</strong><a href="#auth">인증과 범위</a
+          ><a href="#rest">REST API</a><a href="#streaming">스트리밍 AI</a
+          ><a href="#mcp">MCP 연결</a><a href="#errors">오류 처리</a>
+        </aside>
+        <div class="prose">
+          <section id="auth">
+            <h2>내 권한 안에서, 필요한 범위만.</h2>
+            <p>
+              REST 기본 경로는 <code>/api/v1</code>입니다. 외부 클라이언트는
+              개인 또는 서비스 계정 키를
+              <code>Authorization: Bearer &lt;TOKEN&gt;</code>에 넣습니다. 변경
+              요청에는 <code>X-Madi-Request: 1</code> 헤더를 함께 보냅니다. JSON
+              필드명은 <code>snake_case</code>입니다. 실행 중인 서비스의
+              <code>/api/v1/openapi.json</code>에서 기계가 읽을 수 있는 API
+              목록을 조회할 수 있습니다.
+            </p>
+            <div class="table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th>키 범위</th>
+                    <th>용도</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><code>document:read</code></td>
+                    <td>문서와 백링크 조회</td>
+                  </tr>
+                  <tr>
+                    <td><code>document:write</code></td>
+                    <td>문서 작성·수정·삭제</td>
+                  </tr>
+                  <tr>
+                    <td><code>database:read</code></td>
+                    <td>데이터베이스·행 조회</td>
+                  </tr>
+                  <tr>
+                    <td><code>database:write</code></td>
+                    <td>데이터베이스·행 변경</td>
+                  </tr>
+                  <tr>
+                    <td><code>search:read</code></td>
+                    <td>검색·그래프</td>
+                  </tr>
+                  <tr>
+                    <td><code>ai:execute</code></td>
+                    <td>AI 요청</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <p>
+              키의 워크스페이스와 범위, 사용자 문서 ACL, 만료·IP·호출 제한을
+              함께 적용합니다. 키를 발급했다고 관리자 설정에 접근하거나 자신의
+              권한을 늘릴 수는 없습니다. 발급·회전된 키의 비밀은 한 번만
+              반환되며 회전 즉시 이전 비밀은 폐기됩니다.
+            </p>
+          </section>
+          <section id="rest">
+            <h2>문서와 데이터를 REST로 다루세요.</h2>
+            <div class="table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th>메서드</th>
+                    <th>경로</th>
+                    <th>역할</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>GET, POST</td>
+                    <td><code>/documents</code></td>
+                    <td>목록·작성</td>
+                  </tr>
+                  <tr>
+                    <td>GET, PUT, DELETE</td>
+                    <td><code>/documents/{id}</code></td>
+                    <td>조회·수정·휴지통</td>
+                  </tr>
+                  <tr>
+                    <td>GET</td>
+                    <td><code>/documents/{id}/backlinks</code></td>
+                    <td>백링크</td>
+                  </tr>
+                  <tr>
+                    <td>GET</td>
+                    <td><code>/documents/{id}/versions</code></td>
+                    <td>버전 목록</td>
+                  </tr>
+                  <tr>
+                    <td>GET</td>
+                    <td><code>/graph?workspace_id={id}</code></td>
+                    <td>연결 그래프</td>
+                  </tr>
+                  <tr>
+                    <td>GET, POST</td>
+                    <td><code>/databases</code></td>
+                    <td>데이터베이스 목록·생성</td>
+                  </tr>
+                  <tr>
+                    <td>GET, POST</td>
+                    <td><code>/databases/{id}/rows</code></td>
+                    <td>행 목록·추가</td>
+                  </tr>
+                  <tr>
+                    <td>POST</td>
+                    <td><code>/ai/chat</code></td>
+                    <td>SSE 스트리밍</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <pre><code>curl --fail-with-body \
+  'https://madi.example.internal/api/v1/documents' \
+  -H "Authorization: Bearer $MADI_API_TOKEN" \
+  -H 'Content-Type: application/json' \
+  -H 'X-Madi-Request: 1' \
+  --data '{
+    "workspace_id": "WORKSPACE_UUID",
+    "title": "운영 점검",
+    "markdown": "# 운영 점검\n\n- [ ] 상태 확인"
+  }'</code></pre>
+            <p>
+              문서 수정에는 읽을 때 받은 <code>version</code>을 함께 보내세요.
+              다른 사용자가 먼저 저장했다면 <code>409</code>가 반환됩니다.
+              목록에는 <code>workspace_id</code>, <code>q</code>,
+              <code>tag</code> 등의 쿼리를 사용할 수 있습니다.
+            </p>
+            <p>
+              예시의 <code>MADI_API_TOKEN</code>은 호출하는 클라이언트에서
+              비밀을 주입하는 변수입니다. madi 서비스에 다섯 번째 실행
+              환경변수를 추가하는 것이 아닙니다.
+            </p>
+          </section>
+          <section id="streaming">
+            <h2>AI 응답은 생성되는 순서대로.</h2>
+            <p>
+              <code>POST /api/v1/ai/chat</code>에 <code>prompt</code>와 선택적인
+              <code>document_id</code>, <code>workspace_id</code>를 전송합니다.
+              응답은 <code>text/event-stream</code>입니다.
+            </p>
+            <pre><code>data: {"sources":[{"id":"DOCUMENT_UUID","title":"운영 점검"}]}
+
+data: {"text":"문서의 핵심은 "}
+
+data: {"text":"다음과 같습니다."}
+
+data: [DONE]</code></pre>
+            <p>
+              오류는 <code>{"error":"메시지"}</code> 이벤트로 전달될 수
+              있습니다. 청크 경계와 SSE 이벤트 경계는 같지 않으므로 버퍼를
+              유지하는 파서를 사용하세요. 취소 시 연결을 종료하고, 프록시의 응답
+              버퍼링을 끕니다.
+            </p>
+            <p>
+              <code>retract: true</code> 이벤트를 받으면 이미 표시한 답변과
+              출처도 제거해야 합니다. 현재 문서 버전·권한·계정·키·공급자가
+              변경되면 진행 중인 요청을 중단합니다. 출처에는 원문 버전·행·UTF-8
+              바이트 범위·해시가 포함되며, 오래된 출처는 새로 확인합니다.
+            </p>
+            <p>
+              자연어 검색과 개인 검색 기록 분석, AI 그래프 후보·Agent 쓰기
+              확인은 일반 사용자 세션의 명시 동의가 필요한 별도 흐름입니다. API
+              키에
+              <code>ai:execute</code>가 있다고 개인 동의나 승인 절차를 우회할 수
+              없습니다. 상세 계약은 실행 중인 서비스의
+              <code>/api/v1/openapi.json</code>을 확인하세요.
+            </p>
+            <p>
+              관리자 설정은 최대 262,144 출력 토큰을 허용합니다. 실제 지원
+              한도는 제공자·모델을 따릅니다. 문서 출처를 표시하고 사용자가 접근
+              가능한 문서만 활용합니다.
+            </p>
+          </section>
+          <section id="mcp">
+            <h2>에이전트에 지식 도구를 연결하세요.</h2>
+            <p>
+              MCP 주소는 <code>https://madi.example.internal/mcp</code>이며
+              <code>/api/v1/mcp</code>도 사용할 수 있습니다. Bearer 키가
+              필수이며, HTTP POST JSON-RPC의 상태 없는 JSON 응답 방식을
+              사용합니다. 원격 HTTP MCP와 Authorization 헤더를 지원하는
+              클라이언트를 연결하세요.
+            </p>
+            <pre><code>{
+  "jsonrpc": "2.0",
+  "id": 1,
+  "method": "initialize",
+  "params": {
+    "protocolVersion": "2025-11-25",
+    "capabilities": {},
+    "clientInfo": {"name": "company-agent", "version": "1.0"}
+  }
+}</code></pre>
+            <p>
+              프로토콜 버전 <code>2025-11-25</code>, <code>2025-06-18</code>,
+              <code>2025-03-26</code>을 지원합니다. <code>initialize</code>,
+              <code>notifications/initialized</code>, <code>tools/list</code>,
+              <code>tools/call</code>을 제공합니다. stdio나 legacy SSE 세션
+              서버와는 다른 전송 방식입니다.
+            </p>
+            <div class="table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th>MCP 도구</th>
+                    <th>기능</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>
+                      <code>search_documents</code><br /><code
+                        >search_workspace</code
+                      >
+                    </td>
+                    <td>문서 검색</td>
+                  </tr>
+                  <tr>
+                    <td><code>get_document</code></td>
+                    <td>문서 조회</td>
+                  </tr>
+                  <tr>
+                    <td>
+                      <code>create_document</code><br /><code
+                        >update_document</code
+                      ><br /><code>delete_document</code>
+                    </td>
+                    <td>문서 변경</td>
+                  </tr>
+                  <tr>
+                    <td>
+                      <code>get_backlinks</code><br /><code>get_graph</code>
+                    </td>
+                    <td>지식 연결 탐색</td>
+                  </tr>
+                  <tr>
+                    <td>
+                      <code>list_databases</code><br /><code
+                        >query_database</code
+                      >
+                    </td>
+                    <td>데이터베이스 조회</td>
+                  </tr>
+                  <tr>
+                    <td><code>create_database_row</code></td>
+                    <td>행 추가</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <p>
+              정확한 입력 스키마는 <code>tools/list</code>에서 조회합니다. MCP는
+              사용자 ACL과 키 범위를 그대로 적용하므로 문서 ID를 직접 지정해도
+              권한 검사를 우회할 수 없습니다.
+            </p>
+          </section>
+          <section id="errors">
+            <h2>오류와 재시도를 명확하게.</h2>
+            <p>
+              일반 REST 오류는
+              <code>{"error":"메시지","request_id":"요청 ID"}</code> 형식입니다.
+              요청 ID가 있으면 관리자 로그 추적에 사용하세요. 인증·권한·유효성
+              오류를 무조건 재시도하지 않습니다.
+            </p>
+            <div class="table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th>응답</th>
+                    <th>처리 방향</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>400</td>
+                    <td>입력 필드와 형식 확인</td>
+                  </tr>
+                  <tr>
+                    <td>401</td>
+                    <td>토큰 유효성·만료·회전 여부 확인</td>
+                  </tr>
+                  <tr>
+                    <td>403</td>
+                    <td>워크스페이스·문서·범위·IP 정책 확인</td>
+                  </tr>
+                  <tr>
+                    <td>404</td>
+                    <td>리소스 존재·접근 가능 여부 확인</td>
+                  </tr>
+                  <tr>
+                    <td>409</td>
+                    <td>최신 문서를 읽고 충돌 해결</td>
+                  </tr>
+                  <tr>
+                    <td>429</td>
+                    <td>호출 속도를 낮추고 간격을 두어 재시도</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <p>
+              엔드포인트별 세션·키 허용 여부와 전체 계약은
+              <a
+                href="https://github.com/hkjang/madi/blob/main/docs/api-guide.md"
+                >상세 API 문서</a
+              >와 현재 버전의 서버 구현을 확인하세요.
+            </p>
+          </section>
+        </div>
+      </div>
+    </main>
+    <footer class="site-footer">
+      <div class="container">
+        <div class="footer-top">
+          <div class="footer-brand">
+            <img src="assets/logo.svg" alt="madi" width="90" height="32" /><span
+              >우리 조직의 지식이 연결되는 공간.</span
+            >
+          </div>
+          <div class="footer-links">
+            <a href="guide.html">사용 가이드</a
+            ><a href="https://github.com/hkjang/madi">GitHub ↗</a>
+          </div>
+        </div>
+        <div class="footer-bottom">
+          madi v0.2.0 · Same knowledge. Same permissions.
+        </div>
+      </div>
+    </footer>
+    <script src="assets/site.js" defer></script>
+  </body>
+</html>

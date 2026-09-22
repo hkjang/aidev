@@ -1,0 +1,195 @@
+{
+  "measured_at": "2026-09-08T06:45:06.947Z",
+  "postgres_version": "18.6 (Ubuntu 18.6-0ubuntu0.26.04.1)",
+  "scope": "Session-local TEMP tables only; the application schema, production data, database configuration and service SQL were not modified.",
+  "reproduction": "scripts/diagnostics/audit-popularity.sql",
+  "documents": 10000,
+  "candidate_documents": 8000,
+  "initial_search_audit_rows": 300,
+  "new_document_read_rows": 130,
+  "distinct_read_users": 31,
+  "stale_statistics_setup": "ANALYZE when only SEARCH rows exist, then insert DOCUMENT_READ without re-analyzing.",
+  "preserved_semantics": "For each document: DOCUMENT_READ in last30days, latest256 rows, COUNT(DISTINCT user_id), popularity=0.25*LEAST(1.0,count/20.0). Baseline SQL is unchanged before and after ANALYZE.",
+  "observations": [
+    {
+      "stage": "stale_statistics",
+      "variant": "baseline",
+      "index_scans": [
+        {
+          "rows": "0.02",
+          "index": "audit_action_created_idx",
+          "loops": "8000",
+          "filtered": "130",
+          "condition": "((action = 'DOCUMENT_READ'::text) AND (created_at > (now() - '30 days'::interval)))",
+          "local_hits": "56000"
+        }
+      ],
+      "execution_ms": "196.011"
+    },
+    {
+      "stage": "stale_statistics",
+      "variant": "resource_first_order",
+      "index_scans": [
+        {
+          "rows": "0.02",
+          "index": "audit_action_created_idx",
+          "loops": "8000",
+          "filtered": "130",
+          "condition": "((action = 'DOCUMENT_READ'::text) AND (created_at > (now() - '30 days'::interval)))",
+          "local_hits": "56000"
+        }
+      ],
+      "execution_ms": "199.014"
+    },
+    {
+      "stage": "stale_statistics",
+      "variant": "resource_barrier",
+      "index_scans": [
+        {
+          "rows": "0.02",
+          "index": "audit_action_created_idx",
+          "loops": "8000",
+          "filtered": "130",
+          "condition": "(action = 'DOCUMENT_READ'::text)",
+          "local_hits": "56000"
+        }
+      ],
+      "execution_ms": "187.228"
+    },
+    {
+      "stage": "stale_statistics",
+      "variant": "singleton_any",
+      "index_scans": [
+        {
+          "rows": "0.02",
+          "index": "audit_action_created_idx",
+          "loops": "8000",
+          "filtered": "130",
+          "condition": "((action = 'DOCUMENT_READ'::text) AND (created_at > (now() - '30 days'::interval)))",
+          "local_hits": "56000"
+        }
+      ],
+      "execution_ms": "263.376"
+    },
+    {
+      "stage": "fresh_statistics",
+      "variant": "baseline",
+      "index_scans": [
+        {
+          "rows": "0.02",
+          "index": "audit_document_popularity_idx",
+          "loops": "8000",
+          "filtered": null,
+          "condition": "((resource = (d.id)::text) AND (created_at > (now() - '30 days'::interval)))",
+          "local_hits": "16001"
+        }
+      ],
+      "execution_ms": "33.670"
+    },
+    {
+      "stage": "fresh_statistics",
+      "variant": "resource_first_order",
+      "index_scans": [
+        {
+          "rows": "0.02",
+          "index": "audit_document_popularity_idx",
+          "loops": "8000",
+          "filtered": null,
+          "condition": "((resource = (d.id)::text) AND (created_at > (now() - '30 days'::interval)))",
+          "local_hits": "16001"
+        }
+      ],
+      "execution_ms": "40.969"
+    },
+    {
+      "stage": "fresh_statistics",
+      "variant": "resource_barrier",
+      "index_scans": null,
+      "execution_ms": "317.890"
+    },
+    {
+      "stage": "fresh_statistics",
+      "variant": "singleton_any",
+      "index_scans": [
+        {
+          "rows": "0.02",
+          "index": "audit_document_popularity_idx",
+          "loops": "8000",
+          "filtered": null,
+          "condition": "((resource = ANY (ARRAY[(d.id)::text])) AND (created_at > (now() - '30 days'::interval)))",
+          "local_hits": "16001"
+        }
+      ],
+      "execution_ms": "33.918"
+    },
+    {
+      "stage": "full_covering_index",
+      "variant": "baseline",
+      "index_scans": [
+        {
+          "rows": "0.02",
+          "index": "audit_document_popularity_idx",
+          "loops": "8000",
+          "filtered": null,
+          "condition": "((resource = (d.id)::text) AND (created_at > (now() - '30 days'::interval)))",
+          "local_hits": "16001"
+        }
+      ],
+      "execution_ms": "38.505"
+    },
+    {
+      "stage": "full_covering_index",
+      "variant": "resource_first_order",
+      "index_scans": [
+        {
+          "rows": "0.02",
+          "index": "audit_document_popularity_idx",
+          "loops": "8000",
+          "filtered": null,
+          "condition": "((resource = (d.id)::text) AND (created_at > (now() - '30 days'::interval)))",
+          "local_hits": "16001"
+        }
+      ],
+      "execution_ms": "31.761"
+    },
+    {
+      "stage": "full_covering_index",
+      "variant": "resource_barrier",
+      "index_scans": null,
+      "execution_ms": "277.256"
+    },
+    {
+      "stage": "full_covering_index",
+      "variant": "singleton_any",
+      "index_scans": [
+        {
+          "rows": "0.02",
+          "index": "audit_document_popularity_idx",
+          "loops": "8000",
+          "filtered": null,
+          "condition": "((resource = ANY (ARRAY[(d.id)::text])) AND (created_at > (now() - '30 days'::interval)))",
+          "local_hits": "16001"
+        }
+      ],
+      "execution_ms": "35.004"
+    }
+  ],
+  "conclusions": [
+    "Stale action/resource statistics reproduce the observed action-time index scan with130 nonmatching rows filtered per candidate document.",
+    "ANALYZE of the TEMP audit table alone switches the baseline query to the existing partial resource/time index, without changing aggregation semantics.",
+    "ORDER BY resource first, OFFSET0 and singleton ANY did not fix the stale-statistics condition. OFFSET0 regressed to a sequential scan after statistics refresh.",
+    "An additional full covering index was tested only after statistics refresh; the existing partial index remained selected. This does not justify a production index change."
+  ],
+  "limitations": [
+    "TEMP-table buffers are local hits, not the shared hits of the application plan. Compare plan shape and row work, not absolute buffer counts across those fixtures.",
+    "Only the popularity subquery over candidate documents is timed; these are not full API or full FTS latencies.",
+    "Shared host had concurrent tests/builds; timings are observations, not capacity guarantees.",
+    "This distribution has130 reads concentrated on one document. It does not establish a universal PostgreSQL planner choice for all distributions.",
+    "No automatic ANALYZE, global optimizer tuning, or service configuration mutation was added."
+  ],
+  "sources": [
+    "https://www.postgresql.org/docs/current/indexes-partial.html",
+    "https://www.postgresql.org/docs/current/indexes-multicolumn.html",
+    "https://www.postgresql.org/docs/current/using-explain.html"
+  ]
+}

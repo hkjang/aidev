@@ -1,0 +1,34 @@
+{
+  "description": "실제 고객 자료가 아닌 한국어·약어·공백·영문 혼용 검색 회귀용 합성 문서",
+  "dictionary": [
+    {"canonical":"Kubernetes","aliases":["k8s","쿠버네티스"]},
+    {"canonical":"GPU","aliases":["지피유"]},
+    {"canonical":"PostgreSQL","aliases":["pgsql","postgres","포스트그레스"]},
+    {"canonical":"인공지능","aliases":["AI"]}
+  ],
+  "documents": [
+    {"key":"k8s","title":"Kubernetes 장애 대응","markdown":"# Kubernetes 장애 대응\n\n쿠버네티스 클러스터 상태를 점검합니다. 노드와 파드 이벤트를 확인합니다."},
+    {"key":"guide","title":"운영 가이드","markdown":"# 운영 가이드\n\n배포 전 확인 목록과 담당자의 연락 절차를 기록합니다."},
+    {"key":"gpu","title":"GPU 서버 증설","markdown":"# GPU 서버 증설\n\n지피유 자원과 전력, 냉각 장비를 검토합니다."},
+    {"key":"error","title":"저장소 오류 코드","markdown":"# 저장소 오류 코드\n\n```text\nERR-042: volume unavailable\n```\n\n저장 경로와 마운트를 확인합니다."},
+    {"key":"crash","title":"CrashLoopBackOff 대응","markdown":"# CrashLoopBackOff 대응\n\n애플리케이션 로그와 종료 코드를 확인합니다."},
+    {"key":"sso","title":"SSO 연동 절차","markdown":"# SSO 연동 절차\n\nKeycloak OIDC 클라이언트의 Redirect URI를 확인합니다. OIDC-500 오류의 서버 기록을 점검합니다."},
+    {"key":"postgres","title":"PostgreSQL 백업","markdown":"# PostgreSQL 백업\n\n정기 백업과 복원 검증을 수행합니다."},
+    {"key":"latency","title":"API 응답 성능","markdown":"# API 응답 성능\n\nP99 지연과 처리량을 함께 기록합니다."},
+    {"key":"mail","title":"Mail 시스템","markdown":"# Mail 시스템\n\n메일 전송과 수신 채널을 관리합니다."}
+  ],
+  "cases": [
+    {"query":"쿠버네티스 장애","expected":["k8s"],"category":"약어·영문 혼용"},
+    {"query":"k8s장애","expected":["k8s"],"category":"붙여쓰기·약어"},
+    {"query":"운영가이드","expected":["guide"],"category":"띄어쓰기"},
+    {"query":" GPU   서버 ","expected":["gpu"],"category":"연속 공백"},
+    {"query":"지피유 증설","expected":["gpu"],"category":"한글 음차"},
+    {"query":"ERR-042","expected":["error"],"category":"오류 코드"},
+    {"query":"ＣＲＡＳＨＬＯＯＰ","expected":["crash"],"category":"전각·대소문자"},
+    {"query":"ＳＳＯ 연동","expected":["sso"],"category":"전각·영문 혼용"},
+    {"query":"PgSQL 백업","expected":["postgres"],"category":"조직 별칭"},
+    {"query":"p99 지연","expected":["latency"],"category":"숫자·영문"},
+    {"query":"OIDC-500","expected":["sso"],"category":"코드 기호"},
+    {"query":"mail","expected":["mail"],"category":"부분 약어 오탐 방지"}
+  ]
+}

@@ -1,0 +1,138 @@
+<!doctype html>
+<html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#164e43">
+<title>문서 안의 선언형 조회 표 — madi</title><meta name="description" content="문서 안의 선언형 조회 표. madi의 실제 설정 방법, 사용자 권한, 기능 흐름과 운영상 주의점을 안내합니다."><link rel="canonical" href="https://hkjang.github.io/madi/manuals/document-query-guide.html"><link rel="icon" href="../assets/favicon.svg" type="image/svg+xml"><link rel="stylesheet" href="../assets/style.css">
+<meta property="og:type" content="website"><meta property="og:locale" content="ko_KR"><meta property="og:site_name" content="madi"><meta property="og:title" content="문서 안의 선언형 조회 표 — madi"><meta property="og:description" content="문서 안의 선언형 조회 표. madi의 실제 설정 방법, 사용자 권한, 기능 흐름과 운영상 주의점을 안내합니다."><meta property="og:url" content="https://hkjang.github.io/madi/manuals/document-query-guide.html"><meta property="og:image" content="https://hkjang.github.io/madi/screenshots/workspace.png"><meta name="twitter:card" content="summary_large_image">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"문서 안의 선언형 조회 표","description":"문서 안의 선언형 조회 표. madi의 실제 설정 방법, 사용자 권한, 기능 흐름과 운영상 주의점을 안내합니다.","inLanguage":"ko","url":"https://hkjang.github.io/madi/manuals/document-query-guide.html","isPartOf":{"@type":"WebSite","name":"madi","url":"https://hkjang.github.io/madi/"}}</script></head>
+<body><a class="skip" href="#main">본문으로 바로가기</a><header class="site-header"><div class="container header-inner"><a class="brand" href="../index.html" aria-label="madi 홈"><img src="../assets/logo.svg" alt="madi" width="113" height="40"></a><button class="mobile-toggle" type="button" aria-expanded="false" aria-controls="navigation" aria-label="탐색 메뉴 열기">☰</button><nav class="nav" id="navigation" aria-label="주 탐색"><a href="../index.html#features">기능</a><a href="../screenshots.html">화면 둘러보기</a><a href="../guide.html">시작 가이드</a><a href="../manuals.html">전체 매뉴얼</a><a href="../api.html">API · MCP</a><a href="https://github.com/hkjang/madi">GitHub ↗</a></nav></div></header>
+<main id="main" class="container"><div class="page-hero"><a class="crumb" href="../manuals.html">madi / 전체 매뉴얼</a><p>문서 안의 선언형 조회 표. madi의 실제 설정 방법, 사용자 권한, 기능 흐름과 운영상 주의점을 안내합니다.</p><a href="../document-query-guide.md" download>Markdown 원문 내려받기</a></div><div class="guide-layout"><aside class="guide-sidebar" aria-label="문서 목차"><strong>이 문서의 내용</strong><a href="#작성과-실행">작성과 실행</a><a href="#문법-예시">문법 예시</a><a href="#범위와-현재성">범위와 현재성</a><a href="#api와-mcp">API와 MCP</a><a href="#검증">검증</a></aside><article class="prose manual-prose"><h1 id="문서-안의-선언형-조회-표">문서 안의 선언형 조회 표</h1>
+<p>문서 읽기 화면에서 현재 접근 가능한 문서 속성·할 일·명시적 관계를 표로 확인합니다. <code>madi-query</code> 코드 블록의 JSON 정의가 Markdown 원본이며 결과는 일시적인 읽기 화면입니다. SQL, JavaScript, <code>eval</code>, 임의 JSONPath, 외부 URL 호출과 셸 실행은 지원하지 않습니다.</p>
+<h2 id="작성과-실행">작성과 실행</h2>
+<ol>
+<li>문서 편집 도구의 <strong>선언형 조회 표</strong>를 엽니다.</li>
+<li>문서 속성·할 일·문서 관계 중 조회 대상과 표시할 열을 고릅니다. 대상 선택을 바꾸면 이전 대상의 열을 초기화합니다.</li>
+<li>필요하면 최상위 Front Matter 속성과 실행 시 입력받을 문구를 지정합니다. <strong>조회 정의 넣기</strong>는 JSON 정의만 기존 편집기에 삽입합니다. 저장·공동 편집·승인은 기존 문서 절차를 따릅니다.</li>
+<li>정본 문서의 읽기 화면에서 매개변수를 입력하고 <strong>조회 실행</strong>을 누릅니다. 읽기 화면 방문만으로 표를 실행하지 않습니다.</li>
+<li>표의 원문 링크에서 버전·해당 위치를 미리 봅니다. <strong>새로 조회</strong>를 눌러 새 문서와 새 행을 포함해 다시 계산합니다.</li>
+</ol>
+<p>조회 결과는 Markdown 본문, 문서 버전, AI 답변, 공개 공유, 승인 스냅샷, Markdown 내보내기에 저장하지 않습니다. 인쇄에서는 동적 결과를 숨깁니다. 동기화 블록·AI 출력·템플릿/문서 미리보기에서도 정의만 표시하며 자동 실행하지 않습니다. 이미 사람이 복사한 정보의 외부 사본을 회수하는 기능은 아닙니다.</p>
+<h2 id="문법-예시">문법 예시</h2>
+<pre><code class="language-markdown">```madi-query
+{
+  &quot;version&quot;: 1,
+  &quot;source&quot;: &quot;documents&quot;,
+  &quot;columns&quot;: [
+    { &quot;field&quot;: &quot;title&quot;, &quot;label&quot;: &quot;문서&quot; },
+    { &quot;field&quot;: &quot;status&quot;, &quot;label&quot;: &quot;상태&quot; },
+    { &quot;field&quot;: &quot;property.점검일&quot;, &quot;label&quot;: &quot;점검일&quot; }
+  ],
+  &quot;properties&quot;: { &quot;점검일&quot;: &quot;date&quot; },
+  &quot;parameters&quot;: {
+    &quot;검색어&quot;: { &quot;type&quot;: &quot;string&quot;, &quot;label&quot;: &quot;포함할 문구&quot;, &quot;required&quot;: true }
+  },
+  &quot;filters&quot;: [
+    { &quot;field&quot;: &quot;title&quot;, &quot;op&quot;: &quot;contains&quot;, &quot;value&quot;: { &quot;parameter&quot;: &quot;검색어&quot; } }
+  ],
+  &quot;order_by&quot;: [{ &quot;field&quot;: &quot;updated_at&quot;, &quot;direction&quot;: &quot;desc&quot; }],
+  &quot;limit&quot;: 20
+}
+```
+</code></pre>
+<p>지원 필드는 다음과 같습니다. 원문 전체·암호·개인 AI 이력·API 키 속성 등은 조회 필드가 아닙니다.</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>대상</th>
+<th>필드</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>documents</code></td>
+<td><code>id</code>, <code>title</code>, <code>status</code>, <code>tags</code>, <code>owner_id</code>, <code>owner_name</code>, <code>created_at</code>, <code>updated_at</code>, <code>classification</code>, <code>kind</code>, <code>version</code>, 선언한 <code>property.이름</code></td>
+</tr>
+<tr>
+<td><code>tasks</code></td>
+<td><code>document_id</code>, <code>document_title</code>, <code>text</code>, <code>done</code>, <code>status</code>, <code>priority</code>, <code>assignee_id</code>, <code>assignee_name</code>, <code>due_date</code>, <code>version</code>, <code>line</code></td>
+</tr>
+<tr>
+<td><code>relations</code></td>
+<td><code>source_id</code>, <code>source_title</code>, <code>target_id</code>, <code>target_title</code>, <code>relation_type</code>, <code>depth</code></td>
+</tr>
+</tbody></table></div>
+<p>문서의 <code>properties</code>는 Front Matter <strong>최상위 스칼라</strong>만 읽습니다. 유형은 <code>string</code>, <code>number</code>, <code>boolean</code>, <code>date</code>입니다. YAML 별칭·중첩 객체·배열을 펼치거나 문자열을 다른 유형으로 추정 변환하지 않습니다. 형식이 맞지 않거나 한도를 넘은 속성은 빈 값과 제한 안내로 표시합니다. 날짜는 <code>YYYY-MM-DD</code> 또는 RFC3339를 받습니다. 숫자는 유한한 JavaScript 안전 정수 범위 내 수만 허용합니다(소수 지원).</p>
+<p>필터는 최대 8개의 AND 조건입니다. <code>eq</code>, <code>ne</code>, <code>in</code>, <code>exists</code>, 문자열 <code>contains</code>, 숫자·날짜의 <code>lt/lte/gt/gte</code>를 지원합니다. <code>in</code>은 같은 유형의 리터럴 1~20개이며 매개변수 배열은 받지 않습니다. <code>contains</code>는 문자열에서 대소문자 구분 부분 일치, 태그 배열에서는 정확한 태그 일치입니다. <code>exists</code>는 값이 없는 조건으로 null/빈 문자열을 제외합니다. 없는 값은 <code>ne</code>를 포함한 비교에 일치하지 않습니다. 정렬은 2개까지이며 누락 값은 뒤로 갑니다.</p>
+<p>선택적인 <code>space_id</code>는 해당 공간의 문서만, <code>document_ids</code>는 같은 워크스페이스의 최대 50개 지정 문서만 대상으로 삼습니다. 관계 조회의 기본 출발점은 조회 정의가 있는 문서이며 <code>document_ids</code>로 출발점을 지정할 수도 있습니다. <code>direction</code>은 <code>outgoing</code> 또는 <code>incoming</code>, <code>depth</code>는 1~3입니다. 경로의 양끝뿐 아니라 <strong>모든 중간 문서</strong>를 현재 ACL로 검사하고, 접근할 수 없는 노드 뒤로 탐색하지 않습니다. 관계 결과의 정렬/제한은 발견한 안전한 경로 후보 안에서 적용됩니다.</p>
+<h2 id="범위와-현재성">범위와 현재성</h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>항목</th>
+<th>한도</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>정의 JSON</td>
+<td>5 KiB, 중첩 12단계, 정확한 필드 이름·중복 키 거부</td>
+</tr>
+<tr>
+<td>한 문서의 정의</td>
+<td>처음 16개 실제 Markdown 코드 블록</td>
+</tr>
+<tr>
+<td>정의를 해석할 부모 문서</td>
+<td>1 MiB</td>
+</tr>
+<tr>
+<td>후보</td>
+<td>최대 2,000개, 최근 수정 문서 우선 검사</td>
+</tr>
+<tr>
+<td>읽어 분석할 원문·메타데이터</td>
+<td>합계 8 MiB, 할 일/속성 본문 문서당 256 KiB</td>
+</tr>
+<tr>
+<td>속성 Front Matter</td>
+<td>32 KiB, 선언 속성/매개변수 각각 8개</td>
+</tr>
+<tr>
+<td>표</td>
+<td>최대 12열·100행·1 MiB 응답 행 데이터</td>
+</tr>
+<tr>
+<td>동시 실행</td>
+<td>서비스 프로세스당 4개, 포화 시 429</td>
+</tr>
+<tr>
+<td>시간 예산</td>
+<td>요청 2초·SQL 문장 1.9초, 초과/취소 시 결과 폐기</td>
+</tr>
+<tr>
+<td>결과 검증 토큰</td>
+<td>현재 계정·세션/키에 바인딩된 암호화 토큰, 10분</td>
+</tr>
+</tbody></table></div>
+<p>후보/바이트/행 한도, 큰 본문 제외, 잘린 필드, 해석하지 못한 속성을 결과에 표시합니다. 태그는 원형을 보존하는 최대 32개(각 200바이트), 제목은 최대 500문자, 할 일 문구는 최대 500문자로 제한합니다. 이 제한 안의 정렬은 <strong>전체 조직 자료에 대한 전역 순위·전체 결과를 뜻하지 않습니다</strong>. 후보 탐색과 CommonMark 해석 시간은 부하·본문 구조의 영향을 받으므로 2초 예산을 최악 지연 SLA로 표현하지 않습니다.</p>
+<p>화면이 보일 때 3초 주기로 반환한 행과 사용한 경로의 현재 문서 ACL·버전/해시·할 일 속성·관계·보호 정책을 재검사합니다. 권한 회수, 삭제, 원문 또는 표시 속성 변경, 기능 비활성화, 세션 만료 시 결과를 지웁니다. 화면을 숨기거나 문서/사용자/매개변수를 바꾸어도 결과를 폐기합니다. 이는 새로운 후보를 자동 추가하는 실시간 전체 조회가 아닙니다. 더 최신의 전체 후보는 명시적으로 다시 실행하세요. 네트워크 지연과 브라우저 스케줄링 때문에 철회 표시가 정확히 3초 이내라는 SLA는 아닙니다.</p>
+<h2 id="api와-mcp">API와 MCP</h2>
+<ul>
+<li><code>GET /api/v1/documents/{id}/queries</code>: 현재 정의와 <code>hash</code>, <code>document_version</code> 조회.</li>
+<li><code>POST /api/v1/documents/{id}/queries/execute</code>: <code>{ &quot;document_version&quot;: 3, &quot;query_hash&quot;: &quot;…&quot;, &quot;parameters&quot;: { &quot;검색어&quot;: &quot;운영&quot; } }</code> 실행. 원문에 같은 hash의 유효한 정의가 있어야 하며 임의 정의를 요청 본문으로 받을 수 없습니다.</li>
+<li><code>POST /api/v1/documents/{id}/queries/check</code>: <code>{ &quot;validation_token&quot;: &quot;…&quot; }</code>로 표시 결과의 현재성 확인. 행 데이터를 다시 반환하지 않습니다.</li>
+<li>MCP <code>list_document_queries</code>, <code>execute_document_query</code>: 위 REST 경로를 그대로 거칩니다.</li>
+</ul>
+<p>모두 <code>document:read</code>가 필요하고 API 키의 현재 워크스페이스·만료·스코프·IP 제한을 적용합니다. 읽기 전용 POST도 일반 세션에서 CSRF 검증을 거칩니다. 서비스 관리자는 다른 사용자의 private 문서를 우회하지 못합니다. 서비스 계정은 부여된 키와 현재 문서 권한으로만 사용할 수 있으며 플러그인 브리지에는 이 조회 도구를 노출하지 않습니다.</p>
+<p>관리자는 기존 기능 관리의 <code>document-queries</code>로 서비스를 차단할 수 있습니다. 서비스·워크스페이스·사용자 false 설정은 상위 true로 우회되지 않습니다. 원문 정의를 지우거나 바꾸지 않고 실행만 차단합니다. 별도 저장 테이블·환경변수·외부 서비스·DB 확장은 필요하지 않습니다.</p>
+<h2 id="검증">검증</h2>
+<pre><code class="language-sh">MADI_TEST_POSTGRES_DSN=&#39;postgres://tester@127.0.0.1:5432/madi_test?sslmode=disable&#39; \
+  go test -race ./internal/server -run &#39;^(TestDocumentQuery|TestPostgresDocumentQuery)&#39; -count=1 -v
+
+# web 빌드 및 Playwright Chromium 설치 후
+MADI_TEST_POSTGRES_DSN=&#39;postgres://tester@127.0.0.1:5432/madi_test?sslmode=disable&#39; \
+MADI_BROWSER_DOCUMENT_QUERY=1 \
+  go test ./internal/server -run &#39;^TestBrowserDocumentQuery$&#39; -count=1 -v
+</code></pre>
+<p>2026-09-09 Go 1.26.8/PostgreSQL 18.6의 임의 격리 스키마에서 첫 종합 PG race 16.053초 PASS: 문법/중복 키/SQL 거부, 실제 Front Matter·CommonMark 할 일, private·중간 경로 ACL, 원문/버전 불변, 키/MCP/세션 바인딩, 정책·키 회수, 후보 2,100→2,000/100행, 큰 본문 제외, 4슬롯 포화, 실제 SQL 잠금 1.91초 종료, 잠금 후 세션 만료를 확인했습니다. 추가 취소 회귀는 실제 SQL 대기를 확인한 뒤 HTTP 취소와 슬롯 반환을 3.237초 시험에서 검증했습니다. 합성 fixture의 실제 프로토콜 검증이며 운영 규모·최악 지연 보증은 아닙니다.</p>
+<p>같은 날 대소문자 키의 모호함·잘린 필드 진단·관계 결과 버전 정합성 보강 후 E8 및 기존 키/MCP 교차 PG race 22.405초 PASS입니다. 실제 브라우저 <code>main-CnzNgKXJ.js</code>에서는 명시 실행/매개변수/비공개 제외/원문 무변경/출처 미리보기 초점 복귀/인쇄 결과 제외/390px/빈 결과 복구/권한 회수/네이티브 선택 변경/정의만 삽입·저장을 21.470초에 확인했습니다.</p>
+<p>최종 <code>main-C5hG03ts.js</code>에서 동일 브라우저 회귀와 결과 셀의 실제 계산 글꼴 16px 검증을 17.577초에 통과했습니다. 정상 화면만 남긴 <a href="../screenshots/document-query-definition.png">조회 정의</a>, <a href="../screenshots/document-query-results.png">실행 결과</a>, <a href="../screenshots/document-query-mobile.png">모바일 표</a>, <a href="../screenshots/document-query-revoked.png">권한 회수 안내</a>, <a href="../screenshots/document-query-builder.png">조회 삽입 도구</a>를 참고하세요. 초기 실패 진단 화면은 공개 캡처에 포함하지 않습니다.</p>
+</article></div></main>
+<footer class="site-footer"><div class="container"><div class="footer-top"><a class="brand" href="../index.html"><img src="../assets/logo.svg" alt="madi" width="90" height="32"></a><div class="footer-links"><a href="../manuals.html">사용자·관리자 매뉴얼</a><a href="../screenshots.html">실제 화면</a><a href="https://github.com/hkjang/madi">소스 저장소 ↗</a></div></div><p class="footer-bottom">madi v0.3.0 · 우리 조직의 지식이 연결되는 공간.</p></div></footer>
+<dialog class="lightbox" aria-label="서비스 화면 확대"><img alt=""><div class="lightbox-caption"><span data-caption></span><button class="lightbox-close" type="button">닫기 ×</button></div></dialog><script src="../assets/site.js" defer></script></body></html>

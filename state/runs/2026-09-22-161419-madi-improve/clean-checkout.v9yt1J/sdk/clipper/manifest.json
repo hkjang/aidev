@@ -1,0 +1,25 @@
+{
+  "manifest_version": 3,
+  "minimum_chrome_version": "116",
+  "name": "madi 웹 클리퍼",
+  "version": "0.1.0",
+  "description": "지금 보고 있는 내용을 사내 madi 개인 인박스에 안전하게 보관합니다.",
+  "permissions": ["activeTab", "scripting", "storage"],
+  "optional_host_permissions": ["https://*/*", "http://*/*"],
+  "background": { "service_worker": "background.js", "type": "module" },
+  "action": {
+    "default_popup": "popup.html",
+    "default_title": "madi에 빠르게 기록"
+  },
+  "commands": {
+    "_execute_action": {
+      "suggested_key": { "default": "Ctrl+Shift+Y", "mac": "Command+Shift+Y" },
+      "description": "madi 웹 클리퍼 열기"
+    }
+  },
+  "options_ui": { "page": "options.html", "open_in_tab": true },
+  "icons": { "48": "icon-48.png", "128": "icon-128.png" },
+  "content_security_policy": {
+    "extension_pages": "script-src 'self'; object-src 'none'; base-uri 'none'; frame-src 'none'"
+  }
+}

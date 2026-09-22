@@ -1,0 +1,194 @@
+.rag-generations-page {
+  max-width: 1400px;
+  margin: auto;
+}
+.rag-generation-layout {
+  display: grid;
+  grid-template-columns: 260px minmax(0, 1fr);
+  gap: 24px;
+}
+.rag-generation-list {
+  display: grid;
+  align-content: start;
+  gap: 10px;
+}
+.rag-generation-list > button {
+  display: grid;
+  gap: 6px;
+  text-align: left;
+  color: var(--text);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 16px;
+  overflow-wrap: anywhere;
+}
+.rag-generation-list > button.selected {
+  border-color: var(--primary);
+  box-shadow: inset 3px 0 var(--primary);
+}
+.rag-generation-list small,
+.rag-generation-list span {
+  color: var(--muted);
+}
+.rag-generation-detail {
+  min-width: 0;
+  padding: 24px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  border-radius: 16px;
+}
+.rag-generation-detail h3 {
+  margin: 30px 0 12px;
+}
+.rag-generation-header,
+.rag-generation-toolbar {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+}
+.rag-generation-toolbar {
+  margin: 18px 0;
+  justify-content: flex-start;
+}
+.rag-generation-header h2 {
+  margin: 0;
+}
+.rag-generation-header p {
+  color: var(--muted);
+  margin-bottom: 0;
+}
+.rag-generation-provider {
+  display: grid;
+  gap: 12px;
+  background: var(--bg);
+  padding: 16px;
+  border-radius: 10px;
+}
+.rag-generation-provider dt {
+  color: var(--muted);
+  font-size: 14px;
+}
+.rag-generation-provider dd {
+  margin: 5px 0 0;
+  overflow-wrap: anywhere;
+}
+.rag-generation-documents {
+  max-height: 330px;
+  overflow: auto;
+  scrollbar-width: thin;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+}
+.rag-generation-documents > div {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  justify-content: space-between;
+  padding: 12px;
+}
+.rag-generation-documents > div + div {
+  border-top: 1px solid var(--border);
+}
+.rag-generation-documents label {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  min-width: 0;
+  flex: 1;
+}
+.rag-generation-documents label > span {
+  overflow-wrap: anywhere;
+}
+.rag-generation-documents small {
+  display: block;
+  color: var(--muted);
+  font-size: 13px;
+  margin-top: 4px;
+}
+.rag-generation-documents input,
+.rag-generation-check input {
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+  margin-top: 3px;
+}
+.rag-generation-check {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  line-height: 1.75;
+  margin: 18px 0;
+}
+.rag-generation-report {
+  padding: 18px;
+  background: var(--soft);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  margin-top: 20px;
+}
+.rag-generation-report h3 {
+  margin-top: 0;
+}
+.rag-generation-delete {
+  margin-top: 34px;
+  padding-top: 22px;
+  border-top: 1px solid var(--border);
+}
+.rag-generation-form {
+  display: grid;
+  gap: 14px;
+}
+.rag-generation-form .field {
+  margin-bottom: 0;
+}
+.rag-generation-detail p {
+  overflow-wrap: anywhere;
+  line-height: 1.8;
+}
+.rag-generations-page button:focus-visible,
+.rag-generations-page a:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 3px;
+}
+@media (max-width: 850px) {
+  .rag-generation-layout {
+    grid-template-columns: 1fr;
+  }
+  .rag-generation-list {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .rag-generation-detail {
+    padding: 18px;
+  }
+}
+@media (max-width: 600px) {
+  :root .rag-generations-page .page-heading {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  :root .rag-generations-page .heading-actions {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    padding-top: 0;
+  }
+  .rag-generation-list {
+    grid-template-columns: 1fr;
+  }
+  .rag-generation-documents > div {
+    align-items: stretch;
+    flex-direction: column;
+  }
+  .rag-generation-documents .button {
+    align-self: flex-start;
+  }
+  .rag-generation-provider {
+    padding: 12px;
+  }
+  .rag-generation-check {
+    font-size: 16px;
+  }
+}

@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>madi 웹 클리퍼</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body class="popup">
+    <main>
+      <header>
+        <img src="icon-192.png" alt="" />
+        <div>
+          <h1>madi에 기록하기</h1>
+          <small>웹에서 만난 지식을 내 인박스로</small>
+        </div>
+      </header>
+      <div id="error" class="error" role="alert" hidden></div>
+      <p id="connection"></p>
+      <label for="mode">저장 방식</label
+      ><select id="mode">
+        <option value="article">본문만 · article/main 영역</option>
+        <option value="selection">선택한 텍스트</option>
+        <option value="link">링크만</option>
+        <option value="fullpage">전체 페이지 텍스트</option>
+        <option value="screenshot">현재 화면 스크린샷</option>
+      </select>
+      <div class="actions">
+        <button id="capture">내용 가져오기</button
+        ><button id="settings" class="secondary">연결 설정</button>
+      </div>
+      <form id="form" hidden>
+        <label for="title">기록 제목</label
+        ><input id="title" required maxlength="250" /><label for="text"
+          >보관할 내용</label
+        ><textarea id="text" rows="7" maxlength="900000"></textarea
+        ><img id="preview-image" alt="저장할 현재 화면 스크린샷" hidden />
+        <p id="source"></p>
+        <div class="note">
+          현재 보이는 미리보기만 개인 인박스에 저장합니다. 로그인 쿠키와 원본
+          HTML·스크립트는 전송하지 않습니다.
+        </div>
+        <div class="actions"><button id="save">개인 인박스에 저장</button></div>
+      </form>
+      <div id="success" class="status" role="status"></div>
+      <footer>madi v0.1.0 · 개인 API 키는 브라우저 종료 시 삭제됩니다.</footer>
+    </main>
+    <script type="module" src="popup.js"></script>
+  </body>
+</html>

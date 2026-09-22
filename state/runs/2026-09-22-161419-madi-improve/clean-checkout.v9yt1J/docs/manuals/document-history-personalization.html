@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#164e43">
+<title>문서 이력·개인화·팀 감사 가이드 — madi</title><meta name="description" content="문서 이력·개인화·팀 감사 가이드. madi의 실제 설정 방법, 사용자 권한, 기능 흐름과 운영상 주의점을 안내합니다."><link rel="canonical" href="https://hkjang.github.io/madi/manuals/document-history-personalization.html"><link rel="icon" href="../assets/favicon.svg" type="image/svg+xml"><link rel="stylesheet" href="../assets/style.css">
+<meta property="og:type" content="website"><meta property="og:locale" content="ko_KR"><meta property="og:site_name" content="madi"><meta property="og:title" content="문서 이력·개인화·팀 감사 가이드 — madi"><meta property="og:description" content="문서 이력·개인화·팀 감사 가이드. madi의 실제 설정 방법, 사용자 권한, 기능 흐름과 운영상 주의점을 안내합니다."><meta property="og:url" content="https://hkjang.github.io/madi/manuals/document-history-personalization.html"><meta property="og:image" content="https://hkjang.github.io/madi/screenshots/workspace.png"><meta name="twitter:card" content="summary_large_image">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"문서 이력·개인화·팀 감사 가이드","description":"문서 이력·개인화·팀 감사 가이드. madi의 실제 설정 방법, 사용자 권한, 기능 흐름과 운영상 주의점을 안내합니다.","inLanguage":"ko","url":"https://hkjang.github.io/madi/manuals/document-history-personalization.html","isPartOf":{"@type":"WebSite","name":"madi","url":"https://hkjang.github.io/madi/"}}</script></head>
+<body><a class="skip" href="#main">본문으로 바로가기</a><header class="site-header"><div class="container header-inner"><a class="brand" href="../index.html" aria-label="madi 홈"><img src="../assets/logo.svg" alt="madi" width="113" height="40"></a><button class="mobile-toggle" type="button" aria-expanded="false" aria-controls="navigation" aria-label="탐색 메뉴 열기">☰</button><nav class="nav" id="navigation" aria-label="주 탐색"><a href="../index.html#features">기능</a><a href="../screenshots.html">화면 둘러보기</a><a href="../guide.html">시작 가이드</a><a href="../manuals.html">전체 매뉴얼</a><a href="../api.html">API · MCP</a><a href="https://github.com/hkjang/madi">GitHub ↗</a></nav></div></header>
+<main id="main" class="container"><div class="page-hero"><a class="crumb" href="../manuals.html">madi / 전체 매뉴얼</a><p>문서 이력·개인화·팀 감사 가이드. madi의 실제 설정 방법, 사용자 권한, 기능 흐름과 운영상 주의점을 안내합니다.</p><a href="../document-history-personalization.md" download>Markdown 원문 내려받기</a></div><div class="guide-layout"><aside class="guide-sidebar" aria-label="문서 목차"><strong>이 문서의 내용</strong><a href="#원문과-문서-이력">원문과 문서 이력</a><a href="#비교-한도">비교 한도</a><a href="#api">API</a><a href="#개인-설정">개인 설정</a><a href="#팀-감사로그">팀 감사로그</a></aside><article class="prose manual-prose"><h1 id="문서-이력개인화팀-감사-가이드">문서 이력·개인화·팀 감사 가이드</h1>
+<h2 id="원문과-문서-이력">원문과 문서 이력</h2>
+<p>문서는 Markdown 원문을 기준으로 보관합니다. 블록 편집과 원문 편집은 같은 문서를 다루지만, 원문 편집 저장 시에는 버전을 검사하고 공동 편집의 새 기준을 만듭니다. 읽기 화면은 문서를 저장하지 않습니다. 지원 범위를 벗어난 Markdown은 원문 보존 모드로 표시합니다.</p>
+<p>문서 오른쪽 <strong>변경 이력</strong>에서 다음 작업을 할 수 있습니다.</p>
+<ol>
+<li>작성자·시각·제목·원문 크기를 포함한 버전 목록을 확인합니다. 목록 응답에는 문서 본문이 없습니다.</li>
+<li><strong>원문 보기</strong>에서 선택한 버전만 불러옵니다. 미리보기와 Markdown 원문을 전환하거나 해당 버전 원문을 내려받을 수 있습니다.</li>
+<li>두 버전을 선택하고 <strong>변경 비교</strong>를 누르면 추가·삭제 줄, 이전·다음 줄 번호, 제목·태그 변경을 확인합니다. 긴 동일 구간은 접어서 표시합니다.</li>
+<li><strong>이 버전으로 복원</strong>은 현재 문서를 새 버전으로 저장합니다. 기존 버전을 물리적으로 덮어쓰지 않습니다. 현재 공유 범위와 소유권을 유지하고 정보보호·승인 정책을 다시 적용합니다.</li>
+</ol>
+<p>이력을 연 이후 누군가 문서를 저장했다면 복원은 충돌로 중단됩니다. 최신 이력을 다시 불러오고 변경 내용을 비교한 후 복원을 결정하세요. 읽기 권한만 있는 사용자는 이력을 볼 수 있지만 복원할 수 없습니다. 공유 권한이 철회되면 과거 버전도 조회할 수 없습니다.</p>
+<h3 id="비교-한도">비교 한도</h3>
+<p>비교는 서버 내 제한된 줄 단위 알고리즘으로 수행하며 원문을 외부로 보내지 않습니다. CRLF와 마지막 줄바꿈 차이도 비교 대상입니다. 입력 50,000줄, 계산 단계 400,000개, 표시 2,000줄·512KB·한 줄 8KB의 제한을 적용합니다. 계산 한도를 넘으면 최소 변경 대신 변경 구간 전체를 보여주고, 표시 한도를 넘으면 안내합니다. 정확한 전체 비교가 필요하면 두 버전의 원문을 내려받으세요.</p>
+<h3 id="api">API</h3>
+<pre><code class="language-text">GET  /api/v1/documents/{id}/versions?limit=50&amp;before=100
+GET  /api/v1/documents/{id}/versions/{version}
+GET  /api/v1/documents/{id}/versions/diff?from=1&amp;to=2
+POST /api/v1/documents/{id}/versions/{version}/restore
+     {&quot;expected_version&quot;: 3}
+</code></pre>
+<p>복원 요청의 <code>expected_version</code>은 필수입니다. 현재 버전과 다르면 409 응답이며 저장되지 않습니다. API 키에는 기존 문서 읽기·쓰기 범위와 현재 사용자·워크스페이스·공간 ACL이 그대로 적용됩니다.</p>
+<h2 id="개인-설정">개인 설정</h2>
+<p><code>/app/profile</code>의 설정은 로그인한 계정에 저장됩니다. 변경사항 저장 후 새로고침하거나 다른 기기로 로그인해도 유지됩니다.</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>설정</th>
+<th>적용 범위</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>테마</td>
+<td>밝은 화면 / 어두운 화면</td>
+</tr>
+<tr>
+<td>글자 크기</td>
+<td>16~24px의 정수</td>
+</tr>
+<tr>
+<td>글꼴</td>
+<td>내장 Noto Sans KR, 기기 기본 고딕, 기기 설치 명조</td>
+</tr>
+<tr>
+<td>사이드바 너비</td>
+<td>220~420px, 드래그 또는 선택</td>
+</tr>
+<tr>
+<td>문서 본문 너비</td>
+<td>표준 최대 880px / 넓게 최대 1,200px / 현재 화면 전체</td>
+</tr>
+<tr>
+<td>기본 편집 모드</td>
+<td>블록 / Markdown 원문 / 읽기; 명시한 URL 모드가 우선</td>
+</tr>
+<tr>
+<td>맞춤법 검사</td>
+<td>블록·원문 편집기의 브라우저 맞춤법 속성</td>
+</tr>
+<tr>
+<td>코드 색상</td>
+<td>화면 테마 따르기 / 밝게 / 어둡게</td>
+</tr>
+<tr>
+<td>시간대</td>
+<td>서울 / UTC / 도쿄 / 뉴욕</td>
+</tr>
+<tr>
+<td>날짜 표시</td>
+<td>한국어 기본 / 숫자형 YYYY-MM-DD / 연도·요일 포함</td>
+</tr>
+<tr>
+<td>키보드 단축키</td>
+<td>지원 명령별 변경, 중복·브라우저 예약 조합 금지</td>
+</tr>
+</tbody></table></div>
+<p>글꼴은 서비스에 내장되거나 기기에 이미 설치된 것을 사용하며 외부 폰트 요청은 없습니다. 명조 글꼴이 없으면 기기의 기본 글꼴로 대체됩니다. madi는 맞춤법 서버를 호출하지 않습니다. 브라우저의 향상된 맞춤법 검사 또는 운영체제의 온라인 검사 기능은 별도 조직 정책으로 제어하세요. 알림 채널은 별도 <strong>알림 설정</strong>에서 관리합니다.</p>
+<p><code>PUT /api/v1/profile</code>의 <code>preferences</code>는 전달한 키만 병합합니다. <code>expected_user_id</code>를 함께 보내면 로그인 계정 전환으로 다른 계정의 설정을 잘못 바꾸는 것을 방지합니다. 선택값·타입·숫자 범위를 서버에서 검증하고 전체 저장 용량은 32KB로 제한합니다. 암호 변경·이름 변경과 함께 요청한 설정이 잘못되면 요청 전체가 반영되지 않습니다.</p>
+<h2 id="팀-감사로그">팀 감사로그</h2>
+<p><code>/app/workspace-audit</code>는 현재 워크스페이스 소유자와 관리자용 화면입니다. 서비스 전체 관리자의 감사 화면과 구분됩니다.</p>
+<ul>
+<li>현재 접근 가능한 문서·첨부·데이터베이스·공간·템플릿·캔버스 및 팀 설정·키·저장소 관리 동작을 표시합니다.</li>
+<li>서비스 관리자라도 다른 사람의 개인 문서 제목이나 기록을 우회해서 볼 수 없습니다. 현재 공유 권한이 없어지면 과거 기록도 목록에서 제외합니다.</li>
+<li>본문, 이전·이후 원문, 검색어, IP, 토큰, 비밀 설정은 노출하지 않습니다. 작성자 이름·동작·현재 자료명·시각과 제한된 버전·상태·개수·활성 여부만 제공합니다.</li>
+<li>원본이 물리적으로 삭제되어 현재 접근 권한을 확인할 수 없거나, 이 화면이 지원하지 않는 리소스 유형의 기록은 표시하지 않습니다. 전체 감사 기록을 대체하는 보존·감사 증빙 도구는 아닙니다.</li>
+<li>최근 1~365일, 동작별 필터, 100개 단위 이전 기록 탐색을 지원합니다. 필터와 페이지 커서는 URL에 유지됩니다.</li>
+</ul>
+<pre><code class="language-text">GET /api/v1/workspaces/{id}/audit?days=30&amp;action=DOCUMENT_UPDATE&amp;cursor=...
+</code></pre>
+<p>별도 저장 테이블 없이 기존 감사 로그를 현재 권한으로 안전하게 조회합니다. 감사 로그와 사용자 설정·문서 이력은 기존 논리 백업·복원에 포함됩니다.</p>
+</article></div></main>
+<footer class="site-footer"><div class="container"><div class="footer-top"><a class="brand" href="../index.html"><img src="../assets/logo.svg" alt="madi" width="90" height="32"></a><div class="footer-links"><a href="../manuals.html">사용자·관리자 매뉴얼</a><a href="../screenshots.html">실제 화면</a><a href="https://github.com/hkjang/madi">소스 저장소 ↗</a></div></div><p class="footer-bottom">madi v0.3.0 · 우리 조직의 지식이 연결되는 공간.</p></div></footer>
+<dialog class="lightbox" aria-label="서비스 화면 확대"><img alt=""><div class="lightbox-caption"><span data-caption></span><button class="lightbox-close" type="button">닫기 ×</button></div></dialog><script src="../assets/site.js" defer></script></body></html>

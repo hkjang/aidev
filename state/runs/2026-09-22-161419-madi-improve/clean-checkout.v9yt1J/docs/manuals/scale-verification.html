@@ -1,0 +1,231 @@
+<!doctype html>
+<html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#164e43">
+<title>규모·응답 시간 측정 — madi</title><meta name="description" content="규모·응답 시간 측정. madi의 실제 설정 방법, 사용자 권한, 기능 흐름과 운영상 주의점을 안내합니다."><link rel="canonical" href="https://hkjang.github.io/madi/manuals/scale-verification.html"><link rel="icon" href="../assets/favicon.svg" type="image/svg+xml"><link rel="stylesheet" href="../assets/style.css">
+<meta property="og:type" content="website"><meta property="og:locale" content="ko_KR"><meta property="og:site_name" content="madi"><meta property="og:title" content="규모·응답 시간 측정 — madi"><meta property="og:description" content="규모·응답 시간 측정. madi의 실제 설정 방법, 사용자 권한, 기능 흐름과 운영상 주의점을 안내합니다."><meta property="og:url" content="https://hkjang.github.io/madi/manuals/scale-verification.html"><meta property="og:image" content="https://hkjang.github.io/madi/screenshots/workspace.png"><meta name="twitter:card" content="summary_large_image">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"규모·응답 시간 측정","description":"규모·응답 시간 측정. madi의 실제 설정 방법, 사용자 권한, 기능 흐름과 운영상 주의점을 안내합니다.","inLanguage":"ko","url":"https://hkjang.github.io/madi/manuals/scale-verification.html","isPartOf":{"@type":"WebSite","name":"madi","url":"https://hkjang.github.io/madi/"}}</script></head>
+<body><a class="skip" href="#main">본문으로 바로가기</a><header class="site-header"><div class="container header-inner"><a class="brand" href="../index.html" aria-label="madi 홈"><img src="../assets/logo.svg" alt="madi" width="113" height="40"></a><button class="mobile-toggle" type="button" aria-expanded="false" aria-controls="navigation" aria-label="탐색 메뉴 열기">☰</button><nav class="nav" id="navigation" aria-label="주 탐색"><a href="../index.html#features">기능</a><a href="../screenshots.html">화면 둘러보기</a><a href="../guide.html">시작 가이드</a><a href="../manuals.html">전체 매뉴얼</a><a href="../api.html">API · MCP</a><a href="https://github.com/hkjang/madi">GitHub ↗</a></nav></div></header>
+<main id="main" class="container"><div class="page-hero"><a class="crumb" href="../manuals.html">madi / 전체 매뉴얼</a><p>규모·응답 시간 측정. madi의 실제 설정 방법, 사용자 권한, 기능 흐름과 운영상 주의점을 안내합니다.</p><a href="../scale-verification.md" download>Markdown 원문 내려받기</a></div><div class="guide-layout"><aside class="guide-sidebar" aria-label="문서 목차"><strong>이 문서의 내용</strong><a href="#격리된-실행">격리된 실행</a><a href="#시나리오">시나리오</a><a href="#결과-읽기">결과 읽기</a><a href="#2026-09-08-최적화-이전-기준-측정">2026-09-08 최적화 이전 기준 측정</a><a href="#같은-조건의-최적화-후-회귀">같은 조건의 최적화 후 회귀</a><a href="#최종-보안-패치-도구-체인-재확인">최종 보안 패치 도구 체인 재확인</a></aside><article class="prose manual-prose"><h1 id="규모응답-시간-측정">규모·응답 시간 측정</h1>
+<p>이 검증은 성능 목표와 실제 측정값을 구분하기 위한 재현 절차입니다. 천만 문서·동시 2,000명 목표를 충족했다고 주장하지 않으며, 아래 규모를 넘는 용량 보증이나 실제 조직 환경의 지연 시간 약속도 아닙니다.</p>
+<h2 id="격리된-실행">격리된 실행</h2>
+<p>Go 도구와 운영 DB와 분리된 PostgreSQL 테스트 DB를 준비합니다. 애플리케이션 서버 주소를 입력하지 않습니다. 테스트는 임의 이름의 스키마를 만들고 그 안에 합성 문서를 생성한 뒤, 종료 시 <strong>생성한 스키마만</strong> 삭제합니다. 개발 서비스의 문서나 기존 스키마에는 요청하지 않습니다.</p>
+<pre><code class="language-sh">MADI_TEST_POSTGRES_DSN=&#39;postgres://tester@127.0.0.1:5432/madi_test?sslmode=disable&#39; \
+  bash scripts/benchmark-readonly.sh --isolated-test-database
+</code></pre>
+<p>DSN 비밀번호는 로그에 출력하지 않습니다. 테스트 사용자에게 임의 스키마 생성 권한이 필요하며 암호는 조직의 비밀 관리 절차로 주입합니다. 기본 <code>go test ./...</code>에서는 규모 검증을 건너뛰고, 명시적으로 실행할 때만 동작합니다. 시간 측정은 <code>-race</code> 없이 실행하고 보안·데이터 경합 검증은 별도의 <code>go test -race</code>로 수행합니다.</p>
+<p>기본 통합 fixture 풀은 pgx 기본값(이 측정 호스트에서는 연결 4개)입니다. 실제 서비스 바이너리는 최대 20개 연결을 사용하므로 <code>MADI_SCALE_POOL=20</code>으로 별도 비교합니다. 이 옵션은 테스트 전용이며 서비스 환경변수에 추가하지 않습니다. 두 설정의 결과를 섞지 말고 보고서의 <code>postgres_pool_max_connections</code>를 확인하세요.</p>
+<h2 id="시나리오">시나리오</h2>
+<p>문서 1,000개와 10,000개 각각에 대해 일반 열람자 권한으로 다음 HTTP GET 요청을 실행합니다. 모든 측정 전 5회의 준비 요청을 하고, 동시 요청 10개·경로별 60회를 측정합니다.</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>경로</th>
+<th>측정 대상</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>/api/v1/documents?limit=100</code></td>
+<td>원문 없는 문서 메타데이터 목록</td>
+</tr>
+<tr>
+<td><code>/api/v1/search?type=document&amp;limit=30</code></td>
+<td>PostgreSQL 문서 키워드 검색</td>
+</tr>
+<tr>
+<td><code>/api/v1/documents/{id}</code></td>
+<td>Markdown 원문을 포함하는 단일 문서 열기</td>
+</tr>
+</tbody></table></div>
+<p>합성 문서의 20%는 비공개로 생성하여 다른 열람자의 결과에서 제외됩니다. 계층은 한 단계이며 합성 본문 크기는 결과 보고서에 기록합니다. 측정 단계는 읽기 HTTP 요청만 사용하지만 정상 접속·검색 감사로그는 테스트 스키마에 남습니다. 검색은 PostgreSQL 문서 FTS를 사용하며 블록·벡터·외부 AI 색인 속도 측정은 포함하지 않습니다.</p>
+<h2 id="결과-읽기">결과 읽기</h2>
+<p>기본 결과는 <code>test-results/scale-benchmark.json</code>입니다. P50/P95/최대 밀리초, 오류율, 평균·최대 응답 바이트, HTTP 상태 수, Go 프로세스 메모리, 운영체제·Go·PostgreSQL 버전, CPU 수와 메모리·PG 연결 풀 설정을 포함합니다. 기본 경로가 필요하면 <code>MADI_SCALE_REPORT</code>로 <strong>테스트 출력 경로만</strong> 변경할 수 있습니다.</p>
+<p>메모리는 해당 API 테스트 프로세스의 요청 종료 시점 표본입니다. 백그라운드 작업을 모두 켠 운영 컨테이너의 최대 메모리나 PostgreSQL 전체 사용량이 아니므로 운영 메모리 제한을 이 값만으로 정하면 안 됩니다.</p>
+<p><code>MADI_SCALE_EXPLAIN=1</code>을 추가하면 실제 API가 실행한 목록·검색 SQL과 인자를 캡처하여 측정 이후 <code>EXPLAIN (ANALYZE, BUFFERS, FORMAT JSON)</code> 결과를 <code>test-results/scale-plans/</code>에 저장합니다. 실행계획은 별도 읽기 전용 트랜잭션에서만 수집하며 권한 함수나 운영 쿼리를 바꾸지 않습니다. <code>MADI_SCALE_EXPLAIN_ONLY=1</code>이면 부하 측정 없이 같은 1k/10k 합성 데이터의 단일 요청과 실행계획만 수집합니다. 이 모드는 기존 부하 보고서를 덮어쓰지 않습니다.</p>
+<p>수치는 실행 당시 공유 호스트의 다른 작업에 영향을 받습니다. 브라우저 렌더링, TLS 프록시, 실제 망 지연, 첨부파일, 중첩 공간 ACL, 수백만 문서 및 대량 쓰기 상황은 별도 측정해야 합니다. 오류가 있는 측정은 성공 결과로 간주하지 않으며 보고서를 남긴 뒤 테스트가 실패합니다.</p>
+<h2 id="2026-09-08-최적화-이전-기준-측정">2026-09-08 최적화 이전 기준 측정</h2>
+<p>공유 WSL2 Linux/amd64, Go 1.26.0, PostgreSQL 18.6, CPU 4개, 호스트 메모리 약 15.6GiB, PG 풀 4개, 합성 본문 6,505바이트로 실행했습니다. 경쟁 작업이 존재하는 개발 환경의 기준 측정이며 전용 운영 호스트 측정값이 아닙니다. <a href="../benchmarks/2026-09-08-baseline.json">원본 JSON 보고서</a>를 함께 제공합니다.</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th align="right">문서 수</th>
+<th>경로</th>
+<th align="right">P50</th>
+<th align="right">P95</th>
+<th align="right">오류</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="right">1,000</td>
+<td>메타데이터 목록 100개</td>
+<td align="right">564ms</td>
+<td align="right">701ms</td>
+<td align="right">0/60</td>
+</tr>
+<tr>
+<td align="right">1,000</td>
+<td>문서 검색 30개</td>
+<td align="right">796ms</td>
+<td align="right">927ms</td>
+<td align="right">0/60</td>
+</tr>
+<tr>
+<td align="right">1,000</td>
+<td>단일 문서</td>
+<td align="right">7.3ms</td>
+<td align="right">9.3ms</td>
+<td align="right">0/60</td>
+</tr>
+<tr>
+<td align="right">10,000</td>
+<td>메타데이터 목록 100개</td>
+<td align="right">5,752ms</td>
+<td align="right">6,471ms</td>
+<td align="right">0/60</td>
+</tr>
+<tr>
+<td align="right">10,000</td>
+<td>문서 검색 30개</td>
+<td align="right">8,003ms</td>
+<td align="right">11,022ms</td>
+<td align="right">3/60</td>
+</tr>
+<tr>
+<td align="right">10,000</td>
+<td>단일 문서</td>
+<td align="right">14.0ms</td>
+<td align="right">19.8ms</td>
+<td align="right">0/60</td>
+</tr>
+</tbody></table></div>
+<p><strong>이 최적화 이전의 10,000개 문서·동시 검색 10개 구간은 통과하지 못했습니다.</strong> 검색 DB 시간 제한으로 5%의 요청이 실패했으며, 실패 보고서는 수정하거나 숨기지 않고 보존합니다. 다음 회귀 측정은 이 실패 이후 목록 필터·권한 검사 실행계획·최종 결과 투영을 개선한 코드로 실행했습니다.</p>
+<h2 id="같은-조건의-최적화-후-회귀">같은 조건의 최적화 후 회귀</h2>
+<p>문서 수, 본문 크기, 사용자 권한, 요청 수와 동시성은 유지했습니다. 초기 풀 4개와 실제 런타임 풀 20개를 각각 비교한 <a href="../benchmarks/2026-09-08-pool4.json">풀 4 보고서</a>, <a href="../benchmarks/2026-09-08-pool20.json">풀 20 보고서</a>는 두 경우 모두 360개 측정 요청에서 오류 0건을 기록했습니다. 이 중간 단계의 10,000개 문서 검색 P95는 각각 2,654ms와 2,178ms입니다.</p>
+<p>이후 검색의 Markdown 미리보기·태그 메타데이터 생성을 최종 정렬·제한 이후로 옮겼습니다. <a href="../benchmarks/2026-09-08-projection-pool20.json">최종 투영 개선 보고서</a>는 런타임과 같은 최대 연결 20개로 다음 결과를 기록했습니다.</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th align="right">문서 수</th>
+<th>경로</th>
+<th align="right">P50</th>
+<th align="right">P95</th>
+<th align="right">최대</th>
+<th align="right">오류</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="right">1,000</td>
+<td>메타데이터 목록 100개</td>
+<td align="right">233ms</td>
+<td align="right">317ms</td>
+<td align="right">333ms</td>
+<td align="right">0/60</td>
+</tr>
+<tr>
+<td align="right">1,000</td>
+<td>문서 검색 30개</td>
+<td align="right">104ms</td>
+<td align="right">161ms</td>
+<td align="right">182ms</td>
+<td align="right">0/60</td>
+</tr>
+<tr>
+<td align="right">1,000</td>
+<td>단일 문서</td>
+<td align="right">31.9ms</td>
+<td align="right">47.5ms</td>
+<td align="right">58.1ms</td>
+<td align="right">0/60</td>
+</tr>
+<tr>
+<td align="right">10,000</td>
+<td>메타데이터 목록 100개</td>
+<td align="right">215ms</td>
+<td align="right">344ms</td>
+<td align="right">347ms</td>
+<td align="right">0/60</td>
+</tr>
+<tr>
+<td align="right">10,000</td>
+<td>문서 검색 30개</td>
+<td align="right">677ms</td>
+<td align="right">869ms</td>
+<td align="right">902ms</td>
+<td align="right">0/60</td>
+</tr>
+<tr>
+<td align="right">10,000</td>
+<td>단일 문서</td>
+<td align="right">20.0ms</td>
+<td align="right">35.1ms</td>
+<td align="right">41.8ms</td>
+<td align="right">0/60</td>
+</tr>
+</tbody></table></div>
+<p>최종 시험은 총 360개 측정 요청이 모두 HTTP 200이었습니다. 실행 계획에서는 문서 미리보기·태그 메타데이터 생성이 접근 가능한 전체 8,000개 대신 최종 31개 결과(다음 페이지 존재 확인 1개 포함)에서만 실행됨을 확인했습니다. <strong>이 한정된 시험에서 오류 해소와 검색 P95 1초 미만을 확인한 것이며, 모든 배포 환경에서의 1초 보증이나 천만 문서 목표 달성은 아닙니다.</strong></p>
+<p>응답 크기는 메타데이터 목록 약 89KB, 검색 약 57KB, 단일 문서 약 7KB였습니다. 검색 랭킹에 사용하는 조회 기록 수가 늘면 실행 계획도 달라질 수 있고, 공유 호스트의 다른 검증 작업 때문에 단계별 목록·단건 지연 시간도 변동했습니다. 실제 문서 분포·중첩 권한·감사로그 축적량과 장시간 쓰기 부하를 포함한 운영 수용 시험을 추가해야 합니다.</p>
+<p>별도 격리 진단에서는 검색 감사 300건의 통계가 수집된 뒤 문서 읽기 130건이 추가된 짧은 구간에, 이전 분포를 따르는 잘못된 인덱스 선택이 관찰됐습니다. 같은 SQL과 데이터에서 해당 테스트 테이블의 <code>ANALYZE</code>만 실행하면 문서별 부분 인덱스 선택으로 회복했습니다. 따라서 PostgreSQL의 autovacuum·autoanalyze가 정상 작동하는지 확인하고, 대량 가져오기나 감사 이벤트 분포 급변 뒤에는 조직의 운영 절차에 따라 통계 갱신을 점검하세요. 이 프로젝트의 부하 시험은 운영 DB의 전역 튜닝이나 통계 변경을 자동 수행하지 않습니다.</p>
+<h2 id="최종-보안-패치-도구-체인-재확인">최종 보안 패치 도구 체인 재확인</h2>
+<p>Go 1.26.8과 최종 보안 패치 의존성을 적용한 뒤 동일 규모·연결 풀 20개·동시 요청 10개로 <a href="../benchmarks/2026-09-08-final-go1268-pool20.json">다시 측정한 보고서</a>도 360개 측정 요청 모두 HTTP 200으로 통과했습니다.</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th align="right">문서 수</th>
+<th>경로</th>
+<th align="right">P50</th>
+<th align="right">P95</th>
+<th align="right">최대</th>
+<th align="right">오류</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="right">1,000</td>
+<td>메타데이터 목록 100개</td>
+<td align="right">118ms</td>
+<td align="right">201ms</td>
+<td align="right">223ms</td>
+<td align="right">0/60</td>
+</tr>
+<tr>
+<td align="right">1,000</td>
+<td>문서 검색 30개</td>
+<td align="right">56ms</td>
+<td align="right">123ms</td>
+<td align="right">133ms</td>
+<td align="right">0/60</td>
+</tr>
+<tr>
+<td align="right">1,000</td>
+<td>단일 문서</td>
+<td align="right">10.3ms</td>
+<td align="right">16.8ms</td>
+<td align="right">20.6ms</td>
+<td align="right">0/60</td>
+</tr>
+<tr>
+<td align="right">10,000</td>
+<td>메타데이터 목록 100개</td>
+<td align="right">105ms</td>
+<td align="right">174ms</td>
+<td align="right">198ms</td>
+<td align="right">0/60</td>
+</tr>
+<tr>
+<td align="right">10,000</td>
+<td>문서 검색 30개</td>
+<td align="right">348ms</td>
+<td align="right">411ms</td>
+<td align="right">470ms</td>
+<td align="right">0/60</td>
+</tr>
+<tr>
+<td align="right">10,000</td>
+<td>단일 문서</td>
+<td align="right">5.6ms</td>
+<td align="right">9.7ms</td>
+<td align="right">11.4ms</td>
+<td align="right">0/60</td>
+</tr>
+</tbody></table></div>
+<p>공유 호스트의 경쟁 작업과 통계 수집 시점도 달라지므로 이전 표와의 시간 차이를 Go 패치 버전 하나의 효과로 해석하지 않습니다. 이는 최종 코드의 제한된 시나리오 회귀 결과이며 앞서 설명한 용량 보증·실제 조직 환경의 제한은 그대로 적용됩니다.</p>
+</article></div></main>
+<footer class="site-footer"><div class="container"><div class="footer-top"><a class="brand" href="../index.html"><img src="../assets/logo.svg" alt="madi" width="90" height="32"></a><div class="footer-links"><a href="../manuals.html">사용자·관리자 매뉴얼</a><a href="../screenshots.html">실제 화면</a><a href="https://github.com/hkjang/madi">소스 저장소 ↗</a></div></div><p class="footer-bottom">madi v0.3.0 · 우리 조직의 지식이 연결되는 공간.</p></div></footer>
+<dialog class="lightbox" aria-label="서비스 화면 확대"><img alt=""><div class="lightbox-caption"><span data-caption></span><button class="lightbox-close" type="button">닫기 ×</button></div></dialog><script src="../assets/site.js" defer></script></body></html>

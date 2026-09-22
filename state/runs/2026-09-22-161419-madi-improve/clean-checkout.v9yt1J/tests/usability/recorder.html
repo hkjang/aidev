@@ -1,0 +1,120 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src 'none'; script-src 'self'; style-src 'self'; connect-src 'none'; img-src 'none'; form-action 'none'; base-uri 'none'"
+    />
+    <title>madi 사용성 관찰 기록기 · 로컬 전용</title>
+    <link rel="stylesheet" href="recorder.css" />
+    <script type="module" src="recorder.mjs"></script>
+  </head>
+  <body>
+    <main>
+      <h1>실제 사용자 관찰 기록기</h1>
+      <p>
+        자동시험 결과가 아닙니다. 참여자 동의 후 관찰자가 기록합니다. 제품과
+        별도 창에서 열고 제품의 문서·계정·화면·키 입력을 수집하지 않습니다.
+        네트워크 전송과 브라우저 영구 저장은 없습니다. 새로고침 전에 JSON을
+        내려받으세요.
+      </p>
+      <p class="notice">
+        아직 관찰하지 않았다면 결과를 입력하지 마세요. 제품 QA 시간은 사람의
+        과제 완료시간이 아닙니다.
+      </p>
+      <fieldset id="setup">
+        <legend>동일 과제의 실측 조건</legend>
+        <label
+          >세션 익명 ID<input
+            id="session"
+            required
+            maxlength="64"
+            placeholder="S001" /></label
+        ><label
+          >참가자 익명 ID<input
+            id="participant"
+            required
+            maxlength="64"
+            placeholder="P001" /></label
+        ><label
+          >빌드 ID<input
+            id="build"
+            required
+            maxlength="64"
+            placeholder="v0.2.0-candidate.1" /></label
+        ><label
+          >사용 경험<select id="cohort">
+            <option value="new">신규 · 이전 사용 없음</option>
+            <option value="existing">기존 · 다른 날 3회 이상 사용</option>
+          </select></label
+        ><label
+          >화면<select id="viewport">
+            <option value="desktop">데스크톱</option>
+            <option value="mobile">모바일</option>
+          </select></label
+        ><label>과제<select id="task"></select></label
+        ><label
+          >시도 번호<input
+            type="number"
+            id="attempt"
+            min="1"
+            max="10000"
+            value="1" /></label
+        ><label class="check"
+          ><input id="consent" type="checkbox" />참가자가 목적·익명 항목·파일
+          보관에 동의했습니다.</label
+        >
+      </fieldset>
+      <section aria-labelledby="task-title">
+        <h2 id="task-title"></h2>
+        <p id="instruction"></p>
+        <p id="success"></p>
+      </section>
+      <div class="actions">
+        <button id="start">과제 시작</button
+        ><output id="timer" aria-live="off">00:00</output
+        ><button id="finish" disabled>과제 시간 종료</button>
+      </div>
+      <p>
+        설명을 마치고 시작할 때 누릅니다. 도움·오류·되돌림을 포함한 전체 경과
+        시간입니다. 중단 과제도 시간을 남기고 완료로 바꾸지 않습니다.
+      </p>
+      <fieldset id="results" disabled>
+        <legend>직접 관찰한 결과</legend>
+        <div class="actions">
+          <button id="help" type="button">도움 1회 기록</button
+          ><output id="help-count">0</output
+          ><button id="undo" type="button">되돌림 1회 기록</button
+          ><output id="undo-count">0</output>
+        </div>
+        <label
+          >결과<select id="outcome">
+            <option value="partial">부분 완료</option>
+            <option value="completed">완료 기준 확인</option>
+            <option value="abandoned">중단</option>
+          </select></label
+        ><label
+          >공유 범위 오해<select id="sharing">
+            <option value="not_assessed">평가하지 않음</option>
+            <option value="yes">오해 있음</option>
+            <option value="no">설명과 실제 범위 일치</option>
+          </select></label
+        ><label class="check"
+          ><input id="confirmed" type="checkbox" />자동 실행이 아닌 실제 사람의
+          수행을 관찰했고 결과를 확인했습니다.</label
+        ><button id="record" disabled>확인한 관찰 추가</button>
+      </fieldset>
+      <p id="error" role="alert"></p>
+      <h2>메모리에 보관한 기록</h2>
+      <p id="count">0개 · 관찰 미실시</p>
+      <button id="download" disabled>익명 관찰 JSON 내려받기</button
+      ><button id="clear">현재 기록 지우기</button>
+      <p>
+        자유 메모·문서 ID·실명은 기록하지 않습니다. 내려받은 파일의 보존·삭제는
+        조직의 동의 및 보안 절차를 따르세요.
+      </p>
+    </main>
+  </body>
+</html>

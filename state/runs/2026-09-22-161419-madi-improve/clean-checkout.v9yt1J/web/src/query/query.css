@@ -1,0 +1,155 @@
+.document-query {
+  margin: 20px 0;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 20px;
+  background: var(--surface);
+  font-size: 16px;
+  line-height: 1.65;
+  min-width: 0;
+}
+.document-query header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  gap: 12px;
+}
+.document-query header > div {
+  flex: 1 1 230px;
+}
+.document-query header p,
+.document-query .query-status {
+  margin: 6px 0 12px;
+  color: var(--text-secondary);
+  font-size: 16px;
+}
+.document-query .button,
+.document-query button,
+.query-builder button {
+  font-size: 16px;
+}
+.query-parameters,
+.query-builder-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(230px, 100%), 1fr));
+  gap: 14px;
+  margin: 16px 0;
+}
+.document-query pre,
+.query-builder pre {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  max-height: 360px;
+  overflow: auto;
+  font-size: 15px;
+  padding: 14px;
+}
+.query-table {
+  overflow: auto;
+  width: 100%;
+  margin: 14px 0;
+  max-height: 520px;
+  border: 1px solid var(--border);
+  border-radius: 9px;
+}
+.document-query .query-table table {
+  margin: 0;
+  width: 100%;
+  min-width: 440px;
+  border-collapse: collapse;
+  font-size: 16px;
+}
+.document-query .query-table th,
+.document-query .query-table td {
+  font-size:16px;
+  padding: 12px;
+  border-bottom: 1px solid var(--border);
+  vertical-align: top;
+  min-width: 100px;
+  max-width: 480px;
+  overflow-wrap: anywhere;
+}
+.query-warning {
+  padding: 12px 14px;
+  background: var(--warning-bg, #fff6df);
+  color: var(--text);
+  border-radius: 9px;
+  margin: 12px 0;
+}
+.document-query details {
+  margin-top: 14px;
+  font-size: 16px;
+}
+.document-query summary,
+.query-builder summary {
+  cursor: pointer;
+}
+.query-builder {
+  min-width: 0;
+  font-size: 16px;
+}
+.query-builder fieldset {
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 14px;
+  margin: 15px 0;
+}
+.query-column-options {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(155px, 1fr));
+  gap: 12px;
+}
+.query-column-options label,
+.query-check {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  font-size: 16px;
+}
+.query-column-options input,
+.query-check input {
+  width: 18px;
+  height: 18px;
+  flex: 0 0 18px;
+}
+.query-builder-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 20px;
+}
+@media (max-width: 640px) {
+  .document-query {
+    padding: 14px;
+    margin: 14px 0;
+  }
+  .document-query header > div {
+    flex-basis: 100%;
+  }
+  .query-builder-grid {
+    grid-template-columns: 1fr;
+  }
+  .query-column-options {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+@media print {
+  .document-query .query-result,
+  .document-query .query-parameters,
+  .document-query header button,
+  .document-query .query-status {
+    display: none !important;
+  }
+  .document-query .query-definition {
+    display: block;
+  }
+  .document-query .query-definition::after {
+    content: "동적 조회 결과는 인쇄에 포함되지 않습니다. 원문 조회 정의만 보존합니다.";
+    display: block;
+  }
+  .document-query .query-definition pre {
+    display: block !important;
+    max-height: none;
+  }
+}

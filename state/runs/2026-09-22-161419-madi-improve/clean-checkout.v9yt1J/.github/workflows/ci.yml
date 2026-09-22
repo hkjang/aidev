@@ -1,0 +1,124 @@
+name: Build and test
+on:
+  push:
+    branches: [main]
+  pull_request:
+permissions:
+  contents: read
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    services:
+      postgres:
+        image: postgres:17-alpine
+        env:
+          POSTGRES_DB: madi
+          POSTGRES_USER: madi
+          POSTGRES_PASSWORD: test-password
+        ports: ['5432:5432']
+        options: >-
+          --health-cmd "pg_isready -U madi -d madi"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 20
+    env:
+      MADI_TEST_POSTGRES_DSN: postgres://madi:test-password@localhost:5432/madi?sslmode=disable
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: web/package-lock.json
+      - uses: actions/setup-go@v5
+        with:
+          go-version-file: go.mod
+          cache: true
+      - run: npm ci
+        working-directory: web
+      - name: Verify checked-in runtime dependency attribution
+        run: node scripts/licenses.mjs --check
+      - run: npm run build
+        working-directory: web
+      - name: Reject reachable Go vulnerabilities
+        run: go run golang.org/x/vuln/cmd/govulncheck@v1.7.0 ./...
+      - run: npm ci
+        working-directory: tests
+      - run: npx playwright install --with-deps chromium
+        working-directory: tests
+      - name: Build and verify responsive Korean documentation
+        run: node scripts/build-docs.mjs && node tests/docs.mjs
+      - name: Verify Korean date parsing and explicit usability-study tools
+        run: node --test tests/natural-date.mjs tests/silent-sso.mjs tests/usability/model.test.mjs tests/usability/recorder.test.mjs tests/pdf-font-sources.mjs tests/publish-verified-screenshots.test.mjs
+      - name: Verify PostgreSQL, protocols and isolated browser modules
+        env:
+          MADI_BROWSER_APPROVAL: '1'
+          MADI_BROWSER_COLLABORATION: '1'
+          MADI_BROWSER_FOUNDATIONS: '1'
+          MADI_BROWSER_DOCUMENT_RACES: '1'
+          MADI_BROWSER_EDITOR: '1'
+          MADI_BROWSER_GRAPH_AI: '1'
+          MADI_BROWSER_IDENTITY: '1'
+          MADI_BROWSER_RAG: '1'
+          MADI_BROWSER_RUNBOOK: '1'
+          MADI_BROWSER_SUPPORT: '1'
+          MADI_BROWSER_AGENT: '1'
+          MADI_BROWSER_SELECTION: '1'
+          MADI_BROWSER_ACCESS: '1'
+          MADI_BROWSER_SPLIT: '1'
+          MADI_BROWSER_DATABASE_EDITING: '1'
+          MADI_BROWSER_DATABASE_BASELINE: '1'
+          MADI_BROWSER_MOBILE_UX: '1'
+          MADI_BROWSER_WORKSETS: '1'
+          MADI_BROWSER_UX: '1'
+          MADI_BROWSER_ATTACHMENT_EXTRACTION: '1'
+          MADI_BROWSER_ATTACHMENT_KNOWLEDGE: '1'
+          MADI_BROWSER_DOCUMENT_QUERY: '1'
+          MADI_BROWSER_CONFLICTS: '1'
+          MADI_BROWSER_LEARNING_PATHS: '1'
+          MADI_BROWSER_STRUCTURED: '1'
+          MADI_BROWSER_KNOWLEDGE_QUESTIONS: '1'
+          MADI_BROWSER_KNOWLEDGE_OPERATIONS: '1'
+          MADI_BROWSER_KNOWLEDGE_DISTRIBUTION: '1'
+          MADI_BROWSER_IMPACT_EXCEPTION: '1'
+          MADI_BROWSER_MIGRATION_RESUME: '1'
+          MADI_BROWSER_RAG_GENERATIONS: '1'
+          MADI_BROWSER_SEARCH_OPERATIONS: '1'
+          MADI_BROWSER_SYSTEM_STATUS: '1'
+          MADI_BROWSER_COLLABORATION_SOAK: '1'
+          MADI_BROWSER_TASKS: '1'
+        run: go test -race -failfast -count=1 -timeout 45m ./...
+      - run: go vet ./...
+      - name: Prepare isolated browser test database
+        env:
+          PGPASSWORD: test-password
+        run: createdb --host=localhost --username=madi madi_browser_ci
+      - name: Verify user and administrator screens
+        env:
+          MADI_BROWSER_POSTGRES_DSN: postgres://madi:test-password@localhost:5432/madi_browser_ci?sslmode=disable
+        run: bash scripts/verify-browser.sh
+      - name: Keep browser verification results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: browser-verification
+          path: |
+            test-results/
+            internal/server/test-results/
+          if-no-files-found: ignore
+  # Both jobs use the event commit and must succeed; image verification does not
+  # wait for the full regression job to finish.
+  offline-image:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version-file: go.mod
+          cache: true
+      - name: Build service image
+        run: docker build -t madi:ci .
+      - name: Verify service without external network access
+        run: bash scripts/verify-image.sh madi:ci
