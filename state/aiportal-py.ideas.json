@@ -5,8 +5,8 @@
     "risk": 2,
     "size": "S",
     "status": "pending",
-    "note": "service/feedbackservice.py:process_feedback_single은 policy_token을 Bearer에 그대로 사용하고 process_feedback_batch는 사전검사 없이 위임. 빈 배치 계약·실제 서비스 import 검증 필요.",
-    "updated": "2026-09-21"
+    "note": "service/feedbackservice.py:process_feedback_single은 policy_token을 Bearer에 그대로 사용하고 process_feedback_batch는 사전검사 없이 run_feedback_batch에 위임. 빈 배치 계약 및 실제 서비스 import 검증 미확인.",
+    "updated": "2026-09-22"
   },
   {
     "title": "/run_confluence_pipeline_delete_spacefile MutationResult 성공 응답 직렬화 확인",
@@ -14,8 +14,8 @@
     "risk": 2,
     "size": "S",
     "status": "pending",
-    "note": "delete_to_milvus_space_file→서비스가 결과를 그대로 반환. pymilvus 실제 직렬화와 운영 클라이언트 미확인; 응답 변경 보류.",
-    "updated": "2026-09-21"
+    "note": "util/milvus_confluence.py:delete_to_milvus_space_file과 service/pipelineservice.py가 삭제 결과를 그대로 반환. 실제 pymilvus 직렬화/클라이언트 계약 미확인으로 보류.",
+    "updated": "2026-09-22"
   },
   {
     "title": "executor 피드백 배치 shutdown 시 행 사이 중단 요청",
@@ -23,8 +23,8 @@
     "risk": 2,
     "size": "M",
     "status": "pending",
-    "note": "util/feedback_batch.py:run_batch_off_loop는 await 취소 후 worker 계속 실행을 명시. 실제 Task와 DB 풀 종료 배선 검증 필요.",
-    "updated": "2026-09-21"
+    "note": "util/feedback_batch.py:run_batch_off_loop는 await 취소 후 worker 계속 실행을 명시. 종료 플래그와 실제 Task 및 DB 풀 종료 연결 검증 필요.",
+    "updated": "2026-09-22"
   },
   {
     "title": "A-105 후속 공통 오류 응답 model과 traceback 노출 제거",
@@ -32,8 +32,8 @@
     "risk": 3,
     "size": "L",
     "status": "pending",
-    "note": "api.py에 traceback.format_exc 응답 잔존. 공통 계약 변경은 45분 범위 밖.",
-    "updated": "2026-09-21"
+    "note": "api.py에 traceback.format_exc 응답 다수 잔존. 공통 계약 변경은 45분 범위 밖.",
+    "updated": "2026-09-22"
   },
   {
     "title": "스페이스 첨부 재색인 시 삭제→색인 순서 보장",
@@ -41,8 +41,8 @@
     "risk": 3,
     "size": "M",
     "status": "pending",
-    "note": "confluence_pipeline_spacefile_detail은 index_space_files 위임, 삭제는 별도 함수. 적재 실패 시 데이터 손실 계약 미확인.",
-    "updated": "2026-09-21"
+    "note": "service/pipelineservice.py:confluence_pipeline_spacefile_detail은 index_space_files 위임; 삭제는 별도 함수. 적재 실패 데이터 손실 계약 미확인.",
+    "updated": "2026-09-22"
   },
   {
     "title": "A-102/A-206 추천 질문·토큰 캐시 프로세스 간 공유",
@@ -50,8 +50,8 @@
     "risk": 3,
     "size": "L",
     "status": "pending",
-    "note": "api.py question_store 전역 및 감사 A-102 잔존. 외부 공유 저장소·라우팅 협의 필요.",
-    "updated": "2026-09-21"
+    "note": "api.py question_store 전역과 감사 A-102 잔존. A-206 무한 증가는 해결되었으나 프로세스 간 공유는 별개.",
+    "updated": "2026-09-22"
   },
   {
     "title": "A-107 idempotent 호출 제한 재시도·circuit breaker·requests.Session",
@@ -59,8 +59,8 @@
     "risk": 3,
     "size": "M",
     "status": "pending",
-    "note": "감사 A-107은 timeout 부분 해결 상태. 서비스별 멱등성 계약 필요.",
-    "updated": "2026-09-21"
+    "note": "감사 A-107 timeout만 부분 해결. dynamic_fetcher는 자체 Session/redirect 루프를 이미 사용하므로 전역 일괄 적용 금지; 서비스별 멱등성 계약 필요.",
+    "updated": "2026-09-22"
   },
   {
     "title": "bare except를 구체 예외로 축소",
@@ -68,8 +68,8 @@
     "risk": 3,
     "size": "M",
     "status": "pending",
-    "note": "service/pipelineservice.py:confluence_pipeline_kcblaw 및 api.py 잔여 확인. 경로별 취소 계약의 실제 실행 검증 필요.",
-    "updated": "2026-09-21"
+    "note": "service/pipelineservice.py:confluence_pipeline_kcblaw의 bare except 잔존. 경로별 취소 계약과 실제 런타임 검증 필요.",
+    "updated": "2026-09-22"
   },
   {
     "title": "A-104 collection allowlist와 field 타입 검증",
@@ -77,8 +77,8 @@
     "risk": 2,
     "size": "M",
     "status": "pending",
-    "note": "get_all_rows_loop의 Collection(collection_name) 직접 전달 잔존. 허용 목록 운영 계약 미확인.",
-    "updated": "2026-09-21"
+    "note": "service/pipelineservice.py:get_all_rows_loop의 Collection(collection_name) 직접 전달 확인. 허용 목록 운영 계약 미확인; 기존 expr escaping 해결과 구분.",
+    "updated": "2026-09-22"
   },
   {
     "title": "법령 xml_parser_core·json_formatter 단위 테스트",
@@ -86,8 +86,8 @@
     "risk": 1,
     "size": "M",
     "status": "pending",
-    "note": "가지조문 및 별표·부칙 장문 source 청킹 실제 변환 회귀 확보. 일반 법률/행정규칙 fixture 확대는 남아 있어 pending 유지.",
-    "updated": "2026-09-21"
+    "note": "test_law_article_hierarchy/test_law_source_chunking에 실제 체인 회귀 존재. 일반 법률 항·호·목과 행정규칙 부칙 fixture 확대는 여전히 남아 있음.",
+    "updated": "2026-09-22"
   },
   {
     "title": "Milvus collection·confluence·pipeline default alias ensure_connection 통일",
@@ -95,8 +95,8 @@
     "risk": 2,
     "size": "M",
     "status": "pending",
-    "note": "util/milvus_confluence.py 및 service/pipelineservice.py에 using 없는 Collection 잔존. 검색 경로 해결과 별도.",
-    "updated": "2026-09-21"
+    "note": "util/milvus_confluence.py와 service/pipelineservice.py에 using 없는 Collection 잔존. 해결된 검색 alias 경로를 다시 변경하지 말 것.",
+    "updated": "2026-09-22"
   },
   {
     "title": "GitLab CI deploy 앞단 test stage 추가",
@@ -104,34 +104,52 @@
     "risk": 3,
     "size": "L",
     "status": "pending",
-    "note": ".gitlab-ci.yml stages는 deploy 하나. 여전히 타당하나 보호 경로라 이번 선택 제외.",
-    "updated": "2026-09-21"
+    "note": ".gitlab-ci.yml stages는 deploy 하나; test job 없음. 보호 경로와 배포 정책 연계라 이번 제외.",
+    "updated": "2026-09-22"
   },
   {
-    "title": "CODEBASE_MAP의 tests·pytest.ini 부재 문구 정정",
+    "title": "CODEBASE_MAP·CURRENT_STATE_AUDIT의 tests·pytest.ini 부재 서술 정정",
     "value": 2,
     "risk": 1,
     "size": "S",
     "status": "pending",
-    "note": "docs/CODEBASE_MAP.md 현재 없는 구조와 CURRENT_STATE_AUDIT A-201에 부재 서술 잔존. TESTING에는 실제 테스트 구성 있음. 차선 후보.",
-    "updated": "2026-09-21"
+    "note": "차선. docs/DEVELOPMENT.md에도 test suite 부재 서술 확인(범위 추가). CURRENT_STATE_AUDIT의 해당 항목은 이전 프로필 A-201이 아니라 A-202.",
+    "updated": "2026-09-22"
   },
   {
-    "title": "법령 별표·부칙의 긴 한 줄이 source 청크 길이 제한을 우회하는 오류 수정",
+    "title": "행정규칙 가지조문 계층 경로 표기 수정",
     "value": 3,
     "risk": 1,
     "size": "S",
     "status": "done",
-    "note": "짧은 버퍼를 확정·초기화한 뒤 긴 줄 강제 분할. 실제 XML→source→RAG 15건에서 수정 전 8 실패/7 통과, 수정 후 15 통과. 전체 1071 통과; source_seq·문자 순서·짧은 출력 계약 확인.",
-    "updated": "2026-09-21"
+    "note": "A-117 수정 및 실제 체인 회귀 확인. 이미 완료한 과제이며 재선택하지 않음.",
+    "updated": "2026-09-22"
   },
   {
-    "title": "빈 부칙 RAG 레코드의 결정적 id 누락 보완",
-    "value": 1,
+    "title": "법령 별표·부칙의 긴 한 줄 source 길이 제한 보장",
+    "value": 3,
     "risk": 1,
     "size": "S",
-    "status": "rejected",
-    "note": "신규 검토. 빈 부칙 XML→formatter 결과에 id 없음 재현했으나 ingest_pipeline_task가 모든 RAG id를 uuid4로 덮어쓴다. 현재 적재 출력 개선이 입증되지 않아 효과 없는 수정 회피; 다른 소비자는 미확인.",
-    "updated": "2026-09-21"
+    "status": "done",
+    "note": "4af5b2f에서 버퍼 확정 후 강제 분할 수정. 현행 테스트 통과 및 15,001자 재현의 max content 15,000 확인. Markdown 표현은 별도 신규 항목.",
+    "updated": "2026-09-22"
+  },
+  {
+    "title": "긴 법령 별표·부칙의 분할 Markdown 들여쓰기 보존",
+    "value": 3,
+    "risk": 1,
+    "size": "S",
+    "status": "done",
+    "note": "8a11ce7: Markdown 생성 두 분기에 기존 들여쓰기 변환 재사용. 실제 체인 회귀 수정 전 2 실패/25 통과 → 수정 후 27 통과, 전체 1075 통과. content/seq_map/RAG 전체 필드의 수정 전후 동일성도 확인.",
+    "updated": "2026-09-22"
+  },
+  {
+    "title": "일반 법령 항·호·목 source 길이 상한 적용 검토",
+    "value": 3,
+    "risk": 2,
+    "size": "M",
+    "status": "pending",
+    "note": "신규. SourceDocumentBuilder.build에서 article/clause/item/sub_item은 _split_long_record 없이 직접 append한다. 장문 조문 실제 발생·적재 영향은 미확인; 범용 splitter Markdown은 별표/부칙 heading을 전제하므로 단순 호출 확대 금지, 별도 실제 체인 검증 필요.",
+    "updated": "2026-09-22"
   }
 ]

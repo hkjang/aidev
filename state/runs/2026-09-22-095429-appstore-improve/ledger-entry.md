@@ -1,0 +1,12 @@
+## 2026-09-22
+- 선택: 즐겨찾기의 기기 간 동기화 오안내를 사용자 가이드·PDF·웹 요약에서 정정 (가치 3 / 위험 1 / 작업량 S)
+- 결과: 성공
+- 요약: FavoritesProvider가 인증/API 없이 appstore.favorites를 localStorage에만 저장하는 것을 확인하고 USER_GUIDE 3.6·4.4와 웹 요약에 로그인과 무관한 브라우저 저장·자동 동기화 불가·데이터 삭제 시 소실을 명시했다. 새 임시 파일로 PDF를 생성하여 pypdf로 수정 전 실패·수정 후 두 절 통과와 옛 권유 제거를 확인했고, 표지 및 15·25쪽을 렌더링해 한글·줄바꿈·이미지를 육안 검토했다. check-docs.sh·check-env-contract.sh·git diff --check·staged diff 검사 모두 exit 0 후 7170190으로 커밋했으며 작업 트리는 깨끗하다.
+- 보류 아이디어: E2E public config override 순서 정리 (가치 2 / 위험 1 / 작업량 S) — 차선 유지, 이번 미구현.
+- 보류 아이디어: 즐겨찾기 개수·100개 밖 앱 페이지 탐색 (가치 3 / 위험 2 / 작업량 M) — 전체 조회 계약 필요.
+- 보류 아이디어: /login?sso=none 화면 캡처 (가치 1 / 위험 1 / 작업량 S) — 다음 전체 캡처 갱신 때 처리.
+- 보류 아이디어: 내장 appstore 가이드와 docs 정본 갱신 정책 (가치 2 / 위험 2 / 작업량 M) — 외부 수집본이므로 전체 동기화하지 않음.
+- 과제서: 채택 — 현행 구현과 문서의 불일치가 재확인됐고 PDF 도구가 정상 작동하여 지정된 세 파일만 정정했다.
+- 스킬: Skill 호출 도구는 없어서 headcount/plugins/technology/skills의 completion-verification·systematic-debugging·test-driven-development/SKILL.md 원본을 직접 읽었다. 원인 확인과 문서 수용 조건의 red/green을 적용하고 원본 HEAD에도 새 조건이 실패함을 재확인했다. 새 제품 테스트는 과제서대로 추가하지 않았다.
+- 검증 근거: impl-checks.log, pdf-verification.txt, pdf-page-15.png, pdf-page-25.png, pdf-cover.png. PDF는 27쪽·표지 v2.11.4·전체 내장 이미지 바이트·URI 링크를 유지한다. 공용 변환기가 표지 작성일만 2026-09-21에서 2026-09-22로 갱신했다.
+- 검증 한계: Go/Vitest/E2E·실제 DB/Keycloak·웹 요약 브라우저 렌더링은 실행하지 않았다. 문서만 변경하여 지정 계약 검사와 PDF 검증을 수행했으며 제품 코드·캡처·ADMIN_GUIDE·내장 가이드·버전·릴리즈·원격은 변경하지 않았다. fitz 사용 시 deprecated 경고 1건이 있었고 후속 렌더링은 pymupdf로 정상 수행했다.

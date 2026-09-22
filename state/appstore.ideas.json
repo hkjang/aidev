@@ -5,8 +5,8 @@
     "risk": 2,
     "size": "S",
     "status": "pending",
-    "note": "internal/auth/access_token.go와 MCP OAuth 구현이 현재 HEAD에 없음. 선행 구현 후 재평가.",
-    "updated": "2026-09-21"
+    "note": "internal/auth/access_token.go와 validateMCPOAuth가 HEAD 검색에 없음. 선행 MCP OAuth 구현 후 재평가.",
+    "updated": "2026-09-22"
   },
   {
     "title": "validateMCPOAuth 저장 시 422 경로의 핸들러 수준 Go 테스트",
@@ -14,8 +14,8 @@
     "risk": 1,
     "size": "S",
     "status": "pending",
-    "note": "validateMCPOAuth가 현재 코드에 없어 선행 MCP OAuth 구현 필요.",
-    "updated": "2026-09-21"
+    "note": "대상 함수가 HEAD에 없음. 성공 원장의 머지 여부와 구분할 것.",
+    "updated": "2026-09-22"
   },
   {
     "title": "개인 API 키 만료 임박 메일(key.expiring)",
@@ -23,8 +23,8 @@
     "risk": 3,
     "size": "L",
     "status": "pending",
-    "note": "internal/mail 및 migration 000005 부재. 메일 기반과 스케줄러부터 필요하여 이번 범위 초과.",
-    "updated": "2026-09-21"
+    "note": "현재 메일 기반 미확인/대상 internal/mail 부재인 이전 기록. 선행 구현이 필요하며 이번 범위 제외.",
+    "updated": "2026-09-22"
   },
   {
     "title": "로그인 rate limit 통합 테스트가 분 경계에 걸리면 실패 — 고정 시각 주입",
@@ -32,8 +32,8 @@
     "risk": 1,
     "size": "S",
     "status": "pending",
-    "note": "auth_handlers.go는 time.Now(), limiter는 now 인자를 사용. DSN 미제공으로 과거 실패 재현은 하지 않음.",
-    "updated": "2026-09-21"
+    "note": "auth_handlers.go의 time.Now() 확인. 이번 DSN 통합 재현 없음.",
+    "updated": "2026-09-22"
   },
   {
     "title": "clientAddress 가 RemoteAddr 만 보아 reverse proxy 뒤에서 rate limit 이 전역",
@@ -41,8 +41,8 @@
     "risk": 3,
     "size": "M",
     "status": "pending",
-    "note": "ratelimit.go의 RemoteAddr 사용 확인. 신뢰 프록시 정책 결정이 필요한 인증 변경.",
-    "updated": "2026-09-21"
+    "note": "ratelimit.go:clientAddress 확인. 신뢰 프록시 정책과 인증 보호 경로 변경 필요.",
+    "updated": "2026-09-22"
   },
   {
     "title": "소유자가 볼 수 있는 검토 이력이 마지막 한 건뿐 — /me/apps/{id}/reviews",
@@ -50,8 +50,8 @@
     "risk": 2,
     "size": "M",
     "status": "pending",
-    "note": "personal_handlers.go의 LatestReviewsByApp 사용 확인. 권한/API/화면 계약 동시 변경 필요.",
-    "updated": "2026-09-21"
+    "note": "personal_handlers.go LatestReviewsByApp 유지. API/권한/화면 계약 변경 필요.",
+    "updated": "2026-09-22"
   },
   {
     "title": "pending_review 앱을 수정해도 검토가 level 1 로 되돌아가지 않음",
@@ -59,8 +59,8 @@
     "risk": 3,
     "size": "S",
     "status": "pending",
-    "note": "UpdateApp과 rotateAppChallenge는 보안 심의 nonce와 review ID만 변경. 검토 단계 재설정은 정책 미확인으로 보류.",
-    "updated": "2026-09-21"
+    "note": "store/apps.go UpdateApp의 rotateAppChallenge 호출 확인. 단계 재설정 정책은 미확인; 결함으로 단정 금지.",
+    "updated": "2026-09-22"
   },
   {
     "title": "방문 추적 화면에 현재 설정이 만들 CSP 문자열 미리보기",
@@ -68,17 +68,8 @@
     "risk": 2,
     "size": "M",
     "status": "pending",
-    "note": "pagePolicy 존재 확인. 저장 전 입력 전달과 nonce 표현 계약 필요.",
-    "updated": "2026-09-21"
-  },
-  {
-    "title": "LoginPage 렌더 테스트 — 기본 상태 3종(SSO만·bootstrap만·둘 다) 커버",
-    "value": 2,
-    "risk": 1,
-    "size": "S",
-    "status": "done",
-    "note": "721ad4a: 실제 AuthProvider/API 경유 Vitest 5건 추가(SSO 전용, Bootstrap 전용 3조합, 둘 다일 때 토글 왕복). production bundle E2E 2건 추가, 기존 복구 E2E와 함께 desktop/mobile 통과. mutation 3종이 새 테스트에서 실패함을 확인. 전체 React 65, E2E 71 passed/1 skipped.",
-    "updated": "2026-09-21"
+    "note": "analytics_handlers.go:pagePolicy 존재. 저장 전 설정/nonce 미리보기 계약이 필요.",
+    "updated": "2026-09-22"
   },
   {
     "title": "USER_GUIDE 2.2 의 silent SSO 안내 문단에 /login?sso=none 캡처가 없음",
@@ -86,8 +77,8 @@
     "risk": 1,
     "size": "S",
     "status": "pending",
-    "note": "캡처 전체 갱신 시 함께 처리. 이번에는 시각 자산 변경하지 않음.",
-    "updated": "2026-09-21"
+    "note": "별도 전체 캡처 갱신 때 처리. 이번 시각 자산 갱신 제외.",
+    "updated": "2026-09-22"
   },
   {
     "title": "즐겨찾기 화면의 개수·페이지 탐색이 공개 카탈로그 전체 기준인 문제",
@@ -95,17 +86,17 @@
     "risk": 2,
     "size": "M",
     "status": "pending",
-    "note": "public-pages.tsx는 pageSize=100을 로컬 slugs로 거르고 total과 pagination은 서버 전체 값 사용. 일부 숫자만 수정하지 말 것.",
-    "updated": "2026-09-21"
+    "note": "AppsPage가 pageSize=100 공개 조회 결과에 slugs 필터만 적용. 전체 조회 계약이 필요해 문서 정정보다 위험 높음.",
+    "updated": "2026-09-22"
   },
   {
     "title": "USER_GUIDE의 로그인하면 즐겨찾기가 기기 간 동기화된다는 안내 수정",
-    "value": 2,
+    "value": 3,
     "risk": 1,
     "size": "S",
-    "status": "pending",
-    "note": "USER_GUIDE 3.6과 4.2 및 FavoritesProvider 확인. 로그인 무관 localStorage인데 문서에는 동기화 안내가 남음. 두 문단과 PDF를 함께 수정해야 함.",
-    "updated": "2026-09-21"
+    "status": "done",
+    "note": "7170190: Markdown 3.6·4.4, 웹 요약, PDF 정정. PDF 27쪽 유지, 15·25쪽 추출/육안 확인 및 계약 검사 통과.",
+    "updated": "2026-09-22"
   },
   {
     "title": "E2E mock API의 public config override가 기본값을 실제로 덮어쓰도록 정리",
@@ -113,8 +104,17 @@
     "risk": 1,
     "size": "S",
     "status": "pending",
-    "note": "신규. mock-api.ts는 ...options.config 뒤에 oidcEnabled 등 기본값을 써 호출자가 지정한 값을 덮음. 이번 신규 테스트는 별도 HTTP route 응답으로 우회; 공용 fixture 변경은 별도 영향 검증 필요.",
-    "updated": "2026-09-21"
+    "note": "installMockApi가 options.config 뒤에 기본값을 씀. core.spec.ts 로그인 케이스는 별도 route로 우회. 차선.",
+    "updated": "2026-09-22"
+  },
+  {
+    "title": "LoginPage 기본 상태 3종과 복구용 관리자 토글 회귀 검증",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "done",
+    "note": "721ad4a가 HEAD 조상. auth-pages.test.tsx의 SSO/Bootstrap/병행·토글 및 core.spec.ts 확인.",
+    "updated": "2026-09-22"
   },
   {
     "title": "로그인 방식이 모두 없는 설치의 브라우저 안내 검증",
@@ -122,7 +122,43 @@
     "risk": 1,
     "size": "S",
     "status": "pending",
-    "note": "신규. 기존 Vitest의 안내 검증은 있으나 production bundle의 둘 다 비활성 상태 E2E는 없음. 이번 3종 계약과 분리하여 다음에 검토.",
-    "updated": "2026-09-21"
+    "note": "Vitest 안내 검증은 있지만 core.spec.ts에서 해당 E2E 미발견. 기존 로그인 방식 테스트와 별도.",
+    "updated": "2026-09-22"
+  },
+  {
+    "title": "소유자 앱 카드의 비공개 즐겨찾기 버튼 숨기기",
+    "value": 3,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "AppCard의 하트는 HEAD에서 무조건 노출. 과거 구현·모바일 수리 기록이 있으므로 재선정 금지, 기존 PR 머지 상태는 원격 미확인.",
+    "updated": "2026-09-22"
+  },
+  {
+    "title": "일반 카탈로그의 즐겨찾기 토글로 불필요한 앱 재조회가 생기는 query key 분리",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "신규. AppsPage queryKey에 favoritesOnly=false여도 slugs가 포함되어 토글마다 다른 캐시 키가 된다. 네트워크 횟수 실측은 미확인. 실제 기능 영향 확인 후 추진.",
+    "updated": "2026-09-22"
+  },
+  {
+    "title": "즐겨찾기 다른 탭 변경을 현재 탭에도 반영",
+    "value": 2,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "신규. FavoritesProvider는 초기 localStorage 읽기와 toggle만 있고 storage 이벤트 구독이 없음. 동일 브라우저 탭 간 갱신만 대상으로 하며 기기 간 동기화와 구분.",
+    "updated": "2026-09-22"
+  },
+  {
+    "title": "내장 appstore 사용자 가이드와 docs 정본의 갱신 정책 확인",
+    "value": 2,
+    "risk": 2,
+    "size": "M",
+    "status": "pending",
+    "note": "신규. guides/appstore/USER_GUIDE.pdf와 docs/USER_GUIDE.pdf 바이트 불일치 확인. 문서 버전 차이인지 내용 누락인지는 미확인. 외부 수집본 make guides 절차 확인 후 별도 추진.",
+    "updated": "2026-09-22"
   }
 ]
