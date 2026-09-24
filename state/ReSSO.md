@@ -256,3 +256,10 @@
 - 과제서: 채택 — 근거(1109행의 and 조건, `logoutClient`의 무음 nil 두 경로, 정확 일치)가 코드와 그대로 맞았고 수용 기준 네 가지를 모두 구현·검증했다.
 
 - 릴리즈: v0.9.90 (2026-09-23, run 2026-09-23-183428-ReSSO-improve)
+## 2026-09-24
+- 선택: 로그아웃 POST의 폼 읽기 실패를 같은 이유 코드 자리에 기록하기 (`form_unreadable`) (가치 3 / 위험 1 / 작업량 S)
+- 결과: 성공 (커밋 87f4ce9)
+- 요약: `oidcLogout`의 `_ = r.ParseForm()`을 `formErr`로 함수 스코프에 남기고, 네 이유 판정 뒤에 `formErr != nil && redirectTo == ""`이면 `form_unreadable`을 기록하도록 했다 — 본문이 안 읽히면 `id_token_hint`·`client_id`·`post_logout_redirect_uri`·`state`가 한꺼번에 사라져 기존 이유 넷(모두 `requested != ""`에서 출발)에 하나도 걸리지 않고, 감사에도 로그에도 한 줄이 남지 않았다. 기록만 더했고 상태 코드(302/204/`/login?logged_out=1`)·세션 종료·`clearBrowserCookies`·1MiB 상한·정확 일치 규칙과 기존 이유 코드 네 개의 문자열은 그대로이며, 폼 오류로 조기 거절하지 않는다. 폼 오류 원문은 전용 `WARN` 한 줄(`logout could not read the form it was posted…`)의 `error`에만 넣고 감사 detail에는 이유 코드만 넣는다(한 요청에 로그 한 줄). 검증: 새 통합 테스트 `TestIntegrationLogoutRecordsAFormItCouldNotRead`가 **수정 전 핸들러에서 단언 6개가 실제로 실패**함을 먼저 확인했고(기준선 (a)와 쿼리 우선 (d)는 그때도 통과 — 정찰이 미확인으로 남긴 "ParseForm은 본문 오류에도 URL 쿼리를 `r.Form`에 채운다"가 이로써 확인됐다), 수정 후 `go test -race ./internal/httpserver -run '^TestIntegrationLogout' -count=1 -v`의 로그아웃 테스트 4개 모두 PASS(SKIP 0). `make lint` 0 issues(govulncheck 0, eslint), `make test` 전체 exit 0(13개 패키지 ok, httpserver 117s, SKIP 경고 없음, 프런트 29파일/161테스트, 빌드). `webui/dist/index.html`은 복원, `git diff --check` 통과.
+- 보류 아이디어: oidcCORS가 realmFromPath 실패에 조용히 CORS 헤더를 빼고 지나간다 — 구현 전 middleware.go 확인 필요(2/1/S) / 인가 접근 로그에 client_id 남기기(2/1/S) / UserInfo 거절 카운터 resso_userinfo_errors_total(2/1/S) / 비화면 경로의 CSP를 default-src 'none'으로 좁히기(2/2/S) / 통합 테스트의 lockedBuffer를 공용 헬퍼로 — 이번에 사용처가 둘이 됐다(1/1/S)
+- 과제서: 채택 — 근거(1070행의 무시된 ParseForm, 1127행 `requested != ""`가 만든 구멍)가 코드와 그대로 맞았고 수용 기준 다섯을 모두 구현·검증했다. 기준 4의 미확인 전제는 테스트 (d)로 확인됐다(쿼리는 살아남는다 — 기대값 수정 불필요).
+

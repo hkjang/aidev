@@ -1,0 +1,20 @@
+- 과제: 로그아웃 POST의 폼 읽기 실패를 같은 이유 코드 자리에 기록하기 (`form_unreadable`) (가치 3 / 위험 1 / 작업량 S)
+- 왜: `internal/httpserver/oidc.go:1070`의 `_ = r.ParseForm()`은 POST 본문 읽기 실패(1MiB 초과 — 바로 위 1069행의 `http.MaxBytesReader`, 깨진 퍼센트 인코딩, 망가진 Content-Type)를 삼키고, 그 뒤 1087행이 `values = r.Form`으로 이어가므로 본문에 실린 `id_token_hint`·`client_id`·`post_logout_redirect_uri`·`state`가 통째로 **없는 것**이 된다. 지난 회차(ee75261)가 만든 이유 코드 체계는 "요청된 주소가 있었는데 버렸다"만 기록하므로(1127행 `requested != ""`), 이 경우는 주소 자체가 사라져 감사 항목에도 로그에도 한 줄이 남지 않는다 — 세션은 끝나고 204가 나가는데 RP는 돌아갈 곳을 잃고, 운영자는 "로그아웃 후 서비스로 안 돌아온다"는 문의에서 볼 자리가 없다.
+- 수용 기준:
+  1) POST 로그아웃의 폼을 읽지 못했고 리다이렉트가 성립하지 않았을 때, LOGOUT 감사 detail에 `post_logout_redirect_uri: "dropped"` + `reason: "form_unreadable"`이 붙는다(`noteDroppedLogoutRedirect` 재사용, `client_id`는 해결된 경우에만 — 폼이 안 읽혔으면 보통 없음).
+  2) 같은 사실이 로그 한 줄로도 남는다(쿠키 세션이 없으면 감사 항목 자체가 없으므로). 기존 `s.logger.Warn("logout dropped the post-logout redirect it was asked for")`를 그대로 쓰거나 폼 실패 전용 한 줄을 더해도 되지만, **한 요청에 중복 두 줄은 내지 말 것**. 폼 오류 원문(`err.Error()`)은 로그 줄에만(1172행의 `"error", sessionErr` 관례와 같게), 감사 detail에는 이유 코드만 — 요청된 주소·본문 원문은 어디에도 넣지 않는다(기존 테스트가 단언한다).
+  3) 동작 계약은 하나도 바뀌지 않는다: 상태 코드(정상 302 / POST 204 / GET `/login?logged_out=1`), 세션 종료, `clearBrowserCookies`, 정확 일치 규칙 그대로. **폼 오류로 조기 거절하지 말 것** — 이 파일에 "조기 거절 금지"가 두 번 명시돼 있다(1075~1078행 주석, endSession 주석).
+  4) 쿼리스트링에 유효한 `client_id`+등록된 `post_logout_redirect_uri`가 있고 본문만 깨진 POST는 **여전히 302로 리다이렉트하고 `form_unreadable`을 주장하지 않는다**. 즉 판정은 `formErr != nil && redirectTo == ""`이다 — 이 조건을 테스트가 증명해야 한다. (근거로 삼은 "Go의 `ParseForm`은 본문 오류에도 URL 쿼리를 `r.Form`에 채운다"는 것은 **이번 정찰에서 미확인**이다 — 표준 라이브러리 소스를 이 환경에서 열 수 없었다. 테스트 케이스 (d)가 그대로 이 사실의 확인이 되므로, 만약 쿼리도 함께 사라지는 동작이면 `redirectTo == ""` 조건은 그대로 두고 (d)의 기대값만 실제 동작에 맞춰 고치고 그 사실을 회차 노트에 적을 것.)
+  5) 새 통합 테스트가 **수정 전 핸들러에서 실제로 실패**함을 확인한 사실을 회차 노트에 적는다(이 저장소의 관례).
+- 건드릴 파일:
+  - `internal/httpserver/oidc.go:1067 oidcLogout` — `_ = r.ParseForm()`을 `formErr := r.ParseForm()`으로 바꿔 함수 스코프에 남기고(POST 아닐 때는 nil), 1126~1146행의 `droppedReason` 판정에 폼 실패 분기를 더한다. 기존 4개 이유 판정 순서는 유지하고, 폼 실패는 `requested == ""`여서 아무 이유도 안 붙는 지금의 구멍을 메우는 자리에 넣는다.
+  - `internal/httpserver/oidc.go:1202~1220`의 이유 코드 const 블록 — `logoutRedirectFormUnreadable = "form_unreadable"`을 같은 밀도의 주석과 함께 추가(왜 이것만 "주소가 요청되지 않아도" 기록되는가 = 요청되지 않은 것과 읽지 못한 것을 구별할 수 없기 때문).
+  - `internal/httpserver/integration_test.go` — `TestIntegrationLogoutSaysWhyItDroppedTheRedirect`(6939행) 바로 아래에 새 테스트 하나. 그 테스트의 준비(실제 PostgreSQL, `New(...).Handler()`, httptest, `lockedBuffer`(6904행)로 로그 수집, 등록된 post-logout URI를 가진 client, 쿠키 세션)를 그대로 따라 쓰되 헬퍼를 리팩터하지 말 것. 케이스: (a) 기준선 — 정상 폼 POST → 302 + `state` + detail에 drop 없음, (b) 본문 1MiB+1 → 204 + `reason=form_unreadable`, (c) 본문 `post_logout_redirect_uri=%zz`(깨진 escape) → 204 + `form_unreadable`, (d) 쿼리에 유효한 `client_id`+등록 URI / 본문만 깨짐 → 302이고 `form_unreadable` 없음, (e) 로그 한 줄 확인.
+  - 문서: `docs/operations.md`의 이유 코드 표(46~49행 — `client_not_named`·`client_unknown`·`client_unavailable`·`uri_not_registered` 네 행이 이미 있다, 정찰에서 확인)에 `form_unreadable` 행 하나를 같은 세 칼럼 형식으로 더할 것: 무엇이 일어났나 / 운영자가 다음에 할 것(본문 크기 1MiB 상한과 인코딩을 RP 쪽에서 확인, 로그 줄의 `error` 값을 볼 것).
+- 검증 명령:
+  - `eval "$(scripts/test-services.sh)"` 를 먼저, **같은 셸에서**:
+  - `go test -race ./internal/httpserver -run '^TestIntegrationLogout' -count=1 -v` (SKIP 0인지 눈으로 확인 — 환경변수가 없으면 SKIP인데도 exit 0이다)
+  - `make lint` (첫 실행에서 gofmt 정렬이 자주 잡힌다), `make test` (전체 수 분: httpserver 약 115s / store 약 80s)
+  - 빌드가 바꾸는 `webui/dist/index.html`은 되돌릴 것. `git diff --check`.
+- 위험과 피할 것: `auth.go`·세션 쿠키·`internal/store/migrations`·`.github/workflows`는 건드리지 말 것. 1069행의 `MaxBytesReader`(1MiB)는 그대로 두고 상한을 바꾸지 말 것 — 이번 과제는 거절이 아니라 기록이다. `bearerToken`·`userInfo`의 폼 처리와 섞지 말 것(다른 회차에서 이미 끝난 경로). `r.Form`이 nil일 수 있으나 `url.Values(nil).Get`은 안전하므로 nil 가드를 새로 넣지 말 것. 이유 코드 문자열은 감사 트레일의 계약이니 기존 네 개의 값을 바꾸지 말 것.
+- 차선 후보: `oidcCORS`가 `realmFromPath` 실패에 조용히 CORS 헤더를 빼고 지나가는 것(`internal/httpserver/middleware.go`) — 실패를 로그 한 줄로 남기기(가치 2 / 위험 1 / 작업량 S). 이번 정찰에서 코드 재확인은 하지 않았으므로 구현자가 먼저 `middleware.go`의 `oidcCORS`를 읽고 err 무음 분기가 실제로 남아 있는지 확인할 것.

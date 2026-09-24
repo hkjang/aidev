@@ -1,0 +1,6 @@
+## 2026-09-24
+- 선택: 통합 테스트 `uniqueName` 의 고정 길이 자르기가 패닉하던 기존 플레이키 수정 (가치 3 / 위험 1 / 작업량 S)
+- 결과: 성공
+- 요약: `uniqueName` 이 `time.Now().UnixNano()%1e9` 를 `%d` 로 찍어 접미사가 1~9자리로 흔들렸고, 감사 로그 통합 테스트가 그 결과를 `strings.ToUpper(...)[:12]` 로 잘라 쿠폰 코드를 만들기 때문에 나머지가 1억 미만인 약 10% 의 실행에서 길이 11자가 되어 슬라이스가 패닉하고 `internal/httpapi` 테스트 바이너리 전체가 중단됐다(임시 테스트로 `slice bounds out of range [:12] with length 11` 재현 확인). 시간 인자를 받는 `uniqueNameAt` 로 seam 을 먼저 낸 뒤 접미사 폭을 고정하는 테스트를 실패시키고(`AUD99999999` 길이 11 등) `%09d` 로 고쳐 통과시켰으며, 패딩을 잘라내는 식의 회귀를 막는 유일성 테스트도 함께 두었다. 검증: 버릴 PostgreSQL 16(docker) 로 `go test ./cmd/... ./internal/...` 전체 통과(httpapi 84.8초, 통합 실제 실행), 해당 감사 테스트 단독 PASS, `go vet`·`gofmt -l` 무결, `npm --prefix web test` 10건 통과. 접두사 최대 18자 + 9자리 = 27자로 username 50자 제한 안이라 다른 호출자에 영향 없음을 확인했다.
+- 보류 아이디어: README 환경변수 계약을 필수 4개 + 선택 SHUTDOWN_DRAIN_SECONDS 로 정리 (가치 2 / 위험 1 / S) · 알 수 없는 승인 조건을 편집할 때 유실 안내/보존 (가치 3 / 위험 2 / M) · 가이드 문서의 API 메서드·경로를 실제 라우터와 대조 (가치 2 / 위험 2 / M) · Node 요구사항을 package.json engines·Makefile 선행 검사로 명시 (가치 2 / 위험 1 / S) · 쿠폰 코드 형식(길이·문자)에 대한 서버 검증 부재 (가치 2 / 위험 2 / S)
+- 과제서: 채택 — 과제서가 pending 으로 올린 `[:12]` 패닉 항목이 지금 코드(integration_test.go:169, 4391)와 정확히 일치했고 docker 로 통합까지 실제 실행해 증명할 수 있었다.

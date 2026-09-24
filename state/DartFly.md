@@ -92,3 +92,10 @@
 - 과제서: 채택 — 과제서의 근거(saved.js:23 의 limit=200 고정, 서버의 limit/offset/total 지원, admin-history 관례, 하네스의 querySelectorAll 대역 때문에 pager 를 목록 밖에 둘 것)가 모두 현재 코드와 맞았고, 과제서가 예상하지 못한 것은 CSP(`style-src 'self'`)가 HTML 인라인 style 속성을 막아 pager 스타일을 JS 로 줘야 했다는 점 하나입니다.
 
 - 릴리즈: v2.73.0 (2026-09-23, run 2026-09-23-170429-DartFly-improve)
+## 2026-09-24
+- 선택: 저장 결과 조회·삭제 실패의 HTTP 상태를 원인과 맞추기 (가치 3 / 위험 1 / 작업량 S)
+- 결과: 성공
+- 요약: `internal/resultsave` 에 센티널 `ErrNotFound`·`ErrInvalidID` 를 두고, mariadb 저장소가 sql.ErrNoRows·RowsAffected==0 자리에서 그 값을 돌려주며, 핸들러의 새 `writeSavedResultProblem` 이 `errors.Is` 로 404(없음/권한없음) / 400(잘못된 ID) / 500(저장소 장애·손상 저장본)을 나눕니다(커밋 6f5c1d7). 실제 라우터(`New(logger, options)`)에 httptest 로 요청하는 서버 테스트 9개를 먼저 돌려 6개가 실패(조회 0·음수 ID 404, 메타 DB 장애 404, 손상 저장본 404, 삭제 없음 400, 삭제 잘못된 ID 코드 불일치, 삭제 장애 400)하는 것을 확인한 뒤 green 으로 만들었고, sqlmock 으로 저장소 경계 테스트 4개를 더해 센티널을 되돌리면 2개가 다시 실패하는 것까지 확인했습니다. `go test -race ./...` 38개 패키지 통과·`go vet ./...`·`gofmt -l .` 무출력이며, 드라이버 원문(`Error 1452`, `write tcp …`)이 본문에 없는지도 테스트로 못 박았습니다. 안내 문구는 `saved.js` 가 `cause.message` 만 쓰고 `layout.js api()` 는 401 만 특별 취급하므로 그대로 두었고, 화면 동작이 바뀌지 않아 브라우저 스모크는 돌리지 않았습니다.
+- 보류 아이디어: 로그인 폼 429 Retry-After 카운트다운과 재제출 방지 2/1/S / history.go:55·http.go:1659 의 '모든 실패 404' 도 같은 방식으로 분류 2/2/M / 저장 결과 검색을 서버 쪽으로(q 파라미터) 3/3/L / 세션 만료 임박 알림과 저장 안 된 SQL 안내 3/2/M / 로그인 페이지 조용한 SSO 시도 중 폼 깜빡임 제거 2/1/S
+- 과제서: 채택 — 지목한 코드 4곳이 모두 현재 코드와 일치했고 순환 import 없음도 맞았습니다. 다른 점은 경로 하나뿐입니다: 실제 라우트는 `/api/v1/saved-results/{id}` 가 아니라 `/api/v1/query/saved/{id}`(http.go:208-209) 이며, 과제서가 언급하지 않은 `csrfProtection`(middleware.go:14) 때문에 DELETE 테스트는 세션의 실제 CSRF 토큰을 헤더로 넣어야 핸들러에 닿습니다.
+
