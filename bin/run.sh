@@ -1135,6 +1135,12 @@ release_project(){ # $1=base $2=변경 요약 [$3=assets] — 에이전트는 �
   local base=$1 summary=$2 mode=${3:-release} rwt="$WT_BASE/$n-release" rfile="$OUT/release.json" rprompt ref="origin/$1" mode_note="" latest="" g budget
   budget=$(policy "$n" ".budget_usd.$( [ "$mode" = assets ] && echo assets || echo release)"); [ -n "$RBUDGET" ] && budget=$RBUDGET; budget=${budget:-10}
   budget_ok "$budget" || { stage release hold "예산 부족"; result="$result, release hold (budget)"; return 0; }
+  # 같은 이유로 세 번 넘게 실패한 릴리즈는 사람이 관례를 정해 줄 때까지 시도하지 않는다 (bin/fixer.sh 가 건다).
+  # 개선·머지는 그대로 돌고 릴리즈만 쉰다 — 교착에 세션을 태우지 않기 위해서다.
+  if [ -f "$STATE/$n.release-hold" ]; then
+    stage release hold "릴리즈 보류 — $(jq -r '.failures // "?"' "$STATE/$n.release-hold" 2>/dev/null)회 실패 후 사람 결정 대기 (state/$n.release-hold)"
+    result="$result, release held (사람 결정 대기)"; return 0
+  fi
   git -C "$repo" fetch -q --force --tags origin "$base" >>"$LOG" 2>&1 || log "$n: tag fetch had errors (continuing)"
   # 이미 최신 태그가 base 끝을 가리키면 릴리즈할 것이 없다 — 에이전트 세션을 낭비하지 않는다 (2026-09-08 git-ctx 재개가 같은 버전을 다시 돌렸다)
   if [ "$mode" != assets ]; then

@@ -1,14 +1,164 @@
 [
-  {"title":"IMAP 리터럴 길이를 int64로 파싱하고 선언 크기 선할당을 제거","value":4,"risk":2,"size":"S","status":"done","note":"이번 회차 구현(89d4076). strconv.ParseInt + 파싱 실패 시 abandon(errUnframed), 수용 리터럴은 bytes.Buffer+io.CopyN 스트리밍(청크마다 deadline 갱신, 선예약 drainChunk 상한). 수정 전 실제 TCP 로 make([]byte, MaxInt64) 패닉 재현, 변이 2종으로 각 테스트 귀속 확인.","updated":"2026-09-24"},
-  {"title":"sync.max_message_bytes 의 0/음수(=무제한) 의미를 검증하거나 문서화","value":2,"risk":1,"size":"S","status":"pending","note":"settings.go:705 int64Setting 은 0·음수를 그대로 받고 sync.go:258 은 >0 일 때만 적용하므로 0=무제한이 사실상의 규약인데 docs/·README 어디에도 이 키 설명이 없다. 이번 수정으로 무제한 계정의 패닉 경로는 사라졌지만 규약 자체는 여전히 미문서화. 문서만 고치는 저위험 항목.","updated":"2026-09-24"},
-  {"title":"IMAP SELECT/FETCH 응답의 나머지 Atoi 오류 무시(exists, seq)","value":2,"risk":2,"size":"S","status":"pending","note":"client.go 의 selectInbox(EXISTS)·enumerate(seq)·Retrieve 경로가 여전히 오류를 버린다. 다만 여기서 얻는 값은 카운트·시퀀스라 잘못돼도 할당으로 이어지지 않는다(리터럴 길이만 이번에 고침). 관찰 가능한 실패를 먼저 재현하지 못하면 착수 금지 — 효과 없는 변경 금지 규칙.","updated":"2026-09-24"},
-  {"title":"IMAP 본문 수신에도 drainChunk 단위 데드라인 갱신","value":2,"risk":2,"size":"S","status":"done","note":"이번 회차에 readLiteral 이 drainChunk(1MiB) 마다 s.deadline() 을 갱신하도록 함께 구현. 느린 링크의 대형 본문이 단일 명령 타임아웃에 걸리지 않으며, 아무것도 보내지 않는 서버는 여전히 첫 청크에서 commandTO 로 끊긴다.","updated":"2026-09-24"},
-  {"title":"세션이 못 쓰게 됐을 때 sync 루프를 조기 종료","value":2,"risk":3,"size":"M","status":"pending","note":"sync.go:262 는 오류를 Failed++ 로 세고 같은 세션으로 continue 한다. IMAP 은 errUnframed 로 이후 명령을 모두 실패시키므로 남은 메시지가 전부 Failed 로 집계된다. 도메인 치명-오류 신호가 없어 위험 3 — 잘못 만들면 정상 실패까지 조기 중단된다.","updated":"2026-09-24"},
-  {"title":"README govulncheck 로컬 예시를 CI 고정 버전(v1.6.0)에 정렬","value":2,"risk":1,"size":"S","status":"pending","note":"README.md:303 @latest vs .github/workflows/ci.yml @v1.6.0 불일치. 문서만 수정, 코드·워크플로 무변경. 이번 회차의 차선 후보였으나 1순위가 재현에 성공해 미착수.","updated":"2026-09-24"},
-  {"title":"IMAP readLine 이 개행 없는 줄을 무한 버퍼링","value":2,"risk":2,"size":"M","status":"pending","note":"client.go:152 ReadString('\\n') 에 상한이 없다. 리터럴 본문 쪽 증폭은 이번에 막혔지만 프로토콜 줄 자체는 여전히 무제한. 실제 TCP 로 관찰 가능한 실패를 먼저 재현하지 못하면 착수 금지.","updated":"2026-09-24"},
-  {"title":"POP3 명령 대기 중 context 취소 전파","value":3,"risk":2,"size":"M","status":"pending","note":"PR #22(04b15be) 가 아직 병합되지 않았다(internal/adapters/pop3 에 client.go 뿐, 테스트 파일 없음). 같은 파일 충돌을 피하려면 병합 후로 유지.","updated":"2026-09-24"},
-  {"title":"POP3 USER/PASS AuthError·TLS 프로토콜 테스트 확대","value":2,"risk":1,"size":"M","status":"pending","note":"위와 같은 이유로 PR #22 병합 전 착수 금지.","updated":"2026-09-24"},
-  {"title":"CI 에 gofmt -l 검사 추가","value":2,"risk":1,"size":"S","status":"pending","note":"workflows 는 보호 경로이고 Release 워크플로가 계속 success 라 흔들 근거가 없다. 로컬 make lint-format 으로 이미 대체 가능.","updated":"2026-09-24"},
-  {"title":"gosec 잡에 -stdout 추가해 잡 로그에도 결과 표시","value":2,"risk":1,"size":"S","status":"pending","note":"같은 workflows 보호 경로 사유로 보류 유지.","updated":"2026-09-24"},
-  {"title":"OIDC runtime 단일 헬퍼(OIDCConfigured + OIDCAutoLoginEnabled)","value":2,"risk":1,"size":"S","status":"pending","note":"auth 보호 경로이고 관찰 가능한 동작 변화가 없다. 보류 유지.","updated":"2026-09-24"}
+  {
+    "title": "IMAP 리터럴 길이를 int64로 파싱하고 선언 크기 선할당을 제거",
+    "value": 4,
+    "risk": 2,
+    "size": "S",
+    "status": "done",
+    "note": "이번 회차 구현(89d4076). strconv.ParseInt + 파싱 실패 시 abandon(errUnframed), 수용 리터럴은 bytes.Buffer+io.CopyN 스트리밍(청크마다 deadline 갱신, 선예약 drainChunk 상한). 수정 전 실제 TCP 로 make([]byte, MaxInt64) 패닉 재현, 변이 2종으로 각 테스트 귀속 확인.",
+    "updated": "2026-09-24"
+  },
+  {
+    "title": "sync.max_message_bytes 의 0/음수(=무제한) 의미를 검증하거나 문서화",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "settings.go:705 int64Setting 은 0·음수를 그대로 받고 sync.go:258 은 >0 일 때만 적용하므로 0=무제한이 사실상의 규약인데 docs/·README 어디에도 이 키 설명이 없다. 이번 수정으로 무제한 계정의 패닉 경로는 사라졌지만 규약 자체는 여전히 미문서화. 문서만 고치는 저위험 항목.",
+    "updated": "2026-09-24"
+  },
+  {
+    "title": "IMAP SELECT/FETCH 응답의 나머지 Atoi 오류 무시(exists, seq)",
+    "value": 2,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "client.go 의 selectInbox(EXISTS)·enumerate(seq)·Retrieve 경로가 여전히 오류를 버린다. 다만 여기서 얻는 값은 카운트·시퀀스라 잘못돼도 할당으로 이어지지 않는다(리터럴 길이만 이번에 고침). 관찰 가능한 실패를 먼저 재현하지 못하면 착수 금지 — 효과 없는 변경 금지 규칙.",
+    "updated": "2026-09-24"
+  },
+  {
+    "title": "IMAP 본문 수신에도 drainChunk 단위 데드라인 갱신",
+    "value": 2,
+    "risk": 2,
+    "size": "S",
+    "status": "done",
+    "note": "이번 회차에 readLiteral 이 drainChunk(1MiB) 마다 s.deadline() 을 갱신하도록 함께 구현. 느린 링크의 대형 본문이 단일 명령 타임아웃에 걸리지 않으며, 아무것도 보내지 않는 서버는 여전히 첫 청크에서 commandTO 로 끊긴다.",
+    "updated": "2026-09-24"
+  },
+  {
+    "title": "세션이 못 쓰게 됐을 때 sync 루프를 조기 종료",
+    "value": 2,
+    "risk": 3,
+    "size": "M",
+    "status": "pending",
+    "note": "sync.go:262 는 오류를 Failed++ 로 세고 같은 세션으로 continue 한다. IMAP 은 errUnframed 로 이후 명령을 모두 실패시키므로 남은 메시지가 전부 Failed 로 집계된다. 도메인 치명-오류 신호가 없어 위험 3 — 잘못 만들면 정상 실패까지 조기 중단된다.",
+    "updated": "2026-09-24"
+  },
+  {
+    "title": "README govulncheck 로컬 예시를 CI 고정 버전(v1.6.0)에 정렬",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "README.md:303 @latest vs .github/workflows/ci.yml @v1.6.0 불일치. 문서만 수정, 코드·워크플로 무변경. 이번 회차의 차선 후보였으나 1순위가 재현에 성공해 미착수.",
+    "updated": "2026-09-24"
+  },
+  {
+    "title": "IMAP readLine 이 개행 없는 줄을 무한 버퍼링",
+    "value": 2,
+    "risk": 2,
+    "size": "M",
+    "status": "pending",
+    "note": "client.go:152 ReadString('\\n') 에 상한이 없다. 리터럴 본문 쪽 증폭은 이번에 막혔지만 프로토콜 줄 자체는 여전히 무제한. 실제 TCP 로 관찰 가능한 실패를 먼저 재현하지 못하면 착수 금지.",
+    "updated": "2026-09-24"
+  },
+  {
+    "title": "POP3 명령 대기 중 context 취소 전파",
+    "value": 3,
+    "risk": 2,
+    "size": "M",
+    "status": "pending",
+    "note": "PR #22(04b15be) 가 아직 병합되지 않았다(internal/adapters/pop3 에 client.go 뿐, 테스트 파일 없음). 같은 파일 충돌을 피하려면 병합 후로 유지.",
+    "updated": "2026-09-24"
+  },
+  {
+    "title": "POP3 USER/PASS AuthError·TLS 프로토콜 테스트 확대",
+    "value": 2,
+    "risk": 1,
+    "size": "M",
+    "status": "pending",
+    "note": "위와 같은 이유로 PR #22 병합 전 착수 금지.",
+    "updated": "2026-09-24"
+  },
+  {
+    "title": "CI 에 gofmt -l 검사 추가",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "workflows 는 보호 경로이고 Release 워크플로가 계속 success 라 흔들 근거가 없다. 로컬 make lint-format 으로 이미 대체 가능.",
+    "updated": "2026-09-24"
+  },
+  {
+    "title": "gosec 잡에 -stdout 추가해 잡 로그에도 결과 표시",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "같은 workflows 보호 경로 사유로 보류 유지.",
+    "updated": "2026-09-24"
+  },
+  {
+    "title": "OIDC runtime 단일 헬퍼(OIDCConfigured + OIDCAutoLoginEnabled)",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "auth 보호 경로이고 관찰 가능한 동작 변화가 없다. 보류 유지.",
+    "updated": "2026-09-24"
+  },
+  {
+    "title": "auto-improve: fix(smtp): bound every relay command with CommandTimeoutSec and honour ctx cancellation after dial",
+    "value": 3,
+    "risk": 2,
+    "size": "M",
+    "status": "pending",
+    "updated": "2026-09-24",
+    "note": "https://github.com/hkjang/postra/pull/18 (PR 처리기가 3일 전에 더 진행할 수 없다고 판정했고(수정·심사를 2번 시도했지만 통과하지 못함) 그 뒤 사람 손이 닿지 않았습니다) 로 닫힘 — 다시 하려면 처음부터"
+  },
+  {
+    "title": "auto-improve: test(smtp): cover AUTH selection, reply classification and TLS paths against a scripted loopback relay",
+    "value": 3,
+    "risk": 2,
+    "size": "M",
+    "status": "pending",
+    "updated": "2026-09-24",
+    "note": "https://github.com/hkjang/postra/pull/16 (PR 처리기가 4일 전에 더 진행할 수 없다고 판정했고(수정·심사를 2번 시도했지만 통과하지 못함) 그 뒤 사람 손이 닿지 않았습니다) 로 닫힘 — 다시 하려면 처음부터"
+  },
+  {
+    "title": "auto-improve: feat(notify): mail assignees about imminent and missed team-inbox deadlines",
+    "value": 3,
+    "risk": 2,
+    "size": "M",
+    "status": "pending",
+    "updated": "2026-09-24",
+    "note": "https://github.com/hkjang/postra/pull/14 (PR 처리기가 5일 전에 더 진행할 수 없다고 판정했고(base 와 충돌하는데 자동 리베이스로 풀리지 않음) 그 뒤 사람 손이 닿지 않았습니다) 로 닫힘 — 다시 하려면 처음부터"
+  },
+  {
+    "title": "auto-improve: fix(notify): revoke the superseded SMTP relay password reference",
+    "value": 3,
+    "risk": 2,
+    "size": "M",
+    "status": "pending",
+    "updated": "2026-09-24",
+    "note": "https://github.com/hkjang/postra/pull/13 (PR 처리기가 5일 전에 더 진행할 수 없다고 판정했고(base 와 충돌하는데 자동 리베이스로 풀리지 않음) 그 뒤 사람 손이 닿지 않았습니다) 로 닫힘 — 다시 하려면 처음부터"
+  },
+  {
+    "title": "auto-improve: feat(notify): send event notifications through a company SMTP relay",
+    "value": 3,
+    "risk": 2,
+    "size": "M",
+    "status": "pending",
+    "updated": "2026-09-24",
+    "note": "https://github.com/hkjang/postra/pull/12 (PR 처리기가 5일 전에 더 진행할 수 없다고 판정했고(base 와 충돌하는데 자동 리베이스로 풀리지 않음) 그 뒤 사람 손이 닿지 않았습니다) 로 닫힘 — 다시 하려면 처음부터"
+  },
+  {
+    "title": "auto-improve: feat(handoff): send a mail to another in-house service as markdown",
+    "value": 3,
+    "risk": 2,
+    "size": "M",
+    "status": "pending",
+    "updated": "2026-09-24",
+    "note": "https://github.com/hkjang/postra/pull/11 (PR 처리기가 6일 전에 더 진행할 수 없다고 판정했고(base 와 충돌하는데 자동 리베이스로 풀리지 않음) 그 뒤 사람 손이 닿지 않았습니다) 로 닫힘 — 다시 하려면 처음부터"
+  }
 ]

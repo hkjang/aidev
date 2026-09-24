@@ -57,6 +57,25 @@ for rj in "$STATE"/*.release.json; do
   grep -q -P "^$proj\t" "$FIXQ" && continue
   [ -f "$STATE/STOP-$proj" ] && continue
   tag=$(jq -r '.tag // ""' "$rj" 2>/dev/null); rsn=$(jq -r '.reason // ""' "$rj" 2>/dev/null)
+  # 같은 이유로 계속 실패하는 릴리즈는 다시 잡아도 달라지지 않는다 — 에이전트가 "사람이 정해야
+  # 한다" 고 적은 것을 회차로 뚫으려 하면 돈만 탄다. 2026-09-24 aiportal-front 가 하루 8회차를
+  # 돌며 릴리즈 에이전트 스스로 "27회째 동일 교착" 이라고 적었다(첫 버전·태그 형식·노트 위치·
+  # GitHub Release 사용 여부 넷을 사람이 정해 줘야 한다).
+  fails=$(jq -rs --arg p "$proj" '[.[]|select(.project==$p and ((.result//"")|test("release failed")))]|length' "$RUNS" 2>/dev/null || echo 0)
+  hold="$STATE/$proj.release-hold"
+  if [ "${fails:-0}" -ge 3 ]; then
+    if [ ! -f "$hold" ]; then
+      jq -cn --arg ts "$(date -Iseconds)" --arg p "$proj" --argjson n "${fails:-0}" --arg r "$rsn" \
+        '{ts:$ts,project:$p,failures:$n,reason:$r}' > "$hold"
+      echo "release-hold $proj (${fails}회 연속 실패) — 사람 결정 대기"
+      "$HERE/tg.sh" "⛔ $proj 릴리즈를 ${fails}번 실패해 더 시도하지 않습니다 — 사람이 정해야 풀립니다.
+
+$(printf '%s' "$rsn" | tail -c 700)
+
+정하고 나면: state/$proj.release-hold 를 지우세요 (관례를 state/$proj.policy.json 이나 저장소 문서에 적어 두면 다음 회차가 따릅니다)." >/dev/null 2>&1 || true
+    fi
+    continue
+  fi
   printf '%s\t%s\t\n' "$proj" "오류 대응(자동 적재): 릴리즈 실패($tag). $rsn" >> "$FIXQ"
   echo "enqueue $proj (release-failed $tag)"; enq=$((enq+1))
 done

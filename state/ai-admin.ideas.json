@@ -1,14 +1,119 @@
 [
-  {"title": "역할 수정 name의 120자 DB 상한·공백을 요청 단계에서 검증", "value": 2, "risk": 1, "size": "S", "status": "done", "note": "updateRole이 trim·길이 검증 없이 varchar(120)에 넣어 121자는 500, 빈 값·공백만은 그대로 저장됐다. 실제 PostgreSQL로 재현 후 400 name_invalid로 거부하고 trim 저장하도록 수정, 통합 테스트 6케이스 추가 (커밋 c111ad1).", "updated": "2026-09-23"},
-  {"title": "loadGrants가 map 순회로 roles·permissions 순서를 무작위화", "value": 2, "risk": 1, "size": "S", "status": "pending", "note": "internal/auth/auth.go의 grant 로딩이 map을 순회해 /api/v1/auth/me 응답 배열 순서가 요청마다 뒤바뀐다. internal/auth는 위험 구역이라 세션 경로를 건드리지 않는 정렬만 추가해야 한다. 이번 회차엔 미검토.", "updated": "2026-09-23"},
-  {"title": "decideApproval이 decision_comment를 trim·길이 제한 없이 저장", "value": 2, "risk": 2, "size": "S", "status": "pending", "note": "approval_action.comment에는 trim한 값을, approval_request.decision_comment에는 원문을 저장해 같은 결정의 두 기록이 달라진다. workflow.go는 승인 트랜잭션이라 위험 구역.", "updated": "2026-09-23"},
-  {"title": "loadProvider·aiModels·aiCatalog가 available_models JSON 파싱 실패를 조용히 무시", "value": 2, "risk": 1, "size": "M", "status": "pending", "note": "`_ = json.Unmarshal` 4곳과 users.go의 roles 파싱이 실패를 nil/빈 배열로 숨긴다. 같은 값을 읽는 경로가 여럿이므로 한쪽만 고치지 말고 end-to-end로 맞춰야 한다.", "updated": "2026-09-23"},
-  {"title": "합성 레거시 스키마·데모 시드를 scripts/의 재사용 가능한 SQL로 승격", "value": 3, "risk": 2, "size": "M", "status": "pending", "note": "docs/screenshots/README.md가 요구하는 합성 DB를 만드는 방법이 저장소에 없다. Pages CI의 캡처 44개 일치 요건과 얽혀 있어 한 세션(M)에는 빠듯하다.", "updated": "2026-09-23"},
-  {"title": "chat 프록시가 비스트리밍 응답의 upstream Content-Type을 그대로 전달", "value": 2, "risk": 2, "size": "S", "status": "pending", "note": "upstream이 text/html 오류 페이지를 주면 그대로 브라우저에 전달된다. 이번 회차엔 코드 재확인을 하지 않았다.", "updated": "2026-09-23"},
-  {"title": "legacyRequestTrend·legacyTokenTotal 실패를 화면에서 구별할 수 없음", "value": 2, "risk": 2, "size": "M", "status": "pending", "note": "레거시 조회 실패가 0/빈 배열로 렌더링돼 '데이터 없음'과 구분되지 않는다. 대시보드 계약 변경이라 웹까지 함께 손대야 한다.", "updated": "2026-09-23"},
-  {"title": "oidcCallbackFailure의 실패 감사가 어떤 사용자였는지 남기지 않음", "value": 1, "risk": 2, "size": "M", "status": "pending", "note": "감사 details에는 스크럽 전 원문 대신 식별자만 넣어야 하므로 subject 해시 등 설계가 필요하다. oidc.go는 위험 구역.", "updated": "2026-09-23"},
-  {"title": "회전 승인 실행의 errKeyStale 반환 지점이 많아 변경 필드가 불명확", "value": 2, "risk": 2, "size": "M", "status": "pending", "note": "검토자가 '무엇이 바뀌어 409가 났는지' 알 수 없다. details에 필드명을 넣는 방향. workflow.go 위험 구역.", "updated": "2026-09-23"},
-  {"title": "감사 CSV 문서의 성공 다운로드=전체 이벤트 보장 문구 정정", "value": 1, "risk": 1, "size": "S", "status": "pending", "note": "docs/api.md가 '다운로드가 성공했다면 필터에 맞는 이벤트가 모두 담긴 것'이라고 하지만 상한은 50,000건이다. 문서만 고치는 S.", "updated": "2026-09-23"},
-  {"title": "사용자 목록에 포함되는 roles 배열의 순서 명시", "value": 1, "risk": 1, "size": "S", "status": "pending", "note": "listUsers의 roles 집계 정렬이 문서화돼 있지 않다. 실제 출력이 바뀌지 않는다면 문서만 고치는 선에서 끝내야 한다.", "updated": "2026-09-23"},
-  {"title": "역할 수정 폼에 서버와 같은 120자 maxLength 적용", "value": 1, "risk": 1, "size": "S", "status": "pending", "note": "RolesPage.tsx의 역할 이름 Input에는 길이 제한이 없어 서버 400을 받고서야 알 수 있다. 웹을 고치면 커밋된 internal/ui/dist도 재빌드해야 해 변경 범위가 커진다.", "updated": "2026-09-23"}
+  {
+    "title": "역할 수정 name의 120자 DB 상한·공백을 요청 단계에서 검증",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "done",
+    "note": "updateRole이 trim·길이 검증 없이 varchar(120)에 넣어 121자는 500, 빈 값·공백만은 그대로 저장됐다. 실제 PostgreSQL로 재현 후 400 name_invalid로 거부하고 trim 저장하도록 수정, 통합 테스트 6케이스 추가 (커밋 c111ad1).",
+    "updated": "2026-09-23"
+  },
+  {
+    "title": "loadGrants가 map 순회로 roles·permissions 순서를 무작위화",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "internal/auth/auth.go의 grant 로딩이 map을 순회해 /api/v1/auth/me 응답 배열 순서가 요청마다 뒤바뀐다. internal/auth는 위험 구역이라 세션 경로를 건드리지 않는 정렬만 추가해야 한다. 이번 회차엔 미검토.",
+    "updated": "2026-09-23"
+  },
+  {
+    "title": "decideApproval이 decision_comment를 trim·길이 제한 없이 저장",
+    "value": 2,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "approval_action.comment에는 trim한 값을, approval_request.decision_comment에는 원문을 저장해 같은 결정의 두 기록이 달라진다. workflow.go는 승인 트랜잭션이라 위험 구역.",
+    "updated": "2026-09-23"
+  },
+  {
+    "title": "loadProvider·aiModels·aiCatalog가 available_models JSON 파싱 실패를 조용히 무시",
+    "value": 2,
+    "risk": 1,
+    "size": "M",
+    "status": "pending",
+    "note": "`_ = json.Unmarshal` 4곳과 users.go의 roles 파싱이 실패를 nil/빈 배열로 숨긴다. 같은 값을 읽는 경로가 여럿이므로 한쪽만 고치지 말고 end-to-end로 맞춰야 한다.",
+    "updated": "2026-09-23"
+  },
+  {
+    "title": "합성 레거시 스키마·데모 시드를 scripts/의 재사용 가능한 SQL로 승격",
+    "value": 3,
+    "risk": 2,
+    "size": "M",
+    "status": "pending",
+    "note": "docs/screenshots/README.md가 요구하는 합성 DB를 만드는 방법이 저장소에 없다. Pages CI의 캡처 44개 일치 요건과 얽혀 있어 한 세션(M)에는 빠듯하다.",
+    "updated": "2026-09-23"
+  },
+  {
+    "title": "chat 프록시가 비스트리밍 응답의 upstream Content-Type을 그대로 전달",
+    "value": 2,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "upstream이 text/html 오류 페이지를 주면 그대로 브라우저에 전달된다. 이번 회차엔 코드 재확인을 하지 않았다.",
+    "updated": "2026-09-23"
+  },
+  {
+    "title": "legacyRequestTrend·legacyTokenTotal 실패를 화면에서 구별할 수 없음",
+    "value": 2,
+    "risk": 2,
+    "size": "M",
+    "status": "pending",
+    "note": "레거시 조회 실패가 0/빈 배열로 렌더링돼 '데이터 없음'과 구분되지 않는다. 대시보드 계약 변경이라 웹까지 함께 손대야 한다.",
+    "updated": "2026-09-23"
+  },
+  {
+    "title": "oidcCallbackFailure의 실패 감사가 어떤 사용자였는지 남기지 않음",
+    "value": 1,
+    "risk": 2,
+    "size": "M",
+    "status": "pending",
+    "note": "감사 details에는 스크럽 전 원문 대신 식별자만 넣어야 하므로 subject 해시 등 설계가 필요하다. oidc.go는 위험 구역.",
+    "updated": "2026-09-23"
+  },
+  {
+    "title": "회전 승인 실행의 errKeyStale 반환 지점이 많아 변경 필드가 불명확",
+    "value": 2,
+    "risk": 2,
+    "size": "M",
+    "status": "pending",
+    "note": "검토자가 '무엇이 바뀌어 409가 났는지' 알 수 없다. details에 필드명을 넣는 방향. workflow.go 위험 구역.",
+    "updated": "2026-09-23"
+  },
+  {
+    "title": "감사 CSV 문서의 성공 다운로드=전체 이벤트 보장 문구 정정",
+    "value": 1,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "docs/api.md가 '다운로드가 성공했다면 필터에 맞는 이벤트가 모두 담긴 것'이라고 하지만 상한은 50,000건이다. 문서만 고치는 S.",
+    "updated": "2026-09-23"
+  },
+  {
+    "title": "사용자 목록에 포함되는 roles 배열의 순서 명시",
+    "value": 1,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "listUsers의 roles 집계 정렬이 문서화돼 있지 않다. 실제 출력이 바뀌지 않는다면 문서만 고치는 선에서 끝내야 한다.",
+    "updated": "2026-09-23"
+  },
+  {
+    "title": "역할 수정 폼에 서버와 같은 120자 maxLength 적용",
+    "value": 1,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "RolesPage.tsx의 역할 이름 Input에는 길이 제한이 없어 서버 400을 받고서야 알 수 있다. 웹을 고치면 커밋된 internal/ui/dist도 재빌드해야 해 변경 범위가 커진다.",
+    "updated": "2026-09-23"
+  },
+  {
+    "title": "auto-improve: feat: 사내 SMTP 릴레이로 보내는 이벤트 알림 메일과 발송 기록",
+    "value": 3,
+    "risk": 2,
+    "size": "M",
+    "status": "pending",
+    "updated": "2026-09-24",
+    "note": "https://github.com/hkjang/ai-admin/pull/23 (PR 처리기가 7일 전에 더 진행할 수 없다고 판정했고(수정·심사를 2번 시도했지만 통과하지 못함) 그 뒤 사람 손이 닿지 않았습니다) 로 닫힘 — 다시 하려면 처음부터"
+  }
 ]

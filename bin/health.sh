@@ -91,7 +91,35 @@ $(printf -- '- %s\n' "${problems[@]:-}" "${actions[@]:-}" | grep -v '^- $')"
     fi
   fi
 fi
-# 오래된 열린 PR: 6시간마다 세어 보고(닫지는 않는다 — bin/pr-gc.sh --close 는 사람이 부른다).
+# CI 가 아예 없는 저장소: PR 이 영구히 "CI 검사 없음" 으로 막힌다 (2026-09-24 sqlon 11건·jasql 5건).
+# 검사를 건너뛰게 하는 대신 **CI 를 만들게** 한다 — 정찰이 고르도록 아이디어로 넣어 둔다.
+# .github/workflows 는 보호 경로라 그 PR 은 사람 승인을 받게 되고, 한 번 승인하면 그 저장소는 영구히 풀린다.
+ci_gap=()
+for d in "${ROOT:-/mnt/c/Users/USER/projects}"/*/; do
+  n=$(basename "$d"); [ -d "$d/.git" ] || continue
+  case "$n" in aidev|headcount|Naviq|sqlpad) continue;; esac
+  [ "$(ls "$d/.github/workflows" 2>/dev/null | grep -cE '\.ya?ml$')" = 0 ] || continue
+  [ "$(jq -r '.allow_merge_without_ci // false' "$REPO_DIR/state/$n.policy.json" 2>/dev/null)" = true ] && continue
+  [ "$(jq -r --arg p "$n" '.[$p].open // 0' "$REPO_DIR/state/open-prs.json" 2>/dev/null || echo 0)" -ge 1 ] || continue
+  f="$REPO_DIR/state/$n.ideas.json"; [ -s "$f" ] || echo '[]' > "$f"
+  title="GitHub Actions CI 워크플로 추가 — 러너가 돌리는 검증 명령을 그대로 CI 로"
+  jq --arg t "$title" --arg d "$(date +%F)" \
+     'if any(.[]?; .title==$t and (.status=="pending" or .status=="done")) then . else . + [{title:$t,value:5,risk:1,size:"S",status:"pending",updated:$d,note:"이 저장소에는 워크플로 파일이 없어 러너 PR 이 전부 \"CI 검사 없음\" 으로 막힌다. 러너가 이미 돌리는 검증 명령(build·vet·test)을 그대로 .github/workflows/ci.yml 로 옮겨라. 이 파일은 보호 경로라 사람 승인을 받는다."}] end' \
+     "$f" > "$f.tmp" 2>/dev/null && mv "$f.tmp" "$f" || rm -f "$f.tmp"
+  ci_gap+=("$n")
+done
+if [ ${#ci_gap[@]} -gt 0 ]; then
+  cg_stamp="$HOME/.auto-improve/.ci-gap"
+  if [ "$(cat "$cg_stamp" 2>/dev/null)" != "${ci_gap[*]}" ]; then
+    printf '%s' "${ci_gap[*]}" > "$cg_stamp"
+    "$HERE/tg.sh" "🧪 CI 워크플로가 없어 PR 이 막히는 저장소: ${ci_gap[*]}
+정찰 아이디어로 'CI 워크플로 추가' 를 넣었습니다. 그 PR 은 보호 경로라 사람 승인이 필요합니다.
+지금 당장 풀려면: state/<이름>.policy.json 에 {\"allow_merge_without_ci\": true}" >/dev/null 2>&1 || true
+  fi
+fi
+
+# PR 정리: 6시간마다. 처리기가 "더 못 한다"고 판정하고 3일이 지난 PR 은 닫고 일감은 ideas 로 회수한다.
+# 그냥 오래되기만 한 PR 은 목록(state/stale-prs.md)에만 남긴다 — 그건 사람이 bin/pr-gc.sh --close 로.
 prgc_stamp="$HOME/.auto-improve/.prgc"
 if [ $(( now - $(stat -c %Y "$prgc_stamp" 2>/dev/null || echo 0) )) -gt 21600 ]; then
   date +%s > "$prgc_stamp"; "$HERE/pr-gc.sh" >>"$REPO_DIR/logs/pr-gc.log" 2>&1 || true

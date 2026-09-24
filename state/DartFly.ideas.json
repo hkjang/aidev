@@ -1,13 +1,128 @@
 [
-  {"title":"저장 결과 목록의 200건 벽 제거 — total/offset 페이지 이동과 검색 범위 표시","value":3,"risk":2,"size":"M","status":"done","note":"이번 회차 구현(커밋 bad8c9a). saved.js 를 PAGE=100 + offset 으로 바꾸고 admin-history 관례의 pager 를 #saved-pager 에 붙임. 서버 무변경. 실제 바이너리에 105건을 만들어 Chromium 으로 다음/이전·마지막 페이지 삭제 후 물러나기 확인.","updated":"2026-09-23"},
-  {"title":"저장 결과 조회·삭제 실패의 HTTP 상태를 원인과 맞추기(없음 404 / 저장소 장애·손상 500)","value":3,"risk":1,"size":"S","status":"pending","note":"차선 후보로 남음. resultsave.go:93 은 Get 의 모든 실패를 404, :113 은 Delete 의 모든 실패를 400 으로 낸다. 메타 DB 장애와 손상 저장본(service.go:112)이 '없는 결과'로 보여 모니터링이 4xx 로 집계함. 드라이버 원문 노출은 safeProblemDetail 로 이미 해결됨 — 같은 것을 또 고치지 말 것.","updated":"2026-09-23"},
-  {"title":"저장 결과 목록 기본 건수를 서버 기본값과 화면에서 한 곳으로 모으기","value":1,"risk":1,"size":"S","status":"done","note":"페이지 이동 작업에 흡수됨. 화면이 PAGE=100 한 곳에서만 값을 정하고 서버 기본값(100)과 일치함.","updated":"2026-09-23"},
-  {"title":"저장 결과 검색을 서버 쪽으로(q 파라미터) — 전체 저장본 대상 검색","value":3,"risk":3,"size":"L","status":"pending","note":"이번 회차로 '이 페이지에서만 검색한다'는 사실이 화면에 드러났으므로 급하지는 않음. 제대로 하려면 ListSavedResults 와 savedSelect 의 권한 조건(admin OR user_seq=?)을 건드려야 해 권한 누출 위험.","updated":"2026-09-23"},
-  {"title":"로그인 폼 429(속도 제한) 응답의 Retry-After 카운트다운과 재제출 방지","value":2,"risk":1,"size":"S","status":"pending","note":"서버 쪽 속도 제한은 있음(http.go 의 logins 리미터). login.js 가 Retry-After 를 쓰는지는 이번 회차에도 미확인.","updated":"2026-09-23"},
-  {"title":"로그인 페이지 조용한 SSO 시도 중 폼 깜빡임 제거","value":2,"risk":1,"size":"S","status":"pending","note":"서버 302(d40c325)가 '세션 있음' 경우를 흡수해 남는 깜빡임은 IdP 왕복뿐. silentsso.js 코드 재확인 미실시.","updated":"2026-09-23"},
-  {"title":"세션 만료 임박 알림과 저장 안 된 SQL 안내","value":3,"risk":2,"size":"M","status":"pending","note":"auth/me 에 expires_at 이 있다는 이전 회차 확인에 의존. 세션 경로를 건드리므로 위험 구역과 인접.","updated":"2026-09-23"},
-  {"title":"스모크 하네스에서 MariaDB 컨테이너 기동 실패(TLS 시각 flake)를 한 번 재시도","value":2,"risk":1,"size":"S","status":"pending","note":"이번 회차에 재현됨: 'ERROR 2026 (HY000): TLS/SSL error: certificate is not yet valid' 로 첫 실행이 죽고 재실행은 통과. 2026-09-17 에 이어 두 번째 관측이라 우선순위를 올릴 만함(run.sh 의 메타 DB 기동만 1회 재시도).","updated":"2026-09-23"},
-  {"title":"MCP SSO 의 실제 Keycloak·실제 MCP 클라이언트 연결 확인","value":3,"risk":1,"size":"S","status":"rejected","note":"대상 코드(mcp_oauth)가 이 브랜치(main@d1d3682)에 없고 환경도 없어 이 저장소에서는 착수 불가. 세 회차 연속 같은 결론이라 rejected 로 내림.","updated":"2026-09-23"},
-  {"title":"로그아웃 시 IdP end_session(RP-initiated logout) 호출","value":3,"risk":3,"size":"M","status":"pending","note":"auth/session/SSO 는 위험 구역. 한 세션 안에 실제 IdP 검증까지 끝내기 어려움.","updated":"2026-09-23"},
-  {"title":"401 리다이렉트 헬퍼를 layout.js api() 로 일원화","value":2,"risk":1,"size":"S","status":"pending","note":"동작 변화 없는 정리라 우선순위 낮음. 운영자 지침상 '출력이 바뀌지 않는 수정'에 가까워 단독 과제로는 부적절할 수 있음.","updated":"2026-09-23"}
+  {
+    "title": "저장 결과 목록의 200건 벽 제거 — total/offset 페이지 이동과 검색 범위 표시",
+    "value": 3,
+    "risk": 2,
+    "size": "M",
+    "status": "done",
+    "note": "이번 회차 구현(커밋 bad8c9a). saved.js 를 PAGE=100 + offset 으로 바꾸고 admin-history 관례의 pager 를 #saved-pager 에 붙임. 서버 무변경. 실제 바이너리에 105건을 만들어 Chromium 으로 다음/이전·마지막 페이지 삭제 후 물러나기 확인.",
+    "updated": "2026-09-23"
+  },
+  {
+    "title": "저장 결과 조회·삭제 실패의 HTTP 상태를 원인과 맞추기(없음 404 / 저장소 장애·손상 500)",
+    "value": 3,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "차선 후보로 남음. resultsave.go:93 은 Get 의 모든 실패를 404, :113 은 Delete 의 모든 실패를 400 으로 낸다. 메타 DB 장애와 손상 저장본(service.go:112)이 '없는 결과'로 보여 모니터링이 4xx 로 집계함. 드라이버 원문 노출은 safeProblemDetail 로 이미 해결됨 — 같은 것을 또 고치지 말 것.",
+    "updated": "2026-09-23"
+  },
+  {
+    "title": "저장 결과 목록 기본 건수를 서버 기본값과 화면에서 한 곳으로 모으기",
+    "value": 1,
+    "risk": 1,
+    "size": "S",
+    "status": "done",
+    "note": "페이지 이동 작업에 흡수됨. 화면이 PAGE=100 한 곳에서만 값을 정하고 서버 기본값(100)과 일치함.",
+    "updated": "2026-09-23"
+  },
+  {
+    "title": "저장 결과 검색을 서버 쪽으로(q 파라미터) — 전체 저장본 대상 검색",
+    "value": 3,
+    "risk": 3,
+    "size": "L",
+    "status": "pending",
+    "note": "이번 회차로 '이 페이지에서만 검색한다'는 사실이 화면에 드러났으므로 급하지는 않음. 제대로 하려면 ListSavedResults 와 savedSelect 의 권한 조건(admin OR user_seq=?)을 건드려야 해 권한 누출 위험.",
+    "updated": "2026-09-23"
+  },
+  {
+    "title": "로그인 폼 429(속도 제한) 응답의 Retry-After 카운트다운과 재제출 방지",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "서버 쪽 속도 제한은 있음(http.go 의 logins 리미터). login.js 가 Retry-After 를 쓰는지는 이번 회차에도 미확인.",
+    "updated": "2026-09-23"
+  },
+  {
+    "title": "로그인 페이지 조용한 SSO 시도 중 폼 깜빡임 제거",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "서버 302(d40c325)가 '세션 있음' 경우를 흡수해 남는 깜빡임은 IdP 왕복뿐. silentsso.js 코드 재확인 미실시.",
+    "updated": "2026-09-23"
+  },
+  {
+    "title": "세션 만료 임박 알림과 저장 안 된 SQL 안내",
+    "value": 3,
+    "risk": 2,
+    "size": "M",
+    "status": "pending",
+    "note": "auth/me 에 expires_at 이 있다는 이전 회차 확인에 의존. 세션 경로를 건드리므로 위험 구역과 인접.",
+    "updated": "2026-09-23"
+  },
+  {
+    "title": "스모크 하네스에서 MariaDB 컨테이너 기동 실패(TLS 시각 flake)를 한 번 재시도",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "이번 회차에 재현됨: 'ERROR 2026 (HY000): TLS/SSL error: certificate is not yet valid' 로 첫 실행이 죽고 재실행은 통과. 2026-09-17 에 이어 두 번째 관측이라 우선순위를 올릴 만함(run.sh 의 메타 DB 기동만 1회 재시도).",
+    "updated": "2026-09-23"
+  },
+  {
+    "title": "MCP SSO 의 실제 Keycloak·실제 MCP 클라이언트 연결 확인",
+    "value": 3,
+    "risk": 1,
+    "size": "S",
+    "status": "rejected",
+    "note": "대상 코드(mcp_oauth)가 이 브랜치(main@d1d3682)에 없고 환경도 없어 이 저장소에서는 착수 불가. 세 회차 연속 같은 결론이라 rejected 로 내림.",
+    "updated": "2026-09-23"
+  },
+  {
+    "title": "로그아웃 시 IdP end_session(RP-initiated logout) 호출",
+    "value": 3,
+    "risk": 3,
+    "size": "M",
+    "status": "pending",
+    "note": "auth/session/SSO 는 위험 구역. 한 세션 안에 실제 IdP 검증까지 끝내기 어려움.",
+    "updated": "2026-09-23"
+  },
+  {
+    "title": "401 리다이렉트 헬퍼를 layout.js api() 로 일원화",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "동작 변화 없는 정리라 우선순위 낮음. 운영자 지침상 '출력이 바뀌지 않는 수정'에 가까워 단독 과제로는 부적절할 수 있음.",
+    "updated": "2026-09-23"
+  },
+  {
+    "title": "auto-improve: feat: /mcp 가 공유 토큰 외에 Keycloak(SSO) 액세스 토큰도 받게 (MCP OAuth 2.1 리소스 서버)",
+    "value": 3,
+    "risk": 2,
+    "size": "M",
+    "status": "pending",
+    "updated": "2026-09-24",
+    "note": "https://github.com/hkjang/DartFly/pull/7 (PR 처리기가 5일 전에 더 진행할 수 없다고 판정했고(base 와 충돌하는데 자동 리베이스로 풀리지 않음) 그 뒤 사람 손이 닿지 않았습니다) 로 닫힘 — 다시 하려면 처음부터"
+  },
+  {
+    "title": "auto-improve: feat: 사내 SMTP 릴레이로 승인·결재·모니터링 알림을 보내는 메일 체계 (기본 꺼짐)",
+    "value": 3,
+    "risk": 2,
+    "size": "M",
+    "status": "pending",
+    "updated": "2026-09-24",
+    "note": "https://github.com/hkjang/DartFly/pull/5 (PR 처리기가 5일 전에 더 진행할 수 없다고 판정했고(base 와 충돌하는데 자동 리베이스로 풀리지 않음) 그 뒤 사람 손이 닿지 않았습니다) 로 닫힘 — 다시 하려면 처음부터"
+  },
+  {
+    "title": "auto-improve: feat: 관리자가 화면에서 방문 추적 스니펫을 붙일 수 있게 (nonce 기반 CSP, Momento 프록시)",
+    "value": 3,
+    "risk": 2,
+    "size": "M",
+    "status": "pending",
+    "updated": "2026-09-24",
+    "note": "https://github.com/hkjang/DartFly/pull/3 (PR 처리기가 7일 전에 더 진행할 수 없다고 판정했고(base 와 충돌하는데 자동 리베이스로 풀리지 않음) 그 뒤 사람 손이 닿지 않았습니다) 로 닫힘 — 다시 하려면 처음부터"
+  }
 ]

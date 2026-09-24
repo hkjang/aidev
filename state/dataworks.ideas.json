@@ -1,15 +1,128 @@
 [
-  {"title": "parseExpiryHorizon의 d/w 곱셈 오버플로 거부", "value": 2, "risk": 1, "size": "S", "status": "done", "note": "이번 회차 구현. 106751992d는 약 20시간, 200000000d/30000000w는 음수 창으로 감겨 200으로 응답하며 감긴 값을 적용 창으로 돌려줬다. math.MaxInt64/unit 경계 검사로 400 invalid_expiring_within 거부, 경계 106751d/15250w는 통과. HTTP 회귀 + 표 테스트로 고정.", "updated": "2026-09-23"},
-  {"title": "상품이 사라진 참조 행(고아 Contract Scope·Entitlement)을 전용 운영 경고로 분류", "value": 2, "risk": 2, "size": "M", "status": "pending", "note": "액션 센터는 product_key가 가리키는 상품이 없어도 기존 분류로 집계한다. 새 경고 종류는 요약 키·화면 문구·문서를 함께 바꾸므로 별도 판단 필요.", "updated": "2026-09-23"},
-  {"title": "동일 API 키에 활성 엔타이틀먼트가 둘 이상일 때 운영 화면 경고", "value": 2, "risk": 2, "size": "S", "status": "pending", "note": "usableEntitlement가 후보를 순회해 유효 계약을 고르므로 복수 행이 곧 오류는 아니다. 상품별 그룹과 정상 다중 계약 기준을 먼저 정해야 함.", "updated": "2026-09-23"},
-  {"title": "가이드 캡처 스펙의 하드코딩 버전 문자열(DEMO_VERSION) 한 곳에서 읽기", "value": 2, "risk": 1, "size": "S", "status": "pending", "note": "dataworks-demo-fixtures.ts 상수와 pages.spec.ts의 서비스 버전 단언이 각각 존재해 릴리즈마다 두 곳을 고쳐야 한다. 캡처는 CI 미포함이라 가치는 낮음.", "updated": "2026-09-23"},
-  {"title": "실제 MCP 클라이언트 흐름(401→메타데이터→PKCE→토큰→tools/list) e2e를 스텁 Keycloak + Playwright로 web/e2e에 편입", "value": 3, "risk": 2, "size": "M", "status": "pending", "note": "web/e2e는 workbench.spec.ts 하나이며 HTTP route mock 중심이라 실제 IdP 배선을 증명하지 못한다. 스텁 IdP·서버 기동 인프라가 필요.", "updated": "2026-09-23"},
-  {"title": "Playwright 캡처·e2e를 CI 잡으로 편입", "value": 3, "risk": 2, "size": "M", "status": "pending", "note": ".github/workflows/ci.yml은 go/web만 실행. 브라우저 설치와 fixture/서버 의존성 확인 필요, 보호 경로라 보류.", "updated": "2026-09-23"},
-  {"title": "verifyKeycloakAccessToken(currentAccessClaims)의 role 클레임 권한 승격 경로 재검토", "value": 3, "risk": 3, "size": "M", "status": "pending", "note": "MCP OAuth 경로는 토큰 role을 읽지 않는데 관리 API 경로는 읽는다. 기존 machine client 계약·마이그레이션 영향 미확인, 인증 보호 경로라 보류.", "updated": "2026-09-23"},
-  {"title": "세션 만료 401로 로그인 화면에 떨어질 때도 auto_login이면 한 번 silent 재시도", "value": 2, "risk": 2, "size": "S", "status": "pending", "note": "auth-store.markUnauthorized는 JWT 삭제와 unauthenticated 설정만 한다. 무한 재시도 방지와 명시적 로그아웃 계약 확인이 선행되어야 함.", "updated": "2026-09-23"},
-  {"title": "이미 지난 expires_at으로 발급되는 죽은 엔타이틀먼트를 쓰기 경로에서 거부", "value": 2, "risk": 2, "size": "S", "status": "pending", "note": "handleDataWorksAPIEntitlements는 형식과 status만 확인한다. 저장 거부는 기존 갱신·감사 행 계약에 영향이 있어 별도 판단 필요.", "updated": "2026-09-23"},
-  {"title": "메일 알림·방문 추적·자동 로그인·MCP SSO 카드 가이드 캡처 갱신", "value": 2, "risk": 1, "size": "M", "status": "pending", "note": "main에 internal/mail이 없고 캡처 fixture에 tracking/auto_login/mcp.oauth 대응이 없다. 메일은 병합 후, 나머지는 축소해 별도 진행 가능.", "updated": "2026-09-23"},
-  {"title": "레거시 콘솔(/admin) 설정 화면에 메일 시험 발송 단추·발송 기록", "value": 2, "risk": 1, "size": "S", "status": "rejected", "note": "main에 internal/mail이 없어 실행할 수 없다. 메일 브랜치가 병합되면 새 항목으로 다시 올린다.", "updated": "2026-09-23"},
-  {"title": "CI build/web 잡의 annotations_count 1 원인 확인", "value": 1, "risk": 1, "size": "S", "status": "pending", "note": "이 세션에는 gh 인증이 없어 원격 annotation을 조회할 수 없다. 로컬에서 확인 가능한 범위가 없음.", "updated": "2026-09-23"},
-  {"title": "EvaluatePublishGateV2 masking 민감도 키워드와 RequiresStrictPublishGate 키워드를 한 상수로 공유", "value": 2, "risk": 2, "size": "S", "status": "pending", "note": "동작 불변 정리라 값이 낮고, 테스트로 고정하는 형태가 아니면 반려 사유(효과 없는 변경)에 해당할 수 있다.", "updated": "2026-09-23"}
+  {
+    "title": "parseExpiryHorizon의 d/w 곱셈 오버플로 거부",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "done",
+    "note": "이번 회차 구현. 106751992d는 약 20시간, 200000000d/30000000w는 음수 창으로 감겨 200으로 응답하며 감긴 값을 적용 창으로 돌려줬다. math.MaxInt64/unit 경계 검사로 400 invalid_expiring_within 거부, 경계 106751d/15250w는 통과. HTTP 회귀 + 표 테스트로 고정.",
+    "updated": "2026-09-23"
+  },
+  {
+    "title": "상품이 사라진 참조 행(고아 Contract Scope·Entitlement)을 전용 운영 경고로 분류",
+    "value": 2,
+    "risk": 2,
+    "size": "M",
+    "status": "pending",
+    "note": "액션 센터는 product_key가 가리키는 상품이 없어도 기존 분류로 집계한다. 새 경고 종류는 요약 키·화면 문구·문서를 함께 바꾸므로 별도 판단 필요.",
+    "updated": "2026-09-23"
+  },
+  {
+    "title": "동일 API 키에 활성 엔타이틀먼트가 둘 이상일 때 운영 화면 경고",
+    "value": 2,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "usableEntitlement가 후보를 순회해 유효 계약을 고르므로 복수 행이 곧 오류는 아니다. 상품별 그룹과 정상 다중 계약 기준을 먼저 정해야 함.",
+    "updated": "2026-09-23"
+  },
+  {
+    "title": "가이드 캡처 스펙의 하드코딩 버전 문자열(DEMO_VERSION) 한 곳에서 읽기",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "dataworks-demo-fixtures.ts 상수와 pages.spec.ts의 서비스 버전 단언이 각각 존재해 릴리즈마다 두 곳을 고쳐야 한다. 캡처는 CI 미포함이라 가치는 낮음.",
+    "updated": "2026-09-23"
+  },
+  {
+    "title": "실제 MCP 클라이언트 흐름(401→메타데이터→PKCE→토큰→tools/list) e2e를 스텁 Keycloak + Playwright로 web/e2e에 편입",
+    "value": 3,
+    "risk": 2,
+    "size": "M",
+    "status": "pending",
+    "note": "web/e2e는 workbench.spec.ts 하나이며 HTTP route mock 중심이라 실제 IdP 배선을 증명하지 못한다. 스텁 IdP·서버 기동 인프라가 필요.",
+    "updated": "2026-09-23"
+  },
+  {
+    "title": "Playwright 캡처·e2e를 CI 잡으로 편입",
+    "value": 3,
+    "risk": 2,
+    "size": "M",
+    "status": "pending",
+    "note": ".github/workflows/ci.yml은 go/web만 실행. 브라우저 설치와 fixture/서버 의존성 확인 필요, 보호 경로라 보류.",
+    "updated": "2026-09-23"
+  },
+  {
+    "title": "verifyKeycloakAccessToken(currentAccessClaims)의 role 클레임 권한 승격 경로 재검토",
+    "value": 3,
+    "risk": 3,
+    "size": "M",
+    "status": "pending",
+    "note": "MCP OAuth 경로는 토큰 role을 읽지 않는데 관리 API 경로는 읽는다. 기존 machine client 계약·마이그레이션 영향 미확인, 인증 보호 경로라 보류.",
+    "updated": "2026-09-23"
+  },
+  {
+    "title": "세션 만료 401로 로그인 화면에 떨어질 때도 auto_login이면 한 번 silent 재시도",
+    "value": 2,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "auth-store.markUnauthorized는 JWT 삭제와 unauthenticated 설정만 한다. 무한 재시도 방지와 명시적 로그아웃 계약 확인이 선행되어야 함.",
+    "updated": "2026-09-23"
+  },
+  {
+    "title": "이미 지난 expires_at으로 발급되는 죽은 엔타이틀먼트를 쓰기 경로에서 거부",
+    "value": 2,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "handleDataWorksAPIEntitlements는 형식과 status만 확인한다. 저장 거부는 기존 갱신·감사 행 계약에 영향이 있어 별도 판단 필요.",
+    "updated": "2026-09-23"
+  },
+  {
+    "title": "메일 알림·방문 추적·자동 로그인·MCP SSO 카드 가이드 캡처 갱신",
+    "value": 2,
+    "risk": 1,
+    "size": "M",
+    "status": "pending",
+    "note": "main에 internal/mail이 없고 캡처 fixture에 tracking/auto_login/mcp.oauth 대응이 없다. 메일은 병합 후, 나머지는 축소해 별도 진행 가능.",
+    "updated": "2026-09-23"
+  },
+  {
+    "title": "레거시 콘솔(/admin) 설정 화면에 메일 시험 발송 단추·발송 기록",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "rejected",
+    "note": "main에 internal/mail이 없어 실행할 수 없다. 메일 브랜치가 병합되면 새 항목으로 다시 올린다.",
+    "updated": "2026-09-23"
+  },
+  {
+    "title": "CI build/web 잡의 annotations_count 1 원인 확인",
+    "value": 1,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "이 세션에는 gh 인증이 없어 원격 annotation을 조회할 수 없다. 로컬에서 확인 가능한 범위가 없음.",
+    "updated": "2026-09-23"
+  },
+  {
+    "title": "EvaluatePublishGateV2 masking 민감도 키워드와 RequiresStrictPublishGate 키워드를 한 상수로 공유",
+    "value": 2,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "동작 불변 정리라 값이 낮고, 테스트로 고정하는 형태가 아니면 반려 사유(효과 없는 변경)에 해당할 수 있다.",
+    "updated": "2026-09-23"
+  },
+  {
+    "title": "auto-improve: feat(mail): notify people through the company SMTP relay for the events they wait on",
+    "value": 3,
+    "risk": 2,
+    "size": "M",
+    "status": "pending",
+    "updated": "2026-09-24",
+    "note": "https://github.com/hkjang/dataworks/pull/21 (PR 처리기가 6일 전에 더 진행할 수 없다고 판정했고(수정·심사를 2번 시도했지만 통과하지 못함) 그 뒤 사람 손이 닿지 않았습니다) 로 닫힘 — 다시 하려면 처음부터"
+  }
 ]

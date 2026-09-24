@@ -1,15 +1,128 @@
 [
-  {"title": "SSE에서 500행 페이지가 가득 차면 즉시 다음 쿼리 실행", "value": 3, "risk": 2, "size": "S", "status": "done", "note": "simple.go와 releases.go 두 스트림 모두 수정. 실제 PostgreSQL 16 + 프로덕션 핸들러로 2,600행 6.0초 -> 1.4초를 재현·검증했고 릴리즈 쪽은 되돌려 재실패 확인.", "updated": "2026-09-24"},
-  {"title": "EventSource 연결 실패(429 stream_limit·세션 만료)를 실행 상세 화면에 표시", "value": 3, "risk": 2, "size": "S", "status": "pending", "note": "미머지 브랜치 auto/2026-09-23-1104이 같은 파일(SimpleRunDetailPage.tsx)의 스트림 effect를 고치고 있어 충돌을 피하려 이번에는 손대지 않음. 머지 이후 source.onerror로 상태 표시.", "updated": "2026-09-24"},
-  {"title": "SSE 프레임을 모아 배치마다 한 번만 setLogs 호출", "value": 2, "risk": 2, "size": "M", "status": "pending", "note": "프레임을 ref에 모아 rAF마다 flush. 위와 같은 파일이라 미머지 브랜치 머지 이후.", "updated": "2026-09-24"},
-  {"title": "make vet(gofmt/go vet)와 웹 tsc -b --noEmit를 make test에 포함", "value": 2, "risk": 1, "size": "S", "status": "pending", "note": "현 Makefile에 vet 타깃이 없다(auto/2026-09-17-0853 미머지). 이번 회차에도 손으로 돌렸다.", "updated": "2026-09-24"},
-  {"title": "전체 모드 릴리즈·프리셋 업로드도 스트리밍으로 전환", "value": 3, "risk": 4, "size": "L", "status": "pending", "note": "releases.go:persistArtifactTx가 행 잠금을 쥔 채 파일을 쓴다. 트랜잭션 밖 staging 후 rename으로 durability 경로 재설계 필요.", "updated": "2026-09-24"},
-  {"title": "uploadHasFailedPackages가 batch_id만 보고 actor로 좁히지 않음", "value": 2, "risk": 3, "size": "S", "status": "pending", "note": "좁히면 안전 확인이 느슨해질 수 있어 보류 유지.", "updated": "2026-09-24"},
-  {"title": "web/dist/assets/vendor 청크 분할로 폐쇄망 초기 로딩 개선", "value": 2, "risk": 3, "size": "M", "status": "pending", "note": "617.30 kB(gzip 191.72 kB) 그대로. 라우팅 구조까지 건드려야 한다.", "updated": "2026-09-24"},
-  {"title": "ci.yml과 release.yml의 중복 PostgreSQL 서비스·setup 블록 통합", "value": 2, "risk": 3, "size": "M", "status": "pending", "note": "릴리즈 보호 경로라 보류 유지.", "updated": "2026-09-24"},
-  {"title": "PATCH /api/v1/admin/oidc에도 mcp_oauth_* 필드 받기", "value": 1, "risk": 1, "size": "S", "status": "pending", "note": "MCP OAuth 브랜치(auto/2026-09-18-1213)가 main에 없다. 머지 이후 재평가.", "updated": "2026-09-24"},
-  {"title": "MCP SSO 토큰 거부를 감사 로그에도 남기기", "value": 2, "risk": 1, "size": "S", "status": "pending", "note": "MCP OAuth 브랜치가 main에 없다. 머지 이후 식별자만 기록.", "updated": "2026-09-24"},
-  {"title": "write의 64 KiB 강제 flush에서 UTF-8 rune 경계 보존", "value": 1, "risk": 2, "size": "S", "status": "pending", "note": "simple.go:write의 강제 flush는 trimToRuneBoundary를 타지 않는다. 최근 반복 수정 영역이라 보류 유지.", "updated": "2026-09-24"},
-  {"title": "실행 상세 새로 고침에서 진행 중 로그 전체 재수집 줄이기", "value": 1, "risk": 2, "size": "S", "status": "pending", "note": "사용자 기대와 충돌 가능.", "updated": "2026-09-24"},
-  {"title": "통합 테스트 픽스처를 New() 기반 Server로 옮기기", "value": 2, "risk": 1, "size": "S", "status": "pending", "note": "newSimpleBatchFixture가 &Server{store,log} 리터럴이라 New()가 채우는 streams/aiActive 맵이 nil이고, 그 서버로 스트림 라우트를 타면 acquireLogStream이 nil map 대입으로 패닉한다(프로덕션 New()는 안전). 이번 회차는 테스트 쪽에서 New()를 써서 우회했다.", "updated": "2026-09-24"}
+  {
+    "title": "SSE에서 500행 페이지가 가득 차면 즉시 다음 쿼리 실행",
+    "value": 3,
+    "risk": 2,
+    "size": "S",
+    "status": "done",
+    "note": "simple.go와 releases.go 두 스트림 모두 수정. 실제 PostgreSQL 16 + 프로덕션 핸들러로 2,600행 6.0초 -> 1.4초를 재현·검증했고 릴리즈 쪽은 되돌려 재실패 확인.",
+    "updated": "2026-09-24"
+  },
+  {
+    "title": "EventSource 연결 실패(429 stream_limit·세션 만료)를 실행 상세 화면에 표시",
+    "value": 3,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "미머지 브랜치 auto/2026-09-23-1104이 같은 파일(SimpleRunDetailPage.tsx)의 스트림 effect를 고치고 있어 충돌을 피하려 이번에는 손대지 않음. 머지 이후 source.onerror로 상태 표시.",
+    "updated": "2026-09-24"
+  },
+  {
+    "title": "SSE 프레임을 모아 배치마다 한 번만 setLogs 호출",
+    "value": 2,
+    "risk": 2,
+    "size": "M",
+    "status": "pending",
+    "note": "프레임을 ref에 모아 rAF마다 flush. 위와 같은 파일이라 미머지 브랜치 머지 이후.",
+    "updated": "2026-09-24"
+  },
+  {
+    "title": "make vet(gofmt/go vet)와 웹 tsc -b --noEmit를 make test에 포함",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "현 Makefile에 vet 타깃이 없다(auto/2026-09-17-0853 미머지). 이번 회차에도 손으로 돌렸다.",
+    "updated": "2026-09-24"
+  },
+  {
+    "title": "전체 모드 릴리즈·프리셋 업로드도 스트리밍으로 전환",
+    "value": 3,
+    "risk": 4,
+    "size": "L",
+    "status": "pending",
+    "note": "releases.go:persistArtifactTx가 행 잠금을 쥔 채 파일을 쓴다. 트랜잭션 밖 staging 후 rename으로 durability 경로 재설계 필요.",
+    "updated": "2026-09-24"
+  },
+  {
+    "title": "uploadHasFailedPackages가 batch_id만 보고 actor로 좁히지 않음",
+    "value": 2,
+    "risk": 3,
+    "size": "S",
+    "status": "pending",
+    "note": "좁히면 안전 확인이 느슨해질 수 있어 보류 유지.",
+    "updated": "2026-09-24"
+  },
+  {
+    "title": "web/dist/assets/vendor 청크 분할로 폐쇄망 초기 로딩 개선",
+    "value": 2,
+    "risk": 3,
+    "size": "M",
+    "status": "pending",
+    "note": "617.30 kB(gzip 191.72 kB) 그대로. 라우팅 구조까지 건드려야 한다.",
+    "updated": "2026-09-24"
+  },
+  {
+    "title": "ci.yml과 release.yml의 중복 PostgreSQL 서비스·setup 블록 통합",
+    "value": 2,
+    "risk": 3,
+    "size": "M",
+    "status": "pending",
+    "note": "릴리즈 보호 경로라 보류 유지.",
+    "updated": "2026-09-24"
+  },
+  {
+    "title": "PATCH /api/v1/admin/oidc에도 mcp_oauth_* 필드 받기",
+    "value": 1,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "MCP OAuth 브랜치(auto/2026-09-18-1213)가 main에 없다. 머지 이후 재평가.",
+    "updated": "2026-09-24"
+  },
+  {
+    "title": "MCP SSO 토큰 거부를 감사 로그에도 남기기",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "MCP OAuth 브랜치가 main에 없다. 머지 이후 식별자만 기록.",
+    "updated": "2026-09-24"
+  },
+  {
+    "title": "write의 64 KiB 강제 flush에서 UTF-8 rune 경계 보존",
+    "value": 1,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "simple.go:write의 강제 flush는 trimToRuneBoundary를 타지 않는다. 최근 반복 수정 영역이라 보류 유지.",
+    "updated": "2026-09-24"
+  },
+  {
+    "title": "실행 상세 새로 고침에서 진행 중 로그 전체 재수집 줄이기",
+    "value": 1,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "사용자 기대와 충돌 가능.",
+    "updated": "2026-09-24"
+  },
+  {
+    "title": "통합 테스트 픽스처를 New() 기반 Server로 옮기기",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "newSimpleBatchFixture가 &Server{store,log} 리터럴이라 New()가 채우는 streams/aiActive 맵이 nil이고, 그 서버로 스트림 라우트를 타면 acquireLogStream이 nil map 대입으로 패닉한다(프로덕션 New()는 안전). 이번 회차는 테스트 쪽에서 New()를 써서 우회했다.",
+    "updated": "2026-09-24"
+  },
+  {
+    "title": "auto-improve: feat: let /mcp accept a Keycloak access token beside the personal key",
+    "value": 3,
+    "risk": 2,
+    "size": "M",
+    "status": "pending",
+    "updated": "2026-09-24",
+    "note": "https://github.com/hkjang/releasedock/pull/18 (PR 처리기가 5일 전에 더 진행할 수 없다고 판정했고(수정·심사를 2번 시도했지만 통과하지 못함) 그 뒤 사람 손이 닿지 않았습니다) 로 닫힘 — 다시 하려면 처음부터"
+  }
 ]
