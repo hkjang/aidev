@@ -107,7 +107,9 @@ bin/daily.sh (Windows 작업 스케줄러 → wsl.exe)
 | WIP 상한 | 열린 러너 PR 이 `WIP_MAX`(기본 5)건 이상인 저장소는 새 개선 회차를 잡지 않는다. 정리 트랙(fix-queue·shepherd·`--project`)은 계속 돈다 | `WIP_MAX=`, 저장소별 `policy.wip_max`. 목록 캐시 `state/open-prs.json`(45분) |
 | 성과 쿨다운 | 최근 `ROI_WINDOW`(8) 회차에 머지가 0건이면 `ROI_COOLDOWN_DAYS`(3)일 쉰다 | `rm state/<p>.cooldown`, `policy.tier="revenue"` 면 면제 |
 | 티어 | `policy.tier` 가 `revenue` 인 저장소는 성과 쿨다운·dormant 를 면제 (돈이 걸린 저장소를 러너가 조용히 끊지 않는다) | `state/<p>.policy.json` |
-| 오래된 PR 정리 | `bin/pr-gc.sh` 가 6시간마다 세어 보고, `--close` 를 주면 `STALE_PR_DAYS`(10)일 넘은 PR 을 닫고 제목을 `ideas.json` 으로 회수 | `state/NO-PR-GC` |
+| PR 정리 | `bin/pr-gc.sh` 가 6시간마다: ① 처리기가 "더 못 한다"고 판정(수정·심사 N회 실패·리베이스 불가 충돌)한 지 `STUCK_PR_DAYS`(3)일 지난 PR 을 **닫고** 제목을 `ideas.json` 으로 회수(한 번에 `MAX_CLOSE`=20건) ② 그냥 오래된 PR 은 목록만 — 닫으려면 `--close` | `state/NO-PR-GC`, PR 에 `aidev-keep`/`aidev-approved`/`risk-accepted` 라벨 |
+| CI 공백 메우기 | 워크플로가 하나도 없어 PR 이 "CI 검사 없음" 으로 막히는 저장소에는 **검사를 건너뛰게 하는 대신** "CI 워크플로 추가" 를 가치 5 아이디어로 넣는다. 그 PR 은 보호 경로라 사람이 한 번 승인하면 그 저장소가 영구히 풀린다 | 즉시 풀려면 `policy.allow_merge_without_ci=true` |
+| 릴리즈 교착 차단 | 같은 이유로 3회 넘게 실패한 릴리즈는 `state/<p>.release-hold` 를 걸고 더 시도하지 않는다. 개선·머지는 계속 돈다 (aiportal-front 는 릴리즈 에이전트가 "27회째 동일 교착" 이라 적을 때까지 돌았다) | 사람이 관례를 정하고 `rm state/<p>.release-hold` |
 | 진단 되풀이 차단 | 같은 이상을 세 번 물어도 그대로면 더 사지 않고 "사람이 결정할 것" 으로 한 번만 올린다 (umm 의 stuck-dirty 를 7일 연속 진단해 왔다) | `bin/ask-claude.sh` |
 | 자기 동기화 감시 | 멈춘 `.git/index.lock` 제거, 50MB 초과 회차 산출물 삭제, push 실패 2회 연속이면 알림. 100MB 초과 파일이 커밋에 들어가 push 가 영구 거부되면 재시도를 멈추고 그 사실을 알린다 | `logs/sync.log`, `state/.sync-fail`, `state/.sync-blocked` |
 | 정찰 예산 | 정찰이 예산을 넘겨 끝나면 기록하고, 두 회차 연속이면 그 저장소의 정찰 예산만 +$1(최대 4) 올린다. 과제서는 초안부터 쓰게 해 중간에 끊겨도 남는다 | `policy.budget_usd.scout` |
