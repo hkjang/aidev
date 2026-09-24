@@ -1,4 +1,4 @@
-# 오래된 열린 PR (2026-09-24 12:27 기준, 10일 초과)
+# 오래된 열린 PR (2026-09-24 12:40 기준, 10일 초과)
 
 - ai-admin #23 (10일) https://github.com/hkjang/ai-admin/pull/23 — auto-improve: feat: 사내 SMTP 릴레이로 보내는 이벤트 알림 메일과 발송 기록
 - DartFly #4 (10일) https://github.com/hkjang/DartFly/pull/4 — auto-improve: feat: 저장 결과를 다른 사내 서비스로 넘기기 (HANDOFF 표준 보내는 쪽, csv)
