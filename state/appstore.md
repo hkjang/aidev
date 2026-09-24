@@ -245,3 +245,4 @@
 - 보류 아이디어: 상위 100개 밖 즐겨찾기가 /favorites 에 아예 안 보임 (3/3/M) — 서버 slug 필터 API 나 다중 페이지 조회가 필요해 공개 API 계약 변경 수반 · E2E mock API 의 public config override 가 기본값에 덮여 무효 (2/1/S, mock-api.ts:307-318) · /favorites 의 검색·정렬이 전체 카탈로그를 대상으로 동작해 검색어를 넣으면 즐겨찾기가 사라진 것처럼 보임 (2/2/M) · clientAddress 가 RemoteAddr 만 보아 reverse proxy 뒤에서 rate limit 이 전역 (3/3/M) · 로그인 방식이 모두 없는 설치의 브라우저 안내 검증 (2/1/S)
 - 과제서: 채택 — 과제서가 지목한 `public-pages.tsx:357`·`:406` 이 현재 코드와 정확히 일치했고 수용 기준 4건을 그대로 구현했으며, 선택 사항이던 `/favorites` E2E 1건도 더해 production 번들에서 수정 전 실패(desktop·mobile)와 수정 후 통과를 확인했다.
 
+- 릴리즈: v2.11.5 (2026-09-24, run 2026-09-24-185207-appstore-approve)

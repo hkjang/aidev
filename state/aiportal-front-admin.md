@@ -526,3 +526,4 @@
 - 과제서: 채택 — 지정한 3개 화면·행 번호·`tabLoaded` 재사용·수용 기준 3가지가 모두 현재 코드와 일치해 그대로 구현했고, 미확인이라던 `CatalogView` script 에는 `tabLoaded` 가 이미 있어 새 플래그가 필요 없었다.
 
 - 릴리즈: v0.1.2 (2026-09-23, run 2026-09-23-210500-aiportal-front-admin-improve)
+- 릴리즈: v0.1.3 (2026-09-24, run 2026-09-24-184729-aiportal-front-admin-approve)
