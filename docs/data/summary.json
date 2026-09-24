@@ -1,27 +1,27 @@
 {
- "generated": "2026-09-24T12:46:00+09:00",
+ "generated": "2026-09-24T13:02:33+09:00",
  "site": "https://hkjang.github.io/aidev",
- "description": "Claude Code 자율 개선 에이전트가 hkjang 의 프로젝트를 개선·테스트·머지·릴리즈한 일일 보고. 오늘 29회차·릴리즈 11건, 누적 1354회차·릴리즈 452건, 주의 필요 7건.",
+ "description": "Claude Code 자율 개선 에이전트가 hkjang 의 프로젝트를 개선·테스트·머지·릴리즈한 일일 보고. 오늘 30회차·릴리즈 11건, 누적 1355회차·릴리즈 452건, 주의 필요 6건.",
  "today": {
   "date": "2026-09-24",
-  "total": 29,
+  "total": 30,
   "projects": 19,
   "released": 11,
   "merged": 10,
   "nochange": 0,
   "failed": 0,
-  "cost_usd": 201.11,
-  "minutes": 536,
-  "sessions": 108
+  "cost_usd": 205.11,
+  "minutes": 546,
+  "sessions": 110
  },
  "totals": {
-  "runs": 1354,
+  "runs": 1355,
   "released": 452,
   "days": 23,
-  "cost_usd": 4795.7,
-  "minutes": 11842,
-  "tokens_in": 5365367305,
-  "tokens_out": 40164309
+  "cost_usd": 4799.7,
+  "minutes": 11853,
+  "tokens_in": 5368093878,
+  "tokens_out": 40209577
  },
  "alerts": [
   {
@@ -65,24 +65,12 @@
    "project": "jasql_semantic",
    "why": "수정 과제 대기 중 — 오류 대응(자동 적재): 마지막 회차가 'error' 로 끝났습니다. fix-round: error: pr create",
    "result": ""
-  },
-  {
-   "date": "",
-   "time": "",
-   "project": "aiportal-front",
-   "why": "수정 과제 대기 중 — 오류 대응(자동 적재): 릴리즈 실패(). 릴리즈 관례를 정할 근거가 없어 다음 버전을 결정할 수 없다(27회째 동일 교착). 이번 회차에 6개 항목을 직접 재실측함: (1) git tag --sort=-creatordate 출력 0건, 태그 총 0개 (2) package.json ve",
-   "result": ""
   }
  ],
  "fix_queue": [
   {
    "project": "jasql_semantic",
    "note": "오류 대응(자동 적재): 마지막 회차가 'error' 로 끝났습니다. fix-round: error: pr create",
-   "merge_sha": ""
-  },
-  {
-   "project": "aiportal-front",
-   "note": "오류 대응(자동 적재): 릴리즈 실패(). 릴리즈 관례를 정할 근거가 없어 다음 버전을 결정할 수 없다(27회째 동일 교착). 이번 회차에 6개 항목을 직접 재실측함: (1) git tag --sort=-creatordate 출력 0건, 태그 총 0개 (2) package.json version=0.0.0, package-lock.json version 및 packages[\"\"].version=0.0.0 — 최초 커밋 ab700ba 의 package.json 도 0.0.0 이라 증가 이력이 전무 (3) CHANGELOG 파일 없음 (4) 릴리즈 노트 없음 — docs/RELEASE.md 는 스스로 '릴리즈 노트나 새 릴리즈 정책이 아니며 다음 버전·태그·릴리즈 커밋 관례를 정하지 않는다' 고 명시 (5) git log --oneline -60 에 릴리즈 커밋 메시지 양식 0건 (6) .github 디렉터리 부재, .gitlab-ci.yml 은 CI_COMMIT_TAG 참조 0건인 main/develop 브랜치 조건 배포 전용이며 태그 기반 버전 증가나 Release 생성을 정의하지 않음. 러너가 미리 가져온 GitHub Release 목록도 비어 있어 과거 릴리즈 자산 규칙도 없다(assets 는 빈 배열). 절차 5 의 skipped 조건('태그도, 버전 파일도, 릴리즈 노트도 없음')은 package.json 이라는 버전 파일이 실재하므로 충족하지 않고, 절차 2 의 '최근 릴리즈들의 증가 패턴' 은 릴리즈가 0건이라 따를 패턴 자체가 없다. 따라서 released 로 진행하려면 관례를 새로 발명해야 하는데 이는 사람의 일이므로 하지 않았다. 버전 파일·태그·CHANGELOG·릴리즈 노트·릴리즈 커밋을 일체 만들지 않았고 원격에 아무것도 보내지 않았으며 docs/RELEASE.md 도 수정하지 않았다(워크트리 clean 유지). 러너 지시('워크플로 파일과 실패한 단계의 스크립트·테스트를 읽고 원인을 고치세요')는 수행 대상이 없다: 이 저장소에 워크플로 파일이 없고(.github 부재) 실패 지점이 워크트리 밖의 외부 aidev bin/run.sh -> release.json -> bin/gate.py 이며, 게이트를 느슨하게 만드는 우회(version 필드 삭제 등)는 금지라 하지 않았다. 해소에 필요한 사람 입력 4가지(직전 26회차와 동일): (1) 첫 릴리즈 버전을 0.0.1 / 0.1.0 / 1.0.0 중 무엇으로 할지 — README 와 docs/01-시작하기.md 에 '0.0.1 / 2025-01-01 / 초기 릴리스' 기재가 있으나 실제 릴리스 증거는 미확인 (2) 태그 형식(v1.2.3 / 1.2.3)과 주석 태그 여부 (3) 릴리즈 노트의 위치·양식·언어(CHANGELOG.md 신설 여부 포함) (4) GitHub Release 사용 여부 — 현재 배포는 GitLab CI 브랜치 배포뿐이다.",
    "merge_sha": ""
   }
  ],
@@ -308,6 +296,21 @@
   "DORMANT_DAYS": 7
  },
  "inbox": [
+  {
+   "kind": "PR",
+   "project": "aiportal-front",
+   "title": "auto-improve: fix: 헤더 알림 조회 실패가 '알림이 없습니다.' 문구로 감춰지던 문제 수정",
+   "url": "https://github.com/hkjang/aiportal-front/pull/39",
+   "sha": "712983c",
+   "summary": "2파일 +229/−0 · fix-round: merge stopped, PR open https://github.com/hkjang/aiportal-front/pull/39",
+   "why": "scout: failed — 과제서 없음 — 구현자가 직접 고른다; merge: stopped — 긴급 중지",
+   "evidence": "https://github.com/hkjang/aidev/tree/main/state/runs/2026-09-24-125212-aiportal-front-improve",
+   "labels": "",
+   "action": "PR 처리기가 매시간 살핀다 (아직 순서가 오지 않음) · 승인: PR 라벨 aidev-approved / 반려: aidev-rejected — 다음 회차에 러너가 승인 당시 커밋에만 CI 확인 후 머지·닫기",
+   "date": "2026-09-24",
+   "shepherd": "",
+   "shepherd_action": ""
+  },
   {
    "kind": "PR",
    "project": "sqlon",
@@ -2313,22 +2316,13 @@
    "labels": "",
    "action": "두면 러너가 수정 회차를 돌림. 급하면 run: 이슈, 멈추려면 stop",
    "date": ""
-  },
-  {
-   "kind": "수정 과제",
-   "project": "aiportal-front",
-   "title": "오류 대응(자동 적재): 릴리즈 실패(). 릴리즈 관례를 정할 근거가 없어 다음 버전을 결정할 수 없다(27회째 동일 교착). 이번 회차에 6개 항목을 직접 재실측함: (1) gi",
-   "url": "https://hkjang.github.io/aidev/projects/aiportal-front/",
-   "sha": "",
-   "summary": "릴리즈 워크플로 2회 실패 — 다음 회차 자동 배정",
-   "why": "오류 대응(자동 적재): 릴리즈 실패(). 릴리즈 관례를 정할 근거가 없어 다음 버전을 결정할 수 없다(27회째 동일 교착). 이번 회차에 6개 항목을 직접 재실측함: (1) git tag --sort=-creatordate 출력 0건, 태그 총 0개 (2) package.json version=0.0.0, package-lock.json version 및",
-   "evidence": "",
-   "labels": "",
-   "action": "두면 러너가 수정 회차를 돌림. 급하면 run: 이슈, 멈추려면 stop",
-   "date": ""
   }
  ],
  "stops": [
+  {
+   "scope": "all",
+   "note": "2026-09-24T12:50:59+09:00 by hkjang: 정리 작업"
+  },
   {
    "scope": "aiportal-java",
    "note": "2026-09-08T19:18:43+09:00 by hkjang: JDK 21(javac) 미설치로 gradle 검증 불가 — sudo apt install -y openjdk-21-jdk-headless 후 해제"
@@ -2611,15 +2605,15 @@
   "rows": [
    {
     "role": "정찰 scout",
-    "calls": 293,
-    "metric": "과제서 91% · 구현자 채택 95% · 과제서 회차의 PR 도달 64%",
-    "cost": 232.19
+    "calls": 294,
+    "metric": "과제서 90% · 구현자 채택 95% · 과제서 회차의 PR 도달 64%",
+    "cost": 233.95
    },
    {
     "role": "구현 builder",
-    "calls": 633,
+    "calls": 634,
     "metric": "러너 검증 통과 94% · 변경 없음 103",
-    "cost": 2672.93
+    "cost": 2675.18
    },
    {
     "role": "비평 critic",
@@ -3079,7 +3073,7 @@
   {
    "metric": "검증된 개선 완료율",
    "value": "100%",
-   "detail": "관찰 24h 지난 머지 257건 중 회귀 없음 257건"
+   "detail": "관찰 24h 지난 머지 258건 중 회귀 없음 258건"
   },
   {
    "metric": "완전한 릴리즈 비율",
@@ -3089,17 +3083,17 @@
   {
    "metric": "사람의 재작업률",
    "value": "0%",
-   "detail": "되돌림·롤백 0건 / 관찰 머지 257건"
+   "detail": "되돌림·롤백 0건 / 관찰 머지 258건"
   },
   {
    "metric": "변경 후 회귀율",
    "value": "0%",
-   "detail": "회귀 0건 / 관찰 머지 257건"
+   "detail": "회귀 0건 / 관찰 머지 258건"
   },
   {
    "metric": "유효 개선당 비용",
-   "value": "$17.07",
-   "detail": "비용 확인된 유효 개선 228건, 미확인 세션 449"
+   "value": "$17.01",
+   "detail": "비용 확인된 유효 개선 229건, 미확인 세션 449"
   },
   {
    "metric": "예외 처리 소요 시간(중앙값)",
@@ -3114,7 +3108,7 @@
  ],
  "outcomes_today": {
   "merged": 10,
-  "review-pending": 6,
+  "review-pending": 7,
   "release-ready": 11,
   "verify-failed": 2,
   "releasing": 0,
@@ -3124,12 +3118,12 @@
  "days": [
   {
    "date": "2026-09-24",
-   "total": 29,
+   "total": 30,
    "released": 11,
    "merged": 10,
    "nochange": 0,
    "failed": 0,
-   "cost_usd": 201.11
+   "cost_usd": 205.11
   },
   {
    "date": "2026-09-23",
@@ -3335,13 +3329,13 @@
    "key": "2026-W39",
    "url": "https://hkjang.github.io/aidev/weekly/2026-W39/",
    "days": 4,
-   "total": 222,
+   "total": 223,
    "released": 48,
    "merged": 41,
    "nochange": 92,
    "failed": 2,
-   "cost": 544.64,
-   "minutes": 1474
+   "cost": 548.65,
+   "minutes": 1485
   },
   {
    "key": "2026-W38",
@@ -3385,13 +3379,13 @@
    "key": "2026-09",
    "url": "https://hkjang.github.io/aidev/monthly/2026-09/",
    "days": 23,
-   "total": 1354,
+   "total": 1355,
    "released": 452,
    "merged": 169,
    "nochange": 117,
    "failed": 30,
-   "cost": 4795.7,
-   "minutes": 11842
+   "cost": 4799.7,
+   "minutes": 11853
   }
  ],
  "projects": [
@@ -3449,18 +3443,18 @@
    "name": "aiportal-front",
    "repo": "https://github.com/hkjang/aiportal-front",
    "page": "https://hkjang.github.io/aidev/projects/aiportal-front/",
-   "runs": 81,
+   "runs": 82,
    "released": 0,
-   "last_ts": "2026-09-24T11:16:45+09:00",
-   "last_status": "merged",
-   "last_result": "fix-round: merged https://github.com/hkjang/aiportal-front/pull/38, release failed",
-   "cost": 172.03,
-   "minutes": 429,
+   "last_ts": "2026-09-24T13:02:34+09:00",
+   "last_status": "other",
+   "last_result": "fix-round: merge stopped, PR open https://github.com/hkjang/aiportal-front/pull/39",
+   "cost": 176.04,
+   "minutes": 440,
    "grade": "D",
    "grade_why": "14일: 릴리즈 0, 실패 0, 경고 20, 회귀 0",
    "lessons": 1,
-   "ideas_pending": 12,
-   "ideas_total": 13,
+   "ideas_pending": 13,
+   "ideas_total": 14,
    "release": {
     "status": "failed",
     "version": "",
