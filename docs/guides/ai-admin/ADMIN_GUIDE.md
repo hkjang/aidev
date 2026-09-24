@@ -1,6 +1,6 @@
 # ai-admin 관리자 가이드
 
-`v1.2.25` 기준입니다. 이 문서는 ai-admin을 **설치하고 지키는 사람**을 위한 것입니다.
+`v1.2.26` 기준입니다. 이 문서는 ai-admin을 **설치하고 지키는 사람**을 위한 것입니다.
 화면을 쓰는 방법은 [사용자 가이드](USER_GUIDE.md)에 있습니다.
 
 화면 캡처는 합성 데이터로 채운 실제 ai-admin 화면을 1440×1024에서 찍은 것입니다.
@@ -61,14 +61,14 @@ Compose 파일은 PostgreSQL을 함께 띄우지 않습니다. `POSTGRES_DSN`의
 
 ### 2.2 이미지 반입
 
-GitHub Release에서 `ai-admin-v1.2.25.tar.gz`와 `SHA256SUMS`를 받아 승인된 매체로 반입합니다.
+GitHub Release에서 `ai-admin-v1.2.26.tar.gz`와 `SHA256SUMS`를 받아 승인된 매체로 반입합니다.
 반입 전후 모두 체크섬을 확인하세요. 공식 아카이브는 Linux `amd64`입니다.
 
 ```bash
 sha256sum -c SHA256SUMS
-gzip -t ai-admin-v1.2.25.tar.gz
-gzip -dc ai-admin-v1.2.25.tar.gz | docker load
-docker image inspect ai-admin:v1.2.25 --format '{{.RepoTags}}'
+gzip -t ai-admin-v1.2.26.tar.gz
+gzip -dc ai-admin-v1.2.26.tar.gz | docker load
+docker image inspect ai-admin:v1.2.26 --format '{{.RepoTags}}'
 ```
 
 ### 2.3 환경 파일과 기동
@@ -101,7 +101,7 @@ docker run -d --name ai-admin --restart unless-stopped \
   --env-file .env -p 8080:8080 \
   --read-only --tmpfs /tmp:size=64m,noexec,nosuid \
   --cap-drop ALL --security-opt no-new-privileges \
-  ai-admin:v1.2.25
+  ai-admin:v1.2.26
 ```
 
 시작할 때 DB 연결 → migration → seed 순으로 진행하며, 하나라도 실패하면 프로세스는 종료됩니다.
@@ -168,6 +168,7 @@ ai-admin이 읽는 환경 변수는 다음 네 개가 전부입니다. 나머지
 | AI 기본값 | 기본 공급자, 기본 스트리밍 여부 |
 | 승인 전체 설정 | 검토·승인 전역 스위치 |
 | 화면 | 기본 테마, 컴팩트 모드 |
+| MCP SSO | Keycloak 액세스 토큰으로 `/mcp` 인증, 리소스 식별자, 허용 대상, SSO 주체 scope. 3.6절 |
 | 방문 추적 | 추적 도구, Momento 프록시, 붙여 넣은 스니펫, 허용 출처, 삽입 위치. 3.5절 |
 | 레거시 연결 | 레거시 스키마 이름 |
 | 레거시 API / 배치 / 인증 / 저장소 | 기존 Java YAML 운영 값. **재시작** 배지가 붙습니다 |
@@ -331,6 +332,96 @@ HTTPS로 서비스한다면 **보안·세션 → HTTPS 전용 쿠키**도 함께
 - 직접 붙여 넣는 스니펫은 `settings.write` 권한이 있는 관리자가 넣는 HTML 그대로 화면에
   실립니다. 출처를 아는 도구의 로더만 붙이세요.
 
+### 3.6 MCP SSO(OAuth) — 개인 키 없이 Keycloak 로그인으로 `/mcp` 연결
+
+기본 상태에서 `/mcp`는 개인 API 키(`aia_…`)로만 들어갑니다. **시스템 설정 → MCP SSO**를 켜면
+MCP 클라이언트(Claude, Cursor 등)에 URL 하나만 주면 됩니다 — 클라이언트가 스스로 Keycloak
+로그인 화면을 띄우고 액세스 토큰을 받아 `Authorization: Bearer` 로 보냅니다. MCP 인가 규격
+(2025-06-18 이후)이 정한 OAuth 2.1 흐름이며, 이 서버는 **리소스 서버**입니다. `/authorize`·
+`/token`·클라이언트 등록은 Keycloak이 하고, 이 서버는 (1) 인증 없이 보호 리소스 메타데이터
+(RFC 9728)를 내고, (2) `/mcp`의 401에 그 주소를 실어 주고, (3) 들어온 토큰을 요청마다 검사할
+뿐입니다. 토큰을 저장하거나 세션으로 바꾸지 않습니다.
+
+기본값은 **꺼짐**이며, 새로 설치한 곳은 아무것도 달라지지 않습니다. 켜도 기존 키는 그대로
+동작하고, SSO 토큰은 `/mcp`에서만 받습니다 — REST·OpenAI 호환 API·관리 API는 지금처럼 키와
+세션만 받습니다.
+
+| 설정 | 기본값 | 뜻 |
+| --- | --- | --- |
+| `mcp.oauth.enabled` | 꺼짐 | Keycloak 액세스 토큰을 `/mcp`에서 받는다 |
+| `mcp.oauth.resource` | 빈 값 | 리소스 식별자. 비면 **서비스 Public URL** + `/mcp` |
+| `mcp.oauth.audience` | 빈 목록 | 허용 대상. 토큰의 `aud` **또는 `azp`** 와 비교할 Keycloak 클라이언트 ID·audience |
+| `mcp.oauth.scopes` | `mcp:tools` | SSO 주체에게 주는 키 scope. 토큰의 `scope`가 아니라 이 목록이 상한 |
+| (재사용) `oidc.issuer_url`, `oidc.allow_insecure_http` | Keycloak SSO 탭 | 토큰 발급자. 새로 적지 않는다 |
+
+실제로 동작하려면 세 가지가 다 있어야 합니다 — 스위치가 켜져 있고, Keycloak SSO 탭의
+**Issuer URL**이 있고, 리소스 식별자를 만들 수 있어야(서비스 Public URL 또는 `mcp.oauth.resource`)
+합니다. 하나라도 없으면 켜 두어도 꺼진 것처럼 동작하고, **MCP SSO** 탭의 "저장된 설정의 실제
+동작" 카드가 어느 것이 빠졌는지 알려 줍니다. 리소스 식별자는 요청의 `Host` 헤더에서 만들지
+않습니다(누구나 바꿀 수 있는 값이라 대상 검사에 쓸 수 없습니다).
+
+토큰 검사 항목: Keycloak JWKS 서명(RS/ES/PS 계열만, `HS*`·`none` 거부), `iss`가 Issuer URL과 같음,
+`exp`·`nbf`, `typ`이 `ID`면 거부(ID 토큰은 로그인 증거이지 API 자격이 아님), `cnf`가 있으면
+거부(이 서버가 검증할 수 없는 소지자 증명), `sub` 존재, 그리고 **대상**. 대상은 다음 중 하나가
+맞아야 합니다.
+
+- `aud`에 리소스 식별자(`https://<공개 주소>/mcp`)가 있다 — Keycloak에 Audience 매퍼를 둔 정식 경로
+- `aud` 또는 `azp`가 `mcp.oauth.audience`에 있다 — 매퍼 없이 쓰는 호환 경로. 실제 Keycloak 26은
+  `aud`에 `account`만 싣고 클라이언트 ID는 `azp`에 담으므로, MCP 클라이언트 ID를 여기 적으면 됩니다
+
+계정은 만들지 않습니다. 토큰의 `sub`로 **이미 웹 SSO 로그인으로 등록된 활성 계정**만 찾고,
+없으면 "먼저 웹으로 한 번 로그인하세요"로 거부합니다. 토큰의 role로 권한을 올리지 않으며,
+SSO 주체는 그 사용자가 키로 들어왔을 때와 같은 문을 지납니다 — 계정의 역할 권한과
+`mcp.oauth.scopes`의 교집합입니다. `create_approval_request`까지 열려면 목록에 `admin:write`를
+더하세요.
+
+#### Keycloak 쪽 할 일
+
+1. MCP 클라이언트용 **공개(public) 클라이언트**를 만듭니다(예: `claude-mcp`). Standard Flow 켬,
+   PKCE `S256`, Direct Access Grants·Implicit·Service accounts 끔. 웹 로그인 클라이언트
+   (`oidc.client_id`)와 **다른** 클라이언트입니다.
+2. Valid Redirect URIs에 쓰는 MCP 클라이언트의 콜백을 정확히 적습니다. Claude는
+   `https://claude.ai/api/mcp/auth_callback`, 로컬 클라이언트는 `http://127.0.0.1:*/callback` 류.
+   `*` 하나로 다 여는 것은 금지입니다.
+3. 정식 경로: 그 클라이언트(또는 전용 client scope)에 **Audience 매퍼** — Mapper type
+   `Audience`, Included Custom Audience = 리소스 식별자, Add to access token 켬, Add to ID token 끔.
+   호환 경로: 매퍼 없이 이 앱의 `mcp.oauth.audience`에 클라이언트 ID를 적습니다.
+4. 액세스 토큰 수명은 짧게(5분 안팎). 이 서버는 introspection을 하지 않으므로 Keycloak에서
+   로그아웃해도 이미 발급된 토큰은 만료까지 삽니다.
+
+#### 확인
+
+```bash
+# 메타데이터: 인증 없이 맨 JSON. 꺼져 있으면 404
+curl -s https://<ai-admin-host>/.well-known/oauth-protected-resource/mcp
+# {"resource":"https://<ai-admin-host>/mcp","authorization_servers":["https://keycloak/realms/<realm>"],
+#  "bearer_methods_supported":["header"],"scopes_supported":["mcp:tools"],"resource_name":"AI Admin MCP"}
+
+# 401 이 길을 가리키는지
+curl -si -X POST https://<ai-admin-host>/mcp -H 'Accept: application/json, text/event-stream' \
+  -H 'Content-Type: application/json' -d '{"jsonrpc":"2.0","id":1,"method":"tools/list"}' | grep -i www-authenticate
+# WWW-Authenticate: Bearer realm="ai-admin-mcp", resource_metadata="https://<ai-admin-host>/.well-known/oauth-protected-resource/mcp"
+
+# 실제 토큰으로
+curl -s -X POST https://<ai-admin-host>/mcp -H "Authorization: Bearer $ACCESS_TOKEN" \
+  -H 'Accept: application/json, text/event-stream' -H 'Content-Type: application/json' \
+  -d '{"jsonrpc":"2.0","id":1,"method":"tools/list"}'
+```
+
+#### 거부 메시지별 조치
+
+| 401 메시지 | 조치 |
+| --- | --- |
+| `이 서버는 SSO 액세스 토큰을 받지 않습니다` | `mcp.oauth.enabled`를 켭니다 |
+| `켜져 있지만 아직 동작하지 않습니다: …` | 메시지가 말하는 값(Issuer URL, 서비스 Public URL 또는 `mcp.oauth.resource`)을 채웁니다 |
+| `유효하지 않습니다(서명·발급자·만료)` | 토큰이 만료됐거나 다른 realm의 토큰입니다. 클라이언트에서 다시 로그인하고 `oidc.issuer_url`이 토큰의 `iss`와 같은지 봅니다 |
+| `이 서버를 위해 발급된 것이 아닙니다(aud=[…], azp="…")` | 메시지에 나온 `azp` 값을 `mcp.oauth.audience`에 더하거나, Keycloak 클라이언트에 Audience 매퍼로 리소스 식별자를 넣습니다 |
+| `ID 토큰은 로그인 증거이지 API 자격이 아닙니다` | 클라이언트가 ID 토큰을 보내고 있습니다. 액세스 토큰을 쓰도록 고칩니다 |
+| `소지자 증명(cnf)이 묶인 토큰` | 클라이언트의 DPoP/mTLS 바인딩을 끕니다 |
+| `등록되지 않았거나 비활성입니다. 먼저 웹으로 한 번 로그인하세요` | 그 사람이 웹에서 SSO로 한 번 로그인해 계정을 만들거나, 계정 상태를 `active`로 되돌립니다 |
+| `mcp.oauth.scopes 에 mcp:tools 가 없어` | scope 목록에 `mcp:tools`를 다시 넣습니다 |
+| 503 `인증 정보를 확인하지 못했습니다` | 토큰 문제가 아니라 Keycloak discovery/JWKS에 닿지 못한 것입니다. DNS·사내 CA·라우팅을 봅니다 |
+
 ---
 
 ## 4. 계정과 권한
@@ -481,8 +572,8 @@ credential 또는 승인된 백업 에이전트를 쓰세요. 복구는 별도 D
 
 ```bash
 sha256sum -c SHA256SUMS
-gzip -dc ai-admin-v1.2.25.tar.gz | docker load
-docker image inspect ai-admin:v1.2.25 --format '{{.RepoTags}}'
+gzip -dc ai-admin-v1.2.26.tar.gz | docker load
+docker image inspect ai-admin:v1.2.26 --format '{{.RepoTags}}'
 docker compose --env-file .env -f compose.offline.yml up -d --force-recreate
 ```
 
@@ -536,6 +627,18 @@ DB 연결 문제입니다. 풀은 최대 20 · 최소 2 연결을 씁니다. Pos
 - SSO 장애는 로컬 관리자 세션에서 **시스템 설정 → Keycloak SSO → 저장된 설정 진단**을 실행합니다. `Client Secret` 실패는 Keycloak confidential client credential을, `Callback URL` 실패는 Valid redirect URI를, discovery·endpoint 실패는 사내 CA·DNS·라우팅을 먼저 봅니다.
 - 로그인 화면의 **처리 단계**와 **추적 ID**를 감사 로그에서 같은 ID로 검색합니다. `계정 준비`는 사용자 생성·역할 매핑, `토큰 교환`·`토큰 검증`은 client·code·issuer/JWKS, `세션 생성`은 계정 상태와 DB session 저장을 조사합니다.
 - 복구가 필요하면 SSO를 켜기 전 확보해 둔 로컬 관리자 세션으로 SSO를 끄고 설정을 되돌립니다.
+
+### MCP 클라이언트가 SSO로 연결되지 않는다
+
+- `curl -s https://<host>/.well-known/oauth-protected-resource/mcp`가 404면 3.6절의 세 조건 중
+  하나가 빠진 것입니다. **시스템 설정 → MCP SSO**의 상태 카드가 무엇인지 알려 줍니다.
+- 클라이언트가 로그인 화면을 반복해서 띄우면 토큰이 거부되고 있는 것입니다. 같은 토큰으로
+  `curl`을 보내 401 본문의 메시지를 읽고 3.6절의 표대로 조치합니다. 가장 흔한 원인은 대상
+  불일치 — 메시지의 `azp` 값을 `mcp.oauth.audience`에 적으면 끝납니다.
+- Keycloak 클라이언트의 Valid Redirect URIs에 MCP 클라이언트의 콜백이 없으면 Keycloak 쪽에서
+  `Invalid parameter: redirect_uri`가 납니다. 이 서버의 로그에는 아무것도 남지 않습니다.
+- 개인 키로는 되는데 토큰으로만 안 되면 그 사람이 웹으로 SSO 로그인을 한 번도 하지 않았을
+  가능성이 큽니다. 토큰으로는 계정이 만들어지지 않습니다.
 
 ### 저장된 비밀값을 쓸 수 없다
 
