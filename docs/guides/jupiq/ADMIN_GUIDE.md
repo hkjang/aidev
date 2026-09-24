@@ -620,7 +620,8 @@ GPU·LLM 화면 자체가 없다면 장애가 아니라 `선택 기능` 스위�
 | 상태 변경 요청 | 동일 출처가 아니면 거부(Origin 호스트·스킴과 `Sec-Fetch-Site` 확인) |
 | 세션 | HttpOnly `jupiq_session` 쿠키, SameSite=Lax, 토큰 8시간 |
 | 로그인 시도 | 10분 창, 조합 8회 / 계정 16회 / IP 40회 (실패만 셈) |
-| OIDC 로그인 시작 | `GET /api/v1/auth/oidc/login`은 호출마다 Keycloak Discovery 요청이 나가므로 IP별 분당 120회. 넘으면 제공자를 부르지 않고 `/login?sso=limited`로 보내 로그인 화면에 안내를 띄운다. IP는 jupiq에 직접 닿는 주소라 리버스 프록시 뒤에서는 프록시 주소 하나로 합산된다 |
+| OIDC 로그인 시작 | `GET /api/v1/auth/oidc/login`은 누구나 부를 수 있으므로 IP별 분당 120회. 넘으면 제공자를 부르지 않고 `/login?sso=limited`로 보내 로그인 화면에 안내를 띄운다. IP는 jupiq에 직접 닿는 주소라 리버스 프록시 뒤에서는 프록시 주소 하나로 합산된다 |
+| OIDC Discovery | Keycloak의 Discovery 문서는 Issuer URL·TLS 검증 값별로 10분 동안 재사용하고 서명 키(JWKS)도 그 사이 캐시한다. 로그인 시작·콜백이 저마다 Discovery를 받아 오지 않으므로, 캐시가 채워진 뒤에는 로그인 한 번에 jupiq가 Keycloak으로 보내는 요청은 토큰 교환 하나뿐이다 |
 | 요청 본문 | 2 MiB 초과 시 거부 |
 | 비밀값 | Hub 토큰·OIDC client secret·AI 키·SMTP 비밀번호는 암호화 저장, 화면·API에서 평문 재표시 없음, 로그에도 남지 않음 |
 | API 키 | 해시로만 저장, 발급·회전 직후 1회 표시 |
@@ -633,6 +634,10 @@ GPU·LLM 화면 자체가 없다면 장애가 아니라 `선택 기능` 스위�
 Keycloak OIDC는 `외부 연동` 탭에서 Issuer URL, Client ID·Secret, Redirect URL, Scopes, 사용자 ID Claim,
 최초 로그인 사용자 자동 생성, 자동 로그인(Silent SSO, 기본 꺼짐 — 동작은 4.4절), TLS 검증을 설정합니다. `연결 테스트`는 Discovery 문서와 endpoint 존재까지
 검증하며, authorization code·PKCE·ID token claim 검증은 저장 후 실제 로그인으로 확인해야 합니다.
+
+Discovery 문서는 Issuer URL과 `TLS 검증` 값별로 10분 동안 재사용합니다. 설정에서 Issuer URL이나 `TLS 검증`을
+바꾸면 다음 로그인부터 바로 새로 읽고, 같은 Issuer URL 아래에서 Keycloak의 endpoint 주소만 옮긴 경우에는 실패한
+토큰 교환 직후 또는 10분 뒤에 다시 읽습니다. 서명 키 회전은 캐시와 무관하게 토큰이 모르는 키를 가리키면 즉시 다시 받습니다.
 
 `TLS 검증` 스위치는 운영에서 켜 두세요. 끄면 중간자 공격을 막지 못합니다.
 
