@@ -21,6 +21,18 @@ export GIT_AUTHOR_NAME=hkjang GIT_AUTHOR_EMAIL=gagagiga@naver.com GIT_COMMITTER_
 CLAUDE_SETTINGS='{"attribution":{"commit":"","pr":""}}'
 EXCLUDE_RE='^(aidev|headcount|Naviq|sqlpad|_tmp.*|visitflow-node-modules.*|새 폴더)$'
 MAX_DAILY_COST=300; MAX_DAILY_ROUNDS=60; MAX_DAILY_RELEASES=40; DORMANT_AFTER=3; DORMANT_DAYS=7
+# 한 프로젝트에 열어 둘 수 있는 러너 PR 수. 넘으면 새 개선 회차를 시작하지 않는다 — 열린 PR 위에
+# 새 PR 을 얹으면 충돌·중복 작업만 늘고 아무것도 닫히지 않는다 (2026-09-24: 열린 PR 132건 중 50건이
+# 일주일 넘김, madi 11 / SecCheck 10 / sqlon 10 — 이 셋은 일주일 동안 머지 0건에 $100 을 썼다).
+# 정리 트랙(fix-queue·run-queue·shepherd)과 --project 지정은 이 상한과 무관하게 돈다.
+# 기본값 5 는 지금 백로그(저장소당 최대 11건)에서 12개 저장소만 멈추는 선이다. 백로그가
+# 빠지면(bin/pr-gc.sh) 3 으로 조이는 것이 맞다. 저장소별로는 policy 의 wip_max 로 덮어쓴다.
+WIP_MAX=${WIP_MAX:-5}; OPENPR_TTL_MIN=${OPENPR_TTL_MIN:-45}
+# 성과 없는 반복을 멈추는 장치: 최근 ROI_WINDOW 회차에 머지가 한 건도 없으면 며칠 쉰다.
+# (2026-09-18~24: SecCheck 14회차 $55, madi 13회차 $49 — 둘 다 머지 0건. 쉬게 하는 편이 낫다.)
+# state/<p>.policy.json 의 tier 가 "revenue" 인 프로젝트는 이 쿨다운과 dormant 를 면제한다 —
+# 돈이 걸린 저장소는 성과가 안 나와도 사람이 보고 결정할 문제지 러너가 조용히 끊을 일이 아니다.
+ROI_WINDOW=${ROI_WINDOW:-8}; ROI_COOLDOWN_DAYS=${ROI_COOLDOWN_DAYS:-3}
 [ -f "$STATE/caps.env" ] && . "$STATE/caps.env"
 
 while [ $# -gt 0 ]; do case "$1" in
@@ -86,6 +98,11 @@ gh auth status >/dev/null 2>&1 || { log "gh 인증 없음 — 회차를 시작�
 policy(){ # $1=프로젝트 $2=jq 경로 (예: .base_branch) — 기본 정책 < 프로젝트 정책 < 실험 arm 덮어쓰기(EXP_OVERRIDES)
   # `// empty` 는 false 를 없는 값으로 취급해 agents.scout=false 같은 스위치가 영영 읽히지 않았다 (2026-09-19) — null 만 비운다
   jq -r "($2) | if . == null then empty else . end" <(jq -s '.[0] * (.[1] // {}) * (.[2] // {})' "$STATE/default.policy.json" <([ -f "$STATE/$1.policy.json" ] && cat "$STATE/$1.policy.json" || echo '{}') <(printf '%s' "${EXP_OVERRIDES:-{\}}")) 2>/dev/null
+}
+# 프로젝트 정책 파일만 고친다 (기본 정책·실험 덮어쓰기는 건드리지 않는다)
+policy_set(){ # $1=프로젝트 $2=jq 식
+  local f="$STATE/$1.policy.json"; [ -s "$f" ] || echo '{}' > "$f"
+  jq "$2" "$f" > "$f.tmp" 2>/dev/null && mv "$f.tmp" "$f" || rm -f "$f.tmp"
 }
 # ---------------------------------------------------------------- 비교 실험 (state/experiment.json)
 # 회차마다 arm 을 무작위로 배정해 정책을 덮어쓴다 — "정찰을 넣었더니 좋아졌다" 를 시점 비교가 아니라
@@ -942,6 +959,43 @@ merge_outputs(){
   rm -rf "$OUT/home"  # 임시 홈은 남기지 않는다
 }
 redact_log(){ sed -E -i 's/gh[pousr]_[A-Za-z0-9]{20,}/ghX_[redacted]/g; s/github_pat_[A-Za-z0-9_]{20,}/github_pat_[redacted]/g; s#([a-z][a-z0-9+.-]*://[^/[:space:]:@]+):[^/[:space:]:@]+@#\1:[redacted]@#g; s/AKIA[0-9A-Z]{16}/AKIA[redacted]/g' "$1" 2>/dev/null || true; }
+SYNCLOG="$REPO_DIR/logs/sync.log"
+# 죽은 git 프로세스가 남긴 0바이트 .git/index.lock — 그 뒤 add·commit 이 전부 조용히 실패한다.
+# 2026-09-23 00:16 에 남은 락 하나로 36시간 동안 회차 기록이 원격에 안 올라갔다 (회차는 계속 돌았다).
+stale_index_lock(){
+  [ -n "$(find "$REPO_DIR/.git/index.lock" -mmin +10 2>/dev/null)" ] || return 0
+  pgrep -x git >/dev/null 2>&1 && return 0
+  rm -f "$REPO_DIR/.git/index.lock"; log "sync: 멈춘 .git/index.lock 제거"
+}
+# 에이전트가 $OUT 에 남긴 빌드 산출물(컴파일된 바이너리·node_modules)을 커밋 전에 버린다.
+# 100MB 를 넘는 파일이 한 번 커밋되면 GitHub 가 그 뒤 모든 push 를 영구히 거부한다 —
+# 2026-09-21 appstore-check(162MB)와 9-22 node(120MB) 두 개가 사흘치 push 를 막았다.
+big_artifact_guard(){
+  local f lim=${BIG_FILE_MB:-50}
+  # 진단 로그는 커지면 뒤쪽만 남긴다
+  [ -f "$SYNCLOG" ] && [ "$(stat -c %s "$SYNCLOG" 2>/dev/null || echo 0)" -gt 1000000 ] && { tail -n 500 "$SYNCLOG" > "$SYNCLOG.tmp" && mv "$SYNCLOG.tmp" "$SYNCLOG"; }
+  find "$STATE/runs" -maxdepth 6 -type d -name node_modules -prune -exec rm -rf {} + 2>/dev/null
+  while IFS= read -r f; do
+    [ -n "$f" ] || continue
+    log "sync: 대용량 산출물 제거 ($(du -m "$f" 2>/dev/null | cut -f1)MB) ${f#"$REPO_DIR"/}"
+    rm -f "$f"
+  done < <(find "$STATE/runs" "$REPO_DIR/logs" -type f -size +"${lim}"M 2>/dev/null)
+}
+# 동기화 실패는 조용히 넘기지 않는다 — 기록이 안 올라가면 대시보드·논문 데이터·헬스체크가 전부 과거를 본다.
+sync_failed(){
+  local nf; nf=$(( $(cat "$STATE/.sync-fail" 2>/dev/null || echo 0) + 1 )); echo "$nf" > "$STATE/.sync-fail"
+  log "aidev sync FAILED: $1 (연속 ${nf}회) — logs/sync.log"
+  [ "$nf" -ge 2 ] || return 0
+  local stamp="$STATE/.sync-alert-$RUN_DATE"; [ -f "$stamp" ] && return 0; : > "$stamp"
+  if [ -s "$STATE/.sync-blocked" ]; then
+    "$HERE/tg.sh" "🚨 aidev push 가 영구 차단됐습니다 — 100MB 초과 파일이 이미 커밋에 들어 있습니다.
+$(cat "$STATE/.sync-blocked")
+회차는 계속 돌지만 대시보드·논문 데이터는 멈춥니다. 그 파일을 커밋 기록에서 빼야 풀립니다 (git filter-branch 또는 origin/main 기준 스쿼시)." >/dev/null 2>&1 &
+    return 0
+  fi
+  "$HERE/tg.sh" "🚨 aidev 자기 기록이 ${nf}회 연속 원격에 못 올라갔습니다 — 대시보드·논문 데이터가 그 시점에 멈춥니다.
+$(tail -n 3 "$SYNCLOG" 2>/dev/null)" >/dev/null 2>&1 &
+}
 sync_repo(){
   [ "$SYNC" -eq 1 ] || return 0
   "$HERE/regress.sh" >>"$LOG" 2>&1 || true
@@ -955,14 +1009,21 @@ sync_repo(){
   # 대신 매 시도마다 다시 add·commit 해서 스태시할 것 자체를 남기지 않는다.
   ( flock -w 300 9 || exit 1
     cd "$REPO_DIR" || exit 1; rm -rf .git/rebase-merge .git/rebase-apply 2>/dev/null
+    stale_index_lock; big_artifact_guard
     for attempt in 1 2 3; do
-      git add -A state logs docs >/dev/null 2>&1
-      git diff --cached --quiet || git commit -qm "$1" >/dev/null 2>&1
-      git pull -q --rebase origin main >/dev/null 2>&1 || { git rebase --abort >/dev/null 2>&1; continue; }
-      git push -q origin HEAD >/dev/null 2>&1 && exit 0
+      { echo "--- $(date -Iseconds) sync attempt $attempt: $1"; } >>"$SYNCLOG"
+      git add -A state logs docs >>"$SYNCLOG" 2>&1
+      git diff --cached --quiet || git commit -qm "$1" >>"$SYNCLOG" 2>&1
+      git pull -q --rebase origin main >>"$SYNCLOG" 2>&1 || { git rebase --abort >/dev/null 2>&1; continue; }
+      git push -q origin HEAD >>"$SYNCLOG" 2>&1 && { rm -f "$STATE/.sync-blocked"; exit 0; }
+      # 100MB 초과 파일이 이미 커밋돼 있으면 재시도해도 영원히 거부된다 — 매 회차 3번씩 밀어 올리지 말고 멈춘다.
+      if tail -n 40 "$SYNCLOG" | grep -q "exceeds GitHub's file size limit\|pre-receive hook declined"; then
+        tail -n 40 "$SYNCLOG" | grep -m1 "exceeds GitHub's file size limit" > "$STATE/.sync-blocked" 2>/dev/null || echo "pre-receive hook declined" > "$STATE/.sync-blocked"
+        break
+      fi
     done
     exit 1 ) 9>"$HOME/.auto-improve/sync.lock" >>"$LOG" 2>&1 \
-    && log "aidev synced: $1" || log "aidev sync FAILED: $1"
+    && { log "aidev synced: $1"; rm -f "$STATE/.sync-fail"; } || sync_failed "$1"
 }
 
 # ---------------------------------------------------------------- 릴리즈
@@ -1565,7 +1626,22 @@ if [ $DRY -eq 0 ]; then
   fi
 fi
 
-candidates=(); since=$(date -d "-$DAYS days" +%s); touch "$STATE/fix-queue.tsv" "$STATE/run-queue.tsv"
+# 프로젝트별 열린 PR 수 — gh 를 한 번만 부르고 캐시한다 (회차마다 40개 저장소를 묻지 않는다).
+refresh_open_prs(){
+  local f="$STATE/open-prs.json"
+  [ -n "${AIDEV_SIM:-}" ] && { [ -f "$f" ] || echo '{}' > "$f"; return 0; }
+  [ -f "$f" ] && [ $(( ($(date +%s) - $(stat -c %Y "$f" 2>/dev/null || echo 0)) / 60 )) -lt "$OPENPR_TTL_MIN" ] && return 0
+  local tmp="$f.tmp"
+  if gh search prs --author=@me --state=open --limit 200 --json repository,number,createdAt > "$tmp" 2>/dev/null && [ -s "$tmp" ]; then
+    jq '[.[] | {p:.repository.name, n:.number, at:.createdAt}] | group_by(.p) | map({key:.[0].p, value:{open:length, oldest:(min_by(.at).at)}}) | from_entries' "$tmp" > "$f.j" 2>/dev/null \
+      && mv "$f.j" "$f" && log "open-prs: $(jq -r '[.[].open]|add // 0' "$f")건 열려 있음 ($(jq -r 'length' "$f") 저장소)"
+  fi
+  rm -f "$tmp" "$f.j"
+  [ -f "$f" ] || echo '{}' > "$f"
+}
+open_pr_count(){ jq -r --arg p "$1" '.[$p].open // 0' "$STATE/open-prs.json" 2>/dev/null || echo 0; }
+refresh_open_prs
+candidates=(); allcand=(); since=$(date -d "-$DAYS days" +%s); touch "$STATE/fix-queue.tsv" "$STATE/run-queue.tsv"
 for d in "$ROOT"/*/; do
   n=$(basename "$d"); [ -d "$d/.git" ] || continue
   [[ "$n" =~ $EXCLUDE_RE ]] && continue
@@ -1586,13 +1662,40 @@ for d in "$ROOT"/*/; do
   [ -f "$STATE/STOP-$n" ] && { log "skip $n: STOP"; continue; }
   if [ -z "$ONLY" ] && [ -s "$DATA/runs.jsonl" ]; then
     read -r streak lastd < <(jq -rs --arg p "$n" --argjson k "$DORMANT_AFTER" '[.[]|select(.project==$p)] | (.[-$k:]) as $l | [(($l|length)==$k and all($l[]; .result|test("no change"))), ($l[-1].date // "")] | @tsv' "$DATA/runs.jsonl" 2>/dev/null || echo "false ")
-    if [ "$streak" = true ] && [ -n "$lastd" ] && [ $(( ($(date +%s) - $(date -d "$lastd" +%s)) / 86400 )) -lt "$DORMANT_DAYS" ] && ! grep -q -P "^$n\t" "$STATE/fix-queue.tsv" "$STATE/run-queue.tsv" 2>/dev/null; then
+    if [ "$streak" = true ] && [ "$(policy "$n" '.tier')" != revenue ] && [ -n "$lastd" ] && [ $(( ($(date +%s) - $(date -d "$lastd" +%s)) / 86400 )) -lt "$DORMANT_DAYS" ] && ! grep -q -P "^$n\t" "$STATE/fix-queue.tsv" "$STATE/run-queue.tsv" 2>/dev/null; then
       log "skip $n: dormant (변경 없음 ${DORMANT_AFTER}연속, $lastd)"; continue
     fi
   fi
+  allcand+=("$n")
+  tier=$(policy "$n" '.tier')
+  # 성과 쿨다운: 쉬는 중이면 건너뛴다 (해제: rm state/<p>.cooldown)
+  cdf="$STATE/$n.cooldown"
+  if [ -z "$ONLY" ] && [ -f "$cdf" ]; then
+    if [ "$(date +%s)" -lt "$(cat "$cdf" 2>/dev/null || echo 0)" ]; then
+      log "skip $n: 성과 쿨다운 ($(( ( $(cat "$cdf") - $(date +%s) ) / 3600 ))시간 남음)"; continue
+    fi
+    rm -f "$cdf"
+  fi
+  if [ -z "$ONLY" ] && [ "$tier" != revenue ] && [ -s "$DATA/runs.jsonl" ]; then
+    nomerge=$(jq -rs --arg p "$n" --argjson k "$ROI_WINDOW" '[.[]|select(.project==$p)] | (.[-$k:]) as $l | (($l|length)==$k and all($l[]; (.outcome // "") | IN("merged","releasing","release-ready") | not))' "$DATA/runs.jsonl" 2>/dev/null || echo false)
+    if [ "$nomerge" = true ]; then
+      date -d "+$ROI_COOLDOWN_DAYS days" +%s > "$cdf"
+      log "skip $n: 최근 ${ROI_WINDOW}회차 머지 0건 — ${ROI_COOLDOWN_DAYS}일 쉰다"
+      "$HERE/tg.sh" "⏸ $n — 최근 ${ROI_WINDOW}회차에 머지가 한 건도 없어 ${ROI_COOLDOWN_DAYS}일 쉽니다.
+열린 PR 과 검증 실패를 먼저 보세요: state/stale-prs.md · 해제는 rm state/$n.cooldown" >/dev/null 2>&1 &
+      continue
+    fi
+  fi
+  # WIP 상한: 열린 PR 이 쌓인 프로젝트에는 새 개선을 얹지 않는다. 정리(fix-queue·shepherd)는 계속 잡힌다.
+  if [ -z "$ONLY" ] && [ "$(policy "$n" '.wip_max' | grep -E '^[0-9]+$' || echo "$WIP_MAX")" -le "$(open_pr_count "$n")" ]; then
+    log "skip $n: 열린 PR $(open_pr_count "$n")건 (WIP 상한) — 새 개선 대신 PR 정리가 먼저다"; continue
+  fi
   candidates+=("$n")
 done
-[ ${#candidates[@]} -gt 0 ] || { log "no candidates"; exit 0; }
+if [ ${#candidates[@]} -eq 0 ]; then
+  if [ ${#allcand[@]} -gt 0 ]; then log "no candidates: ${#allcand[@]}개 전부 WIP 상한(열린 PR ${WIP_MAX}건↑) — PR 정리부터 하세요"; else log "no candidates"; fi
+  exit 0
+fi
 log "candidates(${#candidates[@]}): ${candidates[*]}"
 
 CURSOR="$STATE/.cursor"; idx=$(cat "$CURSOR" 2>/dev/null || echo 0); picked=()
@@ -1600,7 +1703,7 @@ for ((i=0;i<COUNT && i<${#candidates[@]};i++)); do picked+=("${candidates[$(( (i
 FIX_PROJECT=""; FIX_NOTE_TEXT=""; FIX_SHA=""; FIXQ="$STATE/fix-queue.tsv"
 if [ -z "$ONLY" ] && [ -s "$FIXQ" ]; then
   while IFS=$'\t' read -r fp fnote fsha; do [ -n "$fp" ] || continue
-    if printf '%s\n' "${candidates[@]}" | grep -qx "$fp"; then picked=("$fp"); FIX_PROJECT="$fp"; FIX_NOTE_TEXT="$fnote"; FIX_SHA="${fsha:-}"; log "fix-queue: picked $fp"; break; fi
+    if printf '%s\n' "${allcand[@]}" | grep -qx "$fp"; then picked=("$fp"); FIX_PROJECT="$fp"; FIX_NOTE_TEXT="$fnote"; FIX_SHA="${fsha:-}"; log "fix-queue: picked $fp"; break; fi
   done < "$FIXQ"
 fi
 # fix-only 전용 트랙: fix-queue 말고는 아무것도 시작하지 않는다. 처리할 항목이 없으면 조용히 끝낸다.
@@ -1611,7 +1714,7 @@ fi
 RUN_PROJECT=""; RUN_ISSUE=""; RUN_SPEC=""; RUNQ="$STATE/run-queue.tsv"
 if [ -z "$FIX_PROJECT" ] && [ -z "$ONLY" ] && [ -s "$RUNQ" ]; then
   while IFS=$'\t' read -r rp rnote rnum rurg rspec; do [ -n "$rp" ] || continue
-    if printf '%s\n' "${candidates[@]}" | grep -qx "$rp"; then picked=("$rp"); RUN_PROJECT="$rp"; RUN_ISSUE="$rnum"; RUN_SPEC="${rspec:-}"; log "run-queue: picked $rp ($rnote)"; break
+    if printf '%s\n' "${allcand[@]}" | grep -qx "$rp"; then picked=("$rp"); RUN_PROJECT="$rp"; RUN_ISSUE="$rnum"; RUN_SPEC="${rspec:-}"; log "run-queue: picked $rp ($rnote)"; break
     else (cd "$REPO_DIR" && gh issue comment "$rnum" --body "\`$rp\` 은 지금 후보가 아닙니다(미커밋 변경/원격 없음/30일 무활동). 정리 후 다시 라벨을 달아 주세요." >/dev/null 2>&1; gh api -X DELETE "repos/hkjang/aidev/issues/$rnum/labels/run" >/dev/null 2>&1) || true; grep -v -P "^$rp\t" "$RUNQ" > "$RUNQ.tmp"; mv "$RUNQ.tmp" "$RUNQ"; fi
   done < "$RUNQ"
 fi
@@ -1720,6 +1823,23 @@ $campaign_note}" BRIEF_FILE="$OUT/brief.md" IDEAS_FILE="$OUT/ideas.json" OUT_DIR
                LESSONS="${lessons:-(없음)}" IDEAS_CONTENT="${ideas:-(없음)}" OPERATOR_PREFS="$prefs_md" LEDGER_CONTENT="$(tail -n 60 "$ledger" 2>/dev/null || echo '(없음)')" \
                envsubst '$TASK_NOTE $BRIEF_FILE $IDEAS_FILE $OUT_DIR $RUN_DATE $PROFILE $PROFILE_AGE $PROFILE_FILE $JOURNAL $JOURNAL_FILE $BRIEF_HISTORY $LESSONS $IDEAS_CONTENT $OPERATOR_PREFS $LEDGER_CONTENT' < "$REPO_DIR/agents/scout.md")
       run_agent scout "$sprompt" "$wt" "$sbud" "Read,Glob,Grep,Write,Bash(git log:*),Bash(git show:*),Bash(git diff:*),Bash(ls:*),Bash(cat:*),Bash(wc:*),Bash(find:*),Bash(go test:*),Bash(npm test:*)"
+      # 정찰이 예산 한도에 걸려 끝나면, 과제서가 남았는지와 무관하게 그 사실을 기록한다.
+      # 2026-09-23~24 이틀에 12회가 한도에 걸려 30달러를 쓰고 "과제서 없음" 으로 끝났다.
+      # 두 회차 연속 걸리는 저장소는 읽을 것이 실제로 많은 것이므로 그 프로젝트의 정찰 예산만 한 단계 올린다
+      # (역할 구조는 그대로 둔다 — 실험 arm 과 섞이면 안 된다).
+      if jq -e '.subtype=="error_max_budget_usd"' "$OUT/agent-scout.json" >/dev/null 2>&1; then
+        ob=$(( $(policy "$n" '.scout_overbudget' | grep -E '^[0-9]+$' || echo 0) + 1 ))
+        policy_set "$n" ".scout_overbudget=$ob"
+        log "$n: 정찰 예산 초과 (\$$sbud, 연속 ${ob}회)$( [ -s "$OUT/brief.md" ] && echo " — 과제서 초안은 남음")"
+        if [ "$ob" -ge 2 ]; then
+          newb=$(awk -v b="$sbud" 'BEGIN{v=b+1; if(v>4)v=4; print v}')
+          policy_set "$n" ".budget_usd.scout=$newb | .scout_overbudget=0 | .scout_budget_note=\"정찰이 연속 두 번 예산을 넘겨 \$$sbud → \$$newb ($RUN_DATE)\""
+          log "$n: 정찰 예산 상향 \$$sbud → \$$newb"
+          "$HERE/tg.sh" "💸 $n — 정찰이 예산(\$$sbud)을 두 회차 연속 넘겨 \$$newb 로 올렸습니다. 계속 넘치면 state/$n.policy.json 의 agents.scout 를 false 로 두세요." >/dev/null 2>&1 &
+        fi
+      elif jq -e '.type=="result" and (.is_error!=true)' "$OUT/agent-scout.json" >/dev/null 2>&1; then
+        [ "$(policy "$n" '.scout_overbudget' | grep -E '^[0-9]+$' || echo 0)" != 0 ] && policy_set "$n" '.scout_overbudget=0'
+      fi
       # 정찰은 읽기만 한다 — 작업 트리에 무엇을 남겼든 버린다
       git -C "$wt" reset -q --hard "$BASE_SHA" >>"$LOG" 2>&1; git -C "$wt" clean -qfd >>"$LOG" 2>&1
       # 정찰이 프로필을 새로 썼으면(비밀값 없을 때만) 영구 기록으로 — 다음 회차의 모든 역할이 읽는다
@@ -1732,7 +1852,7 @@ $campaign_note}" BRIEF_FILE="$OUT/brief.md" IDEAS_FILE="$OUT/ideas.json" OUT_DIR
 (과제서의 근거가 지금 코드와 맞지 않으면 그 이유를 원장에 적고 '차선 후보' 를 고르세요. 절차 1~3은 과제서로 갈음합니다.)
 $(cat "$OUT/brief.md")"
         [ -s "$OUT/ideas.json" ] && $GATE ideas "$OUT/ideas.json" >/dev/null 2>&1 && ideas=$(jq -r '.[]? | select(.status=="pending") | "- [\(.value)/\(.risk)/\(.size)] \(.title) — \(.note // "")"' "$OUT/ideas.json" 2>/dev/null | head -n 12)
-      else stage scout failed "과제서 없음 — 구현자가 직접 고른다"; fi
+      else stage scout failed "과제서 없음 — 구현자가 직접 고른다$( jq -e '.subtype=="error_max_budget_usd"' "$OUT/agent-scout.json" >/dev/null 2>&1 && echo " (예산 초과로 중단)")"; fi
     else stage scout hold "예산 부족 — 구현자가 직접 고른다"; fi
   fi
   prompt=$(LEDGER_FILE="$OUT/ledger-entry.md" IDEAS_FILE="$OUT/ideas.json" OUT_DIR="$OUT" RUN_DATE="$RUN_DATE" FIX_NOTE="$fix_note" LESSONS="${lessons:-(없음)}" IDEAS_CONTENT="${ideas:-(없음)}" \

@@ -19,6 +19,9 @@ HERE = os.path.dirname(os.path.abspath(__file__)); REPO_DIR = os.path.dirname(HE
 STATE = os.path.join(REPO_DIR, "state"); DATA = os.path.join(REPO_DIR, "docs", "data")
 ROOT = os.environ.get("ROOT", "/mnt/c/Users/USER/projects")
 OUT = os.path.join(DATA, "postmerge.json"); WINDOW = 30
+# 관찰 창이 며칠 이상 찬 PR 만 비율에 넣는다. 7 일이 기본이지만, 실험이 막 시작한 시점에는
+# 모든 PR 이 여기서 걸러져 표가 통째로 비어 보인다 (2026-09-24: 실험 5일차, 7일 이상 0건).
+MIN_OBS = int(os.environ.get("POSTMERGE_MIN_OBS", "7"))
 FIX_RE = re.compile(r"\b(fix|hotfix|revert|regress|bug|broken|repair)\b|수정|되돌|고침|고쳤|회귀", re.I)
 NOFETCH = "--no-fetch" in sys.argv
 
@@ -110,15 +113,22 @@ def main():
                 risk = m.group(1)
             prs.append({"pr": pr, "project": project, "merge_sha": merge_sha[:10], "merged_at": merged_at, "files": len(files),
                         "corrective": corrective[:20], "days_observed": days, "risk": risk,
-                        "approved_by": appr_by.get(pr, "auto"), "campaign": r.get("campaign") or ""})
+                        "approved_by": appr_by.get(pr, "auto"), "campaign": r.get("campaign") or "",
+                        # 어느 실험 arm 의 회차가 만든 PR 인지 — 이걸 적어야 품질 축을 arm 별로 볼 수 있다
+                        "experiment": r.get("experiment") or "", "arm": r.get("arm") or ""})
     # 요약: 관찰 7일 이상인 PR 중 수정 커밋이 하나라도 있던 비율, 층별
-    def rate(rows):
-        rows = [p for p in rows if p["days_observed"] >= 7]
+    def rate(rows, min_obs=MIN_OBS):
+        rows = [p for p in rows if p["days_observed"] >= min_obs]
         hit = sum(1 for p in rows if p["corrective"])
         human = sum(1 for p in rows if any(not c["by_runner"] for c in p["corrective"]))
         return {"n": len(rows), "with_fix": hit, "rate": round(hit / len(rows), 3) if rows else None,
                 "with_human_fix": human, "human_rate": round(human / len(rows), 3) if rows else None}
-    summary = {"all": rate(prs),
+    arms = sorted({p["arm"] for p in prs if p["arm"]})
+    summary = {"all": rate(prs), "min_observed_days": MIN_OBS,
+               # 아직 창이 안 찬 시점에도 읽을 수 있게 3일 기준을 같이 낸다 (잠정치)
+               "all_3d": rate(prs, 3),
+               "by_arm": {a: rate([p for p in prs if p["arm"] == a]) for a in arms},
+               "by_arm_3d": {a: rate([p for p in prs if p["arm"] == a], 3) for a in arms},
                "by_approval": {k: rate([p for p in prs if p["approved_by"] == k]) for k in ("auto", "human", "shepherd")},
                "by_risk": {k: rate([p for p in prs if p["risk"] == k]) for k in ("low", "medium", "high", "")},
                "by_campaign": {"campaign": rate([p for p in prs if p["campaign"]]), "exploratory": rate([p for p in prs if not p["campaign"]])},
@@ -135,7 +145,7 @@ def main():
     os.makedirs(DATA, exist_ok=True)
     json.dump({"generated": now.isoformat(timespec="seconds"), "window_days": WINDOW, "prs": prs, "summary": summary},
               open(OUT, "w", encoding="utf-8"), ensure_ascii=False, indent=1)
-    print(f"postmerge: {len(prs)} merged PRs · {summary['all']} · by approval {summary['by_approval']} · median days to first fix {summary['median_days_to_first_fix']}")
+    print(f"postmerge: {len(prs)} merged PRs · {summary['all']} (관찰 {MIN_OBS}일↑) · 3일↑ {summary['all_3d']} · by approval {summary['by_approval']} · median days to first fix {summary['median_days_to_first_fix']}")
 
 
 if __name__ == "__main__":

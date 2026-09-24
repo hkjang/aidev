@@ -28,6 +28,14 @@ if [ -f "$LOCK" ] && ! flock -n "$LOCK" true 2>/dev/null && [ -z "$run_pid" ]; t
   rm -f "$LOCK"; actions+=("소유 프로세스 없는 잠금 파일을 제거했다")
 fi
 [ "$since_last" -gt "$STALE_SEC" ] && [ -z "$run_pid" ] && problems+=("마지막 회차가 $((since_last/3600))시간 전 ($last_ts) — 스케줄러/WSL 확인 필요")
+# 자기 기록이 원격에 올라가고 있나 — 회차는 도는데 push 가 막히면 대시보드·논문 데이터가 조용히 과거에 멈춘다.
+if [ -n "$(find "$REPO_DIR/.git/index.lock" -mmin +10 2>/dev/null)" ] && ! pgrep -x git >/dev/null 2>&1; then
+  rm -f "$REPO_DIR/.git/index.lock" && actions+=("멈춘 .git/index.lock 을 제거했다 — 커밋이 막혀 있었다")
+fi
+sync_fail=$(cat "$REPO_DIR/state/.sync-fail" 2>/dev/null || echo 0)
+[ "${sync_fail:-0}" -ge 2 ] && problems+=("aidev 자기 동기화 ${sync_fail}회 연속 실패 — logs/sync.log 확인")
+ahead=$(git -C "$REPO_DIR" rev-list --count origin/main..HEAD 2>/dev/null || echo 0)
+[ "${ahead:-0}" -gt 30 ] && problems+=("원격에 못 올린 커밋 ${ahead}개 — push 가 막혀 있다 (100MB 초과 파일/인증 확인, logs/sync.log)")
 gh auth status >/dev/null 2>&1 || problems+=("gh 인증 실패 — gh auth login 필요")
 disk=$(df -P "$REPO_DIR" | awk 'NR==2{print $5}' | tr -d '%'); [ "${disk:-0}" -gt 90 ] && problems+=("디스크 ${disk}% 사용")
 docker info >/dev/null 2>&1 || problems+=("docker 를 쓸 수 없음 — 자산 빌드 실패 예상")
@@ -83,6 +91,11 @@ $(printf -- '- %s\n' "${problems[@]:-}" "${actions[@]:-}" | grep -v '^- $')"
     fi
   fi
 fi
+# 오래된 열린 PR: 6시간마다 세어 보고(닫지는 않는다 — bin/pr-gc.sh --close 는 사람이 부른다).
+prgc_stamp="$HOME/.auto-improve/.prgc"
+if [ $(( now - $(stat -c %Y "$prgc_stamp" 2>/dev/null || echo 0) )) -gt 21600 ]; then
+  date +%s > "$prgc_stamp"; "$HERE/pr-gc.sh" >>"$REPO_DIR/logs/pr-gc.log" 2>&1 || true
+fi
 # 러너가 스스로 설명하지 못하는 것이 있으면 물어본다. 안에 전체 간격(기본 2시간)과
 # 같은 것을 다시 묻지 않는 표시가 있어 헬스체크마다 부르는 것이 안전하다.
 "$HERE/ask-claude.sh" >>"$REPO_DIR/logs/ask-claude.log" 2>&1 || true
@@ -109,6 +122,6 @@ python3 "$HERE/collect-guides.py" >/dev/null 2>&1 || true
 python3 "$HERE/publish-guides.py" >>"$REPO_DIR/logs/publish-guides.log" 2>&1 || true
 
 # health.json 을 사이트에 반영 (회차가 안 도는 상황이 바로 이 스크립트가 잡는 것이므로 직접 푸시)
-( flock -w 300 9 || exit 1; cd "$REPO_DIR" && rm -rf .git/rebase-merge .git/rebase-apply 2>/dev/null; git add docs/data/health.json docs/guides >/dev/null 2>&1 && { git diff --cached --quiet || git -c user.name=hkjang -c user.email=gagagiga@naver.com commit -qm "health: $(date '+%F %H:%M') $( [ ${#problems[@]} -eq 0 ] && echo ok || echo "${#problems[@]} problem(s)")"; } \
-  && { git pull -q --rebase origin main || { git rebase --abort >/dev/null 2>&1; git add docs/data/health.json; git pull -q --rebase origin main; }; } && git push -q origin main ) 9>"$HOME/.auto-improve/sync.lock" >/dev/null 2>&1 || true
+( flock -w 300 9 || exit 1; cd "$REPO_DIR" && rm -rf .git/rebase-merge .git/rebase-apply 2>/dev/null; { pgrep -x git >/dev/null 2>&1 || rm -f .git/index.lock; } 2>/dev/null; git add docs/data/health.json docs/guides >/dev/null 2>&1 && { git diff --cached --quiet || git -c user.name=hkjang -c user.email=gagagiga@naver.com commit -qm "health: $(date '+%F %H:%M') $( [ ${#problems[@]} -eq 0 ] && echo ok || echo "${#problems[@]} problem(s)")"; } \
+  && { git pull -q --rebase origin main || { git rebase --abort >/dev/null 2>&1; git add docs/data/health.json; git pull -q --rebase origin main; }; } && git push -q origin main ) 9>"$HOME/.auto-improve/sync.lock" >>"$REPO_DIR/logs/sync.log" 2>&1 || true
 exit 0

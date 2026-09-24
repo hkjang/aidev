@@ -74,6 +74,8 @@ def main():
         merged = [r for r in rows if r.get("outcome") in merged_out]
         costs = [cost_by_run.get(r.get("run_id"), 0.0) for r in rows]
         pm_rows = [pm[r["pr"]] for r in merged if r.get("pr") in pm and pm[r["pr"]].get("days_observed", 0) >= 7]
+        # 관찰 3일 기준 잠정치 — 실험 초기에는 7일 기준이 전부 비어 "측정 실패" 로 오독된다 (2026-09-24)
+        pm_rows3 = [pm[r["pr"]] for r in merged if r.get("pr") in pm and pm[r["pr"]].get("days_observed", 0) >= 3]
         m = {
             "n": len(rows),
             "verify_pass": {"n": len(committed), "rate": rate([st(r, "verify") == "passed" for r in committed]), "ci": boot_ci([1 if st(r, "verify") == "passed" else 0 for r in committed])},
@@ -88,6 +90,9 @@ def main():
             "repair_success": {"n": len(repaired), "rate": rate([1 if st(r, "repair") == "done" else 0 for r in repaired])},
             "arbiter": {"n": len(arb), "approved": sum(1 for r in arb if st(r, "arbiter") == "approved")},
             "postmerge_human_fix_30d": {"n": len(pm_rows), "rate": rate([1 if any(not c["by_runner"] for c in p["corrective"]) else 0 for p in pm_rows])},
+            "postmerge_fix_3d": {"n": len(pm_rows3), "rate": rate([1 if p["corrective"] else 0 for p in pm_rows3])},
+            "pm_observed": {"n": len([r for r in merged if r.get("pr") in pm]),
+                            "max_days": max([pm[r["pr"]].get("days_observed", 0) for r in merged if r.get("pr") in pm], default=0)},
         }
         return m
 
@@ -110,13 +115,16 @@ def main():
         return "—" if v is None else str(v)
 
     lines = [f"# 비교 실험 {exp_id} — arm 별 지표", "", f"회차 {len(runs)}건 · 생성 {__import__('datetime').datetime.now().isoformat(timespec='minutes')}", "",
-             "| arm | 회차 | 검증 통과 | 비평 거절(1회↑) | PR 도달 | 머지 | 검토 대기 | 회차 비용 | 머지당 비용 | 과제서 채택 | 수리 성공 | 중재(승인/전체) | 머지 뒤 30일 사람 수정 |",
+             "| arm | 회차 | 검증 통과 | 비평 거절(1회↑) | PR 도달 | 머지 | 검토 대기 | 회차 비용 | 머지당 비용 | 과제서 채택 | 수리 성공 | 중재(승인/전체) | 머지 뒤 3일 수정(잠정) | 머지 뒤 30일 사람 수정 |",
              "|---|---|---|---|---|---|---|---|---|---|---|---|---|"]
     for a in arms:
         m = result["arms"][a]
-        lines.append(f"| {a} | {m['n']} | {cell(a, 'verify_pass')} | {cell(a, 'critic_rejected_ever')} | {cell(a, 'pr_reached')} | {cell(a, 'merged')} | {cell(a, 'review_pending')} | {cell(a, 'cost_per_round', 'mean')} | {'—' if m['cost_per_merge'] is None else '$' + str(m['cost_per_merge'])} | {cell(a, 'brief_accepted')} | {cell(a, 'repair_success')} | {m['arbiter']['approved']}/{m['arbiter']['n']} | {cell(a, 'postmerge_human_fix_30d')} |")
+        lines.append(f"| {a} | {m['n']} | {cell(a, 'verify_pass')} | {cell(a, 'critic_rejected_ever')} | {cell(a, 'pr_reached')} | {cell(a, 'merged')} | {cell(a, 'review_pending')} | {cell(a, 'cost_per_round', 'mean')} | {'—' if m['cost_per_merge'] is None else '$' + str(m['cost_per_merge'])} | {cell(a, 'brief_accepted')} | {cell(a, 'repair_success')} | {m['arbiter']['approved']}/{m['arbiter']['n']} | {cell(a, 'postmerge_fix_3d')} | {cell(a, 'postmerge_human_fix_30d')} |")
     lines += ["", "RQ 매핑: " + " · ".join(f"{k}: {v}" for k, v in exp.get("questions", {}).items()), "",
-              "비율의 대괄호는 부트스트랩 95% 신뢰구간. 캠페인 회차 비중: " + ", ".join(f"{a} {result['campaign_share'][a] if result['campaign_share'][a] is not None else '—'}" for a in arms) + "."]
+              f"품질 축 성숙도: 머지된 실험 PR {sum(result['arms'][a]['pm_observed']['n'] for a in arms)}건, 관찰 최대 "
+             f"{max([result['arms'][a]['pm_observed']['max_days'] for a in arms], default=0)}일 — 30일 열은 관찰 7일이 차야 값이 생긴다(빈 값은 측정 실패가 아니다).",
+             "",
+             "비율의 대괄호는 부트스트랩 95% 신뢰구간. 캠페인 회차 비중: " + ", ".join(f"{a} {result['campaign_share'][a] if result['campaign_share'][a] is not None else '—'}" for a in arms) + "."]
     os.makedirs(OUTD, exist_ok=True)
     json.dump(result, open(os.path.join(OUTD, f"ab-{exp_id}.json"), "w", encoding="utf-8"), ensure_ascii=False, indent=1)
     open(os.path.join(OUTD, f"ab-{exp_id}.md"), "w", encoding="utf-8").write("\n".join(lines) + "\n")

@@ -46,8 +46,27 @@ while IFS= read -r item; do
   summary=$(jq -r '.summary' <<<"$item"); question=$(jq -r '.question' <<<"$item")
   key=$(printf '%s|%s' "$kind" "$subject" | md5sum | cut -c1-16); stamp="$SEEN/$key"
   # 같은 것을 매번 다시 묻지 않는다. 하루가 지나도 그대로면 다시 묻는다 — 안 풀렸다는
-  # 사실 자체가 새 소식이다.
-  if [ -f "$stamp" ] && [ "$(( $(date +%s) - $(stat -c %Y "$stamp" 2>/dev/null || echo 0) ))" -lt "$QUIET_SECONDS" ]; then
+  # 사실 자체가 새 소식이다. 다만 되풀이될수록 간격을 늘린다: umm 의 stuck-dirty 는
+  # 7일 연속 같은 답을 사서 같은 알림을 보냈고, 아무것도 달라지지 않았다 (2026-09-18~24).
+  # 횟수 기록이 없으면 지난 진단 기록에서 센다 — 이 파일이 생기기 전의 반복도 반복이다
+  [ -f "$stamp.n" ] || jq -r --arg k "$kind" --arg s "$subject" 'select(.kind==$k and .subject==$s)|.ts' "$DIAGNOSES" 2>/dev/null | wc -l > "$stamp.n"
+  reps=$(cat "$stamp.n" 2>/dev/null || echo 0); reps=${reps:-0}
+  mult=$(( reps < 1 ? 1 : (reps > 7 ? 7 : reps) ))
+  if [ -f "$stamp" ] && [ "$(( $(date +%s) - $(stat -c %Y "$stamp" 2>/dev/null || echo 0) ))" -lt "$(( QUIET_SECONDS * mult ))" ]; then
+    continue
+  fi
+  # 세 번 물어도 그대로면 더 사지 않는다 — 진단이 아니라 사람의 결정이 없는 것이다.
+  if [ "$reps" -ge 3 ] && [ "$DRY" -eq 0 ]; then
+    : > "$stamp"; echo "$(( reps + 1 ))" > "$stamp.n"
+    case "$kind" in
+      stuck-dirty) how="git -C ../$subject status --porcelain 으로 확인 → 커밋하거나, 생성물이면 state/$subject.policy.json 의 ignore_dirty 에 경로를 넣으세요";;
+      *) how="state/diagnoses.jsonl 에서 [$kind] $subject 의 지난 진단을 보세요";;
+    esac
+    "$HERE/tg.sh" "🙋 [$kind] $subject — 같은 상태가 ${reps}번째입니다. 진단은 그만 사고 사람 결정을 기다립니다.
+$summary
+
+할 일: $how" >/dev/null 2>&1 &
+    echo "[$kind] $subject → ${reps}회 반복, 질문 대신 에스컬레이션"
     continue
   fi
 
@@ -83,7 +102,7 @@ $question
   text=$(jq -r '.result // ""' "$out" 2>/dev/null)
   cost=$(jq -r '.total_cost_usd // 0' "$out" 2>/dev/null)
   verdict=$(grep -oE '\{"cause".*\}' <<<"$text" | tail -1)
-  : > "$stamp"
+  : > "$stamp"; echo "$(( reps + 1 ))" > "$stamp.n"
 
   jq -cn --arg ts "$(date -Iseconds)" --arg kind "$kind" --arg subject "$subject" \
      --arg summary "$summary" --arg text "$text" --argjson verdict "${verdict:-null}" \
