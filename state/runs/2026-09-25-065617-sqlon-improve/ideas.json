@@ -1,20 +1,128 @@
 [
-  {"title":"비동기 쿼리 제출 POST /api/query/submit 이 binds 를 받지 않아 동기 경로와 실행 계약이 어긋남","value":4,"risk":2,"size":"S","status":"pending","note":"이번 회차 선택. dbapi.go:802 제출 핸들러 요청 구조체에 binds 필드 없음, ExecOptions 에도 미전달. 동기 경로는 dbapi.go:203/235 에서 전달하고 manager.go:397 이 QueryContext 에 넘김 — 소스로 확인. 캐시 키(execguard.go:88)가 binds 를 무시하는 별건 결함은 2026-09-24 에 이미 고쳐졌으므로 재구현 금지.","updated":"2026-09-25"},
-  {"title":"OpenAPI /api/query/submit 스키마에 binds 누락","value":2,"risk":1,"size":"S","status":"pending","note":"openapi.go:570 requestBody 에 profile_id/sql/max_rows/timeout_seconds 만 있음 — 확인. 위 1순위 과제에 포함시켜 함께 고친다.","updated":"2026-09-25"},
-  {"title":"이미 끝난 비동기 잡의 취소가 200 {\"canceled\":true} 를 돌려줌","value":2,"risk":1,"size":"S","status":"pending","note":"신규. asyncquery.go cancelJob 은 Status!=\"running\" 이면 아무것도 하지 않고 true 를 반환하고, dbapi.go:862 핸들러가 그대로 canceled:true 로 응답한다 — 소스 확인, HTTP 재현 미실행. done/failed 잡에는 사실과 다른 응답이다.","updated":"2026-09-25"},
-  {"title":"단독(마스터 토큰) 모드에서 actorName(nil)==\"\" 이라 사용자당 잡 한도 5가 전역 한도로 동작","value":2,"risk":2,"size":"S","status":"pending","note":"신규. auth.go:181 actorName(nil) 은 빈 문자열, asyncquery.go runningFor 는 User 문자열로 세므로 인증이 꺼진 배포에서는 모든 잡이 한 버킷에 들어간다 — 소스 확인, 실행 재현 미실행. 의도된 동작일 수 있어 가치 낮음.","updated":"2026-09-25"},
-  {"title":"requireAdmin 도 인증 사용자를 컨텍스트에 실어 admin:* 감사 전체에 actor 남기기","value":3,"risk":1,"size":"M","status":"pending","note":"현 HEAD(57f99b7)에 선행 actor 변경이 여전히 미통합. 과거 성공 재구현 금지 규칙에 따라 보류 유지.","updated":"2026-09-25"},
-  {"title":"docs/auth.md·rest-api.md·security.md 정본 작성","value":3,"risk":1,"size":"M","status":"pending","note":"세 파일 0바이트 상태 유지(이번 회차 미재확인, 이전 회차 확인 기준). 실제 라우트를 소스에서 확인한 뒤 써야 한다.","updated":"2026-09-25"},
-  {"title":"빈 docs/README.md 를 실제 문서 색인으로 채우기","value":3,"risk":1,"size":"S","status":"pending","note":"이번 회차 차선 후보. 0바이트이며 루트 README 의 링크 대상. 비어 있지 않은 가이드만 연결하고 v0.1.2 기준임을 명시.","updated":"2026-09-25"},
-  {"title":"관리자 가이드 §3.2 의 DB 프로파일 생성 curl 을 실제 POST /api/db-profiles 계약으로 교정","value":3,"risk":1,"size":"S","status":"pending","note":"3순위. admin_guide.md 는 POST /api/fleet/instances 를 안내하지만 그 라우트는 GET 만 존재하고 생성은 registerDBAPI 의 POST /api/db-profiles. reports 중복 정본/PDF 범위 정리 필요.","updated":"2026-09-25"},
-  {"title":"GitHub Actions CI 추가 — go vet + go test ./... (통합 테스트 제외)","value":3,"risk":1,"size":"S","status":"pending","note":".github 에는 FUNDING.yml 만 존재. 이번 회차에도 internal/mcp 테스트 통과 확인. workflows 보호 경로라 보류 유지.","updated":"2026-09-25"},
-  {"title":"changes.html 에서 이미 승인한 사용자의 승인 단추 비활성화","value":2,"risk":1,"size":"S","status":"pending","note":"actor 변경이 현 HEAD 에 미통합이라 선행 조건 미충족. 보류 유지.","updated":"2026-09-25"},
-  {"title":"화면의 인라인 이벤트 핸들러를 걷어내고 script-src nonce 정책 강제","value":4,"risk":3,"size":"L","status":"pending","note":"한 회차(45분) 범위를 초과. 보류 유지.","updated":"2026-09-25"},
-  {"title":"OIDC 콜백의 error 분기에서 state 쿠키 일치 확인","value":2,"risk":1,"size":"S","status":"pending","note":"handleSSOCallback 에서 error 분기가 state 검사보다 앞선다(이전 회차 확인). auth 보호 경로라 이번 회차 회피.","updated":"2026-09-25"},
-  {"title":"OIDC 로그인에 nonce 와 PKCE(S256) 추가","value":3,"risk":2,"size":"M","status":"pending","note":"인증 계약 확장이므로 별도 회차. auth 보호 경로.","updated":"2026-09-25"},
-  {"title":".gitattributes 로 Go 파일 LF 고정 + 일괄 gofmt","value":3,"risk":2,"size":"M","status":"pending","note":"CHANGELOG.md 가 LF/CRLF 혼합. 미통합 브랜치와의 충돌 위험 때문에 보류 유지 — 다만 개별 과제에서 CHANGELOG 편집 시 diff 범위를 반드시 확인할 것.","updated":"2026-09-25"},
-  {"title":"관리자 가이드의 메타 저장소·감사 로그 암호화 설명을 실제 소스에 맞추기","value":3,"risk":2,"size":"M","status":"pending","note":"admin_guide.md 의 감사 암호화 주장 전체 런타임 경로 미확인. reports/PDF 정본 범위를 먼저 정해야 한다.","updated":"2026-09-25"},
-  {"title":"결과 캐시 키가 바인드 변수를 무시해 다른 파라미터의 결과를 돌려줌","value":5,"risk":1,"size":"S","status":"rejected","note":"2026-09-24 회차에서 성공적으로 고침(커밋 57563cf). 현 브랜치 main@57f99b7 에는 미통합이지만 과거 성공 재구현 금지 규칙에 따라 다시 고르지 않는다.","updated":"2026-09-25"},
-  {"title":"비동기 잡의 10분 만료를 조회·취소 경로에서도 적용","value":4,"risk":1,"size":"S","status":"rejected","note":"2026-09-21 회차 성공(커밋 c941cb9). 현 HEAD 의 jobView/cancelJob 에는 prune 호출이 없어 미통합 상태지만 재구현 금지.","updated":"2026-09-25"},
-  {"title":"프로파일 PUT 에서 visibility 생략 시 기존 공개 범위 보존","value":4,"risk":1,"size":"S","status":"rejected","note":"2026-09-22 회차 성공(커밋 ccbd0e7). 2026-09-24 회차가 재제출을 기각한 항목이므로 다시 고르지 않는다.","updated":"2026-09-25"}
+  {
+    "title": "비동기 쿼리 제출 POST /api/query/submit 이 binds 를 받지 않아 동기 경로와 실행 계약이 어긋남",
+    "value": 4,
+    "risk": 2,
+    "size": "S",
+    "status": "done",
+    "note": "이번 회차 구현(13acd4e). 제출 핸들러 요청 구조체에 Binds []any 추가 → submitAsyncQuery → asyncJob.opts(비공개) → executeGuarded. 실제 로그인/mux HTTP 로 RED→GREEN, 실 DB 3종으로 binds 가 드라이버까지 감을 별도 확인. 동기 라우트는 /api/query 가 아니라 /api/query/execute.",
+    "updated": "2026-09-25"
+  },
+  {
+    "title": "OpenAPI /api/query/submit 스키마에 binds 누락",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "done",
+    "note": "openapi.go:570 requestBody 에 \"binds\":{\"type\":\"array\"} 추가. 동기 스키마(openapi.go:532)와 같은 표기.",
+    "updated": "2026-09-25"
+  },
+  {
+    "title": "결과 캐시 키가 binds 를 무시해 다른 파라미터의 결과를 돌려줌",
+    "value": 5,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "이 브랜치에서 재확인: execguard.go 의 cacheKey(profile, sql string, maxRows int) 는 여전히 binds 를 받지 않는다(execguard_test.go:49 가 3인자로 호출). 2026-09-24 의 수정 커밋 57563cf 는 이 브랜치에 미통합이라 결함이 살아 있다. 이번 회차에 binds 가 비동기에도 전달되기 시작했으므로 노출 경로가 하나 늘었다(비동기는 캐시 읽기만 건너뛰고 put 은 한다). 과거 성공 재구현 금지 규칙과 충돌하므로 러너가 57563cf 통합 여부를 먼저 판단할 것.",
+    "updated": "2026-09-25"
+  },
+  {
+    "title": "이미 끝난 비동기 잡의 취소가 200 {\"canceled\":true} 를 돌려줌",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "asyncquery.go cancelJob 은 Status!=\"running\" 이면 아무것도 하지 않고 true 를 반환하고 dbapi.go 핸들러가 그대로 canceled:true 로 응답한다 — 소스 확인. done/failed 잡에는 사실과 다른 응답.",
+    "updated": "2026-09-25"
+  },
+  {
+    "title": "단독(마스터 토큰) 모드에서 actorName(nil)==\"\" 이라 사용자당 잡 한도 5가 전역 한도로 동작",
+    "value": 2,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "auth.go actorName(nil) 은 빈 문자열, asyncquery.go runningFor 는 User 문자열로 센다. 인증이 꺼진 배포에서는 모든 잡이 한 버킷. 의도된 동작일 수 있어 가치 낮음.",
+    "updated": "2026-09-25"
+  },
+  {
+    "title": "requireAdmin 도 인증 사용자를 컨텍스트에 실어 admin:* 감사 전체에 actor 남기기",
+    "value": 3,
+    "risk": 1,
+    "size": "M",
+    "status": "pending",
+    "note": "현 HEAD(57f99b7)에 선행 actor 변경이 여전히 미통합. 과거 성공 재구현 금지 규칙에 따라 보류 유지.",
+    "updated": "2026-09-25"
+  },
+  {
+    "title": "docs/auth.md·rest-api.md·security.md 정본 작성",
+    "value": 3,
+    "risk": 1,
+    "size": "M",
+    "status": "pending",
+    "note": "세 파일 0바이트(이번 회차 미재확인). 실제 라우트를 소스에서 확인한 뒤 써야 한다 — 이번 회차에 과제서의 /api/query 표기가 실제로는 /api/query/execute 였던 사례가 그 이유를 보여준다.",
+    "updated": "2026-09-25"
+  },
+  {
+    "title": "빈 docs/README.md 를 실제 문서 색인으로 채우기",
+    "value": 3,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "이번 회차 차선 후보였으나 주과제를 끝내 미선택. 0바이트이며 루트 README 의 링크 대상. 비어 있지 않은 가이드만 연결하고 v0.1.2 기준임을 명시.",
+    "updated": "2026-09-25"
+  },
+  {
+    "title": "관리자 가이드 §3.2 의 DB 프로파일 생성 curl 을 실제 POST /api/db-profiles 계약으로 교정",
+    "value": 3,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "admin_guide.md 는 POST /api/fleet/instances 를 안내하지만 그 라우트는 GET 만 존재하고 생성은 registerDBAPI 의 POST /api/db-profiles.",
+    "updated": "2026-09-25"
+  },
+  {
+    "title": "GitHub Actions CI 추가 — go vet + go test ./... (통합 테스트 제외)",
+    "value": 3,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": ".github 에는 FUNDING.yml 만 존재. workflows 보호 경로라 보류 유지.",
+    "updated": "2026-09-25"
+  },
+  {
+    "title": "changes.html 에서 이미 승인한 사용자의 승인 단추 비활성화",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "actor 변경이 현 HEAD 에 미통합이라 선행 조건 미충족. 보류 유지.",
+    "updated": "2026-09-25"
+  },
+  {
+    "title": "화면의 인라인 이벤트 핸들러를 걷어내고 script-src nonce 정책 강제",
+    "value": 4,
+    "risk": 3,
+    "size": "L",
+    "status": "pending",
+    "note": "한 회차(45분) 범위를 초과. 보류 유지.",
+    "updated": "2026-09-25"
+  },
+  {
+    "title": "OIDC 콜백의 error 분기에서 state 쿠키 일치 확인",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "handleSSOCallback 에서 error 분기가 state 검사보다 앞선다(이전 회차 확인). auth 보호 경로라 이번 회차 회피.",
+    "updated": "2026-09-25"
+  },
+  {
+    "title": "통합 테스트에 바인드 변수 계약 커버리지 추가",
+    "value": 3,
+    "risk": 1,
+    "size": "S",
+    "status": "done",
+    "note": "TestExecuteBindsReachDriver 를 test/integration 에 추가 — pg/mysql/mariadb 에서 ExecOptions.Binds 가 드라이버 인자로 가고, binds 없는 플레이스홀더 SQL 은 실패함을 실 DB 로 확인. 도커 컨테이너가 있어야 돈다(-tags integration).",
+    "updated": "2026-09-25"
+  }
 ]
