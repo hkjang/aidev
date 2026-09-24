@@ -1,27 +1,27 @@
 {
- "generated": "2026-09-24T15:43:20+09:00",
+ "generated": "2026-09-24T16:08:36+09:00",
  "site": "https://hkjang.github.io/aidev",
- "description": "Claude Code 자율 개선 에이전트가 hkjang 의 프로젝트를 개선·테스트·머지·릴리즈한 일일 보고. 오늘 30회차·릴리즈 11건, 누적 1355회차·릴리즈 452건, 주의 필요 7건.",
+ "description": "Claude Code 자율 개선 에이전트가 hkjang 의 프로젝트를 개선·테스트·머지·릴리즈한 일일 보고. 오늘 31회차·릴리즈 11건, 누적 1356회차·릴리즈 452건, 주의 필요 6건.",
  "today": {
   "date": "2026-09-24",
-  "total": 30,
+  "total": 31,
   "projects": 19,
   "released": 11,
-  "merged": 10,
+  "merged": 11,
   "nochange": 0,
   "failed": 0,
-  "cost_usd": 206.57,
-  "minutes": 549,
-  "sessions": 112
+  "cost_usd": 212.47,
+  "minutes": 563,
+  "sessions": 117
  },
  "totals": {
-  "runs": 1355,
+  "runs": 1356,
   "released": 452,
   "days": 23,
-  "cost_usd": 4801.16,
-  "minutes": 11856,
-  "tokens_in": 5368876602,
-  "tokens_out": 40219768
+  "cost_usd": 4807.06,
+  "minutes": 11870,
+  "tokens_in": 5372390836,
+  "tokens_out": 40277631
  },
  "alerts": [
   {
@@ -65,24 +65,12 @@
    "project": "jasql_semantic",
    "why": "수정 과제 대기 중 — 오류 대응(자동 적재): 마지막 회차가 'error' 로 끝났습니다. fix-round: error: pr create",
    "result": ""
-  },
-  {
-   "date": "",
-   "time": "",
-   "project": "aiportal-front",
-   "why": "수정 과제 대기 중 — 오류 대응(자동 적재): 릴리즈 실패(). 릴리즈 관례를 정할 근거가 없어 다음 버전을 결정할 수 없다(27회째 동일 교착). 이번 회차에 6개 항목을 직접 재실측함: (1) git tag --sort=-creatordate 출력 0건, 태그 총 0개 (2) package.json ve",
-   "result": ""
   }
  ],
  "fix_queue": [
   {
    "project": "jasql_semantic",
    "note": "오류 대응(자동 적재): 마지막 회차가 'error' 로 끝났습니다. fix-round: error: pr create",
-   "merge_sha": ""
-  },
-  {
-   "project": "aiportal-front",
-   "note": "오류 대응(자동 적재): 릴리즈 실패(). 릴리즈 관례를 정할 근거가 없어 다음 버전을 결정할 수 없다(27회째 동일 교착). 이번 회차에 6개 항목을 직접 재실측함: (1) git tag --sort=-creatordate 출력 0건, 태그 총 0개 (2) package.json version=0.0.0, package-lock.json version 및 packages[\"\"].version=0.0.0 — 최초 커밋 ab700ba 의 package.json 도 0.0.0 이라 증가 이력이 전무 (3) CHANGELOG 파일 없음 (4) 릴리즈 노트 없음 — docs/RELEASE.md 는 스스로 '릴리즈 노트나 새 릴리즈 정책이 아니며 다음 버전·태그·릴리즈 커밋 관례를 정하지 않는다' 고 명시 (5) git log --oneline -60 에 릴리즈 커밋 메시지 양식 0건 (6) .github 디렉터리 부재, .gitlab-ci.yml 은 CI_COMMIT_TAG 참조 0건인 main/develop 브랜치 조건 배포 전용이며 태그 기반 버전 증가나 Release 생성을 정의하지 않음. 러너가 미리 가져온 GitHub Release 목록도 비어 있어 과거 릴리즈 자산 규칙도 없다(assets 는 빈 배열). 절차 5 의 skipped 조건('태그도, 버전 파일도, 릴리즈 노트도 없음')은 package.json 이라는 버전 파일이 실재하므로 충족하지 않고, 절차 2 의 '최근 릴리즈들의 증가 패턴' 은 릴리즈가 0건이라 따를 패턴 자체가 없다. 따라서 released 로 진행하려면 관례를 새로 발명해야 하는데 이는 사람의 일이므로 하지 않았다. 버전 파일·태그·CHANGELOG·릴리즈 노트·릴리즈 커밋을 일체 만들지 않았고 원격에 아무것도 보내지 않았으며 docs/RELEASE.md 도 수정하지 않았다(워크트리 clean 유지). 러너 지시('워크플로 파일과 실패한 단계의 스크립트·테스트를 읽고 원인을 고치세요')는 수행 대상이 없다: 이 저장소에 워크플로 파일이 없고(.github 부재) 실패 지점이 워크트리 밖의 외부 aidev bin/run.sh -> release.json -> bin/gate.py 이며, 게이트를 느슨하게 만드는 우회(version 필드 삭제 등)는 금지라 하지 않았다. 해소에 필요한 사람 입력 4가지(직전 26회차와 동일): (1) 첫 릴리즈 버전을 0.0.1 / 0.1.0 / 1.0.0 중 무엇으로 할지 — README 와 docs/01-시작하기.md 에 '0.0.1 / 2025-01-01 / 초기 릴리스' 기재가 있으나 실제 릴리스 증거는 미확인 (2) 태그 형식(v1.2.3 / 1.2.3)과 주석 태그 여부 (3) 릴리즈 노트의 위치·양식·언어(CHANGELOG.md 신설 여부 포함) (4) GitHub Release 사용 여부 — 현재 배포는 GitLab CI 브랜치 배포뿐이다.",
    "merge_sha": ""
   }
  ],
@@ -719,21 +707,6 @@
   },
   {
    "kind": "PR",
-   "project": "SecCheck",
-   "title": "auto-improve: Validate report date filters across REST and MCP",
-   "url": "https://github.com/hkjang/SecCheck/pull/14",
-   "sha": "350d36c",
-   "summary": "3파일 +225/−6 · review held, PR open https://github.com/hkjang/SecCheck/pull/14",
-   "why": "review: blocked — 검토 부서 차단 소견(security) — 수리·중재 없이 운영자의 위험 수용(risk-accepted) 필요",
-   "evidence": "https://github.com/hkjang/aidev/tree/main/state/runs/2026-09-21-085420-SecCheck-improve",
-   "labels": "",
-   "action": "PR 처리기가 사람에게 넘김 — 수정·심사를 2번 시도했지만 통과하지 못함 — 사람이 봐야 한다 · 승인: PR 라벨 aidev-approved / 반려: aidev-rejected — 다음 회차에 러너가 승인 당시 커밋에만 CI 확인 후 머지·닫기",
-   "date": "2026-09-21",
-   "shepherd": "리뷰 없음 · 사람 필요 (09-21 11:41) — 수정·심사를 2번 시도했지만 통과하지 못함 — 사람이 봐야 한다",
-   "shepherd_action": "needs-human"
-  },
-  {
-   "kind": "PR",
    "project": "visitflow",
    "title": "auto-improve: fix(import): warn about duplicate headers and selected columns",
    "url": "https://github.com/hkjang/visitflow/pull/21",
@@ -764,21 +737,6 @@
   },
   {
    "kind": "PR",
-   "project": "moyro",
-   "title": "auto-improve: fix: return persisted sidebar category order",
-   "url": "https://github.com/hkjang/moyro/pull/20",
-   "sha": "bddb463",
-   "summary": "2파일 +222/−1 · review held, PR open https://github.com/hkjang/moyro/pull/20",
-   "why": "review: missing — 리뷰 결과 없음/손상: missing — 보류",
-   "evidence": "https://github.com/hkjang/aidev/tree/main/state/runs/2026-09-21-030413-moyro-improve",
-   "labels": "",
-   "action": "PR 처리기가 사람에게 넘김 — 수정·심사를 2번 시도했지만 통과하지 못함 — 사람이 봐야 한다 · 승인: PR 라벨 aidev-approved / 반려: aidev-rejected — 다음 회차에 러너가 승인 당시 커밋에만 CI 확인 후 머지·닫기",
-   "date": "2026-09-21",
-   "shepherd": "리뷰 없음 · 사람 필요 (09-21 05:45) — 수정·심사를 2번 시도했지만 통과하지 못함 — 사람이 봐야 한다",
-   "shepherd_action": "needs-human"
-  },
-  {
-   "kind": "PR",
    "project": "muni",
    "title": "auto-improve: fix: 워크스페이스 ZIP에서 목록 파일과 동명 문서의 충돌을 막습니다",
    "url": "https://github.com/hkjang/muni/pull/21",
@@ -805,21 +763,6 @@
    "action": "PR 처리기가 사람에게 넘김 — 이 커밋에 CI 검사가 없음 — 워크플로를 두거나 state/jasql.policy.json 에 allow_merge_without_ci=true 를 적어야 머지된다 · 승인: PR 라벨 aidev-approved / 반려: aidev-rejected — 다음 회차에 러너가 승인 당시 커밋에만 CI 확인 후 머지·닫기",
    "date": "2026-09-21",
    "shepherd": "CI 없음 · 사람 필요 (09-21 01:43) — 이 커밋에 CI 검사가 없음 — 워크플로를 두거나 state/jasql.policy.json 에 allow_merge_without_ci=true 를 적어야 머지된다",
-   "shepherd_action": "needs-human"
-  },
-  {
-   "kind": "PR",
-   "project": "jikim",
-   "title": "auto-improve: fix: align AI chat HTTP errors with API session handling",
-   "url": "https://github.com/hkjang/jikim/pull/38",
-   "sha": "d6dd63f",
-   "summary": "5파일 +160/−15 · review held, PR open https://github.com/hkjang/jikim/pull/38",
-   "why": "review: missing — 리뷰 결과 없음/손상: missing — 보류",
-   "evidence": "https://github.com/hkjang/aidev/tree/main/state/runs/2026-09-21-005416-jikim-improve",
-   "labels": "",
-   "action": "PR 처리기가 사람에게 넘김 — 수정·심사를 2번 시도했지만 통과하지 못함 — 사람이 봐야 한다 · 승인: PR 라벨 aidev-approved / 반려: aidev-rejected — 다음 회차에 러너가 승인 당시 커밋에만 CI 확인 후 머지·닫기",
-   "date": "2026-09-21",
-   "shepherd": "리뷰 없음 · 사람 필요 (09-21 03:43) — 수정·심사를 2번 시도했지만 통과하지 못함 — 사람이 봐야 한다",
    "shepherd_action": "needs-human"
   },
   {
@@ -855,21 +798,6 @@
   {
    "kind": "PR",
    "project": "appstore",
-   "title": "auto-improve: fix: open mobile menu in favorites navigation E2E",
-   "url": "https://github.com/hkjang/appstore/pull/27",
-   "sha": "e2f099f",
-   "summary": "4파일 +263/−26 · fix-round: review held, PR open https://github.com/hkjang/appstore/pull/27",
-   "why": "review: missing — 리뷰 결과 없음/손상: missing — 보류",
-   "evidence": "https://github.com/hkjang/aidev/tree/main/state/runs/2026-09-20-220857-appstore-improve",
-   "labels": "",
-   "action": "PR 처리기가 사람에게 넘김 — 수정·심사를 2번 시도했지만 통과하지 못함 — 사람이 봐야 한다 · 승인: PR 라벨 aidev-approved / 반려: aidev-rejected — 다음 회차에 러너가 승인 당시 커밋에만 CI 확인 후 머지·닫기",
-   "date": "2026-09-20",
-   "shepherd": "리뷰 없음 · 사람 필요 (09-21 00:37) — 수정·심사를 2번 시도했지만 통과하지 못함 — 사람이 봐야 한다",
-   "shepherd_action": "needs-human"
-  },
-  {
-   "kind": "PR",
-   "project": "appstore",
    "title": "auto-improve: fix: hide favorites on owner apps without a public page",
    "url": "https://github.com/hkjang/appstore/pull/26",
    "sha": "f6b35f0",
@@ -884,36 +812,6 @@
   },
   {
    "kind": "PR",
-   "project": "vibe-coders",
-   "title": "auto-improve: fix(proxy): close Momento connections and enforce request deadline",
-   "url": "https://github.com/hkjang/vibe-coders/pull/22",
-   "sha": "f201cf5",
-   "summary": "5파일 +238/−4 · fix-round: review held, PR open https://github.com/hkjang/vibe-coders/pull/22",
-   "why": "review: missing — 리뷰 결과 없음/손상: missing — 보류",
-   "evidence": "https://github.com/hkjang/aidev/tree/main/state/runs/2026-09-20-181357-vibe-coders-improve",
-   "labels": "",
-   "action": "PR 처리기가 사람에게 넘김 — 수정·심사를 2번 시도했지만 통과하지 못함 — 사람이 봐야 한다 · 승인: PR 라벨 aidev-approved / 반려: aidev-rejected — 다음 회차에 러너가 승인 당시 커밋에만 CI 확인 후 머지·닫기",
-   "date": "2026-09-20",
-   "shepherd": "리뷰 없음 · 사람 필요 (09-20 21:03) — 수정·심사를 2번 시도했지만 통과하지 못함 — 사람이 봐야 한다",
-   "shepherd_action": "needs-human"
-  },
-  {
-   "kind": "PR",
-   "project": "weekly",
-   "title": "auto-improve: test: 공유 DB를 직접 쓰던 통합 시험 12개를 격리합니다",
-   "url": "https://github.com/hkjang/weekly/pull/20",
-   "sha": "e909ca0",
-   "summary": "5파일 +43/−12 · review held, PR open https://github.com/hkjang/weekly/pull/20",
-   "why": "review: missing — 리뷰 결과 없음/손상: missing — 보류",
-   "evidence": "https://github.com/hkjang/aidev/tree/main/state/runs/2026-09-20-173406-weekly-improve",
-   "labels": "",
-   "action": "PR 처리기가 사람에게 넘김 — 수정·심사를 2번 시도했지만 통과하지 못함 — 사람이 봐야 한다 · 승인: PR 라벨 aidev-approved / 반려: aidev-rejected — 다음 회차에 러너가 승인 당시 커밋에만 CI 확인 후 머지·닫기",
-   "date": "2026-09-20",
-   "shepherd": "리뷰 없음 · 사람 필요 (09-20 20:03) — 수정·심사를 2번 시도했지만 통과하지 못함 — 사람이 봐야 한다",
-   "shepherd_action": "needs-human"
-  },
-  {
-   "kind": "PR",
    "project": "sqlon",
    "title": "auto-improve: fix(mcp): 프로파일 카탈로그 조회 인증과 사용자 권한을 연결합니다",
    "url": "https://github.com/hkjang/sqlon/pull/9",
@@ -925,36 +823,6 @@
    "action": "PR 처리기가 사람에게 넘김 — 이 커밋에 CI 검사가 없음 — 워크플로를 두거나 state/sqlon.policy.json 에 allow_merge_without_ci=true 를 적어야 머지된다 · 승인: PR 라벨 aidev-approved / 반려: aidev-rejected — 다음 회차에 러너가 승인 당시 커밋에만 CI 확인 후 머지·닫기",
    "date": "2026-09-20",
    "shepherd": "CI 없음 · 사람 필요 (09-20 18:06) — 이 커밋에 CI 검사가 없음 — 워크플로를 두거나 state/sqlon.policy.json 에 allow_merge_without_ci=true 를 적어야 머지된다",
-   "shepherd_action": "needs-human"
-  },
-  {
-   "kind": "PR",
-   "project": "qurio",
-   "title": "auto-improve: fix: return to the requested deep link after a local login",
-   "url": "https://github.com/hkjang/qurio/pull/18",
-   "sha": "79ce48f",
-   "summary": "20파일 +125/−25 · review held, PR open https://github.com/hkjang/qurio/pull/18",
-   "why": "review: missing — 리뷰 결과 없음/손상: missing — 보류",
-   "evidence": "https://github.com/hkjang/aidev/tree/main/state/runs/2026-09-20-162401-qurio-improve",
-   "labels": "",
-   "action": "PR 처리기가 사람에게 넘김 — 수정·심사를 2번 시도했지만 통과하지 못함 — 사람이 봐야 한다 · 승인: PR 라벨 aidev-approved / 반려: aidev-rejected — 다음 회차에 러너가 승인 당시 커밋에만 CI 확인 후 머지·닫기",
-   "date": "2026-09-20",
-   "shepherd": "리뷰 없음 · 사람 필요 (09-20 18:42) — 수정·심사를 2번 시도했지만 통과하지 못함 — 사람이 봐야 한다",
-   "shepherd_action": "needs-human"
-  },
-  {
-   "kind": "PR",
-   "project": "postra",
-   "title": "auto-improve: fix(smtp): bound every relay command with CommandTimeoutSec and honour ctx cancellation after dial",
-   "url": "https://github.com/hkjang/postra/pull/18",
-   "sha": "b8c46d1",
-   "summary": "5파일 +246/−22 · review held, PR open https://github.com/hkjang/postra/pull/18",
-   "why": "review: missing — 리뷰 결과 없음/손상: missing — 보류",
-   "evidence": "https://github.com/hkjang/aidev/tree/main/state/runs/2026-09-20-153403-postra-improve",
-   "labels": "",
-   "action": "PR 처리기가 사람에게 넘김 — 수정·심사를 2번 시도했지만 통과하지 못함 — 사람이 봐야 한다 · 승인: PR 라벨 aidev-approved / 반려: aidev-rejected — 다음 회차에 러너가 승인 당시 커밋에만 CI 확인 후 머지·닫기",
-   "date": "2026-09-20",
-   "shepherd": "리뷰 없음 · 사람 필요 (09-20 18:05) — 수정·심사를 2번 시도했지만 통과하지 못함 — 사람이 봐야 한다",
    "shepherd_action": "needs-human"
   },
   {
@@ -1049,21 +917,6 @@
   },
   {
    "kind": "PR",
-   "project": "SecCheck",
-   "title": "auto-improve: Check every screen path against the routes the server registers",
-   "url": "https://github.com/hkjang/SecCheck/pull/13",
-   "sha": "07c19c9",
-   "summary": "3파일 +179/−63 · CI failed, PR open https://github.com/hkjang/SecCheck/pull/13",
-   "why": "review: approved — 리뷰 승인 (risk=low); ci: failed — 성공이 아닌 검사: test-build-scan=failure",
-   "evidence": "https://github.com/hkjang/aidev/tree/main/state/runs/2026-09-20-073406-SecCheck-improve",
-   "labels": "",
-   "action": "PR 처리기가 사람에게 넘김 — 수정·심사를 2번 시도했지만 통과하지 못함 — 사람이 봐야 한다 · 승인: PR 라벨 aidev-approved / 반려: aidev-rejected — 다음 회차에 러너가 승인 당시 커밋에만 CI 확인 후 머지·닫기",
-   "date": "2026-09-20",
-   "shepherd": "CI 실패 · 사람 필요 (09-20 10:10) — 수정·심사를 2번 시도했지만 통과하지 못함 — 사람이 봐야 한다",
-   "shepherd_action": "needs-human"
-  },
-  {
-   "kind": "PR",
    "project": "vibe-coders",
    "title": "auto-improve: build(web): accept a forwarded --silent in the typecheck and build scripts",
    "url": "https://github.com/hkjang/vibe-coders/pull/21",
@@ -1109,51 +962,6 @@
   },
   {
    "kind": "PR",
-   "project": "SecCheck",
-   "title": "auto-improve: WIP: settings-key citation check",
-   "url": "https://github.com/hkjang/SecCheck/pull/12",
-   "sha": "dfe3412",
-   "summary": "2파일 +81/−6 · fix-round: CI failed, PR open https://github.com/hkjang/SecCheck/pull/12",
-   "why": "review: approved — 리뷰 승인 (risk=low); ci: failed — 성공이 아닌 검사: test-build-scan=failure",
-   "evidence": "https://github.com/hkjang/aidev/tree/main/state/runs/2026-09-19-233342-SecCheck-improve",
-   "labels": "",
-   "action": "PR 처리기가 사람에게 넘김 — 수정·심사를 2번 시도했지만 통과하지 못함 — 사람이 봐야 한다 · 승인: PR 라벨 aidev-approved / 반려: aidev-rejected — 다음 회차에 러너가 승인 당시 커밋에만 CI 확인 후 머지·닫기",
-   "date": "2026-09-19",
-   "shepherd": "CI 실패 · 사람 필요 (09-20 05:45) — 수정·심사를 2번 시도했지만 통과하지 못함 — 사람이 봐야 한다",
-   "shepherd_action": "needs-human"
-  },
-  {
-   "kind": "PR",
-   "project": "postra",
-   "title": "auto-improve: test(smtp): cover AUTH selection, reply classification and TLS paths against a scripted loopback relay",
-   "url": "https://github.com/hkjang/postra/pull/16",
-   "sha": "03e8131",
-   "summary": "1파일 +566/−0 · CI failed, PR open https://github.com/hkjang/postra/pull/16",
-   "why": "review: approved — 리뷰 승인 (risk=low); ci: failed — 성공이 아닌 검사: gosec (medium+)=failure",
-   "evidence": "https://github.com/hkjang/aidev/tree/main/state/runs/2026-09-19-230358-postra-improve",
-   "labels": "",
-   "action": "PR 처리기가 사람에게 넘김 — 수정·심사를 2번 시도했지만 통과하지 못함 — 사람이 봐야 한다 · 승인: PR 라벨 aidev-approved / 반려: aidev-rejected — 다음 회차에 러너가 승인 당시 커밋에만 CI 확인 후 머지·닫기",
-   "date": "2026-09-19",
-   "shepherd": "CI 실패 · 사람 필요 (09-20 05:45) — 수정·심사를 2번 시도했지만 통과하지 못함 — 사람이 봐야 한다",
-   "shepherd_action": "needs-human"
-  },
-  {
-   "kind": "PR",
-   "project": "SecCheck",
-   "title": "auto-improve: Drop the superseded docs/admin-guide.md so ADMIN_GUIDE.md is the only admin guide",
-   "url": "https://github.com/hkjang/SecCheck/pull/11",
-   "sha": "5063150",
-   "summary": "1파일 +0/−338 · fix-round: CI failed, PR open https://github.com/hkjang/SecCheck/pull/11",
-   "why": "review: approved — 리뷰 승인 (risk=low); ci: failed — 성공이 아닌 검사: test-build-scan=failure",
-   "evidence": "https://github.com/hkjang/aidev/tree/main/state/runs/2026-09-19-223341-SecCheck-improve",
-   "labels": "",
-   "action": "PR 처리기가 사람에게 넘김 — 수정·심사를 2번 시도했지만 통과하지 못함 — 사람이 봐야 한다 · 승인: PR 라벨 aidev-approved / 반려: aidev-rejected — 다음 회차에 러너가 승인 당시 커밋에만 CI 확인 후 머지·닫기",
-   "date": "2026-09-19",
-   "shepherd": "CI 실패 · 사람 필요 (09-20 04:06) — 수정·심사를 2번 시도했지만 통과하지 못함 — 사람이 봐야 한다",
-   "shepherd_action": "needs-human"
-  },
-  {
-   "kind": "PR",
    "project": "madi",
    "title": "auto-improve: fix: unblock CI steps \"Reject reachable Go vulnerabilities\" and \"Build service image\"",
    "url": "https://github.com/hkjang/madi/pull/8",
@@ -1166,21 +974,6 @@
    "date": "2026-09-19",
    "shepherd": "리뷰 없음 · 승인 → 스윕이 CI 확인 후 머지 (09-20 02:18) — risk=low — 리뷰 승인 (risk=low)",
    "shepherd_action": "approve"
-  },
-  {
-   "kind": "PR",
-   "project": "SecCheck",
-   "title": "auto-improve: Run govulncheck in precheck and document the Fixed-in-N/A gate",
-   "url": "https://github.com/hkjang/SecCheck/pull/10",
-   "sha": "9b4b7aa",
-   "summary": "5파일 +154/−20 · fix-round: CI failed, PR open https://github.com/hkjang/SecCheck/pull/10",
-   "why": "review: approved — 리뷰 승인 (risk=low); ci: failed — 성공이 아닌 검사: test-build-scan=failure",
-   "evidence": "https://github.com/hkjang/aidev/tree/main/state/runs/2026-09-19-210341-SecCheck-improve",
-   "labels": "",
-   "action": "PR 처리기가 사람에게 넘김 — 수정·심사를 2번 시도했지만 통과하지 못함 — 사람이 봐야 한다 · 승인: PR 라벨 aidev-approved / 반려: aidev-rejected — 다음 회차에 러너가 승인 당시 커밋에만 CI 확인 후 머지·닫기",
-   "date": "2026-09-19",
-   "shepherd": "CI 실패 · 사람 필요 (09-20 04:06) — 수정·심사를 2번 시도했지만 통과하지 못함 — 사람이 봐야 한다",
-   "shepherd_action": "needs-human"
   },
   {
    "kind": "PR",
@@ -1199,21 +992,6 @@
   },
   {
    "kind": "PR",
-   "project": "SecCheck",
-   "title": "auto-improve: Pin excelize past the negative shared-string index panic",
-   "url": "https://github.com/hkjang/SecCheck/pull/9",
-   "sha": "6424eb1",
-   "summary": "3파일 +117/−20 · fix-round: CI failed, PR open https://github.com/hkjang/SecCheck/pull/9",
-   "why": "review: approved — 리뷰 승인 (risk=low); ci: failed — 성공이 아닌 검사: test-build-scan=failure",
-   "evidence": "https://github.com/hkjang/aidev/tree/main/state/runs/2026-09-19-184351-SecCheck-improve",
-   "labels": "",
-   "action": "PR 처리기가 사람에게 넘김 — 수정·심사를 2번 시도했지만 통과하지 못함 — 사람이 봐야 한다 · 승인: PR 라벨 aidev-approved / 반려: aidev-rejected — 다음 회차에 러너가 승인 당시 커밋에만 CI 확인 후 머지·닫기",
-   "date": "2026-09-19",
-   "shepherd": "CI 실패 · 사람 필요 (09-20 03:06) — 수정·심사를 2번 시도했지만 통과하지 못함 — 사람이 봐야 한다",
-   "shepherd_action": "needs-human"
-  },
-  {
-   "kind": "PR",
    "project": "jikim",
    "title": "auto-improve: fix: commit scripts/build-image.sh as executable so make docker works from a fresh clone",
    "url": "https://github.com/hkjang/jikim/pull/36",
@@ -1226,21 +1004,6 @@
    "date": "2026-09-19",
    "shepherd": "리뷰 없음 · 승인 → 스윕이 CI 확인 후 머지 (09-20 01:05) — risk=low — 리뷰 승인 (risk=low)",
    "shepherd_action": "approve"
-  },
-  {
-   "kind": "PR",
-   "project": "SecCheck",
-   "title": "auto-improve: Lay out the test-mail row without the search-box icon styles and show it in the guide picture",
-   "url": "https://github.com/hkjang/SecCheck/pull/8",
-   "sha": "693b733",
-   "summary": "9파일 +56/−8 · fix-round: CI failed, PR open https://github.com/hkjang/SecCheck/pull/8",
-   "why": "scout: failed — 과제서 없음 — 구현자가 직접 고른다; review: approved — 리뷰 승인 (risk=low); ci: failed — 성공이 아닌 검사: test-build-scan=failure",
-   "evidence": "https://github.com/hkjang/aidev/tree/main/state/runs/2026-09-19-014340-SecCheck-improve",
-   "labels": "",
-   "action": "PR 처리기가 사람에게 넘김 — 수정·심사를 2번 시도했지만 통과하지 못함 — 사람이 봐야 한다 · 승인: PR 라벨 aidev-approved / 반려: aidev-rejected — 다음 회차에 러너가 승인 당시 커밋에만 CI 확인 후 머지·닫기",
-   "date": "2026-09-19",
-   "shepherd": "CI 실패 · 사람 필요 (09-20 03:06) — 수정·심사를 2번 시도했지만 통과하지 못함 — 사람이 봐야 한다",
-   "shepherd_action": "needs-human"
   },
   {
    "kind": "PR",
@@ -1274,36 +1037,6 @@
   },
   {
    "kind": "PR",
-   "project": "git-ctx",
-   "title": "auto-improve: feat(mcp): accept Keycloak SSO access tokens at /mcp as an OAuth 2.1 resource server",
-   "url": "https://github.com/hkjang/git-ctx/pull/30",
-   "sha": "f4e558f",
-   "summary": "20파일 +1537/−68 · guarded files, PR open https://github.com/hkjang/git-ctx/pull/30",
-   "why": "guard: held-expected — internal/auth/oidc.go internal/auth/principal.go internal/auth/resourcetoken.go ",
-   "evidence": "https://github.com/hkjang/aidev/tree/main/state/runs/2026-09-18-124341-git-ctx-improve",
-   "labels": "",
-   "action": "PR 처리기가 사람에게 넘김 — 수정·심사를 2번 시도했지만 통과하지 못함 — 사람이 봐야 한다 · 승인: PR 라벨 aidev-approved / 반려: aidev-rejected — 다음 회차에 러너가 승인 당시 커밋에만 CI 확인 후 머지·닫기",
-   "date": "2026-09-18",
-   "shepherd": "리뷰 거절 · 사람 필요 (09-19 15:24) — 수정·심사를 2번 시도했지만 통과하지 못함 — 사람이 봐야 한다",
-   "shepherd_action": "needs-human"
-  },
-  {
-   "kind": "PR",
-   "project": "releasedock",
-   "title": "auto-improve: feat: let /mcp accept a Keycloak access token beside the personal key",
-   "url": "https://github.com/hkjang/releasedock/pull/18",
-   "sha": "ff47e4e",
-   "summary": "14파일 +2061/−9 · guarded files, PR open https://github.com/hkjang/releasedock/pull/18",
-   "why": "guard: held-expected — backend/internal/store/migrations/025_mcp_oauth.sql ",
-   "evidence": "https://github.com/hkjang/aidev/tree/main/state/runs/2026-09-18-121339-releasedock-improve",
-   "labels": "",
-   "action": "PR 처리기가 사람에게 넘김 — 수정·심사를 2번 시도했지만 통과하지 못함 — 사람이 봐야 한다 · 승인: PR 라벨 aidev-approved / 반려: aidev-rejected — 다음 회차에 러너가 승인 당시 커밋에만 CI 확인 후 머지·닫기",
-   "date": "2026-09-18",
-   "shepherd": "리뷰 거절 · 사람 필요 (09-19 15:24) — 수정·심사를 2번 시도했지만 통과하지 못함 — 사람이 봐야 한다",
-   "shepherd_action": "needs-human"
-  },
-  {
-   "kind": "PR",
    "project": "Momento",
    "title": "auto-improve: feat(mcp): Keycloak 액세스 토큰으로도 /mcp 에 들어올 수 있게 합니다",
    "url": "https://github.com/hkjang/Momento/pull/14",
@@ -1319,21 +1052,6 @@
   },
   {
    "kind": "PR",
-   "project": "sqlon",
-   "title": "auto-improve: feat(mcp): Keycloak 액세스 토큰으로도 /mcp 에 들어오게 하는 MCP SSO(OAuth 2.1) 지원",
-   "url": "https://github.com/hkjang/sqlon/pull/7",
-   "sha": "7f72223",
-   "summary": "23파일 +2245/−22 · review held, PR open https://github.com/hkjang/sqlon/pull/7",
-   "why": "review: rejected — 리뷰 거절: internal/meta/settings.go:72 기존 SettingDef `{Key: SetCacheTTL, Label: \"쿼리",
-   "evidence": "https://github.com/hkjang/aidev/tree/main/state/runs/2026-09-18-110335-sqlon-improve",
-   "labels": "",
-   "action": "PR 처리기가 사람에게 넘김 — 수정·심사를 2번 시도했지만 통과하지 못함 — 사람이 봐야 한다 · 승인: PR 라벨 aidev-approved / 반려: aidev-rejected — 다음 회차에 러너가 승인 당시 커밋에만 CI 확인 후 머지·닫기",
-   "date": "2026-09-18",
-   "shepherd": "리뷰 거절 · 사람 필요 (09-19 15:24) — 수정·심사를 2번 시도했지만 통과하지 못함 — 사람이 봐야 한다",
-   "shepherd_action": "needs-human"
-  },
-  {
-   "kind": "PR",
    "project": "orbit",
    "title": "auto-improve: feat(mcp): 개인 키 없이 Keycloak 액세스 토큰으로 /mcp 에 들어올 수 있게 한다",
    "url": "https://github.com/hkjang/orbit/pull/6",
@@ -1346,51 +1064,6 @@
    "date": "2026-09-18",
    "shepherd": "리뷰 거절 · 승인 → 스윕이 CI 확인 후 머지 (09-19 13:33) — risk=medium — 리뷰 승인 (risk=medium)",
    "shepherd_action": "approve"
-  },
-  {
-   "kind": "PR",
-   "project": "madi",
-   "title": "auto-improve: feat: accept Keycloak access tokens on /mcp (MCP OAuth resource server)",
-   "url": "https://github.com/hkjang/madi/pull/6",
-   "sha": "af8e021",
-   "summary": "17파일 +1292/−14 · review held, PR open https://github.com/hkjang/madi/pull/6",
-   "why": "review: rejected — 리뷰 거절: internal/server/knowledge_package.go:506 `if current(r).TokenID != \"\"` 는 ",
-   "evidence": "https://github.com/hkjang/aidev/tree/main/state/runs/2026-09-18-065350-madi-improve",
-   "labels": "",
-   "action": "PR 처리기가 사람에게 넘김 — 수정·심사를 2번 시도했지만 통과하지 못함 — 사람이 봐야 한다 · 승인: PR 라벨 aidev-approved / 반려: aidev-rejected — 다음 회차에 러너가 승인 당시 커밋에만 CI 확인 후 머지·닫기",
-   "date": "2026-09-18",
-   "shepherd": "리뷰 거절 · 사람 필요 (09-19 15:24) — 수정·심사를 2번 시도했지만 통과하지 못함 — 사람이 봐야 한다",
-   "shepherd_action": "needs-human"
-  },
-  {
-   "kind": "PR",
-   "project": "DartFly",
-   "title": "auto-improve: feat: /mcp 가 공유 토큰 외에 Keycloak(SSO) 액세스 토큰도 받게 (MCP OAuth 2.1 리소스 서버)",
-   "url": "https://github.com/hkjang/DartFly/pull/7",
-   "sha": "397002a",
-   "summary": "23파일 +1780/−24 · guarded files, PR open https://github.com/hkjang/DartFly/pull/7",
-   "why": "guard: held — internal/auth/service.go internal/sso/accesstoken.go internal/sso/accesstoken_te",
-   "evidence": "https://github.com/hkjang/aidev/tree/main/state/runs/2026-09-18-061339-DartFly-improve",
-   "labels": "",
-   "action": "PR 처리기가 사람에게 넘김 — base 와 충돌하는데 자동 리베이스로 풀리지 않음 — 수동 해결 필요 · 승인: PR 라벨 aidev-approved / 반려: aidev-rejected — 다음 회차에 러너가 승인 당시 커밋에만 CI 확인 후 머지·닫기",
-   "date": "2026-09-18",
-   "shepherd": "충돌 · 사람 필요 (09-19 09:53) — base 와 충돌하는데 자동 리베이스로 풀리지 않음 — 수동 해결 필요",
-   "shepherd_action": "needs-human"
-  },
-  {
-   "kind": "PR",
-   "project": "visitflow",
-   "title": "auto-improve: feat(mcp): accept Keycloak access tokens on /mcp alongside personal keys",
-   "url": "https://github.com/hkjang/visitflow/pull/18",
-   "sha": "715a242",
-   "summary": "12파일 +1338/−21 · guarded files, PR open https://github.com/hkjang/visitflow/pull/18",
-   "why": "guard: held-expected — internal/database/migrations/0016_mcp_oauth.sql ",
-   "evidence": "https://github.com/hkjang/aidev/tree/main/state/runs/2026-09-18-053340-visitflow-improve",
-   "labels": "",
-   "action": "PR 처리기가 사람에게 넘김 — 수정·심사를 2번 시도했지만 통과하지 못함 — 사람이 봐야 한다 · 승인: PR 라벨 aidev-approved / 반려: aidev-rejected — 다음 회차에 러너가 승인 당시 커밋에만 CI 확인 후 머지·닫기",
-   "date": "2026-09-18",
-   "shepherd": "리뷰 거절 · 사람 필요 (09-19 11:09) — 수정·심사를 2번 시도했지만 통과하지 못함 — 사람이 봐야 한다",
-   "shepherd_action": "needs-human"
   },
   {
    "kind": "PR",
@@ -1514,21 +1187,6 @@
   },
   {
    "kind": "PR",
-   "project": "SecCheck",
-   "title": "auto-improve: Let a Keycloak access token open /mcp beside the personal key, the way the MCP OAuth standard says",
-   "url": "https://github.com/hkjang/SecCheck/pull/7",
-   "sha": "5a96fe0",
-   "summary": "21파일 +1323/−14 · guarded files, PR open https://github.com/hkjang/SecCheck/pull/7",
-   "why": "guard: held-expected — internal/auth/auth.go internal/auth/mcpoauth.go internal/auth/mcpoauth_test.go i",
-   "evidence": "https://github.com/hkjang/aidev/tree/main/state/runs/2026-09-17-162321-SecCheck-improve",
-   "labels": "",
-   "action": "PR 처리기가 사람에게 넘김 — 수정·심사를 2번 시도했지만 통과하지 못함 — 사람이 봐야 한다 · 승인: PR 라벨 aidev-approved / 반려: aidev-rejected — 다음 회차에 러너가 승인 당시 커밋에만 CI 확인 후 머지·닫기",
-   "date": "2026-09-17",
-   "shepherd": "리뷰 거절 · 사람 필요 (09-19 07:37) — 수정·심사를 2번 시도했지만 통과하지 못함 — 사람이 봐야 한다",
-   "shepherd_action": "needs-human"
-  },
-  {
-   "kind": "PR",
    "project": "Kkiit",
    "title": "auto-improve: feat: /mcp 를 Keycloak 액세스 토큰(OAuth 2.1)으로도 열다 — 키 체계는 그대로",
    "url": "https://github.com/hkjang/Kkiit/pull/6",
@@ -1541,21 +1199,6 @@
    "date": "2026-09-17",
    "shepherd": "보호 파일 · 승인 → 스윕이 CI 확인 후 머지 (09-19 04:52) — risk=medium — 리뷰 승인 (risk=medium)",
    "shepherd_action": "approve"
-  },
-  {
-   "kind": "PR",
-   "project": "Invenqor",
-   "title": "auto-improve: feat: a Keycloak access token opens /mcp without a personal key",
-   "url": "https://github.com/hkjang/invenqor/pull/24",
-   "sha": "63672cd",
-   "summary": "14파일 +1693/−31 · guarded files, PR open https://github.com/hkjang/invenqor/pull/24",
-   "why": "guard: held-expected — server/internal/auth/mcp_oauth.go server/internal/auth/oidc.go ",
-   "evidence": "https://github.com/hkjang/aidev/tree/main/state/runs/2026-09-17-142314-Invenqor-improve",
-   "labels": "",
-   "action": "PR 처리기가 사람에게 넘김 — base 와 충돌하는데 자동 리베이스로 풀리지 않음 — 수동 해결 필요 · 승인: PR 라벨 aidev-approved / 반려: aidev-rejected — 다음 회차에 러너가 승인 당시 커밋에만 CI 확인 후 머지·닫기",
-   "date": "2026-09-17",
-   "shepherd": "충돌 · 사람 필요 (09-19 04:45) — base 와 충돌하는데 자동 리베이스로 풀리지 않음 — 수동 해결 필요",
-   "shepherd_action": "needs-human"
   },
   {
    "kind": "PR",
@@ -1709,36 +1352,6 @@
   },
   {
    "kind": "PR",
-   "project": "postra",
-   "title": "auto-improve: feat(notify): mail assignees about imminent and missed team-inbox deadlines",
-   "url": "https://github.com/hkjang/postra/pull/14",
-   "sha": "f51281a",
-   "summary": "42파일 +2024/−41 · CI failed, PR open https://github.com/hkjang/postra/pull/14",
-   "why": "review: approved — 리뷰 승인 (risk=medium); ci: failed — 성공이 아닌 검사: gosec=failure, gosec (medium+)=failure",
-   "evidence": "https://github.com/hkjang/aidev/tree/main/state/runs/2026-09-16-171257-postra-improve",
-   "labels": "",
-   "action": "PR 처리기가 사람에게 넘김 — base 와 충돌하는데 자동 리베이스로 풀리지 않음 — 수동 해결 필요 · 승인: PR 라벨 aidev-approved / 반려: aidev-rejected — 다음 회차에 러너가 승인 당시 커밋에만 CI 확인 후 머지·닫기",
-   "date": "2026-09-16",
-   "shepherd": "충돌 · 사람 필요 (09-19 02:54) — base 와 충돌하는데 자동 리베이스로 풀리지 않음 — 수동 해결 필요",
-   "shepherd_action": "needs-human"
-  },
-  {
-   "kind": "PR",
-   "project": "postra",
-   "title": "auto-improve: fix(notify): revoke the superseded SMTP relay password reference",
-   "url": "https://github.com/hkjang/postra/pull/13",
-   "sha": "c60def7",
-   "summary": "39파일 +1591/−24 · CI failed, PR open https://github.com/hkjang/postra/pull/13",
-   "why": "review: approved — 리뷰 승인 (risk=medium); ci: failed — 성공이 아닌 검사: gosec=failure, gosec (medium+)=failure",
-   "evidence": "https://github.com/hkjang/aidev/tree/main/state/runs/2026-09-16-165311-postra-improve",
-   "labels": "",
-   "action": "PR 처리기가 사람에게 넘김 — base 와 충돌하는데 자동 리베이스로 풀리지 않음 — 수동 해결 필요 · 승인: PR 라벨 aidev-approved / 반려: aidev-rejected — 다음 회차에 러너가 승인 당시 커밋에만 CI 확인 후 머지·닫기",
-   "date": "2026-09-16",
-   "shepherd": "충돌 · 사람 필요 (09-19 02:54) — base 와 충돌하는데 자동 리베이스로 풀리지 않음 — 수동 해결 필요",
-   "shepherd_action": "needs-human"
-  },
-  {
-   "kind": "PR",
    "project": "sqlon",
    "title": "auto-improve: feat(mail): 사내 SMTP 릴레이로 이벤트 알림 메일을 보냅니다 (기본 꺼짐)",
    "url": "https://github.com/hkjang/sqlon/pull/5",
@@ -1751,141 +1364,6 @@
    "date": "2026-09-16",
    "shepherd": "리뷰 거절 · 승인 → 스윕이 CI 확인 후 머지 (09-19 02:54) — risk=medium — 리뷰 승인 (risk=medium)",
    "shepherd_action": "approve"
-  },
-  {
-   "kind": "PR",
-   "project": "orbit",
-   "title": "auto-improve: feat(mail): 사내 SMTP 릴레이로 검토 요청·검토 결과·계정 준비 알림을 보낸다",
-   "url": "https://github.com/hkjang/orbit/pull/4",
-   "sha": "8a533d1",
-   "summary": "23파일 +2295/−4 · guarded files, PR open https://github.com/hkjang/orbit/pull/4",
-   "why": "guard: held-expected — internal/store/migrations/008_mail_notifications.sql ",
-   "evidence": "https://github.com/hkjang/aidev/tree/main/state/runs/2026-09-16-155252-orbit-improve",
-   "labels": "",
-   "action": "PR 처리기가 사람에게 넘김 — base 와 충돌하는데 자동 리베이스로 풀리지 않음 — 수동 해결 필요 · 승인: PR 라벨 aidev-approved / 반려: aidev-rejected — 다음 회차에 러너가 승인 당시 커밋에만 CI 확인 후 머지·닫기",
-   "date": "2026-09-16",
-   "shepherd": "충돌 · 사람 필요 (09-19 02:42) — base 와 충돌하는데 자동 리베이스로 풀리지 않음 — 수동 해결 필요",
-   "shepherd_action": "needs-human"
-  },
-  {
-   "kind": "PR",
-   "project": "hunter",
-   "title": "auto-improve: feat: send event notifications over the in-house SMTP relay per MAIL-STANDARD",
-   "url": "https://github.com/hkjang/hunter/pull/4",
-   "sha": "5d66627",
-   "summary": "18파일 +1817/−6 · review held, PR open https://github.com/hkjang/hunter/pull/4",
-   "why": "review: rejected — 리뷰 거절: internal/app/mail.go:585-592 testMail 은 sendCtx(=WithTimeout(timeout+5s))",
-   "evidence": "https://github.com/hkjang/aidev/tree/main/state/runs/2026-09-16-150251-hunter-improve",
-   "labels": "",
-   "action": "PR 처리기가 사람에게 넘김 — base 와 충돌하는데 자동 리베이스로 풀리지 않음 — 수동 해결 필요 · 승인: PR 라벨 aidev-approved / 반려: aidev-rejected — 다음 회차에 러너가 승인 당시 커밋에만 CI 확인 후 머지·닫기",
-   "date": "2026-09-16",
-   "shepherd": "충돌 · 사람 필요 (09-19 01:06) — base 와 충돌하는데 자동 리베이스로 풀리지 않음 — 수동 해결 필요",
-   "shepherd_action": "needs-human"
-  },
-  {
-   "kind": "PR",
-   "project": "qurio",
-   "title": "auto-improve: feat: add SMTP relay mail notifications for approvals, failed jobs, and expiring API keys",
-   "url": "https://github.com/hkjang/qurio/pull/14",
-   "sha": "3c5da14",
-   "summary": "42파일 +2147/−54 · guarded files, PR open https://github.com/hkjang/qurio/pull/14",
-   "why": "guard: held-expected — migrations/0035_mail_notifications.sql ",
-   "evidence": "https://github.com/hkjang/aidev/tree/main/state/runs/2026-09-16-143250-qurio-improve",
-   "labels": "",
-   "action": "PR 처리기가 사람에게 넘김 — base 와 충돌하는데 자동 리베이스로 풀리지 않음 — 수동 해결 필요 · 승인: PR 라벨 aidev-approved / 반려: aidev-rejected — 다음 회차에 러너가 승인 당시 커밋에만 CI 확인 후 머지·닫기",
-   "date": "2026-09-16",
-   "shepherd": "충돌 · 사람 필요 (09-19 01:06) — base 와 충돌하는데 자동 리베이스로 풀리지 않음 — 수동 해결 필요",
-   "shepherd_action": "needs-human"
-  },
-  {
-   "kind": "PR",
-   "project": "madi",
-   "title": "auto-improve: feat: add SMTP relay event mail with delivery log and test send",
-   "url": "https://github.com/hkjang/madi/pull/4",
-   "sha": "8ea4184",
-   "summary": "18파일 +1645/−17 · review held, PR open https://github.com/hkjang/madi/pull/4",
-   "why": "review: rejected — 리뷰 거절: internal/server/mail.go:350 mailLoginAuth.Start의 평문 차단 조건 `!server.TLS &&",
-   "evidence": "https://github.com/hkjang/aidev/tree/main/state/runs/2026-09-16-135255-madi-improve",
-   "labels": "",
-   "action": "PR 처리기가 사람에게 넘김 — 수정·심사를 2번 시도했지만 통과하지 못함 — 사람이 봐야 한다 · 승인: PR 라벨 aidev-approved / 반려: aidev-rejected — 다음 회차에 러너가 승인 당시 커밋에만 CI 확인 후 머지·닫기",
-   "date": "2026-09-16",
-   "shepherd": "리뷰 거절 · 사람 필요 (09-19 01:05) — 수정·심사를 2번 시도했지만 통과하지 못함 — 사람이 봐야 한다",
-   "shepherd_action": "needs-human"
-  },
-  {
-   "kind": "PR",
-   "project": "postra",
-   "title": "auto-improve: feat(notify): send event notifications through a company SMTP relay",
-   "url": "https://github.com/hkjang/postra/pull/12",
-   "sha": "b673f95",
-   "summary": "39파일 +1525/−24 · CI failed, PR open https://github.com/hkjang/postra/pull/12",
-   "why": "review: approved — 리뷰 승인 (risk=medium); ci: failed — 성공이 아닌 검사: gosec=failure, gosec (medium+)=failure",
-   "evidence": "https://github.com/hkjang/aidev/tree/main/state/runs/2026-09-16-133247-postra-improve",
-   "labels": "",
-   "action": "PR 처리기가 사람에게 넘김 — base 와 충돌하는데 자동 리베이스로 풀리지 않음 — 수동 해결 필요 · 승인: PR 라벨 aidev-approved / 반려: aidev-rejected — 다음 회차에 러너가 승인 당시 커밋에만 CI 확인 후 머지·닫기",
-   "date": "2026-09-16",
-   "shepherd": "충돌 · 사람 필요 (09-18 23:52) — base 와 충돌하는데 자동 리베이스로 풀리지 않음 — 수동 해결 필요",
-   "shepherd_action": "needs-human"
-  },
-  {
-   "kind": "PR",
-   "project": "DartFly",
-   "title": "auto-improve: feat: 사내 SMTP 릴레이로 승인·결재·모니터링 알림을 보내는 메일 체계 (기본 꺼짐)",
-   "url": "https://github.com/hkjang/DartFly/pull/5",
-   "sha": "f903223",
-   "summary": "25파일 +2433/−32 · guarded files, PR open https://github.com/hkjang/DartFly/pull/5",
-   "why": "guard: held-expected — internal/store/mariadb/migrations/002_dartfly_control.sql ",
-   "evidence": "https://github.com/hkjang/aidev/tree/main/state/runs/2026-09-16-130247-DartFly-improve",
-   "labels": "",
-   "action": "PR 처리기가 사람에게 넘김 — base 와 충돌하는데 자동 리베이스로 풀리지 않음 — 수동 해결 필요 · 승인: PR 라벨 aidev-approved / 반려: aidev-rejected — 다음 회차에 러너가 승인 당시 커밋에만 CI 확인 후 머지·닫기",
-   "date": "2026-09-16",
-   "shepherd": "충돌 · 사람 필요 (09-18 23:52) — base 와 충돌하는데 자동 리베이스로 풀리지 않음 — 수동 해결 필요",
-   "shepherd_action": "needs-human"
-  },
-  {
-   "kind": "PR",
-   "project": "weekly",
-   "title": "auto-improve: docs: 관리자 가이드 HTML 을 다시 만듭니다",
-   "url": "https://github.com/hkjang/weekly/pull/16",
-   "sha": "975cba9",
-   "summary": "11파일 +285/−35 · guarded files, PR open https://github.com/hkjang/weekly/pull/16",
-   "why": "guard: held-expected — internal/app/migrations/033_mail_standard_keys.sql ",
-   "evidence": "https://github.com/hkjang/aidev/tree/main/state/runs/2026-09-16-124246-weekly-improve",
-   "labels": "",
-   "action": "PR 처리기가 사람에게 넘김 — base 와 충돌하는데 자동 리베이스로 풀리지 않음 — 수동 해결 필요 · 승인: PR 라벨 aidev-approved / 반려: aidev-rejected — 다음 회차에 러너가 승인 당시 커밋에만 CI 확인 후 머지·닫기",
-   "date": "2026-09-16",
-   "shepherd": "충돌 · 사람 필요 (09-18 23:52) — base 와 충돌하는데 자동 리베이스로 풀리지 않음 — 수동 해결 필요",
-   "shepherd_action": "needs-human"
-  },
-  {
-   "kind": "PR",
-   "project": "visitflow",
-   "title": "auto-improve: feat(mail): follow the company mail standard for SMTP event notifications",
-   "url": "https://github.com/hkjang/visitflow/pull/15",
-   "sha": "7be35b6",
-   "summary": "13파일 +614/−89 · guarded files, PR open https://github.com/hkjang/visitflow/pull/15",
-   "why": "guard: held-expected — internal/database/migrations/0015_mail_standard.sql ",
-   "evidence": "https://github.com/hkjang/aidev/tree/main/state/runs/2026-09-16-121246-visitflow-improve",
-   "labels": "",
-   "action": "PR 처리기가 사람에게 넘김 — 수정·심사를 2번 시도했지만 통과하지 못함 — 사람이 봐야 한다 · 승인: PR 라벨 aidev-approved / 반려: aidev-rejected — 다음 회차에 러너가 승인 당시 커밋에만 CI 확인 후 머지·닫기",
-   "date": "2026-09-16",
-   "shepherd": "보호 파일 · 사람 필요 (09-18 23:51) — 수정·심사를 2번 시도했지만 통과하지 못함 — 사람이 봐야 한다",
-   "shepherd_action": "needs-human"
-  },
-  {
-   "kind": "PR",
-   "project": "vibe-coders",
-   "title": "auto-improve: feat(mail): send event notifications through the company SMTP relay",
-   "url": "https://github.com/hkjang/vibe-coders/pull/18",
-   "sha": "f0b2f7e",
-   "summary": "27파일 +3186/−2 · review held, PR open https://github.com/hkjang/vibe-coders/pull/18",
-   "why": "review: rejected — 리뷰 거절: internal/mail/smtp.go:116-121 security=none(또는 STARTTLS 미지원 릴레이의 auto)에서 ",
-   "evidence": "https://github.com/hkjang/aidev/tree/main/state/runs/2026-09-16-113242-vibe-coders-improve",
-   "labels": "",
-   "action": "PR 처리기가 사람에게 넘김 — 수정·심사를 2번 시도했지만 통과하지 못함 — 사람이 봐야 한다 · 승인: PR 라벨 aidev-approved / 반려: aidev-rejected — 다음 회차에 러너가 승인 당시 커밋에만 CI 확인 후 머지·닫기",
-   "date": "2026-09-16",
-   "shepherd": "리뷰 거절 · 사람 필요 (09-18 23:51) — 수정·심사를 2번 시도했지만 통과하지 못함 — 사람이 봐야 한다",
-   "shepherd_action": "needs-human"
   },
   {
    "kind": "PR",
@@ -1904,21 +1382,6 @@
   },
   {
    "kind": "PR",
-   "project": "seaton",
-   "title": "auto-improve: feat: 사내 SMTP 릴레이로 보내는 이벤트 메일 알림 (자리 배정·분석 완료·인사 연동 실패·API 키 만료 임박)",
-   "url": "https://github.com/hkjang/seaton/pull/28",
-   "sha": "61bca8b",
-   "summary": "25파일 +2742/−24 · review held, PR open https://github.com/hkjang/seaton/pull/28",
-   "why": "review: rejected — 리뷰 거절: internal/mail/service.go:158-173 deliver() 가 발송용 컨텍스트(2*Timeout+15s)를 결과 ",
-   "evidence": "https://github.com/hkjang/aidev/tree/main/state/runs/2026-09-16-102235-seaton-improve",
-   "labels": "",
-   "action": "PR 처리기가 사람에게 넘김 — 수정·심사를 2번 시도했지만 통과하지 못함 — 사람이 봐야 한다 · 승인: PR 라벨 aidev-approved / 반려: aidev-rejected — 다음 회차에 러너가 승인 당시 커밋에만 CI 확인 후 머지·닫기",
-   "date": "2026-09-16",
-   "shepherd": "리뷰 거절 · 사람 필요 (09-18 05:58) — 수정·심사를 2번 시도했지만 통과하지 못함 — 사람이 봐야 한다",
-   "shepherd_action": "needs-human"
-  },
-  {
-   "kind": "PR",
    "project": "muni",
    "title": "auto-improve: feat: 사내 SMTP 릴레이로 사람이 기다리는 알림을 메일로 보내고 시도마다 기록합니다 (MAIL-STANDARD)",
    "url": "https://github.com/hkjang/muni/pull/17",
@@ -1931,66 +1394,6 @@
    "date": "2026-09-16",
    "shepherd": "보호 파일 · 승인 → 스윕이 CI 확인 후 머지 (09-18 03:09) — risk=medium — 리뷰 승인 (risk=medium)",
    "shepherd_action": "approve"
-  },
-  {
-   "kind": "PR",
-   "project": "moyro",
-   "title": "auto-improve: feat: notify people who are waiting by mail through the company SMTP relay",
-   "url": "https://github.com/hkjang/moyro/pull/15",
-   "sha": "3a51b5d",
-   "summary": "28파일 +2307/−44 · guarded files, PR open https://github.com/hkjang/moyro/pull/15",
-   "why": "guard: held-expected — server/internal/store/migrations/000018_mail_deliveries.up.sql ",
-   "evidence": "https://github.com/hkjang/aidev/tree/main/state/runs/2026-09-16-081228-moyro-improve",
-   "labels": "",
-   "action": "PR 처리기가 사람에게 넘김 — 수정·심사를 2번 시도했지만 통과하지 못함 — 사람이 봐야 한다 · 승인: PR 라벨 aidev-approved / 반려: aidev-rejected — 다음 회차에 러너가 승인 당시 커밋에만 CI 확인 후 머지·닫기",
-   "date": "2026-09-16",
-   "shepherd": "리뷰 거절 · 사람 필요 (09-18 04:42) — 수정·심사를 2번 시도했지만 통과하지 못함 — 사람이 봐야 한다",
-   "shepherd_action": "needs-human"
-  },
-  {
-   "kind": "PR",
-   "project": "weekly",
-   "title": "auto-improve: feat: 허용된 사내 서비스에서 표(claim)로 PPTX 를 넘겨받습니다",
-   "url": "https://github.com/hkjang/weekly/pull/15",
-   "sha": "4ee60fc",
-   "summary": "19파일 +876/−82 · guarded files, PR open https://github.com/hkjang/weekly/pull/15",
-   "why": "guard: held-expected — internal/app/migrations/032_handoff_source.sql ",
-   "evidence": "https://github.com/hkjang/aidev/tree/main/state/runs/2026-09-16-075229-weekly-improve",
-   "labels": "",
-   "action": "PR 처리기가 사람에게 넘김 — base 와 충돌하는데 자동 리베이스로 풀리지 않음 — 수동 해결 필요 · 승인: PR 라벨 aidev-approved / 반려: aidev-rejected — 다음 회차에 러너가 승인 당시 커밋에만 CI 확인 후 머지·닫기",
-   "date": "2026-09-16",
-   "shepherd": "충돌 · 사람 필요 (09-18 03:47) — base 와 충돌하는데 자동 리베이스로 풀리지 않음 — 수동 해결 필요",
-   "shepherd_action": "needs-human"
-  },
-  {
-   "kind": "PR",
-   "project": "moina",
-   "title": "auto-improve: feat: 사내 SMTP 릴레이 알림에 발송 기록과 이벤트 스위치를 더합니다",
-   "url": "https://github.com/hkjang/moina/pull/23",
-   "sha": "71af292",
-   "summary": "17파일 +899/−75 · guarded files, PR open https://github.com/hkjang/moina/pull/23",
-   "why": "guard: held-expected — backend/internal/store/migrations/014_mail_deliveries.sql ",
-   "evidence": "https://github.com/hkjang/aidev/tree/main/state/runs/2026-09-16-072227-moina-improve",
-   "labels": "",
-   "action": "PR 처리기가 사람에게 넘김 — base 와 충돌하는데 자동 리베이스로 풀리지 않음 — 수동 해결 필요 · 승인: PR 라벨 aidev-approved / 반려: aidev-rejected — 다음 회차에 러너가 승인 당시 커밋에만 CI 확인 후 머지·닫기",
-   "date": "2026-09-16",
-   "shepherd": "충돌 · 사람 필요 (09-18 02:57) — base 와 충돌하는데 자동 리베이스로 풀리지 않음 — 수동 해결 필요",
-   "shepherd_action": "needs-human"
-  },
-  {
-   "kind": "PR",
-   "project": "postra",
-   "title": "auto-improve: feat(handoff): send a mail to another in-house service as markdown",
-   "url": "https://github.com/hkjang/postra/pull/11",
-   "sha": "a44dc07",
-   "summary": "37파일 +1553/−21 · review held, PR open https://github.com/hkjang/postra/pull/11",
-   "why": "review: rejected — 리뷰 거절: internal/application/handoff.go:119 CollectHandoffClaim 은 로그인 없는 공개 경로(pu",
-   "evidence": "https://github.com/hkjang/aidev/tree/main/state/runs/2026-09-16-070228-postra-improve",
-   "labels": "",
-   "action": "PR 처리기가 사람에게 넘김 — base 와 충돌하는데 자동 리베이스로 풀리지 않음 — 수동 해결 필요 · 승인: PR 라벨 aidev-approved / 반려: aidev-rejected — 다음 회차에 러너가 승인 당시 커밋에만 CI 확인 후 머지·닫기",
-   "date": "2026-09-16",
-   "shepherd": "충돌 · 사람 필요 (09-18 01:07) — base 와 충돌하는데 자동 리베이스로 풀리지 않음 — 수동 해결 필요",
-   "shepherd_action": "needs-human"
   },
   {
    "kind": "PR",
@@ -2054,21 +1457,6 @@
   },
   {
    "kind": "PR",
-   "project": "igame",
-   "title": "auto-improve: feat: send approval and ranking notifications through the company SMTP relay",
-   "url": "https://github.com/hkjang/igame/pull/18",
-   "sha": "ebc412f",
-   "summary": "27파일 +2105/−16 · guarded files, PR open https://github.com/hkjang/igame/pull/18",
-   "why": "guard: held-expected — migrations/011_mail_deliveries.sql ",
-   "evidence": "https://github.com/hkjang/aidev/tree/main/state/runs/2026-09-16-015223-igame-improve",
-   "labels": "",
-   "action": "PR 처리기가 사람에게 넘김 — 수정·심사를 2번 시도했지만 통과하지 못함 — 사람이 봐야 한다 · 승인: PR 라벨 aidev-approved / 반려: aidev-rejected — 다음 회차에 러너가 승인 당시 커밋에만 CI 확인 후 머지·닫기",
-   "date": "2026-09-16",
-   "shepherd": "리뷰 거절 · 사람 필요 (09-18 00:36) — 수정·심사를 2번 시도했지만 통과하지 못함 — 사람이 봐야 한다",
-   "shepherd_action": "needs-human"
-  },
-  {
-   "kind": "PR",
    "project": "orbit",
    "title": "auto-improve: feat(handoff): 승인된 기억을 다른 사내 서비스로 넘긴다",
    "url": "https://github.com/hkjang/orbit/pull/3",
@@ -2081,36 +1469,6 @@
    "date": "2026-09-16",
    "shepherd": "리뷰 거절 · 승인 → 스윕이 CI 확인 후 머지 (09-17 16:53) — risk=medium — 리뷰 승인 (risk=medium)",
    "shepherd_action": "approve"
-  },
-  {
-   "kind": "PR",
-   "project": "orbit",
-   "title": "auto-improve: feat(admin): 관리자가 화면에서 방문 추적 스크립트를 붙일 수 있게 한다",
-   "url": "https://github.com/hkjang/orbit/pull/2",
-   "sha": "4081685",
-   "summary": "15파일 +1913/−11 · guarded files, PR open https://github.com/hkjang/orbit/pull/2",
-   "why": "guard: held-expected — internal/store/migrations/006_tracking_settings.sql ",
-   "evidence": "https://github.com/hkjang/aidev/tree/main/state/runs/2026-09-16-010228-orbit-improve",
-   "labels": "",
-   "action": "PR 처리기가 사람에게 넘김 — base 와 충돌하는데 자동 리베이스로 풀리지 않음 — 수동 해결 필요 · 승인: PR 라벨 aidev-approved / 반려: aidev-rejected — 다음 회차에 러너가 승인 당시 커밋에만 CI 확인 후 머지·닫기",
-   "date": "2026-09-16",
-   "shepherd": "충돌 · 사람 필요 (09-17 16:48) — base 와 충돌하는데 자동 리베이스로 풀리지 않음 — 수동 해결 필요",
-   "shepherd_action": "needs-human"
-  },
-  {
-   "kind": "PR",
-   "project": "dataworks",
-   "title": "auto-improve: feat(mail): notify people through the company SMTP relay for the events they wait on",
-   "url": "https://github.com/hkjang/dataworks/pull/21",
-   "sha": "016260b",
-   "summary": "21파일 +2579/−8 · review held, PR open https://github.com/hkjang/dataworks/pull/21",
-   "why": "review: rejected — 리뷰 거절: internal/proxy/mail.go:82,103,121,140 모든 알림 메일의 링크 Path 가 '/admin#approva",
-   "evidence": "https://github.com/hkjang/aidev/tree/main/state/runs/2026-09-15-234224-dataworks-improve",
-   "labels": "",
-   "action": "PR 처리기가 사람에게 넘김 — 수정·심사를 2번 시도했지만 통과하지 못함 — 사람이 봐야 한다 · 승인: PR 라벨 aidev-approved / 반려: aidev-rejected — 다음 회차에 러너가 승인 당시 커밋에만 CI 확인 후 머지·닫기",
-   "date": "2026-09-15",
-   "shepherd": "리뷰 거절 · 사람 필요 (09-17 16:48) — 수정·심사를 2번 시도했지만 통과하지 못함 — 사람이 봐야 한다",
-   "shepherd_action": "needs-human"
   },
   {
    "kind": "PR",
@@ -2144,51 +1502,6 @@
   },
   {
    "kind": "PR",
-   "project": "appstore",
-   "title": "auto-improve: feat: send review and status notifications through a company SMTP relay",
-   "url": "https://github.com/hkjang/appstore/pull/18",
-   "sha": "746e0a0",
-   "summary": "49파일 +2995/−24 · guarded files, PR open https://github.com/hkjang/appstore/pull/18",
-   "why": "guard: held-expected — migrations/000005_mail_deliveries.sql ",
-   "evidence": "https://github.com/hkjang/aidev/tree/main/state/runs/2026-09-14-203210-appstore-improve",
-   "labels": "",
-   "action": "PR 처리기가 사람에게 넘김 — base 와 충돌하는데 자동 리베이스로 풀리지 않음 — 수동 해결 필요 · 승인: PR 라벨 aidev-approved / 반려: aidev-rejected — 다음 회차에 러너가 승인 당시 커밋에만 CI 확인 후 머지·닫기",
-   "date": "2026-09-14",
-   "shepherd": "충돌 · 사람 필요 (09-17 15:02) — base 와 충돌하는데 자동 리베이스로 풀리지 않음 — 수동 해결 필요",
-   "shepherd_action": "needs-human"
-  },
-  {
-   "kind": "PR",
-   "project": "madi",
-   "title": "auto-improve: feat: add cross-service Markdown handoff with origin allow list",
-   "url": "https://github.com/hkjang/madi/pull/3",
-   "sha": "d8a9ce1",
-   "summary": "11파일 +941/−8 · review held, PR open https://github.com/hkjang/madi/pull/3",
-   "why": "review: missing — 리뷰 결과 없음/손상: missing — 보류",
-   "evidence": "https://github.com/hkjang/aidev/tree/main/state/runs/2026-09-14-195205-madi-improve",
-   "labels": "",
-   "action": "PR 처리기가 사람에게 넘김 — 수정·심사를 2번 시도했지만 통과하지 못함 — 사람이 봐야 한다 · 승인: PR 라벨 aidev-approved / 반려: aidev-rejected — 다음 회차에 러너가 승인 당시 커밋에만 CI 확인 후 머지·닫기",
-   "date": "2026-09-14",
-   "shepherd": "리뷰 없음 · 사람 필요 (09-17 15:53) — 수정·심사를 2번 시도했지만 통과하지 못함 — 사람이 봐야 한다",
-   "shepherd_action": "needs-human"
-  },
-  {
-   "kind": "PR",
-   "project": "qurio",
-   "title": "auto-improve: feat: add administrator-managed visitor tracking with CSP nonce and Momento proxy",
-   "url": "https://github.com/hkjang/qurio/pull/12",
-   "sha": "808124a",
-   "summary": "33파일 +1825/−30 · review held, PR open https://github.com/hkjang/qurio/pull/12",
-   "why": "review: rejected — 리뷰 거절: internal/httpapi/tracking_handlers.go:451-458 The unauthenticated /moment",
-   "evidence": "https://github.com/hkjang/aidev/tree/main/state/runs/2026-09-14-192204-qurio-improve",
-   "labels": "",
-   "action": "PR 처리기가 사람에게 넘김 — base 와 충돌하는데 자동 리베이스로 풀리지 않음 — 수동 해결 필요 · 승인: PR 라벨 aidev-approved / 반려: aidev-rejected — 다음 회차에 러너가 승인 당시 커밋에만 CI 확인 후 머지·닫기",
-   "date": "2026-09-14",
-   "shepherd": "충돌 · 사람 필요 (09-17 13:57) — base 와 충돌하는데 자동 리베이스로 풀리지 않음 — 수동 해결 필요",
-   "shepherd_action": "needs-human"
-  },
-  {
-   "kind": "PR",
    "project": "trace",
    "title": "auto-improve: feat(auth): add silent SSO auto-login via OIDC prompt=none",
    "url": "https://github.com/hkjang/trace/pull/1",
@@ -2200,21 +1513,6 @@
    "action": "PR 처리기가 사람에게 넘김 — 사람만 승인할 수 있는 파일을 건드림: .github/workflows/ci.yml  · 승인: PR 라벨 aidev-approved / 반려: aidev-rejected — 다음 회차에 러너가 승인 당시 커밋에만 CI 확인 후 머지·닫기",
    "date": "2026-09-14",
    "shepherd": "보호 파일 · 사람 필요 (09-17 13:15) — 사람만 승인할 수 있는 파일을 건드림: .github/workflows/ci.yml ",
-   "shepherd_action": "needs-human"
-  },
-  {
-   "kind": "PR",
-   "project": "ai-admin",
-   "title": "auto-improve: feat: 사내 SMTP 릴레이로 보내는 이벤트 알림 메일과 발송 기록",
-   "url": "https://github.com/hkjang/ai-admin/pull/23",
-   "sha": "f9ddcc1",
-   "summary": "25파일 +2608/−3 · guarded files, PR open https://github.com/hkjang/ai-admin/pull/23",
-   "why": "guard: held-expected — internal/database/migrations/006_mail_delivery.sql ",
-   "evidence": "https://github.com/hkjang/aidev/tree/main/state/runs/2026-09-14-105155-ai-admin-improve",
-   "labels": "",
-   "action": "PR 처리기가 사람에게 넘김 — 수정·심사를 2번 시도했지만 통과하지 못함 — 사람이 봐야 한다 · 승인: PR 라벨 aidev-approved / 반려: aidev-rejected — 다음 회차에 러너가 승인 당시 커밋에만 CI 확인 후 머지·닫기",
-   "date": "2026-09-14",
-   "shepherd": "리뷰 거절 · 사람 필요 (09-17 14:43) — 수정·심사를 2번 시도했지만 통과하지 못함 — 사람이 봐야 한다",
    "shepherd_action": "needs-human"
   },
   {
@@ -2293,21 +1591,6 @@
    "shepherd_action": "approve"
   },
   {
-   "kind": "PR",
-   "project": "DartFly",
-   "title": "auto-improve: feat: 관리자가 화면에서 방문 추적 스니펫을 붙일 수 있게 (nonce 기반 CSP, Momento 프록시)",
-   "url": "https://github.com/hkjang/DartFly/pull/3",
-   "sha": "211c6f6",
-   "summary": "19파일 +1955/−11 · guarded files, PR open https://github.com/hkjang/DartFly/pull/3",
-   "why": "guard: held-expected — internal/store/mariadb/migrations/002_dartfly_control.sql ",
-   "evidence": "https://github.com/hkjang/aidev/tree/main/state/runs/2026-09-14-081147-DartFly-improve",
-   "labels": "",
-   "action": "PR 처리기가 사람에게 넘김 — base 와 충돌하는데 자동 리베이스로 풀리지 않음 — 수동 해결 필요 · 승인: PR 라벨 aidev-approved / 반려: aidev-rejected — 다음 회차에 러너가 승인 당시 커밋에만 CI 확인 후 머지·닫기",
-   "date": "2026-09-14",
-   "shepherd": "충돌 · 사람 필요 (09-17 13:08) — base 와 충돌하는데 자동 리베이스로 풀리지 않음 — 수동 해결 필요",
-   "shepherd_action": "needs-human"
-  },
-  {
    "kind": "배포 복구",
    "project": "relio",
    "title": "⏪ 배포 복구 필요: relio (60601bd)",
@@ -2328,19 +1611,6 @@
    "sha": "",
    "summary": "릴리즈 워크플로 2회 실패 — 다음 회차 자동 배정",
    "why": "오류 대응(자동 적재): 마지막 회차가 'error' 로 끝났습니다. fix-round: error: pr create",
-   "evidence": "",
-   "labels": "",
-   "action": "두면 러너가 수정 회차를 돌림. 급하면 run: 이슈, 멈추려면 stop",
-   "date": ""
-  },
-  {
-   "kind": "수정 과제",
-   "project": "aiportal-front",
-   "title": "오류 대응(자동 적재): 릴리즈 실패(). 릴리즈 관례를 정할 근거가 없어 다음 버전을 결정할 수 없다(27회째 동일 교착). 이번 회차에 6개 항목을 직접 재실측함: (1) gi",
-   "url": "https://hkjang.github.io/aidev/projects/aiportal-front/",
-   "sha": "",
-   "summary": "릴리즈 워크플로 2회 실패 — 다음 회차 자동 배정",
-   "why": "오류 대응(자동 적재): 릴리즈 실패(). 릴리즈 관례를 정할 근거가 없어 다음 버전을 결정할 수 없다(27회째 동일 교착). 이번 회차에 6개 항목을 직접 재실측함: (1) git tag --sort=-creatordate 출력 0건, 태그 총 0개 (2) package.json version=0.0.0, package-lock.json version 및",
    "evidence": "",
    "labels": "",
    "action": "두면 러너가 수정 회차를 돌림. 급하면 run: 이슈, 멈추려면 stop",
@@ -2630,21 +1900,21 @@
   "rows": [
    {
     "role": "정찰 scout",
-    "calls": 294,
+    "calls": 295,
     "metric": "과제서 90% · 구현자 채택 95% · 과제서 회차의 PR 도달 64%",
-    "cost": 233.95
+    "cost": 235.29
    },
    {
     "role": "구현 builder",
-    "calls": 634,
+    "calls": 635,
     "metric": "러너 검증 통과 94% · 변경 없음 103",
-    "cost": 2675.18
+    "cost": 2677.16
    },
    {
     "role": "비평 critic",
-    "calls": 373,
-    "metric": "최종 승인 87% · 한 번이라도 거절 59 · 승인·머지 뒤 회귀 0/269",
-    "cost": 588.37
+    "calls": 374,
+    "metric": "최종 승인 87% · 한 번이라도 거절 59 · 승인·머지 뒤 회귀 0/270",
+    "cost": 589.65
    },
    {
     "role": "수리 repairer",
@@ -2660,9 +1930,9 @@
    },
    {
     "role": "릴리즈 releaser",
-    "calls": 300,
+    "calls": 301,
     "metric": "완전한 릴리즈 71%",
-    "cost": 377.68
+    "cost": 378.65
    },
    {
     "role": "PR 심사 shepherd-reviewer",
@@ -2678,9 +1948,9 @@
    },
    {
     "role": "기록·학습 historian",
-    "calls": 62,
+    "calls": 63,
     "metric": "캠페인 교훈 37개 · 운영자 규칙 10개",
-    "cost": 1.26
+    "cost": 1.59
    },
    {
     "role": "코파일럿 copilot",
@@ -3117,7 +2387,7 @@
   },
   {
    "metric": "유효 개선당 비용",
-   "value": "$16.73",
+   "value": "$16.75",
    "detail": "비용 확인된 유효 개선 233건, 미확인 세션 449"
   },
   {
@@ -3132,7 +2402,7 @@
   }
  ],
  "outcomes_today": {
-  "merged": 10,
+  "merged": 11,
   "review-pending": 7,
   "release-ready": 11,
   "verify-failed": 2,
@@ -3143,12 +2413,12 @@
  "days": [
   {
    "date": "2026-09-24",
-   "total": 30,
+   "total": 31,
    "released": 11,
-   "merged": 10,
+   "merged": 11,
    "nochange": 0,
    "failed": 0,
-   "cost_usd": 206.57
+   "cost_usd": 212.47
   },
   {
    "date": "2026-09-23",
@@ -3354,13 +2624,13 @@
    "key": "2026-W39",
    "url": "https://hkjang.github.io/aidev/weekly/2026-W39/",
    "days": 4,
-   "total": 223,
+   "total": 224,
    "released": 48,
-   "merged": 41,
+   "merged": 42,
    "nochange": 92,
    "failed": 2,
-   "cost": 550.1,
-   "minutes": 1487
+   "cost": 556.0,
+   "minutes": 1502
   },
   {
    "key": "2026-W38",
@@ -3404,13 +2674,13 @@
    "key": "2026-09",
    "url": "https://hkjang.github.io/aidev/monthly/2026-09/",
    "days": 23,
-   "total": 1355,
+   "total": 1356,
    "released": 452,
-   "merged": 169,
+   "merged": 170,
    "nochange": 117,
    "failed": 30,
-   "cost": 4801.16,
-   "minutes": 11856
+   "cost": 4807.06,
+   "minutes": 11870
   }
  ],
  "projects": [
@@ -3453,8 +2723,8 @@
    "grade": "D",
    "grade_why": "14일: 릴리즈 7, 실패 0, 경고 4, 회귀 0",
    "lessons": 0,
-   "ideas_pending": 11,
-   "ideas_total": 12,
+   "ideas_pending": 12,
+   "ideas_total": 13,
    "release": {
     "status": "released",
     "version": "1.2.25",
@@ -3468,18 +2738,18 @@
    "name": "aiportal-front",
    "repo": "https://github.com/hkjang/aiportal-front",
    "page": "https://hkjang.github.io/aidev/projects/aiportal-front/",
-   "runs": 82,
+   "runs": 83,
    "released": 0,
-   "last_ts": "2026-09-24T13:02:34+09:00",
-   "last_status": "other",
-   "last_result": "fix-round: merge stopped, PR open https://github.com/hkjang/aiportal-front/pull/39",
-   "cost": 177.2,
-   "minutes": 442,
+   "last_ts": "2026-09-24T16:08:35+09:00",
+   "last_status": "merged",
+   "last_result": "fix-round: merged https://github.com/hkjang/aiportal-front/pull/40, release failed",
+   "cost": 182.78,
+   "minutes": 457,
    "grade": "D",
-   "grade_why": "14일: 릴리즈 0, 실패 0, 경고 20, 회귀 0",
+   "grade_why": "14일: 릴리즈 0, 실패 0, 경고 21, 회귀 0",
    "lessons": 1,
-   "ideas_pending": 13,
-   "ideas_total": 14,
+   "ideas_pending": 12,
+   "ideas_total": 13,
    "release": {
     "status": "failed",
     "version": "",
@@ -3569,8 +2839,8 @@
    "grade": "D",
    "grade_why": "14일: 릴리즈 9, 실패 1, 경고 5, 회귀 1",
    "lessons": 2,
-   "ideas_pending": 11,
-   "ideas_total": 12,
+   "ideas_pending": 13,
+   "ideas_total": 14,
    "release": {
     "status": "missing"
    }
@@ -3639,8 +2909,8 @@
    "grade": "D",
    "grade_why": "14일: 릴리즈 6, 실패 0, 경고 6, 회귀 0",
    "lessons": 0,
-   "ideas_pending": 8,
-   "ideas_total": 11,
+   "ideas_pending": 11,
+   "ideas_total": 14,
    "release": {
     "status": "released",
     "version": "2.73.0",
@@ -3664,8 +2934,8 @@
    "grade": "B",
    "grade_why": "14일: 릴리즈 10, 실패 0, 경고 1, 회귀 0",
    "lessons": 0,
-   "ideas_pending": 11,
-   "ideas_total": 13,
+   "ideas_pending": 12,
+   "ideas_total": 14,
    "release": {
     "status": "released",
     "version": "0.9.60",
@@ -3689,8 +2959,8 @@
    "grade": "D",
    "grade_why": "14일: 릴리즈 2, 실패 0, 경고 6, 회귀 0",
    "lessons": 2,
-   "ideas_pending": 11,
-   "ideas_total": 14,
+   "ideas_pending": 12,
+   "ideas_total": 15,
    "release": {
     "status": "released",
     "version": "0.77.16",
@@ -3711,8 +2981,8 @@
    "grade": "B",
    "grade_why": "14일: 릴리즈 1, 실패 0, 경고 1, 회귀 0",
    "lessons": 0,
-   "ideas_pending": 13,
-   "ideas_total": 14,
+   "ideas_pending": 14,
+   "ideas_total": 15,
    "release": {
     "status": "released",
     "version": "1.12.0",
@@ -3733,8 +3003,8 @@
    "grade": "D",
    "grade_why": "14일: 릴리즈 10, 실패 0, 경고 4, 회귀 1",
    "lessons": 1,
-   "ideas_pending": 9,
-   "ideas_total": 10,
+   "ideas_pending": 10,
+   "ideas_total": 11,
    "release": {
     "status": "released",
     "version": "0.7.19",
@@ -3758,8 +3028,8 @@
    "grade": "D",
    "grade_why": "14일: 릴리즈 8, 실패 1, 경고 5, 회귀 0",
    "lessons": 0,
-   "ideas_pending": 12,
-   "ideas_total": 12,
+   "ideas_pending": 13,
+   "ideas_total": 13,
    "release": {
     "status": "released",
     "version": "0.2.38",
@@ -3819,8 +3089,8 @@
    "grade": "C",
    "grade_why": "14일: 릴리즈 11, 실패 0, 경고 2, 회귀 0",
    "lessons": 1,
-   "ideas_pending": 12,
-   "ideas_total": 15,
+   "ideas_pending": 13,
+   "ideas_total": 16,
    "release": {
     "status": "released",
     "version": "0.2.19",
@@ -3919,8 +3189,8 @@
    "grade": "D",
    "grade_why": "14일: 릴리즈 0, 실패 2, 경고 6, 회귀 0",
    "lessons": 0,
-   "ideas_pending": 12,
-   "ideas_total": 15,
+   "ideas_pending": 15,
+   "ideas_total": 18,
    "release": {
     "status": "released",
     "version": "0.3.0",
@@ -3941,8 +3211,8 @@
    "grade": "D",
    "grade_why": "14일: 릴리즈 10, 실패 2, 경고 4, 회귀 0",
    "lessons": 0,
-   "ideas_pending": 11,
-   "ideas_total": 13,
+   "ideas_pending": 12,
+   "ideas_total": 14,
    "release": {
     "status": "released",
     "version": "0.1.37",
@@ -3991,8 +3261,8 @@
    "grade": "D",
    "grade_why": "14일: 릴리즈 7, 실패 0, 경고 5, 회귀 0",
    "lessons": 1,
-   "ideas_pending": 13,
-   "ideas_total": 15,
+   "ideas_pending": 15,
+   "ideas_total": 17,
    "release": {
     "status": "released",
     "version": "0.2.35",
@@ -4066,8 +3336,8 @@
    "grade": "D",
    "grade_why": "14일: 릴리즈 5, 실패 0, 경고 4, 회귀 0",
    "lessons": 0,
-   "ideas_pending": 12,
-   "ideas_total": 15,
+   "ideas_pending": 14,
+   "ideas_total": 17,
    "release": {
     "status": "released",
     "version": "0.6.4",
@@ -4116,8 +3386,8 @@
    "grade": "D",
    "grade_why": "14일: 릴리즈 7, 실패 6, 경고 7, 회귀 1",
    "lessons": 1,
-   "ideas_pending": 10,
-   "ideas_total": 12,
+   "ideas_pending": 16,
+   "ideas_total": 18,
    "release": {
     "status": "released",
     "version": "0.23.5",
@@ -4188,8 +3458,8 @@
    "grade": "D",
    "grade_why": "14일: 릴리즈 0, 실패 0, 경고 4, 회귀 0",
    "lessons": 0,
-   "ideas_pending": 11,
-   "ideas_total": 13,
+   "ideas_pending": 14,
+   "ideas_total": 16,
    "release": {
     "status": "missing"
    }
@@ -4208,8 +3478,8 @@
    "grade": "C",
    "grade_why": "14일: 릴리즈 6, 실패 0, 경고 2, 회귀 0",
    "lessons": 1,
-   "ideas_pending": 12,
-   "ideas_total": 13,
+   "ideas_pending": 13,
+   "ideas_total": 14,
    "release": {
     "status": "released",
     "version": "0.5.19",
@@ -4283,8 +3553,8 @@
    "grade": "B",
    "grade_why": "14일: 릴리즈 5, 실패 0, 경고 1, 회귀 0",
    "lessons": 0,
-   "ideas_pending": 11,
-   "ideas_total": 13,
+   "ideas_pending": 12,
+   "ideas_total": 14,
    "release": {
     "status": "released",
     "version": "1.4.6",
@@ -4308,8 +3578,8 @@
    "grade": "D",
    "grade_why": "14일: 릴리즈 2, 실패 7, 경고 12, 회귀 1",
    "lessons": 1,
-   "ideas_pending": 14,
-   "ideas_total": 18,
+   "ideas_pending": 22,
+   "ideas_total": 26,
    "release": {
     "status": "released",
     "version": "1.0.146",
@@ -4333,8 +3603,8 @@
    "grade": "A",
    "grade_why": "14일: 릴리즈 1, 실패 0, 경고 0, 회귀 0",
    "lessons": 0,
-   "ideas_pending": 12,
-   "ideas_total": 14,
+   "ideas_pending": 13,
+   "ideas_total": 15,
    "release": {
     "status": "released",
     "version": "0.1.5",
@@ -4451,8 +3721,8 @@
    "grade": "B",
    "grade_why": "14일: 릴리즈 0, 실패 0, 경고 1, 회귀 0",
    "lessons": 0,
-   "ideas_pending": 14,
-   "ideas_total": 17,
+   "ideas_pending": 16,
+   "ideas_total": 19,
    "release": {
     "status": "released",
     "version": "0.85.3",
@@ -4473,8 +3743,8 @@
    "grade": "D",
    "grade_why": "14일: 릴리즈 8, 실패 1, 경고 6, 회귀 0",
    "lessons": 0,
-   "ideas_pending": 12,
-   "ideas_total": 14,
+   "ideas_pending": 14,
+   "ideas_total": 16,
    "release": {
     "status": "released",
     "version": "2.8.6",
@@ -4498,8 +3768,8 @@
    "grade": "C",
    "grade_why": "14일: 릴리즈 6, 실패 0, 경고 2, 회귀 0",
    "lessons": 0,
-   "ideas_pending": 13,
-   "ideas_total": 17,
+   "ideas_pending": 16,
+   "ideas_total": 20,
    "release": {
     "status": "released",
     "version": "0.307.0",
