@@ -86,11 +86,11 @@ curl -s -i -X POST http://localhost:3000/api/auth/login \
 
 처음 띄우면 `activity.json`이 빈 상황판(`activities: []`)으로 만들어집니다. 브라우저에서 `http://<서버-주소>:3000/admin`에 접속해 관리자 비밀번호로 로그인한 뒤, 5.2절의 방법으로 작업 목록(`activity.json`)을 올리면 상황판이 채워집니다. 별도의 관리자 계정 생성 절차는 없습니다 — 관리자는 비밀번호 하나로 구분됩니다.
 
-> **HTTPS 없이 운영할 때 반드시 읽으십시오.** 운영 이미지(`NODE_ENV=production`)는 관리자 세션 쿠키에 `Secure` 속성을 붙입니다. 브라우저는 `http://localhost`·`http://127.0.0.1`를 제외한 **평문 HTTP 주소에서는 이 쿠키를 저장하지 않으므로**, `http://192.168.x.x:3000/admin`처럼 접속하면 로그인 직후 콘솔은 보이지만 상태 변경이 모두 `401`로 거부되고 새로고침하면 다시 로그인 화면이 나옵니다. 관리자 화면은 **HTTPS(리버스 프록시 종단)** 또는 서버 로컬 브라우저(`localhost`)에서 쓰십시오. 사용자 화면(`/`, `/pc`)은 이 영향을 받지 않습니다. (`lib/adminSession.ts`, `app/api/auth/login/route.ts` — `secure: process.env.NODE_ENV === 'production'`)
+> **관리자 세션 쿠키의 `Secure` 속성.** 브라우저는 `http://localhost`·`http://127.0.0.1`를 제외한 **평문 HTTP 주소에서는 `Secure` 쿠키를 저장하지 않습니다.** 그래서 서버는 로그인 요청이 **실제로 HTTPS 로 왔을 때만** `Secure`를 붙입니다 — 앱 서버가 직접 받은 프로토콜, 또는 리버스 프록시가 넘겨주는 `X-Forwarded-Proto` 헤더(여러 값이면 첫 값)로 판단합니다. 따라서 `http://192.168.x.x:3000/admin`처럼 평문 HTTP 로 띄운 사내망에서도 관리자 로그인이 됩니다. HTTPS 를 종단하는 리버스 프록시(nginx·ALB 등)를 쓴다면 프록시가 `X-Forwarded-Proto: https`를 넘기는지 확인하십시오. 넘기지 않으면 쿠키가 `Secure` 없이 내려가므로 이때는 `ADMIN_COOKIE_SECURE=true`로 강제합니다(3장). 반대로 `ADMIN_COOKIE_SECURE=false`면 어떤 요청에도 붙이지 않습니다. `NODE_ENV`는 이 판정에 영향을 주지 않습니다. 사용자 화면(`/`, `/pc`)은 쿠키를 쓰지 않아 이 영향을 받지 않습니다. (`lib/adminSession.ts` `resolveAdminCookieSecure`, `app/api/auth/login/route.ts`)
 
 ### 2.5 개발 서버로 띄우기 (선택)
 
-Docker 없이 로컬에서 볼 때는 README의 [로컬 개발 환경 실행](../README.md#1-로컬-개발-환경-실행)을 따릅니다. `.env.local`에 같은 세 변수를 넣고 `npm run dev`로 띄우면 `http://localhost:3000`입니다. 개발 서버는 `secure` 쿠키를 쓰지 않습니다.
+Docker 없이 로컬에서 볼 때는 README의 [로컬 개발 환경 실행](../README.md#1-로컬-개발-환경-실행)을 따릅니다. `.env.local`에 같은 세 변수를 넣고 `npm run dev`로 띄우면 `http://localhost:3000`입니다. 평문 HTTP 이므로 관리자 세션 쿠키에 `Secure`가 붙지 않습니다(2.4절).
 
 ---
 
@@ -108,7 +108,8 @@ Docker 없이 로컬에서 볼 때는 README의 [로컬 개발 환경 실행](..
 | `ACTIVITY_DATA_FILE` | `<작업 디렉터리>/data/activity.json` (컨테이너에서는 `/app/data/activity.json`) | 아니오 | 상황판 데이터 파일 경로. 백업 파일은 같은 폴더에 `<이름>.backup.json`으로 만들어집니다. e2e·캡처 스크립트가 격리용으로 씁니다. |
 | `PORT` | `3000` | 아니오 | 서버 포트(Next.js standalone). |
 | `HOSTNAME` | `0.0.0.0` (Dockerfile) | 아니오 | 바인드 주소. |
-| `NODE_ENV` | `production` (Dockerfile) | 아니오 | `production`이면 관리자 세션 쿠키에 `Secure`가 붙습니다(2.4절). |
+| `ADMIN_COOKIE_SECURE` | 없음(`auto`) | 아니오 | 관리자 세션 쿠키의 `Secure` 속성. 비어 있거나 `auto`면 요청이 HTTPS 로 왔을 때(`X-Forwarded-Proto: https` 또는 직접 HTTPS)만 붙입니다. `true`면 항상, `false`면 절대 붙이지 않습니다(2.4절). HTTPS 종단 프록시가 `X-Forwarded-Proto`를 넘기지 않을 때 `true`로 두십시오. |
+| `NODE_ENV` | `production` (Dockerfile) | 아니오 | Next.js 실행 모드. 쿠키 `Secure` 판정에는 관여하지 않습니다. |
 | `NEXT_TELEMETRY_DISABLED` | `1` (Dockerfile) | 아니오 | Next.js 원격 측정 비활성화. 폐쇄망에서는 켜 두십시오. |
 | `MY_AWS_REGION`, `MY_AWS_ACCESS_KEY_ID`, `MY_AWS_SECRET_ACCESS_KEY`, `S3_BUCKET_NAME` | 없음 | 아니오 | `lib/s3.ts`에서만 참조하며 **현재 어떤 라우트도 사용하지 않습니다.** 설정할 필요가 없습니다. |
 | `MAIL_CONFIG_FILE`, `MAIL_DELIVERIES_FILE` | `ACTIVITY_DATA_FILE`과 같은 폴더의 `mail.json`, `mail-deliveries.json` | 아니오 | 메일 알림 설정과 발송 기록 파일 경로(9장). |
@@ -314,7 +315,7 @@ npm run screenshots:guide
 
 | 증상 | 확인할 곳 | 조치 |
 |---|---|---|
-| 관리자 로그인 직후 콘솔은 보이는데 상태 변경이 반영되지 않고, 새로고침하면 다시 로그인 화면 | 브라우저 주소가 `http://<IP>`(평문 HTTP, localhost 아님)인지. 개발자 도구 → Application → Cookies에 `cutover_admin_session`이 없음. | 2.4절의 `Secure` 쿠키 제약입니다. HTTPS로 접속하거나 서버 로컬 브라우저에서 `http://localhost:3000/admin`을 씁니다. |
+| 관리자 로그인 직후 콘솔은 보이는데 상태 변경이 반영되지 않고, 새로고침하면 다시 로그인 화면 | 브라우저 주소가 `http://<IP>`(평문 HTTP, localhost 아님)이고 개발자 도구 → Application → Cookies에 `cutover_admin_session`이 없음. 로그인 응답의 `Set-Cookie`에 `Secure`가 있는지(2.4절 curl). | 평문 HTTP 인데 `Secure`가 붙었습니다. `ADMIN_COOKIE_SECURE=true`를 줬거나, 앞단 프록시가 평문 구간에도 `X-Forwarded-Proto: https`를 넘기고 있습니다. 변수를 지우거나 프록시 헤더를 고치고, 급하면 `ADMIN_COOKIE_SECURE=false`로 띄웁니다. |
 | `관리자 비밀번호가 틀렸습니다.` | `docker inspect cutover-app --format '{{.Config.Env}}'`에 `ADMIN_PASSWORD`가 있는지 | 없으면 이미지 기본값 `admin1234`가 유효합니다. 실행 명령에 `-e ADMIN_PASSWORD`를 넣어 다시 띄웁니다. |
 | `관리자 인증 설정을 확인해 주세요.` (로그인 시) | 로그: `Admin session could not be created because no signing secret is configured.` | `ADMIN_PASSWORD`와 `AUTH_SECRET`이 모두 비어 있습니다. 둘 중 하나(둘 다 권장)를 설정합니다. |
 | `관리자 인증이 만료되었습니다. 다시 로그인해 주세요.` | 7일이 지났거나 `AUTH_SECRET`이 바뀌었거나 위의 `Secure` 쿠키 문제 | 다시 로그인합니다. 반복되면 첫 번째 행을 확인합니다. |
@@ -345,7 +346,7 @@ npm run screenshots:guide
 **인증 연동**
 
 - SSO·LDAP·OAuth 연동은 없습니다. 비밀번호 두 개가 전부이며, 훈련 참여자 전체가 같은 사용자 비밀번호를 공유합니다. 훈련이 끝나면 비밀번호를 바꿔 다시 띄우십시오.
-- 관리자 세션은 HttpOnly·SameSite=strict·(운영에서) Secure 쿠키이며 7일간 유효합니다. 운영 관리자 접속은 HTTPS로 종단하는 리버스 프록시 뒤에 두는 것을 권장합니다(2.4절).
+- 관리자 세션은 HttpOnly·SameSite=strict 쿠키이며 7일간 유효합니다. `Secure`는 요청이 HTTPS 로 왔을 때만 붙고 `ADMIN_COOKIE_SECURE`로 강제할 수 있습니다. 운영 관리자 접속은 HTTPS로 종단하는 리버스 프록시 뒤에 두고 `ADMIN_COOKIE_SECURE=true`로 고정하는 것을 권장합니다(2.4절).
 - 로그인 실패 횟수 제한(레이트 리밋)이 없습니다. 외부 노출을 막는 것으로 대신합니다.
 
 **데이터**
