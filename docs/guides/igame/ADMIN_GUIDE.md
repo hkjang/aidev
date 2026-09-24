@@ -202,6 +202,10 @@ AI가 꺼져 있거나 미설정이면 AI 메뉴와 게임이 숨겨집니다.
 **키 권한 (`/admin/keys`, 관리자 전용)** — 역할별로 개인 API 키에 줄 수 있는 권한, 활성 키 개수,
 최대 사용 기간.
 
+**MCP SSO (OAuth)** — 같은 `/admin/security` 화면의 두 번째 카드. 개인 키 없이 Keycloak 액세스 토큰으로
+`/mcp`에 들어오게 합니다. 기본값은 **꺼짐**입니다. 설정 표와 Keycloak 쪽 설정은
+[3.4 MCP SSO (OAuth)](#34-mcp-sso-oauth--키-없이-keycloak-토큰으로-mcp-열기)에 있습니다.
+
 **방문 추적 (`/admin/tracking`, 관리자 전용)** — 어떤 화면이 실제로 쓰이는지 재는 추적 스크립트를
 화면에서 붙입니다. 기본값은 **꺼짐**이라 새로 설치한 곳에서는 아무것도 달라지지 않습니다. 설정 방법과
 정책(CSP) 설명은 [3.3 방문 추적](#33-방문-추적)에 있습니다.
@@ -257,6 +261,96 @@ API·MCP·상태 경로에는 붙지 않습니다.
 
 붙여넣은 값은 감사 로그에 `setting.update` / `tracking`으로 남습니다. 로그인 화면에도 스니펫이
 붙지만, 서비스가 만드는 스니펫은 개인 식별 값을 보내지 않습니다.
+
+### 3.4 MCP SSO (OAuth) — 키 없이 Keycloak 토큰으로 /mcp 열기
+
+`/mcp`는 개인 API 키로 들어옵니다. 이 절의 설정을 켜면 **같은 `/mcp`에 Keycloak 액세스 토큰으로도**
+들어올 수 있습니다. MCP 인가 규격(2025-06-18 이후)은 OAuth 2.1이라, 클라이언트(Claude·Cursor 등)에
+MCP 주소 하나만 주면 클라이언트가 401 응답의 안내를 따라 스스로 Keycloak 로그인 화면을 띄우고 토큰을
+받아 옵니다. 키 체계는 그대로이고 — 폐쇄망 자동화와 SDK는 계속 키를 씁니다 — 토큰은 `/mcp`에서만
+받습니다. REST·관리 API는 전과 같이 키와 세션만 받습니다.
+
+igame은 **리소스 서버**입니다. 로그인과 토큰 발급은 Keycloak이 하고, igame은 받은 토큰을 매 요청
+검사만 합니다. `/authorize`·`/token`·동적 클라이언트 등록은 igame에 없으며, 토큰을 저장하거나 세션으로
+바꾸지도 않습니다.
+
+**설정 (`/admin/security`의 "MCP SSO (OAuth)" 카드, 설정 키 `mcp`)**
+
+| 키 | 기본값 | 뜻 |
+| --- | --- | --- |
+| `mcp.oauth.enabled` | `false` | **꺼짐이 기본.** 켜려면 OIDC 카드의 Issuer URL이 저장돼 있어야 하며, 없으면 저장이 거부됩니다 |
+| `mcp.oauth.resource` | 빈 값 | 리소스 식별자. 비우면 **서비스 공개 URL + `/mcp`**. 클라이언트가 실제로 접속하는 공개 HTTPS 주소여야 하며, 프록시 뒤의 내부 주소가 아닙니다 |
+| `mcp.oauth.audience` | 빈 값 | 허용 대상 목록(공백 구분). 토큰의 `aud` 또는 `azp`와 비교합니다 |
+| `mcp.oauth.scopes` | `mcp:access games:read rankings:read profile:read` | SSO 토큰 주체에게 주는 권한. 개인 키와 같은 역할 정책의 교집합만 인정되며 `admin:*`은 줄 수 없습니다 |
+| (재사용) `oidc.issuer`·`oidc.client_id` | OIDC 카드 | 토큰의 발급자와 서명 키(JWKS)는 이 issuer에서 읽습니다. 웹 로그인 클라이언트 ID는 `azp`로 왔을 때 허용 대상으로 인정됩니다 |
+
+카드의 **MCP 주소**와 **메타데이터 주소**는 복사해서 쓰는 값입니다. 전자는 클라이언트에 넣는 URL이자
+Keycloak Audience 매퍼의 값이고, 후자는 401이 가리키는 RFC 9728 문서입니다.
+
+**Keycloak 쪽 할 일**
+
+1. MCP 클라이언트용 **공개(public) 클라이언트**를 새로 만듭니다(예: `igame-mcp`). Standard Flow 켬,
+   PKCE `S256`, Direct Access Grants·Implicit·Service accounts 끔. 웹 로그인 클라이언트와 **다른**
+   클라이언트입니다.
+2. Valid Redirect URIs에 쓰는 MCP 클라이언트의 콜백을 **정확히** 적습니다 — Claude는
+   `https://claude.ai/api/mcp/auth_callback`, 로컬 클라이언트는 `http://127.0.0.1:*/callback` 류.
+   `*` 하나로 다 여는 것은 금지입니다.
+3. 대상(audience)을 잇습니다. 둘 중 하나면 됩니다.
+   - **정식 경로 — Audience 매퍼**: 그 클라이언트(또는 전용 client scope)에 아래 매퍼를 둡니다.
+
+     | 매퍼 항목 | 값 |
+     | --- | --- |
+     | Mapper type | Audience |
+     | Included Custom Audience | 카드의 **MCP 주소** (예: `https://igame.company.local/mcp`) |
+     | Add to access token | ON |
+     | Add to ID token | OFF |
+
+   - **호환 경로 — 허용 대상**: 매퍼 없이 `mcp.oauth.audience`에 MCP 클라이언트 ID(`igame-mcp`)를
+     적습니다. 실제 Keycloak 26은 액세스 토큰의 `aud`에 `account`만 싣고 클라이언트 ID는 `azp`에
+     담으므로, 이 한 줄이면 됩니다.
+4. 액세스 토큰 수명은 짧게(5분 안팎) 둡니다. igame은 introspection을 하지 않으므로 **Keycloak에서
+   로그아웃하거나 사용자를 끊어도 이미 발급된 토큰은 만료까지 삽니다.** 급하면 igame 쪽 계정도
+   비활성화하세요 — 비활성 계정의 토큰은 즉시 거부됩니다.
+
+**계정은 만들지 않습니다.** 토큰의 `sub`로 **웹 로그인으로 이미 등록된 활성 계정**만 찾습니다. 없으면
+"웹으로 먼저 한 번 로그인하세요"로 거부합니다. 토큰의 role claim으로 권한을 올리지 않고, 비활성 계정을
+되살리지 않습니다.
+
+**curl로 확인하기**
+
+```bash
+# 1. 메타데이터 — 인증 없이 맨 JSON. 꺼져 있으면 404
+curl -s https://igame.company.local/.well-known/oauth-protected-resource/mcp
+# {"resource":"https://igame.company.local/mcp","authorization_servers":["https://keycloak/realms/corp"], ...}
+
+# 2. 토큰 없는 /mcp — 401과 resource_metadata가 붙은 WWW-Authenticate
+curl -si https://igame.company.local/mcp -X POST -H 'Content-Type: application/json' \
+  --data '{"jsonrpc":"2.0","id":1,"method":"tools/list"}' | grep -i www-authenticate
+# WWW-Authenticate: Bearer realm="igame-mcp", resource_metadata="https://igame.company.local/.well-known/oauth-protected-resource/mcp"
+
+# 3. Keycloak 토큰으로 tools/list — 거부되면 JSON-RPC error.message가 이유를 말합니다
+curl -s https://igame.company.local/mcp -X POST -H "Authorization: Bearer $TOKEN" \
+  -H 'Content-Type: application/json' --data '{"jsonrpc":"2.0","id":1,"method":"tools/list"}'
+```
+
+REST 401에는 `resource_metadata`가 붙지 않습니다 — 브라우저와 REST 클라이언트가 엉뚱한 곳으로 가지
+않게 하기 위해서입니다.
+
+**거부 메시지별 조치**
+
+| `error.message` | 뜻 | 조치 |
+| --- | --- | --- |
+| `authentication required` (메타데이터 404) | SSO가 꺼져 있거나 issuer가 비어 있음 | 카드의 스위치와 OIDC Issuer URL을 확인합니다. 켜 두었는데 로그에 `mcp oauth is enabled but inactive`가 있으면 issuer가 비워진 것입니다 |
+| `token was not issued for this server (aud=[account], azp="igame-mcp"): add "igame-mcp" to mcp.oauth.audience, or give the Keycloak client an Audience mapper for "https://…/mcp"` | 다른 앱용 토큰이거나 대상 설정이 아직 없음 | 메시지가 말하는 둘 중 하나를 합니다. `aud`/`azp`에 보이는 값이 곧 적을 값입니다 |
+| `SSO access token is not valid (signature, issuer, expiry or not-before)` | 서명·issuer·만료·`nbf` 중 하나가 어긋남 | 토큰이 이 realm에서 나왔는지, 호스트 시각이 맞는지, 만료되지 않았는지 봅니다. 서버 로그에 세부 원인이 남습니다 |
+| `an ID token was presented; send the access token instead` | ID 토큰을 보냄 | 클라이언트가 액세스 토큰을 보내게 합니다. ID 토큰은 로그인 증거이지 API 자격이 아닙니다 |
+| `the token carries a proof-of-possession binding (cnf)` | DPoP·mTLS로 묶인 토큰 | 그 클라이언트에 소지자 증명을 끄고 평범한 Bearer 토큰을 쓰게 합니다 |
+| `no active igame account is linked to this SSO identity; sign in to the web portal once first` | 등록되지 않았거나 비활성 계정 | 사용자가 웹으로 한 번 로그인합니다. 비활성이면 `/admin/users`에서 상태를 봅니다 |
+| `the identity provider could not be reached to verify the SSO token` | igame에서 Keycloak discovery·JWKS를 읽지 못함 | igame 컨테이너에서 issuer로의 DNS·방화벽·CA를 확인합니다 |
+| `SSO token (mcp.oauth.scopes) requires rankings:read` 류 | 토큰 주체의 권한 밖의 tool | `mcp.oauth.scopes`에 그 권한을 더합니다. 역할 정책(`/admin/keys`)이 그 권한을 그 역할에 허용해야 합니다 |
+
+설정 저장은 감사 로그에 `setting.update` / `mcp`로 남습니다. 새로 설치한 곳에서는 기본값이 꺼짐이라
+아무것도 달라지지 않습니다.
 
 ---
 
@@ -422,6 +516,7 @@ RealmGuard와 Defense Series 콘텐츠는 Draft → Test → (승인) → 게시
 | 권한 오류가 잦음 | 로그의 `access denied` (경로·메서드 포함) | 역할 또는 개인 API 키 권한을 확인합니다 |
 | SSO redirect loop | 공개 URL, 프록시 forwarded header, redirect URI, 쿠키 secure 설정 | 공개 URL이 `https://`로 시작해야 세션 쿠키에 Secure가 붙습니다. 자동 로그인을 켠 뒤라면 `/login?sso=none`에 멈추는 것이 정상이며, 그 주소에서 계속 오간다면 브라우저 콘솔의 리다이렉트 순서를 확인합니다 |
 | 토큰 검증 실패 | issuer/audience, JWKS 접근, 시계 오차, Keycloak key rotation | 호스트 시간 동기화를 먼저 확인합니다 |
+| MCP 클라이언트가 로그인 루프에 빠짐 | 메타데이터는 나오는데 토큰이 거부됨 — `/mcp` 응답의 `error.message` | [3.4](#34-mcp-sso-oauth--키-없이-keycloak-토큰으로-mcp-열기)의 거부 메시지 표를 따릅니다. 대부분 허용 대상(`aud`/`azp`) 문제입니다 |
 | AI 응답이 중간에 끊김 | provider 접근, timeout, 프록시 SSE buffering, 모델 token 상한 | SSE 경로의 proxy buffering을 끄고 idle timeout을 늘립니다 |
 | 게임 iframe이 차단됨 | 허용 Frame Origin, 게임 쪽 `frame-ancestors`/`X-Frame-Options` | `/admin/settings`의 허용 origin에 추가합니다 |
 | 점수가 반영되지 않음 | 세션 토큰과 소유권, 같은 세션의 중복 점수, 게임별 점수·시간 규칙 | RealmGuard·Defense는 전용 결과 경로로만 공식 기록이 만들어집니다 |
