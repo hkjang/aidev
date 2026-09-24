@@ -232,6 +232,10 @@ kubectl apply -f ptium-1.69.32.kubernetes.yaml
 | | `analytics.allowed_hosts` | (없음) | 스니펫에서 자동으로 못 읽은 출처를 더하는 자리. 쉼표·줄바꿈 구분 |
 | | `analytics.include_admin` | `false` | 관리 화면(`/admin`)도 추적할지 |
 | | `analytics.placement` | `head` | 스니펫 자리: `head` 또는 `body` |
+| MCP · SSO | `mcp.oauth.enabled` | `false` | 꺼짐이 기본. Keycloak 액세스 토큰으로 `/mcp` 에 들어오게 함. 켜서 저장하려면 OIDC Issuer(실행 중이거나 저장된 것)와 리소스 식별자가 있어야 함. 저장 즉시 적용 |
+| | `mcp.oauth.resource` | (없음) | 리소스 식별자 `https://<공개 주소>/mcp`. 비면 `PUBLIC_BASE_URL` + `/mcp`. 요청의 Host 헤더로는 만들지 않음 |
+| | `mcp.oauth.audience` | (없음) | 토큰의 `aud` 또는 `azp` 로 받아 줄 값, 공백 구분. 실제로는 MCP 클라이언트 ID(예: `claude-mcp`) |
+| | `mcp.oauth.scopes` | `presentations:read templates:read` | SSO 토큰 주체에게 주는 범위, 공백 구분. 키와 같은 어휘, 관리자 범위 불가. `mcp:use` 는 자동 |
 | 문서 넘기기 | `handoff.peers` | `[]` | 문서를 주고받을 사내 서비스. `이름=오리진` 한 줄씩. 비어 있으면 보내기 단추가 없고 어디서도 받지 않음. 저장 즉시 적용 |
 | 메일 알림 | `mail.enabled` | `false` | 꺼짐이 기본. 켜서 저장하려면 `mail.smtp_host` 가 있어야 함. 저장 즉시 적용 |
 | | `mail.smtp_host` | (없음) | 사내 릴레이 주소. 포트 없이 |
@@ -437,6 +441,80 @@ weekly=https://weekly.intra
 착지하는지 봅니다. 릴레이를 끊어 놓고 덱을 생성해도 생성은 평소처럼 끝나고 발송 기록에 "실패"와
 릴레이의 말이 남아야 합니다. 서버 로그의 `notification mail failed` 줄에는 비밀번호가 없습니다.
 
+### 3.6 MCP · SSO (mcp.oauth)
+
+`/mcp` 는 원래 개인 API 키로만 열립니다. 이 영역을 켜면 **Keycloak 액세스 토큰**으로도 들어올 수 있어,
+MCP 클라이언트(Claude·Cursor 등)에 URL 하나만 주면 클라이언트가 스스로 로그인해 토큰을 받아 옵니다.
+키 체계는 그대로입니다 — 폐쇄망 스크립트는 계속 키를 씁니다.
+
+**이 서버는 리소스 서버입니다.** 로그인은 Keycloak 이 합니다. 이 서버는 `/authorize`·`/token`·동적
+클라이언트 등록을 만들지 않고, 토큰을 저장하거나 세션으로 바꾸지도 않습니다. 하는 일은 셋입니다.
+
+1. `GET /.well-known/oauth-protected-resource` 와 `…/oauth-protected-resource/mcp` 에서 인증 없이 맨 JSON
+   (`resource`, `authorization_servers`=[Issuer], `bearer_methods_supported`, `scopes_supported`)을 냅니다. 꺼져 있으면 404.
+2. `/mcp` 의 401 에 `WWW-Authenticate: Bearer realm="ptium-mcp", resource_metadata="…"` 를 붙입니다. 토큰이
+   있었는데 거절했으면 `error="invalid_token"` 을 더합니다. REST 의 401 에는 붙지 않습니다.
+3. 같은 `Authorization: Bearer` 헤더에서 `ptium_` 로 시작하면 키, JWT 모양이면 토큰으로 검사합니다. 서명(Keycloak
+   JWKS, RS/ES/PS 계열만)·`iss`·`exp`·`nbf`·`typ`(`ID` 면 거절)·`cnf`(있으면 거절)·대상을 봅니다.
+
+**대상 검사.** 다른 앱용 토큰이 이 앱의 `/mcp` 를 열면 안 되므로 다음 중 하나여야 합니다: `aud` 에 리소스
+식별자가 있거나, `aud` 또는 `azp` 가 `mcp.oauth.audience` 에 있거나. 실제 Keycloak 26 은 `aud` 에 `account` 만
+싣고 클라이언트 ID 는 `azp` 에 담으므로, 매퍼 없이 쓰려면 MCP 클라이언트 ID 를 허용 대상에 적으면 됩니다.
+웹 로그인 클라이언트(`auth.oidc.client_id`)는 자동으로 허용되지 **않습니다** — 웹용 토큰과 MCP 용 토큰은 다른 것입니다.
+
+**계정.** 토큰의 `sub` 로 **이미 등록된 활성 계정**만 찾습니다. 웹으로 로그인하는 순간이 등록이고, 토큰은
+계정을 만들지 않으며, 정지된 계정을 열지 않고, 토큰의 role 로 권한이 올라가지 않습니다. 범위는 토큰의
+`scope` 가 아니라 `mcp.oauth.scopes` 가 정하고(토큰이 이 앱의 범위 어휘를 실어 오면 교집합), 키와 같은 문을 지납니다.
+OAuth 토큰은 `/mcp` 에서만 받습니다 — REST·관리 API 는 지금처럼 키와 세션만 받고, MCP 클라이언트용 토큰(`azp` 가
+웹 클라이언트가 아닌 것)은 REST 에서 거절됩니다.
+
+**켜기.** 관리자 콘솔 → **MCP · SSO**. 스위치 위 배너에 지금 받고 있는지, 클라이언트에 줄 MCP 주소·메타데이터
+주소·인증 서버가 보입니다. 리소스 식별자는 `PUBLIC_BASE_URL` 이 있으면 비워 두어도 됩니다. 켜져 있는데 Issuer 나
+식별자가 없으면 조용히 꺼진 것처럼 동작하고 서버 로그에 `MCP SSO is switched on but cannot take tokens` 와 이유를 남깁니다.
+
+**Keycloak 쪽 할 일.**
+
+| 항목 | 값 |
+| --- | --- |
+| 클라이언트 | MCP 클라이언트용 **공개(public) 클라이언트**를 새로 만듭니다(예: `claude-mcp`). 웹 로그인 클라이언트와 **다른** 것 |
+| 흐름 | Standard Flow 켬, PKCE `S256`, Direct Access Grants·Implicit·Service accounts 끔 |
+| Valid Redirect URIs | 쓰는 MCP 클라이언트의 콜백을 정확히. Claude 는 `https://claude.ai/api/mcp/auth_callback`, 로컬 클라이언트는 `http://127.0.0.1:*/callback` 류. `*` 하나로 다 열지 않음 |
+| 대상(정식) | 그 클라이언트(또는 전용 client scope)에 **Audience 매퍼** — Included Custom Audience = 리소스 식별자(`https://…/mcp`), Add to access token 켬, Add to ID token 끔 |
+| 대상(호환) | 매퍼 없이 이 앱의 `mcp.oauth.audience` 에 클라이언트 ID 를 적음 |
+| 토큰 수명 | 액세스 토큰 5분 안팎. 이 서버는 introspection 을 하지 않으므로 Keycloak 에서 로그아웃해도 이미 발급된 토큰은 만료까지 삽니다 |
+
+**확인.** 서버 밖에서:
+
+```bash
+# 메타데이터: 인증 없이 200, 꺼져 있으면 404
+curl -s https://slides.example.com/.well-known/oauth-protected-resource/mcp
+# {"resource":"https://slides.example.com/mcp","authorization_servers":["https://keycloak…/realms/…"],…}
+
+# 401 이 길을 가리키는지
+curl -si -X POST https://slides.example.com/mcp -H 'Content-Type: application/json' -d '{}' | grep -i www-authenticate
+# WWW-Authenticate: Bearer realm="ptium-mcp", resource_metadata="https://slides.example.com/.well-known/oauth-protected-resource/mcp"
+
+# 토큰으로 tools/list (TOKEN 은 MCP 클라이언트로 받은 액세스 토큰)
+curl -s https://slides.example.com/mcp -H "Authorization: Bearer $TOKEN" -H 'Content-Type: application/json' \
+  -H 'MCP-Protocol-Version: 2025-11-25' -d '{"jsonrpc":"2.0","id":1,"method":"tools/list"}'
+```
+
+REST 의 401 에 `resource_metadata` 가 없는지도 봅니다: `curl -si https://slides.example.com/api/v1/me | grep -i www-authenticate`.
+
+**거부 메시지별 조치.** 401 본문의 `error.message` 에 이유가 있고, 실제로 실패한 검사(서명·발급자·만료 등)는
+서버 로그의 `authentication failed` 줄(`path=/mcp`)에 남습니다.
+
+| 메시지 | 뜻 | 조치 |
+| --- | --- | --- |
+| `This server does not take SSO access tokens at /mcp` | 스위치가 꺼져 있거나 Issuer·식별자가 없음 | **MCP · SSO** 를 켜고 배너의 이유를 봄. 로그의 `cannot take tokens` 줄 |
+| `The token was not issued for this server (aud=[account], azp="claude-mcp"): add "claude-mcp" to mcp.oauth.audience, or …` | 대상 검사 실패 | 메시지의 `azp` 값을 허용 대상에 적거나, Keycloak 클라이언트에 Audience 매퍼로 리소스 식별자를 넣음 |
+| `The SSO access token was not accepted (signature, issuer or validity)` | 서명·`iss`·`exp`·`nbf` 중 하나 | 로그에 어느 것인지 있음. Issuer 가 토큰의 `iss` 와 같은지(끝의 `/` 포함), 시계, 토큰 갱신 |
+| `An ID token was presented` | 클라이언트가 액세스 토큰 대신 ID 토큰을 보냄 | 클라이언트 설정 확인 |
+| `The token is bound to a key (cnf)` | DPoP·mTLS 바인딩 토큰 | 클라이언트에서 평범한 bearer 토큰을 쓰게 함 |
+| `This SSO account is not registered here. Sign in to the web once first` | `sub` 로 등록된 계정이 없음 | 그 사람이 웹으로 한 번 로그인 |
+| `This account has been disabled` | 정지된 계정 | 관리자 → 사용자 에서 확인 |
+| 403 `The SSO token does not grant this operation` | 범위 밖 도구 | `mcp.oauth.scopes` 에 필요한 범위(예: `presentations:write`)를 더함 |
+
 ## 4. 계정과 권한
 
 역할은 두 가지입니다.
@@ -569,6 +647,8 @@ volume" 으로 답합니다 — 이미지가 있는 척하지 않습니다.
 | 컨테이너가 바로 종료 | 로그에 `auth config: DEV_AUTH_SECRET must contain at least 32 characters when development auth is enabled` | `DEV_AUTH_ENABLED=false` 로 끄거나 32자 이상 시크릿을 넣음 |
 | 컨테이너가 바로 종료 | 로그에 `OIDC_CLIENT_ID is required when OIDC_ISSUER_URL is set` 또는 `URL must use HTTPS (HTTP requires OIDC_ALLOW_HTTP=true)` | 클라이언트 ID 를 넣거나, 평가 환경에서만 `OIDC_ALLOW_HTTP=true` |
 | 컨테이너가 바로 종료 | 로그에 `image directory … is not writable` 또는 `… is not a directory` | `ASSET_DIR` 볼륨이 마운트되고 uid/gid 65532 가 쓸 수 있는지. 볼륨이 깨졌으면 첫 업로드가 아니라 기동이 멈추는 것이 의도된 동작 |
+| MCP 클라이언트가 SSO 로 붙지 못함 | `/.well-known/oauth-protected-resource/mcp` 가 404, 또는 로그에 `MCP SSO is switched on but cannot take tokens` | 3.6 절. **MCP · SSO** 스위치, OIDC Issuer, 리소스 식별자(`mcp.oauth.resource` 또는 `PUBLIC_BASE_URL`) |
+| MCP 클라이언트가 로그인 뒤 401 | 로그의 `authentication failed … path=/mcp` 줄과 401 본문의 `error.message` | 3.6 절의 거부 메시지 표. 대개 `azp` 를 허용 대상에 적는 일 |
 | 아무도 로그인할 수 없음 | 로그에 `no interactive authentication is configured; set BOOTSTRAP_ADMIN and BOOTSTRAP_ADMIN_PASSWORD, or configure OIDC, before anyone can sign in` | 둘 중 하나를 설정하고 재시작 |
 | 다른 서비스에서 보낸 문서가 "허용된 곳이 아닙니다" | 서비스 설정 → 문서 넘기기 | 보낸 서비스의 오리진을 `이름=오리진` 으로 목록에 넣음. 스킴·포트까지 글자 그대로 같아야 함 |
 | 편집기 내보내기에 "다른 서비스로 보내기"가 없음 | `GET /api/v1/handoff/targets` 의 `targets` | 목록이 비었거나 pptx 를 받는 서비스(`weekly`)가 없음. 목록에 `weekly=…` 를 넣음 |
