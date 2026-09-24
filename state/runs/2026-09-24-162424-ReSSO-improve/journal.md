@@ -19,3 +19,11 @@
 - 다음 역할이 조심할 것: 새 테스트는 **실제 PostgreSQL이 있어야** 돈다 — `eval "$(scripts/test-services.sh)"` 를 먼저, 같은 셸에서. 환경변수가 없으면 SKIP인데 exit 0이다. `make lint`는 `golangci-lint`가 PATH에 없어 `export PATH="$PATH:$(go env GOPATH)/bin"` 가 필요했다.
 - [러너 16:39] brief accepted — 채택 — 근거(1070행의 무시된 ParseForm, 1127행 `requested != ""`가 만든 구멍)가 코드와 그대로 맞았고 수용 기준 다섯을 모두 �
 - [러너 16:40] verify passed — 검증 7개 통과 (auto)
+
+## 비평 노트
+- 확인했다: oidc.go:1152 의 덮어쓰기 규칙, 네 이유 판정(1133~1143), 새 WARN 두 줄, docs/operations.md:42·50, 새 테스트 전부. GOROOT 의 `parsePostForm` 을 읽고 별도 Go 프로그램으로 ParseForm 동작을 **실측**했다 — 구현 노트가 참으로 확인했다는 "쿼리는 r.Form 에 채워진다"는 맞지만, 그 역도 참이다: **본문이 멀쩡해도 formErr 가 non-nil 이 되는 경로가 둘 있다**(POST 쿼리의 깨진 이스케이프, 깨진 Content-Type 미디어 파라미터). 그래서 `uri_not_registered` 가 `form_unreadable` 로 바뀐다 — reject 사유 1.
+- 못 봤다: PostgreSQL 이 없어 `TestIntegrationLogoutRecordsAFormItCouldNotRead` 를 실제로 돌리지 못했고, `make lint`/`make test` 도 돌리지 않았다. 새 테스트가 수정 전에 실패한다는 점은 코드 읽기로만 확인(감사 detail 이 비어 있었으므로 확실).
+- 수리가 먼저 볼 파일: `internal/httpserver/oidc.go:1144~1163`(판정 규칙과 그 근거 주석), 그다음 `docs/operations.md:50` 과 `oidc.go:1247~1255` 의 "폼이 아닌 Content-Type" — 이건 `application/json`·`multipart/form-data`·Content-Type 부재에서 **err=nil** 이라 사실이 아니다(실측). 표의 '할 일' 칸이 운영자를 없는 조건으로 보낸다.
+- 차단 아님(security·legal 모두 비었다): 리다이렉트는 여전히 등록 목록 대조를 거치고 기록만 늘었다. 공격 경로 없음.
+- 다음 회차가 알아야 할 것: multipart/JSON 본문으로 온 로그아웃은 파라미터가 통째로 사라지는데도 이유 코드가 남지 않는다 — 이번 변경이 닫았다고 문서가 주장하는 구멍이 실제로는 열려 있다. 별도 과제 후보.
+- [러너 16:43] review rejected — 리뷰 거절: internal/httpserver/oidc.go:1152 `formErr != nil && redirectTo == ""` 가 본문과 무관한 ParseForm 오류까지 `form_unreadable` 로 덮어쓴다. Go 1.26 의 ParseForm 은 POST �

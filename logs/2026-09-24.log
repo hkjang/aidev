@@ -1887,3 +1887,22 @@ Fast-forward
 Preparing worktree (detached HEAD dd4dd3b)
 Updating files:  76% (312/410)Updating files:  77% (316/410)Updating files:  78% (320/410)Updating files:  79% (324/410)Updating files:  80% (328/410)Updating files:  81% (333/410)Updating files:  82% (337/410)Updating files:  83% (341/410)Updating files:  84% (345/410)Updating files:  85% (349/410)Updating files:  86% (353/410)Updating files:  87% (357/410)Updating files:  88% (361/410)Updating files:  89% (365/410)Updating files:  90% (369/410)Updating files:  91% (374/410)Updating files:  92% (378/410)Updating files:  93% (382/410)Updating files:  94% (386/410)Updating files:  95% (390/410)Updating files:  96% (394/410)Updating files:  97% (398/410)Updating files:  98% (402/410)Updating files:  99% (406/410)Updating files: 100% (410/410)Updating files: 100% (410/410), done.
 HEAD is now at dd4dd3b Merge pull request #13 from hkjang/auto/2026-09-24-1624
+[16:42:12] aidev sync FAILED: run(2026-09-24): Kkiit — merged https://github.com/hkjang/Kkiit/pull/11, released v0.4.6 (연속 5회) — logs/sync.log
+[16:43:21] ReSSO: review — 18 turns, 3m, $1.17, success
+[16:43:21] ReSSO: [review] rejected — 리뷰 거절: internal/httpserver/oidc.go:1152 `formErr != nil && redirectTo == ""` 가 본문과 무관한 ParseForm 오류까지 `form_unreadable` 로 덮어쓴다. Go 1.26 의 ParseForm 은 POST 본문을 전부 읽어낸 뒤에도 (a) 쿼리스트링에 깨진 퍼센트 이스케이프가 있으면 `invalid URL escape "%zz"` 를, (b) `Content-Type: application/x-www-form-urlencoded; charset="UTF-8` 처럼 미디어 파라미터만 깨졌으면 `mime: invalid media parameter` 를 돌려준다 — 두 경우 모두 r.Form 에 본문 파라미터가 온전히 들어 있다(GOROOT 소스와 실제 실행으로 확인). 재현: RP 가 `POST /realms/x/protocol/openid-connect/logout?ui_locales=100%` 로 본문에 `client_id` + 미등록 `post_logout_redirect_uri` 를 보내면 1138행이 올바르게 정한 `uri_not_registered` 가 1153행에서 `form_unreadable` 로 교체되고, 1161행이 "logout could not read the form it was posted" 라는 거짓 문장을 남긴다. 운영자는 등록 목록 대조(실제 원인) 대신 본문 크기·인코딩을 뒤지게 된다. 이 변경의 목적이 이유 코드의 정확성인데 기존의 정확한 이유를 부정확하게 만든다. / internal/httpserver/oidc.go:1144 주석 "the query survived and the body did not" 이 위 (a) 경우에 정확히 반대다 — 살아남은 것이 본문이고 깨진 것이 쿼리다. 판정 규칙의 근거 자체가 성립하지 않는 경로가 있다. / docs/operations.md:50 (및 같은 문구의 oidc.go:1249 const 주석, 1159행 "three ways a body fails") `form_unreadable` 원인으로 적은 "폼이 아닌 `Content-Type`" 이 사실이 아니다. parsePostForm 은 `mime.ParseMediaType` 이 실패할 때만 오류를 돌려주므로 `application/json`·`multipart/form-data`·`text/plain`·`Content-Type` 부재는 모두 err=nil 이고 본문 파라미터만 조용히 사라진다(실행 확인). 즉 이 reason 은 붙지 않는다. 그런데 표의 '할 일' 칸은 운영자에게 `Content-Type: application/x-www-form-urlencoded` 를 확인하라고 시킨다 — 이 reason 을 절대 만들지 않는 조건이고, 정작 무음 손실이 일어나는 multipart/JSON 경우는 이 기록 체계가 덮지 않는데 덮는 것처럼 읽힌다. docs/ 가 운영 정본이라 잘못된 분류표는 그대로 오진을 부른다.
+[16:43:59] DartFly: release — 22 turns, 3m, $1, success
+[16:44:03] DartFly: [release] published — v2.74.0
+From https://github.com/hkjang/DartFly
+ * branch            main       -> FETCH_HEAD
+Already up to date.
+https://github.com/hkjang/DartFly/releases/tag/v2.74.0
+[16:44:09] DartFly: [gh-release] created — GitHub Release v2.74.0
+[16:44:10] DartFly: [manifest] ok — dartfly-v2.74.0.tar.gz dartfly-v2.74.0.tar.gz.sha256 
+[16:44:13] DartFly: uploaded dartfly-v2.74.0.tar.gz (ccc7c73026f08292031cdddfc936bcf05d7a510c90a7f56fa887f659206aa375)
+[16:44:15] DartFly: uploaded dartfly-v2.74.0.tar.gz.sha256 (7cf9bc0d3c46ebab4ffb0a0885bad6788bd1e96966ada6a62ffc2ce63a5cfad0)
+[16:44:15] DartFly: [assets] uploaded — 2개
+[16:44:17] DartFly: [assets] verified — v2.74.0 자산 2개 (이전 v2.73.0: 2)
+fatal: '/home/hkjang/.cache/auto-improve-wt/DartFly' is not a working tree
+evidence: /mnt/c/Users/USER/projects/aidev/state/runs/2026-09-24-162413-DartFly-improve/evidence.json
+reports: 23 day(s), 4 week(s), 1 month(s), 1358 run(s), 2462 usage row(s), 46 project page(s), 5 alert(s)
+notify: no new alerts
