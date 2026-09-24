@@ -32,6 +32,18 @@ git -C "$REPO_DIR" pull -q --ff-only origin main || echo "warn: aidev pull 실�
 RUNS="$DATA/runs.jsonl"; FIXQ="$STATE/fix-queue.tsv"; touch "$FIXQ"
 since=$(date -d '-2 days' +%F)
 
+# 사람이 자율 개선에서 뺀 저장소(state/exclude.txt)는 오류 대응도 하지 않는다 —
+# 빼 놓은 저장소를 오류 트랙이 계속 잡으면 "제외" 가 제외가 아니다.
+excluded(){ # $1=프로젝트
+  local f="$STATE/exclude.txt" p
+  [ -s "$f" ] || return 1
+  while IFS= read -r p; do
+    p="${p%%#*}"; p="$(printf '%s' "$p" | sed 's/^[[:space:]]*//; s/[[:space:]]*$//')"; [ -n "$p" ] || continue
+    [[ "$1" =~ ^$p$ ]] && return 0
+  done < "$f"
+  return 1
+}
+
 # ── 1) 적재: 프로젝트별 '마지막 회차'가 오류로 끝났고 아직 fix-queue 에 없으면 넣는다.
 #    마지막이 성공/no-change 면 이미 회복된 것이므로 넣지 않는다. sha 는 비운다
 #    (머지된 게 없어 되돌릴 대상이 없다 — run.sh 의 롤백은 빈 sha 를 건너뛴다).
@@ -41,6 +53,7 @@ if [ -s "$RUNS" ]; then
     [ -n "$proj" ] || continue
     grep -q -P "^$proj\t" "$FIXQ" && continue
     [ -f "$STATE/STOP-$proj" ] && continue
+    excluded "$proj" && continue
     printf '%s\t%s\t\n' "$proj" "오류 대응(자동 적재): 마지막 회차가 '$outcome' 로 끝났습니다. $reason" >> "$FIXQ"
     echo "enqueue $proj ($outcome)"; enq=$((enq+1))
   done < <(jq -rs --arg c "$since" '
@@ -56,6 +69,7 @@ for rj in "$STATE"/*.release.json; do
   proj=$(basename "$rj" .release.json)
   grep -q -P "^$proj\t" "$FIXQ" && continue
   [ -f "$STATE/STOP-$proj" ] && continue
+  excluded "$proj" && continue
   tag=$(jq -r '.tag // ""' "$rj" 2>/dev/null); rsn=$(jq -r '.reason // ""' "$rj" 2>/dev/null)
   # 같은 이유로 계속 실패하는 릴리즈는 다시 잡아도 달라지지 않는다 — 에이전트가 "사람이 정해야
   # 한다" 고 적은 것을 회차로 뚫으려 하면 돈만 탄다. 2026-09-24 aiportal-front 가 하루 8회차를

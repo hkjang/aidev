@@ -98,6 +98,13 @@ ci_gap=()
 for d in "${ROOT:-/mnt/c/Users/USER/projects}"/*/; do
   n=$(basename "$d"); [ -d "$d/.git" ] || continue
   case "$n" in aidev|headcount|Naviq|sqlpad) continue;; esac
+  # 사람이 자율 개선에서 뺀 저장소(state/exclude.txt)는 CI 공백도 메우지 않는다
+  hx_skip=0
+  while IFS= read -r hx; do
+    hx="${hx%%#*}"; hx="$(printf '%s' "$hx" | sed 's/^[[:space:]]*//; s/[[:space:]]*$//')"; [ -n "$hx" ] || continue
+    [[ "$n" =~ ^$hx$ ]] && { hx_skip=1; break; }
+  done < "$REPO_DIR/state/exclude.txt" 2>/dev/null
+  [ "$hx_skip" = 1 ] && continue
   [ "$(ls "$d/.github/workflows" 2>/dev/null | grep -cE '\.ya?ml$')" = 0 ] || continue
   [ "$(jq -r '.allow_merge_without_ci // false' "$REPO_DIR/state/$n.policy.json" 2>/dev/null)" = true ] && continue
   [ "$(jq -r --arg p "$n" '.[$p].open // 0' "$REPO_DIR/state/open-prs.json" 2>/dev/null || echo 0)" -ge 1 ] || continue

@@ -19,7 +19,21 @@ MODEL="${MODEL:-claude-opus-5}"
 REAL_HOME="$HOME"; CLAUDE_CFG="${CLAUDE_CONFIG_DIR:-$REAL_HOME/.claude}"
 export GIT_AUTHOR_NAME=hkjang GIT_AUTHOR_EMAIL=gagagiga@naver.com GIT_COMMITTER_NAME=hkjang GIT_COMMITTER_EMAIL=gagagiga@naver.com
 CLAUDE_SETTINGS='{"attribution":{"commit":"","pr":""}}'
-EXCLUDE_RE='^(aidev|headcount|Naviq|sqlpad|_tmp.*|visitflow-node-modules.*|새 폴더)$'
+# 사람이 자율 개선에서 빼 둔 저장소는 state/exclude.txt 에 한 줄에 하나씩 적는다(정규식, # 은 주석).
+# 코드를 고치지 않고 넣고 뺄 수 있어야 한다 — 무엇을 개선할지는 운영 판단이지 구현이 아니다.
+# bin/fixer.sh·bin/health.sh 도 같은 파일을 읽는다.
+EXCLUDE_BASE='aidev|headcount|Naviq|sqlpad|_tmp.*|visitflow-node-modules.*|새 폴더'
+exclude_extra(){ # state/exclude.txt 의 패턴을 하나의 정규식 조각으로
+  local f="${1:-$STATE/exclude.txt}" p out=""
+  [ -s "$f" ] || return 0
+  while IFS= read -r p; do
+    p="${p%%#*}"; p="$(printf '%s' "$p" | sed 's/^[[:space:]]*//; s/[[:space:]]*$//')"; [ -n "$p" ] || continue
+    out="${out:+$out|}$p"
+  done < "$f"
+  printf '%s' "$out"
+}
+_exx=$(exclude_extra)
+EXCLUDE_RE="^(${EXCLUDE_BASE}${_exx:+|$_exx})\$"
 MAX_DAILY_COST=300; MAX_DAILY_ROUNDS=60; MAX_DAILY_RELEASES=40; DORMANT_AFTER=3; DORMANT_DAYS=7
 # 한 프로젝트에 열어 둘 수 있는 러너 PR 수. 넘으면 새 개선 회차를 시작하지 않는다 — 열린 PR 위에
 # 새 PR 을 얹으면 충돌·중복 작업만 늘고 아무것도 닫히지 않는다 (2026-09-24: 열린 PR 132건 중 50건이
