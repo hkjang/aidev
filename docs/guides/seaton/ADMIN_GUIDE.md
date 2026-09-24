@@ -1,6 +1,6 @@
 # SeatOn 관리자 가이드
 
-SeatOn v1.4.6 기준. 화면을 쓰는 사람을 위한 조작법은 [사용자 가이드](USER_GUIDE.md)에 있으며, 이 문서는 그 화면을 띄워 놓고 지키는 사람을 위한 것입니다. API 세부는 [API_AND_MCP.md](API_AND_MCP.md), 내부 구조는 [ARCHITECTURE.md](ARCHITECTURE.md)를 봅니다.
+SeatOn v1.4.8 기준. 화면을 쓰는 사람을 위한 조작법은 [사용자 가이드](USER_GUIDE.md)에 있으며, 이 문서는 그 화면을 띄워 놓고 지키는 사람을 위한 것입니다. API 세부는 [API_AND_MCP.md](API_AND_MCP.md), 내부 구조는 [ARCHITECTURE.md](ARCHITECTURE.md)를 봅니다.
 
 ## 1. 구성 요소
 
@@ -19,7 +19,7 @@ SeatOn v1.4.6 기준. 화면을 쓰는 사람을 위한 조작법은 [사용자 
 
 ## 2. 설치
 
-릴리즈 자산 `SeatOn-v1.4.6.tar.gz`(GitHub Release 첨부)와 이 저장소의 `compose.yaml` 하나면 됩니다. PostgreSQL은 외부 또는 사내 것을 준비합니다(빈 데이터베이스와 소유 계정만 있으면 스키마는 SeatOn이 만듭니다).
+릴리즈 자산 `SeatOn-v1.4.8.tar.gz`(GitHub Release 첨부)와 이 저장소의 `compose.yaml` 하나면 됩니다. PostgreSQL은 외부 또는 사내 것을 준비합니다(빈 데이터베이스와 소유 계정만 있으면 스키마는 SeatOn이 만듭니다).
 
 | 항목 | 값 |
 | --- | --- |
@@ -32,14 +32,14 @@ SeatOn v1.4.6 기준. 화면을 쓰는 사람을 위한 조작법은 [사용자 
 ### 2.1 처음부터 끝까지
 
 ```bash
-# 1. 이미지 적재 — seaton:v1.4.6 태그가 생긴다
-docker load < SeatOn-v1.4.6.tar.gz
+# 1. 이미지 적재 — seaton:v1.4.8 태그가 생긴다
+docker load < SeatOn-v1.4.8.tar.gz
 
 # 2. 필수 환경변수 3개 + Compose 이미지 태그
 export POSTGRES_DSN='postgres://seaton:change-db-password@postgres.intra:5432/seaton?sslmode=require'
 export BOOTSTRAP_ADMIN='admin'
 export BOOTSTRAP_ADMIN_PASSWORD='change-this-strong-password'   # 12자 이상
-export SEATON_IMAGE_TAG='v1.4.6'
+export SEATON_IMAGE_TAG='v1.4.8'
 
 # 3. 기동
 docker compose up -d
@@ -113,6 +113,10 @@ Compose 전용(컨테이너에 전달되지 않음):
 | `oidc.scopes` | Scopes | `openid profile email groups` | |
 | `oidc.admin_group` | 시스템 관리자 그룹 | `/seaton-admins` | 이 그룹이면 `system_admin` |
 | `oidc.seat_manager_group` | 좌석 관리자 그룹 | `/seaton-seat-managers` | 이 그룹이면 `seat_manager`, 둘 다 아니면 `employee` |
+| `mcp.oauth.enabled` | MCP 를 Keycloak 액세스 토큰으로도 열기 | `false` | 켜면 `/mcp`가 개인 키 외에 Keycloak 액세스 토큰(OAuth 2.1)도 받고 `/.well-known/oauth-protected-resource`가 열림(§3.3 MCP를 SSO로 열기). `oidc.issuer_url`이 비어 있으면 저장이 `400 invalid_setting` |
+| `mcp.oauth.resource` | 리소스 식별자 (resource) | 빈 값 | 클라이언트가 실제로 접속하는 공개 주소 + `/mcp`(예 `https://seaton.intra/mcp`). 켤 때 필수 — 요청의 Host로 대신 만들지 않음(그러면 Host 헤더가 대상 검사의 허용값이 됨). `/mcp`로 끝나는 절대 URL만 저장됨 |
+| `mcp.oauth.audience` | 허용 대상 (aud 또는 azp) | 빈 값 | 공백 구분 Keycloak 클라이언트 ID 목록. 토큰의 `aud` 또는 `azp`가 이 중 하나면 통과(Audience 매퍼 없이 쓰는 호환 경로) |
+| `mcp.oauth.scopes` | SSO 토큰에 주는 범위 | `read mcp` | 공백 구분 `read`·`write`·`mcp`. 토큰의 `scope`가 아니라 이 값이 천장. 켤 때 `mcp`가 없으면 저장 거부 |
 
 **보안 · 키**
 
@@ -189,6 +193,59 @@ Keycloak에 이미 로그인한 사람이 SeatOn을 열었을 때 로그인 화�
 
 로그인 화면이 깜빡이며 반복된다면 브라우저 주소가 `/login?sso=none`으로 끝나는지, 리버스 프록시가 쿼리 문자열을 지우지 않는지 확인합니다.
 
+**MCP를 SSO로 열기(`mcp.oauth.*`)**
+
+`/mcp`는 기본적으로 개인 API 키로만 열립니다. MCP 인가 규격(2025-06-18 이후)은 OAuth 2.1이라, 켜 두면 MCP 클라이언트(Claude, Cursor 등)에 **MCP 주소 하나만** 주면 클라이언트가 스스로 Keycloak 로그인 화면을 띄우고 토큰을 받아 옵니다. 키 체계는 그대로이고, 기본값은 꺼짐이며, 새 설치에서는 아무것도 달라지지 않습니다.
+
+SeatOn은 **리소스 서버**입니다. 인증 서버 노릇(`/authorize`, `/token`, 동적 클라이언트 등록)은 하지 않고 토큰을 발급·저장하지도 않습니다. 하는 일은 셋입니다.
+
+1. `GET /.well-known/oauth-protected-resource`와 `…/mcp`에서 인증 없이 맨 JSON 메타데이터(RFC 9728)를 냅니다: `resource`(리소스 식별자), `authorization_servers`(= `oidc.issuer_url`), `bearer_methods_supported`, `scopes_supported`. 꺼져 있으면 `404`.
+2. `/mcp`의 `401`에 `WWW-Authenticate: Bearer realm="SeatOn", resource_metadata="…/.well-known/oauth-protected-resource/mcp"`를 붙입니다(**MCP 경로에서만** — REST 401에는 붙지 않음). 토큰이 있었는데 거부했으면 `error="invalid_token"`이 더해집니다.
+3. 같은 `Authorization: Bearer` 헤더에서 `seat_`로 시작하면 키, JWT 모양(점 두 개)이면 Keycloak JWKS로 **서명·`iss`·`exp`·`nbf`·`typ`(ID 토큰 거부)·`cnf`(있으면 거부)·대상**을 검사합니다. 서명 알고리즘은 RS/ES/PS 계열만 받고 `HS*`·`none`은 거부합니다.
+
+**대상 검사**가 핵심입니다. 다른 앱에 로그인해 받은 토큰이 SeatOn의 `/mcp`를 열어서는 안 되므로, 다음 중 하나가 맞아야 합니다: `aud`에 리소스 식별자가 있다(Keycloak Audience 매퍼를 둔 정식 경로), 또는 `aud`·`azp`가 `mcp.oauth.audience`에 있다(호환 경로 — 실제 Keycloak 26은 `aud`에 `account`만 싣고 클라이언트 ID는 `azp`에 담습니다). 거부할 때는 본 `aud`/`azp`와 고칠 값을 메시지에 넣으므로 운영자는 그 한 줄로 설정을 끝낼 수 있습니다.
+
+**계정은 만들지 않습니다.** 토큰의 `preferred_username`(없으면 `email`)으로 이미 웹 SSO 로그인으로 등록된(`source=oidc`) **활성** 계정만 찾고, 없으면 "먼저 웹으로 한 번 로그인하세요"로 거부합니다. 정지된 계정은 MCP로 되살아나지 않고, 토큰의 role/groups로 권한을 올리지도 않습니다 — 권한은 그 사용자의 SeatOn 역할 그대로이고, 범위는 `mcp.oauth.scopes`가 정합니다(기본 `read mcp`, 배정 도구까지 열려면 `write`를 더함). OAuth 토큰은 `/mcp`에서만 받습니다. REST·관리 API는 지금처럼 키와 세션만 받습니다.
+
+*Keycloak 쪽 설정*
+
+1. MCP 클라이언트용 **공개(public) 클라이언트**를 만듭니다(예 `claude-mcp`). Client authentication 끔, Standard Flow 켬, PKCE `S256`, Direct Access Grants·Implicit·Service accounts 끔. 웹 로그인 클라이언트(`oidc.client_id`)와 **다른** 클라이언트입니다.
+2. Valid Redirect URIs에 쓰는 MCP 클라이언트의 콜백을 정확히 적습니다(Claude는 `https://claude.ai/api/mcp/auth_callback`, 로컬 클라이언트는 `http://127.0.0.1:*/callback` 류). `*` 하나로 다 여는 것은 금지.
+3. 정식 경로: 그 클라이언트(또는 전용 client scope)에 **Audience 매퍼** — Mapper type `Audience`, Included Custom Audience = 리소스 식별자(`https://seaton.intra/mcp`), Add to access token 켬, Add to ID token 끔. 호환 경로: 매퍼 없이 SeatOn의 **허용 대상**에 클라이언트 ID(`claude-mcp`)를 적습니다.
+4. 액세스 토큰 수명은 짧게(5분 안팎). SeatOn은 introspection을 하지 않으므로 Keycloak에서 로그아웃해도 이미 발급된 토큰은 만료까지 유효합니다.
+
+*SeatOn 쪽 설정*
+
+![시스템 설정 · Keycloak SSO 탭의 MCP SSO(OAuth) 인증 카드 — 스위치, 리소스 식별자, 허용 대상, 범위, 복사 가능한 MCP 주소와 메타데이터 주소](assets/guide/admin-settings-mcp-sso.png)
+
+시스템 설정 → **Keycloak SSO** 탭 아래의 **MCP SSO(OAuth) 인증** 카드에서 스위치를 켜고, **리소스 식별자**에 공개 주소 + `/mcp`를 적고, 호환 경로라면 **허용 대상**에 클라이언트 ID를 적은 뒤 저장합니다. 카드의 **MCP 주소**와 **메타데이터 주소**는 복사해 사용자에게 주는 값입니다. 켜는 조건은 `oidc.issuer_url`과 리소스 식별자가 있고 범위에 `mcp`가 있는 것이며, 아니면 저장이 `400 invalid_setting`으로 거부됩니다.
+
+*확인*
+
+```bash
+# 1. 메타데이터 — 200, 맨 JSON, Access-Control-Allow-Origin: *
+curl -si https://seaton.intra/.well-known/oauth-protected-resource/mcp
+# 2. 토큰 없는 /mcp — 401 + WWW-Authenticate: Bearer realm="SeatOn", resource_metadata="…"
+curl -si -X POST https://seaton.intra/mcp -H 'Content-Type: application/json' \
+  -d '{"jsonrpc":"2.0","id":1,"method":"tools/list"}'
+# 3. Keycloak 에서 받은 액세스 토큰으로 — 200 과 도구 목록
+curl -s -X POST https://seaton.intra/mcp -H "Authorization: Bearer $TOKEN" -H 'Content-Type: application/json' \
+  -d '{"jsonrpc":"2.0","id":1,"method":"tools/list"}'
+```
+
+*거부 메시지별 조치* — 거부의 실제 원인(서명·발급자·만료 중 무엇이 실패했는지)은 서버 로그 `mcp oauth token rejected`의 `cause`에 남습니다.
+
+| 응답 | 뜻 | 조치 |
+| --- | --- | --- |
+| `401 invalid_token` "SSO 액세스 토큰이 유효하지 않습니다(서명·발급자·만료)" | 서명·`iss`·`exp`·`nbf` 중 하나 실패 | 로그 `cause` 확인. `oidc.issuer_url`이 토큰의 `iss`와 글자 그대로 같은지(끝 `/` 제외), 서버 시각 동기, 토큰 수명 |
+| `401 invalid_token` "이 서버를 위해 발급된 것이 아닙니다(aud=[…], azp="…")" | 대상 검사 실패 | 메시지의 `azp` 값을 **허용 대상**에 적거나, Keycloak 클라이언트에 Audience 매퍼로 메시지의 리소스 식별자를 넣음 |
+| `401 invalid_token` "ID 토큰이 아니라 액세스 토큰을 보내세요" | `typ=ID` | 클라이언트가 access_token을 보내도록 |
+| `401 invalid_token` "소지자 증명(cnf)이 묶인 토큰" | DPoP·mTLS 바인딩 | 그 클라이언트에는 바인딩 없는 토큰을 발급하도록 |
+| `401 account_not_registered` "등록되지 않았거나 비활성 … 먼저 웹으로 한 번 로그인하세요" | SSO 계정이 없거나 비활성 | 그 사람이 브라우저로 SeatOn에 SSO 로그인. 비활성이면 사용자 권한 화면에서 **사용** 켬 |
+| `401 authentication_required`, `WWW-Authenticate` 없음 | MCP SSO가 꺼져 있음(또는 issuer 없음) | 스위치와 `oidc.issuer_url` 확인 |
+| `503 sso_unavailable` | Keycloak discovery 실패 | 컨테이너에서 Issuer URL로 나가는 연결·사내 CA. 도전 헤더를 붙이지 않으므로 클라이언트는 루프에 빠지지 않음 |
+| `403 insufficient_scope` "mcp 범위가 있는 API 키가 필요합니다" | `mcp.oauth.scopes`에 `mcp`가 없거나 토큰이 범위를 좁힘 | 범위에 `mcp` 포함 |
+
 ### 3.4 좌석 인식 엔진과 사내 비전 모델
 
 ![시스템 설정 · AI 분석 — 좌석 인식 엔진 선택과 신뢰도 기준, VLM 엔드포인트·모델·제한 시간·타일 수 등](assets/guide/admin-settings-ai.png)
@@ -255,7 +312,7 @@ Keycloak에 이미 로그인한 사람이 SeatOn을 열었을 때 로그인 화�
 | --- | --- | --- | --- |
 | `/healthz` | GET | 없음 | 프로세스 살아 있음 `{"status":"ok"}`. 컨테이너 헬스체크가 이걸 봄 |
 | `/readyz` | GET | 없음 | DB `Ping` 성공 시 `{"status":"ready"}`, 실패 시 `503 database_unavailable` |
-| `/api/v1/version` | GET | 없음 | `{"name":"SeatOn","version":"1.4.6","commit":"…","builtAt":"…"}` |
+| `/api/v1/version` | GET | 없음 | `{"name":"SeatOn","version":"1.4.8","commit":"…","builtAt":"…"}` |
 | `/api/v1/dashboard` | GET | 좌석 관리자 | 운영 준비도·연동 상태·처리 필요 건수 |
 
 처리필요 화면의 **운영 준비도**와 **연동 상태**가 같은 정보를 사람이 보기 좋게 보여 줍니다.
@@ -267,7 +324,7 @@ Keycloak에 이미 로그인한 사람이 SeatOn을 열었을 때 로그인 화�
 표준 출력에 JSON 한 줄씩(`log/slog`) 찍힙니다. `docker compose logs -f seaton`으로 봅니다. 요청마다 `"msg":"request"`에 메서드·경로·소요 시간·`request_id`가 남습니다.
 
 ```json
-{"time":"2026-09-11T11:41:57Z","level":"INFO","msg":"SeatOn started","address":":8080","version":"1.4.6","commit":"…"}
+{"time":"2026-09-11T11:41:57Z","level":"INFO","msg":"SeatOn started","address":":8080","version":"1.4.8","commit":"…"}
 {"time":"…","level":"INFO","msg":"request","method":"GET","path":"/readyz","duration_ms":0,"request_id":"…"}
 {"time":"…","level":"INFO","msg":"도면 분석 완료","jobId":"…","floorMapId":"…","engine":"cv","detected":30,"review":6}
 ```
@@ -322,11 +379,11 @@ curl -s http://127.0.0.1:8080/api/v1/version    # "version":"1.5.0"
 되돌릴 때는 태그를 이전 값으로 바꿔 다시 올립니다. 새 버전이 스키마를 바꾼 뒤라면 이전 바이너리가 그 스키마를 이해한다는 보장이 없으므로, 백업한 덤프를 먼저 복원합니다.
 
 ```bash
-export SEATON_IMAGE_TAG='v1.4.6'
+export SEATON_IMAGE_TAG='v1.4.8'
 docker compose up -d
 ```
 
-분석이 진행 중일 때 재시작하면 그 잡은 실패로 정리되고 도면은 다시 분석할 수 있는 상태로 돌아옵니다. 릴리즈 자산은 `SeatOn-v<버전>.tar.gz` → `seaton:v<버전>` 이름 규칙을 따르고, 애플리케이션이 알리는 버전 문자열은 `v` 없는 `1.4.6`입니다.
+분석이 진행 중일 때 재시작하면 그 잡은 실패로 정리되고 도면은 다시 분석할 수 있는 상태로 돌아옵니다. 릴리즈 자산은 `SeatOn-v<버전>.tar.gz` → `seaton:v<버전>` 이름 규칙을 따르고, 애플리케이션이 알리는 버전 문자열은 `v` 없는 `1.4.8`입니다.
 
 ## 6. 장애 대응
 
@@ -353,6 +410,8 @@ docker compose up -d
 | 추적을 켰는데 수집이 안 됨, 콘솔에 `Refused to load/connect … Content Security Policy` | 시스템 설정 → 방문 추적의 **정책이 차단한 출처** | 막힌 출처를 **허용에 추가**. 표가 비어 있으면 화면을 새로 고쳐 문서를 다시 받았는지, `tracking.enabled`가 저장됐는지 확인(§3.6) |
 | `/momento/tracker.js`가 `404` | `tracking.provider=momento`, `tracking.momento_proxy=true`, `tracking.enabled=true` 인지 | 셋 중 하나라도 아니면 프록시 경로는 없음 |
 | `/momento/*`가 `502 tracking_upstream`, 로그 `Momento 수집기에 연결하지 못했습니다` | 컨테이너에서 `tracking.momento_url`로 나가는 연결, 사내 CA | 수집기 주소·방화벽 확인 |
+| MCP 클라이언트가 SSO 로그인 뒤에도 `401`, 로그 `mcp oauth token rejected` | 로그의 `code`·`cause` | §3.3 거부 메시지별 조치 표. 대상 검사 실패면 메시지의 `azp`를 허용 대상에 |
+| MCP 클라이언트가 로그인 화면을 반복해서 띄움 | 메타데이터는 200인데 토큰이 계속 거부됨 | 위와 같이 원인을 고침. 임시로는 `mcp.oauth.enabled`를 꺼서 메타데이터를 404로 |
 
 ## 7. 보안
 
@@ -363,6 +422,7 @@ docker compose up -d
 - **방문 추적과 정책**: 추적을 켜도 `script-src`에 `'unsafe-inline'`은 들어가지 않습니다 — 요청마다 다른 nonce와 스니펫에서 읽은 출처만 더해지고, 끄면 원래 정책으로 돌아갑니다(§3.6). Momento를 같은 오리진 프록시로 쓰면 외부 출처가 정책에 전혀 없습니다. 차단 신고 수신(`POST /api/v1/tracking/csp-report`)은 인증 없이 열려 있지만 추적이 켜진 동안만 기록하고, 메모리의 유계 목록(100개)만 바꿉니다.
 - **비밀값 저장**: 설정의 비밀값은 `master.key`로 AES-256-GCM 암호화, 세션 토큰과 API 키는 HMAC 해시만 저장. `master.key`는 백업 대상이자 유출 금지 대상입니다.
 - **인증 연동**: Keycloak Authorization Code + PKCE(S256) + nonce 검증. SSO를 검증한 뒤 `auth.local_enabled`를 끄면 부트스트랩 계정도 화면에서는 못 들어오므로, 비상시 되돌리는 SQL(§6)을 운영 문서에 적어 둡니다.
+- **MCP SSO(OAuth)**: 켜도 `/mcp`에서만 Keycloak 액세스 토큰을 받고 REST·관리 API는 키와 세션만 받습니다. 토큰은 저장하지 않고 요청마다 JWKS로 검사하며, 계정을 만들거나 정지된 계정을 열거나 토큰의 role로 권한을 올리지 않습니다. 메타데이터 문서만 CORS(`*`)로 열리고, 어디서 로그인하는지만 말할 뿐 누가 로그인했는지는 담지 않습니다(§3.3).
 - **API 키 정책**: 기본 유효기간 90일, 회전 유예 24시간. 유출이 의심되면 소유자가 **폐기**하거나, 관리자가 그 사용자를 비활성화합니다(비활성 사용자의 키는 즉시 거부).
 - **인터넷 통신**: 기본 설정(`ai.engine=cv`, SSO·인사 연동·방문 추적 꺼짐)에서는 컨테이너가 밖으로 나가는 연결이 없습니다. 연결이 생기는 곳은 Keycloak Issuer, `hr.api_url`, `ai.vlm_base_url`, 그리고 Momento 프록시를 켰을 때의 `tracking.momento_url` 네 군데뿐이며 모두 사내 주소를 씁니다.
 
