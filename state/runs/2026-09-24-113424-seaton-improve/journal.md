@@ -31,3 +31,4 @@
 - 다음 회차가 알아야 할 것: `scripts/build-docs.py` 를 인자 없이 돌리면 md 가 안 바뀐 EXECUTIVE_REPORT·USER_GROUPS_ANALYSIS 의 html/pdf 까지 갱신된다(템플릿에 figure CSS 가 늘어난 뒤로 두 파일이 뒤처져 있다). 이번엔 이전 릴리즈들과 diff 모양을 맞추려고 되돌렸지만, 언젠가 한 번은 따로 커밋해 정리하는 편이 낫다.
 - 남은 우려(닫지 않음): `구역 불일치` 문구가 seats.ts:70 과 SeatMapPage.tsx:177 두 곳에 적혀 있다. 기능 변경이라 릴리즈에서 건드리지 않았다.
 - [러너 12:11] release published — v1.4.6
+- [러너 12:13] assets verified — v1.4.6 자산 1개 (이전 v1.4.5: 1)
