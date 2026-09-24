@@ -137,6 +137,7 @@ HTTP 포트는 `:8080` 고정입니다. 바꾸려면 컨테이너 포트 매핑�
 | :--- | :--- | :--- |
 | `general` | SSO · 일반 | `product_name` `Momento`, `public_url` 빈 값, `timezone` `Asia/Seoul` |
 | `oidc` | SSO · 일반 | `enabled` `false`, `issuer_url`, `client_id`, `client_secret`(암호화 저장), `scopes` `["openid","profile","email"]`, `claim_email` `email`, `claim_name` `name`, `claim_department` `department`, `claim_organization` `organization` |
+| `mcp.oauth` | SSO · 일반 | `enabled` `false`, `resource` 빈 값(비면 `public_url` + `/mcp`), `audience` 빈 값(공백 구분 aud/azp), `scopes` `analytics:read`. 3.5 참고 |
 | `security` | SSO · 일반 | `collector_rate_limit_per_minute` `6000`, `max_payload_bytes` `262144`, `max_events_per_request` `100`(상한 1000), `trusted_proxy_cidrs` `[]` |
 | `privacy` | 개인정보 | `ip_anonymization` `true`, `collect_user_agent` `true`, `strip_query_string` `false`, `masked_parameters` `["token","password","email"]`, `collect_user_id` `true`, `visitor_profiles` `true`, `do_not_track` `true`, `blocked_properties` `["email","phone","resident_number"]`, `pii_detection_mode` `mask` |
 | `automation` | Report · Action | `enabled` `false`, `allowed_webhook_hosts` `[]`, `delivery_timeout_seconds` `10`, `max_entity_ids` `0` |
@@ -166,6 +167,71 @@ HTTP 포트는 `:8080` 고정입니다. 바꾸려면 컨테이너 포트 매핑�
 3. `MOMENTO_ENCRYPTION_KEY_PREVIOUS`를 제거하고 재기동합니다.
 
 암호화 이전에 발급된 키는 한 번 회전해야 재조회 대상이 됩니다. 키 값을 잃으면 암호화 저장된 비밀값은 복구할 수 없고 회전해야 합니다.
+
+### 3.5 MCP SSO(OAuth) — 개인 키 없이 Keycloak 토큰으로 `/mcp` 열기
+
+MCP 인가 규격(2025-06-18 이후)은 OAuth 2.1입니다. 이 기능을 켜면 MCP 클라이언트(Claude, Cursor 등)에 `/mcp` 주소 하나만 주면 클라이언트가 스스로 Keycloak 로그인 화면을 띄우고 액세스 토큰을 받아 옵니다. **개인 API 키(`mom_key_`)는 그대로 동작합니다** — 폐쇄망·자동화 스크립트처럼 로그인 화면을 띄울 수 없는 곳은 계속 키를 씁니다.
+
+Momento는 **리소스 서버**입니다. 로그인은 Keycloak이 하고, Momento는 토큰을 받아 검사만 합니다. `/authorize`·`/token`·동적 클라이언트 등록은 Momento에 없고 Keycloak의 몫입니다. 토큰은 저장하지도, 세션으로 바꾸지도 않고 요청마다 검사합니다.
+
+**동작 규칙**
+
+- 같은 `Authorization: Bearer` 헤더에서 가릅니다. `mom_key_`로 시작하면 키, 점 두 개가 있는 JWT 모양이면 SSO 토큰, 둘 다 아니면 지금과 같은 "invalid session" 거부입니다.
+- SSO 토큰은 **`/mcp`에서만** 받습니다. REST·관리 API는 지금처럼 키와 세션만 받습니다. 유효한 토큰으로 REST를 부르면 401입니다(통합 테스트가 라우터를 순회하며 모든 `/api/v1` 경로에서 확인합니다).
+- **계정을 만들지 않습니다.** 토큰의 `sub`(웹 로그인이 저장한 `oidc_subject`), 없으면 `oidc.claim_email` 클레임으로 **이미 등록된 활성** 계정을 찾습니다. 없으면 "sign in to the web console once first"로 거부합니다. 정지된 계정은 토큰으로 되살아나지 않고, 토큰의 role 클레임은 Momento 역할이 되지 않습니다.
+- SSO 주체는 **키와 같은 문**을 지납니다. 관리 기능과 대화형 쓰기는 인증 종류로 거부되므로 계정이 최고 관리자여도 MCP 도구(모두 조회)만 쓸 수 있습니다. `mcp.oauth.scopes`는 메타데이터의 `scopes_supported`로 광고되고 주체에 기록되지만, 키의 `scopes`와 마찬가지로 경계는 이 값이 아니라 인증 계층이 강제합니다(8.7.1).
+- 켜져 있지 않으면 새로 설치한 곳과 아무것도 다르지 않습니다. 메타데이터는 404, `/mcp`의 401에는 아무 헤더도 붙지 않고, 토큰을 내밀어도 키 전용 때와 같은 거부입니다.
+
+**설정** (`관리 센터 → SSO · 일반 → MCP SSO (OAuth)` 카드, `PUT /api/v1/settings/mcp.oauth`)
+
+| 키 | 기본값 | 뜻 |
+| :--- | :--- | :--- |
+| `mcp.oauth.enabled` | `false` | 켜기. `oidc.issuer_url`이 비어 있거나, `general.public_url`과 `mcp.oauth.resource`가 모두 비어 있으면 저장이 400으로 거부됩니다 |
+| `mcp.oauth.resource` | 빈 값 | 리소스 식별자(RFC 8707). 비면 `general.public_url` + `/mcp`. 둘 다 비면 요청 Host로 만들지 않고 SSO 토큰을 받지 않습니다(Host 헤더는 보내는 쪽이 정하므로 `aud` 검사의 기준이 될 수 없습니다). `/mcp`로 끝나는 절대 URL만 받습니다 |
+| `mcp.oauth.audience` | 빈 값 | 공백 구분 허용 대상. 토큰의 `aud` 또는 `azp`와 비교합니다. Audience 매퍼 없이 쓰는 호환 경로입니다 |
+| `mcp.oauth.scopes` | `analytics:read` | 공백 구분. SSO 주체에게 기록되는 범위. 토큰의 `scope`는 보지 않습니다 |
+| (재사용) `oidc.issuer_url` · `oidc.claim_email` | 웹 로그인 설정 | 발급자와 계정 대조 클레임. 새로 만들지 않습니다 |
+
+카드는 MCP URL과 메타데이터 URL을 복사할 수 있게 보여 줍니다. 켜 두고도 동작하지 않을 상태(발급자 없음, 주소 없음)는 카드가 경고로 알립니다.
+
+**Keycloak 쪽 할 일**
+
+1. MCP 클라이언트용 **공개(public) 클라이언트**를 만듭니다(예: `claude-mcp`). Standard Flow 켬, PKCE `S256`, Direct Access Grants·Implicit·Service accounts 끔. 웹 로그인 클라이언트(`momento-web`)와 **다른** 클라이언트입니다.
+2. Valid Redirect URIs에 쓰는 클라이언트의 콜백을 정확히 적습니다. Claude는 `https://claude.ai/api/mcp/auth_callback`, 로컬 클라이언트는 `http://127.0.0.1:*/callback` 류. `*` 하나로 다 여는 것은 금지입니다.
+3. 대상(audience)을 잇습니다. 둘 중 하나면 됩니다.
+   - 정식 경로: 그 클라이언트(또는 전용 client scope)에 **Audience 매퍼** — Included Custom Audience = 리소스 식별자(`https://<public_url>/mcp`), Add to access token 켬, Add to ID token 끔.
+   - 호환 경로: 매퍼 없이 Momento의 `mcp.oauth.audience`에 클라이언트 ID(`claude-mcp`)를 적습니다. 실제 Keycloak 26은 `aud`에 `account`만 싣고 클라이언트 ID는 `azp`에 담으므로 이 경로가 가장 빠릅니다.
+4. 액세스 토큰 수명은 짧게(5분 안팎). Momento는 introspection을 하지 않으므로 **Keycloak에서 로그아웃해도 이미 발급된 토큰은 만료까지 삽니다.** 계정을 즉시 끊으려면 Momento에서 계정을 비활성화하세요 — 토큰 검사가 활성 계정만 통과시킵니다.
+
+**확인**
+
+```bash
+# 1) 메타데이터 — 인증 없이 맨 JSON. 꺼져 있으면 404
+curl -s https://momento.internal/.well-known/oauth-protected-resource/mcp
+# {"resource":"https://momento.internal/mcp","authorization_servers":["https://keycloak.internal/realms/company"],
+#  "bearer_methods_supported":["header"],"scopes_supported":["analytics:read"],"resource_name":"Momento Analytics MCP"}
+
+# 2) 401 이 길을 가리키는지 — MCP 경로에만 붙습니다
+curl -si -X POST https://momento.internal/mcp -H 'Content-Type: application/json' \
+  -d '{"jsonrpc":"2.0","id":1,"method":"tools/list","params":{}}' | grep -i www-authenticate
+# WWW-Authenticate: Bearer realm="Momento", resource_metadata="https://momento.internal/.well-known/oauth-protected-resource/mcp"
+
+# 3) 토큰으로 열리는지
+curl -s -X POST https://momento.internal/mcp -H "Authorization: Bearer $ACCESS_TOKEN" \
+  -H 'Content-Type: application/json' -d '{"jsonrpc":"2.0","id":1,"method":"tools/list","params":{}}'
+```
+
+**거부 메시지별 조치** (`/mcp`의 401 본문 `error.message`; 하위 원인은 서버 로그 `mcp sso token refused`에 남습니다)
+
+| 메시지 | 뜻 | 조치 |
+| :--- | :--- | :--- |
+| `invalid session` (WWW-Authenticate 없음) | SSO 토큰이 꺼져 있거나 `oidc.issuer_url`이 비어 있음 | 카드에서 켜고 Issuer URL을 채웁니다. 켜져 있는데 발급자가 비면 로그에 `mcp sso is switched on but oidc.issuer_url is empty` |
+| `the SSO issuer could not be read …` | Keycloak Discovery 실패 | Momento 컨테이너에서 Issuer URL에 닿는지, 인증서를 신뢰하는지 확인. 로그에 `discovery at <issuer>: …` |
+| `… not valid (signature, issuer, expiry or not-before)` | 서명·`iss`·`exp`·`nbf` 중 하나가 틀림 | 로그의 `token rejected: …`가 어느 것인지 말합니다. 다른 realm의 토큰이거나 만료된 토큰이면 클라이언트에서 다시 로그인 |
+| `an ID token is not an MCP credential` | ID 토큰을 보냄 | 클라이언트가 access_token을 쓰게 합니다 |
+| `a sender-constrained token (cnf) …` | DPoP·mTLS 묶인 토큰 | 그 클라이언트에 소지자 증명을 끕니다 |
+| `… was not issued for this server (aud [account], azp "claude-mcp"); add "claude-mcp" to the accepted audiences …` | 대상 불일치 | 메시지에 적힌 값을 `mcp.oauth.audience`에 넣거나, Audience 매퍼에 메시지의 리소스 식별자를 넣습니다 |
+| `this SSO account is not registered in Momento or is inactive; sign in to the web console once first` | 계정 없음 또는 비활성 | 그 사람이 웹으로 한 번 로그인하거나(계정 생성), 관리자가 계정을 활성화합니다 |
 
 ---
 
@@ -315,6 +381,7 @@ pg_restore -h db.internal -U momento -d momento --clean --if-exists momento-2026
 
 - Tracking Key(`mom_track_`)는 페이지 HTML에 노출되는 값입니다. 그래서 Origin 없는 서버 간 요청은 Server API Key(`mom_server_`)만 받습니다.
 - 개인 API Key는 관리자 기능과 대화형 쓰기를 항상 거부합니다. 스크립트에 오래 남는 자격 증명이 배포 설정을 바꿀 수 있어서는 안 됩니다.
+- MCP SSO 토큰(3.5)은 같은 거부를 받고, 그 위에 `/mcp` 밖에서는 아예 인증되지 않습니다. 이 두 게이트는 "세션이 아닌 주체"라는 하나의 판정(`Principal.Programmatic`)을 공유하므로 새 자격 종류가 관리자 게이트를 지나치는 일이 없습니다.
 - Delivery Channel의 인증 Header 값은 암호화 저장되고 API로 다시 노출되지 않습니다.
 - `MOMENTO_ENCRYPTION_KEY`를 잃으면 암호화 저장된 비밀값은 복구할 수 없습니다. 백업과 함께 보관합니다.
 
