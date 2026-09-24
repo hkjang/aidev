@@ -202,3 +202,4 @@
 - 보류 아이디어: 문서 내려받기의 `Content-Disposition` 이 한글 제목이면 길이와 무관하게 `mime.ParseMediaType` 에 깨지는 것 — `urlPathEscape` 가 ext-value 의 한글 바이트를 그대로 두어 RFC 5987 위반, 이번에 live 로 확인한 새 항목 (3/2/S) / 워크스페이스 ZIP 한도 초과 안내를 실제로 넘쳤을 때만 넣기 — `LIMIT maxWorkspaceExport+1` 로 읽어 정확히 2000건 경계를 가리기 (2/1/S) / 가져오기·넘겨받기의 240자 제목 절단에도 같은 안내 문구가 붙는 것 — 파일 이름이 아니라 DB 데이터가 바뀌는 자리 (2/2/S) / 워크스페이스 ZIP 파일 이름의 따옴표가 `Content-Disposition` 을 깨는지 확인 — `filename="…"` 안에 큰따옴표가 그대로 들어감 (2/2/S) / CI 에 e2e(playwright) 단계 넣기 — 보호 경로와 계정 시드 때문에 사람 승인 있는 회차에 (4/2/M)
 - 과제서: 채택 — 근거(`safeFilename` → `truncateRunes` 호출, 제목 240자 허용, 다섯 호출 경로가 한 패키지)가 모두 코드·실행과 맞아 지정한 최소 수정을 그대로 구현했고, 과제서가 미확인으로 남긴 동적 재현을 live 테스트로 채웠습니다. 다만 문서 내려받기 라우트는 과제서가 적은 `…/export?format=md` 가 아니라 `…/export/{format}` 이고, 이 워크트리에는 Chromium 이 있어 과제서가 예고한 기존 실패는 없었습니다.
 
+- 릴리즈: v0.44.0 (2026-09-24, run 2026-09-24-000023-muni-approve)

@@ -197,3 +197,4 @@
 - 보류 아이디어: 북마크 4개 핸들러(late.go:1058/1090/1150/1241)의 `ok, _ := IsMember` DB 오류 403 위장 분리(과제서의 차선 후보, S) / createUserPostReminder 별칭도 같은 403 위장(네이티브 경로는 이미 500, S) / preferences upsert·delete 의 400 을 원인별 400/500 으로 분리(서비스 ErrInvalid 센티널 필요, M) / uploadTeamImage 가 10MB 초과 본문에도 200 + 감사 로그(S) / server/internal 9개 파일 gofmt 미적용(구조체 태그 정렬 드리프트, CI 미강제, S).
 - 과제서: 채택 — 과제서의 근거(`WHERE id=$1 AND delete_at=0`, 핸들러 라인, Reorder 가 이미 채널로 스코프됨)가 코드와 정확히 일치했고 수용 기준 1~4 를 실제 DB 회귀로 충족했다. 기준 5(bookmarks 패키지 단위 테스트)는 별도 파일을 만들지 않고 핸들러 테스트가 실제 `bookmarks.Service` 를 통과하는 것으로 갈음했다 — 예산 때문이며, 남는다면 그 파일이 다음 회차의 값싼 후속이다.
 
+- 릴리즈: v0.2.36 (2026-09-24, run 2026-09-24-231859-moyro-approve)
