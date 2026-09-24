@@ -25,8 +25,38 @@
     "at": "2026-09-24T16:40:02+09:00"
   },
   "review": {
-    "state": "rejected",
-    "reason": "리뷰 거절: internal/httpserver/oidc.go:1152 `formErr != nil && redirectTo == \"\"` 가 본문과 무관한 ParseForm 오류까지 `form_unreadable` 로 덮어쓴다. Go 1.26 의 ParseForm 은 POST 본문을 전부 읽어낸 뒤에도 (a) 쿼리스트링에 깨진 퍼센트 이스케이프가 있으면 `invalid URL escape \"%zz\"` 를, (b) `Content-Type: application/x-www-form-urlencoded; charset=\"UTF-8` 처럼 미디어 파라미터만 깨졌으면 `mime: invalid media parameter` 를 돌려준다 — 두 경우 모두 r.Form 에 본문 파라미터가 온전히 들어 있다(GOROOT 소스와 실제 실행으로 확인). 재현: RP 가 `POST /realms/x/protocol/openid-connect/logout?ui_locales=100%` 로 본문에 `client_id` + 미등록 `post_logout_redirect_uri` 를 보내면 1138행이 올바르게 정한 `uri_not_registered` 가 1153행에서 `form_unreadable` 로 교체되고, 1161행이 \"logout could not read the form it was posted\" 라는 거짓 문장을 남긴다. 운영자는 등록 목록 대조(실제 원인) 대신 본문 크기·인코딩을 뒤지게 된다. 이 변경의 목적이 이유 코드의 정확성인데 기존의 정확한 이유를 부정확하게 만든다. / internal/httpserver/oidc.go:1144 주석 \"the query survived and the body did not\" 이 위 (a) 경우에 정확히 반대다 — 살아남은 것이 본문이고 깨진 것이 쿼리다. 판정 규칙의 근거 자체가 성립하지 않는 경로가 있다. / docs/operations.md:50 (및 같은 문구의 oidc.go:1249 const 주석, 1159행 \"three ways a body fails\") `form_unreadable` 원인으로 적은 \"폼이 아닌 `Content-Type`\" 이 사실이 아니다. parsePostForm 은 `mime.ParseMediaType` 이 실패할 때만 오류를 돌려주므로 `application/json`·`multipart/form-data`·`text/plain`·`Content-Type` 부재는 모두 err=nil 이고 본문 파라미터만 조용히 사라진다(실행 확인). 즉 이 reason 은 붙지 않는다. 그런데 표의 '할 일' 칸은 운영자에게 `Content-Type: application/x-www-form-urlencoded` 를 확인하라고 시킨다 — 이 reason 을 절대 만들지 않는 조건이고, 정작 무음 손실이 일어나는 multipart/JSON 경우는 이 기록 체계가 덮지 않는데 덮는 것처럼 읽힌다. docs/ 가 운영 정본이라 잘못된 분류표는 그대로 오진을 부른다.",
-    "at": "2026-09-24T16:43:21+09:00"
+    "state": "approved",
+    "reason": "리뷰 승인 (risk=low)",
+    "at": "2026-09-24T16:58:27+09:00"
+  },
+  "repair": {
+    "state": "done",
+    "reason": "# 수리 요약 (a578657)  비평 네 건 모두 맞았고, 실측으로 재현했다. `r.ParseForm()` 은 본문과 URL 쿼리 두 파스를 오류 하나로 합치고 둘 다 실패하면 본문 것",
+    "at": "2026-09-24T16:51:40+09:00"
+  },
+  "pr": {
+    "state": "created",
+    "reason": "https://github.com/hkjang/ReSSO/pull/28",
+    "at": "2026-09-24T16:58:35+09:00"
+  },
+  "ci": {
+    "state": "passed",
+    "reason": "검사 2개 모두 success",
+    "at": "2026-09-24T17:06:46+09:00"
+  },
+  "merge": {
+    "state": "done",
+    "reason": "a57865793031441032b04f570e9b77c5d9add180",
+    "at": "2026-09-24T17:06:51+09:00"
+  },
+  "release": {
+    "state": "published",
+    "reason": "v0.9.91",
+    "at": "2026-09-24T17:24:06+09:00"
+  },
+  "assets": {
+    "state": "verified",
+    "reason": "v0.9.91 자산 2개 (이전 v0.9.90: 2)",
+    "at": "2026-09-24T17:29:30+09:00"
   }
 }

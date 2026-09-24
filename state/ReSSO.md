@@ -263,3 +263,4 @@
 - 보류 아이디어: oidcCORS가 realmFromPath 실패에 조용히 CORS 헤더를 빼고 지나간다 — 구현 전 middleware.go 확인 필요(2/1/S) / 인가 접근 로그에 client_id 남기기(2/1/S) / UserInfo 거절 카운터 resso_userinfo_errors_total(2/1/S) / 비화면 경로의 CSP를 default-src 'none'으로 좁히기(2/2/S) / 통합 테스트의 lockedBuffer를 공용 헬퍼로 — 이번에 사용처가 둘이 됐다(1/1/S)
 - 과제서: 채택 — 근거(1070행의 무시된 ParseForm, 1127행 `requested != ""`가 만든 구멍)가 코드와 그대로 맞았고 수용 기준 다섯을 모두 구현·검증했다. 기준 4의 미확인 전제는 테스트 (d)로 확인됐다(쿼리는 살아남는다 — 기대값 수정 불필요).
 
+- 릴리즈: v0.9.91 (2026-09-24, run 2026-09-24-162424-ReSSO-improve)
