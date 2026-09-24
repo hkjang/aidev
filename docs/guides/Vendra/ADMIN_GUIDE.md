@@ -156,6 +156,8 @@ curl -fsS http://localhost:8080/api/version    # 버전·커밋·빌드 시각
 |---|---|---|---|
 | general | `branding` | 서비스명·로그인 문구 | 로그인 화면과 머리글에 나오는 문구 |
 | identity | `oidc` | `enabled:false`, `autoCreate:true`, `autoLogin:false`, `defaultRole:business_user` | OIDC 연동(3.3) |
+| identity | `mcp.oauth.enabled` | `false` | MCP 를 Keycloak 액세스 토큰으로도 열기(3.3의 「MCP 를 SSO 로」). 기본 꺼짐 |
+| identity | `mcp.oauth.resource` / `mcp.oauth.audience` / `mcp.oauth.scopes` | 빈 값 / 빈 값 / MCP 도구가 확인하는 읽기 권한 7개 | 리소스 식별자, 허용 대상, SSO 주체에게 주는 범위 |
 | security | `security.login` | `maxFailures:5`, `windowMinutes:15`, `lockoutMinutes:15`, `maxAddressFailures:25` | 로그인 실패 임계값과 잠금 시간 |
 | security | `security.password` | `minLength:10`, `requireClasses:0` | 비밀번호 정책 |
 | security | `security.session` | `ttlHours:12`, `secureCookie:false` | 세션 수명과 쿠키 Secure 속성 |
@@ -235,6 +237,89 @@ https://vendra.internal/api/auth/oidc/callback
 확인법: Keycloak 에 로그인한 브라우저로 Vendra 를 열면 로그인 화면 없이 대시보드가 떠야
 하고, 로그인하지 않은 브라우저로 열면 로그인 화면이 한 번 뜬 뒤 새로고침을 반복해도
 깜빡이지 않아야 합니다.
+
+#### MCP 를 SSO 로 — 개인 키 없이 Keycloak 토큰으로 (`mcp.oauth.*`)
+
+`/mcp` 는 개인 API 키(`vnd_`)로 들어옵니다. 같은 화면(**인증 · SSO**)의 두 번째 카드
+**MCP · SSO(OAuth)로 연결** 을 켜면 **Keycloak 액세스 토큰으로도** 들어올 수 있습니다.
+MCP 인가 규격(2025-06-18 이후)은 OAuth 2.1 이라, 클라이언트(Claude·Cursor 등)에 MCP 주소
+하나만 주면 클라이언트가 스스로 Keycloak 로그인 화면을 띄우고 토큰을 받아 옵니다. 키 체계는
+그대로이며, **기본은 꺼짐**입니다 — 꺼진 배포에서는 아무것도 달라지지 않습니다.
+
+이 서버는 **리소스 서버**입니다. 로그인과 토큰 발급은 Keycloak 이 하고, Vendra 는 토큰을
+받아 검사만 합니다. `/authorize`·`/token` 을 만들지 않고, 토큰을 저장하거나 세션으로 바꾸지
+않으며, 요청마다 검사합니다.
+
+| 키 | 기본값 | 뜻 |
+|---|---|---|
+| `mcp.oauth.enabled` | `false` | 켜기 스위치. OIDC 카드의 Issuer URL 이 비어 있으면 저장이 거부됩니다 |
+| `mcp.oauth.resource` | 빈 값 | 리소스 식별자 — 클라이언트가 실제로 접속하는 공개 MCP 주소(`https://vendra.internal/mcp`). 비우면 OIDC 카드의 **서비스 공개 주소** + `/mcp`, 그것도 비어 있으면 요청의 Host 로 만듭니다(마지막 수단 — 누구나 헤더를 바꿀 수 있으니 공개 주소를 적어 두세요) |
+| `mcp.oauth.audience` | 빈 값 | 공백 구분 허용 대상. 토큰의 `aud` 또는 `azp` 와 비교합니다 |
+| `mcp.oauth.scopes` | `supplier.read contract.read purchase_order.read issue.read risk.read evaluation.read spend.read` | 공백 구분. SSO 로 들어온 주체에게 주는 읽기 권한. 확인되지 않는 권한 이름은 저장이 거부됩니다 |
+| (재사용) `oidc.issuer` · `oidc.publicUrl` | OIDC 카드 | 새로 적지 않습니다 |
+
+**무엇을 검사하는가.** 서명(Keycloak JWKS, RS/ES/PS 계열만 — `HS*`·`none` 거부), `iss`(OIDC
+Issuer 와 같아야 함), `exp`·`nbf`, `typ`(`ID` 면 거부 — ID 토큰은 로그인 증거이지 API 자격이
+아닙니다), `cnf`(있으면 거부), `sub`, 그리고 **대상**. 대상은 다음 중 하나가 맞아야 합니다:
+
+- `aud` 에 리소스 식별자가 있다 — Keycloak 에 Audience 매퍼를 둔 정식 경로
+- `aud` 또는 `azp` 가 `mcp.oauth.audience` 에 있다 — 매퍼 없이 쓰는 호환 경로. 실제 Keycloak 26
+  은 `aud` 에 `account` 만 싣고 클라이언트 ID 는 `azp` 에 담으므로, MCP 클라이언트 ID 를 여기
+  적으면 됩니다
+
+**계정은 만들지 않습니다.** 토큰의 `sub`(웹 로그인 때 묶인 `oidc_subject`), 없으면 검증된
+이메일로 **이미 등록된 활성** 계정만 찾습니다. 없으면 「먼저 웹으로 한 번 로그인하세요」로
+거부합니다. 토큰의 role 로 권한을 올리지 않습니다 — SSO 주체는 그 사용자가 키를 만들어
+들어왔을 때와 같은 문을 지나며, `mcp.oauth.scopes` ∩ 사용자의 역할 권한만 받습니다. 토큰은
+**`/mcp` 에서만** 받습니다. REST·관리 API 는 지금처럼 키와 세션만 받습니다.
+
+**Keycloak 쪽 할 일.**
+
+1. MCP 클라이언트용 **공개(public) 클라이언트**를 만듭니다(예: `claude-mcp`). Standard Flow 켬,
+   PKCE `S256`, Direct Access Grants·Implicit·Service accounts 끔. 웹 로그인 클라이언트(`vendra`)와
+   **다른** 클라이언트입니다.
+2. Valid Redirect URIs 에 쓰는 MCP 클라이언트의 콜백을 정확히 적습니다 — Claude 는
+   `https://claude.ai/api/mcp/auth_callback`, 로컬 클라이언트는 `http://127.0.0.1:*/callback` 류.
+   `*` 하나로 다 여는 것은 금지입니다.
+3. 정식 경로: 그 클라이언트(또는 전용 client scope)에 **Audience 매퍼** — Mapper type
+   `Audience`, Included Custom Audience = 리소스 식별자(`https://vendra.internal/mcp`), Add to
+   access token 켬, Add to ID token 끔. 호환 경로: 매퍼 없이 이 화면의 **허용 대상**에 클라이언트
+   ID(`claude-mcp`)를 적습니다.
+4. 액세스 토큰 수명은 짧게(5분 안팎). 이 서버는 introspection 을 하지 않으므로 **Keycloak 에서
+   로그아웃해도 이미 발급된 토큰은 만료까지 삽니다.** 계정을 즉시 막아야 하면 Vendra 에서
+   사용자를 비활성화하세요 — 토큰 검사가 활성 계정만 통과시킵니다.
+
+**확인법 (`curl`).** 메타데이터는 인증 없이 맨 JSON 으로 나와야 하고, `/mcp` 의 401 은 그 주소를
+가리켜야 합니다:
+
+```bash
+curl -s https://vendra.internal/.well-known/oauth-protected-resource/mcp
+# {"resource":"https://vendra.internal/mcp","authorization_servers":["https://keycloak.internal/realms/company"],
+#  "bearer_methods_supported":["header"],"scopes_supported":["supplier.read",...],"resource_name":"Vendra MCP"}
+
+curl -si -X POST https://vendra.internal/mcp -H 'Content-Type: application/json' \
+  -d '{"jsonrpc":"2.0","id":1,"method":"tools/list"}' | grep -i www-authenticate
+# WWW-Authenticate: Bearer realm="Vendra", resource_metadata="https://vendra.internal/.well-known/oauth-protected-resource/mcp"
+
+curl -s -X POST https://vendra.internal/mcp -H "Authorization: Bearer $ACCESS_TOKEN" \
+  -H 'Content-Type: application/json' -d '{"jsonrpc":"2.0","id":1,"method":"tools/list"}'
+```
+
+꺼져 있으면 메타데이터는 404 이고 401 에 `WWW-Authenticate` 가 붙지 않습니다. REST 의 401 에는
+켜져 있어도 붙지 않습니다.
+
+**거부 메시지별 조치.** 401 본문의 `error.message` 가 이유를 말합니다:
+
+| 메시지 | 원인 | 조치 |
+|---|---|---|
+| `이 서버를 위해 발급된 것이 아닙니다(aud=[account], azp="claude-mcp")` | 대상 불일치 | 메시지가 말하는 대로 **허용 대상**에 `claude-mcp` 를 적거나 Audience 매퍼에 리소스 식별자를 넣습니다 |
+| `발급자(iss)가 … 와 다릅니다` | 다른 realm 의 토큰 | 클라이언트가 이 서버의 메타데이터가 가리키는 realm 으로 로그인했는지 확인합니다 |
+| `만료되었습니다` | `exp` 지남 | 클라이언트가 다시 로그인합니다(정상 — 수명이 짧습니다) |
+| `ID 토큰은 로그인 증거이지 API 자격이 아닙니다` | ID 토큰을 보냄 | 클라이언트 설정에서 액세스 토큰을 보내게 합니다 |
+| `서명 알고리즘을 받지 않습니다` | `HS*`·`none` | Keycloak realm 키(RS256 기본)로 서명된 액세스 토큰이어야 합니다 |
+| `소지자 증명(cnf)이 묶인 토큰` | DPoP·mTLS 바인딩 | 클라이언트에서 바인딩 없는 일반 Bearer 토큰을 쓰게 합니다 |
+| `등록되지 않았거나 비활성입니다. 먼저 웹으로 한 번 로그인하세요` | 계정 없음·비활성 | 그 사람이 웹으로 SSO 로그인을 한 번 하면 계정이 묶입니다. 비활성이면 관리자가 판단합니다 |
+| `로그인이 필요합니다` (헤더 없음) | 스위치 꺼짐 또는 Issuer 비어 있음 | 이 카드를 켜고 OIDC Issuer 를 확인합니다. 스위치가 켜져 있는데 Issuer 가 비어 있을 때만 서버 로그에 `mcp oauth token refused reason=…` 가 남고, 스위치가 꺼진 배포는 조용히 평소의 401 로 답합니다 |
 
 ### 3.4 AI 모델 연결
 
