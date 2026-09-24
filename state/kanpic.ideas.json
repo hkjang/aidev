@@ -1,16 +1,137 @@
 [
-  {"title":"서버 delimited.Number 와 격자 parsePastedNumber 의 열다섯 자리 한도를 공용 픽스처로 못 박는다","value":3,"risk":1,"size":"M","status":"done","note":"testdata/incoming-number.json 을 만들어 Go(importexport.Parse)와 웹(materializePaste·parseClipboardHtml)이 함께 읽게 했다. 15/16자리 경계는 두 문이 이미 일치했고, 같은 픽스처가 앞자리 0 어긋남을 드러냈다.","updated":"2026-09-24"},
-  {"title":"붙여넣기의 앞자리 0 번호가 숫자로 바뀌는 범위를 조사하고 보존한다","value":4,"risk":2,"size":"M","status":"done","note":"decomposeNumberText 에 /^[+-]?0\\d+$/ 가드 한 줄. 붙여넣기(평문·HTML)와 데이터 정리가 함께 좁아지고 직접 입력은 CanvasGrid 의 Number() 가 먼저 읽어 예전대로다. 고치기 전 실패·가드 제거 시 재실패 확인.","updated":"2026-09-24"},
-  {"title":"compareLists.looksLikeIdentifier 는 007.5 까지 번호로 보아 두 문(수 7.5)과 갈린다","value":2,"risk":2,"size":"S","status":"pending","note":"새 아이디어. web/src/lib/compareLists.ts:45 의 /^0\\d/ 는 소수점 유무를 보지 않는다. 목록 대조의 키 맞추기는 칸에 담는 값과 다른 계약이라 이번엔 두었다 — 바꾸기 전에 그 계약이 무엇인지 먼저 못 박아야 한다.","updated":"2026-09-24"},
-  {"title":"칸에 직접 친 값은 CanvasGrid 의 Number() 가 먼저 읽어 0x10 이 16 이 되고 스무 자리 번호가 뭉개진다","value":3,"risk":3,"size":"M","status":"pending","note":"새 아이디어. CanvasGrid.tsx:74 의 빠른 길이 decomposeNumberText 보다 넓다(지수·16진수·긴 번호). 스프레드시트가 늘 하던 대로인 부분과 진짜 어긋남을 가려야 하고, 오래된 입력 동작이라 바꾸면 눈에 띈다.","updated":"2026-09-24"},
-  {"title":"워크북 GET 응답에 넘겨받은 출처를 실어 편집기가 열릴 때마다 404 요청 하나를 더 보내지 않게 한다","value":2,"risk":2,"size":"M","status":"pending","note":"getWorkbook 은 출처를 싣지 않고 EditorPage 는 handoff-origin 별도 query 를 유지한다. 저장소/API 결합 때문에 후순위.","updated":"2026-09-24"},
-  {"title":"홈 화면 워크북 카드에도 넘겨받은 출처를 표시한다","value":2,"risk":2,"size":"M","status":"pending","note":"HomePage 카드에 Grid2X2·시트 수만 있다. 목록 출처 API 설계가 선행되어야 하고 카드별 fetch 는 금지.","updated":"2026-09-24"},
-  {"title":"허용 목록 줄에 받는 형식을 적을 수 있게 한다","value":2,"risk":2,"size":"S","status":"pending","note":"handoff.go receivesByService 고정 표 유지. 표준 변경 요구 미확인.","updated":"2026-09-24"},
-  {"title":"서버 formatValue 와 격자가 숫자처럼 생긴 글자 값에서 갈린다","value":3,"risk":3,"size":"M","status":"pending","note":"functions_text.go formatValue 는 toNumber, cellFormat.ts formatCellValue 는 typeof number 로 분기. TEXT 와 표시 계약 차이의 의도 미확인, 통합 금지.","updated":"2026-09-24"},
-  {"title":"detectDelimiter 는 CR 만 쓰는 옛 파일을 한 줄로 읽는다","value":1,"risk":2,"size":"M","status":"pending","note":"headLines 는 LF 만 나눈다. 감지만 바꾸면 encoding/csv 행 파싱 문제가 남는다.","updated":"2026-09-24"},
-  {"title":"분수 서식의 ? 자리 맞추기 빈칸을 그리지 않는다","value":2,"risk":2,"size":"M","status":"pending","note":"fractionText 는 분자/분모를 바로 연결. Go/TS 공용 서식 기대값과 엑셀 정렬 계약 확정이 선행되어야 한다.","updated":"2026-09-24"},
-  {"title":"가이드 캡처를 CI 나 릴리즈 절차에서 다시 찍게 한다","value":2,"risk":2,"size":"M","status":"pending","note":"README 수동 캡처 명령만 있고 자동 캡처 없음. DB·서버·보호 workflow 변경 비용으로 보류.","updated":"2026-09-24"},
-  {"title":"따옴표 안 여러 줄이 있는 CSV 의 구분자 감지 회귀 사례를 추가한다","value":2,"risk":2,"size":"M","status":"pending","note":"countOutsideQuotes 의 물리 줄별 상태 초기화 유지. 실제 오감지 반례 미확인. 10줄 상한·불균형 따옴표 복구 계약을 함께 살펴야 한다.","updated":"2026-09-24"},
-  {"title":"관리자 가이드의 외부 호출 오류 코드 안내를 실제 #N/A 와 맞춘다","value":2,"risk":1,"size":"S","status":"pending","note":"ADMIN_GUIDE.md:755 는 #VALUE!, Fetcher.Resolve/one 은 정책·호스트 오류에 #N/A. PDF 재생성 절차는 이번 회차에 USER_GUIDE 로 실제 확인했다(gen_user_guide.js 참고).","updated":"2026-09-24"},
-  {"title":"깨진 UTF-16 복구 계약을 원격·업로드의 실제 입구에서 고정한다","value":2,"risk":2,"size":"S","status":"pending","note":"fromUTF16 는 홀수 끝 바이트를 버리고 고립 surrogate 를 U+FFFD 로 복구. encoding_test 에 단위 사례는 있지만 두 입구의 실제 비교는 미확인.","updated":"2026-09-24"}
+  {
+    "title": "서버 delimited.Number 와 격자 parsePastedNumber 의 열다섯 자리 한도를 공용 픽스처로 못 박는다",
+    "value": 3,
+    "risk": 1,
+    "size": "M",
+    "status": "done",
+    "note": "testdata/incoming-number.json 을 만들어 Go(importexport.Parse)와 웹(materializePaste·parseClipboardHtml)이 함께 읽게 했다. 15/16자리 경계는 두 문이 이미 일치했고, 같은 픽스처가 앞자리 0 어긋남을 드러냈다.",
+    "updated": "2026-09-24"
+  },
+  {
+    "title": "붙여넣기의 앞자리 0 번호가 숫자로 바뀌는 범위를 조사하고 보존한다",
+    "value": 4,
+    "risk": 2,
+    "size": "M",
+    "status": "done",
+    "note": "decomposeNumberText 에 /^[+-]?0\\d+$/ 가드 한 줄. 붙여넣기(평문·HTML)와 데이터 정리가 함께 좁아지고 직접 입력은 CanvasGrid 의 Number() 가 먼저 읽어 예전대로다. 고치기 전 실패·가드 제거 시 재실패 확인.",
+    "updated": "2026-09-24"
+  },
+  {
+    "title": "compareLists.looksLikeIdentifier 는 007.5 까지 번호로 보아 두 문(수 7.5)과 갈린다",
+    "value": 2,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "새 아이디어. web/src/lib/compareLists.ts:45 의 /^0\\d/ 는 소수점 유무를 보지 않는다. 목록 대조의 키 맞추기는 칸에 담는 값과 다른 계약이라 이번엔 두었다 — 바꾸기 전에 그 계약이 무엇인지 먼저 못 박아야 한다.",
+    "updated": "2026-09-24"
+  },
+  {
+    "title": "칸에 직접 친 값은 CanvasGrid 의 Number() 가 먼저 읽어 0x10 이 16 이 되고 스무 자리 번호가 뭉개진다",
+    "value": 3,
+    "risk": 3,
+    "size": "M",
+    "status": "pending",
+    "note": "새 아이디어. CanvasGrid.tsx:74 의 빠른 길이 decomposeNumberText 보다 넓다(지수·16진수·긴 번호). 스프레드시트가 늘 하던 대로인 부분과 진짜 어긋남을 가려야 하고, 오래된 입력 동작이라 바꾸면 눈에 띈다.",
+    "updated": "2026-09-24"
+  },
+  {
+    "title": "워크북 GET 응답에 넘겨받은 출처를 실어 편집기가 열릴 때마다 404 요청 하나를 더 보내지 않게 한다",
+    "value": 2,
+    "risk": 2,
+    "size": "M",
+    "status": "pending",
+    "note": "getWorkbook 은 출처를 싣지 않고 EditorPage 는 handoff-origin 별도 query 를 유지한다. 저장소/API 결합 때문에 후순위.",
+    "updated": "2026-09-24"
+  },
+  {
+    "title": "홈 화면 워크북 카드에도 넘겨받은 출처를 표시한다",
+    "value": 2,
+    "risk": 2,
+    "size": "M",
+    "status": "pending",
+    "note": "HomePage 카드에 Grid2X2·시트 수만 있다. 목록 출처 API 설계가 선행되어야 하고 카드별 fetch 는 금지.",
+    "updated": "2026-09-24"
+  },
+  {
+    "title": "허용 목록 줄에 받는 형식을 적을 수 있게 한다",
+    "value": 2,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "handoff.go receivesByService 고정 표 유지. 표준 변경 요구 미확인.",
+    "updated": "2026-09-24"
+  },
+  {
+    "title": "서버 formatValue 와 격자가 숫자처럼 생긴 글자 값에서 갈린다",
+    "value": 3,
+    "risk": 3,
+    "size": "M",
+    "status": "pending",
+    "note": "functions_text.go formatValue 는 toNumber, cellFormat.ts formatCellValue 는 typeof number 로 분기. TEXT 와 표시 계약 차이의 의도 미확인, 통합 금지.",
+    "updated": "2026-09-24"
+  },
+  {
+    "title": "detectDelimiter 는 CR 만 쓰는 옛 파일을 한 줄로 읽는다",
+    "value": 1,
+    "risk": 2,
+    "size": "M",
+    "status": "pending",
+    "note": "headLines 는 LF 만 나눈다. 감지만 바꾸면 encoding/csv 행 파싱 문제가 남는다.",
+    "updated": "2026-09-24"
+  },
+  {
+    "title": "분수 서식의 ? 자리 맞추기 빈칸을 그리지 않는다",
+    "value": 2,
+    "risk": 2,
+    "size": "M",
+    "status": "pending",
+    "note": "fractionText 는 분자/분모를 바로 연결. Go/TS 공용 서식 기대값과 엑셀 정렬 계약 확정이 선행되어야 한다.",
+    "updated": "2026-09-24"
+  },
+  {
+    "title": "가이드 캡처를 CI 나 릴리즈 절차에서 다시 찍게 한다",
+    "value": 2,
+    "risk": 2,
+    "size": "M",
+    "status": "pending",
+    "note": "README 수동 캡처 명령만 있고 자동 캡처 없음. DB·서버·보호 workflow 변경 비용으로 보류.",
+    "updated": "2026-09-24"
+  },
+  {
+    "title": "따옴표 안 여러 줄이 있는 CSV 의 구분자 감지 회귀 사례를 추가한다",
+    "value": 2,
+    "risk": 2,
+    "size": "M",
+    "status": "pending",
+    "note": "countOutsideQuotes 의 물리 줄별 상태 초기화 유지. 실제 오감지 반례 미확인. 10줄 상한·불균형 따옴표 복구 계약을 함께 살펴야 한다.",
+    "updated": "2026-09-24"
+  },
+  {
+    "title": "관리자 가이드의 외부 호출 오류 코드 안내를 실제 #N/A 와 맞춘다",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "ADMIN_GUIDE.md:755 는 #VALUE!, Fetcher.Resolve/one 은 정책·호스트 오류에 #N/A. PDF 재생성 절차는 이번 회차에 USER_GUIDE 로 실제 확인했다(gen_user_guide.js 참고).",
+    "updated": "2026-09-24"
+  },
+  {
+    "title": "깨진 UTF-16 복구 계약을 원격·업로드의 실제 입구에서 고정한다",
+    "value": 2,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "fromUTF16 는 홀수 끝 바이트를 버리고 고립 surrogate 를 U+FFFD 로 복구. encoding_test 에 단위 사례는 있지만 두 입구의 실제 비교는 미확인.",
+    "updated": "2026-09-24"
+  },
+  {
+    "title": "auto-improve: fix(external): IMPORTDATA의 잘못된 UTF-8 입력을 거절한다",
+    "value": 3,
+    "risk": 2,
+    "size": "M",
+    "status": "pending",
+    "updated": "2026-09-25",
+    "note": "https://github.com/hkjang/kanpic/pull/29 (PR 처리기가 3일 전에 더 진행할 수 없다고 판정했고(수정·심사를 2번 시도했지만 통과하지 못함) 그 뒤 사람 손이 닿지 않았습니다) 로 닫힘 — 다시 하려면 처음부터"
+  }
 ]

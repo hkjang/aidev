@@ -1,7 +1,7 @@
 ---
 title: "Vendra — 자율 개선 이력"
 description: "Vendra: 자율 개선 회차 34회, 릴리즈 19건. 최근 릴리즈 v0.7.60 (자산 1개)."
-last_modified_at: 2026-09-25 00:22:59 +0900
+last_modified_at: 2026-09-25 05:48:35 +0900
 ---
 {% raw %}
 <script type="application/ld+json">
@@ -18,7 +18,7 @@ last_modified_at: 2026-09-25 00:22:59 +0900
   "name": "hkjang",
   "url": "https://github.com/hkjang"
  },
- "dateModified": "2026-09-25T00:22:59+09:00",
+ "dateModified": "2026-09-25T05:48:35+09:00",
  "version": "0.7.60"
 }
 </script>

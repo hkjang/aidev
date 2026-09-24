@@ -282,3 +282,4 @@
 - 보류 아이디어: XLSX 해제 **누적** 바이트 예산 — 파트를 하나씩 풀어 peak는 잡혔지만 시트 수가 많으면 누적 해제 작업량(CPU/GC)은 여전히 무제한 (3/3/M) · build-offline.sh 의 매니페스트 검사가 'PyYAML 없음'을 '매니페스트가 잘못됨'으로 둔갑시키는 것 분리 — 이 호스트의 PyYAML 유무 여전히 미확인 (3/2/S) · release.sh 에 빌드 없이 도는 --check(preflight) 모드 (3/1/S) · deck 의 네 숫자 파서(parseNumber·parseBareNumber·chartFields·docs.amountOf) 계약을 한 표 테스트로 묶기, 파서는 손대지 않음 (2/1/S) · e2e call() 의 headers={} 기본 신원 대체 함정 제거 (2/1/S)
 
 - 릴리즈: v1.69.45 (2026-09-24, run 2026-09-24-095420-ptium-improve)
+- 릴리즈: v1.69.46 (2026-09-25, run 2026-09-25-010657-ptium-approve)
