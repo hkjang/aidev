@@ -19,3 +19,5 @@
 - 보안·법무: 권한 확대 없음(/seats 와 /employees 가 같은 authenticate 그룹, server.go:74-75), workplace 는 기존 수집 항목이라 차단 사유 아님.
 - [러너 11:52] review approved — 리뷰 승인 (risk=low)
 - [러너 11:52] pr created — https://github.com/hkjang/seaton/pull/34
+- [러너 11:56] ci passed — 검사 2개 모두 success
+- [러너 11:57] merge done — e6f4f70
