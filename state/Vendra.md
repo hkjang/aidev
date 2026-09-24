@@ -267,3 +267,10 @@
 
 - 릴리즈: v0.7.59 (2026-09-23, run 2026-09-23-183438-Vendra-improve)
 - 릴리즈: v0.7.60 (2026-09-24, run 2026-09-24-181320-Vendra-approve)
+## 2026-09-25
+- 선택: recommend_suppliers 가 설명에 적힌 「최대 위험 등급」을 실제 인자로 받게 하고 minScore 문자열을 조용한 0 으로 떨구지 않기 (가치 3 / 위험 2 / 작업량 M)
+- 결과: 성공 (commit dc31174)
+- 요약: `mcpTools` 의 `recommend_suppliers` inputSchema 에 `maxRisk`(type string, enum 은 새 `mcpRiskCeilings` = `riskGrades` 에서 CRITICAL 만 뺀 것)를 더하고, 인자가 올 때만 기존 `risk_level NOT IN('CRITICAL')` 뒤에 `AND risk_level = ANY($8::text[])` 를 **덧붙였다** — 인자 없는 호출의 SQL 문자열·인자 7개는 글자 그대로 그대로라 기본 결과 집합이 바뀌지 않고, 어휘 밖 등급(빈 문자열·레거시)을 가진 업체도 그대로 남는다. 순위는 문자열 비교가 아니라 `riskGrades` 순서에서 끌어오고(`riskCeilingArg`), 어휘 밖 등급·문자열이 아닌 등급은 `mcpToolError` 로 값을 들어 거절한다. `minScore` 는 새 `numberArg` 로 읽어 문자열·불리언·객체를 거절하는 계약을 골라 주석에 이유를 적었다(`supplierIDArg` 와 같은 방향; 예전 `.(float64)` 는 `"80"` 을 0 으로 만들어 `COALESCE(score,0)>=0` 로 필터를 통째로 없앤 뒤 200 으로 답했다). 검증: 전용 `postgres:16-alpine` 컨테이너와 세 DSN(전용 DB 3개, 뒤 둘은 빈 DB)으로 새 통합 테스트 `internal/httpapi/mcp_recommend_integration_test.go` 를 **고치기 전에 먼저 돌려** ceiling HIGH/MEDIUM/LOW 세 케이스가 HIGH·어휘 밖 업체를 그대로 돌려주고 등급·minScore 오류 일곱 케이스가 전부 정상 응답(`[]`)으로 답하는 실패를 보았고, 스키마 테스트는 `maxRisk` 부재로 실패했다. 고친 뒤 같은 테스트 통과(SKIP 없음), 기존 `TestMCPAdvertisedLimitsAreApplied` 등 `-run 'TestMCP|TestRecommend'` 전부 통과, `go test ./internal/... ./cmd/... -count=1` 전체 통과(httpapi 27.081s), `gofmt -l internal cmd` 무결, `go vet ./internal/... ./cmd/...` 통과, `gate.py secrets` clean. `docs/USER_GUIDE.md:297` 은 지시대로 손대지 않았다(이제 사실이 됐다).
+- 보류 아이디어: 사용자 가이드 4.6 MCP 도구표를 실제 `mcpTools`/`tools/list` 응답과 양방향으로 묶는 가드 테스트 (2/1/S) / `get_expiring_contracts` 의 days 공개 범위 max 730 과 실행 상한 3650 불일치 (2/2/S) / `compare_suppliers` 입력 ID 개수·응답 크기 상한 (2/3/M) / 작업 항목 상태 배치 상한(1~100) 문서화·경계 테스트 (2/1/S) / 관제탑 결재 목록의 200건 상한이 역할 필터보다 먼저 적용됨 (3/3/M)
+- 과제서: 채택 — 과제서의 근거가 코드와 정확히 맞았다(스키마에 등급 인자 없음, SQL 고정 제외, `:608` 의 조용한 0). 과제서가 예상하지 못한 것 하나: `stringValue` 는 문자열이 아닌 값을 "" 로 돌려주므로 `maxRisk:3` 같은 값이 다시 조용히 무시될 수 있어 `riskCeilingArg` 는 원시 값을 읽는다.
+
