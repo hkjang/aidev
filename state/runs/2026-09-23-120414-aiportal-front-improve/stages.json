@@ -1,0 +1,52 @@
+{
+  "base": {
+    "state": "pinned",
+    "reason": "main@595c0c5",
+    "at": "2026-09-23T12:04:18+09:00"
+  },
+  "autonomy": {
+    "state": "release",
+    "reason": "",
+    "at": "2026-09-23T12:04:18+09:00"
+  },
+  "scout": {
+    "state": "done",
+    "reason": "[수정 과제] 릴리즈 실패의 저장소 측 수단 부재 확정 — 진입 조건 미충족이면 기본 실행 대상은 ChatStorage",
+    "at": "2026-09-23T12:10:15+09:00"
+  },
+  "brief": {
+    "state": "fallback",
+    "reason": "차선 — B 의 근거(고아 startLoading → 60초 오버레이)가 호출부 확인 누락으로 지금 코드와 맞지 않음을 마운트 테스트와 �",
+    "at": "2026-09-23T12:15:24+09:00"
+  },
+  "verify": {
+    "state": "passed",
+    "reason": "검증 2개 통과 (auto)",
+    "at": "2026-09-23T12:15:29+09:00"
+  },
+  "review": {
+    "state": "approved",
+    "reason": "리뷰 승인 (risk=low)",
+    "at": "2026-09-23T12:18:21+09:00"
+  },
+  "pr": {
+    "state": "created",
+    "reason": "https://github.com/hkjang/aiportal-front/pull/23",
+    "at": "2026-09-23T12:18:28+09:00"
+  },
+  "ci": {
+    "state": "passed",
+    "reason": "검사 없음 — 정책으로 허용",
+    "at": "2026-09-23T12:18:59+09:00"
+  },
+  "merge": {
+    "state": "done",
+    "reason": "362a4093d0e2b52da8a8effd39015e6f9754a688",
+    "at": "2026-09-23T12:19:04+09:00"
+  },
+  "release": {
+    "state": "failed",
+    "reason": "릴리즈 안 함: 릴리즈 증가 관례를 결정할 입력이 저장소에 없어 버전 파일·태그·릴리즈 노트·커밋을 일체 만들지 않았다(9회째 동일 교착, HEAD 37006f3 에서 전량 재조회). 재확인한 근거: (1) `git tag` 출력 0개, (2) `.github` 디렉터리 부재 = 태그·릴리즈에 반응하는 워크플로 없음, 러너가 미리 가져온 GitHub Release 목록도 비어 있음, (3) CHANGELOG.md 없음, docs/ 에 릴리즈 노트 없음(docs/RELEASE.md 는 자기 선언대로 '릴리즈 노트나 새 릴리즈 정책이 아님'), (4) `git log -p --all -- package.json` 에서 `\"version\"` 행은 최초 커밋 ab700ba 의 추가 1건(`0.0.0`)뿐 — 전 이력에서 한 번도 증가된 적 없음, package.json:4 `private:true`, package-lock.json 의 루트/packages[\"\"] 도 0.0.0, (5) `git log --oneline -60` 의 릴리즈 패턴 검색 결과는 docs 커밋 12c8e8a 1건뿐이라 릴리즈 커밋 양식 없음, (6) scripts/ 와 Makefile 부재, package.json scripts 에 version/release 타깃 없음, semantic-release·standard-version·changeset·release-it·gh release·npm publish 검색 전부 무-히트 = 자산 생성 스크립트 없음(따라서 assets 는 빈 배열), (7) .gitlab-ci.yml 은 main/develop 브랜치 push 조건으로 전용 Runner 가 fetch/reset 후 npm run build:* 하고 dist 를 서버 디렉터리에 cp 하는 배포 전용 — 태그 기반 버전 증가나 릴리즈 생성 정의 없음. 절차 2('최근 릴리즈들의 증가 패턴을 따르라')는 과거 릴리즈 존재를 전제하는데 이 저장소에는 과거 릴리즈가 0건이라 따를 패턴이 없다. 절차 5의 skipped 조건('태그도, 버전 파일도, 릴리즈 노트도 없음')은 세 항목 중 버전 파일이 존재하므로 충족하지 않으며, 이는 저장소 정본 docs/RELEASE.md:84 와 AGENTS.md('확인되지 않은 관례를 새로 만들거나 릴리즈 판정 조건을 완화하지 않는다')가 명시적으로 금지한 완화다. 따라서 skipped/released 로 낮추지 않고 failed 를 유지한다. 게이트를 통과시키는 유일한 저장소 내 수단인 package.json version 필드 삭제는 게이트 완화라 금지. 원격 전송은 일절 하지 않았고(origin push 도 DISABLED), 작업 트리는 무변경(`git status --short` 공백)이다. 사람이 아래 4가지를 출처와 함께 승인해 주면 다음 회차에 즉시 릴리즈 가능: ① 승인된 증가 단위와 시작 버전(현재 0.0.0 에서 0.0.1 인지 0.1.0 인지 — README·docs/01-시작하기.md 의 '0.0.1 / 2025-01-01 / 초기 릴리스' 기재는 실제 릴리스가 확인되지 않은 문서 기재이므로 근거로 쓰지 않았다), ② 태그 형식과 주석 태그 여부(v0.0.1 인지 0.0.1 인지), ③ 릴리즈 커밋 메시지 양식, ④ 릴리즈 노트의 위치·양식·언어(CHANGELOG.md 신설인지 docs/ 인지, GitHub Release 사용 여부). 이 저장소는 GitLab 브랜치 배포만 써 왔고 GitHub Release 를 쓴 적이 없어 github_release 는 false 로 둔다.",
+    "at": "2026-09-23T12:20:42+09:00"
+  }
+}

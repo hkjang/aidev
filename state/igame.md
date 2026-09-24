@@ -194,3 +194,11 @@
   - architecture 비밀 저장·키 회전 설명 정합성 검토 (가치 2 / 위험 1 / 작업량 S)
 - 과제서: 채택 — 현재 Load·main·EnsureBootstrapAdmin 배선이 정찰 근거와 일치하여 지정한 최소 범위로 구현했다.
 
+## 2026-09-23
+- 선택: POST /api/v1/sessions/{id}/finish 의 result 가 JSON 오브젝트인지 검증 (가치 3 / 위험 1 / 작업량 S)
+- 결과: 성공
+- 요약: 일회용 postgres:17-alpine 에서 먼저 전제를 실측해 `'{}'::jsonb || '[1,2]'` = `[{}, 1, 2]`(array), `'{}'||'5'`·`null`·`"x"`·`true` 모두 array 승격이고 그 뒤 `result||jsonb_build_object('score',42)` 의 `result->>'score'` 가 NULL 이 됨을 확인한 뒤(오브젝트 경로는 42 로 읽힘), finishGameSession 에 DB 조회보다 앞서는 오브젝트 검사를 넣어 400 `invalid_result` 로 거부하게 했다 — `*map[string]any` 포인터 대상이라 map 에 그냥 통과하는 JSON 리터럴 null 까지 걸린다(startGameSession 의 `invalid_metadata` 문자열은 손대지 않음). 검증은 진짜 배선으로 했다: 새 internal/api/session_finish_pg_test.go 가 실제 Router() 를 httptest 로 띄우고 실제 POST /games/{slug}/sessions 로 만든 세션·토큰을 써서, 수정 전에는 다섯 비-오브젝트 result 가 모두 200 으로 통과하며 행이 `result=[{}, 1, 2] (array)` 로 바뀌는 것을(Red) 실패 메시지로 찍고, 수정 후에는 400 + 세션이 `active`·`{}` 로 불변, 오브젝트 result → submitScore 순서에서 `result->>'level'=3`·`result->>'score'=42` 가 읽히는 것을 확인한다. 수정을 되돌려 같은 테스트가 다시 Red 가 되는 것까지 확인했다(인과 확인). gofmt·go vet·go build·go test 전체, `make test-db` 전체(api 8.9s/database 1.7s), `-race -count=3` 새 테스트, scripts/check-release-contract.sh 통과. docs/api.md 의 해당 행에 계약 한 줄을 적었다.
+- 보류 아이디어: Migrate context 취소의 롤백·재시도 계약 검증(가치 3/위험 1/M, 차선 후보로 유지) / 끝난 세션에 계속 result 를 덧붙일 수 있음(status IN ('active','finished'), 재시도 정책 미확정으로 계속 보류) / API PostgreSQL fixture 의 테스트별 스키마 격리(가치 3/위험 2/M) / architecture.md 의 DEK·개인키 암호화·유예 회전 설명이 실제 secretbox 구현과 불일치(가치 2/위험 1/S)
+- 과제서: 채택 — jsonb `||` 승격 전제를 실제 psql 로 확인해 성립했고(에러가 아니라 조용한 배열 승격), 지정한 세 파일만 최소 범위로 고쳤다
+
+- 릴리즈: v0.7.19 (2026-09-23, run 2026-09-23-230451-igame-improve)

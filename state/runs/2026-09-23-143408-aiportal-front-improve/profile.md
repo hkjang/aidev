@@ -1,0 +1,16 @@
+# aiportal-front 프로필 (2026-09-23)
+- 목적: 사내 AI 포털 SPA; 채팅·업무 앱·OCR·STT·공유·문서 뷰어 제공.
+- 스택: JavaScript ESM, Vue 3.5, Vite 7, Pinia 3, vue-router 4, axios, Vitest 4/jsdom + @vue/test-utils. 백엔드는 별도 저장소(이 저장소에 없음).
+- 구조:
+  - src/api/: interface.js 가 모든 엔드포인트를 `inf.<도메인>.<이름>.call(...)` 로 선언. common/interceptors.js 가 공통 오류를 처리하고 `Promise.reject('COM')` 으로 던진다.
+  - src/storage/: 인증·사용자·채팅·앱·OCR 캐시(localStorage 래퍼) + ocrStatusCheckStore(폴링).
+  - src/stores/, src/composables/, src/utils/: 상태·재사용 로직·파일 정책·날짜·마크다운·전역 로딩/알림·이벤트버스.
+  - src/views/, src/components/, src/router/: 화면·컴포넌트·라우팅. Support/{Ocr,Stt,Img} 가 업무 도구 화면.
+  - tests/unit/: 23개 spec. docs/: 개발·테스트·CI·릴리즈 근거 문서(docs/.ipynb_checkpoints 에 중복본 존재).
+- 빌드·테스트: `npm ci`(node_modules 비어 있음 — 선행 필수) → `npm test`(기준선 23파일 452테스트) → `npm run build:dev`. 모드별 build:core/ofc/int/*_dev 존재. `npm run build`·`npm run lint` 는 **없다**. 빌드 후 dist/ 는 지울 것.
+- 관례: 한국어 `fix:`/`feat:`/`docs:`/`test:` 커밋 + merge PR. `@` alias, 모드별 .env. API 호출부는 `const res = await inf.X.Y.call(...)` → `isSuccess(res)` 확인 → `catch(e){ if(e=='COM') return; openAlert(...) }` → `finally { stopLoading() }` 가 정착된 형태(SupportStt.vue:131-155 가 표준 예).
+- 위험 구역: src/api/common/interceptors.js, src/api/auth.js, src/storage/{authStorage,userStorage}, src/router, Chat 스트리밍·탭 동기화. .gitlab-ci.yml 은 main/develop push 시 전용 Runner 가 fetch/reset 후 build 하고 dist 를 서버 디렉터리에 cp 하는 배포 전용(테스트 단계 없음).
+- 자주 깨지는 곳: 캐시 값이 배열이 아닐 때, 식별자/serviceCode 비교, 비동기 조회 누락(await 빠짐), 전역 스피너 start/stop 짝. 릴리즈는 정책 결손으로 10회 연속 no-change.
+- 검증 함정: **vitest.config.js 에 @vitejs/plugin-vue 가 연결되어 있어 .vue 를 실제로 마운트해 검증할 수 있다**(2026-09-23 이전 프로필의 "SFC 플러그인 없음" 기재는 폐기). vite.config.js 는 dev server https 인증서 의존이 있어 테스트에서 분리되어 있다. restoreMocks:true. 전역 로딩/알림은 모듈 싱글턴이라 테스트 간 상태가 샌다 — 각 케이스에서 정리할 것.
+- CI: `.github` 디렉터리 자체가 없다(GitHub Actions 워크플로 0개). git tag 0개, package.json version=0.0.0/private:true, CHANGELOG 없음 → 릴리즈 관례를 정할 입력이 저장소에 없다. docs/RELEASE.md 는 근거 문서이지 증가 정책이 아니다.
+- 기준: HEAD 37006f3(main), 작업 트리 무변경. CLAUDE.md 없음(AGENTS.md 가 대신).

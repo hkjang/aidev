@@ -1,0 +1,14 @@
+[
+  {"title":"버전을 반만 올린 릴리즈를 make test 에서 잡기 (openapi·kubernetes·offline-deployment 스탬프 일치 테스트 + release.sh 의 단일 grep 확장)","value":4,"risk":1,"size":"S","status":"done","note":"server/internal/config/stamped_test.go 추가(VERSION 대 세 파일의 모든 스탬프, 실패 시 파일:행:문자열)와 release.sh:42 확장(안내문의 모든 ptium-<v>/ptium:<v>, 스탬프 0개면 fail). VERSION 만 1.69.44 로 바꿔 red 13건 확인 후 되돌림. 커밋 050f946.","updated":"2026-09-23"},
+  {"title":"build-offline.sh 의 매니페스트 검사가 '확인 못함' 과 '매니페스트가 잘못됨' 을 섞는 것 분리","value":3,"risk":2,"size":"S","status":"pending","note":"차선 후보였으나 이번엔 미선정. python3 은 있고 PyYAML 이 없으면 import 실패가 'not valid' 로 둔갑해 릴리즈를 멈춘다(73-103행). 이 호스트의 PyYAML 유무는 이번에도 미확인 — 있으면 동작이 안 바뀌므로 고르지 말 것.","updated":"2026-09-23"},
+  {"title":"release.sh 에 빌드 없이 도는 --check(preflight) 모드","value":3,"risk":1,"size":"S","status":"pending","note":"스탬프 어긋남은 이제 go test 가 먼저 잡으므로 값이 줄었다. 남은 값은 노트·브랜치·태그 검사를 docker 없이 돌리는 것.","updated":"2026-09-23"},
+  {"title":"XLSX ZIP 전체 해제 크기와 불필요한 파트 읽기 제한","value":4,"risk":3,"size":"M","status":"pending","note":"workbook.go:79 은 파트마다 io.LimitReader(32MB) 만 두고 전체 해제 합계에는 상한이 없다. 거절/경고 정책 결정 필요.","updated":"2026-09-23"},
+  {"title":"XLSX 행 수 자체의 상한 — 16,384칸 x 많은 행의 메모리","value":3,"risk":3,"size":"M","status":"pending","note":"열은 80ebe4c 로 행당 16,384칸으로 유한해졌으나 행 수에는 상한이 없다. 실측 없음. ZIP 해제 크기 제한과 같은 축이라 묶어서.","updated":"2026-09-23"},
+  {"title":"e2e call() 의 headers={} 기본 신원 대체 함정 제거","value":2,"risk":1,"size":"S","status":"pending","note":"scripts/e2e/api.py 의 call() 이 빈 dict 를 개발 신원으로 바꾼다. 기존 headers={} 호출 전수 확인과 실서버·DB 필요.","updated":"2026-09-23"},
+  {"title":"deck 의 네 숫자 파서(parseNumber·parseBareNumber·chartFields·docs.amountOf) 계약을 한 표 테스트로 묶기","value":2,"risk":1,"size":"S","status":"pending","note":"테스트만 더하고 파서는 손대지 않는 범위. 파서 통합·구분자 확장은 2회 반려된 자리이므로 절대 함께 하지 말 것.","updated":"2026-09-23"},
+  {"title":"메일 후속: 한 리뷰어의 연속 댓글을 30초 지연으로 묶어 한 통으로","value":3,"risk":3,"size":"M","status":"pending","note":"mail/service.go:Notify 는 수신자마다 즉시 goroutine. 지연·종료 flush·중복 처리로 한 회차에 위험.","updated":"2026-09-23"},
+  {"title":"메일 후속: 관리자에게 새 critical 인시던트를 메일로","value":3,"risk":3,"size":"M","status":"pending","note":"store/admin.go:CaptureIncident 가 신규 여부를 돌려주지 않는다. 중복 방지와 감사 로그 원문 금지 경계 검증 필요.","updated":"2026-09-23"},
+  {"title":"xlsx 가져오기: width=\"0\"·collapsed·outlineLevel 로 접힌 열/행도 숨김으로 볼지","value":2,"risk":2,"size":"S","status":"pending","note":"실제 Excel/LibreOffice 출력 파일로 무엇이 쓰이는지 확인한 뒤에 판단할 것.","updated":"2026-09-23"},
+  {"title":"관리자 가이드에 메일·추적·넘기기 화면 캡처 싣기","value":2,"risk":1,"size":"S","status":"pending","note":"릴리즈된 이미지가 새 화면을 담은 뒤에 가능. 릴리즈가 두 회차 밀려 있어 더 멀어졌다.","updated":"2026-09-23"},
+  {"title":"silent SSO 후속 묶음: e2e autoLogin·handoff 출처 대화상자·peers 형식 표·추적 스니펫 SPA 잔존","value":2,"risk":2,"size":"M","status":"pending","note":"모두 실서버·DB 또는 서버·웹·문서 3면 변경이 필요해 한 회차에 빠듯하다. 묶어서 보류 유지.","updated":"2026-09-23"}
+]

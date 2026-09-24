@@ -518,3 +518,11 @@
 - 과제서: 채택 — 과제서 근거(로컬 태그 0개, 관례 문서 없음, 루트/admin-v2 버전 불일치, node_modules 비어 있음)가 현재 코드와 일치해 그대로 구현했고 수용 기준 1~5 를 모두 충족했다.
 
 - 릴리즈: v0.1.1 (2026-09-22, run 2026-09-22-190425-aiportal-front-admin-improve)
+## 2026-09-23
+- 선택: 세 목록 화면이 재조회 중에도 표와 페이지 이동을 유지하도록 initialLoading/refreshing 패턴을 맞춘다 (가치 4 / 위험 2 / 작업량 M)
+- 결과: 성공
+- 요약: `DirectoryView`·`ContentAccessView`·`CatalogView` 가 `LoadingBlock v-if="loading"` 으로 재조회마다 표와 `PaginationBar` 를 통째로 지우던 것을, 이미 4개 화면이 쓰는 `initialLoading`(=`tabLoading && !tabLoaded`)/`refreshing`(=`tabLoading && tabLoaded`) 패턴으로 맞추고 `PageHeader` `#actions` 에 `OverviewView.vue:50` 과 글자 그대로 같은 `refresh-indicator` 배지를 넣었다. "이미 조회했다" 판정은 `items.length` 가 아니라 기존 `tabLoaded` 플래그를 재사용해, query 변경 시 `applyRouteQuery` 가 그 플래그를 내리는 덕에 이전 사용자의 행은 재조회가 끝날 때까지 계속 가려진다(15e032f·f3016f9 보존). 검증: 변경 전 기준선 `npm ci && npm run verify` 26파일 202테스트 통과 → 새 테스트 12개를 먼저 써서 그중 7개가 "행 대신 skeleton" 으로 실패하는 것을 확인한 뒤 구현 → 26파일 214테스트 통과, 이후 `npm run verify` 3회 반복 모두 214 통과(전 회차의 간헐 실패는 이번에 재현되지 않음). 커밋 9aac9de 하나, 버전 파일·태그는 건드리지 않았다.
+- 보류 아이디어: AdvancedPolicyView 저장·새로고침이 미저장 편집을 덮어씀 (3/2/M, pending — 차선 후보였고 runtime.json 의 enablePolicyWrites:false 로 현재 도달 불가) / 루트 crypto-js local tarball 의존성 제거 (4/4/M, pending) / check-version 이 CHANGELOG 의 현재 버전 섹션 존재도 확인 (2/1/S, pending) / Catalog·Content applyRouteQuery 의 불필요한 활성 탭 재조회 (2/1/S, pending — 이번에 같은 파일을 건드려 동시 수정을 피했다)
+- 과제서: 채택 — 지정한 3개 화면·행 번호·`tabLoaded` 재사용·수용 기준 3가지가 모두 현재 코드와 일치해 그대로 구현했고, 미확인이라던 `CatalogView` script 에는 `tabLoaded` 가 이미 있어 새 플래그가 필요 없었다.
+
+- 릴리즈: v0.1.2 (2026-09-23, run 2026-09-23-210500-aiportal-front-admin-improve)

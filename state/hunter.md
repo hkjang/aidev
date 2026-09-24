@@ -79,3 +79,10 @@
   - 서버 CSV 개인 키 권한 교집합 HTTP 회귀 (3/1/S), 미재평가
   - 실제 Keycloak·MCP 클라이언트 연결 검증 (3/1/M), 미재평가
 
+## 2026-09-23
+- 선택: savedListQuery의 q·f_* 500자 잘림이 서로게이트 쌍을 쪼개 U+FFFD로 깨지는 문제 수정 (가치 3 / 위험 1 / 작업량 S)
+- 결과: 성공
+- 요약: `web/src/saved-list-views.ts`의 `savedListQuery`가 `q`와 각 `f_<key>`를 `slice(0, 500)`으로 잘라 500번째 경계가 서로게이트 쌍 가운데 떨어지면 외톨이 서로게이트가 남았고, 이는 `URLSearchParams` 직렬화에서 `%EF%BF%BD`(U+FFFD)로 치환되어 저장한 보기를 복원하거나 복사한 주소를 연 사람이 원래와 다른 문자열로 검색하게 했다(정찰이 미확인으로 남긴 이 전제를 `node -e` 왕복으로 먼저 실증). 한도는 코드유닛 500 그대로 두고 자르는 위치만 보정하는 로컬 헬퍼 `clip`을 추가했다 — `limit-1`이 high surrogate이고 `limit`이 low surrogate인 실제 쌍 분할일 때만 한 칸 줄여 자른다. TDD로 실제 `URLSearchParams` 왕복 회귀 테스트를 먼저 써서 "q kept a replacement character" 실패를 확인한 뒤 구현했고, 고친 코드에 버그를 다시 넣어 1건 실패 → 복원 후 93통과로 인과를 확인했다. 검증: `npm --prefix web test` 기준선 92통과/0실패/0skip → 93통과/0실패/0skip, `tsc -p web/tsconfig.json --noEmit` 통과, `npm --prefix web run build` 성공, `git diff --check` 깨끗. Go 코드 무변경이라 Go 스위트·`internal/webassets/dist` 재복사는 하지 않았다.
+- 보류 아이디어: 주소 복사(listSharePath)에 저장소용 500자 한도를 적용하지 않도록 분리 (3/1/S) / Go csvSafe 선행 공백·제어문자 보호를 웹 csvCell과 일치 — 선행 PR review-pending이라 중복 금지 (4/1/M) / OIDC `oidcReturnTo`(Go)와 `safeReturnPath`(TS) return_to 공유 JSON 벡터 교차 검증 (3/2/M) / 서버 CSV 내보내기의 개인 키 권한 교집합을 실제 HTTP 회귀로 검증 — HUNTER_TEST_DSN 필요 (3/1/S)
+- 과제서: 채택 — 과제서가 지목한 `slice(0, 500)` 두 군데와 U+FFFD 치환 전제가 현재 코드·런타임에서 그대로 재현되어 제안대로 구현했다(쌍 분할 판정만 양쪽 검사로 좁힘).
+

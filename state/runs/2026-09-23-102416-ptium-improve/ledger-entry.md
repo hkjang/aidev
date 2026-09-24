@@ -1,0 +1,6 @@
+## 2026-09-23
+- 선택: 버전을 반만 올린 릴리즈를 `make test` 단계에서 잡기 (가치 4 / 위험 1 / 작업량 S)
+- 결과: 성공
+- 요약: 릴리즈 버전이 `VERSION`·`api/openapi.yaml`·`deploy/kubernetes.yaml`·`docs/offline-deployment.md` 네 곳에 박혀 있는데 이 어긋남을 보는 것은 `scripts/release.sh` 뿐이었고 설치 안내문은 `ptium-$version.tar.gz` 한 패턴만 봤다 — 로더 스크립트·compose 파일·매니페스트·`docker image inspect` 줄이 옛 버전을 가리켜도 릴리즈가 통과했다. `server/internal/config/stamped_test.go`(이웃 `shipped_test.go` 의 `root := "../../.."` 관례 그대로)를 더해 세 파일의 모든 스탬프를 `VERSION` 과 대조하고 어긋나면 파일·행·본 문자열을 찍게 했고, `release.sh:42` 의 단일 grep 을 "안내문이 이름 붙인 모든 `ptium-<버전>`·`ptium:<버전>` 이 $version 인지" 로 넓혔다(스탬프가 0개여도 fail). 검증: `VERSION` 만 1.69.44 로 바꿔 red(13건, 세 파일 전부 행 번호와 함께) → 되돌려 green; `cd server && go test ./internal/config`, `go test -race ./...`(25개 패키지), `go vet ./...`, `git diff --check` 통과; `bash -n scripts/release.sh` 통과 + 임시 복사본에서 53행만 1.69.42 로 바꿔 새 검사는 두 줄을 찍고 멈추는데 옛 단일 grep 은 그대로 PASS 함을 손으로 확인(릴리즈 스크립트 전체는 실행하지 않음). 버전·릴리즈 노트·배포 매니페스트의 값은 손대지 않았다.
+- 보류 아이디어: build-offline.sh 의 매니페스트 검사가 'PyYAML 없음' 을 '매니페스트가 잘못됨' 으로 둔갑시키는 것 분리 (3/2/S) · release.sh 에 빌드 없이 도는 --check(preflight) 모드 (3/1/S) · XLSX ZIP 전체 해제 크기와 불필요한 파트 읽기 제한 (4/3/M) · XLSX 행 수 자체의 상한 (3/3/M) · e2e call() 의 headers={} 기본 신원 대체 함정 제거 (2/1/S)
+- 과제서: 채택 — 과제서의 사실 정리(릴리즈 워크플로 파일은 없고 `release.sh:42` 의 단일 grep 이 실제 구멍)가 코드와 정확히 맞아 지정한 두 자리만 고쳤다.

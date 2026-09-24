@@ -1,0 +1,175 @@
+{
+  "run_id": "2026-09-24-053422-moyro-improve",
+  "generated": "2026-09-24T06:01:04+09:00",
+  "run": {
+    "run_id": "2026-09-24-053422-moyro-improve",
+    "project": "moyro",
+    "kind": "improve",
+    "started": "2026-09-24T05:34:23+09:00",
+    "model": "claude-opus-5",
+    "policy_version": "ecd4b546e",
+    "prompts_hash": "30c37184f081815d",
+    "runner_version": "ecd4b546e",
+    "arm": "no-journal",
+    "experiment": "roles-2026-09",
+    "finished": "2026-09-24T06:01:04+09:00",
+    "outcome": "review-pending"
+  },
+  "record": {
+    "ts": "2026-09-24T06:01:04+09:00",
+    "date": "2026-09-24",
+    "project": "moyro",
+    "result": "guarded files, PR open https://github.com/hkjang/moyro/pull/23",
+    "outcome": "review-pending",
+    "run_id": "2026-09-24-053422-moyro-improve",
+    "base_sha": "4ca2ff9dd1e6f0918e491bd778193d2711769910",
+    "head_sha": "02a22effd7707a4d27cd35affc1f261b1df8e47d",
+    "pr": "https://github.com/hkjang/moyro/pull/23",
+    "stages": {
+      "base": {
+        "state": "pinned",
+        "reason": "main@4ca2ff9",
+        "at": "2026-09-24T05:34:29+09:00"
+      },
+      "autonomy": {
+        "state": "release",
+        "reason": "",
+        "at": "2026-09-24T05:34:29+09:00"
+      },
+      "scout": {
+        "state": "failed",
+        "reason": "과제서 없음 — 구현자가 직접 고른다",
+        "at": "2026-09-24T05:38:11+09:00"
+      },
+      "verify": {
+        "state": "passed",
+        "reason": "검증 2개 통과 (policy)",
+        "at": "2026-09-24T06:00:56+09:00"
+      },
+      "pr": {
+        "state": "created",
+        "reason": "https://github.com/hkjang/moyro/pull/23",
+        "at": "2026-09-24T06:01:04+09:00"
+      },
+      "guard": {
+        "state": "held",
+        "reason": "server/internal/store/migrations/000018_post_reminder_leases.up.sql ",
+        "at": "2026-09-24T06:01:04+09:00"
+      }
+    },
+    "campaign": "",
+    "autonomy": "release",
+    "arm": "no-journal",
+    "experiment": "roles-2026-09",
+    "files": 9,
+    "additions": 724,
+    "deletions": 17,
+    "tests": 4,
+    "title": "fix: scope channel bookmark patch and delete to their channel"
+  },
+  "stages": {
+    "base": {
+      "state": "pinned",
+      "reason": "main@4ca2ff9",
+      "at": "2026-09-24T05:34:29+09:00"
+    },
+    "autonomy": {
+      "state": "release",
+      "reason": "",
+      "at": "2026-09-24T05:34:29+09:00"
+    },
+    "scout": {
+      "state": "failed",
+      "reason": "과제서 없음 — 구현자가 직접 고른다",
+      "at": "2026-09-24T05:38:11+09:00"
+    },
+    "verify": {
+      "state": "passed",
+      "reason": "검증 2개 통과 (policy)",
+      "at": "2026-09-24T06:00:56+09:00"
+    },
+    "pr": {
+      "state": "created",
+      "reason": "https://github.com/hkjang/moyro/pull/23",
+      "at": "2026-09-24T06:01:04+09:00"
+    },
+    "guard": {
+      "state": "held",
+      "reason": "server/internal/store/migrations/000018_post_reminder_leases.up.sql ",
+      "at": "2026-09-24T06:01:04+09:00"
+    }
+  },
+  "provenance": {
+    "model": "claude-opus-5",
+    "policy_version": "ecd4b546e",
+    "prompts_hash": "30c37184f081815d",
+    "runner_version": "ecd4b546e",
+    "base_sha": "4ca2ff9dd1e6f0918e491bd778193d2711769910",
+    "head_sha": "02a22effd7707a4d27cd35affc1f261b1df8e47d",
+    "pr": "https://github.com/hkjang/moyro/pull/23"
+  },
+  "verification": {
+    "runner": {
+      "source": "policy",
+      "commands": [
+        {
+          "cmd": "cd server && go build ./... && go vet ./... && go test ./...",
+          "exit": 0,
+          "seconds": 5
+        },
+        {
+          "cmd": "cd webapp && ([ -d node_modules ] || npm ci --no-audit --no-fund) && npm run typecheck --silent && npm test --silent",
+          "exit": 0,
+          "seconds": 27
+        }
+      ]
+    },
+    "runner_gate": {
+      "ok": true,
+      "state": "verified",
+      "reason": "검증 2개 통과 (policy)"
+    },
+    "after_rebase": null,
+    "review": null,
+    "ci_gate": null
+  },
+  "release": {
+    "result": null,
+    "assets_sha256": []
+  },
+  "approval": null,
+  "usage": [
+    {
+      "ts": "2026-09-24T05:38:11+09:00",
+      "date": "2026-09-24",
+      "project": "moyro",
+      "phase": "scout",
+      "run_id": "2026-09-24-053422-moyro-improve",
+      "campaign": "",
+      "subtype": "success",
+      "duration_ms": 238939,
+      "num_turns": 26,
+      "cost_usd": 1.6225234999999998,
+      "input_tokens": 34,
+      "output_tokens": 14544,
+      "cache_read": 1072267,
+      "cache_create": 72262
+    },
+    {
+      "ts": "2026-09-24T06:00:23+09:00",
+      "date": "2026-09-24",
+      "project": "moyro",
+      "phase": "improve",
+      "run_id": "2026-09-24-053422-moyro-improve",
+      "campaign": "",
+      "subtype": "error_max_budget_usd",
+      "duration_ms": 1461094,
+      "num_turns": 103,
+      "cost_usd": 8.0893745,
+      "input_tokens": 168,
+      "output_tokens": 62209,
+      "cache_read": 9633172,
+      "cache_create": 158328
+    }
+  ]
+}

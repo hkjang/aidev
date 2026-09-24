@@ -1,0 +1,146 @@
+[
+  {
+    "title": "runtime-apk.lock 을 오프라인 이미지 소스 재고·빌드 단계 상수와 대조하는 정적 계약 시험",
+    "value": 4,
+    "risk": 1,
+    "size": "S",
+    "status": "done",
+    "note": "커밋 1de4d00. tests/deployment-contract/runtime_lock_test.go 가 lock 에서 69 패키지 / 52 origins 를 정적으로 유도해 image-smoke 상수, Dockerfile alpine 핀·DISTFILES_MIRROR, bundle-alpine-sources.mjs 의 tesseract 핀과 대조한다. 09-19 에 전체 이미지 빌드로만 잡히던 ca-certificates/bundle 분리를 밀리초 만에 잡는 것을 실제 주입·복원으로 증명했다.",
+    "updated": "2026-09-24"
+  },
+  {
+    "title": "러너 검증 예산·web/dist 자리표시자·apk lock 드리프트 관례를 CLAUDE.md 로 명문화",
+    "value": 3,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "CLAUDE.md 여전히 없음. 이번에 lock 헤더에 빠른 검사 명령 한 줄을 넣어 가장 급한 부분은 완화됐으나, 웹 빌드 선행·검증 예산 관례는 아직 문서화되지 않았다.",
+    "updated": "2026-09-24"
+  },
+  {
+    "title": "main@fd2c3b5 에 남은 govulncheck GO-2026-6348 + runtime-apk.lock 드리프트 통합",
+    "value": 5,
+    "risk": 2,
+    "size": "M",
+    "status": "pending",
+    "note": "go.mod:87 grpc v1.82.1, lock 의 20260611-r0/2026c-r0 를 직접 확인 — 여전히 존재. 09-19·09-22 두 회차가 성공시켰으나 모두 미병합이라 main 은 그대로다. 반복 금지 지침에 따라 이번 회차에서는 선택하지 않았고, 병합 문제이지 구현 문제가 아니다.",
+    "updated": "2026-09-24"
+  },
+  {
+    "title": "오프라인 이미지의 설치 APK 전체 버전과 runtime-apk.lock 일치 회귀",
+    "value": 3,
+    "risk": 2,
+    "size": "M",
+    "status": "pending",
+    "note": "이번 정적 시험이 개수·하위패키지 묶음·OCR 핀까지는 빌드 없이 잡지만, 실제 이미지의 installed DB 버전 전체 대조는 여전히 Docker 가 필요하다. 남은 공백이 줄어 우선순위는 낮아졌다.",
+    "updated": "2026-09-24"
+  },
+  {
+    "title": "자연어 날짜의 연도 경계·상한 회귀 보강",
+    "value": 1,
+    "risk": 1,
+    "size": "S",
+    "status": "rejected",
+    "note": "naturalDate.ts 를 이번에 정독했다. calendarDate 가 1000~9999 와 실제 달력 성립을 모두 검사하고 최종 가드가 상대 계산 후 연도를 다시 좁히며, Date.UTC 의 0~99 → 1900+ 함정도 하한 때문에 도달 불가다. 추가 시험이 잡을 결함이 없어 기각.",
+    "updated": "2026-09-24"
+  },
+  {
+    "title": "메일 알림 Playwright 브라우저 시험",
+    "value": 3,
+    "risk": 2,
+    "size": "M",
+    "status": "pending",
+    "note": "mail_deliveries 테이블·기능이 main 에 없다. 기능 병합 선행.",
+    "updated": "2026-09-24"
+  },
+  {
+    "title": "메일 발송 기록 보존 기간 정리(mail_deliveries)",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "대상 테이블 없음. 기능 병합 전 구현 불가.",
+    "updated": "2026-09-24"
+  },
+  {
+    "title": "Playwright 시험에 silent SSO 루프 방지 + ?sso=none/error 안내 시나리오",
+    "value": 3,
+    "risk": 2,
+    "size": "M",
+    "status": "pending",
+    "note": "tests/silent-sso.mjs 는 이번에도 통과하지만 loginSsoNotice 안내 UI 가 없어 시나리오가 성립하지 않는다. 안내 기능 선행.",
+    "updated": "2026-09-24"
+  },
+  {
+    "title": "SAML ACS 제공자 오류(Responder/AuthnFailed)도 /login?sso=error 로 안내",
+    "value": 2,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "identity_saml.go:samlACS 는 JSON 오류 유지. 안내 UI 선행이며 서명 검증을 약화하지 않아야 한다.",
+    "updated": "2026-09-24"
+  },
+  {
+    "title": "OpenAPI 카탈로그에 OIDC/SAML start 파라미터 설명 추가",
+    "value": 1,
+    "risk": 1,
+    "size": "S",
+    "status": "rejected",
+    "note": "OIDC 만 return_to 를 지원하고 SAML ACS 는 /app 고정이라, 카탈로그에 적으면 미지원 동작을 문서화하게 된다. 서버 동작이 통일되기 전에는 타당하지 않다.",
+    "updated": "2026-09-24"
+  },
+  {
+    "title": "/handoff 비로그인 도착 시 로그인 뒤 return_to 복귀",
+    "value": 3,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "/handoff 라우트가 아직 없다. 기능 병합 선행.",
+    "updated": "2026-09-24"
+  },
+  {
+    "title": "문서 넘기기 브라우저 시험",
+    "value": 3,
+    "risk": 2,
+    "size": "M",
+    "status": "pending",
+    "note": "handoff 기능 부재로 선행 조건 미충족.",
+    "updated": "2026-09-24"
+  },
+  {
+    "title": "OIDC 콜백 madi 쪽 검증 오류(400/409)도 /login?error= 로 안내",
+    "value": 2,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "integrations_oidc.go 의 상태 오류 계약과 보안이 얽혀 있어 위험 대비 가치가 낮다.",
+    "updated": "2026-09-24"
+  },
+  {
+    "title": "비밀번호 로그인과 OIDC 복귀 규칙 통일: preferences.last_path 를 OIDC 콜백 뒤에도 적용",
+    "value": 2,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "App.tsx 의 last_path 는 존재하나 관리자 /admin 복귀 정책 확대는 보류.",
+    "updated": "2026-09-24"
+  },
+  {
+    "title": "verify-image 출력을 /tmp 고정 경로가 아닌 회차별 임시 디렉터리에 남기는 러너 관례",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "09-22 회차가 이전 회차의 /tmp/verify-image.txt 잔재를 PASS 로 오독할 뻔했다. 러너 측 관례.",
+    "updated": "2026-09-24"
+  },
+  {
+    "title": "govulncheck 미도달 취약점 정기 확인 (무시 설정 금지)",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "이번 회차에서는 govulncheck 를 실행하지 않았다. 도달 불가 판정이 코드 변경으로 뒤집히는지 주기적으로 봐야 한다.",
+    "updated": "2026-09-24"
+  }
+]

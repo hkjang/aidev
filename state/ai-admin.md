@@ -250,3 +250,11 @@
   - 감사 CSV 전체 이벤트 보장 문구 정정 (가치 1 / 위험 1 / 작업량 S)
   - 사용자 목록 roles 배열 순서 명시 (가치 1 / 위험 1 / 작업량 S)
 
+## 2026-09-23
+- 선택: 역할 수정 `name`의 120자 DB 상한·공백 검증을 요청 단계에서 적용 (가치 2 / 위험 1 / 작업량 S)
+- 결과: 성공
+- 요약: `updateRole`은 `updateUser`의 `DisplayName`과 달리 `name`을 trim·길이·공백 검증 없이 `varchar(120)` 컬럼에 그대로 넣어, 121자 이름은 500 `role_update_failed`가 되고 빈 문자열·공백만 있는 이름은 그대로 저장돼 역할 카드가 이름 없이 렌더링됐다(실제 PostgreSQL 16 통합 테스트로 500·공백 저장·미trim 4건 실패를 먼저 확인). `users.go`의 표시 이름 검증과 같은 형태로 `strings.TrimSpace` 후 빈 값 또는 `utf8.RuneCountInString > 120`이면 DB 조회 전에 400 `name_invalid`로 거부하고 trim된 값을 저장하도록 했으며, `name`이 없으면(`nil`) 기존 이름을 유지하는 동작은 그대로 두어 설명·permission만 바꾸는 호출을 깨뜨리지 않았다. 검증: 새 통합 테스트 `TestUpdateRoleValidatesName`(121자 400·DB 불변, 빈 값·공백만 400, 한글 120자 200·원문 저장, 앞뒤 공백 trim 저장, name 생략 시 이름 유지 + permission만 교체)를 먼저 써서 red를 보고 고쳤고, rune 검사를 byte 검사로 바꾸면 한글 120자 사례가 실패하는 것도 확인 후 복구했다. 전용 폐기 `postgres:16-alpine`(포트 55444)로 `go test -race -count=1 ./...`(internal/server 91.0s) 전체 통과, `make lint`(1.2.24 일관)·`go build ./...` 통과, `docs/api.md`에 계약을 적었다. 웹 변경이 없어 `npm test`는 실행하지 않았고 VERSION·CHANGELOG는 건드리지 않았다(커밋 c111ad1, 변경 3개).
+- 보류 아이디어: `loadGrants`가 map 순회로 roles·permissions 순서를 무작위화 (2/1/S) · `decideApproval`이 `decision_comment`를 trim·길이 제한 없이 저장 (2/2/S) · `loadProvider`·`aiModels`·`aiCatalog`의 `available_models` JSON 파싱 실패를 조용히 무시 (2/1/M) · 합성 레거시 스키마·데모 시드를 `scripts/`의 재사용 가능한 SQL로 승격 (3/2/M) · 새 아이디어: 역할 수정 폼(`RolesPage.tsx`)에 서버와 같은 120자 `maxLength`를 걸어 400 전에 막기 (1/1/S)
+- 과제서: 기각 — 정찰이 과제서를 남기지 못해(러너 21:09 scout failed) 직접 골랐고, 정찰 노트의 1순위 후보(역할 이름 검증)를 실제 DB 재현으로 확인한 뒤 채택했다.
+
+- 릴리즈: v1.2.25 (2026-09-23, run 2026-09-23-210455-ai-admin-improve)

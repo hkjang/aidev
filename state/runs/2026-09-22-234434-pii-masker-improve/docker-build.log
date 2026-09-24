@@ -1,0 +1,72 @@
+#0 building with "default" instance using docker driver
+
+#1 [internal] load build definition from Dockerfile
+#1 transferring dockerfile: 795B done
+#1 DONE 0.0s
+
+#2 [internal] load metadata for docker.io/library/alpine:3.21
+#2 ...
+
+#3 [internal] load metadata for docker.io/library/golang:1.25.0
+#3 DONE 1.2s
+
+#2 [internal] load metadata for docker.io/library/alpine:3.21
+#2 DONE 1.5s
+
+#4 [internal] load .dockerignore
+#4 transferring context: 72B done
+#4 DONE 0.0s
+
+#5 [stage-1 1/5] FROM docker.io/library/alpine:3.21@sha256:ce64758a109eb420d874a118f87920e625e12d3634e03b4a5573fd9f6e5d3507
+#5 resolve docker.io/library/alpine:3.21@sha256:ce64758a109eb420d874a118f87920e625e12d3634e03b4a5573fd9f6e5d3507 0.0s done
+#5 DONE 0.0s
+
+#6 [builder 1/7] FROM docker.io/library/golang:1.25.0@sha256:5502b0e56fca23feba76dbc5387ba59c593c02ccc2f0f7355871ea9a0852cebe
+#6 resolve docker.io/library/golang:1.25.0@sha256:5502b0e56fca23feba76dbc5387ba59c593c02ccc2f0f7355871ea9a0852cebe 0.0s done
+#6 DONE 0.0s
+
+#7 [internal] load build context
+#7 transferring context: 13.60MB 0.1s done
+#7 DONE 0.1s
+
+#8 [builder 2/7] WORKDIR /src
+#8 CACHED
+
+#9 [builder 3/7] COPY go.mod go.sum ./
+#9 CACHED
+
+#10 [builder 4/7] COPY vendor ./vendor
+#10 DONE 0.2s
+
+#11 [builder 5/7] COPY cmd ./cmd
+#11 DONE 0.1s
+
+#12 [builder 6/7] COPY internal ./internal
+#12 DONE 0.0s
+
+#13 [builder 7/7] RUN go build -mod=vendor -trimpath -o /out/pii-masker ./cmd/pii-masker
+#13 DONE 7.8s
+
+#14 [stage-1 2/5] WORKDIR /app
+#14 CACHED
+
+#15 [stage-1 3/5] RUN adduser -D -u 10001 appuser
+#15 CACHED
+
+#16 [stage-1 4/5] COPY --from=builder /out/pii-masker /app/pii-masker
+#16 DONE 0.0s
+
+#17 [stage-1 5/5] RUN mkdir -p /app/data && chown -R appuser:appuser /app
+#17 DONE 0.3s
+
+#18 exporting to image
+#18 exporting layers
+#18 exporting layers 0.6s done
+#18 exporting manifest sha256:709db2b0dbf70e15d4531b5e7b1c5ec1940db7438198e70618de203692535cbb 0.0s done
+#18 exporting config sha256:2cd193173435c9c50142036f749eb71420706fa4fd983121739c88012bf8dd5d 0.0s done
+#18 exporting attestation manifest sha256:096837a04f6c5945bcb70115c174303d64d5c538df43c08af7725707dd3a4e2d 0.0s done
+#18 exporting manifest list sha256:aa17eaf3b4d25ace78af32273bd5aa1c702eba3a996d76e7d33a7a8d8248922b 0.0s done
+#18 naming to docker.io/library/pii-masker:latest done
+#18 unpacking to docker.io/library/pii-masker:latest
+#18 unpacking to docker.io/library/pii-masker:latest 0.2s done
+#18 DONE 0.9s

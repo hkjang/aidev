@@ -158,3 +158,18 @@
 - 과제서: 채택 — 바이트 인덱스 절단이 현재 코드에 남아 있었고 실제 HTTP 세 경로의 새 회귀 테스트로 진단 손상을 재현했다.
 
 - 릴리즈: v1.0.25 (2026-09-21, run 2026-09-21-215509-pii-masker-improve)
+## 2026-09-22
+- 선택: 대기열을 거친 비동기 job의 created_at 보존 (가치 3 / 위험 1 / 작업량 S)
+- 결과: 성공
+- 요약: `runJob`이 `job.Metadata = *metadata`로 기록 전체를 `process`가 새로 만든 메타데이터로 덮어써서, `CreateJob`이 업로드 접수 시각으로 찍어 둔 `created_at`이 슬롯이 빈 뒤 처리가 시작된 시각으로 밀렸습니다. 슬롯이 꽉 찬 상태에서 대기한 작업일수록 오차가 커져(테스트에서 306ms) 클라이언트가 재는 대기 시간은 항상 0에 가깝고 이력의 접수 순서도 실행 순서로 바뀝니다. 이제 덮어쓰기 직전에 원래 값을 잡아 되돌려 놓으며, 검증은 프로덕션 배선(app.New→실제 리스너+gated mock 업스트림, MaxConcurrentJobs=1)을 지나는 통합 테스트 `TestQueuedJobKeepsTheTimeItWasAccepted` 1개로 POST 202 응답·GET 조회·이력 목록·디스크의 job.json 네 경로가 모두 같은 시각을 읽는지 확인했고, 고치기 전 실패("created_at to stay at ... got ...")→고친 뒤 통과→수정을 임시로 되돌려 다시 실패하는 것까지 확인했습니다. `gofmt -l`(무출력)·`git diff --check`·`go vet ./...`·`go build ./...`·`go test -count=1 ./...`·`go test -race -count=3 ./internal/httpapi ./internal/service ./internal/jobs ./internal/app` 전부 통과했습니다. README 대기열 문단에 한 문장을 더했습니다.
+- 보류 아이디어: internal/config Load 경유 환경변수 정규화·기본값 테스트 (2/1/S) / POST /v1/jobs가 아직 결과 없는 queued·job_interrupted 작업에도 download_url을 채움 (2/2/S) / gorilla/mux 405 응답 Allow 헤더 (1/2/S) / 동기 슬롯 대기열 메모리 상한 (3/3/M) / 이력 조회에서 전체 job 복제 전 상위 limit 선별 (2/2/M)
+- 과제서: 기각 — 과제서가 이번 과제로 지목한 truncateString UTF-8 절단은 이미 7511062에 반영돼 있어(프로필이 main@3487570 기준으로 낡음) 남은 문제가 아니었고, 대신 보류 목록 재평가 중 찾은 created_at 덮어쓰기를 골랐다.
+
+## 2026-09-24
+- 선택: POST /v1/jobs 응답에서 결과 없는 작업의 download_url 제거 (가치 3 / 위험 1 / 작업량 S)
+- 결과: 성공
+- 요약: `handleCreateJob`(server.go:187)이 `download_url`을 조건 없이 채워서, 방금 접수돼 `queued`인 작업의 202 응답에 `job_result_not_found`만 돌려주는 죽은 링크가 실렸고(내장 Playground가 `renderMetadata`로 그대로 그림) 드레인 중 `job_interrupted`로 실패한 작업까지 URL을 받아 README 79행 계약을 위반했습니다. 같은 값을 읽는 `handleGetJob`(209)·`handleHistory`(282)가 2026-09-21 이후 쓰는 조건(`completed && OutputPath != ""`)을 생성 경로에도 그대로 적용하고 왜 URL을 주지 않는지 주석을 남겼으며, 검증은 프로덕션 배선(app.New→실제 리스너+gated mock 업스트림, MaxConcurrentJobs=1)을 지나는 통합 테스트 `TestAcceptedJobAnnouncesTheDownloadURLOnlyOnceTheResultExists` 1개로 POST 202 응답과 같은 상태의 GET 조회가 모두 빈 값을 읽고, 완료 뒤에는 두 경로가 같은 `/v1/jobs/{id}/result`를 읽으며 그 URL이 실제로 200을 주는 것까지 end-to-end로 확인했습니다. 고치기 전 새 테스트가 `expected no download url on a queued job, got "/v1/jobs/…/result"`로 실패하는 것을 먼저 보고 고친 뒤 통과를 확인했고, 기존 테스트는 무수정 통과했습니다. `gofmt -l ./cmd ./internal`(무출력)·`git diff --check`·`go vet ./...`·`go build ./...`·`go test -count=1 ./...`·`go test -race -count=3 ./internal/httpapi ./internal/service` 전부 통과했습니다. README 대기열 문단에 한 문장을 더했습니다.
+- 보류 아이디어: internal/config Load 경유 환경변수 정규화·기본값 테이블 테스트 (2/1/S) / gorilla/mux 405 응답 Allow 헤더 (1/2/S) / 동기 슬롯 대기열 메모리 상한 (3/3/M) / 이력 조회에서 전체 job 복제 전 상위 limit 선별 (2/2/M) / 업로드 파일명 유니코드 정규화(NFC) (2/2/S)
+- 과제서: 채택 — 과제서의 근거(server.go:187 무조건 대입 대 209·282의 `completed && OutputPath != ""`)가 현재 코드와 정확히 일치했고, 지목된 수용 기준 셋을 새 회귀 테스트로 모두 재현·검증했다.
+
+- 릴리즈: v1.0.27 (2026-09-24, run 2026-09-24-075421-pii-masker-improve)

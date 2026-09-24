@@ -1,0 +1,20 @@
+# aiportal-front 프로필 (2026-09-23)
+- 목적: 사내 AI 포털 SPA; 채팅·업무 앱·OCR·STT·공유·문서 뷰어 제공.
+- 스택: JavaScript ESM, Vue 3.5, Vite 7, Pinia 3, vue-router 4, axios, Vitest 4/jsdom + @vue/test-utils. 백엔드는 별도 저장소(이 저장소에 없음).
+- 구조:
+  - `src/api/`: `interface.js` 가 모든 엔드포인트를 `inf.<도메인>.<이름>.call(...)` 로 선언. `common/interceptors.js` 가 공통 오류를 처리하고 `Promise.reject('COM')` 으로 던진다.
+  - `src/storage/`: 인증·사용자·채팅·앱·OCR 캐시(localStorage/sessionStorage 래퍼) + `ocrStatusCheckStore`(폴링).
+  - `src/stores/`(pinia 7종), `src/composables/`(2종), `src/utils/`(22종 — 파일 정책·날짜·마크다운·전역 로딩/알림/토스트·이벤트버스).
+  - `src/views/`, `src/components/{common,layout}/`, `src/router/`. `Support/{Ocr,Stt,Img}` 가 업무 도구 화면. 전역 팝업은 `src/components/common/popup/Global/`.
+  - `tests/unit/`: 27개 spec. `docs/`: 개발·테스트·CI·릴리즈 근거 문서(`docs/.ipynb_checkpoints` 에 중복본 존재).
+- 빌드·테스트: `npm ci`(node_modules 비어 있음 — 선행 필수) → `npm test`(**기준선 27파일 477테스트**) → `npm run build:dev`. 모드별 `build:core/ofc/int/*_dev` 존재. `npm run build` · `npm run lint` 는 **없다**. 빌드 후 `dist/` 는 지울 것.
+- 관례: 한국어 `fix:`/`feat:`/`docs:`/`test:` 커밋 + merge PR. `@` alias, 모드별 `.env`. API 호출부는 `const res = await inf.X.Y.call(...)` → `isSuccess(res)` 확인 → `catch(e){ if(e=='COM') return; openAlert(...) }` → `finally { stopLoading() }` 가 정착된 형태(`SupportStt.vue:131-155` 가 표준 예). 사용자 안내는 `openAlert`(전역 모달)와 `toast`(가벼운 알림) 두 수단을 함께 쓴다.
+- 위험 구역: `src/api/common/interceptors.js`, `src/api/auth.js`, `src/storage/{authStorage,userStorage}`, `src/router`, Chat 스트리밍·탭 동기화. `.gitlab-ci.yml` 은 main/develop push 시 전용 Runner 가 fetch/reset 후 build 하고 `dist` 를 서버 디렉터리에 cp 하는 **배포 전용**(테스트 단계 없음).
+- 자주 깨지는 곳:
+  - `isSuccess(res)` 가 false 인 **업무 실패 경로에 else 가 없어** 실패가 조용히 삼켜짐(현재 PopSimpleBot/PopSimpleBotUpdate 의 `reload()`). 인터셉터는 `status != 200 && code == 'BZ01'` 일 때만 'COM' 으로 던지고 나머지 200 응답은 그대로 통과시킨다 — `isSuccess` false 는 실제로 화면까지 도달한다.
+  - 같은 값을 읽는 경로가 둘인데 한쪽만 관대함(`source_seq` 의 abc/law 경로).
+  - 캐시 값이 배열이 아닐 때, 식별자/`serviceCode` 비교, 비동기 조회 `await` 누락, 전역 스피너 start/stop 짝, 팝업 닫힘 경로(Escape/배경 클릭)에서 콜백 유실.
+  - 릴리즈는 정책 결손으로 14회 연속 no-change.
+- 검증 함정: `vitest.config.js` 에 `@vitejs/plugin-vue` 가 연결돼 있어 **`.vue` 를 실제로 마운트해 검증할 수 있다**. `vite.config.js` 는 dev server https 인증서 의존이 있어 테스트에서 분리돼 있다. `restoreMocks: true`. 전역 로딩/알림/토스트는 모듈 싱글턴이라 테스트 간 상태가 샌다 — 각 케이스에서 정리할 것. 애니메이션·폴링 코드는 `setInterval` 기반이라 즉시 resolve 하는 대역으로는 결함이 드러나지 않는다(fake timer 나 지연 resolve 필요).
+- CI: `.github` 디렉터리 자체가 없다(GitHub Actions 워크플로 0개). `git tag` 0개, `package.json` version=0.0.0/private:true, CHANGELOG 없음 → 릴리즈 관례를 정할 입력이 저장소에 없다. `docs/RELEASE.md` 는 근거 문서이지 증가 정책이 아니다.
+- 기준: HEAD **108cc47**(main), 작업 트리 무변경. `CLAUDE.md` 없음(`AGENTS.md` 가 대신).

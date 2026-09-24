@@ -1,0 +1,11 @@
+## 2026-09-23
+- 선택: OCR 업로드 실패가 조용히 삼켜지는 문제 수정 — ocrParse 미-await 와 실패 경로 stopLoading 누락 (가치 4 / 위험 3 / 작업량 M)
+- 결과: 성공
+- 요약: `SupportOcr.vue:206` 의 `inf.tools.ocrParse.call(formData)` 는 저장소에서 유일하게 `await` 없는 `inf.tools.*` 호출이라 업로드가 실패해도 `catch` 에 도달하지 못했고, 사용자는 실패 알림 없이 2초 뒤 변환 목록으로 이동했으며 전역 스피너는 `loading.vue` 의 60초 자동 해제까지 남았다. 형제 `SupportStt.vue:131-155` 와 `docs/03-API-개발가이드.md:415` 가 정한 형태대로 `const res = await` + `isSuccess(res)` 실패 분기 + `catch` 의 `stopLoading()` 을 넣되, 성공 경로의 `setTimeout` 안 `stopLoading()` 은 그대로 둬 스피너가 이동 직전까지 켜져 있게 했다. 검증: 실제 컴포넌트를 마운트해 드롭→버튼 클릭까지 실제 DOM 으로 통과시키는 신규 스펙 6케이스가 수정 전 4건 실패(Red) → 수정 후 전부 통과했고, 세 변경분을 각각 하나씩 되돌리면 `await` 제거 시 3건·`catch stopLoading` 제거 시 2건·`isSuccess` 분기 제거 시 1건이 실패함을 확인해 인과를 증명했다. `npm test` 24파일 458테스트 통과(기준선 23/452), `npm run build:dev` 통과 후 `dist/` 삭제.
+- 우선 과제(릴리즈): 진입 조건 미충족으로 무변경. 과제서 지시대로 재조사하지 않았고 버전 파일·태그·CHANGELOG·릴리즈 노트·원격 전송을 일체 하지 않았다. 승인된 증가 단위·시작 버전, 태그 형식, 릴리즈 커밋 양식, 노트 위치가 출처와 함께 인계되지 않았다. 판정을 skipped/released 로 낮추지 않는다.
+- 보류 아이디어: [수정 과제] 릴리즈 버전 결정 입력 복구 — pending(10회째, 진입 조건 미충족).
+  - 릴리즈 절차 교착을 사람에게 에스컬레이션 — pending; 수정 지점이 외부 aidev 절차라 저장소 안에 합법적 수단이 없다.
+  - Alert/Confirm 이 showHeader 를 넘기지 않아 title 이 렌더링되지 않음 — pending; 이번 회차 차선 후보였으나 '보이게 하는 것' 이 기대 계약인지 확정이 선행.
+  - globalLoading 참조 카운트 — pending; SupportOcr 누수는 이번에 해소됐으나 loading.vue 의 60초 자동 해제가 카운터를 되돌리지 않는 문제가 남아 선행 조건 미충족.
+  - inf 의 나머지 네임스페이스(auth/chat/app) await 누락 1회성 감사 — pending; 이번엔 tools 만 확인했다.
+- 과제서: 채택 — A(릴리즈)는 지시대로 무변경으로 두고, B(SupportOcr ocrParse 미-await)를 수용 기준 1~5 그대로 구현·검증했다.

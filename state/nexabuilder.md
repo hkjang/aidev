@@ -36,3 +36,11 @@
 - 과제서: 채택 — 근거 3가지(`queryList:63-65` 가 deletedAt 미검사, 같은 줄 Integer→int 언박싱, 성공/실패 봉투가 다름)가 코드와 전부 일치했고 지정한 파일·기본값 100·`@DirtiesContext` 금지까지 그대로 따랐다. 다만 과제서가 "휴지통 케이스는 지금 200" 이라 한 것은 그 픽스처(pageSize null)에서는 NPE 가 먼저 터져 500 이었으므로, 휴지통 테스트만 `pageSize(10)` 으로 씨딩해 빨간 이유가 구멍(200+행) 자체가 되도록 바로잡았다.
 
 - 릴리즈: v1.20.0 (2026-09-22, run 2026-09-22-220444-nexabuilder-improve)
+## 2026-09-24
+- 선택: `DataAdapterService.parse` 의 페이지 입력(pagenum 음수 / pagesize 0·음수 / pagenum 오버플로)을 클램프로 고쳐 `/api/v1/data/*` 가 500 과 전체 행 응답으로 빠지지 않게 한다 (가치 3 / 위험 2 / 작업량 S)
+- 결과: 성공
+- 요약: `parse` 는 `MAX_PAGE_SIZE` 상한만 보고 하한을 안 봐서, 인증만 통과하면 쿼리 문자열 하나로 세 가지 고장을 낼 수 있었다. 수정 전 세 테스트를 먼저 돌려 실제 실패 모드를 확인했다 — `pagenum=-1&pagesize=10` 은 offset -10 으로 H2 가 `JdbcSQLDataException: Invalid value "-10" for parameter "result OFFSET"` 를 던져 `DataIntegrityViolationException` → **500**(과제서의 500 예상이 맞았고, H2 는 음수 OFFSET 을 거절한다는 것이 이번에 실행으로 확인됐다), `pagenum=2147483647&pagesize=10` 은 `pageNum*pageSize` 가 int 오버플로로 **똑같이 -10** 이 되어 같은 500, `pagesize=0` 은 200 이지만 `LIMIT 0` 으로 빈 Rows. `queryList`/`queryEntity` 가 공유하는 `parse` 한 곳에서만 고쳐(`Math.max(0, …)`, `pagesize <= 0` → 기존 fallback → 기존 상한) 두 URL 이 같은 규칙을 따르게 했고, 오프셋은 `QueryRequest.offset()` 에서 long 으로 계산해 두 백엔드가 같은 값을 쓰게 한 뒤 도달 불가가 된 `applyPaging` 의 `pageSize <= 0` 가드를 지웠다. 회귀 테스트 3건 추가(실제 H2·MockMvc), `cleanTest test` 전체 581건(578+3) 통과·0 skip, `bootJar -x test` 성공. 커밋 7b00675.
+- 보류 아이디어: `/api/v1/data/lists/{id}`·`/builder/lists/{id}/data` 에 ScreenPermissionService 게이트 없음 — permission 은 위험 구역이라 별도 회차(3/4/M) / `executeSqlBacked` 가 전체 행을 메모리로 읽고 자바에서 페이징 — SqlExecutor 페이징 API 조사 선행(3/3/M) / CI 에 wrapper-validation 추가 + docker-publish checkout v6 정렬 + gradlew 실행 비트(3/1/S) / `queryList` 의 sqlId 백엔드 목록에도 `requireLiveList` 회귀 테스트 — SqlMetadata 픽스처 필요(2/1/S) / README·agent.md·deployment.md 의 낡은 버전 표기 정렬을 한 회차로 묶기(2/1/S)
+- 과제서: 채택 — 근거 3가지(`parse` 가 하한 미검사, `applyPaging` 의 `pageSize<=0` 상한 우회, `pageNum*pageSize` int 오버플로)가 코드와 전부 일치했고 계약 결정(400 아닌 클램프)·건드릴 파일·`@DirtiesContext` 금지까지 그대로 따랐다. 과제서가 미확인이라 한 "H2 가 음수 OFFSET 을 거절하는가" 는 실행으로 확인(거절 → 500).
+
+- 릴리즈: v1.21.0 (2026-09-24, run 2026-09-24-053432-nexabuilder-improve)

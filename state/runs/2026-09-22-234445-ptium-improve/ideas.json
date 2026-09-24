@@ -1,0 +1,146 @@
+[
+  {
+    "title": "XLSX 셀 참조의 열 번호를 XFD(16384)로 묶고 세 글자 열 이름을 출처에 바르게 쓰기",
+    "value": 4,
+    "risk": 2,
+    "size": "S",
+    "status": "done",
+    "note": "구현 완료(커밋 80ebe4c). columnOf 가 루프 안에서 16384 초과 시 -1; 초과 셀은 버리지 않고 next 자리에. columnLetter 는 26진 자리올림 반복으로 701=ZZ/702=AAA/16383=XFD. 새 sheetwidth_test.go 5개(ZIP→Read→ParseSource 3개 + 경계 표 2개). 고치기 전 ulimit -v 아래에서 90TB 할당 시도로 프로세스가 죽는 것을 재현했다.",
+    "updated": "2026-09-22"
+  },
+  {
+    "title": "XLSX 과도한 열 번호로 생기는 대규모 할당 제한",
+    "value": 4,
+    "risk": 3,
+    "size": "M",
+    "status": "done",
+    "note": "columnOf 의 XFD 상한으로 이번에 덮였다. 남는 축(행 수 자체의 상한)은 아래 별도 항목으로 분리했다.",
+    "updated": "2026-09-22"
+  },
+  {
+    "title": "XLSX 출처의 AAA 이상 열 이름을 올바르게 표기",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "done",
+    "note": "이번 과제에 포함되어 함께 고쳐졌다. columnLetter(702) 가 '[A' 를 내던 것을 'AAA' 로. end-to-end 증거는 A~ZY 를 숨겨 보이는 열이 ZZ·AAA 가 되는 시트의 인용(A1:AAA3).",
+    "updated": "2026-09-22"
+  },
+  {
+    "title": "XLSX 행 수 자체의 상한 — 16,384칸 x 많은 행의 메모리",
+    "value": 3,
+    "risk": 3,
+    "size": "M",
+    "status": "pending",
+    "note": "열은 이제 행당 16,384칸으로 유한하지만 행 수에는 상한이 없다. 1,048,576행 x 16,384칸이면 여전히 크다. 실측하지 않았고, 거절/경고 정책 결정이 필요하다. ZIP 해제 크기 제한과 같은 축이라 묶어서 보는 편이 낫다.",
+    "updated": "2026-09-22"
+  },
+  {
+    "title": "XLSX ZIP 전체 해제 크기와 불필요한 파트 읽기 제한",
+    "value": 4,
+    "risk": 3,
+    "size": "M",
+    "status": "pending",
+    "note": "workbook.go:79 은 파트마다 io.LimitReader(32MB) 만 두고 전체 해제 합계에는 상한이 없다. 무엇을 거절하고 무엇을 경고할지 정책 결정이 필요하다.",
+    "updated": "2026-09-22"
+  },
+  {
+    "title": "e2e call() 의 headers={} 기본 신원 대체 함정 제거",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "scripts/e2e/api.py 의 call() 이 빈 dict 를 개발 신원으로 바꾼다. 기존 headers={} 호출(공유 링크·로그인 시도)의 의도 전수 확인과 실서버·DB 가 필요해 이번에도 미뤘다. 이번 회차 차선 후보였다.",
+    "updated": "2026-09-22"
+  },
+  {
+    "title": "메일 후속: 한 리뷰어의 연속 댓글을 30초 지연으로 묶어 한 통으로",
+    "value": 3,
+    "risk": 3,
+    "size": "M",
+    "status": "pending",
+    "note": "mail/service.go:Notify 는 수신자마다 즉시 goroutine. 지연·종료 flush·중복 처리로 한 회차에 위험하다.",
+    "updated": "2026-09-22"
+  },
+  {
+    "title": "메일 후속: 관리자에게 새 critical 인시던트를 메일로",
+    "value": 3,
+    "risk": 3,
+    "size": "M",
+    "status": "pending",
+    "note": "store/admin.go:CaptureIncident 가 신규 여부를 돌려주지 않는다. 중복 방지와 스크럽 경계(감사 로그에 원문 금지) 검증이 필요하다.",
+    "updated": "2026-09-22"
+  },
+  {
+    "title": "MCP SSO 후속: ADMIN_GUIDE PDF 재생성과 화면 캡처",
+    "value": 2,
+    "risk": 1,
+    "size": "M",
+    "status": "rejected",
+    "note": "현 HEAD 에 mcp.oauth 구현 자체가 없어 MCP 부분은 성립하지 않는다. 남는 메일·추적·넘기기 캡처는 아래 항목으로 좁혔다.",
+    "updated": "2026-09-22"
+  },
+  {
+    "title": "관리자 가이드에 메일·추적·넘기기 화면 캡처 싣기",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "screenshots.py 에 admin-settings-mail 등 몇 컷. 릴리즈된 이미지가 새 화면을 담은 뒤에 가능하다.",
+    "updated": "2026-09-22"
+  },
+  {
+    "title": "silent SSO 후속: e2e 에 autoLogin 게시 확인",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "silent SSO 구현은 존재하고 scripts/e2e 에 검사가 없다. 실서버·DB 필요.",
+    "updated": "2026-09-22"
+  },
+  {
+    "title": "handoff 후속: 넘겨받은 덱의 출처를 편집기 정보 대화상자에도",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "받기 출처 표시 위치와 정보 대화상자 데이터는 아직 확인하지 않았다.",
+    "updated": "2026-09-22"
+  },
+  {
+    "title": "handoff 후속: 형식 표를 handoff.peers 목록 줄에 적을 수 있게",
+    "value": 2,
+    "risk": 2,
+    "size": "M",
+    "status": "pending",
+    "note": "서버·웹·문서 3면 변경이라 한 회차에 빠듯하다.",
+    "updated": "2026-09-22"
+  },
+  {
+    "title": "추적 후속: SPA 안에서 /admin 이동 시 붙은 스니펫이 남는 문제",
+    "value": 2,
+    "risk": 2,
+    "size": "M",
+    "status": "pending",
+    "note": "ADMIN_GUIDE 337행에 기존 제한이 명시되어 있다. 도구별 중지 API 가 필요해 우선순위가 낮다.",
+    "updated": "2026-09-22"
+  },
+  {
+    "title": "deck 의 네 숫자 파서(parseNumber·parseBareNumber·chartFields·docs.amountOf) 계약을 한 표 테스트로 묶기",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "테스트만 더하고 파서는 손대지 않는 범위. 서로 다른 계약을 문서로 고정하는 값이 있다. 파서 통합·구분자 확장은 2회 반려된 자리이므로 절대 함께 하지 말 것.",
+    "updated": "2026-09-22"
+  },
+  {
+    "title": "xlsx 가져오기: width=\"0\"·collapsed·outlineLevel 로 접힌 열/행도 숨김으로 볼지",
+    "value": 2,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "실제 Excel/LibreOffice 출력 파일로 무엇이 쓰이는지 확인한 뒤에 판단할 것.",
+    "updated": "2026-09-22"
+  }
+]

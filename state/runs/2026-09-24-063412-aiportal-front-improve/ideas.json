@@ -1,0 +1,110 @@
+[
+  {
+    "title": "요청 게시판(RequestList)의 검색이 무동작 — searchId 미전달로 검색어가 요청에 실리지 않음",
+    "value": 4,
+    "risk": 2,
+    "size": "S",
+    "status": "done",
+    "note": "이번 회차 구현(커밋 5b7a15b). onSearchClick 첫머리에 형제와 같은 getElementById+trim 두 줄을 넣고 SearchBox 에 searchId=\"searchKey\" 를 넘겼으며, 아무것도 연결하지 않던 v-model 은 제거했다. 신규 스펙 requestListSearch.spec.js 8건(수정 전 5건 Red) + 변이 2건으로 인과 증명. 공유 SearchBox.vue 는 10화면이 쓰므로 건드리지 않았다.",
+    "updated": "2026-09-24"
+  },
+  {
+    "title": "SearchBox 를 쓰는 나머지 5화면(SupportOcr/Stt/Img List, ChatStorageList, PopPromptSelect)의 검색 배선 실태 확인",
+    "value": 3,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "다음 1순위 후보. 이 5곳은 v-model 없이 searchId 만 넘긴다(grep 확인). onSearchClick 이 DOM 을 읽는지는 이번 회차에도 열어 보지 않아 미확인 — RequestList 와 같은 무동작 검색이 더 있는지 확인하는 조사 항목.",
+    "updated": "2026-09-24"
+  },
+  {
+    "title": "[수정 과제] 릴리즈 버전 결정 입력 복구 — 승인 근거 확보 전까지 pending 유지",
+    "value": 5,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "23회째 진입 조건 미충족. 과제서 지시대로 이번 회차에는 재조사하지 않았고 무변경. git tag 0개 / .github 없음 / CHANGELOG·VERSION·scripts·Makefile 없음 / package.json version 0.0.0 / .gitlab-ci.yml 은 CI_COMMIT_TAG 참조 0건인 브랜치 푸시 배포 전용. 고칠 워크플로 파일이 저장소에 없고 실패 지점이 워크트리 밖(외부 aidev bin/run.sh → release.json → bin/gate.py). package.json 이 있어 skipped 조건도 미충족이며 version 필드 삭제는 게이트 완화라 금지.",
+    "updated": "2026-09-24"
+  },
+  {
+    "title": "릴리즈 절차 교착 자체를 사람에게 에스컬레이션",
+    "value": 5,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "23회 연속 동일 교착. 사람 입력 4가지(①첫 릴리즈 버전 ②태그 형식·주석 태그 여부 ③릴리즈 노트 위치·양식·언어 ④GitHub Release 사용 여부)만 정해지면 이후는 전례로 자동 진행 가능. GitLab CI 가 main 머지 시점에 이미 배포하므로 버전 릴리즈 없이도 서비스는 나간다 — 버전 체계 도입 여부 자체가 제품 판단.",
+    "updated": "2026-09-24"
+  },
+  {
+    "title": "심플봇 두 팝업의 tryUpdateAppIcon / tryUpdateLog 가 예외를 catch(e){} 로 완전히 삼킴",
+    "value": 3,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "PopSimpleBot.vue:542,563 / PopSimpleBotUpdate.vue:649. '아이콘 실패가 앱 저장 전체의 실패인가' 라는 기대 계약이 미확인이고 simpleBotUpdateClose.spec.js 가 현 동작('아이콘 실패는 성공 판정을 바꾸지 않는다')을 고정하고 있어, 고치려면 계약을 '앱 저장은 성공, 아이콘 실패만 별도 토스트' 로 두고 기존 케이스부터 갱신해야 한다.",
+    "updated": "2026-09-24"
+  },
+  {
+    "title": "isSuccess 검사가 없는 잔여 3곳(ShareList / HeaderAlarm / PopWidgetSetting)",
+    "value": 2,
+    "risk": 2,
+    "size": "M",
+    "status": "pending",
+    "note": "목록 3형제 수정(ce28031) 이후 res?.data?.body|data 를 읽으면서 isSuccess 를 쓰지 않는 파일은 이 3곳만 남았다. 헤더 알림·위젯 설정은 보조 UI 라 '조용한 빈 목록이 의도인가' 라는 기대 계약이 미확인이고, 세 화면이 서로 닮지 않아 한 번에 묶기 어렵다.",
+    "updated": "2026-09-24"
+  },
+  {
+    "title": "RequestDetail/RequestList 가 inf.library.* 를 호출한다 — 요청 게시판 전용 엔드포인트 부재",
+    "value": 2,
+    "risk": 4,
+    "size": "S",
+    "status": "pending",
+    "note": "조사 항목. interface.js 에 board(:93)/library(:106) 두 도메인만 있고 request 도메인 자체가 없다. '요청 게시판은 library 를 공유한다' 가 설계일 가능성이 높다. 백엔드가 별개 저장소라 이 저장소만으로 확정 불가 — 사람/백엔드 확인 없이 바꾸면 화면이 통째로 죽는다. 이번 신규 스펙도 /library? 가 나가는 현 동작을 고정했다.",
+    "updated": "2026-09-24"
+  },
+  {
+    "title": "onToggleFav 3곳의 bare catch 가 즐겨찾기 실패를 무음 처리",
+    "value": 2,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "FavoriteList:158 / SupportList:446 / MyAgentList:482 모두 catch (e) {}. FavoriteList 쪽은 showMore:false 라 더보기 버튼이 렌더되지 않아 도달 불가이고, 나머지 2곳도 별 아이콘이 원래 상태로 남아 '실패' 로 읽히므로 개선폭이 작다.",
+    "updated": "2026-09-24"
+  },
+  {
+    "title": "loading.vue 의 자동 해제 타이머가 이미 켜진 상태의 추가 startLoading() 을 반영하지 않음",
+    "value": 3,
+    "risk": 3,
+    "size": "M",
+    "status": "pending",
+    "note": "watch(() => props.modelValue, startTimer) 가 false→true 전이에서만 재시작한다. 기대 계약 확정이 선행이며 globalLoading 참조 카운트의 선행 조건. 이번 회차 미열람(이전 기록 기준 보존).",
+    "updated": "2026-09-24"
+  },
+  {
+    "title": "globalLoading 참조 카운트 도입 (병렬 요청 중 스피너 조기 종료)",
+    "value": 4,
+    "risk": 4,
+    "size": "M",
+    "status": "pending",
+    "note": "loading.vue 의 자동 해제가 카운터를 되돌리지 않고 타이머 재시작 계약도 미확정이라 지금 넣으면 스피너가 영구히 안 꺼지는 회귀. 위 타이머 항목이 선행.",
+    "updated": "2026-09-24"
+  },
+  {
+    "title": "Alert/Confirm 이 showHeader 를 넘기지 않아 title 이 렌더링되지 않음",
+    "value": 3,
+    "risk": 3,
+    "size": "S",
+    "status": "pending",
+    "note": "Base.vue:11 showHeader 기본 false. 보이게 하면 title 자리에 Error 객체를 넘기는 호출부 3곳(SupportOcrDetail.vue:88 / SupportOcrDetail2.vue:90 / SupportSttDetail.vue:81)이 객체를 화면에 찍는다 — 기대 계약 확정이 선행.",
+    "updated": "2026-09-24"
+  },
+  {
+    "title": "openAlert 의 title 자리에 Error 객체를 넘기는 호출부 3곳 정리",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "showHeader 기본값이 false 라 현재 관측 가능한 동작 변화가 없다 — showHeader 계약이 확정될 때 함께 처리.",
+    "updated": "2026-09-24"
+  }
+]

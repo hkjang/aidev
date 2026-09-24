@@ -1,0 +1,11 @@
+## 2026-09-23
+- 선택: 전역 Alert 의 후속 동작(callback)이 Escape 로 닫으면 유실되는 문제 수정 (가치 4 / 위험 3 / 작업량 M)
+- 결과: 성공
+- 요약: `openAlert(text, title, callback)` 의 callback 이 `App.vue:52` 에서 `@primary`(확인 버튼)에만 연결돼 있어, `Base.vue:25-30` 이 window keydown 으로 Escape 를 받아 `close()` 를 부르는 경로에서는 한 번도 실행되지 않았다 — 세션 만료 시 `redirectToLogin()`(interceptors.js:164,210,223 / common.js:587)과 수정 불가 팝업의 `onCancel()`(PopSimpleBotUpdate.vue:166,172)이 통째로 유실돼 사용자가 죽은 화면에 남았다. `globalAlert.js` 에 `closeAlert()`(callback 을 꺼내 null 로 비운 뒤 실행)를 추가하고 `App.vue` 를 `:model-value` + `@update:model-value="closeAlert"` 단일 경로로 바꿨다(확인 버튼도 `Alert.vue:18-21` 이 `close()` 로 수렴하므로 이중 실행이 없다). 검증: 실제 `App.vue` 를 pinia + RouterView 스텁으로 마운트해(과제서가 15분 안에 확인하라던 것 — 가능했다) 실제 `globalAlert.js` 싱글턴에 `openAlert(..., cb)` 를 호출하고 실제 DOM 이벤트(버튼 `click`, window `keydown{Escape}`)로 닫는 신규 스펙 5케이스가 수정 전 2건 실패(Red) → 수정 후 통과. 변이 4건으로 각 요소의 인과를 증명했다: ①`@primary` 전용 배선으로 되돌리면 3건 실패 ②callback 을 비우지 않으면 1건 실패 ③비우는 시점을 실행 뒤로 옮기면(clear-after) 재진입 케이스 1건 실패 ④`@primary` 와 `@update:model-value` 를 둘 다 연결하면 이중 실행으로 2건 실패. `npm test` 25파일 463테스트 통과(기준선 24/458), `npm run build:dev` 통과 후 `dist/` 삭제.
+- 우선 과제(릴리즈): 진입 조건 미충족으로 무변경(11회째). 과제서 지시대로 재조사하지 않았고 버전 파일·태그·CHANGELOG·릴리즈 노트·릴리즈 커밋·원격 전송을 일체 하지 않았으며 `docs/RELEASE.md` 도 건드리지 않았다. 판정을 skipped/released 로 낮추지 않는다. 필요한 사람 입력: ①시작 버전(0.0.1 대 0.1.0)과 증가 단위 ②태그 형식·주석 태그 여부 ③릴리즈 커밋 메시지 양식 ④릴리즈 노트 위치·양식·언어 ⑤GitHub Release 사용 여부.
+- 보류 아이디어: [수정 과제] 릴리즈 버전 결정 입력 복구 — pending(11회째, 진입 조건 미충족).
+  - 릴리즈 절차 교착을 사람에게 에스컬레이션 — pending; 수정 지점이 외부 aidev 절차라 저장소 안에 합법적 수단이 없다.
+  - Confirm 도 Escape 로 닫으면 cancelAction 이 실행되지 않음 — pending; 이번 Alert 수정과 같은 형태로 고칠 수 있으나 `useConfirmStore` 의 Promise 해제 방식 확인이 선행이라 이번 범위 밖으로 뒀다.
+  - `src/utils/alerts.js` 죽은 중복 모듈 제거 — pending; 이번 회차에 재확인(`grep -rn "utils/alerts" src tests` = 0건, App.vue 는 `globalAlert.js` 만 쓴다). 동작 변화가 없어 1순위가 성립한 이번 회차에는 하지 않았다.
+  - globalLoading 참조 카운트 — pending; loading.vue 의 60초 자동 해제가 카운터를 되돌리지 않는 문제가 남아 선행 조건 미충족.
+- 과제서: 채택 — A(릴리즈)는 지시대로 무변경으로 두고, B 를 수용 기준 1~5 그대로 구현·검증했다. 다만 수용 기준 2 의 "1회성" 을 처음 쓴 형태(다음 openAlert 후 닫기)는 `openAlert` 가 callback 을 항상 덮어쓰므로 변이 실험에서 실패하지 않는 무딘 테스트임을 확인해, 실제로 판별되는 두 계약(닫힌 뒤 `alertCallback` 이 null 인지 직접 단정 / callback 이 새 Alert 을 열 때 새 callback 이 살아남는지)으로 바꿔 증명했다.

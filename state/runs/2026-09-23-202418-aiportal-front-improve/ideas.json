@@ -1,0 +1,137 @@
+[
+  {
+    "title": "앱 공유 등록이 공통 오류('COM')를 '권한 없음' 으로 잘못 안내하던 문제 수정",
+    "value": 4,
+    "risk": 2,
+    "size": "M",
+    "status": "done",
+    "note": "createSharedApp 이 모든 예외를 잡아 {ok:false} 로 바꿔 호출부 4곳의 `if (e == 'COM') return` 분기가 전부 죽어 있었다. 세션 만료·BZ01 업무 오류·통신 오류가 모두 '권한이 없어 설치가 불가합니다' 로 안내됐다. 예외를 그대로 던지도록 수정. HTTP 전송만 대역으로 두고 실제 interceptors.js → inf.app.share.call → createSharedApp → HeaderShare.vue 마운트를 통과하는 스펙 6건(Red 3 → Green 6, 되돌리면 다시 3 실패).",
+    "updated": "2026-09-23"
+  },
+  {
+    "title": "[수정 과제] 릴리즈 버전 결정 입력 복구 — 승인 근거 확보 후에만 구현",
+    "value": 5,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "13회째 pending. 2026-09-23 직접 재확인: git tag 0개, package.json version=0.0.0, .github 없음, 릴리즈 커밋 양식 없음. 실패 지점이 워크트리 밖(외부 aidev bin/run.sh → release.json → bin/gate.py)이라 저장소 안에 합법적 수단이 없다. 진입 조건 ①관례 도입 여부 자체 ②시작 버전·증가 단위 ③태그 형식 ④릴리즈 커밋 양식 ⑤릴리즈 노트 위치·양식 ⑥GitHub Release 사용 여부가 출처와 함께 인계돼야 한다. 판정을 skipped/released 로 낮추지 않는다.",
+    "updated": "2026-09-23"
+  },
+  {
+    "title": "릴리즈 절차 교착 자체를 사람에게 에스컬레이션",
+    "value": 5,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "수정 지점이 워크트리 밖이라 저장소 안에 합법적 수단이 없다. package.json version 필드 삭제는 게이트 완화라 금지.",
+    "updated": "2026-09-23"
+  },
+  {
+    "title": "inf 의 나머지 네임스페이스(auth/chat/app) await 누락 1회성 감사",
+    "value": 3,
+    "risk": 2,
+    "size": "M",
+    "status": "done",
+    "note": "2026-09-23 수행: `inf.<도메인>.<이름>.call` 전수 검색 결과 await 없는 호출은 3곳뿐이고 모두 정당하다 — useFileAccept.js:87-88 은 Promise.all 안, common.js:477 groupLogin 은 form submit 후 즉시 resolve 하는 이동 경로(비-async 함수라 await 불가). 결함 없음. 이 감사 중에 별개 결함(shareAppService 의 'COM' 삼킴)을 발견해 그쪽을 구현했다.",
+    "updated": "2026-09-23"
+  },
+  {
+    "title": "Base.vue 의 @:click 오타로 배경 클릭 닫기가 동작하지 않음",
+    "value": 2,
+    "risk": 2,
+    "size": "S",
+    "status": "rejected",
+    "note": "오타가 아니다. Vue 3 runtime-dom 의 patchEvent/parseName 은 `on:click` 형태(name[2] === ':')를 케이스 보존용 정식 문법으로 파싱하므로 `@:click` 은 실제로 click 리스너를 등록한다. 배경 클릭 닫기는 동작하며 고칠 동작 변화가 없다. (런타임 소스 기준 판단 — 별도 마운트 실험은 하지 않았다.)",
+    "updated": "2026-09-23"
+  },
+  {
+    "title": "loading.vue 의 자동 해제 타이머가 이미 켜진 상태의 추가 startLoading() 을 반영하지 않음",
+    "value": 3,
+    "risk": 3,
+    "size": "M",
+    "status": "pending",
+    "note": "신규. watch(() => props.modelValue, startTimer) 는 false→true 전이에서만 타이머를 재시작한다. 스피너가 켜진 채 새 작업이 startLoading() 하면 타이머는 첫 작업 기준으로 남아, 새 작업이 시작되자마자 오버레이가 사라질 수 있다. 덤으로 timeoutTxt('네트워크 오류입니다…')는 timeout 과 동시에 modelValue 가 false 가 되어(App.vue:54 의 v-model + @timeout=\"stopLoading\") 한 번도 렌더링되지 않는 죽은 분기다. 어느 쪽이 기대 계약인지 확정이 선행 — globalLoading 참조 카운트의 선행 조건이기도 하다.",
+    "updated": "2026-09-23"
+  },
+  {
+    "title": "globalLoading 참조 카운트 도입 (병렬 요청 중 스피너 조기 종료)",
+    "value": 4,
+    "risk": 4,
+    "size": "M",
+    "status": "pending",
+    "note": "loading.vue 의 자동 해제가 카운터를 되돌리지 않고, 타이머 재시작 계약도 미확정이라 지금 넣으면 스피너가 영구히 안 꺼지는 회귀. 위 항목이 선행.",
+    "updated": "2026-09-23"
+  },
+  {
+    "title": "openAlert 의 title 자리에 Error 객체를 넘기는 호출부 3곳 정리",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "SupportOcrDetail.vue:88 / SupportOcrDetail2.vue:90 / SupportSttDetail.vue:81 이 openAlert(text, title, callback) 의 title 자리에 error 객체를 넘긴다(로깅 의도로 보인다). Base.vue 의 showHeader 기본값이 false 라 title 은 렌더링되지 않아 현재 관측 가능한 동작 변화가 없다 — 운영자 지시상 단독 수정 대상이 아니며, showHeader 계약이 확정될 때 함께 처리해야 한다.",
+    "updated": "2026-09-23"
+  },
+  {
+    "title": "Alert/Confirm 이 showHeader 를 넘기지 않아 title 이 렌더링되지 않음",
+    "value": 3,
+    "risk": 3,
+    "size": "S",
+    "status": "pending",
+    "note": "Base.vue:11 showHeader 기본 false, v-if 로 헤더(title + 닫기 X) 전체를 감춘다. 지금 보이게 하면 title 자리에 Error 객체를 넘기는 호출부 3곳이 화면에 객체를 찍는다 — '보이게 하기' 가 아니라 '호출부를 고치기' 가 정답일 가능성이 높아 기대 계약 확정이 선행.",
+    "updated": "2026-09-23"
+  },
+  {
+    "title": "src/utils/alerts.js 죽은 중복 모듈 제거",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "globalAlert.js 와 같은 역할인데 src/tests 어디에서도 import 하지 않음. 운영자 지시 '정본을 하나로 유지할 것' 에 해당하나 관측 가능한 동작 변화가 없어 단독 가치는 낮다.",
+    "updated": "2026-09-23"
+  },
+  {
+    "title": "globalLoading 의 timeoutMs(600000) 가 App.vue 의 Loading 에 전달되지 않는 죽은 export",
+    "value": 2,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "App.vue:54 의 <Loading> 이 :timeoutMs 를 넘기지 않아 loading.vue 기본값(config.js 의 apiTimeOutMs = 60000)이 쓰인다. 지금 연결하면 자동 해제가 10분으로 늘어 오히려 나빠지므로 어느 쪽이 의도인지 확정이 선행.",
+    "updated": "2026-09-23"
+  },
+  {
+    "title": "docs/RELEASE.md 재조회 스크립트의 0.0.0 하드 assert",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "실제 릴리즈로 버전이 오르면 즉시 실패한다. 릴리즈 관례가 정해지기 전에는 손대지 말 것 — 지금 고치면 근거 정본이 흔들린다.",
+    "updated": "2026-09-23"
+  },
+  {
+    "title": "SupportSttList.vue 의 사용되지 않는 Confirm import 제거",
+    "value": 1,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "SupportSttList.vue:10 이 Confirm 을 import 하지만 템플릿에 <Confirm> 이 없다(전역 Confirm 은 App.vue 가 렌더링). 관측 가능한 동작 변화가 없어 다른 정리 작업에 묶을 때만.",
+    "updated": "2026-09-23"
+  },
+  {
+    "title": "MyAgentList.vue 의 'MyAvatar'/'etc' serviceCode 정확 비교 통일",
+    "value": 2,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "MyAgentList.vue:272,283,284 및 appList.js:193 이 모두 String(row?.serviceCode||'')=== 정확 비교. 공용 매처가 없어 먼저 만들어야 한다. 2026-09-23 미열람(이전 기록 기준 보존).",
+    "updated": "2026-09-23"
+  },
+  {
+    "title": "Header.vue 가 OCR 사용 여부와 무관하게 마운트 즉시 3초 폴링 시작",
+    "value": 3,
+    "risk": 3,
+    "size": "M",
+    "status": "pending",
+    "note": "기대 계약 미확인. 2026-09-23 미열람 — 이전 기록 기준 보존.",
+    "updated": "2026-09-23"
+  }
+]

@@ -1,0 +1,180 @@
+{
+  "run_id": "2026-09-23-123427-vibe-coders-improve",
+  "generated": "2026-09-23T12:48:57+09:00",
+  "run": {
+    "run_id": "2026-09-23-123427-vibe-coders-improve",
+    "project": "vibe-coders",
+    "kind": "improve",
+    "started": "2026-09-23T12:34:27+09:00",
+    "model": "claude-opus-5",
+    "policy_version": "ecd4b546e",
+    "prompts_hash": "30c37184f081815d",
+    "runner_version": "ecd4b546e",
+    "arm": "no-repair",
+    "experiment": "roles-2026-09",
+    "finished": "2026-09-23T12:48:56+09:00",
+    "outcome": "verify-failed"
+  },
+  "record": {
+    "ts": "2026-09-23T12:48:56+09:00",
+    "date": "2026-09-23",
+    "project": "vibe-coders",
+    "result": "verify failed: 실패한 검증: cd web && pnpm run typecheck --silent (exit 1)",
+    "outcome": "verify-failed",
+    "run_id": "2026-09-23-123427-vibe-coders-improve",
+    "base_sha": "d67267b5e47de66a45c35120c7465d85f5c009f9",
+    "head_sha": "f8b3b427011a4e4b77bcd6cf0578b4ae8b9def7b",
+    "pr": "",
+    "stages": {
+      "base": {
+        "state": "pinned",
+        "reason": "master@d67267b",
+        "at": "2026-09-23T12:34:40+09:00"
+      },
+      "autonomy": {
+        "state": "release",
+        "reason": "",
+        "at": "2026-09-23T12:34:40+09:00"
+      },
+      "scout": {
+        "state": "failed",
+        "reason": "과제서 없음 — 구현자가 직접 고른다",
+        "at": "2026-09-23T12:38:41+09:00"
+      },
+      "verify": {
+        "state": "failed",
+        "reason": "실패한 검증: cd web && pnpm run typecheck --silent (exit 1)",
+        "at": "2026-09-23T12:48:56+09:00"
+      }
+    },
+    "campaign": "",
+    "autonomy": "release",
+    "arm": "no-repair",
+    "experiment": "roles-2026-09",
+    "files": 2,
+    "additions": 120,
+    "deletions": 1,
+    "tests": 1,
+    "title": "fix(settings): reject text2sql.work_mem values PostgreSQL cannot parse"
+  },
+  "stages": {
+    "base": {
+      "state": "pinned",
+      "reason": "master@d67267b",
+      "at": "2026-09-23T12:34:40+09:00"
+    },
+    "autonomy": {
+      "state": "release",
+      "reason": "",
+      "at": "2026-09-23T12:34:40+09:00"
+    },
+    "scout": {
+      "state": "failed",
+      "reason": "과제서 없음 — 구현자가 직접 고른다",
+      "at": "2026-09-23T12:38:41+09:00"
+    },
+    "verify": {
+      "state": "failed",
+      "reason": "실패한 검증: cd web && pnpm run typecheck --silent (exit 1)",
+      "at": "2026-09-23T12:48:56+09:00"
+    }
+  },
+  "provenance": {
+    "model": "claude-opus-5",
+    "policy_version": "ecd4b546e",
+    "prompts_hash": "30c37184f081815d",
+    "runner_version": "ecd4b546e",
+    "base_sha": "d67267b5e47de66a45c35120c7465d85f5c009f9",
+    "head_sha": "f8b3b427011a4e4b77bcd6cf0578b4ae8b9def7b",
+    "pr": ""
+  },
+  "verification": {
+    "runner": {
+      "source": "auto",
+      "commands": [
+        {
+          "cmd": "go build ./...",
+          "exit": 0,
+          "seconds": 1
+        },
+        {
+          "cmd": "go vet ./...",
+          "exit": 0,
+          "seconds": 0
+        },
+        {
+          "cmd": "go test ./...",
+          "exit": 0,
+          "seconds": 59
+        },
+        {
+          "cmd": "cd web && [ -d node_modules ] || pnpm install --frozen-lockfile",
+          "exit": 0,
+          "seconds": 0
+        },
+        {
+          "cmd": "cd web && pnpm test --silent",
+          "exit": 0,
+          "seconds": 50
+        },
+        {
+          "cmd": "cd web && [ -d node_modules ] || pnpm install --frozen-lockfile",
+          "exit": 0,
+          "seconds": 0
+        },
+        {
+          "cmd": "cd web && pnpm run typecheck --silent",
+          "exit": 1,
+          "seconds": 0
+        }
+      ]
+    },
+    "runner_gate": {
+      "ok": false,
+      "state": "verify-failed",
+      "reason": "실패한 검증: cd web && pnpm run typecheck --silent (exit 1)"
+    },
+    "after_rebase": null,
+    "review": null,
+    "ci_gate": null
+  },
+  "release": {
+    "result": null,
+    "assets_sha256": []
+  },
+  "approval": null,
+  "usage": [
+    {
+      "ts": "2026-09-23T12:38:41+09:00",
+      "date": "2026-09-23",
+      "project": "vibe-coders",
+      "phase": "scout",
+      "run_id": "2026-09-23-123427-vibe-coders-improve",
+      "campaign": "",
+      "subtype": "success",
+      "duration_ms": 252577,
+      "num_turns": 34,
+      "cost_usd": 1.8955325000000003,
+      "input_tokens": 48,
+      "output_tokens": 19769,
+      "cache_read": 1411475,
+      "cache_create": 69533
+    },
+    {
+      "ts": "2026-09-23T12:47:04+09:00",
+      "date": "2026-09-23",
+      "project": "vibe-coders",
+      "phase": "improve",
+      "run_id": "2026-09-23-123427-vibe-coders-improve",
+      "campaign": "",
+      "subtype": "success",
+      "duration_ms": 535578,
+      "num_turns": 43,
+      "cost_usd": 3.049151999999999,
+      "input_tokens": 70,
+      "output_tokens": 24746,
+      "cache_read": 2980964,
+      "cache_create": 93967
+    }
+  ]
+}

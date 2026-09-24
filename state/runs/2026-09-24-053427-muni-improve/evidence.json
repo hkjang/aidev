@@ -1,0 +1,241 @@
+{
+  "run_id": "2026-09-24-053427-muni-improve",
+  "generated": "2026-09-24T05:46:45+09:00",
+  "run": {
+    "run_id": "2026-09-24-053427-muni-improve",
+    "project": "muni",
+    "kind": "improve",
+    "started": "2026-09-24T05:34:28+09:00",
+    "model": "claude-opus-5",
+    "policy_version": "ecd4b546e",
+    "prompts_hash": "30c37184f081815d",
+    "runner_version": "ecd4b546e",
+    "arm": "codex-critic",
+    "experiment": "roles-2026-09",
+    "finished": "2026-09-24T05:46:44+09:00",
+    "outcome": "review-pending"
+  },
+  "record": {
+    "ts": "2026-09-24T05:46:44+09:00",
+    "date": "2026-09-24",
+    "project": "muni",
+    "result": "review held, PR open https://github.com/hkjang/muni/pull/25",
+    "outcome": "review-pending",
+    "run_id": "2026-09-24-053427-muni-improve",
+    "base_sha": "b40de35686761b29f1008fbf0c29a89ffc9bc61c",
+    "head_sha": "0864ae76735884a8ddd7139d6277f057bfbe6983",
+    "pr": "https://github.com/hkjang/muni/pull/25",
+    "stages": {
+      "base": {
+        "state": "pinned",
+        "reason": "main@b40de35",
+        "at": "2026-09-24T05:34:34+09:00"
+      },
+      "autonomy": {
+        "state": "release",
+        "reason": "",
+        "at": "2026-09-24T05:34:34+09:00"
+      },
+      "scout": {
+        "state": "done",
+        "reason": "내려받기 파일 이름과 ZIP 항목 이름에 AI 컨텍스트 안내 문구가 붙는 것 고치기 (가치 3 / 위험 1 / 작업량 S)",
+        "at": "2026-09-24T05:38:20+09:00"
+      },
+      "brief": {
+        "state": "accepted",
+        "reason": "채택 — 근거(`safeFilename` → `truncateRunes` 호출, 제목 240자 허용, 다섯 호출 경로가 한 패키지)가 모두 코드·실행과 맞아 지",
+        "at": "2026-09-24T05:44:16+09:00"
+      },
+      "verify": {
+        "state": "passed",
+        "reason": "검증 7개 통과 (auto)",
+        "at": "2026-09-24T05:44:45+09:00"
+      },
+      "review": {
+        "state": "blocked",
+        "reason": "검토 부서 차단 소견(security) — 수리·중재 없이 운영자의 위험 수용(risk-accepted) 필요",
+        "at": "2026-09-24T05:46:34+09:00"
+      },
+      "pr": {
+        "state": "created",
+        "reason": "https://github.com/hkjang/muni/pull/25",
+        "at": "2026-09-24T05:46:41+09:00"
+      }
+    },
+    "campaign": "",
+    "autonomy": "release",
+    "arm": "codex-critic",
+    "experiment": "roles-2026-09",
+    "files": 3,
+    "additions": 252,
+    "deletions": 1,
+    "tests": 2,
+    "title": "fix: 내려받기 파일 이름과 ZIP 항목 이름에 AI 컨텍스트 안내 문구가 붙는 것 고치기"
+  },
+  "stages": {
+    "base": {
+      "state": "pinned",
+      "reason": "main@b40de35",
+      "at": "2026-09-24T05:34:34+09:00"
+    },
+    "autonomy": {
+      "state": "release",
+      "reason": "",
+      "at": "2026-09-24T05:34:34+09:00"
+    },
+    "scout": {
+      "state": "done",
+      "reason": "내려받기 파일 이름과 ZIP 항목 이름에 AI 컨텍스트 안내 문구가 붙는 것 고치기 (가치 3 / 위험 1 / 작업량 S)",
+      "at": "2026-09-24T05:38:20+09:00"
+    },
+    "brief": {
+      "state": "accepted",
+      "reason": "채택 — 근거(`safeFilename` → `truncateRunes` 호출, 제목 240자 허용, 다섯 호출 경로가 한 패키지)가 모두 코드·실행과 맞아 지",
+      "at": "2026-09-24T05:44:16+09:00"
+    },
+    "verify": {
+      "state": "passed",
+      "reason": "검증 7개 통과 (auto)",
+      "at": "2026-09-24T05:44:45+09:00"
+    },
+    "review": {
+      "state": "blocked",
+      "reason": "검토 부서 차단 소견(security) — 수리·중재 없이 운영자의 위험 수용(risk-accepted) 필요",
+      "at": "2026-09-24T05:46:34+09:00"
+    },
+    "pr": {
+      "state": "created",
+      "reason": "https://github.com/hkjang/muni/pull/25",
+      "at": "2026-09-24T05:46:41+09:00"
+    }
+  },
+  "provenance": {
+    "model": "claude-opus-5",
+    "policy_version": "ecd4b546e",
+    "prompts_hash": "30c37184f081815d",
+    "runner_version": "ecd4b546e",
+    "base_sha": "b40de35686761b29f1008fbf0c29a89ffc9bc61c",
+    "head_sha": "0864ae76735884a8ddd7139d6277f057bfbe6983",
+    "pr": "https://github.com/hkjang/muni/pull/25"
+  },
+  "verification": {
+    "runner": {
+      "source": "auto",
+      "commands": [
+        {
+          "cmd": "go build ./...",
+          "exit": 0,
+          "seconds": 4
+        },
+        {
+          "cmd": "go vet ./...",
+          "exit": 0,
+          "seconds": 0
+        },
+        {
+          "cmd": "go test ./...",
+          "exit": 0,
+          "seconds": 1
+        },
+        {
+          "cmd": "cd frontend && [ -d node_modules ] || npm ci --no-audit --no-fund",
+          "exit": 0,
+          "seconds": 19
+        },
+        {
+          "cmd": "cd frontend && npm test --silent",
+          "exit": 0,
+          "seconds": 2
+        },
+        {
+          "cmd": "cd frontend && [ -d node_modules ] || npm ci --no-audit --no-fund",
+          "exit": 0,
+          "seconds": 0
+        },
+        {
+          "cmd": "cd frontend && npm run build --silent",
+          "exit": 0,
+          "seconds": 3
+        }
+      ]
+    },
+    "runner_gate": {
+      "ok": true,
+      "state": "verified",
+      "reason": "검증 7개 통과 (auto)"
+    },
+    "after_rebase": null,
+    "review": {
+      "verdict": "reject",
+      "reasons": [
+        "internal/httpapi/handoff.go:181 [P1] receiveHandoff가 handoff.Fetch 오류 문자열을 그대로 경고 로그에 기록한다. internal/handoff/handoff.go:275는 client.Do의 *url.Error를 그대로 포함하므로 연결 거부·TLS 실패 시 요청 URL의 비밀 claim 원문이 로그에 노출된다. 실제 Fetch 코드를 임시 디렉터리에 복사하고 실패 RoundTripper로 실행해 합성 claim이 오류에 포함됨을 재현했다. 원본 서버에 도달하지 않은 claim은 여전히 유효하므로 로그 열람자는 5분 이내 원본의 /api/v1/handoff/claims/{claim}에 접근해 문서를 탈취할 수 있다. 요청 URL과 claim을 제거한 구조화된 오류만 기록하고, 실패 경로에서 로그에 claim이 없음을 검증해야 한다."
+      ],
+      "notes": [
+        "실제 main은 1045e13이며 main...HEAD는 49개 파일이다. 회차 노트의 pinned base b40de35와 다르다. 위 결함은 요청된 main...HEAD에 포함된 handoff 변경의 결함이며, b40de35...HEAD의 최신 0864ae7 파일 이름 수정이 도입한 결함은 아니다. Git ref는 변경하지 않았다.",
+        "파일 이름 수정의 경계·빈 값·치환·폴더 보호와 신규 테스트 단언을 확인했다. 관련 단위 테스트 및 internal/handoff 전체 테스트 통과, diff --check 통과. 신규 live 테스트 2개는 MUNI_TEST_DSN 미설정으로 SKIP. 전체 Go·프런트·실제 브라우저 다운로드·DB 마이그레이션 실행 검증은 하지 않았다.",
+        "urlPathEscape가 한글을 그대로 두는 Content-Disposition 파싱 문제는 기존 결함이며 이번 파일 이름 수정의 거절 사유로 삼지 않았다. 새 테스트도 헤더의 표준 파싱 성공을 보장하지 않는다.",
+        "최신 수정에는 의존성·권한·DB 변경이 없다. 전체 main diff에는 추가형 마이그레이션 017·018이 있으며 코드 revert만으로 추가 컬럼·테이블이 제거되지는 않는다. 기존 작업 트리의 webui/dist/index.html 수정은 건드리지 않았다."
+      ],
+      "risk": "high",
+      "blocking": [
+        "security"
+      ]
+    },
+    "ci_gate": null
+  },
+  "release": {
+    "result": null,
+    "assets_sha256": []
+  },
+  "approval": null,
+  "usage": [
+    {
+      "ts": "2026-09-24T05:38:20+09:00",
+      "date": "2026-09-24",
+      "project": "muni",
+      "phase": "scout",
+      "run_id": "2026-09-24-053427-muni-improve",
+      "campaign": "",
+      "subtype": "success",
+      "duration_ms": 244809,
+      "num_turns": 26,
+      "cost_usd": 1.710441,
+      "input_tokens": 40,
+      "output_tokens": 18094,
+      "cache_read": 1200542,
+      "cache_create": 65762
+    },
+    {
+      "ts": "2026-09-24T05:44:16+09:00",
+      "date": "2026-09-24",
+      "project": "muni",
+      "phase": "improve",
+      "run_id": "2026-09-24-053427-muni-improve",
+      "campaign": "",
+      "subtype": "success",
+      "duration_ms": 386650,
+      "num_turns": 54,
+      "cost_usd": 3.4078925000000004,
+      "input_tokens": 92,
+      "output_tokens": 26118,
+      "cache_read": 3675885,
+      "cache_create": 91654
+    },
+    {
+      "ts": "2026-09-24T05:46:34+09:00",
+      "date": "2026-09-24",
+      "project": "muni",
+      "phase": "review",
+      "run_id": "2026-09-24-053427-muni-improve",
+      "campaign": "",
+      "subtype": "success",
+      "duration_ms": 0,
+      "num_turns": 1,
+      "cost_usd": null,
+      "input_tokens": 337617,
+      "output_tokens": 2697,
+      "cache_read": 269184,
+      "cache_create": 0
+    }
+  ]
+}

@@ -1,0 +1,275 @@
+{
+  "run_id": "2026-09-23-163413-aiportal-front-improve",
+  "generated": "2026-09-23T16:49:06+09:00",
+  "run": {
+    "run_id": "2026-09-23-163413-aiportal-front-improve",
+    "project": "aiportal-front",
+    "kind": "improve",
+    "started": "2026-09-23T16:34:14+09:00",
+    "model": "claude-opus-5",
+    "policy_version": "ecd4b546e",
+    "prompts_hash": "30c37184f081815d",
+    "runner_version": "ecd4b546e",
+    "arm": "baseline",
+    "experiment": "roles-2026-09",
+    "finished": "2026-09-23T16:49:06+09:00",
+    "outcome": "merged"
+  },
+  "record": {
+    "ts": "2026-09-23T16:49:06+09:00",
+    "date": "2026-09-23",
+    "project": "aiportal-front",
+    "result": "fix-round: merged https://github.com/hkjang/aiportal-front/pull/25, release failed",
+    "outcome": "merged",
+    "run_id": "2026-09-23-163413-aiportal-front-improve",
+    "base_sha": "38a631112cc33de3fee57323f0c91c8a81e4148d",
+    "head_sha": "3b645d1d5898bc034de2976335a15ade4ed3f5d7",
+    "pr": "https://github.com/hkjang/aiportal-front/pull/25",
+    "stages": {
+      "base": {
+        "state": "pinned",
+        "reason": "main@38a6311",
+        "at": "2026-09-23T16:34:17+09:00"
+      },
+      "autonomy": {
+        "state": "release",
+        "reason": "",
+        "at": "2026-09-23T16:34:17+09:00"
+      },
+      "scout": {
+        "state": "done",
+        "reason": "전역 Alert 의 후속 동작(callback)이 Escape 로 닫으면 유실되는 문제 수정 (가치 4 / 위험 3 / 작업량 M)",
+        "at": "2026-09-23T16:38:56+09:00"
+      },
+      "brief": {
+        "state": "accepted",
+        "reason": "채택 — A(릴리즈)는 지시대로 무변경으로 두고, B 를 수용 기준 1~5 그대로 구현·검증했다. 다만 수용 기준 2 의 \"1회성\" 을",
+        "at": "2026-09-23T16:44:22+09:00"
+      },
+      "verify": {
+        "state": "passed",
+        "reason": "검증 2개 통과 (auto)",
+        "at": "2026-09-23T16:44:26+09:00"
+      },
+      "review": {
+        "state": "approved",
+        "reason": "리뷰 승인 (risk=low)",
+        "at": "2026-09-23T16:46:39+09:00"
+      },
+      "pr": {
+        "state": "created",
+        "reason": "https://github.com/hkjang/aiportal-front/pull/25",
+        "at": "2026-09-23T16:46:46+09:00"
+      },
+      "ci": {
+        "state": "passed",
+        "reason": "검사 없음 — 정책으로 허용",
+        "at": "2026-09-23T16:47:16+09:00"
+      },
+      "merge": {
+        "state": "done",
+        "reason": "3b645d1d5898bc034de2976335a15ade4ed3f5d7",
+        "at": "2026-09-23T16:47:21+09:00"
+      },
+      "release": {
+        "state": "failed",
+        "reason": "릴리즈 안 함: 릴리즈 관례 미확인으로 진입 조건 미충족(12회째). 이번 회차에 직접 재조회한 근거: (1) git tag 0개이며 remote.origin.tagOpt 미설정 + is-shallow-repository=false 이므로 태그가 실제로 없음(ls-remote 는 자격증명 없음으로 조회 불가, 러너 제공 GitHub Release 목록도 비어 있음). (2) package.json/package-lock.json version 모두 0.0.0 이고 최초 커밋 ab700ba 부터 한 번도 증가한 적 없음(최초 커밋의 lock 에는 version 필드 자체가 없었음) — 따르거나 추론할 증가 패턴이 존재하지 않음. (3) git log -60 에 릴리즈 커밋 메시지 양식 없음(유일한 관련 커밋 12c8e8a 는 근거 문서화). (4) CHANGELOG 는 전 이력에서 추가된 적 없음(--diff-filter=A 확인); docs/RELEASE.md 는 릴리즈 노트가 아니라 근거 문서이며 README/01-시작하기의 과거 '0.0.1 / 2025-01-01' 기재는 실제 릴리스 미확인으로 정리돼 이 문서를 가리킴. (5) .github 없음; .gitlab-ci.yml 은 main/develop 브랜치 push 조건으로 npm build 후 서버 디렉터리에 복사하는 브랜치 배포이며 태그·버전 증가·릴리즈 생성·자산 업로드를 정의하지 않음. (6) scripts/·Makefile·릴리즈 검사 스크립트 없음, 과거 릴리즈 자산 없음(assets 는 빈 배열). 절차 5 의 skipped 조건('태그도 버전 파일도 릴리즈 노트도 없음')은 버전 파일(package.json)이 존재하므로 충족하지 않아 skipped 로 기록하지 않았고, docs/RELEASE.md 가 명시한 대로 이 판정을 skipped/released 로 낮추지 않았다. 버전 파일·태그·CHANGELOG·릴리즈 노트·릴리즈 커밋을 일체 만들지 않았고 원격 전송도 하지 않았으며 워크트리는 무변경(clean) 상태다. 진행에 필요한 사람 입력: (1)시작 버전(0.0.1 대 0.1.0)과 증가 단위 (2)태그 형식과 주석 태그 여부 (3)릴리즈 커밋 메시지 양식 (4)릴리즈 노트 위치·양식·언어 (5)GitHub Release 사용 여부. 이 저장소는 태그가 아니라 브랜치 머지로 배포되므로, 버전 릴리즈 관례를 도입할지 자체가 먼저 결정돼야 한다.",
+        "at": "2026-09-23T16:49:06+09:00"
+      }
+    },
+    "campaign": "",
+    "autonomy": "release",
+    "arm": "baseline",
+    "experiment": "roles-2026-09",
+    "files": 3,
+    "additions": 145,
+    "deletions": 3,
+    "tests": 1,
+    "title": "fix: 전역 Alert 의 후속 동작이 Escape 로 닫으면 유실되던 문제 수정"
+  },
+  "stages": {
+    "base": {
+      "state": "pinned",
+      "reason": "main@38a6311",
+      "at": "2026-09-23T16:34:17+09:00"
+    },
+    "autonomy": {
+      "state": "release",
+      "reason": "",
+      "at": "2026-09-23T16:34:17+09:00"
+    },
+    "scout": {
+      "state": "done",
+      "reason": "전역 Alert 의 후속 동작(callback)이 Escape 로 닫으면 유실되는 문제 수정 (가치 4 / 위험 3 / 작업량 M)",
+      "at": "2026-09-23T16:38:56+09:00"
+    },
+    "brief": {
+      "state": "accepted",
+      "reason": "채택 — A(릴리즈)는 지시대로 무변경으로 두고, B 를 수용 기준 1~5 그대로 구현·검증했다. 다만 수용 기준 2 의 \"1회성\" 을",
+      "at": "2026-09-23T16:44:22+09:00"
+    },
+    "verify": {
+      "state": "passed",
+      "reason": "검증 2개 통과 (auto)",
+      "at": "2026-09-23T16:44:26+09:00"
+    },
+    "review": {
+      "state": "approved",
+      "reason": "리뷰 승인 (risk=low)",
+      "at": "2026-09-23T16:46:39+09:00"
+    },
+    "pr": {
+      "state": "created",
+      "reason": "https://github.com/hkjang/aiportal-front/pull/25",
+      "at": "2026-09-23T16:46:46+09:00"
+    },
+    "ci": {
+      "state": "passed",
+      "reason": "검사 없음 — 정책으로 허용",
+      "at": "2026-09-23T16:47:16+09:00"
+    },
+    "merge": {
+      "state": "done",
+      "reason": "3b645d1d5898bc034de2976335a15ade4ed3f5d7",
+      "at": "2026-09-23T16:47:21+09:00"
+    },
+    "release": {
+      "state": "failed",
+      "reason": "릴리즈 안 함: 릴리즈 관례 미확인으로 진입 조건 미충족(12회째). 이번 회차에 직접 재조회한 근거: (1) git tag 0개이며 remote.origin.tagOpt 미설정 + is-shallow-repository=false 이므로 태그가 실제로 없음(ls-remote 는 자격증명 없음으로 조회 불가, 러너 제공 GitHub Release 목록도 비어 있음). (2) package.json/package-lock.json version 모두 0.0.0 이고 최초 커밋 ab700ba 부터 한 번도 증가한 적 없음(최초 커밋의 lock 에는 version 필드 자체가 없었음) — 따르거나 추론할 증가 패턴이 존재하지 않음. (3) git log -60 에 릴리즈 커밋 메시지 양식 없음(유일한 관련 커밋 12c8e8a 는 근거 문서화). (4) CHANGELOG 는 전 이력에서 추가된 적 없음(--diff-filter=A 확인); docs/RELEASE.md 는 릴리즈 노트가 아니라 근거 문서이며 README/01-시작하기의 과거 '0.0.1 / 2025-01-01' 기재는 실제 릴리스 미확인으로 정리돼 이 문서를 가리킴. (5) .github 없음; .gitlab-ci.yml 은 main/develop 브랜치 push 조건으로 npm build 후 서버 디렉터리에 복사하는 브랜치 배포이며 태그·버전 증가·릴리즈 생성·자산 업로드를 정의하지 않음. (6) scripts/·Makefile·릴리즈 검사 스크립트 없음, 과거 릴리즈 자산 없음(assets 는 빈 배열). 절차 5 의 skipped 조건('태그도 버전 파일도 릴리즈 노트도 없음')은 버전 파일(package.json)이 존재하므로 충족하지 않아 skipped 로 기록하지 않았고, docs/RELEASE.md 가 명시한 대로 이 판정을 skipped/released 로 낮추지 않았다. 버전 파일·태그·CHANGELOG·릴리즈 노트·릴리즈 커밋을 일체 만들지 않았고 원격 전송도 하지 않았으며 워크트리는 무변경(clean) 상태다. 진행에 필요한 사람 입력: (1)시작 버전(0.0.1 대 0.1.0)과 증가 단위 (2)태그 형식과 주석 태그 여부 (3)릴리즈 커밋 메시지 양식 (4)릴리즈 노트 위치·양식·언어 (5)GitHub Release 사용 여부. 이 저장소는 태그가 아니라 브랜치 머지로 배포되므로, 버전 릴리즈 관례를 도입할지 자체가 먼저 결정돼야 한다.",
+      "at": "2026-09-23T16:49:06+09:00"
+    }
+  },
+  "provenance": {
+    "model": "claude-opus-5",
+    "policy_version": "ecd4b546e",
+    "prompts_hash": "30c37184f081815d",
+    "runner_version": "ecd4b546e",
+    "base_sha": "38a631112cc33de3fee57323f0c91c8a81e4148d",
+    "head_sha": "3b645d1d5898bc034de2976335a15ade4ed3f5d7",
+    "pr": "https://github.com/hkjang/aiportal-front/pull/25"
+  },
+  "verification": {
+    "runner": {
+      "source": "auto",
+      "commands": [
+        {
+          "cmd": "[ -d node_modules ] || npm ci --no-audit --no-fund",
+          "exit": 0,
+          "seconds": 0
+        },
+        {
+          "cmd": "npm test --silent",
+          "exit": 0,
+          "seconds": 4
+        }
+      ]
+    },
+    "runner_gate": {
+      "ok": true,
+      "state": "verified",
+      "reason": "검증 2개 통과 (auto)"
+    },
+    "after_rebase": null,
+    "review": {
+      "verdict": "approve",
+      "reasons": [],
+      "notes": [
+        "검증 실행: `npx vitest run` 25파일 463테스트 전부 통과(기준선 24/458 + 신규 5). 변이 검증도 직접 했다 — src/App.vue 와 src/utils/globalAlert.js 만 main 으로 되돌리고 tests/unit/globalAlertCallback.spec.js 를 돌리니 5개 중 3개가 실패한다(Escape 로 callback 실행 / 닫힌 뒤 alertCallback===null / callback 이 연 새 Alert 의 callback 보존). 나머지 2개는 확인 버튼 경로 회귀 방지용이라 수정 전에도 통과하는 게 정상이다. 무딘 테스트 아님.",
+        "src/utils/globalAlert.js:36 — alertCallback 이 여전히 export 되지만 프로덕션 소비처는 0곳이다(App.vue:20 에서 빠졌고 grep 결과 나머지 31곳은 openAlert 만 구조분해). 지금은 무해하나, 앞으로 누가 alertCallback 이나 showAlert 를 직접 만져 showAlert.value=false 로 닫으면 closeAlert 를 우회해 callback 이 또 유실된다. 다음 회차에서 export 면을 좁히는 것을 검토할 것.",
+        "callback 이 걸린 호출부는 6곳(회차 노트는 5곳으로 적었다): interceptors.js:164,210,223 과 common.js:587 의 redirectToLogin, PopSimpleBotUpdate.vue:166,172 의 onCancel. 전부 '반드시 일어나야 하는 후속 동작'이 맞아 Escape 로도 실행되는 새 동작이 의미상 안전하다. 세션 만료 알림을 Escape 로 닫아도 이제 로그인으로 보내진다 — 세션 위생 측면에서는 오히려 개선이다(보안 차단 사유 아님).",
+        "Base.vue:46 의 `@:click` 오타 때문에 배경(dim) 클릭은 여전히 닫히지 않는다. 이번 범위 밖이 맞지만, 나중에 그 오타를 고치면 배경 클릭도 closeAlert 로 수렴해 callback 을 실행하게 된다 — 의도된 방향이나 그때 재검증이 필요하다.",
+        "같은 계열의 미수정 결함 2건을 다음 회차 후보로 남긴다: (1) Confirm 은 App.vue:51 에서 여전히 v-model + @primary/@secondary 라 Escape 로 닫으면 cancelAction 이 실행되지 않는다. (2) Base 인스턴스마다 window keydown 리스너를 달아 Escape 한 번에 열려 있는 모든 팝업이 동시에 닫힌다. 둘 다 이번 변경이 만든 것은 아니다.",
+        "src/utils/alerts.js 는 importer 0곳인 죽은 모듈인데 이름이 겹치는 closeAlert 를 export 한다. 앞으로 잘못된 모듈을 import 할 여지가 있어 제거 후보.",
+        "검증 못 한 것: 실제 브라우저의 leave 트랜지션 중 Escape 재입력(jsdom 에서 fade 가 즉시라 재현 불가). 다만 Base.vue:26 이 props.modelValue 를 검사하므로 코드상 재진입 경로는 없다. 범위·되돌리기: 3파일 순수 코드 변경, 마이그레이션·외부 상태 없음, revert 로 완전 복구된다."
+      ],
+      "risk": "low",
+      "blocking": []
+    },
+    "ci_gate": {
+      "ok": false,
+      "state": "no-ci",
+      "reason": "이 커밋에 검사가 없음 (정책 allow_merge_without_ci 가 없으면 차단)",
+      "checks": 0
+    }
+  },
+  "release": {
+    "result": {
+      "status": "failed",
+      "version": "",
+      "tag": "",
+      "title": "",
+      "notes_file": "",
+      "github_release": false,
+      "assets": [],
+      "reason": "릴리즈 관례 미확인으로 진입 조건 미충족(12회째). 이번 회차에 직접 재조회한 근거: (1) git tag 0개이며 remote.origin.tagOpt 미설정 + is-shallow-repository=false 이므로 태그가 실제로 없음(ls-remote 는 자격증명 없음으로 조회 불가, 러너 제공 GitHub Release 목록도 비어 있음). (2) package.json/package-lock.json version 모두 0.0.0 이고 최초 커밋 ab700ba 부터 한 번도 증가한 적 없음(최초 커밋의 lock 에는 version 필드 자체가 없었음) — 따르거나 추론할 증가 패턴이 존재하지 않음. (3) git log -60 에 릴리즈 커밋 메시지 양식 없음(유일한 관련 커밋 12c8e8a 는 근거 문서화). (4) CHANGELOG 는 전 이력에서 추가된 적 없음(--diff-filter=A 확인); docs/RELEASE.md 는 릴리즈 노트가 아니라 근거 문서이며 README/01-시작하기의 과거 '0.0.1 / 2025-01-01' 기재는 실제 릴리스 미확인으로 정리돼 이 문서를 가리킴. (5) .github 없음; .gitlab-ci.yml 은 main/develop 브랜치 push 조건으로 npm build 후 서버 디렉터리에 복사하는 브랜치 배포이며 태그·버전 증가·릴리즈 생성·자산 업로드를 정의하지 않음. (6) scripts/·Makefile·릴리즈 검사 스크립트 없음, 과거 릴리즈 자산 없음(assets 는 빈 배열). 절차 5 의 skipped 조건('태그도 버전 파일도 릴리즈 노트도 없음')은 버전 파일(package.json)이 존재하므로 충족하지 않아 skipped 로 기록하지 않았고, docs/RELEASE.md 가 명시한 대로 이 판정을 skipped/released 로 낮추지 않았다. 버전 파일·태그·CHANGELOG·릴리즈 노트·릴리즈 커밋을 일체 만들지 않았고 원격 전송도 하지 않았으며 워크트리는 무변경(clean) 상태다. 진행에 필요한 사람 입력: (1)시작 버전(0.0.1 대 0.1.0)과 증가 단위 (2)태그 형식과 주석 태그 여부 (3)릴리즈 커밋 메시지 양식 (4)릴리즈 노트 위치·양식·언어 (5)GitHub Release 사용 여부. 이 저장소는 태그가 아니라 브랜치 머지로 배포되므로, 버전 릴리즈 관례를 도입할지 자체가 먼저 결정돼야 한다."
+    },
+    "assets_sha256": []
+  },
+  "approval": null,
+  "usage": [
+    {
+      "ts": "2026-09-23T16:38:56+09:00",
+      "date": "2026-09-23",
+      "project": "aiportal-front",
+      "phase": "scout",
+      "run_id": "2026-09-23-163413-aiportal-front-improve",
+      "campaign": "",
+      "subtype": "error_max_budget_usd",
+      "duration_ms": 296696,
+      "num_turns": 33,
+      "cost_usd": 2.0263590000000002,
+      "input_tokens": 42,
+      "output_tokens": 21709,
+      "cache_read": 1346647,
+      "cache_create": 73495
+    },
+    {
+      "ts": "2026-09-23T16:44:22+09:00",
+      "date": "2026-09-23",
+      "project": "aiportal-front",
+      "phase": "improve",
+      "run_id": "2026-09-23-163413-aiportal-front-improve",
+      "campaign": "",
+      "subtype": "success",
+      "duration_ms": 349318,
+      "num_turns": 36,
+      "cost_usd": 2.124883,
+      "input_tokens": 56,
+      "output_tokens": 20930,
+      "cache_read": 1798926,
+      "cache_create": 70189
+    },
+    {
+      "ts": "2026-09-23T16:46:39+09:00",
+      "date": "2026-09-23",
+      "project": "aiportal-front",
+      "phase": "review",
+      "run_id": "2026-09-23-163413-aiportal-front-improve",
+      "campaign": "",
+      "subtype": "success",
+      "duration_ms": 139044,
+      "num_turns": 21,
+      "cost_usd": 0.9631274999999999,
+      "input_tokens": 26,
+      "output_tokens": 9494,
+      "cache_read": 583975,
+      "cache_create": 43366
+    },
+    {
+      "ts": "2026-09-23T16:49:06+09:00",
+      "date": "2026-09-23",
+      "project": "aiportal-front",
+      "phase": "release",
+      "run_id": "2026-09-23-163413-aiportal-front-improve",
+      "campaign": "",
+      "subtype": "success",
+      "duration_ms": 102872,
+      "num_turns": 16,
+      "cost_usd": 0.7715574999999999,
+      "input_tokens": 18,
+      "output_tokens": 7926,
+      "cache_read": 371875,
+      "cache_create": 38738
+    }
+  ]
+}

@@ -1,0 +1,27 @@
+# aiportal-front 프로필 (2026-09-24)
+- 목적: 사내 AI 포털 SPA; 채팅·업무 앱(심플봇)·OCR·STT·공유·게시판(공지/자료실/요청)·문서 뷰어 제공.
+- 스택: JavaScript ESM, Vue 3.5, Vite 7, Pinia 3, vue-router 4, axios, Vitest 4/jsdom + @vue/test-utils. 백엔드는 별도 저장소(이 저장소에 없음).
+- 구조:
+  - `src/api/`: `interface.js` 가 Java 백엔드를 `inf.<도메인>.<이름>.call(...)` 로 선언(`:93` board, `:106` library — **request 도메인은 없다**). `pythonInterface.js` 는 같은 `createInstance('/papi', …)`(`:8`)를 쓰므로 인터셉터 동작이 `inf` 와 동일하다. `common/interceptors.js` 가 공통 오류를 처리하고 `Promise.reject('COM')` 으로 던진다.
+  - `src/storage/`: 인증·사용자·채팅·앱·OCR 캐시(localStorage/sessionStorage 래퍼) + `ocrStatusCheckStore`(폴링).
+  - `src/stores/`(pinia 8종), `src/composables/`(2종), `src/utils/`(22종 — `common.js` 에 `isSuccess`(:55)·`toast`, 파일 정책·날짜·마크다운·전역 로딩/알림/토스트·이벤트버스·`page.js`(`usePaging`)).
+  - `src/views/`(Notice/Library/Request 게시판 3형제, Support/{Ocr,Stt,Img}, Chat, Favorite 등), `src/components/{common,layout}/`, `src/router/index.js`(게시판 경로 `:53,80,83`).
+  - 전역 팝업은 `src/components/common/popup/Global/` + `App.vue` 의 `Teleport` 한곳(Alert·Confirm·Loading·PopEditApp·PopSimpleBot·PopSimpleBotUpdate·ToastManager).
+  - `src/components/layout/Sidemenu.vue`(약 760줄)가 앱 목록 + 대화 이력 + 드롭다운을 모두 들고 있는 가장 큰 레이아웃 컴포넌트이자 **API 실패 처리의 표준형 보관소**.
+  - `tests/unit/`: 33개 spec. `docs/`: 가이드 11편 + `RELEASE.md`(릴리즈 근거 문서). `.ipynb_checkpoints` 에 중복본 존재.
+- 빌드·테스트: `npm ci`(**node_modules 가 비어 있다 — 선행 필수, 수 분**) → `npm test`(**기준선 33파일 534테스트**) → `npm run build:dev`(후 `dist/` 삭제). 모드별 `build:core/ofc/int/*_dev` 존재. **`npm run build` · `npm run lint` 는 없다.** 단일 스펙은 `npx vitest run tests/unit/<file>`.
+- 관례: 한국어 `fix:`/`feat:`/`docs:`/`test:` 커밋 + merge PR. `@` alias, 모드별 `.env`. API 호출부 표준형: `const res = await inf.X.Y.call(...)` → `if (!isSuccess(res)) { 안내; return }` → `catch(e){ if (e !== 'COM') 안내 }` → `finally { stopLoading() }`.
+  - **안내 수단의 확정된 구분**: 상세 조회 실패 = `openAlert`(`SupportOcrDetail.getOcrs:40-42,55-56`, 게시판 상세 3형제 a6ed70e). 목록 조회 실패 = `toast`(`Sidemenu.fetchAppList:207-211,231-234`, `getHistoryList:409-423`). 문구 양식: 업무 실패 `res?.data?.message || '<대상> 조회에 실패하였습니다.'` / 예외 `'<대상> 조회 중 오류가 발생하였습니다.'`
+- 위험 구역: `src/api/common/interceptors.js`, `src/api/auth.js`, `src/storage/{authStorage,userStorage}`, `src/router`, `src/utils/page.js`(여러 화면 공유), Chat 스트리밍·탭 동기화. `.gitlab-ci.yml` 은 **배포 전용**(테스트 단계 없음): 12개 job 전부 `CI_COMMIT_BRANCH == main|develop` 조건, 고정 빌드 디렉터리에서 `git fetch/reset --hard` → `npm run build:*` → `cp -rf dist/* <DEPLOY_DIR>`. **태그 규칙 0줄**(`CI_COMMIT_TAG` `grep -c` = 0; 파일 내 `tags:` 는 GitLab Runner 태그).
+- 자주 깨지는 곳:
+  - **업무 실패(`isSuccess` false) 경로의 안내 누락** — 이 저장소 결함의 대부분. 인터셉터는 세션 만료(`:223`), `status != 200 && code == 'BZ01'`(`:228-236`), axios 에러 + `BZ01` + `!url.includes('/app/simple')`(`:319-322`) 세 곳에서만 'COM' 을 던지므로 **HTTP 200 + 실패 코드는 화면까지 도달한다**.
+  - 실패가 **사실 진술처럼 보이는 빈 화면**으로 감춰지는 형태: Nodata 문구(`NoticeList:133` '공지사항이 없습니다' / `LibraryList:131` '등록된 자료가 없습니다' / `RequestList:261` '조회 내용이 없습니다')와 상세 자리표시자. **잔존: 목록 3형제의 `getBoardList`** (`NoticeList:46` / `LibraryList:45` / `RequestList:132` — `isSuccess` 검사 없음 + `catch` 가 'COM' 가드 뒤 목록만 비움).
+  - `catch` 의 `if (e == 'COM') return` 가드 누락/위치 오류로 전역 Alert 과 토스트가 겹치는 자리.
+  - `catch (e) {}` 로 예외를 완전히 삼키는 보조 호출(`PopSimpleBot.vue:542,563`, `PopSimpleBotUpdate.vue:649`, `onToggleFav` 3곳).
+  - **형제 경로 비대칭** — 같은 실패를 한쪽만 고쳐 다르게 처리하는 형태. 고칠 때는 3형제/2형제를 한 번에 볼 것.
+  - 캐시 값이 배열이 아닐 때, `serviceCode` 비교, 비동기 조회 `await` 누락, 전역 스피너 start/stop 짝, 팝업 닫힘 경로(Escape/배경 클릭)의 콜백 유실.
+  - **무효 변경**(관측 가능한 동작 변화 0)을 과제서 지시대로 넣었다가 비평에서 걸리는 일이 2회차 연속 발생 — 줄을 넣기 전에 **빼고 돌려 실패하는 케이스가 있는지** 확인할 것.
+  - 릴리즈는 정책 결손으로 **20회 연속 no-change**(이번이 21회째).
+- 검증 함정: `vitest.config.js` 에 `@vitejs/plugin-vue` 가 연결돼 있어 **`.vue` 를 실제로 마운트해 검증한다**. 정착된 증명 형태 = HTTP 전송(axios adapter) 한 겹만 대역 + 실제 `interceptors.js` → 실제 `inf`/`pInf` `.call` → 실제 컴포넌트(`boardDetailFailure.spec.js`, `sidemenuHistoryFailure.spec.js`, `simpleBotCreateCommonError.spec.js`, `shareAppCommonError.spec.js`). 모듈 로드 전에 `vi.stubEnv('VITE_BACKEND_API_TARGET'/'VITE_PYTHON_API_TARGET', …)` 필수(없으면 `api/index.js:16` 이 던진다). **'COM' 을 만드는 검증된 대역 응답: `{ status: 204, data: { code: 'BZ01', message: '…' } }`**. `restoreMocks: true` 지만 전역 로딩/알림/토스트는 모듈 싱글턴이라 케이스마다 정리 필요. 라우터 params 의존 화면(`LibraryList` `route.params.type`, 상세 3형제 `boardId`)은 메모리 라우터로 실제 경로를 push 해야 요청이 제대로 나간다. `RequestList` 는 `readUser()` 가 없으면 `creatorId` 가 빈다. 애니메이션·폴링은 `setInterval` 기반이라 즉시 resolve 대역으로는 결함이 안 드러난다.
+- CI/릴리즈 근거: `.github` 디렉터리 자체가 없다(GitHub Actions 0개). `git tag -l | wc -l`=0, `is-shallow-repository`=false, `package.json:3` version `0.0.0`(lock name `kcb_ai`), `CHANGELOG.md`/`VERSION`/`scripts/`/`Makefile` 없음 → 릴리즈 관례를 정할 입력이 저장소에 없다. `docs/RELEASE.md` 는 근거 문서이지 증가 정책이 아니며(`:3`, `:83`, `:84`), 버전 파일이 존재하므로 외부 절차의 `skipped` 조건도 충족하지 않는다. 필요한 사람 입력 4가지: 첫 릴리즈 버전 / 태그 형식·주석 태그 / 릴리즈 노트 위치·양식·언어 / GitHub Release 사용 여부.
+- 기준: HEAD **8f11ecb**(main 머지), 작업 트리 무변경(`git status --porcelain` 무출력). `CLAUDE.md` 없음(`AGENTS.md` 가 대신).

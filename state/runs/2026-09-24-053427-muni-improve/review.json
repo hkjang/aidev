@@ -1,0 +1,16 @@
+{
+  "verdict": "reject",
+  "reasons": [
+    "internal/httpapi/handoff.go:181 [P1] receiveHandoff가 handoff.Fetch 오류 문자열을 그대로 경고 로그에 기록한다. internal/handoff/handoff.go:275는 client.Do의 *url.Error를 그대로 포함하므로 연결 거부·TLS 실패 시 요청 URL의 비밀 claim 원문이 로그에 노출된다. 실제 Fetch 코드를 임시 디렉터리에 복사하고 실패 RoundTripper로 실행해 합성 claim이 오류에 포함됨을 재현했다. 원본 서버에 도달하지 않은 claim은 여전히 유효하므로 로그 열람자는 5분 이내 원본의 /api/v1/handoff/claims/{claim}에 접근해 문서를 탈취할 수 있다. 요청 URL과 claim을 제거한 구조화된 오류만 기록하고, 실패 경로에서 로그에 claim이 없음을 검증해야 한다."
+  ],
+  "notes": [
+    "실제 main은 1045e13이며 main...HEAD는 49개 파일이다. 회차 노트의 pinned base b40de35와 다르다. 위 결함은 요청된 main...HEAD에 포함된 handoff 변경의 결함이며, b40de35...HEAD의 최신 0864ae7 파일 이름 수정이 도입한 결함은 아니다. Git ref는 변경하지 않았다.",
+    "파일 이름 수정의 경계·빈 값·치환·폴더 보호와 신규 테스트 단언을 확인했다. 관련 단위 테스트 및 internal/handoff 전체 테스트 통과, diff --check 통과. 신규 live 테스트 2개는 MUNI_TEST_DSN 미설정으로 SKIP. 전체 Go·프런트·실제 브라우저 다운로드·DB 마이그레이션 실행 검증은 하지 않았다.",
+    "urlPathEscape가 한글을 그대로 두는 Content-Disposition 파싱 문제는 기존 결함이며 이번 파일 이름 수정의 거절 사유로 삼지 않았다. 새 테스트도 헤더의 표준 파싱 성공을 보장하지 않는다.",
+    "최신 수정에는 의존성·권한·DB 변경이 없다. 전체 main diff에는 추가형 마이그레이션 017·018이 있으며 코드 revert만으로 추가 컬럼·테이블이 제거되지는 않는다. 기존 작업 트리의 webui/dist/index.html 수정은 건드리지 않았다."
+  ],
+  "risk": "high",
+  "blocking": [
+    "security"
+  ]
+}

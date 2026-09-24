@@ -1,0 +1,11 @@
+## 2026-09-23
+- 선택: 전역 Confirm 을 Escape 로 닫으면 취소 동작(cancelAction)이 유실되는 문제 수정 (가치 4 / 위험 2 / 작업량 M)
+- 결과: 성공
+- 요약: `Base.vue:25-30` 이 window keydown(Escape) 에서 `update:modelValue` 로만 닫힘을 알리는데 `Confirm.vue:33` 이 이를 그대로 부모에 넘겨 `App.vue:51` 의 `v-model` 이 `confirmStore.visible` 만 false 로 만들었고, `@secondary` 에 걸린 `cancelAction` 은 한 번도 실행되지 않았다 — `Chat/Main.vue:910` / `Chat/Index.vue:307` 의 base64 붙여넣기 취소 처리(텍스트만 남기고 base64 제거)가 통째로 유실되며, 이 경로는 `Main.vue:836` 에서 `event.preventDefault()` 를 먼저 하므로 사용자가 붙여넣은 텍스트가 그대로 사라진다. Base 의 닫힘(Escape/배경 클릭/헤더 X)을 '취소' 로 처리하는 `onBaseClose` 를 두고, 동작이 새 팝업을 열어도 뒤따르는 닫힘 emit 이 그 팝업을 지우지 않도록 `onPrimary`/`onSecondary` 의 emit 순서를 닫힘 먼저로 바꿨다(App.vue 는 무변경). 검증: 실제 `App.vue` 를 pinia + RouterView 스텁으로 마운트해 실제 `useConfirmStore.open()` 을 호출하고 실제 DOM 이벤트(버튼 click, window keydown{Escape})로 닫는 신규 스펙 8케이스가 수정 전 5건 실패(Red) → 수정 후 전부 통과. 변이 2건으로 인과를 분리 증명했다: ①`onBaseClose` 배선만 되돌리면 Escape 관련 3건 실패 ②버튼 emit 순서만 되돌리면 재진입 3건 실패. `npm test` 26파일 471테스트 통과(기준선 25/463), `npm run build:dev` 통과 후 `dist/` 삭제.
+- 우선 과제(릴리즈): 진입 조건 미충족으로 무변경(12회째). 이번 회차에 직접 재확인한 근거 — `git tag` 0개, `package.json` version=0.0.0, `.github` 디렉터리 없음. 버전 파일·태그·CHANGELOG·릴리즈 노트·릴리즈 커밋·원격 전송을 일체 하지 않았고 `docs/RELEASE.md` 도 건드리지 않았다. 판정을 skipped/released 로 낮추지 않는다. 필요한 사람 입력: ①시작 버전(0.0.1 대 0.1.0)과 증가 단위 ②태그 형식·주석 태그 여부 ③릴리즈 커밋 메시지 양식 ④릴리즈 노트 위치·양식·언어 ⑤GitHub Release 사용 여부. 이 저장소는 태그가 아니라 브랜치 머지로 배포되므로 버전 릴리즈 관례를 도입할지 자체가 먼저 결정돼야 한다.
+- 보류 아이디어: [수정 과제] 릴리즈 버전 결정 입력 복구 — pending(12회째, 진입 조건 미충족).
+  - 릴리즈 절차 교착을 사람에게 에스컬레이션 — pending; 수정 지점이 워크트리 밖(외부 aidev 절차)이라 저장소 안에 합법적 수단이 없다.
+  - `Base.vue:46` 의 `@:click` 오타로 배경 클릭 닫기가 동작하지 않음 — pending; 이번 수정으로 Confirm 은 배경 클릭이 살아나도 취소가 정상 실행되는 상태가 됐으나, 오타 수정 자체는 Base 를 쓰는 모든 팝업에 영향이 있어 기대 계약 확인이 선행.
+  - `src/utils/alerts.js` 죽은 중복 모듈 제거 — pending; 관측 가능한 동작 변화가 없어 1순위가 성립한 이번 회차에는 하지 않았다.
+  - globalLoading 참조 카운트 — pending; `loading.vue` 의 60초 자동 해제가 카운터를 되돌리지 않는 문제가 남아 선행 조건 미충족.
+- 과제서: 채택 — A(릴리즈)는 지시대로 재조사 없이 무변경으로 두고, 보류 목록의 1순위(Confirm 의 Escape 취소 유실)를 구현했다. 과제서가 선행이라던 "confirmStore 의 Promise 해제 방식 확인" 은 실제로는 Promise 가 없고 콜백 기반(`useConfirmStore.js:8-11`)임을 읽어 확인했으며, 그 과정에서 같은 계열의 재진입 결함(동작이 새 팝업을 열면 뒤따르는 닫힘 emit 이 지워버림)을 버튼 경로에서도 테스트로 잡아 함께 고쳤다.

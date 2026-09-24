@@ -238,3 +238,10 @@
 - 검증 근거: impl-checks.log, pdf-verification.txt, pdf-page-15.png, pdf-page-25.png, pdf-cover.png. PDF는 27쪽·표지 v2.11.4·전체 내장 이미지 바이트·URI 링크를 유지한다. 공용 변환기가 표지 작성일만 2026-09-21에서 2026-09-22로 갱신했다.
 - 검증 한계: Go/Vitest/E2E·실제 DB/Keycloak·웹 요약 브라우저 렌더링은 실행하지 않았다. 문서만 변경하여 지정 계약 검사와 PDF 검증을 수행했으며 제품 코드·캡처·ADMIN_GUIDE·내장 가이드·버전·릴리즈·원격은 변경하지 않았다. fitz 사용 시 deprecated 경고 1건이 있었고 후속 렌더링은 pymupdf로 정상 수행했다.
 
+## 2026-09-23
+- 선택: 즐겨찾기 화면의 앱 개수와 페이지 탐색을 즐겨찾기 기준으로 맞추기 (가치 3 / 위험 1 / 작업량 S)
+- 결과: 성공
+- 요약: `/favorites` 는 공개 카탈로그 한 페이지를 브라우저 localStorage 의 slug 로 걸러 그리면서 개수 문구와 페이지 탐색만 서버의 카탈로그 전체 `total` 을 읽어, 즐겨찾기 2개인 사용자가 "137개 앱" 을 읽고 100개 초과 설치에서는 아무 즐겨찾기도 없는 2페이지로 가는 "다음" 버튼을 보았다. `public-pages.tsx` 에서 개수를 `favoritesOnly ? filtered.length : apps.data.total` 로 바꾸고 페이지 nav 조건에 `!favoritesOnly` 를 더했으며(로딩 문구·EmptyState·쿼리 키·일반 뷰는 그대로), Vitest 4건(즐겨찾기 개수·로딩 문구 유지·nav 없음·일반 카탈로그 회귀)과 실제 번들 Playwright 1건을 먼저 써 수정 전 실패를 확인했다. 두 수정을 각각 되돌려 해당 테스트만 다시 실패하는 것까지 확인했고 `npm --prefix web test` 69건(기준선 65 + 4)·lint·prettier·build·check-offline-assets·`go build ./cmd/server`·`CI=true npm run test:e2e` 73 passed/1 skipped(기존 모바일 전용 제외) 모두 exit 0 후 0898f7a 로 커밋했다.
+- 보류 아이디어: 상위 100개 밖 즐겨찾기가 /favorites 에 아예 안 보임 (3/3/M) — 서버 slug 필터 API 나 다중 페이지 조회가 필요해 공개 API 계약 변경 수반 · E2E mock API 의 public config override 가 기본값에 덮여 무효 (2/1/S, mock-api.ts:307-318) · /favorites 의 검색·정렬이 전체 카탈로그를 대상으로 동작해 검색어를 넣으면 즐겨찾기가 사라진 것처럼 보임 (2/2/M) · clientAddress 가 RemoteAddr 만 보아 reverse proxy 뒤에서 rate limit 이 전역 (3/3/M) · 로그인 방식이 모두 없는 설치의 브라우저 안내 검증 (2/1/S)
+- 과제서: 채택 — 과제서가 지목한 `public-pages.tsx:357`·`:406` 이 현재 코드와 정확히 일치했고 수용 기준 4건을 그대로 구현했으며, 선택 사항이던 `/favorites` E2E 1건도 더해 production 번들에서 수정 전 실패(desktop·mobile)와 수정 후 통과를 확인했다.
+

@@ -1,0 +1,52 @@
+{
+  "base": {
+    "state": "pinned",
+    "reason": "main@0031fde",
+    "at": "2026-09-24T03:04:30+09:00"
+  },
+  "autonomy": {
+    "state": "release",
+    "reason": "",
+    "at": "2026-09-24T03:04:30+09:00"
+  },
+  "scout": {
+    "state": "done",
+    "reason": "즐겨찾기 화면의 카드 설정(더보기) 팝업이 **빈 상자로 뜨고 아무 동작도 하지 않는** 문제 수정 (가치 4 / ",
+    "at": "2026-09-24T03:09:30+09:00"
+  },
+  "brief": {
+    "state": "fallback",
+    "reason": "차선 — A(릴리즈)는 지시대로 무변경. B(즐겨찾기 ButtonSetting)는 **근거가 지금 코드와 맞지 않아 기각**했다: 과제서가 인�",
+    "at": "2026-09-24T03:16:23+09:00"
+  },
+  "verify": {
+    "state": "passed",
+    "reason": "검증 2개 통과 (auto)",
+    "at": "2026-09-24T03:16:31+09:00"
+  },
+  "review": {
+    "state": "approved",
+    "reason": "리뷰 승인 (risk=low)",
+    "at": "2026-09-24T03:19:03+09:00"
+  },
+  "pr": {
+    "state": "created",
+    "reason": "https://github.com/hkjang/aiportal-front/pull/32",
+    "at": "2026-09-24T03:19:11+09:00"
+  },
+  "ci": {
+    "state": "passed",
+    "reason": "검사 없음 — 정책으로 허용",
+    "at": "2026-09-24T03:19:41+09:00"
+  },
+  "merge": {
+    "state": "done",
+    "reason": "ca204b07af944b81b20573409db4ab00dc4f28c1",
+    "at": "2026-09-24T03:19:43+09:00"
+  },
+  "release": {
+    "state": "failed",
+    "reason": "릴리즈 안 함: 다음 버전을 결정할 입력이 저장소에 없어 릴리즈 진입 조건을 충족하지 못했다(20회째 동일 원인). 이번 회차 워크트리 HEAD fb38bdd(git status --porcelain 출력 없음)에서 직접 재조회한 근거: (1) `git tag --sort=-creatordate` 0개이고 `git for-each-ref refs/tags` 0줄, .git/packed-refs 에 refs/tags 0개, `remote.origin.tagOpt` 미설정, `git rev-parse --is-shallow-repository`=false — 태그가 fetch 에서 누락된 것이 아니라 실제로 존재한 적이 없다. 따라서 태그 형식(v 접두사 유무)·주석 태그 여부를 확정할 전례가 없다. (2) package.json version=0.0.0, package-lock.json 의 루트 version 과 packages[\"\"].version 모두 0.0.0 이며, 최초 커밋 ab700ba 의 package.json 도 0.0.0(당시 package-lock.json 에는 version 필드 자체가 없음). package.json/package-lock.json 을 건드린 커밋 4개(43ed569, 27e86f9, a7fcddd, ab700ba)는 전부 의존성·테스트 설정 변경이고 버전 증가 커밋이 아니다. 즉 62개 커밋 전체에서 버전이 한 번도 올라간 적이 없어 증가 단위(patch/minor) 패턴이 존재하지 않는다. (3) CHANGELOG.md 및 릴리즈 노트 파일 없음. docs/RELEASE.md 는 스스로 '릴리즈 노트나 새 릴리즈 정책이 아니며 다음 버전·태그·릴리즈 커밋 관례를 정하지 않는다' 고 명시하고, '현재 근거로 임의 패치 증가나 새 관례를 만들지 않는다' 고 결론짓는다. README.md 의 버전 기록 절도 이 문서로 위임되어 있으며, 최초 커밋 문서의 '0.0.1 / 2025-01-01 / 초기 릴리스' 기재는 실제 릴리스가 확인되지 않은 문서 기재다(그래서 0.0.1 로 올리는 것도 '초기 릴리스' 기재와 모순되어 근거가 되지 못한다). (4) `git log --oneline -80` 에 릴리즈 커밋 메시지 양식 없음(유일한 관련 커밋 12c8e8a 는 docs 커밋). (5) 배포 자동화는 .gitlab-ci.yml 뿐이고 `$CI_COMMIT_BRANCH == \"main\"`/develop 조건으로 고정 빌드 디렉터리에서 npm 빌드 후 산출물을 서버 디렉터리에 복사한다 — CI_COMMIT_TAG 참조가 전혀 없어 태그·버전 기반 릴리즈 트리거가 아니다. .github/workflows 디렉터리 자체가 없고, 러너가 미리 가져온 GitHub Release 목록도 비어 있다. (6) scripts/ 디렉터리·Makefile 없음, package.json scripts 에 release/version/changelog 타깃 없음 — 자산 생성 스크립트도 릴리즈 전 검사 스크립트도 존재하지 않는다. 따라서 assets 는 빈 배열이다. 절차 5 의 skipped 조건('태그도, 버전 파일도, 릴리즈 노트도 없음')은 package.json 이라는 버전 파일이 존재하므로 충족하지 않아 skipped 로 낮추지 않았고, 절차 2 가 요구하는 '최근 릴리즈들의 증가 패턴' 은 과거 릴리즈가 0건이라 도출 자체가 불가능하다. 저장소에 버전 파일·태그·릴리즈 노트·릴리즈 커밋을 일체 만들지 않았고 워크트리는 작업 시작 시점과 동일하게 깨끗하다. 참고로 형제 저장소 aiportal-front-admin 은 v0.1.1/v0.1.2 로 릴리즈한 이력이 있으나 별개 저장소의 관례이므로 이 저장소에 이식하면 승인되지 않은 새 관례를 만드는 것이라 사용하지 않았다. **사람의 결정이 필요한 에스컬레이션(20회 연속 동일 교착, 저장소 안에 해결 수단 없음)**: 이 저장소의 첫 릴리즈 버전(예: 0.0.1 / 0.1.0 / 1.0.0 중 무엇), 태그 형식과 주석 태그 사용 여부, 릴리즈 노트의 위치·양식·언어, GitHub Release 사용 여부 — 이 4가지를 한 번만 정해 주면(예: docs/RELEASE.md 에 승인된 증가 정책으로 추가하거나 사람이 직접 첫 태그를 하나 만들어 주면) 이후 회차는 그 전례를 따라 자동으로 진행할 수 있다. 현재 GitLab CI 가 main 머지 시점에 이미 배포하고 있어 버전 릴리즈 없이도 서비스는 나가고 있으므로, 버전 체계 도입 여부 자체가 제품 판단이다.",
+    "at": "2026-09-24T03:21:32+09:00"
+  }
+}

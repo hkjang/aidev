@@ -1,0 +1,65 @@
+[
+  {
+    "title": "체크포인트가 untracked 파일을 담지 못함 — 임시 index 스냅샷으로 교체 + 첫 테스트",
+    "value": 5,
+    "risk": 2,
+    "size": "M",
+    "status": "done",
+    "note": "createCheckpoint의 `git stash create`를 GIT_INDEX_FILE 임시 index(read-tree→add -A→write-tree→commit-tree)로 교체. 고치기 전 실제 git 2.43에서 untracked 누락을 재현했고, 복원 블록을 git diff/git checkout -- . 로 교체(스냅샷 커밋은 stash 형식이 아니라 `git stash apply`가 'is not a stash-like commit'으로 거부). 커밋 없는 저장소는 부모 없는 커밋으로 처리. tests/unit/checkpoints.test.ts 9개 신규(진짜 임시 git 저장소). npm run check 통과.",
+    "updated": "2026-09-23"
+  },
+  {
+    "title": "plans.ts(523줄, 테스트 0개) 순수 함수 테스트 보강",
+    "value": 3,
+    "risk": 1,
+    "size": "M",
+    "status": "pending",
+    "note": "selectPlanName(.active-plan 포인터가 없음/깨짐/존재하지 않는 파일 지목), planMeta, sortByPriority(P0~P3+미지정), linkedPlans, openPlanItems. 저장소에서 가장 큰 파일인데 단위 테스트가 하나도 없다. 이번 회차의 차선 후보였고 그대로 유효하다.",
+    "updated": "2026-09-23"
+  },
+  {
+    "title": "computeGoalMetrics가 exitCode 없는 검증 항목을 통과로 집계",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "src/features/goal-metrics.ts:51 — num(undefined)=0 이라 details.exitCode 가 아예 없는 runVerification 항목이 통과로 계산되고 실패 목록에도 안 잡힌다. null 은 방어되어 있으나 undefined 는 아니다. 실제 감사 로그에 그런 줄이 나오는지 먼저 확인해야 하므로(미확인) 가치를 낮게 잡음.",
+    "updated": "2026-09-23"
+  },
+  {
+    "title": "vibe-coders-proxy.ts(356줄) provider 저장/복원 경로 테스트",
+    "value": 3,
+    "risk": 2,
+    "size": "M",
+    "status": "pending",
+    "note": "사용자 provider 설정을 덮어쓰는 기능인데 테스트가 없다. 다만 vscode 설정 API 의존이 커서 스텁 확장이 필요하고, 대역 위주 테스트가 되기 쉬워(운영자 지침에 걸림) 우선순위를 낮춤.",
+    "updated": "2026-09-23"
+  },
+  {
+    "title": "체크포인트 설명 문구(package.nls.json / ko / 문서) 정정",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "done",
+    "note": "1번 과제의 수용 기준으로 흡수해 함께 처리. package.nls.json, package.nls.ko.json 의 settings.checkpointBeforeDestructive.description 과 docs/autonomous-goal-workflow.md:145 를 '추적 파일의 미커밋 변경 + 미추적 파일(.gitignore 제외분 제외)' 문구로 고쳤다. 설정 키 이름은 그대로. changelog.md 의 1.4.0 항목은 릴리즈 기록이라 건드리지 않았다.",
+    "updated": "2026-09-23"
+  },
+  {
+    "title": "createCheckpoint의 catch가 스냅샷 생성 후 실패를 '저장소 아님'으로 뭉갠다",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "update-ref 가 실패하면 commit 은 이미 할당됐는데 note 는 'git 저장소가 아니어서...' 가 된다(이번 교체 이전부터 있던 모양). 노트 본문은 `commit && ref` 로 막혀 있어 사용자에게 틀린 복원 명령이 보이지는 않지만, writeAudit 의 details 에 commit 과 어긋난 note 가 함께 들어간다. catch 에서 commit/ref 를 되돌리거나 단계를 나누면 된다. 이번에는 증명된 재현이 없어 손대지 않았다.",
+    "updated": "2026-09-23"
+  },
+  {
+    "title": "거대한 untracked 디렉터리에서 동기 `git add -A` 지연 측정과 가드",
+    "value": 2,
+    "risk": 2,
+    "size": "M",
+    "status": "pending",
+    "note": "checkpointBeforeCommand 는 명령 승인 훅에서 동기로 돈다. 이번 변경으로 스냅샷이 untracked 파일까지 훑으므로, .gitignore 에 걸리지 않은 대형 디렉터리(빌드 산출물 등)가 있는 워크스페이스에서는 `git stash create` 때보다 느려질 수 있다. 실제 지연을 재 본 적이 없으므로(미확인) 먼저 측정하고, 필요하면 임계치나 타임아웃을 붙일 것.",
+    "updated": "2026-09-23"
+  }
+]

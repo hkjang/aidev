@@ -1,0 +1,6 @@
+## 2026-09-23
+- 선택: 법령 뷰어에서 표 뒤 본문이 표 블록으로 흡수되는 문제 수정 (감사 A-118) (가치 3 / 위험 1 / 작업량 S)
+- 결과: 성공
+- 요약: `util/text_renderer.wrap_preformatted` 는 표 뒤 비-box 줄이 5줄 모일 때마다 섹션 표시(`##`·`**제n조**`)가 없으면 공백 줄을 버리고 나머지를 `box_buffer` 에 덧붙여, `POST /read_law_markdown` 뷰어에서 별표 비고·해설이 고정폭 `<ht0 style="white-space: pre">` 블록 안으로 들어가고 문단 구분이 사라졌다(실제 호출로 재현 — 수정 전 `비고`·번호 목록이 블록 안팎으로 쪼개짐). 간격이 5줄에 이르면 표가 끝난 것으로 보고 `_flush_box()` 후 간격 줄을 공백 줄까지 그대로 내보내도록 그 분기만 바꿨고, 짧은 간격 흡수·`_should_flush_gap`·임계값 5·정규식은 유지했다. 검증은 `wrap_preformatted` 를 실제 호출하는 회귀 4건(본문이 블록 밖, 빈 줄 보존, 태그 제거 시 원문 동일, 긴 간격이 두 표를 분리)으로 했고 수정 전 4건 모두 실패·기존 11건 통과 → 수정 후 15건 통과를 확인했으며, `git show HEAD:util/text_renderer.py` 로 옛 구현을 불러 같은 입력의 잘못된 출력을 나란히 확인했다. 전체 `python3 -m pytest -q` 1079 passed(기존 1075), 변경 파일 pyflakes·`git diff --check` 통과. 커밋 `aef822c`.
+- 보류 아이디어: 법령 일반 XML fixture·formatter 회귀 확대 (가치 3 / 위험 1 / M) / CODEBASE_MAP·DEVELOPMENT 의 테스트 부재 서술 정정 (가치 2 / 위험 1 / S) / `process_feedback_single` policy token 부재 사전검사 (가치 2 / 위험 2 / S) / executor 피드백 배치 shutdown 시 행 사이 중단 요청 (가치 2 / 위험 2 / M) / `<ht1>` 하이라이트가 붙은 표 첫 줄이 box 판정에서 제외되는 문제 확인 (가치 3 / 위험 2 / S)
+- 과제서: 채택 — 정찰이 지목한 `util/text_renderer.py` 의 5줄 간격 흡수 결함이 실제 호출로 재현되어 그 분기만 최소 수정했다(정찰 노트만 있고 과제서 파일은 없었음).

@@ -1,0 +1,265 @@
+{
+  "run_id": "2026-09-23-095418-aiportal-front-improve",
+  "generated": "2026-09-23T10:14:53+09:00",
+  "run": {
+    "run_id": "2026-09-23-095418-aiportal-front-improve",
+    "project": "aiportal-front",
+    "kind": "improve",
+    "started": "2026-09-23T09:54:19+09:00",
+    "model": "claude-opus-5",
+    "policy_version": "ecd4b546e",
+    "prompts_hash": "30c37184f081815d",
+    "runner_version": "ecd4b546e",
+    "arm": "baseline",
+    "experiment": "roles-2026-09",
+    "finished": "2026-09-23T10:14:53+09:00",
+    "outcome": "merged"
+  },
+  "record": {
+    "ts": "2026-09-23T10:14:53+09:00",
+    "date": "2026-09-23",
+    "project": "aiportal-front",
+    "result": "fix-round: merged https://github.com/hkjang/aiportal-front/pull/22, release failed",
+    "outcome": "merged",
+    "run_id": "2026-09-23-095418-aiportal-front-improve",
+    "base_sha": "66e6086706f04d3b00396f6102ccc4b6379ccf35",
+    "head_sha": "228811df34ae705a0c2bd7c5d3d5b2e283250946",
+    "pr": "https://github.com/hkjang/aiportal-front/pull/22",
+    "stages": {
+      "base": {
+        "state": "pinned",
+        "reason": "main@66e6086",
+        "at": "2026-09-23T09:54:22+09:00"
+      },
+      "autonomy": {
+        "state": "release",
+        "reason": "",
+        "at": "2026-09-23T09:54:22+09:00"
+      },
+      "scout": {
+        "state": "failed",
+        "reason": "과제서 없음 — 구현자가 직접 고른다",
+        "at": "2026-09-23T09:59:07+09:00"
+      },
+      "verify": {
+        "state": "passed",
+        "reason": "검증 2개 통과 (auto)",
+        "at": "2026-09-23T10:08:32+09:00"
+      },
+      "review": {
+        "state": "approved",
+        "reason": "리뷰 승인 (risk=low)",
+        "at": "2026-09-23T10:12:30+09:00"
+      },
+      "pr": {
+        "state": "created",
+        "reason": "https://github.com/hkjang/aiportal-front/pull/22",
+        "at": "2026-09-23T10:12:35+09:00"
+      },
+      "ci": {
+        "state": "passed",
+        "reason": "검사 없음 — 정책으로 허용",
+        "at": "2026-09-23T10:13:06+09:00"
+      },
+      "merge": {
+        "state": "done",
+        "reason": "228811df34ae705a0c2bd7c5d3d5b2e283250946",
+        "at": "2026-09-23T10:13:12+09:00"
+      },
+      "release": {
+        "state": "failed",
+        "reason": "릴리즈 안 함: 다음 버전·태그·릴리즈 노트 관례를 확정할 근거가 없어 릴리즈를 수행하지 못했다. HEAD 595c0c5 에서 직접 재조회한 근거: git tag 0개(.git/refs/tags 없음, git ls-remote --tags . 출력 없음), 러너가 미리 가져온 GitHub Release 목록 비어 있음, .github/ 디렉터리 없음, CHANGELOG·릴리즈 노트 파일 없음, scripts/·Makefile·release*.sh·build-*.sh 없음, package.json scripts 에 version-check/release-check 류 릴리즈 검사 타깃 없음(test=vitest run, build:* 뿐), 전체 42개 커밋에 릴리즈·버전 증가 커밋 0건. package.json:3 과 package-lock.json 의 version·packages[\"\"].version 은 모두 0.0.0 이고, git log -p --follow -- package.json 의 version 변경 라인이 최초 커밋 ab700ba 의 '+ \"version\": \"0.0.0\"' 하나뿐이라 생성 이후 한 번도 증가한 적이 없음이 확정된다(private:true, Vite 스캐폴드 기본값). .gitlab-ci.yml 은 main/develop 브랜치 push 에 반응해 전용 Runner 에서 npm run build:<env> 후 dist 를 서버 디렉터리에 복사하는 파이프라인이며 태그·버전·릴리즈 자산과 무관하다(따라서 자산 생성 관례도 없어 assets 는 빈 배열). 절차 2 가 요구하는 '최근 릴리즈들의 증가 패턴'이 존재하지 않고 증가 단위·태그 형식·릴리즈 커밋 양식·노트 위치·언어를 모두 새로 정해야 하는데, 절차 5 는 관례 제정을 사람의 일로 규정한다. 동시에 절차 5 의 skipped 조건('태그도, 버전 파일도, 릴리즈 노트도 없음')은 버전 파일 package.json:3 이 존재하므로 충족하지 않으며, 저장소 정본 docs/RELEASE.md:83-84 도 '현재 근거로 임의 패치 증가나 새 관례를 만들지 않는다', '버전 파일이 있으므로 skipped 조건 불충족, 이 문서로 실패를 skipped/released 로 바꾸지 않는다'를 명시한다. AGENTS.md 의 '릴리즈 판정 조건을 완화하지 않는다'에 따라 판정을 낮추지 않고 failed 로 남긴다. 저장소에는 버전 파일 수정·릴리즈 커밋·태그·CHANGELOG·자산을 만들지 않았고 워크트리는 clean(git status --porcelain 출력 없음), 원격 전송(push/tag push/gh release)도 없다. 요구된 회사 스킬 marketing:product-launch 와 technology:release-and-deployment 는 Skill 도구로 로드해 절차를 적용했다: 이번 변경(알림/확인 팝업 HTML 주입 차단·개행 렌더링 정정, vitest SFC 마운트 지원)은 product-launch 기준 tier 3(릴리즈 노트만 해당)이고 외부 발표 모션이 필요 없으나 그 노트 채널 자체가 저장소에 없다. release-and-deployment 기준으로도 이 저장소의 배포 단위는 브랜치 push 이며 버전 릴리즈와 분리되어 있어 태그 신설은 파이프라인이 소비하지 않는 새 관례가 된다. 사람이 결정해야 할 항목: 0.0.0 에서 시작할 첫 버전과 증가 단위, 태그 형식(v0.0.1 대 0.0.1, 주석 태그 여부), 릴리즈 노트 위치·양식·언어, GitHub Release 사용 여부. 버전 결정 단계에서 중단했으므로 이번 세션에서 앱 test/build 는 실행하지 않았고(앱 CI 실패가 아님), 전용 Runner 배포도 이 기계에서 수행할 수 없다.",
+        "at": "2026-09-23T10:14:53+09:00"
+      }
+    },
+    "campaign": "",
+    "autonomy": "release",
+    "arm": "baseline",
+    "experiment": "roles-2026-09",
+    "files": 8,
+    "additions": 451,
+    "deletions": 3,
+    "tests": 2,
+    "title": "fix: 알림/확인 팝업 본문의 HTML 주입 차단 및 개행 렌더링 정정"
+  },
+  "stages": {
+    "base": {
+      "state": "pinned",
+      "reason": "main@66e6086",
+      "at": "2026-09-23T09:54:22+09:00"
+    },
+    "autonomy": {
+      "state": "release",
+      "reason": "",
+      "at": "2026-09-23T09:54:22+09:00"
+    },
+    "scout": {
+      "state": "failed",
+      "reason": "과제서 없음 — 구현자가 직접 고른다",
+      "at": "2026-09-23T09:59:07+09:00"
+    },
+    "verify": {
+      "state": "passed",
+      "reason": "검증 2개 통과 (auto)",
+      "at": "2026-09-23T10:08:32+09:00"
+    },
+    "review": {
+      "state": "approved",
+      "reason": "리뷰 승인 (risk=low)",
+      "at": "2026-09-23T10:12:30+09:00"
+    },
+    "pr": {
+      "state": "created",
+      "reason": "https://github.com/hkjang/aiportal-front/pull/22",
+      "at": "2026-09-23T10:12:35+09:00"
+    },
+    "ci": {
+      "state": "passed",
+      "reason": "검사 없음 — 정책으로 허용",
+      "at": "2026-09-23T10:13:06+09:00"
+    },
+    "merge": {
+      "state": "done",
+      "reason": "228811df34ae705a0c2bd7c5d3d5b2e283250946",
+      "at": "2026-09-23T10:13:12+09:00"
+    },
+    "release": {
+      "state": "failed",
+      "reason": "릴리즈 안 함: 다음 버전·태그·릴리즈 노트 관례를 확정할 근거가 없어 릴리즈를 수행하지 못했다. HEAD 595c0c5 에서 직접 재조회한 근거: git tag 0개(.git/refs/tags 없음, git ls-remote --tags . 출력 없음), 러너가 미리 가져온 GitHub Release 목록 비어 있음, .github/ 디렉터리 없음, CHANGELOG·릴리즈 노트 파일 없음, scripts/·Makefile·release*.sh·build-*.sh 없음, package.json scripts 에 version-check/release-check 류 릴리즈 검사 타깃 없음(test=vitest run, build:* 뿐), 전체 42개 커밋에 릴리즈·버전 증가 커밋 0건. package.json:3 과 package-lock.json 의 version·packages[\"\"].version 은 모두 0.0.0 이고, git log -p --follow -- package.json 의 version 변경 라인이 최초 커밋 ab700ba 의 '+ \"version\": \"0.0.0\"' 하나뿐이라 생성 이후 한 번도 증가한 적이 없음이 확정된다(private:true, Vite 스캐폴드 기본값). .gitlab-ci.yml 은 main/develop 브랜치 push 에 반응해 전용 Runner 에서 npm run build:<env> 후 dist 를 서버 디렉터리에 복사하는 파이프라인이며 태그·버전·릴리즈 자산과 무관하다(따라서 자산 생성 관례도 없어 assets 는 빈 배열). 절차 2 가 요구하는 '최근 릴리즈들의 증가 패턴'이 존재하지 않고 증가 단위·태그 형식·릴리즈 커밋 양식·노트 위치·언어를 모두 새로 정해야 하는데, 절차 5 는 관례 제정을 사람의 일로 규정한다. 동시에 절차 5 의 skipped 조건('태그도, 버전 파일도, 릴리즈 노트도 없음')은 버전 파일 package.json:3 이 존재하므로 충족하지 않으며, 저장소 정본 docs/RELEASE.md:83-84 도 '현재 근거로 임의 패치 증가나 새 관례를 만들지 않는다', '버전 파일이 있으므로 skipped 조건 불충족, 이 문서로 실패를 skipped/released 로 바꾸지 않는다'를 명시한다. AGENTS.md 의 '릴리즈 판정 조건을 완화하지 않는다'에 따라 판정을 낮추지 않고 failed 로 남긴다. 저장소에는 버전 파일 수정·릴리즈 커밋·태그·CHANGELOG·자산을 만들지 않았고 워크트리는 clean(git status --porcelain 출력 없음), 원격 전송(push/tag push/gh release)도 없다. 요구된 회사 스킬 marketing:product-launch 와 technology:release-and-deployment 는 Skill 도구로 로드해 절차를 적용했다: 이번 변경(알림/확인 팝업 HTML 주입 차단·개행 렌더링 정정, vitest SFC 마운트 지원)은 product-launch 기준 tier 3(릴리즈 노트만 해당)이고 외부 발표 모션이 필요 없으나 그 노트 채널 자체가 저장소에 없다. release-and-deployment 기준으로도 이 저장소의 배포 단위는 브랜치 push 이며 버전 릴리즈와 분리되어 있어 태그 신설은 파이프라인이 소비하지 않는 새 관례가 된다. 사람이 결정해야 할 항목: 0.0.0 에서 시작할 첫 버전과 증가 단위, 태그 형식(v0.0.1 대 0.0.1, 주석 태그 여부), 릴리즈 노트 위치·양식·언어, GitHub Release 사용 여부. 버전 결정 단계에서 중단했으므로 이번 세션에서 앱 test/build 는 실행하지 않았고(앱 CI 실패가 아님), 전용 Runner 배포도 이 기계에서 수행할 수 없다.",
+      "at": "2026-09-23T10:14:53+09:00"
+    }
+  },
+  "provenance": {
+    "model": "claude-opus-5",
+    "policy_version": "ecd4b546e",
+    "prompts_hash": "30c37184f081815d",
+    "runner_version": "ecd4b546e",
+    "base_sha": "66e6086706f04d3b00396f6102ccc4b6379ccf35",
+    "head_sha": "228811df34ae705a0c2bd7c5d3d5b2e283250946",
+    "pr": "https://github.com/hkjang/aiportal-front/pull/22"
+  },
+  "verification": {
+    "runner": {
+      "source": "auto",
+      "commands": [
+        {
+          "cmd": "[ -d node_modules ] || npm ci --no-audit --no-fund",
+          "exit": 0,
+          "seconds": 0
+        },
+        {
+          "cmd": "npm test --silent",
+          "exit": 0,
+          "seconds": 1
+        }
+      ]
+    },
+    "runner_gate": {
+      "ok": true,
+      "state": "verified",
+      "reason": "검증 2개 통과 (auto)"
+    },
+    "after_rebase": null,
+    "review": {
+      "verdict": "approve",
+      "reasons": [],
+      "notes": [
+        "src/utils/alertText.js:39 toAlertHtml 우회 경로를 직접 확인했다: 이스케이프 후 되살리는 것은 리터럴 '<br>' 뿐이고 정규식에 역참조가 없어 속성 주입이 불가하다. 입력에 이미 '&lt;br&gt;' 문자열이 있어도 '&'가 먼저 '&amp;'로 바뀌므로 매치되지 않는다. 실제 공격 경로(SupportOcr.vue:85 등 `${file.name}`, interceptors.js:231 `response.data.message`)가 v-html 로 흘러들던 것이 막혔다.",
+        "tests: 새 테스트가 수정 전 코드에서 실패하는지 별도 검증했다. jsdom 의 innerHTML 은 <script>/<img> 요소를 DOM 에 생성하므로(node+jsdom 으로 직접 확인) alertPopup.spec.js:35-37 의 querySelector 단언은 v-html=\"text\" 시절에는 실패한다. 개행 테스트도 수정 전 br 개수 0 이라 실패한다. 다만 alertPopup.spec.js:38 `window.__hacked` 단언은 jsdom 이 innerHTML 스크립트를 실행하지 않아 수정 전에도 통과하는 무효 단언이다 — 구현 노트가 이미 스스로 밝힌 한계이고 같은 테스트의 다른 단언이 실효가 있어 결함으로 보지 않았다.",
+        "npx vitest run 전체 실행: 21 파일 444 테스트 통과(신규 20개 포함, 기존 424개 무회귀). 워크트리 clean, 빌드 산출물 없음. vitest.config.js 에 plugin-vue 를 붙인 것이 기존 19개 spec 을 깨뜨리지 않음을 실행으로 확인했다.",
+        "의존성: package.json 은 devDep 한 줄(@vue/test-utils ^2.5.1)만 추가. lock 신규 17개 패키지 전부 dev:true 이고 라이선스는 MIT/ISC/BlueOak-1.0.0 로 전부 허용형 — 라이선스·개인정보 쟁점 없음(개인정보를 새로 수집·저장·전송하지 않음).",
+        "남는 우려 1 — 이중 이스케이프 표시: 서버가 이미 HTML 이스케이프된 문구(`&lt;script&gt;` 같은)를 내려주면 이제 화면에 엔티티가 문자 그대로 보인다. 저장소 안 호출부는 PopSimpleBotUpdate.vue:166/172 와 UiComponents.vue:439/488 의 <br>·<br/> 뿐이고 이는 보존되지만, 서버 문구는 이 세션에서 확인할 수 없다. 릴리즈 노트에 '팝업 본문은 평문 취급, <br> 만 줄바꿈' 을 명시하는 것이 좋다.",
+        "남는 우려 2 — 남은 v-html sink(이번 범위 밖, 다음 회차 후보): NoticeDetail.vue:101(서버 notice.content 원본), LibraryDetail.vue:142, RequestDetail.vue:151, ChatStorageDetail.vue:1017·Chat/Index.vue:2460(msg.content 를 replace(/\\n/g,'<br>') 만 하고 이스케이프 없음). 앞의 세 개는 관리자 리치텍스트 의도일 수 있어 판단이 필요하고, 뒤의 두 개는 alertText 와 같은 처방이 바로 맞는다. loading.vue:66 은 호출부가 모두 인자 없는 startLoading() 이라 신뢰 못할 입력이 닿지 않음을 확인했다.",
+        "릴리즈: package.json / package-lock.json version 두 필드가 여전히 0.0.0 이고 태그 0개 — 외부 release-prompt.md 의 상호배타 조건은 이 PR 로 달라지지 않았다. 정찰 1순위였던 ChatStorageDetail.vue:887 고아 startLoading() 과 SupportOcr.vue:204 누수는 손대지 않았고, 구현 노트가 그 이유를 밝혔다."
+      ],
+      "risk": "low",
+      "blocking": []
+    },
+    "ci_gate": {
+      "ok": false,
+      "state": "no-ci",
+      "reason": "이 커밋에 검사가 없음 (정책 allow_merge_without_ci 가 없으면 차단)",
+      "checks": 0
+    }
+  },
+  "release": {
+    "result": {
+      "status": "failed",
+      "version": "",
+      "tag": "",
+      "title": "",
+      "notes_file": "",
+      "github_release": false,
+      "assets": [],
+      "reason": "다음 버전·태그·릴리즈 노트 관례를 확정할 근거가 없어 릴리즈를 수행하지 못했다. HEAD 595c0c5 에서 직접 재조회한 근거: git tag 0개(.git/refs/tags 없음, git ls-remote --tags . 출력 없음), 러너가 미리 가져온 GitHub Release 목록 비어 있음, .github/ 디렉터리 없음, CHANGELOG·릴리즈 노트 파일 없음, scripts/·Makefile·release*.sh·build-*.sh 없음, package.json scripts 에 version-check/release-check 류 릴리즈 검사 타깃 없음(test=vitest run, build:* 뿐), 전체 42개 커밋에 릴리즈·버전 증가 커밋 0건. package.json:3 과 package-lock.json 의 version·packages[\"\"].version 은 모두 0.0.0 이고, git log -p --follow -- package.json 의 version 변경 라인이 최초 커밋 ab700ba 의 '+ \"version\": \"0.0.0\"' 하나뿐이라 생성 이후 한 번도 증가한 적이 없음이 확정된다(private:true, Vite 스캐폴드 기본값). .gitlab-ci.yml 은 main/develop 브랜치 push 에 반응해 전용 Runner 에서 npm run build:<env> 후 dist 를 서버 디렉터리에 복사하는 파이프라인이며 태그·버전·릴리즈 자산과 무관하다(따라서 자산 생성 관례도 없어 assets 는 빈 배열). 절차 2 가 요구하는 '최근 릴리즈들의 증가 패턴'이 존재하지 않고 증가 단위·태그 형식·릴리즈 커밋 양식·노트 위치·언어를 모두 새로 정해야 하는데, 절차 5 는 관례 제정을 사람의 일로 규정한다. 동시에 절차 5 의 skipped 조건('태그도, 버전 파일도, 릴리즈 노트도 없음')은 버전 파일 package.json:3 이 존재하므로 충족하지 않으며, 저장소 정본 docs/RELEASE.md:83-84 도 '현재 근거로 임의 패치 증가나 새 관례를 만들지 않는다', '버전 파일이 있으므로 skipped 조건 불충족, 이 문서로 실패를 skipped/released 로 바꾸지 않는다'를 명시한다. AGENTS.md 의 '릴리즈 판정 조건을 완화하지 않는다'에 따라 판정을 낮추지 않고 failed 로 남긴다. 저장소에는 버전 파일 수정·릴리즈 커밋·태그·CHANGELOG·자산을 만들지 않았고 워크트리는 clean(git status --porcelain 출력 없음), 원격 전송(push/tag push/gh release)도 없다. 요구된 회사 스킬 marketing:product-launch 와 technology:release-and-deployment 는 Skill 도구로 로드해 절차를 적용했다: 이번 변경(알림/확인 팝업 HTML 주입 차단·개행 렌더링 정정, vitest SFC 마운트 지원)은 product-launch 기준 tier 3(릴리즈 노트만 해당)이고 외부 발표 모션이 필요 없으나 그 노트 채널 자체가 저장소에 없다. release-and-deployment 기준으로도 이 저장소의 배포 단위는 브랜치 push 이며 버전 릴리즈와 분리되어 있어 태그 신설은 파이프라인이 소비하지 않는 새 관례가 된다. 사람이 결정해야 할 항목: 0.0.0 에서 시작할 첫 버전과 증가 단위, 태그 형식(v0.0.1 대 0.0.1, 주석 태그 여부), 릴리즈 노트 위치·양식·언어, GitHub Release 사용 여부. 버전 결정 단계에서 중단했으므로 이번 세션에서 앱 test/build 는 실행하지 않았고(앱 CI 실패가 아님), 전용 Runner 배포도 이 기계에서 수행할 수 없다."
+    },
+    "assets_sha256": []
+  },
+  "approval": null,
+  "usage": [
+    {
+      "ts": "2026-09-23T09:59:06+09:00",
+      "date": "2026-09-23",
+      "project": "aiportal-front",
+      "phase": "scout",
+      "run_id": "2026-09-23-095418-aiportal-front-improve",
+      "campaign": "",
+      "subtype": "success",
+      "duration_ms": 296627,
+      "num_turns": 34,
+      "cost_usd": 1.7888009999999999,
+      "input_tokens": 42,
+      "output_tokens": 19074,
+      "cache_read": 1260002,
+      "cache_create": 68174
+    },
+    {
+      "ts": "2026-09-23T10:08:29+09:00",
+      "date": "2026-09-23",
+      "project": "aiportal-front",
+      "phase": "improve",
+      "run_id": "2026-09-23-095418-aiportal-front-improve",
+      "campaign": "",
+      "subtype": "success",
+      "duration_ms": 593494,
+      "num_turns": 53,
+      "cost_usd": 3.8728005,
+      "input_tokens": 92,
+      "output_tokens": 36047,
+      "cache_read": 3931011,
+      "cache_create": 100566
+    },
+    {
+      "ts": "2026-09-23T10:12:30+09:00",
+      "date": "2026-09-23",
+      "project": "aiportal-front",
+      "phase": "review",
+      "run_id": "2026-09-23-095418-aiportal-front-improve",
+      "campaign": "",
+      "subtype": "success",
+      "duration_ms": 247728,
+      "num_turns": 28,
+      "cost_usd": 1.425533,
+      "input_tokens": 42,
+      "output_tokens": 14676,
+      "cache_read": 1066506,
+      "cache_create": 52517
+    },
+    {
+      "ts": "2026-09-23T10:14:53+09:00",
+      "date": "2026-09-23",
+      "project": "aiportal-front",
+      "phase": "release",
+      "run_id": "2026-09-23-095418-aiportal-front-improve",
+      "campaign": "",
+      "subtype": "success",
+      "duration_ms": 94904,
+      "num_turns": 14,
+      "cost_usd": 0.8368245,
+      "input_tokens": 18,
+      "output_tokens": 7650,
+      "cache_read": 391749,
+      "cache_create": 44961
+    }
+  ]
+}

@@ -1,0 +1,119 @@
+[
+  {
+    "title": "[수정 과제] 릴리즈 버전 결정 입력 복구 — 승인 근거 확보 후에만 구현",
+    "value": 5,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "12회째 pending. 이번 회차 직접 재확인: git tag 0개, package.json version=0.0.0, .github 없음. 진입 조건 ①시작 버전(0.0.1 대 0.1.0)·증가 단위 ②태그 형식·주석 태그 여부 ③릴리즈 커밋 메시지 양식 ④릴리즈 노트 위치·양식·언어 ⑤GitHub Release 사용 여부가 출처와 함께 인계되지 않아 버전 파일·태그·CHANGELOG·릴리즈 노트·원격 전송을 일체 하지 않았고 docs/RELEASE.md 도 건드리지 않았다. 판정을 skipped/released 로 낮추지 않는다.",
+    "updated": "2026-09-23"
+  },
+  {
+    "title": "릴리즈 절차 교착 자체를 사람에게 에스컬레이션",
+    "value": 5,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "수정 지점이 워크트리 밖(외부 aidev bin/run.sh → release.json → bin/gate.py)이라 저장소 안에 합법적 수단이 없다. package.json version 필드 삭제는 게이트 완화라 금지.",
+    "updated": "2026-09-23"
+  },
+  {
+    "title": "Confirm 도 Escape 로 닫으면 cancelAction 이 실행되지 않음",
+    "value": 4,
+    "risk": 2,
+    "size": "M",
+    "status": "done",
+    "note": "구현 완료(92ab47b). 선행 조건이라던 'confirmStore 의 Promise 해제 방식' 은 실제로 Promise 가 없고 콜백 기반이었다. Confirm.vue 에 onBaseClose(Base 닫힘 = 취소)를 두고 onPrimary/onSecondary 의 emit 순서를 닫힘 먼저로 바꿔 재진입 결함도 함께 해소. App.vue 는 무변경. 신규 스펙 8케이스(수정 전 5건 Red), 변이 2건으로 인과 분리 증명.",
+    "updated": "2026-09-23"
+  },
+  {
+    "title": "Base.vue 의 @:click 오타로 배경 클릭 닫기가 동작하지 않음",
+    "value": 2,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "Base.vue:45 에 정상 코드가 주석 처리돼 있고 :46 이 @:click=\"close\". 이번 회차 Confirm 수정으로 배경 클릭이 살아나더라도 Confirm 은 취소가 정상 실행되는 상태가 됐다(Alert 도 이전 회차에 동일). 다만 Base 를 쓰는 모든 팝업에 한꺼번에 영향이 가고 의도적 비활성 가능성이 있어 기대 계약 확인이 선행.",
+    "updated": "2026-09-23"
+  },
+  {
+    "title": "src/utils/alerts.js 죽은 중복 모듈 제거",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "globalAlert.js 와 같은 역할인데 src/tests 어디에서도 import 하지 않음. 운영자 지시 '정본을 하나로 유지할 것' 에 해당하나 관측 가능한 동작 변화가 없어 단독 가치는 낮다.",
+    "updated": "2026-09-23"
+  },
+  {
+    "title": "globalLoading 참조 카운트 도입 (병렬 요청 중 스피너 조기 종료)",
+    "value": 4,
+    "risk": 4,
+    "size": "M",
+    "status": "pending",
+    "note": "loading.vue 의 60초 자동 해제가 카운터를 되돌리지 않는 문제가 남아 있어 지금 넣으면 스피너가 영구히 안 꺼지는 회귀. 자동 해제와 카운터의 관계 확정이 선행.",
+    "updated": "2026-09-23"
+  },
+  {
+    "title": "Alert/Confirm 이 showHeader 를 넘기지 않아 title 이 렌더링되지 않음",
+    "value": 3,
+    "risk": 3,
+    "size": "S",
+    "status": "pending",
+    "note": "Base.vue:11 showHeader 기본 false, :50 v-if 로 헤더(title + 닫기 X) 전체를 감춘다. 지금 보이게 하면 SupportOcrDetail.vue:88 등이 title 자리에 넘기는 Error 객체가 화면에 찍힌다 — '보이게 하기' 가 아니라 '호출부를 고치기' 가 정답일 가능성이 높아 기대 계약 확정이 선행.",
+    "updated": "2026-09-23"
+  },
+  {
+    "title": "globalLoading 의 timeoutMs(600000) 가 App.vue 의 Loading 에 전달되지 않는 죽은 export",
+    "value": 2,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "App.vue 의 <Loading> 이 :timeoutMs 를 넘기지 않아 loading.vue 기본값(60초)이 쓰인다. 지금 연결하면 자동 해제가 10분으로 늘어 오히려 나빠지므로 어느 쪽이 의도인지 확정이 선행.",
+    "updated": "2026-09-23"
+  },
+  {
+    "title": "docs/RELEASE.md 재조회 스크립트의 0.0.0 하드 assert",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "실제 릴리즈로 버전이 오르면 즉시 실패한다. 릴리즈 관례가 정해지기 전에는 손대지 말 것 — 지금 고치면 근거 정본이 흔들린다.",
+    "updated": "2026-09-23"
+  },
+  {
+    "title": "SupportSttList.vue 의 사용되지 않는 Confirm import 제거",
+    "value": 1,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "신규. SupportSttList.vue:10 이 Confirm 을 import 하지만 템플릿 어디에도 <Confirm> 이 없다(전역 Confirm 은 App.vue 가 렌더링). 번들에 영향이 없고 관측 가능한 동작 변화도 없어 단독 가치는 매우 낮다 — 다른 정리 작업에 묶을 때만.",
+    "updated": "2026-09-23"
+  },
+  {
+    "title": "MyAgentList.vue 의 'MyAvatar'/'etc' serviceCode 정확 비교 통일",
+    "value": 2,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "MyAgentList.vue:272,283,284 및 appList.js:193 이 모두 String(row?.serviceCode||'')=== 정확 비교. 공용 매처가 없어 먼저 만들어야 한다. 2026-09-23 미열람(이전 기록 기준 보존).",
+    "updated": "2026-09-23"
+  },
+  {
+    "title": "Header.vue 가 OCR 사용 여부와 무관하게 마운트 즉시 3초 폴링 시작",
+    "value": 3,
+    "risk": 3,
+    "size": "M",
+    "status": "pending",
+    "note": "기대 계약 미확인. 2026-09-23 미열람 — 이전 기록 기준 보존.",
+    "updated": "2026-09-23"
+  },
+  {
+    "title": "inf 의 나머지 네임스페이스(auth/chat/app) await 누락 1회성 감사",
+    "value": 3,
+    "risk": 2,
+    "size": "M",
+    "status": "pending",
+    "note": "이전 회차에 tools 네임스페이스만 확인했다. 같은 형태의 미-await 호출이 남아 있으면 실패가 조용히 삼켜진다.",
+    "updated": "2026-09-23"
+  }
+]

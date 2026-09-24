@@ -1,0 +1,47 @@
+{
+  "base": {
+    "state": "pinned",
+    "reason": "main@66e6086",
+    "at": "2026-09-23T09:54:22+09:00"
+  },
+  "autonomy": {
+    "state": "release",
+    "reason": "",
+    "at": "2026-09-23T09:54:22+09:00"
+  },
+  "scout": {
+    "state": "failed",
+    "reason": "과제서 없음 — 구현자가 직접 고른다",
+    "at": "2026-09-23T09:59:07+09:00"
+  },
+  "verify": {
+    "state": "passed",
+    "reason": "검증 2개 통과 (auto)",
+    "at": "2026-09-23T10:08:32+09:00"
+  },
+  "review": {
+    "state": "approved",
+    "reason": "리뷰 승인 (risk=low)",
+    "at": "2026-09-23T10:12:30+09:00"
+  },
+  "pr": {
+    "state": "created",
+    "reason": "https://github.com/hkjang/aiportal-front/pull/22",
+    "at": "2026-09-23T10:12:35+09:00"
+  },
+  "ci": {
+    "state": "passed",
+    "reason": "검사 없음 — 정책으로 허용",
+    "at": "2026-09-23T10:13:06+09:00"
+  },
+  "merge": {
+    "state": "done",
+    "reason": "228811df34ae705a0c2bd7c5d3d5b2e283250946",
+    "at": "2026-09-23T10:13:12+09:00"
+  },
+  "release": {
+    "state": "failed",
+    "reason": "릴리즈 안 함: 다음 버전·태그·릴리즈 노트 관례를 확정할 근거가 없어 릴리즈를 수행하지 못했다. HEAD 595c0c5 에서 직접 재조회한 근거: git tag 0개(.git/refs/tags 없음, git ls-remote --tags . 출력 없음), 러너가 미리 가져온 GitHub Release 목록 비어 있음, .github/ 디렉터리 없음, CHANGELOG·릴리즈 노트 파일 없음, scripts/·Makefile·release*.sh·build-*.sh 없음, package.json scripts 에 version-check/release-check 류 릴리즈 검사 타깃 없음(test=vitest run, build:* 뿐), 전체 42개 커밋에 릴리즈·버전 증가 커밋 0건. package.json:3 과 package-lock.json 의 version·packages[\"\"].version 은 모두 0.0.0 이고, git log -p --follow -- package.json 의 version 변경 라인이 최초 커밋 ab700ba 의 '+ \"version\": \"0.0.0\"' 하나뿐이라 생성 이후 한 번도 증가한 적이 없음이 확정된다(private:true, Vite 스캐폴드 기본값). .gitlab-ci.yml 은 main/develop 브랜치 push 에 반응해 전용 Runner 에서 npm run build:<env> 후 dist 를 서버 디렉터리에 복사하는 파이프라인이며 태그·버전·릴리즈 자산과 무관하다(따라서 자산 생성 관례도 없어 assets 는 빈 배열). 절차 2 가 요구하는 '최근 릴리즈들의 증가 패턴'이 존재하지 않고 증가 단위·태그 형식·릴리즈 커밋 양식·노트 위치·언어를 모두 새로 정해야 하는데, 절차 5 는 관례 제정을 사람의 일로 규정한다. 동시에 절차 5 의 skipped 조건('태그도, 버전 파일도, 릴리즈 노트도 없음')은 버전 파일 package.json:3 이 존재하므로 충족하지 않으며, 저장소 정본 docs/RELEASE.md:83-84 도 '현재 근거로 임의 패치 증가나 새 관례를 만들지 않는다', '버전 파일이 있으므로 skipped 조건 불충족, 이 문서로 실패를 skipped/released 로 바꾸지 않는다'를 명시한다. AGENTS.md 의 '릴리즈 판정 조건을 완화하지 않는다'에 따라 판정을 낮추지 않고 failed 로 남긴다. 저장소에는 버전 파일 수정·릴리즈 커밋·태그·CHANGELOG·자산을 만들지 않았고 워크트리는 clean(git status --porcelain 출력 없음), 원격 전송(push/tag push/gh release)도 없다. 요구된 회사 스킬 marketing:product-launch 와 technology:release-and-deployment 는 Skill 도구로 로드해 절차를 적용했다: 이번 변경(알림/확인 팝업 HTML 주입 차단·개행 렌더링 정정, vitest SFC 마운트 지원)은 product-launch 기준 tier 3(릴리즈 노트만 해당)이고 외부 발표 모션이 필요 없으나 그 노트 채널 자체가 저장소에 없다. release-and-deployment 기준으로도 이 저장소의 배포 단위는 브랜치 push 이며 버전 릴리즈와 분리되어 있어 태그 신설은 파이프라인이 소비하지 않는 새 관례가 된다. 사람이 결정해야 할 항목: 0.0.0 에서 시작할 첫 버전과 증가 단위, 태그 형식(v0.0.1 대 0.0.1, 주석 태그 여부), 릴리즈 노트 위치·양식·언어, GitHub Release 사용 여부. 버전 결정 단계에서 중단했으므로 이번 세션에서 앱 test/build 는 실행하지 않았고(앱 CI 실패가 아님), 전용 Runner 배포도 이 기계에서 수행할 수 없다.",
+    "at": "2026-09-23T10:14:53+09:00"
+  }
+}

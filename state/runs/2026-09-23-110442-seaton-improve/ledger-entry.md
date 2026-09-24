@@ -1,0 +1,6 @@
+## 2026-09-23
+- 선택: 좌석맵 상세에서 배정 해제 단추 (가치 4 / 위험 2 / 작업량 S)
+- 결과: 성공
+- 요약: 서버의 `DELETE /api/v1/seat-assignments/{seatID}`(seats.go:323, 트랜잭션·seat_history·audit 포함)를 부르는 화면이 한 군데도 없어 한 사람의 자리를 비울 방법이 없었고, 배정된 좌석은 `삭제`가 disabled 라 지울 수도 없는 막다른 길이었다. 서버는 손대지 않고 SeatMapPage 에 관리자용 `배정 해제` 단추와 선택을 유지한 채 좌석만 다시 읽는 `reloadSeats` 를 더했다(`chooseMap` 은 첫 줄에서 `setSelected(null)` 을 하므로 쓰지 않음). 검증은 실제 Docker 이미지 + PostgreSQL 16 으로 했다 — 단추만 뺀 red 이미지에서 새 spec 이 DELETE 가 나가지 않아 실패하는 것을 먼저 확인하고(역검증), 고친 이미지에서 seat-unassign 3건 포함 지정 5개 파일 25건이 모두 통과했다(38.8초). go test ./... · go vet ./... · gofmt -l 무출력, tsc, Vitest 102건, vite build 통과. `openapi.go` 에 빠져 있던 `/seats/{seatID}`·`/seat-assignments/{seatID}` DELETE 를 목록 중간에 채우고(끝줄 회피) API_AND_MCP·USER_GUIDE 에 한 줄씩 더해 USER_GUIDE.html 만 다시 만들었다(PDF 는 미머지 브랜치와의 이진 충돌 때문에 굽지 않음).
+- 보류 아이디어: 좌석 상세에서 직원 소속과 지정 구역 구분 (3/1/S — 차선 후보, 코드에 그대로 남음) / 좌석 상세 '근무지'가 검색 결과에 의존하는 것 고치기 (2/1/S) / 로그인 화면 SSO 단추가 깊은 링크 returnTo 를 들고 가게 (3/1/S) / openapi.go 에 남은 `/floor-maps/{mapID}` 외 DELETE 경로 점검 (1/1/S — 이번에 대부분 채움) / PATCH /users/{id} 가 없는 id 에도 204 를 돌려주는지 재확인 (2/1/S)
+- 과제서: 채택 — 과제서의 근거(호출부 부재, `disabled={Boolean(selected.employeeId)}`, `chooseMap` 의 `setSelected(null)`, `keepingSeats` 복구)가 모두 지금 코드와 일치해 계획 그대로 구현했다.

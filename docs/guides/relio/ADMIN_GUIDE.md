@@ -158,6 +158,16 @@ Bootstrap 관리자는 **삭제되지 않는 비상 계정(Break Glass)** 입니
 | | `sales_intelligence.snapshot_enabled` | `true` | 일별 Forecast Snapshot |
 | | `sales_finance.base_currency` | `KRW` | 기준 통화 |
 | | `sales_finance.renewal_radar_days` | `90` | 갱신 레이더가 보는 기간 |
+| 메일 알림 | `mail.enabled` | `false` | 꺼짐이 기본. 켜기 전까지 아무것도 보내지 않음 (3.6 절) |
+| | `mail.smtp_host` | (없음) | 사내 릴레이 주소. 비어 있으면 켜도 보내지 않고 발송 기록에 이유를 남김 |
+| | `mail.smtp_port` | `25` | 사내 릴레이는 대개 25 |
+| | `mail.security` | `auto` | `auto` · `none` · `starttls` · `tls`. `auto` 는 서버가 STARTTLS 를 알리면 쓰고 아니면 평문. 465 포트는 `tls` 로 간주 |
+| | `mail.skip_tls_verify` | `false` | 사내 인증서가 사설일 때만 |
+| | `mail.username` · `mail.password` | 빈 값 | 인증 없는 릴레이가 흔하므로 **선택**. 비밀번호는 암호화 저장되며 API 는 `configured` 만 답함. 자격증명은 TLS/STARTTLS 위에서만 보내고, 평문은 `mail.security=none` 을 명시했을 때만 (3.6 절) |
+| | `mail.from_address` · `mail.from_name` | (없음) · `Relio` | 보내는 사람. 주소가 비면 `relio@<릴레이 주소>` |
+| | `mail.base_url` | (없음) | 메일 속 링크의 기준 주소. 비어 있으면 `system.service_url` |
+| | `mail.timeout_seconds` | `10` | 연결·세션 시간 제한 |
+| | `mail.notify_approval_requested` / `notify_approval_decided` / `notify_voice_assigned` / `notify_contract_renewal` | `true` | 이벤트별 스위치 |
 | 관계 분석 | `relationship_intelligence.graph_max_nodes` | `100` | 관계도 최대 노드 |
 | | `relationship_intelligence.default_plan_year` | `0` (=올해) | 전략 고객 계획 기본 연도 |
 | | `relationship_intelligence.allowed_opportunity_roles` | `PRESALES, CONSULTANT, MANAGER, EXECUTIVE_SPONSOR, LEGAL, DELIVERY, OTHER` | 영업기회 협업팀 역할 |
@@ -173,9 +183,24 @@ Bootstrap 관리자는 **삭제되지 않는 비상 계정(Break Glass)** 입니
 - Keycloak 클라이언트의 Redirect URI 는 `<system.service_url>/api/v1/auth/oidc/callback` 입니다.
 - SSO 로 처음 로그인한 사용자는 **권한 · 데이터 범위** 에서 기본으로 지정한 Role(`영업 담당자`)을 자동으로 받습니다. 클레임 → Role/조직 매핑은 `GET/PUT /api/v1/admin/oidc/mappings` 로 다룹니다.
 
+#### 자동 로그인 (silent SSO, `auto_login`)
+
+Keycloak 에 이미 로그인한 사람이 Relio 를 열면 로그인 화면 없이 바로 본 화면으로 들어가게 하는 설정입니다. 같은 화면의 **자동 로그인** 체크박스로 켜고, REST 로는 `PUT /api/v1/admin/oidc` 의 `autoLogin` 입니다. **기본값은 꺼짐**이며 SSO 자체가 비활성이면 켜 두어도 동작하지 않습니다. 켜고 끈 이력은 감사 로그 `OIDC_CONFIG_UPDATE` 에 남습니다.
+
+동작은 다음과 같습니다.
+
+1. 세션이 없는 브라우저가 앱 경로(`/app/…`, `/admin/…`, `/me/…`)를 열면, 로그인 화면을 그리기 전에 `GET /api/v1/auth/oidc/start?prompt=none&return_to=<원래 경로>` 로 **최상위 이동**합니다. 숨은 iframe 을 쓰지 않으므로 서드파티 쿠키가 막힌 브라우저에서도 동작하고 Keycloak 의 프레임 정책과 무관합니다.
+2. Keycloak 은 `prompt=none` 요청에 화면을 절대 그리지 않습니다. 세션이 있으면 인가 코드가 바로 돌아와 평소 SSO 로그인과 같은 절차로 세션이 만들어지고, 브라우저는 `return_to` 자리로 돌아갑니다(깊은 링크 유지). 세션이 없으면 `error=login_required` 로 돌아오는데 이것은 실패가 아니라 "세션 없음" 이라는 평범한 대답이므로 콜백은 오류 없이 `/login?sso=none` 으로 보냅니다.
+3. 같은 시도를 반복하면 브라우저가 Keycloak 과 Relio 사이를 끝없이 오가므로 세 겹으로 막습니다. (1) 탭 세션마다 한 번만 시도하고 그 표시를 `sessionStorage` 에 남깁니다 — 새 탭은 다시 시도하고, 거절 뒤 새로고침은 시도하지 않습니다. (2) 사용자가 스스로 로그아웃하면 다음 로그인까지 시도하지 않습니다. (3) 콜백이 거절을 받으면 주소에 `?sso=none` 을 남겨 저장소가 지워졌더라도 다시 시도하지 않습니다. 브라우저 저장소를 읽을 수 없는 사생활 보호 모드에서는 "이미 시도했다" 로 간주해 시도하지 않습니다.
+4. 서버는 이 설정이 꺼져 있으면 `?prompt=none` 이 붙어 와도 조용히 평범한 로그인으로 바꿉니다. 주소를 손봐서 흐름을 바꿀 수는 없습니다. `return_to` 는 `/` 로 시작하고 `//` 로 시작하지 않는 같은 출처의 앱 경로만 받으며, API·MCP·로그인 경로나 그 밖의 값은 `/app` 으로 대체됩니다.
+
+자동 로그인이 거절되어 `/login?sso=none` 에 도착한 사용자에게는 로그인 화면이 "조직 계정 세션이 없어 자동으로 로그인하지 않았습니다" 라고 알려 줍니다. SSO 가 켜져 있으면 로그인 화면의 주 동작은 **조직 계정으로 SSO 로그인** 이고, Bootstrap·로컬 관리자 입력란은 **관리자 계정으로 로그인** 을 펼쳐야 나타나는 복구용 경로입니다.
+
+로그인·콜백 경로와 API·MCP·헬스 경로에서는 시도하지 않습니다. 켜기 전에 **연결 테스트** 가 통과하고 수동 **조직 계정으로 SSO 로그인** 이 되는지 먼저 확인하세요 — 조용한 시도는 화면을 보여 주지 않으므로 설정 오류가 사용자에게는 "그냥 로그인 화면이 떴다" 로만 보이고, 원인은 서버 로그 `silent SSO attempt failed` 에 남습니다.
+
 ### 3.4 영업 정책
 
-**영업 단계 설정**(단계·성공확률·전망 분류), **영업 실행 정책**(단계별 Playbook 과 전환 조건 `OFF`/`WARNING`/`BLOCK`, Deal Health 규칙과 배점), **승인 절차**, **사용자 정의 항목**, **상품 카탈로그**, **고객 요청 유형 · SLA** 가 여기 있습니다. 모두 코드 변경 없이 화면에서 바꾸고 즉시 반영됩니다.
+**영업 단계 설정**(단계·성공확률·전망 분류), **영업 실행 정책**(단계별 Playbook 과 전환 조건 `OFF`/`WARNING`/`BLOCK`, Deal Health 규칙과 배점), **승인 절차**, **사용자 정의 항목**, **상품 카탈로그**, **고객 요청 유형 · 업무 영역** 이 여기 있습니다. 모두 코드 변경 없이 화면에서 바꾸고 즉시 반영됩니다.
 
 ![영업 단계 설정 — 단계 순서·성공확률·전망 분류](assets/guide/admin-pipeline.png)
 
@@ -183,9 +208,116 @@ Bootstrap 관리자는 **삭제되지 않는 비상 계정(Break Glass)** 입니
 
 ![고객 요청 유형 · SLA — 유형별 응답·해결 목표 시간](assets/guide/admin-voice-categories.png)
 
+#### 고객 요청 업무 영역 (부서별 VOC)
+
+**고객 요청 유형 · 업무 영역** 화면에서 부서 하나가 공용 VOC 위에 자기만의 접수 체계를 두도록 만듭니다. 기존 요청은 어느 영역에도 속하지 않은 **일반 고객 요청** 으로 그대로 동작합니다.
+
+| 영역 설정 | 효과 |
+|---|---|
+| 소유 부서 | 이 조직과 하위 조직 구성원이 영역을 사용합니다 |
+| 부서 전용(격리) | 소유 부서 밖에서는 영역의 요청과 **영역으로 등록한 고객** 이 보이지 않습니다(COMPANY 범위 사용자 포함, 시스템 관리자 제외). 이 요청과 고객은 이탈 위험도·인텔리전스 Signal/추천·오늘 할 일 등 영업 지표에서 제외됩니다 |
+| 지식 게이트 | 해결 시 원인 근거(확인·추정·미특정)를 필수로 받고, 검토자가 '반영' 한 건만 에이전트 유사 사례 검색의 기본 결과가 됩니다 |
+| 고객 코드 이름·형식 | 예: `회원사코드`, `^[0-9]{12}$`. 간이 등록에서 필수가 되며 형식을 검사합니다. 코드는 회사 전체에서 고유합니다 |
+
+- **유형**: 유형마다 업무 영역과 **SLA 적용** 여부를 정합니다. SLA 를 끄면 기한을 계산하지도 저장하지도 표시하지도 않고, 심각도에 따른 기한 단축도 적용되지 않습니다. 이미 접수된 유형은 업무 영역을 바꿀 수 없습니다(데이터 경계를 넘기 때문).
+- **항목**: **사용자 정의 항목** 에서 대상 `Voice (고객 요청)` 를 고르면 업무 영역과 입력 시점(접수 시 · 해결 시), 도움말을 지정할 수 있습니다. 선택형 값은 서버가 검증하고, 에이전트 도구 스키마에도 허용값으로 자동 반영됩니다.
+- **권한**: 지식 반영 판정은 `voice:knowledge-review` 권한입니다. 이 권한은 개인 연동 키 Scope 로 위임할 수 없고, 개인 키나 OAuth 토큰으로 호출해도 거부됩니다 — 검토자가 화면에서만 판정합니다.
+- **템플릿**: **템플릿: 회원사 민원 (본인확인 서비스)** 은 한 번에 업무 영역(부서 전용 · 지식 게이트 · 회원사코드 12자리), 유형 8종(SLA 미적용), 접수 항목 3종(서비스 구분 · 개발방식 · 오류코드)과 해결 항목(해결 주체), Role 2개(`회원사 민원 담당`, `회원사 민원 검토자`, 모두 DEPARTMENT 범위)를 만듭니다. 이미 있는 항목은 건너뛰므로 다시 적용해도 편집한 내용이 바뀌지 않습니다. 만든 Role 은 **사용자 · 조직** 에서 사용자에게 부여하세요.
+- 격리를 켜거나 끄면 기존 요청과 등록 고객의 공개 범위도 즉시 함께 바뀝니다.
+
 승인 절차는 **정책이 하나도 없으면 검토·승인 메뉴와 버튼이 서비스 전체에서 사라집니다.** 사용자가 "승인 메뉴가 없다"고 하면 정상입니다.
 
 ![승인 절차 — 정책이 없으면 승인 UI 가 숨겨진다](assets/guide/admin-approval.png)
+
+### 3.5 방문자 분석 · CSP (추적 스크립트)
+
+**기본 설정 → 방문자 분석 · CSP** 에서 방문 추적 도구를 붙입니다. **기본값은 꺼짐**입니다 — 공급자를 하나도 등록하지 않은 설치는 런타임에 어떤 외부 요청도 하지 않고, 아래 설명은 아무것도 바꾸지 않습니다. 변경에는 `analytics:manage` 권한(기본 Role 중 시스템 관리자)이 필요하고 모든 변경은 감사 로그 `ANALYTICS_PROVIDER_CREATE/UPDATE/DELETE` 에 남습니다. REST 로는 `GET/POST /api/v1/admin/analytics`, `PUT/DELETE /api/v1/admin/analytics/{id}` 입니다.
+
+#### 왜 그냥 `<script>` 를 붙여 넣지 않는가 — CSP
+
+Relio 의 모든 응답에는 `script-src 'self'` 로 잠긴 Content Security Policy 가 붙습니다. 이 상태에서 추적 스니펫을 화면에 붙여 넣으면 브라우저가 **조용히 차단**하고, 관리자는 수집이 비어 있는 이유를 각 사용자의 개발자 콘솔을 열어 보기 전에는 알 수 없습니다. `'unsafe-inline'` 으로 정책을 푸는 방법은 쓰지 않습니다 — 한 번 풀면 그 앱의 모든 인라인 스크립트가 함께 허용되고, 추적을 끈 뒤에도 정책은 느슨한 채 남기 때문입니다.
+
+대신 Relio 는 두 가지를 동시에 합니다.
+
+1. **스니펫을 서버가 생성해 자기 출처에서 제공**합니다(`/analytics.js`). 관리자가 입력한 값(사이트 ID, 수집기 주소)으로 로더를 만들고, 붙여 넣은 JavaScript 는 받지 않습니다. 로더는 `'self'` 에 이미 포함되므로 nonce 도 `'unsafe-inline'` 도 필요 없고, 관리자 권한이 곧 전체 사용자 세션에 대한 스크립트 실행 권한이 되지 않습니다.
+2. **정책은 같은 설정에서 계산**합니다. 공급자를 켜면 그 공급자가 필요로 하는 출처만 `script-src`·`connect-src`·`img-src` 에 더해지고, 끄면 즉시 원래대로 좁아집니다. 헤더를 손으로 고칠 일이 없습니다.
+
+#### 공급자
+
+| 공급자 | 필요한 값 | 정책에 더해지는 출처 |
+|---|---|---|
+| **Momento (사내 수집기)** — 목록의 첫 자리 | 사이트 ID, 수집기 주소(예: `https://momento.company.internal`) | **같은 오리진 프록시**가 켜져 있으면 없음(기본·권장). 끄면 수집기 주소 |
+| Google Analytics 4 | 측정 ID | googletagmanager.com, google-analytics.com |
+| Matomo / Plausible / Umami | 사이트 ID, 스크립트 출처 | 스크립트 출처 |
+| 직접 지정 스크립트 | 스크립트 출처·경로 | 스크립트 출처 |
+
+Momento 는 사내 자체 호스팅 수집기라 데이터가 밖으로 나가지 않는 유일한 선택지이며, 그래서 첫 자리에 있습니다. 생성되는 태그는 다음과 같습니다.
+
+```html
+<script async src="<수집기 주소>/tracker.js"
+        data-site-id="<사이트 ID>" data-environment="prd" data-contract-version="1"></script>
+```
+
+`data-environment` 는 **스크립트 속성**에 `data-environment=stg` 처럼 적어 바꿀 수 있습니다. `data-site-id` 는 항상 검증된 사이트 ID 로 채워지며 속성으로 덮어쓸 수 없습니다.
+
+#### 같은 오리진 프록시 (`/momento`)
+
+Momento 를 추가할 때 **같은 오리진 프록시 사용** 이 기본으로 켜져 있습니다. 켜져 있으면:
+
+- 추적기는 `/momento/tracker.js` 에서 로드되고 `data-endpoint="/momento"` 를 받아 이벤트도 `/momento/…` 로 보냅니다.
+- Relio 가 `/momento/*` 를 수집기 주소로 넘깁니다. 브라우저 입장에서 모든 요청이 같은 출처이므로 **정책에 외부 출처가 아예 등장하지 않고** `script-src 'self'` 가 출하 상태 그대로입니다. 정책을 넓힐 수 없는 설치에서도 추적이 됩니다.
+- 넘길 때 `Cookie`·`Authorization`·`X-CSRF-Token` 을 떼어 **사용자의 Relio 세션이 수집기로 가지 않게** 하고, 수집기의 `Set-Cookie` 와 정책 헤더는 브라우저에 전달하지 않습니다. 방문자 주소는 `X-Forwarded-For` 로 넘겨 수집기가 방문을 구분할 수 있게 합니다.
+- `GET`·`HEAD`·`POST`·`OPTIONS` 만 통과하고 본문은 256 KB 로 제한합니다. 수집기가 응답하지 않으면 10초 뒤 `502` 로 끊어 화면이 분석 때문에 기다리지 않습니다.
+- 공급자를 끄거나 지우면 정책이 좁아지는 것과 같은 순간에 `/momento` 도 `404` 로 닫힙니다. 아무 공급자도 켜지 않은 설치에서 `/momento` 는 처음부터 `404` 입니다.
+
+프록시를 끄면 추적기가 수집기 주소에서 직접 로드되고 그 주소가 `script-src` 와 `connect-src` 에 들어갑니다. 수집기가 Relio 와 다른 네트워크 경로에 있어 Relio 서버에서는 닿지 않고 브라우저에서는 닿는 경우에만 끕니다.
+
+#### 차단된 요청 확인
+
+공급자가 켜져 있는 동안 정책에 `report-uri /api/v1/csp-report` 가 붙어 브라우저가 거부한 요청을 Relio 로 신고합니다. 같은 화면 상단의 **차단된 요청** 에 **지시어와 출처** 가 모입니다(같은 출처는 횟수만 늘어나 쌓이지 않습니다). 추적기가 스크립트 출처와 다른 주소로 이벤트를 보내면 여기 `connect-src` 로 나타나므로, **이 출처 허용** 을 눌러 공급자의 추가 수집 출처에 넣으면 됩니다. 신고 경로는 브라우저가 자격 증명 없이 보내므로 인증이 없고, 본문은 크기 제한·재검증을 거쳐 출처 단위로만 저장됩니다.
+
+#### 붙지 않는 곳
+
+- `/api/*`·`/mcp`·`/health/*` 같은 비화면 응답에는 스크립트가 들어갈 자리가 없습니다.
+- **로그인 후 화면만 추적** 을 켜면 세션 쿠키가 없는 로그인 화면에서는 추적기를 로드하지 않습니다. 기본은 꺼짐입니다. 추적기는 페이지 안에서 실행되는 스크립트이므로, 자격 증명을 다루는 화면까지 추적할지는 수집기를 신뢰하는 정도에 따라 정합니다 — 확신이 없으면 켭니다.
+- **Do Not Track 요청 존중** 이 기본으로 켜져 있어 브라우저가 DNT 를 보내면 로드하지 않습니다.
+
+### 3.6 메일 알림 (사내 SMTP 릴레이)
+
+**기본 설정 → 메일 알림** 에서 사내 SMTP 릴레이를 연결합니다. **기본값은 꺼짐**입니다 — 새로 설치한 곳은 아무것도 달라지지 않고, `mail.enabled` 를 켜기 전까지 어떤 연결도 시도하지 않습니다. 설정 키는 사내 공통 메일 표준(kanpic 과 같은 이름)을 따르므로 다른 앱에서 배운 이름을 그대로 씁니다. REST 로는 `GET/PUT /api/v1/admin/settings/mail/{key}`, 발송 기록 `GET /api/v1/admin/mail/deliveries`, 시험 발송 `POST /api/v1/admin/mail/test` 입니다.
+
+사내 릴레이는 **포트 25 · 인증 없음 · TLS 없음**이 흔합니다. 그것이 기본값이고, 사용자 이름을 비우면 인증하지 않으며 `security=auto` 는 서버가 STARTTLS 를 알릴 때만 씁니다. 폐쇄망에서는 릴레이 주소로 사내 메일 서비스 **postra** 를 가리키면 알림이 밖으로 나가지 않습니다.
+
+#### 자격증명은 암호화된 연결에서만
+
+`mail.username` 을 채우면 **비밀번호는 TLS(`tls`) 또는 STARTTLS 로 올라간 연결에서만** 보냅니다. `auto` 인데 릴레이가 STARTTLS 를 알리지 않으면 인증하지 않고 `암호화되지 않은 연결에서는 자격증명을 보내지 않습니다` 오류로 그 통을 `failed` 처리합니다 — 메일 한 통보다 릴레이 비밀번호가 사내망에 평문으로 흐르는 쪽이 더 비싸기 때문입니다. 이 규칙은 릴레이가 `PLAIN` 을 내밀든 `LOGIN` 을 내밀든 같습니다(`CRAM-MD5` 는 비밀번호를 그대로 보내지 않으므로 평문 연결에서도 허용). 평문으로 인증해도 되는 릴레이라면(예: 같은 호스트의 사이드카, 격리된 세그먼트) 관리자가 **`mail.security=none` 을 명시**해야 하며, 그때만 평문 인증을 합니다. 릴레이 주소가 loopback 이라고 예외를 두지 않습니다.
+
+#### 보내는 이벤트
+
+kanpic 의 목록을 옮기지 않고, Relio 에서 **이 메일이 오지 않으면 누군가 손해를 보거나 화면을 계속 새로고침하는 일** 네 가지만 고릅니다. "무언가 바뀜" 은 메일감이 아니므로 고객·영업기회 수정, 단계 이동, 활동 기록은 보내지 않습니다.
+
+| 이벤트 | 받는 사람 | 언제 | 스위치 |
+|---|---|---|---|
+| 승인 요청 도착 | 승인자 | 승인 요청이 제출된 순간. 요청자는 결정을 기다리고 있고 승인자는 알기 전까지 움직일 수 없음 | `mail.notify_approval_requested` |
+| 승인 결과 | 요청자 | 승인·반려가 결정된 순간. 요청자가 승인 화면을 새로고침하며 기다리던 답 | `mail.notify_approval_decided` |
+| 고객 요청 배정 | 새 담당자 | 다른 사람이 고객의 목소리(VOC) 담당자로 지정한 순간. SLA 시계가 접수 시점부터 돌고 있어 목록을 열어 보기 전에 알아야 함 | `mail.notify_voice_assigned` |
+| 계약 갱신 준비 기간 진입 | 계약 담당자 | 활성 계약이 `renewal_notice_days` 안으로 들어왔는데 갱신 상태가 미착수일 때. 오늘 큐의 "갱신 미착수" 와 같은 조건이며, 놓치면 계약이 만료됨 | `mail.notify_contract_renewal` |
+
+시끄러우면 사람들은 규칙을 만들어 통째로 버리므로 세 가지를 지킵니다. **자기가 한 일은 자기에게 보내지 않습니다**(승인자가 자기 요청을 승인하면 메일이 없습니다). **한 작업이 여러 알림을 만들면 묶습니다** — 같은 담당자의 계약 여러 건이 같은 날 갱신 기간에 들어오면 한 통입니다. 갱신 알림은 **계약당 한 번**만 보내며(`mail_notices` 원장), 갱신 상태를 미착수에서 바꾸면 더 오지 않습니다. 원장에는 릴레이가 실제로 받아 준 뒤에만 적으므로, 릴레이가 죽어 있는 동안 실패한 갱신 알림은 다음 주기에 다시 시도합니다. 메일 주소가 없는 사용자는 조용히 건너뛰고, 주소가 나중에 등록되면 그때 받습니다.
+
+#### 요청을 막지 않는다
+
+메일은 **배경에서** 보냅니다. 승인 제출·결정, VOC 접수는 릴레이 상태와 무관하게 즉시 끝나고, 릴레이가 죽어 있으면 발송 기록에 `failed` 로 남을 뿐 그 요청은 정상입니다. 한 통마다 2초 간격으로 두 번 시도하고 `timeout_seconds` 뒤 포기합니다. 갱신 알림은 백그라운드 작업(1분 주기, 다중 인스턴스에서 하나만 실행)이 보냅니다.
+
+#### 발송 기록과 시험 발송
+
+같은 화면 아래 **발송 기록** 에 시도마다 남습니다 — 언제, 어떤 이벤트로, 누구에게, 제목이 무엇이었고, `sent`/`failed` 와 오류 문구. **본문은 저장하지 않습니다.** 제목과 수신자면 "안 왔다" 는 문의에 답하기에 충분하고, 본문까지 담으면 기록 자체가 유출 경로가 되기 때문입니다. `status`·`event` 로 좁힐 수 있습니다.
+
+**시험 발송** 은 저장한 설정으로 실제 한 통을 보내고 결과를 그 자리에서 보여 줍니다(`MAIL_TEST_SEND` 감사 기록). 릴레이 설정은 한 번에 맞는 일이 드무니 켜자마자 한 번 보내 보세요. 메일 알림이 꺼져 있으면 `409 mail_disabled`, 릴레이가 거부하면 `502 mail_send_failed` 와 SMTP 단계(EHLO·MAIL FROM·RCPT TO·DATA) 가 적힌 오류가 돌아옵니다. `설정이 모자라면(호스트 없음)` 켜도 보내지 않고 발송 기록에 `mail.smtp_host is required` 로 남습니다.
+
+#### 비밀번호
+
+`mail.password` 는 Instance Data Key 로 암호화되어 저장됩니다. 설정 API 는 값을 **돌려주지 않고** `configured: true` 만 답하며, 화면에는 "설정됨 — 변경할 때만 입력" 으로 보입니다. 감사 로그와 서버 로그에도 `***` 로만 남습니다. 바꾸려면 새 값을 입력하고, 비워 두면 기존 값이 유지됩니다.
 
 ---
 
@@ -219,6 +351,35 @@ Bootstrap 관리자는 **삭제되지 않는 비상 계정(Break Glass)** 입니
 
 사용자는 자기 키를 발급·회전·폐기하고, 관리자는 **연동 키 · API · MCP** 에서 전체 키를 보고 `POST /api/v1/admin/users/{id}/keys/revoke-all` 로 한 사용자의 키를 모두 회수할 수 있습니다. 서버는 Secret 의 HMAC Digest 만 저장하므로 DB 가 유출되어도 키가 복원되지 않습니다.
 
+### 4.4 조직 계정(OAuth)으로 MCP 연결
+
+개인 키 대신 Keycloak 조직 계정으로 MCP 에 로그인하게 하는 설정입니다. MCP Authorization 명세에 따라 Relio 는 **OAuth Resource Server** 로 동작합니다. 로그인·동의·토큰 발급은 Keycloak 이 하고, Relio 는 Keycloak 이 Relio 를 대상으로 발급한 Access Token 만 받습니다. **기본값은 꺼짐**입니다 — 에이전트가 로그인한 사용자의 Role 권한 전체로 동작하기 때문입니다(개인 키처럼 Scope 로 좁힐 수 없습니다).
+
+**연동 키 · API · MCP → 조직 계정(OAuth)으로 MCP 연결** 에서 켜고, 같은 곳의 준비 상태 목록(`GET /api/v1/admin/mcp/oauth`)으로 점검합니다.
+
+| 설정 | 키 | 뜻 |
+|---|---|---|
+| OAuth 허용 | `mcp.oauth_enabled` | 켜면 `/.well-known/oauth-protected-resource/mcp` 를 공개하고 MCP 의 401 응답에 `resource_metadata` 를 넣습니다. 끄면 두 가지 모두 사라지고 MCP 는 Keycloak 토큰을 거부합니다(REST 의 기존 Bearer 동작은 영향 없음). |
+| 필수 Scope | `mcp.oauth_required_scope` | 이 Scope 가 없는 토큰은 `403 insufficient_scope` 로 거부합니다. 비우면 Audience 만 확인합니다. |
+| 에이전트용 Public Client ID | `mcp.oauth_client_id` | 사용자 **MCP 사용 안내** 에 표시됩니다. 비우면 동적 클라이언트 등록을 안내합니다. |
+
+**Keycloak 설정 (권장 — 사전 등록 Public Client)**
+
+1. Client Scope `relio-mcp` 를 만들고 **Audience** Mapper 를 추가합니다. Included Client Audience 는 Relio 의 SSO Client ID(예: `relio`), **Add to access token** 을 켭니다. 이 Mapper 가 없으면 토큰의 `aud` 에 Relio 가 없어 모든 요청이 `invalid_token` 으로 거부됩니다.
+2. Public Client `relio-mcp-cli` 를 만듭니다. Client authentication 끔, Standard flow 켬, PKCE Method `S256`, Valid redirect URIs `http://127.0.0.1/*`, `http://localhost/*`. Keycloak 은 Loopback 주소의 임의 포트를 허용하므로 CLI 가 고르는 포트(OpenCode 19876, Qwen 7777 등)가 모두 맞습니다.
+3. 이 Client 의 Client scopes 에 `relio-mcp` 를 **Optional** 로 붙입니다.
+4. Relio 화면에 필수 Scope `relio-mcp`, Public Client ID `relio-mcp-cli` 를 저장합니다.
+
+**동적 클라이언트 등록(DCR)을 쓰려면** Realm 의 Client registration → Anonymous access policies 에서 다음을 바꿉니다. 등록된 클라이언트에는 Keycloak 이 동의 화면을 요구합니다.
+
+- **Allowed Client Scopes**: `relio-mcp` 추가. (Relio 는 `openid` 를 광고하지 않습니다 — 클라이언트가 등록 요청에 그대로 옮겨 적고, Keycloak 이 이 정책으로 거부하기 때문입니다.)
+- **Trusted Hosts**: `127.0.0.1`, `localhost` 를 넣고 *Host sending registration request must match* 를 끕니다. OpenCode 는 등록 요청에 `client_uri: https://opencode.ai` 를 보내므로 `opencode.ai` 도 넣어야 합니다(문자열 비교이며 외부 통신은 없습니다).
+- Qwen Code 는 Keycloak 처럼 Issuer 에 경로(`/realms/…`)가 있는 서버와 DCR 을 하지 못합니다(0.20.1 실측). Qwen 사용자에게는 Public Client ID 를 안내하세요.
+
+**서비스 URL** — 리소스 식별자는 `system.service_url` + `/mcp` 입니다. 클라이언트는 자신이 접속한 주소와 이 값이 다르면 연결을 거부하므로, 서비스 URL 을 사용자가 실제로 쓰는 주소로 맞추세요. 준비 상태 목록이 `localhost` 로 남은 서비스 URL 을 경고합니다.
+
+**감사와 추적** — OAuth 로 들어온 MCP 요청은 `mcp_request_logs` 에 `auth_method = OIDC_ACCESS_TOKEN` 과 Keycloak `azp`(`oauth_client`) 로 남아 개인 키 요청과 구분됩니다. 처음 MCP 로 접속한 SSO 사용자는 브라우저 첫 로그인과 같은 규칙(자동 생성 설정, 기본 Role)으로 만들어집니다.
+
 ---
 
 ## 5. 운영
@@ -250,7 +411,7 @@ docker logs --since 1h relio | jq -r 'select(.level=="ERROR") | "\(.time) \(.msg
 
 ### 5.3 감사 로그
 
-**감사 로그** 화면은 Web·REST·MCP·Admin·Login·Key 채널의 작업을 검색하고 변경 전후를 비교합니다(`GET /api/v1/admin/audit?channel=&q=&limit=`). 감사 행은 PostgreSQL 에 남으므로 보관 기간은 DB 백업 정책을 따릅니다.
+**감사 로그** 화면은 WEB·API·MCP·ADMIN·LOGIN·SSO 채널(개인 키 작업은 WEB 채널의 `KEY_*` 동작)의 작업을 검색하고 변경 전후를 비교합니다(`GET /api/v1/admin/audit?channel=&q=&limit=`). 목록의 시각은 초 단위까지 보여 같은 날의 로그인 여러 건도 순서를 가릴 수 있습니다. 감사 행은 PostgreSQL 에 남으므로 보관 기간은 DB 백업 정책을 따릅니다. 행을 열면 시각·User-Agent 와 변경 전후 외에 **부가 정보**(로컬 로그인의 Bootstrap 계정 여부, SSO 로그인의 자동 로그인 여부 등 동작에 딸린 값)가 있을 때만 그 아래에 함께 보입니다.
 
 ![감사 로그 — 채널·자원·행위자로 검색하고 변경 전후를 비교한다](assets/guide/admin-audit.png)
 
@@ -322,13 +483,16 @@ docker rm relio-old             # 확인 뒤
 | 로그 `bootstrap administrator initialization failed` | DB 권한, `BOOTSTRAP_ADMIN` 값 | 최초 기동에서만 나옵니다. DB 를 비우고 다시 시도 |
 | `/health/ready` 가 실패 | 응답 본문의 `postgres`, `schema.status` | DB 연결 또는 마이그레이션 문제. 위 항목 참고 |
 | 사용자가 `로그인 시도가 너무 많습니다` 를 봄 | 감사 로그 `LOGIN_FAILED` 의 IP | 같은 주소의 실패 반복. 공용 NAT 뒤라면 정상 사용자도 걸릴 수 있습니다. 잠시 기다리면 풀립니다 |
-| 사용자가 `일반 로컬 로그인이 비활성화되어 있습니다` 를 봄 | 보안 · 파일 · 접속 → 일반 로컬 로그인 허용 | SSO 가 죽어 로컬로 들어와야 하면 Bootstrap 관리자로 로그인해 켭니다. Bootstrap 은 이 설정과 무관하게 항상 로그인됩니다 |
+| 사용자가 `일반 로컬 로그인이 비활성화되어 있습니다` 를 봄 | 보안 · 파일 · 접속 → 일반 로컬 로그인 허용 | SSO 가 죽어 로컬로 들어와야 하면 Bootstrap 관리자로 로그인해 켭니다. Bootstrap 은 이 설정과 무관하게 항상 로그인됩니다. 이 안내는 비밀번호가 맞는 일반 계정에만 나가고, 틀린 비밀번호·없는 아이디는 설정과 무관하게 `아이디 또는 비밀번호가 올바르지 않습니다` 로 답해 어느 계정이 Bootstrap 인지 밖에서 알 수 없습니다. 두 경우 모두 `LOGIN_FAILED` 로 감사되며 `audit_logs.metadata.reason`(DB) 에 `local_login_disabled` / `invalid_credentials` 로 남습니다 |
 | SSO 로그인 후 "아직 사용 권한이 없습니다" | 권한 · 데이터 범위의 기본 Role 지정 | 기본 Role 이 비어 있으면 지정. 이미 들어온 사용자는 사용자 · 조직 → 권한에서 부여 |
+| 자동 로그인을 켰는데 로그인 화면이 뜸 | 서버 로그 `silent SSO declined` / `silent SSO attempt failed`, 주소의 `?sso=none` | `?sso=none` 은 Keycloak 이 세션 없음(`login_required`)으로 답했다는 뜻이며 정상입니다. 로그아웃 직후에는 의도적으로 시도하지 않습니다. 세션이 있는데도 뜬다면 로그의 오류 코드를 봅니다 — `consent_required` 면 Keycloak 클라이언트의 Consent Required 를 끄고, `attempt failed` 로 남은 다른 코드는 클라이언트 설정 오류입니다 |
 | SSO 콜백이 실패 | 사내 SSO 연결 → 연결 테스트 결과(Discovery/TLS/JWKS/Callback) | Keycloak 의 Redirect URI 가 `<service_url>/api/v1/auth/oidc/callback` 인지, `system.service_url` 이 실제 접속 주소인지, 사내 CA 인증서가 컨테이너에 있는지 확인 |
 | API 클라이언트가 HTTP 429 | 보안 · 파일 · 접속 → API 요청 한도 / 분, 연동 키 · API · MCP → MCP 요청 한도 | 신원당 한도입니다. 정당한 배치 작업이면 한도를 올리거나 키를 나눕니다 |
 | MCP 도구가 안 보임 | `mcp.tool_allowlist`, 키의 범위와 채널, `mcp.allowed_origins` | 허용 목록·범위·Origin 세 가지 교집합입니다 |
 | 로그 `capture forecast snapshot` / `run intelligence analysis` / `expire rotated keys` 오류 | 시스템 진단 → Background Job 카드 | 다음 주기에 재시도됩니다. `snapshot ran without the lock`·`take maintenance lock` 은 DB 잠금 문제이므로 PostgreSQL 상태를 봅니다 |
 | 사용자가 `서버 오류가 발생했습니다.` 와 요청 ID 를 전달 | `docker logs relio \| grep <requestId>` | `service error` 줄의 `error` 필드가 원인입니다 |
+| 방문자 분석을 켰는데 수집기에 아무것도 안 들어옴 | 방문자 분석 · CSP → 차단된 요청, 브라우저 개발자 콘솔의 `Content Security Policy` 오류 | 차단된 출처가 보이면 **이 출처 허용**. Momento 는 **같은 오리진 프록시** 를 켜면 정책과 무관해집니다. 프록시를 켰는데 `/momento/tracker.js` 가 `502` 면 Relio 서버에서 수집기 주소로 닿지 않는 것이고(로그 `momento proxy upstream failed`), `404` 면 켜진 Momento 공급자가 없는 것입니다. DNT 를 켠 브라우저는 의도적으로 로드하지 않습니다 |
+| 메일이 안 옴 | 메일 알림 → 발송 기록, 서버 로그 `notification mail failed` | 기록이 없으면 `mail.enabled` 가 꺼져 있거나, 그 이벤트 스위치가 꺼져 있거나, 받는 사용자에게 메일 주소가 없거나, 자기가 한 일(자기에게는 보내지 않음)입니다. `failed` 면 오류 문구의 SMTP 단계를 봅니다 — `SMTP 연결 실패` 는 릴레이 주소·포트·방화벽, `MAIL FROM 실패` 는 릴레이가 보내는 주소를 거부, `서버가 인증을 지원하지 않습니다` 는 사용자 이름을 비우라는 뜻, `암호화되지 않은 연결에서는 자격증명을 보내지 않습니다` 는 릴레이가 STARTTLS 를 알리지 않는데 사용자 이름이 채워져 있다는 뜻입니다(릴레이에 STARTTLS 를 켜거나, 평문이 허용되는 릴레이면 `mail.security=none` 을 명시). **시험 발송** 으로 같은 설정을 즉시 확인합니다. 릴레이가 죽어 있어도 승인·VOC 요청 자체는 정상으로 끝납니다 |
 
 ---
 
@@ -353,7 +517,7 @@ docker rm relio-old             # 확인 뒤
 ![보안 · 파일 · 접속 — 로컬 로그인, 세션, API 한도, 내보내기 정책과 기본 보호 장치 요약](assets/guide/admin-security.png)
 
 - 비밀번호는 argon2id 로 저장하며 원문을 보관하지 않습니다. 존재하지 않는 계정·비활성 계정도 같은 시간을 들여 거절해 아이디 열거를 막습니다.
-- 세션 쿠키는 HttpOnly·SameSite, 상태 변경 요청은 CSRF 토큰, 응답에는 CSP 가 붙습니다. 기본 상태에서 외부 CDN·폰트·분석 스크립트가 없고, 방문자 분석은 **방문자 분석 · CSP** 에서 출처별로 명시적으로 허용한 것만 CSP 에 추가됩니다.
+- 세션 쿠키는 HttpOnly·SameSite, 상태 변경 요청은 CSRF 토큰, 응답에는 CSP 가 붙습니다. 기본 상태에서 외부 CDN·폰트·분석 스크립트가 없고, 방문자 분석은 **방문자 분석 · CSP** 에서 출처별로 명시적으로 허용한 것만 CSP 에 추가됩니다. `'unsafe-inline'` 스크립트는 어떤 설정으로도 허용되지 않으며, Momento 의 같은 오리진 프록시(`/momento`)는 세션 쿠키를 떼고 넘깁니다(3.5).
 - SSO Client Secret 은 AES-256-GCM 으로, 개인 연동 키는 HMAC Digest 로만 저장됩니다.
 - MCP 는 Origin 검사, 개인 연동 키 인증, 도구 허용 목록, 감사 로그를 거칩니다.
 - 주요 보안 설정 변경은 모두 감사 로그에 남습니다.

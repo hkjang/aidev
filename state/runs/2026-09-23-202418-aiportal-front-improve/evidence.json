@@ -1,0 +1,239 @@
+{
+  "run_id": "2026-09-23-202418-aiportal-front-improve",
+  "generated": "2026-09-23T20:39:35+09:00",
+  "run": {
+    "run_id": "2026-09-23-202418-aiportal-front-improve",
+    "project": "aiportal-front",
+    "kind": "improve",
+    "started": "2026-09-23T20:24:19+09:00",
+    "model": "claude-opus-5",
+    "policy_version": "ecd4b546e",
+    "prompts_hash": "30c37184f081815d",
+    "runner_version": "ecd4b546e",
+    "arm": "no-scout",
+    "experiment": "roles-2026-09",
+    "finished": "2026-09-23T20:39:35+09:00",
+    "outcome": "merged"
+  },
+  "record": {
+    "ts": "2026-09-23T20:39:35+09:00",
+    "date": "2026-09-23",
+    "project": "aiportal-front",
+    "result": "fix-round: merged https://github.com/hkjang/aiportal-front/pull/27, release failed",
+    "outcome": "merged",
+    "run_id": "2026-09-23-202418-aiportal-front-improve",
+    "base_sha": "c179034c9b90c00afc182176ade571a30669fd00",
+    "head_sha": "fbca18c8d5ba49df450570b0d75d93c167c3316b",
+    "pr": "https://github.com/hkjang/aiportal-front/pull/27",
+    "stages": {
+      "base": {
+        "state": "pinned",
+        "reason": "main@c179034",
+        "at": "2026-09-23T20:24:23+09:00"
+      },
+      "autonomy": {
+        "state": "release",
+        "reason": "",
+        "at": "2026-09-23T20:24:23+09:00"
+      },
+      "verify": {
+        "state": "passed",
+        "reason": "검증 2개 통과 (auto)",
+        "at": "2026-09-23T20:34:32+09:00"
+      },
+      "review": {
+        "state": "approved",
+        "reason": "리뷰 승인 (risk=low)",
+        "at": "2026-09-23T20:37:21+09:00"
+      },
+      "pr": {
+        "state": "created",
+        "reason": "https://github.com/hkjang/aiportal-front/pull/27",
+        "at": "2026-09-23T20:37:28+09:00"
+      },
+      "ci": {
+        "state": "passed",
+        "reason": "검사 없음 — 정책으로 허용",
+        "at": "2026-09-23T20:37:58+09:00"
+      },
+      "merge": {
+        "state": "done",
+        "reason": "fbca18c8d5ba49df450570b0d75d93c167c3316b",
+        "at": "2026-09-23T20:38:01+09:00"
+      },
+      "release": {
+        "state": "failed",
+        "reason": "릴리즈 안 함: 버전 증가 관례를 결정할 근거가 저장소에 없어 릴리즈를 수행할 수 없음(14회째 동일 사유, 이번 회차 직접 재확인). 근거: git tag 0개; git log 55커밋 전체에 릴리즈 커밋 메시지 양식 없음(유일 매치 12c8e8a 는 문서 커밋); package.json/package-lock.json version 및 packages[\"\"].version 모두 0.0.0 이며 최초 커밋 ab700ba8 부터 한 번도 증가한 적 없음; CHANGELOG.md·VERSION·scripts/·Makefile 없음; .github 디렉터리 없음(태그 푸시/릴리즈 워크플로 부재, 러너가 미리 가져온 GitHub Release 목록도 비어 있음); .gitlab-ci.yml 은 rules 가 전부 $CI_COMMIT_BRANCH == \"main\"/\"develop\" 인 브랜치 푸시 트리거로 태그·버전·GitHub Release 를 다루지 않음; docs/RELEASE.md 는 근거 문서이지 릴리즈 노트가 아님. 따라서 절차 2(최근 릴리즈의 증가 패턴을 따를 것)와 절차 3(이전과 같은 방식으로 수행)이 참조할 선례가 존재하지 않는다. 절차 5 의 skipped 면제는 태그·버전 파일·릴리즈 노트가 '모두' 없을 때만 적용되는데 버전 파일(package.json)이 존재하므로 충족하지 않으며, docs/RELEASE.md 84행이 이 해석을 명시적으로 배제한다. 통과시키는 유일한 수단은 버전·태그·릴리즈 노트 관례를 새로 만드는 것인데 이는 절차 5('관례를 새로 정하는 건 사람의 일')와 AGENTS.md('확인되지 않은 관례를 새로 만들거나 릴리즈 판정 조건을 완화하지 않는다')가 금지한다. 그러므로 버전 파일·태그·CHANGELOG·릴리즈 노트·릴리즈 커밋을 일체 만들지 않았고 docs/RELEASE.md 도 수정하지 않았으며 원격 전송도 하지 않았다(워크트리 git status 청정, HEAD 108cc47 그대로). 자산 없음: 과거 릴리즈 자산 기록이 없고 빌드·업로드 스크립트도 없으므로 assets 는 빈 배열. 필요한 사람 입력: (1)버전 릴리즈 관례 도입 여부 자체 — 현 배포는 GitLab CI 브랜치 푸시 트리거이므로 버전 태그가 배포에 필요하지 않음 (2)시작 버전(0.0.1 대 0.1.0)과 증가 단위 (3)태그 형식과 주석 태그 여부 (4)릴리즈 커밋 메시지 양식 (5)릴리즈 노트 위치·양식·언어 (6)GitHub Release 사용 여부(현재 원격 배포는 GitLab). 참고: 요구된 회사 스킬 marketing:product-launch, technology:release-and-deployment 는 Skill 도구로 원문을 로드해 절차를 따랐다.",
+        "at": "2026-09-23T20:39:34+09:00"
+      }
+    },
+    "campaign": "",
+    "autonomy": "release",
+    "arm": "no-scout",
+    "experiment": "roles-2026-09",
+    "files": 2,
+    "additions": 191,
+    "deletions": 16,
+    "tests": 1,
+    "title": "fix: 앱 공유 등록이 공통 오류를 '권한 없음' 으로 잘못 안내하던 문제 수정"
+  },
+  "stages": {
+    "base": {
+      "state": "pinned",
+      "reason": "main@c179034",
+      "at": "2026-09-23T20:24:23+09:00"
+    },
+    "autonomy": {
+      "state": "release",
+      "reason": "",
+      "at": "2026-09-23T20:24:23+09:00"
+    },
+    "verify": {
+      "state": "passed",
+      "reason": "검증 2개 통과 (auto)",
+      "at": "2026-09-23T20:34:32+09:00"
+    },
+    "review": {
+      "state": "approved",
+      "reason": "리뷰 승인 (risk=low)",
+      "at": "2026-09-23T20:37:21+09:00"
+    },
+    "pr": {
+      "state": "created",
+      "reason": "https://github.com/hkjang/aiportal-front/pull/27",
+      "at": "2026-09-23T20:37:28+09:00"
+    },
+    "ci": {
+      "state": "passed",
+      "reason": "검사 없음 — 정책으로 허용",
+      "at": "2026-09-23T20:37:58+09:00"
+    },
+    "merge": {
+      "state": "done",
+      "reason": "fbca18c8d5ba49df450570b0d75d93c167c3316b",
+      "at": "2026-09-23T20:38:01+09:00"
+    },
+    "release": {
+      "state": "failed",
+      "reason": "릴리즈 안 함: 버전 증가 관례를 결정할 근거가 저장소에 없어 릴리즈를 수행할 수 없음(14회째 동일 사유, 이번 회차 직접 재확인). 근거: git tag 0개; git log 55커밋 전체에 릴리즈 커밋 메시지 양식 없음(유일 매치 12c8e8a 는 문서 커밋); package.json/package-lock.json version 및 packages[\"\"].version 모두 0.0.0 이며 최초 커밋 ab700ba8 부터 한 번도 증가한 적 없음; CHANGELOG.md·VERSION·scripts/·Makefile 없음; .github 디렉터리 없음(태그 푸시/릴리즈 워크플로 부재, 러너가 미리 가져온 GitHub Release 목록도 비어 있음); .gitlab-ci.yml 은 rules 가 전부 $CI_COMMIT_BRANCH == \"main\"/\"develop\" 인 브랜치 푸시 트리거로 태그·버전·GitHub Release 를 다루지 않음; docs/RELEASE.md 는 근거 문서이지 릴리즈 노트가 아님. 따라서 절차 2(최근 릴리즈의 증가 패턴을 따를 것)와 절차 3(이전과 같은 방식으로 수행)이 참조할 선례가 존재하지 않는다. 절차 5 의 skipped 면제는 태그·버전 파일·릴리즈 노트가 '모두' 없을 때만 적용되는데 버전 파일(package.json)이 존재하므로 충족하지 않으며, docs/RELEASE.md 84행이 이 해석을 명시적으로 배제한다. 통과시키는 유일한 수단은 버전·태그·릴리즈 노트 관례를 새로 만드는 것인데 이는 절차 5('관례를 새로 정하는 건 사람의 일')와 AGENTS.md('확인되지 않은 관례를 새로 만들거나 릴리즈 판정 조건을 완화하지 않는다')가 금지한다. 그러므로 버전 파일·태그·CHANGELOG·릴리즈 노트·릴리즈 커밋을 일체 만들지 않았고 docs/RELEASE.md 도 수정하지 않았으며 원격 전송도 하지 않았다(워크트리 git status 청정, HEAD 108cc47 그대로). 자산 없음: 과거 릴리즈 자산 기록이 없고 빌드·업로드 스크립트도 없으므로 assets 는 빈 배열. 필요한 사람 입력: (1)버전 릴리즈 관례 도입 여부 자체 — 현 배포는 GitLab CI 브랜치 푸시 트리거이므로 버전 태그가 배포에 필요하지 않음 (2)시작 버전(0.0.1 대 0.1.0)과 증가 단위 (3)태그 형식과 주석 태그 여부 (4)릴리즈 커밋 메시지 양식 (5)릴리즈 노트 위치·양식·언어 (6)GitHub Release 사용 여부(현재 원격 배포는 GitLab). 참고: 요구된 회사 스킬 marketing:product-launch, technology:release-and-deployment 는 Skill 도구로 원문을 로드해 절차를 따랐다.",
+      "at": "2026-09-23T20:39:34+09:00"
+    }
+  },
+  "provenance": {
+    "model": "claude-opus-5",
+    "policy_version": "ecd4b546e",
+    "prompts_hash": "30c37184f081815d",
+    "runner_version": "ecd4b546e",
+    "base_sha": "c179034c9b90c00afc182176ade571a30669fd00",
+    "head_sha": "fbca18c8d5ba49df450570b0d75d93c167c3316b",
+    "pr": "https://github.com/hkjang/aiportal-front/pull/27"
+  },
+  "verification": {
+    "runner": {
+      "source": "auto",
+      "commands": [
+        {
+          "cmd": "[ -d node_modules ] || npm ci --no-audit --no-fund",
+          "exit": 0,
+          "seconds": 0
+        },
+        {
+          "cmd": "npm test --silent",
+          "exit": 0,
+          "seconds": 3
+        }
+      ]
+    },
+    "runner_gate": {
+      "ok": true,
+      "state": "verified",
+      "reason": "검증 2개 통과 (auto)"
+    },
+    "after_rebase": null,
+    "review": {
+      "verdict": "approve",
+      "reasons": [],
+      "notes": [
+        "구현자가 '읽기만 했다' 고 남긴 3개 호출부를 직접 열어 확인했다 — src/views/Support/SupportList.vue:374-398, src/views/InfoSearch/InfoSearchList.vue:275-298, src/views/MyAgent/MyAgentList.vue:408-433 모두 try/catch(e=='COM' 조기 반환)+finally 로 shareAppLoading 해제까지 갖췄다. HeaderShare.vue:91-114 도 동일. 예외가 전파되어도 스피너 누수나 미처리 거절 없음.",
+        "테스트가 변경을 실제로 검증하는지 직접 확인했다: shareAppService.js 를 main 판으로 되돌리고 새 스펙을 돌리면 6개 중 3개가 실패한다(토스트 배열 단언, 일반 오류 토스트 단언). 실제 mount + 실제 interceptors.js 를 통과하는 스펙이므로 형식적 통과가 아니다. 나머지 3개(BZ01 Alert, 권한 안내 유지, 성공 안내)는 변경 전후 모두 통과하는 회귀 방어용으로 타당하다.",
+        "전체 스위트 27파일 477테스트 통과(main 26파일 471테스트 + 신규 6). 프로필의 '기준선 23파일 452테스트' 기재는 낡았다 — 다음 회차 프로필에서 갱신 필요. 작업 트리에 미추적 파일 없음.",
+        "tests/unit/shareAppCommonError.spec.js:113 의 afterEach 가 axios.defaults.adapter 를 restore 가 아니라 delete 한다. axios 원래 기본값(['xhr','http','fetch'])이 복원되지 않으므로 같은 모듈 레지스트리를 공유하는 스펙이 생기면 '적합한 adapter 없음' 으로 깨진다. 현재 vitest 는 파일별 격리라 무해하지만 원래 값을 보관해 되돌리는 편이 안전하다.",
+        "남는 제품 문구 문제(수정 범위 밖, 릴리즈 노트용): createSharedApp 은 여전히 실패 시 {ok:false,message} 를 돌려주는데 호출부 4곳이 result.message 를 모두 버린다. 따라서 '필수 값이 누락되었습니다' 나 서버가 준 실패 메시지는 아직 '권한이 없어 설치가 불가합니다' 로 표시된다. 공통 오류('COM')·통신 예외 구간만 고쳐졌다.",
+        "보안·법무 차단 사유 없음: 인가 경로·식별자 비교·비밀값·암호 처리 변경 없고, 오류 전파로 새로 노출되는 서버 메시지도 없다(인터셉터의 openAlert 는 기존 동작). 신규 의존성 없음, 개인정보 신규 수집·저장·전송 없음(스펙의 writeUser({userId:'tester'}) 는 합성값). 코드 변경만이라 revert 로 완전히 되돌아온다.",
+        "참고(둘 다 main 에 이미 있던 것, 이번 diff 밖): HeaderShare.vue:32 의 isSuccess() 인자 없는 호출은 항상 false 이고, HeaderShare.vue:113 의 finally 는 켠 적 없는 isLoading 을 내린다 — 이 화면만 다른 3곳과 달리 중복 제출 가드가 없다."
+      ],
+      "risk": "low",
+      "blocking": []
+    },
+    "ci_gate": {
+      "ok": false,
+      "state": "no-ci",
+      "reason": "이 커밋에 검사가 없음 (정책 allow_merge_without_ci 가 없으면 차단)",
+      "checks": 0
+    }
+  },
+  "release": {
+    "result": {
+      "status": "failed",
+      "version": "",
+      "tag": "",
+      "title": "",
+      "notes_file": "",
+      "github_release": false,
+      "assets": [],
+      "reason": "버전 증가 관례를 결정할 근거가 저장소에 없어 릴리즈를 수행할 수 없음(14회째 동일 사유, 이번 회차 직접 재확인). 근거: git tag 0개; git log 55커밋 전체에 릴리즈 커밋 메시지 양식 없음(유일 매치 12c8e8a 는 문서 커밋); package.json/package-lock.json version 및 packages[\"\"].version 모두 0.0.0 이며 최초 커밋 ab700ba8 부터 한 번도 증가한 적 없음; CHANGELOG.md·VERSION·scripts/·Makefile 없음; .github 디렉터리 없음(태그 푸시/릴리즈 워크플로 부재, 러너가 미리 가져온 GitHub Release 목록도 비어 있음); .gitlab-ci.yml 은 rules 가 전부 $CI_COMMIT_BRANCH == \"main\"/\"develop\" 인 브랜치 푸시 트리거로 태그·버전·GitHub Release 를 다루지 않음; docs/RELEASE.md 는 근거 문서이지 릴리즈 노트가 아님. 따라서 절차 2(최근 릴리즈의 증가 패턴을 따를 것)와 절차 3(이전과 같은 방식으로 수행)이 참조할 선례가 존재하지 않는다. 절차 5 의 skipped 면제는 태그·버전 파일·릴리즈 노트가 '모두' 없을 때만 적용되는데 버전 파일(package.json)이 존재하므로 충족하지 않으며, docs/RELEASE.md 84행이 이 해석을 명시적으로 배제한다. 통과시키는 유일한 수단은 버전·태그·릴리즈 노트 관례를 새로 만드는 것인데 이는 절차 5('관례를 새로 정하는 건 사람의 일')와 AGENTS.md('확인되지 않은 관례를 새로 만들거나 릴리즈 판정 조건을 완화하지 않는다')가 금지한다. 그러므로 버전 파일·태그·CHANGELOG·릴리즈 노트·릴리즈 커밋을 일체 만들지 않았고 docs/RELEASE.md 도 수정하지 않았으며 원격 전송도 하지 않았다(워크트리 git status 청정, HEAD 108cc47 그대로). 자산 없음: 과거 릴리즈 자산 기록이 없고 빌드·업로드 스크립트도 없으므로 assets 는 빈 배열. 필요한 사람 입력: (1)버전 릴리즈 관례 도입 여부 자체 — 현 배포는 GitLab CI 브랜치 푸시 트리거이므로 버전 태그가 배포에 필요하지 않음 (2)시작 버전(0.0.1 대 0.1.0)과 증가 단위 (3)태그 형식과 주석 태그 여부 (4)릴리즈 커밋 메시지 양식 (5)릴리즈 노트 위치·양식·언어 (6)GitHub Release 사용 여부(현재 원격 배포는 GitLab). 참고: 요구된 회사 스킬 marketing:product-launch, technology:release-and-deployment 는 Skill 도구로 원문을 로드해 절차를 따랐다."
+    },
+    "assets_sha256": []
+  },
+  "approval": null,
+  "usage": [
+    {
+      "ts": "2026-09-23T20:34:27+09:00",
+      "date": "2026-09-23",
+      "project": "aiportal-front",
+      "phase": "improve",
+      "run_id": "2026-09-23-202418-aiportal-front-improve",
+      "campaign": "",
+      "subtype": "success",
+      "duration_ms": 657845,
+      "num_turns": 71,
+      "cost_usd": 5.687322500000002,
+      "input_tokens": 130,
+      "output_tokens": 45580,
+      "cache_read": 6377465,
+      "cache_create": 135844
+    },
+    {
+      "ts": "2026-09-23T20:37:21+09:00",
+      "date": "2026-09-23",
+      "project": "aiportal-front",
+      "phase": "review",
+      "run_id": "2026-09-23-202418-aiportal-front-improve",
+      "campaign": "",
+      "subtype": "success",
+      "duration_ms": 179338,
+      "num_turns": 26,
+      "cost_usd": 1.1510829999999999,
+      "input_tokens": 34,
+      "output_tokens": 10333,
+      "cache_read": 824416,
+      "cache_create": 48038
+    },
+    {
+      "ts": "2026-09-23T20:39:34+09:00",
+      "date": "2026-09-23",
+      "project": "aiportal-front",
+      "phase": "release",
+      "run_id": "2026-09-23-202418-aiportal-front-improve",
+      "campaign": "",
+      "subtype": "success",
+      "duration_ms": 90565,
+      "num_turns": 16,
+      "cost_usd": 0.724523,
+      "input_tokens": 20,
+      "output_tokens": 7238,
+      "cache_read": 391646,
+      "cache_create": 34765
+    }
+  ]
+}

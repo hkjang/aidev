@@ -1,0 +1,5 @@
+# 수리 요약 (시도 1)
+
+지적 두 개 다 맞았다. (1) `docs/USER_GUIDE.md:384` 이 "열여섯 자리가 넘는" 이라 적었으나 가드는 `spreadsheetNumber.ts:135` 의 `significantDigits(digits)>15` 라 열여섯 자리는 이미 글자다 → "열다섯 자리를 넘는" 으로 고쳐 같은 문서 254·350·529줄과 맞췄다. (2) "CSV·XLSX 와 같은 규칙" 은 XLSX 에 거짓이다 → CSV·TSV(`service.go:136`→`parseDelimited`→`delimited.Number`, 두 가드 다 적용)만 같다고 적고, XLSX 는 앞자리 0만 같으며 형식 없이 적힌 아주 긴 번호는 수로 들어올 수 있다고 밝혔다. 비평이 남긴 우려대로 529줄 정리 설명에도 앞자리 0 정수를 바꾸지 않는다는 한 줄을 넣었다(이 변경이 실제로 좁힌 동작이다).
+
+새로 적은 문장은 실제 코드를 돌려 확인했다: `parseXLSXValue("12345678901234567890", CellTypeUnset)` → `float64 1.2345678901234567e+19`(뭉개짐), 같은 함수로 `"007"` → `"007"`(글자 유지); `looksLikeNumberStoredAsText('007'|'00123'|'1234567890123456')` → false, `'1,234'` → true; `parsePastedNumber('1234567890123456')` → undefined, `'999999999999999'` → 999999999999999. (확인용 파일은 지웠다.) 검증: `go build ./...`·`go vet ./...`·`go test ./...` 통과, `web`: `npm run lint`·`npm test`(73파일 512테스트) ·`npm run build` 통과, `./scripts/check-release-docs.sh` → `release docs ok: v0.252.0`. USER_GUIDE.pdf 를 `scripts/generate_pdf.js` 로 다시 구웠다(1.858MB) — 이 기계에 pdftotext 류가 없어 PDF **안의 글자**는 확인하지 못했다. E2E·DB 통합은 돌리지 않았다.

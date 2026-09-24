@@ -1,0 +1,128 @@
+[
+  {
+    "title": "orbitAt 의 포함 규칙(created_at/first_met/이전 교류)과 시점별 기억 수·마지막 교류를 실제 postgres 로 고정",
+    "value": 3,
+    "risk": 1,
+    "size": "M",
+    "status": "done",
+    "note": "이번 회차 구현. timetravel_db_test.go 에 TestOrbitAtHistoricalSnapshot(하위 10개)과 seedRelationship/seedOrbitPerson/setFirstMet/seedMemory 헬퍼를 더했다. 프로덕션 코드는 바꾸지 않았다. 질의를 10가지로 일부러 깨뜨려 매번 의도한 하위 시험만 빨개지는 것을 확인했다. seedMemory 에는 과제서에 없던 createdAt 인자가 필요했다 — memories.created_at 기본값이 now() 라 occurred_at NULL 폴백을 양쪽으로 증명할 수 없다.",
+    "updated": "2026-09-24"
+  },
+  {
+    "title": "Time Travel API(/orbit?at=, earliest_at, historical)를 openapi.go·API.md 에 문서화",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "차선 후보였다. openapi.go:13 의 /orbit 은 operation() 한 줄뿐이고 at 매개변수·earliest_at·historical 응답 필드가 어느 문서에도 없다 — 이번 회차에도 그대로. docs/cru-manual.md 는 코드와 어긋난 곳이 있어 실제 핸들러(data.go:getOrbit, timetravel.go:parseOrbitAt·writeOrbitAt)를 정본으로 삼아야 한다. date-only ?at= 의 UTC 자정 해석 항목과 묶는 편이 낫다.",
+    "updated": "2026-09-24"
+  },
+  {
+    "title": "parseOrbitAt 이 미래 시각을 거부(400)",
+    "value": 2,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "timetravel.go:22 는 여전히 형식만 본다. interactionFutureSkew 를 재사용할 수 있다. 다만 미래 at 은 오늘과 거의 같은 우주를 돌려줄 뿐이라 사용자가 보는 것이 거의 바뀌지 않는다 — '동작이 안 바뀌는 수정' 쪽에 가깝고, 조회 계약 변경이라 API 키 호출자를 깨뜨릴 수 있다.",
+    "updated": "2026-09-24"
+  },
+  {
+    "title": "date-only ?at= 이 UTC 자정으로 해석되는 것을 문서화",
+    "value": 2,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "parseOrbitAt 의 '2006-01-02' 파싱은 UTC 00:00. 화면은 항상 RFC3339 를 보내므로 영향은 API 키 호출자뿐. 보정은 계약 변경이라 문서화가 먼저 — 위 문서화 과제와 묶는다.",
+    "updated": "2026-09-24"
+  },
+  {
+    "title": "orbitAt 의 first_met<=$2::date 가 DB 세션 TimeZone 에 따라 하루 어긋남",
+    "value": 2,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "timetravel.go:63 에서 timestamptz 인 $2 를 ::date 로 캐스팅하는데 그 결과는 postgres 의 TimeZone 설정에 달렸다(컨테이너 기본 UTC). KST 사용자가 새벽 시각으로 물으면 그날 첫 만남인 사람이 빠질 수 있다. 이번 회차에 first_met 갈래의 회귀 기준이 생겼으므로(UTC 세션 기준) 이제 고칠지 판단할 수 있다 — 다만 고치려면 시험도 세션 TimeZone 을 바꿔 가며 돌려야 한다.",
+    "updated": "2026-09-24"
+  },
+  {
+    "title": "orbitAt 의 교류 조회에 LIMIT 이 없다",
+    "value": 2,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "timetravel.go:93 의 `SELECT person_id,occurred_at,weight FROM interactions WHERE user_id=$1 AND occurred_at<=$2` 는 상한이 없다(사람 조회는 LIMIT 1000). 교류가 많은 사용자에게 한 요청이 전부를 메모리로 올린다. 성급히 LIMIT 을 걸면 지표가 조용히 틀어진다 — 집계를 DB 로 내리는 쪽이 맞을 수 있어 M 으로 커질 수 있다. 다만 이제 last_interaction_at·closeness 회귀 기준이 있어 동등성 확인은 가능하다.",
+    "updated": "2026-09-24"
+  },
+  {
+    "title": "orbitAt 의 사람별 memories count 상관 서브쿼리를 한 번의 GROUP BY 집계로",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "timetravel.go:63 에 상관 count 와 LIMIT 1000 실재. 병목 측정은 아직 안 했다. 이번 회차에 memory_count 의 동등성 회귀 기준(승인 상태·coalesce 폴백·시점 경계·다른 사람 기억 제외)이 생겼으므로 이제 안전하게 바꿔 볼 수 있다 — 순서상 다음 후보로 적당하다.",
+    "updated": "2026-09-24"
+  },
+  {
+    "title": "InteractionDialog 의 datetime-local 입력에 max 를 두어 왕복 전에 막기",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "PersonPage.tsx:489 의 type=\"datetime-local\" 에 max 가 없다. 1dc3fe3 이 기본값을 로컬 벽시계로 고친 뒤에도 사용자가 직접 미래를 적으면 서버 400 으로만 막힌다. 다만 서버 오류가 같은 다이얼로그 Alert 로 이미 보이고 web/src/pages 에 페이지 테스트 기반이 없어 증명 수단이 약하다.",
+    "updated": "2026-09-24"
+  },
+  {
+    "title": "CI 에 postgres 서비스 컨테이너를 붙여 ORBIT_TEST_DATABASE_URL DB 테스트를 매번 돌리기",
+    "value": 3,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "ci.yml 에 DB 가 없어 DB 테스트가 CI 에서 늘 SKIP 된다. 이번에 orbitAt 하위 시험 10개가 더해져 CI 에서 도는 값이 더 커졌다. 다만 .github/workflows 는 보호 경로라 자율 회차에서는 손대지 않는다 — 사람이 해야 할 일로 남긴다.",
+    "updated": "2026-09-24"
+  },
+  {
+    "title": "OrbitPage 통합 테스트 — 역순 응답에서 마지막 시점 nodes 만 남는지 페이지 수준으로 고정",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "web/src/pages 에 테스트가 하나도 없다. createLatestGuard 순수 모듈 테스트만으로는 OrbitPage.load 의 배선을 못 본다. node_modules 가 없어 npm ci 부터 필요하다.",
+    "updated": "2026-09-24"
+  },
+  {
+    "title": "OrbitPage 에서 /rediscover 를 시간 여행과 분리",
+    "value": 2,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "OrbitPage.tsx:51 의 Promise.all 에 그대로 있어 시점만 바뀌어도 /rediscover 를 다시 부른다. 로딩·오류 처리를 나눠야 해 S 치고 손이 많이 간다.",
+    "updated": "2026-09-24"
+  },
+  {
+    "title": "web `npm run lint` 가 eslint 미설치로 실패 — devDependencies 추가 또는 스크립트 제거",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "web/package.json:10 에 `\"lint\": \"eslint .\"` 가 있는데 devDependencies 에 eslint 가 없다. CI 도 lint 를 돌리지 않는다. eslint 를 새로 들이면 기존 13,000 줄에 경고가 쏟아져 S 가 아니게 되므로 스크립트를 지우는 쪽이 실제 S 다.",
+    "updated": "2026-09-24"
+  },
+  {
+    "title": "orbitAt 의 시험 데이터에 categories 가 있는 경우를 더해 contexts 집계까지 고정",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "새 항목. 이번 회차 시험은 relationships.categories 가 기본값 '[]' 라 orbitAt 의 두 번째 반환값 contexts 가 늘 빈 맵인 것만 확인한다. 실제 집계(같은 분류가 여럿이면 세어 올리고, 보이지 않는 사람의 분류는 안 세는지)는 아직 아무 시험도 덮지 않는다. seedRelationship 에 categories 인자를 더하면 된다.",
+    "updated": "2026-09-24"
+  },
+  {
+    "title": "현재 궤도(data.go:getOrbit)와 과거 궤도(orbitAt)가 '지금' 시점에서 같은 값을 주는지 고정",
+    "value": 3,
+    "risk": 1,
+    "size": "M",
+    "status": "pending",
+    "note": "새 항목. 두 경로가 거의 같은 SELECT 를 각자 갖고 있어 한쪽만 고치면 값이 어긋난다(프로필의 '자주 깨지는 곳'). 이번에 orbitAt 쪽 기준이 생겼으니, 같은 데이터에서 at=now 인 orbitAt 과 getOrbit 이 같은 노드 집합·memory_count·last_interaction_at 을 주는지 한 시험으로 묶으면 두 경로가 갈라지는 순간 잡힌다. getOrbit 은 핸들러라 httptest+세션 배선이 필요해 M.",
+    "updated": "2026-09-24"
+  }
+]

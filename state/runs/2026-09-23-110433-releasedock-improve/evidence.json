@@ -1,0 +1,183 @@
+{
+  "run_id": "2026-09-23-110433-releasedock-improve",
+  "generated": "2026-09-23T11:28:30+09:00",
+  "run": {
+    "run_id": "2026-09-23-110433-releasedock-improve",
+    "project": "releasedock",
+    "kind": "improve",
+    "started": "2026-09-23T11:04:34+09:00",
+    "model": "claude-opus-5",
+    "policy_version": "ecd4b546e",
+    "prompts_hash": "30c37184f081815d",
+    "runner_version": "ecd4b546e",
+    "arm": "no-scout",
+    "experiment": "roles-2026-09",
+    "finished": "2026-09-23T11:28:30+09:00",
+    "outcome": "review-pending"
+  },
+  "record": {
+    "ts": "2026-09-23T11:28:30+09:00",
+    "date": "2026-09-23",
+    "project": "releasedock",
+    "result": "review held, PR open https://github.com/hkjang/releasedock/pull/22",
+    "outcome": "review-pending",
+    "run_id": "2026-09-23-110433-releasedock-improve",
+    "base_sha": "31f64a90c1146af1560c4e7f87e7259dad4aa7b0",
+    "head_sha": "1d3e27c03f1e80ad95d9bcc277c451291c5296c6",
+    "pr": "https://github.com/hkjang/releasedock/pull/22",
+    "stages": {
+      "base": {
+        "state": "pinned",
+        "reason": "main@31f64a9",
+        "at": "2026-09-23T11:04:37+09:00"
+      },
+      "autonomy": {
+        "state": "release",
+        "reason": "",
+        "at": "2026-09-23T11:04:37+09:00"
+      },
+      "verify": {
+        "state": "passed",
+        "reason": "검증 7개 통과 (auto)",
+        "at": "2026-09-23T11:14:04+09:00"
+      },
+      "review": {
+        "state": "missing",
+        "reason": "리뷰 결과 없음/손상: missing — 보류",
+        "at": "2026-09-23T11:28:09+09:00"
+      },
+      "pr": {
+        "state": "created",
+        "reason": "https://github.com/hkjang/releasedock/pull/22",
+        "at": "2026-09-23T11:28:24+09:00"
+      }
+    },
+    "campaign": "",
+    "autonomy": "release",
+    "arm": "no-scout",
+    "experiment": "roles-2026-09",
+    "files": 3,
+    "additions": 190,
+    "deletions": 4,
+    "tests": 2,
+    "title": "fix: hold one live log stream per running deployment"
+  },
+  "stages": {
+    "base": {
+      "state": "pinned",
+      "reason": "main@31f64a9",
+      "at": "2026-09-23T11:04:37+09:00"
+    },
+    "autonomy": {
+      "state": "release",
+      "reason": "",
+      "at": "2026-09-23T11:04:37+09:00"
+    },
+    "verify": {
+      "state": "passed",
+      "reason": "검증 7개 통과 (auto)",
+      "at": "2026-09-23T11:14:04+09:00"
+    },
+    "review": {
+      "state": "missing",
+      "reason": "리뷰 결과 없음/손상: missing — 보류",
+      "at": "2026-09-23T11:28:09+09:00"
+    },
+    "pr": {
+      "state": "created",
+      "reason": "https://github.com/hkjang/releasedock/pull/22",
+      "at": "2026-09-23T11:28:24+09:00"
+    }
+  },
+  "provenance": {
+    "model": "claude-opus-5",
+    "policy_version": "ecd4b546e",
+    "prompts_hash": "30c37184f081815d",
+    "runner_version": "ecd4b546e",
+    "base_sha": "31f64a90c1146af1560c4e7f87e7259dad4aa7b0",
+    "head_sha": "1d3e27c03f1e80ad95d9bcc277c451291c5296c6",
+    "pr": "https://github.com/hkjang/releasedock/pull/22"
+  },
+  "verification": {
+    "runner": {
+      "source": "auto",
+      "commands": [
+        {
+          "cmd": "cd backend && go build ./...",
+          "exit": 0,
+          "seconds": 2
+        },
+        {
+          "cmd": "cd backend && go vet ./...",
+          "exit": 0,
+          "seconds": 0
+        },
+        {
+          "cmd": "cd backend && go test ./...",
+          "exit": 0,
+          "seconds": 2
+        },
+        {
+          "cmd": "cd web && [ -d node_modules ] || npm ci --no-audit --no-fund",
+          "exit": 0,
+          "seconds": 0
+        },
+        {
+          "cmd": "cd web && npm test --silent",
+          "exit": 0,
+          "seconds": 11
+        },
+        {
+          "cmd": "cd web && [ -d node_modules ] || npm ci --no-audit --no-fund",
+          "exit": 0,
+          "seconds": 0
+        },
+        {
+          "cmd": "cd web && npm run build --silent",
+          "exit": 0,
+          "seconds": 12
+        }
+      ]
+    },
+    "runner_gate": {
+      "ok": true,
+      "state": "verified",
+      "reason": "검증 7개 통과 (auto)"
+    },
+    "after_rebase": null,
+    "review": null,
+    "ci_gate": null
+  },
+  "release": {
+    "result": null,
+    "assets_sha256": []
+  },
+  "approval": null,
+  "usage": [
+    {
+      "ts": "2026-09-23T11:13:34+09:00",
+      "date": "2026-09-23",
+      "project": "releasedock",
+      "phase": "improve",
+      "run_id": "2026-09-23-110433-releasedock-improve",
+      "campaign": "",
+      "subtype": "success",
+      "duration_ms": 570512,
+      "num_turns": 61,
+      "cost_usd": 4.4198485,
+      "input_tokens": 114,
+      "output_tokens": 33090,
+      "cache_read": 4914717,
+      "cache_create": 113467
+    },
+    {
+      "ts": "2026-09-23T11:28:09+09:00",
+      "date": "2026-09-23",
+      "project": "releasedock",
+      "phase": "review",
+      "run_id": "2026-09-23-110433-releasedock-improve",
+      "subtype": "unknown",
+      "cost_usd": null
+    }
+  ]
+}

@@ -1,0 +1,302 @@
+{
+  "run_id": "2026-09-23-222433-aiportal-py-improve",
+  "generated": "2026-09-23T22:45:02+09:00",
+  "run": {
+    "run_id": "2026-09-23-222433-aiportal-py-improve",
+    "project": "aiportal-py",
+    "kind": "improve",
+    "started": "2026-09-23T22:24:33+09:00",
+    "model": "claude-opus-5",
+    "policy_version": "ecd4b546e",
+    "prompts_hash": "30c37184f081815d",
+    "runner_version": "ecd4b546e",
+    "arm": "no-arbiter",
+    "experiment": "roles-2026-09",
+    "finished": "2026-09-23T22:45:02+09:00",
+    "outcome": "merged"
+  },
+  "record": {
+    "ts": "2026-09-23T22:45:02+09:00",
+    "date": "2026-09-23",
+    "project": "aiportal-py",
+    "result": "merged https://github.com/hkjang/aiportal-py/pull/24, release skipped",
+    "outcome": "merged",
+    "run_id": "2026-09-23-222433-aiportal-py-improve",
+    "base_sha": "a005eb96933fd289c64d772c04ae5aee6272fcc9",
+    "head_sha": "d3fad3ad8aa58545fa7cf08967dc5af7e6196f11",
+    "pr": "https://github.com/hkjang/aiportal-py/pull/24",
+    "stages": {
+      "base": {
+        "state": "pinned",
+        "reason": "main@a005eb9",
+        "at": "2026-09-23T22:24:35+09:00"
+      },
+      "autonomy": {
+        "state": "release",
+        "reason": "",
+        "at": "2026-09-23T22:24:35+09:00"
+      },
+      "scout": {
+        "state": "failed",
+        "reason": "과제서 없음 — 구현자가 직접 고른다",
+        "at": "2026-09-23T22:28:11+09:00"
+      },
+      "verify": {
+        "state": "passed",
+        "reason": "검증 1개 통과 (auto)",
+        "at": "2026-09-23T22:31:47+09:00"
+      },
+      "review": {
+        "state": "approved",
+        "reason": "리뷰 승인 (risk=low)",
+        "at": "2026-09-23T22:43:08+09:00"
+      },
+      "repair": {
+        "state": "done",
+        "reason": "# fix-summary (수리 1회차 → 커밋 d3fad3a)  - **문제(재현함):** 거절된 `aef822c` 의 5줄 조기 flush 가 `──── + 데이터 6행 + ────` 형식(각 행에 `│` 없음)",
+        "at": "2026-09-23T22:40:12+09:00"
+      },
+      "pr": {
+        "state": "created",
+        "reason": "https://github.com/hkjang/aiportal-py/pull/24",
+        "at": "2026-09-23T22:43:11+09:00"
+      },
+      "ci": {
+        "state": "passed",
+        "reason": "검사 없음 — 정책으로 허용",
+        "at": "2026-09-23T22:43:41+09:00"
+      },
+      "merge": {
+        "state": "done",
+        "reason": "d3fad3ad8aa58545fa7cf08967dc5af7e6196f11",
+        "at": "2026-09-23T22:43:46+09:00"
+      },
+      "release": {
+        "state": "skipped",
+        "reason": "릴리즈 안 함: 릴리즈 이력이 전혀 없는 저장소. 확인한 것: `git tag` 0개(태그 전무), 전체 49개 커밋 중 릴리즈/버전 형식 커밋 메시지 0건, CHANGELOG.md·docs/RELEASE*.md·릴리즈 노트 파일 없음(docs/ 21개 문서 어디에도 릴리즈 절차·버전 규약 서술 없음), 버전 파일 없음(pyproject.toml·setup.py·setup.cfg·package.json·VERSION 모두 부재), 릴리즈 스크립트·Makefile 없음(.sh 파일 0개), 미리 가져온 GitHub Release 목록 비어 있음, .github/workflows 없음. 배포는 .gitlab-ci.yml 의 deploy stage 6개 job 이 branch(main/develop) 푸시에만 반응해 배포 호스트에서 `git reset --hard origin/<branch>` 후 k8s rollout restart / podman restart 하는 방식이라 태그·산출물과 무관하다. api.py:147 의 `version=\"1.0.0\"` 는 FastAPI 앱 metadata 로 first commit 이후 한 번도 바뀐 적이 없고(docs/API_REFERENCE.md 에도 '앱 metadata version' 으로 기술) 릴리즈 버전 파일이 아니다. 따라서 따라 할 이전 방식이 없어 관례를 새로 만들지 않고 건너뛴다.",
+        "at": "2026-09-23T22:45:01+09:00"
+      }
+    },
+    "campaign": "",
+    "autonomy": "release",
+    "arm": "no-arbiter",
+    "experiment": "roles-2026-09",
+    "files": 4,
+    "additions": 86,
+    "deletions": 9,
+    "tests": 1,
+    "title": "fix: 간격 5줄 조기 flush 제거로 가로선만 쓰는 별표 표가 쪼개지던 회귀 수정 (감사 A-118)"
+  },
+  "stages": {
+    "base": {
+      "state": "pinned",
+      "reason": "main@a005eb9",
+      "at": "2026-09-23T22:24:35+09:00"
+    },
+    "autonomy": {
+      "state": "release",
+      "reason": "",
+      "at": "2026-09-23T22:24:35+09:00"
+    },
+    "scout": {
+      "state": "failed",
+      "reason": "과제서 없음 — 구현자가 직접 고른다",
+      "at": "2026-09-23T22:28:11+09:00"
+    },
+    "verify": {
+      "state": "passed",
+      "reason": "검증 1개 통과 (auto)",
+      "at": "2026-09-23T22:31:47+09:00"
+    },
+    "review": {
+      "state": "approved",
+      "reason": "리뷰 승인 (risk=low)",
+      "at": "2026-09-23T22:43:08+09:00"
+    },
+    "repair": {
+      "state": "done",
+      "reason": "# fix-summary (수리 1회차 → 커밋 d3fad3a)  - **문제(재현함):** 거절된 `aef822c` 의 5줄 조기 flush 가 `──── + 데이터 6행 + ────` 형식(각 행에 `│` 없음)",
+      "at": "2026-09-23T22:40:12+09:00"
+    },
+    "pr": {
+      "state": "created",
+      "reason": "https://github.com/hkjang/aiportal-py/pull/24",
+      "at": "2026-09-23T22:43:11+09:00"
+    },
+    "ci": {
+      "state": "passed",
+      "reason": "검사 없음 — 정책으로 허용",
+      "at": "2026-09-23T22:43:41+09:00"
+    },
+    "merge": {
+      "state": "done",
+      "reason": "d3fad3ad8aa58545fa7cf08967dc5af7e6196f11",
+      "at": "2026-09-23T22:43:46+09:00"
+    },
+    "release": {
+      "state": "skipped",
+      "reason": "릴리즈 안 함: 릴리즈 이력이 전혀 없는 저장소. 확인한 것: `git tag` 0개(태그 전무), 전체 49개 커밋 중 릴리즈/버전 형식 커밋 메시지 0건, CHANGELOG.md·docs/RELEASE*.md·릴리즈 노트 파일 없음(docs/ 21개 문서 어디에도 릴리즈 절차·버전 규약 서술 없음), 버전 파일 없음(pyproject.toml·setup.py·setup.cfg·package.json·VERSION 모두 부재), 릴리즈 스크립트·Makefile 없음(.sh 파일 0개), 미리 가져온 GitHub Release 목록 비어 있음, .github/workflows 없음. 배포는 .gitlab-ci.yml 의 deploy stage 6개 job 이 branch(main/develop) 푸시에만 반응해 배포 호스트에서 `git reset --hard origin/<branch>` 후 k8s rollout restart / podman restart 하는 방식이라 태그·산출물과 무관하다. api.py:147 의 `version=\"1.0.0\"` 는 FastAPI 앱 metadata 로 first commit 이후 한 번도 바뀐 적이 없고(docs/API_REFERENCE.md 에도 '앱 metadata version' 으로 기술) 릴리즈 버전 파일이 아니다. 따라서 따라 할 이전 방식이 없어 관례를 새로 만들지 않고 건너뛴다.",
+      "at": "2026-09-23T22:45:01+09:00"
+    }
+  },
+  "provenance": {
+    "model": "claude-opus-5",
+    "policy_version": "ecd4b546e",
+    "prompts_hash": "30c37184f081815d",
+    "runner_version": "ecd4b546e",
+    "base_sha": "a005eb96933fd289c64d772c04ae5aee6272fcc9",
+    "head_sha": "d3fad3ad8aa58545fa7cf08967dc5af7e6196f11",
+    "pr": "https://github.com/hkjang/aiportal-py/pull/24"
+  },
+  "verification": {
+    "runner": {
+      "source": "auto",
+      "commands": [
+        {
+          "cmd": "python3 -m pytest -q -x",
+          "exit": 0,
+          "seconds": 3
+        }
+      ]
+    },
+    "runner_gate": {
+      "ok": true,
+      "state": "verified",
+      "reason": "검증 1개 통과 (auto)"
+    },
+    "after_rebase": null,
+    "review": {
+      "verdict": "approve",
+      "reasons": [],
+      "notes": [
+        "util/text_renderer.py:83-90 실제 호출로 3판 대조 검증함. 신규 6건 중 t1~t3(표 뒤 본문/빈 줄/순서)은 main@a005eb9 에서 실제 Red, t4~t5(┌─┐ 표·─── 가로선 표의 긴 간격 유지)는 거절된 aef822c 에서 실제 Red 로 회귀를 고정함. 나머지 1건(섹션 표시 분할)은 세 판 모두 Green 인 계약 고정 테스트이며 tests/unit/test_text_renderer.py:31 과 일부 겹치지만, 5줄 초과 간격 경로를 새로 지나므로 무해함.",
+        "무작위 차분 대조(POOL 15종·최대 30줄·5만건 x2): NEW 가 OLD 보다 ht0 블록을 더 쪼갠 사례 0건(거절된 MID 는 3049건), NEW 가 pre 블록에 더 흡수한 사례 0건, OLD 는 보존하는데 NEW 가 내용을 잃은 사례 0건(반대는 1060건 — NEW 가 개선). 즉 이 변경은 '표 뒤 간격이 문서 끝까지 이어지는' 경우에만 원본과 다르며, 그 방향은 전부 A-118 개선.",
+        "전체 1081 passed, pyflakes 무경고, git diff --check 통과. 변경 범위는 util/text_renderer.py + 그 테스트 + docs 2건뿐이고 범위 이탈 없음. 뷰어 출력 전용이라 색인 데이터·마이그레이션·외부 상태 변화 없음 — revert 는 순수 코드 되돌림으로 충분.",
+        "보안·법무 차단 없음: 인증/인가/비밀값/개인정보/의존성 어느 것도 건드리지 않았고 wrap_preformatted 는 api.py:1477 한 곳에서만 쓰인다. HTML escape 여부는 이번 변경으로 넓어지지도 좁아지지도 않았다(pre 안이든 밖이든 동일하게 미escape).",
+        "다음 회차용 기존 결함(이번 diff 밖, 감사 항목화 권장): api.py:1478 의 bare except 가 traceback.format_exc() 를 클라이언트에 그대로 반환(내부 경로·스택 노출), api.py:1468 의 req.source_seq[0] 빈 리스트 IndexError, 법령 본문 미escape HTML 반환.",
+        "남는 한계(구현자 신고와 일치, 이번에도 미확인): 실물 뷰어 화면과 운영 법령 데이터의 발생 빈도. 섹션 표시(##·**제n조**) 없이 본문 뒤에 또 표가 오면 두 표가 한 블록으로 합쳐지고 그 사이 빈 줄이 사라지는 동작은 main 과 동일한 오래된 행태로 남아 있다 — 별건 과제 후보.",
+        "pipeline/law/library/text_renderer.py 미사용 사본은 이번에도 main 과 동일하게 옛 5줄 분기를 그대로 갖고 있다. 실행 경로가 아니라 무해하지만, 나중에 누가 이쪽을 참조하면 A-118 이 되살아난다 — 삭제 또는 통합을 별건으로 권장."
+      ],
+      "risk": "low",
+      "blocking": []
+    },
+    "ci_gate": {
+      "ok": false,
+      "state": "no-ci",
+      "reason": "이 커밋에 검사가 없음 (정책 allow_merge_without_ci 가 없으면 차단)",
+      "checks": 0
+    }
+  },
+  "release": {
+    "result": {
+      "status": "skipped",
+      "version": "",
+      "tag": "",
+      "title": "",
+      "notes_file": "",
+      "github_release": false,
+      "assets": [],
+      "reason": "릴리즈 이력이 전혀 없는 저장소. 확인한 것: `git tag` 0개(태그 전무), 전체 49개 커밋 중 릴리즈/버전 형식 커밋 메시지 0건, CHANGELOG.md·docs/RELEASE*.md·릴리즈 노트 파일 없음(docs/ 21개 문서 어디에도 릴리즈 절차·버전 규약 서술 없음), 버전 파일 없음(pyproject.toml·setup.py·setup.cfg·package.json·VERSION 모두 부재), 릴리즈 스크립트·Makefile 없음(.sh 파일 0개), 미리 가져온 GitHub Release 목록 비어 있음, .github/workflows 없음. 배포는 .gitlab-ci.yml 의 deploy stage 6개 job 이 branch(main/develop) 푸시에만 반응해 배포 호스트에서 `git reset --hard origin/<branch>` 후 k8s rollout restart / podman restart 하는 방식이라 태그·산출물과 무관하다. api.py:147 의 `version=\"1.0.0\"` 는 FastAPI 앱 metadata 로 first commit 이후 한 번도 바뀐 적이 없고(docs/API_REFERENCE.md 에도 '앱 metadata version' 으로 기술) 릴리즈 버전 파일이 아니다. 따라서 따라 할 이전 방식이 없어 관례를 새로 만들지 않고 건너뛴다."
+    },
+    "assets_sha256": []
+  },
+  "approval": null,
+  "usage": [
+    {
+      "ts": "2026-09-23T22:28:11+09:00",
+      "date": "2026-09-23",
+      "project": "aiportal-py",
+      "phase": "scout",
+      "run_id": "2026-09-23-222433-aiportal-py-improve",
+      "campaign": "",
+      "subtype": "success",
+      "duration_ms": 229651,
+      "num_turns": 31,
+      "cost_usd": 1.6731344999999995,
+      "input_tokens": 40,
+      "output_tokens": 17625,
+      "cache_read": 1140499,
+      "cache_create": 66206
+    },
+    {
+      "ts": "2026-09-23T22:31:42+09:00",
+      "date": "2026-09-23",
+      "project": "aiportal-py",
+      "phase": "improve",
+      "run_id": "2026-09-23-222433-aiportal-py-improve",
+      "campaign": "",
+      "subtype": "success",
+      "duration_ms": 228008,
+      "num_turns": 34,
+      "cost_usd": 1.7760550000000002,
+      "input_tokens": 54,
+      "output_tokens": 16783,
+      "cache_read": 1524160,
+      "cache_create": 59413
+    },
+    {
+      "ts": "2026-09-23T22:36:23+09:00",
+      "date": "2026-09-23",
+      "project": "aiportal-py",
+      "phase": "review",
+      "run_id": "2026-09-23-222433-aiportal-py-improve",
+      "campaign": "",
+      "subtype": "success",
+      "duration_ms": 301172,
+      "num_turns": 27,
+      "cost_usd": 1.5260429999999998,
+      "input_tokens": 38,
+      "output_tokens": 18732,
+      "cache_read": 974766,
+      "cache_create": 57017
+    },
+    {
+      "ts": "2026-09-23T22:40:08+09:00",
+      "date": "2026-09-23",
+      "project": "aiportal-py",
+      "phase": "repair",
+      "run_id": "2026-09-23-222433-aiportal-py-improve",
+      "campaign": "",
+      "subtype": "success",
+      "duration_ms": 241447,
+      "num_turns": 29,
+      "cost_usd": 1.3630410000000002,
+      "input_tokens": 40,
+      "output_tokens": 15781,
+      "cache_read": 939312,
+      "cache_create": 49866
+    },
+    {
+      "ts": "2026-09-23T22:43:08+09:00",
+      "date": "2026-09-23",
+      "project": "aiportal-py",
+      "phase": "review",
+      "run_id": "2026-09-23-222433-aiportal-py-improve",
+      "campaign": "",
+      "subtype": "success",
+      "duration_ms": 187179,
+      "num_turns": 20,
+      "cost_usd": 1.0782129999999999,
+      "input_tokens": 26,
+      "output_tokens": 12075,
+      "cache_read": 607656,
+      "cache_create": 47238
+    },
+    {
+      "ts": "2026-09-23T22:45:01+09:00",
+      "date": "2026-09-23",
+      "project": "aiportal-py",
+      "phase": "release",
+      "run_id": "2026-09-23-222433-aiportal-py-improve",
+      "campaign": "",
+      "subtype": "success",
+      "duration_ms": 72936,
+      "num_turns": 13,
+      "cost_usd": 0.5645135,
+      "input_tokens": 18,
+      "output_tokens": 4276,
+      "cache_read": 324927,
+      "cache_create": 29506
+    }
+  ]
+}

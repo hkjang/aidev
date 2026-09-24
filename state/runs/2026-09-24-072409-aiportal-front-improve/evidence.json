@@ -1,0 +1,276 @@
+{
+  "run_id": "2026-09-24-072409-aiportal-front-improve",
+  "generated": "2026-09-24T07:40:13+09:00",
+  "run": {
+    "run_id": "2026-09-24-072409-aiportal-front-improve",
+    "project": "aiportal-front",
+    "kind": "improve",
+    "started": "2026-09-24T07:24:10+09:00",
+    "model": "claude-opus-5",
+    "policy_version": "ecd4b546e",
+    "prompts_hash": "30c37184f081815d",
+    "runner_version": "ecd4b546e",
+    "arm": "baseline",
+    "experiment": "roles-2026-09",
+    "finished": "2026-09-24T07:40:13+09:00",
+    "outcome": "merged"
+  },
+  "record": {
+    "ts": "2026-09-24T07:40:13+09:00",
+    "date": "2026-09-24",
+    "project": "aiportal-front",
+    "result": "fix-round: merged https://github.com/hkjang/aiportal-front/pull/36, release failed",
+    "outcome": "merged",
+    "run_id": "2026-09-24-072409-aiportal-front-improve",
+    "base_sha": "1c607a387de22989b2d5b916df3de82aa6bfdfd3",
+    "head_sha": "f4e5d5d5edbbb7c6971a74a63d72ca984bbe7f7c",
+    "pr": "https://github.com/hkjang/aiportal-front/pull/36",
+    "stages": {
+      "base": {
+        "state": "pinned",
+        "reason": "main@1c607a3",
+        "at": "2026-09-24T07:24:13+09:00"
+      },
+      "autonomy": {
+        "state": "release",
+        "reason": "",
+        "at": "2026-09-24T07:24:13+09:00"
+      },
+      "scout": {
+        "state": "done",
+        "reason": "**프롬프트 선택 팝업(PopPromptSelect)의 검색이 배경 게시판 화면의 검색창을 읽는다 — 중복 DOM id `searchKey`**",
+        "at": "2026-09-24T07:29:27+09:00"
+      },
+      "brief": {
+        "state": "accepted",
+        "reason": "채택 — A(릴리즈)는 지시대로 재조사 없이 무변경, B 를 지정된 두 줄만 고쳐 구현했고 `SearchBox.vue` 와 게시판 4화면의 id �",
+        "at": "2026-09-24T07:35:16+09:00"
+      },
+      "verify": {
+        "state": "passed",
+        "reason": "검증 2개 통과 (auto)",
+        "at": "2026-09-24T07:35:26+09:00"
+      },
+      "review": {
+        "state": "approved",
+        "reason": "리뷰 승인 (risk=low)",
+        "at": "2026-09-24T07:37:46+09:00"
+      },
+      "pr": {
+        "state": "created",
+        "reason": "https://github.com/hkjang/aiportal-front/pull/36",
+        "at": "2026-09-24T07:37:54+09:00"
+      },
+      "ci": {
+        "state": "passed",
+        "reason": "검사 없음 — 정책으로 허용",
+        "at": "2026-09-24T07:38:21+09:00"
+      },
+      "merge": {
+        "state": "done",
+        "reason": "f4e5d5d5edbbb7c6971a74a63d72ca984bbe7f7c",
+        "at": "2026-09-24T07:38:26+09:00"
+      },
+      "release": {
+        "state": "failed",
+        "reason": "릴리즈 안 함: 릴리즈 진입 조건 미충족(25회째, 무변경). 절차 1 재실측 결과 이 저장소에는 따라 할 이전 릴리즈 방식이 없다: git 태그 0개, 릴리즈 커밋 0건(`git log -60` 에서 릴리즈/버전 메시지 관례 없음), package.json / package-lock.json(root, packages[\"\"]) 모두 `0.0.0` 이며 최초 커밋 ab700ba 이후 한 번도 증가한 적 없음, CHANGELOG 부재, 릴리즈 노트 부재, GitHub Release 이력 부재(러너 제공 목록 비어 있음), `.github` 부재로 워크플로 0개, `.gitlab-ci.yml` 은 main/develop 브랜치 배포 전용으로 `CI_COMMIT_TAG`·release 참조 0건, scripts/ 및 Makefile 부재로 릴리즈 자산 빌드 스크립트 없음, version-check/release-check 류 사전 검사 스크립트도 없음. 따라서 절차 2 의 '최근 릴리즈들의 증가 패턴을 따르라'는 적용할 패턴 자체가 없다. 유일한 버전 표기인 README.md / docs/01-시작하기.md 의 `| 0.0.1 | 2025-01-01 | 초기 릴리스 |` 는 최초 커밋부터 있던 문서 기재일 뿐이고 docs/RELEASE.md 가 '실제 릴리스 미확인' 으로 확정해 둔 항목이라(현재 패키지 값 0.0.0 과도 모순) 증가 기준으로 쓸 수 없다. 절차 5 의 skipped 조건은 '태그도 버전 파일도 릴리즈 노트도 없음' 인데 버전 파일(package.json/package-lock.json)이 존재하므로 충족하지 않는다(docs/RELEASE.md 마지막 절과 동일 판정). 임의로 버전을 정하는 것은 관례를 새로 만드는 일이라 사람의 몫이므로 버전 파일 갱신·태그·CHANGELOG·릴리즈 노트·릴리즈 커밋을 일체 만들지 않았고, docs/RELEASE.md 도 수정하지 않았다(워크트리 clean, HEAD 1125a6e 그대로). 저장소 안에 고칠 대상이 없다: 워크플로 파일이 없고 실패 지점이 워크트리 밖(외부 aidev bin/run.sh → release.json → bin/gate.py)이라 이 세션이 합법적으로 해소할 수단이 없다. 필요한 사람 입력 4가지(직전 24회차와 동일): ①첫 릴리즈 버전을 0.0.1 / 0.1.0 / 1.0.0 중 무엇으로 할지 ②태그 형식(v 접두사 여부)과 주석 태그 사용 여부 ③릴리즈 노트의 위치·양식·언어(CHANGELOG.md 신설 여부 포함) ④GitHub Release 사용 여부(현재 GitLab CI 는 브랜치 배포 전용). 이번 회차에 머지된 변경(PopPromptSelect 검색 id 를 promptSearchKey 로 분리, 2줄)은 릴리즈 대상으로서는 문제가 없으나 위 관례가 정해지기 전에는 실어 보낼 수 없다.",
+        "at": "2026-09-24T07:40:13+09:00"
+      }
+    },
+    "campaign": "",
+    "autonomy": "release",
+    "arm": "baseline",
+    "experiment": "roles-2026-09",
+    "files": 2,
+    "additions": 246,
+    "deletions": 2,
+    "tests": 1,
+    "title": "fix: 프롬프트 선택 팝업 검색이 배경 게시판 검색창을 읽던 문제 수정"
+  },
+  "stages": {
+    "base": {
+      "state": "pinned",
+      "reason": "main@1c607a3",
+      "at": "2026-09-24T07:24:13+09:00"
+    },
+    "autonomy": {
+      "state": "release",
+      "reason": "",
+      "at": "2026-09-24T07:24:13+09:00"
+    },
+    "scout": {
+      "state": "done",
+      "reason": "**프롬프트 선택 팝업(PopPromptSelect)의 검색이 배경 게시판 화면의 검색창을 읽는다 — 중복 DOM id `searchKey`**",
+      "at": "2026-09-24T07:29:27+09:00"
+    },
+    "brief": {
+      "state": "accepted",
+      "reason": "채택 — A(릴리즈)는 지시대로 재조사 없이 무변경, B 를 지정된 두 줄만 고쳐 구현했고 `SearchBox.vue` 와 게시판 4화면의 id �",
+      "at": "2026-09-24T07:35:16+09:00"
+    },
+    "verify": {
+      "state": "passed",
+      "reason": "검증 2개 통과 (auto)",
+      "at": "2026-09-24T07:35:26+09:00"
+    },
+    "review": {
+      "state": "approved",
+      "reason": "리뷰 승인 (risk=low)",
+      "at": "2026-09-24T07:37:46+09:00"
+    },
+    "pr": {
+      "state": "created",
+      "reason": "https://github.com/hkjang/aiportal-front/pull/36",
+      "at": "2026-09-24T07:37:54+09:00"
+    },
+    "ci": {
+      "state": "passed",
+      "reason": "검사 없음 — 정책으로 허용",
+      "at": "2026-09-24T07:38:21+09:00"
+    },
+    "merge": {
+      "state": "done",
+      "reason": "f4e5d5d5edbbb7c6971a74a63d72ca984bbe7f7c",
+      "at": "2026-09-24T07:38:26+09:00"
+    },
+    "release": {
+      "state": "failed",
+      "reason": "릴리즈 안 함: 릴리즈 진입 조건 미충족(25회째, 무변경). 절차 1 재실측 결과 이 저장소에는 따라 할 이전 릴리즈 방식이 없다: git 태그 0개, 릴리즈 커밋 0건(`git log -60` 에서 릴리즈/버전 메시지 관례 없음), package.json / package-lock.json(root, packages[\"\"]) 모두 `0.0.0` 이며 최초 커밋 ab700ba 이후 한 번도 증가한 적 없음, CHANGELOG 부재, 릴리즈 노트 부재, GitHub Release 이력 부재(러너 제공 목록 비어 있음), `.github` 부재로 워크플로 0개, `.gitlab-ci.yml` 은 main/develop 브랜치 배포 전용으로 `CI_COMMIT_TAG`·release 참조 0건, scripts/ 및 Makefile 부재로 릴리즈 자산 빌드 스크립트 없음, version-check/release-check 류 사전 검사 스크립트도 없음. 따라서 절차 2 의 '최근 릴리즈들의 증가 패턴을 따르라'는 적용할 패턴 자체가 없다. 유일한 버전 표기인 README.md / docs/01-시작하기.md 의 `| 0.0.1 | 2025-01-01 | 초기 릴리스 |` 는 최초 커밋부터 있던 문서 기재일 뿐이고 docs/RELEASE.md 가 '실제 릴리스 미확인' 으로 확정해 둔 항목이라(현재 패키지 값 0.0.0 과도 모순) 증가 기준으로 쓸 수 없다. 절차 5 의 skipped 조건은 '태그도 버전 파일도 릴리즈 노트도 없음' 인데 버전 파일(package.json/package-lock.json)이 존재하므로 충족하지 않는다(docs/RELEASE.md 마지막 절과 동일 판정). 임의로 버전을 정하는 것은 관례를 새로 만드는 일이라 사람의 몫이므로 버전 파일 갱신·태그·CHANGELOG·릴리즈 노트·릴리즈 커밋을 일체 만들지 않았고, docs/RELEASE.md 도 수정하지 않았다(워크트리 clean, HEAD 1125a6e 그대로). 저장소 안에 고칠 대상이 없다: 워크플로 파일이 없고 실패 지점이 워크트리 밖(외부 aidev bin/run.sh → release.json → bin/gate.py)이라 이 세션이 합법적으로 해소할 수단이 없다. 필요한 사람 입력 4가지(직전 24회차와 동일): ①첫 릴리즈 버전을 0.0.1 / 0.1.0 / 1.0.0 중 무엇으로 할지 ②태그 형식(v 접두사 여부)과 주석 태그 사용 여부 ③릴리즈 노트의 위치·양식·언어(CHANGELOG.md 신설 여부 포함) ④GitHub Release 사용 여부(현재 GitLab CI 는 브랜치 배포 전용). 이번 회차에 머지된 변경(PopPromptSelect 검색 id 를 promptSearchKey 로 분리, 2줄)은 릴리즈 대상으로서는 문제가 없으나 위 관례가 정해지기 전에는 실어 보낼 수 없다.",
+      "at": "2026-09-24T07:40:13+09:00"
+    }
+  },
+  "provenance": {
+    "model": "claude-opus-5",
+    "policy_version": "ecd4b546e",
+    "prompts_hash": "30c37184f081815d",
+    "runner_version": "ecd4b546e",
+    "base_sha": "1c607a387de22989b2d5b916df3de82aa6bfdfd3",
+    "head_sha": "f4e5d5d5edbbb7c6971a74a63d72ca984bbe7f7c",
+    "pr": "https://github.com/hkjang/aiportal-front/pull/36"
+  },
+  "verification": {
+    "runner": {
+      "source": "auto",
+      "commands": [
+        {
+          "cmd": "[ -d node_modules ] || npm ci --no-audit --no-fund",
+          "exit": 0,
+          "seconds": 0
+        },
+        {
+          "cmd": "npm test --silent",
+          "exit": 0,
+          "seconds": 10
+        }
+      ]
+    },
+    "runner_gate": {
+      "ok": true,
+      "state": "verified",
+      "reason": "검증 2개 통과 (auto)"
+    },
+    "after_rebase": null,
+    "review": {
+      "verdict": "approve",
+      "reasons": [],
+      "notes": [
+        "검증 재현: src/components/common/popup/Global/PopPromptSelect.vue 의 promptSearchKey 를 searchKey 로 되돌리고 돌리면 tests/unit/promptSelectSearch.spec.js 가 정확히 2건 실패한다(expected '' to be '템플릿' / expected '공지' to be ''). 나머지 5건은 팝업 단독 회귀 가드라 수정 전에도 통과하는 것이 맞다. 되돌린 뒤 git checkout 으로 복원했고 git status --porcelain 무출력 확인.",
+        "전체 스위트 재실측: npm test 36파일 567테스트 통과(구현 노트의 주장과 일치, 기준선 35/560 대비 +1파일 +7테스트).",
+        "id 중복 해소 확인: promptSearchKey 는 저장소 전체에서 PopPromptSelect.vue:107,148 두 곳뿐이고 CSS/SCSS 에 #searchKey 셀렉터 참조가 없어 스타일 파손 없음. 다른 팝업(PopGlobalSearch 등)은 이미 고유 id 를 쓴다.",
+        "범위: 변경은 문자열 리터럴 2줄 + 신규 스펙 1개뿐이며 SearchBox.vue·게시판 4화면·getList/페이징은 손대지 않았다. 되돌리기는 revert 한 번으로 완결(외부 상태·마이그레이션 없음). build:dev 는 재실행하지 않았다 — 템플릿 속성 문자열만 바뀌어 빌드 파손 경로가 없다고 판단.",
+        "보안/법무 소견: 차단 사유 없음. 인증·인가·비밀값·삭제 로직 미접촉이고, DOM id 변경은 권한 경계가 아니다. 새로 수집·전송되는 개인정보 없음(user_id 파라미터는 기존 경로 그대로). 스펙이 localStorage 에 심는 'tester'/'tok-1' 은 합성값이라 실데이터 반입 아님.",
+        "다음 회차용 잔여 사실(이번 PR 책임 아님): tests/unit/requestListSearch.spec.js:114 는 writeUser({ user_id: 'tester' }) 로 넣는데 normalizeUserRecord 는 입력 키가 userId 라서 저장되는 user_id 가 '' 이 된다. 즉 그 스펙은 주석이 말하는 것과 달리 creatorId 가 빈 값인 상태로 돌고 있다(RequestList.vue:112-113). 구현자가 '확인하지 못했다' 고 남긴 자리이며 실제로 어긋나 있다. 신규 스펙은 userId 키로 올바르게 넣었다.",
+        "잔여 관찰: 게시판 4화면(Notice/Library/Share/Request)은 여전히 서로 같은 id 'searchKey' 를 쓰지만 동시에 라우팅되지 않아 오늘은 충돌하지 않는다. NoticeList:114 / LibraryList:112 / ShareList:93 의 v-model=\"searchKey\" 는 SearchBox 에 modelValue prop 이 없어 무동작 잔재다(동작 변화 0 이므로 이번에 안 건드린 판단은 타당).",
+        "릴리즈(A): 24회째 무변경. 버전 정책 결손(첫 릴리즈 버전·태그 형식·릴리즈 노트 위치·GitHub Release 사용 여부) 4가지 사람 입력이 없는 한 다음 회차도 동일하게 막힌다."
+      ],
+      "risk": "low",
+      "blocking": []
+    },
+    "ci_gate": {
+      "ok": false,
+      "state": "no-ci",
+      "reason": "이 커밋에 검사가 없음 (정책 allow_merge_without_ci 가 없으면 차단)",
+      "checks": 0
+    }
+  },
+  "release": {
+    "result": {
+      "status": "failed",
+      "version": "",
+      "tag": "",
+      "title": "",
+      "notes_file": "",
+      "github_release": false,
+      "assets": [],
+      "reason": "릴리즈 진입 조건 미충족(25회째, 무변경). 절차 1 재실측 결과 이 저장소에는 따라 할 이전 릴리즈 방식이 없다: git 태그 0개, 릴리즈 커밋 0건(`git log -60` 에서 릴리즈/버전 메시지 관례 없음), package.json / package-lock.json(root, packages[\"\"]) 모두 `0.0.0` 이며 최초 커밋 ab700ba 이후 한 번도 증가한 적 없음, CHANGELOG 부재, 릴리즈 노트 부재, GitHub Release 이력 부재(러너 제공 목록 비어 있음), `.github` 부재로 워크플로 0개, `.gitlab-ci.yml` 은 main/develop 브랜치 배포 전용으로 `CI_COMMIT_TAG`·release 참조 0건, scripts/ 및 Makefile 부재로 릴리즈 자산 빌드 스크립트 없음, version-check/release-check 류 사전 검사 스크립트도 없음. 따라서 절차 2 의 '최근 릴리즈들의 증가 패턴을 따르라'는 적용할 패턴 자체가 없다. 유일한 버전 표기인 README.md / docs/01-시작하기.md 의 `| 0.0.1 | 2025-01-01 | 초기 릴리스 |` 는 최초 커밋부터 있던 문서 기재일 뿐이고 docs/RELEASE.md 가 '실제 릴리스 미확인' 으로 확정해 둔 항목이라(현재 패키지 값 0.0.0 과도 모순) 증가 기준으로 쓸 수 없다. 절차 5 의 skipped 조건은 '태그도 버전 파일도 릴리즈 노트도 없음' 인데 버전 파일(package.json/package-lock.json)이 존재하므로 충족하지 않는다(docs/RELEASE.md 마지막 절과 동일 판정). 임의로 버전을 정하는 것은 관례를 새로 만드는 일이라 사람의 몫이므로 버전 파일 갱신·태그·CHANGELOG·릴리즈 노트·릴리즈 커밋을 일체 만들지 않았고, docs/RELEASE.md 도 수정하지 않았다(워크트리 clean, HEAD 1125a6e 그대로). 저장소 안에 고칠 대상이 없다: 워크플로 파일이 없고 실패 지점이 워크트리 밖(외부 aidev bin/run.sh → release.json → bin/gate.py)이라 이 세션이 합법적으로 해소할 수단이 없다. 필요한 사람 입력 4가지(직전 24회차와 동일): ①첫 릴리즈 버전을 0.0.1 / 0.1.0 / 1.0.0 중 무엇으로 할지 ②태그 형식(v 접두사 여부)과 주석 태그 사용 여부 ③릴리즈 노트의 위치·양식·언어(CHANGELOG.md 신설 여부 포함) ④GitHub Release 사용 여부(현재 GitLab CI 는 브랜치 배포 전용). 이번 회차에 머지된 변경(PopPromptSelect 검색 id 를 promptSearchKey 로 분리, 2줄)은 릴리즈 대상으로서는 문제가 없으나 위 관례가 정해지기 전에는 실어 보낼 수 없다."
+    },
+    "assets_sha256": []
+  },
+  "approval": null,
+  "usage": [
+    {
+      "ts": "2026-09-24T07:29:27+09:00",
+      "date": "2026-09-24",
+      "project": "aiportal-front",
+      "phase": "scout",
+      "run_id": "2026-09-24-072409-aiportal-front-improve",
+      "campaign": "",
+      "subtype": "success",
+      "duration_ms": 341222,
+      "num_turns": 23,
+      "cost_usd": 1.817255,
+      "input_tokens": 32,
+      "output_tokens": 22711,
+      "cache_read": 1023420,
+      "cache_create": 73761
+    },
+    {
+      "ts": "2026-09-24T07:35:15+09:00",
+      "date": "2026-09-24",
+      "project": "aiportal-front",
+      "phase": "improve",
+      "run_id": "2026-09-24-072409-aiportal-front-improve",
+      "campaign": "",
+      "subtype": "success",
+      "duration_ms": 379045,
+      "num_turns": 39,
+      "cost_usd": 2.8401025000000004,
+      "input_tokens": 60,
+      "output_tokens": 23637,
+      "cache_read": 2561395,
+      "cache_create": 96818
+    },
+    {
+      "ts": "2026-09-24T07:37:46+09:00",
+      "date": "2026-09-24",
+      "project": "aiportal-front",
+      "phase": "review",
+      "run_id": "2026-09-24-072409-aiportal-front-improve",
+      "campaign": "",
+      "subtype": "success",
+      "duration_ms": 149065,
+      "num_turns": 22,
+      "cost_usd": 1.0764159999999998,
+      "input_tokens": 28,
+      "output_tokens": 9073,
+      "cache_read": 700582,
+      "cache_create": 49916
+    },
+    {
+      "ts": "2026-09-24T07:40:13+09:00",
+      "date": "2026-09-24",
+      "project": "aiportal-front",
+      "phase": "release",
+      "run_id": "2026-09-24-072409-aiportal-front-improve",
+      "campaign": "",
+      "subtype": "success",
+      "duration_ms": 107082,
+      "num_turns": 13,
+      "cost_usd": 0.6792055,
+      "input_tokens": 18,
+      "output_tokens": 6700,
+      "cache_read": 350471,
+      "cache_create": 33638
+    }
+  ]
+}

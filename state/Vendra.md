@@ -259,3 +259,10 @@
 - 과제서: 채택 — 고정 LIMIT와 공개 인자의 불일치가 현재 코드 및 실제 DB/API 실패로 확인되어 지정 범위대로 구현했다.
 
 - 릴리즈: v0.7.58 (2026-09-22, run 2026-09-22-075427-Vendra-improve)
+## 2026-09-23
+- 선택: MCP get_supplier_risk·get_supplier_score 가 모델의 인자 실수를 권한 거부로 답하던 것 고치기 (가치 3 / 위험 1 / 작업량 S)
+- 결과: 성공 (commit e0aa306)
+- 요약: 두 도구는 supplierId 를 그대로 supplierScopeAllowed 에 넘기는데, 이름 같은 비-UUID 는 PostgreSQL 에서 uuid 캐스트 실패로 조회가 error 가 되어 「옆 부서 공급업체」와 구분이 되지 않았고, 인자를 빠뜨린 호출까지 전부 "data scope denied" 로 답했다 — 모델은 이 말을 그대로 「그 공급업체는 볼 권한이 없습니다」로 사람에게 옮긴다. 조회 전에 인자를 검사하는 supplierIDArg 하나를 두어 없으면 "<tool> requires supplierId", UUID 가 아니면 "supplierId must be a record id, not a name: %q" 로 답하게 했다(객체 도구·get_supplier 는 이미 말로 답하고 있었고 이 둘만 빠져 있었다). 검증: 전용 postgres:16-alpine 세 DB·세 DSN 으로 새 통합 테스트를 **고치기 전에 먼저 돌려** 두 도구의 이름 인자·무인자 네 케이스만 실패하고 대조군(search_contracts·search_purchase_orders·compare_suppliers·get_supplier)은 통과하는 것을 확인한 뒤 수정했고, 수정 후 옆 부서 UUID 는 여전히 스코프 거부·자기 부서 UUID 는 정상 응답까지 같은 테스트가 읽는다. `go test ./internal/... ./cmd/... -count=1` 전체 통과(httpapi 26.286s), gofmt·go vet 무결, gate.py secrets clean.
+- 보류 아이디어: compare_suppliers 입력 ID 개수·응답 크기 상한 (2/3/M) / get_expiring_contracts 의 공개 범위 days max 730 과 실행 상한 3650 불일치 (2/2/S) / recommend_suppliers 의 minScore 가 문자열로 오면 조용히 0 (2/1/S) / 사용자 가이드 4.6 MCP 도구표를 실제 tools/list 응답과 묶는 가드 (2/1/S)
+
+- 릴리즈: v0.7.59 (2026-09-23, run 2026-09-23-183438-Vendra-improve)

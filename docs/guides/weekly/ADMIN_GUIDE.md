@@ -1,6 +1,6 @@
 # Weekly 관리자 가이드
 
-- **문서 버전**: v0.306.0
+- **문서 버전**: v0.307.0
 - **대상**: 시스템 관리자, Security/DevOps 엔지니어, 데이터 보안 담당자
 - **문서 개요**: 구성 요소, 릴리즈 자산으로 설치, 환경 변수와 관리자 설정, 계정과 권한, 운영(백업·상태·업그레이드), 장애 대응, 보안. 화면을 쓰는 사람의 안내는 [사용자 가이드](USER_GUIDE.md)에 있습니다.
 
@@ -28,14 +28,14 @@
 
 ## 2. 설치
 
-GitHub Release 에서 `weekly-v0.306.0.tar.gz` 하나만 반입합니다. 자세한 검증 근거(파일 해시와 이미지 다이제스트가 왜 둘 다 필요한지)는 [README 오프라인 설치](../README.md#오프라인-설치)에 있고, 여기서는 순서대로 붙여 넣을 명령만 적습니다.
+GitHub Release 에서 `weekly-v0.307.0.tar.gz` 하나만 반입합니다. 자세한 검증 근거(파일 해시와 이미지 다이제스트가 왜 둘 다 필요한지)는 [README 오프라인 설치](../README.md#오프라인-설치)에 있고, 여기서는 순서대로 붙여 넣을 명령만 적습니다.
 
 ```bash
 # 1. 파일이 온전히 왔는지 — 릴리즈에 적힌 SHA-256 과 비교
-sha256sum weekly-v0.306.0.tar.gz
+sha256sum weekly-v0.307.0.tar.gz
 
-# 2. 이미지 적재. 같은 버전의 weekly:v0.306.0 이 생깁니다
-gzip -dc weekly-v0.306.0.tar.gz | docker load
+# 2. 이미지 적재. 같은 버전의 weekly:v0.307.0 이 생깁니다
+gzip -dc weekly-v0.307.0.tar.gz | docker load
 
 # 3. 환경 파일. deploy/.env.example 을 복사해 값을 채웁니다
 cp deploy/.env.example deploy/.env
@@ -80,7 +80,7 @@ Kubernetes 는 `deploy/kubernetes.yaml`을 씁니다. `strategy: Recreate`와 `s
 | `WEEKLY_ENCRYPTION_KEY` | 없음 (볼륨의 `instance.key` 로 대체) | 강력 권장 | 관리자 화면에서 입력한 OIDC Client Secret·AI API Key·Confluence 비밀번호·ITSM 토큰·SMTP 비밀번호를 보호하는 마스터 키. `openssl rand -base64 32` 로 한 번 만들고 업그레이드마다 같은 값을 유지합니다. 비우면 키가 상태 볼륨에만 저장되는 하위 호환 모드이며 기동 로그가 그 사실을 적습니다 |
 | `WEEKLY_ALLOW_SECRET_RESET` | `false` | 선택 | 비밀 설정을 복호화할 수 없는 상태에서 기동을 강행하고 모두 다시 입력하기로 했을 때만 `true`. 기존 암호문은 지우지 않고 화면에 `다시 입력 필요`로 표시합니다 |
 
-Compose 파일은 `WEEKLY_VERSION`(이미지 태그, 기본 `0.306.0`)도 읽습니다. 이것은 프로세스가 아니라 `deploy/compose.yaml`의 변수입니다.
+Compose 파일은 `WEEKLY_VERSION`(이미지 태그, 기본 `0.307.0`)도 읽습니다. 이것은 프로세스가 아니라 `deploy/compose.yaml`의 변수입니다.
 
 ### 3.2 관리자 화면의 서비스 설정
 
@@ -171,6 +171,7 @@ Confluence 본문은 PostgreSQL 이나 로그에 저장되지 않습니다. 운�
 - 마감 알림은 담당자 본인의 미완료 일정 중 종료일이 내일부터 5일 이내인 것(`scheduleReminderDays = 5`, 한 통 최대 100건)이며 발송 직전 수신 여부·주소·활성·남은 일감을 다시 확인해 보낼 것이 없으면 행을 지웁니다. 실패는 로그(`schedule reminder retry`, `schedule reminder gave up`).
 - 서비스 시간대가 실제 조직 시간대와 다르면 오전 9시도 그만큼 어긋나므로 `서비스 시간대`를 함께 확인하십시오.
 - 관리자 카드의 발송 현황(`GET /api/v1/admin/mail/health`)은 **세 큐를 모두 집계**하고(발송·대기·실패·사용자 수, 마지막 실패 사유, 종류별 건수) 그 아래 표가 같은 창의 **최근 50건**을 보여 줍니다(`GET /api/v1/admin/mail/deliveries` — 종류·수신자·제목·상태·시도·사유·시각, 본문·첨부 없음). 릴레이가 권고나 알림을 거부하면 여기서 사유가 보이며, 50건보다 오래된 기록은 위 표의 큐 테이블에서 봅니다.
+- 표 위의 **종류·상태** 선택으로 좁힐 수 있습니다. 거르는 일은 50건으로 자르기 **전에** 서버에서 일어나므로, 아침마다 마감 알림이 수십 건 나가는 배포에서 `상태 = 실패`를 고르면 최근 50건 밖으로 밀려난 실패도 나옵니다 — 카드가 `실패 3건`이라고 말하는데 표에는 하나도 없는 일이 이 때문에 생깁니다. 좁힌 결과가 비면 표 대신 그 사실을 적습니다.
 
 ### 3.8 ITSM 연동
 
@@ -268,7 +269,7 @@ MCP 인가 규격은 OAuth 2.1 입니다. 이 설정을 켜면 Weekly 는 **리�
 | 프로세스 생존 | `GET /healthz` |
 | PostgreSQL 연결 포함 준비 상태 | `GET /readyz` |
 | 최근 24시간 경로별 호출·지연·4xx/5xx | `관리자 설정 → 분석` 탭의 서비스 분석 |
-| 메일 발송 현황 | `서비스 설정 → 주간보고 메일 발송` 카드 아래 (최근 n일 발송·대기·실패 — 제출·권고·알림 세 큐 합산, 최근 50건 표) |
+| 메일 발송 현황 | `서비스 설정 → 주간보고 메일 발송` 카드 아래 (최근 n일 발송·대기·실패 — 제출·권고·알림 세 큐 합산, 최근 50건 표 — 종류·상태로 거를 수 있음) |
 | Confluence 수집 상태 | `Confluence 자동화` 탭 |
 | 감사 이력 | `감사 로그` 탭 — 작업·행위자·기간으로 검색 |
 
@@ -287,7 +288,7 @@ MCP 인가 규격은 OAuth 2.1 입니다. 이 설정을 켜면 Weekly 는 **리�
 {"level":"INFO","msg":"bootstrap administrator ensured","username":"admin"}
 {"level":"INFO","msg":"database capabilities detected","pg_trgm":true,"pgvector":false}
 {"level":"INFO","msg":"password hashing pool sized","workers":8,"reserved_mib":512,"container_limit_mib":0}
-{"level":"INFO","msg":"Weekly started","address":":8080","version":"0.306.0"}
+{"level":"INFO","msg":"Weekly started","address":":8080","version":"0.307.0"}
 ```
 
 `key_source`가 `environment`가 아니라 볼륨이면 `WEEKLY_ENCRYPTION_KEY`가 없는 하위 호환 모드입니다. `container_limit_mib`가 0 이면 메모리 한도 없이 호스트 메모리를 상속한 것이니 Compose 의 `mem_limit`를 확인하십시오.

@@ -1,0 +1,52 @@
+{
+  "base": {
+    "state": "pinned",
+    "reason": "main@50b4551",
+    "at": "2026-09-24T10:54:17+09:00"
+  },
+  "autonomy": {
+    "state": "release",
+    "reason": "",
+    "at": "2026-09-24T10:54:17+09:00"
+  },
+  "scout": {
+    "state": "failed",
+    "reason": "과제서 없음 — 구현자가 직접 고른다",
+    "at": "2026-09-24T11:00:18+09:00"
+  },
+  "verify": {
+    "state": "passed",
+    "reason": "검증 2개 통과 (auto)",
+    "at": "2026-09-24T11:06:19+09:00"
+  },
+  "review": {
+    "state": "approved",
+    "reason": "리뷰 승인 (risk=low)",
+    "at": "2026-09-24T11:14:40+09:00"
+  },
+  "repair": {
+    "state": "done",
+    "reason": "# fix-summary (수리 1회차)  - 지적은 맞았다: 재현 테스트로 확인 — 저장 A 응답 대기 중 스위치를 바꿔 B 를 누르면 쿼리가 다른 저장 요청이 2건 나가고, A",
+    "at": "2026-09-24T11:13:22+09:00"
+  },
+  "pr": {
+    "state": "created",
+    "reason": "https://github.com/hkjang/aiportal-front/pull/38",
+    "at": "2026-09-24T11:14:47+09:00"
+  },
+  "ci": {
+    "state": "passed",
+    "reason": "검사 없음 — 정책으로 허용",
+    "at": "2026-09-24T11:15:17+09:00"
+  },
+  "merge": {
+    "state": "done",
+    "reason": "95b92975c95e3a457e8cfd3f0d1b03013ba991ae",
+    "at": "2026-09-24T11:15:19+09:00"
+  },
+  "release": {
+    "state": "failed",
+    "reason": "릴리즈 안 함: 릴리즈 관례를 정할 근거가 없어 다음 버전을 결정할 수 없다(27회째 동일 교착). 이번 회차에 6개 항목을 직접 재실측함: (1) git tag --sort=-creatordate 출력 0건, 태그 총 0개 (2) package.json version=0.0.0, package-lock.json version 및 packages[\"\"].version=0.0.0 — 최초 커밋 ab700ba 의 package.json 도 0.0.0 이라 증가 이력이 전무 (3) CHANGELOG 파일 없음 (4) 릴리즈 노트 없음 — docs/RELEASE.md 는 스스로 '릴리즈 노트나 새 릴리즈 정책이 아니며 다음 버전·태그·릴리즈 커밋 관례를 정하지 않는다' 고 명시 (5) git log --oneline -60 에 릴리즈 커밋 메시지 양식 0건 (6) .github 디렉터리 부재, .gitlab-ci.yml 은 CI_COMMIT_TAG 참조 0건인 main/develop 브랜치 조건 배포 전용이며 태그 기반 버전 증가나 Release 생성을 정의하지 않음. 러너가 미리 가져온 GitHub Release 목록도 비어 있어 과거 릴리즈 자산 규칙도 없다(assets 는 빈 배열). 절차 5 의 skipped 조건('태그도, 버전 파일도, 릴리즈 노트도 없음')은 package.json 이라는 버전 파일이 실재하므로 충족하지 않고, 절차 2 의 '최근 릴리즈들의 증가 패턴' 은 릴리즈가 0건이라 따를 패턴 자체가 없다. 따라서 released 로 진행하려면 관례를 새로 발명해야 하는데 이는 사람의 일이므로 하지 않았다. 버전 파일·태그·CHANGELOG·릴리즈 노트·릴리즈 커밋을 일체 만들지 않았고 원격에 아무것도 보내지 않았으며 docs/RELEASE.md 도 수정하지 않았다(워크트리 clean 유지). 러너 지시('워크플로 파일과 실패한 단계의 스크립트·테스트를 읽고 원인을 고치세요')는 수행 대상이 없다: 이 저장소에 워크플로 파일이 없고(.github 부재) 실패 지점이 워크트리 밖의 외부 aidev bin/run.sh -> release.json -> bin/gate.py 이며, 게이트를 느슨하게 만드는 우회(version 필드 삭제 등)는 금지라 하지 않았다. 해소에 필요한 사람 입력 4가지(직전 26회차와 동일): (1) 첫 릴리즈 버전을 0.0.1 / 0.1.0 / 1.0.0 중 무엇으로 할지 — README 와 docs/01-시작하기.md 에 '0.0.1 / 2025-01-01 / 초기 릴리스' 기재가 있으나 실제 릴리스 증거는 미확인 (2) 태그 형식(v1.2.3 / 1.2.3)과 주석 태그 여부 (3) 릴리즈 노트의 위치·양식·언어(CHANGELOG.md 신설 여부 포함) (4) GitHub Release 사용 여부 — 현재 배포는 GitLab CI 브랜치 배포뿐이다.",
+    "at": "2026-09-24T11:16:45+09:00"
+  }
+}

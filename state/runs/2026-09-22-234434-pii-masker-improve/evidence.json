@@ -1,0 +1,214 @@
+{
+  "run_id": "2026-09-22-234434-pii-masker-improve",
+  "generated": "2026-09-23T00:10:23+09:00",
+  "run": {
+    "run_id": "2026-09-22-234434-pii-masker-improve",
+    "project": "pii-masker",
+    "kind": "improve",
+    "started": "2026-09-22T23:44:35+09:00",
+    "model": "claude-opus-5",
+    "policy_version": "ecd4b546e",
+    "prompts_hash": "30c37184f081815d",
+    "runner_version": "ecd4b546e",
+    "arm": "no-scout",
+    "experiment": "roles-2026-09",
+    "finished": "2026-09-23T00:10:23+09:00",
+    "outcome": "merged"
+  },
+  "record": {
+    "ts": "2026-09-23T00:10:23+09:00",
+    "date": "2026-09-23",
+    "project": "pii-masker",
+    "result": "resumed: merged https://github.com/hkjang/pii-masker/pull/24",
+    "outcome": "merged",
+    "run_id": "2026-09-22-234434-pii-masker-improve",
+    "base_sha": "",
+    "head_sha": "26857d0fec1d4f2d6e8a89efc0d0f3512e2c3d8c",
+    "pr": "https://github.com/hkjang/pii-masker/pull/24",
+    "stages": {
+      "base": {
+        "state": "pinned",
+        "reason": "main@88a5290",
+        "at": "2026-09-22T23:44:42+09:00"
+      },
+      "autonomy": {
+        "state": "release",
+        "reason": "",
+        "at": "2026-09-22T23:44:42+09:00"
+      },
+      "verify": {
+        "state": "passed",
+        "reason": "검증 3개 통과 (policy)",
+        "at": "2026-09-22T23:50:51+09:00"
+      },
+      "review": {
+        "state": "approved",
+        "reason": "리뷰 승인 (risk=low)",
+        "at": "2026-09-22T23:53:18+09:00"
+      },
+      "pr": {
+        "state": "created",
+        "reason": "https://github.com/hkjang/pii-masker/pull/24",
+        "at": "2026-09-22T23:53:26+09:00"
+      },
+      "ci": {
+        "state": "passed",
+        "reason": "검사 없음 — 정책으로 허용",
+        "at": "2026-09-22T23:53:56+09:00"
+      },
+      "merge": {
+        "state": "done",
+        "reason": "5d43c34399173b952d027b516d72e4db1598e7f4 (원격 확인)",
+        "at": "2026-09-23T00:10:19+09:00"
+      },
+      "release": {
+        "state": "nothing-to-release",
+        "reason": "v1.0.26 이 이미 origin/main 끝을 가리킨다",
+        "at": "2026-09-23T00:10:23+09:00"
+      }
+    },
+    "campaign": "",
+    "autonomy": "",
+    "arm": "",
+    "experiment": ""
+  },
+  "stages": {
+    "base": {
+      "state": "pinned",
+      "reason": "main@88a5290",
+      "at": "2026-09-22T23:44:42+09:00"
+    },
+    "autonomy": {
+      "state": "release",
+      "reason": "",
+      "at": "2026-09-22T23:44:42+09:00"
+    },
+    "verify": {
+      "state": "passed",
+      "reason": "검증 3개 통과 (policy)",
+      "at": "2026-09-22T23:50:51+09:00"
+    },
+    "review": {
+      "state": "approved",
+      "reason": "리뷰 승인 (risk=low)",
+      "at": "2026-09-22T23:53:18+09:00"
+    },
+    "pr": {
+      "state": "created",
+      "reason": "https://github.com/hkjang/pii-masker/pull/24",
+      "at": "2026-09-22T23:53:26+09:00"
+    },
+    "ci": {
+      "state": "passed",
+      "reason": "검사 없음 — 정책으로 허용",
+      "at": "2026-09-22T23:53:56+09:00"
+    },
+    "merge": {
+      "state": "done",
+      "reason": "5d43c34399173b952d027b516d72e4db1598e7f4 (원격 확인)",
+      "at": "2026-09-23T00:10:19+09:00"
+    },
+    "release": {
+      "state": "nothing-to-release",
+      "reason": "v1.0.26 이 이미 origin/main 끝을 가리킨다",
+      "at": "2026-09-23T00:10:23+09:00"
+    }
+  },
+  "provenance": {
+    "model": "claude-opus-5",
+    "policy_version": "ecd4b546e",
+    "prompts_hash": "30c37184f081815d",
+    "runner_version": "ecd4b546e",
+    "base_sha": "",
+    "head_sha": "26857d0fec1d4f2d6e8a89efc0d0f3512e2c3d8c",
+    "pr": "https://github.com/hkjang/pii-masker/pull/24"
+  },
+  "verification": {
+    "runner": {
+      "source": "policy",
+      "commands": [
+        {
+          "cmd": "go build ./...",
+          "exit": 0,
+          "seconds": 1
+        },
+        {
+          "cmd": "go vet ./...",
+          "exit": 0,
+          "seconds": 0
+        },
+        {
+          "cmd": "go test -count=1 ./...",
+          "exit": 0,
+          "seconds": 1
+        }
+      ]
+    },
+    "runner_gate": {
+      "ok": true,
+      "state": "verified",
+      "reason": "검증 3개 통과 (policy)"
+    },
+    "after_rebase": null,
+    "review": {
+      "verdict": "approve",
+      "reasons": [],
+      "notes": [
+        "검증함: 새 테스트가 수정 전 코드를 실제로 잡는다 — 스크래치 사본에서 internal/service/service.go만 main으로 되돌리고 실행하니 TestQueuedJobKeepsTheTimeItWasAccepted가 'expected created_at to stay at ...182Z, got ...487Z'로 실패(305ms 차이). HEAD에서는 go build/vet/gofmt 및 go test -race ./... 전부 통과, 새 테스트만 -race -count=5 반복도 통과.",
+        "주석 과장(비차단): internal/service/service.go:423 주석이 '이력이 작업 시작 시각 순으로 정렬된다'고 하지만 이력 정렬은 internal/jobs/store.go:81에서 UpdatedAt 기준이라 created_at 버그와 무관했다. 고친 동작(queue 대기 시간이 0으로 읽힘, created_at이 실행 시각으로 밀림)은 정확하지만 영향 범위 설명이 실제보다 넓다.",
+        "README 문구 부정확(비차단): '작업의 created_at ... updated_at과의 차이로 대기 시간을 잴 수 있습니다' — updated_at은 running 전환 시점뿐 아니라 완료 시점에도 갱신되므로(service.go:431) 완료된 작업에서 그 차이는 큐 대기 시간이 아니라 접수~완료 전체 지연이다. status=running인 동안에만 큐 대기 시간과 같다.",
+        "구현자가 걱정한 'created_at이 빈 job.json 재로드 시 zero time 잔존'은 도달 불가 경로다. runJob은 startJobRunner를 거쳐 CreateJob(service.go:327)에서만 시작되고 CreateJob은 항상 CreatedAt를 찍는다. 재시작 시 저장된 job은 재실행되지 않고 interrupted 처리된다.",
+        "보존 스위퍼(internal/jobs/store.go:104)와 이력 정렬은 UpdatedAt만 쓰므로 created_at 보존이 삭제 시점이나 PII 보존 기간을 바꾸지 않는다. 인증·비밀값·신뢰 불가 입력 경로에 닿는 변경 없음 — security/legal 차단 사유 없음.",
+        "범위 이탈 없음: 2줄 수정 + 주석 + 테스트 + README 한 문장. 테스트 헬퍼 fetchJobMetadata는 기존 waitForJobStatus(integration_test.go:1355)와 일부 겹치나, 기존 헬퍼는 총 1초만 기다려 이 테스트(300ms 게이트)에는 여유가 부족하므로 별도 작성은 타당하다.",
+        "미해결 이월: POST /v1/jobs가 결과 없는 queued/failed 작업에도 download_url을 채우는 불일치(internal/httpapi/server.go:187)는 이번에도 손대지 않았다. 계약 결정이 필요한 별건."
+      ],
+      "risk": "low",
+      "blocking": []
+    },
+    "ci_gate": {
+      "ok": false,
+      "state": "no-ci",
+      "reason": "이 커밋에 검사가 없음 (정책 allow_merge_without_ci 가 없으면 차단)",
+      "checks": 0
+    }
+  },
+  "release": {
+    "result": null,
+    "assets_sha256": []
+  },
+  "approval": null,
+  "usage": [
+    {
+      "ts": "2026-09-22T23:50:49+09:00",
+      "date": "2026-09-22",
+      "project": "pii-masker",
+      "phase": "improve",
+      "run_id": "2026-09-22-234434-pii-masker-improve",
+      "campaign": "",
+      "subtype": "success",
+      "duration_ms": 392237,
+      "num_turns": 53,
+      "cost_usd": 3.9897305,
+      "input_tokens": 84,
+      "output_tokens": 25846,
+      "cache_read": 4311021,
+      "cache_create": 118765
+    },
+    {
+      "ts": "2026-09-22T23:53:18+09:00",
+      "date": "2026-09-22",
+      "project": "pii-masker",
+      "phase": "review",
+      "run_id": "2026-09-22-234434-pii-masker-improve",
+      "campaign": "",
+      "subtype": "success",
+      "duration_ms": 154973,
+      "num_turns": 23,
+      "cost_usd": 1.084391,
+      "input_tokens": 34,
+      "output_tokens": 10380,
+      "cache_read": 772462,
+      "cache_create": 43849
+    }
+  ]
+}

@@ -75,3 +75,10 @@
   - 빈 docs/README.md 문서 색인 (가치 3 / 위험 1 / 작업량 S) — 주과제 결함 재현으로 차선 미선택.
 - 과제서: 채택 — 현재 코드에서 결함을 실제 HTTP로 재현했고 지정된 3개 파일만 수정하여 생성 기본값과 공개 범위 변경 권한 계약을 유지했다.
 
+## 2026-09-24
+- 선택: 결과 캐시 키가 바인드 변수를 무시해 다른 파라미터의 결과를 돌려주던 결함 수정 (가치 5 / 위험 1 / 작업량 S)
+- 결과: 성공
+- 요약: `internal/mcp/execguard.go`의 `cacheKey`가 프로파일·SQL 문자열·`max_rows`만 썼기 때문에, `POST /api/query`가 같은 SQL을 다른 `binds`로 실행하면 `Manager.Execute`가 바인드를 드라이버에 그대로 넘기는데도(`db.QueryContext(qctx, limited, opts.Binds...)`) 앞선 파라미터의 행이 `cached: true`로 반환됐다. `cacheKey`가 `dbconn.ExecOptions`를 받아 `MaxRows`와 `Binds`를 함께 키에 넣고(`%T=%#v` 인코딩으로 타입 차이·구분자 위조 방지), 행 내용을 바꾸지 않는 `User`·`TraceID`·`TimeoutSeconds`·`ApprovePlan`은 캐시를 쪼개지 않도록 제외했다. 검증: 프로덕션 `executeGuarded` 경로로 binds=[1]의 결과가 binds=[2] 요청에 반환되는 것을 먼저 재현(RED: "binds=[2] was answered with the cached rows of binds=[1]")하고 수정 후 GREEN, 다시 바인드 반영을 되돌려 두 테스트가 모두 재실패함을 확인했다. `go test ./... -count=1`·`go vet ./...`·`go build ./...`·대상 `-race`·`gofmt -l`·`git diff --check` 모두 통과(커밋 57563cf).
+- 보류 아이디어: 비동기 실행 경로(`POST /api/query/async`)는 `binds`를 전혀 전달하지 않아 플레이스홀더 SQL이 미바인드로 실행됨(3/2/S) / requireAdmin 사용자 컨텍스트·admin 감사 actor — 선행 변경 미통합이라 재구현 금지(3/1/M) / docs/auth.md·rest-api.md·security.md 0바이트 정본 작성(3/1/M) / 빈 docs/README.md 문서 색인(3/1/S) / 관리자 가이드 §3.2의 프로파일 생성 curl을 실제 `POST /api/db-profiles` 계약으로 교정(3/1/S)
+- 과제서: 기각 — 과제서의 "이번 선택"(dbapi.go upsertProfileMeta의 PUT visibility 보존)은 2026-09-22 회차에서 이미 성공한 과제와 동일하고, 과제서 자신이 금지한 "과거 성공 재구현"에 해당해 새 결함을 찾아 대신 고쳤다.
+

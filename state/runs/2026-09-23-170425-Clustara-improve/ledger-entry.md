@@ -1,0 +1,6 @@
+## 2026-09-23
+- 선택: 알림 전달 불가 상태의 notify scan 이 6시간 dedup 윈도우를 소모하지 않도록 수정 (가치 4 / 위험 1 / 작업량 S)
+- 결과: 성공
+- 요약: `handleK8sNotifyScan` 의 notify 클로저가 `ShouldSendK8sNotification`(기록까지 하는 호출)을 먼저 부르고 나서야 `notifyMattermostTo` 가 Mattermost 비활성·webhook 미설정·카테고리 mute 일 때 조용히 반환해, 알림을 켜기 전에 돈 스캔이 같은 finding 을 6시간 동안 억제하고 응답·감사 로그에는 `sent` 로 적었다. 전달 가능 판정을 `mattermostSnapshot.canNotify` 한 함수로 모아 `notifyMattermostTo` 와 스캔이 같이 쓰게 하고, 스캔은 윈도우를 claim 하기 전에 물어본 뒤 건너뛴 건수를 `undeliverable` 로 보고한다. 검증: 신규 end-to-end 회귀 2개(실 SQLite·`Server.Routes`·httptest webhook — 비활성/카테고리 mute 각각)가 수정 전 `sent=1`(미전달인데 전송으로 집계)로 실패하고, 첫 단언을 일시 완화해 돌리자 2단계가 `sent=0`(윈도우 소모로 켠 뒤에도 미통지)로 실패해 증상 전체를 재현했다. 수정 후 `go test ./internal/proxy -run 'K8sNotify|Mattermost|QuietHours'` → `go build ./...` → `go vet ./...` → `go test ./...`(19 패키지 전부 ok) 및 수정 파일 gofmt 통과, 178bedb 로 커밋.
+- 보류 아이디어: ① notify scan 의 podsec dedup 키에 Kind 가 없어 동명 Pod/Deployment 가 한 알림으로 합쳐짐 (가치 2 / 위험 1 / S) ② 알림 quiet_hours 숫자 범위 검증 — 24 초과·음수 입력이 조용히 무시됨 (가치 3 / 위험 2 / S) ③ PSS Restricted 검사에 seccompProfile 항목 추가 (가치 3 / 위험 2 / S) ④ 취약점 import 가 파싱 못 한 아티팩트를 '취약점 0건 완료' 로 저장 (가치 3 / 위험 3 / S) ⑤ `.github` 에 build/vet/test CI 워크플로 추가 (가치 3 / 위험 1 / S)
+- 과제서: 채택 — 정찰이 지목한 "전달 전에 dedup 을 쓰는 순서 결함" 이 현 코드에서 그대로 재현됐고, 전달 판정을 한 함수로 모으라는 지시대로 `notifyMattermostTo` 와 스캔이 같은 predicate 를 쓰게 했다.

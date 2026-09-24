@@ -1,0 +1,219 @@
+{
+  "run_id": "2026-09-23-110442-seaton-improve",
+  "generated": "2026-09-23T11:32:00+09:00",
+  "run": {
+    "run_id": "2026-09-23-110442-seaton-improve",
+    "project": "seaton",
+    "kind": "improve",
+    "started": "2026-09-23T11:04:42+09:00",
+    "model": "claude-opus-5",
+    "policy_version": "ecd4b546e",
+    "prompts_hash": "30c37184f081815d",
+    "runner_version": "ecd4b546e",
+    "arm": "codex-critic",
+    "experiment": "roles-2026-09",
+    "finished": "2026-09-23T11:32:00+09:00",
+    "outcome": "review-pending"
+  },
+  "record": {
+    "ts": "2026-09-23T11:32:00+09:00",
+    "date": "2026-09-23",
+    "project": "seaton",
+    "result": "review held, PR open https://github.com/hkjang/seaton/pull/33",
+    "outcome": "review-pending",
+    "run_id": "2026-09-23-110442-seaton-improve",
+    "base_sha": "00becef564c12511695d2571b0dbbfb8f697c709",
+    "head_sha": "4ff2f749eb9e5513a3bbc652b3b10b8b07e90c42",
+    "pr": "https://github.com/hkjang/seaton/pull/33",
+    "stages": {
+      "base": {
+        "state": "pinned",
+        "reason": "main@00becef",
+        "at": "2026-09-23T11:04:46+09:00"
+      },
+      "autonomy": {
+        "state": "release",
+        "reason": "",
+        "at": "2026-09-23T11:04:46+09:00"
+      },
+      "scout": {
+        "state": "done",
+        "reason": "좌석맵 상세에서 배정 해제 단추 (가치 4 / 위험 2 / 작업량 S)",
+        "at": "2026-09-23T11:07:55+09:00"
+      },
+      "brief": {
+        "state": "accepted",
+        "reason": "채택 — 과제서의 근거(호출부 부재, `disabled={Boolean(selected.employeeId)}`, `chooseMap` 의 `setSelected(null)`, `keepingSeats` 복구)가 모�",
+        "at": "2026-09-23T11:31:39+09:00"
+      },
+      "verify": {
+        "state": "passed",
+        "reason": "검증 7개 통과 (auto)",
+        "at": "2026-09-23T11:31:51+09:00"
+      },
+      "review": {
+        "state": "missing",
+        "reason": "리뷰 결과 없음/손상: missing — 보류",
+        "at": "2026-09-23T11:31:53+09:00"
+      },
+      "pr": {
+        "state": "created",
+        "reason": "https://github.com/hkjang/seaton/pull/33",
+        "at": "2026-09-23T11:31:57+09:00"
+      }
+    },
+    "campaign": "",
+    "autonomy": "release",
+    "arm": "codex-critic",
+    "experiment": "roles-2026-09",
+    "files": 6,
+    "additions": 197,
+    "deletions": 3,
+    "tests": 1,
+    "title": "feat: 좌석맵 상세에서 배정 해제"
+  },
+  "stages": {
+    "base": {
+      "state": "pinned",
+      "reason": "main@00becef",
+      "at": "2026-09-23T11:04:46+09:00"
+    },
+    "autonomy": {
+      "state": "release",
+      "reason": "",
+      "at": "2026-09-23T11:04:46+09:00"
+    },
+    "scout": {
+      "state": "done",
+      "reason": "좌석맵 상세에서 배정 해제 단추 (가치 4 / 위험 2 / 작업량 S)",
+      "at": "2026-09-23T11:07:55+09:00"
+    },
+    "brief": {
+      "state": "accepted",
+      "reason": "채택 — 과제서의 근거(호출부 부재, `disabled={Boolean(selected.employeeId)}`, `chooseMap` 의 `setSelected(null)`, `keepingSeats` 복구)가 모�",
+      "at": "2026-09-23T11:31:39+09:00"
+    },
+    "verify": {
+      "state": "passed",
+      "reason": "검증 7개 통과 (auto)",
+      "at": "2026-09-23T11:31:51+09:00"
+    },
+    "review": {
+      "state": "missing",
+      "reason": "리뷰 결과 없음/손상: missing — 보류",
+      "at": "2026-09-23T11:31:53+09:00"
+    },
+    "pr": {
+      "state": "created",
+      "reason": "https://github.com/hkjang/seaton/pull/33",
+      "at": "2026-09-23T11:31:57+09:00"
+    }
+  },
+  "provenance": {
+    "model": "claude-opus-5",
+    "policy_version": "ecd4b546e",
+    "prompts_hash": "30c37184f081815d",
+    "runner_version": "ecd4b546e",
+    "base_sha": "00becef564c12511695d2571b0dbbfb8f697c709",
+    "head_sha": "4ff2f749eb9e5513a3bbc652b3b10b8b07e90c42",
+    "pr": "https://github.com/hkjang/seaton/pull/33"
+  },
+  "verification": {
+    "runner": {
+      "source": "auto",
+      "commands": [
+        {
+          "cmd": "go build ./...",
+          "exit": 0,
+          "seconds": 1
+        },
+        {
+          "cmd": "go vet ./...",
+          "exit": 0,
+          "seconds": 1
+        },
+        {
+          "cmd": "go test ./...",
+          "exit": 0,
+          "seconds": 0
+        },
+        {
+          "cmd": "cd web && [ -d node_modules ] || npm ci --no-audit --no-fund",
+          "exit": 0,
+          "seconds": 0
+        },
+        {
+          "cmd": "cd web && npm test --silent",
+          "exit": 0,
+          "seconds": 1
+        },
+        {
+          "cmd": "cd web && [ -d node_modules ] || npm ci --no-audit --no-fund",
+          "exit": 0,
+          "seconds": 0
+        },
+        {
+          "cmd": "cd web && npm run build --silent",
+          "exit": 0,
+          "seconds": 5
+        }
+      ]
+    },
+    "runner_gate": {
+      "ok": true,
+      "state": "verified",
+      "reason": "검증 7개 통과 (auto)"
+    },
+    "after_rebase": null,
+    "review": null,
+    "ci_gate": null
+  },
+  "release": {
+    "result": null,
+    "assets_sha256": []
+  },
+  "approval": null,
+  "usage": [
+    {
+      "ts": "2026-09-23T11:07:54+09:00",
+      "date": "2026-09-23",
+      "project": "seaton",
+      "phase": "scout",
+      "run_id": "2026-09-23-110442-seaton-improve",
+      "campaign": "",
+      "subtype": "success",
+      "duration_ms": 195793,
+      "num_turns": 31,
+      "cost_usd": 1.7028524999999999,
+      "input_tokens": 42,
+      "output_tokens": 15439,
+      "cache_read": 1282595,
+      "cache_create": 67537
+    },
+    {
+      "ts": "2026-09-23T11:31:37+09:00",
+      "date": "2026-09-23",
+      "project": "seaton",
+      "phase": "improve",
+      "run_id": "2026-09-23-110442-seaton-improve",
+      "campaign": "",
+      "subtype": "success",
+      "duration_ms": 1514608,
+      "num_turns": 82,
+      "cost_usd": 4.9900275,
+      "input_tokens": 128,
+      "output_tokens": 32907,
+      "cache_read": 5974845,
+      "cache_create": 117929
+    },
+    {
+      "ts": "2026-09-23T11:31:53+09:00",
+      "date": "2026-09-23",
+      "project": "seaton",
+      "phase": "review",
+      "run_id": "2026-09-23-110442-seaton-improve",
+      "subtype": "unknown",
+      "cost_usd": null
+    }
+  ]
+}

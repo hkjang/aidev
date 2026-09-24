@@ -1,0 +1,175 @@
+{
+  "run_id": "2026-09-24-075415-orbit-improve",
+  "generated": "2026-09-24T08:03:18+09:00",
+  "run": {
+    "run_id": "2026-09-24-075415-orbit-improve",
+    "project": "orbit",
+    "kind": "improve",
+    "started": "2026-09-24T07:54:16+09:00",
+    "model": "claude-opus-5",
+    "policy_version": "ecd4b546e",
+    "prompts_hash": "30c37184f081815d",
+    "runner_version": "ecd4b546e",
+    "arm": "no-repair",
+    "experiment": "roles-2026-09",
+    "finished": "2026-09-24T08:03:18+09:00",
+    "outcome": "verify-failed"
+  },
+  "record": {
+    "ts": "2026-09-24T08:03:18+09:00",
+    "date": "2026-09-24",
+    "project": "orbit",
+    "result": "verify failed: 실패한 검증: cd web && [ -d node_modules ] || npm ci --no-audit --no-fund (exit 1)",
+    "outcome": "verify-failed",
+    "run_id": "2026-09-24-075415-orbit-improve",
+    "base_sha": "88d8955e194440644429991edfdcba07d40ab1a3",
+    "head_sha": "9f6602bf6f823820732ee699e58f853964e0e44a",
+    "pr": "",
+    "stages": {
+      "base": {
+        "state": "pinned",
+        "reason": "main@88d8955",
+        "at": "2026-09-24T07:54:19+09:00"
+      },
+      "autonomy": {
+        "state": "release",
+        "reason": "",
+        "at": "2026-09-24T07:54:19+09:00"
+      },
+      "scout": {
+        "state": "done",
+        "reason": "`orbitAt` 의 \"그날 곁에 있던 사람\" 포함 규칙과 시점별 기억 수·마지막 교류를 실제 postgres 로 고정 (가치 3 ",
+        "at": "2026-09-24T07:58:14+09:00"
+      },
+      "brief": {
+        "state": "accepted",
+        "reason": "채택 — 근거(orbitAt 테스트 0 개, `JOIN relationships` 필수, people.first_met 이 date, memories/relationships 의 NOT NULL 목록, anchored DEFAULT)",
+        "at": "2026-09-24T08:03:01+09:00"
+      },
+      "verify": {
+        "state": "failed",
+        "reason": "실패한 검증: cd web && [ -d node_modules ] || npm ci --no-audit --no-fund (exit 1)",
+        "at": "2026-09-24T08:03:18+09:00"
+      }
+    },
+    "campaign": "",
+    "autonomy": "release",
+    "arm": "no-repair",
+    "experiment": "roles-2026-09",
+    "files": 1,
+    "additions": 239,
+    "deletions": 0,
+    "tests": 1,
+    "title": "test(orbit): orbitAt 의 포함 규칙·시점별 기억 수·마지막 교류를 실제 postgres 로 고정"
+  },
+  "stages": {
+    "base": {
+      "state": "pinned",
+      "reason": "main@88d8955",
+      "at": "2026-09-24T07:54:19+09:00"
+    },
+    "autonomy": {
+      "state": "release",
+      "reason": "",
+      "at": "2026-09-24T07:54:19+09:00"
+    },
+    "scout": {
+      "state": "done",
+      "reason": "`orbitAt` 의 \"그날 곁에 있던 사람\" 포함 규칙과 시점별 기억 수·마지막 교류를 실제 postgres 로 고정 (가치 3 ",
+      "at": "2026-09-24T07:58:14+09:00"
+    },
+    "brief": {
+      "state": "accepted",
+      "reason": "채택 — 근거(orbitAt 테스트 0 개, `JOIN relationships` 필수, people.first_met 이 date, memories/relationships 의 NOT NULL 목록, anchored DEFAULT)",
+      "at": "2026-09-24T08:03:01+09:00"
+    },
+    "verify": {
+      "state": "failed",
+      "reason": "실패한 검증: cd web && [ -d node_modules ] || npm ci --no-audit --no-fund (exit 1)",
+      "at": "2026-09-24T08:03:18+09:00"
+    }
+  },
+  "provenance": {
+    "model": "claude-opus-5",
+    "policy_version": "ecd4b546e",
+    "prompts_hash": "30c37184f081815d",
+    "runner_version": "ecd4b546e",
+    "base_sha": "88d8955e194440644429991edfdcba07d40ab1a3",
+    "head_sha": "9f6602bf6f823820732ee699e58f853964e0e44a",
+    "pr": ""
+  },
+  "verification": {
+    "runner": {
+      "source": "auto",
+      "commands": [
+        {
+          "cmd": "go build ./...",
+          "exit": 0,
+          "seconds": 1
+        },
+        {
+          "cmd": "go vet ./...",
+          "exit": 0,
+          "seconds": 0
+        },
+        {
+          "cmd": "go test ./...",
+          "exit": 0,
+          "seconds": 0
+        },
+        {
+          "cmd": "cd web && [ -d node_modules ] || npm ci --no-audit --no-fund",
+          "exit": 1,
+          "seconds": 16
+        }
+      ]
+    },
+    "runner_gate": {
+      "ok": false,
+      "state": "verify-failed",
+      "reason": "실패한 검증: cd web && [ -d node_modules ] || npm ci --no-audit --no-fund (exit 1)"
+    },
+    "after_rebase": null,
+    "review": null,
+    "ci_gate": null
+  },
+  "release": {
+    "result": null,
+    "assets_sha256": []
+  },
+  "approval": null,
+  "usage": [
+    {
+      "ts": "2026-09-24T07:58:14+09:00",
+      "date": "2026-09-24",
+      "project": "orbit",
+      "phase": "scout",
+      "run_id": "2026-09-24-075415-orbit-improve",
+      "campaign": "",
+      "subtype": "success",
+      "duration_ms": 251861,
+      "num_turns": 31,
+      "cost_usd": 1.9885709999999999,
+      "input_tokens": 38,
+      "output_tokens": 19772,
+      "cache_read": 1330322,
+      "cache_create": 82892
+    },
+    {
+      "ts": "2026-09-24T08:03:00+09:00",
+      "date": "2026-09-24",
+      "project": "orbit",
+      "phase": "improve",
+      "run_id": "2026-09-24-075415-orbit-improve",
+      "campaign": "",
+      "subtype": "success",
+      "duration_ms": 312039,
+      "num_turns": 27,
+      "cost_usd": 2.085926,
+      "input_tokens": 40,
+      "output_tokens": 22516,
+      "cache_read": 1450332,
+      "cache_create": 79766
+    }
+  ]
+}

@@ -1,0 +1,27 @@
+# vibe-code 프로필 (2026-09-23)
+
+- 목적: VS Code 확장. 한국어를 기본으로 하는 "바이브 코딩" 도구로, 채팅 워크스페이스 위에 목표(`/goal`) 기반 자율 개발 루프, 계획 보드, 검증 러너, 명령 실행 감사, 사용량/비용 대시보드를 얹는다. 현재 1.4.0.
+- 스택: TypeScript(ES2022, commonjs, `strict`), esbuild 번들, vitest 3, Node 20. DB 없음 — 상태는 워크스페이스의 `.vibe-code/` 아래 markdown + JSONL 파일. 웹뷰는 `webview-ui/`(원본 소스 확보 불가로 판단됨), 코어는 `vendor/extension.core.js` 로 벤더링.
+- 구조:
+  - `src/extension.ts` → `src/activation.ts` 가 feature 등록을 모두 호출.
+  - `src/features/*.ts` — 기능 한 개당 파일 한 개(goals, plans, verification, checkpoints, command-audit, usage, vibe-coders-proxy, tree, status-bar, diagnostics …). 각 파일은 `register*(host: CoreHost)` 를 내보내고, 그 안에서 `vscode.commands.registerCommand` 로 명령을 등록한다.
+  - `src/core/hooks.ts`, `src/core/host.ts` — 벤더 코어와의 접점. 훅은 `beforeCore`, `mergeLocaleOverrides`, `onCommand` 세 개뿐(`vendor/PATCHES.md`).
+  - `src/util/` — `markdown.ts`(section/taskLines/writeSection 등 섹션 편집기), `kst.ts`(Asia/Seoul 날짜·스탬프), `semver.ts`.
+  - `src/features/workspace.ts` — `.vibe-code/` 경로 해석(`ensureWorkspacePaths`)과 감사 로그 기록(`writeAudit`)의 단일 관문.
+  - `tests/unit/` — vitest. `vscode` 는 `tests/unit/vscode-stub.ts` 로 alias(`vitest.config.mts`). `tests/extension-host/` 는 Windows PowerShell 스크립트로만 돈다.
+  - `docs/` — 한국어 문서. `improvement-roadmap.md` 가 사실상 백로그.
+- 빌드·테스트: `npm ci` → `npm run typecheck`(tsc --noEmit) → `npm test`(vitest run) → `npm run build`(esbuild). 셋을 묶은 것이 `npm run check`(CI가 돌리는 것). VSIX 패키징/스모크(`npm run vsix`, `verify`, `smoke:vscode`, `test:extension-host`)는 **PowerShell 전용이라 리눅스에서 돌지 않는다**.
+- 관례: 커밋 메시지는 영어 conventional commit(`feat:`, `chore:`, `ci:`), 본문 요약은 한국어 기능 나열. 사용자에게 보이는 문자열·주석·문서는 한국어, 코드 식별자는 영어. 설정은 `package.json` 의 `contributes.configuration` + `package.nls.json`/`package.nls.ko.json` 의 `%키%` 쌍으로 등록(세 곳을 같이 고쳐야 한다). 마이그레이션 개념 없음(상태는 파일). 순수 함수는 파일 안에서 export 해 vitest 로 직접 테스트하는 패턴.
+- 위험 구역:
+  - `src/features/checkpoints.ts` — 파괴적 명령 직전 스냅샷. git 상태를 만지므로 stash 스택·작업 트리를 건드리면 사고가 난다.
+  - `src/core/hooks.ts` + `vendor/extension.core.js` — 훅 계약이 깨지면 확장 전체가 죽는다. 벤더 번들은 수정 금지.
+  - `src/features/command-audit.ts` / `writeAudit` — 감사 로그에 명령 원문 외의 내용(출력, 파일 내용, 키)을 넣지 말 것.
+  - `src/features/vibe-coders-proxy.ts` — provider 프로파일을 덮어쓴다. 이전 프로파일 저장/복원 경로를 깨지 말 것.
+  - `.github/workflows/ci.yml`, `scripts/*.ps1`, `release/` — 릴리즈 경로.
+- 자주 깨지는 곳: (회차 기록 없음 — 이번이 첫 정찰. 미확인)
+- 검증 함정:
+  - 워크트리에 `node_modules` 가 없다. 무엇을 하든 `npm ci` 부터.
+  - `dist/` 는 git 에 없고 런타임 자산(node_modules, i18n, wasm, workers)은 릴리즈 VSIX 에서 복원해야 한다(`scripts/restore-dist-assets.mjs`). CI 의 packaging job 은 릴리즈 자산이 없으면 조용히 건너뛴다.
+  - 테스트는 `vscode` 스텁 위에서 돈다. 스텁에 없는 API(`vscode.window.showQuickPick` 등)를 import 시점에 건드리면 테스트가 깨진다 — 함수 본문 안에서만 쓸 것.
+  - 시간은 Asia/Seoul 고정(`src/util/kst.ts`). 로컬 타임존에 의존하는 단정은 쓰지 말 것.
+  - 확장 호스트 테스트와 VSIX 검증은 Windows 에서만 재현되며 CI 의 리눅스 `check` job 은 그것을 보지 못한다.

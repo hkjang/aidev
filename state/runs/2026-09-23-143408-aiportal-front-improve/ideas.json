@@ -1,0 +1,164 @@
+[
+  {
+    "title": "[수정 과제] 릴리즈 버전 결정 입력 복구 — 승인 근거 확보 후에만 구현",
+    "value": 5,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "pending 10회째. 2026-09-23 HEAD 37006f3 에서 재확인: git tag 0개, .github 디렉터리 없음, package.json:3='0.0.0'/:4 private:true, git status --short 0줄, package.json scripts 에 version/release 타깃 없음. 진입 조건 ①증가 단위·시작 버전 ②태그 형식 ③릴리즈 커밋 양식 ④노트 위치/GitHub Release 사용 여부가 출처와 함께 인계되지 않아 버전 파일·태그·CHANGELOG·원격 전송을 일체 하지 않았고 판정을 skipped/released 로 낮추지 않았다. 다음 회차에도 재조사 금지(같은 결과 10회).",
+    "updated": "2026-09-23"
+  },
+  {
+    "title": "릴리즈 절차 교착 자체를 사람에게 에스컬레이션 (release-prompt 2·3항 vs 5항)",
+    "value": 5,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "pending 유지. 수정 지점이 워크트리 밖(외부 aidev bin/run.sh → release.json → bin/gate.py)이라 저장소 안에 합법적 수단이 없다. 저장소에서 게이트를 통과시키는 유일한 수단인 package.json version 필드 삭제는 게이트 완화라 금지.",
+    "updated": "2026-09-23"
+  },
+  {
+    "title": "SupportOcr 업로드의 ocrParse 미-await + 실패 경로 stopLoading 누락 (한 과제로 묶음)",
+    "value": 4,
+    "risk": 3,
+    "size": "M",
+    "status": "done",
+    "note": "2026-09-23 구현 완료(커밋 e0aac38). SupportOcr.vue startConversion 에 const res = await inf.tools.ocrParse.call(formData) + isSuccess 실패 분기(알림·stopLoading·return) + catch 의 stopLoading() 을 넣었다. 성공 경로의 setTimeout 안 stopLoading 은 유지해 스피너가 목록 이동 직전까지 켜져 있다. tests/unit/supportOcrUpload.spec.js(6케이스, 실제 마운트·실제 드롭/클릭) 로 Red 4건 → Green, 세 변경분을 각각 되돌리면 3건/2건/1건이 실패함을 확인해 인과를 증명했다.",
+    "updated": "2026-09-23"
+  },
+  {
+    "title": "globalLoading 참조 카운트 도입 (병렬 요청 중 스피너 조기 종료)",
+    "value": 4,
+    "risk": 4,
+    "size": "M",
+    "status": "pending",
+    "note": "pending 유지. SupportOcr 실패 경로 누수는 2026-09-23 해소됐지만 loading.vue 의 60초 자동 해제가 카운터를 되돌리지 않는 문제는 그대로다. 지금 넣으면 카운터가 0 으로 못 돌아와 스피너가 영구히 안 꺼지는 회귀가 난다. 자동 해제와 카운터의 관계를 먼저 정하는 것이 선행.",
+    "updated": "2026-09-23"
+  },
+  {
+    "title": "Alert/Confirm 이 showHeader 를 넘기지 않아 title 이 영구히 렌더링되지 않음",
+    "value": 3,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "이번 회차 차선 후보로 승격. openAlert(msg, error) 처럼 title 에 Error 객체를 넘기는 호출부 2곳의 증상이 이 때문에 감춰져 있다는 관찰(이전 회차). SFC 마운트가 가능해지고 tests/unit/alertPopup.spec.js 가 생겨 증명 수단은 확보됨. 다만 '보이게 하는 것' 이 기대 계약인지 확정이 선행 — 보이게 했더니 Error 객체가 화면에 찍히면 호출부를 고치는 쪽이 정답이다. 2026-09-23 이번 정찰 미열람(이전 기록 기준 보존).",
+    "updated": "2026-09-23"
+  },
+  {
+    "title": "globalLoading 의 timeoutMs(600000) 가 App.vue 의 Loading 에 전달되지 않는 죽은 export",
+    "value": 2,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "pending 유지. globalLoading.js 의 timeoutMs=600000 은 export 되지만 App.vue:52 Loading 호출부가 :timeoutMs 를 넘기지 않아 loading.vue 기본값 apiTimeOutMs(60000)가 쓰인다(이번 회차 globalLoading.js 원문 재확인, App.vue 는 미열람). 지금 연결하면 자동 해제가 10분으로 늘어 오히려 나빠지므로 '전달 추가' 가 아니라 '어느 쪽이 의도인지 확정' 이 선행.",
+    "updated": "2026-09-23"
+  },
+  {
+    "title": "Base.vue 의 @:click 오타로 배경 클릭 닫기가 동작하지 않음",
+    "value": 2,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "2026-09-23 이번 회차 미열람. 바로 위 줄이 주석 처리된 정상 코드라 의도적 비활성 가능성이 있어 기대 계약 확인이 선행.",
+    "updated": "2026-09-23"
+  },
+  {
+    "title": "docs/RELEASE.md 재조회 스크립트의 0.0.0 하드 assert",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "docs/RELEASE.md 의 재조회 명령이 package/lock 세 필드를 0.0.0 으로 assert 한다. 실제 릴리즈로 버전이 오르면 즉시 실패한다. 릴리즈 관례가 정해지기 전에는 손대지 말 것 — 지금 고치면 근거 정본이 흔들린다.",
+    "updated": "2026-09-23"
+  },
+  {
+    "title": "MyAgentList.vue 의 'MyAvatar'/'etc' serviceCode 정확 비교 통일",
+    "value": 2,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "MyAgentList.vue:272,283,284 및 appList.js:193 이 모두 String(row?.serviceCode||'')===… 정확 비교. 공용 매처가 없어 먼저 만들어야 한다. vitest 가 SFC 마운트를 지원하게 되어 증명 수단은 생겼다. 2026-09-23 미열람.",
+    "updated": "2026-09-23"
+  },
+  {
+    "title": "Header.vue 가 OCR 사용 여부와 무관하게 마운트 즉시 3초 폴링 시작",
+    "value": 3,
+    "risk": 3,
+    "size": "M",
+    "status": "pending",
+    "note": "기대 계약 미확인. 2026-09-23 정찰도 미열람 — 이전 기록 기준으로 보존한다.",
+    "updated": "2026-09-23"
+  },
+  {
+    "title": "빌드 산출물 단일 청크 6.2MB 코드 스플리팅(manualChunks)",
+    "value": 3,
+    "risk": 3,
+    "size": "M",
+    "status": "pending",
+    "note": "이전 회차 측정: dist/assets/index-*.js 6,222.33 kB (gzip 1,697.18 kB), vite 500kB 경고. mermaid/katex/cytoscape 는 이미 별도 청크. vite.config.js 에 manualChunks 없음. 빌드 자체는 통과하므로 급하지 않다. 2026-09-23 재측정 미실행.",
+    "updated": "2026-09-23"
+  },
+  {
+    "title": "SupportOcr.vue 업로드 경로의 stopLoading 누락 (setTimeout 안에만 존재)",
+    "value": 3,
+    "risk": 3,
+    "size": "S",
+    "status": "done",
+    "note": "2026-09-23 item 2 와 함께 해소(커밋 e0aac38). catch 경로에 stopLoading() 추가. 성공 경로는 의도적으로 setTimeout 안에 유지.",
+    "updated": "2026-09-23"
+  },
+  {
+    "title": "SupportOcr 업로드의 ocrParse 호출을 await 하지 않아 try/catch 가 비동기 실패를 못 잡음",
+    "value": 3,
+    "risk": 3,
+    "size": "S",
+    "status": "done",
+    "note": "2026-09-23 해소(커밋 e0aac38). await 추가로 rejection 이 catch 에 도달함을 마운트 테스트로 증명.",
+    "updated": "2026-09-23"
+  },
+  {
+    "title": "ChatStorageDetail.vue:887 중복 startLoading() 제거",
+    "value": 1,
+    "risk": 1,
+    "size": "S",
+    "status": "rejected",
+    "note": "직전 회차에 누수 아님으로 확정(호출부 452행이 handleContentClick 의 try 안이고 finally 476-478 이 stopLoading 한다). 887행만 제거해도 관측 가능한 동작 변화 0 — 운영자 지시 '출력·동작이 바뀌지 않는 수정은 넣지 말 것' 에 걸린다.",
+    "updated": "2026-09-23"
+  },
+  {
+    "title": "저장소의 await 없는 API 호출 전수 감사를 회귀 테스트로 고정",
+    "value": 3,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "pending 유지. 2026-09-23 회차에 inf.tools 네임스페이스의 유일한 미-await 건(SupportOcr)을 고쳤다. auth/chat/app 등 나머지 네임스페이스는 미감사. 운영자 지시상 소스 문자열 검사를 회귀 테스트로 고정하지 말고 1회성 감사로 돌린 뒤 발견 건만 개별 수정할 것.",
+    "updated": "2026-09-23"
+  },
+  {
+    "title": "docs/.ipynb_checkpoints 중복 문서 정리",
+    "value": 1,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "신규. docs/.ipynb_checkpoints/03-API-개발가이드-checkpoint.md 가 docs/03-API-개발가이드.md 와 거의 동일한 내용을 중복 보관하고 있어 문서 정본이 둘이다(운영자 지시 '정본을 하나로 유지할 것' 과 충돌). 저장소 루트의 test.txt / test-scenarios.csv 도 같은 성격. 가치는 낮고, 무엇이 의도적 보관인지 확인이 선행.",
+    "updated": "2026-09-23"
+  },
+  {
+    "title": "SupportStt 업로드 실패 경로도 마운트 테스트로 고정",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "신규. SupportStt.vue:131-155 는 계약상 정본 형태지만 실제 마운트 테스트가 없다. SupportOcr 쪽에 tests/unit/supportOcrUpload.spec.js 라는 배선 선례가 생겼으므로 같은 틀로 낮은 비용에 고정할 수 있다. 다만 STT 는 성공 시 finally stopLoading 이라 스피너 계약이 OCR 과 다르므로 두 계약이 의도된 차이인지 먼저 확정할 것.",
+    "updated": "2026-09-23"
+  },
+  {
+    "title": "SupportOcr 성공 경로의 2초 setTimeout 동안 변환시작 버튼이 다시 눌린다",
+    "value": 3,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "신규(2026-09-23 회차에 관찰). 성공 후 router.push 까지 2초 대기하는 동안 스피너 오버레이가 클릭을 막아 주는지 미확인이며, 막지 못하면 같은 파일이 두 번 업로드된다. 수정 전에 loading.vue 오버레이가 pointer-events 를 실제로 차단하는지부터 확인할 것 — 차단한다면 동작 변화 0 인 무효 수정이다.",
+    "updated": "2026-09-23"
+  }
+]

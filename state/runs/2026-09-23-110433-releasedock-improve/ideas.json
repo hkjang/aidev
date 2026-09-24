@@ -1,0 +1,17 @@
+[
+  {"title": "진행 중 실행의 SSE 로그 스트림이 줄마다 재연결되는 결함 수정", "value": 4, "risk": 2, "size": "S", "status": "done", "note": "useAsync가 매 렌더 새로 만드는 run 객체가 스트림 effect 의존성에 있어 로그 한 줄마다 EventSource를 닫고 다시 열었다. 실제 라우트로 렌더한 테스트에서 4줄 -> 연결 5개로 재현. 의존성을 안정적인 run.reload로 바꾸고, 그로 인해 사라지는 max_duration 복구 경로를 end 프레임 해석으로 명시 처리했다.", "updated": "2026-09-23"},
+  {"title": "EventSource 연결 실패(429 stream_limit·세션 만료)를 실행 상세 화면에 표시", "value": 3, "risk": 2, "size": "S", "status": "pending", "note": "재연결 폭주를 고쳐 429 빈도는 크게 줄었으나 스트림이 끊겼을 때 화면은 여전히 진행 중으로 보인다. source.onerror로 상태를 띄우는 것이 남은 몫.", "updated": "2026-09-23"},
+  {"title": "SSE 프레임을 모아 배치마다 한 번만 setLogs 호출", "value": 2, "risk": 2, "size": "M", "status": "pending", "note": "재연결 폭주가 사라져 이제는 순수 렌더 비용만 남는다. 프레임을 ref에 모아 rAF마다 flush.", "updated": "2026-09-23"},
+  {"title": "SSE에서 500행 페이지가 가득 차면 즉시 다음 쿼리 실행", "value": 2, "risk": 2, "size": "M", "status": "pending", "note": "simple.go:1188의 LIMIT 500이 꽉 차도 1초 폴링을 기다린다. 실제 DB/HTTP 검증 필요.", "updated": "2026-09-23"},
+  {"title": "make vet(gofmt/go vet)와 웹 tsc -b --noEmit를 make test에 포함", "value": 2, "risk": 1, "size": "S", "status": "pending", "note": "해당 브랜치가 아직 main에 없다(현 Makefile에 vet 타깃 없음). 이번 회차에도 손으로 돌렸다.", "updated": "2026-09-23"},
+  {"title": "전체 모드 릴리즈·프리셋 업로드도 스트리밍으로 전환", "value": 3, "risk": 4, "size": "L", "status": "pending", "note": "releases.go:persistArtifactTx가 행 잠금을 쥔 채 파일을 쓴다. 트랜잭션 밖 staging 후 rename으로 durability 경로 재설계 필요.", "updated": "2026-09-23"},
+  {"title": "uploadHasFailedPackages가 batch_id만 보고 actor로 좁히지 않음", "value": 2, "risk": 3, "size": "S", "status": "pending", "note": "좁히면 안전 확인이 느슨해질 수 있어 보류 유지.", "updated": "2026-09-23"},
+  {"title": "web/dist/assets/vendor 청크 분할로 폐쇄망 초기 로딩 개선", "value": 2, "risk": 3, "size": "M", "status": "pending", "note": "이번 빌드에서도 617.30 kB(gzip 191.72 kB) 그대로. 라우팅 구조까지 건드려야 한다.", "updated": "2026-09-23"},
+  {"title": "ci.yml과 release.yml의 중복 PostgreSQL 서비스·setup 블록 통합", "value": 2, "risk": 3, "size": "M", "status": "pending", "note": "릴리즈 보호 경로라 보류 유지.", "updated": "2026-09-23"},
+  {"title": "PATCH /api/v1/admin/oidc에도 mcp_oauth_* 필드 받기", "value": 1, "risk": 1, "size": "S", "status": "pending", "note": "MCP OAuth 브랜치가 main에 없다(server/에 mcpoauth.go 없음). 머지 이후 재평가.", "updated": "2026-09-23"},
+  {"title": "MCP SSO 토큰 거부를 감사 로그에도 남기기", "value": 2, "risk": 1, "size": "S", "status": "pending", "note": "MCP OAuth 브랜치가 main에 없다. 머지 이후 식별자만 기록.", "updated": "2026-09-23"},
+  {"title": "write의 64 KiB 강제 flush에서 UTF-8 rune 경계 보존", "value": 1, "risk": 2, "size": "S", "status": "pending", "note": "최근 반복 수정 영역이라 보류 유지.", "updated": "2026-09-23"},
+  {"title": "실행 상세 새로 고침에서 진행 중 로그 전체 재수집 줄이기", "value": 1, "risk": 2, "size": "S", "status": "pending", "note": "사용자 기대와 충돌 가능.", "updated": "2026-09-23"},
+  {"title": "진행 중 실행의 SSE 중복 제거를 마지막 id 비교로 변경", "value": 2, "risk": 1, "size": "S", "status": "done", "note": "appendStreamedLine으로 2026-09-20 회차에 반영됨(main에 있음).", "updated": "2026-09-23"},
+  {"title": "make test에서 PostgreSQL 통합 테스트 생략을 경고로 알리기", "value": 2, "risk": 1, "size": "S", "status": "done", "note": "cmd/test-postgres-warning으로 2026-09-21 회차에 반영됨(main에 있음).", "updated": "2026-09-23"}
+]

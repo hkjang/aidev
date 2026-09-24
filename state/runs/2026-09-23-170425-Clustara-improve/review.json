@@ -1,0 +1,13 @@
+{
+  "verdict": "approve",
+  "reasons": [],
+  "notes": [
+    "go build ./..., go vet ./..., go test ./... 통과(일부 캐시); 알림 관련 테스트는 -count=1로 별도 통과. 새 테스트는 실제 API·SQLite·webhook을 실행하며 수정 전에는 sent 단언이 실패하는 구조임을 코드로 확인했다. 수정 전 코드 실행은 하지 않았다.",
+    "internal/proxy/k8s_notify_scan_test.go:248: 비활성·카테고리 mute 해제 회귀는 검증하지만 webhook 미설정 후 구성하는 경우의 전용 회귀 테스트는 없다. select/default는 비동기 미전송을 엄밀히 증명하지 못하나 응답 집계와 재활성 후 실제 수신 단언은 유효하다.",
+    "internal/proxy/k8s_notify.go:113 및 :129: 사전 판정과 전송 함수가 설정을 각각 조회하므로 동시에 설정이 바뀌면 dedup 기록 후 전송이 생략될 여지는 남는다. 기존에도 가능한 경합으로 이번 변경의 회귀는 아니다. canNotify는 설정상 허용 여부이며 실제 HTTP 전달 성공을 보장하지 않는다.",
+    "docs/ADMIN_GUIDE.md:371: 재활성 후 즉시 통지는 기존 dedup 기록과 quiet hours에 계속 제한된다. 릴리즈 설명에서도 전달 성공 보장으로 확대 해석하지 않도록 유의할 것.",
+    "undeliverable 응답의 저장소 내 UI·SDK 소비자는 발견하지 못했다. 인증·권한·의존성·DDL 변경과 새로운 개인정보 전송은 없으며 코드 revert가 가능하다. 실 PostgreSQL·Kubernetes·Mattermost·브라우저는 미검증."
+  ],
+  "risk": "low",
+  "blocking": []
+}

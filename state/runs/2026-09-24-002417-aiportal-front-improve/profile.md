@@ -1,0 +1,23 @@
+# aiportal-front 프로필 (2026-09-24)
+- 목적: 사내 AI 포털 SPA; 채팅·업무 앱(심플봇)·OCR·STT·공유·문서 뷰어 제공.
+- 스택: JavaScript ESM, Vue 3.5, Vite 7, Pinia 3, vue-router 4, axios, Vitest 4/jsdom + @vue/test-utils. 백엔드는 별도 저장소(이 저장소에 없음).
+- 구조:
+  - `src/api/`: `interface.js` 가 모든 엔드포인트를 `inf.<도메인>.<이름>.call(...)` 로 선언(`app.createApp` = POST `/app/create`, `app.createAppFile` = POST `/app/create/doc`, `app.appEdit` = POST `/app/{id}`). `common/interceptors.js` 가 공통 오류를 처리하고 `Promise.reject('COM')` 으로 던진다.
+  - `src/storage/`: 인증·사용자·채팅·앱·OCR 캐시(localStorage/sessionStorage 래퍼) + `ocrStatusCheckStore`(폴링).
+  - `src/stores/`(pinia 8종), `src/composables/`(2종), `src/utils/`(22종 — 파일 정책·날짜·마크다운·전역 로딩/알림/토스트·이벤트버스).
+  - `src/views/`, `src/components/{common,layout}/`, `src/router/`. `Support/{Ocr,Stt,Img}` 가 업무 도구 화면. 전역 팝업은 `src/components/common/popup/Global/` 에 있고 `App.vue` 가 `Teleport` 로 한곳에서 띄운다(Alert·Confirm·Loading·PopEditApp·PopSimpleBot·PopSimpleBotUpdate·ToastManager).
+  - `tests/unit/`: 29개 spec. `docs/`: 가이드 11편 + `RELEASE.md`(릴리즈 근거 문서). `.ipynb_checkpoints` 에 중복본 존재.
+- 빌드·테스트: `npm ci`(**node_modules 가 비어 있다 — 선행 필수, 수 분**) → `npm test`(**기준선 29파일 497테스트**) → `npm run build:dev`. 모드별 `build:core/ofc/int/*_dev` 존재. **`npm run build` · `npm run lint` 는 없다.** 빌드 후 `dist/` 는 지울 것.
+- 관례: 한국어 `fix:`/`feat:`/`docs:`/`test:` 커밋 + merge PR. `@` alias, 모드별 `.env`. API 호출부는 `const res = await inf.X.Y.call(...)` → `isSuccess(res)` 확인 → 실패면 안내 후 `return` → `catch(e){ if(e=='COM') return; ... }`(src 전체 **93곳**) → `finally { stopLoading() }` 가 정착된 형태(`SupportStt.vue:131-155`, `ChatStorageList.vue:55-88`, `PopSimpleBotUpdate.vue:679-682` 이 표준 예). 사용자 안내는 `openAlert`(전역 모달)와 `toast`(가벼운 알림)를 함께 쓴다.
+- 위험 구역: `src/api/common/interceptors.js`, `src/api/auth.js`, `src/storage/{authStorage,userStorage}`, `src/router`, Chat 스트리밍·탭 동기화. `.gitlab-ci.yml` 은 **배포 전용**(테스트 단계 없음): 12개 job 전부 `CI_COMMIT_BRANCH == main|develop` 조건이며, 전용 Runner 가 `/sw/aurda/ai-portal-pvc/node-user-build`(또는 `/sw/uracle/ai-portal/build/...`)에서 `git fetch/reset --hard` → `npm run build:*` → `cp -rf dist/* <DEPLOY_DIR>` 한다. **태그 규칙이 한 줄도 없다.**
+- 자주 깨지는 곳:
+  - 업무 실패(`isSuccess(res)` false) 경로의 뒤처리 누락. 인터셉터는 `status != 200 && code == 'BZ01'`(성공 핸들러 `interceptors.js:228-236`) 과 axios 에러 + `code == 'BZ01' && !url.includes('/app/simple')`(에러 핸들러 `:315-322`) 두 곳에서만 'COM' 으로 던지고 나머지 200 응답은 그대로 통과시키므로 `isSuccess` false 는 실제로 화면까지 도달한다.
+  - `catch` 에 `if (e == 'COM') return` 이 빠져 전역 Alert 과 토스트가 겹치는 자리 — 현재 확인된 잔존: `PopSimpleBot.vue:599`(생성), `Sidemenu.vue:499`(대화 삭제).
+  - `finally` 에 성공 전용 후속 동작(`emit`/`close`/이동)을 넣어 실패에도 실행되는 형태 — 심플봇 두 팝업은 정리됨.
+  - `catch (e) {}` 로 예외를 완전히 삼키는 보조 호출(`PopSimpleBot.vue:542,563`, `PopSimpleBotUpdate.vue:649`).
+  - 형제 컴포넌트(`PopSimpleBot` ↔ `PopSimpleBotUpdate`) 한쪽만 고쳐 두 경로가 같은 실패를 다르게 처리하는 비대칭.
+  - 캐시 값이 배열이 아닐 때, 식별자/`serviceCode` 비교, 비동기 조회 `await` 누락, 전역 스피너 start/stop 짝, 팝업 닫힘 경로(Escape/배경 클릭)에서 콜백 유실.
+  - 릴리즈는 정책 결손으로 **16회 연속 no-change**.
+- 검증 함정: `vitest.config.js` 에 `@vitejs/plugin-vue` 가 연결돼 있어 **`.vue` 를 실제로 마운트해 검증할 수 있다**. 증명은 HTTP 전송(axios adapter) 한 겹만 대역으로 바꾸고 실제 `interceptors.js` → 실제 `inf.*.call` → 실제 컴포넌트를 통과시키는 형태가 정착돼 있다(`shareAppCommonError.spec.js`, `simpleBotPromptReload.spec.js`, `simpleBotUpdateClose.spec.js`). **'COM' 을 만드는 검증된 대역 응답: `{ status: 204, data: { code: 'BZ01', message: '…' } }`**(`simpleBotUpdateClose.spec.js:202-204`). `vite.config.js` 는 dev server https 인증서 의존이 있어 테스트에서 분리돼 있다. `restoreMocks: true`. 전역 로딩/알림/토스트는 모듈 싱글턴이라 테스트 간 상태가 샌다 — 각 케이스에서 정리할 것. 애니메이션·폴링은 `setInterval` 기반이라 즉시 resolve 하는 대역으로는 결함이 드러나지 않는다(fake timer 나 지연 resolve 필요). 심플봇 생성 팝업의 `validateCreateApp()`(`PopSimpleBot.vue:196`)은 `name`·`description` 외에 **LLM/임베딩 모델·프롬프트·첨부 1개 이상**까지 요구하므로 실제 DOM 입력과 `getModel` 성공 대역이 선행이다.
+- CI/릴리즈 근거: `.github` 디렉터리 자체가 없다(GitHub Actions 워크플로 0개). `git tag` 0개, `package.json:3`·`package-lock.json:3` 모두 version `0.0.0`(lock name `kcb_ai`), `CHANGELOG.md`/`VERSION`/`scripts`/`Makefile` 없음 → 릴리즈 관례를 정할 입력이 저장소에 없다. `docs/RELEASE.md` 는 근거 문서이지 증가 정책이 아니며, 버전 파일이 존재하므로 외부 절차의 `skipped` 조건도 충족하지 않는다.
+- 기준: HEAD **5d948b7**(main), 작업 트리 무변경. `CLAUDE.md` 없음(`AGENTS.md` 가 대신).

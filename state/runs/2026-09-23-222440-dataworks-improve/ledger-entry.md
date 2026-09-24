@@ -1,0 +1,5 @@
+## 2026-09-23
+- 선택: 액션 센터 `expiring_within` 이 int64 범위를 넘으면 감긴 창으로 조용히 답하던 문제 수정 (가치 2 / 위험 1 / 작업량 S)
+- 결과: 성공
+- 요약: `parseExpiryHorizon` 의 d/w 분기가 `time.Duration(count)*unit` 을 범위 검사 없이 계산해 `106751992d` 는 약 20시간, `200000000d`·`30000000w` 는 음수 창이 되었고, 양수 검사를 통과해 200 으로 응답하면서 `expiring_within` 필드에 그 감긴 값을 실제 적용 창으로 돌려줬다(문서는 "양수가 아니거나 해석할 수 없는 값은 400" 이라고 계약한다). `int64(count) > math.MaxInt64/int64(unit)` 이면 기존 `400 invalid_expiring_within` 으로 거부하도록 고쳤고 경계값 `106751d`·`15250w` 는 그대로 통과한다. 검증: 실제 서버 라우트를 거치는 HTTP 회귀 테스트(수정 전 `expiring_within=106751992d` 가 `"19h59m5.224192s"` 창으로 200 을 반환하는 것을 먼저 확인 → 수정 후 5개 값 400 + 경계 2개 정상 창)와 `TestParseExpiryHorizon` 표 7사례 추가, `go build ./...`·`go vet ./...`·`go test ./...` 전체 통과, `go run ./cmd/api-surface-audit` gap 0, `gofmt -l` 클린. web 변경이 없어 웹 검증은 미실행, 릴리즈 커밋 없음.
+- 보류 아이디어: 상품이 사라진 고아 Contract Scope·Entitlement 를 전용 운영 경고로 분류 (2/2/M) / 동일 API 키에 활성 엔타이틀먼트가 둘 이상일 때 운영 화면 경고 (2/2/S) / 가이드 캡처 스펙의 하드코딩 버전 문자열 한 곳에서 읽기 (2/1/S) / 실제 MCP 클라이언트 흐름 e2e 를 스텁 Keycloak + Playwright 로 web/e2e 에 편입 (3/2/M)

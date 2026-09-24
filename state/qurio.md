@@ -68,3 +68,10 @@
 - 보류 아이디어: Keycloak RP-initiated logout 연동 (가치 3 / 위험 3 / M).
 - 과제서: 채택 — 현재 lint의 포맷 검사 누락과 네 루트의 드리프트 0건을 확인했고 지정 범위 내에서 수용 기준을 충족했다.
 
+## 2026-09-24
+- 선택: internal/store 통합 테스트의 `defer pool.Close()` → `t.Cleanup(DELETE…)` 순서 역전 바로잡기 (가치 3 / 위험 1 / 작업량 S)
+- 결과: 성공
+- 요약: Go 가 테스트 본문의 `defer` 를 `t.Cleanup` 보다 먼저 실행하므로 네 통합 테스트(`TestDurableAPIKeyRate…`, `…ConcurrentLease…`, `…RotationLineage…`, `TestUserProfilePreferencesPostgres`)의 픽스처 DELETE 가 이미 닫힌 풀 위에서 돌고 `_, _ =` 로 오류가 버려져 조용히 죽어 있었다 — 실제 도커 PostgreSQL 17(127.0.0.1:55432)에 붙여 수정 전 `users` 4행·`api_keys` 5행·`authentications` 1행이 남는 것을 psql 로 확인해 red 를 만들었다(profile 테스트 사용자는 `UpdateUserProfile` 이 이름을 바꿔 놓아 `name LIKE 'profile-%'` 만으로는 안 잡힌다 — `user_id>1` 로 셌다). 네 곳의 `defer pool.Close()` 를 같은 자리에서 `t.Cleanup(pool.Close)` 로 바꿔 LIFO 로 풀 종료가 가장 마지막에 오게 했고(테스트 본문 검증 로직·DSN·Skip 분기·프로덕션 코드는 그대로), 수정 후 같은 절차에서 잔존 0행 + 네 테스트 전부 PASS, 다시 되돌리니 2행이 남아 인과를 확인했다. 검증: `go test -race -p=1 -tags=integration ./internal/store -count=1` 2회 연속 통과 및 각 회차 뒤 잔존 0행, `go test -race -p=1 -tags=integration ./...` 전체 통과, `go vet -tags=integration ./internal/store`·`go vet ./...`·`gofmt -l internal/store`(출력 없음)·`go test ./...`·`go build ./...` 통과. 커밋 522f0e5, 컨테이너 제거.
+- 보류 아이디어: 같은 순서 역전을 나머지 패키지(cmd/qurio/migration, platformapi/query_history, intelligenceapi/credential_race, agentapi/repository, runtimeapi/imports)로 확장 (3/2/M); internal/store 통합 테스트 6개 파일의 DSN 을 QURIO_TEST_POSTGRES_DSN 전용으로 바꾸고 연결 오류를 Fatal 로 — 나머지 27개 파일 후속 통일 과제와 함께 (3/2/M); 통합 테스트 DSN/스킵 관례를 공용 헬퍼 하나로 통일하는 캠페인 (4/3/L); `t.Cleanup` 안 DELETE 의 버려진 오류를 `t.Logf` 로 남겨 정리 실패가 다시 조용해지지 않게 하기 (2/1/S); Keycloak RP-initiated logout(end_session_endpoint) 연동 (3/3/M)
+- 과제서: 채택 — 과제서가 지목한 네 지점(28/119/226행, 31행)이 코드와 정확히 일치했고 수용 기준 1~4 를 실제 PostgreSQL 로 red→green→되돌려 red 까지 그대로 충족했다.
+

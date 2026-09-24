@@ -1,0 +1,119 @@
+[
+  {
+    "title": "MCP seccheck.review_report 가 /mcp URL 쿼리로 범위가 바뀌지 않게 하기",
+    "value": 4,
+    "risk": 1,
+    "size": "M",
+    "status": "done",
+    "note": "f4df4c2. mcpReviewReport 가 r.URL.Query() 대신 빈 url.Values{} 에서 출발하고 도구 인자 from/to/department 만 Set. 실 PostgreSQL 16 에서 수정 전 결함(include_done=1 이 등록부를 1→2행으로, from/to/department 가 structuredContent 를 바꿈, 감사 after_value 는 arguments:{} 뿐) 재현 후 수정·통과. 감사 details 컬럼은 audit_logs.after_value.",
+    "updated": "2026-09-23"
+  },
+  {
+    "title": "MCP numberValue 가 범위 밖 limit 을 조용히 기본값 50 으로 되돌림",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "internal/web/mcp.go numberValue — limit:1000 이나 문자열 limit 이 오류 없이 50 이 됨(스키마는 1~100 integer). list_reviews/search_controls 둘 다. 이번에 만든 client.callTool 헬퍼(mcp_report_test.go)로 바로 검증 가능. 다음 회차 유력 후보.",
+    "updated": "2026-09-23"
+  },
+  {
+    "title": "golang/vulndb 에 GO-2026-6452 fixed 이벤트를 더하는 PR 제출",
+    "value": 5,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "저장소 밖·운영자 결정. 이번 회차에 vulndb 상태 재조회 안 함. 09-20 회차의 vulndb-fix-proposal.md 가 본문 초안.",
+    "updated": "2026-09-23"
+  },
+  {
+    "title": "러너: 실패 step 이 Go vulnerability scan 이고 vulndb fixed 가 없으면 수정 과제를 배정하지 않는 규칙",
+    "value": 4,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "저장소 밖(러너). 09-19~09-20 에 같은 게이트로 3회 no-change. 구현 여부 미확인.",
+    "updated": "2026-09-23"
+  },
+  {
+    "title": "docs/user-guide.md 등 소문자 옛 가이드 제거해 대문자 정본 하나만 유지",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "docs/ 에 user-guide.md·api-guide.md 등 소문자 파일이 남아 있음. 참조 0건은 09-20 확인이고 이번 회차에 재확인 안 함. admin-guide.md 는 09-19 회차에 이미 삭제됨. 실동작 결함을 우선.",
+    "updated": "2026-09-23"
+  },
+  {
+    "title": "리포트 필터를 빠르게 바꿀 때 이전 응답이 최신 집계를 덮어쓰는 문제",
+    "value": 3,
+    "risk": 2,
+    "size": "M",
+    "status": "pending",
+    "note": "web/src Reports 화면. 응답 취소·순서 검사 없음(09-22 정찰 기록). 브라우저/vitest 재현 설계 필요.",
+    "updated": "2026-09-23"
+  },
+  {
+    "title": "서비스 timezone(general.timezone)에 맞춘 리포트 월 시작 프리셋",
+    "value": 3,
+    "risk": 2,
+    "size": "M",
+    "status": "pending",
+    "note": "Reports/Audit/ReviewDetail 이 모두 UTC 기준 today 를 만든다는 기록. 여러 화면 공통 계약이라 한쪽만 고치면 안 됨(운영자 지침). 후순위 유지.",
+    "updated": "2026-09-23"
+  },
+  {
+    "title": "심의번호의 생성일 의존성과 과거 자료 이관 시 번호 충돌 조사",
+    "value": 3,
+    "risk": 3,
+    "size": "M",
+    "status": "pending",
+    "note": "fixture 의 created_at 을 바꾸면 다음 생성이 500 이 되는 관찰(09-22). 조사 성격이라 한 세션 과제로는 위험.",
+    "updated": "2026-09-23"
+  },
+  {
+    "title": "excelize 다음 태그가 나오면 pseudo-version 을 태그로 되돌리고 회귀 확인",
+    "value": 3,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "HEAD go.mod 는 v2.11.0 태그. 원격 최신 태그 상태 이번 회차 미확인. 게이트 우회 금지.",
+    "updated": "2026-09-23"
+  },
+  {
+    "title": "precheck.sh 에 npm audit --audit-level=high·go test -race 단계 추가",
+    "value": 3,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "precheck 에는 아직 두 단계 없음(2026-09-23 실행 출력으로 확인: gofmt·vet·Go 테스트·프런트엔드·가이드 그림·가이드 PDF·gitleaks 6단계). 과거 PR #10 과 중복 가능성.",
+    "updated": "2026-09-23"
+  },
+  {
+    "title": "api.ts download(path) 호출을 라우트 스캐너에 넣기",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "선행인 routes.test.ts 가 HEAD 에 없음(PR #13 미병합). 병합 전에는 성립하지 않음. 이번 회차 web 테스트는 2 파일 11개로 여전히 payloads 계열뿐.",
+    "updated": "2026-09-23"
+  },
+  {
+    "title": "docs_test 로 가이드의 <row>.<key> 설정 키를 시드 행과 대조",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "docs_test.go 는 설정 표·시드·mcpTools 를 이미 대조. dotted-key 전수 검사는 미확인. PR #12 접근 반복 주의.",
+    "updated": "2026-09-23"
+  },
+  {
+    "title": "MCP tools/call 을 실제 HTTP 로 부르는 테스트 헬퍼",
+    "value": 3,
+    "risk": 1,
+    "size": "S",
+    "status": "done",
+    "note": "mcp_report_test.go 의 (*client).callTool 로 추가됨. MCP-Protocol-Version 헤더를 보내지 않는 경로(validateMCPHeaders 를 건드리지 않음). 다른 MCP 도구 테스트가 재사용할 수 있음.",
+    "updated": "2026-09-23"
+  }
+]

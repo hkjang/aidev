@@ -227,3 +227,11 @@
   - [2/2/S] 깨진 UTF-16 복구 계약을 원격·업로드의 실제 입구에서 고정.
 - 과제서: 채택 — 현재 코드와 재현 결과가 과제서와 일치했으며 디코더·숫자·캐시·운영 TLS 정책을 바꾸지 않고 지정한 두 파일에서 해결했다.
 
+## 2026-09-24
+- 선택: 붙여넣기도 우편번호의 앞자리 0 을 파일 가져오기처럼 지킨다 + 두 문을 붙드는 공용 픽스처 (가치 4 / 위험 2 / 작업량 M)
+- 결과: 성공
+- 요약: 과제서의 "15자리 한도 공용 픽스처" 를 쓰려고 두 문의 실제 동작을 맞춰 보니 15/16자리 경계는 이미 일치했고, 대신 앞자리 0 이 갈렸다 — 파일 문(업로드 `importexport.Parse`·IMPORTDATA)은 `00123` 을 글자로 두는데 클립보드 문(평문·HTML 붙여넣기)은 123 으로 읽어, 같은 표를 CSV 로 올리느냐 복사해 붙이느냐에 따라 우편번호·사번의 앞자리 0 이 사라졌다. 새 `testdata/incoming-number.json`(30사례, 두 문이 겹치는 평문 정수·소수만) 을 Go(`internal/importexport/incoming_number_fixture_test.go` — 실제 CSV 를 `Parse` 에 넣는다)와 웹(`web/src/lib/clipboardNumber.fixture.test.ts` — `materializePaste` 와 `parseClipboardHtml` 을 실제로 통과시킨다)이 함께 읽게 했고, 고치기 전 웹 쪽 두 경로가 정확히 앞자리 0 다섯 사례에서 깨지는 것을 확인했다. 고침은 뜯는 자 `decomposeNumberText` 에 이미 있던 "열여섯 자리 넘는 번호" 가드 옆에 같은 꼴의 앞자리 0 가드(`/^[+-]?0\d+$/`, 서버 `delimited.HasSignificantLeadingZero` 와 같은 자) 한 줄을 얹은 것뿐이다 — 붙여넣기와 데이터 정리가 같은 자를 쓰므로 정리가 도로 123 으로 고쳐 놓는 일이 없도록 함께 좁혔고(`numberEntry.agreement.test.ts` 의 `neither` 에 못 박음), 칸에 직접 쳐 넣는 문은 `CanvasGrid` 의 `Number()` 가 먼저 읽으므로 예전대로 7 이다. 고친 뒤 가드 한 줄을 지워 세 테스트가 다시 깨지는 것까지 확인했다. 검증: `go test ./...`(18패키지 통과)·`go vet`·`go build`·`gofmt -l`, `npm run lint`·`npm test`(73파일 512개 통과)·`npm run build`, `scripts/check-release-docs.sh`(v0.252.0)·`scripts/check-commit-identities.sh HEAD`. 커밋 2개(c11275a, 0465ac2). 사용자 가이드의 붙여넣기 절에 이 규칙을 적고 USER_GUIDE.pdf 를 다시 구웠다. DB 통합·브라우저 E2E 는 돌리지 않았다(스키마·서버 무관).
+- 보류 아이디어: `compareLists.looksLikeIdentifier` 는 `007.5` 까지 번호로 보아 파일·클립보드 두 문(수 7.5)과 갈린다 — 키 맞추기라는 다른 계약이라 이번엔 두었다 / 칸에 직접 친 값은 `CanvasGrid` 의 `Number()` 가 먼저 읽어 `0x10`→16, 스무 자리 번호→실수로 뭉개진다 / 워크북 GET 응답에 넘겨받은 출처를 실어 편집기가 열릴 때마다 404 요청 하나를 덜 보낸다 / 관리자 가이드의 외부 호출 오류 코드 안내를 실제 #N/A 와 맞춘다 / 깨진 UTF-16 복구 계약을 원격·업로드의 실제 입구에서 고정한다
+- 과제서: 차선 — 과제서가 고른 15자리 한도는 두 문이 이미 일치해 픽스처만으로는 동작이 바뀌지 않았고, 같은 픽스처를 쓰다 드러난 앞자리 0 어긋남(과제서의 [4/2/M] 항목)을 함께 고쳤다.
+
+- 릴리즈: v0.253.0 (2026-09-24, run 2026-09-24-020423-kanpic-improve)

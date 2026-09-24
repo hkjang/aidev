@@ -1,0 +1,119 @@
+[
+  {
+    "title": "대기열을 거친 비동기 job의 created_at 보존",
+    "value": 3,
+    "risk": 1,
+    "size": "S",
+    "status": "done",
+    "note": "runJob이 job.Metadata = *metadata로 기록을 통째로 덮어써 CreateJob이 찍은 접수 시각이 처리 시작 시각으로 밀렸다. 덮어쓰기 직전 값을 잡아 복원. POST 응답/GET 조회/이력/디스크 job.json 네 경로를 통합 테스트로 검증.",
+    "updated": "2026-09-22"
+  },
+  {
+    "title": "업스트림 진단 문자열 UTF-8 절단 경계 보존",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "done",
+    "note": "재확인: truncateString이 utf8.RuneStart로 경계를 맞춘다(client.go:748). 커밋 7511062에 이미 반영됨. 이번 정찰 과제서의 '남은 문제' 기술은 낡았다.",
+    "updated": "2026-09-22"
+  },
+  {
+    "title": "internal/config Load 경유 환경변수 정규화·기본값 테스트",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "재확인: config_test.go는 여전히 서버 timeout 3개뿐. normalizeAllowHosts/normalizeEndpointURL/normalizePIILang/normalizePIISchema/envInt/envNonNegativeInt/envBool이 미검증. t.Setenv는 병렬 금지. 차선 후보.",
+    "updated": "2026-09-22"
+  },
+  {
+    "title": "POST /v1/jobs가 결과 없는 작업에도 download_url을 채움",
+    "value": 2,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "새 후보: server.go:187이 조건 없이 download_url을 붙인다. GET/이력은 2026-09-21 수정으로 completed && OutputPath != \"\"를 요구하므로 같은 값을 읽는 경로들의 계약이 어긋난다. 특히 draining 중 markJobInterrupted로 failed가 된 작업까지 202 + download_url을 받는다. 다만 queued 작업에 폴링 대상 URL을 미리 주는 것이 의도일 수 있어 계약 결정이 선행.",
+    "updated": "2026-09-22"
+  },
+  {
+    "title": "gorilla/mux 405 응답에 Allow 헤더 부재",
+    "value": 1,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "routes()는 Methods만 지정하고 MethodNotAllowedHandler가 없다. RFC 9110 위반이나 라우터 전체에 영향이 가고 실사용 장애는 미확인. 후순위 유지.",
+    "updated": "2026-09-22"
+  },
+  {
+    "title": "동기 슬롯 대기열의 메모리 상한",
+    "value": 3,
+    "risk": 3,
+    "size": "M",
+    "status": "pending",
+    "note": "readProcessInput이 io.ReadAll로 본문을 다 읽은 뒤에야 acquireSyncSlot에 들어가므로 대기 요청이 업로드 바이트를 그대로 들고 있다. 본문 읽기 전 admission 설계가 필요해 한 세션 저위험 범위를 벗어난다.",
+    "updated": "2026-09-22"
+  },
+  {
+    "title": "이력 조회에서 전체 job 복제 전 상위 limit 선별",
+    "value": 2,
+    "risk": 2,
+    "size": "M",
+    "status": "pending",
+    "note": "Store.List가 모든 job을 cloneJob한 뒤 정렬하고 나서 limit으로 자른다. HTTP의 100개 상한이 내부 복제·정렬 비용을 제한하지 않는다. 동률 순서 계약과 벤치마크가 선행, 현재 병목은 미측정.",
+    "updated": "2026-09-22"
+  },
+  {
+    "title": "업로드 파일명 유니코드 정규화(NFC)",
+    "value": 2,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "attachment.go는 unsafe rune 제거와 UTF-8 안전 절단만 한다. golang.org/x/text가 간접 의존이라 go mod vendor 갱신이 필요하고 실제 재조회 장애는 미확인.",
+    "updated": "2026-09-22"
+  },
+  {
+    "title": "종료 시 interrupted로 표시된 job의 재개",
+    "value": 3,
+    "risk": 3,
+    "size": "M",
+    "status": "pending",
+    "note": "load가 queued/running을 failed(job_interrupted)로 전환한다. 재개하려면 ParseOptions 영속과 재시도 정책이 선행이라 한 세션 범위를 넘는다.",
+    "updated": "2026-09-22"
+  },
+  {
+    "title": "비동기 job의 ParseOptions를 job.json에 영속",
+    "value": 2,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "JobRecord에 Options가 없고 CreateJob→startJobRunner→runJob 인자로만 전달된다. 재개 기능이 없는 한 저장 계약 확장의 우선순위가 낮다.",
+    "updated": "2026-09-22"
+  },
+  {
+    "title": "runJob이 Save 실패를 조용히 버림",
+    "value": 2,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "runJob/markJobInterrupted가 _ = Save로 오류를 버린다. 로그만 추가하면 가치가 낮고, 일관성 정책 변경은 별도 설계가 필요하다.",
+    "updated": "2026-09-22"
+  },
+  {
+    "title": "설정 시간·크기 단위 변환의 정수 오버플로 방어",
+    "value": 2,
+    "risk": 2,
+    "size": "M",
+    "status": "pending",
+    "note": "envInt/envSeconds가 양수 확인 후 time.Duration*Second/Hour, int64*MiB로 변환하며 상한을 보지 않는다. 극단 설정에서만 문제이고 여러 설정의 fallback 정책을 함께 정해야 한다.",
+    "updated": "2026-09-22"
+  },
+  {
+    "title": "TestConnection 성공 메시지에 32KB 응답 본문 그대로 노출",
+    "value": 1,
+    "risk": 1,
+    "size": "S",
+    "status": "rejected",
+    "note": "본문 요약은 PII 스크럽이 아니어서 보안 개선으로 표현할 수 없고, 운영자가 엔드포인트를 진단하려면 본문이 오히려 필요하다. 실질 효과 없는 변경이라 기각.",
+    "updated": "2026-09-22"
+  }
+]

@@ -1,0 +1,137 @@
+[
+  {
+    "title": "심플봇 '추천 프롬프트' 생성 실패가 조용히 삼켜짐 (PopSimpleBot/PopSimpleBotUpdate 의 reload() else 누락)",
+    "value": 4,
+    "risk": 2,
+    "size": "M",
+    "status": "done",
+    "note": "isSuccess(res) false 경로에 else 가 없어 타이핑 안내 문구가 입력란에 얼어붙고 payload.prompt 로 전송됐다. 두 컴포넌트를 함께 고치고, 실제 interceptors/axios adapter/컴포넌트 마운트를 통과하는 스펙 10건 + 변이 4건으로 인과를 증명했다.",
+    "updated": "2026-09-23"
+  },
+  {
+    "title": "[수정 과제] 릴리즈 버전 결정 입력 복구 — 승인 근거 확보 후에만 구현",
+    "value": 5,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "14회째 pending. 2026-09-23 재확인: git tag 0개, package.json version=0.0.0/private:true, .github 없음, 릴리즈 커밋 양식 없음. 실패 지점이 워크트리 밖(외부 aidev bin/run.sh → release.json → bin/gate.py)이라 저장소 안에 합법적 수단이 없다. 진입 조건 ①관례 도입 여부 자체 ②시작 버전·증가 단위 ③태그 형식 ④릴리즈 커밋 양식 ⑤릴리즈 노트 위치·양식 ⑥GitHub Release 사용 여부가 출처와 함께 인계돼야 한다. 판정을 skipped/released 로 낮추지 않는다.",
+    "updated": "2026-09-23"
+  },
+  {
+    "title": "릴리즈 절차 교착 자체를 사람에게 에스컬레이션",
+    "value": 5,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "수정 지점이 워크트리 밖이라 저장소 안에 합법적 수단이 없다. package.json version 필드 삭제는 게이트 완화라 금지.",
+    "updated": "2026-09-23"
+  },
+  {
+    "title": "loading.vue 의 자동 해제 타이머가 이미 켜진 상태의 추가 startLoading() 을 반영하지 않음",
+    "value": 3,
+    "risk": 3,
+    "size": "M",
+    "status": "pending",
+    "note": "watch(() => props.modelValue, startTimer) 는 false→true 전이에서만 타이머를 재시작한다. 스피너가 켜진 채 새 작업이 startLoading() 하면 타이머는 첫 작업 기준으로 남아 새 작업 시작 직후 오버레이가 사라질 수 있다. timeoutTxt 분기는 App.vue:54 의 v-model + @timeout=\"stopLoading\" 때문에 한 번도 렌더링되지 않는 죽은 분기다. 어느 쪽이 기대 계약인지 확정이 선행 — globalLoading 참조 카운트의 선행 조건.",
+    "updated": "2026-09-23"
+  },
+  {
+    "title": "globalLoading 참조 카운트 도입 (병렬 요청 중 스피너 조기 종료)",
+    "value": 4,
+    "risk": 4,
+    "size": "M",
+    "status": "pending",
+    "note": "loading.vue 의 자동 해제가 카운터를 되돌리지 않고 타이머 재시작 계약도 미확정이라 지금 넣으면 스피너가 영구히 안 꺼지는 회귀. 위 항목이 선행.",
+    "updated": "2026-09-23"
+  },
+  {
+    "title": "openAlert 의 title 자리에 Error 객체를 넘기는 호출부 3곳 정리",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "SupportOcrDetail.vue:88 / SupportOcrDetail2.vue:90 / SupportSttDetail.vue:81. Base.vue 의 showHeader 기본값이 false 라 title 이 렌더링되지 않아 현재 관측 가능한 동작 변화가 없다 — showHeader 계약이 확정될 때 함께 처리해야 한다.",
+    "updated": "2026-09-23"
+  },
+  {
+    "title": "Alert/Confirm 이 showHeader 를 넘기지 않아 title 이 렌더링되지 않음",
+    "value": 3,
+    "risk": 3,
+    "size": "S",
+    "status": "pending",
+    "note": "Base.vue:11 showHeader 기본 false. 지금 보이게 하면 title 자리에 Error 객체를 넘기는 호출부 3곳이 화면에 객체를 찍는다 — '보이게 하기' 가 아니라 '호출부를 고치기' 가 정답일 가능성이 높아 기대 계약 확정이 선행.",
+    "updated": "2026-09-23"
+  },
+  {
+    "title": "src/utils/alerts.js 죽은 중복 모듈 제거",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "globalAlert.js 와 같은 역할인데 src/tests 어디에서도 import 하지 않음. 운영자 지시 '정본을 하나로 유지할 것' 에 해당하나 관측 가능한 동작 변화가 없어 단독 가치는 낮다.",
+    "updated": "2026-09-23"
+  },
+  {
+    "title": "globalLoading 의 timeoutMs(600000) 가 App.vue 의 Loading 에 전달되지 않는 죽은 export",
+    "value": 2,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "App.vue:54 의 <Loading> 이 :timeoutMs 를 넘기지 않아 config.js 의 apiTimeOutMs(60000)가 쓰인다. 지금 연결하면 자동 해제가 10분으로 늘어 오히려 나빠지므로 어느 쪽이 의도인지 확정이 선행.",
+    "updated": "2026-09-23"
+  },
+  {
+    "title": "docs/RELEASE.md 재조회 스크립트의 0.0.0 하드 assert",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "실제 릴리즈로 버전이 오르면 즉시 실패한다. 릴리즈 관례가 정해지기 전에는 손대지 말 것 — 지금 고치면 근거 정본이 흔들린다.",
+    "updated": "2026-09-23"
+  },
+  {
+    "title": "SupportSttList.vue 의 사용되지 않는 Confirm import 제거",
+    "value": 1,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "SupportSttList.vue:10. 관측 가능한 동작 변화가 없어 다른 정리 작업에 묶을 때만.",
+    "updated": "2026-09-23"
+  },
+  {
+    "title": "MyAgentList.vue 의 'MyAvatar'/'etc' serviceCode 정확 비교 통일",
+    "value": 2,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "MyAgentList.vue:272,283,284 및 appList.js:193 이 모두 String(row?.serviceCode||'')=== 정확 비교. 공용 매처가 없어 먼저 만들어야 한다. 2026-09-23 미열람(이전 기록 기준 보존).",
+    "updated": "2026-09-23"
+  },
+  {
+    "title": "Header.vue 가 OCR 사용 여부와 무관하게 마운트 즉시 3초 폴링 시작",
+    "value": 3,
+    "risk": 3,
+    "size": "M",
+    "status": "pending",
+    "note": "기대 계약 미확인. 2026-09-23 미열람 — 이전 기록 기준 보존.",
+    "updated": "2026-09-23"
+  },
+  {
+    "title": "ChatData.vue:708 의 source_seq JSON.parse 경로 (abc/law 관대함 불일치)",
+    "value": 3,
+    "risk": 4,
+    "size": "M",
+    "status": "pending",
+    "note": "정찰이 차선으로 올렸으나 트리거 입력이 실증되지 않아 무효 변경 위험이 있다. 재현 테스트부터 세우지 않으면 고르지 말 것. 운영자 지시상 분류기/렌더러 양쪽을 end-to-end 로 함께 검증해야 한다.",
+    "updated": "2026-09-23"
+  },
+  {
+    "title": "reload() 실패 시 promptDisable/selectedPromptId 상태가 이전 선택과 어긋날 수 있는지 감사",
+    "value": 2,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "신규. 이번 수정으로 실패 시 rolePrompt 는 비워지지만 promptDisable/selectedPromptId 는 손대지 않았다(선택된 프롬프트가 있으면 promptDisable=true 인 상태에서 reload 가 가능한지부터 확인 필요). 기대 계약이 확정되지 않아 이번 범위 밖으로 뒀다.",
+    "updated": "2026-09-23"
+  }
+]

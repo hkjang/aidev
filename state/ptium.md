@@ -260,3 +260,25 @@
   - e2e call()의 headers={} 기본 신원 대체 함정 제거 (가치 2 / 위험 1 / 작업량 S)
 - 과제서: 채택 — 배열 index만 출처에 기록하는 결함이 현재 코드와 신규 ZIP 기반 실패 재현에서 확인되어 지정된 placement 매핑만 수정했다.
 
+## 2026-09-22
+- 선택: XLSX 셀 참조의 열 번호를 시트의 실제 한계(XFD=16384)로 묶고, 세 글자 열 이름(AAA~XFD)을 출처에 바르게 쓰기 (가치 4 / 위험 2 / 작업량 S)
+- 결과: 성공
+- 요약: `columnOf`(workbook.go:444)가 루프 **안에서** 16384를 넘는 순간 -1로 빠지게 해, 셀 아홉 개짜리 업로드가 `r="AAAAAAAAAA2"` 하나로 90TB 할당을 요구하며 프로세스를 죽이던 것을 막았다(고치기 전 `ulimit -v` 아래에서 `out of memory: cannot allocate 90346943938560-byte block` 재현); 한계를 넘는 셀은 버리지 않고 "참조 없는 셀" 규칙대로 `next` 자리에 놓이므로 고치기 전 표에서 사라지던 값 "1200"이 제자리로 돌아온다. 한계가 유한해지자 드러나는 `columnLetter`(tables.go:227)의 두 글자 한계를 26진 자리올림 반복으로 바꿔 `701=ZZ / 702=AAA / 16383=XFD`를 내고, 출처 인용의 `A1:[A3`을 `A1:AAA3`으로 고쳤다. 새 `sheetwidth_test.go` 5개(실제 xlsx ZIP→`Read`→`deck.ParseSource` 3개 + `columnOf`/`columnLetter` 경계 표 2개)를 먼저 넣어 전부 red임을 확인한 뒤 구현해 green; `go test -count=3 ./internal/docs`, `go test -race ./...`(25개 패키지), `go vet ./...`, `git diff --check` 통과. 커밋 80ebe4c. 버전·릴리스 노트는 손대지 않았다.
+- 보류 아이디어: XLSX 행 수 자체의 상한 — 16,384칸 × 많은 행이면 메모리는 계속 늘 수 있음 (3/3/M) · XLSX ZIP 전체 해제 크기와 불필요한 파트 읽기 제한 (4/3/M) · e2e `call()`의 `headers={}` 기본 신원 대체 함정 제거 (2/1/S) · 메일 후속: 한 리뷰어의 연속 댓글을 30초 지연으로 묶어 한 통으로 (3/3/M) · 메일 후속: 관리자에게 새 critical 인시던트를 메일로 (3/3/M)
+- 과제서: 채택 — `columnOf`의 무제한 누적과 `columnLetter(702)=="[A"`가 현재 코드와 실행 재현에서 그대로 확인되어 지정한 두 함수만 고쳤다. 다만 수용 기준 3의 "열이 703개인 시트를 Read" 경로는 `maximumColumns=5`(docs.go:142) 때문에 인용 열이 항상 E 이하라 성립하지 않아, 대신 A~ZY를 숨겨 보이는 열이 ZZ·AAA가 되게 한 시트로 세 글자 인용을 end-to-end 로 증명했다(`placement.column` 경유).
+
+## 2026-09-23
+- 선택: 버전을 반만 올린 릴리즈를 `make test` 단계에서 잡기 (가치 4 / 위험 1 / 작업량 S)
+- 결과: 성공
+- 요약: 릴리즈 버전이 `VERSION`·`api/openapi.yaml`·`deploy/kubernetes.yaml`·`docs/offline-deployment.md` 네 곳에 박혀 있는데 이 어긋남을 보는 것은 `scripts/release.sh` 뿐이었고 설치 안내문은 `ptium-$version.tar.gz` 한 패턴만 봤다 — 로더 스크립트·compose 파일·매니페스트·`docker image inspect` 줄이 옛 버전을 가리켜도 릴리즈가 통과했다. `server/internal/config/stamped_test.go`(이웃 `shipped_test.go` 의 `root := "../../.."` 관례 그대로)를 더해 세 파일의 모든 스탬프를 `VERSION` 과 대조하고 어긋나면 파일·행·본 문자열을 찍게 했고, `release.sh:42` 의 단일 grep 을 "안내문이 이름 붙인 모든 `ptium-<버전>`·`ptium:<버전>` 이 $version 인지" 로 넓혔다(스탬프가 0개여도 fail). 검증: `VERSION` 만 1.69.44 로 바꿔 red(13건, 세 파일 전부 행 번호와 함께) → 되돌려 green; `cd server && go test ./internal/config`, `go test -race ./...`(25개 패키지), `go vet ./...`, `git diff --check` 통과; `bash -n scripts/release.sh` 통과 + 임시 복사본에서 53행만 1.69.42 로 바꿔 새 검사는 두 줄을 찍고 멈추는데 옛 단일 grep 은 그대로 PASS 함을 손으로 확인(릴리즈 스크립트 전체는 실행하지 않음). 버전·릴리즈 노트·배포 매니페스트의 값은 손대지 않았다.
+- 보류 아이디어: build-offline.sh 의 매니페스트 검사가 'PyYAML 없음' 을 '매니페스트가 잘못됨' 으로 둔갑시키는 것 분리 (3/2/S) · release.sh 에 빌드 없이 도는 --check(preflight) 모드 (3/1/S) · XLSX ZIP 전체 해제 크기와 불필요한 파트 읽기 제한 (4/3/M) · XLSX 행 수 자체의 상한 (3/3/M) · e2e call() 의 headers={} 기본 신원 대체 함정 제거 (2/1/S)
+- 과제서: 채택 — 과제서의 사실 정리(릴리즈 워크플로 파일은 없고 `release.sh:42` 의 단일 grep 이 실제 구멍)가 코드와 정확히 맞아 지정한 두 자리만 고쳤다.
+
+- 릴리즈: v1.69.44 (2026-09-23, run 2026-09-23-102416-ptium-improve)
+## 2026-09-24
+- 선택: XLSX 읽기에서 덱에 쓰이지 않는 ZIP 파트를 해제하지 않기 (가치 4 / 위험 2 / 작업량 S)
+- 결과: 성공
+- 요약: `readWorkbook`(workbook.go:73)이 아카이브의 **모든** 파트를 32MB 상한으로 메모리에 먼저 풀어 맵에 담고 마지막 시트까지 전부 살려 뒀다 — 덱이 쓰는 것은 `xl/workbook.xml`·`xl/_rels/workbook.xml.rels`·`xl/sharedStrings.xml`·`xl/styles.xml`·숨기지 않은 시트 파트뿐이고, 나머지(미디어·theme·printerSettings·pivotCache·calcChain·숨긴 시트)는 풀어서 버리기만 했다. 해제량은 파일 크기에 묶이지 않는다: 8MB짜리 압축 잘 되는 파트 43개를 담은 **341KB** 업로드가 표 하나짜리 덱을 만들며 **877MB**를 할당하는 것을 먼저 재현했고(업로드 상한 32MB에서는 수십 GB, `holdBudget`이 동시 import를 허용하므로 live), 파트별 32MB 상한은 어떤 파트도 상한을 넘지 않아 이것을 보지 못한다. 새 `workbookParts`(이름→`*zip.File`)의 `part(name)`으로 **요청될 때 하나씩** 풀도록 바꿨다 — .docx 리더가 `word/document.xml`에 늘 하던 방식. 검증(TDD): 새 `sheetparts_test.go` 3개를 먼저 넣어 고치기 전 코드에서 877MB·74MB로 red임을 확인한 뒤 구현해 0MB로 green; 세 번째 테스트(관계가 시트 파트를 부를 수 있는 세 이름 `worksheets/…`·`xl/worksheets/…`·`/xl/worksheets/…` 전부에서 찾고, 공유 문자열의 라벨과 styles의 `42%`가 그대로 나오는지)는 고치기 전에도 통과하는 **계약 고정용**이다. `cd server && go test -count=2 ./internal/docs`, `go test -race ./...`(25개 패키지 전부), `go vet ./...`, `gofmt -l`, `git diff --check` 통과. 커밋 22034a7. 버전·릴리즈 노트는 손대지 않았다.
+- 보류 아이디어: XLSX 해제 **누적** 바이트 예산 — 파트를 하나씩 풀어 peak는 잡혔지만 시트 수가 많으면 누적 해제 작업량(CPU/GC)은 여전히 무제한 (3/3/M) · build-offline.sh 의 매니페스트 검사가 'PyYAML 없음'을 '매니페스트가 잘못됨'으로 둔갑시키는 것 분리 — 이 호스트의 PyYAML 유무 여전히 미확인 (3/2/S) · release.sh 에 빌드 없이 도는 --check(preflight) 모드 (3/1/S) · deck 의 네 숫자 파서(parseNumber·parseBareNumber·chartFields·docs.amountOf) 계약을 한 표 테스트로 묶기, 파서는 손대지 않음 (2/1/S) · e2e call() 의 headers={} 기본 신원 대체 함정 제거 (2/1/S)
+
+- 릴리즈: v1.69.45 (2026-09-24, run 2026-09-24-095420-ptium-improve)

@@ -1,0 +1,22 @@
+[
+  {"title":"IMAP 과대 리터럴 거부 후 세션 프레임 어긋남 수정 (드레인 또는 broken 표시)","value":4,"risk":2,"size":"M","status":"pending","note":"이번 선택. client.go:162-164 가 n 바이트를 소비하지 않고 반환 → sync.go:262 가 같은 세션으로 다음 메시지를 계속 가져가 프레이밍이 깨진다. 도달 경로: runBodyRepair/fetchRaw(크기 검사 없음), RFC822.SIZE 미제공으로 rm.Size==0.","updated":"2026-09-22"},
+  {"title":"README govulncheck 로컬 예시를 CI 고정 버전(v1.6.0)에 정렬","value":2,"risk":1,"size":"S","status":"pending","note":"차선 1. README:303 @latest vs ci.yml:173 @v1.6.0 불일치를 이번에도 확인. README:296 의 '고정 버전으로 설치해 재현성 확보' 문장과 모순.","updated":"2026-09-22"},
+  {"title":"imap readLine 의 무제한 ReadString 라인 버퍼링에 상한","value":2,"risk":2,"size":"M","status":"pending","note":"차선 2. 개행 없는 줄을 60초 데드라인이 허락하는 만큼 버퍼링. 실제 TCP 로 관찰 가능한 실패를 재현하기 전에는 착수 금지(효과 없는 변경 금지 규칙).","updated":"2026-09-22"},
+  {"title":"POP3 본문 수신에 MaxMessageBytes 상한 적용","value":4,"risk":2,"size":"M","status":"pending","note":"직전 회차에서 구현됐으나 브랜치 origin/auto/2026-09-21-2155 가 아직 main 에 없다(현 base pop3/client.go 에 MaxMessageBytes 없음, 테스트 파일 없음). 재구현 금지 — 병합 대기.","updated":"2026-09-22"},
+  {"title":"POP3 명령 대기 중 context 취소 전파 (SMTP AfterFunc 패턴)","value":3,"risk":2,"size":"M","status":"pending","note":"pop3/client.go 는 commandTO 데드라인만 있고 ctx 취소는 dial 이후 전파되지 않음. 단 위 POP3 PR 과 같은 파일·같은 영역이라 병합 전에는 착수 금지.","updated":"2026-09-22"},
+  {"title":"CI 에 gofmt -l 검사 추가","value":2,"risk":1,"size":"S","status":"pending","note":"ci.yml 에 포맷 단계 없음. Makefile lint-format 은 0bbff34 로 병합됨. workflows 변경은 계속 후순위.","updated":"2026-09-22"},
+  {"title":"gosec 잡에 -stdout 추가해 잡 로그에도 결과 표시","value":2,"risk":1,"size":"S","status":"pending","note":"SARIF -out 만 사용해 비관리자는 로그 403 으로 실패 원인을 못 본다. workflows 변경이라 후순위.","updated":"2026-09-22"},
+  {"title":"OIDC runtime 을 한 번만 읽는 통합 헬퍼 (OIDCConfigured + OIDCAutoLoginEnabled)","value":2,"risk":1,"size":"S","status":"pending","note":"auth 보호 경로. 관찰 가능한 동작 변화가 없어 '효과 없는 변경' 으로 반려될 위험.","updated":"2026-09-22"},
+  {"title":"smtp isConnectionLost 를 errors.Is(syscall.ECONNRESET) 로 보강","value":1,"risk":2,"size":"S","status":"pending","note":"문자열 판정 유지 중. 관찰 가능한 실패 재현 전 착수 금지.","updated":"2026-09-22"},
+  {"title":"mail_deliveries 90일 보존 reaper","value":2,"risk":1,"size":"S","status":"pending","note":"notifymail 계열은 여전히 main 에 없음. 병합 전 착수 금지.","updated":"2026-09-22"},
+  {"title":"시험 발송·Validate 에서 mail.username 만 있고 비밀번호 참조가 없으면 경고","value":2,"risk":1,"size":"S","status":"pending","note":"notifymail 미병합. 병합 후 재평가.","updated":"2026-09-22"},
+  {"title":"기한 알림 임박 창(24h)·확인 주기(5분)를 설정 키로 노출","value":1,"risk":1,"size":"S","status":"pending","note":"sla_notified_at 구현이 main 에 없음. 운영 피드백 뒤 판단.","updated":"2026-09-22"},
+  {"title":"스레드 화면에도 handoff 단추","value":3,"risk":2,"size":"M","status":"pending","note":"internal·web/src 어디에도 handoff 구현 없음. 관련 브랜치 재적용 금지.","updated":"2026-09-22"},
+  {"title":"handoff DTO 를 contracts.Registry 에 올려 OpenAPI/TS 계약에 포함","value":2,"risk":1,"size":"S","status":"pending","note":"handoff 미병합. 병합 후 실제 DTO 부터 확인.","updated":"2026-09-22"},
+  {"title":"ADMIN_GUIDE.pdf 재생성","value":1,"risk":1,"size":"S","status":"pending","note":"Chromium 실행 가능 여부 미확인. 정본 통합 뒤 재평가.","updated":"2026-09-22"},
+  {"title":"POP3 USER/PASS AuthError·TLS 프로토콜 테스트 행렬 확대","value":2,"risk":1,"size":"M","status":"pending","note":"POP3 PR 병합 대기 중이라 같은 파일 충돌. 병합 후 착수.","updated":"2026-09-22"},
+  {"title":"Makefile 에 CI 고정 버전 gosec·읽기 전용 포맷 검사 타깃 추가","value":3,"risk":1,"size":"S","status":"done","note":"0bbff34 로 병합됨(lint / lint-format / lint-security 확인).","updated":"2026-09-22"},
+  {"title":"SMTP Send/TestConnection 에 명령 시간제한과 ctx 취소 전파","value":3,"risk":2,"size":"S","status":"done","note":"main 의 smtp/client.go 에 반영됨.","updated":"2026-09-22"},
+  {"title":"smtp 어댑터 단위/통합 테스트 추가","value":3,"risk":1,"size":"M","status":"done","note":"bf4e5a9 로 병합됨(client_test.go).","updated":"2026-09-22"},
+  {"title":"tracking 차단 출처 REST 노출","value":2,"risk":1,"size":"S","status":"done","note":"tracking_routes.go 로 main 에 존재.","updated":"2026-09-22"}
+]

@@ -1,0 +1,119 @@
+[
+  {
+    "title": "Sidemenu.getHistoryList 의 bare catch 가 조회 실패를 '최근 대화 기록이 없습니다' 로 감춤",
+    "value": 3,
+    "risk": 2,
+    "size": "S",
+    "status": "done",
+    "note": "Sidemenu.vue:416. 업무 실패(!isSuccess)와 모든 예외를 조용히 historyMap[appId]=[] 로 만들어 Nodata(:756)의 사실 진술과 구분되지 않았다. 같은 파일 형제 fetchAppList(:208,:233)가 이미 확정한 계약(업무 실패·비COM 예외는 토스트, COM 은 전역 Alert 만)을 그대로 적용. 신규 스펙 7건(실제 interceptors → 실제 pInf.chat.getHistoryList.call → 실제 Sidemenu 마운트) 중 4건 Red → Green, 변이 3건으로 인과 분리 증명. npm test 32파일 516테스트, build:dev 통과.",
+    "updated": "2026-09-24"
+  },
+  {
+    "title": "즐겨찾기 화면의 ButtonSetting 이 :actions 없이 렌더돼 빈 팝업이 뜨고 onToggleFav 가 죽은 코드가 됨",
+    "value": 2,
+    "risk": 3,
+    "size": "M",
+    "status": "pending",
+    "note": "근거 정정(2026-09-24): 과제서의 핵심 사실이 틀렸다. FavoriteList.mapAppToCard:56 이 showMore:false 를 박고 SwiperList 가 :showMore=\"item.showMore ?? props.showMore\" 로 넘겨 ButtonCard 의 IconBtn v-if=\"showMore\" 가 false → 더보기 버튼 자체가 렌더되지 않는다(실제 마운트로 확인: button.btn-ico.ico-more 0개, 카드 본체는 정상 렌더). 따라서 '빈 팝업이 뜬다' 는 재현 불가이고, :actions/@action 만 고치면 관측 가능한 동작 변화가 0 이라 운영자 지시(무효 변경 금지) 위반. 살리려면 showMore 도 켜야 하는데 이는 한 번도 보인 적 없는 UI 를 노출하는 기능 추가이며 git log 가 first commit 하나뿐이라 의도 확인 수단이 없다(형제 LibrarySearchList.vue:44 도 showMore:false + ButtonSetting 없음으로 일관). 사람 입력 필요: 즐겨찾기 카드에 더보기를 노출할 것인가.",
+    "updated": "2026-09-24"
+  },
+  {
+    "title": "[수정 과제] 릴리즈 버전 결정 입력 복구 — 승인 근거 확보 후에만 구현",
+    "value": 5,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "19회째 진입 조건 미충족. 고칠 워크플로 파일이 저장소에 없고(.github 부재, GitLab CI 는 CI_COMMIT_TAG 참조 0건인 브랜치 푸시 배포 전용) 실패 지점이 워크트리 밖(외부 aidev bin/run.sh → release.json → bin/gate.py)이다. package.json:3 version=0.0.0 이 존재해 외부 절차의 skipped 조건도 충족하지 않는다. 이번 회차도 버전 파일·태그·CHANGELOG·릴리즈 노트·릴리즈 커밋·원격 전송 일체 없음, docs/RELEASE.md 미수정. 필요한 사람 입력 6가지: ①관례 도입 여부 자체 ②시작 버전·증가 단위 ③태그 형식 ④릴리즈 커밋 양식 ⑤노트 위치·양식·언어 ⑥GitHub Release 사용 여부.",
+    "updated": "2026-09-24"
+  },
+  {
+    "title": "릴리즈 절차 교착 자체를 사람에게 에스컬레이션",
+    "value": 5,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "수정 지점이 워크트리 밖이라 저장소 안에 합법적 수단이 없다. package.json version 필드 삭제로 skipped 조건을 충족시키는 것은 게이트 완화라 금지.",
+    "updated": "2026-09-24"
+  },
+  {
+    "title": "NoticeDetail/LibraryDetail/RequestDetail 의 fetchBoardDetail 이 isSuccess 검사 없이 body 를 읽고 예외를 삼킴",
+    "value": 3,
+    "risk": 2,
+    "size": "M",
+    "status": "pending",
+    "note": "신규. NoticeDetail.vue:57 / LibraryDetail.vue:59 / RequestDetail.vue:62 세 곳이 문자 단위로 같다: res?.data?.body 를 바로 읽어 업무 실패(HTTP 200 + code 불일치)면 undefined → null 이 되고, catch 도 notice/library 를 null 로만 만든 뒤 아무 안내가 없다. 이번 getHistoryList 와 같은 형태이며 3형제를 한 번에 고칠 수 있으나, 상세 화면의 빈 상태 기대 계약(빈 화면인가 안내인가)이 미확인이라 선행 확정이 필요하다.",
+    "updated": "2026-09-24"
+  },
+  {
+    "title": "onToggleFav 3곳의 bare catch 가 즐겨찾기 실패를 완전히 무음 처리",
+    "value": 2,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "FavoriteList:158 / SupportList:446 / MyAgentList:482 모두 catch (e) {} 다. FavoriteList 쪽은 더보기 버튼이 렌더되지 않아 도달 자체가 불가능(위 항목 참조)하므로 실효 대상은 2곳뿐이고, 별 아이콘이 원래 상태로 남아 '실패' 로 읽히므로 관측 가능한 개선폭이 작다.",
+    "updated": "2026-09-24"
+  },
+  {
+    "title": "FavoriteList/SupportList/MyAgentList 의 onToggleFav 3벌이 createFavToggler 를 쓰지 않는 중복",
+    "value": 1,
+    "risk": 3,
+    "size": "M",
+    "status": "rejected",
+    "note": "FavoriteList 쪽 onToggleFav 는 도달 불가능한 죽은 코드라 통합해도 관측 가능한 이득이 없고, 나머지 둘은 후처리(removeCard vs getWorkToolsList)가 달라 통합 위험만 남는다. 운영자 지시상 동작이 바뀌지 않는 정리는 넣지 않는다.",
+    "updated": "2026-09-24"
+  },
+  {
+    "title": "심플봇 두 팝업의 tryUpdateAppIcon / tryUpdateLog 가 예외를 catch(e){} 로 완전히 삼킴",
+    "value": 3,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "PopSimpleBot.vue:542,563 / PopSimpleBotUpdate.vue:649. '아이콘 실패가 전체 실패인가' 라는 기대 계약이 미확인이고 simpleBotUpdateClose.spec.js 의 케이스가 현 동작을 고정하고 있다.",
+    "updated": "2026-09-24"
+  },
+  {
+    "title": "loading.vue 의 자동 해제 타이머가 이미 켜진 상태의 추가 startLoading() 을 반영하지 않음",
+    "value": 3,
+    "risk": 3,
+    "size": "M",
+    "status": "pending",
+    "note": "watch(() => props.modelValue, startTimer) 가 false→true 전이에서만 재시작한다. 기대 계약 확정이 선행이며 globalLoading 참조 카운트의 선행 조건. 이번 회차 미열람(이전 기록 기준 보존).",
+    "updated": "2026-09-24"
+  },
+  {
+    "title": "globalLoading 참조 카운트 도입 (병렬 요청 중 스피너 조기 종료)",
+    "value": 4,
+    "risk": 4,
+    "size": "M",
+    "status": "pending",
+    "note": "loading.vue 의 자동 해제가 카운터를 되돌리지 않고 타이머 재시작 계약도 미확정이라 지금 넣으면 스피너가 영구히 안 꺼지는 회귀. 위 항목이 선행.",
+    "updated": "2026-09-24"
+  },
+  {
+    "title": "Alert/Confirm 이 showHeader 를 넘기지 않아 title 이 렌더링되지 않음",
+    "value": 3,
+    "risk": 3,
+    "size": "S",
+    "status": "pending",
+    "note": "Base.vue:11 showHeader 기본 false. 보이게 하면 title 자리에 Error 객체를 넘기는 호출부 3곳(SupportOcrDetail.vue:88 / SupportOcrDetail2.vue:90 / SupportSttDetail.vue:81)이 객체를 화면에 찍는다 — 기대 계약 확정이 선행.",
+    "updated": "2026-09-24"
+  },
+  {
+    "title": "openAlert 의 title 자리에 Error 객체를 넘기는 호출부 3곳 정리",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "showHeader 기본값이 false 라 현재 관측 가능한 동작 변화가 없다 — showHeader 계약이 확정될 때 함께 처리.",
+    "updated": "2026-09-24"
+  },
+  {
+    "title": "src/utils/alerts.js 죽은 중복 모듈 제거",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "globalAlert.js 와 같은 역할인데 src/tests 어디에서도 import 하지 않음. 관측 가능한 동작 변화가 없어 단독 가치가 낮다(운영자 지시상 무효 변경 금지).",
+    "updated": "2026-09-24"
+  }
+]

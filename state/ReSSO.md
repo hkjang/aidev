@@ -248,3 +248,11 @@
 - 과제서: 채택 — README와 스크립트의 준비 계약 불일치가 현재 코드에도 남아 있어 지정 범위인 README만 수정했다.
 
 - 릴리즈: v0.9.89 (2026-09-21, run 2026-09-21-085415-ReSSO-improve)
+## 2026-09-23
+- 선택: 로그아웃이 `post_logout_redirect_uri`를 버린 이유를 LOGOUT 감사 항목과 로그에 남기기 (가치 3 / 위험 1 / 작업량 S)
+- 결과: 성공 (커밋 ee75261)
+- 요약: `oidcLogout`의 세 조건(`requested != ""` · `client != nil` · `PostLogoutURIAllowed`)을 and 하나에서 풀어 써 어느 것이 어긋났는지를 이유 코드로 남긴다 — `client_not_named`(둘 다 없음) / `client_unknown`(모르는·꺼진 client_id, 검증 안 되는 id_token_hint) / `client_unavailable`(clients 조회 실패 — 이쪽 장애) / `uri_not_registered`. `logoutClient`는 `(*domain.Client, string)`을 돌려주고, 코드는 LOGOUT 감사 detail에 `post_logout_redirect_uri: "dropped"` · `reason` · (해결된 경우에만) `client_id`로 붙으며 같은 사실이 `s.logger.Warn("logout dropped the post-logout redirect it was asked for")` 한 줄로도 남는다(쿠키 세션이 없으면 감사 항목 자체가 없으므로). 상태 코드·리다이렉트·쿠키 삭제·정확 일치 규칙은 그대로이고 정상 리다이렉트는 detail에 아무것도 더하지 않는다. 요청된 주소 원문은 감사에도 로그에도 넣지 않는다(테스트가 단언). 검증: 새 통합 테스트 `TestIntegrationLogoutSaysWhyItDroppedTheRedirect`(실제 PostgreSQL·`New(...).Handler()`·httptest, 정상 302+state/204 기준선 → 버려지는 여섯 경우 → 세션 없는 경로의 Warn 로그 → `clients` 테이블 RENAME으로 `client_unavailable`)가 **수정 전 oidc.go에서 단언 10개가 실제로 실패**함을 확인했다(기준선 둘은 통과). `make lint` 0 issues, `make test` 전체 exit 0(httpserver 113~117s, 연동 SKIP 0), `webui/dist/index.html` 복원.
+- 보류 아이디어: oidcLogout의 `_ = r.ParseForm()` 오류를 같은 방식으로 기록(2/1/S, 차선 후보 — 이번에 안 함) / 인가 접근 로그에 client_id 남기기(2/1/S) / oidcCORS가 realmFromPath 실패에 조용히 헤더를 빼고 지나감(2/1/S) / 비화면 경로의 CSP를 default-src 'none'으로(2/2/S) / id_token_hint의 sub·aud 대조(2/2/M)
+- 과제서: 채택 — 근거(1109행의 and 조건, `logoutClient`의 무음 nil 두 경로, 정확 일치)가 코드와 그대로 맞았고 수용 기준 네 가지를 모두 구현·검증했다.
+
+- 릴리즈: v0.9.90 (2026-09-23, run 2026-09-23-183428-ReSSO-improve)

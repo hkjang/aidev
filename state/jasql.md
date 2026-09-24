@@ -38,3 +38,10 @@
   - cmd/* 플래그·env 파싱 테스트 (2/1/M): eval 출력 테스트 외 공백 유지; 나머지 기존 항목은 ideas.json 보존.
 - 과제서: 채택 — 현재 CLI 표시 조건과 공통 Missing 생산 경로가 정찰 근거와 일치하여 카탈로그·요약·종료 정책 변경 없이 구현했다.
 
+## 2026-09-24
+- 선택: 보고 단위(일별/월별/분기별/연도별) TimeRange를 질문 등장 순서로 내보내 aggregation_level 무작위화 제거 (가치 4 / 위험 1 / 작업량 S)
+- 결과: 성공
+- 요약: `ParseTimeExpressions`의 보고 단위 루프가 map 리터럴 range라 TimeRange append 순서가 실행마다 달라졌고, `AnalyzeQuestion`이 이 슬라이스를 last-wins로 읽어 같은 질문의 `aggregation_level`이 day/month/year로 갈렸다. 고정 슬라이스 + `strings.Index` 위치 기준 `sort.SliceStable`로 등장 순서 append로 바꾸고(동률은 일별,월별,분기별,연도별,년도별 순), analyze.go에는 "마지막 언급 보고 단위" 계약 주석만 달고 선택 로직은 그대로 뒀다(c712da1). 검증: 신규 `internal/catalog/timeparse_order_test.go`(200회 바이트 동일성·위치 순서 표·AnalyzeQuestion 100회 안정성)와 `internal/mcp/analyze_order_test.go`(newFixtureServer + 실제 `/mcp` POST 25회, 보고 단위 1개 질문의 기존 출력 회귀)로 수정 전 red 확인 후 green; `go build ./... && go vet ./... && go test ./...`(catalog 57.3s, mcp 10.1s) 및 `git diff --check` 통과.
+- 보류 아이디어: analyze_question이 복수 보고 단위 중 하나만 남겨 다단 GROUP BY 의도를 잃음(3/2/S, 골든 임계값 영향 미확인) · docs/development.md의 Go 버전·의존성·MCP 도구 수 갱신(3/1/S, 차선 후보) · CI 워크플로 부재(3/1/S, 보호 경로) · Manager.db()의 openDB 변수화로 실제 전송 SQL 검증(3/2/M) · internal/oracle의 gofmt 드리프트 2파일(profile.go, oracle_test.go — 이번 확인, 범위 밖이라 미수정)(2/1/S)
+- 과제서: 채택 — 과제서의 근거(timeparse.go:114 map range → analyze.go:213 last-wins)가 현재 코드와 정확히 일치했고 수용 기준 1~3을 그대로 구현했다.
+

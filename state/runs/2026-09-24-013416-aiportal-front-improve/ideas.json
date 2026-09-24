@@ -1,0 +1,128 @@
+[
+  {
+    "title": "Sidemenu.onDeleted 의 'COM' 가드 누락 — 대화 삭제 실패 시 전역 Alert 과 토스트 중복 안내",
+    "value": 3,
+    "risk": 1,
+    "size": "M",
+    "status": "done",
+    "note": "Sidemenu.vue:499 catch 에 `if (e == 'COM') return` 추가. 같은 파일 fetchAppList(:233)·형제 onSaved(:540)와 같은 계약으로 맞췄다. 이 저장소 첫 Sidemenu 마운트 하네스(tests/unit/sidemenuDeleteCommonError.spec.js, 6케이스)로 실제 interceptors → 실제 pInf → 실제 컴포넌트 DOM 클릭 경로를 통과시켜 Red 2건 → Green, 변이 1건으로 인과 증명. 주의: VITE_PYTHON_API_TARGET 스텁이 필수다.",
+    "updated": "2026-09-24"
+  },
+  {
+    "title": "Sidemenu.onDeleted 의 openedId 초기화가 성공 경로에만 있는 비대칭",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "rejected",
+    "note": "관측 가능한 동작 변화가 없다. PopAppChatSetting.DelCt(:22-25)가 'deleted' 직후 'close' 를 emit 하고 Sidemenu.vue:740 의 @close=\"openedId = null\" 이 이를 비우므로 성공·실패 모두 드롭다운은 이미 닫힌다. finally 로 옮기는 것은 무효 변경(운영자 지시상 금지). 같은 이유로 gotoShare:444·onSaved:543 의 finally 도 중복이다. 이 사실은 스펙의 '실패해도 설정 드롭다운은 닫힌다' 케이스가 고정한다.",
+    "updated": "2026-09-24"
+  },
+  {
+    "title": "[수정 과제] 릴리즈 버전 결정 입력 복구 — 승인 근거 확보 후에만 구현",
+    "value": 5,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "18회째 진입 조건 미충족. HEAD 1a8cb85 에서 재확인: git tag 0개(is-shallow=false), package.json:3 version=0.0.0, .github/CHANGELOG.md/VERSION/scripts/Makefile 전무, .gitlab-ci.yml 의 CI_COMMIT_TAG 참조 0건(파일 내 tags: 는 GitLab Runner 태그). 고칠 워크플로 파일이 저장소에 없고 실패 지점이 워크트리 밖(외부 aidev bin/run.sh → release.json → bin/gate.py)이라 저장소 안에 합법적 수단이 없다. 필요한 사람 입력 6가지: ①관례 도입 여부 자체 ②시작 버전·증가 단위 ③태그 형식 ④릴리즈 커밋 양식 ⑤노트 위치·양식·언어 ⑥GitHub Release 사용 여부.",
+    "updated": "2026-09-24"
+  },
+  {
+    "title": "릴리즈 절차 교착 자체를 사람에게 에스컬레이션",
+    "value": 5,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "수정 지점이 워크트리 밖이라 저장소 안에 합법적 수단이 없다. package.json version 필드 삭제로 skipped 조건을 충족시키는 것은 게이트 완화라 금지.",
+    "updated": "2026-09-24"
+  },
+  {
+    "title": "getHistoryList 의 bare catch 가 설정/전송 오류까지 삼켜 빈 목록과 구분되지 않음",
+    "value": 3,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "신규. Sidemenu.vue:416. 이번 하네스 구축 중 실제로 당했다 — VITE_PYTHON_API_TARGET 이 비면 getPApi() 가 던지는데(api/index.js:16) 그 예외가 통째로 삼켜져 '최근 대화 기록이 없습니다' 로 보인다. 다만 '조회 실패를 사용자에게 알릴 것인가' 라는 기대 계약이 미확인(사이드메뉴는 보조 UI라 조용한 빈 목록이 의도일 수 있다). 고친다면 'COM' 가드와 함께 실패/빈결과를 구분하는 상태가 필요하다.",
+    "updated": "2026-09-24"
+  },
+  {
+    "title": "심플봇 두 팝업의 tryUpdateAppIcon / tryUpdateLog 가 예외를 catch(e){} 로 완전히 삼킴",
+    "value": 3,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "PopSimpleBot.vue:542,563 / PopSimpleBotUpdate.vue:649. 아이콘 변경만 실패해도 사용자는 성공으로 안내받는다. '아이콘 실패가 전체 실패인가' 라는 기대 계약이 미확인. simpleBotUpdateClose.spec.js 의 '아이콘 수정(appEdit) 실패는 전체 수정 성공 판정을 바꾸지 않는다' 케이스가 현 동작을 고정하고 있으므로 계약을 바꿀 때 그 케이스를 함께 고쳐야 한다.",
+    "updated": "2026-09-24"
+  },
+  {
+    "title": "loading.vue 의 자동 해제 타이머가 이미 켜진 상태의 추가 startLoading() 을 반영하지 않음",
+    "value": 3,
+    "risk": 3,
+    "size": "M",
+    "status": "pending",
+    "note": "watch(() => props.modelValue, startTimer) 가 false→true 전이에서만 재시작한다. 어느 쪽이 기대 계약인지 확정이 선행 — globalLoading 참조 카운트의 선행 조건. 이번 회차 미열람(이전 기록 기준 보존).",
+    "updated": "2026-09-24"
+  },
+  {
+    "title": "globalLoading 참조 카운트 도입 (병렬 요청 중 스피너 조기 종료)",
+    "value": 4,
+    "risk": 4,
+    "size": "M",
+    "status": "pending",
+    "note": "loading.vue 의 자동 해제가 카운터를 되돌리지 않고 타이머 재시작 계약도 미확정이라 지금 넣으면 스피너가 영구히 안 꺼지는 회귀. 위 항목이 선행.",
+    "updated": "2026-09-24"
+  },
+  {
+    "title": "Alert/Confirm 이 showHeader 를 넘기지 않아 title 이 렌더링되지 않음",
+    "value": 3,
+    "risk": 3,
+    "size": "S",
+    "status": "pending",
+    "note": "Base.vue:11 showHeader 기본 false. 지금 보이게 하면 title 자리에 Error 객체를 넘기는 호출부 3곳(SupportOcrDetail.vue:88 / SupportOcrDetail2.vue:90 / SupportSttDetail.vue:81)이 화면에 객체를 찍는다 — '호출부를 고치기' 가 정답일 가능성이 높아 기대 계약 확정이 선행.",
+    "updated": "2026-09-24"
+  },
+  {
+    "title": "openAlert 의 title 자리에 Error 객체를 넘기는 호출부 3곳 정리",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "showHeader 기본값이 false 라 현재 관측 가능한 동작 변화가 없다 — showHeader 계약이 확정될 때 함께 처리.",
+    "updated": "2026-09-24"
+  },
+  {
+    "title": "src/utils/alerts.js 죽은 중복 모듈 제거",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "globalAlert.js 와 같은 역할인데 src/tests 어디에서도 import 하지 않음. 관측 가능한 동작 변화가 없어 단독 가치가 낮다(운영자 지시상 무효 변경 금지).",
+    "updated": "2026-09-24"
+  },
+  {
+    "title": "globalLoading 의 timeoutMs(600000) 가 App.vue 의 Loading 에 전달되지 않는 죽은 export",
+    "value": 2,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "App.vue:54 의 <Loading> 이 :timeoutMs 를 넘기지 않아 config.js 의 apiTimeOutMs(60000)가 쓰인다. 지금 연결하면 자동 해제가 10분으로 늘어 오히려 나빠지므로 의도 확정이 선행.",
+    "updated": "2026-09-24"
+  },
+  {
+    "title": "docs/RELEASE.md 재조회 스크립트의 0.0.0 하드 assert",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "실제 릴리즈로 버전이 오르면 즉시 실패한다. 릴리즈 관례가 정해지기 전에는 손대지 말 것 — 지금 고치면 근거 정본이 흔들린다.",
+    "updated": "2026-09-24"
+  },
+  {
+    "title": "SupportSttList.vue 의 사용되지 않는 Confirm import 제거",
+    "value": 1,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "SupportSttList.vue:10. 관측 가능한 동작 변화가 없어 다른 정리 작업에 묶을 때만.",
+    "updated": "2026-09-24"
+  }
+]

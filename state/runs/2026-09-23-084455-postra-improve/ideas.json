@@ -1,0 +1,16 @@
+[
+  {"title": "IMAP 과대 리터럴 거부 후 세션 프레임 어긋남 수정 — 드레인 또는 broken 표시", "value": 4, "risk": 2, "size": "M", "status": "done", "note": "77a242c. 실제 TCP 로 재현(거부된 본문의 40 바이트가 다음 메시지 본문으로 반환) 후 예산 내 드레인 + 초과 시 세션 폐기(errUnframed)로 수정. 변이 4종으로 각 테스트가 해당 결함만 잡는 것 확인.", "updated": "2026-09-23"},
+  {"title": "imap exec 의 리터럴 길이 오버플로 — MaxMessageBytes=0 일 때 make([]byte, MaxInt)", "value": 3, "risk": 2, "size": "S", "status": "pending", "note": "신규. client.go 의 strconv.Atoi(m[1]) 는 범위 초과 시 MaxInt 를 돌려주고 오류는 버려진다. maxLiteral>0 이면 이번 가드가 잡지만 상한 미설정(기본 unlimited) 계정에서는 그대로 할당 시도. 실제 TCP 로 재현 가능하면 착수.", "updated": "2026-09-23"},
+  {"title": "세션이 못 쓰게 됐을 때 sync 루프를 조기 종료 — 남은 메시지를 전부 Failed 로 세지 않기", "value": 2, "risk": 2, "size": "M", "status": "pending", "note": "신규. sync.go:262-265 는 오류를 Failed++ 로 세고 같은 세션으로 continue 한다. 어댑터가 세션 폐기를 알릴 도메인 신호(치명 오류)가 없어 이번 회차 범위 밖으로 남김. 잘못 만들면 정상 실패까지 조기 중단될 위험.", "updated": "2026-09-23"},
+  {"title": "README govulncheck 로컬 예시를 CI 고정 버전(v1.6.0)에 정렬", "value": 2, "risk": 1, "size": "S", "status": "pending", "note": "README:303 @latest vs ci.yml @v1.6.0 불일치 그대로. 문서만 수정. 이번 차선이었다.", "updated": "2026-09-23"},
+  {"title": "imap readLine 이 개행 없는 줄을 무한 버퍼링", "value": 2, "risk": 2, "size": "M", "status": "pending", "note": "실제 TCP 로 관찰 가능한 실패를 먼저 재현하지 못하면 착수 금지(효과 없는 변경 금지 규칙).", "updated": "2026-09-23"},
+  {"title": "CI 에 gofmt -l 검사 추가", "value": 2, "risk": 1, "size": "S", "status": "pending", "note": "workflows 보호 경로. 이번에 Actions API 로 확인: Release 워크플로 72회 전부 success 라 워크플로를 흔들 근거가 전혀 없다. 계속 후순위.", "updated": "2026-09-23"},
+  {"title": "gosec 잡에 -stdout 추가해 잡 로그에도 결과 표시", "value": 2, "risk": 1, "size": "S", "status": "pending", "note": "ci.yml Scan 은 SARIF -out 만 사용. workflows 라 후순위 유지.", "updated": "2026-09-23"},
+  {"title": "POP3 실제 TCP 어댑터 회귀 테스트 / MaxMessageBytes 상한", "value": 4, "risk": 2, "size": "M", "status": "done", "note": "origin/auto/2026-09-21-2155(04b15be, PR #22)에서 구현됨. 아직 main 미병합이므로 같은 파일을 다시 건드리지 말 것.", "updated": "2026-09-23"},
+  {"title": "POP3 USER/PASS AuthError·TLS 프로토콜 테스트 확대", "value": 2, "risk": 1, "size": "M", "status": "pending", "note": "04b15be 병합 전에는 착수 금지(같은 파일 충돌).", "updated": "2026-09-23"},
+  {"title": "POP3 명령 대기 중 context 취소 전파", "value": 3, "risk": 2, "size": "M", "status": "pending", "note": "SMTP 의 AfterFunc(conn.Close) 패턴 이식 가능. 04b15be 병합 후 재평가.", "updated": "2026-09-23"},
+  {"title": "OIDC runtime 단일 헬퍼(OIDCConfigured + OIDCAutoLoginEnabled)", "value": 2, "risk": 1, "size": "S", "status": "pending", "note": "auth 보호 경로이고 관찰 가능한 동작 변화가 없어 보류 유지.", "updated": "2026-09-23"},
+  {"title": "스레드 화면 handoff 단추 / handoff DTO 계약 등록", "value": 3, "risk": 2, "size": "M", "status": "rejected", "note": "handoff 구현이 main 에도 web/src 에도 없다. 관련 브랜치 재적용 금지 교훈에 걸림 — 후보에서 제외.", "updated": "2026-09-23"},
+  {"title": "mail_deliveries 90일 보존 reaper / mail.username 경고 / SLA 창 설정 키", "value": 2, "risk": 1, "size": "S", "status": "rejected", "note": "notifymail 계열이 main 에 전혀 없다(여러 회차 반복 확인). 병합 전에는 후보가 될 수 없어 제외.", "updated": "2026-09-23"},
+  {"title": "ADMIN_GUIDE.pdf 재생성", "value": 1, "risk": 1, "size": "S", "status": "pending", "note": "Chromium 실행 가능 여부 미확인. 가치 낮아 유지 보류.", "updated": "2026-09-23"}
+]

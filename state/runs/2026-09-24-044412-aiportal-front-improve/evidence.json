@@ -1,0 +1,273 @@
+{
+  "run_id": "2026-09-24-044412-aiportal-front-improve",
+  "generated": "2026-09-24T05:00:34+09:00",
+  "run": {
+    "run_id": "2026-09-24-044412-aiportal-front-improve",
+    "project": "aiportal-front",
+    "kind": "improve",
+    "started": "2026-09-24T04:44:13+09:00",
+    "model": "claude-opus-5",
+    "policy_version": "ecd4b546e",
+    "prompts_hash": "30c37184f081815d",
+    "runner_version": "ecd4b546e",
+    "arm": "no-arbiter",
+    "experiment": "roles-2026-09",
+    "finished": "2026-09-24T05:00:33+09:00",
+    "outcome": "merged"
+  },
+  "record": {
+    "ts": "2026-09-24T05:00:33+09:00",
+    "date": "2026-09-24",
+    "project": "aiportal-front",
+    "result": "fix-round: merged https://github.com/hkjang/aiportal-front/pull/33, release failed",
+    "outcome": "merged",
+    "run_id": "2026-09-24-044412-aiportal-front-improve",
+    "base_sha": "fb38bddf0a1863db3168290b19de5fb708b5ad19",
+    "head_sha": "a6ed70e99de0309c04e2f2abddb3e1538b71b3e9",
+    "pr": "https://github.com/hkjang/aiportal-front/pull/33",
+    "stages": {
+      "base": {
+        "state": "pinned",
+        "reason": "main@fb38bdd",
+        "at": "2026-09-24T04:44:14+09:00"
+      },
+      "autonomy": {
+        "state": "release",
+        "reason": "",
+        "at": "2026-09-24T04:44:14+09:00"
+      },
+      "scout": {
+        "state": "done",
+        "reason": "릴리즈 버전 결정 입력 부재 (가치 5 / 위험 2 / 작업량 S — 단, **저장소 안에서 수행 불가**)",
+        "at": "2026-09-24T04:48:15+09:00"
+      },
+      "brief": {
+        "state": "accepted",
+        "reason": "채택 — A(릴리즈)는 지시대로 재조사 없이 무변경, B 를 수용 기준 1~6 그대로 구현·검증했다. 다만 과제서가 \"실패 시 기�",
+        "at": "2026-09-24T04:55:17+09:00"
+      },
+      "verify": {
+        "state": "passed",
+        "reason": "검증 2개 통과 (auto)",
+        "at": "2026-09-24T04:55:28+09:00"
+      },
+      "review": {
+        "state": "approved",
+        "reason": "리뷰 승인 (risk=low)",
+        "at": "2026-09-24T04:58:28+09:00"
+      },
+      "pr": {
+        "state": "created",
+        "reason": "https://github.com/hkjang/aiportal-front/pull/33",
+        "at": "2026-09-24T04:58:35+09:00"
+      },
+      "ci": {
+        "state": "passed",
+        "reason": "검사 없음 — 정책으로 허용",
+        "at": "2026-09-24T04:59:05+09:00"
+      },
+      "merge": {
+        "state": "done",
+        "reason": "a6ed70e99de0309c04e2f2abddb3e1538b71b3e9",
+        "at": "2026-09-24T04:59:10+09:00"
+      },
+      "release": {
+        "state": "failed",
+        "reason": "릴리즈 안 함: 다음 버전을 결정할 입력이 저장소에 없어 릴리즈 진입 조건을 충족하지 못했다(21회째 동일 원인). 이번 회차 워크트리 HEAD 8f11ecb(git status --porcelain 출력 없음)에서 절차 1을 그대로 다시 실행해 직접 확인한 근거: (1) `git tag --sort=-creatordate` 0개, `git tag -l | wc -l`=0, `git rev-parse --is-shallow-repository`=false — 태그가 fetch 에서 빠진 것이 아니라 존재한 적이 없다. 따라서 '최근 태그 3개의 git show --stat 과 태그 주석·커밋 메시지' 를 볼 대상 자체가 없고, 태그 형식(v 접두사 유무)·주석 태그 여부를 확정할 전례가 없다. (2) 버전이 적힌 파일은 package.json 하나(+ 그 lock)뿐이며 package.json version=0.0.0, package-lock.json 의 루트 version 과 packages[\"\"].version 도 0.0.0 이다. 최초 커밋 ab700ba8 의 package.json 도 0.0.0 이고 당시 package-lock.json 에는 version 필드 자체가 없었다 — 저장소 전체 이력에서 버전이 한 번도 증가한 적이 없어 절차 2 가 따라야 할 '최근 릴리즈들의 증가 패턴'(패치/마이너)이 도출 불가능하다. (3) CHANGELOG.md·VERSION·릴리즈 노트 파일 없음. docs/RELEASE.md 는 '릴리즈 판단 근거' 문서이며 스스로 '릴리즈 노트나 새 릴리즈 정책이 아니며, 다음 버전·태그·릴리즈 커밋 관례를 정하지 않는다'(:3), '현재 근거로 임의 패치 증가나 새 관례를 만들지 않는다'(:83), '버전 파일이 있으므로 skipped 조건은 충족하지 않는다. 이 문서로 실패를 skipped/released 로 바꾸지 않는다'(:84) 고 명시한다. README.md·docs/01-시작하기.md 의 '0.0.1 / 2025-01-01 / 초기 릴리스' 기재는 최초 커밋부터 있던 문서 기재로 실제 릴리스가 미확인이며(docs/RELEASE.md:16), 오히려 '초기 릴리스=0.0.1' 기재와 모순되어 0.0.1 로 올릴 근거도 되지 못한다. (4) `git log --oneline -80 | grep -iE 'release|릴리즈|버전|v?[0-9]+\\.[0-9]+\\.[0-9]+'` 매치 1건이며 그 유일한 커밋 12c8e8a('docs: 릴리즈 스킬 탐색 안내 및 버전 근거 정본화')는 문서 커밋이지 릴리즈 커밋이 아니다 — 릴리즈 커밋 메시지 양식이 없다. (5) .github 디렉터리 자체가 없고(러너가 미리 가져온 워크플로 목록도 '(없음)'), GitHub Release 목록도 비어 있다 — 태그 푸시나 릴리즈에 반응하는 워크플로가 없다. 배포 자동화는 .gitlab-ci.yml 뿐이고 모든 job 의 rules 가 `$CI_COMMIT_BRANCH == \"main\"`/\"develop\" 인 브랜치 푸시 트리거이며 `CI_COMMIT_TAG` 참조는 0건이다(파일 안의 `tags:` 는 GitLab Runner 태그이지 git 태그가 아니다). 고정 빌드 디렉터리에서 fetch/reset 후 npm 빌드하고 산출물을 서버 디렉터리에 복사할 뿐, 태그·버전 기반 릴리즈 트리거나 자산 업로드가 없다. (6) scripts/·Makefile 없음, package.json scripts 는 vite dev/build/preview 와 vitest 뿐으로 release/version/changelog/offline 타깃이 없다 — 과거 릴리즈 자산 기록도, 자산 생성 스크립트도, 릴리즈 전 검사 스크립트(version-check 등)도 존재하지 않으므로 assets 는 빈 배열이다(절차 4 해당 없음). 절차 5 의 skipped 조건('태그도, 버전 파일도, 릴리즈 노트도 없음')은 버전 파일 package.json 이 존재하므로 충족하지 않아 skipped 로 낮추지 않았고, released 로 만들려면 시작 버전·증가 단위·태그 형식·릴리즈 커밋 양식·릴리즈 노트 위치를 새로 발명해야 하는데 이는 절차 5('관례를 새로 정하는 건 사람의 일')와 AGENTS.md('확인되지 않은 관례를 새로 만들거나 릴리즈 판정 조건을 완화하지 않는다')가 금지한다. 따라서 버전 파일·태그·CHANGELOG·릴리즈 노트·릴리즈 커밋을 일체 만들지 않았고 docs/RELEASE.md 도 수정하지 않았으며 원격에 아무것도 보내지 않았다(git push·태그 푸시·gh release·npm publish·docker push 전무). 워크트리는 시작 시점과 동일하게 clean 하다. 형제 저장소 aiportal-front-admin 의 v0.1.x 이력은 별개 저장소의 관례라 이식하지 않았다. 요구된 회사 스킬은 Skill 도구로 원문을 로드해 따랐다: technology:release-and-deployment — 이 저장소는 배포(main 브랜치 푸시 시 GitLab CI)와 버전 릴리즈가 분리된 것이 아니라 버전 릴리즈 개념 자체가 없고 파이프라인이 태그를 게이트로 쓰지 않으므로, 이번에 태그를 새로 도입하면 검증된 적 없는 새 게이트를 만드는 일이 된다; marketing:product-launch — 이번 변경(게시판 상세 조회 실패가 빈 자리표시자로 감춰지던 문제 수정, a6ed70e)은 tier 3(개선, 릴리즈 노트만)이라 어떤 대외 발표 동선도 필요하지 않으며 릴리즈 노트를 둘 위치가 바로 미확정인 항목이다. **사람의 결정이 필요한 에스컬레이션(21회 연속 동일 교착, 저장소 안에 해결 수단 없음)**: ① 이 저장소의 첫 릴리즈 버전(0.0.1 / 0.1.0 / 1.0.0 중 무엇) ② 태그 형식(v 접두사 유무)과 주석 태그 여부 ③ 릴리즈 노트의 위치·양식·언어 ④ GitHub Release 사용 여부(현 원격 배포는 GitLab). 이 4가지를 한 번만 정해 주면(docs/RELEASE.md 에 승인된 증가 정책으로 추가하거나 사람이 첫 태그를 하나 만들어 주면) 이후 회차는 그 전례를 따라 자동 진행할 수 있다. 현재 GitLab CI 가 main 머지 시점에 이미 배포하고 있어 버전 릴리즈 없이도 서비스는 나가고 있으므로, 버전 체계 도입 여부 자체가 제품 판단이다. 또한 이 교착의 실제 수정 지점은 워크트리 밖(외부 aidev bin/run.sh → release.json → bin/gate.py)이라 이 저장소 안에 합법적 수단이 없다.",
+        "at": "2026-09-24T05:00:33+09:00"
+      }
+    },
+    "campaign": "",
+    "autonomy": "release",
+    "arm": "no-arbiter",
+    "experiment": "roles-2026-09",
+    "files": 4,
+    "additions": 270,
+    "deletions": 3,
+    "tests": 1,
+    "title": "fix: 게시판 상세 조회 실패가 빈 자리표시자 화면으로 감춰지던 문제 수정"
+  },
+  "stages": {
+    "base": {
+      "state": "pinned",
+      "reason": "main@fb38bdd",
+      "at": "2026-09-24T04:44:14+09:00"
+    },
+    "autonomy": {
+      "state": "release",
+      "reason": "",
+      "at": "2026-09-24T04:44:14+09:00"
+    },
+    "scout": {
+      "state": "done",
+      "reason": "릴리즈 버전 결정 입력 부재 (가치 5 / 위험 2 / 작업량 S — 단, **저장소 안에서 수행 불가**)",
+      "at": "2026-09-24T04:48:15+09:00"
+    },
+    "brief": {
+      "state": "accepted",
+      "reason": "채택 — A(릴리즈)는 지시대로 재조사 없이 무변경, B 를 수용 기준 1~6 그대로 구현·검증했다. 다만 과제서가 \"실패 시 기�",
+      "at": "2026-09-24T04:55:17+09:00"
+    },
+    "verify": {
+      "state": "passed",
+      "reason": "검증 2개 통과 (auto)",
+      "at": "2026-09-24T04:55:28+09:00"
+    },
+    "review": {
+      "state": "approved",
+      "reason": "리뷰 승인 (risk=low)",
+      "at": "2026-09-24T04:58:28+09:00"
+    },
+    "pr": {
+      "state": "created",
+      "reason": "https://github.com/hkjang/aiportal-front/pull/33",
+      "at": "2026-09-24T04:58:35+09:00"
+    },
+    "ci": {
+      "state": "passed",
+      "reason": "검사 없음 — 정책으로 허용",
+      "at": "2026-09-24T04:59:05+09:00"
+    },
+    "merge": {
+      "state": "done",
+      "reason": "a6ed70e99de0309c04e2f2abddb3e1538b71b3e9",
+      "at": "2026-09-24T04:59:10+09:00"
+    },
+    "release": {
+      "state": "failed",
+      "reason": "릴리즈 안 함: 다음 버전을 결정할 입력이 저장소에 없어 릴리즈 진입 조건을 충족하지 못했다(21회째 동일 원인). 이번 회차 워크트리 HEAD 8f11ecb(git status --porcelain 출력 없음)에서 절차 1을 그대로 다시 실행해 직접 확인한 근거: (1) `git tag --sort=-creatordate` 0개, `git tag -l | wc -l`=0, `git rev-parse --is-shallow-repository`=false — 태그가 fetch 에서 빠진 것이 아니라 존재한 적이 없다. 따라서 '최근 태그 3개의 git show --stat 과 태그 주석·커밋 메시지' 를 볼 대상 자체가 없고, 태그 형식(v 접두사 유무)·주석 태그 여부를 확정할 전례가 없다. (2) 버전이 적힌 파일은 package.json 하나(+ 그 lock)뿐이며 package.json version=0.0.0, package-lock.json 의 루트 version 과 packages[\"\"].version 도 0.0.0 이다. 최초 커밋 ab700ba8 의 package.json 도 0.0.0 이고 당시 package-lock.json 에는 version 필드 자체가 없었다 — 저장소 전체 이력에서 버전이 한 번도 증가한 적이 없어 절차 2 가 따라야 할 '최근 릴리즈들의 증가 패턴'(패치/마이너)이 도출 불가능하다. (3) CHANGELOG.md·VERSION·릴리즈 노트 파일 없음. docs/RELEASE.md 는 '릴리즈 판단 근거' 문서이며 스스로 '릴리즈 노트나 새 릴리즈 정책이 아니며, 다음 버전·태그·릴리즈 커밋 관례를 정하지 않는다'(:3), '현재 근거로 임의 패치 증가나 새 관례를 만들지 않는다'(:83), '버전 파일이 있으므로 skipped 조건은 충족하지 않는다. 이 문서로 실패를 skipped/released 로 바꾸지 않는다'(:84) 고 명시한다. README.md·docs/01-시작하기.md 의 '0.0.1 / 2025-01-01 / 초기 릴리스' 기재는 최초 커밋부터 있던 문서 기재로 실제 릴리스가 미확인이며(docs/RELEASE.md:16), 오히려 '초기 릴리스=0.0.1' 기재와 모순되어 0.0.1 로 올릴 근거도 되지 못한다. (4) `git log --oneline -80 | grep -iE 'release|릴리즈|버전|v?[0-9]+\\.[0-9]+\\.[0-9]+'` 매치 1건이며 그 유일한 커밋 12c8e8a('docs: 릴리즈 스킬 탐색 안내 및 버전 근거 정본화')는 문서 커밋이지 릴리즈 커밋이 아니다 — 릴리즈 커밋 메시지 양식이 없다. (5) .github 디렉터리 자체가 없고(러너가 미리 가져온 워크플로 목록도 '(없음)'), GitHub Release 목록도 비어 있다 — 태그 푸시나 릴리즈에 반응하는 워크플로가 없다. 배포 자동화는 .gitlab-ci.yml 뿐이고 모든 job 의 rules 가 `$CI_COMMIT_BRANCH == \"main\"`/\"develop\" 인 브랜치 푸시 트리거이며 `CI_COMMIT_TAG` 참조는 0건이다(파일 안의 `tags:` 는 GitLab Runner 태그이지 git 태그가 아니다). 고정 빌드 디렉터리에서 fetch/reset 후 npm 빌드하고 산출물을 서버 디렉터리에 복사할 뿐, 태그·버전 기반 릴리즈 트리거나 자산 업로드가 없다. (6) scripts/·Makefile 없음, package.json scripts 는 vite dev/build/preview 와 vitest 뿐으로 release/version/changelog/offline 타깃이 없다 — 과거 릴리즈 자산 기록도, 자산 생성 스크립트도, 릴리즈 전 검사 스크립트(version-check 등)도 존재하지 않으므로 assets 는 빈 배열이다(절차 4 해당 없음). 절차 5 의 skipped 조건('태그도, 버전 파일도, 릴리즈 노트도 없음')은 버전 파일 package.json 이 존재하므로 충족하지 않아 skipped 로 낮추지 않았고, released 로 만들려면 시작 버전·증가 단위·태그 형식·릴리즈 커밋 양식·릴리즈 노트 위치를 새로 발명해야 하는데 이는 절차 5('관례를 새로 정하는 건 사람의 일')와 AGENTS.md('확인되지 않은 관례를 새로 만들거나 릴리즈 판정 조건을 완화하지 않는다')가 금지한다. 따라서 버전 파일·태그·CHANGELOG·릴리즈 노트·릴리즈 커밋을 일체 만들지 않았고 docs/RELEASE.md 도 수정하지 않았으며 원격에 아무것도 보내지 않았다(git push·태그 푸시·gh release·npm publish·docker push 전무). 워크트리는 시작 시점과 동일하게 clean 하다. 형제 저장소 aiportal-front-admin 의 v0.1.x 이력은 별개 저장소의 관례라 이식하지 않았다. 요구된 회사 스킬은 Skill 도구로 원문을 로드해 따랐다: technology:release-and-deployment — 이 저장소는 배포(main 브랜치 푸시 시 GitLab CI)와 버전 릴리즈가 분리된 것이 아니라 버전 릴리즈 개념 자체가 없고 파이프라인이 태그를 게이트로 쓰지 않으므로, 이번에 태그를 새로 도입하면 검증된 적 없는 새 게이트를 만드는 일이 된다; marketing:product-launch — 이번 변경(게시판 상세 조회 실패가 빈 자리표시자로 감춰지던 문제 수정, a6ed70e)은 tier 3(개선, 릴리즈 노트만)이라 어떤 대외 발표 동선도 필요하지 않으며 릴리즈 노트를 둘 위치가 바로 미확정인 항목이다. **사람의 결정이 필요한 에스컬레이션(21회 연속 동일 교착, 저장소 안에 해결 수단 없음)**: ① 이 저장소의 첫 릴리즈 버전(0.0.1 / 0.1.0 / 1.0.0 중 무엇) ② 태그 형식(v 접두사 유무)과 주석 태그 여부 ③ 릴리즈 노트의 위치·양식·언어 ④ GitHub Release 사용 여부(현 원격 배포는 GitLab). 이 4가지를 한 번만 정해 주면(docs/RELEASE.md 에 승인된 증가 정책으로 추가하거나 사람이 첫 태그를 하나 만들어 주면) 이후 회차는 그 전례를 따라 자동 진행할 수 있다. 현재 GitLab CI 가 main 머지 시점에 이미 배포하고 있어 버전 릴리즈 없이도 서비스는 나가고 있으므로, 버전 체계 도입 여부 자체가 제품 판단이다. 또한 이 교착의 실제 수정 지점은 워크트리 밖(외부 aidev bin/run.sh → release.json → bin/gate.py)이라 이 저장소 안에 합법적 수단이 없다.",
+      "at": "2026-09-24T05:00:33+09:00"
+    }
+  },
+  "provenance": {
+    "model": "claude-opus-5",
+    "policy_version": "ecd4b546e",
+    "prompts_hash": "30c37184f081815d",
+    "runner_version": "ecd4b546e",
+    "base_sha": "fb38bddf0a1863db3168290b19de5fb708b5ad19",
+    "head_sha": "a6ed70e99de0309c04e2f2abddb3e1538b71b3e9",
+    "pr": "https://github.com/hkjang/aiportal-front/pull/33"
+  },
+  "verification": {
+    "runner": {
+      "source": "auto",
+      "commands": [
+        {
+          "cmd": "[ -d node_modules ] || npm ci --no-audit --no-fund",
+          "exit": 0,
+          "seconds": 0
+        },
+        {
+          "cmd": "npm test --silent",
+          "exit": 0,
+          "seconds": 9
+        }
+      ]
+    },
+    "runner_gate": {
+      "ok": true,
+      "state": "verified",
+      "reason": "검증 2개 통과 (auto)"
+    },
+    "after_rebase": null,
+    "review": {
+      "verdict": "approve",
+      "reasons": [],
+      "notes": [
+        "검증 실행: 전체 `npx vitest run` 33파일 534테스트 전부 통과(기준선 32/516 대비 +1파일 +18테스트). Red 확인은 `git checkout main -- src/views/{Notice/NoticeDetail,Library/LibraryDetail,Request/RequestDetail}.vue` 로 수정 전 소스를 되돌려 신규 스펙만 돌려 수행했고, 3화면 × 3케이스 = 9건이 실패(`expected [] to deeply equal ['…']`)했다. 나머지 9건(성공 렌더·COM 비중복·로딩 종료)은 수정 전에도 통과하는 회귀 가드다. 확인 후 `git checkout HEAD -- …` 로 복원했고 `git status --porcelain` 무출력.",
+        "isSuccess 도입 회귀 위험을 확인했다 — `RequestWrite.vue:83-86` 이 같은 `inf.library.detail` 엔드포인트에 이미 `isSuccess(res)` 분기를 쓰고 있고 저장소 전체 `isSuccess(res)` 사용이 105곳이라, 정상 응답에 code 가 없어 오탐 Alert 이 뜨는 형태는 근거상 배제된다(백엔드는 이 저장소 밖이라 실서버 응답 형태는 여전히 미확인).",
+        "보안(security) 차단 사유 없음: 새 엔드포인트·인가 변경·식별자 노출·비밀값 없음. `openAlert(res?.data?.message)` 가 서버 문자열을 v-html 경로로 보내지만 `src/utils/alertText.js:29` 의 `escapeHtml` 이 Alert.vue:15 에서 선적용되므로 XSS 경로 없음. 법무(legal) 차단 사유 없음: 개인정보 신규 수집·전송 없고, 추가된 문구는 한국어 실패 안내뿐으로 외부 약속을 만들지 않는다.",
+        "구현 노트의 자기 의심 3건을 모두 확인했다 — ①마침표 불일치는 형제 계약 모방이라 취향 문제 ②`RequestDetail` 의 '요청 상세 조회에 실패하였습니다' 는 신규 문장이나 화면 의미와 맞음 ③watch 기반 Alert 집계가 '같은 문구 연속 2회' 를 1회로 세는 맹점은 사실이나, 현재 코드에서 가능한 중복은 인터셉터 Alert + catch Alert(문구가 다름)뿐이고 그 케이스는 스펙 5번이 잡는다. 업무 실패 분기에서 `notice/library = null` 을 생략한 것도 `fetchBoardDetail` 이 `onMounted` 단일 호출이고 초기값이 null 이라 무해함을 확인했다.",
+        "남는 우려(차단 아님): (a) 목록 3형제 `NoticeList:60`·`LibraryList:58`·`RequestList:132` 는 여전히 실패를 빈 목록으로 감춘다 — 상세만 고쳐 형제 비대칭이 목록 층에 남았다. (b) `RequestDetail.vue:69` 가 '요청' 화면인데 `inf.library.detail` 을 호출하는 점은 이번 범위 밖의 선재 문제. (c) 세 화면 모두 라우트 파라미터 변경 시 재조회 watch 가 없어 같은 라우트 레코드 내 이동에서는 아예 재조회되지 않는다(선재 결함, 이번 변경이 악화시키지 않음). (d) 릴리즈는 20회째 무변경이 유지됐고 버전 파일·태그·릴리즈 커밋이 만들어지지 않았음을 `git log main..HEAD`(커밋 1개)와 diffstat(4파일)으로 확인했다."
+      ],
+      "risk": "low",
+      "blocking": []
+    },
+    "ci_gate": {
+      "ok": false,
+      "state": "no-ci",
+      "reason": "이 커밋에 검사가 없음 (정책 allow_merge_without_ci 가 없으면 차단)",
+      "checks": 0
+    }
+  },
+  "release": {
+    "result": {
+      "status": "failed",
+      "version": "",
+      "tag": "",
+      "title": "",
+      "notes_file": "",
+      "github_release": false,
+      "assets": [],
+      "reason": "다음 버전을 결정할 입력이 저장소에 없어 릴리즈 진입 조건을 충족하지 못했다(21회째 동일 원인). 이번 회차 워크트리 HEAD 8f11ecb(git status --porcelain 출력 없음)에서 절차 1을 그대로 다시 실행해 직접 확인한 근거: (1) `git tag --sort=-creatordate` 0개, `git tag -l | wc -l`=0, `git rev-parse --is-shallow-repository`=false — 태그가 fetch 에서 빠진 것이 아니라 존재한 적이 없다. 따라서 '최근 태그 3개의 git show --stat 과 태그 주석·커밋 메시지' 를 볼 대상 자체가 없고, 태그 형식(v 접두사 유무)·주석 태그 여부를 확정할 전례가 없다. (2) 버전이 적힌 파일은 package.json 하나(+ 그 lock)뿐이며 package.json version=0.0.0, package-lock.json 의 루트 version 과 packages[\"\"].version 도 0.0.0 이다. 최초 커밋 ab700ba8 의 package.json 도 0.0.0 이고 당시 package-lock.json 에는 version 필드 자체가 없었다 — 저장소 전체 이력에서 버전이 한 번도 증가한 적이 없어 절차 2 가 따라야 할 '최근 릴리즈들의 증가 패턴'(패치/마이너)이 도출 불가능하다. (3) CHANGELOG.md·VERSION·릴리즈 노트 파일 없음. docs/RELEASE.md 는 '릴리즈 판단 근거' 문서이며 스스로 '릴리즈 노트나 새 릴리즈 정책이 아니며, 다음 버전·태그·릴리즈 커밋 관례를 정하지 않는다'(:3), '현재 근거로 임의 패치 증가나 새 관례를 만들지 않는다'(:83), '버전 파일이 있으므로 skipped 조건은 충족하지 않는다. 이 문서로 실패를 skipped/released 로 바꾸지 않는다'(:84) 고 명시한다. README.md·docs/01-시작하기.md 의 '0.0.1 / 2025-01-01 / 초기 릴리스' 기재는 최초 커밋부터 있던 문서 기재로 실제 릴리스가 미확인이며(docs/RELEASE.md:16), 오히려 '초기 릴리스=0.0.1' 기재와 모순되어 0.0.1 로 올릴 근거도 되지 못한다. (4) `git log --oneline -80 | grep -iE 'release|릴리즈|버전|v?[0-9]+\\.[0-9]+\\.[0-9]+'` 매치 1건이며 그 유일한 커밋 12c8e8a('docs: 릴리즈 스킬 탐색 안내 및 버전 근거 정본화')는 문서 커밋이지 릴리즈 커밋이 아니다 — 릴리즈 커밋 메시지 양식이 없다. (5) .github 디렉터리 자체가 없고(러너가 미리 가져온 워크플로 목록도 '(없음)'), GitHub Release 목록도 비어 있다 — 태그 푸시나 릴리즈에 반응하는 워크플로가 없다. 배포 자동화는 .gitlab-ci.yml 뿐이고 모든 job 의 rules 가 `$CI_COMMIT_BRANCH == \"main\"`/\"develop\" 인 브랜치 푸시 트리거이며 `CI_COMMIT_TAG` 참조는 0건이다(파일 안의 `tags:` 는 GitLab Runner 태그이지 git 태그가 아니다). 고정 빌드 디렉터리에서 fetch/reset 후 npm 빌드하고 산출물을 서버 디렉터리에 복사할 뿐, 태그·버전 기반 릴리즈 트리거나 자산 업로드가 없다. (6) scripts/·Makefile 없음, package.json scripts 는 vite dev/build/preview 와 vitest 뿐으로 release/version/changelog/offline 타깃이 없다 — 과거 릴리즈 자산 기록도, 자산 생성 스크립트도, 릴리즈 전 검사 스크립트(version-check 등)도 존재하지 않으므로 assets 는 빈 배열이다(절차 4 해당 없음). 절차 5 의 skipped 조건('태그도, 버전 파일도, 릴리즈 노트도 없음')은 버전 파일 package.json 이 존재하므로 충족하지 않아 skipped 로 낮추지 않았고, released 로 만들려면 시작 버전·증가 단위·태그 형식·릴리즈 커밋 양식·릴리즈 노트 위치를 새로 발명해야 하는데 이는 절차 5('관례를 새로 정하는 건 사람의 일')와 AGENTS.md('확인되지 않은 관례를 새로 만들거나 릴리즈 판정 조건을 완화하지 않는다')가 금지한다. 따라서 버전 파일·태그·CHANGELOG·릴리즈 노트·릴리즈 커밋을 일체 만들지 않았고 docs/RELEASE.md 도 수정하지 않았으며 원격에 아무것도 보내지 않았다(git push·태그 푸시·gh release·npm publish·docker push 전무). 워크트리는 시작 시점과 동일하게 clean 하다. 형제 저장소 aiportal-front-admin 의 v0.1.x 이력은 별개 저장소의 관례라 이식하지 않았다. 요구된 회사 스킬은 Skill 도구로 원문을 로드해 따랐다: technology:release-and-deployment — 이 저장소는 배포(main 브랜치 푸시 시 GitLab CI)와 버전 릴리즈가 분리된 것이 아니라 버전 릴리즈 개념 자체가 없고 파이프라인이 태그를 게이트로 쓰지 않으므로, 이번에 태그를 새로 도입하면 검증된 적 없는 새 게이트를 만드는 일이 된다; marketing:product-launch — 이번 변경(게시판 상세 조회 실패가 빈 자리표시자로 감춰지던 문제 수정, a6ed70e)은 tier 3(개선, 릴리즈 노트만)이라 어떤 대외 발표 동선도 필요하지 않으며 릴리즈 노트를 둘 위치가 바로 미확정인 항목이다. **사람의 결정이 필요한 에스컬레이션(21회 연속 동일 교착, 저장소 안에 해결 수단 없음)**: ① 이 저장소의 첫 릴리즈 버전(0.0.1 / 0.1.0 / 1.0.0 중 무엇) ② 태그 형식(v 접두사 유무)과 주석 태그 여부 ③ 릴리즈 노트의 위치·양식·언어 ④ GitHub Release 사용 여부(현 원격 배포는 GitLab). 이 4가지를 한 번만 정해 주면(docs/RELEASE.md 에 승인된 증가 정책으로 추가하거나 사람이 첫 태그를 하나 만들어 주면) 이후 회차는 그 전례를 따라 자동 진행할 수 있다. 현재 GitLab CI 가 main 머지 시점에 이미 배포하고 있어 버전 릴리즈 없이도 서비스는 나가고 있으므로, 버전 체계 도입 여부 자체가 제품 판단이다. 또한 이 교착의 실제 수정 지점은 워크트리 밖(외부 aidev bin/run.sh → release.json → bin/gate.py)이라 이 저장소 안에 합법적 수단이 없다."
+    },
+    "assets_sha256": []
+  },
+  "approval": null,
+  "usage": [
+    {
+      "ts": "2026-09-24T04:48:14+09:00",
+      "date": "2026-09-24",
+      "project": "aiportal-front",
+      "phase": "scout",
+      "run_id": "2026-09-24-044412-aiportal-front-improve",
+      "campaign": "",
+      "subtype": "success",
+      "duration_ms": 257714,
+      "num_turns": 24,
+      "cost_usd": 1.5595495,
+      "input_tokens": 28,
+      "output_tokens": 16348,
+      "cache_read": 873219,
+      "cache_create": 71410
+    },
+    {
+      "ts": "2026-09-24T04:55:17+09:00",
+      "date": "2026-09-24",
+      "project": "aiportal-front",
+      "phase": "improve",
+      "run_id": "2026-09-24-044412-aiportal-front-improve",
+      "campaign": "",
+      "subtype": "success",
+      "duration_ms": 461478,
+      "num_turns": 49,
+      "cost_usd": 3.5530509999999995,
+      "input_tokens": 84,
+      "output_tokens": 27835,
+      "cache_read": 3676172,
+      "cache_create": 101867
+    },
+    {
+      "ts": "2026-09-24T04:58:28+09:00",
+      "date": "2026-09-24",
+      "project": "aiportal-front",
+      "phase": "review",
+      "run_id": "2026-09-24-044412-aiportal-front-improve",
+      "campaign": "",
+      "subtype": "success",
+      "duration_ms": 193746,
+      "num_turns": 32,
+      "cost_usd": 1.4968745,
+      "input_tokens": 44,
+      "output_tokens": 12533,
+      "cache_read": 1202339,
+      "cache_create": 58216
+    },
+    {
+      "ts": "2026-09-24T05:00:33+09:00",
+      "date": "2026-09-24",
+      "project": "aiportal-front",
+      "phase": "release",
+      "run_id": "2026-09-24-044412-aiportal-front-improve",
+      "campaign": "",
+      "subtype": "success",
+      "duration_ms": 80286,
+      "num_turns": 12,
+      "cost_usd": 0.7287925,
+      "input_tokens": 16,
+      "output_tokens": 6841,
+      "cache_read": 316595,
+      "cache_create": 39939
+    }
+  ]
+}

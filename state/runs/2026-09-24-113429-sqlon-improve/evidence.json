@@ -1,0 +1,224 @@
+{
+  "run_id": "2026-09-24-113429-sqlon-improve",
+  "generated": "2026-09-24T11:52:36+09:00",
+  "run": {
+    "run_id": "2026-09-24-113429-sqlon-improve",
+    "project": "sqlon",
+    "kind": "improve",
+    "started": "2026-09-24T11:34:29+09:00",
+    "model": "claude-opus-5",
+    "policy_version": "ecd4b546e",
+    "prompts_hash": "30c37184f081815d",
+    "runner_version": "ecd4b546e",
+    "arm": "no-journal",
+    "experiment": "roles-2026-09",
+    "finished": "2026-09-24T11:52:35+09:00",
+    "outcome": "review-pending"
+  },
+  "record": {
+    "ts": "2026-09-24T11:52:35+09:00",
+    "date": "2026-09-24",
+    "project": "sqlon",
+    "result": "CI no-ci, PR open https://github.com/hkjang/sqlon/pull/12",
+    "outcome": "review-pending",
+    "run_id": "2026-09-24-113429-sqlon-improve",
+    "base_sha": "57f99b7233561729106c666369028763debb97b7",
+    "head_sha": "960d0383e6251e6a0aebfe0c26bafa2ccb03776c",
+    "pr": "https://github.com/hkjang/sqlon/pull/12",
+    "stages": {
+      "base": {
+        "state": "pinned",
+        "reason": "main@57f99b7",
+        "at": "2026-09-24T11:34:33+09:00"
+      },
+      "autonomy": {
+        "state": "release",
+        "reason": "",
+        "at": "2026-09-24T11:34:33+09:00"
+      },
+      "scout": {
+        "state": "failed",
+        "reason": "과제서 없음 — 구현자가 직접 고른다",
+        "at": "2026-09-24T11:38:16+09:00"
+      },
+      "verify": {
+        "state": "passed",
+        "reason": "검증 3개 통과 (auto)",
+        "at": "2026-09-24T11:44:37+09:00"
+      },
+      "review": {
+        "state": "approved",
+        "reason": "리뷰 승인 (risk=low)",
+        "at": "2026-09-24T11:48:16+09:00"
+      },
+      "pr": {
+        "state": "created",
+        "reason": "https://github.com/hkjang/sqlon/pull/12",
+        "at": "2026-09-24T11:48:24+09:00"
+      },
+      "ci": {
+        "state": "no-ci",
+        "reason": "이 커밋에 검사가 없음 (정책 allow_merge_without_ci 가 없으면 차단)",
+        "at": "2026-09-24T11:52:35+09:00"
+      }
+    },
+    "campaign": "",
+    "autonomy": "release",
+    "arm": "no-journal",
+    "experiment": "roles-2026-09",
+    "files": 3,
+    "additions": 100,
+    "deletions": 7,
+    "tests": 1,
+    "title": "fix(mcp): 결과 캐시 키에 바인드 변수를 포함합니다"
+  },
+  "stages": {
+    "base": {
+      "state": "pinned",
+      "reason": "main@57f99b7",
+      "at": "2026-09-24T11:34:33+09:00"
+    },
+    "autonomy": {
+      "state": "release",
+      "reason": "",
+      "at": "2026-09-24T11:34:33+09:00"
+    },
+    "scout": {
+      "state": "failed",
+      "reason": "과제서 없음 — 구현자가 직접 고른다",
+      "at": "2026-09-24T11:38:16+09:00"
+    },
+    "verify": {
+      "state": "passed",
+      "reason": "검증 3개 통과 (auto)",
+      "at": "2026-09-24T11:44:37+09:00"
+    },
+    "review": {
+      "state": "approved",
+      "reason": "리뷰 승인 (risk=low)",
+      "at": "2026-09-24T11:48:16+09:00"
+    },
+    "pr": {
+      "state": "created",
+      "reason": "https://github.com/hkjang/sqlon/pull/12",
+      "at": "2026-09-24T11:48:24+09:00"
+    },
+    "ci": {
+      "state": "no-ci",
+      "reason": "이 커밋에 검사가 없음 (정책 allow_merge_without_ci 가 없으면 차단)",
+      "at": "2026-09-24T11:52:35+09:00"
+    }
+  },
+  "provenance": {
+    "model": "claude-opus-5",
+    "policy_version": "ecd4b546e",
+    "prompts_hash": "30c37184f081815d",
+    "runner_version": "ecd4b546e",
+    "base_sha": "57f99b7233561729106c666369028763debb97b7",
+    "head_sha": "960d0383e6251e6a0aebfe0c26bafa2ccb03776c",
+    "pr": "https://github.com/hkjang/sqlon/pull/12"
+  },
+  "verification": {
+    "runner": {
+      "source": "auto",
+      "commands": [
+        {
+          "cmd": "go build ./...",
+          "exit": 0,
+          "seconds": 2
+        },
+        {
+          "cmd": "go vet ./...",
+          "exit": 0,
+          "seconds": 0
+        },
+        {
+          "cmd": "go test ./...",
+          "exit": 0,
+          "seconds": 5
+        }
+      ]
+    },
+    "runner_gate": {
+      "ok": true,
+      "state": "verified",
+      "reason": "검증 3개 통과 (auto)"
+    },
+    "after_rebase": null,
+    "review": {
+      "verdict": "approve",
+      "reasons": [],
+      "notes": [
+        "돌연변이 검증 완료: execguard.go:95 cacheKey 본문을 binds 무시 버전으로 되돌리자 신규 테스트 2개가 모두 RED(TestExecuteGuardedDoesNotServeAnotherBindsResultFromCache execguard_test.go:170, TestCacheKeySeparatesDifferentBinds execguard_test.go:200), 복원 후 GREEN. 테스트는 프로덕션 cacheKey·executeGuarded를 실제로 실행하며 단언이 비어 있지 않다. 워크트리는 검증 후 clean.",
+        "구현 노트의 '확신 없는 곳'(바인드 인코딩 결정성)을 별도 확인: %#v는 map 키를 정렬 출력해 map[string]any 바인드도 결정적이고, 문자열 안의 NUL은 \\x00 리터럴로 이스케이프되어 구분자 위조가 불가능하다. JSON 디코딩 경로(dbapi.go:203 []any)는 float64/string/bool/nil/[]any/map만 만들어 포인터 비결정성 우려는 현재 도달 불가. go build·go vet·go test ./... -count=1 전부 통과, -race도 통과.",
+        "부수 효과(좋은 쪽): /api/query/submit는 executeGuarded(fresh=true)로 캐시에 쓰기만 하는데(asyncquery.go:95) binds를 전혀 전달하지 않는다(dbapi.go:830). 수정 전에는 이 무-바인드 결과가 바인드 있는 동기 요청과 같은 키를 공유해 오염시킬 수 있었고, 이번 변경이 그 경로도 분리했다. 다만 submit이 요청의 binds를 조용히 무시하는 기존 결함은 남아 있다(범위 밖으로 기각된 것이 타당, ideas.json 보류).",
+        "남는 우려(모두 기존 동작, 이번 변경이 악화시키지 않음): (1) ApprovePlan이 키에서 빠져 있어 플랜 게이트를 승인하고 실행한 결과가 TTL 동안 미승인 호출자에게 캐시 히트로 반환될 수 있다 — 플랜 게이트는 비용 가드이지 인가 통제가 아니므로 차단 사유는 아니나 릴리즈 노트에 적어둘 값어치가 있다. (2) 캐시는 사용자가 아닌 프로파일 단위이며 maskPIIResult는 전역 카탈로그만 보므로 사용자별 마스킹 차이는 없다 — 향후 역할별 마스킹을 도입하면 키에 역할을 넣어야 한다. (3) MaxRows=0(프로파일 기본값)과 명시적 동일 값이 다른 키를 만든다 — 성능 문제일 뿐 정확성 문제 아님.",
+        "프라이버시(legal) 관점: 바인드 값이 이제 메모리 캐시 맵의 '키'에도 TTL(기본 60초) 동안 남는다. 다만 캐시된 결과 행에 이미 더 민감한 데이터가 동일 수명으로 들어 있었고, 키는 로깅·영속화·외부 전송되지 않으며(참조는 get/put/executeGuarded뿐) 신규 수집·보존 연장·제3자 전송이 없어 차단 사유 아님.",
+        "범위·되돌리기: 변경은 CHANGELOG.md + execguard.go + execguard_test.go 3개뿐이고 무관한 리팩터·포맷 변경·의존성 갱신이 없다. CHANGELOG는 7줄 순수 삽입으로 CRLF 혼재를 건드리지 않았다. 순수 인메모리 변경이라 마이그레이션·외부 상태가 없어 revert로 완전히 되돌아온다. 커밋 메시지와 CHANGELOG 설명이 코드 동작과 일치함을 dbapi.go:231-267(cached:true 반환 경로)에서 확인."
+      ],
+      "risk": "low",
+      "blocking": []
+    },
+    "ci_gate": {
+      "ok": false,
+      "state": "no-ci",
+      "reason": "이 커밋에 검사가 없음 (정책 allow_merge_without_ci 가 없으면 차단)",
+      "checks": 0
+    }
+  },
+  "release": {
+    "result": null,
+    "assets_sha256": []
+  },
+  "approval": null,
+  "usage": [
+    {
+      "ts": "2026-09-24T11:38:16+09:00",
+      "date": "2026-09-24",
+      "project": "sqlon",
+      "phase": "scout",
+      "run_id": "2026-09-24-113429-sqlon-improve",
+      "campaign": "",
+      "subtype": "error_max_budget_usd",
+      "duration_ms": 239473,
+      "num_turns": 32,
+      "cost_usd": 2.019542,
+      "input_tokens": 40,
+      "output_tokens": 17142,
+      "cache_read": 1291450,
+      "cache_create": 85178
+    },
+    {
+      "ts": "2026-09-24T11:44:28+09:00",
+      "date": "2026-09-24",
+      "project": "sqlon",
+      "phase": "improve",
+      "run_id": "2026-09-24-113429-sqlon-improve",
+      "campaign": "",
+      "subtype": "success",
+      "duration_ms": 405761,
+      "num_turns": 45,
+      "cost_usd": 2.9375090000000013,
+      "input_tokens": 80,
+      "output_tokens": 24775,
+      "cache_read": 2969068,
+      "cache_create": 83320
+    },
+    {
+      "ts": "2026-09-24T11:48:16+09:00",
+      "date": "2026-09-24",
+      "project": "sqlon",
+      "phase": "review",
+      "run_id": "2026-09-24-113429-sqlon-improve",
+      "campaign": "",
+      "subtype": "success",
+      "duration_ms": 236037,
+      "num_turns": 24,
+      "cost_usd": 1.309992,
+      "input_tokens": 36,
+      "output_tokens": 13842,
+      "cache_read": 880284,
+      "cache_create": 52362
+    }
+  ]
+}
