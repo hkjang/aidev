@@ -266,3 +266,4 @@
 - 보류 아이디어: compare_suppliers 입력 ID 개수·응답 크기 상한 (2/3/M) / get_expiring_contracts 의 공개 범위 days max 730 과 실행 상한 3650 불일치 (2/2/S) / recommend_suppliers 의 minScore 가 문자열로 오면 조용히 0 (2/1/S) / 사용자 가이드 4.6 MCP 도구표를 실제 tools/list 응답과 묶는 가드 (2/1/S)
 
 - 릴리즈: v0.7.59 (2026-09-23, run 2026-09-23-183438-Vendra-improve)
+- 릴리즈: v0.7.60 (2026-09-24, run 2026-09-24-181320-Vendra-approve)
