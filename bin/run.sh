@@ -999,9 +999,20 @@ sync_failed(){
   [ "$nf" -ge 2 ] || return 0
   local stamp="$STATE/.sync-alert-$RUN_DATE"; [ -f "$stamp" ] && return 0; : > "$stamp"
   if [ -s "$STATE/.sync-blocked" ]; then
-    "$HERE/tg.sh" "🚨 aidev push 가 영구 차단됐습니다 — 100MB 초과 파일이 이미 커밋에 들어 있습니다.
-$(cat "$STATE/.sync-blocked")
-회차는 계속 돌지만 대시보드·논문 데이터는 멈춥니다. 그 파일을 커밋 기록에서 빼야 풀립니다 (git filter-branch 또는 origin/main 기준 스쿼시)." >/dev/null 2>&1 &
+    # 알림에 그대로 붙여넣을 명령을 싣는다 — "무엇이 문제인지" 만 알려 주면 며칠이 그냥 간다.
+    local bigpath base
+    bigpath=$(grep -oE 'File [^ ]+ is' "$STATE/.sync-blocked" | sed 's/^File //; s/ is$//' | head -1)
+    base=$(git -C "$REPO_DIR" rev-parse --short origin/main 2>/dev/null)
+    "$HERE/tg.sh" "🚨 aidev push 가 막혀 있습니다 — 100MB 초과 파일이 커밋 기록에 들어 있습니다.
+$(head -c 300 "$STATE/.sync-blocked")
+
+회차는 계속 돌지만 대시보드·논문 데이터는 그 시점에 멈춥니다. 아래를 한 번 돌리면 풀립니다:
+
+cd $REPO_DIR && bin/stop.sh all on 정리
+FILTER_BRANCH_SQUELCH_WARNING=1 git filter-branch -f --index-filter 'git rm -r --cached --ignore-unmatch -q \"${bigpath:-<파일경로>}\" || true' -- ${base:-origin/main}..HEAD
+git push origin main && bin/stop.sh all off 완료
+
+되돌리려면: git reset --hard pre-squash-\$(date +%Y-%m-%d) (정리 전 히스토리 태그)" >/dev/null 2>&1 &
     return 0
   fi
   "$HERE/tg.sh" "🚨 aidev 자기 기록이 ${nf}회 연속 원격에 못 올라갔습니다 — 대시보드·논문 데이터가 그 시점에 멈춥니다.
