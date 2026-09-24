@@ -99,6 +99,16 @@ policy(){ # $1=프로젝트 $2=jq 경로 (예: .base_branch) — 기본 정책 <
   # `// empty` 는 false 를 없는 값으로 취급해 agents.scout=false 같은 스위치가 영영 읽히지 않았다 (2026-09-19) — null 만 비운다
   jq -r "($2) | if . == null then empty else . end" <(jq -s '.[0] * (.[1] // {}) * (.[2] // {})' "$STATE/default.policy.json" <([ -f "$STATE/$1.policy.json" ] && cat "$STATE/$1.policy.json" || echo '{}') <(printf '%s' "${EXP_OVERRIDES:-{\}}")) 2>/dev/null
 }
+# PR 라벨 붙이기 — `gh pr edit --add-label` 은 gh 2.45 에서 항상 실패한다.
+# 그 명령은 내부적으로 GraphQL 의 repository.pullRequest.projectCards 를 묻는데 GitHub 이
+# Projects(classic) 을 종료해 에러가 난다. 호출부가 `|| true` 로 감싸고 있어 아무도 몰랐고,
+# PR 처리기가 승인한 PR 55건이 라벨 없이 열린 채로 남아 승인 스윕이 영영 집지 않았다
+# (2026-09-24 발견, 가장 오래된 것은 9-17 승인). REST 로 붙이면 멀쩡하다.
+pr_label(){ # $1=PR URL $2=라벨
+  local slug num; slug=$(sed -E 's#^https?://[^/]+/([^/]+/[^/]+)/pull/[0-9]+.*$#\1#' <<<"$1"); num=${1##*/}
+  [ -n "$slug" ] && [ -n "$num" ] || return 1
+  gh api -X POST "repos/$slug/issues/$num/labels" -f "labels[]=$2" >/dev/null 2>&1
+}
 # 프로젝트 정책 파일만 고친다 (기본 정책·실험 덮어쓰기는 건드리지 않는다)
 policy_set(){ # $1=프로젝트 $2=jq 식
   local f="$STATE/$1.policy.json"; [ -s "$f" ] || echo '{}' > "$f"
@@ -1490,7 +1500,7 @@ $(jq -r '.notes[]? | "- " + .' "$OUT/review.json" 2>/dev/null | head -8)
         jq -cn --arg ts "$(date -Iseconds)" --arg pr "$pr" --arg sha "$head" --arg pv "$pv" --arg risk "$SH_RISK" --arg rid "$RUN_ID" \
           '{ts:$ts,pr:$pr,sha:$sha,policy_version:$pv,by:"shepherd",risk:$risk,run_id:$rid}' >> "$STATE/approvals.jsonl"
         (cd "$repo" && gh label create aidev-approved --color 0E8A16 --description "러너가 CI 확인 후 승인 커밋에만 머지" >/dev/null 2>&1
-         gh pr edit "$pr" --add-label aidev-approved >>"$LOG" 2>&1
+         pr_label "$pr" aidev-approved || log "$n: $pr 승인 라벨 실패 — 승인 스윕이 집지 못한다"
          gh pr comment "$pr" --body "✅ PR 처리기가 심사해 승인합니다 (${head:0:7}, risk=${SH_RISK:-?}) — 러너가 CI 를 확인한 뒤 이 커밋에만 머지하고 릴리즈합니다.
 
 멈춰 있던 이유: $(head -1 <<<"$hold")

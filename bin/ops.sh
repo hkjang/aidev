@@ -10,6 +10,13 @@
 #          shepherd on|off · release <이름> · draft-campaign "<목표 문장>" · activate-campaign <slug> · discard-draft <slug>
 #          board (이번 주 이사회 제안 보기) · board apply <번호...|all> (제안 적용) · board open (지금 열기)
 set -uo pipefail
+
+# gh pr edit --add-label 은 gh 2.45 에서 projectCards GraphQL 때문에 항상 실패한다 (2026-09-24). REST 로 붙인다.
+ops_pr_label(){ # $1=PR URL $2=라벨
+  local slug num; slug=$(sed -E 's#^https?://[^/]+/([^/]+/[^/]+)/pull/[0-9]+.*$#\1#' <<<"$1"); num=${1##*/}
+  [ -n "$slug" ] && [ -n "$num" ] || return 1
+  gh api -X POST "repos/$slug/issues/$num/labels" -f "labels[]=$2" >/dev/null 2>&1
+}
 export HOME="${HOME:-/home/hkjang}"
 export PATH="$HOME/.local/bin:$HOME/.nvm/versions/node/v22.23.1/bin:/usr/local/bin:/usr/bin:/bin"
 HERE="${AIDEV_BIN:-$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)}"
@@ -95,11 +102,11 @@ approve|reject)
   repo=$(repo_of "$pr"); why=${2:-}
   if [ "$verb" = approve ]; then
     gh label create aidev-approved -R "$repo" --color 0E8A16 --description "러너가 CI 확인 후 승인 커밋에만 머지" >/dev/null 2>&1
-    gh pr edit "$pr" --add-label aidev-approved >/dev/null 2>&1 && echo "승인 라벨 달음: $pr — 다음 회차(10분 안) 승인 스윕이 CI 확인 뒤 머지·릴리즈" || { echo "라벨 실패: $pr"; exit 1; }
+    ops_pr_label "$pr" aidev-approved && echo "승인 라벨 달음: $pr — 다음 회차(10분 안) 승인 스윕이 CI 확인 뒤 머지·릴리즈" || { echo "라벨 실패: $pr"; exit 1; }
     gh api -X DELETE "repos/$repo/issues/${pr##*/}/labels/aidev-rejected" >/dev/null 2>&1 || true
   else
     gh label create aidev-rejected -R "$repo" --color B60205 --description "사람이 반려 — 러너가 닫는다" >/dev/null 2>&1
-    gh pr edit "$pr" --add-label aidev-rejected >/dev/null 2>&1 && echo "반려 라벨 달음: $pr — 다음 회차에 닫고 교훈으로 기록" || { echo "라벨 실패: $pr"; exit 1; }
+    ops_pr_label "$pr" aidev-rejected && echo "반려 라벨 달음: $pr — 다음 회차에 닫고 교훈으로 기록" || { echo "라벨 실패: $pr"; exit 1; }
     [ -n "$why" ] && gh pr comment "$pr" --body "반려 사유(코파일럿): $why" >/dev/null 2>&1
     gh api -X DELETE "repos/$repo/issues/${pr##*/}/labels/aidev-approved" >/dev/null 2>&1 || true
   fi
