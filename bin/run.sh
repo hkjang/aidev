@@ -366,6 +366,7 @@ run_codex(){ # $1=단계 $2=프롬프트 $3=작업 디렉터리
     '{type:"result",subtype:"success",is_error:false,engine:"codex",result:("[codex] "+$r),total_cost_usd:null,num_turns:1,duration_ms:0,usage:{input_tokens:$it,output_tokens:$ot,cache_read_input_tokens:$ct,cache_creation_input_tokens:0}}' \
     > "$OUT/agent-$phase.json"
   log "$n: $phase — 코덱스 완료 (대체, in $it/out $ot tok)"
+  [ "$phase" = improve ] && RUN_ENGINE=codex
   return 0
 }
 record_usage(){ # $1=프로젝트 $2=단계 $3=json $4=txt
@@ -373,7 +374,7 @@ record_usage(){ # $1=프로젝트 $2=단계 $3=json $4=txt
   if jq -e '.type=="result"' "$j" >/dev/null 2>&1; then
     jq -r '.result // ""' "$j" >> "$t"
     jq -c --arg ts "$(date -Iseconds)" --arg d "$RUN_DATE" --arg p "$n" --arg ph "$phase" --arg rid "${RUN_ID:-}" --arg camp "${CAMPAIGN_ID:-}" \
-      '{ts:$ts,date:$d,project:$p,phase:$ph,run_id:$rid,campaign:$camp,subtype:(.subtype//""),duration_ms:(.duration_ms//0),num_turns:(.num_turns//0),
+      '{ts:$ts,date:$d,project:$p,phase:$ph,run_id:$rid,campaign:$camp,subtype:(.subtype//""),engine:(.engine//"claude"),duration_ms:(.duration_ms//0),num_turns:(.num_turns//0),
         cost_usd:(.total_cost_usd//null),input_tokens:(.usage.input_tokens//0),output_tokens:(.usage.output_tokens//0),
         cache_read:(.usage.cache_read_input_tokens//0),cache_create:(.usage.cache_creation_input_tokens//0)}' "$j" >> "$DATA/usage.jsonl"
     log "$n: $phase — $(jq -r '"\(.num_turns//0) turns, \((.duration_ms//0)/60000|floor)m, $\(.total_cost_usd//0|.*100|round/100), \(.subtype//"")"' "$j")"
@@ -932,8 +933,8 @@ record_run(){ # $1=프로젝트 $2=결과 문장 $3=outcome
   local st='{}'; [ -f "${OUT:-/nonexistent}/stages.json" ] && st=$(cat "$OUT/stages.json")
   jq -cn --arg ts "$(date -Iseconds)" --arg d "$RUN_DATE" --arg p "$1" --arg r "$2" --arg o "$3" --arg rid "${RUN_ID:-}" \
      --arg b "${BASE_SHA:-}" --arg h "${HEAD_SHA:-}" --arg pr "$pr" --argjson m "${RUN_META:-{\}}" --argjson st "$st" \
-     --arg camp "${CAMPAIGN_ID:-}" --arg au "${AUTONOMY_NOW:-}" --arg arm "${ARM:-}" --arg exp "${EXP_ID:-}" \
-     '{ts:$ts,date:$d,project:$p,result:$r,outcome:$o,run_id:$rid,base_sha:$b,head_sha:$h,pr:$pr,stages:$st,campaign:$camp,autonomy:$au,arm:$arm,experiment:$exp} + $m' >> "$DATA/runs.jsonl"
+     --arg camp "${CAMPAIGN_ID:-}" --arg au "${AUTONOMY_NOW:-}" --arg arm "${ARM:-}" --arg exp "${EXP_ID:-}" --arg eng "${RUN_ENGINE:-claude}" \
+     '{ts:$ts,date:$d,project:$p,result:$r,outcome:$o,run_id:$rid,base_sha:$b,head_sha:$h,pr:$pr,stages:$st,campaign:$camp,autonomy:$au,arm:$arm,experiment:$exp,engine:$eng} + $m' >> "$DATA/runs.jsonl"
   local mark outcome_ko
   case "$3" in
     release-ready) mark="🎉"; outcome_ko="머지하고 릴리즈까지 끝냈습니다";;
@@ -1677,7 +1678,10 @@ for d in "$ROOT"/*/; do
   [ -z "$dirty" ] || { log "skip $n: dirty working tree"; continue; }
   [ -f "$STATE/STOP-$n" ] && { log "skip $n: STOP"; continue; }
   if [ -z "$ONLY" ] && [ -s "$DATA/runs.jsonl" ]; then
-    read -r streak lastd < <(jq -rs --arg p "$n" --argjson k "$DORMANT_AFTER" '[.[]|select(.project==$p)] | (.[-$k:]) as $l | [(($l|length)==$k and all($l[]; .result|test("no change"))), ($l[-1].date // "")] | @tsv' "$DATA/runs.jsonl" 2>/dev/null || echo "false ")
+    # 코덱스 대체 회차의 "변경 없음" 은 그 저장소에 할 일이 없다는 뜻이 아니다 — 클로드가 한도에
+    # 걸려 대신 돈 것이고, 코덱스 대체는 절반이 변경 없이 끝난다(171회 중 85회, 2026-09-10~24).
+    # 그걸 휴면 근거로 쓰면 멀쩡한 저장소가 일주일씩 잠든다.
+    read -r streak lastd < <(jq -rs --arg p "$n" --argjson k "$DORMANT_AFTER" '[.[]|select(.project==$p and ((.engine // "claude") != "codex"))] | (.[-$k:]) as $l | [(($l|length)==$k and all($l[]; .result|test("no change"))), ($l[-1].date // "")] | @tsv' "$DATA/runs.jsonl" 2>/dev/null || echo "false ")
     if [ "$streak" = true ] && [ "$(policy "$n" '.tier')" != revenue ] && [ -n "$lastd" ] && [ $(( ($(date +%s) - $(date -d "$lastd" +%s)) / 86400 )) -lt "$DORMANT_DAYS" ] && ! grep -q -P "^$n\t" "$STATE/fix-queue.tsv" "$STATE/run-queue.tsv" 2>/dev/null; then
       log "skip $n: dormant (변경 없음 ${DORMANT_AFTER}연속, $lastd)"; continue
     fi
@@ -1693,7 +1697,7 @@ for d in "$ROOT"/*/; do
     rm -f "$cdf"
   fi
   if [ -z "$ONLY" ] && [ "$tier" != revenue ] && [ -s "$DATA/runs.jsonl" ]; then
-    nomerge=$(jq -rs --arg p "$n" --argjson k "$ROI_WINDOW" '[.[]|select(.project==$p)] | (.[-$k:]) as $l | (($l|length)==$k and all($l[]; (.outcome // "") | IN("merged","releasing","release-ready") | not))' "$DATA/runs.jsonl" 2>/dev/null || echo false)
+    nomerge=$(jq -rs --arg p "$n" --argjson k "$ROI_WINDOW" '[.[]|select(.project==$p and ((.engine // "claude") != "codex"))] | (.[-$k:]) as $l | (($l|length)==$k and all($l[]; (.outcome // "") | IN("merged","releasing","release-ready") | not))' "$DATA/runs.jsonl" 2>/dev/null || echo false)
     if [ "$nomerge" = true ]; then
       date -d "+$ROI_COOLDOWN_DAYS days" +%s > "$cdf"
       log "skip $n: 최근 ${ROI_WINDOW}회차 머지 0건 — ${ROI_COOLDOWN_DAYS}일 쉰다"
@@ -1759,7 +1763,7 @@ log "picked: ${picked[*]}"
 # 한 프로젝트의 회차 전체. --parallel 이면 서브셸에서 동시에 돈다(각자 워크트리·실행 디렉터리가 달라 서로 간섭하지 않는다).
 round_body(){
   local n=$1 remote_head
-  repo="$ROOT/$n"; ledger="$STATE/$n.md"; wt="$WT_BASE/$n"; result="no change"; OUTCOME=no-change; RUN_META="{}"; HEAD_SHA=""; BASE_SHA=""; url=""
+  repo="$ROOT/$n"; ledger="$STATE/$n.md"; wt="$WT_BASE/$n"; result="no change"; OUTCOME=no-change; RUN_META="{}"; HEAD_SHA=""; BASE_SHA=""; url=""; RUN_ENGINE=claude
   base=$(base_branch "$n")
   new_run "$n" improve; journal_seed "회차 노트 $RUN_ID — $n"
   exp_assign "$n" "$RUN_ID"

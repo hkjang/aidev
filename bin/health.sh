@@ -106,6 +106,18 @@ for d in "${ROOT:-/mnt/c/Users/USER/projects}"/*/; do
   jq --arg t "$title" --arg d "$(date +%F)" \
      'if any(.[]?; .title==$t and (.status=="pending" or .status=="done")) then . else . + [{title:$t,value:5,risk:1,size:"S",status:"pending",updated:$d,note:"이 저장소에는 워크플로 파일이 없어 러너 PR 이 전부 \"CI 검사 없음\" 으로 막힌다. 러너가 이미 돌리는 검증 명령(build·vet·test)을 그대로 .github/workflows/ci.yml 로 옮겨라. 이 파일은 보호 경로라 사람 승인을 받는다."}] end' \
      "$f" > "$f.tmp" 2>/dev/null && mv "$f.tmp" "$f" || rm -f "$f.tmp"
+  # 아이디어만 넣으면 그 저장소는 WIP 상한·성과 쿨다운에 걸려 회차가 안 잡힐 수 있다 —
+  # 막혔기 때문에 막힌 것을 못 푸는 교착이다. 수동 작업 큐로 한 회차를 직접 배정한다
+  # (run-queue 는 상한·쿨다운과 무관하게 잡히고, 회차가 끝나면 줄에서 지워진다).
+  q="$REPO_DIR/state/run-queue.tsv"; touch "$q"
+  stamp="$HOME/.auto-improve/.ci-queued-$n"
+  if ! grep -q -P "^$n\t" "$q" 2>/dev/null \
+     && [ $(( now - $(stat -c %Y "$stamp" 2>/dev/null || echo 0) )) -gt 604800 ]; then
+    date +%s > "$stamp"
+    printf '%s\t%s\t\t\t%s\n' "$n" "CI 공백 메우기(자동 배정)" \
+      "이 저장소에는 .github/workflows 파일이 하나도 없어 러너가 연 PR 이 전부 'CI 검사 없음' 으로 막혀 있습니다(현재 $(jq -r --arg p "$n" '.[$p].open // 0' "$REPO_DIR/state/open-prs.json" 2>/dev/null || echo 0)건).\n\n러너가 이미 이 저장소에서 돌리는 검증 명령(빌드·정적분석·테스트)을 그대로 .github/workflows/ci.yml 로 옮기세요.\n- push 와 pull_request 에서 돌 것\n- 러너가 쓰는 것과 같은 언어 버전·의존성 설치 단계\n- 새 테스트를 쓰거나 기존 테스트를 고치지 말 것. 지금 통과하는 것만 CI 로 옮기는 작업입니다\n- 워크플로 파일은 보호 경로라 이 PR 은 사람 승인을 받습니다. 그래도 됩니다" >> "$q"
+    echo "$n: CI 워크플로 추가를 수동 작업 큐에 배정 (PR 이 전부 'CI 검사 없음' 으로 막혀 있다)"
+  fi
   ci_gap+=("$n")
 done
 if [ ${#ci_gap[@]} -gt 0 ]; then
