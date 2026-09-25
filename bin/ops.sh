@@ -115,7 +115,10 @@ run)
   need "${1:-}" "run <이름> [요청 명세]"; p=$1; spec=${2:-}; is_project "$p" || { echo "러너 대상 프로젝트가 아님: $p"; exit 1; }
   q="$STATE/run-queue.tsv"; touch "$q"
   grep -q -P "^$p\t" "$q" && { echo "$p 는 이미 수동 큐에 있음"; exit 0; }
-  printf '%s\t코파일럿 요청: %s\t\t0\t%s\n' "$p" "$(cut -c1-80 <<<"${spec:-(명세 없음)}" | tr '\t' ' ')" "$(tr '\t\n' '  ' <<<"$spec")" >> "$q"
+  # 빈 칸을 연속 탭으로 두면 안 된다 — IFS 에 탭이 들어가면 read 가 연속된 탭을 하나로 합쳐
+  # 뒤 열이 앞으로 밀린다. 그래서 코파일럿으로 넣은 요청의 명세가 회차에 전달되지 않았다
+  # (2026-09-26 확인). 열은 프로젝트·메모·이슈번호·긴급도·명세 다섯이고 전부 값을 넣는다.
+  printf '%s\t코파일럿 요청: %s\t0\tnormal\t%s\n' "$p" "$(cut -c1-80 <<<"${spec:-(명세 없음)}" | tr '\t' ' ')" "$(tr '\t\n' '  ' <<<"$spec")" >> "$q"
   echo "수동 큐에 넣음: $p${spec:+ — \"$(cut -c1-80 <<<"$spec")\"} (다음 회차, 10분 안에 우선 실행)"; sync_state "run $p"
   ;;
 stop)   need "${1:-}" "stop <all|merge|release|이름> [사유]"; bash "$HERE/stop.sh" "$1" on "${2:-코파일럿에서 중지}" ;;

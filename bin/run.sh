@@ -1771,6 +1771,8 @@ if [ "${FIXONLY:-0}" -eq 1 ]; then
 fi
 RUN_PROJECT=""; RUN_ISSUE=""; RUN_SPEC=""; RUNQ="$STATE/run-queue.tsv"
 if [ -z "$FIX_PROJECT" ] && [ -z "$ONLY" ] && [ -s "$RUNQ" ]; then
+  # 주의: IFS 에 탭이 들어가면 bash 의 read 는 **연속된 탭을 구분자 하나로 합친다**. 빈 칸을
+  # 그냥 비워 두고 쓰면 뒤 열이 앞으로 밀린다 — 줄을 쓰는 쪽에서 빈 칸에도 값을 넣어야 한다.
   while IFS=$'\t' read -r rp rnote rnum rurg rspec; do [ -n "$rp" ] || continue
     if printf '%s\n' "${allcand[@]}" | grep -qx "$rp"; then picked=("$rp"); RUN_PROJECT="$rp"; RUN_ISSUE="$rnum"; RUN_SPEC="${rspec:-}"; log "run-queue: picked $rp ($rnote)"; break
     else (cd "$REPO_DIR" && gh issue comment "$rnum" --body "\`$rp\` 은 지금 후보가 아닙니다(미커밋 변경/원격 없음/30일 무활동). 정리 후 다시 라벨을 달아 주세요." >/dev/null 2>&1; gh api -X DELETE "repos/hkjang/aidev/issues/$rnum/labels/run" >/dev/null 2>&1) || true; grep -v -P "^$rp\t" "$RUNQ" > "$RUNQ.tmp"; mv "$RUNQ.tmp" "$RUNQ"; fi

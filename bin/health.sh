@@ -121,7 +121,10 @@ for d in "${ROOT:-/mnt/c/Users/USER/projects}"/*/; do
   if ! grep -q -P "^$n\t" "$q" 2>/dev/null \
      && [ $(( now - $(stat -c %Y "$stamp" 2>/dev/null || echo 0) )) -gt 604800 ]; then
     date +%s > "$stamp"
-    printf '%s\t%s\t\t\t%s\n' "$n" "CI 공백 메우기(자동 배정)" \
+    # 빈 칸을 연속 탭으로 두면 안 된다 — IFS 에 탭이 들어가면 bash 의 read 는 연속된 탭을
+    # 구분자 하나로 합친다. 그래서 명세가 열 세 칸 앞으로 밀려 RUN_SPEC 이 비었고, 배정한
+    # 작업이 회차에 전달되지 않았다 (2026-09-25 sqlon 이 두 번 다른 일을 했다).
+    printf '%s\t%s\t%s\t%s\t%s\n' "$n" "CI 공백 메우기(자동 배정)" 0 normal \
       "이 저장소에는 .github/workflows 파일이 하나도 없어 러너가 연 PR 이 전부 'CI 검사 없음' 으로 막혀 있습니다(현재 $(jq -r --arg p "$n" '.[$p].open // 0' "$REPO_DIR/state/open-prs.json" 2>/dev/null || echo 0)건).\n\n러너가 이미 이 저장소에서 돌리는 검증 명령(빌드·정적분석·테스트)을 그대로 .github/workflows/ci.yml 로 옮기세요.\n- push 와 pull_request 에서 돌 것\n- 러너가 쓰는 것과 같은 언어 버전·의존성 설치 단계\n- 새 테스트를 쓰거나 기존 테스트를 고치지 말 것. 지금 통과하는 것만 CI 로 옮기는 작업입니다\n- 워크플로 파일은 보호 경로라 이 PR 은 사람 승인을 받습니다. 그래도 됩니다" >> "$q"
     echo "$n: CI 워크플로 추가를 수동 작업 큐에 배정 (PR 이 전부 'CI 검사 없음' 으로 막혀 있다)"
   fi
