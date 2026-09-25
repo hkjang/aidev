@@ -24,3 +24,4 @@
 - [러너 15:43] release published — v0.31.1
 - [러너 15:43] gh-release created — GitHub Release v0.31.1
 - [러너 15:43] manifest failed — 누락/불량: jasql-mcp-v0.31.1.tar.gz
+- [러너 15:57] assets missing — 이전 v0.31.0 엔 8개, v0.31.1 엔 0개 — 워크플로: null: null/null

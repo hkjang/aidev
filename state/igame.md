@@ -210,3 +210,4 @@
 - 보류 아이디어: startGameSession 의 metadata:null 이 client_info 에 JSON null 로 저장됨(catalog.go:206, 가치 2/위험 1/S — 차선 후보로 유지) / serviceLocation 이 설정 읽기 실패를 삼켜 시간대가 조용히 Asia/Seoul 이 됨(extended.go:16, 호출처 6곳 동시 수정 필요, 가치 3/위험 2/M) / 끝난 세션에 계속 result 를 덧붙일 수 있음(catalog.go:512, 재시도 멱등성 정책 미확정으로 계속 보류, 가치 2/위험 2/S) / API PostgreSQL fixture 의 테스트별 스키마 격리(admin_pg_test.go 의 migratedPool 이 기본 스키마 공유, 가치 3/위험 2/M) / architecture.md 의 DEK·개인키 암호화·유예 회전 설명이 secretbox 구현과 불일치(가치 2/위험 1/S)
 - 과제서: 채택 — `database.go:128-131` 의 `_ = tx.Rollback(ctx)` 와 기존 PG 테스트 3개가 취소 경로를 전혀 덮지 않는다는 근거가 지금 코드와 정확히 일치해, 지정한 어드바이저리 락 방식으로 테스트만 추가하고 소스는 건드리지 않았다
 
+- 릴리즈: v0.7.21 (2026-09-25, run 2026-09-25-152105-igame-improve)
