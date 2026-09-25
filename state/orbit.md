@@ -82,3 +82,4 @@
 - 보류 아이디어: `orbitAt` 의 교류 조회에 상한이 없어 교류 많은 사용자의 전체 이력이 메모리로 올라옴 — 단순 LIMIT 은 지표를 틀어뜨려 집계를 DB 로 내려야 함 (2/2/M); `orbitAt` 의 `contexts`(분류 집계) 를 실제 postgres 로 고정 — `seedRelationship` 헬퍼 신설 필요 (2/1/S); `orbitAt` 의 사람별 memories count 상관 서브쿼리를 GROUP BY 집계로 — 동등성 회귀 기준이 main 에 없어 위험 2 (2/2/S); `getOrbit` 의 categories 가 JSON `null` 일 때 nil 슬라이스로 나가 과거 경로(`[]`)와 다름 (1/1/S); CI 에 postgres 서비스 컨테이너를 붙여 DB 테스트를 매번 돌리기 — `.github/workflows` 는 보호 경로라 사람이 할 일 (3/1/S)
 - 과제서: 채택 — 근거(data.go:772 에는 `earliest_at` 이 있고 timetravel.go:165~173 에는 없음, `operation()` 에 매개변수 자리 없음)가 지금 코드와 정확히 일치해 수용 기준 1~3 과 문서까지 그대로 구현했다.
 
+- 릴리즈: v0.7.1 (2026-09-26, run 2026-09-26-033237-orbit-approve)
