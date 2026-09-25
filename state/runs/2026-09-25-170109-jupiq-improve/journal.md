@@ -29,3 +29,16 @@
 - 확신 없는 곳: `email='nonsense'` 계열은 여전히 표시만 되고 안내되지 않는다(범위 밖, 근본은 UpdateProfile·UpsertOIDCUser 입력 검증). Postgres 대괄호식이 문자 그대로를 담으므로 collation이 바뀌어도 판정은 같지만, PG14(릴리스 통합 경로)에서는 직접 돌리지 않았다 — 문자 열거식이라 버전 의존은 없다고 본다.
 - 검증: make lint·make test-integration·go test ./... 통과, SKIP 0건, 되돌림 시 mail_integration_test.go:212 FAIL 확인. 새 커밋 5a67beb, 컨테이너 제거.
 - [러너 17:25] repair done — # 수리 요약 (5a67beb)  - 문제(비평 지적 그대로 확인): `btrim(email)<>''`는 공백만 지우므로 `email=E'\t'`·`E'\r\n'`·NBSP만 든 주소가 "보낼 주소 있음"으로 통과해
+
+## 비평 노트
+- 판정 approve(risk low, 차단 부서 없음). 확인한 것: Go 가 만든 패턴 바이트로 PG16·PG14(UTF8)에서 unicode.IsSpace 25개 룬 + 경계 문자('v','-','^',']',ZWSP,U+180E,공백에 둘러싸인 주소)를 TrimSpace 판정과 대조해 **불일치 0건** — 수리의 핵심 주장이 실제로 맞다.
+- 테스트는 실제로 판별한다: 새 user_id 조건 삭제 → mail_integration_test.go:212 FAIL, 이전 btrim 판(7b6f5b3) 으로 되돌려도 탭·CRLF·NBSP 소유자에서 FAIL. 둘 다 직접 실행 후 원복(git status 무출력), 컨테이너 제거. 통합·go test ./...·gofmt·vet·check-version 모두 통과.
+- 내가 세운 가설 하나는 틀렸다: 비ASCII 정규식 파라미터가 EUC_KR·LATIN1 DB 를 깨뜨린다 → 그 DB 에서는 migrations/014 가 먼저 실패하므로 UTF8 은 이 변경 전부터 사실상 필수다(새 제약 아님). 단 UTF8 요구는 어디에도 문서화돼 있지 않다.
+- 남는 우려(릴리즈 노트·다음 회차): mail.go:171 주석이 남은 계열을 'nonsense' 로만 좁게 적었지만 validAddress 는 내부 공백·<>,"·254자 초과도 버려 email='a b@c.d' 키는 아직 표시만 되고 삼켜진다 — 근본은 UpdateProfile·UpsertOIDCUser 입력 검증. 또 비활성·주소없는 소유자의 키는 영구 미표시로 남아 시간당 재조회된다(의도, 비용 무시할 만함).
+- 못 본 것: 실제 SMTP·Keycloak E2E, 프런트(무관). '주소 0개면 기록도 로그도 없다'는 전제는 service.go:122 조기 반환을 읽어 확인했을 뿐 통합 테스트가 그 부재를 단언하지는 않는다.
+- [러너 17:32] review approved — 리뷰 승인 (risk=low)
+- [러너 17:32] pr created — https://github.com/hkjang/jupiq/pull/24
+- [러너 17:36] ci passed — 검사 3개 모두 success
+- [러너 17:36] merge done — 5a67beb
+- [러너 17:42] release published — v1.8.2
+- [러너 17:45] assets verified — v1.8.2 자산 1개 (이전 v1.8.1: 1)

@@ -25,13 +25,38 @@
     "at": "2026-09-25T17:12:15+09:00"
   },
   "review": {
-    "state": "rejected",
-    "reason": "리뷰 거절: internal/store/mail.go:169 새 조건 `btrim(email)<>''` 은 PostgreSQL btrim 의 기본 제거 문자가 공백 하나뿐이어서 탭·줄바꿈만 든 주소를 '보낼 주소가 있다'로 통과시킨다. 실제 PostgreSQL 16 에서 확인: btrim(E'\\t')<>'' 는 true, btrim('   ')<>'' 는 false. email=E'\\t' 인 소유자의 만료 임박 키는 UPDATE 로 expiry_notified_at 이 찍혀 돌려지는데, mail/service.go:263-265 의 resolve 는 strings.TrimSpace 뒤 validAddress 로 그 주소를 버리므로 Notify 가 addresses 0개로 조기 반환한다(service.go:124-126) — mail_deliveries 도 로그도 남지 않는다. 즉 이 커밋이 닫았다고 말하는 '흔적 없이 조용히 만료되는 키'가 같은 계열(공백뿐인 주소)에서 그대로 남아 있다. 도달 경로: PATCH /auth/me → api/auth_handlers.go:106 → store/users.go:221-225 의 UpdateProfile 은 email 을 다듬지도 검증하지도 않고 그대로 저장하므로 아무 로그인 사용자나 자기 주소를 탭 한 글자로 만들 수 있다(OIDC UpsertOIDCUser 도 클레임을 그대로 쓴다). 고치는 법: `btrim(email)<>''` 대신 `email ~ '[^[:space:]]'` — empty/spaces/tab/newline/CRLF 는 false, 'a@b.c' 와 E'\\t a@b.c \\n' 은 true 로 Go 쪽 TrimSpace 계약과 일치함을 같은 컨테이너에서 확인했다. / internal/store/mail.go:159-163 주석이 '조건은 UserEmails가 수신자를 해석할 때와 같게 두어(활성이고, 다듬은 email이 비어 있지 않음) 두 경로가 같은 계정을 같게 읽는다'고 단언하지만 위와 같이 사실이 아니다. 이 등가 주장이 '보내기 전에 표시한다'는 설계가 안전하다는 유일한 근거이므로, 틀린 주석이 다음 사람에게 확인하지 않아도 된다는 잘못된 안심을 준다. 구현 노트가 스스로 경계한 '두 파서의 계약이 갈라진다'가 바로 이 자리에서 일어났다. / internal/store/mail_integration_test.go:182 새 테스트는 공백뿐인 주소를 '   '(공백 문자)로만 세우고 219행에서 '공백 주소 소유자는 빠진다'고 단언해, 공백류 전체를 고정한 것처럼 읽히지만 실제로는 btrim 이 처리하는 단 하나의 형태만 고정한다. blankID 를 E'\\t' 로 두면 지금 코드에서 이 단언이 깨진다 — 즉 테스트가 덮는 범위를 실제보다 넓게 말한다.",
-    "at": "2026-09-25T17:18:35+09:00"
+    "state": "approved",
+    "reason": "리뷰 승인 (risk=low)",
+    "at": "2026-09-25T17:32:19+09:00"
   },
   "repair": {
     "state": "done",
     "reason": "# 수리 요약 (5a67beb)  - 문제(비평 지적 그대로 확인): `btrim(email)<>''`는 공백만 지우므로 `email=E'\\t'`·`E'\\r\\n'`·NBSP만 든 주소가 \"보낼 주소 있음\"으로 통과해",
     "at": "2026-09-25T17:25:53+09:00"
+  },
+  "pr": {
+    "state": "created",
+    "reason": "https://github.com/hkjang/jupiq/pull/24",
+    "at": "2026-09-25T17:32:26+09:00"
+  },
+  "ci": {
+    "state": "passed",
+    "reason": "검사 3개 모두 success",
+    "at": "2026-09-25T17:36:13+09:00"
+  },
+  "merge": {
+    "state": "done",
+    "reason": "5a67beb425152101e20322f2e451b38b21d87216",
+    "at": "2026-09-25T17:36:17+09:00"
+  },
+  "release": {
+    "state": "published",
+    "reason": "v1.8.2",
+    "at": "2026-09-25T17:42:38+09:00"
+  },
+  "assets": {
+    "state": "verified",
+    "reason": "v1.8.2 자산 1개 (이전 v1.8.1: 1)",
+    "at": "2026-09-25T17:45:37+09:00"
   }
 }
