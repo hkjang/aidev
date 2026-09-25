@@ -20,3 +20,5 @@
 - [러너 19:31] pr created — https://github.com/hkjang/kanpic/pull/33
 - [러너 19:39] ci passed — 검사 2개 모두 success
 - [러너 19:40] merge done — 14703ea
+- [러너 19:51] release published — v0.254.0
+- [러너 19:52] assets verified — v0.254.0 자산 2개 (이전 v0.253.0: 2)

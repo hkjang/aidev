@@ -25,3 +25,7 @@
 - 못 본 것: webapp(Go 전용 변경), 전체 `go test ./...`(httpapi 만 돌림), PG15.
 - 승인이어도 남는 우려: `api.reminder.create.app_error` 가 한 핸들러에서 조회 실패/삽입 실패 두 원인을 덮어 클라이언트가 구분 못 함. `err.Error()` 가 원시 PG 오류를 본문에 싣는 것은 저장소 전반 472곳의 관례라 이번 차단 사유는 아니나 전역 정리 과제로 남는다. `gofmt -l` 이 잡는 native_activity.go 는 main 부터 있던 것 — 이 PR 탓 아님.
 - 릴리즈 노트: 리마인더 생성 두 경로에서 DB 장애가 404/403 대신 500 으로 보고된다(404 본문 id·메시지와 403 본문은 불변, 상태 코드만 분리). 새 오류 id·마이그레이션 없음.
+- [러너 19:40] review approved — 리뷰 승인 (risk=low)
+- [러너 19:40] pr created — https://github.com/hkjang/moyro/pull/24
+- [러너 19:53] ci passed — 검사 3개 모두 success
+- [러너 19:53] merge done — aaf79c6
