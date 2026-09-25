@@ -1,5 +1,5 @@
 {
- "generated": "2026-09-26T07:36:47+09:00",
+ "generated": "2026-09-26T07:49:06+09:00",
  "site": "https://hkjang.github.io/aidev",
  "description": "Claude Code 자율 개선 에이전트가 hkjang 의 프로젝트를 개선·테스트·머지·릴리즈한 일일 보고. 오늘 22회차·릴리즈 6건, 누적 1477회차·릴리즈 474건, 주의 필요 6건.",
  "today": {
@@ -10,18 +10,18 @@
   "merged": 1,
   "nochange": 0,
   "failed": 0,
-  "cost_usd": 56.39,
-  "minutes": 189,
-  "sessions": 33
+  "cost_usd": 57.94,
+  "minutes": 196,
+  "sessions": 34
  },
  "totals": {
   "runs": 1477,
   "released": 474,
   "days": 25,
-  "cost_usd": 5137.88,
-  "minutes": 12922,
-  "tokens_in": 5665792051,
-  "tokens_out": 43132503
+  "cost_usd": 5139.43,
+  "minutes": 12929,
+  "tokens_in": 5666761670,
+  "tokens_out": 43151879
  },
  "alerts": [
   {
@@ -75,17 +75,19 @@
   }
  ],
  "health": {
-  "checked": "2026-09-26T07:15:03+09:00",
-  "last_run": "2026-09-26T06:19:56+09:00",
-  "seconds_since_last": 3305,
-  "runner_pid": "4097307",
-  "runner_age_seconds": 2968,
-  "scheduler_status": "실행 중",
-  "scheduler_next_run": "2026-09-26 오전 7:20:00",
+  "checked": "2026-09-26T07:45:03+09:00",
+  "last_run": "2026-09-26T07:36:45+09:00",
+  "seconds_since_last": 496,
+  "runner_pid": "",
+  "runner_age_seconds": 0,
+  "scheduler_status": "준비",
+  "scheduler_next_run": "2026-09-26 오전 7:50:00",
   "disk_percent": 74,
   "ok": true,
   "problems": [],
-  "actions": []
+  "actions": [
+   "소유 프로세스 없는 잠금 파일을 제거했다"
+  ]
  },
  "lessons": [
   {
@@ -304,10 +306,10 @@
    "why": "guard: held — internal/intelligenceapi/credential_race_integration_test.go ",
    "evidence": "https://github.com/hkjang/aidev/tree/main/state/runs/2026-09-26-055030-qurio-improve",
    "labels": "",
-   "action": "PR 처리기가 매시간 살핀다 (아직 순서가 오지 않음) · 승인: PR 라벨 aidev-approved / 반려: aidev-rejected — 다음 회차에 러너가 승인 당시 커밋에만 CI 확인 후 머지·닫기",
+   "action": "PR 처리기가 사람에게 넘김 — 사람만 승인할 수 있는 파일을 건드림: internal/intelligenceapi/credential_race_integration_test.go  · 승인: PR 라벨 aidev-approved / 반려: aidev-rejected — 다음 회차에 러너가 승인 당시 커밋에만 CI 확인 후 머지·닫기",
    "date": "2026-09-26",
-   "shepherd": "",
-   "shepherd_action": ""
+   "shepherd": "보호 파일 · 사람 필요 (09-26 07:49) — 사람만 승인할 수 있는 파일을 건드림: internal/intelligenceapi/credential_race_integration_test.go ",
+   "shepherd_action": "needs-human"
   },
   {
    "kind": "PR",
@@ -319,10 +321,10 @@
    "why": "review: missing — 리뷰 결과 없음/손상: missing — 보류",
    "evidence": "https://github.com/hkjang/aidev/tree/main/state/runs/2026-09-26-055032-releasedock-improve",
    "labels": "",
-   "action": "PR 처리기가 매시간 살핀다 (아직 순서가 오지 않음) · 승인: PR 라벨 aidev-approved / 반려: aidev-rejected — 다음 회차에 러너가 승인 당시 커밋에만 CI 확인 후 머지·닫기",
+   "action": "PR 처리기가 다음 시간에 다시 시도 · 승인: PR 라벨 aidev-approved / 반려: aidev-rejected — 다음 회차에 러너가 승인 당시 커밋에만 CI 확인 후 머지·닫기",
    "date": "2026-09-26",
-   "shepherd": "",
-   "shepherd_action": ""
+   "shepherd": "리뷰 없음 · 심사 거절 → 다음 시간에 수정 (09-26 07:49) — - web/src/pages/simple/SimpleRunDetailPage.tsx:465 streamLost 로 띄우는 Alert 이 `live` 로 걸러지지 않고, 이 상태를 자동으로 되돌리는 곳은 249줄의 'open' 리스너뿐이다. 그래서 스트림이 끊긴 뒤 실행이 끝나면 안내가 ",
+   "shepherd_action": "review-reject"
   },
   {
    "kind": "PR",
@@ -1381,13 +1383,15 @@
   }
  ],
  "shepherd": {
-  "last_pass": "2026-09-26T05:47:38+09:00",
+  "last_pass": "2026-09-26T07:40:51+09:00",
   "enabled": true,
   "today": {
-   "approve": 1
+   "approve": 1,
+   "review-reject": 1,
+   "needs-human": 1
   },
-  "total": 316,
-  "pending_human": 87
+  "total": 318,
+  "pending_human": 88
  },
  "agents": {
   "rows": [
@@ -1407,7 +1411,7 @@
     "role": "비평 critic",
     "calls": 326,
     "metric": "최종 승인 91% · 한 번이라도 거절 44 · 승인·머지 뒤 회귀 0/245",
-    "cost": 536.87
+    "cost": 538.43
    },
    {
     "role": "수리 repairer",
@@ -1429,9 +1433,9 @@
    },
    {
     "role": "PR 심사 shepherd-reviewer",
-    "calls": 212,
-    "metric": "승인 66 · 거절 59 · 사람 필요 87 · 승인 뒤 회귀 0",
-    "cost": 353.82
+    "calls": 214,
+    "metric": "승인 66 · 거절 60 · 사람 필요 88 · 승인 뒤 회귀 0",
+    "cost": 355.38
    },
    {
     "role": "PR 수리 shepherd-fixer",
@@ -1913,7 +1917,7 @@
    "merged": 1,
    "nochange": 0,
    "failed": 0,
-   "cost_usd": 56.39
+   "cost_usd": 57.94
   },
   {
    "date": "2026-09-25",
@@ -2142,8 +2146,8 @@
    "merged": 68,
    "nochange": 92,
    "failed": 4,
-   "cost": 886.82,
-   "minutes": 2553
+   "cost": 888.38,
+   "minutes": 2560
   },
   {
    "key": "2026-W38",
@@ -2192,8 +2196,8 @@
    "merged": 231,
    "nochange": 117,
    "failed": 32,
-   "cost": 5137.88,
-   "minutes": 12922
+   "cost": 5139.43,
+   "minutes": 12929
   }
  ],
  "projects": [
@@ -3003,8 +3007,8 @@
    "last_ts": "2026-09-26T06:04:11+09:00",
    "last_status": "other",
    "last_result": "review held, PR open https://github.com/hkjang/releasedock/pull/24",
-   "cost": 86.73,
-   "minutes": 214,
+   "cost": 88.29,
+   "minutes": 221,
    "grade": "C",
    "grade_why": "14일: 릴리즈 4, 실패 0, 경고 2, 회귀 0",
    "lessons": 1,
