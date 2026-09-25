@@ -1,7 +1,7 @@
 ---
 title: "vibe-code — 자율 개선 이력"
-description: "vibe-code: 자율 개선 회차 1회, 릴리즈 1건. 최근 릴리즈 v1.4.2."
-last_modified_at: 2026-09-26 07:31:54 +0900
+description: "vibe-code: 자율 개선 회차 2회, 릴리즈 2건. 최근 릴리즈 v1.4.2 (자산 0개)."
+last_modified_at: 2026-09-26 07:36:47 +0900
 ---
 {% raw %}
 <script type="application/ld+json">
@@ -11,35 +11,35 @@ last_modified_at: 2026-09-26 07:31:54 +0900
  "name": "vibe-code",
  "codeRepository": "https://github.com/hkjang/vibe-code",
  "url": "https://hkjang.github.io/aidev/projects/vibe-code/",
- "description": "vibe-code: 자율 개선 회차 1회, 릴리즈 1건. 최근 릴리즈 v1.4.2.",
+ "description": "vibe-code: 자율 개선 회차 2회, 릴리즈 2건. 최근 릴리즈 v1.4.2 (자산 0개).",
  "inLanguage": "ko",
  "maintainer": {
   "@type": "Person",
   "name": "hkjang",
   "url": "https://github.com/hkjang"
  },
- "dateModified": "2026-09-26T07:31:54+09:00",
+ "dateModified": "2026-09-26T07:36:47+09:00",
  "version": "1.4.2"
 }
 </script>
 
 # vibe-code
 
-<p class="tldr"><strong>요약.</strong> vibe-code: 자율 개선 회차 1회, 릴리즈 1건. 최근 릴리즈 v1.4.2. <span class="pill pill-merged" title="14일: 릴리즈 1, 실패 0, 경고 1, 회귀 0">건강 B</span> <span class="meta">14일: 릴리즈 1, 실패 0, 경고 1, 회귀 0</span></p>
+<p class="tldr"><strong>요약.</strong> vibe-code: 자율 개선 회차 2회, 릴리즈 2건. 최근 릴리즈 v1.4.2 (자산 0개). <span class="pill pill-merged" title="14일: 릴리즈 2, 실패 0, 경고 2, 회귀 0">건강 C</span> <span class="meta">14일: 릴리즈 2, 실패 0, 경고 2, 회귀 0</span></p>
 
-<ul class="stats"><li><b>1</b><span>회차</span></li><li><b>1</b><span>프로젝트</span></li><li><b>0</b><span>배포 준비 완료</span></li><li><b>1</b><span>릴리즈 진행 중</span></li><li><b>0</b><span>병합 완료</span></li><li><b>0</b><span>검토 대기</span></li><li><b>0</b><span>검증 실패</span></li><li><b>0</b><span>변경 없음</span></li><li><b>0</b><span>실행 오류</span></li><li><b>$13.56</b><span>비용</span></li><li><b>35분</b><span>에이전트 시간</span></li></ul>
+<ul class="stats"><li><b>2</b><span>회차</span></li><li><b>1</b><span>프로젝트</span></li><li><b>0</b><span>배포 준비 완료</span></li><li><b>2</b><span>릴리즈 진행 중</span></li><li><b>0</b><span>병합 완료</span></li><li><b>0</b><span>검토 대기</span></li><li><b>0</b><span>검증 실패</span></li><li><b>0</b><span>변경 없음</span></li><li><b>0</b><span>실행 오류</span></li><li><b>$13.56</b><span>비용</span></li><li><b>35분</b><span>에이전트 시간</span></li></ul>
 
 ## 현황
 
 <dl class="kv">
 <dt>저장소</dt><dd><a href="https://github.com/hkjang/vibe-code">https://github.com/hkjang/vibe-code</a></dd>
-<dt>마지막 회차</dt><dd>2026-09-23 13:11 KST — <span class="pill pill-released">🚀 릴리즈</span> merged <a href="https://github.com/hkjang/vibe-code/pull/1">PR #1</a>, released <a href="https://github.com/hkjang/vibe-code/releases/tag/v1.4.1">v1.4.1</a>, <strong>ASSETS MISSING</strong></dd>
-<dt>최근 릴리즈</dt><dd><a href="https://github.com/hkjang/vibe-code/releases/tag/v1.4.2">v1.4.2</a> — released <a href="https://github.com/hkjang/vibe-code/releases">전체 릴리즈 →</a></dd>
+<dt>마지막 회차</dt><dd>2026-09-26 07:36 KST — <span class="pill pill-released">🚀 릴리즈</span> merged <a href="https://github.com/hkjang/vibe-code/pull/2">PR #2</a>, released <a href="https://github.com/hkjang/vibe-code/releases/tag/v1.4.2">v1.4.2</a>, <strong>ASSETS MISSING</strong></dd>
+<dt>최근 릴리즈</dt><dd><a href="https://github.com/hkjang/vibe-code/releases/tag/v1.4.2">v1.4.2</a> — released · 자산 0개 (이전 v1.4.0: 2개) <span class="pill pill-failed">❌ 자산 누락</span> <a href="https://github.com/hkjang/vibe-code/releases">전체 릴리즈 →</a></dd>
 </dl>
 
 ## 회차 이력
 
-<div class="table-wrap"><table class="rt"><thead><tr><th>일시</th><th class="primary">프로젝트</th><th>결과</th></tr></thead><tbody><tr data-status="released"><td data-label="일시">2026-09-23 13:11</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/vibe-code/">vibe-code</a></td><td data-label="결과"><span class="pill pill-merged" title="outcome=releasing">릴리즈 진행 중</span> merged <a href="https://github.com/hkjang/vibe-code/pull/1">PR #1</a>, released <a href="https://github.com/hkjang/vibe-code/releases/tag/v1.4.1">v1.4.1</a>, <strong>ASSETS MISSING</strong><div class="meta">5파일 <span style="color:var(--good)">+220</span>/<span style="color:var(--bad)">−15</span> · 테스트 1 — fix: checkpoint snapshots untracked files, not just tracked changes</div></td></tr></tbody></table></div>
+<div class="table-wrap"><table class="rt"><thead><tr><th>일시</th><th class="primary">프로젝트</th><th>결과</th></tr></thead><tbody><tr data-status="released"><td data-label="일시">2026-09-26 07:36</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/vibe-code/">vibe-code</a></td><td data-label="결과"><span class="pill pill-merged" title="outcome=releasing">릴리즈 진행 중</span> merged <a href="https://github.com/hkjang/vibe-code/pull/2">PR #2</a>, released <a href="https://github.com/hkjang/vibe-code/releases/tag/v1.4.2">v1.4.2</a>, <strong>ASSETS MISSING</strong><div class="meta">3파일 <span style="color:var(--good)">+220</span>/<span style="color:var(--bad)">−14</span> · 테스트 1 — fix: archiveDonePlans no longer deletes an archived plan of the same name</div></td></tr><tr data-status="released"><td data-label="일시">2026-09-23 13:11</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/vibe-code/">vibe-code</a></td><td data-label="결과"><span class="pill pill-merged" title="outcome=releasing">릴리즈 진행 중</span> merged <a href="https://github.com/hkjang/vibe-code/pull/1">PR #1</a>, released <a href="https://github.com/hkjang/vibe-code/releases/tag/v1.4.1">v1.4.1</a>, <strong>ASSETS MISSING</strong><div class="meta">5파일 <span style="color:var(--good)">+220</span>/<span style="color:var(--bad)">−15</span> · 테스트 1 — fix: checkpoint snapshots untracked files, not just tracked changes</div></td></tr></tbody></table></div>
 
 ## 비용·사용량
 

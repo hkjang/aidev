@@ -31,3 +31,4 @@
 - [러너 07:13] merge done — fd141bd
 - [러너 07:22] release published — v1.4.2
 - [러너 07:22] gh-release created — GitHub Release v1.4.2
+- [러너 07:36] assets missing — 이전 v1.4.0 엔 2개, v1.4.2 엔 0개 — 워크플로: null: null/null
