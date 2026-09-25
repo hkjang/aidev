@@ -177,3 +177,4 @@
 - 보류 아이디어: `responseNoticeBytes = 320` 예약이 실제 절단 공지보다 짧아 `clampResponse` 결과가 예산 초과 — `truncation_test.go:31` 이 이미 `budget+responseNoticeBytes` 를 허용해 느슨한 계약이 의도인지 먼저 확인 필요 (가치 2 / 위험 2 / S). `finishCall` 이 예산 적용 뒤 `argumentNotes`·`freshnessNote` 를 덧붙여 최종 응답이 예산 초과 — 주석에 명시된 의도이므로 '노트 길이를 먼저 빼기' 로만 접근 (가치 2 / 위험 2 / M). `cutAtRuneBoundary`(search)와 `runeSafeCut`(mcp)의 계약이 갈라지지 않게 테이블 테스트로 고정 — 순수 테스트 추가, 위험 0 이지만 가치도 낮음 (가치 2 / 위험 1 / S). `Sanitize` 의 finding 이 가장 심각한 규칙이 아니라 마지막 규칙을 보고 — 공식 심각도 계약 미확인이라 보류 유지 (가치 2 / 위험 1 / S). `internal/app` 릴리즈 워크플로 flaky — 실패 테스트 이름 미확보(이번 회차에도 app 통과), 이름 없이는 범위 무한 (가치 3 / 위험 2 / M).
 - 과제서: 채택 — 지정한 별칭 사슬(cache.go:32-33 / args.go:170 / service.go:230-233)과 비대칭 근거가 현재 코드와 정확히 맞았고, 예측대로 제한 분기만 수정 전 실패해 수용 기준 1~4 를 충족했다.
 
+- 릴리즈: v0.77.17 (2026-09-25, run 2026-09-25-104126-git-ctx-improve)
