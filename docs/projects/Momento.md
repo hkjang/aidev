@@ -1,7 +1,7 @@
 ---
 title: "Momento — 자율 개선 이력"
 description: "Momento: 자율 개선 회차 58회, 릴리즈 3건. 최근 릴리즈 v0.34.44 (자산 2개)."
-last_modified_at: 2026-09-25 14:38:05 +0900
+last_modified_at: 2026-09-25 15:49:35 +0900
 ---
 {% raw %}
 <script type="application/ld+json">
@@ -18,7 +18,7 @@ last_modified_at: 2026-09-25 14:38:05 +0900
   "name": "hkjang",
   "url": "https://github.com/hkjang"
  },
- "dateModified": "2026-09-25T14:38:05+09:00",
+ "dateModified": "2026-09-25T15:49:35+09:00",
  "version": "0.34.44"
 }
 </script>
