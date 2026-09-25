@@ -1870,7 +1870,13 @@ $(printf '%b' "$RUN_SPEC")
   # 프로젝트 프로필: 정찰이 유지하는 저장소 요약(목적·스택·구조·검증 명령·관례·위험 구역). 14일이 지나면 정찰이 다시 쓴다.
   # 매 회차 45분 중 10분을 "파악" 에 쓰던 것을 줄이고, 구현·비평·수리·심사가 같은 그림을 본다.
   profile_age=999; [ -f "$STATE/$n.profile.md" ] && profile_age=$(( ( $(date +%s) - $(stat -c %Y "$STATE/$n.profile.md") ) / 86400 ))
-  if [ "$(policy "$n" '.agents.scout')" != false ] && [ "${SCOUT:-1}" != 0 ] && [ "$AUTONOMY_NOW" != analyze ]; then
+  # 할 일이 이미 정해진 회차(수동 작업 큐의 명세)에서는 정찰을 돌리지 않는다. 고를 것이 없는데
+  # 고르는 세션을 붙이면 돈만 드는 것이 아니라 **지정된 작업을 덮어쓴다** — 2026-09-25 sqlon 에
+  # "CI 워크플로를 만들라" 고 배정했는데 정찰이 자기가 고른 과제(비동기 binds)를 과제서로 내
+  # 놓았고 구현자는 그것을 했다. 캠페인은 목표만 주므로(저장소별 과제는 정해야 한다) 그대로 둔다.
+  if [ -n "${RUN_SPEC:-}" ] && [ "$n" = "${RUN_PROJECT:-}" ]; then
+    stage scout skipped "요청된 작업이 있어 정찰을 건너뛴다 (과제는 이미 정해져 있다)"
+  elif [ "$(policy "$n" '.agents.scout')" != false ] && [ "${SCOUT:-1}" != 0 ] && [ "$AUTONOMY_NOW" != analyze ]; then
     sbud=$(policy "$n" '.budget_usd.scout'); sbud=${sbud:-2}
     if budget_ok "$sbud"; then
       sprompt=$(TASK_NOTE="${fix_note}${request_note:+
