@@ -564,7 +564,13 @@ approvals(){
     rm -rf "$OUT/home"
     # 아무것도 달라지지 않은 승인 확인(같은 PR 이 여전히 CI 대기/실패)은 회차로 기록하지 않는다 —
     # 10분마다 같은 기록이 쌓여 일일 회차 상한(60)을 태우고 대시보드를 덮었다 (2026-09-08).
-    if [ "$OUTCOME" = merged ] || [ "${CI_STATE:-}" = failed ]; then
+    # 단, 머지 뒤 릴리즈까지 간 회차는 OUTCOME 이 releasing·release-ready 로 바뀐다.
+    # `= merged` 만 보면 **가장 잘 끝난 회차가 골라서 지워진다** — 2026-09-25 까지 이렇게
+    # 사라진 승인 회차가 71건($127)이고, 대시보드·성과 쿨다운·논문의 머지 뒤 분석이 모두
+    # 그만큼 적게 세고 있었다. 머지가 성사된 모든 결말을 기록한다.
+    case "${OUTCOME:-}" in merged|releasing|release-ready) recordable=1;; *) recordable=0;; esac
+    [ "${CI_STATE:-}" = failed ] && recordable=1
+    if [ "$recordable" = 1 ]; then
       record_run "$n" "$result" "$OUTCOME"; sync_repo "run($RUN_DATE): $n — $result"
     else
       log "$n: 승인 대기 유지 ($pr, CI ${CI_STATE:-?}) — 회차로 기록하지 않음"; rm -rf "$OUT"
@@ -1713,7 +1719,7 @@ for d in "$ROOT"/*/; do
     # 코덱스 대체 회차의 "변경 없음" 은 그 저장소에 할 일이 없다는 뜻이 아니다 — 클로드가 한도에
     # 걸려 대신 돈 것이고, 코덱스 대체는 절반이 변경 없이 끝난다(171회 중 85회, 2026-09-10~24).
     # 그걸 휴면 근거로 쓰면 멀쩡한 저장소가 일주일씩 잠든다.
-    read -r streak lastd < <(jq -rs --arg p "$n" --argjson k "$DORMANT_AFTER" '[.[]|select(.project==$p and ((.engine // "claude") != "codex"))] | (.[-$k:]) as $l | [(($l|length)==$k and all($l[]; .result|test("no change"))), ($l[-1].date // "")] | @tsv' "$DATA/runs.jsonl" 2>/dev/null || echo "false ")
+    read -r streak lastd < <(jq -rs --arg p "$n" --argjson k "$DORMANT_AFTER" '[.[]|select(.project==$p and ((.engine // "claude") != "codex"))] | sort_by(.ts) | (.[-$k:]) as $l | [(($l|length)==$k and all($l[]; .result|test("no change"))), ($l[-1].date // "")] | @tsv' "$DATA/runs.jsonl" 2>/dev/null || echo "false ")
     if [ "$streak" = true ] && [ "$(policy "$n" '.tier')" != revenue ] && [ -n "$lastd" ] && [ $(( ($(date +%s) - $(date -d "$lastd" +%s)) / 86400 )) -lt "$DORMANT_DAYS" ] && ! grep -q -P "^$n\t" "$STATE/fix-queue.tsv" "$STATE/run-queue.tsv" 2>/dev/null; then
       log "skip $n: dormant (변경 없음 ${DORMANT_AFTER}연속, $lastd)"; continue
     fi
@@ -1729,7 +1735,7 @@ for d in "$ROOT"/*/; do
     rm -f "$cdf"
   fi
   if [ -z "$ONLY" ] && [ "$tier" != revenue ] && [ -s "$DATA/runs.jsonl" ]; then
-    nomerge=$(jq -rs --arg p "$n" --argjson k "$ROI_WINDOW" '[.[]|select(.project==$p and ((.engine // "claude") != "codex"))] | (.[-$k:]) as $l | (($l|length)==$k and all($l[]; (.outcome // "") | IN("merged","releasing","release-ready") | not))' "$DATA/runs.jsonl" 2>/dev/null || echo false)
+    nomerge=$(jq -rs --arg p "$n" --argjson k "$ROI_WINDOW" '[.[]|select(.project==$p and ((.engine // "claude") != "codex"))] | sort_by(.ts) | (.[-$k:]) as $l | (($l|length)==$k and all($l[]; (.outcome // "") | IN("merged","releasing","release-ready") | not))' "$DATA/runs.jsonl" 2>/dev/null || echo false)
     if [ "$nomerge" = true ]; then
       date -d "+$ROI_COOLDOWN_DAYS days" +%s > "$cdf"
       log "skip $n: 최근 ${ROI_WINDOW}회차 머지 0건 — ${ROI_COOLDOWN_DAYS}일 쉰다"
