@@ -1,13 +1,13 @@
 ---
 title: "Complementary Agents for Autonomous Software Maintenance at Portfolio Scale"
-description: "An experience report from 18 days, 46 repositories, 1,031 runner rounds, 443 pull requests and 331 releases: how a single operator's fleet of repositories is maintained by a runner that splits each change across scout, builder, critic, repairer, arbiter and releaser agents, and what we learned."
+description: "An experience report from 24 days, 48 repositories, 1,441 runner rounds, 870 pull requests and 464 releases: how a single operator's fleet of repositories is maintained by a runner that splits each change across scout, builder, critic, repairer, arbiter and releaser agents, and what we learned."
 ---
 
 # Complementary Agents for Autonomous Software Maintenance at Portfolio Scale
 
-**An experience report from the aidev runner (2026-09-02 → 2026-09-19)**
+**An experience report from the aidev runner (2026-09-02 → 2026-09-25)**
 
-*hkjang · with Claude (Fable 5.1) as co-author of the system and of this report · draft v3, 2026-09-19 · Korean version: [한국어](./ko/) · PDF: [English](./aidev-complementary-agents-en.pdf) · [한국어](./aidev-complementary-agents-ko.pdf)*
+*hkjang · with Claude (Fable 5.1) as co-author of the system and of this report · draft v4, 2026-09-25 · Korean version: [한국어](./ko/) · PDF: [English](./aidev-complementary-agents-en.pdf) · [한국어](./aidev-complementary-agents-ko.pdf)*
 
 ---
 
@@ -308,6 +308,46 @@ Half of our failures are the runner's own plumbing, not the agents — which is 
 | median days to first fix-titled commit | 4 | |
 
 **Reading.** This is an *upper bound* on "the merged change had to be corrected": a later fix that touches the same file is not necessarily a fix *of* that change, and one broad human fix (Vendra's permission tightening) counts against six PRs at once. Even so, a quarter of merged changes sit in files a human had to fix within a month, and the critic's risk label did not separate them (26% vs 24%). We therefore treat the 0-regression figure of §6.2 as what it is — a 48-hour statement — and now publish the 30-day number on the dashboard with its caveat. Two follow-ups are queued: attributing fixes to changes by line (blame) rather than by file, and using the 30-day rate per project to set the observation window before autonomy is raised.
+
+### 6.9 Recount (2026-09-25), after two data corrections
+
+Sections 6.1–6.8 are as of 2026-09-19. Two defects were later found in the record itself (§7) and
+fixed; the corrected numbers differ. Both defects undercounted.
+
+1. **Vanished approval rounds** — the approval sweep dropped precisely the rounds that merged *and*
+   released (71 of them). 56 were recovered by matching merge-commit timestamps back to pull requests.
+2. **Legacy-format rounds** — the first four days (09-02 to 09-05) hold 249 rounds written before the
+   structured `outcome` field existed, so every later aggregation and analysis skipped them. 246 were
+   recovered from their result sentences. These are the oldest merges, so they contribute the most
+   observation time to the post-merge analysis.
+
+| | 2026-09-19 (18 days) | 2026-09-25 (24 days, corrected) |
+|---|---|---|
+| Repositories touched | 46 | 48 |
+| Rounds (all) | 1,031 | 1,441 |
+| Improvement rounds | 704 | 1,045 |
+| Pull requests opened (unique) | 443 | 870 |
+| Merges performed by the runner (stage `merge done`) | 244 | 465 |
+| Human / shepherd approvals entering the sweep | 60 / 25 | 60 / 65 |
+| Releases published (unique) | 331 | 464 |
+| Rounds per day (median / max) | 58 / 102 | 61 / 103 |
+| Cumulative cost | — | \$5,050 (\$3.50 per round) |
+
+The **post-merge corrective-maintenance (E2)** sample grew with it — from 459 merged pull requests in
+the 09-19 draft to 655, and from 269 to **459** with at least seven days of observation. With the
+larger sample, the comparison by approver reversed direction.
+
+| Approver | Sample (≥7 days observed) | Corrective commit within 30 days | of which fixed by a human |
+|---|---|---|---|
+| Runner (auto / shepherd) | 411 | 71.8% | **31.9%** |
+| Human | 48 | 70.8% | **25.0%** |
+
+On the smaller samples (221 and 13) the AI-approved changes appeared to need *less* human follow-up
+than the human-approved ones. With the larger sample the ordering flipped. Neither figure comes from
+random assignment — humans only see pull requests that touch guarded paths (§4), i.e. the harder ones
+by construction. But the fact that the direction flipped with sample size is itself the finding: this
+axis does not support a conclusion yet. The 30-day window does not actually close until early October
+(currently 192 pull requests observed for 20+ days, none for 30).
 
 ## 7. Threats to validity
 
