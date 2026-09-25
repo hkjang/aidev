@@ -204,3 +204,10 @@
 
 - 릴리즈: v0.44.0 (2026-09-24, run 2026-09-24-000023-muni-approve)
 - 릴리즈: v0.45.0 (2026-09-25, run 2026-09-25-004519-muni-approve)
+## 2026-09-25
+- 선택: 내려받기 `Content-Disposition` 의 `filename*` 를 RFC 8187 규칙으로 인코딩하기 (가치 3 / 위험 1 / 작업량 S)
+- 결과: 성공
+- 요약: 문서 내려받기·발표자료·첨부·넘겨받기 네 경로가 같은 `filename*` 에 서로 다른 인코딩을 넣고 있었고 어느 쪽도 ext-value 규칙이 아니었습니다 — 앞의 셋은 URL 용 다섯 글자 치환기(`%` 공백 `#` `?` `"`)를 써서 한글 제목의 UTF-8 바이트를 매개변수에 raw 로 남겨 `mime.ParseMediaType` 이 값 전체를 거부하게 만들었고(길이와 무관, 모든 한글 제목), 제목에 쌍반점이 있으면 파싱은 성공하면서 `구분;키=값.md` 가 `구분` 으로 조용히 잘렸습니다; 넘겨받기 쪽 `url.PathEscape` 는 `=` `:` `@` 를 남겨 같은 거부를 부릅니다(정찰이 논리로만 적었던 추측을 단위 테스트로 확인). attr-char(영숫자와 `` !#$&+-.^_`|~ ``) 밖의 모든 바이트를 퍼센트 인코딩하는 `extValueEscape` 를 `export.go` 에 두어 네 경로가 한 규칙을 쓰게 했고, 검증은 프로덕션 치환기와 비교하지 않고 받는 쪽 파서(`internal/handoff` 의 `filenameOf` 가 쓰는 `mime.ParseMediaType`)로 이름을 다시 읽어 원래 제목과 같은지 보는 방식으로 했습니다. 단위 3(파서 왕복 13건, attr-char 불변 3건, 그 밖 escape 10건)과 live 3(문서 내려받기 / 첨부 내려받기 / 넘겨받기 표 회수, 모두 실제 라우트)을 먼저 실패시켜 두고 고쳤으며, 헬퍼 본문만 되돌리자 그 여섯과 기존 `TestAClaimIsIssuedOnceAndRedeemedOnce` 가 다시 실패해 인과를 확정했습니다. `export_filename_live_test.go` 의 '아직 파싱되지 않는다' 알려진 공백 주석과 `t.Logf` 도 걷어냈습니다. postgres:16-alpine 컨테이너에 `MUNI_TEST_DSN` 을 주어 `go test ./...` 전체 통과(httpapi PASS 233 / SKIP 0 / FAIL 0), `go vet ./...`, `gofmt -l .`(clean), `scripts/check-webui-placeholder.sh` 통과. 프런트는 손대지 않아 `npm` 검사는 돌리지 않았습니다. 커밋 299b4dc.
+- 보류 아이디어: 워크스페이스 ZIP 내려받기에도 `filename*` 을 주기 — 이제 다섯 경로 중 `workspace_export.go:111` 만 `filename*` 이 없고 quoted-string 안에 따옴표 포함 원문을 넣음 (3/2/S) / `Content-Disposition` 을 만드는 다섯 자리를 헬퍼 하나로 모으기 — escape 는 통일했지만 ASCII fallback 규칙은 아직 라우트마다 다름 (2/1/S) / 워크스페이스 ZIP 한도 초과 안내를 실제로 넘쳤을 때만 넣기 — `LIMIT maxWorkspaceExport+1` 로 읽어 2000건 경계 오탐 없애기 (2/1/S) / 가져오기·넘겨받기의 240자 제목 절단에도 AI 안내 문구가 붙는 것 — 파일 이름이 아니라 DB 데이터 (2/2/S) / CI 에 e2e(playwright) 단계 넣기 — 보호 경로와 계정 시드 때문에 사람 승인 있는 회차에 (4/2/M)
+- 과제서: 기각 — 정찰이 과제서를 남기지 못했고(샌드박스에서 `go` 가 막혀 러너가 scout failed 로 판정) 정찰 노트만 있었습니다. 다만 그 노트가 고른 자리(`export_filename_live_test.go:88` 의 알려진 공백, `handoff.go:147` 의 반대 규칙)는 코드와 정확히 맞아 그대로 채택했고, 노트가 추측으로 남긴 "`url.PathEscape` 만으로는 부족하다" 는 `=`·`:`·`@` 에서 실제로 깨지는 것을 단위 테스트로 확인했습니다.
+
