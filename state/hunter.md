@@ -86,3 +86,6 @@
 - 보류 아이디어: 주소 복사(listSharePath)에 저장소용 500자 한도를 적용하지 않도록 분리 (3/1/S) / Go csvSafe 선행 공백·제어문자 보호를 웹 csvCell과 일치 — 선행 PR review-pending이라 중복 금지 (4/1/M) / OIDC `oidcReturnTo`(Go)와 `safeReturnPath`(TS) return_to 공유 JSON 벡터 교차 검증 (3/2/M) / 서버 CSV 내보내기의 개인 키 권한 교집합을 실제 HTTP 회귀로 검증 — HUNTER_TEST_DSN 필요 (3/1/S)
 - 과제서: 채택 — 과제서가 지목한 `slice(0, 500)` 두 군데와 U+FFFD 치환 전제가 현재 코드·런타임에서 그대로 재현되어 제안대로 구현했다(쌍 분할 판정만 양쪽 검사로 좁힘).
 
+## 2026-09-25
+- (원장 항목에 비밀/내부 정보 의심 문자열이 있어 비공개 기록으로 옮김 — run 2026-09-25-104129-hunter-improve)
+
