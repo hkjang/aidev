@@ -89,3 +89,10 @@
 - 보류 아이디어: 결과 캐시 키가 binds 를 무시해 비동기 결과가 다른 binds 의 동기 요청에 반환될 수 있음 — 이 브랜치에 57563cf 미통합이라 여전히 유효(5/1/S) / 이미 끝난 비동기 잡의 취소가 200 {"canceled":true} 를 돌려줌(2/1/S) / 단독 모드에서 actorName(nil)=="" 이라 사용자당 잡 한도가 전역 한도로 동작(2/2/S) / 빈 docs/README.md 를 실제 문서 색인으로 채우기(3/1/S) / 관리자 가이드 §3.2 의 프로파일 생성 curl 을 실제 POST /api/db-profiles 계약으로 교정(3/1/S)
 - 과제서: 채택 — 지정한 결함을 현 HEAD 에서 실제 HTTP 로 재현했고 지정 파일만 최소 수정했다. 다만 동기 경로의 라우트는 과제서가 적은 `POST /api/query` 가 아니라 `POST /api/query/execute` 였다(dbapi.go:277).
 
+## 2026-09-25
+- 선택: `GET /api/metrics` 가 인증 없이 DB 프로파일 인벤토리(pools·breakers 키)를 노출하는 결함 수정 (가치 4 / 위험 2 / 작업량 S)
+- 결과: 성공
+- 요약: `dbapi.go:870` 의 핸들러만 요청을 무시(`_ *http.Request`)하고 게이트 없이 `s.DB.Snapshot()` 을 돌려주고 있어, 메타 DB 모드에서 미인증 요청자가 프로파일 ID 를 맵 키로 담은 `pools`·`breakers` 와 카운터를 통째로 받아 갔다. 형제 운영 조회(`GET /api/db/alerts`, `GET /api/query/history`)와 같은 `requireActor` 한 줄을 앞세웠다(역할은 새로 요구하지 않음). 실제 로그인 쿠키 → `Register` mux → `doReq` 배선의 회귀 테스트를 먼저 써서 수정 전 익명 요청이 200 + 전체 스냅샷을 돌려주는 것을 확인(RED)하고 수정 후 GREEN, 다시 게이트를 임시로 제거해 재실패함을 확인해 인과를 증명했다. `go test ./... -count=1`(22 패키지 ok, mcp 3.996초)·`go vet ./...`·`go build ./...`·대상 `-race`·`gofmt -l` 무출력·`git diff --check` 모두 통과(커밋 eb48f35). CHANGELOG 는 바이트 단위 삽입으로 `git diff --numstat` 5/0 을 확인해 혼합 줄바꿈을 보존했다.
+- 보류 아이디어: Prometheus `GET /metrics` 도 같은 프로파일 ID 를 미인증 노출하나 스크레이퍼가 쿠키를 못 보내 별도 설계 필요(3/3/M) / 이미 끝난 비동기 잡의 취소가 200 {"canceled":true} 를 돌려줌(2/1/S) / `openapi.go:593` 의 `/api/metrics` 항목에 `security` 필드가 없어 이제 실제와 어긋남 — 형제 항목과 같은 3종 표기 추가(2/1/S) / 빈 docs/README.md 를 실제 문서 색인으로 채우기(3/1/S) / 관리자 가이드 §3.2 의 프로파일 생성 curl 을 실제 `POST /api/db-profiles` 계약으로 교정(3/1/S)
+- 과제서: 채택 — 지정 결함을 현 HEAD 에서 실제 HTTP 로 재현하고 지정한 한 줄만 고쳤다. 다만 수용 기준 3)의 "`AdminToken` 이 설정된 단독 모드에서는 토큰 없는 요청이 거절된다" 는 사실과 다르다 — `requireActor`(auth.go:164)는 단독 모드에서 토큰 유무와 무관하게 `nil, true` 를 즉시 돌려주며, 이는 `GET /api/db/alerts` 도 같다. 테스트는 실제 계약(단독 모드는 토큰 설정 여부와 무관하게 열림, alerts 와 동일)을 단언하도록 썼다. `openapi.go:593` 항목에는 `security` 필드가 없어 과제서 지시대로 건드리지 않았다.
+
