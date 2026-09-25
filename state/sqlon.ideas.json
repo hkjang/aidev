@@ -1,16 +1,137 @@
 [
-  {"title":"GET /api/metrics 가 인증 없이 DB 프로파일 인벤토리(pools·breakers 키)를 노출","value":4,"risk":2,"size":"S","status":"done","note":"dbapi.go:870 핸들러에 requireActor 추가(커밋 eb48f35). 형제 운영 조회(GET /api/db/alerts, GET /api/query/history)와 동일한 게이트이며 역할은 새로 요구하지 않는다. RED→GREEN→되돌려 재실패까지 확인.","updated":"2026-09-25"},
-  {"title":"Prometheus GET /metrics 도 프로파일 ID 를 미인증 노출","value":3,"risk":3,"size":"M","status":"pending","note":"dbapi.go:873 s.serveMetrics 는 serveMetrics 가 같은 프로파일 ID 를 텍스트로 내보낸다. requireActor 를 그냥 걸면 세션 쿠키를 못 보내는 스크레이퍼의 관측이 끊기므로 별도 스크레이프 토큰/바인드 주소 분리 설계가 필요하다. 이번 회차에 과제서 지시대로 손대지 않음.","updated":"2026-09-25"},
-  {"title":"openapi.go:593 의 /api/metrics 항목에 security 필드가 없어 실제와 어긋남","value":2,"risk":1,"size":"S","status":"pending","note":"이번 회차에 열어 확인: 해당 항목에는 security 필드가 아예 없다(형제 항목들은 [{SessionCookie},{MCPKey},{AdminToken}] 표기). 이제 메타 DB 모드에서 인증이 필요하므로 문서가 과소 기술 상태. 과제서가 '없으면 건드리지 말 것' 이라 이번엔 미수정.","updated":"2026-09-25"},
-  {"title":"결과 캐시 키가 binds 를 무시해 다른 파라미터의 결과를 돌려줌","value":5,"risk":1,"size":"S","status":"pending","note":"이 브랜치에서 여전히 execguard.go:88 cacheKey(profile, sql string, maxRows int) 가 binds 를 받지 않는다. 2026-09-24 의 수정 커밋 57563cf 가 미통합이라 결함은 살아 있으나 '과거 성공 재구현 금지' 규칙과 충돌 — 러너가 57563cf 통합 여부를 먼저 판단할 것. 이번 회차 미착수.","updated":"2026-09-25"},
-  {"title":"이미 끝난(done/failed) 비동기 잡의 취소가 200 {\"canceled\":true} 를 돌려줌","value":2,"risk":1,"size":"S","status":"pending","note":"asyncquery.go cancelJob 은 Status!=\"running\" 이면 아무것도 하지 않고 true 를 반환하고 dbapi.go:862-866 이 그대로 canceled:true 로 응답한다. 이번 회차 차선 후보였으나 주과제를 끝내 미선택. prune() 을 같이 넣으면 2026-09-21 성공의 재구현이 되므로 넣지 말 것.","updated":"2026-09-25"},
-  {"title":"단독(마스터 토큰) 모드에서 actorName(nil)==\"\" 이라 사용자당 잡 한도 5가 전역 한도로 동작","value":2,"risk":2,"size":"S","status":"pending","note":"auth.go actorName(nil) 은 빈 문자열, asyncquery.go runningFor 는 User 문자열로 센다. 인증이 꺼진 배포에서는 모든 잡이 한 버킷. 의도된 동작일 수 있어 가치 낮음.","updated":"2026-09-25"},
-  {"title":"requireAdmin 도 인증 사용자를 컨텍스트에 실어 admin:* 감사 전체에 actor 남기기","value":3,"risk":1,"size":"M","status":"pending","note":"현 HEAD(57f99b7)에 선행 actor 변경이 여전히 미통합. 과거 성공 재구현 금지 규칙에 따라 보류 유지.","updated":"2026-09-25"},
-  {"title":"docs/auth.md·rest-api.md·security.md 정본 작성","value":3,"risk":1,"size":"M","status":"pending","note":"세 파일 0바이트. 실제 라우트를 소스에서 확인한 뒤 써야 한다 — 이번 회차에도 과제서의 수용 기준 3)이 requireActor 의 단독 모드 동작을 잘못 적은 사례가 나왔다.","updated":"2026-09-25"},
-  {"title":"빈 docs/README.md 를 실제 문서 색인으로 채우기","value":3,"risk":1,"size":"S","status":"pending","note":"0바이트이며 루트 README 의 링크 대상. 비어 있지 않은 가이드만 연결하고 v0.1.2 기준임을 명시.","updated":"2026-09-25"},
-  {"title":"관리자 가이드 §3.2 의 DB 프로파일 생성 curl 을 실제 POST /api/db-profiles 계약으로 교정","value":3,"risk":1,"size":"S","status":"pending","note":"admin_guide.md 는 POST /api/fleet/instances 를 안내하지만 그 라우트는 GET 만 존재하고 생성은 registerDBAPI 의 POST /api/db-profiles.","updated":"2026-09-25"},
-  {"title":"GitHub Actions CI 워크플로 추가 — 러너가 돌리는 build·vet·test 를 그대로 CI 로","value":5,"risk":1,"size":"S","status":"pending","note":".github 에는 FUNDING.yml 만 있어 러너 PR 이 전부 'CI 검사 없음' 으로 막힌다. 보호 경로라 사람 승인 필요.","updated":"2026-09-25"},
-  {"title":"changes.html 에서 이미 승인한 사용자의 승인 단추 비활성화","value":2,"risk":1,"size":"S","status":"pending","note":"actor 변경이 현 HEAD 에 미통합이라 선행 조건 미충족. 보류 유지.","updated":"2026-09-25"},
-  {"title":"화면의 인라인 이벤트 핸들러를 걷어내고 script-src nonce 정책 강제","value":4,"risk":3,"size":"L","status":"pending","note":"한 회차(45분) 범위를 초과. 보류 유지.","updated":"2026-09-25"},
-  {"title":"OIDC 콜백의 error 분기에서 state 쿠키 일치 확인","value":2,"risk":1,"size":"S","status":"pending","note":"handleSSOCallback 에서 error 분기가 state 검사보다 앞선다. auth 보호 경로라 회피 중.","updated":"2026-09-25"}
+  {
+    "title": "GET /api/metrics 가 인증 없이 DB 프로파일 인벤토리(pools·breakers 키)를 노출",
+    "value": 4,
+    "risk": 2,
+    "size": "S",
+    "status": "done",
+    "note": "dbapi.go:870 핸들러에 requireActor 추가(커밋 eb48f35). 형제 운영 조회(GET /api/db/alerts, GET /api/query/history)와 동일한 게이트이며 역할은 새로 요구하지 않는다. RED→GREEN→되돌려 재실패까지 확인.",
+    "updated": "2026-09-25"
+  },
+  {
+    "title": "Prometheus GET /metrics 도 프로파일 ID 를 미인증 노출",
+    "value": 3,
+    "risk": 3,
+    "size": "M",
+    "status": "pending",
+    "note": "dbapi.go:873 s.serveMetrics 는 serveMetrics 가 같은 프로파일 ID 를 텍스트로 내보낸다. requireActor 를 그냥 걸면 세션 쿠키를 못 보내는 스크레이퍼의 관측이 끊기므로 별도 스크레이프 토큰/바인드 주소 분리 설계가 필요하다. 이번 회차에 과제서 지시대로 손대지 않음.",
+    "updated": "2026-09-25"
+  },
+  {
+    "title": "openapi.go:593 의 /api/metrics 항목에 security 필드가 없어 실제와 어긋남",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "이번 회차에 열어 확인: 해당 항목에는 security 필드가 아예 없다(형제 항목들은 [{SessionCookie},{MCPKey},{AdminToken}] 표기). 이제 메타 DB 모드에서 인증이 필요하므로 문서가 과소 기술 상태. 과제서가 '없으면 건드리지 말 것' 이라 이번엔 미수정.",
+    "updated": "2026-09-25"
+  },
+  {
+    "title": "결과 캐시 키가 binds 를 무시해 다른 파라미터의 결과를 돌려줌",
+    "value": 5,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "이 브랜치에서 여전히 execguard.go:88 cacheKey(profile, sql string, maxRows int) 가 binds 를 받지 않는다. 2026-09-24 의 수정 커밋 57563cf 가 미통합이라 결함은 살아 있으나 '과거 성공 재구현 금지' 규칙과 충돌 — 러너가 57563cf 통합 여부를 먼저 판단할 것. 이번 회차 미착수.",
+    "updated": "2026-09-25"
+  },
+  {
+    "title": "이미 끝난(done/failed) 비동기 잡의 취소가 200 {\"canceled\":true} 를 돌려줌",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "asyncquery.go cancelJob 은 Status!=\"running\" 이면 아무것도 하지 않고 true 를 반환하고 dbapi.go:862-866 이 그대로 canceled:true 로 응답한다. 이번 회차 차선 후보였으나 주과제를 끝내 미선택. prune() 을 같이 넣으면 2026-09-21 성공의 재구현이 되므로 넣지 말 것.",
+    "updated": "2026-09-25"
+  },
+  {
+    "title": "단독(마스터 토큰) 모드에서 actorName(nil)==\"\" 이라 사용자당 잡 한도 5가 전역 한도로 동작",
+    "value": 2,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "auth.go actorName(nil) 은 빈 문자열, asyncquery.go runningFor 는 User 문자열로 센다. 인증이 꺼진 배포에서는 모든 잡이 한 버킷. 의도된 동작일 수 있어 가치 낮음.",
+    "updated": "2026-09-25"
+  },
+  {
+    "title": "requireAdmin 도 인증 사용자를 컨텍스트에 실어 admin:* 감사 전체에 actor 남기기",
+    "value": 3,
+    "risk": 1,
+    "size": "M",
+    "status": "pending",
+    "note": "현 HEAD(57f99b7)에 선행 actor 변경이 여전히 미통합. 과거 성공 재구현 금지 규칙에 따라 보류 유지.",
+    "updated": "2026-09-25"
+  },
+  {
+    "title": "docs/auth.md·rest-api.md·security.md 정본 작성",
+    "value": 3,
+    "risk": 1,
+    "size": "M",
+    "status": "pending",
+    "note": "세 파일 0바이트. 실제 라우트를 소스에서 확인한 뒤 써야 한다 — 이번 회차에도 과제서의 수용 기준 3)이 requireActor 의 단독 모드 동작을 잘못 적은 사례가 나왔다.",
+    "updated": "2026-09-25"
+  },
+  {
+    "title": "빈 docs/README.md 를 실제 문서 색인으로 채우기",
+    "value": 3,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "0바이트이며 루트 README 의 링크 대상. 비어 있지 않은 가이드만 연결하고 v0.1.2 기준임을 명시.",
+    "updated": "2026-09-25"
+  },
+  {
+    "title": "관리자 가이드 §3.2 의 DB 프로파일 생성 curl 을 실제 POST /api/db-profiles 계약으로 교정",
+    "value": 3,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "admin_guide.md 는 POST /api/fleet/instances 를 안내하지만 그 라우트는 GET 만 존재하고 생성은 registerDBAPI 의 POST /api/db-profiles.",
+    "updated": "2026-09-25"
+  },
+  {
+    "title": "GitHub Actions CI 워크플로 추가 — 러너가 돌리는 build·vet·test 를 그대로 CI 로",
+    "value": 5,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": ".github 에는 FUNDING.yml 만 있어 러너 PR 이 전부 'CI 검사 없음' 으로 막힌다. 보호 경로라 사람 승인 필요.",
+    "updated": "2026-09-25"
+  },
+  {
+    "title": "changes.html 에서 이미 승인한 사용자의 승인 단추 비활성화",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "actor 변경이 현 HEAD 에 미통합이라 선행 조건 미충족. 보류 유지.",
+    "updated": "2026-09-25"
+  },
+  {
+    "title": "화면의 인라인 이벤트 핸들러를 걷어내고 script-src nonce 정책 강제",
+    "value": 4,
+    "risk": 3,
+    "size": "L",
+    "status": "pending",
+    "note": "한 회차(45분) 범위를 초과. 보류 유지.",
+    "updated": "2026-09-25"
+  },
+  {
+    "title": "OIDC 콜백의 error 분기에서 state 쿠키 일치 확인",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "handleSSOCallback 에서 error 분기가 state 검사보다 앞선다. auth 보호 경로라 회피 중.",
+    "updated": "2026-09-25"
+  },
+  {
+    "title": "GitHub Actions CI 워크플로 추가 — 러너가 돌리는 검증 명령을 그대로 CI 로",
+    "value": 5,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "updated": "2026-09-25",
+    "note": "이 저장소에는 워크플로 파일이 없어 러너 PR 이 전부 \"CI 검사 없음\" 으로 막힌다. 러너가 이미 돌리는 검증 명령(build·vet·test)을 그대로 .github/workflows/ci.yml 로 옮겨라. 이 파일은 보호 경로라 사람 승인을 받는다."
+  }
 ]
