@@ -1,7 +1,7 @@
 ---
 title: "umm — 자율 개선 이력"
 description: "umm: 자율 개선 회차 23회, 릴리즈 12건. 최근 릴리즈 v0.75.0 (자산 3개)."
-last_modified_at: 2026-09-25 19:52:56 +0900
+last_modified_at: 2026-09-25 20:35:12 +0900
 ---
 {% raw %}
 <script type="application/ld+json">
@@ -18,7 +18,7 @@ last_modified_at: 2026-09-25 19:52:56 +0900
   "name": "hkjang",
   "url": "https://github.com/hkjang"
  },
- "dateModified": "2026-09-25T19:52:56+09:00",
+ "dateModified": "2026-09-25T20:35:12+09:00",
  "version": "0.75.0"
 }
 </script>

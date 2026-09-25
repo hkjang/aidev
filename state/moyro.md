@@ -205,3 +205,4 @@
 - 보류 아이디어: uploadTeamImage 가 10MB 초과 본문에도 200 + 업로드 감사 로그(차선 후보, S — 413 + 감사 미기록까지 증명해야 '효과 없는 정리' 를 면함) / 북마크 4개 핸들러(late.go)의 `ok, _ := IsMember` 403 위장 분리(관리자 예외 설계 선행, M) / preferences upsert·delete 의 400 을 원인별 400/500 으로 분리(서비스 ErrInvalid 센티널 필요, M) / bookmarks 패키지 단위 테스트 신설(2026-09-24 이 남긴 값싼 후속, S) / 자동화 dead run 시 소유자 메일(mail 패키지가 아직 main 에 없어 선행 브랜치 머지 후, S)
 - 과제서: 채택 — 과제서의 근거(두 핸들러의 `err != nil || p == nil` → 404, 별칭만 `isMember, _ :=`, `scanPost` 가 ErrNoRows 를 그대로 올림, handlers 구조체 필드명)가 현재 코드와 정확히 일치했고 수용 기준 1~5 를 실제 DB 회귀로 충족했다.
 
+- 릴리즈: v0.2.37 (2026-09-25, run 2026-09-25-192100-moyro-improve)
