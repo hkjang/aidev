@@ -1,0 +1,223 @@
+{
+  "run_id": "2026-09-25-141257-hunter-improve",
+  "generated": "2026-09-25T14:32:15+09:00",
+  "run": {
+    "run_id": "2026-09-25-141257-hunter-improve",
+    "project": "hunter",
+    "kind": "improve",
+    "started": "2026-09-25T14:12:58+09:00",
+    "model": "claude-opus-5",
+    "policy_version": "ecd4b546e",
+    "prompts_hash": "edb1de40f407fdd9",
+    "runner_version": "5cbca3f20",
+    "arm": "codex-critic",
+    "experiment": "roles-2026-09",
+    "finished": "2026-09-25T14:32:15+09:00",
+    "outcome": "review-pending"
+  },
+  "record": {
+    "ts": "2026-09-25T14:32:15+09:00",
+    "date": "2026-09-25",
+    "project": "hunter",
+    "result": "fix-round: guarded files, PR open https://github.com/hkjang/hunter/pull/11",
+    "outcome": "review-pending",
+    "run_id": "2026-09-25-141257-hunter-improve",
+    "base_sha": "4ae4034fa220901c05757fcbff9a76dfdc0d1c06",
+    "head_sha": "64f824ba6e1712ef6911267133c808f1d309b9d4",
+    "pr": "https://github.com/hkjang/hunter/pull/11",
+    "stages": {
+      "base": {
+        "state": "pinned",
+        "reason": "main@4ae4034",
+        "at": "2026-09-25T14:13:01+09:00"
+      },
+      "autonomy": {
+        "state": "release",
+        "reason": "",
+        "at": "2026-09-25T14:13:01+09:00"
+      },
+      "scout": {
+        "state": "done",
+        "reason": "PR #10 / v1.15.0 태그에서 실패한 Verify·Release 워크플로의 실제 실패 단계를 확인하고, `web/src/tracking-state.ts` �",
+        "at": "2026-09-25T14:17:02+09:00"
+      },
+      "brief": {
+        "state": "rejected",
+        "reason": "기각 — 1순위 근거가 이미 해결됐다(과제서가 지목한 Node 26 xn-- 실패는 `e503f24` 로 고쳐졌고 main CI 는 success, Node 26.10.0 에�",
+        "at": "2026-09-25T14:31:58+09:00"
+      },
+      "verify": {
+        "state": "passed",
+        "reason": "검증 9개 통과 (auto)",
+        "at": "2026-09-25T14:32:07+09:00"
+      },
+      "pr": {
+        "state": "created",
+        "reason": "https://github.com/hkjang/hunter/pull/11",
+        "at": "2026-09-25T14:32:13+09:00"
+      },
+      "guard": {
+        "state": "held",
+        "reason": ".github/workflows/ci.yml ",
+        "at": "2026-09-25T14:32:13+09:00"
+      }
+    },
+    "campaign": "",
+    "autonomy": "release",
+    "arm": "codex-critic",
+    "experiment": "roles-2026-09",
+    "engine": "claude",
+    "files": 4,
+    "additions": 141,
+    "deletions": 16,
+    "tests": 0,
+    "title": "fix: select release notes by minor series instead of an open-ended comparison"
+  },
+  "stages": {
+    "base": {
+      "state": "pinned",
+      "reason": "main@4ae4034",
+      "at": "2026-09-25T14:13:01+09:00"
+    },
+    "autonomy": {
+      "state": "release",
+      "reason": "",
+      "at": "2026-09-25T14:13:01+09:00"
+    },
+    "scout": {
+      "state": "done",
+      "reason": "PR #10 / v1.15.0 태그에서 실패한 Verify·Release 워크플로의 실제 실패 단계를 확인하고, `web/src/tracking-state.ts` �",
+      "at": "2026-09-25T14:17:02+09:00"
+    },
+    "brief": {
+      "state": "rejected",
+      "reason": "기각 — 1순위 근거가 이미 해결됐다(과제서가 지목한 Node 26 xn-- 실패는 `e503f24` 로 고쳐졌고 main CI 는 success, Node 26.10.0 에�",
+      "at": "2026-09-25T14:31:58+09:00"
+    },
+    "verify": {
+      "state": "passed",
+      "reason": "검증 9개 통과 (auto)",
+      "at": "2026-09-25T14:32:07+09:00"
+    },
+    "pr": {
+      "state": "created",
+      "reason": "https://github.com/hkjang/hunter/pull/11",
+      "at": "2026-09-25T14:32:13+09:00"
+    },
+    "guard": {
+      "state": "held",
+      "reason": ".github/workflows/ci.yml ",
+      "at": "2026-09-25T14:32:13+09:00"
+    }
+  },
+  "provenance": {
+    "model": "claude-opus-5",
+    "policy_version": "ecd4b546e",
+    "prompts_hash": "edb1de40f407fdd9",
+    "runner_version": "5cbca3f20",
+    "base_sha": "4ae4034fa220901c05757fcbff9a76dfdc0d1c06",
+    "head_sha": "64f824ba6e1712ef6911267133c808f1d309b9d4",
+    "pr": "https://github.com/hkjang/hunter/pull/11"
+  },
+  "verification": {
+    "runner": {
+      "source": "auto",
+      "commands": [
+        {
+          "cmd": "go build ./...",
+          "exit": 0,
+          "seconds": 2
+        },
+        {
+          "cmd": "go vet ./...",
+          "exit": 0,
+          "seconds": 0
+        },
+        {
+          "cmd": "go test ./...",
+          "exit": 0,
+          "seconds": 3
+        },
+        {
+          "cmd": "cd web && [ -d node_modules ] || npm ci --no-audit --no-fund",
+          "exit": 0,
+          "seconds": 0
+        },
+        {
+          "cmd": "cd web && npm test --silent",
+          "exit": 0,
+          "seconds": 1
+        },
+        {
+          "cmd": "cd web && [ -d node_modules ] || npm ci --no-audit --no-fund",
+          "exit": 0,
+          "seconds": 0
+        },
+        {
+          "cmd": "cd web && npm run typecheck --silent",
+          "exit": 0,
+          "seconds": 0
+        },
+        {
+          "cmd": "cd web && [ -d node_modules ] || npm ci --no-audit --no-fund",
+          "exit": 0,
+          "seconds": 0
+        },
+        {
+          "cmd": "cd web && npm run build --silent",
+          "exit": 0,
+          "seconds": 2
+        }
+      ]
+    },
+    "runner_gate": {
+      "ok": true,
+      "state": "verified",
+      "reason": "검증 9개 통과 (auto)"
+    },
+    "after_rebase": null,
+    "review": null,
+    "ci_gate": null
+  },
+  "release": {
+    "result": null,
+    "assets_sha256": []
+  },
+  "approval": null,
+  "usage": [
+    {
+      "ts": "2026-09-25T14:17:01+09:00",
+      "date": "2026-09-25",
+      "project": "hunter",
+      "phase": "scout",
+      "run_id": "2026-09-25-141257-hunter-improve",
+      "campaign": "",
+      "subtype": "error_max_budget_usd",
+      "engine": "claude",
+      "duration_ms": 256363,
+      "num_turns": 30,
+      "cost_usd": 2.0067255000000004,
+      "input_tokens": 42,
+      "output_tokens": 15587,
+      "cache_read": 1407591,
+      "cache_create": 76074
+    },
+    {
+      "ts": "2026-09-25T14:31:58+09:00",
+      "date": "2026-09-25",
+      "project": "hunter",
+      "phase": "improve",
+      "run_id": "2026-09-25-141257-hunter-improve",
+      "campaign": "",
+      "subtype": "success",
+      "engine": "claude",
+      "duration_ms": 50408,
+      "num_turns": 5,
+      "cost_usd": 6.968865999999999,
+      "input_tokens": 10,
+      "output_tokens": 3028,
+      "cache_read": 753774,
+      "cache_create": 4862
+    }
+  ]
+}
