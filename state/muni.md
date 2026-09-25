@@ -211,3 +211,4 @@
 - 보류 아이디어: 워크스페이스 ZIP 내려받기에도 `filename*` 을 주기 — 이제 다섯 경로 중 `workspace_export.go:111` 만 `filename*` 이 없고 quoted-string 안에 따옴표 포함 원문을 넣음 (3/2/S) / `Content-Disposition` 을 만드는 다섯 자리를 헬퍼 하나로 모으기 — escape 는 통일했지만 ASCII fallback 규칙은 아직 라우트마다 다름 (2/1/S) / 워크스페이스 ZIP 한도 초과 안내를 실제로 넘쳤을 때만 넣기 — `LIMIT maxWorkspaceExport+1` 로 읽어 2000건 경계 오탐 없애기 (2/1/S) / 가져오기·넘겨받기의 240자 제목 절단에도 AI 안내 문구가 붙는 것 — 파일 이름이 아니라 DB 데이터 (2/2/S) / CI 에 e2e(playwright) 단계 넣기 — 보호 경로와 계정 시드 때문에 사람 승인 있는 회차에 (4/2/M)
 - 과제서: 기각 — 정찰이 과제서를 남기지 못했고(샌드박스에서 `go` 가 막혀 러너가 scout failed 로 판정) 정찰 노트만 있었습니다. 다만 그 노트가 고른 자리(`export_filename_live_test.go:88` 의 알려진 공백, `handoff.go:147` 의 반대 규칙)는 코드와 정확히 맞아 그대로 채택했고, 노트가 추측으로 남긴 "`url.PathEscape` 만으로는 부족하다" 는 `=`·`:`·`@` 에서 실제로 깨지는 것을 단위 테스트로 확인했습니다.
 
+- 릴리즈: v0.46.0 (2026-09-25, run 2026-09-25-000113-muni-improve)
