@@ -75,3 +75,10 @@
 
 - 릴리즈: v0.6.4 (2026-09-24, run 2026-09-24-084409-orbit-improve)
 - 릴리즈: v0.7.0 (2026-09-25, run 2026-09-25-005855-orbit-approve)
+## 2026-09-26
+- 선택: `GET /orbit?at=` 응답에 `earliest_at` 을 더해 현재/과거 두 경로의 계약을 맞추고 Time Travel 매개변수·응답 필드를 openapi.go·docs/API.md 에 문서화 (가치 3 / 위험 1 / 작업량 S)
+- 결과: 성공
+- 요약: 같은 `GET /api/v1/orbit` 인데 현재 경로(`data.go:getOrbit`)는 `earliest_at` 을 담고 과거 경로(`timetravel.go:writeOrbitAt`)는 그 키가 아예 없어 `?at=` 만 부르는 API 키·MCP 호출자가 시간 여행 구간을 알 수 없었다 — 새 질의를 쓰지 않고 현재 경로와 같은 `s.orbitRange` 를 그대로 불러 담았고 다른 키·순서는 건드리지 않았다. 검증은 실제 postgres(docker `postgres:16-alpine`, 포트 55481) 위에서 실제 핸들러 `getOrbit` 을 `?at=` 있음/없음으로 두 번 불러 JSON 을 디코딩하는 `TestOrbitAtResponseCarriesEarliestAt`(하위 3개) 로 했다 — 고치기 전에 먼저 돌려 세 하위 시험 모두 "응답에 earliest_at 키가 없다" 로 빨개지는 것을 확인했고, 고친 뒤 `first` 를 1시간 밀어 보는 변이로 값 비교가 실제로 도는 것까지 확인했다. `gofmt -l .`(출력 없음)·`go vet ./...`·`go test -race ./...`(DSN 없이 초록, 새 시험은 SKIP)·DSN 주고 `go test -race -count=1 -v ./internal/server -run TestOrbit`(7 PASS) 통과. openapi.go 의 `/orbit` 은 `operation()` 이 요약·권한만 받아 매개변수 자리가 없어 그 항목만 리터럴로 풀어 썼고(실제 핸들러를 불러 문서가 유효한 JSON 으로 렌더되는 것을 확인), docs/API.md 에 Time Travel 절을 신설했다.
+- 보류 아이디어: `orbitAt` 의 교류 조회에 상한이 없어 교류 많은 사용자의 전체 이력이 메모리로 올라옴 — 단순 LIMIT 은 지표를 틀어뜨려 집계를 DB 로 내려야 함 (2/2/M); `orbitAt` 의 `contexts`(분류 집계) 를 실제 postgres 로 고정 — `seedRelationship` 헬퍼 신설 필요 (2/1/S); `orbitAt` 의 사람별 memories count 상관 서브쿼리를 GROUP BY 집계로 — 동등성 회귀 기준이 main 에 없어 위험 2 (2/2/S); `getOrbit` 의 categories 가 JSON `null` 일 때 nil 슬라이스로 나가 과거 경로(`[]`)와 다름 (1/1/S); CI 에 postgres 서비스 컨테이너를 붙여 DB 테스트를 매번 돌리기 — `.github/workflows` 는 보호 경로라 사람이 할 일 (3/1/S)
+- 과제서: 채택 — 근거(data.go:772 에는 `earliest_at` 이 있고 timetravel.go:165~173 에는 없음, `operation()` 에 매개변수 자리 없음)가 지금 코드와 정확히 일치해 수용 기준 1~3 과 문서까지 그대로 구현했다.
+
