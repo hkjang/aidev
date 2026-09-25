@@ -1050,7 +1050,14 @@ sync_repo(){
       { echo "--- $(date -Iseconds) sync attempt $attempt: $1"; } >>"$SYNCLOG"
       git add -A state logs docs >>"$SYNCLOG" 2>&1
       git diff --cached --quiet || git commit -qm "$1" >>"$SYNCLOG" 2>&1
-      git pull -q --rebase origin main >>"$SYNCLOG" 2>&1 || { git rebase --abort >/dev/null 2>&1; continue; }
+      # 원격이 실제로 앞서 있을 때만 리베이스한다. 사람이 bin/ 을 고치던 중이면
+      # `pull --rebase` 는 "unstaged changes" 로 실패하고, 그 한 줄 때문에 회차 기록이
+      # 통째로 안 올라간다 (2026-09-25 07:52). autostash 는 쓰지 않는다 — 병렬 회차가
+      # 덧붙인 runs.jsonl 한 줄이 스태시로 빨려 들어가 유실된 적이 있다 (2026-09-09).
+      git fetch -q origin main >>"$SYNCLOG" 2>&1
+      if ! git merge-base --is-ancestor origin/main HEAD 2>/dev/null; then
+        git pull -q --rebase origin main >>"$SYNCLOG" 2>&1 || { git rebase --abort >/dev/null 2>&1; continue; }
+      fi
       git push -q origin HEAD >>"$SYNCLOG" 2>&1 && { rm -f "$STATE/.sync-blocked"; exit 0; }
       # 100MB 초과 파일이 이미 커밋돼 있으면 재시도해도 영원히 거부된다 — 매 회차 3번씩 밀어 올리지 말고 멈춘다.
       if tail -n 40 "$SYNCLOG" | grep -q "exceeds GitHub's file size limit\|pre-receive hook declined"; then
