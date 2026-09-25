@@ -1,0 +1,223 @@
+{
+  "run_id": "2026-09-26-055030-qurio-improve",
+  "generated": "2026-09-26T06:05:41+09:00",
+  "run": {
+    "run_id": "2026-09-26-055030-qurio-improve",
+    "project": "qurio",
+    "kind": "improve",
+    "started": "2026-09-26T05:50:30+09:00",
+    "model": "claude-opus-5",
+    "policy_version": "ecd4b546e",
+    "prompts_hash": "edb1de40f407fdd9",
+    "runner_version": "437408cfd",
+    "arm": "no-journal",
+    "experiment": "roles-2026-09",
+    "finished": "2026-09-26T06:05:41+09:00",
+    "outcome": "review-pending"
+  },
+  "record": {
+    "ts": "2026-09-26T06:05:41+09:00",
+    "date": "2026-09-26",
+    "project": "qurio",
+    "result": "guarded files, PR open https://github.com/hkjang/qurio/pull/22",
+    "outcome": "review-pending",
+    "run_id": "2026-09-26-055030-qurio-improve",
+    "base_sha": "1ad4e50372086fd23aa89b46434404b3118d6241",
+    "head_sha": "a8f07755dc6706ffa2d834b05f0caa3146df48f9",
+    "pr": "https://github.com/hkjang/qurio/pull/22",
+    "stages": {
+      "base": {
+        "state": "pinned",
+        "reason": "main@1ad4e50",
+        "at": "2026-09-26T05:50:31+09:00"
+      },
+      "autonomy": {
+        "state": "release",
+        "reason": "",
+        "at": "2026-09-26T05:50:31+09:00"
+      },
+      "scout": {
+        "state": "done",
+        "reason": "`defer pool.Close()` → `t.Cleanup(pool.Close)` 순서 역전을 runtimeapi·intelligenceapi·platformapi 통합 테스트로 확장 (가�",
+        "at": "2026-09-26T05:55:01+09:00"
+      },
+      "brief": {
+        "state": "accepted",
+        "reason": "채택 — 19개 지점의 파일·행 번호가 코드와 정확히 일치했고 수용 기준 1·2·4·5 를 실제 PostgreSQL 로 red→green→되돌려 red",
+        "at": "2026-09-26T06:02:48+09:00"
+      },
+      "verify": {
+        "state": "passed",
+        "reason": "검증 9개 통과 (auto)",
+        "at": "2026-09-26T06:05:31+09:00"
+      },
+      "pr": {
+        "state": "created",
+        "reason": "https://github.com/hkjang/qurio/pull/22",
+        "at": "2026-09-26T06:05:39+09:00"
+      },
+      "guard": {
+        "state": "held",
+        "reason": "internal/intelligenceapi/credential_race_integration_test.go ",
+        "at": "2026-09-26T06:05:39+09:00"
+      }
+    },
+    "campaign": "",
+    "autonomy": "release",
+    "arm": "no-journal",
+    "experiment": "roles-2026-09",
+    "engine": "claude",
+    "files": 8,
+    "additions": 19,
+    "deletions": 19,
+    "tests": 8,
+    "title": "fix(test): close integration pools via t.Cleanup so fixture deletes still run"
+  },
+  "stages": {
+    "base": {
+      "state": "pinned",
+      "reason": "main@1ad4e50",
+      "at": "2026-09-26T05:50:31+09:00"
+    },
+    "autonomy": {
+      "state": "release",
+      "reason": "",
+      "at": "2026-09-26T05:50:31+09:00"
+    },
+    "scout": {
+      "state": "done",
+      "reason": "`defer pool.Close()` → `t.Cleanup(pool.Close)` 순서 역전을 runtimeapi·intelligenceapi·platformapi 통합 테스트로 확장 (가�",
+      "at": "2026-09-26T05:55:01+09:00"
+    },
+    "brief": {
+      "state": "accepted",
+      "reason": "채택 — 19개 지점의 파일·행 번호가 코드와 정확히 일치했고 수용 기준 1·2·4·5 를 실제 PostgreSQL 로 red→green→되돌려 red",
+      "at": "2026-09-26T06:02:48+09:00"
+    },
+    "verify": {
+      "state": "passed",
+      "reason": "검증 9개 통과 (auto)",
+      "at": "2026-09-26T06:05:31+09:00"
+    },
+    "pr": {
+      "state": "created",
+      "reason": "https://github.com/hkjang/qurio/pull/22",
+      "at": "2026-09-26T06:05:39+09:00"
+    },
+    "guard": {
+      "state": "held",
+      "reason": "internal/intelligenceapi/credential_race_integration_test.go ",
+      "at": "2026-09-26T06:05:39+09:00"
+    }
+  },
+  "provenance": {
+    "model": "claude-opus-5",
+    "policy_version": "ecd4b546e",
+    "prompts_hash": "edb1de40f407fdd9",
+    "runner_version": "437408cfd",
+    "base_sha": "1ad4e50372086fd23aa89b46434404b3118d6241",
+    "head_sha": "a8f07755dc6706ffa2d834b05f0caa3146df48f9",
+    "pr": "https://github.com/hkjang/qurio/pull/22"
+  },
+  "verification": {
+    "runner": {
+      "source": "auto",
+      "commands": [
+        {
+          "cmd": "go build ./...",
+          "exit": 0,
+          "seconds": 0
+        },
+        {
+          "cmd": "go vet ./...",
+          "exit": 0,
+          "seconds": -2
+        },
+        {
+          "cmd": "go test ./...",
+          "exit": 0,
+          "seconds": 1
+        },
+        {
+          "cmd": "cd web && [ -d node_modules ] || npm ci --no-audit --no-fund",
+          "exit": 0,
+          "seconds": 14
+        },
+        {
+          "cmd": "cd web && npm test --silent",
+          "exit": 0,
+          "seconds": 143
+        },
+        {
+          "cmd": "cd web && [ -d node_modules ] || npm ci --no-audit --no-fund",
+          "exit": 0,
+          "seconds": 0
+        },
+        {
+          "cmd": "cd web && npm run typecheck --silent",
+          "exit": 0,
+          "seconds": 4
+        },
+        {
+          "cmd": "cd web && [ -d node_modules ] || npm ci --no-audit --no-fund",
+          "exit": 0,
+          "seconds": 0
+        },
+        {
+          "cmd": "cd web && npm run build --silent",
+          "exit": 0,
+          "seconds": 2
+        }
+      ]
+    },
+    "runner_gate": {
+      "ok": true,
+      "state": "verified",
+      "reason": "검증 9개 통과 (auto)"
+    },
+    "after_rebase": null,
+    "review": null,
+    "ci_gate": null
+  },
+  "release": {
+    "result": null,
+    "assets_sha256": []
+  },
+  "approval": null,
+  "usage": [
+    {
+      "ts": "2026-09-26T05:55:01+09:00",
+      "date": "2026-09-26",
+      "project": "qurio",
+      "phase": "scout",
+      "run_id": "2026-09-26-055030-qurio-improve",
+      "campaign": "",
+      "subtype": "success",
+      "engine": "claude",
+      "duration_ms": 289557,
+      "num_turns": 21,
+      "cost_usd": 1.6708040000000002,
+      "input_tokens": 32,
+      "output_tokens": 19848,
+      "cache_read": 980328,
+      "cache_create": 68428
+    },
+    {
+      "ts": "2026-09-26T06:02:48+09:00",
+      "date": "2026-09-26",
+      "project": "qurio",
+      "phase": "improve",
+      "run_id": "2026-09-26-055030-qurio-improve",
+      "campaign": "",
+      "subtype": "success",
+      "engine": "claude",
+      "duration_ms": 508459,
+      "num_turns": 39,
+      "cost_usd": 2.49622,
+      "input_tokens": 68,
+      "output_tokens": 24200,
+      "cache_read": 2291060,
+      "cache_create": 74535
+    }
+  ]
+}
