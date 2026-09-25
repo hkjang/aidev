@@ -24,3 +24,5 @@
 - 남는 우려(차단 아님): idna CheckHyphens(V2) 계열이 미반영이라 `http://my--service.internal`·`api--v2.internal` 을 UI 가 유효로 보고 PUT 은 400 을 준다(`xn--` 는 서버가 면제). bidi 계열(`https://٢`)도 동일. main 과 같은 동작이라 회귀는 아니지만 벡터 75건에 이 규칙이 없다.
 - 따라서 두 테스트 주석의 "PUT 이 거절할 원점을 결코 제안·통과시키지 않는다"는 과장이다. 릴리즈 노트에 "완전 일치"로 적지 말고 "legacy IPv4 별칭·라벨·포트·중복 합산 규칙 일치"로 한정할 것. 다음 회차 후보: CheckHyphens/bidi 벡터 2건 추가.
 - 못 본 것: 실제 브라우저 렌더·"허용 목록에 추가" 클릭, 전체 `go test ./...`, Node 26(로컬은 Node 22 — UTS46 판정 차이 가능). 릴리즈 전 `cp -a web/dist/. internal/webassets/dist/` 재수행 필요(dist 는 gitignore).
+- [러너 11:09] review approved — 리뷰 승인 (risk=low)
+- [러너 11:09] pr created — https://github.com/hkjang/hunter/pull/10
