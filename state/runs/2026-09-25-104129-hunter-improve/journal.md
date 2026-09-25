@@ -26,3 +26,4 @@
 - 못 본 것: 실제 브라우저 렌더·"허용 목록에 추가" 클릭, 전체 `go test ./...`, Node 26(로컬은 Node 22 — UTS46 판정 차이 가능). 릴리즈 전 `cp -a web/dist/. internal/webassets/dist/` 재수행 필요(dist 는 gitignore).
 - [러너 11:09] review approved — 리뷰 승인 (risk=low)
 - [러너 11:09] pr created — https://github.com/hkjang/hunter/pull/10
+- [러너 11:11] ci failed — 성공이 아닌 검사: verify=failure
