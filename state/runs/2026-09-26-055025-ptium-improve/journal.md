@@ -31,3 +31,8 @@
 - [러너 06:02] pr created — https://github.com/hkjang/ptium/pull/34
 - [러너 06:07] ci passed — 검사 1개 모두 success
 - [러너 06:07] merge done — e68ce08
+- [러너 06:19] release published — v1.69.47
+- [러너 06:19] gh-release created — GitHub Release v1.69.47
+- [러너 06:19] manifest ok — ptium-1.69.47.tar.gz ptium-1.69.47.tar.gz.sha256 docker-compose.ptium-1.69.47.yml ptium-1.69.47.env.example load-ptium-1.69.47.ps1 load-ptium-1.69.47.sh ptium-1.69.47.kubernetes.yaml 
+- [러너 06:19] assets uploaded — 7개
+- [러너 06:19] assets verified — v1.69.47 자산 7개 (이전 v1.69.46: 7)
