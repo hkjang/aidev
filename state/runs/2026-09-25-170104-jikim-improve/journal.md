@@ -22,3 +22,7 @@
 - 릴리즈 노트: 관리자에게 보이는 변화는 '대기열 포화 + 기록 실패' 시 WARN 한 줄뿐. TestWebhookTestDoesNotFollowRedirect는 main에서도 통과하는 기존 동작 특성 테스트(SSRF 리다이렉트 가드 고정).
 - [러너 17:13] review approved — 리뷰 승인 (risk=low)
 - [러너 17:13] pr created — https://github.com/hkjang/jikim/pull/44
+- [러너 17:16] ci passed — 검사 2개 모두 success
+- [러너 17:16] merge done — 73939f0
+- [러너 17:23] release published — v0.2.22
+- [러너 17:27] assets verified — v0.2.22 자산 2개 (이전 v0.2.21: 2)

@@ -184,3 +184,4 @@
 - 보류 아이디어: aiRequestLimiter의 사용자 표에 실질적 상한이 없는 문제 정리 (2/1/S, 차선 후보였으나 미실행) / retryWebhookDelivery 왕복 테스트 공백 (2/1/M, seam 추가 금지라 PostgreSQL 통합 테스트가 더 정직한 경로) / Go 라우트와 Vite 개발 프록시 목록 교차 검증 부재 (3/2/M, 현재 실제 누락 없음) / baoKVWrite의 create·update 판정 TOCTOU (3/3/M, PostgreSQL·동시성 필요) / requestedOpenBaoVersion이 음수·공백 version을 오류 대신 latest로 처리 (2/2/S, OpenBao 사양 확인 불가)
 - 과제서: 채택 — 근거가 코드와 정확히 맞았고(default 분기만 `_ =`로 남아 있었다), 배선 사실(`quietServer()`의 nil `webhookSlots`, 비동기 경로의 `*[]error` 경합)도 그대로 맞아 새 seam 없이 수용 기준 5개를 모두 충족했다.
 
+- 릴리즈: v0.2.22 (2026-09-25, run 2026-09-25-170104-jikim-improve)

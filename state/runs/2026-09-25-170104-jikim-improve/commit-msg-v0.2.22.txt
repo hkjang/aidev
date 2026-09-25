@@ -1,0 +1,24 @@
+fix: release the saturated webhook queue recording warning for v0.2.22
+
+Webhook 전송 대기열이 가득 찬 상태에서 delivery 기록까지 실패하면 아무 흔적도
+남지 않던 문제를 고친 PR #44를 릴리즈합니다. `queueWebhook`의 대기열 포화
+`default` 분기가 `completeWebhookDelivery`의 반환값을 `_ =`로 버려, 저장소가
+흔들리는 동안 대기열이 가득 차면 delivery 행이 `pending`으로 영원히 남고 로그에도
+아무것도 남지 않았습니다. 관리자가 "전송도 되지 않았고 실패로도 찍히지 않은"
+이벤트를 원인 없이 보게 되던 자리입니다. 이제 전송 경로가 이미 쓰던 것과 같은
+문구·같은 식별자 필드(`delivery_id`·`event`·`request_id`·`error`)의 `logger.Warn`을
+남기며, payload와 서명 키는 남기지 않습니다. `queueWebhook`의 반환(void), 기록하는
+상태 코드 `0`과 `webhook 전송 대기열이 가득 찼습니다` 문구는 계약이라 그대로
+두었습니다. 같은 PR은 기존 `webhookServer` 하네스와 실제 운영 HTTP 클라이언트로
+왕복하는 회귀 테스트 3개(대기열 포화, 여유 슬롯, `302` 리다이렉트 비추종)를
+추가했으며, 새 seam은 만들지 않았습니다.
+
+기존 패치 릴리스와 같은 방식으로 버전 파일, 문서 프로파일과 CHANGELOG를
+v0.2.22로 갱신했습니다. 캡처 출처는 v0.2.9를 유지합니다. 두 가이드 PDF는
+v0.2.21과 같은 이유로 표지가 `v0.2.18`인 채로 남았습니다. 지금까지 쓰던
+변환기(표지 템플릿 + HeadlessChrome 인쇄)가 저장소에 없어 같은 판형으로 다시
+구울 수 없었고, 다른 템플릿으로 바꿔 굽는 것은 릴리스 절차 밖의 변경이라 기존
+파일을 그대로 두고 CHANGELOG에 적었습니다. 본문 Markdown은 갱신했습니다.
+Node 22.23.1에서 ./scripts/verify.sh 전체(Go test·vet·gofmt, 웹 테스트
+59개·lint·build, 문서·Compose)가 통과했습니다. 이미지 빌드·스모크·
+브라우저 E2E·번들 생성 및 게시 작업은 태그 푸시 후 release.yml이 수행합니다.

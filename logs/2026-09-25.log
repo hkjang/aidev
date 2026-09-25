@@ -4359,3 +4359,60 @@ branch 'auto/2026-09-25-1701' set up to track 'origin/auto/2026-09-25-1701'.
 [17:13:22] jikim: waiting for CI on 73939f0 (no-ci)
 reports: 24 day(s), 4 week(s), 1 month(s), 1440 run(s), 2555 usage row(s), 46 project page(s), 4 alert(s)
 notify: no new alerts
+[17:15:01] aidev synced: run(2026-09-25): jasql — review held, PR open https://github.com/hkjang/jasql/pull/8
+[17:16:39] jikim: [ci] passed — 검사 2개 모두 success
+[17:16:45] jikim: [merge] done — 73939f049afd7233136a1ac7928861fbfbcfa275
+From https://github.com/hkjang/jikim
+ * branch            main       -> FETCH_HEAD
+   7db6e13..88f1ac4  main       -> origin/main
+Updating 7db6e13..88f1ac4
+Fast-forward
+ internal/httpapi/webhook.go      |   8 +-
+ internal/httpapi/webhook_test.go | 191 +++++++++++++++++++++++++++++++++++++++
+ 2 files changed, 198 insertions(+), 1 deletion(-)
+Preparing worktree (detached HEAD 88f1ac4)
+HEAD is now at 88f1ac4 Merge pull request #44 from hkjang/auto/2026-09-25-1701
+[17:18:35] jupiq: review — 33 turns, 6m, $2.02, success
+[17:18:35] jupiq: [review] rejected — 리뷰 거절: internal/store/mail.go:169 새 조건 `btrim(email)<>''` 은 PostgreSQL btrim 의 기본 제거 문자가 공백 하나뿐이어서 탭·줄바꿈만 든 주소를 '보낼 주소가 있다'로 통과시킨다. 실제 PostgreSQL 16 에서 확인: btrim(E'\t')<>'' 는 true, btrim('   ')<>'' 는 false. email=E'\t' 인 소유자의 만료 임박 키는 UPDATE 로 expiry_notified_at 이 찍혀 돌려지는데, mail/service.go:263-265 의 resolve 는 strings.TrimSpace 뒤 validAddress 로 그 주소를 버리므로 Notify 가 addresses 0개로 조기 반환한다(service.go:124-126) — mail_deliveries 도 로그도 남지 않는다. 즉 이 커밋이 닫았다고 말하는 '흔적 없이 조용히 만료되는 키'가 같은 계열(공백뿐인 주소)에서 그대로 남아 있다. 도달 경로: PATCH /auth/me → api/auth_handlers.go:106 → store/users.go:221-225 의 UpdateProfile 은 email 을 다듬지도 검증하지도 않고 그대로 저장하므로 아무 로그인 사용자나 자기 주소를 탭 한 글자로 만들 수 있다(OIDC UpsertOIDCUser 도 클레임을 그대로 쓴다). 고치는 법: `btrim(email)<>''` 대신 `email ~ '[^[:space:]]'` — empty/spaces/tab/newline/CRLF 는 false, 'a@b.c' 와 E'\t a@b.c \n' 은 true 로 Go 쪽 TrimSpace 계약과 일치함을 같은 컨테이너에서 확인했다. / internal/store/mail.go:159-163 주석이 '조건은 UserEmails가 수신자를 해석할 때와 같게 두어(활성이고, 다듬은 email이 비어 있지 않음) 두 경로가 같은 계정을 같게 읽는다'고 단언하지만 위와 같이 사실이 아니다. 이 등가 주장이 '보내기 전에 표시한다'는 설계가 안전하다는 유일한 근거이므로, 틀린 주석이 다음 사람에게 확인하지 않아도 된다는 잘못된 안심을 준다. 구현 노트가 스스로 경계한 '두 파서의 계약이 갈라진다'가 바로 이 자리에서 일어났다. / internal/store/mail_integration_test.go:182 새 테스트는 공백뿐인 주소를 '   '(공백 문자)로만 세우고 219행에서 '공백 주소 소유자는 빠진다'고 단언해, 공백류 전체를 고정한 것처럼 읽히지만 실제로는 btrim 이 처리하는 단 하나의 형태만 고정한다. blankID 를 E'\t' 로 두면 지금 코드에서 이 단언이 깨진다 — 즉 테스트가 덮는 범위를 실제보다 넓게 말한다.
+[17:19:55] jikim: release — 29 turns, 3m, $1.84, success
+[17:20:00] jikim: waiting for CI on 6424731 (no-ci)
+[17:23:49] jikim: [release] published — v0.2.22
+From https://github.com/hkjang/jikim
+ * branch            main       -> FETCH_HEAD
+Updating 88f1ac4..6424731
+Fast-forward
+ .github/workflows/release.yml  |  4 ++--
+ CHANGELOG.md                   | 18 +++++++++++++++++-
+ CONTRIBUTING.md                |  2 +-
+ README.md                      | 18 +++++++++---------
+ docker-compose.yml             |  2 +-
+ docs/ADMIN_GUIDE.md            | 18 +++++++++---------
+ docs/USER_GUIDE.md             | 10 +++++-----
+ docs/guides/README.md          | 12 ++++++------
+ docs/guides/api-guide.md       |  8 ++++----
+ docs/guides/compatibility.md   | 12 ++++++------
+ docs/guides/index.html         |  8 ++++----
+ docs/guides/offline-install.md | 20 ++++++++++----------
+ docs/guides/security.md        |  6 +++---
+ docs/index.html                | 24 ++++++++++++------------
+ docs/llms.txt                  |  8 ++++----
+ internal/version/version.go    |  2 +-
+ scripts/version.sh             |  2 +-
+ web/package-lock.json          |  4 ++--
+ web/package.json               |  2 +-
+ web/src/lib/format.ts          |  2 +-
+ 20 files changed, 99 insertions(+), 83 deletions(-)
+[17:25:37] jupiq: repair — 43 turns, 7m, $2.35, success
+[17:25:37] jupiq: verify `go build ./...` → exit 0 (0s)
+[17:25:38] jupiq: verify `go vet ./...` → exit 0 (1s)
+[17:25:38] jupiq: verify `go test ./...` → exit 0 (0s)
+[17:25:39] jupiq: verify `cd web && [ -d node_modules ] || npm ci --no-audit --no-fund` → exit 0 (0s)
+[17:25:45] jupiq: verify `cd web && npm test --silent` → exit 0 (6s)
+[17:25:45] jupiq: verify `cd web && [ -d node_modules ] || npm ci --no-audit --no-fund` → exit 0 (0s)
+[17:25:52] jupiq: verify `cd web && npm run build --silent` → exit 0 (7s)
+[17:25:53] jupiq: [repair] done — # 수리 요약 (5a67beb)  - 문제(비평 지적 그대로 확인): `btrim(email)<>''`는 공백만 지우므로 `email=E'\t'`·`E'\r\n'`·NBSP만 든 주소가 "보낼 주소 있음"으로 통과해
+[17:27:18] jikim: [assets] verified — v0.2.22 자산 2개 (이전 v0.2.21: 2)
+fatal: '/home/hkjang/.cache/auto-improve-wt/jikim' is not a working tree
+evidence: /mnt/c/Users/USER/projects/aidev/state/runs/2026-09-25-170104-jikim-improve/evidence.json
+reports: 24 day(s), 4 week(s), 1 month(s), 1441 run(s), 2560 usage row(s), 46 project page(s), 4 alert(s)
+notify: no new alerts
