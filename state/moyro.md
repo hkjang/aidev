@@ -213,3 +213,4 @@
 - 보류 아이디어: patchPost 의 `updated, _ = h.posts.Get(...)` 되읽기 실패 시 200 + 본문 `null` + `post_edited` 이벤트 누락(S — 사이드바 재정렬의 "되읽기 오류는 500, 성공 이벤트 차단" 선례를 그대로 쓰면 되지만, 두 쓰기 사이에만 장애를 끼우는 결정론적 주입 방법을 아직 못 찾았다) / `patchCustomProfileValuesGlobal`·`patchUserCustomProfileValues` 의 `out, _ := GetUserValues` 가 실패 시 200 `null` 인데 형제 GET 은 500(같은 읽기, 두 답 — S) / `pluginhost.UpdatePost` 의 예약 키 목록이 `postcommand.isReservedProp` 보다 좁아 플러그인이 `from_webhook`·`override_username` 을 찍을 수 있음(S) / uploadTeamImage 가 10MB 초과 본문에도 200 + 업로드 감사 로그(S) / 북마크 4개 핸들러(late.go)의 `ok, _ := IsMember` 403 위장 분리(관리자 예외 설계 선행, M)
 - 과제서: — (이번 회차에는 정찰 과제서가 없었다)
 
+- 릴리즈: v0.2.38 (2026-09-25, run 2026-09-25-000108-moyro-improve)
