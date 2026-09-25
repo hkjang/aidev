@@ -1,0 +1,202 @@
+{
+  "run_id": "2026-09-25-170059-jasql-improve",
+  "generated": "2026-09-25T17:11:38+09:00",
+  "run": {
+    "run_id": "2026-09-25-170059-jasql-improve",
+    "project": "jasql",
+    "kind": "improve",
+    "started": "2026-09-25T17:00:59+09:00",
+    "model": "claude-opus-5",
+    "policy_version": "ecd4b546e",
+    "prompts_hash": "edb1de40f407fdd9",
+    "runner_version": "ae8642cb4",
+    "arm": "codex-critic",
+    "experiment": "roles-2026-09",
+    "finished": "2026-09-25T17:11:38+09:00",
+    "outcome": "review-pending"
+  },
+  "record": {
+    "ts": "2026-09-25T17:11:38+09:00",
+    "date": "2026-09-25",
+    "project": "jasql",
+    "result": "review held, PR open https://github.com/hkjang/jasql/pull/8",
+    "outcome": "review-pending",
+    "run_id": "2026-09-25-170059-jasql-improve",
+    "base_sha": "376cf4cf674d181dbb32c42b9eeaf9f79ccd526e",
+    "head_sha": "31da0d46ebf556c291cddd4cc46cb77643e49c85",
+    "pr": "https://github.com/hkjang/jasql/pull/8",
+    "stages": {
+      "base": {
+        "state": "pinned",
+        "reason": "main@376cf4c",
+        "at": "2026-09-25T17:01:03+09:00"
+      },
+      "autonomy": {
+        "state": "release",
+        "reason": "",
+        "at": "2026-09-25T17:01:04+09:00"
+      },
+      "scout": {
+        "state": "done",
+        "reason": "토크나이저의 도달 불가능한 한국어 접미사 `별로` 를 살려 `…별로` 와 `…별` 이 같은 토큰이 되게 하고, ",
+        "at": "2026-09-25T17:06:45+09:00"
+      },
+      "brief": {
+        "state": "accepted",
+        "reason": "채택 — 과제서의 근거(`search.go:832` 접미사 순서로 `별로` 분기 도달 불가, `tokenize`/`stripKoreanSuffix` 테스트 0 개)가 현재 코�",
+        "at": "2026-09-25T17:11:25+09:00"
+      },
+      "verify": {
+        "state": "passed",
+        "reason": "검증 3개 통과 (auto)",
+        "at": "2026-09-25T17:11:27+09:00"
+      },
+      "review": {
+        "state": "missing",
+        "reason": "리뷰 결과 없음/손상: missing — 보류",
+        "at": "2026-09-25T17:11:28+09:00"
+      },
+      "pr": {
+        "state": "created",
+        "reason": "https://github.com/hkjang/jasql/pull/8",
+        "at": "2026-09-25T17:11:36+09:00"
+      }
+    },
+    "campaign": "",
+    "autonomy": "release",
+    "arm": "codex-critic",
+    "experiment": "roles-2026-09",
+    "engine": "claude",
+    "files": 2,
+    "additions": 98,
+    "deletions": 1,
+    "tests": 1,
+    "title": "order the Korean suffix list so \"별로\" is reachable"
+  },
+  "stages": {
+    "base": {
+      "state": "pinned",
+      "reason": "main@376cf4c",
+      "at": "2026-09-25T17:01:03+09:00"
+    },
+    "autonomy": {
+      "state": "release",
+      "reason": "",
+      "at": "2026-09-25T17:01:04+09:00"
+    },
+    "scout": {
+      "state": "done",
+      "reason": "토크나이저의 도달 불가능한 한국어 접미사 `별로` 를 살려 `…별로` 와 `…별` 이 같은 토큰이 되게 하고, ",
+      "at": "2026-09-25T17:06:45+09:00"
+    },
+    "brief": {
+      "state": "accepted",
+      "reason": "채택 — 과제서의 근거(`search.go:832` 접미사 순서로 `별로` 분기 도달 불가, `tokenize`/`stripKoreanSuffix` 테스트 0 개)가 현재 코�",
+      "at": "2026-09-25T17:11:25+09:00"
+    },
+    "verify": {
+      "state": "passed",
+      "reason": "검증 3개 통과 (auto)",
+      "at": "2026-09-25T17:11:27+09:00"
+    },
+    "review": {
+      "state": "missing",
+      "reason": "리뷰 결과 없음/손상: missing — 보류",
+      "at": "2026-09-25T17:11:28+09:00"
+    },
+    "pr": {
+      "state": "created",
+      "reason": "https://github.com/hkjang/jasql/pull/8",
+      "at": "2026-09-25T17:11:36+09:00"
+    }
+  },
+  "provenance": {
+    "model": "claude-opus-5",
+    "policy_version": "ecd4b546e",
+    "prompts_hash": "edb1de40f407fdd9",
+    "runner_version": "ae8642cb4",
+    "base_sha": "376cf4cf674d181dbb32c42b9eeaf9f79ccd526e",
+    "head_sha": "31da0d46ebf556c291cddd4cc46cb77643e49c85",
+    "pr": "https://github.com/hkjang/jasql/pull/8"
+  },
+  "verification": {
+    "runner": {
+      "source": "auto",
+      "commands": [
+        {
+          "cmd": "go build ./...",
+          "exit": 0,
+          "seconds": 0
+        },
+        {
+          "cmd": "go vet ./...",
+          "exit": 0,
+          "seconds": 1
+        },
+        {
+          "cmd": "go test ./...",
+          "exit": 0,
+          "seconds": 0
+        }
+      ]
+    },
+    "runner_gate": {
+      "ok": true,
+      "state": "verified",
+      "reason": "검증 3개 통과 (auto)"
+    },
+    "after_rebase": null,
+    "review": null,
+    "ci_gate": null
+  },
+  "release": {
+    "result": null,
+    "assets_sha256": []
+  },
+  "approval": null,
+  "usage": [
+    {
+      "ts": "2026-09-25T17:06:44+09:00",
+      "date": "2026-09-25",
+      "project": "jasql",
+      "phase": "scout",
+      "run_id": "2026-09-25-170059-jasql-improve",
+      "campaign": "",
+      "subtype": "success",
+      "engine": "claude",
+      "duration_ms": 364314,
+      "num_turns": 28,
+      "cost_usd": 1.619608,
+      "input_tokens": 36,
+      "output_tokens": 21776,
+      "cache_read": 959516,
+      "cache_create": 59527
+    },
+    {
+      "ts": "2026-09-25T17:11:25+09:00",
+      "date": "2026-09-25",
+      "project": "jasql",
+      "phase": "improve",
+      "run_id": "2026-09-25-170059-jasql-improve",
+      "campaign": "",
+      "subtype": "success",
+      "engine": "claude",
+      "duration_ms": 300255,
+      "num_turns": 33,
+      "cost_usd": 1.8269004999999998,
+      "input_tokens": 58,
+      "output_tokens": 15819,
+      "cache_read": 1675471,
+      "cache_create": 59340
+    },
+    {
+      "ts": "2026-09-25T17:11:28+09:00",
+      "date": "2026-09-25",
+      "project": "jasql",
+      "phase": "review",
+      "run_id": "2026-09-25-170059-jasql-improve",
+      "subtype": "unknown",
+      "cost_usd": null
+    }
+  ]
+}

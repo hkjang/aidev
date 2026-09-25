@@ -174,3 +174,10 @@
 - 릴리즈: v1.7.3 (2026-09-24, run 2026-09-24-005437-jupiq-improve)
 - 릴리즈: v1.8.0 (2026-09-24, run 2026-09-24-221051-jupiq-approve)
 - 릴리즈: v1.8.1 (2026-09-25, run 2026-09-25-041034-jupiq-approve)
+## 2026-09-25
+- 선택: 만료 임박 API 키 안내가 받을 주소 없는 소유자의 키까지 "안내함"으로 표시해 영구히 삼키는 것을 막는다 (가치 3 / 위험 2 / 작업량 S)
+- 결과: 성공
+- 요약: `internal/store/mail.go:ExpiringAPIKeys`의 `UPDATE api_keys SET expiry_notified_at=now() … RETURNING`에 `AND user_id IN (SELECT id FROM users WHERE active AND btrim(email)<>'')` 한 줄을 더해, 수신자 해석(`UserEmails`)과 같은 계정만 표시하도록 두 경로를 맞췄다(인자 번호·호출부·스키마 무변경, "한 번만" 보장은 그대로). 과제서가 경고한 함정(기존 테스트의 Seed 계정 `email=''`)은 실제로는 문제가 아니었다 — 같은 테스트 92행이 이미 주소를 채우므로 종전 계약이 그대로 살아 있었고, 대신 주소 없음/비활성/공백뿐 주소 소유자 세 명을 실제 `Store`·실제 PostgreSQL 16으로 새로 단언했다(공백뿐 주소는 `UpdateProfile`이 입력을 다듬지 않아 프로덕션에서 도달 가능하고 `UserEmails`가 다듬어 ''로 돌려주는 것을 소스에서 확인해 추가). TDD로 먼저 빨갛게 했고(수정 전 세 소유자의 키가 모두 반환), WHERE 절을 되돌리면 수용 기준 1)과 2)가 실제로 실패하는 것을 한 실행에서 확인했다(단언을 Errorf로 바꿔: 반환됨 + `expiry_notified_at` 비NULL + 주소를 채운 뒤 `map[]`으로 이미 삼켜짐). `gofmt -l .` 무출력, `go vet ./...`, `make test-integration`(store 2.55s·api 0.64s), `go test -count=1 ./...` 전부 통과, store 통합 `-v` SKIP 0건, `check-version.sh` 1.8.1. 컨테이너는 제거했다.
+- 보류 아이디어: ListMailDeliveries의 limit>200이 상한 200이 아니라 기본값 50으로 줄어든다(store/mail.go:111 — 차선 후보, 미착수) / OpenAPI page_size 상한 불일치 정리(/users 100 vs /audit 200 vs pageBounds 200) / 같은 수집 주기에 여러 Hub가 degraded로 넘어가면 관리자에게 한 통으로 묶기 / 메일 알림 탭·발송 기록 화면 캡처를 manifest에 추가하고 가이드에 싣기 / internal/store 순수 헬퍼 5개 표 기반 테스트
+- 과제서: 채택 — 진단(표시가 수신자 해석보다 먼저라 주소 없는 소유자의 키가 흔적 없이 삼켜진다)이 코드와 정확히 일치했고 수용 기준 5개를 모두 실제 DB에서 충족했다(함정으로 적힌 기존 단언 붕괴만 실제로는 일어나지 않았다).
+

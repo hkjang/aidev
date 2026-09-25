@@ -177,3 +177,10 @@
 - 과제서: 채택 — 근거가 코드와 정확히 맞았고(webhook.go:165-167에서 updateErr가 전송 결과를 덮어씀) 실제 엔드포인트 왕복으로 수정 전 실패를 재현했다. 다만 과제서가 지시한 `webhookCompleter` 하나만으로는 `webhookTest` 핸들러를 DB 없이 돌릴 수 없어(같은 핸들러가 `WebhookConfig`·`CreateWebhookDelivery`도 부른다) 같은 nil-폴백 관례로 seam 두 개를 더 추가했다 — 수용 기준 4)의 "실제 webhookTest 핸들러로 왕복"을 만족시키기 위한 최소 확장이다.
 
 - 릴리즈: v0.2.21 (2026-09-25, run 2026-09-25-152115-jikim-improve)
+## 2026-09-25
+- 선택: webhook 대기열 포화 시 기록 실패가 아무 흔적도 남기지 않는 문제 수정 + 포화·3xx 분기 왕복 테스트 (가치 3 / 위험 1 / 작업량 M)
+- 결과: 성공
+- 요약: `queueWebhook`(webhook.go:87-89)의 `default` 분기가 `_ = s.completeWebhookDelivery(...)`로 반환값을 버려, 전송 대기열이 가득 찬 동시에 저장소가 흔들리면 delivery 행이 `pending`으로 영원히 남고 로그에도 아무것도 남지 않았다. 같은 파일 191-194와 같은 문구·같은 식별자 필드(`delivery_id`·`event`·`request_id`·`error`)의 `logger.Warn`을 넣고, `queueWebhook`의 반환(void)·statusCode 0·"대기열이 가득 찼습니다" 문구는 그대로 두었다. 검증은 TDD로 — 기존 하네스 `webhookServer`에 실제 `newOutboundHTTPClient`+실제 `deliverWebhook`으로 도는 테스트 3개(포화: 경고 한 줄·엔드포인트 요청 0건·statusCode 0 기록 정확히 1회·로그에 payload/서명 키 없음, 자리 있음: 엔드포인트가 서명 요청 수신·경고 없음, 302: 두 번째 URL로 요청 0건·`ok:false`+`status_code:302`)를 먼저 써서 포화 테스트가 수정 전 실패(경고 0줄)하는 것을 확인한 뒤 고쳐 통과시켰고, `outbound_client.go`의 `http.ErrUseLastResponse`를 `nil`로 되돌리면 302 테스트가 실패(ok:true, status 200)함도 확인한 뒤 파일을 복원했다. `go test ./internal/httpapi/ -run Webhook -count=20`·`-race -count=5`·`go test ./... -count=1`·`go vet ./...`·`gofmt -l .`·`./scripts/verify.sh`(vitest 59개 포함) 전부 exit 0. 커밋 `73939f0`.
+- 보류 아이디어: aiRequestLimiter의 사용자 표에 실질적 상한이 없는 문제 정리 (2/1/S, 차선 후보였으나 미실행) / retryWebhookDelivery 왕복 테스트 공백 (2/1/M, seam 추가 금지라 PostgreSQL 통합 테스트가 더 정직한 경로) / Go 라우트와 Vite 개발 프록시 목록 교차 검증 부재 (3/2/M, 현재 실제 누락 없음) / baoKVWrite의 create·update 판정 TOCTOU (3/3/M, PostgreSQL·동시성 필요) / requestedOpenBaoVersion이 음수·공백 version을 오류 대신 latest로 처리 (2/2/S, OpenBao 사양 확인 불가)
+- 과제서: 채택 — 근거가 코드와 정확히 맞았고(default 분기만 `_ =`로 남아 있었다), 배선 사실(`quietServer()`의 nil `webhookSlots`, 비동기 경로의 `*[]error` 경합)도 그대로 맞아 새 seam 없이 수용 기준 5개를 모두 충족했다.
+

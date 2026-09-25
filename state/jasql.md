@@ -60,3 +60,10 @@
 - 과제서: 기각 — 과제서의 eval `-verbose` MISS 과제는 근거 자체는 맞다(`git merge-base --is-ancestor caf7a00 HEAD` 실패, cmd/jasql-eval/main.go:64 의 세 bool 조건 그대로). 다만 이미 2026-09-22 회차가 caf7a00 로 구현해 미머지 상태로 떠 있어 재구현은 열린 PR 과의 중복·충돌이다. 같은 이유로 timeparse 순서결정성(c712da1)도 피했고, 대신 미머지 커밋과 겹치지 않는 문서 동기화를 골랐다. **다음 정찰 주의: 이 저장소는 base 가 미머지 '성공' 커밋 2 개(caf7a00, c712da1)만큼 뒤처져 있어, 그 두 과제를 다시 내면 중복이다.**
 
 - 릴리즈: v0.31.1 (2026-09-25, run 2026-09-25-152110-jasql-improve)
+## 2026-09-25
+- 선택: 토크나이저의 도달 불가능한 한국어 접미사 `별로` 를 살리고 `tokenize` 표 테스트를 신설 (가치 4 / 위험 2 / 작업량 S)
+- 결과: 성공
+- 요약: `stripKoreanSuffix` 는 첫 일치에서 `return` 하는데 접미사 목록이 `"로"` 를 `"별로"` 앞에 둬서 `별로` 분기가 죽어 있었고(`로` 의 길이 가드가 더 느슨해 항상 먼저 먹는다), 그 결과 `회원사별`→`회원사` 인데 `회원사별로`→`회원사별` 로 같은 뜻의 두 표기가 다른 토큰이 됐다 — `tokenize` 는 search/graph/metrics/analyze/clarify/feedback/validate 8+ 호출부의 공용 1차 토큰이라 리콜을 조용히 깎는다. `"별로"` 를 `"로"` 앞으로 옮기는 한 줄만 바꾸고(길이 가드·`return` 구조·나머지 순서·`expandTokens`·가중치·구분자 목록은 그대로) 근거 주석을 달았다. 신규 `internal/catalog/tokenize_test.go` 로 수정 전 red 를 실제로 확인했고(`tokenize("회원사별로")=[회원사별]` 4 쌍 + `stripKoreanSuffix` 2 건 실패) 수정 후 green; 짧은 토큰(`월별로`→`월별`, `으로`, `바로`, `별로`)과 구분자·소문자화·중복제거 특성화 케이스는 수정 전후 모두 green 이라 과도 절단이 없음을 고정한다. 골든 평가는 수정 전후 동일(cases 80 / table_selection_acc 0.94 / column_recall_avg 0.9 / join_path_acc 0.94 / metric_lookup_acc 1 / expected_sql_valid 1). `go build ./...`·`go vet ./...`·`go test ./...`(catalog 57.590s, mcp 10.154s) 통과, `go test ./internal/mcp -count=1` 별도 재실행으로 `analyze_question` 출력 회귀 없음 확인, `gofmt -l` 신규 파일 깨끗, `git diff --check` 통과, `git status` 로 `data/kcb` 무변화 확인 (커밋 31da0d4).
+- 보류 아이디어: internal/oracle 의 gofmt 드리프트 2 파일(profile.go, oracle_test.go) 정리 후 CI gofmt 게이트 추가 (3/1/S — 이번 회차에 `gofmt -l` 로 실재 재확인, 다음 회차 1 순위) · docs/README.md 의 데이터셋 개수를 DatasetRegistry 와 일치시키고 docs_test.go 식 테스트로 고정 (1/1/S) · analyze_question 이 복수 보고 단위 중 하나만 남겨 다단 GROUP BY 의도를 잃음 (3/2/S — 선행 c712da1 이 아직 base 에 없어 대기) · Manager.db() 의 openDB 를 변수화해 실제 전송 SQL 검증 (3/2/M) · ValidateReadOnlySQL 거부 키워드 정규식 사전 컴파일 (2/1/S)
+- 과제서: 채택 — 과제서의 근거(`search.go:832` 접미사 순서로 `별로` 분기 도달 불가, `tokenize`/`stripKoreanSuffix` 테스트 0 개)가 현재 코드와 정확히 일치했고 수용 기준 1~4 를 그대로 구현·검증했다.
+
