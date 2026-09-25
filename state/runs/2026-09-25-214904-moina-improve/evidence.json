@@ -1,0 +1,213 @@
+{
+  "run_id": "2026-09-25-214904-moina-improve",
+  "generated": "2026-09-25T22:09:06+09:00",
+  "run": {
+    "run_id": "2026-09-25-214904-moina-improve",
+    "project": "moina",
+    "kind": "improve",
+    "started": "2026-09-25T21:49:05+09:00",
+    "model": "claude-opus-5",
+    "policy_version": "ecd4b546e",
+    "prompts_hash": "edb1de40f407fdd9",
+    "runner_version": "437408cfd",
+    "arm": "baseline",
+    "experiment": "roles-2026-09",
+    "finished": "2026-09-25T22:09:05+09:00",
+    "outcome": "review-pending"
+  },
+  "record": {
+    "ts": "2026-09-25T22:09:05+09:00",
+    "date": "2026-09-25",
+    "project": "moina",
+    "result": "fix-round: guarded files, PR open https://github.com/hkjang/moina/pull/32",
+    "outcome": "review-pending",
+    "run_id": "2026-09-25-214904-moina-improve",
+    "base_sha": "3ba1767621e8f58bcffc78f38485713689f81fea",
+    "head_sha": "ab3625475346be37da7e1bdc63bacc79e2b93e3f",
+    "pr": "https://github.com/hkjang/moina/pull/32",
+    "stages": {
+      "base": {
+        "state": "pinned",
+        "reason": "main@3ba1767",
+        "at": "2026-09-25T21:49:11+09:00"
+      },
+      "autonomy": {
+        "state": "release",
+        "reason": "",
+        "at": "2026-09-25T21:49:11+09:00"
+      },
+      "scout": {
+        "state": "done",
+        "reason": "CI `Image and browser smoke` 실패가 어느 화면 때문인지 알 수 없는 것을 고친다 — 실패 상세를 `$GITHUB_STEP_SUMMARY",
+        "at": "2026-09-25T21:54:15+09:00"
+      },
+      "brief": {
+        "state": "accepted",
+        "reason": "채택 — 과제서의 근거(`ci.yml`에 `$GITHUB_STEP_SUMMARY`가 `Dependency audit` 한 곳뿐, 세 e2e 스크립트가 `e2e/test-results` 아래 결과 JSO",
+        "at": "2026-09-25T22:08:42+09:00"
+      },
+      "verify": {
+        "state": "passed",
+        "reason": "검증 7개 통과 (auto)",
+        "at": "2026-09-25T22:08:59+09:00"
+      },
+      "pr": {
+        "state": "created",
+        "reason": "https://github.com/hkjang/moina/pull/32",
+        "at": "2026-09-25T22:09:03+09:00"
+      },
+      "guard": {
+        "state": "held",
+        "reason": ".github/workflows/ci.yml ",
+        "at": "2026-09-25T22:09:03+09:00"
+      }
+    },
+    "campaign": "",
+    "autonomy": "release",
+    "arm": "baseline",
+    "experiment": "roles-2026-09",
+    "engine": "claude",
+    "files": 2,
+    "additions": 149,
+    "deletions": 0,
+    "tests": 0,
+    "title": "fix: CI image 잡이 실패하면 깨진 e2e 화면·route를 job summary에 적습니다"
+  },
+  "stages": {
+    "base": {
+      "state": "pinned",
+      "reason": "main@3ba1767",
+      "at": "2026-09-25T21:49:11+09:00"
+    },
+    "autonomy": {
+      "state": "release",
+      "reason": "",
+      "at": "2026-09-25T21:49:11+09:00"
+    },
+    "scout": {
+      "state": "done",
+      "reason": "CI `Image and browser smoke` 실패가 어느 화면 때문인지 알 수 없는 것을 고친다 — 실패 상세를 `$GITHUB_STEP_SUMMARY",
+      "at": "2026-09-25T21:54:15+09:00"
+    },
+    "brief": {
+      "state": "accepted",
+      "reason": "채택 — 과제서의 근거(`ci.yml`에 `$GITHUB_STEP_SUMMARY`가 `Dependency audit` 한 곳뿐, 세 e2e 스크립트가 `e2e/test-results` 아래 결과 JSO",
+      "at": "2026-09-25T22:08:42+09:00"
+    },
+    "verify": {
+      "state": "passed",
+      "reason": "검증 7개 통과 (auto)",
+      "at": "2026-09-25T22:08:59+09:00"
+    },
+    "pr": {
+      "state": "created",
+      "reason": "https://github.com/hkjang/moina/pull/32",
+      "at": "2026-09-25T22:09:03+09:00"
+    },
+    "guard": {
+      "state": "held",
+      "reason": ".github/workflows/ci.yml ",
+      "at": "2026-09-25T22:09:03+09:00"
+    }
+  },
+  "provenance": {
+    "model": "claude-opus-5",
+    "policy_version": "ecd4b546e",
+    "prompts_hash": "edb1de40f407fdd9",
+    "runner_version": "437408cfd",
+    "base_sha": "3ba1767621e8f58bcffc78f38485713689f81fea",
+    "head_sha": "ab3625475346be37da7e1bdc63bacc79e2b93e3f",
+    "pr": "https://github.com/hkjang/moina/pull/32"
+  },
+  "verification": {
+    "runner": {
+      "source": "auto",
+      "commands": [
+        {
+          "cmd": "cd backend && go build ./...",
+          "exit": 0,
+          "seconds": 1
+        },
+        {
+          "cmd": "cd backend && go vet ./...",
+          "exit": 0,
+          "seconds": 0
+        },
+        {
+          "cmd": "cd backend && go test ./...",
+          "exit": 0,
+          "seconds": 0
+        },
+        {
+          "cmd": "cd frontend && [ -d node_modules ] || npm ci --no-audit --no-fund",
+          "exit": 0,
+          "seconds": 7
+        },
+        {
+          "cmd": "cd frontend && npm test --silent",
+          "exit": 0,
+          "seconds": 3
+        },
+        {
+          "cmd": "cd frontend && [ -d node_modules ] || npm ci --no-audit --no-fund",
+          "exit": 0,
+          "seconds": 0
+        },
+        {
+          "cmd": "cd frontend && npm run build --silent",
+          "exit": 0,
+          "seconds": 5
+        }
+      ]
+    },
+    "runner_gate": {
+      "ok": true,
+      "state": "verified",
+      "reason": "검증 7개 통과 (auto)"
+    },
+    "after_rebase": null,
+    "review": null,
+    "ci_gate": null
+  },
+  "release": {
+    "result": null,
+    "assets_sha256": []
+  },
+  "approval": null,
+  "usage": [
+    {
+      "ts": "2026-09-25T21:54:15+09:00",
+      "date": "2026-09-25",
+      "project": "moina",
+      "phase": "scout",
+      "run_id": "2026-09-25-214904-moina-improve",
+      "campaign": "",
+      "subtype": "error_max_budget_usd",
+      "engine": "claude",
+      "duration_ms": 326756,
+      "num_turns": 37,
+      "cost_usd": 2.004218,
+      "input_tokens": 42,
+      "output_tokens": 14476,
+      "cache_read": 1285168,
+      "cache_create": 79900
+    },
+    {
+      "ts": "2026-09-25T22:08:41+09:00",
+      "date": "2026-09-25",
+      "project": "moina",
+      "phase": "improve",
+      "run_id": "2026-09-25-214904-moina-improve",
+      "campaign": "",
+      "subtype": "success",
+      "engine": "claude",
+      "duration_ms": 952038,
+      "num_turns": 67,
+      "cost_usd": 4.960673499999999,
+      "input_tokens": 126,
+      "output_tokens": 41130,
+      "cache_read": 5624887,
+      "cache_create": 111935
+    }
+  ]
+}
