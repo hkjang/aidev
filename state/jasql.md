@@ -67,3 +67,4 @@
 - 보류 아이디어: internal/oracle 의 gofmt 드리프트 2 파일(profile.go, oracle_test.go) 정리 후 CI gofmt 게이트 추가 (3/1/S — 이번 회차에 `gofmt -l` 로 실재 재확인, 다음 회차 1 순위) · docs/README.md 의 데이터셋 개수를 DatasetRegistry 와 일치시키고 docs_test.go 식 테스트로 고정 (1/1/S) · analyze_question 이 복수 보고 단위 중 하나만 남겨 다단 GROUP BY 의도를 잃음 (3/2/S — 선행 c712da1 이 아직 base 에 없어 대기) · Manager.db() 의 openDB 를 변수화해 실제 전송 SQL 검증 (3/2/M) · ValidateReadOnlySQL 거부 키워드 정규식 사전 컴파일 (2/1/S)
 - 과제서: 채택 — 과제서의 근거(`search.go:832` 접미사 순서로 `별로` 분기 도달 불가, `tokenize`/`stripKoreanSuffix` 테스트 0 개)가 현재 코드와 정확히 일치했고 수용 기준 1~4 를 그대로 구현·검증했다.
 
+- 릴리즈: v0.31.2 (2026-09-25, run 2026-09-25-180627-jasql-approve)
