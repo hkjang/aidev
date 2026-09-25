@@ -1,0 +1,12 @@
+{
+  "verdict": "approve",
+  "reasons": [],
+  "notes": [
+    "기준 불일치: 로컬 main은 95255f3이어서 main...HEAD에는 이전 릴리즈를 포함한 77개 파일이 보인다. 회차에 고정된 3ba1767은 origin/main 및 HEAD 부모와 일치하며, 이번 구현은 social.go·Topic 통합 테스트·OpenAPI 3개 파일이다. 이전 인증·추적 변경도 주요 경로를 읽었지만 전체 77개 파일의 전수 검증이나 외부 연동 재검증은 수행하지 않았다.",
+    "독립 검증: 임시 postgres:17-alpine에서 새 Topic 통합 테스트를 go test -race -count=1 -v로 실행해 5개 하위 케이스 PASS, SKIP 0. 테스트 후 트리거·함수·사용자·Topic 잔여 수 모두 0 확인. make check와 git diff --check main...HEAD 통과.",
+    "실제 라우팅·세션·CSRF·pgx를 거치는 오류 단언이 있어 수정 전 통합 404 분기는 저장 실패 테스트를 통과할 수 없다. 수정 전 코드 실행은 별도로 반복하지 않았다. 전체 backend·frontend·e2e는 이번 리뷰에서 재실행하지 않았다.",
+    "이번 수정은 SQL·인가·스키마·의존성을 변경하지 않고 저장 오류 응답만 분리하므로 코드 revert로 되돌릴 수 있다. 보안·법무 차단 근거는 발견하지 못했다."
+  ],
+  "risk": "low",
+  "blocking": []
+}
