@@ -29,3 +29,8 @@
 - [러너 02:13] pr created — https://github.com/hkjang/pii-masker/pull/26
 - [러너 02:14] ci passed — 검사 없음 — 정책으로 허용
 - [러너 02:14] merge done — 89597ce
+- [러너 02:19] release published — v1.0.28
+- [러너 02:19] gh-release created — GitHub Release v1.0.28
+- [러너 02:19] manifest ok — pii-masker-image.tar.gz 
+- [러너 02:19] assets uploaded — 1개
+- [러너 02:19] assets verified — v1.0.28 자산 1개 (이전 v1.0.27: 1)

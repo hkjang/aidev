@@ -180,3 +180,4 @@
 - 보류 아이디어: internal/config Load 경유 나머지 환경변수 정규화·기본값 테이블 테스트 (2/1/S — 이번에 mock/base URL 축만 덮었고 normalizeAllowHosts/PIILang/PIISchema/AuthMode/envInt 계열은 여전히 무검증) / gorilla/mux 405 응답 Allow 헤더 (1/2/S) / 동기 슬롯 대기열 메모리 상한 (3/3/M) / 이력 조회에서 전체 job 복제 전 상위 limit 선별 (2/2/M) / handleCreateJob·handleGetJob·handleHistory의 download_url 결정을 공용 헬퍼로 (2/1/S)
 - 과제서: 채택 — 과제서의 근거(`config.go:110-113` 하드코딩 대 `app.go:42`의 같은 mux 마운트)가 현재 코드와 정확히 일치했고, 수용 기준 4개를 지목된 방식(리스너를 열어 둔 채 `config.Load` 경유)으로 모두 재현·검증했다.
 
+- 릴리즈: v1.0.28 (2026-09-26, run 2026-09-26-020315-pii-masker-improve)
