@@ -266,3 +266,4 @@
 - 보류 아이디어: `decideApproval`이 `decision_comment`를 trim·길이 제한 없이 저장 (2/2/S) · `loadProvider`·`aiModels`·`aiCatalog`의 `available_models` JSON 파싱 실패를 조용히 무시 (2/1/M) · 사용자 목록 `roles` 배열의 정렬을 `/auth/me`와 같은 계약으로 맞추고 문서화 (1/1/S) · 감사 CSV 문서의 "성공 다운로드=전체 이벤트" 문구를 50,000건 상한으로 정정 (1/1/S) · 합성 레거시 스키마·데모 시드를 `scripts/`의 재사용 가능한 SQL로 승격 (3/2/M)
 - 과제서: 채택 — 결함·파일·재사용 셋업은 코드와 정확히 일치했으나, 지정된 구현 방식(SQL 정렬 보존)이 수용 기준 1(오름차순)을 만족하지 못하는 것을 실측으로 확인해 Go 정렬 + SQL `ORDER BY` 제거로 바꿨다.
 
+- 릴리즈: v1.2.27 (2026-09-25, run 2026-09-25-095742-ai-admin-approve)

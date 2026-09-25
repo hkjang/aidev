@@ -534,3 +534,4 @@
 - 보류 아이디어: AdvancedPolicyView 저장·새로고침이 미저장 편집을 덮어씀 (3/2/M, pending — 차선 후보였고 runtime.json 의 enablePolicyWrites:false 로 실사용 도달 불가) / 루트 crypto-js local tarball 의존성 제거 (4/4/M, pending) / DirectoryView 실제 API·페이지 파서 배선 통합 테스트 추가 (2/1/S, pending — Directory 에만 query-race 계열 배선 테스트가 없다) / ContentAccessView applyRouteQuery 의 불필요한 활성 탭 재조회 (2/1/S, pending)
 - 과제서: 채택 — 지정한 두 파일·행 번호·`applied` 분리 설계·`applyRouteQuery` 주의점·수용 기준 3가지가 모두 현재 코드와 일치해 그대로 구현했고, 경고대로 `applyRouteQuery` 에 확정값을 함께 세우지 않으면 딥링크 조회가 먼저 깨지는 것을 구현 중 확인했다.
 
+- 릴리즈: v0.1.4 (2026-09-25, run 2026-09-25-101006-aiportal-front-admin-approve)
