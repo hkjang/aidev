@@ -1005,7 +1005,18 @@ merge_outputs(){
   elif [ -s "$OUT/ideas.json" ]; then log "$n: ideas.json 스키마 불합격 — 무시"; fi
   rm -rf "$OUT/home"  # 임시 홈은 남기지 않는다
 }
-redact_log(){ sed -E -i 's/gh[pousr]_[A-Za-z0-9]{20,}/ghX_[redacted]/g; s/github_pat_[A-Za-z0-9_]{20,}/github_pat_[redacted]/g; s#([a-z][a-z0-9+.-]*://[^/[:space:]:@]+):[^/[:space:]:@]+@#\1:[redacted]@#g; s/AKIA[0-9A-Z]{16}/AKIA[redacted]/g' "$1" 2>/dev/null || true; }
+# 비밀값을 지우고, 잘못된 UTF-8 바이트도 함께 걷어낸다.
+# 회차 로그에는 외부 도구(cp949 로 찍는 Windows 실행 파일, 진행률을 CR 로 덮어쓰는 git)의
+# 출력이 섞여 들어와 유효하지 않은 바이트가 남는다. 그러면 grep 이 그 파일을 바이너리로 보고
+# **일치하는 줄을 조용히 안 보여 준다** — 2026-09-26 에 이 때문에 로그가 통째로 비어 보였다.
+# sed -i 는 파일을 갈아 끼워(inode 교체) 열려 있는 append 리다이렉트를 끊으므로 쓰지 않는다.
+redact_log(){
+  local t; t=$(mktemp) || return 0
+  sed -E 's/gh[pousr]_[A-Za-z0-9]{20,}/ghX_[redacted]/g; s/github_pat_[A-Za-z0-9_]{20,}/github_pat_[redacted]/g; s#([a-z][a-z0-9+.-]*://[^/[:space:]:@]+):[^/[:space:]:@]+@#\1:[redacted]@#g; s/AKIA[0-9A-Z]{16}/AKIA[redacted]/g' "$1" 2>/dev/null \
+    | iconv -c -f UTF-8 -t UTF-8 2>/dev/null > "$t" || { rm -f "$t"; return 0; }
+  [ -s "$t" ] && cat "$t" > "$1"      # inode 유지 — 돌고 있는 회차의 로그 리다이렉트를 끊지 않는다
+  rm -f "$t"
+}
 SYNCLOG="$REPO_DIR/logs/sync.log"
 # 죽은 git 프로세스가 남긴 0바이트 .git/index.lock — 그 뒤 add·commit 이 전부 조용히 실패한다.
 # 2026-09-23 00:16 에 남은 락 하나로 36시간 동안 회차 기록이 원격에 안 올라갔다 (회차는 계속 돌았다).
@@ -1785,6 +1796,12 @@ FIX_PROJECT=""; FIX_NOTE_TEXT=""; FIX_SHA=""; FIXQ="$STATE/fix-queue.tsv"
 if [ -z "$ONLY" ] && [ -s "$FIXQ" ]; then
   while IFS=$'\t' read -r fp fnote fsha; do [ -n "$fp" ] || continue
     if printf '%s\n' "${allcand[@]}" | grep -qx "$fp"; then picked=("$fp"); FIX_PROJECT="$fp"; FIX_NOTE_TEXT="$fnote"; FIX_SHA="${fsha:-}"; log "fix-queue: picked $fp"; break; fi
+    # 저장소가 아예 없는 줄은 영원히 안 잡히고 줄만 차지한다 (2026-09-25 jasql_semantic).
+    # 오늘 후보가 아닐 뿐인 프로젝트(dirty·쿨다운 등)는 그대로 둔다 — 그건 다음 기회가 온다.
+    if [ ! -d "$ROOT/$fp/.git" ]; then
+      log "fix-queue: $fp — 저장소가 없어 줄을 지운다"
+      grep -v -P "^$fp\t" "$FIXQ" > "$FIXQ.tmp" 2>/dev/null && mv "$FIXQ.tmp" "$FIXQ" || rm -f "$FIXQ.tmp"
+    fi
   done < "$FIXQ"
 fi
 # fix-only 전용 트랙: fix-queue 말고는 아무것도 시작하지 않는다. 처리할 항목이 없으면 조용히 끝낸다.
