@@ -1,0 +1,137 @@
+[
+  {
+    "title": "추적이 꺼져 있어도 인증 없는 CSP 리포트가 관리자 진단 목록을 채우는 문제 막기",
+    "value": 3,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "이번 회차 선택. receiveCSPReport(internal/httpapi/tracking.go:138)가 추적 설정을 보지 않고 무조건 s.violations.Record를 부른다. 추적이 꺼지면 defaultPagePolicy()에 report-uri가 없어 정상 브라우저는 이 주소로 보내지 않으므로, 기본 설치에서 도달하는 리포트는 전부 외부 직접 주입이다. MaxViolations=100 LRU라 목록 전체를 임의 값으로 채울 수 있고 그 목록에는 CSP script-src 허용 버튼(allowTrackingOrigin)이 붙어 있다. 같은 파일 momentoProxy는 ProxyActive() 게이트로 이미 같은 원칙을 지킨다. Config.ReportingActive() 추가 + 한 줄 게이트. 라우트가 requireRoles 래퍼 없이 등록된 것과 기존 테스트 통과를 확인했다.",
+    "updated": "2026-09-26"
+  },
+  {
+    "title": "aiRequestLimiter의 사용자 표에 결정적 상한 세우기",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "이번 회차 차선. ai_rate_limit.go:45-51 — len(l.users)>4096일 때만, 그것도 active==0 && windowStart 2분 초과 항목만 지워 최근 활동 사용자가 많으면 한 건도 안 지워진다. 2026-09-20 login_rate_limit.go 방식(상수+capacity 필드+분리된 결정적 evict+흘림 테스트)을 옮길 수 있고 ai_rate_limit_test.go가 하네스를 준다. 키가 인증 사용자 ID라 외부에서 임의로 늘릴 수 없어 가치는 낮다. 두 회차 연속 차선으로만 올랐다.",
+    "updated": "2026-09-26"
+  },
+  {
+    "title": "추적이 켜진 동안의 CSP 리포트 폭주에 속도 제한 또는 동일 출처 검증 넣기",
+    "value": 3,
+    "risk": 3,
+    "size": "M",
+    "status": "pending",
+    "note": "새 항목. 위 1순위는 '꺼져 있으면 기록하지 않는다'만 담는다. 켜진 동안에는 여전히 인증 없이 100개 슬롯을 밀어낼 수 있다. document-uri는 공격자가 정하는 값이라 동일 출처 검증의 근거가 약하고, 속도 제한은 브라우저가 페이지마다 보내는 정상 트래픽과 구별해야 해서 새 계약이 필요하다. 1순위가 머지된 뒤 별개로 다룰 것.",
+    "updated": "2026-09-26"
+  },
+  {
+    "title": "allowTrackingOrigin이 trackingLoader nil 검사 없이 직접 호출한다",
+    "value": 1,
+    "risk": 1,
+    "size": "S",
+    "status": "rejected",
+    "note": "tracking.go:186이 s.trackingConfig의 nil 폴백을 거치지 않고 s.trackingLoader(r.Context())를 직접 부른다. 그러나 server.go:63에서 New()가 항상 st.TrackingConfig를 넣으므로 프로덕션에서는 도달 불가이고 테스트에서만 패닉 가능. 관찰 가능한 운영 동작 변화가 없어 기각(이 저장소의 반려 사유와 정확히 겹친다).",
+    "updated": "2026-09-26"
+  },
+  {
+    "title": "AI 설정 timeout_seconds/max_tokens가 0이면 요청이 즉시 실패하는 문제",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "rejected",
+    "note": "확인 결과 이미 해결되어 있다. store/settings.go AIConfig()가 읽은 뒤 MaxTokens를 1..262144, TimeoutSeconds를 10..3600으로 클램프하고 기본값도 4096/600이다. 저장 시에도 optionalIntInRange(10,3600) 검증이 있다(settings.go:225). 결함 없음.",
+    "updated": "2026-09-26"
+  },
+  {
+    "title": "retryWebhookDelivery 핸들러 왕복 테스트 공백",
+    "value": 2,
+    "risk": 1,
+    "size": "M",
+    "status": "pending",
+    "note": "webhook.go:140-162. s.store.WebhookDelivery을 직접 불러 seam이 하나 더 필요하고 seam은 이미 세 개다. 2026-09-25 회차가 'seam 추가 금지'로 미뤘다. PostgreSQL(JIKIM_TEST_POSTGRES_DSN) 통합 테스트 쪽이 더 정직한 경로.",
+    "updated": "2026-09-26"
+  },
+  {
+    "title": "Go 라우트와 Vite 개발 프록시 목록이 어긋나도 아무도 알려주지 않는 구조적 공백",
+    "value": 3,
+    "risk": 2,
+    "size": "M",
+    "status": "pending",
+    "note": "5회 연속 같은 주제이고 현재 실제 누락은 없다(vite.config.ts가 server.go의 비-SPA 접두사를 덮는다). 교차 검증 자체는 여전히 없음. 실제 결함이 없는 상태에서 하는 변경은 '관찰 가능한 변화 없음' 반려 위험이 있다.",
+    "updated": "2026-09-26"
+  },
+  {
+    "title": "baoKVWrite가 SecretExistsByPath로 create/update capability를 고르면서 생기는 TOCTOU",
+    "value": 3,
+    "risk": 3,
+    "size": "M",
+    "status": "pending",
+    "note": "openbao.go의 존재 조회와 PutOpenBaoSecret이 분리. 트랜잭션과 동시성 테스트가 필요하고 PostgreSQL(JIKIM_TEST_POSTGRES_DSN)이 있어야 해 한 세션 저위험 과제로 부적합.",
+    "updated": "2026-09-26"
+  },
+  {
+    "title": "requestedOpenBaoVersion이 음수·0·공백 낀 version 쿼리를 오류 대신 latest로 처리",
+    "value": 2,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "openbao.go:514-526. 어느 쪽이 OpenBao 호환인지 이 환경에서 확인할 수 없어 보류(gh·외부 문서 접근 없음). 차선은 compatibility.md에 현재 동작을 명시하는 것.",
+    "updated": "2026-09-26"
+  },
+  {
+    "title": "리버스 프록시 뒤에서 remoteIP가 접혀 로그인 잠금 key의 IP 부분이 모두 같아지는 문제",
+    "value": 2,
+    "risk": 3,
+    "size": "M",
+    "status": "pending",
+    "note": "신뢰 프록시 설정으로 X-Forwarded-For를 반영해야 하는데 신뢰 경계가 새 계약이라 위험하고 보호 경로(auth_handlers.go)를 건드린다.",
+    "updated": "2026-09-26"
+  },
+  {
+    "title": "queueWebhook의 비동기 전송 goroutine이 서버 종료를 기다리지 않는다",
+    "value": 2,
+    "risk": 2,
+    "size": "M",
+    "status": "pending",
+    "note": "webhook.go:79-86의 go func는 context.Background() + 10초 타임아웃으로 돌고 아무도 기다리지 않아, 프로세스가 내려가면 전송 중이던 delivery가 pending으로 남는다(재시도 핸들러가 있으니 유실은 아니다). 종료 경로에 WaitGroup/드레인을 넣으려면 cmd/server의 셧다운 계약을 건드려야 한다.",
+    "updated": "2026-09-26"
+  },
+  {
+    "title": "webhook 실패 delivery에 자동 재시도·백오프가 없다",
+    "value": 2,
+    "risk": 3,
+    "size": "L",
+    "status": "pending",
+    "note": "실패는 관리자가 화면에서 retryWebhookDelivery를 눌러야만 재시도된다. 백그라운드 재시도는 스케줄러·상태 전이·중복 전송 방지 계약이 새로 필요해 한 세션 범위를 넘는다.",
+    "updated": "2026-09-26"
+  },
+  {
+    "title": "모바일 fullPage 캡처가 너무 길어 갤러리·문서에서 읽을 수 없는 문제",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "mobile.spec.ts fullPage:true. 육안 확인이 필요하고 캡처 실행이 docs/screenshots를 덮어써 작업 트리를 더럽힌다. 읽기 전용 정찰에서 검증 불가.",
+    "updated": "2026-09-26"
+  },
+  {
+    "title": "승인 워크플로가 켜진 상태의 검토·승인 화면 캡처 추가",
+    "value": 2,
+    "risk": 2,
+    "size": "M",
+    "status": "pending",
+    "note": "seedCaptureFixtures에 workflow 활성화·승인 요청 fixture가 없다. 상태 변경은 전용 E2E DB로 한정해야 한다.",
+    "updated": "2026-09-26"
+  },
+  {
+    "title": "캡처 파이프라인에 tracking 탭 방문을 정식 편입",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "SettingsTab은 7개(tracking 포함)인데 all-pages.spec.ts에 tracking 전용 방문이 없다.",
+    "updated": "2026-09-26"
+  }
+]
