@@ -1,0 +1,19 @@
+# 회차 노트 2026-09-26-233221-qurio-improve — qurio
+정찰 → 구현 → 비평 → 수리 → 중재 → 릴리즈가 차례로 적는다. 다음 역할은 앞선 노트를 먼저 읽는다. [러너] 줄은 러너의 단계 판정이다.
+- [러너 23:32] base pinned — main@1ad4e50
+- [러너 23:32] autonomy release — 
+
+## 구현 노트
+- 무엇/왜: `internal/domain/sqlsafe` 의 `postgresAliasColumnList` 이 이름 앞 토큰이 `)` 이기만 하면 alias column list 로 단정해 함수 허용목록 검사를 건너뛰었다. 괄호 항 하나를 앞에 붙이면 어떤 호출이든 숨었다(`SELECT (SELECT 1) || dblink_exec('host=internal','DROP TABLE victim')` → readOnly/low). `postgresFromItemContext` 로 왼쪽을 걸어 FROM/JOIN/LATERAL 문맥일 때만 면제한다. 프로덕션 파일 1개.
+- 확신 없는 곳: (1) `postgresValueExpressionKeywords` 목록의 완결성 — 빠진 키워드는 탐색을 더 멀리 보내므로 오탐 쪽이 아니라 **미탐 쪽**으로 틀릴 수 있다. FROM 과 값 식 사이에 올 수 있는 키워드를 더 찾아보면 좋다. (2) `FROM (SELECT 1) t(x) evil(y)` 같은 문법 오류 형태는 여전히 면제된다 — 대상 DB 파서가 거부하므로 무해하다고 판단했으나 직접 실행해 확인하지는 않았다. (3) Oracle 경로는 손대지 않았다(이미 같은 형태를 차단).
+- 일부러 안 한 것: 같은 파일에서 발견한 **선재 오탐 2건**(`WHERE col=(SELECT …)` 를 `col()` 함수 호출로 오판 → 기본 임베딩 컬렉션 생성이 막힌다; `WITH ORDINALITY g(v,i)` 오탐)은 고치지 않았다 — 방향이 반대(loosening)이고 `scanOraclePolicy` 가 연산자를 버리는 구조를 건드려야 해서 보안 게이트를 느슨하게 할 위험이 있다. 원본 파일로도 동일 재현됨을 확인해 ideas.json 에 근거와 함께 남겼다. 문서 변경 없음(allowlist 를 설명하는 문서가 없고, 옛 동작을 단정한 문서도 없다).
+- 다음 역할 주의: 새 테스트 3개는 순수 단위 테스트라 DB 없이 돈다. 다만 `internal/domain/dbexec` 통합 테스트는 **마이그레이션이 적용된 폐기 DB** 가 있어야 하고(빈 DB 로는 내 변경과 무관하게 3건 실패 — 원본 파일로도 동일), `QURIO_TEST_POSTGRES_DSN` 전용에 `-p=1` 직렬 실행이 필요하다. 이번 검증은 도커 postgres:17-alpine 127.0.0.1:55452 에서 했고 컨테이너는 제거했다.
+- [러너 23:53] verify passed — 검증 9개 통과 (auto)
+
+## 비평 노트
+- 확인: 새 테스트는 진짜로 바뀐 경로를 지난다(패키지를 /tmp 로 복사해 sqlsafe.go 만 main 으로 되돌리면 `(1) || custom_reporting_fn(id)` 에서 즉시 실패). gofmt·go vet·패키지 테스트 통과. 구현 노트 불확실 (2) 는 PG17 에서 syntax error 로 무해 확인.
+- 거절 사유: `sqlsafe.go:777` 의 왼쪽 탐색이 FROM 목록의 최상위 콤마를 경계로 보지 않아 앞 from-item 의 `ON`/`USING` 에 걸린다 → PG17 에서 정상 실행되는 `FROM a JOIN b ON a.id=b.id, (SELECT 1) t(x)` 류가 main 의 low 에서 blocked 로 하드 차단(runtimeapi·mcpserver·agentapi 실행 경로 직결).
+- 수리가 먼저 볼 파일: `internal/domain/sqlsafe/sqlsafe.go` postgresFromItemContext. `ON`/`USING` 를 목록에서 빼는 해법은 금지 — `JOIN b ON (a.x) = evil_fn(y)` 로 원래 구멍이 재개방된다. 깊이 0 콤마를 건넜는지를 상태로 들고 콤마 이후에만 `ON`/`USING` 을 무시할 것.
+- 승인이어도 남을 우려(릴리즈 노트): `dbexec/postgres_safety.go:418/430/439` 경유로 `) fn(` 형태를 가진 뷰·파티션 키·RLS 정책이 이제 관계째로 ErrUnsafeDatabaseObject — 실측 `SELECT 1 WHERE ((tenant_id) = current_setting('app.tenant'))` low→blocked. 의도된 강화지만 사용자 가시적.
+- 못 본 것: dbexec 통합 테스트(폐기 DB 미준비) 미실행. 검증은 sqlsafe 단위 A/B + PG17 컨테이너 구문 확인까지. 컨테이너 제거 완료. 보안·법무 차단 사유 없음(실패는 닫히는 방향, 공격 경로 없음).
+- [러너 00:03] review rejected — 리뷰 거절: internal/domain/sqlsafe/sqlsafe.go:777 postgresFromItemContext 의 왼쪽 탐색이 FROM 목록의 최상위 콤마를 경계로 인식하지 않는다. 앞선 from-item 의 `JOIN ... O

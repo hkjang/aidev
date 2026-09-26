@@ -1,0 +1,22 @@
+{
+  "base": {
+    "state": "pinned",
+    "reason": "main@1ad4e50",
+    "at": "2026-09-26T23:32:26+09:00"
+  },
+  "autonomy": {
+    "state": "release",
+    "reason": "",
+    "at": "2026-09-26T23:32:26+09:00"
+  },
+  "verify": {
+    "state": "passed",
+    "reason": "검증 9개 통과 (auto)",
+    "at": "2026-09-26T23:53:35+09:00"
+  },
+  "review": {
+    "state": "rejected",
+    "reason": "리뷰 거절: internal/domain/sqlsafe/sqlsafe.go:777 postgresFromItemContext 의 왼쪽 탐색이 FROM 목록의 최상위 콤마를 경계로 인식하지 않는다. 앞선 from-item 의 `JOIN ... ON` / `USING` 절까지 계속 걸어가 `ON`/`USING` 키워드에 걸려 false 를 반환하고, 그 결과 정상적인 alias column list 가 함수 호출로 오판되어 allowlist 에 없으므로 RiskBlocked 로 하드 차단된다. PostgreSQL 17(docker postgres:17-alpine, 55471)에서 실제로 정상 실행되는 다음 세 쿼리가 main 에서는 readOnly/low 였는데 이 브랜치에서 blocked 로 바뀐다(패키지를 /tmp 로 복사해 main 버전 sqlsafe.go 와 A/B 비교, 재현됨): `SELECT * FROM a JOIN b ON a.id = b.id, (SELECT 1) t(x)` / `SELECT * FROM a JOIN b USING (id), (VALUES (1)) v(n)` / `SELECT * FROM orders o JOIN customers c ON o.customer_id = c.id, (VALUES ('a'),('b')) tags(label)`. 이 게이트는 runtimeapi/sql.go:54, runtimeapi/services.go:753, domain/mcpserver/server.go:174, agentapi/orchestrator.go:238 등 사용자·에이전트 실행 경로에 직접 걸려 있어 정상 읽기 쿼리가 거부된다. / internal/domain/sqlsafe/sqlsafe.go:777 수리 방향(검증까지 해 둠): `ON`/`USING` 를 목록에서 빼는 것만으로는 안 된다 — 그러면 `SELECT * FROM a JOIN b ON (a.x) = evil_fn(y)` 가 왼쪽으로 걸어 JOIN 에 닿아 다시 면제된다(원래 구멍 재개방). 깊이 0 의 콤마를 건넜는지 상태로 들고, **콤마를 건넌 뒤에는** `ON`/`USING` 이 탐색을 끝내지 않게 하면 두 경우가 모두 맞는다(콤마 전 `ON` 은 여전히 차단, 콤마 후 `ON` 은 앞 from-item 소속이므로 통과).",
+    "at": "2026-09-27T00:03:25+09:00"
+  }
+}
