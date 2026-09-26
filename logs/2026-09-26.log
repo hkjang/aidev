@@ -5147,3 +5147,12 @@ fatal: '/home/hkjang/.cache/auto-improve-wt/postra' is not a working tree
 evidence: /mnt/c/Users/USER/projects/aidev/state/runs/2026-09-26-233213-postra-improve/evidence.json
 reports: 25 day(s), 4 week(s), 1 month(s), 1509 run(s), 2740 usage row(s), 46 project page(s), 6 alert(s)
 notify: no new alerts
+[00:30:24] aidev synced: run(2026-09-26): postra — merged https://github.com/hkjang/postra/pull/26, released v0.23.7
+[00:32:28] qurio: review — 39 turns, 11m, $2.67, success
+[00:32:28] qurio: [review] rejected — 리뷰 거절: internal/domain/sqlsafe/sqlsafe.go:766 postgresFromItemContext 는 호출 지점마다 토큰 스트림을 왼쪽 끝까지 다시 훑고, 균형 괄호 그룹을 한 토큰씩 되짚어 건너뛴다. 이 함수는 sqlsafe.go:447 의 O(n) 루프 안에서 `)` 뒤에 오는 모든 `word(` 자리마다 sqlsafe.go:453 을 통해 불리므로 전체가 O(n^2) 가 된다. 메모이제이션도, 왼쪽 탐색 거리 상한도 없다. 측정(PG 방언, 동일 입력, main 대 HEAD): 평범하고 문법적으로 유효한 `SELECT upper(x) || upper(x) || ... FROM t` 는 96KB 에서 7ms→1.555s, 480KB 에서 28ms→35.5s. runtimeapi/sql.go:49 가 스스로 허용하는 상한인 1MiB 페이로드는 83ms→3m53.9s(약 2800배). AnalyzeDialect 는 순수 CPU 루프라 ctx 취소도 statement timeout 도 걸리지 않고, runtimeapi/api.go:111 의 /sql/validate 는 기본 권한 `sql.generate` 만 요구하며 sqlsafe.go 호출(sql.go:54)이 requireDatabaseAccess(sql.go:61)보다 먼저 실행된다. 즉 DB 권한이 하나도 없는 일반 로그인 사용자가 요청 몇 개로 코어를 분 단위로 점유할 수 있고, 정상 크기(50~100KB)의 생성 SQL 도 검증 지연이 수백 ms~초 단위로 늘어난다. main 에는 없는 회귀다. 고치는 법: 토큰 스캔 때 matching-left-paren 인덱스를 1회 O(n) 으로 미리 계산해 그룹 건너뛰기를 O(1) 점프로 만들고, 서로 같은 접미사로 수렴하는 왼쪽 탐색 결과를 cursor 기준으로 메모이즈할 것(또는 최소한 탐색 토큰 수에 넉넉한 상한을 두고 초과 시 false 로 닫을 것 — 소진은 이미 차단 방향이다).
+branch 'auto/2026-09-26-2332' set up to track 'origin/auto/2026-09-26-2332'.
+[00:32:34] qurio: [pr] created — https://github.com/hkjang/qurio/pull/23
+https://github.com/hkjang/qurio/pull/23#issuecomment-5847503006
+evidence: /mnt/c/Users/USER/projects/aidev/state/runs/2026-09-26-233221-qurio-improve/evidence.json
+reports: 25 day(s), 4 week(s), 1 month(s), 1510 run(s), 2741 usage row(s), 46 project page(s), 6 alert(s)
+notify: no new alerts

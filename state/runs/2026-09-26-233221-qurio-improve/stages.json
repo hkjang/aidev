@@ -16,12 +16,17 @@
   },
   "review": {
     "state": "rejected",
-    "reason": "리뷰 거절: internal/domain/sqlsafe/sqlsafe.go:777 postgresFromItemContext 의 왼쪽 탐색이 FROM 목록의 최상위 콤마를 경계로 인식하지 않는다. 앞선 from-item 의 `JOIN ... ON` / `USING` 절까지 계속 걸어가 `ON`/`USING` 키워드에 걸려 false 를 반환하고, 그 결과 정상적인 alias column list 가 함수 호출로 오판되어 allowlist 에 없으므로 RiskBlocked 로 하드 차단된다. PostgreSQL 17(docker postgres:17-alpine, 55471)에서 실제로 정상 실행되는 다음 세 쿼리가 main 에서는 readOnly/low 였는데 이 브랜치에서 blocked 로 바뀐다(패키지를 /tmp 로 복사해 main 버전 sqlsafe.go 와 A/B 비교, 재현됨): `SELECT * FROM a JOIN b ON a.id = b.id, (SELECT 1) t(x)` / `SELECT * FROM a JOIN b USING (id), (VALUES (1)) v(n)` / `SELECT * FROM orders o JOIN customers c ON o.customer_id = c.id, (VALUES ('a'),('b')) tags(label)`. 이 게이트는 runtimeapi/sql.go:54, runtimeapi/services.go:753, domain/mcpserver/server.go:174, agentapi/orchestrator.go:238 등 사용자·에이전트 실행 경로에 직접 걸려 있어 정상 읽기 쿼리가 거부된다. / internal/domain/sqlsafe/sqlsafe.go:777 수리 방향(검증까지 해 둠): `ON`/`USING` 를 목록에서 빼는 것만으로는 안 된다 — 그러면 `SELECT * FROM a JOIN b ON (a.x) = evil_fn(y)` 가 왼쪽으로 걸어 JOIN 에 닿아 다시 면제된다(원래 구멍 재개방). 깊이 0 의 콤마를 건넜는지 상태로 들고, **콤마를 건넌 뒤에는** `ON`/`USING` 이 탐색을 끝내지 않게 하면 두 경우가 모두 맞는다(콤마 전 `ON` 은 여전히 차단, 콤마 후 `ON` 은 앞 from-item 소속이므로 통과).",
-    "at": "2026-09-27T00:03:25+09:00"
+    "reason": "리뷰 거절: internal/domain/sqlsafe/sqlsafe.go:766 postgresFromItemContext 는 호출 지점마다 토큰 스트림을 왼쪽 끝까지 다시 훑고, 균형 괄호 그룹을 한 토큰씩 되짚어 건너뛴다. 이 함수는 sqlsafe.go:447 의 O(n) 루프 안에서 `)` 뒤에 오는 모든 `word(` 자리마다 sqlsafe.go:453 을 통해 불리므로 전체가 O(n^2) 가 된다. 메모이제이션도, 왼쪽 탐색 거리 상한도 없다. 측정(PG 방언, 동일 입력, main 대 HEAD): 평범하고 문법적으로 유효한 `SELECT upper(x) || upper(x) || ... FROM t` 는 96KB 에서 7ms→1.555s, 480KB 에서 28ms→35.5s. runtimeapi/sql.go:49 가 스스로 허용하는 상한인 1MiB 페이로드는 83ms→3m53.9s(약 2800배). AnalyzeDialect 는 순수 CPU 루프라 ctx 취소도 statement timeout 도 걸리지 않고, runtimeapi/api.go:111 의 /sql/validate 는 기본 권한 `sql.generate` 만 요구하며 sqlsafe.go 호출(sql.go:54)이 requireDatabaseAccess(sql.go:61)보다 먼저 실행된다. 즉 DB 권한이 하나도 없는 일반 로그인 사용자가 요청 몇 개로 코어를 분 단위로 점유할 수 있고, 정상 크기(50~100KB)의 생성 SQL 도 검증 지연이 수백 ms~초 단위로 늘어난다. main 에는 없는 회귀다. 고치는 법: 토큰 스캔 때 matching-left-paren 인덱스를 1회 O(n) 으로 미리 계산해 그룹 건너뛰기를 O(1) 점프로 만들고, 서로 같은 접미사로 수렴하는 왼쪽 탐색 결과를 cursor 기준으로 메모이즈할 것(또는 최소한 탐색 토큰 수에 넉넉한 상한을 두고 초과 시 false 로 닫을 것 — 소진은 이미 차단 방향이다).",
+    "at": "2026-09-27T00:32:28+09:00"
   },
   "repair": {
     "state": "done",
     "reason": "# fix-summary (수리 1회차 → 커밋 b715a45)  - 문제(재현됨): `postgresFromItemContext` 의 왼쪽 탐색이 FROM 목록의 최상위 콤마를 경계로 보지 않아 앞 from-item 의 `ON`",
     "at": "2026-09-27T00:21:08+09:00"
+  },
+  "pr": {
+    "state": "created",
+    "reason": "https://github.com/hkjang/qurio/pull/23",
+    "at": "2026-09-27T00:32:34+09:00"
   }
 }
