@@ -29,3 +29,5 @@
 - [러너 07:23] pr created — https://github.com/hkjang/Momento/pull/18
 - [러너 07:29] ci passed — 검사 1개 모두 success
 - [러너 07:29] merge done — 42d76f1
+- [러너 07:38] release published — v0.34.46
+- [러너 07:40] assets verified — v0.34.46 자산 2개 (이전 v0.34.45: 2)
