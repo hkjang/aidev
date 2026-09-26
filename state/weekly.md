@@ -244,3 +244,4 @@
 - 보류 아이디어: 참여 카드 ThisWeek* 가 달력의 이번 주만 말해 월요일에 지난주 마지막 기회를 못 봄 — openWeeks 목록 (3/2/M) · README:47·MCP.md:3·AdminPage 의 MCP OAuth 도움말 세 곳의 '읽기 전용' 이 mcpwrite.go 의 `mcp:write` 보다 낡음 (2/1/S) · 관리자 카드에서 실패한 발송을 '다시 시도' 로 큐에 되돌리기 — 세 큐의 재시도 규칙이 각각 달라 계약을 먼저 정해야 함 (3/2/S) · CHECKS.md:16 이 authz-check 를 '수 분' 이라 적고 같은 문서 108행은 '수십 분' (2/1/S) · SettingsTab 을 렌더하는 프런트 시험이 하나도 없어 관리자 카드의 조건부 문장·표가 타입 검사 밖에서는 검증되지 않음 (2/2/M)
 - 과제서: 채택 — 과제서가 지목한 `mail.go` 의 `args = append(args, mailDeliveryLimit)` 와 시험 1145행의 57건 배치가 코드와 정확히 일치했고, 미확인으로 남겨 둔 `paging-check.py` 를 실제로 돌려 `truncated?: boolean` 이 offset 요구를 만들지 않는 것까지 확인해 수용 기준 5개를 모두 채웠습니다.
 
+- 릴리즈: v0.308.0 (2026-09-26, run 2026-09-26-083036-weekly-improve)

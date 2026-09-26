@@ -30,3 +30,5 @@
 - [러너 09:07] pr created — https://github.com/hkjang/weekly/pull/22
 - [러너 09:29] ci passed — 검사 1개 모두 success
 - [러너 09:29] merge done — 726b8c8
+- [러너 09:50] release published — v0.308.0
+- [러너 09:52] assets verified — v0.308.0 자산 1개 (이전 v0.307.0: 1)
