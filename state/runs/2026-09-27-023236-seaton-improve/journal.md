@@ -19,3 +19,6 @@
 - 다음 역할이 조심할 것: `web/e2e/seat-deeplink.spec.ts` 는 Docker 이미지 + PostgreSQL 16 + 씨드가 있어야 돈다. `PLAYWRIGHT_BROWSERS_PATH=/home/hkjang/.cache/ms-playwright` 가 필요했다(HOME 이 run 디렉터리라 기본 경로에 브라우저가 없다). 검증에 쓴 컨테이너·네트워크·`seaton:e2e-before` 이미지는 모두 지웠다.
 - [러너 02:54] brief accepted — 채택 — 과제서가 지목한 다섯 자리(324/350/384/636/679-693)와 `lastSearchRef` 재사용 가정이 모두 지금 코드와 맞았고, 씨드에 도
 - [러너 02:54] verify passed — 검증 7개 통과 (auto)
+- [러너 03:08] review timeout — 단계 제한 시간 초과
+- [러너 03:08] review missing — 리뷰 결과 없음/손상: missing — 보류
+- [러너 03:08] pr created — https://github.com/hkjang/seaton/pull/36
