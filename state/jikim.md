@@ -185,3 +185,10 @@
 - 과제서: 채택 — 근거가 코드와 정확히 맞았고(default 분기만 `_ =`로 남아 있었다), 배선 사실(`quietServer()`의 nil `webhookSlots`, 비동기 경로의 `*[]error` 경합)도 그대로 맞아 새 seam 없이 수용 기준 5개를 모두 충족했다.
 
 - 릴리즈: v0.2.22 (2026-09-25, run 2026-09-25-170104-jikim-improve)
+## 2026-09-26
+- 선택: 추적이 꺼져 있어도 인증 없는 CSP 리포트가 관리자 진단 목록을 채우는 문제 막기 (가치 3 / 위험 1 / 작업량 S)
+- 결과: 성공
+- 요약: `receiveCSPReport`(internal/httpapi/tracking.go:138)가 추적 설정을 보지 않고 무조건 `s.violations.Record`를 불러, 추적이 꺼져 `report-uri`를 내보낸 적 없는 기본 설치에서도 누구든 관리자의 "차단된 출처" 목록(`MaxViolations=100`, 항목마다 CSP `script-src` 허용 버튼)을 임의 값으로 채울 수 있었다. `tracking.Config.ReportingActive()`(경로 규칙만 뺀 `Active`)를 추가하고 게이트 한 줄을 넣었으며, `defer w.WriteHeader(204)`는 첫 줄에 그대로 두어 어느 분기로 빠져도 본문 없는 204가 나가 응답으로 추적 on/off를 알 수 없게 유지했다. TDD로 서브테스트 3개(off 5회→`"data":[]`, on 3회→`"count":3` 1건, 설정 읽기 실패 2회→`"data":[]`)를 먼저 써서 수정 전 2개 실패를 확인하고, 게이트를 지우면 같은 2개가 다시 실패하는 것도 확인했다. 기존 `TestPolicyReportsAreRecordedOnceAndListedForAdministrators`는 수정 없이 통과. `go test ./... -count=1`·`go vet ./...`·`gofmt -l .`·`-race -count=10`·`./scripts/verify.sh`(vitest 59개 포함) 전부 exit 0. 커밋 `90bee37`.
+- 보류 아이디어: 추적이 켜진 동안의 CSP 리포트 폭주에 속도 제한 또는 동일 출처 검증 (3/3/M, 이번 범위 밖 — 새 계약 필요) / aiRequestLimiter 사용자 표의 결정적 상한 (2/1/S, 차선 후보였으나 미실행) / retryWebhookDelivery 왕복 테스트 공백 (2/1/M, PostgreSQL 통합 경로가 더 정직) / Go 라우트와 Vite 개발 프록시 목록 교차 검증 부재 (3/2/M, 현재 실제 누락 없음) / baoKVWrite create·update 판정 TOCTOU (3/3/M, PostgreSQL·동시성 필요)
+- 과제서: 채택 — 근거가 코드와 정확히 맞았고(tracking.go:138-142에 설정 확인이 없었다) 지정한 파일 3개와 게이트 판정식을 그대로 구현했다. 다만 `ReportingActive`의 경로-비의존성은 httpapi 왕복 테스트로는 보일 수 없어 `internal/tracking/tracking_test.go`에 단위 테스트 하나를 더했다(테스트 파일 1개 추가, 프로덕션 파일 수는 과제서대로 2개).
+
