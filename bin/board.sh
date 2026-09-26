@@ -75,6 +75,16 @@ else
       --permission-mode plan --allowedTools "Read Grep Glob Skill" --max-budget-usd "$BUDGET" --output-format json ${pargs[@]+"${pargs[@]}"} </dev/null >"$out" 2>>"$REPO_DIR/logs/board.err" )
   text=$(jq -r '.result // ""' "$out" 2>/dev/null); cost=$(jq -r '.total_cost_usd // 0' "$out" 2>/dev/null); cost=${cost:-0}; rm -f "$out"
   [ -n "$text" ] || { echo "이사회 세션이 답을 내지 못함"; exit 1; }
+  # 사용량 한도에 걸린 응답을 보고서로 쓰면 안 된다. 2026-09-21 의 W39 이사회는 본문이
+  # "You've hit your weekly limit · resets Sep 22, 6pm" 한 줄이었고 제안 0건으로 저장됐다.
+  # 파일이 생겼으니 헬스체크는 "이번 주 이사회 완료" 로 보고 다시 부르지 않았다 — 한 주가 통째로 비었다.
+  if grep -qiE "usage limit|limit reached|weekly limit|5-hour limit|rate.?limit|quota|credit balance|resets? at|resets [A-Z][a-z]{2} " <<<"$text" \
+     && [ "$(printf '%s' "$text" | wc -c)" -lt 400 ]; then
+    echo "이사회 세션이 사용량 한도에 걸렸다 — 주간 파일을 만들지 않는다 (다음 헬스체크가 다시 시도)"
+    "$HERE/tg.sh" "🏛 이사회 $WEEK — 사용량 한도로 열지 못했습니다. 한도가 풀리면 다음 헬스체크가 다시 엽니다.
+$(printf '%s' "$text" | head -c 200)" >/dev/null 2>&1 || true
+    exit 0
+  fi
 fi
 
 # 제안 목록: 마지막 줄의 JSON 이 있으면 그것을, 없으면 메모의 "N. `동사 ...` — 이유" 줄에서 뽑는다 (모델이 JSON 을 빼먹어도 제안은 남는다)

@@ -100,6 +100,13 @@ $question
     --allowedTools "Read Grep Glob Bash(git log:*) Bash(git show:*) Bash(git diff:*) Bash(gh pr view:*) Bash(gh run view:*)" \
     --max-budget-usd "$BUDGET" --output-format json >"$out" 2>"$err"
   text=$(jq -r '.result // ""' "$out" 2>/dev/null)
+  # 사용량 한도 응답을 결과로 쓰지 않는다 — 짧은 안내문 한 줄이 보고서·교훈·취향으로
+  # 저장되면 그 파일을 읽는 모든 회차가 그것을 규칙으로 읽는다 (2026-09-21 이사회가 그랬다).
+  if grep -qiE "usage limit|limit reached|weekly limit|5-hour limit|rate.?limit|quota|credit balance|resets? at|resets [A-Z][a-z]{2} " <<<"$text" \
+     && [ "$(printf '%s' "$text" | wc -c)" -lt 400 ]; then
+    echo "사용량 한도 응답 — 결과를 쓰지 않고 다음 기회로 넘긴다"
+    rm -f "$out" "$err"; continue
+  fi
   cost=$(jq -r '.total_cost_usd // 0' "$out" 2>/dev/null)
   verdict=$(grep -oE '\{"cause".*\}' <<<"$text" | tail -1)
   : > "$stamp"; echo "$(( reps + 1 ))" > "$stamp.n"
