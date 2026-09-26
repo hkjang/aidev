@@ -1173,7 +1173,8 @@ def inbox_items(by_day, days, alert_items):
             items.append({"kind": "PR", "project": r.get("project"), "title": info.get("title", ""), "url": pr, "sha": (info.get("headRefOid") or "")[:7],
                           "summary": f"{info.get('changedFiles', '?')}파일 +{info.get('additions', '?')}/−{info.get('deletions', '?')} · {(r.get('result') or '')[:90]}",
                           "why": why or (r.get("result") or ""), "evidence": f"{GH}/aidev/tree/main/state/runs/{r.get('run_id', '')}", "labels": labels, "action": rec, "date": d,
-                          "shepherd": shepherd_line(sh), "shepherd_action": (sh or {}).get("action", "")})
+                          "shepherd": shepherd_line(sh), "shepherd_action": (sh or {}).get("action", ""),
+                          "shepherd_detail": (sh or {}).get("detail", "")})
     for it in gh_json(["issue", "list", "-R", "hkjang/aidev", "--label", "deploy-recovery", "--state", "open", "--json", "number,title,url,createdAt"]) or []:
         items.append({"kind": "배포 복구", "project": re.sub(r"^.*?: ", "", it["title"]).split(" ")[0], "title": it["title"], "url": it["url"], "sha": "",
                       "summary": "이전 정상 릴리즈로 운영 복귀 여부 결정", "why": "롤백 PR 과 별개로 운영 환경 복구가 필요할 수 있음", "evidence": it["url"], "labels": "", "action": "이슈 안내대로 복구 후 이슈 닫기", "date": it["createdAt"][:10]})
@@ -1184,7 +1185,19 @@ def inbox_items(by_day, days, alert_items):
 
 
 def write_inbox(items, alert_items):
-    desc = f"사람이 판단해야 할 항목 {len(items)}건 — 열린 PR(리뷰 보류·보호 파일·CI 실패·승인 대기), 배포 복구, 수정 과제. 각 항목에 변경 요약·실패 근거·권장 조치가 붙어 있다."
+    # 열린 PR 을 전부 '사람 판단 필요' 로 세면 숫자가 3배로 부풀고, 그러면 아무도 안 본다.
+    # 실제로 사람을 기다리는 것은 PR 처리기가 needs-human 으로 넘긴 것과 배포 복구뿐이다 —
+    # 나머지는 승인 스윕·처리기·pr-gc 가 처리 중이다 (2026-09-26: 56건 중 사람 몫은 17건).
+    # 처리기가 '더 못 한다' 고 판정한 것(수정·심사 N회 실패, 리베이스로 안 풀리는 충돌)은
+    # bin/pr-gc.sh 가 3일 뒤 닫고 일감을 ideas 로 회수한다 — 사람을 기다리는 것이 아니다.
+    _gc = ("시도했지만 통과하지 못함", "자동 리베이스로 풀리지 않음")
+    for _it in items:
+        _d = _it.get("shepherd_detail") or ""
+        _it["needs_human"] = (_it.get("shepherd_action") == "needs-human"
+                              and not any(g in _d for g in _gc)) or _it.get("kind") == "배포 복구"
+    items.sort(key=lambda x: (not x.get("needs_human"), x.get("date") or ""))
+    n_human = sum(1 for _it in items if _it["needs_human"])
+    desc = f"사람이 결정해야 할 항목 {n_human}건 (러너가 처리 중 {len(items) - n_human}건) — 열린 PR(리뷰 보류·보호 파일·CI 실패·승인 대기), 배포 복구, 수정 과제. 각 항목에 변경 요약·실패 근거·권장 조치가 붙어 있다."
     lines = [front_matter("작업함 — 사람 판단 필요", desc, None, {"type": "report"}), "# 작업함 — 사람 판단 필요\n",
              f'<p class="tldr"><strong>요약.</strong> {esc(desc)}</p>\n']
     st = stops()
