@@ -535,6 +535,18 @@ approvals(){
     fi
     [[ ",$labels," == *",aidev-approved,"* ]] || continue
     stopped merge "$n" && continue
+    # CI 워크플로가 하나도 없는 저장소의 승인 PR 은 머지 조건이 영원히 안 갖춰진다. 그래도
+    # 스윕은 10분마다 집어 CI 를 묻고 '승인 대기 유지' 만 찍었다 (9-26 한 시간에 10건).
+    # 그 저장소에는 health.sh 가 'CI 워크플로 추가' 를 배정하고 따로 알리므로, 여기서는
+    # 조건이 갖춰질 때까지 하루 한 번만 적고 넘긴다. CI 가 생기면 다음 스윕부터 저절로 붙는다.
+    if [ "$(policy "$n" '.allow_merge_without_ci')" != true ] \
+       && [ "$(ls "$repo/.github/workflows" 2>/dev/null | grep -cE '\.ya?ml$')" = 0 ]; then
+      if [ ! -f "$STATE/.noci-skip-$n-$RUN_DATE" ]; then
+        : > "$STATE/.noci-skip-$n-$RUN_DATE"
+        log "$n: 승인된 PR 이 있지만 이 저장소엔 CI 워크플로가 없다 — 생길 때까지 스윕에서 넘긴다"
+      fi
+      continue
+    fi
     appr_sha=$(jq -r --arg pr "$pr" 'select(.pr==$pr) | (.sha // "")' "$STATE/approvals.jsonl" 2>/dev/null | tail -1)
     if [ -z "$appr_sha" ]; then appr_sha=$head; jq -cn --arg ts "$(date -Iseconds)" --arg pr "$pr" --arg sha "$head" --arg pv "$pv" '{ts:$ts,pr:$pr,sha:$sha,policy_version:$pv}' >> "$STATE/approvals.jsonl"; log "$n: 승인 기록 $pr @ ${head:0:7} (policy $pv)"; fi
     if [ "$appr_sha" != "$head" ]; then
@@ -1060,6 +1072,7 @@ big_artifact_guard(){
   find "$STATE/runs" -maxdepth 2 -type d -name assets -mtime +7 -exec rm -rf {} + 2>/dev/null
   # 에이전트가 파 놓고 안 치운 임시 체크아웃 — 한 번은 저장소 하나가 통째로(1,683 파일) 커밋에 들어갔다
   find "$STATE/runs" -maxdepth 2 -type d -name 'clean-checkout*' -mmin +720 -exec rm -rf {} + 2>/dev/null
+  find "$STATE" -maxdepth 1 -name '.noci-skip-*' -mtime +2 -delete 2>/dev/null
   while IFS= read -r f; do
     [ -n "$f" ] || continue
     log "sync: 대용량 산출물 제거 ($(du -m "$f" 2>/dev/null | cut -f1)MB) ${f#"$REPO_DIR"/}"
