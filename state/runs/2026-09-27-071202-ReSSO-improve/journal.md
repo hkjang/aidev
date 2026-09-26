@@ -26,3 +26,7 @@
 - 남는 우려 2: ADMIN_GUIDE.md:570의 `resso_token_errors_total{stage=…}`는 라벨 이름이 틀렸고(실제 `grant_type`, metrics.go:56) 새 operations.md 문장과 정면으로 어긋난다 — 이번 변경 전부터의 오류지만 이제 눈에 띈다. 그리고 기존 표 테스트(integration_test.go:10376)에 token 행이 없어 "모든 OIDC Endpoint" 표가 계열을 다 담지 못한다. 릴리즈: 워크트리의 uncommitted `webui/dist/index.html`을 함께 커밋하지 말 것.
 - [러너 07:36] review approved — 리뷰 승인 (risk=low)
 - [러너 07:37] pr created — https://github.com/hkjang/ReSSO/pull/30
+- [러너 07:45] ci passed — 검사 2개 모두 success
+- [러너 07:45] merge done — b762ea8
+- [러너 07:59] release published — v0.9.93
+- [러너 08:04] assets verified — v0.9.93 자산 2개 (이전 v0.9.92: 2)

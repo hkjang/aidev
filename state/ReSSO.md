@@ -280,3 +280,4 @@
 - 보류 아이디어: token의 `client_credentials`·refresh 경로에서 `UserByID` 장애를 `invalid_grant`로 답하는 것 — 같은 부류이나 판정 지점이 셋이고 회귀 범위가 넓다(3/2/M) / UserInfo 거절 카운터 `resso_userinfo_errors_total` — stage 여섯 고정 라벨(2/1/S) / `metricClientAuth`의 `realm` 라벨에 없는 Realm 이름이 들어가는지 확인 — 되면 인증 없는 호출자가 시계열을 늘린다(1/1/S) / 비화면 경로의 CSP를 `default-src 'none'`으로 좁히기(2/2/S) / 통합 테스트의 `lockedBuffer`를 공용 헬퍼로 — 이번에 사용처가 넷이 됐다(1/1/S)
 - 과제서: 채택 — 근거(428-432행이 `ErrNotFound` 구분 없이 400 `invalid_grant`, 489-497행에 같은 논지가 이미 있음, `realmLookupFailed`를 쓰지 않는 유일한 호출자)가 코드와 그대로 맞았고 수용 기준 다섯을 모두 구현·검증했다. 토큰은 과제서가 지정한 `IssueUserTokens`로 발급했다.
 
+- 릴리즈: v0.9.93 (2026-09-27, run 2026-09-27-071202-ReSSO-improve)

@@ -1,0 +1,27 @@
+release: ReSSO v0.9.93
+
+The Token endpoint answered every realm lookup failure with 400 invalid_grant,
+so a realms table this server could not read was indistinguishable from a Realm
+that does not exist. invalid_grant tells the relying party that the code or
+refresh token it holds is spent, and the ordinary response is to discard it and
+send the person through login again — so an outage that nobody's grant was ever
+read during took every session with it, and none of them came back when it
+ended. Such a failure now answers 500 server_error with a description that says
+the token is still valid and the call is worth retrying. The same argument was
+already written one check further down, where a signing key that cannot be
+opened answers 500 rather than blaming the grant; the Realm lookup sat in front
+of it and was the exception. The fault also went unrecorded: of the seven
+callers of realmFromPath this was the only one that did not report through
+realmLookupFailed, so no endpoint=token line existed for an operator to find the
+outage by, and now there is one. A Realm that is genuinely absent or switched
+off is unchanged to the byte — both arrive as store.ErrNotFound and keep 400
+invalid_grant with no log line, because this endpoint is deliberately not a way
+to ask what exists, and the tests assert that silence. No metric is added:
+resso_token_errors_total's only label is grant_type, and the form has not been
+read for one when this fails, so there is no honest value to count it under; the
+500 is already visible in resso_http_requests_total{route,status}, and that
+reasoning is left in the code as a comment. The operations guide's alert entry
+for resso_token_errors_total gains a sentence saying the same, since an operator
+reading that line is the person who would otherwise wait for a counter that will
+never move. Stamps the version in the Makefile, console package metadata and
+both compose files, with no schema or configuration changes.
