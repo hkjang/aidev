@@ -1,0 +1,27 @@
+Bump version to 1.23.0
+
+SQL 기반 목록 정의 조회 수정 릴리즈 (#32):
+  #32 nexa_list.entity_id 는 nullable 이고 POST /api/v1/admin/lists 는 sql_id
+    만 든 목록을 그대로 저장하는데, 같은 행을 읽는 네 경로 중 listDefinition
+    하나만 entity(list.getEntityId()) 를 무조건 불러 null 을
+    entityRepository.findById 에 넘기고 있던 것 — listData·
+    DataAdapterService.queryList 는 entityId 를 보기 전에 sqlId 로 분기하고,
+    내보내기 3종(CSV·XLSX·PDF)은 listData 를 지난다
+  #32 거기서 나오는 InvalidDataAccessApiUsageException("The given id must not
+    be null") 은 GlobalExceptionHandler 가 매핑하는 타입이 아니라 400 도 아닌
+    500 이고, 런타임 목록 화면이 가장 먼저 부르는 호출이라 SQL 기반 목록은
+    그리드가 아예 그려지지 않았음
+  #32 엔티티 블록을 entityMapFor(list) 로 뽑아 entityId 가 있을 때만 조회하고
+    (그 경우 v1.22.0 의 requireLiveEntity 판정 불변) 없으면 빈 맵을 내줌;
+    키를 빼지 않고 빈 맵으로 둔 것은 런타임 템플릿이 이미
+    definition.entity?.keyColumn || columns[0].field 로 방어적으로 읽어
+    평범한 def.entity.keyColumn 도 예외 대신 undefined 로 떨어지게 하려는 것.
+    성공 응답의 나머지 10개 키는 불변, 프로덕션 파일은 NexaUiService 1개
+  #32 sqlId·entityId 가 둘 다 없는 목록의 판정은 기존대로 데이터 경로
+    (queryList 의 "has no sqlId nor entityId")에 남겨 둠 — 정의 조회가
+    추측해서 막지 않음
+  #32 SqlBackedListDefinitionIntegrationTest 4건 신규 (실제 H2·MockMvc 에
+    실제 SqlMetadata/SqlExecutor 배선, 목 없음) — 수정 전 단독 실행에서
+    정의 조회만 Status expected:<200> but was:<500> 으로 빨갛고 나머지 3건
+    (빌더 /data·jqxgrid 어댑터·엔티티 기반 목록 정의)은 초록인 것을 먼저
+    확인 후 초록, cleanTest test 590 (586+4) 통과·0 skip, bootJar 성공

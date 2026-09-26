@@ -18,3 +18,7 @@
 - 다음 회차 후보: `/api/v1/builder/lists/**`·`/api/v1/data/lists/**` 에 목록 단위 권한 게이트가 없음(이번 변경이 만든 것 아님, anyRequest().authenticated() 뿐) + 구현자가 남긴 SQL 어댑터 대문자 컬럼 키.
 - [러너 22:25] review approved — 리뷰 승인 (risk=low)
 - [러너 22:25] pr created — https://github.com/hkjang/nexabuilder/pull/32
+- [러너 22:34] ci passed — 검사 2개 모두 success
+- [러너 22:34] merge done — 3445eba
+- [러너 22:53] release published — v1.23.0
+- [러너 22:55] assets verified — v1.23.0 자산 1개 (이전 v1.22.0: 1)
