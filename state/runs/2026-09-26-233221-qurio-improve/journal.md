@@ -17,3 +17,11 @@
 - 승인이어도 남을 우려(릴리즈 노트): `dbexec/postgres_safety.go:418/430/439` 경유로 `) fn(` 형태를 가진 뷰·파티션 키·RLS 정책이 이제 관계째로 ErrUnsafeDatabaseObject — 실측 `SELECT 1 WHERE ((tenant_id) = current_setting('app.tenant'))` low→blocked. 의도된 강화지만 사용자 가시적.
 - 못 본 것: dbexec 통합 테스트(폐기 DB 미준비) 미실행. 검증은 sqlsafe 단위 A/B + PG17 컨테이너 구문 확인까지. 컨테이너 제거 완료. 보안·법무 차단 사유 없음(실패는 닫히는 방향, 공격 경로 없음).
 - [러너 00:03] review rejected — 리뷰 거절: internal/domain/sqlsafe/sqlsafe.go:777 postgresFromItemContext 의 왼쪽 탐색이 FROM 목록의 최상위 콤마를 경계로 인식하지 않는다. 앞선 from-item 의 `JOIN ... O
+
+## 수리 노트
+- 지적은 맞았다: FROM 목록의 최상위 콤마를 경계로 보지 않아 `FROM a JOIN b ON …, (SELECT 1) t(x)` 세 쿼리가 blocked 로 재현됐다. `AS` 도 같은 부류로 깨져 있었다(`FROM (VALUES (1)) AS a, (SELECT 1) t(x)`) — 지적에 없었지만 같은 결함이라 함께 고쳤다.
+- 고친 방법(b715a45): 콤마 통과 플래그 + ① 짝 안 맞는 `(` 를 넘으면 플래그 해제(그 콤마는 인자 목록 것 → `ON coalesce(x,(1)||evil_fn(y))` 차단 유지) ② FROM 목록에 못 오는 절 키워드(SELECT/WHERE/BY/SET/VALUES/ORDER…)는 콤마 이후에도 항상 종료. 지적이 금지한 "ON/USING 를 목록에서 제거" 는 쓰지 않았다.
+- 검증: go test ./... 전체 + gofmt/vet 통과, 양방향 되돌림 검증(수리 전이면 allow 실패, 괄호 해제 빼면 block 실패), 새 allow 6건 PG17 실제 실행 확인.
+- 여전히 확신 없는 곳: (1) `IS [NOT] DISTINCT FROM` 은 이 브랜치 이전부터 왼쪽 탐색이 `FROM` 에 닿아 true 를 주므로 `WHERE x IS DISTINCT FROM (1) || evil_fn(y)` 가 면제된다 — 이번 지적 범위 밖이라 손대지 않았고 3줄 가드로 막을 수 있다. (2) `postgresClauseBoundaryKeywords` 분류의 완결성 — 잘못 넣으면 오탐(차단), 빼면 미탐 쪽이다. TABLESAMPLE 은 별도 규칙이 먼저 차단하므로 이 함수와 무관.
+- 비평가가 릴리즈 노트로 남긴 dbexec `) fn(` 관계 차단 우려는 이번 수리로 `ON`/`AS` 뒤 콤마 케이스만 좁아졌고 나머지는 그대로다.
+- [러너 00:21] repair done — # fix-summary (수리 1회차 → 커밋 b715a45)  - 문제(재현됨): `postgresFromItemContext` 의 왼쪽 탐색이 FROM 목록의 최상위 콤마를 경계로 보지 않아 앞 from-item 의 `ON`

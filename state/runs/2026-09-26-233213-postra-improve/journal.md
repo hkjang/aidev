@@ -42,3 +42,7 @@
 - 미확인: 프런트(npm), POSTRA_TEST_PG, 브라우저/PDF, govulncheck. 보안·법무 차단 사유 없음(인증·인가·비밀값·주입 표면 무변경, 새 에러는 상수만 담아 본문·서버 텍스트를 로그로 흘리지 않음, 개인정보 무변화, 코드 전용이라 revert 로 완전 복구).
 - [러너 00:07] review approved — 리뷰 승인 (risk=low)
 - [러너 00:07] pr created — https://github.com/hkjang/postra/pull/26
+- [러너 00:12] ci passed — 검사 10개 모두 success
+- [러너 00:12] merge done — 5145007
+- [러너 00:24] release published — v0.23.7
+- [러너 00:27] assets verified — v0.23.7 자산 5개 (이전 v0.23.6: 5)
