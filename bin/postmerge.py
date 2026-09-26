@@ -77,6 +77,15 @@ def main():
         # 러너가 만든 커밋 집합: 러너 PR 의 머지 커밋 M 에 대해 M^1..M^2 가 그 PR 의 커밋들이다.
         # 이것이 없으면 러너의 다음 회차가 같은 파일을 'fix:' 로 고친 것까지 전부 "사람이 고쳤다" 로 읽힌다.
         runner_shas = set()
+        # 릴리즈 커밋도 러너가 만든 것이다. release_project 는 PR 없이 기본 브랜치에 바로
+        # 커밋하고 태그를 달므로 위의 PR 기반 수집으로는 안 잡힌다. 그런데 이 저장소들의
+        # 릴리즈 커밋 제목은 "fix: release the ... for v0.2.22" 처럼 fix 로 시작하고 버전
+        # 파일·CHANGELOG 를 건드린다 — 그래서 **과거의 모든 PR 이 '사람이 다시 고쳤다' 로
+        # 집계됐다.** jikim 은 그 때문에 13건 전부 100%% 로 보였다 (2026-09-26 확인).
+        for line in git(repo, "show-ref", "--tags", "-d").splitlines():
+            parts = line.split()
+            if parts:
+                runner_shas.add(parts[0])
         for pr0, _ in items:
             m0 = git(repo, "log", head, "--merges", "--grep", f"Merge pull request #{pr0.rsplit('/', 1)[-1]} ", "--format=%H", "-1").strip()
             if m0:

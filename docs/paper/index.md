@@ -339,8 +339,8 @@ larger sample, the comparison by approver reversed direction.
 
 | Approver | Sample (≥7 days observed) | Corrective commit within 30 days | of which fixed by a human |
 |---|---|---|---|
-| Runner (auto / shepherd) | 411 | 71.8% | **31.9%** |
-| Human | 48 | 70.8% | **25.0%** |
+| Runner (auto / shepherd) | 423 | 70.9% | **24.1%** |
+| Human | 48 | 70.8% | **18.8%** |
 
 On the smaller samples (221 and 13) the AI-approved changes appeared to need *less* human follow-up
 than the human-approved ones. With the larger sample the ordering flipped. Neither figure comes from
@@ -355,18 +355,27 @@ the same files rises monotonically.
 
 | Production files touched | Sample | Fixed by a human within 30 days |
 |---|---|---|
-| 1–3 | 130 | **16%** |
-| 4–9 | 236 | 35% |
-| 10 or more | 105 | **43%** |
+| 1–3 | 130 | **14%** |
+| 4–9 | 236 | 25% |
+| 10 or more | 105 | **33%** |
 
 This is not random assignment, so it cannot be read causally — larger changes may simply be harder
-problems. The 2.6× spread was still enough to change operating guidance: the scout and builder
+problems. The 2.4× spread was still enough to change operating guidance: the scout and builder
 prompts now carry a "six production files or fewer" limit together with this table as its rationale,
 and the scorecard keeps counting the rate by size so the next draft can compare before and after.
 
-The spread between repositories is just as large — same runner, same gates, yet pii-masker and ptium
-sit at 0% human rework (18 each) while jikim is at 100% (13) and Quantoss at 80% (10). The scorecard
+The spread between repositories is just as large — same runner, same gates, yet pii-masker, ptium and
+jikim sit at 0% human rework while Quantoss is at 80% (10) and Vendra at 55% (20). The scorecard
 surfaces the worst five and advises lowering the autonomy level or adding verification above 70%.
+
+These figures moved sharply on 2026-09-26. Until then release commits were being counted as human
+fixes: `release_project` commits straight to the default branch and tags it, so it never entered the
+PR-derived set of "commits the runner made", and these repositories happen to write release commits as
+`fix: release the … for v0.2.22`, touching the version file and the changelog. **Every release therefore
+added one "a human fixed this" to every past pull request in that repository.** The more often a
+repository released, the worse it looked — jikim showed 100% across all 13 and is 0% once corrected.
+Adding the commits that tags point at to the runner set fixed it; the overall human-fix rate fell from
+31% to 24%.
 
 ## 7. Threats to validity
 
