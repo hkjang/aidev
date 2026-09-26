@@ -1,7 +1,7 @@
 ---
 title: "aidev 자율 개선 대시보드"
 description: "Claude Code 자율 개선 에이전트가 hkjang 의 프로젝트를 개선·테스트·머지·릴리즈한 일일 보고. 오늘 37회차·릴리즈 19건, 누적 1492회차·릴리즈 487건, 주의 필요 7건."
-last_modified_at: 2026-09-26 15:57:58 +0900
+last_modified_at: 2026-09-26 16:11:43 +0900
 ---
 {% raw %}
 <script type="application/ld+json">
@@ -17,7 +17,7 @@ last_modified_at: 2026-09-26 15:57:58 +0900
   "name": "hkjang",
   "url": "https://github.com/hkjang"
  },
- "dateModified": "2026-09-26T15:57:58+09:00"
+ "dateModified": "2026-09-26T16:11:43+09:00"
 }
 </script>
 
@@ -339,7 +339,7 @@ last_modified_at: 2026-09-26 15:57:58 +0900
 
 # aidev 자율 개선 대시보드
 
-<p class="tldr"><strong>한 줄 요약.</strong> Claude Code 자율 개선 에이전트가 hkjang 의 프로젝트를 개선·테스트·머지·릴리즈한 일일 보고. 오늘 37회차·릴리즈 19건, 누적 1492회차·릴리즈 487건, 주의 필요 7건. 회차가 끝날 때마다 자동 갱신됩니다 (마지막 갱신 <time datetime="2026-09-26T15:57:58+09:00" data-rel>2026-09-26 15:57</time> KST).</p>
+<p class="tldr"><strong>한 줄 요약.</strong> Claude Code 자율 개선 에이전트가 hkjang 의 프로젝트를 개선·테스트·머지·릴리즈한 일일 보고. 오늘 37회차·릴리즈 19건, 누적 1492회차·릴리즈 487건, 주의 필요 7건. 회차가 끝날 때마다 자동 갱신됩니다 (마지막 갱신 <time datetime="2026-09-26T16:11:43+09:00" data-rel>2026-09-26 16:11</time> KST).</p>
 
 <div class="alerts" role="alert"><strong>⚠️ 주의 필요 7건</strong> <span class="meta">— 새 경고는 GitHub Issue·Slack·이메일·Windows 알림으로도 보냅니다</span><ul><li><a href="https://hkjang.github.io/aidev/projects/qurio/">qurio</a> — 보호 파일 변경 — 자동 머지 안 함, 사람 검토 필요 <span class=meta>(2026-09-26 06:05)</span></li><li><a href="https://hkjang.github.io/aidev/projects/sqlon/">sqlon</a> — 보호 파일 변경 — 자동 머지 안 함, 사람 검토 필요 <span class=meta>(2026-09-26 11:40)</span></li><li><a href="https://hkjang.github.io/aidev/projects/hunter/">hunter</a> — 보호 파일 변경 — 자동 머지 안 함, 사람 검토 필요 <span class=meta>(2026-09-25 14:32)</span></li><li><a href="https://hkjang.github.io/aidev/projects/moina/">moina</a> — CI 실패로 PR 미머지 <span class=meta>(2026-09-25 19:37)</span></li><li><a href="https://hkjang.github.io/aidev/projects/moina/">moina</a> — 보호 파일 변경 — 자동 머지 안 함, 사람 검토 필요 <span class=meta>(2026-09-25 22:09)</span></li><li><a href="https://hkjang.github.io/aidev/projects/vibe-code/">vibe-code</a> — 최신 릴리즈 v1.4.2 자산 0개 (이전 v1.4.0: 2개)</li><li><a href="https://hkjang.github.io/aidev/projects/jasql_semantic/">jasql_semantic</a> — 수정 과제 대기 중 — 오류 대응(자동 적재): 마지막 회차가 &#x27;error&#x27; 로 끝났습니다. fix-round: error: pr create</li></ul></div>
 
