@@ -277,3 +277,4 @@
 - 보류 아이디어: SimpleDeployPage 의 업로드 중 라이브 로그도 같은 빈틈(error 미청취·`?after` 이어받기 없음) — 같은 헬퍼를 재사용할 것 (가치 2 / 위험 2 / S); 전체 모드 ReleaseDetailPage 는 `onerror` 에서 readyState 를 보지 않아 자동 재연결 중에도 끊김으로 표시하고 프로퍼티 대입이라 EventTarget 대역으로 테스트가 닿지 않음 (가치 1 / 위험 2 / S); SSE 프레임을 rAF 마다 모아 한 번만 setLogs (가치 2 / 위험 2 / M); 통합 테스트 픽스처를 `New()` 기반 Server 로 옮기기 — `simple_batch_test.go:71` 의 `&Server{}` 리터럴이 nil `streams` 맵을 남겨 스트림 라우트가 패닉 (가치 2 / 위험 1 / S, 이번 차선 후보).
 - 과제서: 채택 — 과제서의 근거(effect 에 error/open 리스너 없음, 서버 429 stream_limit, 전체 모드에만 connected 표시)가 지금 코드와 그대로 일치했고 수용 기준 4건을 지정된 두 파일 안에서 충족했습니다.
 
+- 릴리즈: v0.5.21 (2026-09-26, run 2026-09-26-102029-releasedock-approve)
