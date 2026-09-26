@@ -128,3 +128,11 @@
 - 과제서: 채택 — 근거로 든 행 번호(auth.go:229·239, admin.go:899·956·973, AdminPage.tsx 3278·3336·3410)와 `useAuth` 위치가 모두 현재 코드와 일치했고 수용 기준 3개를 그대로 구현·증명했다; 과제서가 미확인으로 남긴 Tooltip 은 실제로 import 되어 있지 않아 한 줄 추가했다.
 
 - 릴리즈: v0.34.45 (2026-09-26, run 2026-09-26-121651-Momento-improve)
+## 2026-09-27
+- 선택: DataTable 이 clamp 하지 않은 page 로 slice 해 행도 Empty 도 없는 빈 표를 보여주는 것을 고친다 (가치 3 / 위험 1 / 작업량 S)
+- 결과: 성공
+- 요약: `DataTable.tsx:87` 이 raw `page` 로 `filtered.slice(page*pageSize, …)` 하고 `209-212행`만 표시용 페이지 번호를 `Math.min` 으로 clamp 해, 뒤쪽 페이지에서 결과가 줄면 `paged` 가 빈 배열이 되는데 `194행` Empty 는 `!filtered.length` 에서만 나오므로 행도 안내문도 없는 표가 남았다. 새 순수 모듈 `web/src/components/tablePaging.ts` 의 `clampPage(page, pageSize, total)` 하나를 두고 slice(87)·`TablePagination.page`(209)·기본 rowKey fallback(103)이 **같은** `safePage` 를 읽게 했다; `86행 useEffect` 의존성, `205행 filtered.length > 10`, `194행` Empty 분기, `onPageChange`/`onRowsPerPageChange`, CSV(`149행`)는 손대지 않았다(프로덕션 파일 2개). 검증: `cd web && npm ci && npm run lint && npm test && npm run build` 전부 통과(테스트 115 → 121, +6). 순수 함수 테스트에 더해, 실제 프로덕션 배선을 확인했다 — vite dev 로 **진짜 `DataTable`** 을 real MUI·real React 로 마운트하고 headless Chrome(google-chrome 151, puppeteer-core 는 /tmp 에 설치)으로 몰아 "alpha" 검색 → 4페이지(`76–100 / 100`) → `rows.length` 는 100 그대로인 채 내용만 바뀌어 일치가 5건으로 줄어드는 재조회(useEffect 미발화)를 재현했다: 수정 전 `{"rows":0,"empty":false,"pager":null}`, 수정 후 `{"rows":5,"first":"alpha-0"}`. 임시 하네스(`web/verify-tmp`)와 `dist` 는 커밋 전에 지웠고 `git status` 로 3파일만 담긴 것을 확인했다.
+- 실패 재현: 순수 함수 — clamp 를 raw page 로 되돌리자 6건 중 5건 실패, 순회 테스트는 `error: 'page=1 pageSize=1 total=1 → 0행'`. 프로덕션 배선 — `git checkout -- web/src/components/DataTable.tsx` 후 같은 브라우저 시나리오가 `길이 동일·내용 변경 후: {"rows":0,"first":null,"empty":false,"pager":null}` / `RESULT: 빈 표 (행 0 + 안내문 없음) — 결함 재현` (exit 1).
+- 보류 아이디어: DataTable 에 description 이 있으면 검색 중 일치 건수가 어디에도 표시되지 않는다(122-125행) (가치 2 / 위험 1 / S); 자기 자신의 역할 변경(SELF_ROLE) 제약을 사용자 편집 다이얼로그에 반영 (가치 2 / 위험 1 / S); DataTable 기본 rowKey 가 동명이인에서 중복될 수 있다(93-104행) (가치 2 / 위험 1 / S); 대형 표에서 DataTable 검색이 디바운스 없이 매 키 입력마다 전체를 다시 필터한다 — 먼저 측정 (가치 2 / 위험 2 / M)
+- 과제서: 채택 — 인용한 행 번호(87·103·194·205·209-212·86)와 csvExport 선례(`.ts` 확장자까지 적는 node:test import)가 모두 현재 코드와 일치했고 수용 기준 3개를 그대로 구현·증명했다. 과제서가 미확인으로 남긴 puppeteer-core/Chrome 은 Chrome 은 있고 puppeteer-core 만 없어 /tmp 에 설치해 실제 DOM 확인까지 했다.
+

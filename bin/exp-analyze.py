@@ -171,9 +171,13 @@ def main():
             return (f"{round(x*100)}% (n={v.get('n')})" if field == "rate" else f"${x} (n={v.get('n')})")
         _p = (m.get("merged_vs_baseline") or {}).get("p")
         _ps = "—" if a == "baseline" or _p is None else (f"**{_p}**" if _p < 0.0083 else str(_p))
+        # 처치 노출: arm 이 끄는 기능이 baseline 에서 실제로 몇 번 돌았나. 노출이 낮으면
+        # 그만큼 효과가 희석되므로 같은 p 값이라도 해석이 달라진다.
         _ex = m.get("baseline_exposure")
         if _ex == 0:
             _ps = "노출 0 — 비교 불가"
+        elif _ex is not None and _b.get("n"):
+            _ps += f" (노출 {round(_ex / _b['n'] * 100)}%)"
         if (exp["arms"].get(a) or {}).get("stopped"):
             _ps += f" · 중단 {exp['arms'][a]['stopped'].get('at','')}"
         lines.append(f"| {a} | {m['n']} | {c2('verify_pass')} | {c2('pr_reached')} | {c2('merged')} | {_ps} | {c2('review_pending')} | {c2('cost_per_round','mean')} | {'—' if m['cost_per_merge'] is None else '$' + str(m['cost_per_merge'])} |")

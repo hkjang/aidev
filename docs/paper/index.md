@@ -416,6 +416,15 @@ The other three (repair, journal, lessons) are indistinguishable from baseline o
 not evidence of absence: with 20–33 rounds per arm, differences under about 20 percentage points are
 not detectable.
 
+**Counting treatment exposure, only two of the six arms were real comparisons (2026-09-27).**
+Measuring how often the feature an arm disables actually ran in baseline: no-scout 100%,
+codex-critic 84%, no-journal 100% (a round journal of roughly 4KB accumulates in every round),
+no-lessons about 53% (the share of rounds on repositories that have lessons; operator preferences are
+injected in every round, so true exposure is higher), **no-repair 7%**, **no-arbiter 0%**. The
+repairer only runs when the critic rejects, which is 7% of rounds — so 93% of the no-repair arm's
+rounds were the same treatment as baseline, and its p=0.565 is a diluted figure.
+`bin/exp-analyze.py` now prints the exposure rate alongside each arm.
+
 **The no-arbiter arm was never a comparison at all (found 2026-09-27).** The arbiter has not run once
 in 1,500 rounds. It fires only when the critic rejects and the repairer declines to commit, arguing
 the criticism is wrong — and the repairer has run 22 times and committed successfully all 22. Baseline
