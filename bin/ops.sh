@@ -189,6 +189,38 @@ board)
         done; sync_state "board apply $sel" ;;
     *) echo "board [open|apply <번호...|all>]"; exit 2;;
   esac ;;
+campaign-prs)
+  # 캠페인 PR 을 '바꾼 파일 모양' 으로 묶어 보여 준다. 캠페인은 같은 변경을 저장소마다
+  # 반복하므로 PR 들이 서로 거의 같다 — 하나를 제대로 보고 같은 모양을 한 번에 승인하는 것이
+  # 33번 따로 보는 것보다 정확하고 빠르다. 캠페인 PR 의 46%가 보호 경로(인증·토큰·메일)에
+  # 걸려 사람 승인을 기다리고, 그래서 캠페인 머지율이 20%다(일반 회차는 86%, 2026-09-27).
+  cid=${1:-}; shift || true; approve=0; [ "${1:-}" = "--approve" ] && approve=1
+  [ -n "$cid" ] || { echo "사용법: bin/ops.sh campaign-prs <캠페인id> [--approve]"; jq -r '.campaigns[]|select(.done!=true)|"  "+.id' "$STATE/campaigns.json"; exit 2; }
+  tmpf=$(mktemp); trap 'rm -f "$tmpf"' EXIT
+  jq -r --arg c "$cid" 'select(.campaign==$c and (.pr//"")!="")|.pr' "$DATA/runs.jsonl" | sort -u > "$tmpf"
+  [ -s "$tmpf" ] || { echo "$cid 의 PR 기록이 없습니다"; exit 0; }
+  # 저장소마다 파일 경로가 달라 '같은 모양' 으로는 묶이지 않는다. 대신 작은 것부터 보여 준다 —
+  # 검토 시간은 파일 수에 비례하고, 작은 PR 이 먼저 머지되면 다음 조각이 그 위에서 이어진다.
+  rows=$(mktemp); trap 'rm -f "$tmpf" "$rows"' EXIT
+  while read -r u; do
+    [ -n "$u" ] || continue
+    read -r st nf < <(gh pr view "$u" --json state,changedFiles --jq '"\(.state) \(.changedFiles)"' 2>/dev/null || echo "? 0")
+    [ "$st" = OPEN ] || continue
+    printf '%s\t%s\n' "${nf:-0}" "$u" >> "$rows"
+  done < "$tmpf"
+  [ -s "$rows" ] || { echo "$cid: 열린 PR 이 없습니다"; exit 0; }
+  echo "$cid — 열린 PR $(grep -c . "$rows")건 (파일 수 적은 순)"
+  sort -n "$rows" | awk -F'\t' '{printf "  %3s파일  %s\n", $1, $2}'
+  if [ "$approve" -eq 1 ]; then
+    ok=0; tot=0
+    while IFS=$'\t' read -r nf u; do tot=$((tot+1)); ops_pr_label "$u" aidev-approved && ok=$((ok+1)); done < "$rows"
+    echo "→ 승인 $ok/$tot (승인 스윕이 CI 확인 뒤 머지합니다)"
+  else
+    echo
+    echo "작은 것부터 대표로 하나 읽어 보고, 이 캠페인의 변경 방식이 괜찮으면:"
+    echo "  bin/ops.sh campaign-prs $cid --approve"
+  fi
+  ;;
 ci-prs)
   # CI 워크플로만 추가하는 PR 을 모아 한 번에 보여 주고, 원하면 한 번에 승인한다.
   # 워크플로는 보호 경로라 PR 마다 사람 승인이 필요한데, CI 공백을 메우는 PR 은 러너가
