@@ -38,3 +38,5 @@
 - 비평이 남긴 둘을 처리했다: ① ASCII fallback 에서 이름이 빠져 `workspace-YYYYMMDD.zip` 이 되는 것을 릴리스 노트에 한 단락으로 적었다(`filename*` 을 읽는 클라이언트는 전과 같다는 것까지). ② `npm run build` 가 더럽힌 `webui/dist/index.html` 은 커밋 전에 `git checkout --` 으로 되돌렸고 placeholder 검사를 다시 통과시켰다 — 커밋에는 들어가지 않았다.
 - 자산은 만들지 않았다(`assets: []`). `release.yml` 이 태그 푸시로 이미지를 빌드해 `muni-v0.47.0.tar.gz` 를 만들고 GitHub Release 까지 게시하므로 `github_release: false` 다. `sync-release-notes.yml` 은 이미 있는 릴리스만 고치니 이 노트 본문은 **릴리스가 생긴 뒤 두 번째 푸시**에서야 반영된다 — 그때 「릴리스 파일 검증」의 크기·SHA-256 "(릴리스 후 기록)" 두 자리를 asset digest 로 채우는 것이 남은 일이다(v0.40.0 은 이 두 번째 푸시가 없어 본문이 자동 생성 목록 그대로 남아 있다).
 - 임시로 띄운 postgres 컨테이너(`muni-rel-pg`)는 지웠다. 워킹트리는 깨끗하고 HEAD 는 detached 그대로, 브랜치는 만들지도 옮기지도 않았다.
+- [러너 21:30] release published — v0.47.0
+- [러너 21:35] assets verified — v0.47.0 자산 1개 (이전 v0.46.0: 1)

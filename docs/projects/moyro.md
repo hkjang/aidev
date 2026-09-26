@@ -1,7 +1,7 @@
 ---
 title: "moyro — 자율 개선 이력"
 description: "moyro: 자율 개선 회차 38회, 릴리즈 16건. 최근 릴리즈 v0.2.39."
-last_modified_at: 2026-09-26 21:20:31 +0900
+last_modified_at: 2026-09-26 21:35:54 +0900
 ---
 {% raw %}
 <script type="application/ld+json">
@@ -18,7 +18,7 @@ last_modified_at: 2026-09-26 21:20:31 +0900
   "name": "hkjang",
   "url": "https://github.com/hkjang"
  },
- "dateModified": "2026-09-26T21:20:31+09:00",
+ "dateModified": "2026-09-26T21:35:54+09:00",
  "version": "0.2.39"
 }
 </script>
@@ -276,6 +276,8 @@ last_modified_at: 2026-09-26 21:20:31 +0900
 - 실패 재현: `--- FAIL: TestCustomProfileValuesReadBackFaultIsNotSwallowed/global_patch_reports_the_read-back_fault` / `custom_profile_values_errors_postgres_test.go:107: status = 200, want 500 (body null)` (user_patch 서브테스트도 같은 줄로 실패)
 - 보류 아이디어: patchPost 의 `updated, _ = h.posts.Get(...)` 되읽기 실패 시 200 + 본문 null + `post_edited` 이벤트 누락(S — 쓰기는 성공하고 되읽기만 실패시키는 결정론적 주입 방법이 여전히 없다; 이번 회차의 `{}` 트릭은 posts 에는 대응물이 없다) / uploadTeamImage 가 10MB 초과 본문에도 200 + 업로드 감사 로그(S — 413 + 감사 미기록까지 증명해야 '효과 없는 정리' 를 면함) / 북마크 4개 핸들러(late.go)의 `ok, _ := IsMember` 403 위장 분리(관리자 예외 설계 선행, M) / preferences upsert·delete 의 400 을 원인별 400/500 으로 분리(서비스 ErrInvalid 센티널 필요, M) / `pluginhost.UpdatePost` 의 예약 키 목록이 `postcommand.isReservedProp` 보다 좁음(플러그인 신뢰 경계 결정 선행, S)
 - 과제서: 차선 — 러너가 "scout failed — 과제서 없음" 으로 판정해 정식 과제서는 없었으나, 회차 노트의 정찰 메모가 지목한 과제와 그 주입 방법(`{}` + DROP TABLE)이 코드와 정확히 일치해 그대로 채택했고 RED 로 전제를 실제 확인했다.
+
+- 릴리즈: v0.2.39 (2026-09-26, run 2026-09-26-203224-moyro-improve)
 
 
 [← 대시보드](https://hkjang.github.io/aidev/) · [교훈 모음](https://hkjang.github.io/aidev/lessons/)
