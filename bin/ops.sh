@@ -189,5 +189,36 @@ board)
         done; sync_state "board apply $sel" ;;
     *) echo "board [open|apply <번호...|all>]"; exit 2;;
   esac ;;
+ci-prs)
+  # CI 워크플로만 추가하는 PR 을 모아 한 번에 보여 주고, 원하면 한 번에 승인한다.
+  # 워크플로는 보호 경로라 PR 마다 사람 승인이 필요한데, CI 공백을 메우는 PR 은 러너가
+  # 정해진 명세로 만든 것이고 변경이 .github/workflows/*.yml 한 종류뿐이다 — 저장소 열두 곳을
+  # 풀려면 결정 열두 번이 필요했다. 승인 시점에 파일 목록을 다시 확인하므로, 그 사이 PR 에
+  # 다른 파일이 섞이면 건너뛴다.
+  approve=0; [ "${1:-}" = "--approve" ] && approve=1
+  n_ok=0; n_skip=0
+  while IFS=$'\t' read -r url files; do
+    [ -n "$url" ] || continue
+    # 워크플로 + 문서·변경기록까지는 같은 결정으로 본다. 코드(.go·.py·.mjs·scripts/ 등)가
+    # 섞이면 목록에서 뺀다 — 그건 CI 추가와 다른 판단이다.
+    if [ -n "$(tr ' ' '\n' <<<"$files" | grep -vE '^(\.github/workflows/[A-Za-z0-9_.-]+\.ya?ml|CHANGELOG\.md|README\.md|AGENTS\.md|docs/.*\.md)$' | grep -v '^$')" ]; then
+      n_skip=$((n_skip+1)); continue
+    fi
+    if [ "$approve" -eq 1 ]; then
+      if ops_pr_label "$url" aidev-approved; then echo "승인: $url ($files)"; n_ok=$((n_ok+1)); else echo "승인 실패: $url"; fi
+    else
+      echo "- $url — $files"; n_ok=$((n_ok+1))
+    fi
+  done < <(gh search prs --author=@me --state=open --limit 200 --json url --jq '.[].url' 2>/dev/null \
+           | while read -r u; do
+               f=$(gh pr view "$u" --json files --jq '[.files[].path]|join(" ")' 2>/dev/null)
+               case "$f" in *.github/workflows/*) printf '%s\t%s\n' "$u" "$f";; esac
+             done)
+  if [ "$approve" -eq 1 ]; then
+    echo "승인 ${n_ok}건 · 워크플로 밖 파일이 섞여 건너뜀 ${n_skip}건 — 승인 스윕이 CI 확인 뒤 머지합니다"
+  else
+    echo "워크플로만 바꾸는 PR ${n_ok}건 (다른 파일이 섞인 것 ${n_skip}건은 목록에서 뺐습니다)"
+    echo "한 번에 승인: bin/ops.sh ci-prs --approve"
+  fi ;;
 *) echo "모르는 동사: $verb"; bash "$0" help; exit 2;;
 esac
