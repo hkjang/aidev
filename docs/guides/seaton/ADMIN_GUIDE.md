@@ -1,6 +1,6 @@
 # SeatOn 관리자 가이드
 
-SeatOn v1.4.9 기준. 화면을 쓰는 사람을 위한 조작법은 [사용자 가이드](USER_GUIDE.md)에 있으며, 이 문서는 그 화면을 띄워 놓고 지키는 사람을 위한 것입니다. API 세부는 [API_AND_MCP.md](API_AND_MCP.md), 내부 구조는 [ARCHITECTURE.md](ARCHITECTURE.md)를 봅니다.
+SeatOn v1.4.10 기준. 화면을 쓰는 사람을 위한 조작법은 [사용자 가이드](USER_GUIDE.md)에 있으며, 이 문서는 그 화면을 띄워 놓고 지키는 사람을 위한 것입니다. API 세부는 [API_AND_MCP.md](API_AND_MCP.md), 내부 구조는 [ARCHITECTURE.md](ARCHITECTURE.md)를 봅니다.
 
 ## 1. 구성 요소
 
@@ -19,7 +19,7 @@ SeatOn v1.4.9 기준. 화면을 쓰는 사람을 위한 조작법은 [사용자 
 
 ## 2. 설치
 
-릴리즈 자산 `SeatOn-v1.4.9.tar.gz`(GitHub Release 첨부)와 이 저장소의 `compose.yaml` 하나면 됩니다. PostgreSQL은 외부 또는 사내 것을 준비합니다(빈 데이터베이스와 소유 계정만 있으면 스키마는 SeatOn이 만듭니다).
+릴리즈 자산 `SeatOn-v1.4.10.tar.gz`(GitHub Release 첨부)와 이 저장소의 `compose.yaml` 하나면 됩니다. PostgreSQL은 외부 또는 사내 것을 준비합니다(빈 데이터베이스와 소유 계정만 있으면 스키마는 SeatOn이 만듭니다).
 
 | 항목 | 값 |
 | --- | --- |
@@ -32,14 +32,14 @@ SeatOn v1.4.9 기준. 화면을 쓰는 사람을 위한 조작법은 [사용자 
 ### 2.1 처음부터 끝까지
 
 ```bash
-# 1. 이미지 적재 — seaton:v1.4.9 태그가 생긴다
-docker load < SeatOn-v1.4.9.tar.gz
+# 1. 이미지 적재 — seaton:v1.4.10 태그가 생긴다
+docker load < SeatOn-v1.4.10.tar.gz
 
 # 2. 필수 환경변수 3개 + Compose 이미지 태그
 export POSTGRES_DSN='postgres://seaton:change-db-password@postgres.intra:5432/seaton?sslmode=require'
 export BOOTSTRAP_ADMIN='admin'
 export BOOTSTRAP_ADMIN_PASSWORD='change-this-strong-password'   # 12자 이상
-export SEATON_IMAGE_TAG='v1.4.9'
+export SEATON_IMAGE_TAG='v1.4.10'
 
 # 3. 기동
 docker compose up -d
@@ -312,7 +312,7 @@ curl -s -X POST https://seaton.intra/mcp -H "Authorization: Bearer $TOKEN" -H 'C
 | --- | --- | --- | --- |
 | `/healthz` | GET | 없음 | 프로세스 살아 있음 `{"status":"ok"}`. 컨테이너 헬스체크가 이걸 봄 |
 | `/readyz` | GET | 없음 | DB `Ping` 성공 시 `{"status":"ready"}`, 실패 시 `503 database_unavailable` |
-| `/api/v1/version` | GET | 없음 | `{"name":"SeatOn","version":"1.4.9","commit":"…","builtAt":"…"}` |
+| `/api/v1/version` | GET | 없음 | `{"name":"SeatOn","version":"1.4.10","commit":"…","builtAt":"…"}` |
 | `/api/v1/dashboard` | GET | 좌석 관리자 | 운영 준비도·연동 상태·처리 필요 건수 |
 
 처리필요 화면의 **운영 준비도**와 **연동 상태**가 같은 정보를 사람이 보기 좋게 보여 줍니다.
@@ -324,7 +324,7 @@ curl -s -X POST https://seaton.intra/mcp -H "Authorization: Bearer $TOKEN" -H 'C
 표준 출력에 JSON 한 줄씩(`log/slog`) 찍힙니다. `docker compose logs -f seaton`으로 봅니다. 요청마다 `"msg":"request"`에 메서드·경로·소요 시간·`request_id`가 남습니다.
 
 ```json
-{"time":"2026-09-11T11:41:57Z","level":"INFO","msg":"SeatOn started","address":":8080","version":"1.4.9","commit":"…"}
+{"time":"2026-09-11T11:41:57Z","level":"INFO","msg":"SeatOn started","address":":8080","version":"1.4.10","commit":"…"}
 {"time":"…","level":"INFO","msg":"request","method":"GET","path":"/readyz","duration_ms":0,"request_id":"…"}
 {"time":"…","level":"INFO","msg":"도면 분석 완료","jobId":"…","floorMapId":"…","engine":"cv","detected":30,"review":6}
 ```
@@ -379,11 +379,11 @@ curl -s http://127.0.0.1:8080/api/v1/version    # "version":"1.5.0"
 되돌릴 때는 태그를 이전 값으로 바꿔 다시 올립니다. 새 버전이 스키마를 바꾼 뒤라면 이전 바이너리가 그 스키마를 이해한다는 보장이 없으므로, 백업한 덤프를 먼저 복원합니다.
 
 ```bash
-export SEATON_IMAGE_TAG='v1.4.9'
+export SEATON_IMAGE_TAG='v1.4.10'
 docker compose up -d
 ```
 
-분석이 진행 중일 때 재시작하면 그 잡은 실패로 정리되고 도면은 다시 분석할 수 있는 상태로 돌아옵니다. 릴리즈 자산은 `SeatOn-v<버전>.tar.gz` → `seaton:v<버전>` 이름 규칙을 따르고, 애플리케이션이 알리는 버전 문자열은 `v` 없는 `1.4.9`입니다.
+분석이 진행 중일 때 재시작하면 그 잡은 실패로 정리되고 도면은 다시 분석할 수 있는 상태로 돌아옵니다. 릴리즈 자산은 `SeatOn-v<버전>.tar.gz` → `seaton:v<버전>` 이름 규칙을 따르고, 애플리케이션이 알리는 버전 문자열은 `v` 없는 `1.4.10`입니다.
 
 ## 6. 장애 대응
 
