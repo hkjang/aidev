@@ -735,8 +735,21 @@ pick_campaign(){
     fi
     if [ "$remaining" -eq 0 ]; then
       jq --arg id "$id" '(.campaigns[]|select(.id==$id)).done=true' "$cj" > "$cj.tmp" && mv "$cj.tmp" "$cj"
-      log "campaign $id: 대상 $(wc -w <<<"$projs")개 전부 완료 — 캠페인을 닫는다"
-      "$HERE/tg.sh" "🏁 캠페인 $id 완료 — 대상 $(wc -w <<<"$projs")개를 모두 돌았습니다." >/dev/null 2>&1 &
+      # "완료" 는 대상마다 PR 을 열었다는 뜻이지 표준이 적용됐다는 뜻이 아니다. 캠페인 PR 의
+      # 80%는 머지되지 않는다(2026-09-27: PR 166건 중 33건). 닫을 때 실제로 들어간 수를 함께
+      # 적지 않으면 "모두 돌았습니다" 가 성공으로 읽힌다.
+      read -r c_prs c_merged < <(jq -rs --arg id "$id" '
+          [ .[] | select(.campaign==$id and (.pr//"")!="") ] as $r
+          | [ ($r | map(.pr) | unique | length),
+              ($r | map(select(.outcome=="merged" or .outcome=="releasing" or .outcome=="release-ready") | .pr) | unique | length) ]
+          | @tsv' "$DATA/runs.jsonl" 2>/dev/null || echo "0 0")
+      jq --arg id "$id" --argjson p "${c_prs:-0}" --argjson m "${c_merged:-0}" --arg d "$RUN_DATE" \
+         '(.campaigns[]|select(.id==$id)) |= (.closed_at=$d | .landed={prs:$p, merged:$m})' \
+         "$cj" > "$cj.tmp" && mv "$cj.tmp" "$cj"
+      log "campaign $id: 대상 $(wc -w <<<"$projs")개 전부 시도 — PR ${c_prs:-0}건 중 ${c_merged:-0}건 머지, 캠페인을 닫는다"
+      "$HERE/tg.sh" "🏁 캠페인 $id 닫음 — 대상 $(wc -w <<<"$projs")개를 모두 한 번씩 돌았습니다.
+실제로 들어간 것: PR ${c_prs:-0}건 중 ${c_merged:-0}건 머지. 나머지는 열린 채 검토를 기다립니다
+(대부분 보호 경로라 사람 승인이 필요합니다 — bin/ops.sh campaign-prs $id 로 한 번에 봅니다)." >/dev/null 2>&1 &
       continue
     fi
     if [ -n "$best" ]; then
