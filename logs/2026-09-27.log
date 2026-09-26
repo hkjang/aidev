@@ -1,0 +1,102 @@
+[00:35:57] shepherd: 후보 165건 (한 번에 최대 6건, 오늘 $0/$150)
+[00:37:33] === shepherd qurio PR #23 (원인 review, run 2026-09-27-003732-qurio-shepherd)
+Preparing worktree (detached HEAD b715a45)
+HEAD is now at b715a45 fix(sqlsafe): treat top-level FROM commas as a boundary when checking alias column lists
+[00:50:01] 다른 러너(pid 1436969)가 실행 중 — 겹쳐 돌리지 않는다 (flock 뒤에서 실행하세요)
+[00:53:04] qurio: improve — 63 turns, 16m, $4.07, success
+[00:53:05] qurio: verify `go build ./...` → exit 0 (1s)
+[00:53:05] qurio: verify `go vet ./...` → exit 0 (0s)
+[00:53:07] qurio: verify `go test ./...` → exit 0 (2s)
+[00:53:20] qurio: verify `cd web && [ -d node_modules ] || npm ci --no-audit --no-fund` → exit 0 (13s)
+[00:55:37] qurio: verify `cd web && npm test --silent` → exit 0 (137s)
+[00:55:37] qurio: verify `cd web && [ -d node_modules ] || npm ci --no-audit --no-fund` → exit 0 (0s)
+[00:55:41] qurio: verify `cd web && npm run typecheck --silent` → exit 0 (4s)
+[00:55:41] qurio: verify `cd web && [ -d node_modules ] || npm ci --no-audit --no-fund` → exit 0 (0s)
+[00:55:46] qurio: verify `cd web && npm run build --silent` → exit 0 (5s)
+[00:55:48] qurio: [shepherd] PR #23 review → fix-pushed — # fix-summary (수리 2회차 → 커밋 5f3ca5e)  - 문제(재현됨): `postgresAliasColumnList` 가 호출 지점마다 왼쪽 끝까지 재탐색해 O(n^2) 
+https://github.com/hkjang/qurio/pull/23#issuecomment-5847664075
+Preparing worktree (detached HEAD 5f3ca5e)
+HEAD is now at 5f3ca5e fix(sqlsafe): index parentheses and memoize the FROM-item search so alias column list checks stay linear
+[01:00:02] 다른 러너(pid 1436969)가 실행 중 — 겹쳐 돌리지 않는다 (flock 뒤에서 실행하세요)
+[01:05:01] 다른 러너(pid 1436969)가 실행 중 — 겹쳐 돌리지 않는다 (flock 뒤에서 실행하세요)
+[01:06:10] qurio: review — 31 turns, 10m, $2.17, success
+https://github.com/hkjang/qurio/pull/23#issuecomment-5847737373
+[01:06:14] qurio: [shepherd] PR #23 review → approve — risk=medium — 리뷰 승인 (risk=medium) 
+[01:06:14] shepherd: 처리 1건 — 승인 1 · 수정 푸시 1 · 사람 필요 0 (오늘 $6.24656/$150)
+[01:07:05] hunter: waiting for CI on 845b6b2 (no-ci)
+[01:10:03] 다른 러너(pid 1436969)가 실행 중 — 겹쳐 돌리지 않는다 (flock 뒤에서 실행하세요)
+[01:11:23] hunter: [ci] no-ci — 이 커밋에 검사가 없음 (정책 allow_merge_without_ci 가 없으면 차단)
+[01:11:23] hunter: 승인 대기 유지 (https://github.com/hkjang/hunter/pull/5, CI no-ci) — 회차로 기록하지 않음
+[01:11:31] jasql: waiting for CI on 1507e00 (no-ci)
+[01:15:04] 다른 러너(pid 1436969)가 실행 중 — 겹쳐 돌리지 않는다 (flock 뒤에서 실행하세요)
+[01:15:48] jasql: [ci] no-ci — 이 커밋에 검사가 없음 (정책 allow_merge_without_ci 가 없으면 차단)
+[01:15:48] jasql: 승인 대기 유지 (https://github.com/hkjang/jasql/pull/1, CI no-ci) — 회차로 기록하지 않음
+[01:16:41] qurio: waiting for CI on 5f3ca5e (pending)
+[01:17:40] qurio: [merge] done — 5f3ca5e2ce8ede7ea610d31850a364e9b8940531 (사람 승인)
+Preparing worktree (detached HEAD 3071ec1)
+HEAD is now at 3071ec1 Merge pull request #23 from hkjang/auto/2026-09-26-2332
+[01:20:01] 다른 러너(pid 1436969)가 실행 중 — 겹쳐 돌리지 않는다 (flock 뒤에서 실행하세요)
+[01:26:46] qurio: release — 42 turns, 9m, $2.14, success
+[01:26:50] qurio: waiting for CI on 2128ef7 (no-ci)
+[01:30:02] 다른 러너(pid 1436969)가 실행 중 — 겹쳐 돌리지 않는다 (flock 뒤에서 실행하세요)
+[01:40:02] 다른 러너(pid 1436969)가 실행 중 — 겹쳐 돌리지 않는다 (flock 뒤에서 실행하세요)
+[01:45:03] qurio: [release] published — v1.4.6
+From https://github.com/hkjang/qurio
+ * branch            main       -> FETCH_HEAD
+Updating 3071ec1..2128ef7
+Fast-forward
+ README.md                                          |  4 ++--
+ VERSION                                            |  2 +-
+ compose.yml                                        |  2 +-
+ docs/gallery.html                                  |  6 +++---
+ docs/guides/offline-install.md                     |  6 +++---
+ docs/index.html                                    | 10 +++++-----
+ docs/requirements.md                               |  4 ++--
+ ...minPages-CdM61cW6.js => AdminPages-DtJMAyf2.js} |  2 +-
+ ...DjyJvG6g.js => AnalyticsDetailPage-D7ahu9dd.js} |  2 +-
+ ...AuthPages-DFUXapq0.js => AuthPages-BQyI9j7T.js} |  2 +-
+ ...Page-BeowfAaw.js => CodeStudioPage-vEIScFUT.js} |  2 +-
+ ...TrvGB.js => EvaluationCancelAction-FKXONJgR.js} |  2 +-
+ ...eft-sc0CoY_W.js => IconChevronLeft-IuOAHcpq.js} |  2 +-
+ ...ht-DOYkj9PV.js => IconChevronRight-DtCCZ0wh.js} |  2 +-
+ ...IconTrash-WQhN995J.js => IconTrash-S9Vrw_L-.js} |  2 +-
+ ...BdAap3jO.js => MetadataCatalogPage-CaAzUrLL.js} |  2 +-
+ ...cePage-DKy3POuZ.js => ResourcePage-CEuT-bhe.js} |  2 +-
+ ...ge-1OQd4XHZ.js => SqlWorkbenchPage-BwJahTph.js} |  2 +-
+ .../{Textarea-CqPri8kD.js => Textarea-CcFB9uK_.js} |  2 +-
+ ...xPLvJKId.js => TopologyIndexesPage-CXN4bczA.js} |  2 +-
+ ...D0n.js => TopologyIntelligencePage-CaNbHAnG.js} |  2 +-
+ ...ages-CEPZyUKQ.js => WorkspacePages-B8loquZs.js} |  2 +-
+ .../{index-CBaICZzq.js => index-Dn2bZQJy.js}       |  4 ++--
+ internal/webui/dist/index.html                     |  2 +-
+ migrations/0040_release_1_4_6.sql                  | 23 ++++++++++++++++++++++
+ web/e2e/application.spec.ts                        |  6 +++---
+ web/package-lock.json                              |  4 ++--
+ web/package.json                                   |  2 +-
+ web/src/App.test.tsx                               |  8 ++++----
+ 29 files changed, 68 insertions(+), 45 deletions(-)
+ rename internal/webui/dist/assets/{AdminPages-CdM61cW6.js => AdminPages-DtJMAyf2.js} (99%)
+ rename internal/webui/dist/assets/{AnalyticsDetailPage-DjyJvG6g.js => AnalyticsDetailPage-D7ahu9dd.js} (99%)
+ rename internal/webui/dist/assets/{AuthPages-DFUXapq0.js => AuthPages-BQyI9j7T.js} (96%)
+ rename internal/webui/dist/assets/{CodeStudioPage-BeowfAaw.js => CodeStudioPage-vEIScFUT.js} (99%)
+ rename internal/webui/dist/assets/{EvaluationCancelAction-HldTrvGB.js => EvaluationCancelAction-FKXONJgR.js} (97%)
+ rename internal/webui/dist/assets/{IconChevronLeft-sc0CoY_W.js => IconChevronLeft-IuOAHcpq.js} (96%)
+ rename internal/webui/dist/assets/{IconChevronRight-DOYkj9PV.js => IconChevronRight-DtCCZ0wh.js} (98%)
+ rename internal/webui/dist/assets/{IconTrash-WQhN995J.js => IconTrash-S9Vrw_L-.js} (98%)
+ rename internal/webui/dist/assets/{MetadataCatalogPage-BdAap3jO.js => MetadataCatalogPage-CaAzUrLL.js} (99%)
+ rename internal/webui/dist/assets/{ResourcePage-DKy3POuZ.js => ResourcePage-CEuT-bhe.js} (99%)
+ rename internal/webui/dist/assets/{SqlWorkbenchPage-1OQd4XHZ.js => SqlWorkbenchPage-BwJahTph.js} (99%)
+ rename internal/webui/dist/assets/{Textarea-CqPri8kD.js => Textarea-CcFB9uK_.js} (97%)
+ rename internal/webui/dist/assets/{TopologyIndexesPage-xPLvJKId.js => TopologyIndexesPage-CXN4bczA.js} (96%)
+ rename internal/webui/dist/assets/{TopologyIntelligencePage-DLhjND0n.js => TopologyIntelligencePage-CaNbHAnG.js} (98%)
+ rename internal/webui/dist/assets/{WorkspacePages-CEPZyUKQ.js => WorkspacePages-B8loquZs.js} (99%)
+ rename internal/webui/dist/assets/{index-CBaICZzq.js => index-Dn2bZQJy.js} (99%)
+ create mode 100644 migrations/0040_release_1_4_6.sql
+[01:50:01] 다른 러너(pid 1436969)가 실행 중 — 겹쳐 돌리지 않는다 (flock 뒤에서 실행하세요)
+[02:00:02] 다른 러너(pid 1436969)가 실행 중 — 겹쳐 돌리지 않는다 (flock 뒤에서 실행하세요)
+[02:05:01] 다른 러너(pid 1436969)가 실행 중 — 겹쳐 돌리지 않는다 (flock 뒤에서 실행하세요)
+[02:10:03] 다른 러너(pid 1436969)가 실행 중 — 겹쳐 돌리지 않는다 (flock 뒤에서 실행하세요)
+[02:11:05] qurio: [assets] verified — v1.4.6 자산 1개 (이전 v1.3.1: 1)
+evidence: /mnt/c/Users/USER/projects/aidev/state/runs/2026-09-27-011640-qurio-approve/evidence.json
+reports: 26 day(s), 4 week(s), 1 month(s), 1511 run(s), 2744 usage row(s), 46 project page(s), 4 alert(s)
+notify: no new alerts

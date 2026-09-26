@@ -91,3 +91,4 @@
 - 보류 아이디어: **[신규 4/3/M] sqlsafe 가 `WHERE col=(SELECT …)` 를 함수 호출로 오판해 차단 — `defaultEmbeddingMaterializationQuery` 의 `WHERE version=(SELECT max(version) FROM meta_word_dict)` 가 `version()` 로 읽혀 기본 임베딩 컬렉션 생성이 ApplyRowLimit 에서 실패한다(선재 결함, 원본 파일로 재현 확인). `scanOraclePolicy` 가 연산자를 버려 `=(` 와 `name(` 을 구분할 정보가 없는 것이 뿌리 — 연산자 토큰 도입은 게이트 loosening 이라 별도 회차로**; [신규 2/1/S] `FROM UNNEST(a) WITH ORDINALITY g(v,i)` 오탐(선재) — CTE/alias 분기가 ORDINALITY 를 모름; [3/2/S] 픽스처 DELETE 를 등록하지 않는 통합 테스트에 정리 추가(agent_instructions·publication·intelligenceapi/repository_test, 잔존 13행); [3/2/M] `defer pool.Close()` 순서 역전을 보호 경로 패키지로 확장 — 이 base 에는 아직 54곳 남아 있고 지난 회차 a8f0775(runtimeapi·intelligenceapi·platformapi 19곳)는 미머지이므로 중복 피할 것; [3/2/M] internal/store 통합 테스트 6개 파일 DSN 을 QURIO_TEST_POSTGRES_DSN 전용·연결 오류 Fatal 로
 - 과제서: (없음 — 정찰 과제서가 붙지 않은 회차라 1~4단계를 직접 수행했다)
 
+- 릴리즈: v1.4.6 (2026-09-27, run 2026-09-27-011640-qurio-approve)
