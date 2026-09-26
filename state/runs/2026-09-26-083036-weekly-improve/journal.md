@@ -19,3 +19,12 @@
 - 다음 역할이 조심할 것: 늘린 시험 `TestTheOperatorCanPickTheFailuresOutOfAGoodWeek` 는 **실제 DB 가 있어야 돈다**(창 안에 57건을 INSERT 한다). `WEEKLY_TEST_POSTGRES_DSN` 이 15434 를 가리키니 `pgvector/pgvector:pg16` 이 거기 떠 있어야 하고, `postgres:16` 이면 무관한 2건이 `report_item_embeddings` 로 실패한다. 이 워크트리는 `node_modules` 가 없어 프런트 검사 전에 `npm --prefix frontend ci` 가 필요했다.
 - 검증: `go test ./... -count=1` 전체 통과(150.694s, exit 0, 실패 0) · `gofmt -l internal/app` 빈 출력 · `go build`·`go vet` · guard-check `--changed main` 4개 도달(`adminMailDeliveries` 75%) · frontend lint·vitest 160개·build · `render-docs.py ADMIN_GUIDE`. 커밋 **뒤** `mutation-check --test … --budget 480` 을 혼자 돌려 5건 적용 **caught 5 / survived 0, exit 0**(지난 회차는 timeout 으로 결론을 못 냈다), 끝난 뒤 `git status` 깨끗함과 시험 재통과를 확인했다.
 - [러너 09:03] brief accepted — 채택 — 과제서가 지목한 `mail.go` 의 `args = append(args, mailDeliveryLimit)` 와 시험 1145행의 57건 배치가 코드와 정확히 일치했고,
+- [러너 09:05] verify passed — 검증 7개 통과 (auto)
+
+## 비평 노트
+- approve / low: diff·커밋·변경 7개 파일을 확인했고 실제 결함이나 security/legal 차단 근거는 찾지 못했다.
+- JSX 문장은 표 바로 아래에서 truncated일 때만 표시된다. 51번째 행 감지·필터 선적용·omitempty·Close·관리자 인가와 문서 일치를 확인했다.
+- 세션 DSN 부재로 최초 시험은 skip; 기존 weekly-test-pg 설정으로 재실행한 관련 실제 DB 시험 3개와 OpenAPI·paging·diff 검사가 통과했다.
+- 브라우저 렌더링·전체 시험은 재실행하지 않았다. 정확히 50/51건과 필터 후 초과의 직접 단언은 후속 보강 여지이며, 코드 수정 없이 review.json을 기록했다.
+- [러너 09:06] review approved — 리뷰 승인 (risk=low)
+- [러너 09:07] pr created — https://github.com/hkjang/weekly/pull/22

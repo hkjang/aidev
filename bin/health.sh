@@ -140,6 +140,28 @@ if [ ${#ci_gap[@]} -gt 0 ]; then
   fi
 fi
 
+# 캠페인이 멈춰 있나 — 예산과 기한을 들고 있는데 며칠째 한 회차도 안 도는 상태는
+# 로그만 봐서는 안 보인다 (2026-09-26 에 다섯이 8~10일째 멈춰 있었고 아무 알림도 없었다).
+camp_stall=()
+if [ -s "$REPO_DIR/state/campaigns.json" ]; then
+  while IFS=$'\t' read -r cid cbud; do
+    [ -n "$cid" ] || continue
+    clast=$(jq -r --arg c "$cid" 'select(.campaign==$c)|.ts' "$RUNS" 2>/dev/null | tail -1)
+    [ -n "$clast" ] || continue
+    cdays=$(( ( now - $(date -d "$clast" +%s 2>/dev/null || echo "$now") ) / 86400 ))
+    [ "$cdays" -ge "${CAMPAIGN_STALL_DAYS:-5}" ] && camp_stall+=("$cid ${cdays}일째 (예산 \$$cbud)")
+  done < <(jq -r '.campaigns[]? | select(.done!=true and .paused!=true) | "\(.id)\t\(.budget_usd)"' "$REPO_DIR/state/campaigns.json" 2>/dev/null)
+fi
+if [ ${#camp_stall[@]} -gt 0 ]; then
+  cs_stamp="$HOME/.auto-improve/.camp-stall"
+  if [ "$(cat "$cs_stamp" 2>/dev/null)" != "${camp_stall[*]}" ]; then
+    printf '%s' "${camp_stall[*]}" > "$cs_stamp"
+    "$HERE/tg.sh" "🐢 캠페인이 멈춰 있습니다 — $(printf '%s · ' "${camp_stall[@]}" | sed 's/ · $//')
+남은 대상이 지금 회차 후보가 아니어서일 수 있습니다(미커밋 변경·30일 무활동·WIP 상한·성과 쿨다운).
+확인: state/campaigns.json 의 projects 와 skipped, 그리고 러너 로그의 'campaign <id>:' 줄" >/dev/null 2>&1 || true
+  fi
+fi
+
 # PR 정리: 6시간마다. 처리기가 "더 못 한다"고 판정하고 3일이 지난 PR 은 닫고 일감은 ideas 로 회수한다.
 # 그냥 오래되기만 한 PR 은 목록(state/stale-prs.md)에만 남긴다 — 그건 사람이 bin/pr-gc.sh --close 로.
 prgc_stamp="$HOME/.auto-improve/.prgc"

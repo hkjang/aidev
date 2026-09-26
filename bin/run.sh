@@ -658,7 +658,7 @@ pick_campaign(){
     # 아직 성과가 없는 프로젝트를 고른다. 캠페인은 유한한 일감이다 — 대상마다 한 번씩
     # 해내면 끝이고, 다 돌았는데 목록을 다시 도는 것은 같은 문서를 또 쓰는 것이다.
     # 한 번도 안 돈 것이 먼저, 그 다음이 실패해서 다시 해야 하는 것(가장 오래된 순).
-    local best="" best_rank="" rank last_out tries remaining=0; local -a stuck=()
+    local best="" best_rank="" rank last_out tries remaining=0 cp_last cp_age cp_why; local -a stuck=()
     for cp in $projs; do
       last_out=$(jq -r --arg id "$id" --arg p "$cp" 'select(.campaign==$id and .project==$p) | .outcome' "$DATA/runs.jsonl" 2>/dev/null | tail -1)
       case "$last_out" in
@@ -674,8 +674,24 @@ pick_campaign(){
           fi;;
         *) continue;;                             # PR 까지 갔으면 이 캠페인에서는 끝난 것으로 본다
       esac
+      # 후보가 될 수 없는 대상은 "다음 기회" 가 영원히 오지 않는다. 30일 넘게 커밋이 없는
+      # 저장소는 DAYS 창 밖이라 어떤 회차도 잡지 않는데, 캠페인은 그것을 남은 일로 세고
+      # 끝나지 않는다 — 2026-09-26 에 캠페인 다섯이 8~10일째 멈춰 있었고 ssak·kanvas·trace
+      # 셋이 그 이유였다(마지막 커밋 6주 전). 대상에서 빼고 이유를 남긴다.
+      if ! printf '%s\n' "${candidates[@]}" | grep -qx "$cp"; then
+        cp_last=$(git -C "$ROOT/$cp" log -1 --format=%ct 2>/dev/null || echo 0)
+        cp_age=$(( ( $(date +%s) - ${cp_last:-0} ) / 86400 ))
+        if [ ! -d "$ROOT/$cp/.git" ] || [ "${cp_age:-0}" -gt "$DAYS" ]; then
+          cp_why=$( [ -d "$ROOT/$cp/.git" ] && echo "${cp_age}일 무활동 (회차 후보 창 ${DAYS}일 밖)" || echo "저장소 없음" )
+          jq --arg id "$id" --arg p "$cp" --arg why "$cp_why" --arg d "$RUN_DATE" \
+             '(.campaigns[]|select(.id==$id)) |= (.projects -= [$p] | .skipped = ((.skipped // []) + [{project:$p, why:$why, at:$d}]))' \
+             "$cj" > "$cj.tmp" && mv "$cj.tmp" "$cj"
+          log "campaign $id: $cp 을 대상에서 뺀다 — $cp_why"
+          continue                 # 남은 일로 세지 않는다 — 셀수록 캠페인이 안 끝난다
+        fi
+        remaining=$((remaining+1)); continue   # 오늘은 후보가 아니지만 아직 할 일이다
+      fi
       remaining=$((remaining+1))
-      printf '%s\n' "${candidates[@]}" | grep -qx "$cp" || continue   # 지금 후보가 아니면 다음 기회에
       [ -n "$last_out" ] || { best=$cp; break; }
       rank=$(jq -r --arg id "$id" --arg p "$cp" 'select(.campaign==$id and .project==$p) | .ts' "$DATA/runs.jsonl" 2>/dev/null | tail -1)
       [ -z "$best" ] || [[ "$rank" < "$best_rank" ]] && { best=$cp; best_rank=$rank; }
