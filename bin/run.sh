@@ -1648,9 +1648,29 @@ $reasons
   done
   log "shepherd: 처리 ${done_n}건 — 승인 $approved · 수정 푸시 $fixed · 사람 필요 $human (오늘 \$$(shepherd_spent)/\$$SHEPHERD_DAILY_BUDGET)"
   if [ $((done_n+human)) -gt 0 ]; then
+    # 사람 몫은 링크를 알림에 직접 싣는다. 폰에서 GitHub 앱으로 열어 aidev-approved 라벨만
+    # 달면 승인 스윕이 CI 확인 뒤 머지한다 — 텔레그램 답장을 받는 코파일럿은 예약 작업이 없어
+    # 돌지 않으므로(2026-09-26 확인), 작업함 주소만 주면 폰에서는 아무것도 할 수 없다.
+    hlist=""
+    if [ "$human" -gt 0 ]; then
+      while IFS=$'\t' read -r hpr hdet; do
+        [ -n "$hpr" ] || continue
+        [ "$(gh pr view "$hpr" --json state --jq .state 2>/dev/null)" = OPEN ] || continue   # 이미 닫힌 것은 뺀다
+        hlist="${hlist:+$hlist
+}• $hpr
+   ${hdet:0:70}"
+      done < <(jq -rs --arg d "$(date -d '-2 days' +%Y-%m-%d)" '
+          [ .[] | select(.action=="needs-human" and (.ts >= $d)) ] | group_by(.pr) | map(.[-1])
+          | map(select((.detail // "") | test("시도했지만 통과하지 못함|자동 리베이스로 풀리지 않음") | not))
+          | .[0:8] | map("\(.pr)\t\(.detail // "")") | join("\n")' "$SHEPHERD_LOG" 2>/dev/null)
+    fi
     "$HERE/tg.sh" "🧹 PR 처리기 — 후보 ${#items[@]}건 중 ${done_n}건 처리
 승인 $approved · 수정 푸시 $fixed · 사람 필요 $human · 오늘 \$$(shepherd_spent)/\$$SHEPHERD_DAILY_BUDGET
-승인된 PR 은 승인 스윕이 CI 확인 뒤 머지·릴리즈합니다. 사람 필요는 작업함에: https://hkjang.github.io/aidev/inbox/" >/dev/null 2>&1 &
+승인된 PR 은 승인 스윕이 CI 확인 뒤 머지·릴리즈합니다.${hlist:+
+
+사람이 볼 것 (GitHub 앱에서 aidev-approved 라벨을 달면 머지됩니다):
+$hlist}
+전체 목록: https://hkjang.github.io/aidev/inbox/" >/dev/null 2>&1 &
   fi
   # 승인한 것은 바로 스윕에 넘긴다 — CI 확인 뒤 승인 커밋에만 머지하고 릴리즈한다
   [ "$approved" -gt 0 ] && ! stopped start && approvals
