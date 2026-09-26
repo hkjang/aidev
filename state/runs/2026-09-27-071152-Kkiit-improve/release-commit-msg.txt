@@ -1,0 +1,23 @@
+Kkiit v0.4.8 — 신고 접수 저장 실패 안내 수정
+
+v0.4.7 이후 들어온 수정 하나를 담는다.
+
+- `createReport` 가 `INSERT INTO reports` 의 모든 오류를 409
+  `report_already_open` 으로 묶어 돌려주던 것을 고친다. 그 대상에 열린
+  신고가 하나도 없는 신고자까지 "이미 접수되어 처리 중인 신고가
+  있습니다." 라는 안내를 받아, 신고가 접수된 줄 알고 포기했다. 쿠폰
+  회차에서 만든 `isUniqueViolation`(SQLSTATE 23505)을 이동·시그니처 변경
+  없이 그대로 재사용해 진짜 중복만 409 `report_already_open` 으로 남기고,
+  그 밖의 저장 실패는 500 `report_failed` 로 가른다. `coupons.go` 는 주석
+  한 줄을 쿠폰 전용에서 일반화한 것뿐이다. 버릴 PostgreSQL 16 에 붙는
+  통합 테스트로 409 를 먼저 재현한 뒤 고쳐 통과시켰고, 핸들러에 임시
+  프로브를 넣어 두 경로의 SQLSTATE 가 실제로 23505(중복)와
+  22021(`details` 의 NUL 거절)로 갈리는 것을 확인한 뒤 프로브를 제거했다.
+  분류기를 두 방향으로 변이시켜(항상 참 / 23505 를 절대 안 맞춤) 각각
+  실패하는 것도 확인했다. 프런트는 이미 `error.message` 를 그대로 띄우므로
+  `web/` 과 `internal/ui/dist` 는 건드리지 않았고, `openapi.yaml` 의 POST
+  /reports 응답에 500 을 더해 실제 동작과 맞췄다.
+
+버전 표기(VERSION·compose·web/package·openapi·README)를 0.4.8 으로 올린다.
+
+gofmt · go build · go vet · go test, web lint · test · build 전부 통과.

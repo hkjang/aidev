@@ -106,3 +106,12 @@
 - 과제서: 채택 — docker(29.7.2)가 가용해 수용 기준 1~3 을 실제 HTTP→실제 DB 로 증명했고, 과제서가 미확인으로 남긴 두 가지(중복 PUT 이 실제로 404 를 준다, `pgconn` 이 go.mod 변경 없이 import 된다)를 모두 확인했다.
 
 - 릴리즈: v0.4.7 (2026-09-26, run 2026-09-26-121646-Kkiit-improve)
+## 2026-09-27
+- 선택: 신고 접수(createReport)가 모든 INSERT 실패를 409 "이미 접수되어 처리 중인 신고가 있습니다." 로 보고하는 것을 중복(23505)만 409 로 가르기 (가치 3 / 위험 1 / 작업량 S)
+- 결과: 성공
+- 요약: `createReport` 가 `INSERT INTO reports` 의 모든 오류를 409 `report_already_open` 으로 묶어, 열린 신고가 하나도 없는 신고자까지 "이미 접수되어 처리 중" 이라는 안내를 받고 신고가 접수된 줄 알고 포기하게 만들었다. 쿠폰 회차에서 만든 `isUniqueViolation`(SQLSTATE 23505)을 이동·시그니처 변경 없이 그대로 재사용해 진짜 중복만 409 로 남기고 그 밖의 저장 실패는 500 `report_failed` 로 갈랐다(주석 한 줄만 쿠폰 전용에서 일반화). 검증: 실제 라우터 + 버릴 PostgreSQL 16(docker 29.7.2)으로 HTTP→DB 왕복 통합 테스트를 먼저 실패시킨 뒤 수정해 통과시켰고, 핸들러에 임시 프로브를 넣어 두 경로의 SQLSTATE 가 실제로 23505(중복)와 22021(NUL 인코딩 거절)로 갈린다는 것을 눈으로 확인한 뒤 프로브를 제거했다. 분류기를 두 방향으로 변이시켜(항상 참 / 23505 를 절대 안 맞춤) 각각 실패하는 것도 확인했다. 깨끗한 DB 로 `go test ./cmd/... ./internal/...` 전체 통과(httpapi 101.1초, 통합 실제 실행), `gofmt -l cmd internal` 무출력, `go vet ./cmd/... ./internal/...` 무결. 프런트는 `error.message` 를 그대로 띄우므로 `web/`·`internal/ui/dist` 를 건드리지 않았고 `docs/openapi.yaml` 의 POST /reports 에 `'500'` 한 줄만 더했다. 프로덕션 파일 2개(reports.go 분기, coupons.go 주석).
+- 실패 재현: `--- FAIL: TestIntegrationReportSeparatesDuplicateFromStorageFailure (0.82s)` / `integration_test.go:1134: POST /api/v1/reports status=409 want=500 body={"error":{"code":"report_already_open","message":"이미 접수되어 처리 중인 신고가 있습니다."}}` — 이 요청을 보낸 신고자는 그 대상에 열린 신고가 하나도 없다.
+- 보류 아이디어: README 환경변수 계약을 필수 4개 + 선택 `SHUTDOWN_DRAIN_SECONDS` 로 정리 (가치 2 / 위험 1 / S) · `deleteCoupon` 의 404 를 DB 오류와 "활성 쿠폰 없음" 으로 가르기 — 실제 HTTP 로 순수 DB 오류를 만들 경로가 없어 증거 설계가 선결 (가치 2 / 위험 1 / S) · 알 수 없는 승인 조건을 편집할 때 유실 안내/보존 (가치 3 / 위험 2 / M) · 가이드 문서의 API 메서드·응답 코드를 실제 라우터와 대조 — openapi_test.go 가 경로만 비교해 이번 `'500'` 누락을 못 잡았다 (가치 2 / 위험 2 / M) · Node 요구사항을 `package.json` engines·Makefile 선행 검사로 명시 (가치 2 / 위험 1 / S)
+- 과제서: 채택 — docker(29.7.2)가 가용해 수용 기준 1~3 을 모두 실제 HTTP→실제 DB 로 증명했고, 과제서가 미확인으로 남긴 1순위(`details` 의 NUL 이 비중복 INSERT 실패를 일으킨다)가 서버 측 SQLSTATE 22021 로 정확히 확인되어 3순위 단위 테스트 대안이 필요 없었다.
+
+- 릴리즈: v0.4.8 (2026-09-27, run 2026-09-27-071152-Kkiit-improve)

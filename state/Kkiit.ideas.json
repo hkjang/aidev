@@ -1,12 +1,12 @@
 [
   {
-    "title": "쿠폰 코드 중복을 수정 저장에서 404 대신 409 로 구분해 알리기",
+    "title": "신고 접수(createReport)가 모든 INSERT 실패를 409 '이미 접수된 신고' 로 보고하는 것을 23505 만 409 로 가르기",
     "value": 3,
     "risk": 1,
     "size": "S",
     "status": "done",
-    "note": "구현·커밋 완료(db274a9). updateCoupon 의 `err != nil || RowsAffected()==0` 를 갈라 SQLSTATE 23505 만 409 coupon_exists, 나머지 500 coupon_save_failed, RowsAffected()==0 만 404. createCoupon 의 blanket 409 도 같은 방식으로 나눴다. pgconn 은 pgx/v5 하위 패키지라 go.mod 변경 없이 import 됨을 확인. 실제 라우터·PostgreSQL 16 통합 테스트로 404 재현 후 수정, 변이 테스트로 인과 확인.",
-    "updated": "2026-09-26"
+    "note": "2026-09-27 구현. reports.go:76 에서 isUniqueViolation(23505)만 409 report_already_open, 그 밖은 500 report_failed. 과제서가 미확인으로 남긴 1순위(details 의 NUL)가 서버 측 SQLSTATE 22021 로 확인되어 실제 HTTP→DB 왕복으로 증명했다. 분류기 두 방향 변이 모두 테스트가 잡는다. openapi.yaml POST /reports 에 '500' 추가. 같은 자리의 '404'(대상 없음) 누락은 여전히 남아 있다.",
+    "updated": "2026-09-27"
   },
   {
     "title": "README 환경변수 계약을 필수 4개 + 선택 SHUTDOWN_DRAIN_SECONDS 로 정리",
@@ -14,8 +14,8 @@
     "risk": 1,
     "size": "S",
     "status": "pending",
-    "note": "config.go:33~40 Load 가 필수 4개(POSTGRES_DSN/BOOTSTRAP_ADMIN/BOOTSTRAP_ADMIN_PASSWORD/ENCRYPTION_KEY)를 검사하고 DrainSeconds 는 intFromEnv('SHUTDOWN_DRAIN_SECONDS',5,0,120). README 48행 표는 필수만 나열하고 84행 본문이 드레인을 설명 — 표에 선택 항목이 없다. DB·docker 없이 끝난다. 이번 회차 차선 후보였으나 docker 가용으로 본 과제를 진행해 손대지 않았다.",
-    "updated": "2026-09-26"
+    "note": "config.go 의 Load/intFromEnv 가 정본, README 48행 표에 선택 항목 없음. DB·docker 불필요. 이번 회차에도 config.go 를 다시 열지 않았다(2026-09-22 확인 내용 그대로 — 미확인).",
+    "updated": "2026-09-27"
   },
   {
     "title": "deleteCoupon 의 404 도 DB 오류와 '활성 쿠폰 없음' 으로 가르기",
@@ -23,8 +23,26 @@
     "risk": 1,
     "size": "S",
     "status": "pending",
-    "note": "이번 회차에 coupons.go 를 읽다 발견(신규). deleteCoupon 은 `UPDATE coupons SET active=false WHERE id=$1 AND active` 의 결과를 여전히 `err != nil || tag.RowsAffected()==0` 로 묶어 404 '중단할 활성 쿠폰을 찾을 수 없습니다' 를 준다. 이번에 만든 isUniqueViolation 과 같은 자리라 패턴은 준비돼 있으나, 이 UPDATE 는 고유 제약을 건드리지 않으므로 갈라야 할 것은 23505 가 아니라 '순수 DB 오류 → 500' 뿐이다. 실제 HTTP 로 DB 오류를 유발할 경로가 없어 통합으로 증명하기 어렵다 — 증거 설계가 선결.",
-    "updated": "2026-09-26"
+    "note": "coupons.go:349 에 err!=nil||RowsAffected()==0 이 그대로 있다. 이 UPDATE 는 고유 제약을 건드리지 않아 가를 것은 '순수 DB 오류 → 500' 뿐이고, createReport 와 달리 입력으로 저장 실패를 만들 경로가 보이지 않아 증거 설계가 선결. 참고: createReport 에서는 details 의 NUL 이 SQLSTATE 22021 을 냈으므로, 텍스트 컬럼에 NUL 이 닿는 UPDATE 라면 같은 수법이 통할 수 있다 — 미확인.",
+    "updated": "2026-09-27"
+  },
+  {
+    "title": "가이드 문서의 API 메서드·응답 코드를 실제 라우터와 대조",
+    "value": 2,
+    "risk": 2,
+    "size": "M",
+    "status": "pending",
+    "note": "openapi_test.go 는 경로만 비교하고 메서드·응답 코드를 보지 않는다. 이번 회차에 POST /reports 의 '500' 누락(추가함)과 '404' 누락(남김)을 사람 눈으로 발견한 것이 그 증거. 소스 문자열 검사는 증거가 되지 않으므로 라우터를 실제 호출해 대조하는 형태여야 하고 설계가 M 이상.",
+    "updated": "2026-09-27"
+  },
+  {
+    "title": "POST /reports 의 openapi 응답에 '404'(신고 대상 없음) 추가",
+    "value": 1,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "reports.go:69 가 resource_not_found 404 를 내지만 docs/openapi.yaml 의 POST /reports responses 에 '404' 가 없다(2026-09-27 확인). 이번 과제서가 명시적으로 범위 밖이라 손대지 않았다. 위의 '메서드·응답 코드 대조' 과제에 흡수시키는 편이 낫다.",
+    "updated": "2026-09-27"
   },
   {
     "title": "알 수 없는 승인 조건을 편집할 때 유실 안내/보존",
@@ -32,8 +50,8 @@
     "risk": 2,
     "size": "M",
     "status": "pending",
-    "note": "AdminPage.tsx save 가 알려진 폼 필드에서만 conditions 를 재구성해 미지 키가 저장 시 사라진다. 이번 회차에도 코드로 재확인하지 않았다(미확인). 프런트 변경이라 dist 재빌드·브라우저 검증 논점이 따라붙는다.",
-    "updated": "2026-09-26"
+    "note": "AdminPage.tsx save 가 알려진 폼 필드로만 conditions 를 재구성. 이번 회차에도 코드로 재확인하지 않았다(미확인). 프런트 변경이라 dist 재빌드·브라우저 검증 논점이 붙어 한 세션에 무겁다.",
+    "updated": "2026-09-27"
   },
   {
     "title": "Node 요구사항을 package.json engines·Makefile 선행 검사로 명시",
@@ -41,26 +59,8 @@
     "risk": 1,
     "size": "S",
     "status": "pending",
-    "note": "README Node24+, Docker 이미지 24.18.0, package.json engines 없음. 이번 회차에 로컬 Node 로 `npm ci` + `npm test`(10건) 가 통과함을 확인했으나 최소 빌드 버전은 여전히 미확인 — 확인 없이 하한을 낮추지 말 것.",
-    "updated": "2026-09-26"
-  },
-  {
-    "title": "가이드 문서의 API 메서드·경로를 실제 라우터와 대조",
-    "value": 2,
-    "risk": 2,
-    "size": "M",
-    "status": "pending",
-    "note": "openapi_test.go 는 경로만 비교하고 응답 코드·메서드를 보지 않는다(이번 회차에 확인: PUT /admin/coupons/{id} 에 409 가 빠져 있어 한 줄 추가했다). 소스 문자열 검사를 증거로 삼지 말라는 지침에 걸리기 쉬워 설계가 어렵다 — 라우터를 실제로 호출해 대조하는 형태여야 한다.",
-    "updated": "2026-09-26"
-  },
-  {
-    "title": "쿠폰 코드 형식(길이·문자)에 대한 서버 검증 부재",
-    "value": 2,
-    "risk": 2,
-    "size": "S",
-    "status": "rejected",
-    "note": "기각 유지. couponInput.validate()(coupons.go:196~) 가 이미 3~40자·공백 금지·대문자화를 한다. 이번 회차에 다시 읽어 확인했고 단위 테스트도 존재한다. 형식 검증을 새로 더하면 기존 운영 데이터를 깨뜨린다.",
-    "updated": "2026-09-26"
+    "note": "README Node24+, Docker 이미지 24.18.0, package.json engines 없음. 최소 빌드 버전 미확인 — 확인 없이 하한을 낮추지 말 것.",
+    "updated": "2026-09-27"
   },
   {
     "title": "조용한 로그인 시작 실패를 JSON 오류 대신 /login?sso=error 로 보내기",
@@ -69,7 +69,7 @@
     "size": "M",
     "status": "pending",
     "note": "auth.go oauthStart 는 보호 경로라 위험이 높다. 미확인 — 이번 회차에 읽지 않았다.",
-    "updated": "2026-09-26"
+    "updated": "2026-09-27"
   },
   {
     "title": "Momento 프록시로 넘기는 요청 본문 크기 상한",
@@ -77,8 +77,8 @@
     "risk": 2,
     "size": "M",
     "status": "pending",
-    "note": "analytics.go momentoProxy 에 본문 크기 상한 없음(2026-09-20 확인). 적정 상한의 근거가 없어 숫자를 정하기 어렵다.",
-    "updated": "2026-09-26"
+    "note": "analytics.go momentoProxy 에 본문 크기 상한 없음(2026-09-20 확인). 적정 상한의 근거가 없어 숫자를 정하기 어렵다. 참고: 일반 핸들러는 decodeJSON 이 2MiB(types.go:103)로 막는다.",
+    "updated": "2026-09-27"
   },
   {
     "title": "CSP 신고 분당 60 제한의 호출자 구분과 프록시 뒤 X-Forwarded-For 처리 명시",
@@ -86,8 +86,8 @@
     "risk": 2,
     "size": "S",
     "status": "pending",
-    "note": "middleware.go clientIP 는 RemoteAddr 만 읽는다. 프록시 신뢰 정책을 넓히지 말고 문서 설명 범위로 제한.",
-    "updated": "2026-09-26"
+    "note": "middleware.go clientIP 는 RemoteAddr 만 읽는다. 프록시 신뢰 정책을 넓히지 말고 문서 설명 범위로 제한. 미확인 — 이번 회차에 읽지 않았다.",
+    "updated": "2026-09-27"
   },
   {
     "title": "정지된 계정 로그인 거부 문구를 README 설명과 맞추기",
@@ -95,8 +95,8 @@
     "risk": 3,
     "size": "M",
     "status": "pending",
-    "note": "auth.go login 은 status='active' 만 조회해 invalid_credentials 를 준다. 계정 열거 위험 때문에 문구 설계가 필요하고 보호 경로 — 여러 회차 미뤄짐.",
-    "updated": "2026-09-26"
+    "note": "auth.go login 은 status='active' 만 조회. 계정 열거 위험 때문에 문구 설계가 필요하고 보호 경로 — 여러 회차 미뤄짐.",
+    "updated": "2026-09-27"
   },
   {
     "title": "/login?sso=none 안내와 자동 로그인 제공자 우선 배치",
@@ -104,8 +104,8 @@
     "risk": 1,
     "size": "S",
     "status": "pending",
-    "note": "LoginPage.tsx 는 sso 쿼리 안내 없이 providers 순서대로 표시. 브라우저 검증·dist 재빌드가 따라온다.",
-    "updated": "2026-09-26"
+    "note": "LoginPage.tsx 는 sso 쿼리 안내 없이 providers 순서대로 표시. 브라우저 검증·dist 재빌드가 따라온다. 미확인.",
+    "updated": "2026-09-27"
   },
   {
     "title": "개인 알림 설정 화면에 메일 채널 표시",
@@ -113,16 +113,7 @@
     "risk": 2,
     "size": "S",
     "status": "pending",
-    "note": "NotificationSettings.tsx 는 웹 알림 위주. 프런트 변경이라 dist 논점 동일.",
-    "updated": "2026-09-26"
-  },
-  {
-    "title": "OrderOverdue 를 mail.notify_order_overdue 이벤트로 추가",
-    "value": 2,
-    "risk": 2,
-    "size": "M",
-    "status": "pending",
-    "note": "internal/mail/config.go 이벤트 목록에 없다. 수신 대상 결정이 필요해 한 세션 범위를 넘긴다.",
-    "updated": "2026-09-26"
+    "note": "NotificationSettings.tsx 는 웹 알림 위주. 프런트 변경이라 dist 논점 동일. 미확인.",
+    "updated": "2026-09-27"
   }
 ]

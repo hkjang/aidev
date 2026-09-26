@@ -17,3 +17,17 @@
 - 일부러 하지 않은 것: NUL 을 400 으로 막는 입력 검증(별 과제), POST /reports 의 `'404'` openapi 누락(과제서 범위 밖 — ideas.json 에 남김), `deleteCoupon` 등 같은 패턴 10여 곳(파일 수 억제), `web/`·`internal/ui/dist`(화면은 `error.message` 를 그대로 띄운다).
 - 다음 역할 주의: 새 테스트 `TestIntegrationReportSeparatesDuplicateFromStorageFailure`(integration_test.go:1110 부근)는 `KKIIT_TEST_DSN` 없이는 SKIP 된다 — DSN 없는 통과는 검증이 아니다. 새 헬퍼 `errorCode`(같은 파일 끝)는 패키지 전역이라 이름 충돌에 주의. 전역 `apiUnderTest` 때문에 병렬화 금지.
 - 검증 출력: 깨끗한 DB 로 `go test ./cmd/... ./internal/...` 전체 통과(`ok internal/httpapi 101.059s`, 통합 실제 실행), `gofmt -l cmd internal` 무출력, `go vet ./cmd/... ./internal/...` 무결. 분류기 변이 2종(항상 참 / 23505→00000)에서 각각 FAIL 확인.
+- [러너 07:24] brief accepted — 채택 — docker(29.7.2)가 가용해 수용 기준 1~3 을 모두 실제 HTTP→실제 DB 로 증명했고, 과제서가 미확인으로 남긴 1순위(`detai
+- [러너 07:24] verify passed — 검증 2개 통과 (policy)
+
+## 비평 노트
+- 직접 재현했다: reports.go 만 main 판으로 되돌려 새 테스트가 `status=409 want=500 code=report_already_open` 으로 FAIL, HEAD 에서 PASS. 폐기 Postgres16 을 새로 띄워 `go test ./cmd/... ./internal/...` 전체 통과(httpapi 91.3s, 통합 실제 실행)·gofmt·vet 무결까지 보고 컨테이너를 지웠다. 승인.
+- 못 본 것: `npm --prefix web test`·`make check`·`make build`·브라우저. 프런트는 ReportDialog.tsx:33 이 `error.message` 를 토스트로 띄우고 실패 시 다이얼로그를 닫지 않는 것을 코드로만 확인했다.
+- 승인이어도 남는 우려(다음 회차 후보): ① 클라이언트가 보낸 NUL 은 여전히 500 인데 문구가 "잠시 후 다시 시도" 라 거짓이다 — 400 입력 검증 과제. ② reports.go:84 에 `s.Logger.Error` 가 없어 진짜 저장 실패가 서버에 흔적을 남기지 않는다.
+- 릴리즈 노트용: 사용자에게 보이는 변화는 "열린 신고가 없는데도 중복이라고 안내하던 것" 이 사라지고 저장 실패 시 재시도 안내가 나오는 것. 새 오류 코드 `report_failed`(500)가 POST /api/v1/reports 에 추가됐고 openapi 에도 반영됐다.
+- [러너 07:31] review approved — 리뷰 승인 (risk=low)
+- [러너 07:31] pr created — https://github.com/hkjang/Kkiit/pull/13
+- [러너 07:31] ci passed — 검사 없음 — 정책으로 허용
+- [러너 07:31] merge done — 99e5841
+- [러너 07:34] release published — v0.4.8
+- [러너 07:35] assets verified — v0.4.8 자산 1개 (이전 v0.4.7: 1)
