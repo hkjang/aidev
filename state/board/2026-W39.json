@@ -1,9 +1,95 @@
 {
   "week": "2026-W39",
-  "generated": "2026-09-21T00:19:51+09:00",
-  "cost_usd": 0,
-  "constraint": "",
-  "proposals": [],
-  "not_doing": [],
-  "role_advice": []
+  "generated": "2026-09-27T06:21:17+09:00",
+  "cost_usd": 0.7968295,
+  "constraint": "사람 한 명의 검토 처리량 — 대기 38→90, 캠페인 PR 117건이 8일간 한 건도 머지되지 않았다",
+  "proposals": [
+    {
+      "cmd": [
+        "campaign",
+        "pause",
+        "mail-2026-09"
+      ],
+      "why": "$359.74 로 done 2 · 열린 PR 27(전환율 7%), 8일간 무변동",
+      "gives_up": "남은 todo 1건과 재시도 여유",
+      "revert": "campaign resume mail-2026-09",
+      "n": 1,
+      "applied": null
+    },
+    {
+      "cmd": [
+        "campaign",
+        "pause",
+        "silent-sso-2026-09"
+      ],
+      "why": "31/31 처리 완료 todo 0 인데 PR 25 · done 5 — 남은 과제 없이 재시도만 산다",
+      "gives_up": "거의 없음",
+      "revert": "campaign resume silent-sso-2026-09",
+      "n": 2,
+      "applied": null
+    },
+    {
+      "cmd": [
+        "campaign",
+        "pause",
+        "handoff-2026-09"
+      ],
+      "why": "12/12 처리, PR 11 · done 1 — 대기열에 11건 추가, 완료 1건",
+      "gives_up": "거의 없음",
+      "revert": "campaign resume handoff-2026-09",
+      "n": 3,
+      "applied": null
+    },
+    {
+      "cmd": [
+        "stop",
+        "Quantoss",
+        "머지 10건 중 8건을 사람이 다시 고침 — 자율화 강등까지 중지"
+      ],
+      "why": "human_rate 80% 로 회사 평균 23.2% 의 3.4배, 성적표 권고와 일치",
+      "gives_up": "Quantoss 주간 개선 회차 (~$6.4/회차)",
+      "revert": "resume Quantoss",
+      "n": 4,
+      "applied": null
+    },
+    {
+      "cmd": [
+        "run",
+        "jasql_semantic",
+        "마지막 회차가 error: pr create 로 끝났다. PR 생성 실패의 원인만 진단·복구하고 다른 파일은 건드리지 말 것"
+      ],
+      "why": "유일하게 정지한 프로젝트, 최대 실패 범주(인프라 128/234)에 속함",
+      "gives_up": "약 $8",
+      "revert": "stop jasql_semantic",
+      "n": 5,
+      "applied": null
+    },
+    {
+      "cmd": [
+        "run",
+        "vibe-code",
+        "v1.4.3 자산 0개(v1.4.0 은 2개). 릴리즈 워크플로를 로컬에서 재현해 자산이 붙는 것을 확인한 뒤 고칠 것 — 09-10 igame 교훈"
+      ],
+      "why": "릴리즈 완전성이 품질 축에서 유일하게 100% 가 아닌 지표",
+      "gives_up": "약 $8",
+      "revert": "reject 후 stop vibe-code",
+      "n": 6,
+      "applied": null
+    }
+  ],
+  "not_doing": [
+    "새 캠페인 draft-campaign — 대기열이 제약인 주에 유입을 늘리지 않는다",
+    "캠페인 예산 재삭감 — 8일간 지출 +$23 로 상한이 이미 구속력 없음",
+    "정찰(scout) 비활성화 — p=0.0237 은 다중비교 보정(≈0.008)을 넘지 못한다, n≈40 까지 유지",
+    "보호 파일 PR(sqlon·jasql)의 자동 경로 전환",
+    "tracking·guides·mcp-oauth 일시정지 — stuck 3건 마무리 가치가 남아 다음 주 재검토"
+  ],
+  "role_advice": [
+    "PR 심사: 사람 필요 40%(90/223)에 사유 분류(보호파일/CI/판단불가) 필수화 — 사람이 일괄 처리 가능해진다",
+    "구현: 변경 파일 수 권고 상한 9개 (사람 수정률 1-3파일 13% vs 10+파일 33%)",
+    "정찰: no-scout 가 머지 91% vs baseline 66%(p=0.0237)이나 다중비교 미통과 — n≈40 에서 재판정",
+    "중재: 2주 연속 0회, 표본 없음 — 성적표에 '판단 보류' 표시, 폐지 결정은 보류",
+    "비평: 승인 뒤 회귀 0/263 — 조정 불필요, codex-critic 09-26 중단은 옳았다",
+    "인프라: 실패의 55%가 시스템 설계·인프라 — 역할 조정보다 러너 환경 수리의 수익이 크다"
+  ]
 }
