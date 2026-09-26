@@ -127,3 +127,4 @@
 - 보류 아이디어: DataTable 이 clamp 하지 않은 page 로 slice 해 검색 직후 빈 표가 나온다 (가치 2 / 위험 1 / S); DataTable 기본 rowKey 가 동명이인에서 중복될 수 있다 (가치 2 / 위험 1 / S); 자기 자신의 역할 변경(SELF_ROLE)·비밀번호(SELF_PASSWORD) 제약을 같은 다이얼로그에 반영 (가치 2 / 위험 1 / S); visitor-search 의 ID·부서 일치가 기간 무관인 점을 문구에 나누어 적는다 (가치 2 / 위험 1 / S); DataTable CSV 가 화면 형식이 아닌 원시값을 내보낸다 (가치 2 / 위험 1 / S)
 - 과제서: 채택 — 근거로 든 행 번호(auth.go:229·239, admin.go:899·956·973, AdminPage.tsx 3278·3336·3410)와 `useAuth` 위치가 모두 현재 코드와 일치했고 수용 기준 3개를 그대로 구현·증명했다; 과제서가 미확인으로 남긴 Tooltip 은 실제로 import 되어 있지 않아 한 줄 추가했다.
 
+- 릴리즈: v0.34.45 (2026-09-26, run 2026-09-26-121651-Momento-improve)
