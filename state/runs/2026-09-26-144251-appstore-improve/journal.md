@@ -29,3 +29,5 @@
 - [러너 15:02] pr created — https://github.com/hkjang/appstore/pull/31
 - [러너 15:06] ci passed — 검사 2개 모두 success
 - [러너 15:06] merge done — 73122f8
+- [러너 15:20] release published — v2.11.6
+- [러너 15:22] assets verified — v2.11.6 자산 1개 (이전 v2.11.5: 1)

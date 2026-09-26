@@ -253,3 +253,4 @@
 - 보류 아이디어: E2E mock API 의 public config override 가 기본값에 덮여 무효 (2/1/S, mock-api.ts:311-322) · 상위 100개 밖의 즐겨찾기 앱이 /favorites 에 안 나옴 (3/3/M, 공개 API 계약 변경 수반) · /favorites 의 검색·정렬이 전체 카탈로그를 대상으로 동작 (2/2/M) · clientAddress 가 RemoteAddr 만 보아 reverse proxy 뒤에서 rate limit 이 전역 (3/3/M) · 로그인 방식이 모두 없는 설치의 브라우저 안내 E2E (2/1/S, config override 순서 수정이 선행)
 - 과제서: 채택 — 지목한 `public-pages.tsx:222` 의 `slugs` 가 현재 코드와 정확히 일치하고 수용 기준 4건을 그대로 구현했다. 다만 과제서의 목록 엔드포인트 경로는 `/api/v1/public/apps` 가 아니라 `/api/v1/apps` 였으므로(그대로 셌다면 항상 0건이 되어 기준 2가 거짓 통과한다) 실제 경로로 셌고, 기준선은 65건이 아니라 78건이었다.
 
+- 릴리즈: v2.11.6 (2026-09-26, run 2026-09-26-144251-appstore-improve)
