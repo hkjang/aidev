@@ -614,9 +614,17 @@ resolve_generated_conflicts(){ # $1=워크트리
 }
 
 rebase_pr(){ # $1=PR url $2=base
-  local pr=$1 base=$2 br rwt="$WT_BASE/$n-rebase" newsha
+  local pr=$1 base=$2 br rwt="$WT_BASE/$n-rebase" newsha rkey rmemo="$STATE/.rebase-failed"
   br=$(cd "$repo" && gh pr view "$pr" --json headRefName --jq .headRefName 2>/dev/null); [ -n "$br" ] || return 0
   git -C "$repo" fetch -q origin "$base" "$br" >>"$LOG" 2>&1 || return 0
+  # 같은 (PR, base 끝, 브랜치 끝) 조합은 이미 한 번 충돌로 실패했으면 다시 해도 같은 결과다.
+  # 승인 스윕이 10분마다, 처리기가 시간마다 같은 리베이스를 다시 걸어 사흘 동안 한 PR 에
+  # 스무 번 넘게 'could not apply' 를 찍고 있었다 (2026-09-24~26 로그에 200건 넘음).
+  # 어느 쪽이든 끝이 움직이면 키가 바뀌어 다시 시도한다.
+  rkey="$pr|$(git -C "$repo" rev-parse --short "origin/$base" 2>/dev/null)|$(git -C "$repo" rev-parse --short "origin/$br" 2>/dev/null)"
+  if grep -qxF "$rkey" "$rmemo" 2>/dev/null; then
+    log "$n: 리베이스 생략 — 같은 조합에서 이미 충돌로 실패했다 ($pr)"; return 1
+  fi
   wt_reset "$repo" "$rwt"
   git -C "$repo" worktree add --detach "$rwt" "origin/$br" >>"$LOG" 2>&1 || return 0
   if { git -C "$rwt" rebase "origin/$base" >>"$LOG" 2>&1 || resolve_generated_conflicts "$rwt"; } \
@@ -629,6 +637,8 @@ rebase_pr(){ # $1=PR url $2=base
     else stage rebase push-failed "강제 푸시 실패"; fi
   else
     git -C "$rwt" rebase --abort >/dev/null 2>&1 || true
+    # 이 조합은 다시 해도 같은 결과다 — 기억해 두고 끝이 움직일 때만 다시 시도한다
+    printf '%s\n' "$rkey" >> "$rmemo"; tail -n 500 "$rmemo" > "$rmemo.t" 2>/dev/null && mv "$rmemo.t" "$rmemo"
     stage rebase conflict "자동 리베이스 실패 — 수동 해결 필요"; result="$result, rebase conflict"
     (cd "$repo" && gh pr comment "$pr" --body "⚠️ base 와 충돌하는데 자동 리베이스로 풀리지 않습니다. 수동으로 해결해 주세요. (run $RUN_ID)" >/dev/null 2>&1) || true
   fi
