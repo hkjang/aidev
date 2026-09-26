@@ -123,10 +123,18 @@ def main():
         human = sum(1 for p in rows if any(not c["by_runner"] for c in p["corrective"]))
         return {"n": len(rows), "with_fix": hit, "rate": round(hit / len(rows), 3) if rows else None,
                 "with_human_fix": human, "human_rate": round(human / len(rows), 3) if rows else None}
+    # 변경 규모별 — 파일을 많이 건드린 변경이 사람 손을 더 타는지. 2026-09-26 측정:
+    # 파일 10개 이상 42%, 3개 이하 16% (2.6배). 프롬프트의 "파일 여섯 개 안쪽" 지침의 근거다.
+    def by_size(lo, hi):
+        return rate([p for p in prs if lo <= p["files"] <= hi])
     arms = sorted({p["arm"] for p in prs if p["arm"]})
     summary = {"all": rate(prs), "min_observed_days": MIN_OBS,
                # 아직 창이 안 찬 시점에도 읽을 수 있게 3일 기준을 같이 낸다 (잠정치)
                "all_3d": rate(prs, 3),
+               "by_size": {"1-3": by_size(0, 3), "4-9": by_size(4, 9), "10+": by_size(10, 10**9)},
+               "by_project": {k: v for k, v in sorted(
+                   ((proj, rate([p for p in prs if p["project"] == proj])) for proj in {p["project"] for p in prs}),
+                   key=lambda kv: -((kv[1] or {}).get("human_rate") or 0)) if (v or {}).get("n", 0) >= 8},
                "by_arm": {a: rate([p for p in prs if p["arm"] == a]) for a in arms},
                "by_arm_3d": {a: rate([p for p in prs if p["arm"] == a], 3) for a in arms},
                "by_approval": {k: rate([p for p in prs if p["approved_by"] == k]) for k in ("auto", "human", "shepherd")},

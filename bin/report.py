@@ -530,6 +530,18 @@ def agent_scorecard(runs_all, usage_all, lessons, days_window=14):
         rows.append({"role": "머지 뒤 30일 (postmerge)", "calls": s["all"]["n"], "cost": None,
                      "metric": f"같은 파일에 fix 커밋 {fmt(s['all'])} (그중 사람이 고친 것 {fmt_h(s['all'])}) · 승인 주체별 사람 수정: 자동 {fmt_h(s['by_approval'].get('auto'))} / 사람 승인 {fmt_h(s['by_approval'].get('human'))} / 처리기 {fmt_h(s['by_approval'].get('shepherd'))}"
                                f" · 비평 위험도별 사람 수정: low {fmt_h(s['by_risk'].get('low'))} / medium {fmt_h(s['by_risk'].get('medium'))} · 첫 수정까지 중앙값 {s.get('median_days_to_first_fix', '—')}일 (상한 추정: 같은 파일을 고친 것이지 그 PR 을 고친 것은 아닐 수 있다)"})
+        # 변경 규모별 — 파일을 적게 건드린 변경이 뒤탈이 적다. 프롬프트의 "파일 여섯 개 안쪽" 근거.
+        sz = s.get("by_size") or {}
+        if any((sz.get(k) or {}).get("n") for k in ("1-3", "4-9", "10+")):
+            rows.append({"role": "변경 규모별 뒤탈 (postmerge)", "calls": s["all"]["n"], "cost": None,
+                         "metric": " · ".join(f"파일 {k}개: 사람 수정 {fmt_h(sz.get(k))}" for k in ("1-3", "4-9", "10+")
+                                              if (sz.get(k) or {}).get("n"))})
+        worst = [(k, v) for k, v in (s.get("by_project") or {}).items() if (v or {}).get("human_rate") is not None][:5]
+        if worst:
+            rows.append({"role": "사람 손이 가장 많이 간 저장소", "calls": len(s.get("by_project") or {}), "cost": None,
+                         "metric": " · ".join(f"{k} {round(v['human_rate']*100)}% ({v['n']}건)" for k, v in worst)})
+            if worst[0][1]["human_rate"] >= 0.7:
+                advice.append(f"{worst[0][0]} 은 머지한 변경의 {round(worst[0][1]['human_rate']*100)}% 를 사람이 다시 고쳤다 — 자율화 단계를 낮추거나(state/{worst[0][0]}.policy.json 의 autonomy) 검증 명령을 늘릴 것")
         if s["all"].get("human_rate") is not None and s["all"]["human_rate"] > 0.3:
             advice.append("머지 뒤 30일 안에 사람이 같은 파일을 다시 고친 PR 이 30% 를 넘는다 — 비평 승인 기준과 테스트 요구를 강화하거나 자동 머지 범위를 줄인다.")
     # 실패 분류 (MAST, Cemri et al. 2025): 시스템 설계 / 에이전트 간 불일치 / 검증·종료

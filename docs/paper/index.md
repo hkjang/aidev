@@ -349,6 +349,25 @@ by construction. But the fact that the direction flipped with sample size is its
 axis does not support a conclusion yet. The 30-day window does not actually close until early October
 (currently 192 pull requests observed for 20+ days, none for 30).
 
+**Change size predicts rework (2026-09-26).** Splitting the 471 merged pull requests with at least
+seven days of observation by the number of files they touched, the share that a human later fixed in
+the same files rises monotonically.
+
+| Production files touched | Sample | Fixed by a human within 30 days |
+|---|---|---|
+| 1–3 | 130 | **16%** |
+| 4–9 | 236 | 35% |
+| 10 or more | 105 | **43%** |
+
+This is not random assignment, so it cannot be read causally — larger changes may simply be harder
+problems. The 2.6× spread was still enough to change operating guidance: the scout and builder
+prompts now carry a "six production files or fewer" limit together with this table as its rationale,
+and the scorecard keeps counting the rate by size so the next draft can compare before and after.
+
+The spread between repositories is just as large — same runner, same gates, yet pii-masker and ptium
+sit at 0% human rework (18 each) while jikim is at 100% (13) and Quantoss at 80% (10). The scorecard
+surfaces the worst five and advises lowering the autonomy level or adding verification above 70%.
+
 ## 7. Threats to validity
 
 - **One operator, one stack.** Forty-six repositories by one person with a shared Go/React/Keycloak stack is a narrow population. The campaigns in particular exploit that homogeneity.
