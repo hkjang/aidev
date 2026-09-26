@@ -28,3 +28,8 @@
 - [러너 12:32] pr created — https://github.com/hkjang/DartFly/pull/14
 - [러너 12:37] ci passed — 검사 3개 모두 success
 - [러너 12:37] merge done — 6daa89e
+- [러너 12:41] release published — v2.75.0
+- [러너 12:41] gh-release created — GitHub Release v2.75.0
+- [러너 12:41] manifest ok — dartfly-v2.75.0.tar.gz dartfly-v2.75.0.tar.gz.sha256 
+- [러너 12:41] assets uploaded — 2개
+- [러너 12:41] assets verified — v2.75.0 자산 2개 (이전 v2.74.0: 2)
