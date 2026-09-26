@@ -355,12 +355,17 @@ the same files rises monotonically.
 
 | Production files touched | Sample | Fixed by a human within 30 days |
 |---|---|---|
-| 1–3 | 130 | **14%** |
-| 4–9 | 236 | 25% |
-| 10 or more | 105 | **33%** |
+| 1–3 | 136 | **13%** |
+| 4–9 | 237 | 25% |
+| 10 or more | 53 | **47%** |
+
+Campaign rounds are excluded. Campaign pull requests are large — 20 files at the median — but their
+human-rework rate is *lower*, 19%, because only the ones that merged are counted and 80% of campaign
+pull requests never merge. Mixing them in understates the risk of large changes: the 10-or-more bucket
+reads 33% with campaigns included.
 
 This is not random assignment, so it cannot be read causally — larger changes may simply be harder
-problems. The 2.4× spread was still enough to change operating guidance: the scout and builder
+problems. The 3.6× spread was still enough to change operating guidance: the scout and builder
 prompts now carry a "six production files or fewer" limit together with this table as its rationale,
 and the scorecard keeps counting the rate by size so the next draft can compare before and after.
 
