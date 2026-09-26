@@ -91,3 +91,4 @@
 - 보류 아이디어: `openapi.go:openAPI` 핸들러 렌더를 테스트로 고정 — 이 핸들러를 부르는 테스트가 0개 (2/1/S); `orbitAt` 의 `contexts` 분류 집계를 실제 postgres 로 고정 — 이번에 `seedRelationship` 이 생겨 categories 인자만 더하면 된다 (2/1/S); `orbitAt` 의 교류 조회에 상한이 없어 교류 많은 사용자의 전체 이력이 메모리로 올라옴 — 단순 LIMIT 은 지표를 틀어뜨려 집계를 DB 로 내려야 함 (2/2/M); `orbitAt` 의 사람별 memories count 상관 서브쿼리를 GROUP BY 집계로 — 동등성 회귀 기준이 main 에 없어 위험 2 (2/2/S); `createPersonLink` 에 uuid 가 아닌 person_id 를 주면 400 이 아니라 500 (2/1/S, 미확인)
 - 과제서: 채택 — 근거(`writeOrbitAt` 이 `orbitLinks` 결과를 거르지 않음, `orbitAt` 의 `JOIN relationships`, `person_links` 의 `CHECK (person_a < person_b)`, main 에 두 헬퍼 없음)가 지금 코드와 정확히 일치해 수용 기준 1~3 을 그대로 구현했다.
 
+- 릴리즈: v0.7.2 (2026-09-26, run 2026-09-26-220237-orbit-improve)
