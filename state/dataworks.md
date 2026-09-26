@@ -212,3 +212,4 @@
 - 보류 아이디어: 액션 센터가 아직 열리지 않은 계약 창(`valid_from` 미래)을 전용 경고로 보고 (2/2/M — 새 action type·summary 키·웹 4파일 동반) / 상품이 사라진 고아 Contract Scope·Entitlement 를 전용 운영 경고로 분류 (2/2/M) / 동일 API 키에 활성 엔타이틀먼트가 둘 이상일 때 운영 화면 경고 (2/2/S) / 이미 지난 `expires_at` 으로 발급되는 죽은 엔타이틀먼트를 쓰기 경로에서 거부 (2/3/S) / 실제 MCP 클라이언트 흐름 e2e 를 스텁 Keycloak + Playwright 로 편입 (3/2/M)
 - 과제서: 채택 — 근거(`contractScopeActive` 의 `valid_from` 처리와 액션 센터 루프의 `valid_to`-only `continue`)가 현재 코드와 정확히 일치했고 수용 기준 1~5 를 모두 실행으로 확인했다.
 
+- 릴리즈: v0.9.62 (2026-09-26, run 2026-09-26-144300-dataworks-improve)

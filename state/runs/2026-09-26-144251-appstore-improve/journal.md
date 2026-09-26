@@ -27,3 +27,5 @@
 - 다음 회차용: /favorites 의 개수 문구(:361)·페이지 nav(:410)는 여전히 미수정이며 이번 범위 밖이다. 릴리즈 노트에 "즐겨찾기 토글 시 카탈로그 재조회 제거" 로 적되 개수 버그 수정으로 읽히지 않게 할 것.
 - [러너 15:02] review approved — 리뷰 승인 (risk=low)
 - [러너 15:02] pr created — https://github.com/hkjang/appstore/pull/31
+- [러너 15:06] ci passed — 검사 2개 모두 success
+- [러너 15:06] merge done — 73122f8
