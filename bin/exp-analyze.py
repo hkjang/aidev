@@ -133,11 +133,25 @@ def main():
     for a in arms:
         m = result["arms"][a]
         lines.append(f"| {a} | {m['n']} | {cell(a, 'verify_pass')} | {cell(a, 'critic_rejected_ever')} | {cell(a, 'pr_reached')} | {cell(a, 'merged')} | {cell(a, 'review_pending')} | {cell(a, 'cost_per_round', 'mean')} | {'—' if m['cost_per_merge'] is None else '$' + str(m['cost_per_merge'])} | {cell(a, 'brief_accepted')} | {cell(a, 'repair_success')} | {m['arbiter']['approved']}/{m['arbiter']['n']} | {cell(a, 'postmerge_fix_3d')} | {cell(a, 'postmerge_human_fix_30d')} |")
+    # baseline 대비 2표본 비율 z 검정 — 표에 그대로 싣는다. 여섯 번 비교하므로 Bonferroni 0.0083.
+    import math as _m
+    def _z(p1, n1, p2, n2):
+        if p1 is None or p2 is None or min(n1, n2) == 0: return None, None
+        p = (p1 * n1 + p2 * n2) / (n1 + n2)
+        se = _m.sqrt(p * (1 - p) * (1 / n1 + 1 / n2))
+        if se == 0: return None, None
+        z = (p1 - p2) / se
+        return round(z, 2), round(_m.erfc(abs(z) / _m.sqrt(2)), 4)
+    _b = result["arms_claude"].get("baseline", {})
+    for a in arms:
+        m = result["arms_claude"][a]
+        z, pv = _z(m["merged"]["rate"], m["n"], (_b.get("merged") or {}).get("rate"), _b.get("n", 0))
+        m["merged_vs_baseline"] = {"z": z, "p": pv}
     lines += ["", "## 클로드 회차만 (엔진 혼입 제거)", "",
               "같은 프롬프트라도 클로드가 한도에 걸린 날은 코덱스가 대신 돌았고, 그 회차는 절반이 변경 없이 끝난다. "
               "역할의 효과를 보려면 엔진을 섞지 말아야 한다 — 아래는 클로드가 구현한 회차만 다시 센 것이다.", "",
-              "| arm | 회차 | 검증 통과 | PR 도달 | 머지 | 검토 대기 | 회차 비용 | 머지당 비용 |",
-              "|---|---|---|---|---|---|---|---|"]
+              "| arm | 회차 | 검증 통과 | PR 도달 | 머지 | baseline 대비 p | 검토 대기 | 회차 비용 | 머지당 비용 |",
+              "|---|---|---|---|---|---|---|---|---|"]
     for a in arms:
         m = result["arms_claude"][a]
         def c2(key, field="rate"):
@@ -145,7 +159,9 @@ def main():
             x = v.get(field)
             if x is None: return "—"
             return (f"{round(x*100)}% (n={v.get('n')})" if field == "rate" else f"${x} (n={v.get('n')})")
-        lines.append(f"| {a} | {m['n']} | {c2('verify_pass')} | {c2('pr_reached')} | {c2('merged')} | {c2('review_pending')} | {c2('cost_per_round','mean')} | {'—' if m['cost_per_merge'] is None else '$' + str(m['cost_per_merge'])} |")
+        _p = (m.get("merged_vs_baseline") or {}).get("p")
+        _ps = "—" if a == "baseline" or _p is None else (f"**{_p}**" if _p < 0.0083 else str(_p))
+        lines.append(f"| {a} | {m['n']} | {c2('verify_pass')} | {c2('pr_reached')} | {c2('merged')} | {_ps} | {c2('review_pending')} | {c2('cost_per_round','mean')} | {'—' if m['cost_per_merge'] is None else '$' + str(m['cost_per_merge'])} |")
     lines += ["", "RQ 매핑: " + " · ".join(f"{k}: {v}" for k, v in exp.get("questions", {}).items()), "",
               f"품질 축 성숙도: 머지된 실험 PR {sum(result['arms'][a]['pm_observed']['n'] for a in arms)}건, 관찰 최대 "
              f"{max([result['arms'][a]['pm_observed']['max_days'] for a in arms], default=0)}일 — 30일 열은 관찰 7일이 차야 값이 생긴다(빈 값은 측정 실패가 아니다).",

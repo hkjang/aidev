@@ -377,6 +377,40 @@ repository released, the worse it looked — jikim showed 100% across all 13 and
 Adding the commits that tags point at to the runner set fixed it; the overall human-fix rate fell from
 31% to 24%.
 
+### 6.10 Interim readout (2026-09-26, day 8 of the experiment)
+
+The experiment runs to 10-03, but the deadline makes this readout worth printing. With the engine
+mix removed (§7) — **only rounds that Claude implemented** — each arm's merge rate is compared to
+baseline with a two-proportion z-test.
+
+| arm | Rounds (Claude) | Merge rate | vs baseline | p |
+|---|---|---|---|---|
+| baseline | 50 | 64% | — | — |
+| **no-scout** | 20 | **95%** | **+31pp** | **0.008** |
+| no-repair | 24 | 71% | +7pp | 0.56 |
+| no-arbiter | 27 | 70% | +6pp | 0.57 |
+| no-journal | 33 | 70% | +6pp | 0.59 |
+| no-lessons | 22 | 68% | +4pp | 0.73 |
+| **codex-critic** | 31 | **23%** | **−41pp** | **0.0003** |
+
+Six comparisons put the Bonferroni threshold at 0.0083: codex-critic clears it comfortably, no-scout
+sits on the line. Two things can be read.
+
+**RQ1 (role separation).** Removing the scout *raised* the merge rate (64% → 95%). The scout spends
+roughly \$0.7–2 a round deciding what to do, and the tasks it picks get merged **less** often than the
+ones the builder picks for itself. Read it carefully — the scout may be choosing harder work (its
+briefs are adopted 95% of the time, so this is not the builder rejecting them). Still, the premise
+that a read-only session should set direction is not supported by merge rate.
+
+**RQ3 (judge family).** A critic from a different family (Codex) drops the merge rate to 23%. Not
+because it rejects more, but because far more rounds end up waiting for review (§6.4). Avoiding
+self-preference bias costs throughput. Whether those rejections caught real defects can only be
+answered by the 30-day post-merge measure, and the present sample shows no difference between arms.
+
+The other four (repair, arbiter, journal, lessons) are indistinguishable from baseline on merge rate.
+That is not evidence of absence: with 20–33 rounds per arm, differences under about 20 percentage
+points are not detectable.
+
 ## 7. Threats to validity
 
 - **One operator, one stack.** Forty-six repositories by one person with a shared Go/React/Keycloak stack is a narrow population. The campaigns in particular exploit that homogeneity.
