@@ -142,6 +142,16 @@ def main():
         if se == 0: return None, None
         z = (p1 - p2) / se
         return round(z, 2), round(_m.erfc(abs(z) / _m.sqrt(2)), 4)
+    # arm 이 끄는 기능이 baseline 에서 실제로 돌긴 하는가. 돌지 않는 기능을 끄는 arm 은
+    # 처치 노출이 0 이므로 그 null 결과는 "효과 없음" 이 아니라 "비교 자체가 없음" 이다.
+    # 2026-09-27: 중재(arbiter)는 1,500회차 동안 한 번도 실행되지 않았다 — 수리가 커밋을
+    # 거부해야 트리거되는데 수리는 22/22 전부 커밋에 성공했다.
+    _feature = {"no-scout": "scout", "no-repair": "repair", "no-arbiter": "arbiter", "codex-critic": "review"}
+    _base_rows = by_arm_claude.get("baseline", [])
+    for a in arms:
+        f = _feature.get(a)
+        if not f: continue
+        result["arms_claude"][a]["baseline_exposure"] = sum(1 for r in _base_rows if st(r, f))
     _b = result["arms_claude"].get("baseline", {})
     for a in arms:
         m = result["arms_claude"][a]
@@ -161,6 +171,9 @@ def main():
             return (f"{round(x*100)}% (n={v.get('n')})" if field == "rate" else f"${x} (n={v.get('n')})")
         _p = (m.get("merged_vs_baseline") or {}).get("p")
         _ps = "—" if a == "baseline" or _p is None else (f"**{_p}**" if _p < 0.0083 else str(_p))
+        _ex = m.get("baseline_exposure")
+        if _ex == 0:
+            _ps = "노출 0 — 비교 불가"
         if (exp["arms"].get(a) or {}).get("stopped"):
             _ps += f" · 중단 {exp['arms'][a]['stopped'].get('at','')}"
         lines.append(f"| {a} | {m['n']} | {c2('verify_pass')} | {c2('pr_reached')} | {c2('merged')} | {_ps} | {c2('review_pending')} | {c2('cost_per_round','mean')} | {'—' if m['cost_per_merge'] is None else '$' + str(m['cost_per_merge'])} |")

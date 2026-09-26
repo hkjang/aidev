@@ -412,9 +412,19 @@ because it rejects more, but because far more rounds end up waiting for review (
 self-preference bias costs throughput. Whether those rejections caught real defects can only be
 answered by the 30-day post-merge measure, and the present sample shows no difference between arms.
 
-The other four (repair, arbiter, journal, lessons) are indistinguishable from baseline on merge rate.
-That is not evidence of absence: with 20–33 rounds per arm, differences under about 20 percentage
-points are not detectable.
+The other three (repair, journal, lessons) are indistinguishable from baseline on merge rate. That is
+not evidence of absence: with 20–33 rounds per arm, differences under about 20 percentage points are
+not detectable.
+
+**The no-arbiter arm was never a comparison at all (found 2026-09-27).** The arbiter has not run once
+in 1,500 rounds. It fires only when the critic rejects and the repairer declines to commit, arguing
+the criticism is wrong — and the repairer has run 22 times and committed successfully all 22. Baseline
+therefore had no arbiter either, which makes no-arbiter the same treatment as baseline. Its p=0.57
+should be read as "the arbiter was never tested", not "the arbiter has no effect". An arm that
+disables a feature which never fires manufactures a null result that looks like evidence of no effect;
+the exposure of each treatment should have been counted before the experiment started.
+`bin/exp-analyze.py` now counts how often the feature an arm disables actually ran in baseline and
+prints "노출 0 — 비교 불가" (zero exposure, not comparable) in the table when it is zero.
 
 **Why scouted rounds merge less.** Splitting the Claude-only rounds by how they ended: baseline's 51
 are 65% merged/released, 18% blocked on missing or failing CI, 8% on a guarded path; no-scout's 20 are
