@@ -30,3 +30,5 @@
 - [러너 16:29] pr created — https://github.com/hkjang/git-ctx/pull/39
 - [러너 16:36] ci passed — 검사 5개 모두 success
 - [러너 16:36] merge done — aad7bde
+- [러너 16:59] release published — v0.77.18
+- [러너 17:13] assets verified — v0.77.18 자산 2개 (이전 v0.77.17: 2)

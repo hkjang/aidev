@@ -185,3 +185,4 @@
 - 보류 아이디어: `cutAtRuneBoundary`(search)와 `runeSafeCut`(mcp)의 계약을 같은 테이블 테스트 두 벌로 고정 — 순수 테스트 추가, 위험 0 이지만 가치 낮음 (가치 2 / 위험 1 / S). calltrace 에 `context.Canceled` 를 별도 상태로 구분 — 새 상태 상수가 `mcp_call_steps.status` 계약과 관리 콘솔을 건드려 위험 (가치 2 / 위험 3 / M). `responseNoticeBytes = 320` 예약이 실제 공지보다 짧아 `clampResponse` 결과가 예산 초과 — `truncation_test.go:31` 이 이미 느슨한 계약을 고정해 의도 확인 필요 (가치 2 / 위험 2 / S). `Sanitize` 의 finding 이 가장 심각한 규칙이 아니라 마지막 규칙을 보고 — 공식 심각도 계약 미확인이라 보류 유지 (가치 2 / 위험 1 / S). `internal/app` 릴리즈 워크플로 flaky — 실패 테스트 이름 미확보(이번 회차에도 app 통과, 99.422s) (가치 3 / 위험 2 / M).
 - 과제서: 채택 — 지정한 줄·임포트·비대칭 근거가 현재 코드와 정확히 맞았고, 과제서가 예측한 두 래핑 케이스만 수정 전 실패해 수용 기준 1~3 을 충족했다.
 
+- 릴리즈: v0.77.18 (2026-09-26, run 2026-09-26-161550-git-ctx-improve)
