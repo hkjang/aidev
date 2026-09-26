@@ -140,6 +140,23 @@ if [ ${#ci_gap[@]} -gt 0 ]; then
   fi
 fi
 
+# 실험이 기한을 넘겼는데 아직 켜져 있나 — 끝난 실험을 계속 돌리면 회차마다 정책이 무작위로
+# 덮어써지고, 끝난 줄 모르면 대기 중인 변경(state/after-experiment.md)도 영영 안 들어간다.
+expf="$REPO_DIR/state/experiment.json"
+if [ -s "$expf" ] && [ "$(jq -r '.enabled // false' "$expf")" = true ]; then
+  exp_until=$(jq -r '.until // ""' "$expf")
+  if [ -n "$exp_until" ] && [ "$(date +%F)" \> "$exp_until" ]; then
+    exp_stamp="$HOME/.auto-improve/.exp-ended"
+    if [ "$(cat "$exp_stamp" 2>/dev/null)" != "$exp_until" ]; then
+      echo "$exp_until" > "$exp_stamp"
+      "$HERE/tg.sh" "🔬 비교 실험 $(jq -r '.id' "$expf") 이 기한($exp_until)을 넘겼습니다.
+끄려면 state/experiment.json 의 enabled 를 false 로. 판독: docs/paper/experiments/
+실험이 끝나면 넣기로 미뤄 둔 변경이 있습니다: state/after-experiment.md" >/dev/null 2>&1 || true
+    fi
+    problems+=("비교 실험 $(jq -r '.id' "$expf") 기한($exp_until) 지남 — enabled 를 끄고 state/after-experiment.md 를 적용할 것")
+  fi
+fi
+
 # 캠페인이 멈춰 있나 — 예산과 기한을 들고 있는데 며칠째 한 회차도 안 도는 상태는
 # 로그만 봐서는 안 보인다 (2026-09-26 에 다섯이 8~10일째 멈춰 있었고 아무 알림도 없었다).
 camp_stall=()

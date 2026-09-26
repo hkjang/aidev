@@ -411,6 +411,21 @@ The other four (repair, arbiter, journal, lessons) are indistinguishable from ba
 That is not evidence of absence: with 20–33 rounds per arm, differences under about 20 percentage
 points are not detectable.
 
+**Why scouted rounds merge less.** Splitting the Claude-only rounds by how they ended: baseline's 51
+are 65% merged/released, 18% blocked on missing or failing CI, 8% on a guarded path; no-scout's 20 are
+95% merged and 5% held for review, with no guarded-path and no CI blocks at all. The task titles show
+the difference — the scout picks structural work ("clean up gofmt drift and add a `gofmt -l` gate to
+CI"), the builder picks narrow defects ("a failed share-list lookup was being hidden behind an
+'empty' message"). Self-rated value is 3.4 against 3.2, essentially the same. So the scout's tasks are
+not less valuable; they are **tasks this pipeline cannot carry to the end**. With 4/51 against 0/20 on
+guarded paths, the mechanism itself is not established.
+
+The fix is not to remove the scout but to tell it about mergeability — pick guarded-path work only
+when that is the point of the task, and in a repository without CI make adding CI the task. **That
+change was deliberately deferred.** Making it now would alter a treatment mid-experiment, precisely
+where RQ1 is most interesting. The proposed edit and how to check it are in
+`state/after-experiment.md`, and the health check reminds us of that file once the deadline passes.
+
 **The codex-critic arm was stopped on 2026-09-26.** No stopping rule had been specified in advance,
 so this was a post-hoc call and is recorded as such: the throughput effect was established at
 p=0.0003, and the information another week would add was judged smaller than its cost (\$20.63 per

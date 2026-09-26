@@ -30,3 +30,11 @@
 - [러너 20:46] pr created — https://github.com/hkjang/muni/pull/27
 - [러너 20:51] ci passed — 검사 2개 모두 success
 - [러너 20:51] merge done — a774de9
+
+## 릴리즈 노트
+- v0.47.0 을 앞선 회차와 같은 방식으로 냈다: `VERSION` 0.46.0 → 0.47.0, `docs/releases/v0.47.0.md`(가장 새 노트 v0.46.0 의 꼬리 — 업그레이드/오프라인 설치/운영 정보/릴리스 파일 검증/문서 — 를 버전 문자열만 바꿔 옮겼다), 커밋 `docs: v0.47.0 릴리스 노트`(fdbf260, VERSION + 노트 둘뿐), 주석 태그 `v0.47.0`. 0.x 에서 마이너를 올려 온 패턴대로 마이너 한 칸. 푸시는 하지 않았다(러너의 일).
+- 버전 자리는 `VERSION` 하나뿐인 것을 확인했다 — `grep 0.46.0` 이 `docs/releases` 밖에서 걸리는 곳이 없고, 바이너리 버전은 Makefile 이 `-ldflags` 로 넣는다.
+- 검증은 CI(`ci.yml`)의 test 잡을 이 기계에서 그대로 돌렸다: `scripts/check-webui-placeholder.sh` OK, `gofmt -l .` 빈 출력, `go vet ./...` OK, postgres:16-alpine 컨테이너에 `MUNI_TEST_DSN` 을 주어 `go test ./...` 전체 ok(httpapi 9.6s 포함, live 스킵 0), `CGO_ENABLED=0 go build ./cmd/muni` OK. 프런트는 미변경이지만 CI 가 도는 것이라 함께 돌렸다 — `npm ci` → `npm run build`(tsc -b + vite) OK, `npm test` 42파일 297건 통과, `npm run lint`(tsc -b) 무출력. 코드 변경 자체의 CI 는 a774de9 에서 이미 success 둘(`ci-a774de924576.json`).
+- 비평이 남긴 둘을 처리했다: ① ASCII fallback 에서 이름이 빠져 `workspace-YYYYMMDD.zip` 이 되는 것을 릴리스 노트에 한 단락으로 적었다(`filename*` 을 읽는 클라이언트는 전과 같다는 것까지). ② `npm run build` 가 더럽힌 `webui/dist/index.html` 은 커밋 전에 `git checkout --` 으로 되돌렸고 placeholder 검사를 다시 통과시켰다 — 커밋에는 들어가지 않았다.
+- 자산은 만들지 않았다(`assets: []`). `release.yml` 이 태그 푸시로 이미지를 빌드해 `muni-v0.47.0.tar.gz` 를 만들고 GitHub Release 까지 게시하므로 `github_release: false` 다. `sync-release-notes.yml` 은 이미 있는 릴리스만 고치니 이 노트 본문은 **릴리스가 생긴 뒤 두 번째 푸시**에서야 반영된다 — 그때 「릴리스 파일 검증」의 크기·SHA-256 "(릴리스 후 기록)" 두 자리를 asset digest 로 채우는 것이 남은 일이다(v0.40.0 은 이 두 번째 푸시가 없어 본문이 자동 생성 목록 그대로 남아 있다).
+- 임시로 띄운 postgres 컨테이너(`muni-rel-pg`)는 지웠다. 워킹트리는 깨끗하고 HEAD 는 detached 그대로, 브랜치는 만들지도 옮기지도 않았다.
