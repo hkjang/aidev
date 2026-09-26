@@ -1,0 +1,26 @@
+moyro v0.2.39
+
+Custom profile attribute writes now report a read-back failure instead of
+answering `200 null`. `PATCH /api/v4/custom_profile_attributes/values` and
+`PATCH /api/v4/users/{userID}/custom_profile_attributes` both echo the user's
+attribute map back after writing it, and both discarded the error from that
+read — `out, _ := h.customProf.GetUserValues(...)` followed by `writeJSON(w,
+200, out)`. A failed read therefore returned `200 null`, a body the client
+cannot tell apart from "this user has no attributes set", so the profile form
+blanked every field the user had just saved and, because 200 is a success, the
+caller was given no reason to retry what may well have been a transient fault.
+The sibling `GET /api/v4/users/{userID}/custom_profile_attributes` already
+answers 500 `api.custom_profile.values.get.app_error` for the same read of the
+same map on the same input, so both PATCH paths reuse that id rather than
+introduce a new one, and all three paths that read this map now answer the same
+failure the same way. Nothing changes for a request that succeeds: status codes,
+error ids and response shapes are unchanged, and there is no new error id, no
+migration and no service-contract change. The audit record keeps its existing
+position and order because the write is committed before the read-back runs, so
+the entry is accurate whichever way the read goes and a 500 does not retract it.
+A Postgres integration test pins both paths red-first against a real schema, the
+real `customprofile.Service` and the real handlers rather than hand-built
+doubles, injecting the fault with `DROP TABLE custom_profile_values` and an
+empty `{}` body so that the read-back is the only access to the dropped table in
+the request; reverting either call site alone fails just that path's subtest.
+There is no web change.

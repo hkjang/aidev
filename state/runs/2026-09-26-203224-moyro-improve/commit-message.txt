@@ -1,0 +1,45 @@
+release: carry release markers to v0.2.39
+
+v0.2.39 ships one custom-profile read-back fix already merged to main. `PATCH
+/api/v4/custom_profile_attributes/values` and `PATCH
+/api/v4/users/{userID}/custom_profile_attributes` both echo the user's attribute
+map back after writing it, and both dropped the error from that read: `out, _ :=
+h.customProf.GetUserValues(...)` followed by `writeJSON(w, 200, out)`. When the
+read-back failed the response body was `200 null`, which a client cannot tell
+apart from "this user has no attributes set" — the profile form blanks every
+field the user had just saved, and because 200 is a success the caller is given
+no reason to retry a fault that was in fact transient.
+
+The sibling `GET /api/v4/users/{userID}/custom_profile_attributes` already
+answers 500 `api.custom_profile.values.get.app_error` for the same read of the
+same map on the same input, so both PATCH paths now reuse that id rather than
+introducing a new one; all three paths that read this map answer the same
+failure the same way, and no status code, error id or response shape changes for
+a request that succeeds. The audit record keeps its existing position and order:
+the write is committed before the read-back runs, so the entry is accurate
+whichever way the read goes, and a 500 from the read-back does not retract it.
+There is no new error id, no migration and no service-contract change, and there
+is no web change.
+
+A Postgres integration test pins both paths red-first against a real schema
+built by `store.Migrate`, the real `customprofile.Service` and the real handlers
+in an isolated schema rather than hand-built doubles, and it reverts to green
+only with both call sites fixed — reverting either one alone fails just that
+path's subtest. The fault injection is `DROP TABLE custom_profile_values` with
+an empty `{}` body, which works because `PatchUserValues` returns before opening
+a transaction when the map is empty while `GetUserValues` always issues its
+SELECT, leaving the read-back as the only access to the dropped table in the
+request.
+
+Release markers move to v0.2.39 across the README, the product site and guides,
+the canonical user and administrator guides, the OpenAPI contracts, the offline
+deployment guide, the plugin SDK and sample plugin, the pages gate, and the web
+package and its version surfaces. The two guides keep naming the v0.2.27 image
+as the origin of their screen captures, which is still true for the existing
+captures, and their PDFs are left as rendered because the md2pdf converter that
+produced them lives outside this repository. Verified at this tree: the pages
+gate, `go test -race -p 1 ./...` against a local postgres:16-alpine and `go vet
+./...` for the server with all 49 packages passing, `go build ./...`,
+`govulncheck` reporting no reachable vulnerability, the Go plugin SDK tests and
+vet, 48 webapp test files with 221 tests, typecheck across both tsconfigs,
+build, both npm audits at zero, and the source-size ratchets.

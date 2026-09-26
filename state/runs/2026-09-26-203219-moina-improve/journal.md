@@ -28,3 +28,7 @@
 - 다음 회차 후보(이번 변경이 만든 것 아님): openapi.yaml:896 `OptionalObject`의 `additionalProperties: true` vs handler의 `DisallowUnknownFields`, openapi.yaml:397 follow POST에 400 문구 부재, 한도 초과 본문의 400 vs 1bd4408의 413 선례.
 - [러너 20:52] review approved — 리뷰 승인 (risk=low)
 - [러너 20:52] pr created — https://github.com/hkjang/moina/pull/33
+- [러너 21:00] ci passed — 검사 2개 모두 success
+- [러너 21:00] merge done — 1d8cf40
+- [러너 21:14] release published — v0.1.38
+- [러너 21:20] assets verified — v0.1.38 자산 1개 (이전 v0.1.37: 1)

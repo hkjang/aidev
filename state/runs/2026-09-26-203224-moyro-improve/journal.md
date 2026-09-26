@@ -27,3 +27,5 @@
 - 보안·법무 차단 없음: 인가 경로·개인정보 수집·비밀값 무변경. 500 `message` 의 `err.Error()` 노출은 형제 GET 과 같은 파일 patch 실패 경로가 이미 하던 것으로 신규 면이 아니다(저장소 전반 과제로 남김).
 - [러너 20:49] review approved — 리뷰 승인 (risk=low)
 - [러너 20:49] pr created — https://github.com/hkjang/moyro/pull/26
+- [러너 21:03] ci passed — 검사 3개 모두 success
+- [러너 21:03] merge done — 8fe8a75
