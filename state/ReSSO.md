@@ -271,3 +271,4 @@
 - 보류 아이디어: UserInfo 거절 카운터 `resso_userinfo_errors_total` — stage 여섯 중 어디서 걸렸나를 고정 라벨로(2/1/S) / 인가 접근 로그에 client_id 남기기 — context 왕복과 미검증 입력 스크럽이 필요해 6회 연속 보류(2/1/S) / 비화면 경로(/api·/realms·/mcp·/health·/metrics)의 CSP를 default-src 'none'으로 좁히기(2/2/S) / 통합 테스트의 `lockedBuffer`를 공용 헬퍼로 — 이번에 사용처가 셋이 됐다(1/1/S)
 - 과제서: 채택 — 근거(98·99행의 버려진 `err`/`allowErr`, `realmFromPath` 호출자 중 유일하게 `realmLookupFailed`를 쓰지 않음)가 코드와 그대로 맞았고 수용 기준 넷을 모두 구현·검증했다. 정찰이 미확인으로 남긴 (c)의 RENAME 대상은 `clients`가 맞았다(store/clients.go:348의 쿼리를 열어 확인, 키셋 경로는 clients를 읽지 않아 부수 실패가 없다).
 
+- 릴리즈: v0.9.92 (2026-09-26, run 2026-09-26-131233-ReSSO-improve)

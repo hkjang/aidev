@@ -1,0 +1,26 @@
+release: ReSSO v0.9.92
+
+The CORS check in front of every protocol route discarded both of its lookup
+errors, so a store that could not answer was byte for byte indistinguishable
+from an origin nobody had registered: the headers were left off, the request
+went on to the handler, and that handler answered 200. A relying party saw an
+opaque CORS failure and re-read a configuration that was correct, while this
+side had nothing to read and even the access log looked healthy. Both failures
+are now recorded. A realm lookup that fails for a reason other than absence
+goes through realmLookupFailed under this middleware's own endpoint name, the
+same distinction discovery, JWKS, authorization, revocation and logout already
+make; an origin check that fails gets one line carrying trace_id, realm and
+error. The origin itself is not logged, since it is unvalidated input and the
+line exists to name which tenant's lookups stopped. An origin that is simply
+not registered is still recorded nowhere, and that silence is the contract
+rather than an omission: Origin is caller-controlled, arrives without
+authentication on every route the protocol serves, and a line per unregistered
+origin is a log anyone can fill from outside by varying one header. Nothing
+about the response changes. Both cases still fail closed, so a store that
+stopped answering cannot widen who may read a token response, and the status
+codes, the body, Vary: Origin and the four headers an allowed origin receives
+are all as they were. The operations guide's table of the log lines a clients
+outage leaves grows from two rows to three, because the symptom is the one an
+unregistered origin produces and the table is where an operator looks first.
+Stamps the version in the Makefile, console package metadata and both compose
+files, with no schema or configuration changes.

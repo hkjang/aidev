@@ -42,3 +42,7 @@
 - 못 본 것: 부하·장기 장애에서의 실제 로그량 측정, context 취소·풀 고갈로 인한 `allowErr` 실측(추론만), LDAP·다중 Realm 조합. 보안·법무 차단 없음 — 인가·세션·정책 변경 없고, 새로 남기는 값은 조회에 성공한 경로 realm·trace_id·store 오류 문자열뿐이며 Origin 원문 미기록을 테스트가 단언한다. 개인정보 신규 수집·전송 없음.
 - [러너 13:46] review approved — 리뷰 승인 (risk=low)
 - [러너 13:46] pr created — https://github.com/hkjang/ReSSO/pull/29
+- [러너 13:55] ci passed — 검사 2개 모두 success
+- [러너 13:55] merge done — cea3c36
+- [러너 14:17] release published — v0.9.92
+- [러너 14:22] assets verified — v0.9.92 자산 2개 (이전 v0.9.91: 2)
