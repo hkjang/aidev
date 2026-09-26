@@ -19,3 +19,16 @@
 - **다음 역할이 조심할 것**: 이 시험은 실제 DB 가 있어야 돕니다(`WEEKLY_TEST_POSTGRES_DSN`, pgvector/pgvector:pg16 이 15434 에 이미 떠 있었습니다 — `postgres:16` 으로는 임베딩 시험 2건이 환경적으로 깨집니다). `last week still open` 서브테스트(`deadline_days=13`)가 요일과 무관하게 새 경로를 밟고, `default deadline` 서브테스트는 오늘이 월요일이 아니면 `wantOpen==""` 로 조용히 지나갑니다 — 둘 다 필요합니다.
 - [러너 04:44] brief accepted — 채택 — 과제서가 지목한 격자 질의의 `AND deadlinePassed`(74행)·두 번째 질의의 `current` 전용 범위·시험 24행의 `deadline_days=13`
 - [러너 04:47] verify passed — 검증 7개 통과 (auto)
+
+## 비평 노트
+- 판정 **approve** (risk low, 차단 없음). 구현 노트가 비워 둔 "실패 재현" 을 직접 만들었습니다 — a28b21d 임시 워크트리에 새 시험 + `OpenArrears` 필드만 얹어 돌려 `participation_test.go:110 열린 미제출 주가 "", want "2026-09-14"` 로 실패하는 것을 확인했습니다. 시험은 정말 바뀐 경로를 지납니다.
+- 확인한 것: go build·vet, `go test ./internal/app/ -count=1`(실제 DB, pgvector:pg16@15434), openapi-check 119, **paging-check 통과**(정찰의 불확신 1 해소 — 스칼라는 문제 없음), guard-check --changed main 11개, frontend tsc·vitest 160·build, `render-docs.py USER_GUIDE` 재실행 후 트리 깨끗(HTML 은 정상 재생성본). `admin.go:33-34` 의 deadline_days∈[0,13]·hour∈[1,24] 로 마감 간격 최대 14일이라 열린 주는 언제나 이번 주+지난주 둘뿐 — "지난주" 문구가 모든 설정에서 맞습니다. 숫자 불변은 `continue` 위치 + 마감 단조성(DESC 에서 열린 행이 앞에 모임) + 관리자 분석 시험 녹색으로 확인.
+- 못 본 것: mutation-check(이 환경에서 결론 없음 — 위 pre-fix 실패 재현으로 대체했으나 변이 강도는 미측정), DashboardPage 렌더(저장소에 SchedulePage.test.tsx 등 렌더 선례가 있으니 다음 회차에서 메울 수 있음), 변경 전후 응답을 나란히 놓은 실측 비교.
+- 다음 회차가 알 것: `default deadline` 서브테스트는 요일에 따라 모양이 바뀌지만 일요일인 오늘은 `OpenArrears == ""` 로 **이번 주 누출을 실제로 지킵니다** — 그래도 양성 경로를 요일과 무관하게 지키는 것은 `last week still open` 하나뿐이니 두 서브테스트 모두 유지.
+- 릴리즈 노트로 넘길 무관한 결함: 전체 스위트 첫 실행에서 `TestTheOperatorSeesEveryQueueTheRelayTouches`(mail_test.go:1120·1124 — 같은 주 발송 2건 순서 역전, attempts=1 want 5)가 한 번 깨졌습니다. 재실행·단독·base 전체 실행 모두 통과 → 이 변경과 무관한 flake. 별건으로 볼 가치 있음.
+- [러너 05:00] review approved — 리뷰 승인 (risk=low)
+- [러너 05:01] pr created — https://github.com/hkjang/weekly/pull/23
+- [러너 05:24] ci passed — 검사 1개 모두 success
+- [러너 05:24] merge done — 56c326a
+- [러너 05:52] release published — v0.309.0
+- [러너 05:53] assets verified — v0.309.0 자산 1개 (이전 v0.308.0: 1)

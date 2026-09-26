@@ -253,3 +253,4 @@
 - 보류 아이디어: README:47·docs/MCP.md:3·AdminPage 의 MCP SSO 도움말 세 곳의 '읽기 전용' 서술이 mcpwrite.go 의 `mcp:write` 보다 낡음 (2/1/S) · 관리자 카드에서 실패한 발송을 '다시 시도' 로 큐에 되돌리기 — 세 큐의 next_attempt_at·attempts 상한이 달라 계약을 먼저 정해야 함 (3/2/S) · CHECKS.md:16 이 authz-check 를 '수 분' 이라 적고 같은 문서 108행은 '수십 분', 표가 '제자리에서 고쳐 쓴다·혼자 돌려라' 를 말하지 않음 (2/1/S) · DashboardPage·SettingsTab 을 렌더하는 프런트 시험이 없어 조건부 문장이 타입 검사 밖에서 검증되지 않음 — 이번 회차 수용 기준 3)이 그 공백에 걸렸음 (2/2/M) · [새] mutation-check 가 `--budget 480` 을 줘도 560초에 끊기고 출력을 한 줄도 내지 않아 두 회차 연속 결론을 못 냄 — 진행 상황을 흘려 쓰거나 budget 을 실제로 지키게 (2/1/S)
 - 과제서: 채택 — 과제서가 지목한 격자 질의의 `AND deadlinePassed`(74행)·두 번째 질의의 `current` 전용 범위·시험 24행의 `deadline_days=13` 서브테스트가 코드와 정확히 일치했고, 미확인으로 남겨 둔 `paging-check.py` 를 실제로 돌려 스칼라 필드가 offset 을 요구하지 않는 것까지 확인해 수용 기준 4개를 모두 채웠습니다. 다만 날짜 비교는 과제서의 `day.Equal(current)` 가 시간대 때문에 틀려 문자열 비교로 바꿨습니다.
 
+- 릴리즈: v0.309.0 (2026-09-27, run 2026-09-27-041208-weekly-improve)
