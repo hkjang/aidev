@@ -1,0 +1,23 @@
+- 과제: MCP 검색·객체 도구가 문자열이 아닌 인자를 「전부 반환」으로 바꾸지 않게 하기 (가치 3 / 위험 2 / 작업량 M)
+- 왜: `stringValue`(objects.go:665)는 문자열이 아닌 값을 "" 로 돌려주고, "" 는 이 도구들에서 필터가 사라진다는 뜻이다 — `search_suppliers` 에 `query:1001`(설명이 「공급업체 번호로 검색」이라 모델이 숫자를 넣기 쉽다)을 주면 `name ILIKE '%%'` 가 되어 이름순 앞 100개를 「검색 결과」로 답하고, `get_supplier_issues` 는 스키마가 required 로 공개한 supplierId 가 빠지거나 숫자면 스코프 안 모든 이슈를 답한다. 없는 결과를 빈 목록으로 답하는 것보다 나쁘다: 모델은 그것을 사실로 사람에게 옮긴다. e0aa306(get_supplier_risk/score)·dc31174(minScore)와 같은 결함의 나머지 자리다.
+- 수용 기준: 1) `search_suppliers` 에 문자열이 아닌 `query`(숫자·불리언·객체·배열)를 주면 값을 말하는 도구 오류로 답한다 2) `get_supplier_issues` 는 supplierId 가 없거나 문자열이 아니면 `get_supplier_risk`/`get_supplier_score` 와 같은 문구로 거절하고, 이름이면 "record id, not a name" 으로 거절한다 3) `search_contracts`/`search_purchase_orders` 에 문자열이 아닌 `supplierId`·`query` 를 주면 필터가 조용히 사라지지 않는다 4) **`query:""` 는 지금처럼 「전부」를 뜻한다** — 기존 테스트 세 곳이 그 동작에 의존한다 5) 테스트는 고치기 전에 돌려 실패를 먼저 보이고, 고친 뒤 정상 인자 호출(부분 일치·번호 검색·부서 스코프)이 그대로임을 보인다.
+- 건드릴 파일:
+  - `internal/httpapi/integrations.go` — 파일 끝 인자 헬퍼 구역(`supplierIDArg`/`numberArg`/`riskCeilingArg` 옆)에 `stringArg(tool, args, key) (string, error)` 하나를 더한다: 키 없음·null 은 "" 로 통과, 문자열은 TrimSpace, 그 밖의 값은 `mcpToolError` 로 `json.Marshal` 한 값을 들어 거절(numberArg 의 문체 그대로). 왜 "" 를 거절하지 않는지 주석에 적을 것.
+  - `internal/httpapi/integrations.go:runMCPTool` `case "search_suppliers"` — `stringValue(args,"query")` 를 `stringArg` 로 바꾸고 err 반환.
+  - `internal/httpapi/integrations.go:runMCPTool` `case "get_supplier_issues"` — `stringValue` 로 만든 맵 대신 `supplierIDArg(name, args)` 로 검사 후 그 값을 넘긴다(형제 두 도구와 같은 문구).
+  - `internal/httpapi/integrations.go:mcpObjects` — `stringValue(args,"supplierId")`(두 번 읽는다)·`stringValue(args,"query")` 를 `stringArg` 로 한 번씩 읽어 지역 변수에 담고 쿼리 인자로 넘긴다. 기존 비-UUID 거절은 그대로 둔다.
+  - 새 파일 `internal/httpapi/mcp_stringargs_integration_test.go` — 실제 로그인 세션·App.Handler 경유 하네스를 그대로 쓴다: `newScopeWorld(t)`, `callMCPTool(t,w,w.deptToken,tool,args)`(mcptools_test.go:13), 성공은 `toolRows`(:25), **거절은 `toolFailure`(mcptools_test.go:58 — isError 와 content[0].text 를 읽고, 도구가 정상 응답하면 실패시킨다)**. 이슈·계약 시드는 `seedContracts`(mcptools_test.go:85, `business_objects` 에 `BULK-%` 번호로 넣고 `context.Background()` 로 청소)를 본보기로 `object_type='issue'` 를 몇 건 넣을 것. 대조군으로 정상 호출(문자열 query 부분 일치, UUID supplierId, 옆 부서 제외)이 그대로 동작하는 것도 같은 테스트에서 읽을 것. `mcp_recommend_integration_test.go`(dc31174)·`mcpargs_test.go`(e0aa306)가 문체의 본보기이고, 헬퍼 자체의 표 단위 테스트는 `mcpargs_test.go` 에 덧붙여도 된다(DB 불필요).
+- 검증 명령:
+  - 먼저 고치기 전: `go test ./internal/httpapi/ -run TestMCP -count=1` (DSN 있으면 실패를 봐야 한다. DSN 없으면 통합 테스트는 SKIP 되므로 초록은 증거가 아니다)
+  - 세 DSN(VENDRA_TEST_DSN / VENDRA_TEST_MIGRATE_DSN / VENDRA_TEST_UPGRADE_DSN, 전용 DB 3개·뒤 둘은 빈 DB, docker `postgres:16-alpine`)을 걸고 `go test ./internal/... ./cmd/... -count=1`
+  - `gofmt -l internal cmd` (무출력), `go vet ./internal/... ./cmd/...`
+- 위험과 피할 것:
+  - **`query:""` 의 뜻을 바꾸지 말 것.** `mcptools_test.go:144`, `login_integration_test.go:577`, `mcp_limits_integration_test.go:93,102,180` 이 `{"query":""}` 로 「전부」를 뜻하게 쓰고 있다. 빈 문자열을 거절하면 기존 테스트가 깨지고, 그것은 계약 변경이라 이번 범위가 아니다(riskCeilingArg 주석이 같은 판단을 이미 적어 두었다).
+  - `intNumber`(문자열 limit 을 조용히 기본값으로) 은 **건드리지 말 것** — `TestIntNumberStaysInRange`(mcptools_test.go:155 `{"not a number","180",…}`)가 그 동작을 고정해 두었고, 기본값으로 떨어지는 것은 틀린 답이 아니라 안전한 답이다.
+  - `orgInScope`·`p.DataScope`·`showSpend`·`LIMIT 100` 을 건드리지 말 것. 스코프·상한은 이번 변경의 대상이 아니다.
+  - 보호 경로(auth/session/migrations/.github/workflows) 무관 — 열지 말 것. `docs/` 도 이번엔 손대지 않는다(도구 설명 문구는 이미 사실이다).
+  - 러너 `gate.py secrets` 를 diff 에 먼저 돌릴 것(테스트에 12자 이상 비밀번호 리터럴 주의 — 하네스가 세션을 만든다면 기존 헬퍼를 쓸 것).
+  - 소스 문자열 검사(grep)나 Principal 직접 대입으로 배선을 증명하지 말 것 — 실제 세션 쿠키 + `POST /mcp` 로만 증명한다.
+  - `get_supplier`/`compare_suppliers` 의 `supplierArg`·`supplierListArg` 는 **범위 밖**이다. `mcpargs_test.go:4` 의 `TestSupplierArgAcceptsEitherName` 이 `{"supplierId":42} → ""` 를 일부러 고정해 두었고, 그 둘은 이미 말로 답한다(`requires supplierId` / `not names`). 숫자 id 에 「requires」라고 말하는 문구 개선은 다음 회차 후보로 남길 것 — 같이 고치면 그 테스트를 다시 쓰게 되고 범위가 번진다.
+  - 이미 확인한 것(구현자가 다시 확인하지 않아도 되는 것): `stringValue`(objects.go:665)는 문자열이 아니면 "" 반환; `mcpObjects` 는 `supplierId` 를 두 번 읽는다; `get_supplier_issues` 를 부르는 테스트는 트리에 **하나도 없다**(그래서 required 로 강제해도 기존 테스트와 충돌하지 않는다); DSN 없이 `go test ./internal/httpapi/ -run 'TestMCP|TestIntNumber'` 는 0.044s 로 통과한다(=통합 부분은 SKIP).
+- 차선 후보: 사용자 가이드 4.6 MCP 도구표를 실제 `mcpTools` 와 양방향으로 묶는 가드 테스트 (2/1/S) — `guide_docs_test.go` 가 같은 방식의 본보기이고 `mcpTools` 는 패키지 변수라 DB 가 필요 없다.
