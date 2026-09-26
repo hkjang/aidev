@@ -27,3 +27,4 @@
 - 선참고(별건): savedListQuery 의 size 허용 목록 ["10","50","100"] 이 pageSizes [10,25,50,100] 과 어긋나 size=25 가 공유 주소에서 탈락한다. 기존 불일치이며 이번 diff 밖.
 - [러너 16:29] review approved — 리뷰 승인 (risk=low)
 - [러너 16:29] pr created — https://github.com/hkjang/hunter/pull/12
+- [러너 16:49] ci timeout — 제한 시간 안에 CI 완료를 확인하지 못함

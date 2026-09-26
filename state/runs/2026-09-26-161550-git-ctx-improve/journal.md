@@ -28,3 +28,5 @@
 - 승인 후 남는 우려(릴리즈 노트용): 앞으로 일부 행이 error 대신 timeout 으로 기록돼 과거/신규 데이터 분포가 갈린다. 다음 회차 후보로 context.Canceled 의 동일한 비대칭(status='error' vs error_code='canceled')이 남아 있다.
 - [러너 16:28] review approved — 리뷰 승인 (risk=low)
 - [러너 16:29] pr created — https://github.com/hkjang/git-ctx/pull/39
+- [러너 16:36] ci passed — 검사 5개 모두 success
+- [러너 16:36] merge done — aad7bde
