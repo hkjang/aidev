@@ -224,3 +224,12 @@
 - 과제서: 채택 — 과제서의 근거(TrimSpace 만 하는 쓰기 vs 관용적 읽기, json.Valid vs map Unmarshal)가 현 코드와 정확히 맞았고, `start==end` 거절은 권고대로, 읽기 경로는 지시대로 무변경으로 두었다.
 
 - 릴리즈: v0.9.289 (2026-09-26, run 2026-09-26-083046-Clustara-improve)
+## 2026-09-27
+- 선택: notify scan 이 분석하지 않는 kind 로 조회 창을 낭비해 알림이 조용히 사라지는 결함 + 상한 초과 미보고 (가치 4 / 위험 2 / 작업량 S)
+- 결과: 성공
+- 요약: `POST /admin/k8s/notify/scan` 이 인벤토리를 kind 제한 없이 `updated_at` 역순 2000행만 읽어, 분석이 보지 않는 kind(컨트롤러가 자주 고쳐 쓰는 ConfigMap 등)가 자주 갱신되는 클러스터에서는 그 행들이 창을 채우고 privileged 워크로드·과도한 Role 이 창 밖으로 밀려났다. 같은 `AnalyzeSecurity` 를 돌리는 `/admin/k8s/security` 는 v0.9.282 에 `SecurityRelevantKinds()`+truncation 보고로 이미 좁혀졌는데 알림 경로만 남아 있었고, 이쪽은 사람이 결과를 보지 않으므로 누락이 "알림이 그냥 안 온다" 로만 나타난다. `analyzer.RCARelevantKinds()`(AnalyzeRCA·analyzeRolloutAndJobs·analyzeNodeConditions 의 kind switch 를 그대로 옮긴 Pod·Deployment·StatefulSet·DaemonSet·Job·CronJob·Node)를 추가해 `SecurityRelevantKinds()` 와의 합집합만 조회하고, 상한보다 한 행 더 요청해 잘림을 감지한 뒤 응답·감사 로그에 `truncated`·`resources` 와 `truncation_notice` 를 적는다. 검증: 신규 테스트 4개(kind 커버리지 단위 1 + 실제 SQLite·`kube.InventoryFromObject`·`Server.Routes`·httptest Mattermost webhook 을 쓰는 종단 3개)를 먼저 붙여 빨강을 확인했고, 수정 후 `go test ./internal/proxy -run NotifyScan` → `gofmt` → `go build ./...` → `go vet ./...` → `go test ./...`(19 패키지 전부 ok) 통과. 인과 확인으로 `Kinds:` 한 줄만 다시 빼서 같은 테스트가 다시 빨강이 되는 것을 보고 되돌렸다. ceb42b9 로 커밋(프로덕션 파일 2개).
+- 실패 재현: `--- FAIL: TestNotifyScanDoesNotLoseWorkloadsToChurningKinds` / `k8s_notify_scope_test.go:140: the privileged workload must still be notified when unread kinds churn ahead of it: map[evaluated_rca:0 evaluated_security:0 sent:0 undeliverable:0]` (같은 실행에서 `TestNotifyScanReportsTruncation` 은 상한 1 에 2행인데 `truncated` 키 없이 `sent:2` 로 실패)
+- 보류 아이디어: notify scan 의 podsec dedup 키에 Kind 가 없어 동명 Pod/Deployment 가 한 알림으로 합쳐짐 (2/1/S) / notify scan 의 events(500)·revisions(1000) 상한은 여전히 무보고 — 이번에 인벤토리만 다뤘다 (3/2/S, 신규) / quiet_hours 판정이 서버 로컬 시각만 쓰고 타임존 설정이 없음 (3/2/M) / PSS Restricted 검사에 seccompProfile 항목 추가 (3/2/S) / SEC-01 classifyPodSecurity 가 hostPath·hostPort·baseline 밖 capability 를 baseline 으로 둠 (3/2/S)
+- 과제서: 차선 — 과제서가 1순위로 꼽은 podsec dedup 키(가치 2)보다, 같은 파일에서 "두 경로 중 한쪽만 고쳐진" 상태로 남아 있던 조회 범위 결함이 가치가 높아 그쪽을 골랐다.
+
+- 릴리즈: v0.9.290 (2026-09-27, run 2026-09-27-061158-Clustara-improve)
