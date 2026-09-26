@@ -218,3 +218,4 @@
 - 보류 아이디어: startGameSession 의 metadata:null 이 client_info 에 jsonb null 로 저장됨(catalog.go:206, 가치 2/위험 1/S — 이번 차선 후보였고 `client_info` 를 읽는 코드가 없어 계속 보류) / serviceLocation 이 설정 읽기 실패를 삼켜 시간대가 조용히 Asia/Seoul 이 됨(extended.go:16, 호출처 6곳, 가치 3/위험 2/M — 설정 값이 null 로 망가지는 상류 원인이 이번에 막혀 재평가 시점) / API PostgreSQL fixture 의 테스트별 스키마 격리(admin_pg_test.go:27 의 migratedPool 이 기본 스키마 공유, 가치 3/위험 2/M) / 끝난 세션에 계속 result 를 덧붙일 수 있음(catalog.go:610, 재시도 멱등성 정책 미확정으로 계속 보류, 가치 2/위험 2/S) / architecture.md 의 DEK·개인키 암호화·유예 회전 설명이 secretbox 구현과 불일치(가치 2/위험 1/S)
 - 과제서: 채택 — 수용 기준 0) 의 전제(`{"value": null}` 이 pgx/DB 에서 거부되지 않고 jsonb `null` 로 저장됨)를 실제 PG 로 확인해 과제가 성립했고, 지정한 세 파일만 최소 범위로 고쳤다
 
+- 릴리즈: v0.7.22 (2026-09-26, run 2026-09-26-180342-igame-approve)
