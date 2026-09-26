@@ -558,7 +558,16 @@ approvals(){
         [ "$RELEASE" -eq 1 ] && [ "$(autonomy "$n")" = release ] && ! stopped release "$n" && release_project "$base" "(사람 승인 머지)"
       else
         stage merge failed "머지 실패 ($RETRY_KIND)"
-        [ "$RETRY_KIND" = conflict ] && rebase_pr "$pr" "$base"
+        # 충돌은 리베이스로 풀어 보고, 그래도 안 되면 승인 라벨을 뗀다. 떼지 않으면 스윕이
+        # 10분마다 같은 PR 을 집어 같은 머지·리베이스를 다시 한다 — 9-24~26 사흘 동안
+        # '머지 실패(conflict)' 233건, '리베이스 실패' 230건이 대부분 같은 PR 의 반복이었다.
+        # 라벨을 떼면 PR 처리기가 사람 몫으로 넘기고, 오래되면 bin/pr-gc.sh 가 정리한다.
+        if [ "$RETRY_KIND" = conflict ] && ! rebase_pr "$pr" "$base"; then
+          (cd "$repo" && gh api -X DELETE "repos/{owner}/{repo}/issues/${pr##*/}/labels/aidev-approved" >/dev/null 2>&1
+           gh pr comment "$pr" --body "🚧 승인은 됐지만 base 와 충돌해 머지할 수 없고, 자동 리베이스로도 풀리지 않았습니다. 승인 라벨을 떼어 둡니다 — 충돌을 풀어 주시면 다시 승인해 주세요 (그 사이 러너는 이 PR 을 다시 집지 않습니다)." >/dev/null 2>&1) || true
+          jq -cn --arg ts "$(date -Iseconds)" --arg pr "$pr" --arg now "$head" '{ts:$ts,pr:$pr,sha:"",cleared:true,head_sha:$now,why:"rebase-conflict"}' >> "$STATE/approvals.jsonl"
+          log "$n: $pr 충돌로 머지 불가 — 승인 라벨 제거"
+        fi
       fi
     else stage ci "$CI_STATE" "$CI_REASON"; fi
     rm -rf "$OUT/home"
@@ -614,7 +623,7 @@ resolve_generated_conflicts(){ # $1=워크트리
 }
 
 rebase_pr(){ # $1=PR url $2=base
-  local pr=$1 base=$2 br rwt="$WT_BASE/$n-rebase" newsha rkey rmemo="$STATE/.rebase-failed"
+  local pr=$1 base=$2 br rwt="$WT_BASE/$n-rebase" newsha rkey rmemo="$STATE/.rebase-failed" rebase_failed=0
   br=$(cd "$repo" && gh pr view "$pr" --json headRefName --jq .headRefName 2>/dev/null); [ -n "$br" ] || return 0
   git -C "$repo" fetch -q origin "$base" "$br" >>"$LOG" 2>&1 || return 0
   # 같은 (PR, base 끝, 브랜치 끝) 조합은 이미 한 번 충돌로 실패했으면 다시 해도 같은 결과다.
@@ -639,10 +648,11 @@ rebase_pr(){ # $1=PR url $2=base
     git -C "$rwt" rebase --abort >/dev/null 2>&1 || true
     # 이 조합은 다시 해도 같은 결과다 — 기억해 두고 끝이 움직일 때만 다시 시도한다
     printf '%s\n' "$rkey" >> "$rmemo"; tail -n 500 "$rmemo" > "$rmemo.t" 2>/dev/null && mv "$rmemo.t" "$rmemo"
-    stage rebase conflict "자동 리베이스 실패 — 수동 해결 필요"; result="$result, rebase conflict"
+    stage rebase conflict "자동 리베이스 실패 — 수동 해결 필요"; result="$result, rebase conflict"; rebase_failed=1
     (cd "$repo" && gh pr comment "$pr" --body "⚠️ base 와 충돌하는데 자동 리베이스로 풀리지 않습니다. 수동으로 해결해 주세요. (run $RUN_ID)" >/dev/null 2>&1) || true
   fi
   git -C "$repo" worktree remove --force "$rwt" >>"$LOG" 2>&1 || true
+  [ "${rebase_failed:-0}" = 1 ] && return 1 || return 0
 }
 # 캠페인: 활성(미완료·기한 내·예산 남음) 캠페인의 대상 프로젝트를 후보 중에서 고른다 → CAMPAIGN_ID, CAMPAIGN_NOTE, CAMPAIGN_PROJECT
 pick_campaign(){
