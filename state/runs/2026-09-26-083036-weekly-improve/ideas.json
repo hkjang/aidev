@@ -1,14 +1,92 @@
 [
-  {"title": "발송 기록 표가 50건에서 잘렸다는 사실을 말한다 — total 대신 truncated 불리언", "value": 3, "risk": 1, "size": "S", "status": "pending", "note": "이번 회차 선택. adminMailDeliveries 의 LIMIT $N 에 mailDeliveryLimit+1 을 보내 51번째 행의 존재만 알리고 버린다. paging-check.py:paged_types(51-67행)를 읽어 확인했다 — 그 검사는 TS 형 본문의 \\btotal\\s*: 에만 걸리므로 truncated?: boolean 은 offset 요구를 만들지 않는다. 기존 시험 TestTheOperatorCanPickTheFailuresOutOfAGoodWeek(mail_test.go:1145)이 이미 창 안에 57건을 넣고 무필터 한 쪽이 꽉 찬 것을 주장하므로 그 자리를 늘리면 된다.", "updated": "2026-09-26"},
-  {"title": "참여 카드 ThisWeek* 가 달력의 이번 주만 말해 월요일에 지난주 마지막 기회를 못 봄 — openWeeks 목록", "value": 3, "risk": 2, "size": "M", "status": "pending", "note": "participationView·myParticipation 은 currentWeekStart 기준 ThisWeekStart/Filed 만 준다. 관찰 가능한 개선이지만 API·날짜 경계·UI 를 함께 바꿔야 해 한 회차에 위험하다. 이번 회차에 코드를 다시 보지 않았다(미확인, 2026-09-23 기록 승계).", "updated": "2026-09-26"},
-  {"title": "README:47·MCP.md:3 의 '읽기 전용' 설명이 mcpwrite.go 보다 낡음", "value": 2, "risk": 1, "size": "S", "status": "pending", "note": "이번 회차의 차선 후보. AdminPage.tsx 의 MCP SSO 도움말에도 '개인 키와 같은 읽기 전용 규칙' 문구가 있는 것을 이번에 확인했다 — 정정 대상이 세 곳일 수 있다. 문서만 고치는 변경이라 값은 낮다.", "updated": "2026-09-26"},
-  {"title": "CHECKS.md:16 이 authz-check 를 '수 분' 이라 적고 같은 문서 108행은 '수십 분'", "value": 2, "risk": 1, "size": "S", "status": "pending", "note": "스크립트 서두는 40분 이상·작업 트리 변조·병행 금지를 설명하나 표가 이를 말하지 않아 사람이 커밋 직전에 돌릴 수 있다. 2026-09-23 회차가 두 줄을 직접 확인했다. 이번 회차에는 다시 열지 않았다.", "updated": "2026-09-26"},
-  {"title": "메일 발송 목록 동률 정렬에 큐 종류 기준 추가", "value": 2, "risk": 1, "size": "S", "status": "pending", "note": "ORDER BY m.created_at DESC, m.id DESC 를 이번에 다시 확인했다 — m.id 는 세 표가 각각 세는 번호라 같은 시각의 서로 다른 큐 사이에서 안정적인 뜻이 없다. 실제로 관찰되는 차이를 먼저 입증해야 하며 효과 없는 변경이면 넣지 않는다. 이번 과제와 같은 질의를 건드리므로 같은 회차에 섞지 말 것.", "updated": "2026-09-26"},
-  {"title": "upgrade_test 의 weekly_u_* 가 sweepAbandonedDatabases 정리 대상에 없음", "value": 2, "risk": 2, "size": "S", "status": "pending", "note": "upgrade_test.go:41 이 weekly_u_ 를 만들지만 harnessNameStamp 는 tmpl_·h_ 만 파싱한다. 실제 DB 에서 오래된 것 삭제·현재 것 생존을 함께 검증해야 한다. 하네스만 바뀌고 제품 동작은 그대로라 값이 낮다.", "updated": "2026-09-26"},
-  {"title": "관리자 카드에서 실패한 발송을 '다시 시도' 로 큐에 되돌리기", "value": 3, "risk": 2, "size": "S", "status": "pending", "note": "이번 필터·잘림 표시로 실패를 찾는 길은 갖춰지지만 되살리는 길이 없다. 세 큐의 재시도 규칙(next_attempt_at·attempts 상한)이 각각 달라 한 버튼으로 묶는 계약을 먼저 정해야 한다. 쓰기 경로라 위험이 읽기 과제보다 높다.", "updated": "2026-09-26"},
-  {"title": "adminMailHealth 가 UNION 서브쿼리를 집계·마지막 사유로 두 번 훑음", "value": 1, "risk": 1, "size": "S", "status": "pending", "note": "이번에 질의 두 개를 다시 읽어 확인했다. 14일 창이라 지금은 무해하다. 측정으로 느리다는 것을 보이기 전에는 착수하지 않는다.", "updated": "2026-09-26"},
-  {"title": "deadlineRule 에 Closed(week, now) 메서드 — SQL deadlinePassedFor 와 같은 값", "value": 2, "risk": 2, "size": "S", "status": "pending", "note": "admin_analytics.go 의 instant 와 SQL deadlinePassedFor 가 따로 days+hours 를 더한다. 참여 통계와 시간대/DST 계약을 함께 입증해야 하므로 단순 공통화로 착수하지 않는다. 운영자 지침(같은 값을 읽는 경로가 둘이면 end-to-end 로 확인, 계약이 다른 파서를 통합하지 말 것)이 정면으로 걸리는 자리다.", "updated": "2026-09-26"},
-  {"title": "캠페인 mail-2026-09 — 이벤트 알림 셋(반려/수정 요청·검토 대기 묶음·Import 실패)", "value": 4, "risk": 3, "size": "L", "status": "rejected", "note": "세 이벤트와 묶음·중복 방지·공용 큐를 한 45분 과제로 잡을 수 없다. 현재 우선 캠페인 지시가 아니라 과거 보류 항목이므로 이 크기로는 기각한다 — 필요하면 한 이벤트씩 별개 S 과제로 다시 낸다.", "updated": "2026-09-26"},
-  {"title": "mail.base_url — 메일 속 링크 주소 설정 키", "value": 2, "risk": 1, "size": "S", "status": "rejected", "note": "링크를 필요로 하는 이벤트 알림이 없는 지금은 설정만 늘리는 무효과 변경이다. 그 알림 범위가 정해질 때 함께 설계한다.", "updated": "2026-09-26"},
-  {"title": "캠페인 handoff-2026-09 — 보내는 쪽(PPTX) / 받는 쪽(markdown·docx)", "value": 3, "risk": 3, "size": "L", "status": "rejected", "note": "handoff 관련 구현 파일·설정이 main 에 없다(2026-09-23 확인). 표준 계약이 main 에 들어오기 전에는 착수할 근거가 없다.", "updated": "2026-09-26"}
+  {
+    "title": "발송 기록 표가 50건에서 잘렸다는 사실을 말한다 — total 대신 truncated 불리언",
+    "value": 3,
+    "risk": 1,
+    "size": "S",
+    "status": "done",
+    "note": "이번 회차 구현. LIMIT 에 mailDeliveryLimit+1 을 보내고 51번째 행은 Items 에 넣지 않은 채 Truncated 만 세운다 — COUNT 질의 없이 한 번의 질의로 끝난다. omitempty 라 잘리지 않으면 칸이 사라지고 화면 문장도 상시 문구가 되지 않는다. paging-check.py 를 실제로 돌려 truncated?: boolean 이 offset 요구를 만들지 않는 것을 확인했다(정찰이 미확인으로 남긴 부분). 기존 시험 TestTheOperatorCanPickTheFailuresOutOfAGoodWeek 를 늘려 고치기 전 truncated=<nil> 실패를 먼저 확인. 커밋 14a4173·726b8c8.",
+    "updated": "2026-09-26"
+  },
+  {
+    "title": "참여 카드 ThisWeek* 가 달력의 이번 주만 말해 월요일에 지난주 마지막 기회를 못 봄 — openWeeks 목록",
+    "value": 3,
+    "risk": 2,
+    "size": "M",
+    "status": "pending",
+    "note": "participationView·myParticipation 은 currentWeekStart 기준 ThisWeekStart/Filed 만 준다. 기본 규칙(deadline_days=7, deadline_hour=24)에서 지난주는 이번 주 화요일 0시까지 열려 있다. 관찰 가능한 개선이지만 API·날짜 경계·UI 를 함께 바꿔야 해 한 회차에 위험하다. 이번 회차에도 코드를 열지 않았다(미확인, 2026-09-23 기록 승계).",
+    "updated": "2026-09-26"
+  },
+  {
+    "title": "관리자 카드에서 실패한 발송을 '다시 시도' 로 큐에 되돌리기",
+    "value": 3,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "지난 회차의 종류·상태 필터와 이번 회차의 잘림 표시로 실패를 찾는 길은 갖춰졌지만 되살리는 길이 없다. 세 큐의 재시도 규칙(next_attempt_at·attempts 상한)이 각각 달라 한 버튼으로 묶는 계약을 먼저 정해야 한다. 쓰기 경로라 위험이 읽기 과제보다 높다.",
+    "updated": "2026-09-26"
+  },
+  {
+    "title": "README:47·MCP.md:3·AdminPage 의 MCP OAuth 도움말 세 곳의 '읽기 전용' 설명이 mcpwrite.go 보다 낡음",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "이번 회차의 차선 후보였다. AdminPage.tsx 의 MCP SSO 도움말에 '개인 키와 같은 읽기 전용 규칙을 따릅니다' 라는 문구가 있는 것을 이번 회차에 직접 확인했다 — 정정 대상이 세 곳이다. 고칠 때 도구 이름·범위(mcp:write, 본인 보고서 쓰기, d5ee67a)를 소스에서 확인하고 대체된 낡은 서술을 남기지 말 것. 문서만 고치는 변경이라 값은 낮다.",
+    "updated": "2026-09-26"
+  },
+  {
+    "title": "SettingsTab 을 렌더하는 프런트 시험이 하나도 없음",
+    "value": 2,
+    "risk": 2,
+    "size": "M",
+    "status": "pending",
+    "note": "[새] 이번 회차에 확인했다 — frontend/src 의 시험 18개 가운데 AdminPage·SettingsTab 을 렌더하는 것이 없다(SchedulePage·ManualTeamReminder 등만 있다). 그래서 이번 회차가 더한 truncated 문장도, 지난 회차의 종류·상태 select 와 '좁힌 결과가 비었다' 문구도 tsc -b 와 build 밖에서는 검증되지 않는다. 다만 SettingsTab 은 한 컴포넌트에 설정·메일 현황·표가 모두 들어 있고 fetch 여러 개를 대역으로 세워야 해서, 운영자 지침(손으로 만든 대역으로 증명하지 말 것)과 부딪힌다 — 컴포넌트를 쪼개는 쪽이 먼저일 수 있다.",
+    "updated": "2026-09-26"
+  },
+  {
+    "title": "CHECKS.md:16 이 authz-check 를 '수 분' 이라 적고 같은 문서 108행은 '수십 분'",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "스크립트 서두는 40분 이상·작업 트리 변조·병행 금지를 설명하나 표가 이를 말하지 않아 사람이 커밋 직전에 돌릴 수 있다. 2026-09-23 회차가 두 줄을 직접 확인했다. 이번 회차에는 열지 않았다.",
+    "updated": "2026-09-26"
+  },
+  {
+    "title": "메일 발송 목록 동률 정렬에 큐 종류 기준 추가",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "ORDER BY m.created_at DESC, m.id DESC — m.id 는 세 표가 각각 세는 번호라 같은 시각의 서로 다른 큐 사이에서 안정적인 뜻이 없다. 이번 회차가 같은 질의의 LIMIT 을 건드렸으므로 이제는 섞일 걱정이 없지만, 실제로 관찰되는 차이를 먼저 입증해야 하며 효과 없는 변경이면 넣지 않는다. 잘림 경계에서 동률 행이 흔들리면 truncated 판정도 같은 행을 두고 달라질 수 있어 값이 조금 올랐다고 볼 여지는 있으나 아직 측정하지 않았다.",
+    "updated": "2026-09-26"
+  },
+  {
+    "title": "upgrade_test 의 weekly_u_* 가 sweepAbandonedDatabases 정리 대상에 없음",
+    "value": 2,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "upgrade_test.go:41 이 weekly_u_ 를 만들지만 harnessNameStamp 는 tmpl_·h_ 만 파싱한다. 실제 DB 에서 오래된 것 삭제·현재 것 생존을 함께 검증해야 한다. 하네스만 바뀌고 제품 동작은 그대로라 값이 낮다.",
+    "updated": "2026-09-26"
+  },
+  {
+    "title": "adminMailHealth 가 UNION 서브쿼리를 집계·마지막 사유로 두 번 훑음",
+    "value": 1,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "이번 회차에도 질의 두 개를 다시 읽었다(mail.go:1140·1159). 14일 창이라 지금은 무해하다. 측정으로 느리다는 것을 보이기 전에는 착수하지 않는다.",
+    "updated": "2026-09-26"
+  },
+  {
+    "title": "deadlineRule 에 Closed(week, now) 메서드 — SQL deadlinePassedFor 와 같은 값",
+    "value": 2,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "admin_analytics.go 의 instant 와 SQL deadlinePassedFor 가 따로 days+hours 를 더한다. 참여 통계와 시간대/DST 계약을 함께 입증해야 하므로 단순 공통화로 착수하지 않는다. 운영자 지침(같은 값을 읽는 경로가 둘이면 end-to-end 로 확인, 계약이 다른 파서를 통합하지 말 것)이 정면으로 걸리는 자리다.",
+    "updated": "2026-09-26"
+  }
 ]
