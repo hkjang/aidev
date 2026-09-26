@@ -411,6 +411,17 @@ The other four (repair, arbiter, journal, lessons) are indistinguishable from ba
 That is not evidence of absence: with 20–33 rounds per arm, differences under about 20 percentage
 points are not detectable.
 
+**The codex-critic arm was stopped on 2026-09-26.** No stopping rule had been specified in advance,
+so this was a post-hoc call and is recorded as such: the throughput effect was established at
+p=0.0003, and the information another week would add was judged smaller than its cost (\$20.63 per
+merge, roughly \$150–200). The 31 rounds already collected stay in the analysis, and the quality axis
+(30-day post-merge) will be read in October from the pull requests that already merged. Only the
+assignment weight was set to zero; the other arms run to 10-03. The decision and its basis are in
+`state/experiment.json` (`stopping_log` and the arm's `stopped` block) and the generated table marks
+the arm as stopped. Interrupting an experiment without a pre-specified rule can bias that arm's
+estimate optimistically — the opposite direction from what we observed, so it does not overturn the
+conclusion, but the value itself is correspondingly less trustworthy.
+
 ## 7. Threats to validity
 
 - **One operator, one stack.** Forty-six repositories by one person with a shared Go/React/Keycloak stack is a narrow population. The campaigns in particular exploit that homogeneity.

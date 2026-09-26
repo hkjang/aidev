@@ -161,6 +161,8 @@ def main():
             return (f"{round(x*100)}% (n={v.get('n')})" if field == "rate" else f"${x} (n={v.get('n')})")
         _p = (m.get("merged_vs_baseline") or {}).get("p")
         _ps = "—" if a == "baseline" or _p is None else (f"**{_p}**" if _p < 0.0083 else str(_p))
+        if (exp["arms"].get(a) or {}).get("stopped"):
+            _ps += f" · 중단 {exp['arms'][a]['stopped'].get('at','')}"
         lines.append(f"| {a} | {m['n']} | {c2('verify_pass')} | {c2('pr_reached')} | {c2('merged')} | {_ps} | {c2('review_pending')} | {c2('cost_per_round','mean')} | {'—' if m['cost_per_merge'] is None else '$' + str(m['cost_per_merge'])} |")
     lines += ["", "RQ 매핑: " + " · ".join(f"{k}: {v}" for k, v in exp.get("questions", {}).items()), "",
               f"품질 축 성숙도: 머지된 실험 PR {sum(result['arms'][a]['pm_observed']['n'] for a in arms)}건, 관찰 최대 "

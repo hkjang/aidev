@@ -4,7 +4,9 @@
   "started": "2026-09-19",
   "until": "2026-10-03",
   "enabled": true,
-  "exclude": ["Quantoss"],
+  "exclude": [
+    "Quantoss"
+  ],
   "questions": {
     "RQ1": "역할 분리: 정찰(읽기 전용)이 과제를 정하면 구현자 혼자 고를 때보다 검증 통과·PR 도달·채택이 나은가 (baseline vs no-scout)",
     "RQ2": "회차 내 비평·수리·중재: 수리 없음 / 수리 1회 / 수리 1회+중재 가 검토 대기·머지·비용을 어떻게 바꾸나 (no-repair vs no-arbiter vs baseline)",
@@ -13,12 +15,71 @@
     "RQ5": "교훈 되먹임: 캠페인 교훈·운영자 취향 주입이 같은 유형의 거절 재발을 줄이나 (baseline vs no-lessons)"
   },
   "arms": {
-    "baseline":     {"weight": 2, "overrides": {}},
-    "no-scout":     {"weight": 1, "overrides": {"agents": {"scout": false}}},
-    "no-repair":    {"weight": 1, "overrides": {"agents": {"repair_max": 0}}},
-    "no-arbiter":   {"weight": 1, "overrides": {"agents": {"arbiter": false}}},
-    "codex-critic": {"weight": 1, "overrides": {"agents": {"critic_engine": "codex"}}},
-    "no-journal":   {"weight": 1, "overrides": {"agents": {"journal": false}}},
-    "no-lessons":   {"weight": 1, "overrides": {"agents": {"lessons": false}}}
-  }
+    "baseline": {
+      "weight": 2,
+      "overrides": {}
+    },
+    "no-scout": {
+      "weight": 1,
+      "overrides": {
+        "agents": {
+          "scout": false
+        }
+      }
+    },
+    "no-repair": {
+      "weight": 1,
+      "overrides": {
+        "agents": {
+          "repair_max": 0
+        }
+      }
+    },
+    "no-arbiter": {
+      "weight": 1,
+      "overrides": {
+        "agents": {
+          "arbiter": false
+        }
+      }
+    },
+    "codex-critic": {
+      "weight": 0,
+      "overrides": {
+        "agents": {
+          "critic_engine": "codex"
+        }
+      },
+      "stopped": {
+        "at": "2026-09-26",
+        "reason": "머지율 23% vs baseline 64% (n=31, p=0.0003) — 처리량 효과가 확립돼 추가 배정의 정보 가치보다 비용(머지당 $20.63)이 크다. 수집한 회차는 분석에 그대로 쓴다; 품질 축(머지 뒤 30일)은 이미 머지된 것들로 10월에 판독한다.",
+        "decided_by": "claude, hkjang 위임"
+      }
+    },
+    "no-journal": {
+      "weight": 1,
+      "overrides": {
+        "agents": {
+          "journal": false
+        }
+      }
+    },
+    "no-lessons": {
+      "weight": 1,
+      "overrides": {
+        "agents": {
+          "lessons": false
+        }
+      }
+    }
+  },
+  "stopping_log": [
+    {
+      "arm": "codex-critic",
+      "at": "2026-09-26",
+      "n": 31,
+      "merge_rate": 0.23,
+      "p": 0.0003
+    }
+  ]
 }
