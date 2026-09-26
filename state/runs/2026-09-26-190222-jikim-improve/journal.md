@@ -12,3 +12,15 @@
 - 다음 역할이 조심할 것: 새 테스트는 DB 없이 돈다(`trackingServer` 하네스). 응답 계약은 **모든 분기에서 본문 없는 204** 이므로 off 상태에 403/404를 주는 "개선"은 추적 설정 노출이 되어 되돌리기다. 기존 `TestPolicyReportsAreRecordedOnceAndListedForAdministrators`는 한 글자도 수정하지 않았고 그대로 통과한다. `./scripts/verify.sh` 전체 exit 0 (Go test·vet·gofmt, npm ci·vitest 59개·lint·build, 문서·Compose).
 - [러너 19:16] brief accepted — 채택 — 근거가 코드와 정확히 맞았고(tracking.go:138-142에 설정 확인이 없었다) 지정한 파일 3개와 게이트 판정식을 그대로 
 - [러너 19:16] verify passed — 검증 7개 통과 (auto)
+
+## 비평 노트
+- 판정 approve (blocking 없음). 게이트(`internal/httpapi/tracking.go:146`)를 실제로 지우고 새 테스트를 돌려 off 5건·outage 2건이 관리자 목록에 들어가며 두 서브테스트가 FAIL 함을 확인했다 — 테스트는 대상을 정말 실행한다. 복원 후 `go test ./... -count=1`·`go vet ./...`·`gofmt -l .` 통과, 트리 깨끗.
+- 방향 검사: `pagePolicy` 는 `Active(path) && nonce!=""` 일 때만 `report-uri` 를 붙이고 `ReportingActive()` 는 `Active` 에서 경로 규칙만 뺀 조건이라 `Active(path) ⊆ ReportingActive()`. report-uri 를 실제로 받은 페이지의 정상 리포트가 새로 버려지는 경로는 추적을 끄는 순간의 경합뿐이고 그건 의도된 동작이다. `ADMIN_GUIDE.md:472`·`SettingsPage.tsx:1461` 이 이미 "추적 on 동안만"이라 적고 있어 문서 수정 불필요.
+- 못 본 것: 실제 브라우저의 report-uri 왕복, 실제 PostgreSQL 경유 `TrackingConfig`, 프런트 전체 검증(npm ci 미실행 — 이번 diff 가 `web/` 을 건드리지 않아 생략).
+- 남는 우려(차단 아님): `store.GetSetting` 에 캐시가 없어 인증 없는 리포트 1건당 DB 쿼리 1회가 늘었다 — 인증 없는 `GET /` 이 이미 같은 쿼리를 하므로 새 공격 종류는 아니지만 두 경로 모두 속도 제한이 없다. 설정 읽기 실패 시 리포트마다 Warn 한 줄이 남아 DB 장애 + 폭주가 겹치면 로그가 비례해 늘어난다.
+- 릴리즈 노트에 "추적 설정을 읽지 못하는 동안 CSP 신고는 기록되지 않는다" 한 줄을 넣으면 운영자가 빈 목록을 버그로 오해하지 않는다. 다음 회차: `ReportingActive()` 가 `Active()` 앞 세 줄을 복제하므로 "추적이 켜졌다" 정의를 한쪽만 바꾸면 조용히 갈라진다.
+- [러너 19:22] review approved — 리뷰 승인 (risk=low)
+- [러너 19:22] pr created — https://github.com/hkjang/jikim/pull/45
+- [러너 19:26] ci passed — 검사 2개 모두 success
+- [러너 19:26] merge done — 90bee37
+- [러너 19:31] release ci-blocked — 릴리즈 커밋 CI: failed — 성공이 아닌 검사: 폐쇄망 이미지 · 브라우저 E2E=failure (태그 보류)
