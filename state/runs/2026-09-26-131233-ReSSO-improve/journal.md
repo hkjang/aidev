@@ -33,3 +33,12 @@
 - 여전히 확신 없는 곳: 새 행의 "어디서" 를 "프로토콜 Endpoint 앞단 CORS 검사(`/realms/...` 전체)" 로 적었는데 다른 두 행이 Endpoint 이름을 쓰는 것과 표기 층이 다르다(미들웨어라 Endpoint 하나로 좁힐 수 없다). 표 밖 남은 사실 하나: realms 장애 중에는 한 요청이 `endpoint=cors` 줄과 핸들러 줄을 함께 남기는데 이는 문서화하지 않았다.
 - 손대지 않은 것: `webui/dist/index.html`(회차 시작부터 더러운 빌드 산출물), 지표·감사·미등록 Origin 무기록 정책.
 - [러너 13:41] repair done — # 수리 요약 (시도 1)  - 지적은 맞았다: `WebOriginAllowed`가 읽는 것이 `clients`(internal/store/clients.go:355)임을 직접 확인했고, 그래서 5b260c7이 추가한 `a CORS origin
+
+## 비평 노트
+- 직접 확인: main 의 middleware.go 를 임시로 되돌려 새 테스트를 돌려 (c) 두 줄과 (e) 한 줄이 실제로 FAIL 함을 눈으로 봤다(HEAD 에서는 PASS, 0.66s). 실제 PostgreSQL 로 `go test -race ./internal/httpserver ./internal/store` 117s/81s 모두 ok, gofmt·go vet 깨끗, 작업 트리는 회차 시작부터 더럽던 `webui/dist/index.html` 만 남음. 응답·헤더·fail-closed 불변((c) 가 단언), `oidcCORS` 가 `/realms/{realm}` 전체에 걸리는 것(server.go:107-108)과 `WebOriginAllowed` 가 `clients` 를 읽는 것(store/clients.go:355)까지 열어 확인. 테스트는 스키마별 격리(integration_test.go:265)라 RENAME 이 다른 테스트를 건드리지 않는다.
+- 승인이어도 남는 우려 ①(릴리즈 노트 아님, 다음 회차): middleware.go:124-130 주석의 "A store that stopped answering is not reachable that way" 는 과하다 — 클라이언트가 연결을 끊으면 context 취소로 같은 Error 줄이 난다. 비대칭(미등록 Origin 무기록 / store 오류 기록)의 결론은 여전히 옳고 `realmLookupFailed` 가 이미 다섯 Endpoint 에서 같은 성질을 갖지만, 단정 문구는 다음에 손볼 때 완화할 값어치가 있다. 접근 로그가 어차피 요청당 한 줄이라 증폭은 2배에 그친다.
+- 승인이어도 남는 우려 ②: docs/operations.md:38 의 "접근 로그에는 200으로 남습니다" 는 `clients` 조회만 흔들릴 때 참이다. clients 테이블이 통째로 멈추면 Token·UserInfo 는 핸들러가 스스로 500 을 답하므로 200 이 아니다 — 이 행이 설명하려는 혼동스러운 경우(JWKS·discovery)에는 정확하니 거절 사유로 보지 않았다.
+- 승인이어도 남는 우려 ③: 테스트가 로그 문구에 부분 문자열(`"a CORS origin could not be checked"`, `"endpoint=cors"`, `"realm=master"`)로 결합돼 있어 문구나 slog 핸들러를 바꾸면 함께 고쳐야 한다. 테스트 중간에 죽으면 그 테스트 전용 스키마에 `clients_hidden`/`realms_hidden` 이 남지만 스키마가 테스트마다 새로 만들어져 영향 없음.
+- 못 본 것: 부하·장기 장애에서의 실제 로그량 측정, context 취소·풀 고갈로 인한 `allowErr` 실측(추론만), LDAP·다중 Realm 조합. 보안·법무 차단 없음 — 인가·세션·정책 변경 없고, 새로 남기는 값은 조회에 성공한 경로 realm·trace_id·store 오류 문자열뿐이며 Origin 원문 미기록을 테스트가 단언한다. 개인정보 신규 수집·전송 없음.
+- [러너 13:46] review approved — 리뷰 승인 (risk=low)
+- [러너 13:46] pr created — https://github.com/hkjang/ReSSO/pull/29
