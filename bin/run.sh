@@ -1022,6 +1022,13 @@ big_artifact_guard(){
   # 진단 로그는 커지면 뒤쪽만 남긴다
   [ -f "$SYNCLOG" ] && [ "$(stat -c %s "$SYNCLOG" 2>/dev/null || echo 0)" -gt 1000000 ] && { tail -n 500 "$SYNCLOG" > "$SYNCLOG.tmp" && mv "$SYNCLOG.tmp" "$SYNCLOG"; }
   find "$STATE/runs" -maxdepth 6 -type d -name node_modules -prune -exec rm -rf {} + 2>/dev/null
+  # 회차가 남긴 로컬 전용 산출물 정리 — git 에는 안 들어가지만 디스크와 git 의 파일 훑기를
+  # 무겁게 한다 (2026-09-26: state/runs 2.3GB 중 추적되는 건 4.6MB 뿐이었고, 임시 홈 하나가
+  # 224MB 였다). 도는 회차를 건드리지 않게 넉넉히 지난 것만 지운다.
+  find "$STATE/runs" -maxdepth 2 -type d -name home -mmin +720 -exec rm -rf {} + 2>/dev/null
+  find "$STATE/runs" -maxdepth 2 -type d -name assets -mtime +7 -exec rm -rf {} + 2>/dev/null
+  # 에이전트가 파 놓고 안 치운 임시 체크아웃 — 한 번은 저장소 하나가 통째로(1,683 파일) 커밋에 들어갔다
+  find "$STATE/runs" -maxdepth 2 -type d -name 'clean-checkout*' -mmin +720 -exec rm -rf {} + 2>/dev/null
   while IFS= read -r f; do
     [ -n "$f" ] || continue
     log "sync: 대용량 산출물 제거 ($(du -m "$f" 2>/dev/null | cut -f1)MB) ${f#"$REPO_DIR"/}"

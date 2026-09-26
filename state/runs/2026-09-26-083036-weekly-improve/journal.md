@@ -28,3 +28,5 @@
 - 브라우저 렌더링·전체 시험은 재실행하지 않았다. 정확히 50/51건과 필터 후 초과의 직접 단언은 후속 보강 여지이며, 코드 수정 없이 review.json을 기록했다.
 - [러너 09:06] review approved — 리뷰 승인 (risk=low)
 - [러너 09:07] pr created — https://github.com/hkjang/weekly/pull/22
+- [러너 09:29] ci passed — 검사 1개 모두 success
+- [러너 09:29] merge done — 726b8c8
