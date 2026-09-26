@@ -1,7 +1,7 @@
 ---
 title: "pii-masker — 자율 개선 이력"
 description: "pii-masker: 자율 개선 회차 34회, 릴리즈 22건. 최근 릴리즈 v1.0.28 (자산 1개)."
-last_modified_at: 2026-09-26 15:22:50 +0900
+last_modified_at: 2026-09-26 15:57:58 +0900
 ---
 {% raw %}
 <script type="application/ld+json">
@@ -18,7 +18,7 @@ last_modified_at: 2026-09-26 15:22:50 +0900
   "name": "hkjang",
   "url": "https://github.com/hkjang"
  },
- "dateModified": "2026-09-26T15:22:50+09:00",
+ "dateModified": "2026-09-26T15:57:58+09:00",
  "version": "1.0.28"
 }
 </script>

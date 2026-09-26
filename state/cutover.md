@@ -92,3 +92,4 @@
 - 보류 아이디어: validateActivityImport 단위 테스트 추가(`lib/activityData.test.ts` 없음, 3/1/S) / eslint globalIgnores 에 playwright-report·test-results 추가(2/1/S) / 상태 전파를 `lib/treeUtils propagateStatus` 순수 함수로 옮겨 API 의 targetId+newStatus 분기와 규칙 통일(3/2/M) / 빈 트리에서 최상위 작업 추가 진입점 제공(3/1/S) / Dockerfile 의 NEXT_PUBLIC_*_PASSWORD 빌드 기본값 제거로 fail-closed(4/3/M, 릴리즈 통과 확인 필요한 단독 회차)
 - 과제서: 채택 — 과제서의 근거가 코드와 정확히 일치했고(6곳 미검사 PUT, 287행 confirm 의 최상위 node.title, handleSave 의 즉시 닫기) 수용 기준 1~4 를 모두 e2e 로 고정했다. 다만 과제서의 `setIsAuthed(false)` 는 실제로 기존 `handleUnauthorized()`(loggedIn state)였고, e2e 로케이터용으로 삭제 버튼 외에 편집/저장/취소 버튼 title 과 입력 data-testid 도 함께 붙여야 했다.
 
+- 릴리즈: v1.9.0 (2026-09-26, run 2026-09-26-155135-cutover-approve)
