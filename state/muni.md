@@ -221,3 +221,12 @@
 - 과제서: 채택 — 근거(다섯 자리 중 이 한 곳만 `filename*` 이 없고 `safeFilename` 결과를 quoted-string 에 원문으로 넣음, 워크스페이스 이름 검사는 길이뿐)가 코드·실행과 모두 맞았고 지정한 수용 기준 넷을 그대로 충족했습니다. 선택으로 남긴 단위 표 추가는 live 가 이미 프로덕션 배선을 지나므로 넣지 않았습니다.
 
 - 릴리즈: v0.47.0 (2026-09-26, run 2026-09-26-203229-muni-improve)
+## 2026-09-27
+- 선택: 워크스페이스 ZIP 의 안내 파일 `목록.md` 가 같은 이름의 문서를 덮어쓰지 않게 하기 (가치 3 / 위험 1 / 작업량 S)
+- 결과: 성공
+- 요약: 아카이브 항목 이름 중복 추적(`uniqueEntryName`)을 거치지 않는 유일한 항목이 마지막에 쓰이는 안내 파일 `목록.md` 였습니다 — 워크스페이스 루트에 제목이 `목록` 인 문서가 있고 md 로 내보내면 ZIP 안에 같은 이름 항목이 둘 들어가고, 순서대로 쓰는 압축 해제 도구에서는 한쪽만 남습니다(`uniqueEntryName` 이 막으려던 그 문서 분실이 그 이름 하나에서 일어남). 이름을 상수 `workspaceManifestName` 으로 두고 문서 순회 전에 `used` 에 예약해, 그 제목의 문서는 `목록 (2).md` 로 가고 안내 파일은 읽는 쪽이 기대하는 이름에 남습니다. 프로덕션 파일 하나, 테스트 파일 하나. 검증: 실제 라우트(`GET /api/v1/workspaces/{id}/export.zip?format=md&trash=true`)로 루트 문서 `목록` 과 폴더 `회의` 안의 `목록` 을 넣고 ZIP 항목 이름을 읽는 live 테스트를 먼저 실패시킨 뒤 고쳐 통과시켰고, 예약 한 줄만 되돌리자 그 테스트 하나만 다시 실패(나머지 234건 계속 통과)해 인과를 확정했습니다. postgres:16-alpine 에 `MUNI_TEST_DSN` 을 주어 `go test -count=1 -v ./internal/httpapi`(PASS 235 / SKIP 0 / FAIL 0), `go test ./...` 전체 ok, `go vet ./...`, `gofmt -l .`(clean), `scripts/check-webui-placeholder.sh` OK. 프런트 미변경이라 npm 검사는 돌리지 않았습니다. 커밋 a8f56b6.
+- 실패 재현: `workspace_export_live_test.go:114: two entries are called "목록.md"; one of them will not survive unpacking: [목록.md 회의/목록.md 목록.md]` / `workspace_export_live_test.go:133: the document titled 목록 has no entry of its own`
+- 보류 아이디어: `Content-Disposition` 을 만드는 다섯 자리를 헬퍼 하나로 모으기 — escape 와 ext-value 는 완전히 통일됐고 ASCII fallback 문자열만 라우트마다 다름, 순수 재발 방지 (2/1/S) / 워크스페이스 ZIP 한도 초과 안내를 실제로 넘쳤을 때만 넣기 — `LIMIT maxWorkspaceExport+1` 로 읽어 정확히 2000건 경계 오탐 없애기, 2000건 live 재현이 무거운 것이 걸림돌이라 판정 부분을 함수로 떼는 쪽 (2/1/S) / 가져오기·넘겨받기의 240자 제목 절단에 AI 안내 문구가 붙는 것 — 파일 이름이 아니라 DB 제목 데이터, 241자 도달 가능성 여전히 미확인 (2/2/S) / CI 에 e2e(playwright) 단계 넣기 — 보호 경로와 계정 시드 때문에 사람 승인 있는 회차에 (4/2/M) / PDF 가져오기에서 본문 첫 줄이 metadata 제목과 같으면 빼기 — 첫 블록이 heading 으로 나오는지 일곱 회차째 미확인, 확인 전 착수 금지 (2/2/S)
+- 과제서: 기각 — 이번 회차에는 정찰 과제서가 없었고 러너 노트만 있었습니다. 다만 프로필이 "`목록.md` 이름은 예약" 이라고 적은 것은 코드와 달라(예약이 없었음) 그 자리가 이번 과제가 됐습니다.
+
+- 릴리즈: v0.48.0 (2026-09-27, run 2026-09-27-142151-muni-improve)
