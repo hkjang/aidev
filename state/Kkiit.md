@@ -123,3 +123,4 @@
 - 보류 아이디어: 포트폴리오 수정(`updateMyPortfolio`, discovery.go:196)의 같은 결함을 500 으로 가르기 — 1순위와 완전히 같은 형태고 title/description 이 text 라 같은 증거 수법이 통한다 (가치 2 / 위험 1 / S) · 관리자 사용자 수정(`updateAdminUser`, admin_users.go:72)의 같은 결함 — display_name 이 text 라 NUL 수법이 통하지만 계정 상태·세션 폐기에 붙어 위험 한 단계 위 (가치 3 / 위험 2 / S) · `err!=nil||RowsAffected()==0` 남은 24곳 중 사용자 텍스트가 문장에 들어가는(= HTTP 로 증명 가능한) 경로만 골라 우선순위 문서를 남기기 (가치 2 / 위험 1 / M) · 가이드 문서의 API 메서드·응답 코드를 실제 라우터와 대조 — openapi_test.go 가 경로만 비교해 이번 `'400'` 누락도 사람 눈으로 찾았다 (가치 2 / 위험 2 / M) · README 환경변수 계약을 필수 4개 + 선택 `SHUTDOWN_DRAIN_SECONDS` 로 정리 (가치 2 / 위험 1 / S)
 - 과제서: 채택 — docker(29.7.2)가 가용해 수용 기준 1~3 을 모두 실제 HTTP→실제 DB 로 증명했고, 과제서가 미확인으로 남긴 두 가지(`webhooks.name` 의 NUL 이 22021 로 UPDATE 만 실패시킨다, docker 가용)를 프로브와 실행으로 모두 확인했다.
 
+- 릴리즈: v0.4.9 (2026-09-28, run 2026-09-28-031232-Kkiit-improve)
