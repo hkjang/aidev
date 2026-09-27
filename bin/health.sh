@@ -37,6 +37,9 @@ sync_fail=$(cat "$REPO_DIR/state/.sync-fail" 2>/dev/null || echo 0)
 ahead=$(git -C "$REPO_DIR" rev-list --count origin/main..HEAD 2>/dev/null || echo 0)
 [ "${ahead:-0}" -gt 30 ] && problems+=("원격에 못 올린 커밋 ${ahead}개 — push 가 막혀 있다 (100MB 초과 파일/인증 확인, logs/sync.log)")
 gh auth status >/dev/null 2>&1 || problems+=("gh 인증 실패 — gh auth login 필요")
+# 측정 자기 감사(bin/audit.py)의 high 는 헬스 문제로 올린다 — 숫자가 어긋난 채 굴러가면
+# 그 숫자로 내리는 모든 판단이 같은 방향으로 휜다.
+while IFS= read -r af; do [ -n "$af" ] && problems+=("측정 감사: $af"); done < <(jq -r '[.findings[]?|select(.severity=="high")|.summary]|.[0:2][]' "$REPO_DIR/docs/data/audit.json" 2>/dev/null)
 disk=$(df -P "$REPO_DIR" | awk 'NR==2{print $5}' | tr -d '%'); [ "${disk:-0}" -gt 90 ] && problems+=("디스크 ${disk}% 사용")
 docker info >/dev/null 2>&1 || problems+=("docker 를 쓸 수 없음 — 자산 빌드 실패 예상")
 # 자기 복구: 예전 러너가 남긴 pushurl=DISABLED(저장소 공통 설정)를 발견하면 풀어준다 — 사용자 push 를 막아서는 안 된다
@@ -204,6 +207,8 @@ if [ ! -f "$pm" ] || [ $(( now - $(stat -c %Y "$pm" 2>/dev/null || echo 0) )) -g
   python3 "$HERE/postmerge.py" >>"$REPO_DIR/logs/postmerge.log" 2>&1 || true
   # 실제로 게시된 릴리즈를 태그에서 직접 센다 — 회차 기록이 비어도 결과는 남는다
   python3 "$HERE/released.py" >>"$REPO_DIR/logs/released.log" 2>&1 || true
+  # 측정 자기 감사: 독립된 두 출처를 맞춰 보고 어긋나면 적는다 (고치지는 않는다)
+  python3 "$HERE/audit.py" >>"$REPO_DIR/logs/audit.log" 2>&1 || true
   # 비교 실험(state/experiment.json)이 켜져 있으면 arm 별 지표 표를 같이 갱신한다
   [ "$(jq -r '.enabled // false' "$REPO_DIR/state/experiment.json" 2>/dev/null)" = true ] && python3 "$HERE/exp-analyze.py" >>"$REPO_DIR/logs/exp-analyze.log" 2>&1 || true
 fi

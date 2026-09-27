@@ -519,6 +519,17 @@ def agent_scorecard(runs_all, usage_all, lessons, days_window=14):
     rows.append({"role": "기록·학습 historian", "calls": sum(1 for u in usage if u.get("phase") in ("campaign-lessons", "operator-prefs")),
                  "metric": f"캠페인 교훈 {sum(len(campaign_lessons(c.get('id')).get('rules', [])) for c in campaigns())}개 · 운영자 규칙 {op_rules}개", "cost": cost("campaign-lessons", "operator-prefs")})
     rows.append({"role": "코파일럿 copilot", "calls": sum(1 for u in usage if u.get("phase") == "copilot"), "metric": "텔레그램 답장", "cost": cost("copilot")})
+    # 측정 자기 감사 (bin/audit.py): 두 출처가 어긋난 자리
+    try:
+        au = json.load(open(os.path.join(DOCS, "data", "audit.json"), encoding="utf-8"))
+    except Exception:
+        au = {}
+    if au.get("findings"):
+        hi = [x for x in au["findings"] if x.get("severity") == "high"]
+        rows.append({"role": "측정 자기 감사", "calls": len(au["findings"]), "cost": None,
+                     "metric": " · ".join(f"[{x['severity']}] {x['summary'][:70]}" for x in au["findings"][:3])})
+        for x in hi[:2]:
+            advice.append(f"측정이 어긋났다 — {x['summary']} ({x.get('detail','')[:80]})")
     # 실제 게시된 릴리즈 (bin/released.py): 회차 기록이 아니라 저장소 태그에서 직접 센 것.
     # 기록이 비어도 결과는 남으므로, 자기 기록과 실제가 어긋나면 여기서 드러난다.
     try:
