@@ -1,0 +1,41 @@
+release: ReSSO v0.9.95
+
+The refresh grant's first act is to read the token it was handed with
+store.InspectRefreshToken, and the single line under that call answered 400
+invalid_grant "refresh token is invalid or expired" for every error the call can
+return, so a refresh_tokens table this server could not read was
+indistinguishable from a token that was never issued, has expired, or belongs to
+somebody else. invalid_grant tells the relying party the refresh token it holds
+is dead, and the ordinary response is to discard it and send the person through
+login again — so an outage that ended when the table came back took every
+session with it, permanently. The argument is strongest at this position of all:
+this lookup is the grant's first store call, so RotateRefreshToken below it has
+not run and nothing at all has been written, which means the token in the
+caller's hand is exactly as live after this answer as it was before it. Such a
+failure now answers 500 server_error with a description that says only what is
+known — not that the token was verified, because it was not read at all, but
+that it has been neither rotated nor rejected, which is what tells a caller a
+retry is worth making. The other two callers of InspectRefreshToken already
+separated a fault on this side from a real answer, introspection through
+recordUnjudgedIntrospection and revocation through its own ErrNotFound check;
+this was the one that did not. The fault also went unrecorded, and now leaves one
+line, the refresh token offered to the grant could not be looked up, carrying
+trace_id, realm, client, grant_type and error, with the offered token itself
+kept out of it — it is a bearer credential, and the identifiers already resolved
+say which tenant's lookups stopped. It is counted under
+resso_token_errors_total{grant_type="refresh_token"}, the form having been read
+by this point so the label is honest. A token that is genuinely absent, and the
+three mismatches under it, are unchanged to the byte — all keep 400
+invalid_grant "refresh token is invalid or expired", because this endpoint
+deliberately does not distinguish an unknown value from one issued to somebody
+else, and the tests assert that. This is the earliest of the places in this
+endpoint that answered a fault on this side as a spent grant and not the last of
+them: the code redemption above answers invalid_grant for every
+RedeemAuthorizationCode failure, and RotateRefreshToken below answers it for
+everything that is not ErrTokenReuse. Those are separate changes and still to
+make, and the comment left here says so rather than reading as though the
+endpoint were now finished. The operations guide's alert entry for
+resso_token_errors_total gains the sentence for this cause, naming the log line
+to search for and saying that an absent, expired or foreign token is not counted
+under it. Stamps the version in the Makefile, console package metadata and both
+compose files, with no schema or configuration changes.

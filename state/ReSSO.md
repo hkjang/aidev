@@ -298,3 +298,4 @@
 - 보류 아이디어: UserInfo 거절 카운터 `resso_userinfo_errors_total` — stage 여섯 고정 라벨, `errors_total` 계열 중 userinfo만 없다(2/1/S) / `InspectRefreshToken`의 `active` 반환값을 refresh 그랜트가 `_`로 버리는 것 — 이번 과제서가 명시적으로 금지했고 "왜 버리는가"를 먼저 읽어야 한다(2/3/M) / 비화면 경로(/api·/realms·/mcp·/health·/metrics)의 CSP를 `default-src 'none'`으로 좁히기 — 외부 표준 원문 미확인으로 8회 연속 보류(2/2/S) / 통합 테스트의 `lockedBuffer`를 공용 헬퍼로 — 이번에 사용처가 여섯이 됐다(1/1/S)
 - 과제서: 채택 — 근거(576-580행이 `ErrNotFound` 구분 없이 400 `invalid_grant`, `InspectRefreshToken` 호출자 셋 중 유일, 597행에 같은 논지가 이미 있음)가 코드와 그대로 맞았고 수용 기준 다섯을 모두 구현·검증했다. 과제서가 미확인으로 남긴 `docs/operations.md` 중복은 없었고(지난 두 회차는 Realm·계정만 다룬다), 권장 문안을 그대로 썼다. RENAME이 안전하다는 것과 지표 배선(`nil` 등록기로는 못 읽는다)도 과제서대로였다.
 
+- 릴리즈: v0.9.95 (2026-09-28, run 2026-09-28-053435-ReSSO-approve)
