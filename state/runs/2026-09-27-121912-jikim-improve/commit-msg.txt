@@ -1,0 +1,28 @@
+fix: release the unreachable webhook recording warning for v0.2.24
+
+Webhook이 엔드포인트에 닿지도 못한 상태에서 delivery 기록까지 실패하면 아무 흔적도
+남지 않던 문제를 고친 PR #46을 릴리즈합니다. `deliverWebhook`의 요청 생성 실패와
+전송 자체 실패(connection refused·DNS·TLS·타임아웃) 두 분기가
+`completeWebhookDelivery`의 반환값을 `_ =`로 버려, 엔드포인트가 죽은 동시에 저장소가
+흔들리면 delivery 행이 `pending`으로 영원히 남고 로그에도 단서가 없었습니다.
+관리자가 "보내지도 못했고 실패로도 찍히지 않은" 이벤트를 원인 없이 보게 되던
+자리입니다. 같은 모양이던 세 자리를 `recordWebhookOutcome(delivery, statusCode,
+deliveryErr)` 헬퍼로 모아, 이제 이 경로도 기존과 같은 문구(`webhook delivery 기록
+실패`)와 같은 식별자 필드(`delivery_id`·`event`·`request_id`·`status_code`·`error`)의
+`logger.Warn`을 남기며 payload와 서명 키는 남기지 않습니다. 반환값과 기록하는 상태
+코드, `webhookTest` 응답 문구는 계약이라 그대로 두었고, 대기열 포화 분기와
+`outbound_client.go`, `store/webhooks.go`는 손대지 않았습니다(프로덕션 파일 1개).
+같은 PR은 기존 `webhookServer` 하네스로 "닿지 않음 + 기록 실패" 조합에서 경고가
+정확히 한 줄 남는 것을 고정하는 회귀 테스트를 추가했으며, 새 seam은 만들지
+않았습니다. 요청 생성 실패 분기는 검증을 통과한 URL에서 재현할 입력을 만들지 못해
+헬퍼 호출로 바뀐 것만 확인했고 그 경로의 로그 자체는 미검증입니다.
+
+기존 패치 릴리스와 같은 방식으로 버전 파일, 문서 프로파일과 CHANGELOG를
+v0.2.24로 갱신했습니다. 캡처 출처는 v0.2.9를 유지합니다. 두 가이드 PDF는
+v0.2.23과 같은 이유로 표지가 `v0.2.18`인 채로 남았습니다. 지금까지 쓰던
+변환기(표지 템플릿 + HeadlessChrome 인쇄)가 저장소에 없어 같은 판형으로 다시
+구울 수 없었고, 다른 템플릿으로 바꿔 굽는 것은 릴리스 절차 밖의 변경이라 기존
+파일을 그대로 두고 CHANGELOG에 적었습니다. 본문 Markdown은 갱신했습니다.
+./scripts/verify.sh 전체(Go test·vet·gofmt, 웹 테스트 59개·lint·build,
+문서·Compose)가 통과했습니다. 이미지 빌드·스모크·브라우저 E2E·번들 생성 및
+게시 작업은 태그 푸시 후 release.yml이 수행합니다.

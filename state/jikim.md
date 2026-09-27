@@ -192,3 +192,12 @@
 - 보류 아이디어: 추적이 켜진 동안의 CSP 리포트 폭주에 속도 제한 또는 동일 출처 검증 (3/3/M, 이번 범위 밖 — 새 계약 필요) / aiRequestLimiter 사용자 표의 결정적 상한 (2/1/S, 차선 후보였으나 미실행) / retryWebhookDelivery 왕복 테스트 공백 (2/1/M, PostgreSQL 통합 경로가 더 정직) / Go 라우트와 Vite 개발 프록시 목록 교차 검증 부재 (3/2/M, 현재 실제 누락 없음) / baoKVWrite create·update 판정 TOCTOU (3/3/M, PostgreSQL·동시성 필요)
 - 과제서: 채택 — 근거가 코드와 정확히 맞았고(tracking.go:138-142에 설정 확인이 없었다) 지정한 파일 3개와 게이트 판정식을 그대로 구현했다. 다만 `ReportingActive`의 경로-비의존성은 httpapi 왕복 테스트로는 보일 수 없어 `internal/tracking/tracking_test.go`에 단위 테스트 하나를 더했다(테스트 파일 1개 추가, 프로덕션 파일 수는 과제서대로 2개).
 
+## 2026-09-27
+- 선택: webhook 전송이 엔드포인트에 닿지도 못했을 때의 기록 실패가 아무 흔적도 남기지 않는 마지막 분기 막기 (가치 3 / 위험 1 / 작업량 S)
+- 결과: 성공
+- 요약: `deliverWebhook`의 요청 생성 실패(webhook.go:175)와 전송 자체 실패(187, connection refused·DNS·TLS·타임아웃)가 `_ = s.completeWebhookDelivery(...)`로 반환값을 버려, 엔드포인트가 죽은 동시에 저장소가 흔들리면 delivery 행이 `pending`으로 영원히 남고 로그에도 단서가 없었다. 세 자리(175·187·197)가 같은 모양이 되므로 `recordWebhookOutcome(delivery, statusCode, deliveryErr)` 헬퍼로 모아 기존과 **같은** 문구(`webhook delivery 기록 실패`)·같은 필드(`error`·`delivery_id`·`event`·`request_id`·`status_code`)의 `logger.Warn`을 남기게 했다. 반환값·상태코드·`webhookTest` 응답 문구는 그대로이고 포화 분기(90-94)·`outbound_client.go`·`store/webhooks.go`는 손대지 않았다(프로덕션 파일 1개). 검증은 `go test ./internal/httpapi/ -run Webhook -count=1 -v`(9개 통과)·`-race -count=5`·`go test ./... -count=1`·`go vet ./...`·`gofmt -l .`·`./scripts/verify.sh`(vitest 59개 포함, "검증 완료: jikim v0.2.23") 전부 exit 0. 커밋 `1e93118`.
+- 실패 재현: `--- FAIL: TestDeliverWebhookLogsWhenUnreachableRecordingFails (0.01s)` / `webhook_test.go:289: 경고가 한 줄이 아닙니다: []` — 고친 뒤 통과하고, 187을 다시 `_ = s.completeWebhookDelivery(...)`로 되돌리면 같은 테스트가 같은 메시지로 다시 실패함을 확인한 뒤 복원했다. 기존 `TestDeliverWebhookReportsUnreachableEndpoint`는 수정 없이 계속 통과.
+- 보류 아이디어: aiRequestLimiter의 사용자 표에 결정적 상한 세우기 (2/1/S, 차선 후보였으나 미실행 — 5회 연속) / 추적이 켜진 동안의 CSP 리포트 폭주에 속도 제한 또는 동일 출처 검증 (3/3/M, 새 계약 필요) / retryWebhookDelivery 왕복 테스트 공백 (2/1/M, seam 추가 금지라 PostgreSQL 통합 경로가 더 정직) / openbao.go:267·oidc.go:380·auth_handlers.go:106의 RevokeToken 실패를 조용히 버림 (2/2/S, 보호 경로라 위험) / baoKVWrite create·update 판정 TOCTOU (3/3/M, PostgreSQL·동시성 필요)
+- 과제서: 채택 — 근거가 코드와 정확히 맞았고(175·187만 `_ =`로 남아 있었다) 지정한 파일 2개·헬퍼 형태·기존 하네스를 그대로 써서 수용 기준 5개를 모두 충족했다.
+
+- 릴리즈: v0.2.24 (2026-09-27, run 2026-09-27-121912-jikim-improve)
