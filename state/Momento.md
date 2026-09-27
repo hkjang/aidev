@@ -145,3 +145,4 @@
 - 보류 아이디어: 자기 자신의 역할 변경(SELF_ROLE)·비밀번호(SELF_PASSWORD) 제약을 사용자 편집 다이얼로그에 반영 (가치 2 / 위험 1 / S); 검색 중에는 일치가 10건 이하라도 TablePagination 을 유지한다 — 이번 캡션 수정으로 건수는 보이게 되어 급하지 않다 (가치 2 / 위험 2 / S); DataTable 기본 rowKey 가 동명이인에서 중복될 수 있다 (가치 2 / 위험 1 / S); DataTable CSV 가 column.format 을 적용하지 않고 원시값을 내보낸다 — 결함인지 의도인지 사용자 가이드 CSV 절 확인이 선행 (가치 2 / 위험 1 / S)
 - 과제서: 채택 — 인용한 행 번호(130-132 캡션, 212 페이저 조건, 78-86 filtered, 21-22 import, FunnelPage.tsx:350-353, VisitorInsightsPage.tsx:764)와 `tablePaging.ts`/`tablePaging.test.mjs:3` 의 `.ts` 확장자 선례가 모두 현재 코드와 일치했고 수용 기준 3개를 그대로 구현·증명했다. 과제서가 `${filtered.length}개 항목` 로 적은 부분은 실제로는 이미 `Intl.NumberFormat("ko-KR").format(filtered.length)` 였고(기준 1 의 구분자 요구와 같은 방향), 검색어가 없을 때 `filtered === rows` 라 `total` 로 바꿔도 출력이 동일해 기준 2 가 그대로 성립했다.
 
+- 릴리즈: v0.34.47 (2026-09-28, run 2026-09-28-031237-Momento-improve)
