@@ -1,0 +1,742 @@
+#0 building with "default" instance using docker driver
+
+#1 [internal] load build definition from Dockerfile
+#1 transferring dockerfile: 2.91kB done
+#1 DONE 0.0s
+
+#2 [internal] load metadata for docker.io/library/alpine:3.24.1@sha256:28bd5fe8b56d1bd048e5babf5b10710ebe0bae67db86916198a6eec434943f8b
+#2 DONE 1.2s
+
+#3 [internal] load metadata for docker.io/library/node:22-alpine
+#3 DONE 1.2s
+
+#4 [internal] load metadata for docker.io/library/node:22-alpine3.24
+#4 DONE 1.2s
+
+#5 [internal] load metadata for docker.io/library/golang:1.26.8-alpine
+#5 DONE 1.5s
+
+#6 [internal] load .dockerignore
+#6 transferring context: 230B done
+#6 DONE 0.0s
+
+#7 [runtime-base 1/3] FROM docker.io/library/alpine:3.24.1@sha256:28bd5fe8b56d1bd048e5babf5b10710ebe0bae67db86916198a6eec434943f8b
+#7 resolve docker.io/library/alpine:3.24.1@sha256:28bd5fe8b56d1bd048e5babf5b10710ebe0bae67db86916198a6eec434943f8b 0.0s done
+#7 DONE 0.0s
+
+#8 [web 1/6] FROM docker.io/library/node:22-alpine@sha256:0a7108bf6c7bf5de370ffb1a3ed6be93d405b43ff159f681a8d18c0e2bc2e402
+#8 resolve docker.io/library/node:22-alpine@sha256:0a7108bf6c7bf5de370ffb1a3ed6be93d405b43ff159f681a8d18c0e2bc2e402 0.0s done
+#8 DONE 0.0s
+
+#9 [server 1/7] FROM docker.io/library/golang:1.26.8-alpine@sha256:8ac98ca534ac3f51e1f420a1dd2c15e74c75cfa0f23f3ad27eb5d7236c349a0c
+#9 resolve docker.io/library/golang:1.26.8-alpine@sha256:8ac98ca534ac3f51e1f420a1dd2c15e74c75cfa0f23f3ad27eb5d7236c349a0c 0.0s done
+#9 DONE 0.0s
+
+#10 [runtime-sources  1/10] FROM docker.io/library/node:22-alpine3.24@sha256:0a7108bf6c7bf5de370ffb1a3ed6be93d405b43ff159f681a8d18c0e2bc2e402
+#10 resolve docker.io/library/node:22-alpine3.24@sha256:0a7108bf6c7bf5de370ffb1a3ed6be93d405b43ff159f681a8d18c0e2bc2e402 0.0s done
+#10 DONE 0.0s
+
+#11 [internal] load build context
+#11 transferring context: 9.99MB 0.1s done
+#11 DONE 0.2s
+
+#12 [web 2/6] WORKDIR /build/web
+#12 CACHED
+
+#13 [web 3/6] COPY web/package*.json ./
+#13 CACHED
+
+#14 [web 4/6] RUN --mount=type=cache,target=/root/.npm npm ci
+#14 CACHED
+
+#15 [server 2/7] WORKDIR /build
+#15 CACHED
+
+#16 [server 3/7] COPY go.mod go.sum ./
+#16 CACHED
+
+#17 [server 4/7] RUN --mount=type=cache,target=/go/pkg/mod go mod download
+#17 CACHED
+
+#18 [web 5/6] COPY web/ ./
+#18 DONE 0.1s
+
+#19 [server 5/7] COPY . .
+#19 DONE 0.2s
+
+#20 [web 6/6] RUN npm run build
+#20 0.429 
+#20 0.429 > madi-web@0.4.0 build
+#20 0.429 > tsc -b && vite build
+#20 0.429 
+#20 7.799 vite v7.3.6 building client environment for production...
+#20 7.849 transforming...
+#20 19.24 ✓ 4719 modules transformed.
+#20 20.06 rendering chunks...
+#20 20.33 [plugin vite:reporter] 
+#20 20.33 (!) /build/web/src/review/DocumentRecovery.tsx is dynamically imported by /build/web/src/App.tsx but also statically imported by /build/web/src/DocumentPage.tsx, /build/web/src/navigation/DocumentActions.tsx, dynamic import will not move module into another chunk.
+#20 20.33 
+#20 20.56 computing gzip size...
+#20 20.64 dist/.gitkeep                                                       0.00 kB
+#20 20.64 dist/assets/pdfjs/cmaps/CNS2-V.bcmap                                0.09 kB
+#20 20.64 dist/assets/pdfjs/cmaps/Roman.bcmap                                 0.10 kB
+#20 20.64 dist/assets/pdfjs/cmaps/Katakana.bcmap                              0.10 kB
+#20 20.64 dist/assets/pdfjs/cmaps/ETenms-B5-H.bcmap                           0.10 kB
+#20 20.64 dist/assets/pdfjs/cmaps/UniJIS-UCS2-HW-H.bcmap                      0.12 kB
+#20 20.64 dist/assets/pdfjs/cmaps/Hiragana.bcmap                              0.12 kB
+#20 20.64 dist/assets/pdfjs/cmaps/Hankaku.bcmap                               0.13 kB
+#20 20.64 dist/assets/pdfjs/cmaps/B5-V.bcmap                                  0.14 kB
+#20 20.64 dist/assets/pdfjs/cmaps/CNS1-V.bcmap                                0.14 kB
+#20 20.64 dist/assets/pdfjs/cmaps/B5pc-V.bcmap                                0.14 kB
+#20 20.64 dist/assets/pdfjs/cmaps/HKdla-B5-V.bcmap                            0.15 kB
+#20 20.64 dist/assets/pdfjs/cmaps/HKdlb-B5-V.bcmap                            0.15 kB
+#20 20.64 dist/assets/pdfjs/cmaps/HKgccs-B5-V.bcmap                           0.15 kB
+#20 20.64 dist/assets/pdfjs/cmaps/HKm314-B5-V.bcmap                           0.15 kB
+#20 20.64 dist/assets/pdfjs/cmaps/HKm471-B5-V.bcmap                           0.15 kB
+#20 20.64 dist/assets/pdfjs/cmaps/UniCNS-UCS2-V.bcmap                         0.16 kB
+#20 20.64 dist/assets/pdfjs/cmaps/UniCNS-UTF16-V.bcmap                        0.16 kB
+#20 20.64 dist/assets/pdfjs/cmaps/UniCNS-UTF8-V.bcmap                         0.16 kB
+#20 20.64 dist/assets/pdfjs/cmaps/ETHK-B5-V.bcmap                             0.16 kB
+#20 20.64 dist/assets/pdfjs/cmaps/ETen-B5-V.bcmap                             0.16 kB
+#20 20.64 dist/assets/pdfjs/cmaps/HKscs-B5-V.bcmap                            0.16 kB
+#20 20.64 dist/assets/pdfjs/cmaps/KSC-V.bcmap                                 0.16 kB
+#20 20.64 dist/assets/pdfjs/cmaps/UniCNS-UTF32-V.bcmap                        0.16 kB
+#20 20.64 dist/assets/pdfjs/cmaps/KSC-EUC-V.bcmap                             0.16 kB
+#20 20.64 dist/assets/pdfjs/cmaps/UniKS-UTF16-V.bcmap                         0.16 kB
+#20 20.64 dist/assets/pdfjs/cmaps/KSC-Johab-V.bcmap                           0.17 kB
+#20 20.64 dist/assets/pdfjs/cmaps/KSCms-UHC-V.bcmap                           0.17 kB
+#20 20.64 dist/assets/pdfjs/cmaps/KSCpc-EUC-V.bcmap                           0.17 kB
+#20 20.64 dist/assets/pdfjs/cmaps/V.bcmap                                     0.17 kB
+#20 20.64 dist/assets/pdfjs/cmaps/UniKS-UTF32-V.bcmap                         0.17 kB
+#20 20.64 dist/assets/pdfjs/cmaps/78-V.bcmap                                  0.17 kB
+#20 20.64 dist/assets/pdfjs/cmaps/KSCms-UHC-HW-V.bcmap                        0.17 kB
+#20 20.64 dist/assets/pdfjs/cmaps/UniKS-UTF8-V.bcmap                          0.17 kB
+#20 20.64 dist/assets/pdfjs/cmaps/EUC-V.bcmap                                 0.17 kB
+#20 20.64 dist/assets/pdfjs/cmaps/RKSJ-V.bcmap                                0.17 kB
+#20 20.64 dist/assets/pdfjs/cmaps/ETenms-B5-V.bcmap                           0.17 kB
+#20 20.64 dist/assets/pdfjs/cmaps/78-EUC-V.bcmap                              0.17 kB
+#20 20.64 dist/assets/pdfjs/cmaps/78-RKSJ-V.bcmap                             0.17 kB
+#20 20.64 dist/assets/pdfjs/cmaps/GB-V.bcmap                                  0.18 kB
+#20 20.64 dist/assets/pdfjs/cmaps/GBT-V.bcmap                                 0.18 kB
+#20 20.64 dist/assets/pdfjs/cmaps/UniGB-UTF16-V.bcmap                         0.18 kB
+#20 20.64 dist/assets/pdfjs/cmaps/UniKS-UCS2-V.bcmap                          0.18 kB
+#20 20.64 dist/assets/pdfjs/cmaps/GB-EUC-V.bcmap                              0.18 kB
+#20 20.64 dist/assets/pdfjs/cmaps/WP-Symbol.bcmap                             0.18 kB
+#20 20.64 dist/assets/pdfjs/cmaps/GBK-EUC-V.bcmap                             0.18 kB
+#20 20.64 dist/assets/pdfjs/cmaps/GBT-EUC-V.bcmap                             0.18 kB
+#20 20.64 dist/assets/pdfjs/cmaps/GBKp-EUC-V.bcmap                            0.18 kB
+#20 20.64 dist/assets/pdfjs/cmaps/GBpc-EUC-V.bcmap                            0.18 kB
+#20 20.64 dist/assets/pdfjs/cmaps/UniGB-UTF8-V.bcmap                          0.18 kB
+#20 20.64 dist/assets/pdfjs/cmaps/GBTpc-EUC-V.bcmap                           0.18 kB
+#20 20.64 dist/assets/pdfjs/cmaps/UniGB-UTF32-V.bcmap                         0.18 kB
+#20 20.64 dist/assets/pdfjs/cmaps/UniGB-UCS2-V.bcmap                          0.19 kB
+#20 20.64 dist/assets/pdfjs/cmaps/Ext-V.bcmap                                 0.22 kB
+#20 20.64 dist/assets/pdfjs/cmaps/Adobe-GB1-0.bcmap                           0.22 kB
+#20 20.64 dist/assets/pdfjs/cmaps/Ext-RKSJ-V.bcmap                            0.22 kB
+#20 20.64 dist/assets/pdfjs/cmaps/GBK2K-V.bcmap                               0.22 kB
+#20 20.64 dist/assets/pdfjs/cmaps/Adobe-Japan1-0.bcmap                        0.23 kB
+#20 20.64 dist/assets/pdfjs/cmaps/Adobe-Japan1-1.bcmap                        0.23 kB
+#20 20.64 dist/assets/pdfjs/cmaps/Adobe-Japan1-2.bcmap                        0.23 kB
+#20 20.64 dist/assets/pdfjs/cmaps/Adobe-Korea1-0.bcmap                        0.24 kB
+#20 20.64 dist/assets/pdfjs/cmaps/Adobe-Japan1-3.bcmap                        0.24 kB
+#20 20.64 dist/assets/pdfjs/cmaps/Adobe-GB1-1.bcmap                           0.25 kB
+#20 20.64 dist/assets/pdfjs/cmaps/NWP-V.bcmap                                 0.25 kB
+#20 20.64 dist/assets/pdfjs/cmaps/90pv-RKSJ-V.bcmap                           0.26 kB
+#20 20.64 dist/assets/pdfjs/cmaps/Add-V.bcmap                                 0.28 kB
+#20 20.64 dist/assets/pdfjs/cmaps/Add-RKSJ-V.bcmap                            0.29 kB
+#20 20.64 dist/assets/pdfjs/cmaps/78ms-RKSJ-V.bcmap                           0.29 kB
+#20 20.64 dist/assets/pdfjs/cmaps/90ms-RKSJ-V.bcmap                           0.29 kB
+#20 20.64 dist/assets/pdfjs/cmaps/90msp-RKSJ-V.bcmap                          0.29 kB
+#20 20.64 dist/assets/pdfjs/cmaps/Adobe-CNS1-0.bcmap                          0.32 kB
+#20 20.64 dist/assets/pdfjs/cmaps/Adobe-Japan1-4.bcmap                        0.34 kB
+#20 20.64 dist/assets/pdfjs/cmaps/Adobe-CNS1-1.bcmap                          0.37 kB
+#20 20.64 dist/assets/pdfjs/cmaps/Adobe-CNS1-2.bcmap                          0.38 kB
+#20 20.64 dist/assets/pdfjs/cmaps/Adobe-Korea1-1.bcmap                        0.39 kB
+#20 20.64 dist/assets/pdfjs/cmaps/Adobe-Korea1-2.bcmap                        0.39 kB
+#20 20.64 dist/assets/pdfjs/cmaps/Adobe-CNS1-3.bcmap                          0.40 kB
+#20 20.64 dist/assets/pdfjs/cmaps/Adobe-CNS1-4.bcmap                          0.41 kB
+#20 20.64 dist/assets/pdfjs/cmaps/Adobe-CNS1-5.bcmap                          0.41 kB
+#20 20.64 dist/assets/pdfjs/cmaps/Adobe-CNS1-6.bcmap                          0.41 kB
+#20 20.64 dist/assets/pdfjs/cmaps/Adobe-Japan1-5.bcmap                        0.43 kB
+#20 20.64 dist/assets/pdfjs/cmaps/Adobe-GB1-2.bcmap                           0.47 kB
+#20 20.64 dist/assets/pdfjs/cmaps/Adobe-GB1-3.bcmap                           0.47 kB
+#20 20.64 dist/assets/pdfjs/cmaps/Adobe-Japan1-6.bcmap                        0.49 kB
+#20 20.64 dist/assets/pdfjs/cmaps/CNS2-H.bcmap                                0.50 kB
+#20 20.64 dist/assets/pdfjs/cmaps/GB-H.bcmap                                  0.53 kB
+#20 20.64 dist/assets/pdfjs/cmaps/RKSJ-H.bcmap                                0.53 kB
+#20 20.64 dist/assets/pdfjs/cmaps/GB-EUC-H.bcmap                              0.55 kB
+#20 20.64 dist/assets/pdfjs/cmaps/H.bcmap                                     0.55 kB
+#20 20.64 dist/assets/pdfjs/wasm/LICENSE_PDFJS_JBIG2                          0.56 kB
+#20 20.64 dist/assets/pdfjs/cmaps/GBpc-EUC-H.bcmap                            0.56 kB
+#20 20.64 dist/assets/pdfjs/cmaps/EUC-H.bcmap                                 0.58 kB
+#20 20.64 dist/assets/pdfjs/cmaps/Adobe-GB1-4.bcmap                           0.60 kB
+#20 20.64 dist/assets/pdfjs/cmaps/Adobe-GB1-5.bcmap                           0.63 kB
+#20 20.64 dist/assets/pdfjs/cmaps/UniJIS-UTF16-V.bcmap                        0.64 kB
+#20 20.64 dist/assets/pdfjs/cmaps/UniJIS2004-UTF16-V.bcmap                    0.65 kB
+#20 20.64 dist/assets/pdfjs/cmaps/UniJIS-UCS2-V.bcmap                         0.66 kB
+#20 20.64 dist/assets/pdfjs/cmaps/UniJIS-UTF32-V.bcmap                        0.68 kB
+#20 20.64 dist/assets/pdfjs/cmaps/UniJIS-UTF8-V.bcmap                         0.68 kB
+#20 20.64 dist/assets/pdfjs/cmaps/UniJIS-UCS2-HW-V.bcmap                      0.68 kB
+#20 20.64 dist/assets/pdfjs/cmaps/UniJIS2004-UTF32-V.bcmap                    0.68 kB
+#20 20.64 dist/assets/pdfjs/cmaps/UniJIS2004-UTF8-V.bcmap                     0.68 kB
+#20 20.64 dist/assets/pdfjs/cmaps/UniJISX0213-UTF32-V.bcmap                   0.68 kB
+#20 20.64 dist/assets/pdfjs/cmaps/UniJISX02132004-UTF32-V.bcmap               0.69 kB
+#20 20.64 dist/assets/pdfjs/cmaps/UniJISPro-UCS2-V.bcmap                      0.69 kB
+#20 20.64 dist/assets/pdfjs/cmaps/UniJISPro-UCS2-HW-V.bcmap                   0.71 kB
+#20 20.64 dist/assets/pdfjs/cmaps/CNS1-H.bcmap                                0.71 kB
+#20 20.64 dist/assets/pdfjs/cmaps/90msp-RKSJ-H.bcmap                          0.72 kB
+#20 20.64 dist/assets/pdfjs/cmaps/90ms-RKSJ-H.bcmap                           0.72 kB
+#20 20.64 dist/assets/pdfjs/cmaps/UniJISPro-UTF8-V.bcmap                      0.73 kB
+#20 20.64 dist/offline.html                                                   0.78 kB │ gzip:   0.43 kB
+#20 20.64 dist/index.html                                                     0.80 kB │ gzip:   0.49 kB
+#20 20.64 dist/assets/pdfjs/cmaps/83pv-RKSJ-H.bcmap                           0.91 kB
+#20 20.64 dist/assets/pdfjs/cmaps/90pv-RKSJ-H.bcmap                           0.98 kB
+#20 20.64 dist/assets/pdfjs/wasm/LICENSE_PDFJS_QCMS                           1.04 kB
+#20 20.64 dist/assets/pdfjs/cmaps/B5-H.bcmap                                  1.09 kB
+#20 20.64 dist/assets/pdfjs/cmaps/B5pc-H.bcmap                                1.10 kB
+#20 20.64 dist/assets/pdfjs/wasm/LICENSE_QCMS                                 1.12 kB
+#20 20.64 dist/assets/pdfjs/cmaps/ETen-B5-H.bcmap                             1.13 kB
+#20 20.64 dist/assets/pdfjs/wasm/LICENSE_PDFJS_OPENJPEG                       1.29 kB
+#20 20.64 dist/assets/pdfjs/standard_fonts/LICENSE_FOXIT                      1.55 kB
+#20 20.64 dist/assets/pdfjs/cmaps/HKm314-B5-H.bcmap                           1.77 kB
+#20 20.64 dist/assets/pdfjs/cmaps/CNS-EUC-H.bcmap                             1.78 kB
+#20 20.64 dist/assets/pdfjs/cmaps/KSC-H.bcmap                                 1.83 kB
+#20 20.64 dist/assets/pdfjs/cmaps/KSC-EUC-H.bcmap                             1.85 kB
+#20 20.64 dist/assets/pdfjs/cmaps/CNS-EUC-V.bcmap                             1.92 kB
+#20 20.64 dist/assets/pdfjs/cmaps/KSCpc-EUC-H.bcmap                           2.02 kB
+#20 20.64 dist/assets/pdfjs/cmaps/LICENSE                                     2.08 kB
+#20 20.64 dist/assets/pdfjs/wasm/LICENSE_OPENJPEG                             2.11 kB
+#20 20.64 dist/assets/pdfjs/cmaps/HKm471-B5-H.bcmap                           2.17 kB
+#20 20.64 dist/assets/pdfjs/cmaps/HKgccs-B5-H.bcmap                           2.29 kB
+#20 20.64 dist/assets/pdfjs/cmaps/78-H.bcmap                                  2.38 kB
+#20 20.64 dist/assets/pdfjs/cmaps/78-RKSJ-H.bcmap                             2.40 kB
+#20 20.64 dist/assets/pdfjs/cmaps/78-EUC-H.bcmap                              2.40 kB
+#20 20.64 dist/assets/pdfjs/cmaps/Add-RKSJ-H.bcmap                            2.41 kB
+#20 20.64 dist/assets/pdfjs/cmaps/HKdlb-B5-H.bcmap                            2.41 kB
+#20 20.64 dist/assets/pdfjs/cmaps/Add-H.bcmap                                 2.42 kB
+#20 20.64 dist/assets/pdfjs/cmaps/Ext-H.bcmap                                 2.54 kB
+#20 20.64 dist/assets/pdfjs/cmaps/Ext-RKSJ-H.bcmap                            2.54 kB
+#20 20.64 dist/assets/pdfjs/cmaps/78ms-RKSJ-H.bcmap                           2.65 kB
+#20 20.64 dist/assets/pdfjs/cmaps/HKdla-B5-H.bcmap                            2.65 kB
+#20 20.64 dist/assets/pdfjs/cmaps/NWP-H.bcmap                                 2.77 kB
+#20 20.64 dist/assets/pdfjs/cmaps/KSCms-UHC-H.bcmap                           2.79 kB
+#20 20.64 dist/assets/pdfjs/cmaps/KSCms-UHC-HW-H.bcmap                        2.79 kB
+#20 20.64 dist/assets/KaTeX_Size3-Regular-CTq5MqoE.woff                       4.42 kB
+#20 20.64 dist/assets/pdfjs/cmaps/ETHK-B5-H.bcmap                             4.43 kB
+#20 20.64 dist/assets/pdfjs/cmaps/HKscs-B5-H.bcmap                            4.44 kB
+#20 20.64 dist/assets/KaTeX_Size4-Regular-Dl5lxZxV.woff2                      4.93 kB
+#20 20.64 dist/assets/KaTeX_Size2-Regular-Dy4dx90m.woff2                      5.21 kB
+#20 20.64 dist/assets/KaTeX_Size1-Regular-mCD8mA8B.woff2                      5.47 kB
+#20 20.64 dist/assets/KaTeX_Size4-Regular-BF-4gkZK.woff                       5.98 kB
+#20 20.64 dist/assets/KaTeX_Size2-Regular-oD1tc_U0.woff                       6.19 kB
+#20 20.64 dist/assets/KaTeX_Size1-Regular-C195tn64.woff                       6.50 kB
+#20 20.64 dist/assets/KaTeX_Caligraphic-Regular-Di6jR-x-.woff2                6.91 kB
+#20 20.64 dist/assets/KaTeX_Caligraphic-Bold-Dq_IR9rO.woff2                   6.91 kB
+#20 20.64 dist/assets/pdfjs/cmaps/GBT-H.bcmap                                 7.27 kB
+#20 20.64 dist/assets/pdfjs/cmaps/GBT-EUC-H.bcmap                             7.29 kB
+#20 20.64 dist/assets/pdfjs/cmaps/GBTpc-EUC-H.bcmap                           7.30 kB
+#20 20.64 dist/assets/KaTeX_Size3-Regular-DgpXs0kz.ttf                        7.59 kB
+#20 20.64 dist/assets/KaTeX_Caligraphic-Regular-CTRA-rTL.woff                 7.66 kB
+#20 20.64 dist/assets/KaTeX_Caligraphic-Bold-BEiXGLvX.woff                    7.72 kB
+#20 20.64 dist/assets/noto-sans-kr-latin-ext-wght-normal-B5bX9d3o.woff2       8.30 kB
+#20 20.64 dist/assets/transfer-archive.worker-CVbPJpnF.js                     9.00 kB
+#20 20.64 dist/assets/noto-sans-kr-vietnamese-wght-normal-BHUVOYrQ.woff2      9.17 kB
+#20 20.64 dist/assets/KaTeX_Script-Regular-D3wIWfF6.woff2                     9.64 kB
+#20 20.64 dist/assets/noto-sans-kr-cyrillic-wght-normal-Bd4ZsfxM.woff2       10.12 kB
+#20 20.64 dist/assets/KaTeX_SansSerif-Regular-DDBCnlJ7.woff2                 10.34 kB
+#20 20.64 dist/assets/KaTeX_Size4-Regular-DWFBv043.ttf                       10.36 kB
+#20 20.64 dist/assets/KaTeX_Script-Regular-D5yQViql.woff                     10.59 kB
+#20 20.64 dist/assets/KaTeX_Fraktur-Regular-CTYiF6lA.woff2                   11.32 kB
+#20 20.64 dist/assets/KaTeX_Fraktur-Bold-CL6g_b3V.woff2                      11.35 kB
+#20 20.64 dist/assets/KaTeX_Size2-Regular-B7gKUWhC.ttf                       11.51 kB
+#20 20.64 dist/assets/KaTeX_SansSerif-Italic-C3H0VqGB.woff2                  12.03 kB
+#20 20.64 dist/assets/noto-sans-kr-98-wght-normal-DO7crlgc.woff2             12.18 kB
+#20 20.64 dist/assets/KaTeX_SansSerif-Bold-D1sUS0GD.woff2                    12.22 kB
+#20 20.64 dist/assets/KaTeX_Size1-Regular-Dbsnue_I.ttf                       12.23 kB
+#20 20.64 dist/assets/KaTeX_SansSerif-Regular-CS6fqUqJ.woff                  12.32 kB
+#20 20.64 dist/assets/KaTeX_Caligraphic-Regular-wX97UBjC.ttf                 12.34 kB
+#20 20.64 dist/assets/KaTeX_Caligraphic-Bold-ATXxdsX0.ttf                    12.37 kB
+#20 20.64 dist/assets/pdfjs/wasm/LICENSE_JBIG2                               12.86 kB
+#20 20.64 dist/assets/KaTeX_Fraktur-Regular-Dxdc4cR9.woff                    13.21 kB
+#20 20.64 dist/assets/KaTeX_Fraktur-Bold-BsDP51OF.woff                       13.30 kB
+#20 20.64 dist/assets/KaTeX_Typewriter-Regular-CO6r4hn1.woff2                13.57 kB
+#20 20.64 dist/assets/KaTeX_SansSerif-Italic-DN2j7dab.woff                   14.11 kB
+#20 20.64 dist/assets/noto-sans-kr-97-wght-normal-Dr2ufsTl.woff2             14.18 kB
+#20 20.64 dist/assets/KaTeX_SansSerif-Bold-DbIhKOiC.woff                     14.41 kB
+#20 20.64 dist/assets/noto-sans-kr-117-wght-normal-DNkILo1k.woff2            14.46 kB
+#20 20.64 dist/assets/noto-sans-kr-118-wght-normal-Be8jlQ51.woff2            14.66 kB
+#20 20.64 dist/assets/pdfjs/cmaps/GBKp-EUC-H.bcmap                           14.69 kB
+#20 20.64 dist/assets/pdfjs/cmaps/GBK-EUC-H.bcmap                            14.69 kB
+#20 20.64 dist/assets/distribution-archive.worker-ChSp0R1j.js                15.80 kB
+#20 20.64 dist/assets/KaTeX_Typewriter-Regular-C0xS9mPB.woff                 16.03 kB
+#20 20.64 dist/assets/noto-sans-kr-116-wght-normal-DvHAaAUg.woff2            16.20 kB
+#20 20.64 dist/assets/noto-sans-kr-114-wght-normal-BcwVxkxL.woff2            16.21 kB
+#20 20.64 dist/assets/noto-sans-kr-115-wght-normal-Czx6kN3B.woff2            16.27 kB
+#20 20.64 dist/assets/KaTeX_Math-BoldItalic-CZnvNsCZ.woff2                   16.40 kB
+#20 20.64 dist/assets/KaTeX_Math-Italic-t53AETM-.woff2                       16.44 kB
+#20 20.64 dist/assets/noto-sans-kr-112-wght-normal-DApkhTZy.woff2            16.45 kB
+#20 20.64 dist/assets/noto-sans-kr-113-wght-normal-DnhzVD4m.woff2            16.46 kB
+#20 20.64 dist/assets/KaTeX_Script-Regular-C5JkGWo-.ttf                      16.65 kB
+#20 20.64 dist/assets/noto-sans-kr-119-wght-normal-C_6m2-od.woff2            16.68 kB
+#20 20.64 dist/assets/noto-sans-kr-38-wght-normal-D7aEX-Z7.woff2             16.69 kB
+#20 20.64 dist/assets/pdfjs/standard_fonts/FoxitSymbol.pfb                   16.73 kB
+#20 20.64 dist/assets/KaTeX_Main-BoldItalic-DxDJ3AOS.woff2                   16.78 kB
+#20 20.64 dist/assets/pdfjs/cmaps/KSC-Johab-H.bcmap                          16.79 kB
+#20 20.64 dist/assets/noto-sans-kr-99-wght-normal-DzzxDKB5.woff2             16.89 kB
+#20 20.64 dist/assets/KaTeX_Main-Italic-NWA7e6Wa.woff2                       16.99 kB
+#20 20.64 dist/assets/noto-sans-kr-111-wght-normal-DeeXajyY.woff2            17.46 kB
+#20 20.64 dist/assets/pdfjs/standard_fonts/FoxitFixed.pfb                    17.60 kB
+#20 20.64 dist/assets/noto-sans-kr-110-wght-normal-Bz2J7MHi.woff2            17.61 kB
+#20 20.64 dist/assets/pdfjs/standard_fonts/FoxitFixedBold.pfb                18.06 kB
+#20 20.64 dist/assets/noto-sans-kr-109-wght-normal-B6hzfDSQ.woff2            18.06 kB
+#20 20.64 dist/assets/noto-sans-kr-41-wght-normal-CrDDFHLC.woff2             18.14 kB
+#20 20.64 dist/assets/noto-sans-kr-107-wght-normal-CWnd6wcQ.woff2            18.42 kB
+#20 20.64 dist/assets/noto-sans-kr-44-wght-normal-BOzNPFw1.woff2             18.50 kB
+#20 20.64 dist/assets/noto-sans-kr-64-wght-normal-KNqhDR8m.woff2             18.58 kB
+#20 20.64 dist/assets/KaTeX_Math-BoldItalic-iY-2wyZ7.woff                    18.67 kB
+#20 20.64 dist/assets/pdfjs/standard_fonts/FoxitFixedItalic.pfb              18.75 kB
+#20 20.64 dist/assets/KaTeX_Math-Italic-DA0__PXp.woff                        18.75 kB
+#20 20.64 dist/assets/pdfjs/standard_fonts/FoxitFixedBoldItalic.pfb          19.15 kB
+#20 20.64 dist/assets/pdfjs/standard_fonts/FoxitSerifBold.pfb                19.40 kB
+#20 20.64 dist/assets/KaTeX_Main-BoldItalic-SpSLRI95.woff                    19.41 kB
+#20 20.64 dist/assets/noto-sans-kr-94-wght-normal-ihdiE-sw.woff2             19.42 kB
+#20 20.64 dist/assets/KaTeX_SansSerif-Regular-BNo7hRIc.ttf                   19.44 kB
+#20 20.64 dist/assets/pdfjs/standard_fonts/FoxitSerif.pfb                    19.47 kB
+#20 20.64 dist/assets/KaTeX_Fraktur-Regular-CB_wures.ttf                     19.57 kB
+#20 20.64 dist/assets/KaTeX_Fraktur-Bold-BdnERNNW.ttf                        19.58 kB
+#20 20.64 dist/assets/pdfjs/cmaps/GBK2K-H.bcmap                              19.66 kB
+#20 20.64 dist/assets/noto-sans-kr-108-wght-normal-CVosuT20.woff2            19.67 kB
+#20 20.64 dist/assets/KaTeX_Main-Italic-BMLOBm91.woff                        19.68 kB
+#20 20.64 dist/assets/noto-sans-kr-45-wght-normal-HgLQPnZe.woff2             19.74 kB
+#20 20.64 dist/assets/noto-sans-kr-51-wght-normal-DYiiYWHC.woff2             19.74 kB
+#20 20.64 dist/assets/noto-sans-kr-8-wght-normal-CstSMSR0.woff2              19.83 kB
+#20 20.64 dist/assets/noto-sans-kr-25-wght-normal-pcUlc7hZ.woff2             19.88 kB
+#20 20.64 dist/assets/noto-sans-kr-11-wght-normal-DnDO1vGF.woff2             20.16 kB
+#20 20.64 dist/assets/noto-sans-kr-42-wght-normal-_xElrv31.woff2             20.23 kB
+#20 20.64 dist/assets/noto-sans-kr-10-wght-normal-D44PZdTN.woff2             20.49 kB
+#20 20.64 dist/assets/noto-sans-kr-6-wght-normal-CJnF25Ox.woff2              20.60 kB
+#20 20.64 dist/assets/noto-sans-kr-55-wght-normal-Bb2kolOu.woff2             20.70 kB
+#20 20.64 dist/assets/pdfjs/standard_fonts/FoxitSerifBoldItalic.pfb          20.73 kB
+#20 20.64 dist/assets/noto-sans-kr-5-wght-normal-D2ndBBlz.woff2              20.78 kB
+#20 20.64 dist/assets/noto-sans-kr-46-wght-normal-B8aQM0KO.woff2             20.92 kB
+#20 20.64 dist/assets/noto-sans-kr-40-wght-normal-B6XNibcs.woff2             20.98 kB
+#20 20.64 dist/assets/noto-sans-kr-7-wght-normal-CImCbZMD.woff2              21.01 kB
+#20 20.64 dist/assets/noto-sans-kr-63-wght-normal-Cc2PlhZU.woff2             21.04 kB
+#20 20.64 dist/assets/noto-sans-kr-54-wght-normal-Dh8YqAZX.woff2             21.08 kB
+#20 20.64 dist/assets/noto-sans-kr-53-wght-normal-D_jDj1TO.woff2             21.11 kB
+#20 20.64 dist/assets/pdfjs/standard_fonts/FoxitSerifItalic.pfb              21.23 kB
+#20 20.64 dist/assets/noto-sans-kr-37-wght-normal-D0Nod484.woff2             21.28 kB
+#20 20.64 dist/assets/noto-sans-kr-96-wght-normal-BsiGrPsV.woff2             21.32 kB
+#20 20.64 dist/assets/noto-sans-kr-57-wght-normal-B8WEhlXz.woff2             21.33 kB
+#20 20.64 dist/assets/noto-sans-kr-36-wght-normal-BQ3DsEFp.woff2             21.36 kB
+#20 20.64 dist/assets/noto-sans-kr-35-wght-normal-CNljDv8x.woff2             21.36 kB
+#20 20.64 dist/assets/noto-sans-kr-48-wght-normal-Ds0KCpXR.woff2             21.41 kB
+#20 20.64 dist/assets/noto-sans-kr-56-wght-normal-C-IXS01q.woff2             21.42 kB
+#20 20.64 dist/assets/noto-sans-kr-39-wght-normal-QVs81SbT.woff2             21.44 kB
+#20 20.64 dist/assets/noto-sans-kr-43-wght-normal-D4Z4qIjx.woff2             21.47 kB
+#20 20.64 dist/assets/noto-sans-kr-50-wght-normal-C8Hs8Bel.woff2             21.50 kB
+#20 20.64 dist/assets/noto-sans-kr-16-wght-normal-D7pAhItn.woff2             21.50 kB
+#20 20.64 dist/assets/noto-sans-kr-34-wght-normal-Dn9wUbC5.woff2             21.56 kB
+#20 20.64 dist/assets/noto-sans-kr-18-wght-normal-B_Xt9mRz.woff2             21.66 kB
+#20 20.64 dist/assets/noto-sans-kr-28-wght-normal-COQop0OG.woff2             21.95 kB
+#20 20.64 dist/assets/noto-sans-kr-62-wght-normal-Brkp78oR.woff2             21.95 kB
+#20 20.64 dist/assets/noto-sans-kr-58-wght-normal-CPkb-af3.woff2             22.05 kB
+#20 20.64 dist/assets/noto-sans-kr-14-wght-normal-BtTu50RG.woff2             22.10 kB
+#20 20.64 dist/assets/pdfjs/standard_fonts/LICENSE_LIBERATION                22.15 kB
+#20 20.64 dist/assets/noto-sans-kr-47-wght-normal-CisIuWX8.woff2             22.20 kB
+#20 20.64 dist/assets/noto-sans-kr-21-wght-normal-CuThq_3_.woff2             22.27 kB
+#20 20.64 dist/assets/noto-sans-kr-52-wght-normal-RCgHYf1C.woff2             22.29 kB
+#20 20.64 dist/assets/KaTeX_SansSerif-Italic-YYjJ1zSn.ttf                    22.36 kB
+#20 20.64 dist/assets/noto-sans-kr-9-wght-normal-Dc1zs_Pa.woff2              22.40 kB
+#20 20.64 dist/assets/noto-sans-kr-13-wght-normal-olvHB9I9.woff2             22.67 kB
+#20 20.64 dist/assets/noto-sans-kr-12-wght-normal-gICIGsXI.woff2             22.71 kB
+#20 20.64 dist/assets/noto-sans-kr-15-wght-normal-CxFswjwr.woff2             22.76 kB
+#20 20.64 dist/assets/noto-sans-kr-49-wght-normal-BC5F4RRq.woff2             22.84 kB
+#20 20.64 dist/assets/noto-sans-kr-29-wght-normal-Bwniia0r.woff2             23.14 kB
+#20 20.64 dist/assets/pdfjs/cmaps/Adobe-Korea1-UCS2.bcmap                    23.29 kB
+#20 20.64 dist/assets/noto-sans-kr-4-wght-normal-MlF4wjtz.woff2              23.34 kB
+#20 20.64 dist/assets/noto-sans-kr-22-wght-normal-D-9XnguA.woff2             23.54 kB
+#20 20.64 dist/assets/noto-sans-kr-30-wght-normal-BNXqYhtq.woff2             23.55 kB
+#20 20.64 dist/assets/noto-sans-kr-17-wght-normal-CcMq9J3c.woff2             23.59 kB
+#20 20.64 dist/assets/noto-sans-kr-31-wght-normal-BoAdonrH.woff2             23.64 kB
+#20 20.64 dist/assets/noto-sans-kr-61-wght-normal-C9Nbt4dY.woff2             23.80 kB
+#20 20.64 dist/assets/noto-sans-kr-23-wght-normal-CsoKTgIH.woff2             24.07 kB
+#20 20.64 dist/assets/noto-sans-kr-103-wght-normal-C9B_csKo.woff2            24.40 kB
+#20 20.64 dist/assets/noto-sans-kr-27-wght-normal-BYvOljic.woff2             24.48 kB
+#20 20.64 dist/assets/KaTeX_SansSerif-Bold-CFMepnvq.ttf                      24.50 kB
+#20 20.64 dist/assets/noto-sans-kr-60-wght-normal-DriWx1rc.woff2             24.51 kB
+#20 20.64 dist/assets/noto-sans-kr-106-wght-normal-DCG_yG2L.woff2            24.75 kB
+#20 20.64 dist/assets/noto-sans-kr-3-wght-normal-DZIqdvJw.woff2              24.79 kB
+#20 20.64 dist/assets/noto-sans-kr-19-wght-normal-DicL0vd6.woff2             25.16 kB
+#20 20.64 dist/assets/noto-sans-kr-33-wght-normal-DMSZNpMD.woff2             25.17 kB
+#20 20.64 dist/assets/noto-sans-kr-105-wght-normal-Bwk-4itQ.woff2            25.23 kB
+#20 20.64 dist/assets/noto-sans-kr-59-wght-normal-C4laA72l.woff2             25.25 kB
+#20 20.64 dist/assets/KaTeX_Main-Bold-Cx986IdX.woff2                         25.32 kB
+#20 20.64 dist/assets/pdfjs/cmaps/UniJIS-UCS2-H.bcmap                        25.44 kB
+#20 20.64 dist/assets/noto-sans-kr-24-wght-normal-CVm75uzf.woff2             25.47 kB
+#20 20.64 dist/assets/noto-sans-kr-102-wght-normal-DPlG-Gq_.woff2            25.58 kB
+#20 20.64 dist/assets/noto-sans-kr-26-wght-normal-gwaK2bp7.woff2             25.64 kB
+#20 20.64 dist/assets/pdfjs/cmaps/UniKS-UCS2-H.bcmap                         25.78 kB
+#20 20.64 dist/assets/noto-sans-kr-20-wght-normal-PxcBBeNg.woff2             25.91 kB
+#20 20.64 dist/assets/noto-sans-kr-latin-wght-normal-CZ1P3i-_.woff2          26.00 kB
+#20 20.64 dist/assets/noto-sans-kr-101-wght-normal-yIk-xkbt.woff2            26.08 kB
+#20 20.64 dist/sw.js                                                         26.11 kB
+#20 20.65 dist/assets/noto-sans-kr-100-wght-normal-BUnzX67h.woff2            26.27 kB
+#20 20.65 dist/assets/KaTeX_Main-Regular-B22Nviop.woff2                      26.27 kB
+#20 20.65 dist/assets/pdfjs/cmaps/UniKS-UTF16-H.bcmap                        26.33 kB
+#20 20.65 dist/assets/noto-sans-kr-32-wght-normal-BREiG6LA.woff2             26.40 kB
+#20 20.65 dist/assets/pdfjs/cmaps/UniKS-UTF32-H.bcmap                        26.45 kB
+#20 20.65 dist/assets/KaTeX_Typewriter-Regular-D3Ib7_Hf.ttf                  27.56 kB
+#20 20.65 dist/assets/pdfjs/cmaps/UniKS-UTF8-H.bcmap                         27.79 kB
+#20 20.65 dist/assets/KaTeX_AMS-Regular-BQhdFMY1.woff2                       28.08 kB
+#20 20.65 dist/assets/noto-sans-kr-104-wght-normal-BV6o_vl3.woff2            28.69 kB
+#20 20.65 dist/assets/noto-sans-kr-93-wght-normal-LhQTABfI.woff2             29.06 kB
+#20 20.65 dist/assets/pdfjs/standard_fonts/FoxitDingbats.pfb                 29.51 kB
+#20 20.65 dist/assets/KaTeX_Main-Bold-Jm3AIy58.woff                          29.91 kB
+#20 20.65 dist/assets/KaTeX_Main-Regular-Dr94JaBh.woff                       30.77 kB
+#20 20.65 dist/assets/KaTeX_Math-BoldItalic-B3XSjfu4.ttf                     31.20 kB
+#20 20.65 dist/assets/KaTeX_Math-Italic-flOr_0UB.ttf                         31.31 kB
+#20 20.65 dist/assets/KaTeX_Main-BoldItalic-DzxPMmG6.ttf                     32.97 kB
+#20 20.65 dist/assets/KaTeX_AMS-Regular-DMm9YOAa.woff                        33.52 kB
+#20 20.65 dist/assets/KaTeX_Main-Italic-3WenGoN9.ttf                         33.58 kB
+#20 20.65 dist/assets/pdfjs/cmaps/Adobe-GB1-UCS2.bcmap                       33.97 kB
+#20 20.65 dist/assets/noto-sans-kr-0-wght-normal-D06yvloL.woff2              34.28 kB
+#20 20.65 dist/assets/noto-sans-kr-2-wght-normal-BlW3AcBF.woff2              35.98 kB
+#20 20.65 dist/assets/pdfjs/cmaps/UniJIS-UTF16-H.bcmap                       39.44 kB
+#20 20.65 dist/assets/pdfjs/cmaps/UniJIS2004-UTF16-H.bcmap                   39.53 kB
+#20 20.65 dist/assets/pdfjs/cmaps/UniJISX0213-UTF32-H.bcmap                  40.52 kB
+#20 20.65 dist/assets/pdfjs/cmaps/UniJIS-UTF32-H.bcmap                       40.54 kB
+#20 20.65 dist/assets/pdfjs/cmaps/UniJISX02132004-UTF32-H.bcmap              40.61 kB
+#20 20.65 dist/assets/pdfjs/cmaps/UniJIS2004-UTF32-H.bcmap                   40.63 kB
+#20 20.65 dist/assets/pdfjs/cmaps/Adobe-Japan1-UCS2.bcmap                    40.95 kB
+#20 20.65 dist/assets/noto-sans-kr-83-wght-normal-McHuBf-B.woff2             41.16 kB
+#20 20.65 dist/assets/pdfjs/cmaps/Adobe-CNS1-UCS2.bcmap                      41.19 kB
+#20 20.65 dist/assets/pdfjs/cmaps/UniJIS-UTF8-H.bcmap                        41.70 kB
+#20 20.65 dist/assets/pdfjs/cmaps/UniJIS2004-UTF8-H.bcmap                    41.78 kB
+#20 20.65 dist/assets/noto-sans-kr-90-wght-normal-lqvjLFoO.woff2             41.93 kB
+#20 20.65 dist/assets/noto-sans-kr-92-wght-normal-CfCk7nA7.woff2             42.69 kB
+#20 20.65 dist/assets/pdfjs/cmaps/UniGB-UCS2-H.bcmap                         43.37 kB
+#20 20.65 dist/assets/pdfjs/cmaps/UniGB-UTF16-H.bcmap                        44.09 kB
+#20 20.65 dist/assets/noto-sans-kr-91-wght-normal-DsGtjSva.woff2             44.99 kB
+#20 20.65 dist/assets/noto-sans-kr-87-wght-normal-CBZPTWsE.woff2             45.02 kB
+#20 20.65 dist/assets/noto-sans-kr-72-wght-normal-CYbqUrRD.woff2             45.52 kB
+#20 20.65 dist/assets/noto-sans-kr-89-wght-normal-D3Fd3_EL.woff2             45.53 kB
+#20 20.65 dist/assets/pdfjs/cmaps/UniGB-UTF32-H.bcmap                        45.74 kB
+#20 20.65 dist/assets/noto-sans-kr-88-wght-normal-_V-zytEf.woff2             46.46 kB
+#20 20.65 dist/assets/pdfjs/cmaps/UniGB-UTF8-H.bcmap                         46.84 kB
+#20 20.65 dist/assets/noto-sans-kr-70-wght-normal-BSMUUut2.woff2             47.28 kB
+#20 20.65 dist/assets/noto-sans-kr-81-wght-normal-DZCTVH03.woff2             48.02 kB
+#20 20.65 dist/assets/pdfjs/cmaps/UniCNS-UCS2-H.bcmap                        48.28 kB
+#20 20.65 dist/assets/noto-sans-kr-69-wght-normal-BReeBVHk.woff2             48.36 kB
+#20 20.65 dist/assets/noto-sans-kr-67-wght-normal-CWhGYJ2i.woff2             48.38 kB
+#20 20.65 dist/assets/noto-sans-kr-78-wght-normal-CxH4Pb6I.woff2             48.44 kB
+#20 20.65 dist/assets/noto-sans-kr-76-wght-normal-BRcUMWZ8.woff2             48.58 kB
+#20 20.65 dist/assets/noto-sans-kr-73-wght-normal-Dq-lIKz-.woff2             50.30 kB
+#20 20.65 dist/assets/pdfjs/cmaps/UniCNS-UTF16-H.bcmap                       50.42 kB
+#20 20.65 dist/assets/noto-sans-kr-82-wght-normal-CJo3UUYg.woff2             50.54 kB
+#20 20.65 dist/assets/noto-sans-kr-80-wght-normal-C5D21FTw.woff2             51.00 kB
+#20 20.65 dist/assets/KaTeX_Main-Bold-waoOVXN0.ttf                           51.34 kB
+#20 20.65 dist/assets/noto-sans-kr-86-wght-normal-B7E1-Ec0.woff2             51.62 kB
+#20 20.65 dist/assets/noto-sans-kr-68-wght-normal-BrksQ5yZ.woff2             51.74 kB
+#20 20.65 dist/assets/noto-sans-kr-85-wght-normal-BlAw-6qA.woff2             52.55 kB
+#20 20.65 dist/assets/noto-sans-kr-77-wght-normal-q_AHRG0H.woff2             52.61 kB
+#20 20.65 dist/assets/pdfjs/cmaps/UniCNS-UTF32-H.bcmap                       52.68 kB
+#20 20.65 dist/assets/noto-sans-kr-95-wght-normal-aqERMEsW.woff2             53.26 kB
+#20 20.65 dist/assets/KaTeX_Main-Regular-ypZvNtVU.ttf                        53.58 kB
+#20 20.65 dist/assets/pdfjs/cmaps/UniCNS-UTF8-H.bcmap                        53.63 kB
+#20 20.65 dist/assets/noto-sans-kr-74-wght-normal-Dsmj0w4F.woff2             54.44 kB
+#20 20.65 dist/assets/noto-sans-kr-84-wght-normal-DLV_AXtC.woff2             54.48 kB
+#20 20.65 dist/assets/noto-sans-kr-66-wght-normal-IxdJCmlc.woff2             56.06 kB
+#20 20.65 dist/assets/noto-sans-kr-1-wght-normal-Bqp_kP4o.woff2              56.20 kB
+#20 20.65 dist/assets/noto-sans-kr-75-wght-normal-JM9JBG-M.woff2             56.76 kB
+#20 20.65 dist/assets/noto-sans-kr-71-wght-normal-D9VPS-IJ.woff2             56.89 kB
+#20 20.65 dist/assets/noto-sans-kr-79-wght-normal-Bdi4I7EA.woff2             60.84 kB
+#20 20.65 dist/assets/KaTeX_AMS-Regular-DRggAlZN.ttf                         63.63 kB
+#20 20.65 dist/assets/noto-sans-kr-65-wght-normal-FHC1ZHx-.woff2             64.46 kB
+#20 20.65 dist/assets/pdfjs/wasm/qcms_bg.wasm                                96.59 kB │ gzip:  35.85 kB
+#20 20.65 dist/assets/pdfjs/wasm/jbig2.wasm                                 104.85 kB │ gzip:  40.49 kB
+#20 20.65 dist/assets/pdfjs/standard_fonts/LiberationSans-BoldItalic.ttf    135.12 kB
+#20 20.65 dist/assets/pdfjs/standard_fonts/LiberationSans-Bold.ttf          137.05 kB
+#20 20.65 dist/assets/pdfjs/standard_fonts/LiberationSans-Regular.ttf       139.51 kB
+#20 20.65 dist/assets/pdfjs/wasm/jbig2_nowasm_fallback.js                   145.70 kB
+#20 20.65 dist/assets/pdfjs/standard_fonts/LiberationSans-Italic.ttf        162.04 kB
+#20 20.65 dist/assets/pdfjs/wasm/openjpeg.wasm                              252.03 kB │ gzip:  83.01 kB
+#20 20.65 dist/assets/pdfjs/wasm/openjpeg_nowasm_fallback.js                451.59 kB
+#20 20.65 dist/assets/pdf.worker.min-Dswkl-cV.mjs                         1,265.41 kB
+#20 20.65 dist/assets/KnowledgeQuestionsPage-DS_DqpT5.css                     0.59 kB │ gzip:   0.27 kB
+#20 20.65 dist/assets/selection-ai-gAmTwZl5.css                               0.89 kB │ gzip:   0.40 kB
+#20 20.65 dist/assets/channel-settings-BmVeT8RC.css                           0.97 kB │ gzip:   0.49 kB
+#20 20.65 dist/assets/SearchHistoryPage-DOIUJjJZ.css                          1.03 kB │ gzip:   0.47 kB
+#20 20.65 dist/assets/AI-C7ZWoRTP.css                                         1.05 kB │ gzip:   0.39 kB
+#20 20.65 dist/assets/WorkspaceAuditPage-CVYMQW8S.css                         1.13 kB │ gzip:   0.46 kB
+#20 20.65 dist/assets/DocumentPreview-qgikPhtz.css                            1.14 kB │ gzip:   0.45 kB
+#20 20.65 dist/assets/evidence-B7tidFNl.css                                   1.14 kB │ gzip:   0.48 kB
+#20 20.65 dist/assets/distribution-BOYRGPje.css                               1.15 kB │ gzip:   0.46 kB
+#20 20.65 dist/assets/CollaborationDiagnostics-CVHHCs3u.css                   1.19 kB │ gzip:   0.47 kB
+#20 20.65 dist/assets/IdentityPage-BzRA9Sor.css                               1.25 kB │ gzip:   0.53 kB
+#20 20.65 dist/assets/AccessRequestsPage-kkXYLFAX.css                         1.33 kB │ gzip:   0.47 kB
+#20 20.65 dist/assets/style-DacHh1Nv.css                                      1.88 kB │ gzip:   0.73 kB
+#20 20.65 dist/assets/DocumentPassport-B69lH3fR.css                           1.92 kB │ gzip:   0.66 kB
+#20 20.65 dist/assets/ApprovalPanel-BdbWhKiO.css                              2.18 kB │ gzip:   0.69 kB
+#20 20.65 dist/assets/RunbookPages-DX2OY_Bu.css                               2.31 kB │ gzip:   0.84 kB
+#20 20.65 dist/assets/style-f8nUFRYB.css                                      2.38 kB │ gzip:   0.86 kB
+#20 20.65 dist/assets/SearchOperationsPage-WTuoxSYK.css                       2.40 kB │ gzip:   0.81 kB
+#20 20.65 dist/assets/DatabasesPage-JZHLzUG-.css                              2.52 kB │ gzip:   0.87 kB
+#20 20.65 dist/assets/GitSyncPages-EFXN2p8K.css                               2.58 kB │ gzip:   0.91 kB
+#20 20.65 dist/assets/KnowledgeConflictsPage-2jAKURRN.css                     2.60 kB │ gzip:   0.79 kB
+#20 20.65 dist/assets/MarkdownContent-C2F0KFtH.css                            2.63 kB │ gzip:   0.97 kB
+#20 20.65 dist/assets/KnowledgePathsPage-CEFR4ZRy.css                         2.80 kB │ gzip:   0.89 kB
+#20 20.65 dist/assets/DocumentRAGIndex-Br3WcHJ5.css                           2.91 kB │ gzip:   0.87 kB
+#20 20.65 dist/assets/DocumentHistory-D-f1lG3l.css                            2.94 kB │ gzip:   0.93 kB
+#20 20.65 dist/assets/system-status-CteFAwVF.css                              2.99 kB │ gzip:   0.89 kB
+#20 20.65 dist/assets/InboxPage-gFO8vvOu.css                                  3.00 kB │ gzip:   0.93 kB
+#20 20.65 dist/assets/AgentPages-CO720IKb.css                                 3.12 kB │ gzip:   0.95 kB
+#20 20.65 dist/assets/FocusedHome-C9AD6b3k.css                                3.12 kB │ gzip:   0.94 kB
+#20 20.65 dist/assets/SupportPage-qBa5vFVb.css                                3.18 kB │ gzip:   1.01 kB
+#20 20.65 dist/assets/RAGGenerationsPage-CxtewJK2.css                         3.22 kB │ gzip:   0.92 kB
+#20 20.65 dist/assets/RAGSettingsPage-C9rVsPa9.css                            3.29 kB │ gzip:   1.03 kB
+#20 20.65 dist/assets/GraphAIPage-BxPvO-t8.css                                4.53 kB │ gzip:   1.21 kB
+#20 20.65 dist/assets/StructuredDraftsPage-BeO5_ppJ.css                       4.62 kB │ gzip:   1.18 kB
+#20 20.65 dist/assets/OperationsPage-BBSTlf8d.css                             5.50 kB │ gzip:   1.42 kB
+#20 20.65 dist/assets/TemplatesPage-57W0VnnK.css                              5.61 kB │ gzip:   1.42 kB
+#20 20.65 dist/assets/TaskPage-CLwkyx9Q.css                                   6.15 kB │ gzip:   1.63 kB
+#20 20.65 dist/assets/GraphPage-uv3_Jyek.css                                  6.45 kB │ gzip:   1.59 kB
+#20 20.65 dist/assets/SearchPage-BNZgDARJ.css                                 6.85 kB │ gzip:   1.80 kB
+#20 20.65 dist/assets/DocumentPage-CsjKjrZB.css                              18.67 kB │ gzip:   4.21 kB
+#20 20.65 dist/assets/main-Du-IZsHW.css                                      25.78 kB │ gzip:   5.73 kB
+#20 20.65 dist/assets/katex-BOvhZl6_.css                                     30.25 kB │ gzip:   8.09 kB
+#20 20.65 dist/assets/uuid-Zm31JCHo.css                                     162.07 kB │ gzip:  42.92 kB
+#20 20.65 dist/assets/channel-Cv4wZc6h.js                                     0.11 kB │ gzip:   0.13 kB
+#20 20.65 dist/assets/square-BtnSjK2J.js                                      0.15 kB │ gzip:   0.15 kB
+#20 20.65 dist/assets/init-Gi6I4Gst.js                                        0.15 kB │ gzip:   0.13 kB
+#20 20.65 dist/assets/arrow-up-Bk2yzjnV.js                                    0.16 kB │ gzip:   0.16 kB
+#20 20.65 dist/assets/arrow-down-DEc10-0k.js                                  0.17 kB │ gzip:   0.16 kB
+#20 20.65 dist/assets/play-DgJyqLdI.js                                        0.19 kB │ gzip:   0.18 kB
+#20 20.65 dist/assets/chunk-2Q5K7J3B-BjwznKIi.js                              0.19 kB │ gzip:   0.16 kB
+#20 20.65 dist/assets/rotate-ccw-CUUVnvfP.js                                  0.20 kB │ gzip:   0.18 kB
+#20 20.65 dist/assets/lock-CegUBLUH.js                                        0.20 kB │ gzip:   0.19 kB
+#20 20.65 dist/assets/table-2-Dqwwmb9c.js                                     0.22 kB │ gzip:   0.18 kB
+#20 20.65 dist/assets/git-branch--mwNmrRz.js                                  0.22 kB │ gzip:   0.19 kB
+#20 20.65 dist/assets/chunk-JWPE2WC7-BNfyZfaO.js                              0.23 kB │ gzip:   0.17 kB
+#20 20.65 dist/assets/paperclip-Y9keUaDS.js                                   0.23 kB │ gzip:   0.19 kB
+#20 20.65 dist/assets/upload-C7ED306H.js                                      0.23 kB │ gzip:   0.19 kB
+#20 20.65 dist/assets/chunk-XXDRQBXY-kXLUbkyB.js                              0.23 kB │ gzip:   0.21 kB
+#20 20.65 dist/assets/settings-2-C9n1xcWR.js                                  0.25 kB │ gzip:   0.19 kB
+#20 20.65 dist/assets/eye-BsMi4P9B.js                                         0.25 kB │ gzip:   0.20 kB
+#20 20.65 dist/assets/test-tube-diagonal-Ccdt3Zk1.js                          0.26 kB │ gzip:   0.21 kB
+#20 20.65 dist/assets/maximize-Irb8i8vL.js                                    0.29 kB │ gzip:   0.20 kB
+#20 20.65 dist/assets/share-2-Cq9VTC7X.js                                     0.35 kB │ gzip:   0.23 kB
+#20 20.65 dist/assets/chunk-5VM5RSS4-Cm4JVLQz.js                              0.37 kB │ gzip:   0.27 kB
+#20 20.65 dist/assets/file-search-BlYjC2_u.js                                 0.38 kB │ gzip:   0.27 kB
+#20 20.65 dist/assets/layers-B81AhJMd.js                                      0.42 kB │ gzip:   0.24 kB
+#20 20.65 dist/assets/types-CGRMyk5U.js                                       0.44 kB │ gzip:   0.35 kB
+#20 20.65 dist/assets/useModalReturnFocus-UQBzIx4v.js                         0.49 kB │ gzip:   0.33 kB
+#20 20.65 dist/assets/chunk-POPQ4Y6H-DCjKDQbh.js                              0.51 kB │ gzip:   0.36 kB
+#20 20.65 dist/assets/stateDiagram-v2-MP3YSRHH-DJ-f8u_G.js                    0.61 kB │ gzip:   0.39 kB
+#20 20.65 dist/assets/v4-Dnyct6Ft.js                                          0.62 kB │ gzip:   0.37 kB
+#20 20.65 dist/assets/classDiagram-ZZMXUADV-ClKW9XsD.js                       0.65 kB │ gzip:   0.41 kB
+#20 20.65 dist/assets/classDiagram-v2-VYDZK3BY-ClKW9XsD.js                    0.65 kB │ gzip:   0.41 kB
+#20 20.65 dist/assets/system-status-FXqN13qq.js                               0.71 kB │ gzip:   0.50 kB
+#20 20.65 dist/assets/swimlanesDiagram-VR7AAH4N-Bcr7q1VY.js                   0.73 kB │ gzip:   0.46 kB
+#20 20.65 dist/assets/infoDiagram-27XIBGKW-CfIW8SWZ.js                        0.76 kB │ gzip:   0.50 kB
+#20 20.65 dist/assets/square-check-big-m_ml3w5H.js                            0.79 kB │ gzip:   0.40 kB
+#20 20.65 dist/assets/sizeCapture-INFHLROL-B8RQVm5y.js                        1.12 kB │ gzip:   0.62 kB
+#20 20.65 dist/assets/ordinal-Cboi1Yqb.js                                     1.19 kB │ gzip:   0.57 kB
+#20 20.65 dist/assets/CitationViewer-DC8gIiDA.js                              1.64 kB │ gzip:   1.00 kB
+#20 20.65 dist/assets/railroadDiagram-O6MQD6OU-zzQAtltm.js                    1.79 kB │ gzip:   0.85 kB
+#20 20.65 dist/assets/chunk-F27PBJKO-BnDbJ4l7.js                              1.88 kB │ gzip:   0.83 kB
+#20 20.65 dist/assets/SaveEvidence-gH5iGFwp.js                                1.88 kB │ gzip:   1.15 kB
+#20 20.65 dist/assets/DocumentProtection-CoYuDYFn.js                          1.91 kB │ gzip:   1.15 kB
+#20 20.65 dist/assets/abnfDiagram-VCTEODGH-wotwI1dU.js                        1.99 kB │ gzip:   0.98 kB
+#20 20.65 dist/assets/KnowledgePolicyHistory-DGPM8IzC.js                      2.06 kB │ gzip:   1.21 kB
+#20 20.65 dist/assets/pegDiagram-XKGWAZYB-DXAemON-.js                         2.14 kB │ gzip:   1.02 kB
+#20 20.65 dist/assets/ebnfDiagram-PWID7BFC-Kia-jcaP.js                        2.19 kB │ gzip:   0.97 kB
+#20 20.65 dist/assets/NaturalDateInput-D8vYQipE.js                            3.21 kB │ gzip:   1.89 kB
+#20 20.65 dist/assets/arc-Bm4h7LDS.js                                         3.43 kB │ gzip:   1.47 kB
+#20 20.65 dist/assets/RangePasteReview-p1tDsBSE.js                            3.68 kB │ gzip:   1.92 kB
+#20 20.65 dist/assets/CollaborationDiagnostics-ChZ0p3hN.js                    3.77 kB │ gzip:   1.91 kB
+#20 20.65 dist/assets/AIActions-C3n5wPNN.js                                   3.89 kB │ gzip:   2.18 kB
+#20 20.65 dist/assets/SaveToWorkset-BOUYO8qF.js                               3.99 kB │ gzip:   1.89 kB
+#20 20.65 dist/assets/DocumentPreview-DA03ezKg.js                             4.15 kB │ gzip:   2.18 kB
+#20 20.65 dist/assets/PublicSharePage-Dev3c9c9.js                             4.18 kB │ gzip:   2.18 kB
+#20 20.65 dist/assets/DocumentSplit-DUtUAUuQ.js                               4.26 kB │ gzip:   2.26 kB
+#20 20.65 dist/assets/ExtractionPolicyPage-C35HktHF.js                        4.32 kB │ gzip:   2.20 kB
+#20 20.65 dist/assets/diagram-Z3DM3KII-DELCiHWc.js                            4.40 kB │ gzip:   1.93 kB
+#20 20.65 dist/assets/ImpactExceptions-C_Y3W01b.js                            4.53 kB │ gzip:   2.07 kB
+#20 20.65 dist/assets/TeamsPage-CMqqb0rX.js                                   4.54 kB │ gzip:   1.97 kB
+#20 20.65 dist/assets/SystemStatusAdminPage-WVV1B6Cv.js                       4.66 kB │ gzip:   2.09 kB
+#20 20.65 dist/assets/defaultLocale-DX6XiGOO.js                               4.69 kB │ gzip:   2.18 kB
+#20 20.65 dist/assets/WorkspaceAuditPage-Doq2Vcbn.js                          5.38 kB │ gzip:   2.58 kB
+#20 20.65 dist/assets/linear-D2hKVf47.js                                      5.66 kB │ gzip:   2.31 kB
+#20 20.65 dist/assets/diagram-UQ7AKVKN-DqYpvFKr.js                            6.26 kB │ gzip:   2.72 kB
+#20 20.65 dist/assets/DocumentPassport-BePVt5aW.js                            6.32 kB │ gzip:   2.94 kB
+#20 20.65 dist/assets/offline-Btcxg9sU.js                                     6.33 kB │ gzip:   2.63 kB
+#20 20.65 dist/assets/pieDiagram-E7YTZNPT-DUHdp9Nc.js                         6.48 kB │ gzip:   2.72 kB
+#20 20.65 dist/assets/AttachmentAI-Btag6uLG.js                                7.18 kB │ gzip:   3.55 kB
+#20 20.65 dist/assets/ProtectionPage-CGdAnRwa.js                              7.50 kB │ gzip:   2.98 kB
+#20 20.65 dist/assets/AccessRequestsPage-DIWarujP.js                          7.85 kB │ gzip:   3.27 kB
+#20 20.65 dist/assets/AI-BK6LPxJr.js                                          7.87 kB │ gzip:   3.71 kB
+#20 20.65 dist/assets/DocumentHistory-C1AHcNpV.js                             7.87 kB │ gzip:   3.06 kB
+#20 20.65 dist/assets/AIHistory-C7d70oxT.js                                   7.95 kB │ gzip:   3.52 kB
+#20 20.65 dist/assets/diagram-S7CK7UJ4-DcN7IeqW.js                            8.40 kB │ gzip:   3.77 kB
+#20 20.65 dist/assets/SelectionAI-DzaGtoPK.js                                 8.55 kB │ gzip:   3.98 kB
+#20 20.65 dist/assets/ApprovalPanel-DzG8ANbF.js                               8.66 kB │ gzip:   3.53 kB
+#20 20.65 dist/assets/EvidencePage-BnJwIGtu.js                                8.68 kB │ gzip:   3.59 kB
+#20 20.65 dist/assets/DevicesPage-Da-L4xOx.js                                 8.85 kB │ gzip:   3.67 kB
+#20 20.65 dist/assets/TransferPages-ozCH7kCk.js                               9.08 kB │ gzip:   4.03 kB
+#20 20.65 dist/assets/DistributionPolicyPage-BI2D-u4g.js                      9.88 kB │ gzip:   3.69 kB
+#20 20.65 dist/assets/FocusedHome-CsZfDdoo.js                                10.13 kB │ gzip:   4.00 kB
+#20 20.65 dist/assets/KnowledgeImpactPage-3fPjYL_H.js                        10.17 kB │ gzip:   4.05 kB
+#20 20.65 dist/assets/cynefinDiagram-5FMLGOSQ-COjC2O6_.js                    10.28 kB │ gzip:   3.73 kB
+#20 20.65 dist/assets/InboxPage-C3eENKTB.js                                  10.28 kB │ gzip:   4.27 kB
+#20 20.65 dist/assets/stateDiagram-D77RDMKH-D6QcgbfG.js                      10.55 kB │ gzip:   3.73 kB
+#20 20.65 dist/assets/dagre-GXQ25YYZ-CThrwcjR.js                             10.86 kB │ gzip:   4.13 kB
+#20 20.65 dist/assets/diagram-VSXAHHWV-BeZBpj5M.js                           10.90 kB │ gzip:   4.23 kB
+#20 20.65 dist/assets/SearchHistoryPage-hj_cVi2U.js                          10.96 kB │ gzip:   4.78 kB
+#20 20.65 dist/assets/KnowledgeTimePage-BpHYiCM6.js                          11.03 kB │ gzip:   4.25 kB
+#20 20.65 dist/assets/AttachmentPage-CYJSk3Bj.js                             11.06 kB │ gzip:   4.65 kB
+#20 20.65 dist/assets/DocumentRAGIndex-EmTxaNTu.js                           11.13 kB │ gzip:   4.10 kB
+#20 20.65 dist/assets/ApprovalPages-DQwm0YkY.js                              11.80 kB │ gzip:   4.17 kB
+#20 20.65 dist/assets/WorksetsPage-Dynd9Q15.js                               11.93 kB │ gzip:   4.52 kB
+#20 20.65 dist/assets/SearchOperationsPage-B5xyuGKu.js                       12.05 kB │ gzip:   4.44 kB
+#20 20.65 dist/assets/PluginFrame-BWCZSvWB.js                                12.23 kB │ gzip:   5.05 kB
+#20 20.65 dist/assets/KnowledgeConflictsPage-BwPDojvp.js                     12.57 kB │ gzip:   5.05 kB
+#20 20.65 dist/assets/NotificationDeliveryPages-CuT-5DGO.js                  12.67 kB │ gzip:   4.54 kB
+#20 20.65 dist/assets/KnowledgeProposalsPage-DcHWX0UI.js                     12.96 kB │ gzip:   4.45 kB
+#20 20.65 dist/assets/EnterprisePages-B-rczaiQ.js                            13.13 kB │ gzip:   4.47 kB
+#20 20.65 dist/assets/RAGSettingsPage-BCNV7fJE.js                            14.34 kB │ gzip:   5.40 kB
+#20 20.65 dist/assets/AgentPages-CE3OfBy0.js                                 14.35 kB │ gzip:   5.60 kB
+#20 20.65 dist/assets/InboundCapturePages-DucOFr7V.js                        14.80 kB │ gzip:   5.35 kB
+#20 20.65 dist/assets/SupportPage-BhndiuY6.js                                15.13 kB │ gzip:   5.77 kB
+#20 20.65 dist/assets/KnowledgeQuestionsPage-Crxx994E.js                     15.43 kB │ gzip:   5.73 kB
+#20 20.65 dist/assets/chunk-SVP7TREG-CSkgc1-c.js                             15.73 kB │ gzip:   4.41 kB
+#20 20.65 dist/assets/KnowledgePathsPage-BJRpNmij.js                         16.06 kB │ gzip:   5.76 kB
+#20 20.65 dist/assets/diagram-VX7I27RA-DMN0uLbu.js                           16.14 kB │ gzip:   5.80 kB
+#20 20.65 dist/assets/SystemStatusPage-D7Xn4YLB.js                           16.22 kB │ gzip:   5.54 kB
+#20 20.65 dist/assets/KnowledgePackagesPage-Br2nLLNT.js                      16.46 kB │ gzip:   5.98 kB
+#20 20.65 dist/assets/GitSyncPages-Caq6uGy2.js                               16.57 kB │ gzip:   5.89 kB
+#20 20.65 dist/assets/ishikawaDiagram-5VMMS53U-7PVbN4Sa.js                   17.65 kB │ gzip:   6.75 kB
+#20 20.65 dist/assets/GraphAIPage-xL_uTHmA.js                                17.86 kB │ gzip:   6.53 kB
+#20 20.65 dist/assets/ConnectorPages-YUGO2G4F.js                             18.47 kB │ gzip:   6.61 kB
+#20 20.65 dist/assets/IdentityPage-BCEgWqwO.js                               19.04 kB │ gzip:   6.45 kB
+#20 20.65 dist/assets/RAGGenerationsPage-DiaxNyvW.js                         19.44 kB │ gzip:   7.04 kB
+#20 20.65 dist/assets/kanban-definition-UXKFOSKX-CPy21vxU.js                 20.48 kB │ gzip:   7.31 kB
+#20 20.65 dist/assets/KnowledgeDistributionPage-BPP8IokP.js                  20.76 kB │ gzip:   7.44 kB
+#20 20.65 dist/assets/TaskPage-BwX3DzBr.js                                   21.12 kB │ gzip:   7.59 kB
+#20 20.65 dist/assets/PluginsPage-oq2_ia0E.js                                21.60 kB │ gzip:   7.36 kB
+#20 20.65 dist/assets/TemplatesPage-BdqWvtBt.js                              22.47 kB │ gzip:   7.60 kB
+#20 20.65 dist/assets/mindmap-definition-YA3MSWOX-yxo4NM39.js                22.78 kB │ gzip:   7.67 kB
+#20 20.65 dist/assets/SearchPage-DlLDU_sx.js                                 23.22 kB │ gzip:   8.88 kB
+#20 20.65 dist/assets/sankeyDiagram-P5KCCOFB-DxByScZf.js                     23.38 kB │ gzip:   8.66 kB
+#20 20.65 dist/assets/journeyDiagram-3NMN7TZE-B45BUsWW.js                    23.75 kB │ gzip:   8.45 kB
+#20 20.65 dist/assets/GraphPage-CGDYosKs.js                                  24.07 kB │ gzip:   8.68 kB
+#20 20.65 dist/assets/wardleyDiagram-VM6X3IG4-ioI4kmq6.js                    25.68 kB │ gzip:   6.89 kB
+#20 20.65 dist/assets/OperationsPage-D4cjy6xK.js                             27.09 kB │ gzip:   9.25 kB
+#20 20.65 dist/assets/SQLSourcePages-QcRCFG_h.js                             27.73 kB │ gzip:   8.91 kB
+#20 20.65 dist/assets/StructuredDraftsPage-DRso259h.js                       29.25 kB │ gzip:   9.75 kB
+#20 20.65 dist/assets/RunbookPages-CCCWGlCN.js                               29.53 kB │ gzip:   9.36 kB
+#20 20.65 dist/assets/gitGraphDiagram-WWUBYQGX-KyN1JszC.js                   29.60 kB │ gzip:   8.80 kB
+#20 20.65 dist/assets/erDiagram-RLTQ6QDP-D2BRU2Iq.js                         30.97 kB │ gzip:  10.69 kB
+#20 20.65 dist/assets/timeline-definition-24CTP7MA-B-R2H2zP.js               31.02 kB │ gzip:  10.26 kB
+#20 20.65 dist/assets/requirementDiagram-BXWQKSXE-DV6L56Em.js                31.18 kB │ gzip:   9.83 kB
+#20 20.65 dist/assets/quadrantDiagram-AXDQQJYC-D-wF0uet.js                   34.19 kB │ gzip:  10.07 kB
+#20 20.65 dist/assets/layout-v0K_jcvF.js                                     35.44 kB │ gzip:  12.75 kB
+#20 20.65 dist/assets/chunk-IMKFNOWR-DLSl_MHl.js                             38.12 kB │ gzip:  12.53 kB
+#20 20.65 dist/assets/index-DHl1Vxxp.js                                      39.23 kB │ gzip:  11.85 kB
+#20 20.65 dist/assets/blockDiagram-I7D4REHJ-CHYiI_sA.js                      41.94 kB │ gzip:  13.68 kB
+#20 20.65 dist/assets/vennDiagram-4TSXK5OY-D499oQpb.js                       42.15 kB │ gzip:  15.80 kB
+#20 20.65 dist/assets/xychartDiagram-S5SC5T6Z-CBqM2vx7.js                    44.69 kB │ gzip:  12.71 kB
+#20 20.65 dist/assets/CanvasPage-IkU_tizY.js                                 46.27 kB │ gzip:  15.57 kB
+#20 20.65 dist/assets/chunk-TICWLB2K-CT_rxfqH.js                             49.22 kB │ gzip:  15.77 kB
+#20 20.65 dist/assets/flowDiagram-HODETNUW-DNa7pbgA.js                       61.89 kB │ gzip:  19.89 kB
+#20 20.65 dist/assets/DatabasesPage-C5z13O-y.js                              62.35 kB │ gzip:  20.26 kB
+#20 20.65 dist/assets/c4Diagram-7LVT6UL2-M5DbqnrS.js                         65.66 kB │ gzip:  18.88 kB
+#20 20.65 dist/assets/ganttDiagram-EL5Y4UJY-PF0M4cQS.js                      69.88 kB │ gzip:  23.65 kB
+#20 20.65 dist/assets/cose-bilkent-JH36ORCC-tt60Hcwb.js                      81.88 kB │ gzip:  22.58 kB
+#20 20.65 dist/assets/swimlanes-42K2YHIH-DEag79Ml.js                        115.97 kB │ gzip:  42.61 kB
+#20 20.65 dist/assets/sequenceDiagram-WJ2MYXX4-3rqY7J23.js                  117.15 kB │ gzip:  31.24 kB
+#20 20.65 dist/assets/index-BFgnXYQX.js                                     118.41 kB │ gzip:  36.53 kB
+#20 20.65 dist/assets/architectureDiagram-5GKGNRK7-SL4N0CeU.js              152.01 kB │ gzip:  43.25 kB
+#20 20.65 dist/assets/uuid-Dzc4JzJS.js                                      246.52 kB │ gzip:  79.55 kB
+#20 20.65 dist/assets/katex-HP8lGamR.js                                     261.31 kB │ gzip:  77.57 kB
+#20 20.65 dist/assets/katex-C79Zqph_.js                                     261.69 kB │ gzip:  77.88 kB
+#20 20.65 dist/assets/DocumentPage-BG-2vdtt.js                              266.06 kB │ gzip:  86.06 kB
+#20 20.65 dist/assets/main-CpB02-uO.js                                      360.73 kB │ gzip: 114.97 kB
+#20 20.65 dist/assets/PdfPage-B5UI8N5J.js                                   438.58 kB │ gzip: 131.87 kB
+#20 20.65 dist/assets/cytoscape.esm-BB4DxJjf.js                             443.04 kB │ gzip: 141.98 kB
+#20 20.65 dist/assets/mermaid.core-CHgsiOk_.js                              654.16 kB │ gzip: 158.20 kB
+#20 20.65 dist/assets/cynefin-OW5HDTMX-2SsDARv6.js                          687.91 kB │ gzip: 154.14 kB
+#20 20.65 dist/assets/MarkdownContent-C2_OFqM5.js                           760.46 kB │ gzip: 242.47 kB
+#20 20.65 ✓ built in 12.83s
+#20 21.11 npm notice
+#20 21.11 npm notice New major version of npm available! 10.9.9 -> 12.1.0
+#20 21.11 npm notice Changelog: https://github.com/npm/cli/releases/tag/v12.1.0
+#20 21.11 npm notice To update run: npm install -g npm@12.1.0
+#20 21.11 npm notice
+#20 DONE 21.2s
+
+#21 [server 6/7] COPY --from=web /build/web/dist ./web/dist
+#21 DONE 0.2s
+
+#22 [server 7/7] RUN --mount=type=cache,target=/go/pkg/mod --mount=type=cache,target=/root/.cache/go-build     MADI_VERSION="0.4.0" &&     CGO_ENABLED=0 GOOS=linux go build -trimpath -ldflags="-s -w -X main.version=${MADI_VERSION}" -o /out/madi ./cmd/madi
+#22 DONE 1.6s
+
+#23 [runtime-base 3/3] RUN sed '/^#/d; /^$/d' /runtime-apk.lock | xargs apk add --no-cache &&     cp /lib/apk/db/installed /runtime-apk-installed
+#23 CACHED
+
+#24 [runtime-base 2/3] COPY deploy/runtime-apk.lock /runtime-apk.lock
+#24 CACHED
+
+#25 [runtime-sources  5/10] COPY --from=runtime-base /usr/share/tessdata/kor.traineddata /runtime-tessdata/kor.traineddata
+#25 CACHED
+
+#26 [runtime-sources  3/10] COPY --from=runtime-base /runtime-apk-installed /runtime-apk-installed
+#26 CACHED
+
+#27 [runtime-sources  4/10] COPY --from=runtime-base /usr/share/tessdata/eng.traineddata /runtime-tessdata/eng.traineddata
+#27 CACHED
+
+#28 [runtime-sources  6/10] COPY --from=web /build/web/node_modules/pdfjs-dist/package.json /runtime-pdfjs/package.json
+#28 CACHED
+
+#29 [runtime-sources  7/10] COPY --from=web /build/web/node_modules/pdfjs-dist/standard_fonts /runtime-pdfjs/standard_fonts
+#29 CACHED
+
+#30 [runtime-sources  2/10] RUN apk add --no-cache abuild curl git
+#30 CACHED
+
+#31 [runtime-sources  8/10] COPY scripts/bundle-alpine-sources.mjs /build/bundle-alpine-sources.mjs
+#31 CACHED
+
+#32 [runtime-sources  9/10] COPY scripts/bundle-pdf-font-sources.mjs /build/bundle-pdf-font-sources.mjs
+#32 CACHED
+
+#33 [stage-4 1/4] RUN addgroup -g 10001 madi && adduser -D -H -u 10001 -G madi madi &&     mkdir -p /var/lib/madi/attachments && chown -R madi:madi /var/lib/madi
+#33 CACHED
+
+#34 [runtime-sources 10/10] RUN --mount=type=cache,target=/madi-source-cache,sharing=locked     DISTFILES_MIRROR=https://distfiles.alpinelinux.org/distfiles/v3.24     node /build/bundle-alpine-sources.mjs /runtime-apk-installed /build/madi-sources
+#34 CACHED
+
+#35 [stage-4 2/4] COPY --from=server /out/madi /usr/local/bin/madi
+#35 DONE 0.1s
+
+#36 [stage-4 3/4] COPY --from=runtime-sources /build/madi-sources /usr/share/madi/sources
+#36 DONE 0.8s
+
+#37 [stage-4 4/4] WORKDIR /var/lib/madi
+#37 DONE 0.0s
+
+#38 exporting to image
+#38 exporting layers
+#38 exporting layers 4.6s done
+#38 exporting manifest sha256:19303916f7a93f4ec7d3350aaca68d92c01336cb8e285d75a5be97397076f2e0 0.0s done
+#38 exporting config sha256:8d9cfc685eb80fdc2fd4f0199cc873ddd386d0030bbb77f42a5c269ca4db10c1 0.0s done
+#38 exporting attestation manifest sha256:8baf5204b1158fc758a14774b86c885fea5a628dfb391f14d336f42baf516ec7 0.0s done
+#38 exporting manifest list sha256:4437b0aa5de72da7f4215dca737ee721d24f2d437c33e4521509fdcc4b9622a6 0.0s done
+#38 naming to docker.io/library/madi:v0.4.0 done
+#38 unpacking to docker.io/library/madi:v0.4.0
+#38 unpacking to docker.io/library/madi:v0.4.0 1.6s done
+#38 DONE 6.4s
+Image: madi:v0.4.0
+Archive: /home/hkjang/.cache/auto-improve-wt/madi-release/dist/madi-v0.4.0.tar.gz
+53e2264d6e3039ee8cb738b0db2b3f0f29a1cf3f99634569f111f452594af8e4  /home/hkjang/.cache/auto-improve-wt/madi-release/dist/madi-v0.4.0.tar.gz
