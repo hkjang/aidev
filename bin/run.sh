@@ -1282,6 +1282,14 @@ release_project(){ # $1=base $2=변경 요약 [$3=assets] — 에이전트는 �
   # 이미 최신 태그가 base 끝을 가리키면 릴리즈할 것이 없다 — 에이전트 세션을 낭비하지 않는다 (2026-09-08 git-ctx 재개가 같은 버전을 다시 돌렸다)
   if [ "$mode" != assets ]; then
     local last_tag; last_tag=$(git -C "$repo" describe --tags --abbrev=0 "origin/$base" 2>/dev/null)
+    # 원격에 없는 태그(=CI 때문에 보류했던 로컬 태그)는 무시한다. 그걸 '이미 릴리즈했다' 로
+    # 읽으면 그 저장소는 영구히 릴리즈하지 않는다 — madi 가 원격에 없는 v0.4.0 때문에 그랬다
+    # (2026-09-27). 보류 시 태그를 지우도록 고쳤지만, 과거에 남은 것과 사람이 만든 것도 막는다.
+    if [ -n "$last_tag" ] && ! git -C "$repo" ls-remote --tags origin "refs/tags/$last_tag" 2>/dev/null | grep -q .; then
+      log "$n: 최신 태그 $last_tag 가 원격에 없다 — 보류된 로컬 태그로 보고 무시한다"
+      git -C "$repo" tag -d "$last_tag" >>"$LOG" 2>&1 || true
+      last_tag=$(git -C "$repo" describe --tags --abbrev=0 "origin/$base" 2>/dev/null)
+    fi
     if [ -n "$last_tag" ] && [ "$(git -C "$repo" rev-list --count "$last_tag..origin/$base" 2>/dev/null)" = 0 ]; then
       stage release nothing-to-release "$last_tag 이 이미 origin/$base 끝을 가리킨다"; return 0
     fi
