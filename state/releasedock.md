@@ -295,3 +295,4 @@
 - 보류 아이디어: 로그 스트림 한도(3/user·64/global) 거절과 해제의 HTTP 통합 테스트 — 같은 픽스처, 동시 스트림 타이밍이 남은 위험 (가치 2 / 위험 2 / M); SimpleDeployPage 업로드 라이브 로그의 영구 연결 종료 안내 — activeRunId effect 가 log/end 만 청취 (가치 2 / 위험 2 / S); SSE 프레임을 rAF 마다 모아 한 번만 setLogs (가치 2 / 위험 2 / M); make vet(gofmt/go vet)과 웹 tsc -b --noEmit 를 make test 에 포함 — 브랜치 auto/2026-09-17-0853 이 아직 main 에 없어 중복 위험 (가치 2 / 위험 1 / S).
 - 과제서: 채택 — 과제서의 근거(두 핸들러의 max 선택, 기존 3건이 모두 `after=0`, 헤더를 지나는 테스트 부재)가 지금 코드와 그대로 일치했고, 수용 기준 1~5 를 지정된 범위(프로덕션 0 파일, 테스트 1 파일) 안에서 실제 PostgreSQL 로 충족했습니다.
 
+- 릴리즈: v0.5.23 (2026-09-27, run 2026-09-27-213147-releasedock-improve)
