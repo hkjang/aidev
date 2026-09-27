@@ -1,8 +1,10 @@
-# 열린 러너 PR (2026-09-27 11:45 기준)
+# 열린 러너 PR (2026-09-27 18:15 기준)
 
+- [오래됨] Kkiit #6 (10일) https://github.com/hkjang/Kkiit/pull/6 — auto-improve: feat: /mcp 를 Keycloak 액세스 토큰(OAuth 2.1)으로도 열다 — 키 체계는 그대로
 - [오래됨] sqlon #6 (10일) https://github.com/hkjang/sqlon/pull/6 — auto-improve: fix(mcp): REST 변경 관리 승인·감사 행위자를 인증 사용자로 기록합니다
 - [오래됨] releasedock #17 (10일) https://github.com/hkjang/releasedock/pull/17 — auto-improve: chore: run gofmt and go vet before the tests in CI and make test
 - [오래됨] git-ctx #29 (10일) https://github.com/hkjang/git-ctx/pull/29 — auto-improve: fix(contentsecurity): keep the line break an Authorization header folds on
+- [오래됨] invenqor #22 (10일) https://github.com/hkjang/invenqor/pull/22 — auto-improve: feat: an MCP relation names both of its ends instead of two UUIDs
 - [오래됨] umm #158 (11일) https://github.com/hkjang/umm/pull/158 — auto-improve: Tell the people who are waiting, through the company relay
 - [오래됨] jikim #28 (11일) https://github.com/hkjang/jikim/pull/28 — auto-improve: feat: send approval and rotation-failure mail through a company SMTP relay
 - [오래됨] sqlon #4 (11일) https://github.com/hkjang/sqlon/pull/4 — auto-improve: feat(handoff): DBA 다이제스트를 다른 서비스로 넘기는 단일 사용 표(claim) 발급 — HANDOFF-STANDARD 보내는 쪽
