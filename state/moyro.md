@@ -231,3 +231,4 @@
 - 보류 아이디어: patchPost 의 `updated, _ = h.posts.Get(...)` 되읽기 실패 시 200 + 본문 null + `post_edited` 누락(S — Update 성공 후 Get 만 실패시키는 결정론적 주입이 4회차 연속 미해결) / uploadTeamImage 에 `denyGuestMutation` 이 없어 형제 `deleteTeamImage` 와 게스트 정책 비대칭(게스트 권한 모델 확인 선행, S) / 북마크 4개 핸들러(late.go)의 `ok, _ := IsMember` 403 위장 분리(관리자 예외 설계 선행, M) / preferences upsert·delete 의 400 을 원인별 400/500 으로 분리(서비스 ErrInvalid 센티널 필요, M) / `internal/httpapi` 의 남은 `MaxBytesReader` 호출자(`native_tracking.go:156`, `handlers.go:2919/3141/3290`, `admin_compat_handlers.go:357`)가 같은 규칙 밖인지 경로별 확인(계약이 달라 일괄 확대 금지, M)
 - 과제서: 채택 — 과제서의 근거(세 핸들러의 `io.Copy` 오류 무시 + 감사 호출 + 200, `{botUserID}` vs `"botID"` 불일치, 재사용 금지 id)가 현재 코드와 정확히 일치했고 수용 기준 1~5 를 실제 DB 회귀로 모두 충족했다. 미확인이던 `&handlers{}` 배선은 `auth.New(db, key, ttl, nil)` + `teams.New(db)` + `audit.New(db, slog.Default())` 이고, roles 는 콤마가 아니라 **공백 구분**(`auth.splitRoles`)이어야 통과한다.
 
+- 릴리즈: v0.2.40 (2026-09-27, run 2026-09-27-142149-moyro-improve)
