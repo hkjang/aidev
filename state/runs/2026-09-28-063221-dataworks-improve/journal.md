@@ -27,3 +27,6 @@
 - [러너 07:05] merge done — 21c969c
 - [러너 07:16] release published — v0.9.64
 - [러너 07:16] gh-release created — GitHub Release v0.9.64
+- [러너 07:16] manifest ok — dataworks-v0.9.64.tar.gz 
+- [러너 07:16] assets uploaded — 1개
+- [러너 07:16] assets verified — v0.9.64 자산 1개 (이전 v0.9.63: 1)
