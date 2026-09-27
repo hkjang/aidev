@@ -1,0 +1,5 @@
+- 문제: oidc.go:578 주석 첫 절이 이 자리를 "The last place in this endpoint where a fault on this side was still answered as a spent grant" 라고 단언했다. 거짓이다 — 같은 endpoint 에 oidc.go:530(RedeemAuthorizationCode 의 모든 실패), oidc.go:665(ErrTokenReuse 아닌 모든 것), store/oidc.go:310(세션 생존 질의 장애가 ErrNotFound 로 둔갑)이 아직 400 invalid_grant 다. 세 자리 모두 파일에서 직접 확인했다.
+- 고친 것: 그 절만 "The earliest of the places in this endpoint …, and not the last of them" 로 바꾸고, 남은 두 자리(코드 상환 / RotateRefreshToken, 그 안의 ErrNotFound 둔갑 포함)를 이름으로 적어 "separate changes and are still to make" 라고 남겼다. 다음 정찰이 이 endpoint 를 끝난 자리로 분류하지 못한다.
+- 범위: 코드 동작·테스트·docs 무변경. 프로덕션 파일 1개의 주석 한 단락뿐(커밋 a3d0e56).
+- 검증: gofmt 깨끗, `go vet ./internal/httpserver`, `go build ./...`, `go test -race ./internal/httpserver -run '^TestIntegrationTokenSaysWhenItCouldNotLookUpTheRefreshToken$'` PASS, `-run 'Refresh|Token'` 전부 PASS(실제 PostgreSQL).
+- 부수: 커밋 없이 남아 있던 빌드 산출물 webui/dist/index.html 을 `git checkout` 으로 복원했다(비평 노트의 우려 해소). 커밋에는 oidc.go 만 들어갔다.
