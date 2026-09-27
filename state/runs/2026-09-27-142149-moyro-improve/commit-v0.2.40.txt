@@ -1,0 +1,51 @@
+release: carry release markers to v0.2.40
+
+v0.2.40 ships one upload-cap fix already merged to main. `POST
+/api/v4/teams/{teamID}/image` (10MB), `POST /api/v4/bots/{botUserID}/icon`
+(256KB) and `POST /api/v4/uploads/{uploadID}` (50MB) each wrapped the request
+body in `http.MaxBytesReader` and then discarded the cap with `_, _ =
+io.Copy(io.Discard, r.Body)`. A request over the limit therefore read a truncated
+body, fell through to the success path, wrote an `audit_logs` row describing an
+upload that never completed, and answered 200 `{"status":"OK"}`. `uploadChunk`
+made it worse by returning the truncated byte count as `file_offset`, so an
+official resuming client was handed a false offset and silently lost the
+discarded tail.
+
+The rule already owned by this repository is applied rather than invented:
+`decodeCollectionBody` in `request_body.go` maps `*http.MaxBytesError` to 413,
+and the emoji upload in `handlers.go` answers 413 for the same overrun. A new
+`drainCappedBody(w, r, limit, errID)` helper in `request_body.go` carries that
+behaviour to the three stubs, answering 413 with a caller-specific id —
+`api.team.image.upload_too_large`, `api.bot.icon.upload_too_large` and
+`api.upload.chunk.too_large` — and returning before the audit call, so a refused
+request leaves no audit row behind. `api.user.image.too_large` is deliberately
+not reused because `handlers.go` already spends that id on a 400. The caps
+themselves, the 401 and 403 branches, and the 200 response shape for a request
+inside the cap are unchanged.
+
+Alongside it, `uploadBotIcon` and `deleteBotIcon` read `chi.URLParam(r,
+"botID")` while `router.go` declares the segment as `{botUserID}`, which left the
+target NULL on every bot icon audit row. Both now read `botUserID`; the other
+`{botID}` routes are untouched. There is no new migration, no service-contract
+change and no web change.
+
+A Postgres integration test pins all of it red-first against a real schema built
+by `store.Migrate`, the real `auth`, `teams` and `audit` services and chi route
+patterns copied verbatim from `router.go`, rather than hand-built doubles, so
+that registering a convenient `{botID}` in the test cannot hide the parameter
+bug. It reverts to green only with every call site fixed: reverting the team
+image branch alone fails just that subtest, and reverting the rename alone fails
+just the audit target assertion.
+
+Release markers move to v0.2.40 across the README, the product site and guides,
+the canonical user and administrator guides, the OpenAPI contracts, the offline
+deployment guide, the plugin SDK and sample plugin, the pages gate, and the web
+package and its version surfaces. The two guides keep naming the v0.2.27 image as
+the origin of their screen captures, which is still true for the existing
+captures, and their PDFs are left as rendered because the md2pdf converter that
+produced them lives outside this repository. Verified at this tree: the pages
+gate, `go test -race -p 1 ./...` against a local postgres:16-alpine and `go vet
+./...` for the server with all 49 packages passing, `go build ./...`,
+`govulncheck` reporting no reachable vulnerability, the Go plugin SDK tests and
+vet, 48 webapp test files with 221 tests, typecheck across both tsconfigs, build,
+both npm audits at zero, and the source-size ratchets.

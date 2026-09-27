@@ -29,3 +29,5 @@
 - [러너 14:39] pr created — https://github.com/hkjang/nexabuilder/pull/33
 - [러너 14:48] ci passed — 검사 2개 모두 success
 - [러너 14:48] merge done — 4988e27
+- [러너 15:07] release published — v1.24.0
+- [러너 15:08] assets verified — v1.24.0 자산 1개 (이전 v1.23.0: 1)

@@ -67,3 +67,4 @@
 - 보류 아이디어: `/api/v1/data/lists/{id}`·`/builder/lists/{id}/data` 에 ScreenPermissionService 게이트 없음 — permission 은 보호 구역이라 별도 회차(3/4/M) / `POST /builder/lists/{id}/data`(NexaUiService.listData)도 SQL 기반 목록에서 원본 대문자 키를 그대로 내보냄 — 이번에 H2 대문자 라벨이 실행으로 확정됐으니 근거가 강해졌으나 프런트 소비자 미확인이라 분리(2/2/S) / `executeSqlBacked` 가 전체 행을 메모리로 읽고 자바에서 페이징 — SqlExecutor 페이징 API 설계 선행(3/3/M) / `queryList` 의 sqlId 백엔드 목록에도 `requireLiveList` 회귀 테스트, 프로덕션 0줄(2/1/S) / 리스트 디자이너가 `entityId` 없이는 저장을 막아 SQL 기반 목록을 UI 로 만들 수 없음(3/3/M)
 - 과제서: 채택 — 지정한 파일·헬퍼 재사용·호출 순서(`lowerCaseKeys` → `total` → `applySort` → `applyPaging`)를 그대로 따랐고 수용 기준 4건을 모두 충족했다. 다만 과제서가 "정렬이 예외 없이 no-op" 라 한 진단은 틀렸다 — 실제로는 unmodifiableList 때문에 500 이었고(수용 기준 2 의 "수정 전에는 `row 0 …` 이 나온다" 도 그래서 빗나갔다), 같은 한 줄 수정이 둘 다 고치므로 범위는 그대로 두고 테스트 기대값만 실제 동작에 맞췄다.
 
+- 릴리즈: v1.24.0 (2026-09-27, run 2026-09-27-142156-nexabuilder-improve)

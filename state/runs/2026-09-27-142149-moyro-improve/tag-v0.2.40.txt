@@ -1,0 +1,36 @@
+moyro v0.2.40
+
+Three upload stubs now refuse a body past their cap instead of answering 200
+with an audit row for an upload that never happened. `POST
+/api/v4/teams/{teamID}/image` (10MB), `POST /api/v4/bots/{botUserID}/icon`
+(256KB) and `POST /api/v4/uploads/{uploadID}` (50MB) each wrapped the request
+body in `http.MaxBytesReader` and then threw that cap away with `_, _ =
+io.Copy(io.Discard, r.Body)`, so an oversized request read a truncated body, fell
+through to the success path, wrote an `audit_logs` row describing an upload that
+did not complete, and returned `{"status":"OK"}`. `uploadChunk` compounded it by
+reporting the truncated byte count as `file_offset`, handing an official client a
+false resume point that silently drops the discarded tail.
+
+The rule this repository already owns is applied instead: `decodeCollectionBody`
+in `request_body.go` maps `*http.MaxBytesError` to 413, and the emoji upload in
+`handlers.go` answers 413 for the same overrun. A new `drainCappedBody(w, r,
+limit, errID)` helper carries that behaviour to the three stubs, answering 413
+with a caller-specific id — `api.team.image.upload_too_large`,
+`api.bot.icon.upload_too_large` and `api.upload.chunk.too_large` — and returning
+before the audit call so that no row is written for a refused request.
+`api.user.image.too_large` is deliberately not reused because `handlers.go`
+already spends it on a 400. The caps themselves, the 401 and 403 branches, and
+the 200 response shape for a request inside the cap are unchanged.
+
+`uploadBotIcon` and `deleteBotIcon` also read `chi.URLParam(r, "botID")` while
+`router.go` declares that segment as `{botUserID}`, so every bot icon audit row
+recorded a NULL target. Both now read `botUserID`; the other `{botID}` routes are
+untouched.
+
+A Postgres integration test pins all of it red-first against a real schema built
+by `store.Migrate`, the real `auth`, `teams` and `audit` services, and chi route
+patterns copied verbatim from `router.go` so that registering a convenient
+`{botID}` cannot hide the parameter bug. Reverting the team image branch alone
+fails only that subtest, and reverting the rename alone fails only the audit
+target assertion. There is no migration, no service-contract change and no web
+change.
