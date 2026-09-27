@@ -1,0 +1,40 @@
+chore(release): AppStore v2.11.7
+
+로그아웃하거나 권한을 잃은 뒤에도 빠른 이동 팔레트의 "최근 이동"이 관리자 메뉴를
+계속 보여 주던 문제를 고친 patch 릴리스입니다. 최근 목록만 세션 필터를 거치지
+않아, 관리자가 쓰던 브라우저에서 로그아웃하면 익명 사용자가 Ctrl+K로 "앱 관리"
+같은 항목을 보고 누를 수 있었습니다. 서버와 schema는 바뀌지 않았습니다.
+
+Version
+
+web/package.json, package-lock.json, docker-compose.yml, README, GitHub Pages
+문서와 docs/USER_GUIDE.md·docs/ADMIN_GUIDE.md의 버전 표기를 v2.11.7로
+올렸습니다. 관리자 가이드의 롤백 예시는 한 칸 밀어 appstore-v2.11.6-stopped로
+맞췄습니다. package-lock에서는 이 패키지의 version 두 곳만 옮겼습니다.
+
+두 가이드 PDF는 공용 변환기(aidev/tools/guide/md2pdf.mjs)로 이 환경의 Linux
+Chrome 151에서 다시 구워 표지의 제목·버전을 확인했습니다. 사용자 가이드 27쪽,
+관리자 가이드 36쪽으로 v2.11.6과 같습니다.
+
+기능 커밋(1355503)은 command-palette.tsx의 빈 검색 results에서 최근 목록을
+세션 기준으로만 통과시키고(menu: 는 현재 세션의 menuDestinations에 같은 id가
+있을 때, app-admin: 은 canManage일 때, app: 은 그대로) Vitest 2건을 더했습니다.
+localStorage 값은 건드리지 않아 재로그인하면 복원됩니다. 찍히는 화면이 달라지지
+않으므로, screenshot manifest는 90개 항목의 version만 갱신하고 캡처 파일과
+SHA-256은 그대로 두었습니다.
+
+Migration
+
+제품 코드의 schema 변경이 없습니다. 기존 설치는 image만 교체하면 됩니다.
+
+Embedded bundle
+
+internal/webui/dist는 기존 관례대로 유지합니다. Dockerfile이 production
+bundle을 새로 빌드합니다.
+
+검증: 실제 PostgreSQL 16(16.15) 통합 테스트를 포함한 go test -race -count=1
+릴리스 패키지 목록, go vet, gofmt, go build, npm test 82건, lint, Prettier,
+build, 오프라인/환경/문서 검사 통과. Playwright desktop/mobile은 Chromium을
+설치한 뒤 전체 실행하여 retry 없이 75 passed/1 skipped. Docker image
+build/load/smoke와 GitHub Release 게시·SHA-256 생성은 기존 태그 워크플로가
+수행합니다. 이 세션에서는 원격 전송을 수행하지 않았습니다.

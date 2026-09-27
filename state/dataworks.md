@@ -221,3 +221,4 @@
 - 보류 아이디어: `dataWorksTimestampOK` 를 통과한 `valid_from`/`valid_to`/`expires_at` 을 런타임·액션센터·`store.parseStoredTime` 이 같게 읽는지 계약 테스트로 고정 (2/1/S) / `syncApprovalTracesFromRegulatoryTrace`(admin_dataworks_ops.go:603)가 `ExpiresAt` 없이 UPSERT 해 기존 승인 만료일을 지움 — 게이트가 느슨해지는 방향이라 의도 확인 필요 (2/2/S) / `contract_expiring` 이 만료 임박·이미 만료·창 해석 불가를 한 type 으로 묶어 구분 불가 (2/2/M) / 상품이 사라진 고아 Contract Scope·Entitlement 를 전용 운영 경고로 분류 (2/2/M) / 동일 API 키에 활성 엔타이틀먼트가 둘 이상일 때 운영 화면 경고 (2/2/S)
 - 과제서: 채택 — 근거(`bestApprovalStatus` 안에서 Step·Status 만 트림하고 `ExpiresAt` 은 원문 파싱, 호출부는 domain.go:90 한 곳, V2 가 V1 을 위임)가 현재 코드와 정확히 일치했고 수용 기준 1~4 를 모두 실행으로 확인했다(과제서의 `gofmt -l` "출력 없음" 기대도 이 두 파일에서 성립).
 
+- 릴리즈: v0.9.63 (2026-09-27, run 2026-09-27-094221-dataworks-improve)
