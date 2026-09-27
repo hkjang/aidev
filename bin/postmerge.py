@@ -105,6 +105,7 @@ def main():
             except Exception:
                 continue
             files = [f for f in git(repo, "diff", "--name-only", f"{merge_sha}^1", merge_sha).split("\n") if f]
+            fileset = set(files)
             corrective = []
             if files:
                 log = git(repo, "log", f"{merge_sha}..{head}", "--no-merges", f"--until={(mdt + timedelta(days=WINDOW)).isoformat()}",
@@ -114,7 +115,15 @@ def main():
                         continue
                     sha, at, subj = (line.split("\t") + ["", ""])[:3]
                     if FIX_RE.search(subj):
-                        corrective.append({"sha": sha[:10], "at": at, "subject": subj[:120], "by_runner": sha in runner_shas})
+                        # 어떤 파일이 다시 고쳐졌는지도 남긴다 — 그 저장소에서 잘 깨지는 자리다.
+                        # 이 PR 이 건드린 파일과 그 수정 커밋이 건드린 파일의 교집합만 센다.
+                        # 러너가 스스로 고친 것은 '잘 깨지는 자리' 신호가 아니므로 파일까지 캐지 않는다
+                        # (커밋마다 git diff 를 한 번 더 부르는 비용을 4분의 1로 줄인다)
+                        touched = [] if sha in runner_shas else [
+                            x for x in git(repo, "diff", "--name-only", f"{sha}^", sha).split("\n")
+                            if x and x in fileset]
+                        corrective.append({"sha": sha[:10], "at": at, "subject": subj[:120],
+                                           "by_runner": sha in runner_shas, "files": touched[:8]})
             days = max(0, min(WINDOW, (now - mdt.astimezone(timezone.utc)).days))
             risk = ""
             m = re.search(r"risk=(\w+)", ((r.get("stages") or {}).get("review") or {}).get("reason", "") or "")
@@ -138,6 +147,14 @@ def main():
     # 섞으면 큰 변경의 위험이 과소평가된다. 규모 비교는 일반 회차만으로 한다 (2026-09-27).
     def by_size(lo, hi, campaign=False):
         return rate([p for p in prs if lo <= p["files"] <= hi and bool(p.get("campaign")) == campaign])
+    # 저장소별로 사람이 다시 고친 파일을 센다 — 프롬프트에 넣어 다음 회차가 조심하게 한다.
+    hot = collections.defaultdict(collections.Counter)
+    for p in prs:
+        for c in p["corrective"]:
+            if c.get("by_runner"):
+                continue
+            for fp in c.get("files") or []:
+                hot[p["project"]][fp] += 1
     arms = sorted({p["arm"] for p in prs if p["arm"]})
     summary = {"all": rate(prs), "min_observed_days": MIN_OBS,
                # 아직 창이 안 찬 시점에도 읽을 수 있게 3일 기준을 같이 낸다 (잠정치)
@@ -147,6 +164,7 @@ def main():
                "by_project": {k: v for k, v in sorted(
                    ((proj, rate([p for p in prs if p["project"] == proj])) for proj in {p["project"] for p in prs}),
                    key=lambda kv: -((kv[1] or {}).get("human_rate") or 0)) if (v or {}).get("n", 0) >= 8},
+               "hot_files": {k: [f"{fp} ({n}회)" for fp, n in v.most_common(5)] for k, v in hot.items() if v},
                "by_arm": {a: rate([p for p in prs if p["arm"] == a]) for a in arms},
                "by_arm_3d": {a: rate([p for p in prs if p["arm"] == a], 3) for a in arms},
                "by_approval": {k: rate([p for p in prs if p["approved_by"] == k]) for k in ("auto", "human", "shepherd")},

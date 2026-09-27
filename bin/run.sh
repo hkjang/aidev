@@ -123,6 +123,15 @@ pr_label(){ # $1=PR URL $2=라벨
   [ -n "$slug" ] && [ -n "$num" ] || return 1
   gh api -X POST "repos/$slug/issues/$num/labels" -f "labels[]=$2" >/dev/null 2>&1
 }
+# 그 저장소에서 머지 뒤 사람이 다시 고친 파일 — 잘 깨지는 자리다(bin/postmerge.py 가 센다).
+# 교훈(lessons)은 거절·회귀에서만 오고, 머지된 뒤 조용히 다시 고쳐진 것은 어디에도 안 실렸다.
+hot_files(){ # $1=프로젝트
+  local f="$DATA/postmerge.json" arr
+  [ -s "$f" ] || return 0
+  arr=$(jq -r --arg p "$1" '(.summary.hot_files[$p] // []) | .[0:5] | map("- " + .) | join("\n")' "$f" 2>/dev/null)
+  [ -n "$arr" ] || return 0
+  printf '## 이 저장소에서 머지 뒤 사람이 다시 고친 파일 (최근 30일)\n%s\n\n이 자리를 건드린다면 왜 전에 다시 고쳐야 했는지 `git log` 로 먼저 확인하고, 같은 실수를 반복하지 마세요. 건드리지 않는 편이 나으면 다른 과제를 고르세요.\n' "$arr"
+}
 # 프로젝트 정책 파일만 고친다 (기본 정책·실험 덮어쓰기는 건드리지 않는다)
 policy_set(){ # $1=프로젝트 $2=jq 식
   local f="$STATE/$1.policy.json"; [ -s "$f" ] || echo '{}' > "$f"
@@ -2015,6 +2024,8 @@ round_body(){
 $(printf '%b' "$FIX_NOTE_TEXT")
 릴리즈 워크플로가 같은 이유로 두 번 실패했습니다. 워크플로 파일과 실패한 단계의 스크립트·테스트를 읽고 원인을 고치세요. 워크플로 자체를 느슨하게 만들어 통과시키는 것은 금지입니다. 고친 뒤 같은 검증을 로컬에서 재현해 통과를 확인하고, 원장에 '수정 과제' 로 기록하세요."
   lessons=$(jq -r --arg p "$n" 'select(.project==$p) | "- \(.date) [\(.kind)] \(.detail)"' "$STATE/lessons.jsonl" 2>/dev/null | tail -n 8)
+  lessons="${lessons}${lessons:+
+}$(hot_files "$n")"
   ideas=$(jq -r '.[]? | select(.status=="pending") | "- [\(.value)/\(.risk)/\(.size)] \(.title) — \(.note // "")"' "$STATE/$n.ideas.json" 2>/dev/null | head -n 12)
   AUTONOMY_NOW=$(autonomy "$n"); request_note=""; campaign_note=""
   [ "$n" = "$RUN_PROJECT" ] && [ -n "$RUN_SPEC" ] && request_note="## 요청된 작업 (사람의 명세, 이슈 #$RUN_ISSUE) — 새 아이디어 대신 이 작업을 하세요
