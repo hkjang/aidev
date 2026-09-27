@@ -1775,3 +1775,75 @@ fatal: '/home/hkjang/.cache/auto-improve-wt/kanpic' is not a working tree
 evidence: /mnt/c/Users/USER/projects/aidev/state/runs/2026-09-27-121922-kanpic-improve/evidence.json
 reports: 26 day(s), 4 week(s), 1 month(s), 1540 run(s), 2837 usage row(s), 46 project page(s), 4 alert(s)
 notify: no new alerts
+[12:56:27] aidev synced: run(2026-09-27): kanpic — merged https://github.com/hkjang/kanpic/pull/34, released v0.255.0
+[12:56:27] done
+[12:56:43] shepherd: 후보 165건 (한 번에 최대 6건, 오늘 $9.255998/$150)
+[12:57:04] postra: PR #6 승인 뒤 CI 실패 — 라벨을 떼고 고친다
+[12:58:14] === shepherd hunter PR #13 (원인 review, run 2026-09-27-125814-hunter-shepherd)
+Preparing worktree (detached HEAD acddb25)
+HEAD is now at acddb25 fix: reject saving a list view that browser storage would silently discard
+[13:03:17] hunter: improve — 35 turns, 5m, $2.09, success
+[13:03:20] hunter: verify `go build ./...` → exit 0 (3s)
+[13:03:21] hunter: verify `go vet ./...` → exit 0 (1s)
+[13:03:26] hunter: verify `go test ./...` → exit 0 (5s)
+[13:03:26] hunter: verify `cd web && [ -d node_modules ] || npm ci --no-audit --no-fund` → exit 0 (0s)
+[13:03:26] hunter: verify `cd web && npm test --silent` → exit 0 (0s)
+[13:03:26] hunter: verify `cd web && [ -d node_modules ] || npm ci --no-audit --no-fund` → exit 0 (0s)
+[13:03:27] hunter: verify `cd web && npm run typecheck --silent` → exit 0 (1s)
+[13:03:27] hunter: verify `cd web && [ -d node_modules ] || npm ci --no-audit --no-fund` → exit 0 (0s)
+[13:03:28] hunter: verify `cd web && npm run build --silent` → exit 0 (1s)
+[13:03:31] hunter: [shepherd] PR #13 review → fix-pushed — # 수리 요약 — hunter PR #13 (커밋 201f9f3)  - 재현: `list-tools.tsx` 만 `origin/main` 으로 되돌리고 `npm --prefix web test` → **97 통과 / 0
+https://github.com/hkjang/hunter/pull/13#issuecomment-5852484470
+Preparing worktree (detached HEAD 201f9f3)
+HEAD is now at 201f9f3 fix: test the saved view save guards and name the read validation limit correctly
+[13:07:21] hunter: review — 22 turns, 4m, $1.57, success
+https://github.com/hkjang/hunter/pull/13#issuecomment-5852505970
+[13:07:25] hunter: [shepherd] PR #13 review → approve — risk=low — 리뷰 승인 (risk=low) 
+[13:07:27] madi: PR #11 승인 뒤 CI 실패 — 라벨을 떼고 고친다
+[13:07:29] madi: PR #12 승인 뒤 CI 실패 — 라벨을 떼고 고친다
+[13:07:30] madi: PR #5 승인 뒤 CI 실패 — 라벨을 떼고 고친다
+[13:07:32] madi: PR #9 승인 뒤 CI 실패 — 라벨을 떼고 고친다
+[13:07:33] shepherd: 처리 1건 — 승인 1 · 수정 푸시 1 · 사람 필요 0 (오늘 $12.918262/$150)
+[13:08:23] hunter: waiting for CI on 201f9f3 (pending)
+[13:20:00] 다른 러너(pid 2284036)가 실행 중 — 겹쳐 돌리지 않는다 (flock 뒤에서 실행하세요)
+[13:26:32] hunter: [merge] done — 201f9f3b93c9231352e81a4641d13d0068ca3b87 (사람 승인)
+Preparing worktree (detached HEAD 6bcef28)
+HEAD is now at 6bcef28 Merge pull request #13 from hkjang/auto/2026-09-27-1041
+[13:30:00] 다른 러너(pid 2284036)가 실행 중 — 겹쳐 돌리지 않는다 (flock 뒤에서 실행하세요)
+[13:31:55] hunter: release — 56 turns, 5m, $3.06, success
+[13:32:02] hunter: waiting for CI on de4bfd3 (no-ci)
+[13:40:00] 다른 러너(pid 2284036)가 실행 중 — 겹쳐 돌리지 않는다 (flock 뒤에서 실행하세요)
+[13:45:02] 다른 러너(pid 2284036)가 실행 중 — 겹쳐 돌리지 않는다 (flock 뒤에서 실행하세요)
+[13:49:14] hunter: [release] published — v1.17.0
+From https://github.com/hkjang/hunter
+ * branch            main       -> FETCH_HEAD
+Updating 6bcef28..de4bfd3
+Fast-forward
+ README.md                    |  12 +++++++-----
+ VERSION                      |   2 +-
+ cmd/hunter/main.go           |   2 +-
+ compose.yaml                 |   2 +-
+ docs/guides/admin-guide.html |  26 +++++++++++++-------------
+ docs/guides/admin-guide.md   |  22 +++++++++++-----------
+ docs/guides/admin-guide.pdf  | Bin 9957620 -> 9957570 bytes
+ docs/guides/user-guide.html  |   6 +++---
+ docs/guides/user-guide.md    |   2 +-
+ docs/guides/user-guide.pdf   | Bin 8868552 -> 8868534 bytes
+ docs/index.html              |   8 ++++----
+ docs/llms.txt                |   4 ++--
+ docs/package-lock.json       |   4 ++--
+ docs/package.json            |   2 +-
+ docs/release-v1.17.0.md      |  23 +++++++++++++++++++++++
+ docs/validation.md           |  17 +++++++++++++++++
+ internal/app/openapi.json    |   2 +-
+ scripts/release-notes.py     |  17 ++++++++++++++++-
+ web/package-lock.json        |   4 ++--
+ web/package.json             |   2 +-
+ web/src/App.tsx              |   8 ++++----
+ 21 files changed, 111 insertions(+), 54 deletions(-)
+ create mode 100644 docs/release-v1.17.0.md
+[13:50:00] 다른 러너(pid 2284036)가 실행 중 — 겹쳐 돌리지 않는다 (flock 뒤에서 실행하세요)
+[13:51:47] hunter: [assets] verified — v1.17.0 자산 1개 (이전 v1.10.0: 1)
+evidence: /mnt/c/Users/USER/projects/aidev/state/runs/2026-09-27-130822-hunter-approve/evidence.json
+reports: 26 day(s), 4 week(s), 1 month(s), 1541 run(s), 2840 usage row(s), 46 project page(s), 4 alert(s)
+notify: no new alerts

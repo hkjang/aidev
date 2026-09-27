@@ -107,3 +107,4 @@
 - 보류 아이디어: `save()` 의 나머지 세 판정(이름 공백·8개 상한·중복 이름)도 순수 헬퍼로 뽑아 web/tests 에서 검증 (3/1/S) / `oidcReturnTo`(Go)와 `safeReturnPath`(TS) return_to 규칙을 공유 JSON 벡터로 교차 검증 (3/2/M, 차선 후보) / 서버 CSV 내보내기의 개인 키 권한 교집합을 실제 HTTP 회귀로 검증 (3/1/S, HUNTER_TEST_DSN 필요) / 보기 8개 합산 localStorage 쿼터 초과 시 storageError 문구를 저장 실패로 구분 (2/1/S)
 - 과제서: 채택 — 지목한 파일·행·`8192` 단일 출처·`snapshot` 재사용 지점이 현재 코드와 정확히 맞았고, 미확인으로 남긴 9,016자 손계산을 실제 `savedListQuery` 로 실측해 확정했다.
 
+- 릴리즈: v1.17.0 (2026-09-27, run 2026-09-27-130822-hunter-approve)
