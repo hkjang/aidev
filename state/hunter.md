@@ -99,3 +99,11 @@
 - 보류 아이디어: 저장한 보기가 8192자 한도를 넘겨 새로고침 후 조용히 사라지는 것을 save() 시점에 거절 (3/1/M, 차선 후보) / `oidcReturnTo`(Go)와 `safeReturnPath`(TS) return_to 규칙을 공유 JSON 벡터로 교차 검증 (3/2/M) / 서버 CSV 내보내기의 개인 키 권한 교집합을 실제 HTTP 회귀로 검증 (3/1/S, HUNTER_TEST_DSN 필요) / 실제 Keycloak·MCP 클라이언트 연결 절차를 docs/validation.md 에 기록 (3/1/M, 환경 필요)
 - 과제서: 채택 — 과제서가 지목한 `listSharePath` → `savedListQuery` → `clip(500)` 경로와 `patchListParams` 무잘림 대비가 현재 코드에서 그대로 맞았고, 실패 테스트로 런타임 재현까지 확정했다(기준선은 93이 아니라 95였다).
 
+## 2026-09-27
+- 선택: 저장한 목록 보기가 브라우저 저장소 한도(8192자)를 넘겨 새로고침 후 조용히 사라지는 것을 저장 시점에 거절 (가치 3 / 위험 1 / 작업량 M)
+- 결과: 성공
+- 요약: `readListPreferences`(web/src/saved-list-views.ts)는 `item.query.length > 8192` 인 보기를 조용히 버리는데 `ListTools.save()` 는 q·필터 각 500자만 검사해 "‘X’ 보기를 저장했습니다" 를 띄우고도 다음 방문에 보기가 사라졌다. 하드코딩 `8192` 를 `export const savedListQueryLimit` 로 뽑아 읽기 쪽이 그대로 쓰게 하고 순수 판정 `savedListQueryTooLong(query)` 를 추가한 뒤, `save()` 의 기존 500자 검사 뒤에 이미 계산돼 있는 `snapshot` 으로 같은 판정을 적용해 한국어 오류를 내고 `setPreferences` 를 호출하지 않는다(`clip(500)`·`savedListQuery`·`applySavedListQuery`·읽기 쪽 `>` 판정은 한 글자도 안 바뀜). 검증(실제 실행, Node 22.23.1/npm 10.9.8): `npm --prefix web ci`, `npm --prefix web test` 기준선 96통과/0실패/0skip → 97통과/0실패/0skip, `npm --prefix web run typecheck`(tsc --noEmit) 0, `npm --prefix web run build` 성공, `prettier --check` 통과, `git diff --check` 깨끗. 프로덕션 코드 2파일. Go 무변경이라 Go 스위트·`internal/webassets/dist` 재복사는 하지 않았다.
+- 실패 재현: `not ok 79 - a snapshot browser storage would silently discard is rejected before it is saved` / `AssertionError expected: true, actual: false, operator: 'strictEqual'` (판정 함수를 `return false` 스텁으로 둔 상태, 96통과/1실패 — 그 테스트 하나만 실패). 앞서 실제 함수 프로브로 인과도 확정: `savedListQuery(q=가×500, f_service_id=가×500)` 길이 **9016** > 8192 → 그 query 를 담은 JSON 을 `readListPreferences` 에 넣으면 `views.length === 0`(정찰의 손계산 9,016 이 실측과 정확히 일치).
+- 보류 아이디어: `save()` 의 나머지 세 판정(이름 공백·8개 상한·중복 이름)도 순수 헬퍼로 뽑아 web/tests 에서 검증 (3/1/S) / `oidcReturnTo`(Go)와 `safeReturnPath`(TS) return_to 규칙을 공유 JSON 벡터로 교차 검증 (3/2/M, 차선 후보) / 서버 CSV 내보내기의 개인 키 권한 교집합을 실제 HTTP 회귀로 검증 (3/1/S, HUNTER_TEST_DSN 필요) / 보기 8개 합산 localStorage 쿼터 초과 시 storageError 문구를 저장 실패로 구분 (2/1/S)
+- 과제서: 채택 — 지목한 파일·행·`8192` 단일 출처·`snapshot` 재사용 지점이 현재 코드와 정확히 맞았고, 미확인으로 남긴 9,016자 손계산을 실제 `savedListQuery` 로 실측해 확정했다.
+

@@ -1,0 +1,25 @@
+release: v0.77.19
+
+진단용 오류 문자열을 바이트 예산에 맞춰 자를 때 마지막 UTF-8 문자가 깨지던 것을
+임베딩 런타임과 Milvus 벡터 저장소에서 고칩니다. internal/embedding/runtime.go:182 의
+clipRuntimeError 는 value[:limit] + "…" 로, internal/vectorstore/milvus.go:282 의
+truncate 는 value[:limit] 로 바이트 경계에서 잘랐고, 한글은 한 글자가 3바이트라 예산이
+글자 중간에 떨어지면 invalid UTF-8 이 남았습니다. 두 결과 모두 운영자에게 도달하는
+값이었습니다 — clipRuntimeError 는 Runtime.Snapshot().LastError 를 거쳐 관리 콘솔 상태
+JSON(internal/app/health.go:325·339)에, Milvus 쪽은 Status(milvus.go:251-253) →
+TestConnection(vectorstore.go:178-180) → searchBackendHealth(health.go:478-480) →
+adminHealth 의 jsonOut(health.go:507) 경로로 같은 JSON 에 실리며, encoding/json 이 깨진
+꼬리를 U+FFFD 로 바꿔 내보냈습니다. 이미 옳게 동작하던 형제 절단기 세 곳
+(source.truncateError·mcp.runeSafeCut·search.cutAtRuneBoundary)과 같은 관용구인 연속
+바이트 후퇴로 두 자리를 맞췄고, 순환 임포트를 만들지 않도록 각 패키지에 두는 사유를
+계약 주석에 적었습니다. 예산 상수(300·400)와 임베딩의 말줄임표 접미사, Milvus 의
+"milvus %s: %s" 문구는 한 글자도 바꾸지 않았습니다. 대역 타입 없이 실제 배선으로 회귀
+시험했습니다 — 임베딩은 실제 NewRuntime() 과 실제 Runtime.Guard 가 finish 를 거쳐 기록한
+Snapshot().LastError 를, 벡터 저장소는 실제 Open(FromMap{…milvus…})+httptest 503 과
+430바이트 한국어 본문으로 얻은 실제 Status(ctx) 오류 문자열을 단언합니다. 두 시험 모두
+3바이트 글자가 예산에 걸치는 패딩(limit-2·limit-1)과 걸치지 않는 패딩(limit-3·limit)을
+함께 도는 경계 표이며, 수정 전 코드에서 걸치는 패딩만 실패함을 먼저 확인했습니다 —
+pad=297·300·397·400 은 수정 전에도 통과하는 동작 무변경 대조군입니다. 관리 콘솔 JSON 에
+U+FFFD 이스케이프가 실리지 않음도 직렬화 결과의 바이트로 단언합니다. ASCII 진단문과
+예산보다 짧은 진단문의 결과는 전과 완전히 같고, 오류 발생 여부와 상태 판정, 검색 결과와
+접근 판정은 바뀌지 않습니다. 마이그레이션과 재색인은 필요하지 않습니다.
