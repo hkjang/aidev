@@ -567,7 +567,7 @@ Realm별로 LDAP/Active Directory를 연결합니다. 등록 직후에는 `마�
 | 로그인 화면에서 `로그인 요청을 확인하지 못했습니다…`를 봤다는 문의 | `서버 로그`의 그 Trace ID | **사용자를 애플리케이션으로 돌려보내지 마세요.** 요청은 살아 있으며 이쪽 장애가 걷히면 `다시 시도`로 이어집니다 |
 | 인가가 조용히 실패한다(사용자가 로그인 화면에 도달하지 못한다) | `/metrics`의 `resso_authorization_errors_total{stage=…}` | 이 계열은 대부분 302로 나가 성공한 인가와 HTTP 상태가 같습니다. `stage` 값이 어느 조회가 멈췄는지 가리킵니다 |
 | 어떤 서비스를 열면 화면이 깜빡이며 로그인 화면이 뜨지 않는다 | `/metrics`의 `resso_silent_authentications_total{result="login_required"}`, `서버 로그`의 `a silent authentication found no session to reuse` | 그 서비스가 `prompt=none` 거절에 다시 시도하는 루프입니다. 로그의 `client_id`로 서비스를 찾아 개발자에게 알립니다 — 고칠 곳은 ReSSO가 아니라 그 서비스입니다([5-1](#로그인-화면-없이-들어가기-silent-sso)) |
-| Token 발급이 실패한다 | `/metrics`의 `resso_token_errors_total{stage=…}` | 400 `invalid_grant`(호출자 문제)와 500 `server_error`(이쪽 문제)의 구분은 [운영 가이드](operations.md)에 있습니다 |
+| Token 발급이 실패한다 | `/metrics`의 `resso_token_errors_total{grant_type=…}` | 400 `invalid_grant`(호출자 문제)와 500 `server_error`(이쪽 문제)의 구분은 [운영 가이드](operations.md)에 있습니다 |
 | Prometheus가 `/metrics`에서 401·403을 받는다 | 스크레이프 설정의 Bearer token | `admin:read` 범위 개인 API 키인지, 만료되지 않았는지 확인합니다 |
 | 대시보드가 `HTTP Issuer 확인 필요`를 표시한다 | `Realm` 화면의 Issuer URL | 외부 HTTPS 주소로 바꿉니다 |
 | 클라이언트 IP가 전부 Proxy 주소로 보인다 | `TRUSTED_PROXY_CIDRS` | 실제 Proxy 네트워크를 등록합니다. 등록되지 않은 발신지의 전달 헤더는 무시됩니다 |
