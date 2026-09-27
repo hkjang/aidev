@@ -19,3 +19,4 @@
 - 못 본 것: `-tags=integration` 통합 테스트(원장의 폐기 PG17 2회 통과를 재현하지 않았다), Oracle 실 DB, SPA/웹. Oracle 무영향은 `.start` 독자가 443·724·725 세 곳뿐이고 Oracle 경로가 읽지 않음을 확인해 코드로 대체했다. 돌린 것: `go test ./...` 전부 통과, `go vet ./...`, `gofmt -l` 무출력, 프로브 파일 제거 후 worktree 깨끗.
 - [러너 17:08] review approved — 리뷰 승인 (risk=medium)
 - [러너 17:08] pr created — https://github.com/hkjang/qurio/pull/24
+- [러너 17:27] ci timeout — 제한 시간 안에 CI 완료를 확인하지 못함
