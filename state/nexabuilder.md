@@ -76,3 +76,4 @@
 - 보류 아이디어: 런타임 대체 뷰 7종이 fetch 실패를 `catch (e)` 로 삼켜 "데이터 없음" 으로 보여준다 — 이번 버그가 몇 달 안 보인 이유, 템플릿 7개라 2~3개씩 쪼개야 함(3/2/M) / `/api/v1/data/lists/{id}`·`/builder/lists/{id}/data` 에 ScreenPermissionService 게이트 없음 — 보호 구역이라 사람이 있는 회차(3/4/M) / `DataAdapterService.executeSqlBacked` 가 전체 행을 메모리로 읽고 자바에서 페이징(3/3/M) / `queryList` 의 sqlId 백엔드 목록에도 `requireLiveList` 회귀 테스트, 프로덕션 0줄(2/1/S) / `listData` 가 SQL 기반 목록에서 원본 대문자 키를 그대로 내보냄 — 프런트 소비자 미확인(2/2/S)
 - 과제서: 채택 — 진단(같은 파라미터를 읽는 두 리더의 계약 불일치, `sanitizeIdentifier` 가 선행 밑줄 통과, 500 으로 접힘)이 실행으로 전부 확인됐고 지정한 파일·키 이름·fallback 100·`@DirtiesContext` 금지·상한 금지까지 그대로 따랐다.
 
+- 릴리즈: v1.25.0 (2026-09-27, run 2026-09-27-205119-nexabuilder-approve)
