@@ -519,6 +519,22 @@ def agent_scorecard(runs_all, usage_all, lessons, days_window=14):
     rows.append({"role": "기록·학습 historian", "calls": sum(1 for u in usage if u.get("phase") in ("campaign-lessons", "operator-prefs")),
                  "metric": f"캠페인 교훈 {sum(len(campaign_lessons(c.get('id')).get('rules', [])) for c in campaigns())}개 · 운영자 규칙 {op_rules}개", "cost": cost("campaign-lessons", "operator-prefs")})
     rows.append({"role": "코파일럿 copilot", "calls": sum(1 for u in usage if u.get("phase") == "copilot"), "metric": "텔레그램 답장", "cost": cost("copilot")})
+    # 실제 게시된 릴리즈 (bin/released.py): 회차 기록이 아니라 저장소 태그에서 직접 센 것.
+    # 기록이 비어도 결과는 남으므로, 자기 기록과 실제가 어긋나면 여기서 드러난다.
+    try:
+        rl = json.load(open(os.path.join(DOCS, "data", "released.json"), encoding="utf-8"))
+    except Exception:
+        rl = {}
+    if rl.get("total"):
+        # runs 는 최근 14일치라 태그 전체(released.py 의 since 이후)와 비교하면 안 된다 —
+        # 같은 기간끼리 세려면 runs_all 을 쓴다 (2026-09-27: 14일치와 비교해 423건이 빠진 것처럼 보였다).
+        recorded = sum(1 for r in runs_all if re.search(r"released v", r.get("result") or ""))
+        gap = rl["total"] - recorded
+        rows.append({"role": "실제 게시 릴리즈 (태그 기준)", "calls": rl["total"], "cost": None,
+                     "metric": f"저장소 {rl.get('projects')}개 · 러너 태그 {rl['total']}건 (사람 태그 {rl.get('human', 0)}건)"
+                               + (f" · 누적 회차 기록에는 {recorded}건 — {gap}건이 기록에서 빠졌다" if gap > 0 else " · 회차 기록과 일치")})
+        if gap > 20:
+            advice.append(f"실제 릴리즈 태그({rl['total']}건)가 누적 회차 기록({recorded}건)보다 {gap}건 많다 — 기록 경로에 빠지는 자리가 남아 있다 (bin/released.py 가 태그로 센 값)")
     # 머지 뒤 수정 필요율 (bin/postmerge.py): 리뷰가 승인해 머지한 것이 30일 안에 다시 고쳐졌나
     pm = postmerge()
     if pm.get("summary", {}).get("all", {}).get("n"):
