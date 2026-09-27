@@ -33,3 +33,6 @@
 - 비평 노트의 우려대로 커밋 안 된 webui/dist/index.html 을 복원했다. 커밋에는 oidc.go 만 들어갔다.
 - 여전히 확신 없는 곳: `make lint`(golangci-lint PATH 미확인)와 vitest/프런트는 이번에도 돌리지 않았다 — 주석 한 단락이라 위험은 낮다고 판단했다. 남은 세 자리는 ideas.json 에 별건으로 남길 일이며 이번 범위에서 손대지 않았다.
 - [러너 04:58] repair done — - 문제: oidc.go:578 주석 첫 절이 이 자리를 "The last place in this endpoint where a fault on this side was still answered as a spent grant" 라고 단언했다. 거짓이다 — 같은 endp
+- [러너 05:13] review timeout — 단계 제한 시간 초과
+- [러너 05:13] review missing — 리뷰 결과 없음/손상: missing — 보류
+- [러너 05:13] pr created — https://github.com/hkjang/ReSSO/pull/32
