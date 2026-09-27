@@ -1,0 +1,95 @@
+{
+  "week": "2026-W40",
+  "generated": "2026-09-28T00:20:46+09:00",
+  "cost_usd": 1.3400355,
+  "constraint": "측정이 틀려서 결정이 집행되지 않거나 잘못된 것을 자른다 — 게시 릴리즈의 18%가 기록에서 빠지고, 릴리즈 완전성 두 숫자가 어긋나며, 실험 회차의 4분의 1이 노출 0~6% arm 에 들어간다.",
+  "proposals": [
+    {
+      "cmd": [
+        "run",
+        "aidev",
+        "회차 기록 경로에서 결말에 따라 runs.jsonl 기록이 빠지는 자리를 찾아 고치고, 원격 태그 수와 회차 기록 수가 일치하는지 확인하는 테스트를 추가"
+      ],
+      "why": "게시 릴리즈 647건 vs 회차 기록 533건 — 114건(18%) 누락, 헬스체크의 유일한 red",
+      "gives_up": "이 회차에 쓸 수 있었던 다른 저장소 개선 1건(약 $6)",
+      "revert": "stop aidev",
+      "n": 1,
+      "applied": null
+    },
+    {
+      "cmd": [
+        "stop",
+        "sqlon",
+        "보호 파일 PR 12건이 14일째 열려 있다 — 열린 PR 54건의 22%. 사람이 처분할 때까지 새 회차 중지"
+      ],
+      "why": "열린 PR 54건 중 12건이 sqlon, 전부 자동 머지 불가 채널",
+      "gives_up": "sqlon 의 주간 자동 개선",
+      "revert": "resume sqlon",
+      "n": 2,
+      "applied": null
+    },
+    {
+      "cmd": [
+        "stop",
+        "jasql",
+        "보호 파일 PR 5건 대기 — sqlon 과 같은 이유"
+      ],
+      "why": "sqlon 과 합쳐 열린 PR 의 31%(17/54)가 자동 머지 불가 채널에 적체",
+      "gives_up": "jasql 의 주간 자동 개선",
+      "revert": "resume jasql",
+      "n": 3,
+      "applied": null
+    },
+    {
+      "cmd": [
+        "stop",
+        "jikim",
+        "머지 14건 중 13건(93%)을 사람이 다시 고침 — 회사 평균 23.6% 의 4배"
+      ],
+      "why": "사람 수정률 92.9%(13/14), 유일하게 90% 초과 — 자동 개선이 순수하게 사람 일을 만든다",
+      "gives_up": "jikim 자동 개선 전부",
+      "revert": "resume jikim",
+      "n": 4,
+      "applied": null
+    },
+    {
+      "cmd": [
+        "stop",
+        "Quantoss",
+        "머지 12건 중 8건(67%)을 사람이 다시 고침 — W39 미집행 결정 재제출"
+      ],
+      "why": "사람 수정률 66.7%(8/12), 60% 선 위의 두 저장소 중 하나. 지난주 결정이 집행되지 않았다",
+      "gives_up": "Quantoss 자동 개선 전부",
+      "revert": "resume Quantoss",
+      "n": 5,
+      "applied": null
+    },
+    {
+      "cmd": [
+        "stop",
+        "jasql_semantic",
+        "회차가 error: pr create 로 끝남 — 원인 확인까지 중지"
+      ],
+      "why": "수정 과제 대기 경고. 실패 회차는 비용만 쓰고 산출이 없다",
+      "gives_up": "거의 없음",
+      "revert": "resume jasql_semantic",
+      "n": 6,
+      "applied": null
+    }
+  ],
+  "not_doing": [
+    "캠페인 pause/budget/until 재제안 — 6개 전부 done:true, 주간 지출 $0.03. W39 결정 1~3 공식 취소",
+    "relio(55%)·Vendra(50%)·kanpic(48%)·aiportal-py(47%)·muni(46%) 중지 — 60% 아래로는 자연스러운 단절이 없어 잡음으로 자르게 된다",
+    "정찰(scout) 끄기 — no-scout 머지 89% vs 68% 는 n=28 이고 arm 6개 다중비교 보정 시 p≈0.18",
+    "shepherd 끄기 — 승인 78건, 승인 뒤 회귀 0, 신규 '사람 필요' 0건",
+    "새 캠페인 생성(draft-campaign) — 계기판이 고쳐질 때까지 새 지출 라인을 열지 않는다"
+  ],
+  "role_advice": [
+    "실험 arm no-arbiter(노출 0%)·no-repair(노출 6%) 를 state/experiment.json 에서 내리고 그 가중치를 no-scout 로 옮길 것 — 102 회차가 baseline 과 구분 불가한 처치에 배정됐다",
+    "중재(arbiter) 를 agents.arbiter: false 로 내릴 것 — 10일간 호출 0회·$0, 수리 '손대지 않음' 0건이라 발동 조건 자체가 생기지 않는다",
+    "구현 프롬프트에 변경 규모 상한(파일 3개)을 기본으로 둘 것 — 사람 수정률 1-3파일 12.7% / 4-9파일 26.2% / 10+파일 35.5%",
+    "릴리즈 완전성 두 숫자(대시보드 94% / releaser 75%)를 같은 정의로 통일하고, 통일 전까지 어느 쪽도 인용하지 않을 것",
+    "대시보드의 pending_human 을 '누적 사람 필요 권고' 로 개명할 것 — 231 = 78+63+90 인 누적 집계이고, 살아 있는 대기열은 open-prs.json 의 54건이다",
+    "인프라에 더 쓰지 않을 것 — MAST 인프라 실패가 128 에서 증가 0, 신규 12건은 전부 검증·종료/불일치"
+  ]
+}
