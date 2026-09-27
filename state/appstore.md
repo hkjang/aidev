@@ -262,3 +262,4 @@
 - 보류 아이디어: 팔레트에서 앱 결과가 늦게 도착하면 선택 위치가 밀려 Enter 가 엉뚱한 항목으로 이동 (3/2/S, 이번 차선 후보 · 재현 미검증) · E2E mock API 의 public config override 가 기본값에 덮여 무효 (2/1/S, mock-api.ts:308-318) · 상위 100개 밖의 즐겨찾기 앱이 /favorites 에 안 나옴 (3/3/M, 공개 API 계약 변경 수반) · /favorites 의 검색·정렬이 전체 카탈로그를 대상으로 동작 (2/2/M) · clientAddress 가 RemoteAddr 만 보아 reverse proxy 뒤에서 rate limit 이 전역 (3/3/M)
 - 과제서: 채택 — 지목한 `command-palette.tsx:39-56`·`:166-176` 과 `nav-items.ts:134-146` 이 현재 코드와 정확히 일치했고 수용 기준 4건과 "프로덕션 파일 1개" 제약을 그대로 지켰다. 기준선 테스트 수도 과제서의 80건과 일치했다.
 
+- 릴리즈: v2.11.7 (2026-09-27, run 2026-09-27-094211-appstore-improve)
