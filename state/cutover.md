@@ -102,3 +102,13 @@
 - 과제서: 채택 — 과제서의 근거가 코드와 정확히 일치했고(257행 `tree.map`, ActivityTree 의 isRoot 전용 추가 버튼, route.ts 의 `parentId:null` 지원, 빈 배열을 통과시키는 validateActivityImport) 수용 기준 1~4 를 신규 e2e 2건으로 고정했다. 선택 사항이던 `같은 레벨 추가` 버튼 삭제는 기존 e2e 가 쓰지 않는 것을 확인했지만 수용 기준 밖이라 하지 않았다.
 
 - 릴리즈: v1.10.0 (2026-09-27, run 2026-09-27-094216-cutover-improve)
+## 2026-09-28
+- 선택: `validateActivityImport` 단위 테스트 신규 추가 (`lib/activityData.test.ts`) (가치 3 / 위험 1 / 작업량 S)
+- 결과: 성공
+- 요약: 관리자 PUT(`app/api/activities/route.ts:81`)과 JSON 업로드(`app/api/activities/import/route.ts:77`)가 공유하는 유일한 입력 검증 관문인 `validateActivityImport`(`lib/activityData.ts:120`)에 단위 테스트가 0건이라, 깨진 트리(고아·순환·중복 id)를 막는 계약이 아무 데도 고정돼 있지 않았다. 신규 파일 1개(프로덕션 변경 0)로 정상 입력의 id·parentId·dashboardTitle trim, 빈 배열 통과, 최상위 형식 오류 2종(`$`/`activities`), 관계 오류별 `issues[].path`, `'진행중'` 정규화 건수(=2), issues 상한(50+생략 안내 1=51)을 16건으로 고정했다. 모킹 없이 라우트가 넘기는 것과 동일한 평문 객체를 실제 함수에 넣었고 `readActivityData`/`writeActivityData` 는 호출하지 않았다(실행 뒤 `data/` diff 없음 확인). 검증(전부 실행함): `node --test lib/activityData.test.ts` 16건 통과, `npm run test:unit` **95건/30 suites 통과**(기존 79/25 + 신규 16/5), `npx tsc --noEmit` 통과, `rm -rf playwright-report test-results` 후 `npm run lint` 오류 0, `git status --porcelain` 은 신규 테스트 파일 1개뿐. e2e·`npm run build` 는 프로덕션 변경 0이라 생략했다(과제서가 선택 사항으로 둔 항목).
+- 실패 재현: 과제서의 지시대로 한 케이스("부모 부재")에 일부러 틀린 기대값 `activities[0].id` 를 넣고 돌려 `not ok 2 - 부모가 존재하지 않으면 parentId 경로를 가리킨다 / Expected values to be strictly equal: + 'activities[0].parentId' - 'activities[0].id'` 를 확인한 뒤 바로잡았다. 같은 실행에서 **의도하지 않은 실패 1건이 더 났다**: `not ok 4 - 자기 자신을 부모로 지정하면 parentId 오류 1건만 난다 / 2 !== 1`.
+- 범위 밖 발견(프로덕션 미수정): 과제서 수용 기준 5)는 `parentId === id` 일 때 "부모 부재·level 검사를 `continue` 로 건너뛰므로 issues 1건"이라고 했으나 **실제로는 2건**이다. `continue`(`activityData.ts:260`)는 부모 관계 루프의 나머지만 건너뛸 뿐, 순환 검사(`:273-299`)는 별도 패스라 `a → a` 를 순환으로 한 번 더 신고한다(둘 다 path `activities[0].parentId`). 과제서 지시대로 고치지 않고 현재 동작(2건)을 그대로 고정했다 — 사용자에게 같은 문제를 두 문장으로 보여주는 사소한 중복이며, 다음 회차 후보다.
+- 보류 아이디어: eslint `globalIgnores` 에 `playwright-report/**`·`test-results/**` 추가(2/1/S, 이번 회차 `rm -rf` 로 우회) / 상태 전파를 `lib/treeUtils propagateStatus` 순수 함수로 옮겨 API 의 `targetId+newStatus` 분기와 규칙 통일(3/2/M) / `ActivityTree.tsx` 의 `isRoot` 전용 '같은 레벨 추가' 버튼 제거(2/1/S) / `parentId === id` 가 자기참조·순환 2건을 내는 중복 제거(2/1/S, 이번에 실측) / Dockerfile 의 `NEXT_PUBLIC_*_PASSWORD` 빌드 기본값 제거로 fail-closed(4/3/M, 릴리즈 통과 확인이 필요한 단독 회차)
+- 과제서: 채택 — 근거(두 라우트가 공유하는 단일 관문, `lib/activityData.test.ts` 부재, `.ts` 확장자 import 관례, 50/51 상한)가 코드와 일치했고 수용 기준 1~4·6·7 을 그대로 충족했다. 다만 5)의 "자기 자신을 부모 → issues 1건"은 실제 동작이 2건이어서 기대값을 실측대로 고쳤다.
+
+- 릴리즈: v1.11.0 (2026-09-28, run 2026-09-28-063216-cutover-improve)

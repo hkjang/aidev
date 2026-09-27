@@ -1,21 +1,12 @@
 [
   {
-    "title": "빠른 이동 팔레트의 최근 이동 항목이 세션 권한으로 걸러지지 않아 로그아웃 뒤에도 관리자 메뉴가 보인다",
-    "value": 3,
-    "risk": 1,
-    "size": "S",
-    "status": "done",
-    "note": "2026-09-27 구현(1355503). command-palette.tsx results useMemo 에서 menu: id 는 현재 세션 menuDestinations 에 있을 때만, app-admin: 은 canManage 일 때만 통과. localStorage 값은 유지(재로그인 시 복원). Vitest 2건(command-palette.test.tsx)이 익명/관리자 세션을 프로덕션 AuthProvider 로 검증.",
-    "updated": "2026-09-27"
-  },
-  {
-    "title": "팔레트에서 타이핑 중 앱 결과가 늦게 도착하면 선택 위치가 밀려 Enter 가 엉뚱한 항목으로 이동",
+    "title": "팔레트에서 앱 결과가 늦게 도착하면 선택 위치가 밀려 Enter 가 엉뚱한 항목으로 이동",
     "value": 3,
     "risk": 2,
     "size": "S",
-    "status": "pending",
-    "note": "queryKey ['command-apps', query] 가 키스트로크마다 새 쿼리라 apps.data 가 비었다 채워지고(command-palette.tsx:116), results 는 앱 항목을 앞에 붙이는데(:179) active 리셋은 query 변경에만 걸린다(:197). 수정 방향: 디바운스 키 또는 placeholderData + 선두 항목 변화 시 active 재조정. 2026-09-27 회차 차선 후보였으나 재현 시나리오를 테스트로 잡은 적 없음 — 구현자가 먼저 red 를 확인할 것.",
-    "updated": "2026-09-27"
+    "status": "done",
+    "note": "2026-09-28 구현(96fb687). active 인덱스 상태를 activeId 로 바꾸고 인덱스를 results.findIndex 에서 파생(-1→0). 범위 밖 인덱스로 Enter 가 무반응이던 상태도 함께 해소. Vitest 3건 추가(회귀 1 + 순환·리셋 보존 2), red→green→revert-red 및 변형 2종 확인.",
+    "updated": "2026-09-28"
   },
   {
     "title": "E2E mock API 의 public config override 가 기본값에 덮여 무효",
@@ -23,8 +14,8 @@
     "risk": 1,
     "size": "S",
     "status": "pending",
-    "note": "mock-api.ts:308-318 이 ...options.config 를 먼저 펼치고 oidcEnabled 등 기본값을 뒤에 써서 주입이 항상 덮인다. 사용자에게 보이는 변화가 없는 테스트 인프라 수정이라 단독 과제로는 반려 위험(2026-09-08·09-10 이력) — 설정 주입이 필요한 E2E 과제와 묶어서만 다룰 것.",
-    "updated": "2026-09-27"
+    "note": "mock-api.ts 가 ...options.config 를 먼저 펼치고 기본값을 뒤에 써서 주입이 항상 덮인다(2026-09-26 정찰이 311-322 로 확인, 2026-09-28 회차도 미재확인). 사용자에게 보이는 변화가 없는 테스트 인프라 수정이라 단독 과제로는 반려 위험 — 설정 주입이 필요한 E2E 과제와 묶어서만.",
+    "updated": "2026-09-28"
   },
   {
     "title": "상위 100개 밖의 즐겨찾기 앱이 /favorites 에 아예 안 나옴",
@@ -32,8 +23,8 @@
     "risk": 3,
     "size": "M",
     "status": "pending",
-    "note": "서버 listApps limit 상한 100. slug 필터 API 추가나 다중 페이지 조회가 필요하고 공개 API 계약 변경을 수반하므로 단독 회차로. 즐겨찾기 영역은 2026-09-26 까지 연속 선택됐으므로 당분간 다른 영역 우선.",
-    "updated": "2026-09-27"
+    "note": "public-pages.tsx 가 favoritesOnly 일 때 pageSize 100 한 페이지만 받고 slug 로 거른다. 서버 limit 상한 100 이라 slug 필터 API 나 다중 페이지 조회가 필요 — 공개 API 계약 변경 수반, 단독 회차로.",
+    "updated": "2026-09-28"
   },
   {
     "title": "/favorites 의 검색·정렬이 즐겨찾기가 아닌 전체 카탈로그를 대상으로 동작",
@@ -41,8 +32,8 @@
     "risk": 2,
     "size": "M",
     "status": "pending",
-    "note": "서버 검색 결과를 slug 로 거르므로 검색어를 넣으면 즐겨찾기가 사라진 것처럼 보인다(public-pages.tsx:243). 100개 밖 문제와 뿌리가 같아 함께 다루는 편이 낫다.",
-    "updated": "2026-09-27"
+    "note": "서버 검색 결과를 slug 로 거르므로 검색어를 넣으면 즐겨찾기가 사라진 것처럼 보인다(public-pages.tsx:226-242). 2026-09-28 회차의 차선 후보였으나 1순위가 성립해 쓰지 않았다. 100개 밖 문제와 뿌리가 같아 함께 다루는 편이 낫다.",
+    "updated": "2026-09-28"
   },
   {
     "title": "clientAddress 가 RemoteAddr 만 보아 reverse proxy 뒤에서 rate limit 이 전역",
@@ -50,8 +41,8 @@
     "risk": 3,
     "size": "M",
     "status": "pending",
-    "note": "internal/httpapi/ratelimit.go:clientAddress. 신뢰 프록시 정책과 보호 경로(auth) 변경이 필요해 위험. 단독 회차로. 2026-09-27 미열람.",
-    "updated": "2026-09-27"
+    "note": "internal/httpapi/ratelimit.go:clientAddress. 신뢰 프록시 정책과 보호 경로(auth) 변경이 필요해 위험. 2026-09-27·09-28 정찰 모두 미열람 — 단독 회차로.",
+    "updated": "2026-09-28"
   },
   {
     "title": "로그인 방식이 모두 없는 설치의 브라우저 안내 E2E",
@@ -60,7 +51,7 @@
     "size": "S",
     "status": "pending",
     "note": "Vitest 안내 검증은 721ad4a 로 있으나 core.spec.ts 에 해당 E2E 없음. mock config override 순서 문제를 먼저 고쳐야 설정 주입이 가능하다.",
-    "updated": "2026-09-27"
+    "updated": "2026-09-28"
   },
   {
     "title": "로그인 rate limit 통합 테스트의 분 경계 취약성 — 고정 시각 주입",
@@ -68,8 +59,8 @@
     "risk": 1,
     "size": "S",
     "status": "pending",
-    "note": "auth_handlers.go:61 이 time.Now() 를 직접 사용. APPSTORE_TEST_POSTGRES_DSN 미설정이라 통합 테스트가 skip 되어 재현 미확인. 보호 경로(auth)라 신중히.",
-    "updated": "2026-09-27"
+    "note": "auth_handlers.go 가 time.Now() 를 직접 사용. APPSTORE_TEST_POSTGRES_DSN 미설정이라 통합 테스트가 skip 되어 재현 미확인. 보호 경로(auth)라 신중히.",
+    "updated": "2026-09-28"
   },
   {
     "title": "소유자가 볼 수 있는 검토 이력이 마지막 한 건뿐",
@@ -77,8 +68,8 @@
     "risk": 2,
     "size": "M",
     "status": "pending",
-    "note": "personal_handlers.go 의 LatestReviewsByApp. API·권한·화면 계약 변경이 필요. 2026-09-27 미열람.",
-    "updated": "2026-09-27"
+    "note": "personal_handlers.go 의 LatestReviewsByApp. API·권한·화면 계약 변경이 필요. 2026-09-28 회차도 미열람.",
+    "updated": "2026-09-28"
   },
   {
     "title": "방문 추적 화면에 현재 설정이 만들 CSP 문자열 미리보기",
@@ -86,8 +77,8 @@
     "risk": 2,
     "size": "M",
     "status": "pending",
-    "note": "analytics_handlers.go:pagePolicy 존재. 저장 전 미리보기/nonce 계약이 필요. 2026-09-27 미열람.",
-    "updated": "2026-09-27"
+    "note": "analytics_handlers.go:pagePolicy 존재. 저장 전 미리보기/nonce 계약이 필요. 2026-09-28 회차도 미열람.",
+    "updated": "2026-09-28"
   },
   {
     "title": "pending_review 앱을 수정해도 검토가 level 1 로 되돌아가지 않음",
@@ -96,7 +87,7 @@
     "size": "S",
     "status": "pending",
     "note": "store/apps.go UpdateApp 의 rotateAppChallenge. 단계 재설정이 의도된 정책인지 미확인 — 결함으로 단정 금지.",
-    "updated": "2026-09-27"
+    "updated": "2026-09-28"
   },
   {
     "title": "/login?sso=none 안내 화면 캡처 추가",
@@ -105,7 +96,7 @@
     "size": "S",
     "status": "pending",
     "note": "make screenshots 전체 갱신이 필요하므로 다음 캡처 갱신 회차에.",
-    "updated": "2026-09-27"
+    "updated": "2026-09-28"
   },
   {
     "title": "팔레트가 최근 이동 항목을 앱 삭제·비공개 전환 뒤에도 계속 제시",
@@ -113,7 +104,25 @@
     "risk": 2,
     "size": "M",
     "status": "pending",
-    "note": "신규(2026-09-27). 이번 회차는 menu:/app-admin: 만 세션 기준으로 걸렀고 app:<slug> 는 항상 통과시킨다 — 삭제되거나 비공개로 바뀐 앱의 최근 항목은 여전히 보이고 클릭하면 상세 화면이 404/권한 오류가 된다. 검증하려면 팔레트가 열릴 때 slug 유효성을 확인해야 하므로 추가 요청이나 서버 계약이 필요해 단독 회차로.",
-    "updated": "2026-09-27"
+    "note": "command-palette.tsx 의 최근 이동 필터가 menu:/app-admin: 만 세션 기준으로 걸러 app:<slug> 는 항상 통과한다(2026-09-28 코드에서 재확인, :174-178). 삭제·비공개 앱의 최근 항목은 클릭하면 404/권한 오류. slug 유효성 확인에 추가 요청이나 서버 계약이 필요해 단독 회차로.",
+    "updated": "2026-09-28"
+  },
+  {
+    "title": "팔레트 입력이 프레임 콜백으로 포커스를 잡아 렌더 직후 키 입력을 놓칠 수 있음",
+    "value": 1,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "신규. requestAnimationFrame 으로 inputRef.focus() 를 하므로 첫 프레임 이전의 ↑↓ 는 dialog 에 닿지 않는다(2026-09-28 새 테스트에서 실제로 관측 — 테스트가 click 으로 포커스를 먼저 잡아야 했다). 실사용에서는 프레임이 즉시 돌아 사용자에게 보이는 결함은 확인하지 못했으므로 결함으로 단정 금지.",
+    "updated": "2026-09-28"
+  },
+  {
+    "title": "USER_GUIDE·ADMIN_GUIDE 에 빠른 이동 팔레트 사용법 안내가 없음",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "신규. Ctrl+K 팔레트와 최근 이동이 제품에 있으나 정본 가이드에 절이 없어 발견되지 않는 기능이다. docs 두 파일 + PDF 재생성이 필요하고 md2pdf 변환기가 동작함은 2026-09-22 회차가 확인했다. 문서만 바꾸는 회차 후보.",
+    "updated": "2026-09-28"
   }
 ]
