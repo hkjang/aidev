@@ -1,14 +1,110 @@
 [
-  {"title":"admin-history.js 실행 감사 탭의 늦은 응답 덮어쓰기와 빈 페이지 갇힘 수정","value":3,"risk":2,"size":"M","status":"pending","note":"이번 회차 선택. admin-history.js:59 load() 에 요청 순번 없음(탭 전환·검색·pager 클릭이 겹치면 늦은 응답이 덮어씀), loadExecutions:108 이 items 비면 early return 해 execPager 를 안 붙임(offset>0 이면 '← 이전' 없어 갇힘), 106-107 카운트가 '101-100 / 총 50건' 역전. saved.js:30-44 의 검증된 후퇴 패턴과 test/js/saved.test.mjs 하네스를 그대로 옮길 수 있음.","updated":"2026-09-28"},
-  {"title":"history.go 의 limit·offset 무검증 — 음수면 저장소 오류로 500","value":2,"risk":1,"size":"S","status":"rejected","note":"2026-09-28 재평가: 사실이 아님. 핸들러가 raw 값을 넘기는 것은 맞지만 internal/history/service.go 가 이미 클램프함 — ListSchemaHistory:80(limit<=0||>1000 → 200), ListDataHistory:94(→200), ListExecutionAudit:101-106(limit→100, offset<0→0). 고칠 것이 없음.","updated":"2026-09-28"},
-  {"title":"history.go:55·http.go:1659 의 '모든 실패 404' 를 센티널 방식으로 분류","value":2,"risk":2,"size":"M","status":"pending","note":"history.go:55 는 GetSchemaHistorySource 의 저장소 장애까지 404 로 내보냄(err.Error() 를 detail 로 쓰지만 safeProblemDetail 이 드라이버 원문은 막음). http.go:1659(cancelQueryHandler)은 '남의 실행 ID' 존재 여부가 드러나므로 404 유지가 옳을 수 있어 재검토 필요. 사용자가 보는 변화 거의 없음.","updated":"2026-09-28"},
-  {"title":"세션 만료 임박 알림과 저장 안 된 SQL 안내","value":3,"risk":2,"size":"M","status":"pending","note":"auth/me 의 expires_at 에 의존(2026-09-20 확인, 이후 미재확인). 세션 경로와 인접해 위험 구역. 2026-09-26 회차가 login.js 에 세운 카운트다운 패턴(가짜 setInterval 하네스)을 재사용 가능해 전보다 쌈.","updated":"2026-09-28"},
-  {"title":"401 리다이렉트 헬퍼를 layout.js api() 로 일원화","value":2,"risk":1,"size":"S","status":"pending","note":"이번 회차 차선 후보. layout.js:102 api() 말고도 admin-databases.js:20·admin-migration.js:14·app.js:343·mcp.js:108·resources.js:37,45 에 같은 401 분기가 복사됨. 동작 변화 없는 정리.","updated":"2026-09-28"},
-  {"title":"admin-history.js 저장결과 탭의 100건 벽 — /saved 처럼 pager 붙이기","value":2,"risk":2,"size":"M","status":"pending","note":"신규. loadSaved(admin-history.js:69)가 limit=100 고정에 pager 없이 total 만 표시해 101번째부터 관리자 화면에 안 보임. /saved 화면은 2026-09-23 회차로 해결됐으나 관리자 탭은 그대로. 같은 서버 API(/api/v1/query/saved 의 limit/offset/total)를 쓰므로 saved.js 패턴 이식. 이번 회차의 실행 감사 탭 수정과 같은 파일이라 회차를 나눠야 함.","updated":"2026-09-28"},
-  {"title":"admin-history.js 스키마/데이터 탭의 서버 상한 노출 없음","value":2,"risk":1,"size":"S","status":"pending","note":"신규. loadSchema/loadData 는 서버가 limit 200 으로 잘라 보낸 배열을 그대로 items.length 건으로 표시해, 200건에서 잘렸는지 사용자가 알 수 없음(history.go:28·service.go:80,94). 서버가 total 을 안 주므로 '200건 이상(상한)' 같은 표시 또는 서버 페이지네이션이 필요 — 후자는 M 이상.","updated":"2026-09-28"},
-  {"title":"저장 결과 검색을 서버 쪽으로(q 파라미터)","value":3,"risk":3,"size":"L","status":"pending","note":"ListSavedResults 와 savedSelect 의 권한 조건(admin OR user_seq=?)을 건드려야 해 권한 누출 위험. L 이라 한 세션 범위 밖. 2026-09-23 회차로 '이 페이지에서만 검색' 이 화면에 드러나 급하지 않음.","updated":"2026-09-28"},
-  {"title":"로그인 페이지 조용한 SSO 시도 중 폼 깜빡임 제거","value":2,"risk":1,"size":"S","status":"pending","note":"서버 302(d40c325)가 '세션 있음' 을 흡수해 남는 깜빡임은 IdP 왕복뿐. login.js:44-47 shouldAttemptSilentSso 뒤 hasSession() 왕복이 한 번 더 있어 여지는 남음. test/js/login.test.mjs 하네스 있음.","updated":"2026-09-28"},
-  {"title":"로그인 제출 중 단추 라벨을 '로그인 중…' 으로","value":1,"risk":1,"size":"S","status":"pending","note":"2026-09-26 회차가 LOGIN_LABEL 상수와 라벨 복구 기계를 세웠으므로 한 줄. 다른 변경에 곁들일 때만.","updated":"2026-09-28"},
-  {"title":"스모크 하네스의 pkill -f \"$BIN\" 자기 매칭 함정 회피","value":2,"risk":1,"size":"S","status":"pending","note":"test/smoke/run.sh:34,100 의 pkill -f \"$BIN\" 이 호출한 셸 자신의 명령줄에 걸려 호출자를 죽임(2026-09-26 회차 exit 144). PID 파일로 바꾸면 사라짐. 제품 코드가 아니라 하네스 품질 문제.","updated":"2026-09-28"},
-  {"title":"로그아웃 시 IdP end_session(RP-initiated logout) 호출","value":3,"risk":3,"size":"M","status":"pending","note":"auth/session/SSO 위험 구역. 실제 IdP 검증을 한 세션 안에 끝내기 어려움. 닫힌 PR #3/#5/#7 기능과 혼동 금지 — 이 브랜치에 코드 없음.","updated":"2026-09-28"}
+  {
+    "title": "admin-history.js 실행 감사 탭의 늦은 응답 덮어쓰기와 빈 페이지 갇힘 수정",
+    "value": 3,
+    "risk": 2,
+    "size": "M",
+    "status": "done",
+    "note": "2026-09-28 회차로 구현(커밋 68a51eb). load() 에 요청 순번 도입 + 빈 응답이면 서버 total 로 마지막 페이지를 계산해 한 번 재요청 + 빈 페이지 카운트 역전 제거. pager 클릭도 load() 를 거치게 함. 신규 test/js/admin-history.test.mjs 11개. saved.js 의 '한 페이지 물러나기' 는 admin-history 에서는 불충분했음(pager 가 별도 요소가 아니라 empty() 가 목록을 덮으므로).",
+    "updated": "2026-09-28"
+  },
+  {
+    "title": "history.go limit·offset 무검증",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "rejected",
+    "note": "2026-09-28 재확인: internal/history/service.go:80,94,101-106 이 이미 limit(<=0 또는 >1000 이면 기본값)·offset(<0 이면 0)을 클램프합니다. 고칠 것이 없습니다.",
+    "updated": "2026-09-28"
+  },
+  {
+    "title": "admin-history.js 저장결과 탭의 100건 벽 — /saved 처럼 pager 붙이기",
+    "value": 2,
+    "risk": 2,
+    "size": "M",
+    "status": "pending",
+    "note": "loadSaved(admin-history.js:71)가 limit=100 고정에 pager 없이 total 만 표시해 101번째부터 관리자 탭에 안 보입니다. 서버는 /api/v1/query/saved 에서 limit/offset/total 을 이미 줍니다. 이번 회차로 같은 파일에 순번 가드가 들어갔으니 pager 는 execPager 를 참고해 붙일 수 있습니다. 실행 감사 탭과 같은 파일이라 회차를 나눔.",
+    "updated": "2026-09-28"
+  },
+  {
+    "title": "admin-history.js 스키마·데이터 탭의 서버 상한(200건) 노출 없음",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "loadSchema/loadData 는 서버가 limit 200 으로 잘라 보낸 배열을 그대로 items.length 건으로 표시해, 잘렸는지 알 수 없습니다(history.go:28·service.go:80,94). 서버가 total 을 안 주므로 '200건(상한)' 표시가 S, 서버 페이지네이션은 M 이상.",
+    "updated": "2026-09-28"
+  },
+  {
+    "title": "401 리다이렉트 헬퍼를 layout.js api() 로 일원화",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "layout.js:102 api() 말고도 admin-databases.js:20·admin-migration.js:14·app.js:343·mcp.js:108·resources.js:37,45 에 같은 401 분기가 복사돼 있습니다. 동작 변화 없는 정리라 가치는 낮습니다. 2026-09-28 정찰의 차선 후보였음.",
+    "updated": "2026-09-28"
+  },
+  {
+    "title": "history.go:55·http.go:1659 의 '모든 실패 404' 를 센티널 방식으로 분류",
+    "value": 2,
+    "risk": 2,
+    "size": "M",
+    "status": "pending",
+    "note": "history.go:55 는 GetSchemaHistorySource 의 저장소 장애까지 404 로 내보냅니다(safeProblemDetail 이 드라이버 원문은 막음). http.go:1659(cancelQueryHandler)은 '남의 실행 ID' 존재 여부가 드러나므로 404 유지가 옳을 수 있어 재검토 필요. resultsave 의 ErrNotFound/ErrInvalidID 패턴(6f5c1d7) 을 이식.",
+    "updated": "2026-09-28"
+  },
+  {
+    "title": "스모크 하네스의 pkill -f \"$BIN\" 자기 매칭을 PID 파일로 교체",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "test/smoke/run.sh:34,100 의 pkill -f \"$BIN\" 이 호출한 셸 자신의 명령줄에 걸려 호출자를 exit 144 로 죽입니다. 2026-09-26 회차에 이어 2026-09-28 회차에서도 두 번 걸렸습니다(heredoc 안이든 go build -o /tmp/dartfly-smoke 같은 인수든 BIN 문자열이 명령줄에 있으면 걸림). 서버 PID 를 파일에 적고 그 PID 만 kill 하면 사라집니다. 제품 코드가 아니라 하네스 품질 문제.",
+    "updated": "2026-09-28"
+  },
+  {
+    "title": "세션 만료 임박 알림과 저장 안 된 SQL 안내",
+    "value": 3,
+    "risk": 2,
+    "size": "M",
+    "status": "pending",
+    "note": "auth/me 의 expires_at 에 의존(2026-09-20 확인, 이후 미재확인). 세션 경로와 인접해 위험 구역. 2026-09-26 회차가 login.js 에 세운 카운트다운 패턴(가짜 타이머 하네스)을 재사용 가능해 전보다 쌈.",
+    "updated": "2026-09-28"
+  },
+  {
+    "title": "저장 결과 검색을 서버 쪽으로(q 파라미터)",
+    "value": 3,
+    "risk": 3,
+    "size": "L",
+    "status": "pending",
+    "note": "ListSavedResults 와 savedSelect 의 권한 조건(admin OR user_seq=?)을 건드려야 해 권한 누출 위험. L 이라 한 세션 범위 밖. 2026-09-23 회차로 '이 페이지에서만 검색' 이 화면에 드러나 급하지 않음.",
+    "updated": "2026-09-28"
+  },
+  {
+    "title": "로그인 페이지 조용한 SSO 시도 중 폼 깜빡임 제거",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "서버 302(d40c325)가 '세션 있음' 을 흡수해 남는 깜빡임은 IdP 왕복뿐. login.js:44-47 shouldAttemptSilentSso 뒤 hasSession() 왕복이 한 번 더 있어 여지는 남음. test/js/login.test.mjs·silentsso.test.mjs 하네스 있음.",
+    "updated": "2026-09-28"
+  },
+  {
+    "title": "로그인 제출 중 단추 라벨을 '로그인 중…' 으로",
+    "value": 1,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "2026-09-26 회차가 LOGIN_LABEL 상수와 라벨 복구 기계를 세웠으므로 한 줄. 다른 변경에 곁들일 때만.",
+    "updated": "2026-09-28"
+  },
+  {
+    "title": "로그아웃 시 IdP end_session(RP-initiated logout) 호출",
+    "value": 3,
+    "risk": 3,
+    "size": "M",
+    "status": "pending",
+    "note": "auth/session/SSO 위험 구역. 실제 IdP 검증을 한 세션 안에 끝내기 어려움. 닫힌 PR #3/#5/#7 기능과 혼동 금지 — 이 브랜치에 코드 없음.",
+    "updated": "2026-09-28"
+  }
 ]
