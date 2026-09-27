@@ -1,0 +1,6 @@
+# 수리 요약 (2026-09-28, 시도 1 거절 후)
+
+비평이 맞았다. 이 폼이 POST 하는 값은 원문이 아니라 `patch.assignee = input.assignee.trim()` 이고, 서버 `finding_bulk.go:63` 의 `len(name) > 200` 은 그 trim 된 값을 잰다. 즉 원래 코드가 이미 서버와 동일했고, b8fb590 의 원문 기준 검사는 `김보안`+공백200 같은 붙여넣기 값을 3글자 이름에 바이트 한도 오류로 막는 오탐만 추가했다. node 로 재현 확인: server(wire)=true, 원문검사=false.
+`web/src/finding-bulk-state.ts` 의 길이 검사를 `.trim()` 기준으로 되돌리고(왜 trim 기준인지 주석으로 고정), 공유 벡터에 `wire`(폼이 실제로 보내는 문자열) 열을 넣어 **TS 는 `assignee` 원문을, Go 는 `wire` 를** 먹게 했다 — 두 리더가 서로 다른 문자열을 본다는 사실 자체가 계약이다. TS 쪽은 `assignee.trim() === wire` 도 단언해 `wire` 열이 진짜 요청 본문임을 유지한다. 잘못 고정했던 `exactly-200-bytes-padded-with-spaces`·`short-name-padded-past-200-bytes` 는 `accepted:true` 로 바로잡아, 이제 이 두 사례가 원문 기준 검사를 잡는 회귀 테스트다.
+검증(실제 실행): `npm --prefix web test` **104통과/0실패/0skip**, `typecheck` 0, `prettier --check` 통과, `go vet ./...` 0, `go build ./cmd/hunter` 성공, `go test -run TestFindingBulkAssigneeSharedVectors -count=1 -v ./internal/app` **17서브테스트 PASS/0 SKIP**. 인과 확정: 길이 검사를 원문 기준으로 되돌리면 `not ok 39 ... assignee verdicts follow the shared server bulk change vectors` 하나만 실패(103/1)하고, 복원하면 다시 104/0.
+`internal/webassets/dist` 재복사와 전체 `go test -race ./...`(DB 필요)는 하지 않았다 — Go 프로덕션 코드 무변경, 웹 소스는 순수 검증 로직 1줄 복귀.
