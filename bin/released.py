@@ -52,31 +52,44 @@ def main():
             if isinstance(p, str) and not p.startswith("("):
                 projects.add(p)
     by = {}
-    tot_r = tot_h = 0
+    tot_r = tot_h = tot_held = 0
     for p in sorted(projects):
         repo = os.path.join(ROOT, p)
         if not os.path.isdir(os.path.join(repo, ".git")):
             continue
+        # 원격에 있는 태그만 센다. release_project 는 릴리즈 커밋의 CI 를 확인하지 못하면
+        # 태그를 만들어 두고 push 를 보류한다("태그 보류") — 그 태그는 로컬에만 남는다.
+        # 로컬 태그를 그대로 세면 게시되지 않은 릴리즈가 성과로 잡힌다 (2026-09-27: 40건).
+        remote = set()
+        for line in git(repo, "ls-remote", "--tags", "origin").splitlines():
+            ref = line.split("\t")[-1]
+            if ref.startswith("refs/tags/") and not ref.endswith("^{}"):
+                remote.add(ref[len("refs/tags/"):])
         out = git(repo, "for-each-ref", "--sort=creatordate", "--format=%(refname:short)\t%(creatordate:short)", "refs/tags")
-        runner, human, tags = 0, 0, []
+        runner, human, held, tags = 0, 0, 0, []
         for line in out.splitlines():
             parts = line.split("\t")
             if len(parts) != 2 or parts[1] < SINCE:
                 continue
             tag = parts[0]
-            if AUTO.search(git(repo, "log", "-6", "--format=%s", tag)):
+            is_runner = bool(AUTO.search(git(repo, "log", "-6", "--format=%s", tag)))
+            if tag not in remote:
+                if is_runner:
+                    held += 1          # 태그만 만들고 push 를 보류한 것 — 반쯤 끝난 릴리즈
+                continue
+            if is_runner:
                 runner += 1; tags.append(tag)
             else:
                 human += 1
-        if runner or human:
-            by[p] = {"runner": runner, "human": human,
+        if runner or human or held:
+            by[p] = {"runner": runner, "human": human, "held": held,
                      "first": tags[0] if tags else "", "last": tags[-1] if tags else ""}
-            tot_r += runner; tot_h += human
+            tot_r += runner; tot_h += human; tot_held += held
     os.makedirs(DATA, exist_ok=True)
     json.dump({"generated": datetime.now(timezone.utc).isoformat(timespec="seconds"), "since": SINCE,
-               "total": tot_r, "human": tot_h, "projects": len([1 for v in by.values() if v["runner"]]),
+               "total": tot_r, "human": tot_h, "held": tot_held, "projects": len([1 for v in by.values() if v["runner"]]),
                "by_project": by}, open(OUT, "w", encoding="utf-8"), ensure_ascii=False, indent=1)
-    print(f"released: 러너 태그 {tot_r}건 · 사람 태그 {tot_h}건 · 저장소 {len(by)}개 ({SINCE} 이후) → {OUT}")
+    print(f"released: 게시된 러너 릴리즈 {tot_r}건 · 사람 {tot_h}건 · 태그만 만들고 보류 {tot_held}건 · 저장소 {len(by)}개 ({SINCE} 이후)")
     return 0
 
 

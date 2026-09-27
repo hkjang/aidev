@@ -530,8 +530,9 @@ def agent_scorecard(runs_all, usage_all, lessons, days_window=14):
         # 같은 기간끼리 세려면 runs_all 을 쓴다 (2026-09-27: 14일치와 비교해 423건이 빠진 것처럼 보였다).
         recorded = sum(1 for r in runs_all if re.search(r"released v", r.get("result") or ""))
         gap = rl["total"] - recorded
-        rows.append({"role": "실제 게시 릴리즈 (태그 기준)", "calls": rl["total"], "cost": None,
-                     "metric": f"저장소 {rl.get('projects')}개 · 러너 태그 {rl['total']}건 (사람 태그 {rl.get('human', 0)}건)"
+        rows.append({"role": "실제 게시 릴리즈 (원격 태그 기준)", "calls": rl["total"], "cost": None,
+                     "metric": f"저장소 {rl.get('projects')}개 · 게시 {rl['total']}건 (사람 {rl.get('human', 0)}건)"
+                               + (f" · 태그만 만들고 미게시 {rl['held']}건 — CI 가 릴리즈 커밋을 막은 저장소" if rl.get("held") else "")
                                + (f" · 누적 회차 기록에는 {recorded}건 — {gap}건이 기록에서 빠졌다" if gap > 0 else " · 회차 기록과 일치")})
         if gap > 20:
             advice.append(f"실제 릴리즈 태그({rl['total']}건)가 누적 회차 기록({recorded}건)보다 {gap}건 많다 — 기록 경로에 빠지는 자리가 남아 있다 (bin/released.py 가 태그로 센 값)")

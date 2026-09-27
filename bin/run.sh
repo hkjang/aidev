@@ -1325,6 +1325,10 @@ release_project(){ # $1=base $2=변경 요약 [$3=assets] — 에이전트는 �
     with_retry "release push" git -C "$rwt" push origin "HEAD:$base" || { stage release push-failed "릴리즈 커밋 푸시 실패 ($RETRY_KIND)"; result="$result, release push failed"; git -C "$repo" worktree remove --force "$rwt" >>"$LOG" 2>&1 || true; return 0; }
     if [ "$tagged" -eq 1 ] && ! ci_gate "$(git -C "$rwt" rev-parse HEAD)"; then
       stage release ci-blocked "릴리즈 커밋 CI: $CI_STATE — $CI_REASON (태그 보류)"; result="$result, release tag held ($CI_STATE)"; OUTCOME=releasing
+      # 보류한 태그는 로컬에서 지운다. 남겨 두면 다음 회차가 더 높은 버전을 성공적으로 게시한
+      # 뒤에도 원격에 없는 태그가 계속 쌓이고(2026-09-27: 28건), 게시되지 않은 릴리즈가
+      # 성과로 잡힌다. 다시 해야 할 릴리즈는 다음 회차가 새 버전으로 만든다.
+      [ -n "${tag:-}" ] && git -C "$repo" tag -d "$tag" >>"$LOG" 2>&1 || true
       git -C "$repo" pull --ff-only origin "$base" >>"$LOG" 2>&1 || true; git -C "$repo" worktree remove --force "$rwt" >>"$LOG" 2>&1 || true; return 0
     fi
   fi
