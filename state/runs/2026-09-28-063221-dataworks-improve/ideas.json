@@ -1,0 +1,146 @@
+[
+  {
+    "title": "syncApprovalTracesFromRegulatoryTrace 가 기존 승인 행의 expires_at 을 빈 값으로 덮어씀",
+    "value": 3,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "이번 회차 1순위. 2026-09-28 에 세 지점을 실제로 열어 확인: admin_dataworks_ops.go:583 이 ExpiresAt 없이 결정적 id `appr_<product>_<step>` 로 UPSERT, store/dataworks_governance.go:191 의 ON CONFLICT 가 expires_at = excluded.expires_at 로 무조건 덮음, domain.go:668 bestApprovalStatus 는 빈 값을 '만료 없음' 으로 읽음. 재생성 라우트는 admin_dataworks_ops.go:148(OpenAPI 322행 'Generate or replace')이고 워크벤치 승인 편집기는 기존 id 를 그대로 보낸다(product-workspace-page.tsx:396) — 즉 같은 행이 겹친다. 기존 테스트 admin_dataworks_test.go:190~212 가 regulatory-trace 2회 POST → publish 409/200 을 이미 돌리므로 재현 하네스가 준비돼 있다. 코드 실행 재현은 정찰에서 하지 않았다(미확인). 가치를 2→3 으로 올림: 게이트가 느슨해지는 방향이고 엄격 게이트 필수 3단계 전부에 해당.",
+    "updated": "2026-09-28"
+  },
+  {
+    "title": "dataWorksTimestampOK 를 통과한 valid_from/valid_to/expires_at 을 런타임·액션센터·store·bestApprovalStatus 가 같게 읽는지 계약 테스트로 고정",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "이번 회차 차선 후보. 2026-09-28 에 쓰기 경로를 재확인: 계약 POST(admin_dataworks.go:1371~1376)와 엔타이틀먼트 POST(1455), 승인 POST(1116)는 모두 TrimSpace 후 dataWorksTimestampOK 를 호출하므로 쓰기 경로는 이미 일관적이고, 남은 위험은 레거시 행을 읽는 네 경로의 동치뿐이다. 파서 통합은 금지, 동치만 표 테스트로 단언. 프로덕션 파일 0개.",
+    "updated": "2026-09-28"
+  },
+  {
+    "title": "contractScopeCanServe 가 해석 불가 valid_from 을 무시해 영구히 서빙 불가인 계약을 퍼블리시 게이트 masking 증거에서 살아 있는 계약으로 셈",
+    "value": 3,
+    "risk": 3,
+    "size": "S",
+    "status": "pending",
+    "note": "2026-09-28 신규. dataworks_runtime.go:271 contractScopeCanServe 는 status 와 valid_to 만 보고 valid_from 은 보지 않는데, contractScopeActive(317)는 해석 불가 valid_from 에 영구히 false 다. 따라서 '지금 또는 나중에 서빙할 수 있는가' 라는 함수의 문서화된 의도와 실제가 어긋난다. 유일한 프로덕션 호출부는 admin_dataworks.go:1753 의 masking 증거 루프이고, 고치면 그 계약이 증거 판정에서 제외되어 **게이트가 느슨해지는 방향**이다 — 프로필의 '퍼블리시 게이트 masking 증거를 느슨해지는 방향으로 바꾸지 말 것' 가드레일과 정면으로 충돌하므로 자율 회차에서 고르지 말 것. 운영자 판단이 필요한 항목.",
+    "updated": "2026-09-28"
+  },
+  {
+    "title": "같은 step 에 승인 행이 둘 이상이면 bestApprovalStatus 가 첫 approved 를 즉시 돌려줘 나중 rejected 가 게이트를 막지 못함",
+    "value": 3,
+    "risk": 3,
+    "size": "M",
+    "status": "pending",
+    "note": "2026-09-28 신규. POST …/approvals(admin_dataworks.go:1116)는 id 가 없으면 newID('appr') 로 새 행을 만들고 dw_approval_traces 에는 (product_key, step) UNIQUE 제약이 없다(sqlstore.go:1898·1911 은 인덱스만). bestApprovalStatus(domain.go:668)는 step 이 맞는 첫 approved|waived 에서 즉시 반환하므로, CLI·SDK 로 같은 step 에 rejected 행을 추가해도 기존 approved 행이 게이트를 계속 열어 둔다. 워크벤치는 기존 id 를 보내므로 UI 로는 재현되지 않는다(확인). 고치는 방향이 둘(쓰기 경로에서 step 당 한 행으로 합치기 / 판정 우선순위를 가장 제한적인 값으로 바꾸기)이고 어느 쪽이든 API 의미가 바뀌므로 M, 운영자 판단 필요.",
+    "updated": "2026-09-28"
+  },
+  {
+    "title": "contract_expiring 액션이 만료 임박·이미 만료·창 해석 불가 세 상태를 한 type 으로 묶어 구분 불가",
+    "value": 2,
+    "risk": 2,
+    "size": "M",
+    "status": "pending",
+    "note": "2026-09-28 에 코드로 재확인: admin_dataworks.go:252~295 루프가 세 경우를 모두 type=contract_expiring 으로 내고 severity 만 high/medium 으로 갈린다. next_action 문구 'renew, narrow, or retire the customer contract scope' 는 '설정 오류' 에 맞지 않는다. 새 type 없이 reason 필드를 더하는 방향이면 web 렌더(labels.ko.ts·secondary-pages.tsx typeMap·home-page.tsx·types/dataworks.ts)가 따라와 프로덕션 5파일. 쪼개지 않으면 파일 수 상한에 걸린다.",
+    "updated": "2026-09-28"
+  },
+  {
+    "title": "액션 센터가 아직 열리지 않은 계약 창(valid_from 미래)을 전용 경고로 보고",
+    "value": 2,
+    "risk": 2,
+    "size": "M",
+    "status": "pending",
+    "note": "2026-09-28 재확인: admin_dataworks.go:283 근처 주석이 '미래 valid_from 은 예정 계약이므로 일부러 제외' 라고 명시하므로 현재 동작은 의도된 것이다. 새 action type(contract_not_yet_active) + summary 키 + web 4파일 + 문서로 프로덕션 6파일을 넘는다. 고르려면 쪼갤 것.",
+    "updated": "2026-09-28"
+  },
+  {
+    "title": "상품이 사라진 참조 행(고아 Contract Scope·Entitlement)을 전용 운영 경고로 분류",
+    "value": 2,
+    "risk": 2,
+    "size": "M",
+    "status": "pending",
+    "note": "2026-09-28 회차에도 코드로 재확인하지 않았다(미확인). 새 경고 종류라 summary 키·웹 4파일·문서 동반 변경.",
+    "updated": "2026-09-28"
+  },
+  {
+    "title": "동일 API 키에 활성 엔타이틀먼트가 둘 이상일 때 운영 화면 경고",
+    "value": 2,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "2026-09-28 에 usableEntitlement(dataworks_runtime.go:246)를 재확인: 후보를 순회해 첫 통과 행을 쓰므로 중복 자체는 오류가 아니지만 어느 계약이 적용되는지 운영자가 예측하기 어렵다. 새 경고 종류라 summary 키·웹 동반 변경.",
+    "updated": "2026-09-28"
+  },
+  {
+    "title": "이미 지난 expires_at 으로 발급되는 죽은 엔타이틀먼트를 쓰기 경로에서 거부",
+    "value": 2,
+    "risk": 3,
+    "size": "S",
+    "status": "pending",
+    "note": "2026-09-28 재확인: admin_dataworks.go:1455~1456 은 트림 후 형식과 status 만 본다. 과거 만료 행 저장 거부는 갱신·감사·백필 계약에 영향이 있고 액션 센터가 entitlement_inactive 로 이미 보고하므로 가치가 낮다.",
+    "updated": "2026-09-28"
+  },
+  {
+    "title": "가이드 캡처 스펙의 하드코딩 버전 문자열(DEMO_VERSION) 한 곳에서 읽기",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "캡처는 CI 미포함이라 가치 낮음. 2026-09-28 회차에도 web/capture 를 열지 않아 미재확인.",
+    "updated": "2026-09-28"
+  },
+  {
+    "title": "실제 MCP 클라이언트 흐름(401→메타데이터→PKCE→토큰→tools/list) e2e 를 스텁 Keycloak + Playwright 로 편입",
+    "value": 3,
+    "risk": 2,
+    "size": "M",
+    "status": "pending",
+    "note": "스텁 IdP·서버 기동 인프라가 필요해 한 세션(45분)에 맞지 않음. 보류 유지.",
+    "updated": "2026-09-28"
+  },
+  {
+    "title": "Playwright 캡처·e2e 를 CI 잡으로 편입",
+    "value": 3,
+    "risk": 2,
+    "size": "M",
+    "status": "pending",
+    "note": "보호 경로(.github/workflows/ci.yml)이고 브라우저 설치 의존. 보류 유지.",
+    "updated": "2026-09-28"
+  },
+  {
+    "title": "verifyKeycloakAccessToken(currentAccessClaims) 의 role 클레임 권한 승격 경로 재검토",
+    "value": 3,
+    "risk": 3,
+    "size": "M",
+    "status": "pending",
+    "note": "인증 보호 경로. 기존 machine client 계약 영향 미확인. 자율 회차에서 고르기에 위험이 높다.",
+    "updated": "2026-09-28"
+  },
+  {
+    "title": "parseExpiryHorizon 의 d/w 곱셈 오버플로 거부",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "done",
+    "note": "v0.9.60(2026-09-23)에서 해결. admin_dataworks.go:390 에 int64 범위 검사가 들어가 있음을 2026-09-28 에 확인.",
+    "updated": "2026-09-28"
+  },
+  {
+    "title": "런타임·액션센터·도메인 규칙의 날짜 트림 규칙 불일치(valid_to·valid_from·entitlement expires_at·승인 expires_at)",
+    "value": 3,
+    "risk": 1,
+    "size": "S",
+    "status": "done",
+    "note": "v0.9.59~v0.9.63 네 회차로 네 곳 모두 해소. 2026-09-28 에 dataworks_runtime.go:276·325, admin_dataworks.go:267·283, domain.go:683 을 다시 읽어 전부 TrimSpace 후 파싱함을 확인했다. 남은 것은 읽기 경로 동치를 테스트로 고정하는 일뿐.",
+    "updated": "2026-09-28"
+  },
+  {
+    "title": "web/dist/.gitkeep 이 vite build 로 지워지는 문제",
+    "value": 3,
+    "risk": 1,
+    "size": "S",
+    "status": "done",
+    "note": "v0.9.57 의 vite 인라인 플러그인 keepDistPlaceholder 로 해결.",
+    "updated": "2026-09-28"
+  }
+]

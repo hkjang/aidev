@@ -160,6 +160,13 @@ if [ -s "$expf" ] && [ "$(jq -r '.enabled // false' "$expf")" = true ]; then
   fi
 fi
 
+# 기본 브랜치 CI 가 며칠째 빨간 저장소 — 하루 한 번. 러너는 자기 PR 의 CI 만 보므로
+# 저장소 전체가 빨간 상태는 아무도 세지 않았다 (madi 가 9-24~27 사흘을 그랬다).
+ciw_stamp="$HOME/.auto-improve/.ci-watch"
+if [ $(( now - $(stat -c %Y "$ciw_stamp" 2>/dev/null || echo 0) )) -gt 86400 ]; then
+  date +%s > "$ciw_stamp"; python3 "$HERE/ci-watch.py" --queue >>"$REPO_DIR/logs/ci-watch.log" 2>&1 || true
+fi
+
 # 이사회: 주마다 한 번. postmerge 6시간 블록 안에 있었는데, 그러면 그 블록이 건너뛰는
 # 점검에서는 기회조차 없다 — 한 번 실패하면 그 주가 통째로 빈다 (2026-09-21 W39 가 그랬다).
 # 파일 존재 확인은 공짜이므로 매 점검마다 본다.

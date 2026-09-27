@@ -1,0 +1,155 @@
+[
+  {
+    "title": "팔레트에서 앱 결과가 늦게 도착하면 선택 위치가 밀려 Enter 가 엉뚱한 항목으로 이동",
+    "value": 3,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "이번 회차 선택. command-palette.tsx:109 의 active 인덱스 상태가 :185-188 에서 앱 결과가 앞에 끼어들 때 다른 항목을 가리킨다. 선택을 항목 id 로 추적하는 방향으로 지정했고, 범위를 벗어난 active 로 Enter 가 무반응이던 상태도 같이 사라진다. 재현 테스트는 아직 없음 — 구현자가 red 를 먼저 확인할 것.",
+    "updated": "2026-09-28"
+  },
+  {
+    "title": "E2E mock API 의 public config override 가 기본값에 덮여 무효",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "mock-api.ts 가 ...options.config 를 먼저 펼치고 기본값을 뒤에 써서 주입이 항상 덮인다(2026-09-26 정찰이 311-322 로 확인, 이번 회차 미재확인). 사용자에게 보이는 변화가 없는 테스트 인프라 수정이라 단독 과제로는 반려 위험 — 설정 주입이 필요한 E2E 과제와 묶어서만.",
+    "updated": "2026-09-28"
+  },
+  {
+    "title": "상위 100개 밖의 즐겨찾기 앱이 /favorites 에 아예 안 나옴",
+    "value": 3,
+    "risk": 3,
+    "size": "M",
+    "status": "pending",
+    "note": "public-pages.tsx:237 이 favoritesOnly 일 때 pageSize 100 한 페이지만 받고 :242 에서 slug 로 거른다. 서버 limit 상한 100 이라 slug 필터 API 나 다중 페이지 조회가 필요 — 공개 API 계약 변경 수반, 단독 회차로.",
+    "updated": "2026-09-28"
+  },
+  {
+    "title": "/favorites 의 검색·정렬이 즐겨찾기가 아닌 전체 카탈로그를 대상으로 동작",
+    "value": 2,
+    "risk": 2,
+    "size": "M",
+    "status": "pending",
+    "note": "이번 회차 차선 후보. 서버 검색 결과를 slug 로 거르므로 검색어를 넣으면 즐겨찾기가 사라진 것처럼 보인다(public-pages.tsx:226-242). 100개 밖 문제와 뿌리가 같아 함께 다루는 편이 낫다.",
+    "updated": "2026-09-28"
+  },
+  {
+    "title": "clientAddress 가 RemoteAddr 만 보아 reverse proxy 뒤에서 rate limit 이 전역",
+    "value": 3,
+    "risk": 3,
+    "size": "M",
+    "status": "pending",
+    "note": "internal/httpapi/ratelimit.go:clientAddress. 신뢰 프록시 정책과 보호 경로(auth) 변경이 필요해 위험. 2026-09-27·09-28 정찰 모두 미열람 — 단독 회차로.",
+    "updated": "2026-09-28"
+  },
+  {
+    "title": "로그인 방식이 모두 없는 설치의 브라우저 안내 E2E",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "Vitest 안내 검증은 721ad4a 로 있으나 core.spec.ts 에 해당 E2E 없음. mock config override 순서 문제를 먼저 고쳐야 설정 주입이 가능하다.",
+    "updated": "2026-09-28"
+  },
+  {
+    "title": "로그인 rate limit 통합 테스트의 분 경계 취약성 — 고정 시각 주입",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "auth_handlers.go 가 time.Now() 를 직접 사용. APPSTORE_TEST_POSTGRES_DSN 미설정이라 통합 테스트가 skip 되어 재현 미확인. 보호 경로(auth)라 신중히.",
+    "updated": "2026-09-28"
+  },
+  {
+    "title": "소유자가 볼 수 있는 검토 이력이 마지막 한 건뿐",
+    "value": 2,
+    "risk": 2,
+    "size": "M",
+    "status": "pending",
+    "note": "personal_handlers.go 의 LatestReviewsByApp. API·권한·화면 계약 변경이 필요. 이번 회차 미열람.",
+    "updated": "2026-09-28"
+  },
+  {
+    "title": "방문 추적 화면에 현재 설정이 만들 CSP 문자열 미리보기",
+    "value": 2,
+    "risk": 2,
+    "size": "M",
+    "status": "pending",
+    "note": "analytics_handlers.go:pagePolicy 존재. 저장 전 미리보기/nonce 계약이 필요. 이번 회차 미열람.",
+    "updated": "2026-09-28"
+  },
+  {
+    "title": "pending_review 앱을 수정해도 검토가 level 1 로 되돌아가지 않음",
+    "value": 2,
+    "risk": 3,
+    "size": "S",
+    "status": "pending",
+    "note": "store/apps.go UpdateApp 의 rotateAppChallenge. 단계 재설정이 의도된 정책인지 미확인 — 결함으로 단정 금지.",
+    "updated": "2026-09-28"
+  },
+  {
+    "title": "/login?sso=none 안내 화면 캡처 추가",
+    "value": 1,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "make screenshots 전체 갱신이 필요하므로 다음 캡처 갱신 회차에.",
+    "updated": "2026-09-28"
+  },
+  {
+    "title": "팔레트가 최근 이동 항목을 앱 삭제·비공개 전환 뒤에도 계속 제시",
+    "value": 2,
+    "risk": 2,
+    "size": "M",
+    "status": "pending",
+    "note": "command-palette.tsx:174-178 이 menu:/app-admin: 만 세션 기준으로 걸러 app:<slug> 는 항상 통과한다(이번 회차 재확인). 삭제·비공개 앱의 최근 항목은 클릭하면 404/권한 오류. slug 유효성 확인에 추가 요청이나 서버 계약이 필요해 단독 회차로.",
+    "updated": "2026-09-28"
+  },
+  {
+    "title": "즐겨찾기 화면의 앱 개수와 페이지 탐색을 즐겨찾기 기준으로 맞추기",
+    "value": 3,
+    "risk": 1,
+    "size": "S",
+    "status": "rejected",
+    "note": "중복 제출 금지. 2026-09-23 회차가 0898f7a 로 구현했고 review-pending 으로 남아 있다. 이번 정찰에서 main 에는 여전히 없음을 확인했다(public-pages.tsx:361 의 apps.data.total, :410 에 !favoritesOnly 없음) — 그래도 같은 두 줄을 다시 고치지 말 것.",
+    "updated": "2026-09-28"
+  },
+  {
+    "title": "공개 화면이 없는 소유자 앱 카드에서 즐겨찾기 버튼 숨기기",
+    "value": 3,
+    "risk": 1,
+    "size": "S",
+    "status": "done",
+    "note": "PR #26(4ee7153)로 머지됨 — app-card.tsx 의 viewable 조건이 main 에 있다. 재구현 금지.",
+    "updated": "2026-09-28"
+  },
+  {
+    "title": "하트를 누르면 카탈로그 목록 전체가 스켈레톤으로 사라지고 서버를 다시 조회",
+    "value": 4,
+    "risk": 1,
+    "size": "S",
+    "status": "done",
+    "note": "73122f8 로 머지됨 — public-pages.tsx:223 주석과 쿼리 키에서 slugs 가 빠진 것을 이번 정찰에서 확인했다.",
+    "updated": "2026-09-28"
+  },
+  {
+    "title": "로그아웃·권한 상실 뒤에도 팔레트 최근 이동이 관리자 메뉴를 제시",
+    "value": 3,
+    "risk": 1,
+    "size": "S",
+    "status": "done",
+    "note": "1355503 으로 머지됨 — command-palette.tsx:171-178 의 세션 기준 필터를 이번 정찰에서 확인했다.",
+    "updated": "2026-09-28"
+  },
+  {
+    "title": "즐겨찾기 기기 간 동기화 오안내를 USER_GUIDE·PDF·웹 요약에서 정정",
+    "value": 3,
+    "risk": 1,
+    "size": "S",
+    "status": "done",
+    "note": "7170190 로 머지됨(v2.11.4).",
+    "updated": "2026-09-28"
+  }
+]
