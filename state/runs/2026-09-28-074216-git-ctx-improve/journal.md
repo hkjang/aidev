@@ -18,3 +18,6 @@
 - 부서 소견: security·legal 모두 차단 없음. 펜스 탈출은 파일이 `Source:`·`### Notes` 틀을 위조하는 프롬프트 인젝션 면이었고 이 변경은 그것을 좁힌다. 이 PR 밖 위생 항목: main 에 이미 추적된 `c.txt`(쿠키 항목 0개)·`server.log` — 값 확인해 비밀값 없음, 차단 아님.
 - [러너 08:12] review approved — 리뷰 승인 (risk=low)
 - [러너 08:12] pr created — https://github.com/hkjang/git-ctx/pull/41
+- [러너 08:19] ci passed — 검사 5개 모두 success
+- [러너 08:19] merge done — 82ceb79
+- [러너 08:37] release published — v0.77.20

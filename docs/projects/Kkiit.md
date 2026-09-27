@@ -1,7 +1,7 @@
 ---
 title: "Kkiit — 자율 개선 이력"
 description: "Kkiit: 자율 개선 회차 20회, 릴리즈 10건. 최근 릴리즈 v0.4.9 (자산 1개)."
-last_modified_at: 2026-09-28 08:13:46 +0900
+last_modified_at: 2026-09-28 08:39:46 +0900
 ---
 {% raw %}
 <script type="application/ld+json">
@@ -18,7 +18,7 @@ last_modified_at: 2026-09-28 08:13:46 +0900
   "name": "hkjang",
   "url": "https://github.com/hkjang"
  },
- "dateModified": "2026-09-28T08:13:46+09:00",
+ "dateModified": "2026-09-28T08:39:46+09:00",
  "version": "0.4.9"
 }
 </script>

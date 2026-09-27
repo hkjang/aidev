@@ -29,3 +29,13 @@
 - 고친 방법: 길이 검사를 `.trim()` 기준으로 되돌리고, 벡터에 `wire`(= 요청 본문) 열을 추가해 TS 는 원문, Go 는 `wire` 를 먹인다. TS 가 `assignee.trim() === wire` 를, Go 가 `TrimSpace(wire) == wire` 를 단언해 두 trim 이 어긋나면 벡터가 깨진다.
 - 여전히 확신 없는 곳: 앞뒤에만 붙은 탭/개행은 폼이 제어 문자로 거절하지만 서버는 trim 후 수락한다(클라이언트가 더 엄격). 의도적으로 벡터에 넣지 않았다 — 기존 동작이고 이번 범위를 넘어서므로 손대지 않았다. `U+0085`(Go 는 trim, JS 는 아님)와 `U+FEFF`(반대) 역시 벡터에서 제외한 채 note 로만 고정했다.
 - [러너 08:13] repair done — # 수리 요약 (2026-09-28, 시도 1 거절 후)  비평이 맞았다. 이 폼이 POST 하는 값은 원문이 아니라 `patch.assignee = input.assignee.trim()` 이고, 서버 `finding_bulk.go:63` �
+
+## 비평 노트
+- (수리 후 재심) 확인: `finding_bulk.go:36-81`, `finding-bulk-state.ts` 전문, main 과의 대조(프로덕션 변경 = 주석 4줄뿐), 벡터 17사례. 실행: Go 17/17 PASS, `npm --prefix web test` 104/0/0, `go vet`·`gofmt -l`·`tsc --noEmit` 통과, Node 로 17벡터를 서버 규칙(원문·wire 양쪽)과 대조. 변이 검증 후 트리 clean 복원.
+- **승인.** 웹 테스트는 진짜 회귀 테스트다 — 1차 시도의 원문 카운트로 되돌리면 test 39 가 FAIL 한다. Go 테스트도 무력하지 않다: `>200`→`>=200`, `>400`, 제어 집합 C0 축소가 모두 FAIL.
+- 남는 우려 1 — `finding_bulk_validate_test.go:63-67` 주석은 이 단언이 두 trim 불일치를 잡는다고 하지만 wire 가 이미 trim 된 값이라 **절대 실패하지 않는다**(서버 `strings.TrimSpace` 를 아예 지워도 17/17 PASS). 이번 변경의 핵심 축에 Go 는 눈이 없다.
+- 남는 우려 2 — 벡터 `note` 의 제외 근거가 틀렸다: Go TrimSpace 와 JS trim 은 U+2000~U+200A·U+3000 에서 **일치**하며(실측) 갈리는 것은 U+FEFF·U+0085 둘뿐이다. 제외는 보수적이라 무해하나 다음 회차가 없는 불일치를 쫓을 수 있다.
+- 릴리즈 노트: 서버 계약(`finding_bulk.go:63` 은 여전히 trim 전 바이트를 센다)은 **무변경**임을 명시할 것 — API 직접 호출자의 앞뒤 공백 400 은 의도적으로 남긴 선행 동작이다. b8fb590 은 없던 증상을 단정한 오수정이므로 **squash 병합** 권장.
+- [러너 08:19] review approved — 리뷰 승인 (risk=low)
+- [러너 08:20] pr created — https://github.com/hkjang/hunter/pull/14
+- [러너 08:39] ci timeout — 제한 시간 안에 CI 완료를 확인하지 못함

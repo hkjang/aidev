@@ -1,0 +1,26 @@
+release: v0.77.20
+
+MCP 응답이 파일 내용을 감싸는 코드 펜스가 그 내용보다 짧아 답변 구조가 무너지던 것을
+read-file·get-symbol-context 두 도구에서 고칩니다. internal/mcp/format.go 의
+formatFileContent(179-182행)은 내용에 백틱 세 개가 있으면 네 개로만 올렸고
+formatSymbolContext(391행)은 아예 올리지 않고 언제나 백틱 세 개로 감쌌습니다. 저장소에는
+코드 펜스를 그대로 보여 주는 파일이 실제로 있습니다 — 사용 예를 담은 파이썬 모듈
+docstring, 4백틱 안에 3백틱 블록을 보여 주는 README. 그런 내용의 펜스는 답변이 연 블록을
+내용 한가운데서 닫았고, 그 뒤의 Source: 인용과 ### Notes, 그리고 finishCall(dispatch.go:376-382)
+이 예산 적용 뒤에 덧붙이는 인자 안내·신선도 안내가 파일 본문으로 읽혔으며 답변의 마지막
+펜스는 끝내 닫히지 않는 블록을 하나 더 열었습니다. 같은 입력을 두 경로가 다르게 읽던 것이
+근거였습니다 — 4백틱 안에 3백틱을 보여 주는 README 는 read-file 에서도 무너지고, 펜스를 담은
+docstring 을 가진 심볼은 read-file 로는 살아남아도 get-symbol-context 로 읽으면 무너졌습니다.
+새 헬퍼 contentFence 하나로 두 경로를 통일했습니다 — 내용 안의 가장 긴 백틱 연속보다 한 개
+긴 펜스, 최소 세 개. 백틱 세 개를 담은 내용은 종전과 똑같이 네 개가 되므로 read-file 의
+기존 계약은 그대로이고, 도구 이름·인자·응답 필드 구조와 인용 형식은 한 글자도 바꾸지
+않았습니다. 대역 타입 없이 실제 배선으로 회귀 시험했습니다 — 실제 store.Open("sqlite", …)
+fixture 와 실제 mcp.Server.ServeHTTP 의 JSON-RPC tools/call 로 get-symbol-context(실제
+search.SymbolContext → document_chunks 재조립)와 read-file(실제 search.ReadFile →
+repository_files 청크 재조립) 두 경로를 각각 호출하고, 응답을 CommonMark 방식으로 읽는 시험
+헬퍼로 ① 끝에 열린 채 남은 블록 없음 ② 블록이 정확히 하나 ③ 본문 마지막 줄이 그 블록 안에
+있음을 단언합니다. 수정 전 코드에서 두 케이스가 모두 실패함을 먼저 확인했습니다. 백틱을
+담지 않거나 두 개 이하만 담은 내용의 결과는 전과 완전히 같고, 저장되는 청크와 검색 결과,
+접근 판정은 바뀌지 않습니다. 답변이 절단될 때 closeOpenFence(budget.go:111-119)가 여는 펜스
+길이를 모른 채 언제나 백틱 세 개를 붙이는 것은 선존 제약으로 남겨 별도 회차로 분리했습니다.
+마이그레이션과 재색인은 필요하지 않습니다.
