@@ -1,5 +1,5 @@
 {
- "generated": "2026-09-27T11:34:13+09:00",
+ "generated": "2026-09-27T11:42:03+09:00",
  "site": "https://hkjang.github.io/aidev",
  "description": "Claude Code 자율 개선 에이전트가 hkjang 의 프로젝트를 개선·테스트·머지·릴리즈한 일일 보고. 오늘 23회차·릴리즈 20건, 누적 1533회차·릴리즈 518건, 주의 필요 4건.",
  "today": {
@@ -10,18 +10,18 @@
   "merged": 1,
   "nochange": 0,
   "failed": 0,
-  "cost_usd": 160.23,
-  "minutes": 590,
-  "sessions": 83
+  "cost_usd": 161.36,
+  "minutes": 593,
+  "sessions": 84
  },
  "totals": {
   "runs": 1533,
   "released": 518,
   "days": 26,
-  "cost_usd": 5512.4,
-  "minutes": 14248,
-  "tokens_in": 5996398728,
-  "tokens_out": 46454497
+  "cost_usd": 5513.53,
+  "minutes": 14251,
+  "tokens_in": 5997107173,
+  "tokens_out": 46465101
  },
  "alerts": [
   {
@@ -1219,11 +1219,11 @@
    "why": "review: approved — 리뷰 승인 (risk=low); ci: timeout — 제한 시간 안에 CI 완료를 확인하지 못함",
    "evidence": "https://github.com/hkjang/aidev/tree/main/state/runs/2026-09-27-104151-hunter-improve",
    "labels": "",
-   "action": "PR 처리기가 매시간 살핀다 (아직 순서가 오지 않음) · 승인: PR 라벨 aidev-approved / 반려: aidev-rejected — 다음 회차에 러너가 승인 당시 커밋에만 CI 확인 후 머지·닫기",
+   "action": "PR 처리기가 다음 시간에 다시 시도 · 승인: PR 라벨 aidev-approved / 반려: aidev-rejected — 다음 회차에 러너가 승인 당시 커밋에만 CI 확인 후 머지·닫기",
    "date": "2026-09-27",
-   "shepherd": "",
-   "shepherd_action": "",
-   "shepherd_detail": "",
+   "shepherd": "리뷰 없음 · 심사 거절 → 다음 시간에 수정 (09-27 11:42) — - web/src/list-tools.tsx:152-160 이 PR 의 동작 변경 전체가 이 인라인 분기인데 어떤 테스트도 이 경로를 실행하지 않는다. 실측으로 증명했다: list-tools.tsx 만 origin/main 으로 되돌리고 `npm --prefix web test` 를 돌",
+   "shepherd_action": "review-reject",
+   "shepherd_detail": "- web/src/list-tools.tsx:152-160 이 PR 의 동작 변경 전체가 이 인라인 분기인데 어떤 테스트도 이 경로를 실행하지 않는다. 실측으로 증명했다: list-tools.tsx 만 origin/main 으로 되돌리고 `npm --prefix web test` 를 돌리면 97 통과/0 실패 — 고친 코드를 지워도 깨지는 테스트가 없다. 즉 회귀 보호가 0 이다.\n- web/tests/saved-list-views.test.mjs:125-161 새 테스트는 추출한 순수 술어 savedListQueryTooLong 과 읽기측 필터만 검증한다. 읽기측 판정은 main 에도 인라인 `item.query.length > 8192` 로 동일하게 있었으므로(saved-list-views.ts:45 의 치환은 무동작 리팩터) 이 테스트가 main 에서 실패하는 이유는 새 export 두 개가 없어 import 가 깨지는 것뿐이고, 실제 결함(저장이 성공을 보고하는 것)은 단언하지 않는다.\n- 수리 방향(하네스 불필요): web/src/list-tools.tsx:126-175 의 save() 네 가드(이름 없음·8개 초과·이름 중복·500자 초과)와 새 8192 가드를 saved-list-views.ts 쪽 순수 함수(예: savedViewSaveError(prefs, title, params, snapshot) -> 오류 문자열 또는 \"\")로 뽑고 save() 가 그것만 호출하게 한 뒤, 각 가드와 그 판정 순서를 테스트할 것. 이것이 이 저장소가 컴포넌트 인라인 로직을 검증하는 기존 관례이며, 가짜 view 객체 없이 프로덕션 함수를 그대로 부른다.\n- web/src/saved-list-views.ts:17-19 주석 \"Browser storage keeps one saved view under this many characters\" 와 커밋 제목 \"...that browser storage would silently discard\" 가 사실과 다르다. localStorage 에는 값당 8192자 제한이 없다(쿼터는 origin 단위 수 MB, 저장소 전체 기준). 8192 는 readListPreferences(saved-list-views.ts:26-51) 의 자체 검증값이다. 증상(새로고침 후 보기 사라짐)은 실제지만 원인 설명이 틀렸고, 러너가 이 커밋 제목을 릴리즈 노트로 옮기므로 주석·커밋 제목 모두 \"읽기 검증 한도\"로 고칠 것.",
    "needs_human": false
   }
  ],
@@ -1588,13 +1588,14 @@
   }
  ],
  "shepherd": {
-  "last_pass": "2026-09-27T10:20:09+09:00",
+  "last_pass": "2026-09-27T11:37:28+09:00",
   "enabled": true,
   "today": {
    "fix-pushed": 1,
-   "approve": 2
+   "approve": 2,
+   "review-reject": 1
   },
-  "total": 329,
+  "total": 330,
   "pending_human": 90
  },
  "agents": {
@@ -1615,7 +1616,7 @@
     "role": "비평 critic",
     "calls": 349,
     "metric": "최종 승인 92% · 한 번이라도 거절 43 · 승인·머지 뒤 회귀 0/277",
-    "cost": 589.7
+    "cost": 590.83
    },
    {
     "role": "수리 repairer",
@@ -1637,9 +1638,9 @@
    },
    {
     "role": "PR 심사 shepherd-reviewer",
-    "calls": 223,
-    "metric": "승인 73 · 거절 60 · 사람 필요 90 · 승인 뒤 회귀 0",
-    "cost": 372.75
+    "calls": 224,
+    "metric": "승인 73 · 거절 61 · 사람 필요 90 · 승인 뒤 회귀 0",
+    "cost": 373.88
    },
    {
     "role": "PR 수리 shepherd-fixer",
@@ -2114,7 +2115,7 @@
    "merged": 1,
    "nochange": 0,
    "failed": 0,
-   "cost_usd": 160.23
+   "cost_usd": 161.36
   },
   {
    "date": "2026-09-26",
@@ -2352,8 +2353,8 @@
    "merged": 71,
    "nochange": 92,
    "failed": 4,
-   "cost": 1261.34,
-   "minutes": 3879
+   "cost": 1262.47,
+   "minutes": 3882
   },
   {
    "key": "2026-W38",
@@ -2402,8 +2403,8 @@
    "merged": 234,
    "nochange": 117,
    "failed": 32,
-   "cost": 5512.4,
-   "minutes": 14248
+   "cost": 5513.53,
+   "minutes": 14251
   }
  ],
  "projects": [
@@ -2707,8 +2708,8 @@
    "last_ts": "2026-09-27T11:12:26+09:00",
    "last_status": "other",
    "last_result": "CI timeout, PR open https://github.com/hkjang/hunter/pull/13",
-   "cost": 149.45,
-   "minutes": 443,
+   "cost": 150.58,
+   "minutes": 447,
    "grade": "D",
    "grade_why": "14일: 릴리즈 1, 실패 1, 경고 4, 회귀 0",
    "lessons": 0,
