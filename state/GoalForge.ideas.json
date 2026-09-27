@@ -1,0 +1,65 @@
+[
+  {
+    "title": "GoalForge 커밋 신원을 환경변수 GIT_AUTHOR_*/GIT_COMMITTER_* 가 덮어쓰지 못하게 고정",
+    "value": 4,
+    "risk": 2,
+    "size": "S",
+    "status": "done",
+    "note": "2026-09-28 구현. internal/gitops/commit.go 에 commitIdentityEnv() 추가, MergeVerified/CommitVerified 의 exec.Cmd 에 cmd.Env 로 물림. -c user.name= 인자는 설정 경로용으로 유지해 두 경로가 같은 값을 낸다. 원인을 printenv 로 직접 확증(GIT_AUTHOR_NAME=hkjang 등이 실제로 떠 있었다). 새 회귀 테스트 TestCommitIdentityIgnoresAmbientGitEnvironment 가 실제 git 저장소에 실제 함수를 호출해 검증하고, 고치기 전 실패를 눈으로 확인했다.",
+    "updated": "2026-09-28"
+  },
+  {
+    "title": "internal/model 패키지 테스트 추가 (현재 no test files)",
+    "value": 3,
+    "risk": 1,
+    "size": "M",
+    "status": "pending",
+    "note": "go test ./... 출력에서 internal/model, internal/procctl, internal/testscript 가 [no test files]. model 은 프로젝트 전역 핵심 타입이라 상태 전이·검증 헬퍼의 계약을 고정할 값이 가장 크다. 이번 회차 차선 후보였으나 1순위가 실제로 깨져 있어 그쪽을 구현했다. 다음 회차 유력 후보.",
+    "updated": "2026-09-28"
+  },
+  {
+    "title": "push 의존 테스트를 pushurl=DISABLED 감지로 결정적 skip 처리",
+    "value": 2,
+    "risk": 3,
+    "size": "M",
+    "status": "pending",
+    "note": "2026-09-28 원인 확정: 하네스가 GIT_CONFIG_COUNT=2 / GIT_CONFIG_KEY_0=remote.origin.pushurl / GIT_CONFIG_VALUE_0=DISABLED 를 주입해 push 를 의도적으로 차단한다(로컬 bare 대상도 fatal: 'DISABLED' does not appear to be a git repository). 이전 회차의 '미확인' 이 해소됐으므로 이제 근거 있는 skip 이 가능하다. 대상: TestPushBranchPublishesToLocalRemote(commit_test.go:110), internal/app TestPublishReconcilesInsteadOfRepeating(effects_test.go:74), cmd/goalforge TestCLIFullLifecycle. 다만 skip 조건을 'remote.origin.pushurl 이 실제 저장소가 아님' 으로 아주 좁게 잡아야 진짜 push 회귀를 덮지 않는다. 안전장치를 우회하는 방향(pushurl 덮어쓰기)은 절대 금지.",
+    "updated": "2026-09-28"
+  },
+  {
+    "title": "테스트용 git 저장소 부트스트랩 헬퍼를 공유 패키지로 정리",
+    "value": 2,
+    "risk": 2,
+    "size": "M",
+    "status": "pending",
+    "note": "internal/api/setup_test.go:21, internal/evaluation/runner_test.go:19, internal/app/plan_test.go:41, internal/app/service_test.go:628/705, internal/app/effects_test.go:25, internal/gitops/commit_test.go 가 각자 git init + user.name 설정 + t.Skipf 를 중복 구현한다. 한 헬퍼로 모으면 환경 격리(전역 hooksPath·신원·GIT_CONFIG_* 주입)를 한 곳에서 보장할 수 있다. 테스트 파일 6개 이상을 건드리므로 파일 예산이 넉넉한 회차에.",
+    "updated": "2026-09-28"
+  },
+  {
+    "title": "internal/procctl·internal/testscript 테스트 공백",
+    "value": 2,
+    "risk": 1,
+    "size": "M",
+    "status": "pending",
+    "note": "둘 다 [no test files]. procctl 은 OS 분기(unix/windows)라 한쪽 플랫폼만 검증 가능해 비용 대비 가치가 낮고, testscript 는 테스트 유틸이라 우선순위가 낮다. internal/model 을 먼저 할 것.",
+    "updated": "2026-09-28"
+  },
+  {
+    "title": "cmd/goalforge/main.go(2949줄) 를 명령별 파일로 분할",
+    "value": 2,
+    "risk": 4,
+    "size": "L",
+    "status": "rejected",
+    "note": "정찰이 기각한 것을 유지한다. CLI 표면 전체가 한 파일이라 읽기는 불편하지만, 순수 이동 리팩터라도 위험 4 / L 이고 자율 회차의 파일 예산·범위 규칙에 맞지 않는다. 동작 변화 없는 변경으로 회귀 위험만 사는 셈.",
+    "updated": "2026-09-28"
+  },
+  {
+    "title": "GitHub Actions CI 워크플로 추가",
+    "value": 3,
+    "risk": 4,
+    "size": "S",
+    "status": "rejected",
+    "note": "기각 유지. .github 안에 FUNDING.yml 뿐이고 워크플로가 없는 상태 자체가 현재 설계다. 릴리즈·빌드 경로는 보호 경로이고, 지금 켜면 push 차단과 무관하게 빨간불로 시작한다(이 저장소는 git 실행 테스트가 환경에 진다). 운영자 규칙상 릴리즈·빌드 경로 변경은 릴리즈까지 통과를 확인해야 하는데 이 세션에서는 불가능하다.",
+    "updated": "2026-09-28"
+  }
+]
