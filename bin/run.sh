@@ -1300,6 +1300,19 @@ publish_release(){ # $1=태그 $2=제목 $3=노트 $4=ghrel $5=자산 목록 파
   cur_n=$(cd "$repo" && gh release view "$tag" --json assets --jq '.assets|length' 2>/dev/null || echo 0)
   jq --argjson n "${cur_n:-0}" --arg prev "${prev:-}" --argjson pn "${prev_n:-0}" --arg rid "$RUN_ID" '.assets_count=$n | .prev_tag=$prev | .prev_assets_count=$pn | .run_id=$rid' "$STATE/$n.release.json" > "$STATE/$n.release.json.tmp" 2>/dev/null && mv "$STATE/$n.release.json.tmp" "$STATE/$n.release.json" || true
 }
+# origin/$base 에서 가장 가까운 태그를 돌려준다. 그 태그가 원격에 없으면(=CI 때문에 보류했던
+# 로컬 태그) 지우고 다음 것을 본다. 남겨 두면 release_project 가 '이미 릴리즈했다' 로 읽어
+# 그 저장소는 영구히 릴리즈하지 않는다 — madi 가 원격에 없는 v0.4.0 때문에 그랬다 (2026-09-27).
+# 시험: tests/test_guards.sh
+drop_phantom_tags(){ # $1=저장소 $2=base — 원격에 있는 가장 가까운 태그를 출력
+  local repo=$1 base=$2 t i
+  for i in 1 2 3 4 5; do
+    t=$(git -C "$repo" describe --tags --abbrev=0 "origin/$base" 2>/dev/null) || return 0
+    [ -n "$t" ] || return 0
+    if git -C "$repo" ls-remote --tags origin "refs/tags/$t" 2>/dev/null | grep -q .; then printf '%s' "$t"; return 0; fi
+    git -C "$repo" tag -d "$t" >/dev/null 2>&1 || return 0
+  done
+}
 release_project(){ # $1=base $2=변경 요약 [$3=assets] — 에이전트는 커밋·태그·자산만 만들고, 게시는 여기서
   local base=$1 summary=$2 mode=${3:-release} rwt="$WT_BASE/$n-release" rfile="$OUT/release.json" rprompt ref="origin/$1" mode_note="" latest="" g budget
   budget=$(policy "$n" ".budget_usd.$( [ "$mode" = assets ] && echo assets || echo release)"); [ -n "$RBUDGET" ] && budget=$RBUDGET; budget=${budget:-10}
@@ -1313,15 +1326,7 @@ release_project(){ # $1=base $2=변경 요약 [$3=assets] — 에이전트는 �
   git -C "$repo" fetch -q --force --tags origin "$base" >>"$LOG" 2>&1 || log "$n: tag fetch had errors (continuing)"
   # 이미 최신 태그가 base 끝을 가리키면 릴리즈할 것이 없다 — 에이전트 세션을 낭비하지 않는다 (2026-09-08 git-ctx 재개가 같은 버전을 다시 돌렸다)
   if [ "$mode" != assets ]; then
-    local last_tag; last_tag=$(git -C "$repo" describe --tags --abbrev=0 "origin/$base" 2>/dev/null)
-    # 원격에 없는 태그(=CI 때문에 보류했던 로컬 태그)는 무시한다. 그걸 '이미 릴리즈했다' 로
-    # 읽으면 그 저장소는 영구히 릴리즈하지 않는다 — madi 가 원격에 없는 v0.4.0 때문에 그랬다
-    # (2026-09-27). 보류 시 태그를 지우도록 고쳤지만, 과거에 남은 것과 사람이 만든 것도 막는다.
-    if [ -n "$last_tag" ] && ! git -C "$repo" ls-remote --tags origin "refs/tags/$last_tag" 2>/dev/null | grep -q .; then
-      log "$n: 최신 태그 $last_tag 가 원격에 없다 — 보류된 로컬 태그로 보고 무시한다"
-      git -C "$repo" tag -d "$last_tag" >>"$LOG" 2>&1 || true
-      last_tag=$(git -C "$repo" describe --tags --abbrev=0 "origin/$base" 2>/dev/null)
-    fi
+    local last_tag; last_tag=$(drop_phantom_tags "$repo" "$base")
     if [ -n "$last_tag" ] && [ "$(git -C "$repo" rev-list --count "$last_tag..origin/$base" 2>/dev/null)" = 0 ]; then
       stage release nothing-to-release "$last_tag 이 이미 origin/$base 끝을 가리킨다"; return 0
     fi

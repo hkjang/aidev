@@ -109,6 +109,7 @@ bin/daily.sh (Windows 작업 스케줄러 → wsl.exe)
 | 티어 | `policy.tier` 가 `revenue` 인 저장소는 성과 쿨다운·dormant 를 면제 (돈이 걸린 저장소를 러너가 조용히 끊지 않는다) | `state/<p>.policy.json` |
 | 제외 목록 | `state/exclude.txt` 에 적은 저장소는 후보·오류 대응·CI 공백 메우기에서 모두 빠진다(정규식, 한 줄에 하나). 러너를 고치지 않고 넣고 뺀다 | 줄을 지우면 복귀 |
 | PR 정리 | `bin/pr-gc.sh` 가 6시간마다: ① 처리기가 "더 못 한다"고 판정(수정·심사 N회 실패·리베이스 불가 충돌)한 지 `STUCK_PR_DAYS`(3)일 지난 PR 을 **닫고** 제목을 `ideas.json` 으로 회수(한 번에 `MAX_CLOSE`=20건) ② 그냥 오래된 PR 은 목록만 — 닫으려면 `--close` | `state/NO-PR-GC`, PR 에 `aidev-keep`/`aidev-approved`/`risk-accepted` 라벨 |
+| 보호 장치 시험 | `tests/test_guards.sh` — 회차 중간에만 만들어지는 조건(보류된 태그, 검증 범위 불일치)은 모의 회차로 재현되지 않아 함수를 직접 부른다 | `bash tests/test_guards.sh` |
 | CI 공백 메우기 | 워크플로가 하나도 없어 PR 이 "CI 검사 없음" 으로 막히는 저장소에는 **검사를 건너뛰게 하는 대신** "CI 워크플로 추가" 를 가치 5 아이디어로 넣는다. 그 PR 은 보호 경로라 사람이 한 번 승인하면 그 저장소가 영구히 풀린다 | 즉시 풀려면 `policy.allow_merge_without_ci=true` |
 | 릴리즈 교착 차단 | 같은 이유로 3회 넘게 실패한 릴리즈는 `state/<p>.release-hold` 를 걸고 더 시도하지 않는다. 개선·머지는 계속 돈다 (aiportal-front 는 릴리즈 에이전트가 "27회째 동일 교착" 이라 적을 때까지 돌았다) | 사람이 관례를 정하고 `rm state/<p>.release-hold` |
 | 승인 라벨 자가 치유 | 승인 기록(`approvals.jsonl`)은 있는데 `aidev-approved` 라벨이 없는 PR 을 `bin/pr-gc.sh` 가 다시 붙인다. gh 2.45 의 `pr edit --add-label` 이 Projects(classic) 종료로 항상 실패해 승인된 PR 55건이 6일 동안 머지되지 않았다 — 라벨은 REST 로 붙인다 | 승인 SHA 가 head 와 다르면 붙이지 않는다(사람이 다시 확인) |

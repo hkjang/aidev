@@ -204,6 +204,23 @@ class Autonomy(unittest.TestCase):
         self.assertIn("analyze-only", r["result"])
 
 
+class RunnerGuards(unittest.TestCase):
+    """2026-09-25~28 에 넣은 보호 장치들 — 조용히 깨지면 아무도 모르는 것들."""
+
+    # 보류된 태그가 base 끝을 가리키는 상태는 회차 **중간**에만 만들어져 모의 회차로는
+    # 재현되지 않는다(준비 단계에서 만든 태그는 머지 커밋에 닿지 않는다). 그 가드는
+    # tests/test_guards.sh 에서 drop_phantom_tags 를 직접 불러 시험한다.
+
+    def test_no_local_only_tag_is_left_behind(self):
+        """어떤 결말이든 원격에 없는 태그를 로컬에 남기지 않는다.
+
+        2026-09-27: 보류된 로컬 태그가 그 저장소의 다음 릴리즈를 영구히 막았다."""
+        for scenario in ({}, {"ci": "failure"}, {"ci": "timed_out"}):
+            with self.subTest(**scenario):
+                r = run(scn(**scenario))
+                self.assertEqual(r.get("local_only_tags", ""), "", r)
+
+
 class ReleaseSafety(unittest.TestCase):
     def test_tag_conflict_does_not_fail(self):
         r = run(scn(tag_exists=True))
