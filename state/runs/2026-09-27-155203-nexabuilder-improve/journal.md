@@ -16,3 +16,13 @@
 - 다음 역할이 조심할 것: 새 테스트는 H2 + 전체 Spring 컨텍스트 + MockMvc 가 필요하다(`sh ./gradlew --no-daemon test --tests 'com.nexabuilder.api.BuilderListDataPagingIntegrationTest'`, gradlew 실행 비트 없어 `sh` 필수). 픽스처는 정리하지 않는다(관례). `sqlBackedListAcceptsProtocolKeys` 는 수정 전에도 초록이었던 회귀 가드다.
 - [러너 16:08] brief accepted — 채택 — 진단(같은 파라미터를 읽는 두 리더의 계약 불일치, `sanitizeIdentifier` 가 선행 밑줄 통과, 500 으로 접힘)이 실행으�
 - [러너 16:08] verify passed — 검증 1개 통과 (auto)
+
+## 비평 노트
+- 확인함(실행): HEAD 에서 새 테스트 6/6 통과, `NexaUiService.java` 만 master 판으로 되돌리면 5/6 실패 — 실패 리포트에 `BadSqlGrammarException` / `Column "_OFFSET" not found` 가 그대로 찍혀 진단·주석이 실제와 일치함을 확인했다(원장에 `- 실패 재현:` 줄이 없어 리뷰어가 직접 재현). 되돌린 파일 복원 완료, 워킹트리 clean.
+- 못 본 것: 디자이너/빌더 콘솔이 이 피드를 화면 권한 없이 미리보기에 쓰는지, 프로덕션 힙 크기, SQL 기반 목록에 페이징을 붙일 때의 파급.
+- 거절 사유(1건, blocking=security): `NexaUiService.java:156-171` `_limit` 무제한. 수정 전에는 항상 pageSize 로 묶였고 offset 은 0 고정이었다. 지금은 인증된 최저 권한 사용자가 `{"_limit":100000000}` 한 방으로 테이블 전량 + 힙 고갈을 만든다. 뷰 7종 최댓값이 5000 이므로 5000 이상 상수로 클램프하면 기능 손실 0 으로 닫힌다(`MAX_PAGE_SIZE`=1000 재사용 금지).
+- 수리가 가장 먼저 볼 파일: `src/main/java/com/nexabuilder/core/ui/NexaUiService.java:156-171` (새 상수 하나 + 클램프). 그 외는 손대지 말 것 — 기능 수정 자체는 정확하다.
+- 승인 후에도 남는 우려(선행 결함, 별도 티켓): 이 엔드포인트에만 `ScreenPermissionService` 게이트가 없다(export/bulk/runtime 은 전부 있음) — `_offset` 이 호출자 제어가 되면서 '첫 페이지만' 이 '전량 순회 가능' 으로 바뀌었다. 그리고 `listData` 는 PII 마스킹을 전혀 적용하지 않는다. 릴리즈 노트에는 "대체 뷰 7종 복구" 만 쓰고 이 둘은 다음 회차 원장으로.
+- [러너 16:13] review rejected — 리뷰 거절: src/main/java/com/nexabuilder/core/ui/NexaUiService.java:156-171 `_limit` 에 상한이 없다. 이 변경 전에는 limit 이 항상 `list.getPageSize()`(기본 50) 로 묶여 있었�
+- [러너 16:13] review blocked — 검토 부서 차단 소견(security) — 수리·중재 없이 운영자의 위험 수용(risk-accepted) 필요
+- [러너 16:13] pr created — https://github.com/hkjang/nexabuilder/pull/34

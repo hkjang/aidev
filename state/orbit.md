@@ -100,3 +100,4 @@
 - 보류 아이디어: `mcp.go` 의 `args.PersonID`(170·195·213·250)에도 같은 `looksLikeUUID` 가드 — JSON-RPC 봉투라 오류 매핑이 REST 와 달라 그 매핑 확인이 먼저 (2/2/S); `openapi.go:openAPI` 핸들러 렌더를 httptest 로 고정 — 이 핸들러를 부르는 테스트가 여전히 0개 (2/1/S); `orbitAt` 의 `contexts` 분류 집계를 실제 postgres 로 고정 — `seedRelationship` 에 categories 인자만 더하면 된다 (2/1/S); `orbitAt` 의 교류 조회에 상한이 없어 전체 이력이 메모리로 올라옴 — 단순 LIMIT 은 지표를 틀어뜨려 집계를 DB 로 내려야 함 (2/2/M); `web/src/pages` 테스트 0개 — OrbitPage 페이지 통합 테스트 기반 만들기 (2/1/M)
 - 과제서: 채택 — 근거(여섯 핸들러가 uuid 컬럼에 무검사 전달, `createInteraction` 은 이미 404, `person_links.id` 도 uuid)가 지금 코드와 정확히 일치했고 수용 기준 1~4 를 그대로 구현했다. 과제서가 미확인으로 남긴 `22P02`→500 추론은 이번에 실제 postgres 로 확인해 사실로 확정했다. 한 가지 판단을 더했다: 대문자 16진수는 postgres 가 같은 id 로 읽으므로 거부하지 않는다(수용 기준 3 을 지키려면 지금 찾아지던 것이 가드 때문에 사라지면 안 된다). 중괄호·하이픈 없는 형태는 postgres 가 받아 주더라도 거부한다 — Orbit 이 발급한 적 없는 모양이다.
 
+- 릴리즈: v0.7.3 (2026-09-27, run 2026-09-27-155208-orbit-improve)

@@ -2174,3 +2174,23 @@ fatal: '/home/hkjang/.cache/auto-improve-wt/pii-masker' is not a working tree
 evidence: /mnt/c/Users/USER/projects/aidev/state/runs/2026-09-27-155213-pii-masker-improve/evidence.json
 reports: 26 day(s), 4 week(s), 1 month(s), 1545 run(s), 2860 usage row(s), 46 project page(s), 4 alert(s)
 notify: no new alerts
+[16:12:42] aidev synced: run(2026-09-27): pii-masker — merged https://github.com/hkjang/pii-masker/pull/28, released v1.0.30
+[16:13:06] orbit: release — 29 turns, 4m, $1.12, success
+[16:13:09] orbit: waiting for CI on fc11b43 (no-ci)
+[16:13:20] nexabuilder: review — 27 turns, 5m, $1.83, success
+[16:13:20] nexabuilder: [review] rejected — 리뷰 거절: src/main/java/com/nexabuilder/core/ui/NexaUiService.java:156-171 `_limit` 에 상한이 없다. 이 변경 전에는 limit 이 항상 `list.getPageSize()`(기본 50) 로 묶여 있었고 offset 은 하드코딩 0 이었다. 이제 요청 본문의 `_limit`/`_offset` 이 그대로 `EntityService.list` 의 LIMIT/OFFSET 에 도달하고, `jdbcTemplate.queryForList` 는 결과 전체를 힙에 적재한 뒤 JSON 으로 직렬화한다. 공격 경로: 인증된 최저 권한 사용자 1명이 `POST /api/v1/builder/lists/{listId}/data` 에 `{"_offset":0,"_limit":100000000}` 을 보낸다(이 엔드포인트는 SecurityConfig:198 의 `anyRequest().authenticated()` 만 걸려 있고 `UiBuilderController` 에 `@PreAuthorize` 가 0개다). 얻는 것: (a) 요청 1회로 대상 테이블 전체 행 — 변경 전에는 첫 페이지 50행이 전부였다, (b) 대용량 테이블에서는 단일 요청으로 힙 고갈(전 사용자 대상 가용성 영향). 런타임 뷰 7종이 요구하는 최댓값은 chart/pivot/tree 의 5000 이므로(chart.html:103, pivot.html:101, tree.html:195, map.html:146, gantt.html:134, calendar.html:133, kanban.html:181), 5000 이상의 상수(예: 10_000)로 클램프하면 기능 손실 없이 닫힌다. `DataAdapterService.MAX_PAGE_SIZE`(1000) 재사용은 구현자 지적대로 부분 집계 버그가 되므로 쓰지 말 것 — 별도 상수를 둘 것.
+[16:13:20] nexabuilder: [review] blocked — 검토 부서 차단 소견(security) — 수리·중재 없이 운영자의 위험 수용(risk-accepted) 필요
+branch 'auto/2026-09-27-1552' set up to track 'origin/auto/2026-09-27-1552'.
+[16:13:29] nexabuilder: [pr] created — https://github.com/hkjang/nexabuilder/pull/34
+https://github.com/hkjang/nexabuilder/pull/34#issuecomment-5853683287
+evidence: /mnt/c/Users/USER/projects/aidev/state/runs/2026-09-27-155203-nexabuilder-improve/evidence.json
+[16:15:32] orbit: [release] published — v0.7.3
+From https://github.com/hkjang/orbit
+ * branch            main       -> FETCH_HEAD
+Updating f9b629c..fc11b43
+Fast-forward
+ VERSION | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+reports: 26 day(s), 4 week(s), 1 month(s), 1546 run(s), 2862 usage row(s), 46 project page(s), 4 alert(s)
+notify: no new alerts
+[16:16:31] orbit: [assets] verified — v0.7.3 자산 1개 (이전 v0.7.2: 1)
