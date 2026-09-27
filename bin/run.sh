@@ -802,6 +802,37 @@ $(cat "$STATE/campaign-lessons/$id.md" 2>/dev/null)")
 
 # ---------------------------------------------------------------- 러너 직접 검증
 # 정책 verify 가 있으면 그것을, 없으면 저장소 종류로 자동 감지한 명령을 러너가 직접 실행한다. 에이전트의 "통과했다"는 말은 믿지 않는다.
+# 바꾼 파일의 언어 중 검증 명령이 건드리지 않은 것 — 게이트가 눈을 감은 자리다.
+# 2026-09-27 측정: 9-20 이후에도 ts 5/88, py 2/7 회차가 그 언어 검증 없이 지나갔다.
+# 명령을 추측해 끼워 넣지 않는다(잘못된 명령은 회차를 죽인다). 대신 비평가에게 알려
+# 그 부분을 직접 보게 한다.
+unverified_note(){ # 비평 프롬프트에 넣을 한 문단 (없으면 빈 문자열)
+  local u; u=$(unverified_langs "$wt" "$BASE_SHA")
+  [ -n "$u" ] || return 0
+  printf '## 러너 검증이 닿지 않은 부분\n이번 변경은 **%s** 파일을 건드렸는데, 이 회차의 러너 검증 명령에는 그 언어를 실행하는 것이 없습니다(이 저장소에 그 언어의 테스트 설정이 없거나 자동 감지가 놓쳤습니다). 그 부분은 기계가 한 번도 돌려 보지 않은 코드입니다 — diff 를 읽어 직접 판단하고, 확신이 서지 않으면 거절 사유로 적으세요.\n' "$u"
+}
+unverified_langs(){ # $1=작업트리 $2=base sha — 공백으로 구분한 언어 목록을 출력
+  local wd=$1 base=$2 cmds langs="" f ext L
+  [ -n "$base" ] || return 0
+  cmds=$(jq -r '[.commands[]?.cmd]|join(" ")' "$OUT/verify.json" 2>/dev/null)
+  [ -n "$cmds" ] || return 0
+  while IFS= read -r f; do
+    case "$f" in
+      *.go) L=go;; *.py) L=py;; *.ts|*.tsx|*.js|*.jsx) L=ts;;
+      *.java|*.kt) L=java;; *.rs) L=rust;; *) continue;;
+    esac
+    case " $langs " in *" $L "*) continue;; esac
+    case "$L" in
+      go)   grep -q "go " <<<"$cmds" && continue;;
+      py)   grep -qE "pytest|python|ruff|mypy" <<<"$cmds" && continue;;
+      ts)   grep -qE "npm|pnpm|yarn|vitest|jest|tsc" <<<"$cmds" && continue;;
+      java) grep -qE "gradle|mvn" <<<"$cmds" && continue;;
+      rust) grep -q "cargo" <<<"$cmds" && continue;;
+    esac
+    langs="${langs:+$langs }$L"
+  done < <(git -C "$wd" diff --name-only "$base..HEAD" 2>/dev/null)
+  printf '%s' "$langs"
+}
 run_verify(){ # $1=작업 디렉터리 $2=결과 파일
   local wd=$1 outf=$2 src=policy tmo; local -a cmds=()
   mapfile -t cmds < <(policy "$n" '.verify[]?')
@@ -882,7 +913,8 @@ review_gate(){ # $1=base $2=PR url(비면 판정만) → 0=승인
   budget_ok "$rb" || { stage review hold "예산 부족으로 리뷰를 돌리지 못함"; CRITIC_STATE=hold; return 1; }
   rm -f "$OUT/review.json"
   rprompt=$(BASE="$1" REVIEW_FILE="$OUT/review.json" PROFILE="$(cat "$STATE/$n.profile.md" 2>/dev/null)" JOURNAL="$(journal_text)" JOURNAL_FILE="$OUT/journal.md" \
-            ARBITER_HISTORY="$(arbiter_history)" envsubst '$BASE $REVIEW_FILE $PROFILE $JOURNAL $JOURNAL_FILE $ARBITER_HISTORY' < "$REPO_DIR/review-prompt.md")
+            ARBITER_HISTORY="$(arbiter_history)" UNVERIFIED="$(unverified_note)" \
+            envsubst '$BASE $REVIEW_FILE $PROFILE $JOURNAL $JOURNAL_FILE $ARBITER_HISTORY $UNVERIFIED' < "$REPO_DIR/review-prompt.md")
   # 비평 엔진: 기본은 Claude. 정책 agents.critic_engine=codex 면 다른 계열(OpenAI Codex)이 심사한다 —
   # 같은 계열이 만들고 같은 계열이 판정할 때의 자기 선호 편향(Zheng et al. 2023; Wataoka et al. 2024)을
   # 피하려는 선택지다. 교차 모델 실험(bin/exp-cross-critic.sh)으로 일치도를 잰 뒤 켠다.
