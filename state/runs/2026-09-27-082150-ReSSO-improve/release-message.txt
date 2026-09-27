@@ -1,0 +1,37 @@
+release: ReSSO v0.9.94
+
+Both Token grants that belong to a person read the account with store.UserByID
+and answered 400 invalid_grant "user is unavailable" for every error that call
+can return, so a users table this server could not read was indistinguishable
+from an account that is switched off. invalid_grant tells the relying party
+that the code or refresh token it holds is spent, and the ordinary response is
+to discard it and send the person through login again. The refresh grant reads
+the account before it rotates anything — that order is deliberate and says so
+in a comment — so the token in the caller's hands was still live for the whole
+outage, and this answer is what threw it away, taking sessions the end of the
+outage would have kept. Such a failure now answers 500 server_error: the
+refresh grant says the refresh token is still valid and the call is worth
+retrying after a short delay, and the authorization code grant says the code
+was accepted and the sign-in is worth retrying, since that code was spent by
+the redemption one step earlier and cannot be presented again. The judgement is
+made once, in a new userLookupFailed placed directly under realmLookupFailed
+and shaped the same way. It is the same distinction the Realm lookup one step
+earlier has made since v0.9.93, the signing-key branches one step later already
+made, and userinfo already made for this very call (writeUserInfoUnavailable,
+stage user) — these two grants were what was left. The fault also went
+unrecorded, the store error being discarded where it happened, and now leaves
+one line, the account named in the grant could not be looked up, carrying
+trace_id, realm, grant_type and error. It is counted under
+resso_token_errors_total as well, which the Realm lookup in front of it could
+not be: that one fails before the form has been read, while here the grant is
+already known, so authorization_code and refresh_token are honest labels. An
+account that is genuinely absent or switched off is unchanged to the byte —
+both keep 400 invalid_grant "user is unavailable" with no log line, because
+this endpoint is deliberately not a way to ask who exists, and the tests assert
+that silence. The operations guide's alert entry for resso_token_errors_total
+gains the counterpart of the sentence added last release, saying that this
+series does count an account lookup failure and naming the log line to search
+for; the admin guide's row for the same metric had its label wrong — stage,
+which this series has never carried — and now reads grant_type. Stamps the
+version in the Makefile, console package metadata and both compose files, with
+no schema or configuration changes.

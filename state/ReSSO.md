@@ -289,3 +289,4 @@
 - 보류 아이디어: UserInfo 거절 카운터 `resso_userinfo_errors_total` — stage 여섯 고정 라벨, 이제 errors_total 계열 중 userinfo만 없다(2/1/S) / 비화면 경로(/api·/realms·/mcp·/health·/metrics)의 CSP를 `default-src 'none'`으로 좁히기(2/2/S) / 통합 테스트의 `lockedBuffer`를 공용 헬퍼로 — 이번에 사용처가 다섯이 됐다(1/1/S) / `oidcLogout`이 `id_token_hint`의 `sub`·`aud`를 대조하지 않는다 — 정책·규범 해석 미확인(2/2/M)
 - 과제서: 채택 — 과제서가 "현재 공백"에 남긴 부류(481·534행의 `UserByID` 장애가 꺼진 계정과 같은 답)를 그대로 골랐고, 판정 지점은 둘(client_credentials는 `UserByID`를 부르지 않는다)이라 과제서가 적은 "셋"만 실제와 달랐다. `metricClientAuth` 라벨 조사도 함께 끝냈다 — `realm.Name`(조회된 Realm)이라 카디널리티 문제는 없다.
 
+- 릴리즈: v0.9.94 (2026-09-27, run 2026-09-27-082150-ReSSO-improve)
