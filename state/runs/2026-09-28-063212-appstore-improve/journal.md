@@ -29,3 +29,7 @@
 - 보안·법무 차단 없음: 인증/인가/비밀값/마이그레이션 미접촉, 새 의존성 없음(`@testing-library/user-event` 는 기존 devDependency, package.json 무변경), localStorage `appstore.recentDestinations` 는 기존 저장소·기존 필드라 개인정보 신규 수집·전송이 없다.
 - [러너 06:52] review approved — 리뷰 승인 (risk=low)
 - [러너 06:52] pr created — https://github.com/hkjang/appstore/pull/33
+- [러너 06:57] ci passed — 검사 2개 모두 success
+- [러너 06:57] merge done — 96fb687
+- [러너 07:10] release published — v2.11.8
+- [러너 07:13] assets verified — v2.11.8 자산 1개 (이전 v2.11.7: 1)

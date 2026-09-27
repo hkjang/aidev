@@ -1,30 +1,39 @@
 [
   {
-    "title": "퍼블리시 게이트가 승인 이력의 expires_at 을 저장소·런타임과 같은 트림 규칙으로 읽도록 수정",
+    "title": "syncApprovalTracesFromRegulatoryTrace 가 기존 승인 행의 expires_at 을 빈 값으로 덮어씀",
     "value": 3,
     "risk": 1,
     "size": "S",
     "status": "done",
-    "note": "구현 완료(커밋 67aa619). bestApprovalStatus(internal/dataworks/domain.go:668)가 빈 값 검사와 time.Parse 에 한 번 TrimSpace 한 지역 값을 함께 쓴다. 트림 후에도 해석 불가하면 여전히 expired(닫히는 방향 유지). 저장·API 원문 불변. EvaluatePublishGateV2 가 EvaluatePublishGate 를 위임하므로 두 게이트 모두 수정됨. 표 테스트 7사례(TestPublishGateReadsApprovalExpiryLikeRuntimeGate) 추가, 수정 전 공백 미래·공백만 두 사례 실패 확인.",
-    "updated": "2026-09-27"
+    "note": "2026-09-28 구현(커밋 21c969c). 루프 전에 ListApprovalTraces 로 id → ExpiresAt 맵을 만들어 UPSERT 에 실어 준다. 조회 오류는 빈 만료일을 쓰는 대신 sync 를 건너뛴다(빈 값 쓰기가 바로 이 결함이라, 게이트를 느슨하게 하지 않는 방향). UpsertApprovalTrace 의 UPSERT 컬럼 목록은 건드리지 않아 POST …/approvals 로 만료일을 비우는 정상 경로는 그대로다. 실제 SQLStore + Routes() HTTP 표 테스트 3건: 과거 만료는 재생성 전·후 모두 publish 409 유지, 미래 만료 대조 사례는 전·후 모두 200, 재생성의 approved→rejected 는 status·decided_by·notes·evidence_ref 를 그대로 갱신. 프로덕션 파일만 되돌리면 새 3건만 실패함을 확인.",
+    "updated": "2026-09-28"
   },
   {
-    "title": "dataWorksTimestampOK 를 통과한 valid_from/valid_to/expires_at 를 런타임·액션센터·store 가 같게 읽는지 계약 테스트로 고정",
+    "title": "dataWorksTimestampOK 를 통과한 valid_from/valid_to/expires_at 을 런타임·액션센터·store·bestApprovalStatus 가 같게 읽는지 계약 테스트로 고정",
     "value": 2,
     "risk": 1,
     "size": "S",
     "status": "pending",
-    "note": "이번 회차 차선 후보였음. admin_dataworks.go:1766 은 원문을 RFC3339Nano 로 검증하고(계약 POST 는 먼저 트림해 저장하므로 공백 값은 400) 런타임 contractScopeActive·액션 센터·store.parseStoredTime·이제 bestApprovalStatus 는 각자 트림 후 파싱한다. 파서 통합 없이 end-to-end 동치만 표 테스트로 단언. 테스트 전용이라 프로덕션 파일 0개. 2026-09-27 회차에서 승인 경로가 정리됐으므로 이제 네 경로가 모두 같은 규칙임을 고정할 시점.",
-    "updated": "2026-09-27"
+    "note": "2026-09-28 회차의 차선 후보였고 쓰지 않았다(1순위가 재현·수정까지 끝났으므로). 쓰기 경로(계약 POST admin_dataworks.go:1371~1376, 엔타이틀먼트 1455, 승인 1116)는 모두 TrimSpace 후 dataWorksTimestampOK 를 호출해 이미 일관적이고, 남은 위험은 레거시 행을 읽는 네 경로의 동치뿐이다. 파서 통합은 하지 말고 동치만 표 테스트로 단언. 프로덕션 파일 0개. 다음 회차 1순위로 적합.",
+    "updated": "2026-09-28"
   },
   {
-    "title": "syncApprovalTracesFromRegulatoryTrace 가 기존 승인 행의 expires_at 을 빈 값으로 덮어씀",
-    "value": 2,
-    "risk": 2,
-    "size": "S",
+    "title": "같은 step 에 승인 행이 둘 이상이면 bestApprovalStatus 가 첫 approved 를 즉시 돌려줘 나중 rejected 가 게이트를 막지 못함",
+    "value": 3,
+    "risk": 3,
+    "size": "M",
     "status": "pending",
-    "note": "admin_dataworks_ops.go:603 은 ExpiresAt 을 채우지 않고 UpsertApprovalTrace 를 호출하고 store 의 UPSERT(dataworks_governance.go:202)는 expires_at = excluded.expires_at 으로 무조건 덮는다. 규제 추적 재동기화 시 관리자가 POST …/approvals 로 넣은 만료일이 사라져 만료 승인이 영구 유효가 된다(게이트가 느슨해지는 방향). '만료일을 지우지 않는다' 가 의도인지 확인이 필요하고 UPSERT 컬럼 목록을 건드리면 다른 호출부에 영향. 코드 실행으로 재현하지 않았다(미확인). 2026-09-27 회차에서 재확인 안 함.",
-    "updated": "2026-09-27"
+    "note": "POST …/approvals(admin_dataworks.go:1116)는 id 가 없으면 newID('appr') 로 새 행을 만들고 dw_approval_traces 에는 (product_key, step) UNIQUE 제약이 없다(sqlstore.go:1898·1911 은 인덱스만). bestApprovalStatus(domain.go:668)는 step 이 맞는 첫 approved|waived 에서 즉시 반환하므로 CLI·SDK 로 같은 step 에 rejected 행을 추가해도 기존 approved 행이 게이트를 계속 열어 둔다. 워크벤치는 기존 id 를 보내므로 UI 로는 재현되지 않는다. 2026-09-28 참고: 이번 회차의 sync 보존 수정은 결정적 id 한 행만 다루므로 이 항목과 겹치지 않는다. 고치는 방향이 둘(쓰기 경로에서 step 당 한 행으로 합치기 / 판정을 가장 제한적인 값으로 바꾸기)이고 어느 쪽이든 API 의미가 바뀌므로 운영자 판단 필요.",
+    "updated": "2026-09-28"
+  },
+  {
+    "title": "contractScopeCanServe 가 해석 불가 valid_from 을 무시해 영구히 서빙 불가인 계약을 퍼블리시 게이트 masking 증거에서 살아 있는 계약으로 셈",
+    "value": 3,
+    "risk": 3,
+    "size": "S",
+    "status": "rejected",
+    "note": "dataworks_runtime.go:271 contractScopeCanServe 는 status 와 valid_to 만 보고 valid_from 은 보지 않는데 contractScopeActive(317)는 해석 불가 valid_from 에 영구히 false 다. 유일한 프로덕션 호출부는 admin_dataworks.go:1753 의 masking 증거 루프이고, 고치면 그 계약이 증거 판정에서 제외되어 게이트가 느슨해지는 방향이다 — 프로필의 '퍼블리시 게이트 masking 증거를 느슨해지는 방향으로 바꾸지 말 것' 가드레일과 정면 충돌. 자율 회차에서 고를 수 없으므로 rejected 로 내림(운영자가 직접 지시할 때만).",
+    "updated": "2026-09-28"
   },
   {
     "title": "contract_expiring 액션이 만료 임박·이미 만료·창 해석 불가 세 상태를 한 type 으로 묶어 구분 불가",
@@ -32,8 +41,8 @@
     "risk": 2,
     "size": "M",
     "status": "pending",
-    "note": "v0.9.62 에서 valid_from 해석 불가까지 같은 type 으로 합쳐 더 두드러졌다. severity high 가 '만료됨' 과 '설정 오류' 를 같이 가리키고 next_action 문구('renew, narrow, or retire')는 후자에 맞지 않는다. 새 type 없이 action 맵에 reason(expired|unparseable_window|approaching) 필드를 더해 웹이 문구를 갈라 쓰는 방향이 가능한지 확인할 것 — web 렌더 변경이 따라오므로 M. 2026-09-27 회차에서 코드 재확인 안 함.",
-    "updated": "2026-09-27"
+    "note": "admin_dataworks.go:252~295 루프가 세 경우를 모두 type=contract_expiring 으로 내고 severity 만 high/medium 으로 갈린다. next_action 문구 'renew, narrow, or retire the customer contract scope' 는 '설정 오류' 에 맞지 않는다. 새 type 없이 reason 필드를 더하는 방향이면 web 렌더(labels.ko.ts·secondary-pages.tsx typeMap·home-page.tsx·types/dataworks.ts)가 따라와 프로덕션 5파일 — 쪼개지 않으면 파일 수 상한에 걸린다.",
+    "updated": "2026-09-28"
   },
   {
     "title": "액션 센터가 아직 열리지 않은 계약 창(valid_from 미래)을 전용 경고로 보고",
@@ -41,8 +50,8 @@
     "risk": 2,
     "size": "M",
     "status": "pending",
-    "note": "여전히 미해결. 새 action type(contract_not_yet_active) + summary 키 + web/src/lib/labels.ko.ts·pages/secondary/secondary-pages.tsx typeMap·home-page.tsx·types/dataworks.ts + 문서로 프로덕션 파일이 6개를 넘는다. 고르려면 범위를 쪼갤 것. 2026-09-27 회차에서 코드 재확인 안 함(미확인).",
-    "updated": "2026-09-27"
+    "note": "admin_dataworks.go:283 근처 주석이 '미래 valid_from 은 예정 계약이므로 일부러 제외' 라고 명시하므로 현재 동작은 의도된 것이다. 새 action type(contract_not_yet_active) + summary 키 + web 4파일 + 문서로 프로덕션 6파일을 넘는다. 고르려면 쪼갤 것.",
+    "updated": "2026-09-28"
   },
   {
     "title": "상품이 사라진 참조 행(고아 Contract Scope·Entitlement)을 전용 운영 경고로 분류",
@@ -50,8 +59,8 @@
     "risk": 2,
     "size": "M",
     "status": "pending",
-    "note": "미해결. 새 경고 종류라 summary 키·웹 4파일·문서 동반 변경. 2026-09-27 회차에도 코드로 재확인하지 않았다(미확인).",
-    "updated": "2026-09-27"
+    "note": "2026-09-28 회차에도 코드로 재확인하지 않았다(미확인). 새 경고 종류라 summary 키·웹 4파일·문서 동반 변경.",
+    "updated": "2026-09-28"
   },
   {
     "title": "동일 API 키에 활성 엔타이틀먼트가 둘 이상일 때 운영 화면 경고",
@@ -59,8 +68,8 @@
     "risk": 2,
     "size": "S",
     "status": "pending",
-    "note": "usableEntitlement(dataworks_runtime.go:246)는 후보를 순회해 첫 통과 행을 쓰고 FindAPIEntitlement 는 entitlementNewer(updated_at→id) 순으로 정렬하므로 중복 자체는 오류가 아니지만 어느 계약이 적용되는지 운영자가 예측하기 어렵다. 새 경고 종류라 summary 키·웹 동반 변경. 2026-09-27 회차에서 재확인 안 함.",
-    "updated": "2026-09-27"
+    "note": "usableEntitlement(dataworks_runtime.go:246)는 후보를 순회해 첫 통과 행을 쓰므로 중복 자체는 오류가 아니지만 어느 계약이 적용되는지 운영자가 예측하기 어렵다. 새 경고 종류라 summary 키·웹 동반 변경.",
+    "updated": "2026-09-28"
   },
   {
     "title": "이미 지난 expires_at 으로 발급되는 죽은 엔타이틀먼트를 쓰기 경로에서 거부",
@@ -68,8 +77,8 @@
     "risk": 3,
     "size": "S",
     "status": "pending",
-    "note": "handleDataWorksAPIEntitlements(admin_dataworks.go:1455~1456)는 트림 후 형식(dataWorksTimestampOK)과 status 만 본다. 과거 만료 행 저장 거부는 갱신·감사·백필 계약에 영향이 있고 액션 센터가 entitlement_inactive 로 이미 보고하므로 가치가 낮다. 2026-09-27 회차에서 재확인 안 함.",
-    "updated": "2026-09-27"
+    "note": "admin_dataworks.go:1455~1456 은 트림 후 형식과 status 만 본다. 과거 만료 행 저장 거부는 갱신·감사·백필 계약에 영향이 있고 액션 센터가 entitlement_inactive 로 이미 보고하므로 가치가 낮다. 참고: 2026-09-28 회차는 승인 쪽에서 '과거 만료 값을 그대로 보존하는 것' 이 옳은 동작임을 확정했으므로 이 항목을 고를 때 두 경로의 의미 차이를 분명히 할 것.",
+    "updated": "2026-09-28"
   },
   {
     "title": "가이드 캡처 스펙의 하드코딩 버전 문자열(DEMO_VERSION) 한 곳에서 읽기",
@@ -77,8 +86,8 @@
     "risk": 1,
     "size": "S",
     "status": "pending",
-    "note": "캡처는 CI 미포함이라 가치 낮음. 2026-09-27 회차에도 web/capture 를 열지 않아 미재확인.",
-    "updated": "2026-09-27"
+    "note": "캡처는 CI 미포함이라 가치 낮음. 2026-09-28 회차에도 web/capture 를 열지 않아 미재확인.",
+    "updated": "2026-09-28"
   },
   {
     "title": "실제 MCP 클라이언트 흐름(401→메타데이터→PKCE→토큰→tools/list) e2e 를 스텁 Keycloak + Playwright 로 편입",
@@ -86,8 +95,8 @@
     "risk": 2,
     "size": "M",
     "status": "pending",
-    "note": "스텁 IdP·서버 기동 인프라가 필요해 한 세션에 맞지 않음. 보류 유지.",
-    "updated": "2026-09-27"
+    "note": "스텁 IdP·서버 기동 인프라가 필요해 한 세션(45분)에 맞지 않음. 보류 유지.",
+    "updated": "2026-09-28"
   },
   {
     "title": "Playwright 캡처·e2e 를 CI 잡으로 편입",
@@ -96,15 +105,6 @@
     "size": "M",
     "status": "pending",
     "note": "보호 경로(.github/workflows/ci.yml)이고 브라우저 설치 의존. 보류 유지.",
-    "updated": "2026-09-27"
-  },
-  {
-    "title": "verifyKeycloakAccessToken(currentAccessClaims) 의 role 클레임 권한 승격 경로 재검토",
-    "value": 3,
-    "risk": 3,
-    "size": "M",
-    "status": "pending",
-    "note": "인증 보호 경로. 기존 machine client 계약 영향 미확인. 자율 회차에서 고르기에 위험이 높다.",
-    "updated": "2026-09-27"
+    "updated": "2026-09-28"
   }
 ]
