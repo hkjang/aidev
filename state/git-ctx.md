@@ -196,3 +196,4 @@
 - 보류 아이디어: `cutAtRuneBoundary`(search)·`runeSafeCut`(mcp)·`truncateError`(source) 세 형제 함수의 계약을 같은 테이블 테스트로 고정 — 이번 회차로 다섯 번째 구현까지 계약이 맞춰졌으니 표 하나로 묶을 값어치가 조금 올랐다, 다만 순수 테스트라 가치 낮음 (가치 2 / 위험 1 / S). calltrace 에 `context.Canceled` 를 별도 상태로 구분 — 새 상태 상수가 `mcp_call_steps.status` 계약과 관리 콘솔을 건드려 위험 (가치 2 / 위험 3 / M). `responseNoticeBytes = 320` 예약이 실제 공지보다 짧아 `clampResponse` 결과가 예산 초과 — `truncation_test.go:31` 이 이미 느슨한 계약을 고정해 의도 확인이 먼저 (가치 2 / 위험 2 / S). `Sanitize` 의 finding 이 가장 심각한 규칙이 아니라 마지막 규칙을 보고 — 공식 심각도 계약 미확인이라 보류 유지 (가치 2 / 위험 1 / S). `internal/app` 릴리즈 워크플로 flaky — 실패 테스트 이름 여전히 미확보(이번 회차에도 app 통과, 101.792s) (가치 3 / 위험 2 / M).
 - 과제서: 채택 — 지정한 두 줄·limit·형제 관용구가 현재 코드와 정확히 맞았고, 과제서가 예측한 pad(limit-2, limit-1)만 수정 전 실패해 수용 기준 1~3 을 충족했다. 과제서가 근거 약함을 이유로 제외를 허용한 milvus 는, JSON 도달 경로를 소스에서 끝까지 확인해 포함했다.
 
+- 릴리즈: v0.77.19 (2026-09-27, run 2026-09-27-104147-git-ctx-improve)

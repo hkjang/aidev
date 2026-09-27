@@ -30,3 +30,5 @@
 - [러너 10:59] pr created — https://github.com/hkjang/git-ctx/pull/40
 - [러너 11:06] ci passed — 검사 5개 모두 success
 - [러너 11:06] merge done — 852dddf
+- [러너 11:22] release published — v0.77.19
+- [러너 11:34] assets verified — v0.77.19 자산 2개 (이전 v0.77.18: 2)

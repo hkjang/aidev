@@ -227,3 +227,4 @@
 - 보류 아이디어: 이미 비-오브젝트로 저장된 jsonb 행의 복구 경로가 없음(system_settings·client_info·game_telemetry.data·user_achievements.metadata, 가치 2/위험 2/S — 새 쓰기는 이번에 다 막혔으니 남은 것은 기존 행뿐) / serviceLocation 이 설정 읽기 실패를 삼켜 시간대가 조용히 Asia/Seoul 이 됨(extended.go:16, 호출처 6곳, 가치 3/위험 2/M) / API PostgreSQL fixture 의 테스트별 스키마 격리(admin_pg_test.go:27 의 migratedPool 이 기본 스키마 공유 — 이번 신규 테스트가 고유 tag 수동 격리의 세 번째 사례가 되어 가치가 올랐다, 가치 3/위험 2/M) / PUT /api/v1/admin/settings/{key} 에 DisallowUnknownFields 적용 검토(가치 2/위험 3/M) / 끝난 세션에 계속 result 를 덧붙일 수 있음(catalog.go:610, 재시도 멱등성 정책 미확정으로 계속 보류, 가치 2/위험 2/S)
 - 과제서: 채택 — 세 경로의 전제를 실제 PG 로 확인해 그대로 성립했고(세션은 `null` 만, telemetry·업적은 5종 전부 저장됨) 지정한 프로덕션 파일 2개 + 테스트 1개 + docs 3줄만 고쳤다. 다만 업적 unlock 의 경로는 과제서의 `POST /api/v1/achievements/unlock` 이 아니라 `POST /api/v1/me/achievements`(api.go:143) 였다 — 핸들러(content.go:443)는 지시와 같으므로 그 경로로 테스트했다.
 
+- 릴리즈: v0.7.23 (2026-09-27, run 2026-09-27-104156-igame-improve)
