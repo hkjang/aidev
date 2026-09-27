@@ -1,7 +1,7 @@
 ---
 title: "moyro — 자율 개선 이력"
 description: "moyro: 자율 개선 회차 40회, 릴리즈 18건. 최근 릴리즈 v0.2.40 (자산 1개)."
-last_modified_at: 2026-09-27 23:42:50 +0900
+last_modified_at: 2026-09-28 00:44:43 +0900
 ---
 {% raw %}
 <script type="application/ld+json">
@@ -18,14 +18,14 @@ last_modified_at: 2026-09-27 23:42:50 +0900
   "name": "hkjang",
   "url": "https://github.com/hkjang"
  },
- "dateModified": "2026-09-27T23:42:50+09:00",
+ "dateModified": "2026-09-28T00:44:43+09:00",
  "version": "0.2.40"
 }
 </script>
 
 # moyro
 
-<p class="tldr"><strong>요약.</strong> moyro: 자율 개선 회차 40회, 릴리즈 18건. 최근 릴리즈 v0.2.40 (자산 1개). <span class="pill pill-failed" title="14일: 릴리즈 10, 실패 0, 경고 4, 회귀 0">건강 D</span> <span class="meta">14일: 릴리즈 10, 실패 0, 경고 4, 회귀 0</span></p>
+<p class="tldr"><strong>요약.</strong> moyro: 자율 개선 회차 40회, 릴리즈 18건. 최근 릴리즈 v0.2.40 (자산 1개). <span class="pill pill-merged" title="14일: 릴리즈 10, 실패 0, 경고 3, 회귀 0">건강 C</span> <span class="meta">14일: 릴리즈 10, 실패 0, 경고 3, 회귀 0</span></p>
 
 <ul class="stats"><li><b>40</b><span>회차</span></li><li><b>1</b><span>프로젝트</span></li><li><b>21</b><span>배포 준비 완료</span></li><li><b>0</b><span>릴리즈 진행 중</span></li><li><b>3</b><span>병합 완료</span></li><li><b>7</b><span>검토 대기</span></li><li><b>5</b><span>검증 실패</span></li><li><b>1</b><span>변경 없음</span></li><li><b>3</b><span>실행 오류</span></li><li><b>$193.98</b><span>비용</span></li><li><b>8시간 43분</b><span>에이전트 시간</span></li></ul>
 
