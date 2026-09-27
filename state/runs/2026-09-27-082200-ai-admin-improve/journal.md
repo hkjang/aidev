@@ -26,3 +26,7 @@
 - 보안·법무 부서 차단 없음: 공격면을 좁히는 변경이고 새 인가 경로·식별자·비밀값·의존성·개인정보 수집이 없다. 다음 회차 후보는 `available_models` JSON 파싱 무시와 `workflow.go` `errKeyStale` — upstream 무검증 릴레이 지점은 `providers.go:655`가 유일했고 닫혔다.
 - [러너 08:42] review approved — 리뷰 승인 (risk=low)
 - [러너 08:42] pr created — https://github.com/hkjang/ai-admin/pull/33
+- [러너 08:51] ci passed — 검사 2개 모두 success
+- [러너 08:51] merge done — ac2ed50
+- [러너 09:04] release published — v1.2.29
+- [러너 09:06] assets verified — v1.2.29 자산 2개 (이전 v1.2.28: 2)
