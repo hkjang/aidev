@@ -1,0 +1,21 @@
+- 과제: 로그아웃하거나 권한을 잃은 뒤에도 빠른 이동 팔레트의 "최근 이동" 이 관리자 메뉴를 계속 보여 준다 (가치 3 / 위험 1 / 작업량 S)
+- 왜: `CommandPalette` 의 `readRecent()`(`web/src/features/navigation/command-palette.tsx:39-56`)는 localStorage `appstore.recentDestinations` 를 그대로 되돌려 주고, 검색어가 비었을 때 그 목록을 `menuDestinations` 앞에 무조건 붙인다(`:166-176`). 살아 있는 메뉴 목록은 `searchableNavGroups({authenticated, roles})`(`web/src/features/navigation/nav-items.ts:134-146`)로 세션에 맞게 걸러지는데 최근 목록만 걸러지지 않아, 관리자가 쓰던 브라우저에서 로그아웃하면(`web/src/app/providers.tsx:129-139` 의 logout 은 이 키를 지우지 않는다) 익명 사용자가 Ctrl+K 를 눌러 "앱 관리"·"사용자"·"감사 로그" 같은 항목을 보고 클릭까지 할 수 있다.
+- 수용 기준: 1) 세션이 비인증(또는 역할 없음)일 때 팔레트의 빈 검색 상태에 `menu:/admin/...`·`menu:/my/...` 같은 현재 세션에서 허용되지 않는 최근 항목이 렌더되지 않는다. 2) 같은 세션에서 허용되는 최근 항목(예: `menu:/apps`)과 앱 항목(`app:<slug>`)은 그대로 "최근 이동" 그룹에 남는다. 3) localStorage 값 자체는 지우지 않는다(다시 로그인하면 최근 목록이 복원된다) — 표시만 거른다. 4) Vitest 가 (a) 익명 세션 + 관리자 최근 항목 → 해당 항목 없음, (b) 관리자 세션 + 같은 저장값 → 항목 보임 을 증명하고, 필터를 되돌리면 (a) 가 실패한다.
+- 건드릴 파일:
+  - `web/src/features/navigation/command-palette.tsx` — `results` useMemo(`:166-176`)에서 `readRecent()` 결과를 현재 세션 기준으로 거른다. 권장 규칙: `menu:` 로 시작하는 id 는 `menuDestinations` 에 같은 id 가 있을 때만 통과, `app-admin:` 은 `canManage` 일 때만 통과, `app:` 은 항상 통과. `menuDestinations` 는 이미 `id: menu:${item.to}` 로 만들어지므로 Set 하나로 비교된다(`:120-135`).
+  - `web/src/features/navigation/command-palette.test.tsx` (신규) — 팔레트 단독 렌더 테스트. 기존 단위 테스트는 소스와 같은 폴더에 `*.test.tsx` 로 둔다. 세션 배선은 `web/src/pages/auth-pages.test.tsx:20-58` 의 `renderLogin` 패턴을 그대로 따를 것 — `vi.stubGlobal("fetch", …)` 로 `/auth/session`·`/public/config` 만 답하고 `QueryClientProvider`(retry:false) → `MemoryRouter` → `AuthProvider` 안에서 렌더한 뒤 `await waitFor(() => expect(client.isFetching()).toBe(0))` 으로 세션이 도착한 뒤에 단언한다(로딩 중 상태로 거짓 통과 방지). 관리자 세션은 `/auth/session` 이 `{authenticated:true, user:{roles:["admin"]}}` 를 주면 된다(`hasAnyRole(session?.user?.roles, ADMIN_ROLES)`). 손으로 만든 AuthContext 주입 금지 — 프로덕션 Provider 로 검증할 것.
+  - 테스트 준비: 렌더 전에 `localStorage.setItem("appstore.recentDestinations", JSON.stringify([{id:"menu:/admin/apps", to:"/admin/apps", label:"앱 관리"}, {id:"menu:/apps", to:"/apps", label:"전체 앱"}]))` 로 저장값을 심고 `<CommandPalette open onClose={vi.fn()} />` 를 렌더한다. 검색어가 비면 `api.apps` 쿼리는 `enabled:false` 라 앱 요청은 나가지 않는다(`command-palette.tsx:110-115`). 팔레트는 `FavoritesProvider` 를 필요로 하지 않는다.
+  - 프로덕션 파일은 1개만 건드린다. `nav-items.ts`·`providers.tsx`·`app-shell.tsx` 는 바꾸지 않는다.
+- 검증 명령 (이 저장소에서 실제로 도는 것):
+  - `npm --prefix web ci --no-audit --no-fund` (워크트리에 node_modules 없음 — 첫 단계로 필요, 권한 승인 때문에 단일 명령으로 실행)
+  - `npm --prefix web test` (현재 기준선 80건 — 2026-09-26 회차 기록. 실제 숫자는 직접 확인할 것)
+  - `npm --prefix web run lint`, `npm --prefix web run build`, `./scripts/check-offline-assets.sh web/dist`
+  - 선택(여유 있으면): `CI=true npm --prefix web run test:e2e -- core.spec.ts -g '빠른 이동'` — 기존 팔레트 E2E 2건(`web/e2e/core.spec.ts:303`, `:330`)이 깨지지 않는지 확인. Chromium 설치가 필요하다(`cd web && npx playwright install chromium`).
+- 위험과 피할 것:
+  - 최근 목록을 localStorage 에서 **지우는** 방향(logout 시 removeItem)으로 가지 말 것: `providers.tsx` 의 logout 은 보호 경로(세션/CSRF)에 맞닿아 있고, 다시 로그인한 사용자의 편의 목록을 되돌릴 수 없게 없앤다. 표시 시점 필터가 더 좁고 안전하다.
+  - 기존 E2E 2건이 "최근 이동" 그룹 제목과 메뉴 이동을 단언한다 — 인증 세션에서는 동작이 그대로여야 한다.
+  - `readRecent()` 의 `slice(0, RECENT_LIMIT)`·`safeJsonParse` 방어 로직과 `rememberRecent` 의 저장 형식은 바꾸지 말 것(저장값 형식을 바꾸면 기존 브라우저의 값이 버려진다).
+  - 보호 경로(internal/auth·migrations·.github/workflows)와 서버 코드는 이번 과제에서 손대지 않는다. 라우터 가드(`web/src/app/router.tsx`)도 바꾸지 말 것 — 팔레트가 없는 항목을 제시하지 않게 하는 것이 범위다.
+  - 즐겨찾기(`public-pages.tsx:357`·`:406` 개수·페이지 nav)는 review-pending 인 0898f7a 와 중복이므로 절대 건드리지 말 것.
+- 차선 후보: 빠른 이동 팔레트에서 타이핑 중 앱 결과가 도착하면 선택 위치가 밀려 Enter 가 엉뚱한 곳으로 이동한다 — `queryKey: ["command-apps", query]`(`command-palette.tsx:111`)가 키스트로크마다 새 쿼리라 `apps.data` 가 비었다가 채워지고, `results` 는 앱 항목을 **앞에** 붙이는데(`:172-175`) `active` 는 `query` 변경에만 0 으로 리셋된다(`:184`). 같은 검색어에서 응답이 늦게 오면 화살표로 골라 둔 항목이 아래로 밀린다. 수정 방향: 키를 디바운스한 값으로 만들거나 `placeholderData` 로 이전 결과를 유지하고, `results` 의 선두 항목이 바뀔 때 `active` 를 다시 맞춘다. (미확인: 실제 재현 시나리오를 테스트로 잡아 본 적 없음 — 구현자가 먼저 red 를 확인할 것.)
+- 참고(고르지 말 것): E2E mock API 의 public config override 가 기본값에 덮여 무효 — `web/e2e/mock-api.ts:308-318` 이 `...options.config` 를 먼저 펼치고 `oidcEnabled` 등 기본값을 뒤에 써서 주입이 항상 덮이는 것을 이번 회차에 직접 확인했다. 다만 사용자에게 보이는 변화가 없는 테스트 인프라 수정이고 과거에 "출력이 실제로 변하지 않는 수정" 이 반려된 이력이 있어 단독 과제로는 부적합하다.

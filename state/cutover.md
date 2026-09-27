@@ -93,3 +93,12 @@
 - 과제서: 채택 — 과제서의 근거가 코드와 정확히 일치했고(6곳 미검사 PUT, 287행 confirm 의 최상위 node.title, handleSave 의 즉시 닫기) 수용 기준 1~4 를 모두 e2e 로 고정했다. 다만 과제서의 `setIsAuthed(false)` 는 실제로 기존 `handleUnauthorized()`(loggedIn state)였고, e2e 로케이터용으로 삭제 버튼 외에 편집/저장/취소 버튼 title 과 입력 data-testid 도 함께 붙여야 했다.
 
 - 릴리즈: v1.9.0 (2026-09-26, run 2026-09-26-155135-cutover-approve)
+## 2026-09-27
+- 선택: 관리자 화면에 항상 보이는 "최상위 작업 추가" 진입점과 빈 상태 안내 추가 (가치 3 / 위험 1 / 작업량 S)
+- 결과: 성공
+- 요약: `app/admin/page.tsx` 는 `tree.map` 만 렌더하고 최상위 추가 버튼은 `ActivityTree.tsx:111-115` 의 `isRoot` 행 안에만 있어, `activities` 가 비면(초기 설치 직후·전체 삭제 후) 관리 화면에 작업을 만들 수단이 하나도 없었다 — JSON 업로드가 유일한 복구 경로였다. 트리 목록 컨테이너 안·`tree.map` 아래에 `data-testid="add-root-activity"` 버튼을 항상 두고, `tree.length === 0` 일 때 `data-testid="empty-activity-tree"` 안내("등록된 작업이 없습니다…")를 함께 렌더했다. 버튼은 새 fetch 를 만들지 않고 09-26 이 정리한 `submitActivityChange({ action: 'add', parentId: null })` 를 그대로 호출하므로 401/400/500 이 기존 `admin-save-error` 배너에 그대로 나온다. 프로덕션 1파일 + 신규 e2e 1파일 + 문서 1절. 검증(전부 실행함): `npm run lint` 오류 0, `npx tsc --noEmit` 통과, `npm run test:unit` 79건/25 suites 통과, `PLAYWRIGHT_CHROMIUM_PATH=/usr/bin/google-chrome npm run test:e2e` **18건 통과**(기존 16 + 신규 2), `npm run build` 통과, 산출물 삭제 뒤 `git status --porcelain` 깨끗. 커밋 255d9d7.
+- 실패 재현: 구현 전 `npx playwright test e2e/admin-empty-tree.spec.ts` → `2 failed`. 2번 테스트: `Error: locator.click: Test timeout of 30000ms exceeded. Call log: - waiting for getByTestId('add-root-activity')` (1번도 같은 이유로 `empty-activity-tree` 대기 중 타임아웃). 구현 후 같은 명령 `2 passed (3.6s)`.
+- 보류 아이디어: validateActivityImport 단위 테스트 추가(`lib/activityData.test.ts` 여전히 없음, 3/1/S) / eslint globalIgnores 에 playwright-report·test-results 추가(2/1/S) / 상태 전파를 `lib/treeUtils propagateStatus` 순수 함수로 옮겨 API 의 targetId+newStatus 분기와 규칙 통일(3/2/M) / `ActivityTree.tsx:111-115` 의 이제 중복이 된 `isRoot` 전용 '같은 레벨 추가' 버튼 제거(2/1/S, 이번엔 수용 기준 밖이라 남겨 둠) / Dockerfile 의 NEXT_PUBLIC_*_PASSWORD 빌드 기본값 제거로 fail-closed(4/3/M, 릴리즈 통과 확인이 필요한 단독 회차)
+- 과제서: 채택 — 과제서의 근거가 코드와 정확히 일치했고(257행 `tree.map`, ActivityTree 의 isRoot 전용 추가 버튼, route.ts 의 `parentId:null` 지원, 빈 배열을 통과시키는 validateActivityImport) 수용 기준 1~4 를 신규 e2e 2건으로 고정했다. 선택 사항이던 `같은 레벨 추가` 버튼 삭제는 기존 e2e 가 쓰지 않는 것을 확인했지만 수용 기준 밖이라 하지 않았다.
+
+- 릴리즈: v1.10.0 (2026-09-27, run 2026-09-27-094216-cutover-improve)
