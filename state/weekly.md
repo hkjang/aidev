@@ -262,3 +262,4 @@
 - 보류 아이디어: `adminConfluenceStatus` 가 진단 질의 오류를 통째로 버린다(`errorRows, _ :=`) — 질의 실패가 '진단 없음' 으로 읽히지만 재현 방법을 먼저 정해야 함 (2/1/S) · README:47·docs/MCP.md:3·AdminPage 의 MCP '읽기 전용' 서술이 `mcpwrite.go` 의 `mcp:write` 보다 낡음 — 여섯 회차 연속 차선, CHECKS.md 항목과 묶어 문서 회차로 처리할 것 (2/1/S) · CHECKS.md:16 이 authz-check 를 '수 분' 이라 적고 같은 문서 108행은 '수십 분', 표가 '제자리에서 고쳐 쓴다·혼자 돌려라' 를 말하지 않음 (2/1/S) · AdminPage·DashboardPage 를 렌더하는 프런트 시험이 없어 조건부 문장이 타입 검사 밖에서 검증되지 않음 — 이번 회차 수용 기준 3)이 또 그 공백에 걸렸음 (2/2/M) · Confluence 진단 목록에 시간 창이 없어 두 달 전 진단이 '최근' 으로 뜰 수 있음 — mail 쪽 14일 창과 대비, 미측정 (2/2/S)
 - 과제서: 채택 — 과제서가 지목한 `confluence_handlers.go:280` 의 `LIMIT 20`, `AdminPage.tsx` 의 `pagesFailed` 0회 등장, `types.ts:229` 의 미사용 필드가 코드와 정확히 일치했고, 정찰이 미확인으로 남긴 "`confluence_sync_state` 의 CONFLUENCE 행이 마이그레이션에서 생기는가" 를 `migrations/005_confluence.sql:40` 의 `INSERT ... VALUES ('CONFLUENCE')` 로 확인해 시험이 그 행을 따로 채울 필요가 없었습니다.
 
+- 릴리즈: v0.310.0 (2026-09-27, run 2026-09-27-000251-weekly-improve)

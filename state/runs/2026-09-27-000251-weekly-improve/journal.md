@@ -30,3 +30,7 @@
 - 원장에 `- 실패 재현:` 줄이 없습니다 — 위에 적은 실패 출력이 그 자리를 대신합니다.
 - [러너 00:29] review approved — 리뷰 승인 (risk=low)
 - [러너 00:29] pr created — https://github.com/hkjang/weekly/pull/24
+- [러너 00:54] ci passed — 검사 1개 모두 success
+- [러너 00:54] merge done — e141627
+- [러너 01:25] release published — v0.310.0
+- [러너 01:27] assets verified — v0.310.0 자산 1개 (이전 v0.309.0: 1)
