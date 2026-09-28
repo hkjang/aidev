@@ -27,3 +27,7 @@
 - 다음 회차: 같은 패턴 24곳 중 `POST /me/portfolios` 의 openapi '500' 누락과 admin_users.go:72 가 ideas.json 에 대기 중이다.
 - [러너 04:09] review approved — 리뷰 승인 (risk=low)
 - [러너 04:09] pr created — https://github.com/hkjang/Kkiit/pull/15
+- [러너 04:10] ci passed — 검사 없음 — 정책으로 허용
+- [러너 04:10] merge done — 7989dc1
+- [러너 04:16] release published — v0.4.10
+- [러너 04:17] assets verified — v0.4.10 자산 1개 (이전 v0.4.9: 1)

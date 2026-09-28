@@ -18,3 +18,14 @@
 - 다음 역할이 조심할 것: 새 테스트 5건은 `web/test/roleScope.test.mjs` 안이고 DB 없이 `cd web && npm ci && npm test`(135건) 로 돈다. 브라우저 확인은 커밋에 없다 — 하네스를 /tmp/harness 에만 두고 dist 를 지웠으므로 재현하려면 dist 빌드와 `/api/v1/me`·`/api/v1/users` 모킹을 다시 세워야 한다.
 - [러너 04:07] brief accepted — 채택 — 인용한 행 번호(admin.go 949·977·986, AdminPage.tsx 3194·3285·3416-3427·3428-3438·3439)와 `User.id`·`.ts` 확장자 import 관례가 모
 - [러너 04:07] verify passed — 검증 7개 통과 (auto)
+
+## 비평 노트
+- 확인한 것: 대상은 baa6292 한 커밋(로컬 `main` ref 가 낡아 `main...HEAD` 가 릴리즈 7개를 끌고 오므로 pinned base 08a1b9f 기준으로 봤다). admin.go:949·977·986 세 분기, Principal.ID 의 `json:"id"`, client.ts `User.id`, 저장 핸들러가 disabled 와 무관하게 state 의 role·active 를 보내는 것, 비밀번호 조건이 기존 `edit.id !== user?.id` 와 논리적으로 동치인 것을 각각 파일에서 확인. 실행: npm test 135/135, eslint 무경고, tsc -b + vite build 성공.
+- 원장에 `- 실패 재현:` 줄이 없어 직접 재현했다 — 커밋의 roleScope.test.mjs 를 baa6292^ 의 roleScope.ts 와 /tmp 에서 함께 돌리니 export 부재로 실패한다. 새 테스트는 바뀐 경로를 지난다.
+- 못 본 것: 브라우저 렌더링(캡션 `mt={-1.5}` 의 좁은 화면·다국어 폭), Go 테스트(변경에 Go 파일 없음), 통합 테스트(Postgres 없음).
+- 승인이어도 남는 우려 — ① 테스트가 순수 함수만 고정하고 AdminPage 의 세 `disabled`/렌더 조건은 지워도 135건이 통과한다(이 저장소에 컴포넌트 테스트 수단 자체가 없음). ② `자기 판정은 id 만 보고 대소문자…` 테스트의 근거 주석이 틀렸다 — 서버는 `uuid.Parse` 후 UUID 값을 비교하므로 대문자 UUID 도 self 로 본다(Go 가 소문자 정규형만 내보내 도달 불가, 권한도 넓어지지 않음). 다음에 그 주석을 서버 동등성의 근거로 인용하지 말 것.
+- 보안·개인정보 차단 사유 없음: 서버·auth·마이그레이션 무변경, 새 엔드포인트·의존성·비밀값·개인정보 수집 없음, 화면 제안 범위를 좁히기만 함. 거울이 fail-open(세션 미확정 시 전부 열림)인 것은 의도이며 서버가 정본 — 이 함수를 통제로 오해해 서버 검사를 줄이지 말 것. 릴리즈 노트는 "자기 계정 편집 시 권한·중지가 애초에 제안되지 않는다" 로 좁게 쓰는 것이 정확하다.
+- [러너 04:11] review approved — 리뷰 승인 (risk=low)
+- [러너 04:12] pr created — https://github.com/hkjang/Momento/pull/20
+- [러너 04:17] ci passed — 검사 1개 모두 success
+- [러너 04:17] merge done — baa6292

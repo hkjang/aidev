@@ -1,0 +1,10 @@
+{"verdict":"approve","reasons":[],"notes":["검증 실행: web/node_modules 가 이미 있어 `npm test`(135/135 pass), `npm run lint`(eslint 무경고), `npm run build`(tsc -b + vite build 성공) 를 모두 돌렸다. 원장에 `- 실패 재현:` 줄이 없으므로 직접 확인했다 — baa6292 의 web/test/roleScope.test.mjs 를 baa6292^ 의 roleScope.ts 와 함께 /tmp 에서 돌리니 실패한다(selfAccountLimits export 부재로 모듈 단위 실패). 새 테스트가 바뀐 경로를 지나는 것은 맞다.",
+"web/test/roleScope.test.mjs:220-224 '자기 판정은 id 만 보고 대소문자·공백을 봐주지 않는다' 의 근거 주석(\"서버는 id == p.ID 한 번뿐이라\")은 사실과 다르다. admin.go:924 는 `uuid.Parse(chi.URLParam(...))` 로 파싱한 뒤 UUID 값을 비교하므로 대문자·URN·중괄호 표기까지 같은 id 로 본다 — 대문자 UUID 라면 서버는 SELF_ROLE 로 거절하는데 화면은 self 가 아니라고 판정한다. 실제로는 `/api/v1/me`(Principal.ID)·사용자 목록 모두 Go uuid 의 소문자 정규형만 내보내므로 도달하지 않고, 어긋나도 저장이 400 으로 막혀 권한이 넓어지지는 않는다. 거절 사유로 보지 않았으나 다음에 이 테스트를 근거로 삼지는 말 것.",
+"실제 사용자 눈에 보이는 부분(AdminPage.tsx:3431 `disabled={!limits.canChangeRole}`, 3455 `disabled={edit.active && !limits.canDeactivate}`, 3466 `limits.canResetPassword`)에는 테스트가 없다. 세 군데를 지워도 135건이 그대로 통과한다. web devDependencies 에 testing-library 계열이 없어 이 저장소에는 컴포넌트 테스트 수단 자체가 없고(순수 로직 .ts + node:test 가 관례), 구현자도 브라우저 확인은 커밋에 넣지 않았다고 적었다 — 관례 밖의 결함으로 보지 않았지만 회귀는 리뷰로만 막힌다.",
+"selfAccountLimits 의 `callerId !== undefined &&` 가드는 `targetId: string` 인 한 죽은 조건이다(`undefined === \"\"` 도 false). 의도 서술로만 남아 있고 동작에는 영향이 없다.",
+"거울이 fail-open 이다 — 세션이 확정되기 전(`user` 가 null) 에는 세 제약이 모두 열린다. 이것은 의도된 설계이고 서버 admin.go:949·977·986 이 그대로 권한의 정본이므로 공격 경로가 아니다. 다만 다음 회차가 이 함수를 '통제' 로 오해해 서버 검사를 줄이는 근거로 쓰지 않도록 주의.",
+"캡션 `mt={-1.5}` 는 `<Stack spacing={2}>` 안이라 16px 간격에서 4px 로 줄어드는 형태다. 1280 폭 외의 좁은 화면·다국어 폭은 확인하지 않았다(순수 스타일).",
+"보안: 서버·internal/auth·마이그레이션·워크플로에 손대지 않았고(변경 3파일 모두 web/), 새 엔드포인트·새 의존성·비밀값·암호 비교·외부 입력 싱크가 없다. 화면이 제안하는 범위를 좁히기만 하므로 권한을 넓히는 변경이 아니다. 차단 사유 없음.",
+"개인정보: 새로 수집·저장·전송하는 개인정보가 없고, 이미 클라이언트가 가지고 있던 `user.id`·`edit.id` 만 비교한다. 보존 기간·접근 통제·국외 이전에 변화가 없으며 외부에 약속을 만드는 문구도 없다. 차단 사유 없음.",
+"되돌리기: 프로덕션 2파일 + 테스트 1파일의 순수 프론트엔드 변경으로 스키마·외부 상태를 건드리지 않아 revert 로 완전히 돌아온다.",
+"npm run build 가 worktree 에 web/dist 를 남겼지만 .gitignore:4 로 무시되며 git status 는 비어 있다."],"risk":"low","blocking":[]}

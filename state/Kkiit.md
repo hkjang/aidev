@@ -132,3 +132,4 @@
 - 보류 아이디어: 관리자 사용자 수정(`updateAdminUser`, admin_users.go:72)의 같은 결함을 500 으로 가르기 — display_name 이 text 라 같은 NUL 수법이 통하지만 계정 상태·세션 폐기에 붙어 위험 한 단계 위 (가치 3 / 위험 2 / S) · `POST /me/portfolios` 의 openapi 응답에 `'500'` 누락 — 이번에 발견, 핸들러(discovery.go:173)가 실제로 500 `create_failed` 를 내지만 문서에 `'201'`·`'400'` 만 있다. 범위를 지키려 이번엔 뺐다 (가치 1 / 위험 1 / S) · `err!=nil||RowsAffected()==0` 남은 곳 중 HTTP 로 증명 가능한 경로 우선순위 지도 만들기 (가치 2 / 위험 1 / M) · 가이드 문서·openapi 의 API 메서드·응답 코드를 실제 라우터와 대조 — openapi_test.go 가 경로만 비교해 이번 누락도 사람 눈으로 찾았다 (가치 2 / 위험 2 / M) · README 환경변수 계약을 필수 4개 + 선택 `SHUTDOWN_DRAIN_SECONDS` 로 정리 (가치 2 / 위험 1 / S)
 - 과제서: 채택 — docker(29.7.2)가 가용해 수용 기준 1~3 을 모두 실제 HTTP→실제 DB 로 증명했고, 과제서가 미확인으로 남긴 것(`registerSeller` 로 `talents.write` 회피, docker 가용, portfolios.title 의 NUL 이 22021 로 UPDATE 만 실패시킨다)을 실행과 프로브로 모두 확인했다. 과제서의 경고대로 `deleteMyPortfolio` 의 500 경로는 HTTP 로 만들 수 없어 404 회귀 확인까지만 했다.
 
+- 릴리즈: v0.4.10 (2026-09-29, run 2026-09-29-035520-Kkiit-improve)
