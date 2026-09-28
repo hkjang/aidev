@@ -1,0 +1,21 @@
+# umm 프로필 (2026-09-28)
+
+- 목적: 생각을 캔버스에 붙이고 연결해 두는 협업 도구. 공간(space)·생각(note)·연결(edge)·갈래(line of thinking)가 기본 단위이고, Markdown 내보내기가 곧 백업이며 발표 자료·문서 차례로도 컴파일된다. 버전 `0.76.0`(`VERSION`).
+- 스택: Go(모듈 `go.mod`, 진입점 `cmd/`) + PostgreSQL 17 + SQL 마이그레이션(`migrations/`, 번호 순서, up/down 쌍). 프런트는 `web/` — React + TypeScript + Vite + Mantine + React Flow, 테스트는 vitest(단위)와 Playwright(e2e). MCP 서버와 OIDC(Keycloak) 로그인, 선택적 AI 게이트웨이(임베딩·Dream·Namer)가 붙는다.
+- 구조:
+  - `cmd/` — 바이너리 진입점. `internal/httpapi/` — 라우터(`server.go` 의 `spa()` 가 요청마다 nonce 를 새로 써서 CSP 를 잠금)와 핸들러(`export_handlers.go`, `handoff_handlers.go`, `presentation_*`, `content_disposition.go`).
+  - `internal/store/` — DB 접근(`attachments.go`, `mail.go`, 감사 로그 `Audit`). `internal/auth/` — 세션·OIDC(`oidc.go`, `oauth_states`). `internal/config/config.go` — 환경 변수 전수.
+  - `internal/presentation/` — 발표·문서 차례 컴파일(`service.go`, `sections.go`, `grouping.go`). `internal/analytics/` — 방문 추적 스니펫+CSP. `internal/mail/` — SMTP 알림. `internal/textutil/` — `LimitUTF8Bytes` 등.
+  - 설정은 대부분 DB 의 `app_settings` JSON 절(`general`, `security`, `oidc`, `analytics`, `handoff`, `mail`) + 관리자 화면. 비밀값은 `SecretSettingFields("<절>")` 로 암호화·마스크.
+  - `web/src/pages/CanvasPage.tsx` — 3500행 넘는 핵심 화면(공간 전환, 되감기, 자리 기억, 내보내기 메뉴, 공유). `web/src/lib/` — 순수 모듈(`markdown-import.ts`, `silent-sso.ts`, `handoff.ts`, `optimistic-write.ts`, `browser-storage.ts`)로 단위 시험이 붙는 자리. `web/e2e/` — 38개 spec + `helpers.ts`(`signIn`, `unique`).
+  - `docs/` — `USER_GUIDE.md`/`ADMIN_GUIDE.md`(정본, 부록 번호로 증축), `openapi.yaml`(드리프트 시험이 지킴), `screenshots/`. PDF 는 공용 `md2pdf.mjs` 산출물.
+- 빌드·테스트 (실제 명령):
+  - Go: `go build ./cmd/...` · `go vet ./...` · `gofmt` · `go test -p 1 ./...` — **실제 PostgreSQL 17 필요**. 과거 회차가 쓴 것: 도커 `umm-test-pg`, DSN `postgres://umm:umm@127.0.0.1:15433/umm`. 16개 패키지, 몇 분 걸림.
+  - 마이그레이션: `scripts/migrate-dry-run.sh` (up/re-apply/down 을 다 돈다).
+  - 웹: `cd web && npx tsc --noEmit` · `npx vitest run`(≈182개, 빠름) · `npx oxlint` · `npx prettier --check` · `npx vite build`.
+  - e2e: `cd web && npx playwright test [spec]` — 실제 바이너리 + 도커 `umm-e2e-pg` + 헤드리스 크로뮴. **느리고 CI 에서 타이밍에 약함.**
+  - 기타: `scripts/check-version.sh`(버전 일관성), i18n 키 수 확인(현재 1000키 대), OpenAPI 드리프트 시험.
+- 관례: 커밋 메시지는 **영어 한 문장**, 명령형이 아니라 "무엇이 달라졌는가"를 사람 말로 쓴다(예: "Let a thought keep a name the export also uses"). **Co-Authored-By/Claude 트레일러를 붙이지 않는다.** 릴리즈는 별도 세션이 `VERSION` 을 올리고 `Release vX.Y.Z <한 줄>` 커밋을 만든다 — 개선 회차는 **버전을 올리지 않는다**. 설정은 마이그레이션으로 기본 **꺼짐** 상태를 시드하고 관리자 화면에서 켠다. 새 기능은 `docs/ADMIN_GUIDE.md` 의 설정 표 한 행 + 부록 하나 + `docs/openapi.yaml` 로 문서화한다. UI 문구·시험 이름은 한국어.
+- 위험 구역: `internal/auth/`(세션·OIDC·silent SSO 의 3중 루프 방지 — 잘못 건드리면 로그인 루프), `migrations/`(번호 충돌 — 머지 안 된 브랜치의 번호까지 확인해야 한다; 실제로 028/029 를 그렇게 피했다), `.github/workflows/` 와 릴리즈 경로(릴리즈를 깨뜨린 머지가 되돌림 PR 과 자율화 강등으로 이어졌다), 비밀값 경로(`SecretSettingFields`, 마스크 재저장 시 유지, 로그·감사에 원문 금지 — 식별자만), `spa()` 의 CSP/nonce.
+- 자주 깨지는 곳: Markdown 가져오기/내보내기의 절 경계(`web/src/lib/markdown-import.ts` — 제목이 아니라 **꼬리**로 판정하는 규칙 위에 여러 회차가 쌓였다; PR #149 가 여기서 한 번 거절됐다). 파일 이름 새니타이즈가 세 군데(`store.safeFilename`, `httpapi.dispositionSafe`, `handoffFilename`)에 흩어져 규칙이 어긋난다. `CanvasPage.tsx` 의 공간 전환 시 상태 누수(`viewportKnown` 은 지우는데 `rewind` 는 안 지운다). 자리 기억(`umm:view:<space>`)이 스트림으로 들어오는 노트에 맞춘 fit 을 기억한다.
+- 검증 함정: 단위 시험만으로는 배선 결함이 안 잡힌다 — `CanvasPage.tsx` 에는 단위 시험 파일이 없고 순수 모듈에만 vitest 가 붙어 있다. e2e 에서 `page.goto` 는 전체 새로고침이라 클라이언트 라우팅으로만 재현되는 상태 누수를 **놓친다**. CI 는 로컬보다 느려 스트림·fit 타이밍 시험이 흔들린다(CDP 로 CPU 6배 스로틀하면 로컬 재현 가능). 외부 의존(AI 게이트웨이, Momento, SMTP 릴레이, Keycloak, handoff 받는 쪽)이 이 환경에 없어 과거 회차들은 httptest/in-process 가짜로 대신했고 그 사실을 회차 요약에 적었다.

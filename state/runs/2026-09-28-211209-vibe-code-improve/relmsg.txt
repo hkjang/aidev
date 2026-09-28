@@ -1,0 +1,22 @@
+fix: v1.4.5 — appendVerificationLog stops duplicating 검증 로그 on CRLF files
+
+- verification.ts: `appendVerificationLog` 이 v1.4.3 의 CRLF 통합에서 빠진 자체
+  정규식 `/(?:^|\n)## 검증 로그\n/` 을 들고 있어 CRLF 파일의 `## 검증 로그\r\n`
+  에는 절대 매칭되지 않고, 검증을 돌릴 때마다 섹션이 파일 끝에 하나씩 더 붙던
+  것을 고침 — 3회 실행이면 섹션 3개. goals.ts 의 `최근 검증` 은 `section()` 으로
+  첫 섹션만 읽으므로 새 기록은 모두 뒤쪽 중복 섹션으로 들어가고 사용자에게는
+  영원히 갱신되지 않는 것으로 보였다. 섹션 판정을 공유 `hasSection` 하나로 모음
+- 기존 기록 줄을 `lines()` 대신 `sectionLines()` 로 원본 그대로 읽어, 섹션 안에
+  적어 둔 들여쓴 출력 줄(`  출력: 78 tests passed`)과 빈 줄이 다음 기록을 붙일 때
+  납작해지거나 사라지던 것도 함께 사라졌다
+- `checkLine` 이 `/\r?\n/` 로 쪼갠 뒤 `\n` 으로 다시 붙여, CRLF 파일에서 체크박스
+  하나를 체크하면 파일 전체가 LF 로 바뀌던 것을 고침 — 1.4.3 이후 다른 편집 계열이
+  따르는 것과 같은 `detectEol`/`restoreEol` 규칙으로 입력의 줄바꿈을 복원한다
+- markdown.ts: `restoreEol` 을 `export` — 한 단어 변경이며 함수 본문은 그대로.
+  복제본을 두지 않기 위한 것이고, 이로써 verification.ts 는 섹션을 자체적으로
+  파싱하지 않는다(파서는 다시 하나). 프로덕션 파일 2개 변경
+- version 1.4.5; changelog, readme(en/ko), docs 갱신; 82 unit tests
+  (tests/unit/verification.test.ts `verification log on CRLF files` 신규 4개 —
+  프로덕션 goalTemplate/planTemplate 을 CRLF 로 바꾼 실제 문자열에 3회 연속
+  append 하고 프로덕션 sectionLines/normalizeEol 로 확인, 대역·직접 조립 문자열
+  없음; 4개 모두 고치기 전 실패 확인 — `expected 3 to be 1`, `expected 2 to be 1`)
