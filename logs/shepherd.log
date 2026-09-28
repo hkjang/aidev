@@ -3147,3 +3147,36 @@ shepherd: 락을 3000초 안에 잡지 못했거나 처리 실패 — 다음 시
 [09:06:20] done
 ===== 2026-09-28 09:06:20 shepherd done
 ===== 2026-09-28 09:35:02 shepherd start
+[10:07:32] shepherd: 후보 138건 (한 번에 최대 6건, 오늘 $3.8612965/$150)
+[10:08:54] === shepherd hunter PR #14 (원인 review, run 2026-09-28-100853-hunter-shepherd)
+[10:13:17] hunter: improve — 26 turns, 4m, $1.94, success
+[10:13:19] hunter: verify `go build ./...` → exit 0 (2s)
+[10:13:19] hunter: verify `go vet ./...` → exit 0 (0s)
+[10:13:22] hunter: verify `go test ./...` → exit 0 (3s)
+[10:13:33] hunter: verify `cd web && [ -d node_modules ] || npm ci --no-audit --no-fund` → exit 0 (11s)
+[10:13:34] hunter: verify `cd web && npm test --silent` → exit 0 (1s)
+[10:13:34] hunter: verify `cd web && [ -d node_modules ] || npm ci --no-audit --no-fund` → exit 0 (0s)
+[10:13:34] hunter: verify `cd web && npm run typecheck --silent` → exit 0 (0s)
+[10:13:34] hunter: verify `cd web && [ -d node_modules ] || npm ci --no-audit --no-fund` → exit 0 (0s)
+[10:13:36] hunter: verify `cd web && npm run build --silent` → exit 0 (2s)
+[10:13:39] hunter: [shepherd] PR #14 review → fix-pushed — # 수리 요약 (2026-09-28, PR #14 2차 거절 후)  - 지적 3개를 모두 실측 재현했다. (1) `finding_bulk.go:66` 의 `strings.TrimSpace` 를 `= name`
+[10:17:05] hunter: review — 20 turns, 3m, $1.31, success
+[10:17:09] hunter: [shepherd] PR #14 review → approve — risk=low — 리뷰 승인 (risk=low) 
+[10:17:13] === shepherd kanpic PR #35 (원인 review, run 2026-09-28-101712-kanpic-shepherd)
+[10:24:34] kanpic: improve — 53 turns, 7m, $3.15, success
+[10:24:34] kanpic: verify `go build ./...` → exit 0 (-1s)
+[10:24:34] kanpic: verify `go vet ./...` → exit 0 (0s)
+[10:24:37] kanpic: verify `go test ./...` → exit 0 (3s)
+[10:24:41] kanpic: verify `cd web && [ -d node_modules ] || npm ci --no-audit --no-fund` → exit 0 (4s)
+[10:24:45] kanpic: verify `cd web && npm test --silent` → exit 0 (4s)
+[10:24:45] kanpic: verify `cd web && [ -d node_modules ] || npm ci --no-audit --no-fund` → exit 0 (0s)
+[10:24:52] kanpic: verify `cd web && npm run build --silent` → exit 0 (7s)
+[10:24:58] kanpic: [shepherd] PR #35 review → fix-pushed — # 수리 요약 — kanpic PR #35  - 지적이 맞았다. `internal/httpapi` 에 새 테스트 3개를 먼저 써서 재현했다(pgx 처럼 취소된 ctx 에�
+[10:28:06] kanpic: review — 25 turns, 3m, $1.52, success
+[10:28:09] kanpic: [shepherd] PR #35 review → approve — risk=medium — 리뷰 승인 (risk=medium) 
+[10:28:09] shepherd: 처리 2건 — 승인 2 · 수정 푸시 2 · 사람 필요 0 (오늘 $11.778566/$150)
+[10:28:57] hunter: waiting for CI on e7d2bb2 (pending)
+[10:36:49] hunter: [merge] done — e7d2bb201f11525e6a069b293ee17943bfbf5cc2 (사람 승인)
+[10:44:36] hunter: release — 50 turns, 7m, $3.5, success
+[10:44:41] hunter: waiting for CI on f0f7667 (no-ci)
+[11:04:10] hunter: [release] ci-blocked — 릴리즈 커밋 CI: timeout — 제한 시간 안에 CI 완료를 확인하지 못함 (태그 보류)
