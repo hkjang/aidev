@@ -17,3 +17,16 @@
 - 거절 아님이므로 수리 대상 파일 없음.
 - [러너 20:02] review approved — 리뷰 승인 (risk=low)
 - [러너 20:02] pr created — https://github.com/hkjang/releasedock/pull/27
+- [러너 20:05] ci passed — 검사 1개 모두 success
+- [러너 20:05] merge done — 468ed59
+
+## 릴리즈 노트
+- 판단: v0.5.23 → **v0.5.24** (패치). 최근 10개 태그가 전부 패치 증가이고 이번 변경은 웹 1파일 버그 수정이라 그 관례를 그대로 따랐다.
+- 한 것: 이전 릴리즈 커밋 6개와 **똑같은 파일 6개**만 갱신(VERSION, README.md 의 `make package` 출력 예, docs/offline-install.md 5곳, web/package.json, web/package-lock.json 2곳, web/src/app/VersionContext.tsx 의 fallback). diffstat 이 v0.5.18~v0.5.23 과 글자까지 동일하다(6 files, 11 insertions, 11 deletions). 커밋 `chore: release v0.5.24`, 주석 태그 `v0.5.24` / 메시지 `ReleaseDock v0.5.24` — 모두 이전 형식 그대로. 작성자는 환경 설정대로 hkjang <gagagiga@naver.com> 로 찍혔고 트레일러는 붙이지 않았다.
+- 일부러 건드리지 않은 것: `web/src/pages/simple/SimpleDeployPage.stream.test.tsx:97` 의 `version: '0.5.23'` 목값. 릴리즈 커밋은 역대 한 번도 테스트의 버전 리터럴을 따라 올리지 않았고(SimpleRunDetailPage.stream.test.tsx 는 아직 `0.5.18`), 이건 API 응답 스텁일 뿐 버전 일치 검사의 대상이 아니다. 관례를 바꾸는 건 사람의 몫이라 그대로 뒀다.
+- 검증: 릴리즈 워크플로가 태그 푸시 때 돌리는 것과 같은 경로를 이 기계에서 그대로 실행했다 — 도커 postgres:16-alpine(포트 55581)에 `TEST_POSTGRES_DSN` 을 채우고 `./scripts/package-release.sh` 전체 완주(exit 0). 그 안에서 build.sh 가 web `npm ci` → `npm test --run` (12 files / **112 tests 통과**) → `npm run build`, backend `go test ./...` (server 패키지 38.190s — DSN 이 실제로 먹어 통합 테스트가 돌았다는 뜻, SKIP 로 새지 않음), runner `go test ./...` 전부 ok. 워크플로의 `test "${GITHUB_REF_NAME}" = "v$(cat VERSION)"` 도 손으로 확인했다 — v0.5.24 일치.
+- 자산: **만들지 않았다(`assets: []`)**. release.yml 의 `package` 잡이 태그 푸시에 `package-release.sh` 를 돌려 tar.gz 와 .sha256 를 만들고, `publish` 잡이 `gh release create --verify-tag --generate-notes --title "ReleaseDock v${version}"` 로 GitHub Release 까지 자동 생성한다. 그래서 `github_release` 도 **false** — 여기서 릴리즈를 만들면 워크플로와 충돌한다. 로컬에서 만든 `releasedock-v0.5.24.tar.gz`(10,438,188 B, sha256 자체 검증 OK)는 빌드가 통과하는지 보려던 검증물일 뿐이라 `dist`·`release`·`web/dist` 와 함께 **커밋 전에 지웠다**. 임베드 디렉터리도 `.gitkeep` 만 남은 것을 확인했다.
+- 원격에는 아무것도 보내지 않았다 — 커밋과 주석 태그만 detached HEAD(103db16)에 만들어 뒀다. 푸시는 러너 몫이다.
+- 다음 회차가 알아둘 것: 릴리즈 검증 한 바퀴가 `npm ci` 를 매번 새로 받아서 오래 걸린다(이번엔 postgres 대기 포함 약 4분). 그리고 비평 노트 ③ "배포 화면 effect 에 종료 상태 가드 없음" 은 릴리즈 노트에 남기라고 했지만, 이 저장소의 GitHub Release 본문은 `--generate-notes` 가 PR 제목으로만 채우는 구조라 사람이 쓰는 본문 자리가 없다 — 그 우려는 여기 회차 노트와 ideas.json 에만 남는다.
+- [러너 20:11] release published — v0.5.24
+- [러너 20:14] assets verified — v0.5.24 자산 2개 (이전 v0.5.23: 2)

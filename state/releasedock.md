@@ -304,3 +304,4 @@
 - 보류 아이디어: 로그 스트림 한도(3/user·64/global) 거절과 해제의 HTTP 통합 테스트 — 동시 스트림 타이밍 안정화가 남은 위험 (가치 2 / 위험 2 / M); SSE 프레임을 rAF 마다 모아 배치당 한 번만 setLogs (가치 2 / 위험 2 / M); 전체 모드 ReleaseDetailPage 의 재연결이 `?after` 커서를 이어받는지 확인 — useReleaseLogs 의 URL 을 아직 읽지 않았다 (가치 2 / 위험 2 / S); make vet(gofmt/go vet)과 웹 tsc -b --noEmit 를 make test 에 포함 — 브랜치 auto/2026-09-17-0853 이 아직 main 에 없어 중복 위험 (가치 2 / 위험 1 / S).
 - 과제서: 없음 — 이번 회차에는 정찰 과제서가 붙지 않아 보류 아이디어 재평가로 선택했다. 그 과정에서 "음수 Last-Event-ID" 아이디어는 코드로 확인해 기각했다(`?after` 부재 시 queryID=0 이 max 선택에서 음수를 0 으로 바닥 처리한다).
 
+- 릴리즈: v0.5.24 (2026-09-28, run 2026-09-28-194203-releasedock-improve)

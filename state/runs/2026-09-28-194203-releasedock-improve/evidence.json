@@ -1,0 +1,277 @@
+{
+  "run_id": "2026-09-28-194203-releasedock-improve",
+  "generated": "2026-09-28T20:14:57+09:00",
+  "run": {
+    "run_id": "2026-09-28-194203-releasedock-improve",
+    "project": "releasedock",
+    "kind": "improve",
+    "started": "2026-09-28T19:42:03+09:00",
+    "model": "claude-opus-5",
+    "policy_version": "4a9e91ac7",
+    "prompts_hash": "ce085c79e18002e2",
+    "runner_version": "d36dd84d8",
+    "arm": "no-scout",
+    "experiment": "roles-2026-09",
+    "finished": "2026-09-28T20:14:57+09:00",
+    "outcome": "release-ready"
+  },
+  "record": {
+    "ts": "2026-09-28T20:14:57+09:00",
+    "date": "2026-09-28",
+    "project": "releasedock",
+    "result": "merged https://github.com/hkjang/releasedock/pull/27, released v0.5.24",
+    "outcome": "release-ready",
+    "run_id": "2026-09-28-194203-releasedock-improve",
+    "base_sha": "79a00dae23002a109e72d8bacf871162b6e0e59d",
+    "head_sha": "468ed59090e869f9191608a6d055570b5b392693",
+    "pr": "https://github.com/hkjang/releasedock/pull/27",
+    "stages": {
+      "base": {
+        "state": "pinned",
+        "reason": "main@79a00da",
+        "at": "2026-09-28T19:42:07+09:00"
+      },
+      "autonomy": {
+        "state": "release",
+        "reason": "",
+        "at": "2026-09-28T19:42:07+09:00"
+      },
+      "verify": {
+        "state": "passed",
+        "reason": "검증 7개 통과 (auto)",
+        "at": "2026-09-28T19:58:44+09:00"
+      },
+      "review": {
+        "state": "approved",
+        "reason": "리뷰 승인 (risk=low)",
+        "at": "2026-09-28T20:02:26+09:00"
+      },
+      "pr": {
+        "state": "created",
+        "reason": "https://github.com/hkjang/releasedock/pull/27",
+        "at": "2026-09-28T20:02:33+09:00"
+      },
+      "ci": {
+        "state": "passed",
+        "reason": "검사 1개 모두 success",
+        "at": "2026-09-28T20:05:25+09:00"
+      },
+      "merge": {
+        "state": "done",
+        "reason": "468ed59090e869f9191608a6d055570b5b392693",
+        "at": "2026-09-28T20:05:31+09:00"
+      },
+      "release": {
+        "state": "published",
+        "reason": "v0.5.24",
+        "at": "2026-09-28T20:11:52+09:00"
+      },
+      "assets": {
+        "state": "verified",
+        "reason": "v0.5.24 자산 2개 (이전 v0.5.23: 2)",
+        "at": "2026-09-28T20:14:56+09:00"
+      }
+    },
+    "campaign": "",
+    "autonomy": "release",
+    "arm": "no-scout",
+    "experiment": "roles-2026-09",
+    "engine": "claude",
+    "files": 2,
+    "additions": 308,
+    "deletions": 11,
+    "tests": 1,
+    "title": "fix: keep the deploy page's live log alive when its stream drops"
+  },
+  "stages": {
+    "base": {
+      "state": "pinned",
+      "reason": "main@79a00da",
+      "at": "2026-09-28T19:42:07+09:00"
+    },
+    "autonomy": {
+      "state": "release",
+      "reason": "",
+      "at": "2026-09-28T19:42:07+09:00"
+    },
+    "verify": {
+      "state": "passed",
+      "reason": "검증 7개 통과 (auto)",
+      "at": "2026-09-28T19:58:44+09:00"
+    },
+    "review": {
+      "state": "approved",
+      "reason": "리뷰 승인 (risk=low)",
+      "at": "2026-09-28T20:02:26+09:00"
+    },
+    "pr": {
+      "state": "created",
+      "reason": "https://github.com/hkjang/releasedock/pull/27",
+      "at": "2026-09-28T20:02:33+09:00"
+    },
+    "ci": {
+      "state": "passed",
+      "reason": "검사 1개 모두 success",
+      "at": "2026-09-28T20:05:25+09:00"
+    },
+    "merge": {
+      "state": "done",
+      "reason": "468ed59090e869f9191608a6d055570b5b392693",
+      "at": "2026-09-28T20:05:31+09:00"
+    },
+    "release": {
+      "state": "published",
+      "reason": "v0.5.24",
+      "at": "2026-09-28T20:11:52+09:00"
+    },
+    "assets": {
+      "state": "verified",
+      "reason": "v0.5.24 자산 2개 (이전 v0.5.23: 2)",
+      "at": "2026-09-28T20:14:56+09:00"
+    }
+  },
+  "provenance": {
+    "model": "claude-opus-5",
+    "policy_version": "4a9e91ac7",
+    "prompts_hash": "ce085c79e18002e2",
+    "runner_version": "d36dd84d8",
+    "base_sha": "79a00dae23002a109e72d8bacf871162b6e0e59d",
+    "head_sha": "468ed59090e869f9191608a6d055570b5b392693",
+    "pr": "https://github.com/hkjang/releasedock/pull/27"
+  },
+  "verification": {
+    "runner": {
+      "source": "auto",
+      "commands": [
+        {
+          "cmd": "cd backend && go build ./...",
+          "exit": 0,
+          "seconds": 1
+        },
+        {
+          "cmd": "cd backend && go vet ./...",
+          "exit": 0,
+          "seconds": 0
+        },
+        {
+          "cmd": "cd backend && go test ./...",
+          "exit": 0,
+          "seconds": 0
+        },
+        {
+          "cmd": "cd web && [ -d node_modules ] || npm ci --no-audit --no-fund",
+          "exit": 0,
+          "seconds": 0
+        },
+        {
+          "cmd": "cd web && npm test --silent",
+          "exit": 0,
+          "seconds": 4
+        },
+        {
+          "cmd": "cd web && [ -d node_modules ] || npm ci --no-audit --no-fund",
+          "exit": 0,
+          "seconds": 0
+        },
+        {
+          "cmd": "cd web && npm run build --silent",
+          "exit": 0,
+          "seconds": 4
+        }
+      ]
+    },
+    "runner_gate": {
+      "ok": true,
+      "state": "verified",
+      "reason": "검증 7개 통과 (auto)"
+    },
+    "after_rebase": null,
+    "review": {
+      "verdict": "approve",
+      "reasons": [],
+      "notes": [
+        "SimpleDeployPage.tsx:370-374 다중 파일 배치의 커서 경계에 좁은 경쟁이 남는다. `logCursorRef.current = 0` 는 동기이지만 이전 런 A 의 EventSource 는 아직 열려 있을 수 있고, 리셋과 effect 재실행(런 B 스트림 오픈) 사이에 A 의 log 프레임이 하나라도 도착하면 `logCursorRef` 가 A 의 id 로 다시 올라가 B 가 `?after=<A의 id>` 로 열린다 — B 의 앞부분 로그가 조용히 누락된다. main 은 커서가 없어 항상 0 부터였으므로 이론상 퇴행이다. 다만 서버가 페이지가 가득 차면 대기 없이 즉시 드레인하고(simple.go 의 `sent == logStreamPageSize` 분기) 큐는 1500ms 폴링이므로 `waitForTerminal` 이 돌아올 무렵 A 스트림은 이미 비었을 확률이 높다. 구현자도 '다중 파일 배치 미검증' 으로 스스로 표시했다. 확정 결함으로 보기엔 근거가 부족해 차단하지 않지만, 다음 회차에 2 파일 배치 테스트를 하나 넣을 값어치가 있다.",
+        "SimpleDeployPage.tsx:232,234 `nextLineId()` 가 `setLogs` 업데이터 안에서 ref 를 변이한다. 업데이터는 순수해야 하고 React 19 StrictMode·동시 렌더는 이를 재호출할 수 있다. 여기서는 카운터가 더 올라갈 뿐 id 유일성은 깨지지 않아 실해는 없지만, 업데이터 밖에서 id 를 먼저 뽑는 편이 안전하다.",
+        "SimpleDeployPage.tsx:576 `streamLost && Boolean(activeRunId)` 가드는 '큐가 그 런을 지나갔는지' 가 아니라 'activeRunId 가 비었는지' 만 본다. 파일 N 이 끝나고 파일 N+1 을 업로드하는(긴 await) 동안 activeRunId 는 여전히 N 이므로, 그 사이 N 의 스트림이 CLOSED 되면 이미 끝난 런을 가리키는 '다시 연결' 버튼이 뜬다. 무해하지만 안내 문구와 실제가 어긋난다.",
+        "SimpleDeployPage.tsx:222-265 의 effect 에는 실행 상세의 `if (!live) return` 같은 종료 상태 가드가 없다. 지금 안전한 이유는 오직 서버가 종료 상태일 때 `end` 프레임에 status 를 담아 주기 때문이다(simple.go). 서버가 종료 프레임 형태를 바꾸면 `streamEndedRun` 이 false 가 되어 재연결 루프가 생긴다 — 두 화면의 `end` 계약이 이제 두 곳에서 서버 프레임 모양에 묶여 있다는 점을 릴리즈 노트에 남겨 둘 만하다.",
+        "검증: 워크트리에서 `npx tsc -b --noEmit` 종료 0, `npx vitest run` 112건 전부 통과(신규 7건 포함)를 직접 재현했다. Go 파일은 0 개 변경이라 backend/runner 는 재실행하지 않았다 — 원장이 주장하는 도커 PostgreSQL 16 통합 실행은 내가 확인하지 못했다. 브라우저 실동작(실제 429 가 CLOSED 로 오는지)도 확인하지 못했고 v0.5.21 판단 승계를 그대로 받아들였다.",
+        "보안·법무: 새 엔드포인트·권한·비밀값·개인정보가 없다. `?after` 는 서버에서 `strconv.ParseInt` 로 읽혀 pgx 플레이스홀더($2)로만 쓰이고, 그 앞에 `authorizeRun` 이 걸려 있어 다른 사용자의 로그에 닿지 않는다. 음수는 max 선택에서 0 으로 바닥 처리된다. 신규 의존성 없음. 차단 사유 없음."
+      ],
+      "risk": "low",
+      "blocking": []
+    },
+    "ci_gate": {
+      "ok": true,
+      "state": "success",
+      "reason": "검사 1개 모두 success",
+      "checks": 1
+    }
+  },
+  "release": {
+    "result": {
+      "status": "released",
+      "version": "0.5.24",
+      "tag": "v0.5.24",
+      "title": "ReleaseDock v0.5.24",
+      "notes_file": "",
+      "github_release": false,
+      "assets": [],
+      "reason": ""
+    },
+    "assets_sha256": []
+  },
+  "approval": null,
+  "usage": [
+    {
+      "ts": "2026-09-28T19:58:34+09:00",
+      "date": "2026-09-28",
+      "project": "releasedock",
+      "phase": "improve",
+      "run_id": "2026-09-28-194203-releasedock-improve",
+      "campaign": "",
+      "subtype": "success",
+      "engine": "claude",
+      "duration_ms": 1058874,
+      "num_turns": 72,
+      "cost_usd": 4.542598000000001,
+      "input_tokens": 108,
+      "output_tokens": 39932,
+      "cache_read": 4824576,
+      "cache_create": 113147
+    },
+    {
+      "ts": "2026-09-28T20:02:26+09:00",
+      "date": "2026-09-28",
+      "project": "releasedock",
+      "phase": "review",
+      "run_id": "2026-09-28-194203-releasedock-improve",
+      "campaign": "",
+      "subtype": "success",
+      "engine": "claude",
+      "duration_ms": 233474,
+      "num_turns": 28,
+      "cost_usd": 1.4957395000000002,
+      "input_tokens": 34,
+      "output_tokens": 15827,
+      "cache_read": 934309,
+      "cache_create": 63274
+    },
+    {
+      "ts": "2026-09-28T20:08:54+09:00",
+      "date": "2026-09-28",
+      "project": "releasedock",
+      "phase": "release",
+      "run_id": "2026-09-28-194203-releasedock-improve",
+      "campaign": "",
+      "subtype": "success",
+      "engine": "claude",
+      "duration_ms": 206923,
+      "num_turns": 24,
+      "cost_usd": 1.213482,
+      "input_tokens": 40,
+      "output_tokens": 9828,
+      "cache_read": 970244,
+      "cache_create": 48246
+    }
+  ]
+}
