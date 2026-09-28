@@ -203,3 +203,4 @@
 - 보류 아이디어: `/mail/deliveries`의 `status`가 문서화된 enum 밖 값을 조용히 삼키는 것을 400 `invalid_query`로 거부(차선 후보, 미착수) / OpenAPI page_size 상한 불일치 정리(/users 100 vs /audit 200 vs pageBounds 200) / internal/store 순수 헬퍼 5개 표 기반 테스트 / OpenAPI servers URL과 계약 테스트 경로 접두사 불일치 검출 / search 질의의 최대 길이·제어문자 정규화
 - 과제서: 채택 — 과제서의 진단(settings.go:1033이 project를 알고 resource_usage.go:220-229는 모른다)이 코드와 정확히 일치했고 수용 기준 5개를 모두 실제 DB에서 충족했다.
 
+- 릴리즈: v1.8.5 (2026-09-28, run 2026-09-28-092233-jupiq-improve)

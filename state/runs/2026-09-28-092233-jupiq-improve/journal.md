@@ -31,3 +31,4 @@
 - [러너 09:46] pr created — https://github.com/hkjang/jupiq/pull/27
 - [러너 09:50] ci passed — 검사 3개 모두 success
 - [러너 09:50] merge done — 92d05c7
+- [러너 10:01] release published — v1.8.5
