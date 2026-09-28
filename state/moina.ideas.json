@@ -1,16 +1,137 @@
 [
-  {"title":"TIMEOUT으로 유실된 a4082e1(resolveReport 500 분리) + 93b0234(설정 캐시 LISTEN 장벽) 재적용","value":4,"risk":2,"size":"S","status":"done","note":"이번 회차 구현. cherry-pick 이 실제로 무충돌이었고(추측 → 확인) git diff 93b0234 HEAD 가 비어 원래 스택과 트리가 byte-identical. c5e7cf9·a2a0f65. CI Source tests 4단계를 postgres:16-alpine(16.15) DSN 으로 전부 재현해 exit 0, -v -count=1 로 FAIL 0줄·SKIP 0줄·TestPostgreSQL* 37건·resolve 6/6 PASS, 경합 조건 5/5. 첫 실행이 (cached) 로 나와 -count=1 재실행이 필요했다는 점이 교훈 — 캐시된 ok 는 증거가 아니다.","updated":"2026-09-28"},
-  {"title":"CI e2e 실패 요약을 $GITHUB_STEP_SUMMARY 에 적기 (ab36254 되살리기)","value":4,"risk":2,"size":"M","status":"pending","note":"ab36254 는 CI 전체 success 였음이 확인됐다 — 순수 cherry-pick·머지 문제다. 로컬 브랜치 auto/2026-09-25-2149 와 origin 에 남아 있다. 이번 회차가 같은 성격(유실 커밋 재적용)이어서 뒤로 미뤘고, 이번 회차의 cherry-pick 이 무충돌로 끝난 것이 이 후보의 위험도 낮춘다 — 다음 회차 1순위로 적합.","updated":"2026-09-28"},
-  {"title":"followTopic(social.go:282)의 err!=nil||RowsAffected()==0 통합 404 를 500 storage_error 와 404 로 분리","value":2,"risk":2,"size":"S","status":"pending","note":"972113f 의 verify-failed 원인은 followTopic 과 무관한 image 잡 'API and browser smoke' 실패였음이 확인됐다. 남은 세 번째 유실 커밋. 이 저장소에 남은 마지막 통합 404. image 잡 e2e 가 왜 깨졌는지는 여전히 미확인이라 e2e 요약 과제가 먼저 오는 것이 맞다.","updated":"2026-09-28"},
-  {"title":"CI Go 테스트 실패 요약을 $GITHUB_STEP_SUMMARY 에 적기","value":4,"risk":2,"size":"S","status":"pending","note":"이번 회차 차선이었으나 1순위가 충돌 없이 끝나 불필요했다. 'Go formatting, tests and vet' 단계에 if: failure() 로 --- FAIL 줄만 요약에 적는다. Actions 로그는 admin 권한 없이 못 읽으므로 공개로 얻는 것은 step conclusion 뿐. ab36254 가 e2e 쪽에 같은 접근을 이미 썼다. tee 와 set -o pipefail 상호작용 확인 필요. 단 flaky 원인이 이번에 닫혔으므로 가치가 다소 내려간다.","updated":"2026-09-28"},
-  {"title":"새 500 출구가 pg 오류를 버려 운영자 로그에 원인이 없는 것 — 구조화 로그 한 줄","value":3,"risk":2,"size":"S","status":"pending","note":"a4082e1 의 새 500 출구 4곳(Begin·UPDATE·INSERT·Commit)이 err 를 그대로 버린다. 이제 a4082e1 이 이 브랜치에 있으므로 순서상 다음 회차에 바로 가능하다. 같은 형태가 joinMoim·leaveMoim·followTopic·updatePost 에도 있어 500 storage_error 가 10곳 넘는데 원인이 로그에 없다. 운영자 지침(감사·로그에는 식별자만, 스크럽 이전 원문 금지)을 지켜 pg 오류 코드와 handler 이름만 남길 것. 공통 헬퍼를 만들면 파일이 여러 개로 번지니 한 handler 계열만 먼저.","updated":"2026-09-28"},
-  {"title":"POST /media 거절 경로(415·인증·CSRF) 실제 multipart integration 테스트","value":2,"risk":1,"size":"S","status":"pending","note":"아홉 회차째 밀림. 프로덕션 코드 무변경 회차가 성공 판정을 받는지 불확실해 계속 뒤로 간다 — 이번 회차도 프로덕션 변경이 재적용된 admin.go 하나뿐이었으나 성공 판정을 받았으니 이 우려는 다음 회차에 확인해 볼 만하다.","updated":"2026-09-28"},
-  {"title":"joinMoim·createReport·getMoim·getTopic 의 Scan 오류를 404 에서 500 으로 분리","value":2,"risk":2,"size":"S","status":"pending","note":"열 회차째 미선택. 네 후보가 같은 벽을 공유한다 — 평 PostgreSQL 에서 특정 SELECT 만 실패시킬 수단이 없다(트리거는 SELECT 에 못 걸고 RLS 는 공유 테이블 전역 변경). 전용 스키마 테스트 헬퍼가 선행되어야 한다.","updated":"2026-09-28"},
-  {"title":"전용 스키마를 쓰는 integration 테스트 헬퍼(SELECT 실패 재현 가능하게)","value":3,"risk":3,"size":"M","status":"pending","note":"search_path 를 테스트 전용 schema 로 두면 위 네 후보가 한꺼번에 풀린다. store.Open 이 public 에 migration 을 적용하는 구조를 건드려야 할 수 있어 위험 3. CI source 는 moina_ci 한 DB 를 네 패키지가 -p 4 로 공유하므로 전역 스키마 변경은 다른 패키지를 깨뜨린다.","updated":"2026-09-28"},
-  {"title":"reports.resolution·moderation_actions.reason 이 retention sweep 대상이 아닌 것","value":2,"risk":3,"size":"M","status":"pending","note":"2000자 운영자 메모가 무기한 남는다. retention.go 의 sweep 대상에 이 두 컬럼이 없다는 것은 여전히 미확인(이번 회차에도 열어 보지 못했다). 보존 정책 변경은 데이터 삭제를 뜻해 위험 3 — 정책 설계가 선행되어야 하고 한 세션 과제로는 크다.","updated":"2026-09-28"},
-  {"title":"가이드 3.4 Keycloak OIDC·3.6 SMTP·3.8 방문 추적 화면 재캡처","value":3,"risk":1,"size":"M","status":"pending","note":"make image + docker PostgreSQL + capture:web 필요. 절차가 실제로 도는 것은 2026-09-25 에 확인됐으나 회차 예산으로는 무리.","updated":"2026-09-28"},
-  {"title":"시각 회귀 베이스라인 재승인","value":3,"risk":3,"size":"M","status":"pending","note":"공식 noble 이미지에서 52/52 통과하지만 24개 화면이 0.15%↑(최악 dark-desktop-admin-smtp 0.345%, 여유 0.155%p). VISUAL_REGRESSION.md:45 가 승인 renderer 를 CI ubuntu-24.04 로 못박으므로 로컬 갱신만으로 승인 금지.","updated":"2026-09-28"},
-  {"title":"now() 가 단조롭다고 가정하는 통합 테스트들(ORDER BY created_at,id)의 취약성","value":2,"risk":2,"size":"S","status":"pending","note":"TestPostgreSQLSecurityNoticesReachTheOwner 가 notifications.created_at 순서에 items[0..2] 를 건다. WSL2 host wall clock 이 ~14초마다 최대 971ms 뒤로 점프해 20회 중 2회 실패했으나 GitHub runner 는 chrony 동기라 CI 원인은 아니다. 이번 회차의 full 실행 2회·경합 5회에서는 재발하지 않았다. 프로덕션 결함 아님 — 다른 과제가 없을 때만.","updated":"2026-09-28"},
-  {"title":"e2e README 기본 테스트 실행 순서 정정","value":1,"risk":1,"size":"S","status":"pending","note":"README 의 실행 순서를 설명하는 두 문단이 상충한다. 값이 낮아 계속 밀린다.","updated":"2026-09-28"},
-  {"title":"Makefile test 에 CI 와 같은 go -race 적용","value":2,"risk":1,"size":"S","status":"rejected","note":"단독 과제로 두 번 골랐다가 두 번 no-change. 다시 고르지 말 것.","updated":"2026-09-28"}
+  {
+    "title": "TIMEOUT으로 유실된 a4082e1(resolveReport 500 분리) + 93b0234(설정 캐시 LISTEN 장벽) 재적용",
+    "value": 4,
+    "risk": 2,
+    "size": "S",
+    "status": "done",
+    "note": "이번 회차 구현. cherry-pick 이 실제로 무충돌이었고(추측 → 확인) git diff 93b0234 HEAD 가 비어 원래 스택과 트리가 byte-identical. c5e7cf9·a2a0f65. CI Source tests 4단계를 postgres:16-alpine(16.15) DSN 으로 전부 재현해 exit 0, -v -count=1 로 FAIL 0줄·SKIP 0줄·TestPostgreSQL* 37건·resolve 6/6 PASS, 경합 조건 5/5. 첫 실행이 (cached) 로 나와 -count=1 재실행이 필요했다는 점이 교훈 — 캐시된 ok 는 증거가 아니다.",
+    "updated": "2026-09-28"
+  },
+  {
+    "title": "CI e2e 실패 요약을 $GITHUB_STEP_SUMMARY 에 적기 (ab36254 되살리기)",
+    "value": 4,
+    "risk": 2,
+    "size": "M",
+    "status": "pending",
+    "note": "ab36254 는 CI 전체 success 였음이 확인됐다 — 순수 cherry-pick·머지 문제다. 로컬 브랜치 auto/2026-09-25-2149 와 origin 에 남아 있다. 이번 회차가 같은 성격(유실 커밋 재적용)이어서 뒤로 미뤘고, 이번 회차의 cherry-pick 이 무충돌로 끝난 것이 이 후보의 위험도 낮춘다 — 다음 회차 1순위로 적합.",
+    "updated": "2026-09-28"
+  },
+  {
+    "title": "followTopic(social.go:282)의 err!=nil||RowsAffected()==0 통합 404 를 500 storage_error 와 404 로 분리",
+    "value": 2,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "972113f 의 verify-failed 원인은 followTopic 과 무관한 image 잡 'API and browser smoke' 실패였음이 확인됐다. 남은 세 번째 유실 커밋. 이 저장소에 남은 마지막 통합 404. image 잡 e2e 가 왜 깨졌는지는 여전히 미확인이라 e2e 요약 과제가 먼저 오는 것이 맞다.",
+    "updated": "2026-09-28"
+  },
+  {
+    "title": "CI Go 테스트 실패 요약을 $GITHUB_STEP_SUMMARY 에 적기",
+    "value": 4,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "이번 회차 차선이었으나 1순위가 충돌 없이 끝나 불필요했다. 'Go formatting, tests and vet' 단계에 if: failure() 로 --- FAIL 줄만 요약에 적는다. Actions 로그는 admin 권한 없이 못 읽으므로 공개로 얻는 것은 step conclusion 뿐. ab36254 가 e2e 쪽에 같은 접근을 이미 썼다. tee 와 set -o pipefail 상호작용 확인 필요. 단 flaky 원인이 이번에 닫혔으므로 가치가 다소 내려간다.",
+    "updated": "2026-09-28"
+  },
+  {
+    "title": "새 500 출구가 pg 오류를 버려 운영자 로그에 원인이 없는 것 — 구조화 로그 한 줄",
+    "value": 3,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "a4082e1 의 새 500 출구 4곳(Begin·UPDATE·INSERT·Commit)이 err 를 그대로 버린다. 이제 a4082e1 이 이 브랜치에 있으므로 순서상 다음 회차에 바로 가능하다. 같은 형태가 joinMoim·leaveMoim·followTopic·updatePost 에도 있어 500 storage_error 가 10곳 넘는데 원인이 로그에 없다. 운영자 지침(감사·로그에는 식별자만, 스크럽 이전 원문 금지)을 지켜 pg 오류 코드와 handler 이름만 남길 것. 공통 헬퍼를 만들면 파일이 여러 개로 번지니 한 handler 계열만 먼저.",
+    "updated": "2026-09-28"
+  },
+  {
+    "title": "POST /media 거절 경로(415·인증·CSRF) 실제 multipart integration 테스트",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "아홉 회차째 밀림. 프로덕션 코드 무변경 회차가 성공 판정을 받는지 불확실해 계속 뒤로 간다 — 이번 회차도 프로덕션 변경이 재적용된 admin.go 하나뿐이었으나 성공 판정을 받았으니 이 우려는 다음 회차에 확인해 볼 만하다.",
+    "updated": "2026-09-28"
+  },
+  {
+    "title": "joinMoim·createReport·getMoim·getTopic 의 Scan 오류를 404 에서 500 으로 분리",
+    "value": 2,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "열 회차째 미선택. 네 후보가 같은 벽을 공유한다 — 평 PostgreSQL 에서 특정 SELECT 만 실패시킬 수단이 없다(트리거는 SELECT 에 못 걸고 RLS 는 공유 테이블 전역 변경). 전용 스키마 테스트 헬퍼가 선행되어야 한다.",
+    "updated": "2026-09-28"
+  },
+  {
+    "title": "전용 스키마를 쓰는 integration 테스트 헬퍼(SELECT 실패 재현 가능하게)",
+    "value": 3,
+    "risk": 3,
+    "size": "M",
+    "status": "pending",
+    "note": "search_path 를 테스트 전용 schema 로 두면 위 네 후보가 한꺼번에 풀린다. store.Open 이 public 에 migration 을 적용하는 구조를 건드려야 할 수 있어 위험 3. CI source 는 moina_ci 한 DB 를 네 패키지가 -p 4 로 공유하므로 전역 스키마 변경은 다른 패키지를 깨뜨린다.",
+    "updated": "2026-09-28"
+  },
+  {
+    "title": "reports.resolution·moderation_actions.reason 이 retention sweep 대상이 아닌 것",
+    "value": 2,
+    "risk": 3,
+    "size": "M",
+    "status": "pending",
+    "note": "2000자 운영자 메모가 무기한 남는다. retention.go 의 sweep 대상에 이 두 컬럼이 없다는 것은 여전히 미확인(이번 회차에도 열어 보지 못했다). 보존 정책 변경은 데이터 삭제를 뜻해 위험 3 — 정책 설계가 선행되어야 하고 한 세션 과제로는 크다.",
+    "updated": "2026-09-28"
+  },
+  {
+    "title": "가이드 3.4 Keycloak OIDC·3.6 SMTP·3.8 방문 추적 화면 재캡처",
+    "value": 3,
+    "risk": 1,
+    "size": "M",
+    "status": "pending",
+    "note": "make image + docker PostgreSQL + capture:web 필요. 절차가 실제로 도는 것은 2026-09-25 에 확인됐으나 회차 예산으로는 무리.",
+    "updated": "2026-09-28"
+  },
+  {
+    "title": "시각 회귀 베이스라인 재승인",
+    "value": 3,
+    "risk": 3,
+    "size": "M",
+    "status": "pending",
+    "note": "공식 noble 이미지에서 52/52 통과하지만 24개 화면이 0.15%↑(최악 dark-desktop-admin-smtp 0.345%, 여유 0.155%p). VISUAL_REGRESSION.md:45 가 승인 renderer 를 CI ubuntu-24.04 로 못박으므로 로컬 갱신만으로 승인 금지.",
+    "updated": "2026-09-28"
+  },
+  {
+    "title": "now() 가 단조롭다고 가정하는 통합 테스트들(ORDER BY created_at,id)의 취약성",
+    "value": 2,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "TestPostgreSQLSecurityNoticesReachTheOwner 가 notifications.created_at 순서에 items[0..2] 를 건다. WSL2 host wall clock 이 ~14초마다 최대 971ms 뒤로 점프해 20회 중 2회 실패했으나 GitHub runner 는 chrony 동기라 CI 원인은 아니다. 이번 회차의 full 실행 2회·경합 5회에서는 재발하지 않았다. 프로덕션 결함 아님 — 다른 과제가 없을 때만.",
+    "updated": "2026-09-28"
+  },
+  {
+    "title": "e2e README 기본 테스트 실행 순서 정정",
+    "value": 1,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "README 의 실행 순서를 설명하는 두 문단이 상충한다. 값이 낮아 계속 밀린다.",
+    "updated": "2026-09-28"
+  },
+  {
+    "title": "Makefile test 에 CI 와 같은 go -race 적용",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "rejected",
+    "note": "단독 과제로 두 번 골랐다가 두 번 no-change. 다시 고르지 말 것.",
+    "updated": "2026-09-28"
+  },
+  {
+    "title": "auto-improve: fix: Topic Link의 저장 실패를 404 not_found에서 500 storage_error로 분리합니다",
+    "value": 3,
+    "risk": 2,
+    "size": "M",
+    "status": "pending",
+    "updated": "2026-09-29",
+    "note": "https://github.com/hkjang/moina/pull/31 (PR 처리기가 3일 전에 더 진행할 수 없다고 판정했고(수정·심사를 2번 시도했지만 통과하지 못함) 그 뒤 사람 손이 닿지 않았습니다) 로 닫힘 — 다시 하려면 처음부터"
+  }
 ]
