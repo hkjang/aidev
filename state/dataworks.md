@@ -251,3 +251,4 @@
   - contract_expiring의 만료·설정 오류 원인 구분 (가치 2 / 위험 2 / 작업량 M)
   - 고아 Contract Scope·Entitlement 전용 운영 경고 (가치 2 / 위험 2 / 작업량 M)
 
+- 릴리즈: v0.9.66 (2026-09-29, run 2026-09-29-060149-dataworks-improve)

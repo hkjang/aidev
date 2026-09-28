@@ -22,3 +22,11 @@
 - [러너 06:12] pr created — https://github.com/hkjang/appstore/pull/34
 - [러너 06:17] ci passed — 검사 2개 모두 success
 - [러너 06:17] merge done — 28092fd
+
+## 릴리즈 노트
+- v2.11.10 / f44d9fd: 기존 메시지 양식의 릴리즈 커밋과 주석 태그를 detached HEAD에서 생성. 작성자 hkjang, 트레일러 없음.
+- 버전·compose·문서·90개 실제 캡처·PDF 갱신. 캡처 88개 동일, 인증 설정 2개는 미리보기 포트만 다름.
+- Go race/vet/gofmt/build, React 92건, lint/Prettier/build, offline/env/docs/version 검사 통과. E2E 81 passed/1 skipped, retry 0. PDF 표지와 file URI 부재 확인.
+- 최초 PDF 직접 실행 권한 오류는 sh 호출로 해결. 최초 E2E 브라우저 경로 오류는 PLAYWRIGHT_BROWSERS_PATH 지정 후 전체 재실행으로 해결.
+- DB 통합 DSN 없음 및 실제 DB/Keycloak 미검증. Docker build/load/smoke는 기존 태그 CI 담당. 원격 전송 없음.
+- release.json 기록 완료: github_release=false, assets=[]; 릴리즈 노트·검증 로그·인계 문서는 실행 디렉터리에 보존.
