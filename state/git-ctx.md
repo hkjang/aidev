@@ -206,3 +206,15 @@
 - 과제서: 기각 — 이번 회차에는 정찰 과제서가 없었고, 보류 목록의 pending 항목은 모두 가치 2 이하·근거 미확보여서 직접 정찰해 새 결함을 골랐다.
 
 - 릴리즈: v0.77.20 (2026-09-28, run 2026-09-28-074216-git-ctx-improve)
+## 2026-09-29
+- 선택: MCP 절단 응답을 여는 코드 펜스 길이에 맞춰 닫기 (가치 3 / 위험 2 / 작업량 S)
+- 결과: 성공
+- 요약: `closeOpenFence`가 백틱 부분 문자열의 홀짝만 세고 항상 3백틱을 붙여 긴 펜스를 닫지 못하던 것을, 줄별 여는 길이와 유효한 닫는 줄을 추적하도록 수정했다(commit ded2934, 프로덕션 1파일·테스트 1파일). 실제 SQLite→Server.ServeHTTP tools/call의 read-file·get-symbol-context 두 경로에서 3·4·5·7백틱, 중첩/인라인 백틱, 절단·비절단, 캐시 미스·히트(감사 행으로 확인)를 검증했고, 이미 닫힌 펜스 뒤에 새 펜스를 붙이지 않는 회귀도 추가했으며 원복 시 재실패와 수정본 복구 후 통과를 확인했다. `go test -tags sqlite_fts5 -count=1 ./...`(mcp 1.203s/app 104.881s)·`go test -tags sqlite_fts5 -race -count=1 ./...`(mcp 4.915s/app 107.101s)·`go vet ./...`·`go build -tags sqlite_fts5 ./...`·gofmt 빈 출력·버전 동기화 및 해당 회귀 스크립트·SQLite build-mode 교차·JS 4파일 문법 및 test/web/*.test.js 모두 exit 0; 외부 DB/Vault·Docker·실브라우저·구버전 업그레이드·govulncheck는 미실행이며 릴리즈는 수행하지 않았다.
+- 실패 재현: `fence_test.go:168: budget 2000: answer has 1 code blocks, unterminated=true` / `fence_test.go:178: budget 2000: tool notice rendered inside file content` — 수정 전 실제 HTTP 테스트에서 두 도구 모두 실패, 일반 3백틱·비절단 대조군 통과. 최종 테스트로 원복 재검증한 출력은 red.log에 저장했다.
+- 보류 아이디어:
+  - formatRepositoryMap의 고정 JSON 펜스 — 현재 남아 있으나 JSON 이스케이프 이후 실제 펜스 줄이 되는 경로 미입증 (가치 2 / 위험 1 / S).
+  - sectionCount가 #### 검색 히트를 세지 못함 — 포매터/카운터 계약부터 확인 (가치 2 / 위험 2 / S).
+  - 추적된 c.txt·server.log 제거 — 기능 수정과 분리한 위생 작업 (가치 2 / 위험 1 / S).
+  - 파일 본문의 ### Notes를 응답 Notes로 오인하는 경우 — 새 후보, LastIndex 경로의 실제 입력 재현 필요 (가치 3 / 위험 2 / M).
+  - 코드 블록 내부 제목·목록을 결과 개수로 세는 경우 — 새 후보, 감사/공지 영향 재현 필요 (가치 2 / 위험 2 / S).
+

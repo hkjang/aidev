@@ -1,0 +1,11 @@
+## 2026-09-29
+- 선택: validateFindingBulk의 개수·ID·revision·patch·상태 계약을 DB 없는 회귀 테스트로 고정 (가치 3 / 위험 1 / 작업량 S)
+- 결과: 성공
+- 요약: 실제 findingBulkRequest/findingBulkItem과 validateFindingBulk를 사용하는 37개 독립 사례를 테스트 파일 하나에 추가했다. 개수·ASCII/한글 ID 바이트 경계·ID별 revision 순간과 나노초·patch/status 허용 목록 및 모든 거절의 findingBulkError 값 타입/400/nil 반환을 검증하며 기존 담당자 공유 벡터 21개는 보존했다. 기준선 1개+21하위 PASS, 단계 검사 2개+38하위 PASS, 최종 `go test -run '^TestFindingBulk(ValidationContract|AssigneeSharedVectors)$' -count=1 -v ./internal/app` 2개+58하위 PASS/0 FAIL/0 SKIP (0.028s), `go vet ./internal/app` 종료 0, `gofmt -l internal/app/finding_bulk_validate_test.go` 빈 출력, `git diff --check` 종료 0; DB·전체 스위트·빌드·원격 CI·배포는 미실행.
+- 실패 재현: 못 함 — 기존 계약의 테스트 공백 보강이며 신규 테스트는 첫 실행부터 통과했다. 과제서의 명시적 예외에 따라 인위적 프로덕션 버그 주입이나 red 출력을 만들지 않았다. 프로덕션 결함 수정으로 주장하지 않는다.
+- 보류 아이디어:
+  - OIDC return_to 공유 벡터 교차 검증 (3/2/M): 서로 다른 fallback 계약 보존, 후속 과제.
+  - 서버 CSV 개인 키 권한 교집합 HTTP 회귀 (3/1/S): 안전한 테스트 DB 필요.
+  - bulk due_date 해제·형식·오류 래핑 순수 테스트 (3/1/S): 정찰 신규/차선, 1순위가 유효해 보류.
+  - 직접 API 담당자 비문자열·trim 전 바이트 한도 테스트 (2/1/S): 정찰 신규, 웹 wire 계약과 구분해 후속 검증.
+- 과제서: 채택 — 현재 파일에 담당자 공유 벡터만 있어 지정된 순수 계약 테스트 공백을 확인했고 프로덕션 0파일/테스트 1파일 범위를 지켰다.

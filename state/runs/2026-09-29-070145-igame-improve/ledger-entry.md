@@ -1,0 +1,11 @@
+## 2026-09-29
+- 선택: API PostgreSQL fixture를 호출별 전용 스키마로 격리 (가치 3 / 위험 2 / 작업량 M)
+- 결과: 성공
+- 요약: migratedPool 호출마다 UUID 스키마에 실제 embedded migration을 적용하고 startup search_path를 자기 스키마와 사전 설치한 pgcrypto 스키마로 제한했다. 별도 관리 pool과 유한 setup/drop context, LIFO cleanup으로 형제 fixture 및 DB 전역 확장을 보존하며 기존 preserve 동작은 유지했다(제품 파일 0개, 테스트·문서 4개). 일회용 PostgreSQL 17에서 새 회귀 PASS, 기존 helper 복원 시 동일 Red 재현, make test-db PASS(API 24.991s/database 1.958s), 새 테스트 -race -count=3 PASS(3.903s), DSN 없는 Go API/database 테스트·go vet·go build·diff·release contract PASS; 실행 후 api_test_/migrate_ 잔여 스키마 0개 및 pgcrypto 보존 확인.
+- 실패 재현: `fixture_pg_test.go:92: fixtures share schema "public"` / `--- FAIL: TestMigratedPoolIsolation (0.30s)` — 연결·migration 성공 후 두 fixture의 current_schema가 같아서 실패했고 helper 원복 변이에서도 재현됨.
+- 보류 아이디어:
+  - serviceLocation 설정 읽기 오류 전파 (가치 3 / 위험 2 / 작업량 M)
+  - README RealmGuard 서버 재현 설명 정합성 (가치 2 / 위험 1 / 작업량 S)
+  - settings fixture updated_by 복원 회귀 (가치 2 / 위험 1 / 작업량 S)
+  - 기존 비-오브젝트 jsonb 데이터 복구 정책 (가치 2 / 위험 2 / 작업량 S)
+- 과제서: 채택 — 현재 helper의 기본 스키마 공유를 실DB Red로 확인했으며 지정된 4개 파일 범위에서 세 수용 기준을 모두 검증했다.
