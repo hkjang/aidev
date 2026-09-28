@@ -153,3 +153,11 @@
   - Slack HTTP 4xx/5xx 응답 경고 보강 — 이번 범위와 분리 (가치 2 / 위험 1 / 작업량 S)
 - 과제서: 채택 — 실제 두 오류 분기의 원문 로깅과 신규 회귀의 비밀 노출 실패로 과제서 근거가 확인됐다.
 
+## 2026-09-29
+- 선택: `toss.Client.request` 429 분기 — 마지막 시도 오류 삼킴(retry-exhausted/Status 0) + Retry-After 지수 증폭 (가치 4 / 위험 2 / 작업량 S)
+- 결과: 성공
+- 요약: `client.go:250` 의 429 분기에 같은 루프 5xx 분기(`:262`)와 달리 `attempt < maxAttempts-1` 가드가 없어 다섯 번째 429 도 한 번 더 자고 루프를 빠져나가 서버 envelope 이 `&APIError{Code:"retry-exhausted"}`(Status=0)로 덮였고, `backoff(attempt, max(ra,1))` 가 `Retry-After` 를 `2^attempt` 로 증폭해 `Retry-After: 60` 이면 한 `request()` 가 60→120→240→480초 = 약 900초 동안 호출 고루틴을 붙잡았다(HTTP.Timeout 은 10초). 가드를 붙여 마지막 429 가 기존 4xx 분기로 떨어져 `*APIError{Status:429, Code/Message/RequestID}` 를 돌려주게 하고(요청 횟수는 5회 유지), `Retry-After` 가 숫자로 파싱되면 `c.backoff(0, ra, …)` 로 불러 `ra + [0,0.5)s` 만 기다리게 했다(헤더 없음·HTTP-date 면 현행 base=1 지수 백오프 유지). `backoff` 시그니처·대기식·로그 키와 `ensureToken`·토큰 캐시·401 분기는 손대지 않았다. 프로덕션 1파일 + 테스트 1파일. 검증: `gofmt -l .` 무출력 → `go vet ./...` → `go build ./...` → `go test -count=1 -race ./internal/toss/`(3.763s) → `go test -count=1 ./internal/toss/ ./internal/broker/`(2.766s / 7.726s) → `go test -count=1 ./...` 전체 통과(9.86s real). 기존 `TestBackoffUsesInjectedSleep`·`TestBackoffNilSleepFallsBackToTimeSleep` 은 수정 없이 통과. 호출부 영향 확인: `broker/live.go:616` 은 전에 Status=0 으로 `>=400` 이 거짓이라 재시도했고 이제 `!=429` 가 거짓이라 여전히 재시도 — 결과 동일하나 의도가 명시됨. `doctor.go:83`(403)·`live.go:676`(404/422) 은 무영향. 커밋 9def9bc8.
+- 실패 재현: `client_test.go:86: want Status 429, got 0 ([0] retry-exhausted: GET /probe (requestId=))` / `client_test.go:98: want Sleep called 4 times (only between retries), got 5: [1.488586362s 2.040704803s 4.269445051s 8.099239647s 16.272289695s]` / `client_test.go:111: want Sleep called 4 times, got 5: [30.271309833s 1m0.226729967s 2m0.119145628s 4m0.092969292s 8m0.035522335s]`
+- 보류 아이디어: toss.request 401 재발급 경로(attempt<2 경계) 단위 테스트 — 인증 구역이라 테스트만 (3/2/S) / toss.request network 오류 소진 경로 단위 테스트 (2/1/S) / scripts/check.sh 로컬 Go 검증 진입점 — 5회 연속 미채택 (3/1/S) / 스윙 실행기 청산 판정이 마지막 봉 하나만 본다 — 진입 다음 봉부터 순회 (3/3/M) / swing.Runner 동시 보유 한도 MaxPositions*5 vs 예약 상한 *3 — 의도 확정 선행 (3/2/M)
+- 과제서: 채택 — 과제서가 지목한 비대칭(429 에 가드 없음·Retry-After 증폭)이 코드와 정확히 일치했고 수용 기준 1~5 를 모두 실측으로 만족했다.
+
