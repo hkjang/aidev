@@ -1,0 +1,20 @@
+- 과제: 가져온 이미지 이름(`imageAssetName`)에 AI 컨텍스트 안내 문구와 줄바꿈이 들어가는 것 고치기 (가치 3 / 위험 1 / 작업량 S)
+- 왜: `internal/httpapi/import_html.go:45` `imageAssetName` 은 `alt` 에서 `r < 0x20` 제어문자를 `strings.Map` 으로 먼저 걷어낸 뒤, 200룬 절단을 AI 프롬프트용 `truncateRunes`(`internal/httpapi/ai.go:238`)로 합니다. 그 함수는 넘칠 때 `"\n[…문서 컨텍스트가 길어 일부 생략됨…]"` 를 덧붙이므로, 애써 지운 줄바꿈이 절단 단계에서 다시 들어오고 그 뒤에 확장자가 붙어 이름이 `<앞 200룬>\n[…문서 컨텍스트가 길어 일부 생략됨….png` 가 됩니다(줄 66·68 두 갈래 모두). 2026-09-24 회차가 `safeFilename` 에서 없앤 것과 **같은 결함이 남은 다른 자리**이고, 그때 만든 문구 없는 절단기 `cutFilenameRunes(value, max)`(`export.go:335`, 같은 패키지)가 바로 옆에 이미 있습니다 — 그 함수의 주석이 "in a file name it is the whole failure" 라고 이 결함을 그대로 설명하고 있습니다.
+- 이 이름이 어디로 가나(읽어서 확인한 경로): `import_inline.go:377` `imageNode` → `inlineContext.asset(...)` → `richdoc.Asset{Name: …}` → `import_attachments.go:408` `prepareImportedAssets`(435 의 `strings.TrimSpace` 는 **가운데** 줄바꿈을 지우지 못함) → `attachments.name` 에 `truncateRunes(attachment.Name, 240)`(183·312) 로 저장(200 + 안내 문구 약 24룬 + 확장자 ≈ 228룬 이라 240 에 걸리지 않고 문구가 그대로 남습니다) → 첨부 내려받기가 `import_attachments.go:652` 에서 `filename*=UTF-8''extValueEscape(name)` 로 그 이름을 내보냅니다(`safeFilename` 을 거치지 않음; `extValueEscape` 가 줄바꿈까지 `%0A` 로 인코딩하므로 헤더 파싱은 깨지지 않고, 내려받는 파일 이름과 편집기 첨부 목록에 안내 문구가 그대로 보입니다).
+- `inlineContext` 는 마크다운·HTML 가져오기가 **공유**합니다(`import_html.go:73` 의 `htmlConverter{inline: &inlineContext{}}`, `import_text_test.go:333` 의 `markdownDocument("![점](data:image/png;base64,…)")`). 즉 `.html` 의 `alt` 속성과 `.md` 의 `![…](data:…)` 설명 두 경로가 모두 걸립니다.
+- 수용 기준: 1) 201룬 이상 설명을 가진 data-URI 이미지를 담은 문서를 가져오면 자산·첨부 이름에 안내 문구가 없고 줄바꿈이 없으며 확장자가 끝에 한 번 붙는다(HTML·마크다운 두 경로 모두). 2) 200룬 이하 설명, 이미 확장자로 끝나는 설명, 빈 설명(`image.png`), `/`·`\`·제어문자 제거, jpg/gif/webp 확장자 선택은 한 글자도 달라지지 않는다. 3) 실제 가져오기 라우트를 지나 DB 에 저장된 첨부 이름과 첨부 내려받기 `Content-Disposition` 을 프로덕션 파서(`mime.ParseMediaType`)로 되읽어 확인한다 — 기존 `TestAnAttachmentNameSurvivesTheHeader` 계열 live 테스트와 같은 방식.
+- 건드릴 파일:
+  - `internal/httpapi/import_html.go:imageAssetName` — `truncateRunes(name, 200)` 두 자리를 `cutFilenameRunes(name, 200)` 로. 200 이라는 길이·확장자 판정·`strings.Map` 치환은 그대로 둘 것. 왜 AI 절단기를 쓰면 안 되는지 한 줄 주석을 이 저장소 주석 밀도(산문체)로 남길 것.
+  - 테스트 1~2개: `internal/httpapi/import_text_test.go`(단위 — `htmlDocument`/`markdownDocument` 가 assets 를 돌려주므로 DB 없이 `assets[0].Name` 을 볼 수 있음, `TestHTMLImportStoresInlineImages`·`TestMarkdownImportStoresInlineImages` 옆에), 그리고 첨부 이름·헤더를 보는 live 테스트(`import_attachments` 또는 `content_disposition_live_test.go` 관례에 맞춰).
+- 검증 명령 (이 저장소에서 실제로 도는 것):
+  - `go test -count=1 ./internal/httpapi` — `MUNI_TEST_DSN` 없으면 live 가 SKIP 되므로 postgres:16-alpine 컨테이너를 띄우고 DSN 을 주어 SKIP 0 을 확인할 것
+  - `go test ./...`, `go vet ./...`, `gofmt -l .`, `scripts/check-webui-placeholder.sh`
+  - 프런트 미변경이면 npm 검사는 불필요
+- 위험과 피할 것:
+  - `truncateRunes`(ai.go:238) 자체를 건드리지 말 것 — AI 컨텍스트에서는 그 문구가 의도된 동작이고 호출자가 20곳이다.
+  - `safeFilename`·`cutFilenameRunes`·`extValueEscape` 본문도 건드리지 말 것(다섯 내려받기 경로가 공유, 최근 세 릴리즈가 여기서 나왔다).
+  - `internal/docx/import.go:724` 에는 문구를 붙이지 않는 **동명의 다른** `truncateRunes` 가 있다(패키지가 달라 무관) — 혼동하지 말 것.
+  - `prepareImportedAssets` 의 `image-N` 빈 이름 대체와 자산 개수·용량 한도는 이번 범위가 아니다.
+  - 보호 경로(auth/migrations/workflows) 는 건드릴 것이 없다.
+- 미확인(정찰이 확인하지 못한 것): 이 샌드박스에서 `go` 실행이 승인 대기로 막혀 **동적 재현을 하지 못했습니다** — 위 경로는 전부 코드 읽기로만 확인했습니다. 구현자는 먼저 실패하는 테스트로 재현부터 할 것. 특히 (a) 저장된 첨부 이름의 정확한 룬 수와 240 절단에 걸리지 않는다는 계산, (b) 마크다운 `![…](data:…)` 에서 201룬 alt 가 파서를 그대로 통과하는지(`inlineContext.parseWithMarks` 의 길이 제한 여부 미확인)를 실행으로 확인할 것.
+- 차선 후보: 워크스페이스 ZIP 한도 초과 안내를 실제로 넘쳤을 때만 넣기 — `workspace_export.go:71` 의 `LIMIT $3`(=2000)을 `maxWorkspaceExport+1` 로 읽고 2001번째 행이 있을 때만 `:179` 의 안내를 넣기, 목록은 2000건으로 자르기. 판정 부분을 작은 함수로 떼어 단위로 볼 것(2000건 live 재현은 무겁다).

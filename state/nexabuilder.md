@@ -77,3 +77,11 @@
 - 과제서: 채택 — 진단(같은 파라미터를 읽는 두 리더의 계약 불일치, `sanitizeIdentifier` 가 선행 밑줄 통과, 500 으로 접힘)이 실행으로 전부 확인됐고 지정한 파일·키 이름·fallback 100·`@DirtiesContext` 금지·상한 금지까지 그대로 따랐다.
 
 - 릴리즈: v1.25.0 (2026-09-27, run 2026-09-27-205119-nexabuilder-approve)
+## 2026-09-28
+- 선택: CSV/XLSX/PDF 내보내기가 그리드 한 페이지(기본 100행)만 내려주고 조용히 잘리는 것을 고친다 (가치 4 / 위험 2 / 작업량 S)
+- 결과: 성공
+- 요약: 런타임 목록의 내보내기 링크(`downloadExport`)는 `filterValues()` 만 쿼리스트링에 담고 `_offset`/`_limit` 는 보내지 않는데(내보내기에는 페이징 UI 가 없으니 당연한 동작), 세 엔드포인트가 그 쿼리스트링을 그대로 `NexaUiService.listData` 로 넘기기 때문에 `_limit` 이 없어 `listData:175-179` 의 fallback(`list.page_size`, null 이면 100)으로 떨어졌다 — `page_size=5` 인 12행 목록을 내보내면 파일에 5행만 담기고 잘렸다는 표시는 없다. `readQueryParams`(프로덕션 파일 1개) 에서 `_limit` 키가 없을 때만 `NexaUiService.MAX_FEED_ROWS`(5000)를 `putIfAbsent` 로 채워, 세 엔드포인트가 공유하는 이 메서드 한 곳에만 기본값이 생기고 명시된 `?_limit=3` 은 그대로 존중된다. `MAX_FEED_ROWS` 상한과 `listData` 의 `page_size` fallback(런타임 그리드 페이징 계약)은 건드리지 않았고, 새 상수를 복제하지 않고 `listData` 가 클램프에 쓰는 같은 값을 직접 참조했다. `seed(Integer pageSize, int rowCount)` 오버로드를 추가하고 기존 `seed()` 는 `seed(null, 1)` 로 위임해 기존 6건의 기대값을 그대로 두고 신규 3건을 붙였다. `cleanTest test` 전체 605건 통과·0 skip·0 fail, `bootJar -x test` 성공. 커밋 ff96bd8.
+- 실패 재현: `csvExportIsNotTruncatedToTheListPageSize() FAILED` / `java.lang.AssertionError: Expected size: 13 but was: 6 in: ["ID,이름", "r_13bae784,홍길동", …"r_13bae784_4,홍길동 4"]` 와 `xlsxExportIsNotTruncatedToTheListPageSize() FAILED` / `org.opentest4j.AssertionFailedError: expected: 12 but was: 5`. 같은 실행에서 기존 6건과 신규 `explicitQueryStringLimitWinsOverTheExportDefault`(명시 `_limit` 이 원래 이미 동작 — 회귀 가드)는 초록이라 "기본값 미주입만이 원인" 이 실행으로 확인됐다.
+- 보류 아이디어: 런타임 대체 뷰 7종이 fetch 실패를 `catch (e)` 로 삼켜 "데이터 없음" 으로 보여준다 — 템플릿 7개라 2~3개씩 쪼개야 함(3/2/M) / 5000행을 넘는 목록의 내보내기가 잘린 사실을 알리지 않는다 — 이번 회차에 헤더 옵션을 일부러 뺐다, 스트리밍은 별도 L(3/2/M) / `/api/v1/data/lists/{id}`·`/builder/lists/{id}/data` 에 ScreenPermissionService 게이트 없음 — 보호 구역이라 사람이 있는 회차(3/4/M) / `DataAdapterService.executeSqlBacked` 가 전체 행을 메모리로 읽고 자바에서 페이징(3/3/M) / `queryList` 의 sqlId 백엔드 목록에도 `requireLiveList` 회귀 테스트, 프로덕션 0줄(2/1/S)
+- 과제서: 채택 — 진단(`readQueryParams` 가 `_limit` 을 넣지 않아 `listData` fallback 으로 떨어짐)과 수용 기준 4건이 실행으로 전부 확인됐고, 지정한 파일 1개·`MAX_FEED_ROWS` 직접 참조·`_offset` 불간섭·`seed` 오버로드 위임·`@DirtiesContext` 금지를 그대로 따랐다. 과제서가 "기존 5건" 이라 한 기존 테스트는 실제로 6건이고, 수용 기준 3(`?_limit=3`)은 수정 전에도 초록이라 회귀 가드로 남겼다.
+
