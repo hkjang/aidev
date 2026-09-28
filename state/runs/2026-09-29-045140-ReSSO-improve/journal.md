@@ -30,3 +30,5 @@
 - [러너 05:13] pr created — https://github.com/hkjang/ReSSO/pull/33
 - [러너 05:21] ci passed — 검사 2개 모두 success
 - [러너 05:21] merge done — eb3972d
+- [러너 05:37] release published — v0.9.96
+- [러너 05:42] assets verified — v0.9.96 자산 2개 (이전 v0.9.95: 2)

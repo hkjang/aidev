@@ -307,3 +307,4 @@
 - 보류 아이디어: 기존 Token 연동 테스트 둘에 `srv.Metrics()`를 붙여 `resso_token_errors_total{grant_type}` 배선을 고정(2/1/S) / `InspectRefreshToken`의 `active` 반환값을 refresh 그랜트가 `_`로 버리는 것 — 조사 회차 필요(2/3/M) / 비화면 경로의 CSP를 `default-src 'none'`으로 좁히기 — 9회 연속 보류, 다음 회차에 기각 권고(2/2/S) / 통합 테스트의 `lockedBuffer`를 공용 헬퍼로(1/1/S) / `UpdateUser`가 계정을 끄면 세션을 함께 끝낸다는 사실을 연동 테스트가 직접 단언하지 않는다 — 이번 회차에 실행으로 확인했다(2/1/S)
 - 과제서: 채택 — 근거(로그만 남기는 `writeUserInfoUnavailable`, `errors_total` 계열 중 userinfo만 부재, 호출자 여섯의 `ErrNotFound` 선처리, `New`의 nil 등록기 대체)가 코드와 그대로 맞았고 수용 기준 다섯을 모두 구현·검증했다. 과제서가 미확인으로 남긴 둘은 실행으로 확인했다 — `users` RENAME은 userinfo 이전 미들웨어를 무너뜨리지 않고 stage `user`로 잡히며(`revocation_state`는 0), `docs/operations.md`의 자리는 introspection 불릿 바로 뒤였다. 과제서에 없던 사실 하나: 꺼진 계정 401을 같은 계정으로 확인하려면 `UpdateUser`가 세션까지 끝내 그 토큰이 영구 무효가 되므로, 그 경우는 별도 계정·토큰으로 검사했다.
 
+- 릴리즈: v0.9.96 (2026-09-29, run 2026-09-29-045140-ReSSO-improve)
