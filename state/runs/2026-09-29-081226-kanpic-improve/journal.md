@@ -28,3 +28,5 @@
 - 기존 service.go complete의 만료 컨텍스트 사용에 따른 감사 갱신 실패 가능성은 다음 회차 확인 대상으로 남긴다.
 - [러너 08:22] review approved — 리뷰 승인 (risk=low)
 - [러너 08:22] pr created — https://github.com/hkjang/kanpic/pull/37
+- [러너 08:30] ci passed — 검사 2개 모두 success
+- [러너 08:30] merge done — de77d56
