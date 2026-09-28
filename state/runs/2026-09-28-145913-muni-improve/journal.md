@@ -29,3 +29,4 @@
 - [러너 15:13] pr created — https://github.com/hkjang/muni/pull/29
 - [러너 15:18] ci passed — 검사 2개 모두 success
 - [러너 15:18] merge done — f5039e3
+- [러너 15:28] release ci-blocked — 릴리즈 커밋 CI: failed — 성공이 아닌 검사: sync=failure (태그 보류)

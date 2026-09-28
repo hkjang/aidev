@@ -19,3 +19,12 @@
 - 다음 역할이 조심할 것: 테스트는 H2 가 붙은 `@SpringBootTest`+MockMvc 이고 목이 없다. 내보내기 테스트는 `sessionAttr("nexabuilder.user", …)` 가 필요하다. 기존 `seed()` 는 `seed(null, 1)` 로 위임하므로 기존 6건의 기대값은 변하지 않았다. 전체 605건(602+3) 통과·0 skip, `bootJar -x test` 성공. `gradlew` 는 100644 라 `sh ./gradlew` 로 실행해야 한다.
 - [러너 15:20] brief accepted — 채택 — 진단(`readQueryParams` 가 `_limit` 을 넣지 않아 `listData` fallback 으로 떨어짐)과 수용 기준 4건이 실행으로 전부 확인됐�
 - [러너 15:20] verify passed — 검증 1개 통과 (auto)
+
+## 비평 노트
+- 판정: approve / risk low / blocking 없음. 원장에 `- 실패 재현:` 줄이 없어 직접 재현했다 — `ListExportController.java:379` 의 putIfAbsent 한 줄만 제거하고 테스트 클래스를 돌려 csv `13→6`, xlsx `12→5` 실패(=픽스처 page_size 5)를 확인, 줄 복원 후 9/9 통과·`git status` clean. 증상이 이번 변경이 고치는 절단과 일치한다.
+- `explicitQueryStringLimitWinsOverTheExportDefault` 는 수정 전에도 통과하는 가드 테스트다(검증력은 위 2건에 있다). 범위 이탈·인증/권한/마이그레이션 변경 없음: 프로덕션 diff 는 1줄 + javadoc 이고 `canView` 게이트와 `MAX_FEED_ROWS` 클램프는 그대로(클램프 테스트도 통과).
+- 못 본 것: 실제 운영 목록의 `page_size` 분포와 5000행 PDF/XLSX 의 실측 소요 시간·메모리. 전체 605건은 재실행하지 않고 내보내기 클래스만 돌렸다.
+- 승인이어도 남는 우려(릴리즈 노트용): ① 내보내기 기본 비용 100행→최대 5000행, PDF 는 표 전체를 메모리에 만든다 ② `?_limit=`(빈 값)은 여전히 page_size 로 절단되고 javadoc 문구와 어긋난다 ③ 5000 초과분은 아직 무신호 절단 ④ 성공한 내보내기는 감사 로그에 남지 않는데 다운로드당 개인정보 행수가 ~50배가 됐다.
+- 다음 회차 후보: `PARAM_LIMIT` 를 public 으로 올려 `"_limit"` 리터럴 4개 사용처를 모으기(기본값이 50/20/5000/5000 로 갈라져 있다).
+- [러너 15:28] review approved — 리뷰 승인 (risk=low)
+- [러너 15:28] pr created — https://github.com/hkjang/nexabuilder/pull/35
