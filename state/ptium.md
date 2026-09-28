@@ -309,3 +309,12 @@
 - 과제서: 채택 — 지정한 재현·수용 기준·건드릴 파일이 현재 코드와 정확히 맞았고, 권장한 `handle` 클로저 + 펜스 상태 + 미닫힘 시 재생 구조를 그대로 구현했다(수용 기준 3 의 "한 글자도 다르지 않다" 는 고치기 전 출력을 테스트에 박아 확인).
 
 - 릴리즈: v1.69.49 (2026-09-27, run 2026-09-27-163156-ptium-improve)
+## 2026-09-28
+- 선택: 마크다운 setext 제목(제목 다음 줄의 `===`)을 제목으로 읽기 (가치 3 / 위험 1 / 작업량 S)
+- 결과: 성공
+- 요약: `readMarkdown`(prose.go:205)의 `handle` 클로저를 `func(line, next string) bool` 로 바꿔 **`default:` 분기에서만** 다음 줄이 `=` 뿐이면(`underlinesHeading`) `writer.point` 대신 `writer.slide(line)` 을 부르고 `true` 를 돌려 바깥 루프가 밑줄 줄을 건너뛰게 했다(`skip` 플래그 + 새 `lineAfter` 헬퍼). 앞 줄을 되돌리는 방식은 `writer.point` 가 `maximumPoints` 에서 `(계속)` 슬라이드를 만들어 되돌릴 수 없으므로 앞보기로 했고, 닫히지 않은 펜스의 재생 루프도 같은 앞보기·같은 `skip` 규칙으로 돌려 stray ``` 가 그 아래 제목의 뜻을 바꾸지 못하게 했다. 나머지 분기(``, `#`, `|`, `isListLine`)와 `writer.go`·숫자 파서·`tables.go` 는 손대지 않았고, `---` 밑줄은 front matter 의 `title: 보고서` 가 슬라이드 제목이 되므로 범위 밖으로 두고 커밋 메시지에 적었다. 새 `markdownsetext_test.go` 6개(두 `Read` 의 `Source` 를 `!=` 로 비교 / 중간 제목이 2장으로 갈리는지 / 홀로 있는 `===` 두 경우 / 문장과 `===` 사이 빈 줄 / 펜스 안 `===` + 경고 유지 / 미닫힘 펜스 재생에서도 setext)를 먼저 넣어 red 3건을 확인한 뒤 고쳐 green. 검증: `cd server && go test -count=1 ./internal/docs`(2.9s), `go test -race ./...`(25개 패키지 전부 ok), `go vet ./...`, `gofmt -l internal/docs`(출력 없음), `git diff --check` 통과. 기존 마크다운 테스트(`docs_test.go`·`markdownfence_test.go`·`wordbreaks_test.go`·`listmarker_test.go`·`told_test.go`)는 한 글자도 바뀌지 않았다. 웹·API·문법 문서 변경이 없어 `make test` 의 웹 단계는 건너뜀. 프로덕션 파일 1개 + 테스트 1개. 커밋 80b1be5. 버전·릴리즈 노트·배포 매니페스트는 손대지 않았다.
+- 실패 재현: `markdownsetext_test.go:27: read as # 월간 보고서 @cover / # 월간 보고서 / - 분기 요약 / - ========= / - 매출이 늘었습니다. / !source 월간 보고서.md ... want # 분기 요약 @cover > 월간 보고서.md …` / `markdownsetext_test.go:30: called the deck "월간 보고서", want "분기 요약" — the document's own title` / `markdownsetext_test.go:47: read as … - 다음 분기 / - ==== … # (계속) - 비용을 줄입니다.` (2절 문서가 한 장 + `(계속)` 한 장)
+- 보류 아이디어: 마크다운 setext h2(`---`)도 제목으로 읽기 — YAML front matter 를 먼저 건너뛰기로 결정해야 값이 생긴다 (2/3/S) · tables.go:186 이 `writer.go` 의 `continued()` 대신 `' (계속)'` 을 직접 붙이는 것 (2/1/S) · 마크다운 들여쓰기 4칸 코드 블록도 코드로 보기 — 목록 항목의 이어지는 줄과 구별해야 해 위험이 높다 (2/3/M) · deck 의 네 숫자 파서 계약을 한 표 테스트로 묶기, 파서는 손대지 않음 (2/1/S) · XLSX 해제 누적 CPU/GC 예산 — peak 는 22034a7 로 잡혔다 (3/3/M)
+- 과제서: 채택 — 재현·수용 기준·권장 구조(`handle(line, next) bool` + `skip` + 미닫힘 펜스 재생 루프의 앞보기)가 현재 코드와 그대로 맞아 지정한 두 자리(프로덕션 1파일 + 새 테스트 1파일)만 고쳤다.
+
+- 릴리즈: v1.69.51 (2026-09-28, run 2026-09-28-174212-ptium-improve)

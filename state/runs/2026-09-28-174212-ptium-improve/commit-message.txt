@@ -1,0 +1,25 @@
+Read an underlined title as the title it is
+
+A markdown file that writes its name the other way markdown allows — the
+title on one line and a row of "=" under it — lost that name twice. The
+title stayed behind as a bullet, the underline became a second bullet of
+"=========", and because no heading had been seen by then the deck was
+named after the file instead of after the document. A file whose sections
+are written that way never started a new slide either, so its paragraphs
+piled onto one until maximumPoints spilled the rest onto a "(계속)" nobody
+wrote.
+
+readMarkdown now reads one line while knowing the next: handle takes the
+line after it and, for a sentence with an underline under it, starts a
+slide instead of a point and says it took the underline with it. The
+heading is decided by looking ahead rather than by taking back the point
+already written, because writer.point may have filled the slide and opened
+a continuation to hold the overflow, and that cannot be undone. The lines
+a fence that never closes gives back are replayed by the same rule, so a
+stray ``` above a heading does not change what that heading is.
+
+A row of "-" is out of scope on purpose. That character is already a list
+marker, a thematic break and the fence of YAML front matter, so reading it
+as an underline would make the "title: 보고서" under a front matter "---"
+the name of a slide. CommonMark does read it as a heading; here it would
+lose more than it found.
