@@ -1,0 +1,7 @@
+## 2026-09-29
+- 선택: 보고 표면이 광고하는 기간 단위("7d")를 실제로 받아들이게 함 (가치 4 / 위험 1 / 작업량 S)
+- 결과: 성공
+- 요약: MCP `activity_report` 스키마(`internal/mcp/tools.go:73`)는 에이전트에게 `7d` 를 쓰라고 광고하면서 처리기는 `time.ParseDuration` 이라 반드시 거절했고, CLI `report --since` 도 `flag.Duration` 이라 같은 이유로 `7d`/`2w` 를 거절했다. 이미 retention 용으로 존재하던 일/주 파서를 `internal/model/window.go` 의 `ParseWindow` 로 옮기고 세 표면(`cmd/goalforge` 의 `dayDuration`, `report --since`, MCP `activityReport`)이 같은 파서를 쓰게 했다. 부호 판정은 호출자에게 남겨 `<= 0` 거절 가드를 양쪽 모두 유지했다. 검증: `gofmt -l .`(무출력), `go vet ./...`, `go build ./...`, `go test ./...` — 실패는 기준선과 **완전히 동일한 6건**(커밋 신원 2건, push DISABLED 3건 + `TestRestoreVerifies…`)뿐이고 새로 깨진 것 없음. 기준선은 추측이 아니라 변경을 stash 하고 같은 세 패키지를 돌려 직접 측정했다. `internal/model` 은 이번에 `[no test files]` 를 벗어났다.
+- 실패 재현: `server_test.go:127: since="7d": since must be a positive duration such as 24h, got "7d"` (동 테스트에서 `2w`, `1.5d` 도 동일). CLI 쪽은 처음 쓴 테스트가 명령 이름을 틀려(`review report`) 잘못된 이유로 실패했기에 인자를 고친 뒤, 수정본을 되돌려 재확인했다: `duration_test.go:49: --since 7d: invalid value "7d" for flag -since: parse error`.
+- 보류 아이디어: ① `internal/model` 의 `ParseCriterion` 테스트(패키지 테스트 파일은 이번에 생겼으므로 남은 건 이 함수 계약 고정) ② push 의존 테스트를 `remote.origin.pushurl=DISABLED` 감지로 결정적 skip ③ 테스트용 git 저장소 부트스트랩 헬퍼를 공유 패키지로 정리(6개 파일 중복) ④ `internal/notify/suppress.go:52`·`internal/api/setup.go:289,304` 의 기간 파서도 `model.ParseWindow` 로 통일(폴백 의미가 달라 이번엔 제외) ⑤ `internal/procctl`·`internal/testscript` 테스트 공백.
+- 과제서: 채택 — 정찰이 지목한 두 줄(`tools.go:73` 광고 / `:657` 거절)이 지금 코드와 정확히 맞았고, 같은 결함이 CLI `--since` 에도 있어 한 회차에서 함께 닫았다.
