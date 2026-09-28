@@ -195,3 +195,11 @@
 - 과제서: 채택 — 과제서의 진단(세 함수의 `limit > MAX → 기본값`과 openapi 638·207·573행의 maximum)이 코드와 정확히 일치했고 수용 기준 5개를 모두 실제 DB에서 충족했다.
 
 - 릴리즈: v1.8.4 (2026-09-27, run 2026-09-27-121917-jupiq-improve)
+## 2026-09-28
+- 선택: `/usage`가 같은 `group_by`를 두 경로에 넘기면서 `consumption`만 조용히 `user` 그룹으로 떨어지는 것을 응답에 드러낸다 (가치 3 / 위험 1 / 작업량 S)
+- 결과: 성공
+- 요약: `internal/store/resource_usage.go`의 함수 안 `columns` 맵을 패키지 수준 `consumptionColumns`로 올리고 그 표만을 근거로 되돌림 결과를 알려주는 `ConsumptionGroupBy(groupBy) string`을 더했다(아는 값이면 그대로, 모르면 `"user"`). `ResourceConsumption`은 같은 맵을 쓰게 해 두 곳이 갈릴 수 없게 했고 SQL·인자·`boundedLimit(limit,100,500)`·반환 형식은 무변경이다. `internal/api/core_handlers.go:usage`는 이미 읽던 `groupBy`로 `result["consumption_group_by"] = store.ConsumptionGroupBy(groupBy)`를 성공 분기에만 넣었다(에러면 `consumption`과 함께 생략). 프로덕션 파일 2개, openapi·프런트·`/usage/consumption`은 손대지 않았다. 검증은 실제 `postgres:16-alpine`(5433)에 metric_samples의 project 라벨 행과 resource_usage_hourly 행을 넣고 실제 `store.Store`+실제 `Server.usage` 핸들러로 `/api/v1/usage?group_by=project`를 호출하는 새 통합 테스트로 했다 — 대역 Store 없음. `gofmt -l .` 무출력, `go vet ./...`, `go test -count=1 ./...`, `go test -count=1 -run 'OpenAPI|UndocumentedRoute' ./internal/api`, `make test-integration`(store 4.390s·api 0.705s) 통과, 통합 `-v` SKIP 0건, `scripts/check-version.sh` 1.8.4. 컨테이너는 제거했다.
+- 실패 재현: `usage_group_by_integration_test.go:102: 응답이 어떤 그룹으로 집계된 소비량인지 말하지 않는다: map[...]{"consumption":[...{"group_by":"user"...}], "group_by":"project", "trend":[...{"group":"usage-group-by-…-project"...}]}` / `usage_group_by_integration_test.go:136: group_by=user: consumption_group_by = <nil>, want "user"` (수정 전, 실제 PostgreSQL 16 — 같은 응답이 `group_by:project`를 내걸고 `consumption` 행은 `user`인 것이 그대로 찍혔다). 되돌림 확인도 했다: 핸들러 한 줄을 빼면 통합 서브테스트 3개가 다시 빨개지고, `ConsumptionGroupBy`를 `return groupBy`로 되돌리면 단위 테스트(`ConsumptionGroupBy("nonsense") = "nonsense", want "user"`)와 통합 테스트가 함께 빨개졌으며 원복 후 둘 다 통과했다.
+- 보류 아이디어: `/mail/deliveries`의 `status`가 문서화된 enum 밖 값을 조용히 삼키는 것을 400 `invalid_query`로 거부(차선 후보, 미착수) / OpenAPI page_size 상한 불일치 정리(/users 100 vs /audit 200 vs pageBounds 200) / internal/store 순수 헬퍼 5개 표 기반 테스트 / OpenAPI servers URL과 계약 테스트 경로 접두사 불일치 검출 / search 질의의 최대 길이·제어문자 정규화
+- 과제서: 채택 — 과제서의 진단(settings.go:1033이 project를 알고 resource_usage.go:220-229는 모른다)이 코드와 정확히 일치했고 수용 기준 5개를 모두 실제 DB에서 충족했다.
+

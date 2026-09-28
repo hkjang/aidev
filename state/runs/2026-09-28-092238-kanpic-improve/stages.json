@@ -1,0 +1,37 @@
+{
+  "base": {
+    "state": "pinned",
+    "reason": "main@6265307",
+    "at": "2026-09-28T09:22:50+09:00"
+  },
+  "autonomy": {
+    "state": "release",
+    "reason": "",
+    "at": "2026-09-28T09:22:50+09:00"
+  },
+  "scout": {
+    "state": "done",
+    "reason": "알림 메일의 \"누가 받는가\" 계약을 실제 relay 로 못 박고, 요청이 끊겨도 알림이 조용히 사라지지 않게 한�",
+    "at": "2026-09-28T09:27:32+09:00"
+  },
+  "brief": {
+    "state": "accepted",
+    "reason": "채택 — 과제서가 두 갈래로 써 둔 것 중 '빨강' 갈래가 그대로 맞았고(취소된 요청에서 알림이 나가지 않았다), 건드릴 �",
+    "at": "2026-09-28T09:49:38+09:00"
+  },
+  "verify": {
+    "state": "passed",
+    "reason": "검증 7개 통과 (auto)",
+    "at": "2026-09-28T09:49:56+09:00"
+  },
+  "review": {
+    "state": "rejected",
+    "reason": "리뷰 거절: internal/httpapi/mail.go:145 커밋 메시지와 service.go:74-75 주석이 첫 예로 든 '칸 저장' 경로는 여전히 알림이 사라진다. notifyWatchers 는 publishCells 가 넘긴 r.Context()(server.go:705, agent.go:241, search.go:74, conflicts.go:50)로 s.repository.SheetWatchRules(ctx, sheetID) 를 부르고, 취소된 컨텍스트에서 pgx 가 곧바로 실패한다는 이번 변경의 전제 그대로 err!=nil 로 mail.go:146 에서 돌아선다 — mail.Notify 에 닿지도 못하므로 service.go 의 WithoutCancel 이 구제할 수 없다. 설명과 동작이 어긋난다. / internal/httpapi/sharing.go:215-217 접근 요청 알림도 같은 이유로 그대로 사라진다. audience 는 workbookAudience(r.Context()) 에서 오고 그 안의 GetWorkbook 이 취소된 컨텍스트에서 실패하면 nil 을 돌려주므로, notifyMail 이 mail.go:65 의 len(recipients)==0 에서 멈춘다. / 수리 방향은 둘 중 하나로 족하다: (1) 알림 채비(SheetWatchRules·GetWorkbook·LookupUsers)도 automations.go:249 와 같은 WithTimeout(WithoutCancel(ctx)) 로 감싸 httpapi 경계에서 취소를 떼거나, (2) 커밋 메시지와 service.go:74-81 주석을 실제로 덮는 경로(공유 부여·접근 결정 등 수신자가 정적인 것)로 좁힌다. 지금 문구대로 머지되면 릴리즈 노트와 다음 회차가 '칸 저장 알림 소실'을 닫힌 것으로 오해한다.",
+    "at": "2026-09-28T09:55:20+09:00"
+  },
+  "pr": {
+    "state": "created",
+    "reason": "https://github.com/hkjang/kanpic/pull/35",
+    "at": "2026-09-28T09:55:30+09:00"
+  }
+}

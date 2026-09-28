@@ -1,0 +1,246 @@
+{
+  "run_id": "2026-09-28-092238-kanpic-improve",
+  "generated": "2026-09-28T09:55:31+09:00",
+  "run": {
+    "run_id": "2026-09-28-092238-kanpic-improve",
+    "project": "kanpic",
+    "kind": "improve",
+    "started": "2026-09-28T09:22:38+09:00",
+    "model": "claude-opus-5",
+    "policy_version": "4a9e91ac7",
+    "prompts_hash": "ce085c79e18002e2",
+    "runner_version": "d36dd84d8",
+    "arm": "no-repair",
+    "experiment": "roles-2026-09",
+    "finished": "2026-09-28T09:55:31+09:00",
+    "outcome": "review-pending"
+  },
+  "record": {
+    "ts": "2026-09-28T09:55:31+09:00",
+    "date": "2026-09-28",
+    "project": "kanpic",
+    "result": "review held, PR open https://github.com/hkjang/kanpic/pull/35",
+    "outcome": "review-pending",
+    "run_id": "2026-09-28-092238-kanpic-improve",
+    "base_sha": "6265307b2df27ef2d8fe64f0a6b37e72d64ad5de",
+    "head_sha": "4e4d1d52769a537a9d62656c42bf6884b5da062a",
+    "pr": "https://github.com/hkjang/kanpic/pull/35",
+    "stages": {
+      "base": {
+        "state": "pinned",
+        "reason": "main@6265307",
+        "at": "2026-09-28T09:22:50+09:00"
+      },
+      "autonomy": {
+        "state": "release",
+        "reason": "",
+        "at": "2026-09-28T09:22:50+09:00"
+      },
+      "scout": {
+        "state": "done",
+        "reason": "알림 메일의 \"누가 받는가\" 계약을 실제 relay 로 못 박고, 요청이 끊겨도 알림이 조용히 사라지지 않게 한�",
+        "at": "2026-09-28T09:27:32+09:00"
+      },
+      "brief": {
+        "state": "accepted",
+        "reason": "채택 — 과제서가 두 갈래로 써 둔 것 중 '빨강' 갈래가 그대로 맞았고(취소된 요청에서 알림이 나가지 않았다), 건드릴 �",
+        "at": "2026-09-28T09:49:38+09:00"
+      },
+      "verify": {
+        "state": "passed",
+        "reason": "검증 7개 통과 (auto)",
+        "at": "2026-09-28T09:49:56+09:00"
+      },
+      "review": {
+        "state": "rejected",
+        "reason": "리뷰 거절: internal/httpapi/mail.go:145 커밋 메시지와 service.go:74-75 주석이 첫 예로 든 '칸 저장' 경로는 여전히 알림이 사라진다. notifyWatchers 는 publishCells 가 넘긴 r.Context()(server.go:705, agent.go:241, search.go:74, conflicts.go:50)로 s.repository.SheetWatchRules(ctx, sheetID) 를 부르고, 취소된 컨텍스트에서 pgx 가 곧바로 실패한다는 이번 변경의 전제 그대로 err!=nil 로 mail.go:146 에서 돌아선다 — mail.Notify 에 닿지도 못하므로 service.go 의 WithoutCancel 이 구제할 수 없다. 설명과 동작이 어긋난다. / internal/httpapi/sharing.go:215-217 접근 요청 알림도 같은 이유로 그대로 사라진다. audience 는 workbookAudience(r.Context()) 에서 오고 그 안의 GetWorkbook 이 취소된 컨텍스트에서 실패하면 nil 을 돌려주므로, notifyMail 이 mail.go:65 의 len(recipients)==0 에서 멈춘다. / 수리 방향은 둘 중 하나로 족하다: (1) 알림 채비(SheetWatchRules·GetWorkbook·LookupUsers)도 automations.go:249 와 같은 WithTimeout(WithoutCancel(ctx)) 로 감싸 httpapi 경계에서 취소를 떼거나, (2) 커밋 메시지와 service.go:74-81 주석을 실제로 덮는 경로(공유 부여·접근 결정 등 수신자가 정적인 것)로 좁힌다. 지금 문구대로 머지되면 릴리즈 노트와 다음 회차가 '칸 저장 알림 소실'을 닫힌 것으로 오해한다.",
+        "at": "2026-09-28T09:55:20+09:00"
+      },
+      "pr": {
+        "state": "created",
+        "reason": "https://github.com/hkjang/kanpic/pull/35",
+        "at": "2026-09-28T09:55:30+09:00"
+      }
+    },
+    "campaign": "",
+    "autonomy": "release",
+    "arm": "no-repair",
+    "experiment": "roles-2026-09",
+    "engine": "claude",
+    "files": 2,
+    "additions": 295,
+    "deletions": 0,
+    "tests": 1,
+    "title": "fix(mail): 요청이 취소돼도 이미 일어난 변경의 알림을 보낸다"
+  },
+  "stages": {
+    "base": {
+      "state": "pinned",
+      "reason": "main@6265307",
+      "at": "2026-09-28T09:22:50+09:00"
+    },
+    "autonomy": {
+      "state": "release",
+      "reason": "",
+      "at": "2026-09-28T09:22:50+09:00"
+    },
+    "scout": {
+      "state": "done",
+      "reason": "알림 메일의 \"누가 받는가\" 계약을 실제 relay 로 못 박고, 요청이 끊겨도 알림이 조용히 사라지지 않게 한�",
+      "at": "2026-09-28T09:27:32+09:00"
+    },
+    "brief": {
+      "state": "accepted",
+      "reason": "채택 — 과제서가 두 갈래로 써 둔 것 중 '빨강' 갈래가 그대로 맞았고(취소된 요청에서 알림이 나가지 않았다), 건드릴 �",
+      "at": "2026-09-28T09:49:38+09:00"
+    },
+    "verify": {
+      "state": "passed",
+      "reason": "검증 7개 통과 (auto)",
+      "at": "2026-09-28T09:49:56+09:00"
+    },
+    "review": {
+      "state": "rejected",
+      "reason": "리뷰 거절: internal/httpapi/mail.go:145 커밋 메시지와 service.go:74-75 주석이 첫 예로 든 '칸 저장' 경로는 여전히 알림이 사라진다. notifyWatchers 는 publishCells 가 넘긴 r.Context()(server.go:705, agent.go:241, search.go:74, conflicts.go:50)로 s.repository.SheetWatchRules(ctx, sheetID) 를 부르고, 취소된 컨텍스트에서 pgx 가 곧바로 실패한다는 이번 변경의 전제 그대로 err!=nil 로 mail.go:146 에서 돌아선다 — mail.Notify 에 닿지도 못하므로 service.go 의 WithoutCancel 이 구제할 수 없다. 설명과 동작이 어긋난다. / internal/httpapi/sharing.go:215-217 접근 요청 알림도 같은 이유로 그대로 사라진다. audience 는 workbookAudience(r.Context()) 에서 오고 그 안의 GetWorkbook 이 취소된 컨텍스트에서 실패하면 nil 을 돌려주므로, notifyMail 이 mail.go:65 의 len(recipients)==0 에서 멈춘다. / 수리 방향은 둘 중 하나로 족하다: (1) 알림 채비(SheetWatchRules·GetWorkbook·LookupUsers)도 automations.go:249 와 같은 WithTimeout(WithoutCancel(ctx)) 로 감싸 httpapi 경계에서 취소를 떼거나, (2) 커밋 메시지와 service.go:74-81 주석을 실제로 덮는 경로(공유 부여·접근 결정 등 수신자가 정적인 것)로 좁힌다. 지금 문구대로 머지되면 릴리즈 노트와 다음 회차가 '칸 저장 알림 소실'을 닫힌 것으로 오해한다.",
+      "at": "2026-09-28T09:55:20+09:00"
+    },
+    "pr": {
+      "state": "created",
+      "reason": "https://github.com/hkjang/kanpic/pull/35",
+      "at": "2026-09-28T09:55:30+09:00"
+    }
+  },
+  "provenance": {
+    "model": "claude-opus-5",
+    "policy_version": "4a9e91ac7",
+    "prompts_hash": "ce085c79e18002e2",
+    "runner_version": "d36dd84d8",
+    "base_sha": "6265307b2df27ef2d8fe64f0a6b37e72d64ad5de",
+    "head_sha": "4e4d1d52769a537a9d62656c42bf6884b5da062a",
+    "pr": "https://github.com/hkjang/kanpic/pull/35"
+  },
+  "verification": {
+    "runner": {
+      "source": "auto",
+      "commands": [
+        {
+          "cmd": "go build ./...",
+          "exit": 0,
+          "seconds": 1
+        },
+        {
+          "cmd": "go vet ./...",
+          "exit": 0,
+          "seconds": 0
+        },
+        {
+          "cmd": "go test ./...",
+          "exit": 0,
+          "seconds": 1
+        },
+        {
+          "cmd": "cd web && [ -d node_modules ] || npm ci --no-audit --no-fund",
+          "exit": 0,
+          "seconds": 5
+        },
+        {
+          "cmd": "cd web && npm test --silent",
+          "exit": 0,
+          "seconds": 3
+        },
+        {
+          "cmd": "cd web && [ -d node_modules ] || npm ci --no-audit --no-fund",
+          "exit": 0,
+          "seconds": 0
+        },
+        {
+          "cmd": "cd web && npm run build --silent",
+          "exit": 0,
+          "seconds": 8
+        }
+      ]
+    },
+    "runner_gate": {
+      "ok": true,
+      "state": "verified",
+      "reason": "검증 7개 통과 (auto)"
+    },
+    "after_rebase": null,
+    "review": {
+      "verdict": "reject",
+      "reasons": [
+        "internal/httpapi/mail.go:145 커밋 메시지와 service.go:74-75 주석이 첫 예로 든 '칸 저장' 경로는 여전히 알림이 사라진다. notifyWatchers 는 publishCells 가 넘긴 r.Context()(server.go:705, agent.go:241, search.go:74, conflicts.go:50)로 s.repository.SheetWatchRules(ctx, sheetID) 를 부르고, 취소된 컨텍스트에서 pgx 가 곧바로 실패한다는 이번 변경의 전제 그대로 err!=nil 로 mail.go:146 에서 돌아선다 — mail.Notify 에 닿지도 못하므로 service.go 의 WithoutCancel 이 구제할 수 없다. 설명과 동작이 어긋난다.",
+        "internal/httpapi/sharing.go:215-217 접근 요청 알림도 같은 이유로 그대로 사라진다. audience 는 workbookAudience(r.Context()) 에서 오고 그 안의 GetWorkbook 이 취소된 컨텍스트에서 실패하면 nil 을 돌려주므로, notifyMail 이 mail.go:65 의 len(recipients)==0 에서 멈춘다.",
+        "수리 방향은 둘 중 하나로 족하다: (1) 알림 채비(SheetWatchRules·GetWorkbook·LookupUsers)도 automations.go:249 와 같은 WithTimeout(WithoutCancel(ctx)) 로 감싸 httpapi 경계에서 취소를 떼거나, (2) 커밋 메시지와 service.go:74-81 주석을 실제로 덮는 경로(공유 부여·접근 결정 등 수신자가 정적인 것)로 좁힌다. 지금 문구대로 머지되면 릴리즈 노트와 다음 회차가 '칸 저장 알림 소실'을 닫힌 것으로 오해한다."
+      ],
+      "notes": [
+        "빨강/초록은 직접 확인했다: go test -overlay 로 main 의 service.go 를 끼워 돌리면 TestNotifySendsEvenWhenTheRequestWasCancelled 만 'RCPT TO=[], want [lee@corp.example]' 로 실패하고, 현재 코드에서는 -race -count=1 전부 통과한다(vet·gofmt 도 깨끗). 원장에 `- 실패 재현:` 줄이 없어 내가 대신 재현했다 — 새 테스트는 바뀐 경로를 정말 지난다.",
+        "comments.go:171-178 은 취소돼도 audience 가 메모리의 thread.Messages 작성자에서 오므로 이번 변경으로 메일이 실제로 나가기 시작한다. 그런데 book.Title 은 취소된 컨텍스트의 workbookAudience 에서 와 빈 문자열이고 actorLabel 도 식별자로 떨어져, 제목이 '[kanpic]  B2에 새 댓글'(message.go:110)처럼 워크북 이름 없이 간다. 전에는 아예 안 갔으니 회귀는 아니지만 새로 보이는 증상이다.",
+        "service_test.go:112 waitForRecipients 는 len(got) >= want 가 되면 곧바로 돌아온다. 수신자 계약이 깨져 한 통이 더 나가는 회귀에서도 원하는 주소가 먼저 도착하면 통과할 수 있어, 그 7행은 읽히는 것보다 느슨하다(이번 변경이 건드린 자리는 아니다).",
+        "10초 시한은 설정이 아니라 하드코딩이지만 서버 WriteTimeout 이 130초(main.go:79)라 응답 기한을 넘기지는 않고, 패턴도 automations.go:249 의 선례와 같다. Deliveries 의 nil 풀 패닉은 여전히 아무 테스트도 지나지 않는다(통합 몫).",
+        "보안·법무 차단 사유는 없다: 인가 경로·식별자 취급·비밀값·의존성에 변화가 없고, 수신자 집합도 그대로다. 취소 뒤 발송은 이미 커밋된 변경의 알림이라 목적 범위 안이며(모든 호출처가 쓰기 성공 뒤에 부른다), WatchChanged 는 의도대로 값을 싣지 않는다. 테스트 주소는 corp.example 가상값이다."
+      ],
+      "risk": "low",
+      "blocking": []
+    },
+    "ci_gate": null
+  },
+  "release": {
+    "result": null,
+    "assets_sha256": []
+  },
+  "approval": null,
+  "usage": [
+    {
+      "ts": "2026-09-28T09:27:31+09:00",
+      "date": "2026-09-28",
+      "project": "kanpic",
+      "phase": "scout",
+      "run_id": "2026-09-28-092238-kanpic-improve",
+      "campaign": "",
+      "subtype": "success",
+      "engine": "claude",
+      "duration_ms": 289439,
+      "num_turns": 28,
+      "cost_usd": 1.7812255000000001,
+      "input_tokens": 38,
+      "output_tokens": 18285,
+      "cache_read": 1215381,
+      "cache_create": 71622
+    },
+    {
+      "ts": "2026-09-28T09:49:38+09:00",
+      "date": "2026-09-28",
+      "project": "kanpic",
+      "phase": "improve",
+      "run_id": "2026-09-28-092238-kanpic-improve",
+      "campaign": "",
+      "subtype": "success",
+      "engine": "claude",
+      "duration_ms": 1376099,
+      "num_turns": 41,
+      "cost_usd": 3.0100860000000007,
+      "input_tokens": 70,
+      "output_tokens": 26353,
+      "cache_read": 2846302,
+      "cache_create": 92776
+    },
+    {
+      "ts": "2026-09-28T09:55:20+09:00",
+      "date": "2026-09-28",
+      "project": "kanpic",
+      "phase": "review",
+      "run_id": "2026-09-28-092238-kanpic-improve",
+      "campaign": "",
+      "subtype": "success",
+      "engine": "claude",
+      "duration_ms": 333250,
+      "num_turns": 23,
+      "cost_usd": 1.3694550000000003,
+      "input_tokens": 28,
+      "output_tokens": 15507,
+      "cache_read": 770500,
+      "cache_create": 59639
+    }
+  ]
+}
