@@ -198,3 +198,4 @@
 - 보류 아이디어: `exportOutline` 의 내려받기 이름에 공간 이름 담기 — `internal/httpapi/export_handlers.go:101` 이 언제나 리터럴 `umm-outline.md`, 같은 패키지의 `dispositionSafe`·`handoffFilename` 을 그대로 쓸 수 있음 (차선 후보였음, 이번에 손대지 않음) / 업로드 라벨의 경로가 `safeFilename` 에서 구분자만 지워져 `C:\a\b.png` → `Cab.png` — 마지막 조각만 취하고 `attachments_test.go:42` 단언도 함께 바꿀 것 / 공백 한 칸 발표 제목이면 공간 이름도 표지도 잃음 — `internal/presentation/service.go:336` 부근, 여전히 미확인이라 별 과제 / `usableSections` 가 서로 다른 부에 같은 제목이 오는 제안을 막지 않음 — `sections.go:116` 미확인 / 빈 공간에 노트가 실시간으로 들어오면 첫 몇 개에 맞춘 fit 이 '자리'로 기억됨 — 이번에 건드린 effect 뭉치와 같은 자리라 일부러 뺐음
 - 과제서: 채용 — 과제서의 근거(512-519행이 rewind 를 비우지 않음, 클라이언트 라우팅, 배너·readOnly·스트림·자리 복원 네 증상)가 지금 코드와 정확히 맞았고, 경고한 함정(`page.goto` 로는 재현 안 됨)도 그대로 사실이었습니다.
 
+- 릴리즈: v0.76.1 (2026-09-28, run 2026-09-28-211204-umm-improve)
