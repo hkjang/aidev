@@ -1,39 +1,30 @@
 [
   {
-    "title": "직원 화면에서 조회 결과를 CSV 로 내보내기",
+    "title": "직원 화면의 조직 필터를 화면에 노출",
     "value": 3,
     "risk": 1,
     "size": "S",
     "status": "done",
-    "note": "커밋 fa4a85f. web/src/lib/employeeExport.ts 에 EMPLOYEE_CSV_HEADERS·employeeStatusLabel·employeeSeatLabel·employeeCsvRows 를 두고 표의 상태·좌석 칸과 CSV 가 같은 함수를 쓴다. 열 이름은 직원 가져오기 파서(employees.go:170-177)에 맞춰 조직명·직급=title·직책=position. E2E 는 본문까지 읽어 표의 행 수 == 파일 데이터 행 수를 단정한다.",
-    "updated": "2026-09-27"
+    "note": "커밋 59574c9. web/src/lib/employeeQuery.ts 신규 + EmployeesPage.tsx 배선(프로덕션 2파일). vitest 8건·E2E 3건 추가, 변경 전 이미지에서 역검증 완료. 서버 무변경.",
+    "updated": "2026-09-28"
   },
   {
-    "title": "직원 화면의 조직 필터를 화면에 노출",
-    "value": 2,
-    "risk": 1,
-    "size": "S",
-    "status": "pending",
-    "note": "서버 listEmployees(employees.go:62)는 organizationId 를 받는데 EmployeesPage 의 load 는 q·status·assignment 만 보낸다. 조직 목록 API(listOrganizations)는 이미 있다. Select 하나 추가 수준이고, 이제 CSV 내보내기가 화면의 items 를 그대로 담으므로 조직별 명단을 받는 길이 바로 열린다 — 다음 회차 첫 후보.",
-    "updated": "2026-09-27"
-  },
-  {
-    "title": "직원 목록 500건 상한에 total·더 보기 붙이기",
+    "title": "직원 화면 필터(조직·재직상태·배정상태·검색어)를 주소에 반영",
     "value": 2,
     "risk": 2,
-    "size": "M",
+    "size": "S",
     "status": "pending",
-    "note": "listEmployees(employees.go:60)는 limit<=500 만 받고 total 을 주지 않아 화면이 조용히 잘린다(EmployeesPage 의 '최대 500명 표시' 안내는 이미 있다). 이번 회차 CSV 도 그 상한을 그대로 물려받는다 — exportCsv 주석에 그 이유를 적어 뒀다. 서버 COUNT 추가 필요 + 501명을 만들어야 관찰됨.",
-    "updated": "2026-09-27"
+    "note": "이번 회차가 employeeQuery.ts 에 키 이름과 빈 값 규칙을 이미 모았으므로 readEmployeeParams/writeEmployeeParams 를 같은 파일에 더하면 된다 — seatMapLink.ts 가 좌석맵에서 한 것과 같은 꼴. 이번 회차 범위에서 명시적으로 뺐다(상태 네 개의 직렬화 규칙을 새로 정해야 해서). 지금이 적기.",
+    "updated": "2026-09-28"
   },
   {
-    "title": "E2E 환경 의존 spec 2건(mcp-oauth·tracking) 준비 절차를 web/e2e README 로 고정",
+    "title": "E2E 환경 의존 spec 2건(mcp-oauth·tracking) 준비 절차를 web/e2e/README.md 로 고정",
     "value": 2,
     "risk": 1,
     "size": "S",
     "status": "pending",
-    "note": "이번 회차에도 전체 68건 중 7건(tracking 3·mcp-oauth 4) 실패를 '원래 안 돈다'로 구전 판정했다(변경 전 이미지에서도 같은 두 spec 이 8건 실패하는 것을 확인해 무관함을 증명). 가짜 Keycloak IdP·E2E_COLLECTOR_HOST 준비 절차를 문서로 굳히면 매 회차 이 확인이 사라진다. 문서만이라 코드 위험 0.",
-    "updated": "2026-09-27"
+    "note": "차선 후보였고 손대지 않았다. 이번 회차에 변경 전·후 두 이미지에서 같은 2건(tracking.spec.ts:110 Momento 프록시, mcp-oauth.spec.ts:247 Keycloak 토큰)이 같은 이유로 실패함을 실제로 재현해 확인했다 — 그 수치와 원인을 문서로 굳힐 근거가 생겼다. 다섯 회차 연속 구전 판정. 문서만이라 코드 위험 0.",
+    "updated": "2026-09-28"
   },
   {
     "title": "목록 핸들러가 rows.Err()·Scan 오류를 삼켜 부분 목록을 200 으로 반환",
@@ -41,17 +32,17 @@
     "risk": 2,
     "size": "M",
     "status": "pending",
-    "note": "employees.go:22/78/293·seats.go:36·maps.go:27/72/126·keys.go:28·mcp.go:113/127/153. 올바른 꼴은 grid.go:150-158. 파일 10개 안팎이라 '프로덕션 6파일 이내'에 걸리고 DB 붙은 Go 테스트 하네스가 없다. 하려면 한 파일만. 이번에 CSV 가 목록 응답을 그대로 파일로 굽기 시작했으므로 부분 목록이 파일로도 새어 나간다 — 가치는 유지.",
-    "updated": "2026-09-27"
+    "note": "이번에도 employees.go:22/78 과 올바른 꼴 grid.go:150-158 을 확인했다(listOrganizations 도 같은 꼴 — 이번에 읽었다). 대상이 employees·seats·maps·keys·mcp 등 파일 10개 안팎이라 프로덕션 6파일 규칙에 걸린다. 하려면 employees.go 한 파일만 조각내서. DB 붙은 Go 테스트 하네스가 없어 증명 수단이 E2E 뿐인 것이 여전한 걸림돌.",
+    "updated": "2026-09-28"
   },
   {
-    "title": "좌석맵 필터·색상 모드·조직 강조도 주소에 반영",
+    "title": "직원 목록 500건 상한에 total·더 보기 붙이기",
     "value": 2,
     "risk": 2,
     "size": "M",
     "status": "pending",
-    "note": "seatMapLink 헬퍼를 넓히면 되지만 상태가 네 개(filters Set, colorMode, showZones, activeOrg)라 직렬화 규칙을 새로 정해야 하고 Set 순서·미지의 값 방어가 붙는다. edit 쓰기는 범위 밖.",
-    "updated": "2026-09-27"
+    "note": "listEmployees(employees.go:65-67)는 limit<=500 만 받고 total 을 주지 않는다. 화면 안내는 EmployeesPage.tsx 끝의 caption. 이번 조직 필터가 들어가 팀 단위로 자를 수 있으므로 급함은 한 단계 더 내려간다. 서버 COUNT 추가 + 501명을 만들어야 관찰됨.",
+    "updated": "2026-09-28"
   },
   {
     "title": "이력 화면의 조회 파라미터를 load 와 exportCsv 가 한 함수로 짓게 하기",
@@ -59,8 +50,26 @@
     "risk": 1,
     "size": "S",
     "status": "pending",
-    "note": "HistoryPage.tsx:80-86 과 132-137 이 q·source·from·to 를 각자 조립한다. 지금은 두 곳이 일치하지만 필터를 하나 더할 때 CSV 가 화면과 다른 집합을 내보낸다. 이번 회차의 직원 CSV 는 items 를 그대로 써서 이 위험이 없다 — 이력 쪽만 남은 자리. 관측되는 결함은 아직 없어 순수 예방.",
-    "updated": "2026-09-27"
+    "note": "HistoryPage.tsx 의 두 곳이 q·source·from·to 를 각자 조립한다(이번 회차 미재확인). 이번에 만든 employeeQuery 와 같은 처방이므로 그 꼴을 그대로 옮기면 된다. 관측되는 결함은 아직 없어 순수 예방.",
+    "updated": "2026-09-28"
+  },
+  {
+    "title": "화면 전체 Select·검색 Paper 에 접근 가능한 이름 붙이기",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "이번 회차에 직원 화면 세 Select(조직·재직상태·배정상태)에 inputProps aria-label 을 붙였다. 남은 곳은 좌석맵 왼쪽 검색 Paper 의 region 이름과 범례. 방법은 더는 미확인이 아니다 — getByRole('combobox',{name}) 로 실제 잡히는 것을 이번 E2E 로 다시 확인했다. 주의: 이름 없는 Select 를 hasText 로 집는 기존 spec(employee-export.spec.ts:52-55)이 있으므로 보이는 텍스트는 바꾸지 말 것.",
+    "updated": "2026-09-28"
+  },
+  {
+    "title": "좌석맵 필터·색상 모드·조직 강조도 주소에 반영",
+    "value": 2,
+    "risk": 2,
+    "size": "M",
+    "status": "pending",
+    "note": "seatMapLink 헬퍼를 넓히면 되지만 상태가 네 개(filters Set, colorMode, showZones, activeOrg)라 직렬화 규칙을 새로 정해야 하고 Set 순서·미지의 값 방어가 붙는다. 이번 회차 미재확인.",
+    "updated": "2026-09-28"
   },
   {
     "title": "PATCH /users/{id} 가 없는 id 에도 204 를 돌려주는지 재확인",
@@ -68,17 +77,8 @@
     "risk": 1,
     "size": "S",
     "status": "pending",
-    "note": "09-17(404 확인)과 09-20 보류가 엇갈린 채 다섯 회차째 미확인. 이번 회차에는 컨테이너를 띄웠으나 직원 화면 검증만 하고 curl 로 확인하지 않았다. 착수 전 상태 코드부터 볼 것. auth/권한 근처라 위험이 낮지 않다.",
-    "updated": "2026-09-27"
-  },
-  {
-    "title": "왼쪽 검색·범례에도 접근 가능한 region 이름 붙이기",
-    "value": 2,
-    "risk": 1,
-    "size": "S",
-    "status": "pending",
-    "note": "좌석 상세의 region(section aria-label='좌석 상세')은 E2E 에서 잘 쓰였지만 왼쪽 검색 Paper 에는 여전히 이름이 없어 placeholder 에 기댄다. 이번 회차 미재확인. 참고로 직원 화면의 Select 두 개도 접근 가능한 이름이 없어 새 spec 이 hasText 로 집어야 했다 — 같은 뿌리.",
-    "updated": "2026-09-27"
+    "note": "09-17(404 확인)과 09-20 보류가 엇갈린 채 일곱 회차째 미확인. 이번 회차도 curl 로 보지 않았다. 착수 전 상태 코드부터 볼 것. auth/권한 근처라 위험이 낮지 않다.",
+    "updated": "2026-09-28"
   },
   {
     "title": "CI 에 guide-shots 스모크 추가",
@@ -86,8 +86,8 @@
     "risk": 2,
     "size": "S",
     "status": "pending",
-    "note": ".github/workflows 는 이번 회차에도 열지 않았다. 릴리즈·빌드 경로를 건드리므로 릴리즈까지 통과 확인이 필요하다(운영자 규칙) — 자율 회차에서 고르기엔 무겁다.",
-    "updated": "2026-09-27"
+    "note": ".github/workflows 는 이번 회차에도 열지 않았다. 릴리즈·빌드 경로라 '릴리즈까지 통과 확인' 운영자 규칙이 걸린다 — 자율 회차에서 고르기엔 무겁다.",
+    "updated": "2026-09-28"
   },
   {
     "title": "build-docs.py 파서 단위 테스트",
@@ -95,17 +95,8 @@
     "risk": 1,
     "size": "S",
     "status": "pending",
-    "note": "파이썬 테스트 하네스가 저장소에 없어 새 도구를 들여야 한다 — 그 비용 때문에 계속 밀린다.",
-    "updated": "2026-09-27"
-  },
-  {
-    "title": "세션 만료(401) 뒤에도 auto_login 이면 조용한 재로그인 시도",
-    "value": 2,
-    "risk": 3,
-    "size": "S",
-    "status": "rejected",
-    "note": "auth/session 보호 경로 + 로그인 루프 위험이고 네 회차째 아무도 손대지 않았다. 자율 회차의 위험 한도를 넘으므로 후보에서 뺀다 — 필요해지면 사람이 있는 회차에서 다룰 것.",
-    "updated": "2026-09-27"
+    "note": "파이썬 테스트 하네스가 저장소에 없어 새 도구를 들여야 한다 — 그 비용 때문에 계속 밀린다. 이번 회차에 build-docs.py USER_GUIDE 를 돌려 '블록 101개' 로 정상 동작하는 것은 확인했다.",
+    "updated": "2026-09-28"
   },
   {
     "title": "'구역 불일치' 문구를 한 곳에서만 짓기",
@@ -113,7 +104,16 @@
     "risk": 1,
     "size": "S",
     "status": "pending",
-    "note": "seatSpeech/seatOrgDetail 이중 정의. 세 회차 연속 재확인하지 못했다 — 착수 전 두 자리가 아직 갈라져 있는지부터 볼 것.",
-    "updated": "2026-09-27"
+    "note": "seatSpeech/seatOrgDetail 이중 정의. 다섯 회차 연속 재확인하지 못했다 — 착수 전 두 자리가 아직 갈라져 있는지부터 볼 것.",
+    "updated": "2026-09-28"
+  },
+  {
+    "title": "E2E 준비 문서에 '/api/v1/health 는 없다' 를 적기",
+    "value": 1,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "새 아이디어. 이번 회차에 컨테이너 기동 대기를 /api/v1/health 로 걸었다가 404 라서 루프가 무한정 돌아 10분을 잃었다(준비 확인은 GET / 의 200 으로 해야 한다). web/e2e README 아이디어와 같은 파일에 한 줄로 합치면 비용 0. 코드 변경 아님.",
+    "updated": "2026-09-28"
   }
 ]
