@@ -30,3 +30,12 @@
 - [러너 08:22] pr created — https://github.com/hkjang/kanpic/pull/37
 - [러너 08:30] ci passed — 검사 2개 모두 success
 - [러너 08:30] merge done — de77d56
+
+## 릴리즈 노트
+- marketing:product-launch 및 technology:release-and-deployment를 실제 headcount SKILL.md에서 읽음(전용 Skill 도구 미제공). Tier three 개선으로 릴리즈 노트만 작성. 외부 사용자 직접 시험과 운영 적용은 이 세션에서 수행하지 않음.
+- v0.258.0 / 5d8e9d5, 기존 형식의 한국어 릴리즈 커밋과 주석 태그를 detached HEAD에 작성. README VERSION 갱신. web/package.json·lock의 0.1.0은 독립 프런트 패키지 값, ADMIN_GUIDE의 v0.242.0은 기존 설치 예제, buildinfo/Dockerfile의 dev는 빌드 주입 기본값으로 기존 관례 유지.
+- 전체 Go 테스트·mail race(count=2, 3.285s)·vet·build·gofmt·diff·버전 일치·작성자 검사 통과. local preflight는 upstream/push 조건만 사용자 지시와 충돌해 제외하고 원본과 같은 나머지 조건 통과. 수정본과 로그를 run 디렉터리에 보존.
+- 구현 커밋의 CI 두 작업 성공은 러너의 ci-de77d56d27ce.json에서 확인. 웹·DB·E2E 및 운영 SMTP는 로컬 재실행하지 않음. 운영 담당자의 소규모 적용, 정상 릴레이 시험 실패 시 확대 중단·v0.257.0 복귀, 다음 날 지연 문의 점검을 노트에 명시.
+- release.yml이 태그 푸시 후 이미지 빌드·GHCR 게시·tar.gz/sha256 생성·GitHub Release 생성을 모두 수행하므로 assets=[] 및 github_release=false. 원격 전송 없음. release.json과 영구 release-notes.md 저장 완료.
+- [러너 08:42] release published — v0.258.0
+- [러너 08:44] assets verified — v0.258.0 자산 2개 (이전 v0.257.0: 2)
