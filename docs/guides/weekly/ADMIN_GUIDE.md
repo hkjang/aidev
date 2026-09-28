@@ -1,6 +1,6 @@
 # Weekly 관리자 가이드
 
-- **문서 버전**: v0.310.0
+- **문서 버전**: v0.311.0
 - **대상**: 시스템 관리자, Security/DevOps 엔지니어, 데이터 보안 담당자
 - **문서 개요**: 구성 요소, 릴리즈 자산으로 설치, 환경 변수와 관리자 설정, 계정과 권한, 운영(백업·상태·업그레이드), 장애 대응, 보안. 화면을 쓰는 사람의 안내는 [사용자 가이드](USER_GUIDE.md)에 있습니다.
 
@@ -28,14 +28,14 @@
 
 ## 2. 설치
 
-GitHub Release 에서 `weekly-v0.310.0.tar.gz` 하나만 반입합니다. 자세한 검증 근거(파일 해시와 이미지 다이제스트가 왜 둘 다 필요한지)는 [README 오프라인 설치](../README.md#오프라인-설치)에 있고, 여기서는 순서대로 붙여 넣을 명령만 적습니다.
+GitHub Release 에서 `weekly-v0.311.0.tar.gz` 하나만 반입합니다. 자세한 검증 근거(파일 해시와 이미지 다이제스트가 왜 둘 다 필요한지)는 [README 오프라인 설치](../README.md#오프라인-설치)에 있고, 여기서는 순서대로 붙여 넣을 명령만 적습니다.
 
 ```bash
 # 1. 파일이 온전히 왔는지 — 릴리즈에 적힌 SHA-256 과 비교
-sha256sum weekly-v0.310.0.tar.gz
+sha256sum weekly-v0.311.0.tar.gz
 
-# 2. 이미지 적재. 같은 버전의 weekly:v0.310.0 이 생깁니다
-gzip -dc weekly-v0.310.0.tar.gz | docker load
+# 2. 이미지 적재. 같은 버전의 weekly:v0.311.0 이 생깁니다
+gzip -dc weekly-v0.311.0.tar.gz | docker load
 
 # 3. 환경 파일. deploy/.env.example 을 복사해 값을 채웁니다
 cp deploy/.env.example deploy/.env
@@ -80,7 +80,7 @@ Kubernetes 는 `deploy/kubernetes.yaml`을 씁니다. `strategy: Recreate`와 `s
 | `WEEKLY_ENCRYPTION_KEY` | 없음 (볼륨의 `instance.key` 로 대체) | 강력 권장 | 관리자 화면에서 입력한 OIDC Client Secret·AI API Key·Confluence 비밀번호·ITSM 토큰·SMTP 비밀번호를 보호하는 마스터 키. `openssl rand -base64 32` 로 한 번 만들고 업그레이드마다 같은 값을 유지합니다. 비우면 키가 상태 볼륨에만 저장되는 하위 호환 모드이며 기동 로그가 그 사실을 적습니다 |
 | `WEEKLY_ALLOW_SECRET_RESET` | `false` | 선택 | 비밀 설정을 복호화할 수 없는 상태에서 기동을 강행하고 모두 다시 입력하기로 했을 때만 `true`. 기존 암호문은 지우지 않고 화면에 `다시 입력 필요`로 표시합니다 |
 
-Compose 파일은 `WEEKLY_VERSION`(이미지 태그, 기본 `0.310.0`)도 읽습니다. 이것은 프로세스가 아니라 `deploy/compose.yaml`의 변수입니다.
+Compose 파일은 `WEEKLY_VERSION`(이미지 태그, 기본 `0.311.0`)도 읽습니다. 이것은 프로세스가 아니라 `deploy/compose.yaml`의 변수입니다.
 
 ### 3.2 관리자 화면의 서비스 설정
 
@@ -113,13 +113,17 @@ Compose 파일은 `WEEKLY_VERSION`(이미지 태그, 기본 `0.310.0`)도 읽습
 2. Keycloak 클라이언트의 Valid Redirect URI 에 `https://<weekly 주소>/api/v1/auth/oidc/callback` 을 등록합니다(라우트는 `GET`).
 3. Issuer URL·Client ID·Client Secret 을 넣고, 그룹 Claim 과 `관리자 그룹`을 지정하면 그 그룹의 사용자가 자동으로 ADMIN 이 됩니다. `사용자 자동 등록`을 켜면 처음 로그인하는 사용자가 계정을 얻습니다.
 4. `OIDC 연결 시험` → `설정 저장` → `Keycloak OIDC 사용`을 켭니다.
-5. 이미 Keycloak 에 로그인한 사람이 로그인 화면 없이 바로 들어오게 하려면 `Keycloak 세션 자동 로그인 (prompt=none)` 을 켭니다. **기본값은 꺼짐**이며, 꺼진 설치에서는 아래 자동 확인이 일어나지 않고 로그인 화면의 `Keycloak SSO로 로그인` 버튼만 남습니다.
+5. 이미 Keycloak 에 로그인한 사람이 로그인 화면 없이 바로 들어오게 하려면 `Keycloak 세션 자동 로그인 (prompt=none)` 을 켭니다. **기본값은 꺼짐**이며, 꺼진 설치에서는 아래 자동 확인이 일어나지 않고 로그인 화면의 `조직 계정으로 로그인` 버튼만 남습니다.
+
+OIDC 를 켜면 로그인 화면은 **`조직 계정으로 로그인` 을 주 버튼**으로 두고, 아이디·비밀번호는 `아이디·비밀번호로 로그인` 을 펼쳐야 보입니다. 로컬 계정은 사라지지 않습니다 — SSO 가 없는 계정과 Keycloak 이 멈췄을 때의 복구 경로입니다. 로컬 로그인을 아예 끄려면 `로컬 로그인 사용` 을 끕니다.
 
 #### 자동 로그인의 동작
 
 자동 로그인을 켠 배포에서 Weekly 세션이 없는 브라우저가 앱을 처음 열면 Authorization Code + PKCE 흐름을 `prompt=none`으로 한 번 시작합니다. Keycloak SSO 세션이 있으면 로그인 화면 없이 원래 화면으로 돌아오고, `login_required`·`interaction_required`·`consent_required`·`account_selection_required`이면 일반 로그인 화면으로 돌아옵니다. state·nonce·PKCE 와 10분 만료를 검증하며 ID·Access·Refresh Token 은 DB 에 보관하지 않습니다. 이 자동 확인은 앱 최초 세션 조회가 401 인 경우에만 하므로 PostgreSQL 장애를 로그아웃으로 오인해 Keycloak 으로 보내지 않고, 작성 중 세션 만료 시에는 탭을 이동하지 않습니다. Weekly 의 `로그아웃`은 Keycloak Realm 로그아웃을 호출하지 않고 현재 탭(`sessionStorage`)의 자동 확인만 억제합니다.
 
 무한 루프를 막는 장치는 세 겹입니다. (1) 시도했다는 표시를 탭의 `sessionStorage` 에 남겨 한 탭 세션에 한 번만 시도합니다 — 새 탭은 다시 시도하고, 거절당한 뒤 새로고침하면 다시 시도하지 않습니다. (2) 스스로 로그아웃한 탭은 억제 표시를 남기고, 다시 세션이 생기면 지웁니다. (3) 콜백이 거절을 받으면 `/?oidc_auto=miss#/...` 로 돌아와 주소에도 표시를 남기므로 저장소가 지워졌더라도 반복하지 않습니다. 사생활 보호 모드처럼 `sessionStorage` 를 읽지 못하는 브라우저는 "이미 시도했다" 로 쳐서 시도하지 않습니다. 숨은 iframe 이 아니라 최상위 이동을 쓰므로 서드파티 쿠키가 막힌 브라우저에서도 동작합니다.
+
+**Keycloak 에 닿지 않는 브라우저.** 자동 로그인은 탭 전체를 Keycloak 으로 보내므로, 브라우저가 Keycloak 에 닿지 못하면(VPN 미연결, IdP 재시작 중, 그 망에서 경로 없음) 사람이 브라우저의 "사이트에 연결할 수 없음" 화면에 갇힙니다 — 실제로 그렇게 되는 것을 확인했습니다. 그래서 화면은 보내기 전에 발급자의 디스커버리 문서에 한 번 요청해(`no-cors`, 2.5초) 답이 없으면 보내지 않고, 로그인 화면에 "이 브라우저에서 Keycloak 에 연결할 수 없어 자동 로그인을 건너뛰었습니다" 를 띄운 뒤 그 탭에서는 다시 묻지 않습니다. 이 요청이 가능하도록 **자동 로그인이 켜져 있을 때만** SPA 문서(`index.html`)의 CSP `connect-src` 에 발급자의 origin 하나를 더하고, `/api/v1/auth/providers` 가 `oidcIssuer` 를 알립니다. API 와 정적 파일의 CSP 는 그대로이며, 발급자 주소는 어차피 브라우저가 이동하는 곳이라 비밀이 아닙니다.
 
 이 설정은 서버가 지킵니다. 꺼져 있으면 시작 주소에 `silent=1` 이 붙어 있어도 평범한 로그인으로 처리하고 `prompt=none` 을 보내지 않으므로, 주소를 고쳐 흐름을 바꿀 수 없습니다. `Keycloak OIDC 사용` 을 끄면 저장된 자동 로그인 값과 무관하게 꺼집니다. 깊은 링크(`#/history?report=17` 같은 SPA 경로)로 들어온 사람은 조용히 로그인한 뒤 그 자리로 돌아오며, 돌아갈 자리는 `#/` 로 시작하는 이 앱의 경로만 받습니다.
 
@@ -289,7 +293,7 @@ MCP 인가 규격은 OAuth 2.1 입니다. 이 설정을 켜면 Weekly 는 **리�
 {"level":"INFO","msg":"bootstrap administrator ensured","username":"admin"}
 {"level":"INFO","msg":"database capabilities detected","pg_trgm":true,"pgvector":false}
 {"level":"INFO","msg":"password hashing pool sized","workers":8,"reserved_mib":512,"container_limit_mib":0}
-{"level":"INFO","msg":"Weekly started","address":":8080","version":"0.310.0"}
+{"level":"INFO","msg":"Weekly started","address":":8080","version":"0.311.0"}
 ```
 
 `key_source`가 `environment`가 아니라 볼륨이면 `WEEKLY_ENCRYPTION_KEY`가 없는 하위 호환 모드입니다. `container_limit_mib`가 0 이면 메모리 한도 없이 호스트 메모리를 상속한 것이니 Compose 의 `mem_limit`를 확인하십시오.
@@ -341,7 +345,9 @@ weekly-backup.sh restore -i ARCHIVE_DIR [-d DSN] [-s STATE_DIR] [--force]
 | 첫 부팅이 Kubernetes 에서 계속 재시작 | 파드 이벤트 | `startupProbe`(5초 × 60회)가 빠졌는지 확인. 기존 데이터 위의 마이그레이션·백필은 livenessProbe 기본값보다 오래 걸립니다 |
 | 사용자에게 캡처 패널이 `파일 없음`, 로그에 `attachment files are missing` | 기동 로그의 `hint` (`확인: /var/lib/weekly 를 영속 볼륨으로 마운트했는지`) | 볼륨이 빠졌거나 바뀌었습니다. 볼륨을 복구하거나(`weekly-backup.sh restore`) 사용자에게 재업로드 안내 |
 | SSO 로그인이 전부 실패 | `서비스 설정 → 인증` 카드의 Client Secret 상태 | `복호화할 수 없음 · 다시 입력 필요`면 키가 바뀐 것입니다(위 복호화 항목). `OIDC 연결 시험`으로 Issuer·Redirect 확인 |
-| 사용자가 `Keycloak 자동 로그인을 확인하지 못했습니다`를 봄 | Keycloak 세션·클라이언트 설정 | 정상 경로일 수 있습니다(세션 없음). 반복되면 Valid Redirect URI 와 `prompt=none` 허용 여부 |
+| 사용자가 `조직 계정 세션이 없어 자동으로 로그인하지 않았습니다`를 봄 | — | 정상입니다. Keycloak 에 로그인돼 있지 않은 브라우저입니다 |
+| 사용자가 `이 브라우저에서 Keycloak 에 연결할 수 없어 자동 로그인을 건너뛰었습니다`를 봄 | 사용자 PC 에서 Keycloak 주소로의 연결(VPN·DNS·방화벽) | 서버가 아니라 **그 브라우저**가 닿지 못한 것입니다. 사용자 PC 에서 `https://<keycloak>/realms/<realm>/.well-known/openid-configuration` 이 열리는지 봅니다 |
+| 사용자가 `Keycloak 자동 로그인을 확인하지 못했습니다`를 봄 | Keycloak 클라이언트 설정 | Keycloak 이 답했지만 확인에 실패했습니다. Valid Redirect URI 와 `prompt=none` 허용 여부 |
 | 사용자가 `로그인 시도가 너무 많습니다. n분 후에 다시 시도하세요.` | `감사 로그`의 로그인 차단 이벤트 | 본인 오타면 `로그인 차단 시간(분)`만큼 기다립니다. 한 층이 통째로 잠기면 `IP당 로그인 실패 허용 횟수`가 켜져 있는지 — NAT 뒤에서는 끕니다 |
 | 제출 메일이 안 감, 사용자가 `메일 릴레이가 준비되지 않았습니다` | `주간보고 메일 발송` 카드의 현황과 `마지막 실패 사유`, `report_mail_deliveries` | `메일 발송 시험`으로 릴레이 확인. 큐에 남은 것은 릴레이가 살아나면 재시도됩니다 |
 | 첨부 없이 온 제출 메일, 본문 첫 줄에 이유 | 로그 `report mail deck too large` / `report mail deck` | 10MiB 상한을 넘었거나 렌더링 실패. 첨부 상한(`화면 캡처 첨부`)을 낮추거나 템플릿을 점검 |

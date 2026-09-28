@@ -24,7 +24,7 @@ Redis, 외부 CDN, 인터넷 연결은 필요하지 않습니다. UI, 한글 PDF
 
 ## 2. 설치
 
-릴리즈 자산 하나(`seccheck-v1.0.146.tar.gz`)로 처음부터 끝까지 올리는 순서입니다. 아래 명령은 그대로 붙여 넣을 수 있으며, 값은 예시이므로 실제 값으로 바꾸십시오.
+릴리즈 자산 하나(`seccheck-v1.0.147.tar.gz`)로 처음부터 끝까지 올리는 순서입니다. 아래 명령은 그대로 붙여 넣을 수 있으며, 값은 예시이므로 실제 값으로 바꾸십시오.
 
 ### 2-1. 요구 사항
 
@@ -39,9 +39,9 @@ Redis, 외부 CDN, 인터넷 연결은 필요하지 않습니다. UI, 한글 PDF
 ### 2-2. 이미지 적재
 
 ```bash
-sha256sum seccheck-v1.0.146.tar.gz   # 릴리즈 노트에 적힌 sha256 과 대조
-docker load -i seccheck-v1.0.146.tar.gz
-docker image inspect seccheck:v1.0.146 --format '{{index .Config.Labels "org.opencontainers.image.version"}}'
+sha256sum seccheck-v1.0.147.tar.gz   # 릴리즈 노트에 적힌 sha256 과 대조
+docker load -i seccheck-v1.0.147.tar.gz
+docker image inspect seccheck:v1.0.147 --format '{{index .Config.Labels "org.opencontainers.image.version"}}'
 ```
 
 ### 2-3. 데이터베이스 준비
@@ -60,7 +60,7 @@ CREATE EXTENSION IF NOT EXISTS pg_trgm;   -- 선택. 없으면 경고만 남기�
 ```yaml
 services:
   seccheck:
-    image: seccheck:v1.0.146
+    image: seccheck:v1.0.147
     container_name: seccheck
     restart: unless-stopped
     stop_grace_period: 25s
@@ -186,7 +186,7 @@ SECCHECK_SELFTEST_PASSWORD='<관리자 비밀번호>' docker compose exec secche
 
 | 화면 이름 | 키 | 기본값 | 설명 |
 | :--- | :--- | :--- | :--- |
-| Keycloak / OIDC SSO 활성화 | `enabled` | `false` | 켜면 로그인 화면에 `사내 SSO로 로그인` 이 생김. `issuer`·`client_id`·`redirect_url` 이 비어 있으면 저장이 거부됨(`OIDC 활성화 시 issuer, client_id, redirect_url이 필요합니다.`) |
+| Keycloak / OIDC SSO 활성화 | `enabled` | `false` | 켜면 로그인 화면의 첫 번째 방법이 `조직 계정으로 로그인` 이 되고 아이디·비밀번호 입력란은 `아이디·비밀번호로 로그인` 아래로 접힘(SSO 가 실패하면 자동으로 펼쳐짐). `issuer`·`client_id`·`redirect_url` 이 비어 있으면 저장이 거부됨(`OIDC 활성화 시 issuer, client_id, redirect_url이 필요합니다.`) |
 | Issuer URL | `issuer` | (비어 있음) | Realm 주소. `Discovery 연결 테스트` 가 여기의 `.well-known/openid-configuration` 을 읽음 |
 | Client ID | `client_id` | (비어 있음) | |
 | Client Secret | `client_secret` | (비어 있음) | 마스터 키로 암호화 저장되며 다시 표시되지 않음 |
@@ -517,7 +517,7 @@ docker compose exec seccheck /app/seccheck verify-evidence --sample 50   # 전�
 3. 새 이미지를 적재하고 `compose.yaml` 의 `image:` 태그를 새 태그로 바꿉니다. 2-4 절에 실은 본문은 이 가이드가 쓰인 버전의 것이므로, 새 릴리즈의 가이드에 실린 본문과 달라졌는지도 함께 봅니다.
    ```bash
    docker load -i seccheck-<새 태그>.tar.gz
-   sed -i 's/seccheck:v1.0.146/seccheck:<새 태그>/' compose.yaml
+   sed -i 's/seccheck:v1.0.147/seccheck:<새 태그>/' compose.yaml
    docker compose up -d
    ```
 4. 기동 로그에서 `SecCheck started` 를 확인하고 `/ready` 가 200 인지, `시스템 정보` 의 버전과 스키마 버전이 기대와 같은지 봅니다.
