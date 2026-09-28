@@ -1,0 +1,25 @@
+feat: release igame v0.7.24
+
+Ships as a patch release the API PostgreSQL fixture isolation landed since
+v0.7.23. Each migratedPool call now applies the real embedded migrations to
+its own UUID schema and limits the startup search_path to that schema and
+the preinstalled pgcrypto namespace. A separate management pool, bounded
+setup/drop contexts and LIFO cleanup preserve sibling fixtures and the
+shared extension while retaining existing preserve behavior. Regression
+coverage checks setting independence, concurrent pool connections and
+sibling data and extension identity after cleanup. Product behavior, SQL
+migrations and game content are unchanged.
+
+Moves VERSION, the Compose image tag and the web and SDK package versions
+together as the release contract requires, updates release documentation,
+and rebuilds the two enterprise manuals for v0.7.24. The administrator
+guide examples move with them while the photographed v0.7.11 provenance
+and the two separately published guide PDFs remain intact. RealmGuard
+content 0.3.1 and Defense Series content 0.4.0 are retained.
+
+Validated with make check-contract, make lint, make test, make test-race,
+make build, full PostgreSQL 17 make test-db, the fixture isolation test
+under -race -count=3, both npm dependency audits, govulncheck v1.6.0 and
+make docs-pdf. No test schemas remain and pgcrypto is preserved. The
+tag-triggered workflow builds and verifies the offline image, SBOM and
+browser gates before publication.

@@ -20,3 +20,6 @@
 - 일반 CommonMark·기존 Notes/제목 오인·엄격한 예산 상한은 잔여 범위. 전체/race 및 외부 DB/Vault·Docker·브라우저·업그레이드·govulncheck는 이번 리뷰에서 미검증; CI/릴리즈 성공으로 해석 금지.
 - [러너 07:10] review approved — 리뷰 승인 (risk=low)
 - [러너 07:10] pr created — https://github.com/hkjang/git-ctx/pull/42
+- [러너 07:18] ci passed — 검사 5개 모두 success
+- [러너 07:18] merge done — ded2934
+- [러너 07:19] release missing — 릴리즈 결과 없음/손상: missing
