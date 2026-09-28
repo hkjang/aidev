@@ -28,3 +28,7 @@
 - 다음 회차 후보: `PARAM_LIMIT` 를 public 으로 올려 `"_limit"` 리터럴 4개 사용처를 모으기(기본값이 50/20/5000/5000 로 갈라져 있다).
 - [러너 15:28] review approved — 리뷰 승인 (risk=low)
 - [러너 15:28] pr created — https://github.com/hkjang/nexabuilder/pull/35
+- [러너 15:37] ci passed — 검사 2개 모두 success
+- [러너 15:37] merge done — ff96bd8
+- [러너 15:57] release published — v1.26.0
+- [러너 15:58] assets verified — v1.26.0 자산 1개 (이전 v1.25.0: 1)

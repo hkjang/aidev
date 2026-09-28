@@ -85,3 +85,4 @@
 - 보류 아이디어: 런타임 대체 뷰 7종이 fetch 실패를 `catch (e)` 로 삼켜 "데이터 없음" 으로 보여준다 — 템플릿 7개라 2~3개씩 쪼개야 함(3/2/M) / 5000행을 넘는 목록의 내보내기가 잘린 사실을 알리지 않는다 — 이번 회차에 헤더 옵션을 일부러 뺐다, 스트리밍은 별도 L(3/2/M) / `/api/v1/data/lists/{id}`·`/builder/lists/{id}/data` 에 ScreenPermissionService 게이트 없음 — 보호 구역이라 사람이 있는 회차(3/4/M) / `DataAdapterService.executeSqlBacked` 가 전체 행을 메모리로 읽고 자바에서 페이징(3/3/M) / `queryList` 의 sqlId 백엔드 목록에도 `requireLiveList` 회귀 테스트, 프로덕션 0줄(2/1/S)
 - 과제서: 채택 — 진단(`readQueryParams` 가 `_limit` 을 넣지 않아 `listData` fallback 으로 떨어짐)과 수용 기준 4건이 실행으로 전부 확인됐고, 지정한 파일 1개·`MAX_FEED_ROWS` 직접 참조·`_offset` 불간섭·`seed` 오버로드 위임·`@DirtiesContext` 금지를 그대로 따랐다. 과제서가 "기존 5건" 이라 한 기존 테스트는 실제로 6건이고, 수용 기준 3(`?_limit=3`)은 수정 전에도 초록이라 회귀 가드로 남겼다.
 
+- 릴리즈: v1.26.0 (2026-09-28, run 2026-09-28-145918-nexabuilder-improve)
