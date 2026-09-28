@@ -26,3 +26,7 @@
 - 못 본 것: stage `realm`·`revocation_state`·`session` 이 실제로 **오르는** 것(테스트는 0 으로만 단언). 라벨 문자열은 눈으로 대조했다.
 - 승인 뒤 남는 우려: 지표가 인스턴스 단위 누적이라 이 테스트의 "정확히 1" 이 요청 순서에 의존한다 — 이 파일에 userinfo 요청을 앞에 끼우는 다음 회차가 알아야 한다.
 - 작업 트리에 커밋되지 않은 `webui/dist/index.html` asset-hash churn 이 남아 있다(머지에는 무영향, 릴리즈 빌드 전 되돌릴 것).
+- [러너 05:12] review approved — 리뷰 승인 (risk=low)
+- [러너 05:13] pr created — https://github.com/hkjang/ReSSO/pull/33
+- [러너 05:21] ci passed — 검사 2개 모두 success
+- [러너 05:21] merge done — eb3972d

@@ -28,3 +28,7 @@
 - 보안·법무 차단 없음: 인가·세션·비밀값·마이그레이션 무관, 저장하지 않던 개인정보(소속) 수용 경로를 닫는 방향이고 revert 1줄로 복구된다.
 - [러너 05:06] review approved — 리뷰 승인 (risk=low)
 - [러너 05:06] pr created — https://github.com/hkjang/ai-admin/pull/35
+- [러너 05:14] ci passed — 검사 2개 모두 success
+- [러너 05:14] merge done — e0e1420
+- [러너 05:24] release published — v1.2.31
+- [러너 05:26] assets verified — v1.2.31 자산 2개 (이전 v1.2.30: 2)
