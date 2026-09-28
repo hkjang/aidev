@@ -242,3 +242,12 @@
 - 과제서: 차선 — 과제서가 1순위로 꼽은 podsec dedup 키(가치 2)보다, 과제서가 M 으로 미뤄 둔 타임존 결함이 가치가 높았다. 과제서의 근거(컨테이너 TZ 가 UTC 면 '22-08' 이 KST 07-17)를 코드에서 그대로 확인했고, 권고대로 플래그+UI+문서를 함께 냈다.
 
 - 릴리즈: v0.9.291 (2026-09-28, run 2026-09-28-015233-Clustara-improve)
+## 2026-09-28
+- 선택: PSS Restricted 검사에 seccompProfile 항목 추가 (가치 3 / 위험 2 / 작업량 S)
+- 결과: 성공
+- 요약: `restrictedProfileViolations`(포스처 표와 `enforce_pss_restricted` Deny 게이트 공용)가 Restricted 통제 중 runAsNonRoot·allowPrivilegeEscalation·capabilities drop ALL 만 보고 `securityContext.seccompProfile` 을 전혀 읽지 않아, seccomp 미설정·`Unconfined` 워크로드가 세 통제를 다 만족하면 `Level="restricted"` 로 분류됐다. 그 등급은 `admin_ui.go:13460` 의 `filter(p => p.level !== 'restricted')` 와 `admin_k8s_dw.go:82` 의 `if p.Level != "restricted"` 가 **행을 버리는 데** 쓰는 값이라, seccomp 을 적용하지 않은 워크로드가 화면·DW 에서 보이지 않고 Deny 게이트도 통과했다. 파드 `securityContext.seccompProfile.type` 을 `podRunAsNonRoot` 처럼 루프 밖에서 한 번 읽고, `SecurityRelevantContainers(ps)` 루프 안에서 컨테이너가 선언한 type 이 있으면 그것을, 없으면 파드 값을 유효 타입으로 삼아 `RuntimeDefault`/`Localhost` 가 아니면 위반을 추가한다(`localhostProfile` 값 자체는 미검사). 검증: 신규 테스트 2개(표 기반 8케이스 + 컨테이너별 귀속, `AnalyzeSecurity`+`deployWithPodSpec`+`evalRule` 로 실제 `store.K8sInventoryItem` 사용 — 손으로 만든 대역 없음)를 먼저 붙여 빨강을 확인했고, 수정 후 `go test ./internal/analyzer -count=1` → gofmt(손댄 4개 파일, 출력 없음) → `go build ./...` → `go vet ./...` → `go test ./... -count=1`(20 패키지 전부 ok, proxy 73.5s) 통과. 인과 확인으로 seccomp 블록만 다시 빼서 같은 테스트가 다시 빨강이 되는 것을 보고 복원했다. 프로덕션 파일 1개(`internal/analyzer/security.go`), 1bfa039 로 커밋. seccomp 미설정 워크로드가 새로 Deny 대상이 되고 포스처 점수가 내려가는 것(Baseline*2)은 의도된 신호 변화이며 커밋 메시지에 명시했다. 알림은 늘지 않는다(`k8s_notify.go:271` 이 privileged 만 본다 — 전체 테스트로 확인).
+- 실패 재현: `--- FAIL: TestRestrictedProfileChecksSeccompProfile` / `security_seccomp_test.go:70: neither pod nor container declares a profile: level "restricted", want "baseline" (violations [])` (같은 실행에서 `TestSeccompViolationNamesOnlyTheOffendingContainer` 는 `security_seccomp_test.go:98: the sidecar opting out of seccomp fails Restricted` 로 실패)
+- 보류 아이디어: notify scan 의 events(500)·revisions(1000) 상한이 여전히 무보고 (3/2/S) / SEC-01 `classifyPodSecurity` 가 hostPath·hostPort·baseline 밖 capability 를 baseline 버킷에 둠 (3/3/M — 이번 변경과 같은 파일이니 연달아 하지 말 것) / notify scan 이 전 클러스터 스캔에서 2000행 예산을 공유 (3/2/M) / notify scan 의 podsec·rbac dedup 키에 Kind 없음 (2/1/S)
+- 과제서: 채택 — analyzer 에 seccomp 코드가 0건이라는 근거와 `hardenedContainer()` 에 seccompProfile 이 없다는 근거가 현 코드와 정확히 맞았고, 지정한 파일 3개에 더해 과제서가 예고한 "등급 기대값을 고정한 기존 테스트"(`security_test.go` 의 hardened fixture)만 추가로 갱신했다.
+
+- 릴리즈: v0.9.292 (2026-09-28, run 2026-09-28-224230-Clustara-improve)
