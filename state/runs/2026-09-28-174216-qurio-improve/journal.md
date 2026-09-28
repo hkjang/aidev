@@ -21,3 +21,4 @@
 - 릴리즈 노트: 사용자 영향은 "점 표기 좌변 뒤 함수 호출이 이제 허용목록을 거친다" 뿐. 기존에 통과했던 `a.b = 사용자함수(...)` 쿼리는 이제 차단되니 릴리즈 노트에 명시할 것.
 - [러너 18:14] review approved — 리뷰 승인 (risk=low)
 - [러너 18:14] pr created — https://github.com/hkjang/qurio/pull/27
+- [러너 18:33] ci timeout — 제한 시간 안에 CI 완료를 확인하지 못함
