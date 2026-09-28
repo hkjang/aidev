@@ -1,7 +1,7 @@
 ---
 title: "jasql_semantic — 자율 개선 이력"
 description: "jasql_semantic: 자율 개선 회차 2회, 릴리즈 0건. 최근 릴리즈 없음."
-last_modified_at: 2026-09-29 05:42:11 +0900
+last_modified_at: 2026-09-29 06:18:59 +0900
 ---
 {% raw %}
 <script type="application/ld+json">
@@ -18,7 +18,7 @@ last_modified_at: 2026-09-29 05:42:11 +0900
   "name": "hkjang",
   "url": "https://github.com/hkjang"
  },
- "dateModified": "2026-09-29T05:42:11+09:00"
+ "dateModified": "2026-09-29T06:18:59+09:00"
 }
 </script>
 

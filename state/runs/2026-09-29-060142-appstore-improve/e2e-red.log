@@ -1,0 +1,94 @@
+
+> appstore-web@2.11.9 test:e2e
+> playwright test --grep 카탈로그 보기 전환 --workers=2
+
+[WebServer] (node:1886547) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+Running 2 tests using 2 workers
+
+(node:1886574) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:1886573) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✘  1 [desktop] › e2e/core.spec.ts:744:1 › 카탈로그 보기 전환은 현재 페이지와 앱을 유지한다 (5.9s)
+  ✘  2 [mobile] › e2e/core.spec.ts:744:1 › 카탈로그 보기 전환은 현재 페이지와 앱을 유지한다 (6.0s)
+
+
+  1) [desktop] › e2e/core.spec.ts:744:1 › 카탈로그 보기 전환은 현재 페이지와 앱을 유지한다 ──────────────────────────────
+
+    Error: expect(page).toHaveURL(expected) failed
+
+    Expected pattern: /page=2/
+    Received string:  "http://127.0.0.1:4173/apps?q=Catalog&category=ai&sort=name&view=list"
+    Timeout: 5000ms
+
+    Call log:
+      - Expect "toHaveURL" with timeout 5000ms
+        13 × locator resolved to <html lang="ko" data-theme="dark">…</html>
+           - unexpected value "http://127.0.0.1:4173/apps?q=Catalog&category=ai&sort=name&view=list"
+
+
+      772 |     await button.click();
+      773 |     await expect(button).toHaveAttribute("aria-pressed", "true");
+    > 774 |     await expect(page).toHaveURL(/page=2/);
+          |                        ^
+      775 |     await expect(lastApp).toBeVisible();
+      776 |     await expect(page.getByText("2 페이지", { exact: true })).toBeVisible();
+      777 |     expect(requests).toHaveLength(1);
+        at /home/hkjang/.cache/auto-improve-wt/appstore/web/e2e/core.spec.ts:774:24
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/core-카탈로그-보기-전환은-현재-페이지와-앱을-유지한다-desktop/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/core-카탈로그-보기-전환은-현재-페이지와-앱을-유지한다-desktop/error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/core-카탈로그-보기-전환은-현재-페이지와-앱을-유지한다-desktop/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/core-카탈로그-보기-전환은-현재-페이지와-앱을-유지한다-desktop/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  2) [mobile] › e2e/core.spec.ts:744:1 › 카탈로그 보기 전환은 현재 페이지와 앱을 유지한다 ───────────────────────────────
+
+    Error: expect(page).toHaveURL(expected) failed
+
+    Expected pattern: /page=2/
+    Received string:  "http://127.0.0.1:4173/apps?q=Catalog&category=ai&sort=name&view=list"
+    Timeout: 5000ms
+
+    Call log:
+      - Expect "toHaveURL" with timeout 5000ms
+        13 × locator resolved to <html lang="ko" data-theme="dark">…</html>
+           - unexpected value "http://127.0.0.1:4173/apps?q=Catalog&category=ai&sort=name&view=list"
+
+
+      772 |     await button.click();
+      773 |     await expect(button).toHaveAttribute("aria-pressed", "true");
+    > 774 |     await expect(page).toHaveURL(/page=2/);
+          |                        ^
+      775 |     await expect(lastApp).toBeVisible();
+      776 |     await expect(page.getByText("2 페이지", { exact: true })).toBeVisible();
+      777 |     expect(requests).toHaveLength(1);
+        at /home/hkjang/.cache/auto-improve-wt/appstore/web/e2e/core.spec.ts:774:24
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/core-카탈로그-보기-전환은-현재-페이지와-앱을-유지한다-mobile/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/core-카탈로그-보기-전환은-현재-페이지와-앱을-유지한다-mobile/error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/core-카탈로그-보기-전환은-현재-페이지와-앱을-유지한다-mobile/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/core-카탈로그-보기-전환은-현재-페이지와-앱을-유지한다-mobile/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  2 failed
+    [desktop] › e2e/core.spec.ts:744:1 › 카탈로그 보기 전환은 현재 페이지와 앱을 유지한다 ───────────────────────────────
+    [mobile] › e2e/core.spec.ts:744:1 › 카탈로그 보기 전환은 현재 페이지와 앱을 유지한다 ────────────────────────────────

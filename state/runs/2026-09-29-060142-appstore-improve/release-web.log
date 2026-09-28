@@ -1,0 +1,2203 @@
+
+> appstore-web@2.11.10 lint
+> eslint . --max-warnings 0
+
+
+> appstore-web@2.11.10 format:check
+> prettier --check .
+
+Checking formatting...
+All matched files use Prettier code style!
+
+> appstore-web@2.11.10 test
+> vitest run
+
+
+ RUN  v3.2.7 /home/hkjang/.cache/auto-improve-wt/appstore-release/web
+
+ ✓ src/lib/utils.test.ts (5 tests) 4ms
+ ✓ src/features/home/hero-copy.test.ts (3 tests) 3ms
+ ✓ src/features/auth/silent-sso.test.ts (9 tests) 10ms
+ ✓ src/lib/api.test.ts (6 tests) 13ms
+ ✓ src/app/providers.test.tsx (1 test) 81ms
+ ✓ src/components/app-shell.test.tsx (4 tests) 48ms
+ ✓ src/features/apps/app-card.test.tsx (3 tests) 100ms
+ ✓ src/components/ui.test.tsx (3 tests) 197ms
+ ✓ src/features/apps/guide-documents.test.tsx (6 tests) 215ms
+ ✓ src/pages/admin-pages.test.tsx (3 tests) 175ms
+ ✓ src/pages/auth-pages.test.tsx (9 tests) 292ms
+ ✓ src/features/navigation/command-palette.test.tsx (5 tests) 314ms
+ ✓ src/pages/review-pages.test.tsx (4 tests) 411ms
+ ✓ src/features/security-check/security-check.test.tsx (4 tests) 491ms
+ ✓ src/pages/personal-pages.test.tsx (16 tests) 568ms
+ ✓ src/pages/public-pages.test.tsx (11 tests) 748ms
+
+ Test Files  16 passed (16)
+      Tests  92 passed (92)
+   Start at  06:18:59
+   Duration  1.87s (transform 1.26s, setup 1.90s, collect 4.57s, tests 3.67s, environment 4.97s, prepare 1.32s)
+
+
+> appstore-web@2.11.10 build
+> tsc -b && vite build
+
+vite v7.3.6 building client environment for production...
+transforming...
+✓ 1757 modules transformed.
+rendering chunks...
+computing gzip size...
+dist/index.html                                   0.58 kB │ gzip:   0.40 kB
+dist/assets/Pretendard-Regular-DduNsf_8.woff2   630.02 kB
+dist/assets/Pretendard-Medium-CcMLxVMi.woff2    640.52 kB
+dist/assets/Pretendard-SemiBold-D66dyVQg.woff2  649.23 kB
+dist/assets/Pretendard-Bold-CRkDENDk.woff2      655.32 kB
+dist/assets/index-r3BzTPyz.css                   38.36 kB │ gzip:   8.84 kB
+dist/assets/index-5Wf6baQD.js                   482.51 kB │ gzip: 145.26 kB
+✓ built in 2.10s
+Offline frontend asset check passed
+Environment contract verified: exactly four application settings
+GitHub Pages documentation check passed
+
+> appstore-web@2.11.10 test:e2e
+> playwright test
+
+[WebServer] (node:1926560) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+Running 82 tests using 4 workers
+
+(node:1926603) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:1926604) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:1926615) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:1926606) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✘   2 [desktop] › e2e/core.spec.ts:5:1 › 공개 탐색과 URL 검색 상태는 새로고침 후에도 유지된다 (1ms)
+  ✘   1 [desktop] › e2e/core.spec.ts:43:1 › 관리자 사용자 목록은 가상화되고 route refresh를 견딘다 (1ms)
+  ✘   4 [desktop] › e2e/core.spec.ts:20:1 › 비로그인 등록 접근은 원래 URL을 보존한 로그인 화면으로 이동한다 (1ms)
+  ✘   3 [desktop] › e2e/core.spec.ts:32:1 › 일반 사용자는 관리자 화면에서 403 상태를 본다 (1ms)
+(node:1926666) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:1926673) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:1926665) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:1926679) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✘   5 [desktop] › e2e/core.spec.ts:56:1 › AI는 256K 설정과 SSE token streaming을 처리한다 (1ms)
+  ✘   8 [desktop] › e2e/core.spec.ts:90:1 › light/dark 테마 선택은 새로고침 후 유지된다 (1ms)
+  ✘   6 [desktop] › e2e/core.spec.ts:102:1 › 모바일 메뉴는 키보드와 명시적 버튼으로 접근 가능하다 (2ms)
+  ✘   7 [desktop] › e2e/core.spec.ts:70:1 › 관리자는 Key Permission과 Template을 편집할 수 있다 (2ms)
+(node:1926738) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:1926736) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:1926739) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:1926755) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✘  10 [desktop] › e2e/core.spec.ts:137:1 › SSO 연결 테스트는 discovery endpoint를 표시한다 (1ms)
+  ✘   9 [desktop] › e2e/core.spec.ts:116:1 › 관리자는 앱 상세를 수정하고 삭제 확인 후 목록으로 돌아온다 (1ms)
+  ✘  11 [desktop] › e2e/core.spec.ts:150:1 › 스토어 메뉴는 Apps와 MCP Apps를 동시에 선택하지 않는다 (1ms)
+  ✘  12 [desktop] › e2e/core.spec.ts:172:3 › SSO 전용 설치에서는 사용 가능한 로그인 방식만 표시한다 (1ms)
+(node:1926807) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:1926808) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:1926821) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:1926819) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✘  13 [desktop] › e2e/core.spec.ts:172:3 › Bootstrap 전용 설치에서는 사용 가능한 로그인 방식만 표시한다 (1ms)
+  ✘  14 [desktop] › e2e/core.spec.ts:215:1 › SSO를 설정해도 복구용 관리자 로그인을 계속 사용할 수 있다 (1ms)
+  ✘  15 [desktop] › e2e/core.spec.ts:253:1 › 관리자는 스토어 목록과 상세에서 관리 설정으로 바로 이동한다 (1ms)
+  ✘  16 [desktop] › e2e/core.spec.ts:237:1 › 거절된 silent SSO 뒤 로그인 화면은 이유를 알리고 SSO 링크는 그대로다 (1ms)
+(node:1926865) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:1926866) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:1926883) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:1926877) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✘  17 [desktop] › e2e/core.spec.ts:285:1 › 관리자는 앱 관리에서 새 앱을 등록한다 (1ms)
+  ✘  20 [desktop] › e2e/core.spec.ts:331:1 › 빠른 이동 팔레트는 esc로 닫히고 최근 항목을 기억한다 (1ms)
+  ✘  19 [desktop] › e2e/core.spec.ts:304:1 › 빠른 이동 팔레트로 메뉴와 앱으로 이동한다 (1ms)
+  ✘  18 [desktop] › e2e/core.spec.ts:271:1 › 일반 사용자에게는 관리 설정 바로가기가 보이지 않는다 (1ms)
+(node:1926926) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:1926932) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:1926924) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:1926938) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✘  22 [desktop] › e2e/core.spec.ts:397:1 › 첫 화면 배너는 관리자가 저장한 문구를 사용한다 (1ms)
+  ✘  21 [desktop] › e2e/core.spec.ts:350:1 › 관리자는 로고와 파비콘을 업로드하고 주소로 가져온다 (1ms)
+  ✘  23 [desktop] › e2e/core.spec.ts:389:1 › 앱 관리 목록에서 서비스 주소로 바로 이동한다 (1ms)
+  ✘  24 [desktop] › e2e/core.spec.ts:421:1 › 추천 진열은 최신순이 아니라 관리자가 정한 우선순위를 따른다 (1ms)
+(node:1926984) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:1926991) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:1926985) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:1926997) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✘  25 [desktop] › e2e/core.spec.ts:461:1 › 가이드 문서는 비로그인 방문자도 앱 상세에서 내려받는다 (1ms)
+  ✘  27 [desktop] › e2e/core.spec.ts:433:1 › 관리자는 앱 관리에서 추천 우선순위를 지정하거나 지운다 (1ms)
+  ✘  26 [desktop] › e2e/core.spec.ts:477:1 › 소유자는 앱 수정 화면에서 가이드 문서를 첨부하고 삭제를 예약한다 (1ms)
+  ✘  28 [desktop] › e2e/core.spec.ts:498:1 › 앱 카드는 이름 밖을 눌러도 앱 상세로 이동한다 (1ms)
+(node:1927049) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:1927048) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:1927055) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:1927069) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✘  30 [desktop] › e2e/core.spec.ts:556:1 › 보안 심의를 마쳐야 앱을 제출할 수 있다 (1ms)
+  ✘  29 [desktop] › e2e/core.spec.ts:541:1 › 관리자의 앱 카드는 자세히 글자 없이 아이콘만 보여 준다 (1ms)
+  ✘  31 [desktop] › e2e/core.spec.ts:509:1 › 게시되지 않은 내 앱의 카드는 수정 화면으로 열린다 (1ms)
+  ✘  32 [desktop] › e2e/core.spec.ts:570:1 › 관리자는 SecCheck 연동을 설정하고 연결을 확인한다 (1ms)
+(node:1927098) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:1927104) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:1927105) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:1927125) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✘  33 [desktop] › e2e/core.spec.ts:661:1 › 카탈로그에서 즐겨찾기를 눌러도 목록을 다시 받아 오지 않는다 (1ms)
+  ✘  34 [desktop] › e2e/core.spec.ts:585:1 › 검토자는 앱 내용과 이전 검토를 보고 의견과 함께 결정한다 (1ms)
+  ✘  35 [desktop] › e2e/core.spec.ts:612:1 › 공개 앱 즐겨찾기는 소유자와 공개 목록에서 추가하고 즐겨찾기에서 해제한다 (1ms)
+  ✘  36 [desktop] › e2e/core.spec.ts:690:1 › 자동 로그인은 세션이 없을 때 조용히 한 번만 확인한다 (1ms)
+(node:1927161) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:1927160) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:1927173) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:1927180) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✘  37 [desktop] › e2e/visual.spec.ts:123:1 › 공개 주요 화면 캡처 (1ms)
+  ✘  39 [desktop] › e2e/core.spec.ts:743:1 › 카탈로그 보기 전환은 현재 페이지와 앱을 유지한다 (1ms)
+  ✘  38 [desktop] › e2e/core.spec.ts:710:1 › 로그아웃한 뒤 새 탭에서 자동 로그인이 다시 밀어 넣지 않는다 (1ms)
+  ✘  40 [desktop] › e2e/visual.spec.ts:154:1 › 개인화·검토 주요 화면 캡처 (1ms)
+(node:1927222) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:1927225) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:1927223) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:1927240) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✘  41 [desktop] › e2e/visual.spec.ts:159:1 › 관리자 전체 주요 화면 캡처 (1ms)
+  ✘  42 [mobile] › e2e/core.spec.ts:5:1 › 공개 탐색과 URL 검색 상태는 새로고침 후에도 유지된다 (1ms)
+  ✘  43 [mobile] › e2e/core.spec.ts:20:1 › 비로그인 등록 접근은 원래 URL을 보존한 로그인 화면으로 이동한다 (1ms)
+  ✘  44 [mobile] › e2e/core.spec.ts:32:1 › 일반 사용자는 관리자 화면에서 403 상태를 본다 (1ms)
+(node:1927276) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:1927277) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:1927270) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:1927283) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✘  45 [mobile] › e2e/core.spec.ts:56:1 › AI는 256K 설정과 SSE token streaming을 처리한다 (1ms)
+  ✘  46 [mobile] › e2e/core.spec.ts:70:1 › 관리자는 Key Permission과 Template을 편집할 수 있다 (1ms)
+  ✘  47 [mobile] › e2e/core.spec.ts:90:1 › light/dark 테마 선택은 새로고침 후 유지된다 (1ms)
+  ✘  48 [mobile] › e2e/core.spec.ts:43:1 › 관리자 사용자 목록은 가상화되고 route refresh를 견딘다 (1ms)
+(node:1927331) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:1927346) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:1927332) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:1927338) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✘  49 [mobile] › e2e/core.spec.ts:150:1 › 스토어 메뉴는 Apps와 MCP Apps를 동시에 선택하지 않는다 (1ms)
+  ✘  50 [mobile] › e2e/core.spec.ts:102:1 › 모바일 메뉴는 키보드와 명시적 버튼으로 접근 가능하다 (1ms)
+  ✘  51 [mobile] › e2e/core.spec.ts:116:1 › 관리자는 앱 상세를 수정하고 삭제 확인 후 목록으로 돌아온다 (1ms)
+  ✘  52 [mobile] › e2e/core.spec.ts:137:1 › SSO 연결 테스트는 discovery endpoint를 표시한다 (1ms)
+(node:1927395) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:1927394) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:1927405) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:1927401) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✘  53 [mobile] › e2e/core.spec.ts:172:3 › Bootstrap 전용 설치에서는 사용 가능한 로그인 방식만 표시한다 (1ms)
+  ✘  55 [mobile] › e2e/core.spec.ts:237:1 › 거절된 silent SSO 뒤 로그인 화면은 이유를 알리고 SSO 링크는 그대로다 (1ms)
+  ✘  54 [mobile] › e2e/core.spec.ts:215:1 › SSO를 설정해도 복구용 관리자 로그인을 계속 사용할 수 있다 (1ms)
+  ✘  56 [mobile] › e2e/core.spec.ts:172:3 › SSO 전용 설치에서는 사용 가능한 로그인 방식만 표시한다 (1ms)
+(node:1927457) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:1927471) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:1927464) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:1927470) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✘  57 [mobile] › e2e/core.spec.ts:253:1 › 관리자는 스토어 목록과 상세에서 관리 설정으로 바로 이동한다 (1ms)
+  ✘  59 [mobile] › e2e/core.spec.ts:304:1 › 빠른 이동 팔레트로 메뉴와 앱으로 이동한다 (1ms)
+  ✘  58 [mobile] › e2e/core.spec.ts:285:1 › 관리자는 앱 관리에서 새 앱을 등록한다 (1ms)
+  ✘  60 [mobile] › e2e/core.spec.ts:271:1 › 일반 사용자에게는 관리 설정 바로가기가 보이지 않는다 (1ms)
+(node:1927518) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:1927525) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:1927531) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:1927532) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✘  61 [mobile] › e2e/core.spec.ts:331:1 › 빠른 이동 팔레트는 esc로 닫히고 최근 항목을 기억한다 (1ms)
+  ✘  62 [mobile] › e2e/core.spec.ts:350:1 › 관리자는 로고와 파비콘을 업로드하고 주소로 가져온다 (1ms)
+  ✘  64 [mobile] › e2e/core.spec.ts:389:1 › 앱 관리 목록에서 서비스 주소로 바로 이동한다 (1ms)
+  ✘  63 [mobile] › e2e/core.spec.ts:397:1 › 첫 화면 배너는 관리자가 저장한 문구를 사용한다 (1ms)
+(node:1927583) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:1927596) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:1927589) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:1927597) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✘  65 [mobile] › e2e/core.spec.ts:421:1 › 추천 진열은 최신순이 아니라 관리자가 정한 우선순위를 따른다 (1ms)
+  ✘  66 [mobile] › e2e/core.spec.ts:461:1 › 가이드 문서는 비로그인 방문자도 앱 상세에서 내려받는다 (1ms)
+  ✘  68 [mobile] › e2e/core.spec.ts:433:1 › 관리자는 앱 관리에서 추천 우선순위를 지정하거나 지운다 (1ms)
+  ✘  67 [mobile] › e2e/core.spec.ts:477:1 › 소유자는 앱 수정 화면에서 가이드 문서를 첨부하고 삭제를 예약한다 (1ms)
+(node:1927632) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:1927640) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:1927639) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:1927646) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✘  69 [mobile] › e2e/core.spec.ts:498:1 › 앱 카드는 이름 밖을 눌러도 앱 상세로 이동한다 (1ms)
+  ✘  70 [mobile] › e2e/core.spec.ts:509:1 › 게시되지 않은 내 앱의 카드는 수정 화면으로 열린다 (1ms)
+  ✘  72 [mobile] › e2e/core.spec.ts:541:1 › 관리자의 앱 카드는 자세히 글자 없이 아이콘만 보여 준다 (1ms)
+  ✘  71 [mobile] › e2e/core.spec.ts:556:1 › 보안 심의를 마쳐야 앱을 제출할 수 있다 (1ms)
+(node:1927693) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:1927699) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:1927707) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:1927700) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✘  73 [mobile] › e2e/core.spec.ts:570:1 › 관리자는 SecCheck 연동을 설정하고 연결을 확인한다 (1ms)
+  ✘  74 [mobile] › e2e/core.spec.ts:612:1 › 공개 앱 즐겨찾기는 소유자와 공개 목록에서 추가하고 즐겨찾기에서 해제한다 (1ms)
+  ✘  75 [mobile] › e2e/core.spec.ts:661:1 › 카탈로그에서 즐겨찾기를 눌러도 목록을 다시 받아 오지 않는다 (1ms)
+  ✘  76 [mobile] › e2e/core.spec.ts:585:1 › 검토자는 앱 내용과 이전 검토를 보고 의견과 함께 결정한다 (1ms)
+(node:1927757) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:1927758) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:1927768) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:1927765) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✘  77 [mobile] › e2e/visual.spec.ts:123:1 › 공개 주요 화면 캡처 (1ms)
+  ✘  78 [mobile] › e2e/core.spec.ts:690:1 › 자동 로그인은 세션이 없을 때 조용히 한 번만 확인한다 (1ms)
+  ✘  79 [mobile] › e2e/core.spec.ts:710:1 › 로그아웃한 뒤 새 탭에서 자동 로그인이 다시 밀어 넣지 않는다 (1ms)
+  ✘  80 [mobile] › e2e/core.spec.ts:743:1 › 카탈로그 보기 전환은 현재 페이지와 앱을 유지한다 (1ms)
+(node:1927807) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:1927806) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✘  82 [mobile] › e2e/visual.spec.ts:159:1 › 관리자 전체 주요 화면 캡처 (1ms)
+  ✘  81 [mobile] › e2e/visual.spec.ts:154:1 › 개인화·검토 주요 화면 캡처 (1ms)
+
+
+  1) [desktop] › e2e/core.spec.ts:5:1 › 공개 탐색과 URL 검색 상태는 새로고침 후에도 유지된다 ────────────────────────────
+
+    Error: browserType.launch: Executable doesn't exist at /mnt/c/Users/USER/projects/aidev/state/runs/2026-09-29-060142-appstore-improve/home/.cache/ms-playwright/chromium_headless_shell-1234/chrome-headless-shell-linux64/chrome-headless-shell
+    ╔════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright was just installed or updated.       ║
+    ║ Please run the following command to download new browsers: ║
+    ║                                                            ║
+    ║     npx playwright install                                 ║
+    ║                                                            ║
+    ║ <3 Playwright Team                                         ║
+    ╚════════════════════════════════════════════════════════════╝
+
+    Error Context: test-results/core-공개-탐색과-URL-검색-상태는-새로고침-후에도-유지된다-desktop/error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/core-공개-탐색과-URL-검색-상태는-새로고침-후에도-유지된다-desktop/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/core-공개-탐색과-URL-검색-상태는-새로고침-후에도-유지된다-desktop/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  2) [desktop] › e2e/core.spec.ts:20:1 › 비로그인 등록 접근은 원래 URL을 보존한 로그인 화면으로 이동한다 ─────────────────────
+
+    Error: browserType.launch: Executable doesn't exist at /mnt/c/Users/USER/projects/aidev/state/runs/2026-09-29-060142-appstore-improve/home/.cache/ms-playwright/chromium_headless_shell-1234/chrome-headless-shell-linux64/chrome-headless-shell
+    ╔════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright was just installed or updated.       ║
+    ║ Please run the following command to download new browsers: ║
+    ║                                                            ║
+    ║     npx playwright install                                 ║
+    ║                                                            ║
+    ║ <3 Playwright Team                                         ║
+    ╚════════════════════════════════════════════════════════════╝
+
+    Error Context: test-results/core-비로그인-등록-접근은-원래-URL을-보존한-로그인-화면으로-이동한다-desktop/error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/core-비로그인-등록-접근은-원래-URL을-보존한-로그인-화면으로-이동한다-desktop/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/core-비로그인-등록-접근은-원래-URL을-보존한-로그인-화면으로-이동한다-desktop/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  3) [desktop] › e2e/core.spec.ts:32:1 › 일반 사용자는 관리자 화면에서 403 상태를 본다 ───────────────────────────────
+
+    Error: browserType.launch: Executable doesn't exist at /mnt/c/Users/USER/projects/aidev/state/runs/2026-09-29-060142-appstore-improve/home/.cache/ms-playwright/chromium_headless_shell-1234/chrome-headless-shell-linux64/chrome-headless-shell
+    ╔════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright was just installed or updated.       ║
+    ║ Please run the following command to download new browsers: ║
+    ║                                                            ║
+    ║     npx playwright install                                 ║
+    ║                                                            ║
+    ║ <3 Playwright Team                                         ║
+    ╚════════════════════════════════════════════════════════════╝
+
+    Error Context: test-results/core-일반-사용자는-관리자-화면에서-403-상태를-본다-desktop/error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/core-일반-사용자는-관리자-화면에서-403-상태를-본다-desktop/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/core-일반-사용자는-관리자-화면에서-403-상태를-본다-desktop/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  4) [desktop] › e2e/core.spec.ts:43:1 › 관리자 사용자 목록은 가상화되고 route refresh를 견딘다 ──────────────────────
+
+    Error: browserType.launch: Executable doesn't exist at /mnt/c/Users/USER/projects/aidev/state/runs/2026-09-29-060142-appstore-improve/home/.cache/ms-playwright/chromium_headless_shell-1234/chrome-headless-shell-linux64/chrome-headless-shell
+    ╔════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright was just installed or updated.       ║
+    ║ Please run the following command to download new browsers: ║
+    ║                                                            ║
+    ║     npx playwright install                                 ║
+    ║                                                            ║
+    ║ <3 Playwright Team                                         ║
+    ╚════════════════════════════════════════════════════════════╝
+
+    Error Context: test-results/core-관리자-사용자-목록은-가상화되고-route-refresh를-견딘다-desktop/error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/core-관리자-사용자-목록은-가상화되고-route-refresh를-견딘다-desktop/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/core-관리자-사용자-목록은-가상화되고-route-refresh를-견딘다-desktop/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  5) [desktop] › e2e/core.spec.ts:56:1 › AI는 256K 설정과 SSE token streaming을 처리한다 ────────────────────
+
+    Error: browserType.launch: Executable doesn't exist at /mnt/c/Users/USER/projects/aidev/state/runs/2026-09-29-060142-appstore-improve/home/.cache/ms-playwright/chromium_headless_shell-1234/chrome-headless-shell-linux64/chrome-headless-shell
+    ╔════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright was just installed or updated.       ║
+    ║ Please run the following command to download new browsers: ║
+    ║                                                            ║
+    ║     npx playwright install                                 ║
+    ║                                                            ║
+    ║ <3 Playwright Team                                         ║
+    ╚════════════════════════════════════════════════════════════╝
+
+    Error Context: test-results/core-AI는-256K-설정과-SSE-token-streaming을-처리한다-desktop/error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/core-AI는-256K-설정과-SSE-token-streaming을-처리한다-desktop/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/core-AI는-256K-설정과-SSE-token-streaming을-처리한다-desktop/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  6) [desktop] › e2e/core.spec.ts:70:1 › 관리자는 Key Permission과 Template을 편집할 수 있다 ───────────────────
+
+    Error: browserType.launch: Executable doesn't exist at /mnt/c/Users/USER/projects/aidev/state/runs/2026-09-29-060142-appstore-improve/home/.cache/ms-playwright/chromium_headless_shell-1234/chrome-headless-shell-linux64/chrome-headless-shell
+    ╔════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright was just installed or updated.       ║
+    ║ Please run the following command to download new browsers: ║
+    ║                                                            ║
+    ║     npx playwright install                                 ║
+    ║                                                            ║
+    ║ <3 Playwright Team                                         ║
+    ╚════════════════════════════════════════════════════════════╝
+
+    Error Context: test-results/core-관리자는-Key-Permission과-Template을-편집할-수-있다-desktop/error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/core-관리자는-Key-Permission과-Template을-편집할-수-있다-desktop/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/core-관리자는-Key-Permission과-Template을-편집할-수-있다-desktop/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  7) [desktop] › e2e/core.spec.ts:90:1 › light/dark 테마 선택은 새로고침 후 유지된다 ─────────────────────────────
+
+    Error: browserType.launch: Executable doesn't exist at /mnt/c/Users/USER/projects/aidev/state/runs/2026-09-29-060142-appstore-improve/home/.cache/ms-playwright/chromium_headless_shell-1234/chrome-headless-shell-linux64/chrome-headless-shell
+    ╔════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright was just installed or updated.       ║
+    ║ Please run the following command to download new browsers: ║
+    ║                                                            ║
+    ║     npx playwright install                                 ║
+    ║                                                            ║
+    ║ <3 Playwright Team                                         ║
+    ╚════════════════════════════════════════════════════════════╝
+
+    Error Context: test-results/core-light-dark-테마-선택은-새로고침-후-유지된다-desktop/error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/core-light-dark-테마-선택은-새로고침-후-유지된다-desktop/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/core-light-dark-테마-선택은-새로고침-후-유지된다-desktop/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  8) [desktop] › e2e/core.spec.ts:102:1 › 모바일 메뉴는 키보드와 명시적 버튼으로 접근 가능하다 ────────────────────────────
+
+    Error: browserType.launch: Executable doesn't exist at /mnt/c/Users/USER/projects/aidev/state/runs/2026-09-29-060142-appstore-improve/home/.cache/ms-playwright/chromium_headless_shell-1234/chrome-headless-shell-linux64/chrome-headless-shell
+    ╔════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright was just installed or updated.       ║
+    ║ Please run the following command to download new browsers: ║
+    ║                                                            ║
+    ║     npx playwright install                                 ║
+    ║                                                            ║
+    ║ <3 Playwright Team                                         ║
+    ╚════════════════════════════════════════════════════════════╝
+
+    Error Context: test-results/core-모바일-메뉴는-키보드와-명시적-버튼으로-접근-가능하다-desktop/error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/core-모바일-메뉴는-키보드와-명시적-버튼으로-접근-가능하다-desktop/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/core-모바일-메뉴는-키보드와-명시적-버튼으로-접근-가능하다-desktop/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  9) [desktop] › e2e/core.spec.ts:116:1 › 관리자는 앱 상세를 수정하고 삭제 확인 후 목록으로 돌아온다 ────────────────────────
+
+    Error: browserType.launch: Executable doesn't exist at /mnt/c/Users/USER/projects/aidev/state/runs/2026-09-29-060142-appstore-improve/home/.cache/ms-playwright/chromium_headless_shell-1234/chrome-headless-shell-linux64/chrome-headless-shell
+    ╔════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright was just installed or updated.       ║
+    ║ Please run the following command to download new browsers: ║
+    ║                                                            ║
+    ║     npx playwright install                                 ║
+    ║                                                            ║
+    ║ <3 Playwright Team                                         ║
+    ╚════════════════════════════════════════════════════════════╝
+
+    Error Context: test-results/core-관리자는-앱-상세를-수정하고-삭제-확인-후-목록으로-돌아온다-desktop/error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/core-관리자는-앱-상세를-수정하고-삭제-확인-후-목록으로-돌아온다-desktop/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/core-관리자는-앱-상세를-수정하고-삭제-확인-후-목록으로-돌아온다-desktop/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  10) [desktop] › e2e/core.spec.ts:137:1 › SSO 연결 테스트는 discovery endpoint를 표시한다 ────────────────────
+
+    Error: browserType.launch: Executable doesn't exist at /mnt/c/Users/USER/projects/aidev/state/runs/2026-09-29-060142-appstore-improve/home/.cache/ms-playwright/chromium_headless_shell-1234/chrome-headless-shell-linux64/chrome-headless-shell
+    ╔════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright was just installed or updated.       ║
+    ║ Please run the following command to download new browsers: ║
+    ║                                                            ║
+    ║     npx playwright install                                 ║
+    ║                                                            ║
+    ║ <3 Playwright Team                                         ║
+    ╚════════════════════════════════════════════════════════════╝
+
+    Error Context: test-results/core-SSO-연결-테스트는-discovery-endpoint를-표시한다-desktop/error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/core-SSO-연결-테스트는-discovery-endpoint를-표시한다-desktop/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/core-SSO-연결-테스트는-discovery-endpoint를-표시한다-desktop/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  11) [desktop] › e2e/core.spec.ts:150:1 › 스토어 메뉴는 Apps와 MCP Apps를 동시에 선택하지 않는다 ────────────────────
+
+    Error: browserType.launch: Executable doesn't exist at /mnt/c/Users/USER/projects/aidev/state/runs/2026-09-29-060142-appstore-improve/home/.cache/ms-playwright/chromium_headless_shell-1234/chrome-headless-shell-linux64/chrome-headless-shell
+    ╔════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright was just installed or updated.       ║
+    ║ Please run the following command to download new browsers: ║
+    ║                                                            ║
+    ║     npx playwright install                                 ║
+    ║                                                            ║
+    ║ <3 Playwright Team                                         ║
+    ╚════════════════════════════════════════════════════════════╝
+
+    Error Context: test-results/core-스토어-메뉴는-Apps와-MCP-Apps를-동시에-선택하지-않는다-desktop/error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/core-스토어-메뉴는-Apps와-MCP-Apps를-동시에-선택하지-않는다-desktop/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/core-스토어-메뉴는-Apps와-MCP-Apps를-동시에-선택하지-않는다-desktop/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  12) [desktop] › e2e/core.spec.ts:172:3 › SSO 전용 설치에서는 사용 가능한 로그인 방식만 표시한다 ────────────────────────
+
+    Error: browserType.launch: Executable doesn't exist at /mnt/c/Users/USER/projects/aidev/state/runs/2026-09-29-060142-appstore-improve/home/.cache/ms-playwright/chromium_headless_shell-1234/chrome-headless-shell-linux64/chrome-headless-shell
+    ╔════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright was just installed or updated.       ║
+    ║ Please run the following command to download new browsers: ║
+    ║                                                            ║
+    ║     npx playwright install                                 ║
+    ║                                                            ║
+    ║ <3 Playwright Team                                         ║
+    ╚════════════════════════════════════════════════════════════╝
+
+    Error Context: test-results/core-SSO-전용-설치에서는-사용-가능한-로그인-방식만-표시한다-desktop/error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/core-SSO-전용-설치에서는-사용-가능한-로그인-방식만-표시한다-desktop/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/core-SSO-전용-설치에서는-사용-가능한-로그인-방식만-표시한다-desktop/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  13) [desktop] › e2e/core.spec.ts:172:3 › Bootstrap 전용 설치에서는 사용 가능한 로그인 방식만 표시한다 ──────────────────
+
+    Error: browserType.launch: Executable doesn't exist at /mnt/c/Users/USER/projects/aidev/state/runs/2026-09-29-060142-appstore-improve/home/.cache/ms-playwright/chromium_headless_shell-1234/chrome-headless-shell-linux64/chrome-headless-shell
+    ╔════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright was just installed or updated.       ║
+    ║ Please run the following command to download new browsers: ║
+    ║                                                            ║
+    ║     npx playwright install                                 ║
+    ║                                                            ║
+    ║ <3 Playwright Team                                         ║
+    ╚════════════════════════════════════════════════════════════╝
+
+    Error Context: test-results/core-Bootstrap-전용-설치에서는-사용-가능한-로그인-방식만-표시한다-desktop/error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/core-Bootstrap-전용-설치에서는-사용-가능한-로그인-방식만-표시한다-desktop/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/core-Bootstrap-전용-설치에서는-사용-가능한-로그인-방식만-표시한다-desktop/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  14) [desktop] › e2e/core.spec.ts:215:1 › SSO를 설정해도 복구용 관리자 로그인을 계속 사용할 수 있다 ──────────────────────
+
+    Error: browserType.launch: Executable doesn't exist at /mnt/c/Users/USER/projects/aidev/state/runs/2026-09-29-060142-appstore-improve/home/.cache/ms-playwright/chromium_headless_shell-1234/chrome-headless-shell-linux64/chrome-headless-shell
+    ╔════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright was just installed or updated.       ║
+    ║ Please run the following command to download new browsers: ║
+    ║                                                            ║
+    ║     npx playwright install                                 ║
+    ║                                                            ║
+    ║ <3 Playwright Team                                         ║
+    ╚════════════════════════════════════════════════════════════╝
+
+    Error Context: test-results/core-SSO를-설정해도-복구용-관리자-로그인을-계속-사용할-수-있다-desktop/error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/core-SSO를-설정해도-복구용-관리자-로그인을-계속-사용할-수-있다-desktop/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/core-SSO를-설정해도-복구용-관리자-로그인을-계속-사용할-수-있다-desktop/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  15) [desktop] › e2e/core.spec.ts:237:1 › 거절된 silent SSO 뒤 로그인 화면은 이유를 알리고 SSO 링크는 그대로다 ───────────
+
+    Error: browserType.launch: Executable doesn't exist at /mnt/c/Users/USER/projects/aidev/state/runs/2026-09-29-060142-appstore-improve/home/.cache/ms-playwright/chromium_headless_shell-1234/chrome-headless-shell-linux64/chrome-headless-shell
+    ╔════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright was just installed or updated.       ║
+    ║ Please run the following command to download new browsers: ║
+    ║                                                            ║
+    ║     npx playwright install                                 ║
+    ║                                                            ║
+    ║ <3 Playwright Team                                         ║
+    ╚════════════════════════════════════════════════════════════╝
+
+    Error Context: test-results/core-거절된-silent-SSO-뒤-로그인-화면은-이유를-알리고-SSO-링크는-그대로다-desktop/error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/core-거절된-silent-SSO-뒤-로그인-화면은-이유를-알리고-SSO-링크는-그대로다-desktop/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/core-거절된-silent-SSO-뒤-로그인-화면은-이유를-알리고-SSO-링크는-그대로다-desktop/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  16) [desktop] › e2e/core.spec.ts:253:1 › 관리자는 스토어 목록과 상세에서 관리 설정으로 바로 이동한다 ───────────────────────
+
+    Error: browserType.launch: Executable doesn't exist at /mnt/c/Users/USER/projects/aidev/state/runs/2026-09-29-060142-appstore-improve/home/.cache/ms-playwright/chromium_headless_shell-1234/chrome-headless-shell-linux64/chrome-headless-shell
+    ╔════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright was just installed or updated.       ║
+    ║ Please run the following command to download new browsers: ║
+    ║                                                            ║
+    ║     npx playwright install                                 ║
+    ║                                                            ║
+    ║ <3 Playwright Team                                         ║
+    ╚════════════════════════════════════════════════════════════╝
+
+    Error Context: test-results/core-관리자는-스토어-목록과-상세에서-관리-설정으로-바로-이동한다-desktop/error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/core-관리자는-스토어-목록과-상세에서-관리-설정으로-바로-이동한다-desktop/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/core-관리자는-스토어-목록과-상세에서-관리-설정으로-바로-이동한다-desktop/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  17) [desktop] › e2e/core.spec.ts:271:1 › 일반 사용자에게는 관리 설정 바로가기가 보이지 않는다 ───────────────────────────
+
+    Error: browserType.launch: Executable doesn't exist at /mnt/c/Users/USER/projects/aidev/state/runs/2026-09-29-060142-appstore-improve/home/.cache/ms-playwright/chromium_headless_shell-1234/chrome-headless-shell-linux64/chrome-headless-shell
+    ╔════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright was just installed or updated.       ║
+    ║ Please run the following command to download new browsers: ║
+    ║                                                            ║
+    ║     npx playwright install                                 ║
+    ║                                                            ║
+    ║ <3 Playwright Team                                         ║
+    ╚════════════════════════════════════════════════════════════╝
+
+    Error Context: test-results/core-일반-사용자에게는-관리-설정-바로가기가-보이지-않는다-desktop/error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/core-일반-사용자에게는-관리-설정-바로가기가-보이지-않는다-desktop/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/core-일반-사용자에게는-관리-설정-바로가기가-보이지-않는다-desktop/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  18) [desktop] › e2e/core.spec.ts:285:1 › 관리자는 앱 관리에서 새 앱을 등록한다 ───────────────────────────────────
+
+    Error: browserType.launch: Executable doesn't exist at /mnt/c/Users/USER/projects/aidev/state/runs/2026-09-29-060142-appstore-improve/home/.cache/ms-playwright/chromium_headless_shell-1234/chrome-headless-shell-linux64/chrome-headless-shell
+    ╔════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright was just installed or updated.       ║
+    ║ Please run the following command to download new browsers: ║
+    ║                                                            ║
+    ║     npx playwright install                                 ║
+    ║                                                            ║
+    ║ <3 Playwright Team                                         ║
+    ╚════════════════════════════════════════════════════════════╝
+
+    Error Context: test-results/core-관리자는-앱-관리에서-새-앱을-등록한다-desktop/error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/core-관리자는-앱-관리에서-새-앱을-등록한다-desktop/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/core-관리자는-앱-관리에서-새-앱을-등록한다-desktop/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  19) [desktop] › e2e/core.spec.ts:304:1 › 빠른 이동 팔레트로 메뉴와 앱으로 이동한다 ─────────────────────────────────
+
+    Error: browserType.launch: Executable doesn't exist at /mnt/c/Users/USER/projects/aidev/state/runs/2026-09-29-060142-appstore-improve/home/.cache/ms-playwright/chromium_headless_shell-1234/chrome-headless-shell-linux64/chrome-headless-shell
+    ╔════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright was just installed or updated.       ║
+    ║ Please run the following command to download new browsers: ║
+    ║                                                            ║
+    ║     npx playwright install                                 ║
+    ║                                                            ║
+    ║ <3 Playwright Team                                         ║
+    ╚════════════════════════════════════════════════════════════╝
+
+    Error Context: test-results/core-빠른-이동-팔레트로-메뉴와-앱으로-이동한다-desktop/error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/core-빠른-이동-팔레트로-메뉴와-앱으로-이동한다-desktop/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/core-빠른-이동-팔레트로-메뉴와-앱으로-이동한다-desktop/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  20) [desktop] › e2e/core.spec.ts:331:1 › 빠른 이동 팔레트는 esc로 닫히고 최근 항목을 기억한다 ─────────────────────────
+
+    Error: browserType.launch: Executable doesn't exist at /mnt/c/Users/USER/projects/aidev/state/runs/2026-09-29-060142-appstore-improve/home/.cache/ms-playwright/chromium_headless_shell-1234/chrome-headless-shell-linux64/chrome-headless-shell
+    ╔════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright was just installed or updated.       ║
+    ║ Please run the following command to download new browsers: ║
+    ║                                                            ║
+    ║     npx playwright install                                 ║
+    ║                                                            ║
+    ║ <3 Playwright Team                                         ║
+    ╚════════════════════════════════════════════════════════════╝
+
+    Error Context: test-results/core-빠른-이동-팔레트는-esc로-닫히고-최근-항목을-기억한다-desktop/error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/core-빠른-이동-팔레트는-esc로-닫히고-최근-항목을-기억한다-desktop/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/core-빠른-이동-팔레트는-esc로-닫히고-최근-항목을-기억한다-desktop/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  21) [desktop] › e2e/core.spec.ts:350:1 › 관리자는 로고와 파비콘을 업로드하고 주소로 가져온다 ────────────────────────────
+
+    Error: browserType.launch: Executable doesn't exist at /mnt/c/Users/USER/projects/aidev/state/runs/2026-09-29-060142-appstore-improve/home/.cache/ms-playwright/chromium_headless_shell-1234/chrome-headless-shell-linux64/chrome-headless-shell
+    ╔════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright was just installed or updated.       ║
+    ║ Please run the following command to download new browsers: ║
+    ║                                                            ║
+    ║     npx playwright install                                 ║
+    ║                                                            ║
+    ║ <3 Playwright Team                                         ║
+    ╚════════════════════════════════════════════════════════════╝
+
+    Error Context: test-results/core-관리자는-로고와-파비콘을-업로드하고-주소로-가져온다-desktop/error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/core-관리자는-로고와-파비콘을-업로드하고-주소로-가져온다-desktop/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/core-관리자는-로고와-파비콘을-업로드하고-주소로-가져온다-desktop/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  22) [desktop] › e2e/core.spec.ts:389:1 › 앱 관리 목록에서 서비스 주소로 바로 이동한다 ───────────────────────────────
+
+    Error: browserType.launch: Executable doesn't exist at /mnt/c/Users/USER/projects/aidev/state/runs/2026-09-29-060142-appstore-improve/home/.cache/ms-playwright/chromium_headless_shell-1234/chrome-headless-shell-linux64/chrome-headless-shell
+    ╔════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright was just installed or updated.       ║
+    ║ Please run the following command to download new browsers: ║
+    ║                                                            ║
+    ║     npx playwright install                                 ║
+    ║                                                            ║
+    ║ <3 Playwright Team                                         ║
+    ╚════════════════════════════════════════════════════════════╝
+
+    Error Context: test-results/core-앱-관리-목록에서-서비스-주소로-바로-이동한다-desktop/error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/core-앱-관리-목록에서-서비스-주소로-바로-이동한다-desktop/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/core-앱-관리-목록에서-서비스-주소로-바로-이동한다-desktop/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  23) [desktop] › e2e/core.spec.ts:397:1 › 첫 화면 배너는 관리자가 저장한 문구를 사용한다 ──────────────────────────────
+
+    Error: browserType.launch: Executable doesn't exist at /mnt/c/Users/USER/projects/aidev/state/runs/2026-09-29-060142-appstore-improve/home/.cache/ms-playwright/chromium_headless_shell-1234/chrome-headless-shell-linux64/chrome-headless-shell
+    ╔════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright was just installed or updated.       ║
+    ║ Please run the following command to download new browsers: ║
+    ║                                                            ║
+    ║     npx playwright install                                 ║
+    ║                                                            ║
+    ║ <3 Playwright Team                                         ║
+    ╚════════════════════════════════════════════════════════════╝
+
+    Error Context: test-results/core-첫-화면-배너는-관리자가-저장한-문구를-사용한다-desktop/error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/core-첫-화면-배너는-관리자가-저장한-문구를-사용한다-desktop/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/core-첫-화면-배너는-관리자가-저장한-문구를-사용한다-desktop/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  24) [desktop] › e2e/core.spec.ts:421:1 › 추천 진열은 최신순이 아니라 관리자가 정한 우선순위를 따른다 ───────────────────────
+
+    Error: browserType.launch: Executable doesn't exist at /mnt/c/Users/USER/projects/aidev/state/runs/2026-09-29-060142-appstore-improve/home/.cache/ms-playwright/chromium_headless_shell-1234/chrome-headless-shell-linux64/chrome-headless-shell
+    ╔════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright was just installed or updated.       ║
+    ║ Please run the following command to download new browsers: ║
+    ║                                                            ║
+    ║     npx playwright install                                 ║
+    ║                                                            ║
+    ║ <3 Playwright Team                                         ║
+    ╚════════════════════════════════════════════════════════════╝
+
+    Error Context: test-results/core-추천-진열은-최신순이-아니라-관리자가-정한-우선순위를-따른다-desktop/error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/core-추천-진열은-최신순이-아니라-관리자가-정한-우선순위를-따른다-desktop/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/core-추천-진열은-최신순이-아니라-관리자가-정한-우선순위를-따른다-desktop/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  25) [desktop] › e2e/core.spec.ts:433:1 › 관리자는 앱 관리에서 추천 우선순위를 지정하거나 지운다 ──────────────────────────
+
+    Error: browserType.launch: Executable doesn't exist at /mnt/c/Users/USER/projects/aidev/state/runs/2026-09-29-060142-appstore-improve/home/.cache/ms-playwright/chromium_headless_shell-1234/chrome-headless-shell-linux64/chrome-headless-shell
+    ╔════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright was just installed or updated.       ║
+    ║ Please run the following command to download new browsers: ║
+    ║                                                            ║
+    ║     npx playwright install                                 ║
+    ║                                                            ║
+    ║ <3 Playwright Team                                         ║
+    ╚════════════════════════════════════════════════════════════╝
+
+    Error Context: test-results/core-관리자는-앱-관리에서-추천-우선순위를-지정하거나-지운다-desktop/error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/core-관리자는-앱-관리에서-추천-우선순위를-지정하거나-지운다-desktop/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/core-관리자는-앱-관리에서-추천-우선순위를-지정하거나-지운다-desktop/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  26) [desktop] › e2e/core.spec.ts:461:1 › 가이드 문서는 비로그인 방문자도 앱 상세에서 내려받는다 ──────────────────────────
+
+    Error: browserType.launch: Executable doesn't exist at /mnt/c/Users/USER/projects/aidev/state/runs/2026-09-29-060142-appstore-improve/home/.cache/ms-playwright/chromium_headless_shell-1234/chrome-headless-shell-linux64/chrome-headless-shell
+    ╔════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright was just installed or updated.       ║
+    ║ Please run the following command to download new browsers: ║
+    ║                                                            ║
+    ║     npx playwright install                                 ║
+    ║                                                            ║
+    ║ <3 Playwright Team                                         ║
+    ╚════════════════════════════════════════════════════════════╝
+
+    Error Context: test-results/core-가이드-문서는-비로그인-방문자도-앱-상세에서-내려받는다-desktop/error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/core-가이드-문서는-비로그인-방문자도-앱-상세에서-내려받는다-desktop/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/core-가이드-문서는-비로그인-방문자도-앱-상세에서-내려받는다-desktop/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  27) [desktop] › e2e/core.spec.ts:477:1 › 소유자는 앱 수정 화면에서 가이드 문서를 첨부하고 삭제를 예약한다 ────────────────────
+
+    Error: browserType.launch: Executable doesn't exist at /mnt/c/Users/USER/projects/aidev/state/runs/2026-09-29-060142-appstore-improve/home/.cache/ms-playwright/chromium_headless_shell-1234/chrome-headless-shell-linux64/chrome-headless-shell
+    ╔════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright was just installed or updated.       ║
+    ║ Please run the following command to download new browsers: ║
+    ║                                                            ║
+    ║     npx playwright install                                 ║
+    ║                                                            ║
+    ║ <3 Playwright Team                                         ║
+    ╚════════════════════════════════════════════════════════════╝
+
+    Error Context: test-results/core-소유자는-앱-수정-화면에서-가이드-문서를-첨부하고-삭제를-예약한다-desktop/error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/core-소유자는-앱-수정-화면에서-가이드-문서를-첨부하고-삭제를-예약한다-desktop/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/core-소유자는-앱-수정-화면에서-가이드-문서를-첨부하고-삭제를-예약한다-desktop/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  28) [desktop] › e2e/core.spec.ts:498:1 › 앱 카드는 이름 밖을 눌러도 앱 상세로 이동한다 ──────────────────────────────
+
+    Error: browserType.launch: Executable doesn't exist at /mnt/c/Users/USER/projects/aidev/state/runs/2026-09-29-060142-appstore-improve/home/.cache/ms-playwright/chromium_headless_shell-1234/chrome-headless-shell-linux64/chrome-headless-shell
+    ╔════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright was just installed or updated.       ║
+    ║ Please run the following command to download new browsers: ║
+    ║                                                            ║
+    ║     npx playwright install                                 ║
+    ║                                                            ║
+    ║ <3 Playwright Team                                         ║
+    ╚════════════════════════════════════════════════════════════╝
+
+    Error Context: test-results/core-앱-카드는-이름-밖을-눌러도-앱-상세로-이동한다-desktop/error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/core-앱-카드는-이름-밖을-눌러도-앱-상세로-이동한다-desktop/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/core-앱-카드는-이름-밖을-눌러도-앱-상세로-이동한다-desktop/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  29) [desktop] › e2e/core.spec.ts:509:1 › 게시되지 않은 내 앱의 카드는 수정 화면으로 열린다 ────────────────────────────
+
+    Error: browserType.launch: Executable doesn't exist at /mnt/c/Users/USER/projects/aidev/state/runs/2026-09-29-060142-appstore-improve/home/.cache/ms-playwright/chromium_headless_shell-1234/chrome-headless-shell-linux64/chrome-headless-shell
+    ╔════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright was just installed or updated.       ║
+    ║ Please run the following command to download new browsers: ║
+    ║                                                            ║
+    ║     npx playwright install                                 ║
+    ║                                                            ║
+    ║ <3 Playwright Team                                         ║
+    ╚════════════════════════════════════════════════════════════╝
+
+    Error Context: test-results/core-게시되지-않은-내-앱의-카드는-수정-화면으로-열린다-desktop/error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/core-게시되지-않은-내-앱의-카드는-수정-화면으로-열린다-desktop/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/core-게시되지-않은-내-앱의-카드는-수정-화면으로-열린다-desktop/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  30) [desktop] › e2e/core.spec.ts:541:1 › 관리자의 앱 카드는 자세히 글자 없이 아이콘만 보여 준다 ─────────────────────────
+
+    Error: browserType.launch: Executable doesn't exist at /mnt/c/Users/USER/projects/aidev/state/runs/2026-09-29-060142-appstore-improve/home/.cache/ms-playwright/chromium_headless_shell-1234/chrome-headless-shell-linux64/chrome-headless-shell
+    ╔════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright was just installed or updated.       ║
+    ║ Please run the following command to download new browsers: ║
+    ║                                                            ║
+    ║     npx playwright install                                 ║
+    ║                                                            ║
+    ║ <3 Playwright Team                                         ║
+    ╚════════════════════════════════════════════════════════════╝
+
+    Error Context: test-results/core-관리자의-앱-카드는-자세히-글자-없이-아이콘만-보여-준다-desktop/error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/core-관리자의-앱-카드는-자세히-글자-없이-아이콘만-보여-준다-desktop/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/core-관리자의-앱-카드는-자세히-글자-없이-아이콘만-보여-준다-desktop/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  31) [desktop] › e2e/core.spec.ts:556:1 › 보안 심의를 마쳐야 앱을 제출할 수 있다 ──────────────────────────────────
+
+    Error: browserType.launch: Executable doesn't exist at /mnt/c/Users/USER/projects/aidev/state/runs/2026-09-29-060142-appstore-improve/home/.cache/ms-playwright/chromium_headless_shell-1234/chrome-headless-shell-linux64/chrome-headless-shell
+    ╔════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright was just installed or updated.       ║
+    ║ Please run the following command to download new browsers: ║
+    ║                                                            ║
+    ║     npx playwright install                                 ║
+    ║                                                            ║
+    ║ <3 Playwright Team                                         ║
+    ╚════════════════════════════════════════════════════════════╝
+
+    Error Context: test-results/core-보안-심의를-마쳐야-앱을-제출할-수-있다-desktop/error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/core-보안-심의를-마쳐야-앱을-제출할-수-있다-desktop/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/core-보안-심의를-마쳐야-앱을-제출할-수-있다-desktop/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  32) [desktop] › e2e/core.spec.ts:570:1 › 관리자는 SecCheck 연동을 설정하고 연결을 확인한다 ─────────────────────────
+
+    Error: browserType.launch: Executable doesn't exist at /mnt/c/Users/USER/projects/aidev/state/runs/2026-09-29-060142-appstore-improve/home/.cache/ms-playwright/chromium_headless_shell-1234/chrome-headless-shell-linux64/chrome-headless-shell
+    ╔════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright was just installed or updated.       ║
+    ║ Please run the following command to download new browsers: ║
+    ║                                                            ║
+    ║     npx playwright install                                 ║
+    ║                                                            ║
+    ║ <3 Playwright Team                                         ║
+    ╚════════════════════════════════════════════════════════════╝
+
+    Error Context: test-results/core-관리자는-SecCheck-연동을-설정하고-연결을-확인한다-desktop/error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/core-관리자는-SecCheck-연동을-설정하고-연결을-확인한다-desktop/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/core-관리자는-SecCheck-연동을-설정하고-연결을-확인한다-desktop/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  33) [desktop] › e2e/core.spec.ts:585:1 › 검토자는 앱 내용과 이전 검토를 보고 의견과 함께 결정한다 ────────────────────────
+
+    Error: browserType.launch: Executable doesn't exist at /mnt/c/Users/USER/projects/aidev/state/runs/2026-09-29-060142-appstore-improve/home/.cache/ms-playwright/chromium_headless_shell-1234/chrome-headless-shell-linux64/chrome-headless-shell
+    ╔════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright was just installed or updated.       ║
+    ║ Please run the following command to download new browsers: ║
+    ║                                                            ║
+    ║     npx playwright install                                 ║
+    ║                                                            ║
+    ║ <3 Playwright Team                                         ║
+    ╚════════════════════════════════════════════════════════════╝
+
+    Error Context: test-results/core-검토자는-앱-내용과-이전-검토를-보고-의견과-함께-결정한다-desktop/error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/core-검토자는-앱-내용과-이전-검토를-보고-의견과-함께-결정한다-desktop/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/core-검토자는-앱-내용과-이전-검토를-보고-의견과-함께-결정한다-desktop/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  34) [desktop] › e2e/core.spec.ts:612:1 › 공개 앱 즐겨찾기는 소유자와 공개 목록에서 추가하고 즐겨찾기에서 해제한다 ────────────────
+
+    Error: browserType.launch: Executable doesn't exist at /mnt/c/Users/USER/projects/aidev/state/runs/2026-09-29-060142-appstore-improve/home/.cache/ms-playwright/chromium_headless_shell-1234/chrome-headless-shell-linux64/chrome-headless-shell
+    ╔════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright was just installed or updated.       ║
+    ║ Please run the following command to download new browsers: ║
+    ║                                                            ║
+    ║     npx playwright install                                 ║
+    ║                                                            ║
+    ║ <3 Playwright Team                                         ║
+    ╚════════════════════════════════════════════════════════════╝
+
+    Error Context: test-results/core-공개-앱-즐겨찾기는-소유자와-공개-목록에서-추가하고-즐겨찾기에서-해제한다-desktop/error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/core-공개-앱-즐겨찾기는-소유자와-공개-목록에서-추가하고-즐겨찾기에서-해제한다-desktop/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/core-공개-앱-즐겨찾기는-소유자와-공개-목록에서-추가하고-즐겨찾기에서-해제한다-desktop/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  35) [desktop] › e2e/core.spec.ts:661:1 › 카탈로그에서 즐겨찾기를 눌러도 목록을 다시 받아 오지 않는다 ───────────────────────
+
+    Error: browserType.launch: Executable doesn't exist at /mnt/c/Users/USER/projects/aidev/state/runs/2026-09-29-060142-appstore-improve/home/.cache/ms-playwright/chromium_headless_shell-1234/chrome-headless-shell-linux64/chrome-headless-shell
+    ╔════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright was just installed or updated.       ║
+    ║ Please run the following command to download new browsers: ║
+    ║                                                            ║
+    ║     npx playwright install                                 ║
+    ║                                                            ║
+    ║ <3 Playwright Team                                         ║
+    ╚════════════════════════════════════════════════════════════╝
+
+    Error Context: test-results/core-카탈로그에서-즐겨찾기를-눌러도-목록을-다시-받아-오지-않는다-desktop/error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/core-카탈로그에서-즐겨찾기를-눌러도-목록을-다시-받아-오지-않는다-desktop/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/core-카탈로그에서-즐겨찾기를-눌러도-목록을-다시-받아-오지-않는다-desktop/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  36) [desktop] › e2e/core.spec.ts:690:1 › 자동 로그인은 세션이 없을 때 조용히 한 번만 확인한다 ──────────────────────────
+
+    Error: browserType.launch: Executable doesn't exist at /mnt/c/Users/USER/projects/aidev/state/runs/2026-09-29-060142-appstore-improve/home/.cache/ms-playwright/chromium_headless_shell-1234/chrome-headless-shell-linux64/chrome-headless-shell
+    ╔════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright was just installed or updated.       ║
+    ║ Please run the following command to download new browsers: ║
+    ║                                                            ║
+    ║     npx playwright install                                 ║
+    ║                                                            ║
+    ║ <3 Playwright Team                                         ║
+    ╚════════════════════════════════════════════════════════════╝
+
+    Error Context: test-results/core-자동-로그인은-세션이-없을-때-조용히-한-번만-확인한다-desktop/error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/core-자동-로그인은-세션이-없을-때-조용히-한-번만-확인한다-desktop/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/core-자동-로그인은-세션이-없을-때-조용히-한-번만-확인한다-desktop/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  37) [desktop] › e2e/core.spec.ts:710:1 › 로그아웃한 뒤 새 탭에서 자동 로그인이 다시 밀어 넣지 않는다 ──────────────────────
+
+    Error: browserType.launch: Executable doesn't exist at /mnt/c/Users/USER/projects/aidev/state/runs/2026-09-29-060142-appstore-improve/home/.cache/ms-playwright/chromium_headless_shell-1234/chrome-headless-shell-linux64/chrome-headless-shell
+    ╔════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright was just installed or updated.       ║
+    ║ Please run the following command to download new browsers: ║
+    ║                                                            ║
+    ║     npx playwright install                                 ║
+    ║                                                            ║
+    ║ <3 Playwright Team                                         ║
+    ╚════════════════════════════════════════════════════════════╝
+
+    Error Context: test-results/core-로그아웃한-뒤-새-탭에서-자동-로그인이-다시-밀어-넣지-않는다-desktop/error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/core-로그아웃한-뒤-새-탭에서-자동-로그인이-다시-밀어-넣지-않는다-desktop/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/core-로그아웃한-뒤-새-탭에서-자동-로그인이-다시-밀어-넣지-않는다-desktop/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  38) [desktop] › e2e/core.spec.ts:743:1 › 카탈로그 보기 전환은 현재 페이지와 앱을 유지한다 ─────────────────────────────
+
+    Error: browserType.launch: Executable doesn't exist at /mnt/c/Users/USER/projects/aidev/state/runs/2026-09-29-060142-appstore-improve/home/.cache/ms-playwright/chromium_headless_shell-1234/chrome-headless-shell-linux64/chrome-headless-shell
+    ╔════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright was just installed or updated.       ║
+    ║ Please run the following command to download new browsers: ║
+    ║                                                            ║
+    ║     npx playwright install                                 ║
+    ║                                                            ║
+    ║ <3 Playwright Team                                         ║
+    ╚════════════════════════════════════════════════════════════╝
+
+    Error Context: test-results/core-카탈로그-보기-전환은-현재-페이지와-앱을-유지한다-desktop/error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/core-카탈로그-보기-전환은-현재-페이지와-앱을-유지한다-desktop/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/core-카탈로그-보기-전환은-현재-페이지와-앱을-유지한다-desktop/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  39) [desktop] › e2e/visual.spec.ts:123:1 › 공개 주요 화면 캡처 ───────────────────────────────────────────
+
+    Error: browserType.launch: Executable doesn't exist at /mnt/c/Users/USER/projects/aidev/state/runs/2026-09-29-060142-appstore-improve/home/.cache/ms-playwright/chromium_headless_shell-1234/chrome-headless-shell-linux64/chrome-headless-shell
+    ╔════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright was just installed or updated.       ║
+    ║ Please run the following command to download new browsers: ║
+    ║                                                            ║
+    ║     npx playwright install                                 ║
+    ║                                                            ║
+    ║ <3 Playwright Team                                         ║
+    ╚════════════════════════════════════════════════════════════╝
+
+    Error Context: test-results/visual-공개-주요-화면-캡처-desktop/error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/visual-공개-주요-화면-캡처-desktop/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/visual-공개-주요-화면-캡처-desktop/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  40) [desktop] › e2e/visual.spec.ts:154:1 › 개인화·검토 주요 화면 캡처 ───────────────────────────────────────
+
+    Error: browserType.launch: Executable doesn't exist at /mnt/c/Users/USER/projects/aidev/state/runs/2026-09-29-060142-appstore-improve/home/.cache/ms-playwright/chromium_headless_shell-1234/chrome-headless-shell-linux64/chrome-headless-shell
+    ╔════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright was just installed or updated.       ║
+    ║ Please run the following command to download new browsers: ║
+    ║                                                            ║
+    ║     npx playwright install                                 ║
+    ║                                                            ║
+    ║ <3 Playwright Team                                         ║
+    ╚════════════════════════════════════════════════════════════╝
+
+    Error Context: test-results/visual-개인화·검토-주요-화면-캡처-desktop/error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/visual-개인화·검토-주요-화면-캡처-desktop/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/visual-개인화·검토-주요-화면-캡처-desktop/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  41) [desktop] › e2e/visual.spec.ts:159:1 › 관리자 전체 주요 화면 캡처 ───────────────────────────────────────
+
+    Error: browserType.launch: Executable doesn't exist at /mnt/c/Users/USER/projects/aidev/state/runs/2026-09-29-060142-appstore-improve/home/.cache/ms-playwright/chromium_headless_shell-1234/chrome-headless-shell-linux64/chrome-headless-shell
+    ╔════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright was just installed or updated.       ║
+    ║ Please run the following command to download new browsers: ║
+    ║                                                            ║
+    ║     npx playwright install                                 ║
+    ║                                                            ║
+    ║ <3 Playwright Team                                         ║
+    ╚════════════════════════════════════════════════════════════╝
+
+    Error Context: test-results/visual-관리자-전체-주요-화면-캡처-desktop/error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/visual-관리자-전체-주요-화면-캡처-desktop/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/visual-관리자-전체-주요-화면-캡처-desktop/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  42) [mobile] › e2e/core.spec.ts:5:1 › 공개 탐색과 URL 검색 상태는 새로고침 후에도 유지된다 ────────────────────────────
+
+    Error: browserType.launch: Executable doesn't exist at /mnt/c/Users/USER/projects/aidev/state/runs/2026-09-29-060142-appstore-improve/home/.cache/ms-playwright/chromium_headless_shell-1234/chrome-headless-shell-linux64/chrome-headless-shell
+    ╔════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright was just installed or updated.       ║
+    ║ Please run the following command to download new browsers: ║
+    ║                                                            ║
+    ║     npx playwright install                                 ║
+    ║                                                            ║
+    ║ <3 Playwright Team                                         ║
+    ╚════════════════════════════════════════════════════════════╝
+
+    Error Context: test-results/core-공개-탐색과-URL-검색-상태는-새로고침-후에도-유지된다-mobile/error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/core-공개-탐색과-URL-검색-상태는-새로고침-후에도-유지된다-mobile/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/core-공개-탐색과-URL-검색-상태는-새로고침-후에도-유지된다-mobile/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  43) [mobile] › e2e/core.spec.ts:20:1 › 비로그인 등록 접근은 원래 URL을 보존한 로그인 화면으로 이동한다 ─────────────────────
+
+    Error: browserType.launch: Executable doesn't exist at /mnt/c/Users/USER/projects/aidev/state/runs/2026-09-29-060142-appstore-improve/home/.cache/ms-playwright/chromium_headless_shell-1234/chrome-headless-shell-linux64/chrome-headless-shell
+    ╔════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright was just installed or updated.       ║
+    ║ Please run the following command to download new browsers: ║
+    ║                                                            ║
+    ║     npx playwright install                                 ║
+    ║                                                            ║
+    ║ <3 Playwright Team                                         ║
+    ╚════════════════════════════════════════════════════════════╝
+
+    Error Context: test-results/core-비로그인-등록-접근은-원래-URL을-보존한-로그인-화면으로-이동한다-mobile/error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/core-비로그인-등록-접근은-원래-URL을-보존한-로그인-화면으로-이동한다-mobile/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/core-비로그인-등록-접근은-원래-URL을-보존한-로그인-화면으로-이동한다-mobile/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  44) [mobile] › e2e/core.spec.ts:32:1 › 일반 사용자는 관리자 화면에서 403 상태를 본다 ───────────────────────────────
+
+    Error: browserType.launch: Executable doesn't exist at /mnt/c/Users/USER/projects/aidev/state/runs/2026-09-29-060142-appstore-improve/home/.cache/ms-playwright/chromium_headless_shell-1234/chrome-headless-shell-linux64/chrome-headless-shell
+    ╔════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright was just installed or updated.       ║
+    ║ Please run the following command to download new browsers: ║
+    ║                                                            ║
+    ║     npx playwright install                                 ║
+    ║                                                            ║
+    ║ <3 Playwright Team                                         ║
+    ╚════════════════════════════════════════════════════════════╝
+
+    Error Context: test-results/core-일반-사용자는-관리자-화면에서-403-상태를-본다-mobile/error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/core-일반-사용자는-관리자-화면에서-403-상태를-본다-mobile/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/core-일반-사용자는-관리자-화면에서-403-상태를-본다-mobile/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  45) [mobile] › e2e/core.spec.ts:43:1 › 관리자 사용자 목록은 가상화되고 route refresh를 견딘다 ──────────────────────
+
+    Error: browserType.launch: Executable doesn't exist at /mnt/c/Users/USER/projects/aidev/state/runs/2026-09-29-060142-appstore-improve/home/.cache/ms-playwright/chromium_headless_shell-1234/chrome-headless-shell-linux64/chrome-headless-shell
+    ╔════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright was just installed or updated.       ║
+    ║ Please run the following command to download new browsers: ║
+    ║                                                            ║
+    ║     npx playwright install                                 ║
+    ║                                                            ║
+    ║ <3 Playwright Team                                         ║
+    ╚════════════════════════════════════════════════════════════╝
+
+    Error Context: test-results/core-관리자-사용자-목록은-가상화되고-route-refresh를-견딘다-mobile/error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/core-관리자-사용자-목록은-가상화되고-route-refresh를-견딘다-mobile/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/core-관리자-사용자-목록은-가상화되고-route-refresh를-견딘다-mobile/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  46) [mobile] › e2e/core.spec.ts:56:1 › AI는 256K 설정과 SSE token streaming을 처리한다 ────────────────────
+
+    Error: browserType.launch: Executable doesn't exist at /mnt/c/Users/USER/projects/aidev/state/runs/2026-09-29-060142-appstore-improve/home/.cache/ms-playwright/chromium_headless_shell-1234/chrome-headless-shell-linux64/chrome-headless-shell
+    ╔════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright was just installed or updated.       ║
+    ║ Please run the following command to download new browsers: ║
+    ║                                                            ║
+    ║     npx playwright install                                 ║
+    ║                                                            ║
+    ║ <3 Playwright Team                                         ║
+    ╚════════════════════════════════════════════════════════════╝
+
+    Error Context: test-results/core-AI는-256K-설정과-SSE-token-streaming을-처리한다-mobile/error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/core-AI는-256K-설정과-SSE-token-streaming을-처리한다-mobile/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/core-AI는-256K-설정과-SSE-token-streaming을-처리한다-mobile/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  47) [mobile] › e2e/core.spec.ts:70:1 › 관리자는 Key Permission과 Template을 편집할 수 있다 ───────────────────
+
+    Error: browserType.launch: Executable doesn't exist at /mnt/c/Users/USER/projects/aidev/state/runs/2026-09-29-060142-appstore-improve/home/.cache/ms-playwright/chromium_headless_shell-1234/chrome-headless-shell-linux64/chrome-headless-shell
+    ╔════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright was just installed or updated.       ║
+    ║ Please run the following command to download new browsers: ║
+    ║                                                            ║
+    ║     npx playwright install                                 ║
+    ║                                                            ║
+    ║ <3 Playwright Team                                         ║
+    ╚════════════════════════════════════════════════════════════╝
+
+    Error Context: test-results/core-관리자는-Key-Permission과-Template을-편집할-수-있다-mobile/error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/core-관리자는-Key-Permission과-Template을-편집할-수-있다-mobile/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/core-관리자는-Key-Permission과-Template을-편집할-수-있다-mobile/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  48) [mobile] › e2e/core.spec.ts:90:1 › light/dark 테마 선택은 새로고침 후 유지된다 ─────────────────────────────
+
+    Error: browserType.launch: Executable doesn't exist at /mnt/c/Users/USER/projects/aidev/state/runs/2026-09-29-060142-appstore-improve/home/.cache/ms-playwright/chromium_headless_shell-1234/chrome-headless-shell-linux64/chrome-headless-shell
+    ╔════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright was just installed or updated.       ║
+    ║ Please run the following command to download new browsers: ║
+    ║                                                            ║
+    ║     npx playwright install                                 ║
+    ║                                                            ║
+    ║ <3 Playwright Team                                         ║
+    ╚════════════════════════════════════════════════════════════╝
+
+    Error Context: test-results/core-light-dark-테마-선택은-새로고침-후-유지된다-mobile/error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/core-light-dark-테마-선택은-새로고침-후-유지된다-mobile/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/core-light-dark-테마-선택은-새로고침-후-유지된다-mobile/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  49) [mobile] › e2e/core.spec.ts:102:1 › 모바일 메뉴는 키보드와 명시적 버튼으로 접근 가능하다 ────────────────────────────
+
+    Error: browserType.launch: Executable doesn't exist at /mnt/c/Users/USER/projects/aidev/state/runs/2026-09-29-060142-appstore-improve/home/.cache/ms-playwright/chromium_headless_shell-1234/chrome-headless-shell-linux64/chrome-headless-shell
+    ╔════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright was just installed or updated.       ║
+    ║ Please run the following command to download new browsers: ║
+    ║                                                            ║
+    ║     npx playwright install                                 ║
+    ║                                                            ║
+    ║ <3 Playwright Team                                         ║
+    ╚════════════════════════════════════════════════════════════╝
+
+    Error Context: test-results/core-모바일-메뉴는-키보드와-명시적-버튼으로-접근-가능하다-mobile/error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/core-모바일-메뉴는-키보드와-명시적-버튼으로-접근-가능하다-mobile/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/core-모바일-메뉴는-키보드와-명시적-버튼으로-접근-가능하다-mobile/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  50) [mobile] › e2e/core.spec.ts:116:1 › 관리자는 앱 상세를 수정하고 삭제 확인 후 목록으로 돌아온다 ────────────────────────
+
+    Error: browserType.launch: Executable doesn't exist at /mnt/c/Users/USER/projects/aidev/state/runs/2026-09-29-060142-appstore-improve/home/.cache/ms-playwright/chromium_headless_shell-1234/chrome-headless-shell-linux64/chrome-headless-shell
+    ╔════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright was just installed or updated.       ║
+    ║ Please run the following command to download new browsers: ║
+    ║                                                            ║
+    ║     npx playwright install                                 ║
+    ║                                                            ║
+    ║ <3 Playwright Team                                         ║
+    ╚════════════════════════════════════════════════════════════╝
+
+    Error Context: test-results/core-관리자는-앱-상세를-수정하고-삭제-확인-후-목록으로-돌아온다-mobile/error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/core-관리자는-앱-상세를-수정하고-삭제-확인-후-목록으로-돌아온다-mobile/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/core-관리자는-앱-상세를-수정하고-삭제-확인-후-목록으로-돌아온다-mobile/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  51) [mobile] › e2e/core.spec.ts:137:1 › SSO 연결 테스트는 discovery endpoint를 표시한다 ─────────────────────
+
+    Error: browserType.launch: Executable doesn't exist at /mnt/c/Users/USER/projects/aidev/state/runs/2026-09-29-060142-appstore-improve/home/.cache/ms-playwright/chromium_headless_shell-1234/chrome-headless-shell-linux64/chrome-headless-shell
+    ╔════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright was just installed or updated.       ║
+    ║ Please run the following command to download new browsers: ║
+    ║                                                            ║
+    ║     npx playwright install                                 ║
+    ║                                                            ║
+    ║ <3 Playwright Team                                         ║
+    ╚════════════════════════════════════════════════════════════╝
+
+    Error Context: test-results/core-SSO-연결-테스트는-discovery-endpoint를-표시한다-mobile/error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/core-SSO-연결-테스트는-discovery-endpoint를-표시한다-mobile/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/core-SSO-연결-테스트는-discovery-endpoint를-표시한다-mobile/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  52) [mobile] › e2e/core.spec.ts:150:1 › 스토어 메뉴는 Apps와 MCP Apps를 동시에 선택하지 않는다 ─────────────────────
+
+    Error: browserType.launch: Executable doesn't exist at /mnt/c/Users/USER/projects/aidev/state/runs/2026-09-29-060142-appstore-improve/home/.cache/ms-playwright/chromium_headless_shell-1234/chrome-headless-shell-linux64/chrome-headless-shell
+    ╔════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright was just installed or updated.       ║
+    ║ Please run the following command to download new browsers: ║
+    ║                                                            ║
+    ║     npx playwright install                                 ║
+    ║                                                            ║
+    ║ <3 Playwright Team                                         ║
+    ╚════════════════════════════════════════════════════════════╝
+
+    Error Context: test-results/core-스토어-메뉴는-Apps와-MCP-Apps를-동시에-선택하지-않는다-mobile/error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/core-스토어-메뉴는-Apps와-MCP-Apps를-동시에-선택하지-않는다-mobile/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/core-스토어-메뉴는-Apps와-MCP-Apps를-동시에-선택하지-않는다-mobile/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  53) [mobile] › e2e/core.spec.ts:172:3 › SSO 전용 설치에서는 사용 가능한 로그인 방식만 표시한다 ─────────────────────────
+
+    Error: browserType.launch: Executable doesn't exist at /mnt/c/Users/USER/projects/aidev/state/runs/2026-09-29-060142-appstore-improve/home/.cache/ms-playwright/chromium_headless_shell-1234/chrome-headless-shell-linux64/chrome-headless-shell
+    ╔════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright was just installed or updated.       ║
+    ║ Please run the following command to download new browsers: ║
+    ║                                                            ║
+    ║     npx playwright install                                 ║
+    ║                                                            ║
+    ║ <3 Playwright Team                                         ║
+    ╚════════════════════════════════════════════════════════════╝
+
+    Error Context: test-results/core-SSO-전용-설치에서는-사용-가능한-로그인-방식만-표시한다-mobile/error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/core-SSO-전용-설치에서는-사용-가능한-로그인-방식만-표시한다-mobile/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/core-SSO-전용-설치에서는-사용-가능한-로그인-방식만-표시한다-mobile/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  54) [mobile] › e2e/core.spec.ts:172:3 › Bootstrap 전용 설치에서는 사용 가능한 로그인 방식만 표시한다 ───────────────────
+
+    Error: browserType.launch: Executable doesn't exist at /mnt/c/Users/USER/projects/aidev/state/runs/2026-09-29-060142-appstore-improve/home/.cache/ms-playwright/chromium_headless_shell-1234/chrome-headless-shell-linux64/chrome-headless-shell
+    ╔════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright was just installed or updated.       ║
+    ║ Please run the following command to download new browsers: ║
+    ║                                                            ║
+    ║     npx playwright install                                 ║
+    ║                                                            ║
+    ║ <3 Playwright Team                                         ║
+    ╚════════════════════════════════════════════════════════════╝
+
+    Error Context: test-results/core-Bootstrap-전용-설치에서는-사용-가능한-로그인-방식만-표시한다-mobile/error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/core-Bootstrap-전용-설치에서는-사용-가능한-로그인-방식만-표시한다-mobile/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/core-Bootstrap-전용-설치에서는-사용-가능한-로그인-방식만-표시한다-mobile/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  55) [mobile] › e2e/core.spec.ts:215:1 › SSO를 설정해도 복구용 관리자 로그인을 계속 사용할 수 있다 ───────────────────────
+
+    Error: browserType.launch: Executable doesn't exist at /mnt/c/Users/USER/projects/aidev/state/runs/2026-09-29-060142-appstore-improve/home/.cache/ms-playwright/chromium_headless_shell-1234/chrome-headless-shell-linux64/chrome-headless-shell
+    ╔════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright was just installed or updated.       ║
+    ║ Please run the following command to download new browsers: ║
+    ║                                                            ║
+    ║     npx playwright install                                 ║
+    ║                                                            ║
+    ║ <3 Playwright Team                                         ║
+    ╚════════════════════════════════════════════════════════════╝
+
+    Error Context: test-results/core-SSO를-설정해도-복구용-관리자-로그인을-계속-사용할-수-있다-mobile/error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/core-SSO를-설정해도-복구용-관리자-로그인을-계속-사용할-수-있다-mobile/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/core-SSO를-설정해도-복구용-관리자-로그인을-계속-사용할-수-있다-mobile/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  56) [mobile] › e2e/core.spec.ts:237:1 › 거절된 silent SSO 뒤 로그인 화면은 이유를 알리고 SSO 링크는 그대로다 ────────────
+
+    Error: browserType.launch: Executable doesn't exist at /mnt/c/Users/USER/projects/aidev/state/runs/2026-09-29-060142-appstore-improve/home/.cache/ms-playwright/chromium_headless_shell-1234/chrome-headless-shell-linux64/chrome-headless-shell
+    ╔════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright was just installed or updated.       ║
+    ║ Please run the following command to download new browsers: ║
+    ║                                                            ║
+    ║     npx playwright install                                 ║
+    ║                                                            ║
+    ║ <3 Playwright Team                                         ║
+    ╚════════════════════════════════════════════════════════════╝
+
+    Error Context: test-results/core-거절된-silent-SSO-뒤-로그인-화면은-이유를-알리고-SSO-링크는-그대로다-mobile/error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/core-거절된-silent-SSO-뒤-로그인-화면은-이유를-알리고-SSO-링크는-그대로다-mobile/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/core-거절된-silent-SSO-뒤-로그인-화면은-이유를-알리고-SSO-링크는-그대로다-mobile/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  57) [mobile] › e2e/core.spec.ts:253:1 › 관리자는 스토어 목록과 상세에서 관리 설정으로 바로 이동한다 ────────────────────────
+
+    Error: browserType.launch: Executable doesn't exist at /mnt/c/Users/USER/projects/aidev/state/runs/2026-09-29-060142-appstore-improve/home/.cache/ms-playwright/chromium_headless_shell-1234/chrome-headless-shell-linux64/chrome-headless-shell
+    ╔════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright was just installed or updated.       ║
+    ║ Please run the following command to download new browsers: ║
+    ║                                                            ║
+    ║     npx playwright install                                 ║
+    ║                                                            ║
+    ║ <3 Playwright Team                                         ║
+    ╚════════════════════════════════════════════════════════════╝
+
+    Error Context: test-results/core-관리자는-스토어-목록과-상세에서-관리-설정으로-바로-이동한다-mobile/error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/core-관리자는-스토어-목록과-상세에서-관리-설정으로-바로-이동한다-mobile/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/core-관리자는-스토어-목록과-상세에서-관리-설정으로-바로-이동한다-mobile/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  58) [mobile] › e2e/core.spec.ts:271:1 › 일반 사용자에게는 관리 설정 바로가기가 보이지 않는다 ────────────────────────────
+
+    Error: browserType.launch: Executable doesn't exist at /mnt/c/Users/USER/projects/aidev/state/runs/2026-09-29-060142-appstore-improve/home/.cache/ms-playwright/chromium_headless_shell-1234/chrome-headless-shell-linux64/chrome-headless-shell
+    ╔════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright was just installed or updated.       ║
+    ║ Please run the following command to download new browsers: ║
+    ║                                                            ║
+    ║     npx playwright install                                 ║
+    ║                                                            ║
+    ║ <3 Playwright Team                                         ║
+    ╚════════════════════════════════════════════════════════════╝
+
+    Error Context: test-results/core-일반-사용자에게는-관리-설정-바로가기가-보이지-않는다-mobile/error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/core-일반-사용자에게는-관리-설정-바로가기가-보이지-않는다-mobile/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/core-일반-사용자에게는-관리-설정-바로가기가-보이지-않는다-mobile/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  59) [mobile] › e2e/core.spec.ts:285:1 › 관리자는 앱 관리에서 새 앱을 등록한다 ────────────────────────────────────
+
+    Error: browserType.launch: Executable doesn't exist at /mnt/c/Users/USER/projects/aidev/state/runs/2026-09-29-060142-appstore-improve/home/.cache/ms-playwright/chromium_headless_shell-1234/chrome-headless-shell-linux64/chrome-headless-shell
+    ╔════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright was just installed or updated.       ║
+    ║ Please run the following command to download new browsers: ║
+    ║                                                            ║
+    ║     npx playwright install                                 ║
+    ║                                                            ║
+    ║ <3 Playwright Team                                         ║
+    ╚════════════════════════════════════════════════════════════╝
+
+    Error Context: test-results/core-관리자는-앱-관리에서-새-앱을-등록한다-mobile/error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/core-관리자는-앱-관리에서-새-앱을-등록한다-mobile/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/core-관리자는-앱-관리에서-새-앱을-등록한다-mobile/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  60) [mobile] › e2e/core.spec.ts:304:1 › 빠른 이동 팔레트로 메뉴와 앱으로 이동한다 ──────────────────────────────────
+
+    Error: browserType.launch: Executable doesn't exist at /mnt/c/Users/USER/projects/aidev/state/runs/2026-09-29-060142-appstore-improve/home/.cache/ms-playwright/chromium_headless_shell-1234/chrome-headless-shell-linux64/chrome-headless-shell
+    ╔════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright was just installed or updated.       ║
+    ║ Please run the following command to download new browsers: ║
+    ║                                                            ║
+    ║     npx playwright install                                 ║
+    ║                                                            ║
+    ║ <3 Playwright Team                                         ║
+    ╚════════════════════════════════════════════════════════════╝
+
+    Error Context: test-results/core-빠른-이동-팔레트로-메뉴와-앱으로-이동한다-mobile/error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/core-빠른-이동-팔레트로-메뉴와-앱으로-이동한다-mobile/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/core-빠른-이동-팔레트로-메뉴와-앱으로-이동한다-mobile/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  61) [mobile] › e2e/core.spec.ts:331:1 › 빠른 이동 팔레트는 esc로 닫히고 최근 항목을 기억한다 ──────────────────────────
+
+    Error: browserType.launch: Executable doesn't exist at /mnt/c/Users/USER/projects/aidev/state/runs/2026-09-29-060142-appstore-improve/home/.cache/ms-playwright/chromium_headless_shell-1234/chrome-headless-shell-linux64/chrome-headless-shell
+    ╔════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright was just installed or updated.       ║
+    ║ Please run the following command to download new browsers: ║
+    ║                                                            ║
+    ║     npx playwright install                                 ║
+    ║                                                            ║
+    ║ <3 Playwright Team                                         ║
+    ╚════════════════════════════════════════════════════════════╝
+
+    Error Context: test-results/core-빠른-이동-팔레트는-esc로-닫히고-최근-항목을-기억한다-mobile/error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/core-빠른-이동-팔레트는-esc로-닫히고-최근-항목을-기억한다-mobile/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/core-빠른-이동-팔레트는-esc로-닫히고-최근-항목을-기억한다-mobile/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  62) [mobile] › e2e/core.spec.ts:350:1 › 관리자는 로고와 파비콘을 업로드하고 주소로 가져온다 ─────────────────────────────
+
+    Error: browserType.launch: Executable doesn't exist at /mnt/c/Users/USER/projects/aidev/state/runs/2026-09-29-060142-appstore-improve/home/.cache/ms-playwright/chromium_headless_shell-1234/chrome-headless-shell-linux64/chrome-headless-shell
+    ╔════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright was just installed or updated.       ║
+    ║ Please run the following command to download new browsers: ║
+    ║                                                            ║
+    ║     npx playwright install                                 ║
+    ║                                                            ║
+    ║ <3 Playwright Team                                         ║
+    ╚════════════════════════════════════════════════════════════╝
+
+    Error Context: test-results/core-관리자는-로고와-파비콘을-업로드하고-주소로-가져온다-mobile/error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/core-관리자는-로고와-파비콘을-업로드하고-주소로-가져온다-mobile/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/core-관리자는-로고와-파비콘을-업로드하고-주소로-가져온다-mobile/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  63) [mobile] › e2e/core.spec.ts:389:1 › 앱 관리 목록에서 서비스 주소로 바로 이동한다 ────────────────────────────────
+
+    Error: browserType.launch: Executable doesn't exist at /mnt/c/Users/USER/projects/aidev/state/runs/2026-09-29-060142-appstore-improve/home/.cache/ms-playwright/chromium_headless_shell-1234/chrome-headless-shell-linux64/chrome-headless-shell
+    ╔════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright was just installed or updated.       ║
+    ║ Please run the following command to download new browsers: ║
+    ║                                                            ║
+    ║     npx playwright install                                 ║
+    ║                                                            ║
+    ║ <3 Playwright Team                                         ║
+    ╚════════════════════════════════════════════════════════════╝
+
+    Error Context: test-results/core-앱-관리-목록에서-서비스-주소로-바로-이동한다-mobile/error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/core-앱-관리-목록에서-서비스-주소로-바로-이동한다-mobile/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/core-앱-관리-목록에서-서비스-주소로-바로-이동한다-mobile/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  64) [mobile] › e2e/core.spec.ts:397:1 › 첫 화면 배너는 관리자가 저장한 문구를 사용한다 ───────────────────────────────
+
+    Error: browserType.launch: Executable doesn't exist at /mnt/c/Users/USER/projects/aidev/state/runs/2026-09-29-060142-appstore-improve/home/.cache/ms-playwright/chromium_headless_shell-1234/chrome-headless-shell-linux64/chrome-headless-shell
+    ╔════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright was just installed or updated.       ║
+    ║ Please run the following command to download new browsers: ║
+    ║                                                            ║
+    ║     npx playwright install                                 ║
+    ║                                                            ║
+    ║ <3 Playwright Team                                         ║
+    ╚════════════════════════════════════════════════════════════╝
+
+    Error Context: test-results/core-첫-화면-배너는-관리자가-저장한-문구를-사용한다-mobile/error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/core-첫-화면-배너는-관리자가-저장한-문구를-사용한다-mobile/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/core-첫-화면-배너는-관리자가-저장한-문구를-사용한다-mobile/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  65) [mobile] › e2e/core.spec.ts:421:1 › 추천 진열은 최신순이 아니라 관리자가 정한 우선순위를 따른다 ────────────────────────
+
+    Error: browserType.launch: Executable doesn't exist at /mnt/c/Users/USER/projects/aidev/state/runs/2026-09-29-060142-appstore-improve/home/.cache/ms-playwright/chromium_headless_shell-1234/chrome-headless-shell-linux64/chrome-headless-shell
+    ╔════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright was just installed or updated.       ║
+    ║ Please run the following command to download new browsers: ║
+    ║                                                            ║
+    ║     npx playwright install                                 ║
+    ║                                                            ║
+    ║ <3 Playwright Team                                         ║
+    ╚════════════════════════════════════════════════════════════╝
+
+    Error Context: test-results/core-추천-진열은-최신순이-아니라-관리자가-정한-우선순위를-따른다-mobile/error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/core-추천-진열은-최신순이-아니라-관리자가-정한-우선순위를-따른다-mobile/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/core-추천-진열은-최신순이-아니라-관리자가-정한-우선순위를-따른다-mobile/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  66) [mobile] › e2e/core.spec.ts:433:1 › 관리자는 앱 관리에서 추천 우선순위를 지정하거나 지운다 ───────────────────────────
+
+    Error: browserType.launch: Executable doesn't exist at /mnt/c/Users/USER/projects/aidev/state/runs/2026-09-29-060142-appstore-improve/home/.cache/ms-playwright/chromium_headless_shell-1234/chrome-headless-shell-linux64/chrome-headless-shell
+    ╔════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright was just installed or updated.       ║
+    ║ Please run the following command to download new browsers: ║
+    ║                                                            ║
+    ║     npx playwright install                                 ║
+    ║                                                            ║
+    ║ <3 Playwright Team                                         ║
+    ╚════════════════════════════════════════════════════════════╝
+
+    Error Context: test-results/core-관리자는-앱-관리에서-추천-우선순위를-지정하거나-지운다-mobile/error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/core-관리자는-앱-관리에서-추천-우선순위를-지정하거나-지운다-mobile/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/core-관리자는-앱-관리에서-추천-우선순위를-지정하거나-지운다-mobile/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  67) [mobile] › e2e/core.spec.ts:461:1 › 가이드 문서는 비로그인 방문자도 앱 상세에서 내려받는다 ───────────────────────────
+
+    Error: browserType.launch: Executable doesn't exist at /mnt/c/Users/USER/projects/aidev/state/runs/2026-09-29-060142-appstore-improve/home/.cache/ms-playwright/chromium_headless_shell-1234/chrome-headless-shell-linux64/chrome-headless-shell
+    ╔════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright was just installed or updated.       ║
+    ║ Please run the following command to download new browsers: ║
+    ║                                                            ║
+    ║     npx playwright install                                 ║
+    ║                                                            ║
+    ║ <3 Playwright Team                                         ║
+    ╚════════════════════════════════════════════════════════════╝
+
+    Error Context: test-results/core-가이드-문서는-비로그인-방문자도-앱-상세에서-내려받는다-mobile/error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/core-가이드-문서는-비로그인-방문자도-앱-상세에서-내려받는다-mobile/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/core-가이드-문서는-비로그인-방문자도-앱-상세에서-내려받는다-mobile/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  68) [mobile] › e2e/core.spec.ts:477:1 › 소유자는 앱 수정 화면에서 가이드 문서를 첨부하고 삭제를 예약한다 ─────────────────────
+
+    Error: browserType.launch: Executable doesn't exist at /mnt/c/Users/USER/projects/aidev/state/runs/2026-09-29-060142-appstore-improve/home/.cache/ms-playwright/chromium_headless_shell-1234/chrome-headless-shell-linux64/chrome-headless-shell
+    ╔════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright was just installed or updated.       ║
+    ║ Please run the following command to download new browsers: ║
+    ║                                                            ║
+    ║     npx playwright install                                 ║
+    ║                                                            ║
+    ║ <3 Playwright Team                                         ║
+    ╚════════════════════════════════════════════════════════════╝
+
+    Error Context: test-results/core-소유자는-앱-수정-화면에서-가이드-문서를-첨부하고-삭제를-예약한다-mobile/error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/core-소유자는-앱-수정-화면에서-가이드-문서를-첨부하고-삭제를-예약한다-mobile/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/core-소유자는-앱-수정-화면에서-가이드-문서를-첨부하고-삭제를-예약한다-mobile/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  69) [mobile] › e2e/core.spec.ts:498:1 › 앱 카드는 이름 밖을 눌러도 앱 상세로 이동한다 ───────────────────────────────
+
+    Error: browserType.launch: Executable doesn't exist at /mnt/c/Users/USER/projects/aidev/state/runs/2026-09-29-060142-appstore-improve/home/.cache/ms-playwright/chromium_headless_shell-1234/chrome-headless-shell-linux64/chrome-headless-shell
+    ╔════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright was just installed or updated.       ║
+    ║ Please run the following command to download new browsers: ║
+    ║                                                            ║
+    ║     npx playwright install                                 ║
+    ║                                                            ║
+    ║ <3 Playwright Team                                         ║
+    ╚════════════════════════════════════════════════════════════╝
+
+    Error Context: test-results/core-앱-카드는-이름-밖을-눌러도-앱-상세로-이동한다-mobile/error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/core-앱-카드는-이름-밖을-눌러도-앱-상세로-이동한다-mobile/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/core-앱-카드는-이름-밖을-눌러도-앱-상세로-이동한다-mobile/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  70) [mobile] › e2e/core.spec.ts:509:1 › 게시되지 않은 내 앱의 카드는 수정 화면으로 열린다 ─────────────────────────────
+
+    Error: browserType.launch: Executable doesn't exist at /mnt/c/Users/USER/projects/aidev/state/runs/2026-09-29-060142-appstore-improve/home/.cache/ms-playwright/chromium_headless_shell-1234/chrome-headless-shell-linux64/chrome-headless-shell
+    ╔════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright was just installed or updated.       ║
+    ║ Please run the following command to download new browsers: ║
+    ║                                                            ║
+    ║     npx playwright install                                 ║
+    ║                                                            ║
+    ║ <3 Playwright Team                                         ║
+    ╚════════════════════════════════════════════════════════════╝
+
+    Error Context: test-results/core-게시되지-않은-내-앱의-카드는-수정-화면으로-열린다-mobile/error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/core-게시되지-않은-내-앱의-카드는-수정-화면으로-열린다-mobile/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/core-게시되지-않은-내-앱의-카드는-수정-화면으로-열린다-mobile/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  71) [mobile] › e2e/core.spec.ts:541:1 › 관리자의 앱 카드는 자세히 글자 없이 아이콘만 보여 준다 ──────────────────────────
+
+    Error: browserType.launch: Executable doesn't exist at /mnt/c/Users/USER/projects/aidev/state/runs/2026-09-29-060142-appstore-improve/home/.cache/ms-playwright/chromium_headless_shell-1234/chrome-headless-shell-linux64/chrome-headless-shell
+    ╔════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright was just installed or updated.       ║
+    ║ Please run the following command to download new browsers: ║
+    ║                                                            ║
+    ║     npx playwright install                                 ║
+    ║                                                            ║
+    ║ <3 Playwright Team                                         ║
+    ╚════════════════════════════════════════════════════════════╝
+
+    Error Context: test-results/core-관리자의-앱-카드는-자세히-글자-없이-아이콘만-보여-준다-mobile/error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/core-관리자의-앱-카드는-자세히-글자-없이-아이콘만-보여-준다-mobile/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/core-관리자의-앱-카드는-자세히-글자-없이-아이콘만-보여-준다-mobile/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  72) [mobile] › e2e/core.spec.ts:556:1 › 보안 심의를 마쳐야 앱을 제출할 수 있다 ───────────────────────────────────
+
+    Error: browserType.launch: Executable doesn't exist at /mnt/c/Users/USER/projects/aidev/state/runs/2026-09-29-060142-appstore-improve/home/.cache/ms-playwright/chromium_headless_shell-1234/chrome-headless-shell-linux64/chrome-headless-shell
+    ╔════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright was just installed or updated.       ║
+    ║ Please run the following command to download new browsers: ║
+    ║                                                            ║
+    ║     npx playwright install                                 ║
+    ║                                                            ║
+    ║ <3 Playwright Team                                         ║
+    ╚════════════════════════════════════════════════════════════╝
+
+    Error Context: test-results/core-보안-심의를-마쳐야-앱을-제출할-수-있다-mobile/error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/core-보안-심의를-마쳐야-앱을-제출할-수-있다-mobile/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/core-보안-심의를-마쳐야-앱을-제출할-수-있다-mobile/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  73) [mobile] › e2e/core.spec.ts:570:1 › 관리자는 SecCheck 연동을 설정하고 연결을 확인한다 ──────────────────────────
+
+    Error: browserType.launch: Executable doesn't exist at /mnt/c/Users/USER/projects/aidev/state/runs/2026-09-29-060142-appstore-improve/home/.cache/ms-playwright/chromium_headless_shell-1234/chrome-headless-shell-linux64/chrome-headless-shell
+    ╔════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright was just installed or updated.       ║
+    ║ Please run the following command to download new browsers: ║
+    ║                                                            ║
+    ║     npx playwright install                                 ║
+    ║                                                            ║
+    ║ <3 Playwright Team                                         ║
+    ╚════════════════════════════════════════════════════════════╝
+
+    Error Context: test-results/core-관리자는-SecCheck-연동을-설정하고-연결을-확인한다-mobile/error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/core-관리자는-SecCheck-연동을-설정하고-연결을-확인한다-mobile/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/core-관리자는-SecCheck-연동을-설정하고-연결을-확인한다-mobile/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  74) [mobile] › e2e/core.spec.ts:585:1 › 검토자는 앱 내용과 이전 검토를 보고 의견과 함께 결정한다 ─────────────────────────
+
+    Error: browserType.launch: Executable doesn't exist at /mnt/c/Users/USER/projects/aidev/state/runs/2026-09-29-060142-appstore-improve/home/.cache/ms-playwright/chromium_headless_shell-1234/chrome-headless-shell-linux64/chrome-headless-shell
+    ╔════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright was just installed or updated.       ║
+    ║ Please run the following command to download new browsers: ║
+    ║                                                            ║
+    ║     npx playwright install                                 ║
+    ║                                                            ║
+    ║ <3 Playwright Team                                         ║
+    ╚════════════════════════════════════════════════════════════╝
+
+    Error Context: test-results/core-검토자는-앱-내용과-이전-검토를-보고-의견과-함께-결정한다-mobile/error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/core-검토자는-앱-내용과-이전-검토를-보고-의견과-함께-결정한다-mobile/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/core-검토자는-앱-내용과-이전-검토를-보고-의견과-함께-결정한다-mobile/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  75) [mobile] › e2e/core.spec.ts:612:1 › 공개 앱 즐겨찾기는 소유자와 공개 목록에서 추가하고 즐겨찾기에서 해제한다 ─────────────────
+
+    Error: browserType.launch: Executable doesn't exist at /mnt/c/Users/USER/projects/aidev/state/runs/2026-09-29-060142-appstore-improve/home/.cache/ms-playwright/chromium_headless_shell-1234/chrome-headless-shell-linux64/chrome-headless-shell
+    ╔════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright was just installed or updated.       ║
+    ║ Please run the following command to download new browsers: ║
+    ║                                                            ║
+    ║     npx playwright install                                 ║
+    ║                                                            ║
+    ║ <3 Playwright Team                                         ║
+    ╚════════════════════════════════════════════════════════════╝
+
+    Error Context: test-results/core-공개-앱-즐겨찾기는-소유자와-공개-목록에서-추가하고-즐겨찾기에서-해제한다-mobile/error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/core-공개-앱-즐겨찾기는-소유자와-공개-목록에서-추가하고-즐겨찾기에서-해제한다-mobile/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/core-공개-앱-즐겨찾기는-소유자와-공개-목록에서-추가하고-즐겨찾기에서-해제한다-mobile/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  76) [mobile] › e2e/core.spec.ts:661:1 › 카탈로그에서 즐겨찾기를 눌러도 목록을 다시 받아 오지 않는다 ────────────────────────
+
+    Error: browserType.launch: Executable doesn't exist at /mnt/c/Users/USER/projects/aidev/state/runs/2026-09-29-060142-appstore-improve/home/.cache/ms-playwright/chromium_headless_shell-1234/chrome-headless-shell-linux64/chrome-headless-shell
+    ╔════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright was just installed or updated.       ║
+    ║ Please run the following command to download new browsers: ║
+    ║                                                            ║
+    ║     npx playwright install                                 ║
+    ║                                                            ║
+    ║ <3 Playwright Team                                         ║
+    ╚════════════════════════════════════════════════════════════╝
+
+    Error Context: test-results/core-카탈로그에서-즐겨찾기를-눌러도-목록을-다시-받아-오지-않는다-mobile/error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/core-카탈로그에서-즐겨찾기를-눌러도-목록을-다시-받아-오지-않는다-mobile/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/core-카탈로그에서-즐겨찾기를-눌러도-목록을-다시-받아-오지-않는다-mobile/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  77) [mobile] › e2e/core.spec.ts:690:1 › 자동 로그인은 세션이 없을 때 조용히 한 번만 확인한다 ───────────────────────────
+
+    Error: browserType.launch: Executable doesn't exist at /mnt/c/Users/USER/projects/aidev/state/runs/2026-09-29-060142-appstore-improve/home/.cache/ms-playwright/chromium_headless_shell-1234/chrome-headless-shell-linux64/chrome-headless-shell
+    ╔════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright was just installed or updated.       ║
+    ║ Please run the following command to download new browsers: ║
+    ║                                                            ║
+    ║     npx playwright install                                 ║
+    ║                                                            ║
+    ║ <3 Playwright Team                                         ║
+    ╚════════════════════════════════════════════════════════════╝
+
+    Error Context: test-results/core-자동-로그인은-세션이-없을-때-조용히-한-번만-확인한다-mobile/error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/core-자동-로그인은-세션이-없을-때-조용히-한-번만-확인한다-mobile/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/core-자동-로그인은-세션이-없을-때-조용히-한-번만-확인한다-mobile/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  78) [mobile] › e2e/core.spec.ts:710:1 › 로그아웃한 뒤 새 탭에서 자동 로그인이 다시 밀어 넣지 않는다 ───────────────────────
+
+    Error: browserType.launch: Executable doesn't exist at /mnt/c/Users/USER/projects/aidev/state/runs/2026-09-29-060142-appstore-improve/home/.cache/ms-playwright/chromium_headless_shell-1234/chrome-headless-shell-linux64/chrome-headless-shell
+    ╔════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright was just installed or updated.       ║
+    ║ Please run the following command to download new browsers: ║
+    ║                                                            ║
+    ║     npx playwright install                                 ║
+    ║                                                            ║
+    ║ <3 Playwright Team                                         ║
+    ╚════════════════════════════════════════════════════════════╝
+
+    Error Context: test-results/core-로그아웃한-뒤-새-탭에서-자동-로그인이-다시-밀어-넣지-않는다-mobile/error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/core-로그아웃한-뒤-새-탭에서-자동-로그인이-다시-밀어-넣지-않는다-mobile/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/core-로그아웃한-뒤-새-탭에서-자동-로그인이-다시-밀어-넣지-않는다-mobile/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  79) [mobile] › e2e/core.spec.ts:743:1 › 카탈로그 보기 전환은 현재 페이지와 앱을 유지한다 ──────────────────────────────
+
+    Error: browserType.launch: Executable doesn't exist at /mnt/c/Users/USER/projects/aidev/state/runs/2026-09-29-060142-appstore-improve/home/.cache/ms-playwright/chromium_headless_shell-1234/chrome-headless-shell-linux64/chrome-headless-shell
+    ╔════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright was just installed or updated.       ║
+    ║ Please run the following command to download new browsers: ║
+    ║                                                            ║
+    ║     npx playwright install                                 ║
+    ║                                                            ║
+    ║ <3 Playwright Team                                         ║
+    ╚════════════════════════════════════════════════════════════╝
+
+    Error Context: test-results/core-카탈로그-보기-전환은-현재-페이지와-앱을-유지한다-mobile/error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/core-카탈로그-보기-전환은-현재-페이지와-앱을-유지한다-mobile/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/core-카탈로그-보기-전환은-현재-페이지와-앱을-유지한다-mobile/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  80) [mobile] › e2e/visual.spec.ts:123:1 › 공개 주요 화면 캡처 ────────────────────────────────────────────
+
+    Error: browserType.launch: Executable doesn't exist at /mnt/c/Users/USER/projects/aidev/state/runs/2026-09-29-060142-appstore-improve/home/.cache/ms-playwright/chromium_headless_shell-1234/chrome-headless-shell-linux64/chrome-headless-shell
+    ╔════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright was just installed or updated.       ║
+    ║ Please run the following command to download new browsers: ║
+    ║                                                            ║
+    ║     npx playwright install                                 ║
+    ║                                                            ║
+    ║ <3 Playwright Team                                         ║
+    ╚════════════════════════════════════════════════════════════╝
+
+    Error Context: test-results/visual-공개-주요-화면-캡처-mobile/error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/visual-공개-주요-화면-캡처-mobile/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/visual-공개-주요-화면-캡처-mobile/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  81) [mobile] › e2e/visual.spec.ts:154:1 › 개인화·검토 주요 화면 캡처 ────────────────────────────────────────
+
+    Error: browserType.launch: Executable doesn't exist at /mnt/c/Users/USER/projects/aidev/state/runs/2026-09-29-060142-appstore-improve/home/.cache/ms-playwright/chromium_headless_shell-1234/chrome-headless-shell-linux64/chrome-headless-shell
+    ╔════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright was just installed or updated.       ║
+    ║ Please run the following command to download new browsers: ║
+    ║                                                            ║
+    ║     npx playwright install                                 ║
+    ║                                                            ║
+    ║ <3 Playwright Team                                         ║
+    ╚════════════════════════════════════════════════════════════╝
+
+    Error Context: test-results/visual-개인화·검토-주요-화면-캡처-mobile/error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/visual-개인화·검토-주요-화면-캡처-mobile/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/visual-개인화·검토-주요-화면-캡처-mobile/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  82) [mobile] › e2e/visual.spec.ts:159:1 › 관리자 전체 주요 화면 캡처 ────────────────────────────────────────
+
+    Error: browserType.launch: Executable doesn't exist at /mnt/c/Users/USER/projects/aidev/state/runs/2026-09-29-060142-appstore-improve/home/.cache/ms-playwright/chromium_headless_shell-1234/chrome-headless-shell-linux64/chrome-headless-shell
+    ╔════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright was just installed or updated.       ║
+    ║ Please run the following command to download new browsers: ║
+    ║                                                            ║
+    ║     npx playwright install                                 ║
+    ║                                                            ║
+    ║ <3 Playwright Team                                         ║
+    ╚════════════════════════════════════════════════════════════╝
+
+    Error Context: test-results/visual-관리자-전체-주요-화면-캡처-mobile/error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/visual-관리자-전체-주요-화면-캡처-mobile/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/visual-관리자-전체-주요-화면-캡처-mobile/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  82 failed
+    [desktop] › e2e/core.spec.ts:5:1 › 공개 탐색과 URL 검색 상태는 새로고침 후에도 유지된다 ─────────────────────────────
+    [desktop] › e2e/core.spec.ts:20:1 › 비로그인 등록 접근은 원래 URL을 보존한 로그인 화면으로 이동한다 ──────────────────────
+    [desktop] › e2e/core.spec.ts:32:1 › 일반 사용자는 관리자 화면에서 403 상태를 본다 ────────────────────────────────
+    [desktop] › e2e/core.spec.ts:43:1 › 관리자 사용자 목록은 가상화되고 route refresh를 견딘다 ───────────────────────
+    [desktop] › e2e/core.spec.ts:56:1 › AI는 256K 설정과 SSE token streaming을 처리한다 ─────────────────────
+    [desktop] › e2e/core.spec.ts:70:1 › 관리자는 Key Permission과 Template을 편집할 수 있다 ────────────────────
+    [desktop] › e2e/core.spec.ts:90:1 › light/dark 테마 선택은 새로고침 후 유지된다 ──────────────────────────────
+    [desktop] › e2e/core.spec.ts:102:1 › 모바일 메뉴는 키보드와 명시적 버튼으로 접근 가능하다 ─────────────────────────────
+    [desktop] › e2e/core.spec.ts:116:1 › 관리자는 앱 상세를 수정하고 삭제 확인 후 목록으로 돌아온다 ─────────────────────────
+    [desktop] › e2e/core.spec.ts:137:1 › SSO 연결 테스트는 discovery endpoint를 표시한다 ──────────────────────
+    [desktop] › e2e/core.spec.ts:150:1 › 스토어 메뉴는 Apps와 MCP Apps를 동시에 선택하지 않는다 ──────────────────────
+    [desktop] › e2e/core.spec.ts:172:3 › SSO 전용 설치에서는 사용 가능한 로그인 방식만 표시한다 ──────────────────────────
+    [desktop] › e2e/core.spec.ts:172:3 › Bootstrap 전용 설치에서는 사용 가능한 로그인 방식만 표시한다 ────────────────────
+    [desktop] › e2e/core.spec.ts:215:1 › SSO를 설정해도 복구용 관리자 로그인을 계속 사용할 수 있다 ────────────────────────
+    [desktop] › e2e/core.spec.ts:237:1 › 거절된 silent SSO 뒤 로그인 화면은 이유를 알리고 SSO 링크는 그대로다 ─────────────
+    [desktop] › e2e/core.spec.ts:253:1 › 관리자는 스토어 목록과 상세에서 관리 설정으로 바로 이동한다 ─────────────────────────
+    [desktop] › e2e/core.spec.ts:271:1 › 일반 사용자에게는 관리 설정 바로가기가 보이지 않는다 ─────────────────────────────
+    [desktop] › e2e/core.spec.ts:285:1 › 관리자는 앱 관리에서 새 앱을 등록한다 ─────────────────────────────────────
+    [desktop] › e2e/core.spec.ts:304:1 › 빠른 이동 팔레트로 메뉴와 앱으로 이동한다 ───────────────────────────────────
+    [desktop] › e2e/core.spec.ts:331:1 › 빠른 이동 팔레트는 esc로 닫히고 최근 항목을 기억한다 ───────────────────────────
+    [desktop] › e2e/core.spec.ts:350:1 › 관리자는 로고와 파비콘을 업로드하고 주소로 가져온다 ──────────────────────────────
+    [desktop] › e2e/core.spec.ts:389:1 › 앱 관리 목록에서 서비스 주소로 바로 이동한다 ─────────────────────────────────
+    [desktop] › e2e/core.spec.ts:397:1 › 첫 화면 배너는 관리자가 저장한 문구를 사용한다 ────────────────────────────────
+    [desktop] › e2e/core.spec.ts:421:1 › 추천 진열은 최신순이 아니라 관리자가 정한 우선순위를 따른다 ─────────────────────────
+    [desktop] › e2e/core.spec.ts:433:1 › 관리자는 앱 관리에서 추천 우선순위를 지정하거나 지운다 ────────────────────────────
+    [desktop] › e2e/core.spec.ts:461:1 › 가이드 문서는 비로그인 방문자도 앱 상세에서 내려받는다 ────────────────────────────
+    [desktop] › e2e/core.spec.ts:477:1 › 소유자는 앱 수정 화면에서 가이드 문서를 첨부하고 삭제를 예약한다 ──────────────────────
+    [desktop] › e2e/core.spec.ts:498:1 › 앱 카드는 이름 밖을 눌러도 앱 상세로 이동한다 ────────────────────────────────
+    [desktop] › e2e/core.spec.ts:509:1 › 게시되지 않은 내 앱의 카드는 수정 화면으로 열린다 ──────────────────────────────
+    [desktop] › e2e/core.spec.ts:541:1 › 관리자의 앱 카드는 자세히 글자 없이 아이콘만 보여 준다 ───────────────────────────
+    [desktop] › e2e/core.spec.ts:556:1 › 보안 심의를 마쳐야 앱을 제출할 수 있다 ────────────────────────────────────
+    [desktop] › e2e/core.spec.ts:570:1 › 관리자는 SecCheck 연동을 설정하고 연결을 확인한다 ───────────────────────────
+    [desktop] › e2e/core.spec.ts:585:1 › 검토자는 앱 내용과 이전 검토를 보고 의견과 함께 결정한다 ──────────────────────────
+    [desktop] › e2e/core.spec.ts:612:1 › 공개 앱 즐겨찾기는 소유자와 공개 목록에서 추가하고 즐겨찾기에서 해제한다 ──────────────────
+    [desktop] › e2e/core.spec.ts:661:1 › 카탈로그에서 즐겨찾기를 눌러도 목록을 다시 받아 오지 않는다 ─────────────────────────
+    [desktop] › e2e/core.spec.ts:690:1 › 자동 로그인은 세션이 없을 때 조용히 한 번만 확인한다 ────────────────────────────
+    [desktop] › e2e/core.spec.ts:710:1 › 로그아웃한 뒤 새 탭에서 자동 로그인이 다시 밀어 넣지 않는다 ────────────────────────
+    [desktop] › e2e/core.spec.ts:743:1 › 카탈로그 보기 전환은 현재 페이지와 앱을 유지한다 ───────────────────────────────
+    [desktop] › e2e/visual.spec.ts:123:1 › 공개 주요 화면 캡처 ─────────────────────────────────────────────
+    [desktop] › e2e/visual.spec.ts:154:1 › 개인화·검토 주요 화면 캡처 ─────────────────────────────────────────
+    [desktop] › e2e/visual.spec.ts:159:1 › 관리자 전체 주요 화면 캡처 ─────────────────────────────────────────
+    [mobile] › e2e/core.spec.ts:5:1 › 공개 탐색과 URL 검색 상태는 새로고침 후에도 유지된다 ──────────────────────────────
+    [mobile] › e2e/core.spec.ts:20:1 › 비로그인 등록 접근은 원래 URL을 보존한 로그인 화면으로 이동한다 ───────────────────────
+    [mobile] › e2e/core.spec.ts:32:1 › 일반 사용자는 관리자 화면에서 403 상태를 본다 ─────────────────────────────────
+    [mobile] › e2e/core.spec.ts:43:1 › 관리자 사용자 목록은 가상화되고 route refresh를 견딘다 ────────────────────────
+    [mobile] › e2e/core.spec.ts:56:1 › AI는 256K 설정과 SSE token streaming을 처리한다 ──────────────────────
+    [mobile] › e2e/core.spec.ts:70:1 › 관리자는 Key Permission과 Template을 편집할 수 있다 ─────────────────────
+    [mobile] › e2e/core.spec.ts:90:1 › light/dark 테마 선택은 새로고침 후 유지된다 ───────────────────────────────
+    [mobile] › e2e/core.spec.ts:102:1 › 모바일 메뉴는 키보드와 명시적 버튼으로 접근 가능하다 ──────────────────────────────
+    [mobile] › e2e/core.spec.ts:116:1 › 관리자는 앱 상세를 수정하고 삭제 확인 후 목록으로 돌아온다 ──────────────────────────
+    [mobile] › e2e/core.spec.ts:137:1 › SSO 연결 테스트는 discovery endpoint를 표시한다 ───────────────────────
+    [mobile] › e2e/core.spec.ts:150:1 › 스토어 메뉴는 Apps와 MCP Apps를 동시에 선택하지 않는다 ───────────────────────
+    [mobile] › e2e/core.spec.ts:172:3 › SSO 전용 설치에서는 사용 가능한 로그인 방식만 표시한다 ───────────────────────────
+    [mobile] › e2e/core.spec.ts:172:3 › Bootstrap 전용 설치에서는 사용 가능한 로그인 방식만 표시한다 ─────────────────────
+    [mobile] › e2e/core.spec.ts:215:1 › SSO를 설정해도 복구용 관리자 로그인을 계속 사용할 수 있다 ─────────────────────────
+    [mobile] › e2e/core.spec.ts:237:1 › 거절된 silent SSO 뒤 로그인 화면은 이유를 알리고 SSO 링크는 그대로다 ──────────────
+    [mobile] › e2e/core.spec.ts:253:1 › 관리자는 스토어 목록과 상세에서 관리 설정으로 바로 이동한다 ──────────────────────────
+    [mobile] › e2e/core.spec.ts:271:1 › 일반 사용자에게는 관리 설정 바로가기가 보이지 않는다 ──────────────────────────────
+    [mobile] › e2e/core.spec.ts:285:1 › 관리자는 앱 관리에서 새 앱을 등록한다 ──────────────────────────────────────
+    [mobile] › e2e/core.spec.ts:304:1 › 빠른 이동 팔레트로 메뉴와 앱으로 이동한다 ────────────────────────────────────
+    [mobile] › e2e/core.spec.ts:331:1 › 빠른 이동 팔레트는 esc로 닫히고 최근 항목을 기억한다 ────────────────────────────
+    [mobile] › e2e/core.spec.ts:350:1 › 관리자는 로고와 파비콘을 업로드하고 주소로 가져온다 ───────────────────────────────
+    [mobile] › e2e/core.spec.ts:389:1 › 앱 관리 목록에서 서비스 주소로 바로 이동한다 ──────────────────────────────────
+    [mobile] › e2e/core.spec.ts:397:1 › 첫 화면 배너는 관리자가 저장한 문구를 사용한다 ─────────────────────────────────
+    [mobile] › e2e/core.spec.ts:421:1 › 추천 진열은 최신순이 아니라 관리자가 정한 우선순위를 따른다 ──────────────────────────
+    [mobile] › e2e/core.spec.ts:433:1 › 관리자는 앱 관리에서 추천 우선순위를 지정하거나 지운다 ─────────────────────────────
+    [mobile] › e2e/core.spec.ts:461:1 › 가이드 문서는 비로그인 방문자도 앱 상세에서 내려받는다 ─────────────────────────────
+    [mobile] › e2e/core.spec.ts:477:1 › 소유자는 앱 수정 화면에서 가이드 문서를 첨부하고 삭제를 예약한다 ───────────────────────
+    [mobile] › e2e/core.spec.ts:498:1 › 앱 카드는 이름 밖을 눌러도 앱 상세로 이동한다 ─────────────────────────────────
+    [mobile] › e2e/core.spec.ts:509:1 › 게시되지 않은 내 앱의 카드는 수정 화면으로 열린다 ───────────────────────────────
+    [mobile] › e2e/core.spec.ts:541:1 › 관리자의 앱 카드는 자세히 글자 없이 아이콘만 보여 준다 ────────────────────────────
+    [mobile] › e2e/core.spec.ts:556:1 › 보안 심의를 마쳐야 앱을 제출할 수 있다 ─────────────────────────────────────
+    [mobile] › e2e/core.spec.ts:570:1 › 관리자는 SecCheck 연동을 설정하고 연결을 확인한다 ────────────────────────────
+    [mobile] › e2e/core.spec.ts:585:1 › 검토자는 앱 내용과 이전 검토를 보고 의견과 함께 결정한다 ───────────────────────────
+    [mobile] › e2e/core.spec.ts:612:1 › 공개 앱 즐겨찾기는 소유자와 공개 목록에서 추가하고 즐겨찾기에서 해제한다 ───────────────────
+    [mobile] › e2e/core.spec.ts:661:1 › 카탈로그에서 즐겨찾기를 눌러도 목록을 다시 받아 오지 않는다 ──────────────────────────
+    [mobile] › e2e/core.spec.ts:690:1 › 자동 로그인은 세션이 없을 때 조용히 한 번만 확인한다 ─────────────────────────────
+    [mobile] › e2e/core.spec.ts:710:1 › 로그아웃한 뒤 새 탭에서 자동 로그인이 다시 밀어 넣지 않는다 ─────────────────────────
+    [mobile] › e2e/core.spec.ts:743:1 › 카탈로그 보기 전환은 현재 페이지와 앱을 유지한다 ────────────────────────────────
+    [mobile] › e2e/visual.spec.ts:123:1 › 공개 주요 화면 캡처 ──────────────────────────────────────────────
+    [mobile] › e2e/visual.spec.ts:154:1 › 개인화·검토 주요 화면 캡처 ──────────────────────────────────────────
+    [mobile] › e2e/visual.spec.ts:159:1 › 관리자 전체 주요 화면 캡처 ──────────────────────────────────────────

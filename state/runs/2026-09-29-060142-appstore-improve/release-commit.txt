@@ -1,0 +1,27 @@
+chore(release): AppStore v2.11.10
+
+앱 카탈로그에서 보기 전환 시 현재 페이지를 잃던 문제를 고친 patch 릴리스입니다.
+
+Version
+
+package.json·package-lock.json, compose, README, Pages 문서와 사용자·관리자
+가이드의 버전을 v2.11.10으로 갱신했습니다. 롤백 예시는 v2.11.9를 가리킵니다.
+
+Screenshots and guide PDFs
+
+실제 번들에서 desktop/mobile 캡처 90개를 다시 생성했습니다. 88개는 동일하며
+인증 설정 2개만 preview 포트(4183에서 4173) 표기가 달라졌습니다.
+기존 스크립트로 PDF를 재생성하고 표지 버전과 file:// 링크 부재를 확인했습니다.
+
+Migration
+
+서버·schema 변경은 없습니다. 기존 설치는 image만 교체하면 됩니다.
+internal/webui/dist는 기존 관례대로 유지하며 Dockerfile이 번들을 새로 빌드합니다.
+
+검증: Go race 테스트·vet·gofmt·build, React 92건, lint·Prettier·build,
+오프라인·환경·문서·버전 일치 검사 통과. Playwright는 retry 없이
+81 passed/1 skipped. 최초 실행의 브라우저 경로 오류를 설치된 동일 버전
+Chromium 경로 지정으로 해결한 뒤 전체 재실행했습니다.
+DB DSN 미설정으로 DB 통합 검증은 skip이며 실제 DB/Keycloak은 검증하지 않았습니다.
+Docker build/load/smoke, SHA-256 및 GitHub Release 게시는 태그 워크플로가
+수행합니다. 이 세션에서는 원격 전송을 수행하지 않았습니다.

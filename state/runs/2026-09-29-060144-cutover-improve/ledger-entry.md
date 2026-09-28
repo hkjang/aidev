@@ -1,0 +1,13 @@
+## 2026-09-29
+- 선택: ESLint에서 Playwright 생성 보고서·실행 결과 제외 (가치 2 / 위험 1 / 작업량 S)
+- 결과: 성공
+- 요약: eslint.config.mjs의 기존 globalIgnores 항목을 유지하고 playwright-report/**와 test-results/** 두 줄만 추가했다(커밋 0de2f1e, 설정 1파일·제품 코드 0파일). npm ci --legacy-peer-deps 성공 후 실제 ESLint API로 수정 전 두 생성 경로 ignored=false/errorCount=1, 수정 후 생성물 제외 및 app/admin/page.tsx·e2e/tree-ops.spec.ts·scripts/guide-screenshots/playwright.config.ts 검사 유지를 확인했고, 원복 실패와 재적용 통과까지 검증했다. npm run lint(exit 0), npm run test:unit(95건/30 suites, 실패·skip 0), git diff --check(exit 0), git diff --stat(1 file changed, 2 insertions), 커밋 후 깨끗한 git status를 확인했다.
+- 실패 재현: AssertionError [ERR_ASSERTION]: playwright-report/trace/index.js / false !== true (제공된 ESLint API 검증, 수정 전 exit 1; 의존성 로드 성공)
+- 보류 아이디어:
+  - 자기참조·순환 issues 중복 제거 (2/1/S) — 기존 자기참조 진단을 보존하는 별도 과제.
+  - 상태 전파 API·UI 통일 (3/2/M) — 두 계약의 의도와 실제 요청 비교 필요.
+  - 같은 레벨 추가 버튼 중복 정리 (2/1/S) — 행 단축 동작과 관리자 가이드 고려.
+  - Date.now 기반 ID 충돌 방지 (2/2/S) — 깊은 트리와 ID 길이 제한 고려.
+- 과제서: 채택 — 두 생성 경로가 실제 ESLint에서 제외되지 않는다는 근거가 현재 코드·실제 엔진 실행과 일치했다.
+- 검증 한계: 기존 playwright-report와 test-results 디렉터리는 시작 시 없었고 삭제 작업은 하지 않았다. lintText로 잠재 중첩 경로를 검증했으며 실제 실패 trace 생성, E2E, build는 과제서 범위에 따라 실행하지 않았다. npm ci가 high severity 취약점 2건을 보고했으나 의존성 변경은 범위 밖이라 하지 않았다.
+- 스킬: 전용 Skill/skills.list/skills.read 도구가 없어 /home/hkjang/.claude/plugins/marketplaces/headcount/plugins/technology/skills/ 아래 completion-verification, systematic-debugging, test-driven-development 정본을 직접 읽고 적용했다. 설치된 Next ESLint 가이드도 변경 전에 읽었다. 영구 테스트는 과제서대로 추가하지 않고 제공된 실제 API 검증을 사용했다.

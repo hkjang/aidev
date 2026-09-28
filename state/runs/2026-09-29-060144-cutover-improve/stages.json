@@ -1,0 +1,42 @@
+{
+  "base": {
+    "state": "pinned",
+    "reason": "main@8e876b7",
+    "at": "2026-09-29T06:01:49+09:00"
+  },
+  "autonomy": {
+    "state": "release",
+    "reason": "",
+    "at": "2026-09-29T06:01:49+09:00"
+  },
+  "scout": {
+    "state": "done",
+    "reason": "ESLint에서 Playwright 생성 보고서·실행 결과 제외 (가치 2 / 위험 1 / 작업량 S)",
+    "at": "2026-09-29T06:07:52+09:00"
+  },
+  "brief": {
+    "state": "accepted",
+    "reason": "채택 — 두 생성 경로가 실제 ESLint에서 제외되지 않는다는 근거가 현재 코드·실제 엔진 실행과 일치했다.",
+    "at": "2026-09-29T06:10:18+09:00"
+  },
+  "verify": {
+    "state": "passed",
+    "reason": "검증 1개 통과 (policy)",
+    "at": "2026-09-29T06:10:41+09:00"
+  },
+  "review": {
+    "state": "rejected",
+    "reason": "리뷰 거절: lib/mail/events.ts:77 [P2 정확성·머지 차단] 완료된 최상위 작업 A와 대기 중인 B가 있을 때 B만 삭제해도 allDone 전후 비교가 drill.completed를 생성한다. app/api/activities/route.ts:91은 삭제 후에도 알림을 호출하므로 실제 notifyActivityChanges→createMailService→sendMail→로컬 TCP SMTP 릴레이에서 \"모든 작업이 완료되었습니다\" 메일 1통을 수신했다. 삭제에는 알림을 보내지 않는다는 docs/ADMIN_GUIDE.md:448 및 events.test.ts의 계약과 다르고 서비스 개시 판단을 오도할 수 있다. 기존 삭제 테스트는 남은 작업도 대기여서 이 경계를 놓친다. 훈련 완료를 실제 기존 최상위 작업의 완료 상태 전환에 한정하고, 마지막 미완료 작업 삭제 시 발송 0건 회귀 테스트를 추가해야 한다.",
+    "at": "2026-09-29T06:18:47+09:00"
+  },
+  "repair": {
+    "state": "done",
+    "reason": "비평 지적 확인: STARTTLS 승인 후 TLS 무응답 시 timeoutMs=100이어도 1초 넘게 sendMail이 미완료였다. upgrade 전용 타이머와 오류·종료 처리를 추가하고, TLS 소�",
+    "at": "2026-09-29T06:15:44+09:00"
+  },
+  "pr": {
+    "state": "created",
+    "reason": "https://github.com/hkjang/cutover/pull/9",
+    "at": "2026-09-29T06:18:53+09:00"
+  }
+}

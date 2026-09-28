@@ -272,3 +272,16 @@
 - 과제서: 채택 — 지목한 `command-palette.tsx:109`·`:185-188`·`:204`·`:230` 과 `nav-items.ts:43-54`(검색어 `앱` 이 `전체 앱`·`MCP 앱` 두 개와 맞음), 목록 경로 `/api/v1/apps` 가 모두 현재 코드와 일치했고 수용 기준 4건과 "프로덕션 파일 1개" 제약을 그대로 지켰다. 기준선 테스트 수도 과제서가 미확인이라 한 82건과 일치했다.
 
 - 릴리즈: v2.11.8 (2026-09-28, run 2026-09-28-063212-appstore-improve)
+## 2026-09-29
+- 선택: 카탈로그 카드·목록 보기 전환 시 현재 페이지 유지 (가치 3 / 위험 1 / 작업량 S)
+- 결과: 성공
+- 요약: AppsPage의 URL 갱신 함수가 보기 변경에도 page를 삭제해 2페이지에서 카드/목록을 전환하면 1페이지 앱으로 바뀌므로, view 변경만 초기화에서 제외하는 프로덕션 파일 1개·한 줄을 수정했다. 실제 AuthProvider·FavoritesProvider·TanStack Query·라우터·API 클라이언트를 사용하고 HTTP 경계만 대체한 Vitest 5건(양방향 보기 전환 2건·검색/카테고리/정렬의 페이지 초기화 보존 3건)과 실제 번들 Playwright 1건(desktop/mobile)을 추가해 수정 전 실패·수정 후 통과를 확인했으며 제품 수정 원복 시 같은 2건이 재실패했다. npm --prefix web test 92 passed, lint·수정 테스트 Prettier·build·오프라인 자산/환경/문서 검사·Go race 전체 패키지 테스트·Go build 및 CI=true npm --prefix web run test:e2e -- --workers=4 --retries=0 --reporter=list 81 passed/1 skipped 후 28092fd로 커밋했다.
+- 실패 재현: `FAIL src/pages/public-pages.test.tsx > Apps route state > keeps page two when changing the grid view` / `TestingLibraryElementError: Unable to find an element with the text: 2 페이지.` (list도 동일; 2 failed / 9 passed). Playwright desktop/mobile도 `Expected pattern: /page=2/` / `Received string: "http://127.0.0.1:4173/apps?q=Catalog&category=ai&sort=name&view=list"`로 실패.
+- 보류 아이디어: 상위 100개 밖 즐겨찾기 앱 누락 (가치 3 / 위험 3 / 작업량 M) — 조회 계약을 따로 설계해야 함.
+- 보류 아이디어: E2E public config override 덮어쓰기 (가치 2 / 위험 1 / 작업량 S) — 설정 주입이 필요한 사용자 시나리오 검증과 묶어서만 수행.
+- 보류 아이디어: reverse proxy 뒤 RemoteAddr 기반 rate limit 공유 (가치 3 / 위험 3 / 작업량 M) — 신뢰 프록시 정책부터 정해야 함.
+- 보류 아이디어: 다른 탭의 즐겨찾기 변경 미반영 (가치 2 / 위험 2 / 작업량 M) — 신규, storage 이벤트와 동시 갱신을 실제 브라우저로 검증할 별도 과제.
+- 스킬: Skill 호출 도구는 제공되지 않아 /mnt/c/Users/USER/projects/headcount/plugins/technology/skills/{completion-verification,systematic-debugging,test-driven-development}/SKILL.md 원본을 읽고 절차를 적용했다. 원인은 캐시 내부가 아닌 URL page 삭제이며 수정 원복 테스트와 E2E URL/앱/요청 관측으로 확인했다.
+- 검증 한계: APPSTORE_TEST_POSTGRES_DSN 미설정으로 DB 통합 테스트는 skip; 실제 DB/Keycloak 및 Docker 이미지 smoke는 미실행. E2E는 실제 번들과 Chromium 및 HTTP fixture이며 skip 1건은 기존 모바일 전용 테스트의 desktop 제외다. 최초 빌드는 새 Vitest의 잘못된 exact 옵션/undefined 타입으로 실패해 테스트를 바로잡았고, 최초 E2E는 임시 HOME의 Chromium 부재로 시작하지 못해 설치했다. 첫 전체 E2E의 새 테스트만 전역/카탈로그 검색창 이름 중복 때문에 실패하여 #catalog-search로 대상을 명확히 한 뒤 전체를 재실행했다.
+- 검증 근거: red.log, e2e-red.log, green.log, revert-red.log, react-tests.log, go-tests.log, build.log, e2e-final.log. 기존 12개 아이디어를 유지·재평가하고 신규 2개를 추가한 ideas.json을 작성했다(즐겨찾기 검색/정렬 독립 결함은 100개 제한과 중복되어 rejected). 빌드 산출물·버전·릴리즈·원격 변경 없음.
+

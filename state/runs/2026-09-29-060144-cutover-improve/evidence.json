@@ -1,0 +1,258 @@
+{
+  "run_id": "2026-09-29-060144-cutover-improve",
+  "generated": "2026-09-29T06:18:56+09:00",
+  "run": {
+    "run_id": "2026-09-29-060144-cutover-improve",
+    "project": "cutover",
+    "kind": "improve",
+    "started": "2026-09-29T06:01:45+09:00",
+    "model": "claude-opus-5",
+    "policy_version": "4a9e91ac7",
+    "prompts_hash": "ce085c79e18002e2",
+    "runner_version": "d36dd84d8",
+    "arm": "no-journal",
+    "experiment": "roles-2026-09",
+    "finished": "2026-09-29T06:18:55+09:00",
+    "outcome": "review-pending"
+  },
+  "record": {
+    "ts": "2026-09-29T06:18:55+09:00",
+    "date": "2026-09-29",
+    "project": "cutover",
+    "result": "review held, PR open https://github.com/hkjang/cutover/pull/9",
+    "outcome": "review-pending",
+    "run_id": "2026-09-29-060144-cutover-improve",
+    "base_sha": "8e876b7cf30ba40242732eedd4dcc5ee2ca2e4b2",
+    "head_sha": "c050c84ae0e4f3d46318b05f3f12253c78676a74",
+    "pr": "https://github.com/hkjang/cutover/pull/9",
+    "stages": {
+      "base": {
+        "state": "pinned",
+        "reason": "main@8e876b7",
+        "at": "2026-09-29T06:01:49+09:00"
+      },
+      "autonomy": {
+        "state": "release",
+        "reason": "",
+        "at": "2026-09-29T06:01:49+09:00"
+      },
+      "scout": {
+        "state": "done",
+        "reason": "ESLint에서 Playwright 생성 보고서·실행 결과 제외 (가치 2 / 위험 1 / 작업량 S)",
+        "at": "2026-09-29T06:07:52+09:00"
+      },
+      "brief": {
+        "state": "accepted",
+        "reason": "채택 — 두 생성 경로가 실제 ESLint에서 제외되지 않는다는 근거가 현재 코드·실제 엔진 실행과 일치했다.",
+        "at": "2026-09-29T06:10:18+09:00"
+      },
+      "verify": {
+        "state": "passed",
+        "reason": "검증 1개 통과 (policy)",
+        "at": "2026-09-29T06:10:41+09:00"
+      },
+      "review": {
+        "state": "rejected",
+        "reason": "리뷰 거절: lib/mail/events.ts:77 [P2 정확성·머지 차단] 완료된 최상위 작업 A와 대기 중인 B가 있을 때 B만 삭제해도 allDone 전후 비교가 drill.completed를 생성한다. app/api/activities/route.ts:91은 삭제 후에도 알림을 호출하므로 실제 notifyActivityChanges→createMailService→sendMail→로컬 TCP SMTP 릴레이에서 \"모든 작업이 완료되었습니다\" 메일 1통을 수신했다. 삭제에는 알림을 보내지 않는다는 docs/ADMIN_GUIDE.md:448 및 events.test.ts의 계약과 다르고 서비스 개시 판단을 오도할 수 있다. 기존 삭제 테스트는 남은 작업도 대기여서 이 경계를 놓친다. 훈련 완료를 실제 기존 최상위 작업의 완료 상태 전환에 한정하고, 마지막 미완료 작업 삭제 시 발송 0건 회귀 테스트를 추가해야 한다.",
+        "at": "2026-09-29T06:18:47+09:00"
+      },
+      "repair": {
+        "state": "done",
+        "reason": "비평 지적 확인: STARTTLS 승인 후 TLS 무응답 시 timeoutMs=100이어도 1초 넘게 sendMail이 미완료였다. upgrade 전용 타이머와 오류·종료 처리를 추가하고, TLS 소�",
+        "at": "2026-09-29T06:15:44+09:00"
+      },
+      "pr": {
+        "state": "created",
+        "reason": "https://github.com/hkjang/cutover/pull/9",
+        "at": "2026-09-29T06:18:53+09:00"
+      }
+    },
+    "campaign": "",
+    "autonomy": "release",
+    "arm": "no-journal",
+    "experiment": "roles-2026-09",
+    "engine": "codex",
+    "files": 3,
+    "additions": 82,
+    "deletions": 6,
+    "tests": 1,
+    "title": "fix: STARTTLS 핸드셰이크 무응답에 시간 제한과 소켓 정리 적용"
+  },
+  "stages": {
+    "base": {
+      "state": "pinned",
+      "reason": "main@8e876b7",
+      "at": "2026-09-29T06:01:49+09:00"
+    },
+    "autonomy": {
+      "state": "release",
+      "reason": "",
+      "at": "2026-09-29T06:01:49+09:00"
+    },
+    "scout": {
+      "state": "done",
+      "reason": "ESLint에서 Playwright 생성 보고서·실행 결과 제외 (가치 2 / 위험 1 / 작업량 S)",
+      "at": "2026-09-29T06:07:52+09:00"
+    },
+    "brief": {
+      "state": "accepted",
+      "reason": "채택 — 두 생성 경로가 실제 ESLint에서 제외되지 않는다는 근거가 현재 코드·실제 엔진 실행과 일치했다.",
+      "at": "2026-09-29T06:10:18+09:00"
+    },
+    "verify": {
+      "state": "passed",
+      "reason": "검증 1개 통과 (policy)",
+      "at": "2026-09-29T06:10:41+09:00"
+    },
+    "review": {
+      "state": "rejected",
+      "reason": "리뷰 거절: lib/mail/events.ts:77 [P2 정확성·머지 차단] 완료된 최상위 작업 A와 대기 중인 B가 있을 때 B만 삭제해도 allDone 전후 비교가 drill.completed를 생성한다. app/api/activities/route.ts:91은 삭제 후에도 알림을 호출하므로 실제 notifyActivityChanges→createMailService→sendMail→로컬 TCP SMTP 릴레이에서 \"모든 작업이 완료되었습니다\" 메일 1통을 수신했다. 삭제에는 알림을 보내지 않는다는 docs/ADMIN_GUIDE.md:448 및 events.test.ts의 계약과 다르고 서비스 개시 판단을 오도할 수 있다. 기존 삭제 테스트는 남은 작업도 대기여서 이 경계를 놓친다. 훈련 완료를 실제 기존 최상위 작업의 완료 상태 전환에 한정하고, 마지막 미완료 작업 삭제 시 발송 0건 회귀 테스트를 추가해야 한다.",
+      "at": "2026-09-29T06:18:47+09:00"
+    },
+    "repair": {
+      "state": "done",
+      "reason": "비평 지적 확인: STARTTLS 승인 후 TLS 무응답 시 timeoutMs=100이어도 1초 넘게 sendMail이 미완료였다. upgrade 전용 타이머와 오류·종료 처리를 추가하고, TLS 소�",
+      "at": "2026-09-29T06:15:44+09:00"
+    },
+    "pr": {
+      "state": "created",
+      "reason": "https://github.com/hkjang/cutover/pull/9",
+      "at": "2026-09-29T06:18:53+09:00"
+    }
+  },
+  "provenance": {
+    "model": "claude-opus-5",
+    "policy_version": "4a9e91ac7",
+    "prompts_hash": "ce085c79e18002e2",
+    "runner_version": "d36dd84d8",
+    "base_sha": "8e876b7cf30ba40242732eedd4dcc5ee2ca2e4b2",
+    "head_sha": "c050c84ae0e4f3d46318b05f3f12253c78676a74",
+    "pr": "https://github.com/hkjang/cutover/pull/9"
+  },
+  "verification": {
+    "runner": {
+      "source": "policy",
+      "commands": [
+        {
+          "cmd": "npm ci --no-audit --no-fund && npx tsc --noEmit && npm run build --silent",
+          "exit": 0,
+          "seconds": 22
+        }
+      ]
+    },
+    "runner_gate": {
+      "ok": true,
+      "state": "verified",
+      "reason": "검증 1개 통과 (policy)"
+    },
+    "after_rebase": null,
+    "review": {
+      "verdict": "reject",
+      "reasons": [
+        "lib/mail/events.ts:77 [P2 정확성·머지 차단] 완료된 최상위 작업 A와 대기 중인 B가 있을 때 B만 삭제해도 allDone 전후 비교가 drill.completed를 생성한다. app/api/activities/route.ts:91은 삭제 후에도 알림을 호출하므로 실제 notifyActivityChanges→createMailService→sendMail→로컬 TCP SMTP 릴레이에서 \"모든 작업이 완료되었습니다\" 메일 1통을 수신했다. 삭제에는 알림을 보내지 않는다는 docs/ADMIN_GUIDE.md:448 및 events.test.ts의 계약과 다르고 서비스 개시 판단을 오도할 수 있다. 기존 삭제 테스트는 남은 작업도 대기여서 이 경계를 놓친다. 훈련 완료를 실제 기존 최상위 작업의 완료 상태 전환에 한정하고, 마지막 미완료 작업 삭제 시 발송 0건 회귀 테스트를 추가해야 한다."
+      ],
+      "notes": [
+        "명시된 main...HEAD 기준 49파일 검토 범위: 로컬 main=cd9d1f3, 원장 pinned base=8e876b7이 달라 ESLint·STARTTLS 수리 외 이전 메일/추적 변경도 포함된다. 발견 결함은 이 diff에 추가된 코드다.",
+        "STARTTLS 수리는 확인됨: 임시 복사본에서 HEAD^ smtp.ts에 새 테스트를 실행하면 auto/starttls 두 건 모두 STILL_PENDING after 1000ms로 실패(exit 1), 현재 전체 단위 테스트 97건 통과. 저장소 코드는 수정하지 않았다.",
+        "npm run lint, npx tsc --noEmit --incremental false, git diff --check 통과. 실제 ESLint API로 생성물 3경로 제외 및 app/lib/e2e 소스 3경로 검사 유지 확인. E2E·build·실제 외부 TLS 릴레이는 이번 리뷰에서 실행하지 않았다.",
+        "전용 Skill 도구가 없어 로컬 headcount 정본의 privacy-and-data-protection, security-architecture-review, code-review와 관련 source 목록을 직접 읽었다. 인증·설정 API 인가·SMTP 비밀번호 응답 제외·추적 프록시 데이터 흐름·보존 상한을 확인했다. 구체적인 부서 차단 소견은 없다.",
+        "개인정보 흐름: 관리자 입력 메일 주소와 제목은 알림 목적으로 SMTP 및 최근 500건 로컬 기록에 남고 관리 API로 접근한다. Momento 프록시는 방문자 X-Forwarded-For/Referer/User-Agent를 설정된 수집기로 전달한다. 외부 수집기의 보존·계약·접근 정책은 저장소로 확인할 수 없어 운영 확인 사항으로 남긴다. 의존성·lockfile·마이그레이션 변경은 없으나 이미 발송된 메일은 revert로 회수되지 않는다."
+      ],
+      "risk": "medium",
+      "blocking": []
+    },
+    "ci_gate": null
+  },
+  "release": {
+    "result": null,
+    "assets_sha256": []
+  },
+  "approval": null,
+  "usage": [
+    {
+      "ts": "2026-09-29T06:07:51+09:00",
+      "date": "2026-09-29",
+      "project": "cutover",
+      "phase": "scout",
+      "run_id": "2026-09-29-060144-cutover-improve",
+      "campaign": "",
+      "subtype": "success",
+      "engine": "codex",
+      "duration_ms": 0,
+      "num_turns": 1,
+      "cost_usd": null,
+      "input_tokens": 557248,
+      "output_tokens": 8171,
+      "cache_read": 497024,
+      "cache_create": 0
+    },
+    {
+      "ts": "2026-09-29T06:10:17+09:00",
+      "date": "2026-09-29",
+      "project": "cutover",
+      "phase": "improve",
+      "run_id": "2026-09-29-060144-cutover-improve",
+      "campaign": "",
+      "subtype": "success",
+      "engine": "codex",
+      "duration_ms": 0,
+      "num_turns": 1,
+      "cost_usd": null,
+      "input_tokens": 593780,
+      "output_tokens": 3143,
+      "cache_read": 557568,
+      "cache_create": 0
+    },
+    {
+      "ts": "2026-09-29T06:13:24+09:00",
+      "date": "2026-09-29",
+      "project": "cutover",
+      "phase": "review",
+      "run_id": "2026-09-29-060144-cutover-improve",
+      "campaign": "",
+      "subtype": "success",
+      "engine": "codex",
+      "duration_ms": 0,
+      "num_turns": 1,
+      "cost_usd": null,
+      "input_tokens": 610553,
+      "output_tokens": 4053,
+      "cache_read": 536320,
+      "cache_create": 0
+    },
+    {
+      "ts": "2026-09-29T06:15:23+09:00",
+      "date": "2026-09-29",
+      "project": "cutover",
+      "phase": "repair",
+      "run_id": "2026-09-29-060144-cutover-improve",
+      "campaign": "",
+      "subtype": "success",
+      "engine": "codex",
+      "duration_ms": 0,
+      "num_turns": 1,
+      "cost_usd": null,
+      "input_tokens": 315456,
+      "output_tokens": 2927,
+      "cache_read": 283392,
+      "cache_create": 0
+    },
+    {
+      "ts": "2026-09-29T06:18:47+09:00",
+      "date": "2026-09-29",
+      "project": "cutover",
+      "phase": "review",
+      "run_id": "2026-09-29-060144-cutover-improve",
+      "campaign": "",
+      "subtype": "success",
+      "engine": "codex",
+      "duration_ms": 0,
+      "num_turns": 1,
+      "cost_usd": null,
+      "input_tokens": 682890,
+      "output_tokens": 4389,
+      "cache_read": 606336,
+      "cache_create": 0
+    }
+  ]
+}

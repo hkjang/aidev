@@ -1,0 +1,15 @@
+{
+  "verdict": "reject",
+  "reasons": [
+    "lib/mail/events.ts:77 [P2 정확성·머지 차단] 완료된 최상위 작업 A와 대기 중인 B가 있을 때 B만 삭제해도 allDone 전후 비교가 drill.completed를 생성한다. app/api/activities/route.ts:91은 삭제 후에도 알림을 호출하므로 실제 notifyActivityChanges→createMailService→sendMail→로컬 TCP SMTP 릴레이에서 \"모든 작업이 완료되었습니다\" 메일 1통을 수신했다. 삭제에는 알림을 보내지 않는다는 docs/ADMIN_GUIDE.md:448 및 events.test.ts의 계약과 다르고 서비스 개시 판단을 오도할 수 있다. 기존 삭제 테스트는 남은 작업도 대기여서 이 경계를 놓친다. 훈련 완료를 실제 기존 최상위 작업의 완료 상태 전환에 한정하고, 마지막 미완료 작업 삭제 시 발송 0건 회귀 테스트를 추가해야 한다."
+  ],
+  "notes": [
+    "명시된 main...HEAD 기준 49파일 검토 범위: 로컬 main=cd9d1f3, 원장 pinned base=8e876b7이 달라 ESLint·STARTTLS 수리 외 이전 메일/추적 변경도 포함된다. 발견 결함은 이 diff에 추가된 코드다.",
+    "STARTTLS 수리는 확인됨: 임시 복사본에서 HEAD^ smtp.ts에 새 테스트를 실행하면 auto/starttls 두 건 모두 STILL_PENDING after 1000ms로 실패(exit 1), 현재 전체 단위 테스트 97건 통과. 저장소 코드는 수정하지 않았다.",
+    "npm run lint, npx tsc --noEmit --incremental false, git diff --check 통과. 실제 ESLint API로 생성물 3경로 제외 및 app/lib/e2e 소스 3경로 검사 유지 확인. E2E·build·실제 외부 TLS 릴레이는 이번 리뷰에서 실행하지 않았다.",
+    "전용 Skill 도구가 없어 로컬 headcount 정본의 privacy-and-data-protection, security-architecture-review, code-review와 관련 source 목록을 직접 읽었다. 인증·설정 API 인가·SMTP 비밀번호 응답 제외·추적 프록시 데이터 흐름·보존 상한을 확인했다. 구체적인 부서 차단 소견은 없다.",
+    "개인정보 흐름: 관리자 입력 메일 주소와 제목은 알림 목적으로 SMTP 및 최근 500건 로컬 기록에 남고 관리 API로 접근한다. Momento 프록시는 방문자 X-Forwarded-For/Referer/User-Agent를 설정된 수집기로 전달한다. 외부 수집기의 보존·계약·접근 정책은 저장소로 확인할 수 없어 운영 확인 사항으로 남긴다. 의존성·lockfile·마이그레이션 변경은 없으나 이미 발송된 메일은 revert로 회수되지 않는다."
+  ],
+  "risk": "medium",
+  "blocking": []
+}
