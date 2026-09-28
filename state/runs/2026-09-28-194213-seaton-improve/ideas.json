@@ -1,0 +1,119 @@
+[
+  {
+    "title": "직원 화면의 조직 필터를 화면에 노출",
+    "value": 3,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "이번 회차 선택. 서버 listEmployees(employees.go:62,69)는 organizationId 를 받는데 EmployeesPage.load(58-61)가 보내지 않는 것을 이번에 직접 확인했다. GET /organizations 는 인증만 요구(server.go:82)하고 화면은 Manager 가드 안(App.tsx:70-77). 시드가 3조직·10명(개발6/영업2/인사2, seed.mjs:14-30)이라 E2E 로 곧장 증명된다. 가치를 2→3 으로 올렸다 — 09-27 CSV 가 items 를 그대로 담으므로 조직별 명단 파일이 덤으로 열린다.",
+    "updated": "2026-09-28"
+  },
+  {
+    "title": "E2E 환경 의존 spec 2건(mcp-oauth·tracking) 준비 절차를 web/e2e README 로 고정",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "차선 후보. 네 회차 연속 7~8건 실패를 '원래 안 돈다'로 구전 판정했다. 가짜 Keycloak IdP·E2E_COLLECTOR_HOST 준비 절차를 문서로 굳히면 매 회차 이 확인이 사라진다. 문서만이라 코드 위험 0.",
+    "updated": "2026-09-28"
+  },
+  {
+    "title": "목록 핸들러가 rows.Err()·Scan 오류를 삼켜 부분 목록을 200 으로 반환",
+    "value": 3,
+    "risk": 2,
+    "size": "M",
+    "status": "pending",
+    "note": "이번에 employees.go:22/78 과 올바른 꼴 grid.go:150-158 을 재확인했다. 대상이 employees·seats·maps·keys·mcp 등 파일 10개 안팎이라 '프로덕션 6파일 이내' 규칙에 걸린다. 하려면 employees.go 한 파일만 조각내서. DB 붙은 Go 테스트 하네스가 없어 증명 수단이 E2E 뿐인 것이 여전한 걸림돌.",
+    "updated": "2026-09-28"
+  },
+  {
+    "title": "직원 목록 500건 상한에 total·더 보기 붙이기",
+    "value": 2,
+    "risk": 2,
+    "size": "M",
+    "status": "pending",
+    "note": "listEmployees(employees.go:66)는 limit<=500 만 받고 total 을 주지 않는다. 화면 안내는 EmployeesPage.tsx:449 에 있다. 서버 COUNT 추가 + 501명을 만들어야 관찰됨. 이번 조직 필터가 들어가면 상한에 덜 걸리므로 급함은 내려간다.",
+    "updated": "2026-09-28"
+  },
+  {
+    "title": "직원 화면 필터(조직·재직상태·배정상태)를 주소에 반영",
+    "value": 2,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "새 아이디어. 좌석맵이 seatMapLink 로 ?q=·?map= 을 주소에 남기는데(cda1e3f) 직원 화면은 새로고침하면 필터가 날아간다. 이번 조직 필터가 들어간 뒤가 적기 — employeeQuery 헬퍼가 이미 키 이름을 한 곳에 쥐고 있으므로 readEmployeeParams/writeEmployeeParams 를 같은 파일에 더하면 된다. 이번 회차 범위에서는 명시적으로 뺐다.",
+    "updated": "2026-09-28"
+  },
+  {
+    "title": "화면 전체 Select 에 접근 가능한 이름 붙이기 (좌석맵 왼쪽 검색·범례 포함)",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "이번 회차에 직원 화면 세 Select 분은 과제에 포함시켰다. UsersPage.tsx:260 의 inputProps={{'aria-label'}} 꼴이 admin.spec.ts:150 의 getByRole('combobox',{name}) 로 실제 잡히는 것을 확인했으므로 방법은 더는 미확인이 아니다. 남은 곳은 좌석맵 왼쪽 검색 Paper 의 region 이름.",
+    "updated": "2026-09-28"
+  },
+  {
+    "title": "좌석맵 필터·색상 모드·조직 강조도 주소에 반영",
+    "value": 2,
+    "risk": 2,
+    "size": "M",
+    "status": "pending",
+    "note": "seatMapLink 헬퍼를 넓히면 되지만 상태가 네 개(filters Set, colorMode, showZones, activeOrg)라 직렬화 규칙을 새로 정해야 하고 Set 순서·미지의 값 방어가 붙는다. 이번 회차 미재확인.",
+    "updated": "2026-09-28"
+  },
+  {
+    "title": "이력 화면의 조회 파라미터를 load 와 exportCsv 가 한 함수로 짓게 하기",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "HistoryPage.tsx 의 두 곳이 q·source·from·to 를 각자 조립한다(이번 회차 미재확인 — 줄 번호는 이전 기록의 80-86/132-137). 이번 과제가 직원 화면에 만드는 employeeQuery 와 같은 처방이므로, 그 꼴이 자리잡은 뒤 이력 쪽에 같은 것을 적용하는 것이 자연스럽다. 관측되는 결함은 아직 없어 순수 예방.",
+    "updated": "2026-09-28"
+  },
+  {
+    "title": "PATCH /users/{id} 가 없는 id 에도 204 를 돌려주는지 재확인",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "09-17(404 확인)과 09-20 보류가 엇갈린 채 여섯 회차째 미확인. 이번 회차도 curl 로 보지 않았다. 착수 전 상태 코드부터 볼 것. auth/권한 근처라 위험이 낮지 않다.",
+    "updated": "2026-09-28"
+  },
+  {
+    "title": "CI 에 guide-shots 스모크 추가",
+    "value": 2,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": ".github/workflows 는 이번 회차에도 열지 않았다. 릴리즈·빌드 경로라 '릴리즈까지 통과 확인' 운영자 규칙이 걸린다 — 자율 회차에서 고르기엔 무겁다.",
+    "updated": "2026-09-28"
+  },
+  {
+    "title": "build-docs.py 파서 단위 테스트",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "파이썬 테스트 하네스가 저장소에 없어 새 도구를 들여야 한다 — 그 비용 때문에 계속 밀린다.",
+    "updated": "2026-09-28"
+  },
+  {
+    "title": "'구역 불일치' 문구를 한 곳에서만 짓기",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "seatSpeech/seatOrgDetail 이중 정의. 네 회차 연속 재확인하지 못했다 — 착수 전 두 자리가 아직 갈라져 있는지부터 볼 것.",
+    "updated": "2026-09-28"
+  },
+  {
+    "title": "내보낸 직원 CSV 를 그대로 다시 올리면 조직이 중복 생성됨",
+    "value": 2,
+    "risk": 2,
+    "size": "M",
+    "status": "rejected",
+    "note": "96c911e 가 '왕복 안내'를 문서에서 거두는 것으로 닫았다. 서버 saveEmployee(employees.go:109-115)가 organizationName 만 보고 새 조직을 만드는 것은 의도된 동작이고, 고치려면 내보내기에 조직코드(external_id)를 실어야 하는데 그 값이 비어 있는 조직이 있을 수 있다. 문서로 닫힌 건을 다시 열지 않는다.",
+    "updated": "2026-09-28"
+  }
+]
