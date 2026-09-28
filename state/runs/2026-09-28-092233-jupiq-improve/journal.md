@@ -32,3 +32,4 @@
 - [러너 09:50] ci passed — 검사 3개 모두 success
 - [러너 09:50] merge done — 92d05c7
 - [러너 10:01] release published — v1.8.5
+- [러너 10:04] assets verified — v1.8.5 자산 1개 (이전 v1.8.4: 1)
