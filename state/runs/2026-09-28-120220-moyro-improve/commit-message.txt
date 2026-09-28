@@ -1,0 +1,51 @@
+release: carry release markers to v0.2.41
+
+v0.2.41 ships one team-admin permission fix already merged to main.
+`callerCanAdminTeam` in `compat_wave_handlers.go` asked `auth.HasRole` and
+`teams.IsTeamAdmin` whether the caller may administer a team and threw both
+errors away with `ok, _ :=`, so a connection failure, an unusable
+`team_members` table or a cancelled context arrived at the client as 403
+`api.context.permissions.app_error` "team admin required" across ten
+team-administration endpoints. That is a permanent answer no client retries, so
+a transient fault cost the caller the operation and looked like a permissions
+decision rather than an outage.
+
+The helper now returns `(bool, error)` and absorbs only `pgx.ErrNoRows` as
+"not an administrator", which is the sentinel both services already return for
+a genuinely absent user or membership row. A new
+`requireTeamAdmin(w, r, teamID, uid, forbidden)` gate writes the response at
+all ten call sites — 138, 186, 744, 1274 and 1317 in
+`compat_wave_handlers.go` and 93, 120, 135 and 1148 in
+`compat_wave_handlers_final.go` — so a real fault stops with 500 "failed to
+check team admin permissions" before the audit row, the write and the
+websocket broadcast, while a non-member, a deleted user and a non-administrator
+member keep their existing 403 and their per-call-site wording, "team admin
+required" against "team_admin required", character for character. This is the
+decision the sibling `listChannelViews` already made for `channels.IsMember`,
+carried to the team side so that the same class of fault answers the same way
+on both resources. `removeTeamMember` keeps its `uid != caller &&`
+short-circuit, so leaving a team oneself still never touches the roles table.
+There is no new error id, no new status code, no migration and no
+service-contract change, and there is no web change.
+
+A Postgres integration test pins it red-first against a real schema built by
+`store.Migrate`, the real `auth`, `teams` and `audit` services, a running
+`ws.Hub` and chi route patterns copied verbatim from `router.go` rather than
+hand-built doubles. `DROP TABLE team_members` is the fault injector precisely
+because it leaves `users` intact, so `HasRole` keeps working and the
+administrator check is the only thing that breaks in the request. Reverting
+each of the three guards separately fails only that guard's subtests: the fault
+branch four, the `HasRole` sentinel two, the `IsTeamAdmin` sentinel four.
+
+Release markers move to v0.2.41 across the README, the product site and guides,
+the canonical user and administrator guides, the OpenAPI contracts, the offline
+deployment guide, the plugin SDK and sample plugin, the pages gate, and the web
+package and its version surfaces. The two guides keep naming the v0.2.27 image
+as the origin of their screen captures, which is still true for the existing
+captures, and their PDFs are left as rendered because the md2pdf converter that
+produced them lives outside this repository. Verified at this tree: the pages
+gate, `go test -race -p 1 ./...` against a local postgres:16-alpine and `go vet
+./...` for the server with all 49 packages passing, `go build ./...`,
+`govulncheck` reporting no reachable vulnerability, the Go plugin SDK tests and
+vet, 48 webapp test files with 221 tests, typecheck across both tsconfigs,
+build, both npm audits at zero, and the source-size ratchets.

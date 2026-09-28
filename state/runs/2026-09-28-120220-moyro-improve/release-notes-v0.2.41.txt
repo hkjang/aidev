@@ -1,0 +1,35 @@
+moyro v0.2.41
+
+Team administration now reports a failed permission lookup as 500 instead of
+disguising it as a refusal. `callerCanAdminTeam` in `compat_wave_handlers.go`
+asked `auth.HasRole` and `teams.IsTeamAdmin` whether the caller may administer a
+team and discarded both errors with `ok, _ :=`, so a connection failure, an
+unusable `team_members` table or a cancelled context reached the client as 403
+`api.context.permissions.app_error` "team admin required" on ten
+team-administration endpoints. 403 is a permanent answer no client retries, so a
+transient fault silently cost the caller the operation and presented an outage
+as a permissions decision.
+
+The helper now returns `(bool, error)` and absorbs only `pgx.ErrNoRows` as "not
+an administrator", the sentinel both services already return for a genuinely
+absent user or membership row. A new
+`requireTeamAdmin(w, r, teamID, uid, forbidden)` gate writes the response at all
+ten call sites, so a real fault stops with 500 "failed to check team admin
+permissions" before the audit row, the write and the websocket broadcast, while a
+non-member, a deleted user and a non-administrator member keep their existing 403
+and their per-call-site wording — "team admin required" against "team_admin
+required" — character for character. The sibling `listChannelViews` already made
+this decision for `channels.IsMember`; it is carried to the team side so the same
+class of fault answers the same way on both resources. `removeTeamMember` keeps
+its `uid != caller &&` short-circuit, so leaving a team oneself still never
+touches the roles table.
+
+A Postgres integration test pins it red-first against a real schema built by
+`store.Migrate`, the real `auth`, `teams` and `audit` services, a running
+`ws.Hub` and chi route patterns copied verbatim from `router.go` rather than
+hand-built doubles. `DROP TABLE team_members` is the fault injector precisely
+because it leaves `users` intact, so `HasRole` keeps working and the
+administrator check is the only thing that breaks in the request. Reverting each
+of the three guards separately fails only that guard's subtests. There is no new
+error id, no new status code, no migration, no service-contract change and no web
+change.

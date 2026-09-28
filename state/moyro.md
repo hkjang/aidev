@@ -240,3 +240,4 @@
 - 보류 아이디어: uploadTeamImage 에 `denyGuestMutation` 누락 — 형제 deleteTeamImage 와 게스트 정책 비대칭(차선 후보, S — 이번엔 범위 유지를 위해 뺐다) / `denyGuestMutation`·`denyGuestEnumeration` 의 UserByID DB 오류가 401 위장(호출 지점 20곳 이상이라 회귀 범위 넓음, M) / patchPost 의 `updated, _ = h.posts.Get(...)` 되읽기 실패 시 200 + 본문 null(6회차 연속 결정론적 주입 미해결, S) / 북마크 4개 핸들러(late.go)의 `ok, _ := IsMember` 403 위장 분리(관리자 예외 설계 선행, M) / `internal/httpapi` 의 남은 MaxBytesReader 호출자 경로별 확인(계약이 달라 일괄 확대 금지, M)
 - 과제서: 채택 — 과제서의 근거(헬퍼의 두 `ok, _ :=`, 호출 지점 10곳, 두 서비스가 Scan 오류를 그대로 올림, `listChannelViews` 선례, `DROP TABLE team_members` 가 `HasRole` 을 살려 두는 결정론)가 현재 코드와 정확히 일치했고 수용 기준 1~5 를 실제 DB 회귀로 모두 충족했다. 미확인이던 `compat_wave_handlers_final.go` 의 import 는 `errors` 는 있고 `pgx` 는 없었는데, 오류 판정을 헬퍼 한 곳에 모은 덕에 새 import 가 필요 없었다.
 
+- 릴리즈: v0.2.41 (2026-09-28, run 2026-09-28-120220-moyro-improve)
