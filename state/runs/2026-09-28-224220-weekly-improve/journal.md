@@ -18,3 +18,7 @@
 - 승인이어도 남는 우려 ②: 이 경로는 이제 카운트 질의 하나만 실패해도 첫 로드가 500 입니다. 릴리즈 노트에 "조회 실패 시 카드가 숫자 대신 오류를 말한다" 를 명시하는 편이 좋습니다.
 - [러너 23:01] review approved — 리뷰 승인 (risk=low)
 - [러너 23:01] pr created — https://github.com/hkjang/weekly/pull/25
+- [러너 23:35] ci passed — 검사 1개 모두 success
+- [러너 23:35] merge done — 8326a2c
+- [러너 00:06] release published — v0.312.0
+- [러너 00:08] assets verified — v0.312.0 자산 1개 (이전 v0.311.0: 1)
