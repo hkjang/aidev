@@ -1,0 +1,11 @@
+## 2026-09-29
+- 선택: 유실된 CI e2e 실패 요약 커밋 ab36254 복원 (가치 4 / 위험 2 / 작업량 M)
+- 결과: 성공
+- 요약: df9dd4b로 scripts/e2e-failure-summary.mjs와 ci.yml의 7줄만 원본과 동일하게 복원해 failure()에서 기존 artifact 업로드 전에 GITHUB_STEP_SUMMARY에 append하도록 했습니다(서비스 프로덕션 파일 0개, 스크립트 1개, workflow 1개). make check(OpenAPI 120개)·node --check·누락/세 JSON 구문 오류 exit 0, 공식 Playwright v1.62.1-noble+새 PostgreSQL 17의 정상 npm test(시각 52/52, Axe 36개·키보드 등 9개, smoke 27 route), 명령 단위 임계값 0의 실제 시각 실패 26/52와 잘못된 버전의 실제 smoke 실패 각각 exit 1 및 요약 exit 0, make package와 make verify-package가 통과했고 실제 workflow run 명령으로 기존 summary 유지·append·성공 화면 제외도 검증했습니다. 최초 make image는 기존 AuthContext.test.tsx:92의 expected true to be false로 249/250 실패했고 동일 조건 두 번째 실행은 250/250 및 이미지 빌드 통과했으나 원인은 확정하지 않았으며, 원격 source/image CI·exact commit 릴리즈는 미확인입니다.
+- 실패 재현: 상태 디렉터리 check-summary.py의 복원 전 실행 → `AssertionError: FAIL: image job failure did not append missing-results diagnostics`; 복원 후 같은 테스트 PASS, 옛 workflow를 잠시 되돌린 재검증에서 같은 assertion 재실패 후 복원하면 PASS. 실제 workflow를 파싱해 run 명령을 실행하는 경계 테스트이며 소스 문자열 grep을 실행 증거로 쓰지 않았고, GitHub runner의 failure() 스케줄링 자체는 로컬 미검증입니다.
+- 보류 아이디어: AuthContext silent SSO 상태 해제 테스트의 effect 완료 경합 조사 (4/2/S) — 최초 이미지 빌드에서 실제 실패, 재빌드 통과; 원인 미확정.
+- 보류 아이디어: followTopic 저장 오류를 500으로 분리하는 972113f 복원 (2/2/S) — decodeOptionalJSON 보존 필요.
+- 보류 아이디어: CI Go 테스트 실패 요약 (3/2/S) — 실제 실패 출력·pipefail 검증 필요.
+- 보류 아이디어: 접근성 catch의 blocking 목록 유실 (3/2/S) — 실제 Axe 실패 재현 선행, 이번엔 통과 결과만 확인.
+- 보류 아이디어: 커스텀 MOINA_E2E_OUTPUT의 visual 경로 불일치 (2/2/S) — 별도 producer 계약 검증 필요.
+- 과제서: 채택 — 현재 파일과 근거가 일치해 원본 두 파일을 그대로 복원했고, 검증 전 커밋 금지 지시를 지키기 위해 cherry-pick --no-commit 뒤 검증 후 원본 메시지로 커밋했습니다.

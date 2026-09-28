@@ -1,0 +1,240 @@
+docker build --platform linux/amd64 \
+	--build-arg VERSION='v0.1.39' \
+	--build-arg VCS_REF="$(git rev-parse --verify HEAD 2>/dev/null || printf unknown)" \
+	--build-arg BUILD_DATE="$(date -u +%Y-%m-%dT%H:%M:%SZ)" \
+	--tag 'moina:v0.1.39' .
+#0 building with "default" instance using docker driver
+
+#1 [internal] load build definition from Dockerfile
+#1 transferring dockerfile: 2.00kB done
+#1 DONE 0.0s
+
+#2 resolve image config for docker-image://docker.io/docker/dockerfile:1@sha256:ecfaec9ed6d810b56388c508f4121597bfbba70d41a6dfeee4d8cad5f295fc32
+#2 DONE 1.1s
+
+#3 docker-image://docker.io/docker/dockerfile:1@sha256:ecfaec9ed6d810b56388c508f4121597bfbba70d41a6dfeee4d8cad5f295fc32
+#3 resolve docker.io/docker/dockerfile:1@sha256:ecfaec9ed6d810b56388c508f4121597bfbba70d41a6dfeee4d8cad5f295fc32 0.0s done
+#3 CACHED
+
+#4 [internal] load metadata for docker.io/library/golang:1.26.6-alpine@sha256:3889b425f035be855a72fb4755265311293b6d414521f0a519d819df32222d83
+#4 ...
+
+#5 [internal] load metadata for gcr.io/distroless/static-debian12:nonroot@sha256:afa5c872c891853ca7fcf1f12c3edb23f7eeef36189728842dd51042ff57f7ab
+#5 DONE 0.8s
+
+#6 [internal] load metadata for docker.io/library/node:24-alpine@sha256:e67514e5d0f6c46656005e1b693b2ec9d52e80b641307de684d4a015ba7a4eaf
+#6 ...
+
+#4 [internal] load metadata for docker.io/library/golang:1.26.6-alpine@sha256:3889b425f035be855a72fb4755265311293b6d414521f0a519d819df32222d83
+#4 DONE 1.1s
+
+#6 [internal] load metadata for docker.io/library/node:24-alpine@sha256:e67514e5d0f6c46656005e1b693b2ec9d52e80b641307de684d4a015ba7a4eaf
+#6 DONE 1.1s
+
+#7 [internal] load .dockerignore
+#7 transferring context: 178B done
+#7 DONE 0.0s
+
+#8 [frontend-builder 1/6] FROM docker.io/library/node:24-alpine@sha256:e67514e5d0f6c46656005e1b693b2ec9d52e80b641307de684d4a015ba7a4eaf
+#8 resolve docker.io/library/node:24-alpine@sha256:e67514e5d0f6c46656005e1b693b2ec9d52e80b641307de684d4a015ba7a4eaf 0.0s done
+#8 DONE 0.0s
+
+#9 [runtime 1/4] FROM gcr.io/distroless/static-debian12:nonroot@sha256:afa5c872c891853ca7fcf1f12c3edb23f7eeef36189728842dd51042ff57f7ab
+#9 resolve gcr.io/distroless/static-debian12:nonroot@sha256:afa5c872c891853ca7fcf1f12c3edb23f7eeef36189728842dd51042ff57f7ab 0.0s done
+#9 DONE 0.0s
+
+#10 [backend-builder 1/6] FROM docker.io/library/golang:1.26.6-alpine@sha256:3889b425f035be855a72fb4755265311293b6d414521f0a519d819df32222d83
+#10 resolve docker.io/library/golang:1.26.6-alpine@sha256:3889b425f035be855a72fb4755265311293b6d414521f0a519d819df32222d83 0.0s done
+#10 DONE 0.0s
+
+#11 [internal] load build context
+#11 transferring context: 2.06MB done
+#11 DONE 0.0s
+
+#10 [backend-builder 1/6] FROM docker.io/library/golang:1.26.6-alpine@sha256:3889b425f035be855a72fb4755265311293b6d414521f0a519d819df32222d83
+#10 CACHED
+
+#12 [frontend-builder 2/6] WORKDIR /src/frontend
+#12 CACHED
+
+#13 [backend-builder 2/6] WORKDIR /src/backend
+#13 DONE 0.0s
+
+#14 [frontend-builder 3/6] COPY frontend/package.json frontend/package-lock.json ./
+#14 DONE 0.1s
+
+#15 [backend-builder 3/6] COPY backend/go.mod backend/go.sum ./
+#15 DONE 0.1s
+
+#16 [backend-builder 4/6] RUN go mod download && go mod verify
+#16 2.107 all modules verified
+#16 DONE 2.2s
+
+#17 [backend-builder 5/6] COPY backend/ ./
+#17 DONE 0.1s
+
+#18 [frontend-builder 4/6] RUN npm ci
+#18 1.890 npm warn deprecated whatwg-encoding@3.1.1: Use @exodus/bytes instead for a more spec-conformant and faster implementation
+#18 ...
+
+#19 [backend-builder 6/6] RUN go test ./... && go vet ./... &&     CGO_ENABLED=0 GOOS="linux" GOARCH="amd64"     go build -trimpath -ldflags "-s -w -X main.version=v0.1.39"     -o /out/moina ./cmd/moina
+#19 7.070 ?   	github.com/hkjang/moina/backend/cmd/moina	[no test files]
+#19 7.076 ok  	github.com/hkjang/moina/backend/internal/analytics	0.003s
+#19 7.076 ok  	github.com/hkjang/moina/backend/internal/config	0.003s
+#19 7.178 ok  	github.com/hkjang/moina/backend/internal/event	0.105s
+#19 7.178 ok  	github.com/hkjang/moina/backend/internal/feed	0.004s
+#19 ...
+
+#18 [frontend-builder 4/6] RUN npm ci
+#18 9.543 
+#18 9.543 added 314 packages, and audited 315 packages in 9s
+#18 9.543 
+#18 9.543 63 packages are looking for funding
+#18 9.544   run `npm fund` for details
+#18 9.547 
+#18 9.547 2 moderate severity vulnerabilities
+#18 9.547 
+#18 9.547 To address all issues (including breaking changes), run:
+#18 9.547   npm audit fix --force
+#18 9.547 
+#18 9.547 Run `npm audit` for details.
+#18 9.547 npm warn install-scripts 1 package has install scripts not yet covered by allowScripts:
+#18 9.547 npm warn install-scripts   esbuild@0.28.2 (postinstall: node install.js)
+#18 9.547 npm warn install-scripts
+#18 9.547 npm warn install-scripts Run `npm install-scripts ls` to review, or `npm install-scripts approve <pkg>` to allow.
+#18 9.549 npm notice
+#18 9.549 npm notice New major version of npm available! 11.19.0 -> 12.1.0
+#18 9.549 npm notice Changelog: https://github.com/npm/cli/releases/tag/v12.1.0
+#18 9.549 npm notice To update run: npm install -g npm@12.1.0
+#18 9.549 npm notice
+#18 DONE 10.0s
+
+#19 [backend-builder 6/6] RUN go test ./... && go vet ./... &&     CGO_ENABLED=0 GOOS="linux" GOARCH="amd64"     go build -trimpath -ldflags "-s -w -X main.version=v0.1.39"     -o /out/moina ./cmd/moina
+#19 ...
+
+#20 [frontend-builder 5/6] COPY frontend/ ./
+#20 DONE 0.1s
+
+#21 [frontend-builder 6/6] RUN npm test && VITE_MOINA_VERSION="v0.1.39" npm run build
+#21 0.288 
+#21 0.288 > moina-frontend@0.1.39 test
+#21 0.288 > vitest run
+#21 0.288 
+#21 0.625 
+#21 0.625  RUN  v3.2.7 /src/frontend
+#21 0.625 
+#21 2.405  ✓ src/theme/style-contract.test.ts (4 tests) 7ms
+#21 2.431  ✓ src/theme/contrast.test.ts (16 tests) 8ms
+#21 2.518  ✓ src/utils/format.test.ts (15 tests) 44ms
+#21 2.560  ✓ src/utils/media.test.ts (19 tests) 8ms
+#21 2.580  ✓ src/state/moinMutations.test.ts (4 tests) 7ms
+#21 2.599  ✓ src/api/adapters.test.ts (7 tests) 12ms
+#21 2.623  ✓ src/config.test.ts (5 tests) 19ms
+#21 2.624  ✓ src/auth/silentSso.test.ts (8 tests) 25ms
+#21 2.644  ✓ src/state/feedCache.test.ts (7 tests) 14ms
+#21 2.649  ✓ src/utils/liveNotifications.test.ts (6 tests) 20ms
+#21 2.743  ✓ src/hooks/useMentionAutocomplete.test.ts (7 tests) 10ms
+#21 2.744  ✓ src/api/client.test.ts (7 tests) 29ms
+#21 2.747  ✓ src/hooks/apiQueryCache.test.ts (4 tests) 6ms
+#21 2.766  ✓ src/navigation.test.ts (4 tests) 11ms
+#21 2.886  ❯ src/auth/AuthContext.test.tsx (4 tests | 1 failed) 218ms
+#21 2.886    ✓ AuthProvider의 silent SSO 시작 > 세션이 없고 auto-login이 켜져 있으면 화면을 그리기 전에 깊은 링크를 들고 제공자로 이동한다 84ms
+#21 2.886    ✓ AuthProvider의 silent SSO 시작 > auto-login이 꺼진 기본 설정에서는 아무것도 달라지지 않는다 22ms
+#21 2.886    ✓ AuthProvider의 silent SSO 시작 > 로그인 화면 자체에서는 시도하지 않고 설정을 묻지도 않는다 8ms
+#21 2.886    × AuthProvider의 silent SSO 시작 > 스스로 로그아웃한 뒤에는 시도하지 않고, 세션이 다시 생기면 억제가 풀린다 102ms
+#21 2.886      → expected true to be false // Object.is equality
+#21 3.037  ✓ src/components/MoinContent.test.tsx (8 tests) 215ms
+#21 3.084  ✓ src/hooks/useFeedPages.test.tsx (2 tests) 250ms
+#21 3.133  ✓ src/pages/NotificationsPage.test.tsx (2 tests) 174ms
+#21 3.284  ✓ src/components/MoinCardMemo.test.tsx (3 tests) 194ms
+#21 3.480  ✓ src/hooks/useApiQuery.test.tsx (14 tests) 699ms
+#21 3.488  ✓ src/pages/admin/AdminSettingsPage.test.tsx (1 test) 386ms
+#21 3.488    ✓ 관리자 서비스 기본 설정 > 사이트 기본 주소를 불러오고 service.general에 저장한다  384ms
+#21 3.528  ✓ src/pages/admin/AdminSMTPPage.test.tsx (3 tests) 464ms
+#21 3.577  ✓ src/styles/feed-rendering.test.ts (3 tests) 12ms
+#21 3.589  ✓ src/utils/preferences.test.ts (2 tests) 9ms
+#21 3.619  ✓ src/utils/allowedHosts.test.ts (5 tests) 8ms
+#21 3.663  ✓ src/pages/admin/AdminTrackingSettings.test.tsx (5 tests) 590ms
+#21 3.703  ✓ src/utils/workflowActions.test.ts (2 tests) 6ms
+#21 3.747  ✓ src/pages/SettingsPages.test.tsx (3 tests) 671ms
+#21 3.770  ✓ src/pages/FlowPage.test.tsx (3 tests) 677ms
+#21 3.770    ✓ FlowPage composer navigation guard > 확인을 거부하면 URL과 작성 내용 및 인용 원문을 보존한다  345ms
+#21 3.838  ✓ src/pages/ProfileSettingsPage.test.tsx (4 tests) 767ms
+#21 3.838    ✓ 개인 프로필 이미지 설정 > 선택한 이미지를 미리 보고 업로드한 avatarId를 프로필에 저장한다  494ms
+#21 3.893  ✓ src/pages/PocketPage.test.ts (1 test) 2ms
+#21 4.055  ✓ src/components/QuickNavigation.test.tsx (6 tests) 1056ms
+#21 4.055    ✓ 빠른 이동 팔레트 > Ctrl+K로 열고 검색·방향키·Enter로 화면을 이동한다  568ms
+#21 4.148  ✓ src/test/a11y.test.tsx (4 tests) 931ms
+#21 4.148    ✓ 대표 DOM 접근성 > 공통 form/card 구성요소가 axe-core 규칙을 만족한다  331ms
+#21 4.148    ✓ 대표 DOM 접근성 > 빠른 이동 combobox와 결과 목록이 axe-core 규칙을 만족한다  376ms
+#21 4.214  ✓ src/components/MoinCard.test.tsx (21 tests) 1119ms
+#21 4.214    ✓ MoinCard optimistic mutation > 반응·저장·공유 아이콘 버튼에 항상 접근 가능한 이름을 제공한다  301ms
+#21 4.243  ✓ src/pages/admin/AdminProviderSettings.test.tsx (11 tests) 1127ms
+#21 4.243    ✓ 관리자 공급자 설정 저장 계약 > OIDC 조회 전용 필드(true)를 PUT에 재전송하지 않고 기존 Secret을 유지한다  310ms
+#21 4.932  ✓ src/components/MoinComposer.test.tsx (30 tests) 1836ms
+#21 4.932    ✓ MoinComposer media upload > 서버 미디어 설정을 확인하기 전에는 첨부를 시작하지 않는다  321ms
+#21 4.966 
+#21 4.966 ⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+#21 4.966 
+#21 4.966  FAIL  src/auth/AuthContext.test.tsx > AuthProvider의 silent SSO 시작 > 스스로 로그아웃한 뒤에는 시도하지 않고, 세션이 다시 생기면 억제가 풀린다
+#21 4.968 AssertionError: expected true to be false // Object.is equality
+#21 4.968 
+#21 4.968 [32m- Expected[39m
+#21 4.968 [31m+ Received[39m
+#21 4.968 
+#21 4.968 [32m- false[39m
+#21 4.968 [31m+ true[39m
+#21 4.968 
+#21 4.968  ❯ src/auth/AuthContext.test.tsx:92:34
+#21 4.972      90|     render(<AuthProvider><Probe/></AuthProvider>);
+#21 4.972      91|     await screen.findByText('user:mina');
+#21 4.972      92|     expect(silentSsoAttempted()).toBe(false);
+#21 4.972        |                                  ^
+#21 4.972      93|   });
+#21 4.972      94| });
+#21 4.972 
+#21 4.972 ⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+#21 4.972 
+#21 4.973 
+#21 4.974  Test Files  1 failed | 35 passed (36)
+#21 4.974       Tests  1 failed | 249 passed (250)
+#21 4.974    Start at  23:19:26
+#21 4.974    Duration  4.34s (transform 5.49s, setup 6.35s, collect 17.70s, tests 11.63s, environment 32.70s, prepare 5.45s)
+#21 4.974 
+#21 ERROR: process "/bin/sh -c npm test && VITE_MOINA_VERSION=\"${VERSION}\" npm run build" did not complete successfully: exit code: 1
+
+#19 [backend-builder 6/6] RUN go test ./... && go vet ./... &&     CGO_ENABLED=0 GOOS="linux" GOARCH="amd64"     go build -trimpath -ldflags "-s -w -X main.version=v0.1.39"     -o /out/moina ./cmd/moina
+#19 8.319 ok  	github.com/hkjang/moina/backend/internal/httpapi	0.315s
+#19 8.319 ok  	github.com/hkjang/moina/backend/internal/media	0.004s
+#19 8.319 ?   	github.com/hkjang/moina/backend/internal/model	[no test files]
+#19 8.319 ok  	github.com/hkjang/moina/backend/internal/observability	0.004s
+#19 8.319 ok  	github.com/hkjang/moina/backend/internal/outbound	0.004s
+#19 8.319 ok  	github.com/hkjang/moina/backend/internal/pagination	0.004s
+#19 8.319 ok  	github.com/hkjang/moina/backend/internal/search	0.003s
+#19 8.319 ok  	github.com/hkjang/moina/backend/internal/secure	0.003s
+#19 8.319 ok  	github.com/hkjang/moina/backend/internal/store	0.004s
+#19 8.319 ok  	github.com/hkjang/moina/backend/internal/visibility	0.003s
+#19 CANCELED
+------
+ > [frontend-builder 6/6] RUN npm test && VITE_MOINA_VERSION="v0.1.39" npm run build:
+4.972      94| });
+4.972 
+4.972 ⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+4.972 
+4.973 
+4.974  Test Files  1 failed | 35 passed (36)
+4.974       Tests  1 failed | 249 passed (250)
+4.974    Start at  23:19:26
+4.974    Duration  4.34s (transform 5.49s, setup 6.35s, collect 17.70s, tests 11.63s, environment 32.70s, prepare 5.45s)
+4.974 
+------
+Dockerfile:13
+--------------------
+  11 |     COPY frontend/ ./
+  12 |     ARG VERSION=v0.1.39
+  13 | >>> RUN npm test && VITE_MOINA_VERSION="${VERSION}" npm run build
+  14 |     
+  15 |     FROM ${GO_IMAGE} AS backend-builder
+--------------------
+ERROR: failed to build: failed to solve: process "/bin/sh -c npm test && VITE_MOINA_VERSION=\"${VERSION}\" npm run build" did not complete successfully: exit code: 1
+make: *** [Makefile:64: image] Error 1

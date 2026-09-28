@@ -204,3 +204,15 @@
 - 과제서: 채택 — 과제서의 진단(settings.go:1033이 project를 알고 resource_usage.go:220-229는 모른다)이 코드와 정확히 일치했고 수용 기준 5개를 모두 실제 DB에서 충족했다.
 
 - 릴리즈: v1.8.5 (2026-09-28, run 2026-09-28-092233-jupiq-improve)
+## 2026-09-29
+- 선택: 메일 발송 기록 API의 잘못된 status를 400 invalid_query로 거부 (가치 2 / 위험 1 / 작업량 S)
+- 결과: 성공
+- 요약: API에서 TrimSpace 후 빈 값·queued·sent·failed만 허용하고 고정 오류 메시지를 반환하도록 프로덕션 1개 파일을 수정했다. 실제 PostgreSQL 16·store.Store·auth.Service 관리자 세션·New(...).Handler()를 사용하는 새 통합 테스트로 공백·상태별 ID/Status·전체 Total/Summary·limit 기본값 50 및 상한 200을 검증했으며, 잘못된 입력 6개는 수정 전 실패·수정 후 통과·검사 분기 제거 시 재실패했다. make test-integration(store 4.206s/api 0.956s), go test -count=1 ./..., go vet ./..., go build ./..., gofmt 및 diff 검사 통과; 추가 JSON 통합 실행 SKIP 0건, fixture 잔여 0건이며 임시 DB 컨테이너를 제거했다.
+- 실패 재현: `mail_deliveries_integration_test.go:191: status="nonsense": HTTP 200, want 400` / `mail_deliveries_integration_test.go:191: status="SENT": HTTP 200, want 400`
+- 보류 아이디어:
+  - OpenAPI page_size 상한 불일치 정리 (가치 2 / 위험 2 / 작업량 S)
+  - internal/store 순수 헬퍼 5개 표 기반 테스트 (가치 2 / 위험 1 / 작업량 S)
+  - OpenAPI servers URL과 계약 테스트 경로 접두사 불일치 검출 (가치 2 / 위험 1 / 작업량 S)
+  - search 질의 최대 길이·제어문자 정규화 (가치 2 / 위험 2 / 작업량 S)
+- 과제서: 채택 — 코드가 진단과 일치하여 지정된 두 파일에서 수용 기준을 실제 HTTP·DB로 검증했다.
+

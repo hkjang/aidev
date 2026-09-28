@@ -1,0 +1,20 @@
+- 과제: SMTP 세션이 호출자 컨텍스트의 취소·시한을 끝까지 지킨다 (가치 4 / 위험 2 / 작업량 M)
+- 왜: `internal/mail/mail.go:dial`은 평문 TCP 연결 때만 컨텍스트를 쓰고 `smtp.NewClient`의 greeting 읽기와 이후 SMTP 명령에는 적용하지 않아, 멈춘 relay에서 `Deliver`·`Verify`가 호출자 시한 뒤에도 반환하지 않는다. 취소를 실제 연결 수명에 연결하면 관리자 시험 요청과 알림 고루틴이 끝나고 기존 재시도도 진행할 수 있다.
+- 수용 기준: 1) 로컬 relay가 greeting 또는 EHLO 응답을 멈춘 경우 `Deliver`와 `Verify` 모두 컨텍스트 deadline 뒤 충분한 테스트 여유 시간 안에 non-nil 오류로 끝난다. 2) deadline 없는 컨텍스트를 연결 수락 뒤 명시적으로 cancel해도 끝나며, implicit TLS 연결/handshake에도 같은 호출자 컨텍스트가 적용된다. 3) 정상 relay 전송·Verify·기존 AUTH 및 수신자/본문 테스트는 통과하고, 회귀 테스트는 수정 전 실패→수정 후 통과하며 연결·감시 고루틴을 남기지 않는다.
+- 건드릴 파일: `internal/mail/mail.go:dial, Deliver, Verify` — 연결 수명에 호출자 취소를 연결하고 성공/실패 경로마다 감시 해제·소켓 닫기; `internal/mail/mail_test.go:startRelay, relayConfig` 주변 — 기존 helper를 유지하면서 정지 relay 및 컨텍스트 회귀 테스트 추가. 프로덕션 1개, 테스트 1개로 제한.
+- 검증 명령: `go test ./internal/mail -run 'TestDeliver|TestVerify' -count=1 -v`; `go test ./internal/mail -race -count=1`; `go test ./...`. 뒤 두 명령은 정찰에서 실제 성공했다. 정찰 재현은 `go test -overlay=/mnt/c/Users/USER/projects/aidev/state/runs/2026-09-29-081226-kanpic-improve/smtp_timeout_overlay.json ./internal/mail -run TestScoutSMTPTimeout -count=1 -v`이며 현재 4개 부속 사례가 모두 실패한다. overlay는 정찰용 증거이며 구현 테스트로 옮긴 후 일반 테스트 명령으로 검증한다.
+- 위험과 피할 것: 범위 밖은 설정의 `mail.timeout_seconds` 의미/기본값, 서비스 재시도 횟수·간격·감사 DB, TLS 인증서 검증·STARTTLS 필수 여부·AUTH 정책, auth/migrations/workflows, 문서/PDF 및 숫자·인코딩 규칙이다. 이 과제는 Config.Timeout을 전송 전체 제한으로 재정의하지 않는다(현재 문서는 연결 제한). `SendNow`·`Notify`가 의도적으로 만든 WithoutCancel 컨텍스트를 원래 요청 취소에 다시 묶지 않는다. `dial` 안에서 취소 감시를 defer 해제하면 반환 후 SMTP 명령을 보호하지 못한다. TLS handshake가 끝난 뒤에만 감시를 붙이면 handshake 대기는 여전히 남는다. 단순히 select로 호출자만 먼저 반환하고 뒤에 SMTP 고루틴을 남기는 방식은 금지. 전송 완료 응답을 못 받은 상황의 재시도 중복 가능성은 기존 정책이며 이번에 바꾸지 않는다.
+- 차선 후보: 깨진 UTF-16의 홀수 끝 바이트 복구를 업로드·IMPORTDATA 실제 입구에서 고정한다(가치 2 / 위험 2 / 작업량 S) — 선택 과제가 이미 해결된 별도 변경과 충돌할 때만. `internal/delimited/encoding_test.go:TestToUTF8ReadsWhatTheFileSaysItIs`에는 홀수 끝 바이트 사례가 있으나 `internal/external/fetcher_test.go:TestImportDataReadsACSVThatSaysItIsUTF16`은 정상 UTF-16 직접 파서 사례뿐이다. `internal/importexport/scalar_test.go`의 `Parse` 패턴과 Fetcher 실제 HTTPS 테스트 패턴을 먼저 확인하고 테스트 2개 파일로 제한; 디코더 수정 금지.
+
+근거와 재현(완료): main@1d2d226. run 디렉터리 안에만 만든 Go overlay 테스트로 실제 localhost TCP 연결을 사용했다. greeting/ehlo × Deliver/Verify 모두 `Config.Timeout=100ms`, ctx deadline=150ms인데 500ms 뒤에도 blocked였다. 서버 쪽 연결을 닫자 모두 반환했다. TLS handshake와 명시적 cancel은 정찰에서 실행하지 않았으므로 구현 단계에서 확인한다. 전체 Go 테스트(일부 cached) 및 mail race 테스트(1.260s)는 통과한다. 저장소 작업 트리는 변경하지 않았다.
+
+대안 비교: (A) ctx deadline만 SetDeadline으로 복사하면 작지만 deadline 없는 cancel을 놓친다. (B, 선택) 컨텍스트 취소 시 실제 소켓을 닫고 세션 종료 때 감시를 정리하면 두 경우를 함께 해결한다; `context.AfterFunc` 등을 검토하고 implicit TLS는 컨텍스트를 받는 dial/handshake 경로를 사용한다. (C) 비동기 큐/worker 재설계는 확장에 유리하지만 45분·파일 제한을 넘는다. (D) 현상 유지는 비용이 없지만 실제 재현된 무기한 대기를 남긴다. 핵심 가정: 서비스가 이미 제공하는 유한 컨텍스트가 전송 수명의 계약이며, TLS/AUTH 정책을 바꿀 필요가 없다.
+
+실행 순서(미착수, 모든 체크포인트는 구현자의 자동 판정; 사람 승인 없음):
+1. mail_test.go에 정지 relay와 bounded cleanup을 추가한다. 4개 기본 실패 사례 및 연결 후 cancel을 구현한다. 증명: 위 TestDeliver/TestVerify 명령. 체크포인트: 의도한 시한 초과에서만 실패하고 cleanup으로 프로세스가 끝나는지 확인한다(의도적 red 테스트 외 빌드 파손 금지).
+2. mail.go의 연결 소유권과 취소 정리를 수정한다. 암묵 TLS handshake 정지 사례도 로컬 TCP 서버로 검증한다. 증명: 같은 좁은 테스트. 체크포인트: 정상 전송과 취소 모두 초록, 반환 후 취소 callback·연결 누수 없음. 현실이 과제서와 다르면 먼저 과제서를 수정하고 범위 확대 금지.
+3. 증명: mail race 및 전체 Go 테스트. 체크포인트: 통과한 단계만 완료로 기록하고 diff가 지정 2파일 범위인지 확인한다. 웹·DB·브라우저 변경은 없으므로 해당 테스트는 필수 아님.
+
+추정 근거: 정찰자의 코드·재현 기반 bottom-up 판단으로 테스트 10~13분 + 연결 수명 수정 10~14분 + 검증/검토 5~8분 = 기본 25~35분. 알려진 불확실성인 TLS 정리·race 조정에 contingency 5~10분을 별도로 두어 총 30~45분(중간 신뢰, 통계적 확률 아님)이다. 이전 mail 1~2파일 회차와 범위는 유사하나 소요 시간 데이터가 없어 유추 방식의 독립 수치 추정은 하지 않았다. 관리 예비비는 배정하지 않는다; 새로운 기능/DB 문제가 나오면 이번 범위에서 제외해 다음 후보로 남긴다. 1차 회귀 테스트 완성 시 재추정한다.
+
+적용 스킬: `/home/hkjang/.claude/plugins/marketplaces/headcount/plugins/pmo/skills/estimating-and-contingency/SKILL.md`, `technology/skills/implementation-planning/SKILL.md`, `technology/skills/solution-exploration/SKILL.md`(뒤 두 경로도 같은 marketplaces/headcount/plugins 아래). Skill 전용 도구가 없어 실제 로컬 SKILL.md를 읽었다. estimating의 references/sources.md도 확인했으나 외부 비용모형·신뢰확률 수치는 인용하지 않았다.

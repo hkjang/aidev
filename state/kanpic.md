@@ -270,3 +270,15 @@
 - 과제서: 채택 — 정찰의 와이어 재현이 지금 코드와 정확히 맞았고, 건드릴 파일 2개·`startRelay` 재사용·`SetSender` 금지·표시 이름 인코딩 갈래 버리기·TLS/AUTH 와 service.go 손대지 않기를 모두 그대로 따랐다.
 
 - 릴리즈: v0.257.0 (2026-09-28, run 2026-09-28-120210-kanpic-improve)
+## 2026-09-29
+- 선택: SMTP 세션이 호출자 컨텍스트의 취소·시한을 끝까지 지킨다 (가치 4 / 위험 2 / 작업량 M)
+- 결과: 성공
+- 요약: dial이 세션 정리 함수를 반환하도록 바꿔 greeting부터 QUIT까지 호출자 취소가 실제 TCP 소켓을 닫고, 성공·실패 경로 모두 감시 콜백을 해제하거나 종료까지 기다린다. implicit TLS는 tls.Dialer.DialContext로 연결·handshake에 호출자 컨텍스트를 적용하며 Config.Timeout·TLS/AUTH 정책·서비스 취소 분리는 유지했다. 실제 TCP 회귀 12사례 수정 전 실패→수정 후 통과와 구현 원복 시 재실패를 확인했고, 지정 좁은 테스트·mail race(2.189s)·go test ./...·go vet ./...·go build ./...·gofmt·diff 검사를 통과하여 지정 2파일을 de77d56으로 커밋했다.
+- 실패 재현: `mail_test.go:536: SMTP session blocked after context cancellation` / `--- FAIL: TestVerifyHonorsContext/tls/deadline (0.65s)` — Deliver/Verify × greeting/EHLO/TLS × deadline/cancel 총 12사례 실패, bounded cleanup 후 프로세스 종료. mail-red.log 및 mail-reverted.log에 원본 출력 보존.
+- 보류 아이디어:
+  - [2/1/S] 관리자 가이드 외부 호출 오류 안내를 #N/A와 맞춤 — PDF 동반 작업으로 보류.
+  - [2/1/S] SendNow record의 요청 취소 영향 재현 — DB 및 취소 시점별 검증 필요.
+  - [2/2/S] 깨진 UTF-16 홀수 끝 바이트 복구를 원격·업로드 실제 입구에서 고정 — 이번 선택과 충돌 없어 차선 미실행.
+  - [2/2/S] compareLists의 007.5 식별자 판정 — 키 비교 계약 결정 전 변경 금지.
+- 과제서: 채택 — 현재 코드와 실제 TCP 12사례가 시한·취소 누락을 확인했고 프로덕션 1개·테스트 1개 범위에서 해결했다.
+

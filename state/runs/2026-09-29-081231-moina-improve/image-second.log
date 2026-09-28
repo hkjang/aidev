@@ -1,0 +1,222 @@
+docker build --platform linux/amd64 \
+	--build-arg VERSION='v0.1.39' \
+	--build-arg VCS_REF="$(git rev-parse --verify HEAD 2>/dev/null || printf unknown)" \
+	--build-arg BUILD_DATE="$(date -u +%Y-%m-%dT%H:%M:%SZ)" \
+	--tag 'moina:v0.1.39' .
+#0 building with "default" instance using docker driver
+
+#1 [internal] load build definition from Dockerfile
+#1 transferring dockerfile: 2.00kB done
+#1 DONE 0.0s
+
+#2 resolve image config for docker-image://docker.io/docker/dockerfile:1@sha256:ecfaec9ed6d810b56388c508f4121597bfbba70d41a6dfeee4d8cad5f295fc32
+#2 DONE 0.0s
+
+#3 docker-image://docker.io/docker/dockerfile:1@sha256:ecfaec9ed6d810b56388c508f4121597bfbba70d41a6dfeee4d8cad5f295fc32
+#3 resolve docker.io/docker/dockerfile:1@sha256:ecfaec9ed6d810b56388c508f4121597bfbba70d41a6dfeee4d8cad5f295fc32 0.0s done
+#3 CACHED
+
+#4 [internal] load metadata for gcr.io/distroless/static-debian12:nonroot@sha256:afa5c872c891853ca7fcf1f12c3edb23f7eeef36189728842dd51042ff57f7ab
+#4 DONE 0.0s
+
+#5 [internal] load metadata for docker.io/library/golang:1.26.6-alpine@sha256:3889b425f035be855a72fb4755265311293b6d414521f0a519d819df32222d83
+#5 DONE 0.0s
+
+#6 [internal] load metadata for docker.io/library/node:24-alpine@sha256:e67514e5d0f6c46656005e1b693b2ec9d52e80b641307de684d4a015ba7a4eaf
+#6 DONE 0.0s
+
+#7 [internal] load .dockerignore
+#7 transferring context: 178B done
+#7 DONE 0.0s
+
+#8 [runtime 1/4] FROM gcr.io/distroless/static-debian12:nonroot@sha256:afa5c872c891853ca7fcf1f12c3edb23f7eeef36189728842dd51042ff57f7ab
+#8 resolve gcr.io/distroless/static-debian12:nonroot@sha256:afa5c872c891853ca7fcf1f12c3edb23f7eeef36189728842dd51042ff57f7ab 0.0s done
+#8 DONE 0.0s
+
+#9 [frontend-builder 1/6] FROM docker.io/library/node:24-alpine@sha256:e67514e5d0f6c46656005e1b693b2ec9d52e80b641307de684d4a015ba7a4eaf
+#9 resolve docker.io/library/node:24-alpine@sha256:e67514e5d0f6c46656005e1b693b2ec9d52e80b641307de684d4a015ba7a4eaf 0.0s done
+#9 DONE 0.0s
+
+#10 [backend-builder 1/6] FROM docker.io/library/golang:1.26.6-alpine@sha256:3889b425f035be855a72fb4755265311293b6d414521f0a519d819df32222d83
+#10 resolve docker.io/library/golang:1.26.6-alpine@sha256:3889b425f035be855a72fb4755265311293b6d414521f0a519d819df32222d83 0.0s done
+#10 DONE 0.0s
+
+#11 [internal] load build context
+#11 transferring context: 17.96kB 0.0s done
+#11 DONE 0.0s
+
+#12 [frontend-builder 2/6] WORKDIR /src/frontend
+#12 CACHED
+
+#13 [frontend-builder 3/6] COPY frontend/package.json frontend/package-lock.json ./
+#13 CACHED
+
+#14 [frontend-builder 4/6] RUN npm ci
+#14 CACHED
+
+#15 [backend-builder 3/6] COPY backend/go.mod backend/go.sum ./
+#15 CACHED
+
+#16 [backend-builder 4/6] RUN go mod download && go mod verify
+#16 CACHED
+
+#17 [backend-builder 2/6] WORKDIR /src/backend
+#17 CACHED
+
+#18 [frontend-builder 5/6] COPY frontend/ ./
+#18 CACHED
+
+#19 [backend-builder 5/6] COPY backend/ ./
+#19 CACHED
+
+#20 [frontend-builder 6/6] RUN npm test && VITE_MOINA_VERSION="v0.1.39" npm run build
+#20 0.357 
+#20 0.357 > moina-frontend@0.1.39 test
+#20 0.357 > vitest run
+#20 0.357 
+#20 0.721 
+#20 0.721  RUN  v3.2.7 /src/frontend
+#20 0.721 
+#20 2.295  ✓ src/state/feedCache.test.ts (7 tests) 7ms
+#20 2.306  ✓ src/theme/style-contract.test.ts (4 tests) 9ms
+#20 2.309  ✓ src/theme/contrast.test.ts (16 tests) 9ms
+#20 2.352  ✓ src/config.test.ts (5 tests) 16ms
+#20 2.356  ✓ src/utils/media.test.ts (19 tests) 12ms
+#20 2.361  ✓ src/utils/liveNotifications.test.ts (6 tests) 15ms
+#20 2.364  ✓ src/auth/silentSso.test.ts (8 tests) 21ms
+#20 2.401  ✓ src/state/moinMutations.test.ts (4 tests) 8ms
+#20 2.404  ✓ src/api/adapters.test.ts (7 tests) 10ms
+#20 2.405  ✓ src/hooks/apiQueryCache.test.ts (4 tests) 7ms
+#20 2.407  ✓ src/api/client.test.ts (7 tests) 46ms
+#20 2.409  ✓ src/utils/format.test.ts (15 tests) 36ms
+#20 2.440  ✓ src/hooks/useMentionAutocomplete.test.ts (7 tests) 12ms
+#20 2.484  ✓ src/navigation.test.ts (4 tests) 7ms
+#20 2.791  ✓ src/components/MoinContent.test.tsx (8 tests) 182ms
+#20 2.850  ✓ src/auth/AuthContext.test.tsx (4 tests) 238ms
+#20 2.878  ✓ src/hooks/useFeedPages.test.tsx (2 tests) 245ms
+#20 2.910  ✓ src/pages/NotificationsPage.test.tsx (2 tests) 179ms
+#20 3.065  ✓ src/components/MoinCardMemo.test.tsx (3 tests) 181ms
+#20 3.266  ✓ src/pages/admin/AdminSMTPPage.test.tsx (3 tests) 409ms
+#20 3.271  ✓ src/pages/admin/AdminSettingsPage.test.tsx (1 test) 359ms
+#20 3.271    ✓ 관리자 서비스 기본 설정 > 사이트 기본 주소를 불러오고 service.general에 저장한다  356ms
+#20 3.347  ✓ src/hooks/useApiQuery.test.tsx (14 tests) 712ms
+#20 3.451  ✓ src/pages/admin/AdminTrackingSettings.test.tsx (5 tests) 594ms
+#20 3.451  ✓ src/utils/allowedHosts.test.ts (5 tests) 12ms
+#20 3.487  ✓ src/styles/feed-rendering.test.ts (3 tests) 5ms
+#20 3.492  ✓ src/utils/preferences.test.ts (2 tests) 6ms
+#20 3.538  ✓ src/utils/workflowActions.test.ts (2 tests) 5ms
+#20 3.668  ✓ src/pages/SettingsPages.test.tsx (3 tests) 735ms
+#20 3.668    ✓ 알림 개인화 설정 > 사용자 동작으로 브라우저 권한을 받은 뒤 desktop 채널을 저장한다  315ms
+#20 3.824  ✓ src/pages/ProfileSettingsPage.test.tsx (4 tests) 894ms
+#20 3.824    ✓ 개인 프로필 이미지 설정 > 선택한 이미지를 미리 보고 업로드한 avatarId를 프로필에 저장한다  530ms
+#20 3.824  ✓ src/pages/FlowPage.test.tsx (3 tests) 892ms
+#20 3.824    ✓ FlowPage composer navigation guard > 확인을 거부하면 URL과 작성 내용 및 인용 원문을 보존한다  429ms
+#20 3.825  ✓ src/pages/PocketPage.test.ts (1 test) 4ms
+#20 3.921  ✓ src/components/QuickNavigation.test.tsx (6 tests) 1113ms
+#20 3.921    ✓ 빠른 이동 팔레트 > Ctrl+K로 열고 검색·방향키·Enter로 화면을 이동한다  462ms
+#20 4.190  ✓ src/test/a11y.test.tsx (4 tests) 1162ms
+#20 4.190    ✓ 대표 DOM 접근성 > MoinCard의 링크와 반응 control이 axe-core 규칙을 만족한다  348ms
+#20 4.190    ✓ 대표 DOM 접근성 > 빠른 이동 combobox와 결과 목록이 axe-core 규칙을 만족한다  540ms
+#20 4.256  ✓ src/components/MoinCard.test.tsx (21 tests) 1363ms
+#20 4.256    ✓ MoinCard optimistic mutation > 반응·저장·공유 아이콘 버튼에 항상 접근 가능한 이름을 제공한다  311ms
+#20 4.281  ✓ src/pages/admin/AdminProviderSettings.test.tsx (11 tests) 1364ms
+#20 5.293  ✓ src/components/MoinComposer.test.tsx (30 tests) 2456ms
+#20 5.335 
+#20 5.336  Test Files  36 passed (36)
+#20 5.336       Tests  250 passed (250)
+#20 5.336    Start at  23:20:27
+#20 5.337    Duration  4.61s (transform 5.24s, setup 5.05s, collect 17.24s, tests 13.33s, environment 26.02s, prepare 5.03s)
+#20 5.337 
+#20 5.614 
+#20 5.614 > moina-frontend@0.1.39 build
+#20 5.614 > tsc -b && vite build
+#20 5.614 
+#20 ...
+
+#21 [backend-builder 6/6] RUN go test ./... && go vet ./... &&     CGO_ENABLED=0 GOOS="linux" GOARCH="amd64"     go build -trimpath -ldflags "-s -w -X main.version=v0.1.39"     -o /out/moina ./cmd/moina
+#21 7.941 ?   	github.com/hkjang/moina/backend/cmd/moina	[no test files]
+#21 7.945 ok  	github.com/hkjang/moina/backend/internal/analytics	0.003s
+#21 7.945 ok  	github.com/hkjang/moina/backend/internal/config	0.003s
+#21 8.049 ok  	github.com/hkjang/moina/backend/internal/event	0.105s
+#21 8.049 ok  	github.com/hkjang/moina/backend/internal/feed	0.004s
+#21 9.401 ok  	github.com/hkjang/moina/backend/internal/httpapi	0.433s
+#21 9.401 ok  	github.com/hkjang/moina/backend/internal/media	0.004s
+#21 9.401 ?   	github.com/hkjang/moina/backend/internal/model	[no test files]
+#21 9.401 ok  	github.com/hkjang/moina/backend/internal/observability	0.004s
+#21 9.401 ok  	github.com/hkjang/moina/backend/internal/outbound	0.004s
+#21 9.401 ok  	github.com/hkjang/moina/backend/internal/pagination	0.003s
+#21 9.401 ok  	github.com/hkjang/moina/backend/internal/search	0.003s
+#21 9.401 ok  	github.com/hkjang/moina/backend/internal/secure	0.003s
+#21 9.401 ok  	github.com/hkjang/moina/backend/internal/store	0.004s
+#21 9.401 ok  	github.com/hkjang/moina/backend/internal/visibility	0.003s
+#21 ...
+
+#20 [frontend-builder 6/6] RUN npm test && VITE_MOINA_VERSION="v0.1.39" npm run build
+#20 10.51 vite v7.3.6 building client environment for production...
+#20 10.57 transforming...
+#20 13.41 ✓ 1810 modules transformed.
+#20 13.72 rendering chunks...
+#20 13.82 computing gzip size...
+#20 13.84 dist/index.html                               1.16 kB │ gzip:  0.57 kB
+#20 13.84 dist/assets/index-C3RDgC1Q.css               74.82 kB │ gzip: 14.61 kB
+#20 13.84 dist/assets/helpers-CcuSQ02i.js               0.42 kB │ gzip:  0.29 kB
+#20 13.84 dist/assets/allowedHosts-gDPlupJ3.js          0.43 kB │ gzip:  0.27 kB
+#20 13.84 dist/assets/components-BGJy3A2c.js            0.57 kB │ gzip:  0.32 kB
+#20 13.84 dist/assets/Modal-ZeuE9-TE.js                 0.77 kB │ gzip:  0.44 kB
+#20 13.84 dist/assets/format-DphGvUHk.js                1.02 kB │ gzip:  0.52 kB
+#20 13.84 dist/assets/StatePages-Czty0s9S.js            1.13 kB │ gzip:  0.57 kB
+#20 13.84 dist/assets/preferences-jCMnQIo-.js           1.24 kB │ gzip:  0.53 kB
+#20 13.84 dist/assets/media-SXfH3btu.js                 1.31 kB │ gzip:  0.75 kB
+#20 13.84 dist/assets/PocketPage-DS7_PZk9.js            1.39 kB │ gzip:  0.87 kB
+#20 13.84 dist/assets/MoinDetailPage-DKg02LYF.js        1.73 kB │ gzip:  0.97 kB
+#20 13.84 dist/assets/NotificationsPage-FvUnN-BZ.js     1.94 kB │ gzip:  1.12 kB
+#20 13.84 dist/assets/AdminContentPage-DcLvrLxG.js      2.40 kB │ gzip:  1.34 kB
+#20 13.84 dist/assets/AdminOverviewPage-C93ujxpI.js     2.59 kB │ gzip:  1.23 kB
+#20 13.84 dist/assets/AdminReportsPage-DKzb39mC.js      2.92 kB │ gzip:  1.51 kB
+#20 13.84 dist/assets/AdminRolesPage-BCHA8fK0.js        3.02 kB │ gzip:  1.60 kB
+#20 13.84 dist/assets/useApiQuery-C4g70441.js           3.14 kB │ gzip:  1.08 kB
+#20 13.84 dist/assets/UserProfilePage-DyzCqBH0.js       3.45 kB │ gzip:  1.59 kB
+#20 13.84 dist/assets/AdminApprovalsPage-B4OpH5MS.js    3.60 kB │ gzip:  1.81 kB
+#20 13.84 dist/assets/AdminAuditPage-B-8OIBJu.js        3.75 kB │ gzip:  1.82 kB
+#20 13.84 dist/assets/AdminUsersPage--5cvxI0b.js        4.71 kB │ gzip:  2.00 kB
+#20 13.84 dist/assets/AIPage-Zirzlv2k.js                5.44 kB │ gzip:  2.61 kB
+#20 13.84 dist/assets/AdminAIPage-DSFjMYlw.js           5.53 kB │ gzip:  2.44 kB
+#20 13.84 dist/assets/AdminSMTPPage-Dohg_pDH.js         5.61 kB │ gzip:  2.43 kB
+#20 13.84 dist/assets/LoginPage-DfV4MHgq.js             5.75 kB │ gzip:  2.37 kB
+#20 13.84 dist/assets/FlowPage-fP5e9rah.js              5.89 kB │ gzip:  2.83 kB
+#20 13.84 dist/assets/MoimsPage-D0TQ6DNN.js             6.39 kB │ gzip:  2.64 kB
+#20 13.84 dist/assets/DiscoveryPages-Cr5Khu-V.js        8.54 kB │ gzip:  3.16 kB
+#20 13.84 dist/assets/AdminOIDCPage-Dha_FY3L.js        14.15 kB │ gzip:  5.23 kB
+#20 13.84 dist/assets/icons-d_M1BBE1.js                16.58 kB │ gzip:  5.90 kB
+#20 13.84 dist/assets/AdminSettingsPage-BObjHS3O.js    17.51 kB │ gzip:  6.23 kB
+#20 13.84 dist/assets/AppShell-Booc_j7_.js             18.88 kB │ gzip:  6.63 kB
+#20 13.84 dist/assets/SettingsPages-BkpFuBsx.js        27.96 kB │ gzip:  9.15 kB
+#20 13.84 dist/assets/MoinCard-Ba9F80ix.js             33.02 kB │ gzip: 11.56 kB
+#20 13.84 dist/assets/index-D1gdD21G.js                59.06 kB │ gzip: 19.54 kB
+#20 13.84 dist/assets/radix-1gsX8op0.js               101.84 kB │ gzip: 34.04 kB
+#20 13.84 dist/assets/react-DZUsZfVP.js               288.79 kB │ gzip: 92.77 kB
+#20 13.85 ✓ built in 3.32s
+#20 DONE 14.3s
+
+#21 [backend-builder 6/6] RUN go test ./... && go vet ./... &&     CGO_ENABLED=0 GOOS="linux" GOARCH="amd64"     go build -trimpath -ldflags "-s -w -X main.version=v0.1.39"     -o /out/moina ./cmd/moina
+#21 DONE 16.6s
+
+#22 [runtime 2/4] WORKDIR /app
+#22 CACHED
+
+#23 [runtime 3/4] COPY --from=backend-builder --chown=nonroot:nonroot /out/moina /app/moina
+#23 DONE 0.0s
+
+#24 [runtime 4/4] COPY --from=frontend-builder --chown=nonroot:nonroot /src/frontend/dist /app/web/dist
+#24 DONE 0.1s
+
+#25 exporting to image
+#25 exporting layers
+#25 exporting layers 0.3s done
+#25 exporting manifest sha256:f660f35eb050158ef5febdcc99bd3bbc9ed11d9f4923e4be0f6a24b21776731e 0.0s done
+#25 exporting config sha256:197180a990b5336377bd26fdc4b134e01a58b8f36761c9f4805288a3cc4b368e done
+#25 exporting attestation manifest sha256:cd3d1e3f8a8d1cce269c9d24883dc45d480ec3adde5fbbb4c414f5271fc497e2 0.0s done
+#25 exporting manifest list sha256:b547d1a2a3d3f961d065d22ddd3af4354b81f8548d9b80f880d9ac75114dc53f done
+#25 naming to docker.io/library/moina:v0.1.39 done
+#25 unpacking to docker.io/library/moina:v0.1.39 0.1s done
+#25 DONE 0.5s
