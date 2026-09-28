@@ -25,3 +25,5 @@
 - 승인이어도 남는 우려: (1) 릴리즈 노트에 "팀 관리 10개 엔드포인트가 DB 장애 시 403 대신 500 을 준다 — 클라이언트 재시도 동작이 바뀐다" 를 적어야 한다. (2) `router.go:756`/`:1054` 의 `POST /teams/{teamID}/invite/email` 중복 등록은 이번 변경과 무관하게 미해결이다 — 나중 등록(`inviteTeamMembersFromBody` 스텁)이 이기면 `compat_wave_handlers.go:1317` 의 게이트는 도달 불가다. 다음 회차의 독립 과제로 적합. (3) `compat_wave_handlers_final.go:98` 등이 500 본문에 `err.Error()` 를 그대로 싣는다(DB 오류 문자열 노출) — 이번 변경은 일반 문구를 쓰므로 새 노출은 없지만 형제 경로에 남아 있다.
 - [러너 12:24] review approved — 리뷰 승인 (risk=low)
 - [러너 12:24] pr created — https://github.com/hkjang/moyro/pull/28
+- [러너 12:36] ci passed — 검사 3개 모두 success
+- [러너 12:36] merge done — dcb9487
