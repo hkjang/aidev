@@ -1,0 +1,24 @@
+- 과제: 메일의 "누구에게" 를 봉투와 헤더가 같은 값으로 읽게 한다 — 지금 `Rcpt` 는 trim 하고 `To:` 헤더는 날것을 쓴다 (가치 3 / 위험 2 / 작업량 S)
+- 왜: `internal/mail/mail.go:116` 은 `client.Rcpt(strings.TrimSpace(message.To))` 로 봉투 수신자를 주지만 `internal/mail/message.go:15` 는 `"To: " + message.To` 로 날것을 붙인다. 주소 끝에 `\r\n` 이 붙어 있으면 `Rcpt` 의 `validateLine` 은 trim 후를 보므로 통과하고, 헤더 쪽은 빈 줄이 하나 더 생겨 **헤더 블록이 거기서 끝나** Subject·Date·MIME-Version·Content-Type 이 전부 본문 글자가 된다(받는 사람은 제목 없는 깨진 메일을 본다).
+- **정찰이 실제로 재현했다(추측 아님).** 임시 테스트를 `internal/mail` 에 넣고 기존 `startRelay` 로 `Deliver(ctx, relayConfig(relay), Message{To: "park@corp.example\r\n", Subject: "공유 알림", Body: "본문입니다."})` 를 돌린 결과(임시 파일은 지웠고 작업 트리는 깨끗하다):
+  - `TRANSCRIPT="EHLO corp.example | MAIL FROM:<kanpic@corp.example> | RCPT TO:<park@corp.example> | DATA | QUIT"` — 봉투는 멀쩡하다.
+  - `HEADERS="From: =?utf-8?q?kanpic_=EC=95=8C=EB=A6=BC?= <kanpic@corp.example>\r\nTo: park@corp.example"` — 헤더가 **To 에서 끝난다**.
+  - `BODY="Subject: =?utf-8?q?...?=\r\nDate: ...\r\nMIME-Version: 1.0\r\nContent-Type: text/plain; charset=UTF-8\r\nContent-Transfer-Encoding: 8bit\r\nAuto-Submitted: auto-generated\r\nX-Kanpic-Notification: 1\r\n\r\n본문입니다.\r\n"` — Subject 이하 **일곱 줄이 전부 본문**이 됐다. `Deliver` 는 `nil` 을 돌려주므로 아무도 모른다.
+  - 주소 **가운데**에 CR/LF 가 들면 지금도 막히지만 문구가 영어다: `ERR=RCPT TO 실패: smtp: A line must not contain CR or LF`.
+- 수용 기준: 1) 같은 `Message` 하나로 와이어를 찍었을 때 `RCPT TO:` 가 받은 주소와 `To:` 헤더의 주소가 **글자 그대로 같고**, 끝에 `\r\n`·앞뒤 공백이 붙은 입력에서도 헤더 블록에 `Subject`·`MIME-Version`·`Content-Type` 이 그대로 남는다(위 재현의 반대). 2) 주소 가운데에 CR/LF 가 든 입력은 `Deliver` 가 연결 전에 `ErrInvalid` 로 거절하고 문구가 저장소 관례대로 한국어다 — `errors.Is(err, ErrInvalid)` 로 단언하고, 릴레이에 연결조차 없었음을 `relay.transcript()` 가 비어 있는 것으로 확인할 것. 3) 테스트는 고치기 전 **빨강**이어야 한다: 위 재현이 `BODY` 가 `"Subject: "` 로 시작함을 보이므로, 그것을 단언 실패로 뒤집어 쓴 뒤 고치면 초록이 된다.
+- 건드릴 파일 (프로덕션 2개):
+  - `internal/mail/mail.go:Deliver` — 지금의 `strings.TrimSpace(message.To) == ""` 검사 자리에서 한 번만 정규화한다. `to := strings.TrimSpace(message.To)` 를 만들고, 비었으면 기존대로 `ErrInvalid`, `strings.ContainsAny(to, "\r\n")` 이면 새로 `ErrInvalid`(한국어 문구). 아래 `client.Rcpt(to)` 와 `compose` 에 같은 `to` 를 넘긴다(`message.To = to` 로 지역 복사본을 갱신하거나 `compose(config, message, to)` 중 한 가지 — `Message` 는 값으로 받으므로 지역 갱신이 호출자에 새지 않는다는 점을 확인할 것).
+  - `internal/mail/message.go:compose` — `"To: " + message.To` 가 `Deliver` 가 정규화한 값을 쓰게 한다. 왜 여기서 다시 trim 하지 않는지(정본은 `Deliver` 한 곳)를 관례대로 주석에 적을 것.
+  - `internal/mail/mail_test.go` — 기존 in-process `startRelay(t, false)`/`relayConfig(relay)`/`relay.transcript()`/`relay.body` 를 그대로 쓴다(모두 실제로 돌려 봤다). 헤더/본문 가르기는 이미 있는 `undotWireBody`(mail_test.go:172)와 같은 `strings.Cut(wire, "\r\n\r\n")` 자를 쓸 것. `SetSender` 를 쓰지 말 것 — 프로덕션 `Deliver` 로 실제 `net/smtp` 배선을 타야 한다.
+- 검증 명령:
+  - `go test ./internal/mail -run 'TestDeliver|TestNotify|TestSendNow' -v` (빨강 → 초록을 이 명령으로 보일 것)
+  - `go test ./internal/mail -race -count=2`
+  - `go test ./...` · `go vet ./...` · `go build ./...` · `gofmt -l ./cmd ./internal ./pkg`(출력 없어야 함)
+  - `./scripts/check-release-docs.sh` · `./scripts/check-commit-identities.sh HEAD`
+- 위험과 피할 것:
+  - **표시 이름(`홍길동 <a@b>`) 을 지원하려 들지 말 것.** 프로덕션에서 `Message.To` 는 언제나 맨 주소다(`service.go:99` 는 `resolve` 가 고른 주소, `service.go:195` 가 이미 `TrimSpace` 한 값; `service.go:118` 은 관리자가 넣은 주소). 표시 이름이 들어오면 `client.Rcpt` 가 먼저 거절하므로 `mime.QEncoding` 인코딩은 죽은 코드가 된다 — 보류 목록의 "To 헤더를 인코딩한다" 중 인코딩 갈래는 이 이유로 버리고 **봉투/헤더 일치**만 한다.
+  - `internal/mail` 의 TLS/AUTH(`tlsConfig` 의 SkipVerify·`loginAuth`) 는 건드리지 말 것. 테스트의 루프백·자체 서명 허용을 운영으로 옮기지 않는다.
+  - `service.go` 는 이번에 건드리지 말 것(지난 회차가 막 고쳤다). `From` 헤더의 `encodeAddress` 도 그대로 둘 것 — `config.FromAddress`/`FromName` 은 표시 이름을 쓰는 진짜 자리다.
+  - `normalizeBody` 의 점 이스케이프 주석(c0ab986)을 되돌리지 말 것 — 줄 앞 점은 dot writer 몫이다.
+  - 문서: 사용자에게 보이는 규칙이 아니므로 docs·PDF 재생성 불필요.
+- 차선 후보: 관리자 가이드 `docs/ADMIN_GUIDE.md:785` 의 외부 호출 증상 칸을 실제 `#N/A` 와 맞춘다 — `internal/external/fetcher.go:124,130,136,158,171`(설정 읽기 실패·external.enabled 꺼짐·호출 수 초과·호스트 거절)은 모두 `#N/A` 이고 `#VALUE!` 는 399(CSV 읽기 실패) 한 갈래뿐인데 가이드는 `#VALUE!` 만 적었다. 줄 번호는 고치기 전 재확인하고, `scripts/generate_pdf.js`(web/node_modules/playwright-core 필요)로 PDF 를 다시 구울 것.
