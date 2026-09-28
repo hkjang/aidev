@@ -154,3 +154,4 @@
 - 보류 아이디어: 사용자 생성·편집 다이얼로그가 서버 오류 코드(WEAK_PASSWORD·ROLE_ABOVE_CALLER·SELF_*·USER_NOT_FOUND)를 한국어로 안내한다 — 이번 회차가 화면에서 막은 만큼 남는 것은 코드→문구 매핑 (가치 2 / 위험 1 / S); DataTable 기본 rowKey 가 동명이인·같은 인덱스에서 중복될 수 있다 (가치 2 / 위험 1 / S); DataTable CSV 가 column.format 을 적용하지 않고 원시값을 내보낸다 — 사용자 가이드 CSV 절 확인이 선행 (가치 2 / 위험 1 / S); 검색 중에는 일치가 10건 이하라도 TablePagination 을 유지한다 (가치 2 / 위험 2 / S)
 - 과제서: 채택 — 인용한 행 번호(admin.go 949·977·986, AdminPage.tsx 3194·3285·3416-3427·3428-3438·3439)와 `User.id`·`.ts` 확장자 import 관례가 모두 현재 코드와 일치했고 수용 기준 3개를 그대로 구현·증명했다. 과제서가 판단을 맡긴 helperText 는 disabled 로 함께 흐려지는 것을 피해 `Typography variant="caption"` 으로 두었고, 미확인으로 남긴 브라우저 확인은 실제 dist + headless Chrome 으로 마쳤다.
 
+- 릴리즈: v0.34.48 (2026-09-29, run 2026-09-29-035522-Momento-improve)
