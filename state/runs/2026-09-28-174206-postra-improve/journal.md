@@ -30,3 +30,5 @@
 - [러너 18:05] pr created — https://github.com/hkjang/postra/pull/28
 - [러너 18:11] ci passed — 검사 10개 모두 success
 - [러너 18:11] merge done — 33f8950
+- [러너 18:22] release published — v0.23.9
+- [러너 18:24] assets verified — v0.23.9 자산 5개 (이전 v0.23.8: 5)

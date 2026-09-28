@@ -156,3 +156,4 @@
 - 보류 아이디어: POP3 본문 MaxMessageBytes 상한 — 미병합 04b15be/PR #22 소유, 사람 반려 여부 확인이 먼저 (가치 4/위험 3/M); POP3 어댑터 프로토콜 테스트 확대 — AuthError·`-ERR` 인사말·dot-unstuffing (STLS 성공 경로는 이번에 처리됨) (가치 2/위험 1/S); `sync.max_message_bytes` 의 0·음수=무제한 규약을 설정 카탈로그·관리자 문서에 명시 (가치 2/위험 1/S — 7회 연속 차선); 세션 폐기 뒤 sync 루프 조기 종료 + 전건 실패에도 JobSucceeded 를 보고하는 오보 수정 (가치 3/위험 3/M); README govulncheck 를 CI v1.6.0 에 정렬 (가치 2/위험 1/S).
 - 과제서: 채택 — 근거(두 `Dial` 이 업그레이드 후 리더를 새로 만들어 주입을 삼킨다, 검사 위치, `s.text.R`/`s.r` 핸들, smtp `selfSigned` 이식처, SMTP 범위 밖)가 모두 코드와 맞았고, 정찰이 "미확인" 으로 남긴 `textproto.Conn` 의 `Reader.R` 접근은 컴파일로 확인돼 대안 경로가 필요하지 않았다.
 
+- 릴리즈: v0.23.9 (2026-09-28, run 2026-09-28-174206-postra-improve)
