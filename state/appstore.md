@@ -285,3 +285,4 @@
 - 검증 한계: APPSTORE_TEST_POSTGRES_DSN 미설정으로 DB 통합 테스트는 skip; 실제 DB/Keycloak 및 Docker 이미지 smoke는 미실행. E2E는 실제 번들과 Chromium 및 HTTP fixture이며 skip 1건은 기존 모바일 전용 테스트의 desktop 제외다. 최초 빌드는 새 Vitest의 잘못된 exact 옵션/undefined 타입으로 실패해 테스트를 바로잡았고, 최초 E2E는 임시 HOME의 Chromium 부재로 시작하지 못해 설치했다. 첫 전체 E2E의 새 테스트만 전역/카탈로그 검색창 이름 중복 때문에 실패하여 #catalog-search로 대상을 명확히 한 뒤 전체를 재실행했다.
 - 검증 근거: red.log, e2e-red.log, green.log, revert-red.log, react-tests.log, go-tests.log, build.log, e2e-final.log. 기존 12개 아이디어를 유지·재평가하고 신규 2개를 추가한 ideas.json을 작성했다(즐겨찾기 검색/정렬 독립 결함은 100개 제한과 중복되어 rejected). 빌드 산출물·버전·릴리즈·원격 변경 없음.
 
+- 릴리즈: v2.11.10 (2026-09-29, run 2026-09-29-060142-appstore-improve)
