@@ -1,0 +1,20 @@
+=== A) --keep 이 서버를 남기는가 ===
+서버를 http://127.0.0.1:9911 에 띄워 뒀습니다(admin@example.com / Smoke-Test-1234). 정리: bash test/smoke/run.sh --down
+== 통과 ==
+  run --keep rc=0 / PIDFILE=1502468 / 포트주인=1502468 / exe=/tmp/dartfly-smoke
+  PASS: 서버가 남아 포트를 듣고 있고 PID 파일과 일치합니다.
+=== B) 앞 서버가 떠 있는 채로 다시 돌리기(연속 실행) ===
+서버를 http://127.0.0.1:9911 에 띄워 뒀습니다(admin@example.com / Smoke-Test-1234). 정리: bash test/smoke/run.sh --down
+== 통과 ==
+  run --keep rc=0 / 새 PID=1503896 / 포트주인=1503896 / exe=/tmp/dartfly-smoke
+  PASS: 새 프로세스가 떴습니다(옛 1502468 -> 새 1503896).
+  PASS: 포트를 새 서버가 잡았습니다 — 점검은 새 바이너리를 상대로 돌았습니다.
+  PASS: 옛 서버(1502468)는 정리됐습니다.
+=== C) --down 이 --keep 이 남긴 서버를 정리하는가 ===
+  --down 출력: [정리했습니다.] rc=0
+  PASS: 서버가 정리됐고 포트가 비었습니다.
+  PASS: PID 파일이 지워졌습니다.
+=== D) 이 스크립트(호출자)가 살아남았는가 ===
+  PASS: SURVIVED pid=1502137 — run.sh 를 세 번 부르고도 살아 있습니다.
+=== keep/down/연속실행 전부 통과 ===
+KEEPDOWN_EXIT=0
