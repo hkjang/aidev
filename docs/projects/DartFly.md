@@ -1,7 +1,7 @@
 ---
 title: "DartFly — 자율 개선 이력"
 description: "DartFly: 자율 개선 회차 19회, 릴리즈 10건. 최근 릴리즈 v2.77.0 (자산 2개)."
-last_modified_at: 2026-09-29 00:45:41 +0900
+last_modified_at: 2026-09-29 01:31:09 +0900
 ---
 {% raw %}
 <script type="application/ld+json">
@@ -18,7 +18,7 @@ last_modified_at: 2026-09-29 00:45:41 +0900
   "name": "hkjang",
   "url": "https://github.com/hkjang"
  },
- "dateModified": "2026-09-29T00:45:41+09:00",
+ "dateModified": "2026-09-29T01:31:09+09:00",
  "version": "2.77.0"
 }
 </script>
@@ -35,6 +35,7 @@ last_modified_at: 2026-09-29 00:45:41 +0900
 <dt>저장소</dt><dd><a href="https://github.com/hkjang/DartFly">https://github.com/hkjang/DartFly</a></dd>
 <dt>마지막 회차</dt><dd>2026-09-29 00:45 KST — <span class="pill pill-other">• 기타</span> error: agent produced no result ()</dd>
 <dt>최근 릴리즈</dt><dd><a href="https://github.com/hkjang/DartFly/releases/tag/v2.77.0">v2.77.0</a> — released · 자산 2개 (이전 v2.76.0: 2개) <a href="https://github.com/hkjang/DartFly/releases">전체 릴리즈 →</a></dd>
+<dt>수정 과제</dt><dd>⚠️ 오류 대응(자동 적재): 마지막 회차가 &#x27;error&#x27; 로 끝났습니다. error: agent produced no result ()</dd>
 </dl>
 
 ## 회차 이력

@@ -1,17 +1,128 @@
 [
-  {"title":"POST /api/v1/assets/merge 가 primary·secondary 존재를 확인하지 않아 openapi 가 약속한 400 대신 조용한 200·500 을 돌려줌","value":4,"risk":2,"size":"S","status":"pending","note":"이번 회차 선택. openapi.yaml:2234 는 '400: Primary or secondary assets missing' 을 공개 계약으로 적어 놓았지만 mergeAssets(assets.go:647) 는 입력 UUID 존재를 한 번도 확인하지 않는다. 없는 secondary 는 0행 UPDATE 로 200 성공 + asset_changes 'merged' 거짓 기록, 없는 primary 는 asset_changes.asset_id FK(두 방언 모두 REFERENCES assets(id), SQLite 는 PRAGMA foreign_keys=ON storage/runtime.go:276) 로 500. 실측은 probe 테스트 진행 중.","updated":"2026-09-29"},
-  {"title":"목록 핸들러 rows.Err() 확인","value":3,"risk":1,"size":"M","status":"pending","note":"차선 후보. listAgents·settings·자산 상세 sources/history/relations 가 rows.Err() 없이 부분 결과를 200 으로 돌려줌. 실패 주입 수단이 선행 과제라 M. 이번 회차엔 코드 재확인 못 함 — 미확인.","updated":"2026-09-29"},
-  {"title":"콘솔·외부 REST assetRelations 페이지네이션","value":3,"risk":2,"size":"M","status":"pending","note":"MCP 와 달리 상한 없이 모든 edge 반환. 콘솔 관계 패널 수정을 동반해 파일 수가 늘어남(웹+서버). 이번 회차 코드 재확인 안 함 — 미확인.","updated":"2026-09-29"},
-  {"title":"Query DSL limit 입력을 1~500 으로 맞추고 응답 limit 반영","value":2,"risk":1,"size":"S","status":"pending","note":"web 전용. 가치가 낮아 미선택. 미확인.","updated":"2026-09-29"},
-  {"title":"mergeAssets 가 secondary_ids 를 보낸 글자 그대로 저장해 대문자 UUID 병합은 merged_into 조회가 못 찾음","value":2,"risk":1,"size":"S","status":"pending","note":"PostgreSQL 의 assets.id 는 UUID 타입이라 대소문자 정규화되지만 asset_changes.after_json 의 secondary_ids 는 TEXT 로 보낸 글자 그대로 들어가고 mcp.go:747/752 의 조회는 문자 일치다. 선택한 과제와 같은 함수를 건드리므로 이번엔 분리. 실측 미확인.","updated":"2026-09-29"},
-  {"title":"cargo audit·govulncheck 매일 cron 실행","value":3,"risk":1,"size":"S","status":"pending","note":"ci.yml 에 schedule 트리거 추가. 릴리즈·빌드 경로(.github/workflows)를 건드려 보호 경로 회피 원칙과 충돌 — 우선순위 낮춤.","updated":"2026-09-29"},
-  {"title":"Dependabot 보안 갱신 PR 자동화","value":3,"risk":2,"size":"S","status":"pending","note":"위와 같은 보호 경로 이슈.","updated":"2026-09-29"},
-  {"title":"API key 만료 임박 메일","value":3,"risk":2,"size":"M","status":"pending","note":"mail·apikeys·스케줄러를 함께 건드려 파일 수가 6개를 넘길 위험. 미확인.","updated":"2026-09-29"},
-  {"title":"Query DSL attributes 키 존재·부재 연산자","value":3,"risk":2,"size":"M","status":"pending","note":"querydsl 두 방언 동시 지원 필요. 미확인.","updated":"2026-09-29"},
-  {"title":"MCP asset_search 0건 응답에 실제 type·status 안내","value":3,"risk":2,"size":"M","status":"pending","note":"미확인.","updated":"2026-09-29"},
-  {"title":"attributes 배열·객체 값의 저장 모드별 텍스트 차이","value":3,"risk":2,"size":"S","status":"pending","note":"미확인.","updated":"2026-09-29"},
-  {"title":"추적 정책·mcp.oauth 설정 TTL 캐시","value":2,"risk":2,"size":"S","status":"pending","note":"성능 이득이 측정되지 않았고 설정 변경 반영 지연을 새로 만든다. 미확인.","updated":"2026-09-29"},
-  {"title":"실제 Keycloak·MCP 클라이언트 SSO 연결 검증","value":4,"risk":1,"size":"S","status":"rejected","note":"이 환경에 실제 Keycloak·MCP 클라이언트가 없어 자율 회차에서 수행 불가. 사람이 해야 하는 일이므로 기각.","updated":"2026-09-29"},
-  {"title":"MCP SSO·메일·Keycloak·방문 추적 화면 캡처","value":2,"risk":1,"size":"S","status":"pending","note":"capture-guide-screenshots.mjs + docs/assets/guide + 가이드 본문 세 곳을 TestGuideScreenshotsMatchCaptureScript 가 대조하므로 실패 지점이 많고 headless Chrome 이 필요. 우선순위 낮음.","updated":"2026-09-29"},
-  {"title":"splitAsset 도 대상 source 가 그 자산 것인지 확인하는지 점검","value":3,"risk":2,"size":"S","status":"pending","note":"신규. mergeAssets 와 대칭인 splitAsset(assets.go)이 요청된 source_ids 가 실제로 해당 자산에 속하는지 확인하는지 이번 회차에 읽지 못했다 — 미확인. 선택 과제와 같은 파일이라 다음 회차로.","updated":"2026-09-29"}
+  {
+    "title": "POST /api/v1/assets/merge 가 primary·secondary 존재를 확인하지 않아 openapi 가 약속한 400 대신 200·500(SQLite 는 무한 대기)",
+    "value": 4,
+    "risk": 2,
+    "size": "S",
+    "status": "done",
+    "note": "구현함. mergeAssets 가 tx 를 연 직후 primary 와 모든 secondary 를 SELECT id FROM assets WHERE id=$1 로 단건 확인하고 없으면 400 INVALID_MERGE. 실측한 수정 전 동작: 없는 secondary → 200 성공(거짓 asset_changes/audit_logs 기록), 없는 primary → SQLite 에서 요청이 영원히 안 돌아옴(internalError→recordDiagnostic 이 tx 가 쥔 단일 커넥션을 기다림, storage/runtime.go:273 SetMaxOpenConns(1)). UUID 형식 검사를 앞에 두어 두 방언이 같은 코드를 답한다.",
+    "updated": "2026-09-29"
+  },
+  {
+    "title": "트랜잭션 안에서 internalError 를 부르면 SQLite 폴백이 교착한다",
+    "value": 4,
+    "risk": 3,
+    "size": "M",
+    "status": "pending",
+    "note": "이번 회차에 스택으로 실측한 새 결함. internalError → recordDiagnostic → DB().ExecContext 가 새 커넥션을 요구하는데 열린 tx 가 SetMaxOpenConns(1) 의 유일한 커넥션을 쥐고 있어 영원히 대기한다. mergeAssets 는 존재 확인으로 이 경로를 피했지만 splitAsset·ingest 등 tx 안에서 internalError 를 부르는 모든 핸들러에 그대로 남아 있다. 고치려면 tx.Rollback() 뒤에 오류를 보고하도록 순서를 바꾸거나 recordDiagnostic 이 tx 를 쓰게 해야 한다 — 핸들러 여러 개를 건드려 M.",
+    "updated": "2026-09-29"
+  },
+  {
+    "title": "목록 핸들러 rows.Err() 확인",
+    "value": 3,
+    "risk": 1,
+    "size": "M",
+    "status": "pending",
+    "note": "listAgents·settings·자산 상세 sources/history/relations 가 rows.Err() 없이 부분 결과를 200 으로 돌려줌. 실패 주입 수단이 선행 과제라 M. 이번 회차엔 코드 재확인 못 함 — 미확인.",
+    "updated": "2026-09-29"
+  },
+  {
+    "title": "콘솔·외부 REST assetRelations 페이지네이션",
+    "value": 3,
+    "risk": 2,
+    "size": "M",
+    "status": "pending",
+    "note": "MCP 와 달리 상한 없이 모든 edge 반환. 콘솔 관계 패널 수정을 동반해 파일 수가 늘어남(웹+서버). 이번 회차 코드 재확인 안 함 — 미확인.",
+    "updated": "2026-09-29"
+  },
+  {
+    "title": "Query DSL limit 입력을 1~500 으로 맞추고 응답 limit 반영",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "web 전용. 가치가 낮아 미선택. 미확인.",
+    "updated": "2026-09-29"
+  },
+  {
+    "title": "mergeAssets 가 secondary_ids 를 보낸 글자 그대로 저장해 대문자 UUID 병합은 merged_into 조회가 못 찾음",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "asset_changes.after_json 의 secondary_ids 는 TEXT 로 보낸 글자 그대로 들어가고 mcp.go:747/752 의 조회는 문자 일치다. 이번에 넣은 uuid.Parse 형식 검사는 대문자를 통과시키므로 이 결함은 그대로 남아 있다(존재 확인은 PostgreSQL 에서 UUID 비교라 대문자도 찾는다). 실측 미확인.",
+    "updated": "2026-09-29"
+  },
+  {
+    "title": "cargo audit·govulncheck 매일 cron 실행",
+    "value": 3,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "ci.yml 에 schedule 트리거 추가. 릴리즈·빌드 경로(.github/workflows)를 건드려 보호 경로 회피 원칙과 충돌 — 우선순위 낮춤.",
+    "updated": "2026-09-29"
+  },
+  {
+    "title": "Dependabot 보안 갱신 PR 자동화",
+    "value": 3,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "위와 같은 보호 경로 이슈.",
+    "updated": "2026-09-29"
+  },
+  {
+    "title": "API key 만료 임박 메일",
+    "value": 3,
+    "risk": 2,
+    "size": "M",
+    "status": "pending",
+    "note": "mail·apikeys·스케줄러를 함께 건드려 파일 수가 6개를 넘길 위험. 미확인.",
+    "updated": "2026-09-29"
+  },
+  {
+    "title": "Query DSL attributes 키 존재·부재 연산자",
+    "value": 3,
+    "risk": 2,
+    "size": "M",
+    "status": "pending",
+    "note": "querydsl 두 방언 동시 지원 필요. 미확인.",
+    "updated": "2026-09-29"
+  },
+  {
+    "title": "MCP asset_search 0건 응답에 실제 type·status 안내",
+    "value": 3,
+    "risk": 2,
+    "size": "M",
+    "status": "pending",
+    "note": "미확인.",
+    "updated": "2026-09-29"
+  },
+  {
+    "title": "attributes 배열·객체 값의 저장 모드별 텍스트 차이",
+    "value": 3,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "미확인.",
+    "updated": "2026-09-29"
+  },
+  {
+    "title": "추적 정책·mcp.oauth 설정 TTL 캐시",
+    "value": 2,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "성능 이득이 측정되지 않았고 설정 변경 반영 지연을 새로 만든다. 미확인.",
+    "updated": "2026-09-29"
+  },
+  {
+    "title": "splitAsset 도 source_ids·assetID 의 존재를 확인하지 않는다",
+    "value": 3,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "이번 회차에 같은 파일에서 본 것. splitAsset 은 source_ids/name/type 이 비었는지만 보고 originalID 나 source_ids 가 실제 행인지 확인하지 않는다 — mergeAssets 와 같은 모양의 결함일 가능성이 높다. 과제서가 범위 밖으로 남겨 두어 이번엔 손대지 않았고, 실제 응답 코드는 실측하지 않았다.",
+    "updated": "2026-09-29"
+  }
 ]
