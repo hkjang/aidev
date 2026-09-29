@@ -1,0 +1,87 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    name: typecheck + unit tests + build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+      - run: npm ci
+      - run: npm run check
+      - run: node --check dist/extension.js && node --check dist/extension.core.js
+
+  package:
+    name: package VSIX (windows)
+    runs-on: windows-latest
+    needs: check
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+      - run: npm ci
+      - run: npm run build
+
+      # dist/node_modules, dist/i18n, workers and wasm files are not in git; they are taken
+      # from the newest published release VSIX. Without one the packaging steps are skipped.
+      - name: Fetch runtime assets from the latest release
+        id: assets
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          New-Item -ItemType Directory -Force -Path .tmp/release-assets | Out-Null
+          gh release download --repo $env:GITHUB_REPOSITORY --pattern '*.vsix' --dir .tmp/release-assets
+          $vsix = Get-ChildItem .tmp/release-assets -Filter *.vsix | Sort-Object LastWriteTime | Select-Object -Last 1
+          if ($vsix) {
+            node scripts/restore-dist-assets.mjs --from $vsix.FullName
+            "found=true" | Out-File -FilePath $env:GITHUB_OUTPUT -Append
+          } else {
+            Write-Host "no release VSIX found; skipping packaging"
+            "found=false" | Out-File -FilePath $env:GITHUB_OUTPUT -Append
+          }
+        continue-on-error: true
+
+      - name: Package VSIX
+        if: steps.assets.outputs.found == 'true'
+        shell: pwsh
+        run: powershell -ExecutionPolicy Bypass -File scripts/package-vsix.ps1
+
+      - name: Verify package
+        if: steps.assets.outputs.found == 'true'
+        shell: pwsh
+        run: powershell -ExecutionPolicy Bypass -File scripts/verify-package.ps1
+
+      - name: SHA256
+        if: steps.assets.outputs.found == 'true'
+        shell: pwsh
+        run: |
+          Get-ChildItem release -Filter *.vsix | ForEach-Object {
+            $hash = (Get-FileHash $_.FullName -Algorithm SHA256).Hash.ToLower()
+            "$hash  $($_.Name)" | Out-File -FilePath "$($_.FullName).sha256" -Encoding ascii
+            Write-Host "$hash  $($_.Name)"
+          }
+
+      - name: Upload VSIX
+        if: steps.assets.outputs.found == 'true'
+        uses: actions/upload-artifact@v4
+        with:
+          name: vibe-code-vsix
+          path: |
+            release/*.vsix
+            release/*.sha256
+          if-no-files-found: error

@@ -1,0 +1,904 @@
+{
+	"name": "vibe-code",
+	"displayName": "%extension.displayName%",
+	"description": "%extension.description%",
+	"publisher": "vibe-code",
+	"version": "1.4.5",
+	"icon": "assets/icons/icon.png",
+	"galleryBanner": {
+		"color": "#617A91",
+		"theme": "dark"
+	},
+	"engines": {
+		"vscode": "^1.84.0",
+		"node": "20.19.2"
+	},
+	"author": {
+		"name": "Vibe Code"
+	},
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/vibe-code/vibe-code"
+	},
+	"homepage": "https://github.com/vibe-code/vibe-code",
+	"categories": [
+		"AI",
+		"Chat",
+		"Programming Languages",
+		"Education",
+		"Snippets",
+		"Testing"
+	],
+	"keywords": [
+		"dev",
+		"mcp",
+		"openrouter",
+		"coding",
+		"agent",
+		"autonomous",
+		"chatgpt",
+		"sonnet",
+		"ai",
+		"llama"
+	],
+	"activationEvents": [
+		"onLanguage",
+		"onStartupFinished"
+	],
+	"main": "./dist/extension.js",
+	"contributes": {
+		"viewsContainers": {
+			"activitybar": [
+				{
+					"id": "vibe-code-ActivityBar",
+					"title": "%views.activitybar.title%",
+					"icon": "assets/icons/icon.svg"
+				}
+			]
+		},
+		"views": {
+			"vibe-code-ActivityBar": [
+				{
+					"type": "webview",
+					"id": "vibe-code.SidebarProvider",
+					"name": "%views.sidebar.name%"
+				},
+				{
+					"id": "vibe-code.GoalTracker",
+					"name": "%views.goalTracker.name%"
+				},
+				{
+					"id": "vibe-code.PlanBoard",
+					"name": "%views.planBoard.name%"
+				},
+				{
+					"id": "vibe-code.GoalPlanMap",
+					"name": "%views.goalPlanMap.name%"
+				},
+				{
+					"id": "vibe-code.GoalList",
+					"name": "%views.goalList.name%"
+				}
+			]
+		},
+		"commands": [
+			{
+				"command": "vibe-code.setupWizard",
+				"title": "%command.setupWizard.title%",
+				"category": "%configuration.title%",
+				"icon": "$(settings-gear)"
+			},
+			{
+				"command": "vibe-code.plusButtonClicked",
+				"title": "%command.newTask.title%",
+				"icon": "$(add)"
+			},
+			{
+				"command": "vibe-code.mcpButtonClicked",
+				"title": "%command.mcpServers.title%",
+				"icon": "$(server)"
+			},
+			{
+				"command": "vibe-code.popoutButtonClicked",
+				"title": "%command.openInEditor.title%",
+				"icon": "$(link-external)"
+			},
+			{
+				"command": "vibe-code.settingsButtonClicked",
+				"title": "%command.settings.title%",
+				"icon": "$(settings-gear)"
+			},
+			{
+				"command": "vibe-code.openInNewTab",
+				"title": "%command.openInNewTab.title%",
+				"category": "%configuration.title%"
+			},
+			{
+				"command": "vibe-code.explainCode",
+				"title": "%command.explainCode.title%",
+				"category": "%configuration.title%"
+			},
+			{
+				"command": "vibe-code.fixCode",
+				"title": "%command.fixCode.title%",
+				"category": "%configuration.title%"
+			},
+			{
+				"command": "vibe-code.improveCode",
+				"title": "%command.improveCode.title%",
+				"category": "%configuration.title%"
+			},
+			{
+				"command": "vibe-code.addToContext",
+				"title": "%command.addToContext.title%",
+				"category": "%configuration.title%"
+			},
+			{
+				"command": "vibe-code.newTask",
+				"title": "%command.newTask.title%",
+				"category": "%configuration.title%"
+			},
+			{
+				"command": "vibe-code.terminalAddToContext",
+				"title": "%command.terminal.addToContext.title%",
+				"category": "Terminal"
+			},
+			{
+				"command": "vibe-code.terminalFixCommand",
+				"title": "%command.terminal.fixCommand.title%",
+				"category": "Terminal"
+			},
+			{
+				"command": "vibe-code.terminalExplainCommand",
+				"title": "%command.terminal.explainCommand.title%",
+				"category": "Terminal"
+			},
+			{
+				"command": "vibe-code.setCustomStoragePath",
+				"title": "%command.setCustomStoragePath.title%",
+				"category": "%configuration.title%"
+			},
+			{
+				"command": "vibe-code.importSettings",
+				"title": "%command.importSettings.title%",
+				"category": "%configuration.title%"
+			},
+			{
+				"command": "vibe-code.focusInput",
+				"title": "%command.focusInput.title%",
+				"category": "%configuration.title%"
+			},
+			{
+				"command": "vibe-code.acceptInput",
+				"title": "%command.acceptInput.title%",
+				"category": "%configuration.title%"
+			},
+			{
+				"command": "vibe-code.searchDocuments",
+				"title": "%command.searchDocuments.title%",
+				"category": "%configuration.title%",
+				"icon": "$(search)"
+			},
+			{
+				"command": "vibe-code.openTask",
+				"title": "%command.openTask.title%",
+				"category": "%configuration.title%",
+				"icon": "$(history)"
+			},
+			{
+				"command": "vibe-code.deleteTaskHistory",
+				"title": "%command.deleteTaskHistory.title%",
+				"category": "%configuration.title%"
+			},
+			{
+				"command": "vibe-code.visualizeGraphCodebase",
+				"title": "Visualize Graph Codebase Indexing",
+				"category": "%configuration.title%"
+			},
+			{
+				"command": "vibe-code.showContextStats",
+				"title": "%command.showContextStats.title%",
+				"category": "%configuration.title%",
+				"icon": "$(graph)"
+			},
+			{
+				"command": "vibe-code.openJournal",
+				"title": "%command.openJournal.title%",
+				"category": "%configuration.title%",
+				"icon": "$(notebook)"
+			},
+			{
+				"command": "vibe-code.openCurrentGoal",
+				"title": "%command.openCurrentGoal.title%",
+				"category": "%configuration.title%",
+				"icon": "$(target)"
+			},
+			{
+				"command": "vibe-code.showGoalStatus",
+				"title": "%command.showGoalStatus.title%",
+				"category": "%configuration.title%",
+				"icon": "$(checklist)"
+			},
+			{
+				"command": "vibe-code.createGoalHandoff",
+				"title": "%command.createGoalHandoff.title%",
+				"category": "%configuration.title%",
+				"icon": "$(export)"
+			},
+			{
+				"command": "vibe-code.openLatestPlan",
+				"title": "%command.openLatestPlan.title%",
+				"category": "%configuration.title%",
+				"icon": "$(project)"
+			},
+			{
+				"command": "vibe-code.advanceCurrentPlan",
+				"title": "%command.advanceCurrentPlan.title%",
+				"category": "%configuration.title%",
+				"icon": "$(run)"
+			},
+			{
+				"command": "vibe-code.setCurrentPlanStatus",
+				"title": "%command.setCurrentPlanStatus.title%",
+				"category": "%configuration.title%",
+				"icon": "$(symbol-enum)"
+			},
+			{
+				"command": "vibe-code.setCurrentPlanPriority",
+				"title": "%command.setCurrentPlanPriority.title%",
+				"category": "%configuration.title%",
+				"icon": "$(arrow-up)"
+			},
+			{
+				"command": "vibe-code.linkCurrentPlanToGoal",
+				"title": "%command.linkCurrentPlanToGoal.title%",
+				"category": "%configuration.title%",
+				"icon": "$(link)"
+			},
+			{
+				"command": "vibe-code.archiveDonePlans",
+				"title": "%command.archiveDonePlans.title%",
+				"category": "%configuration.title%",
+				"icon": "$(archive)"
+			},
+			{
+				"command": "vibe-code.restoreArchivedPlan",
+				"title": "%command.restoreArchivedPlan.title%",
+				"category": "%configuration.title%",
+				"icon": "$(history)"
+			},
+			{
+				"command": "vibe-code.setActivePlan",
+				"title": "%command.setActivePlan.title%",
+				"category": "%configuration.title%",
+				"icon": "$(go-to-file)"
+			},
+			{
+				"command": "vibe-code.selectHighestPriorityPlan",
+				"title": "%command.selectHighestPriorityPlan.title%",
+				"category": "%configuration.title%",
+				"icon": "$(arrow-up)"
+			},
+			{
+				"command": "vibe-code.showPlanCatalog",
+				"title": "%command.showPlanCatalog.title%",
+				"category": "%configuration.title%",
+				"icon": "$(list-tree)"
+			},
+			{
+				"command": "vibe-code.showPlanHistory",
+				"title": "%command.showPlanHistory.title%",
+				"category": "%configuration.title%",
+				"icon": "$(history)"
+			},
+			{
+				"command": "vibe-code.showGoalPlanMap",
+				"title": "%command.showGoalPlanMap.title%",
+				"category": "%configuration.title%",
+				"icon": "$(organization)"
+			},
+			{
+				"command": "vibe-code.showIndexInfo",
+				"title": "%command.showIndexInfo.title%",
+				"category": "%configuration.title%"
+			},
+			{
+				"command": "vibe-code.healthCheck",
+				"title": "%command.healthCheck.title%",
+				"category": "%configuration.title%",
+				"icon": "$(pulse)"
+			},
+			{
+				"command": "vibe-code.exportTeamConfig",
+				"title": "%command.exportTeamConfig.title%",
+				"category": "%configuration.title%"
+			},
+			{
+				"command": "vibe-code.importTeamConfig",
+				"title": "%command.importTeamConfig.title%",
+				"category": "%configuration.title%"
+			},
+			{
+				"command": "vibe-code.auditNetwork",
+				"title": "%command.auditNetwork.title%",
+				"category": "%configuration.title%",
+				"icon": "$(shield)"
+			},
+			{
+				"command": "vibe-code.applyVibeCodersProxy",
+				"title": "%command.applyVibeCodersProxy.title%",
+				"category": "%configuration.title%",
+				"icon": "$(plug)"
+			},
+			{
+				"command": "vibe-code.restorePreviousProviderProfile",
+				"title": "%command.restorePreviousProviderProfile.title%",
+				"category": "%configuration.title%",
+				"icon": "$(history)"
+			},
+			{
+				"command": "vibe-code.showVibeCodersProxyStatus",
+				"title": "%command.showVibeCodersProxyStatus.title%",
+				"category": "%configuration.title%",
+				"icon": "$(list-tree)"
+			},
+			{
+				"command": "vibe-code.checkVibeCodersProxy",
+				"title": "%command.checkVibeCodersProxy.title%",
+				"category": "%configuration.title%",
+				"icon": "$(globe)"
+			},
+			{
+				"command": "vibe-code.writeVibeCodersProxyConfig",
+				"title": "%command.writeVibeCodersProxyConfig.title%",
+				"category": "%configuration.title%",
+				"icon": "$(json)"
+			},
+			{
+				"command": "vibe-code.completePlanItem",
+				"title": "%command.completePlanItem.title%",
+				"category": "%configuration.title%"
+			},
+			{
+				"command": "vibe-code.deferPlanItem",
+				"title": "%command.deferPlanItem.title%",
+				"category": "%configuration.title%"
+			},
+			{
+				"command": "vibe-code.promotePlanItem",
+				"title": "%command.promotePlanItem.title%",
+				"category": "%configuration.title%"
+			},
+			{
+				"command": "vibe-code.togglePlanCheckbox",
+				"title": "%command.togglePlanCheckbox.title%",
+				"category": "%configuration.title%"
+			},
+			{
+				"command": "vibe-code.selectPlanFile",
+				"title": "%command.selectPlanFile.title%",
+				"category": "%configuration.title%"
+			},
+			{
+				"command": "vibe-code.showCommandHistory",
+				"title": "%command.showCommandHistory.title%",
+				"category": "%configuration.title%",
+				"icon": "$(terminal)"
+			},
+			{
+				"command": "vibe-code.showUsageReport",
+				"title": "%command.showUsageReport.title%",
+				"category": "%configuration.title%",
+				"icon": "$(graph)"
+			},
+			{
+				"command": "vibe-code.openUsageDashboard",
+				"title": "%command.openUsageDashboard.title%",
+				"category": "%configuration.title%",
+				"icon": "$(graph)"
+			},
+			{
+				"command": "vibe-code.resumeGoal",
+				"title": "%command.resumeGoal.title%",
+				"category": "%configuration.title%",
+				"icon": "$(debug-continue)"
+			},
+			{
+				"command": "vibe-code.setGoalStatus",
+				"title": "%command.setGoalStatus.title%",
+				"category": "%configuration.title%",
+				"icon": "$(symbol-enum)"
+			},
+			{
+				"command": "vibe-code.runVerificationCommand",
+				"title": "%command.runVerificationCommand.title%",
+				"category": "%configuration.title%",
+				"icon": "$(play)"
+			},
+			{
+				"command": "vibe-code.suggestTests",
+				"title": "%command.suggestTests.title%",
+				"category": "%configuration.title%",
+				"icon": "$(beaker)"
+			},
+			{
+				"command": "vibe-code.runVerification",
+				"title": "%command.runVerification.title%",
+				"category": "%configuration.title%"
+			},
+			{
+				"command": "vibe-code.newGoal",
+				"title": "%command.newGoal.title%",
+				"category": "%configuration.title%",
+				"icon": "$(add)"
+			},
+			{
+				"command": "vibe-code.switchGoal",
+				"title": "%command.switchGoal.title%",
+				"category": "%configuration.title%",
+				"icon": "$(arrow-swap)"
+			},
+			{
+				"command": "vibe-code.linkPlanToCriteria",
+				"title": "%command.linkPlanToCriteria.title%",
+				"category": "%configuration.title%",
+				"icon": "$(checklist)"
+			},
+			{
+				"command": "vibe-code.showGoalMetrics",
+				"title": "%command.showGoalMetrics.title%",
+				"category": "%configuration.title%",
+				"icon": "$(graph-line)"
+			},
+			{
+				"command": "vibe-code.createRetro",
+				"title": "%command.createRetro.title%",
+				"category": "%configuration.title%",
+				"icon": "$(book)"
+			},
+			{
+				"command": "vibe-code.createCheckpoint",
+				"title": "%command.createCheckpoint.title%",
+				"category": "%configuration.title%",
+				"icon": "$(save-all)"
+			},
+			{
+				"command": "vibe-code.listCheckpoints",
+				"title": "%command.listCheckpoints.title%",
+				"category": "%configuration.title%",
+				"icon": "$(history)"
+			}
+		],
+		"keybindings": [
+			{
+				"command": "vibe-code.SidebarProvider.focus",
+				"key": "ctrl+;",
+				"mac": "cmd+;"
+			},
+			{
+				"command": "vibe-code.addToContext",
+				"key": "ctrl+shift+l",
+				"mac": "cmd+shift+l",
+				"when": "editorTextFocus"
+			},
+			{
+				"command": "vibe-code.explainCode",
+				"key": "ctrl+alt+e",
+				"mac": "cmd+alt+e",
+				"when": "editorTextFocus && editorHasSelection"
+			},
+			{
+				"command": "vibe-code.fixCode",
+				"key": "ctrl+alt+f",
+				"mac": "cmd+alt+f",
+				"when": "editorTextFocus && editorHasSelection"
+			},
+			{
+				"command": "vibe-code.improveCode",
+				"key": "ctrl+alt+i",
+				"mac": "cmd+alt+i",
+				"when": "editorTextFocus && editorHasSelection"
+			},
+			{
+				"command": "vibe-code.newTask",
+				"key": "ctrl+alt+n",
+				"mac": "cmd+alt+n"
+			},
+			{
+				"command": "vibe-code.showContextStats",
+				"key": "ctrl+alt+s",
+				"mac": "cmd+alt+s"
+			},
+			{
+				"command": "vibe-code.openJournal",
+				"key": "ctrl+alt+j",
+				"mac": "cmd+alt+j"
+			}
+		],
+		"menus": {
+			"editor/context": [
+				{
+					"submenu": "vibe-code.contextMenu",
+					"group": "1"
+				}
+			],
+			"vibe-code.contextMenu": [
+				{
+					"command": "vibe-code.addToContext",
+					"group": "1_actions@1"
+				},
+				{
+					"command": "vibe-code.explainCode",
+					"group": "1_actions@2"
+				},
+				{
+					"command": "vibe-code.improveCode",
+					"group": "1_actions@3"
+				},
+				{
+					"command": "vibe-code.fixCode",
+					"group": "1_actions@4"
+				},
+				{
+					"command": "vibe-code.newTask",
+					"group": "1_actions@5"
+				}
+			],
+			"terminal/context": [
+				{
+					"submenu": "vibe-code.terminalMenu",
+					"group": "2"
+				}
+			],
+			"vibe-code.terminalMenu": [
+				{
+					"command": "vibe-code.terminalAddToContext",
+					"group": "1_actions@1"
+				},
+				{
+					"command": "vibe-code.terminalFixCommand",
+					"group": "1_actions@2"
+				},
+				{
+					"command": "vibe-code.terminalExplainCommand",
+					"group": "1_actions@3"
+				}
+			],
+			"view/title": [
+				{
+					"command": "vibe-code.plusButtonClicked",
+					"group": "navigation@1",
+					"when": "view == vibe-code.SidebarProvider"
+				},
+				{
+					"command": "vibe-code.settingsButtonClicked",
+					"group": "navigation@2",
+					"when": "view == vibe-code.SidebarProvider"
+				},
+				{
+					"command": "vibe-code.openTask",
+					"group": "navigation@3",
+					"when": "view == vibe-code.SidebarProvider"
+				},
+				{
+					"command": "vibe-code.mcpButtonClicked",
+					"group": "navigation@4",
+					"when": "view == vibe-code.SidebarProvider"
+				},
+				{
+					"command": "vibe-code.popoutButtonClicked",
+					"group": "navigation@5",
+					"when": "view == vibe-code.SidebarProvider"
+				}
+			],
+			"editor/title": [
+				{
+					"command": "vibe-code.plusButtonClicked",
+					"group": "navigation@1",
+					"when": "activeWebviewPanelId == vibe-code.TabPanelProvider"
+				},
+				{
+					"command": "vibe-code.settingsButtonClicked",
+					"group": "navigation@2",
+					"when": "activeWebviewPanelId == vibe-code.TabPanelProvider"
+				},
+				{
+					"command": "vibe-code.openTask",
+					"group": "navigation@3",
+					"when": "activeWebviewPanelId == vibe-code.TabPanelProvider"
+				},
+				{
+					"command": "vibe-code.mcpButtonClicked",
+					"group": "navigation@4",
+					"when": "activeWebviewPanelId == vibe-code.TabPanelProvider"
+				},
+				{
+					"command": "vibe-code.popoutButtonClicked",
+					"group": "navigation@5",
+					"when": "activeWebviewPanelId == vibe-code.TabPanelProvider"
+				}
+			],
+			"commandPalette": [
+				{
+					"command": "vibe-code.completePlanItem",
+					"when": "false"
+				},
+				{
+					"command": "vibe-code.deferPlanItem",
+					"when": "false"
+				},
+				{
+					"command": "vibe-code.promotePlanItem",
+					"when": "false"
+				},
+				{
+					"command": "vibe-code.togglePlanCheckbox",
+					"when": "false"
+				},
+				{
+					"command": "vibe-code.selectPlanFile",
+					"when": "false"
+				},
+				{
+					"command": "vibe-code.runVerification",
+					"when": "false"
+				}
+			]
+		},
+		"submenus": [
+			{
+				"id": "vibe-code.contextMenu",
+				"label": "%views.contextMenu.label%"
+			},
+			{
+				"id": "vibe-code.terminalMenu",
+				"label": "%views.terminalMenu.label%"
+			}
+		],
+		"configuration": {
+			"title": "%configuration.title%",
+			"properties": {
+				"vibe-code.allowedCommands": {
+					"type": "array",
+					"items": {
+						"type": "string"
+					},
+					"default": [
+						"npm test",
+						"npm install",
+						"tsc",
+						"git log",
+						"git diff",
+						"git show"
+					],
+					"description": "%commands.allowedCommands.description%"
+				},
+				"vibe-code.deniedCommands": {
+					"type": "array",
+					"items": {
+						"type": "string"
+					},
+					"default": [
+						"rm -rf /",
+						"rm -rf ~",
+						"rm -rf *",
+						"rm -rf .",
+						"sudo rm",
+						"dd if=",
+						"mkfs",
+						"git push --force",
+						"git push -f",
+						"git reset --hard HEAD",
+						"git clean -fdx",
+						"git branch -D",
+						"DROP TABLE",
+						"DROP DATABASE",
+						"TRUNCATE TABLE",
+						"DELETE FROM",
+						"shutdown",
+						"reboot",
+						":(){:|:&};:",
+						"curl | sh",
+						"curl | bash",
+						"wget | sh",
+						"wget | bash"
+					],
+					"description": "%commands.deniedCommands.description%"
+				},
+				"vibe-code.commandExecutionTimeout": {
+					"type": "number",
+					"default": 0,
+					"minimum": 0,
+					"maximum": 600,
+					"description": "%commands.commandExecutionTimeout.description%"
+				},
+				"vibe-code.vsCodeLmModelSelector": {
+					"type": "object",
+					"properties": {
+						"vendor": {
+							"type": "string",
+							"description": "%settings.vsCodeLmModelSelector.vendor.description%"
+						},
+						"family": {
+							"type": "string",
+							"description": "%settings.vsCodeLmModelSelector.family.description%"
+						}
+					},
+					"description": "%settings.vsCodeLmModelSelector.description%"
+				},
+				"vibe-code.customStoragePath": {
+					"type": "string",
+					"default": "",
+					"description": "%settings.customStoragePath.description%"
+				},
+				"vibe-code.enableCodeActions": {
+					"type": "boolean",
+					"default": true,
+					"description": "%settings.enableCodeActions.description%"
+				},
+				"vibe-code.autoImportSettingsPath": {
+					"type": "string",
+					"default": "",
+					"description": "%settings.autoImportSettingsPath.description%"
+				},
+				"vibe-code.language": {
+					"type": "string",
+					"enum": [
+						"ko",
+						"en"
+					],
+					"enumDescriptions": [
+						"한국어 (Korean)",
+						"English"
+					],
+					"default": "ko",
+					"description": "%settings.language.description%"
+				},
+				"vibe-code.tone": {
+					"type": "string",
+					"enum": [
+						"formal",
+						"casual",
+						"terse"
+					],
+					"enumDescriptions": [
+						"격식체 (~합니다, ~입니다)",
+						"친근체 (~해요, ~예요)",
+						"간결 — 코드 위주, 최소 설명"
+					],
+					"default": "casual",
+					"description": "%settings.tone.description%"
+				},
+				"vibe-code.autonomy": {
+					"type": "string",
+					"enum": [
+						"safe",
+						"assist",
+						"auto",
+						"yolo"
+					],
+					"enumDescriptions": [
+						"safe — 모든 작업 사용자 승인 필요",
+						"assist — 읽기 자동, 편집/실행 묻기 (기본)",
+						"auto — 읽기/편집 자동, 명령 실행 묻기",
+						"yolo — 모두 자동 (위험, 신중히 사용)"
+					],
+					"default": "assist",
+					"description": "%settings.autonomy.description%"
+				},
+				"vibe-code.offlineMode": {
+					"type": "string",
+					"enum": [
+						"auto",
+						"online",
+						"offline"
+					],
+					"enumDescriptions": [
+						"auto — 인터넷 연결 자동 감지 (기본)",
+						"online — 인터넷 가용 가정",
+						"offline — 외부 호출 금지, 로컬 자료만 사용"
+					],
+					"default": "auto",
+					"description": "%settings.offlineMode.description%"
+				},
+				"vibe-code.proxyUrl": {
+					"type": "string",
+					"default": "",
+					"description": "%settings.proxyUrl.description%"
+				},
+				"vibe-code.extraCaCertsPath": {
+					"type": "string",
+					"default": "",
+					"description": "%settings.extraCaCertsPath.description%"
+				},
+				"vibe-code.updateSourcePath": {
+					"type": "string",
+					"default": "",
+					"description": "%settings.updateSourcePath.description%"
+				},
+				"vibe-code.vibeCodersProjectPath": {
+					"type": "string",
+					"default": "../vibe-coders",
+					"description": "%settings.vibeCodersProjectPath.description%"
+				},
+				"vibe-code.vibeCodersBaseUrl": {
+					"type": "string",
+					"default": "http://localhost:8080/v1",
+					"description": "%settings.vibeCodersBaseUrl.description%"
+				},
+				"vibe-code.vibeCodersDefaultModel": {
+					"type": "string",
+					"default": "gpt-4.1-mini",
+					"description": "%settings.vibeCodersDefaultModel.description%"
+				},
+				"vibe-code.vibeCodersProfileName": {
+					"type": "string",
+					"default": "vibe-coders proxy",
+					"description": "%settings.vibeCodersProfileName.description%"
+				},
+				"vibe-code.vibeCodersProviderHeader": {
+					"type": "string",
+					"default": "",
+					"description": "%settings.vibeCodersProviderHeader.description%"
+				},
+				"vibe-code.goalAutoResume": {
+					"type": "string",
+					"enum": [
+						"ask",
+						"always",
+						"never"
+					],
+					"enumDescriptions": [
+						"ask — 활성 목표에 남은 Now 항목이 있으면 이어서 진행할지 묻기 (기본)",
+						"always — 묻지 않고 바로 /goal 이어서 시작",
+						"never — 자동 재개 안 함"
+					],
+					"default": "ask",
+					"description": "%settings.goalAutoResume.description%"
+				},
+				"vibe-code.goalResumeWithinHours": {
+					"type": "number",
+					"default": 72,
+					"minimum": 1,
+					"description": "%settings.goalResumeWithinHours.description%"
+				},
+				"vibe-code.goalStaleHours": {
+					"type": "number",
+					"default": 48,
+					"minimum": 1,
+					"description": "%settings.goalStaleHours.description%"
+				},
+				"vibe-code.checkpointBeforeDestructive": {
+					"type": "boolean",
+					"default": true,
+					"description": "%settings.checkpointBeforeDestructive.description%"
+				},
+				"vibe-code.weeklyBudgetKrw": {
+					"type": "number",
+					"default": 0,
+					"minimum": 0,
+					"description": "%settings.weeklyBudgetKrw.description%"
+				}
+			}
+		}
+	},
+	"scripts": {
+		"build": "node scripts/build.mjs",
+		"watch": "node scripts/build.mjs --watch",
+		"typecheck": "tsc -p tsconfig.json --noEmit",
+		"test": "vitest run",
+		"check": "npm run typecheck && npm run test && npm run build",
+		"vsix": "powershell -ExecutionPolicy Bypass -File scripts/package-vsix.ps1",
+		"vsix:lean": "powershell -ExecutionPolicy Bypass -File scripts/package-vsix.ps1 -Lean",
+		"verify": "powershell -ExecutionPolicy Bypass -File scripts/verify-package.ps1",
+		"smoke:vscode": "powershell -ExecutionPolicy Bypass -File scripts/smoke-vscode-cli.ps1",
+		"test:extension-host": "powershell -ExecutionPolicy Bypass -File scripts/test-extension-host.ps1"
+	},
+	"devDependencies": {
+		"@types/node": "20.x",
+		"@types/vscode": "^1.84.0",
+		"esbuild": "^0.25.0",
+		"typescript": "5.8.3",
+		"vitest": "^3.2.3"
+	}
+}

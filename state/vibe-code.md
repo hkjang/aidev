@@ -53,3 +53,18 @@
   - provider 저장/복원 실제 배선 테스트 (3/2/M) — 가짜 객체 없이 검증할 경계 필요.
 - 과제서: 채택 — 기존 집중 38 tests 기준선에서 빈 메타데이터의 인접 줄 흡수·삭제 및 실제 파일 오보관이 모두 재현되어 지정된 범위를 구현했다.
 
+## 2026-09-29
+- 선택: 수정 과제 — PR #6 Actions 실행 차단 해소와 동일 커밋 검증 완료 (가치 5 / 위험 1 / 작업량 S)
+- 결과: 변경없음
+- 요약: PR #6은 open이고 head는 1855dcb57ee750819629a7142992f43839c7d233이며, 연결 도구 재조회에서도 run 36518589343의 check failure/package skipped 상태다. ci-annotations.json은 “The job was not started because recent account payments have failed or your spending limit needs to be increased.”라고 명시하고 보관 jobs는 steps=[], runner_id=0이므로 실패한 코드 실행 단계가 없다. 동일 커밋 원본을 run/validation/implementation-check에 추출해 Node v20.20.2에서 npm ci → npm run check(typecheck + 11 files / 146 tests + build) → node --check dist/extension.js → node --check dist/extension.core.js를 모두 exit 0으로 재실행했으나, 원격 차단 해소·릴리즈 성공은 미확인이다.
+- 실패 재현: 못 함 — 새 코드 결함이 재현되지 않았고 신규 테스트·수정은 없다. 계정 실행 차단은 보관 annotation과 최신 job 상태로 확인했으며 Linux gh 미인증으로 annotation 자체의 새 조회는 실패했다.
+- 외부 blocker: 계정 소유자의 Billing & plans 결제/사용 한도 조치 및 해결 증거가 없다. 정확한 결제수단/한도는 미확인; 비용 설정 변경·CI 재시도·원격 쓰기는 하지 않았다. 기존 25 runs 증거에서는 failure 1건/attempt 1만 확인되어 “두 번 동일 실패”는 입증되지 않았다.
+- 검증 증거: validation/implementation-node20-check.log(EXIT_CODE=0), validation/implementation-integrity.json(추출한 검증 입력 전체 Git blob 일치), validation/implementation-remote.json(PR head/jobs 재조회), ci-annotations.json. TMPDIR와 GIT_CEILING_DIRECTORIES는 run/validation/implementation-tmp로 명령 범위에만 지정했다.
+- 검증 한계: npm ci는 고정 엔진 20.19.2 대비 20.20.2 경고와 moderate 취약점 2건을 보고했고 build는 런타임 자산 5종 누락 경고를 냈다. Windows Package VSIX/Verify package/Upload VSIX는 미실행이며 직전 main 녹색 run에서도 이 단계들은 skipped였다. 계정 해결 후 같은 PR head의 실제 check 및 이 세 단계가 모두 success인지 확인해야 한다.
+- 보류 아이디어:
+  - countChecks/taskLines/isTaskLine/checkLine 들여쓰기 계약 통일 (3/2/M) — 별도 계약 결정 필요.
+  - 빈 제목의 다음 줄 흡수와 제목 린트 동시 수정 (3/1/S) — 이번 실행 차단과 무관.
+  - sectionLines 첫 줄 들여쓰기 보존 (3/2/S) — 경계 계약 검증 필요.
+  - provider 저장/복원 실제 배선 테스트 (3/2/M) — 실제 provider 경계 필요.
+- 과제서: 채택 — 로컬 재현 실패가 없어 소스 변경 0개를 유지하고 외부 계정 blocker와 실제 패키징 미검증을 기록했다.
+

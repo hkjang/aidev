@@ -1,0 +1,67 @@
+v20.20.2
+npm warn EBADENGINE Unsupported engine {
+npm warn EBADENGINE   package: 'vibe-code@1.4.5',
+npm warn EBADENGINE   required: { vscode: '^1.84.0', node: '20.19.2' },
+npm warn EBADENGINE   current: { node: 'v20.20.2', npm: '10.9.8' }
+npm warn EBADENGINE }
+
+added 57 packages, and audited 58 packages in 4s
+
+15 packages are looking for funding
+  run `npm fund` for details
+
+2 moderate severity vulnerabilities
+
+To address all issues (including breaking changes), run:
+  npm audit fix --force
+
+Run `npm audit` for details.
+
+> vibe-code@1.4.5 check
+> npm run typecheck && npm run test && npm run build
+
+
+> vibe-code@1.4.5 typecheck
+> tsc -p tsconfig.json --noEmit
+
+
+> vibe-code@1.4.5 test
+> vitest run
+
+
+ RUN  v3.2.7 /mnt/c/Users/USER/projects/aidev/state/runs/2026-09-29-141215-vibe-code-improve/validation/check
+
+ ✓ tests/unit/usage.test.ts (2 tests) 7ms
+ ✓ tests/unit/semver.test.ts (2 tests) 2ms
+ ✓ tests/unit/goal-loop.test.ts (3 tests) 3ms
+ ✓ tests/unit/goal-catalog.test.ts (3 tests) 5ms
+ ✓ tests/unit/verification.test.ts (10 tests) 6ms
+ ✓ tests/unit/journal-summary.test.ts (7 tests) 5ms
+ ✓ tests/unit/markdown.test.ts (84 tests) 24ms
+ ✓ tests/unit/goal-metrics.test.ts (4 tests) 9ms
+ ✓ tests/unit/goal-health.test.ts (4 tests) 6ms
+ ✓ tests/unit/plans.test.ts (18 tests) 1896ms
+   ✓ 완료 보관의 상태 줄 경계 ("\n") > 빈 상태 다음 done은 원본 바이트를 보존하고 같은 줄의 done만 보관한다  442ms
+ ✓ tests/unit/checkpoints.test.ts (9 tests) 10720ms
+   ✓ createCheckpoint > snapshots uncommitted tracked changes and untracked files, skipping ignored ones  3009ms
+   ✓ createCheckpoint > leaves the working tree, index and stash stack untouched  1831ms
+   ✓ createCheckpoint > does not leave its temporary index behind in the checkpoints directory  1856ms
+   ✓ createCheckpoint > writes a restore block whose commands actually run against the snapshot  1780ms
+   ✓ createCheckpoint > reports a clean working tree without pinning a ref  1244ms
+   ✓ createCheckpoint > snapshots a repository that has no commits yet  934ms
+
+ Test Files  11 passed (11)
+      Tests  146 passed (146)
+   Start at  14:19:24
+   Duration  13.92s (transform 8.43s, setup 0ms, collect 17.37s, tests 12.68s, environment 2ms, prepare 8.64s)
+
+
+> vibe-code@1.4.5 build
+> node scripts/build.mjs
+
+warning: dist/ is missing runtime assets: node_modules, i18n, workers, tree-sitter.wasm, tiktoken_bg.wasm
+         copy them from an existing release VSIX (extension/dist/) before packaging.
+
+  dist/extension.js  202.7kb
+
+⚡ Done in 143ms

@@ -1,0 +1,49 @@
+
+> vibe-code@1.4.5 check
+> npm run typecheck && npm run test && npm run build
+
+
+> vibe-code@1.4.5 typecheck
+> tsc -p tsconfig.json --noEmit
+
+
+> vibe-code@1.4.5 test
+> vitest run
+
+
+ RUN  v3.2.7 /mnt/c/Users/USER/projects/aidev/state/runs/2026-09-29-141215-vibe-code-improve/validation/check
+
+ ✓ tests/unit/goal-loop.test.ts (3 tests) 3ms
+ ✓ tests/unit/goal-catalog.test.ts (3 tests) 7ms
+ ✓ tests/unit/semver.test.ts (2 tests) 3ms
+ ✓ tests/unit/usage.test.ts (2 tests) 6ms
+ ✓ tests/unit/journal-summary.test.ts (7 tests) 5ms
+ ✓ tests/unit/verification.test.ts (10 tests) 7ms
+ ✓ tests/unit/markdown.test.ts (84 tests) 26ms
+ ✓ tests/unit/goal-health.test.ts (4 tests) 7ms
+ ✓ tests/unit/goal-metrics.test.ts (4 tests) 7ms
+ ✓ tests/unit/plans.test.ts (18 tests) 1482ms
+ ✓ tests/unit/checkpoints.test.ts (9 tests) 10158ms
+   ✓ createCheckpoint > snapshots uncommitted tracked changes and untracked files, skipping ignored ones  2598ms
+   ✓ createCheckpoint > leaves the working tree, index and stash stack untouched  1925ms
+   ✓ createCheckpoint > does not leave its temporary index behind in the checkpoints directory  1682ms
+   ✓ createCheckpoint > writes a restore block whose commands actually run against the snapshot  1731ms
+   ✓ createCheckpoint > reports a clean working tree without pinning a ref  1252ms
+   ✓ createCheckpoint > snapshots a repository that has no commits yet  909ms
+
+ Test Files  11 passed (11)
+      Tests  146 passed (146)
+   Start at  14:17:11
+   Duration  13.71s (transform 4.26s, setup 0ms, collect 12.42s, tests 11.71s, environment 1ms, prepare 14.21s)
+
+
+> vibe-code@1.4.5 build
+> node scripts/build.mjs
+
+staged dist/extension.core.js (20.3 MB)
+warning: dist/ is missing runtime assets: node_modules, i18n, workers, tree-sitter.wasm, tiktoken_bg.wasm
+         copy them from an existing release VSIX (extension/dist/) before packaging.
+
+  dist/extension.js  202.7kb
+
+⚡ Done in 143ms
