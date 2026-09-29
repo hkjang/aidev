@@ -1,0 +1,5 @@
+- 커밋 없이 종료: 지적(CI 실패가 이 diff의 결함)이 **틀렸다**. CI 명령 두 개를 로컬에서 그대로 돌려 통과 — `sh ./gradlew --no-daemon clean test` 615건 0 fail/0 error/0 skip (5분58초, `cleanTest` 가 아닌 진짜 `clean` 이라 낡은 클래스 가설도 배제), `sh ./gradlew --no-daemon bootJar -x test` 성공(6초), `compileTestJava` 도 깨끗함(경고는 기존 Jackson2JsonConfig:57 뿐).
+- CI 는 테스트 단계에 도달조차 못 했다. 과거 `ci-*.json` 22건의 `test + bootJar` 성공 시간은 470~611초인데, 오늘 밤 실패 2건은 **0421f6d=39초, PR #38 의 f9d64368=4초**다. 4초는 `setup-java` 조차 끝나지 않는 시간이고, #38 은 트리가 다른 별개 브랜치다 — 서로 다른 두 코드가 같은 방식으로 죽었으므로 원인은 코드가 아니라 러너/환경이다.
+- `annotations_count: 2` 는 오류 신호가 아니다 — 성공 22건 중 20건이 같은 값 2다(과제서의 후보 1 근거는 무효).
+- 남은 미확인: 실패 로그 본문. 저장소가 비공개이고 `gh` 미인증(`gh auth login` 요구) + 인증 없는 REST 는 404 라 annotations·job 로그를 못 읽었다. 어떤 환경 실패인지는 **여전히 모른다**.
+- 다음 행동은 코드 수정이 아니다: 러너가 `gh run view 36572142192 --log-failed` 를 인증 상태로 저장해 주거나, CI 를 그냥 재실행(rerun)해 39초/4초 패턴이 재현되는지 볼 것. 워크플로를 완화해 통과시키는 것은 금지사항이라 하지 않았다.
