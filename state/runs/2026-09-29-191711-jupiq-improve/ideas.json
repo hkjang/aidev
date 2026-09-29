@@ -1,0 +1,110 @@
+[
+  {
+    "title": "JSON으로 표시된 잘못된 오류 본문에서 ApiError 계약 유지",
+    "value": 3,
+    "risk": 1,
+    "size": "S",
+    "status": "done",
+    "note": "parseResponse가 content-type만 믿고 response.json()을 반환해 빈/끊긴 본문에서 SyntaxError가 호출자까지 올라갔다. 오류 응답은 본문 없는 오류와 동일하게, 성공 응답은 INVALID_RESPONSE ApiError로 처리. 실제 node:http 서버+네이티브 fetch 테스트 21개(17개 선실패).",
+    "updated": "2026-09-29"
+  },
+  {
+    "title": "배정된 우선 과제: PR #29 'React 검사' CI 실패 수정",
+    "value": 0,
+    "risk": 1,
+    "size": "S",
+    "status": "done",
+    "note": "적재된 실패는 이미 7791175(@types/node 명시)로 고쳐져 v1.8.6까지 릴리즈됨. cdb9d16 + 깨끗한 npm ci로 원래 오류(TS2307 node:http)를 재현해 확인했고, 릴리즈 워크플로 단계 전체(통합 PG14·이미지 빌드·오프라인 패키징·기동 검증)를 로컬에서 통과시켜 '두 번 실패'는 재현되지 않았다.",
+    "updated": "2026-09-29"
+  },
+  {
+    "title": "서버 writeJSON이 인코딩 오류를 버려 200 + 빈 JSON 본문을 내보내는 것 고치기",
+    "value": 3,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "신규: helpers.go:29 writeJSON이 `_ = json.NewEncoder(w).Encode(value)`로 오류를 버린다. NaN/Inf 같은 인코딩 불가 값이면 상태·헤더는 나가고 본문은 비어 클라이언트가 빈 JSON을 받는다(이번 회차 클라이언트 쪽은 ApiError로 막았다). 버퍼에 마샬한 뒤 오류면 500 error 봉투를 쓰는 방향. WriteHeader 이후에는 상태를 바꿀 수 없으므로 마샬을 먼저 해야 한다.",
+    "updated": "2026-09-29"
+  },
+  {
+    "title": "OpenAPI page_size 상한 불일치 정리(/users maximum 100 vs pageBounds 200)",
+    "value": 2,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "openapi.yaml /users maximum 100과 store.go pageBounds 200이 다르다. 실제 HTTP 경계는 여전히 미확인. 문서와 코드 중 어느 쪽이 정본인지 정해야 한다.",
+    "updated": "2026-09-29"
+  },
+  {
+    "title": "internal/store 순수 헬퍼 5개(firstLabel·latestMetricSample·countBool·countRuntime·filterBool) 표 기반 테스트",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "실행 결함 증거가 없어 후순위 유지. 테스트 공백 보강 성격.",
+    "updated": "2026-09-29"
+  },
+  {
+    "title": "@types/node가 src 전체에 Node 전역을 깔아 브라우저 코드의 Node API 사용을 tsc가 놓친다",
+    "value": 2,
+    "risk": 3,
+    "size": "M",
+    "status": "pending",
+    "note": "신규: 7791175이 @types/node를 devDependencies에 넣어 tsconfig.app.json(types 미지정)이 src 전체에 Node 전역을 포함한다. 컴포넌트에서 process.env를 써도 tsc가 통과하고 브라우저에서만 깨진다. 테스트 전용 tsconfig 프로젝트 분리가 정답이지만 types:[]로는 node:http 모듈 선언까지 사라져 테스트가 깨진다. 빌드·릴리즈 경로라 위험 3.",
+    "updated": "2026-09-29"
+  },
+  {
+    "title": "OpenAPI servers URL과 계약 테스트 경로 접두사 불일치 검출",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "현재 둘 다 /api/v1로 일치해 실제 결함은 아니다. 예방 테스트로만 유효.",
+    "updated": "2026-09-29"
+  },
+  {
+    "title": "search 질의의 최대 길이·제어문자 정규화",
+    "value": 2,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "resource_handlers.go는 원문 전달, core_handlers.go 전역 검색은 2~100자 제한. 부하 미재현. 계약이 다른 두 파서를 무리하게 합치지 않는다.",
+    "updated": "2026-09-29"
+  },
+  {
+    "title": "silent SSO·MCP OAuth를 mock OIDC 컨테이너로 검증하는 통합 절차",
+    "value": 3,
+    "risk": 1,
+    "size": "M",
+    "status": "pending",
+    "note": "oidc.go에 silent 로그인 존재. 실제 IdP 검증 환경과 한 세션 완료 가능성 미확인. silent SSO로 한정할 때 재검토.",
+    "updated": "2026-09-29"
+  },
+  {
+    "title": "메일 알림 탭·발송 기록 화면 캡처를 manifest에 추가하고 가이드에 싣기",
+    "value": 3,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "SettingsPage MailDeliveriesCard·ADMIN_GUIDE 3.6 존재, manifest에 mail 항목 없음. 브라우저 캡처 환경(Playwright) 필요 여부 미확인.",
+    "updated": "2026-09-29"
+  },
+  {
+    "title": "resource_usage_hourly에 project 열을 더해 소비량도 project로 묶기",
+    "value": 3,
+    "risk": 4,
+    "size": "L",
+    "status": "pending",
+    "note": "consumption_group_by fallback 공개는 완료. 마이그레이션·백필 과제로 한 세션 범위를 넘는다.",
+    "updated": "2026-09-29"
+  },
+  {
+    "title": "메일 발송 기록 limit의 잘못된 정수 HTTP 회귀 테스트 보강",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "limit=abc/-1 회귀가 여전히 없다. status 검증은 완료됐으므로 limit만 남았다.",
+    "updated": "2026-09-29"
+  }
+]

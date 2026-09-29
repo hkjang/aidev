@@ -229,3 +229,16 @@
 - 과제서: 채택 — 현재 소스와 실제 HTTP 테스트가 진단에 일치하여 지정된 두 파일에서 구현하고 정찰의 후보·평가를 유지했다.
 
 - 릴리즈: v1.8.6 (2026-09-29, run 2026-09-29-184312-jupiq-approve)
+## 2026-09-29
+- 선택: 깨진/빈 JSON 응답 본문이 ApiError 대신 SyntaxError로 새는 것을 막는다 (가치 3 / 위험 1 / 작업량 S)
+- 결과: 성공
+- 요약: 배정된 우선 과제(PR #29 'React 검사' 실패)는 이미 고쳐져 릴리즈까지 끝난 상태였다 — 실패 커밋 cdb9d16을 임시 디렉터리에 풀어 깨끗한 `npm ci` 후 `npm run lint`로 원래 오류(`TS2307: Cannot find module 'node:http'`)를 그대로 재현했고, 그것을 고친 7791175(@types/node 명시)가 내 base(main@2db2da2)에 들어 있으며 이전 회차 기록(ci-7791175c082f.json 검사 3개 success, release published v1.8.6, assets verified 1개)도 일치했다. 릴리즈 워크플로가 같은 이유로 두 번 실패했다는 적재 내용은 확인되지 않았다: 로컬에서 릴리즈 워크플로 단계를 그대로 돌려 전부 통과했다(check-version 1.8.6, check-screenshots 30/30/21, go mod verify·vet·govulncheck 0건·go test ./...·PostgreSQL **14**-alpine 통합 store 4.393s/api 1.031s, npm ci·audit high·lint·test·build, build-image.sh·package-offline.sh(9.5M)·verify-offline.sh·offline-smoke-test.sh 전체 기동 검증). 그래서 남은 시간에 보류 아이디어 하나를 구현했다: `web/src/api/client.ts`의 `parseResponse`가 content-type만 믿고 `response.json()`을 그대로 반환해, 본문이 비었거나 끊겨 있으면 SyntaxError가 호출자까지 올라가 ApiError의 status·code가 사라졌다(`AuthContext.tsx:71`의 401/403 로그아웃 분기가 `instanceof ApiError`라 동작하지 않고 원문 파서 오류가 화면에 뜬다). 서버 `helpers.go:29`의 `writeJSON`이 `json.NewEncoder(...).Encode` 오류를 버리기 때문에 200 + `application/json` + 빈 본문이 실제로 만들어진다. 오류 응답은 본문 없는 오류와 같게 다뤄 상태·대체 메시지를 살리고, 성공 응답은 본문이 곧 결과이므로 `INVALID_RESPONSE` ApiError로 알린다. 프로덕션 파일 1개(client.ts)만 바꿨고, 실제 `node:http` 서버 + 네이티브 fetch로 request·requestList·streamAI를 호출하는 테스트 21개를 더했다(대역 없음). 검증: 신규 21개 중 17개 선실패 → 수정 후 집중 3파일 65개 통과 → 성공 분기만 되돌리자 정확히 8개 재실패(PR #29의 오류 경로 33개는 그대로 통과) → 원복 후 전체 22파일 144개 통과, `npm run lint`·`npm run build`·`git diff --check` 통과, 이미지 빌드·오프라인 패키징·기동 검증까지 변경 후 다시 통과. dist/·web/dist·임시 컨테이너·이미지는 모두 제거했다.
+- 실패 재현: `AssertionError: expected SyntaxError: Unexpected end of JSON input to be an instance of ApiError` / `AssertionError: expected SyntaxError: Unexpected token '<', "<html… to be an instance of ApiError` (수정 전, 실제 HTTP 200 + application/json). 배정 과제의 원래 CI 실패도 재현했다: `src/api/client_http_errors.test.ts(1,30): error TS2307: Cannot find module 'node:http' or its corresponding type declarations.` (cdb9d16 + 깨끗한 npm ci)
+- 보류 아이디어:
+  - 서버 writeJSON이 인코딩 오류를 버려 200 + 빈 JSON 본문을 내보내는 것을 500 error 봉투로 바꾸기 (가치 3 / 위험 2 / 작업량 S)
+  - OpenAPI page_size 상한 불일치 정리 (가치 2 / 위험 2 / 작업량 S)
+  - internal/store 순수 헬퍼 5개 표 기반 테스트 (가치 2 / 위험 1 / 작업량 S)
+  - @types/node가 src 전체에 Node 전역을 깔아 브라우저 코드의 process 사용을 tsc가 놓치는 것(테스트 전용 tsconfig 분리) (가치 2 / 위험 3 / 작업량 M)
+- 과제서: 기각 — 지정된 실패(PR #29 React 검사)는 base에 이미 고쳐져 있고 릴리즈 경로도 로컬에서 전부 통과해 고칠 것이 없었으므로, 재현으로 증명한 뒤 보류 아이디어를 구현했다.
+
+- 릴리즈: v1.8.7 (2026-09-29, run 2026-09-29-191711-jupiq-improve)
