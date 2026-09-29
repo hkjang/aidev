@@ -39,3 +39,5 @@
 - 검증은 이전 릴리즈가 밟던 CI 게이트(ci.yml)를 이 기계에서 그대로 재현해 전부 초록이다: `gofmt -l .`(무출력) · `go vet ./...`(조용) · `go build ./...` · `go test -race -count=1 ./...`(config·secure·server·scripts ok, DSN 없어 새 DB 시험은 SKIP — 비평 노트의 경고대로 개발 DB 를 붙이지 않았다) · `npm ci` · `npm run test -- --run`(16파일 121시험 통과) · `npm run build`. 여기에 `release.yml` 이 태그 푸시에서 할 `docker build --platform linux/amd64 --build-arg VERSION=v0.7.6` 까지 미리 돌려 성공을 확인했다(확인용 이미지는 바로 삭제). 버전 일치 검사 스크립트는 저장소에 없다.
 - 원격에는 아무것도 보내지 않았다 — 푸시·태그 푸시·릴리즈 생성 없음. 커밋 3aceddd 와 주석 태그 v0.7.6 이 로컬에 있고, 푸시되면 `release.yml` 이 태그를 검증하고 이미지·자산·GitHub Release 를 만든다.
 - 다음 회차에 넘기는 것: 비평 노트가 "릴리즈 노트감" 으로 남긴 우려(`TestListUsersBrokenRowStream` 이 시험 중 `users` 를 전역 개명하므로 그 창에서 SIGKILL 이 나면 스키마가 깨진 채 남고 복구 절차가 어디에도 없다)는 **이번 릴리즈 본문에 담기지 않았다** — 본문이 자동 생성이라 끼워 넣을 자리가 없고, 문서 추가는 릴리즈 세션의 범위를 넘는다. 개발자용 주의사항이므로 docs 나 테스트 파일 주석에 적는 일을 다음 회차 후보로 남긴다.
+- [러너 22:07] release published — v0.7.6
+- [러너 22:08] assets verified — v0.7.6 자산 1개 (이전 v0.7.5: 1)

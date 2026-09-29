@@ -130,3 +130,4 @@
 - 보류 아이디어: `mcp.go:149` 검색 루프의 `rows.Err()` 누락 — 스캔 오류를 바깥 `err` 에 담고 `break` 하는 다른 구조라 JSON-RPC 오류 매핑까지 봐야 함 (2/2/S); `auth.go:userByAPIKey` 의 `rows.Err()` 누락 — 401 fail-closed 라 데이터 손실은 아니고 보호 경로 (2/3/S); AI 제공자 SSE 파서(`ai.go:proxyAIStream`)의 여러 `data:` 줄 합치기·프레임 경계·EOF flush 를 httptest 로 고정 (2/1/S); `orbitAt` 의 `contexts` 분류 집계를 실제 postgres 로 고정 (2/1/S); `orbitAt` 의 교류 조회에 상한이 없어 전체 이력이 메모리로 올라옴 (2/2/M)
 - 과제서: 채택 — 다섯 자리 모두 지금 코드와 정확히 일치했고 수용 기준 1~4 를 그대로 구현했다. 정찰이 실행하지 못해 "미확인" 으로 남긴 뷰 주입법은 이번에 실제로 성립함을 확인했다(대안 경로로 물러설 필요 없었음). 다만 정찰의 예측과 달리 잘린 결과는 1행이 아니라 0행이다 — `ORDER BY created_at` 이 Sort 를 강제해 postgres 가 DataRow 를 하나도 보내기 전에 ErrorResponse 를 보내기 때문이며, `rows.Err()` 에만 오류가 남는다는 핵심 전제는 그대로다.
 
+- 릴리즈: v0.7.6 (2026-09-29, run 2026-09-29-214228-orbit-improve)
