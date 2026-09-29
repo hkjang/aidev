@@ -30,3 +30,8 @@
 - build-offline.sh 성공. 동일 이미지 최초 실행, 1.69.44 → 1.69.52 업그레이드와 1.69.44 롤백 검사 모두 실패 0건. 클러스터 연결 불가로 Kubernetes API 스키마 검증 대신 YAML 4개 리소스 구조 검사.
 - assets/에 기존과 같은 7개 자산 복사 및 SHA256 검증 완료. 이미지 라벨의 버전·커밋 일치 확인. release.json과 보존용 릴리즈 본문 작성. 운영 배포는 러너 이후 담당자 범위.
 - Skill 도구 부재로 로컬 headcount의 marketing:product-launch, technology:release-and-deployment 원문과 sources를 읽어 적용. Tier 3으로 노트만 작성; 외부 사용자 최초 사용 관찰·실제 채택 측정은 이 무인 로컬 릴리즈에서 미수행. 배포 담당자의 중단 조건 및 롤백은 노트에 명시.
+- [러너 11:05] release published — v1.69.52
+- [러너 11:05] gh-release created — GitHub Release v1.69.52
+- [러너 11:05] manifest ok — docker-compose.ptium-1.69.52.yml load-ptium-1.69.52.ps1 load-ptium-1.69.52.sh ptium-1.69.52.env.example ptium-1.69.52.kubernetes.yaml ptium-1.69.52.tar.gz ptium-1.69.52.tar.gz.sha256 
+- [러너 11:05] assets uploaded — 7개
+- [러너 11:05] assets verified — v1.69.52 자산 7개 (이전 v1.69.51: 7)
