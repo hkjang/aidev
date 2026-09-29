@@ -20,3 +20,15 @@
 - 검증: `go test -count=1 -v ./internal/httpapi` PASS 242 / SKIP 0 / FAIL 0(직전 239 + 새 3), `go test ./...` exit 0, `go vet ./...`·`gofmt -l .` clean, `scripts/check-webui-placeholder.sh` OK. 여섯 자리를 되돌리면 새 테스트 둘만 다시 실패합니다. 프런트 미변경이라 npm 검사는 돌리지 않았습니다.
 - [러너 20:27] brief accepted — 채택 — 근거(여섯 자리의 `truncateRunes(…,240)`, `documents.title`·`attachments.name` 이 `text`, `:329` 가 감사 로그가 아니라 편집기�
 - [러너 20:28] verify passed — 검증 7개 통과 (auto)
+
+## 비평 노트
+- 확인한 것: 커밋 9e19ea8 은 선언한 여섯 자리(`import_attachments.go:121,183,312,329,570`, `handoff.go:230`)만 `truncateRunes`→`cutFilenameRunes` 로 바꿨고 그 외 수정·리팩터·의존성 변경이 없습니다. 남은 `truncateRunes` 호출 13곳을 전수로 봤더니 전부 AI 프롬프트·머리말/꼬리말·mail_deliveries·에러 문장이라 커밋 메시지 설명과 코드가 일치합니다. 원장의 `실패 재현` 두 줄이 이번 증상(저장값에 붙은 문구)과 정확히 맞고, 새 테스트는 실제 라우트를 태운 뒤 DB 를 직접 읽으므로 고치기 전 통과할 수 없습니다.
+- 구현자가 의심한 자리(`:183`,`:312`,`handoff.go:230` 미재현)는 결함이 아니라 도달 경로 미확인입니다 — 세 자리 모두 저장 직전의 같은 컬럼이고 계약을 좁히기만 하므로 되돌림 위험이 없습니다. 인가·마이그레이션·비밀값·워크플로 미변경, `downloadAttachment` 의 `documentRole` 검사도 그대로라 security/legal 차단 사유 없음.
+- 못 본 것: live 테스트를 이 세션에서 돌리지 못했습니다(MUNI_TEST_DSN 없음). `go build ./...`·`go vet ./internal/httpapi`·`gofmt -l internal` 만 clean 확인. hwp/hwpx/pdfx reader 가 머리말/꼬리말에 201룬 이상을 넣을 수 있는지도 확인하지 않았습니다.
+- 승인이어도 남는 우려 셋: (1) `uploadAttachment` 응답이 아직 절단·Base 안 한 `header.Filename` 을 돌려줘 화면값과 저장값이 다름(:605, 기존 결함·다음 회차 후보), (2) 앞 240룬이 전부 공백인 첨부 이름은 이제 빈 이름으로 저장됨(제목과 달리 TrimSpace 를 안 거침 — 퇴행은 아님), (3) 240룬 넘는 제목의 본문 H1 중복은 **고쳐지지 않았으니** 릴리스 노트에 넣지 말 것.
+- [러너 20:30] review approved — 리뷰 승인 (risk=low)
+- [러너 20:31] pr created — https://github.com/hkjang/muni/pull/31
+- [러너 20:36] ci passed — 검사 2개 모두 success
+- [러너 20:36] merge done — 9e19ea8
+- [러너 20:48] release published — v0.51.0
+- [러너 20:52] assets verified — v0.51.0 자산 1개 (이전 v0.50.0: 1)

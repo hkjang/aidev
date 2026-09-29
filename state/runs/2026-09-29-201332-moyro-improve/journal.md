@@ -20,3 +20,14 @@
 - 실행한 검증: DSN 을 준 `go test -race -p 1 ./...` 전 패키지 실패 0건, `go build ./...`, `go vet ./...`, `gofmt -l`(2파일 clean), `git diff --check`, `bash scripts/check-source-sizes.sh`(handlers.go 124880/130000).
 - [러너 20:27] brief accepted — 채택 — 과제서의 근거(`if err != nil || !ok`, 3168 의 500 분기가 같은 (CreatorID, ChannelID) 쌍을 읽는 것, `SELECT EXISTS` 라 ErrNoRows 없
 - [러너 20:27] verify passed — 검증 2개 통과 (policy)
+
+## 비평 노트
+- 확인함: RED 를 직접 재현했다 — handlers.go 만 `git apply -R` 로 되돌리고 실제 PostgreSQL(moyro-pg-improve:55433)에서 돌리니 장애 서브테스트만 `status = 403, want 500` 로 FAIL, 나머지 4건 PASS. 복원 후 5/5 PASS, 작업 트리 clean. 원장의 `- 실패 재현:` 줄과 일치한다.
+- 확인함: `channels.IsMember` 는 `SELECT EXISTS` 라 ErrNoRows 없음(service.go:1077), `fire.permission_check` id 를 3178 이 이미 소유(중복 아님), `creator_not_member` 참조처는 코드+테스트뿐(웹·docs·OpenAPI 계약 무영향), router.go:371 per-IP 리미터 실재, 격리 스키마+search_path 라 `DROP TABLE` 누출 없음. 직접 실행: build/vet/`go test ./internal/httpapi`(ok 39.4s)/size check exit 0/gofmt clean.
+- 못 봤음: 전 패키지 `-race -p 1 ./...` 는 내가 돌리지 않고 구현자 보고를 믿었다. 웹앱은 Go 전용 변경이라 생략.
+- 승인이어도 남는 우려(릴리즈 노트용): 무인증 공개 경로 500 본문의 `err.Error()`(handlers.go:3165). 차단하지 않은 이유는 같은 라우트의 3153 이 **hook 토큰 없이도** 같은 문구를 이미 내고 있어 노출면이 넓어지지 않기 때문 — 정책을 정하려면 3153·3165·3178 을 함께 다루는 별건 과제로.
+- 다음 회차 주의: 이 테스트는 서브테스트 순서 의존이다(`DROP TABLE channel_members` 앞 세 건이 선행). `t.Parallel()` 추가·순서 변경 금지.
+- [러너 20:31] review approved — 리뷰 승인 (risk=low)
+- [러너 20:31] pr created — https://github.com/hkjang/moyro/pull/30
+- [러너 20:42] ci passed — 검사 3개 모두 success
+- [러너 20:42] merge done — 94db712

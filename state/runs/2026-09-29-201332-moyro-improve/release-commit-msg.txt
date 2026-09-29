@@ -1,0 +1,51 @@
+release: carry release markers to v0.2.42
+
+v0.2.42 ships one incoming-webhook permission fix already merged to main.
+`fireIncomingWebhook` in `handlers.go` folded the creator membership lookup into
+`if err != nil || !ok`, so a dropped connection, an unusable `channel_members`
+table or a cancelled context arrived at the client as 403
+`api.webhook.incoming.fire.creator_not_member` "hook creator no longer a channel
+member". 403 is a permanent verdict that tells an integration sender the hook is
+finished and stops it retrying, so a transient fault silently dropped the post
+and presented an outage as a permissions decision. This route is the unauthenticated
+public `/hooks/{hookID}` endpoint, which is exactly where a sender has no other
+channel to learn that the failure was retryable.
+
+The pre-check is now split in two: a lookup fault reports 500
+`api.webhook.incoming.fire.permission_check` and `!ok` keeps its existing 403 and
+its existing message, character for character. The reused id is not a new one —
+the same handler already answers the same question the other way one branch
+below, where `Fire` -> `postcommand.Execute` -> `authorize` resolves the identical
+(`ActorID=hook.CreatorID`, `ChannelID=hook.ChannelID`) pair and its
+`FailurePermissionCheck`/`FailureMembershipCheck` cases already report that 500.
+Splitting the pre-check makes the two readings of one pair agree instead of
+disagreeing by status code. `channels.IsMember` runs a `SELECT EXISTS`, so it
+always yields a row and every error it returns is a real fault — there is no
+`pgx.ErrNoRows` case to absorb, and none was added. The 8KiB body cap, the 404
+for an unknown hook and the 400 for an empty body are untouched, as is the switch
+under `Fire`. There is no new error id, no new status code, no migration and no
+service-contract change, and there is no web change.
+
+A Postgres integration test pins it red-first against a real schema built by
+`store.Migrate` and the production wiring rather than hand-built doubles: the
+real `rbac`, `channels` and `posts` services, the real `webhooks.IncomingService`,
+the `AuthorizeCreate` closure from `router.go` and the chi pattern copied from
+`router.go`. `DROP TABLE channel_members` is the fault injector precisely because
+it leaves `incoming_webhooks` intact, so the request reaches the membership branch
+rather than short-circuiting on a 404. The fault case fails as 403 before the
+change and passes as 500 after, while the genuine non-member 403, the 404, the
+400 and the successful 200 post are unaffected in both directions.
+
+Release markers move to v0.2.42 across the README, the product site and guides,
+the canonical user and administrator guides, the OpenAPI contracts, the offline
+deployment guide, the plugin SDK and sample plugin, the pages gate, and the web
+package and its version surfaces. The two guides keep naming the v0.2.27 image as
+the origin of their screen captures, which is still true for the existing
+captures, and their PDFs are left as rendered because the md2pdf converter that
+produced them lives outside this repository. Verified at this tree: the pages
+gate, `go test -race -p 1 ./...` against a local postgres:16-alpine and `go vet
+./...` for the server with all 49 packages passing, `go build ./...`,
+`govulncheck` reporting no reachable vulnerability, the Go plugin SDK tests and
+vet, 48 webapp test files with 221 tests, typecheck across both tsconfigs, build,
+the production npm audit at zero and the full audit clean at the high gate CI
+enforces, and the source-size ratchets.

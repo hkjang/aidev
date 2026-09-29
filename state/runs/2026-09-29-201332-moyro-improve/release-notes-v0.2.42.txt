@@ -1,0 +1,38 @@
+moyro v0.2.42
+
+Incoming webhooks now report a failed creator-membership lookup as 500 instead of
+disguising it as a refusal. `fireIncomingWebhook` in `handlers.go` folded the
+lookup into `if err != nil || !ok`, so a dropped connection, an unusable
+`channel_members` table or a cancelled context reached the sender as 403
+`api.webhook.incoming.fire.creator_not_member` "hook creator no longer a channel
+member". 403 is a permanent verdict that tells an integration the hook is finished
+and stops it retrying, so a transient fault silently dropped the post and
+presented an outage as a permissions decision — and because `/hooks/{hookID}` is
+the unauthenticated public route, the sender has no other channel through which to
+learn the failure was retryable.
+
+The pre-check is now split in two: a lookup fault answers 500
+`api.webhook.incoming.fire.permission_check`, while a creator who genuinely left
+the channel keeps the existing 403 and its exact message. That id is not a new
+one. The same handler already answers the same question the other way one branch
+below, where `Fire` -> `postcommand.Execute` -> `authorize` resolves the identical
+(`ActorID=hook.CreatorID`, `ChannelID=hook.ChannelID`) pair and its
+`FailurePermissionCheck` and `FailureMembershipCheck` cases already report that
+500. Splitting the pre-check makes two readings of one pair agree rather than
+disagree by status code. `channels.IsMember` runs a `SELECT EXISTS`, so it always
+yields a row and every error it returns is a real fault; there is no
+`pgx.ErrNoRows` case to absorb and none was added. The 8KiB body cap, the 404 for
+an unknown hook, the 400 for an empty body and the switch under `Fire` are
+untouched.
+
+A Postgres integration test pins it red-first against a real schema built by
+`store.Migrate` and the production wiring rather than hand-built doubles — the
+real `rbac`, `channels` and `posts` services, the real `webhooks.IncomingService`,
+the `AuthorizeCreate` closure from `router.go` and the chi pattern copied from
+`router.go`. `DROP TABLE channel_members` is the fault injector precisely because
+it leaves `incoming_webhooks` intact, so the request reaches the membership branch
+instead of short-circuiting on a 404. The fault case fails as 403 before the
+change and passes as 500 after, while the genuine non-member 403, the 404, the 400
+and the successful 200 post are unaffected in both directions. There is no new
+error id, no new status code, no migration, no service-contract change and no web
+change.
