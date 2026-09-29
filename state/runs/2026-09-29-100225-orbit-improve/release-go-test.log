@@ -1,0 +1,306 @@
+?   	github.com/hkjang/orbit/cmd/orbit	[no test files]
+=== RUN   TestLoadRequiresExactlySupportedValues
+--- PASS: TestLoadRequiresExactlySupportedValues (0.00s)
+=== RUN   TestLoadRejectsWeakMasterKey
+--- PASS: TestLoadRejectsWeakMasterKey (0.00s)
+PASS
+ok  	github.com/hkjang/orbit/internal/config	1.014s
+?   	github.com/hkjang/orbit/internal/id	[no test files]
+=== RUN   TestVaultRoundTripAndContextBinding
+--- PASS: TestVaultRoundTripAndContextBinding (0.00s)
+=== RUN   TestCiphertextUsesRandomNonce
+--- PASS: TestCiphertextUsesRandomNonce (0.00s)
+PASS
+ok  	github.com/hkjang/orbit/internal/secure	1.016s
+=== RUN   TestStreamAIPersonLookup
+=== RUN   TestStreamAIPersonLookup/missing_person
+=== RUN   TestStreamAIPersonLookup/other_users_person
+=== RUN   TestStreamAIPersonLookup/missing_relationship
+=== RUN   TestStreamAIPersonLookup/own_person_without_memories
+=== RUN   TestStreamAIPersonLookup/empty_person_id
+=== RUN   TestStreamAIPersonLookup/malformed_uuid
+=== RUN   TestStreamAIPersonLookup/disabled_ai
+=== RUN   TestStreamAIPersonLookup/missing_memory_key
+2026/09/29 10:19:37 ERROR request failed method=POST path=/api/v1/ai/stream error="no rows in result set"
+=== RUN   TestStreamAIPersonLookup/missing_setting
+2026/09/29 10:19:37 ERROR request failed method=POST path=/api/v1/ai/stream error="no rows in result set"
+--- PASS: TestStreamAIPersonLookup (0.25s)
+    --- PASS: TestStreamAIPersonLookup/missing_person (0.00s)
+    --- PASS: TestStreamAIPersonLookup/other_users_person (0.00s)
+    --- PASS: TestStreamAIPersonLookup/missing_relationship (0.00s)
+    --- PASS: TestStreamAIPersonLookup/own_person_without_memories (0.01s)
+    --- PASS: TestStreamAIPersonLookup/empty_person_id (0.00s)
+    --- PASS: TestStreamAIPersonLookup/malformed_uuid (0.00s)
+    --- PASS: TestStreamAIPersonLookup/disabled_ai (0.00s)
+    --- PASS: TestStreamAIPersonLookup/missing_memory_key (0.01s)
+    --- PASS: TestStreamAIPersonLookup/missing_setting (0.00s)
+=== RUN   TestStreamAIRejectsMalformedPersonIDBeforeDB
+=== RUN   TestStreamAIRejectsMalformedPersonIDBeforeDB/uuid가_아닌_문자열
+=== RUN   TestStreamAIRejectsMalformedPersonIDBeforeDB/하이픈_없는_16진수
+=== RUN   TestStreamAIRejectsMalformedPersonIDBeforeDB/중괄호로_감싼_형태
+=== RUN   TestStreamAIRejectsMalformedPersonIDBeforeDB/따옴표가_섞인_값
+--- PASS: TestStreamAIRejectsMalformedPersonIDBeforeDB (0.00s)
+    --- PASS: TestStreamAIRejectsMalformedPersonIDBeforeDB/uuid가_아닌_문자열 (0.00s)
+    --- PASS: TestStreamAIRejectsMalformedPersonIDBeforeDB/하이픈_없는_16진수 (0.00s)
+    --- PASS: TestStreamAIRejectsMalformedPersonIDBeforeDB/중괄호로_감싼_형태 (0.00s)
+    --- PASS: TestStreamAIRejectsMalformedPersonIDBeforeDB/따옴표가_섞인_값 (0.00s)
+=== RUN   TestStreamAILetsWellFormedPersonIDReachDB
+=== RUN   TestStreamAILetsWellFormedPersonIDReachDB/소문자_uuid
+=== RUN   TestStreamAILetsWellFormedPersonIDReachDB/대문자_uuid
+=== RUN   TestStreamAILetsWellFormedPersonIDReachDB/person_id_없음
+--- PASS: TestStreamAILetsWellFormedPersonIDReachDB (0.00s)
+    --- PASS: TestStreamAILetsWellFormedPersonIDReachDB/소문자_uuid (0.00s)
+    --- PASS: TestStreamAILetsWellFormedPersonIDReachDB/대문자_uuid (0.00s)
+    --- PASS: TestStreamAILetsWellFormedPersonIDReachDB/person_id_없음 (0.00s)
+=== RUN   TestSilentOIDCRequestedNeedsAutoLogin
+--- PASS: TestSilentOIDCRequestedNeedsAutoLogin (0.00s)
+=== RUN   TestSafeReturnTo
+--- PASS: TestSafeReturnTo (0.00s)
+=== RUN   TestOIDCCallbackRefusal
+=== RUN   TestOIDCCallbackRefusal/silent_login_required
+=== RUN   TestOIDCCallbackRefusal/silent_interaction_required
+=== RUN   TestOIDCCallbackRefusal/plain_error
+2026/09/29 10:19:37 WARN OIDC provider returned an error error=access_denied
+=== RUN   TestOIDCCallbackRefusal/state_mismatch
+2026/09/29 10:19:37 WARN OIDC provider returned an error error=login_required
+=== RUN   TestOIDCCallbackRefusal/no_cookie
+2026/09/29 10:19:37 WARN OIDC provider returned an error error=login_required
+--- PASS: TestOIDCCallbackRefusal (0.00s)
+    --- PASS: TestOIDCCallbackRefusal/silent_login_required (0.00s)
+    --- PASS: TestOIDCCallbackRefusal/silent_interaction_required (0.00s)
+    --- PASS: TestOIDCCallbackRefusal/plain_error (0.00s)
+    --- PASS: TestOIDCCallbackRefusal/state_mismatch (0.00s)
+    --- PASS: TestOIDCCallbackRefusal/no_cookie (0.00s)
+=== RUN   TestOIDCCallbackRejectsBadStateWithoutProviderError
+--- PASS: TestOIDCCallbackRejectsBadStateWithoutProviderError (0.00s)
+=== RUN   TestOIDCStartDiscoveryFailure
+2026/09/29 10:19:37 WARN silent SSO failed code=internal_error error="OIDC discovery: Get \"http://127.0.0.1:45587/.well-known/openid-configuration\": dial tcp 127.0.0.1:45587: connect: connection refused"
+2026/09/29 10:19:37 ERROR request failed method=GET path=/api/v1/auth/oidc/start error="OIDC discovery: Get \"http://127.0.0.1:45587/.well-known/openid-configuration\": dial tcp 127.0.0.1:45587: connect: connection refused"
+--- PASS: TestOIDCStartDiscoveryFailure (0.00s)
+=== RUN   TestOIDCCallbackExchangeFailure
+2026/09/29 10:19:37 WARN silent SSO failed code=oidc_exchange_failed error="oauth2: \"invalid_grant\""
+--- PASS: TestOIDCCallbackExchangeFailure (0.01s)
+=== RUN   TestOIDCCallbackDiscoveryFailure
+2026/09/29 10:19:37 WARN silent SSO failed code=internal_error error="OIDC discovery: Get \"http://127.0.0.1:33795/.well-known/openid-configuration\": dial tcp 127.0.0.1:33795: connect: connection refused"
+--- PASS: TestOIDCCallbackDiscoveryFailure (0.00s)
+=== RUN   TestOIDCFailureAnswersSilentFlowWithRedirect
+2026/09/29 10:19:37 WARN silent SSO failed code=provisioning_disabled error=<nil>
+2026/09/29 10:19:37 WARN silent SSO failed code=account_disabled error=<nil>
+2026/09/29 10:19:37 WARN silent SSO failed code=invalid_id_token error=<nil>
+--- PASS: TestOIDCFailureAnswersSilentFlowWithRedirect (0.00s)
+=== RUN   TestCreateInteractionRejectsFutureOccurredAt
+--- PASS: TestCreateInteractionRejectsFutureOccurredAt (0.00s)
+=== RUN   TestValidateInteractionInput
+=== RUN   TestValidateInteractionInput/과거_시각은_그대로_통과한다
+=== RUN   TestValidateInteractionInput/생략하면_현재로_채운다
+=== RUN   TestValidateInteractionInput/허용_오차_안의_미래는_통과한다
+=== RUN   TestValidateInteractionInput/오차를_넘는_미래는_거부한다
+=== RUN   TestValidateInteractionInput/모르는_유형은_거부한다
+=== RUN   TestValidateInteractionInput/범위_밖_weight는_1로_보정한다
+--- PASS: TestValidateInteractionInput (0.00s)
+    --- PASS: TestValidateInteractionInput/과거_시각은_그대로_통과한다 (0.00s)
+    --- PASS: TestValidateInteractionInput/생략하면_현재로_채운다 (0.00s)
+    --- PASS: TestValidateInteractionInput/허용_오차_안의_미래는_통과한다 (0.00s)
+    --- PASS: TestValidateInteractionInput/오차를_넘는_미래는_거부한다 (0.00s)
+    --- PASS: TestValidateInteractionInput/모르는_유형은_거부한다 (0.00s)
+    --- PASS: TestValidateInteractionInput/범위_밖_weight는_1로_보정한다 (0.00s)
+=== RUN   TestPersonHandlersRejectMalformedPathIDBeforeDB
+=== RUN   TestPersonHandlersRejectMalformedPathIDBeforeDB/getPerson
+=== RUN   TestPersonHandlersRejectMalformedPathIDBeforeDB/updatePerson
+=== RUN   TestPersonHandlersRejectMalformedPathIDBeforeDB/deletePerson
+=== RUN   TestPersonHandlersRejectMalformedPathIDBeforeDB/listPersonLinks
+=== RUN   TestPersonHandlersRejectMalformedPathIDBeforeDB/createPersonLink
+=== RUN   TestPersonHandlersRejectMalformedPathIDBeforeDB/deletePersonLink의_linkID
+--- PASS: TestPersonHandlersRejectMalformedPathIDBeforeDB (0.00s)
+    --- PASS: TestPersonHandlersRejectMalformedPathIDBeforeDB/getPerson (0.00s)
+    --- PASS: TestPersonHandlersRejectMalformedPathIDBeforeDB/updatePerson (0.00s)
+    --- PASS: TestPersonHandlersRejectMalformedPathIDBeforeDB/deletePerson (0.00s)
+    --- PASS: TestPersonHandlersRejectMalformedPathIDBeforeDB/listPersonLinks (0.00s)
+    --- PASS: TestPersonHandlersRejectMalformedPathIDBeforeDB/createPersonLink (0.00s)
+    --- PASS: TestPersonHandlersRejectMalformedPathIDBeforeDB/deletePersonLink의_linkID (0.00s)
+=== RUN   TestCreatePersonLinkRejectsMalformedBodyPersonID
+--- PASS: TestCreatePersonLinkRejectsMalformedBodyPersonID (0.00s)
+=== RUN   TestLooksLikeUUID
+=== RUN   TestLooksLikeUUID/id.New()가_만든_값
+=== RUN   TestLooksLikeUUID/고정된_정상_uuid
+=== RUN   TestLooksLikeUUID/대문자_16진수도_같은_id다
+=== RUN   TestLooksLikeUUID/빈_문자열
+=== RUN   TestLooksLikeUUID/중괄호로_감싼_것
+=== RUN   TestLooksLikeUUID/하이픈이_없는_것
+=== RUN   TestLooksLikeUUID/길이가_짧은_것
+=== RUN   TestLooksLikeUUID/길이가_긴_것
+=== RUN   TestLooksLikeUUID/하이픈_자리가_어긋난_것
+=== RUN   TestLooksLikeUUID/16진수가_아닌_글자
+=== RUN   TestLooksLikeUUID/SQL을_섞은_것
+=== RUN   TestLooksLikeUUID/공백이_붙은_것
+--- PASS: TestLooksLikeUUID (0.00s)
+    --- PASS: TestLooksLikeUUID/id.New()가_만든_값 (0.00s)
+    --- PASS: TestLooksLikeUUID/고정된_정상_uuid (0.00s)
+    --- PASS: TestLooksLikeUUID/대문자_16진수도_같은_id다 (0.00s)
+    --- PASS: TestLooksLikeUUID/빈_문자열 (0.00s)
+    --- PASS: TestLooksLikeUUID/중괄호로_감싼_것 (0.00s)
+    --- PASS: TestLooksLikeUUID/하이픈이_없는_것 (0.00s)
+    --- PASS: TestLooksLikeUUID/길이가_짧은_것 (0.00s)
+    --- PASS: TestLooksLikeUUID/길이가_긴_것 (0.00s)
+    --- PASS: TestLooksLikeUUID/하이픈_자리가_어긋난_것 (0.00s)
+    --- PASS: TestLooksLikeUUID/16진수가_아닌_글자 (0.00s)
+    --- PASS: TestLooksLikeUUID/SQL을_섞은_것 (0.00s)
+    --- PASS: TestLooksLikeUUID/공백이_붙은_것 (0.00s)
+=== RUN   TestReadGrammarMatchesTheCanvasGrammar
+=== RUN   TestReadGrammarMatchesTheCanvasGrammar/교류가_늘면_다가오는_중
+=== RUN   TestReadGrammarMatchesTheCanvasGrammar/작은_흔들림은_안정_궤도
+=== RUN   TestReadGrammarMatchesTheCanvasGrammar/음의_흔들림도_안정_궤도
+=== RUN   TestReadGrammarMatchesTheCanvasGrammar/교류가_줄면_멀어지는_중
+=== RUN   TestReadGrammarMatchesTheCanvasGrammar/침묵만으로도_멀어지는_중
+=== RUN   TestReadGrammarMatchesTheCanvasGrammar/오래_침묵하면_다크_오빗
+=== RUN   TestReadGrammarMatchesTheCanvasGrammar/교류_기록이_없으면_안정_궤도
+=== RUN   TestReadGrammarMatchesTheCanvasGrammar/고정된_관계는_침묵해도_남는다
+=== RUN   TestReadGrammarMatchesTheCanvasGrammar/고정되어도_실제_쇠퇴는_드러난다
+--- PASS: TestReadGrammarMatchesTheCanvasGrammar (0.00s)
+    --- PASS: TestReadGrammarMatchesTheCanvasGrammar/교류가_늘면_다가오는_중 (0.00s)
+    --- PASS: TestReadGrammarMatchesTheCanvasGrammar/작은_흔들림은_안정_궤도 (0.00s)
+    --- PASS: TestReadGrammarMatchesTheCanvasGrammar/음의_흔들림도_안정_궤도 (0.00s)
+    --- PASS: TestReadGrammarMatchesTheCanvasGrammar/교류가_줄면_멀어지는_중 (0.00s)
+    --- PASS: TestReadGrammarMatchesTheCanvasGrammar/침묵만으로도_멀어지는_중 (0.00s)
+    --- PASS: TestReadGrammarMatchesTheCanvasGrammar/오래_침묵하면_다크_오빗 (0.00s)
+    --- PASS: TestReadGrammarMatchesTheCanvasGrammar/교류_기록이_없으면_안정_궤도 (0.00s)
+    --- PASS: TestReadGrammarMatchesTheCanvasGrammar/고정된_관계는_침묵해도_남는다 (0.00s)
+    --- PASS: TestReadGrammarMatchesTheCanvasGrammar/고정되어도_실제_쇠퇴는_드러난다 (0.00s)
+=== RUN   TestEveryStateHasWordsForPeople
+--- PASS: TestEveryStateHasWordsForPeople (0.00s)
+=== RUN   TestDaysSinceReportsUnknownAsNegative
+--- PASS: TestDaysSinceReportsUnknownAsNegative (0.00s)
+=== RUN   TestDescribeLastInteractionSpeaksInHumanTime
+--- PASS: TestDescribeLastInteractionSpeaksInHumanTime (0.00s)
+=== RUN   TestEscapeLikeKeepsWildcardsLiteral
+--- PASS: TestEscapeLikeKeepsWildcardsLiteral (0.00s)
+=== RUN   TestMatchesMemoryLooksEverywhere
+--- PASS: TestMatchesMemoryLooksEverywhere (0.00s)
+=== RUN   TestMatchesMemoryIgnoresCase
+--- PASS: TestMatchesMemoryIgnoresCase (0.00s)
+=== RUN   TestNormalizeTagsTidiesFreeformLabels
+=== RUN   TestNormalizeTagsTidiesFreeformLabels/앞뒤_공백을_뗀다
+=== RUN   TestNormalizeTagsTidiesFreeformLabels/빈_값은_버린다
+=== RUN   TestNormalizeTagsTidiesFreeformLabels/같은_것은_한_번만
+=== RUN   TestNormalizeTagsTidiesFreeformLabels/공백만_다른_것도_같은_것으로
+=== RUN   TestNormalizeTagsTidiesFreeformLabels/적은_순서를_지킨다
+=== RUN   TestNormalizeTagsTidiesFreeformLabels/가운데_공백은_그대로_둔다
+=== RUN   TestNormalizeTagsTidiesFreeformLabels/빈_목록
+--- PASS: TestNormalizeTagsTidiesFreeformLabels (0.00s)
+    --- PASS: TestNormalizeTagsTidiesFreeformLabels/앞뒤_공백을_뗀다 (0.00s)
+    --- PASS: TestNormalizeTagsTidiesFreeformLabels/빈_값은_버린다 (0.00s)
+    --- PASS: TestNormalizeTagsTidiesFreeformLabels/같은_것은_한_번만 (0.00s)
+    --- PASS: TestNormalizeTagsTidiesFreeformLabels/공백만_다른_것도_같은_것으로 (0.00s)
+    --- PASS: TestNormalizeTagsTidiesFreeformLabels/적은_순서를_지킨다 (0.00s)
+    --- PASS: TestNormalizeTagsTidiesFreeformLabels/가운데_공백은_그대로_둔다 (0.00s)
+    --- PASS: TestNormalizeTagsTidiesFreeformLabels/빈_목록 (0.00s)
+=== RUN   TestPersonInputCountsCategoriesAfterTidying
+--- PASS: TestPersonInputCountsCategoriesAfterTidying (0.00s)
+=== RUN   TestRelationshipMetricsReadRecentContact
+=== RUN   TestRelationshipMetricsReadRecentContact/교류가_없으면_모두_0
+=== RUN   TestRelationshipMetricsReadRecentContact/최근_교류가_옛_교류보다_친밀도를_크게_올린다
+=== RUN   TestRelationshipMetricsReadRecentContact/교류가_늘면_momentum이_양수
+=== RUN   TestRelationshipMetricsReadRecentContact/교류가_줄면_momentum이_음수
+=== RUN   TestRelationshipMetricsReadRecentContact/친밀도는_0과_1_사이를_벗어나지_않는다
+=== RUN   TestRelationshipMetricsReadRecentContact/미래_시각도_폭주하지_않는다
+--- PASS: TestRelationshipMetricsReadRecentContact (0.00s)
+    --- PASS: TestRelationshipMetricsReadRecentContact/교류가_없으면_모두_0 (0.00s)
+    --- PASS: TestRelationshipMetricsReadRecentContact/최근_교류가_옛_교류보다_친밀도를_크게_올린다 (0.00s)
+    --- PASS: TestRelationshipMetricsReadRecentContact/교류가_늘면_momentum이_양수 (0.00s)
+    --- PASS: TestRelationshipMetricsReadRecentContact/교류가_줄면_momentum이_음수 (0.00s)
+    --- PASS: TestRelationshipMetricsReadRecentContact/친밀도는_0과_1_사이를_벗어나지_않는다 (0.00s)
+    --- PASS: TestRelationshipMetricsReadRecentContact/미래_시각도_폭주하지_않는다 (0.00s)
+=== RUN   TestParseOrbitAtAcceptsDatesAndRejectsNonsense
+--- PASS: TestParseOrbitAtAcceptsDatesAndRejectsNonsense (0.00s)
+=== RUN   TestRelationshipMetricsDependOnTheAskedMoment
+--- PASS: TestRelationshipMetricsDependOnTheAskedMoment (0.00s)
+=== RUN   TestExtractDelta
+=== RUN   TestExtractDelta/responses
+=== RUN   TestExtractDelta/chat-compatible
+--- PASS: TestExtractDelta (0.00s)
+    --- PASS: TestExtractDelta/responses (0.00s)
+    --- PASS: TestExtractDelta/chat-compatible (0.00s)
+=== RUN   TestRequiredScope
+--- PASS: TestRequiredScope (0.00s)
+=== RUN   TestStablePositionIsDeterministicAndBounded
+--- PASS: TestStablePositionIsDeterministicAndBounded (0.00s)
+=== RUN   TestMCPVersionDiscovery
+--- PASS: TestMCPVersionDiscovery (0.00s)
+=== RUN   TestResponsesStreamNormalization
+--- PASS: TestResponsesStreamNormalization (0.00s)
+=== RUN   TestNormalizeLinkIsOrderIndependent
+--- PASS: TestNormalizeLinkIsOrderIndependent (0.00s)
+=== RUN   TestLinkKindsCoverStoredValues
+--- PASS: TestLinkKindsCoverStoredValues (0.00s)
+=== RUN   TestLoginThrottleLocksAfterRepeatedFailures
+--- PASS: TestLoginThrottleLocksAfterRepeatedFailures (0.00s)
+=== RUN   TestLoginThrottleForgetsOldFailures
+--- PASS: TestLoginThrottleForgetsOldFailures (0.00s)
+=== RUN   TestLoginThrottleResetOnSuccess
+--- PASS: TestLoginThrottleResetOnSuccess (0.00s)
+=== RUN   TestLoginKeyScope
+--- PASS: TestLoginKeyScope (0.00s)
+=== RUN   TestLocalLoginRespondsTooManyRequestsWhileLocked
+--- PASS: TestLocalLoginRespondsTooManyRequestsWhileLocked (0.00s)
+=== RUN   TestWriteLoginBlockedRoundsUp
+--- PASS: TestWriteLoginBlockedRoundsUp (0.00s)
+=== RUN   TestLoginThrottleSweepsStaleEntries
+--- PASS: TestLoginThrottleSweepsStaleEntries (0.01s)
+=== RUN   TestOrbitRangeMatchesLegacyJoin
+=== RUN   TestOrbitRangeMatchesLegacyJoin/사람이_없으면_nil
+=== RUN   TestOrbitRangeMatchesLegacyJoin/사람만_있으면_created_at
+=== RUN   TestOrbitRangeMatchesLegacyJoin/더_앞선_교류가_있으면_occurred_at
+=== RUN   TestOrbitRangeMatchesLegacyJoin/다른_사용자_것은_보지_않는다
+--- PASS: TestOrbitRangeMatchesLegacyJoin (0.05s)
+    --- PASS: TestOrbitRangeMatchesLegacyJoin/사람이_없으면_nil (0.01s)
+    --- PASS: TestOrbitRangeMatchesLegacyJoin/사람만_있으면_created_at (0.01s)
+    --- PASS: TestOrbitRangeMatchesLegacyJoin/더_앞선_교류가_있으면_occurred_at (0.01s)
+    --- PASS: TestOrbitRangeMatchesLegacyJoin/다른_사용자_것은_보지_않는다 (0.01s)
+=== RUN   TestOrbitAtLinksStayWithinNodes
+=== RUN   TestOrbitAtLinksStayWithinNodes/과거_응답의_링크는_모두_그_응답의_nodes_안에서_닫힌다
+=== RUN   TestOrbitAtLinksStayWithinNodes/현재_응답은_오늘의_링크를_전부_담는다
+=== RUN   TestOrbitAtLinksStayWithinNodes/링크가_하나도_안_남아도_배열로_나간다
+--- PASS: TestOrbitAtLinksStayWithinNodes (0.04s)
+    --- PASS: TestOrbitAtLinksStayWithinNodes/과거_응답의_링크는_모두_그_응답의_nodes_안에서_닫힌다 (0.01s)
+    --- PASS: TestOrbitAtLinksStayWithinNodes/현재_응답은_오늘의_링크를_전부_담는다 (0.00s)
+    --- PASS: TestOrbitAtLinksStayWithinNodes/링크가_하나도_안_남아도_배열로_나간다 (0.00s)
+=== RUN   TestOrbitAtResponseCarriesEarliestAt
+=== RUN   TestOrbitAtResponseCarriesEarliestAt/기록이_있으면_두_경로의_earliest_at_이_같다
+=== RUN   TestOrbitAtResponseCarriesEarliestAt/기록이_없으면_두_경로_모두_null
+=== RUN   TestOrbitAtResponseCarriesEarliestAt/기존_키는_하나도_사라지지_않는다
+--- PASS: TestOrbitAtResponseCarriesEarliestAt (0.05s)
+    --- PASS: TestOrbitAtResponseCarriesEarliestAt/기록이_있으면_두_경로의_earliest_at_이_같다 (0.02s)
+    --- PASS: TestOrbitAtResponseCarriesEarliestAt/기록이_없으면_두_경로_모두_null (0.01s)
+    --- PASS: TestOrbitAtResponseCarriesEarliestAt/기존_키는_하나도_사라지지_않는다 (0.01s)
+=== RUN   TestListMemoriesRejectsMalformedPersonIDBeforeDB
+=== RUN   TestListMemoriesRejectsMalformedPersonIDBeforeDB/uuid가_아닌_문자열
+=== RUN   TestListMemoriesRejectsMalformedPersonIDBeforeDB/하이픈_없는_16진수
+=== RUN   TestListMemoriesRejectsMalformedPersonIDBeforeDB/중괄호로_감싼_형태
+=== RUN   TestListMemoriesRejectsMalformedPersonIDBeforeDB/따옴표가_섞인_값
+--- PASS: TestListMemoriesRejectsMalformedPersonIDBeforeDB (0.00s)
+    --- PASS: TestListMemoriesRejectsMalformedPersonIDBeforeDB/uuid가_아닌_문자열 (0.00s)
+    --- PASS: TestListMemoriesRejectsMalformedPersonIDBeforeDB/하이픈_없는_16진수 (0.00s)
+    --- PASS: TestListMemoriesRejectsMalformedPersonIDBeforeDB/중괄호로_감싼_형태 (0.00s)
+    --- PASS: TestListMemoriesRejectsMalformedPersonIDBeforeDB/따옴표가_섞인_값 (0.00s)
+=== RUN   TestListMemoriesLetsWellFormedPersonIDReachDB
+=== RUN   TestListMemoriesLetsWellFormedPersonIDReachDB/소문자_uuid
+=== RUN   TestListMemoriesLetsWellFormedPersonIDReachDB/대문자_uuid
+=== RUN   TestListMemoriesLetsWellFormedPersonIDReachDB/person_id_없음
+--- PASS: TestListMemoriesLetsWellFormedPersonIDReachDB (0.00s)
+    --- PASS: TestListMemoriesLetsWellFormedPersonIDReachDB/소문자_uuid (0.00s)
+    --- PASS: TestListMemoriesLetsWellFormedPersonIDReachDB/대문자_uuid (0.00s)
+    --- PASS: TestListMemoriesLetsWellFormedPersonIDReachDB/person_id_없음 (0.00s)
+PASS
+ok  	github.com/hkjang/orbit/internal/server	1.436s
+?   	github.com/hkjang/orbit/internal/store	[no test files]
+?   	github.com/hkjang/orbit/internal/webui	[no test files]
+=== RUN   TestRetriesTransientRegistryFailure
+--- PASS: TestRetriesTransientRegistryFailure (0.02s)
+=== RUN   TestDoesNotRetryWhenFirstAttemptSucceeds
+--- PASS: TestDoesNotRetryWhenFirstAttemptSucceeds (0.00s)
+=== RUN   TestFailsAfterAttemptLimit
+--- PASS: TestFailsAfterAttemptLimit (0.01s)
+=== RUN   TestPassesCIFlagsAndExtraArguments
+--- PASS: TestPassesCIFlagsAndExtraArguments (0.00s)
+PASS
+ok  	github.com/hkjang/orbit/scripts	1.050s

@@ -1,0 +1,11 @@
+## 2026-09-29
+- 선택: POP3 인증 실패·인사말 거부·본문 dot-unstuffing 실제 TCP 회귀 테스트 (가치 3 / 위험 1 / 작업량 S)
+- 결과: 성공
+- 요약: client_test.go 1개에 실제 루프백 TCP 스크립트 서버와 인증/인사말 4개·본문 2개 하위 테스트를 추가했다(프로덕션 변경 0개, 기존 5개 유지). 실제 Dialer와 SecretHandle을 통해 명시적 USER/PASS 거부의 AuthError·nil 세션·연결 EOF, 인사말 거부의 비인증 오류·인증 미전송, 성공 로그인 LIST를 검증하고 RETR/TOP의 전체 반환 바이트·CRLF·dot-unstuffing·후속 LIST 및 요청 인수를 검증했다. go test -race -count=1 -timeout=90s ./internal/adapters/pop3/ → ok 2.885s; go test -race -count=3 -timeout=90s ./internal/adapters/pop3/ → ok 6.580s; go test -race -count=1 ./internal/adapters/pop3/ ./internal/adapters/imap/ → ok 3.164s / 4.321s; make lint-format, go build ./..., git diff --check → exit 0.
+- 실패 재현: 못 함 — 과제서는 현재 정상 계약의 테스트 추가이며 새 동작 테스트가 기존 구현에서 통과했다. 첫 작성 실행의 `client_test.go:5:2: "bytes" imported and not used`는 본문 단계용 import를 먼저 넣은 테스트 작성 오류로 제거했으며 제품 결함 재현으로 주장하지 않는다. 프로덕션 수정·변이 검증은 수행하지 않았다.
+- 보류 아이디어:
+  - POP3 본문 MaxMessageBytes 상한 (가치 4 / 위험 3 / 작업량 M) — 미병합 04b15be/PR #22 사람 반려 여부 미확인, 재구현하지 않음.
+  - sync.max_message_bytes 0·음수 무제한 규약 문서화 (가치 2 / 위험 1 / 작업량 S) — POP3 상한 미구현을 숨기지 말 것.
+  - 세션 폐기 뒤 sync 루프 종료·잡 상태 개선 (가치 3 / 위험 3 / 작업량 M) — 치명 오류와 부분 성공 정책 필요.
+  - USER/PASS 네트워크 단절 오류 분류 (가치 3 / 위험 3 / 작업량 M) — 실제 TCP→StartSync→계정 상태 재현은 별도 과제.
+- 과제서: 채택 — 현재 코드와 공백이 일치하며 프로덕션 정책을 바꾸지 않고 지정된 어댑터 계약을 모두 검증했다.

@@ -1,0 +1,146 @@
+#0 building with "default" instance using docker driver
+
+#1 [internal] load build definition from Dockerfile
+#1 transferring dockerfile: 1.36kB done
+#1 DONE 0.0s
+
+#2 resolve image config for docker-image://docker.io/docker/dockerfile:1.7
+#2 DONE 0.3s
+
+#3 docker-image://docker.io/docker/dockerfile:1.7@sha256:a57df69d0ea827fb7266491f2813635de6f17269be881f696fbfdf2d83dda33e
+#3 resolve docker.io/docker/dockerfile:1.7@sha256:a57df69d0ea827fb7266491f2813635de6f17269be881f696fbfdf2d83dda33e 0.0s done
+#3 CACHED
+
+#4 [internal] load metadata for gcr.io/distroless/static-debian12:nonroot
+#4 ...
+
+#5 [internal] load metadata for docker.io/library/node:24-alpine
+#5 DONE 0.3s
+
+#6 [internal] load metadata for docker.io/library/golang:1.26.6-alpine
+#6 DONE 0.7s
+
+#4 [internal] load metadata for gcr.io/distroless/static-debian12:nonroot
+#4 DONE 1.0s
+
+#7 [internal] load .dockerignore
+#7 transferring context: 109B done
+#7 DONE 0.0s
+
+#8 [internal] load build context
+#8 DONE 0.0s
+
+#9 [go-builder 1/7] FROM docker.io/library/golang:1.26.6-alpine@sha256:3889b425f035be855a72fb4755265311293b6d414521f0a519d819df32222d83
+#9 resolve docker.io/library/golang:1.26.6-alpine@sha256:3889b425f035be855a72fb4755265311293b6d414521f0a519d819df32222d83 0.0s done
+#9 DONE 0.0s
+
+#10 [stage-2 1/2] FROM gcr.io/distroless/static-debian12:nonroot@sha256:afa5c872c891853ca7fcf1f12c3edb23f7eeef36189728842dd51042ff57f7ab
+#10 resolve gcr.io/distroless/static-debian12:nonroot@sha256:afa5c872c891853ca7fcf1f12c3edb23f7eeef36189728842dd51042ff57f7ab
+#10 resolve gcr.io/distroless/static-debian12:nonroot@sha256:afa5c872c891853ca7fcf1f12c3edb23f7eeef36189728842dd51042ff57f7ab 0.0s done
+#10 DONE 0.0s
+
+#11 [web-builder 1/7] FROM docker.io/library/node:24-alpine@sha256:ebfe2f90462722a7a4de65e91990e97fe0d401c70e0e762c5b53302f905ec1c1
+#11 resolve docker.io/library/node:24-alpine@sha256:ebfe2f90462722a7a4de65e91990e97fe0d401c70e0e762c5b53302f905ec1c1 0.0s done
+#11 DONE 0.0s
+
+#8 [internal] load build context
+#8 transferring context: 21.38MB 0.1s done
+#8 DONE 0.1s
+
+#12 [go-builder 2/7] WORKDIR /src
+#12 CACHED
+
+#13 [go-builder 3/7] COPY go.mod go.sum ./
+#13 CACHED
+
+#14 [web-builder 2/7] WORKDIR /src/web
+#14 CACHED
+
+#15 [web-builder 3/7] COPY scripts/npm-install.sh /usr/local/bin/npm-install.sh
+#15 CACHED
+
+#16 [web-builder 4/7] COPY web/package.json web/package-lock.json ./
+#16 CACHED
+
+#17 [web-builder 5/7] RUN sh /usr/local/bin/npm-install.sh
+#17 CACHED
+
+#18 [web-builder 6/7] COPY web/ ./
+#18 DONE 0.1s
+
+#19 [web-builder 7/7] RUN npm run build
+#19 0.544 
+#19 0.544 > orbit-web@0.1.0 build
+#19 0.544 > tsc -b && vite build
+#19 0.544 
+#19 ...
+
+#20 [go-builder 4/7] RUN go mod download
+#20 DONE 1.9s
+
+#21 [go-builder 5/7] COPY . .
+#21 DONE 0.2s
+
+#19 [web-builder 7/7] RUN npm run build
+#19 6.459 vite v8.2.1 building client environment for production...
+#19 6.471 [2Ktransforming...✓ 974 modules transformed.
+#19 6.836 rendering chunks...
+#19 6.950 computing gzip size...
+#19 6.958 dist/index.html                                  1.06 kB │ gzip:  0.53 kB
+#19 6.958 dist/assets/AddRounded-D9yx2b52.js               0.24 kB │ gzip:  0.19 kB
+#19 6.958 dist/assets/dividerClasses-CpgAT1g6.js           0.27 kB │ gzip:  0.21 kB
+#19 6.958 dist/assets/categoryStyle-BiNgmblJ.js            0.36 kB │ gzip:  0.28 kB
+#19 6.958 dist/assets/CloseRounded-DRL7MXgy.js             0.36 kB │ gzip:  0.24 kB
+#19 6.958 dist/assets/PageHeader-DFHqHU28.js               0.42 kB │ gzip:  0.29 kB
+#19 6.958 dist/assets/rolldown-runtime-CbXtAM7H.js         0.58 kB │ gzip:  0.36 kB
+#19 6.958 dist/assets/forecast-CHYpwk_D.js                 0.84 kB │ gzip:  0.46 kB
+#19 6.958 dist/assets/StateViews-ClxC0t9z.js               1.06 kB │ gzip:  0.62 kB
+#19 6.958 dist/assets/orbitGrammar-BwFVMXNg.js             1.50 kB │ gzip:  0.90 kB
+#19 6.958 dist/assets/CardActionArea-BSRSbZZR.js           1.63 kB │ gzip:  0.81 kB
+#19 6.958 dist/assets/SearchRounded-Cd_-Ic1z.js            2.09 kB │ gzip:  1.14 kB
+#19 6.958 dist/assets/PersonFormDialog-DTgWwDxg.js         4.07 kB │ gzip:  1.99 kB
+#19 6.958 dist/assets/AIPage-Chl3VGol.js                   4.84 kB │ gzip:  2.52 kB
+#19 6.958 dist/assets/LoginPage-CdWjhCj-.js                4.88 kB │ gzip:  2.52 kB
+#19 6.958 dist/assets/ApprovalsPage-DB6dded0.js            4.90 kB │ gzip:  2.30 kB
+#19 6.958 dist/assets/CardContent-D7Io0VgV.js              5.64 kB │ gzip:  2.21 kB
+#19 6.958 dist/assets/PeoplePage-D_QOMTJJ.js               6.02 kB │ gzip:  2.98 kB
+#19 6.958 dist/assets/DialogTitle-t10OdRjP.js              6.79 kB │ gzip:  2.32 kB
+#19 6.958 dist/assets/MemoriesPage-BLh_Qxd0.js             6.86 kB │ gzip:  3.00 kB
+#19 6.958 dist/assets/Chip-BD6oDDzF.js                     8.01 kB │ gzip:  2.66 kB
+#19 6.958 dist/assets/ThemeProviderWithVars-Vn-2ZbFt.js   10.60 kB │ gzip:  3.94 kB
+#19 6.958 dist/assets/PersonalPage-CALHTWi_.js            12.75 kB │ gzip:  4.84 kB
+#19 6.958 dist/assets/PersonPage-hKto4nRi.js              16.56 kB │ gzip:  6.52 kB
+#19 6.958 dist/assets/Slider-BP58n0fM.js                  19.73 kB │ gzip:  6.72 kB
+#19 6.958 dist/assets/Tabs-Ou8D2pP-.js                    22.44 kB │ gzip:  7.55 kB
+#19 6.958 dist/assets/OrbitPage-sM2HPK_h.js               23.11 kB │ gzip:  9.44 kB
+#19 6.958 dist/assets/AdminPage-BY2iujBF.js               24.01 kB │ gzip:  7.89 kB
+#19 6.958 dist/assets/Menu-oNvSEJuI.js                    38.33 kB │ gzip: 13.21 kB
+#19 6.958 dist/assets/TextField-Ck7bMhEd.js               45.70 kB │ gzip: 13.35 kB
+#19 6.958 dist/assets/api-ZtZzsCU7.js                    127.62 kB │ gzip: 42.78 kB
+#19 6.958 dist/assets/index-BJ5HucJG.js                  296.04 kB │ gzip: 96.01 kB
+#19 6.958 
+#19 6.959 ✓ built in 498ms
+#19 DONE 7.3s
+
+#22 [go-builder 6/7] COPY --from=web-builder /src/web/dist ./internal/webui/dist
+#22 DONE 0.1s
+
+#23 [go-builder 7/7] RUN CGO_ENABLED=0 GOOS=linux go build -trimpath     -ldflags "-s -w -X main.version=v0.7.5 -X main.commit=b4203ef41e59 -X main.builtAt=2026-09-29T01:19:49Z"     -o /out/orbit ./cmd/orbit
+#23 DONE 5.9s
+
+#10 [stage-2 1/2] FROM gcr.io/distroless/static-debian12:nonroot@sha256:afa5c872c891853ca7fcf1f12c3edb23f7eeef36189728842dd51042ff57f7ab
+#10 CACHED
+
+#24 [stage-2 2/2] COPY --from=go-builder /out/orbit /orbit
+#24 DONE 0.0s
+
+#25 exporting to image
+#25 exporting layers
+#25 exporting layers 0.3s done
+#25 exporting manifest sha256:8371e457e97d6e9e7bcb3d4a9d4e7ca96630fe196f83797d8325fef91695a859 0.0s done
+#25 exporting config sha256:2b06d4ed08fcc825c911521e78444ab0835974029d36ac341c026377a2d95610 done
+#25 exporting attestation manifest sha256:aade8bf05b8a1a036181b70cdd6f24633bd0baf4a0bd2f10afb1b3181108bbeb 0.0s done
+#25 exporting manifest list sha256:17b27a019633910ad17e081a779f22b130e11b948628ff96fee4f7fb95285871 0.0s done
+#25 naming to docker.io/library/orbit:release-check-v0.7.5 done
+#25 unpacking to docker.io/library/orbit:release-check-v0.7.5 0.1s done
+#25 DONE 0.5s

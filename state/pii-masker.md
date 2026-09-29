@@ -199,3 +199,16 @@
 - 과제서: 채택 — 과제서의 근거(`config.go:148`의 `envInt` 대 `service.go:651`의 `MaxPages > 0`)가 현재 코드와 정확히 일치했고, 수용 기준 5개를 지목된 방식(`envInt` 불변 + 호출 지점만 교체, `Load()` 경유 증명)으로 모두 재현·검증했다. 미확인으로 남겨 둔 두 축(손수 늘린 PDF를 pdfcpu가 21로 세는지, Playground가 `max_pages: 0`을 어떻게 쓰는지)은 각각 probe 테스트와 `index.html` 확인으로 해결해 기준 2)를 낮추지 않고 그대로 달성했다.
 
 - 릴리즈: v1.0.30 (2026-09-27, run 2026-09-27-155213-pii-masker-improve)
+## 2026-09-29
+- 선택: 환경변수 시간 단위 변환의 time.Duration 오버플로 방어 (가치 3 / 위험 2 / 작업량 M)
+- 결과: 성공
+- 요약: config의 여섯 시간 설정을 int64 전용 파서로 읽고 MaxInt64/unit 상한을 곱셈 전에 검사하여 초과 입력을 각 기본값으로 복귀시켰으며, retention·sync wait의 명시적 0과 기존 정수 파서 계약을 유지했다. Load 경계 테이블 78건과 실제 config.Load→app.New→httptest HTTP 회귀로 48시간 된 작업 삭제/404 및 최근 작업 파일 유지/200을 확인했고, 프로덕션 수정만 되돌렸을 때 같은 실패가 재현된 뒤 복원했다. go test -count=1 ./internal/config ./internal/httpapi, go test -count=1 ./..., go vet ./..., go build ./..., go test -race -count=1 ./internal/config ./internal/httpapi, gofmt -l ./cmd ./internal(무출력), git diff --check 및 GOARCH=386 go test -count=1 ./internal/config가 모두 통과하여 001f6f7로 커밋했다.
+- 실패 재현: `config_test.go:276: PII_MASKER_JOB_RETENTION_HOURS="2562048": got -2562047h34m33.709551616s, want 24h0m0s` / `integration_test.go:1243: timed out waiting for the expired job directory to be removed` (수정 전 전체 출력 assets/duration-red.log; 되돌림 재현 assets/duration-revert-red.log)
+- 보류 아이디어:
+  - 나머지 정규화 함수의 Load 경유 테이블 테스트 (가치 2 / 위험 1 / 작업량 S)
+  - download_url 결정을 공용 헬퍼로 (가치 2 / 위험 1 / 작업량 S)
+  - gorilla/mux 405 응답 Allow 헤더 (가치 1 / 위험 2 / 작업량 S)
+  - 이력 조회 전체 복제 전 상위 limit 선별 (가치 2 / 위험 2 / 작업량 M)
+- 과제서: 채택 — 현재 HEAD에 여섯 시간 설정의 무검사 곱셈이 남아 있었으며 Load와 실제 HTTP 회귀 모두 수정 전에 결함을 재현했다.
+
+- 릴리즈: v1.0.31 (2026-09-29, run 2026-09-29-100231-pii-masker-improve)
