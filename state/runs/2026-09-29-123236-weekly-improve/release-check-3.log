@@ -1,0 +1,345 @@
+checking 341 guard test(s) in ./internal/app
+
+  .  TestAnUpdateThatSaysNothingAboutActivityLeavesADisabledAccountDisabled — updateUser 61%
+  .  TestAnUpdateKeepsTheFieldsItDoesNotMentionAndStillClearsTheOnesItDoes — updateUser 61%
+  .  TestAnAccountUpdateStillNeedsANameAndARealRole — updateUser 24%
+  .  TestTheLockOutGuardCoversTheAdministratorsOwnAccountAndNoOtherCase — updateUser 56%
+  .  TestABlankCandidateFromTheModelIsNotOfferedAsADecision — suggestDecisions 58%
+  .  TestTheModelCannotPushMoreCandidatesThanTheScreenAccepts — suggestDecisions 58%
+  .  TestAReplyThatCramsAListIntoOneFactIsRefused — parseAIText 61%
+  .  TestEachHalfOfTheOneFactRuleIsEnforcedOnItsOwn — parseAIText 61%
+  .  TestAWellFormedReplyBecomesTheReportItWasAskedFor — parseAIText 56%
+  .  TestTheTextToParseIsCheckedBeforeItIsSentAnywhere — parseAIText 72%
+  .  TestATaskWithNothingWrittenOnItDoesNotGoToTheGateway — suggestDecisions 29%
+  .  TestARefusedKeyIsToldWhatBecameOfIt — authenticate 71%, requireAuth 63%
+  .  TestNobodyListsSomebodyElsesCaptures — listAttachments 69%
+  .  TestNobodyAddsCapturesToSomebodyElsesReport — uploadAttachments 57%
+  .  TestNobodyOpensSomebodyElsesCapture — serveAttachment 71%
+  .  TestNobodyRenamesSomebodyElsesCapture — updateAttachment 55%
+  .  TestNobodyDeletesSomebodyElsesCapture — deleteAttachment 80%
+  .  TestCaptureBytesAreNotReadUntilTheyAreWritten — attachmentSlides 82%, appendSlidesToPPTX 86%
+  .  TestANewSlideIsNumberedPastEveryExistingOneWhateverOrderTheyAreIn — appendSlidesToPPTX 86%
+  .  TestFailedAttachmentWriteLeavesNothingBehind — writeAttachmentFile 83%
+  .  TestAttachmentWriteIsAllOrNothing — writeAttachmentFile 83%
+  .  TestAnAuditWriteThatFailsIsAtLeastReported — audit 85%
+  .  TestAnAuditRecordSurvivesTheClientWalkingAway — audit 77%
+  .  TestAnAuditRecordNamesWhoActedAndFromWhere — audit 77%
+  .  TestAnAuditRecordWithNobodySignedInIsStillWritten — audit 77%
+  .  TestOnlyGenuineSignOutIsMarkedAsNoSession — authenticate 75%
+  .  TestLoginSaysTheStoreIsDownRatherThanBlamingThePassword — login 43%
+  .  TestOnlyTheDatabaseAddressIsNeededToStart — loadEnvironment 100%
+  .  TestAnEmptyDatabaseStillDemandsAFirstAdministrator — bootstrapAdmin 75%
+  .  TestAChangeGroupCapsItsRowsAndKeepsTheBiggestMovers — orderChangeEntries 75%, buildChangeSummary 91%
+  .  TestCloningInFullModeCarriesTheWritingAndStructureModeDoesNot — cloneReport 55%
+  .  TestCloningOntoAWeekThatAlreadyHasAReportSaysSo — cloneReport 55%
+  .  TestTwoClonesOntoTheSameWeekAtOnceBothGetAnAnswerTheyCanActOn — cloneReport 60%
+  .  TestEditingAFinishedReportTakesItBackToDraft — updateReport 64%
+  .  TestAColleagueOnTheSameTeamStillCannotReadYourReport — canViewReport 80%
+  .  TestTheOperatorLearnsTheDiagnosisTableIsCutOff — adminConfluenceStatus 70%
+  .  TestTheConfluenceCardRefusesToAnswerWithAFailedQuery — adminConfluenceStatus 72%
+  .  TestTheForceSyncRefusesAnUnreadableState — forceConfluenceSync 85%
+  .  TestASyncFailureNamesTheSystemThatActuallyFailed — confluenceSyncErrorMessage 100%
+  .  TestTheSyncStopsWhenAPageComesBackEmpty — runConfluenceSync 46%
+  .  TestPagedListsHonourTheLimitsTheContractPublishes — clampQueryInt 100%
+  .  TestCoverageDoesNotCountWeeksNobodyCouldHaveReported — expectedWeekStarts 89%
+  .  TestAWrongPasswordIsRefusedAndARightOneIsNot — login 66%
+  .  TestAnExpiredOrRevokedAPIKeyIsRefused — authenticate 79%
+  .  TestCurrentReportOpensTheReportCoveringTheseDaysAfterTheGridMoves — currentReport 64%, weekCoveringDays 100%
+  .  TestIncludedMaterialsFindTheMemberReportCoveringTheseDaysAfterTheGridMoves — includedMaterialsFor 76%, weekCoveringDays 100%
+  .  TestPreviousPlanSkipsTheOpenReportCoveringTheseDaysAfterTheGridMoves — previousWeekPlan 58%, weekEndedBefore 100%
+  .  TestAutomaticCloneCopiesTheReportCoveringLastWeekAfterTheGridMoves — runAutomaticCloneForUser 65%, weekCoveringDays 100%
+  .  TestAnalyticsOverviewCountsTheReportsCoveringTheseDaysAfterTheGridMoves — analyticsOverviewContext 90%, weekCoveringDays 100%
+  .  TestMCPSearchFindsTheReportsCoveringTheseDaysAfterTheGridMoves — mcpSearchReports 76%, weekCoveringDays 100%
+  .  TestParticipationCountsTheReportsCoveringTheseDaysAfterTheGridMoves — analyticsParticipation 71%, weekCoveringDaysOf 100%
+  .  TestDecisionsAreReadableOnlyInsideTheReadersScope — listWorkItemDecisions 57%
+  .  TestNobodyRecordsADecisionOnAnotherOrganisationsWork — createWorkItemDecision 20%
+  .  TestOnlyTheRecorderOrAnAdministratorChangesADecision — updateDecision 30%, deleteDecision 63%
+  .  TestDecisionSuggestionsStayInsideTheReadersScope — suggestDecisions 19%
+  .  TestTheAskBlockIsBelowTheIssueBlockAndNotOnTopOfIt — issueSlide 91%
+  .  TestTheDeduplicationCardDoesNotCountTwoThingsAsOne — buildHighlights 41%
+  .  TestTheDigestDurationIsTheTasksNotTheWindows — executiveDigest 75%
+  .  TestTheOverlapBetweenTwoTasksIsNotTheWindow — workGraph 70%
+  .  TestTheDirectorySearchNarrowsToWhatWasTyped — adminUsers 73%
+  .  TestTheDirectoryRoleFilterNarrowsToThatRole — adminUsers 75%
+  .  TestWithNoAIGatewayEveryAIPathSaysSoRatherThanFailing — parseAIText 39%, suggestDecisions 23%, uploadImportPPTX 3%
+  .  TestFeaturesLeftOffAnswerWithTheirOwnCodeNotAFailure — reviewReport 8%, forceConfluenceSync 23%
+  .  TestReadingWorksWithEveryOptionOff — listReports 100%, analyticsParticipation 71%
+  .  TestSearchOnPlainPostgreSQLFallsBackInsteadOfFailing — searchReports 50%, searchWorkItems 39%
+  .  TestASubmissionIsNotWhenAReportBecomesVisible — canViewReport 80%
+  .  TestOutlookForDueDate — outlookForDueDate 100%
+  .  TestAgreedDueIsOnlyOfferedWhereThereIsNoDeadline — workItemsWantingADeadline 100%
+  .  TestTheEmbeddingWorkerFinishesTheBacklogRatherThanOneBatchOfIt — drainEmbeddings 79%, embedPending 76%
+  .  TestTheRebuildSaysHowMuchIsStillMissing — rebuildEmbeddings 74%, pendingEmbeddingCount 100%
+  .  TestTheSearchSettingSaysWhichPieceIsMissingInTheReadersLanguage — embeddingConfig 64%
+  .  TestAnAdministratorCanSeeWhetherALostVolumeCostsTheSecrets — adminEncryption 63%
+  .  TestEveryCitationOfAPageCanBeReachedWithinTheCallersScope — evidenceUses 73%
+  .  TestAnOrganisationIsOnlyOwedTheWeeksItsPeopleWereHereFor — analyticsOrganizations 64%
+  .  TestTheExportedDeckIsAFileWithTheReportInIt — exportReportPPTX 58%
+  .  TestTheIssuePageAppearsOnlyWhenThereAreIssues — issueSlide 86%
+  .  TestTheDeckGrowsWithTheWorkAndStaysOpenable — renderReferencePPTX 86%
+  .  TestNobodyExportsSomebodyElsesDeck — exportReportPPTX 65%
+  .  TestTheAskReachesTheDeckAndStaysApartFromTheIssue — issueSlide 96%, askRuns 96%
+  .  TestThePeriodDeckCarriesWhatTheAuthorsAskedFor — askSlide 100%
+  .  TestADeckWithBothAnIssuePageAndCapturesStaysValid — exportReportPPTX 58%, appendSlidesToPPTX 86%
+  .  TestADeckCarriesNoPageThatHoldsNothing — renderReferencePPTX 86%
+  .  TestTwoExportsOfOneUnchangedReportAreTheSameFile — exportReportPPTX 58%
+  .  TestAIMessageNamesWhichFailureItWas — aiUserMessage 100%
+  .  TestConfluenceMessageIsActionableAndLeaksNothing — safeConfluenceError 100%
+  .  TestForecastCompletion — forecastCompletion 98%
+  .  TestNoLandingDateDoesNotRepeatWhatStalledAlreadySays — noLandingDate 100%
+  .  TestNoLandingCatchesWorkThatLooksHealthy — noLandingDate 67%
+  .  TestShortFlatSeriesSaysStalledRatherThanAskingForMoreWeeks — forecastCompletion 18%
+  .  TestForecastPaceIsPerWeekNotPerReport — forecastCompletion 61%, weekSpan 75%
+  .  TestWeekSpanNeverDividesByZero — weekSpan 100%
+  .  TestNothingFinishedOrStalledIsCalledUnlandable — noLandingDate 100%
+  .  TestADeadlineThatHasArrivedIsStatedNotProjected — outlookForDueDate 55%
+  .  TestAClosedPeriodIsNotForecast — outlookForPeriodEnd 57%
+  .  TestHandoverSaysWhenNobodyHasMentionedTheWorkInMonths — cautionFor 73%, weeksSince 100%
+  .  TestTheWorkListCarriesHowLongAgoTheLastReportWas — loadWorkItems 84%
+  .  TestAHandoverCarriesTheLeaversOwnWorkAndNobodyElses — handover 59%
+  .  TestAHandoverPutsWhatIsStuckFirstAndThenTheOldest — handover 63%
+  .  TestAHandoverPutsAStuckTaskAheadOfAMovingOne — handover 63%
+  .  TestAHandoverForAnIdentifierThatIsNotOneIsRefused — handover 10%
+  .  TestAHandoverCarriesTheDecisionsRecordedOnTheLeaversWork — handover 60%
+  .  TestALeaderReadingADepartingMembersHandoverGetsTheirWork — handover 63%
+  .  TestHarnessCanSignInAndRead — login 51%, authenticate 42%
+  .  TestOnePersonsReportIsNotAnothersToRead — getReport 86%, updateReport 73%, deleteReport 44%, createReport 62%
+  .  TestRoleAndSessionGatesAnswerBeforeTheHandlerDoes — requireRole 100%, requireAuth 58%
+  .  TestAWriteFromAnotherOriginIsRefused — csrf 100%
+  .  TestAFailedImportSaysWhatTheAdministratorsTestWouldSay — processImportFile 54%, aiUserMessage 31%
+  .  TestAnImportReplacementDoesNotKeepTheOldReviewStamp — confirmImportJob 57%
+  .  TestAnImportMergeDoesNotKeepTheOldReviewStamp — confirmImportJob 55%
+  .  TestAnImportWhereEveryFileIsRejectedDoesNotStayOpen — uploadImportPPTX 46%
+  .  TestTheConfiguredImportLimitsBoundTheRequest — uploadImportPPTX 11%
+  .  TestAnImportOfRejectedAndAlreadySeenFilesIsPartial — uploadImportPPTX 53%
+  .  TestAJobWithNothingToReviewDoesNotAskToBeReviewed — importJobStatus 100%
+  .  TestADeckExportedFromOneWeekCanBeImportedIntoAnother — processImportFile 68%
+  .  TestIssueClearanceMeasuresWeeksNotMentions — issueClearanceFor 86%
+  .  TestNoRecordedEndingsIsNotAZeroWeekAnswer — issueClearanceFor 54%
+  .  TestTheLongestObstacleIsTheOneReported — issueClearanceFor 86%
+  .  TestTheClearanceFigureSurvivesBothScopes — issueClearanceFor 86%, periodRollup 60%
+  .  TestAnUnreadClearanceIsNotAnEmptyOne — periodRollup 60%
+  .  TestAnIssueAnsweredWeeksAgoIsNotAnOpenOne — summarizeWorkItem 66%
+  .  TestAnOpenIssueIsMeasuredAcrossTheWeeksItSpannedNotTheReportsThatMentionedIt — summarizeWorkItem 82%
+  .  TestTheIssueThresholdMeansAtLeastThatManyWeeksNotMoreThan — summarizeWorkItem 82%
+  .  TestOneWeekOfAnIssueIsNotYetPersistent — summarizeWorkItem 82%
+  .  TestWithLocalLoginTurnedOffThePasswordFormIsRefusedAndSaysWhy — login 57%
+  .  TestLocalLoginCannotBeTurnedOffWithNoOtherWayIn — updateSettings 12%
+  .  TestMCPRefusesARequestFromAnotherSite — mcp 56%
+  .  TestConditionIsLoggedOncePerProcess — once 100%
+  .  TestDifferentConditionsAreEachReported — once 90%
+  .  TestConditionLogIsSafeUnderConcurrentRequests — once 90%
+  .  TestAReportMailArrivesAsTheRelayCanReadIt — sendMail 60%, buildMailMessage 25%
+  .  TestTheMailLeavesOutWhatWasNotWritten — reportMailBody 44%, writeMailField 100%
+  .  TestReportMailKeepsIncludedTeamMaterialInItsOwnSection — reportMailBody 97%
+  .  TestNothingTypedIntoAReportCanAddItsOwnHeaders — headerSafe 100%, buildMailMessage 25%
+  .  TestOnlyAPlainAddressIsAccepted — validMailAddress 100%
+  .  TestAPasswordIsNotOfferedToAPlaintextRelay — unusable 85%
+  .  TestSubmittingAReportSendsItToTheAddressTheWriterChose — queueReportMail 100%, sendNextQueuedMail 53%
+  .  TestNothingIsSentForAWriterWhoDidNotAskForIt — queueReportMail 100%
+  .  TestARefusedDeliveryKeepsTheRelaysOwnReason — sendNextQueuedMail 56%
+  .  TestTheRetryBudgetOutlivesAnOrdinaryOutage — retryDelay 100%
+  .  TestOneRefusedAddressDoesNotHoldUpEverybodyElse — sendNextQueuedMail 65%
+  .  TestADeliveryThatRunsOutOfTriesSaysSoAndKeepsTheLastReason — sendNextQueuedMail 59%, markMailFailed 50%
+  .  TestALongBodyIsWrappedAndSurvivesTheRoundTrip — buildMailMessage 25%
+  .  TestAPasswordOnlyTravelsOverAnEncryptedConnection — sendMail 68%
+  .  TestAWrongPasswordDoesNotSendAnyway — sendMail 53%
+  .  TestTheOperatorCanSeeWhatHappenedToTheMail — adminMailHealth 50%
+  .  TestTheOperatorSeesEveryQueueTheRelayTouches — adminMailHealth 50%, adminMailDeliveries 53%
+  .  TestTheOperatorCanPickTheFailuresOutOfAGoodWeek — adminMailDeliveries 75%, mailDeliveryFilter 100%
+  .  TestAReportMailCarriesTheDeckAsAFileAClientCanOpen — buildMailMessage 89%, wrapBase64 100%, mailFileParameter 75%
+  .  TestAMailWithNothingToAttachStaysASinglePart — buildMailMessage 25%
+  .  TestAnAwkwardFileNameSurvivesBothKindsOfClient — rfc2231Value 100%, asciiMailFilename 82%
+  .  TestTheMailedDeckIsTheSameFileTheDownloadGives — reportMailAttachments 50%, reportDeck 71%
+  .  TestAWriterCanSendThemselvesTheRealMailBeforeMonday — testMyReportMail 71%, mailRecipientFor 67%
+  .  TestATestMailWithNowhereToGoSaysSoInsteadOfSending — mailRecipientFor 83%
+  .  TestOneWritersTestDoesNotHoldUpAnothers — take 89%, newSendCooldown 100%
+  .  TestATestMailWithNoRelayConfiguredNamesTheSetting — mailSettingsForTest 62%
+  .  TestTheWriterIsToldWhatToDoAndNotWhereTheRelayLives — mailUserMessage 100%
+  .  TestTheMessageCarriesTheHeadersNothingDownstreamWillAdd — buildMailMessage 25%, mailMessageID 88%
+  .  TestTheSenderNameCannotBecomeAnAddress — mailDisplayName 100%, buildMailMessage 25%
+  .  TestASenderNameOfNothingLeavesJustTheAddress — buildMailMessage 21%
+  .  TestTheMaintenanceSweepThrowsAwayOnlyWhatThePolicySays — runMaintenance 80%
+  .  TestTheImportSourceCleanupActuallySelects — cleanupImportSources 75%
+  .  TestMaintenanceSweepsWithoutWaitingForItsFirstTick — maintenance 86%, runMaintenance 80%
+  .  TestTheRollupAModelReadsIsTrimmedAndSaysSo — rollupForModel 85%
+  .  TestASmallRollupIsNotDescribedAsPartial — rollupForModel 56%
+  .  TestTheRollupAModelReadsIsBoundedByWeightNotOnlyByRows — rollupForModel 85%
+  .  TestARollupInsideTheBudgetIsNotDescribedAsCutForSize — rollupForModel 56%
+  .  TestTheRollupBudgetCountsBothCopiesOfTheAnswer — encodedSize 71%
+  .  TestThePeriodSummaryDoesNotNameEverybody — mcpRollupContributors (상수/원장) 참조
+  .  TestAnArgumentTheServerCannotUseIsRefusedInTheCallersTerms — mcpDateArgument 67%
+  .  TestAStatusTheServerDoesNotKnowIsRefusedRatherThanAnsweredWithZero — mcpStatusArgument 83%
+  .  TestATornRequestIsAnsweredAsJSONRPC — mcp 56%
+  .  TestMCPAnswersABatchTheWayTheProtocolAsks — mcpBatch 65%
+  .  TestTheSearchCanBeFollowedIntoTheReportItFound — mcpReportDetail 53%
+  .  TestTheMissingSubmitterListNamesPeopleWithinTheCallersScope — mcpMissingSubmitters 80%
+  .  TestTheDepartmentBoardIsReadableThroughMCP — mcpScheduleTasks 74%
+  .  TestEveryToolTheListingOffersAnswersItsOwnDefaultCall — mcpTools 100%
+  .  TestTheProfileCardNamesEveryMCPToolTheServerOffers — mcpTools 100%
+  .  TestALeadersReportNamesItsMaterialsWithoutCarryingThem — mcpReportDetail 80%
+  .  TestReportsCanBeFoundByWhatTheySayNotOnlyByWhen — mcpTextSearch 88%
+  .  TestARefusedMCPClientIsToldWhereToSignIn — protectedResourceMetadata 100%, wwwAuthenticate 100%
+  .  TestAKeycloakTokenOpensMCPForAnAccountWeeklyKnows — oauthPrincipal 71%
+  .  TestATokenIsRefusedForTheRightReason — oauthPrincipal 82%
+  .  TestEveryToolAnswersWithinItsOwnSchema — mcpTools 100%
+  .  TestMCPOffersOnlyTheToolsTheCallerCanUse — mcp 48%
+  .  TestMCPRefusesAnAdministratorToolAndSaysWhy — mcp 48%
+  .  TestMCPAnswersWithinTheCallersOwnOrganisation — mcp 48%
+  .  TestMCPSearchReturnsOnlyTheCallersOwnOrganisation — mcpSearchReports 76%
+  .  TestAnAPIKeyWithoutTheMCPScopeCannotUseMCP — apiKeyRequestAllowed 46%
+  .  TestAModelCanWriteItsOwnReportWithoutOverwritingWhatItDidNotRead — mcpCreateReport 82%, mcpUpdateReport 83%
+  .  TestWritingThroughMCPNeedsTheWriteScopeAndOnlyReachesOnesOwnReport — callMCPWriteTool 67%, mcpWriteTools 100%
+  .  TestMeetingCoversTheseDaysAfterTheGridMoves — buildMeeting 81%
+  .  TestTheDigestCountsOnlyTheRowsTheCutCouldHaveKeptInstead — capDigest 100%
+  .  TestMergingWorkCarriesEverythingThatPointedAtIt — mergeWorkItem 47%
+  .  TestAnUnknownAPIPathIsNotFiledUnderTheSiteRoot — requestMetrics 82%, isAPIPath 100%
+  .  TestTheRecordedRouteLeavesTheMethodToTheMethodColumn — routePath 100%
+  .  TestWorkSearchSaysWhenTheMeaningPassDidNotRun — searchWorkItems 47%
+  .  TestSomebodyTheProviderKnowsIsStillAStrangerHere — oidcCallback 36%
+  .  TestWithProvisioningOnTheNominatedClaimBecomesTheAccount — oidcCallback 37%
+  .  TestOnlyTheNominatedGroupArrivesAsAnAdministrator — oidcCallback 38%
+  .  TestACallbackThatCannotBeMatchedToALoginIsRefused — oidcCallback 40%
+  .  TestWithNoRedirectConfiguredTheSchemeComesFromTheRequest — oidcCallback 40%
+  .  TestOIDCDiscoverySaysWhichFaultItWasWithoutQuotingTheServer — oidcUserMessage 100%
+  .  TestOnlyTheSPADocumentMayReachKeycloakAndOnlyForSilentSignIn — documentConnectOrigin 100%, silentIssuer 83%
+  .  TestPromptNoneIsUsedOnlyForSilentOIDCStarts — oidcStart 52%
+  .  TestSilentOIDCStartRequiresTheAutoLoginSetting — oidcStart 60%, oidcAutoLogin 100%, authProviders 100%
+  .  TestOIDCStartDerivesTheCallbackAndCookieFromTheRequest — oidcStart 60%
+  .  TestSilentProviderErrorsReturnToTheLoginScreenAndConsumeState — oidcCallback 19%
+  .  TestMalformedOrUnmatchedCallbacksDoNotConsumeState — oidcCallback 19%
+  .  TestOIDCReturnToCannotLeaveTheSPAHash — safeOIDCReturnTo 100%
+  .  TestSuccessfulOIDCLoginReturnsToTheStoredHash — oidcCallback 37%
+  .  TestBothScreensCountTheSameSubmissions — analyticsOverview 56%, analyticsParticipation 70%
+  .  TestACodeSomebodyIsAlreadyUsingSaysSoRatherThanFailing — createOrganization 58%
+  .  TestAParentThatIsNotThereIsTheCallersMistakeNotAFault — createOrganization 54%
+  .  TestAnIdSomebodyIsAlreadyUsingSaysSoRatherThanFailing — createUser 68%
+  .  TestDeclaringTheSamePredecessorTwiceSaysItIsAlreadyThere — createWorkItemLink 48%
+  .  TestALoopInTheOrganisationChartDoesNotHangTheReadsUnderIt — orgSubtree 100%, periodRollup 60%
+  .  TestSightReachesDownTheWholeSubtreeAndNoFurther — canViewReport 73%, teamReports 100%, getReport 86%
+  .  TestAnOrganisationCanBeCorrectedWithoutTouchingTheTable — updateOrganization 46%
+  .  TestAnOrganisationCannotBeMovedUnderItself — updateOrganization 49%
+  .  TestALeaderWithNoOrganisationIsToldWhy — queryReports 69%
+  .  TestAnAdminEditKeepsThePasswordUnlessItSendsOne — updateUser 61%
+  .  TestAnAccountThatCannotBeReachedIsToldWhy — accountNotice 100%
+  .  TestTheSessionCarriesTheAccountNotice — me 100%
+  .  TestTheWeekSomebodyJoinedCountsAgainstThem — analyticsParticipation 70%
+  .  TestTheParticipationRatesAgreeWithTheCountsBesideThem — analyticsParticipation 71%
+  .  TestCorrectingOneFieldOfADecisionKeepsTheRest — updateDecision 52%
+  .  TestEditingOneLineOfAnAutomaticDraftKeepsTheRest — updateConfluenceCandidate 58%
+  .  TestAnAutomaticDraftKeepsTheLimitsAReportWouldEnforce — updateConfluenceCandidate 42%
+  .  TestMyRecordCountsTheWeeksTheArrearsListCounts — myParticipation 77%
+  .  TestDeadlineInstantMatchesTheSQLItGuards — instant 100%
+  .  TestWeekInProgressIsMarkedOpen — instant 100%
+  .  TestAnAccountWithNoPasswordIsRefusedRatherThanCrashing — login 66%
+  .  TestOutlookForPeriodEnd — outlookForPeriodEnd 100%
+  .  TestPeriodMissDoesNotRepeatWhatNoLandingAlreadySays — missesThePeriod 67%
+  .  TestPPTXProjectionAttributesIncludedTeamMaterialWithoutCopyingIdentity — reportItemsWithIncludedMaterials 100%, renderReferencePPTX 81%
+  .  TestOnTimeAndLateAreNotTheSameColumn — analyticsParticipation 71%
+  .  TestWorkItemSearchDoesNotScanOnOneCharacter — searchWorkItems 52%
+  .  TestReportInclusionPreferencesAreScopedNormalisedAndAudited — myReportInclusions 50%, updateMyReportInclusions 63%, reportInclusionPreferenceFor 91%
+  .  TestIncludedMaterialsUseTheExactWeekWithoutCopyingReportItems — currentIncludedMaterials 67%, includedMaterialsFor 78%, loadReport 58%
+  .  TestNestedMaterialsNeverBroadenTheOuterReportPermission — includedMaterialsFor 78%, loadReport 58%
+  .  TestAMissingReportIsRefusedLikeSomebodyElses — updateReport 73%
+  .  TestDeletingAMissingReportIsRefusedLikeSomebodyElses — deleteReport 49%
+  .  TestNobodyReviewsTheirOwnReport — reviewReport 19%, canReviewReport 50%
+  .  TestATeamLeaderReviewsTheirOwnOrganisationAndNoOther — canReviewReport 62%
+  .  TestAReportCanOnlyBeReviewedFromSubmitted — reviewReport 56%
+  .  TestRejectionMustSayWhy — reviewReport 61%
+  .  TestEditingAnApprovedReportTakesTheApprovalBackAndSaysSo — updateReport 64%
+  .  TestAReviewedReportSaysWhoReviewedIt — loadReport 66%, approveReport 100%, rejectReport 100%
+  .  TestRollupSendsTheWeeklySeriesOnlyForTheRowsThatAreDrawn — trimTimelineSeries 100%
+  .  TestRollupStallCountsWeeksNotReports — isStalled 100%
+  .  TestPublishedPercentagesAreRounded — analyticsOverview 67%
+  .  TestASaveConflictDoesNotSendTheWriterToLoseTheirWriting — updateReport 82%
+  .  TestADeleteConflictSaysWhatChangedUnderneath — deleteReport 46%
+  .  TestTheMonthBoardCarriesTheDepartmentsPlanAndItsCheckboxes — createScheduleTask 59%, listScheduleTasks 62%, setScheduleTaskDone 70%
+  .  TestWorkThatCrossesTheMonthIsOnBothMonths — listScheduleTasks 62%, scheduleRange 62%
+  .  TestEveryoneReadsTheBoardAndOnlyTheirOwnLinesAreTheirsToTick — scheduleVisibility 62%, canManageScheduleTask 100%, manageableOwners 27%
+  .  TestAnSRNumberBringsBackItsTitleAndLinksToThePortalNotTheAPI — lookupITSM 78%, itsmLookup 89%, itsmURL 85%, itsmTitle 38%
+  .  TestAnITSMWithNoAPIIsReadFromItsPage — itsmTitle 44%
+  .  TestASettingThatCannotWorkIsRefusedAtTheBox — validOptionalRegex 67%, validITSMTemplate 71%
+  .  TestAnUnknownPriorityBecomesTheOrdinaryOne — normalizePriority 100%
+  .  TestTheBoardSaysHowMuchOfTheMonthItCouldNotDraw — listScheduleTasks 69%
+  .  TestEditingALineReplacesTheWholeLineIncludingItsLinkToTheWork — updateScheduleTask 53%, scheduleWorkItemAllowed 79%
+  .  TestALineIsRewrittenOnlyByThePeopleWhoCouldTickItAndOnlyOntoTheirOwnDepartment — updateScheduleTask 74%, authorizeScheduleTask 67%, canManageScheduleTask 100%
+  .  TestTheDeadlineDigestListsWhatIsDueGroupedByDaysLeft — queueDueScheduleReminders 75%, sendNextQueuedScheduleReminder 43%, scheduleTasksDueSoon 85%, scheduleReminderBody 85%
+  .  TestTheDigestGoesOutOnceADayHoweverOftenTheWorkerRuns — queueDueScheduleReminders 75%
+  .  TestNoDigestForSomebodyWhoDidNotAskAndNoneWithNothingInIt — queueDueScheduleReminders 75%, sendNextQueuedScheduleReminder 35%
+  .  TestTheSubjectSaysHowManyAndHowSoon — priorityLabel 100%, scheduleReminderSubject 100%
+  .  TestOnlyTheOwnerSetsAWorkItemsDueDate — setWorkItemDueDate 62%
+  .  TestNobodyCommentsOnAReportTheyCannotRead — addComment 70%
+  .  TestNobodyReadsSomebodyElsesHandover — handover 66%
+  .  TestOrganisationWideMeetingMaterialIsForLeaders — meetingMode 58%
+  .  TestOrganisationWideWorkSearchIsForLeaders — searchWorkItems 38%
+  .  TestOrganisationWideChangeSummaryIsForLeaders — weeklyChanges 67%
+  .  TestTheScopeSwitchNarrowsAndWidensOnEveryScreenThatOffersIt — listWorkItems 68%, searchWorkItems 50%, weeklyChanges 63%, meetingMode 51%
+  .  TestTheMeetingsCrossOrgWaitFollowsTheScopeSwitch — crossOrgBlocked 82%
+  .  TestATitleMatchOutranksAFloodOfRecentBodies — searchScan 88%, appendSearchMatches 94%
+  .  TestAThinSearchSaysWhichPassCouldNotRun — searchReports 50%
+  .  TestASlowEmbeddingGatewayDoesNotHoldTheSearchBox — searchSemantic 18%
+  .  TestAStoredSecretCanBeRemovedAndABlankOneIsNotAnUpdate — updateSettings 42%, clearSecretSetting 87%
+  .  TestTheSessionSaysWhichOptionalFeaturesAreOn — me 100%
+  .  TestTurningTheAIOnNeedsSomewhereToSendThePrompt — updateSettings 47%
+  .  TestTurningConfluenceOnNeedsAnAddressAndAWayToSignIn — updateSettings 65%
+  .  TestAScopedKeyOpensEveryPathItsScopeNames — apiKeyRequestAllowed 77%
+  .  TestTheMCPSurfaceChecksTheEnvelopeItAnswers — mcp 48%
+  .  TestLocalLoginCanBeTurnedBackOnWithoutAnIdentityProvider — updateSettings 36%
+  .  TestEverySettingCanBeReachedOnAFreshInstall — adminSettings 76%
+  .  TestEverySettingHasABoxOnTheAdministratorsScreen — settingDefinitions (상수/원장) 참조
+  .  TestARefusedStartUpNamesWhatIsMissingAndWhatToDo — loadEnvironment 83%, bootstrapAdmin 75%
+  .  TestAShortBootstrapPasswordSaysWhyAndThatItCanBeChanged — loadEnvironment 83%
+  .  TestAReportComesOutOnItsNearestAncestorsTemplate — exportReportPPTX 58%, uploadPPTXTemplate 56%
+  .  TestAnExportIsDrawnOnTheOrganisationsOwnTemplate — exportReportPPTX 58%, templateForOrganization 83%
+  .  TestAMissingOrganisationTemplateFallsBackInsteadOfFailing — exportReportPPTX 58%
+  .  TestACustomTemplateHasItsPlaceholdersFilledIn — exportReportPPTX 58%
+  .  TestTheTraceIdOnTheReadersScreenIsInTheLog — requestMetrics 82%, writeError 100%
+  .  TestAnOrdinaryRefusalIsNotLoggedAsAFailedRequest — requestMetrics 76%
+  .  TestTheDirectoryCountsAndListsAccountsWithNoOrganisation — adminUsers 71%
+  .  TestAnUnknownOrganizationFilterIsIgnoredRatherThanObeyed — adminUsers 67%
+  .  TestACommentHasToSaySomethingAndNotTooMuch — addComment 70%
+  .  TestFoldingATaskNeedsATaskToFoldItInto — mergeWorkItem 9%
+  .  TestSplittingATaskUnderItsOwnNameIsRefused — splitWorkItem 41%
+  .  TestTheAgendaRaisesWorkWaitingOnAnotherOrganisation — meetingMode 70%
+  .  TestOnlyTheAuthorClonesAReport — cloneReport 58%
+  .  TestOrganisationWidePeriodRollupIsForLeaders — periodRollup 70%
+  .  TestUnreportedSlidesAreNamedAndHeldForReview — uncoveredContentSlides 92%, unreportedSlideWarning 67%, pptxSlidesWithContent 92%, finalizeImportedAIResult 56%
+  .  TestFullyReportedDeckStaysQuietAndReady — uncoveredContentSlides 83%, finalizeImportedAIResult 51%
+  .  TestManyUnreportedSlidesKeepTheirCount — unreportedSlideWarning 67%
+  .  TestUnresolvedActorsAreCountedAndNamed — unresolvedConfluenceActors 100%, unresolvedActorNotice 67%
+  .  TestFullyMappedSyncSaysNothing — unresolvedConfluenceActors 76%
+  .  TestAnonymousPagesAreNotCalledUnmapped — unresolvedConfluenceActors 76%
+  .  TestManyUnresolvedActorsKeepTheirCounts — unresolvedConfluenceActors 100%, unresolvedActorNotice 100%
+  .  TestAnUpgradedDeploymentEndsUpWithTheSchemaAFreshInstallHas — migrate 72%
+  .  TestAMigrationThatHasShippedIsNeverEdited — migrationFiles (상수/원장) 참조
+  .  TestUploadCapsAreEnforced — uploadImportPPTX 64%
+  .  TestDeletingAReportNeedsTheVersionInFrontOfYou — deleteReport 63%
+  .  TestAnImportSaysWhichOfTheThreeThingsWentWrong — uploadImportPPTX 47%
+  .  TestAnOversizedAttachmentUploadIsNotCalledMalformed — uploadAttachments 15%
+  .  TestWorkScopeNeverOpensUpMoreThanTheRoleAllows — where 100%, scopeForPrincipal 100%
+  .  TestImportPathStaysInsideItsOwnJob — safeImportPath 100%
+  .  TestWeekStartWarningStatesWhatIsAtStake — weekStartWarning 100%
+  .  TestAutomaticTeamReminderRejectsAStaleScheduledWeekday — queueTeamReminderForLeader 78%, queueTeamReminders 66%, updateMyWeeklyPreferences 56%
+  .  TestWeeklyTeamReminderSkipsAReportHandedInOnThePreviousWeekGrid — queueTeamReminders 58%, weekCoveringDays 100%
+  .  TestManualTeamReminderQueuesTheCurrentScopedTeamAndSendsWithoutAnAutomaticPreference — sendMyTeamReminders 69%, queueTeamReminders 62%, reminderStillWanted 73%
+  .  TestManualTeamReminderRestartsFailedRowsButKeepsSentRowsDeduplicated — queueManualTeamReminderRecipient 42%, queueTeamReminders 62%
+  .  TestManualTeamReminderPromotesAQueuedAutomaticRowBeforeAutomationIsDisabled — sendMyTeamReminders 53%, queueManualTeamReminderRecipient 33%, updateMyWeeklyPreferences 56%
+  .  TestManualTeamReminderDuplicateKeepsTheFirstManualRequester — sendMyTeamReminders 53%, queueManualTeamReminderRecipient 38%, reminderStillWanted 73%
+  .  TestManualQueuedReminderRevalidatesCurrentAuthorityScopeAndSubmission — reminderStillWanted 82%, sendNextQueuedReminder 34%
+  .  TestClassifyWeeklyChange — classifyWeeklyChange 100%
+  .  TestClassifyWeeklyChangeAfterTheGridMoves — classifyWeeklyChange 55%, snapshotFor 85%, snapshotPrior 86%
+  .  TestOnlyTheOwnerFoldsTwoTasksIntoOne — mergeWorkItem 22%
+  .  TestOnlyTheOwnerSplitsATaskInTwo — splitWorkItem 24%
+  .  TestPredecessorsAreDeclaredOnlyOnYourOwnWork — listWorkItemLinks 52%, createWorkItemLink 17%
+  .  TestOnlyTheTwoEndsRemoveAPredecessorLink — deleteWorkItemLink 48%
+  .  TestOrganisationWideTaskListIsForLeaders — listWorkItems 57%
+  .  TestBothEndsOfADependencyCanTakeItBack — deleteWorkItemLink 52%
+  .  TestAnIdentifierThatIsNotOneIsRefusedBeforeAnythingIsRead — deleteWorkItemLink 19%
+  .  TestADependencyThatWouldCloseALoopIsRefused — createWorkItemLink 52%
+  .  TestStallIsMeasuredInWeeksNotInReports — summarizeWorkItem 66%
+  .  TestAPlanUnchangedSinceTheFirstReportCountsThatFirstReport — summarizeWorkItem 65%
+  .  TestWorkSearchShowsTheStrongestMatchFirstAndThenTheMostRecent — searchWorkItems 53%
+  .  TestWorkSearchSaysWhichPieceOfTheMeaningSearchIsMissing — searchWorkItems 42%
+  .  TestAMeaningOnlyMatchDoesNotClaimTheSameProblem — describeWorkHit 73%
+
+341 guard(s) reached what they name.

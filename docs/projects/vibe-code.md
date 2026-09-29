@@ -1,7 +1,7 @@
 ---
 title: "vibe-code — 자율 개선 이력"
 description: "vibe-code: 자율 개선 회차 6회, 릴리즈 5건. 최근 릴리즈 v1.4.5 (자산 0개)."
-last_modified_at: 2026-09-29 12:54:11 +0900
+last_modified_at: 2026-09-29 13:44:09 +0900
 ---
 {% raw %}
 <script type="application/ld+json">
@@ -18,7 +18,7 @@ last_modified_at: 2026-09-29 12:54:11 +0900
   "name": "hkjang",
   "url": "https://github.com/hkjang"
  },
- "dateModified": "2026-09-29T12:54:11+09:00",
+ "dateModified": "2026-09-29T13:44:09+09:00",
  "version": "1.4.5"
 }
 </script>
@@ -35,6 +35,7 @@ last_modified_at: 2026-09-29 12:54:11 +0900
 <dt>저장소</dt><dd><a href="https://github.com/hkjang/vibe-code">https://github.com/hkjang/vibe-code</a></dd>
 <dt>마지막 회차</dt><dd>2026-09-29 12:46 KST — <span class="pill pill-failed">❌ 실패</span> <strong>CI failed</strong>, PR open <a href="https://github.com/hkjang/vibe-code/pull/6">PR #6</a></dd>
 <dt>최근 릴리즈</dt><dd><a href="https://github.com/hkjang/vibe-code/releases/tag/v1.4.5">v1.4.5</a> — released · 자산 0개 (이전 v1.4.0: 2개) <span class="pill pill-failed">❌ 자산 누락</span> <a href="https://github.com/hkjang/vibe-code/releases">전체 릴리즈 →</a></dd>
+<dt>수정 과제</dt><dd>⚠️ 오류 대응(자동 적재): 마지막 회차가 &#x27;verify-failed&#x27; 로 끝났습니다. CI failed, PR open https://github.com/hkjang/vibe-code/pull/6</dd>
 </dl>
 
 ## 회차 이력

@@ -28,3 +28,7 @@
 - 화면 렌더링·wake 부재 동적 계측·전체/권한 시험은 재실행하지 않음; OpenAPI·diff --check 통과. 릴리즈 시 DB 없는 시험 성공을 통합 검증으로 세지 말 것.
 - [러너 12:48] review approved — 리뷰 승인 (risk=low)
 - [러너 12:48] pr created — https://github.com/hkjang/weekly/pull/26
+- [러너 13:11] ci passed — 검사 1개 모두 success
+- [러너 13:11] merge done — 0473e95
+- [러너 13:42] release published — v0.313.0
+- [러너 13:44] assets verified — v0.313.0 자산 1개 (이전 v0.312.0: 1)
