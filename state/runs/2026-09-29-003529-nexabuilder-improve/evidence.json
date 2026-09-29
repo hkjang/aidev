@@ -1,0 +1,191 @@
+{
+  "run_id": "2026-09-29-003529-nexabuilder-improve",
+  "generated": "2026-09-30T00:54:53+09:00",
+  "run": {
+    "run_id": "2026-09-29-003529-nexabuilder-improve",
+    "project": "nexabuilder",
+    "kind": "improve",
+    "started": "2026-09-30T00:35:30+09:00",
+    "model": "claude-opus-5",
+    "policy_version": "4a9e91ac7",
+    "prompts_hash": "ce085c79e18002e2",
+    "runner_version": "d36dd84d8",
+    "arm": "no-scout",
+    "experiment": "roles-2026-09",
+    "finished": "2026-09-30T00:54:53+09:00",
+    "outcome": "verify-failed"
+  },
+  "record": {
+    "ts": "2026-09-30T00:54:53+09:00",
+    "date": "2026-09-29",
+    "project": "nexabuilder",
+    "result": "fix-round: CI failed, PR open https://github.com/hkjang/nexabuilder/pull/39",
+    "outcome": "verify-failed",
+    "run_id": "2026-09-29-003529-nexabuilder-improve",
+    "base_sha": "a3ca1438f9ee9135284a782b5e615baeb5eeebf0",
+    "head_sha": "297a248d32351b141b57d4f8fc8bac5e7d7532d5",
+    "pr": "https://github.com/hkjang/nexabuilder/pull/39",
+    "stages": {
+      "base": {
+        "state": "pinned",
+        "reason": "master@a3ca143",
+        "at": "2026-09-30T00:35:34+09:00"
+      },
+      "autonomy": {
+        "state": "release",
+        "reason": "",
+        "at": "2026-09-30T00:35:34+09:00"
+      },
+      "verify": {
+        "state": "passed",
+        "reason": "검증 1개 통과 (auto)",
+        "at": "2026-09-30T00:49:04+09:00"
+      },
+      "review": {
+        "state": "approved",
+        "reason": "리뷰 승인 (risk=low)",
+        "at": "2026-09-30T00:54:09+09:00"
+      },
+      "pr": {
+        "state": "created",
+        "reason": "https://github.com/hkjang/nexabuilder/pull/39",
+        "at": "2026-09-30T00:54:19+09:00"
+      },
+      "ci": {
+        "state": "failed",
+        "reason": "성공이 아닌 검사: test + bootJar=failure",
+        "at": "2026-09-30T00:54:53+09:00"
+      }
+    },
+    "campaign": "",
+    "autonomy": "release",
+    "arm": "no-scout",
+    "experiment": "roles-2026-09",
+    "engine": "claude",
+    "files": 2,
+    "additions": 159,
+    "deletions": 2,
+    "tests": 1,
+    "title": "fix(export): 긴 텍스트 값 때문에 XLSX 내보내기가 400 으로 죽지 않게 합니다"
+  },
+  "stages": {
+    "base": {
+      "state": "pinned",
+      "reason": "master@a3ca143",
+      "at": "2026-09-30T00:35:34+09:00"
+    },
+    "autonomy": {
+      "state": "release",
+      "reason": "",
+      "at": "2026-09-30T00:35:34+09:00"
+    },
+    "verify": {
+      "state": "passed",
+      "reason": "검증 1개 통과 (auto)",
+      "at": "2026-09-30T00:49:04+09:00"
+    },
+    "review": {
+      "state": "approved",
+      "reason": "리뷰 승인 (risk=low)",
+      "at": "2026-09-30T00:54:09+09:00"
+    },
+    "pr": {
+      "state": "created",
+      "reason": "https://github.com/hkjang/nexabuilder/pull/39",
+      "at": "2026-09-30T00:54:19+09:00"
+    },
+    "ci": {
+      "state": "failed",
+      "reason": "성공이 아닌 검사: test + bootJar=failure",
+      "at": "2026-09-30T00:54:53+09:00"
+    }
+  },
+  "provenance": {
+    "model": "claude-opus-5",
+    "policy_version": "4a9e91ac7",
+    "prompts_hash": "ce085c79e18002e2",
+    "runner_version": "d36dd84d8",
+    "base_sha": "a3ca1438f9ee9135284a782b5e615baeb5eeebf0",
+    "head_sha": "297a248d32351b141b57d4f8fc8bac5e7d7532d5",
+    "pr": "https://github.com/hkjang/nexabuilder/pull/39"
+  },
+  "verification": {
+    "runner": {
+      "source": "auto",
+      "commands": [
+        {
+          "cmd": "sh gradlew --quiet --offline test || sh gradlew --quiet test",
+          "exit": 0,
+          "seconds": 1
+        }
+      ]
+    },
+    "runner_gate": {
+      "ok": true,
+      "state": "verified",
+      "reason": "검증 1개 통과 (auto)"
+    },
+    "after_rebase": null,
+    "review": {
+      "verdict": "approve",
+      "reasons": [],
+      "notes": [
+        "결함 실재 확인: POI 5.3.0 `poi-5.3.0.jar` 의 `org.apache.poi.ss.usermodel.CellBase.setCellValue(String)` 바이트코드에 `SpreadsheetVersion.getMaxTextLength()` 비교와 \"The maximum length of cell contents (text) is %d characters\" IllegalArgumentException 이 있고, `SXSSFCell.getSpreadsheetVersion()` 은 EXCEL2007 을 돌려준다. GlobalExceptionHandler.java:92-95 가 이를 400 으로 바꾼다 — 수정 전 XLSX 가 죽는 경로가 코드로 확인된다.",
+        "테스트 유효성: 원장에 `- 실패 재현:` 줄이 없어 직접 확인했다. `xlsxExportCutsCellsToTheExcelLengthLimit` 은 `hasSize(max)` + `endsWith(\"…\")` 로 `cellText()` 만이 만들 수 있는 결과를 단언하므로 수정 전에는 반드시 실패한다(200 조차 못 받음). 나머지 둘(`...LeavesCellsAtTheLimitUntouched`, `csvExportKeepsOverLongValuesWhole`)은 수정 전에도 통과하는 회귀 가드다 — 잘못은 아니나 이 둘만으로는 변경을 검증하지 못한다. 재실행 결과 16건/실패0/오류0/skip0(1.8초).",
+        "서로게이트 페어 경계(구현자가 스스로 남긴 미검증 항목)를 추적했다: `substring(0, max-1)` 이 페어를 쪼개면 짝 없는 서로게이트가 남지만, SXSSF 는 이를 UTF-8 `OutputStreamWriter` 로 내보내므로 인코더가 REPLACE 로 `?` 한 글자를 쓴다 — 예외도 파일 손상도 아니다. 차단 사유가 아니다.",
+        "남는 우려(릴리즈 노트용): XLSX 에서 32,767자 초과 값은 **조용히 잘린다**. 사용자 쪽 표시는 말줄임표 하나뿐이고 나머지는 서버 WARN 로그다. 기록·감사 목적 내보내기라면 값 전체가 필요한 사용자에게 CSV 를 쓰라고 안내하는 문장이 릴리즈 노트에 있어야 한다.",
+        "확인하지 못한 것 두 가지: (1) 주석·커밋 메시지가 주장하는 \"PDF 는 성공한다\"는 32k 초과 값으로 검증되지 않았다(신규 테스트에 PDF 케이스 없음). OpenPDF 는 셀 한도가 없어 성공할 것으로 보이나 증명하지 않았다 — 주장 범위가 검증 범위보다 넓다. (2) PR #38 CI 실패의 원인은 이 PR 이 건드리지 않았고 여전히 미해명이다. 보안·법무 관점 신규 노출 없음: 인증·인가·마이그레이션·비밀값 무변경, 로그에 listId 와 건수만 남고 셀 내용은 남지 않는다."
+      ],
+      "risk": "low",
+      "blocking": []
+    },
+    "ci_gate": {
+      "ok": false,
+      "state": "failed",
+      "reason": "성공이 아닌 검사: test + bootJar=failure",
+      "checks": 2,
+      "bad": 1
+    }
+  },
+  "release": {
+    "result": null,
+    "assets_sha256": []
+  },
+  "approval": null,
+  "usage": [
+    {
+      "ts": "2026-09-30T00:49:01+09:00",
+      "date": "2026-09-29",
+      "project": "nexabuilder",
+      "phase": "improve",
+      "run_id": "2026-09-29-003529-nexabuilder-improve",
+      "campaign": "",
+      "subtype": "success",
+      "engine": "claude",
+      "duration_ms": 804291,
+      "num_turns": 43,
+      "cost_usd": 3.5162769999999988,
+      "input_tokens": 74,
+      "output_tokens": 31076,
+      "cache_read": 3307974,
+      "cache_create": 108502
+    },
+    {
+      "ts": "2026-09-30T00:54:09+09:00",
+      "date": "2026-09-29",
+      "project": "nexabuilder",
+      "phase": "review",
+      "run_id": "2026-09-29-003529-nexabuilder-improve",
+      "campaign": "",
+      "subtype": "success",
+      "engine": "claude",
+      "duration_ms": 300822,
+      "num_turns": 24,
+      "cost_usd": 1.372773,
+      "input_tokens": 30,
+      "output_tokens": 15227,
+      "cache_read": 821476,
+      "cache_create": 58121
+    }
+  ]
+}
