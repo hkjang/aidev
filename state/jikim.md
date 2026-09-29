@@ -221,3 +221,4 @@
   - retryWebhookDelivery 왕복 테스트 (2/1/M): PostgreSQL 통합 경로 필요.
   - baoKVWrite create/update TOCTOU (3/3/M): 트랜잭션·동시성 검증 필요.
 
+- 릴리즈: v0.2.26 (2026-09-29, run 2026-09-29-172220-jikim-improve)

@@ -22,3 +22,5 @@
 - [러너 17:28] pr created — https://github.com/hkjang/jikim/pull/48
 - [러너 17:32] ci passed — 검사 2개 모두 success
 - [러너 17:32] merge done — ea62e53
+- [러너 17:39] release published — v0.2.26
+- [러너 17:42] assets verified — v0.2.26 자산 2개 (이전 v0.2.25: 2)
