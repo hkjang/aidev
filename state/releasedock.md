@@ -316,3 +316,12 @@
 - 보류 아이디어: 릴리즈 ID 전환 시 표시 로그 초기화 (가치 2 / 위험 2 / S) — 이번에는 커서 격리만 수정, 표시 초기화는 별도 과제.
 - 과제서: 채택 — 현재 훅의 모든 end 영구 종료 및 서버의 정상 {} / max_duration 계약을 확인했고 지정 두 파일로 수용 기준을 검증했다.
 
+## 2026-09-30
+- 선택: 다른 릴리즈로 이동할 때 이전 릴리즈의 실시간 로그가 화면에 남는 결함 수정 (가치 3 / 위험 1 / 작업량 S)
+- 결과: 성공
+- 요약: `useReleaseLogs` 의 리셋 effect(ReleaseDetailPage.tsx:62-64)가 `cursor.current = 0` 만 되돌리고 표시 상태는 그대로 둬서, `useAsync` 가 새 릴리즈를 불러오는 동안 이전 `data` 를 유지하는 탓에 LogPanel 이 언마운트되지 않고 `releaseId` prop 만 갈아치워졌다 — 릴리즈 A 의 배포 로그가 B 상세 화면에 남고 B 의 새 줄이 그 아래 이어 붙어 복사 버튼이 두 릴리즈를 섞어 내보냈다. 같은 리셋 effect(의존성 `[releaseId, enabled]`)에 `setLogs([])` 와 `setConnected(false)` 두 줄만 더했다(프로덕션 1 파일 + 테스트 1 파일); 스트림 effect(의존성에 `streamAttempt` 포함)에는 넣지 않았고 `sequence.current` 는 단조 증가로 남겼다. 검증은 TDD 로 — 기존 릴리즈 이동 테스트에 assertion 을 먼저 넣어 빨강을 확인한 뒤 고쳤고, 반증 실험 두 건으로 각 줄이 특정 테스트에 고정돼 있음을 확인했다. `cd web && npm test -- --run` 122건 전부 통과(13 파일), `npx tsc -b --noEmit` 통과, 무관함 확인용 `cd backend && go test ./... -count=1` 전 패키지 ok(단 `TEST_POSTGRES_DSN` 이 없어 DB 통합 테스트는 SKIP — 통합 검증으로 보고하지 않는다). `web/dist` 는 생성되지 않았고 `VERSION` 은 건드리지 않았다.
+- 실패 재현: `× does not carry the cursor, displayed lines or connected state to another release route` / `→ expect(element).not.toBeInTheDocument() — expected document not to contain element, found <span class="MuiBox-root css-vfpuro">server line 57</span> instead` (Tests 1 failed | 9 passed). 반증 실험도 확인: ① 두 줄을 스트림 effect(`[releaseId, enabled, streamAttempt]`)로 옮기면 `× resumes timeout streams with server IDs, retaining lines and one connection across renders` 가 실패(v0.5.24 되돌림) ② `setConnected(false)` 만 빼면 `→ Unable to find an element with the text: 로그 연결 대기` 가 실패. 둘 다 원복했다.
+- 보류 아이디어: 로그 스트림 한도(3/user·64/global) 거절·해제의 HTTP 통합 테스트 — 동시 스트림 비동기 해제 동기화가 남은 위험, `TEST_POSTGRES_DSN` 필요 (가치 2 / 위험 2 / M); SSE 프레임을 rAF 마다 모아 배치당 한 번만 setLogs — 측정 방법을 먼저 정해야 수용 기준을 쓸 수 있다 (가치 2 / 위험 2 / M); 전체 모드 `onerror` 가 readyState 를 보지 않아 CONNECTING/CLOSED 를 구분 못 함 — 이번에 같은 훅을 건드렸으니 다음 회차로 (가치 1 / 위험 2 / S); LogPanel 의 미사용 `enabled` prop 정리 — JSX 에서 항상 리터럴 true 이고 탭 이탈 시 언마운트라 죽은 경로다 (가치 1 / 위험 1 / S); make vet(gofmt/go vet)·웹 tsc 를 make test 에 포함 — 브랜치 auto/2026-09-17-0853 이 아직 main 에 없어 중복 위험 (가치 2 / 위험 1 / S).
+- 과제서: 채택 — 과제서의 근거(리셋 effect 가 `cursor.current = 0` 한 줄, 스트림 effect 의 `streamAttempt` 의존성, 기존 145행 테스트가 실제 App 라우트로 A→B 이동을 재현)가 지금 코드와 그대로 일치했고 수용 기준 1~4 를 지정된 두 파일 안에서 충족했다.
+
+- 릴리즈: v0.5.25 (2026-09-30, run 2026-09-30-034258-releasedock-improve)

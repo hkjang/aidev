@@ -1,0 +1,26 @@
+Read a markdown heading only when a space follows the hashes
+
+readMarkdown asked only whether a line began with "#", which is not what
+"#" means in markdown. CommonMark wants a space (or the end of the line)
+after one to six hashes, and without that rule a Korean memo's hashtags
+opened slides: "#출시 #마케팅" under a paragraph cut the paragraph in two
+and took the sentence below it onto a slide named after the tags.
+
+The expensive case is the sentence that opens with a numbered reference.
+A heading is the one line whose text does not also become a point, so
+"#1 우선순위는 출시입니다." became a slide title with nothing under it and
+the sentence saying what the memo was about was gone from the deck.
+Nothing else in this reader can lose a sentence that way. The same
+reader also takes .txt, where a leading "#" is not markup at all.
+
+A new atxHeading sits beside underlinesHeading and answers both halves
+of the rule: one to six hashes, then end of line or a space or tab. A
+line that is no longer a heading falls through to the switch's default,
+so it takes the setext lookahead and writer.point exactly as any other
+sentence does, and escapeLine keeps its leading "#" as "\#". The replay
+of an unclosed fence calls the same handle, so the rule reaches there too.
+
+The deck source DSL in internal/deck/source.go reads "#" by its own
+contract and is deliberately untouched; this is the upload reader only.
+Closing "#" sequences ("## 제목 ##") are still left in the heading text
+and are out of scope here.
