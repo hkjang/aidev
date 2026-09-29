@@ -1,0 +1,11 @@
+## 2026-09-29
+- 선택: XLSX 내보내기 시 목록 ID를 안전한 시트 이름으로 변환한다 (가치 3 / 위험 1 / 작업량 S)
+- 결과: 성공
+- 요약: exportXlsx에서 POI WorkbookUtil.createSafeSheetName으로 출력 시트명만 변환했다(프로덕션 1파일, 테스트 1파일). 실제 H2·NexaListRepository·EntityService·SchemaDdlService·MockMvc·POI로 콜론/앞뒤 작은따옴표/긴 ID 신규 4건과 정상 ID 및 헤더·행 보존을 검증했으며 기존 9건도 통과했다. 단일 클래스 13건 통과 후 변환 한 줄을 되돌리자 특수문자 3건이 다시 HTTP 400이었고, 복원 후 전체 test 609건(실패/오류/skip 0, 5분56초), bootJar -x test(6초) 성공; 커밋 ee7f786.
+- 실패 재현: `ListExportIntegrationTest > xlsxExportReplacesColonInSheetName() FAILED` / `java.lang.AssertionError: Status expected:<200> but was:<400>`. 실제 응답 JSON: `{"success":false,"message":"Invalid char (:) found at index (5) in sheet name 'sales:2026_6eaa0a9a'"}`; Resolved Exception은 java.lang.IllegalArgumentException. 최초 실행 10건 중 신규 1건만 실패(xlsx-red.log/xml).
+- 보류 아이디어:
+  - 런타임 차트·피벗 fetch 실패 표시 개선 (가치 3 / 위험 2 / 작업량 M).
+  - 5000행 초과 내보내기 잘림 안내 (가치 3 / 위험 2 / 작업량 M).
+  - 목록 데이터 경로 ScreenPermissionService 게이트 검토 (가치 3 / 위험 4 / 작업량 M).
+  - SQL 기반 목록 휴지통 어댑터 회귀 테스트 (가치 2 / 위험 1 / 작업량 S).
+- 과제서: 채택 — 실제 HTTP 경로에서 콜론 ID의 저장·조회는 성공하고 POI 시트 생성만 실패함을 확인했으며 지정한 최소 수정으로 수용 기준을 충족했다.

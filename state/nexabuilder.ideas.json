@@ -1,21 +1,12 @@
 [
   {
-    "title": "CSV/XLSX/PDF 내보내기가 _limit 없이 listData 를 불러 그리드 한 페이지(기본 100행)만 내려준다 — readQueryParams 에서 _limit 기본값을 MAX_FEED_ROWS 로",
-    "value": 4,
-    "risk": 2,
-    "size": "S",
-    "status": "done",
-    "note": "2026-09-28 구현(커밋 ff96bd8). readQueryParams 에서 putIfAbsent(\"_limit\", NexaUiService.MAX_FEED_ROWS) — 세 엔드포인트가 이 메서드 하나를 공유하므로 기본값이 한 곳에만 있다. 수정 전 CSV 6줄(헤더+5)·XLSX lastRowNum 5 로 빨간 것을 확인하고 고쳐 초록. 전체 605건 통과. 프로덕션 파일 1개.",
-    "updated": "2026-09-28"
-  },
-  {
-    "title": "런타임 대체 뷰 7종이 fetch 실패를 catch (e) 로 삼켜 '데이터 없음' 으로 보여준다 — Nexa.toast 로 통일",
+    "title": "런타임 대체 뷰 7종이 fetch 실패를 catch (e) 로 삼켜 데이터 없음으로 보여준다 — Nexa.toast 로 통일",
     "value": 3,
     "risk": 2,
     "size": "M",
     "status": "pending",
-    "note": "2026-09-27 의 _offset/_limit 500 이 몇 달 안 보인 이유가 이것이고, 이번 회차에 고친 내보내기 truncation 도 같은 '조용한 실패' 계열이다(그쪽은 애초에 에러조차 아니라 잘린 파일이 그냥 내려갔다). 템플릿 7개라 '파일 6개 이내' 규칙에 걸려 2~3개씩 쪼개야 한다. 서버 쪽 관찰 가능한 결함이 줄어들면서 이번 항목의 상대 가치가 올라갔다.",
-    "updated": "2026-09-28"
+    "note": "chart.load와 pivot.load 데이터 요청의 빈 catch를 재확인. 나머지 5개도 catch 위치 확인했으나 동작 실행은 미확인. 7개 전체는 파일 제한 초과이므로 차트·피벗 2개로 먼저 분할. 브라우저 실패 경로 검증 비용 때문에 이번에는 제외.",
+    "updated": "2026-09-29"
   },
   {
     "title": "5000행을 넘는 목록의 내보내기가 잘린 사실을 사용자에게 알리지 않는다",
@@ -23,8 +14,8 @@
     "risk": 2,
     "size": "M",
     "status": "pending",
-    "note": "2026-09-28 에 근거가 좁아졌다: 이제 내보내기는 MAX_FEED_ROWS(5000)까지 담으므로 '5000행 초과' 만 남는다. 상한 자체는 유지해야 한다(EntityService.list 가 모든 행을 List<Map> 으로 적재). 이번 회차에 응답 헤더(X-Nexa-Export-Truncated) 옵션을 일부러 뺐다 — listData 가 RecordSet 만 돌려줘 '상한에 딱 걸린 것' 과 '마침 5000행' 을 구분할 수 없고, 구분하려면 limit+1 을 읽거나 count 를 한 번 더 쳐야 해서 S 가 아니다. 근본 해결은 스트리밍 페이지네이션(L)이고 executeSqlBacked 페이징 과제와 같은 뿌리.",
-    "updated": "2026-09-28"
+    "note": "readQueryParams의 MAX_FEED_ROWS 주입은 머지되어 있음. 정확히 5000행과 초과를 구분하는 추가 조회 설계가 필요하며 스트리밍은 L. 상한 제거 금지.",
+    "updated": "2026-09-29"
   },
   {
     "title": "UiBuilderController/DataAdapterController 의 목록 데이터 경로에 ScreenPermissionService 게이트 추가",
@@ -32,8 +23,8 @@
     "risk": 4,
     "size": "M",
     "status": "pending",
-    "note": "GET /api/v1/data/lists/{id} 와 POST /builder/lists/{id}/data 에 권한 검사가 없다(ListExportController.resolveExportable 은 canView 로 403 — 이번 회차에도 소스 재확인). permission 은 보호 구역, 역할별 런타임 뷰 호환성 미확인, 기존 테스트는 전부 @WithMockUser ADMIN. 13회 연속 미룸 — 사람이 있는 회차가 맞다.",
-    "updated": "2026-09-28"
+    "note": "두 컨트롤러 데이터 메서드에 화면 권한 호출이 없고 export.resolveExportable에는 존재함을 재확인. 전체 보안 필터와 역할 호환성 미확인. 보호 경로 변경이므로 이번 제외.",
+    "updated": "2026-09-29"
   },
   {
     "title": "DataAdapterService.executeSqlBacked 가 전체 행을 메모리로 읽은 뒤 자바에서 페이징",
@@ -41,8 +32,8 @@
     "risk": 3,
     "size": "M",
     "status": "pending",
-    "note": "엔티티 백엔드는 sqlPagination.limitOffset 으로 DB 페이징이라 같은 URL 의 두 백엔드 성능 특성이 다르다. SqlExecutor 에 페이징 API 가 없고 resolveSql 이 @Cacheable 이라 래핑 지점 설계 선행 필요. 내보내기의 5000행 상한 문제(스트리밍 내보내기)와 같은 뿌리이므로 묶어 설계하면 좋다.",
-    "updated": "2026-09-28"
+    "note": "executeSqlBacked의 executeQuery → lowerCaseKeys → applySort/applyPaging 구조 유지. SQL 변환과 다양한 DB 계약을 다루므로 단기 수정에 부적합.",
+    "updated": "2026-09-29"
   },
   {
     "title": "DataAdapterService.queryList 의 sqlId 백엔드 목록에도 requireLiveList 회귀 테스트",
@@ -50,8 +41,8 @@
     "risk": 1,
     "size": "S",
     "status": "pending",
-    "note": "이번 회차 차선 후보였다. 기존 soft-delete 테스트가 전부 entityId 백엔드라 SQL 백엔드 커버가 0. SqlBackedListDefinitionIntegrationTest 의 sqlId 픽스처에 deleted_at 만 찍어 GET /api/v1/data/lists/{id} 가 400 인지 확인. 프로덕션 0줄.",
-    "updated": "2026-09-28"
+    "note": "SqlBackedListDefinitionIntegrationTest의 6개 테스트에 deletedAt 사례 없음. requireLiveList가 SQL 분기 앞에 있어 결함보다는 회귀 공백. 이번 차선.",
+    "updated": "2026-09-29"
   },
   {
     "title": "ListExportController 의 OpenPDF 3 deprecated API 정리",
@@ -59,8 +50,8 @@
     "risk": 2,
     "size": "S",
     "status": "pending",
-    "note": "이번 회차 빌드도 'ListExportController.java uses or overrides a deprecated API' 를 그대로 지목한다(로그 확인). 정확한 호출 위치는 -Xlint:deprecation 없이는 미확인. 이제 ListExportIntegrationTest 9건이 안전망이다(6→9). 같은 파일을 이번 회차에 만졌으므로 충돌 없이 다음 회차에 가능.",
-    "updated": "2026-09-28"
+    "note": "현 코드 OpenPDF 호출 존재. 이번 컴파일은 일부 파일 deprecated 경고만 출력하므로 이 컨트롤러의 정확한 경고 위치는 여전히 미확인. 사용자 문제보다 우선순위 낮음.",
+    "updated": "2026-09-29"
   },
   {
     "title": "DataAdapterService 의 페이지 클램프 계약을 /data/lists/{id} 쪽에서도 회귀 테스트로 고정",
@@ -68,8 +59,8 @@
     "risk": 1,
     "size": "S",
     "status": "pending",
-    "note": "기존 클램프 테스트 3건은 모두 /data/entity/{id}. lists 경로는 pagesize=0 일 때 100 이 아니라 목록 정의값으로 떨어져 별도 픽스처 필요. 프로덕션 0줄.",
-    "updated": "2026-09-28"
+    "note": "DataAdapterIntegrationTest의 경계 테스트는 entity 경로이며 목록 테스트는 null/default와 명시 pagesize/soft-delete만 확인. 목록 pageSize fallback 계약 테스트 공백 유지.",
+    "updated": "2026-09-29"
   },
   {
     "title": "리스트 디자이너가 SQL 기반 목록을 저장하지 못한다 (admin/list-designer.html)",
@@ -77,8 +68,8 @@
     "risk": 3,
     "size": "M",
     "status": "pending",
-    "note": "listMeta.entityId 가 비면 저장을 막고(1263/1280) 컬럼도 /admin/entities/{id}/fields 에서만 가져온다. 서버 쪽(POST /api/v1/admin/lists, 런타임, 어댑터, 내보내기)은 2026-09-26·09-27 세 회차로 완전히 동작한다. 디자이너 JS 가 커서 M 이상.",
-    "updated": "2026-09-28"
+    "note": "1263/1280의 entityId 필수 검사와 fields 조회 경로 유지. 서버는 SQL 단독 목록 지원. UI 데이터 소스 전환 범위가 크므로 이번 제외.",
+    "updated": "2026-09-29"
   },
   {
     "title": "CI wrapper-validation 추가 + docker-publish checkout v6 정렬 + gradlew 실행 비트",
@@ -86,17 +77,17 @@
     "risk": 1,
     "size": "S",
     "status": "pending",
-    "note": ".github/workflows 는 보호 경로라 13회 연속 미룸. gradlew 실행 비트 없음은 이번 회차에도 재확인(sh ./gradlew 필요). 액션 최신 태그 지원 여부 미확인. 사람이 있는 회차로.",
-    "updated": "2026-09-28"
+    "note": "ci.yml chmod 사용, docker-publish checkout@v4, git index의 gradlew 100644 재확인. 최신 액션 태그 지원은 미확인. 보호 경로이며 릴리즈 전체 검증 필요.",
+    "updated": "2026-09-29"
   },
   {
     "title": "NexaUiService.formDefinition 의 soft-delete 판정을 requireLiveForm 헬퍼로 통일",
     "value": 2,
     "risk": 2,
     "size": "S",
-    "status": "pending",
-    "note": "formDefinition:215-220 은 includeInactive=false 일 때만 deletedAt 을 본다. 목록·엔티티는 헬퍼로 모였고 폼만 인라인. 호출자에 편집/복사 용도가 있어 일괄 치환 금지이고 현재 관찰 가능한 버그가 없어 '효과 없는 변경 금지' 에 걸릴 수 있다.",
-    "updated": "2026-09-28"
+    "status": "rejected",
+    "note": "includeInactive에 따른 현재 판정 유지 확인. 관찰 가능한 결함 없이 헬퍼 추출만 하는 과제는 이번 개선 기준에 맞지 않음. 실제 호출 결함 발견 시 별도 아이디어로 재등록.",
+    "updated": "2026-09-29"
   },
   {
     "title": "README·agent.md·deployment.md 의 낡은 버전·환경 표기를 실제 빌드 설정과 정렬",
@@ -104,16 +95,34 @@
     "risk": 1,
     "size": "S",
     "status": "pending",
-    "note": "문서 본문은 이번 회차에도 열지 않음(미확인). 기록상 README 는 JDK17/Boot 3.4.4/v1.5.0, agent.md 는 Boot 3.4.4·Windows 고정 경로, deployment.md 는 nexabuilder-1.2.0.jar 표기이고 실제는 Java 21 / Boot 4.1.1 / v1.25.0. 문서 한정이라 위험 낮고 세 파일을 한 회차로 묶는 것이 낫다.",
-    "updated": "2026-09-28"
+    "note": "이번에 세 문서 실제 열람. README Boot 3.4.4/JDK17 배지, agent.md Git 저장소 아님 문구, deployment.md JDK17 Docker 예제가 현 Java21/Boot4.1.1과 불일치. 문서 수정 가치 확인했지만 재현 가능한 내보내기 실패 우선.",
+    "updated": "2026-09-29"
   },
   {
     "title": "_limit 프로토콜 키 이름이 다섯 곳에 문자열 리터럴로 흩어져 있다 — 공유 상수로 모을지 판정",
     "value": 1,
     "risk": 2,
     "size": "S",
+    "status": "rejected",
+    "note": "listData와 readQueryParams의 경로별 기본값은 의도적으로 다름. 신규 상수화만으로 관찰 가능한 개선 없음. 나머지 3곳 이번 재열람은 하지 않음.",
+    "updated": "2026-09-29"
+  },
+  {
+    "title": "XLSX 내보내기 시 목록 ID를 안전한 시트 이름으로 변환한다",
+    "value": 3,
+    "risk": 1,
+    "size": "S",
+    "status": "done",
+    "note": "실제 H2/MockMvc에서 콜론 ID가 HTTP 400 및 POI IllegalArgumentException으로 실패함을 재현. WorkbookUtil 적용 후 정상·콜론·앞/뒤 작은따옴표·긴 ID의 시트명과 헤더/행 보존 검증. 변환을 되돌리면 특수문자 3건이 다시 400. 전체 609건 통과, bootJar 성공. 커밋 ee7f786.",
+    "updated": "2026-09-29"
+  },
+  {
+    "title": "모든 컬럼이 hidden인 목록에서 내보내기의 첫 행 키 fallback이 숨긴 컬럼을 다시 노출하는지 검증",
+    "value": 4,
+    "risk": 3,
+    "size": "M",
     "status": "pending",
-    "note": "2026-09-28 에 새로 발견. NexaUiService.PARAM_LIMIT(private), EntityCrudController:54/59, LookupController:108, OpenApiController:153, 그리고 이번에 추가한 ListExportController:379 가 각각 \"_limit\" 리터럴을 쓴다. 다만 기본값이 경로마다 다르고(50/20/5000) 와이어 이름은 이미 공개 계약이라 상수화의 실익이 작다 — 관찰 가능한 버그가 없어 '효과 없는 변경' 으로 반려될 수 있다. 기록만 남기고 실행은 보류.",
-    "updated": "2026-09-28"
+    "note": "신규. resolveColumns는 hidden 컬럼을 제외하지만 CSV/XLSX는 결과 columns.isEmpty이면 첫 행의 모든 키로 재구성함. 의도적인 빈 설정과 전부 숨김을 구분하지 않는 소스 근거가 있음. 실제 HTTP 및 필드권한 의미 미확인, 민감한 계약이라 이번 범위 밖. PDF 같은 fallback도 후속 확인 필요.",
+    "updated": "2026-09-29"
   }
 ]

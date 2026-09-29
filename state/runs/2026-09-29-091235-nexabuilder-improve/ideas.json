@@ -112,8 +112,8 @@
     "value": 3,
     "risk": 1,
     "size": "S",
-    "status": "pending",
-    "note": "이번 선택·신규. exportXlsx의 createSheet(listId), ID 길이120 및 saveList의 별도 문자검사 없음 확인. 실제 POI5.3.0 SXSSFWorkbook에 sales:2026 입력 시 IllegalArgumentException, createSafeSheetName 적용 시 sales 2026 성공. HTTP 실패 재현은 구현자 담당. 긴 ID는 POI가 이미 31자로 잘라 단독 결함 아님.",
+    "status": "done",
+    "note": "실제 H2/MockMvc에서 콜론 ID가 HTTP 400 및 POI IllegalArgumentException으로 실패함을 재현. WorkbookUtil 적용 후 정상·콜론·앞/뒤 작은따옴표·긴 ID의 시트명과 헤더/행 보존 검증. 변환을 되돌리면 특수문자 3건이 다시 400. 전체 609건 통과, bootJar 성공. 커밋 ee7f786.",
     "updated": "2026-09-29"
   },
   {

@@ -22,3 +22,5 @@
 - [러너 09:21] pr created — https://github.com/hkjang/muni/pull/30
 - [러너 09:26] ci passed — 검사 2개 모두 success
 - [러너 09:26] merge done — 86476c4
+- [러너 09:37] release published — v0.50.0
+- [러너 09:41] assets verified — v0.50.0 자산 1개 (이전 v0.48.0: 1)
