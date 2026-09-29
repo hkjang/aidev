@@ -35,3 +35,5 @@
 - 이 기계에서 직접 돌린 검증(비평 노트가 경고한 대로 `webui/dist/index.html` 은 빌드 후 `git checkout --` 로 되돌려 워크트리 clean): 전용 postgres:16-alpine 로 `go test -count=1 -json ./...` **719 PASS / 4 SKIP / 0 FAIL**(SKIP 은 docx 수동 출력·hwp/hwpx 외부 코퍼스 넷), 새 표 5행 모두 pass, `go vet` 0, `gofmt -l` clean, `check-webui-placeholder.sh` OK, `git diff --check` clean, 프런트 `npm ci`·`npm run lint`(tsc -b)·`npm test` 42파일 297건·`npm run build`, `CGO_ENABLED=0 go build -trimpath`, `docker build --build-arg VERSION=v0.52.0` 모두 통과. 머지 커밋의 GitHub CI 도 test·image 둘 다 success 였다(ci-c991f0b04d7c.json).
 - 노트에 적으면서 바로잡은 것: 비평 노트가 지적한 `.tar.gz` 주석 오류를 노트 본문으로 옮기지 않았고(그 예를 쓰지 않았다), fallback 표는 실제 다섯 자리 코드를 다시 읽어 적었다 — 문서 넘기기 fallback 은 상수가 아니라 `document`+`filepath.Ext` 라 `document.xlsx` 로 예시했다.
 - 다음 회차가 알아야 할 것: 릴리스 본문은 첫 푸시에서 GitHub 자동 생성 노트로 남는다(`sync-release-notes.yml` 은 이미 존재하는 릴리스만 고친다). `docs/releases/v0.52.0.md` 의 "릴리스 파일 검증" 크기·SHA-256 은 여전히 "(릴리스 후 기록)" 이므로, 워크플로가 끝난 뒤 두 번째 푸시로 채워야 본문이 교체된다.
+- [러너 22:14] release published — v0.52.0
+- [러너 22:19] assets verified — v0.52.0 자산 1개 (이전 v0.51.0: 1)
