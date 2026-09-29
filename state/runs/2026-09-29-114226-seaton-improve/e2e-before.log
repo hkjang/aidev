@@ -1,0 +1,224 @@
+[e2e] 시드 {"seeded":false,"repaired":false}
+
+Running 5 tests using 1 worker
+
+(node:2569713) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✘  1 e2e/employee-filter.spec.ts:106:3 › 직원 필터 URL › 직접 진입과 새로고침이 네 필터·실제 조회·CSV를 복원한다 (10.8s)
+(node:2570000) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✘  2 e2e/employee-filter.spec.ts:159:3 › 직원 필터 URL › 제출·Select는 replace로 조건을 보존하고 빈 값은 지우며 같은 검색도 다시 조회한다 (11.6s)
+(node:2570384) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✘  3 e2e/employee-filter.spec.ts:223:3 › 직원 필터 URL › 뒤로·앞으로 이동도 주소의 조건과 목록을 다시 읽는다 (10.8s)
+(node:2570642) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✘  4 e2e/employee-filter.spec.ts:243:3 › 직원 필터 URL › 가져오기 두 경로도 확정 필터로 재조회하고 미제출 입력은 적용하지 않는다 (10.8s)
+(node:2570974) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✘  5 e2e/employee-filter.spec.ts:273:3 › 직원 필터 URL › 조직 응답이 늦거나 실패해도 URL의 조직 조건을 보존한다 (10.8s)
+
+
+  1) e2e/employee-filter.spec.ts:106:3 › 직원 필터 URL › 직접 진입과 새로고침이 네 필터·실제 조회·CSV를 복원한다 ─────────────
+
+    Error: expect(locator).toHaveValue(expected) failed
+
+    Locator:  getByPlaceholder('이름, 사번, 이메일, 조직 검색')
+    Expected: "영업팀"
+    Received: ""
+    Timeout:  10000ms
+
+    Call log:
+      - Expect "toHaveValue" with timeout 10000ms
+      - waiting for getByPlaceholder('이름, 사번, 이메일, 조직 검색')
+        24 × locator resolved to <input value="" id="_r_9_" type="text" aria-invalid="false" placeholder="이름, 사번, 이메일, 조직 검색" class="MuiInputBase-input MuiOutlinedInput-input MuiInputBase-inputSizeSmall MuiInputBase-inputAdornedStart css-1m7embp"/>
+           - unexpected value ""
+
+
+      126 |       await expect(
+      127 |         page.getByPlaceholder("이름, 사번, 이메일, 조직 검색"),
+    > 128 |       ).toHaveValue("영업팀");
+          |         ^
+      129 |       await expect(
+      130 |         page.getByRole("combobox", { name: "조직 필터" }),
+      131 |       ).toHaveText("영업팀");
+        at /home/hkjang/.cache/auto-improve-wt/seaton/web/e2e/employee-filter.spec.ts:128:9
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/employee-filter-직원-필터-URL-직접-진입과-새로고침이-네-필터·실제-조회·CSV를-복원한다/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/employee-filter-직원-필터-URL-직접-진입과-새로고침이-네-필터·실제-조회·CSV를-복원한다/error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/employee-filter-직원-필터-URL-직접-진입과-새로고침이-네-필터·실제-조회·CSV를-복원한다/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/employee-filter-직원-필터-URL-직접-진입과-새로고침이-네-필터·실제-조회·CSV를-복원한다/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  2) e2e/employee-filter.spec.ts:159:3 › 직원 필터 URL › 제출·Select는 replace로 조건을 보존하고 빈 값은 지우며 같은 검색도 다시 조회한다 
+
+    Error: expect(locator).toHaveValue(expected) failed
+
+    Locator:  getByPlaceholder('이름, 사번, 이메일, 조직 검색')
+    Expected: "김개발"
+    Received: "  김개발  "
+    Timeout:  10000ms
+
+    Call log:
+      - Expect "toHaveValue" with timeout 10000ms
+      - waiting for getByPlaceholder('이름, 사번, 이메일, 조직 검색')
+        24 × locator resolved to <input id="_r_9_" type="text" value="  김개발  " aria-invalid="false" placeholder="이름, 사번, 이메일, 조직 검색" class="MuiInputBase-input MuiOutlinedInput-input MuiInputBase-inputSizeSmall MuiInputBase-inputAdornedStart css-1m7embp"/>
+           - unexpected value "  김개발  "
+
+
+      179 |     await chooseOrganization(page, "개발팀");
+      180 |     await expect(page.locator("table tbody tr")).toHaveCount(1);
+    > 181 |     await expect(search).toHaveValue("김개발");
+          |                          ^
+      182 |     await choose(page, "재직상태 필터", "재직");
+      183 |     await expect(page.locator("table tbody tr")).toHaveCount(1);
+      184 |     await choose(page, "배정상태 필터", "배정");
+        at /home/hkjang/.cache/auto-improve-wt/seaton/web/e2e/employee-filter.spec.ts:181:26
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/employee-filter-직원-필터-URL--129d6-존하고-빈-값은-지우며-같은-검색도-다시-조회한다/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/employee-filter-직원-필터-URL--129d6-존하고-빈-값은-지우며-같은-검색도-다시-조회한다/error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/employee-filter-직원-필터-URL--129d6-존하고-빈-값은-지우며-같은-검색도-다시-조회한다/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/employee-filter-직원-필터-URL--129d6-존하고-빈-값은-지우며-같은-검색도-다시-조회한다/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  3) e2e/employee-filter.spec.ts:223:3 › 직원 필터 URL › 뒤로·앞으로 이동도 주소의 조건과 목록을 다시 읽는다 ─────────────────
+
+    Error: expect(locator).toHaveCount(expected) failed
+
+    Locator:  locator('table tbody tr')
+    Expected: 1
+    Received: 10
+    Timeout:  10000ms
+
+    Call log:
+      - Expect "toHaveCount" with timeout 10000ms
+      - waiting for locator('table tbody tr')
+        24 × locator resolved to 10 elements
+           - unexpected value "10"
+
+
+      225 |   }) => {
+      226 |     await page.goto("/admin/employees?q=김개발");
+    > 227 |     await expect(page.locator("table tbody tr")).toHaveCount(1);
+          |                                                  ^
+      228 |     // 브라우저의 실제 history 항목 사이를 이동해 같은 페이지의 POP 복원을 확인한다.
+      229 |     await page.evaluate(() =>
+      230 |       history.pushState(null, "", "/admin/employees?q=영업팀"),
+        at /home/hkjang/.cache/auto-improve-wt/seaton/web/e2e/employee-filter.spec.ts:227:50
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/employee-filter-직원-필터-URL-뒤로·앞으로-이동도-주소의-조건과-목록을-다시-읽는다/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/employee-filter-직원-필터-URL-뒤로·앞으로-이동도-주소의-조건과-목록을-다시-읽는다/error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/employee-filter-직원-필터-URL-뒤로·앞으로-이동도-주소의-조건과-목록을-다시-읽는다/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/employee-filter-직원-필터-URL-뒤로·앞으로-이동도-주소의-조건과-목록을-다시-읽는다/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  4) e2e/employee-filter.spec.ts:243:3 › 직원 필터 URL › 가져오기 두 경로도 확정 필터로 재조회하고 미제출 입력은 적용하지 않는다 ──────
+
+    Error: expect(locator).toHaveCount(expected) failed
+
+    Locator:  locator('table tbody tr')
+    Expected: 1
+    Received: 10
+    Timeout:  10000ms
+
+    Call log:
+      - Expect "toHaveCount" with timeout 10000ms
+      - waiting for locator('table tbody tr')
+        24 × locator resolved to 10 elements
+           - unexpected value "10"
+
+
+      247 |       "/admin/employees?q=김개발&status=active&assignment=assigned",
+      248 |     );
+    > 249 |     await expect(page.locator("table tbody tr")).toHaveCount(1);
+          |                                                  ^
+      250 |     await page.getByPlaceholder("이름, 사번, 이메일, 조직 검색").fill("영업팀");
+      251 |     for (const [label, csv] of [
+      252 |       ["직원 가져오기", "사번,이름\n,검증누락\n"],
+        at /home/hkjang/.cache/auto-improve-wt/seaton/web/e2e/employee-filter.spec.ts:249:50
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/employee-filter-직원-필터-URL--9a31a--필터로-재조회하고-미제출-입력은-적용하지-않는다/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/employee-filter-직원-필터-URL--9a31a--필터로-재조회하고-미제출-입력은-적용하지-않는다/error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/employee-filter-직원-필터-URL--9a31a--필터로-재조회하고-미제출-입력은-적용하지-않는다/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/employee-filter-직원-필터-URL--9a31a--필터로-재조회하고-미제출-입력은-적용하지-않는다/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  5) e2e/employee-filter.spec.ts:273:3 › 직원 필터 URL › 조직 응답이 늦거나 실패해도 URL의 조직 조건을 보존한다 ──────────────
+
+    Error: expect(locator).toHaveCount(expected) failed
+
+    Locator:  locator('table tbody tr')
+    Expected: 2
+    Received: 10
+    Timeout:  10000ms
+
+    Call log:
+      - Expect "toHaveCount" with timeout 10000ms
+      - waiting for locator('table tbody tr')
+        - locator resolved to 0 elements
+        - unexpected value "0"
+        23 × locator resolved to 10 elements
+           - unexpected value "10"
+
+
+      289 |     );
+      290 |     try {
+    > 291 |       await expect(page.locator("table tbody tr")).toHaveCount(2);
+          |                                                    ^
+      292 |       await expect(
+      293 |         page.getByRole("combobox", { name: "조직 필터" }),
+      294 |       ).toHaveText(sales);
+        at /home/hkjang/.cache/auto-improve-wt/seaton/web/e2e/employee-filter.spec.ts:291:52
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/employee-filter-직원-필터-URL-조직-응답이-늦거나-실패해도-URL의-조직-조건을-보존한다/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/employee-filter-직원-필터-URL-조직-응답이-늦거나-실패해도-URL의-조직-조건을-보존한다/error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/employee-filter-직원-필터-URL-조직-응답이-늦거나-실패해도-URL의-조직-조건을-보존한다/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/employee-filter-직원-필터-URL-조직-응답이-늦거나-실패해도-URL의-조직-조건을-보존한다/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  5 failed
+    e2e/employee-filter.spec.ts:106:3 › 직원 필터 URL › 직접 진입과 새로고침이 네 필터·실제 조회·CSV를 복원한다 ──────────────
+    e2e/employee-filter.spec.ts:159:3 › 직원 필터 URL › 제출·Select는 replace로 조건을 보존하고 빈 값은 지우며 같은 검색도 다시 조회한다 
+    e2e/employee-filter.spec.ts:223:3 › 직원 필터 URL › 뒤로·앞으로 이동도 주소의 조건과 목록을 다시 읽는다 ──────────────────
+    e2e/employee-filter.spec.ts:243:3 › 직원 필터 URL › 가져오기 두 경로도 확정 필터로 재조회하고 미제출 입력은 적용하지 않는다 ───────
+    e2e/employee-filter.spec.ts:273:3 › 직원 필터 URL › 조직 응답이 늦거나 실패해도 URL의 조직 조건을 보존한다 ───────────────

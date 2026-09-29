@@ -1,0 +1,49 @@
+[e2e] 시드 {"seeded":false,"repaired":false}
+
+Running 1 test using 1 worker
+
+(node:2579644) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✘  1 e2e/employee-filter.spec.ts:158:3 › 직원 필터 URL › 제출·Select는 replace로 조건을 보존하고 빈 값은 지우며 같은 검색도 다시 조회한다 (3.2s)
+
+
+  1) e2e/employee-filter.spec.ts:158:3 › 직원 필터 URL › 제출·Select는 replace로 조건을 보존하고 빈 값은 지우며 같은 검색도 다시 조회한다 
+
+    Error: expect(received).toEqual(expected) // deep equality
+
+    - Expected  - 4
+    + Received  + 0
+
+      Object {
+    -   "assignment": "assigned",
+    -   "organizationId": "a44aec3b-c485-4bb9-945f-0b0df55c585b",
+        "other": "keep",
+    -   "q": "김개발",
+    -   "status": "active",
+      }
+
+      189 |       assignment: "assigned",
+      190 |     };
+    > 191 |     expect(Object.fromEntries(new URL(page.url()).searchParams)).toEqual(
+          |                                                                  ^
+      192 |       expected,
+      193 |     );
+      194 |     await expect(search).toHaveValue("김개발");
+        at /home/hkjang/.cache/auto-improve-wt/seaton/web/e2e/employee-filter.spec.ts:191:66
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/employee-filter-직원-필터-URL--129d6-존하고-빈-값은-지우며-같은-검색도-다시-조회한다/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/employee-filter-직원-필터-URL--129d6-존하고-빈-값은-지우며-같은-검색도-다시-조회한다/error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/employee-filter-직원-필터-URL--129d6-존하고-빈-값은-지우며-같은-검색도-다시-조회한다/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/employee-filter-직원-필터-URL--129d6-존하고-빈-값은-지우며-같은-검색도-다시-조회한다/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  1 failed
+    e2e/employee-filter.spec.ts:158:3 › 직원 필터 URL › 제출·Select는 replace로 조건을 보존하고 빈 값은 지우며 같은 검색도 다시 조회한다 

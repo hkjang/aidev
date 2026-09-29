@@ -1,0 +1,104 @@
+go test ./...
+?   	github.com/hkjang/relio/cmd/relio	[no test files]
+ok  	github.com/hkjang/relio/internal/admin	(cached)
+ok  	github.com/hkjang/relio/internal/analytics	(cached)
+?   	github.com/hkjang/relio/internal/api	[no test files]
+ok  	github.com/hkjang/relio/internal/apikey	(cached)
+ok  	github.com/hkjang/relio/internal/approval	(cached)
+ok  	github.com/hkjang/relio/internal/audit	(cached)
+ok  	github.com/hkjang/relio/internal/auth	(cached)
+ok  	github.com/hkjang/relio/internal/config	(cached)
+ok  	github.com/hkjang/relio/internal/crm	(cached)
+ok  	github.com/hkjang/relio/internal/intelligence	(cached)
+ok  	github.com/hkjang/relio/internal/job	(cached)
+ok  	github.com/hkjang/relio/internal/mail	(cached)
+ok  	github.com/hkjang/relio/internal/mcp	(cached)
+ok  	github.com/hkjang/relio/internal/oidc	(cached)
+ok  	github.com/hkjang/relio/internal/personal	(cached)
+ok  	github.com/hkjang/relio/internal/platform/database	(cached)
+ok  	github.com/hkjang/relio/internal/platform/httpx	(cached)
+?   	github.com/hkjang/relio/internal/platform/ids	[no test files]
+ok  	github.com/hkjang/relio/internal/platform/secrets	(cached)
+ok  	github.com/hkjang/relio/internal/platform/timezone	(cached)
+?   	github.com/hkjang/relio/internal/platform/version	[no test files]
+ok  	github.com/hkjang/relio/internal/relationship	(cached)
+ok  	github.com/hkjang/relio/internal/server	(cached)
+ok  	github.com/hkjang/relio/internal/voice	(cached)
+ok  	github.com/hkjang/relio/internal/webui	(cached)
+?   	github.com/hkjang/relio/migrations	[no test files]
+go vet ./...
+cd web && npm ci && npm run typecheck && npm test
+
+added 69 packages, and audited 70 packages in 1s
+
+9 packages are looking for funding
+  run `npm fund` for details
+
+found 0 vulnerabilities
+npm warn allow-scripts 1 package has install scripts not yet covered by allowScripts:
+npm warn allow-scripts   esbuild@0.28.2 (postinstall: node install.js)
+npm warn allow-scripts
+npm warn allow-scripts Run `npm approve-scripts --allow-scripts-pending` to review, or `npm approve-scripts <pkg>` to allow.
+
+> relio-web@0.1.0 typecheck
+> tsc -b --pretty false
+
+
+> relio-web@0.1.0 test
+> node --test 'test/**/*.test.ts'
+
+✔ dateTime renders the day and a 24h clock down to the second (8.013438ms)
+✔ date keeps stopping at the day so the other pages are unchanged (0.288924ms)
+✔ dateTime falls back to the same em dash as date for a missing value (0.111441ms)
+✔ SSO login renders with storage access blocked, autoLogin=false (6.261894ms)
+✔ SSO login renders with getItem blocked, autoLogin=false (0.82478ms)
+✔ SSO login renders with invalid URL, autoLogin=false (0.83519ms)
+✔ SSO login renders with empty, autoLogin=false (0.621462ms)
+✔ SSO login renders with disallowed path, autoLogin=false (0.930917ms)
+✔ SSO login renders with remembered path, autoLogin=false (1.193586ms)
+✔ SSO login renders with storage access blocked, autoLogin=true (0.942274ms)
+✔ SSO login renders with getItem blocked, autoLogin=true (1.355358ms)
+✔ SSO login renders with invalid URL, autoLogin=true (0.988462ms)
+✔ SSO login renders with empty, autoLogin=true (1.053866ms)
+✔ SSO login renders with disallowed path, autoLogin=true (0.909059ms)
+✔ SSO login renders with remembered path, autoLogin=true (0.755729ms)
+✔ a header row is skipped, whatever it is called (1.172825ms)
+✔ either column order works: the all-digit cell is the code (0.175737ms)
+✔ tabs, quotes, a BOM and blank lines are tolerated (0.189598ms)
+✔ a line with one cell is kept so the server can report it (0.088547ms)
+✔ a default installation never tries: auto login is off (0.694972ms)
+✔ with auto login on, a fresh tab on an application path tries once (0.506312ms)
+✔ the refusal marker in the address stops a retry even with empty storage (0.157241ms)
+✔ the login, callback, API, MCP and discovery paths never start an attempt (0.16411ms)
+✔ signing out suppresses auto login until a session exists again (0.129081ms)
+✔ unreadable storage counts as already attempted (0.187324ms)
+✔ a write that does not stick also refuses to leave (0.765191ms)
+✔ return_to only carries a same-origin path (0.14312ms)
+✖ temporary make failure propagation probe (0.599994ms)
+ℹ tests 28
+ℹ suites 0
+ℹ pass 27
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 136.468196
+
+✖ failing tests:
+
+test at test/zz-make-failure.test.ts:3:1
+✖ temporary make failure propagation probe (0.599994ms)
+  AssertionError [ERR_ASSERTION]: intentional frontend failure propagation probe
+      at TestContext.<anonymous> (file:///home/hkjang/.cache/auto-improve-wt/relio/web/test/zz-make-failure.test.ts:4:10)
+      at Test.runInAsyncScope (node:async_hooks:213:14)
+      at Test.run (node:internal/test_runner/test:1106:25)
+      at Test.start (node:internal/test_runner/test:1003:17)
+      at startSubtestAfterBootstrap (node:internal/test_runner/harness:358:17) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: undefined,
+    operator: 'fail',
+    diff: 'simple'
+  }
+make: *** [Makefile:16: test] Error 1

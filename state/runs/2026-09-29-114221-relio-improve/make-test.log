@@ -1,0 +1,84 @@
+go test ./...
+?   	github.com/hkjang/relio/cmd/relio	[no test files]
+ok  	github.com/hkjang/relio/internal/admin	(cached)
+ok  	github.com/hkjang/relio/internal/analytics	(cached)
+?   	github.com/hkjang/relio/internal/api	[no test files]
+ok  	github.com/hkjang/relio/internal/apikey	(cached)
+ok  	github.com/hkjang/relio/internal/approval	(cached)
+ok  	github.com/hkjang/relio/internal/audit	(cached)
+ok  	github.com/hkjang/relio/internal/auth	(cached)
+ok  	github.com/hkjang/relio/internal/config	(cached)
+ok  	github.com/hkjang/relio/internal/crm	(cached)
+ok  	github.com/hkjang/relio/internal/intelligence	(cached)
+ok  	github.com/hkjang/relio/internal/job	(cached)
+ok  	github.com/hkjang/relio/internal/mail	(cached)
+ok  	github.com/hkjang/relio/internal/mcp	(cached)
+ok  	github.com/hkjang/relio/internal/oidc	(cached)
+ok  	github.com/hkjang/relio/internal/personal	(cached)
+ok  	github.com/hkjang/relio/internal/platform/database	(cached)
+ok  	github.com/hkjang/relio/internal/platform/httpx	(cached)
+?   	github.com/hkjang/relio/internal/platform/ids	[no test files]
+ok  	github.com/hkjang/relio/internal/platform/secrets	(cached)
+ok  	github.com/hkjang/relio/internal/platform/timezone	(cached)
+?   	github.com/hkjang/relio/internal/platform/version	[no test files]
+ok  	github.com/hkjang/relio/internal/relationship	(cached)
+ok  	github.com/hkjang/relio/internal/server	(cached)
+ok  	github.com/hkjang/relio/internal/voice	(cached)
+ok  	github.com/hkjang/relio/internal/webui	(cached)
+?   	github.com/hkjang/relio/migrations	[no test files]
+go vet ./...
+cd web && npm ci && npm run typecheck && npm test
+
+added 69 packages, and audited 70 packages in 1s
+
+9 packages are looking for funding
+  run `npm fund` for details
+
+found 0 vulnerabilities
+npm warn allow-scripts 1 package has install scripts not yet covered by allowScripts:
+npm warn allow-scripts   esbuild@0.28.2 (postinstall: node install.js)
+npm warn allow-scripts
+npm warn allow-scripts Run `npm approve-scripts --allow-scripts-pending` to review, or `npm approve-scripts <pkg>` to allow.
+
+> relio-web@0.1.0 typecheck
+> tsc -b --pretty false
+
+
+> relio-web@0.1.0 test
+> node --test 'test/**/*.test.ts'
+
+✔ dateTime renders the day and a 24h clock down to the second (10.536063ms)
+✔ date keeps stopping at the day so the other pages are unchanged (0.314946ms)
+✔ dateTime falls back to the same em dash as date for a missing value (0.117685ms)
+✔ SSO login renders with storage access blocked, autoLogin=false (6.192723ms)
+✔ SSO login renders with getItem blocked, autoLogin=false (0.818318ms)
+✔ SSO login renders with invalid URL, autoLogin=false (0.892627ms)
+✔ SSO login renders with empty, autoLogin=false (0.652793ms)
+✔ SSO login renders with disallowed path, autoLogin=false (1.108436ms)
+✔ SSO login renders with remembered path, autoLogin=false (1.015007ms)
+✔ SSO login renders with storage access blocked, autoLogin=true (0.96005ms)
+✔ SSO login renders with getItem blocked, autoLogin=true (1.294483ms)
+✔ SSO login renders with invalid URL, autoLogin=true (0.925599ms)
+✔ SSO login renders with empty, autoLogin=true (1.125505ms)
+✔ SSO login renders with disallowed path, autoLogin=true (0.822339ms)
+✔ SSO login renders with remembered path, autoLogin=true (0.841601ms)
+✔ a header row is skipped, whatever it is called (1.1849ms)
+✔ either column order works: the all-digit cell is the code (0.180514ms)
+✔ tabs, quotes, a BOM and blank lines are tolerated (0.165797ms)
+✔ a line with one cell is kept so the server can report it (0.108286ms)
+✔ a default installation never tries: auto login is off (0.574765ms)
+✔ with auto login on, a fresh tab on an application path tries once (0.525397ms)
+✔ the refusal marker in the address stops a retry even with empty storage (0.193974ms)
+✔ the login, callback, API, MCP and discovery paths never start an attempt (0.180675ms)
+✔ signing out suppresses auto login until a session exists again (0.134091ms)
+✔ unreadable storage counts as already attempted (0.187279ms)
+✔ a write that does not stick also refuses to leave (0.116339ms)
+✔ return_to only carries a same-origin path (0.140414ms)
+ℹ tests 27
+ℹ suites 0
+ℹ pass 27
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 134.549815

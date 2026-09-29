@@ -1,0 +1,544 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SeatOn - 오프라인 우선 스마트 좌석 & 오피스 레이아웃 관리 플랫폼 | 단일 Docker</title>
+    <meta name="description" content="SeatOn은 도면 CV 좌석 후보 분석, SVG 비율좌표 좌석맵, 이상 좌석 자동 감지, Keycloak OIDC SSO 및 Streamable MCP를 단일 Docker 이미지로 제공하는 스마트 좌석 및 공간 관리 서비스입니다.">
+    <meta name="keywords" content="스마트 좌석, 좌석 관리, 오피스 레이아웃, 오프라인 CV 도면 분석, 비전 모델 좌석 판독, 도면 격자 보정, SVG 좌석맵, Keycloak OIDC, MCP, SeatOn">
+    <meta name="author" content="SeatOn">
+    <meta name="robots" content="index, follow">
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="favicon.svg">
+    <link rel="shortcut icon" href="favicon.svg">
+
+    <!-- Open Graph -->
+    <meta property="og:title" content="SeatOn - 오프라인 우선 스마트 좌석 & 오피스 레이아웃 관리 플랫폼">
+    <meta property="og:description" content="도면 CV 좌석 탐지, SVG 비율좌표 좌석맵, 이상 좌석 감지 및 100% 에어갭 단일 컨테이너 구동.">
+    <meta property="og:url" content="https://hkjang.github.io/seaton/">
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="SeatOn">
+    <meta property="og:locale" content="ko_KR">
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="SeatOn - 오프라인 우선 스마트 좌석 & 오피스 레이아웃 관리 플랫폼">
+    <meta name="twitter:description" content="단일 Docker 이미지 기반 사내 오프라인 스마트 좌석맵. CV·비전 모델 선택형 도면 판독 & Streamable MCP 내장.">
+
+    <!-- Canonical & Alternate -->
+    <link rel="canonical" href="https://hkjang.github.io/seaton/">
+    <link rel="alternate" hreflang="ko" href="https://hkjang.github.io/seaton/">
+    <link rel="alternate" hreflang="en" href="https://hkjang.github.io/seaton/index_en.html">
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+
+    <!-- Stylesheet -->
+    <link rel="stylesheet" href="style.css">
+
+    <!-- JSON-LD: SoftwareApplication -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "SoftwareApplication",
+      "name": "SeatOn",
+      "operatingSystem": "Linux, Docker",
+      "applicationCategory": "BusinessApplication",
+      "softwareVersion": "1.0.0",
+      "description": "사무실 도면과 직원 정보를 한 화면에 연결하는 오프라인 우선 스마트 좌석 및 공간 관리 서비스",
+      "url": "https://github.com/hkjang/seaton",
+      "downloadUrl": "https://github.com/hkjang/seaton",
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "USD"
+      },
+      "featureList": [
+        "PNG/JPG/PDF 도면 버전 관리 및 좌석 후보 자동 판독 (PDF도 좌석 오버레이 지원)",
+        "좌석 판독 엔진 선택: 오프라인 CV · 사내 비전 모델(VLM) · 두 결과 교차 검증 하이브리드",
+        "도면별 좌석 격자 보정과 일괄 정렬로 실제 책상 열 간격에 맞춘 스냅",
+        "비율 좌표 SVG 편집 기반 Drag & Drop 좌석 배정 및 선택/줌",
+        "미배정·퇴직자 점유·조직 영역 불일치·저신뢰 좌석 자동 탐지",
+        "Keycloak OIDC PKCE SSO 및 Break Glass 부트스트랩 계정",
+        "HMAC Digest 기반 Personal Key 관리 및 7일 유예기간 회전",
+        "Streamable HTTP MCP Server 탑재 (5개 ACL-aware Tools)",
+        "단일 non-root Docker 이미지 및 오프라인 air-gapped 번들"
+      ]
+    }
+    </script>
+
+    <!-- JSON-LD: FAQPage -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "FAQPage",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "SeatOn은 외부 지도 SDK나 인터넷 연결 없이 작동합니까?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "네. SeatOn은 외부 지도 SDK 대신 자체 SVG 비율 좌표 렌더링 엔진과 오프라인 CV 파서를 사용하며, 외부 CDN이나 폰트 다운로드 없이 단일 Docker 이미지로 100% 에어갭 오프라인 구동합니다. 좌석 판독을 비전 모델로 바꾸더라도 관리자가 지정한 사내 추론 서버만 호출하므로 도면이 사외로 나가지 않습니다."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "도면 이미지(PNG/PDF)에서 좌석 위치를 자동으로 찾아주나요?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "네. 내장된 오프라인 Computer Vision(CV) 파서가 도면에서 좌석 후보를 자동 검출하고, 책상 배치의 반복 격자까지 복원해 신뢰도를 매깁니다. 사내 비전 모델을 함께 사용하면 두 결과를 교차 검증해 검토가 필요한 좌석만 남길 수 있습니다."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "SeatOn 구동을 위한 필수 환경변수는 몇 개인가요?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "POSTGRES_DSN, BOOTSTRAP_ADMIN, BOOTSTRAP_ADMIN_PASSWORD 딱 3개의 환경변수만으로 최소 부트스트랩이 완수됩니다."
+          }
+        }
+      ]
+    }
+    </script>
+</head>
+<body>
+
+    <!-- Navigation -->
+    <header class="navbar">
+        <div class="container nav-container">
+            <a href="#" class="logo">
+                <img src="favicon.svg" alt="SeatOn Logo" width="32" height="32" style="filter: drop-shadow(0 0 8px rgba(16, 185, 129, 0.5));">
+                SeatOn
+            </a>
+            <ul class="nav-links desktop-only">
+                <li><a href="#features">주요 기능</a></li>
+                <li><a href="#seatmap">좌석맵 & 판독</a></li>
+                <li><a href="#mcp">API & MCP</a></li>
+                <li><a href="#docs">문서 센터</a></li>
+                <li><a href="#faq">FAQ</a></li>
+            </ul>
+            <div class="nav-actions desktop-only">
+                <a href="https://github.com/sponsors/hkjang" target="_blank" rel="noopener" class="btn btn-sponsor">
+                    💖 Sponsor
+                </a>
+                <div class="lang-switcher">
+                    <a href="index.html" class="active">KO</a>
+                    <a href="index_en.html">EN</a>
+                </div>
+                <a href="https://github.com/hkjang/seaton" class="btn btn-secondary" target="_blank" rel="noopener">
+                    <svg width="18" height="18" viewBox="0 0 16 16" fill="currentColor"><path d="M8 0c4.42 0 8 3.58 8 8a8.013 8.013 0 0 1-5.45 7.59c-.4.08-.55-.17-.55-.38 0-.27.01-1.13.01-2.2 0-.75-.25-1.23-.54-1.48 1.78-.2 3.65-.88 3.65-3.95 0-.88-.31-1.59-.82-2.15.08-.2.36-1.02-.08-2.12 0 0-.67-.22-2.2.82-.64-.18-1.32-.27-2-.27-.68 0-1.36.09-2 .27-1.53-1.03-2.2-.82-2.2-.82-.44 1.1-.16 1.92-.08 2.12-.51.56-.82 1.28-.82 2.15 0 3.06 1.86 3.75 3.64 3.95-.23.2-.44.55-.51 1.07-.46.21-1.61.55-2.33-.66-.15-.24-.6-.83-1.23-.82-.67.01-.27.38.01.53.34.19.73.9.82 1.13.16.45.68 1.31 2.69.94 0 .67.01 1.3.01 1.49 0 .21-.15.46-.55.38A7.995 7.995 0 0 1 0 8c0-4.42 3.58-8 8-8Z"/></svg>
+                    GitHub
+                </a>
+            </div>
+            <button class="mobile-menu-btn" id="mobile-menu-btn" aria-label="메뉴 열기">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12h18M3 6h18M3 18h18"/></svg>
+            </button>
+        </div>
+    </header>
+
+    <!-- Mobile Menu Drawer -->
+    <div class="mobile-menu" id="mobile-menu">
+        <div class="mobile-nav-links">
+            <a href="#features">주요 기능</a>
+            <a href="#seatmap">좌석맵 & 판독</a>
+            <a href="#mcp">API & MCP</a>
+            <a href="#docs">문서 센터</a>
+            <a href="#faq">FAQ</a>
+            <a href="https://github.com/sponsors/hkjang" target="_blank" class="btn btn-sponsor" style="justify-content: center;">💖 Sponsor</a>
+            <a href="https://github.com/hkjang/seaton" class="btn btn-primary" target="_blank">GitHub 바로가기</a>
+            <div class="lang-switcher" style="justify-content: center; margin-top: 12px;">
+                <a href="index.html" class="active">한국어</a>
+                <a href="index_en.html">English</a>
+                        <a href="https://hkjang.github.io/" target="_blank" style="color: #06b6d4; font-weight: 600;">🌐 전체 서비스</a>
+            </div>
+        </div>
+    </div>
+
+    <main>
+        <!-- Hero Section -->
+        <section class="hero" id="hero">
+            <div class="container">
+                <div class="hero-badge">🪑 Offline-First Smart Seat & Office Layout Platform</div>
+                <h1 class="hero-headline">
+                    차세대 온프레미스<br>
+                    <span class="text-gradient">스마트 좌석 & 오피스 관리</span>
+                </h1>
+                <p class="hero-subtitle">사무실 도면과 직원 정보를 비율좌표 SVG와 선택형 좌석 판독 엔진으로 정확히 연결</p>
+                <p class="hero-description">
+                    SeatOn은 인터넷이 차단된 사내 폐쇄망 인프라에서 도면 좌석 자동 판독, 비율 좌표 SVG 좌석 편집기, 
+                    이상 좌석 자동 검출, Keycloak OIDC SSO 및 AI 에이전트를 위한 Streamable HTTP MCP를 
+                    단일 Docker 컨테이너로 제공하는 스마트 공간 관리 플랫폼입니다.
+                </p>
+                <div class="hero-ctas">
+                    <a href="https://github.com/hkjang/seaton" class="btn btn-primary btn-lg" target="_blank" rel="noopener">
+                        <svg width="20" height="20" viewBox="0 0 16 16" fill="currentColor" style="margin-right:6px"><path d="M8 0c4.42 0 8 3.58 8 8a8.013 8.013 0 0 1-5.45 7.59c-.4.08-.55-.17-.55-.38 0-.27.01-1.13.01-2.2 0-.75-.25-1.23-.54-1.48 1.78-.2 3.65-.88 3.65-3.95 0-.88-.31-1.59-.82-2.15.08-.2.36-1.02-.08-2.12 0 0-.67-.22-2.2.82-.64-.18-1.32-.27-2-.27-.68 0-1.36.09-2 .27-1.53-1.03-2.2-.82-2.2-.82-.44 1.1-.16 1.92-.08 2.12-.51.56-.82 1.28-.82 2.15 0 3.06 1.86 3.75 3.64 3.95-.23.2-.44.55-.51 1.07-.46.21-1.61.55-2.33-.66-.15-.24-.6-.83-1.23-.82-.67.01-.27.38.01.53.34.19.73.9.82 1.13.16.45.68 1.31 2.69.94 0 .67.01 1.3.01 1.49 0 .21-.15.46-.55.38A7.995 7.995 0 0 1 0 8c0-4.42 3.58-8 8-8Z"/></svg>
+                        시작하기 (GitHub)
+                    </a>
+                    <a href="#seatmap" class="btn btn-secondary btn-lg">
+                        🗺️ SVG 좌석맵 보기
+                    </a>
+                </div>
+            </div>
+        </section>
+
+        <!-- Stats Bar -->
+        <section class="stats-bar">
+            <div class="container stats-container">
+                <div class="stat-item">
+                    <span class="stat-icon">📐</span>
+                    <span>SVG 비율좌표 좌석맵</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-icon">👁️</span>
+                    <span>CV · 비전 모델 선택형 판독</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-icon">⚠️</span>
+                    <span>이상 좌석 자동 감지</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-icon">🤖</span>
+                    <span>Streamable HTTP MCP</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- Core Features -->
+        <section class="section" id="features">
+            <div class="container">
+                <h2 class="section-title text-center">주요 기능</h2>
+                <p class="section-subtitle text-center">도면 버전 관리부터 비율좌표 좌석배정, 이상 감지 및 AI 연동까지 통합 제공합니다</p>
+                <div class="feature-grid">
+                    <article class="feature-card glass-panel">
+                        <div class="feature-icon">👁️</div>
+                        <h3 class="feature-title">도면 CV 좌석 자동 분석</h3>
+                        <p class="feature-desc">PNG, JPG, PDF 건축 도면 업로드 시 오프라인 CV 엔진이 벽·치수선을 걸러내고 책상 배치의 반복 격자까지 복원해 좌석 후보를 만듭니다. 사내 비전 모델(Qwen2.5-VL 등)로 교차 검증하도록 전환할 수도 있습니다.</p>
+                    </article>
+                    <article class="feature-card glass-panel">
+                        <div class="feature-icon">🗺️</div>
+                        <h3 class="feature-title">비율 좌표 SVG 좌석 편집기</h3>
+                        <p class="feature-desc">외부 지도 SDK 없는 100% 오프라인 SVG 좌표 엔진으로 해상도에 구애받지 않고 Drag & Drop 배정을 수행합니다.</p>
+                    </article>
+                    <article class="feature-card glass-panel">
+                        <div class="feature-icon">⚠️</div>
+                        <h3 class="feature-title">이상 좌석 상태 자동 검출</h3>
+                        <p class="feature-desc">미배정 공석, 퇴직자 미반납 점유, 조직 구역 불일치 및 저신뢰 좌석을 자동으로 감지하여 보고합니다.</p>
+                    </article>
+                    <article class="feature-card glass-panel">
+                        <div class="feature-icon">🔐</div>
+                        <h3 class="feature-title">Keycloak OIDC & Break Glass</h3>
+                        <p class="feature-desc">Keycloak OIDC (PKCE) 인증과 네트워크 단선 상황을 대비한 삭제 불가능한 Break Glass 부트스트랩 계정을 지원합니다.</p>
+                    </article>
+                    <article class="feature-card glass-panel">
+                        <div class="feature-icon">🤖</div>
+                        <h3 class="feature-title">Streamable HTTP MCP Server</h3>
+                        <p class="feature-desc">Claude Desktop, Cursor 등 AI 에이전트가 호출자의 권한 범위 내에서 안전하게 빈 좌석 검색 및 배정 현황을 조회합니다.</p>
+                    </article>
+                    <article class="feature-card glass-panel">
+                        <div class="feature-icon">📦</div>
+                        <h3 class="feature-title">오프라인 단일 Docker</h3>
+                        <p class="feature-desc">Go API와 React 19 / MUI 자산이 통합된 단일 non-root Docker 이미지로 외부 CDN 연결 없는 100% 폐쇄망 배포를 보장합니다.</p>
+                    </article>
+                </div>
+            </div>
+        </section>
+
+        <!-- SeatMap Section -->
+        <section class="section bg-dark" id="seatmap">
+            <div class="container text-white">
+                <h2 class="section-title text-center">SVG 비율좌표 좌석맵 & 이상 감지</h2>
+                <p class="section-subtitle text-center" style="color: #94a3b8">실시간 좌석 점유 현황과 조직 구역 불일치를 자동으로 모니터링합니다</p>
+
+                <div class="architecture-diagram">
+                    <div class="window-header">
+                        <span class="dot red"></span>
+                        <span class="dot yellow"></span>
+                        <span class="dot green"></span>
+                        <span class="window-title">seaton-seatmap-status.json</span>
+                    </div>
+<pre><code>{
+  "floor_id": "FL_10F_WEST",
+  "total_seats": 120,
+  "occupied_seats": 98,
+  "anomalies": [
+    {
+      "seat_code": "10F-W-42",
+      "type": "RETIRED_USER_OCCUPIED",
+      "assigned_to": "USR_9012 (퇴직자)",
+      "confidence": 0.95
+    }
+  ]
+}</code></pre>
+                </div>
+            </div>
+        </section>
+
+        <!-- Developer & MCP Integration -->
+        <section class="section" id="mcp">
+            <div class="container">
+                <h2 class="section-title text-center">개발자 API & Streamable MCP</h2>
+                <p class="section-subtitle text-center">REST API와 Streamable HTTP MCP로 사내 좌석 배정 자동화를 연동하세요</p>
+                
+                <div class="integration-layout">
+                    <div class="api-block glass-panel">
+                        <div class="api-title">
+                            <span class="badge badge-emerald">REST API</span>
+                            OpenAPI 3.0 사양
+                        </div>
+                        <p style="color: var(--text-muted); margin-bottom: 1rem;">`/api/v1` 경로로 도면, 좌석, 직원 및 이상 감지 API를 제공합니다.</p>
+                        <div class="code-editor">
+                            <div class="code-header">json — GET /api/v1/seats/available</div>
+<pre><code>{
+  "success": true,
+  "data": [
+    {
+      "seat_id": "SEAT_10F_012",
+      "floor": "10F",
+      "zone": "DEVELOPMENT_TEAM",
+      "x_ratio": 0.452,
+      "y_ratio": 0.681
+    }
+  ]
+}</code></pre>
+                        </div>
+                    </div>
+
+                    <div class="api-block glass-panel">
+                        <div class="api-title">
+                            <span class="badge badge-indigo">MCP</span>
+                            Streamable HTTP MCP Server
+                        </div>
+                        <p style="color: var(--text-muted); margin-bottom: 1rem;">Permission과 Scope를 엄격히 검사하는 MCP 어댑터입니다.</p>
+                        <div class="code-editor">
+                            <div class="code-header">json — MCP Authorization Token</div>
+<pre><code>{
+  "Authorization": "Bearer stn_7f9c8d11a2b3c4d5_secret_digest",
+  "Accept": "application/json, text/event-stream"
+}</code></pre>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tech Badges -->
+                <div class="tech-stack text-center" style="margin-top: 48px;">
+                    <h3 style="margin-bottom: 12px;">기술 스택</h3>
+                    <div class="badges">
+                        <span class="tech-badge">🔵 Go 1.24+</span>
+                        <span class="tech-badge">⚛️ React 19 / MUI</span>
+                        <span class="tech-badge">🐘 PostgreSQL 14+</span>
+                        <span class="tech-badge">📐 SVG Coordinate Engine</span>
+                        <span class="tech-badge">👁️ Offline OpenCV Parser</span>
+                        <span class="tech-badge">🔐 Keycloak OIDC</span>
+                        <span class="tech-badge">🤖 Streamable MCP</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Documentation & Report Center -->
+        <section class="section bg-dark" id="docs">
+            <div class="container text-white">
+                <h2 class="section-title text-center">공식 문서 & 보고서 센터</h2>
+                <p class="section-subtitle text-center" style="color: #94a3b8">사내 도입 및 운영을 위한 역할별 매뉴얼, 경영진 보고서, 로드맵 및 분석 자료 세트</p>
+                
+                <div class="feature-grid">
+                    <div class="glass-panel">
+                        <h3>📊 경영진 종합 보고서</h3>
+                        <p style="color: var(--text-muted); margin: 8px 0 16px; font-size: 0.9rem;">SeatOn 도입 성과, TCO 60% 절감, 공간 점유율 45% 향상 및 보안 보고서</p>
+                        <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+                            <a href="EXECUTIVE_REPORT.pdf" target="_blank" class="btn btn-primary" style="padding: 6px 14px; font-size: 0.82rem;">📄 PDF 다운로드</a>
+                            <a href="EXECUTIVE_REPORT.html" target="_blank" class="btn btn-secondary" style="padding: 6px 14px; font-size: 0.82rem;">🌐 HTML 뷰어</a>
+                            <a href="EXECUTIVE_REPORT.md" target="_blank" class="btn btn-secondary" style="padding: 6px 14px; font-size: 0.82rem;">📝 Markdown</a>
+                        </div>
+                    </div>
+
+                    <div class="glass-panel">
+                        <h3>📘 사용자 가이드 (User Guide)</h3>
+                        <p style="color: var(--text-muted); margin: 8px 0 16px; font-size: 0.9rem;">SVG 좌석맵 검색, Drag&Drop 배정, 도면 판독과 격자 보정, Personal Key 및 MCP 사용법</p>
+                        <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+                            <a href="USER_GUIDE.pdf" target="_blank" class="btn btn-primary" style="padding: 6px 14px; font-size: 0.82rem;">📄 PDF 다운로드</a>
+                            <a href="USER_GUIDE.html" target="_blank" class="btn btn-secondary" style="padding: 6px 14px; font-size: 0.82rem;">🌐 HTML 뷰어</a>
+                            <a href="USER_GUIDE.md" target="_blank" class="btn btn-secondary" style="padding: 6px 14px; font-size: 0.82rem;">📝 Markdown</a>
+                        </div>
+                    </div>
+
+                    <div class="glass-panel">
+                        <h3>🔧 관리자 가이드 (Admin Guide)</h3>
+                        <p style="color: var(--text-muted); margin: 8px 0 16px; font-size: 0.9rem;">3대 환경변수 부트스트랩, Keycloak OIDC, RBAC, 이상 좌석 감지 및 Master Key 관리</p>
+                        <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+                            <a href="ADMIN_GUIDE.pdf" target="_blank" class="btn btn-primary" style="padding: 6px 14px; font-size: 0.82rem;">📄 PDF 다운로드</a>
+                            <a href="ADMIN_GUIDE.html" target="_blank" class="btn btn-secondary" style="padding: 6px 14px; font-size: 0.82rem;">🌐 HTML 뷰어</a>
+                            <a href="ADMIN_GUIDE.md" target="_blank" class="btn btn-secondary" style="padding: 6px 14px; font-size: 0.82rem;">📝 Markdown</a>
+                        </div>
+                    </div>
+
+                    <div class="glass-panel">
+                        <h3>🚀 중장기 로드맵 (Roadmap)</h3>
+                        <p style="color: var(--text-muted); margin: 8px 0 16px; font-size: 0.9rem;">Phase 1 오프라인 좌석맵 구축부터 Phase 3 AI 자율 좌석 자동 추천 MCP 2.0 비전</p>
+                        <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+                            <a href="ROADMAP_PLAN.pdf" target="_blank" class="btn btn-primary" style="padding: 6px 14px; font-size: 0.82rem;">📄 PDF 다운로드</a>
+                            <a href="ROADMAP_PLAN.html" target="_blank" class="btn btn-secondary" style="padding: 6px 14px; font-size: 0.82rem;">🌐 HTML 뷰어</a>
+                            <a href="ROADMAP_PLAN.md" target="_blank" class="btn btn-secondary" style="padding: 6px 14px; font-size: 0.82rem;">📝 Markdown</a>
+                        </div>
+                    </div>
+
+                    <div class="glass-panel">
+                        <h3>👥 타겟 사용자군 분석</h3>
+                        <p style="color: var(--text-muted); margin: 8px 0 16px; font-size: 0.9rem;">경영진, 총무/인사/시설 관리자, 일반 임직원, SRE 및 보안팀 등 사내 직군별 페르소나 및 이점</p>
+                        <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+                            <a href="USER_GROUPS_ANALYSIS.pdf" target="_blank" class="btn btn-primary" style="padding: 6px 14px; font-size: 0.82rem;">📄 PDF 다운로드</a>
+                            <a href="USER_GROUPS_ANALYSIS.html" target="_blank" class="btn btn-secondary" style="padding: 6px 14px; font-size: 0.82rem;">🌐 HTML 뷰어</a>
+                            <a href="USER_GROUPS_ANALYSIS.md" target="_blank" class="btn btn-secondary" style="padding: 6px 14px; font-size: 0.82rem;">📝 Markdown</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Deployment Section -->
+        <section class="section" id="deployment">
+            <div class="container">
+                <h2 class="section-title text-center">오프라인 설치 가이드</h2>
+                <p class="section-subtitle text-center">단일 Docker 이미지로 오프라인 폐쇄망 환경에 빠르게 배포하세요</p>
+                <div class="deploy-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 24px;">
+                    <div class="deploy-card glass-panel">
+                        <h4>🐳 Single Docker Archive Load</h4>
+                        <p>GitHub Release의 .tar.gz 패키지 하나만 오프라인망으로 반입하여 구동합니다.</p>
+<pre><code>docker load < SeatOn-v1.0.0-linux-amd64-image.tar.gz
+
+# 3개 환경변수로 구동
+export POSTGRES_DSN='postgres://seaton:password@postgres:5432/seaton'
+export BOOTSTRAP_ADMIN='admin'
+export BOOTSTRAP_ADMIN_PASSWORD='change-this-strong-password'
+docker compose up -d</code></pre>
+                    </div>
+                    <div class="deploy-card glass-panel">
+                        <h4>⚙️ 3대 필수 환경변수</h4>
+                        <p>SeatOn이 사용하는 필수 환경변수는 단 3개입니다.</p>
+<pre><code>POSTGRES_DSN=postgres://seaton:pass@localhost:5432/seaton
+BOOTSTRAP_ADMIN=admin
+BOOTSTRAP_ADMIN_PASSWORD=SuperSecretPassword123!</code></pre>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- FAQ Section -->
+        <section class="section bg-dark" id="faq">
+            <div class="container text-white">
+                <h2 class="section-title text-center">자주 묻는 질문 (FAQ)</h2>
+                <div class="faq-container" style="margin-top: 40px;">
+                    <div class="faq-item">
+                        <button class="faq-question" aria-expanded="false">
+                            SeatOn은 외부 지도 SDK 없이 100% 오프라인에서 구동되나요?
+                            <span class="faq-icon">+</span>
+                        </button>
+                        <div class="faq-answer">
+                            <p>네. 외부 지도 SDK 대신 자체 개발된 SVG 비율 좌표 엔진과 오프라인 CV 도면 파서를 사용하여 인터넷 연결 없이 100% 오프라인 독립 구동합니다. 비전 모델 판독은 선택 기능이며, 사내 추론 서버 주소만 지정할 수 있습니다.</p>
+                        </div>
+                    </div>
+                    <div class="faq-item">
+                        <button class="faq-question" aria-expanded="false">
+                            도면 파일(PNG/PDF)에서 좌석 위치를 자동으로 찾아주나요?
+                            <span class="faq-icon">+</span>
+                        </button>
+                        <div class="faq-answer">
+                            <p>네. 내장된 오프라인 CV 파서가 건축 도면에서 좌석 후보를 자동 감지하고 배치 격자를 복원합니다. 신뢰도가 낮은 좌석만 검토 목록에 남으며, 사내 비전 모델과 교차 검증하면 검토 대상을 더 줄일 수 있습니다.</p>
+                        </div>
+                    </div>
+                    <div class="faq-item">
+                        <button class="faq-question" aria-expanded="false">
+                            퇴직자 점유나 오지 배정 같은 이상 좌석도 탐지하나요?
+                            <span class="faq-icon">+</span>
+                        </button>
+                        <div class="faq-answer">
+                            <p>네. 인사 DB 연동 및 이상 탐지 규칙 엔진을 통해 미배정 공석, 퇴직자 미반납 점유, 조직 구역 불일치 및 저신뢰 좌석을 자동으로 감지합니다.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- CTA Section -->
+        <section class="section" id="get-started">
+            <div class="container">
+                <div class="cta-container glass-panel text-center" style="border-radius: var(--radius-xl)">
+                    <h2 class="cta-title">지금 바로 시작하세요</h2>
+                    <p class="cta-desc" style="margin-bottom: 2rem; color: #94a3b8;">오프라인망 사내 스마트 좌석 및 공간 관리 인프라를 단일 Docker 패키지로 구축하세요</p>
+                    <a href="https://github.com/hkjang/seaton" class="btn btn-primary btn-lg" target="_blank" rel="noopener">
+                        <svg width="20" height="20" viewBox="0 0 16 16" fill="currentColor" style="margin-right:8px"><path d="M8 0c4.42 0 8 3.58 8 8a8.013 8.013 0 0 1-5.45 7.59c-.4.08-.55-.17-.55-.38 0-.27.01-1.13.01-2.2 0-.75-.25-1.23-.54-1.48 1.78-.2 3.65-.88 3.65-3.95 0-.88-.31-1.59-.82-2.15.08-.2.36-1.02-.08-2.12 0 0-.67-.22-2.2.82-.64-.18-1.32-.27-2-.27-.68 0-1.36.09-2 .27-1.53-1.03-2.2-.82-2.2-.82-.44 1.1-.16 1.92-.08 2.12-.51.56-.82 1.28-.82 2.15 0 3.06 1.86 3.75 3.64 3.95-.23.2-.44.55-.51 1.07-.46.21-1.61.55-2.33-.66-.15-.24-.6-.83-1.23-.82-.67.01-.27.38.01.53.34.19.73.9.82 1.13.16.45.68 1.31 2.69.94 0 .67.01 1.3.01 1.49 0 .21-.15.46-.55.38A7.995 7.995 0 0 1 0 8c0-4.42 3.58-8 8-8Z"/></svg>
+                        GitHub 저장소 방문하기
+                    </a>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-grid">
+                <div>
+                    <a href="#" class="logo" style="margin-bottom: 12px;">
+                        <img src="favicon.svg" alt="SeatOn Logo" width="28" height="28" style="filter: drop-shadow(0 0 8px rgba(16, 185, 129, 0.5));">
+                        SeatOn
+                    </a>
+                    <p class="footer-desc">사무실 도면과 직원 정보를 한 화면에 연결하는 오프라인 우선 스마트 좌석 및 공간 관리 플랫폼.</p>
+                </div>
+                <div>
+                    <h4 class="footer-heading">빠른 링크</h4>
+                    <div class="footer-links">
+                        <a href="https://github.com/hkjang/seaton" target="_blank">GitHub Repository</a>
+                        <a href="https://github.com/hkjang/seaton#readme" target="_blank">Documentation</a>
+                        <a href="index_en.html">English Page</a>
+                        <a href="https://hkjang.github.io/" target="_blank" style="color: #06b6d4; font-weight: 600;">🌐 전체 서비스</a>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <span>© 2026 SeatOn. Open Source Apache-2.0 License.</span>
+                <span class="footer-contact">도입 및 문의: <a href="mailto:gagagiga@naver.com">gagagiga@naver.com</a></span>
+            </div>
+        </div>
+    </footer>
+
+    <!-- JavaScript Interactions -->
+    <script>
+    (function() {
+        'use strict';
+        var menuBtn = document.getElementById('mobile-menu-btn');
+        var mobileMenu = document.getElementById('mobile-menu');
+        if (menuBtn && mobileMenu) {
+            menuBtn.addEventListener('click', function() {
+                mobileMenu.classList.toggle('active');
+            });
+            mobileMenu.querySelectorAll('a').forEach(function(link) {
+                link.addEventListener('click', function() {
+                    mobileMenu.classList.remove('active');
+                });
+            });
+        }
+        document.querySelectorAll('.faq-question').forEach(function(btn) {
+            btn.addEventListener('click', function() {
+                var answer = this.nextElementSibling;
+                var icon = this.querySelector('.faq-icon');
+                var isOpen = answer.style.maxHeight && answer.style.maxHeight !== '0px';
+
+                document.querySelectorAll('.faq-answer').forEach(function(a) { a.style.maxHeight = '0px'; });
+                document.querySelectorAll('.faq-icon').forEach(function(i) { i.textContent = '+'; });
+                document.querySelectorAll('.faq-question').forEach(function(q) { q.setAttribute('aria-expanded', 'false'); });
+
+                if (!isOpen) {
+                    answer.style.maxHeight = answer.scrollHeight + 'px';
+                    icon.textContent = '−';
+                    this.setAttribute('aria-expanded', 'true');
+                }
+            });
+        });
+    })();
+    </script>
+</body>
+</html>

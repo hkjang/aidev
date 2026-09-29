@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SeatOn 사용자 가이드 (User Guide)</title>
+    <meta name="description" content="SeatOn v1.4.12 기준. 화면을 띄워 놓고 운영하는 사람을 위한 설치·설정·장애 대응은 관리자 가이드ADMIN_GUIDE.md에 있습니다.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #10b981;
+            --primary-dark: #047857;
+            --text-dark: #0f172a;
+            --text-muted: #475569;
+            --bg-light: #f8fafc;
+            --border-color: #e2e8f0;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: 'Inter', -apple-system, sans-serif; color: var(--text-dark); background: var(--bg-light); line-height: 1.65; padding: 48px 24px; }
+        .doc-card { max-width: 1040px; margin: 0 auto; background: #ffffff; border: 1px solid var(--border-color); border-radius: 20px; padding: 56px; box-shadow: 0 12px 30px rgba(0,0,0,0.06); }
+        .header-meta { border-bottom: 3px solid var(--primary); padding-bottom: 28px; margin-bottom: 36px; }
+        .header-meta h1 { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 2.2rem; color: #0f172a; margin-bottom: 16px; letter-spacing: -0.02em; }
+        .meta-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; font-size: 0.9rem; color: var(--text-muted); }
+        .meta-item { background: #f1f5f9; padding: 8px 14px; border-radius: 8px; border: 1px solid #e2e8f0; }
+        h2 { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 1.45rem; color: var(--primary-dark); margin: 40px 0 20px; border-bottom: 2px solid #f1f5f9; padding-bottom: 10px; }
+        h3 { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 1.12rem; color: #0f172a; margin: 28px 0 14px; }
+        h4 { font-size: 1rem; color: var(--text-muted); margin: 22px 0 10px; }
+        p { margin-bottom: 18px; font-size: 1rem; color: #334155; }
+        ul, ol { margin-bottom: 20px; padding-left: 24px; }
+        li { margin-bottom: 8px; }
+        pre { background: #0f172a; color: #f8fafc; padding: 24px; border-radius: 12px; font-family: 'JetBrains Mono', monospace; font-size: 0.88rem; overflow-x: auto; margin: 20px 0; }
+        code { font-family: 'JetBrains Mono', monospace; background: #e2e8f0; color: #0f172a; padding: 2px 6px; border-radius: 4px; font-size: 0.88rem; }
+        pre code { background: none; color: inherit; padding: 0; }
+        table { width: 100%; border-collapse: collapse; margin: 20px 0; font-size: 0.92rem; }
+        th, td { border: 1px solid var(--border-color); padding: 10px 12px; text-align: left; vertical-align: top; }
+        th { background: #f1f5f9; font-weight: 700; color: #0f172a; }
+        tbody tr:nth-child(even) { background: #fafafa; }
+        blockquote { border-left: 4px solid var(--primary); background: #ecfdf5; padding: 14px 18px; border-radius: 0 10px 10px 0; margin: 20px 0; color: #065f46; }
+        hr { border: none; border-top: 1px solid var(--border-color); margin: 32px 0; }
+        figure { margin: 20px 0 24px; }
+        figure img { width: 100%; border: 1px solid var(--border-color); border-radius: 10px; }
+        figcaption { margin-top: 8px; font-size: 0.88rem; color: var(--text-muted); }
+        a { color: var(--primary-dark); }
+        .doc-nav { margin-bottom: 24px; font-size: 0.9rem; }
+        .print-btn { display: inline-block; background: var(--primary); color: #ffffff; padding: 12px 24px; border-radius: 10px; text-decoration: none; font-weight: 700; font-size: 0.92rem; float: right; }
+        .print-btn:hover { background: var(--primary-dark); }
+        .generated { margin-top: 40px; padding-top: 20px; border-top: 1px solid var(--border-color); font-size: 0.82rem; color: var(--text-muted); }
+        @media print { .print-btn, .doc-nav { display: none; } body { background: #ffffff; padding: 0; } .doc-card { border: none; box-shadow: none; padding: 0; } }
+    </style>
+</head>
+<body>
+    <div class="doc-card">
+        <a href="javascript:window.print()" class="print-btn">🖨️ PDF / 인쇄하기</a>
+        <div class="header-meta">
+            <h1>SeatOn 사용자 가이드</h1>
+        </div>
+        <p>SeatOn v1.4.12 기준. 화면을 띄워 놓고 운영하는 사람을 위한 설치·설정·장애 대응은 <a href="ADMIN_GUIDE.md">관리자 가이드</a>에 있습니다.</p>
+        <h2>1. 이 제품이 하는 일</h2>
+        <p>SeatOn은 사무실 도면 위에 "누가 어디에 앉는지"를 보여 줍니다. PNG·JPG·PDF 도면을 올리면 좌석을 자동으로 찾아 주고, 인사 정보와 연결해 이름·사번·조직으로 자리를 검색할 수 있게 합니다. 좌석 이동은 끌어다 놓기만 하면 되고, 누가 언제 어디로 옮겼는지는 자동으로 기록됩니다.</p>
+        <p>일반 직원은 <strong>좌석맵</strong> 한 화면만 씁니다. 동료의 자리를 찾고, 팀이 어디에 모여 앉는지 봅니다. 좌석 관리자(총무·시설·인사)는 도면을 올리고, 인식 결과를 검토하고, 배정을 바꾸고, 미배정·퇴직자 점유·조직 구역 불일치 같은 예외를 <strong>처리필요</strong> 화면에서 처리합니다.</p>
+        <p>도면과 좌석 좌표는 모두 사내 PostgreSQL에 저장되고, 기본 설정에서는 인터넷으로 나가는 통신이 없습니다. 사내 AI 비서(MCP 클라이언트)에서 좌석을 물어보는 연동도 개인 API 키로 붙일 수 있습니다.</p>
+        <h2>2. 처음 5분 — 로그인해서 동료 자리 찾기</h2>
+        <ol>
+            <li>관리자에게 받은 주소(예: <code>http://seaton.intra:8080</code>)를 브라우저로 엽니다. 로그인 화면이 나옵니다. Keycloak SSO가 켜진 회사라면 <strong>사내 SSO로 로그인</strong> 단추가 함께 보입니다.</li>
+        </ol>
+        <figure><img src="assets/guide/login.png" alt="로그인 — 아이디와 비밀번호를 넣고 로그인을 누른다. 카드 아래에 빌드 버전이 표시된다" loading="lazy"><figcaption>로그인 — 아이디와 비밀번호를 넣고 로그인을 누른다. 카드 아래에 빌드 버전이 표시된다</figcaption></figure>
+        <ol start="2">
+            <li>로그인하면 바로 <strong>좌석맵</strong>이 열립니다. 동료가 보낸 링크(예: 특정 도면 주소)로 들어와 로그인 화면을 지난 경우에는 좌석맵이 아니라 그 링크의 화면으로 갑니다. 가운데가 도면, 왼쪽이 검색, 오른쪽이 선택한 좌석의 상세입니다. 도면 위 좌석은 배정된 사람의 이름 또는 좌석 번호 뒷자리로 표시됩니다.</li>
+        </ol>
+        <figure><img src="assets/guide/seatmap.png" alt="좌석맵 — 왼쪽 검색, 가운데 도면, 오른쪽 좌석 상세. 아래 범례가 배정·빈 좌석·검토 필요를 구분한다" loading="lazy"><figcaption>좌석맵 — 왼쪽 검색, 가운데 도면, 오른쪽 좌석 상세. 아래 범례가 배정·빈 좌석·검토 필요를 구분한다</figcaption></figure>
+        <ol start="3">
+            <li>왼쪽 검색창에 이름·사번·조직명을 넣고 Enter를 누릅니다. 첫 결과의 좌석으로 도면이 확대되며 테두리가 맥동하고, 오른쪽에 좌석 번호·소속·근무지가 열립니다. 검색한 말과 보고 있는 도면은 주소창에 남습니다(<code>/?q=김개발</code>) — 새로고침해도 같은 자리가 그대로 열리고, 그 주소를 그대로 복사해 동료에게 보내면 동료도 같은 좌석을 봅니다. 검색창을 비우고 Enter를 누르면 주소에서도 사라집니다.</li>
+        </ol>
+        <figure><img src="assets/guide/seatmap-search.png" alt="좌석맵 검색 — &quot;김개발&quot;을 찾자 HQ-3F-001 좌석으로 확대되고 오른쪽에 상세가 열렸다" loading="lazy"><figcaption>좌석맵 검색 — "김개발"을 찾자 HQ-3F-001 좌석으로 확대되고 오른쪽에 상세가 열렸다</figcaption></figure>
+        <ol start="4">
+            <li>도면 좌상단의 <strong>전체 보기</strong> 단추(가운데 아이콘)를 누르거나 키보드 <code>0</code>을 누르면 다시 층 전체가 보입니다.</li>
+        </ol>
+        <p>여기까지가 일반 직원이 매일 쓰는 전부입니다. 관리 화면은 왼쪽 메뉴에 권한이 있는 사람에게만 나타납니다.</p>
+        <h2>3. 화면별 사용법</h2>
+        <h3>3.1 좌석맵</h3>
+        <p>주소 <code>/</code>. 모든 사용자가 봅니다. 상단 오른쪽의 <strong>본사</strong>·<strong>3층</strong> 선택기로 사업장과 층을 바꿉니다. 기본값은 각 층의 게시된 도면입니다.</p>
+        <p><strong>도면 다루기</strong></p>
+        <table>
+            <thead><tr><th>조작</th><th>동작</th></tr></thead>
+            <tbody>
+                <tr><td>빈 곳 드래그</td><td>화면 이동</td></tr>
+                <tr><td>마우스 휠</td><td>커서 위치를 기준으로 확대·축소</td></tr>
+                <tr><td>방향키</td><td>화면 이동</td></tr>
+                <tr><td><code>+</code> / <code>-</code></td><td>확대 / 축소</td></tr>
+                <tr><td><code>0</code></td><td>전체 보기로 되돌리기</td></tr>
+                <tr><td>좌하단 미니맵</td><td>현재 보는 영역 표시. 클릭·드래그로 이동</td></tr>
+            </tbody>
+        </table>
+        <p>확대 배율은 도면 좌상단에 %로 표시되며 전체 보기가 100%입니다. 미니맵은 확대했거나 필터·조직 강조가 걸렸을 때 나타납니다. 좌석 번호는 도면 안에서 구분되는 뒷자리만 보여 줍니다. <code>HQ-3F-011</code> 좌석은 도면 위에서 <code>011</code>로 읽히고, 전체 번호는 좌석을 고르면 오른쪽 상세와 툴팁에 나옵니다.</p>
+        <p><strong>색상 기준과 필터</strong> — 도면 위 툴바에서 고릅니다.</p>
+        <ul>
+            <li><strong>상태 색</strong>(기본): 배정, 빈 좌석, 공용, 사용불가를 색으로 구분합니다. 검토 필요(점선), 구역 불일치(자주색 점선)는 테두리로도 구분되므로 색각 이상이 있어도 판별할 수 있습니다.</li>
+            <li><strong>조직 색</strong>: 실제로 앉은 직원의 소속 색으로 칠해 어느 팀이 어디에 앉는지 봅니다. 범례가 그 도면의 조직 목록으로 바뀌고, 조직을 누르면 그 조직만 도드라집니다.</li>
+            <li><strong>구역</strong>: 좌석에 지정된 조직 구역을 배경 상자로 표시합니다.</li>
+            <li><strong>배정 · 빈 좌석 · 검토 필요 · 구역 불일치</strong> 필터: 여러 개를 함께 고를 수 있습니다. 걸리지 않은 좌석은 사라지지 않고 흐려지며, 강조된 좌석 수가 툴바 오른쪽에 <code>6 / 30석 강조</code>처럼 표시됩니다.</li>
+        </ul>
+        <figure><img src="assets/guide/seatmap-org-color.png" alt="조직 색과 구역 — 개발팀·영업팀·인사팀이 색으로 구분되고 앞줄에 개발팀 구역이 점선 상자로 표시된다" loading="lazy"><figcaption>조직 색과 구역 — 개발팀·영업팀·인사팀이 색으로 구분되고 앞줄에 개발팀 구역이 점선 상자로 표시된다</figcaption></figure>
+        <figure><img src="assets/guide/seatmap-filter-review.png" alt="검토 필요 필터 — 인식 신뢰도가 낮은 6석만 남기고 나머지는 흐려진다" loading="lazy"><figcaption>검토 필요 필터 — 인식 신뢰도가 낮은 6석만 남기고 나머지는 흐려진다</figcaption></figure>
+        <p>좌석에 마우스를 올리면 좌석 번호, 배정자, 소속, 검토 필요 여부, 구역 불일치가 툴팁으로 표시됩니다.</p>
+        <p><strong>좌석 상세의 두 조직</strong> — 좌석을 고르면 오른쪽 상세가 열립니다. <strong>조직</strong>은 그 자리에 실제로 앉은 직원의 소속이고, <strong>지정 구역</strong>은 좌석 자체에 지정해 둔 조직 구역입니다. 둘은 다를 수 있으며, 다르면 지정 구역 옆에 <code>구역 불일치</code>가 함께 표시됩니다. 지정 구역은 아무도 앉지 않은 좌석에서도 보이고, 지정하지 않은 좌석에서는 그 줄이 나타나지 않습니다. 상세는 검색 결과가 아니라 좌석 정보에서 채워지므로, 검색하지 않고 도면에서 바로 좌석을 골라도 소속과 근무지가 그대로 보입니다.</p>
+        <p><strong>키보드만으로 쓰기</strong></p>
+        <table>
+            <thead><tr><th>조작</th><th>동작</th></tr></thead>
+            <tbody>
+                <tr><td>Tab</td><td>도면 안 좌석 하나로 들어옵니다. 한 번 더 누르면 도면을 지나 다음 조작으로 갑니다</td></tr>
+                <tr><td>방향키</td><td>그 방향에 있는 이웃 좌석으로 초점을 옮깁니다</td></tr>
+                <tr><td>Home / End</td><td>도면의 첫 좌석 / 마지막 좌석</td></tr>
+                <tr><td>Enter · Space</td><td>그 좌석을 선택해 오른쪽에 상세를 엽니다</td></tr>
+            </tbody>
+        </table>
+        <p>초점이 화면 밖 좌석으로 가면 그 좌석이 보이도록 화면이 따라 움직입니다. 좌석마다 좌석 번호·배정자·소속·검토 상태를 읽어 주므로 화면 낭독기로도 쓸 수 있습니다. 검색 결과가 여럿이면 Tab으로 목록을 옮겨 다니며 Enter나 Space로 고릅니다. 상단 <strong>직원 빠른 검색</strong>(<code>Ctrl/⌘ K</code>)은 어느 화면에서든 사람을 찾아 좌석맵으로 갑니다.</p>
+        <p><strong>배치 편집</strong> (좌석 관리자 이상) — 오른쪽 위 <strong>배치 편집</strong>을 누르면 도면 위에 편집 도구가 나타나고, 단추가 <strong>좌석 추가</strong>·<strong>편집 완료</strong>로 바뀝니다.</p>
+        <figure><img src="assets/guide/seatmap-edit.png" alt="배치 편집 — 도면 격자, 격자 보정, 격자에 정렬, 실행 취소·다시 실행 도구가 도면 위에 뜬다. 선택한 좌석의 상세에 편집·삭제가 나타난다" loading="lazy"><figcaption>배치 편집 — 도면 격자, 격자 보정, 격자에 정렬, 실행 취소·다시 실행 도구가 도면 위에 뜬다. 선택한 좌석의 상세에 편집·삭제가 나타난다</figcaption></figure>
+        <ul>
+            <li><strong>이동</strong>: 좌석을 끌어 옮깁니다. Shift로 여러 좌석을 선택해 함께 옮깁니다. 방향키로 미세 조정하고 Shift와 함께 누르면 크게 움직입니다.</li>
+            <li><strong>도면 격자</strong>: 격자 오버레이를 켜고 끕니다. 격자가 보정된 도면에서는 드래그가 실제 책상 간격에 스냅됩니다.</li>
+            <li><strong>선택 좌석으로 격자 보정</strong>(자 아이콘): 가로·세로로 떨어진 좌석 2개 이상을 Shift로 고른 뒤 누르면 그 간격이 이 도면의 격자로 저장됩니다.</li>
+            <li><strong>격자에 정렬</strong>(지팡이 아이콘): 선택 좌석(없으면 도면 전체)을 격자 교점에 한 번에 맞춥니다. 결과에 좌석이 얼마나 움직였는지가 함께 표시되며, 좌석 간격의 절반을 넘게 움직였다는 경고가 뜨면 격자 보정값이 잘못된 것이니 다시 보정하십시오.</li>
+            <li><strong>격자 보정 해제</strong>: 저장된 격자를 지웁니다.</li>
+            <li><strong>실행 취소 · 다시 실행</strong>: <code>Ctrl/⌘ Z</code>, <code>Ctrl/⌘ Shift Z</code>.</li>
+            <li><strong>좌석 추가</strong>: 단추를 누르거나 도면의 빈 곳을 더블 클릭하면 그 위치에 좌석을 만듭니다. 좌표와 크기는 도면 대비 0~1 비율입니다.</li>
+            <li><strong>편집 · 삭제</strong>(오른쪽 상세): 좌석 번호, 종류(고정 좌석·공용 좌석·사용 불가·회의실·임원실·기타 공간), 좌표·크기, 회전 각도를 고치거나 좌석을 지웁니다. 배정된 좌석은 삭제되지 않으므로 상세의 <strong>배정 해제</strong>로 먼저 자리를 비웁니다. 좌석 추가·보정 창의 <strong>조직 구역</strong>에서 조직을 지정하거나 변경하고, <strong>미지정</strong>을 고르면 구역을 해제합니다. <strong>저장</strong>해야 반영되며 <strong>취소</strong>하면 변경되지 않습니다. 좌석 구역만 바뀌고 직원의 배정·소속은 그대로입니다. 앉은 직원의 소속과 다른 조직을 지정하면 구역 불일치로 표시됩니다. 처리필요의 <strong>영역 맞춤</strong>으로 직원 소속에 맞출 수도 있습니다.</li>
+        </ul>
+        <h3>3.2 처리필요</h3>
+        <p>주소 <code>/admin/actions</code>. 좌석 관리자 이상. 예외를 발견하고 처리하는 화면입니다. 왼쪽 메뉴의 배지 숫자가 처리 필요 건수입니다.</p>
+        <figure><img src="assets/guide/admin-actions.png" alt="처리필요 — 확인이 필요한 건수, 직원 배정률·좌석 점유율·미배정 직원·AI 검토 대기 집계" loading="lazy"><figcaption>처리필요 — 확인이 필요한 건수, 직원 배정률·좌석 점유율·미배정 직원·AI 검토 대기 집계</figcaption></figure>
+        <figure><img src="assets/guide/admin-actions-queue.png" alt="작업 큐 — 조직 영역 불일치와 AI 좌석 확인 항목이 줄지어 있고 각 항목에 즉시 조치 단추가 있다. 오른쪽은 운영 준비도와 연동 상태" loading="lazy"><figcaption>작업 큐 — 조직 영역 불일치와 AI 좌석 확인 항목이 줄지어 있고 각 항목에 즉시 조치 단추가 있다. 오른쪽은 운영 준비도와 연동 상태</figcaption></figure>
+        <p><strong>작업 큐</strong>는 전체·미배정·퇴직자·조직 불일치·AI 확인 탭으로 나뉩니다. 각 항목의 단추로 그 자리에서 처리합니다.</p>
+        <table>
+            <thead><tr><th>항목</th><th>뜻</th><th>단추</th></tr></thead>
+            <tbody>
+                <tr><td>미배정</td><td>재직 중인데 좌석이 없는 직원</td><td><strong>좌석 배정</strong> — 그 직원을 검색해 둔 좌석맵으로 이동</td></tr>
+                <tr><td>퇴직자</td><td>퇴직 처리된 직원이 좌석을 점유</td><td><strong>좌석 해제</strong>, 또는 위쪽의 <strong>퇴직자 n건 일괄 해제</strong></td></tr>
+                <tr><td>조직 영역 불일치</td><td>좌석의 조직 구역과 앉은 사람의 소속이 다름</td><td><strong>영역 맞춤</strong> — 좌석의 구역을 앉은 사람의 소속으로 바꿈</td></tr>
+                <tr><td>AI 좌석 확인</td><td>인식 신뢰도가 자동 승인선 아래인 좌석</td><td><strong>확인 완료</strong> — 검토를 끝내고 신뢰도를 승인선으로 올림</td></tr>
+            </tbody>
+        </table>
+        <p><strong>운영 준비도</strong>는 사업장 등록 → 층 구성 → 좌석맵 게시 → 직원 데이터 → Keycloak SSO → 인사 자동 동기화 여섯 단계 중 끝난 것을 보여 줍니다. 마지막 두 단계는 시스템 관리자가 시스템 설정에서 켭니다. <strong>연동 상태</strong>는 인사 동기화·Keycloak SSO·게시 좌석맵의 현재 상태입니다. 화면은 자동으로 새로 고쳐지지 않으며 오른쪽 위 새로고침 아이콘으로 다시 읽습니다.</p>
+        <h3>3.3 도면 · 좌석</h3>
+        <p>주소 <code>/admin/maps</code>. 좌석 관리자 이상. 사업장 → 층 → 도면 → AI 분석 → 게시 다섯 단계가 위쪽에 표시되고, 끝난 단계에 체크가 붙습니다.</p>
+        <figure><img src="assets/guide/admin-maps.png" alt="도면 · 좌석 — 다섯 단계 진행 표시와 층별 도면 카드. 카드에 좌석 수, 검토 건수, AI 분석·좌석 일괄·배치 편집·게시 내림 단추가 있다" loading="lazy"><figcaption>도면 · 좌석 — 다섯 단계 진행 표시와 층별 도면 카드. 카드에 좌석 수, 검토 건수, AI 분석·좌석 일괄·배치 편집·게시 내림 단추가 있다</figcaption></figure>
+        <p>오른쪽 위 단추:</p>
+        <ul>
+            <li><strong>사업장</strong>: 사업장명·코드·주소(선택)를 넣습니다. 코드(<code>HQ</code>)가 좌석 번호 접두어의 앞부분이 됩니다.</li>
+            <li><strong>층</strong>: 사업장을 고르고 층 이름(<code>12층</code>)·층 코드(<code>12F</code>)를 넣습니다. 좌석 번호는 <code>HQ-12F-001</code>처럼 만들어집니다.</li>
+            <li><strong>도면 업로드</strong>: 층과 버전을 고르고 PNG·JPG·PDF(25MB 이하)를 올립니다. 같은 층에 같은 버전은 두 번 올릴 수 없습니다.</li>
+        </ul>
+        <figure><img src="assets/guide/admin-maps-building.png" alt="사업장 추가 — 사업장명, 코드, 주소를 넣는 창" loading="lazy"><figcaption>사업장 추가 — 사업장명, 코드, 주소를 넣는 창</figcaption></figure>
+        <figure><img src="assets/guide/admin-maps-upload.png" alt="도면 업로드 — 층을 고르고 버전을 적은 뒤 PNG, JPG, PDF 파일을 고른다" loading="lazy"><figcaption>도면 업로드 — 층을 고르고 버전을 적은 뒤 PNG, JPG, PDF 파일을 고른다</figcaption></figure>
+        <p>도면 카드의 단추:</p>
+        <table>
+            <thead><tr><th>단추</th><th>동작</th></tr></thead>
+            <tbody>
+                <tr><td><strong>AI 분석</strong></td><td>좌석 인식을 시작합니다. 백그라운드에서 진행되며 단추가 진행 상태로 바뀌고, 끝나면 결과와 경고가 화면 위에 표시됩니다. 게시 중인 도면은 다시 분석할 수 없습니다</td></tr>
+                <tr><td><strong>좌석 일괄</strong></td><td>행·열·간격을 지정해 좌석 격자를 한 번에 만듭니다(최대 500석). 인식 결과가 없거나 도면이 단순할 때 씁니다</td></tr>
+                <tr><td><strong>배치 편집</strong></td><td>이 도면을 좌석맵 편집 모드로 엽니다</td></tr>
+                <tr><td><strong>게시</strong> / <strong>게시 내림</strong></td><td>층의 활성 도면으로 올리거나 내립니다. 게시를 내려도 좌석과 이력은 남습니다</td></tr>
+                <tr><td><strong>삭제</strong></td><td>게시 중이 아닌 버전을 지웁니다. 무엇을 지우는지 확인 창이 뜹니다</td></tr>
+            </tbody>
+        </table>
+        <p><strong>인식 결과</strong> — 좌석에는 신뢰도와 근거가 함께 기록됩니다. 신뢰도가 자동 승인 기준(기본 0.95) 아래인 좌석은 좌석맵에서 점선 테두리로 표시되고 카드에 <code>검토 n건</code>으로 집계되며, 처리필요의 AI 확인 탭에도 올라옵니다. 근거는 네 가지입니다.</p>
+        <ul>
+            <li><code>cv</code> — 오프라인 CV가 도면의 실제 선에서 찾은 좌석</li>
+            <li><code>vlm</code> — 사내 비전 모델만 찾은 좌석. 항상 검토 대상입니다</li>
+            <li><code>cv+vlm</code> — 두 엔진이 같은 자리를 지목해 교차 검증된 좌석</li>
+            <li><code>grid-fill</code> — 격자에서 빠진 자리에 도면 흔적이 있어 채운 좌석. 항상 검토 대상입니다</li>
+        </ul>
+        <p>어떤 엔진을 쓸지는 시스템 관리자가 정합니다. 엔진별 차이는 관리자 가이드의 "좌석 인식 엔진" 절을 보십시오.</p>
+        <h3>3.4 직원</h3>
+        <p>주소 <code>/admin/employees</code>. 좌석 관리자 이상. 재직자·좌석 배정·미배정 집계와 직원 목록입니다. 이름·사번·이메일·조직으로 검색하고 재직 상태·배정 상태·조직으로 거릅니다. <strong>조직</strong> 필터는 고른 조직에 소속된 직원만 남깁니다 — 검색어로 조직명을 치는 것과 달리 이름·사번·이메일까지 함께 훑지 않으므로 <code>영업팀</code>처럼 팀 단위 명단을 정확히 잘라 볼 수 있고, 한 번에 500명까지만 표시되는 제한도 팀별로 나누면 걸리지 않습니다. 조직을 골라도 검색어와 나머지 필터는 그대로 남습니다.</p>
+        <figure><img src="assets/guide/admin-employees.png" alt="직원 — 조회된 재직자·좌석 배정·미배정 집계, 검색과 상태 필터, 직원 목록. 오른쪽 위에 CSV 내보내기·직원 양식·배정 양식·좌석 일괄 배정·직원 가져오기" loading="lazy"><figcaption>직원 — 조회된 재직자·좌석 배정·미배정 집계, 검색과 상태 필터, 직원 목록. 오른쪽 위에 CSV 내보내기·직원 양식·배정 양식·좌석 일괄 배정·직원 가져오기</figcaption></figure>
+        <ul>
+            <li><strong>CSV 내보내기</strong>: 지금 조회된 목록을 그대로 <code>직원목록_2026-09-27.csv</code>처럼 내려받습니다. 검색어와 재직 상태·배정 상태·조직 필터가 적용된 결과이므로 표에 보이는 행이 그대로 파일이 됩니다(예: 배정 상태를 <code>미배정</code>으로 걸러 미배정자 명단만 받기, 조직을 <code>영업팀</code>으로 걸러 팀별 명단 파일 받기). 열은 이름·사번·이메일·조직명·직급·직책·근무지·좌석·재직상태로, 표에 보이는 값과 같습니다. 이 파일은 보고·확인용입니다 — 조직을 가리키는 <code>조직코드</code> 열이 없으므로 그대로 <strong>직원 가져오기</strong>에 올리지 마십시오. 올리면 같은 이름의 조직이 새로 만들어지고 직원이 그리로 옮겨져 도면의 팀 색과 좌석의 지정 구역이 어긋나고, 조직명 칸을 비워 올리면 소속이 지워집니다. 직원 정보를 고쳐 올릴 때는 <code>조직코드</code>가 있는 <strong>직원 양식</strong>을 쓰고, 좌석은 <strong>좌석 일괄 배정</strong>으로 바꾸십시오. 목록이 비었으면 누를 수 없습니다.</li>
+            <li><strong>직원 양식</strong> / <strong>배정 양식</strong>: 가져오기에 쓰는 CSV 양식을 내려받습니다.</li>
+            <li><strong>직원 가져오기</strong>: 인사 CSV/XLSX를 올려 직원을 만들거나 갱신합니다.</li>
+            <li><strong>좌석 일괄 배정</strong>: 사번과 좌석 번호 두 열짜리 CSV/XLSX로 배정합니다. 결과는 <code>1건 배정, 2건 확인 필요</code>처럼 요약되고, 반영되지 않은 행은 행 번호와 사유(<code>사번을 찾을 수 없습니다</code>, <code>이미 다른 직원에게 배정된 좌석입니다</code>)가 목록으로 나옵니다.</li>
+            <li>목록의 <strong>지도에서 보기</strong>는 그 직원의 좌석으로, <strong>좌석 배정</strong>은 그 직원을 검색해 둔 좌석맵으로 이동합니다.</li>
+        </ul>
+        <h3>3.5 변경 이력</h3>
+        <p>주소 <code>/admin/history</code>. 좌석 관리자 이상. 좌석 이동은 별도 입력 없이 처리 주체·사유·경로까지 자동으로 남습니다.</p>
+        <figure><img src="assets/guide/admin-history.png" alt="변경 이력 — 검색, 방식, 시작일·종료일 필터와 이전 좌석 → 새 좌석, 처리자, 사유, 방식 목록" loading="lazy"><figcaption>변경 이력 — 검색, 방식, 시작일·종료일 필터와 이전 좌석 → 새 좌석, 처리자, 사유, 방식 목록</figcaption></figure>
+        <ul>
+            <li><strong>검색</strong>: 이름, 사번, 좌석 번호. 이전 좌석과 새 좌석 양쪽이 대상입니다.</li>
+            <li><strong>방식</strong>: 수동 배정, 일괄 등록, 처리필요에서 조치, 처리필요 일괄 조치, 인사 동기화, MCP 연동.</li>
+            <li><strong>시작일 · 종료일</strong>: 그 날 전체가 포함됩니다. 경계는 보고 있는 브라우저의 시간대로 계산됩니다.</li>
+            <li><strong>더 보기</strong>: 100건씩 늘려 최대 500건까지 봅니다. 조건에 맞는 건수가 5000건을 넘으면 <code>5000+</code>로 표시됩니다.</li>
+            <li><strong>CSV 내보내기</strong>: 화면에 보이는 만큼이 아니라 조건에 맞는 전체를 다시 조회해 내려받습니다. 한 번에 500건까지이며, 그보다 많으면 몇 건을 받았는지 알려 주므로 기간을 나눠 다시 내보냅니다. Excel에서 한글이 깨지지 않도록 BOM이 붙습니다.</li>
+        </ul>
+        <p>변경일시는 최근 것일수록 "3분 전"처럼 상대 시간으로 보이고, 마우스를 올리면 정확한 시각이 나옵니다.</p>
+        <h3>3.6 내 API 키</h3>
+        <p>주소 <code>/profile/keys</code>. 모든 사용자. 오른쪽 위 프로필을 누르면 열리는 메뉴에서 <strong>내 API 키</strong>로 갑니다. 같은 메뉴에 빌드 버전과 <strong>로그아웃</strong>이 있습니다.</p>
+        <figure><img src="assets/guide/profile-menu.png" alt="프로필 메뉴 — 내 API 키, SeatOn 1.4.0 버전 표시, 로그아웃" loading="lazy"><figcaption>프로필 메뉴 — 내 API 키, SeatOn 1.4.0 버전 표시, 로그아웃</figcaption></figure>
+        <figure><img src="assets/guide/profile-keys-create.png" alt="개인 API 키 만들기 — 키 이름을 적고 read·write·mcp 범위를 고른다" loading="lazy"><figcaption>개인 API 키 만들기 — 키 이름을 적고 read·write·mcp 범위를 고른다</figcaption></figure>
+        <figure><img src="assets/guide/profile-keys-created.png" alt="지금 키를 복사하세요 — 키 원문은 이 창에서 한 번만 표시된다(그림에서는 가렸다)" loading="lazy"><figcaption>지금 키를 복사하세요 — 키 원문은 이 창에서 한 번만 표시된다(그림에서는 가렸다)</figcaption></figure>
+        <figure><img src="assets/guide/profile-keys.png" alt="내 API 키 목록 — 상태, 범위, 버전, 마지막 사용, 만료와 회전·폐기 단추. 아래에 MCP 엔드포인트 주소" loading="lazy"><figcaption>내 API 키 목록 — 상태, 범위, 버전, 마지막 사용, 만료와 회전·폐기 단추. 아래에 MCP 엔드포인트 주소</figcaption></figure>
+        <ol start="15">
+            <li><strong>키 만들기</strong>를 누르고 이름과 범위(<code>read</code>, <code>write</code>, <code>mcp</code>)를 정합니다. 범위를 벗어난 요청은 <code>403</code>으로 막힙니다. <code>read</code> 키로는 데이터를 바꿀 수 없고, <code>mcp</code> 범위가 없으면 MCP 연결도 되지 않습니다.</li>
+            <li><strong>생성</strong> 직후 <code>seat_...</code> 형식의 키 원문이 한 번만 표시됩니다. <strong>복사</strong>해 안전한 곳에 두고 <strong>보관 완료</strong>를 누릅니다. 서버는 해시만 저장하므로 원문은 다시 볼 수 없습니다.</li>
+            <li>목록의 <strong>상태</strong>는 사용 중 · 회전 유예 · 폐기됨 중 하나입니다. <strong>만료</strong>는 관리자가 정한 기본 유효기간(기본 90일)으로 계산됩니다.</li>
+            <li><strong>회전</strong>: 새 키가 한 번 표시되고, 기존 키는 유예시간(기본 24시간) 동안만 함께 동작한 뒤 막힙니다. 연동을 새 키로 바꿀 시간을 벌어 줍니다.</li>
+            <li><strong>폐기</strong>: 유출이 의심되면 즉시 무효로 만듭니다. 유예 없이 그 순간부터 막히고 되돌릴 수 없으므로 어떤 키인지 확인하는 창이 한 번 뜹니다.</li>
+        </ol>
+        <h2>4. 자주 하는 작업</h2>
+        <h3>새 층 도면을 올려서 게시하기 (좌석 관리자)</h3>
+        <ol>
+            <li><strong>도면 · 좌석</strong> → <strong>사업장</strong>, <strong>층</strong>으로 건물과 층을 만듭니다(이미 있으면 건너뜁니다).</li>
+            <li><strong>도면 업로드</strong>에서 층과 버전(<code>2026-09</code> 또는 <code>1</code>)을 고르고 파일을 올립니다.</li>
+            <li>카드의 <strong>AI 분석</strong>을 누르고 끝날 때까지 기다립니다. 오프라인 CV는 보통 몇 초, 비전 모델은 수십 초에서 수 분이 걸립니다.</li>
+            <li><strong>배치 편집</strong>으로 열어 검토 필요(점선) 좌석을 확인합니다. 어긋난 좌석은 끌어 옮기고, 책상이 규칙적이면 좌석 2개 이상을 Shift로 골라 <strong>선택 좌석으로 격자 보정</strong> 뒤 <strong>격자에 정렬</strong>로 한 번에 맞춥니다.</li>
+            <li><strong>편집 완료</strong> 뒤 카드의 <strong>게시</strong>를 누릅니다. 같은 층의 이전 게시 도면은 자동으로 보관 상태가 됩니다.</li>
+        </ol>
+        <p>게시된 도면은 다시 분석할 수 없습니다. 인식을 다시 돌리려면 새 버전을 올리십시오.</p>
+        <h3>사람을 다른 자리로 옮기기</h3>
+        <p>좌석맵 왼쪽에서 직원을 검색하고, 결과 항목을 목표 좌석 위로 끌어다 놓습니다. 즉시 배정되고 이력이 남습니다. 한 직원은 동시에 한 좌석만 차지하며, 이미 누가 앉은 좌석에는 놓을 수 없습니다.</p>
+        <h3>자리를 비우기</h3>
+        <p>좌석을 골라 오른쪽 상세의 <strong>배정 해제</strong>를 누르면 그 자리가 빈 좌석이 됩니다(좌석 관리자 이상, 배치 편집을 켜지 않아도 됩니다). 확인 창에서 승인해야 반영되며 변경 이력이 남습니다. 배정된 좌석은 삭제할 수 없으므로, 좌석 자체를 지우려면 먼저 배정을 해제하십시오.</p>
+        <h3>인사 파일로 한꺼번에 배정하기</h3>
+        <ol>
+            <li><strong>직원</strong> → <strong>배정 양식</strong>을 내려받아 사번과 좌석 번호(<code>HQ-3F-001</code>) 두 열을 채웁니다.</li>
+            <li><strong>좌석 일괄 배정</strong>으로 올립니다. 반영되지 않은 행은 사유와 함께 아래에 나열되므로 그 행만 고쳐 다시 올립니다.</li>
+        </ol>
+        <p>직원 자체를 새로 넣거나 소속을 갱신하려면 <strong>직원 양식</strong>으로 같은 순서를 밟되 <strong>직원 가져오기</strong>를 씁니다.</p>
+        <h3>인식이 남긴 검토 항목 털어내기</h3>
+        <p><strong>처리필요</strong> → <strong>AI 확인</strong> 탭에서 항목마다 좌석 번호를 보고 좌석맵에서 자리를 확인한 뒤 <strong>확인 완료</strong>를 누릅니다. 좌석맵에서 <strong>검토 필요</strong> 필터를 켜면 점선 좌석만 남으므로 어디를 봐야 하는지 바로 보입니다.</p>
+        <h3>월말 좌석 변경 내역 내보내기</h3>
+        <p><strong>변경 이력</strong>에서 시작일·종료일을 그 달의 1일과 말일로 두고 <strong>조회</strong>, 이어서 <strong>CSV 내보내기</strong>. 500건을 넘으면 안내에 나온 전체 건수를 보고 기간을 반으로 나눠 두 번 내보냅니다.</p>
+        <h3>잘못 올린 도면 버전 지우기</h3>
+        <p><strong>도면 · 좌석</strong>에서 그 카드의 <strong>삭제</strong>를 누릅니다. 두 경우에는 지워지지 않습니다.</p>
+        <ul>
+            <li><strong>게시 중인 도면</strong>: 삭제 단추가 나타나지 않습니다. <strong>게시 내림</strong>으로 먼저 내리거나 다른 버전을 게시해 밀어낸 뒤 지웁니다.</li>
+            <li><strong>배정이나 변경 이력이 걸린 좌석이 있는 도면</strong>: "누가 어디서 어디로 옮겼는지"를 잃지 않도록 거절합니다. 시험 삼아 올린 버전은 배정도 이력도 없으므로 바로 지워집니다.</li>
+        </ul>
+        <h3>사내 AI 비서에서 좌석 물어보기 (MCP)</h3>
+        <p><strong>내 API 키</strong>에서 <code>read</code>와 <code>mcp</code> 범위로 키를 만들고(배정까지 시키려면 <code>write</code>도), MCP 클라이언트에 Streamable HTTP 엔드포인트 하나만 등록합니다. 엔드포인트 주소는 키 목록 아래에 표시됩니다.</p>
+        <pre><code>{
+  "mcpServers": {
+    "seaton": {
+      "type": "http",
+      "url": "https://seaton.intra/mcp",
+      "headers": {
+        "Authorization": "Bearer seat_xxxxxxxxxxxxxxxxxxxx"
+      }
+    }
+  }
+}</code></pre>
+        <table>
+            <thead><tr><th>도구</th><th>설명</th></tr></thead>
+            <tbody>
+                <tr><td><code>search_employees</code></td><td>이름, 사번, 이메일, 조직명으로 직원을 찾고 현재 좌석을 반환합니다</td></tr>
+                <tr><td><code>list_available_seats</code></td><td>건물·층의 사용 가능한 좌석을 조회합니다</td></tr>
+                <tr><td><code>get_floor_map</code></td><td>층 도면과 좌석 배치를 조회합니다. 이미지 원문 대신 내부 URL과 비율 좌표를 반환합니다</td></tr>
+                <tr><td><code>get_action_items</code></td><td>미배정, 퇴직자 점유, 조직 불일치 등 처리 필요 건수를 조회합니다</td></tr>
+                <tr><td><code>assign_seat</code></td><td>좌석을 배정합니다. 좌석 관리자 권한과 <code>write</code> 범위가 모두 필요하며 이력에 남습니다</td></tr>
+            </tbody>
+        </table>
+        <p><strong>키 없이 SSO 로 연결하기</strong></p>
+        <p>관리자가 MCP SSO 인증을 켠 설치라면 키가 필요 없습니다. <strong>내 API 키</strong> 화면에 "키 없이 SSO 로 연결하기" 안내가 보이면 그 설치입니다. MCP 클라이언트에 주소 하나만 등록합니다.</p>
+        <pre><code>{
+  "mcpServers": {
+    "seaton": { "type": "http", "url": "https://seaton.intra/mcp" }
+  }
+}</code></pre>
+        <p>클라이언트가 처음 연결할 때 사내 SSO(Keycloak) 로그인 화면을 띄우고, 로그인하면 토큰을 받아 와 이어서 씁니다. 이미 Keycloak 에 로그인돼 있으면 화면이 거의 보이지 않습니다. 쓰이는 계정은 웹에서 로그인하는 그 계정이고 권한도 같습니다 — 단, <strong>먼저 브라우저로 SeatOn 에 한 번 로그인해 두어야</strong> 합니다("등록되지 않았거나 비활성 … 먼저 웹으로 한 번 로그인하세요"가 나오면 그것입니다). 자동화 스크립트처럼 사람이 로그인할 수 없는 곳에서는 여전히 개인 키를 씁니다.</p>
+        <p>REST API 전체는 <a href="API_AND_MCP.md">API_AND_MCP.md</a>와 실행 중인 서버의 <code>/api/v1/openapi.json</code>에 있습니다.</p>
+        <h2>5. 막혔을 때</h2>
+        <p>화면에 나오는 문구 그대로 찾으십시오. "관리자에게"라고 적힌 것은 시스템 관리자가 관리자 가이드를 보고 처리합니다.</p>
+        <table>
+            <thead><tr><th>화면 문구</th><th>뜻</th><th>할 일</th></tr></thead>
+            <tbody>
+                <tr><td><code>아이디 또는 비밀번호를 확인하세요</code></td><td>로컬 로그인 실패</td><td>다시 입력합니다. SSO 계정이면 SSO 단추로 로그인합니다</td></tr>
+                <tr><td><code>로컬 로그인이 비활성화되어 있습니다</code></td><td>관리자가 로컬 로그인을 껐음</td><td>SSO로 로그인합니다</td></tr>
+                <tr><td><code>서버에 연결하지 못했습니다. 네트워크를 확인한 뒤 다시 시도하세요.</code></td><td>브라우저가 서버에 닿지 못함</td><td>주소·VPN을 확인하고, 계속되면 관리자에게</td></tr>
+                <tr><td><code>세션이 만료되었습니다. 다시 로그인해 주세요.</code></td><td>세션 유효시간(기본 8시간)이 지남</td><td>다시 로그인하면 이어서 작업합니다. 저장 전 내용은 남지 않습니다</td></tr>
+                <tr><td><code>로그인이 필요합니다</code></td><td>로그인 없이 보호된 화면을 열었음</td><td>로그인합니다</td></tr>
+                <tr><td><code>좌석 관리자 권한이 필요합니다</code> / <code>시스템 관리자 권한이 필요합니다</code></td><td>권한 부족</td><td>관리자에게 <strong>사용자 권한</strong>에서 역할을 올려 달라고 합니다</td></tr>
+                <tr><td><code>PNG, JPG, PDF 도면만 업로드할 수 있습니다</code></td><td>지원하지 않는 파일</td><td>형식을 바꿔 다시 올립니다</td></tr>
+                <tr><td><code>도면 파일은 25MB 이하여야 합니다</code></td><td>파일이 큼</td><td>해상도를 낮추거나 PDF는 한 페이지로 잘라 올립니다</td></tr>
+                <tr><td><code>동일한 층과 버전의 도면이 이미 있습니다</code></td><td>버전 중복</td><td>다른 버전 이름을 씁니다</td></tr>
+                <tr><td><code>게시 중인 도면은 다시 분석할 수 없습니다</code></td><td>게시된 버전에 AI 분석을 누름</td><td>새 버전을 올려 분석합니다</td></tr>
+                <tr><td><code>이 도면은 이미 분석 중입니다</code></td><td>같은 도면의 분석이 진행 중</td><td>끝날 때까지 기다립니다</td></tr>
+                <tr><td><code>분석이 예상보다 오래 걸립니다. 잠시 후 도면 목록을 새로 고쳐 확인하세요</code></td><td>비전 모델 응답이 느림</td><td>새로 고쳐 확인합니다. VLM 호출이 실패해도 CV 결과로 완료됩니다</td></tr>
+                <tr><td><code>도면 분석에 실패했습니다</code></td><td>분석 잡 실패</td><td>카드의 오류 문구를 관리자에게 전달합니다</td></tr>
+                <tr><td><code>게시 중인 도면은 삭제할 수 없습니다. 다른 버전을 게시한 뒤 삭제하세요</code></td><td>게시 중 삭제 시도</td><td>게시 내림 뒤 지웁니다</td></tr>
+                <tr><td><code>배정이나 변경 이력이 있는 도면은 삭제할 수 없습니다</code></td><td>이력 보호</td><td>게시 내림으로 내려 두고 보관합니다</td></tr>
+                <tr><td><code>배정 중인 좌석은 삭제할 수 없습니다</code></td><td>배정된 좌석 삭제 시도</td><td>사람을 다른 자리로 옮긴 뒤 지웁니다</td></tr>
+                <tr><td><code>격자를 계산할 수 없습니다. 가로·세로로 떨어진 좌석을 2개 이상 선택하세요</code></td><td>격자 보정 선택 부족</td><td>한 줄이 아니라 가로와 세로로 떨어진 좌석을 고릅니다</td></tr>
+                <tr><td><code>먼저 도면의 좌석 격자를 보정하세요</code></td><td>격자 없이 정렬 시도</td><td>격자 보정을 먼저 합니다</td></tr>
+                <tr><td><code>한 번에 1~500개 좌석을 생성할 수 있습니다</code></td><td>좌석 일괄 범위 초과</td><td>행·열을 줄입니다</td></tr>
+                <tr><td><code>CSV 또는 XLSX 파일만 사용할 수 있습니다</code></td><td>가져오기 파일 형식</td><td>양식을 내려받아 그 형식으로 저장합니다</td></tr>
+                <tr><td><code>사번과 이름은 필수입니다</code></td><td>직원 파일에 빈 칸</td><td>그 행을 채웁니다</td></tr>
+                <tr><td><code>사번을 찾을 수 없습니다</code> / <code>이미 다른 직원에게 배정된 좌석입니다</code></td><td>일괄 배정에서 반영되지 않은 행</td><td>사번·좌석 번호를 고쳐 그 행만 다시 올립니다</td></tr>
+                <tr><td><code>PDF 미리보기 없음 · 오버레이를 표시할 수 없습니다</code></td><td>PDF 변환 실패</td><td>도면을 PNG로 바꿔 올리거나 관리자에게</td></tr>
+                <tr><td><code>지원 범위는 read, write, mcp입니다</code></td><td>API 키 범위 오타</td><td>세 값 중에서 고릅니다</td></tr>
+                <tr><td><code>mcp 범위가 있는 API 키가 필요합니다</code> / <code>write 범위가 있는 API 키가 필요합니다</code></td><td>키 범위 부족(<code>403</code>)</td><td>범위를 넣어 새 키를 만듭니다</td></tr>
+                <tr><td><code>API 키가 유효하지 않습니다</code></td><td>만료·폐기·회전 유예 종료</td><td>새 키로 바꿉니다</td></tr>
+            </tbody>
+        </table>
+        <p>그 밖의 상황:</p>
+        <table>
+            <thead><tr><th>상황</th><th>확인할 점</th></tr></thead>
+            <tbody>
+                <tr><td>좌석맵에 도면만 보이고 좌석이 없다</td><td>AI 분석을 실행했는지, 게시했는지 확인합니다</td></tr>
+                <tr><td>좌석이 도면과 어긋나 보인다</td><td>도면 우측 상단에 크기 정보 경고가 있는지 보고, 없으면 격자 보정값을 점검합니다</td></tr>
+                <tr><td>정렬 후 좌석이 흐트러졌다</td><td>정렬 결과의 이동량 경고를 확인하고 <code>Ctrl/⌘ Z</code>로 되돌린 뒤 격자를 다시 보정합니다</td></tr>
+                <tr><td>이력에서 오늘 것이 안 보인다</td><td>시작일·종료일을 모두 오늘로 두었는지 확인합니다</td></tr>
+                <tr><td>내려받은 CSV가 화면보다 적다</td><td>한 번에 500건까지만 받습니다. 기간을 나눠 다시 내보냅니다</td></tr>
+                <tr><td>왼쪽 메뉴에 관리 화면이 없다</td><td>역할이 직원입니다. 관리자에게 좌석 관리자 역할을 요청합니다</td></tr>
+            </tbody>
+        </table>
+        <h2>6. 용어</h2>
+        <table>
+            <thead><tr><th>용어</th><th>뜻</th></tr></thead>
+            <tbody>
+                <tr><td>사업장 · 층</td><td>건물과 층. 코드(<code>HQ</code>, <code>3F</code>)가 좌석 번호 접두어 <code>HQ-3F-</code>를 만듭니다</td></tr>
+                <tr><td>도면 버전</td><td>한 층에 올린 도면 파일 하나. 여러 버전 중 하나만 게시됩니다</td></tr>
+                <tr><td>게시</td><td>그 버전을 층의 활성 도면으로 올려 좌석맵에 보이게 하는 것</td></tr>
+                <tr><td>AI 분석</td><td>도면에서 좌석을 자동으로 찾는 작업. 오프라인 CV, 비전 모델(VLM), 하이브리드 중 하나로 동작합니다</td></tr>
+                <tr><td>신뢰도 · 검토 필요</td><td>인식된 좌석이 실제 좌석일 확률. 자동 승인 기준(기본 0.95) 아래면 검토 필요로 표시됩니다</td></tr>
+                <tr><td>격자 보정</td><td>도면의 실제 책상 간격을 저장해 스냅·정렬 기준으로 삼는 것</td></tr>
+                <tr><td>구역</td><td>좌석에 지정한 조직. 좌석 추가·보정 창의 조직 구역에서 지정·변경하거나 미지정으로 해제합니다. 직원 소속은 바뀌지 않으며, 앉은 사람의 소속과 다르면 구역 불일치가 됩니다</td></tr>
+                <tr><td>처리필요</td><td>미배정·퇴직자 점유·구역 불일치·AI 확인을 모아 놓은 작업 큐</td></tr>
+                <tr><td>회전 · 유예</td><td>API 키를 새것으로 바꾸되 옛 키를 잠시 함께 허용하는 것</td></tr>
+                <tr><td>MCP</td><td>AI 비서가 SeatOn 도구를 부르는 표준 연결 방식. 개인 API 키의 <code>mcp</code> 범위가 필요합니다</td></tr>
+            </tbody>
+        </table>
+        <div class="generated">이 문서는 <code>docs/USER_GUIDE.md</code> 에서 <code>scripts/build-docs.py</code> 로 생성되었습니다. 내용 수정은 Markdown 원본에서 하십시오.</div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,46 @@
+name: Release offline Docker image
+
+on:
+  push:
+    tags:
+      - "v*.*.*"
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v6
+      - uses: docker/setup-buildx-action@v4
+      - name: Build offline image
+        env:
+          VERSION: ${{ github.ref_name }}
+          COMMIT: ${{ github.sha }}
+        run: |
+          # 이미지 태그는 서비스명:v버전, 배포 파일은 서비스명-v버전.tar.gz 로 맞춘다.
+          # 애플리케이션이 알리는 버전 문자열은 v 없는 semver 그대로 둔다.
+          built_at="$(date -u +%Y-%m-%dT%H:%M:%SZ)"
+          docker buildx build --load --platform linux/amd64 \
+            --build-arg "VERSION=${VERSION#v}" \
+            --build-arg "COMMIT=${COMMIT}" \
+            --build-arg "BUILT_AT=${built_at}" \
+            -t "seaton:${VERSION}" .
+          docker save "seaton:${VERSION}" | gzip -9 > "SeatOn-${VERSION}.tar.gz"
+      - name: Verify image archive
+        env:
+          VERSION: ${{ github.ref_name }}
+        run: |
+          test -s "SeatOn-${VERSION}.tar.gz"
+          gzip -t "SeatOn-${VERSION}.tar.gz"
+      - name: Create GitHub release with image only
+        env:
+          GH_TOKEN: ${{ github.token }}
+          VERSION: ${{ github.ref_name }}
+        run: |
+          gh release create "$VERSION" \
+            "SeatOn-${VERSION}.tar.gz" \
+            --verify-tag \
+            --generate-notes \
+            --title "SeatOn ${VERSION}"

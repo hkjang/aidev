@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SeatOn 로드맵 계획서 (Roadmap Plan)</title>
+    <meta name="description" content="SeatOn 플랫폼은 오프라인 도면 판독과 비율 좌표 좌석 관리를 기반으로, 사내 AI 에이전트와 대화형으로 오피스 공간을 추천·배정하는 Autonomous Smart Office Platform으로 진화합니다. 모든 단계에서 에어갭 환경에서 기능이 완결되어야 한다는 원칙을 유지합니다. 외부 모델이나 클라우드 서비스는 선택 사항이며, 설정하지 않아도 제품이">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #10b981;
+            --primary-dark: #047857;
+            --text-dark: #0f172a;
+            --text-muted: #475569;
+            --bg-light: #f8fafc;
+            --border-color: #e2e8f0;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: 'Inter', -apple-system, sans-serif; color: var(--text-dark); background: var(--bg-light); line-height: 1.65; padding: 48px 24px; }
+        .doc-card { max-width: 1040px; margin: 0 auto; background: #ffffff; border: 1px solid var(--border-color); border-radius: 20px; padding: 56px; box-shadow: 0 12px 30px rgba(0,0,0,0.06); }
+        .header-meta { border-bottom: 3px solid var(--primary); padding-bottom: 28px; margin-bottom: 36px; }
+        .header-meta h1 { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 2.2rem; color: #0f172a; margin-bottom: 16px; letter-spacing: -0.02em; }
+        .meta-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; font-size: 0.9rem; color: var(--text-muted); }
+        .meta-item { background: #f1f5f9; padding: 8px 14px; border-radius: 8px; border: 1px solid #e2e8f0; }
+        h2 { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 1.45rem; color: var(--primary-dark); margin: 40px 0 20px; border-bottom: 2px solid #f1f5f9; padding-bottom: 10px; }
+        h3 { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 1.12rem; color: #0f172a; margin: 28px 0 14px; }
+        h4 { font-size: 1rem; color: var(--text-muted); margin: 22px 0 10px; }
+        p { margin-bottom: 18px; font-size: 1rem; color: #334155; }
+        ul, ol { margin-bottom: 20px; padding-left: 24px; }
+        li { margin-bottom: 8px; }
+        pre { background: #0f172a; color: #f8fafc; padding: 24px; border-radius: 12px; font-family: 'JetBrains Mono', monospace; font-size: 0.88rem; overflow-x: auto; margin: 20px 0; }
+        code { font-family: 'JetBrains Mono', monospace; background: #e2e8f0; color: #0f172a; padding: 2px 6px; border-radius: 4px; font-size: 0.88rem; }
+        pre code { background: none; color: inherit; padding: 0; }
+        table { width: 100%; border-collapse: collapse; margin: 20px 0; font-size: 0.92rem; }
+        th, td { border: 1px solid var(--border-color); padding: 10px 12px; text-align: left; vertical-align: top; }
+        th { background: #f1f5f9; font-weight: 700; color: #0f172a; }
+        tbody tr:nth-child(even) { background: #fafafa; }
+        blockquote { border-left: 4px solid var(--primary); background: #ecfdf5; padding: 14px 18px; border-radius: 0 10px 10px 0; margin: 20px 0; color: #065f46; }
+        hr { border: none; border-top: 1px solid var(--border-color); margin: 32px 0; }
+        figure { margin: 20px 0 24px; }
+        figure img { width: 100%; border: 1px solid var(--border-color); border-radius: 10px; }
+        figcaption { margin-top: 8px; font-size: 0.88rem; color: var(--text-muted); }
+        a { color: var(--primary-dark); }
+        .doc-nav { margin-bottom: 24px; font-size: 0.9rem; }
+        .print-btn { display: inline-block; background: var(--primary); color: #ffffff; padding: 12px 24px; border-radius: 10px; text-decoration: none; font-weight: 700; font-size: 0.92rem; float: right; }
+        .print-btn:hover { background: var(--primary-dark); }
+        .generated { margin-top: 40px; padding-top: 20px; border-top: 1px solid var(--border-color); font-size: 0.82rem; color: var(--text-muted); }
+        @media print { .print-btn, .doc-nav { display: none; } body { background: #ffffff; padding: 0; } .doc-card { border: none; box-shadow: none; padding: 0; } }
+    </style>
+</head>
+<body>
+    <div class="doc-card">
+        <a href="javascript:window.print()" class="print-btn">🖨️ PDF / 인쇄하기</a>
+        <div class="header-meta">
+            <h1>SeatOn 엔터프라이즈 중장기 기술 로드맵 (Product Roadmap Plan)</h1>
+            <div class="meta-grid">
+                <div class="meta-item"><strong>문서 버전:</strong> v1.4.12 ~ v3.0-VISION</div>
+                <div class="meta-item"><strong>작성일자:</strong> 2026년 8월 26일</div>
+                <div class="meta-item"><strong>문서 분류:</strong> 비즈니스 및 아키텍처 중장기 로드맵 (Strategic Product Roadmap)</div>
+            </div>
+        </div>
+        <hr>
+        <h2>1. 비전 및 발전 마일스톤 개요</h2>
+        <p>SeatOn 플랫폼은 오프라인 도면 판독과 비율 좌표 좌석 관리를 기반으로, 사내 AI 에이전트와 대화형으로 오피스 공간을 추천·배정하는 Autonomous Smart Office Platform으로 진화합니다. 모든 단계에서 <strong>에어갭 환경에서 기능이 완결되어야 한다</strong>는 원칙을 유지합니다. 외부 모델이나 클라우드 서비스는 선택 사항이며, 설정하지 않아도 제품이 온전히 동작합니다.</p>
+        <pre><code>==================================================================================================
+                                [SeatOn 단계별 마일스톤 아키텍처]
+==================================================================================================
+ [Phase 1: v1.0.0] (완료)    ➔ Offline CV Parsing, SVG Coordinate Engine, Anomaly Seat Detection
+ [Phase 1.5: v1.1.0] (완료)  ➔ Pluggable Detection Engines (CV / VLM / Hybrid), Grid Calibration
+ [Phase 1.6: v1.2.0] (완료)  ➔ SeatMap Navigation &amp; Org Overlay, Admin Screen Consistency
+ [Phase 1.7: v1.3.0] (완료)  ➔ Browser-Verified UI (E2E in CI), Map Version Lifecycle, A11y
+ [Phase 1.8: v1.4.0] (완료)  ➔ Keyboard-Navigable Floorplan, Bulk Seat Assignment UI, 500-Seat Scale
+ [Phase 2: v1.5.0] (진행)    ➔ Multi-Building Floorplan Sync &amp; Real-Time IoT Sensor Integration
+ [Phase 3: v2.0.0] (2026 Q4) ➔ AI Auto Seat Allocation Copilot (NL-to-Space Action MCP 2.0)
+ [Phase 4: v3.0.0] (2027)    ➔ Predictive Office Space Analytics &amp; Autonomous Energy Saving
+==================================================================================================</code></pre>
+        <hr>
+        <h2>2. Phase별 세부 기술 명세 및 추진 전략</h2>
+        <h3>2.1 Phase 1: v1.0.0 오프라인 스마트 좌석 플랫폼 구축 (완료)</h3>
+        <ul>
+            <li><strong>도면 CV &amp; SVG 엔진</strong>: PNG/JPG/PDF 도면 오프라인 후보 파싱, 비율 좌표 SVG 좌석 편집기.</li>
+            <li><strong>이상 좌석 감지</strong>: 미배정, 퇴직자 점유, 조직 구역 불일치, 저신뢰 좌석 자동 감지.</li>
+            <li><strong>Keycloak OIDC &amp; Break Glass</strong>: PKCE SSO 연동 및 3대 환경변수 부트스트랩.</li>
+            <li><strong>Streamable HTTP MCP</strong>: AI 에이전트를 위한 5개 ACL-aware MCP Tools 탑재.</li>
+        </ul>
+        <h3>2.2 Phase 1.5: v1.1.0 좌석 매핑 정확도와 판독 엔진 선택 (완료)</h3>
+        <p>Phase 1의 가장 큰 실사용 마찰은 인식률이 아니라 <strong>좌석이 도면과 어긋나는 문제</strong>였습니다. 좌표계를 도면 원본 비율에 정렬하고, 판독 엔진을 교체 가능한 구조로 바꿨습니다.</p>
+        <ul>
+            <li><strong>좌표계 정합</strong>: 좌석맵 좌표계를 도면 픽셀 비율에 맞춰 비율 좌표가 1:1 대응하도록 수정. 이전에는 10:7 고정이어서 세로 도면에서 좌석이 도면 너비의 40%까지 밀렸습니다. 포인터 입력도 같은 좌표계로 변환해 드래그 정밀도를 확보했습니다.</li>
+            <li><strong>PDF 좌석 오버레이</strong>: PDF 첫 페이지를 래스터화해 보관하고, 좌석 오버레이와 판독이 같은 이미지를 기준으로 동작하도록 통일.</li>
+            <li><strong>도면별 격자 보정</strong>: 도면마다 책상 열 간격을 저장해 스냅과 일괄 정렬이 실제 배치를 따르게 함. 관리자 보정값과 자동 추론값을 출처로 구분해, 잘못 추론된 격자가 영구히 남지 않도록 처리.</li>
+            <li><strong>판독 엔진 재설계(<code>offline-cv-v2</code>)</strong>: Otsu 이진화, 벽·치수선 제거, 크기 군집 중 격자 정합도가 가장 높은 묶음 선택. 벽선이 관통하는 책상과 저대비 스캔 도면에서 이전 구현은 후보를 전혀 만들지 못했습니다.</li>
+            <li><strong>선택형 비전 모델(VLM) 판독</strong>: OpenAI 호환 사내 추론 서버로 Qwen2.5-VL 계열을 호출하는 경로 추가. 모델이 좌표계와 상자 형식을 임의로 바꿔도 자동 판별합니다.</li>
+            <li><strong>교차 검증(하이브리드)</strong>: CV의 기하 정확도와 VLM의 의미 이해를 IoU로 교차 검증하고, 보정되지 않은 모델 확신도가 자동 승인으로 이어지지 않도록 신뢰도 상한을 둠.</li>
+            <li><strong>비동기 분석 작업</strong>: 판독을 백그라운드 잡으로 분리해 장시간 추론이 HTTP 응답 제한에 걸리지 않게 하고, 중단된 작업을 자동 복구.</li>
+        </ul>
+        <h3>2.3 Phase 1.6: v1.2.0 좌석맵 탐색과 관리자 화면 정비 (완료)</h3>
+        <p>판독 정확도를 확보한 뒤 남은 마찰은 <strong>큰 도면을 다루는 방법</strong>과 <strong>화면 전반의 일관성</strong>이었습니다.</p>
+        <ul>
+            <li><strong>좌석맵 탐색</strong>: 스크롤 확대를 뷰포트 기반 캔버스로 바꿔 화면 이동과 커서 기준 확대를 지원합니다. 검색으로 찾은 좌석은 중앙으로 이동하며 확대되고, 미니맵이 현재 영역을 보여줍니다.</li>
+            <li><strong>조직 시각화</strong>: 좌석 색상을 상태 또는 조직 기준으로 전환하고, 조직 구역을 배경으로 표시합니다. 좌석 API가 착석자의 소속을 함께 내려주어 구역 불일치를 화면에서 바로 구분합니다.</li>
+            <li><strong>좌석 렌더 분리</strong>: 좌석을 개별 memo 단위로 나눠 화면 이동·확대가 좌석 목록을 다시 그리지 않습니다.</li>
+            <li><strong>감사 이력 조회</strong>: 검색·방식·기간 필터와 CSV 내보내기를 더했습니다. 기간 경계는 사용자 시간대로 계산하고, 건수 집계는 상한에서 끊어 이력이 쌓여도 전체 스캔이 되지 않습니다.</li>
+            <li><strong>화면 일관성</strong>: 모든 관리자 화면에 로딩·빈 상태를 공통 컴포넌트로 적용해 "아직 못 불러왔다"와 "데이터가 없다"를 구분합니다.</li>
+            <li><strong>세션 만료 안내</strong>: 세션이 끊기면 한 곳에서 정리해 로그인으로 안내합니다.</li>
+            <li><strong>집계 비용 절감</strong>: 상단 배지 전용 집계를 분리하고 대시보드 집계를 제한된 동시성으로 실행합니다.</li>
+        </ul>
+        <h3>2.4 Phase 1.7: v1.3.0 화면 검증 체계와 도면 버전 수명주기 (완료)</h3>
+        <p>타입 검사와 단위 테스트는 화면이 실제로 어떻게 그려지는지 보지 못합니다. v1.2.0까지의 결함 중 팬·확대가 통째로 죽은 것, 좌석 클릭이 삼켜진 것, 휠 확대가 조용히 사라진 것은 모두 그 사각지대에서 나왔습니다. v1.3.0은 그 사각지대를 없애고, 없애자마자 드러난 결함들을 함께 정리한 릴리즈입니다.</p>
+        <ul>
+            <li><strong>브라우저 화면 검증</strong>: 실행 중인 SeatOn을 Playwright로 열어 확인하는 검증 28건을 CI에 붙였습니다. PostgreSQL과 방금 만든 이미지를 띄우고, 빈 데이터베이스에 사업장·층·도면·좌석·직원을 시드한 뒤(좌석은 실제 CV 분석으로 생성) 로그인부터 배치 편집까지 밟습니다. 검증 항목은 과거에 실제로 났던 결함을 따라가며, 주요 항목은 결함을 되살려 놓고 검증이 실패하는 것까지 확인했습니다.</li>
+            <li><strong>좌석 라벨 가독성</strong>: 좌석 번호에서 도면 공통 접두사를 떼어 좁은 좌석 안에서도 구분되는 뒷자리가 남게 했습니다. 라벨 크기는 확대 배율에 반비례시키되 배율보다 느리게 키워, 확대해도 글자가 좌석을 뒤덮지 않고 파묻히지도 않습니다. 배율은 단계로 뭉쳐 휠을 굴릴 때마다 좌석 전체를 다시 그리지 않습니다.</li>
+            <li><strong>조작 패널 배치</strong>: 색상·필터와 배치 편집 도구를 도면 위 떠 있는 패널에서 상단 툴바로 옮겼습니다. 이전에는 패널이 도면 좌상단 좌석과 확대 배율 표시를 가렸습니다.</li>
+            <li><strong>노트북 화면 대응</strong>: 검색·도면·상세 세 칸의 최소 폭 합이 1280px 화면을 넘겨 상세 패널이 잘려 나갔습니다. 도면 칸이 줄어들 수 있게 하고 양옆은 넓은 화면에서만 넉넉하게 줍니다.</li>
+            <li><strong>첫 실행 안내</strong>: 준비 단계가 아직 하지 않은 일까지 체크 표시로 보여 주던 것을, 끝난 단계·지금 할 단계·대기로 구분했습니다.</li>
+            <li><strong>연결 실패와 설정 오류 구분</strong>: 서버에 닿지 못했을 때 "로그인 방식이 없다"고 안내하며 입력란까지 감추던 것을, 연결 안내와 다시 시도로 바꿨습니다.</li>
+            <li><strong>키보드 접근</strong>: 좌석은 도면 위 그림이라 탭 순서에 들어오지 않으므로, 검색 결과 목록이 키보드로 좌석을 고르는 길입니다. 그 목록에 초점과 Enter·Space, 화면 낭독기용 레이블을 붙였습니다.</li>
+            <li><strong>도면 버전 수명주기</strong>: 잘못 올린 도면 버전을 지울 수 있게 했습니다. 게시 중인 도면과, 배정·변경 이력이 걸린 좌석이 있는 도면은 거절합니다. 좌석이 사라지면 변경 이력의 좌석 참조가 비어 감사 기록을 잃기 때문입니다.</li>
+            <li><strong>입력 마찰 제거</strong>: 고를 것이 하나뿐인 목록은 미리 골라 둡니다.</li>
+        </ul>
+        <h3>2.5 Phase 1.8: v1.4.0 키보드 탐색과 일괄 배정, 대형 도면 확인 (완료)</h3>
+        <p>v1.3.0에서 만든 화면 검증으로 남은 사각지대 세 곳을 차례로 확인하고 메웠습니다.</p>
+        <ul>
+            <li><strong>도면 좌석 키보드 탐색</strong>: 좌석은 도면 위 그림이라 탭 순서에 들어오지 않아, 도면을 훑어보는 것은 마우스로만 가능했습니다. 좌석 하나만 탭에 넣고 그 안에서는 방향키로 옮겨 다닙니다(roving tabindex). 도면 좌석은 표가 아니라 흩어진 사각형이므로, 줄을 벗어난 정도에 벌점을 주고 가장 가까운 좌석을 고릅니다. 초점이 화면 밖으로 나가면 화면이 따라가고, 이미 보이는 좌석이면 움직이지 않습니다.</li>
+            <li><strong>좌석 일괄 배정 화면</strong>: 문서에는 "사번과 좌석 번호 두 열로 일괄 배정"이 적혀 있었지만 화면에는 없었고, API 키로 직접 호출해야만 닿을 수 있었습니다. 화면을 붙이고, 반영되지 않은 행은 행 번호와 사유를 함께 보여 줍니다. 서버에서는 좌석 번호로 좌석을 찾을 때 게시된 도면으로 좁혔습니다. 좌석 번호는 도면마다 따로 매겨지므로, 검토 중인 새 버전이 있으면 그쪽 좌석에 배정되어 좌석맵에는 보이지 않았습니다.</li>
+            <li><strong>대형 도면 확인</strong>: 25열 × 20행 500석 도면에서 30석 도면과 화면 성능이 사실상 같음을 확인했습니다(첫 렌더 24ms, 화면 이동 중 프레임 간격 중앙값 16.7ms로 60fps 유지). 화면 이동이 좌석을 다시 그리지 않고 <code>viewBox</code> 만 바꾸기 때문이며, 그 특성이 유지되는지 검증이 확인합니다.</li>
+            <li><strong>도면 게시 내림</strong>: 게시 중인 도면은 지울 수 없는데 그 층의 유일한 버전이면 밀어낼 다른 버전도 없어, v1.3.0의 삭제 기능이 닿지 못하는 경우가 있었습니다. 게시를 내리면 좌석맵에서 사라지고 좌석과 이력은 남으므로, 그 뒤에 지울지 다시 게시할지 고를 수 있습니다.</li>
+        </ul>
+        <h3>2.6 Phase 2: v1.5.0 멀티 사옥 도면 동기화 &amp; 실시간 센서 연동 (2026 Q3)</h3>
+        <ul>
+            <li><strong>다중 건물/사옥 통합 뷰</strong>: 본사, 지사, R&amp;D 센터 멀티 사옥 레이아웃 통합 관리.</li>
+            <li><strong>IoT 모션 센서 연동</strong>: 좌석 재실 센서 데이터 실시간 바인딩.</li>
+            <li><strong>도면 버전 간 좌석 이관</strong>: 새 도면 버전을 올릴 때 이전 버전의 좌석과 배정을 좌표 기준으로 자동 승계.</li>
+        </ul>
+        <h3>2.7 Phase 3: v2.0.0 AI 자율 좌석 코파일럿 (2026 Q4)</h3>
+        <ul>
+            <li><strong>NL-to-Space Action (MCP 2.0)</strong>: "10층 개발팀 구역 근처에 빈 좌석 찾아 배정해줘" 같은 요청을 권한 검증 후 자동 처리.</li>
+            <li><strong>판독 품질 피드백 루프</strong>: 관리자가 교정한 좌석을 판독 품질 지표로 축적해 엔진·프롬프트 선택을 데이터로 결정.</li>
+        </ul>
+        <hr>
+        <h2>3. 리소스 및 위험 관리 (Risk Matrix)</h2>
+        <table>
+            <thead><tr><th>위험 요소</th><th>영향도</th><th>발생 가능성</th><th>대응 및 완화 전략</th></tr></thead>
+            <tbody>
+                <tr><td><strong>PostgreSQL DB 장애</strong></td><td>High</td><td>Low</td><td>Multi-AZ HA 클러스터 및 Read-Replica 구축</td></tr>
+                <tr><td><strong>도면 판독 오차</strong></td><td>Medium</td><td>Medium</td><td>신뢰도 점수 기반 검토 큐, 격자 보정, 엔진 교차 검증</td></tr>
+                <tr><td><strong>비전 모델 오검출 유입</strong></td><td>Medium</td><td>Medium</td><td>모델 단독 결과에 신뢰도 상한 적용, 격자를 벗어난 결과 제외, 실패 시 CV 폴백</td></tr>
+                <tr><td><strong>비전 모델 서버 장애</strong></td><td>Low</td><td>Medium</td><td>판독 실패 시 CV 결과로 자동 대체하여 작업 자체는 완료</td></tr>
+                <tr><td><strong>Master Key 분실</strong></td><td>High</td><td>Low</td><td><code>/var/lib/seaton/master.key</code> 자동 이중화 백업</td></tr>
+            </tbody>
+        </table>
+        <hr>
+        <h2>4. 문서 산출물 관리</h2>
+        <p><code>docs/*.md</code> 가 단일 원본이며, 배포용 HTML과 PDF는 <code>scripts/build-docs.py</code> 로 생성합니다. 문서를 고칠 때는 Markdown만 수정한 뒤 스크립트를 다시 실행하십시오.</p>
+        <pre><code>python3 scripts/build-docs.py            # 전체 재생성
+python3 scripts/build-docs.py ADMIN_GUIDE # 특정 문서만</code></pre>
+        <div class="generated">이 문서는 <code>docs/ROADMAP_PLAN.md</code> 에서 <code>scripts/build-docs.py</code> 로 생성되었습니다. 내용 수정은 Markdown 원본에서 하십시오.</div>
+    </div>
+</body>
+</html>

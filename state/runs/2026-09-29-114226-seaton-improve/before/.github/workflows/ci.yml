@@ -1,0 +1,95 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-go@v7
+        with:
+          go-version-file: go.mod
+          cache: true
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 24
+          cache: npm
+          cache-dependency-path: web/package-lock.json
+      - name: Go tests and vet
+        run: |
+          go test ./...
+          go vet ./...
+      - name: React tests and production build
+        working-directory: web
+        run: |
+          npm ci
+          npm test
+          npm run build
+      - name: Docker image build
+        run: docker build --build-arg VERSION=ci --build-arg COMMIT="$GITHUB_SHA" --build-arg BUILT_AT=ci -t seaton:ci .
+
+  e2e:
+    # 실제로 그려진 화면을 브라우저로 확인한다. 타입 검사와 단위 테스트가
+    # 잡지 못하는 배치·조작 결함이 여기서 걸린다.
+    runs-on: ubuntu-24.04
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_USER: seaton
+          POSTGRES_PASSWORD: seaton
+          POSTGRES_DB: seaton
+        ports: ["5432:5432"]
+        options: >-
+          --health-cmd "pg_isready -U seaton"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 20
+    env:
+      E2E_BASE_URL: http://127.0.0.1:8080
+      E2E_USERNAME: admin
+      E2E_PASSWORD: ci-e2e-password-123
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 24
+          cache: npm
+          cache-dependency-path: web/package-lock.json
+      - name: Build image
+        run: docker build --build-arg VERSION=e2e -t seaton:e2e .
+      - name: Start SeatOn
+        run: |
+          docker run -d --name seaton-e2e --network host \
+            -e POSTGRES_DSN='postgres://seaton:seaton@127.0.0.1:5432/seaton?sslmode=disable' \
+            -e BOOTSTRAP_ADMIN="$E2E_USERNAME" \
+            -e BOOTSTRAP_ADMIN_PASSWORD="$E2E_PASSWORD" \
+            seaton:e2e
+          for i in $(seq 60); do
+            curl -sf "$E2E_BASE_URL/readyz" && break
+            sleep 2
+          done
+      - name: Install browser
+        working-directory: web
+        run: |
+          npm ci
+          npx playwright install --with-deps chromium
+      - name: Screen tests
+        working-directory: web
+        run: npx playwright test
+      - name: Server log on failure
+        if: failure()
+        run: docker logs seaton-e2e
+      - uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: playwright-report
+          path: web/playwright-report
+          retention-days: 7

@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SeatOn 타겟 사용자군 분석 (User Groups Analysis)</title>
+    <meta name="description" content="SeatOn 플랫폼은 사내 5대 핵심 직군C-Level 경영진, 총무/시설 관리자, 일반 임직원, SRE/DevOps, CISO/보안팀의 요구사항과 페인 포인트를 완벽하게 충족합니다.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #10b981;
+            --primary-dark: #047857;
+            --text-dark: #0f172a;
+            --text-muted: #475569;
+            --bg-light: #f8fafc;
+            --border-color: #e2e8f0;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: 'Inter', -apple-system, sans-serif; color: var(--text-dark); background: var(--bg-light); line-height: 1.65; padding: 48px 24px; }
+        .doc-card { max-width: 1040px; margin: 0 auto; background: #ffffff; border: 1px solid var(--border-color); border-radius: 20px; padding: 56px; box-shadow: 0 12px 30px rgba(0,0,0,0.06); }
+        .header-meta { border-bottom: 3px solid var(--primary); padding-bottom: 28px; margin-bottom: 36px; }
+        .header-meta h1 { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 2.2rem; color: #0f172a; margin-bottom: 16px; letter-spacing: -0.02em; }
+        .meta-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; font-size: 0.9rem; color: var(--text-muted); }
+        .meta-item { background: #f1f5f9; padding: 8px 14px; border-radius: 8px; border: 1px solid #e2e8f0; }
+        h2 { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 1.45rem; color: var(--primary-dark); margin: 40px 0 20px; border-bottom: 2px solid #f1f5f9; padding-bottom: 10px; }
+        h3 { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 1.12rem; color: #0f172a; margin: 28px 0 14px; }
+        h4 { font-size: 1rem; color: var(--text-muted); margin: 22px 0 10px; }
+        p { margin-bottom: 18px; font-size: 1rem; color: #334155; }
+        ul, ol { margin-bottom: 20px; padding-left: 24px; }
+        li { margin-bottom: 8px; }
+        pre { background: #0f172a; color: #f8fafc; padding: 24px; border-radius: 12px; font-family: 'JetBrains Mono', monospace; font-size: 0.88rem; overflow-x: auto; margin: 20px 0; }
+        code { font-family: 'JetBrains Mono', monospace; background: #e2e8f0; color: #0f172a; padding: 2px 6px; border-radius: 4px; font-size: 0.88rem; }
+        pre code { background: none; color: inherit; padding: 0; }
+        table { width: 100%; border-collapse: collapse; margin: 20px 0; font-size: 0.92rem; }
+        th, td { border: 1px solid var(--border-color); padding: 10px 12px; text-align: left; vertical-align: top; }
+        th { background: #f1f5f9; font-weight: 700; color: #0f172a; }
+        tbody tr:nth-child(even) { background: #fafafa; }
+        blockquote { border-left: 4px solid var(--primary); background: #ecfdf5; padding: 14px 18px; border-radius: 0 10px 10px 0; margin: 20px 0; color: #065f46; }
+        hr { border: none; border-top: 1px solid var(--border-color); margin: 32px 0; }
+        a { color: var(--primary-dark); }
+        .doc-nav { margin-bottom: 24px; font-size: 0.9rem; }
+        .print-btn { display: inline-block; background: var(--primary); color: #ffffff; padding: 12px 24px; border-radius: 10px; text-decoration: none; font-weight: 700; font-size: 0.92rem; float: right; }
+        .print-btn:hover { background: var(--primary-dark); }
+        .generated { margin-top: 40px; padding-top: 20px; border-top: 1px solid var(--border-color); font-size: 0.82rem; color: var(--text-muted); }
+        @media print { .print-btn, .doc-nav { display: none; } body { background: #ffffff; padding: 0; } .doc-card { border: none; box-shadow: none; padding: 0; } }
+    </style>
+</head>
+<body>
+    <div class="doc-card">
+        <a href="javascript:window.print()" class="print-btn">🖨️ PDF / 인쇄하기</a>
+        <div class="header-meta">
+            <h1>SeatOn 타겟 사용자군 분석 보고서 (Target User Groups Analysis)</h1>
+            <div class="meta-grid">
+                <div class="meta-item"><strong>문서 버전:</strong> v1.1.0-ENTERPRISE</div>
+                <div class="meta-item"><strong>작성일자:</strong> 2026년 8월 11일</div>
+                <div class="meta-item"><strong>문서 분류:</strong> 페르소나 및 사용자군 가치 분석 보고서 (Target User Groups Analysis)</div>
+            </div>
+        </div>
+        <hr>
+        <h2>1. 개요 및 사용자 분류 체계</h2>
+        <p>SeatOn 플랫폼은 사내 5대 핵심 직군(C-Level 경영진, 총무/시설 관리자, 일반 임직원, SRE/DevOps, CISO/보안팀)의 요구사항과 페인 포인트를 완벽하게 충족합니다.</p>
+        <pre><code>==================================================================================================
+                           [SeatOn 5대 핵심 사용자 직군 및 가치]
+==================================================================================================
+ [1. C-Level 경영진]     ➔ 임차 오피스 점유 효율화로 연간 3.5억 공간 TCO 절감
+ [2. 총무/시설 관리자]   ➔ 도면 자동 판독·격자 보정 및 Drag&amp;Drop 좌석 배치 공수 90% 감축
+ [3. 일반 임직원]        ➔ 실시간 SVG 도면 뷰어로 부서원 및 빈 좌석 초고속 탐색
+ [4. SRE / DevOps]       ➔ 단일 non-root Docker 컨테이너 및 3대 환경변수 최소 운용
+ [5. CISO / 보안팀]       ➔ 100% 사내 오프라인망(Air-Gapped) 구동, Keycloak OIDC &amp; HMAC Key
+ [+ AI 도입 관점]        ➔ 판독 엔진을 사내 추론 서버로만 지정, 기본값은 외부 통신 없음
+==================================================================================================</code></pre>
+        <hr>
+        <h2>2. 페르소나별 상세 시나리오 및 As-Is vs To-Be 대조 분석</h2>
+        <h3>2.1 C-Level 경영진 및 총무 이사</h3>
+        <ul>
+            <li><strong>As-Is</strong>: 오피스 각 층의 좌석 점유율 파악 불가 및 무단 빈 좌석 방치로 인한 임차료 낭비.</li>
+            <li><strong>To-Be (SeatOn)</strong>: 오피스 점유율 45% 향상 및 공간 관리 TCO 60% 절감 실현.</li>
+        </ul>
+        <h3>2.2 총무/시설 관리자 (Facility Manager)</h3>
+        <ul>
+            <li><strong>As-Is</strong>: 조직 개편이나 도면 변경 시 CAD 파일이나 엑셀 수동 조율로 수십 일 소요. 좌석 좌표를 눈대중으로 맞추다 도면과 어긋나면 전수 재작업.</li>
+            <li><strong>To-Be (SeatOn)</strong>: PNG/JPG/PDF 도면 업로드 시 판독 엔진이 좌석을 자동 분석하고 Drag &amp; Drop으로 배치. 도면별 책상 격자를 한 번 보정하면 이후 스냅과 일괄 정렬이 실제 배치 간격을 따르므로 미세 조정 반복이 사라집니다.</li>
+            <li><strong>판독 품질 관리</strong>: 신뢰도가 기준 아래인 좌석만 검토 큐에 모이고, 좌석마다 판독 근거(오프라인 CV / 비전 모델 / 교차 검증 / 격자 보간)가 기록되어 무엇을 확인해야 하는지 명확합니다.</li>
+        </ul>
+        <h3>2.3 일반 임직원 (Employees)</h3>
+        <ul>
+            <li><strong>As-Is</strong>: 신규 입사자나 타 부서 직원의 좌석 위치를 찾지 못해 부서 간 소통 지체.</li>
+            <li><strong>To-Be (SeatOn)</strong>: 검색창에 이름만 입력하면 SVG 도면 상 위치가 실시간 반짝임 강조 표시.</li>
+        </ul>
+        <h3>2.4 SRE / DevOps 엔지니어</h3>
+        <ul>
+            <li><strong>As-Is</strong>: 지도 SDK나 외부 CDN 연동 실패 시 시스템 전체 렌더링 장애 발생.</li>
+            <li><strong>To-Be (SeatOn)</strong>: 100% 오프라인 SVG 파서 및 3개 환경변수 기반 단일 컨테이너 운영.</li>
+        </ul>
+        <h3>2.5 CISO 및 보안팀 (Security Officer)</h3>
+        <ul>
+            <li><strong>As-Is</strong>: 퇴직자 미반납 점유나 권한 없는 사외 인원의 무단 좌석 사용 보안 위험. AI 판독을 도입하려면 사옥 도면을 외부 클라우드로 전송해야 하는 딜레마.</li>
+            <li><strong>To-Be (SeatOn)</strong>: 퇴직자 점유 및 조직 영역 불일치 이상 좌석 자동 검출과 Audit Trail. 판독 엔진 기본값은 외부 통신이 전혀 없는 오프라인 CV이며, 비전 모델을 쓰더라도 관리자가 지정한 사내 추론 서버만 호출합니다. 추론 서버 API 키는 설치별 마스터 키로 AES-256-GCM 암호화되어 저장됩니다.</li>
+            <li><strong>AI 결과의 승인 통제</strong>: 보정되지 않은 모델 확신도가 그대로 승인으로 이어지지 않도록, 비전 모델이 단독으로 찾은 좌석은 자동 승인선을 넘지 못하고 항상 사람의 검토를 거칩니다.</li>
+        </ul>
+        <hr>
+        <h2>3. 결론</h2>
+        <p>SeatOn 플랫폼은 경영진의 공간 비용 절감 요구부터 시설 관리자의 배치 생산성, 일반 임직원의 소통 편의성, 보안팀의 에어갭 컴플라이언스 준수를 함께 충족합니다. v1.1.0에서는 좌석 좌표가 도면과 어긋나는 근본 문제를 해소하고, AI 판독을 도입하더라도 도면과 자격 증명이 사내에 머무르는 구성을 제공하여 시설 관리자와 보안팀의 요구를 동시에 만족시킵니다.</p>
+        <div class="generated">이 문서는 <code>docs/USER_GROUPS_ANALYSIS.md</code> 에서 <code>scripts/build-docs.py</code> 로 생성되었습니다. 내용 수정은 Markdown 원본에서 하십시오.</div>
+    </div>
+</body>
+</html>

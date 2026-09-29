@@ -1,0 +1,128 @@
+[
+  {
+    "title": "직원 화면 필터(조직·재직상태·배정상태·검색어)를 주소에 반영",
+    "value": 3,
+    "risk": 2,
+    "size": "M",
+    "status": "pending",
+    "note": "이번 선택. employeeQuery는 API 조립만, EmployeesPage 초기 네 값은 공백이고 초기 load도 공백. 프로덕션 2파일. UI 런타임은 미확인.",
+    "updated": "2026-09-29"
+  },
+  {
+    "title": "E2E 환경 의존 spec 2건(mcp-oauth·tracking) 준비 절차를 web/e2e/README.md로 고정",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "README 파일 없음. 두 spec beforeAll이 가짜 서버를 직접 띄움: 별도 IdP 미기동으로 단정한 과거 메모 수정 필요. CI host network/bridge 접근 차이를 문서화. 차선.",
+    "updated": "2026-09-29"
+  },
+  {
+    "title": "목록 핸들러가 rows.Err()·Scan 오류를 삼켜 부분 목록을 200으로 반환",
+    "value": 3,
+    "risk": 2,
+    "size": "M",
+    "status": "pending",
+    "note": "employees.go listOrganizations/listEmployees에서 재확인. employees.go 한 파일로 분할 가능하나 실제 DB 오류 검증 하네스 미확인이라 미선정.",
+    "updated": "2026-09-29"
+  },
+  {
+    "title": "직원 목록 500건 상한에 total·더 보기 붙이기",
+    "value": 2,
+    "risk": 2,
+    "size": "M",
+    "status": "pending",
+    "note": "listEmployees는 여전히 LIMIT만 있고 total 없음. 조직 필터 존재, 501명 검증 필요.",
+    "updated": "2026-09-29"
+  },
+  {
+    "title": "이력 화면의 조회 파라미터를 load와 exportCsv가 한 함수로 짓게 하기",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "HistoryPage 두 함수에 q/source/dayRangeToISO 조립 중복 재확인. PAGE_SIZE 100과 EXPORT_LIMIT 500 차이는 보존해야 함. 관측 결함 없음.",
+    "updated": "2026-09-29"
+  },
+  {
+    "title": "화면 전체 Select·검색 Paper에 접근 가능한 이름 붙이기",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "직원 Select 세 개 이름은 완료. SeatMapPage 검색 Paper/범례 전체 범위는 부분 확인이며 아직 실행 증명 없음. 범위를 두 region으로 좁힐 것.",
+    "updated": "2026-09-29"
+  },
+  {
+    "title": "좌석맵 필터·색상 모드·조직 강조도 주소에 반영",
+    "value": 2,
+    "risk": 2,
+    "size": "M",
+    "status": "pending",
+    "note": "SeatMapPage colorMode/showZones/activeOrg 로컬 상태와 seatMapLink의 map/q/edit만 처리하는 계약 재확인. 직원 URL보다 상태 표현 복잡.",
+    "updated": "2026-09-29"
+  },
+  {
+    "title": "PATCH /users/{id}가 없는 id에도 204를 돌려주는지 재확인",
+    "value": 2,
+    "risk": 3,
+    "size": "S",
+    "status": "pending",
+    "note": "auth.go updateUser는 Email이 있으면 사전 SELECT, 없으면 Exec 결과 RowsAffected를 버리고 204. 상반된 과거 기록은 body별 차이일 가능성. curl 미실행. 권한 보호 경로라 위험 3으로 수정.",
+    "updated": "2026-09-29"
+  },
+  {
+    "title": "CI에 guide-shots 스모크 추가",
+    "value": 2,
+    "risk": 3,
+    "size": "M",
+    "status": "pending",
+    "note": "ci.yml test/e2e에 guide-shots 없음 확인. 릴리즈까지 확인해야 하는 운영자 규칙 때문에 자율 소과제로 부적합; 미선정.",
+    "updated": "2026-09-29"
+  },
+  {
+    "title": "build-docs.py 파서 단위 테스트",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "Block/Document 및 파서 스크립트 확인. 표준 unittest로 가능해 새 외부 의존성 필수라는 이전 추정은 부정확. 이번에는 파서 전체 미확인.",
+    "updated": "2026-09-29"
+  },
+  {
+    "title": "'구역 불일치' 문구를 한 곳에서만 짓기",
+    "value": 1,
+    "risk": 1,
+    "size": "S",
+    "status": "rejected",
+    "note": "seatSpeech는 낭독/툴팁용 지정 조직 포함 설명, seatOrgDetail은 상세 행용으로 서로 출력 계약이 다름. 판정은 이미 zoneMismatched 공유. 문구 단일화만으로 관측 이득 부족; 다른 계약 강제 통합 피함.",
+    "updated": "2026-09-29"
+  },
+  {
+    "title": "E2E 준비 문서에 '/api/v1/health는 없다'를 적기",
+    "value": 1,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "기존 README 후보에 병합해서 구현. server.go에 /healthz와 /readyz가 있고 CI는 /readyz 사용. 이전 GET /만으로 준비 확인 권고는 교정해야 함.",
+    "updated": "2026-09-29"
+  },
+  {
+    "title": "직원 목록의 늦게 도착한 이전 응답이 최신 필터 결과를 덮지 않게 하기",
+    "value": 3,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "새 후보. EmployeesPage.load는 순번 검사가 없고 HistoryPage.load는 requestRef sequence 보호. 실제 지연 응답 재현은 미확인. 이번 URL 범위 외 별도 후속.",
+    "updated": "2026-09-29"
+  },
+  {
+    "title": "직원 조회 재시도 성공 시 이전 오류 배너 지우기",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "새 후보. EmployeesPage.load는 setError 실패만 있고 시작/성공 초기화 없음; HistoryPage.load는 시작에서 setError(빈값). 실서버 실패→복구 시나리오 재현 필요. 규모 작지만 URL 공유보다 영향 낮음.",
+    "updated": "2026-09-29"
+  }
+]

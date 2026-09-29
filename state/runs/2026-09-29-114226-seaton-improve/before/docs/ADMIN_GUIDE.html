@@ -1,0 +1,503 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SeatOn 엔터프라이즈 관리자 가이드 (Admin Guide)</title>
+    <meta name="description" content="SeatOn v1.4.12 기준. 화면을 쓰는 사람을 위한 조작법은 사용자 가이드USER_GUIDE.md에 있으며, 이 문서는 그 화면을 띄워 놓고 지키는 사람을 위한 것입니다. API 세부는 API_AND_MCP.mdAPI_AND_MCP.md, 내부 구조는 ARCHITECTURE.mdARCHITECTURE.md를 봅니다.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #10b981;
+            --primary-dark: #047857;
+            --text-dark: #0f172a;
+            --text-muted: #475569;
+            --bg-light: #f8fafc;
+            --border-color: #e2e8f0;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: 'Inter', -apple-system, sans-serif; color: var(--text-dark); background: var(--bg-light); line-height: 1.65; padding: 48px 24px; }
+        .doc-card { max-width: 1040px; margin: 0 auto; background: #ffffff; border: 1px solid var(--border-color); border-radius: 20px; padding: 56px; box-shadow: 0 12px 30px rgba(0,0,0,0.06); }
+        .header-meta { border-bottom: 3px solid var(--primary); padding-bottom: 28px; margin-bottom: 36px; }
+        .header-meta h1 { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 2.2rem; color: #0f172a; margin-bottom: 16px; letter-spacing: -0.02em; }
+        .meta-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; font-size: 0.9rem; color: var(--text-muted); }
+        .meta-item { background: #f1f5f9; padding: 8px 14px; border-radius: 8px; border: 1px solid #e2e8f0; }
+        h2 { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 1.45rem; color: var(--primary-dark); margin: 40px 0 20px; border-bottom: 2px solid #f1f5f9; padding-bottom: 10px; }
+        h3 { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 1.12rem; color: #0f172a; margin: 28px 0 14px; }
+        h4 { font-size: 1rem; color: var(--text-muted); margin: 22px 0 10px; }
+        p { margin-bottom: 18px; font-size: 1rem; color: #334155; }
+        ul, ol { margin-bottom: 20px; padding-left: 24px; }
+        li { margin-bottom: 8px; }
+        pre { background: #0f172a; color: #f8fafc; padding: 24px; border-radius: 12px; font-family: 'JetBrains Mono', monospace; font-size: 0.88rem; overflow-x: auto; margin: 20px 0; }
+        code { font-family: 'JetBrains Mono', monospace; background: #e2e8f0; color: #0f172a; padding: 2px 6px; border-radius: 4px; font-size: 0.88rem; }
+        pre code { background: none; color: inherit; padding: 0; }
+        table { width: 100%; border-collapse: collapse; margin: 20px 0; font-size: 0.92rem; }
+        th, td { border: 1px solid var(--border-color); padding: 10px 12px; text-align: left; vertical-align: top; }
+        th { background: #f1f5f9; font-weight: 700; color: #0f172a; }
+        tbody tr:nth-child(even) { background: #fafafa; }
+        blockquote { border-left: 4px solid var(--primary); background: #ecfdf5; padding: 14px 18px; border-radius: 0 10px 10px 0; margin: 20px 0; color: #065f46; }
+        hr { border: none; border-top: 1px solid var(--border-color); margin: 32px 0; }
+        figure { margin: 20px 0 24px; }
+        figure img { width: 100%; border: 1px solid var(--border-color); border-radius: 10px; }
+        figcaption { margin-top: 8px; font-size: 0.88rem; color: var(--text-muted); }
+        a { color: var(--primary-dark); }
+        .doc-nav { margin-bottom: 24px; font-size: 0.9rem; }
+        .print-btn { display: inline-block; background: var(--primary); color: #ffffff; padding: 12px 24px; border-radius: 10px; text-decoration: none; font-weight: 700; font-size: 0.92rem; float: right; }
+        .print-btn:hover { background: var(--primary-dark); }
+        .generated { margin-top: 40px; padding-top: 20px; border-top: 1px solid var(--border-color); font-size: 0.82rem; color: var(--text-muted); }
+        @media print { .print-btn, .doc-nav { display: none; } body { background: #ffffff; padding: 0; } .doc-card { border: none; box-shadow: none; padding: 0; } }
+    </style>
+</head>
+<body>
+    <div class="doc-card">
+        <a href="javascript:window.print()" class="print-btn">🖨️ PDF / 인쇄하기</a>
+        <div class="header-meta">
+            <h1>SeatOn 관리자 가이드</h1>
+        </div>
+        <p>SeatOn v1.4.12 기준. 화면을 쓰는 사람을 위한 조작법은 <a href="USER_GUIDE.md">사용자 가이드</a>에 있으며, 이 문서는 그 화면을 띄워 놓고 지키는 사람을 위한 것입니다. API 세부는 <a href="API_AND_MCP.md">API_AND_MCP.md</a>, 내부 구조는 <a href="ARCHITECTURE.md">ARCHITECTURE.md</a>를 봅니다.</p>
+        <h2>1. 구성 요소</h2>
+        <table>
+            <thead><tr><th>구성 요소</th><th>무엇</th><th>주고받는 것</th></tr></thead>
+            <tbody>
+                <tr><td><code>seaton</code> 컨테이너</td><td>Go 단일 바이너리. 내장 React UI, REST/OpenAPI, MCP(Streamable HTTP), 도면 분석 워커, 백그라운드 정리·인사 동기화 스케줄러를 한 프로세스에서 실행</td><td><code>:8080</code> HTTP. 인터넷 통신 없음(기본)</td></tr>
+                <tr><td>PostgreSQL 14+</td><td>유일한 상태 저장소. 도면 파일·좌석·직원·배정·이력·감사·세션·설정을 모두 보관. 스키마는 기동 시 자동 생성</td><td><code>POSTGRES_DSN</code></td></tr>
+                <tr><td>볼륨 <code>seaton-data</code> → <code>/var/lib/seaton</code></td><td><code>master.key</code>(32바이트). 설정의 비밀값 암호화(AES-256-GCM)와 세션·API 키 해시(HMAC)에 쓰임</td><td>컨테이너만 읽음</td></tr>
+                <tr><td>Keycloak (선택)</td><td>OIDC Discovery + Authorization Code/PKCE. 그룹으로 역할 결정</td><td>Issuer URL로 나가는 HTTPS, 콜백 <code>/api/v1/auth/oidc/callback</code></td></tr>
+                <tr><td>인사 시스템 API (선택)</td><td>직원·조직 JSON을 내려주는 사내 엔드포인트</td><td><code>hr.api_url</code>로 <code>GET</code> + Bearer</td></tr>
+                <tr><td>사내 비전 모델 서버 (선택)</td><td>OpenAI 호환 <code>/chat/completions</code> (vLLM·Ollama 등)</td><td><code>ai.vlm_base_url</code>로 HTTPS/HTTP</td></tr>
+                <tr><td>Momento 수집기 (선택)</td><td>사내 자체 호스팅 방문 추적. 브라우저가 <code>tracker.js</code>를 받고 <code>/collect/v1/events</code>로 보냄</td><td>기본은 SeatOn의 <code>/momento/*</code> 프록시를 거침(§3.6)</td></tr>
+                <tr><td>리버스 프록시 (권장)</td><td>HTTPS 종료</td><td><code>X-Forwarded-Proto</code>, <code>X-Forwarded-Host</code> 전달</td></tr>
+            </tbody>
+        </table>
+        <p>컨테이너는 <code>read_only</code> 루트, <code>cap_drop: ALL</code>, <code>no-new-privileges</code>, UID 10001로 돌며 <code>/tmp</code>만 tmpfs로 씁니다. 이미지 크기는 약 186MB이고 PDF 도면 변환용 <code>poppler-utils</code>가 들어 있습니다.</p>
+        <h2>2. 설치</h2>
+        <p>릴리즈 자산 <code>SeatOn-v1.4.12.tar.gz</code>(GitHub Release 첨부)와 이 저장소의 <code>compose.yaml</code> 하나면 됩니다. PostgreSQL은 외부 또는 사내 것을 준비합니다(빈 데이터베이스와 소유 계정만 있으면 스키마는 SeatOn이 만듭니다).</p>
+        <table>
+            <thead><tr><th>항목</th><th>값</th></tr></thead>
+            <tbody>
+                <tr><td>포트</td><td>컨테이너 <code>8080</code> → 호스트 <code>8080</code> (<code>compose.yaml</code>)</td></tr>
+                <tr><td>볼륨</td><td><code>seaton-data:/var/lib/seaton</code> — <code>master.key</code> 보관. 반드시 백업</td></tr>
+                <tr><td>tmpfs</td><td><code>/tmp</code> 256MB — PDF 변환·업로드 임시 파일</td></tr>
+                <tr><td>자원</td><td>도면 분석 중 CPU 1코어를 잠시 씀. 500석 도면 기준 힙 수십 MB. 메모리 512MB면 충분</td></tr>
+                <tr><td>헬스체크</td><td><code>seaton healthcheck</code> 30초마다(<code>/healthz</code>), 시작 유예 20초</td></tr>
+            </tbody>
+        </table>
+        <h3>2.1 처음부터 끝까지</h3>
+        <pre><code># 1. 이미지 적재 — seaton:v1.4.12 태그가 생긴다
+docker load &lt; SeatOn-v1.4.12.tar.gz
+
+# 2. 필수 환경변수 3개 + Compose 이미지 태그
+export POSTGRES_DSN='postgres://seaton:change-db-password@postgres.intra:5432/seaton?sslmode=require'
+export BOOTSTRAP_ADMIN='admin'
+export BOOTSTRAP_ADMIN_PASSWORD='change-this-strong-password'   # 12자 이상
+export SEATON_IMAGE_TAG='v1.4.12'
+
+# 3. 기동
+docker compose up -d
+
+# 4. 준비 확인 — {"status":"ready"} 가 나올 때까지
+curl -s http://127.0.0.1:8080/readyz
+curl -s http://127.0.0.1:8080/api/v1/version</code></pre>
+        <p><code>SEATON_IMAGE_TAG</code>는 Compose가 이미지를 고르는 셸 치환값이며 컨테이너 안으로 전달되지 않습니다.</p>
+        <h3>2.2 최초 관리자 계정</h3>
+        <p><code>BOOTSTRAP_ADMIN</code> / <code>BOOTSTRAP_ADMIN_PASSWORD</code>로 <strong>시스템 관리자</strong> 계정이 첫 기동 때 만들어집니다. 같은 이름의 계정이 이미 있으면 환경변수 비밀번호로 덮어쓰지 않으므로, 화면에서 비밀번호를 바꾸거나 SSO로 전환한 뒤에도 안전합니다. 이 계정은 삭제할 수 없는 비상 복구용(break glass) 계정으로 두고, 평소 운영은 SSO 계정으로 합니다.</p>
+        <p><code>http://호스트:8080</code>에 접속해 로그인합니다. 로그인 카드 아래에 빌드 버전이 보이면 UI가 정상적으로 내장된 것입니다.</p>
+        <figure><img src="assets/guide/login.png" alt="로그인 — 부트스트랩 관리자 계정으로 첫 로그인. 카드 아래에 SeatOn 1.4.0 버전이 표시된다" loading="lazy"><figcaption>로그인 — 부트스트랩 관리자 계정으로 첫 로그인. 카드 아래에 SeatOn 1.4.0 버전이 표시된다</figcaption></figure>
+        <p>로그인 뒤 <strong>시스템 설정</strong> → <strong>보안 · 키</strong> 탭의 <strong>내 로컬 관리자 비밀번호</strong>에서 부트스트랩 비밀번호를 바로 바꿉니다. 그다음은 <strong>도면 · 좌석</strong>에서 사업장·층·도면을 등록하는 순서이며, 이 부분은 사용자 가이드의 "새 층 도면을 올려서 게시하기"를 따릅니다.</p>
+        <figure><img src="assets/guide/admin-maps.png" alt="도면 · 좌석 — 사업장 → 층 → 도면 → AI 분석 → 게시 다섯 단계. 새 설치에서는 여기서 시작한다" loading="lazy"><figcaption>도면 · 좌석 — 사업장 → 층 → 도면 → AI 분석 → 게시 다섯 단계. 새 설치에서는 여기서 시작한다</figcaption></figure>
+        <h2>3. 설정</h2>
+        <h3>3.1 환경 변수</h3>
+        <p>애플리케이션이 읽는 환경 변수는 세 개뿐입니다(<code>internal/platform/config.go</code>). 나머지는 모두 DB의 설정 테이블에 있고 <strong>시스템 설정</strong> 화면에서 바꿉니다.</p>
+        <table>
+            <thead><tr><th>이름</th><th>기본값</th><th>필수</th><th>설명</th></tr></thead>
+            <tbody>
+                <tr><td><code>POSTGRES_DSN</code></td><td>없음</td><td>예</td><td>PostgreSQL 접속 문자열. 앞뒤 공백은 제거됨. 기동 시 최대 2분 동안 접속을 재시도</td></tr>
+                <tr><td><code>BOOTSTRAP_ADMIN</code></td><td>없음</td><td>예</td><td>최초 시스템 관리자 아이디. <code>@</code>가 들어 있으면 이메일로도 저장</td></tr>
+                <tr><td><code>BOOTSTRAP_ADMIN_PASSWORD</code></td><td>없음</td><td>예</td><td>최초 관리자 비밀번호. <strong>12자 이상</strong>이 아니면 기동 실패</td></tr>
+            </tbody>
+        </table>
+        <p>Compose 전용(컨테이너에 전달되지 않음):</p>
+        <table>
+            <thead><tr><th>이름</th><th>기본값</th><th>설명</th></tr></thead>
+            <tbody>
+                <tr><td><code>SEATON_IMAGE_TAG</code></td><td><code>latest</code></td><td><code>seaton:&lt;태그&gt;</code> 이미지 선택</td></tr>
+            </tbody>
+        </table>
+        <p>셋 중 하나라도 비면 기동 로그에 <code>configuration error ... missing required environment variables: ...</code>가 찍히고 종료합니다.</p>
+        <h3>3.2 시스템 설정 화면</h3>
+        <p>주소 <code>/admin/settings</code>. 시스템 관리자만. 상단 칩이 현재 상태(<code>Keycloak 비활성</code>, <code>인사 동기화 비활성</code>, <code>오프라인 CV 엔진</code>)를 요약하고, 오른쪽 위에 저장 여부(<code>모든 변경 저장됨</code> / <code>저장하지 않은 변경</code>)가 표시됩니다. 비밀값은 저장 후 <code><strong>*</strong><strong>*</code>로만 보이고, 빈 값이나 <code></strong><strong>*</strong>*</code>로 다시 저장하면 기존 값을 유지합니다. 모든 저장은 감사 로그(<code>settings.update</code>)에 바뀐 키 이름과 함께 남습니다.</p>
+        <figure><img src="assets/guide/admin-settings.png" alt="시스템 설정 · 일반 — 서비스 이름, 회사/조직명, 기본 언어" loading="lazy"><figcaption>시스템 설정 · 일반 — 서비스 이름, 회사/조직명, 기본 언어</figcaption></figure>
+        <p>설정 키 전수(<code>internal/database/migrations.sql</code> 기본값). 화면 탭과 항목 이름을 함께 적었습니다.</p>
+        <p><strong>일반</strong></p>
+        <table>
+            <thead><tr><th>키</th><th>화면 항목</th><th>기본값</th><th>설명</th></tr></thead>
+            <tbody>
+                <tr><td><code>general.service_name</code></td><td>서비스 이름</td><td><code>SeatOn</code></td><td>화면 제목</td></tr>
+                <tr><td><code>general.company_name</code></td><td>회사/조직명</td><td>빈 값</td><td>표시용</td></tr>
+                <tr><td><code>general.default_locale</code></td><td>기본 언어</td><td><code>ko-KR</code></td><td>표시용</td></tr>
+            </tbody>
+        </table>
+        <p><strong>Keycloak SSO</strong></p>
+        <table>
+            <thead><tr><th>키</th><th>화면 항목</th><th>기본값</th><th>설명</th></tr></thead>
+            <tbody>
+                <tr><td><code>oidc.enabled</code></td><td>Keycloak SSO 사용</td><td><code>false</code></td><td>켜면 로그인 화면에 <strong>사내 SSO로 로그인</strong> 단추가 나타남</td></tr>
+                <tr><td><code>auth.local_enabled</code></td><td>로컬 관리자 로그인 허용</td><td><code>true</code></td><td>끄면 아이디·비밀번호 로그인이 <code>403 local_login_disabled</code>. <strong>SSO가 검증되기 전에는 끄지 말 것</strong></td></tr>
+                <tr><td><code>oidc.auto_provision</code></td><td>SSO 사용자 자동 생성</td><td><code>true</code></td><td>첫 SSO 로그인 때 사용자 자동 생성</td></tr>
+                <tr><td><code>oidc.auto_login</code></td><td>Keycloak 세션이 있으면 자동 로그인</td><td><code>false</code></td><td>켜면 Keycloak에 이미 로그인한 사람은 로그인 화면 없이 바로 들어옴(§3.3 조용한 로그인). <code>oidc.enabled</code>가 켜져 있을 때만 효과</td></tr>
+                <tr><td><code>oidc.issuer_url</code></td><td>Keycloak Issuer URL</td><td>빈 값</td><td>예 <code>https://keycloak.intra/realms/company</code>. Discovery 문서에서 나머지 엔드포인트를 자동 구성</td></tr>
+                <tr><td><code>oidc.client_id</code></td><td>Client ID</td><td>빈 값</td><td></td></tr>
+                <tr><td><code>oidc.client_secret</code></td><td>Client Secret</td><td>빈 값</td><td>비밀값(암호화 저장)</td></tr>
+                <tr><td><code>oidc.scopes</code></td><td>Scopes</td><td><code>openid profile email groups</code></td><td></td></tr>
+                <tr><td><code>oidc.admin_group</code></td><td>시스템 관리자 그룹</td><td><code>/seaton-admins</code></td><td>이 그룹이면 <code>system_admin</code></td></tr>
+                <tr><td><code>oidc.seat_manager_group</code></td><td>좌석 관리자 그룹</td><td><code>/seaton-seat-managers</code></td><td>이 그룹이면 <code>seat_manager</code>, 둘 다 아니면 <code>employee</code></td></tr>
+                <tr><td><code>mcp.oauth.enabled</code></td><td>MCP 를 Keycloak 액세스 토큰으로도 열기</td><td><code>false</code></td><td>켜면 <code>/mcp</code>가 개인 키 외에 Keycloak 액세스 토큰(OAuth 2.1)도 받고 <code>/.well-known/oauth-protected-resource</code>가 열림(§3.3 MCP를 SSO로 열기). <code>oidc.issuer_url</code>이 비어 있으면 저장이 <code>400 invalid_setting</code></td></tr>
+                <tr><td><code>mcp.oauth.resource</code></td><td>리소스 식별자 (resource)</td><td>빈 값</td><td>클라이언트가 실제로 접속하는 공개 주소 + <code>/mcp</code>(예 <code>https://seaton.intra/mcp</code>). 켤 때 필수 — 요청의 Host로 대신 만들지 않음(그러면 Host 헤더가 대상 검사의 허용값이 됨). <code>/mcp</code>로 끝나는 절대 URL만 저장됨</td></tr>
+                <tr><td><code>mcp.oauth.audience</code></td><td>허용 대상 (aud 또는 azp)</td><td>빈 값</td><td>공백 구분 Keycloak 클라이언트 ID 목록. 토큰의 <code>aud</code> 또는 <code>azp</code>가 이 중 하나면 통과(Audience 매퍼 없이 쓰는 호환 경로)</td></tr>
+                <tr><td><code>mcp.oauth.scopes</code></td><td>SSO 토큰에 주는 범위</td><td><code>read mcp</code></td><td>공백 구분 <code>read</code>·<code>write</code>·<code>mcp</code>. 토큰의 <code>scope</code>가 아니라 이 값이 천장. 켤 때 <code>mcp</code>가 없으면 저장 거부</td></tr>
+            </tbody>
+        </table>
+        <p><strong>보안 · 키</strong></p>
+        <table>
+            <thead><tr><th>키</th><th>화면 항목</th><th>기본값</th><th>설명</th></tr></thead>
+            <tbody>
+                <tr><td><code>security.session_hours</code></td><td>세션 유효시간 (시간)</td><td><code>8</code></td><td>넘기면 <code>401 session_expired</code></td></tr>
+                <tr><td><code>security.api_key_days</code></td><td>개인 키 기본 유효기간 (일)</td><td><code>90</code></td><td>키 생성 시 만료일 계산. 요청에서 1~3650일로 지정 가능</td></tr>
+                <tr><td><code>security.rotation_grace_hours</code></td><td>키 회전 유예시간 (시간)</td><td><code>24</code></td><td>회전 후 옛 키가 함께 동작하는 시간</td></tr>
+            </tbody>
+        </table>
+        <p><strong>AI 분석</strong></p>
+        <table>
+            <thead><tr><th>키</th><th>화면 항목</th><th>기본값</th><th>설명</th></tr></thead>
+            <tbody>
+                <tr><td><code>ai.engine</code></td><td>좌석 인식 엔진</td><td><code>cv</code></td><td><code>cv</code> · <code>vlm</code> · <code>hybrid</code></td></tr>
+                <tr><td><code>ai.confidence_threshold</code></td><td>좌석 후보 최소 신뢰도</td><td><code>0.80</code></td><td>이 아래 후보는 버림</td></tr>
+                <tr><td><code>ai.auto_approve_threshold</code></td><td>자동 승인 신뢰도</td><td><code>0.95</code></td><td>이 아래면 검토 필요로 표시</td></tr>
+                <tr><td><code>ai.vlm_base_url</code></td><td>VLM 엔드포인트 (OpenAI 호환)</td><td>빈 값</td><td>예 <code>http://vllm.intra:8000/v1</code>. <code>/chat/completions</code>는 자동으로 붙음</td></tr>
+                <tr><td><code>ai.vlm_model</code></td><td>VLM 모델 이름</td><td><code>qwen2.5-vl-7b-instruct</code></td><td></td></tr>
+                <tr><td><code>ai.vlm_api_key</code></td><td>VLM API 키</td><td>빈 값</td><td>비밀값(암호화 저장)</td></tr>
+                <tr><td><code>ai.vlm_timeout_seconds</code></td><td>VLM 응답 제한 (초)</td><td><code>120</code></td><td>10~600</td></tr>
+                <tr><td><code>ai.vlm_max_image_side</code></td><td>VLM 전송 이미지 최대 변 (px)</td><td><code>1600</code></td><td>512~4096</td></tr>
+                <tr><td><code>ai.vlm_max_seats</code></td><td>VLM 좌석 상한</td><td><code>400</code></td><td>1~500</td></tr>
+                <tr><td><code>ai.vlm_tiles</code></td><td>VLM 타일 분할 (한 변)</td><td><code>1</code></td><td>1~4. 1 권장(§8.2)</td></tr>
+                <tr><td><code>ai.vlm_json_mode</code></td><td>VLM JSON 강제 모드</td><td><code>true</code></td><td><code>response_format: json_object</code> 사용</td></tr>
+                <tr><td><code>ai.fusion_iou</code></td><td>하이브리드 일치 판정 IoU</td><td><code>0.35</code></td><td>0.1~0.9</td></tr>
+            </tbody>
+        </table>
+        <p><strong>인사 연동</strong></p>
+        <table>
+            <thead><tr><th>키</th><th>화면 항목</th><th>기본값</th><th>설명</th></tr></thead>
+            <tbody>
+                <tr><td><code>hr.sync_enabled</code></td><td>자동 동기화 사용</td><td><code>false</code></td><td>켜면 스케줄러가 매분 일정을 확인</td></tr>
+                <tr><td><code>hr.api_url</code></td><td>인사 시스템 API URL</td><td>빈 값</td><td><code>GET</code>으로 호출. 응답은 <code>{"organizations":[...],"employees":[...]}</code> JSON</td></tr>
+                <tr><td><code>hr.api_token</code></td><td>API Bearer Token</td><td>빈 값</td><td>비밀값(암호화 저장)</td></tr>
+                <tr><td><code>hr.schedule</code></td><td>동기화 일정 (Cron)</td><td><code>0 2 * * *</code></td><td>표준 5필드 cron. 잘못된 식은 로그 <code>invalid HR sync schedule</code></td></tr>
+            </tbody>
+        </table>
+        <p><strong>방문 추적</strong>(§3.6)</p>
+        <table>
+            <thead><tr><th>키</th><th>화면 항목</th><th>기본값</th><th>설명</th></tr></thead>
+            <tbody>
+                <tr><td><code>tracking.enabled</code></td><td>방문 추적 사용</td><td><code>false</code></td><td>켜야 스니펫이 붙음. 새 설치에서는 꺼져 있어 아무것도 달라지지 않음</td></tr>
+                <tr><td><code>tracking.provider</code></td><td>추적 도구</td><td><code>momento</code></td><td><code>momento</code> · <code>ga4</code> · <code>gtm</code> · <code>matomo</code> · <code>custom</code> · <code>none</code></td></tr>
+                <tr><td><code>tracking.momento_url</code></td><td>Momento 수집기 주소</td><td>빈 값</td><td>예 <code>https://momento.intra</code>. <code>tracker.js</code>와 <code>/collect/v1/events</code>를 내주는 곳</td></tr>
+                <tr><td><code>tracking.momento_site_id</code></td><td>사이트 ID</td><td>빈 값</td><td>Momento 관리 센터 → 사이트의 <code>SITE_…</code> 키</td></tr>
+                <tr><td><code>tracking.momento_proxy</code></td><td>같은 오리진 프록시(/momento) 사용</td><td><code>true</code></td><td>켜면 로더와 수집 요청이 SeatOn의 <code>/momento/*</code>를 거쳐 수집기로 가고 외부 출처가 정책에 등장하지 않음</td></tr>
+                <tr><td><code>tracking.measurement_id</code></td><td>측정 ID / 컨테이너 ID</td><td>빈 값</td><td>GA4 <code>G-…</code>, GTM <code>GTM-…</code></td></tr>
+                <tr><td><code>tracking.matomo_url</code> · <code>tracking.matomo_site_id</code></td><td>Matomo 주소 · 사이트 ID</td><td>빈 값</td><td></td></tr>
+                <tr><td><code>tracking.custom_snippet</code></td><td>추적 스니펫 (HTML)</td><td>빈 값</td><td><code>&lt;script&gt;</code> 태그를 그대로. <strong>8,192바이트 초과는 <code>400 invalid_setting</code>으로 저장 거부</strong></td></tr>
+                <tr><td><code>tracking.allowed_hosts</code></td><td>추가로 허용할 출처</td><td>빈 값</td><td>쉼표 구분 <code>https://host[:port]</code>. 차단 기록의 <strong>허용에 추가</strong>가 채움</td></tr>
+                <tr><td><code>tracking.include_admin</code></td><td>관리 화면(/admin, /profile)도 추적</td><td><code>false</code></td><td>꺼져 있으면 <code>/admin/*</code>·<code>/profile/*</code> 주소로 연 문서에는 붙지 않음</td></tr>
+                <tr><td><code>tracking.placement</code></td><td>넣는 자리</td><td><code>head</code></td><td><code>head</code>(<code>&lt;/head&gt;</code> 앞) 또는 <code>body</code>(<code>&lt;/body&gt;</code> 앞)</td></tr>
+            </tbody>
+        </table>
+        <h3>3.3 Keycloak 연결</h3>
+        <figure><img src="assets/guide/admin-settings-sso.png" alt="시스템 설정 · Keycloak SSO — 사용 스위치, 콜백 URL 안내, Issuer URL·Client ID·Client Secret·Scopes·그룹 이름, 저장 후 연결 테스트" loading="lazy"><figcaption>시스템 설정 · Keycloak SSO — 사용 스위치, 콜백 URL 안내, Issuer URL·Client ID·Client Secret·Scopes·그룹 이름, 저장 후 연결 테스트</figcaption></figure>
+        <ol>
+            <li>Keycloak에 Client를 만들고 <strong>Client authentication</strong>을 켭니다. Valid Redirect URI에 화면 안내대로 <code>https://&lt;서비스 주소&gt;/api/v1/auth/oidc/callback</code>을 등록합니다. 안내 주소는 리버스 프록시가 넘겨준 <code>X-Forwarded-Host</code>·<code>X-Forwarded-Proto</code>로 만들어지므로 프록시 설정을 먼저 맞춥니다.</li>
+            <li><strong>Group Membership</strong> mapper로 <code>groups</code> claim을 ID Token에 넣고, <code>/seaton-admins</code>·<code>/seaton-seat-managers</code> 그룹을 만듭니다(이름을 바꾸면 설정의 그룹 이름도 맞춥니다).</li>
+            <li>시스템 설정 → <strong>Keycloak SSO</strong>에 Issuer URL·Client ID·Client Secret을 넣고 <strong>설정 저장</strong>, 이어서 <strong>저장 후 연결 테스트</strong>(<code>POST /api/v1/settings/oidc/test</code>)로 Discovery 문서와 콜백 주소를 확인합니다.</li>
+            <li><strong>Keycloak SSO 사용</strong>을 켜고 저장합니다. 다른 브라우저에서 SSO 로그인이 되는 것을 확인한 뒤에야 <strong>로컬 관리자 로그인 허용</strong>을 끌지 결정합니다.</li>
+        </ol>
+        <p>SSO 사용자는 첫 로그인 때 자동 생성되고 그룹으로 역할이 정해집니다. 이미 <code>system_admin</code>인 사용자는 그룹이 바뀌어도 강등되지 않습니다.</p>
+        <p><strong>조용한 로그인(<code>oidc.auto_login</code>)</strong></p>
+        <p>Keycloak에 이미 로그인한 사람이 SeatOn을 열었을 때 로그인 화면을 건너뛰게 하려면 <strong>Keycloak 세션이 있으면 자동 로그인</strong>을 켭니다. 기본값은 꺼짐이며, 꺼진 설치에서는 아무것도 달라지지 않습니다.</p>
+        <p>동작은 다음과 같습니다.</p>
+        <ol>
+            <li>세션이 없는 브라우저가 화면 경로(<code>/</code>, <code>/admin/...</code> 등)를 열면 로그인 화면 대신 <code>GET /api/v1/auth/oidc/start?prompt=none&amp;returnTo=&lt;원래 경로&gt;</code>로 이동합니다. 숨은 iframe이 아니라 최상위 이동이므로 서드파티 쿠키가 막힌 브라우저에서도 동작합니다.</li>
+            <li>서버는 <code>oidc.auto_login</code>이 켜져 있을 때만 Keycloak에 <code>prompt=none</code>을 붙입니다. 꺼져 있으면 주소에 <code>prompt=none</code>이 있어도 평범한 로그인으로 바꿉니다 — 누구든 주소를 고쳐 흐름을 바꿀 수 없습니다.</li>
+            <li>Keycloak에 세션이 있으면 화면 없이 인가 코드가 돌아와 평소처럼 로그인되고 <code>returnTo</code> 자리로 갑니다(<code>/</code>로 시작하고 <code>//</code>로 시작하지 않는 경로만 받습니다). 세션이 없으면 Keycloak이 <code>error=login_required</code>를 보내고, 콜백은 이를 실패가 아닌 "세션 없음"으로 다뤄 <code>/login?sso=none</code>으로 보냅니다. 서버 로그에는 아무것도 남지 않습니다.</li>
+        </ol>
+        <p><code>prompt=none</code>이 거절된 뒤 다시 시도하면 브라우저가 Keycloak과 SeatOn 사이를 끝없이 오가므로, 화면은 세 겹으로 재시도를 막습니다: 한 탭 세션에 한 번만 시도(<code>sessionStorage</code>, 새 탭은 다시 시도), 로그아웃 단추로 나간 뒤에는 다시 로그인하기 전까지 시도하지 않음, 주소에 <code>?sso=none</code>이 붙어 있으면 시도하지 않음. 저장소를 읽지 못하는 사생활 보호 모드에서는 "이미 시도했다"로 쳐서 시도하지 않습니다. 로그인·콜백·API·MCP·헬스 경로에서는 시도하지 않습니다.</p>
+        <p>로그인 화면이 깜빡이며 반복된다면 브라우저 주소가 <code>/login?sso=none</code>으로 끝나는지, 리버스 프록시가 쿼리 문자열을 지우지 않는지 확인합니다.</p>
+        <p><strong>MCP를 SSO로 열기(<code>mcp.oauth.*</code>)</strong></p>
+        <p><code>/mcp</code>는 기본적으로 개인 API 키로만 열립니다. MCP 인가 규격(2025-06-18 이후)은 OAuth 2.1이라, 켜 두면 MCP 클라이언트(Claude, Cursor 등)에 <strong>MCP 주소 하나만</strong> 주면 클라이언트가 스스로 Keycloak 로그인 화면을 띄우고 토큰을 받아 옵니다. 키 체계는 그대로이고, 기본값은 꺼짐이며, 새 설치에서는 아무것도 달라지지 않습니다.</p>
+        <p>SeatOn은 <strong>리소스 서버</strong>입니다. 인증 서버 노릇(<code>/authorize</code>, <code>/token</code>, 동적 클라이언트 등록)은 하지 않고 토큰을 발급·저장하지도 않습니다. 하는 일은 셋입니다.</p>
+        <ol>
+            <li><code>GET /.well-known/oauth-protected-resource</code>와 <code>…/mcp</code>에서 인증 없이 맨 JSON 메타데이터(RFC 9728)를 냅니다: <code>resource</code>(리소스 식별자), <code>authorization_servers</code>(= <code>oidc.issuer_url</code>), <code>bearer_methods_supported</code>, <code>scopes_supported</code>. 꺼져 있으면 <code>404</code>.</li>
+            <li><code>/mcp</code>의 <code>401</code>에 <code>WWW-Authenticate: Bearer realm="SeatOn", resource_metadata="…/.well-known/oauth-protected-resource/mcp"</code>를 붙입니다(<strong>MCP 경로에서만</strong> — REST 401에는 붙지 않음). 토큰이 있었는데 거부했으면 <code>error="invalid_token"</code>이 더해집니다.</li>
+            <li>같은 <code>Authorization: Bearer</code> 헤더에서 <code>seat_</code>로 시작하면 키, JWT 모양(점 두 개)이면 Keycloak JWKS로 <strong>서명·<code>iss</code>·<code>exp</code>·<code>nbf</code>·<code>typ</code>(ID 토큰 거부)·<code>cnf</code>(있으면 거부)·대상</strong>을 검사합니다. 서명 알고리즘은 RS/ES/PS 계열만 받고 <code>HS*</code>·<code>none</code>은 거부합니다.</li>
+        </ol>
+        <p><strong>대상 검사</strong>가 핵심입니다. 다른 앱에 로그인해 받은 토큰이 SeatOn의 <code>/mcp</code>를 열어서는 안 되므로, 다음 중 하나가 맞아야 합니다: <code>aud</code>에 리소스 식별자가 있다(Keycloak Audience 매퍼를 둔 정식 경로), 또는 <code>aud</code>·<code>azp</code>가 <code>mcp.oauth.audience</code>에 있다(호환 경로 — 실제 Keycloak 26은 <code>aud</code>에 <code>account</code>만 싣고 클라이언트 ID는 <code>azp</code>에 담습니다). 거부할 때는 본 <code>aud</code>/<code>azp</code>와 고칠 값을 메시지에 넣으므로 운영자는 그 한 줄로 설정을 끝낼 수 있습니다.</p>
+        <p><strong>계정은 만들지 않습니다.</strong> 토큰의 <code>preferred_username</code>(없으면 <code>email</code>)으로 이미 웹 SSO 로그인으로 등록된(<code>source=oidc</code>) <strong>활성</strong> 계정만 찾고, 없으면 "먼저 웹으로 한 번 로그인하세요"로 거부합니다. 정지된 계정은 MCP로 되살아나지 않고, 토큰의 role/groups로 권한을 올리지도 않습니다 — 권한은 그 사용자의 SeatOn 역할 그대로이고, 범위는 <code>mcp.oauth.scopes</code>가 정합니다(기본 <code>read mcp</code>, 배정 도구까지 열려면 <code>write</code>를 더함). OAuth 토큰은 <code>/mcp</code>에서만 받습니다. REST·관리 API는 지금처럼 키와 세션만 받습니다.</p>
+        <p>*Keycloak 쪽 설정*</p>
+        <ol>
+            <li>MCP 클라이언트용 <strong>공개(public) 클라이언트</strong>를 만듭니다(예 <code>claude-mcp</code>). Client authentication 끔, Standard Flow 켬, PKCE <code>S256</code>, Direct Access Grants·Implicit·Service accounts 끔. 웹 로그인 클라이언트(<code>oidc.client_id</code>)와 <strong>다른</strong> 클라이언트입니다.</li>
+            <li>Valid Redirect URIs에 쓰는 MCP 클라이언트의 콜백을 정확히 적습니다(Claude는 <code>https://claude.ai/api/mcp/auth_callback</code>, 로컬 클라이언트는 <code>http://127.0.0.1:*/callback</code> 류). <code>*</code> 하나로 다 여는 것은 금지.</li>
+            <li>정식 경로: 그 클라이언트(또는 전용 client scope)에 <strong>Audience 매퍼</strong> — Mapper type <code>Audience</code>, Included Custom Audience = 리소스 식별자(<code>https://seaton.intra/mcp</code>), Add to access token 켬, Add to ID token 끔. 호환 경로: 매퍼 없이 SeatOn의 <strong>허용 대상</strong>에 클라이언트 ID(<code>claude-mcp</code>)를 적습니다.</li>
+            <li>액세스 토큰 수명은 짧게(5분 안팎). SeatOn은 introspection을 하지 않으므로 Keycloak에서 로그아웃해도 이미 발급된 토큰은 만료까지 유효합니다.</li>
+        </ol>
+        <p>*SeatOn 쪽 설정*</p>
+        <figure><img src="assets/guide/admin-settings-mcp-sso.png" alt="시스템 설정 · Keycloak SSO 탭의 MCP SSO(OAuth) 인증 카드 — 스위치, 리소스 식별자, 허용 대상, 범위, 복사 가능한 MCP 주소와 메타데이터 주소" loading="lazy"><figcaption>시스템 설정 · Keycloak SSO 탭의 MCP SSO(OAuth) 인증 카드 — 스위치, 리소스 식별자, 허용 대상, 범위, 복사 가능한 MCP 주소와 메타데이터 주소</figcaption></figure>
+        <p>시스템 설정 → <strong>Keycloak SSO</strong> 탭 아래의 <strong>MCP SSO(OAuth) 인증</strong> 카드에서 스위치를 켜고, <strong>리소스 식별자</strong>에 공개 주소 + <code>/mcp</code>를 적고, 호환 경로라면 <strong>허용 대상</strong>에 클라이언트 ID를 적은 뒤 저장합니다. 카드의 <strong>MCP 주소</strong>와 <strong>메타데이터 주소</strong>는 복사해 사용자에게 주는 값입니다. 켜는 조건은 <code>oidc.issuer_url</code>과 리소스 식별자가 있고 범위에 <code>mcp</code>가 있는 것이며, 아니면 저장이 <code>400 invalid_setting</code>으로 거부됩니다.</p>
+        <p>*확인*</p>
+        <pre><code># 1. 메타데이터 — 200, 맨 JSON, Access-Control-Allow-Origin: *
+curl -si https://seaton.intra/.well-known/oauth-protected-resource/mcp
+# 2. 토큰 없는 /mcp — 401 + WWW-Authenticate: Bearer realm="SeatOn", resource_metadata="…"
+curl -si -X POST https://seaton.intra/mcp -H 'Content-Type: application/json' \
+  -d '{"jsonrpc":"2.0","id":1,"method":"tools/list"}'
+# 3. Keycloak 에서 받은 액세스 토큰으로 — 200 과 도구 목록
+curl -s -X POST https://seaton.intra/mcp -H "Authorization: Bearer $TOKEN" -H 'Content-Type: application/json' \
+  -d '{"jsonrpc":"2.0","id":1,"method":"tools/list"}'</code></pre>
+        <p>*거부 메시지별 조치* — 거부의 실제 원인(서명·발급자·만료 중 무엇이 실패했는지)은 서버 로그 <code>mcp oauth token rejected</code>의 <code>cause</code>에 남습니다.</p>
+        <table>
+            <thead><tr><th>응답</th><th>뜻</th><th>조치</th></tr></thead>
+            <tbody>
+                <tr><td><code>401 invalid_token</code> "SSO 액세스 토큰이 유효하지 않습니다(서명·발급자·만료)"</td><td>서명·<code>iss</code>·<code>exp</code>·<code>nbf</code> 중 하나 실패</td><td>로그 <code>cause</code> 확인. <code>oidc.issuer_url</code>이 토큰의 <code>iss</code>와 글자 그대로 같은지(끝 <code>/</code> 제외), 서버 시각 동기, 토큰 수명</td></tr>
+                <tr><td><code>401 invalid_token</code> "이 서버를 위해 발급된 것이 아닙니다(aud=[…], azp="…")"</td><td>대상 검사 실패</td><td>메시지의 <code>azp</code> 값을 <strong>허용 대상</strong>에 적거나, Keycloak 클라이언트에 Audience 매퍼로 메시지의 리소스 식별자를 넣음</td></tr>
+                <tr><td><code>401 invalid_token</code> "ID 토큰이 아니라 액세스 토큰을 보내세요"</td><td><code>typ=ID</code></td><td>클라이언트가 access_token을 보내도록</td></tr>
+                <tr><td><code>401 invalid_token</code> "소지자 증명(cnf)이 묶인 토큰"</td><td>DPoP·mTLS 바인딩</td><td>그 클라이언트에는 바인딩 없는 토큰을 발급하도록</td></tr>
+                <tr><td><code>401 account_not_registered</code> "등록되지 않았거나 비활성 … 먼저 웹으로 한 번 로그인하세요"</td><td>SSO 계정이 없거나 비활성</td><td>그 사람이 브라우저로 SeatOn에 SSO 로그인. 비활성이면 사용자 권한 화면에서 <strong>사용</strong> 켬</td></tr>
+                <tr><td><code>401 authentication_required</code>, <code>WWW-Authenticate</code> 없음</td><td>MCP SSO가 꺼져 있음(또는 issuer 없음)</td><td>스위치와 <code>oidc.issuer_url</code> 확인</td></tr>
+                <tr><td><code>503 sso_unavailable</code></td><td>Keycloak discovery 실패</td><td>컨테이너에서 Issuer URL로 나가는 연결·사내 CA. 도전 헤더를 붙이지 않으므로 클라이언트는 루프에 빠지지 않음</td></tr>
+                <tr><td><code>403 insufficient_scope</code> "mcp 범위가 있는 API 키가 필요합니다"</td><td><code>mcp.oauth.scopes</code>에 <code>mcp</code>가 없거나 토큰이 범위를 좁힘</td><td>범위에 <code>mcp</code> 포함</td></tr>
+            </tbody>
+        </table>
+        <h3>3.4 좌석 인식 엔진과 사내 비전 모델</h3>
+        <figure><img src="assets/guide/admin-settings-ai.png" alt="시스템 설정 · AI 분석 — 좌석 인식 엔진 선택과 신뢰도 기준, VLM 엔드포인트·모델·제한 시간·타일 수 등" loading="lazy"><figcaption>시스템 설정 · AI 분석 — 좌석 인식 엔진 선택과 신뢰도 기준, VLM 엔드포인트·모델·제한 시간·타일 수 등</figcaption></figure>
+        <p>기본값 <code>cv</code>는 외부 통신이 전혀 없습니다. <code>vlm</code>·<code>hybrid</code>를 쓰려면 사내 추론 서버 주소를 넣고 <strong>설정 저장</strong> 뒤 <strong>저장 후 VLM 연결 시험</strong>(<code>POST /api/v1/settings/ai/vlm/test</code>)으로 주소·인증·응답 형식·좌표계를 한 번에 확인합니다. 엔진별 동작·실측·실패 처리는 §8에 있습니다.</p>
+        <h3>3.5 인사 연동</h3>
+        <p><code>hr.api_url</code>을 <code>GET</code>으로 호출하고 <code>hr.api_token</code>이 있으면 <code>Authorization: Bearer</code>를 붙입니다. 응답 JSON의 <code>organizations[]</code>(<code>externalId</code>, <code>name</code>, <code>parentExternalId</code>, <code>color</code>)와 <code>employees[]</code>(<code>employeeNo</code>, <code>name</code>, <code>email</code>, <code>organizationExternalId</code>, <code>title</code>, <code>position</code>, <code>workplace</code>, <code>status</code>)를 upsert합니다. 화면의 <strong>저장 후 지금 동기화</strong>(<code>POST /api/v1/settings/hr/sync</code>)로 즉시 돌려 볼 수 있고, 결과는 <code>employee_sync_runs</code> 테이블과 감사 로그(<code>hr.sync</code>)에 남습니다. <code>status</code>가 <code>retired</code>인 직원이 좌석을 갖고 있으면 처리필요의 <strong>퇴직자</strong> 항목이 됩니다.</p>
+        <h3>3.6 방문 추적과 콘텐츠 보안 정책(CSP)</h3>
+        <figure><img src="assets/guide/admin-settings-tracking.png" alt="시스템 설정 · 방문 추적 — 사용·관리 화면 포함·같은 오리진 프록시 스위치, 추적 도구와 넣는 자리, Momento 수집기 주소·사이트 ID, 추가로 허용할 출처, 정책이 차단한 출처 표와 허용에 추가 단추" loading="lazy"><figcaption>시스템 설정 · 방문 추적 — 사용·관리 화면 포함·같은 오리진 프록시 스위치, 추적 도구와 넣는 자리, Momento 수집기 주소·사이트 ID, 추가로 허용할 출처, 정책이 차단한 출처 표와 허용에 추가 단추</figcaption></figure>
+        <p><strong>시스템 설정 → 방문 추적</strong> 탭에서 관리자가 화면에서 추적 도구를 붙입니다. 다시 배포하지 않아도 되고, 저장하면 <strong>다음에 여는 문서부터</strong> 붙습니다(이미 열어 둔 탭은 새로 고쳐야 합니다). 기본값은 꺼짐이며, 켜지 않은 설치는 응답 한 바이트도 달라지지 않습니다.</p>
+        <p><strong>어려운 쪽은 <code>&lt;script&gt;</code> 한 줄이 아니라 정책입니다.</strong> SeatOn의 모든 응답에는 <code>Content-Security-Policy: … script-src 'self'; connect-src 'self' …</code>가 붙어 있어, 스니펫을 그냥 넣으면 브라우저가 조용히 막고 화면은 멀쩡한데 수집만 안 됩니다. 추적이 켜진 문서에는 SeatOn이 다음을 함께 합니다.</p>
+        <ol>
+            <li><strong>요청마다 nonce</strong> — 문서를 내보낼 때 무작위 nonce를 만들어 스니펫의 <strong>모든</strong> <code>&lt;script&gt;</code> 태그에 <code>nonce="…"</code>로 붙이고, 같은 값을 <code>script-src 'nonce-…'</code>에 넣습니다. <code>'unsafe-inline'</code>은 어떤 경우에도 넣지 않습니다. 한 번 풀면 그 앱의 모든 인라인 스크립트가 함께 허용되고, 추적을 끈 뒤에도 느슨한 채 남기 때문입니다.</li>
+            <li><strong>정책 출처 자동 추출</strong> — provider가 아는 주소(Matomo 주소, Google 도메인)와 붙여넣은 스니펫 안에 적힌 <code>http(s)://</code> 주소를 읽어 <code>script-src</code>·<code>connect-src</code>·<code>img-src</code>에 더합니다. 관리자가 브라우저 콘솔의 정책 오류를 호스트 이름으로 번역해 손으로 넣을 일이 없습니다.</li>
+            <li><strong>차단 기록</strong> — 추적이 켜진 동안만 정책에 <code>report-uri /api/v1/tracking/csp-report</code>를 넣고, 브라우저가 신고한 <strong>차단된 출처와 지시어</strong>를 메모리에 기억합니다(서로 다른 출처 100개, 재시작하면 비워짐). 같은 탭의 <strong>정책이 차단한 출처</strong> 표에 나타나며, <strong>허용에 추가</strong>를 한 번 누르면 <code>tracking.allowed_hosts</code>에 들어가 바로 저장됩니다. 이미 허용된 출처는 <code>허용됨</code>으로 표시됩니다.</li>
+            <li><strong>붙이지 않는 곳</strong> — <code>/api/*</code>·<code>/mcp</code>·<code>/healthz</code>·<code>/readyz</code>와 정적 자산은 문서가 아니므로 스니펫도 nonce도 없고 원래 정책 그대로입니다. <code>/admin/*</code>·<code>/profile/*</code> 주소로 연 문서는 <code>tracking.include_admin</code>이 켜졌을 때만 붙습니다. 로그인 화면에는 붙지만 SeatOn이 개인 식별 값을 보내지는 않습니다 — 추적 도구가 무엇을 모으는지는 그 도구의 설정에서 확인하십시오.</li>
+        </ol>
+        <p>추적을 끄면 정책은 위의 원래 문자열로 <strong>글자 그대로</strong> 돌아갑니다. 켜져 있는 동안의 정책과 스니펫은 <code>curl -sI https://서비스주소/ | grep -i content-security-policy</code>와 <code>curl -s https://서비스주소/ | grep nonce</code>로 확인할 수 있습니다.</p>
+        <p><strong>Momento(권장, 기본).</strong> 사내 자체 호스팅 수집기라 데이터가 밖으로 나가지 않는 유일한 선택지입니다. 수집기 주소와 사이트 ID를 넣고 켜면 됩니다. 기본으로 켜져 있는 <strong>같은 오리진 프록시</strong>는 브라우저가 <code>https://서비스주소/momento/tracker.js</code>에서 로더를 받고 <code>https://서비스주소/momento/collect/v1/events</code>로 이벤트를 보내게 하며, SeatOn이 이 둘만 수집기로 넘깁니다. 그래서 외부 출처가 정책에 아예 등장하지 않고, 앞단 프록시의 정책을 바꿀 수 없는 설치에서도 동작합니다.</p>
+        <pre><code>&lt;!-- 프록시를 쓸 때 SeatOn이 문서에 넣는 스니펫 (nonce는 요청마다 다름) --&gt;
+&lt;script nonce="…" async src="/momento/tracker.js" data-site-id="SITE_…"
+        data-environment="prd" data-contract-version="1" data-endpoint="/momento"&gt;&lt;/script&gt;</code></pre>
+        <p>프록시를 지날 때 SeatOn은 브라우저의 세션 쿠키와 <code>Authorization</code>을 벗기고 수집기의 <code>Set-Cookie</code>·정책 헤더를 돌려주지 않으며, 원래 방문자 주소를 <code>X-Forwarded-For</code>로 넘깁니다. Momento 쪽에서는 (1) 사이트의 <strong>허용 도메인</strong>에 SeatOn 주소를 등록하고 (2) 방문자 IP를 그대로 쓰려면 SeatOn 컨테이너의 주소를 <code>security.trusted_proxy_cidrs</code>에 넣습니다. 프록시를 끄면 브라우저가 수집기에 직접 연결하며, 이때는 수집기 출처가 <code>script-src</code>·<code>connect-src</code>·<code>img-src</code>에 자동으로 더해집니다. <code>/momento/*</code>는 추적이 Momento·프록시 구성으로 켜져 있을 때만 열리고 그 밖에는 <code>404</code>이며, 수집기에 닿지 못하면 <code>502 tracking_upstream</code>과 로그 <code>Momento 수집기에 연결하지 못했습니다</code>가 남습니다.</p>
+        <p><strong>GA4 · GTM · Matomo · 직접 붙여넣기.</strong> 각각 ID 또는 주소만 넣으면 표준 로더를 SeatOn이 만듭니다. 직접 붙여넣기는 8KB까지이며 안에 적힌 주소가 자동으로 정책에 들어갑니다. 문자열을 이어 붙여 만든 주소처럼 읽히지 않는 출처가 있으면 차단 기록에 나타나므로 거기서 허용에 더하십시오. 폐쇄망에서 외부 도구는 브라우저가 밖으로 나갈 수 있을 때만 의미가 있습니다.</p>
+        <h2>4. 계정과 권한</h2>
+        <table>
+            <thead><tr><th>역할</th><th>값</th><th>할 수 있는 일</th></tr></thead>
+            <tbody>
+                <tr><td>직원</td><td><code>employee</code></td><td>좌석맵 조회·검색, 내 API 키</td></tr>
+                <tr><td>부서 관리자</td><td><code>department_manager</code></td><td>현재 버전에서는 직원과 같음(역할 값만 예약)</td></tr>
+                <tr><td>좌석 관리자</td><td><code>seat_manager</code></td><td>+ 처리필요, 도면 · 좌석(업로드·분석·편집·게시·삭제), 직원(가져오기·일괄 배정), 변경 이력, 좌석 배정</td></tr>
+                <tr><td>시스템 관리자</td><td><code>system_admin</code></td><td>+ 사용자 권한, 시스템 설정, 연결 시험, 인사 동기화 실행</td></tr>
+            </tbody>
+        </table>
+        <p>권한 검사는 서버에서 합니다(<code>requireSeatManager</code> → <code>403 seat_manager_required</code>, <code>requireAdmin</code> → <code>403 admin_required</code>). API 키로 부르는 요청은 키 소유자의 역할에 키의 범위(<code>read</code>·<code>write</code>·<code>mcp</code>)가 교집합으로 걸립니다. 예를 들어 <code>assign_seat</code> MCP 도구는 소유자가 좌석 관리자 이상이고 키에 <code>write</code>·<code>mcp</code>가 모두 있어야 합니다.</p>
+        <figure><img src="assets/guide/admin-users.png" alt="사용자 권한 — 사용자, 메일 주소, 로그인 방식(Local/SSO), 최근 로그인, 권한 선택, 사용 스위치. 새 설치에는 부트스트랩 관리자만 있다" loading="lazy"><figcaption>사용자 권한 — 사용자, 메일 주소, 로그인 방식(Local/SSO), 최근 로그인, 권한 선택, 사용 스위치. 새 설치에는 부트스트랩 관리자만 있다</figcaption></figure>
+        <p><strong>사용자 권한</strong>(<code>/admin/users</code>)에서 역할을 바로 바꾸고, <strong>사용</strong> 스위치로 계정을 막거나 다시 엽니다(비활성 사용자는 로그인·세션·API 키가 모두 거부됩니다). 자기 계정은 끌 수도, 권한을 낮출 수도 없습니다(API 로 보내면 <code>400 self_deactivation</code>·<code>400 self_demotion</code>) — 마지막 관리자가 스스로를 잠그거나 직원으로 내리면 이 화면을 더는 열 수 없어 되돌릴 길이 없기 때문입니다. 화면에는 계정 만들기가 없습니다 — 로컬 계정은 부트스트랩 관리자 하나뿐이고, 나머지 사용자는 SSO 첫 로그인 때 생깁니다.</p>
+        <p><strong>메일 주소</strong>는 알림 메일이 닿는 곳입니다. 부트스트랩 관리자 같은 로컬 계정은 처음부터 주소가 없으므로 연필 단추로 넣어 두어야 하고(비우면 지웁니다), SSO 사용자의 주소는 로그인할 때마다 Keycloak 프로필에서 가져오므로 화면에서는 고칠 수 없습니다(Keycloak 쪽에서 바꿉니다). 같은 일을 API 로 하려면 <code>PATCH /api/v1/users/{id}</code>에 <code>{"email": "…"}</code>·<code>{"active": false}</code>를 보냅니다.</p>
+        <p>로컬 관리자 비밀번호는 <strong>시스템 설정 → 보안 · 키</strong>에서 바꿉니다(12자 이상, <code>POST /api/v1/auth/password</code>, 브라우저 세션에서만 가능). 바꾸면 현재 세션을 제외한 다른 세션이 종료됩니다.</p>
+        <figure><img src="assets/guide/admin-settings-security.png" alt="시스템 설정 · 보안 · 키 — 세션 유효시간, 개인 키 기본 유효기간, 키 회전 유예시간과 로컬 관리자 비밀번호 변경" loading="lazy"><figcaption>시스템 설정 · 보안 · 키 — 세션 유효시간, 개인 키 기본 유효기간, 키 회전 유예시간과 로컬 관리자 비밀번호 변경</figcaption></figure>
+        <h2>5. 운영</h2>
+        <h3>5.1 상태 점검</h3>
+        <table>
+            <thead><tr><th>경로</th><th>메서드</th><th>인증</th><th>응답</th></tr></thead>
+            <tbody>
+                <tr><td><code>/healthz</code></td><td>GET</td><td>없음</td><td>프로세스 살아 있음 <code>{"status":"ok"}</code>. 컨테이너 헬스체크가 이걸 봄</td></tr>
+                <tr><td><code>/readyz</code></td><td>GET</td><td>없음</td><td>DB <code>Ping</code> 성공 시 <code>{"status":"ready"}</code>, 실패 시 <code>503 database_unavailable</code></td></tr>
+                <tr><td><code>/api/v1/version</code></td><td>GET</td><td>없음</td><td><code>{"name":"SeatOn","version":"1.4.12","commit":"…","builtAt":"…"}</code></td></tr>
+                <tr><td><code>/api/v1/dashboard</code></td><td>GET</td><td>좌석 관리자</td><td>운영 준비도·연동 상태·처리 필요 건수</td></tr>
+            </tbody>
+        </table>
+        <p>처리필요 화면의 <strong>운영 준비도</strong>와 <strong>연동 상태</strong>가 같은 정보를 사람이 보기 좋게 보여 줍니다.</p>
+        <figure><img src="assets/guide/admin-actions-queue.png" alt="처리필요 — 운영 준비도(사업장·층·게시·직원·SSO·인사 동기화)와 연동 상태" loading="lazy"><figcaption>처리필요 — 운영 준비도(사업장·층·게시·직원·SSO·인사 동기화)와 연동 상태</figcaption></figure>
+        <h3>5.2 로그</h3>
+        <p>표준 출력에 JSON 한 줄씩(<code>log/slog</code>) 찍힙니다. <code>docker compose logs -f seaton</code>으로 봅니다. 요청마다 <code>"msg":"request"</code>에 메서드·경로·소요 시간·<code>request_id</code>가 남습니다.</p>
+        <pre><code>{"time":"2026-09-11T11:41:57Z","level":"INFO","msg":"SeatOn started","address":":8080","version":"1.4.12","commit":"…"}
+{"time":"…","level":"INFO","msg":"request","method":"GET","path":"/readyz","duration_ms":0,"request_id":"…"}
+{"time":"…","level":"INFO","msg":"도면 분석 완료","jobId":"…","floorMapId":"…","engine":"cv","detected":30,"review":6}</code></pre>
+        <p>업무 감사 로그는 별도로 DB <code>audit_logs</code> 테이블에 사용자·IP·대상과 함께 쌓입니다(<code>auth.login</code>, <code>settings.update</code>, <code>floor_map.publish</code>, <code>assignment.create</code>, <code>api_key.revoke</code> 등). 좌석 이동 이력은 <strong>변경 이력</strong> 화면에서 CSV로 내보낼 수 있습니다.</p>
+        <h3>5.3 백업</h3>
+        <p>한 세트로 같이 받습니다.</p>
+        <pre><code># PostgreSQL
+pg_dump "$POSTGRES_DSN" -Fc -f seaton-$(date +%F).dump
+
+# master.key (볼륨)
+docker run --rm -v seaton-data:/data -v "$PWD":/backup alpine \
+  tar czf /backup/seaton-data-$(date +%F).tgz -C /data .</code></pre>
+        <p><code>master.key</code>를 잃으면 DB의 암호화된 Client Secret·VLM 키·인사 토큰을 복호화할 수 없고, 세션과 개인 API 키의 해시도 맞지 않게 되어 모두 새로 발급해야 합니다. 개인 API 키 원문은 어떤 경우에도 복구되지 않습니다.</p>
+        <h3>5.4 복구</h3>
+        <pre><code>docker compose down
+pg_restore -d "$POSTGRES_DSN" --clean --if-exists seaton-YYYY-MM-DD.dump
+docker run --rm -v seaton-data:/data -v "$PWD":/backup alpine \
+  sh -c 'rm -rf /data/* &amp;&amp; tar xzf /backup/seaton-data-YYYY-MM-DD.tgz -C /data &amp;&amp; chown -R 10001:10001 /data'
+docker compose up -d &amp;&amp; curl -s http://127.0.0.1:8080/readyz</code></pre>
+        <h3>5.5 백그라운드 작업</h3>
+        <table>
+            <thead><tr><th>작업</th><th>주기</th><th>하는 일</th></tr></thead>
+            <tbody>
+                <tr><td>정리</td><td>30분</td><td>만료된 세션·OIDC state 삭제, 재시작으로 끊긴 분석 잡 정리</td></tr>
+                <tr><td>스케줄러</td><td>1분</td><td><code>hr.sync_enabled</code>가 <code>true</code>이고 <code>hr.schedule</code>이 되면 인사 동기화 실행</td></tr>
+                <tr><td>기동 직후</td><td>1회</td><td><code>analyzing</code> 상태에 갇힌 도면 복구(로그 <code>중단된 분석 잡을 정리했습니다</code>)</td></tr>
+            </tbody>
+        </table>
+        <h3>5.6 업그레이드와 되돌리기</h3>
+        <p>스키마는 기동 때 자동으로 맞춰지므로(<code>migrations.sql</code>, 멱등) 별도 마이그레이션 명령이 없습니다. 대신 <strong>올리기 전에 §5.3 백업을 먼저</strong> 받습니다.</p>
+        <pre><code>pg_dump "$POSTGRES_DSN" -Fc -f before-v1.5.0.dump
+docker load &lt; SeatOn-v1.5.0.tar.gz
+export SEATON_IMAGE_TAG='v1.5.0'
+docker compose up -d
+curl -s http://127.0.0.1:8080/api/v1/version    # "version":"1.5.0"</code></pre>
+        <p>되돌릴 때는 태그를 이전 값으로 바꿔 다시 올립니다. 새 버전이 스키마를 바꾼 뒤라면 이전 바이너리가 그 스키마를 이해한다는 보장이 없으므로, 백업한 덤프를 먼저 복원합니다.</p>
+        <pre><code>export SEATON_IMAGE_TAG='v1.4.12'
+docker compose up -d</code></pre>
+        <p>분석이 진행 중일 때 재시작하면 그 잡은 실패로 정리되고 도면은 다시 분석할 수 있는 상태로 돌아옵니다. 릴리즈 자산은 <code>SeatOn-v&lt;버전&gt;.tar.gz</code> → <code>seaton:v&lt;버전&gt;</code> 이름 규칙을 따르고, 애플리케이션이 알리는 버전 문자열은 <code>v</code> 없는 <code>1.4.12</code>입니다.</p>
+        <h2>6. 장애 대응</h2>
+        <table>
+            <thead><tr><th>증상</th><th>확인할 곳</th><th>조치</th></tr></thead>
+            <tbody>
+                <tr><td>컨테이너가 바로 종료</td><td><code>docker compose logs seaton</code> 에 <code>configuration error ... missing required environment variables</code> 또는 <code>BOOTSTRAP_ADMIN_PASSWORD must be at least 12 characters</code></td><td>환경변수 3개를 채우고 비밀번호를 12자 이상으로</td></tr>
+                <tr><td>기동 후 2분 뒤 종료, 로그 <code>database startup failed</code></td><td>DSN·방화벽·<code>sslmode</code></td><td>DB 접속을 고치고 재기동. 재시도는 2분 동안만</td></tr>
+                <tr><td>로그 <code>keyring startup failed</code></td><td>볼륨 권한, <code>master.key must be 32 bytes</code></td><td>볼륨이 UID 10001 소유인지, 파일이 손상되지 않았는지 확인. 백업에서 복원</td></tr>
+                <tr><td><code>/readyz</code>가 <code>503 database_unavailable</code></td><td>DB 상태</td><td>DB 복구. <code>/healthz</code>는 이때도 200이므로 준비 확인은 <code>/readyz</code>로</td></tr>
+                <tr><td>로그인 화면에 <code>서버에 연결하지 못했습니다</code></td><td>프록시·포트</td><td>브라우저 → 프록시 → <code>:8080</code> 경로 확인</td></tr>
+                <tr><td>SSO 로그인 실패 <code>SSO 요청이 만료되었거나 유효하지 않습니다</code></td><td>프록시가 <code>X-Forwarded-Host</code>·<code>X-Forwarded-Proto</code>를 넘기는지, Keycloak Redirect URI</td><td>콜백 주소를 화면 안내와 같게. state는 만료되면 정리됨</td></tr>
+                <tr><td><code>Keycloak 연결을 확인하세요</code> (<code>502 oidc_discovery_failed</code>)</td><td>컨테이너에서 Issuer URL로 나가는 HTTPS, 사내 CA</td><td>Issuer URL 확인. Discovery 문서 <code>/.well-known/openid-configuration</code> 이 열리는지</td></tr>
+                <tr><td><code>Keycloak ID 토큰 검증에 실패했습니다</code> / <code>Keycloak 토큰 요청값이 일치하지 않습니다</code></td><td>시계 동기, Client Secret, nonce</td><td>서버 시각 동기화, Client Secret 재입력</td></tr>
+                <tr><td>로컬 로그인이 <code>로컬 로그인이 비활성화되어 있습니다</code> 인데 SSO도 안 됨</td><td><code>auth.local_enabled</code></td><td>DB에서 되돌립니다: <code>UPDATE settings SET value='true' WHERE key='auth.local_enabled';</code></td></tr>
+                <tr><td>세션이 자꾸 끊김</td><td>프록시가 <code>X-Forwarded-Proto: https</code>를 안 넘김 → 쿠키 <code>Secure</code> 판단 오류, 또는 <code>security.session_hours</code></td><td>프록시 헤더 전달, 세션 시간 조정</td></tr>
+                <tr><td>요청이 <code>403 csrf_failed</code></td><td>브라우저 세션에서 <code>X-CSRF-Token</code> 없이 변경 요청</td><td>스크립트라면 API 키(Bearer)를 쓰거나 <code>/api/v1/auth/me</code>의 <code>csrfToken</code>을 헤더로</td></tr>
+                <tr><td>도면이 <code>analyzing</code>에 갇혀 재분석이 <code>409 analysis_running</code></td><td>재시작 여부</td><td>서비스 재시작 시 자동 정리(로그 <code>중단된 분석 잡을 정리했습니다</code>). 30분마다도 정리</td></tr>
+                <tr><td>분석 실패, 카드에 오류</td><td>로그 <code>분석 잡에서 패닉</code>, <code>VLM 타일 분석 실패</code></td><td>VLM 서버 상태·제한 시간. VLM 실패는 CV로 대체되어 완료됨(§8.5)</td></tr>
+                <tr><td>PDF 도면에 좌석이 안 겹침, <code>PDF 미리보기 없음</code></td><td>로그 <code>도면 미리보기 생성 실패</code> / <code>도면 미리보기 저장 실패</code>, <code>/tmp</code> 공간</td><td>tmpfs 256MB 초과 여부, PDF 첫 페이지 크기. PNG로 변환해 재업로드</td></tr>
+                <tr><td>인사 동기화가 안 돎</td><td>로그 <code>invalid HR sync schedule</code>, <code>scheduled HR sync failed</code></td><td>cron 식(5필드) 수정, <code>hr.api_url</code> 응답 형식 확인</td></tr>
+                <tr><td>처리필요 화면이 느림, 로그 <code>집계 쿼리 실패</code></td><td>DB 부하</td><td>상단 배지는 <code>/dashboard/action-count</code>만 쓰므로 화면 이동은 영향 없음. DB 점검</td></tr>
+                <tr><td>로그 <code>audit log failed</code></td><td>DB 쓰기</td><td>감사 기록 실패는 요청을 막지 않음. DB 디스크·권한 확인</td></tr>
+                <tr><td>로그 <code>panic</code> + 스택</td><td>애플리케이션 결함</td><td><code>request_id</code>와 함께 이슈로 보고. 프로세스는 계속 동작</td></tr>
+                <tr><td>추적을 켰는데 수집이 안 됨, 콘솔에 <code>Refused to load/connect … Content Security Policy</code></td><td>시스템 설정 → 방문 추적의 <strong>정책이 차단한 출처</strong></td><td>막힌 출처를 <strong>허용에 추가</strong>. 표가 비어 있으면 화면을 새로 고쳐 문서를 다시 받았는지, <code>tracking.enabled</code>가 저장됐는지 확인(§3.6)</td></tr>
+                <tr><td><code>/momento/tracker.js</code>가 <code>404</code></td><td><code>tracking.provider=momento</code>, <code>tracking.momento_proxy=true</code>, <code>tracking.enabled=true</code> 인지</td><td>셋 중 하나라도 아니면 프록시 경로는 없음</td></tr>
+                <tr><td><code>/momento/*</code>가 <code>502 tracking_upstream</code>, 로그 <code>Momento 수집기에 연결하지 못했습니다</code></td><td>컨테이너에서 <code>tracking.momento_url</code>로 나가는 연결, 사내 CA</td><td>수집기 주소·방화벽 확인</td></tr>
+                <tr><td>MCP 클라이언트가 SSO 로그인 뒤에도 <code>401</code>, 로그 <code>mcp oauth token rejected</code></td><td>로그의 <code>code</code>·<code>cause</code></td><td>§3.3 거부 메시지별 조치 표. 대상 검사 실패면 메시지의 <code>azp</code>를 허용 대상에</td></tr>
+                <tr><td>MCP 클라이언트가 로그인 화면을 반복해서 띄움</td><td>메타데이터는 200인데 토큰이 계속 거부됨</td><td>위와 같이 원인을 고침. 임시로는 <code>mcp.oauth.enabled</code>를 꺼서 메타데이터를 404로</td></tr>
+            </tbody>
+        </table>
+        <h2>7. 보안</h2>
+        <ul>
+            <li><strong>바꿔야 하는 기본값</strong>: <code>BOOTSTRAP_ADMIN_PASSWORD</code>는 설치 직후 화면에서 변경. <code>POSTGRES_DSN</code>은 <code>sslmode=require</code> 이상. 비밀값 예시(<code>change-this-strong-password</code>)를 그대로 두지 않습니다.</li>
+            <li><strong>밖에 열면 안 되는 것</strong>: <code>:8080</code>은 리버스 프록시 뒤에만 둡니다. PostgreSQL 포트는 SeatOn 컨테이너에서만 닿게 합니다. <code>/mcp</code>와 <code>/api/v1/*</code>은 같은 포트이므로 프록시에서 따로 막을 필요는 없지만, 사내망 밖으로 열지 않습니다.</li>
+            <li><strong>프록시에서 HTTPS 종료</strong>: <code>X-Forwarded-Proto: https</code>와 <code>X-Forwarded-Host</code>를 반드시 전달합니다. 이 값으로 세션 쿠키의 <code>Secure</code> 플래그와 OIDC 콜백 주소가 결정됩니다.</li>
+            <li><strong>컨테이너 강화</strong>: <code>compose.yaml</code>의 <code>read_only</code>, <code>cap_drop: ALL</code>, <code>no-new-privileges</code>, 비루트 UID 10001을 그대로 둡니다. 응답에는 <code>CSP default-src 'self'</code>, <code>X-Frame-Options: DENY</code>, <code>nosniff</code>가 항상 붙습니다.</li>
+            <li><strong>방문 추적과 정책</strong>: 추적을 켜도 <code>script-src</code>에 <code>'unsafe-inline'</code>은 들어가지 않습니다 — 요청마다 다른 nonce와 스니펫에서 읽은 출처만 더해지고, 끄면 원래 정책으로 돌아갑니다(§3.6). Momento를 같은 오리진 프록시로 쓰면 외부 출처가 정책에 전혀 없습니다. 차단 신고 수신(<code>POST /api/v1/tracking/csp-report</code>)은 인증 없이 열려 있지만 추적이 켜진 동안만 기록하고, 메모리의 유계 목록(100개)만 바꿉니다.</li>
+            <li><strong>비밀값 저장</strong>: 설정의 비밀값은 <code>master.key</code>로 AES-256-GCM 암호화, 세션 토큰과 API 키는 HMAC 해시만 저장. <code>master.key</code>는 백업 대상이자 유출 금지 대상입니다.</li>
+            <li><strong>인증 연동</strong>: Keycloak Authorization Code + PKCE(S256) + nonce 검증. SSO를 검증한 뒤 <code>auth.local_enabled</code>를 끄면 부트스트랩 계정도 화면에서는 못 들어오므로, 비상시 되돌리는 SQL(§6)을 운영 문서에 적어 둡니다.</li>
+            <li><strong>MCP SSO(OAuth)</strong>: 켜도 <code>/mcp</code>에서만 Keycloak 액세스 토큰을 받고 REST·관리 API는 키와 세션만 받습니다. 토큰은 저장하지 않고 요청마다 JWKS로 검사하며, 계정을 만들거나 정지된 계정을 열거나 토큰의 role로 권한을 올리지 않습니다. 메타데이터 문서만 CORS(<code>*</code>)로 열리고, 어디서 로그인하는지만 말할 뿐 누가 로그인했는지는 담지 않습니다(§3.3).</li>
+            <li><strong>API 키 정책</strong>: 기본 유효기간 90일, 회전 유예 24시간. 유출이 의심되면 소유자가 <strong>폐기</strong>하거나, 관리자가 그 사용자를 비활성화합니다(비활성 사용자의 키는 즉시 거부).</li>
+            <li><strong>인터넷 통신</strong>: 기본 설정(<code>ai.engine=cv</code>, SSO·인사 연동·방문 추적 꺼짐)에서는 컨테이너가 밖으로 나가는 연결이 없습니다. 연결이 생기는 곳은 Keycloak Issuer, <code>hr.api_url</code>, <code>ai.vlm_base_url</code>, 그리고 Momento 프록시를 켰을 때의 <code>tracking.momento_url</code> 네 군데뿐이며 모두 사내 주소를 씁니다.</li>
+        </ul>
+        <h2>8. 좌석 인식 엔진 (CV · VLM · 하이브리드)</h2>
+        <p><code>시스템 설정 → AI 분석</code>에서 도면 판독 엔진을 선택합니다. 세 방식 모두 결과를 동일한 비율 좌표 좌석으로 저장하므로 이후 편집·배정 흐름은 같습니다.</p>
+        <table>
+            <thead><tr><th>엔진</th><th>동작</th><th>외부 통신</th><th>신뢰도 상한</th></tr></thead>
+            <tbody>
+                <tr><td><code>cv</code> (기본)</td><td>오프라인 CV 파이프라인(<code>offline-cv-v2</code>)</td><td>없음</td><td>격자 정합 시 0.99</td></tr>
+                <tr><td><code>vlm</code></td><td>사내 비전 모델 단독 판독</td><td>설정한 사내 엔드포인트</td><td>0.94 (자동 승인 불가)</td></tr>
+                <tr><td><code>hybrid</code></td><td>CV와 VLM을 IoU로 교차 검증</td><td>설정한 사내 엔드포인트</td><td>합의 시 0.99</td></tr>
+            </tbody>
+        </table>
+        <p>기본값은 <code>cv</code>입니다. <code>hybrid</code>가 항상 더 낫지는 않으므로 8.2의 실측 비교를 먼저 확인하십시오.</p>
+        <h3>8.1 VLM 엔드포인트 설정</h3>
+        <p>OpenAI 호환 <code>/chat/completions</code> 인터페이스를 제공하는 <strong>사내</strong> 추론 서버를 지정합니다. vLLM, SGLang, Ollama 등으로 Qwen2.5-VL 계열을 서빙한 주소를 쓰며, 인터넷 구간으로 나가는 주소를 넣지 마십시오. 설정을 저장한 뒤 <strong>저장 후 VLM 연결 시험</strong> 버튼을 누르면 합성 도면 한 장을 왕복시켜 주소·인증·응답 형식·좌표계를 한 번에 검증합니다.</p>
+        <table>
+            <thead><tr><th>설정</th><th>설명</th></tr></thead>
+            <tbody>
+                <tr><td><code>ai.vlm_base_url</code></td><td>예: <code>http://vllm.intra:8000/v1</code> (<code>/chat/completions</code>는 자동으로 덧붙습니다)</td></tr>
+                <tr><td><code>ai.vlm_model</code></td><td>서버에 로드된 모델 이름</td></tr>
+                <tr><td><code>ai.vlm_api_key</code></td><td>Bearer 토큰. AES-256-GCM으로 암호화 저장</td></tr>
+                <tr><td><code>ai.vlm_timeout_seconds</code></td><td>요청당 제한 시간(10~600)</td></tr>
+                <tr><td><code>ai.vlm_max_image_side</code></td><td>전송 이미지 최대 변(512~4096)</td></tr>
+                <tr><td><code>ai.vlm_max_seats</code></td><td>한 번에 받아들일 좌석 수 상한(1~500)</td></tr>
+                <tr><td><code>ai.vlm_tiles</code></td><td>한 변의 타일 수(1~4). 기본 1 권장 — 아래 실측 참고</td></tr>
+                <tr><td><code>ai.vlm_json_mode</code></td><td><code>response_format: json_object</code> 사용 여부. 기본 <code>true</code></td></tr>
+                <tr><td><code>ai.fusion_iou</code></td><td>하이브리드 일치 판정 기준(0.1~0.9)</td></tr>
+            </tbody>
+        </table>
+        <h3>8.2 실측 결과 (Qwen2.5-VL 7B, Ollama, RTX 5090)</h3>
+        <p>합성 사무실 도면(책상 30개, 1600×1100, 외벽·복도벽·회의실·의자·치수선 포함)으로 엔진별 정확도를 측정한 값입니다. 정답과 IoU 0.5 이상 겹치면 일치로 계산했습니다.</p>
+        <table>
+            <thead><tr><th>엔진</th><th>검출</th><th>F1</th><th>평균 IoU</th><th>검토 필요</th><th>소요</th></tr></thead>
+            <tbody>
+                <tr><td><code>cv</code></td><td>30</td><td><strong>1.000</strong></td><td>0.915</td><td>6건</td><td>2초</td></tr>
+                <tr><td><code>vlm</code></td><td>30</td><td>0.900</td><td>0.827</td><td><strong>30건</strong> (전부)</td><td>8초</td></tr>
+                <tr><td><code>hybrid</code></td><td>30</td><td><strong>1.000</strong></td><td>0.915</td><td><strong>0건</strong></td><td>9초</td></tr>
+            </tbody>
+        </table>
+        <p>가로 도면에서 하이브리드가 유리한 이유는 정확도가 아니라 <strong>검토 부담</strong>입니다. CV 단독은 6건이 자동 승인선 아래로 남지만, VLM이 같은 자리를 지목해 교차 검증되면 신뢰도가 0.95 이상으로 올라가 관리자가 확인할 항목이 사라집니다.</p>
+        <p>도면별 결과는 다음과 같습니다. PDF는 A3 150 DPI 래스터(2481×1754) 기준입니다.</p>
+        <table>
+            <thead><tr><th>도면</th><th><code>cv</code></th><th><code>hybrid</code></th><th>비고</th></tr></thead>
+            <tbody>
+                <tr><td>가로 1600×1100, 책상 30</td><td>F1 1.000 · 검토 6건</td><td>F1 1.000 · 검토 0건</td><td>30건 전부 교차 검증</td></tr>
+                <tr><td>PDF A3 가로, 책상 30</td><td>F1 1.000 · 검토 0건</td><td>F1 1.000 · 검토 0건</td><td>30건 전부 교차 검증</td></tr>
+                <tr><td>세로 1000×1400, 책상 28</td><td><strong>F1 1.000</strong> · 검토 0건</td><td>F1 0.933 · 검토 28건</td><td>VLM 합의 4건뿐, 오검출 유입</td></tr>
+            </tbody>
+        </table>
+        <p><strong>세로 도면에서는 하이브리드가 CV보다 나빴습니다.</strong> VLM이 책상 28개 중 4개만 CV와 합의하고 14개를 엉뚱한 곳에 보고해, 그 오검출이 좌석으로 추가되면서 정밀도가 1.000에서 0.667로 떨어졌습니다. 그래서 CV가 책상 격자를 복원한 도면에서는 <strong>격자를 벗어난 VLM 단독 상자를 제외</strong>하도록 했고(10건 제외), 정밀도가 0.875, F1 0.933으로 회복됐습니다. 남은 오검출 4건은 우연히 격자 근처에 놓인 것으로, 모두 검토 대상으로 표시되며 분석 완료 후 경고에 "VLM만 찾은 좌석이 교차 검증된 건수보다 많습니다"가 함께 뜹니다.</p>
+        <p>정리하면 <strong>도면 종류에 따라 하이브리드가 CV보다 나쁠 수 있습니다.</strong> 도입 시 대표 도면 몇 장으로 <code>cv</code>와 <code>hybrid</code>를 모두 돌려 비교하고, VLM 합의 건수(<code>details.agreed</code>)가 CV 검출 수에 근접하는지 확인하십시오. 합의 비율이 낮으면 <code>cv</code>를 쓰는 편이 낫습니다.</p>
+        <p><strong>프롬프트 설계가 정확도를 좌우합니다.</strong> 같은 모델·같은 도면에서 프롬프트 형식만 바꿔 5회씩 측정한 결과입니다.</p>
+        <table>
+            <thead><tr><th>요청 형식</th><th>F1</th></tr></thead>
+            <tbody>
+                <tr><td>JSON 스키마에 예시 좌표를 넣어 요청</td><td>0.00 — 모델이 예시 숫자를 그대로 복사</td></tr>
+                <tr><td>예시 없이 정규화 좌표 스키마만 서술</td><td>0.00 — 균일 격자를 발명</td></tr>
+                <tr><td>네이티브 grounding · 배열 반환</td><td>0.30</td></tr>
+                <tr><td>네이티브 grounding · 객체 래퍼 (<strong>현재 구현</strong>)</td><td>0.37~0.41</td></tr>
+                <tr><td>위에 "최대 N개" 상한 문구 추가</td><td>0.22</td></tr>
+            </tbody>
+        </table>
+        <p>SeatOn은 마지막에서 두 번째 형식을 사용하며, 여기에 시스템 메시지를 더한 실제 구현이 위 표의 0.900입니다. 좌석 수 상한은 프롬프트가 아니라 서버에서 잘라냅니다.</p>
+        <p><strong>타일 분할은 이 모델에서 역효과였습니다.</strong> 1×1 F1 0.30 → 2×2 0.04 → 3×3 0.00. 큰 도면에서 작은 객체를 키워 보려던 의도였지만, Qwen 계열의 grounding은 장면 전체를 볼 때 더 정확했습니다. 기본값 1을 유지하고, 다른 모델로 교체할 때만 실제 도면으로 재측정해 조정하십시오.</p>
+        <p><strong>좌표계는 같은 모델도 입력에 따라 바꿉니다.</strong> 실측에서 Qwen2.5-VL은 1600×1100 도면에는 절대 픽셀 좌표로, 640×480 시험 도면에는 0~1000 좌표로 답했습니다. SeatOn은 후보 좌표계를 모두 적용해 자동 판별하며, 판별 결과를 분석 잡의 <code>details.vlmCoordinates</code>에 기록합니다. 연결 시험 결과에도 표시되므로 모델 교체 시 먼저 확인하십시오.</p>
+        <h3>8.3 신뢰도 보정 원칙</h3>
+        <p>비전 모델이 스스로 보고하는 확신도는 보정된 확률이 아닙니다. 그래서 VLM이 단독으로 찾은 좌석은 신뢰도를 0.88~0.94로 제한해 <strong>자동 승인선(기본 0.95)을 절대 넘지 못하게</strong> 하고 항상 관리자 검토 큐에 남깁니다. 하이브리드에서 CV와 VLM이 같은 자리를 지목한 좌석만 0.90 이상으로 올라가 자동 승인 대상이 됩니다. CV가 단독으로 찾은 좌석은 소폭 감점합니다. 좌석의 <code>metadata.source</code> 값(<code>cv</code>, <code>vlm</code>, <code>cv+vlm</code>, <code>grid-fill</code>)으로 근거를 추적할 수 있습니다.</p>
+        <h3>8.4 분석은 비동기 잡입니다</h3>
+        <p>VLM 판독은 도면 크기와 타일 수에 따라 수십 초에서 수 분이 걸립니다. <code>POST /floor-maps/{id}/analyze</code>는 즉시 <code>202</code>와 <code>jobId</code>를 돌려주고 실제 작업은 백그라운드에서 진행됩니다. 관리자 화면은 완료까지 진행 상태를 표시합니다. 같은 도면을 동시에 두 번 분석할 수 없으며(<code>409 analysis_running</code>), 서비스가 재시작되어 중단된 잡은 다음 기동 시 실패로 정리되고 도면 상태도 복구됩니다.</p>
+        <h3>8.5 예상되는 실패와 동작</h3>
+        <table>
+            <thead><tr><th>상황</th><th>SeatOn 동작</th></tr></thead>
+            <tbody>
+                <tr><td>VLM 서버 연결 불가 · 타임아웃 · 5xx · 429</td><td>지수 백오프로 최대 3회 재시도</td></tr>
+                <tr><td>인증 실패(401/403)</td><td>재시도 없이 즉시 중단, 키 확인 안내</td></tr>
+                <tr><td>경로 오류(404)</td><td><code>/v1</code> 포함 여부 확인 안내</td></tr>
+                <tr><td><code>response_format</code> 미지원 서버</td><td>해당 옵션을 빼고 자동 재시도</td></tr>
+                <tr><td>모델이 JSON 대신 설명문을 반환</td><td>코드펜스·설명 제거 후 재파싱, 실패 시 1회 교정 재요청</td></tr>
+                <tr><td>좌표를 픽셀이나 0~1000으로 반환</td><td>후보 좌표계를 모두 적용해 가장 정합한 해석을 자동 선택</td></tr>
+                <tr><td><code>[x1,y1,x2,y2]</code>와 <code>[x,y,w,h]</code> 혼용</td><td>필드 이름과 정합도로 형식 판별, 역순 좌표는 교정</td></tr>
+                <tr><td>같은 좌석 중복·반복 출력</td><td>IoU 기반 중복 제거</td></tr>
+                <tr><td>회의실·구역 등 과대 상자, 글자 등 과소 상자</td><td>크기·종횡비 검증으로 제거</td></tr>
+                <tr><td>응답이 최대 길이에서 잘림</td><td>건진 좌석은 사용하고 경고 표시, 좌석 상한/타일 수 조정 안내</td></tr>
+                <tr><td>타일 일부만 실패</td><td>성공한 영역 결과를 사용하고 누락 가능성을 경고</td></tr>
+                <tr><td>VLM이 책상 격자를 벗어난 곳에 보고</td><td>CV가 격자를 세운 도면이면 해당 상자 제외 후 경고</td></tr>
+                <tr><td>VLM 단독 좌석이 교차 검증 좌석보다 많음</td><td>오검출 혼입 가능성 경고</td></tr>
+                <tr><td>VLM이 좌석을 하나도 못 찾음 · 그 밖의 실패</td><td><strong>CV 결과로 자동 대체</strong>하고 경고 표시 (분석 자체는 완료)</td></tr>
+            </tbody>
+        </table>
+        <p>모든 경고는 분석 완료 후 도면 화면에 목록으로 표시되며 <code>analysis_jobs.warnings</code>에 함께 기록됩니다.</p>
+        <div class="generated">이 문서는 <code>docs/ADMIN_GUIDE.md</code> 에서 <code>scripts/build-docs.py</code> 로 생성되었습니다. 내용 수정은 Markdown 원본에서 하십시오.</div>
+    </div>
+</body>
+</html>
