@@ -1,0 +1,7 @@
+# 수리 요약 — PR #39 (커밋 없음)
+
+- **지적은 틀렸다 — 코드 결함이 아니다.** CI 가 실패한 그 커밋(`297a248`, 작업 트리 clean)에서 CI 와 똑같은 두 명령을 그대로 돌렸고 둘 다 통과했다: `sh ./gradlew --no-daemon test` → `BUILD SUCCESSFUL in 5m 54s`, XML 집계 **612 tests / 0 failures / 0 errors / 0 skipped**; `sh ./gradlew --no-daemon bootJar -x test` → `BUILD SUCCESSFUL in 6s`, `build/libs/nexabuilder-1.26.0.jar` 생성. 재현 불가.
+- **실패가 코드 밖이라는 근거:** CI 잡은 **7초** 만에 죽었는데 이 프로젝트는 Gradle 이 차갑게 뜨는 데만 12초가 걸린다(이번 세션 `compileJava` 실측). 즉 `./gradlew test` 는 시작조차 못 했다. 넘겨받은 '실패 로그 끝부분' 도 **비어 있다** — 어떤 스텝도 출력을 남기지 않았다는 뜻이다. 성공 22건은 470~611초, 실패는 4초·39초·7초로 갈린다. 게다가 `git diff origin/master...HEAD -- .github/` 는 **빈 diff** 이고 워크플로는 2026-09-13 이후 안 바뀌었다(그 뒤로 CI 가 여러 번 성공했다). 이 PR 이 건드린 파일은 `ListExportController.java` 와 `ListExportIntegrationTest.java` 둘뿐이다.
+- **테스트가 대상을 실제로 검증한다는 것도 증명했다(revert-check).** `cellText()` 의 자르기 본문만 `return value;` 로 되돌리니 `xlsxExportCutsCellsToTheExcelLengthLimit` 가 `16 tests completed, 1 failed` 로 **빨갛게** 떨어졌고, `git checkout --` 로 복원하니 다시 16건 전부 통과했다. 통과를 위해 단언을 느슨하게 하거나 테스트를 지운 곳은 없다.
+- **그래서 커밋하지 않았다.** 고칠 코드 결함이 없고, 남은 유일한 수단은 워크플로·검증 명령을 건드리는 것인데 그것은 금지다. 워크플로는 한 줄도 손대지 않았다. 브랜치는 `297a248` 그대로다.
+- **여전히 확신 없는 곳:** CI 가 *왜* 7초에 죽는지는 끝내 모른다(`gh` 미인증·비공개 저장소라 로그 접근 불가). 과금/러너 할당 같은 인프라 가설은 세웠을 뿐 증명하지 못했다. 사람이 Actions 로그를 직접 열어보는 것이 다음 단계다. 구현·비평이 남긴 우려 중 "XLSX 만 값이 조용히 잘린다(표시는 말줄임표 하나 + 서버 WARN)" 와 "PDF 는 32k 초과 값으로 검증된 적 없다" 는 이번에도 손대지 않았다.
