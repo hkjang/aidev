@@ -4,8 +4,8 @@
     "value": 3,
     "risk": 1,
     "size": "M",
-    "status": "pending",
-    "note": "이번 선택. 두 페이지 현재 코드 확인: Scanner catch 없음, Lobby catch가 삼킴. 기존 verify/checkin이 멈춘다는 과거 표현은 부정확. 실제 브라우저 실패는 미확인.",
+    "status": "done",
+    "note": "두 페이지 별도 refError/refLoading·loadReference·닫기 없는 Alert 적용. 실제 PostgreSQL/임베드 UI/Chromium E2E 4개로 최초 실패→재실패→지연 성공, 요청 수, pageerror, 실제 범위 제한 계정, 입력·조회·SSE 보존 검증. 전체 E2E 14개 통과.",
     "updated": "2026-09-29"
   },
   {
@@ -14,7 +14,7 @@
     "risk": 1,
     "size": "S",
     "status": "pending",
-    "note": "integration_test.go:472 쿼리 유지 확인. 이전 실제 flake 기록 존재. 이번 단독 실행은 DSN 없어 SKIP; 차선.",
+    "note": "쿼리 취약성은 기존 정찰대로 유지. 이번 DSN 지정 전체 Go 테스트 2회는 통과(app 53.623s/54.516s); 이전 flake가 해결됐다는 증거로 보지 않으며 별도 과제로 보류.",
     "updated": "2026-09-29"
   },
   {
@@ -141,6 +141,24 @@
     "size": "S",
     "status": "done",
     "note": "기존 기록의 후보. HEAD submitBlockReason 및 화면 안내 반영(v2.8.9). 필드별 표시는 별도 후보로 유지.",
+    "updated": "2026-09-29"
+  },
+  {
+    "title": "로비 필터의 빈 값에도 전체 로비 문구 표시",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "신규. 실제 Chromium에서 로비 필터 value=\"\"가 전체 로비 텍스트 대신 zero-width space로 표시됨을 관찰했다. 필터 자체는 정상 작동하며 이번 복구 계약과 별개인 표시 개선으로 보류.",
+    "updated": "2026-09-29"
+  },
+  {
+    "title": "실제 서버 E2E 기준 정보 fixture의 실행 후 정리",
+    "value": 2,
+    "risk": 1,
+    "size": "M",
+    "status": "pending",
+    "note": "신규. 기존 관리 화면 테스트와 이번 복구 테스트 모두 실제 사업장·로비·계정을 생성하므로 공유 로컬 서버에서 반복 실행하면 누적된다. 이번에는 전용 PostgreSQL 컨테이너를 제거해 정리했으며, 로컬 E2E 진입점 과제와 함께 격리 DB 수명주기를 검토할 것.",
     "updated": "2026-09-29"
   }
 ]

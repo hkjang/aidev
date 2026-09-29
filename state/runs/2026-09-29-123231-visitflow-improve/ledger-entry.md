@@ -1,0 +1,11 @@
+## 2026-09-29
+- 선택: QR 스캔·로비 현황에서 기준 정보 로드 실패를 알리고 재시도 제공 (가치 3 / 위험 1 / 작업량 M)
+- 결과: 성공
+- 요약: Scanner의 미처리 reference-data rejection과 Lobby의 숨겨진 실패를 실제 503 응답으로 재현한 뒤, 각 페이지의 loadReference/refError/refLoading과 닫기 없는 한국어 Alert·다시 불러오기 버튼으로 복구하도록 수정했다. 프로덕션 2개 파일만 변경했고 QR·출입증·검증 결과, 기존 scope·빈 lobbyId·카메라 cleanup, 현황 검색·탭·필터·목록·SSE 계약을 보존했으며 가이드 3.7/3.8에 한 문장씩 추가했다. 실제 PostgreSQL·실제 dist 임베드 서버·Chromium의 집중 E2E 4개 및 전체 E2E 14개(45.1s), npm ci/lint/test(60개)/build, DSN 지정 go test ./... -count=1(app 54.516s), go vet/build, git diff --check 통과; 성공 응답은 route.continue()이며 실제 범위 제한 계정과 0/1/2개 허용 로비를 사용했다.
+- 실패 재현: `Error: expect(locator).toBeVisible() failed` / `Locator: getByRole('button', { name: '다시 불러오기' }) — Error: element(s) not found` (수정 전 두 화면 모두, 최초 집중 실행 4 failed). Scanner trace의 pageError도 `기준 정보를 불러오지 못했습니다`로 관찰했으며, 통과 후 수정 전 바이너리를 다시 기동한 동일 두 시나리오가 `2 failed`로 재실패했다. 처음의 MUI 옵션 선택자 오류는 결함 증거에 포함하지 않았다.
+- 보류 아이디어:
+  - 동의 기록 host/self 동시각 선택 결정성 개선 (가치 2 / 위험 1 / S) — 이번 DB 전체 테스트는 통과했으나 이전 flake 후보 유지.
+  - 연속 가져오기 응답 역전 방지 (가치 2 / 위험 1 / S) — 실제 역전 재현 전, 이번 범위 밖.
+  - 로컬 실제 서버·dist E2E 실행 진입점 (가치 3 / 위험 2 / M) — CI는 이미 존재하며 로컬 준비 재사용만 검토.
+  - 제출 차단 사유 필드별 표시 (가치 2 / 위험 1 / S) — 기존 단일 안내 정책 보존, 별도 UX 과제.
+- 과제서: 채택 — 현재 코드와 실제 실패가 과제서의 원인과 일치했고, 네 파일 범위에서 수용 기준을 실제 서버 브라우저로 검증했다.

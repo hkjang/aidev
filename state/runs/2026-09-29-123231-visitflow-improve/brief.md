@@ -21,7 +21,7 @@
 - 위험과 피할 것: 이전 기록의 “스캔 화면이 죽는다”는 표현을 사실로 전제하지 말 것. 현재 verify/checkin은 ref 로드를 기다리지 않으며 이 과제는 로비 목록 복구만 다룬다. refError를 공용 error에 섞지 말고 재시도 시작에 Alert를 제거하지 말 것(진행 중 버튼·문구가 사라짐). scope 필터·카메라 stopCamera 정리·SSE 재구독 구조를 보존한다. `.tsx` 테스트는 vitest include에서 제외되므로 UI 배선은 브라우저로 검증한다. 미머지 메일/MCP/import 브랜치 및 auth/migrations/workflows는 피한다. MUI select은 접근성 이름을 브라우저에서 확인하고 필요한 경우 aria-labelledby를 따라간다.
 - 차선 후보: TestSelfRegistrationRecordsVisitorConsent의 동시각 동의 기록 선택 비결정성 제거 (가치 2 / 위험 1 / S). internal/app/integration_test.go:472의 ORDER BY consented_at DESC LIMIT 1은 동시각에서 결정적이지 않다. WHERE source='self'로 목적을 좁히되 실제 등록 경로를 거친 host/self 기록을 함께 검증한다. DB 없이 SKIP한 결과를 통과 증거로 삼지 않는다. 본 과제의 전제가 이미 해결된 경우만 선택한다.
 
-진행 계획 (구현자 상태 갱신: 1 완료, 2 완료, 3 전체 검증 진행 중):
+진행 계획 (구현자 상태 갱신: 1 완료, 2 완료, 3 완료 — 집중 E2E 4개·전체 14개 통과, 원본 산출물 복원 및 기록 완료):
 1. 재현/검증 준비: 기존 실제 서버에서 두 화면에 reference-data 503을 주고 현재 안내·재시도 부재를 관찰, 회귀 테스트를 추가한다. 증명: 위 focused E2E가 안내 부재로 실패. 점검: 자동 결과 확인 후 진행, 사람 승인 없음.
 2. 두 페이지에 VisitFormPage.tsx:loadReference(48~57행)의 패턴 적용. 증명: npm run lint, npm test, npm run build 및 focused E2E 통과. 실제 동작이 전제와 다르면 과제서를 수정하고 범위를 늘리지 않는다. 점검: 수용 기준 1~4 재확인, 사람 승인 없음.
 3. 가이드 두 문장과 검증 결과 정리. 증명: 전체 E2E 및 git diff --check, 산출물 복원 후 diff 확인. 점검: 수용 기준 5와 파일 수 확인, 사람 승인 없음.
