@@ -241,3 +241,15 @@
 - 과제서: 채택 — 과제서의 근거(헬퍼의 두 `ok, _ :=`, 호출 지점 10곳, 두 서비스가 Scan 오류를 그대로 올림, `listChannelViews` 선례, `DROP TABLE team_members` 가 `HasRole` 을 살려 두는 결정론)가 현재 코드와 정확히 일치했고 수용 기준 1~5 를 실제 DB 회귀로 모두 충족했다. 미확인이던 `compat_wave_handlers_final.go` 의 import 는 `errors` 는 있고 `pgx` 는 없었는데, 오류 판정을 헬퍼 한 곳에 모은 덕에 새 import 가 필요 없었다.
 
 - 릴리즈: v0.2.41 (2026-09-28, run 2026-09-28-120220-moyro-improve)
+## 2026-09-29
+- 선택: 팀 이미지 업로드에 형제 DELETE와 동일한 게스트 차단 적용 (가치 2 / 위험 2 / 작업량 S)
+- 결과: 성공
+- 요약: uploadTeamImage 첫머리에 기존 denyGuestMutation을 추가해 게스트+팀관리자의 POST를 DELETE와 같은 403 api.team.image.guest_forbidden으로 차단하고, 본문을 읽거나 업로드 감사 행을 남기기 전에 반환하게 했다(프로덕션 1파일 3줄, 테스트 2파일). 실제 PostgreSQL 격리 스키마와 실제 auth/teams/audit 서비스로 정상 팀관리자·시스템관리자의 200 및 target, 비관리자·비회원 403, 상한 초과 413, 삭제 사용자 401을 확인했으며, 양성 감사 대조 후 3.2초 동안 거절 요청의 감사 미기록을 관찰했다. 지정 DB 회귀 3개 스킵 없이 통과(13.452s), DSN을 준 go test -race -p 1 -count=1 ./internal/httpapi 통과(53.189s), go build ./..., go vet ./..., 소스 크기 검사 및 변경 3파일 gofmt -l·git diff --check 통과.
+- 실패 재현: team_image_guest_postgres_test.go:104: guest body reads = 2, want 0 / team_image_guest_postgres_test.go:106: status = 200, want 403 (body {"status":"OK"}); 같은 실행에서 refused-request audit rows = 1, want none.
+- 보류 아이디어:
+  - denyGuestMutation / denyGuestEnumeration의 UserByID DB 오류 401 위장 (가치 2 / 위험 3 / 작업량 M): 넓은 호출 범위의 별도 오류 분류 과제.
+  - customprofile 빈 맵 no-op / null DELETE 계약 테스트 (가치 2 / 위험 1 / 작업량 S): 이번 차선 후보 유지.
+  - inviteGuestsByEmail 게스트+팀관리자 차단 누락 확인 (가치 2 / 위험 2 / 작업량 S): 정책·라우팅 재현 선행.
+  - fireIncomingWebhook 작성자 멤버십 DB 오류 403/500 분리 (가치 3 / 위험 2 / 작업량 M): 실제 DB 장애 재현 선행.
+- 과제서: 채택 — POST의 가드 누락과 DELETE 선례가 현재 코드에 일치하며, 지정된 권한·본문·감사·삭제 사용자·DB 장애 회귀를 실제 DB에서 검증했다.
+

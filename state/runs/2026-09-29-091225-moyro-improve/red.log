@@ -1,0 +1,28 @@
+=== RUN   TestTeamImageGuestMutationPostgres
+=== RUN   TestTeamImageGuestMutationPostgres/accepts_user-a
+=== RUN   TestTeamImageGuestMutationPostgres/accepts_sysadmin
+=== RUN   TestTeamImageGuestMutationPostgres/POST_refuses_guest_admin_without_reading_body
+    team_image_guest_postgres_test.go:104: guest body reads = 2, want 0
+    team_image_guest_postgres_test.go:106: status = 200, want 403 (body {"status":"OK"}
+        )
+=== RUN   TestTeamImageGuestMutationPostgres/DELETE_refuses_guest_admin_without_reading_body
+=== RUN   TestTeamImageGuestMutationPostgres/deleted_user_is_rejected_by_the_preceding_guest_guard
+    team_image_guest_postgres_test.go:112: status = 403, want 401 (body {"id":"api.context.permissions.app_error","message":"team_admin required","status_code":403}
+        )
+=== RUN   TestTeamImageGuestMutationPostgres/refuses_member
+=== RUN   TestTeamImageGuestMutationPostgres/refuses_stranger
+=== RUN   TestTeamImageGuestMutationPostgres/team_admin_still_cannot_exceed_the_cap
+=== NAME  TestTeamImageGuestMutationPostgres
+    team_image_guest_postgres_test.go:137: refused-request audit rows = 1, want none
+--- FAIL: TestTeamImageGuestMutationPostgres (1.04s)
+    --- PASS: TestTeamImageGuestMutationPostgres/accepts_user-a (0.02s)
+    --- PASS: TestTeamImageGuestMutationPostgres/accepts_sysadmin (0.01s)
+    --- FAIL: TestTeamImageGuestMutationPostgres/POST_refuses_guest_admin_without_reading_body (0.00s)
+    --- PASS: TestTeamImageGuestMutationPostgres/DELETE_refuses_guest_admin_without_reading_body (0.00s)
+    --- FAIL: TestTeamImageGuestMutationPostgres/deleted_user_is_rejected_by_the_preceding_guest_guard (0.00s)
+    --- PASS: TestTeamImageGuestMutationPostgres/refuses_member (0.00s)
+    --- PASS: TestTeamImageGuestMutationPostgres/refuses_stranger (0.00s)
+    --- PASS: TestTeamImageGuestMutationPostgres/team_admin_still_cannot_exceed_the_cap (0.00s)
+FAIL
+FAIL	github.com/hkjang/moyro/server/internal/httpapi	1.056s
+FAIL

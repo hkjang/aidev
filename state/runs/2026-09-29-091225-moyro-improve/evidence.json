@@ -1,0 +1,205 @@
+{
+  "run_id": "2026-09-29-091225-moyro-improve",
+  "generated": "2026-09-29T09:23:38+09:00",
+  "run": {
+    "run_id": "2026-09-29-091225-moyro-improve",
+    "project": "moyro",
+    "kind": "improve",
+    "started": "2026-09-29T09:12:26+09:00",
+    "model": "claude-opus-5",
+    "policy_version": "4a9e91ac7",
+    "prompts_hash": "ce085c79e18002e2",
+    "runner_version": "d36dd84d8",
+    "arm": "no-lessons",
+    "experiment": "roles-2026-09",
+    "finished": "2026-09-29T09:23:38+09:00",
+    "outcome": "review-pending"
+  },
+  "record": {
+    "ts": "2026-09-29T09:23:38+09:00",
+    "date": "2026-09-29",
+    "project": "moyro",
+    "result": "review held, PR open https://github.com/hkjang/moyro/pull/29",
+    "outcome": "review-pending",
+    "run_id": "2026-09-29-091225-moyro-improve",
+    "base_sha": "a6d51064a8639e24dc650c5168ff04b1b8ffa096",
+    "head_sha": "2a5b8b271668b9988349f6ec96fada7af94f6f02",
+    "pr": "https://github.com/hkjang/moyro/pull/29",
+    "stages": {
+      "base": {
+        "state": "pinned",
+        "reason": "main@a6d5106",
+        "at": "2026-09-29T09:12:31+09:00"
+      },
+      "autonomy": {
+        "state": "release",
+        "reason": "",
+        "at": "2026-09-29T09:12:31+09:00"
+      },
+      "scout": {
+        "state": "done",
+        "reason": "팀 이미지 업로드에 형제 DELETE와 동일한 게스트 차단 적용 (가치 2 / 위험 2 / 작업량 S)",
+        "at": "2026-09-29T09:17:30+09:00"
+      },
+      "brief": {
+        "state": "accepted",
+        "reason": "채택 — POST의 가드 누락과 DELETE 선례가 현재 코드에 일치하며, 지정된 권한·본문·감사·삭제 사용자·DB 장애 회귀를 실�",
+        "at": "2026-09-29T09:22:47+09:00"
+      },
+      "verify": {
+        "state": "passed",
+        "reason": "검증 2개 통과 (policy)",
+        "at": "2026-09-29T09:23:22+09:00"
+      },
+      "review": {
+        "state": "missing",
+        "reason": "리뷰 결과 없음/손상: missing — 보류",
+        "at": "2026-09-29T09:23:28+09:00"
+      },
+      "pr": {
+        "state": "created",
+        "reason": "https://github.com/hkjang/moyro/pull/29",
+        "at": "2026-09-29T09:23:35+09:00"
+      }
+    },
+    "campaign": "",
+    "autonomy": "release",
+    "arm": "no-lessons",
+    "experiment": "roles-2026-09",
+    "engine": "codex",
+    "files": 3,
+    "additions": 161,
+    "deletions": 1,
+    "tests": 2,
+    "title": "fix: deny guest team image uploads before consuming the body"
+  },
+  "stages": {
+    "base": {
+      "state": "pinned",
+      "reason": "main@a6d5106",
+      "at": "2026-09-29T09:12:31+09:00"
+    },
+    "autonomy": {
+      "state": "release",
+      "reason": "",
+      "at": "2026-09-29T09:12:31+09:00"
+    },
+    "scout": {
+      "state": "done",
+      "reason": "팀 이미지 업로드에 형제 DELETE와 동일한 게스트 차단 적용 (가치 2 / 위험 2 / 작업량 S)",
+      "at": "2026-09-29T09:17:30+09:00"
+    },
+    "brief": {
+      "state": "accepted",
+      "reason": "채택 — POST의 가드 누락과 DELETE 선례가 현재 코드에 일치하며, 지정된 권한·본문·감사·삭제 사용자·DB 장애 회귀를 실�",
+      "at": "2026-09-29T09:22:47+09:00"
+    },
+    "verify": {
+      "state": "passed",
+      "reason": "검증 2개 통과 (policy)",
+      "at": "2026-09-29T09:23:22+09:00"
+    },
+    "review": {
+      "state": "missing",
+      "reason": "리뷰 결과 없음/손상: missing — 보류",
+      "at": "2026-09-29T09:23:28+09:00"
+    },
+    "pr": {
+      "state": "created",
+      "reason": "https://github.com/hkjang/moyro/pull/29",
+      "at": "2026-09-29T09:23:35+09:00"
+    }
+  },
+  "provenance": {
+    "model": "claude-opus-5",
+    "policy_version": "4a9e91ac7",
+    "prompts_hash": "ce085c79e18002e2",
+    "runner_version": "d36dd84d8",
+    "base_sha": "a6d51064a8639e24dc650c5168ff04b1b8ffa096",
+    "head_sha": "2a5b8b271668b9988349f6ec96fada7af94f6f02",
+    "pr": "https://github.com/hkjang/moyro/pull/29"
+  },
+  "verification": {
+    "runner": {
+      "source": "policy",
+      "commands": [
+        {
+          "cmd": "cd server && go build ./... && go vet ./... && go test ./...",
+          "exit": 0,
+          "seconds": 4
+        },
+        {
+          "cmd": "cd webapp && ([ -d node_modules ] || npm ci --no-audit --no-fund) && npm run typecheck --silent && npm test --silent",
+          "exit": 0,
+          "seconds": 30
+        }
+      ]
+    },
+    "runner_gate": {
+      "ok": true,
+      "state": "verified",
+      "reason": "검증 2개 통과 (policy)"
+    },
+    "after_rebase": null,
+    "review": null,
+    "ci_gate": null
+  },
+  "release": {
+    "result": null,
+    "assets_sha256": []
+  },
+  "approval": null,
+  "usage": [
+    {
+      "ts": "2026-09-29T09:17:30+09:00",
+      "date": "2026-09-29",
+      "project": "moyro",
+      "phase": "scout",
+      "run_id": "2026-09-29-091225-moyro-improve",
+      "campaign": "",
+      "subtype": "success",
+      "engine": "codex",
+      "duration_ms": 0,
+      "num_turns": 1,
+      "cost_usd": null,
+      "input_tokens": 613656,
+      "output_tokens": 8294,
+      "cache_read": 536320,
+      "cache_create": 0
+    },
+    {
+      "ts": "2026-09-29T09:22:47+09:00",
+      "date": "2026-09-29",
+      "project": "moyro",
+      "phase": "improve",
+      "run_id": "2026-09-29-091225-moyro-improve",
+      "campaign": "",
+      "subtype": "success",
+      "engine": "codex",
+      "duration_ms": 0,
+      "num_turns": 1,
+      "cost_usd": null,
+      "input_tokens": 1223110,
+      "output_tokens": 7151,
+      "cache_read": 1166464,
+      "cache_create": 0
+    },
+    {
+      "ts": "2026-09-29T09:23:28+09:00",
+      "date": "2026-09-29",
+      "project": "moyro",
+      "phase": "review",
+      "run_id": "2026-09-29-091225-moyro-improve",
+      "campaign": "",
+      "subtype": "success",
+      "engine": "claude",
+      "duration_ms": 510,
+      "num_turns": 1,
+      "cost_usd": 0,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read": 0,
+      "cache_create": 0
+    }
+  ]
+}
