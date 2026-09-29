@@ -1,0 +1,191 @@
+{
+  "run_id": "2026-09-30-024234-nexabuilder-improve",
+  "generated": "2026-09-30T03:06:44+09:00",
+  "run": {
+    "run_id": "2026-09-30-024234-nexabuilder-improve",
+    "project": "nexabuilder",
+    "kind": "improve",
+    "started": "2026-09-30T02:42:34+09:00",
+    "model": "claude-opus-5",
+    "policy_version": "4a9e91ac7",
+    "prompts_hash": "ce085c79e18002e2",
+    "runner_version": "d36dd84d8",
+    "arm": "no-scout",
+    "experiment": "roles-2026-09",
+    "finished": "2026-09-30T03:06:44+09:00",
+    "outcome": "verify-failed"
+  },
+  "record": {
+    "ts": "2026-09-30T03:06:44+09:00",
+    "date": "2026-09-30",
+    "project": "nexabuilder",
+    "result": "fix-round: CI failed, PR open https://github.com/hkjang/nexabuilder/pull/41",
+    "outcome": "verify-failed",
+    "run_id": "2026-09-30-024234-nexabuilder-improve",
+    "base_sha": "a3ca1438f9ee9135284a782b5e615baeb5eeebf0",
+    "head_sha": "cd6d8b98be9ab12e8d74251df1ee189163321251",
+    "pr": "https://github.com/hkjang/nexabuilder/pull/41",
+    "stages": {
+      "base": {
+        "state": "pinned",
+        "reason": "master@a3ca143",
+        "at": "2026-09-30T02:42:38+09:00"
+      },
+      "autonomy": {
+        "state": "release",
+        "reason": "",
+        "at": "2026-09-30T02:42:38+09:00"
+      },
+      "verify": {
+        "state": "passed",
+        "reason": "검증 1개 통과 (auto)",
+        "at": "2026-09-30T02:57:18+09:00"
+      },
+      "review": {
+        "state": "approved",
+        "reason": "리뷰 승인 (risk=low)",
+        "at": "2026-09-30T03:05:59+09:00"
+      },
+      "pr": {
+        "state": "created",
+        "reason": "https://github.com/hkjang/nexabuilder/pull/41",
+        "at": "2026-09-30T03:06:10+09:00"
+      },
+      "ci": {
+        "state": "failed",
+        "reason": "성공이 아닌 검사: test + bootJar=failure",
+        "at": "2026-09-30T03:06:43+09:00"
+      }
+    },
+    "campaign": "",
+    "autonomy": "release",
+    "arm": "no-scout",
+    "experiment": "roles-2026-09",
+    "engine": "claude",
+    "files": 2,
+    "additions": 217,
+    "deletions": 1,
+    "tests": 1,
+    "title": "fix(ui): 폼 레코드 PII 마스킹이 같은 값을 두 번 마스킹하지 않게 합니다"
+  },
+  "stages": {
+    "base": {
+      "state": "pinned",
+      "reason": "master@a3ca143",
+      "at": "2026-09-30T02:42:38+09:00"
+    },
+    "autonomy": {
+      "state": "release",
+      "reason": "",
+      "at": "2026-09-30T02:42:38+09:00"
+    },
+    "verify": {
+      "state": "passed",
+      "reason": "검증 1개 통과 (auto)",
+      "at": "2026-09-30T02:57:18+09:00"
+    },
+    "review": {
+      "state": "approved",
+      "reason": "리뷰 승인 (risk=low)",
+      "at": "2026-09-30T03:05:59+09:00"
+    },
+    "pr": {
+      "state": "created",
+      "reason": "https://github.com/hkjang/nexabuilder/pull/41",
+      "at": "2026-09-30T03:06:10+09:00"
+    },
+    "ci": {
+      "state": "failed",
+      "reason": "성공이 아닌 검사: test + bootJar=failure",
+      "at": "2026-09-30T03:06:43+09:00"
+    }
+  },
+  "provenance": {
+    "model": "claude-opus-5",
+    "policy_version": "4a9e91ac7",
+    "prompts_hash": "ce085c79e18002e2",
+    "runner_version": "d36dd84d8",
+    "base_sha": "a3ca1438f9ee9135284a782b5e615baeb5eeebf0",
+    "head_sha": "cd6d8b98be9ab12e8d74251df1ee189163321251",
+    "pr": "https://github.com/hkjang/nexabuilder/pull/41"
+  },
+  "verification": {
+    "runner": {
+      "source": "auto",
+      "commands": [
+        {
+          "cmd": "sh gradlew --quiet --offline test || sh gradlew --quiet test",
+          "exit": 0,
+          "seconds": 1
+        }
+      ]
+    },
+    "runner_gate": {
+      "ok": true,
+      "state": "verified",
+      "reason": "검증 1개 통과 (auto)"
+    },
+    "after_rebase": null,
+    "review": {
+      "verdict": "approve",
+      "reasons": [],
+      "notes": [
+        "NexaUiService.java:933 수정 전/후를 직접 실행해 확인했습니다. `git checkout master -- NexaUiService.java` 후 PiiMaskingRecordIntegrationTest 는 `phoneMaskKeepsTheCarrierPrefixWhenTheFieldNameMatchesTwoKeyVariants() FAILED` (4건 중 1건 실패), 수정본에서 4건 모두 통과. 원장의 `- 실패 재현:` 줄과 증상이 일치합니다. 전체 `cleanTest test` 도 5m55s BUILD SUCCESSFUL.",
+        "NexaUiService.java:933 남은 경계 조건: 중복 제거가 **atom 단위**라 한 폼에 대소문자만 다른 fieldName 두 개(`phone` 과 `PHONE`)가 같은 비멱등 정책으로 걸려 있으면 같은 행 키가 여전히 두 번 마스킹됩니다. 실사용에서 드문 구성이고 테스트는 없습니다. 레코드 단위로 이미 마스킹한 키를 기억하는 편이 완전한 해법입니다.",
+        "동작 변화 — 릴리즈 노트에 넣을 것: 이 수정으로 `phone` 정책의 출력이 `****-5678` 에서 `010-****-5678` 로 **덜 가려집니다**. 문서화된 정책 모양(PiiMaskingService javadoc)과 일치하고 한국 휴대폰의 `010` 은 식별력이 없어 개인정보 노출로 보지 않았습니다. 다만 기존 화면을 보던 운영자에게는 값이 바뀐 것으로 보입니다.",
+        "piiMaskingService 호출부를 grep 으로 전수 확인했습니다 — 마스킹이 걸리는 곳은 UiBuilderController.java:242 (폼 레코드 GET) **한 군데뿐**이고 목록·어댑터·내보내기는 여전히 원문 PII 를 내보냅니다. 이번 변경이 만든 문제가 아니라 기존 결함이며 구현자가 ideas.json 에 남겼습니다. 차단 사유는 아니지만 다음 회차의 최우선 후보입니다(법무 관점: 같은 개인정보가 접근 통제 없이 다른 경로로 나감).",
+        "구현자가 스스로 의심한 (1)(2) 는 그대로 남습니다 — PostgreSQL 조합(소문자 라벨+소문자 fieldName)은 H2 에서 재현 불가라 대문자 fieldName 으로 같은 코드 경로만 짚었고, 대문자 fieldName atom 이 실제 배포 데이터에 있는지는 확인되지 않았습니다. 코드 경로는 동일하므로 수정의 타당성에는 영향이 없다고 판단했습니다. 인증·권한·마이그레이션·워크플로는 건드리지 않았고 revert 로 온전히 되돌아갑니다."
+      ],
+      "risk": "low",
+      "blocking": []
+    },
+    "ci_gate": {
+      "ok": false,
+      "state": "failed",
+      "reason": "성공이 아닌 검사: test + bootJar=failure",
+      "checks": 2,
+      "bad": 1
+    }
+  },
+  "release": {
+    "result": null,
+    "assets_sha256": []
+  },
+  "approval": null,
+  "usage": [
+    {
+      "ts": "2026-09-30T02:57:15+09:00",
+      "date": "2026-09-30",
+      "project": "nexabuilder",
+      "phase": "improve",
+      "run_id": "2026-09-30-024234-nexabuilder-improve",
+      "campaign": "",
+      "subtype": "success",
+      "engine": "claude",
+      "duration_ms": 875719,
+      "num_turns": 52,
+      "cost_usd": 4.007442999999999,
+      "input_tokens": 80,
+      "output_tokens": 33280,
+      "cache_read": 3952806,
+      "cache_create": 119864
+    },
+    {
+      "ts": "2026-09-30T03:05:59+09:00",
+      "date": "2026-09-30",
+      "project": "nexabuilder",
+      "phase": "review",
+      "run_id": "2026-09-30-024234-nexabuilder-improve",
+      "campaign": "",
+      "subtype": "success",
+      "engine": "claude",
+      "duration_ms": 518697,
+      "num_turns": 22,
+      "cost_usd": 0.9222085,
+      "input_tokens": 26,
+      "output_tokens": 8836,
+      "cache_read": 567757,
+      "cache_create": 41730
+    }
+  ]
+}
