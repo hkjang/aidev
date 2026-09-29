@@ -98,3 +98,11 @@
   - SQL 기반 목록 휴지통 어댑터 회귀 테스트 (가치 2 / 위험 1 / 작업량 S).
 - 과제서: 채택 — 실제 HTTP 경로에서 콜론 ID의 저장·조회는 성공하고 POI 시트 생성만 실패함을 확인했으며 지정한 최소 수정으로 수용 기준을 충족했다.
 
+## 2026-09-29
+- 선택: 모든 컬럼이 `hidden` 인 목록을 내보낼 때 CSV/XLSX/PDF 가 숨긴 컬럼을 첫 행 키 fallback 으로 다시 노출하는 것을 막는다 (가치 3 / 위험 2 / 작업량 S)
+- 결과: 성공
+- 요약: `resolveColumns` 가 `hidden:true` 를 걸러 빈 리스트가 되면 세 엔드포인트에 복제돼 있던 fallback 블록이 `rs.getRows().get(0).keySet()` 으로 행의 모든 키를 컬럼으로 되살려, 리스트 디자이너에서 전 컬럼을 Hidden 으로 저장한 목록이 화면에는 아무것도 없는데 파일로는 `SELECT *` 가 나갔다. "보이는 컬럼 + 컬럼 설정이 있었는가" 를 같이 나르는 `ColumnPlan` record 를 도입해 "설정 없음"(=fallback 유지)과 "설정은 있는데 전부 숨김"(=fallback 억제)을 구분하고, 복제됐던 fallback 3개를 `applyFirstRowFallback` 헬퍼 하나로 합쳐 세 형식이 같은 규칙을 쓰게 했다. CSV 는 컬럼이 비면 헤더·데이터 행을 쓰지 않고(BOM 만), XLSX 는 `createRow` 를 돌리지 않아 빈 시트, PDF 는 기존 `columns.isEmpty()` 분기로 떨어진다. 프로덕션 파일 1개(`ListExportController.java`), 테스트 1개. 실제 H2·`NexaListRepository`·`EntityService`·`SchemaDdlService`·MockMvc·POI 로 신규 6건 추가(목·대역 없음). 단일 클래스 19건 통과, `cleanTest test` 전체 615건(609+6) 통과·0 skip·0 fail(5분36초), `bootJar -x test` 성공(7초). 커밋 0421f6d.
+- 실패 재현: `ListExportIntegrationTest > csvExportOfAllHiddenColumnsCarriesNoData() FAILED` / `java.lang.AssertionError: Expecting actual: "﻿ID,NAME\nr_b9c0558c,홍길동\n" not to contain: "r_b9c0558c"` — 즉 all-hidden 목록의 CSV 에 숨긴 두 컬럼의 헤더와 값이 그대로 들어 있었다(드라이버 키 그대로 `ID,NAME`). 같은 실행에서 `xlsxExportOfAllHiddenColumnsCarriesNoData() FAILED` / `org.opentest4j.AssertionFailedError: expected: 0 but was: 2`(시트에 헤더+데이터 2행). 19건 중 이 2건만 빨갰고 fallback 유지(`columnsJson` null·`[]`)·부분 hidden·all-hidden PDF 3+1건은 수정 전에도 초록 — 과제서의 수용 기준 2·3 예측이 실행으로 확인됐다.
+- 보류 아이디어: SQL 기반 목록 휴지통 어댑터 회귀 테스트(`DataAdapterService.queryList` sqlId 경로, 프로덕션 0줄) (2/1/S) / 런타임 차트·피벗의 fetch 실패를 `Nexa.toast` 로 알리기 (3/2/M) / 5000행(MAX_FEED_ROWS) 초과 내보내기 잘림 안내 (3/2/M) / 목록 데이터 두 컨트롤러에 ScreenPermissionService 게이트 (3/4/M) / README·agent.md·deployment.md 의 낡은 JDK/Boot 버전 표기 정렬 (2/1/S)
+- 과제서: 채택 — 진단(세 곳에 복제된 fallback 이 hidden 필터 결과의 빈 리스트를 `SELECT *` 로 되살림)과 지정한 설계(`ColumnPlan` record, `applyFirstRowFallback` 단일 헬퍼, `configured` 의 정의, 시트 이름 변환 불간섭, `@DirtiesContext` 금지, 프로덕션 파일 1개)를 그대로 따랐고, "수정 전에도 CSV 가 비어 있으면 과제 성립 안 함" 이라던 미확인 항목은 빨간 테스트로 성립을 확인했다. 과제서가 "기존 13건" 이라 한 수치는 정확했다(신규 6건을 더해 19건).
+
