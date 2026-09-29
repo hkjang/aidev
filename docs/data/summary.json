@@ -1,5 +1,5 @@
 {
- "generated": "2026-09-30T06:43:06+09:00",
+ "generated": "2026-09-30T07:04:04+09:00",
  "site": "https://hkjang.github.io/aidev",
  "description": "Claude Code 자율 개선 에이전트가 hkjang 의 프로젝트를 개선·테스트·머지·릴리즈한 일일 보고. 오늘 11회차·릴리즈 2건, 누적 1707회차·릴리즈 594건, 주의 필요 11건.",
  "today": {
@@ -10,18 +10,18 @@
   "merged": 0,
   "nochange": 0,
   "failed": 4,
-  "cost_usd": 62.04,
-  "minutes": 196,
-  "sessions": 34
+  "cost_usd": 65.57,
+  "minutes": 206,
+  "sessions": 36
  },
  "totals": {
   "runs": 1707,
   "released": 594,
   "days": 29,
-  "cost_usd": 6170.23,
-  "minutes": 16579,
-  "tokens_in": 6714443538,
-  "tokens_out": 52956856
+  "cost_usd": 6173.75,
+  "minutes": 16589,
+  "tokens_in": 6716182683,
+  "tokens_out": 52975048
  },
  "alerts": [
   {
@@ -102,7 +102,13 @@
    "result": ""
   }
  ],
- "fix_queue": [],
+ "fix_queue": [
+  {
+   "project": "nexabuilder",
+   "note": "오류 대응(자동 적재): 마지막 회차가 'verify-failed' 로 끝났습니다. fix-round: CI failed, PR open https://github.com/hkjang/nexabuilder/pull/43",
+   "merge_sha": ""
+  }
+ ],
  "health": {
   "checked": "2026-09-30T06:45:03+09:00",
   "last_run": "2026-09-30T06:43:01+09:00",
@@ -850,6 +856,20 @@
    "needs_human": true
   },
   {
+   "kind": "수정 과제",
+   "project": "nexabuilder",
+   "title": "오류 대응(자동 적재): 마지막 회차가 'verify-failed' 로 끝났습니다. fix-round: CI failed, PR open https://github.com/hkja",
+   "url": "https://hkjang.github.io/aidev/projects/nexabuilder/",
+   "sha": "",
+   "summary": "릴리즈 워크플로 2회 실패 — 다음 회차 자동 배정",
+   "why": "오류 대응(자동 적재): 마지막 회차가 'verify-failed' 로 끝났습니다. fix-round: CI failed, PR open https://github.com/hkjang/nexabuilder/pull/43",
+   "evidence": "",
+   "labels": "",
+   "action": "두면 러너가 수정 회차를 돌림. 급하면 run: 이슈, 멈추려면 stop",
+   "date": "",
+   "needs_human": false
+  },
+  {
    "kind": "PR",
    "project": "sqlon",
    "title": "auto-improve: feat(mail): 사내 SMTP 릴레이로 이벤트 알림 메일을 보냅니다 (기본 꺼짐)",
@@ -1267,11 +1287,11 @@
    "why": "review: approved — 리뷰 승인 (risk=low); ci: failed — 성공이 아닌 검사: test + bootJar=failure",
    "evidence": "https://github.com/hkjang/aidev/tree/main/state/runs/2026-09-30-062227-nexabuilder-improve",
    "labels": "",
-   "action": "PR 처리기가 매시간 살핀다 (아직 순서가 오지 않음) · 승인: PR 라벨 aidev-approved / 반려: aidev-rejected — 다음 회차에 러너가 승인 당시 커밋에만 CI 확인 후 머지·닫기",
+   "action": "PR 처리기가 다음 시간에 다시 시도 · 승인: PR 라벨 aidev-approved / 반려: aidev-rejected — 다음 회차에 러너가 승인 당시 커밋에만 CI 확인 후 머지·닫기",
    "date": "2026-09-30",
-   "shepherd": "",
-   "shepherd_action": "",
-   "shepherd_detail": "",
+   "shepherd": "CI 실패 · 수정 실패 → 다음 시간에 재시도 (09-30 07:04) — 수정 세션이 커밋을 만들지 않음: # fix-summary — nexabuilder PR #43 (커밋 없음)  - **고칠 결함이 없다.** 브랜치 HEAD 에서 CI 두 명령을 그대로 돌려 둘 다 초록: `sh ./gradlew --no-daemon test` → BUILD SUCC",
+   "shepherd_action": "fix-failed",
+   "shepherd_detail": "수정 세션이 커밋을 만들지 않음: # fix-summary — nexabuilder PR #43 (커밋 없음)  - **고칠 결함이 없다.** 브랜치 HEAD 에서 CI 두 명령을 그대로 돌려 둘 다 초록: `sh ./gradlew --no-daemon test` → BUILD SUCCESSFUL 5m53s, 156클래스 **615건 / 실패0 / 에러0 / skip0**; `sh ./gradlew --no-daemon bootJar -x test` → BUILD SUCCESSFUL. 신규 `BulkListSoftDeleteIntegrationTest` 6/6 통과. - **테스트가 대상을 실제로 잡는다**(되돌림 검증): 컨트롤러만 `origin/master` 판으로 되돌리면 `6 tests completed, 4 failed`(휴지통2+SQL2, 회귀가드2는 초록), 복원하면 6",
    "needs_human": false
   },
   {
@@ -1286,9 +1306,9 @@
    "labels": "",
    "action": "PR 처리기가 다음 시간에 다시 시도 · 승인: PR 라벨 aidev-approved / 반려: aidev-rejected — 다음 회차에 러너가 승인 당시 커밋에만 CI 확인 후 머지·닫기",
    "date": "2026-09-30",
-   "shepherd": "CI 실패 · 수정 실패 → 다음 시간에 재시도 (09-30 06:02) — 수정 세션이 커밋을 만들지 않음: 이유 없음",
+   "shepherd": "CI 실패 · 수정 실패 → 다음 시간에 재시도 (09-30 06:55) — 수정 세션이 커밋을 만들지 않음: # 수리 결과 — 고칠 결함 없음 (커밋 없음)  - 지적은 CI `test + bootJar` 실패 하나뿐이고 **실패 로그가 비어 있다**. HEAD(`a7d58cb`)에서 CI 와 똑같은 두 명령을 그대로 돌려 재현을 시도했으나 둘 다 성공했다: ",
    "shepherd_action": "fix-failed",
-   "shepherd_detail": "수정 세션이 커밋을 만들지 않음: 이유 없음",
+   "shepherd_detail": "수정 세션이 커밋을 만들지 않음: # 수리 결과 — 고칠 결함 없음 (커밋 없음)  - 지적은 CI `test + bootJar` 실패 하나뿐이고 **실패 로그가 비어 있다**. HEAD(`a7d58cb`)에서 CI 와 똑같은 두 명령을 그대로 돌려 재현을 시도했으나 둘 다 성공했다: `sh ./gradlew --no-daemon cleanTest test` → BUILD SUCCESSFUL in 5m 54s, XML 집계 **614건 / 실패0 / 에러0 / skip0**(155 클래스); `sh ./gradlew --no-daemon bootJar -x test` → BUILD SUCCESSFUL, `build/libs/nexabuilder-1.26.0.jar` 생성. - CI 잡은 **9초** 만에 실패했다. 로컬 전체 테스트가 5분 54초인�",
    "needs_human": false
   },
   {
@@ -1755,13 +1775,13 @@
   }
  ],
  "shepherd": {
-  "last_pass": "2026-09-30T05:59:28+09:00",
+  "last_pass": "2026-09-30T06:46:45+09:00",
   "enabled": true,
   "today": {
    "needs-human": 7,
-   "fix-failed": 9
+   "fix-failed": 11
   },
-  "total": 392,
+  "total": 394,
   "pending_human": 105
  },
  "agents": {
@@ -1776,7 +1796,7 @@
     "role": "구현 builder",
     "calls": 654,
     "metric": "러너 검증 통과 97% · 변경 없음 119",
-    "cost": 1870.86
+    "cost": 1874.38
    },
    {
     "role": "비평 critic",
@@ -1806,12 +1826,12 @@
     "role": "PR 심사 shepherd-reviewer",
     "calls": 253,
     "metric": "승인 84 · 거절 64 · 사람 필요 105 · 승인 뒤 회귀 0",
-    "cost": 421.19
+    "cost": 424.72
    },
    {
     "role": "PR 수리 shepherd-fixer",
-    "calls": 100,
-    "metric": "고쳐서 푸시 55%",
+    "calls": 102,
+    "metric": "고쳐서 푸시 53%",
     "cost": null
    },
    {
@@ -1836,7 +1856,7 @@
     "role": "실제 게시 릴리즈 (원격 태그 기준)",
     "calls": 715,
     "cost": null,
-    "metric": "저장소 39개 · 게시 715건 (사람 133건) · 누적 회차 기록에는 594건 — 121건이 기록에서 빠졌다"
+    "metric": "저장소 39개 · 게시 715건 (사람 134건) · 누적 회차 기록에는 594건 — 121건이 기록에서 빠졌다"
    },
    {
     "role": "머지 뒤 30일 (postmerge)",
@@ -2265,7 +2285,7 @@
   },
   {
    "metric": "유효 개선당 비용",
-   "value": "$10.76",
+   "value": "$10.77",
    "detail": "비용 확인된 유효 개선 333건, 미확인 세션 556"
   },
   {
@@ -2296,7 +2316,7 @@
    "merged": 0,
    "nochange": 0,
    "failed": 4,
-   "cost_usd": 62.04
+   "cost_usd": 65.57
   },
   {
    "date": "2026-09-29",
@@ -2561,8 +2581,8 @@
    "merged": 14,
    "nochange": 16,
    "failed": 10,
-   "cost": 495.46,
-   "minutes": 1756
+   "cost": 498.98,
+   "minutes": 1765
   },
   {
    "key": "2026-W39",
@@ -2623,8 +2643,8 @@
    "merged": 250,
    "nochange": 133,
    "failed": 42,
-   "cost": 6170.23,
-   "minutes": 16579
+   "cost": 6173.75,
+   "minutes": 16589
   }
  ],
  "projects": [
@@ -3285,8 +3305,8 @@
    "last_ts": "2026-09-30T06:43:01+09:00",
    "last_status": "failed",
    "last_result": "fix-round: CI failed, PR open https://github.com/hkjang/nexabuilder/pull/43",
-   "cost": 131.0,
-   "minutes": 558,
+   "cost": 134.52,
+   "minutes": 568,
    "grade": "D",
    "grade_why": "14일: 릴리즈 10, 실패 7, 경고 8, 회귀 0",
    "lessons": 0,
