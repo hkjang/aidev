@@ -41,3 +41,15 @@
 - 과제서: 채택 — 과제서가 미확인으로 남긴 "CRLF 계획 파일 2·3회차 중복" 시나리오를 3회 연속 호출 테스트로 먼저 재현(섹션 2개)했고, 수용 기준 1~5 를 모두 충족했다. 다만 `restoreEol` 을 verification.ts 에서 쓰려면 markdown.ts 의 `function` 을 `export function` 으로 바꿔야 해 프로덕션 파일이 1개가 아니라 2개가 됐다(둘째는 한 단어 변경).
 
 - 릴리즈: v1.4.5 (2026-09-28, run 2026-09-28-211209-vibe-code-improve)
+## 2026-09-29
+- 선택: 빈 메타데이터의 줄 경계를 지켜 인접 정보 삭제와 잘못된 완료 보관을 막기 (가치 4 / 위험 2 / 작업량 M)
+- 결과: 성공
+- 요약: matchLine/setLine/touchPlan의 값·앵커 매칭을 한 물리적 줄로 제한하고 빈 값은 trim 후 호출자 fallback을 반환하도록 했다. archiveDonePlans도 matchLine의 상태를 사용하며 실제 템플릿·파서·린트·임시 fs에서 LF/CRLF, 공백·탭, EOF, 원문 보존을 검증했다. npm ci 완료, 집중 102 tests와 npm run check(typecheck + 전체 146 tests + esbuild) 통과; 프로덕션 2파일과 테스트 2파일만 변경했으며 원본 코드 복원 시 신규 64개가 다시 실패하는 인과 검증도 수행했다.
+- 실패 재현: `Tests 62 failed | 22 passed (84)` (metadata-red.log); `AssertionError: expected [ 'plan-2.md', 'plan-3.md', …(1) ] to deeply equal [ 'plan-4.md', 'plan-5.md' ]` (archive-red.log).
+- 보류 아이디어:
+  - countChecks/taskLines/isTaskLine/checkLine 들여쓰기 계약 통일 (3/2/M) — 별도 소비자 계약 결정 필요.
+  - 빈 제목의 다음 줄 흡수와 제목 린트 동시 수정 (3/1/S) — 이번 메타데이터 계약과 분리.
+  - sectionLines 첫 줄 들여쓰기 보존 (3/2/S) — 섹션 경계 계약과 기존 편집 경로 검증 필요.
+  - provider 저장/복원 실제 배선 테스트 (3/2/M) — 가짜 객체 없이 검증할 경계 필요.
+- 과제서: 채택 — 기존 집중 38 tests 기준선에서 빈 메타데이터의 인접 줄 흡수·삭제 및 실제 파일 오보관이 모두 재현되어 지정된 범위를 구현했다.
+

@@ -271,3 +271,15 @@
 - 보류 아이디어: Confluence 진단 목록에 시간 창이 없어 두 달 전 진단이 '최근' 으로 뜰 수 있음 — mail 쪽 14일 창과 대비, 미측정 (2/2/S) · README:47·docs/MCP.md:3·AdminPage 의 MCP '읽기 전용' 서술이 `mcpwrite.go` 보다 낡음 — 이번에 AdminPage.tsx 의 해당 문장을 눈으로 확인, CHECKS.md 항목과 묶어 문서 회차로 (2/1/S) · CHECKS.md:16 이 authz-check 를 '수 분' 이라 적고 같은 문서 108행은 '수십 분' (2/1/S) · [새] ConfluenceTab 의 10초 폴링이 모든 실패를 삼켜 멈춘 카드가 오래된 숫자를 나이 표시 없이 계속 보여 줌 — '연속 실패' 와 '마지막 갱신 시각' 중 무엇을 말할지 먼저 정할 것 (2/2/S) · [새] `forceConfluenceSync` 가 상태 읽기 실패를 RUNNING 아님으로 읽어 이미 도는 동기화에도 202 queued 로 답함 — 쓰기 경로라 '실패 시 거부' 가 맞는지 먼저 정할 것이며, `currentConfluenceCandidates`(54·68행)의 같은 모양은 주석이 밝힌 대로 의도된 것이라 구분 필요 (2/2/S)
 
 - 릴리즈: v0.312.0 (2026-09-28, run 2026-09-28-224220-weekly-improve)
+## 2026-09-29
+- 선택: Confluence 수동 동기화가 상태 조회 실패를 접수 성공으로 답하지 않는다 (가치 3 / 위험 2 / 작업량 S)
+- 결과: 성공
+- 요약: forceConfluenceSync의 상태 Scan 오류 무시가 실패한 조회를 queued=true와 요청 감사 기록으로 바꾸는 원인이었고, 오류 시 worker 깨우기·감사 기록 전에 안전한 한국어 메시지의 500 QUERY_FAILED로 반환하도록 수정하고 POST OpenAPI에 500을 추가했다. 실제 newTestServer·request·scratch PostgreSQL과 HTTP Confluence 서버에서 테이블 이름 변경/복원, 행 없음, RUNNING, IDLE, 감사 증감을 검증했으며 구 코드 재복원으로 동일 실패도 확인했다. 지정 시험 4개, 실제 DB go test ./... -count=1(internal/app 148.628s), go vet ./..., go build ./..., openapi-check(119경로), guard-check --changed 59a684c(9개 도달, 새 시험 forceConfluenceSync 85%), git diff --check 통과 후 0473e95로 커밋했다.
+- 실패 재현: confluence_test.go:472: sync = 202 {"success":true,"data":{"queued":true,"status":"QUEUED"},"traceId":"26b9b41563c6c3e7"} / confluence_test.go:472: request audit delta = 1, want 0 — 기대 500인데 202였으며 missing_row도 동일 실패.
+- 보류 아이디어:
+  - README·MCP·AdminPage의 MCP 읽기 전용 서술 정정 (가치 2 / 위험 1 / 작업량 S).
+  - CHECKS.md authz-check 실행 시간과 병행 금지 정정 (가치 2 / 위험 1 / 작업량 S).
+  - Confluence 수동 요청 queued=false를 화면 알림에 반영 (가치 2 / 위험 1 / 작업량 S).
+  - Confluence 상태 조회 GET OpenAPI에 실제 500 응답 계약 기재 (가치 2 / 위험 1 / 작업량 S).
+- 과제서: 채택 — 현재 코드의 오류 무시와 실제 POST 실패가 과제서 근거에 일치했으며 범위 변경 없이 수용 기준을 검증했다.
+

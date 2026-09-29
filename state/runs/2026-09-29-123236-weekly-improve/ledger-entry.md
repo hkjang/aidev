@@ -1,0 +1,11 @@
+## 2026-09-29
+- 선택: Confluence 수동 동기화가 상태 조회 실패를 접수 성공으로 답하지 않는다 (가치 3 / 위험 2 / 작업량 S)
+- 결과: 성공
+- 요약: forceConfluenceSync의 상태 Scan 오류 무시가 실패한 조회를 queued=true와 요청 감사 기록으로 바꾸는 원인이었고, 오류 시 worker 깨우기·감사 기록 전에 안전한 한국어 메시지의 500 QUERY_FAILED로 반환하도록 수정하고 POST OpenAPI에 500을 추가했다. 실제 newTestServer·request·scratch PostgreSQL과 HTTP Confluence 서버에서 테이블 이름 변경/복원, 행 없음, RUNNING, IDLE, 감사 증감을 검증했으며 구 코드 재복원으로 동일 실패도 확인했다. 지정 시험 4개, 실제 DB go test ./... -count=1(internal/app 148.628s), go vet ./..., go build ./..., openapi-check(119경로), guard-check --changed 59a684c(9개 도달, 새 시험 forceConfluenceSync 85%), git diff --check 통과 후 0473e95로 커밋했다.
+- 실패 재현: confluence_test.go:472: sync = 202 {"success":true,"data":{"queued":true,"status":"QUEUED"},"traceId":"26b9b41563c6c3e7"} / confluence_test.go:472: request audit delta = 1, want 0 — 기대 500인데 202였으며 missing_row도 동일 실패.
+- 보류 아이디어:
+  - README·MCP·AdminPage의 MCP 읽기 전용 서술 정정 (가치 2 / 위험 1 / 작업량 S).
+  - CHECKS.md authz-check 실행 시간과 병행 금지 정정 (가치 2 / 위험 1 / 작업량 S).
+  - Confluence 수동 요청 queued=false를 화면 알림에 반영 (가치 2 / 위험 1 / 작업량 S).
+  - Confluence 상태 조회 GET OpenAPI에 실제 500 응답 계약 기재 (가치 2 / 위험 1 / 작업량 S).
+- 과제서: 채택 — 현재 코드의 오류 무시와 실제 POST 실패가 과제서 근거에 일치했으며 범위 변경 없이 수용 기준을 검증했다.

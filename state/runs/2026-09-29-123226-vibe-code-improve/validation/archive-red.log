@@ -1,0 +1,58 @@
+
+ RUN  v3.2.7 /home/hkjang/.cache/auto-improve-wt/vibe-code
+
+ ✓ tests/unit/markdown.test.ts (84 tests) 15ms
+ ❯ tests/unit/plans.test.ts (18 tests | 2 failed) 33ms
+   ✓ archiveDonePlans > moves only done plans and leaves the rest of plans/ alone 4ms
+   ✓ archiveDonePlans > keeps the existing archived copy when a done plan reuses its name 3ms
+   ✓ archiveDonePlans > keeps both archived copies when the same name is archived twice within one stamp 2ms
+   ✓ archiveDonePlans > does not descend into the archive directory or touch non-markdown files 2ms
+   ✓ archiveDonePlans > creates the archive directory when it does not exist yet 2ms
+   ✓ conflictStamp > is 14 digits of Asia/Seoul time — the one format archive and restore both suffix with 0ms
+   ✓ selectPlanName > follows the .active-plan pointer when it names an existing file 2ms
+   ✓ selectPlanName > falls back to the last file when the pointer names a file that is gone 2ms
+   ✓ selectPlanName > falls back to the default name for an empty plans directory 2ms
+   ✓ openPlanItems > lists unchecked items of 단계/Now/검증 계획 only 0ms
+   ✓ advancePlanText > Now/Next 의 체크리스트가 아닌 줄과 들여쓴 줄을 그대로 남긴다 0ms
+   ✓ advancePlanText > 첫 Now 항목을 Done 끝에 붙이고 Next 첫 항목을 승격하며 상태·갱신 시각을 올린다 0ms
+   ✓ advancePlanText > 이미 있던 Done 기록의 들여쓰기를 유지한 채 뒤에 붙인다 0ms
+   ✓ advancePlanText > Now 에 체크리스트 줄이 없으면 null 을 돌려준다 0ms
+   ✓ advancePlanText > Next 가 비어 있으면 승격 없이 Now 만 비운다 0ms
+   ✓ advancePlanText > CRLF 계획에서도 같은 결과를 내고 줄바꿈을 보존한다 0ms
+   × 완료 보관의 상태 줄 경계 ("\n") > 빈 상태 다음 done은 원본 바이트를 보존하고 같은 줄의 done만 보관한다 7ms
+     → expected [ 'plan-2.md', 'plan-3.md', …(1) ] to deeply equal [ 'plan-4.md', 'plan-5.md' ]
+   × 완료 보관의 상태 줄 경계 ("\r\n") > 빈 상태 다음 done은 원본 바이트를 보존하고 같은 줄의 done만 보관한다 4ms
+     → expected [ 'plan-2.md', 'plan-3.md', …(1) ] to deeply equal [ 'plan-4.md', 'plan-5.md' ]
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/unit/plans.test.ts > 완료 보관의 상태 줄 경계 ("\n") > 빈 상태 다음 done은 원본 바이트를 보존하고 같은 줄의 done만 보관한다
+ FAIL  tests/unit/plans.test.ts > 완료 보관의 상태 줄 경계 ("\r\n") > 빈 상태 다음 done은 원본 바이트를 보존하고 같은 줄의 done만 보관한다
+AssertionError: expected [ 'plan-2.md', 'plan-3.md', …(1) ] to deeply equal [ 'plan-4.md', 'plan-5.md' ]
+
+- Expected
++ Received
+
+  [
++   "plan-2.md",
++   "plan-3.md",
+    "plan-4.md",
+-   "plan-5.md",
+  ]
+
+ ❯ tests/unit/plans.test.ts:254:50
+    252|   const archived = archiveDonePlans(plans, archive, "20260929120000");
+    253| 
+    254|   expect(archived.map((row) => row.name).sort()).toEqual(inputs.filter…
+       |                                                  ^
+    255|   for (const input of inputs) {
+    256|    expect(planMeta(input.text, input.name).status === "done").toBe(inp…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+
+ Test Files  1 failed | 1 passed (2)
+      Tests  2 failed | 100 passed (102)
+   Start at  12:42:02
+   Duration  409ms (transform 141ms, setup 0ms, collect 271ms, tests 48ms, environment 0ms, prepare 91ms)
+

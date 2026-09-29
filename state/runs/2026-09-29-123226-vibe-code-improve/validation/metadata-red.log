@@ -1,0 +1,774 @@
+
+ RUN  v3.2.7 /home/hkjang/.cache/auto-improve-wt/vibe-code
+
+ ❯ tests/unit/markdown.test.ts (84 tests | 62 failed) 38ms
+   ✓ section parsing > reads whole multi-line sections, not just the first line 2ms
+   ✓ section parsing > does not confuse ### sub-sections with ## sections 1ms
+   ✓ section parsing > returns empty strings for unknown sections 0ms
+   ✓ writeSection > replaces a section body and keeps the rest intact 0ms
+   ✓ writeSection > fills an empty section and can empty a filled one 0ms
+   ✓ writeSection > leaves text unchanged when the section is missing 0ms
+   ✓ writeSection > supports the advance flow end to end 0ms
+   ✓ sectionLines > 원본 줄을 들여쓰기까지 그대로 돌려주고 빈 섹션은 빈 배열이다 0ms
+   ✓ moveTaskToSection > 대상 섹션에 이미 있던 들여쓴 줄과 메모 줄을 보존한다 0ms
+   ✓ metadata lines > reads and rewrites label lines 0ms
+   ✓ metadata lines > touches status and timestamp 0ms
+   ✓ metadata lines > inserts a status line after the title when missing 0ms
+   ✓ metadata lines > escapes regex characters in labels 0ms
+   ✓ goal parsing > summarizes the goal template 1ms
+   ✓ CRLF 줄바꿈 > 줄바꿈 방식을 첫 줄바꿈 기준으로 판정한다 0ms
+   ✓ CRLF 줄바꿈 > 읽기 함수가 CRLF 에서 LF 와 같은 값을 돌려준다 1ms
+   ✓ CRLF 줄바꿈 > writeSection 이 CRLF 에서 같은 편집 결과를 내고 줄바꿈을 보존한다 0ms
+   ✓ CRLF 줄바꿈 > moveTaskToSection 이 CRLF 에서 null 대신 옮긴 텍스트를 돌려준다 0ms
+   ✓ CRLF 줄바꿈 > toggleCheckbox·touchPlan·setLine 이 입력의 줄바꿈을 보존한다 0ms
+   ✓ CRLF 줄바꿈 > 계획·목표 소비자(parseGoal·openPlanItems)도 CRLF 에서 같은 값을 읽는다 0ms
+   ✓ CRLF 줄바꿈 > 린트가 CRLF 계획·목표에 섹션 누락 경고를 내지 않는다 1ms
+   ✓ priorityRank > orders P0..P3 and pushes unknowns last 0ms
+   × 빈 메타데이터 줄 경계 ("\n") > 빈 값 ""은 다음 줄이나 EOF 대신 fallback을 반환한다 4ms
+     → expected '작성일: original' to be 'fallback' // Object.is equality
+   × 빈 메타데이터 줄 경계 ("\n") > plan: 빈 상태 ""를 소비자별 기본값으로 읽는다 2ms
+     → expected '작성일: 2026-09-22 10:00:00 KST' to be 'draft' // Object.is equality
+   × 빈 메타데이터 줄 경계 ("\n") > plan: setLine은 빈 상태 ""만 제자리 교체한다 1ms
+     → expected '# 계획: 테스트 목표\n\n상태: active\n마지막 갱신:\n…' to be '# 계획: 테스트 목표\n\n상태: active\n작성일: 2026…' // Object.is equality
+   × 빈 메타데이터 줄 경계 ("\n") > plan: touchPlan은 빈 상태·갱신 ""만 변경한다 1ms
+     → expected '# 계획: 테스트 목표\n\n상태: active\n마지막 갱신: n…' to be '# 계획: 테스트 목표\n\n상태: active\n작성일: 2026…' // Object.is equality
+   × 빈 메타데이터 줄 경계 ("\n") > goal: 빈 상태 ""를 소비자별 기본값으로 읽는다 0ms
+     → expected '작성일: 2026-09-22 10:00:00 KST' to be '(unknown)' // Object.is equality
+   × 빈 메타데이터 줄 경계 ("\n") > goal: setLine은 빈 상태 ""만 제자리 교체한다 0ms
+     → expected '# 목표: 새 목표\n\n상태: active\n마지막 갱신:\n목표…' to be '# 목표: 새 목표\n\n상태: active\n작성일: 2026-0…' // Object.is equality
+   × 빈 메타데이터 줄 경계 ("\n") > goal: touchPlan은 빈 상태·갱신 ""만 변경한다 0ms
+     → expected '# 목표: 새 목표\n\n상태: active\n마지막 갱신: new…' to be '# 목표: 새 목표\n\n상태: active\n작성일: 2026-0…' // Object.is equality
+   × 빈 메타데이터 줄 경계 ("\n") > 빈 값 " "은 다음 줄이나 EOF 대신 fallback을 반환한다 1ms
+     → expected '' to be 'fallback' // Object.is equality
+   × 빈 메타데이터 줄 경계 ("\n") > plan: 빈 상태 " "를 소비자별 기본값으로 읽는다 0ms
+     → expected '작성일: 2026-09-22 10:00:00 KST' to be 'draft' // Object.is equality
+   × 빈 메타데이터 줄 경계 ("\n") > plan: setLine은 빈 상태 " "만 제자리 교체한다 0ms
+     → expected '# 계획: 테스트 목표\n\n상태: active\n마지막 갱신: \…' to be '# 계획: 테스트 목표\n\n상태: active\n작성일: 2026…' // Object.is equality
+   × 빈 메타데이터 줄 경계 ("\n") > plan: touchPlan은 빈 상태·갱신 " "만 변경한다 0ms
+     → expected '# 계획: 테스트 목표\n\n상태: active\n마지막 갱신: n…' to be '# 계획: 테스트 목표\n\n상태: active\n작성일: 2026…' // Object.is equality
+   × 빈 메타데이터 줄 경계 ("\n") > goal: 빈 상태 " "를 소비자별 기본값으로 읽는다 0ms
+     → expected '작성일: 2026-09-22 10:00:00 KST' to be '(unknown)' // Object.is equality
+   × 빈 메타데이터 줄 경계 ("\n") > goal: setLine은 빈 상태 " "만 제자리 교체한다 0ms
+     → expected '# 목표: 새 목표\n\n상태: active\n마지막 갱신: \n목…' to be '# 목표: 새 목표\n\n상태: active\n작성일: 2026-0…' // Object.is equality
+   × 빈 메타데이터 줄 경계 ("\n") > goal: touchPlan은 빈 상태·갱신 " "만 변경한다 0ms
+     → expected '# 목표: 새 목표\n\n상태: active\n마지막 갱신: new…' to be '# 목표: 새 목표\n\n상태: active\n작성일: 2026-0…' // Object.is equality
+   × 빈 메타데이터 줄 경계 ("\n") > 빈 값 "\t"은 다음 줄이나 EOF 대신 fallback을 반환한다 0ms
+     → expected '' to be 'fallback' // Object.is equality
+   × 빈 메타데이터 줄 경계 ("\n") > plan: 빈 상태 "\t"를 소비자별 기본값으로 읽는다 0ms
+     → expected '작성일: 2026-09-22 10:00:00 KST' to be 'draft' // Object.is equality
+   × 빈 메타데이터 줄 경계 ("\n") > plan: setLine은 빈 상태 "\t"만 제자리 교체한다 0ms
+     → expected '# 계획: 테스트 목표\n\n상태: active\n마지막 갱신:\t…' to be '# 계획: 테스트 목표\n\n상태: active\n작성일: 2026…' // Object.is equality
+   × 빈 메타데이터 줄 경계 ("\n") > plan: touchPlan은 빈 상태·갱신 "\t"만 변경한다 0ms
+     → expected '# 계획: 테스트 목표\n\n상태: active\n마지막 갱신: n…' to be '# 계획: 테스트 목표\n\n상태: active\n작성일: 2026…' // Object.is equality
+   × 빈 메타데이터 줄 경계 ("\n") > goal: 빈 상태 "\t"를 소비자별 기본값으로 읽는다 0ms
+     → expected '작성일: 2026-09-22 10:00:00 KST' to be '(unknown)' // Object.is equality
+   × 빈 메타데이터 줄 경계 ("\n") > goal: setLine은 빈 상태 "\t"만 제자리 교체한다 0ms
+     → expected '# 목표: 새 목표\n\n상태: active\n마지막 갱신:\t\n…' to be '# 목표: 새 목표\n\n상태: active\n작성일: 2026-0…' // Object.is equality
+   × 빈 메타데이터 줄 경계 ("\n") > goal: touchPlan은 빈 상태·갱신 "\t"만 변경한다 0ms
+     → expected '# 목표: 새 목표\n\n상태: active\n마지막 갱신: new…' to be '# 목표: 새 목표\n\n상태: active\n작성일: 2026-0…' // Object.is equality
+   × 빈 메타데이터 줄 경계 ("\n") > 빈 값 " \t "은 다음 줄이나 EOF 대신 fallback을 반환한다 0ms
+     → expected '' to be 'fallback' // Object.is equality
+   × 빈 메타데이터 줄 경계 ("\n") > plan: 빈 상태 " \t "를 소비자별 기본값으로 읽는다 0ms
+     → expected '작성일: 2026-09-22 10:00:00 KST' to be 'draft' // Object.is equality
+   × 빈 메타데이터 줄 경계 ("\n") > plan: setLine은 빈 상태 " \t "만 제자리 교체한다 0ms
+     → expected '# 계획: 테스트 목표\n\n상태: active\n마지막 갱신: \…' to be '# 계획: 테스트 목표\n\n상태: active\n작성일: 2026…' // Object.is equality
+   × 빈 메타데이터 줄 경계 ("\n") > plan: touchPlan은 빈 상태·갱신 " \t "만 변경한다 0ms
+     → expected '# 계획: 테스트 목표\n\n상태: active\n마지막 갱신: n…' to be '# 계획: 테스트 목표\n\n상태: active\n작성일: 2026…' // Object.is equality
+   × 빈 메타데이터 줄 경계 ("\n") > goal: 빈 상태 " \t "를 소비자별 기본값으로 읽는다 0ms
+     → expected '작성일: 2026-09-22 10:00:00 KST' to be '(unknown)' // Object.is equality
+   × 빈 메타데이터 줄 경계 ("\n") > goal: setLine은 빈 상태 " \t "만 제자리 교체한다 0ms
+     → expected '# 목표: 새 목표\n\n상태: active\n마지막 갱신: \t …' to be '# 목표: 새 목표\n\n상태: active\n작성일: 2026-0…' // Object.is equality
+   × 빈 메타데이터 줄 경계 ("\n") > goal: touchPlan은 빈 상태·갱신 " \t "만 변경한다 0ms
+     → expected '# 목표: 새 목표\n\n상태: active\n마지막 갱신: new…' to be '# 목표: 새 목표\n\n상태: active\n작성일: 2026-0…' // Object.is equality
+   × 빈 메타데이터 줄 경계 ("\n") > setLine은 값이 빈 앵커 바로 뒤에 삽입하고 마지막 갱신을 우선한다 0ms
+     → expected '작성일: original\n마지막 갱신: \t\n\n## Now\n…' to be '작성일: original\n마지막 갱신: \t\n우선순위: P0\n…' // Object.is equality
+   × 빈 메타데이터 줄 경계 ("\n") > 파일 끝의 빈 라벨도 제자리 교체한다 0ms
+     → expected '작성일: original\n마지막 갱신: new\n상태:' to be '작성일: original\n마지막 갱신: new\n상태: active' // Object.is equality
+   × 빈 메타데이터 줄 경계 ("\n") > touchPlan은 빈 작성일 바로 뒤에 누락 갱신을 삽입한다 0ms
+     → expected '상태:\n작성일: \t\n\n## Now\n마지막 갱신: new\n…' to be '상태:\n작성일: \t\n마지막 갱신: new\n\n## Now\n…' // Object.is equality
+   × 빈 메타데이터 줄 경계 ("\r\n") > 빈 값 ""은 다음 줄이나 EOF 대신 fallback을 반환한다 0ms
+     → expected '작성일: original' to be 'fallback' // Object.is equality
+   × 빈 메타데이터 줄 경계 ("\r\n") > plan: 빈 상태 ""를 소비자별 기본값으로 읽는다 0ms
+     → expected '작성일: 2026-09-22 10:00:00 KST' to be 'draft' // Object.is equality
+   × 빈 메타데이터 줄 경계 ("\r\n") > plan: setLine은 빈 상태 ""만 제자리 교체한다 0ms
+     → expected '# 계획: 테스트 목표\r\n\r\n상태: active\r\n마지막…' to be '# 계획: 테스트 목표\r\n\r\n상태: active\r\n작성일…' // Object.is equality
+   × 빈 메타데이터 줄 경계 ("\r\n") > plan: touchPlan은 빈 상태·갱신 ""만 변경한다 0ms
+     → expected '# 계획: 테스트 목표\r\n\r\n상태: active\r\n마지막…' to be '# 계획: 테스트 목표\r\n\r\n상태: active\r\n작성일…' // Object.is equality
+   × 빈 메타데이터 줄 경계 ("\r\n") > goal: 빈 상태 ""를 소비자별 기본값으로 읽는다 0ms
+     → expected '작성일: 2026-09-22 10:00:00 KST' to be '(unknown)' // Object.is equality
+   × 빈 메타데이터 줄 경계 ("\r\n") > goal: setLine은 빈 상태 ""만 제자리 교체한다 0ms
+     → expected '# 목표: 새 목표\r\n\r\n상태: active\r\n마지막 갱…' to be '# 목표: 새 목표\r\n\r\n상태: active\r\n작성일: …' // Object.is equality
+   × 빈 메타데이터 줄 경계 ("\r\n") > goal: touchPlan은 빈 상태·갱신 ""만 변경한다 0ms
+     → expected '# 목표: 새 목표\r\n\r\n상태: active\r\n마지막 갱…' to be '# 목표: 새 목표\r\n\r\n상태: active\r\n작성일: …' // Object.is equality
+   × 빈 메타데이터 줄 경계 ("\r\n") > 빈 값 " "은 다음 줄이나 EOF 대신 fallback을 반환한다 0ms
+     → expected '' to be 'fallback' // Object.is equality
+   × 빈 메타데이터 줄 경계 ("\r\n") > plan: 빈 상태 " "를 소비자별 기본값으로 읽는다 0ms
+     → expected '작성일: 2026-09-22 10:00:00 KST' to be 'draft' // Object.is equality
+   × 빈 메타데이터 줄 경계 ("\r\n") > plan: setLine은 빈 상태 " "만 제자리 교체한다 0ms
+     → expected '# 계획: 테스트 목표\r\n\r\n상태: active\r\n마지막…' to be '# 계획: 테스트 목표\r\n\r\n상태: active\r\n작성일…' // Object.is equality
+   × 빈 메타데이터 줄 경계 ("\r\n") > plan: touchPlan은 빈 상태·갱신 " "만 변경한다 0ms
+     → expected '# 계획: 테스트 목표\r\n\r\n상태: active\r\n마지막…' to be '# 계획: 테스트 목표\r\n\r\n상태: active\r\n작성일…' // Object.is equality
+   × 빈 메타데이터 줄 경계 ("\r\n") > goal: 빈 상태 " "를 소비자별 기본값으로 읽는다 0ms
+     → expected '작성일: 2026-09-22 10:00:00 KST' to be '(unknown)' // Object.is equality
+   × 빈 메타데이터 줄 경계 ("\r\n") > goal: setLine은 빈 상태 " "만 제자리 교체한다 0ms
+     → expected '# 목표: 새 목표\r\n\r\n상태: active\r\n마지막 갱…' to be '# 목표: 새 목표\r\n\r\n상태: active\r\n작성일: …' // Object.is equality
+   × 빈 메타데이터 줄 경계 ("\r\n") > goal: touchPlan은 빈 상태·갱신 " "만 변경한다 0ms
+     → expected '# 목표: 새 목표\r\n\r\n상태: active\r\n마지막 갱…' to be '# 목표: 새 목표\r\n\r\n상태: active\r\n작성일: …' // Object.is equality
+   × 빈 메타데이터 줄 경계 ("\r\n") > 빈 값 "\t"은 다음 줄이나 EOF 대신 fallback을 반환한다 0ms
+     → expected '' to be 'fallback' // Object.is equality
+   × 빈 메타데이터 줄 경계 ("\r\n") > plan: 빈 상태 "\t"를 소비자별 기본값으로 읽는다 0ms
+     → expected '작성일: 2026-09-22 10:00:00 KST' to be 'draft' // Object.is equality
+   × 빈 메타데이터 줄 경계 ("\r\n") > plan: setLine은 빈 상태 "\t"만 제자리 교체한다 0ms
+     → expected '# 계획: 테스트 목표\r\n\r\n상태: active\r\n마지막…' to be '# 계획: 테스트 목표\r\n\r\n상태: active\r\n작성일…' // Object.is equality
+   × 빈 메타데이터 줄 경계 ("\r\n") > plan: touchPlan은 빈 상태·갱신 "\t"만 변경한다 0ms
+     → expected '# 계획: 테스트 목표\r\n\r\n상태: active\r\n마지막…' to be '# 계획: 테스트 목표\r\n\r\n상태: active\r\n작성일…' // Object.is equality
+   × 빈 메타데이터 줄 경계 ("\r\n") > goal: 빈 상태 "\t"를 소비자별 기본값으로 읽는다 0ms
+     → expected '작성일: 2026-09-22 10:00:00 KST' to be '(unknown)' // Object.is equality
+   × 빈 메타데이터 줄 경계 ("\r\n") > goal: setLine은 빈 상태 "\t"만 제자리 교체한다 0ms
+     → expected '# 목표: 새 목표\r\n\r\n상태: active\r\n마지막 갱…' to be '# 목표: 새 목표\r\n\r\n상태: active\r\n작성일: …' // Object.is equality
+   × 빈 메타데이터 줄 경계 ("\r\n") > goal: touchPlan은 빈 상태·갱신 "\t"만 변경한다 0ms
+     → expected '# 목표: 새 목표\r\n\r\n상태: active\r\n마지막 갱…' to be '# 목표: 새 목표\r\n\r\n상태: active\r\n작성일: …' // Object.is equality
+   × 빈 메타데이터 줄 경계 ("\r\n") > 빈 값 " \t "은 다음 줄이나 EOF 대신 fallback을 반환한다 0ms
+     → expected '' to be 'fallback' // Object.is equality
+   × 빈 메타데이터 줄 경계 ("\r\n") > plan: 빈 상태 " \t "를 소비자별 기본값으로 읽는다 0ms
+     → expected '작성일: 2026-09-22 10:00:00 KST' to be 'draft' // Object.is equality
+   × 빈 메타데이터 줄 경계 ("\r\n") > plan: setLine은 빈 상태 " \t "만 제자리 교체한다 0ms
+     → expected '# 계획: 테스트 목표\r\n\r\n상태: active\r\n마지막…' to be '# 계획: 테스트 목표\r\n\r\n상태: active\r\n작성일…' // Object.is equality
+   × 빈 메타데이터 줄 경계 ("\r\n") > plan: touchPlan은 빈 상태·갱신 " \t "만 변경한다 0ms
+     → expected '# 계획: 테스트 목표\r\n\r\n상태: active\r\n마지막…' to be '# 계획: 테스트 목표\r\n\r\n상태: active\r\n작성일…' // Object.is equality
+   × 빈 메타데이터 줄 경계 ("\r\n") > goal: 빈 상태 " \t "를 소비자별 기본값으로 읽는다 0ms
+     → expected '작성일: 2026-09-22 10:00:00 KST' to be '(unknown)' // Object.is equality
+   × 빈 메타데이터 줄 경계 ("\r\n") > goal: setLine은 빈 상태 " \t "만 제자리 교체한다 0ms
+     → expected '# 목표: 새 목표\r\n\r\n상태: active\r\n마지막 갱…' to be '# 목표: 새 목표\r\n\r\n상태: active\r\n작성일: …' // Object.is equality
+   × 빈 메타데이터 줄 경계 ("\r\n") > goal: touchPlan은 빈 상태·갱신 " \t "만 변경한다 1ms
+     → expected '# 목표: 새 목표\r\n\r\n상태: active\r\n마지막 갱…' to be '# 목표: 새 목표\r\n\r\n상태: active\r\n작성일: …' // Object.is equality
+   × 빈 메타데이터 줄 경계 ("\r\n") > setLine은 값이 빈 앵커 바로 뒤에 삽입하고 마지막 갱신을 우선한다 0ms
+     → expected '작성일: original\r\n마지막 갱신: \t\r\n\r\n##…' to be '작성일: original\r\n마지막 갱신: \t\r\n우선순위: …' // Object.is equality
+   × 빈 메타데이터 줄 경계 ("\r\n") > 파일 끝의 빈 라벨도 제자리 교체한다 0ms
+     → expected '작성일: original\r\n마지막 갱신: new\r\n상태:' to be '작성일: original\r\n마지막 갱신: new\r\n상태: a…' // Object.is equality
+   × 빈 메타데이터 줄 경계 ("\r\n") > touchPlan은 빈 작성일 바로 뒤에 누락 갱신을 삽입한다 0ms
+     → expected '상태:\r\n작성일: \t\r\n\r\n## Now\r\n마지막 갱…' to be '상태:\r\n작성일: \t\r\n마지막 갱신: new\r\n\r\n…' // Object.is equality
+
+⎯⎯⎯⎯⎯⎯ Failed Tests 62 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/unit/markdown.test.ts > 빈 메타데이터 줄 경계 ("\n") > 빈 값 ""은 다음 줄이나 EOF 대신 fallback을 반환한다
+ FAIL  tests/unit/markdown.test.ts > 빈 메타데이터 줄 경계 ("\r\n") > 빈 값 ""은 다음 줄이나 EOF 대신 fallback을 반환한다
+AssertionError: expected '작성일: original' to be 'fallback' // Object.is equality
+
+Expected: "fallback"
+Received: "작성일: original"
+
+ ❯ tests/unit/markdown.test.ts:248:73
+    246|   it(`빈 값 ${JSON.stringify(blank)}은 다음 줄이나 EOF 대신 fallback을 반환한다`, () …
+    247|    for (const suffix of ["", "\n작성일: original", "\n\n본문", "\n## Now", …
+    248|     expect(matchLine(encode(`상태:${blank}${suffix}`), "상태", "fallback")…
+       |                                                                         ^
+    249|    }
+    250|    expect(matchLine("작성일: original", "상태", "fallback")).toBe("fallback…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/62]⎯
+
+ FAIL  tests/unit/markdown.test.ts > 빈 메타데이터 줄 경계 ("\n") > plan: 빈 상태 ""를 소비자별 기본값으로 읽는다
+ FAIL  tests/unit/markdown.test.ts > 빈 메타데이터 줄 경계 ("\n") > plan: 빈 상태 " "를 소비자별 기본값으로 읽는다
+ FAIL  tests/unit/markdown.test.ts > 빈 메타데이터 줄 경계 ("\n") > plan: 빈 상태 "\t"를 소비자별 기본값으로 읽는다
+ FAIL  tests/unit/markdown.test.ts > 빈 메타데이터 줄 경계 ("\n") > plan: 빈 상태 " \t "를 소비자별 기본값으로 읽는다
+ FAIL  tests/unit/markdown.test.ts > 빈 메타데이터 줄 경계 ("\r\n") > plan: 빈 상태 ""를 소비자별 기본값으로 읽는다
+ FAIL  tests/unit/markdown.test.ts > 빈 메타데이터 줄 경계 ("\r\n") > plan: 빈 상태 " "를 소비자별 기본값으로 읽는다
+ FAIL  tests/unit/markdown.test.ts > 빈 메타데이터 줄 경계 ("\r\n") > plan: 빈 상태 "\t"를 소비자별 기본값으로 읽는다
+ FAIL  tests/unit/markdown.test.ts > 빈 메타데이터 줄 경계 ("\r\n") > plan: 빈 상태 " \t "를 소비자별 기본값으로 읽는다
+AssertionError: expected '작성일: 2026-09-22 10:00:00 KST' to be 'draft' // Object.is equality
+
+Expected: "draft"
+Received: "작성일: 2026-09-22 10:00:00 KST"
+
+ ❯ tests/unit/markdown.test.ts:260:31
+    258|    const input = encode(template.replace("상태: draft", `상태:${blank}`).r…
+    259|    it(`${kind}: 빈 상태 ${JSON.stringify(blank)}를 소비자별 기본값으로 읽는다`, () => {
+    260|     expect(readStatus(input)).toBe(kind === "plan" ? "draft" : "(unkno…
+       |                               ^
+    261|     expect(matchLine(input, "상태")).toBe("");
+    262|     expect(lint(input).filter((issue) => issue.message.includes("상태"))…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/62]⎯
+
+ FAIL  tests/unit/markdown.test.ts > 빈 메타데이터 줄 경계 ("\n") > plan: setLine은 빈 상태 ""만 제자리 교체한다
+AssertionError: expected '# 계획: 테스트 목표\n\n상태: active\n마지막 갱신:\n…' to be '# 계획: 테스트 목표\n\n상태: active\n작성일: 2026…' // Object.is equality
+
+- Expected
++ Received
+
+@@ -1,9 +1,8 @@
+  # 계획: 테스트 목표
+
+  상태: active
+- 작성일: 2026-09-22 10:00:00 KST
+  마지막 갱신:
+  연결 목표: .vibe-code/goals/current.md
+  계획 파일: .vibe-code/plans/current-plan.md
+
+  ## 목표 정렬
+
+ ❯ tests/unit/markdown.test.ts:268:20
+    266|    it(`${kind}: setLine은 빈 상태 ${JSON.stringify(blank)}만 제자리 교체한다`, () …
+    267|     const edited = setLine(input, "상태", "active");
+    268|     expect(edited).toBe(input.replace(`상태:${blank}${eol}`, `상태: active…
+       |                    ^
+    269|     expect(readStatus(edited)).toBe("active");
+    270|     expect(lint(edited)).toEqual(lint(template));
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/62]⎯
+
+ FAIL  tests/unit/markdown.test.ts > 빈 메타데이터 줄 경계 ("\n") > plan: touchPlan은 빈 상태·갱신 ""만 변경한다
+ FAIL  tests/unit/markdown.test.ts > 빈 메타데이터 줄 경계 ("\n") > plan: touchPlan은 빈 상태·갱신 " "만 변경한다
+ FAIL  tests/unit/markdown.test.ts > 빈 메타데이터 줄 경계 ("\n") > plan: touchPlan은 빈 상태·갱신 "\t"만 변경한다
+ FAIL  tests/unit/markdown.test.ts > 빈 메타데이터 줄 경계 ("\n") > plan: touchPlan은 빈 상태·갱신 " \t "만 변경한다
+AssertionError: expected '# 계획: 테스트 목표\n\n상태: active\n마지막 갱신: n…' to be '# 계획: 테스트 목표\n\n상태: active\n작성일: 2026…' // Object.is equality
+
+- Expected
++ Received
+
+@@ -1,11 +1,9 @@
+  # 계획: 테스트 목표
+
+  상태: active
+- 작성일: 2026-09-22 10:00:00 KST
+- 마지막 갱신: new
+- 연결 목표: .vibe-code/goals/current.md
++ 마지막 갱신: new
+  계획 파일: .vibe-code/plans/current-plan.md
+
+  ## 목표 정렬
+  - 목표 제목: 테스트 목표
+  - 이번 계획의 초점: 가장 작은 다음 구현 단위 정의
+
+ ❯ tests/unit/markdown.test.ts:274:20
+    272|    it(`${kind}: touchPlan은 빈 상태·갱신 ${JSON.stringify(blank)}만 변경한다`, ()…
+    273|     const edited = touchPlan(input, "active", "new");
+    274|     expect(edited).toBe(input.replace(`상태:${blank}${eol}`, `상태: active…
+       |                    ^
+    275|     expect(readStatus(edited)).toBe("active");
+    276|     expect(lint(edited)).toEqual(lint(template));
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/62]⎯
+
+ FAIL  tests/unit/markdown.test.ts > 빈 메타데이터 줄 경계 ("\n") > goal: 빈 상태 ""를 소비자별 기본값으로 읽는다
+ FAIL  tests/unit/markdown.test.ts > 빈 메타데이터 줄 경계 ("\n") > goal: 빈 상태 " "를 소비자별 기본값으로 읽는다
+ FAIL  tests/unit/markdown.test.ts > 빈 메타데이터 줄 경계 ("\n") > goal: 빈 상태 "\t"를 소비자별 기본값으로 읽는다
+ FAIL  tests/unit/markdown.test.ts > 빈 메타데이터 줄 경계 ("\n") > goal: 빈 상태 " \t "를 소비자별 기본값으로 읽는다
+ FAIL  tests/unit/markdown.test.ts > 빈 메타데이터 줄 경계 ("\r\n") > goal: 빈 상태 ""를 소비자별 기본값으로 읽는다
+ FAIL  tests/unit/markdown.test.ts > 빈 메타데이터 줄 경계 ("\r\n") > goal: 빈 상태 " "를 소비자별 기본값으로 읽는다
+ FAIL  tests/unit/markdown.test.ts > 빈 메타데이터 줄 경계 ("\r\n") > goal: 빈 상태 "\t"를 소비자별 기본값으로 읽는다
+ FAIL  tests/unit/markdown.test.ts > 빈 메타데이터 줄 경계 ("\r\n") > goal: 빈 상태 " \t "를 소비자별 기본값으로 읽는다
+AssertionError: expected '작성일: 2026-09-22 10:00:00 KST' to be '(unknown)' // Object.is equality
+
+Expected: "(unknown)"
+Received: "작성일: 2026-09-22 10:00:00 KST"
+
+ ❯ tests/unit/markdown.test.ts:260:31
+    258|    const input = encode(template.replace("상태: draft", `상태:${blank}`).r…
+    259|    it(`${kind}: 빈 상태 ${JSON.stringify(blank)}를 소비자별 기본값으로 읽는다`, () => {
+    260|     expect(readStatus(input)).toBe(kind === "plan" ? "draft" : "(unkno…
+       |                               ^
+    261|     expect(matchLine(input, "상태")).toBe("");
+    262|     expect(lint(input).filter((issue) => issue.message.includes("상태"))…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/62]⎯
+
+ FAIL  tests/unit/markdown.test.ts > 빈 메타데이터 줄 경계 ("\n") > goal: setLine은 빈 상태 ""만 제자리 교체한다
+AssertionError: expected '# 목표: 새 목표\n\n상태: active\n마지막 갱신:\n목표…' to be '# 목표: 새 목표\n\n상태: active\n작성일: 2026-0…' // Object.is equality
+
+- Expected
++ Received
+
+@@ -1,9 +1,8 @@
+  # 목표: 새 목표
+
+  상태: active
+- 작성일: 2026-09-22 10:00:00 KST
+  마지막 갱신:
+  목표 파일: .vibe-code/goals/current.md
+
+  ## 목표
+  /goal <원하는 결과>로 목표를 지정하거나 이 파일을 편집하세요.
+
+ ❯ tests/unit/markdown.test.ts:268:20
+    266|    it(`${kind}: setLine은 빈 상태 ${JSON.stringify(blank)}만 제자리 교체한다`, () …
+    267|     const edited = setLine(input, "상태", "active");
+    268|     expect(edited).toBe(input.replace(`상태:${blank}${eol}`, `상태: active…
+       |                    ^
+    269|     expect(readStatus(edited)).toBe("active");
+    270|     expect(lint(edited)).toEqual(lint(template));
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[6/62]⎯
+
+ FAIL  tests/unit/markdown.test.ts > 빈 메타데이터 줄 경계 ("\n") > goal: touchPlan은 빈 상태·갱신 ""만 변경한다
+ FAIL  tests/unit/markdown.test.ts > 빈 메타데이터 줄 경계 ("\n") > goal: touchPlan은 빈 상태·갱신 " "만 변경한다
+ FAIL  tests/unit/markdown.test.ts > 빈 메타데이터 줄 경계 ("\n") > goal: touchPlan은 빈 상태·갱신 "\t"만 변경한다
+ FAIL  tests/unit/markdown.test.ts > 빈 메타데이터 줄 경계 ("\n") > goal: touchPlan은 빈 상태·갱신 " \t "만 변경한다
+AssertionError: expected '# 목표: 새 목표\n\n상태: active\n마지막 갱신: new…' to be '# 목표: 새 목표\n\n상태: active\n작성일: 2026-0…' // Object.is equality
+
+- Expected
++ Received
+
+@@ -1,11 +1,9 @@
+  # 목표: 새 목표
+
+  상태: active
+- 작성일: 2026-09-22 10:00:00 KST
+- 마지막 갱신: new
+- 목표 파일: .vibe-code/goals/current.md
++ 마지막 갱신: new
+
+  ## 목표
+  /goal <원하는 결과>로 목표를 지정하거나 이 파일을 편집하세요.
+
+  ## 완료 기준
+
+ ❯ tests/unit/markdown.test.ts:274:20
+    272|    it(`${kind}: touchPlan은 빈 상태·갱신 ${JSON.stringify(blank)}만 변경한다`, ()…
+    273|     const edited = touchPlan(input, "active", "new");
+    274|     expect(edited).toBe(input.replace(`상태:${blank}${eol}`, `상태: active…
+       |                    ^
+    275|     expect(readStatus(edited)).toBe("active");
+    276|     expect(lint(edited)).toEqual(lint(template));
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[7/62]⎯
+
+ FAIL  tests/unit/markdown.test.ts > 빈 메타데이터 줄 경계 ("\n") > 빈 값 " "은 다음 줄이나 EOF 대신 fallback을 반환한다
+ FAIL  tests/unit/markdown.test.ts > 빈 메타데이터 줄 경계 ("\n") > 빈 값 "\t"은 다음 줄이나 EOF 대신 fallback을 반환한다
+ FAIL  tests/unit/markdown.test.ts > 빈 메타데이터 줄 경계 ("\n") > 빈 값 " \t "은 다음 줄이나 EOF 대신 fallback을 반환한다
+ FAIL  tests/unit/markdown.test.ts > 빈 메타데이터 줄 경계 ("\r\n") > 빈 값 " "은 다음 줄이나 EOF 대신 fallback을 반환한다
+ FAIL  tests/unit/markdown.test.ts > 빈 메타데이터 줄 경계 ("\r\n") > 빈 값 "\t"은 다음 줄이나 EOF 대신 fallback을 반환한다
+ FAIL  tests/unit/markdown.test.ts > 빈 메타데이터 줄 경계 ("\r\n") > 빈 값 " \t "은 다음 줄이나 EOF 대신 fallback을 반환한다
+AssertionError: expected '' to be 'fallback' // Object.is equality
+
+- Expected
++ Received
+
+- fallback
+
+ ❯ tests/unit/markdown.test.ts:248:73
+    246|   it(`빈 값 ${JSON.stringify(blank)}은 다음 줄이나 EOF 대신 fallback을 반환한다`, () …
+    247|    for (const suffix of ["", "\n작성일: original", "\n\n본문", "\n## Now", …
+    248|     expect(matchLine(encode(`상태:${blank}${suffix}`), "상태", "fallback")…
+       |                                                                         ^
+    249|    }
+    250|    expect(matchLine("작성일: original", "상태", "fallback")).toBe("fallback…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[8/62]⎯
+
+ FAIL  tests/unit/markdown.test.ts > 빈 메타데이터 줄 경계 ("\n") > plan: setLine은 빈 상태 " "만 제자리 교체한다
+ FAIL  tests/unit/markdown.test.ts > 빈 메타데이터 줄 경계 ("\n") > plan: setLine은 빈 상태 " \t "만 제자리 교체한다
+AssertionError: expected '# 계획: 테스트 목표\n\n상태: active\n마지막 갱신: \…' to be '# 계획: 테스트 목표\n\n상태: active\n작성일: 2026…' // Object.is equality
+
+- Expected
++ Received
+
+@@ -1,9 +1,8 @@
+  # 계획: 테스트 목표
+
+  상태: active
+- 작성일: 2026-09-22 10:00:00 KST
+  마지막 갱신: 
+  연결 목표: .vibe-code/goals/current.md
+  계획 파일: .vibe-code/plans/current-plan.md
+
+  ## 목표 정렬
+
+ ❯ tests/unit/markdown.test.ts:268:20
+    266|    it(`${kind}: setLine은 빈 상태 ${JSON.stringify(blank)}만 제자리 교체한다`, () …
+    267|     const edited = setLine(input, "상태", "active");
+    268|     expect(edited).toBe(input.replace(`상태:${blank}${eol}`, `상태: active…
+       |                    ^
+    269|     expect(readStatus(edited)).toBe("active");
+    270|     expect(lint(edited)).toEqual(lint(template));
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[9/62]⎯
+
+ FAIL  tests/unit/markdown.test.ts > 빈 메타데이터 줄 경계 ("\n") > goal: setLine은 빈 상태 " "만 제자리 교체한다
+AssertionError: expected '# 목표: 새 목표\n\n상태: active\n마지막 갱신: \n목…' to be '# 목표: 새 목표\n\n상태: active\n작성일: 2026-0…' // Object.is equality
+
+- Expected
++ Received
+
+@@ -1,9 +1,8 @@
+  # 목표: 새 목표
+
+  상태: active
+- 작성일: 2026-09-22 10:00:00 KST
+  마지막 갱신: 
+  목표 파일: .vibe-code/goals/current.md
+
+  ## 목표
+  /goal <원하는 결과>로 목표를 지정하거나 이 파일을 편집하세요.
+
+ ❯ tests/unit/markdown.test.ts:268:20
+    266|    it(`${kind}: setLine은 빈 상태 ${JSON.stringify(blank)}만 제자리 교체한다`, () …
+    267|     const edited = setLine(input, "상태", "active");
+    268|     expect(edited).toBe(input.replace(`상태:${blank}${eol}`, `상태: active…
+       |                    ^
+    269|     expect(readStatus(edited)).toBe("active");
+    270|     expect(lint(edited)).toEqual(lint(template));
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[10/62]⎯
+
+ FAIL  tests/unit/markdown.test.ts > 빈 메타데이터 줄 경계 ("\n") > plan: setLine은 빈 상태 "\t"만 제자리 교체한다
+AssertionError: expected '# 계획: 테스트 목표\n\n상태: active\n마지막 갱신:\t…' to be '# 계획: 테스트 목표\n\n상태: active\n작성일: 2026…' // Object.is equality
+
+- Expected
++ Received
+
+@@ -1,9 +1,8 @@
+  # 계획: 테스트 목표
+
+  상태: active
+- 작성일: 2026-09-22 10:00:00 KST
+  마지막 갱신:	
+  연결 목표: .vibe-code/goals/current.md
+  계획 파일: .vibe-code/plans/current-plan.md
+
+  ## 목표 정렬
+
+ ❯ tests/unit/markdown.test.ts:268:20
+    266|    it(`${kind}: setLine은 빈 상태 ${JSON.stringify(blank)}만 제자리 교체한다`, () …
+    267|     const edited = setLine(input, "상태", "active");
+    268|     expect(edited).toBe(input.replace(`상태:${blank}${eol}`, `상태: active…
+       |                    ^
+    269|     expect(readStatus(edited)).toBe("active");
+    270|     expect(lint(edited)).toEqual(lint(template));
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[11/62]⎯
+
+ FAIL  tests/unit/markdown.test.ts > 빈 메타데이터 줄 경계 ("\n") > goal: setLine은 빈 상태 "\t"만 제자리 교체한다
+AssertionError: expected '# 목표: 새 목표\n\n상태: active\n마지막 갱신:\t\n…' to be '# 목표: 새 목표\n\n상태: active\n작성일: 2026-0…' // Object.is equality
+
+- Expected
++ Received
+
+@@ -1,9 +1,8 @@
+  # 목표: 새 목표
+
+  상태: active
+- 작성일: 2026-09-22 10:00:00 KST
+  마지막 갱신:	
+  목표 파일: .vibe-code/goals/current.md
+
+  ## 목표
+  /goal <원하는 결과>로 목표를 지정하거나 이 파일을 편집하세요.
+
+ ❯ tests/unit/markdown.test.ts:268:20
+    266|    it(`${kind}: setLine은 빈 상태 ${JSON.stringify(blank)}만 제자리 교체한다`, () …
+    267|     const edited = setLine(input, "상태", "active");
+    268|     expect(edited).toBe(input.replace(`상태:${blank}${eol}`, `상태: active…
+       |                    ^
+    269|     expect(readStatus(edited)).toBe("active");
+    270|     expect(lint(edited)).toEqual(lint(template));
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[12/62]⎯
+
+ FAIL  tests/unit/markdown.test.ts > 빈 메타데이터 줄 경계 ("\n") > goal: setLine은 빈 상태 " \t "만 제자리 교체한다
+AssertionError: expected '# 목표: 새 목표\n\n상태: active\n마지막 갱신: \t …' to be '# 목표: 새 목표\n\n상태: active\n작성일: 2026-0…' // Object.is equality
+
+- Expected
++ Received
+
+@@ -1,9 +1,8 @@
+  # 목표: 새 목표
+
+  상태: active
+- 작성일: 2026-09-22 10:00:00 KST
+  마지막 갱신: 	 
+  목표 파일: .vibe-code/goals/current.md
+
+  ## 목표
+  /goal <원하는 결과>로 목표를 지정하거나 이 파일을 편집하세요.
+
+ ❯ tests/unit/markdown.test.ts:268:20
+    266|    it(`${kind}: setLine은 빈 상태 ${JSON.stringify(blank)}만 제자리 교체한다`, () …
+    267|     const edited = setLine(input, "상태", "active");
+    268|     expect(edited).toBe(input.replace(`상태:${blank}${eol}`, `상태: active…
+       |                    ^
+    269|     expect(readStatus(edited)).toBe("active");
+    270|     expect(lint(edited)).toEqual(lint(template));
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[13/62]⎯
+
+ FAIL  tests/unit/markdown.test.ts > 빈 메타데이터 줄 경계 ("\n") > setLine은 값이 빈 앵커 바로 뒤에 삽입하고 마지막 갱신을 우선한다
+AssertionError: expected '작성일: original\n마지막 갱신: \t\n\n## Now\n…' to be '작성일: original\n마지막 갱신: \t\n우선순위: P0\n…' // Object.is equality
+
+- Expected
++ Received
+
+  작성일: original
+  마지막 갱신: 	
+- 우선순위: P0
+-
+- ## Now
++
++ ## Now
++ 우선순위: P0
+  본문
+
+ ❯ tests/unit/markdown.test.ts:286:42
+    284|    for (const suffix of ["", "\n\n## Now\n본문"]) {
+    285|     const input = encode(`작성일: original\n${anchor}: \t${suffix}`);
+    286|     expect(setLine(input, "우선순위", "P0")).toBe(anchor === "마지막 갱신"
+       |                                          ^
+    287|      ? encode(`작성일: original\n${anchor}: \t\n우선순위: P0${suffix}`)
+    288|      : encode(`작성일: original\n우선순위: P0\n${anchor}: \t${suffix}`));
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[14/62]⎯
+
+ FAIL  tests/unit/markdown.test.ts > 빈 메타데이터 줄 경계 ("\n") > 파일 끝의 빈 라벨도 제자리 교체한다
+AssertionError: expected '작성일: original\n마지막 갱신: new\n상태:' to be '작성일: original\n마지막 갱신: new\n상태: active' // Object.is equality
+
+- Expected
++ Received
+
+  작성일: original
+  마지막 갱신: new
+- 상태: active
++ 상태:
+
+ ❯ tests/unit/markdown.test.ts:297:68
+    295|  it("파일 끝의 빈 라벨도 제자리 교체한다", () => {
+    296|   expect(setLine(encode("작성일: original\na.b:\t"), "a.b", "value")).toB…
+    297|   expect(touchPlan(encode("작성일: original\n상태:"), "active", "new")).toB…
+       |                                                                    ^
+    298|   expect(touchPlan(encode("상태: active\n마지막 갱신:"), null, "new")).toBe(e…
+    299|  });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[15/62]⎯
+
+ FAIL  tests/unit/markdown.test.ts > 빈 메타데이터 줄 경계 ("\n") > touchPlan은 빈 작성일 바로 뒤에 누락 갱신을 삽입한다
+AssertionError: expected '상태:\n작성일: \t\n\n## Now\n마지막 갱신: new\n…' to be '상태:\n작성일: \t\n마지막 갱신: new\n\n## Now\n…' // Object.is equality
+
+- Expected
++ Received
+
+  상태:
+- 작성일: 	
++ 작성일: 	
++
++ ## Now
+- 마지막 갱신: new
+-
+- ## Now
++ 마지막 갱신: new
+  본문
+
+ ❯ tests/unit/markdown.test.ts:304:42
+    302|   for (const suffix of ["", "\n\n## Now\n본문"]) {
+    303|    const input = encode(`상태:\n작성일: \t${suffix}`);
+    304|    expect(touchPlan(input, null, "new")).toBe(encode(`상태:\n작성일: \t\n마지…
+       |                                          ^
+    305|   }
+    306|  });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[16/62]⎯
+
+ FAIL  tests/unit/markdown.test.ts > 빈 메타데이터 줄 경계 ("\r\n") > plan: setLine은 빈 상태 ""만 제자리 교체한다
+ FAIL  tests/unit/markdown.test.ts > 빈 메타데이터 줄 경계 ("\r\n") > plan: setLine은 빈 상태 " "만 제자리 교체한다
+ FAIL  tests/unit/markdown.test.ts > 빈 메타데이터 줄 경계 ("\r\n") > plan: setLine은 빈 상태 "\t"만 제자리 교체한다
+ FAIL  tests/unit/markdown.test.ts > 빈 메타데이터 줄 경계 ("\r\n") > plan: setLine은 빈 상태 " \t "만 제자리 교체한다
+AssertionError: expected '# 계획: 테스트 목표\r\n\r\n상태: active\r\n마지막…' to be '# 계획: 테스트 목표\r\n\r\n상태: active\r\n작성일…' // Object.is equality
+
+- Expected
++ Received
+
+@@ -1,9 +1,8 @@
+  # 계획: 테스트 목표
+  
+  상태: active
+- 작성일: 2026-09-22 10:00:00 KST
+  마지막 갱신:
+  연결 목표: .vibe-code/goals/current.md
+  계획 파일: .vibe-code/plans/current-plan.md
+  
+  ## 목표 정렬
+
+ ❯ tests/unit/markdown.test.ts:268:20
+    266|    it(`${kind}: setLine은 빈 상태 ${JSON.stringify(blank)}만 제자리 교체한다`, () …
+    267|     const edited = setLine(input, "상태", "active");
+    268|     expect(edited).toBe(input.replace(`상태:${blank}${eol}`, `상태: active…
+       |                    ^
+    269|     expect(readStatus(edited)).toBe("active");
+    270|     expect(lint(edited)).toEqual(lint(template));
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[17/62]⎯
+
+ FAIL  tests/unit/markdown.test.ts > 빈 메타데이터 줄 경계 ("\r\n") > plan: touchPlan은 빈 상태·갱신 ""만 변경한다
+ FAIL  tests/unit/markdown.test.ts > 빈 메타데이터 줄 경계 ("\r\n") > plan: touchPlan은 빈 상태·갱신 " "만 변경한다
+ FAIL  tests/unit/markdown.test.ts > 빈 메타데이터 줄 경계 ("\r\n") > plan: touchPlan은 빈 상태·갱신 "\t"만 변경한다
+ FAIL  tests/unit/markdown.test.ts > 빈 메타데이터 줄 경계 ("\r\n") > plan: touchPlan은 빈 상태·갱신 " \t "만 변경한다
+AssertionError: expected '# 계획: 테스트 목표\r\n\r\n상태: active\r\n마지막…' to be '# 계획: 테스트 목표\r\n\r\n상태: active\r\n작성일…' // Object.is equality
+
+- Expected
++ Received
+
+@@ -1,11 +1,9 @@
+  # 계획: 테스트 목표
+  
+  상태: active
+- 작성일: 2026-09-22 10:00:00 KST
+- 마지막 갱신: new
+- 연결 목표: .vibe-code/goals/current.md
++ 마지막 갱신: new
+  계획 파일: .vibe-code/plans/current-plan.md
+  
+  ## 목표 정렬
+  - 목표 제목: 테스트 목표
+  - 이번 계획의 초점: 가장 작은 다음 구현 단위 정의
+
+ ❯ tests/unit/markdown.test.ts:274:20
+    272|    it(`${kind}: touchPlan은 빈 상태·갱신 ${JSON.stringify(blank)}만 변경한다`, ()…
+    273|     const edited = touchPlan(input, "active", "new");
+    274|     expect(edited).toBe(input.replace(`상태:${blank}${eol}`, `상태: active…
+       |                    ^
+    275|     expect(readStatus(edited)).toBe("active");
+    276|     expect(lint(edited)).toEqual(lint(template));
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[18/62]⎯
+
+ FAIL  tests/unit/markdown.test.ts > 빈 메타데이터 줄 경계 ("\r\n") > goal: setLine은 빈 상태 ""만 제자리 교체한다
+ FAIL  tests/unit/markdown.test.ts > 빈 메타데이터 줄 경계 ("\r\n") > goal: setLine은 빈 상태 " "만 제자리 교체한다
+ FAIL  tests/unit/markdown.test.ts > 빈 메타데이터 줄 경계 ("\r\n") > goal: setLine은 빈 상태 "\t"만 제자리 교체한다
+ FAIL  tests/unit/markdown.test.ts > 빈 메타데이터 줄 경계 ("\r\n") > goal: setLine은 빈 상태 " \t "만 제자리 교체한다
+AssertionError: expected '# 목표: 새 목표\r\n\r\n상태: active\r\n마지막 갱…' to be '# 목표: 새 목표\r\n\r\n상태: active\r\n작성일: …' // Object.is equality
+
+- Expected
++ Received
+
+@@ -1,9 +1,8 @@
+  # 목표: 새 목표
+  
+  상태: active
+- 작성일: 2026-09-22 10:00:00 KST
+  마지막 갱신:
+  목표 파일: .vibe-code/goals/current.md
+  
+  ## 목표
+  /goal <원하는 결과>로 목표를 지정하거나 이 파일을 편집하세요.
+
+ ❯ tests/unit/markdown.test.ts:268:20
+    266|    it(`${kind}: setLine은 빈 상태 ${JSON.stringify(blank)}만 제자리 교체한다`, () …
+    267|     const edited = setLine(input, "상태", "active");
+    268|     expect(edited).toBe(input.replace(`상태:${blank}${eol}`, `상태: active…
+       |                    ^
+    269|     expect(readStatus(edited)).toBe("active");
+    270|     expect(lint(edited)).toEqual(lint(template));
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[19/62]⎯
+
+ FAIL  tests/unit/markdown.test.ts > 빈 메타데이터 줄 경계 ("\r\n") > goal: touchPlan은 빈 상태·갱신 ""만 변경한다
+ FAIL  tests/unit/markdown.test.ts > 빈 메타데이터 줄 경계 ("\r\n") > goal: touchPlan은 빈 상태·갱신 " "만 변경한다
+ FAIL  tests/unit/markdown.test.ts > 빈 메타데이터 줄 경계 ("\r\n") > goal: touchPlan은 빈 상태·갱신 "\t"만 변경한다
+ FAIL  tests/unit/markdown.test.ts > 빈 메타데이터 줄 경계 ("\r\n") > goal: touchPlan은 빈 상태·갱신 " \t "만 변경한다
+AssertionError: expected '# 목표: 새 목표\r\n\r\n상태: active\r\n마지막 갱…' to be '# 목표: 새 목표\r\n\r\n상태: active\r\n작성일: …' // Object.is equality
+
+- Expected
++ Received
+
+@@ -1,11 +1,9 @@
+  # 목표: 새 목표
+  
+  상태: active
+- 작성일: 2026-09-22 10:00:00 KST
+- 마지막 갱신: new
+- 목표 파일: .vibe-code/goals/current.md
++ 마지막 갱신: new
+  
+  ## 목표
+  /goal <원하는 결과>로 목표를 지정하거나 이 파일을 편집하세요.
+  
+  ## 완료 기준
+
+ ❯ tests/unit/markdown.test.ts:274:20
+    272|    it(`${kind}: touchPlan은 빈 상태·갱신 ${JSON.stringify(blank)}만 변경한다`, ()…
+    273|     const edited = touchPlan(input, "active", "new");
+    274|     expect(edited).toBe(input.replace(`상태:${blank}${eol}`, `상태: active…
+       |                    ^
+    275|     expect(readStatus(edited)).toBe("active");
+    276|     expect(lint(edited)).toEqual(lint(template));
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[20/62]⎯
+
+ FAIL  tests/unit/markdown.test.ts > 빈 메타데이터 줄 경계 ("\r\n") > setLine은 값이 빈 앵커 바로 뒤에 삽입하고 마지막 갱신을 우선한다
+AssertionError: expected '작성일: original\r\n마지막 갱신: \t\r\n\r\n##…' to be '작성일: original\r\n마지막 갱신: \t\r\n우선순위: …' // Object.is equality
+
+- Expected
++ Received
+
+  작성일: original
+  마지막 갱신: 	
+- 우선순위: P0
+- 
+- ## Now
++ 
++ ## Now
++ 우선순위: P0
+  본문
+
+ ❯ tests/unit/markdown.test.ts:286:42
+    284|    for (const suffix of ["", "\n\n## Now\n본문"]) {
+    285|     const input = encode(`작성일: original\n${anchor}: \t${suffix}`);
+    286|     expect(setLine(input, "우선순위", "P0")).toBe(anchor === "마지막 갱신"
+       |                                          ^
+    287|      ? encode(`작성일: original\n${anchor}: \t\n우선순위: P0${suffix}`)
+    288|      : encode(`작성일: original\n우선순위: P0\n${anchor}: \t${suffix}`));
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[21/62]⎯
+
+ FAIL  tests/unit/markdown.test.ts > 빈 메타데이터 줄 경계 ("\r\n") > 파일 끝의 빈 라벨도 제자리 교체한다
+AssertionError: expected '작성일: original\r\n마지막 갱신: new\r\n상태:' to be '작성일: original\r\n마지막 갱신: new\r\n상태: a…' // Object.is equality
+
+- Expected
++ Received
+
+  작성일: original
+  마지막 갱신: new
+- 상태: active
++ 상태:
+
+ ❯ tests/unit/markdown.test.ts:297:68
+    295|  it("파일 끝의 빈 라벨도 제자리 교체한다", () => {
+    296|   expect(setLine(encode("작성일: original\na.b:\t"), "a.b", "value")).toB…
+    297|   expect(touchPlan(encode("작성일: original\n상태:"), "active", "new")).toB…
+       |                                                                    ^
+    298|   expect(touchPlan(encode("상태: active\n마지막 갱신:"), null, "new")).toBe(e…
+    299|  });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[22/62]⎯
+
+ FAIL  tests/unit/markdown.test.ts > 빈 메타데이터 줄 경계 ("\r\n") > touchPlan은 빈 작성일 바로 뒤에 누락 갱신을 삽입한다
+AssertionError: expected '상태:\r\n작성일: \t\r\n\r\n## Now\r\n마지막 갱…' to be '상태:\r\n작성일: \t\r\n마지막 갱신: new\r\n\r\n…' // Object.is equality
+
+- Expected
++ Received
+
+  상태:
+  작성일: 	
+- 마지막 갱신: new
+- 
+- ## Now
++ 
++ ## Now
++ 마지막 갱신: new
+  본문
+
+ ❯ tests/unit/markdown.test.ts:304:42
+    302|   for (const suffix of ["", "\n\n## Now\n본문"]) {
+    303|    const input = encode(`상태:\n작성일: \t${suffix}`);
+    304|    expect(touchPlan(input, null, "new")).toBe(encode(`상태:\n작성일: \t\n마지…
+       |                                          ^
+    305|   }
+    306|  });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[23/62]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  62 failed | 22 passed (84)
+   Start at  12:41:28
+   Duration  477ms (transform 115ms, setup 0ms, collect 145ms, tests 38ms, environment 0ms, prepare 36ms)
+
