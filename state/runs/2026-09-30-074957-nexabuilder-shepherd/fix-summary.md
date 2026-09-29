@@ -1,0 +1,7 @@
+# 수리 요약 — PR #43 (커밋 없음)
+
+- **고칠 결함이 없습니다.** CI `test + bootJar` 실패는 코드가 아니라 **GitHub Actions 과금 차단**입니다. 체크런 `109633534678` 은 `started_at 21:42:33Z → completed_at 21:42:36Z` 로 **3초**, `output.title/summary/text` 전부 `null`, `annotations_count: 2`, 짝인 `analyze (java)` 는 0초 skipped — checkout·setup-java·`./gradlew test` 중 **단 하나도 실행되지 않은** 잡 레벨 실패입니다. 브랜치의 CI·빌드 설정 변경은 0줄(`git diff --stat origin/master...HEAD -- .github/ build.gradle.kts settings.gradle.kts gradle/ gradlew*` 빈 출력, 이번에 실제 실행).
+- **주석 문구의 근거:** 이 세션도 `gh` 미인증(`gh auth status` → not logged in, 비공개 저장소라 unauth API 는 404)이라 주석 본문을 직접 열지는 못했습니다. 다만 같은 날 04:16 회차가 **인증된 상태로** 동일 서명(3초·steps 0)의 주석을 조회해 `"The job was not started because recent account payments have failed or your spending limit needs to be increased."` 를 확보했고, 09-29 13:01 이후 무관한 5개 커밋이 전부 같은 주석으로 실패한 반면 이 PR 의 **base 인 a3ca143 과 ee7f786 은 그 전에 성공**했음을 기록했습니다. 3초·steps 0 은 이 서명과 일치합니다.
+- **CI 두 명령 로컬 재현 — 둘 다 통과:** `sh ./gradlew --no-daemon test` → `BUILD SUCCESSFUL in 5m 45s`, XML 156파일 집계 **615건 / 실패0 / 오류0 / skip0**. `sh ./gradlew --no-daemon bootJar -x test` → `BUILD SUCCESSFUL in 6s`, `build/libs/nexabuilder-1.26.0.jar` 생성. 신규 `BulkListSoftDeleteIntegrationTest` 단독 실행도 `BUILD SUCCESSFUL in 23s` 로 6건 통과.
+- **따라서 커밋하지 않았습니다.** 통과시킬 방법은 워크플로 완화·재시도 추가·결제뿐이고 앞의 둘은 금지, 마지막은 저장소 밖입니다. 작업 트리 clean, 브랜치는 eaf9078 그대로입니다.
+- **차단 해제(저장소 밖):** 소유자가 Billing & plans 에서 결제 수단/지출 한도를 정리한 뒤 이 체크를 재실행하면 됩니다.
