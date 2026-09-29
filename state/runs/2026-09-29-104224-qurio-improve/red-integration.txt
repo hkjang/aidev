@@ -1,0 +1,27 @@
+=== RUN   TestPostgresOrdinalityAliasValidationAndPaging
+=== RUN   TestPostgresOrdinalityAliasValidationAndPaging/unnest(ARRAY[11,22,33])_WITH_ORDINALITY_g(value,position)
+    manager_integration_test.go:79: WITH ORDINALITY validation failed: {Valid:false Dialect:POSTGRES Strategy:read_only_explain Elapsed:0 Analysis:{StatementType:SELECT ReadOnly:false MultipleStatements:false Risk:blocked Reasons:[PostgreSQL SELECT의 비허용 함수 호출 g()이 포함되어 있습니다.] Tokens:[SELECT G VALUE TEXT AS VALUE G POSITION TEXT AS POSITION FROM UNNEST ARRAY WITH ORDINALITY G VALUE POSITION ORDER BY G POSITION]} Diagnostic:0x3ec4324d7860}, SQL violates the target database read-only policy: PostgreSQL SELECT의 비허용 함수 호출 g()이 포함되어 있습니다.
+    manager_integration_test.go:83: WITH ORDINALITY execution failed: SQL violates the target database read-only policy: PostgreSQL SELECT의 비허용 함수 호출 g()이 포함되어 있습니다.
+=== RUN   TestPostgresOrdinalityAliasValidationAndPaging/unnest(ARRAY[11,22,33])_WITH_ORDINALITY_AS_g(value,position)
+=== RUN   TestPostgresOrdinalityAliasValidationAndPaging/unnest(ARRAY[11,22,33])_with_/*_count_*/_ordinality_"g"("value","position")
+    manager_integration_test.go:79: WITH ORDINALITY validation failed: {Valid:false Dialect:POSTGRES Strategy:read_only_explain Elapsed:0 Analysis:{StatementType:SELECT ReadOnly:false MultipleStatements:false Risk:blocked Reasons:[PostgreSQL SELECT의 비허용 함수 호출 g()이 포함되어 있습니다.] Tokens:[SELECT G VALUE TEXT AS VALUE G POSITION TEXT AS POSITION FROM UNNEST ARRAY WITH ORDINALITY ORDER BY G POSITION]} Diagnostic:0x3ec43260e1e0}, SQL violates the target database read-only policy: PostgreSQL SELECT의 비허용 함수 호출 g()이 포함되어 있습니다.
+    manager_integration_test.go:83: WITH ORDINALITY execution failed: SQL violates the target database read-only policy: PostgreSQL SELECT의 비허용 함수 호출 g()이 포함되어 있습니다.
+=== RUN   TestPostgresOrdinalityAliasValidationAndPaging/(VALUES_(1))_AS_a(n),_LATERAL_unnest(ARRAY[11,22,33])_WITH_ORDINALITY_g(value,position)
+    manager_integration_test.go:79: WITH ORDINALITY validation failed: {Valid:false Dialect:POSTGRES Strategy:read_only_explain Elapsed:0 Analysis:{StatementType:SELECT ReadOnly:false MultipleStatements:false Risk:blocked Reasons:[PostgreSQL SELECT의 비허용 함수 호출 g()이 포함되어 있습니다.] Tokens:[SELECT G VALUE TEXT AS VALUE G POSITION TEXT AS POSITION FROM VALUES AS A N LATERAL UNNEST ARRAY WITH ORDINALITY G VALUE POSITION ORDER BY G POSITION]} Diagnostic:0x3ec43260e330}, SQL violates the target database read-only policy: PostgreSQL SELECT의 비허용 함수 호출 g()이 포함되어 있습니다.
+    manager_integration_test.go:83: WITH ORDINALITY execution failed: SQL violates the target database read-only policy: PostgreSQL SELECT의 비허용 함수 호출 g()이 포함되어 있습니다.
+=== RUN   TestPostgresOrdinalityAliasValidationAndPaging/(VALUES_(1))_AS_a(n)_JOIN_unnest(ARRAY[11,22,33])_WITH_ORDINALITY_g(value,position)_ON_a.n=1
+    manager_integration_test.go:79: WITH ORDINALITY validation failed: {Valid:false Dialect:POSTGRES Strategy:read_only_explain Elapsed:0 Analysis:{StatementType:SELECT ReadOnly:false MultipleStatements:false Risk:blocked Reasons:[PostgreSQL SELECT의 비허용 함수 호출 g()이 포함되어 있습니다.] Tokens:[SELECT G VALUE TEXT AS VALUE G POSITION TEXT AS POSITION FROM VALUES AS A N JOIN UNNEST ARRAY WITH ORDINALITY G VALUE POSITION ON A N ORDER BY G POSITION]} Diagnostic:0x3ec43260e480}, SQL violates the target database read-only policy: PostgreSQL SELECT의 비허용 함수 호출 g()이 포함되어 있습니다.
+    manager_integration_test.go:83: WITH ORDINALITY execution failed: SQL violates the target database read-only policy: PostgreSQL SELECT의 비허용 함수 호출 g()이 포함되어 있습니다.
+=== RUN   TestPostgresOrdinalityAliasValidationAndPaging/(VALUES_(1))_AS_a(n)_JOIN_(VALUES_(1))_AS_b(n)_ON_a.n=b.n,_unnest(ARRAY[11,22,33])_WITH_ORDINALITY_g(value,position)
+    manager_integration_test.go:79: WITH ORDINALITY validation failed: {Valid:false Dialect:POSTGRES Strategy:read_only_explain Elapsed:0 Analysis:{StatementType:SELECT ReadOnly:false MultipleStatements:false Risk:blocked Reasons:[PostgreSQL SELECT의 비허용 함수 호출 g()이 포함되어 있습니다.] Tokens:[SELECT G VALUE TEXT AS VALUE G POSITION TEXT AS POSITION FROM VALUES AS A N JOIN VALUES AS B N ON A N B N UNNEST ARRAY WITH ORDINALITY G VALUE POSITION ORDER BY G POSITION]} Diagnostic:0x3ec43260e5d0}, SQL violates the target database read-only policy: PostgreSQL SELECT의 비허용 함수 호출 g()이 포함되어 있습니다.
+    manager_integration_test.go:83: WITH ORDINALITY execution failed: SQL violates the target database read-only policy: PostgreSQL SELECT의 비허용 함수 호출 g()이 포함되어 있습니다.
+--- FAIL: TestPostgresOrdinalityAliasValidationAndPaging (0.05s)
+    --- FAIL: TestPostgresOrdinalityAliasValidationAndPaging/unnest(ARRAY[11,22,33])_WITH_ORDINALITY_g(value,position) (0.00s)
+    --- PASS: TestPostgresOrdinalityAliasValidationAndPaging/unnest(ARRAY[11,22,33])_WITH_ORDINALITY_AS_g(value,position) (0.04s)
+    --- FAIL: TestPostgresOrdinalityAliasValidationAndPaging/unnest(ARRAY[11,22,33])_with_/*_count_*/_ordinality_"g"("value","position") (0.00s)
+    --- FAIL: TestPostgresOrdinalityAliasValidationAndPaging/(VALUES_(1))_AS_a(n),_LATERAL_unnest(ARRAY[11,22,33])_WITH_ORDINALITY_g(value,position) (0.00s)
+    --- FAIL: TestPostgresOrdinalityAliasValidationAndPaging/(VALUES_(1))_AS_a(n)_JOIN_unnest(ARRAY[11,22,33])_WITH_ORDINALITY_g(value,position)_ON_a.n=1 (0.00s)
+    --- FAIL: TestPostgresOrdinalityAliasValidationAndPaging/(VALUES_(1))_AS_a(n)_JOIN_(VALUES_(1))_AS_b(n)_ON_a.n=b.n,_unnest(ARRAY[11,22,33])_WITH_ORDINALITY_g(value,position) (0.00s)
+FAIL
+FAIL	github.com/hkjang/qurio/internal/domain/dbexec	0.050s
+FAIL

@@ -1,0 +1,53 @@
+=== RUN   TestAnalyzeDialectAllowsPostgresOrdinalityAliasColumnLists
+=== PAUSE TestAnalyzeDialectAllowsPostgresOrdinalityAliasColumnLists
+=== RUN   TestAnalyzeDialectOrdinalityDoesNotExemptFunctionCalls
+=== PAUSE TestAnalyzeDialectOrdinalityDoesNotExemptFunctionCalls
+=== CONT  TestAnalyzeDialectAllowsPostgresOrdinalityAliasColumnLists
+=== RUN   TestAnalyzeDialectAllowsPostgresOrdinalityAliasColumnLists/SELECT_*_FROM_unnest(ARRAY[11,22])_WITH_ORDINALITY_g(value,position)
+=== CONT  TestAnalyzeDialectOrdinalityDoesNotExemptFunctionCalls
+=== NAME  TestAnalyzeDialectAllowsPostgresOrdinalityAliasColumnLists/SELECT_*_FROM_unnest(ARRAY[11,22])_WITH_ORDINALITY_g(value,position)
+    sqlsafe_test.go:268: PostgreSQL WITH ORDINALITY alias was rejected: sqlsafe.Analysis{StatementType:"SELECT", ReadOnly:false, MultipleStatements:false, Risk:"blocked", Reasons:[]string{"PostgreSQL SELECT의 비허용 함수 호출 g()이 포함되어 있습니다."}, Tokens:[]string{"SELECT", "FROM", "UNNEST", "ARRAY", "WITH", "ORDINALITY", "G", "VALUE", "POSITION"}}
+=== RUN   TestAnalyzeDialectOrdinalityDoesNotExemptFunctionCalls/SELECT_*_FROM_custom_reporting_fn(1)_WITH_ORDINALITY_g(value,position)
+=== RUN   TestAnalyzeDialectAllowsPostgresOrdinalityAliasColumnLists/SELECT_*_FROM_generate_series(11,22)_with_ordinality_g(value,position)
+    sqlsafe_test.go:268: PostgreSQL WITH ORDINALITY alias was rejected: sqlsafe.Analysis{StatementType:"SELECT", ReadOnly:false, MultipleStatements:false, Risk:"blocked", Reasons:[]string{"PostgreSQL SELECT의 비허용 함수 호출 g()이 포함되어 있습니다."}, Tokens:[]string{"SELECT", "FROM", "GENERATE_SERIES", "WITH", "ORDINALITY", "G", "VALUE", "POSITION"}}
+=== RUN   TestAnalyzeDialectOrdinalityDoesNotExemptFunctionCalls/SELECT_*_FROM_unnest(ARRAY[custom_reporting_fn(1)])_WITH_ORDINALITY_g(value,position)
+=== RUN   TestAnalyzeDialectAllowsPostgresOrdinalityAliasColumnLists/SELECT_*_FROM_unnest(ARRAY[11,22])_WITH_ORDINALITY_AS_g(value,position)
+=== RUN   TestAnalyzeDialectOrdinalityDoesNotExemptFunctionCalls/SELECT_*_FROM_unnest(ARRAY[1])_WITH_ORDINALITY_g(value,position)_WHERE_g.value=custom_reporting_fn(1)
+=== RUN   TestAnalyzeDialectAllowsPostgresOrdinalityAliasColumnLists/SELECT_*_FROM_unnest(ARRAY[11,22])_WITH_ORDINALITY_"g"("value","position")
+    sqlsafe_test.go:268: PostgreSQL WITH ORDINALITY alias was rejected: sqlsafe.Analysis{StatementType:"SELECT", ReadOnly:false, MultipleStatements:false, Risk:"blocked", Reasons:[]string{"PostgreSQL SELECT의 비허용 함수 호출 g()이 포함되어 있습니다."}, Tokens:[]string{"SELECT", "FROM", "UNNEST", "ARRAY", "WITH", "ORDINALITY"}}
+=== RUN   TestAnalyzeDialectOrdinalityDoesNotExemptFunctionCalls/SELECT_*_FROM_unnest(ARRAY[1])_WITH_ORDINALITY_g(value,position)_JOIN_(VALUES_(1))_a(n)_ON_(g.value)=custom_reporting_fn(a.n)
+=== RUN   TestAnalyzeDialectAllowsPostgresOrdinalityAliasColumnLists/SELECT_*_FROM_unnest(ARRAY[11,22])_/*_rows_*/_WITH_/*_count_*/_ORDINALITY_/*_alias_*/_g(value,position)
+=== RUN   TestAnalyzeDialectOrdinalityDoesNotExemptFunctionCalls/SELECT_ordinality_+_custom_reporting_fn(1)_FROM_public.events
+=== NAME  TestAnalyzeDialectAllowsPostgresOrdinalityAliasColumnLists/SELECT_*_FROM_unnest(ARRAY[11,22])_/*_rows_*/_WITH_/*_count_*/_ORDINALITY_/*_alias_*/_g(value,position)
+    sqlsafe_test.go:268: PostgreSQL WITH ORDINALITY alias was rejected: sqlsafe.Analysis{StatementType:"SELECT", ReadOnly:false, MultipleStatements:false, Risk:"blocked", Reasons:[]string{"PostgreSQL SELECT의 비허용 함수 호출 g()이 포함되어 있습니다."}, Tokens:[]string{"SELECT", "FROM", "UNNEST", "ARRAY", "WITH", "ORDINALITY", "G", "VALUE", "POSITION"}}
+=== RUN   TestAnalyzeDialectAllowsPostgresOrdinalityAliasColumnLists/SELECT_*_FROM_(VALUES_(1))_AS_a(n),_LATERAL_unnest(ARRAY[11,22])_WITH_ORDINALITY_g(value,position)
+    sqlsafe_test.go:268: PostgreSQL WITH ORDINALITY alias was rejected: sqlsafe.Analysis{StatementType:"SELECT", ReadOnly:false, MultipleStatements:false, Risk:"blocked", Reasons:[]string{"PostgreSQL SELECT의 비허용 함수 호출 g()이 포함되어 있습니다."}, Tokens:[]string{"SELECT", "FROM", "VALUES", "AS", "A", "N", "LATERAL", "UNNEST", "ARRAY", "WITH", "ORDINALITY", "G", "VALUE", "POSITION"}}
+=== RUN   TestAnalyzeDialectAllowsPostgresOrdinalityAliasColumnLists/SELECT_*_FROM_(VALUES_(1))_AS_a(n)_JOIN_unnest(ARRAY[11,22])_WITH_ORDINALITY_g(value,position)_ON_a.n=g.position
+=== RUN   TestAnalyzeDialectOrdinalityDoesNotExemptFunctionCalls/SELECT_(1)_WITH_ORDINALITY_custom_reporting_fn(1)
+=== NAME  TestAnalyzeDialectAllowsPostgresOrdinalityAliasColumnLists/SELECT_*_FROM_(VALUES_(1))_AS_a(n)_JOIN_unnest(ARRAY[11,22])_WITH_ORDINALITY_g(value,position)_ON_a.n=g.position
+    sqlsafe_test.go:268: PostgreSQL WITH ORDINALITY alias was rejected: sqlsafe.Analysis{StatementType:"SELECT", ReadOnly:false, MultipleStatements:false, Risk:"blocked", Reasons:[]string{"PostgreSQL SELECT의 비허용 함수 호출 g()이 포함되어 있습니다."}, Tokens:[]string{"SELECT", "FROM", "VALUES", "AS", "A", "N", "JOIN", "UNNEST", "ARRAY", "WITH", "ORDINALITY", "G", "VALUE", "POSITION", "ON", "A", "N", "G", "POSITION"}}
+=== RUN   TestAnalyzeDialectAllowsPostgresOrdinalityAliasColumnLists/SELECT_*_FROM_(VALUES_(1))_AS_a(n)_JOIN_(VALUES_(1))_AS_b(n)_ON_a.n=b.n,_unnest(ARRAY[11,22])_WITH_ORDINALITY_g(value,position)
+    sqlsafe_test.go:268: PostgreSQL WITH ORDINALITY alias was rejected: sqlsafe.Analysis{StatementType:"SELECT", ReadOnly:false, MultipleStatements:false, Risk:"blocked", Reasons:[]string{"PostgreSQL SELECT의 비허용 함수 호출 g()이 포함되어 있습니다."}, Tokens:[]string{"SELECT", "FROM", "VALUES", "AS", "A", "N", "JOIN", "VALUES", "AS", "B", "N", "ON", "A", "N", "B", "N", "UNNEST", "ARRAY", "WITH", "ORDINALITY", "G", "VALUE", "POSITION"}}
+--- FAIL: TestAnalyzeDialectAllowsPostgresOrdinalityAliasColumnLists (0.00s)
+    --- FAIL: TestAnalyzeDialectAllowsPostgresOrdinalityAliasColumnLists/SELECT_*_FROM_unnest(ARRAY[11,22])_WITH_ORDINALITY_g(value,position) (0.00s)
+    --- FAIL: TestAnalyzeDialectAllowsPostgresOrdinalityAliasColumnLists/SELECT_*_FROM_generate_series(11,22)_with_ordinality_g(value,position) (0.00s)
+    --- PASS: TestAnalyzeDialectAllowsPostgresOrdinalityAliasColumnLists/SELECT_*_FROM_unnest(ARRAY[11,22])_WITH_ORDINALITY_AS_g(value,position) (0.00s)
+    --- FAIL: TestAnalyzeDialectAllowsPostgresOrdinalityAliasColumnLists/SELECT_*_FROM_unnest(ARRAY[11,22])_WITH_ORDINALITY_"g"("value","position") (0.00s)
+    --- FAIL: TestAnalyzeDialectAllowsPostgresOrdinalityAliasColumnLists/SELECT_*_FROM_unnest(ARRAY[11,22])_/*_rows_*/_WITH_/*_count_*/_ORDINALITY_/*_alias_*/_g(value,position) (0.00s)
+    --- FAIL: TestAnalyzeDialectAllowsPostgresOrdinalityAliasColumnLists/SELECT_*_FROM_(VALUES_(1))_AS_a(n),_LATERAL_unnest(ARRAY[11,22])_WITH_ORDINALITY_g(value,position) (0.00s)
+    --- FAIL: TestAnalyzeDialectAllowsPostgresOrdinalityAliasColumnLists/SELECT_*_FROM_(VALUES_(1))_AS_a(n)_JOIN_unnest(ARRAY[11,22])_WITH_ORDINALITY_g(value,position)_ON_a.n=g.position (0.00s)
+    --- FAIL: TestAnalyzeDialectAllowsPostgresOrdinalityAliasColumnLists/SELECT_*_FROM_(VALUES_(1))_AS_a(n)_JOIN_(VALUES_(1))_AS_b(n)_ON_a.n=b.n,_unnest(ARRAY[11,22])_WITH_ORDINALITY_g(value,position) (0.00s)
+=== RUN   TestAnalyzeDialectOrdinalityDoesNotExemptFunctionCalls/SELECT_*_FROM_unnest(ARRAY[1])_"WITH"_ORDINALITY_custom_reporting_fn(1)
+=== RUN   TestAnalyzeDialectOrdinalityDoesNotExemptFunctionCalls/SELECT_*_FROM_unnest(ARRAY[1])_WITH_"ORDINALITY"_custom_reporting_fn(1)
+--- PASS: TestAnalyzeDialectOrdinalityDoesNotExemptFunctionCalls (0.00s)
+    --- PASS: TestAnalyzeDialectOrdinalityDoesNotExemptFunctionCalls/SELECT_*_FROM_custom_reporting_fn(1)_WITH_ORDINALITY_g(value,position) (0.00s)
+    --- PASS: TestAnalyzeDialectOrdinalityDoesNotExemptFunctionCalls/SELECT_*_FROM_unnest(ARRAY[custom_reporting_fn(1)])_WITH_ORDINALITY_g(value,position) (0.00s)
+    --- PASS: TestAnalyzeDialectOrdinalityDoesNotExemptFunctionCalls/SELECT_*_FROM_unnest(ARRAY[1])_WITH_ORDINALITY_g(value,position)_WHERE_g.value=custom_reporting_fn(1) (0.00s)
+    --- PASS: TestAnalyzeDialectOrdinalityDoesNotExemptFunctionCalls/SELECT_*_FROM_unnest(ARRAY[1])_WITH_ORDINALITY_g(value,position)_JOIN_(VALUES_(1))_a(n)_ON_(g.value)=custom_reporting_fn(a.n) (0.00s)
+    --- PASS: TestAnalyzeDialectOrdinalityDoesNotExemptFunctionCalls/SELECT_ordinality_+_custom_reporting_fn(1)_FROM_public.events (0.00s)
+    --- PASS: TestAnalyzeDialectOrdinalityDoesNotExemptFunctionCalls/SELECT_(1)_WITH_ORDINALITY_custom_reporting_fn(1) (0.00s)
+    --- PASS: TestAnalyzeDialectOrdinalityDoesNotExemptFunctionCalls/SELECT_*_FROM_unnest(ARRAY[1])_"WITH"_ORDINALITY_custom_reporting_fn(1) (0.00s)
+    --- PASS: TestAnalyzeDialectOrdinalityDoesNotExemptFunctionCalls/SELECT_*_FROM_unnest(ARRAY[1])_WITH_"ORDINALITY"_custom_reporting_fn(1) (0.00s)
+FAIL
+FAIL	github.com/hkjang/qurio/internal/domain/sqlsafe	0.003s
+FAIL

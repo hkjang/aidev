@@ -1,0 +1,58 @@
+=== RUN   TestAnalyzeDialectAllowsPostgresOrdinalityAliasColumnLists
+=== PAUSE TestAnalyzeDialectAllowsPostgresOrdinalityAliasColumnLists
+=== RUN   TestAnalyzeDialectOrdinalityDoesNotExemptFunctionCalls
+=== PAUSE TestAnalyzeDialectOrdinalityDoesNotExemptFunctionCalls
+=== CONT  TestAnalyzeDialectAllowsPostgresOrdinalityAliasColumnLists
+=== RUN   TestAnalyzeDialectAllowsPostgresOrdinalityAliasColumnLists/SELECT_*_FROM_unnest(ARRAY[11,22])_WITH_ORDINALITY_g(value,position)
+=== CONT  TestAnalyzeDialectOrdinalityDoesNotExemptFunctionCalls
+=== RUN   TestAnalyzeDialectAllowsPostgresOrdinalityAliasColumnLists/SELECT_*_FROM_generate_series(11,22)_with_ordinality_g(value,position)
+=== RUN   TestAnalyzeDialectOrdinalityDoesNotExemptFunctionCalls/SELECT_*_FROM_custom_reporting_fn(1)_WITH_ORDINALITY_g(value,position)
+=== RUN   TestAnalyzeDialectOrdinalityDoesNotExemptFunctionCalls/SELECT_*_FROM_unnest(ARRAY[custom_reporting_fn(1)])_WITH_ORDINALITY_g(value,position)
+=== RUN   TestAnalyzeDialectAllowsPostgresOrdinalityAliasColumnLists/SELECT_*_FROM_unnest(ARRAY[11,22])_WITH_ORDINALITY_AS_g(value,position)
+=== RUN   TestAnalyzeDialectAllowsPostgresOrdinalityAliasColumnLists/SELECT_*_FROM_unnest(ARRAY[11,22])_WITH_ORDINALITY_"g"("value","position")
+=== RUN   TestAnalyzeDialectOrdinalityDoesNotExemptFunctionCalls/SELECT_*_FROM_unnest(ARRAY[1])_WITH_ORDINALITY_g(value,position)_WHERE_g.value=custom_reporting_fn(1)
+=== RUN   TestAnalyzeDialectAllowsPostgresOrdinalityAliasColumnLists/SELECT_*_FROM_unnest(ARRAY[11,22])_/*_rows_*/_WITH_/*_count_*/_ORDINALITY_/*_alias_*/_g(value,position)
+=== RUN   TestAnalyzeDialectOrdinalityDoesNotExemptFunctionCalls/SELECT_*_FROM_unnest(ARRAY[1])_WITH_ORDINALITY_g(value,position)_JOIN_(VALUES_(1))_a(n)_ON_(g.value)=custom_reporting_fn(a.n)
+=== RUN   TestAnalyzeDialectAllowsPostgresOrdinalityAliasColumnLists/SELECT_*_FROM_(VALUES_(1))_AS_a(n),_LATERAL_unnest(ARRAY[11,22])_WITH_ORDINALITY_g(value,position)
+=== RUN   TestAnalyzeDialectOrdinalityDoesNotExemptFunctionCalls/SELECT_ordinality_+_custom_reporting_fn(1)_FROM_public.events
+=== RUN   TestAnalyzeDialectAllowsPostgresOrdinalityAliasColumnLists/SELECT_*_FROM_(VALUES_(1))_AS_a(n)_JOIN_unnest(ARRAY[11,22])_WITH_ORDINALITY_g(value,position)_ON_a.n=g.position
+=== RUN   TestAnalyzeDialectOrdinalityDoesNotExemptFunctionCalls/SELECT_(1)_WITH_ORDINALITY_custom_reporting_fn(1)
+=== RUN   TestAnalyzeDialectOrdinalityDoesNotExemptFunctionCalls/SELECT_*_FROM_unnest(ARRAY[1])_"WITH"_ORDINALITY_custom_reporting_fn(1)
+=== RUN   TestAnalyzeDialectAllowsPostgresOrdinalityAliasColumnLists/SELECT_*_FROM_(VALUES_(1))_AS_a(n)_JOIN_(VALUES_(1))_AS_b(n)_ON_a.n=b.n,_unnest(ARRAY[11,22])_WITH_ORDINALITY_g(value,position)
+=== RUN   TestAnalyzeDialectOrdinalityDoesNotExemptFunctionCalls/SELECT_*_FROM_unnest(ARRAY[1])_WITH_"ORDINALITY"_custom_reporting_fn(1)
+--- PASS: TestAnalyzeDialectOrdinalityDoesNotExemptFunctionCalls (0.00s)
+    --- PASS: TestAnalyzeDialectOrdinalityDoesNotExemptFunctionCalls/SELECT_*_FROM_custom_reporting_fn(1)_WITH_ORDINALITY_g(value,position) (0.00s)
+    --- PASS: TestAnalyzeDialectOrdinalityDoesNotExemptFunctionCalls/SELECT_*_FROM_unnest(ARRAY[custom_reporting_fn(1)])_WITH_ORDINALITY_g(value,position) (0.00s)
+    --- PASS: TestAnalyzeDialectOrdinalityDoesNotExemptFunctionCalls/SELECT_*_FROM_unnest(ARRAY[1])_WITH_ORDINALITY_g(value,position)_WHERE_g.value=custom_reporting_fn(1) (0.00s)
+    --- PASS: TestAnalyzeDialectOrdinalityDoesNotExemptFunctionCalls/SELECT_*_FROM_unnest(ARRAY[1])_WITH_ORDINALITY_g(value,position)_JOIN_(VALUES_(1))_a(n)_ON_(g.value)=custom_reporting_fn(a.n) (0.00s)
+    --- PASS: TestAnalyzeDialectOrdinalityDoesNotExemptFunctionCalls/SELECT_ordinality_+_custom_reporting_fn(1)_FROM_public.events (0.00s)
+    --- PASS: TestAnalyzeDialectOrdinalityDoesNotExemptFunctionCalls/SELECT_(1)_WITH_ORDINALITY_custom_reporting_fn(1) (0.00s)
+    --- PASS: TestAnalyzeDialectOrdinalityDoesNotExemptFunctionCalls/SELECT_*_FROM_unnest(ARRAY[1])_"WITH"_ORDINALITY_custom_reporting_fn(1) (0.00s)
+    --- PASS: TestAnalyzeDialectOrdinalityDoesNotExemptFunctionCalls/SELECT_*_FROM_unnest(ARRAY[1])_WITH_"ORDINALITY"_custom_reporting_fn(1) (0.00s)
+--- PASS: TestAnalyzeDialectAllowsPostgresOrdinalityAliasColumnLists (0.00s)
+    --- PASS: TestAnalyzeDialectAllowsPostgresOrdinalityAliasColumnLists/SELECT_*_FROM_unnest(ARRAY[11,22])_WITH_ORDINALITY_g(value,position) (0.00s)
+    --- PASS: TestAnalyzeDialectAllowsPostgresOrdinalityAliasColumnLists/SELECT_*_FROM_generate_series(11,22)_with_ordinality_g(value,position) (0.00s)
+    --- PASS: TestAnalyzeDialectAllowsPostgresOrdinalityAliasColumnLists/SELECT_*_FROM_unnest(ARRAY[11,22])_WITH_ORDINALITY_AS_g(value,position) (0.00s)
+    --- PASS: TestAnalyzeDialectAllowsPostgresOrdinalityAliasColumnLists/SELECT_*_FROM_unnest(ARRAY[11,22])_WITH_ORDINALITY_"g"("value","position") (0.00s)
+    --- PASS: TestAnalyzeDialectAllowsPostgresOrdinalityAliasColumnLists/SELECT_*_FROM_unnest(ARRAY[11,22])_/*_rows_*/_WITH_/*_count_*/_ORDINALITY_/*_alias_*/_g(value,position) (0.00s)
+    --- PASS: TestAnalyzeDialectAllowsPostgresOrdinalityAliasColumnLists/SELECT_*_FROM_(VALUES_(1))_AS_a(n),_LATERAL_unnest(ARRAY[11,22])_WITH_ORDINALITY_g(value,position) (0.00s)
+    --- PASS: TestAnalyzeDialectAllowsPostgresOrdinalityAliasColumnLists/SELECT_*_FROM_(VALUES_(1))_AS_a(n)_JOIN_unnest(ARRAY[11,22])_WITH_ORDINALITY_g(value,position)_ON_a.n=g.position (0.00s)
+    --- PASS: TestAnalyzeDialectAllowsPostgresOrdinalityAliasColumnLists/SELECT_*_FROM_(VALUES_(1))_AS_a(n)_JOIN_(VALUES_(1))_AS_b(n)_ON_a.n=b.n,_unnest(ARRAY[11,22])_WITH_ORDINALITY_g(value,position) (0.00s)
+PASS
+ok  	github.com/hkjang/qurio/internal/domain/sqlsafe	1.013s
+=== RUN   TestPostgresOrdinalityAliasValidationAndPaging
+=== RUN   TestPostgresOrdinalityAliasValidationAndPaging/unnest(ARRAY[11,22,33])_WITH_ORDINALITY_g(value,position)
+=== RUN   TestPostgresOrdinalityAliasValidationAndPaging/unnest(ARRAY[11,22,33])_WITH_ORDINALITY_AS_g(value,position)
+=== RUN   TestPostgresOrdinalityAliasValidationAndPaging/unnest(ARRAY[11,22,33])_with_/*_count_*/_ordinality_"g"("value","position")
+=== RUN   TestPostgresOrdinalityAliasValidationAndPaging/(VALUES_(1))_AS_a(n),_LATERAL_unnest(ARRAY[11,22,33])_WITH_ORDINALITY_g(value,position)
+=== RUN   TestPostgresOrdinalityAliasValidationAndPaging/(VALUES_(1))_AS_a(n)_JOIN_unnest(ARRAY[11,22,33])_WITH_ORDINALITY_g(value,position)_ON_a.n=1
+=== RUN   TestPostgresOrdinalityAliasValidationAndPaging/(VALUES_(1))_AS_a(n)_JOIN_(VALUES_(1))_AS_b(n)_ON_a.n=b.n,_unnest(ARRAY[11,22,33])_WITH_ORDINALITY_g(value,position)
+--- PASS: TestPostgresOrdinalityAliasValidationAndPaging (0.14s)
+    --- PASS: TestPostgresOrdinalityAliasValidationAndPaging/unnest(ARRAY[11,22,33])_WITH_ORDINALITY_g(value,position) (0.04s)
+    --- PASS: TestPostgresOrdinalityAliasValidationAndPaging/unnest(ARRAY[11,22,33])_WITH_ORDINALITY_AS_g(value,position) (0.03s)
+    --- PASS: TestPostgresOrdinalityAliasValidationAndPaging/unnest(ARRAY[11,22,33])_with_/*_count_*/_ordinality_"g"("value","position") (0.02s)
+    --- PASS: TestPostgresOrdinalityAliasValidationAndPaging/(VALUES_(1))_AS_a(n),_LATERAL_unnest(ARRAY[11,22,33])_WITH_ORDINALITY_g(value,position) (0.02s)
+    --- PASS: TestPostgresOrdinalityAliasValidationAndPaging/(VALUES_(1))_AS_a(n)_JOIN_unnest(ARRAY[11,22,33])_WITH_ORDINALITY_g(value,position)_ON_a.n=1 (0.02s)
+    --- PASS: TestPostgresOrdinalityAliasValidationAndPaging/(VALUES_(1))_AS_a(n)_JOIN_(VALUES_(1))_AS_b(n)_ON_a.n=b.n,_unnest(ARRAY[11,22,33])_WITH_ORDINALITY_g(value,position) (0.02s)
+PASS
+ok  	github.com/hkjang/qurio/internal/domain/dbexec	1.156s

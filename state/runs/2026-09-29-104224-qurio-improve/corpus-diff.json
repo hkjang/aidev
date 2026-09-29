@@ -1,0 +1,314 @@
+[
+  {
+    "before": {
+      "Query": "SELECT * FROM (VALUES (1)) AS a(n) JOIN (VALUES (1)) AS b(n) ON a.n=b.n, unnest(ARRAY[11,22]) WITH ORDINALITY g(value,position)",
+      "Dialect": "postgres",
+      "Analysis": {
+        "statementType": "SELECT",
+        "readOnly": false,
+        "multipleStatements": false,
+        "risk": "blocked",
+        "reasons": [
+          "PostgreSQL SELECT의 비허용 함수 호출 g()이 포함되어 있습니다."
+        ]
+      }
+    },
+    "after": {
+      "Query": "SELECT * FROM (VALUES (1)) AS a(n) JOIN (VALUES (1)) AS b(n) ON a.n=b.n, unnest(ARRAY[11,22]) WITH ORDINALITY g(value,position)",
+      "Dialect": "postgres",
+      "Analysis": {
+        "statementType": "SELECT",
+        "readOnly": true,
+        "multipleStatements": false,
+        "risk": "low",
+        "reasons": [
+          "단일 읽기 전용 SQL 문입니다."
+        ]
+      }
+    }
+  },
+  {
+    "before": {
+      "Query": "SELECT * FROM (VALUES (1)) AS a(n) JOIN unnest(ARRAY[11,22]) WITH ORDINALITY g(value,position) ON a.n=g.position",
+      "Dialect": "postgres",
+      "Analysis": {
+        "statementType": "SELECT",
+        "readOnly": false,
+        "multipleStatements": false,
+        "risk": "blocked",
+        "reasons": [
+          "PostgreSQL SELECT의 비허용 함수 호출 g()이 포함되어 있습니다."
+        ]
+      }
+    },
+    "after": {
+      "Query": "SELECT * FROM (VALUES (1)) AS a(n) JOIN unnest(ARRAY[11,22]) WITH ORDINALITY g(value,position) ON a.n=g.position",
+      "Dialect": "postgres",
+      "Analysis": {
+        "statementType": "SELECT",
+        "readOnly": true,
+        "multipleStatements": false,
+        "risk": "low",
+        "reasons": [
+          "단일 읽기 전용 SQL 문입니다."
+        ]
+      }
+    }
+  },
+  {
+    "before": {
+      "Query": "SELECT * FROM (VALUES (1)) AS a(n), LATERAL unnest(ARRAY[11,22]) WITH ORDINALITY g(value,position)",
+      "Dialect": "postgres",
+      "Analysis": {
+        "statementType": "SELECT",
+        "readOnly": false,
+        "multipleStatements": false,
+        "risk": "blocked",
+        "reasons": [
+          "PostgreSQL SELECT의 비허용 함수 호출 g()이 포함되어 있습니다."
+        ]
+      }
+    },
+    "after": {
+      "Query": "SELECT * FROM (VALUES (1)) AS a(n), LATERAL unnest(ARRAY[11,22]) WITH ORDINALITY g(value,position)",
+      "Dialect": "postgres",
+      "Analysis": {
+        "statementType": "SELECT",
+        "readOnly": true,
+        "multipleStatements": false,
+        "risk": "low",
+        "reasons": [
+          "단일 읽기 전용 SQL 문입니다."
+        ]
+      }
+    }
+  },
+  {
+    "before": {
+      "Query": "SELECT * FROM custom_reporting_fn(1) WITH ORDINALITY g(value,position)",
+      "Dialect": "postgres",
+      "Analysis": {
+        "statementType": "SELECT",
+        "readOnly": false,
+        "multipleStatements": false,
+        "risk": "blocked",
+        "reasons": [
+          "PostgreSQL SELECT의 비허용 함수 호출 custom_reporting_fn()이 포함되어 있습니다.",
+          "PostgreSQL SELECT의 비허용 함수 호출 g()이 포함되어 있습니다."
+        ]
+      }
+    },
+    "after": {
+      "Query": "SELECT * FROM custom_reporting_fn(1) WITH ORDINALITY g(value,position)",
+      "Dialect": "postgres",
+      "Analysis": {
+        "statementType": "SELECT",
+        "readOnly": false,
+        "multipleStatements": false,
+        "risk": "blocked",
+        "reasons": [
+          "PostgreSQL SELECT의 비허용 함수 호출 custom_reporting_fn()이 포함되어 있습니다."
+        ]
+      }
+    }
+  },
+  {
+    "before": {
+      "Query": "SELECT * FROM generate_series(11,22) with ordinality g(value,position)",
+      "Dialect": "postgres",
+      "Analysis": {
+        "statementType": "SELECT",
+        "readOnly": false,
+        "multipleStatements": false,
+        "risk": "blocked",
+        "reasons": [
+          "PostgreSQL SELECT의 비허용 함수 호출 g()이 포함되어 있습니다."
+        ]
+      }
+    },
+    "after": {
+      "Query": "SELECT * FROM generate_series(11,22) with ordinality g(value,position)",
+      "Dialect": "postgres",
+      "Analysis": {
+        "statementType": "SELECT",
+        "readOnly": true,
+        "multipleStatements": false,
+        "risk": "low",
+        "reasons": [
+          "단일 읽기 전용 SQL 문입니다."
+        ]
+      }
+    }
+  },
+  {
+    "before": {
+      "Query": "SELECT * FROM unnest(ARRAY[11,22]) /* rows */ WITH /* count */ ORDINALITY /* alias */ g(value,position)",
+      "Dialect": "postgres",
+      "Analysis": {
+        "statementType": "SELECT",
+        "readOnly": false,
+        "multipleStatements": false,
+        "risk": "blocked",
+        "reasons": [
+          "PostgreSQL SELECT의 비허용 함수 호출 g()이 포함되어 있습니다."
+        ]
+      }
+    },
+    "after": {
+      "Query": "SELECT * FROM unnest(ARRAY[11,22]) /* rows */ WITH /* count */ ORDINALITY /* alias */ g(value,position)",
+      "Dialect": "postgres",
+      "Analysis": {
+        "statementType": "SELECT",
+        "readOnly": true,
+        "multipleStatements": false,
+        "risk": "low",
+        "reasons": [
+          "단일 읽기 전용 SQL 문입니다."
+        ]
+      }
+    }
+  },
+  {
+    "before": {
+      "Query": "SELECT * FROM unnest(ARRAY[11,22]) WITH ORDINALITY \"g\"(\"value\",\"position\")",
+      "Dialect": "postgres",
+      "Analysis": {
+        "statementType": "SELECT",
+        "readOnly": false,
+        "multipleStatements": false,
+        "risk": "blocked",
+        "reasons": [
+          "PostgreSQL SELECT의 비허용 함수 호출 g()이 포함되어 있습니다."
+        ]
+      }
+    },
+    "after": {
+      "Query": "SELECT * FROM unnest(ARRAY[11,22]) WITH ORDINALITY \"g\"(\"value\",\"position\")",
+      "Dialect": "postgres",
+      "Analysis": {
+        "statementType": "SELECT",
+        "readOnly": true,
+        "multipleStatements": false,
+        "risk": "low",
+        "reasons": [
+          "단일 읽기 전용 SQL 문입니다."
+        ]
+      }
+    }
+  },
+  {
+    "before": {
+      "Query": "SELECT * FROM unnest(ARRAY[11,22]) WITH ORDINALITY g(value,position)",
+      "Dialect": "postgres",
+      "Analysis": {
+        "statementType": "SELECT",
+        "readOnly": false,
+        "multipleStatements": false,
+        "risk": "blocked",
+        "reasons": [
+          "PostgreSQL SELECT의 비허용 함수 호출 g()이 포함되어 있습니다."
+        ]
+      }
+    },
+    "after": {
+      "Query": "SELECT * FROM unnest(ARRAY[11,22]) WITH ORDINALITY g(value,position)",
+      "Dialect": "postgres",
+      "Analysis": {
+        "statementType": "SELECT",
+        "readOnly": true,
+        "multipleStatements": false,
+        "risk": "low",
+        "reasons": [
+          "단일 읽기 전용 SQL 문입니다."
+        ]
+      }
+    }
+  },
+  {
+    "before": {
+      "Query": "SELECT * FROM unnest(ARRAY[1]) WITH ORDINALITY g(value,position) JOIN (VALUES (1)) a(n) ON (g.value)=custom_reporting_fn(a.n)",
+      "Dialect": "postgres",
+      "Analysis": {
+        "statementType": "SELECT",
+        "readOnly": false,
+        "multipleStatements": false,
+        "risk": "blocked",
+        "reasons": [
+          "PostgreSQL SELECT의 비허용 함수 호출 g()이 포함되어 있습니다.",
+          "PostgreSQL SELECT의 비허용 함수 호출 custom_reporting_fn()이 포함되어 있습니다."
+        ]
+      }
+    },
+    "after": {
+      "Query": "SELECT * FROM unnest(ARRAY[1]) WITH ORDINALITY g(value,position) JOIN (VALUES (1)) a(n) ON (g.value)=custom_reporting_fn(a.n)",
+      "Dialect": "postgres",
+      "Analysis": {
+        "statementType": "SELECT",
+        "readOnly": false,
+        "multipleStatements": false,
+        "risk": "blocked",
+        "reasons": [
+          "PostgreSQL SELECT의 비허용 함수 호출 custom_reporting_fn()이 포함되어 있습니다."
+        ]
+      }
+    }
+  },
+  {
+    "before": {
+      "Query": "SELECT * FROM unnest(ARRAY[1]) WITH ORDINALITY g(value,position) WHERE g.value=custom_reporting_fn(1)",
+      "Dialect": "postgres",
+      "Analysis": {
+        "statementType": "SELECT",
+        "readOnly": false,
+        "multipleStatements": false,
+        "risk": "blocked",
+        "reasons": [
+          "PostgreSQL SELECT의 비허용 함수 호출 g()이 포함되어 있습니다.",
+          "PostgreSQL SELECT의 비허용 함수 호출 custom_reporting_fn()이 포함되어 있습니다."
+        ]
+      }
+    },
+    "after": {
+      "Query": "SELECT * FROM unnest(ARRAY[1]) WITH ORDINALITY g(value,position) WHERE g.value=custom_reporting_fn(1)",
+      "Dialect": "postgres",
+      "Analysis": {
+        "statementType": "SELECT",
+        "readOnly": false,
+        "multipleStatements": false,
+        "risk": "blocked",
+        "reasons": [
+          "PostgreSQL SELECT의 비허용 함수 호출 custom_reporting_fn()이 포함되어 있습니다."
+        ]
+      }
+    }
+  },
+  {
+    "before": {
+      "Query": "SELECT * FROM unnest(ARRAY[custom_reporting_fn(1)]) WITH ORDINALITY g(value,position)",
+      "Dialect": "postgres",
+      "Analysis": {
+        "statementType": "SELECT",
+        "readOnly": false,
+        "multipleStatements": false,
+        "risk": "blocked",
+        "reasons": [
+          "PostgreSQL SELECT의 비허용 함수 호출 custom_reporting_fn()이 포함되어 있습니다.",
+          "PostgreSQL SELECT의 비허용 함수 호출 g()이 포함되어 있습니다."
+        ]
+      }
+    },
+    "after": {
+      "Query": "SELECT * FROM unnest(ARRAY[custom_reporting_fn(1)]) WITH ORDINALITY g(value,position)",
+      "Dialect": "postgres",
+      "Analysis": {
+        "statementType": "SELECT",
+        "readOnly": false,
+        "multipleStatements": false,
+        "risk": "blocked",
+        "reasons": [
+          "PostgreSQL SELECT의 비허용 함수 호출 custom_reporting_fn()이 포함되어 있습니다."
+        ]
+      }
+    }
+  }
+]

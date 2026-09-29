@@ -1,0 +1,3746 @@
+[
+  {
+    "Query": "SELECT \"ABS\"(amount) FROM reporting.sales",
+    "Dialect": "postgres",
+    "Analysis": {
+      "statementType": "SELECT",
+      "readOnly": false,
+      "multipleStatements": false,
+      "risk": "blocked",
+      "reasons": [
+        "PostgreSQL SELECT의 비허용 함수 호출 ABS()이 포함되어 있습니다."
+      ]
+    }
+  },
+  {
+    "Query": "SELECT \"ABS\"(amount) FROM reporting.sales",
+    "Dialect": "oracle",
+    "Analysis": {
+      "statementType": "SELECT",
+      "readOnly": false,
+      "multipleStatements": false,
+      "risk": "blocked",
+      "reasons": [
+        "Oracle SELECT의 비허용 함수 호출 ABS()이 포함되어 있습니다."
+      ]
+    }
+  },
+  {
+    "Query": "SELECT \"SALES_SEQUENCE\".\"NEXTVAL\" FROM dual",
+    "Dialect": "postgres",
+    "Analysis": {
+      "statementType": "SELECT",
+      "readOnly": true,
+      "multipleStatements": false,
+      "risk": "low",
+      "reasons": [
+        "단일 읽기 전용 SQL 문입니다."
+      ]
+    }
+  },
+  {
+    "Query": "SELECT \"SALES_SEQUENCE\".\"NEXTVAL\" FROM dual",
+    "Dialect": "oracle",
+    "Analysis": {
+      "statementType": "SELECT",
+      "readOnly": false,
+      "multipleStatements": false,
+      "risk": "blocked",
+      "reasons": [
+        "Oracle sequence 의사컬럼 NEXTVAL/CURRVAL은 허용되지 않습니다."
+      ]
+    }
+  },
+  {
+    "Query": "SELECT \"column@label\" FROM reporting.sales /* @remote side_effect_fn() */",
+    "Dialect": "postgres",
+    "Analysis": {
+      "statementType": "SELECT",
+      "readOnly": true,
+      "multipleStatements": false,
+      "risk": "low",
+      "reasons": [
+        "단일 읽기 전용 SQL 문입니다."
+      ]
+    }
+  },
+  {
+    "Query": "SELECT \"column@label\" FROM reporting.sales /* @remote side_effect_fn() */",
+    "Dialect": "oracle",
+    "Analysis": {
+      "statementType": "SELECT",
+      "readOnly": true,
+      "multipleStatements": false,
+      "risk": "low",
+      "reasons": [
+        "단일 읽기 전용 SQL 문입니다."
+      ]
+    }
+  },
+  {
+    "Query": "SELECT \"delete\" FROM audit_log",
+    "Dialect": "postgres",
+    "Analysis": {
+      "statementType": "SELECT",
+      "readOnly": true,
+      "multipleStatements": false,
+      "risk": "low",
+      "reasons": [
+        "단일 읽기 전용 SQL 문입니다."
+      ]
+    }
+  },
+  {
+    "Query": "SELECT \"delete\" FROM audit_log",
+    "Dialect": "oracle",
+    "Analysis": {
+      "statementType": "SELECT",
+      "readOnly": true,
+      "multipleStatements": false,
+      "risk": "low",
+      "reasons": [
+        "단일 읽기 전용 SQL 문입니다."
+      ]
+    }
+  },
+  {
+    "Query": "SELECT \"evil_type\" 'payload' FROM public.events",
+    "Dialect": "postgres",
+    "Analysis": {
+      "statementType": "SELECT",
+      "readOnly": false,
+      "multipleStatements": false,
+      "risk": "blocked",
+      "reasons": [
+        "PostgreSQL의 비허용 사용자 정의 문자열 상수 형식 evil_type이 포함되어 있습니다."
+      ]
+    }
+  },
+  {
+    "Query": "SELECT \"evil_type\" 'payload' FROM public.events",
+    "Dialect": "oracle",
+    "Analysis": {
+      "statementType": "SELECT",
+      "readOnly": true,
+      "multipleStatements": false,
+      "risk": "low",
+      "reasons": [
+        "단일 읽기 전용 SQL 문입니다."
+      ]
+    }
+  },
+  {
+    "Query": "SELECT \"pg_read_file\"('/etc/passwd') FROM public.events",
+    "Dialect": "postgres",
+    "Analysis": {
+      "statementType": "SELECT",
+      "readOnly": false,
+      "multipleStatements": false,
+      "risk": "blocked",
+      "reasons": [
+        "PostgreSQL SELECT의 비허용 함수 호출 pg_read_file()이 포함되어 있습니다."
+      ]
+    }
+  },
+  {
+    "Query": "SELECT \"pg_read_file\"('/etc/passwd') FROM public.events",
+    "Dialect": "oracle",
+    "Analysis": {
+      "statementType": "SELECT",
+      "readOnly": false,
+      "multipleStatements": false,
+      "risk": "blocked",
+      "reasons": [
+        "Oracle SELECT의 비허용 함수 호출 pg_read_file()이 포함되어 있습니다."
+      ]
+    }
+  },
+  {
+    "Query": "SELECT $$pg_read_file('/etc/passwd')$$::text, MD5(id::text) FROM public.events",
+    "Dialect": "postgres",
+    "Analysis": {
+      "statementType": "SELECT",
+      "readOnly": true,
+      "multipleStatements": false,
+      "risk": "low",
+      "reasons": [
+        "단일 읽기 전용 SQL 문입니다."
+      ]
+    }
+  },
+  {
+    "Query": "SELECT $$pg_read_file('/etc/passwd')$$::text, MD5(id::text) FROM public.events",
+    "Dialect": "oracle",
+    "Analysis": {
+      "statementType": "SELECT",
+      "readOnly": false,
+      "multipleStatements": false,
+      "risk": "blocked",
+      "reasons": [
+        "Oracle SELECT의 비허용 함수 호출 MD5()이 포함되어 있습니다."
+      ]
+    }
+  },
+  {
+    "Query": "SELECT '@remote side_effect_fn()' AS sample FROM dual",
+    "Dialect": "postgres",
+    "Analysis": {
+      "statementType": "SELECT",
+      "readOnly": true,
+      "multipleStatements": false,
+      "risk": "low",
+      "reasons": [
+        "단일 읽기 전용 SQL 문입니다."
+      ]
+    }
+  },
+  {
+    "Query": "SELECT '@remote side_effect_fn()' AS sample FROM dual",
+    "Dialect": "oracle",
+    "Analysis": {
+      "statementType": "SELECT",
+      "readOnly": true,
+      "multipleStatements": false,
+      "risk": "low",
+      "reasons": [
+        "단일 읽기 전용 SQL 문입니다."
+      ]
+    }
+  },
+  {
+    "Query": "SELECT (1) WITH ORDINALITY custom_reporting_fn(1)",
+    "Dialect": "postgres",
+    "Analysis": {
+      "statementType": "SELECT",
+      "readOnly": false,
+      "multipleStatements": false,
+      "risk": "blocked",
+      "reasons": [
+        "PostgreSQL SELECT의 비허용 함수 호출 custom_reporting_fn()이 포함되어 있습니다."
+      ]
+    }
+  },
+  {
+    "Query": "SELECT (1) WITH ORDINALITY custom_reporting_fn(1)",
+    "Dialect": "oracle",
+    "Analysis": {
+      "statementType": "SELECT",
+      "readOnly": false,
+      "multipleStatements": false,
+      "risk": "blocked",
+      "reasons": [
+        "Oracle SELECT의 비허용 함수 호출 custom_reporting_fn()이 포함되어 있습니다."
+      ]
+    }
+  },
+  {
+    "Query": "SELECT (1) || custom_reporting_fn(id) FROM public.events",
+    "Dialect": "postgres",
+    "Analysis": {
+      "statementType": "SELECT",
+      "readOnly": false,
+      "multipleStatements": false,
+      "risk": "blocked",
+      "reasons": [
+        "PostgreSQL SELECT의 비허용 함수 호출 custom_reporting_fn()이 포함되어 있습니다."
+      ]
+    }
+  },
+  {
+    "Query": "SELECT (1) || custom_reporting_fn(id) FROM public.events",
+    "Dialect": "oracle",
+    "Analysis": {
+      "statementType": "SELECT",
+      "readOnly": false,
+      "multipleStatements": false,
+      "risk": "blocked",
+      "reasons": [
+        "Oracle SELECT의 비허용 함수 호출 custom_reporting_fn()이 포함되어 있습니다."
+      ]
+    }
+  },
+  {
+    "Query": "SELECT (1) || side_effect_fn(id) FROM reporting.sales",
+    "Dialect": "postgres",
+    "Analysis": {
+      "statementType": "SELECT",
+      "readOnly": false,
+      "multipleStatements": false,
+      "risk": "blocked",
+      "reasons": [
+        "PostgreSQL SELECT의 비허용 함수 호출 side_effect_fn()이 포함되어 있습니다."
+      ]
+    }
+  },
+  {
+    "Query": "SELECT (1) || side_effect_fn(id) FROM reporting.sales",
+    "Dialect": "oracle",
+    "Analysis": {
+      "statementType": "SELECT",
+      "readOnly": false,
+      "multipleStatements": false,
+      "risk": "blocked",
+      "reasons": [
+        "Oracle SELECT의 비허용 함수 호출 side_effect_fn()이 포함되어 있습니다."
+      ]
+    }
+  },
+  {
+    "Query": "SELECT (SELECT 1) || dblink_exec('host=internal', 'DROP TABLE victim') FROM public.events",
+    "Dialect": "postgres",
+    "Analysis": {
+      "statementType": "SELECT",
+      "readOnly": false,
+      "multipleStatements": false,
+      "risk": "blocked",
+      "reasons": [
+        "PostgreSQL SELECT의 비허용 함수 호출 dblink_exec()이 포함되어 있습니다."
+      ]
+    }
+  },
+  {
+    "Query": "SELECT (SELECT 1) || dblink_exec('host=internal', 'DROP TABLE victim') FROM public.events",
+    "Dialect": "oracle",
+    "Analysis": {
+      "statementType": "SELECT",
+      "readOnly": false,
+      "multipleStatements": false,
+      "risk": "blocked",
+      "reasons": [
+        "Oracle SELECT의 비허용 함수 호출 dblink_exec()이 포함되어 있습니다."
+      ]
+    }
+  },
+  {
+    "Query": "SELECT (amount + 1) * custom_reporting_fn(id) FROM public.events",
+    "Dialect": "postgres",
+    "Analysis": {
+      "statementType": "SELECT",
+      "readOnly": false,
+      "multipleStatements": false,
+      "risk": "blocked",
+      "reasons": [
+        "PostgreSQL SELECT의 비허용 함수 호출 custom_reporting_fn()이 포함되어 있습니다."
+      ]
+    }
+  },
+  {
+    "Query": "SELECT (amount + 1) * custom_reporting_fn(id) FROM public.events",
+    "Dialect": "oracle",
+    "Analysis": {
+      "statementType": "SELECT",
+      "readOnly": false,
+      "multipleStatements": false,
+      "risk": "blocked",
+      "reasons": [
+        "Oracle SELECT의 비허용 함수 호출 custom_reporting_fn()이 포함되어 있습니다."
+      ]
+    }
+  },
+  {
+    "Query": "SELECT * FROM \"Reporting\".\"Sales\" @ \"RemoteLink\"",
+    "Dialect": "postgres",
+    "Analysis": {
+      "statementType": "SELECT",
+      "readOnly": true,
+      "multipleStatements": false,
+      "risk": "low",
+      "reasons": [
+        "단일 읽기 전용 SQL 문입니다."
+      ]
+    }
+  },
+  {
+    "Query": "SELECT * FROM \"Reporting\".\"Sales\" @ \"RemoteLink\"",
+    "Dialect": "oracle",
+    "Analysis": {
+      "statementType": "SELECT",
+      "readOnly": false,
+      "multipleStatements": false,
+      "risk": "blocked",
+      "reasons": [
+        "Oracle database link(@) 참조는 허용되지 않습니다."
+      ]
+    }
+  },
+  {
+    "Query": "SELECT * FROM ((SELECT 1) t(x))",
+    "Dialect": "postgres",
+    "Analysis": {
+      "statementType": "SELECT",
+      "readOnly": true,
+      "multipleStatements": false,
+      "risk": "low",
+      "reasons": [
+        "단일 읽기 전용 SQL 문입니다."
+      ]
+    }
+  },
+  {
+    "Query": "SELECT * FROM ((SELECT 1) t(x))",
+    "Dialect": "oracle",
+    "Analysis": {
+      "statementType": "SELECT",
+      "readOnly": false,
+      "multipleStatements": false,
+      "risk": "blocked",
+      "reasons": [
+        "Oracle SELECT의 비허용 함수 호출 t()이 포함되어 있습니다."
+      ]
+    }
+  },
+  {
+    "Query": "SELECT * FROM (SELECT 1 AS n) t(value)",
+    "Dialect": "postgres",
+    "Analysis": {
+      "statementType": "SELECT",
+      "readOnly": true,
+      "multipleStatements": false,
+      "risk": "low",
+      "reasons": [
+        "단일 읽기 전용 SQL 문입니다."
+      ]
+    }
+  },
+  {
+    "Query": "SELECT * FROM (SELECT 1 AS n) t(value)",
+    "Dialect": "oracle",
+    "Analysis": {
+      "statementType": "SELECT",
+      "readOnly": false,
+      "multipleStatements": false,
+      "risk": "blocked",
+      "reasons": [
+        "Oracle SELECT의 비허용 함수 호출 t()이 포함되어 있습니다."
+      ]
+    }
+  },
+  {
+    "Query": "SELECT * FROM (SELECT 1) t(x)",
+    "Dialect": "postgres",
+    "Analysis": {
+      "statementType": "SELECT",
+      "readOnly": true,
+      "multipleStatements": false,
+      "risk": "low",
+      "reasons": [
+        "단일 읽기 전용 SQL 문입니다."
+      ]
+    }
+  },
+  {
+    "Query": "SELECT * FROM (SELECT 1) t(x)",
+    "Dialect": "oracle",
+    "Analysis": {
+      "statementType": "SELECT",
+      "readOnly": false,
+      "multipleStatements": false,
+      "risk": "blocked",
+      "reasons": [
+        "Oracle SELECT의 비허용 함수 호출 t()이 포함되어 있습니다."
+      ]
+    }
+  },
+  {
+    "Query": "SELECT * FROM (VALUES (1)) AS a(n) JOIN (VALUES (1)) AS b(n) ON a.n=b.n, unnest(ARRAY[11,22]) WITH ORDINALITY g(value,position)",
+    "Dialect": "postgres",
+    "Analysis": {
+      "statementType": "SELECT",
+      "readOnly": false,
+      "multipleStatements": false,
+      "risk": "blocked",
+      "reasons": [
+        "PostgreSQL SELECT의 비허용 함수 호출 g()이 포함되어 있습니다."
+      ]
+    }
+  },
+  {
+    "Query": "SELECT * FROM (VALUES (1)) AS a(n) JOIN (VALUES (1)) AS b(n) ON a.n=b.n, unnest(ARRAY[11,22]) WITH ORDINALITY g(value,position)",
+    "Dialect": "oracle",
+    "Analysis": {
+      "statementType": "SELECT",
+      "readOnly": false,
+      "multipleStatements": false,
+      "risk": "blocked",
+      "reasons": [
+        "Oracle SELECT의 비허용 함수 호출 a()이 포함되어 있습니다.",
+        "Oracle SELECT의 비허용 함수 호출 b()이 포함되어 있습니다.",
+        "Oracle SELECT의 비허용 함수 호출 unnest()이 포함되어 있습니다.",
+        "Oracle SELECT의 비허용 함수 호출 g()이 포함되어 있습니다."
+      ]
+    }
+  },
+  {
+    "Query": "SELECT * FROM (VALUES (1)) AS a(n) JOIN unnest(ARRAY[11,22]) WITH ORDINALITY g(value,position) ON a.n=g.position",
+    "Dialect": "postgres",
+    "Analysis": {
+      "statementType": "SELECT",
+      "readOnly": false,
+      "multipleStatements": false,
+      "risk": "blocked",
+      "reasons": [
+        "PostgreSQL SELECT의 비허용 함수 호출 g()이 포함되어 있습니다."
+      ]
+    }
+  },
+  {
+    "Query": "SELECT * FROM (VALUES (1)) AS a(n) JOIN unnest(ARRAY[11,22]) WITH ORDINALITY g(value,position) ON a.n=g.position",
+    "Dialect": "oracle",
+    "Analysis": {
+      "statementType": "SELECT",
+      "readOnly": false,
+      "multipleStatements": false,
+      "risk": "blocked",
+      "reasons": [
+        "Oracle SELECT의 비허용 함수 호출 a()이 포함되어 있습니다.",
+        "Oracle SELECT의 비허용 함수 호출 unnest()이 포함되어 있습니다.",
+        "Oracle SELECT의 비허용 함수 호출 g()이 포함되어 있습니다."
+      ]
+    }
+  },
+  {
+    "Query": "SELECT * FROM (VALUES (1)) AS a(n), LATERAL unnest(ARRAY[11,22]) WITH ORDINALITY g(value,position)",
+    "Dialect": "postgres",
+    "Analysis": {
+      "statementType": "SELECT",
+      "readOnly": false,
+      "multipleStatements": false,
+      "risk": "blocked",
+      "reasons": [
+        "PostgreSQL SELECT의 비허용 함수 호출 g()이 포함되어 있습니다."
+      ]
+    }
+  },
+  {
+    "Query": "SELECT * FROM (VALUES (1)) AS a(n), LATERAL unnest(ARRAY[11,22]) WITH ORDINALITY g(value,position)",
+    "Dialect": "oracle",
+    "Analysis": {
+      "statementType": "SELECT",
+      "readOnly": false,
+      "multipleStatements": false,
+      "risk": "blocked",
+      "reasons": [
+        "Oracle SELECT의 비허용 함수 호출 a()이 포함되어 있습니다.",
+        "Oracle SELECT의 비허용 함수 호출 unnest()이 포함되어 있습니다.",
+        "Oracle SELECT의 비허용 함수 호출 g()이 포함되어 있습니다."
+      ]
+    }
+  },
+  {
+    "Query": "SELECT * FROM (VALUES (1)) AS a, (SELECT 1) t(x)",
+    "Dialect": "postgres",
+    "Analysis": {
+      "statementType": "SELECT",
+      "readOnly": true,
+      "multipleStatements": false,
+      "risk": "low",
+      "reasons": [
+        "단일 읽기 전용 SQL 문입니다."
+      ]
+    }
+  },
+  {
+    "Query": "SELECT * FROM (VALUES (1)) AS a, (SELECT 1) t(x)",
+    "Dialect": "oracle",
+    "Analysis": {
+      "statementType": "SELECT",
+      "readOnly": false,
+      "multipleStatements": false,
+      "risk": "blocked",
+      "reasons": [
+        "Oracle SELECT의 비허용 함수 호출 t()이 포함되어 있습니다."
+      ]
+    }
+  },
+  {
+    "Query": "SELECT * FROM (VALUES (1), (2)) AS t(n)",
+    "Dialect": "postgres",
+    "Analysis": {
+      "statementType": "SELECT",
+      "readOnly": true,
+      "multipleStatements": false,
+      "risk": "low",
+      "reasons": [
+        "단일 읽기 전용 SQL 문입니다."
+      ]
+    }
+  },
+  {
+    "Query": "SELECT * FROM (VALUES (1), (2)) AS t(n)",
+    "Dialect": "oracle",
+    "Analysis": {
+      "statementType": "SELECT",
+      "readOnly": false,
+      "multipleStatements": false,
+      "risk": "blocked",
+      "reasons": [
+        "Oracle SELECT의 비허용 함수 호출 t()이 포함되어 있습니다."
+      ]
+    }
+  },
+  {
+    "Query": "SELECT * FROM GENERATE_SERIES(1, 3) s(n)",
+    "Dialect": "postgres",
+    "Analysis": {
+      "statementType": "SELECT",
+      "readOnly": true,
+      "multipleStatements": false,
+      "risk": "low",
+      "reasons": [
+        "단일 읽기 전용 SQL 문입니다."
+      ]
+    }
+  },
+  {
+    "Query": "SELECT * FROM GENERATE_SERIES(1, 3) s(n)",
+    "Dialect": "oracle",
+    "Analysis": {
+      "statementType": "SELECT",
+      "readOnly": false,
+      "multipleStatements": false,
+      "risk": "blocked",
+      "reasons": [
+        "Oracle SELECT의 비허용 함수 호출 GENERATE_SERIES()이 포함되어 있습니다.",
+        "Oracle SELECT의 비허용 함수 호출 s()이 포함되어 있습니다."
+      ]
+    }
+  },
+  {
+    "Query": "SELECT * FROM UNNEST(ARRAY[1, 2]) g(value)",
+    "Dialect": "postgres",
+    "Analysis": {
+      "statementType": "SELECT",
+      "readOnly": true,
+      "multipleStatements": false,
+      "risk": "low",
+      "reasons": [
+        "단일 읽기 전용 SQL 문입니다."
+      ]
+    }
+  },
+  {
+    "Query": "SELECT * FROM UNNEST(ARRAY[1, 2]) g(value)",
+    "Dialect": "oracle",
+    "Analysis": {
+      "statementType": "SELECT",
+      "readOnly": false,
+      "multipleStatements": false,
+      "risk": "blocked",
+      "reasons": [
+        "Oracle SELECT의 비허용 함수 호출 UNNEST()이 포함되어 있습니다.",
+        "Oracle SELECT의 비허용 함수 호출 g()이 포함되어 있습니다."
+      ]
+    }
+  },
+  {
+    "Query": "SELECT * FROM a JOIN b ON (a.x) = custom_reporting_fn(b.y)",
+    "Dialect": "postgres",
+    "Analysis": {
+      "statementType": "SELECT",
+      "readOnly": false,
+      "multipleStatements": false,
+      "risk": "blocked",
+      "reasons": [
+        "PostgreSQL SELECT의 비허용 함수 호출 custom_reporting_fn()이 포함되어 있습니다."
+      ]
+    }
+  },
+  {
+    "Query": "SELECT * FROM a JOIN b ON (a.x) = custom_reporting_fn(b.y)",
+    "Dialect": "oracle",
+    "Analysis": {
+      "statementType": "SELECT",
+      "readOnly": false,
+      "multipleStatements": false,
+      "risk": "blocked",
+      "reasons": [
+        "Oracle SELECT의 비허용 함수 호출 custom_reporting_fn()이 포함되어 있습니다."
+      ]
+    }
+  },
+  {
+    "Query": "SELECT * FROM a JOIN b ON COALESCE(a.x, (1) || custom_reporting_fn(b.y)) IS NOT NULL",
+    "Dialect": "postgres",
+    "Analysis": {
+      "statementType": "SELECT",
+      "readOnly": false,
+      "multipleStatements": false,
+      "risk": "blocked",
+      "reasons": [
+        "PostgreSQL SELECT의 비허용 함수 호출 custom_reporting_fn()이 포함되어 있습니다."
+      ]
+    }
+  },
+  {
+    "Query": "SELECT * FROM a JOIN b ON COALESCE(a.x, (1) || custom_reporting_fn(b.y)) IS NOT NULL",
+    "Dialect": "oracle",
+    "Analysis": {
+      "statementType": "SELECT",
+      "readOnly": false,
+      "multipleStatements": false,
+      "risk": "blocked",
+      "reasons": [
+        "Oracle SELECT의 비허용 함수 호출 custom_reporting_fn()이 포함되어 있습니다."
+      ]
+    }
+  },
+  {
+    "Query": "SELECT * FROM a JOIN b ON COALESCE(a.x, (1)) = custom_reporting_fn(b.y)",
+    "Dialect": "postgres",
+    "Analysis": {
+      "statementType": "SELECT",
+      "readOnly": false,
+      "multipleStatements": false,
+      "risk": "blocked",
+      "reasons": [
+        "PostgreSQL SELECT의 비허용 함수 호출 custom_reporting_fn()이 포함되어 있습니다."
+      ]
+    }
+  },
+  {
+    "Query": "SELECT * FROM a JOIN b ON COALESCE(a.x, (1)) = custom_reporting_fn(b.y)",
+    "Dialect": "oracle",
+    "Analysis": {
+      "statementType": "SELECT",
+      "readOnly": false,
+      "multipleStatements": false,
+      "risk": "blocked",
+      "reasons": [
+        "Oracle SELECT의 비허용 함수 호출 custom_reporting_fn()이 포함되어 있습니다."
+      ]
+    }
+  },
+  {
+    "Query": "SELECT * FROM a JOIN b ON a.id = CAST(b.id AS int), (SELECT 1) t(x)",
+    "Dialect": "postgres",
+    "Analysis": {
+      "statementType": "SELECT",
+      "readOnly": true,
+      "multipleStatements": false,
+      "risk": "low",
+      "reasons": [
+        "단일 읽기 전용 SQL 문입니다."
+      ]
+    }
+  },
+  {
+    "Query": "SELECT * FROM a JOIN b ON a.id = CAST(b.id AS int), (SELECT 1) t(x)",
+    "Dialect": "oracle",
+    "Analysis": {
+      "statementType": "SELECT",
+      "readOnly": false,
+      "multipleStatements": false,
+      "risk": "blocked",
+      "reasons": [
+        "Oracle SELECT의 비허용 함수 호출 t()이 포함되어 있습니다."
+      ]
+    }
+  },
+  {
+    "Query": "SELECT * FROM a JOIN b ON a.id = b.id, (SELECT 1) t(x)",
+    "Dialect": "postgres",
+    "Analysis": {
+      "statementType": "SELECT",
+      "readOnly": true,
+      "multipleStatements": false,
+      "risk": "low",
+      "reasons": [
+        "단일 읽기 전용 SQL 문입니다."
+      ]
+    }
+  },
+  {
+    "Query": "SELECT * FROM a JOIN b ON a.id = b.id, (SELECT 1) t(x)",
+    "Dialect": "oracle",
+    "Analysis": {
+      "statementType": "SELECT",
+      "readOnly": false,
+      "multipleStatements": false,
+      "risk": "blocked",
+      "reasons": [
+        "Oracle SELECT의 비허용 함수 호출 t()이 포함되어 있습니다."
+      ]
+    }
+  },
+  {
+    "Query": "SELECT * FROM a JOIN b ON a.id IN (1, 2), (SELECT 1) t(x)",
+    "Dialect": "postgres",
+    "Analysis": {
+      "statementType": "SELECT",
+      "readOnly": true,
+      "multipleStatements": false,
+      "risk": "low",
+      "reasons": [
+        "단일 읽기 전용 SQL 문입니다."
+      ]
+    }
+  },
+  {
+    "Query": "SELECT * FROM a JOIN b ON a.id IN (1, 2), (SELECT 1) t(x)",
+    "Dialect": "oracle",
+    "Analysis": {
+      "statementType": "SELECT",
+      "readOnly": false,
+      "multipleStatements": false,
+      "risk": "blocked",
+      "reasons": [
+        "Oracle SELECT의 비허용 함수 호출 t()이 포함되어 있습니다."
+      ]
+    }
+  },
+  {
+    "Query": "SELECT * FROM a JOIN b USING (id), (VALUES (1)) v(n)",
+    "Dialect": "postgres",
+    "Analysis": {
+      "statementType": "SELECT",
+      "readOnly": true,
+      "multipleStatements": false,
+      "risk": "low",
+      "reasons": [
+        "단일 읽기 전용 SQL 문입니다."
+      ]
+    }
+  },
+  {
+    "Query": "SELECT * FROM a JOIN b USING (id), (VALUES (1)) v(n)",
+    "Dialect": "oracle",
+    "Analysis": {
+      "statementType": "SELECT",
+      "readOnly": false,
+      "multipleStatements": false,
+      "risk": "blocked",
+      "reasons": [
+        "Oracle SELECT의 비허용 함수 호출 v()이 포함되어 있습니다."
+      ]
+    }
+  },
+  {
+    "Query": "SELECT * FROM custom_reporting_fn(1) WITH ORDINALITY g(value,position)",
+    "Dialect": "postgres",
+    "Analysis": {
+      "statementType": "SELECT",
+      "readOnly": false,
+      "multipleStatements": false,
+      "risk": "blocked",
+      "reasons": [
+        "PostgreSQL SELECT의 비허용 함수 호출 custom_reporting_fn()이 포함되어 있습니다.",
+        "PostgreSQL SELECT의 비허용 함수 호출 g()이 포함되어 있습니다."
+      ]
+    }
+  },
+  {
+    "Query": "SELECT * FROM custom_reporting_fn(1) WITH ORDINALITY g(value,position)",
+    "Dialect": "oracle",
+    "Analysis": {
+      "statementType": "SELECT",
+      "readOnly": false,
+      "multipleStatements": false,
+      "risk": "blocked",
+      "reasons": [
+        "Oracle SELECT의 비허용 함수 호출 custom_reporting_fn()이 포함되어 있습니다.",
+        "Oracle SELECT의 비허용 함수 호출 g()이 포함되어 있습니다."
+      ]
+    }
+  },
+  {
+    "Query": "SELECT * FROM generate_series(11,22) with ordinality g(value,position)",
+    "Dialect": "postgres",
+    "Analysis": {
+      "statementType": "SELECT",
+      "readOnly": false,
+      "multipleStatements": false,
+      "risk": "blocked",
+      "reasons": [
+        "PostgreSQL SELECT의 비허용 함수 호출 g()이 포함되어 있습니다."
+      ]
+    }
+  },
+  {
+    "Query": "SELECT * FROM generate_series(11,22) with ordinality g(value,position)",
+    "Dialect": "oracle",
+    "Analysis": {
+      "statementType": "SELECT",
+      "readOnly": false,
+      "multipleStatements": false,
+      "risk": "blocked",
+      "reasons": [
+        "Oracle SELECT의 비허용 함수 호출 generate_series()이 포함되어 있습니다.",
+        "Oracle SELECT의 비허용 함수 호출 g()이 포함되어 있습니다."
+      ]
+    }
+  },
+  {
+    "Query": "SELECT * FROM orders o JOIN customers c ON o.customer_id = c.id, (VALUES ('a'), ('b')) tags(label)",
+    "Dialect": "postgres",
+    "Analysis": {
+      "statementType": "SELECT",
+      "readOnly": true,
+      "multipleStatements": false,
+      "risk": "low",
+      "reasons": [
+        "단일 읽기 전용 SQL 문입니다."
+      ]
+    }
+  },
+  {
+    "Query": "SELECT * FROM orders o JOIN customers c ON o.customer_id = c.id, (VALUES ('a'), ('b')) tags(label)",
+    "Dialect": "oracle",
+    "Analysis": {
+      "statementType": "SELECT",
+      "readOnly": false,
+      "multipleStatements": false,
+      "risk": "blocked",
+      "reasons": [
+        "Oracle SELECT의 비허용 함수 호출 tags()이 포함되어 있습니다."
+      ]
+    }
+  },
+  {
+    "Query": "SELECT * FROM public.docs d, public.tags t(id, label) WHERE d.id = t.id",
+    "Dialect": "postgres",
+    "Analysis": {
+      "statementType": "SELECT",
+      "readOnly": true,
+      "multipleStatements": false,
+      "risk": "low",
+      "reasons": [
+        "단일 읽기 전용 SQL 문입니다."
+      ]
+    }
+  },
+  {
+    "Query": "SELECT * FROM public.docs d, public.tags t(id, label) WHERE d.id = t.id",
+    "Dialect": "oracle",
+    "Analysis": {
+      "statementType": "SELECT",
+      "readOnly": false,
+      "multipleStatements": false,
+      "risk": "blocked",
+      "reasons": [
+        "Oracle SELECT의 비허용 함수 호출 t()이 포함되어 있습니다."
+      ]
+    }
+  },
+  {
+    "Query": "SELECT * FROM public.events AS ev(id, name)",
+    "Dialect": "postgres",
+    "Analysis": {
+      "statementType": "SELECT",
+      "readOnly": true,
+      "multipleStatements": false,
+      "risk": "low",
+      "reasons": [
+        "단일 읽기 전용 SQL 문입니다."
+      ]
+    }
+  },
+  {
+    "Query": "SELECT * FROM public.events AS ev(id, name)",
+    "Dialect": "oracle",
+    "Analysis": {
+      "statementType": "SELECT",
+      "readOnly": false,
+      "multipleStatements": false,
+      "risk": "blocked",
+      "reasons": [
+        "Oracle SELECT의 비허용 함수 호출 ev()이 포함되어 있습니다."
+      ]
+    }
+  },
+  {
+    "Query": "SELECT * FROM public.events TABLESAMPLE system(10)",
+    "Dialect": "postgres",
+    "Analysis": {
+      "statementType": "SELECT",
+      "readOnly": false,
+      "multipleStatements": false,
+      "risk": "blocked",
+      "reasons": [
+        "PostgreSQL TABLESAMPLE access method 호출은 허용되지 않습니다.",
+        "PostgreSQL SELECT의 비허용 함수 호출 system()이 포함되어 있습니다."
+      ]
+    }
+  },
+  {
+    "Query": "SELECT * FROM public.events TABLESAMPLE system(10)",
+    "Dialect": "oracle",
+    "Analysis": {
+      "statementType": "SELECT",
+      "readOnly": false,
+      "multipleStatements": false,
+      "risk": "blocked",
+      "reasons": [
+        "Oracle SELECT의 비허용 함수 호출 system()이 포함되어 있습니다."
+      ]
+    }
+  },
+  {
+    "Query": "SELECT * FROM public.events e(id, label)",
+    "Dialect": "postgres",
+    "Analysis": {
+      "statementType": "SELECT",
+      "readOnly": true,
+      "multipleStatements": false,
+      "risk": "low",
+      "reasons": [
+        "단일 읽기 전용 SQL 문입니다."
+      ]
+    }
+  },
+  {
+    "Query": "SELECT * FROM public.events e(id, label)",
+    "Dialect": "oracle",
+    "Analysis": {
+      "statementType": "SELECT",
+      "readOnly": false,
+      "multipleStatements": false,
+      "risk": "blocked",
+      "reasons": [
+        "Oracle SELECT의 비허용 함수 호출 e()이 포함되어 있습니다."
+      ]
+    }
+  },
+  {
+    "Query": "SELECT * FROM public.events ev(id, name)",
+    "Dialect": "postgres",
+    "Analysis": {
+      "statementType": "SELECT",
+      "readOnly": true,
+      "multipleStatements": false,
+      "risk": "low",
+      "reasons": [
+        "단일 읽기 전용 SQL 문입니다."
+      ]
+    }
+  },
+  {
+    "Query": "SELECT * FROM public.events ev(id, name)",
+    "Dialect": "oracle",
+    "Analysis": {
+      "statementType": "SELECT",
+      "readOnly": false,
+      "multipleStatements": false,
+      "risk": "blocked",
+      "reasons": [
+        "Oracle SELECT의 비허용 함수 호출 ev()이 포함되어 있습니다."
+      ]
+    }
+  },
+  {
+    "Query": "SELECT * FROM public.events, LATERAL (SELECT 1) lateral_rows(value)",
+    "Dialect": "postgres",
+    "Analysis": {
+      "statementType": "SELECT",
+      "readOnly": true,
+      "multipleStatements": false,
+      "risk": "low",
+      "reasons": [
+        "단일 읽기 전용 SQL 문입니다."
+      ]
+    }
+  },
+  {
+    "Query": "SELECT * FROM public.events, LATERAL (SELECT 1) lateral_rows(value)",
+    "Dialect": "oracle",
+    "Analysis": {
+      "statementType": "SELECT",
+      "readOnly": false,
+      "multipleStatements": false,
+      "risk": "blocked",
+      "reasons": [
+        "Oracle SELECT의 비허용 함수 호출 LATERAL()이 포함되어 있습니다.",
+        "Oracle SELECT의 비허용 함수 호출 lateral_rows()이 포함되어 있습니다."
+      ]
+    }
+  },
+  {
+    "Query": "SELECT * FROM public.orders a JOIN public.items b(id, sku) ON a.id = b.id",
+    "Dialect": "postgres",
+    "Analysis": {
+      "statementType": "SELECT",
+      "readOnly": true,
+      "multipleStatements": false,
+      "risk": "low",
+      "reasons": [
+        "단일 읽기 전용 SQL 문입니다."
+      ]
+    }
+  },
+  {
+    "Query": "SELECT * FROM public.orders a JOIN public.items b(id, sku) ON a.id = b.id",
+    "Dialect": "oracle",
+    "Analysis": {
+      "statementType": "SELECT",
+      "readOnly": false,
+      "multipleStatements": false,
+      "risk": "blocked",
+      "reasons": [
+        "Oracle SELECT의 비허용 함수 호출 b()이 포함되어 있습니다."
+      ]
+    }
+  },
+  {
+    "Query": "SELECT * FROM public.t, LATERAL unnest(t.arr) x(v)",
+    "Dialect": "postgres",
+    "Analysis": {
+      "statementType": "SELECT",
+      "readOnly": true,
+      "multipleStatements": false,
+      "risk": "low",
+      "reasons": [
+        "단일 읽기 전용 SQL 문입니다."
+      ]
+    }
+  },
+  {
+    "Query": "SELECT * FROM public.t, LATERAL unnest(t.arr) x(v)",
+    "Dialect": "oracle",
+    "Analysis": {
+      "statementType": "SELECT",
+      "readOnly": false,
+      "multipleStatements": false,
+      "risk": "blocked",
+      "reasons": [
+        "Oracle SELECT의 비허용 함수 호출 unnest()이 포함되어 있습니다.",
+        "Oracle SELECT의 비허용 함수 호출 x()이 포함되어 있습니다."
+      ]
+    }
+  },
+  {
+    "Query": "SELECT * FROM reporting.sales@remote_link",
+    "Dialect": "postgres",
+    "Analysis": {
+      "statementType": "SELECT",
+      "readOnly": true,
+      "multipleStatements": false,
+      "risk": "low",
+      "reasons": [
+        "단일 읽기 전용 SQL 문입니다."
+      ]
+    }
+  },
+  {
+    "Query": "SELECT * FROM reporting.sales@remote_link",
+    "Dialect": "oracle",
+    "Analysis": {
+      "statementType": "SELECT",
+      "readOnly": false,
+      "multipleStatements": false,
+      "risk": "blocked",
+      "reasons": [
+        "Oracle database link(@) 참조는 허용되지 않습니다."
+      ]
+    }
+  },
+  {
+    "Query": "SELECT * FROM unnest(ARRAY[1, 2]) g(v)",
+    "Dialect": "postgres",
+    "Analysis": {
+      "statementType": "SELECT",
+      "readOnly": true,
+      "multipleStatements": false,
+      "risk": "low",
+      "reasons": [
+        "단일 읽기 전용 SQL 문입니다."
+      ]
+    }
+  },
+  {
+    "Query": "SELECT * FROM unnest(ARRAY[1, 2]) g(v)",
+    "Dialect": "oracle",
+    "Analysis": {
+      "statementType": "SELECT",
+      "readOnly": false,
+      "multipleStatements": false,
+      "risk": "blocked",
+      "reasons": [
+        "Oracle SELECT의 비허용 함수 호출 unnest()이 포함되어 있습니다.",
+        "Oracle SELECT의 비허용 함수 호출 g()이 포함되어 있습니다."
+      ]
+    }
+  },
+  {
+    "Query": "SELECT * FROM unnest(ARRAY[11,22]) /* rows */ WITH /* count */ ORDINALITY /* alias */ g(value,position)",
+    "Dialect": "postgres",
+    "Analysis": {
+      "statementType": "SELECT",
+      "readOnly": false,
+      "multipleStatements": false,
+      "risk": "blocked",
+      "reasons": [
+        "PostgreSQL SELECT의 비허용 함수 호출 g()이 포함되어 있습니다."
+      ]
+    }
+  },
+  {
+    "Query": "SELECT * FROM unnest(ARRAY[11,22]) /* rows */ WITH /* count */ ORDINALITY /* alias */ g(value,position)",
+    "Dialect": "oracle",
+    "Analysis": {
+      "statementType": "SELECT",
+      "readOnly": false,
+      "multipleStatements": false,
+      "risk": "blocked",
+      "reasons": [
+        "Oracle SELECT의 비허용 함수 호출 unnest()이 포함되어 있습니다.",
+        "Oracle SELECT의 비허용 함수 호출 g()이 포함되어 있습니다."
+      ]
+    }
+  },
+  {
+    "Query": "SELECT * FROM unnest(ARRAY[11,22]) WITH ORDINALITY \"g\"(\"value\",\"position\")",
+    "Dialect": "postgres",
+    "Analysis": {
+      "statementType": "SELECT",
+      "readOnly": false,
+      "multipleStatements": false,
+      "risk": "blocked",
+      "reasons": [
+        "PostgreSQL SELECT의 비허용 함수 호출 g()이 포함되어 있습니다."
+      ]
+    }
+  },
+  {
+    "Query": "SELECT * FROM unnest(ARRAY[11,22]) WITH ORDINALITY \"g\"(\"value\",\"position\")",
+    "Dialect": "oracle",
+    "Analysis": {
+      "statementType": "SELECT",
+      "readOnly": false,
+      "multipleStatements": false,
+      "risk": "blocked",
+      "reasons": [
+        "Oracle SELECT의 비허용 함수 호출 unnest()이 포함되어 있습니다.",
+        "Oracle SELECT의 비허용 함수 호출 g()이 포함되어 있습니다."
+      ]
+    }
+  },
+  {
+    "Query": "SELECT * FROM unnest(ARRAY[11,22]) WITH ORDINALITY AS g(value,position)",
+    "Dialect": "postgres",
+    "Analysis": {
+      "statementType": "SELECT",
+      "readOnly": true,
+      "multipleStatements": false,
+      "risk": "low",
+      "reasons": [
+        "단일 읽기 전용 SQL 문입니다."
+      ]
+    }
+  },
+  {
+    "Query": "SELECT * FROM unnest(ARRAY[11,22]) WITH ORDINALITY AS g(value,position)",
+    "Dialect": "oracle",
+    "Analysis": {
+      "statementType": "SELECT",
+      "readOnly": false,
+      "multipleStatements": false,
+      "risk": "blocked",
+      "reasons": [
+        "Oracle SELECT의 비허용 함수 호출 unnest()이 포함되어 있습니다.",
+        "Oracle SELECT의 비허용 함수 호출 g()이 포함되어 있습니다."
+      ]
+    }
+  },
+  {
+    "Query": "SELECT * FROM unnest(ARRAY[11,22]) WITH ORDINALITY g(value,position)",
+    "Dialect": "postgres",
+    "Analysis": {
+      "statementType": "SELECT",
+      "readOnly": false,
+      "multipleStatements": false,
+      "risk": "blocked",
+      "reasons": [
+        "PostgreSQL SELECT의 비허용 함수 호출 g()이 포함되어 있습니다."
+      ]
+    }
+  },
+  {
+    "Query": "SELECT * FROM unnest(ARRAY[11,22]) WITH ORDINALITY g(value,position)",
+    "Dialect": "oracle",
+    "Analysis": {
+      "statementType": "SELECT",
+      "readOnly": false,
+      "multipleStatements": false,
+      "risk": "blocked",
+      "reasons": [
+        "Oracle SELECT의 비허용 함수 호출 unnest()이 포함되어 있습니다.",
+        "Oracle SELECT의 비허용 함수 호출 g()이 포함되어 있습니다."
+      ]
+    }
+  },
+  {
+    "Query": "SELECT * FROM unnest(ARRAY[1]) \"WITH\" ORDINALITY custom_reporting_fn(1)",
+    "Dialect": "postgres",
+    "Analysis": {
+      "statementType": "SELECT",
+      "readOnly": false,
+      "multipleStatements": false,
+      "risk": "blocked",
+      "reasons": [
+        "PostgreSQL SELECT의 비허용 함수 호출 custom_reporting_fn()이 포함되어 있습니다."
+      ]
+    }
+  },
+  {
+    "Query": "SELECT * FROM unnest(ARRAY[1]) \"WITH\" ORDINALITY custom_reporting_fn(1)",
+    "Dialect": "oracle",
+    "Analysis": {
+      "statementType": "SELECT",
+      "readOnly": false,
+      "multipleStatements": false,
+      "risk": "blocked",
+      "reasons": [
+        "Oracle SELECT의 비허용 함수 호출 unnest()이 포함되어 있습니다.",
+        "Oracle SELECT의 비허용 함수 호출 custom_reporting_fn()이 포함되어 있습니다."
+      ]
+    }
+  },
+  {
+    "Query": "SELECT * FROM unnest(ARRAY[1]) WITH \"ORDINALITY\" custom_reporting_fn(1)",
+    "Dialect": "postgres",
+    "Analysis": {
+      "statementType": "SELECT",
+      "readOnly": false,
+      "multipleStatements": false,
+      "risk": "blocked",
+      "reasons": [
+        "PostgreSQL SELECT의 비허용 함수 호출 custom_reporting_fn()이 포함되어 있습니다."
+      ]
+    }
+  },
+  {
+    "Query": "SELECT * FROM unnest(ARRAY[1]) WITH \"ORDINALITY\" custom_reporting_fn(1)",
+    "Dialect": "oracle",
+    "Analysis": {
+      "statementType": "SELECT",
+      "readOnly": false,
+      "multipleStatements": false,
+      "risk": "blocked",
+      "reasons": [
+        "Oracle SELECT의 비허용 함수 호출 unnest()이 포함되어 있습니다.",
+        "Oracle SELECT의 비허용 함수 호출 custom_reporting_fn()이 포함되어 있습니다."
+      ]
+    }
+  },
+  {
+    "Query": "SELECT * FROM unnest(ARRAY[1]) WITH ORDINALITY g(value,position) JOIN (VALUES (1)) a(n) ON (g.value)=custom_reporting_fn(a.n)",
+    "Dialect": "postgres",
+    "Analysis": {
+      "statementType": "SELECT",
+      "readOnly": false,
+      "multipleStatements": false,
+      "risk": "blocked",
+      "reasons": [
+        "PostgreSQL SELECT의 비허용 함수 호출 g()이 포함되어 있습니다.",
+        "PostgreSQL SELECT의 비허용 함수 호출 custom_reporting_fn()이 포함되어 있습니다."
+      ]
+    }
+  },
+  {
+    "Query": "SELECT * FROM unnest(ARRAY[1]) WITH ORDINALITY g(value,position) JOIN (VALUES (1)) a(n) ON (g.value)=custom_reporting_fn(a.n)",
+    "Dialect": "oracle",
+    "Analysis": {
+      "statementType": "SELECT",
+      "readOnly": false,
+      "multipleStatements": false,
+      "risk": "blocked",
+      "reasons": [
+        "Oracle SELECT의 비허용 함수 호출 unnest()이 포함되어 있습니다.",
+        "Oracle SELECT의 비허용 함수 호출 g()이 포함되어 있습니다.",
+        "Oracle SELECT의 비허용 함수 호출 a()이 포함되어 있습니다.",
+        "Oracle SELECT의 비허용 함수 호출 custom_reporting_fn()이 포함되어 있습니다."
+      ]
+    }
+  },
+  {
+    "Query": "SELECT * FROM unnest(ARRAY[1]) WITH ORDINALITY g(value,position) WHERE g.value=custom_reporting_fn(1)",
+    "Dialect": "postgres",
+    "Analysis": {
+      "statementType": "SELECT",
+      "readOnly": false,
+      "multipleStatements": false,
+      "risk": "blocked",
+      "reasons": [
+        "PostgreSQL SELECT의 비허용 함수 호출 g()이 포함되어 있습니다.",
+        "PostgreSQL SELECT의 비허용 함수 호출 custom_reporting_fn()이 포함되어 있습니다."
+      ]
+    }
+  },
+  {
+    "Query": "SELECT * FROM unnest(ARRAY[1]) WITH ORDINALITY g(value,position) WHERE g.value=custom_reporting_fn(1)",
+    "Dialect": "oracle",
+    "Analysis": {
+      "statementType": "SELECT",
+      "readOnly": false,
+      "multipleStatements": false,
+      "risk": "blocked",
+      "reasons": [
+        "Oracle SELECT의 비허용 함수 호출 unnest()이 포함되어 있습니다.",
+        "Oracle SELECT의 비허용 함수 호출 g()이 포함되어 있습니다.",
+        "Oracle SELECT의 비허용 함수 호출 custom_reporting_fn()이 포함되어 있습니다."
+      ]
+    }
+  },
+  {
+    "Query": "SELECT * FROM unnest(ARRAY[custom_reporting_fn(1)]) WITH ORDINALITY g(value,position)",
+    "Dialect": "postgres",
+    "Analysis": {
+      "statementType": "SELECT",
+      "readOnly": false,
+      "multipleStatements": false,
+      "risk": "blocked",
+      "reasons": [
+        "PostgreSQL SELECT의 비허용 함수 호출 custom_reporting_fn()이 포함되어 있습니다.",
+        "PostgreSQL SELECT의 비허용 함수 호출 g()이 포함되어 있습니다."
+      ]
+    }
+  },
+  {
+    "Query": "SELECT * FROM unnest(ARRAY[custom_reporting_fn(1)]) WITH ORDINALITY g(value,position)",
+    "Dialect": "oracle",
+    "Analysis": {
+      "statementType": "SELECT",
+      "readOnly": false,
+      "multipleStatements": false,
+      "risk": "blocked",
+      "reasons": [
+        "Oracle SELECT의 비허용 함수 호출 unnest()이 포함되어 있습니다.",
+        "Oracle SELECT의 비허용 함수 호출 custom_reporting_fn()이 포함되어 있습니다.",
+        "Oracle SELECT의 비허용 함수 호출 g()이 포함되어 있습니다."
+      ]
+    }
+  },
+  {
+    "Query": "SELECT 1 /* outer /* inner */ outer */",
+    "Dialect": "postgres",
+    "Analysis": {
+      "statementType": "",
+      "readOnly": false,
+      "multipleStatements": false,
+      "risk": "blocked",
+      "reasons": [
+        "따옴표 또는 주석이 닫히지 않았습니다."
+      ]
+    }
+  },
+  {
+    "Query": "SELECT 1 /* outer /* inner */ outer */",
+    "Dialect": "oracle",
+    "Analysis": {
+      "statementType": "",
+      "readOnly": false,
+      "multipleStatements": false,
+      "risk": "blocked",
+      "reasons": [
+        "따옴표 또는 주석이 닫히지 않았습니다."
+      ]
+    }
+  },
+  {
+    "Query": "SELECT 1 FROM a JOIN b ON a.id = b.id GROUP BY label, (1) || custom_reporting_fn(a.id)",
+    "Dialect": "postgres",
+    "Analysis": {
+      "statementType": "SELECT",
+      "readOnly": false,
+      "multipleStatements": false,
+      "risk": "blocked",
+      "reasons": [
+        "PostgreSQL SELECT의 비허용 함수 호출 custom_reporting_fn()이 포함되어 있습니다."
+      ]
+    }
+  },
+  {
+    "Query": "SELECT 1 FROM a JOIN b ON a.id = b.id GROUP BY label, (1) || custom_reporting_fn(a.id)",
+    "Dialect": "oracle",
+    "Analysis": {
+      "statementType": "SELECT",
+      "readOnly": false,
+      "multipleStatements": false,
+      "risk": "blocked",
+      "reasons": [
+        "Oracle SELECT의 비허용 함수 호출 custom_reporting_fn()이 포함되어 있습니다."
+      ]
+    }
+  },
+  {
+    "Query": "SELECT 1 FROM a JOIN b ON a.id = b.id ORDER BY label, (1) || custom_reporting_fn(a.id)",
+    "Dialect": "postgres",
+    "Analysis": {
+      "statementType": "SELECT",
+      "readOnly": false,
+      "multipleStatements": false,
+      "risk": "blocked",
+      "reasons": [
+        "PostgreSQL SELECT의 비허용 함수 호출 custom_reporting_fn()이 포함되어 있습니다."
+      ]
+    }
+  },
+  {
+    "Query": "SELECT 1 FROM a JOIN b ON a.id = b.id ORDER BY label, (1) || custom_reporting_fn(a.id)",
+    "Dialect": "oracle",
+    "Analysis": {
+      "statementType": "SELECT",
+      "readOnly": false,
+      "multipleStatements": false,
+      "risk": "blocked",
+      "reasons": [
+        "Oracle SELECT의 비허용 함수 호출 custom_reporting_fn()이 포함되어 있습니다."
+      ]
+    }
+  },
+  {
+    "Query": "SELECT CAST(id AS public.evil_domain) FROM public.events",
+    "Dialect": "postgres",
+    "Analysis": {
+      "statementType": "SELECT",
+      "readOnly": false,
+      "multipleStatements": false,
+      "risk": "blocked",
+      "reasons": [
+        "PostgreSQL의 비허용 사용자 정의 cast 형식 public이 포함되어 있습니다."
+      ]
+    }
+  },
+  {
+    "Query": "SELECT CAST(id AS public.evil_domain) FROM public.events",
+    "Dialect": "oracle",
+    "Analysis": {
+      "statementType": "SELECT",
+      "readOnly": true,
+      "multipleStatements": false,
+      "risk": "low",
+      "reasons": [
+        "단일 읽기 전용 SQL 문입니다."
+      ]
+    }
+  },
+  {
+    "Query": "SELECT COALESCE(label, 'x') || pg_read_file('/etc/passwd') FROM public.events",
+    "Dialect": "postgres",
+    "Analysis": {
+      "statementType": "SELECT",
+      "readOnly": false,
+      "multipleStatements": false,
+      "risk": "blocked",
+      "reasons": [
+        "관리자 확인이 필요한 함수 PG_READ_FILE가 포함되어 있습니다.",
+        "PostgreSQL SELECT의 비허용 함수 호출 pg_read_file()이 포함되어 있습니다."
+      ]
+    }
+  },
+  {
+    "Query": "SELECT COALESCE(label, 'x') || pg_read_file('/etc/passwd') FROM public.events",
+    "Dialect": "oracle",
+    "Analysis": {
+      "statementType": "SELECT",
+      "readOnly": false,
+      "multipleStatements": false,
+      "risk": "blocked",
+      "reasons": [
+        "관리자 확인이 필요한 함수 PG_READ_FILE가 포함되어 있습니다.",
+        "Oracle SELECT의 비허용 함수 호출 pg_read_file()이 포함되어 있습니다."
+      ]
+    }
+  },
+  {
+    "Query": "SELECT COUNT(*), SUM(ABS(amount)), LOWER(status) FROM public.events GROUP BY LOWER(status)",
+    "Dialect": "postgres",
+    "Analysis": {
+      "statementType": "SELECT",
+      "readOnly": true,
+      "multipleStatements": false,
+      "risk": "low",
+      "reasons": [
+        "단일 읽기 전용 SQL 문입니다."
+      ]
+    }
+  },
+  {
+    "Query": "SELECT COUNT(*), SUM(ABS(amount)), LOWER(status) FROM public.events GROUP BY LOWER(status)",
+    "Dialect": "oracle",
+    "Analysis": {
+      "statementType": "SELECT",
+      "readOnly": true,
+      "multipleStatements": false,
+      "risk": "low",
+      "reasons": [
+        "단일 읽기 전용 SQL 문입니다."
+      ]
+    }
+  },
+  {
+    "Query": "SELECT COUNT(*), SUM(ABS(amount)), LOWER(status) FROM reporting.sales GROUP BY LOWER(status)",
+    "Dialect": "postgres",
+    "Analysis": {
+      "statementType": "SELECT",
+      "readOnly": true,
+      "multipleStatements": false,
+      "risk": "low",
+      "reasons": [
+        "단일 읽기 전용 SQL 문입니다."
+      ]
+    }
+  },
+  {
+    "Query": "SELECT COUNT(*), SUM(ABS(amount)), LOWER(status) FROM reporting.sales GROUP BY LOWER(status)",
+    "Dialect": "oracle",
+    "Analysis": {
+      "statementType": "SELECT",
+      "readOnly": true,
+      "multipleStatements": false,
+      "risk": "low",
+      "reasons": [
+        "단일 읽기 전용 SQL 문입니다."
+      ]
+    }
+  },
+  {
+    "Query": "SELECT DATE '2026-08-31', INTERVAL '1 day', TEXT 'plain', E'escaped\\\\ntext', B'1010', X'0f' FROM public.events",
+    "Dialect": "postgres",
+    "Analysis": {
+      "statementType": "SELECT",
+      "readOnly": true,
+      "multipleStatements": false,
+      "risk": "low",
+      "reasons": [
+        "단일 읽기 전용 SQL 문입니다."
+      ]
+    }
+  },
+  {
+    "Query": "SELECT DATE '2026-08-31', INTERVAL '1 day', TEXT 'plain', E'escaped\\\\ntext', B'1010', X'0f' FROM public.events",
+    "Dialect": "oracle",
+    "Analysis": {
+      "statementType": "SELECT",
+      "readOnly": true,
+      "multipleStatements": false,
+      "risk": "low",
+      "reasons": [
+        "단일 읽기 전용 SQL 문입니다."
+      ]
+    }
+  },
+  {
+    "Query": "SELECT DATE_TRUNC('day', created_at), COALESCE(payload->>'state', 'unknown') FROM public.events",
+    "Dialect": "postgres",
+    "Analysis": {
+      "statementType": "SELECT",
+      "readOnly": true,
+      "multipleStatements": false,
+      "risk": "low",
+      "reasons": [
+        "단일 읽기 전용 SQL 문입니다."
+      ]
+    }
+  },
+  {
+    "Query": "SELECT DATE_TRUNC('day', created_at), COALESCE(payload->>'state', 'unknown') FROM public.events",
+    "Dialect": "oracle",
+    "Analysis": {
+      "statementType": "SELECT",
+      "readOnly": false,
+      "multipleStatements": false,
+      "risk": "blocked",
+      "reasons": [
+        "Oracle SELECT의 비허용 함수 호출 DATE_TRUNC()이 포함되어 있습니다."
+      ]
+    }
+  },
+  {
+    "Query": "SELECT DISTINCT (status) FROM reporting.sales START WITH (parent_id IS NULL) CONNECT BY PRIOR id = parent_id",
+    "Dialect": "postgres",
+    "Analysis": {
+      "statementType": "SELECT",
+      "readOnly": true,
+      "multipleStatements": false,
+      "risk": "low",
+      "reasons": [
+        "단일 읽기 전용 SQL 문입니다."
+      ]
+    }
+  },
+  {
+    "Query": "SELECT DISTINCT (status) FROM reporting.sales START WITH (parent_id IS NULL) CONNECT BY PRIOR id = parent_id",
+    "Dialect": "oracle",
+    "Analysis": {
+      "statementType": "SELECT",
+      "readOnly": true,
+      "multipleStatements": false,
+      "risk": "low",
+      "reasons": [
+        "단일 읽기 전용 SQL 문입니다."
+      ]
+    }
+  },
+  {
+    "Query": "SELECT JSONB_ARRAY_LENGTH(payload->'items'), ARRAY_LENGTH(tags, 1) FROM public.events",
+    "Dialect": "postgres",
+    "Analysis": {
+      "statementType": "SELECT",
+      "readOnly": true,
+      "multipleStatements": false,
+      "risk": "low",
+      "reasons": [
+        "단일 읽기 전용 SQL 문입니다."
+      ]
+    }
+  },
+  {
+    "Query": "SELECT JSONB_ARRAY_LENGTH(payload->'items'), ARRAY_LENGTH(tags, 1) FROM public.events",
+    "Dialect": "oracle",
+    "Analysis": {
+      "statementType": "SELECT",
+      "readOnly": false,
+      "multipleStatements": false,
+      "risk": "blocked",
+      "reasons": [
+        "Oracle SELECT의 비허용 함수 호출 JSONB_ARRAY_LENGTH()이 포함되어 있습니다.",
+        "Oracle SELECT의 비허용 함수 호출 ARRAY_LENGTH()이 포함되어 있습니다."
+      ]
+    }
+  },
+  {
+    "Query": "SELECT JSON_VALUE(payload, '$.status') FROM reporting.events",
+    "Dialect": "postgres",
+    "Analysis": {
+      "statementType": "SELECT",
+      "readOnly": false,
+      "multipleStatements": false,
+      "risk": "blocked",
+      "reasons": [
+        "PostgreSQL SELECT의 비허용 함수 호출 JSON_VALUE()이 포함되어 있습니다."
+      ]
+    }
+  },
+  {
+    "Query": "SELECT JSON_VALUE(payload, '$.status') FROM reporting.events",
+    "Dialect": "oracle",
+    "Analysis": {
+      "statementType": "SELECT",
+      "readOnly": true,
+      "multipleStatements": false,
+      "risk": "low",
+      "reasons": [
+        "단일 읽기 전용 SQL 문입니다."
+      ]
+    }
+  },
+  {
+    "Query": "SELECT MAX((amount) + custom_reporting_fn(id)) FROM public.events",
+    "Dialect": "postgres",
+    "Analysis": {
+      "statementType": "SELECT",
+      "readOnly": false,
+      "multipleStatements": false,
+      "risk": "blocked",
+      "reasons": [
+        "PostgreSQL SELECT의 비허용 함수 호출 custom_reporting_fn()이 포함되어 있습니다."
+      ]
+    }
+  },
+  {
+    "Query": "SELECT MAX((amount) + custom_reporting_fn(id)) FROM public.events",
+    "Dialect": "oracle",
+    "Analysis": {
+      "statementType": "SELECT",
+      "readOnly": false,
+      "multipleStatements": false,
+      "risk": "blocked",
+      "reasons": [
+        "Oracle SELECT의 비허용 함수 호출 custom_reporting_fn()이 포함되어 있습니다."
+      ]
+    }
+  },
+  {
+    "Query": "SELECT NVL(label, 'x') || side_effect_fn(id) FROM reporting.sales",
+    "Dialect": "postgres",
+    "Analysis": {
+      "statementType": "SELECT",
+      "readOnly": false,
+      "multipleStatements": false,
+      "risk": "blocked",
+      "reasons": [
+        "PostgreSQL SELECT의 비허용 함수 호출 NVL()이 포함되어 있습니다.",
+        "PostgreSQL SELECT의 비허용 함수 호출 side_effect_fn()이 포함되어 있습니다."
+      ]
+    }
+  },
+  {
+    "Query": "SELECT NVL(label, 'x') || side_effect_fn(id) FROM reporting.sales",
+    "Dialect": "oracle",
+    "Analysis": {
+      "statementType": "SELECT",
+      "readOnly": false,
+      "multipleStatements": false,
+      "risk": "blocked",
+      "reasons": [
+        "Oracle SELECT의 비허용 함수 호출 side_effect_fn()이 포함되어 있습니다."
+      ]
+    }
+  },
+  {
+    "Query": "SELECT ROW_NUMBER() OVER (PARTITION BY status ORDER BY created_at), CAST(amount AS NUMBER(12,2)) FROM reporting.sales",
+    "Dialect": "postgres",
+    "Analysis": {
+      "statementType": "SELECT",
+      "readOnly": false,
+      "multipleStatements": false,
+      "risk": "blocked",
+      "reasons": [
+        "PostgreSQL의 비허용 사용자 정의 cast 형식 NUMBER이 포함되어 있습니다."
+      ]
+    }
+  },
+  {
+    "Query": "SELECT ROW_NUMBER() OVER (PARTITION BY status ORDER BY created_at), CAST(amount AS NUMBER(12,2)) FROM reporting.sales",
+    "Dialect": "oracle",
+    "Analysis": {
+      "statementType": "SELECT",
+      "readOnly": true,
+      "multipleStatements": false,
+      "risk": "low",
+      "reasons": [
+        "단일 읽기 전용 SQL 문입니다."
+      ]
+    }
+  },
+  {
+    "Query": "SELECT ROW_NUMBER() OVER (PARTITION BY status ORDER BY created_at), CAST(amount AS NUMERIC(12,2)) FROM public.events",
+    "Dialect": "postgres",
+    "Analysis": {
+      "statementType": "SELECT",
+      "readOnly": true,
+      "multipleStatements": false,
+      "risk": "low",
+      "reasons": [
+        "단일 읽기 전용 SQL 문입니다."
+      ]
+    }
+  },
+  {
+    "Query": "SELECT ROW_NUMBER() OVER (PARTITION BY status ORDER BY created_at), CAST(amount AS NUMERIC(12,2)) FROM public.events",
+    "Dialect": "oracle",
+    "Analysis": {
+      "statementType": "SELECT",
+      "readOnly": false,
+      "multipleStatements": false,
+      "risk": "blocked",
+      "reasons": [
+        "Oracle SELECT의 비허용 함수 호출 NUMERIC()이 포함되어 있습니다."
+      ]
+    }
+  },
+  {
+    "Query": "SELECT TABLE(side_effect_fn()) FROM dual",
+    "Dialect": "postgres",
+    "Analysis": {
+      "statementType": "SELECT",
+      "readOnly": false,
+      "multipleStatements": false,
+      "risk": "blocked",
+      "reasons": [
+        "PostgreSQL SELECT의 비허용 함수 호출 TABLE()이 포함되어 있습니다.",
+        "PostgreSQL SELECT의 비허용 함수 호출 side_effect_fn()이 포함되어 있습니다."
+      ]
+    }
+  },
+  {
+    "Query": "SELECT TABLE(side_effect_fn()) FROM dual",
+    "Dialect": "oracle",
+    "Analysis": {
+      "statementType": "SELECT",
+      "readOnly": false,
+      "multipleStatements": false,
+      "risk": "blocked",
+      "reasons": [
+        "Oracle SELECT의 비허용 함수 호출 TABLE()이 포함되어 있습니다.",
+        "Oracle SELECT의 비허용 함수 호출 side_effect_fn()이 포함되어 있습니다."
+      ]
+    }
+  },
+  {
+    "Query": "SELECT TIMESTAMP WITH TIME ZONE '2026-08-31 00:00:00+09', DOUBLE PRECISION '1.5' FROM public.events",
+    "Dialect": "postgres",
+    "Analysis": {
+      "statementType": "SELECT",
+      "readOnly": true,
+      "multipleStatements": false,
+      "risk": "low",
+      "reasons": [
+        "단일 읽기 전용 SQL 문입니다."
+      ]
+    }
+  },
+  {
+    "Query": "SELECT TIMESTAMP WITH TIME ZONE '2026-08-31 00:00:00+09', DOUBLE PRECISION '1.5' FROM public.events",
+    "Dialect": "oracle",
+    "Analysis": {
+      "statementType": "SELECT",
+      "readOnly": true,
+      "multipleStatements": false,
+      "risk": "low",
+      "reasons": [
+        "단일 읽기 전용 SQL 문입니다."
+      ]
+    }
+  },
+  {
+    "Query": "SELECT TIMESTAMP(3) WITH TIME ZONE '2026-08-31 00:00:00+09', TIME (6) WITHOUT TIME ZONE '12:00:00' FROM public.events",
+    "Dialect": "postgres",
+    "Analysis": {
+      "statementType": "SELECT",
+      "readOnly": true,
+      "multipleStatements": false,
+      "risk": "low",
+      "reasons": [
+        "단일 읽기 전용 SQL 문입니다."
+      ]
+    }
+  },
+  {
+    "Query": "SELECT TIMESTAMP(3) WITH TIME ZONE '2026-08-31 00:00:00+09', TIME (6) WITHOUT TIME ZONE '12:00:00' FROM public.events",
+    "Dialect": "oracle",
+    "Analysis": {
+      "statementType": "SELECT",
+      "readOnly": false,
+      "multipleStatements": false,
+      "risk": "blocked",
+      "reasons": [
+        "Oracle SELECT의 비허용 함수 호출 TIME()이 포함되어 있습니다."
+      ]
+    }
+  },
+  {
+    "Query": "SELECT TO_CHAR(created_at, 'YYYY-MM-DD'), NVL(label, 'unknown') FROM reporting.sales",
+    "Dialect": "postgres",
+    "Analysis": {
+      "statementType": "SELECT",
+      "readOnly": false,
+      "multipleStatements": false,
+      "risk": "blocked",
+      "reasons": [
+        "PostgreSQL SELECT의 비허용 함수 호출 NVL()이 포함되어 있습니다."
+      ]
+    }
+  },
+  {
+    "Query": "SELECT TO_CHAR(created_at, 'YYYY-MM-DD'), NVL(label, 'unknown') FROM reporting.sales",
+    "Dialect": "oracle",
+    "Analysis": {
+      "statementType": "SELECT",
+      "readOnly": true,
+      "multipleStatements": false,
+      "risk": "low",
+      "reasons": [
+        "단일 읽기 전용 SQL 문입니다."
+      ]
+    }
+  },
+  {
+    "Query": "SELECT a.x FROM (SELECT 1) a(x) JOIN (SELECT 2) b(y) ON a.x = b.y",
+    "Dialect": "postgres",
+    "Analysis": {
+      "statementType": "SELECT",
+      "readOnly": true,
+      "multipleStatements": false,
+      "risk": "low",
+      "reasons": [
+        "단일 읽기 전용 SQL 문입니다."
+      ]
+    }
+  },
+  {
+    "Query": "SELECT a.x FROM (SELECT 1) a(x) JOIN (SELECT 2) b(y) ON a.x = b.y",
+    "Dialect": "oracle",
+    "Analysis": {
+      "statementType": "SELECT",
+      "readOnly": false,
+      "multipleStatements": false,
+      "risk": "blocked",
+      "reasons": [
+        "Oracle SELECT의 비허용 함수 호출 a()이 포함되어 있습니다.",
+        "Oracle SELECT의 비허용 함수 호출 b()이 포함되어 있습니다."
+      ]
+    }
+  },
+  {
+    "Query": "SELECT amount%(SELECT 2) FROM public.events",
+    "Dialect": "postgres",
+    "Analysis": {
+      "statementType": "SELECT",
+      "readOnly": true,
+      "multipleStatements": false,
+      "risk": "low",
+      "reasons": [
+        "단일 읽기 전용 SQL 문입니다."
+      ]
+    }
+  },
+  {
+    "Query": "SELECT amount%(SELECT 2) FROM public.events",
+    "Dialect": "oracle",
+    "Analysis": {
+      "statementType": "SELECT",
+      "readOnly": false,
+      "multipleStatements": false,
+      "risk": "blocked",
+      "reasons": [
+        "Oracle SELECT의 비허용 함수 호출 amount()이 포함되어 있습니다."
+      ]
+    }
+  },
+  {
+    "Query": "SELECT amount*(SELECT 2) FROM public.events",
+    "Dialect": "postgres",
+    "Analysis": {
+      "statementType": "SELECT",
+      "readOnly": true,
+      "multipleStatements": false,
+      "risk": "low",
+      "reasons": [
+        "단일 읽기 전용 SQL 문입니다."
+      ]
+    }
+  },
+  {
+    "Query": "SELECT amount*(SELECT 2) FROM public.events",
+    "Dialect": "oracle",
+    "Analysis": {
+      "statementType": "SELECT",
+      "readOnly": false,
+      "multipleStatements": false,
+      "risk": "blocked",
+      "reasons": [
+        "Oracle SELECT의 비허용 함수 호출 amount()이 포함되어 있습니다."
+      ]
+    }
+  },
+  {
+    "Query": "SELECT amount+(SELECT 1) FROM public.events",
+    "Dialect": "postgres",
+    "Analysis": {
+      "statementType": "SELECT",
+      "readOnly": true,
+      "multipleStatements": false,
+      "risk": "low",
+      "reasons": [
+        "단일 읽기 전용 SQL 문입니다."
+      ]
+    }
+  },
+  {
+    "Query": "SELECT amount+(SELECT 1) FROM public.events",
+    "Dialect": "oracle",
+    "Analysis": {
+      "statementType": "SELECT",
+      "readOnly": false,
+      "multipleStatements": false,
+      "risk": "blocked",
+      "reasons": [
+        "Oracle SELECT의 비허용 함수 호출 amount()이 포함되어 있습니다."
+      ]
+    }
+  },
+  {
+    "Query": "SELECT amount-(SELECT 1) FROM public.events",
+    "Dialect": "postgres",
+    "Analysis": {
+      "statementType": "SELECT",
+      "readOnly": true,
+      "multipleStatements": false,
+      "risk": "low",
+      "reasons": [
+        "단일 읽기 전용 SQL 문입니다."
+      ]
+    }
+  },
+  {
+    "Query": "SELECT amount-(SELECT 1) FROM public.events",
+    "Dialect": "oracle",
+    "Analysis": {
+      "statementType": "SELECT",
+      "readOnly": false,
+      "multipleStatements": false,
+      "risk": "blocked",
+      "reasons": [
+        "Oracle SELECT의 비허용 함수 호출 amount()이 포함되어 있습니다."
+      ]
+    }
+  },
+  {
+    "Query": "SELECT amount/(SELECT 2) FROM public.events",
+    "Dialect": "postgres",
+    "Analysis": {
+      "statementType": "SELECT",
+      "readOnly": true,
+      "multipleStatements": false,
+      "risk": "low",
+      "reasons": [
+        "단일 읽기 전용 SQL 문입니다."
+      ]
+    }
+  },
+  {
+    "Query": "SELECT amount/(SELECT 2) FROM public.events",
+    "Dialect": "oracle",
+    "Analysis": {
+      "statementType": "SELECT",
+      "readOnly": false,
+      "multipleStatements": false,
+      "risk": "blocked",
+      "reasons": [
+        "Oracle SELECT의 비허용 함수 호출 amount()이 포함되어 있습니다."
+      ]
+    }
+  },
+  {
+    "Query": "SELECT app.abs(amount) FROM reporting.sales",
+    "Dialect": "postgres",
+    "Analysis": {
+      "statementType": "SELECT",
+      "readOnly": false,
+      "multipleStatements": false,
+      "risk": "blocked",
+      "reasons": [
+        "PostgreSQL SELECT의 비허용 함수 호출 abs()이 포함되어 있습니다."
+      ]
+    }
+  },
+  {
+    "Query": "SELECT app.abs(amount) FROM reporting.sales",
+    "Dialect": "oracle",
+    "Analysis": {
+      "statementType": "SELECT",
+      "readOnly": false,
+      "multipleStatements": false,
+      "risk": "blocked",
+      "reasons": [
+        "Oracle SELECT의 비허용 함수 호출 abs()이 포함되어 있습니다."
+      ]
+    }
+  },
+  {
+    "Query": "SELECT app.side_effect_fn(customer_id) FROM reporting.sales",
+    "Dialect": "postgres",
+    "Analysis": {
+      "statementType": "SELECT",
+      "readOnly": false,
+      "multipleStatements": false,
+      "risk": "blocked",
+      "reasons": [
+        "PostgreSQL SELECT의 비허용 함수 호출 side_effect_fn()이 포함되어 있습니다."
+      ]
+    }
+  },
+  {
+    "Query": "SELECT app.side_effect_fn(customer_id) FROM reporting.sales",
+    "Dialect": "oracle",
+    "Analysis": {
+      "statementType": "SELECT",
+      "readOnly": false,
+      "multipleStatements": false,
+      "risk": "blocked",
+      "reasons": [
+        "Oracle SELECT의 비허용 함수 호출 side_effect_fn()이 포함되어 있습니다."
+      ]
+    }
+  },
+  {
+    "Query": "SELECT count(*) FROM public.events e GROUP BY e.name",
+    "Dialect": "postgres",
+    "Analysis": {
+      "statementType": "SELECT",
+      "readOnly": true,
+      "multipleStatements": false,
+      "risk": "low",
+      "reasons": [
+        "단일 읽기 전용 SQL 문입니다."
+      ]
+    }
+  },
+  {
+    "Query": "SELECT count(*) FROM public.events e GROUP BY e.name",
+    "Dialect": "oracle",
+    "Analysis": {
+      "statementType": "SELECT",
+      "readOnly": true,
+      "multipleStatements": false,
+      "risk": "low",
+      "reasons": [
+        "단일 읽기 전용 SQL 문입니다."
+      ]
+    }
+  },
+  {
+    "Query": "SELECT custom_reporting_fn(id) FROM public.events",
+    "Dialect": "postgres",
+    "Analysis": {
+      "statementType": "SELECT",
+      "readOnly": false,
+      "multipleStatements": false,
+      "risk": "blocked",
+      "reasons": [
+        "PostgreSQL SELECT의 비허용 함수 호출 custom_reporting_fn()이 포함되어 있습니다."
+      ]
+    }
+  },
+  {
+    "Query": "SELECT custom_reporting_fn(id) FROM public.events",
+    "Dialect": "oracle",
+    "Analysis": {
+      "statementType": "SELECT",
+      "readOnly": false,
+      "multipleStatements": false,
+      "risk": "blocked",
+      "reasons": [
+        "Oracle SELECT의 비허용 함수 호출 custom_reporting_fn()이 포함되어 있습니다."
+      ]
+    }
+  },
+  {
+    "Query": "SELECT dblink_exec\n\t('host=internal', 'DROP TABLE victim')",
+    "Dialect": "postgres",
+    "Analysis": {
+      "statementType": "SELECT",
+      "readOnly": false,
+      "multipleStatements": false,
+      "risk": "blocked",
+      "reasons": [
+        "PostgreSQL SELECT의 비허용 함수 호출 dblink_exec()이 포함되어 있습니다."
+      ]
+    }
+  },
+  {
+    "Query": "SELECT dblink_exec\n\t('host=internal', 'DROP TABLE victim')",
+    "Dialect": "oracle",
+    "Analysis": {
+      "statementType": "SELECT",
+      "readOnly": false,
+      "multipleStatements": false,
+      "risk": "blocked",
+      "reasons": [
+        "Oracle SELECT의 비허용 함수 호출 dblink_exec()이 포함되어 있습니다."
+      ]
+    }
+  },
+  {
+    "Query": "SELECT dblink_exec ('host=internal', 'DROP TABLE victim')",
+    "Dialect": "postgres",
+    "Analysis": {
+      "statementType": "SELECT",
+      "readOnly": false,
+      "multipleStatements": false,
+      "risk": "blocked",
+      "reasons": [
+        "PostgreSQL SELECT의 비허용 함수 호출 dblink_exec()이 포함되어 있습니다."
+      ]
+    }
+  },
+  {
+    "Query": "SELECT dblink_exec ('host=internal', 'DROP TABLE victim')",
+    "Dialect": "oracle",
+    "Analysis": {
+      "statementType": "SELECT",
+      "readOnly": false,
+      "multipleStatements": false,
+      "risk": "blocked",
+      "reasons": [
+        "Oracle SELECT의 비허용 함수 호출 dblink_exec()이 포함되어 있습니다."
+      ]
+    }
+  },
+  {
+    "Query": "SELECT dblink_exec('host=internal', 'DROP TABLE victim') FROM public.events",
+    "Dialect": "postgres",
+    "Analysis": {
+      "statementType": "SELECT",
+      "readOnly": false,
+      "multipleStatements": false,
+      "risk": "blocked",
+      "reasons": [
+        "PostgreSQL SELECT의 비허용 함수 호출 dblink_exec()이 포함되어 있습니다."
+      ]
+    }
+  },
+  {
+    "Query": "SELECT dblink_exec('host=internal', 'DROP TABLE victim') FROM public.events",
+    "Dialect": "oracle",
+    "Analysis": {
+      "statementType": "SELECT",
+      "readOnly": false,
+      "multipleStatements": false,
+      "risk": "blocked",
+      "reasons": [
+        "Oracle SELECT의 비허용 함수 호출 dblink_exec()이 포함되어 있습니다."
+      ]
+    }
+  },
+  {
+    "Query": "SELECT dblink_exec-- c\n('host=internal', 'DROP TABLE victim')",
+    "Dialect": "postgres",
+    "Analysis": {
+      "statementType": "SELECT",
+      "readOnly": false,
+      "multipleStatements": false,
+      "risk": "blocked",
+      "reasons": [
+        "PostgreSQL SELECT의 비허용 함수 호출 dblink_exec()이 포함되어 있습니다."
+      ]
+    }
+  },
+  {
+    "Query": "SELECT dblink_exec-- c\n('host=internal', 'DROP TABLE victim')",
+    "Dialect": "oracle",
+    "Analysis": {
+      "statementType": "SELECT",
+      "readOnly": false,
+      "multipleStatements": false,
+      "risk": "blocked",
+      "reasons": [
+        "Oracle SELECT의 비허용 함수 호출 dblink_exec()이 포함되어 있습니다."
+      ]
+    }
+  },
+  {
+    "Query": "SELECT dblink_exec/*c('host=internal', 'DROP TABLE victim')",
+    "Dialect": "postgres",
+    "Analysis": {
+      "statementType": "",
+      "readOnly": false,
+      "multipleStatements": false,
+      "risk": "blocked",
+      "reasons": [
+        "따옴표 또는 주석이 닫히지 않았습니다."
+      ]
+    }
+  },
+  {
+    "Query": "SELECT dblink_exec/*c('host=internal', 'DROP TABLE victim')",
+    "Dialect": "oracle",
+    "Analysis": {
+      "statementType": "",
+      "readOnly": false,
+      "multipleStatements": false,
+      "risk": "blocked",
+      "reasons": [
+        "따옴표 또는 주석이 닫히지 않았습니다."
+      ]
+    }
+  },
+  {
+    "Query": "SELECT dblink_exec/*c*/('host=internal', 'DROP TABLE victim')",
+    "Dialect": "postgres",
+    "Analysis": {
+      "statementType": "SELECT",
+      "readOnly": false,
+      "multipleStatements": false,
+      "risk": "blocked",
+      "reasons": [
+        "PostgreSQL SELECT의 비허용 함수 호출 dblink_exec()이 포함되어 있습니다."
+      ]
+    }
+  },
+  {
+    "Query": "SELECT dblink_exec/*c*/('host=internal', 'DROP TABLE victim')",
+    "Dialect": "oracle",
+    "Analysis": {
+      "statementType": "SELECT",
+      "readOnly": false,
+      "multipleStatements": false,
+      "risk": "blocked",
+      "reasons": [
+        "Oracle SELECT의 비허용 함수 호출 dblink_exec()이 포함되어 있습니다."
+      ]
+    }
+  },
+  {
+    "Query": "SELECT evil_type(32) 'payload' FROM public.events",
+    "Dialect": "postgres",
+    "Analysis": {
+      "statementType": "SELECT",
+      "readOnly": false,
+      "multipleStatements": false,
+      "risk": "blocked",
+      "reasons": [
+        "PostgreSQL의 비허용 사용자 정의 문자열 상수 형식 evil_type이 포함되어 있습니다.",
+        "PostgreSQL SELECT의 비허용 함수 호출 evil_type()이 포함되어 있습니다."
+      ]
+    }
+  },
+  {
+    "Query": "SELECT evil_type(32) 'payload' FROM public.events",
+    "Dialect": "oracle",
+    "Analysis": {
+      "statementType": "SELECT",
+      "readOnly": false,
+      "multipleStatements": false,
+      "risk": "blocked",
+      "reasons": [
+        "Oracle SELECT의 비허용 함수 호출 evil_type()이 포함되어 있습니다."
+      ]
+    }
+  },
+  {
+    "Query": "SELECT evil_type[] '{payload}' FROM public.events",
+    "Dialect": "postgres",
+    "Analysis": {
+      "statementType": "SELECT",
+      "readOnly": false,
+      "multipleStatements": false,
+      "risk": "blocked",
+      "reasons": [
+        "PostgreSQL의 비허용 사용자 정의 문자열 상수 형식 evil_type이 포함되어 있습니다."
+      ]
+    }
+  },
+  {
+    "Query": "SELECT evil_type[] '{payload}' FROM public.events",
+    "Dialect": "oracle",
+    "Analysis": {
+      "statementType": "SELECT",
+      "readOnly": true,
+      "multipleStatements": false,
+      "risk": "low",
+      "reasons": [
+        "단일 읽기 전용 SQL 문입니다."
+      ]
+    }
+  },
+  {
+    "Query": "SELECT id FROM events WHERE events.name = custom_reporting_fn(1)",
+    "Dialect": "postgres",
+    "Analysis": {
+      "statementType": "SELECT",
+      "readOnly": false,
+      "multipleStatements": false,
+      "risk": "blocked",
+      "reasons": [
+        "PostgreSQL SELECT의 비허용 함수 호출 custom_reporting_fn()이 포함되어 있습니다."
+      ]
+    }
+  },
+  {
+    "Query": "SELECT id FROM events WHERE events.name = custom_reporting_fn(1)",
+    "Dialect": "oracle",
+    "Analysis": {
+      "statementType": "SELECT",
+      "readOnly": false,
+      "multipleStatements": false,
+      "risk": "blocked",
+      "reasons": [
+        "Oracle SELECT의 비허용 함수 호출 custom_reporting_fn()이 포함되어 있습니다."
+      ]
+    }
+  },
+  {
+    "Query": "SELECT id FROM events e JOIN other o ON e.id = custom_reporting_fn(o.id)",
+    "Dialect": "postgres",
+    "Analysis": {
+      "statementType": "SELECT",
+      "readOnly": false,
+      "multipleStatements": false,
+      "risk": "blocked",
+      "reasons": [
+        "PostgreSQL SELECT의 비허용 함수 호출 custom_reporting_fn()이 포함되어 있습니다."
+      ]
+    }
+  },
+  {
+    "Query": "SELECT id FROM events e JOIN other o ON e.id = custom_reporting_fn(o.id)",
+    "Dialect": "oracle",
+    "Analysis": {
+      "statementType": "SELECT",
+      "readOnly": false,
+      "multipleStatements": false,
+      "risk": "blocked",
+      "reasons": [
+        "Oracle SELECT의 비허용 함수 호출 custom_reporting_fn()이 포함되어 있습니다."
+      ]
+    }
+  },
+  {
+    "Query": "SELECT id FROM meta_word_dict WHERE version=(SELECT max(version) FROM meta_word_dict)",
+    "Dialect": "postgres",
+    "Analysis": {
+      "statementType": "SELECT",
+      "readOnly": true,
+      "multipleStatements": false,
+      "risk": "low",
+      "reasons": [
+        "단일 읽기 전용 SQL 문입니다."
+      ]
+    }
+  },
+  {
+    "Query": "SELECT id FROM meta_word_dict WHERE version=(SELECT max(version) FROM meta_word_dict)",
+    "Dialect": "oracle",
+    "Analysis": {
+      "statementType": "SELECT",
+      "readOnly": false,
+      "multipleStatements": false,
+      "risk": "blocked",
+      "reasons": [
+        "Oracle SELECT의 비허용 함수 호출 version()이 포함되어 있습니다."
+      ]
+    }
+  },
+  {
+    "Query": "SELECT id FROM public.events WHERE (id > 0) AND (1) = custom_reporting_fn(id)",
+    "Dialect": "postgres",
+    "Analysis": {
+      "statementType": "SELECT",
+      "readOnly": false,
+      "multipleStatements": false,
+      "risk": "blocked",
+      "reasons": [
+        "PostgreSQL SELECT의 비허용 함수 호출 custom_reporting_fn()이 포함되어 있습니다."
+      ]
+    }
+  },
+  {
+    "Query": "SELECT id FROM public.events WHERE (id > 0) AND (1) = custom_reporting_fn(id)",
+    "Dialect": "oracle",
+    "Analysis": {
+      "statementType": "SELECT",
+      "readOnly": false,
+      "multipleStatements": false,
+      "risk": "blocked",
+      "reasons": [
+        "Oracle SELECT의 비허용 함수 호출 custom_reporting_fn()이 포함되어 있습니다."
+      ]
+    }
+  },
+  {
+    "Query": "SELECT id FROM public.events WHERE NOT(amount) = (SELECT 1)",
+    "Dialect": "postgres",
+    "Analysis": {
+      "statementType": "SELECT",
+      "readOnly": true,
+      "multipleStatements": false,
+      "risk": "low",
+      "reasons": [
+        "단일 읽기 전용 SQL 문입니다."
+      ]
+    }
+  },
+  {
+    "Query": "SELECT id FROM public.events WHERE NOT(amount) = (SELECT 1)",
+    "Dialect": "oracle",
+    "Analysis": {
+      "statementType": "SELECT",
+      "readOnly": true,
+      "multipleStatements": false,
+      "risk": "low",
+      "reasons": [
+        "단일 읽기 전용 SQL 문입니다."
+      ]
+    }
+  },
+  {
+    "Query": "SELECT id FROM public.events WHERE amount = -- note\n(SELECT 1)",
+    "Dialect": "postgres",
+    "Analysis": {
+      "statementType": "SELECT",
+      "readOnly": true,
+      "multipleStatements": false,
+      "risk": "low",
+      "reasons": [
+        "단일 읽기 전용 SQL 문입니다."
+      ]
+    }
+  },
+  {
+    "Query": "SELECT id FROM public.events WHERE amount = -- note\n(SELECT 1)",
+    "Dialect": "oracle",
+    "Analysis": {
+      "statementType": "SELECT",
+      "readOnly": false,
+      "multipleStatements": false,
+      "risk": "blocked",
+      "reasons": [
+        "Oracle SELECT의 비허용 함수 호출 amount()이 포함되어 있습니다."
+      ]
+    }
+  },
+  {
+    "Query": "SELECT id FROM public.events WHERE amount = /*note*/ (SELECT 1)",
+    "Dialect": "postgres",
+    "Analysis": {
+      "statementType": "SELECT",
+      "readOnly": true,
+      "multipleStatements": false,
+      "risk": "low",
+      "reasons": [
+        "단일 읽기 전용 SQL 문입니다."
+      ]
+    }
+  },
+  {
+    "Query": "SELECT id FROM public.events WHERE amount = /*note*/ (SELECT 1)",
+    "Dialect": "oracle",
+    "Analysis": {
+      "statementType": "SELECT",
+      "readOnly": false,
+      "multipleStatements": false,
+      "risk": "blocked",
+      "reasons": [
+        "Oracle SELECT의 비허용 함수 호출 amount()이 포함되어 있습니다."
+      ]
+    }
+  },
+  {
+    "Query": "SELECT id FROM public.events WHERE amount = pg_read_file('/etc/passwd')",
+    "Dialect": "postgres",
+    "Analysis": {
+      "statementType": "SELECT",
+      "readOnly": false,
+      "multipleStatements": false,
+      "risk": "blocked",
+      "reasons": [
+        "관리자 확인이 필요한 함수 PG_READ_FILE가 포함되어 있습니다.",
+        "PostgreSQL SELECT의 비허용 함수 호출 pg_read_file()이 포함되어 있습니다."
+      ]
+    }
+  },
+  {
+    "Query": "SELECT id FROM public.events WHERE amount = pg_read_file('/etc/passwd')",
+    "Dialect": "oracle",
+    "Analysis": {
+      "statementType": "SELECT",
+      "readOnly": false,
+      "multipleStatements": false,
+      "risk": "blocked",
+      "reasons": [
+        "관리자 확인이 필요한 함수 PG_READ_FILE가 포함되어 있습니다.",
+        "Oracle SELECT의 비허용 함수 호출 pg_read_file()이 포함되어 있습니다."
+      ]
+    }
+  },
+  {
+    "Query": "SELECT id FROM public.events WHERE amount >(SELECT 1)",
+    "Dialect": "postgres",
+    "Analysis": {
+      "statementType": "SELECT",
+      "readOnly": true,
+      "multipleStatements": false,
+      "risk": "low",
+      "reasons": [
+        "단일 읽기 전용 SQL 문입니다."
+      ]
+    }
+  },
+  {
+    "Query": "SELECT id FROM public.events WHERE amount >(SELECT 1)",
+    "Dialect": "oracle",
+    "Analysis": {
+      "statementType": "SELECT",
+      "readOnly": false,
+      "multipleStatements": false,
+      "risk": "blocked",
+      "reasons": [
+        "Oracle SELECT의 비허용 함수 호출 amount()이 포함되어 있습니다."
+      ]
+    }
+  },
+  {
+    "Query": "SELECT id FROM public.events WHERE amount<(SELECT 1)",
+    "Dialect": "postgres",
+    "Analysis": {
+      "statementType": "SELECT",
+      "readOnly": true,
+      "multipleStatements": false,
+      "risk": "low",
+      "reasons": [
+        "단일 읽기 전용 SQL 문입니다."
+      ]
+    }
+  },
+  {
+    "Query": "SELECT id FROM public.events WHERE amount<(SELECT 1)",
+    "Dialect": "oracle",
+    "Analysis": {
+      "statementType": "SELECT",
+      "readOnly": false,
+      "multipleStatements": false,
+      "risk": "blocked",
+      "reasons": [
+        "Oracle SELECT의 비허용 함수 호출 amount()이 포함되어 있습니다."
+      ]
+    }
+  },
+  {
+    "Query": "SELECT id FROM public.events WHERE amount<=(SELECT 1)",
+    "Dialect": "postgres",
+    "Analysis": {
+      "statementType": "SELECT",
+      "readOnly": true,
+      "multipleStatements": false,
+      "risk": "low",
+      "reasons": [
+        "단일 읽기 전용 SQL 문입니다."
+      ]
+    }
+  },
+  {
+    "Query": "SELECT id FROM public.events WHERE amount<=(SELECT 1)",
+    "Dialect": "oracle",
+    "Analysis": {
+      "statementType": "SELECT",
+      "readOnly": false,
+      "multipleStatements": false,
+      "risk": "blocked",
+      "reasons": [
+        "Oracle SELECT의 비허용 함수 호출 amount()이 포함되어 있습니다."
+      ]
+    }
+  },
+  {
+    "Query": "SELECT id FROM public.events WHERE amount<>(SELECT 1)",
+    "Dialect": "postgres",
+    "Analysis": {
+      "statementType": "SELECT",
+      "readOnly": true,
+      "multipleStatements": false,
+      "risk": "low",
+      "reasons": [
+        "단일 읽기 전용 SQL 문입니다."
+      ]
+    }
+  },
+  {
+    "Query": "SELECT id FROM public.events WHERE amount<>(SELECT 1)",
+    "Dialect": "oracle",
+    "Analysis": {
+      "statementType": "SELECT",
+      "readOnly": false,
+      "multipleStatements": false,
+      "risk": "blocked",
+      "reasons": [
+        "Oracle SELECT의 비허용 함수 호출 amount()이 포함되어 있습니다."
+      ]
+    }
+  },
+  {
+    "Query": "SELECT id FROM public.events WHERE amount=(SELECT 1)",
+    "Dialect": "postgres",
+    "Analysis": {
+      "statementType": "SELECT",
+      "readOnly": true,
+      "multipleStatements": false,
+      "risk": "low",
+      "reasons": [
+        "단일 읽기 전용 SQL 문입니다."
+      ]
+    }
+  },
+  {
+    "Query": "SELECT id FROM public.events WHERE amount=(SELECT 1)",
+    "Dialect": "oracle",
+    "Analysis": {
+      "statementType": "SELECT",
+      "readOnly": false,
+      "multipleStatements": false,
+      "risk": "blocked",
+      "reasons": [
+        "Oracle SELECT의 비허용 함수 호출 amount()이 포함되어 있습니다."
+      ]
+    }
+  },
+  {
+    "Query": "SELECT id FROM public.events WHERE amount=(SELECT pg_read_file('/etc/passwd'))",
+    "Dialect": "postgres",
+    "Analysis": {
+      "statementType": "SELECT",
+      "readOnly": false,
+      "multipleStatements": false,
+      "risk": "blocked",
+      "reasons": [
+        "관리자 확인이 필요한 함수 PG_READ_FILE가 포함되어 있습니다.",
+        "PostgreSQL SELECT의 비허용 함수 호출 pg_read_file()이 포함되어 있습니다."
+      ]
+    }
+  },
+  {
+    "Query": "SELECT id FROM public.events WHERE amount=(SELECT pg_read_file('/etc/passwd'))",
+    "Dialect": "oracle",
+    "Analysis": {
+      "statementType": "SELECT",
+      "readOnly": false,
+      "multipleStatements": false,
+      "risk": "blocked",
+      "reasons": [
+        "관리자 확인이 필요한 함수 PG_READ_FILE가 포함되어 있습니다.",
+        "Oracle SELECT의 비허용 함수 호출 amount()이 포함되어 있습니다.",
+        "Oracle SELECT의 비허용 함수 호출 pg_read_file()이 포함되어 있습니다."
+      ]
+    }
+  },
+  {
+    "Query": "SELECT id FROM public.events WHERE amount>=(SELECT 1)",
+    "Dialect": "postgres",
+    "Analysis": {
+      "statementType": "SELECT",
+      "readOnly": true,
+      "multipleStatements": false,
+      "risk": "low",
+      "reasons": [
+        "단일 읽기 전용 SQL 문입니다."
+      ]
+    }
+  },
+  {
+    "Query": "SELECT id FROM public.events WHERE amount>=(SELECT 1)",
+    "Dialect": "oracle",
+    "Analysis": {
+      "statementType": "SELECT",
+      "readOnly": false,
+      "multipleStatements": false,
+      "risk": "blocked",
+      "reasons": [
+        "Oracle SELECT의 비허용 함수 호출 amount()이 포함되어 있습니다."
+      ]
+    }
+  },
+  {
+    "Query": "SELECT id FROM public.events WHERE id > 0 AND dblink_exec('a', 'b') IS NOT NULL",
+    "Dialect": "postgres",
+    "Analysis": {
+      "statementType": "SELECT",
+      "readOnly": false,
+      "multipleStatements": false,
+      "risk": "blocked",
+      "reasons": [
+        "PostgreSQL SELECT의 비허용 함수 호출 dblink_exec()이 포함되어 있습니다."
+      ]
+    }
+  },
+  {
+    "Query": "SELECT id FROM public.events WHERE id > 0 AND dblink_exec('a', 'b') IS NOT NULL",
+    "Dialect": "oracle",
+    "Analysis": {
+      "statementType": "SELECT",
+      "readOnly": false,
+      "multipleStatements": false,
+      "risk": "blocked",
+      "reasons": [
+        "Oracle SELECT의 비허용 함수 호출 dblink_exec()이 포함되어 있습니다."
+      ]
+    }
+  },
+  {
+    "Query": "SELECT id FROM public.events WHERE name = custom_reporting_fn(1)",
+    "Dialect": "postgres",
+    "Analysis": {
+      "statementType": "SELECT",
+      "readOnly": false,
+      "multipleStatements": false,
+      "risk": "blocked",
+      "reasons": [
+        "PostgreSQL SELECT의 비허용 함수 호출 custom_reporting_fn()이 포함되어 있습니다."
+      ]
+    }
+  },
+  {
+    "Query": "SELECT id FROM public.events WHERE name = custom_reporting_fn(1)",
+    "Dialect": "oracle",
+    "Analysis": {
+      "statementType": "SELECT",
+      "readOnly": false,
+      "multipleStatements": false,
+      "risk": "blocked",
+      "reasons": [
+        "Oracle SELECT의 비허용 함수 호출 custom_reporting_fn()이 포함되어 있습니다."
+      ]
+    }
+  },
+  {
+    "Query": "SELECT id FROM public.events WHERE public.events.name = dblink_exec('host=internal', 'DROP TABLE victim')",
+    "Dialect": "postgres",
+    "Analysis": {
+      "statementType": "SELECT",
+      "readOnly": false,
+      "multipleStatements": false,
+      "risk": "blocked",
+      "reasons": [
+        "PostgreSQL SELECT의 비허용 함수 호출 dblink_exec()이 포함되어 있습니다."
+      ]
+    }
+  },
+  {
+    "Query": "SELECT id FROM public.events WHERE public.events.name = dblink_exec('host=internal', 'DROP TABLE victim')",
+    "Dialect": "oracle",
+    "Analysis": {
+      "statementType": "SELECT",
+      "readOnly": false,
+      "multipleStatements": false,
+      "risk": "blocked",
+      "reasons": [
+        "Oracle SELECT의 비허용 함수 호출 dblink_exec()이 포함되어 있습니다."
+      ]
+    }
+  },
+  {
+    "Query": "SELECT id FROM public.events e WHERE e.id IN (SELECT id FROM public.ids)",
+    "Dialect": "postgres",
+    "Analysis": {
+      "statementType": "SELECT",
+      "readOnly": true,
+      "multipleStatements": false,
+      "risk": "low",
+      "reasons": [
+        "단일 읽기 전용 SQL 문입니다."
+      ]
+    }
+  },
+  {
+    "Query": "SELECT id FROM public.events e WHERE e.id IN (SELECT id FROM public.ids)",
+    "Dialect": "oracle",
+    "Analysis": {
+      "statementType": "SELECT",
+      "readOnly": true,
+      "multipleStatements": false,
+      "risk": "low",
+      "reasons": [
+        "단일 읽기 전용 SQL 문입니다."
+      ]
+    }
+  },
+  {
+    "Query": "SELECT id FROM public.events e WHERE e.name = pg_read_file('/etc/passwd')",
+    "Dialect": "postgres",
+    "Analysis": {
+      "statementType": "SELECT",
+      "readOnly": false,
+      "multipleStatements": false,
+      "risk": "blocked",
+      "reasons": [
+        "관리자 확인이 필요한 함수 PG_READ_FILE가 포함되어 있습니다.",
+        "PostgreSQL SELECT의 비허용 함수 호출 pg_read_file()이 포함되어 있습니다."
+      ]
+    }
+  },
+  {
+    "Query": "SELECT id FROM public.events e WHERE e.name = pg_read_file('/etc/passwd')",
+    "Dialect": "oracle",
+    "Analysis": {
+      "statementType": "SELECT",
+      "readOnly": false,
+      "multipleStatements": false,
+      "risk": "blocked",
+      "reasons": [
+        "관리자 확인이 필요한 함수 PG_READ_FILE가 포함되어 있습니다.",
+        "Oracle SELECT의 비허용 함수 호출 pg_read_file()이 포함되어 있습니다."
+      ]
+    }
+  },
+  {
+    "Query": "SELECT id FROM public.jobs j WHERE j.payload->>'k' = 'v'",
+    "Dialect": "postgres",
+    "Analysis": {
+      "statementType": "SELECT",
+      "readOnly": true,
+      "multipleStatements": false,
+      "risk": "low",
+      "reasons": [
+        "단일 읽기 전용 SQL 문입니다."
+      ]
+    }
+  },
+  {
+    "Query": "SELECT id FROM public.jobs j WHERE j.payload->>'k' = 'v'",
+    "Dialect": "oracle",
+    "Analysis": {
+      "statementType": "SELECT",
+      "readOnly": true,
+      "multipleStatements": false,
+      "risk": "low",
+      "reasons": [
+        "단일 읽기 전용 SQL 문입니다."
+      ]
+    }
+  },
+  {
+    "Query": "SELECT id FROM public.people p WHERE p.name LIKE upper(p.code)",
+    "Dialect": "postgres",
+    "Analysis": {
+      "statementType": "SELECT",
+      "readOnly": true,
+      "multipleStatements": false,
+      "risk": "low",
+      "reasons": [
+        "단일 읽기 전용 SQL 문입니다."
+      ]
+    }
+  },
+  {
+    "Query": "SELECT id FROM public.people p WHERE p.name LIKE upper(p.code)",
+    "Dialect": "oracle",
+    "Analysis": {
+      "statementType": "SELECT",
+      "readOnly": true,
+      "multipleStatements": false,
+      "risk": "low",
+      "reasons": [
+        "단일 읽기 전용 SQL 문입니다."
+      ]
+    }
+  },
+  {
+    "Query": "SELECT id FROM public.sessions s WHERE s.ts > now() - interval '1 day'",
+    "Dialect": "postgres",
+    "Analysis": {
+      "statementType": "SELECT",
+      "readOnly": true,
+      "multipleStatements": false,
+      "risk": "low",
+      "reasons": [
+        "단일 읽기 전용 SQL 문입니다."
+      ]
+    }
+  },
+  {
+    "Query": "SELECT id FROM public.sessions s WHERE s.ts > now() - interval '1 day'",
+    "Dialect": "oracle",
+    "Analysis": {
+      "statementType": "SELECT",
+      "readOnly": false,
+      "multipleStatements": false,
+      "risk": "blocked",
+      "reasons": [
+        "Oracle SELECT의 비허용 함수 호출 now()이 포함되어 있습니다."
+      ]
+    }
+  },
+  {
+    "Query": "SELECT id::\"evil_domain\" FROM public.events",
+    "Dialect": "postgres",
+    "Analysis": {
+      "statementType": "SELECT",
+      "readOnly": false,
+      "multipleStatements": false,
+      "risk": "blocked",
+      "reasons": [
+        "PostgreSQL의 비허용 사용자 정의 cast 형식 evil_domain이 포함되어 있습니다."
+      ]
+    }
+  },
+  {
+    "Query": "SELECT id::\"evil_domain\" FROM public.events",
+    "Dialect": "oracle",
+    "Analysis": {
+      "statementType": "SELECT",
+      "readOnly": true,
+      "multipleStatements": false,
+      "risk": "low",
+      "reasons": [
+        "단일 읽기 전용 SQL 문입니다."
+      ]
+    }
+  },
+  {
+    "Query": "SELECT id::TEXT, CAST(amount AS DOUBLE PRECISION) FROM public.events",
+    "Dialect": "postgres",
+    "Analysis": {
+      "statementType": "SELECT",
+      "readOnly": true,
+      "multipleStatements": false,
+      "risk": "low",
+      "reasons": [
+        "단일 읽기 전용 SQL 문입니다."
+      ]
+    }
+  },
+  {
+    "Query": "SELECT id::TEXT, CAST(amount AS DOUBLE PRECISION) FROM public.events",
+    "Dialect": "oracle",
+    "Analysis": {
+      "statementType": "SELECT",
+      "readOnly": true,
+      "multipleStatements": false,
+      "risk": "low",
+      "reasons": [
+        "단일 읽기 전용 SQL 문입니다."
+      ]
+    }
+  },
+  {
+    "Query": "SELECT id::public.evil_domain FROM public.events",
+    "Dialect": "postgres",
+    "Analysis": {
+      "statementType": "SELECT",
+      "readOnly": false,
+      "multipleStatements": false,
+      "risk": "blocked",
+      "reasons": [
+        "PostgreSQL의 비허용 사용자 정의 cast 형식 public이 포함되어 있습니다."
+      ]
+    }
+  },
+  {
+    "Query": "SELECT id::public.evil_domain FROM public.events",
+    "Dialect": "oracle",
+    "Analysis": {
+      "statementType": "SELECT",
+      "readOnly": true,
+      "multipleStatements": false,
+      "risk": "low",
+      "reasons": [
+        "단일 읽기 전용 SQL 문입니다."
+      ]
+    }
+  },
+  {
+    "Query": "SELECT label, (1) || custom_reporting_fn(id) FROM a JOIN b ON a.id = b.id",
+    "Dialect": "postgres",
+    "Analysis": {
+      "statementType": "SELECT",
+      "readOnly": false,
+      "multipleStatements": false,
+      "risk": "blocked",
+      "reasons": [
+        "PostgreSQL SELECT의 비허용 함수 호출 custom_reporting_fn()이 포함되어 있습니다."
+      ]
+    }
+  },
+  {
+    "Query": "SELECT label, (1) || custom_reporting_fn(id) FROM a JOIN b ON a.id = b.id",
+    "Dialect": "oracle",
+    "Analysis": {
+      "statementType": "SELECT",
+      "readOnly": false,
+      "multipleStatements": false,
+      "risk": "blocked",
+      "reasons": [
+        "Oracle SELECT의 비허용 함수 호출 custom_reporting_fn()이 포함되어 있습니다."
+      ]
+    }
+  },
+  {
+    "Query": "SELECT label||(SELECT 'x') FROM public.events",
+    "Dialect": "postgres",
+    "Analysis": {
+      "statementType": "SELECT",
+      "readOnly": true,
+      "multipleStatements": false,
+      "risk": "low",
+      "reasons": [
+        "단일 읽기 전용 SQL 문입니다."
+      ]
+    }
+  },
+  {
+    "Query": "SELECT label||(SELECT 'x') FROM public.events",
+    "Dialect": "oracle",
+    "Analysis": {
+      "statementType": "SELECT",
+      "readOnly": false,
+      "multipleStatements": false,
+      "risk": "blocked",
+      "reasons": [
+        "Oracle SELECT의 비허용 함수 호출 label()이 포함되어 있습니다."
+      ]
+    }
+  },
+  {
+    "Query": "SELECT lower(e.name) FROM public.events e WHERE e.id = 1",
+    "Dialect": "postgres",
+    "Analysis": {
+      "statementType": "SELECT",
+      "readOnly": true,
+      "multipleStatements": false,
+      "risk": "low",
+      "reasons": [
+        "단일 읽기 전용 SQL 문입니다."
+      ]
+    }
+  },
+  {
+    "Query": "SELECT lower(e.name) FROM public.events e WHERE e.id = 1",
+    "Dialect": "oracle",
+    "Analysis": {
+      "statementType": "SELECT",
+      "readOnly": true,
+      "multipleStatements": false,
+      "risk": "low",
+      "reasons": [
+        "단일 읽기 전용 SQL 문입니다."
+      ]
+    }
+  },
+  {
+    "Query": "SELECT name COLLATE \"C\" FROM public.events",
+    "Dialect": "postgres",
+    "Analysis": {
+      "statementType": "SELECT",
+      "readOnly": false,
+      "multipleStatements": false,
+      "risk": "blocked",
+      "reasons": [
+        "PostgreSQL의 명시적 COLLATE 절은 허용되지 않습니다."
+      ]
+    }
+  },
+  {
+    "Query": "SELECT name COLLATE \"C\" FROM public.events",
+    "Dialect": "oracle",
+    "Analysis": {
+      "statementType": "SELECT",
+      "readOnly": true,
+      "multipleStatements": false,
+      "risk": "low",
+      "reasons": [
+        "단일 읽기 전용 SQL 문입니다."
+      ]
+    }
+  },
+  {
+    "Query": "SELECT name COLLATE public.remote_collation FROM public.events",
+    "Dialect": "postgres",
+    "Analysis": {
+      "statementType": "SELECT",
+      "readOnly": false,
+      "multipleStatements": false,
+      "risk": "blocked",
+      "reasons": [
+        "PostgreSQL의 명시적 COLLATE 절은 허용되지 않습니다."
+      ]
+    }
+  },
+  {
+    "Query": "SELECT name COLLATE public.remote_collation FROM public.events",
+    "Dialect": "oracle",
+    "Analysis": {
+      "statementType": "SELECT",
+      "readOnly": true,
+      "multipleStatements": false,
+      "risk": "low",
+      "reasons": [
+        "단일 읽기 전용 SQL 문입니다."
+      ]
+    }
+  },
+  {
+    "Query": "SELECT nextval('sequence_name') FROM public.events",
+    "Dialect": "postgres",
+    "Analysis": {
+      "statementType": "SELECT",
+      "readOnly": false,
+      "multipleStatements": false,
+      "risk": "blocked",
+      "reasons": [
+        "PostgreSQL SELECT의 비허용 함수 호출 nextval()이 포함되어 있습니다."
+      ]
+    }
+  },
+  {
+    "Query": "SELECT nextval('sequence_name') FROM public.events",
+    "Dialect": "oracle",
+    "Analysis": {
+      "statementType": "SELECT",
+      "readOnly": false,
+      "multipleStatements": false,
+      "risk": "blocked",
+      "reasons": [
+        "Oracle SELECT의 비허용 함수 호출 nextval()이 포함되어 있습니다.",
+        "Oracle sequence 의사컬럼 NEXTVAL/CURRVAL은 허용되지 않습니다."
+      ]
+    }
+  },
+  {
+    "Query": "SELECT ordinality + custom_reporting_fn(1) FROM public.events",
+    "Dialect": "postgres",
+    "Analysis": {
+      "statementType": "SELECT",
+      "readOnly": false,
+      "multipleStatements": false,
+      "risk": "blocked",
+      "reasons": [
+        "PostgreSQL SELECT의 비허용 함수 호출 custom_reporting_fn()이 포함되어 있습니다."
+      ]
+    }
+  },
+  {
+    "Query": "SELECT ordinality + custom_reporting_fn(1) FROM public.events",
+    "Dialect": "oracle",
+    "Analysis": {
+      "statementType": "SELECT",
+      "readOnly": false,
+      "multipleStatements": false,
+      "risk": "blocked",
+      "reasons": [
+        "Oracle SELECT의 비허용 함수 호출 custom_reporting_fn()이 포함되어 있습니다."
+      ]
+    }
+  },
+  {
+    "Query": "SELECT pg_advisory_lock(42) FROM public.events",
+    "Dialect": "postgres",
+    "Analysis": {
+      "statementType": "SELECT",
+      "readOnly": false,
+      "multipleStatements": false,
+      "risk": "blocked",
+      "reasons": [
+        "PostgreSQL SELECT의 비허용 함수 호출 pg_advisory_lock()이 포함되어 있습니다."
+      ]
+    }
+  },
+  {
+    "Query": "SELECT pg_advisory_lock(42) FROM public.events",
+    "Dialect": "oracle",
+    "Analysis": {
+      "statementType": "SELECT",
+      "readOnly": false,
+      "multipleStatements": false,
+      "risk": "blocked",
+      "reasons": [
+        "Oracle SELECT의 비허용 함수 호출 pg_advisory_lock()이 포함되어 있습니다."
+      ]
+    }
+  },
+  {
+    "Query": "SELECT pg_catalog /* outer /* inner */ harmless */ .pg_read_file('/etc/passwd')",
+    "Dialect": "postgres",
+    "Analysis": {
+      "statementType": "",
+      "readOnly": false,
+      "multipleStatements": false,
+      "risk": "blocked",
+      "reasons": [
+        "따옴표 또는 주석이 닫히지 않았습니다."
+      ]
+    }
+  },
+  {
+    "Query": "SELECT pg_catalog /* outer /* inner */ harmless */ .pg_read_file('/etc/passwd')",
+    "Dialect": "oracle",
+    "Analysis": {
+      "statementType": "",
+      "readOnly": false,
+      "multipleStatements": false,
+      "risk": "blocked",
+      "reasons": [
+        "따옴표 또는 주석이 닫히지 않았습니다."
+      ]
+    }
+  },
+  {
+    "Query": "SELECT pg_catalog.pg_read_file('/etc/passwd') FROM public.events",
+    "Dialect": "postgres",
+    "Analysis": {
+      "statementType": "SELECT",
+      "readOnly": false,
+      "multipleStatements": false,
+      "risk": "blocked",
+      "reasons": [
+        "관리자 확인이 필요한 함수 PG_READ_FILE가 포함되어 있습니다.",
+        "PostgreSQL SELECT의 비허용 함수 호출 pg_read_file()이 포함되어 있습니다."
+      ]
+    }
+  },
+  {
+    "Query": "SELECT pg_catalog.pg_read_file('/etc/passwd') FROM public.events",
+    "Dialect": "oracle",
+    "Analysis": {
+      "statementType": "SELECT",
+      "readOnly": false,
+      "multipleStatements": false,
+      "risk": "blocked",
+      "reasons": [
+        "관리자 확인이 필요한 함수 PG_READ_FILE가 포함되어 있습니다.",
+        "Oracle SELECT의 비허용 함수 호출 pg_read_file()이 포함되어 있습니다."
+      ]
+    }
+  },
+  {
+    "Query": "SELECT pg_notify('channel', 'payload') FROM public.events",
+    "Dialect": "postgres",
+    "Analysis": {
+      "statementType": "SELECT",
+      "readOnly": false,
+      "multipleStatements": false,
+      "risk": "blocked",
+      "reasons": [
+        "PostgreSQL SELECT의 비허용 함수 호출 pg_notify()이 포함되어 있습니다."
+      ]
+    }
+  },
+  {
+    "Query": "SELECT pg_notify('channel', 'payload') FROM public.events",
+    "Dialect": "oracle",
+    "Analysis": {
+      "statementType": "SELECT",
+      "readOnly": false,
+      "multipleStatements": false,
+      "risk": "blocked",
+      "reasons": [
+        "Oracle SELECT의 비허용 함수 호출 pg_notify()이 포함되어 있습니다."
+      ]
+    }
+  },
+  {
+    "Query": "SELECT pg_read_file('/etc/passwd') FROM public.events",
+    "Dialect": "postgres",
+    "Analysis": {
+      "statementType": "SELECT",
+      "readOnly": false,
+      "multipleStatements": false,
+      "risk": "blocked",
+      "reasons": [
+        "관리자 확인이 필요한 함수 PG_READ_FILE가 포함되어 있습니다.",
+        "PostgreSQL SELECT의 비허용 함수 호출 pg_read_file()이 포함되어 있습니다."
+      ]
+    }
+  },
+  {
+    "Query": "SELECT pg_read_file('/etc/passwd') FROM public.events",
+    "Dialect": "oracle",
+    "Analysis": {
+      "statementType": "SELECT",
+      "readOnly": false,
+      "multipleStatements": false,
+      "risk": "blocked",
+      "reasons": [
+        "관리자 확인이 필요한 함수 PG_READ_FILE가 포함되어 있습니다.",
+        "Oracle SELECT의 비허용 함수 호출 pg_read_file()이 포함되어 있습니다."
+      ]
+    }
+  },
+  {
+    "Query": "SELECT public.evil_type $$payload$$ FROM public.events",
+    "Dialect": "postgres",
+    "Analysis": {
+      "statementType": "SELECT",
+      "readOnly": false,
+      "multipleStatements": false,
+      "risk": "blocked",
+      "reasons": [
+        "PostgreSQL의 비허용 사용자 정의 문자열 상수 형식 evil_type이 포함되어 있습니다."
+      ]
+    }
+  },
+  {
+    "Query": "SELECT public.evil_type $$payload$$ FROM public.events",
+    "Dialect": "oracle",
+    "Analysis": {
+      "statementType": "SELECT",
+      "readOnly": true,
+      "multipleStatements": false,
+      "risk": "low",
+      "reasons": [
+        "단일 읽기 전용 SQL 문입니다."
+      ]
+    }
+  },
+  {
+    "Query": "SELECT public.evil_type 'payload' FROM public.events",
+    "Dialect": "postgres",
+    "Analysis": {
+      "statementType": "SELECT",
+      "readOnly": false,
+      "multipleStatements": false,
+      "risk": "blocked",
+      "reasons": [
+        "PostgreSQL의 비허용 사용자 정의 문자열 상수 형식 evil_type이 포함되어 있습니다."
+      ]
+    }
+  },
+  {
+    "Query": "SELECT public.evil_type 'payload' FROM public.events",
+    "Dialect": "oracle",
+    "Analysis": {
+      "statementType": "SELECT",
+      "readOnly": true,
+      "multipleStatements": false,
+      "risk": "low",
+      "reasons": [
+        "단일 읽기 전용 SQL 문입니다."
+      ]
+    }
+  },
+  {
+    "Query": "SELECT public.evil_type /* comment */ 'payload' FROM public.events",
+    "Dialect": "postgres",
+    "Analysis": {
+      "statementType": "SELECT",
+      "readOnly": false,
+      "multipleStatements": false,
+      "risk": "blocked",
+      "reasons": [
+        "PostgreSQL의 비허용 사용자 정의 문자열 상수 형식 evil_type이 포함되어 있습니다."
+      ]
+    }
+  },
+  {
+    "Query": "SELECT public.evil_type /* comment */ 'payload' FROM public.events",
+    "Dialect": "oracle",
+    "Analysis": {
+      "statementType": "SELECT",
+      "readOnly": true,
+      "multipleStatements": false,
+      "risk": "low",
+      "reasons": [
+        "단일 읽기 전용 SQL 문입니다."
+      ]
+    }
+  },
+  {
+    "Query": "SELECT public.evil_type /* outer /* nested */ comment */ 'payload' FROM public.events",
+    "Dialect": "postgres",
+    "Analysis": {
+      "statementType": "",
+      "readOnly": false,
+      "multipleStatements": false,
+      "risk": "blocked",
+      "reasons": [
+        "따옴표 또는 주석이 닫히지 않았습니다."
+      ]
+    }
+  },
+  {
+    "Query": "SELECT public.evil_type /* outer /* nested */ comment */ 'payload' FROM public.events",
+    "Dialect": "oracle",
+    "Analysis": {
+      "statementType": "",
+      "readOnly": false,
+      "multipleStatements": false,
+      "risk": "blocked",
+      "reasons": [
+        "따옴표 또는 주석이 닫히지 않았습니다."
+      ]
+    }
+  },
+  {
+    "Query": "SELECT q'[side_effect_fn()@remote]' AS sample FROM dual",
+    "Dialect": "postgres",
+    "Analysis": {
+      "statementType": "SELECT",
+      "readOnly": false,
+      "multipleStatements": false,
+      "risk": "blocked",
+      "reasons": [
+        "PostgreSQL의 비허용 사용자 정의 문자열 상수 형식 q이 포함되어 있습니다."
+      ]
+    }
+  },
+  {
+    "Query": "SELECT q'[side_effect_fn()@remote]' AS sample FROM dual",
+    "Dialect": "oracle",
+    "Analysis": {
+      "statementType": "SELECT",
+      "readOnly": true,
+      "multipleStatements": false,
+      "risk": "low",
+      "reasons": [
+        "단일 읽기 전용 SQL 문입니다."
+      ]
+    }
+  },
+  {
+    "Query": "SELECT sales.id FROM reporting.sales sales, reporting.customers customers WHERE sales.customer_id = customers.id(+)",
+    "Dialect": "postgres",
+    "Analysis": {
+      "statementType": "SELECT",
+      "readOnly": true,
+      "multipleStatements": false,
+      "risk": "low",
+      "reasons": [
+        "단일 읽기 전용 SQL 문입니다."
+      ]
+    }
+  },
+  {
+    "Query": "SELECT sales.id FROM reporting.sales sales, reporting.customers customers WHERE sales.customer_id = customers.id(+)",
+    "Dialect": "oracle",
+    "Analysis": {
+      "statementType": "SELECT",
+      "readOnly": true,
+      "multipleStatements": false,
+      "risk": "low",
+      "reasons": [
+        "단일 읽기 전용 SQL 문입니다."
+      ]
+    }
+  },
+  {
+    "Query": "SELECT sales_sequence.NEXTVAL FROM dual",
+    "Dialect": "postgres",
+    "Analysis": {
+      "statementType": "SELECT",
+      "readOnly": true,
+      "multipleStatements": false,
+      "risk": "low",
+      "reasons": [
+        "단일 읽기 전용 SQL 문입니다."
+      ]
+    }
+  },
+  {
+    "Query": "SELECT sales_sequence.NEXTVAL FROM dual",
+    "Dialect": "oracle",
+    "Analysis": {
+      "statementType": "SELECT",
+      "readOnly": false,
+      "multipleStatements": false,
+      "risk": "blocked",
+      "reasons": [
+        "Oracle sequence 의사컬럼 NEXTVAL/CURRVAL은 허용되지 않습니다."
+      ]
+    }
+  },
+  {
+    "Query": "SELECT side_effect_fn() FROM dual",
+    "Dialect": "postgres",
+    "Analysis": {
+      "statementType": "SELECT",
+      "readOnly": false,
+      "multipleStatements": false,
+      "risk": "blocked",
+      "reasons": [
+        "PostgreSQL SELECT의 비허용 함수 호출 side_effect_fn()이 포함되어 있습니다."
+      ]
+    }
+  },
+  {
+    "Query": "SELECT side_effect_fn() FROM dual",
+    "Dialect": "oracle",
+    "Analysis": {
+      "statementType": "SELECT",
+      "readOnly": false,
+      "multipleStatements": false,
+      "risk": "blocked",
+      "reasons": [
+        "Oracle SELECT의 비허용 함수 호출 side_effect_fn()이 포함되어 있습니다."
+      ]
+    }
+  },
+  {
+    "Query": "SELECT x=dblink_exec('host=internal', 'DROP TABLE victim')",
+    "Dialect": "postgres",
+    "Analysis": {
+      "statementType": "SELECT",
+      "readOnly": false,
+      "multipleStatements": false,
+      "risk": "blocked",
+      "reasons": [
+        "PostgreSQL SELECT의 비허용 함수 호출 dblink_exec()이 포함되어 있습니다."
+      ]
+    }
+  },
+  {
+    "Query": "SELECT x=dblink_exec('host=internal', 'DROP TABLE victim')",
+    "Dialect": "oracle",
+    "Analysis": {
+      "statementType": "SELECT",
+      "readOnly": false,
+      "multipleStatements": false,
+      "risk": "blocked",
+      "reasons": [
+        "Oracle SELECT의 비허용 함수 호출 dblink_exec()이 포함되어 있습니다."
+      ]
+    }
+  },
+  {
+    "Query": "WITH cte(a, b) AS (SELECT 1, 2) SELECT a FROM cte",
+    "Dialect": "postgres",
+    "Analysis": {
+      "statementType": "WITH",
+      "readOnly": true,
+      "multipleStatements": false,
+      "risk": "low",
+      "reasons": [
+        "단일 읽기 전용 SQL 문입니다."
+      ]
+    }
+  },
+  {
+    "Query": "WITH cte(a, b) AS (SELECT 1, 2) SELECT a FROM cte",
+    "Dialect": "oracle",
+    "Analysis": {
+      "statementType": "WITH",
+      "readOnly": false,
+      "multipleStatements": false,
+      "risk": "blocked",
+      "reasons": [
+        "Oracle SELECT의 비허용 함수 호출 cte()이 포함되어 있습니다."
+      ]
+    }
+  },
+  {
+    "Query": "WITH remote_rows AS (SELECT id FROM sales@prod) SELECT * FROM remote_rows",
+    "Dialect": "postgres",
+    "Analysis": {
+      "statementType": "WITH",
+      "readOnly": true,
+      "multipleStatements": false,
+      "risk": "low",
+      "reasons": [
+        "단일 읽기 전용 SQL 문입니다."
+      ]
+    }
+  },
+  {
+    "Query": "WITH remote_rows AS (SELECT id FROM sales@prod) SELECT * FROM remote_rows",
+    "Dialect": "oracle",
+    "Analysis": {
+      "statementType": "WITH",
+      "readOnly": false,
+      "multipleStatements": false,
+      "risk": "blocked",
+      "reasons": [
+        "Oracle database link(@) 참조는 허용되지 않습니다."
+      ]
+    }
+  },
+  {
+    "Query": "WITH totals AS (SELECT customer_id, SUM(amount) amount FROM reporting.sales GROUP BY customer_id) SELECT MAX(amount) FROM totals",
+    "Dialect": "postgres",
+    "Analysis": {
+      "statementType": "WITH",
+      "readOnly": true,
+      "multipleStatements": false,
+      "risk": "low",
+      "reasons": [
+        "단일 읽기 전용 SQL 문입니다."
+      ]
+    }
+  },
+  {
+    "Query": "WITH totals AS (SELECT customer_id, SUM(amount) amount FROM reporting.sales GROUP BY customer_id) SELECT MAX(amount) FROM totals",
+    "Dialect": "oracle",
+    "Analysis": {
+      "statementType": "WITH",
+      "readOnly": true,
+      "multipleStatements": false,
+      "risk": "low",
+      "reasons": [
+        "단일 읽기 전용 SQL 문입니다."
+      ]
+    }
+  },
+  {
+    "Query": "WITH totals(customer_id, amount) AS (SELECT 1, 2) SELECT * FROM totals",
+    "Dialect": "postgres",
+    "Analysis": {
+      "statementType": "WITH",
+      "readOnly": true,
+      "multipleStatements": false,
+      "risk": "low",
+      "reasons": [
+        "단일 읽기 전용 SQL 문입니다."
+      ]
+    }
+  },
+  {
+    "Query": "WITH totals(customer_id, amount) AS (SELECT 1, 2) SELECT * FROM totals",
+    "Dialect": "oracle",
+    "Analysis": {
+      "statementType": "WITH",
+      "readOnly": false,
+      "multipleStatements": false,
+      "risk": "blocked",
+      "reasons": [
+        "Oracle SELECT의 비허용 함수 호출 totals()이 포함되어 있습니다."
+      ]
+    }
+  }
+]
