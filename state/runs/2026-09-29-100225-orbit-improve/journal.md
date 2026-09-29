@@ -30,3 +30,5 @@
 - [러너 10:15] pr created — https://github.com/hkjang/orbit/pull/15
 - [러너 10:17] ci passed — 검사 1개 모두 success
 - [러너 10:17] merge done — 35ca564
+- [러너 10:23] release published — v0.7.5
+- [러너 10:24] assets verified — v0.7.5 자산 1개 (이전 v0.7.4: 1)
