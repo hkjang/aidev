@@ -1,0 +1,11 @@
+## 2026-09-29
+- 선택: 목록·AI HTTP 오류에서도 서버 error.code를 보존 (가치 2 / 위험 1 / 작업량 S)
+- 결과: 성공
+- 요약: client.ts 한 파일에서 세 공개 요청 경로의 HTTP 오류 생성을 공유하여 서버 status/code/message를 일관되게 전달하도록 수정했다. 실제 node:http 서버·네이티브 fetch로 11가지 응답 × 3개 export를 호출하는 테스트 33개를 추가했으며, 수정 전 목록·AI 코드 검증 4개 실패 → 수정 후 집중 테스트 44개 통과 → code 전달만 제거 시 신규 6개와 기존 1개 재실패 → 원복 후 전체 21파일/123개 통과를 확인했다. npm --prefix web run lint, npm --prefix web run build, git diff --check도 통과했다; 전체 테스트의 jsdom getComputedStyle 경고 및 npm ci의 moderate 취약점 2건은 범위 밖으로 유지했고 Go·DB·브라우저 E2E·release-check는 실행하지 않았다.
+- 실패 재현: `-   "code": "forbidden",` / `+   "code": undefined,` (requestList·streamAI, HTTP 403; invalid_query/400도 동일하게 실패)
+- 보류 아이디어:
+  - OpenAPI page_size 상한 불일치 정리 (가치 2 / 위험 2 / 작업량 S)
+  - internal/store 순수 헬퍼 5개 표 기반 테스트 (가치 2 / 위험 1 / 작업량 S)
+  - OpenAPI servers URL과 계약 테스트 경로 접두사 불일치 검출 (가치 2 / 위험 1 / 작업량 S)
+  - search 질의 최대 길이·제어문자 정규화 (가치 2 / 위험 2 / 작업량 S)
+- 과제서: 채택 — 현재 소스와 실제 HTTP 테스트가 진단에 일치하여 지정된 두 파일에서 구현하고 정찰의 후보·평가를 유지했다.

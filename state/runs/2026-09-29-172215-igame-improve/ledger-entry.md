@@ -1,0 +1,11 @@
+## 2026-09-29
+- 선택: 아키텍처 백서의 비밀 저장·개인 키 회전 설명을 실제 구현과 일치시키기 (가치 3 / 위험 1 / 작업량 M)
+- 결과: 성공
+- 요약: 9b849ed에서 백서 도입·구조도·2절과 배포 PDF를 설치키 직접 AES-256-GCM, 개인 API/MCP 키 SHA-256 저장, 회전 트랜잭션 성공 시 기존 키 즉시 폐기 계약으로 맞췄다(제품 코드 0개, 문서 2개). 별도 키 생성→consumer 전환→이전 키 폐기 절차와 설치키 자동 회전/재암호화 미지원도 명시했고, 첫 PDF에서 관찰한 구조도 테두리 잘림은 Markdown의 ASCII 테두리로 해결했다. `go test ./internal/secretbox/... -count=1 -v` PASS(TestRoundTripAndRandomNonce, 0.002s), `DOCS_PDF_DATE=2026-09-29 make docs-pdf` PASS, `bash scripts/check-release-contract.sh` PASS(v0.7.24), `git diff --check` PASS 및 diff stat 2파일 확인; 최종 PDF 4쪽을 PyMuPDF로 렌더링하여 이미지 뷰어로 직접 열람했고 CRU PDF는 사전 백업과 byte 동일하게 복원했다.
+- 실패 재현: 못 함 — 문서 전용 과제로 새 테스트를 만들지 않았으며 소스 문자열/대역 테스트를 금지한 과제서에 따랐다. 수정 전 백서와 실제 New/Seal/Open, main 배선, putOIDCSetting/putAISetting, createAPIKey/rotateAPIKey 및 security.md를 읽어 불일치를 확인했다. 기존 Box 테스트는 수정 전에도 PASS였고 API 회전 동작의 실행 증거가 아니다. PDF 첫 생성물 2쪽에서는 유니코드 테두리 오른쪽 잘림을 직접 확인했고 ASCII 전환 후 동일 생성기로 재생성해 잘림 해소를 확인했다.
+- 보류 아이디어:
+  - serviceLocation 설정 읽기 오류 전파 (가치 3 / 위험 2 / 작업량 M)
+  - README RealmGuard 서버 재현 설명 정합성 (가치 2 / 위험 1 / 작업량 S)
+  - settings PG fixture updated_by 복원 회귀 (가치 2 / 위험 1 / 작업량 S)
+  - secretbox 변조·잘못된 키·손상 포맷 거부 회귀 (가치 2 / 위험 1 / 작업량 S)
+- 과제서: 채택 — 현재 코드가 정찰 근거와 일치하고 기존 Docker PDF 생성 환경도 작동하여 지정한 Markdown과 PDF 두 파일만 수정했다.

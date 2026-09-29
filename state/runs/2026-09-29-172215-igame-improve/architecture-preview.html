@@ -1,0 +1,142 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8" />
+<title>igame 아키텍처 및 보안 백서 (Architecture &amp; Security Whitepaper)</title>
+<style>
+  /* Fonts resolve from the build container; no network asset is referenced so
+     the same page renders identically offline. */
+  :root {
+    --ink: #101d2b;
+    --muted: #4c5c6d;
+    --accent: #0b6a8f;
+    --rule: #d6e0ea;
+    --surface: #f2f6fa;
+    --code-bg: #0f1d2e;
+    --code-ink: #d6e9f7;
+  }
+  @page { size: A4; margin: 18mm 16mm 20mm; }
+  @page :first { margin: 0; }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    color: var(--ink);
+    font-family: "Noto Sans CJK KR", "Noto Sans KR", "Malgun Gothic", "Noto Sans", sans-serif;
+    font-size: 10.5pt;
+    line-height: 1.7;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+  .cover {
+    height: 297mm;
+    padding: 46mm 24mm 24mm;
+    background: linear-gradient(150deg, #07101d 0%, #0f2c3f 58%, #0b6a8f 100%);
+    color: #f3f7fb;
+    display: flex;
+    flex-direction: column;
+    page-break-after: always;
+  }
+  .cover .mark { font-size: 12pt; letter-spacing: .34em; text-transform: uppercase; opacity: .72; }
+  .cover h1 { font-size: 30pt; line-height: 1.25; margin: 14mm 0 0; font-weight: 800; }
+  .cover .summary { margin-top: 8mm; font-size: 11.5pt; line-height: 1.8; color: #c7dced; max-width: 132mm; }
+  .cover .meta { margin-top: auto; font-size: 10pt; color: #a9c4d8; }
+  .cover .meta strong { color: #f3f7fb; font-weight: 700; }
+  .cover .rule { width: 34mm; height: 3px; background: #67d7ff; margin-top: 10mm; }
+  h2 {
+    font-size: 15pt; margin: 11mm 0 4mm; padding-bottom: 2.5mm;
+    border-bottom: 2px solid var(--accent); color: var(--accent);
+    page-break-after: avoid;
+  }
+  h3 { font-size: 12pt; margin: 7mm 0 2.5mm; color: var(--ink); page-break-after: avoid; }
+  h4 { font-size: 11pt; margin: 5mm 0 2mm; color: var(--muted); page-break-after: avoid; }
+  p { margin: 0 0 3mm; }
+  ul, ol { margin: 0 0 4mm; padding-left: 7mm; }
+  li { margin-bottom: 1.6mm; }
+  li.nested { margin-left: 5mm; list-style-type: circle; }
+  hr { border: 0; border-top: 1px solid var(--rule); margin: 7mm 0; }
+  code {
+    font-family: "D2Coding", "Noto Sans Mono CJK KR", ui-monospace, monospace;
+    font-size: 9.5pt; background: var(--surface); color: var(--accent);
+    padding: 0.4mm 1.2mm; border-radius: 2px;
+  }
+  pre {
+    font-family: "D2Coding", "Noto Sans Mono CJK KR", ui-monospace, monospace;
+    font-size: 8.5pt; line-height: 1.5; background: var(--code-bg); color: var(--code-ink);
+    padding: 4mm 5mm; border-radius: 3mm; overflow: hidden; white-space: pre;
+    page-break-inside: avoid;
+  }
+  pre code { background: none; color: inherit; padding: 0; }
+  strong { font-weight: 700; }
+  a { color: var(--accent); text-decoration: none; }
+  .cover code {
+    background: rgba(103, 215, 255, .16);
+    color: #bfe6ff;
+  }
+</style>
+</head>
+<body>
+  <section class="cover">
+    <div class="mark">igame</div>
+    <h1>igame 아키텍처 및 보안 백서 (Architecture &amp; Security Whitepaper)</h1>
+    <div class="rule"></div>
+    <p class="summary">본 문서는 igame의 단일 바이너리 모듈러 모놀리스 아키텍처, 2계층 봉투 암호화, Keycloak OIDC SSO 및 Model Context Protocol (MCP) 연동에 대한 기술 사양서입니다.</p>
+    <div class="meta">
+      <div><strong>서비스 버전</strong> v0.7.24</div>
+      <div><strong>발행일</strong> 2026-09-29</div>
+      <div>Apache License 2.0 · 사내 폐쇄망 배포용</div>
+    </div>
+  </section>
+  <main>
+<h2>🏛️ 1. 시스템 토폴로지 및 런타임 구조</h2>
+<p>igame은 Go 1.26+ 기반의 단일 실행 바이너리 안에 React 19 정적 자산과 Phaser 엔진 번들을 내장(go:embed)하여, 외부 인터넷 통신이 일체 없는 폐쇄망(Air-Gapped) 환경에서 동작합니다.</p>
+<pre>Client Browser (React 19 + Phaser)
+                 │ (HTTPS / Bearer Token / Session)
+                 ▼
+┌──────────────────────────────────────────────────────────────┐
+│ igame Modular Monolith (:8080)                               │
+│  ├─ Core Control Plane (REST / SSE / MCP Streamable HTTP)    │
+│  ├─ Keycloak OIDC SSO &amp; Local Bootstrap Auth                 │
+│  ├─ Deterministic Battle Kernel &amp; Replay Verifier            │
+│  ├─ Game Session &amp; Telemetry Ledger Validator                │
+│  ├─ Leaderboard, Season &amp; Tournament Engine                  │
+│  ├─ Per-User AES-256-GCM Envelope Encryption Vault           │
+│  └─ Embedded Web Assets (dist/*)                             │
+└──────────────────────────────────────────────────────────────┘
+                 │ (SQL / pgxpool)
+                 ▼
+┌──────────────────────────────────────────────────────────────┐
+│ PostgreSQL 16+ (ACID Transactional Data Store)               │
+└──────────────────────────────────────────────────────────────┘</pre>
+<h3>1.1 서버 권위 전투 검증 (Server-Authoritative Battle Replay)</h3>
+<p>RealmGuard의 전투 규칙은 renderer와 완전히 분리된 결정론적 kernel 하나로 존재하며, 브라우저(TypeScript)와 서버(Go)에 같은 알고리즘으로 구현되어 있습니다. kernel은 고정 50ms step으로만 진행하고 벽시계와 난수를 사용하지 않으며, 사칙연산과 제곱근만으로 작성해 두 언어가 같은 IEEE-754 배정밀도 결과를 내도록 보장합니다.</p>
+<pre>Browser                                    Server
+  BattleKernel  ──inputs──▶ ledger ──────▶ battle.Kernel (Go)
+  (renders state)                            │ replays from published content
+  Phaser scene                               ▼
+  (pixels only)                            score · stars · progress</pre>
+<p>브라우저는 무슨 일이 일어났는지 보고하지 않고 플레이어가 무엇을 했는지(<code>{tick, op, …}</code>)만 제출합니다. 서버는 세션에 고정된 published 콘텐츠를 kernel 입력으로 투영해 digest를 재계산하고, 브라우저가 보낸 digest와 일치할 때만 원장을 재생해 남은 생명·자원·처치·유출·완료 wave·승패를 직접 산출합니다. 두 구현의 동치성은 저장소에 커밋된 replay vector와 콘텐츠 투영 fixture로 CI에서 강제됩니다.</p>
+<hr />
+<h2>🔐 2. 2계층 봉투 암호화 (Envelope Encryption)</h2>
+<ul>
+<li><strong>마스터 키 (MEK):</strong> 환경변수 <code>ENCRYPTION_KEY</code> (32바이트 AES-256-GCM)로 관리</li>
+<li><strong>데이터 암호화 키 (DEK):</strong> 사용자 및 테넌트별로 고유한 DEK를 생성하여 마스터 키로 래핑</li>
+<li><strong>비밀 정보 보호:</strong> 모든 개인 API 키, OIDC 클라이언트 시크릿, AI API 토큰은 DEK로 암호화되어 DB에 저장</li>
+<li><strong>Zero-Downtime Key Rotation:</strong> 구 키와 신 키의 유예 기간을 두어 서비스 중단 없는 실시간 키 회전 지원</li>
+</ul>
+<hr />
+<h2>🔌 3. Model Context Protocol (MCP) 연동</h2>
+<ul>
+<li><strong>규격:</strong> Model Context Protocol (Streamable HTTP)</li>
+<li><strong>엔드포인트:</strong> <code>/mcp</code></li>
+<li><strong>세션 유지:</strong> <code>GET /mcp</code>은 서버가 먼저 보내는 message가 없는 열린 SSE stream이며 25초마다 keep-alive만 전송합니다. reverse proxy의 stream idle timeout은 이보다 길게 설정해야 합니다</li>
+<li><strong>제공 도구:</strong></li>
+<li class="nested"><code>games_list</code> / <code>game_get</code>: 등록된 게임 목록과 개별 메타데이터 조회</li>
+<li class="nested"><code>leaderboard_get</code>: 게임별 개인·부서·팀 랭킹 조회</li>
+<li class="nested"><code>defense_config_get</code> / <code>defense_rankings_get</code>: Defense Series의 게시된 콘텐츠와 버전 고정 랭킹 조회</li>
+<li class="nested"><code>profile_get</code> / <code>events_list</code>: 인증된 사용자 프로필과 사내 이벤트 조회</li>
+<li class="nested"><code>game_session_start</code> / <code>score_submit</code>: 서명된 게임 세션 시작과 점수 제출</li>
+<li><strong>권한:</strong> API 키로 접근할 때는 도구별로 <code>games:read</code>, <code>rankings:read</code>, <code>profile:read</code>, <code>sessions:write</code>, <code>scores:write</code> scope를 각각 요구하며 <code>mcp:access</code>가 함께 있어야 합니다</li>
+</ul>
+  </main>
+</body>
+</html>
