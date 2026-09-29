@@ -1,0 +1,221 @@
+{
+  "run_id": "2026-09-30-072221-nexabuilder-improve",
+  "generated": "2026-09-30T07:44:54+09:00",
+  "run": {
+    "run_id": "2026-09-30-072221-nexabuilder-improve",
+    "project": "nexabuilder",
+    "kind": "improve",
+    "started": "2026-09-30T07:22:21+09:00",
+    "model": "claude-opus-5",
+    "policy_version": "4a9e91ac7",
+    "prompts_hash": "ce085c79e18002e2",
+    "runner_version": "d36dd84d8",
+    "arm": "no-repair",
+    "experiment": "roles-2026-09",
+    "finished": "2026-09-30T07:44:54+09:00",
+    "outcome": "verify-failed"
+  },
+  "record": {
+    "ts": "2026-09-30T07:44:54+09:00",
+    "date": "2026-09-30",
+    "project": "nexabuilder",
+    "result": "fix-round: CI failed, PR open https://github.com/hkjang/nexabuilder/pull/44",
+    "outcome": "verify-failed",
+    "run_id": "2026-09-30-072221-nexabuilder-improve",
+    "base_sha": "a3ca1438f9ee9135284a782b5e615baeb5eeebf0",
+    "head_sha": "a332829c9df117973fbd8722a5b274b66df93d51",
+    "pr": "https://github.com/hkjang/nexabuilder/pull/44",
+    "stages": {
+      "base": {
+        "state": "pinned",
+        "reason": "master@a3ca143",
+        "at": "2026-09-30T07:22:24+09:00"
+      },
+      "autonomy": {
+        "state": "release",
+        "reason": "",
+        "at": "2026-09-30T07:22:24+09:00"
+      },
+      "scout": {
+        "state": "failed",
+        "reason": "과제서 없음 — 구현자가 직접 고른다",
+        "at": "2026-09-30T07:27:11+09:00"
+      },
+      "verify": {
+        "state": "passed",
+        "reason": "검증 1개 통과 (auto)",
+        "at": "2026-09-30T07:39:57+09:00"
+      },
+      "review": {
+        "state": "approved",
+        "reason": "리뷰 승인 (risk=low)",
+        "at": "2026-09-30T07:44:14+09:00"
+      },
+      "pr": {
+        "state": "created",
+        "reason": "https://github.com/hkjang/nexabuilder/pull/44",
+        "at": "2026-09-30T07:44:21+09:00"
+      },
+      "ci": {
+        "state": "failed",
+        "reason": "성공이 아닌 검사: test + bootJar=failure",
+        "at": "2026-09-30T07:44:53+09:00"
+      }
+    },
+    "campaign": "",
+    "autonomy": "release",
+    "arm": "no-repair",
+    "experiment": "roles-2026-09",
+    "engine": "claude",
+    "files": 2,
+    "additions": 155,
+    "deletions": 1,
+    "tests": 1,
+    "title": "fix(report): 휴지통에 넣은 목록의 리포트 생성·메일 발송을 막습니다"
+  },
+  "stages": {
+    "base": {
+      "state": "pinned",
+      "reason": "master@a3ca143",
+      "at": "2026-09-30T07:22:24+09:00"
+    },
+    "autonomy": {
+      "state": "release",
+      "reason": "",
+      "at": "2026-09-30T07:22:24+09:00"
+    },
+    "scout": {
+      "state": "failed",
+      "reason": "과제서 없음 — 구현자가 직접 고른다",
+      "at": "2026-09-30T07:27:11+09:00"
+    },
+    "verify": {
+      "state": "passed",
+      "reason": "검증 1개 통과 (auto)",
+      "at": "2026-09-30T07:39:57+09:00"
+    },
+    "review": {
+      "state": "approved",
+      "reason": "리뷰 승인 (risk=low)",
+      "at": "2026-09-30T07:44:14+09:00"
+    },
+    "pr": {
+      "state": "created",
+      "reason": "https://github.com/hkjang/nexabuilder/pull/44",
+      "at": "2026-09-30T07:44:21+09:00"
+    },
+    "ci": {
+      "state": "failed",
+      "reason": "성공이 아닌 검사: test + bootJar=failure",
+      "at": "2026-09-30T07:44:53+09:00"
+    }
+  },
+  "provenance": {
+    "model": "claude-opus-5",
+    "policy_version": "4a9e91ac7",
+    "prompts_hash": "ce085c79e18002e2",
+    "runner_version": "d36dd84d8",
+    "base_sha": "a3ca1438f9ee9135284a782b5e615baeb5eeebf0",
+    "head_sha": "a332829c9df117973fbd8722a5b274b66df93d51",
+    "pr": "https://github.com/hkjang/nexabuilder/pull/44"
+  },
+  "verification": {
+    "runner": {
+      "source": "auto",
+      "commands": [
+        {
+          "cmd": "sh gradlew --quiet --offline test || sh gradlew --quiet test",
+          "exit": 0,
+          "seconds": 2
+        }
+      ]
+    },
+    "runner_gate": {
+      "ok": true,
+      "state": "verified",
+      "reason": "검증 1개 통과 (auto)"
+    },
+    "after_rebase": null,
+    "review": {
+      "verdict": "approve",
+      "reasons": [],
+      "notes": [
+        "테스트가 변경을 정말 검증하는지 직접 확인했다: ReportService.java:82-84 의 가드를 임시로 제거하고 돌려 `trashedListIsNotSnapshotted`, `trashedListIsNotMailedOut` 2건이 실패(tests=6/failures=2)하고 되돌리면 6건 전부 초록(failures=0)임을 재현했다. 원장의 `- 실패 재현:` 줄(400 기대/200·500 관측)과 증상이 일치한다. 확인 후 `git status --porcelain` 빈 출력으로 워크트리 원복도 확인했다.",
+        "구현 노트의 미검증 항목 (3) 스케줄 경로를 읽어서 확인했다: ReportService.generate/generateAndEmail 의 프로덕션 호출자는 ReportController:40-41 과 ScheduledJobManager:106 둘뿐이고 후자는 generateAndEmail 만 쓰므로 새 가드를 우회하는 경로가 없다. ScheduledJobManager:129-138 이 Exception 을 잡아 last_status=error·last_message 로 기록하므로 스케줄러 루프가 깨지지도 않는다(실제 스케줄러 실행은 나도 안 했지만 코드 경로상 열린 구멍은 없다).",
+        "구현 노트의 미검증 항목 (1) admin 경로의 400 봉투도 확인했다: GlobalExceptionHandler 의 @ExceptionHandler(IllegalArgumentException) 이 ApiResponse.error 로 400 을 만들고, ReportController 는 IOException 만 잡으므로 IllegalArgumentException 이 advice 까지 올라간다. 실제 MockMvc 실행에서 `$.message` 문자열까지 일치했다.",
+        "판정 표현이 저장소 관례와 글자 단위로 같다: `getDeletedAt() != null` 은 NexaUiService:62/91, ListInlineEditController:72, LookupController:116, EntityCrudController:132, InboundWebhookService:104 등 전부와 동일한 형태이며(hasText 를 쓰는 판독자는 없음), 메시지도 requireLiveList 와 동일한 \"List not found: {listId}\" 다. 즉 없는 목록과 휴지통 목록을 호출자가 구분할 수 없다.",
+        "남는 우려 1 (이번 변경이 만든 것 아님, 릴리즈 노트에 넣지 말 것): ReportService.java:88-90 은 목록은 살아 있고 **엔티티**가 휴지통인 경우를 여전히 통과시킨다 — 같은 계열의 전량 스냅샷·메일 유출이 남아 있다. 구현자가 의도적으로 다음 회차(ideas.json)로 뺐고 requireLiveEntity 와 계약을 맞춰야 하므로 범위 분리는 타당하다.",
+        "남는 우려 2: prune():170-180 이 파일명 역순 정렬로 남길 파일을 고르는데 정렬 키가 시각이 아니라 listId 라 낮게 정렬되는 listId 의 리포트가 쓰자마자 지워진다(구현자가 발견·ideas.json 신규 pending). 이번 수정으로 recipients 경로의 500 증상은 가려지므로 다음 회차가 이 결함을 잊지 않도록 주의.",
+        "남는 우려 3 (보존·차단 아님): 휴지통에 넣기 **전에** 이미 생성된 CSV 는 nexa.report.dir 에 그대로 남고 목록 수명주기와 묶인 삭제 장치가 없다(retain=30 개수 상한만 있음). 다만 ReportController 에 다운로드 라우트가 없어(run/list 둘뿐) 파일 내용을 다시 읽어 갈 HTTP 경로는 없으므로 공격 경로가 아니다. 개인정보를 담는 목록을 운영할 경우 보존 정책이 필요하다는 점만 남겨 둔다.",
+        "보안·법무 관점에서 차단 사유 없음: 새 엔드포인트·새 식별자·권한 확대·암호 관련 코드가 없고 신규 개인정보 수집도 없다. 변경 방향은 조직 밖 메일 발송을 **줄이는** 쪽이다. 마이그레이션·워크플로·.github/ 무수정을 diff 로 확인했으며(2파일 1커밋) 순수 가드라 revert 로 완전히 되돌아온다."
+      ],
+      "risk": "low",
+      "blocking": []
+    },
+    "ci_gate": {
+      "ok": false,
+      "state": "failed",
+      "reason": "성공이 아닌 검사: test + bootJar=failure",
+      "checks": 2,
+      "bad": 1
+    }
+  },
+  "release": {
+    "result": null,
+    "assets_sha256": []
+  },
+  "approval": null,
+  "usage": [
+    {
+      "ts": "2026-09-30T07:27:11+09:00",
+      "date": "2026-09-30",
+      "project": "nexabuilder",
+      "phase": "scout",
+      "run_id": "2026-09-30-072221-nexabuilder-improve",
+      "campaign": "",
+      "subtype": "success",
+      "engine": "claude",
+      "duration_ms": 290966,
+      "num_turns": 29,
+      "cost_usd": 2.025289999999999,
+      "input_tokens": 38,
+      "output_tokens": 18125,
+      "cache_read": 1401370,
+      "cache_create": 87129
+    },
+    {
+      "ts": "2026-09-30T07:39:55+09:00",
+      "date": "2026-09-30",
+      "project": "nexabuilder",
+      "phase": "improve",
+      "run_id": "2026-09-30-072221-nexabuilder-improve",
+      "campaign": "",
+      "subtype": "success",
+      "engine": "claude",
+      "duration_ms": 783166,
+      "num_turns": 39,
+      "cost_usd": 3.0224320000000002,
+      "input_tokens": 70,
+      "output_tokens": 23029,
+      "cache_read": 2969954,
+      "cache_create": 96138
+    },
+    {
+      "ts": "2026-09-30T07:44:14+09:00",
+      "date": "2026-09-30",
+      "project": "nexabuilder",
+      "phase": "review",
+      "run_id": "2026-09-30-072221-nexabuilder-improve",
+      "campaign": "",
+      "subtype": "success",
+      "engine": "claude",
+      "duration_ms": 259357,
+      "num_turns": 30,
+      "cost_usd": 1.43896,
+      "input_tokens": 38,
+      "output_tokens": 13140,
+      "cache_read": 1068220,
+      "cache_create": 57616
+    }
+  ]
+}
