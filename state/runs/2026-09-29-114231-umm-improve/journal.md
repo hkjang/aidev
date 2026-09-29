@@ -28,3 +28,6 @@
 - 외부 Ptium·AI/브라우저·전체 Go 재실행은 미실시. 신규 데이터 수집·수신자·권한·마이그레이션 없음; 기존 외부 처리 계약 전체 인증은 범위 밖.
 - [러너 11:53] review approved — 리뷰 승인 (risk=low)
 - [러너 11:54] pr created — https://github.com/hkjang/umm/pull/161
+- [러너 12:05] ci passed — 검사 1개 모두 success
+- [러너 12:05] merge done — e116020
+- [러너 12:05] release missing — 릴리즈 결과 없음/손상: missing

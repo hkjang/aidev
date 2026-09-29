@@ -123,3 +123,15 @@
 - 과제서: 채택 — 과제서가 지목한 자리(employees.go:59-69 의 org 필터, EmployeesPage.tsx:58-61 의 누락, server.go:82 의 인증만 요구, seed.mjs 의 개발6·영업2·인사2, UsersPage.tsx:260 ↔ admin.spec.ts:150 의 `inputProps` aria-label 증거)가 모두 지금 코드와 맞아 계획 그대로 구현했다. 두 가지를 덧붙였다: ① `limit` 을 `EMPLOYEE_QUERY_LIMIT` 상수로 내보내 테스트가 "조건과 무관하게 언제나 500" 을 단정한다 ② E2E 에 "조직을 골라도 `q` 가 남는다" 를 한 건 더 넣었다 — 과제서가 "`q` 를 지우지 말 것" 을 위험으로 짚었는데 그것을 단정하는 테스트가 없으면 회귀를 못 잡는다. 과제서의 '미확인'(조직 0개 설치에서의 표시)은 이번에도 확인하지 않았다 — 시드가 항상 조직 3개를 만들어 그 상태를 E2E 로 만들 수 없고, 코드상 `organizations.map` 이 빈 배열이면 `전체 조직` 한 항목만 남는다는 것까지만 읽었다.
 
 - 릴리즈: v1.4.12 (2026-09-28, run 2026-09-28-194213-seaton-improve)
+## 2026-09-29
+- 선택: 직원 화면의 조회 필터를 URL에 보존 (가치 3 / 위험 2 / 작업량 M)
+- 결과: 성공 (커밋 b477d7b)
+- 요약: 초기 빈 상태와 무조건 전체 조회가 URL의 조건을 무시하는 원인이었다. employeeQuery의 읽기·쓰기·API 정규화를 공유하고 EmployeesPage를 URL 확정 조건에 연결해, 검색/Select의 replace 갱신·새로고침/POP 복원·동일값 재조회·가져오기 뒤 확정 조건 재조회 및 늦거나 실패한 조직 목록의 임시 선택지를 구현했다(프로덕션 2파일). 변경 전 6ae2417을 git archive로 빌드한 이미지에서 새 E2E 5건 실패와 주소 미갱신 재역검증을 확인한 뒤 수정 이미지의 employee-filter/employee-export/login 19건 통과(19.4초), npm ci·npm test(159건)·npm run lint·npm run build·go test ./...·python3 scripts/build-docs.py USER_GUIDE·git diff --check 통과; 문서는 md/html 한 문장만 추가했다.
+- 실패 재현: Vitest — `Expected: "limit=500" / Received: "limit=500&status=unknown&assignment=all"`. 변경 전 실서버 E2E — `Error: expect(locator).toHaveValue(expected) failed / Expected: "영업팀" / Received: ""`; 주소 갱신 역검증도 `Error: expect(received).toEqual(expected)`로 실패하여 q·organizationId·status·assignment가 전부 빠지고 other만 남았다.
+- 보류 아이디어: E2E 환경 의존 spec 준비 README (가치 2 / 위험 1 / S) — Docker host network는 이 셸에서 접근 불가했고 전용 bridge+published port로 실제 검증 가능했음; 별도 과제 유지.
+- 보류 아이디어: 목록 rows.Err/Scan 오류 처리 (가치 3 / 위험 2 / M) — 실제 DB 오류 재현 하네스가 필요해 이번 범위 제외.
+- 보류 아이디어: 직원 목록 500건 상한 total·더 보기 (가치 2 / 위험 2 / M) — API limit은 500을 유지하고 URL limit은 신뢰하지 않음.
+- 보류 아이디어: 이력 load/export 쿼리 공유 (가치 2 / 위험 1 / S) — 관측 결함 없는 예방 과제로 유지.
+- 보류 아이디어: 직원 이전 응답 덮어쓰기 및 재시도 뒤 오류 배너 초기화 — 기존 ideas.json 두 후보 유지, 이번에 공통 훅이나 요청 수명으로 확장하지 않음.
+- 과제서: 채택 — 현재 코드가 정찰 근거와 일치했고, 전용 PostgreSQL 16 및 Docker bridge로 실서버 E2E를 준비해 본 과제를 끝냈다.
+
