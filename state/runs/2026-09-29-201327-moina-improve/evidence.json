@@ -1,0 +1,213 @@
+{
+  "run_id": "2026-09-29-201327-moina-improve",
+  "generated": "2026-09-29T20:26:40+09:00",
+  "run": {
+    "run_id": "2026-09-29-201327-moina-improve",
+    "project": "moina",
+    "kind": "improve",
+    "started": "2026-09-29T20:13:27+09:00",
+    "model": "claude-opus-5",
+    "policy_version": "4a9e91ac7",
+    "prompts_hash": "ce085c79e18002e2",
+    "runner_version": "d36dd84d8",
+    "arm": "no-journal",
+    "experiment": "roles-2026-09",
+    "finished": "2026-09-29T20:26:40+09:00",
+    "outcome": "review-pending"
+  },
+  "record": {
+    "ts": "2026-09-29T20:26:40+09:00",
+    "date": "2026-09-29",
+    "project": "moina",
+    "result": "guarded files, PR open https://github.com/hkjang/moina/pull/37",
+    "outcome": "review-pending",
+    "run_id": "2026-09-29-201327-moina-improve",
+    "base_sha": "1d13889180ff7927c3ca86d27a2e6e1085be5879",
+    "head_sha": "98529c0e7ba8440af96ccba38f3206e9c747203e",
+    "pr": "https://github.com/hkjang/moina/pull/37",
+    "stages": {
+      "base": {
+        "state": "pinned",
+        "reason": "main@1d13889",
+        "at": "2026-09-29T20:13:33+09:00"
+      },
+      "autonomy": {
+        "state": "release",
+        "reason": "",
+        "at": "2026-09-29T20:13:33+09:00"
+      },
+      "scout": {
+        "state": "done",
+        "reason": "`AuthContext.test.tsx:92`가 passive effect 완료를 기다리지 않아 간헐 실패(`expected true to be false`)하는 것을 고친다 ",
+        "at": "2026-09-29T20:16:50+09:00"
+      },
+      "brief": {
+        "state": "accepted",
+        "reason": "채택 — 과제서가 지목한 파일·줄·수정 방향(:92를 `waitFor`로)은 옳았고 그대로 구현했습니다. 다만 과제서의 **증명 기법",
+        "at": "2026-09-29T20:26:19+09:00"
+      },
+      "verify": {
+        "state": "passed",
+        "reason": "검증 7개 통과 (auto)",
+        "at": "2026-09-29T20:26:30+09:00"
+      },
+      "pr": {
+        "state": "created",
+        "reason": "https://github.com/hkjang/moina/pull/37",
+        "at": "2026-09-29T20:26:38+09:00"
+      },
+      "guard": {
+        "state": "held",
+        "reason": "frontend/src/auth/AuthContext.test.tsx ",
+        "at": "2026-09-29T20:26:38+09:00"
+      }
+    },
+    "campaign": "",
+    "autonomy": "release",
+    "arm": "no-journal",
+    "experiment": "roles-2026-09",
+    "engine": "claude",
+    "files": 1,
+    "additions": 7,
+    "deletions": 1,
+    "tests": 1,
+    "title": "test: silent SSO 해제 단언이 passive effect 완료를 기다리게 합니다"
+  },
+  "stages": {
+    "base": {
+      "state": "pinned",
+      "reason": "main@1d13889",
+      "at": "2026-09-29T20:13:33+09:00"
+    },
+    "autonomy": {
+      "state": "release",
+      "reason": "",
+      "at": "2026-09-29T20:13:33+09:00"
+    },
+    "scout": {
+      "state": "done",
+      "reason": "`AuthContext.test.tsx:92`가 passive effect 완료를 기다리지 않아 간헐 실패(`expected true to be false`)하는 것을 고친다 ",
+      "at": "2026-09-29T20:16:50+09:00"
+    },
+    "brief": {
+      "state": "accepted",
+      "reason": "채택 — 과제서가 지목한 파일·줄·수정 방향(:92를 `waitFor`로)은 옳았고 그대로 구현했습니다. 다만 과제서의 **증명 기법",
+      "at": "2026-09-29T20:26:19+09:00"
+    },
+    "verify": {
+      "state": "passed",
+      "reason": "검증 7개 통과 (auto)",
+      "at": "2026-09-29T20:26:30+09:00"
+    },
+    "pr": {
+      "state": "created",
+      "reason": "https://github.com/hkjang/moina/pull/37",
+      "at": "2026-09-29T20:26:38+09:00"
+    },
+    "guard": {
+      "state": "held",
+      "reason": "frontend/src/auth/AuthContext.test.tsx ",
+      "at": "2026-09-29T20:26:38+09:00"
+    }
+  },
+  "provenance": {
+    "model": "claude-opus-5",
+    "policy_version": "4a9e91ac7",
+    "prompts_hash": "ce085c79e18002e2",
+    "runner_version": "d36dd84d8",
+    "base_sha": "1d13889180ff7927c3ca86d27a2e6e1085be5879",
+    "head_sha": "98529c0e7ba8440af96ccba38f3206e9c747203e",
+    "pr": "https://github.com/hkjang/moina/pull/37"
+  },
+  "verification": {
+    "runner": {
+      "source": "auto",
+      "commands": [
+        {
+          "cmd": "cd backend && go build ./...",
+          "exit": 0,
+          "seconds": 1
+        },
+        {
+          "cmd": "cd backend && go vet ./...",
+          "exit": 0,
+          "seconds": 0
+        },
+        {
+          "cmd": "cd backend && go test ./...",
+          "exit": 0,
+          "seconds": 0
+        },
+        {
+          "cmd": "cd frontend && [ -d node_modules ] || npm ci --no-audit --no-fund",
+          "exit": 0,
+          "seconds": 0
+        },
+        {
+          "cmd": "cd frontend && npm test --silent",
+          "exit": 0,
+          "seconds": 3
+        },
+        {
+          "cmd": "cd frontend && [ -d node_modules ] || npm ci --no-audit --no-fund",
+          "exit": 0,
+          "seconds": 0
+        },
+        {
+          "cmd": "cd frontend && npm run build --silent",
+          "exit": 0,
+          "seconds": 5
+        }
+      ]
+    },
+    "runner_gate": {
+      "ok": true,
+      "state": "verified",
+      "reason": "검증 7개 통과 (auto)"
+    },
+    "after_rebase": null,
+    "review": null,
+    "ci_gate": null
+  },
+  "release": {
+    "result": null,
+    "assets_sha256": []
+  },
+  "approval": null,
+  "usage": [
+    {
+      "ts": "2026-09-29T20:16:50+09:00",
+      "date": "2026-09-29",
+      "project": "moina",
+      "phase": "scout",
+      "run_id": "2026-09-29-201327-moina-improve",
+      "campaign": "",
+      "subtype": "success",
+      "engine": "claude",
+      "duration_ms": 202249,
+      "num_turns": 20,
+      "cost_usd": 1.2990644999999998,
+      "input_tokens": 24,
+      "output_tokens": 13525,
+      "cache_read": 684799,
+      "cache_create": 61842
+    },
+    {
+      "ts": "2026-09-29T20:26:19+09:00",
+      "date": "2026-09-29",
+      "project": "moina",
+      "phase": "improve",
+      "run_id": "2026-09-29-201327-moina-improve",
+      "campaign": "",
+      "subtype": "success",
+      "engine": "claude",
+      "duration_ms": 594186,
+      "num_turns": 41,
+      "cost_usd": 3.1923285000000003,
+      "input_tokens": 70,
+      "output_tokens": 35828,
+      "cache_read": 2768477,
+      "cache_create": 91204
+    }
+  ]
+}

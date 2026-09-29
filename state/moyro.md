@@ -253,3 +253,16 @@
   - fireIncomingWebhook 작성자 멤버십 DB 오류 403/500 분리 (가치 3 / 위험 2 / 작업량 M): 실제 DB 장애 재현 선행.
 - 과제서: 채택 — POST의 가드 누락과 DELETE 선례가 현재 코드에 일치하며, 지정된 권한·본문·감사·삭제 사용자·DB 장애 회귀를 실제 DB에서 검증했다.
 
+## 2026-09-29
+- 선택: `fireIncomingWebhook` 의 작성자 멤버십 조회 DB 장애를 403 `creator_not_member` 에서 500 으로 분리 (가치 3 / 위험 2 / 작업량 S)
+- 결과: 성공
+- 요약: `handlers.go:3158` 이 `ok, err := h.channels.IsMember(...)` 를 `if err != nil || !ok` 로 접어 연결 실패·`channel_members` 장애·컨텍스트 취소를 403 `api.webhook.incoming.fire.creator_not_member` 로 냈다 — 통합 발신자에게는 "이 훅은 끝났다"(재시도하지 않는 영구 응답)라서 DB 순단 동안의 알림이 조용히 사라진다. 같은 핸들러가 바로 아래에서 같은 질문에 다르게 답한다: `Fire` → `postcommand.Execute` → `authorize` 는 글자 그대로 같은 `(ActorID=hook.CreatorID, ChannelID=hook.ChannelID)` 쌍을 읽고 `FailurePermissionCheck`/`FailureMembershipCheck` 를 이미 500 `api.webhook.incoming.fire.permission_check` 로 낸다. 선행 검사를 둘로 갈라 그 id 를 그대로 재사용했다(새 id·새 상태 코드 없음). `channels.IsMember` 는 `SELECT EXISTS` 라 항상 행이 오므로 `pgx.ErrNoRows` 흡수 분기는 넣지 않았다. 프로덕션 1파일 9줄(주석 포함), 신규 테스트 1파일. 검증: 신규 `server/internal/httpapi/incoming_webhook_member_errors_postgres_test.go` 5개 서브테스트를 실제 PostgreSQL(격리 스키마 + `store.Migrate`) 위에서 프로덕션 배선 그대로 — 실제 `rbac.NewPostgres`/`channels.New`/`posts.New`, `router.go:198-216` 의 `AuthorizeCreate` 클로저 복사, 실제 `webhooks.NewIncoming(db, pcSvc)`(가짜 executor 없음), `router.go:372` 의 chi 패턴 복사, 무인증 요청 — 로 돌렸다. 수정 전 장애 케이스만 403 으로 실패하고 나머지 4건(200 발사+게시글 저장, 진짜 비회원 403, 404, 400)은 수정 전후 모두 통과한다. 반대 방향도 확인: `!ok` 분기를 500 으로 바꾸면 비회원 서브테스트만 깨진다. DSN 을 준 `go test -race -p 1 ./...` 전 패키지 실패 0건, `go build ./...`, `go vet ./...`, `gofmt -l`(수정·신규 2파일 clean), `git diff --check`, `bash scripts/check-source-sizes.sh`(handlers.go 124880/130000) 통과. 웹 변경 없음.
+- 실패 재현: `--- FAIL: TestIncomingWebhookMemberCheckFaultIsNotForbidden/a_membership_lookup_fault_reports_a_server_error` / `incoming_webhook_member_errors_postgres_test.go:191: status = 403, want 500 (body {"id":"api.webhook.incoming.fire.creator_not_member","message":"hook creator no longer a channel member","status_code":403})` (같은 실행에서 `a_live_hook_still_posts`·`a_creator_who_left_the_channel_is_still_refused`·`an_unknown_hook_is_still_not_found`·`an_empty_body_is_still_a_bad_request` 는 PASS)
+- 보류 아이디어:
+  - customprofile 빈 맵 `PatchUserValues` no-op / null DELETE 계약 단위 테스트 (가치 2 / 위험 1 / 작업량 S) — 이번 차선 후보 그대로 유지. 2026-09-26 회차의 장애 주입이 이 전제 위에 서 있는데 전제를 지키는 테스트가 없다.
+  - 북마크 4개 핸들러(late.go 1058/1090/1150/1247)의 `ok, _ := IsMember` 403 위장 분리 (가치 2 / 위험 2 / 작업량 M) — list 의 system-admin 예외 때문에 관리자 우회 시 장애 정책부터 정해야 한다.
+  - `denyGuestMutation`/`denyGuestEnumeration` 의 UserByID DB 오류 401 위장 (가치 2 / 위험 3 / 작업량 M) — 호출 지점 20곳 이상이라 회귀 범위가 넓다.
+  - preferences upsert/delete 의 400 을 원인별 400/500 으로 분리 (가치 3 / 위험 2 / 작업량 M) — 서비스에 `ErrInvalid` 센티널이 없어 선행 작업 필요.
+  - `inviteGuestsByEmail` 게스트+팀관리자 차단 누락 (가치 2 / 위험 2 / 작업량 S) — router.go 756/1054 중복 등록 때문에 실제 승자 라우트 재현이 선행.
+- 과제서: 채택 — 과제서의 근거(`if err != nil || !ok`, 3168 의 500 분기가 같은 (CreatorID, ChannelID) 쌍을 읽는 것, `SELECT EXISTS` 라 ErrNoRows 없음, `DROP TABLE channel_members` 가 `incoming_webhooks` 를 살려 둬 404 가 아니라 멤버십 분기까지 도달하는 결정론)가 현재 코드와 정확히 일치했고, 수용 기준 1~5 를 실제 DB 회귀로 모두 충족했다. 미확인이던 격리 스키마 헬퍼 이름은 `newOperationsTestDB` 가 맞았다.
+
