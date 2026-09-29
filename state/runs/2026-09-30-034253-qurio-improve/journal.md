@@ -19,3 +19,12 @@
 - 다음 역할이 조심할 것: 새 `dbexec` 테스트(`TestPostgresUnqualifiedAliasColumnListValidationAndPaging`)는 `-tags=integration` + `QURIO_TEST_POSTGRES_DSN` 이 필요하고 마이그레이션이 적용된 폐기 DB 를 요구한다(`users` 에 시스템 사용자 1행이 있어야 한다). 이번 검증은 도커 PostgreSQL 17 을 127.0.0.1:55482 에 띄워 했고 컨테이너는 제거했다.
 - [러너 04:01] brief accepted — 채택 — 지목한 행(751-784의 네 분기, 881 `fromItemContext`)이 코드와 정확히 일치했고 수용 기준 1~4 를 그대로 충족했다. 다만 
 - [러너 04:04] verify passed — 검증 9개 통과 (auto)
+
+## 비평 노트
+- 확인: diff 3파일 정독 + sqlsafe.go:751-835·fromItemContext·호출측(450-475) 흐름 추적 + base(main)/HEAD 양쪽에서 프로브 질의 11건 실제 실행 비교.
+- **거절(security 차단)**: sqlsafe.go:806-816 의 introducer FROM/JOIN/ONLY 무조건 `return true` 가 fail-open 이다. PostgreSQL 은 `extract/substring/trim/overlay` 인자 문법에도 `FROM` 을 쓰고, 스캐너가 연산자를 버리므로 `FROM src + evil(...)` 가 `FROM <word> <word>(` 로 붕괴한다. 실측: `SELECT substring(label FROM id + query_to_xml('DELETE FROM users',false,true,'')::text::int) FROM events` → main blocked, HEAD `readonly=true risk=low`, RequireReadOnlyDialect nil. `query_to_xml` 은 pg_catalog 내장이라 dbexec 의 search_path 제한도 못 막는다.
+- 수리가 먼저 볼 파일: `internal/domain/sqlsafe/sqlsafe.go:801-816`(FROM/JOIN/ONLY 특례 제거 → fromItemContext 통일, 단 구현 노트의 `"WITH" ORDINALITY` fail-open 을 별도로 닫을 것) 과 `internal/domain/sqlsafe/sqlsafe_test.go:573`(extract/substring/trim/overlay 인자 문법 차단 케이스 추가).
+- 못 본 것: dbexec 통합 테스트 미실행(단위 수준에서 확정), Oracle 판정 불변 미검증 — 수리 후 프로필이 요구하는 base-vs-수정본 현실 질의 덤프 diff 를 반드시 수행할 것. 작업 트리는 clean 으로 복원했다.
+- [러너 04:08] review rejected — 리뷰 거절: internal/domain/sqlsafe/sqlsafe.go:806-816 새 비수식 별칭 분기가 introducer 가 FROM/JOIN/ONLY 일 때 `fromItemContext` 를 호출하지 않고 무조건 `return true` 한다.
+- [러너 04:08] review blocked — 검토 부서 차단 소견(security) — 수리·중재 없이 운영자의 위험 수용(risk-accepted) 필요
+- [러너 04:08] pr created — https://github.com/hkjang/qurio/pull/29

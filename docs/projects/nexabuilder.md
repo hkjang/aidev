@@ -1,7 +1,7 @@
 ---
 title: "nexabuilder — 자율 개선 이력"
 description: "nexabuilder: 자율 개선 회차 23회, 릴리즈 11건. 최근 릴리즈 없음."
-last_modified_at: 2026-09-30 04:03:15 +0900
+last_modified_at: 2026-09-30 04:10:59 +0900
 ---
 {% raw %}
 <script type="application/ld+json">
@@ -18,7 +18,7 @@ last_modified_at: 2026-09-30 04:03:15 +0900
   "name": "hkjang",
   "url": "https://github.com/hkjang"
  },
- "dateModified": "2026-09-30T04:03:15+09:00"
+ "dateModified": "2026-09-30T04:10:59+09:00"
 }
 </script>
 
@@ -34,6 +34,7 @@ last_modified_at: 2026-09-30 04:03:15 +0900
 <dt>저장소</dt><dd><a href="https://github.com/hkjang/nexabuilder">https://github.com/hkjang/nexabuilder</a></dd>
 <dt>마지막 회차</dt><dd>2026-09-30 03:06 KST — <span class="pill pill-failed">❌ 실패</span> fix-round: <strong>CI failed</strong>, PR open <a href="https://github.com/hkjang/nexabuilder/pull/41">PR #41</a></dd>
 <dt>최근 릴리즈</dt><dd>missing — missing</dd>
+<dt>수정 과제</dt><dd>⚠️ 오류 대응(자동 적재): 마지막 회차가 &#x27;verify-failed&#x27; 로 끝났습니다. fix-round: CI failed, PR open https://github.com/hkjang/nexabuilder/pull/41</dd>
 </dl>
 
 ## 회차 이력

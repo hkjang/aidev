@@ -290,3 +290,41 @@ reports: 29 day(s), 5 week(s), 1 month(s), 1699 run(s), 3298 usage row(s), 47 pr
 notify: no new alerts
 [04:05:48] ptium: release — 41 turns, 4m, $2.09, success
 [04:05:54] ptium: waiting for CI on 70a0c4e (no-ci)
+[04:06:41] aidev synced: run(2026-09-30): releasedock — merged https://github.com/hkjang/releasedock/pull/29, released v0.5.25
+[04:08:11] qurio: review — 19 turns, 3m, $1.28, success
+[04:08:11] qurio: [review] rejected — 리뷰 거절: internal/domain/sqlsafe/sqlsafe.go:806-816 새 비수식 별칭 분기가 introducer 가 FROM/JOIN/ONLY 일 때 `fromItemContext` 를 호출하지 않고 무조건 `return true` 한다. 그런데 PostgreSQL 은 `extract(field FROM src)`·`substring(s FROM n)`·`trim(... FROM s)`·`overlay(... from n)` 처럼 **값 표현식 안에서도 `FROM` 키워드를 쓴다**. 정책 스캐너가 연산자를 전부 버리므로 `FROM src + evil(...)` 가 `FROM <word> <word>(` 토큰 모양으로 붕괴하고, 그 결과 비허용 함수 호출이 읽기 전용 게이트를 통과한다. 실측(base vs HEAD 동일 프로브): `SELECT substring(label FROM id + query_to_xml('DELETE FROM users', false, true, '')::text::int) FROM events` → main 은 blocked, HEAD 는 `readonly=true risk=low`, `RequireReadOnlyDialect` 오류 nil. `SELECT extract(epoch FROM created_at + dblink_exec('host=h dbname=d','DROP TABLE victim')::interval) FROM events` 도 동일. `query_to_xml` 은 contrib 가 아닌 pg_catalog 내장 함수이므로 dbexec 의 `search_path=pg_catalog` 로도 막히지 않고, 캐스트 실패 전에 인자 SQL(DELETE)이 실제로 실행된다. / internal/domain/sqlsafe/sqlsafe.go:801-805 주석은 "관계 이름이 스스로 FROM 항목을 시작해야 한다 … FROM, JOIN, ONLY 뒤이거나 fromItemContext 가 증명한 콤마 뒤" 라고 쓰여 있으나, FROM/JOIN/ONLY 경로는 FROM **절** 문맥을 전혀 증명하지 않는다(`FROM` 토큰이 EXTRACT/SUBSTRING 인자 문법일 수 있음). 코드와 설명이 불일치하며, 프로필의 확립된 규칙("새 면제는 반드시 fromItemContext 로 FROM 문맥을 요구하고 판단 불가 시 fail-closed")을 정면으로 위반한다. / internal/domain/sqlsafe/sqlsafe_test.go:573-608 `TestAnalyzeDialectUnqualifiedAliasDoesNotExemptFunctionCalls` 가 FROM 절 내부 형태(CROSS JOIN·콤마·LATERAL·NATURAL JOIN·WHERE·ORDER BY)만 덮고, `FROM` 이 함수 인자 문법으로 등장하는 extract/substring/trim/overlay 를 한 건도 시험하지 않는다. 그래서 이 회귀가 녹색으로 통과했다. 수용 기준 2(차단 케이스 고정)가 실제 위험 표면을 놓쳤다.
+[04:08:11] qurio: [review] blocked — 검토 부서 차단 소견(security) — 수리·중재 없이 운영자의 위험 수용(risk-accepted) 필요
+branch 'auto/2026-09-30-0342' set up to track 'origin/auto/2026-09-30-0342'.
+[04:08:17] qurio: [pr] created — https://github.com/hkjang/qurio/pull/29
+https://github.com/hkjang/qurio/pull/29#issuecomment-5896838610
+evidence: /mnt/c/Users/USER/projects/aidev/state/runs/2026-09-30-034253-qurio-improve/evidence.json
+reports: 29 day(s), 5 week(s), 1 month(s), 1700 run(s), 3300 usage row(s), 47 project page(s), 10 alert(s)
+notify: 1 new alert(s)
+notify: commented on issue #1
+notify: toast shown
+[04:10:34] ptium: [release] published — v1.69.53
+From https://github.com/hkjang/ptium
+ * branch            main       -> FETCH_HEAD
+Updating d5da1ea..70a0c4e
+Fast-forward
+ VERSION                        |  2 +-
+ api/openapi.yaml               |  2 +-
+ deploy/kubernetes.yaml         |  2 +-
+ docs/offline-deployment.md     | 16 ++++-----
+ docs/release-notes-v1.69.53.md | 81 ++++++++++++++++++++++++++++++++++++++++++
+ 5 files changed, 92 insertions(+), 11 deletions(-)
+ create mode 100644 docs/release-notes-v1.69.53.md
+https://github.com/hkjang/ptium/releases/tag/v1.69.53
+[04:10:40] ptium: [gh-release] created — GitHub Release v1.69.53
+[04:10:41] ptium: [manifest] ok — ptium-1.69.53.tar.gz ptium-1.69.53.tar.gz.sha256 docker-compose.ptium-1.69.53.yml ptium-1.69.53.env.example load-ptium-1.69.53.ps1 load-ptium-1.69.53.sh ptium-1.69.53.kubernetes.yaml 
+[04:10:45] ptium: uploaded ptium-1.69.53.tar.gz (5c4c4451efab1708d16e7aedd2d80b8440753a50d6522f0bfd897f7fe562356e)
+[04:10:47] ptium: uploaded ptium-1.69.53.tar.gz.sha256 (7c4932e847dd0840521b33f5f6be2baf43a68f01577af80c215663b0544f46c5)
+[04:10:49] ptium: uploaded docker-compose.ptium-1.69.53.yml (6d6cc485eeef04401b72b3a6621b03774188af77e33bac415dbbf52b6159c4be)
+[04:10:51] ptium: uploaded ptium-1.69.53.env.example (891305e1b0b2c566e00e50141a214af3709159f0a610591253405e7ad47a4522)
+[04:10:52] ptium: uploaded load-ptium-1.69.53.ps1 (5beaa9b18c470379a3d1e419f36c3f4774080eae3e386a585d159ae1ac2b53b6)
+[04:10:54] ptium: uploaded load-ptium-1.69.53.sh (0f37ad7e0812f7f1ecfeb2af6cdc5c38cc06e4920d3d671af7f044a8a30aad67)
+[04:10:55] ptium: uploaded ptium-1.69.53.kubernetes.yaml (f9de34d42bcb0351194d40367a7a60e81c88608eff200e13b51b0d1fa7581964)
+[04:10:55] ptium: [assets] uploaded — 7개
+[04:10:57] ptium: [assets] verified — v1.69.53 자산 7개 (이전 v1.69.52: 7)
+fatal: '/home/hkjang/.cache/auto-improve-wt/ptium' is not a working tree
+evidence: /mnt/c/Users/USER/projects/aidev/state/runs/2026-09-30-034249-ptium-improve/evidence.json

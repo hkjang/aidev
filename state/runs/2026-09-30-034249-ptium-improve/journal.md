@@ -29,3 +29,8 @@
 - [러너 03:56] pr created — https://github.com/hkjang/ptium/pull/39
 - [러너 04:00] ci passed — 검사 1개 모두 success
 - [러너 04:01] merge done — 70f65fe
+- [러너 04:10] release published — v1.69.53
+- [러너 04:10] gh-release created — GitHub Release v1.69.53
+- [러너 04:10] manifest ok — ptium-1.69.53.tar.gz ptium-1.69.53.tar.gz.sha256 docker-compose.ptium-1.69.53.yml ptium-1.69.53.env.example load-ptium-1.69.53.ps1 load-ptium-1.69.53.sh ptium-1.69.53.kubernetes.yaml 
+- [러너 04:10] assets uploaded — 7개
+- [러너 04:10] assets verified — v1.69.53 자산 7개 (이전 v1.69.52: 7)
