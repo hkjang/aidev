@@ -266,3 +266,4 @@
   - `inviteGuestsByEmail` 게스트+팀관리자 차단 누락 (가치 2 / 위험 2 / 작업량 S) — router.go 756/1054 중복 등록 때문에 실제 승자 라우트 재현이 선행.
 - 과제서: 채택 — 과제서의 근거(`if err != nil || !ok`, 3168 의 500 분기가 같은 (CreatorID, ChannelID) 쌍을 읽는 것, `SELECT EXISTS` 라 ErrNoRows 없음, `DROP TABLE channel_members` 가 `incoming_webhooks` 를 살려 둬 404 가 아니라 멤버십 분기까지 도달하는 결정론)가 현재 코드와 정확히 일치했고, 수용 기준 1~5 를 실제 DB 회귀로 모두 충족했다. 미확인이던 격리 스키마 헬퍼 이름은 `newOperationsTestDB` 가 맞았다.
 
+- 릴리즈: v0.2.42 (2026-09-29, run 2026-09-29-201332-moyro-improve)
