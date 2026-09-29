@@ -1,0 +1,5 @@
+- 원인: 실제 HTTP 테스트의 node:http에 필요한 @types/node가 누락되어 깨끗한 npm ci 후 lint에서 CI와 동일한 오류 4개 발생.
+- 로컬은 /home/hkjang/node_modules/@types/node를 참조하여 누락을 숨김; /tmp 격리 복사본에서 재현.
+- 수정: web/package.json과 package-lock.json에 Node 22 타입 개발 의존성 및 undici-types만 추가. 커밋 7791175 (push 안 함).
+- 검증: 격리본에서 npm ci → npm run lint → npm test(21파일/123개) → npm run build 통과; 타입 제거 시 동일 4개 오류 재발, 복원 후 통과; git diff --check 통과.
+- 테스트 추가·완화 없음(기존 타입 검사를 회귀 검증으로 사용). 기존 jsdom 경고·moderate 취약점 2건 유지; Go/DB/E2E/release-check 미실행.

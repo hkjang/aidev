@@ -1,0 +1,16 @@
+{
+  "verdict": "approve",
+  "recommend": "merge",
+  "reasons": [],
+  "notes": [
+    "HEAD 7791175c082f8638050617747e5c311ea7d052a4의 4개 변경 파일과 전체 클라이언트·소비자·테스트 설정·CI/릴리즈 경로를 검토했다. HTTP 오류 생성만 공유하며 성공 응답·SSE·AbortError 계약과 인증·권한은 유지된다. 데이터 마이그레이션 없이 revert 가능하다.",
+    "Node 22.23.1의 /tmp 격리 체크아웃에서 npm ci, lint, 전체 21파일/123개 테스트, build 통과. 실제 HTTP 신규 33개 테스트는 origin/main 코드에서 목록·AI code 단언 4개가 실패하고 HEAD에서 모두 통과하여 회귀 검출력을 확인했다.",
+    "Go 모듈 검증·vet·govulncheck·단위 테스트, 릴리즈의 고정 PostgreSQL 14 이미지로 -p=1 통합 테스트, 버전·스크린샷 검사 통과. GOFLAGS=-p=1로 패키지를 순차 실행한 make release-check도 전체 통과했다.",
+    "Dockerfile로 linux/amd64 이미지 빌드, gzip 저장·복원·OCI 라벨 확인, offline-smoke-test.sh의 health/ready/version/SPA/OpenAPI/login/dashboard/MCP 검증 통과. 기존 이미지 태그를 덮어쓰지 않도록 Docker 호출에서 심사용 태그 jupiq-review:7791175로 매핑했다. 원격 CI 재실행·실제 GitHub 릴리즈 게시와 브라우저 E2E/화면의 code 활용 효과는 확인하지 않았다.",
+    "기존 internal/store/list_limit_integration_test.go:68은 DSN을 전체 make release-check에 전달하면 병렬 패키지 테스트의 DB 변경으로 Total 268/269 불일치가 발생했다. 실제 release.yml처럼 DSN을 순차 통합 단계에만 주면 통과했고 GOFLAGS=-p=1 전체 검사도 통과했다. 이 PR에서 변경하지 않은 테스트 실행상의 참고 사항이다.",
+    "privacy-and-data-protection, security-architecture-review, code-review 스킬은 전용 Skill 도구가 없어 로컬 SKILL.md와 해당 참고 문헌 목록을 읽어 적용했다. 변경은 이미 수신한 서버 code의 메모리상 전달이며 새 개인정보 수집·영속화·외부 전송·로그·권한 확대가 없다. 추가 타입 패키지 2개의 MIT LICENSE와 잠금 파일을 확인했고 차단 소견은 없다.",
+    "npm audit --audit-level=high 통과. 기존 Vitest/@vitest/mocker moderate 2건과 jsdom getComputedStyle 경고는 남아 있다. 이번 변경으로 새로 도입된 취약점이나 제품 공격 경로는 발견하지 못했다."
+  ],
+  "risk": "low",
+  "blocking": []
+}

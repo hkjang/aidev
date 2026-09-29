@@ -1,0 +1,5 @@
+- 재현: PDF 3쪽 링크 객체 178·179가 /work/security.md#…를 가리켜 배포 독자가 열 수 없다는 지적이 맞았다.
+- 원인/수정: 컨테이너에서 상대 링크가 절대 경로로 변환됨. architecture.md에 docs/security.md의 「세 가지 키 계층」 평문 안내를 쓰고 기존 배포 PDF를 재생성했다.
+- 검증: DOCS_PDF_DATE=2026-09-29 make docs-pdf, go test ./internal/secretbox/... -count=1 -v, make check-contract, git diff --check 모두 PASS.
+- check_pdf.py로 원본 FAIL → 수정본 PASS → 원본 재검사 FAIL 확인: 4쪽·링크 0개·파일/절 안내 존재, 3쪽 시각 확인. CRU PDF는 원본과 cmp 일치.
+- 커밋 5ec0a88 (문서 2개만), push 없음. 제품 전체 테스트·실DB 회전은 문서 참조 수정 범위 밖이라 미실행.
