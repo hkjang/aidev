@@ -20,3 +20,6 @@
 - PostgreSQL 실서비스 통합은 기록만 확인; Oracle·릴리즈 이미지·보안 스캐너 미재검증. 릴리즈 단계 검증은 남음.
 - [러너 10:58] review approved — 리뷰 승인 (risk=low)
 - [러너 10:58] pr created — https://github.com/hkjang/qurio/pull/28
+- [러너 11:15] ci passed — 검사 1개 모두 success
+- [러너 11:15] merge done — 7cda7f5
+- [러너 11:24] release ci-blocked — 릴리즈 커밋 CI: failed — 성공이 아닌 검사: test=failure, deploy=failure (태그 보류)
