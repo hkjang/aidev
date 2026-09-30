@@ -292,3 +292,4 @@
 - 보류 아이디어: [새] `deleteAttachment` 의 참조 수 질의가 오류를 버려(`_ = … Scan(&remaining)`) 질의 실패 시 `remaining=0` 으로 읽고, 같은 보고서의 다른 행이 아직 가리키는 파일을 지움 (2/2/S) · [새] `searchStatus`(semantic.go:431) 가 세 개의 count 질의 오류를 버려 200 과 `items:0, embedded:0, stale:0` 으로 답함 — 임베딩이 하나도 없는 것과 질의가 실패한 것이 화면에서 같아 보임 (3/1/S) · 관리자 카드에서 실패한 발송을 다시 시도로 큐에 되돌리기 — 세 큐의 재시도 계약을 먼저 정해야 함 (3/3/M) · README·docs/MCP.md·AdminPage 의 MCP '읽기 전용' 서술이 `mcpwrite.go` 보다 낡음, CHECKS.md 의 authz-check 소요 시간·병행 금지와 묶어 문서 회차로 (2/1/S) · AdminPage·DashboardPage 를 렌더하는 프런트 시험이 없어 조건부 문장이 타입 검사 밖에서 검증되지 않음 (2/2/M)
 - 과제서: 기각 — 이번 회차에는 정찰 과제서가 없었고, 프로필의 보류 목록은 모두 가치 2 이하이거나 계약 결정이 선행돼야 하는 것들이라, 프로필이 다루지 않은 `attachments.go` 의 부분 저장 결함을 직접 찾아 골랐습니다.
 
+- 릴리즈: v0.314.0 (2026-09-30, run 2026-09-30-230306-weekly-improve)

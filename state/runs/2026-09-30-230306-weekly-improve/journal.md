@@ -20,3 +20,5 @@
 - [러너 23:22] pr created — https://github.com/hkjang/weekly/pull/27
 - [러너 23:45] ci passed — 검사 1개 모두 success
 - [러너 23:45] merge done — b9eb36c
+- [러너 00:17] release published — v0.314.0
+- [러너 00:19] assets verified — v0.314.0 자산 1개 (이전 v0.313.0: 1)
