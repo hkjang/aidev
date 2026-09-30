@@ -1,0 +1,58 @@
+=== PR #13 HEAD = 1dd215189ec6c3ae625cb7deeb93756ac168dc73 ===
+=== files changed vs origin/main ===
+ src/features/goal-metrics.ts    |  20 ++++++--
+ tests/unit/goal-metrics.test.ts | 108 +++++++++++++++++++++++++++++++++++++++-
+ 2 files changed, 121 insertions(+), 7 deletions(-)
+
+=== node/npm (CI node-version: 20 resolves here) ===
+v20.20.2
+10.9.8
+
+=== TZ=UTC npm run check (CI runner TZ) ===
+
+> vibe-code@1.4.5 check
+> npm run typecheck && npm run test && npm run build
+
+
+> vibe-code@1.4.5 typecheck
+> tsc -p tsconfig.json --noEmit
+
+
+> vibe-code@1.4.5 test
+> vitest run
+
+
+ RUN  v3.2.7 /home/hkjang/.cache/auto-improve-wt/vibe-code-shepherd
+
+ ✓ tests/unit/goal-loop.test.ts (3 tests) 2ms
+ ✓ tests/unit/verification.test.ts (10 tests) 5ms
+ ✓ tests/unit/goal-catalog.test.ts (3 tests) 5ms
+ ✓ tests/unit/journal-summary.test.ts (7 tests) 4ms
+ ✓ tests/unit/semver.test.ts (2 tests) 2ms
+ ✓ tests/unit/usage.test.ts (2 tests) 4ms
+ ✓ tests/unit/markdown.test.ts (22 tests) 11ms
+ ✓ tests/unit/plans.test.ts (16 tests) 26ms
+ ✓ tests/unit/goal-health.test.ts (4 tests) 4ms
+ ✓ tests/unit/goal-metrics.test.ts (9 tests) 37ms
+ ✓ tests/unit/checkpoints.test.ts (9 tests) 702ms
+
+ Test Files  11 passed (11)
+      Tests  87 passed (87)
+   Start at  23:07:46
+   Duration  1.09s (transform 746ms, setup 0ms, collect 1.76s, tests 803ms, environment 1ms, prepare 843ms)
+
+
+> vibe-code@1.4.5 build
+> node scripts/build.mjs
+
+warning: dist/ is missing runtime assets: node_modules, i18n, workers, tree-sitter.wasm, tiktoken_bg.wasm
+         copy them from an existing release VSIX (extension/dist/) before packaging.
+
+  dist/extension.js  202.8kb
+
+⚡ Done in 17ms
+CHECK_EXIT=0
+
+=== node --check both bundles ===
+ok-extension
+ok-core
