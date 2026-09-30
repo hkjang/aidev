@@ -1,0 +1,178 @@
+
+ RUN  v3.2.7 /home/hkjang/.cache/auto-improve-wt/vibe-code
+
+ ❯ tests/unit/plans.test.ts (22 tests | 6 failed) 32ms
+   ✓ archiveDonePlans > moves only done plans and leaves the rest of plans/ alone 4ms
+   ✓ archiveDonePlans > keeps the existing archived copy when a done plan reuses its name 3ms
+   ✓ archiveDonePlans > keeps both archived copies when the same name is archived twice within one stamp 2ms
+   ✓ archiveDonePlans > does not descend into the archive directory or touch non-markdown files 2ms
+   ✓ archiveDonePlans > creates the archive directory when it does not exist yet 2ms
+   ✓ conflictStamp > is 14 digits of Asia/Seoul time — the one format archive and restore both suffix with 0ms
+   ✓ selectPlanName > follows the .active-plan pointer when it names an existing file 2ms
+   ✓ selectPlanName > falls back to the last file when the pointer names a file that is gone 2ms
+   ✓ selectPlanName > falls back to the default name for an empty plans directory 2ms
+   ✓ openPlanItems > lists unchecked items of 단계/Now/검증 계획 only 0ms
+   ✓ advancePlanText > Now/Next 의 체크리스트가 아닌 줄과 들여쓴 줄을 그대로 남긴다 0ms
+   ✓ advancePlanText > 첫 Now 항목을 Done 끝에 붙이고 Next 첫 항목을 승격하며 상태·갱신 시각을 올린다 0ms
+   ✓ advancePlanText > 이미 있던 Done 기록의 들여쓰기를 유지한 채 뒤에 붙인다 0ms
+   ✓ advancePlanText > Now 에 체크리스트 줄이 없으면 null 을 돌려준다 0ms
+   ✓ advancePlanText > Next 가 비어 있으면 승격 없이 Now 만 비운다 0ms
+   ✓ advancePlanText > CRLF 계획에서도 같은 결과를 내고 줄바꿈을 보존한다 0ms
+   × advancePlanText > 이미 체크된 Now 첫 항목은 건너뛰고 첫 열린 항목을 완료한다 5ms
+     → expected '바로 구현할 작업 1개 정의' to be '그다음 Now 작업' // Object.is equality
+   × advancePlanText > 이미 체크된 Next 첫 항목은 승격하지 않고 첫 열린 Next 항목을 승격한다 1ms
+     → expected '뒤이어 실행할 작업 1개 정의' to be '그다음 Next 작업' // Object.is equality
+   × advancePlanText > Next 에 열린 항목이 없으면 승격하지 않고 Next 를 그대로 둔다 1ms
+     → expected '뒤이어 실행할 작업 1개 정의' to be '' // Object.is equality
+   × advancePlanText > Now 항목이 전부 체크되어 있으면 null 을 돌려주고 텍스트를 바꾸지 않는다 1ms
+     → expected { …(3) } to be null
+   × advancePlanText > 체크된 첫 줄 다음이 들여쓴 열린 항목이면 그것을 완료한다 0ms
+     → expected '바로 구현할 작업 1개 정의' to be '들여쓴 하위' // Object.is equality
+   × advancePlanText > 체크된 첫 항목을 건너뛰는 결과가 CRLF 계획에서도 같다 1ms
+     → expected '바로 구현할 작업 1개 정의' to be '그다음 Now 작업' // Object.is equality
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 6 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/unit/plans.test.ts > advancePlanText > 이미 체크된 Now 첫 항목은 건너뛰고 첫 열린 항목을 완료한다
+AssertionError: expected '바로 구현할 작업 1개 정의' to be '그다음 Now 작업' // Object.is equality
+
+Expected: "그다음 Now 작업"
+Received: "바로 구현할 작업 1개 정의"
+
+ ❯ tests/unit/plans.test.ts:251:29
+    249| 
+    250|   expect(result).not.toBeNull();
+    251|   expect(result!.completed).toBe("그다음 Now 작업");
+       |                             ^
+    252|   expect(sectionLines(result!.text, "Now")).toEqual([checkedNowTask, s…
+    253|   expect(section(result!.text, "Done")).toBe("- [x] 그다음 Now 작업");
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/6]⎯
+
+ FAIL  tests/unit/plans.test.ts > advancePlanText > 이미 체크된 Next 첫 항목은 승격하지 않고 첫 열린 Next 항목을 승격한다
+AssertionError: expected '뒤이어 실행할 작업 1개 정의' to be '그다음 Next 작업' // Object.is equality
+
+Expected: "그다음 Next 작업"
+Received: "뒤이어 실행할 작업 1개 정의"
+
+ ❯ tests/unit/plans.test.ts:259:28
+    257|   const result = advancePlanText(firstsChecked, NEXT_STAMP);
+    258| 
+    259|   expect(result!.promoted).toBe("그다음 Next 작업");
+       |                            ^
+    260|   expect(sectionLines(result!.text, "Next")).toEqual([checkedNextTask]…
+    261|  });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/6]⎯
+
+ FAIL  tests/unit/plans.test.ts > advancePlanText > Next 에 열린 항목이 없으면 승격하지 않고 Next 를 그대로 둔다
+AssertionError: expected '뒤이어 실행할 작업 1개 정의' to be '' // Object.is equality
+
+- Expected
++ Received
+
++ 뒤이어 실행할 작업 1개 정의
+
+ ❯ tests/unit/plans.test.ts:268:28
+    266|   const result = advancePlanText(source, NEXT_STAMP);
+    267| 
+    268|   expect(result!.promoted).toBe("");
+       |                            ^
+    269|   expect(section(result!.text, "Next")).toBe(section(source, "Next"));
+    270|   expect(sectionLines(result!.text, "Now")).toEqual([secondNowTask]);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/6]⎯
+
+ FAIL  tests/unit/plans.test.ts > advancePlanText > Now 항목이 전부 체크되어 있으면 null 을 돌려주고 텍스트를 바꾸지 않는다
+AssertionError: expected { …(3) } to be null
+
+- Expected: 
+null
+
++ Received: 
+{
+  "completed": "바로 구현할 작업 1개 정의",
+  "promoted": "뒤이어 실행할 작업 1개 정의",
+  "text": "# 계획: 테스트 목표
+
+상태: active
+작성일: 2026-09-22 10:00:00 KST
+마지막 갱신: 2026-09-28 11:22:33 KST
+연결 목표: .vibe-code/goals/current.md
+계획 파일: .vibe-code/plans/current-plan.md
+
+## 목표 정렬
+- 목표 제목: 테스트 목표
+- 이번 계획의 초점: 가장 작은 다음 구현 단위 정의
+
+## 단계
+- [ ] 요구사항/제약 다시 확인
+- [ ] 가장 작은 구현 단계 선택
+- [ ] 검증 기준 확정
+
+## Now
+- [x] 그다음 Now 작업
+- [ ] 뒤이어 실행할 작업 1개 정의
+
+## Next
+
+
+## Done
+- [x] 바로 구현할 작업 1개 정의
+
+## Risks
+- 없음
+
+## 검증 계획
+- [ ] 관련 스크립트 또는 테스트 실행
+",
+}
+
+ ❯ tests/unit/plans.test.ts:278:47
+    276|   expect(taskLines(section(source, "Now"))).toHaveLength(2);
+    277|   expect(openPlanItems(source).filter((item) => item.startsWith("Now: …
+    278|   expect(advancePlanText(source, NEXT_STAMP)).toBeNull();
+       |                                               ^
+    279|  });
+    280| 
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/6]⎯
+
+ FAIL  tests/unit/plans.test.ts > advancePlanText > 체크된 첫 줄 다음이 들여쓴 열린 항목이면 그것을 완료한다
+AssertionError: expected '바로 구현할 작업 1개 정의' to be '들여쓴 하위' // Object.is equality
+
+Expected: "들여쓴 하위"
+Received: "바로 구현할 작업 1개 정의"
+
+ ❯ tests/unit/plans.test.ts:286:29
+    284|   const result = advancePlanText(source, NEXT_STAMP);
+    285| 
+    286|   expect(result!.completed).toBe("들여쓴 하위");
+       |                             ^
+    287|   expect(sectionLines(result!.text, "Now")).toEqual([checkedNowTask, n…
+    288|  });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/6]⎯
+
+ FAIL  tests/unit/plans.test.ts > advancePlanText > 체크된 첫 항목을 건너뛰는 결과가 CRLF 계획에서도 같다
+AssertionError: expected '바로 구현할 작업 1개 정의' to be '그다음 Now 작업' // Object.is equality
+
+Expected: "그다음 Now 작업"
+Received: "바로 구현할 작업 1개 정의"
+
+ ❯ tests/unit/plans.test.ts:294:29
+    292|   const result = advancePlanText(crlf(firstsChecked), NEXT_STAMP);
+    293| 
+    294|   expect(result!.completed).toBe("그다음 Now 작업");
+       |                             ^
+    295|   expect(result!.text).toBe(crlf(advancePlanText(firstsChecked, NEXT_S…
+    296|  });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[6/6]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  6 failed | 16 passed (22)
+   Start at  22:28:13
+   Duration  489ms (transform 219ms, setup 0ms, collect 245ms, tests 32ms, environment 0ms, prepare 44ms)
+
