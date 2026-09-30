@@ -1,0 +1,63 @@
+=== PR#9 gate: head bb54c5807c44d4d33d6afb82641425fe1de27860 ===
+node: v20.19.2  npm: 10.9.8
+=== step 1: npm ci ===
+
+added 57 packages, and audited 58 packages in 951ms
+
+15 packages are looking for funding
+  run `npm fund` for details
+
+2 moderate severity vulnerabilities
+
+To address all issues (including breaking changes), run:
+  npm audit fix --force
+
+Run `npm audit` for details.
+EXIT_npm_ci=0
+=== step 2: npm run check ===
+
+> vibe-code@1.4.5 check
+> npm run typecheck && npm run test && npm run build
+
+
+> vibe-code@1.4.5 typecheck
+> tsc -p tsconfig.json --noEmit
+
+
+> vibe-code@1.4.5 test
+> vitest run
+
+
+ RUN  v3.2.7 /home/hkjang/.cache/pr9-gate/src
+
+ ✓ tests/unit/usage.test.ts (2 tests) 3ms
+ ✓ tests/unit/semver.test.ts (2 tests) 2ms
+ ✓ tests/unit/goal-loop.test.ts (3 tests) 2ms
+ ✓ tests/unit/verification.test.ts (10 tests) 5ms
+ ✓ tests/unit/goal-catalog.test.ts (3 tests) 4ms
+ ✓ tests/unit/journal-summary.test.ts (7 tests) 4ms
+ ✓ tests/unit/markdown.test.ts (22 tests) 9ms
+ ✓ tests/unit/goal-health.test.ts (4 tests) 4ms
+ ✓ tests/unit/plans.test.ts (22 tests) 26ms
+ ✓ tests/unit/goal-metrics.test.ts (4 tests) 6ms
+ ✓ tests/unit/checkpoints.test.ts (9 tests) 614ms
+
+ Test Files  11 passed (11)
+      Tests  88 passed (88)
+   Start at  01:09:57
+   Duration  970ms (transform 776ms, setup 0ms, collect 1.72s, tests 679ms, environment 2ms, prepare 589ms)
+
+
+> vibe-code@1.4.5 build
+> node scripts/build.mjs
+
+staged dist/extension.core.js (20.3 MB)
+warning: dist/ is missing runtime assets: node_modules, i18n, workers, tree-sitter.wasm, tiktoken_bg.wasm
+         copy them from an existing release VSIX (extension/dist/) before packaging.
+
+  dist/extension.js  202.7kb
+
+⚡ Done in 13ms
+EXIT_npm_check=0
+=== step 3+4: node --check bundles ===
+EXIT_node_check=0

@@ -1,0 +1,94 @@
+
+ RUN  v3.2.7 /home/hkjang/.cache/auto-improve-wt/vibe-code
+
+ ❯ tests/unit/journal.test.ts (5 tests | 3 failed) 8ms
+   × appendSessionLine > keeps three reactivation lines inside the 세션 section in call order 5ms
+     → expected [ '- 09:00 — 확장 활성화' ] to deeply equal [ '- 09:00 — 확장 활성화', …(3) ]
+   × appendSessionLine > leaves no reactivation line in 다음 세션을 위한 노트 1ms
+     → expected '- 13:20 — 확장 재활성화\n- 15:05 — 확장 재활성화\…' to be '' // Object.is equality
+   ✓ appendSessionLine > keeps the heading and the other template sections byte-for-byte 0ms
+   × appendSessionLine > keeps a CRLF journal free of LF-only lines 1ms
+     → expected '# Vibe Code 작업 일지 — 2026-10-01\r\n\r\…' to be '# Vibe Code 작업 일지 — 2026-10-01\r\n\r\…' // Object.is equality
+   ✓ appendSessionLine > falls back to the end of the file when the 세션 heading was removed 0ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 3 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/unit/journal.test.ts > appendSessionLine > keeps three reactivation lines inside the 세션 section in call order
+AssertionError: expected [ '- 09:00 — 확장 활성화' ] to deeply equal [ '- 09:00 — 확장 활성화', …(3) ]
+
+- Expected
++ Received
+
+  [
+    "- 09:00 — 확장 활성화",
+-   "- 13:20 — 확장 재활성화",
+-   "- 15:05 — 확장 재활성화",
+-   "- 18:40 — 확장 재활성화",
+  ]
+
+ ❯ tests/unit/journal.test.ts:15:36
+     13|  it("keeps three reactivation lines inside the 세션 section in call orde…
+     14|   const text = reactivate(journalTemplate(YMD, "09:00"), "13:20", "15:…
+     15|   expect(sectionLines(text, "세션")).toEqual([
+       |                                    ^
+     16|    "- 09:00 — 확장 활성화",
+     17|    "- 13:20 — 확장 재활성화",
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/3]⎯
+
+ FAIL  tests/unit/journal.test.ts > appendSessionLine > leaves no reactivation line in 다음 세션을 위한 노트
+AssertionError: expected '- 13:20 — 확장 재활성화\n- 15:05 — 확장 재활성화\…' to be '' // Object.is equality
+
+- Expected
++ Received
+
++ - 13:20 — 확장 재활성화
++ - 15:05 — 확장 재활성화
++ - 18:40 — 확장 재활성화
+
+ ❯ tests/unit/journal.test.ts:25:41
+     23|  it("leaves no reactivation line in 다음 세션을 위한 노트", () => {
+     24|   const text = reactivate(journalTemplate(YMD, "09:00"), "13:20", "15:…
+     25|   expect(section(text, "다음 세션을 위한 노트")).toBe("");
+       |                                         ^
+     26|  });
+     27| 
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/3]⎯
+
+ FAIL  tests/unit/journal.test.ts > appendSessionLine > keeps a CRLF journal free of LF-only lines
+AssertionError: expected '# Vibe Code 작업 일지 — 2026-10-01\r\n\r\…' to be '# Vibe Code 작업 일지 — 2026-10-01\r\n\r\…' // Object.is equality
+
+- Expected
++ Received
+
+@@ -8,9 +8,9 @@
+  
+  (직접 기록하거나 에이전트에게 요청하세요: "오늘 작업 일지에 다음 내용 추가해줘 ...")
+  
+  ## 다음 세션을 위한 노트
+  
+- - 13:20 — 확장 재활성화
++ - 13:20 — 확장 재활성화
+- - 15:05 — 확장 재활성화
++ - 15:05 — 확장 재활성화
+- - 18:40 — 확장 재활성화
++ - 18:40 — 확장 재활성화
+
+
+ ❯ tests/unit/journal.test.ts:45:16
+     43|   expect(detectEol(text)).toBe("\r\n");
+     44|   // LF-only 줄이 하나라도 남으면 복원한 텍스트가 원본과 달라진다.
+     45|   expect(text).toBe(normalizeEol(text).replace(/\n/g, "\r\n"));
+       |                ^
+     46|   expect(sectionLines(text, "세션")).toEqual([
+     47|    "- 09:00 — 확장 활성화",
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/3]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  3 failed | 2 passed (5)
+   Start at  01:11:18
+   Duration  299ms (transform 71ms, setup 0ms, collect 91ms, tests 8ms, environment 0ms, prepare 45ms)
+

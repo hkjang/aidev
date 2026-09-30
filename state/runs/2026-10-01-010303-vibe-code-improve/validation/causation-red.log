@@ -1,0 +1,83 @@
+
+ RUN  v3.2.7 /home/hkjang/.cache/auto-improve-wt/vibe-code
+
+ ❯ tests/unit/journal.test.ts (5 tests | 5 failed) 4ms
+   × appendSessionLine > keeps three reactivation lines inside the 세션 section in call order 2ms
+     → (0 , journalTemplate) is not a function
+   × appendSessionLine > leaves no reactivation line in 다음 세션을 위한 노트 0ms
+     → (0 , journalTemplate) is not a function
+   × appendSessionLine > keeps the heading and the other template sections byte-for-byte 0ms
+     → (0 , journalTemplate) is not a function
+   × appendSessionLine > keeps a CRLF journal free of LF-only lines 0ms
+     → (0 , journalTemplate) is not a function
+   × appendSessionLine > falls back to the end of the file when the 세션 heading was removed 0ms
+     → (0 , journalTemplate) is not a function
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 5 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/unit/journal.test.ts > appendSessionLine > keeps three reactivation lines inside the 세션 section in call order
+TypeError: (0 , journalTemplate) is not a function
+ ❯ tests/unit/journal.test.ts:14:27
+     12| describe("appendSessionLine", () => {
+     13|  it("keeps three reactivation lines inside the 세션 section in call orde…
+     14|   const text = reactivate(journalTemplate(YMD, "09:00"), "13:20", "15:…
+       |                           ^
+     15|   expect(sectionLines(text, "세션")).toEqual([
+     16|    "- 09:00 — 확장 활성화",
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/5]⎯
+
+ FAIL  tests/unit/journal.test.ts > appendSessionLine > leaves no reactivation line in 다음 세션을 위한 노트
+TypeError: (0 , journalTemplate) is not a function
+ ❯ tests/unit/journal.test.ts:24:27
+     22| 
+     23|  it("leaves no reactivation line in 다음 세션을 위한 노트", () => {
+     24|   const text = reactivate(journalTemplate(YMD, "09:00"), "13:20", "15:…
+       |                           ^
+     25|   expect(section(text, "다음 세션을 위한 노트")).toBe("");
+     26|  });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/5]⎯
+
+ FAIL  tests/unit/journal.test.ts > appendSessionLine > keeps the heading and the other template sections byte-for-byte
+TypeError: (0 , journalTemplate) is not a function
+ ❯ tests/unit/journal.test.ts:29:19
+     27| 
+     28|  it("keeps the heading and the other template sections byte-for-byte",…
+     29|   const journal = journalTemplate(YMD, "09:00");
+       |                   ^
+     30|   const text = reactivate(journal, "13:20", "15:05", "18:40");
+     31|   expect(text.split("\n")[0]).toBe(`# Vibe Code 작업 일지 — ${YMD}`);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/5]⎯
+
+ FAIL  tests/unit/journal.test.ts > appendSessionLine > keeps a CRLF journal free of LF-only lines
+TypeError: (0 , journalTemplate) is not a function
+ ❯ tests/unit/journal.test.ts:40:16
+     38| 
+     39|  it("keeps a CRLF journal free of LF-only lines", () => {
+     40|   const crlf = journalTemplate(YMD, "09:00").replace(/\n/g, "\r\n");
+       |                ^
+     41|   expect(detectEol(crlf)).toBe("\r\n");
+     42|   const text = reactivate(crlf, "13:20", "15:05", "18:40");
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/5]⎯
+
+ FAIL  tests/unit/journal.test.ts > appendSessionLine > falls back to the end of the file when the 세션 heading was removed
+TypeError: (0 , journalTemplate) is not a function
+ ❯ tests/unit/journal.test.ts:55:19
+     53| 
+     54|  it("falls back to the end of the file when the 세션 heading was removed…
+     55|   const journal = journalTemplate(YMD, "09:00");
+       |                   ^
+     56|   const without = journal.replace("## 세션\n", "");
+     57|   expect(hasSection(without, "세션")).toBe(false);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/5]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  5 failed (5)
+   Start at  01:11:44
+   Duration  273ms (transform 61ms, setup 0ms, collect 77ms, tests 4ms, environment 0ms, prepare 38ms)
+
