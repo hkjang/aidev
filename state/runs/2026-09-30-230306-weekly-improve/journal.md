@@ -18,3 +18,5 @@
 - 보안·법무 차단 없음: 새 경로·권한 변경 없고 저장 경로는 sha256+허용확장자라 Filename 경로 탈출이 없으며, 새로 수집하는 개인정보·새 의존성·외부 약속 문구가 없다. 릴리즈 노트에는 "거절된 업로드는 이제 아무 이미지도 남기지 않는다"만 적으면 되고, 문서의 그 문장은 UNSUPPORTED_IMAGE·FILE_TOO_LARGE 범위에서만 참임을 기억할 것.
 - [러너 23:22] review approved — 리뷰 승인 (risk=low)
 - [러너 23:22] pr created — https://github.com/hkjang/weekly/pull/27
+- [러너 23:45] ci passed — 검사 1개 모두 success
+- [러너 23:45] merge done — b9eb36c
