@@ -872,6 +872,35 @@ run_verify(){ # $1=작업 디렉터리 $2=결과 파일
       [ ${#cmds[@]} -gt 0 ] && [ "$sub" != . ] && continue
     done
     if [ ${#cmds[@]} -eq 0 ] && [ -f "$wd/Makefile" ] && grep -qE '^test:' "$wd/Makefile"; then cmds+=("make test"); fi
+    # CI 가 돌리는데 우리는 안 돌리는 것을 워크플로에서 캐낸다. 게이트가 CI 보다 약하면 회차가
+    # 예고된 실패를 계속 만든다 — nexabuilder 는 로컬에서 gradlew test 만 돌고 CI 는 bootJar 도
+    # 도는데, 2026-09-29~30 에 CI 실패가 11회 났다(로컬 검증은 매번 통과).
+    # 저장소 자기 도구를 부르는 줄만 쓰고(배포·인증·업로드는 제외) 최대 셋까지 보탠다.
+    local wfl
+    for wfl in "$wd"/.github/workflows/*.yml "$wd"/.github/workflows/*.yaml; do
+      [ -f "$wfl" ] || continue
+      while IFS= read -r line; do
+        [ -n "$line" ] || continue
+        case "$line" in
+          *secret*|*SECRET*|*token*|*TOKEN*|*login*|*publish*|*deploy*|*upload*|*push*|*release*|*docker*|*npm\ i*|*npm\ ci*|*install*) continue;;
+        esac
+        case "$line" in
+          ./gradlew*|gradlew*|./mvnw*|mvnw*|make\ *|npm\ run\ *|pnpm\ run\ *|yarn\ run\ *|go\ *|cargo\ *|pytest*|dotnet\ *) ;;
+          *) continue;;
+        esac
+        # 중복 판정은 **플래그를 뺀 형태**로 한다. 첫 두 토큰만 보면 `gradlew --no-daemon` 이
+        # 키가 되어 test 와 bootJar 이 같은 것으로 묶인다 — 정작 필요한 bootJar 가 빠졌다.
+        local key printed=0 c2 ckey
+        key=$(tr ' ' '\n' <<<"${line#./}" | grep -v '^-' | grep -v '^$' | tr '\n' ' ')
+        for c2 in "${cmds[@]}"; do
+          ckey=$(tr ' ' '\n' <<<"${c2#./}" | grep -v '^-' | grep -v '^$' | tr '\n' ' ')
+          case "$ckey" in *"$key"*) printed=1; break;; esac
+        done
+        [ "$printed" = 1 ] && continue
+        [ "$(printf '%s\n' "${cmds[@]}" | grep -c 'CI에서 가져옴')" -ge 3 ] 2>/dev/null && break
+        cmds+=("$line   # CI에서 가져옴")
+      done < <(grep -hE '^[[:space:]]+run:[[:space:]]*[^|>]' "$wfl" 2>/dev/null | sed -E 's/^[[:space:]]*run:[[:space:]]*//' | sed 's/[[:space:]]*$//' | head -20)
+    done
   fi
   [ ${#cmds[@]} -gt 0 ] || src=none
   echo "{\"source\":\"$src\",\"commands\":[]}" > "$outf"
