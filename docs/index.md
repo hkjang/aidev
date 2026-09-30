@@ -1,7 +1,7 @@
 ---
 title: "aidev 자율 개선 대시보드"
 description: "Claude Code 자율 개선 에이전트가 hkjang 의 프로젝트를 개선·테스트·머지·릴리즈한 일일 보고. 오늘 20회차·릴리즈 2건, 누적 1716회차·릴리즈 594건, 주의 필요 18건."
-last_modified_at: 2026-09-30 16:29:50 +0900
+last_modified_at: 2026-09-30 16:34:14 +0900
 ---
 {% raw %}
 <script type="application/ld+json">
@@ -17,7 +17,7 @@ last_modified_at: 2026-09-30 16:29:50 +0900
   "name": "hkjang",
   "url": "https://github.com/hkjang"
  },
- "dateModified": "2026-09-30T16:29:50+09:00"
+ "dateModified": "2026-09-30T16:34:14+09:00"
 }
 </script>
 
@@ -363,7 +363,7 @@ last_modified_at: 2026-09-30 16:29:50 +0900
 
 # aidev 자율 개선 대시보드
 
-<p class="tldr"><strong>한 줄 요약.</strong> Claude Code 자율 개선 에이전트가 hkjang 의 프로젝트를 개선·테스트·머지·릴리즈한 일일 보고. 오늘 20회차·릴리즈 2건, 누적 1716회차·릴리즈 594건, 주의 필요 18건. 회차가 끝날 때마다 자동 갱신됩니다 (마지막 갱신 <time datetime="2026-09-30T16:29:50+09:00" data-rel>2026-09-30 16:29</time> KST).</p>
+<p class="tldr"><strong>한 줄 요약.</strong> Claude Code 자율 개선 에이전트가 hkjang 의 프로젝트를 개선·테스트·머지·릴리즈한 일일 보고. 오늘 20회차·릴리즈 2건, 누적 1716회차·릴리즈 594건, 주의 필요 18건. 회차가 끝날 때마다 자동 갱신됩니다 (마지막 갱신 <time datetime="2026-09-30T16:34:14+09:00" data-rel>2026-09-30 16:34</time> KST).</p>
 
 <div class="alerts" role="alert"><strong>⚠️ 주의 필요 18건</strong> <span class="meta">— 새 경고는 GitHub Issue·Slack·이메일·Windows 알림으로도 보냅니다</span><ul><li><a href="https://hkjang.github.io/aidev/projects/nexabuilder/">nexabuilder</a> — CI 실패로 PR 미머지 <span class=meta>(2026-09-30 01:55)</span></li><li><a href="https://hkjang.github.io/aidev/projects/nexabuilder/">nexabuilder</a> — CI 실패로 PR 미머지 <span class=meta>(2026-09-30 03:06)</span></li><li><a href="https://hkjang.github.io/aidev/projects/nexabuilder/">nexabuilder</a> — CI 실패로 PR 미머지 <span class=meta>(2026-09-30 05:55)</span></li><li><a href="https://hkjang.github.io/aidev/projects/nexabuilder/">nexabuilder</a> — CI 실패로 PR 미머지 <span class=meta>(2026-09-30 06:43)</span></li><li><a href="https://hkjang.github.io/aidev/projects/nexabuilder/">nexabuilder</a> — CI 실패로 PR 미머지 <span class=meta>(2026-09-30 07:44)</span></li><li><a href="https://hkjang.github.io/aidev/projects/nexabuilder/">nexabuilder</a> — CI 실패로 PR 미머지 <span class=meta>(2026-09-30 08:53)</span></li><li><a href="https://hkjang.github.io/aidev/projects/nexabuilder/">nexabuilder</a> — CI 실패로 PR 미머지 <span class=meta>(2026-09-30 09:54)</span></li><li><a href="https://hkjang.github.io/aidev/projects/nexabuilder/">nexabuilder</a> — CI 실패로 PR 미머지 <span class=meta>(2026-09-30 11:45)</span></li><li><a href="https://hkjang.github.io/aidev/projects/nexabuilder/">nexabuilder</a> — CI 실패로 PR 미머지 <span class=meta>(2026-09-30 12:54)</span></li><li><a href="https://hkjang.github.io/aidev/projects/nexabuilder/">nexabuilder</a> — CI 실패로 PR 미머지 <span class=meta>(2026-09-30 13:55)</span></li><li><a href="https://hkjang.github.io/aidev/projects/nexabuilder/">nexabuilder</a> — CI 실패로 PR 미머지 <span class=meta>(2026-09-30 14:52)</span></li><li><a href="https://hkjang.github.io/aidev/projects/moina/">moina</a> — 보호 파일 변경 — 자동 머지 안 함, 사람 검토 필요 <span class=meta>(2026-09-29 08:28)</span></li><li><a href="https://hkjang.github.io/aidev/projects/vibe-code/">vibe-code</a> — CI 실패로 PR 미머지 <span class=meta>(2026-09-29 12:46)</span></li><li><a href="https://hkjang.github.io/aidev/projects/moina/">moina</a> — 보호 파일 변경 — 자동 머지 안 함, 사람 검토 필요 <span class=meta>(2026-09-29 20:26)</span></li><li><a href="https://hkjang.github.io/aidev/projects/nexabuilder/">nexabuilder</a> — CI 실패로 PR 미머지 <span class=meta>(2026-09-29 22:02)</span></li><li><a href="https://hkjang.github.io/aidev/projects/nexabuilder/">nexabuilder</a> — CI 실패로 PR 미머지 <span class=meta>(2026-09-29 23:21)</span></li><li><a href="https://hkjang.github.io/aidev/projects/nexabuilder/">nexabuilder</a> — CI 실패로 PR 미머지 <span class=meta>(2026-09-29 00:54)</span></li><li><a href="https://hkjang.github.io/aidev/projects/vibe-code/">vibe-code</a> — 최신 릴리즈 v1.4.5 자산 0개 (이전 v1.4.0: 2개)</li></ul></div>
 
