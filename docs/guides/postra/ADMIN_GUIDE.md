@@ -247,6 +247,8 @@ Postra v0.10.0+는 장애 및 시스템 이벤트 추적 파이프라인을 지�
 
 동기화 실패는 작업마다 멈춘 **단계**(policy/secret/host_check/tcp_connect/tls_handshake/greeting/starttls/login/select/enumerate/fetch/list/idle)와 **유형**(timeout/refused/reset/closed/unreachable/dns_*/tls_*/rejected/config/other), 그 단계의 소요·제한 시간, 연결 시도 횟수, 이 노드가 유지 중인 인바운드 연결 수, 보낸 메일함 패스 결과를 함께 기록합니다. `/app/jobs` 의 "멈춘 지점", 장애 화면의 `sync` 행 detail, `GET /api/jobs/{id}` 의 `diagnostic`, MCP `job_status` 에서 같은 내용을 봅니다. 메일 서버가 보낸 문장은 저장하지 않고 RFC 응답 코드만 남깁니다.
 
+한 계정은 인바운드 연결을 하나만 씁니다. IMAP 실시간 수신(IDLE) 감시는 알림을 받으면 자기 연결을 닫고 동기화에 넘긴 뒤 다시 연결합니다. 계정당 동시 접속을 1개만 허용하는 서버라면 `mail.idle_enabled` 를 꺼서 주기적 동기화만 사용하세요.
+
 단계·유형별 확인 항목과 자주 보는 조합은 [SYNC_DIAGNOSTICS.md](SYNC_DIAGNOSTICS.md) 를 참고하세요.
 
 ### 6.3 Prometheus 메트릭 수집 (`/metrics`)
