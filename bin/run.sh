@@ -881,14 +881,23 @@ run_verify(){ # $1=작업 디렉터리 $2=결과 파일
       [ -f "$wfl" ] || continue
       while IFS= read -r line; do
         [ -n "$line" ] || continue
+        # 무엇을 보태도 되는지는 아주 좁게 잡는다. 2026-10-01 에 넓은 필터로 미리 돌려 보니
+        # 통합·라이브 테스트(-run Live, 8분 브라우저 테스트), 네트워크 도구(govulncheck@latest,
+        # cargo audit), 도커 빌드(make image), e2e 까지 끌어왔다 — 그걸 검증에 넣으면 회차가
+        # 그 자리에서 죽는다. 그래서 **밀폐된 빌드·린트류만** 남긴다.
         case "$line" in
-          *secret*|*SECRET*|*token*|*TOKEN*|*login*|*publish*|*deploy*|*upload*|*push*|*release*|*docker*|*npm\ i*|*npm\ ci*|*install*) continue;;
+          *secret*|*SECRET*|*token*|*TOKEN*|*login*|*publish*|*deploy*|*upload*|*push*|*release*|*docker*|*install*) continue;;
+          *-run\ *|*e2e*|*E2E*|*ntegration*|*Live*|*rowser*|*@*|*audit*|*image*|*deps*|*coverprofile*|*playwright*) continue;;
         esac
         case "$line" in
-          ./gradlew*|gradlew*|./mvnw*|mvnw*|make\ *|npm\ run\ *|pnpm\ run\ *|yarn\ run\ *|go\ *|cargo\ *|pytest*|dotnet\ *) ;;
+          *gradlew*bootJar*|*gradlew*assemble*|*gradlew*build*|*mvnw*package*|\
+          "npm run build"*|"npm run typecheck"*|"npm run lint"*|"pnpm run build"*|"yarn run build"*|\
+          "go build "*|"go vet "*|"cargo build"*|"cargo clippy"*) ;;
           *) continue;;
         esac
-        # 중복 판정은 **플래그를 뺀 형태**로 한다. 첫 두 토큰만 보면 `gradlew --no-daemon` 이
+        # 중복 판정은 **플래그를 뺀 형태**로 한다. 그래서 `go build -tags sqlite_fts5 ./...` 처럼
+        # 플래그가 의미를 바꾸는 것은 기본 빌드와 같은 것으로 묶여 빠진다 — 빌드 태그별 깨짐은
+        # 여기서 못 잡는다. 지금은 그 대가를 받아들인다(중복 빌드로 회차 시간을 두 배 쓰는 것보다 낫다). 첫 두 토큰만 보면 `gradlew --no-daemon` 이
         # 키가 되어 test 와 bootJar 이 같은 것으로 묶인다 — 정작 필요한 bootJar 가 빠졌다.
         local key printed=0 c2 ckey
         key=$(tr ' ' '\n' <<<"${line#./}" | grep -v '^-' | grep -v '^$' | tr '\n' ' ')
