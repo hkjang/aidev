@@ -1,27 +1,27 @@
 {
- "generated": "2026-10-01T03:49:03+09:00",
+ "generated": "2026-10-01T04:19:08+09:00",
  "site": "https://hkjang.github.io/aidev",
- "description": "Claude Code 자율 개선 에이전트가 hkjang 의 프로젝트를 개선·테스트·머지·릴리즈한 일일 보고. 오늘 6회차·릴리즈 2건, 누적 1741회차·릴리즈 602건, 주의 필요 19건.",
+ "description": "Claude Code 자율 개선 에이전트가 hkjang 의 프로젝트를 개선·테스트·머지·릴리즈한 일일 보고. 오늘 7회차·릴리즈 2건, 누적 1742회차·릴리즈 602건, 주의 필요 21건.",
  "today": {
   "date": "2026-10-01",
-  "total": 6,
+  "total": 7,
   "projects": 4,
   "released": 2,
   "merged": 0,
   "nochange": 0,
   "failed": 4,
-  "cost_usd": 49.11,
-  "minutes": 133,
-  "sessions": 25
+  "cost_usd": 56.59,
+  "minutes": 157,
+  "sessions": 30
  },
  "totals": {
-  "runs": 1741,
+  "runs": 1742,
   "released": 602,
   "days": 30,
-  "cost_usd": 6404.66,
-  "minutes": 17288,
-  "tokens_in": 6907411189,
-  "tokens_out": 54890088
+  "cost_usd": 6412.14,
+  "minutes": 17311,
+  "tokens_in": 6914088094,
+  "tokens_out": 54955110
  },
  "alerts": [
   {
@@ -156,23 +156,50 @@
    "project": "vibe-code",
    "why": "최신 릴리즈 v1.4.5 자산 0개 (이전 v1.4.0: 2개)",
    "result": ""
+  },
+  {
+   "date": "",
+   "time": "",
+   "project": "DartFly",
+   "why": "수정 과제 대기 중 — 오류 대응(자동 적재): 마지막 회차가 'verify-failed' 로 끝났습니다. fix-round: CI failed, PR open https://github.com/hkjang/DartFly/pull/19",
+   "result": ""
+  },
+  {
+   "date": "",
+   "time": "",
+   "project": "vibe-code",
+   "why": "수정 과제 대기 중 — 오류 대응(자동 적재): 마지막 회차가 'verify-failed' 로 끝났습니다. fix-round: CI failed, PR open https://github.com/hkjang/vibe-code/pull/11",
+   "result": ""
   }
  ],
- "fix_queue": [],
+ "fix_queue": [
+  {
+   "project": "DartFly",
+   "note": "오류 대응(자동 적재): 마지막 회차가 'verify-failed' 로 끝났습니다. fix-round: CI failed, PR open https://github.com/hkjang/DartFly/pull/19",
+   "merge_sha": ""
+  },
+  {
+   "project": "vibe-code",
+   "note": "오류 대응(자동 적재): 마지막 회차가 'verify-failed' 로 끝났습니다. fix-round: CI failed, PR open https://github.com/hkjang/vibe-code/pull/11",
+   "merge_sha": ""
+  }
+ ],
  "health": {
-  "checked": "2026-10-01T03:45:04+09:00",
-  "last_run": "2026-10-01T03:16:16+09:00",
-  "seconds_since_last": 1726,
-  "runner_pid": "2665067",
-  "runner_age_seconds": 1504,
-  "scheduler_status": "실행 중",
-  "scheduler_next_run": "2026-10-01 오전 3:50:00",
+  "checked": "2026-10-01T04:15:04+09:00",
+  "last_run": "2026-10-01T03:49:01+09:00",
+  "seconds_since_last": 1561,
+  "runner_pid": "",
+  "runner_age_seconds": 0,
+  "scheduler_status": "준비",
+  "scheduler_next_run": "2026-10-01 오전 4:20:00",
   "disk_percent": 75,
   "ok": false,
   "problems": [
    "측정 감사: 게시 릴리즈 726건인데 회차 기록은 602건 — 124건이 기록에서 빠졌다"
   ],
-  "actions": []
+  "actions": [
+   "소유 프로세스 없는 잠금 파일을 제거했다"
+  ]
  },
  "lessons": [
   {
@@ -853,6 +880,34 @@
    "shepherd_action": "needs-human",
    "shepherd_detail": "검토 부서 차단 소견(security — internal/domain/sqlsafe/sqlsafe.go:806-816: 사용자가 제출한 신뢰할 수 없는 SQL 이 읽기 전용 게이트를 우회해 비허용 함수 호출에 닿는다. 공격 경로: 인증된 사용자가 MCP(internal/domain/mcpserver/server.go:174) 또는 실행 API(internal/runtimeapi/services.go:753)로 `SELECT substring(label FROM id + query_to_xml('DELETE FROM users',false,true,'')::text::int) FROM events` 를 보내면 게이트가 readonly=true risk=low 로 통과시킨다. query_to_xml 은 pg_catalog 내장이라 dbexec 의 search_path=pg_catalog 제한도 막지 못하며 인자로 준 DELETE 가 서버 안에서 실행된다. 공격자가 얻는 것: 읽기 전용으로 광고된 경로에서의 임의 쓰기(데이터 파괴·변조), dblink 계열로는 내부망 서버 측 요청. base(main) 대비 HEAD 에서만 통과하는 것을 실제 실행으로 확인한 신규 회귀이며 릴리즈를 막는다.) — 운영자 위험 수용(risk-accepted 라벨) 필요: - internal/domain/sqlsafe/sqlsafe.go:806-816 새 비수식 별칭 분기가 introducer 가 FROM/JOIN/ONLY 이면 fromItemContext 를 호출하지 않고 무조건 return true 하여 읽기 전용 게이트가 뚫린다. PostgreSQL 은 substring/extract 의 인자 문법에도 FROM 을 쓰고 스캐�",
    "needs_human": true
+  },
+  {
+   "kind": "수정 과제",
+   "project": "DartFly",
+   "title": "오류 대응(자동 적재): 마지막 회차가 'verify-failed' 로 끝났습니다. fix-round: CI failed, PR open https://github.com/hkja",
+   "url": "https://hkjang.github.io/aidev/projects/DartFly/",
+   "sha": "",
+   "summary": "릴리즈 워크플로 2회 실패 — 다음 회차 자동 배정",
+   "why": "오류 대응(자동 적재): 마지막 회차가 'verify-failed' 로 끝났습니다. fix-round: CI failed, PR open https://github.com/hkjang/DartFly/pull/19",
+   "evidence": "",
+   "labels": "",
+   "action": "두면 러너가 수정 회차를 돌림. 급하면 run: 이슈, 멈추려면 stop",
+   "date": "",
+   "needs_human": false
+  },
+  {
+   "kind": "수정 과제",
+   "project": "vibe-code",
+   "title": "오류 대응(자동 적재): 마지막 회차가 'verify-failed' 로 끝났습니다. fix-round: CI failed, PR open https://github.com/hkja",
+   "url": "https://hkjang.github.io/aidev/projects/vibe-code/",
+   "sha": "",
+   "summary": "릴리즈 워크플로 2회 실패 — 다음 회차 자동 배정",
+   "why": "오류 대응(자동 적재): 마지막 회차가 'verify-failed' 로 끝났습니다. fix-round: CI failed, PR open https://github.com/hkjang/vibe-code/pull/11",
+   "evidence": "",
+   "labels": "",
+   "action": "두면 러너가 수정 회차를 돌림. 급하면 run: 이슈, 멈추려면 stop",
+   "date": "",
+   "needs_human": false
   },
   {
    "kind": "PR",
@@ -1536,6 +1591,23 @@
   },
   {
    "kind": "PR",
+   "project": "DartFly",
+   "title": "auto-improve: fix: 스모크가 브라우저를 못 띄운 이유를 트레이스백에 묻지 않고 한 줄로 알리기",
+   "url": "https://github.com/hkjang/DartFly/pull/19",
+   "sha": "7fa00ad",
+   "summary": "4파일 +233/−27 · approved https://github.com/hkjang/DartFly/pull/19",
+   "why": "ci: failed — 성공이 아닌 검사: smoke=failure, livedb=failure, test=failure",
+   "evidence": "https://github.com/hkjang/aidev/tree/main/state/runs/2026-10-01-041901-DartFly-approve",
+   "labels": "aidev-approved",
+   "action": "PR 처리기가 승인함 — 승인 스윕이 CI 확인 뒤 머지·릴리즈 (아직 열려 있으면 CI 를 기다리는 중)",
+   "date": "2026-10-01",
+   "shepherd": "CI 실패 · 승인 → 스윕이 CI 확인 후 머지 (10-01 04:15) — risk=low — 리뷰 승인 (risk=low)",
+   "shepherd_action": "approve",
+   "shepherd_detail": "risk=low — 리뷰 승인 (risk=low)",
+   "needs_human": false
+  },
+  {
+   "kind": "PR",
    "project": "vibe-code",
    "title": "auto-improve: fix: handoff 메모가 CRLF 목표 파일의 줄바꿈을 보존한다",
    "url": "https://github.com/hkjang/vibe-code/pull/11",
@@ -1544,28 +1616,11 @@
    "why": "review: approved — 리뷰 승인 (risk=low); ci: failed — 성공이 아닌 검사: typecheck + unit tests + build=failure",
    "evidence": "https://github.com/hkjang/aidev/tree/main/state/runs/2026-10-01-033250-vibe-code-improve",
    "labels": "",
-   "action": "PR 처리기가 매시간 살핀다 (아직 순서가 오지 않음) · 승인: PR 라벨 aidev-approved / 반려: aidev-rejected — 다음 회차에 러너가 승인 당시 커밋에만 CI 확인 후 머지·닫기",
+   "action": "PR 처리기가 다음 시간에 다시 시도 · 승인: PR 라벨 aidev-approved / 반려: aidev-rejected — 다음 회차에 러너가 승인 당시 커밋에만 CI 확인 후 머지·닫기",
    "date": "2026-10-01",
-   "shepherd": "",
-   "shepherd_action": "",
-   "shepherd_detail": "",
-   "needs_human": false
-  },
-  {
-   "kind": "PR",
-   "project": "DartFly",
-   "title": "auto-improve: fix: 스모크가 브라우저를 못 띄운 이유를 트레이스백에 묻지 않고 한 줄로 알리기",
-   "url": "https://github.com/hkjang/DartFly/pull/19",
-   "sha": "0b156d6",
-   "summary": "4파일 +228/−27 · fix-round: CI failed, PR open https://github.com/hkjang/DartFly/pull/19",
-   "why": "review: approved — 리뷰 승인 (risk=low); ci: failed — 성공이 아닌 검사: livedb=failure, smoke=failure, test=failure",
-   "evidence": "https://github.com/hkjang/aidev/tree/main/state/runs/2026-10-01-025243-DartFly-improve",
-   "labels": "",
-   "action": "PR 처리기가 매시간 살핀다 (아직 순서가 오지 않음) · 승인: PR 라벨 aidev-approved / 반려: aidev-rejected — 다음 회차에 러너가 승인 당시 커밋에만 CI 확인 후 머지·닫기",
-   "date": "2026-10-01",
-   "shepherd": "",
-   "shepherd_action": "",
-   "shepherd_detail": "",
+   "shepherd": "CI 실패 · 수정 실패 → 다음 시간에 재시도 (10-01 04:18) — 수정 세션이 커밋을 만들지 않음: # fix-summary — vibe-code PR #11 (af9b04b)  **고치지 않았다. 커밋 없음.** CI 실패는 코드 결함이 아니라 GitHub Actions 과금 차단이다. job 110043934323 의 annotation 원문: *",
+   "shepherd_action": "fix-failed",
+   "shepherd_detail": "수정 세션이 커밋을 만들지 않음: # fix-summary — vibe-code PR #11 (af9b04b)  **고치지 않았다. 커밋 없음.** CI 실패는 코드 결함이 아니라 GitHub Actions 과금 차단이다. job 110043934323 의 annotation 원문: *\"The job was not started because recent account payments have failed or your spending limit needs to be increased.\"* — `runner_id=0`, `runner_name=\"\"`, `steps=[]`, 18:48:32→18:48:36(4초). 러너가 배정된 적이 없어 `--log-failed` 는 \"log not found\". `package VSIX` 는 `needs: check` 때문에 skipped 일 뿐이며 af9b04b 의 다른 실패 검사는 없다. 정찰 노트가 기록�",
    "needs_human": false
   },
   {
@@ -1580,9 +1635,9 @@
    "labels": "",
    "action": "PR 처리기가 다음 시간에 다시 시도 · 승인: PR 라벨 aidev-approved / 반려: aidev-rejected — 다음 회차에 러너가 승인 당시 커밋에만 CI 확인 후 머지·닫기",
    "date": "2026-10-01",
-   "shepherd": "CI 실패 · 수정 실패 → 다음 시간에 재시도 (10-01 02:35) — 수정 세션이 커밋을 만들지 않음: # 수리 결과: 고칠 결함 없음 — 커밋 없이 종료  - 원인 확정: CI 3개 잡은 **한 스텝도 실행되지 않았습니다**(`jobs[].steps == []`, 세 잡 모두 17:04:32 동시 종료, 2~3s). 잡 annotation 이 이유를 그",
+   "shepherd": "CI 실패 · 수정 실패 → 다음 시간에 재시도 (10-01 04:02) — 수정 세션이 커밋을 만들지 않음: # 수리 결과 — 고칠 결함 없음 (커밋 없음)  - CI 3잡(test/livedb/smoke)은 코드 때문이 아니라 **잡이 시작조차 못 해서** 빨갛습니다: 세 잡 모두 `steps: 0`, 기동 3~4초, annotation 이 `The job ",
    "shepherd_action": "fix-failed",
-   "shepherd_detail": "수정 세션이 커밋을 만들지 않음: # 수리 결과: 고칠 결함 없음 — 커밋 없이 종료  - 원인 확정: CI 3개 잡은 **한 스텝도 실행되지 않았습니다**(`jobs[].steps == []`, 세 잡 모두 17:04:32 동시 종료, 2~3s). 잡 annotation 이 이유를 그대로 말합니다 — `\"The job was not started because recent account payments have failed or your spending limit needs to be increased. Please check the 'Billing & plans' section in your settings\"`. GitHub 계정 결제/한도 문제이며 a772071 의 코드와 무관합니다. (`GH_CONFIG_DIR=/home/hkjang/.config/gh gh api repos/hkjang/DartFly/check-",
+   "shepherd_detail": "수정 세션이 커밋을 만들지 않음: # 수리 결과 — 고칠 결함 없음 (커밋 없음)  - CI 3잡(test/livedb/smoke)은 코드 때문이 아니라 **잡이 시작조차 못 해서** 빨갛습니다: 세 잡 모두 `steps: 0`, 기동 3~4초, annotation 이 `The job was not started because recent account payments have failed or your spending limit needs to be increased` (`gh api repos/hkjang/DartFly/check-runs/{110024328526,110024328857,110024328997}/annotations`). - a772071 에서 CI 3잡을 로컬로 그대로 재현: `gofmt -w . && git diff --exit-code` 통과, `go vet ./...` 통과, `go test -race ./...` 전 패키지 ok",
    "needs_human": false
   },
   {
@@ -1597,9 +1652,9 @@
    "labels": "",
    "action": "PR 처리기가 다음 시간에 다시 시도 · 승인: PR 라벨 aidev-approved / 반려: aidev-rejected — 다음 회차에 러너가 승인 당시 커밋에만 CI 확인 후 머지·닫기",
    "date": "2026-10-01",
-   "shepherd": "CI 실패 · 수정 실패 → 다음 시간에 재시도 (10-01 02:26) — 수정 세션이 커밋을 만들지 않음: # 수리 요약 — vibe-code PR #10 (커밋 없음)  - **고치지 않았다. 코드 결함이 아니다.** CI run 36743220729 의 check job 은 3초 만에 실패했고 `steps: []`, `runner_id: 0` 이다 — 단",
+   "shepherd": "CI 실패 · 수정 실패 → 다음 시간에 재시도 (10-01 03:57) — 수정 세션이 커밋을 만들지 않음: # 수리 요약 — PR #10 (c3d1ddb) · 커밋 없음 (코드 결함 아님)  - **지적이 틀렸다.** CI job 109982719958 은 실행되지 않았다. check-run annotation 원문(`validation/ci-annotati",
    "shepherd_action": "fix-failed",
-   "shepherd_detail": "수정 세션이 커밋을 만들지 않음: # 수리 요약 — vibe-code PR #10 (커밋 없음)  - **고치지 않았다. 코드 결함이 아니다.** CI run 36743220729 의 check job 은 3초 만에 실패했고 `steps: []`, `runner_id: 0` 이다 — 단계가 하나도 실행되지 않았다. check-run 109982719958 의 annotation 원문: *\"The job was not started because recent account payments have failed or your spending limit needs to be increased. Please check the 'Billing & plans' section in your settings\"*. GitHub 결제/지출 한도 문제이며 PR 내용과 무관하다. - **같은 검증을 로컬에서 재현**했다. CI ",
+   "shepherd_detail": "수정 세션이 커밋을 만들지 않음: # 수리 요약 — PR #10 (c3d1ddb) · 커밋 없음 (코드 결함 아님)  - **지적이 틀렸다.** CI job 109982719958 은 실행되지 않았다. check-run annotation 원문(`validation/ci-annotations-c3d1ddb.json`): *\"The job was not started because recent account payments have failed or your spending limit needs to be increased.\"* 결제/사용 한도 문제다. - **증거:** check job `started_at 16:18:21Z → completed_at 16:18:24Z`(3초 — checkout+setup-node+npm ci 에 불가능). `package` job 은 `completed_at 16:18:24Z` 가 `started_at 16:18:25Z` 보다 앞선다 = 러너 미�",
    "needs_human": false
   }
  ],
@@ -1964,13 +2019,15 @@
   }
  ],
  "shepherd": {
-  "last_pass": "2026-10-01T02:22:05+09:00",
+  "last_pass": "2026-10-01T03:52:44+09:00",
   "enabled": true,
   "today": {
-   "fix-failed": 5,
-   "needs-human": 2
+   "fix-failed": 8,
+   "needs-human": 2,
+   "fix-pushed": 1,
+   "approve": 1
   },
-  "total": 432,
+  "total": 437,
   "pending_human": 117
  },
  "agents": {
@@ -1985,13 +2042,13 @@
     "role": "구현 builder",
     "calls": 648,
     "metric": "러너 검증 통과 97% · 변경 없음 119",
-    "cost": 1737.98
+    "cost": 1742.92
    },
    {
     "role": "비평 critic",
     "calls": 436,
     "metric": "최종 승인 97% · 한 번이라도 거절 37 · 승인·머지 뒤 회귀 0/352",
-    "cost": 711.88
+    "cost": 714.41
    },
    {
     "role": "수리 repairer",
@@ -2013,14 +2070,14 @@
    },
    {
     "role": "PR 심사 shepherd-reviewer",
-    "calls": 267,
-    "metric": "승인 86 · 거절 64 · 사람 필요 117 · 승인 뒤 회귀 0",
-    "cost": 463.34
+    "calls": 268,
+    "metric": "승인 87 · 거절 64 · 사람 필요 117 · 승인 뒤 회귀 0",
+    "cost": 470.82
    },
    {
     "role": "PR 수리 shepherd-fixer",
-    "calls": 126,
-    "metric": "고쳐서 푸시 44%",
+    "calls": 130,
+    "metric": "고쳐서 푸시 43%",
     "cost": null
    },
    {
@@ -2067,9 +2124,9 @@
    },
    {
     "role": "실패 분류 (MAST)",
-    "calls": 220,
+    "calls": 221,
     "cost": null,
-    "metric": "시스템 설계·인프라 59 · 에이전트 간 불일치(비평 거절·과제서 기각·수리 실패) 25 · 검증·종료(러너 검증·CI·중재 거절) 136"
+    "metric": "시스템 설계·인프라 59 · 에이전트 간 불일치(비평 거절·과제서 기각·수리 실패) 25 · 검증·종료(러너 검증·CI·중재 거절) 137"
    }
   ],
   "advice": [
@@ -2455,7 +2512,7 @@
   {
    "metric": "검증된 개선 완료율",
    "value": "100%",
-   "detail": "관찰 24h 지난 머지 386건 중 회귀 없음 386건"
+   "detail": "관찰 24h 지난 머지 388건 중 회귀 없음 388건"
   },
   {
    "metric": "완전한 릴리즈 비율",
@@ -2465,22 +2522,22 @@
   {
    "metric": "사람의 재작업률",
    "value": "0%",
-   "detail": "되돌림·롤백 0건 / 관찰 머지 386건"
+   "detail": "되돌림·롤백 0건 / 관찰 머지 388건"
   },
   {
    "metric": "변경 후 회귀율",
    "value": "0%",
-   "detail": "회귀 0건 / 관찰 머지 386건"
+   "detail": "회귀 0건 / 관찰 머지 388건"
   },
   {
    "metric": "유효 개선당 비용",
-   "value": "$10.22",
-   "detail": "비용 확인된 유효 개선 345건, 미확인 세션 555"
+   "value": "$10.18",
+   "detail": "비용 확인된 유효 개선 347건, 미확인 세션 555"
   },
   {
    "metric": "예외 처리 소요 시간(중앙값)",
    "value": "1.9시간",
-   "detail": "해결된 경고 289건"
+   "detail": "해결된 경고 290건"
   },
   {
    "metric": "실행 오류",
@@ -2491,21 +2548,21 @@
  "outcomes_today": {
   "verify-failed": 4,
   "release-ready": 2,
+  "review-pending": 1,
   "releasing": 0,
   "merged": 0,
-  "review-pending": 0,
   "no-change": 0,
   "error": 0
  },
  "days": [
   {
    "date": "2026-10-01",
-   "total": 6,
+   "total": 7,
    "released": 2,
    "merged": 0,
    "nochange": 0,
    "failed": 4,
-   "cost_usd": 49.11
+   "cost_usd": 56.59
   },
   {
    "date": "2026-09-30",
@@ -2774,13 +2831,13 @@
    "key": "2026-W40",
    "url": "https://hkjang.github.io/aidev/weekly/2026-W40/",
    "days": 4,
-   "total": 176,
+   "total": 177,
    "released": 66,
    "merged": 16,
    "nochange": 17,
    "failed": 25,
-   "cost": 729.89,
-   "minutes": 2464
+   "cost": 737.37,
+   "minutes": 2488
   },
   {
    "key": "2026-W39",
@@ -2836,13 +2893,13 @@
    "key": "2026-10",
    "url": "https://hkjang.github.io/aidev/monthly/2026-10/",
    "days": 1,
-   "total": 6,
+   "total": 7,
    "released": 2,
    "merged": 0,
    "nochange": 0,
    "failed": 4,
-   "cost": 49.11,
-   "minutes": 133
+   "cost": 56.59,
+   "minutes": 157
   },
   {
    "key": "2026-09",
@@ -3078,13 +3135,13 @@
    "name": "DartFly",
    "repo": "https://github.com/hkjang/DartFly",
    "page": "https://hkjang.github.io/aidev/projects/DartFly/",
-   "runs": 23,
+   "runs": 24,
    "released": 11,
-   "last_ts": "2026-10-01T03:16:16+09:00",
-   "last_status": "failed",
-   "last_result": "fix-round: CI failed, PR open https://github.com/hkjang/DartFly/pull/19",
-   "cost": 144.64,
-   "minutes": 379,
+   "last_ts": "2026-10-01T04:19:04+09:00",
+   "last_status": "other",
+   "last_result": "approved https://github.com/hkjang/DartFly/pull/19",
+   "cost": 149.45,
+   "minutes": 396,
    "grade": "D",
    "grade_why": "14일: 릴리즈 10, 실패 2, 경고 4, 회귀 0",
    "lessons": 0,
@@ -3887,8 +3944,8 @@
    "last_ts": "2026-10-01T03:49:01+09:00",
    "last_status": "failed",
    "last_result": "fix-round: CI failed, PR open https://github.com/hkjang/vibe-code/pull/11",
-   "cost": 73.98,
-   "minutes": 195,
+   "cost": 76.65,
+   "minutes": 201,
    "grade": "D",
    "grade_why": "14일: 릴리즈 5, 실패 6, 경고 11, 회귀 0",
    "lessons": 0,
