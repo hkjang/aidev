@@ -60,9 +60,24 @@ def main():
     if rel.get("total"):
         recorded = sum(1 for r in runs if re.search(r"released v", r.get("result") or ""))
         gap = rel["total"] - recorded
-        if gap > 20:
-            add("release-gap", "high", f"게시 릴리즈 {rel['total']}건인데 회차 기록은 {recorded}건 — {gap}건이 기록에서 빠졌다",
-                "회차를 기록하는 경로 어딘가가 결말에 따라 기록을 건너뛴다. 2026-09-26 에 승인 스윕에서 같은 결함을 고쳤다.")
+        # 과거 잔재(2026-09-26 승인 스윕 결함 이전)는 줄지 않는다 — 그 수를 기준선으로 두고
+        # **늘어날 때만** 알린다. 안 그러면 고칠 수 없는 항목이 영구히 high 로 떠 있어
+        # 다른 알림을 덮는다 (2026-10-01: 기준선 64건).
+        baseline = 0
+        bf = os.path.join(STATE, ".audit-release-gap-baseline")
+        if os.path.exists(bf):
+            try:
+                baseline = int(open(bf, encoding="utf-8").read().strip() or 0)
+            except Exception:
+                baseline = 0
+        else:
+            open(bf, "w", encoding="utf-8").write(str(gap)); baseline = gap
+        if gap > baseline + 5:
+            add("release-gap", "high",
+                f"게시 릴리즈 {rel['total']}건인데 회차 기록은 {recorded}건 — {gap}건이 빠졌다 (기준선 {baseline}건보다 {gap - baseline}건 늘었다)",
+                "회차를 기록하는 경로 어딘가가 결말에 따라 기록을 건너뛴다. 기준선을 다시 잡으려면 state/.audit-release-gap-baseline 을 지운다.")
+        elif gap > baseline:
+            add("release-gap", "low", f"기록 누락이 기준선({baseline}건)보다 {gap - baseline}건 늘었다 — 아직 작지만 지켜볼 것")
 
     # 2) 게시하지 못한 로컬 태그. 남아 있으면 그 저장소가 영구히 '릴리즈할 것 없음' 이 된다.
     if rel.get("held"):

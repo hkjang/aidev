@@ -5,9 +5,11 @@
 버렸고(2026-09-26 수정), 그래서 2026-09-27 에 세어 보니 기록상 510건인데 저장소 태그로는
 615건이었다. 자기 기록이 비어도 결과는 남는다 — 태그가 그 결과다.
 
-가려내는 방법: 태그가 가리키는 커밋에서 6개 뒤까지 러너 브랜치(`auto/<날짜>-<시각>`) 머지가
-있으면 러너가 만든 릴리즈로 본다. 사람이 직접 만든 브랜치(`feat/…`, `fix/…`)는 빠진다.
-gh 를 부르지 않고 로컬 클론의 태그만 읽으므로 공짜다(러너가 릴리즈마다 --tags 를 받아 둔다).
+가려내는 방법: 러너의 릴리즈는 모양이 정해져 있다 — `auto/…` 브랜치를 머지하고, 그 위에
+릴리즈 커밋 하나를 올리고, 거기에 태그를 단다. 그래서 **태그 커밋과 그 직전 커밋** 둘만 보고
+`auto/` 머지가 있으면 러너 것으로 센다. 창을 6커밋으로 넓혔더니 사람이 러너 머지 직후에 직접
+릴리즈한 것까지 59건 끌어왔다 (2026-10-01: GoalForge v0.32.0 은 `feature/` 브랜치 머지에 달린
+태그였다). 창별 집계: 1커밋 139 · 2커밋 668 · 3커밋 690 · 6커밋 727.
 
 세는 것은 **태그**다. GitHub Release 객체는 그보다 적을 수 있다 — 태그는 달렸지만 CI 가 막아
 릴리즈 게시까지 못 간 경우가 있다(`release tag held`). 2026-09-27 기준 러너 태그 661건,
@@ -27,7 +29,10 @@ OUT = os.path.join(DATA, "released.json")
 SINCE = "2026-09-02"
 if "--since" in sys.argv:
     SINCE = sys.argv[sys.argv.index("--since") + 1]
-AUTO = re.compile(r"from [^/\s]+/auto/")
+# 러너 브랜치는 정확히 auto/<YYYY-MM-DD>-<HHMM> 이다 (run.sh: slug="auto/$RUN_DATE-$(date +%H%M)").
+# `auto/` 로 시작하는 사람 브랜치도 있다 — postra 의 auto/2026-09-30-release 가 그랬고,
+# 느슨한 패턴은 그 저장소의 사람 릴리즈 3건을 러너 것으로 셌다 (2026-10-01).
+AUTO = re.compile(r"from [^/\s]+/auto/\d{4}-\d{2}-\d{2}-\d{4}\b")
 
 
 def git(repo, *args):
@@ -72,7 +77,7 @@ def main():
             if len(parts) != 2 or parts[1] < SINCE:
                 continue
             tag = parts[0]
-            is_runner = bool(AUTO.search(git(repo, "log", "-6", "--format=%s", tag)))
+            is_runner = bool(AUTO.search(git(repo, "log", "-2", "--format=%s", tag)))
             if tag not in remote:
                 if is_runner:
                     held += 1          # 태그만 만들고 push 를 보류한 것 — 반쯤 끝난 릴리즈
