@@ -1,0 +1,106 @@
+
+ RUN  v3.2.7 /home/hkjang/.cache/auto-improve-wt/vibe-code
+
+ ❯ tests/unit/goal-metrics.test.ts (9 tests | 3 failed) 35ms
+   ✓ goal metrics > aggregates completions, verifications, commands, tasks 1ms
+   ✓ goal metrics > builds a retro with bottlenecks and next-week items 3ms
+   ✓ isDestructiveCommand > flags deletes, history rewrites and production-like actions 1ms
+   ✓ isDestructiveCommand > passes ordinary commands 0ms
+   × audit window > cuts the window by KST date, not by file count 11ms
+     → expected [ Array(5) ] to deeply equal [ '6일 전 (창 경계)', '3일 전', '오늘' ]
+   ✓ audit window > reads every in-window file when the window holds fewer than `days` of them 4ms
+   × audit window > counts activeDays by KST date, not by the UTC date inside the timestamp 5ms
+     → expected 2 to be 1 // Object.is equality
+   ✓ audit window > writes and reads the same KST file name for an entry recorded after UTC midnight 4ms
+   × audit window > keeps buildRetro's title window and its 완료한 것 list on the same days 5ms
+     → expected '# 주간 회고 — 2026-09-16 ~ 2026-09-22\n\n…' not to contain '두 달 전 항목'
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 3 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/unit/goal-metrics.test.ts > audit window > cuts the window by KST date, not by file count
+AssertionError: expected [ Array(5) ] to deeply equal [ '6일 전 (창 경계)', '3일 전', '오늘' ]
+
+- Expected
++ Received
+
+  [
++   "60일 전",
++   "7일 전",
+    "6일 전 (창 경계)",
+    "3일 전",
+    "오늘",
+  ]
+
+ ❯ tests/unit/goal-metrics.test.ts:115:28
+    113|   expect(fs.readdirSync(dir).sort()).toEqual(["2026-07-24.jsonl", "202…
+    114|   const m = computeGoalMetrics(readRecentAudit(dir, 7), 7);
+    115|   expect(m.completedItems).toEqual(["6일 전 (창 경계)", "3일 전", "오늘"]);
+       |                            ^
+    116|  });
+    117| 
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/3]⎯
+
+ FAIL  tests/unit/goal-metrics.test.ts > audit window > counts activeDays by KST date, not by the UTC date inside the timestamp
+AssertionError: expected 2 to be 1 // Object.is equality
+
+- Expected
++ Received
+
+- 1
++ 2
+
+ ❯ tests/unit/goal-metrics.test.ts:140:53
+    138|   const entries = readRecentAudit(dir, 7);
+    139|   expect(entries.map((e) => e.ts)).toEqual(["2026-09-21T16:00:00.000Z"…
+    140|   expect(computeGoalMetrics(entries, 7).activeDays).toBe(1);
+       |                                                     ^
+    141|  });
+    142| 
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/3]⎯
+
+ FAIL  tests/unit/goal-metrics.test.ts > audit window > keeps buildRetro's title window and its 완료한 것 list on the same days
+AssertionError: expected '# 주간 회고 — 2026-09-16 ~ 2026-09-22\n\n…' not to contain '두 달 전 항목'
+
+- Expected
++ Received
+
+- 두 달 전 항목
++ # 주간 회고 — 2026-09-16 ~ 2026-09-22
++
++ ## 이번 주 한눈에
++ - 기간: 최근 7일 (활동일 2일)
++ - 완료 항목: 2개 (하루 0.3개)
++ - 검증 실행: 0회, 통과율 0%
++ - 명령 실행: 승인 0 · 거부 0 · 실패 종료 0
++ - 작업: 0회 (목표 미갱신 0회) · 토큰 0 · 비용 $0.00
++ - 핸드오프 0회 · 정체 경고 0회 · 계획 상태 변경 없음
++
++ ## 완료한 것
++ - [x] 두 달 전 항목
++ - [x] 이번 주 항목
++
++ ## 병목과 실패
++ - 반복 실패 없음
++
++ ## 다음 주
++ - 활성 목표 없음 — `Vibe Code: 새 목표`로 시작하세요.
++
+
+ ❯ tests/unit/goal-metrics.test.ts:159:21
+    157|   expect(retro).toContain("# 주간 회고 — 2026-09-16 ~ 2026-09-22");
+    158|   expect(retro).toContain("- [x] 이번 주 항목");
+    159|   expect(retro).not.toContain("두 달 전 항목");
+       |                     ^
+    160|  });
+    161| });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/3]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  3 failed | 6 passed (9)
+   Start at  06:40:58
+   Duration  449ms (transform 161ms, setup 0ms, collect 196ms, tests 35ms, environment 0ms, prepare 44ms)
+

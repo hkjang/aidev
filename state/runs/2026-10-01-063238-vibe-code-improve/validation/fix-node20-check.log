@@ -1,0 +1,49 @@
+=== Stage 1 verification: node v20.19.2, npm 10.9.8 ===
+date: 2026-09-30T21:42:02Z
+baseline measured on main@43fd7a1 in this worktree: 11 files / 82 tests
+
+
+> vibe-code@1.4.5 check
+> npm run typecheck && npm run test && npm run build
+
+
+> vibe-code@1.4.5 typecheck
+> tsc -p tsconfig.json --noEmit
+
+
+> vibe-code@1.4.5 test
+> vitest run
+
+
+ RUN  v3.2.7 /home/hkjang/.cache/auto-improve-wt/vibe-code
+
+ ✓ tests/unit/semver.test.ts (2 tests) 2ms
+ ✓ tests/unit/goal-loop.test.ts (3 tests) 3ms
+ ✓ tests/unit/usage.test.ts (2 tests) 3ms
+ ✓ tests/unit/goal-catalog.test.ts (3 tests) 4ms
+ ✓ tests/unit/verification.test.ts (10 tests) 5ms
+ ✓ tests/unit/journal-summary.test.ts (7 tests) 4ms
+ ✓ tests/unit/markdown.test.ts (22 tests) 10ms
+ ✓ tests/unit/plans.test.ts (16 tests) 25ms
+ ✓ tests/unit/goal-health.test.ts (4 tests) 4ms
+ ✓ tests/unit/goal-metrics.test.ts (9 tests) 34ms
+ ✓ tests/unit/checkpoints.test.ts (9 tests) 619ms
+
+ Test Files  11 passed (11)
+      Tests  87 passed (87)
+   Start at  06:42:02
+   Duration  953ms (transform 825ms, setup 0ms, collect 1.66s, tests 714ms, environment 1ms, prepare 611ms)
+
+
+> vibe-code@1.4.5 build
+> node scripts/build.mjs
+
+warning: dist/ is missing runtime assets: node_modules, i18n, workers, tree-sitter.wasm, tiktoken_bg.wasm
+         copy them from an existing release VSIX (extension/dist/) before packaging.
+
+  dist/extension.js  202.8kb
+
+⚡ Done in 14ms
+EXIT_npm_check=0
+EXIT_node_check_extension=0
+EXIT_node_check_core=0

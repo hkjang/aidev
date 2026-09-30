@@ -1,0 +1,40 @@
+=== Stage 0 gate: CI check job (.github/workflows/ci.yml:13-24) reproduced locally ===
+date: 2026-09-30T21:38:26Z
+PR #12 head (assumed = origin/auto/2026-10-01-0535): 2a264c83c52c05b303235c6825f5373457c57c1b
+extracted with git archive to /tmp/pr12 (outside the repo); Node installed at /tmp/node2019 (NOT inside /tmp/pr12)
+node: v20.19.2 (= engines.node exact pin)  npm: 10.9.8
+
+EXIT_npm_ci=0
+EXIT_npm_check=0
+EXIT_node_check_extension=0
+EXIT_node_check_core=0
+
+--- npm run check tail (typecheck + vitest + esbuild) ---
+ ✓ tests/unit/semver.test.ts (2 tests) 3ms
+ ✓ tests/unit/journal-eol.test.ts (4 tests) 27ms
+ ✓ tests/unit/goal-health.test.ts (4 tests) 5ms
+ ✓ tests/unit/goal-metrics.test.ts (4 tests) 6ms
+ ✓ tests/unit/markdown.test.ts (22 tests) 10ms
+ ✓ tests/unit/plans.test.ts (16 tests) 26ms
+ ✓ tests/unit/journal-summary.test.ts (11 tests) 31ms
+ ✓ tests/unit/checkpoints.test.ts (9 tests) 637ms
+
+ Test Files  12 passed (12)
+      Tests  90 passed (90)
+   Start at  06:38:12
+   Duration  1.01s (transform 844ms, setup 0ms, collect 1.92s, tests 761ms, environment 1ms, prepare 693ms)
+
+
+> vibe-code@1.4.5 build
+> node scripts/build.mjs
+
+staged dist/extension.core.js (20.3 MB)
+warning: dist/ is missing runtime assets: node_modules, i18n, workers, tree-sitter.wasm, tiktoken_bg.wasm
+         copy them from an existing release VSIX (extension/dist/) before packaging.
+
+  dist/extension.js  202.8kb
+
+⚡ Done in 15ms
+
+VERDICT: all four CI check-job steps exit 0 on PR #12 head.
+PR #12's remote CI failure is NOT a code defect. ci.yml was read only, never modified.
