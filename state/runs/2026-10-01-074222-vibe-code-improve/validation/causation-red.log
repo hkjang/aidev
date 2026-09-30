@@ -1,0 +1,177 @@
+=== causation: production files reverted (tests untouched) ===
+
+ RUN  v3.2.7 /home/hkjang/.cache/auto-improve-wt/vibe-code
+
+ ❯ tests/unit/journal-summary.test.ts (8 tests | 1 failed) 7ms
+   ✓ journal summary > parses audit lines and skips garbage 1ms
+   ✓ journal summary > builds a summary with completed items, status changes, failures and goal next action 1ms
+   × journal summary > renders an unknown exit code as 미상 instead of `exit undefined` 4ms
+     → expected '## 세션 요약 (10:30 KST)\n\n- 실행한 명령: 1개 …' not to contain 'exit undefined'
+   ✓ journal summary > only reports entries after the last summary marker 0ms
+   ✓ line-level plan edits > finds the enclosing section of a line 0ms
+   ✓ line-level plan edits > moves a Now task to Done as checked, and a Next task to Now 0ms
+   ✓ line-level plan edits > refuses non-task lines and missing sections 0ms
+   ✓ line-level plan edits > toggles checkboxes in place 0ms
+ ❯ tests/unit/goal-metrics.test.ts (9 tests | 5 failed) 14ms
+   ✓ goal metrics > aggregates completions, verifications, commands, tasks 1ms
+   ✓ goal metrics > builds a retro with bottlenecks and next-week items 3ms
+   × audit entries with no exitCode field > keeps a verification of unknown exit code out of the pass rate numerator 3ms
+     → expected 1 to be close to 0.5, received difference is 0.5, but expected 0.005
+   × audit entries with no exitCode field > lists a verification of unknown exit code among the failed ones 2ms
+     → expected [] to deeply equal [ 'npm test' ]
+   × audit entries with no exitCode field > counts a command that exited with an unknown exit code as failed 1ms
+     → expected +0 to be 1 // Object.is equality
+   × audit entries with no exitCode field > agrees with the journal summary on how many commands failed 1ms
+     → expected '## 세션 요약 (10:30 KST)\n\n- 실행한 명령: 1개 …' to contain '실패 0개'
+   × audit entries with no exitCode field > reports the unknown-exit-code command as a bottleneck in the retro 1ms
+     → expected '# 주간 회고 — 2026-09-16 ~ 2026-09-22\n\n…' to contain '`npm run lint` — 실패 1회'
+   ✓ isDestructiveCommand > flags deletes, history rewrites and production-like actions 1ms
+   ✓ isDestructiveCommand > passes ordinary commands 0ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 6 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/unit/goal-metrics.test.ts > audit entries with no exitCode field > keeps a verification of unknown exit code out of the pass rate numerator
+AssertionError: expected 1 to be close to 0.5, received difference is 0.5, but expected 0.005
+ ❯ tests/unit/goal-metrics.test.ts:66:34
+     64|  it("keeps a verification of unknown exit code out of the pass rate nu…
+     65|   expect(m.verifications).toBe(2);
+     66|   expect(m.verificationPassRate).toBeCloseTo(0.5);
+       |                                  ^
+     67|  });
+     68| 
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/6]⎯
+
+ FAIL  tests/unit/goal-metrics.test.ts > audit entries with no exitCode field > lists a verification of unknown exit code among the failed ones
+AssertionError: expected [] to deeply equal [ 'npm test' ]
+
+- Expected
++ Received
+
+- [
+-   "npm test",
+- ]
++ []
+
+ ❯ tests/unit/goal-metrics.test.ts:70:33
+     68| 
+     69|  it("lists a verification of unknown exit code among the failed ones",…
+     70|   expect(m.failedVerifications).toEqual(["npm test"]);
+       |                                 ^
+     71|  });
+     72| 
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/6]⎯
+
+ FAIL  tests/unit/goal-metrics.test.ts > audit entries with no exitCode field > counts a command that exited with an unknown exit code as failed
+AssertionError: expected +0 to be 1 // Object.is equality
+
+- Expected
++ Received
+
+- 1
++ 0
+
+ ❯ tests/unit/goal-metrics.test.ts:74:28
+     72| 
+     73|  it("counts a command that exited with an unknown exit code as failed"…
+     74|   expect(m.commandsFailed).toBe(1);
+       |                            ^
+     75|  });
+     76| 
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/6]⎯
+
+ FAIL  tests/unit/goal-metrics.test.ts > audit entries with no exitCode field > agrees with the journal summary on how many commands failed
+AssertionError: expected '## 세션 요약 (10:30 KST)\n\n- 실행한 명령: 1개 …' to contain '실패 0개'
+
+- Expected
++ Received
+
+- 실패 0개
++ ## 세션 요약 (10:30 KST)
++
++ - 실행한 명령: 1개 승인, 0개 거부 · 실패 1개: npm run lint (exit undefined)
++ - 감사 이벤트: plan 2, command 2
++
++ <!-- vibe-code:summary-until 2026-09-22T02:01:00Z -->
++
+
+ ❯ tests/unit/goal-metrics.test.ts:79:19
+     77|  it("agrees with the journal summary on how many commands failed", () …
+     78|   const summary = buildSessionSummary(entries, "", "10:30 KST", "")!;
+     79|   expect(summary).toContain(`실패 ${m.commandsFailed}개`);
+       |                   ^
+     80|   expect(m.commandsFailed).toBe(1);
+     81|  });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/6]⎯
+
+ FAIL  tests/unit/goal-metrics.test.ts > audit entries with no exitCode field > reports the unknown-exit-code command as a bottleneck in the retro
+AssertionError: expected '# 주간 회고 — 2026-09-16 ~ 2026-09-22\n\n…' to contain '`npm run lint` — 실패 1회'
+
+- Expected
++ Received
+
+- `npm run lint` — 실패 1회
++ # 주간 회고 — 2026-09-16 ~ 2026-09-22
++
++ ## 이번 주 한눈에
++ - 기간: 최근 7일 (활동일 1일)
++ - 완료 항목: 0개 (하루 0.0개)
++ - 검증 실행: 2회, 통과율 100%
++ - 명령 실행: 승인 1 · 거부 0 · 실패 종료 0
++ - 작업: 0회 (목표 미갱신 0회) · 토큰 0 · 비용 $0.00
++ - 핸드오프 0회 · 정체 경고 0회 · 계획 상태 변경 없음
++
++ ## 완료한 것
++ - (완료 항목 없음)
++
++ ## 병목과 실패
++ - 반복 실패 없음
++
++ ## 다음 주
++ - 활성 목표 없음 — `Vibe Code: 새 목표`로 시작하세요.
++
+
+ ❯ tests/unit/goal-metrics.test.ts:85:17
+     83|  it("reports the unknown-exit-code command as a bottleneck in the retr…
+     84|   const retro = buildRetro({ from: "2026-09-16", to: "2026-09-22", met…
+     85|   expect(retro).toContain("`npm run lint` — 실패 1회");
+       |                 ^
+     86|  });
+     87| });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/6]⎯
+
+ FAIL  tests/unit/journal-summary.test.ts > journal summary > renders an unknown exit code as 미상 instead of `exit undefined`
+AssertionError: expected '## 세션 요약 (10:30 KST)\n\n- 실행한 명령: 1개 …' not to contain 'exit undefined'
+
+- Expected
++ Received
+
+- exit undefined
++ ## 세션 요약 (10:30 KST)
++
++ - 실행한 명령: 1개 승인, 0개 거부 · 실패 1개: npm run lint (exit undefined)
++ - 감사 이벤트: command 2
++
++ <!-- vibe-code:summary-until 2026-09-22T02:01:00.000Z -->
++
+
+ ❯ tests/unit/journal-summary.test.ts:41:20
+     39|   ].join("\n");
+     40|   const text = buildSessionSummary(parseAuditLines(audit), "", "10:30 …
+     41|   expect(text).not.toContain("exit undefined");
+       |                    ^
+     42|   expect(text).toContain("실행한 명령: 1개 승인, 0개 거부 · 실패 1개: npm run lint (…
+     43|  });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[6/6]⎯
+
+
+ Test Files  2 failed (2)
+      Tests  6 failed | 11 passed (17)
+   Start at  07:50:41
+   Duration  387ms (transform 193ms, setup 0ms, collect 281ms, tests 21ms, environment 0ms, prepare 101ms)
+

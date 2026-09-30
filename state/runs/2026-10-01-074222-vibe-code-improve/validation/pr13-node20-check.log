@@ -1,0 +1,45 @@
+=== CI check job reproduction — PR #13 head 1dd2151 (origin/auto/2026-10-01-0632) ===
+date: 2026-09-30T22:48:31Z  node: v20.19.2  extracted: /tmp/pr13
+workflow: .github/workflows/ci.yml:13-24 (read-only, not modified)
+
+v20.19.2
+2 moderate severity vulnerabilities
+
+To address all issues (including breaking changes), run:
+  npm audit fix --force
+
+Run `npm audit` for details.
+EXIT_npm_ci=0
+
+ RUN  v3.2.7 /tmp/pr13
+
+ ✓ tests/unit/goal-loop.test.ts (3 tests) 3ms
+ ✓ tests/unit/goal-catalog.test.ts (3 tests) 5ms
+ ✓ tests/unit/semver.test.ts (2 tests) 2ms
+ ✓ tests/unit/verification.test.ts (10 tests) 5ms
+ ✓ tests/unit/usage.test.ts (2 tests) 4ms
+ ✓ tests/unit/journal-summary.test.ts (7 tests) 4ms
+ ✓ tests/unit/goal-health.test.ts (4 tests) 4ms
+ ✓ tests/unit/markdown.test.ts (22 tests) 9ms
+ ✓ tests/unit/plans.test.ts (16 tests) 24ms
+ ✓ tests/unit/goal-metrics.test.ts (9 tests) 33ms
+ ✓ tests/unit/checkpoints.test.ts (9 tests) 729ms
+
+ Test Files  11 passed (11)
+      Tests  87 passed (87)
+   Start at  07:48:34
+   Duration  1.10s (transform 838ms, setup 0ms, collect 1.68s, tests 821ms, environment 1ms, prepare 694ms)
+
+
+> vibe-code@1.4.5 build
+> node scripts/build.mjs
+
+warning: dist/ is missing runtime assets: node_modules, i18n, workers, tree-sitter.wasm, tiktoken_bg.wasm
+         copy them from an existing release VSIX (extension/dist/) before packaging.
+
+  dist/extension.js  202.8kb
+
+⚡ Done in 16ms
+EXIT_npm_check=0
+EXIT_node_check_extension=0
+EXIT_node_check_core=0
