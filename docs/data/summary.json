@@ -1,5 +1,5 @@
 {
- "generated": "2026-10-01T00:19:39+09:00",
+ "generated": "2026-10-01T00:30:20+09:00",
  "site": "https://hkjang.github.io/aidev",
  "description": "Claude Code 자율 개선 에이전트가 hkjang 의 프로젝트를 개선·테스트·머지·릴리즈한 일일 보고. 오늘 0회차·릴리즈 0건, 누적 1735회차·릴리즈 600건, 주의 필요 22건.",
  "today": {
@@ -10,18 +10,18 @@
   "merged": 0,
   "nochange": 0,
   "failed": 0,
-  "cost_usd": 0.0,
-  "minutes": 0,
-  "sessions": 0
+  "cost_usd": 2.28,
+  "minutes": 4,
+  "sessions": 2
  },
  "totals": {
   "runs": 1735,
   "released": 600,
   "days": 29,
-  "cost_usd": 6355.55,
-  "minutes": 17154,
-  "tokens_in": 6865289769,
-  "tokens_out": 54435467
+  "cost_usd": 6357.82,
+  "minutes": 17159,
+  "tokens_in": 6867222529,
+  "tokens_out": 54452256
  },
  "alerts": [
   {
@@ -1263,11 +1263,11 @@
    "why": "review: approved — 리뷰 승인 (risk=low); ci: failed — 성공이 아닌 검사: typecheck + unit tests + build=failure",
    "evidence": "https://github.com/hkjang/aidev/tree/main/state/runs/2026-09-30-221722-vibe-code-improve",
    "labels": "",
-   "action": "PR 처리기가 매시간 살핀다 (아직 순서가 오지 않음) · 승인: PR 라벨 aidev-approved / 반려: aidev-rejected — 다음 회차에 러너가 승인 당시 커밋에만 CI 확인 후 머지·닫기",
+   "action": "PR 처리기가 다음 시간에 다시 시도 · 승인: PR 라벨 aidev-approved / 반려: aidev-rejected — 다음 회차에 러너가 승인 당시 커밋에만 CI 확인 후 머지·닫기",
    "date": "2026-09-30",
-   "shepherd": "",
-   "shepherd_action": "",
-   "shepherd_detail": "",
+   "shepherd": "CI 실패 · 수정 실패 → 다음 시간에 재시도 (10-01 00:30) — 수정 세션이 커밋을 만들지 않음: # 수리 요약 — PR #9 (커밋 없음, 코드 결함 아님)  - **결론: 고칠 코드 결함이 없다.** CI run 36722736193 의 check job 은 3초 만에 `steps: []`, `runner_id: 0` 으로 끝났다 — 단계가 하나",
+   "shepherd_action": "fix-failed",
+   "shepherd_detail": "수정 세션이 커밋을 만들지 않음: # 수리 요약 — PR #9 (커밋 없음, 코드 결함 아님)  - **결론: 고칠 코드 결함이 없다.** CI run 36722736193 의 check job 은 3초 만에 `steps: []`, `runner_id: 0` 으로 끝났다 — 단계가 하나도 실행되지 않았다. check-run annotation 원문(Windows gh 기존 인증으로 조회): *\"The job was not started because recent account payments have failed or your spending limit needs to be increased.\"* GitHub 결제/지출한도 문제이고, PR #9 의 diff 와 무관하다. - **CI check job 을 HEAD(bb54c58)에서 그대로 재현: 3단계 전부 exit 0.** Nod",
    "needs_human": false
   },
   {
@@ -1282,9 +1282,9 @@
    "labels": "",
    "action": "PR 처리기가 다음 시간에 다시 시도 · 승인: PR 라벨 aidev-approved / 반려: aidev-rejected — 다음 회차에 러너가 승인 당시 커밋에만 CI 확인 후 머지·닫기",
    "date": "2026-09-30",
-   "shepherd": "CI 실패 · 수정 실패 → 다음 시간에 재시도 (09-30 21:59) — 수정 세션이 커밋을 만들지 않음: # 수리 결과 — 고칠 결함 없음 (커밋 없음)  - **지적이 틀렸다.** CI run 36717506826 의 실패는 코드 결함이 아니다. check-run 109893967733 annotation 원문: `\"The job was not start",
+   "shepherd": "CI 실패 · 수정 실패 → 다음 시간에 재시도 (10-01 00:28) — 수정 세션이 커밋을 만들지 않음: # fix-summary — vibe-code PR #8 (커밋 없음)  - 지적이 틀렸다. CI run 36717506826 은 코드 실패가 아니다: job `typecheck + unit tests + build` 의 `steps=[]`, `runn",
    "shepherd_action": "fix-failed",
-   "shepherd_detail": "수정 세션이 커밋을 만들지 않음: # 수리 결과 — 고칠 결함 없음 (커밋 없음)  - **지적이 틀렸다.** CI run 36717506826 의 실패는 코드 결함이 아니다. check-run 109893967733 annotation 원문: `\"The job was not started because recent account payments have failed or your spending limit needs to be increased. Please check the 'Billing & plans' section in your settings\"` (failure level). job JSON 도 `steps: []`, `runner_id: 0`, `runner_name: \"\"`, `started_at == created_at`, 3초 후 completed — 러너가 배정되지 않아 단계가 하나도 실행되지 않았다. `actions/jobs/109893967733/logs",
+   "shepherd_detail": "수정 세션이 커밋을 만들지 않음: # fix-summary — vibe-code PR #8 (커밋 없음)  - 지적이 틀렸다. CI run 36717506826 은 코드 실패가 아니다: job `typecheck + unit tests + build` 의 `steps=[]`, `runner_id=0`, 3초 종료이고 check-run annotation 이 \"The job was not started because recent account payments have failed or your spending limit needs to be increased\" 다. 단 한 줄도 실행되지 않았다. - CI 와 같은 Node 20.19.2 로 세 단계를 그대로 재현했다: `npm ci` → `npm run check` (typecheck OK, 11 files / **89 tests 통과**, build OK) → `node --check dist/extension.js && node --ch",
    "needs_human": false
   },
   {
@@ -1313,7 +1313,7 @@
    "summary": "2파일 +239/−0 · approved https://github.com/hkjang/nexabuilder/pull/51",
    "why": "ci: failed — 성공이 아닌 검사: test + bootJar=failure",
    "evidence": "https://github.com/hkjang/aidev/tree/main/state/runs/2026-09-30-181600-nexabuilder-approve",
-   "labels": "aidev-approved",
+   "labels": "",
    "action": "PR 처리기가 승인함 — 승인 스윕이 CI 확인 뒤 머지·릴리즈 (아직 열려 있으면 CI 를 기다리는 중)",
    "date": "2026-09-30",
    "shepherd": "리뷰 없음 · 승인 → 스윕이 CI 확인 후 머지 (09-30 16:19) — risk=low — 리뷰 승인 (risk=low)",
@@ -1330,7 +1330,7 @@
    "summary": "10파일 +77/−4 · approved https://github.com/hkjang/madi/pull/9",
    "why": "ci: failed — 성공이 아닌 검사: test=failure, offline-image=failure",
    "evidence": "https://github.com/hkjang/aidev/tree/main/state/runs/2026-09-30-181143-madi-approve",
-   "labels": "aidev-approved",
+   "labels": "",
    "action": "PR 처리기가 승인함 — 승인 스윕이 CI 확인 뒤 머지·릴리즈 (아직 열려 있으면 CI 를 기다리는 중)",
    "date": "2026-09-30",
    "shepherd": "보호 파일 · 승인 → 스윕이 CI 확인 후 머지 (09-20 14:04) — risk=medium — 리뷰 승인 (risk=medium)",
@@ -1347,7 +1347,7 @@
    "summary": "7파일 +85/−7 · approved https://github.com/hkjang/madi/pull/5",
    "why": "ci: failed — 성공이 아닌 검사: test=failure, offline-image=failure",
    "evidence": "https://github.com/hkjang/aidev/tree/main/state/runs/2026-09-30-180745-madi-approve",
-   "labels": "aidev-approved",
+   "labels": "",
    "action": "PR 처리기가 승인함 — 승인 스윕이 CI 확인 뒤 머지·릴리즈 (아직 열려 있으면 CI 를 기다리는 중)",
    "date": "2026-09-30",
    "shepherd": "보호 파일 · 승인 → 스윕이 CI 확인 후 머지 (09-19 04:10) — risk=medium — 리뷰 승인 (risk=medium)",
@@ -1364,7 +1364,7 @@
    "summary": "9파일 +30/−16 · approved https://github.com/hkjang/madi/pull/12",
    "why": "ci: failed — 성공이 아닌 검사: compatibility (18)=failure",
    "evidence": "https://github.com/hkjang/aidev/tree/main/state/runs/2026-09-30-180352-madi-approve",
-   "labels": "aidev-approved",
+   "labels": "",
    "action": "PR 처리기가 승인함 — 승인 스윕이 CI 확인 뒤 머지·릴리즈 (아직 열려 있으면 CI 를 기다리는 중)",
    "date": "2026-09-30",
    "shepherd": "리뷰 없음 · 승인 → 스윕이 CI 확인 후 머지 (09-24 04:23) — risk=low — 리뷰 승인 (risk=low)",
@@ -1381,7 +1381,7 @@
    "summary": "9파일 +30/−16 · approved https://github.com/hkjang/madi/pull/11",
    "why": "ci: failed — 성공이 아닌 검사: test=failure",
    "evidence": "https://github.com/hkjang/aidev/tree/main/state/runs/2026-09-30-180008-madi-approve",
-   "labels": "aidev-approved",
+   "labels": "",
    "action": "PR 처리기가 승인함 — 승인 스윕이 CI 확인 뒤 머지·릴리즈 (아직 열려 있으면 CI 를 기다리는 중)",
    "date": "2026-09-30",
    "shepherd": "리뷰 없음 · 승인 → 스윕이 CI 확인 후 머지 (09-22 18:47) — risk=low — 리뷰 승인 (risk=low)",
@@ -1938,10 +1938,12 @@
   }
  ],
  "shepherd": {
-  "last_pass": "2026-09-30T21:55:58+09:00",
+  "last_pass": "2026-10-01T00:23:45+09:00",
   "enabled": true,
-  "today": {},
-  "total": 425,
+  "today": {
+   "fix-failed": 2
+  },
+  "total": 427,
   "pending_human": 115
  },
  "agents": {
@@ -1956,7 +1958,7 @@
     "role": "구현 builder",
     "calls": 642,
     "metric": "러너 검증 통과 97% · 변경 없음 119",
-    "cost": 1710.57
+    "cost": 1712.85
    },
    {
     "role": "비평 critic",
@@ -1986,12 +1988,12 @@
     "role": "PR 심사 shepherd-reviewer",
     "calls": 265,
     "metric": "승인 86 · 거절 64 · 사람 필요 115 · 승인 뒤 회귀 0",
-    "cost": 457.01
+    "cost": 459.29
    },
    {
     "role": "PR 수리 shepherd-fixer",
-    "calls": 121,
-    "metric": "고쳐서 푸시 46%",
+    "calls": 123,
+    "metric": "고쳐서 푸시 45%",
     "cost": null
    },
    {
@@ -2008,15 +2010,15 @@
    },
    {
     "role": "측정 자기 감사",
-    "calls": 5,
+    "calls": 4,
     "cost": null,
-    "metric": "[high] 게시 릴리즈 723건인데 회차 기록은 599건 — 124건이 기록에서 빠졌다 · [high] 원격에 없는 릴리즈 태그 1건 — 그 저장소의 다음 릴리즈를 막는다 · [medium] 실험 arm no-repair 의 처치 노출이 4% — 그 arm 의 null 결과는 '효과 없음' 이 아니다"
+    "metric": "[high] 게시 릴리즈 724건인데 회차 기록은 600건 — 124건이 기록에서 빠졌다 · [medium] 실험 arm no-repair 의 처치 노출이 4% — 그 arm 의 null 결과는 '효과 없음' 이 아니다 · [medium] 실험 arm no-arbiter 의 처치 노출이 0% — 그 arm 의 null 결과는 '효과 없음' 이 아니다"
    },
    {
     "role": "실제 게시 릴리즈 (원격 태그 기준)",
-    "calls": 723,
+    "calls": 724,
     "cost": null,
-    "metric": "저장소 39개 · 게시 723건 (사람 156건) · 태그만 만들고 미게시 1건 — CI 가 릴리즈 커밋을 막은 저장소 · 누적 회차 기록에는 600건 — 123건이 기록에서 빠졌다"
+    "metric": "저장소 39개 · 게시 724건 (사람 156건) · 누적 회차 기록에는 600건 — 124건이 기록에서 빠졌다"
    },
    {
     "role": "머지 뒤 30일 (postmerge)",
@@ -2044,9 +2046,8 @@
    }
   ],
   "advice": [
-   "측정이 어긋났다 — 게시 릴리즈 723건인데 회차 기록은 599건 — 124건이 기록에서 빠졌다 (회차를 기록하는 경로 어딘가가 결말에 따라 기록을 건너뛴다. 2026-09-26 에 승인 스윕에서 같은 결함을 고쳤다.)",
-   "측정이 어긋났다 — 원격에 없는 릴리즈 태그 1건 — 그 저장소의 다음 릴리즈를 막는다 (release_project 의 describe 검사가 로컬 태그를 보므로, 보류된 태그가 base 끝을 가리키면 릴리즈가 영구히 멈춘다.)",
-   "실제 릴리즈 태그(723건)가 누적 회차 기록(600건)보다 123건 많다 — 기록 경로에 빠지는 자리가 남아 있다 (bin/released.py 가 태그로 센 값)",
+   "측정이 어긋났다 — 게시 릴리즈 724건인데 회차 기록은 600건 — 124건이 기록에서 빠졌다 (회차를 기록하는 경로 어딘가가 결말에 따라 기록을 건너뛴다. 2026-09-26 에 승인 스윕에서 같은 결함을 고쳤다.)",
+   "실제 릴리즈 태그(724건)가 누적 회차 기록(600건)보다 124건 많다 — 기록 경로에 빠지는 자리가 남아 있다 (bin/released.py 가 태그로 센 값)",
    "jikim 은 머지한 변경의 93% 를 사람이 다시 고쳤다 — 자율화 단계를 낮추거나(state/jikim.policy.json 의 autonomy) 검증 명령을 늘릴 것"
   ]
  },
@@ -2446,7 +2447,7 @@
   },
   {
    "metric": "유효 개선당 비용",
-   "value": "$10.08",
+   "value": "$10.09",
    "detail": "비용 확인된 유효 개선 345건, 미확인 세션 555"
   },
   {
@@ -2734,8 +2735,8 @@
    "merged": 16,
    "nochange": 17,
    "failed": 21,
-   "cost": 680.78,
-   "minutes": 2331
+   "cost": 683.05,
+   "minutes": 2335
   },
   {
    "key": "2026-W39",
@@ -3830,8 +3831,8 @@
    "last_ts": "2026-09-30T22:35:55+09:00",
    "last_status": "failed",
    "last_result": "fix-round: CI failed, PR open https://github.com/hkjang/vibe-code/pull/9",
-   "cost": 57.75,
-   "minutes": 155,
+   "cost": 60.03,
+   "minutes": 160,
    "grade": "D",
    "grade_why": "14일: 릴리즈 5, 실패 4, 경고 9, 회귀 0",
    "lessons": 0,
