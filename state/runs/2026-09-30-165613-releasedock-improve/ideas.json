@@ -1,0 +1,101 @@
+[
+  {
+    "title": "전체 모드 릴리즈 로그의 화면 상한 초과(오래된 줄 버림)를 화면과 복사 결과에 알리기",
+    "value": 3,
+    "risk": 1,
+    "size": "S",
+    "status": "done",
+    "note": "이번 회차 구현. logs 상태를 {lines, truncated} 한 객체로 합치고 순수 export 헬퍼 appendReleaseLogLine 이 자르기와 잘림 플래그를 한 번에 계산한다. 잘리면 warning Alert 이 표시 줄 수를 알리고 복사 문자열은 RELEASE_LOG_TRUNCATED_NOTICE 를 앞에 붙인다(버려진 쪽이 앞). 잘리지 않은 복사 문자열은 이전과 동일. 잘림 초기화는 리셋 effect([releaseId, enabled])에만. 상한 4999 는 헬퍼·렌더 테스트로 경계를 고정했다. web 131건/tsc/build 통과.",
+    "updated": "2026-09-30"
+  },
+  {
+    "title": "SSE 프레임을 한 배치로 받을 때 React key 가 중복되는 결함",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "done",
+    "note": "이번 회차 함께 수정(1줄). 행 번호를 setLogs updater 안에서 읽어 React 가 flush 시점에 updater 를 실행하면 한 배치의 모든 프레임이 같은 카운터 값을 읽고 key 가 전부 같아졌다. const id = (sequence.current += 1) 로 밖에서 읽는다. 대량 emit 렌더 테스트가 드러냈고 console.error 의 duplicate-key 경고로 고정했다. 같은 형태가 SimpleDeployPage/SimpleRunDetailPage 에도 있는지는 확인하지 않았다 — 다음 회차 후보.",
+    "updated": "2026-09-30"
+  },
+  {
+    "title": "단순 모드 배포 화면의 로그 표시 상한 초과를 알리기",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "SimpleDeployPage.tsx:232,234 도 같은 slice(-4998) 을 쓰며 잘림 표시가 없다. 이번 회차의 appendReleaseLogLine 을 그대로 재사용할 수 있는 후속 조각(다만 문구는 배포 화면 맥락에 맞춰야 하고, 실행 상세로 이동해 저장 로그를 다시 볼 수 있어 결함 강도는 전체 모드보다 약하다 — 실행 상세 경로 자체는 이번에도 재확인 안 함). 대량 emit 렌더 테스트는 5000줄 한 커밋에 약 2초가 드는 것을 이번에 실측했으니 비용을 알고 시작할 수 있다.",
+    "updated": "2026-09-30"
+  },
+  {
+    "title": "전체 모드 ReleaseDetailPage 의 onerror 가 readyState 를 보지 않음",
+    "value": 1,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "ReleaseDetailPage.tsx 의 source.onerror = () => setConnected(false) 는 CONNECTING(브라우저 자동 재시도)과 CLOSED(포기)를 구분하지 않는다. 단순 모드의 export 된 streamDisconnected 를 재사용할 수 있다. '로그 연결 대기' 표시가 CONNECTING 에서도 틀린 말은 아니라 결함 강도가 약해 세 회차 연속 밀렸다. 이번 회차도 같은 훅을 건드렸으나 범위를 지키려 뺐다.",
+    "updated": "2026-09-30"
+  },
+  {
+    "title": "로그 스트림 한도(3/user·64/global) 거절과 해제의 HTTP 통합 테스트",
+    "value": 2,
+    "risk": 2,
+    "size": "M",
+    "status": "pending",
+    "note": "server.go 의 acquireLogStream/releaseLogStream 을 newSimpleStreamFixture(프로덕션 New 기반) 위에서 네 번째 스트림 429 stream_limit → 하나 닫으면 재개로 고정한다. 동시 스트림의 비동기 해제 동기화가 남은 위험이고 TEST_POSTGRES_DSN 이 필요하다. 이번 회차는 프런트만 건드려 server.go 를 재확인하지 않았다(미확인).",
+    "updated": "2026-09-30"
+  },
+  {
+    "title": "SSE 프레임을 rAF 마다 모아 배치당 한 번만 setLogs",
+    "value": 2,
+    "risk": 2,
+    "size": "M",
+    "status": "pending",
+    "note": "세 화면 모두 이벤트마다 setLogs. 이번 회차의 대량 emit 렌더 테스트가 기준선을 하나 남겼다 — 5000 프레임을 한 act() 안에서 dispatch 해 React 가 한 커밋으로 합치면 jsdom 에서 약 2초(4999행 렌더 포함). 이미 React 가 같은 tick 의 갱신을 배칭하므로 rAF 배치의 실이득은 여전히 미측정이고, 측정 방법(프레임 수·커밋 횟수)을 먼저 정하지 않으면 수용 기준을 쓸 수 없다.",
+    "updated": "2026-09-30"
+  },
+  {
+    "title": "make vet(gofmt/go vet)과 웹 tsc -b --noEmit 를 make test 에 포함",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "브랜치 auto/2026-09-17-0853 이 아직 main 에 머지되지 않은 채 남아 있어 같은 변경을 다시 만들면 중복이다. 그 브랜치가 정리된 뒤 재평가한다. 이번 회차에 tsc 가 테스트 파일의 reduce 누산기 타입 오류를 실제로 잡아낸 만큼(npm test 만으로는 통과했다) 가치는 확인된 편이다.",
+    "updated": "2026-09-30"
+  },
+  {
+    "title": "LogPanel 의 미사용 enabled prop 정리",
+    "value": 1,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "JSX 에서 항상 리터럴 true 이고 탭 이탈 시 LogPanel 이 언마운트되므로 죽은 경로다. 다만 useReleaseLogs 의 두 effect 의존성 배열([releaseId, enabled] 와 [releaseId, enabled, streamAttempt])은 v0.5.24/25 와 이번 회차가 잘림·표시 초기화 계약으로 고정한 지점이라, 가치 1 짜리 정리로 건드리면 회귀 위험이 이득보다 크다. 사실상 기각 쪽으로 기울었다.",
+    "updated": "2026-09-30"
+  },
+  {
+    "title": "uploadHasFailedPackages 를 actor 로 좁히기",
+    "value": 2,
+    "risk": 3,
+    "size": "S",
+    "status": "pending",
+    "note": "simple.go SQL 에 batch_id/id/status 조건만 있다(이전 회차 기록). actor 조건을 더하면 안전 검사가 느슨해질 수 있어 소유권 계약을 먼저 문서·코드로 확정해야 한다. 이번에도 재확인하지 않았다(미확인).",
+    "updated": "2026-09-30"
+  },
+  {
+    "title": "web/dist vendor 청크 분할로 폐쇄망 초기 로딩 개선",
+    "value": 2,
+    "risk": 3,
+    "size": "M",
+    "status": "pending",
+    "note": "이번 회차에 npm run build 를 실제로 돌려 처음 크기를 얻었다 — vendor 617.30 kB(gzip 191.72 kB), app index 193.04 kB(gzip 55.83 kB), css 1.04 kB. vite.config.ts 는 이미 node_modules 전체를 vendor 한 덩어리로 묶는 manualChunks 를 쓴다. 더 쪼갤 후보(MUI·icons·react-router)가 실제로 초기 로딩을 줄이는지는 폐쇄망 측정 없이 단정할 수 없어 여전히 이득 미확인.",
+    "updated": "2026-09-30"
+  },
+  {
+    "title": "docs/simple-mode.md·architecture.md 와 README 의 Harbor 사용 서술 불일치",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "docs 는 단순 모드가 Harbor 를 쓰지 않는다고 설명하지만 README 는 단순 모드 복제 후처리를 설명한다(정찰 기록). 어느 쪽이 정본인지 소스로 확인해야 하고, 확인 없이 쓰면 정본이 둘이 된다. 해당 기능 소스 전체를 아직 확인하지 않아 과제로 고르지 않았다.",
+    "updated": "2026-09-30"
+  }
+]
