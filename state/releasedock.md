@@ -333,3 +333,4 @@
 - 보류 아이디어: 단순 모드 배포 화면(`SimpleDeployPage.tsx:232,234`)도 같은 `slice(-4998)` 을 조용히 쓴다 — 이번 헬퍼를 재사용하는 후속 조각 (가치 2 / 위험 1 / S); 전체 모드 `source.onerror` 가 `readyState` 를 보지 않아 CONNECTING/CLOSED 를 구분 못 함 — 단순 모드의 `streamDisconnected` 재사용 가능 (가치 1 / 위험 2 / S); 로그 스트림 한도(3/user·64/global) 거절·해제의 HTTP 통합 테스트 — 동시 해제 동기화가 남은 위험, `TEST_POSTGRES_DSN` 필요 (가치 2 / 위험 2 / M); SSE 프레임을 rAF 마다 모아 배치당 한 번만 setLogs — 이번 대량 emit 측정치(5000 프레임 한 커밋 ≈ 2초)가 기준선이 된다 (가치 2 / 위험 2 / M); `make vet`·웹 `tsc` 를 `make test` 에 포함 — 브랜치 `auto/2026-09-17-0853` 이 아직 main 에 없어 중복 위험 (가치 2 / 위험 1 / S).
 - 과제서: 채택 — 과제서의 근거(`slice(-4998)` 의 조용한 버림, 전체 모드 로그 API 가 스트림 하나뿐, 단순 모드 `logTruncated` 선례, 리셋/스트림 effect 의 의존성 배열)가 지금 코드와 그대로 일치했고 수용 기준 1~5 를 지정된 두 파일 안에서 충족했다. 상한 4999 는 헬퍼 테스트와 렌더 테스트로 실제 경계를 고정해 확인했다.
 
+- 릴리즈: v0.5.26 (2026-09-30, run 2026-09-30-165613-releasedock-improve)
