@@ -20,3 +20,15 @@
 - **다음 역할이 조심할 것**: 이 테스트는 DB 없이 돈다(소스만 읽는다). 새 자유 텍스트 검색을 더할 때 기준치 `knownComparisons = 19` 를 올릴 필요는 없지만 **내려서는 안 된다**. 그리고 기존 ESCAPE 검사는 여전히 줄 단위라 비교가 여럿인 줄에서 하나만 `ESCAPE` 를 지우면 놓친다 — 실제로 확인했고 다음 회차 후보로 `ideas.json` 에 적었다.
 - [러너 17:08] brief accepted — 채택 — 과제서가 열어 본 자리와 셈(`service.go:160` 의 `ToLower`, `lower(...) LIKE` 13개 + `ILIKE` 5개 + `knowledge.go:167` 의 Sprintf 1개, �
 - [러너 17:08] verify passed — 검증 9개 통과 (auto)
+
+## 비평 노트
+- 확인한 것: 섭동 5종(service.go:209 / knowledge.go:167 map 키 / team.go:166 / admin_operations.go:99 ILIKE→LIKE / 새 파일의 새 비교)을 직접 돌려 정확히 해당 `path:line` 만 red 임을 확인했고, `knownComparisons=19` 를 독립 셈으로 맞췄다. go build·vet·test ./... 통과, gofmt 무출력, 트리 복구 확인. 보안·법무 차단 사유 없음(프로덕션 동작 0줄, 개인정보·비밀값·인가 무관).
+- 못 본 것: 실제 SQL 이 행을 맞추는지는 확인하지 않았다(실 PostgreSQL 필요 — 원장도 그렇게 적었다). 프런트는 무관해 돌리지 않았다.
+- **남는 우려 1(실증)**: `search_test.go:238-252 literalsAssignedTo` 가 CompositeLit 의 비-BasicLit 요소를 `return true` 로 조용히 건너뛴다 → 리터럴 키 뒤에 `unfoldedCol: 1`(값 `"v.title"`)을 넣으면 접히지 않은 좌변이 살아 있는데 PASS(`seen` 19 유지로 개수 가드도 안 걸림). 주석(:200-202)·원장의 "따라갈 수 없는 인자는 실패" 약속과 어긋난다. 오늘 그 모양이 없어 차단은 안 했다 — 다음 회차에서 그 `return true` 를 실패로 바꾸는 3줄.
+- **남는 우려 2(실증)**: 정규식이 대문자 전용이라 `t.label like $1 escape '\'` 는 새 테스트와 기존 ESCAPE 테스트 **둘 다** 놓친다. 기존 테스트가 이미 가진 구멍이라 회귀는 아니다. 또 개수 가드가 하한이라 검색을 정당하게 지울 때 오해 소지 있는 메시지로 red 가 된다(기준치를 내려야 한다).
+- 판정: **approve** / risk low. 불변식은 한 방향(패턴이 소문자면 좌변도 접혀야 함)만 보고, 반대 방향(SearchPattern 미사용 대문자 패턴 vs `lower(col)`)은 여전히 조용한 0건으로 통과한다 — 릴리즈·다음 회차가 알아 둘 것.
+- [러너 17:13] review approved — 리뷰 승인 (risk=low)
+- [러너 17:13] pr created — https://github.com/hkjang/relio/pull/39
+- [러너 17:17] ci passed — 검사 2개 모두 success
+- [러너 17:17] merge done — f7bf47d
+- [러너 17:17] release skipped — 자율화 단계 low-risk — 릴리즈는 사람이

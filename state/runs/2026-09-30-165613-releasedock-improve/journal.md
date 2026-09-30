@@ -18,3 +18,15 @@
 - 다음 역할이 조심할 것: 잘림 렌더 테스트 5건은 프레임을 하나의 `act()` 안에서 5000회 dispatch 하고 4999행을 렌더하므로 각 1.6~4.7초가 걸린다. 그래서 `SLOW_RENDER_TIMEOUT = 30_000` 을 명시했다 — 느린 CI 에서 기본 5초로 되돌리면 타임아웃으로 깨진다. 파일 전체 약 16초. 클립보드는 `Object.defineProperty` 로 세우고 `afterEach` 에서 원복하며(`vi.restoreAllMocks()` 는 되돌리지 않는다) `vi.stubGlobal('navigator', …)` 는 쓰지 않았다.
 - 검증: `cd web && npm ci` 후 `npm test -- --run` 131 passed (기준선 122 + 신규 9), `npx tsc -b --noEmit` 통과(테스트의 reduce 누산기 타입 오류를 실제로 잡아 고쳤다 — npm test 만으로는 통과했다), `npm run build` 통과, `git diff --check` 깨끗. 백엔드는 0 파일 변경이라 실행하지 않았다(통합 검증 주장 없음). `web/dist` 는 커밋 전에 삭제, `VERSION` 미변경.
 - [러너 17:12] brief accepted — 채택 — 과제서의 근거(`slice(-4998)` 의 조용한 버림, 전체 모드 로그 API 가 스트림 하나뿐, 단순 모드 `logTruncated` 선례, 리�
+- [러너 17:12] verify passed — 검증 7개 통과 (auto)
+
+## 비평 노트
+- 확인함: 변경 2파일 전체, 구현자가 의심한 (a)(b)(c) 세 자리, 그리고 독립 뮤테이션 3건으로 테스트가 헛돌지 않음을 직접 증명 — `sequence.current` 를 updater 안으로 되돌림 → same key 로 빨강, `>`→`>=` → 경계 2건 빨강, 안내를 뒤로 옮김 → 클립보드 1건 빨강. 뮤테이션은 모두 원복했고 트리는 clean.
+- 실행함: web 전체 131 passed (13 files, 15.5s), `npx tsc -b --noEmit` exit 0, `git diff --check` clean. 경계 등가성도 손으로 확인 — 구 `slice(-4998)` 과 신 `limit 4999` 는 최대 보유 줄 수가 같다.
+- 못 본 것: 백엔드·러너 테스트(0 파일 변경이라 미실행), 실제 브라우저에서의 4999행 렌더 체감과 로케일별 숫자 표기, 구현자가 (c)로 남긴 "같은 updater-안에서-ref-읽기 패턴이 SimpleDeployPage·SimpleRunDetailPage 에도 있는가" — **다음 회차 후보다**(전체 모드에서는 실재한 결함이었다).
+- 승인이어도 남는 우려: ① truncated 일 때 Alert 숫자는 사실상 상수 4,999 ② `clear()` 가 안내까지 지워 이후 복사본이 유실을 숨긴다 ③ `aria-label="전체 로그 복사"` 는 여전히 '전체' 를 약속 ④ SLOW_RENDER_TIMEOUT=30_000 을 낮추면 느린 CI 에서 먼저 깨진다.
+- 릴리즈 노트용: 전체 모드 실시간 로그가 표시 한도(4,999줄)를 넘기면 화면 경고와 복사본 머리말로 앞부분 유실을 알린다. 함께 고친 선행 결함 — 한 배치로 도착한 로그 줄들이 같은 React key 를 받던 문제.
+- [러너 17:17] review approved — 리뷰 승인 (risk=low)
+- [러너 17:17] pr created — https://github.com/hkjang/releasedock/pull/30
+- [러너 17:20] ci passed — 검사 1개 모두 success
+- [러너 17:20] merge done — 31d92f5
