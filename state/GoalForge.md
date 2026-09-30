@@ -34,3 +34,4 @@
 - 보류 아이디어: ① `internal/model` 의 `ParseCriterion` 계약 테스트 — `internal/model` 은 여전히 `[no test files]`(2026-09-29 회차의 `window.go`/`window_test.go` 가 main 에 없음을 이번에도 확인) ② 테스트용 git 저장소 부트스트랩 헬퍼를 공유 패키지로 정리(`requirePushable` 3중 복제 + 기존 중복) ③ `AutoApproveMerges` 가 `AutonomyPolicy.DailyLimit` 을 전혀 보지 않는다 — 실행 승인은 하루 한도가 걸리는데 병합 승인은 무제한이고, 병합 승인은 `auto_approvals` 에도 기록되지 않아 셀 수단 자체가 없다. 봉투(위험 구역)를 건드리므로 단독 회차로 ④ `internal/procctl`·`internal/testscript` 테스트 공백(release.yml 이 windows/macos 에서 돌리므로 procctl 의 OS 분기가 실제로 실행된다) ⑤ CI 배지와 `gh attestation verify` 사용법을 README 에 반영(해당 구간 미확인).
 - 과제서: 기각 — 정찰이 예산 초과로 중단되어 과제서가 없었고, 구현자가 보류 목록 재평가 + 코드 직접 확인으로 골랐다.
 
+- 릴리즈: v0.31.0 (2026-10-01, run 2026-10-01-014247-GoalForge-improve)

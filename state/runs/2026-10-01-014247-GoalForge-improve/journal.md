@@ -22,3 +22,5 @@
 - [러너 02:01] pr created — https://github.com/hkjang/goalforge/pull/49
 - [러너 02:05] ci passed — 검사 3개 모두 success
 - [러너 02:05] merge done — 0925b19
+- [러너 02:08] release published — v0.31.0
+- [러너 02:08] gh-release created — GitHub Release v0.31.0
