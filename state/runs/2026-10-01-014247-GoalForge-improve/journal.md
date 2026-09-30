@@ -24,3 +24,4 @@
 - [러너 02:05] merge done — 0925b19
 - [러너 02:08] release published — v0.31.0
 - [러너 02:08] gh-release created — GitHub Release v0.31.0
+- [러너 02:18] assets verified — v0.31.0 자산 7개 (이전 v0.30.0: 7)
