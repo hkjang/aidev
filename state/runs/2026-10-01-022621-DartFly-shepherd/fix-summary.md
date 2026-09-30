@@ -1,0 +1,7 @@
+# 수리 결과: 고칠 결함 없음 — 커밋 없이 종료
+
+- 원인 확정: CI 3개 잡은 **한 스텝도 실행되지 않았습니다**(`jobs[].steps == []`, 세 잡 모두 17:04:32 동시 종료, 2~3s). 잡 annotation 이 이유를 그대로 말합니다 — `"The job was not started because recent account payments have failed or your spending limit needs to be increased. Please check the 'Billing & plans' section in your settings"`. GitHub 계정 결제/한도 문제이며 a772071 의 코드와 무관합니다. (`GH_CONFIG_DIR=/home/hkjang/.config/gh gh api repos/hkjang/DartFly/check-runs/<job>/annotations` 로 확인.)
+- a772071 에서 CI 3개 잡이 돌릴 명령을 로컬에서 그대로 재현했고 전부 통과: `gofmt -l .` 무출력 · `go vet ./...` 무출력 · `go test -race ./...` 전 패키지 ok · `go build ./cmd/dartfly` OK · `TestBrowserModuleTests` 는 Skip 아니라 실제 PASS 15/15(`admin-history.test.mjs` PASS 0.98s) · `DF_SMOKE_REQUIRE_BROWSER=1 bash test/smoke/run.sh` 통과(페이지 31개 중 문제 0개, 편집기 정상) · `bash test/smoke/artifact.sh` 통과 · `bash test/livedb/setup.sh --fast` 통과.
+- 유일한 로컬 실패는 `internal/catalog TestLiveGeneratedDDLActuallyRuns`(pg·mariadb): `ddl_live_test.go:193` 이 node 의 **stderr 를 DDL 문자열에 섞어** 넣는데, Node 22 가 `dialect.js` 에 `MODULE_TYPELESS_PACKAGE_JSON` 경고를 내보내 DDL 첫 줄이 `(node:...) Warning:` 이 됩니다 → `syntax error at or near "node"`.
+- 이 실패는 **origin/main 을 /tmp 에 풀어 돌려도 동일하게 재현**됩니다(이 PR 이 건드리지 않는 파일, 로컬 Node 22 환경 기인). 이번 변경의 회귀가 아니라 기존 결함이므로 규칙(무관한 파일 금지)에 따라 손대지 않고 보고만 합니다.
+- 결론: 코드에 고칠 것이 없어 새 커밋을 만들지 않았습니다. CI 는 계정 결제 해결 후 `workflow_dispatch` 로 재실행하면 됩니다(워크플로 수정 금지 규칙 준수).
