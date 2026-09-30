@@ -243,13 +243,19 @@ Postra v0.10.0+는 장애 및 시스템 이벤트 추적 파이프라인을 지�
   ]
   ```
 
-### 6.2 Prometheus 메트릭 수집 (`/metrics`)
+### 6.2 메일 동기화 실패 진단
+
+동기화 실패는 작업마다 멈춘 **단계**(policy/secret/host_check/tcp_connect/tls_handshake/greeting/starttls/login/select/enumerate/fetch/list/idle)와 **유형**(timeout/refused/reset/closed/unreachable/dns_*/tls_*/rejected/config/other), 그 단계의 소요·제한 시간, 연결 시도 횟수, 이 노드가 유지 중인 인바운드 연결 수, 보낸 메일함 패스 결과를 함께 기록합니다. `/app/jobs` 의 "멈춘 지점", 장애 화면의 `sync` 행 detail, `GET /api/jobs/{id}` 의 `diagnostic`, MCP `job_status` 에서 같은 내용을 봅니다. 메일 서버가 보낸 문장은 저장하지 않고 RFC 응답 코드만 남깁니다.
+
+단계·유형별 확인 항목과 자주 보는 조합은 [SYNC_DIAGNOSTICS.md](SYNC_DIAGNOSTICS.md) 를 참고하세요.
+
+### 6.3 Prometheus 메트릭 수집 (`/metrics`)
 - `postra_sync_total{status="succeeded|failed"}`: 동기화 처리 건수
 - `postra_messages_fetched_total`: 수집된 신규 이메일 수
 - `postra_outbox_pending_messages`: 발송 대기 큐 크기
 - `postra_attachment_blocked_total`: 악성 첨부파일 차단 횟수
 
-### 6.3 방문 추적과 콘텐츠 보안 정책(CSP)
+### 6.4 방문 추적과 콘텐츠 보안 정책(CSP)
 
 `/app/admin/tracking`에서 추적 설정과 차단 출처를 관리합니다. 중앙 설정 API `PATCH /api/admin/configuration`의 `values`에 `tracking.*` 키를 넣어도 됩니다. 기본값은 꺼짐이며 브라우저에 외부 추적 코드를 로드하지 않습니다.
 
@@ -271,7 +277,7 @@ Postra v0.10.0+는 장애 및 시스템 이벤트 추적 파이프라인을 지�
 
 설정은 먼저 변경 확인으로 검토하고 저장합니다. provider 필수값 누락·과대 snippet은 400으로 거부하며 저장하지 않습니다. 끈 상태의 부분 설정은 보관할 수 있습니다. 추적 화면에서 차단된 출처를 확인하고 필요한 출처만 허용하세요.
 
-### 6.4 v0.20 Web/Keycloak 이전
+### 6.5 v0.20 Web/Keycloak 이전
 
 이전 Go 템플릿 `/ui`는 제거했습니다. 현재 운영 화면은 `/app/admin`이며 사용자 `?category=users`, SSO `?category=auth`, AI `?category=ai`, 동기화 `?category=sync`, 장애 `?category=system` 등으로 이동합니다. 프록시는 `/app`, `/auth`, `/api`, 필요 시 `/tracking`·`/momento`를 전달하고 공개 Host/프로토콜을 신뢰 가능한 값으로 설정하세요.
 
