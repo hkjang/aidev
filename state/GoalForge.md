@@ -26,3 +26,11 @@
 - 과제서: 채택 — 원인 진단(`-c` 가 환경변수에 진다)과 프로덕션 수정 위치가 정확했다. 다만 프로브 설계는 차단이 remote 단위라는 점을 놓쳐 그대로 쓰면 실패했을 것이라, 기전을 실측해 `origin` 경유로 바로잡았다.
 
 - 릴리즈: v0.19.0 (2026-09-29, run 2026-09-29-024140-GoalForge-improve)
+## 2026-10-01
+- 선택: 목표를 기다리는 프로젝트가 무인 스윕에서 15분마다 고장으로 보고되던 것을 고침 (가치 4 / 위험 1 / 작업량 S)
+- 결과: 성공
+- 요약: `standards adopt` 는 목표를 요구하지 않으므로 "등록됐지만 활성 목표 없음" 은 정상 경로인데, `tickProject` 가 `CurrentGoal` 의 `ErrNotFound` 를 `tick.Err` 로 담아 워커가 15분마다 stderr 에 같은 줄을 영원히 찍었다. 더 나쁜 것은 `TickResult.Acted()` 가 `Err` 를 활동으로 세어, 그 프로젝트 하나가 스윕 전체를 영원히 "조용하지 않은" 상태로 만들어 `sweepStandards` 의 침묵 설계를 통째로 무력화한 점이다. 같은 함수에 이미 있는 판례(팩 미고정→`continue`, 예산 소진→`Note`)를 따라 `Note` 로 옮기고 다음 행동(`goalforge goal set`)을 문장에 넣었다. `ErrNotFound` 가 아닌 읽기 실패는 그대로 `Err` 로 남긴다. 그런데 `Note` 는 지금까지 프로덕션에서 아무도 읽지 않는 값이었으므로(프로필이 지목한 그 부류), `sweepStandards` 의 보고 부분을 순수 함수 `sweepReport` 로 꺼내 조용한 프로젝트의 `Note` 도 로그에 닿게 했다 — 출력 조건은 그대로 `Acted()` 라 스윕 전체가 할 말이 없으면 여전히 한 줄도 찍지 않는다. 실패는 stderr, 노트는 stdout 으로 갈라 둔다. 프로덕션 파일 2개(`internal/observer/tick.go`, `cmd/goalforge/main.go`). 검증: `gofmt -l ./cmd ./internal`(무출력), `go vet ./...`, `go build ./...`, `go test ./... -count=1` **exit 0**(전부 통과, 기준선과 동일).
+- 실패 재현: `tick_test.go:291: a project waiting for its goal is not a failure: 목표를 읽지 못했습니다: not found` / `sweep_test.go:40: a quiet project's reason must reach the log: out=["worker standards alpha: HEAD_CHANGED — 공급 1건"]` — 둘 다 고치기 전에 돌려 눈으로 확인했고 수정 후 통과. `sweepReport` 는 먼저 **행동을 바꾸지 않는 순수 추출**만 커밋 없이 해 두고 테스트를 돌려, 컴파일 에러가 아니라 행동 실패로 빨강을 확인했다(조용한 스윕 테스트는 그 시점에 이미 통과).
+- 보류 아이디어: ① `internal/model` 의 `ParseCriterion` 계약 테스트 — `internal/model` 은 여전히 `[no test files]`(2026-09-29 회차의 `window.go`/`window_test.go` 가 main 에 없음을 이번에도 확인) ② 테스트용 git 저장소 부트스트랩 헬퍼를 공유 패키지로 정리(`requirePushable` 3중 복제 + 기존 중복) ③ `AutoApproveMerges` 가 `AutonomyPolicy.DailyLimit` 을 전혀 보지 않는다 — 실행 승인은 하루 한도가 걸리는데 병합 승인은 무제한이고, 병합 승인은 `auto_approvals` 에도 기록되지 않아 셀 수단 자체가 없다. 봉투(위험 구역)를 건드리므로 단독 회차로 ④ `internal/procctl`·`internal/testscript` 테스트 공백(release.yml 이 windows/macos 에서 돌리므로 procctl 의 OS 분기가 실제로 실행된다) ⑤ CI 배지와 `gh attestation verify` 사용법을 README 에 반영(해당 구간 미확인).
+- 과제서: 기각 — 정찰이 예산 초과로 중단되어 과제서가 없었고, 구현자가 보류 목록 재평가 + 코드 직접 확인으로 골랐다.
+
