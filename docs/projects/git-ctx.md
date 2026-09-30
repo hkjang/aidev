@@ -1,7 +1,7 @@
 ---
 title: "git-ctx — 자율 개선 이력"
 description: "git-ctx: 자율 개선 회차 39회, 릴리즈 15건. 최근 릴리즈 없음."
-last_modified_at: 2026-10-01 04:40:27 +0900
+last_modified_at: 2026-10-01 05:10:19 +0900
 ---
 {% raw %}
 <script type="application/ld+json">
@@ -18,7 +18,7 @@ last_modified_at: 2026-10-01 04:40:27 +0900
   "name": "hkjang",
   "url": "https://github.com/hkjang"
  },
- "dateModified": "2026-10-01T04:40:27+09:00"
+ "dateModified": "2026-10-01T05:10:19+09:00"
 }
 </script>
 
