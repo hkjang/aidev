@@ -1,0 +1,63 @@
+### reproducing .github/workflows/ci.yml check job at PR #7 head 2ac2a0d
+### node=v20.19.2 npm=10.8.2
+### step: npm ci
+
+added 57 packages, and audited 58 packages in 949ms
+
+15 packages are looking for funding
+  run `npm fund` for details
+
+2 moderate severity vulnerabilities
+
+To address all issues (including breaking changes), run:
+  npm audit fix --force
+
+Run `npm audit` for details.
+EXIT_npm_ci=0
+### step: npm run check
+
+> vibe-code@1.4.5 check
+> npm run typecheck && npm run test && npm run build
+
+
+> vibe-code@1.4.5 typecheck
+> tsc -p tsconfig.json --noEmit
+
+
+> vibe-code@1.4.5 test
+> vitest run
+
+
+ RUN  v3.2.7 /tmp/pr7-check2
+
+ ✓ tests/unit/goal-catalog.test.ts (3 tests) 6ms
+ ✓ tests/unit/goal-loop.test.ts (3 tests) 3ms
+ ✓ tests/unit/verification.test.ts (10 tests) 7ms
+ ✓ tests/unit/semver.test.ts (2 tests) 3ms
+ ✓ tests/unit/usage.test.ts (2 tests) 4ms
+ ✓ tests/unit/journal-summary.test.ts (7 tests) 4ms
+ ✓ tests/unit/goal-health.test.ts (4 tests) 5ms
+ ✓ tests/unit/markdown.test.ts (29 tests) 14ms
+ ✓ tests/unit/plans.test.ts (16 tests) 29ms
+ ✓ tests/unit/goal-metrics.test.ts (4 tests) 8ms
+ ✓ tests/unit/checkpoints.test.ts (9 tests) 662ms
+
+ Test Files  11 passed (11)
+      Tests  89 passed (89)
+   Start at  21:39:48
+   Duration  1.09s (transform 1.52s, setup 0ms, collect 2.52s, tests 745ms, environment 1ms, prepare 646ms)
+
+
+> vibe-code@1.4.5 build
+> node scripts/build.mjs
+
+staged dist/extension.core.js (20.3 MB)
+warning: dist/ is missing runtime assets: node_modules, i18n, workers, tree-sitter.wasm, tiktoken_bg.wasm
+         copy them from an existing release VSIX (extension/dist/) before packaging.
+
+  dist/extension.js  202.7kb
+
+⚡ Done in 17ms
+EXIT_npm_check=0
+### step: node --check dist/extension.js && node --check dist/extension.core.js
+EXIT_syntax=0

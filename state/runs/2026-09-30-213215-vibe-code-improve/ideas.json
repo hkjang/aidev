@@ -1,0 +1,164 @@
+[
+ {
+  "title": "수정 과제 — PR #7 head 2ac2a0d 에서 CI check job 로컬 재현 판정 + headingTitle 후속 수정",
+  "value": 4,
+  "risk": 2,
+  "size": "M",
+  "status": "done",
+  "note": "재현 완료: 2ac2a0d 를 별도 디렉터리에 추출해 Node 20.19.2(= engines 핀)로 npm ci / npm run check(89 tests) / node --check 두 번들 전부 exit 0. 코드 결함 아님 — 원격 실패는 외부 blocker(gh 미인증·네트워크 없음으로 이번 회차 원격 재조회는 미확인). 지정 후속 headingTitle 수정까지 마쳤다.",
+  "updated": "2026-09-30"
+ },
+ {
+  "title": "headingTitle 의 \\s* 가 빈 제목에서 다음 줄을 제목으로 읽는다 (markdown.ts:41)",
+  "value": 3,
+  "risk": 1,
+  "size": "S",
+  "status": "done",
+  "note": "고침. [ \\t]* 로 좁히고 공백만 남은 제목도 trim 후 fallback. 같은 첫 줄을 읽는 둘째 경로 goal-lint 의 ^#\\s*목표:\\s*\\S 도 같은 계약으로 좁혀 두 경로가 같은 입력을 같게 본다. saveCurrentGoal 실파일 테스트로 파일명 경로까지 증명.",
+  "updated": "2026-09-30"
+ },
+ {
+  "title": "moveTaskToSection/advancePlanText 가 line.trim() 으로 들여쓴 하위 항목의 들여쓰기를 잃는다",
+  "value": 3,
+  "risk": 2,
+  "size": "S",
+  "status": "pending",
+  "note": "이번 차선 후보. PR #7 이 들여쓴 항목에 CodeLens 를 붙여 도달 가능성이 올라갔다. '하위 항목 이동 시 들여쓰기 보존 vs 펴기' 계약 판단이 먼저.",
+  "updated": "2026-09-30"
+ },
+ {
+  "title": "PR #6 과 PR #7 이 markdown.ts 에서 서로 머지 충돌한다",
+  "value": 0,
+  "risk": 0,
+  "size": "S",
+  "status": "rejected",
+  "note": "틀린 가설. git diff -U0 hunk 헤더로 확인 — PR #6(33/35/126/130/141/144), PR #7(94/96/109/111/169-180), 테스트도 21·240 vs 6·233 으로 겹치지 않는다.",
+  "updated": "2026-09-30"
+ },
+ {
+  "title": "package.json engines.node 정확 핀(20.19.2)이 CI node-version:20 과 어긋나 npm ci 를 실패시킨다",
+  "value": 0,
+  "risk": 0,
+  "size": "S",
+  "status": "rejected",
+  "note": "틀린 가설. .npmrc 가 없어 engine-strict 가 꺼져 있고 EBADENGINE 경고만 난다. CI 실패 원인 아님. (핀을 범위로 넓히는 것 자체는 별건이나 릴리즈 경로라 보류.)",
+  "updated": "2026-09-30"
+ },
+ {
+  "title": "sectionLines 가 섹션 첫 줄의 들여쓰기와 앞뒤 빈 줄을 지운다",
+  "value": 3,
+  "risk": 2,
+  "size": "S",
+  "status": "pending",
+  "note": "markdown.ts:77 이 section() 을 쓰고 section() 이 .trim() 한다. markdown.test.ts·verification.test.ts 의 기존 기대값 재협상 필요.",
+  "updated": "2026-09-30"
+ },
+ {
+  "title": "countChecks 가 코드블록 안의 체크리스트까지 센다 — 섹션 범위로 제한",
+  "value": 2,
+  "risk": 3,
+  "size": "M",
+  "status": "pending",
+  "note": "PR #7 의 [ \\t]* 완화로 노출 면이 더 넓어졌다(들여쓴 코드블록 항목도 세어짐). 어느 섹션만 세야 하는지 제품 계약 미확인.",
+  "updated": "2026-09-30"
+ },
+ {
+  "title": "advanceCurrentPlan 이 이미 체크된 Now 첫 항목을 다시 완료 처리",
+  "value": 2,
+  "risk": 2,
+  "size": "S",
+  "status": "pending",
+  "note": "plans.ts:213 now.findIndex(isChecklistLine) 이 - [x] 도 집는다. done 을 건너뛸지 제품 계약 미확인. plans.ts 는 PR #6 도 건드린다.",
+  "updated": "2026-09-30"
+ },
+ {
+  "title": "vibe-coders-proxy.ts provider 저장/복원 경로 테스트",
+  "value": 3,
+  "risk": 2,
+  "size": "M",
+  "status": "pending",
+  "note": "보호 경로(전역 설정 덮어쓰기 금지). 가짜 객체 없이 검증할 경계가 필요. 이번에도 파일을 열지 않았다.",
+  "updated": "2026-09-30"
+ },
+ {
+  "title": "CI package job 이 릴리즈 자산을 못 받아도 성공한다 — 포장·검증·업로드가 조용히 skip",
+  "value": 4,
+  "risk": 2,
+  "size": "M",
+  "status": "pending",
+  "note": "ci.yml:41-57 의 continue-on-error:true + found 게이트. 녹색 CI 가 패키징을 증명하지 않는다. 엄격화는 '완화' 가 아니라 허용되지만 보호 경로 + Windows PowerShell 필요로 한 회차에 검증 불가.",
+  "updated": "2026-09-30"
+ },
+ {
+  "title": "createCheckpoint 의 catch 가 update-ref 실패를 '저장소 아님' 으로 뭉갠다",
+  "value": 2,
+  "risk": 1,
+  "size": "S",
+  "status": "pending",
+  "note": "checkpoints.ts 는 임시 Git index/commit-tree/update-ref 를 쓰는 위험 구역. 짧은 회차에 부적합.",
+  "updated": "2026-09-30"
+ },
+ {
+  "title": "archiveDonePlans 후 .active-plan 포인터 정리",
+  "value": 2,
+  "risk": 1,
+  "size": "S",
+  "status": "pending",
+  "note": "selectPlanName 의 files.includes 가드가 있어 실제 사용자 오작동 미확인.",
+  "updated": "2026-09-30"
+ },
+ {
+  "title": "plans.ts 순수 함수 커버리지 보강 (planMeta, sortByPriority, linkedPlans)",
+  "value": 2,
+  "risk": 1,
+  "size": "S",
+  "status": "rejected",
+  "note": "결함 근거 없이 커버리지만 늘리는 것은 이 저장소의 '실패 재현 우선' 관례와 맞지 않는다.",
+  "updated": "2026-09-30"
+ },
+ {
+  "title": "거대한 untracked 디렉터리의 동기 git add -A 지연 측정과 가드",
+  "value": 2,
+  "risk": 2,
+  "size": "M",
+  "status": "pending",
+  "note": "성능 측정 근거 없음 + checkpoints.ts 보호 경로. 보류 유지.",
+  "updated": "2026-09-30"
+ },
+ {
+  "title": "runAndRecord 의 계획·목표 파일 검증 로그 동시 기록 검증",
+  "value": 3,
+  "risk": 2,
+  "size": "M",
+  "status": "pending",
+  "note": "appendVerificationLog 경계는 v1.4.5 에서 테스트가 생겼다. 남은 것은 vscode 의존 배선이라 파일 기록 경계를 분리해야 한다.",
+  "updated": "2026-09-30"
+ },
+ {
+  "title": "headingTitle 이 공백만 남은 제목(`# 목표: `)에서 fallback 대신 빈 문자열을 돌려줬다",
+  "value": 3,
+  "risk": 1,
+  "size": "S",
+  "status": "done",
+  "note": "2026-09-30 발견(신규). [ \\t]* 로 좁힌 뒤에도 (.+) 가 후행 공백 한 칸을 잡아 match[1]=\" \" 가 truthy 였다. match?.[1].trim() || fallback 으로 고침 — PR #6 이 matchLine 에 넣은 것과 같은 계약.",
+  "updated": "2026-09-30"
+ },
+ {
+  "title": "goal-lint 의 첫 줄 제목 검사와 headingTitle 이 별개 정규식으로 같은 값을 읽는다",
+  "value": 3,
+  "risk": 1,
+  "size": "S",
+  "status": "done",
+  "note": "2026-09-30 고침. 계약이 다르므로(있는가? vs 무엇인가?) 통합하지 않고 공백 매칭만 동일하게 좁힌 뒤 goal-health.test.ts 에서 같은 입력에 대한 두 경로의 일치를 고정했다.",
+  "updated": "2026-09-30"
+ },
+ {
+  "title": "CI 와 같은 Node 20 런타임을 회차마다 확보하는 절차를 프로필에 고정",
+  "value": 2,
+  "risk": 1,
+  "size": "S",
+  "status": "pending",
+  "note": "2026-09-30 신규. 이 저장소는 engines.node=20.19.2 를 정확 핀하는데 구현 세션 기본 node 는 22.x 다. `npm install --no-save node@20.19.2` 후 <dir>/bin/node 를 PATH 앞에 두면 된다(이번 회차에서 동작 확인). 다음 회차가 재발견하지 않도록 절차만 적어 두는 일.",
+  "updated": "2026-09-30"
+ }
+]

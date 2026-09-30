@@ -1,0 +1,38 @@
+
+ RUN  v3.2.7 /home/hkjang/.cache/auto-improve-wt/vibe-code
+
+ ❯ tests/unit/goal-health.test.ts (5 tests | 1 failed) 8ms
+   ✓ goal health > computes age from the KST timestamp 1ms
+   ✓ goal health > flags stale and stuck goals only when active 1ms
+   ✓ lint > accepts the templates 1ms
+   ✓ lint > reports structural problems 1ms
+   × lint > reports a heading with no title and agrees with headingTitle 4ms
+     → expected false to be true // Object.is equality
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/unit/goal-health.test.ts > lint > reports a heading with no title and agrees with headingTitle
+AssertionError: expected false to be true // Object.is equality
+
+- Expected
++ Received
+
+- true
++ false
+
+ ❯ tests/unit/goal-health.test.ts:50:79
+     48|   ] as const) {
+     49|    const issues = prefix === "목표" ? lintGoal(text) : lintPlan(text);
+     50|    expect(issues.some((i) => i.message.includes(`\`# ${prefix}: <제목>\`…
+       |                                                                               ^
+     51|    expect(headingTitle(text, prefix, "fallback")).toBe("fallback");
+     52|   }
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 4 passed (5)
+   Start at  21:42:49
+   Duration  494ms (transform 231ms, setup 0ms, collect 267ms, tests 8ms, environment 0ms, prepare 36ms)
+

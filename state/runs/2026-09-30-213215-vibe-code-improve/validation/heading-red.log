@@ -1,0 +1,99 @@
+
+ RUN  v3.2.7 /home/hkjang/.cache/auto-improve-wt/vibe-code
+
+ ❯ tests/unit/goal-catalog.test.ts (5 tests | 1 failed) 12ms
+   ✓ goal catalog > slugifies titles while keeping Korean 2ms
+   ✓ goal catalog > builds a goal file from a preset 1ms
+   ✓ goal catalog > ticks linked criteria by index 1ms
+   ✓ saveCurrentGoal file names > names the file after the title 3ms
+   × saveCurrentGoal file names > names an empty-title goal from the fallback, not from the next line 5ms
+     → expected '2026-09-30-214125-상태-draft.md' to match /-goal\.md$/
+ ❯ tests/unit/markdown.test.ts (26 tests | 2 failed) 16ms
+   ✓ section parsing > reads whole multi-line sections, not just the first line 2ms
+   ✓ section parsing > does not confuse ### sub-sections with ## sections 1ms
+   ✓ section parsing > returns empty strings for unknown sections 0ms
+   ✓ headingTitle > reads the title of a template document 0ms
+   ✓ headingTitle > trims trailing spaces and tabs after the title 0ms
+   × headingTitle > falls back instead of reading the next line as the title 5ms
+     → expected '상태: draft' to be '현재 목표' // Object.is equality
+   × headingTitle > falls back on CRLF documents with an empty title too 1ms
+     → expected '상태: draft' to be '현재 목표' // Object.is equality
+   ✓ writeSection > replaces a section body and keeps the rest intact 0ms
+   ✓ writeSection > fills an empty section and can empty a filled one 0ms
+   ✓ writeSection > leaves text unchanged when the section is missing 0ms
+   ✓ writeSection > supports the advance flow end to end 0ms
+   ✓ sectionLines > 원본 줄을 들여쓰기까지 그대로 돌려주고 빈 섹션은 빈 배열이다 0ms
+   ✓ moveTaskToSection > 대상 섹션에 이미 있던 들여쓴 줄과 메모 줄을 보존한다 0ms
+   ✓ metadata lines > reads and rewrites label lines 0ms
+   ✓ metadata lines > touches status and timestamp 0ms
+   ✓ metadata lines > inserts a status line after the title when missing 0ms
+   ✓ metadata lines > escapes regex characters in labels 0ms
+   ✓ goal parsing > summarizes the goal template 1ms
+   ✓ CRLF 줄바꿈 > 줄바꿈 방식을 첫 줄바꿈 기준으로 판정한다 0ms
+   ✓ CRLF 줄바꿈 > 읽기 함수가 CRLF 에서 LF 와 같은 값을 돌려준다 1ms
+   ✓ CRLF 줄바꿈 > writeSection 이 CRLF 에서 같은 편집 결과를 내고 줄바꿈을 보존한다 0ms
+   ✓ CRLF 줄바꿈 > moveTaskToSection 이 CRLF 에서 null 대신 옮긴 텍스트를 돌려준다 0ms
+   ✓ CRLF 줄바꿈 > toggleCheckbox·touchPlan·setLine 이 입력의 줄바꿈을 보존한다 0ms
+   ✓ CRLF 줄바꿈 > 계획·목표 소비자(parseGoal·openPlanItems)도 CRLF 에서 같은 값을 읽는다 0ms
+   ✓ CRLF 줄바꿈 > 린트가 CRLF 계획·목표에 섹션 누락 경고를 내지 않는다 1ms
+   ✓ priorityRank > orders P0..P3 and pushes unknowns last 0ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 3 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/unit/goal-catalog.test.ts > saveCurrentGoal file names > names an empty-title goal from the fallback, not from the next line
+AssertionError: expected '2026-09-30-214125-상태-draft.md' to match /-goal\.md$/
+
+- Expected: 
+/-goal\.md$/
+
++ Received: 
+"2026-09-30-214125-상태-draft.md"
+
+ ❯ tests/unit/goal-catalog.test.ts:80:16
+     78|   fs.writeFileSync(paths.current, goalTemplate("s").replace("# 목표: 새 목…
+     79|   const name = saveCurrentGoal(paths) as string;
+     80|   expect(name).toMatch(/-goal\.md$/);
+       |                ^
+     81|   expect(name).not.toContain("draft");
+     82|   expect(fs.existsSync(path.join(paths.goals, name))).toBe(true);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/3]⎯
+
+ FAIL  tests/unit/markdown.test.ts > headingTitle > falls back instead of reading the next line as the title
+AssertionError: expected '상태: draft' to be '현재 목표' // Object.is equality
+
+Expected: "현재 목표"
+Received: "상태: draft"
+
+ ❯ tests/unit/markdown.test.ts:69:57
+     67| 
+     68|  it("falls back instead of reading the next line as the title", () => {
+     69|   expect(headingTitle(goalWithoutTitle, "목표", "현재 목표")).toBe("현재 목표");
+       |                                                         ^
+     70|   expect(headingTitle(planWithoutTitle, "계획", "current-plan.md")).toBe…
+     71|   expect(matchLine(goalWithoutTitle, "상태")).toBe("draft");
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/3]⎯
+
+ FAIL  tests/unit/markdown.test.ts > headingTitle > falls back on CRLF documents with an empty title too
+AssertionError: expected '상태: draft' to be '현재 목표' // Object.is equality
+
+Expected: "현재 목표"
+Received: "상태: draft"
+
+ ❯ tests/unit/markdown.test.ts:76:49
+     74|  it("falls back on CRLF documents with an empty title too", () => {
+     75|   const crlfGoal = goalWithoutTitle.replace(/\n/g, "\r\n");
+     76|   expect(headingTitle(crlfGoal, "목표", "현재 목표")).toBe("현재 목표");
+       |                                                 ^
+     77|   expect(headingTitle(plan.replace(/\n/g, "\r\n"), "계획", "")).toBe("테스…
+     78|  });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/3]⎯
+
+
+ Test Files  2 failed (2)
+      Tests  3 failed | 28 passed (31)
+   Start at  21:41:24
+   Duration  382ms (transform 159ms, setup 0ms, collect 260ms, tests 28ms, environment 0ms, prepare 81ms)
+
