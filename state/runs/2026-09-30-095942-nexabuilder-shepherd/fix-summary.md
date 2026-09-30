@@ -1,0 +1,7 @@
+# 수리 요약 — PR #45 (354f3c0)
+
+- **지적이 틀렸다 — 고치지 않았고 커밋도 없다.** CI `test + bootJar` 실패는 이 변경의 결함이 아니다: 체크런 원본(`../2026-09-30-083215-nexabuilder-improve/ci-354f3c095630.json`)에서 커밋 354f3c0 의 잡은 3초(23:53:12→23:53:15)·`output.title/summary/text` 전부 null·짝 잡 `analyze (java)` 는 0초 `skipped` 이다. 잡이 스텝을 하나도 못 돌았다는 뜻이고, 9회차째 반복된 Actions 과금 차단 서명과 같다. 브랜치의 `.github/`·`build.gradle.kts`·`settings.gradle.kts`·`gradle/` 변경은 0줄(`git diff --stat origin/master...HEAD` 는 `ReportService.java`·`ReportIntegrationTest.java` 2파일뿐).
+- **재현 시도(HEAD, CI 와 같은 명령):** `sh ./gradlew --no-daemon cleanTest test` 3회 → 1·2회는 1건 실패, 3회는 **612건 통과 / 실패0 / 에러0 / skip0 (5m43s)**. `sh ./gradlew --no-daemon bootJar -x test` → BUILD SUCCESSFUL. CI 실패는 로컬에서 재현되지 않는다.
+- **1·2회 실패 1건은 무관한 기존 플레이크다:** `SessionActivityIntegrationTest.listForReturnsNewestFirst`(이 브랜치가 한 줄도 안 건드린 `core/session`). 원인을 측정으로 증명했다 — 이 WSL2 호스트의 벽시계가 **약 29초마다 ~1.1초 뒤로 당겨진다**(`sleep(1.1)` 전후 `yyyyMMddHHmmss` 170쌍 중 6쌍이 동일 = 3.5%; 같은 주기로 0.47~0.64초 역행 2회씩 관측). 그러면 두 세션의 `last_seen_at`(초 해상도 문자열)이 같아지고 `findByUserIdOrderByLastSeenAtDesc` 에 타이브레이크가 없어 순서가 임의가 된다. 같은 클래스의 플레이크는 2026-09-17 회차(`v1.17.0` 릴리즈)에도 이미 기록돼 있다.
+- **인과가 아님을 대조로 확인:** `origin/master`(a3ca143)를 별도 워크트리에 체크아웃해 같은 명령 2회 실행 → 둘 다 BUILD SUCCESSFUL(609건). 이 테스트 파일들은 브랜치에서 변경되지 않았으므로 브랜치가 원인일 수 없고, 스위트 실행 시점이 시계 보정 창에 걸리는지의 확률 문제다(단독 실행 `--tests SessionActivityIntegrationTest` 는 통과). 무관 파일이라 규칙대로 손대지 않았다.
+- **다음 회차 후보(별개 과제):** `SessionActivityIntegrationTest` 의 초 해상도 시계 의존 제거 — `last_seen_at` 을 밀리초 해상도로 올리거나 테스트가 스탬프를 직접 주입하도록. 워크플로·검증 명령은 한 줄도 건드리지 않았다.
