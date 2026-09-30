@@ -1,0 +1,49 @@
+# clean clone of 2a264c8, CI check job steps, node v20.19.2, TZ=UTC
+2a264c8 fix: 오늘 일지에 쓰는 두 writer 가 CRLF 일지의 줄바꿈을 보존한다
+--- npm run check ---
+
+> vibe-code@1.4.5 check
+> npm run typecheck && npm run test && npm run build
+
+
+> vibe-code@1.4.5 typecheck
+> tsc -p tsconfig.json --noEmit
+
+
+> vibe-code@1.4.5 test
+> vitest run
+
+
+ RUN  v3.2.7 /tmp/ci-repro
+
+ ✓ tests/unit/goal-loop.test.ts (3 tests) 3ms
+ ✓ tests/unit/semver.test.ts (2 tests) 2ms
+ ✓ tests/unit/goal-catalog.test.ts (3 tests) 4ms
+ ✓ tests/unit/usage.test.ts (2 tests) 3ms
+ ✓ tests/unit/verification.test.ts (10 tests) 5ms
+ ✓ tests/unit/goal-health.test.ts (4 tests) 4ms
+ ✓ tests/unit/goal-metrics.test.ts (4 tests) 6ms
+ ✓ tests/unit/journal-eol.test.ts (4 tests) 35ms
+ ✓ tests/unit/markdown.test.ts (22 tests) 9ms
+ ✓ tests/unit/plans.test.ts (16 tests) 25ms
+ ✓ tests/unit/journal-summary.test.ts (11 tests) 27ms
+ ✓ tests/unit/checkpoints.test.ts (9 tests) 620ms
+
+ Test Files  12 passed (12)
+      Tests  90 passed (90)
+   Start at  21:11:57
+   Duration  974ms (transform 792ms, setup 0ms, collect 1.80s, tests 744ms, environment 2ms, prepare 692ms)
+
+
+> vibe-code@1.4.5 build
+> node scripts/build.mjs
+
+warning: dist/ is missing runtime assets: node_modules, i18n, workers, tree-sitter.wasm, tiktoken_bg.wasm
+         copy them from an existing release VSIX (extension/dist/) before packaging.
+
+  dist/extension.js  202.8kb
+
+⚡ Done in 19ms
+check EXIT=0
+--- node --check ---
+node-check EXIT=0

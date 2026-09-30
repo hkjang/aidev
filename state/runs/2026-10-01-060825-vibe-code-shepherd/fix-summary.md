@@ -1,0 +1,7 @@
+# fix-summary — PR #12 (커밋 없음: 지적이 코드 결함이 아니다)
+
+- 재현 시도: `2a264c8` 를 **빈 클론**(`/tmp/ci-repro`, node_modules·dist 없음)에 받아 `ci.yml:13-24` 의 check job 세 단계를 CI Node(핀 20.19.2)·`TZ=UTC` 로 그대로 돌렸다 → `npm ci` exit 0, `npm run check` exit 0(12파일 **90/90**), `node --check dist/extension.js && dist/extension.core.js` exit 0. 워크트리에서도 동일(90/90). **CI 실패 지점을 로컬에서 재현하지 못했다.**
+- 후보 원인 배제: ① 코드/테스트 결함 — 위 4단계 전부 녹색. ② TZ/로케일(로컬 Asia/Seoul vs CI UTC, 이 코드가 KST 기반) — `TZ=UTC LC_ALL=C` 로 90/90. ③ `engines.node` 정확 핀(20.19.2) vs `node-version: 20` 드리프트로 `npm ci` 조기 실패 — `.npmrc` 가 없어 `engine-strict` 미적용, EBADENGINE 은 경고뿐. ④ 워크플로/스크립트 훼손 — 이 브랜치 diff 는 `src/features/journal{,-summary}.ts` + 테스트 2개뿐, `.github/`·`scripts/`·`vendor/` 미접촉.
+- 남는 설명: **job 이 시작조차 못 했다.** 보고된 실패 소요가 `2s` 이고 과제서에 실린 "실패 로그 끝부분" 이 **비어 있다**(스텝 출력 0줄) — 컴파일·테스트 실패라면 로그가 남는다. 프로필에 기록된 2026-09-29 run 36518589343 과 같은 서명이다(`steps=[]`, `runner_id=0`, annotation "The job was not started because recent account payments have failed or your spending limit needs to be increased" = startup_failure).
+- 확인 못 한 것(정직하게): 원격 annotation 을 **직접 읽지 못했다**. `gh` 미인증(`gh auth login` 요구), 비인증 API 는 repo·run 둘 다 HTTP 404(비공개 저장소), push·WebFetch 불가. 따라서 위 결론은 소요시간 + 빈 로그 + 동일 선례에 근거한 강한 추론이지 판독이 아니다. windows `package` job 도 여전히 미확인.
+- 조치: 절대 규칙("지적이 틀렸으면 고치지 말고 근거만 남길 것")에 따라 **코드·테스트·워크플로를 한 줄도 바꾸지 않았고 커밋도 만들지 않았다**. 운영자 조치 필요: GitHub Actions 결제/사용 한도 해소 + 세션에 `gh` 토큰 공급. 그 전에는 여덟 회차째 같은 결말이 반복된다.

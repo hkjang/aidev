@@ -1,7 +1,7 @@
 {
- "generated": "2026-10-01T05:56:48+09:00",
+ "generated": "2026-10-01T06:12:24+09:00",
  "site": "https://hkjang.github.io/aidev",
- "description": "Claude Code 자율 개선 에이전트가 hkjang 의 프로젝트를 개선·테스트·머지·릴리즈한 일일 보고. 오늘 11회차·릴리즈 2건, 누적 1746회차·릴리즈 602건, 주의 필요 21건.",
+ "description": "Claude Code 자율 개선 에이전트가 hkjang 의 프로젝트를 개선·테스트·머지·릴리즈한 일일 보고. 오늘 11회차·릴리즈 2건, 누적 1746회차·릴리즈 602건, 주의 필요 22건.",
  "today": {
   "date": "2026-10-01",
   "total": 11,
@@ -10,18 +10,18 @@
   "merged": 0,
   "nochange": 0,
   "failed": 6,
-  "cost_usd": 69.07,
-  "minutes": 191,
-  "sessions": 35
+  "cost_usd": 72.84,
+  "minutes": 201,
+  "sessions": 38
  },
  "totals": {
   "runs": 1746,
   "released": 602,
   "days": 30,
-  "cost_usd": 6424.62,
-  "minutes": 17345,
-  "tokens_in": 6924741824,
-  "tokens_out": 55084227
+  "cost_usd": 6428.39,
+  "minutes": 17355,
+  "tokens_in": 6928035530,
+  "tokens_out": 55115925
  },
  "alerts": [
   {
@@ -170,9 +170,22 @@
    "project": "vibe-code",
    "why": "최신 릴리즈 v1.4.5 자산 0개 (이전 v1.4.0: 2개)",
    "result": ""
+  },
+  {
+   "date": "",
+   "time": "",
+   "project": "vibe-code",
+   "why": "수정 과제 대기 중 — 오류 대응(자동 적재): 마지막 회차가 'verify-failed' 로 끝났습니다. fix-round: CI failed, PR open https://github.com/hkjang/vibe-code/pull/12",
+   "result": ""
   }
  ],
- "fix_queue": [],
+ "fix_queue": [
+  {
+   "project": "vibe-code",
+   "note": "오류 대응(자동 적재): 마지막 회차가 'verify-failed' 로 끝났습니다. fix-round: CI failed, PR open https://github.com/hkjang/vibe-code/pull/12",
+   "merge_sha": ""
+  }
+ ],
  "health": {
   "checked": "2026-10-01T05:45:04+09:00",
   "last_run": "2026-10-01T05:20:25+09:00",
@@ -869,6 +882,20 @@
    "needs_human": true
   },
   {
+   "kind": "수정 과제",
+   "project": "vibe-code",
+   "title": "오류 대응(자동 적재): 마지막 회차가 'verify-failed' 로 끝났습니다. fix-round: CI failed, PR open https://github.com/hkja",
+   "url": "https://hkjang.github.io/aidev/projects/vibe-code/",
+   "sha": "",
+   "summary": "릴리즈 워크플로 2회 실패 — 다음 회차 자동 배정",
+   "why": "오류 대응(자동 적재): 마지막 회차가 'verify-failed' 로 끝났습니다. fix-round: CI failed, PR open https://github.com/hkjang/vibe-code/pull/12",
+   "evidence": "",
+   "labels": "",
+   "action": "두면 러너가 수정 회차를 돌림. 급하면 run: 이슈, 멈추려면 stop",
+   "date": "",
+   "needs_human": false
+  },
+  {
    "kind": "PR",
    "project": "jupiq",
    "title": "auto-improve: docs: 관리자·사용자 가이드에 MCP SSO(OAuth) 설정과 연결 방법을 더한다",
@@ -1558,11 +1585,11 @@
    "why": "review: approved — 리뷰 승인 (risk=low); ci: failed — 성공이 아닌 검사: typecheck + unit tests + build=failure",
    "evidence": "https://github.com/hkjang/aidev/tree/main/state/runs/2026-10-01-053539-vibe-code-improve",
    "labels": "",
-   "action": "PR 처리기가 매시간 살핀다 (아직 순서가 오지 않음) · 승인: PR 라벨 aidev-approved / 반려: aidev-rejected — 다음 회차에 러너가 승인 당시 커밋에만 CI 확인 후 머지·닫기",
+   "action": "PR 처리기가 다음 시간에 다시 시도 · 승인: PR 라벨 aidev-approved / 반려: aidev-rejected — 다음 회차에 러너가 승인 당시 커밋에만 CI 확인 후 머지·닫기",
    "date": "2026-10-01",
-   "shepherd": "",
-   "shepherd_action": "",
-   "shepherd_detail": "",
+   "shepherd": "CI 실패 · 수정 실패 → 다음 시간에 재시도 (10-01 06:12) — 수정 세션이 커밋을 만들지 않음: # fix-summary — PR #12 (커밋 없음: 지적이 코드 결함이 아니다)  - 재현 시도: `2a264c8` 를 **빈 클론**(`/tmp/ci-repro`, node_modules·dist 없음)에 받아 `ci.yml:13-24` 의 che",
+   "shepherd_action": "fix-failed",
+   "shepherd_detail": "수정 세션이 커밋을 만들지 않음: # fix-summary — PR #12 (커밋 없음: 지적이 코드 결함이 아니다)  - 재현 시도: `2a264c8` 를 **빈 클론**(`/tmp/ci-repro`, node_modules·dist 없음)에 받아 `ci.yml:13-24` 의 check job 세 단계를 CI Node(핀 20.19.2)·`TZ=UTC` 로 그대로 돌렸다 → `npm ci` exit 0, `npm run check` exit 0(12파일 **90/90**), `node --check dist/extension.js && dist/extension.core.js` exit 0. 워크트리에서도 동일(90/90). **CI 실패 지점을 로컬에서 재현하지 못했다.** - 후보 원인 배제: ① 코드/테스트 결함 — 위 4단계 전부 녹색. ② TZ/�",
    "needs_human": false
   },
   {
@@ -1574,7 +1601,7 @@
    "summary": "4파일 +233/−27 · approved https://github.com/hkjang/DartFly/pull/19",
    "why": "ci: failed — 성공이 아닌 검사: smoke=failure, livedb=failure, test=failure",
    "evidence": "https://github.com/hkjang/aidev/tree/main/state/runs/2026-10-01-052024-DartFly-approve",
-   "labels": "aidev-approved",
+   "labels": "",
    "action": "PR 처리기가 승인함 — 승인 스윕이 CI 확인 뒤 머지·릴리즈 (아직 열려 있으면 CI 를 기다리는 중)",
    "date": "2026-10-01",
    "shepherd": "CI 실패 · 승인 → 스윕이 CI 확인 후 머지 (10-01 04:15) — risk=low — 리뷰 승인 (risk=low)",
@@ -1592,11 +1619,11 @@
    "why": "review: approved — 리뷰 승인 (risk=low); ci: failed — 성공이 아닌 검사: livedb=failure, smoke=failure, test=failure",
    "evidence": "https://github.com/hkjang/aidev/tree/main/state/runs/2026-10-01-045543-DartFly-improve",
    "labels": "",
-   "action": "PR 처리기가 매시간 살핀다 (아직 순서가 오지 않음) · 승인: PR 라벨 aidev-approved / 반려: aidev-rejected — 다음 회차에 러너가 승인 당시 커밋에만 CI 확인 후 머지·닫기",
+   "action": "PR 처리기가 다음 시간에 다시 시도 · 승인: PR 라벨 aidev-approved / 반려: aidev-rejected — 다음 회차에 러너가 승인 당시 커밋에만 CI 확인 후 머지·닫기",
    "date": "2026-10-01",
-   "shepherd": "",
-   "shepherd_action": "",
-   "shepherd_detail": "",
+   "shepherd": "CI 실패 · 수정 실패 → 다음 시간에 재시도 (10-01 06:08) — 수정 세션이 커밋을 만들지 않음: 이유 없음",
+   "shepherd_action": "fix-failed",
+   "shepherd_detail": "수정 세션이 커밋을 만들지 않음: 이유 없음",
    "needs_human": false
   },
   {
@@ -1611,9 +1638,9 @@
    "labels": "",
    "action": "PR 처리기가 다음 시간에 다시 시도 · 승인: PR 라벨 aidev-approved / 반려: aidev-rejected — 다음 회차에 러너가 승인 당시 커밋에만 CI 확인 후 머지·닫기",
    "date": "2026-10-01",
-   "shepherd": "CI 실패 · 수정 실패 → 다음 시간에 재시도 (10-01 04:18) — 수정 세션이 커밋을 만들지 않음: # fix-summary — vibe-code PR #11 (af9b04b)  **고치지 않았다. 커밋 없음.** CI 실패는 코드 결함이 아니라 GitHub Actions 과금 차단이다. job 110043934323 의 annotation 원문: *",
+   "shepherd": "CI 실패 · 수정 실패 → 다음 시간에 재시도 (10-01 06:05) — 수정 세션이 커밋을 만들지 않음: # 수리 결과: 고치지 않음 — CI 실패가 이 브랜치의 코드 결함이 아니다  - **재현 시도**: `git archive HEAD`(af9b04b) 를 `/tmp/pr11` 에 펼쳐 CI `check` job 4단계(`npm ci` → `npm ru",
    "shepherd_action": "fix-failed",
-   "shepherd_detail": "수정 세션이 커밋을 만들지 않음: # fix-summary — vibe-code PR #11 (af9b04b)  **고치지 않았다. 커밋 없음.** CI 실패는 코드 결함이 아니라 GitHub Actions 과금 차단이다. job 110043934323 의 annotation 원문: *\"The job was not started because recent account payments have failed or your spending limit needs to be increased.\"* — `runner_id=0`, `runner_name=\"\"`, `steps=[]`, 18:48:32→18:48:36(4초). 러너가 배정된 적이 없어 `--log-failed` 는 \"log not found\". `package VSIX` 는 `needs: check` 때문에 skipped 일 뿐이며 af9b04b 의 다른 실패 검사는 없다. 정찰 노트가 기록�",
+   "shepherd_detail": "수정 세션이 커밋을 만들지 않음: # 수리 결과: 고치지 않음 — CI 실패가 이 브랜치의 코드 결함이 아니다  - **재현 시도**: `git archive HEAD`(af9b04b) 를 `/tmp/pr11` 에 펼쳐 CI `check` job 4단계(`npm ci` → `npm run check` → `node --check dist/extension.js` → `node --check dist/extension.core.js`)를 그대로 돌렸다. **Node 20.19.2(engines 핀)와 Node 20.20.2(CI `node-version: 20` 의 실제 해석값) 양쪽에서 4단계 전부 exit 0, 88/88 tests 통과.** TZ=UTC·LC_ALL=C 에서도 88/88(신규 테스트가 한국어 문자열·KST 스탬프를 단언하므로 로케일/타임존",
    "needs_human": false
   },
   {
@@ -1626,11 +1653,11 @@
    "why": "review: approved — 리뷰 승인 (risk=low); ci: failed — 성공이 아닌 검사: test=failure, livedb=failure, smoke=failure",
    "evidence": "https://github.com/hkjang/aidev/tree/main/state/runs/2026-10-01-014241-DartFly-improve",
    "labels": "",
-   "action": "PR 처리기가 다음 시간에 다시 시도 · 승인: PR 라벨 aidev-approved / 반려: aidev-rejected — 다음 회차에 러너가 승인 당시 커밋에만 CI 확인 후 머지·닫기",
+   "action": "PR 처리기가 사람에게 넘김 — 수정·심사를 2번 시도했지만 통과하지 못함 — 사람이 봐야 한다 · 승인: PR 라벨 aidev-approved / 반려: aidev-rejected — 다음 회차에 러너가 승인 당시 커밋에만 CI 확인 후 머지·닫기",
    "date": "2026-10-01",
-   "shepherd": "CI 실패 · 수정 실패 → 다음 시간에 재시도 (10-01 04:02) — 수정 세션이 커밋을 만들지 않음: # 수리 결과 — 고칠 결함 없음 (커밋 없음)  - CI 3잡(test/livedb/smoke)은 코드 때문이 아니라 **잡이 시작조차 못 해서** 빨갛습니다: 세 잡 모두 `steps: 0`, 기동 3~4초, annotation 이 `The job ",
-   "shepherd_action": "fix-failed",
-   "shepherd_detail": "수정 세션이 커밋을 만들지 않음: # 수리 결과 — 고칠 결함 없음 (커밋 없음)  - CI 3잡(test/livedb/smoke)은 코드 때문이 아니라 **잡이 시작조차 못 해서** 빨갛습니다: 세 잡 모두 `steps: 0`, 기동 3~4초, annotation 이 `The job was not started because recent account payments have failed or your spending limit needs to be increased` (`gh api repos/hkjang/DartFly/check-runs/{110024328526,110024328857,110024328997}/annotations`). - a772071 에서 CI 3잡을 로컬로 그대로 재현: `gofmt -w . && git diff --exit-code` 통과, `go vet ./...` 통과, `go test -race ./...` 전 패키지 ok",
+   "shepherd": "CI 실패 · 사람 필요 (10-01 06:01) — 수정·심사를 2번 시도했지만 통과하지 못함 — 사람이 봐야 한다",
+   "shepherd_action": "needs-human",
+   "shepherd_detail": "수정·심사를 2번 시도했지만 통과하지 못함 — 사람이 봐야 한다",
    "needs_human": false
   },
   {
@@ -1643,11 +1670,11 @@
    "why": "review: approved — 리뷰 승인 (risk=low); ci: failed — 성공이 아닌 검사: typecheck + unit tests + build=failure",
    "evidence": "https://github.com/hkjang/aidev/tree/main/state/runs/2026-10-01-010303-vibe-code-improve",
    "labels": "",
-   "action": "PR 처리기가 다음 시간에 다시 시도 · 승인: PR 라벨 aidev-approved / 반려: aidev-rejected — 다음 회차에 러너가 승인 당시 커밋에만 CI 확인 후 머지·닫기",
+   "action": "PR 처리기가 사람에게 넘김 — 수정·심사를 2번 시도했지만 통과하지 못함 — 사람이 봐야 한다 · 승인: PR 라벨 aidev-approved / 반려: aidev-rejected — 다음 회차에 러너가 승인 당시 커밋에만 CI 확인 후 머지·닫기",
    "date": "2026-10-01",
-   "shepherd": "CI 실패 · 수정 실패 → 다음 시간에 재시도 (10-01 03:57) — 수정 세션이 커밋을 만들지 않음: # 수리 요약 — PR #10 (c3d1ddb) · 커밋 없음 (코드 결함 아님)  - **지적이 틀렸다.** CI job 109982719958 은 실행되지 않았다. check-run annotation 원문(`validation/ci-annotati",
-   "shepherd_action": "fix-failed",
-   "shepherd_detail": "수정 세션이 커밋을 만들지 않음: # 수리 요약 — PR #10 (c3d1ddb) · 커밋 없음 (코드 결함 아님)  - **지적이 틀렸다.** CI job 109982719958 은 실행되지 않았다. check-run annotation 원문(`validation/ci-annotations-c3d1ddb.json`): *\"The job was not started because recent account payments have failed or your spending limit needs to be increased.\"* 결제/사용 한도 문제다. - **증거:** check job `started_at 16:18:21Z → completed_at 16:18:24Z`(3초 — checkout+setup-node+npm ci 에 불가능). `package` job 은 `completed_at 16:18:24Z` 가 `started_at 16:18:25Z` 보다 앞선다 = 러너 미�",
+   "shepherd": "CI 실패 · 사람 필요 (10-01 06:01) — 수정·심사를 2번 시도했지만 통과하지 못함 — 사람이 봐야 한다",
+   "shepherd_action": "needs-human",
+   "shepherd_detail": "수정·심사를 2번 시도했지만 통과하지 못함 — 사람이 봐야 한다",
    "needs_human": false
   }
  ],
@@ -2012,16 +2039,16 @@
   }
  ],
  "shepherd": {
-  "last_pass": "2026-10-01T03:52:44+09:00",
+  "last_pass": "2026-10-01T06:00:22+09:00",
   "enabled": true,
   "today": {
-   "fix-failed": 8,
-   "needs-human": 2,
+   "fix-failed": 11,
+   "needs-human": 4,
    "fix-pushed": 1,
    "approve": 1
   },
-  "total": 437,
-  "pending_human": 117
+  "total": 442,
+  "pending_human": 119
  },
  "agents": {
   "rows": [
@@ -2035,7 +2062,7 @@
     "role": "구현 builder",
     "calls": 650,
     "metric": "러너 검증 통과 97% · 변경 없음 119",
-    "cost": 1750.36
+    "cost": 1754.13
    },
    {
     "role": "비평 critic",
@@ -2063,14 +2090,14 @@
    },
    {
     "role": "PR 심사 shepherd-reviewer",
-    "calls": 268,
-    "metric": "승인 87 · 거절 64 · 사람 필요 117 · 승인 뒤 회귀 0",
-    "cost": 470.82
+    "calls": 270,
+    "metric": "승인 87 · 거절 64 · 사람 필요 119 · 승인 뒤 회귀 0",
+    "cost": 474.58
    },
    {
     "role": "PR 수리 shepherd-fixer",
-    "calls": 130,
-    "metric": "고쳐서 푸시 43%",
+    "calls": 133,
+    "metric": "고쳐서 푸시 42%",
     "cost": null
    },
    {
@@ -2524,13 +2551,13 @@
   },
   {
    "metric": "유효 개선당 비용",
-   "value": "$10.22",
+   "value": "$10.23",
    "detail": "비용 확인된 유효 개선 347건, 미확인 세션 555"
   },
   {
    "metric": "예외 처리 소요 시간(중앙값)",
    "value": "1.9시간",
-   "detail": "해결된 경고 291건"
+   "detail": "해결된 경고 292건"
   },
   {
    "metric": "실행 오류",
@@ -2555,7 +2582,7 @@
    "merged": 0,
    "nochange": 0,
    "failed": 6,
-   "cost_usd": 69.07
+   "cost_usd": 72.84
   },
   {
    "date": "2026-09-30",
@@ -2829,8 +2856,8 @@
    "merged": 16,
    "nochange": 17,
    "failed": 27,
-   "cost": 749.85,
-   "minutes": 2522
+   "cost": 753.62,
+   "minutes": 2532
   },
   {
    "key": "2026-W39",
@@ -2891,8 +2918,8 @@
    "merged": 0,
    "nochange": 0,
    "failed": 6,
-   "cost": 69.07,
-   "minutes": 191
+   "cost": 72.84,
+   "minutes": 201
   },
   {
    "key": "2026-09",
@@ -3133,8 +3160,8 @@
    "last_ts": "2026-10-01T05:20:25+09:00",
    "last_status": "other",
    "last_result": "approved https://github.com/hkjang/DartFly/pull/19",
-   "cost": 154.25,
-   "minutes": 410,
+   "cost": 155.51,
+   "minutes": 413,
    "grade": "D",
    "grade_why": "14일: 릴리즈 10, 실패 3, 경고 5, 회귀 0",
    "lessons": 0,
@@ -3937,8 +3964,8 @@
    "last_ts": "2026-10-01T05:56:47+09:00",
    "last_status": "failed",
    "last_result": "fix-round: CI failed, PR open https://github.com/hkjang/vibe-code/pull/12",
-   "cost": 84.33,
-   "minutes": 222,
+   "cost": 86.83,
+   "minutes": 229,
    "grade": "D",
    "grade_why": "14일: 릴리즈 5, 실패 7, 경고 12, 회귀 0",
    "lessons": 0,
