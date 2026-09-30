@@ -210,3 +210,11 @@
 - 보류 아이디어: make test-go를 CI와 같은 DB 패키지 직렬 실행으로 맞추기 (가치 3 / 위험 1 / S).
 - 과제서: 채택 — 현재 코드의 fallback 전 공백 미정리와 두 HTTP 경로의 제목 소실이 실제 DB 시험에서 그대로 재현되어 지정된 제품 한 줄만 수정했다.
 
+## 2026-09-30
+- 선택: 문서 차례(outline) 내려받기 이름에 공간 이름 담기 (가치 2 / 위험 1 / 작업량 S)
+- 결과: 성공
+- 요약: `internal/httpapi/export_handlers.go:101` 의 `exportOutline` 만 리터럴 `attachment; filename="umm-outline.md"` 를 보내 여러 공간의 차례를 받으면 브라우저는 `umm-outline (1).md` 로 쌓고 curl -OJ·백업 스크립트는 덮어썼습니다. `CanViewSpace` 를 지난 뒤 handoff 와 같은 모양으로 공간 이름을 한 번 읽고(`SELECT name FROM spaces WHERE id=$1`) 헤더를 같은 패키지의 기존 `attachmentDisposition("umm-outline-"+spaceName, ".md")` 로 바꿨습니다(새 헬퍼 없음, 새니타이즈 3곳 통합 안 함). 이름 조회가 실패해도 500 으로 죽이지 않고 이름 없이 내보냅니다 — 권한은 이미 판정된 뒤입니다. 검증은 실제 chi 라우터 + 실제 auth 세션 + 격리 PostgreSQL 17(도커 `umm-test-pg`, DSN `postgres://umm:umm@127.0.0.1:15433/umm`)을 지나는 통합 시험 2개(따옴표+한글 이름이 `umm-outline-9월 회의.md` 로 오고 `mime.ParseMediaType` 이 `attachment` 로 읽는지, 같은 공간의 백업 이름과 서로 다른 문자열인지, 이름 없는/공백뿐인 공간도 `umm-outline-.md` 로 읽히는지)이고 `-v` 로 SKIP 이 아님을 확인했습니다. 기존 백업(`umm-9월 회의.md`)·handoff 이름 단언은 그대로 통과합니다. `POSTGRES_DSN=… go test -p 1 ./... -count=1` 15개 패키지 전부 PASS · `go vet ./...` · `gofmt -l internal/httpapi` 무출력. 생산 코드 1개 파일(약 4줄), 시험 1개 파일. 버전은 올리지 않았습니다.
+- 실패 재현: `content_disposition_test.go:224: outline filename = "umm-outline.md", want the space's own name in it` / `content_disposition_test.go:240: filename = "umm-outline.md", want a name that still says what the file is` — 고치기 전 코드에서 확인했고, 고친 뒤 생산 코드 한 덩이만 `git show HEAD:` 로 되돌려 같은 실패가 다시 나는 것까지 확인했습니다(같은 실행에서 백업 이름 시험은 통과 — 이 한 경로만 리터럴이었다는 증거).
+- 보류 아이디어: make test-go 를 CI 와 같은 `-p 1` 직렬 실행으로 맞추기(가치 3 / 위험 1 / S) / 업로드 라벨에 든 경로가 `safeFilename` 에서 구분자만 지워져 이름이 뭉개짐(가치 2 / 위험 2 / S) / 빈 공간에 노트가 실시간으로 들어오면 첫 몇 개에 맞춘 fit 이 자리로 기억됨(가치 2 / 위험 2 / M) / ADMIN_GUIDE.pdf 가 부록 11·12 를 담지 못한 채 남아 있음 — 굽기 전에 .md 정본이 지금 코드(메일 기능 부재)와 맞는지 먼저 확인 필요(가치 2 / 위험 1 / S)
+- 과제서: 채택 — 과제서의 근거(101행만 리터럴, :241·handoff:260 선례, `asciiFallback` 이 `umm-outline-.md` 를 남긴다는 예측)가 모두 지금 코드·실행 결과와 맞았습니다.
+
