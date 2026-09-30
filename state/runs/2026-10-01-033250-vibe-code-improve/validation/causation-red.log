@@ -1,0 +1,72 @@
+
+ RUN  v3.2.7 /home/hkjang/.cache/auto-improve-wt/vibe-code
+
+ ❯ tests/unit/goal-handoff.test.ts (6 tests | 2 failed) 26ms
+   × handoff notes in the goal file > keeps CRLF when createHandoffFile appends its note 8ms
+     → expected [ '\n\n', ')\n' ] to deeply equal []
+   × handoff notes in the goal file > keeps CRLF when the session-exit path appends its note 4ms
+     → expected [ '\n\n', ')\n' ] to deeply equal []
+   ✓ handoff notes in the goal file > leaves the LF bytes of createHandoffFile unchanged 3ms
+   ✓ handoff notes in the goal file > leaves the LF bytes of the session-exit path unchanged 3ms
+   ✓ handoff notes in the goal file > writes the same note line from both paths 5ms
+   ✓ handoff notes in the goal file > keeps the goal contract readable by the production parsers after a CRLF note 3ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/unit/goal-handoff.test.ts > handoff notes in the goal file > keeps CRLF when createHandoffFile appends its note
+AssertionError: expected [ '\n\n', ')\n' ] to deeply equal []
+
+- Expected
++ Received
+
+- []
++ [
++   "
++
++ ",
++   ")
++ ",
++ ]
+
+ ❯ tests/unit/goal-handoff.test.ts:54:25
+     52|   createHandoffFile(logSink, { current: ws.current, sessions: ws.sessi…
+     53|   const after = fs.readFileSync(ws.current, "utf8");
+     54|   expect(loneLf(after)).toEqual([]);
+       |                         ^
+     55|  });
+     56| 
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+ FAIL  tests/unit/goal-handoff.test.ts > handoff notes in the goal file > keeps CRLF when the session-exit path appends its note
+AssertionError: expected [ '\n\n', ')\n' ] to deeply equal []
+
+- Expected
++ Received
+
+- []
++ [
++   "
++
++ ",
++   ")
++ ",
++ ]
+
+ ❯ tests/unit/goal-handoff.test.ts:61:25
+     59|   expect(handoffOnExit(ws.root)).not.toBeNull();
+     60|   const after = fs.readFileSync(ws.current, "utf8");
+     61|   expect(loneLf(after)).toEqual([]);
+       |                         ^
+     62|  });
+     63| 
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  2 failed | 4 passed (6)
+   Start at  03:42:25
+   Duration  380ms (transform 118ms, setup 0ms, collect 146ms, tests 26ms, environment 0ms, prepare 46ms)
+
+EXIT=1
