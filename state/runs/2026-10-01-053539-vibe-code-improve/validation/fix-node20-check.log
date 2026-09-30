@@ -1,0 +1,53 @@
+=== fix verification on worktree auto/2026-10-01-0535 ===
+date: 2026-09-30T20:46:53Z
+node: v20.19.2  npm: 10.9.8
+--- npm run check ---
+
+> vibe-code@1.4.5 check
+> npm run typecheck && npm run test && npm run build
+
+
+> vibe-code@1.4.5 typecheck
+> tsc -p tsconfig.json --noEmit
+
+
+> vibe-code@1.4.5 test
+> vitest run
+
+
+ RUN  v3.2.7 /home/hkjang/.cache/auto-improve-wt/vibe-code
+
+ ✓ tests/unit/semver.test.ts (2 tests) 3ms
+ ✓ tests/unit/usage.test.ts (2 tests) 4ms
+ ✓ tests/unit/goal-loop.test.ts (3 tests) 2ms
+ ✓ tests/unit/goal-catalog.test.ts (3 tests) 7ms
+ ✓ tests/unit/verification.test.ts (10 tests) 9ms
+ ✓ tests/unit/goal-metrics.test.ts (4 tests) 7ms
+ ✓ tests/unit/journal-eol.test.ts (4 tests) 39ms
+ ✓ tests/unit/goal-health.test.ts (4 tests) 7ms
+ ✓ tests/unit/markdown.test.ts (22 tests) 17ms
+ ✓ tests/unit/journal-summary.test.ts (11 tests) 40ms
+ ✓ tests/unit/plans.test.ts (16 tests) 38ms
+ ✓ tests/unit/checkpoints.test.ts (9 tests) 772ms
+
+ Test Files  12 passed (12)
+      Tests  90 passed (90)
+   Start at  05:46:55
+   Duration  1.20s (transform 1.00s, setup 0ms, collect 2.25s, tests 946ms, environment 2ms, prepare 856ms)
+
+
+> vibe-code@1.4.5 build
+> node scripts/build.mjs
+
+staged dist/extension.core.js (20.3 MB)
+warning: dist/ is missing runtime assets: node_modules, i18n, workers, tree-sitter.wasm, tiktoken_bg.wasm
+         copy them from an existing release VSIX (extension/dist/) before packaging.
+
+  dist/extension.js  202.8kb
+
+⚡ Done in 14ms
+EXIT_npm_check=0
+--- node --check dist/extension.js ---
+EXIT_node_check_extension=0
+--- node --check dist/extension.core.js ---
+EXIT_node_check_core=0

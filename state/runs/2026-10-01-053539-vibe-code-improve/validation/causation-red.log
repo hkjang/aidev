@@ -1,0 +1,154 @@
+
+ RUN  v3.2.7 /home/hkjang/.cache/auto-improve-wt/vibe-code
+
+ ❯ tests/unit/journal-eol.test.ts (4 tests | 2 failed) 32ms
+   × initJournal line endings > keeps CRLF when the reactivation line is appended repeatedly 11ms
+     → expected [ Array(1) ] to deeply equal []
+   ✓ initJournal line endings > leaves an LF journal on LF 4ms
+   ✓ initJournal line endings > reads the same sections from a CRLF journal as from an LF one 8ms
+   × both journal writers on one CRLF file > keeps CRLF when initJournal and appendSessionSummary both append 7ms
+     → expected [ Array(1) ] to deeply equal []
+ ❯ tests/unit/journal-summary.test.ts (11 tests | 2 failed) 32ms
+   ✓ journal summary > parses audit lines and skips garbage 1ms
+   ✓ journal summary > builds a summary with completed items, status changes, failures and goal next action 1ms
+   ✓ journal summary > only reports entries after the last summary marker 0ms
+   × appendSessionSummary line endings > keeps CRLF for every line of the appended summary block 10ms
+     → expected [ Array(1) ] to deeply equal []
+   ✓ appendSessionSummary line endings > leaves an LF journal on LF 4ms
+   ✓ appendSessionSummary line endings > keeps the blank line before the block so the marker and sections still parse 8ms
+   × appendSessionSummary line endings > appends a second block after the first without mixing line endings 5ms
+     → expected [ Array(1) ] to deeply equal []
+   ✓ line-level plan edits > finds the enclosing section of a line 0ms
+   ✓ line-level plan edits > moves a Now task to Done as checked, and a Next task to Now 0ms
+   ✓ line-level plan edits > refuses non-task lines and missing sections 0ms
+   ✓ line-level plan edits > toggles checkboxes in place 0ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 4 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/unit/journal-eol.test.ts > initJournal line endings > keeps CRLF when the reactivation line is appended repeatedly
+AssertionError: expected [ Array(1) ] to deeply equal []
+
+- Expected
++ Received
+
+- []
++ [
++   "- 05:46 KST — 확장 재활성화
++ - 05:46 KST — 확장 재활성화
++ - 05:46 KST — 확장 재활성화
++ ",
++ ]
+
+ ❯ tests/unit/journal-eol.test.ts:50:24
+     48|   const text = fs.readFileSync(file, "utf8");
+     49|   expect(normalizeEol(text).split("\n").filter((l) => l.includes("확장 재…
+     50|   expect(bareLf(text)).toEqual([]);
+       |                        ^
+     51|  });
+     52| 
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/4]⎯
+
+ FAIL  tests/unit/journal-eol.test.ts > both journal writers on one CRLF file > keeps CRLF when initJournal and appendSessionSummary both append
+AssertionError: expected [ Array(1) ] to deeply equal []
+
+- Expected
++ Received
+
+- []
++ [
++   "- 05:46 KST — 확장 재활성화
++
++ ## 세션 요약 (05:46 KST)
++
++ - 완료한 계획 항목 1개: 바로 구현할 작업 1개 정의
++ - 감사 이벤트: plan 1
++
++ <!-- vibe-code:summary-until 2026-09-22T01:05:00.000Z -->
++ ",
++ ]
+
+ ❯ tests/unit/journal-eol.test.ts:102:24
+    100|   expect(text).toContain("감사 이벤트");
+    101|   expect(text).toContain("<!-- vibe-code:summary-until 2026-09-22T01:0…
+    102|   expect(bareLf(text)).toEqual([]);
+       |                        ^
+    103|  });
+    104| });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/4]⎯
+
+ FAIL  tests/unit/journal-summary.test.ts > appendSessionSummary line endings > keeps CRLF for every line of the appended summary block
+AssertionError: expected [ Array(1) ] to deeply equal []
+
+- Expected
++ Received
+
+- []
++ [
++   "
++ ## 세션 요약 (05:46 KST)
++
++ - 완료한 계획 항목 1개: 바로 구현할 작업 1개 정의
++ - 계획 상태 변경: blocked (current-plan.md)
++ - 실행한 명령: 1개 승인, 1개 거부 · 실패 1개: npm test (exit 1)
++ - 실패: applyVibeCodersProxyFailed: boom
++ - 감사 이벤트: goal 1, plan 2, proxy 1, command 3
++
++ <!-- vibe-code:summary-until 2026-09-22T01:10:00.000Z -->
++ ",
++ ]
+
+ ❯ tests/unit/journal-summary.test.ts:87:24
+     85|   expect(text).toContain("감사 이벤트");
+     86|   expect(text).toContain(SUMMARY_UNTIL);
+     87|   expect(bareLf(text)).toEqual([]);
+       |                        ^
+     88|  });
+     89| 
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/4]⎯
+
+ FAIL  tests/unit/journal-summary.test.ts > appendSessionSummary line endings > appends a second block after the first without mixing line endings
+AssertionError: expected [ Array(1) ] to deeply equal []
+
+- Expected
++ Received
+
+- []
++ [
++   "
++ ## 세션 요약 (05:46 KST)
++
++ - 완료한 계획 항목 1개: 바로 구현할 작업 1개 정의
++ - 계획 상태 변경: blocked (current-plan.md)
++ - 실행한 명령: 1개 승인, 1개 거부 · 실패 1개: npm test (exit 1)
++ - 실패: applyVibeCodersProxyFailed: boom
++ - 감사 이벤트: goal 1, plan 2, proxy 1, command 3
++
++ <!-- vibe-code:summary-until 2026-09-22T01:10:00.000Z -->
++
++ ## 세션 요약 (05:46 KST)
++
++ - 감사 이벤트: goal 1
++
++ <!-- vibe-code:summary-until 2026-09-23T02:00:00.000Z -->
++ ",
++ ]
+
+ ❯ tests/unit/journal-summary.test.ts:131:24
+    129|   const text = readJournal(ws);
+    130|   expect(lastSummaryTs(text)).toBe("2026-09-23T02:00:00.000Z");
+    131|   expect(bareLf(text)).toEqual([]);
+       |                        ^
+    132|  });
+    133| });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/4]⎯
+
+
+ Test Files  2 failed (2)
+      Tests  4 failed | 11 passed (15)
+   Start at  05:46:21
+   Duration  584ms (transform 362ms, setup 0ms, collect 414ms, tests 64ms, environment 0ms, prepare 258ms)
+
