@@ -219,3 +219,12 @@
 - 과제서: 채택 — 과제서의 근거(101행만 리터럴, :241·handoff:260 선례, `asciiFallback` 이 `umm-outline-.md` 를 남긴다는 예측)가 모두 지금 코드·실행 결과와 맞았습니다.
 
 - 릴리즈: v0.76.2 (2026-09-30, run 2026-09-30-192943-umm-approve)
+## 2026-09-30
+- 선택: 업로드한 그림의 이름 라벨이 경로를 통째로 이고 들어와 뭉개진다 — 마지막 조각만 쓰기 (가치 2 / 위험 2 / 작업량 S)
+- 결과: 성공
+- 요약: `internal/store/attachments.go:150` 의 `safeFilename` 은 `strings.Map` 으로 `/`·`\` 를 **지우기만** 해서 전체 경로를 보내는 클라이언트의 `C:\사진\회의.png` 가 `C:사진회의.png` 로 붙었습니다(`a/b/c.png` → `abc.png`). 이 문자열은 그대로 `Content-Disposition` 까지 가므로 내려받은 파일 이름이 올린 이름과 달라집니다. 두 구분자로 `strings.FieldsFunc` 한 뒤 **정리해도 비지 않는 마지막 조각**을 고르도록 고쳤습니다 — `filepath.Base` 는 리눅스에서 `\` 를 구분자로 보지 않아 쓰지 않았고, 꼬리 구분자(`사진/`, `a/b/`)는 빈 조각을 받아들이는 대신 앞 조각으로 되짚어 라벨을 잃지 않습니다(주석에 그 선택을 적었습니다). 조각을 고른 뒤에도 `TrimSpace`·제어문자/`"` 제거·구분자 제거(심층 방어)·`LimitUTF8Bytes(…,120)` 문자 경계 절단은 그대로라 기존 경계 시험과 긴 한글 이름 통합 시험이 통과합니다. `safeFilename`·`dispositionSafe`·`attachmentDisposition`·`handoffFilename` 은 계약이 달라 통합하지 않았고, 이번에 바꾼 프로덕션 함수는 하나(파일 1개)입니다. 검증: `go test ./internal/store -run TestSafeFilename -count=1 -v` 5개 전부 RUN/PASS(SKIP 아님), 실제 `AttachToNote`→DB 를 지나는 새 통합 시험 1개 PASS(격리 PostgreSQL 17 도커 `umm-test-pg`, DSN `postgres://umm:umm@127.0.0.1:15433/umm` — `-v` 로 RUN 확인), `POSTGRES_DSN=… go test -p 1 ./... -count=1` 15개 패키지 전부 PASS, `go vet ./...` · `gofmt -l internal/store` 무출력 · `go build ./cmd/...`(산출물 `umm` 은 커밋 전 삭제). 커밋 324b4a0. 버전은 올리지 않았습니다.
+- 실패 재현: `attachments_test.go:54: safeFilename("C:\\사진\\회의.png") = "C:사진회의.png", want "회의.png"` / `attachments_test.go:69: safeFilename("a/b/") = "ab", want "b"` / `attachments_integration_test.go:176: stored label "C:사진회의.png", want "회의.png"` — 고치기 전에 확인했고, 고친 뒤 프로덕션 파일만 `git show HEAD:internal/store/attachments.go` 로 되돌려 단위·통합 양쪽에서 같은 실패가 다시 나는 것까지 확인했습니다(같은 실행에서 긴 한글 이름·짧은 이름 시험은 계속 통과 — 이 한 경로만 잘못 붙던 증거).
+- 보류 아이디어: make test-go 를 CI 와 같은 `-p 1` 직렬 실행으로 맞추기(가치 3 / 위험 1 / S — 착수 전 `-p 1` 없이 3회 돌려 경합을 먼저 재현할 것) / 빈 공간에 노트가 실시간으로 들어오면 첫 몇 개에 맞춘 fit 이 자리로 기억됨(가치 2 / 위험 2 / M) / `usableSections` 가 서로 다른 부에 같은 제목이 오는 제안을 막지 않음 — 세 회차 연속 미확인, 재현이 먼저(가치 2 / 위험 2 / M) / ADMIN_GUIDE.pdf 가 부록 11·12 를 담지 못한 채 남아 있음 — 굽기 전에 .md 정본이 지금 코드(메일 기능 부재)와 맞는지 확인 필요(가치 2 / 위험 1 / S) / 내보내기 본문 마지막 줄이 ``- id: `x` `` 꼴이고 바로 `---` 가 오면 이음매로 오인 — PR #149 반려 접근 재제출 금지, 재현이 먼저(가치 3 / 위험 3 / M)
+- 과제서: 채택 — 과제서의 근거(150행이 구분자를 삭제만 함, `..etcpasswd.png` 단언이 의도적으로 바뀜, `filepath.Base` 가 리눅스에서 `\` 를 놓침)가 모두 지금 코드·실행 결과와 맞았고, "우선 과제는 이미 해결됨" 도 트리에서 확인됐습니다(`web/package-lock.json` undici 8.11.2, PR #162 는 `50af3b0` 로 머지됨).
+
+- 릴리즈: v0.76.3 (2026-09-30, run 2026-09-30-201207-umm-improve)
