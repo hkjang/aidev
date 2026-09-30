@@ -1,0 +1,7 @@
+# fix-summary — PR #12 (2a264c8): 고칠 결함이 없다, 커밋 없음
+
+- **재현 시도 결과 실패가 재현되지 않았다.** `2a264c8` 를 `/tmp/pr12/repo` 로 pristine clone 해 `ci.yml:13-24` 의 네 단계를 CI 와 같은 Node 20.19.2 로 그대로 돌렸고 전부 exit 0 이다 — typecheck, vitest **12파일 90테스트 전원 통과**, build, `node --check dist/extension.js`·`dist/extension.core.js`. 증거: `validation/pr12-ci-check-reproduction.log`. `TZ=UTC LANG=C`(UTC 로는 09-30 22:02, KST 로는 10-01 07:02 — 날짜 경계를 실제로 넘는 회차)와 `--no-file-parallelism` 직렬 실행에서도 90/90 이다.
+- **CI 실패는 코드 결함이 아니다.** 보고된 검사는 **2초**에 실패했고 과제서의 "실패 로그(끝부분)" 이 비어 있다 — 단계 로그가 없다. 이 저장소에서 `npm ci`+`npm run check` 는 4.4초가 걸리므로 2초 실패는 어떤 단계도 실행되지 않았다는 뜻이고, 프로필에 기록된 run 36518589343 annotation("recent account payments have failed or your spending limit needs to be increased", `steps=[]`, `runner_id=0`)과 같은 모양이다. 이 diff 는 `package.json`·lockfile·워크플로를 건드리지 않아(변경 파일은 `journal.ts`, `journal-summary.ts`, 테스트 2개뿐) job 시작 자체에 영향을 줄 수 없다. PR #6~#11 여섯 회차가 전부 같은 결말이었다.
+- **변경 자체의 인과는 독립 재현했다.** 두 프로덕션 파일만 `git checkout 43fd7a1 --` 로 되돌리면 정확히 4 fail / 11 pass, 복원하면 15 pass — 새 테스트가 대역이 아니라 프로덕션 `initJournal`/`appendSessionSummary` 를 실제로 지난다.
+- **원격은 이 환경에서 한 줄도 읽을 수 없다.** `gh` 미인증이고 저장소가 비공개라 익명 API 는 `repos/hkjang/vibe-code` 에도 404 를 준다. 따라서 위 판정은 "로컬에서 CI job 을 완전 재현했고 실패하지 않는다" 까지이며, 원격 job 의 annotation 을 직접 읽은 것은 아니다.
+- **필요한 것은 코드 수정이 아니라 운영자 조치다**: GitHub Actions 결제/사용 한도 해소, 그리고 세션에 `gh` 토큰 공급. 규칙대로 워크플로·검증 명령을 완화하지 않았고 테스트도 손대지 않았으며 **커밋을 남기지 않았다**.

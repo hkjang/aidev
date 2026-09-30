@@ -1,0 +1,45 @@
+# PR #12 (2a264c8) — CI 'check' job 재현, pristine clone, Node v20.19.2
+## commit
+2a264c8 fix: 오늘 일지에 쓰는 두 writer 가 CRLF 일지의 줄바꿈을 보존한다
+## step: npm ci
+  npm audit fix --force
+
+Run `npm audit` for details.
+exit=0
+## step: npm run check
+ RUN  v3.2.7 /tmp/pr12/repo
+
+ ✓ tests/unit/semver.test.ts (2 tests) 2ms
+ ✓ tests/unit/usage.test.ts (2 tests) 5ms
+ ✓ tests/unit/goal-loop.test.ts (3 tests) 3ms
+ ✓ tests/unit/goal-catalog.test.ts (3 tests) 5ms
+ ✓ tests/unit/verification.test.ts (10 tests) 6ms
+ ✓ tests/unit/goal-metrics.test.ts (4 tests) 6ms
+ ✓ tests/unit/journal-eol.test.ts (4 tests) 37ms
+ ✓ tests/unit/markdown.test.ts (22 tests) 11ms
+ ✓ tests/unit/goal-health.test.ts (4 tests) 5ms
+ ✓ tests/unit/journal-summary.test.ts (11 tests) 32ms
+ ✓ tests/unit/plans.test.ts (16 tests) 35ms
+ ✓ tests/unit/checkpoints.test.ts (9 tests) 802ms
+
+ Test Files  12 passed (12)
+      Tests  90 passed (90)
+   Start at  07:03:16
+   Duration  1.22s (transform 894ms, setup 0ms, collect 2.01s, tests 949ms, environment 2ms, prepare 809ms)
+
+
+> vibe-code@1.4.5 build
+> node scripts/build.mjs
+
+warning: dist/ is missing runtime assets: node_modules, i18n, workers, tree-sitter.wasm, tiktoken_bg.wasm
+         copy them from an existing release VSIX (extension/dist/) before packaging.
+
+  dist/extension.js  202.8kb
+
+⚡ Done in 16ms
+exit=0
+## step: node --check dist
+exit=0
+## remote readability
+gh auth status: not logged in
+api.github.com/repos/hkjang/vibe-code -> HTTP 404
