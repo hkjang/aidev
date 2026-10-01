@@ -1983,6 +1983,14 @@ for ((i=0;i<COUNT && i<${#candidates[@]};i++)); do picked+=("${candidates[$(( (i
 FIX_PROJECT=""; FIX_NOTE_TEXT=""; FIX_SHA=""; FIXQ="$STATE/fix-queue.tsv"
 if [ -z "$ONLY" ] && [ -s "$FIXQ" ]; then
   while IFS=$'\t' read -r fp fnote fsha; do [ -n "$fp" ] || continue
+    # 수정 회차가 세 번 넘게 같은 자리에서 실패한 저장소(bin/fixer.sh 가 fix-hold 를 건다)는
+    # 줄이 남아 있어도 집지 않는다. fix-queue 는 WIP 상한·성과 쿨다운을 우회하므로 이 자리에서
+    # 멈추지 않으면 회차가 무한히 들어간다 (2026-10-01 vibe-code 가 하루 6회차를 그렇게 썼다).
+    if [ -f "$STATE/$fp.fix-hold" ]; then
+      log "fix-queue: $fp — 수정 보류 중(state/$fp.fix-hold), 줄을 지운다"
+      grep -v -P "^$fp\t" "$FIXQ" > "$FIXQ.tmp" 2>/dev/null && mv "$FIXQ.tmp" "$FIXQ" || rm -f "$FIXQ.tmp"
+      continue
+    fi
     if printf '%s\n' "${allcand[@]}" | grep -qx "$fp"; then picked=("$fp"); FIX_PROJECT="$fp"; FIX_NOTE_TEXT="$fnote"; FIX_SHA="${fsha:-}"; log "fix-queue: picked $fp"; break; fi
     # 저장소가 아예 없는 줄은 영원히 안 잡히고 줄만 차지한다 (2026-09-25 jasql_semantic).
     # 오늘 후보가 아닐 뿐인 프로젝트(dirty·쿨다운 등)는 그대로 둔다 — 그건 다음 기회가 온다.

@@ -1,0 +1,42 @@
+# PR #15 (origin/auto/2026-10-01-0842, head a1e3c948b14a7391fe5194a9b1070bafd1c8d42c)
+# CI check job (.github/workflows/ci.yml:13-24) reproduced locally on Node 20.19.2 (= engines.node pin)
+# extracted outside the repo via: git archive -o /tmp/pr15.tar && tar -xf -C /tmp/pr15
+# date: 2026-10-01
+
+node -v -> v20.19.2
+EXIT_npm_ci=0
+EXIT_npm_check=0
+EXIT_node_check_extension=0
+EXIT_node_check_core=0
+
+--- tail of npm run check ---
+ ✓ tests/unit/semver.test.ts (2 tests) 2ms
+ ✓ tests/unit/usage.test.ts (2 tests) 4ms
+ ✓ tests/unit/markdown.test.ts (22 tests) 10ms
+ ✓ tests/unit/goal-metrics.test.ts (4 tests) 6ms
+ ✓ tests/unit/command-audit.test.ts (5 tests) 33ms
+ ✓ tests/unit/plans.test.ts (16 tests) 27ms
+ ✓ tests/unit/goal-health.test.ts (4 tests) 5ms
+ ✓ tests/unit/checkpoints.test.ts (9 tests) 762ms
+
+ Test Files  12 passed (12)
+      Tests  87 passed (87)
+   Start at  09:49:33
+   Duration  1.16s (transform 833ms, setup 0ms, collect 2.04s, tests 870ms, environment 2ms, prepare 857ms)
+
+
+> vibe-code@1.4.5 build
+> node scripts/build.mjs
+
+staged dist/extension.core.js (20.3 MB)
+warning: dist/ is missing runtime assets: node_modules, i18n, workers, tree-sitter.wasm, tiktoken_bg.wasm
+         copy them from an existing release VSIX (extension/dist/) before packaging.
+
+  dist/extension.js  202.8kb
+
+⚡ Done in 18ms
+
+VERDICT: all four CI check-job steps exit 0 -> PR #15's remote CI failure is NOT a code defect.
+NOTE: remote CI status/annotations could NOT be read in this session (gh unauthenticated, no push, no WebFetch) -> unverified.
+NOTE: the assignment speaks of a 'release workflow'; this repo has only .github/workflows/ci.yml (verified: ls below).
+ci.yml

@@ -1,0 +1,77 @@
+# RED — new tests run against the CURRENT production behaviour.
+# budgetNoticeDay was extracted verbatim (now.toISOString().slice(0,10)) and enforceBudget:128
+# rewired to call it. No behaviour change — so these failures are 'production behaviour is
+# wrong', not 'symbol missing'. THIS is the clean defect evidence for this round.
+# (Reverting src/features/usage.ts to HEAD later removes the export and pollutes the run with
+#  an import error, so causation is shown by this log, as in round #14.)
+# cmd: npx vitest run tests/unit/usage.test.ts   (Node v20.19.2)
+
+
+ RUN  v3.2.7 /home/hkjang/.cache/auto-improve-wt/vibe-code
+
+ ❯ tests/unit/usage.test.ts (5 tests | 3 failed) 8ms
+   ✓ usage formatting > formats KRW, tokens and percentages 3ms
+   ✓ usage formatting > builds the status bar line 0ms
+   × budget notice day key > keys the whole KST day to one value across the 09:00 KST UTC rollover 4ms
+     → expected '2026-09-30' to be '2026-10-01' // Object.is equality
+   × budget notice day key > keys the first and last half hour of one KST day to the same value 1ms
+     → expected '2026-09-30' to be '2026-10-01' // Object.is equality
+   × budget notice day key > uses the same day boundary as the audit filename 1ms
+     → expected '2026-09-30' to be '2026-10-01' // Object.is equality
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 3 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/unit/usage.test.ts > budget notice day key > keys the whole KST day to one value across the 09:00 KST UTC rollover
+AssertionError: expected '2026-09-30' to be '2026-10-01' // Object.is equality
+
+Expected: "2026-10-01"
+Received: "2026-09-30"
+
+ ❯ tests/unit/usage.test.ts:31:46
+     29| 
+     30|  it("keys the whole KST day to one value across the 09:00 KST UTC roll…
+     31|   expect(budgetNoticeDay(beforeUtcRollover)).toBe("2026-10-01");
+       |                                              ^
+     32|   expect(budgetNoticeDay(afterUtcRollover)).toBe("2026-10-01");
+     33|   expect(budgetNoticeDay(beforeUtcRollover)).toBe(budgetNoticeDay(afte…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/3]⎯
+
+ FAIL  tests/unit/usage.test.ts > budget notice day key > keys the first and last half hour of one KST day to the same value
+AssertionError: expected '2026-09-30' to be '2026-10-01' // Object.is equality
+
+Expected: "2026-10-01"
+Received: "2026-09-30"
+
+ ❯ tests/unit/usage.test.ts:37:43
+     35| 
+     36|  it("keys the first and last half hour of one KST day to the same valu…
+     37|   expect(budgetNoticeDay(kstMidnightish)).toBe("2026-10-01");
+       |                                           ^
+     38|   expect(budgetNoticeDay(kstLateEvening)).toBe("2026-10-01");
+     39|   expect(budgetNoticeDay(kstMidnightish)).toBe(budgetNoticeDay(kstLate…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/3]⎯
+
+ FAIL  tests/unit/usage.test.ts > budget notice day key > uses the same day boundary as the audit filename
+AssertionError: expected '2026-09-30' to be '2026-10-01' // Object.is equality
+
+Expected: "2026-10-01"
+Received: "2026-09-30"
+
+ ❯ tests/unit/usage.test.ts:46:32
+     44|  it("uses the same day boundary as the audit filename", () => {
+     45|   for (const at of [kstMidnightish, beforeUtcRollover, afterUtcRollove…
+     46|    expect(budgetNoticeDay(at)).toBe(kstDate(at));
+       |                                ^
+     47|   }
+     48|  });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/3]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  3 failed | 2 passed (5)
+   Start at  09:50:45
+   Duration  313ms (transform 75ms, setup 0ms, collect 88ms, tests 8ms, environment 0ms, prepare 52ms)
+

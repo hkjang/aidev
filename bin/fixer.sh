@@ -54,6 +54,22 @@ if [ -s "$RUNS" ]; then
     grep -q -P "^$proj\t" "$FIXQ" && continue
     [ -f "$STATE/STOP-$proj" ] && continue
     excluded "$proj" && continue
+    [ -f "$STATE/$proj.fix-hold" ] && continue
+    # 같은 수정을 세 번 넘게 실패하면 다시 적재하지 않는다. 수정 회차는 fix-queue 로 들어오므로
+    # 성과 쿨다운(WIP·ROI)을 우회한다 — 그래서 고쳐지지 않는 저장소에 회차가 무한히 들어간다.
+    # 2026-10-01 vibe-code: 수정 회차 6건이 전부 같은 CI 실패로 끝나고 매번 다시 적재됐다.
+    fails=$(jq -rs --arg p "$proj" '[.[]|select(.project==$p and ((.result//"")|test("^fix-round")) and (.outcome=="error" or .outcome=="verify-failed"))]|length' "$RUNS" 2>/dev/null || echo 0)
+    if [ "${fails:-0}" -ge 3 ]; then
+      jq -cn --arg ts "$(date -Iseconds)" --arg p "$proj" --argjson n "${fails:-0}" --arg r "$reason" \
+        '{ts:$ts,project:$p,failures:$n,last_reason:$r}' > "$STATE/$proj.fix-hold"
+      echo "fix-hold $proj (수정 회차 ${fails}회 실패) — 사람이 봐야 한다"
+      "$HERE/tg.sh" "⛔ $proj 수정 회차가 ${fails}번 같은 자리에서 실패해 더 시도하지 않습니다.
+
+$(printf '%s' "$reason" | tail -c 400)
+
+원인을 고치고 나면: rm state/$proj.fix-hold" >/dev/null 2>&1 || true
+      continue
+    fi
     printf '%s\t%s\t\n' "$proj" "오류 대응(자동 적재): 마지막 회차가 '$outcome' 로 끝났습니다. $reason" >> "$FIXQ"
     echo "enqueue $proj ($outcome)"; enq=$((enq+1))
   done < <(jq -rs --arg c "$since" '

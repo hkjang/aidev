@@ -1,0 +1,63 @@
+# CAUSATION — src/features/usage.ts reverted to HEAD (production file only; tests kept).
+# EXPECTED POLLUTION: at HEAD the budgetNoticeDay export does not exist, so these fail with
+# 'is not a function' rather than an AssertionError. That is why the clean defect evidence for
+# this round is validation/usage-kst-red.log (extract-only state, real AssertionErrors).
+# cmd: npx vitest run tests/unit/usage.test.ts   (Node v20.19.2)
+
+
+ RUN  v3.2.7 /home/hkjang/.cache/auto-improve-wt/vibe-code
+
+ ❯ tests/unit/usage.test.ts (5 tests | 3 failed) 6ms
+   ✓ usage formatting > formats KRW, tokens and percentages 3ms
+   ✓ usage formatting > builds the status bar line 0ms
+   × budget notice day key > keys the whole KST day to one value across the 09:00 KST UTC rollover 2ms
+     → (0 , budgetNoticeDay) is not a function
+   × budget notice day key > keys the first and last half hour of one KST day to the same value 0ms
+     → (0 , budgetNoticeDay) is not a function
+   × budget notice day key > uses the same day boundary as the audit filename 0ms
+     → (0 , budgetNoticeDay) is not a function
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 3 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/unit/usage.test.ts > budget notice day key > keys the whole KST day to one value across the 09:00 KST UTC rollover
+TypeError: (0 , budgetNoticeDay) is not a function
+ ❯ tests/unit/usage.test.ts:31:10
+     29| 
+     30|  it("keys the whole KST day to one value across the 09:00 KST UTC roll…
+     31|   expect(budgetNoticeDay(beforeUtcRollover)).toBe("2026-10-01");
+       |          ^
+     32|   expect(budgetNoticeDay(afterUtcRollover)).toBe("2026-10-01");
+     33|   expect(budgetNoticeDay(beforeUtcRollover)).toBe(budgetNoticeDay(afte…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/3]⎯
+
+ FAIL  tests/unit/usage.test.ts > budget notice day key > keys the first and last half hour of one KST day to the same value
+TypeError: (0 , budgetNoticeDay) is not a function
+ ❯ tests/unit/usage.test.ts:37:10
+     35| 
+     36|  it("keys the first and last half hour of one KST day to the same valu…
+     37|   expect(budgetNoticeDay(kstMidnightish)).toBe("2026-10-01");
+       |          ^
+     38|   expect(budgetNoticeDay(kstLateEvening)).toBe("2026-10-01");
+     39|   expect(budgetNoticeDay(kstMidnightish)).toBe(budgetNoticeDay(kstLate…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/3]⎯
+
+ FAIL  tests/unit/usage.test.ts > budget notice day key > uses the same day boundary as the audit filename
+TypeError: (0 , budgetNoticeDay) is not a function
+ ❯ tests/unit/usage.test.ts:46:11
+     44|  it("uses the same day boundary as the audit filename", () => {
+     45|   for (const at of [kstMidnightish, beforeUtcRollover, afterUtcRollove…
+     46|    expect(budgetNoticeDay(at)).toBe(kstDate(at));
+       |           ^
+     47|   }
+     48|  });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/3]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  3 failed | 2 passed (5)
+   Start at  09:51:20
+   Duration  345ms (transform 87ms, setup 0ms, collect 103ms, tests 6ms, environment 0ms, prepare 53ms)
+
