@@ -1,0 +1,94 @@
+=== causation: production file reverted to HEAD (43fd7a1) ===
+NOTE: HEAD has no commandMark export, so the commandMark describe fails to import.
+The clean behaviour-only red run is validation/command-audit-red.log (extraction applied, fix not).
+
+ RUN  v3.2.7 /home/hkjang/.cache/auto-improve-wt/vibe-code
+
+ ❯ tests/unit/command-audit.test.ts (5 tests | 4 failed) 30ms
+   × readCommandHistory window > drops audit files dated outside the seven day window even when fewer than seven files exist 11ms
+     → expected [ 'sixty-days-back', …(3) ] to deeply equal [ 'six-days-back', 'today' ]
+   × readCommandHistory window > ignores audit files whose name is not a KST date 5ms
+     → expected [ 'sixty-days-back', 'today', …(1) ] to deeply equal [ 'today' ]
+   ✓ readCommandHistory window > still returns at most `limit` rows, newest last 4ms
+   × commandMark > reads 미상 instead of undefined for an exited row that carries no exitCode 4ms
+     → undefined is not a function
+   × commandMark > keeps the existing wording for known exit codes and for approval phases 4ms
+     → undefined is not a function
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 4 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/unit/command-audit.test.ts > readCommandHistory window > drops audit files dated outside the seven day window even when fewer than seven files exist
+AssertionError: expected [ 'sixty-days-back', …(3) ] to deeply equal [ 'six-days-back', 'today' ]
+
+- Expected
++ Received
+
+  [
++   "sixty-days-back",
++   "seven-days-back",
+    "six-days-back",
+    "today",
+  ]
+
+ ❯ tests/unit/command-audit.test.ts:64:63
+     62|   record("exited", { command: "today", exitCode: 0 });
+     63| 
+     64|   expect(readCommandHistory(audit).map((row) => row.command)).toEqual(…
+       |                                                               ^
+     65|  });
+     66| 
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/4]⎯
+
+ FAIL  tests/unit/command-audit.test.ts > readCommandHistory window > ignores audit files whose name is not a KST date
+AssertionError: expected [ 'sixty-days-back', 'today', …(1) ] to deeply equal [ 'today' ]
+
+- Expected
++ Received
+
+  [
++   "sixty-days-back",
+    "today",
++   "sixty-days-back",
+  ]
+
+ ❯ tests/unit/command-audit.test.ts:76:63
+     74|   fs.copyFileSync(stale as string, path.join(audit, "notes.jsonl"));
+     75| 
+     76|   expect(readCommandHistory(audit).map((row) => row.command)).toEqual(…
+       |                                                               ^
+     77|  });
+     78| 
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/4]⎯
+
+ FAIL  tests/unit/command-audit.test.ts > commandMark > reads 미상 instead of undefined for an exited row that carries no exitCode
+TypeError: undefined is not a function
+ ❯ tests/unit/command-audit.test.ts:103:36
+    101|   record("exited", { command: "npm test" });
+    102| 
+    103|   expect(readCommandHistory(audit).map(commandMark)).toEqual(["! 종료 미상…
+       |                                    ^
+    104|  });
+    105| 
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/4]⎯
+
+ FAIL  tests/unit/command-audit.test.ts > commandMark > keeps the existing wording for known exit codes and for approval phases
+TypeError: undefined is not a function
+ ❯ tests/unit/command-audit.test.ts:114:36
+    112|   record("exited", { command: "npm run lint", exitCode: 1 });
+    113| 
+    114|   expect(readCommandHistory(audit).map(commandMark)).toEqual(["▶ 승인", …
+       |                                    ^
+    115|  });
+    116| });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/4]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  4 failed | 1 passed (5)
+   Start at  08:51:42
+   Duration  340ms (transform 71ms, setup 0ms, collect 88ms, tests 30ms, environment 0ms, prepare 47ms)
+

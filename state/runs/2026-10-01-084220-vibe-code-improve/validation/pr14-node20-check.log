@@ -1,0 +1,77 @@
+++ echo '=== step 0: CI check job reproduction for PR #14 head bf12461 ==='
+=== step 0: CI check job reproduction for PR #14 head bf12461 ===
++++ node --version
++++ npm --version
+++ echo 'node: v20.19.2   npm: 10.9.8'
+node: v20.19.2   npm: 10.9.8
++++ cd /home/hkjang/.cache/auto-improve-wt/vibe-code
++++ git log --oneline -1 bf12461
+++ echo 'commit: bf12461 docs: auditExitCode JSDoc 이 네 번째 읽기 경로(command-audit)를 빠뜨리지 않는다'
+commit: bf12461 docs: auditExitCode JSDoc 이 네 번째 읽기 경로(command-audit)를 빠뜨리지 않는다
+++ cd /tmp/pr14
+++ npm ci
+++ tail -20
+
+added 57 packages, and audited 58 packages in 1s
+
+15 packages are looking for funding
+  run `npm fund` for details
+
+2 moderate severity vulnerabilities
+
+To address all issues (including breaking changes), run:
+  npm audit fix --force
+
+Run `npm audit` for details.
+++ echo EXIT_npm_ci=0
+EXIT_npm_ci=0
+++ npm run check
+++ tail -40
+
+
+> vibe-code@1.4.5 typecheck
+> tsc -p tsconfig.json --noEmit
+
+
+> vibe-code@1.4.5 test
+> vitest run
+
+
+ RUN  v3.2.7 /tmp/pr14
+
+ ✓ tests/unit/semver.test.ts (2 tests) 2ms
+ ✓ tests/unit/usage.test.ts (2 tests) 4ms
+ ✓ tests/unit/goal-loop.test.ts (3 tests) 3ms
+ ✓ tests/unit/goal-catalog.test.ts (3 tests) 7ms
+ ✓ tests/unit/verification.test.ts (10 tests) 6ms
+ ✓ tests/unit/journal-summary.test.ts (8 tests) 4ms
+ ✓ tests/unit/goal-metrics.test.ts (9 tests) 7ms
+ ✓ tests/unit/goal-health.test.ts (4 tests) 4ms
+ ✓ tests/unit/plans.test.ts (16 tests) 26ms
+ ✓ tests/unit/markdown.test.ts (22 tests) 10ms
+ ✓ tests/unit/checkpoints.test.ts (9 tests) 777ms
+
+ Test Files  11 passed (11)
+      Tests  88 passed (88)
+   Start at  08:49:07
+   Duration  1.12s (transform 592ms, setup 0ms, collect 1.58s, tests 849ms, environment 2ms, prepare 705ms)
+
+
+> vibe-code@1.4.5 build
+> node scripts/build.mjs
+
+staged dist/extension.core.js (20.3 MB)
+warning: dist/ is missing runtime assets: node_modules, i18n, workers, tree-sitter.wasm, tiktoken_bg.wasm
+         copy them from an existing release VSIX (extension/dist/) before packaging.
+
+  dist/extension.js  202.7kb
+
+⚡ Done in 19ms
+++ echo EXIT_npm_check=0
+EXIT_npm_check=0
+++ node --check dist/extension.js
+++ echo EXIT_node_check_extension=0
+EXIT_node_check_extension=0
+++ node --check dist/extension.core.js
+++ echo EXIT_node_check_core=0
+EXIT_node_check_core=0
