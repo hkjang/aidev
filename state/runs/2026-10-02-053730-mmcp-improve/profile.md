@@ -1,0 +1,30 @@
+# mmcp 프로필 (2026-10-02)
+
+- 목적: Keycloak 으로 로그인한 사용자 **본인의 Mattermost 권한**으로 AI 클라이언트(Claude Code·Codex·Cursor)가 채널을 검색·요약하고 승인 후 DM 을 보내게 하는, 오프라인 사내망용 MCP 게이트웨이.
+- 스택: Go 1.26 (표준 lib + pgx), PostgreSQL, React 19 + Ant Design 6 + Vite + vitest, 단일 바이너리(프런트는 `internal/ui/dist` 로 embed), Docker 배포.
+- 구조:
+  - `cmd/mmcp/main.go` — 엔트리포인트, `gen-key` 서브커맨드 포함 (154줄)
+  - `internal/server/` — 거의 전부. HTTP 라우팅(`server.go`), MCP over HTTP(`mcp_http.go`), 도구 정의·정책·2단계 승인(`tools.go`), Mattermost 도구 구현(`tools_mm.go` 1364줄, 최대 파일), 관리 API(`admin_api.go` 1586줄), 개인 공간 API(`me_api.go`), DM(`dm.go`), 신원 매핑(`identity.go`), OAuth AS(`oauth.go`), Keycloak OIDC(`oidc.go`), 설정(`settings.go`), API 키(`keys.go`)
+  - `internal/mattermost/client.go` — Mattermost REST 클라이언트 (503줄, **테스트 0개**)
+  - `internal/crypto` — 봉투 암호화 + 랜덤 토큰 / `internal/store` + `store/migrations` — pgx 풀과 SQL 마이그레이션 / `internal/logbuf` — 링 버퍼 slog 핸들러(테스트 0개) / `internal/config` — 환경변수 4개만 / `internal/buildinfo` — ldflags 주입
+  - `web/src/{pages/admin,pages/me,components,api}` — 관리 콘솔과 개인 공간
+  - `docs/` — Markdown 가이드 + GitHub Pages 정적 사이트(`scripts/build-docs.mjs` 가 생성), `scripts/dev/` — Keycloak·Mattermost 시드
+- 빌드·테스트:
+  - `go test ./...` — 빠름(수초). **Postgres 가 없으면 통합 테스트는 조용히 skip**
+  - `TEST_POSTGRES_DSN=postgres://... go test -race -count=1 ./...` — CI 가 하는 것. 이게 진짜 전체 테스트
+  - `make lint` = `gofmt -l .` 비어 있어야 함 + `go vet ./...` + `./scripts/verify-version.sh`
+  - `make test` = Go 테스트 + `cd web && node node_modules/vitest/vitest.mjs run`
+  - `make build` — UI 빌드를 선행(`scripts/build-ui.sh`), 오래 걸림. `make docker` / `make package-offline` / `make verify-offline`
+- 관례: 커밋 메시지는 **영어 Conventional Commits**(`fix:`, `docs:`, `ci:`), 코드 주석도 영어. 반면 사용자에게 보이는 문자열·에러 메시지·README·docs 는 **한국어**. 설정은 환경변수 4개(`POSTGRES_DSN`, `BOOTSTRAP_ADMIN`, `BOOTSTRAP_ADMIN_PASSWORD`, `ENCRYPTION_KEY`)만이고 나머지는 전부 관리 콘솔 → PostgreSQL(비밀값 암호화). 마이그레이션은 `internal/store/migrations` 의 SQL 파일.
+- 위험 구역:
+  - `internal/server/oauth.go`·`oidc.go`·`auth.go`·`keys.go` — OAuth 2.1 AS(DCR+PKCE), redirect URI 검증, JWT 검증. `unit_test.go` 가 `validRedirectURI`/`redirectMatches`/`safeNext` 를 못 박고 있다
+  - `internal/server/identity.go` — Keycloak `sub` ↔ MM `user_id` 고정. **다른 MM 계정으로 자동 재연결 금지**가 명시적 결정사항(커밋 1144230). 계정 삭제·재생성·이름 가로채기 차단 로직
+  - `internal/server/tools.go:321 approve()` — 쓰기 도구의 2단계 승인. `argsHash` 로 인자 고정, 상태 전이를 조건부 UPDATE 로 원자화(재사용 방지). 건드리면 승인 우회 위험
+  - `internal/store/migrations` — 되돌릴 수 없음
+  - `.github/workflows/release.yml`, `scripts/package-offline.sh`, `VERSION`, `scripts/verify-version.sh` — 릴리즈 경로. 버전 문자열이 여러 곳(README 배지, docs, compose)에 박혀 있어 `verify-version.sh` 가 일치를 강제한다
+- 자주 깨지는 곳: (회차 기록이 없어 **미확인**.) 구조상 위험한 곳은 ① 버전 문자열이 README·docs·compose·VERSION 에 중복돼 `verify-version.sh` 가 lint 에서 떨어지는 것 ② 같은 값을 읽는 경로가 둘인 자리 — 사람 이름(`oidc.go:371 koreanName` vs `mattermost/client.go:160 DisplayName`), 역할 판정(`User.HasRole` 의 `mcp-*` 함의)
+- 검증 함정:
+  - **로컬 `go test ./...` 가 `ok ... 0.005s` 면 통합 테스트는 돌지 않았다.** `internal/server/integration_test.go:192` 가 `TEST_POSTGRES_DSN` 없으면 `t.Skip`. CI 는 postgres:16-alpine 서비스를 띄우고 `-race` 로 돈다
+  - 통합 테스트는 가짜 Mattermost **HTTP 서버**(`integration_test.go:30 fakeMM`, `httptest`)를 띄워 실제 `*mattermost.Client` 를 배선한다. 새 테스트도 이 방식을 따를 것 — 손으로 만든 인터페이스 대역은 이 저장소의 관례가 아니다
+  - CI 는 Go 테스트 외에 web `tsc -b` + `vite build` + `docker build` 까지 한다. 프런트를 건드리면 타입 빌드가 로컬 vitest 보다 먼저 깨진다
+  - `gofmt -l .` 이 lint 의 첫 관문이다. 새 파일을 추가하면 반드시 포맷할 것

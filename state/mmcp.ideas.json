@@ -1,0 +1,65 @@
+[
+  {
+    "title": "mattermost.User.DisplayName() 이 한글 여부를 보지 않고 성+이름을 붙여 라틴 이름을 'DoeJohn' 으로 만든다",
+    "value": 4,
+    "risk": 2,
+    "size": "S",
+    "status": "done",
+    "note": "2026-10-02 수정. client.go:160 이 koreanName() 과 같은 U+AC00-U+D7A3 범위로 분기하고, 아니면 'given family'(공백) 로 돌려준다. 두 함수는 입력 계약이 달라 통합하지 않았다. internal/mattermost/client_test.go(신규) 표 테스트 + internal/server/unit_test.go 교차 검증. 실패를 먼저 재현한 뒤 고쳤고 전체 통합 테스트(-race, TEST_POSTGRES_DSN)까지 통과.",
+    "updated": "2026-10-02"
+  },
+  {
+    "title": "internal/mattermost 의 남은 경로에 테스트 없음 — FileContent/PostList.Ordered/CAPEM",
+    "value": 4,
+    "risk": 1,
+    "size": "M",
+    "status": "pending",
+    "note": "2026-10-02 에 client_test.go 가 생겨 DisplayName, send() 의 비2xx→*APIError 와 StatusOf, 빈 본문의 http.StatusText 대체, New() 의 /api/v4 접미사 제거와 비http(s) 거부까지는 덮었다. 남은 것: FileContent 의 *[]byte 우회 경로(JSON 디코드 안 함), PostList.Ordered() 가 Posts 에 없는 id 를 조용히 버리는 것, New() 가 깨진 CAPEM 을 거부하는 것. 전부 httptest + 실제 *Client 로.",
+    "updated": "2026-10-02"
+  },
+  {
+    "title": "internal/logbuf 링 버퍼·Subscribe 해제 경로에 테스트 없음",
+    "value": 3,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "129줄, 테스트 0개. add() 의 용량 초과 폐기, Snapshot() 순서, Subscribe() 가 돌려주는 해제 함수 호출 후 구독자 채널에 더 쓰지 않는지(누수·블로킹)를 go test -race ./internal/logbuf/ 로. slog.Handler 구현이라 WithAttrs/WithGroup 도 대상.",
+    "updated": "2026-10-02"
+  },
+  {
+    "title": "ChannelMembers 가 per_page 한 페이지만 받아 멤버 목록을 조용히 잘라낸다",
+    "value": 3,
+    "risk": 3,
+    "size": "M",
+    "status": "pending",
+    "note": "client.go 의 /channels/{id}/members?per_page=N 호출에 page 루프가 없다. 호출자(tools_mm.go)가 애초에 상한을 의도해 넘기는지 미확인 — 호출자를 먼저 읽어야 타당성이 결정된다. 잘못 고치면 큰 채널에서 API 호출이 폭증하므로 위험 3.",
+    "updated": "2026-10-02"
+  },
+  {
+    "title": "mattermost.New() 가 BaseURL 의 query/fragment 를 그대로 보존해 요청 URL 이 깨질 수 있다",
+    "value": 2,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "client.go:38-43 은 scheme/host 만 검사하고 u.String() 을 base 로 쓴다. 'https://mm.example.com/?x=1' 이면 base+'/api/v4'+path 가 깨진다. 2026-10-02 의 New() 테스트는 비http(s) 거부와 접미사 제거만 덮었고 이 경우는 일부러 비워 뒀다. 설정 저장 시점(settings.go validateSettings)에서 거르는 편이 나을 수 있음 — 그쪽에 이미 URL 정규화가 있다. 운영자 오설정 시나리오라 가치는 낮다.",
+    "updated": "2026-10-02"
+  },
+  {
+    "title": "mattermost.New() 가 x509.SystemCertPool() 에러를 버린다",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "client.go:48 pool, _ := x509.SystemCertPool(). nil 이면 빈 풀로 대체하므로 동작은 하지만 사내 CA 를 넣은 관리자에게 '시스템 CA 를 못 읽었다' 가 조용히 사라진다. New() 가 로거를 받지 않아 시그니처를 건드려야 한다 — 가치 대비 번거로움.",
+    "updated": "2026-10-02"
+  },
+  {
+    "title": "identity_map.mm_display_name 에 남은 옛 'DoeJohn' 값이 갱신 전까지 그대로 보인다",
+    "value": 2,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "identity.go:386-387 이 DisplayName() 을 DB 에 저장하므로 2026-10-02 의 수정 이후에도 기존 행은 다음 갱신 때까지 옛 값을 유지한다. 마이그레이션(internal/store/migrations 는 보호 경로)으로 고치지 말 것 — 관리 콘솔의 '재검증'이 이미 갱신 경로이므로, 필요하다면 문서에 한 줄 적는 정도가 적절하다. 실제로 신경 쓸 만한 문제인지 자체가 미확인.",
+    "updated": "2026-10-02"
+  }
+]

@@ -1,0 +1,168 @@
+{
+  "run_id": "2026-10-02-053737-moyro-improve",
+  "generated": "2026-10-02T05:49:01+09:00",
+  "run": {
+    "run_id": "2026-10-02-053737-moyro-improve",
+    "project": "moyro",
+    "kind": "improve",
+    "started": "2026-10-02T05:37:38+09:00",
+    "model": "claude-opus-5",
+    "policy_version": "4a9e91ac7",
+    "prompts_hash": "ce085c79e18002e2",
+    "runner_version": "1bd5f0cd4",
+    "arm": "no-repair",
+    "experiment": "roles-2026-09",
+    "finished": "2026-10-02T05:49:01+09:00",
+    "outcome": "verify-failed"
+  },
+  "record": {
+    "ts": "2026-10-02T05:49:01+09:00",
+    "date": "2026-10-02",
+    "project": "moyro",
+    "result": "verify failed: 실패한 검증: cd webapp && ([ -d node_modules ] || npm ci --no-audit --no-fund) && npm run typecheck --silent && npm",
+    "outcome": "verify-failed",
+    "run_id": "2026-10-02-053737-moyro-improve",
+    "base_sha": "0439d5ee6929dbd383ad506dc3c007e876c9b5f6",
+    "head_sha": "0b2d41ca8ca8701c8478b0b1bc16ac21363edd71",
+    "pr": "",
+    "stages": {
+      "base": {
+        "state": "pinned",
+        "reason": "main@0439d5e",
+        "at": "2026-10-02T05:37:45+09:00"
+      },
+      "autonomy": {
+        "state": "release",
+        "reason": "",
+        "at": "2026-10-02T05:37:45+09:00"
+      },
+      "scout": {
+        "state": "done",
+        "reason": "`fireIncomingWebhook` 의 `FailureSave`(진짜 게시글 저장 장애)를 400 `post_failed` 에서 500 으로 분리 (가치 3 / 위험 1 /",
+        "at": "2026-10-02T05:41:59+09:00"
+      },
+      "brief": {
+        "state": "accepted",
+        "reason": "채택 — 과제서의 근거가 현재 코드와 정확히 일치했다(`default:` 가 `FailureSave` 와 `empty text` 를 같이 받는 것, 형제 `createPos",
+        "at": "2026-10-02T05:48:32+09:00"
+      },
+      "verify": {
+        "state": "failed",
+        "reason": "실패한 검증: cd webapp && ([ -d node_modules ] || npm ci --no-audit --no-fund) && npm run typecheck --silent && npm test --silent (exit 1)",
+        "at": "2026-10-02T05:48:59+09:00"
+      }
+    },
+    "campaign": "",
+    "autonomy": "release",
+    "arm": "no-repair",
+    "experiment": "roles-2026-09",
+    "engine": "claude",
+    "files": 2,
+    "additions": 249,
+    "deletions": 0,
+    "tests": 1,
+    "title": "fix: report incoming-webhook post save faults as 500 instead of a false 400"
+  },
+  "stages": {
+    "base": {
+      "state": "pinned",
+      "reason": "main@0439d5e",
+      "at": "2026-10-02T05:37:45+09:00"
+    },
+    "autonomy": {
+      "state": "release",
+      "reason": "",
+      "at": "2026-10-02T05:37:45+09:00"
+    },
+    "scout": {
+      "state": "done",
+      "reason": "`fireIncomingWebhook` 의 `FailureSave`(진짜 게시글 저장 장애)를 400 `post_failed` 에서 500 으로 분리 (가치 3 / 위험 1 /",
+      "at": "2026-10-02T05:41:59+09:00"
+    },
+    "brief": {
+      "state": "accepted",
+      "reason": "채택 — 과제서의 근거가 현재 코드와 정확히 일치했다(`default:` 가 `FailureSave` 와 `empty text` 를 같이 받는 것, 형제 `createPos",
+      "at": "2026-10-02T05:48:32+09:00"
+    },
+    "verify": {
+      "state": "failed",
+      "reason": "실패한 검증: cd webapp && ([ -d node_modules ] || npm ci --no-audit --no-fund) && npm run typecheck --silent && npm test --silent (exit 1)",
+      "at": "2026-10-02T05:48:59+09:00"
+    }
+  },
+  "provenance": {
+    "model": "claude-opus-5",
+    "policy_version": "4a9e91ac7",
+    "prompts_hash": "ce085c79e18002e2",
+    "runner_version": "1bd5f0cd4",
+    "base_sha": "0439d5ee6929dbd383ad506dc3c007e876c9b5f6",
+    "head_sha": "0b2d41ca8ca8701c8478b0b1bc16ac21363edd71",
+    "pr": ""
+  },
+  "verification": {
+    "runner": {
+      "source": "policy",
+      "commands": [
+        {
+          "cmd": "cd server && go build ./... && go vet ./... && go test ./...",
+          "exit": 0,
+          "seconds": 5
+        },
+        {
+          "cmd": "cd webapp && ([ -d node_modules ] || npm ci --no-audit --no-fund) && npm run typecheck --silent && npm test --silent",
+          "exit": 1,
+          "seconds": 22
+        }
+      ]
+    },
+    "runner_gate": {
+      "ok": false,
+      "state": "verify-failed",
+      "reason": "실패한 검증: cd webapp && ([ -d node_modules ] || npm ci --no-audit --no-fund) && npm run typecheck --silent && npm test --silent (exit 1)"
+    },
+    "after_rebase": null,
+    "review": null,
+    "ci_gate": null
+  },
+  "release": {
+    "result": null,
+    "assets_sha256": []
+  },
+  "approval": null,
+  "usage": [
+    {
+      "ts": "2026-10-02T05:41:59+09:00",
+      "date": "2026-10-02",
+      "project": "moyro",
+      "phase": "scout",
+      "run_id": "2026-10-02-053737-moyro-improve",
+      "campaign": "",
+      "subtype": "success",
+      "engine": "claude",
+      "duration_ms": 274411,
+      "num_turns": 30,
+      "cost_usd": 1.908905,
+      "input_tokens": 52,
+      "output_tokens": 16781,
+      "cache_read": 1612500,
+      "cache_create": 68287
+    },
+    {
+      "ts": "2026-10-02T05:48:32+09:00",
+      "date": "2026-10-02",
+      "project": "moyro",
+      "phase": "improve",
+      "run_id": "2026-10-02-053737-moyro-improve",
+      "campaign": "",
+      "subtype": "success",
+      "engine": "claude",
+      "duration_ms": 429378,
+      "num_turns": 39,
+      "cost_usd": 2.761735500000001,
+      "input_tokens": 60,
+      "output_tokens": 25317,
+      "cache_read": 2405281,
+      "cache_create": 92587
+    }
+  ]
+}
