@@ -293,3 +293,4 @@
 - 실패 재현: `× Review detail > offers no store link while the app is still waiting for this review` / `AssertionError: expected <a …(3)><svg …(11)>…(3)</svg></a> to be null` (같은 실행에서 기존 4건 + 게시+Public 통과 = 기존 동작 보존 기준선, 2 failed | 5 passed). 사용자 피해 자체도 임시 테스트로 재현했다: 같은 프로덕션 라우트에 `/apps/:slug`(실제 `AppDetailPage`)를 함께 마운트하고 공개 상세에 404 를 응답시킨 뒤 링크를 클릭하면 `앱을 찾을 수 없습니다.` 가 떴고 `Agent Hub` 는 화면에서 사라졌다(확인 후 임시 파일 삭제).
 - 보류 아이디어: 관리자 시스템 설정의 Page Size 가 어디에도 쓰이지 않는다 (3/3/M, `model.go:251` 선언 외 소비처 없음 · publicConfig 응답에도 없어 공개 API 계약 과제) · 상위 100개 밖의 즐겨찾기 앱이 /favorites 에 안 나옴 (3/3/M, 공개 API 계약 변경 수반) · clientAddress 가 RemoteAddr 만 보아 reverse proxy 뒤에서 rate limit 이 전역 (3/3/M, 신뢰 프록시 정책 선행) · 여러 탭에서 즐겨찾기 변경이 다른 탭에 반영되지 않음 (2/2/M, storage 이벤트 미구독 — 실제 브라우저 검증 필요) · 앱 상세의 상태 배지가 영문 원값을 그대로 노출 (2/1/S, `public-pages.tsx:469-475`, 옆에 `AppStatusBadge` 가 이미 있으나 공개 상세는 published 만 서빙해 가치 낮음)
 
+- 릴리즈: v2.11.11 (2026-10-01, run 2026-10-01-145206-appstore-improve)
