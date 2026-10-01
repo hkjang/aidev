@@ -927,6 +927,24 @@ run_verify(){ # $1=작업 디렉터리 $2=결과 파일
 
 # ---------------------------------------------------------------- CI · 보호 파일 · 리뷰 · 비밀정보
 # CI: check-runs 를 페이지 전체로 받아 gate 에 넘긴다. 두 번 연속 통과해야 한다(잡이 늦게 등록되는 경우). 확인 불가는 차단.
+# CI 가 실패했을 때 '어느 검사가 실패했다' 만 남기면 사후에 원인을 알 수 없다. GitHub 로그는
+# 하루 남짓 뒤 사라지므로(2026-10-01 에 vibe-code 실패 10건의 원인을 끝내 못 찾았다) 실패한
+# 잡의 단계 이름과 로그에서 뽑은 줄을 그 자리에서 증거로 남긴다. PR 수리 회차가 이것부터 읽는다.
+ci_failure_detail(){ # $1=sha $2=check-runs json
+  local sha=$1 f=$2 names jid out="$OUT/ci-failure-${sha:0:12}.txt"
+  names=$(jq -r '[.[][]?|select(.conclusion=="failure")|.name]|unique|join(", ")' "$f" 2>/dev/null)
+  { printf '실패한 검사: %s\n' "${names:-?}"
+    # 가장 최근 실패 실행의 잡·단계·로그 앞부분
+    jid=$(cd "$repo" && gh run list --limit 10 --json databaseId,headSha,conclusion \
+          --jq "[.[]|select(.headSha==\"$sha\" and .conclusion==\"failure\")][0].databaseId" 2>/dev/null)
+    if [ -n "$jid" ]; then
+      (cd "$repo" && gh api "repos/{owner}/{repo}/actions/runs/$jid/jobs" \
+        --jq '.jobs[]|select(.conclusion=="failure")|"잡: \(.name)","실패 단계: " + ([.steps[]?|select(.conclusion=="failure")|.name]|join(" / "))' 2>/dev/null)
+      (cd "$repo" && gh run view "$jid" --log-failed 2>/dev/null | grep -iE "error|failed|cannot|not found|✗|assert" | head -12)
+    fi
+  } > "$out" 2>/dev/null || true
+  [ -s "$out" ] && CI_REASON="$CI_REASON · $(head -2 "$out" | tr '\n' ' ' | cut -c1-120)"
+}
 ci_gate(){ # $1=sha → CI_STATE, CI_REASON 설정; 0=통과
   local sha=$1 i passes=0 req allow f="$OUT/ci-${1:0:12}.json" g ci_max
   # CI 대기 시간은 프로젝트마다 다르다 — 정책 .timeouts.ci_minutes 로 늘린다 (weekly 는 CI 가 22분)
@@ -940,7 +958,7 @@ ci_gate(){ # $1=sha → CI_STATE, CI_REASON 설정; 0=통과
     case "$CI_STATE" in
       success|no-ci-allowed) passes=$((passes+1)); [ $passes -ge 2 ] && return 0;;
       pending|no-ci|api-error) passes=0; { [ "$CI_STATE" = no-ci ] && [ $i -ge 10 ]; } && return 1; { [ "$CI_STATE" = api-error ] && [ $i -ge 6 ]; } && return 1;;
-      *) return 1;;
+      *) ci_failure_detail "$sha" "$f"; return 1;;
     esac
     [ $i -eq 1 ] && log "$n: waiting for CI on ${sha:0:7} ($CI_STATE)"
     sleep "$CI_POLL"
