@@ -1,0 +1,183 @@
+{
+  "run_id": "2026-10-02-001239-dataworks-improve",
+  "generated": "2026-10-02T00:30:21+09:00",
+  "run": {
+    "run_id": "2026-10-02-001239-dataworks-improve",
+    "project": "dataworks",
+    "kind": "improve",
+    "started": "2026-10-02T00:12:39+09:00",
+    "model": "claude-opus-5",
+    "policy_version": "4a9e91ac7",
+    "prompts_hash": "ce085c79e18002e2",
+    "runner_version": "1bd5f0cd4",
+    "arm": "baseline",
+    "experiment": "roles-2026-09",
+    "finished": "2026-10-02T00:30:20+09:00",
+    "outcome": "verify-failed"
+  },
+  "record": {
+    "ts": "2026-10-02T00:30:20+09:00",
+    "date": "2026-10-02",
+    "project": "dataworks",
+    "result": "fix-round: verify failed: 실패한 검증: cd web && npm test --silent (exit 1)",
+    "outcome": "verify-failed",
+    "run_id": "2026-10-02-001239-dataworks-improve",
+    "base_sha": "98c508154d1068c9c38a8034f15de9ab159753ec",
+    "head_sha": "f927cea41e12e9f7d82c39b8c52f6dafcbf06d79",
+    "pr": "",
+    "stages": {
+      "base": {
+        "state": "pinned",
+        "reason": "main@98c5081",
+        "at": "2026-10-02T00:12:43+09:00"
+      },
+      "autonomy": {
+        "state": "release",
+        "reason": "",
+        "at": "2026-10-02T00:12:43+09:00"
+      },
+      "scout": {
+        "state": "done",
+        "reason": "릴리즈 검증 `npm run lint` exit 1 복구 — 저장소 루트에 web 검증을 위임하는 `package.json` 을 두어 CI 의 `defaults.",
+        "at": "2026-10-02T00:19:59+09:00"
+      },
+      "brief": {
+        "state": "accepted",
+        "reason": "채택 — 0단계 재현이 과제서의 분기 조건((1) exit 0 · (2) exit 1)을 그대로 만족했고 미확인 가정(\"루트 실행이 원인\")을 `npm ",
+        "at": "2026-10-02T00:29:28+09:00"
+      },
+      "verify": {
+        "state": "failed",
+        "reason": "실패한 검증: cd web && npm test --silent (exit 1)",
+        "at": "2026-10-02T00:30:20+09:00"
+      }
+    },
+    "campaign": "",
+    "autonomy": "release",
+    "arm": "baseline",
+    "experiment": "roles-2026-09",
+    "engine": "claude",
+    "files": 9,
+    "additions": 332,
+    "deletions": 3,
+    "tests": 2,
+    "title": "fix(build): run web verification from the repository root"
+  },
+  "stages": {
+    "base": {
+      "state": "pinned",
+      "reason": "main@98c5081",
+      "at": "2026-10-02T00:12:43+09:00"
+    },
+    "autonomy": {
+      "state": "release",
+      "reason": "",
+      "at": "2026-10-02T00:12:43+09:00"
+    },
+    "scout": {
+      "state": "done",
+      "reason": "릴리즈 검증 `npm run lint` exit 1 복구 — 저장소 루트에 web 검증을 위임하는 `package.json` 을 두어 CI 의 `defaults.",
+      "at": "2026-10-02T00:19:59+09:00"
+    },
+    "brief": {
+      "state": "accepted",
+      "reason": "채택 — 0단계 재현이 과제서의 분기 조건((1) exit 0 · (2) exit 1)을 그대로 만족했고 미확인 가정(\"루트 실행이 원인\")을 `npm ",
+      "at": "2026-10-02T00:29:28+09:00"
+    },
+    "verify": {
+      "state": "failed",
+      "reason": "실패한 검증: cd web && npm test --silent (exit 1)",
+      "at": "2026-10-02T00:30:20+09:00"
+    }
+  },
+  "provenance": {
+    "model": "claude-opus-5",
+    "policy_version": "4a9e91ac7",
+    "prompts_hash": "ce085c79e18002e2",
+    "runner_version": "1bd5f0cd4",
+    "base_sha": "98c508154d1068c9c38a8034f15de9ab159753ec",
+    "head_sha": "f927cea41e12e9f7d82c39b8c52f6dafcbf06d79",
+    "pr": ""
+  },
+  "verification": {
+    "runner": {
+      "source": "auto",
+      "commands": [
+        {
+          "cmd": "go build ./...",
+          "exit": 0,
+          "seconds": 1
+        },
+        {
+          "cmd": "go vet ./...",
+          "exit": 0,
+          "seconds": 1
+        },
+        {
+          "cmd": "go test ./...",
+          "exit": 0,
+          "seconds": 43
+        },
+        {
+          "cmd": "cd web && [ -d node_modules ] || npm ci --no-audit --no-fund",
+          "exit": 0,
+          "seconds": 0
+        },
+        {
+          "cmd": "cd web && npm test --silent",
+          "exit": 1,
+          "seconds": 6
+        }
+      ]
+    },
+    "runner_gate": {
+      "ok": false,
+      "state": "verify-failed",
+      "reason": "실패한 검증: cd web && npm test --silent (exit 1)"
+    },
+    "after_rebase": null,
+    "review": null,
+    "ci_gate": null
+  },
+  "release": {
+    "result": null,
+    "assets_sha256": []
+  },
+  "approval": null,
+  "usage": [
+    {
+      "ts": "2026-10-02T00:19:59+09:00",
+      "date": "2026-10-02",
+      "project": "dataworks",
+      "phase": "scout",
+      "run_id": "2026-10-02-001239-dataworks-improve",
+      "campaign": "",
+      "subtype": "success",
+      "engine": "claude",
+      "duration_ms": 472262,
+      "num_turns": 24,
+      "cost_usd": 1.9167830000000003,
+      "input_tokens": 28,
+      "output_tokens": 28329,
+      "cache_read": 903536,
+      "cache_create": 75665
+    },
+    {
+      "ts": "2026-10-02T00:29:28+09:00",
+      "date": "2026-10-02",
+      "project": "dataworks",
+      "phase": "improve",
+      "run_id": "2026-10-02-001239-dataworks-improve",
+      "campaign": "",
+      "subtype": "success",
+      "engine": "claude",
+      "duration_ms": 617410,
+      "num_turns": 58,
+      "cost_usd": 4.197786,
+      "input_tokens": 108,
+      "output_tokens": 34422,
+      "cache_read": 4630952,
+      "cache_create": 102122
+    }
+  ]
+}
