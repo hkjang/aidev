@@ -35,3 +35,19 @@
 - 확신 없는 곳: (1) 대문자 정규형을 **받아들이고 접는** 선택 — `format: uuid` 는 대소문자를 가리지 않으니 400 으로 거절하면 PG 에서 되던 요청이 깨지므로 접는 쪽을 골랐으나, 거절이 더 엄격해 좋다고 볼 수도 있다. (2) `missingAssetID`(merge, assets.go:689) 는 **똑같은 `uuid.Parse` 결함이 그대로 남아** `urn:uuid:` 로 500 이 날 것이다 — 이번 변경(base 21954f0) 밖의 기성 코드라 범위 밖으로 두었고 `canonicalUUID` 를 한 줄 적용하면 닫히지만 merge 쪽 테스트가 따로 필요하다. 다음 회차 후보.
 - 범위: `assets.go`·`asset_split_validation_test.go` 두 파일만 수정. tx 안 `internalError` → SQLite 교착은 여전히 회피만 하고 고치지 않았다(검증이 tx 밖). `server/invenqor-server` 빌드 산출물은 지웠다.
 - [러너 12:09] repair done — # fix-summary  비평가의 지적 3건은 모두 사실이었고, 실제 postgres:17-alpine 으로 재현했다 — `urn:uuid:<id>` 는 assetID·source_ids 양쪽에서 **500 INTERNAL_ERROR**, `{<실
+
+## 비평 노트
+- (수리 후 재심) 확인한 것: 신규 테스트를 수정 전 트리(22ef83e)에 복사해 돌려 **실패를 직접 재현**했다 — SQLite 4건, 실제 postgres:17-alpine 7건(`urn:uuid:` → 500, 중괄호·하이픈 없는 형식 → **201 로 split 수행**, after_json 에 대문자 그대로). 고친 뒤 두 방언 모두 `go test ./...` 전체 통과 + gofmt/vet 통과. 테스트는 프로덕션 라우터를 지나고 단언이 실질적이다(`assets WHERE source='manual'` 체크도 픽스처가 'agent' 라 비지 않는다).
+- `canonicalUUID`(assets.go:661) 의 `len==36` 가드를 google/uuid v1.6.0 `Parse` 소스와 대조했다 — 36 분기만 하이픈 4곳과 hex 16쌍을 모두 검사하므로 통과 집합이 PostgreSQL `uuid` 입력의 정규형과 정확히 일치한다. 통과하는데 PG 가 거절하는 36자는 없다. 검증이 `BeginTx` 앞이라 tx 누수도 없다. **approve, risk low, 차단 없음.**
+- 남는 우려: `missingAssetID`(assets.go:689)는 맨 `uuid.Parse` 그대로 → **merge 는 `urn:uuid:` 로 PG 에서 아직 500**, 중괄호·하이픈 없는 형식은 PG 만 merge 를 수행한다. 다음 회차 1순위(`canonicalUUID` 한 줄 + merge 테스트). tx 안 `s.internalError` → SQLite 교착은 splitAsset 849·865·886·890 에 여전히 남아 있다(회피만 했음).
+- 릴리즈 노트에 꼭 적을 것: **조이는 변경**이다 — PG 에서 201 로 성공하던 비정규 철자가 이제 400 이고, SQLite 는 형식 틀린 assetID 코드가 `INVALID_SOURCE`→`INVALID_SPLIT` 로 바뀌며(400 유지, openapi 가 코드를 열거하지 않아 계약 위반 아님) 대문자 정규형 id 는 접혀서 성공한다.
+- 보지 않은 것: web·Rust(이번 diff 밖). 범위는 `assets.go` + 신규 테스트 두 파일뿐이고 버전·PDF·`webui/dist`·`openapi.yaml` 은 손대지 않았다 — 관례대로 맞다.
+- [러너 12:15] review approved — 리뷰 승인 (risk=low)
+- [러너 12:16] pr created — https://github.com/hkjang/invenqor/pull/28
+- [러너 12:20] ci passed — 검사 11개 모두 success
+- [러너 12:20] merge done — 52ae5a9
+- [러너 12:44] release published — v0.2.40
+- [러너 12:44] gh-release created — GitHub Release v0.2.40
+- [러너 12:44] manifest ok — ADMIN_GUIDE.md ADMIN_GUIDE.pdf API_MCP_GUIDE.md API_MCP_GUIDE.pdf EXECUTIVE_REPORT.md EXECUTIVE_REPORT.pdf RELEASE_NOTES_v0.2.40.md SERVER_INSTALLATION.md SERVER_INSTALLATION.pdf USER_GUIDE.md USER_GU
+- [러너 12:45] assets uploaded — 29개
+- [러너 12:45] assets verified — v0.2.40 자산 29개 (이전 v0.2.39: 29)

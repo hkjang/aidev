@@ -1,0 +1,531 @@
+{
+  "run_id": "2026-10-01-114217-Invenqor-improve",
+  "generated": "2026-10-01T12:45:50+09:00",
+  "run": {
+    "run_id": "2026-10-01-114217-Invenqor-improve",
+    "project": "Invenqor",
+    "kind": "improve",
+    "started": "2026-10-01T11:42:17+09:00",
+    "model": "claude-opus-5",
+    "policy_version": "4a9e91ac7",
+    "prompts_hash": "ce085c79e18002e2",
+    "runner_version": "1bd5f0cd4",
+    "arm": "no-journal",
+    "experiment": "roles-2026-09",
+    "finished": "2026-10-01T12:45:50+09:00",
+    "outcome": "release-ready"
+  },
+  "record": {
+    "ts": "2026-10-01T12:45:50+09:00",
+    "date": "2026-10-01",
+    "project": "Invenqor",
+    "result": "merged https://github.com/hkjang/invenqor/pull/28, released v0.2.40",
+    "outcome": "release-ready",
+    "run_id": "2026-10-01-114217-Invenqor-improve",
+    "base_sha": "21954f05eb3631e8bee63be2fa979e870e1a0e90",
+    "head_sha": "52ae5a97ac123f0f8e65ada2cf2a7cb0450085df",
+    "pr": "https://github.com/hkjang/invenqor/pull/28",
+    "stages": {
+      "base": {
+        "state": "pinned",
+        "reason": "main@21954f0",
+        "at": "2026-10-01T11:42:24+09:00"
+      },
+      "autonomy": {
+        "state": "release",
+        "reason": "",
+        "at": "2026-10-01T11:42:24+09:00"
+      },
+      "scout": {
+        "state": "done",
+        "reason": "`POST /api/v1/assets/{assetId}/split` 이 형식이 틀린 UUID 를 PostgreSQL 에서 500 으로 터뜨리고, 이 엔드포인트에 테스",
+        "at": "2026-10-01T11:47:01+09:00"
+      },
+      "brief": {
+        "state": "accepted",
+        "reason": "채택 — 근거(openapi 의 400 단독 약속, `splitAsset` 에 형식 검증이 전무, UUID/TEXT 방언 차이, split",
+        "at": "2026-10-01T11:53:08+09:00"
+      },
+      "verify": {
+        "state": "passed",
+        "reason": "검증 8개 통과 (auto)",
+        "at": "2026-10-01T11:53:51+09:00"
+      },
+      "review": {
+        "state": "approved",
+        "reason": "리뷰 승인 (risk=low)",
+        "at": "2026-10-01T12:15:53+09:00"
+      },
+      "repair": {
+        "state": "done",
+        "reason": "# fix-summary  비평가의 지적 3건은 모두 사실이었고, 실제 postgres:17-alpine 으로 재현했다 — `urn:uuid:<id>` 는 assetID·source_ids 양쪽에서 **500 INTERNAL_ERROR**, `{<실",
+        "at": "2026-10-01T12:09:27+09:00"
+      },
+      "pr": {
+        "state": "created",
+        "reason": "https://github.com/hkjang/invenqor/pull/28",
+        "at": "2026-10-01T12:16:00+09:00"
+      },
+      "ci": {
+        "state": "passed",
+        "reason": "검사 11개 모두 success",
+        "at": "2026-10-01T12:20:22+09:00"
+      },
+      "merge": {
+        "state": "done",
+        "reason": "52ae5a97ac123f0f8e65ada2cf2a7cb0450085df",
+        "at": "2026-10-01T12:20:27+09:00"
+      },
+      "release": {
+        "state": "published",
+        "reason": "v0.2.40",
+        "at": "2026-10-01T12:44:25+09:00"
+      },
+      "gh-release": {
+        "state": "created",
+        "reason": "GitHub Release v0.2.40",
+        "at": "2026-10-01T12:44:28+09:00"
+      },
+      "manifest": {
+        "state": "ok",
+        "reason": "ADMIN_GUIDE.md ADMIN_GUIDE.pdf API_MCP_GUIDE.md API_MCP_GUIDE.pdf EXECUTIVE_REPORT.md EXECUTIVE_REPORT.pdf RELEASE_NOTES_v0.2.40.md SERVER_INSTALLATION.md SERVER_INSTALLATION.pdf USER_GUIDE.md USER_GUIDE.pdf compose.invenqor-0.2.40.yaml compose.offline.yaml invenqor-0.2.40.env.example invenqor-0.2.40.tgz invenqor-0.2.40.tgz.sha256 invenqor-agent-linux-aarch64.tar.gz invenqor-agent-linux-aarch64.tar.gz.sha256 invenqor-agent-linux-x86_64.tar.gz invenqor-agent-linux-x86_64.tar.gz.sha256 invenqor-agent-windows-x86_64.zip invenqor-agent-windows-x86_64.zip.sha256 invenqor-agents-0.2.40.tar.gz invenqor-agents-0.2.40.tar.gz.sha256 invenqor-v0.2.40.tar.gz invenqor-v0.2.40.tar.gz.sha256 load-invenqor-0.2.40.ps1 load-invenqor-0.2.40.sh openapi.yaml ",
+        "at": "2026-10-01T12:44:30+09:00"
+      },
+      "assets": {
+        "state": "verified",
+        "reason": "v0.2.40 자산 29개 (이전 v0.2.39: 29)",
+        "at": "2026-10-01T12:45:35+09:00"
+      }
+    },
+    "campaign": "",
+    "autonomy": "release",
+    "arm": "no-journal",
+    "experiment": "roles-2026-09",
+    "engine": "claude",
+    "files": 2,
+    "additions": 382,
+    "deletions": 4,
+    "tests": 1,
+    "title": "fix: split 이 openapi 가 선언한 정규형 uuid 만 받아 두 방언의 500·201 발산을 없앤다"
+  },
+  "stages": {
+    "base": {
+      "state": "pinned",
+      "reason": "main@21954f0",
+      "at": "2026-10-01T11:42:24+09:00"
+    },
+    "autonomy": {
+      "state": "release",
+      "reason": "",
+      "at": "2026-10-01T11:42:24+09:00"
+    },
+    "scout": {
+      "state": "done",
+      "reason": "`POST /api/v1/assets/{assetId}/split` 이 형식이 틀린 UUID 를 PostgreSQL 에서 500 으로 터뜨리고, 이 엔드포인트에 테스",
+      "at": "2026-10-01T11:47:01+09:00"
+    },
+    "brief": {
+      "state": "accepted",
+      "reason": "채택 — 근거(openapi 의 400 단독 약속, `splitAsset` 에 형식 검증이 전무, UUID/TEXT 방언 차이, split",
+      "at": "2026-10-01T11:53:08+09:00"
+    },
+    "verify": {
+      "state": "passed",
+      "reason": "검증 8개 통과 (auto)",
+      "at": "2026-10-01T11:53:51+09:00"
+    },
+    "review": {
+      "state": "approved",
+      "reason": "리뷰 승인 (risk=low)",
+      "at": "2026-10-01T12:15:53+09:00"
+    },
+    "repair": {
+      "state": "done",
+      "reason": "# fix-summary  비평가의 지적 3건은 모두 사실이었고, 실제 postgres:17-alpine 으로 재현했다 — `urn:uuid:<id>` 는 assetID·source_ids 양쪽에서 **500 INTERNAL_ERROR**, `{<실",
+      "at": "2026-10-01T12:09:27+09:00"
+    },
+    "pr": {
+      "state": "created",
+      "reason": "https://github.com/hkjang/invenqor/pull/28",
+      "at": "2026-10-01T12:16:00+09:00"
+    },
+    "ci": {
+      "state": "passed",
+      "reason": "검사 11개 모두 success",
+      "at": "2026-10-01T12:20:22+09:00"
+    },
+    "merge": {
+      "state": "done",
+      "reason": "52ae5a97ac123f0f8e65ada2cf2a7cb0450085df",
+      "at": "2026-10-01T12:20:27+09:00"
+    },
+    "release": {
+      "state": "published",
+      "reason": "v0.2.40",
+      "at": "2026-10-01T12:44:25+09:00"
+    },
+    "gh-release": {
+      "state": "created",
+      "reason": "GitHub Release v0.2.40",
+      "at": "2026-10-01T12:44:28+09:00"
+    },
+    "manifest": {
+      "state": "ok",
+      "reason": "ADMIN_GUIDE.md ADMIN_GUIDE.pdf API_MCP_GUIDE.md API_MCP_GUIDE.pdf EXECUTIVE_REPORT.md EXECUTIVE_REPORT.pdf RELEASE_NOTES_v0.2.40.md SERVER_INSTALLATION.md SERVER_INSTALLATION.pdf USER_GUIDE.md USER_GUIDE.pdf compose.invenqor-0.2.40.yaml compose.offline.yaml invenqor-0.2.40.env.example invenqor-0.2.40.tgz invenqor-0.2.40.tgz.sha256 invenqor-agent-linux-aarch64.tar.gz invenqor-agent-linux-aarch64.tar.gz.sha256 invenqor-agent-linux-x86_64.tar.gz invenqor-agent-linux-x86_64.tar.gz.sha256 invenqor-agent-windows-x86_64.zip invenqor-agent-windows-x86_64.zip.sha256 invenqor-agents-0.2.40.tar.gz invenqor-agents-0.2.40.tar.gz.sha256 invenqor-v0.2.40.tar.gz invenqor-v0.2.40.tar.gz.sha256 load-invenqor-0.2.40.ps1 load-invenqor-0.2.40.sh openapi.yaml ",
+      "at": "2026-10-01T12:44:30+09:00"
+    },
+    "assets": {
+      "state": "verified",
+      "reason": "v0.2.40 자산 29개 (이전 v0.2.39: 29)",
+      "at": "2026-10-01T12:45:35+09:00"
+    }
+  },
+  "provenance": {
+    "model": "claude-opus-5",
+    "policy_version": "4a9e91ac7",
+    "prompts_hash": "ce085c79e18002e2",
+    "runner_version": "1bd5f0cd4",
+    "base_sha": "21954f05eb3631e8bee63be2fa979e870e1a0e90",
+    "head_sha": "52ae5a97ac123f0f8e65ada2cf2a7cb0450085df",
+    "pr": "https://github.com/hkjang/invenqor/pull/28"
+  },
+  "verification": {
+    "runner": {
+      "source": "auto",
+      "commands": [
+        {
+          "cmd": "cargo test --quiet",
+          "exit": 0,
+          "seconds": 13
+        },
+        {
+          "cmd": "cd server && go build ./...",
+          "exit": 0,
+          "seconds": 1
+        },
+        {
+          "cmd": "cd server && go vet ./...",
+          "exit": 0,
+          "seconds": 0
+        },
+        {
+          "cmd": "cd server && go test ./...",
+          "exit": 0,
+          "seconds": 20
+        },
+        {
+          "cmd": "cd web && [ -d node_modules ] || npm ci --no-audit --no-fund",
+          "exit": 0,
+          "seconds": 4
+        },
+        {
+          "cmd": "cd web && npm test --silent",
+          "exit": 0,
+          "seconds": 1
+        },
+        {
+          "cmd": "cd web && [ -d node_modules ] || npm ci --no-audit --no-fund",
+          "exit": 0,
+          "seconds": 0
+        },
+        {
+          "cmd": "cd web && npm run build --silent",
+          "exit": 0,
+          "seconds": 3
+        }
+      ]
+    },
+    "runner_gate": {
+      "ok": true,
+      "state": "verified",
+      "reason": "검증 8개 통과 (auto)"
+    },
+    "after_rebase": null,
+    "review": {
+      "verdict": "approve",
+      "reasons": [],
+      "notes": [
+        "검증: 실제 대상은 21954f0..HEAD 두 커밋(로컬 main 은 c9527e7 로 낡음, origin/main=21954f0). 프로덕션 파일은 server/internal/httpapi/assets.go 하나, 그 외는 신규 테스트 하나 — 범위 이탈 없음. 버전 범프·릴리즈 노트·PDF·webui/dist·openapi 변경 없음(응답 코드 집합이 그대로라 openapi_routes_test 가 요구하지 않음).",
+        "테스트가 변경을 정말 검증한다 — 직접 확인함. 신규 테스트를 22ef83e(수정 전) 트리에 복사해 돌린 결과 SQLite 4건 실패, 실제 postgres:17-alpine 7건 실패이며 실패 출력이 커밋이 주장하는 증상과 정확히 일치한다: assetID `urn:uuid:<id>` → 500 INTERNAL_ERROR, `{<실존 id>}`·하이픈 없는 32자 → **201 로 split 이 실제 수행**, source_ids 쪽도 동일, after_json 에 대문자 id 가 글자 그대로 저장. 고친 뒤 두 방언 모두 `go test ./...` 전체 통과(SQLite + scripts/test-postgres.sh), gofmt -l 빈 출력, go vet 통과.",
+        "canonicalUUID(assets.go:661) 의 `len(value)!=36` 가드를 google/uuid v1.6.0 Parse 소스와 직접 대조했다 — Parse 는 길이로 분기(36 / 36+9 urn / 36+2 중괄호 / 32 하이픈 없음)하고 36 분기만 s[8],s[13],s[18],s[23] 하이픈과 16자리 hex 를 모두 검사하므로, len==36 + Parse 성공은 PostgreSQL uuid 입력이 받는 정규형과 정확히 일치한다. 통과하는데 PG 가 거절하는 36자 문자열은 없다. 검증이 BeginTx 앞에 있어 tx 누수도 없다.",
+        "남은 결함(이번 diff 밖, 다음 회차 1순위): missingAssetID(assets.go:689)는 똑같은 맨 `uuid.Parse` 를 그대로 쓴다 → POST /api/v1/assets/merge 는 `urn:uuid:<id>` 로 PG 에서 여전히 500, 중괄호·하이픈 없는 형식은 PG 가 정규화해 merge 가 **수행**되는데 SQLite 는 400 이다. canonicalUUID 한 줄 적용 + merge 테스트가 필요하다. 수리자가 스스로 flag 했고 범위 판단은 타당.",
+        "릴리즈 노트에 적을 것: 이것은 완화가 아니라 **조이는** 변경이다 — PG 에서 201 로 성공하던 비정규 형식 요청이 이제 400 INVALID_SPLIT/INVALID_SOURCE 가 된다. SQLite 폴백에서도 형식이 틀린 assetID 의 코드가 INVALID_SOURCE→INVALID_SPLIT 로 바뀌고(상태코드 400 은 동일, openapi 가 코드를 열거하지 않아 계약 위반 아님) 대문자 정규형 id 는 이제 접혀서 성공한다.",
+        "우려(거절 사유 아님): (1) tx 안 s.internalError → SQLite 교착 위험은 splitAsset 849·865·886·890 에 그대로 남아 있다 — 이번 변경은 검증을 tx 밖에 두어 회피했을 뿐 고치지 않았다. (2) asset_split_validation_test.go:301 의 `!strings.Contains(afterJSON, upper)` 는 생성된 uuid 에 a–f 가 전혀 없으면 헛되게 실패한다(확률 ~1e-7, 고칠 가치 없음). (3) 못 본 것: web·Rust(이번 diff 밖).",
+        "보안·법무 모두 깨끗 — 차단 없음. 라우트는 기존 requireCSRF + requirePermission(\"assets.merge\") 그대로이고 새 엔드포인트·권한 확대·비밀값·의존성·마이그레이션이 없다. 변경 방향은 허용 목록 검증으로 입력을 **좁히는** 것이라 보안상 순개선이다. 새 개인정보 수집·전송 없음(기록되는 식별자가 호출자 철자 대신 정규형으로 바뀐 것뿐). 마이그레이션·외부 상태가 없어 revert 로 완전히 되돌아온다."
+      ],
+      "risk": "low",
+      "blocking": []
+    },
+    "ci_gate": {
+      "ok": true,
+      "state": "success",
+      "reason": "검사 11개 모두 success",
+      "checks": 11
+    }
+  },
+  "release": {
+    "result": {
+      "status": "released",
+      "version": "0.2.40",
+      "tag": "v0.2.40",
+      "title": "Invenqor v0.2.40",
+      "notes_file": "/mnt/c/Users/USER/projects/aidev/state/runs/2026-10-01-114217-Invenqor-improve/RELEASE_NOTES_v0.2.40.md",
+      "github_release": true,
+      "assets": [
+        "/mnt/c/Users/USER/projects/aidev/state/runs/2026-10-01-114217-Invenqor-improve/assets/ADMIN_GUIDE.md",
+        "/mnt/c/Users/USER/projects/aidev/state/runs/2026-10-01-114217-Invenqor-improve/assets/ADMIN_GUIDE.pdf",
+        "/mnt/c/Users/USER/projects/aidev/state/runs/2026-10-01-114217-Invenqor-improve/assets/API_MCP_GUIDE.md",
+        "/mnt/c/Users/USER/projects/aidev/state/runs/2026-10-01-114217-Invenqor-improve/assets/API_MCP_GUIDE.pdf",
+        "/mnt/c/Users/USER/projects/aidev/state/runs/2026-10-01-114217-Invenqor-improve/assets/EXECUTIVE_REPORT.md",
+        "/mnt/c/Users/USER/projects/aidev/state/runs/2026-10-01-114217-Invenqor-improve/assets/EXECUTIVE_REPORT.pdf",
+        "/mnt/c/Users/USER/projects/aidev/state/runs/2026-10-01-114217-Invenqor-improve/assets/RELEASE_NOTES_v0.2.40.md",
+        "/mnt/c/Users/USER/projects/aidev/state/runs/2026-10-01-114217-Invenqor-improve/assets/SERVER_INSTALLATION.md",
+        "/mnt/c/Users/USER/projects/aidev/state/runs/2026-10-01-114217-Invenqor-improve/assets/SERVER_INSTALLATION.pdf",
+        "/mnt/c/Users/USER/projects/aidev/state/runs/2026-10-01-114217-Invenqor-improve/assets/USER_GUIDE.md",
+        "/mnt/c/Users/USER/projects/aidev/state/runs/2026-10-01-114217-Invenqor-improve/assets/USER_GUIDE.pdf",
+        "/mnt/c/Users/USER/projects/aidev/state/runs/2026-10-01-114217-Invenqor-improve/assets/compose.invenqor-0.2.40.yaml",
+        "/mnt/c/Users/USER/projects/aidev/state/runs/2026-10-01-114217-Invenqor-improve/assets/compose.offline.yaml",
+        "/mnt/c/Users/USER/projects/aidev/state/runs/2026-10-01-114217-Invenqor-improve/assets/invenqor-0.2.40.env.example",
+        "/mnt/c/Users/USER/projects/aidev/state/runs/2026-10-01-114217-Invenqor-improve/assets/invenqor-0.2.40.tgz",
+        "/mnt/c/Users/USER/projects/aidev/state/runs/2026-10-01-114217-Invenqor-improve/assets/invenqor-0.2.40.tgz.sha256",
+        "/mnt/c/Users/USER/projects/aidev/state/runs/2026-10-01-114217-Invenqor-improve/assets/invenqor-agent-linux-aarch64.tar.gz",
+        "/mnt/c/Users/USER/projects/aidev/state/runs/2026-10-01-114217-Invenqor-improve/assets/invenqor-agent-linux-aarch64.tar.gz.sha256",
+        "/mnt/c/Users/USER/projects/aidev/state/runs/2026-10-01-114217-Invenqor-improve/assets/invenqor-agent-linux-x86_64.tar.gz",
+        "/mnt/c/Users/USER/projects/aidev/state/runs/2026-10-01-114217-Invenqor-improve/assets/invenqor-agent-linux-x86_64.tar.gz.sha256",
+        "/mnt/c/Users/USER/projects/aidev/state/runs/2026-10-01-114217-Invenqor-improve/assets/invenqor-agent-windows-x86_64.zip",
+        "/mnt/c/Users/USER/projects/aidev/state/runs/2026-10-01-114217-Invenqor-improve/assets/invenqor-agent-windows-x86_64.zip.sha256",
+        "/mnt/c/Users/USER/projects/aidev/state/runs/2026-10-01-114217-Invenqor-improve/assets/invenqor-agents-0.2.40.tar.gz",
+        "/mnt/c/Users/USER/projects/aidev/state/runs/2026-10-01-114217-Invenqor-improve/assets/invenqor-agents-0.2.40.tar.gz.sha256",
+        "/mnt/c/Users/USER/projects/aidev/state/runs/2026-10-01-114217-Invenqor-improve/assets/invenqor-v0.2.40.tar.gz",
+        "/mnt/c/Users/USER/projects/aidev/state/runs/2026-10-01-114217-Invenqor-improve/assets/invenqor-v0.2.40.tar.gz.sha256",
+        "/mnt/c/Users/USER/projects/aidev/state/runs/2026-10-01-114217-Invenqor-improve/assets/load-invenqor-0.2.40.ps1",
+        "/mnt/c/Users/USER/projects/aidev/state/runs/2026-10-01-114217-Invenqor-improve/assets/load-invenqor-0.2.40.sh",
+        "/mnt/c/Users/USER/projects/aidev/state/runs/2026-10-01-114217-Invenqor-improve/assets/openapi.yaml"
+      ],
+      "reason": ""
+    },
+    "assets_sha256": [
+      {
+        "sha256": "6b86588260d595029cf75ea29be5d26a0d37fe76ee1bac79f700cb76f0507242",
+        "name": "ADMIN_GUIDE.md"
+      },
+      {
+        "sha256": "cd5b21bf3be4f271babbb3533dcf0122b473560a4d83d6c2226e46a0e1cb5311",
+        "name": "ADMIN_GUIDE.pdf"
+      },
+      {
+        "sha256": "ed0174b5da0c24ad4d69838bb52953d46548a9369034a2db6bb774d7a40acefe",
+        "name": "API_MCP_GUIDE.md"
+      },
+      {
+        "sha256": "270a7fadf0212b2b53f5365d67a6055da09915936075ebcdd1cbf3fd7931cc66",
+        "name": "API_MCP_GUIDE.pdf"
+      },
+      {
+        "sha256": "829ea32cbd900d64f44519ac7b6890b59c31cb8220b7c5f8abb48414dd5ca847",
+        "name": "EXECUTIVE_REPORT.md"
+      },
+      {
+        "sha256": "a1d27262209bc07e4656ba2f2a4546507dc4dec201c149275b0427c06764d047",
+        "name": "EXECUTIVE_REPORT.pdf"
+      },
+      {
+        "sha256": "13a39729de1c895b768540e2956c4b82aef47f0d90b0ed053452979a49b052ff",
+        "name": "RELEASE_NOTES_v0.2.40.md"
+      },
+      {
+        "sha256": "5df74c640bac16756bfa45209c94c84c39a8d3e9398aa20d0e032bd5e23c52a5",
+        "name": "SERVER_INSTALLATION.md"
+      },
+      {
+        "sha256": "4cf606a73dec52933fb4068409f597ecf1ccc42f9abf26e149a6703832302559",
+        "name": "SERVER_INSTALLATION.pdf"
+      },
+      {
+        "sha256": "51243037c62cd8bf09646be6e09b588db05ed2acd268f48b4daddfa82dd51254",
+        "name": "USER_GUIDE.md"
+      },
+      {
+        "sha256": "dbe7ce2f657344135747941436ecb2c2560d5084e1946d960f1e92dde04df2ac",
+        "name": "USER_GUIDE.pdf"
+      },
+      {
+        "sha256": "63debfed1daeb7b74ab3e9a789622f9e29d4f65b2193faf26c1845e603d49baa",
+        "name": "compose.invenqor-0.2.40.yaml"
+      },
+      {
+        "sha256": "63debfed1daeb7b74ab3e9a789622f9e29d4f65b2193faf26c1845e603d49baa",
+        "name": "compose.offline.yaml"
+      },
+      {
+        "sha256": "8dbf33009d3174660bf12de0516f225068432d968ce9794952c403c4ac993280",
+        "name": "invenqor-0.2.40.env.example"
+      },
+      {
+        "sha256": "f2ddd576685e93aeb8ca6b46ffc7f098df00e6a3c9e3d00ee11c47178d0631a5",
+        "name": "invenqor-0.2.40.tgz"
+      },
+      {
+        "sha256": "71129f75d62e20a43fd2fc6929a24ebb0ed96d9c6600105ad0f1a5709be0d81b",
+        "name": "invenqor-0.2.40.tgz.sha256"
+      },
+      {
+        "sha256": "bacb804d7da3f5dc26d46ab998f79f8f63e9fa69f4fb34e5c8e0ea040f0d1e29",
+        "name": "invenqor-agent-linux-aarch64.tar.gz"
+      },
+      {
+        "sha256": "b60e0932681e3c0b1d8a5700813f46e8fa336920d0ae9caeb429098afa38c419",
+        "name": "invenqor-agent-linux-aarch64.tar.gz.sha256"
+      },
+      {
+        "sha256": "cee1f410b4421a4a16e3efad9374027e274433277510ef2cb06a71d2003d5424",
+        "name": "invenqor-agent-linux-x86_64.tar.gz"
+      },
+      {
+        "sha256": "4ad58a461b54e2b3f949c651975f8e036d1ce0c2994128dd5a17ad8222db4b37",
+        "name": "invenqor-agent-linux-x86_64.tar.gz.sha256"
+      },
+      {
+        "sha256": "d3981ade8c85a52a6b9cc24553da52bceb347450313d41ed38d5f7a7c9f1fcc8",
+        "name": "invenqor-agent-windows-x86_64.zip"
+      },
+      {
+        "sha256": "f47c4b5e8486a9232832122f76819eb1723086edd5e871079da3310591d40805",
+        "name": "invenqor-agent-windows-x86_64.zip.sha256"
+      },
+      {
+        "sha256": "df97d701420ded7896fa4459e558de9f3b4dc32f6e92b0ad53a5dc9e72c7f8cd",
+        "name": "invenqor-agents-0.2.40.tar.gz"
+      },
+      {
+        "sha256": "615d10f8956edf7a908f5066cc6aec004828bebc44f0e1dbfc3575e797f07ee3",
+        "name": "invenqor-agents-0.2.40.tar.gz.sha256"
+      },
+      {
+        "sha256": "df801a79a07a6658fdfcc0cd25b9af7bc04532d5cd7a19d65eb05f0553163e48",
+        "name": "invenqor-v0.2.40.tar.gz"
+      },
+      {
+        "sha256": "42fd9e11165478f145d1ae14735edb0eb10c18faad20bbc25defa8f60797da72",
+        "name": "invenqor-v0.2.40.tar.gz.sha256"
+      },
+      {
+        "sha256": "3745058161733bac346fd31021fefd237fea4cfbae3b82e52526078c62a45d7e",
+        "name": "load-invenqor-0.2.40.ps1"
+      },
+      {
+        "sha256": "8a6c58e78fc77f6cfb8c14a25ec68b33c1b22f1ed6d37916918ac16a9c8aeabc",
+        "name": "load-invenqor-0.2.40.sh"
+      },
+      {
+        "sha256": "038089438b3b25813c1edb2d8a7422caeefe585777f31c1ceb0eafecd3295882",
+        "name": "openapi.yaml"
+      }
+    ]
+  },
+  "approval": null,
+  "usage": [
+    {
+      "ts": "2026-10-01T11:47:01+09:00",
+      "date": "2026-10-01",
+      "project": "Invenqor",
+      "phase": "scout",
+      "run_id": "2026-10-01-114217-Invenqor-improve",
+      "campaign": "",
+      "subtype": "success",
+      "engine": "claude",
+      "duration_ms": 287839,
+      "num_turns": 32,
+      "cost_usd": 1.7776195000000001,
+      "input_tokens": 48,
+      "output_tokens": 18974,
+      "cache_read": 1363179,
+      "cache_create": 62144
+    },
+    {
+      "ts": "2026-10-01T11:53:08+09:00",
+      "date": "2026-10-01",
+      "project": "Invenqor",
+      "phase": "improve",
+      "run_id": "2026-10-01-114217-Invenqor-improve",
+      "campaign": "",
+      "subtype": "success",
+      "engine": "claude",
+      "duration_ms": 383102,
+      "num_turns": 29,
+      "cost_usd": 1.959105,
+      "input_tokens": 44,
+      "output_tokens": 22287,
+      "cache_read": 1383280,
+      "cache_create": 71007
+    },
+    {
+      "ts": "2026-10-01T11:58:50+09:00",
+      "date": "2026-10-01",
+      "project": "Invenqor",
+      "phase": "review",
+      "run_id": "2026-10-01-114217-Invenqor-improve",
+      "campaign": "",
+      "subtype": "success",
+      "engine": "claude",
+      "duration_ms": 309639,
+      "num_turns": 26,
+      "cost_usd": 1.4279670000000002,
+      "input_tokens": 36,
+      "output_tokens": 17434,
+      "cache_read": 913954,
+      "cache_create": 53496
+    },
+    {
+      "ts": "2026-10-01T12:08:56+09:00",
+      "date": "2026-10-01",
+      "project": "Invenqor",
+      "phase": "repair",
+      "run_id": "2026-10-01-114217-Invenqor-improve",
+      "campaign": "",
+      "subtype": "success",
+      "engine": "claude",
+      "duration_ms": 635021,
+      "num_turns": 51,
+      "cost_usd": 2.921856,
+      "input_tokens": 92,
+      "output_tokens": 29306,
+      "cache_read": 2881372,
+      "cache_create": 74806
+    },
+    {
+      "ts": "2026-10-01T12:15:53+09:00",
+      "date": "2026-10-01",
+      "project": "Invenqor",
+      "phase": "review",
+      "run_id": "2026-10-01-114217-Invenqor-improve",
+      "campaign": "",
+      "subtype": "success",
+      "engine": "claude",
+      "duration_ms": 403723,
+      "num_turns": 30,
+      "cost_usd": 1.8249950000000004,
+      "input_tokens": 44,
+      "output_tokens": 19387,
+      "cache_read": 1331740,
+      "cache_create": 67423
+    },
+    {
+      "ts": "2026-10-01T12:38:55+09:00",
+      "date": "2026-10-01",
+      "project": "Invenqor",
+      "phase": "release",
+      "run_id": "2026-10-01-114217-Invenqor-improve",
+      "campaign": "",
+      "subtype": "success",
+      "engine": "claude",
+      "duration_ms": 1154151,
+      "num_turns": 75,
+      "cost_usd": 4.104293499999999,
+      "input_tokens": 102,
+      "output_tokens": 32284,
+      "cache_read": 4421187,
+      "cache_create": 108609
+    }
+  ]
+}
