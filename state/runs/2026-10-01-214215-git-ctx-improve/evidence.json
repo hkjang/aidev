@@ -1,0 +1,232 @@
+{
+  "run_id": "2026-10-01-214215-git-ctx-improve",
+  "generated": "2026-10-01T22:03:33+09:00",
+  "run": {
+    "run_id": "2026-10-01-214215-git-ctx-improve",
+    "project": "git-ctx",
+    "kind": "improve",
+    "started": "2026-10-01T21:42:16+09:00",
+    "model": "claude-opus-5",
+    "policy_version": "4a9e91ac7",
+    "prompts_hash": "ce085c79e18002e2",
+    "runner_version": "1bd5f0cd4",
+    "arm": "no-repair",
+    "experiment": "roles-2026-09",
+    "finished": "2026-10-01T22:03:33+09:00",
+    "outcome": "review-pending"
+  },
+  "record": {
+    "ts": "2026-10-01T22:03:33+09:00",
+    "date": "2026-10-01",
+    "project": "git-ctx",
+    "result": "review held, PR open https://github.com/hkjang/git-ctx/pull/43",
+    "outcome": "review-pending",
+    "run_id": "2026-10-01-214215-git-ctx-improve",
+    "base_sha": "f1de0535613367ac760cb3c3661e0ac8d6be9c43",
+    "head_sha": "f7d57cc08cad198fd6e54051b34b964a84292510",
+    "pr": "https://github.com/hkjang/git-ctx/pull/43",
+    "stages": {
+      "base": {
+        "state": "pinned",
+        "reason": "main@f1de053",
+        "at": "2026-10-01T21:42:20+09:00"
+      },
+      "autonomy": {
+        "state": "release",
+        "reason": "",
+        "at": "2026-10-01T21:42:20+09:00"
+      },
+      "scout": {
+        "state": "done",
+        "reason": "결과 개수 집계와 절단 경계가 `#### ` 로 쓰인 search-code 히트를 보게 하기 — `sectionCount`·`cutAtBoundary` (가치 ",
+        "at": "2026-10-01T21:48:03+09:00"
+      },
+      "brief": {
+        "state": "accepted",
+        "reason": "채택 — 지정한 두 함수·줄 번호·근거가 현재 코드와 정확히 맞았고, 과제서가 예측한 세 증상(result_count=3, 공지 \"2 of 2\", ",
+        "at": "2026-10-01T21:55:09+09:00"
+      },
+      "verify": {
+        "state": "passed",
+        "reason": "검증 4개 통과 (auto)",
+        "at": "2026-10-01T21:56:51+09:00"
+      },
+      "review": {
+        "state": "rejected",
+        "reason": "리뷰 거절: internal/mcp/budget.go:109 — the new `\\n#### ` branch in `cutAtBoundary` is unconditional, so it also fires on `#### ` lines that are *file content*, not code-search hits. Measured on a read-file answer whose markdown has `#### ` subsections mid-window and a `### ` heading late: at the default 24 KiB budget the delivered body drops from 21,775 bytes (main) to 16,325 bytes (HEAD) — 25% less content for the same budget, because the cut now prefers an earlier content `#### ` over the later `### ` boundary main used. Reproduced at a second scale too (budget 3,400: 2,725 → 2,154 bytes). This is a content-delivery regression in read-file/query-docs/export-context, tools this change was not meant to touch, and the new tests do not cover it. Fix: scope both new branches to an actual code-search answer — only count/cut at `#### ` inside the region after the `### Source Matches (` heading. / internal/mcp/budget.go:104-108 — the comment states the blast radius as \"An answer with no `#### ` gets -1 here and falls straight through\", which is only true for answers with no `#### ` anywhere. Answers whose *content* contains `#### ` are silently affected, so the comment's stated scope and the code's actual scope disagree (the implementer's own note flagged this for `sectionCount` but not for `cutAtBoundary`).",
+        "at": "2026-10-01T22:03:23+09:00"
+      },
+      "pr": {
+        "state": "created",
+        "reason": "https://github.com/hkjang/git-ctx/pull/43",
+        "at": "2026-10-01T22:03:31+09:00"
+      }
+    },
+    "campaign": "",
+    "autonomy": "release",
+    "arm": "no-repair",
+    "experiment": "roles-2026-09",
+    "engine": "claude",
+    "files": 2,
+    "additions": 168,
+    "deletions": 2,
+    "tests": 1,
+    "title": "fix(mcp): count and cut search-code results at the `#### ` hit headings"
+  },
+  "stages": {
+    "base": {
+      "state": "pinned",
+      "reason": "main@f1de053",
+      "at": "2026-10-01T21:42:20+09:00"
+    },
+    "autonomy": {
+      "state": "release",
+      "reason": "",
+      "at": "2026-10-01T21:42:20+09:00"
+    },
+    "scout": {
+      "state": "done",
+      "reason": "결과 개수 집계와 절단 경계가 `#### ` 로 쓰인 search-code 히트를 보게 하기 — `sectionCount`·`cutAtBoundary` (가치 ",
+      "at": "2026-10-01T21:48:03+09:00"
+    },
+    "brief": {
+      "state": "accepted",
+      "reason": "채택 — 지정한 두 함수·줄 번호·근거가 현재 코드와 정확히 맞았고, 과제서가 예측한 세 증상(result_count=3, 공지 \"2 of 2\", ",
+      "at": "2026-10-01T21:55:09+09:00"
+    },
+    "verify": {
+      "state": "passed",
+      "reason": "검증 4개 통과 (auto)",
+      "at": "2026-10-01T21:56:51+09:00"
+    },
+    "review": {
+      "state": "rejected",
+      "reason": "리뷰 거절: internal/mcp/budget.go:109 — the new `\\n#### ` branch in `cutAtBoundary` is unconditional, so it also fires on `#### ` lines that are *file content*, not code-search hits. Measured on a read-file answer whose markdown has `#### ` subsections mid-window and a `### ` heading late: at the default 24 KiB budget the delivered body drops from 21,775 bytes (main) to 16,325 bytes (HEAD) — 25% less content for the same budget, because the cut now prefers an earlier content `#### ` over the later `### ` boundary main used. Reproduced at a second scale too (budget 3,400: 2,725 → 2,154 bytes). This is a content-delivery regression in read-file/query-docs/export-context, tools this change was not meant to touch, and the new tests do not cover it. Fix: scope both new branches to an actual code-search answer — only count/cut at `#### ` inside the region after the `### Source Matches (` heading. / internal/mcp/budget.go:104-108 — the comment states the blast radius as \"An answer with no `#### ` gets -1 here and falls straight through\", which is only true for answers with no `#### ` anywhere. Answers whose *content* contains `#### ` are silently affected, so the comment's stated scope and the code's actual scope disagree (the implementer's own note flagged this for `sectionCount` but not for `cutAtBoundary`).",
+      "at": "2026-10-01T22:03:23+09:00"
+    },
+    "pr": {
+      "state": "created",
+      "reason": "https://github.com/hkjang/git-ctx/pull/43",
+      "at": "2026-10-01T22:03:31+09:00"
+    }
+  },
+  "provenance": {
+    "model": "claude-opus-5",
+    "policy_version": "4a9e91ac7",
+    "prompts_hash": "ce085c79e18002e2",
+    "runner_version": "1bd5f0cd4",
+    "base_sha": "f1de0535613367ac760cb3c3661e0ac8d6be9c43",
+    "head_sha": "f7d57cc08cad198fd6e54051b34b964a84292510",
+    "pr": "https://github.com/hkjang/git-ctx/pull/43"
+  },
+  "verification": {
+    "runner": {
+      "source": "auto",
+      "commands": [
+        {
+          "cmd": "go build ./...",
+          "exit": 0,
+          "seconds": 2
+        },
+        {
+          "cmd": "go vet ./...",
+          "exit": 0,
+          "seconds": 0
+        },
+        {
+          "cmd": "go test ./...",
+          "exit": 0,
+          "seconds": 97
+        },
+        {
+          "cmd": "go build -tags sqlite_fts5 ./...   # CI에서 가져옴",
+          "exit": 0,
+          "seconds": 1
+        }
+      ]
+    },
+    "runner_gate": {
+      "ok": true,
+      "state": "verified",
+      "reason": "검증 4개 통과 (auto)"
+    },
+    "after_rebase": null,
+    "review": {
+      "verdict": "reject",
+      "reasons": [
+        "internal/mcp/budget.go:109 — the new `\\n#### ` branch in `cutAtBoundary` is unconditional, so it also fires on `#### ` lines that are *file content*, not code-search hits. Measured on a read-file answer whose markdown has `#### ` subsections mid-window and a `### ` heading late: at the default 24 KiB budget the delivered body drops from 21,775 bytes (main) to 16,325 bytes (HEAD) — 25% less content for the same budget, because the cut now prefers an earlier content `#### ` over the later `### ` boundary main used. Reproduced at a second scale too (budget 3,400: 2,725 → 2,154 bytes). This is a content-delivery regression in read-file/query-docs/export-context, tools this change was not meant to touch, and the new tests do not cover it. Fix: scope both new branches to an actual code-search answer — only count/cut at `#### ` inside the region after the `### Source Matches (` heading.",
+        "internal/mcp/budget.go:104-108 — the comment states the blast radius as \"An answer with no `#### ` gets -1 here and falls straight through\", which is only true for answers with no `#### ` anywhere. Answers whose *content* contains `#### ` are silently affected, so the comment's stated scope and the code's actual scope disagree (the implementer's own note flagged this for `sectionCount` but not for `cutAtBoundary`)."
+      ],
+      "notes": [
+        "The core fix is real and the tests are real. I reverted internal/mcp/budget.go to main and re-ran the new tests: all four assertions in result_count_test.go fail pre-fix with exactly the output recorded in the ledger's `실패 재현:` line (result_count=3 want 2; notice says 2 exist but 50 found; last hit lost its `Source:` citation), and the three control-group cases pass pre-fix. The tests exercise the real Server.ServeHTTP round trip and count from the response rather than hardcoding — no always-true assertions.",
+        "Residual, NOT a regression, so not a reject reason: `clampResponse` compares `sectionCount(body)` (now `#### ` units) against `sectionCount(kept)` (falls back to `### ` units when the cut lands before the first hit), so a code-search answer with a long Repository Matches prelude reports \"1 of 50 result sections are included\" with zero hits in the body. I probed this on main too — it says \"1 of 2\" with zero hits in the identical case — so both are wrong and HEAD is not worse. Worth a follow-up idea: `shown` and `total` must be counted in the same unit.",
+        "Also not a regression: a single hit larger than ~40% of the room still cuts mid-hit (`enough()` floor), leaving a `#### ` heading with no `Source:` citation — measured identically on main and HEAD at budget 2000. The ledger's claim that the \"last entry is whole\" violation is fixed holds for the common case only.",
+        "Verified green on this worktree with the branch as committed: `gofmt -l ./cmd ./internal` empty, `go vet ./...` exit 0, `go build -tags sqlite_fts5 ./...` ok, `go test -tags sqlite_fts5 -count=1 ./internal/app ./internal/mcp ./internal/search` all ok (app 100.6s). Not run: full ./... , -race, external Postgres/pgvector/Vault/Docker, govulncheck, browser.",
+        "Security (reviewer-class): no finding. The change only removes text from an already-ACL-filtered formatted answer; it cannot widen what a caller sees, touches no auth/session/ACL path, no secrets, no crypto, no untrusted input reaching a query (the SQL in the new test is parameterized), and no new dependency. `mcp_calls.result_count` is display/CSV/AVG only (internal/app/mcpadmin.go:223,440,479) with no control-flow consumer, so its value changing from 3 to N is the intended correction and exposes nothing new. Not blocking.",
+        "Legal/privacy (reviewer-class): no finding. No new personal data is collected, stored, or transmitted — `result_count` is a non-personal integer on an audit row that already existed; retention, access control and purpose are unchanged, no vendor or cross-border transfer, no license or copied code, no external-facing commitment. Not blocking.",
+        "Repo hygiene, pre-existing and untouched by this PR: tracked debug artifacts `c.txt` and `server.log` are still in the root."
+      ],
+      "risk": "medium",
+      "blocking": []
+    },
+    "ci_gate": null
+  },
+  "release": {
+    "result": null,
+    "assets_sha256": []
+  },
+  "approval": null,
+  "usage": [
+    {
+      "ts": "2026-10-01T21:48:03+09:00",
+      "date": "2026-10-01",
+      "project": "git-ctx",
+      "phase": "scout",
+      "run_id": "2026-10-01-214215-git-ctx-improve",
+      "campaign": "",
+      "subtype": "error_max_budget_usd",
+      "engine": "claude",
+      "duration_ms": 367439,
+      "num_turns": 27,
+      "cost_usd": 2.0149795000000004,
+      "input_tokens": 38,
+      "output_tokens": 19975,
+      "cache_read": 1270476,
+      "cache_create": 75780
+    },
+    {
+      "ts": "2026-10-01T21:55:09+09:00",
+      "date": "2026-10-01",
+      "project": "git-ctx",
+      "phase": "improve",
+      "run_id": "2026-10-01-214215-git-ctx-improve",
+      "campaign": "",
+      "subtype": "success",
+      "engine": "claude",
+      "duration_ms": 459410,
+      "num_turns": 42,
+      "cost_usd": 2.5932499999999994,
+      "input_tokens": 68,
+      "output_tokens": 19459,
+      "cache_read": 2605710,
+      "cache_create": 80358
+    },
+    {
+      "ts": "2026-10-01T22:03:23+09:00",
+      "date": "2026-10-01",
+      "project": "git-ctx",
+      "phase": "review",
+      "run_id": "2026-10-01-214215-git-ctx-improve",
+      "campaign": "",
+      "subtype": "success",
+      "engine": "claude",
+      "duration_ms": 423406,
+      "num_turns": 38,
+      "cost_usd": 2.0963185,
+      "input_tokens": 56,
+      "output_tokens": 23109,
+      "cache_read": 1703547,
+      "cache_create": 66654
+    }
+  ]
+}

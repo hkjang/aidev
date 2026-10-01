@@ -9,3 +9,12 @@
 - 일부러 안 한 것: 조사 중 찾은 둘을 고치지 않았다 — `loadAPIKeyPolicyContext` 가 `api_keys` 설정 부재 시 자기 기본값을 버리고 ErrNoRows 를 올려 모든 키 인증이 401 이 되는 문제(도달 경로 미증명, ideas.json 에 pending), 그리고 `touched` CTE 가 만료 키에도 `last_used_at` 을 올리는 것(계약 변경 근거 없음, rejected). 프런트·SDK 는 범위 밖이라 npm 을 돌리지 않았다.
 - 다음 역할 주의: 새 테스트 4개는 **DB 가 있어야 돈다**. DSN 없는 `make test`·`-race` 는 skip 이므로 검증 증거가 아니다. 실행 절차는 README 110~114행 그대로(일회용 PG17 + `igame_test_extensions` 에 pgcrypto 선설치). 각 테스트 함수가 `migratedPool` 을 따로 불러 전용 스키마에 migration 을 적용하므로 api 패키지 소요가 24.9s → 27.4s 로 늘었다.
 - [러너 21:54] verify passed — 검증 4개 통과 (policy)
+
+## 비평 노트
+- 러너가 못 돌린 Go 를 직접 돌렸다: 일회용 PG17 로 신규 4개 PASS, DSN 있는 internal/api+internal/database PASS, DSN 없는 go test ./... PASS, gofmt/vet/build 및 작업 트리 청결. 변이 3개로 Red 를 실측 — effectiveKeyPermissions 재적용 삭제(scope 테스트 Red), /api-keys 거부 삭제(rotate 가 201+새 secret), revoked/expires 필터 삭제(lifecycle 3개 Red). 테스트는 실제 경로를 지난다.
+- 구현자 자기의심 (b) 는 사실로 확인: 소유자 강등 테스트는 변이 M1 에서도 녹색이다(requireRole 이 role 만으로 403). 결함은 아니지만 **릴리즈 노트에 "정책 재적용을 고정한다" 고 쓰면 안 된다** — 그것을 고정하는 것은 scope 테스트 하나뿐이다.
+- 자기의심 (c) 는 해소: putSetting 이 invalidateSetting 을 부르고 settingFixture 가 같은 Server 인스턴스를 재사용하므로 TTL 경합 없음. 가장 약한 단언은 POST /me/api-keys 서브테스트(가드 제거 시 invalid_json 으로 실패, 핸들러까지 못 감).
+- 승인이어도 남는 우려: CI make test 에 DSN 이 없어 이 4개는 CI 에서 영원히 skip — 보호는 make test-db 를 돌리는 사람에게만 있다. 기존 *_pg_test.go 관례와 같아 차단 사유는 아니다.
+- 못 본 것: 프런트·SDK(범위 밖, npm 미실행), 전체 DB 회귀의 다른 패키지, 문서 PDF. loadAPIKeyPolicyContext 의 ErrNoRows 전파와 만료 키 last_used_at 갱신은 기존 문제로 이번 diff 밖(fail-closed 라 차단 아님, ideas 에 남길 가치 있음).
+- [러너 22:02] review approved — 리뷰 승인 (risk=low)
+- [러너 22:02] pr created — https://github.com/hkjang/igame/pull/32

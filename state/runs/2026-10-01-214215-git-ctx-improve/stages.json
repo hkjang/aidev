@@ -18,5 +18,20 @@
     "state": "accepted",
     "reason": "채택 — 지정한 두 함수·줄 번호·근거가 현재 코드와 정확히 맞았고, 과제서가 예측한 세 증상(result_count=3, 공지 \"2 of 2\", ",
     "at": "2026-10-01T21:55:09+09:00"
+  },
+  "verify": {
+    "state": "passed",
+    "reason": "검증 4개 통과 (auto)",
+    "at": "2026-10-01T21:56:51+09:00"
+  },
+  "review": {
+    "state": "rejected",
+    "reason": "리뷰 거절: internal/mcp/budget.go:109 — the new `\\n#### ` branch in `cutAtBoundary` is unconditional, so it also fires on `#### ` lines that are *file content*, not code-search hits. Measured on a read-file answer whose markdown has `#### ` subsections mid-window and a `### ` heading late: at the default 24 KiB budget the delivered body drops from 21,775 bytes (main) to 16,325 bytes (HEAD) — 25% less content for the same budget, because the cut now prefers an earlier content `#### ` over the later `### ` boundary main used. Reproduced at a second scale too (budget 3,400: 2,725 → 2,154 bytes). This is a content-delivery regression in read-file/query-docs/export-context, tools this change was not meant to touch, and the new tests do not cover it. Fix: scope both new branches to an actual code-search answer — only count/cut at `#### ` inside the region after the `### Source Matches (` heading. / internal/mcp/budget.go:104-108 — the comment states the blast radius as \"An answer with no `#### ` gets -1 here and falls straight through\", which is only true for answers with no `#### ` anywhere. Answers whose *content* contains `#### ` are silently affected, so the comment's stated scope and the code's actual scope disagree (the implementer's own note flagged this for `sectionCount` but not for `cutAtBoundary`).",
+    "at": "2026-10-01T22:03:23+09:00"
+  },
+  "pr": {
+    "state": "created",
+    "reason": "https://github.com/hkjang/git-ctx/pull/43",
+    "at": "2026-10-01T22:03:31+09:00"
   }
 }

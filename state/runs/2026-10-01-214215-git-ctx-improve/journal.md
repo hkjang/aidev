@@ -17,3 +17,13 @@
 - 일부러 안 한 것: `format.go` 의 제목 수준은 그대로 뒀다(모든 에이전트의 렌더링이 바뀌고 개수는 여전히 2만큼 틀림). 히트 0건 응답을 0 으로 만드는 일, 펜스 안쪽 제목 제외 일반화, `responseNoticeBytes` 조정은 범위 밖. 기존 `truncation_test.go`·`fence_test.go` 는 한 줄도 고치지 않았다.
 - 다음 역할이 조심할 것: 새 테스트 `internal/mcp/result_count_test.go` 는 sqlite 공유 in-memory fixture 를 쓰므로 `t.Parallel()` 금지(그래서 넣지 않았다), `-tags sqlite_fts5` 필수. 절단 케이스는 `limit:50, maxBytes:4000` 과 60개 패딩 청크의 **길이**에 의존해 경계가 잡히므로, 패딩 문구를 바꾸면 수치가 아니라 관계식만 유효하다(테스트는 숫자를 하드코딩하지 않고 응답에서 센다). 외부 DB·Vault·Docker·실브라우저·govulncheck 는 미실행이고 릴리즈는 하지 않았다.
 - [러너 21:55] brief accepted — 채택 — 지정한 두 함수·줄 번호·근거가 현재 코드와 정확히 맞았고, 과제서가 예측한 세 증상(result_count=3, 공지 "2 of 2", 
+- [러너 21:56] verify passed — 검증 4개 통과 (auto)
+
+## 비평 노트
+- 확인한 것: budget.go 를 main 으로 되돌려 새 테스트가 **실제로 수정 전 실패**함을 재현했다(원장 `실패 재현:` 네 줄과 출력이 정확히 일치, 대조군 3개는 수정 전에도 PASS). 테스트는 진짜 `Server.ServeHTTP` 왕복이고 숫자를 응답에서 센다 — 항상 참인 단언 없음. gofmt·vet·build·`./internal/app ./internal/mcp ./internal/search` 전부 green(app 100.6s). 임시 프로브는 모두 삭제, 작업 트리 clean.
+- **거절 사유(수리가 먼저 볼 파일: `internal/mcp/budget.go:109`)**: 새 `\n#### ` 절단 단이 무조건이라 **파일 본문**의 `#### ` 에도 걸린다. `#### ` 소제목이 중간에, `### ` 가 뒤에 오는 마크다운을 read-file 하면 기본 24KiB 예산에서 본문이 main 21,775B → HEAD 16,325B 로 **25% 줄었다**(예산 3,400 에서도 2,725→2,154 로 재현). budget.go:107 주석은 블래스트 반경을 "`#### ` 없는 응답은 그냥 통과" 로만 적어 코드와 어긋난다. 수리 방향: 두 단 모두 `### Source Matches (` 이후 구간으로 한정.
+- 못 본 것: 전체 `./...`·`-race`·외부 Postgres/pgvector/Vault/Docker·실브라우저·govulncheck.
+- 승인했어도 남을 우려(다음 회차): `clampResponse` 의 `shown`(`### ` 단위로 떨어질 수 있음) 과 `total`(`#### ` 단위) 이 **단위가 다르다** — 리포지터리 머리말이 길면 히트 0건인데 "1 of 50 included" 라 말한다. main 도 같은 자리에서 "1 of 2" 로 똑같이 거짓이라 회귀는 아니지만, 이번 수정이 `total` 만 고쳐 거짓말이 더 또렷해졌다. 단일 히트가 room 의 40% 를 넘으면 여전히 히트 중간에서 잘려 `Source:` 가 사라지는 것도 main 과 동일(= "last entry is whole" 은 일반 보장이 아님).
+- 보안·법무: 차단 없음. ACL 필터를 이미 거친 텍스트에서 바이트를 빼기만 하므로 권한을 넓히지 않고, `result_count` 는 콘솔 표시·CSV·AVG 전용(mcpadmin.go:223,440,479)이라 제어 흐름 소비자가 없다. 새 개인정보 수집·보존·이전 없음, 의존성·라이선스 변경 없음.
+- [러너 22:03] review rejected — 리뷰 거절: internal/mcp/budget.go:109 — the new `\n#### ` branch in `cutAtBoundary` is unconditional, so it also fires on `#### ` lines that are *file content*, not code-search hits. Measured on
+- [러너 22:03] pr created — https://github.com/hkjang/git-ctx/pull/43
