@@ -1,0 +1,183 @@
+{
+  "run_id": "2026-10-01-114227-Momento-improve",
+  "generated": "2026-10-01T11:56:19+09:00",
+  "run": {
+    "run_id": "2026-10-01-114227-Momento-improve",
+    "project": "Momento",
+    "kind": "improve",
+    "started": "2026-10-01T11:42:26+09:00",
+    "model": "claude-opus-5",
+    "policy_version": "4a9e91ac7",
+    "prompts_hash": "ce085c79e18002e2",
+    "runner_version": "1bd5f0cd4",
+    "arm": "baseline",
+    "experiment": "roles-2026-09",
+    "finished": "2026-10-01T11:56:18+09:00",
+    "outcome": "verify-failed"
+  },
+  "record": {
+    "ts": "2026-10-01T11:56:18+09:00",
+    "date": "2026-10-01",
+    "project": "Momento",
+    "result": "verify failed: 실패한 검증: cd web && npm test --silent (exit 1)",
+    "outcome": "verify-failed",
+    "run_id": "2026-10-01-114227-Momento-improve",
+    "base_sha": "12ba62976ee38532c96fb4445e8d10a58599372c",
+    "head_sha": "6acb889f9fead77049f0dc95d07a230678a3a95a",
+    "pr": "",
+    "stages": {
+      "base": {
+        "state": "pinned",
+        "reason": "main@12ba629",
+        "at": "2026-10-01T11:42:32+09:00"
+      },
+      "autonomy": {
+        "state": "release",
+        "reason": "",
+        "at": "2026-10-01T11:42:33+09:00"
+      },
+      "scout": {
+        "state": "done",
+        "reason": "두 화면의 서로 다른 표가 같은 「숨긴 열」 설정을 공유하는 것을 고친다 — `tableStorageKey` 가 열 구성을 �",
+        "at": "2026-10-01T11:48:14+09:00"
+      },
+      "brief": {
+        "state": "accepted",
+        "reason": "채택 — 인용한 행 번호(tablePrefs.ts:10-17, EnterpriseAnalyticsPage.tsx:894, EnterpriseAdminPage.tsx:468, DataTable.tsx:144-146, tablePrefs.test.mjs:12",
+        "at": "2026-10-01T11:56:12+09:00"
+      },
+      "verify": {
+        "state": "failed",
+        "reason": "실패한 검증: cd web && npm test --silent (exit 1)",
+        "at": "2026-10-01T11:56:17+09:00"
+      }
+    },
+    "campaign": "",
+    "autonomy": "release",
+    "arm": "baseline",
+    "experiment": "roles-2026-09",
+    "engine": "claude",
+    "files": 2,
+    "additions": 81,
+    "deletions": 8,
+    "tests": 1,
+    "title": "fix(web): 두 화면의 다른 표가 같은 「숨긴 열」 설정을 쓰던 것을 표마다 갈라 둔다"
+  },
+  "stages": {
+    "base": {
+      "state": "pinned",
+      "reason": "main@12ba629",
+      "at": "2026-10-01T11:42:32+09:00"
+    },
+    "autonomy": {
+      "state": "release",
+      "reason": "",
+      "at": "2026-10-01T11:42:33+09:00"
+    },
+    "scout": {
+      "state": "done",
+      "reason": "두 화면의 서로 다른 표가 같은 「숨긴 열」 설정을 공유하는 것을 고친다 — `tableStorageKey` 가 열 구성을 �",
+      "at": "2026-10-01T11:48:14+09:00"
+    },
+    "brief": {
+      "state": "accepted",
+      "reason": "채택 — 인용한 행 번호(tablePrefs.ts:10-17, EnterpriseAnalyticsPage.tsx:894, EnterpriseAdminPage.tsx:468, DataTable.tsx:144-146, tablePrefs.test.mjs:12",
+      "at": "2026-10-01T11:56:12+09:00"
+    },
+    "verify": {
+      "state": "failed",
+      "reason": "실패한 검증: cd web && npm test --silent (exit 1)",
+      "at": "2026-10-01T11:56:17+09:00"
+    }
+  },
+  "provenance": {
+    "model": "claude-opus-5",
+    "policy_version": "4a9e91ac7",
+    "prompts_hash": "ce085c79e18002e2",
+    "runner_version": "1bd5f0cd4",
+    "base_sha": "12ba62976ee38532c96fb4445e8d10a58599372c",
+    "head_sha": "6acb889f9fead77049f0dc95d07a230678a3a95a",
+    "pr": ""
+  },
+  "verification": {
+    "runner": {
+      "source": "auto",
+      "commands": [
+        {
+          "cmd": "go build ./...",
+          "exit": 0,
+          "seconds": 1
+        },
+        {
+          "cmd": "go vet ./...",
+          "exit": 0,
+          "seconds": 1
+        },
+        {
+          "cmd": "go test ./...",
+          "exit": 0,
+          "seconds": 2
+        },
+        {
+          "cmd": "cd web && [ -d node_modules ] || npm ci --no-audit --no-fund",
+          "exit": 0,
+          "seconds": 0
+        },
+        {
+          "cmd": "cd web && npm test --silent",
+          "exit": 1,
+          "seconds": 0
+        }
+      ]
+    },
+    "runner_gate": {
+      "ok": false,
+      "state": "verify-failed",
+      "reason": "실패한 검증: cd web && npm test --silent (exit 1)"
+    },
+    "after_rebase": null,
+    "review": null,
+    "ci_gate": null
+  },
+  "release": {
+    "result": null,
+    "assets_sha256": []
+  },
+  "approval": null,
+  "usage": [
+    {
+      "ts": "2026-10-01T11:48:13+09:00",
+      "date": "2026-10-01",
+      "project": "Momento",
+      "phase": "scout",
+      "run_id": "2026-10-01-114227-Momento-improve",
+      "campaign": "",
+      "subtype": "success",
+      "engine": "claude",
+      "duration_ms": 355395,
+      "num_turns": 29,
+      "cost_usd": 1.9899785000000005,
+      "input_tokens": 40,
+      "output_tokens": 22303,
+      "cache_read": 1322667,
+      "cache_create": 77087
+    },
+    {
+      "ts": "2026-10-01T11:56:12+09:00",
+      "date": "2026-10-01",
+      "project": "Momento",
+      "phase": "improve",
+      "run_id": "2026-10-01-114227-Momento-improve",
+      "campaign": "",
+      "subtype": "success",
+      "engine": "claude",
+      "duration_ms": 500394,
+      "num_turns": 48,
+      "cost_usd": 3.0686389999999992,
+      "input_tokens": 82,
+      "output_tokens": 28719,
+      "cache_read": 2996588,
+      "cache_create": 85196
+    }
+  ]
+}
