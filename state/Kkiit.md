@@ -141,3 +141,4 @@
 - 보류 아이디어: `retryDomainEvent`(events.go:103-107)의 404 `event_not_retryable` 분기 가르기 — 파라미터가 uuid 뿐이라 HTTP 로 DB 오류를 만들 경로가 없어 증거는 404 회귀까지만 (가치 2 / 위험 1 / S) · `updateOrganizationMember`(organizations.go:256)의 404 `member_not_found` 가르기 — 트랜잭션·last_owner_protected 가 붙어 더 무겁다 (가치 2 / 위험 2 / S) · `npm --prefix web test` 의 `src/**/*.test.ts` 글롭이 node 22.23.1 에서 `src/silentSso.test.ts` 를 못 찾아 0건으로 끝난다 — 이번에 발견, 파일을 직접 주면 10건 모두 통과하므로 글롭만 고치면 되지만 빌드 경로라 릴리즈 확인이 필요 (가치 3 / 위험 2 / S) · 가이드 문서·openapi 의 API 메서드·응답 코드를 실제 라우터와 대조 — openapi_test.go 가 경로만 비교해 이번 `'400'`·`'404'` 누락도 사람 눈으로 찾았다 (가치 2 / 위험 2 / M) · README 환경변수 계약을 필수 4개 + 선택 `SHUTDOWN_DRAIN_SECONDS` 로 정리 (가치 2 / 위험 1 / S)
 - 과제서: 채택 — docker(29.7.2)가 가용해 수용 기준 1~4 를 모두 실제 HTTP→실제 DB 로 증명했고, 과제서가 미확인으로 남긴 두 가지(`users.display_name` 의 NUL 이 22021 로 UPDATE 만 실패시킨다, docker 가용)를 프로브와 실행으로 모두 확인했다.
 
+- 릴리즈: v0.4.11 (2026-10-01, run 2026-10-01-114222-Kkiit-improve)

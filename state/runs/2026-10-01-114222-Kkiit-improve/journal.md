@@ -28,3 +28,7 @@
 - **릴리즈가 조심할 것**: worktree 에 verify 의 `npm run build` 가 남긴 `internal/ui/dist` 재빌드 산출물이 커밋되지 않은 채 있다. 이번 커밋은 3파일로 깨끗하니 `git add -A` 로 그 dist 를 쓸어 담지 말 것.
 - [러너 11:59] review approved — 리뷰 승인 (risk=low)
 - [러너 11:59] pr created — https://github.com/hkjang/Kkiit/pull/16
+- [러너 11:59] ci passed — 검사 없음 — 정책으로 허용
+- [러너 11:59] merge done — a30e191
+- [러너 12:09] release published — v0.4.11
+- [러너 12:10] assets verified — v0.4.11 자산 1개 (이전 v0.4.10: 1)

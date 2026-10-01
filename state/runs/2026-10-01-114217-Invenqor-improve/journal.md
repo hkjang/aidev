@@ -27,3 +27,11 @@
 - 수리가 먼저 볼 파일: `server/internal/httpapi/assets.go:798-808`(정규형 요구 또는 `parsed.String()` 으로 정규화 후 SQL 에 넘기기 — 구현자가 남긴 '대문자·중괄호가 `after_json` 에 글자 그대로 저장' 문제도 같이 닫힌다), 그리고 `asset_split_validation_test.go` 에 비정규 형식 케이스 추가.
 - 남는 우려(수리와 별개): malformed `source_ids` → `INVALID_SOURCE` 는 계약 위반 아님(거절 사유 아님). `TestSplitAssetRejectsSourceIDsThatAreNotUUIDs` 는 SQLite 로는 수정 전에도 통과하므로 CI 가 SQLite 기본이면 이 회귀는 CI 가 못 잡는다. 보안·법무는 깨끗(CSRF+`assets.merge` 로 가려짐, 새 개인정보·의존성·마이그레이션 없음).
 - [러너 11:58] review rejected — 리뷰 거절: server/internal/httpapi/assets.go:798,802 uuid.Parse 는 모양 검사기가 아니다 — godoc 이 직접 "Parse should not be used to validate strings" 라고 적는다. urn:uuid: �
+
+## 수리 노트
+- 맞았던 지적: 3건 전부. 실제 `postgres:17-alpine` 으로 재현 — `urn:uuid:<id>` 는 `assetID`·`source_ids` 양쪽에서 500 INTERNAL_ERROR, `{<실제 id>}`·하이픈 없는 32자는 **201 로 split 이 실제 수행**되는데 SQLite 는 셋 다 400 이었다. 틀린 지적은 없었다. 다만 비평가가 "중괄호는 PG 에서 201" 이라 한 것은 중괄호가 **실제 존재하는** id 를 감쌀 때만 그렇다 — 처음 쓴 표 기반 테스트는 무작위 uuid 를 감싸서 이 발산을 놓쳤고, 실제 id 를 다시 쓰도록 고쳐서야 201 이 재현됐다.
+- 고친 방법: `canonicalUUID`(assets.go:648) 를 추가해 openapi `AssetId`/`source_ids` 가 선언하는 `format: uuid` — 36자 하이픈 형식 — 만 받고(`len(value)==36` + `uuid.Parse`) `parsed.String()` 으로 소문자 정규형을 돌려준다. `splitAsset` 은 이 정규형만 SQL·`after_json`·audit 에 넘기므로 두 방언이 같은 답을 내고 대문자 id 가 글자 그대로 저장되던 문제도 닫혔다. 형식 판단 근거를 내 취향이 아니라 `openapi.yaml:2489` 의 `format: uuid` 에 뒀다.
+- 테스트: 비정규 형식을 **실존 id** 에 적용하는 표 기반 2건(urn:·중괄호·하이픈 없는·not-a-uuid × assetID/source_ids) + 대문자 정규화 1건. 고치기 전 두 방언 합쳐 7건 실패 → 고친 뒤 전부 통과. 기존 테스트는 삭제·완화 없음.
+- 확신 없는 곳: (1) 대문자 정규형을 **받아들이고 접는** 선택 — `format: uuid` 는 대소문자를 가리지 않으니 400 으로 거절하면 PG 에서 되던 요청이 깨지므로 접는 쪽을 골랐으나, 거절이 더 엄격해 좋다고 볼 수도 있다. (2) `missingAssetID`(merge, assets.go:689) 는 **똑같은 `uuid.Parse` 결함이 그대로 남아** `urn:uuid:` 로 500 이 날 것이다 — 이번 변경(base 21954f0) 밖의 기성 코드라 범위 밖으로 두었고 `canonicalUUID` 를 한 줄 적용하면 닫히지만 merge 쪽 테스트가 따로 필요하다. 다음 회차 후보.
+- 범위: `assets.go`·`asset_split_validation_test.go` 두 파일만 수정. tx 안 `internalError` → SQLite 교착은 여전히 회피만 하고 고치지 않았다(검증이 tx 밖). `server/invenqor-server` 빌드 산출물은 지웠다.
+- [러너 12:09] repair done — # fix-summary  비평가의 지적 3건은 모두 사실이었고, 실제 postgres:17-alpine 으로 재현했다 — `urn:uuid:<id>` 는 assetID·source_ids 양쪽에서 **500 INTERNAL_ERROR**, `{<실
