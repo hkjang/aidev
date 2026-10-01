@@ -291,3 +291,4 @@
 - 보류 아이디어: `@midnight`·`@annually` cron 별칭을 더한다(차선 후보, 이번엔 1순위가 성립해 미실행 — `cronAliases` 두 줄 + USER_GUIDE 별칭 목록) / `SAT-SUN` 같은 감싸는 요일·월 범위 지원 — cron 구현마다 갈리는 계약 결정이라 결정 전 변경 금지 / 봄철 DST 로 사라진 벽시계 시각의 일정을 건너뛰는 대신 전이 직후 한 번 실행한다 — `TestScheduleSkipsNonexistentDSTWallTime` 이 현 동작을 의도로 못 박고 있다 / 관리자 가이드 ADMIN_GUIDE.md:785 의 외부 호출 오류 코드를 실제 `#N/A` 와 맞춘다(여덟 회차 연속 보류, PDF 재생성 동반) / `compareLists.looksLikeIdentifier` 는 `007.5` 까지 번호로 보아 파일·클립보드 두 문과 갈린다 — 키 비교 계약 결정 전 변경 금지
 - 과제서: 채택 — 과제서의 재현 결과가 지금 코드와 정확히 일치했고(`0 0 */2 * MON` 이 토·일·화·목에 실행), 건드릴 파일 2개·세 자리 수정·`allowed` 와 DST 손대지 않기·대조 사례 유지를 모두 그대로 따랐다.
 
+- 릴리즈: v0.259.0 (2026-10-02, run 2026-10-02-013744-kanpic-improve)

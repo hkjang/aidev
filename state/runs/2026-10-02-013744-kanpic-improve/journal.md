@@ -20,3 +20,7 @@
 - 또 하나: 커밋 메시지의 "crontab(5) 대로" 는 느슨하다 — man page 의 괄호("i.e., aren't *")를 글자대로 읽으면 `*/2` 는 제한이고, 이번 수정은 man page 가 아니라 참조 구현(필드 첫 글자) 을 따른다. 코드 주석은 그 사실을 정확히 적고 있으니 코드는 문제없고, 릴리즈 문구만 "Vixie/ISC cron 구현과 일치" 로 쓰는 게 정확하다.
 - [러너 01:51] review approved — 리뷰 승인 (risk=low)
 - [러너 01:51] pr created — https://github.com/hkjang/kanpic/pull/38
+- [러너 02:02] ci passed — 검사 2개 모두 success
+- [러너 02:02] merge done — b1f3a81
+- [러너 02:16] release published — v0.259.0
+- [러너 02:18] assets verified — v0.259.0 자산 2개 (이전 v0.258.0: 2)
