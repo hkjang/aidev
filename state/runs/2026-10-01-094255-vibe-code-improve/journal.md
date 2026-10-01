@@ -25,3 +25,4 @@
 - [러너 10:00] merge done — ad0254c
 - [러너 10:10] release published — v1.4.6
 - [러너 10:10] gh-release created — GitHub Release v1.4.6
+- [러너 10:25] assets missing — 이전 v1.4.0 엔 2개, v1.4.6 엔 0개 — 워크플로: null: null/null
