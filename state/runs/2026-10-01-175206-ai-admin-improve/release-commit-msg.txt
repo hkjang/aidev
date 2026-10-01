@@ -1,0 +1,35 @@
+chore: release ai-admin v1.2.32
+
+The merged change fixed the asynchronous wait budget of the web test suite in
+its setup file, adding configure({ asyncUtilTimeout: 5_000 }) to
+web/src/test/setup.ts — findBy* and waitFor wait only for
+@testing-library/dom's default asyncUtilTimeout of 1000ms, and with no
+configure() call anywhere in the repository every asynchronous query across 18
+test files waited one second regardless of vite.config.ts's testTimeout of
+15_000, which does not apply to them — so because a screen runs auth/options,
+auth/me, preferences and then the list query in sequence before it can paint a
+first row, a busy machine exhausted that budget before the assertion could
+matter and the AdminInteractions test broke two runs in a row with "Unable to
+find an element with the text: 샘플", failing at 1328ms rather than anywhere
+near the 15-second test timeout, which is the direct evidence of a spent
+one-second budget — with the single added line changing only how long an
+asynchronous query may wait, leaving the awaited targets and the three
+assertions alone and the existing afterEach, localStorage, matchMedia and
+ResizeObserver blocks in place without reordering, and with five seconds
+sitting below testTimeout while being more than twice the measured passing time
+of 2.2 seconds so a genuine failure still surfaces quickly, and with
+AdminInteractions.test.tsx's fetch stub now delaying each response by 150ms like
+real HTTP so the defect reproduces deterministically rather than under load,
+over the production wiring of App, AuthProvider, ThemeProvider, react-query and
+BrowserRouter with no hand-built doubles — a test-configuration change that
+leaves production behavior untouched, with no web/src application code modified
+and therefore internal/ui/dist unchanged, proved by red, green and revert-red
+(1229ms FAIL at one second, 2.65 seconds PASS at five, FAIL again when the
+budget is put back) with neither it.skip, retry, test.fails, a deleted
+assertion, a testTimeout change nor a workflow edit used to get there — and
+left VERSION and CHANGELOG.md untouched, so this release advances the patch
+number by one — the increment every release so far has used — and records the
+change under today's date.
+
+Bumped 1.2.31 to 1.2.32 in every file scripts/verify-version.sh checks and
+added the v1.2.32 changelog entry.
