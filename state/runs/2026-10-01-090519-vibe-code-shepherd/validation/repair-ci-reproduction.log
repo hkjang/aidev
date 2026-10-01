@@ -1,0 +1,58 @@
+++ echo '# CI check-job reproduction @ a1e3c94 (PR #15) — repair agent, 2026-10-01'
+# CI check-job reproduction @ a1e3c94 (PR #15) — repair agent, 2026-10-01
+++ echo '# Remote run 36793865532 failed in 2s. gh unauthenticated; api.github.com returns 404 (private repo).'
+# Remote run 36793865532 failed in 2s. gh unauthenticated; api.github.com returns 404 (private repo).
+++ echo
+
+++ echo '== A) pristine clone, Node 20.19.2 (engines pin), TZ=KST =='
+== A) pristine clone, Node 20.19.2 (engines pin), TZ=KST ==
+++ export PATH=/tmp/node2019/node_modules/node/bin:/home/hkjang/.cargo/bin:/home/hkjang/.local/bin:/home/hkjang/.cargo/bin:/home/hkjang/.nvm/versions/node/v22.23.1/bin:/home/hkjang/miniconda3/bin:/usr/local/go/bin:/usr/local/bin:/usr/bin:/bin:/mnt/c/WINDOWS/system32:/mnt/c/WINDOWS/System32/WindowsPowerShell/v1.0
+++ PATH=/tmp/node2019/node_modules/node/bin:/home/hkjang/.cargo/bin:/home/hkjang/.local/bin:/home/hkjang/.cargo/bin:/home/hkjang/.nvm/versions/node/v22.23.1/bin:/home/hkjang/miniconda3/bin:/usr/local/go/bin:/usr/local/bin:/usr/bin:/bin:/mnt/c/WINDOWS/system32:/mnt/c/WINDOWS/System32/WindowsPowerShell/v1.0
+++ cd /tmp/ci-pristine
+++ rm -rf node_modules dist
+++ npm ci
+++ echo 'npm ci exit=0'
+npm ci exit=0
+++ npm run check
+++ echo 'npm run check exit=0'
+npm run check exit=0
+++ node --check dist/extension.js
+++ echo 'node --check dist/extension.js exit=0'
+node --check dist/extension.js exit=0
+++ node --check dist/extension.core.js
+++ echo 'node --check dist/extension.core.js exit=0'
+node --check dist/extension.core.js exit=0
+++ echo
+
+++ echo '== B) same clone, TZ=UTC (CI runners are UTC; this change is a KST date window) =='
+== B) same clone, TZ=UTC (CI runners are UTC; this change is a KST date window) ==
+++ TZ=UTC
+++ npm run check
+++ grep -E 'Tests |Test Files '
+ Test Files  12 passed (12)
+      Tests  87 passed (87)
+++ echo 'TZ=UTC check exit=0'
+TZ=UTC check exit=0
+++ echo
+
+++ echo '== C) Node 20.20.2 (what CI'\''s node-version: 20 actually resolves to) =='
+== C) Node 20.20.2 (what CI's node-version: 20 actually resolves to) ==
+++ export PATH=/tmp/node20x/node_modules/node/bin:/tmp/node2019/node_modules/node/bin:/home/hkjang/.cargo/bin:/home/hkjang/.local/bin:/home/hkjang/.cargo/bin:/home/hkjang/.nvm/versions/node/v22.23.1/bin:/home/hkjang/miniconda3/bin:/usr/local/go/bin:/usr/local/bin:/usr/bin:/bin:/mnt/c/WINDOWS/system32:/mnt/c/WINDOWS/System32/WindowsPowerShell/v1.0
+++ PATH=/tmp/node20x/node_modules/node/bin:/tmp/node2019/node_modules/node/bin:/home/hkjang/.cargo/bin:/home/hkjang/.local/bin:/home/hkjang/.cargo/bin:/home/hkjang/.nvm/versions/node/v22.23.1/bin:/home/hkjang/miniconda3/bin:/usr/local/go/bin:/usr/local/bin:/usr/bin:/bin:/mnt/c/WINDOWS/system32:/mnt/c/WINDOWS/System32/WindowsPowerShell/v1.0
+++ node --version
+v20.20.2
+++ rm -rf node_modules dist
+++ npm ci
+++ echo 'npm ci exit=0'
+npm ci exit=0
+++ npm run check
+++ echo 'npm run check exit=0'
+npm run check exit=0
+++ node --check dist/extension.js
+++ node --check dist/extension.core.js
+++ echo 'node --check both exit=0'
+node --check both exit=0
+++ echo
+
+++ echo 'VERDICT: all four CI check-job steps exit 0 in every combination. Not reproducible as a code defect.'
+VERDICT: all four CI check-job steps exit 0 in every combination. Not reproducible as a code defect.
