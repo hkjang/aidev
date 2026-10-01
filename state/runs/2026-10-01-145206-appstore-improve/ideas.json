@@ -1,0 +1,137 @@
+[
+  {
+    "title": "검토 화면의 \"스토어에서 보기\" 가 미게시 앱의 404 로 데려간다",
+    "value": 3,
+    "risk": 1,
+    "size": "S",
+    "status": "done",
+    "note": "ReviewDetailPage 가 app 이 있으면 무조건 /apps/{slug} 링크를 띄웠다. 공개 상세는 GetAppBySlug(includeAll=false) 로 published·public 만 서빙하므로 검토 대기 앱(=검토자가 실제로 보는 유일한 상태)에서는 항상 '앱을 찾을 수 없습니다'. app-card.tsx 의 publiclyViewable 을 export 해 두 경로가 같은 판정을 읽게 했다.",
+    "updated": "2026-10-01"
+  },
+  {
+    "title": "E2E mock API 의 public config override 가 기본값에 덮여 무효",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "mock-api.ts 가 options.config 를 먼저 펼치고 기본값을 뒤에 쓴다. 사용자에게 보이는 변화가 없어 단독 제출은 반려 위험 — 설정 주입이 필요한 E2E 과제와 묶어서만.",
+    "updated": "2026-10-01"
+  },
+  {
+    "title": "상위 100개 밖의 즐겨찾기 앱이 /favorites 에 아예 안 나옴",
+    "value": 3,
+    "risk": 3,
+    "size": "M",
+    "status": "pending",
+    "note": "AppsPage 가 pageSize 100 한 페이지만 요청한 뒤 slug 로 거른다(public-pages.tsx:237-244, 현재도 동일). 서버 slug 필터 또는 다중 페이지 조회가 필요해 공개 API 계약을 건드린다.",
+    "updated": "2026-10-01"
+  },
+  {
+    "title": "clientAddress 가 RemoteAddr 만 보아 reverse proxy 뒤에서 rate limit 이 전역",
+    "value": 3,
+    "risk": 3,
+    "size": "M",
+    "status": "pending",
+    "note": "ratelimit.go 가 RemoteAddr 만 읽는다. 신뢰 프록시 계약을 먼저 정해야 하고 보호 경로이므로 별도 회차.",
+    "updated": "2026-10-01"
+  },
+  {
+    "title": "로그인 방식이 모두 없는 설치의 브라우저 안내 E2E",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "core.spec.ts 에 전용 로그인 2종 테스트는 있으나 둘 다 없는 설치 검증은 없다. config override 순서 수정이 선행.",
+    "updated": "2026-10-01"
+  },
+  {
+    "title": "로그인 rate limit 통합 테스트의 분 경계 취약성 — 고정 시각 주입",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "auth_handlers.go 가 time.Now 를 직접 쓴다. DB 미설정으로 재현 미확인이며 인증 코드 변경이라 보류.",
+    "updated": "2026-10-01"
+  },
+  {
+    "title": "소유자가 볼 수 있는 검토 이력이 마지막 한 건뿐",
+    "value": 2,
+    "risk": 2,
+    "size": "M",
+    "status": "pending",
+    "note": "personal_handlers.go myApps 가 LatestReviewsByApp 만 붙인다. 검토자 화면은 ListAppReviews(20) 로 전체를 받으므로 정책·API·UI 확장 과제.",
+    "updated": "2026-10-01"
+  },
+  {
+    "title": "방문 추적 화면에 현재 설정이 만들 CSP 문자열 미리보기",
+    "value": 2,
+    "risk": 2,
+    "size": "M",
+    "status": "pending",
+    "note": "analytics_handlers.go pagePolicy 는 요청 경로와 nonce 를 포함한다. 저장 전 미리보기 계약 설계가 필요.",
+    "updated": "2026-10-01"
+  },
+  {
+    "title": "pending_review 앱을 수정해도 검토가 level 1 로 되돌아가지 않음",
+    "value": 2,
+    "risk": 3,
+    "size": "S",
+    "status": "pending",
+    "note": "UpdateApp 은 내용 변경 시 rotateAppChallenge 를 부른다. 검토 정책이 미확정이라 결함으로 단정하지 않는다.",
+    "updated": "2026-10-01"
+  },
+  {
+    "title": "/login?sso=none 안내 화면 캡처 추가",
+    "value": 1,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "전체 캡처 갱신(make screenshots)과 버전 문서 작업과 함께 수행. 개선 회차는 릴리즈 작업 제외.",
+    "updated": "2026-10-01"
+  },
+  {
+    "title": "팔레트가 최근 이동 항목을 앱 삭제·비공개 전환 뒤에도 계속 제시",
+    "value": 2,
+    "risk": 2,
+    "size": "M",
+    "status": "pending",
+    "note": "command-palette.tsx 는 menu/app-admin 만 세션으로 거르고 app: 은 통과시킨다. slug 유효성 조회에 서버 계약이 필요.",
+    "updated": "2026-10-01"
+  },
+  {
+    "title": "팔레트 입력이 프레임 콜백으로 포커스를 잡아 렌더 직후 키 입력을 놓칠 수 있음",
+    "value": 1,
+    "risk": 2,
+    "size": "S",
+    "status": "rejected",
+    "note": "requestAnimationFrame 포커스는 Dialog 도 같은 방식이고 실제 사용자 결함을 두 회차 연속 재현하지 못했다. 출력이 변하지 않는 수정은 반려 이력이 있어 더 추적하지 않는다.",
+    "updated": "2026-10-01"
+  },
+  {
+    "title": "여러 탭에서 즐겨찾기 변경이 열린 다른 탭에 반영되지 않음",
+    "value": 2,
+    "risk": 2,
+    "size": "M",
+    "status": "pending",
+    "note": "favorites.tsx 는 초기 localStorage 읽기와 내부 state 만 쓰고 storage 이벤트를 구독하지 않는다(현재도 동일, 47줄 전체 확인). 탭 간 덮어쓰기까지 실제 브라우저로 검증할 별도 과제.",
+    "updated": "2026-10-01"
+  },
+  {
+    "title": "앱 상세의 상태 배지가 영문 원값(published)을 그대로 노출",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "신규. public-pages.tsx:469-475 가 {item.status} 를 직접 그린다. 두 파일 옆에 AppStatusBadge(한국어 라벨·tone)가 이미 있어 교체는 작지만, 공개 상세는 published 만 서빙하므로 보이는 값이 한 가지다 — 가치가 낮아 다른 상태가 노출되는 화면과 함께 처리.",
+    "updated": "2026-10-01"
+  },
+  {
+    "title": "관리자 시스템 설정의 Page Size 가 어디에도 쓰이지 않는다",
+    "value": 3,
+    "risk": 3,
+    "size": "M",
+    "status": "pending",
+    "note": "신규. SystemSettings.PageSize(model.go:251)는 저장만 되고 Go 쪽 소비처가 없으며(grep 결과 선언 1건), publicConfig 응답에도 없고 AppsPage 는 24/100 을 하드코딩한다. 관리자가 바꿔도 아무 일이 없다. 다만 공개 config 응답과 목록 limit 상한까지 건드리므로 API 계약 과제로 분리.",
+    "updated": "2026-10-01"
+  }
+]

@@ -1,0 +1,22 @@
+- 과제: 활동 PUT 이 인식하지 못한 요청에 200 "저장 성공" 을 돌려주는 것을 400 으로 바로잡기 (가치 3 / 위험 2 / 작업량 S)
+- 왜: `app/api/activities/route.ts` PUT(48-92행)은 `activities` 배열·`add`/`delete`/`move`/`targetId+newStatus` 네 분기 중 어느 것도 맞지 않으면 아무 분기도 타지 않고 `updated = currentData.activities` 그대로 저장한 뒤 200 과 새 `lastUpdated` 를 돌려준다. 관리자 화면은 `submitActivityChange`(`app/admin/page.tsx:77-104`)에서 `res.ok` 만 보므로 요청이 틀렸는데도 오류 배너 없이 저장된 것처럼 보인다(09-26 회차가 만든 오류 채널이 이 경우에만 비어 있다).
+- 수용 기준: 1) 인식 가능한 변경 지시(`activities` 배열 / `action:'add'|'delete'|'move'` / `targetId`+`newStatus`)도 `dashboardTitle` 도 없는 PUT 은 400 과 `error` 문구를 돌려주고 `data/` 의 활동·lastUpdated 가 바뀌지 않는다. 2) `{action:'add', parentId: 5}`, `{action:'move', targetId:'x', direction:'left'}` 처럼 action 은 알지만 인자가 계약에 안 맞는 요청도 400(현재는 조용한 200). 3) `{dashboardTitle:'…'}` 단독 PUT 은 지금처럼 200 으로 제목만 바뀐다(관리자 제목 편집 경로 — `app/admin/page.tsx:108`). 4) 기존 e2e 18건과 단위 95건이 그대로 통과한다. 5) 새 e2e 가 400 응답 본문의 `error` 와 "활동/lastUpdated 불변" 을 실제 로그인 세션의 `request.put` 으로 증명한다.
+- 건드릴 파일:
+  - `app/api/activities/route.ts:60-81` PUT — 분기가 하나라도 맞았는지 지역 변수(예: `matched`)로 표시하고, `matched === false && body.dashboardTitle === undefined` 이면 `{ error: '…', code: 'UNSUPPORTED_ACTION' }` 400 을 반환(기존 400 응답 형식과 같은 모양). 분기 조건·검증 호출 순서·`validateActivityImport` 는 그대로 둘 것.
+  - `e2e/admin-put-contract.spec.ts` (신규) — `e2e/tree-ops.spec.ts` 의 로그인·원본 복원 패턴(`beforeAll` 로그인 후 같은 context 의 `request`, 끝에 원본 `activities` 되돌리기)을 그대로 따라 400/200 케이스 3~4건.
+- 검증 명령:
+  - `npx tsc --noEmit`
+  - `npm run test:unit` (= `node --test "lib/**/*.test.ts"`, 현재 95건/30 suites)
+  - `rm -rf playwright-report test-results` 불필요(09-29 에 eslint 에서 제외됨) 후 `npm run lint`
+  - `PLAYWRIGHT_CHROMIUM_PATH=/usr/bin/google-chrome npm run test:e2e` — 신규 spec 포함 전체. 신규만: `PLAYWRIGHT_CHROMIUM_PATH=/usr/bin/google-chrome npx playwright test e2e/admin-put-contract.spec.ts`
+  - 프로덕션 코드를 고치므로 `npm run build` 까지 확인
+  - 선행: `npm ci --legacy-peer-deps`(워크트리에 node_modules 없음, 수 분)
+  - 미확인: 이번 정찰 세션에서는 샌드박스 제약으로 테스트를 한 건도 실행하지 못했다. 위 건수(95건/30 suites, e2e 18건)는 09-28·09-29 회차 기록 기준이다.
+- 위험과 피할 것:
+  - **`dashboardTitle` 단독 PUT 을 깨뜨리지 말 것.** 현재 제목 편집은 "아무 분기도 안 탐 + dashboardTitle 존재" 라는 fall-through 에 의존한다. 이걸 400 으로 만들면 관리자 제목 저장이 죽는다 — 수용 기준 3) 을 먼저 e2e 로 고정하고 구현할 것.
+  - 기존 e2e 의 PUT 본문은 전부 `{activities: …}` 또는 유효한 action 이라 400 대상이 아니다 — 직접 읽어 확인했다: `mail.spec.ts:40`(`{activities, targetId, newStatus}`), `mail.spec.ts:80`·`tree-ops.spec.ts:37,43`(`{activities}`), `tree-ops.spec.ts:47`(`{action:'delete',targetId}`), `admin-empty-tree.spec.ts:29`(`{activities: []}`)·`:35`(`{activities, dashboardTitle}`). `admin-save-failure.spec.ts:34,40` 두 줄은 열어 보지 않았으나 같은 파일의 나머지는 `page.route` 가짜 응답이라 서버 계약과 무관하다 — 구현 전에 확인할 것.
+  - 빈 배열 `{activities: []}` 은 지금처럼 200 이어야 한다(빈 트리 e2e 2건이 이에 의존). `Array.isArray` 분기를 `body.activities.length` 로 바꾸지 말 것.
+  - `app/api/auth/**`·`lib/adminSession.ts`·`proxy.ts` 는 건드리지 말 것. `isAdminRequest` 401 처리는 지금 위치(49행)에 그대로 둔다.
+  - `targetId` 가 존재하지 않는 id 일 때(삭제·상태변경 대상 부재) 404 로 바꾸는 것은 **이번 범위 밖**이다 — 두 관리자가 동시에 조작하는 정상 경합을 실패로 만들 수 있고, `deleteActivity`/`moveActivity` 의 "없으면 그대로" 계약(`lib/treeUtils.ts:27`)도 같이 바꿔야 한다. 범위를 route.ts 한 파일로 유지할 것.
+  - 소스 문자열 검사(grep)로 증명하지 말고, 실제 PUT 응답 코드와 GET 으로 읽은 `lastUpdated`/`activities` 로 증명할 것. 손으로 만든 Request 대역을 쓰지 말고 실제 dev 서버(playwright 3100)로 검증할 것.
+- 차선 후보: `validateActivityImport` 경계값 테스트 보강 (`lib/activityData.test.ts` 에 5000/5001개, `dashboardTitle` 100/101자, `id` 120/121자 — 프로덕션 변경 0, 가치 2 / 위험 1 / 작업량 S)
