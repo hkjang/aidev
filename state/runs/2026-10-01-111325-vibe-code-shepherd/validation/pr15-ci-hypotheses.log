@@ -1,0 +1,58 @@
+### CI-environment hypotheses on pristine HEAD a1e3c94 (Node v20.20.0)
+
+--- H1: CI runners are UTC; new test may depend on local KST ---
+
+ RUN  v3.2.7 /tmp/pr15
+
+ ✓ tests/unit/goal-catalog.test.ts (3 tests) 5ms
+ ✓ tests/unit/semver.test.ts (2 tests) 3ms
+ ✓ tests/unit/journal-summary.test.ts (7 tests) 4ms
+ ✓ tests/unit/goal-loop.test.ts (3 tests) 11ms
+ ✓ tests/unit/usage.test.ts (2 tests) 9ms
+ ✓ tests/unit/verification.test.ts (10 tests) 13ms
+ ✓ tests/unit/command-audit.test.ts (5 tests) 33ms
+ ✓ tests/unit/goal-metrics.test.ts (4 tests) 6ms
+ ✓ tests/unit/plans.test.ts (16 tests) 34ms
+ ✓ tests/unit/goal-health.test.ts (4 tests) 5ms
+ ✓ tests/unit/markdown.test.ts (22 tests) 11ms
+ ✓ tests/unit/checkpoints.test.ts (9 tests) 866ms
+
+ Test Files  12 passed (12)
+      Tests  87 passed (87)
+   Start at  02:16:08
+   Duration  1.29s (transform 824ms, setup 0ms, collect 2.07s, tests 1.00s, environment 2ms, prepare 947ms)
+
+TZ=UTC vitest EXIT=0
+
+--- H2: CI runner has no git identity / no user gitconfig (checkpoints.ts uses commit-tree) ---
+
+ RUN  v3.2.7 /tmp/pr15
+
+ ✓ tests/unit/goal-loop.test.ts (3 tests) 6ms
+ ✓ tests/unit/semver.test.ts (2 tests) 4ms
+ ✓ tests/unit/usage.test.ts (2 tests) 4ms
+ ✓ tests/unit/goal-catalog.test.ts (3 tests) 7ms
+ ✓ tests/unit/journal-summary.test.ts (7 tests) 4ms
+ ✓ tests/unit/verification.test.ts (10 tests) 8ms
+ ✓ tests/unit/goal-health.test.ts (4 tests) 7ms
+ ✓ tests/unit/command-audit.test.ts (5 tests) 34ms
+ ✓ tests/unit/goal-metrics.test.ts (4 tests) 9ms
+ ✓ tests/unit/plans.test.ts (16 tests) 26ms
+ ✓ tests/unit/markdown.test.ts (22 tests) 12ms
+ ✓ tests/unit/checkpoints.test.ts (9 tests) 355ms
+
+ Test Files  12 passed (12)
+      Tests  87 passed (87)
+   Start at  02:16:10
+   Duration  760ms (transform 1.15s, setup 0ms, collect 2.15s, tests 478ms, environment 1ms, prepare 896ms)
+
+no-git-identity vitest EXIT=0
+
+--- H3: repo/CI log readable anonymously? ---
+{
+  "message": "Not Found",
+  "documentation_url": "https://docs.github.com/rest/repos/repos#get-a-repository",
+  "status": "404"
+}
+
+You are not logged into any GitHub hosts. To log in, run: gh auth login

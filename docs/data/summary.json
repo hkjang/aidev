@@ -1,5 +1,5 @@
 {
- "generated": "2026-10-01T11:08:29+09:00",
+ "generated": "2026-10-01T11:17:25+09:00",
  "site": "https://hkjang.github.io/aidev",
  "description": "Claude Code 자율 개선 에이전트가 hkjang 의 프로젝트를 개선·테스트·머지·릴리즈한 일일 보고. 오늘 16회차·릴리즈 3건, 누적 1751회차·릴리즈 603건, 주의 필요 25건.",
  "today": {
@@ -10,18 +10,18 @@
   "merged": 0,
   "nochange": 0,
   "failed": 9,
-  "cost_usd": 117.6,
-  "minutes": 327,
-  "sessions": 59
+  "cost_usd": 118.86,
+  "minutes": 331,
+  "sessions": 60
  },
  "totals": {
   "runs": 1751,
   "released": 603,
   "days": 30,
-  "cost_usd": 6473.15,
-  "minutes": 17481,
-  "tokens_in": 6966368381,
-  "tokens_out": 55532857
+  "cost_usd": 6474.41,
+  "minutes": 17485,
+  "tokens_in": 6967413271,
+  "tokens_out": 55544943
  },
  "alerts": [
   {
@@ -202,17 +202,19 @@
  ],
  "fix_queue": [],
  "health": {
-  "checked": "2026-10-01T10:45:03+09:00",
-  "last_run": "2026-10-01T10:25:20+09:00",
-  "seconds_since_last": 1180,
-  "runner_pid": "3724429",
-  "runner_age_seconds": 941,
-  "scheduler_status": "실행 중",
-  "scheduler_next_run": "2026-10-01 오전 10:50:00",
+  "checked": "2026-10-01T11:15:04+09:00",
+  "last_run": "2026-10-01T11:08:28+09:00",
+  "seconds_since_last": 392,
+  "runner_pid": "",
+  "runner_age_seconds": 0,
+  "scheduler_status": "준비",
+  "scheduler_next_run": "2026-10-01 오전 11:20:00",
   "disk_percent": 77,
   "ok": true,
   "problems": [],
-  "actions": []
+  "actions": [
+   "소유 프로세스 없는 잠금 파일을 제거했다"
+  ]
  },
  "lessons": [
   {
@@ -892,6 +894,23 @@
    "shepherd": "리뷰 없음 · 사람 필요 (09-30 04:30) — 검토 부서 차단 소견(security — internal/domain/sqlsafe/sqlsafe.go:806-816: 사용자가 제출한 신뢰할 수 없는 SQL 이 읽기 전용 게이트를 우회해 비허용 함수 호출에 닿는다. 공격 경로: 인증된 사용자가 MCP(internal/domain/mc",
    "shepherd_action": "needs-human",
    "shepherd_detail": "검토 부서 차단 소견(security — internal/domain/sqlsafe/sqlsafe.go:806-816: 사용자가 제출한 신뢰할 수 없는 SQL 이 읽기 전용 게이트를 우회해 비허용 함수 호출에 닿는다. 공격 경로: 인증된 사용자가 MCP(internal/domain/mcpserver/server.go:174) 또는 실행 API(internal/runtimeapi/services.go:753)로 `SELECT substring(label FROM id + query_to_xml('DELETE FROM users',false,true,'')::text::int) FROM events` 를 보내면 게이트가 readonly=true risk=low 로 통과시킨다. query_to_xml 은 pg_catalog 내장이라 dbexec 의 search_path=pg_catalog 제한도 막지 못하며 인자로 준 DELETE 가 서버 안에서 실행된다. 공격자가 얻는 것: 읽기 전용으로 광고된 경로에서의 임의 쓰기(데이터 파괴·변조), dblink 계열로는 내부망 서버 측 요청. base(main) 대비 HEAD 에서만 통과하는 것을 실제 실행으로 확인한 신규 회귀이며 릴리즈를 막는다.) — 운영자 위험 수용(risk-accepted 라벨) 필요: - internal/domain/sqlsafe/sqlsafe.go:806-816 새 비수식 별칭 분기가 introducer 가 FROM/JOIN/ONLY 이면 fromItemContext 를 호출하지 않고 무조건 return true 하여 읽기 전용 게이트가 뚫린다. PostgreSQL 은 substring/extract 의 인자 문법에도 FROM 을 쓰고 스캐�",
+   "needs_human": true
+  },
+  {
+   "kind": "PR",
+   "project": "qurio",
+   "title": "auto-improve: ci: stop the integration gate from passing on cached test results",
+   "url": "https://github.com/hkjang/qurio/pull/30",
+   "sha": "12223b0",
+   "summary": "3파일 +49/−2 · manual: guarded files, PR open https://github.com/hkjang/qurio/pull/30",
+   "why": "guard: held — .github/workflows/ci.yml .github/workflows/release.yml ",
+   "evidence": "https://github.com/hkjang/aidev/tree/main/state/runs/2026-10-01-104217-qurio-improve",
+   "labels": "",
+   "action": "PR 처리기가 사람에게 넘김 — 사람만 승인할 수 있는 파일을 건드림: .github/workflows/ci.yml .github/workflows/release.yml  · 승인: PR 라벨 aidev-approved / 반려: aidev-rejected — 다음 회차에 러너가 승인 당시 커밋에만 CI 확인 후 머지·닫기",
+   "date": "2026-10-01",
+   "shepherd": "보호 파일 · 사람 필요 (10-01 11:17) — 사람만 승인할 수 있는 파일을 건드림: .github/workflows/ci.yml .github/workflows/release.yml ",
+   "shepherd_action": "needs-human",
+   "shepherd_detail": "사람만 승인할 수 있는 파일을 건드림: .github/workflows/ci.yml .github/workflows/release.yml ",
    "needs_human": true
   },
   {
@@ -1593,23 +1612,6 @@
   },
   {
    "kind": "PR",
-   "project": "qurio",
-   "title": "auto-improve: ci: stop the integration gate from passing on cached test results",
-   "url": "https://github.com/hkjang/qurio/pull/30",
-   "sha": "12223b0",
-   "summary": "3파일 +49/−2 · manual: guarded files, PR open https://github.com/hkjang/qurio/pull/30",
-   "why": "guard: held — .github/workflows/ci.yml .github/workflows/release.yml ",
-   "evidence": "https://github.com/hkjang/aidev/tree/main/state/runs/2026-10-01-104217-qurio-improve",
-   "labels": "",
-   "action": "PR 처리기가 매시간 살핀다 (아직 순서가 오지 않음) · 승인: PR 라벨 aidev-approved / 반려: aidev-rejected — 다음 회차에 러너가 승인 당시 커밋에만 CI 확인 후 머지·닫기",
-   "date": "2026-10-01",
-   "shepherd": "",
-   "shepherd_action": "",
-   "shepherd_detail": "",
-   "needs_human": false
-  },
-  {
-   "kind": "PR",
    "project": "vibe-code",
    "title": "auto-improve: fix: readCommandHistory 가 \"최근 7일\" 을 KST 날짜 창으로 자르고 미상 종료 코드를 표시한다",
    "url": "https://github.com/hkjang/vibe-code/pull/15",
@@ -1620,9 +1622,9 @@
    "labels": "",
    "action": "PR 처리기가 다음 시간에 다시 시도 · 승인: PR 라벨 aidev-approved / 반려: aidev-rejected — 다음 회차에 러너가 승인 당시 커밋에만 CI 확인 후 머지·닫기",
    "date": "2026-10-01",
-   "shepherd": "CI 실패 · 수정 실패 → 다음 시간에 재시도 (10-01 09:09) — 수정 세션이 커밋을 만들지 않음: # fix-summary — PR #15 (vibe-code), 수리 회차 2026-10-01  **커밋 없이 끝냈다 — 지적(CI 실패)이 코드 결함이 아니다.**  - 재현 결과: `a1e3c94` 를 **깨끗한 클론**에 받아 CI `check` ",
+   "shepherd": "CI 실패 · 수정 실패 → 다음 시간에 재시도 (10-01 11:17) — 수정 세션이 커밋을 만들지 않음: # fix-summary — PR #15 (a1e3c94) · 수리 없음 (커밋 0건)  - **고치지 않았다 — 코드 결함을 재현할 수 없다.** CI `check` job 의 네 단계를 HEAD 의 `git archive` 깨끗한 추출본(`/tmp/",
    "shepherd_action": "fix-failed",
-   "shepherd_detail": "수정 세션이 커밋을 만들지 않음: # fix-summary — PR #15 (vibe-code), 수리 회차 2026-10-01  **커밋 없이 끝냈다 — 지적(CI 실패)이 코드 결함이 아니다.**  - 재현 결과: `a1e3c94` 를 **깨끗한 클론**에 받아 CI `check` job 네 단계(`npm ci` → `npm run check` → `node --check dist/extension.js` → `node --check dist/extension.core.js`)를 그대로 돌렸다. 네 조합 전부 **exit 0, 87 테스트 통과** — ① Node 20.19.2/TZ=KST ② Node 20.19.2/TZ=UTC ③ Node 20.20.2(CI 의 `node-version: 20` 이 실제로 푸는 버전)/TZ=KST. 로그: `validation/repair-ci-reproduction.log`. - ",
+   "shepherd_detail": "수정 세션이 커밋을 만들지 않음: # fix-summary — PR #15 (a1e3c94) · 수리 없음 (커밋 0건)  - **고치지 않았다 — 코드 결함을 재현할 수 없다.** CI `check` job 의 네 단계를 HEAD 의 `git archive` 깨끗한 추출본(`/tmp/pr15`, dist·node_modules 없음)에서 그대로 돌려 전부 exit 0 이었다: `npm ci` / `npm run check`(typecheck + **87 tests 통과** + build) / `node --check dist/extension.js` / `node --check dist/extension.core.js`. 로그: `validation/pr15-clean-node2020-check.log` (Node 20.20.0 = CI 의 `node-version: 20` 해석값), 워크트리 재현 Node 20.19.2 도 동일. - **CI",
    "needs_human": false
   },
   {
@@ -2106,16 +2108,16 @@
   }
  ],
  "shepherd": {
-  "last_pass": "2026-10-01T09:03:34+09:00",
+  "last_pass": "2026-10-01T11:12:00+09:00",
   "enabled": true,
   "today": {
-   "fix-failed": 16,
-   "needs-human": 9,
+   "fix-failed": 17,
+   "needs-human": 10,
    "fix-pushed": 2,
    "approve": 1
   },
-  "total": 453,
-  "pending_human": 124
+  "total": 455,
+  "pending_human": 125
  },
  "agents": {
   "rows": [
@@ -2129,7 +2131,7 @@
     "role": "구현 builder",
     "calls": 655,
     "metric": "러너 검증 통과 97% · 변경 없음 119",
-    "cost": 1780.46
+    "cost": 1781.73
    },
    {
     "role": "비평 critic",
@@ -2157,13 +2159,13 @@
    },
    {
     "role": "PR 심사 shepherd-reviewer",
-    "calls": 275,
-    "metric": "승인 87 · 거절 64 · 사람 필요 124 · 승인 뒤 회귀 0",
-    "cost": 483.32
+    "calls": 276,
+    "metric": "승인 87 · 거절 64 · 사람 필요 125 · 승인 뒤 회귀 0",
+    "cost": 484.59
    },
    {
     "role": "PR 수리 shepherd-fixer",
-    "calls": 139,
+    "calls": 140,
     "metric": "고쳐서 푸시 41%",
     "cost": null
    },
@@ -2648,7 +2650,7 @@
    "merged": 0,
    "nochange": 0,
    "failed": 9,
-   "cost_usd": 117.6
+   "cost_usd": 118.86
   },
   {
    "date": "2026-09-30",
@@ -2922,8 +2924,8 @@
    "merged": 16,
    "nochange": 17,
    "failed": 30,
-   "cost": 798.38,
-   "minutes": 2658
+   "cost": 799.64,
+   "minutes": 2662
   },
   {
    "key": "2026-W39",
@@ -2984,8 +2986,8 @@
    "merged": 0,
    "nochange": 0,
    "failed": 9,
-   "cost": 117.6,
-   "minutes": 327
+   "cost": 118.86,
+   "minutes": 331
   },
   {
    "key": "2026-09",
@@ -4030,8 +4032,8 @@
    "last_ts": "2026-10-01T10:25:20+09:00",
    "last_status": "released",
    "last_result": "fix-round: merged https://github.com/hkjang/vibe-code/pull/16, released v1.4.6, ASSETS MISSING",
-   "cost": 125.71,
-   "minutes": 326,
+   "cost": 126.97,
+   "minutes": 330,
    "grade": "D",
    "grade_why": "14일: 릴리즈 6, 실패 10, 경고 16, 회귀 0",
    "lessons": 0,

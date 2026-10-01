@@ -1,0 +1,7 @@
+# fix-summary — PR #15 (a1e3c94) · 수리 없음 (커밋 0건)
+
+- **고치지 않았다 — 코드 결함을 재현할 수 없다.** CI `check` job 의 네 단계를 HEAD 의 `git archive` 깨끗한 추출본(`/tmp/pr15`, dist·node_modules 없음)에서 그대로 돌려 전부 exit 0 이었다: `npm ci` / `npm run check`(typecheck + **87 tests 통과** + build) / `node --check dist/extension.js` / `node --check dist/extension.core.js`. 로그: `validation/pr15-clean-node2020-check.log` (Node 20.20.0 = CI 의 `node-version: 20` 해석값), 워크트리 재현 Node 20.19.2 도 동일.
+- **CI 환경 차이 가설도 전부 배제했다**(`validation/pr15-ci-hypotheses.log`): ① 러너는 UTC — `TZ=UTC` 로 87/87 통과(`kstDate` 가 TZ 무관하게 KST 를 계산). ② 러너에 git ident 가 없음 — `HOME` 빈 디렉터리 + `GIT_CONFIG_NOSYSTEM=1` + GIT_* env 제거로 `checkpoints.test.ts` 포함 87/87 통과. ③ `npm ci` lock 불일치 — diff 가 `package.json`/`package-lock.json` 을 건드리지 않고 깨끗한 추출본에서 성공.
+- **실패는 코드가 아니라 계정/러너 조건이다.** 배정서의 "실패 로그 (끝부분)" 이 **비어 있고** job 지속시간이 **2초** 다 — `npm ci` 한 단계도 완주할 수 없는 시간이다(로컬에서 `npm ci` 만 1초, 전체 check 약 15초). 단계 출력이 전혀 없는 2초 실패는 2026-09-29 run 36518589343 에 기록된 annotation("The job was not started because recent account payments have failed or your spending limit needs to be increased", `steps=[]`, `runner_id=0`)과 같은 양상이고, 이 조건으로 PR #6~#15 **열 회차**가 연속 실패했다(머지 0건).
+- **확인 못 한 것:** 원격 CI 로그 원문. 저장소가 비공개라 익명 API 가 404(`/repos/hkjang/vibe-code`, `/actions/jobs/110152704036`)이고 `gh` 는 미인증이다. 네트워크 자체는 살아 있다(`/rate_limit` 200). windows `package` job 도 이 환경에 실행 수단이 없어 열 회차째 미확인 — **녹색 CI 가 패키징 성공을 증명하지 않는다.**
+- **운영자 조치 필요:** GitHub Actions 결제/지출 한도 복구 + `gh` 토큰 제공. 코드·테스트·워크플로를 고쳐서 풀 문제가 아니므로 규칙대로 커밋 없이 끝낸다(워크플로 완화·테스트 약화 금지).
