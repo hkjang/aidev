@@ -1,15 +1,128 @@
 [
-  {"title":"AuthContext.test.tsx가 passive effect 완료를 기다리지 않아 간헐 실패","value":4,"risk":1,"size":"S","status":"done","note":"98529c0. 원인은 RTL asyncWrapper의 단일 setTimeout(0) drain tick과 React Scheduler setImmediate 사이의 작업원 경합으로 확정(MutationObserver 관측으로 증명). 마지막 단언 + 로그아웃 직전 장벽 두 곳을 waitFor로 고침. 프로덕션 파일 0개.","updated":"2026-09-29"},
-  {"title":"CI Go 테스트 실패 요약을 $GITHUB_STEP_SUMMARY에 적기","value":3,"risk":2,"size":"S","status":"pending","note":"차선 후보였다. e2e 요약(df9dd4b)은 복원됐지만 Go 단계는 여전히 annotation 'exit code 1'만 남긴다. ci.yml 한 곳 + 필요 시 스크립트 1개, 실제 실패 출력으로 tee/pipefail 동작 확인 필요. 이번 회차엔 ci.yml 미재독.","updated":"2026-09-29"},
-  {"title":"접근성 실패 catch가 blocking 목록 없는 JSON으로 덮어쓰는 문제","value":3,"risk":2,"size":"S","status":"pending","note":"실제 Axe 실패 재현(이미지 빌드+Playwright)이 선행이라 짧은 세션에 위험. 지난 회차엔 통과 결과만 확인.","updated":"2026-09-29"},
-  {"title":"새 500 출구가 pg 오류를 버려 운영자 로그에 원인이 없는 것 — 구조화 로그 한 줄","value":3,"risk":2,"size":"S","status":"pending","note":"admin.go resolveReport의 Begin/UPDATE/INSERT/Commit 오류 경로가 writeError만 호출. 사용자 원문·pg 상세를 로그에 넣지 말고 handler·식별자·SQLSTATE로 한정.","updated":"2026-09-29"},
-  {"title":"프런트 테스트 전반의 'effect 결과를 findBy 직후 즉시 읽는' 패턴 점검","value":3,"risk":1,"size":"M","status":"pending","note":"이번 회차에서 원인이 AuthContext 고유가 아니라 RTL asyncWrapper의 단일 drain tick이라는 일반적 성질임이 밝혀졌다. 다른 테스트에도 같은 한 틱 의존이 있을 수 있으므로 findBy 직후의 비-DOM 단언을 훑을 가치가 있다. 재현용 setImmediate 지연 setup 기법은 이번 원장에 기록됨.","updated":"2026-09-29"},
-  {"title":"followTopic(social.go:282)의 통합 404를 500 storage_error로 분리 (972113f 복원)","value":2,"risk":2,"size":"S","status":"pending","note":"남은 마지막 유실 커밋. 이전 verify-failed 원인은 image 잡의 API and browser smoke였으므로 복원해도 같은 곳에서 다시 걸릴 수 있음. decodeOptionalJSON 보존 필요.","updated":"2026-09-29"},
-  {"title":"POST /media 거절 경로(415·인증·CSRF) 실제 multipart integration 테스트","value":2,"risk":1,"size":"S","status":"pending","note":"기존 커버 범위(oversized/filename)는 확인, 415·인증·CSRF 전체 middleware 커버 여부는 여전히 미확인.","updated":"2026-09-29"},
-  {"title":"joinMoim·createReport·getMoim·getTopic의 Scan 오류를 404에서 500으로 분리","value":2,"risk":2,"size":"S","status":"pending","note":"SELECT 실패를 재현할 수단이 없어 전용 스키마 헬퍼가 선행. 대역으로 때우지 않는다.","updated":"2026-09-29"},
-  {"title":"전용 스키마를 쓰는 integration 테스트 헬퍼(SELECT 실패 재현 가능하게)","value":3,"risk":3,"size":"M","status":"pending","note":"CI source는 PostgreSQL 한 DB 공유. 설계 과제라 한 세션에 위험.","updated":"2026-09-29"},
-  {"title":"e2e README의 기본 테스트 실행 순서 설명 충돌 정정","value":1,"risk":1,"size":"S","status":"pending","note":"package.json이 정본(visual→accessibility→smoke). 문서 결함 유지 중.","updated":"2026-09-29"},
-  {"title":"커스텀 MOINA_E2E_OUTPUT과 visual producer 기본 경로 불일치","value":2,"risk":2,"size":"S","status":"pending","note":"요약기는 MOINA_E2E_OUTPUT/visual, producer는 MOINA_VISUAL_OUTPUT 기준. 계약 검증 필요.","updated":"2026-09-29"},
-  {"title":"가이드 3.4/3.6/3.8 화면 재캡처","value":3,"risk":1,"size":"M","status":"pending","note":"전용 DB·브라우저 준비 부담. 외부 연동(Keycloak/SMTP) 미확인.","updated":"2026-09-29"},
-  {"title":"now()가 단조롭다고 가정하는 통합 테스트(ORDER BY created_at,id)의 취약성","value":2,"risk":2,"size":"S","status":"pending","note":"실제 실패 관측 없음. 추정만으로 건드리지 않는다.","updated":"2026-09-29"}
+  {
+    "title": "AuthContext.test.tsx가 passive effect 완료를 기다리지 않아 간헐 실패",
+    "value": 4,
+    "risk": 1,
+    "size": "S",
+    "status": "done",
+    "note": "98529c0. 원인은 RTL asyncWrapper의 단일 setTimeout(0) drain tick과 React Scheduler setImmediate 사이의 작업원 경합으로 확정(MutationObserver 관측으로 증명). 마지막 단언 + 로그아웃 직전 장벽 두 곳을 waitFor로 고침. 프로덕션 파일 0개.",
+    "updated": "2026-09-29"
+  },
+  {
+    "title": "CI Go 테스트 실패 요약을 $GITHUB_STEP_SUMMARY에 적기",
+    "value": 3,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "차선 후보였다. e2e 요약(df9dd4b)은 복원됐지만 Go 단계는 여전히 annotation 'exit code 1'만 남긴다. ci.yml 한 곳 + 필요 시 스크립트 1개, 실제 실패 출력으로 tee/pipefail 동작 확인 필요. 이번 회차엔 ci.yml 미재독.",
+    "updated": "2026-09-29"
+  },
+  {
+    "title": "접근성 실패 catch가 blocking 목록 없는 JSON으로 덮어쓰는 문제",
+    "value": 3,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "실제 Axe 실패 재현(이미지 빌드+Playwright)이 선행이라 짧은 세션에 위험. 지난 회차엔 통과 결과만 확인.",
+    "updated": "2026-09-29"
+  },
+  {
+    "title": "새 500 출구가 pg 오류를 버려 운영자 로그에 원인이 없는 것 — 구조화 로그 한 줄",
+    "value": 3,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "admin.go resolveReport의 Begin/UPDATE/INSERT/Commit 오류 경로가 writeError만 호출. 사용자 원문·pg 상세를 로그에 넣지 말고 handler·식별자·SQLSTATE로 한정.",
+    "updated": "2026-09-29"
+  },
+  {
+    "title": "프런트 테스트 전반의 'effect 결과를 findBy 직후 즉시 읽는' 패턴 점검",
+    "value": 3,
+    "risk": 1,
+    "size": "M",
+    "status": "pending",
+    "note": "이번 회차에서 원인이 AuthContext 고유가 아니라 RTL asyncWrapper의 단일 drain tick이라는 일반적 성질임이 밝혀졌다. 다른 테스트에도 같은 한 틱 의존이 있을 수 있으므로 findBy 직후의 비-DOM 단언을 훑을 가치가 있다. 재현용 setImmediate 지연 setup 기법은 이번 원장에 기록됨.",
+    "updated": "2026-09-29"
+  },
+  {
+    "title": "followTopic(social.go:282)의 통합 404를 500 storage_error로 분리 (972113f 복원)",
+    "value": 2,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "남은 마지막 유실 커밋. 이전 verify-failed 원인은 image 잡의 API and browser smoke였으므로 복원해도 같은 곳에서 다시 걸릴 수 있음. decodeOptionalJSON 보존 필요.",
+    "updated": "2026-09-29"
+  },
+  {
+    "title": "POST /media 거절 경로(415·인증·CSRF) 실제 multipart integration 테스트",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "기존 커버 범위(oversized/filename)는 확인, 415·인증·CSRF 전체 middleware 커버 여부는 여전히 미확인.",
+    "updated": "2026-09-29"
+  },
+  {
+    "title": "joinMoim·createReport·getMoim·getTopic의 Scan 오류를 404에서 500으로 분리",
+    "value": 2,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "SELECT 실패를 재현할 수단이 없어 전용 스키마 헬퍼가 선행. 대역으로 때우지 않는다.",
+    "updated": "2026-09-29"
+  },
+  {
+    "title": "전용 스키마를 쓰는 integration 테스트 헬퍼(SELECT 실패 재현 가능하게)",
+    "value": 3,
+    "risk": 3,
+    "size": "M",
+    "status": "pending",
+    "note": "CI source는 PostgreSQL 한 DB 공유. 설계 과제라 한 세션에 위험.",
+    "updated": "2026-09-29"
+  },
+  {
+    "title": "e2e README의 기본 테스트 실행 순서 설명 충돌 정정",
+    "value": 1,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "package.json이 정본(visual→accessibility→smoke). 문서 결함 유지 중.",
+    "updated": "2026-09-29"
+  },
+  {
+    "title": "커스텀 MOINA_E2E_OUTPUT과 visual producer 기본 경로 불일치",
+    "value": 2,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "요약기는 MOINA_E2E_OUTPUT/visual, producer는 MOINA_VISUAL_OUTPUT 기준. 계약 검증 필요.",
+    "updated": "2026-09-29"
+  },
+  {
+    "title": "가이드 3.4/3.6/3.8 화면 재캡처",
+    "value": 3,
+    "risk": 1,
+    "size": "M",
+    "status": "pending",
+    "note": "전용 DB·브라우저 준비 부담. 외부 연동(Keycloak/SMTP) 미확인.",
+    "updated": "2026-09-29"
+  },
+  {
+    "title": "now()가 단조롭다고 가정하는 통합 테스트(ORDER BY created_at,id)의 취약성",
+    "value": 2,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "실제 실패 관측 없음. 추정만으로 건드리지 않는다.",
+    "updated": "2026-09-29"
+  },
+  {
+    "title": "auto-improve: fix: 신고 처리가 저장 실패를 404로 감추지 않고 제재 기록과 함께 커밋되게 합니다",
+    "value": 3,
+    "risk": 2,
+    "size": "M",
+    "status": "pending",
+    "updated": "2026-10-01",
+    "note": "https://github.com/hkjang/moina/pull/34 (PR 처리기가 3일 전에 더 진행할 수 없다고 판정했고(수정·심사를 2번 시도했지만 통과하지 못함) 그 뒤 사람 손이 닿지 않았습니다) 로 닫힘 — 다시 하려면 처음부터"
+  }
 ]
