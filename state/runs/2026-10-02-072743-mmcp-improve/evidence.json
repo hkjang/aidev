@@ -1,0 +1,213 @@
+{
+  "run_id": "2026-10-02-072743-mmcp-improve",
+  "generated": "2026-10-02T07:46:10+09:00",
+  "run": {
+    "run_id": "2026-10-02-072743-mmcp-improve",
+    "project": "mmcp",
+    "kind": "improve",
+    "started": "2026-10-02T07:27:43+09:00",
+    "model": "claude-opus-5",
+    "policy_version": "4a9e91ac7",
+    "prompts_hash": "ce085c79e18002e2",
+    "runner_version": "1bd5f0cd4",
+    "arm": "no-lessons",
+    "experiment": "roles-2026-09",
+    "finished": "2026-10-02T07:46:10+09:00",
+    "outcome": "review-pending"
+  },
+  "record": {
+    "ts": "2026-10-02T07:46:10+09:00",
+    "date": "2026-10-02",
+    "project": "mmcp",
+    "result": "fix-round: guarded files, PR open https://github.com/hkjang/mmcp/pull/1",
+    "outcome": "review-pending",
+    "run_id": "2026-10-02-072743-mmcp-improve",
+    "base_sha": "60fca203b20698870f9f908d2a6b7f227798a23a",
+    "head_sha": "60d67c0fcfcafff61ac0990775fbd1b3dd1de744",
+    "pr": "https://github.com/hkjang/mmcp/pull/1",
+    "stages": {
+      "base": {
+        "state": "pinned",
+        "reason": "main@60fca20",
+        "at": "2026-10-02T07:27:47+09:00"
+      },
+      "autonomy": {
+        "state": "release",
+        "reason": "",
+        "at": "2026-10-02T07:27:47+09:00"
+      },
+      "scout": {
+        "state": "done",
+        "reason": "`cd web && npm test` 가 `node_modules/.bin` 심링크와 \"이미 설치돼 있음\" 을 전제해 깨끗한 체크아웃에서 항상 실패",
+        "at": "2026-10-02T07:32:29+09:00"
+      },
+      "brief": {
+        "state": "accepted",
+        "reason": "채택 — 과제서의 근거(`web/package.json:9` 만 `.bin` 의존 + 가드 없음, 나머지 전부 패키지 경로, `release.yml` 은 web 테스트를 부",
+        "at": "2026-10-02T07:45:55+09:00"
+      },
+      "verify": {
+        "state": "passed",
+        "reason": "검증 7개 통과 (auto)",
+        "at": "2026-10-02T07:46:04+09:00"
+      },
+      "pr": {
+        "state": "created",
+        "reason": "https://github.com/hkjang/mmcp/pull/1",
+        "at": "2026-10-02T07:46:10+09:00"
+      },
+      "guard": {
+        "state": "held",
+        "reason": ".github/workflows/ci.yml ",
+        "at": "2026-10-02T07:46:10+09:00"
+      }
+    },
+    "campaign": "",
+    "autonomy": "release",
+    "arm": "no-lessons",
+    "experiment": "roles-2026-09",
+    "engine": "claude",
+    "files": 4,
+    "additions": 7,
+    "deletions": 3,
+    "tests": 0,
+    "title": "fix: make `npm test` work from a clean checkout and pin the Node that runs vitest"
+  },
+  "stages": {
+    "base": {
+      "state": "pinned",
+      "reason": "main@60fca20",
+      "at": "2026-10-02T07:27:47+09:00"
+    },
+    "autonomy": {
+      "state": "release",
+      "reason": "",
+      "at": "2026-10-02T07:27:47+09:00"
+    },
+    "scout": {
+      "state": "done",
+      "reason": "`cd web && npm test` 가 `node_modules/.bin` 심링크와 \"이미 설치돼 있음\" 을 전제해 깨끗한 체크아웃에서 항상 실패",
+      "at": "2026-10-02T07:32:29+09:00"
+    },
+    "brief": {
+      "state": "accepted",
+      "reason": "채택 — 과제서의 근거(`web/package.json:9` 만 `.bin` 의존 + 가드 없음, 나머지 전부 패키지 경로, `release.yml` 은 web 테스트를 부",
+      "at": "2026-10-02T07:45:55+09:00"
+    },
+    "verify": {
+      "state": "passed",
+      "reason": "검증 7개 통과 (auto)",
+      "at": "2026-10-02T07:46:04+09:00"
+    },
+    "pr": {
+      "state": "created",
+      "reason": "https://github.com/hkjang/mmcp/pull/1",
+      "at": "2026-10-02T07:46:10+09:00"
+    },
+    "guard": {
+      "state": "held",
+      "reason": ".github/workflows/ci.yml ",
+      "at": "2026-10-02T07:46:10+09:00"
+    }
+  },
+  "provenance": {
+    "model": "claude-opus-5",
+    "policy_version": "4a9e91ac7",
+    "prompts_hash": "ce085c79e18002e2",
+    "runner_version": "1bd5f0cd4",
+    "base_sha": "60fca203b20698870f9f908d2a6b7f227798a23a",
+    "head_sha": "60d67c0fcfcafff61ac0990775fbd1b3dd1de744",
+    "pr": "https://github.com/hkjang/mmcp/pull/1"
+  },
+  "verification": {
+    "runner": {
+      "source": "auto",
+      "commands": [
+        {
+          "cmd": "go build ./...",
+          "exit": 0,
+          "seconds": 0
+        },
+        {
+          "cmd": "go vet ./...",
+          "exit": 0,
+          "seconds": 0
+        },
+        {
+          "cmd": "go test ./...",
+          "exit": 0,
+          "seconds": 0
+        },
+        {
+          "cmd": "cd web && [ -d node_modules ] || npm ci --no-audit --no-fund",
+          "exit": 0,
+          "seconds": 0
+        },
+        {
+          "cmd": "cd web && npm test --silent",
+          "exit": 0,
+          "seconds": 2
+        },
+        {
+          "cmd": "cd web && [ -d node_modules ] || npm ci --no-audit --no-fund",
+          "exit": 0,
+          "seconds": 0
+        },
+        {
+          "cmd": "cd web && npm run build --silent",
+          "exit": 0,
+          "seconds": 4
+        }
+      ]
+    },
+    "runner_gate": {
+      "ok": true,
+      "state": "verified",
+      "reason": "검증 7개 통과 (auto)"
+    },
+    "after_rebase": null,
+    "review": null,
+    "ci_gate": null
+  },
+  "release": {
+    "result": null,
+    "assets_sha256": []
+  },
+  "approval": null,
+  "usage": [
+    {
+      "ts": "2026-10-02T07:32:28+09:00",
+      "date": "2026-10-02",
+      "project": "mmcp",
+      "phase": "scout",
+      "run_id": "2026-10-02-072743-mmcp-improve",
+      "campaign": "",
+      "subtype": "success",
+      "engine": "claude",
+      "duration_ms": 304285,
+      "num_turns": 31,
+      "cost_usd": 1.491783,
+      "input_tokens": 38,
+      "output_tokens": 20017,
+      "cache_read": 910456,
+      "cache_create": 53594
+    },
+    {
+      "ts": "2026-10-02T07:45:55+09:00",
+      "date": "2026-10-02",
+      "project": "mmcp",
+      "phase": "improve",
+      "run_id": "2026-10-02-072743-mmcp-improve",
+      "campaign": "",
+      "subtype": "success",
+      "engine": "claude",
+      "duration_ms": 884712,
+      "num_turns": 79,
+      "cost_usd": 4.802205500000001,
+      "input_tokens": 142,
+      "output_tokens": 46182,
+      "cache_read": 5303871,
+      "cache_create": 99501
+    }
+  ]
+}
