@@ -117,7 +117,7 @@ flowchart LR
 | 컨테이너 런타임 | Docker + Docker Compose |
 | 데이터베이스 | PostgreSQL (별도 준비. `compose.offline.yml`에는 PostgreSQL 서비스가 포함되어 있지 않습니다) |
 | 네트워크 | mmcp → PostgreSQL, Keycloak, Mattermost 접근 가능 / 사용자·MCP 클라이언트 → mmcp `8080` 접근 가능 |
-| 릴리스 파일 | `mmcp-v1.0.0.tar.gz`, `mmcp-v1.0.0.tar.gz.sha256` ([GitHub Releases](https://github.com/hkjang/mmcp/releases)에서 받아 반입) |
+| 릴리스 파일 | `mmcp-v1.0.0.tar.gz`, `릴리스 노트의 SHA-256 값` ([GitHub Releases](https://github.com/hkjang/mmcp/releases)에서 받아 반입) |
 
 이미지 특성(mmcp v1.0.0):
 
@@ -129,8 +129,8 @@ flowchart LR
 ### 2.2 이미지 반입과 검증
 
 ```bash
-# 무결성 확인 (같은 디렉터리에 .sha256 파일이 있어야 합니다)
-sha256sum -c mmcp-v1.0.0.tar.gz.sha256
+# 무결성 확인 (GitHub 릴리스 노트에 적힌 SHA-256 값과 같아야 합니다)
+sha256sum mmcp-v1.0.0.tar.gz   # 릴리스 노트의 SHA-256 값과 비교
 
 # 이미지 로드 → "Loaded image: mmcp:v1.0.0"
 docker load -i mmcp-v1.0.0.tar.gz
@@ -366,11 +366,15 @@ Audience 매퍼는 Keycloak 액세스 토큰을 `/mcp`에 직접 Bearer로 보�
 
 ## 7. 계정 매핑과 충돌 처리
 
+> **로컬 계정과 Keycloak 자동 연결 규칙**: Keycloak 사용자명과 같은 로컬 계정이 있을 때, 그 계정이 **비밀번호도 관리자 역할도 없는 SSO 전용 계정**이면 첫 로그인 때 자동 연결됩니다. 비밀번호·`admin` 역할이 있는 계정이나 부트스트랩 관리자는 계정 탈취를 막기 위해 자동 연결하지 않습니다.
+>
+> **DM 정책**: DM·그룹 메시지는 DM 전용 도구(`mattermost_read_dm`, `mattermost_send_dm` 등)로만 다룰 수 있습니다. 일반 채널 도구에 DM 채널 ID를 넣어도 `POLICY_BLOCKED`로 거부되므로, DM 도구의 활성화·승인·역할 정책이 항상 적용됩니다.
+
 ![계정 매핑](screenshots/mappings.webp)
 
 ### 7.1 매핑 규칙
 
-1. **최초 탐색**: mmcp username(Keycloak 사용자명 클레임, 기본 `preferred_username`)과 같은 Mattermost username을 **서비스 토큰**으로 찾습니다. Mattermost 설정의 **이메일로 매칭**이 켜져 있으면 username이 없을 때 이메일로 찾습니다. 비활성 계정·봇 계정은 매핑하지 않습니다.
+1. **최초 탐색**: mmcp username(Keycloak 사용자명 클레임, 기본 `preferred_username`)과 같은 Mattermost username을 **서비스 토큰**으로 찾습니다. Mattermost 설정의 **이메일로 매칭**이 켜져 있으면 username이 없을 때 이메일로 찾습니다. 단, 이메일 매칭은 Keycloak이 `email_verified=true`로 확인한 Keycloak 사용자에게만 적용되며, 사용자가 직접 바꿀 수 있는 로컬 계정 이메일은 절대 사용하지 않습니다. 비활성 계정·봇 계정은 매핑하지 않습니다.
 2. **고정**: 찾은 뒤에는 Keycloak `sub`(mmcp 사용자) ↔ Mattermost `user_id`가 고정됩니다. 이후 username이 같아도 다른 `user_id`로 바뀌어 연결되지 않습니다.
 3. **주기적 재검증**: 매핑 검증 캐시 시간이 지나면 매핑된 `user_id`가 여전히 존재·활성인지, 그리고 username이 여전히 같은 `user_id`를 가리키는지 확인합니다.
 4. **사용자 직접 등록**: 사용자가 내 공간 > Mattermost 연결에서 PAT를 등록할 수 있습니다. 토큰 소유자가 로그인 사용자(username 또는 이메일 일치) 또는 관리자가 수동 매핑한 계정과 다르면 거부(`IDENTITY_CONFLICT`)됩니다.
@@ -515,6 +519,7 @@ Mattermost 권한 위에 한 겹 더 거는 정책입니다. 사용자가 Matter
 | 결과 최대 건수 | 100건 | 5~200 |
 | 파일 최대 크기 | 1024 KB | 1~51200 |
 | 승인 유효시간 | 10분 | 1~1440 |
+| 콘솔 승인 필수 (엄격 모드) | 꺼짐 | 켜면 AI 대화 속 동의만으로는 실행되지 않고 사용자가 콘솔 **승인 요청** 화면에서 직접 승인해야 함(`APPROVAL_PENDING`). 위험 도구는 항상 이 방식 |
 | 조회 결과에 신뢰불가 표시 | 켜짐 | 읽기 도구 결과를 `untrusted_content`로 감싸 프롬프트 인젝션 방어 |
 | 감사 로그에 본문 저장 | **꺼짐** | 꺼져 있으면 발송 메시지는 글자 수만 기록 |
 | 서버 안내문 (instructions) | (없음) | MCP `initialize` 응답의 instructions 뒤에 덧붙임 (최대 4000자) |
@@ -737,7 +742,7 @@ pg_restore -d "$POSTGRES_DSN" --clean --if-exists mmcp-YYYYMMDD.dump
 ### 15.3 업그레이드
 
 1. 설정 내보내기와 DB 덤프를 받습니다.
-2. 새 릴리스 아카이브를 반입해 `sha256sum -c`로 확인하고 `docker load` 합니다.
+2. 새 릴리스 아카이브를 반입해 `sha256sum` 값을 릴리스 노트와 비교하고 `docker load` 합니다.
 3. `compose.offline.yml`의 `image:` 태그(현재 `mmcp:v1.0.0`)를 새 태그로 바꿉니다.
 4. `docker compose -f compose.offline.yml up -d` — 시작 시 DB 마이그레이션이 자동 적용되며 로그에 `migrations applied`가 남습니다.
 5. 시스템 정보 화면에서 버전(현재 v1.0.0에서 바뀌었는지)과 마이그레이션을 확인합니다.
@@ -878,6 +883,9 @@ HTTP 수준 오류: `IP_DENIED`(IP 허용목록), `ORIGIN_DENIED`(CORS Origin), 
 - [ ] DM 검색, 첨부 파일 내용 조회는 필요할 때만 켜기
 - [ ] 위험 도구(`mattermost_delete_post`, `mattermost_archive_channel`)는 비활성 유지
 - [ ] 쓰기 도구의 confirm 모드 유지, 승인 유효시간 최소화
+- [ ] 민감 환경에서는 **콘솔 승인 필수(엄격 모드)** 켜기 — 프롬프트 인젝션으로 AI가 스스로 승인하는 것을 차단
+- [ ] 리버스 프록시 뒤라면 **프록시 헤더 신뢰**를 켜고, 꺼져 있을 때는 X-Forwarded-* 헤더가 무시됨을 확인 (X-Forwarded-For는 가장 오른쪽 값만 사용)
+- [ ] **일반 설정 > 표시 시간대**를 조직 시간대(기본 Asia/Seoul)로 확인
 - [ ] 조회 결과 신뢰불가 표시 유지
 - [ ] 감사 로그 본문 저장은 규정상 필요할 때만 켜기
 - [ ] 서비스 토큰은 디렉터리 조회·토큰 발급 전용 계정으로 분리
