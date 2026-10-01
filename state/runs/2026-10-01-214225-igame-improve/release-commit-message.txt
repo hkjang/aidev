@@ -1,0 +1,39 @@
+feat: release igame v0.7.26
+
+Ships as a patch release the API key scope coverage landed since v0.7.25. The
+permissions a personal API key carries are decided on every request by the
+api_keys policy setting and the owner's current role, not by the key row, and
+that wiring had no test: the existing unit tests built a Principal and an
+apiKeyPolicy by hand and injected them into a bare Server, so authenticateAPIKey,
+the settings cache and the bearer wiring were never exercised. A new
+internal/api/apikey_scope_pg_test.go drives the real Router over httptest against
+a real PostgreSQL schema, issues the key over POST /api/v1/me/api-keys and
+presents it as an Authorization: Bearer token. It pins that removing a scope from
+the api_keys policy makes an already issued key fail the next request with 403
+insufficient_scope while the key row keeps its permissions, and that restoring
+the policy restores access; that demoting the owner from admin to user takes the
+key's admin reach away; that a key cannot manage API keys whatever it was scoped
+to; and that rotation, revocation and an elapsed expiry each stop authentication
+at once. Causality was shown by reverting product lines one at a time and
+watching the matching assertion fail. Product code, API, schema and game content
+are unchanged and no migration rides with it.
+
+Moves VERSION, the Compose image tag and the web and SDK package versions
+together as the release contract requires, updates release documentation, and
+rebuilds the two enterprise manuals for v0.7.26. The administrator guide examples
+move with them while the photographed v0.7.11 provenance and the two separately
+published guide PDFs remain intact. RealmGuard content 0.3.1 and Defense Series
+content 0.4.0 are retained.
+
+Takes the dev-only transitive brace-expansion from 1.1.18 to 1.1.21 and from
+5.0.9 to 5.0.12 in both lock files. Advisories published after v0.7.25 made the
+release workflow's npm audit --audit-level=low gate fail on an otherwise
+unchanged dependency set. Only those two lock entries move, both reached through
+eslint and typescript-eslint, and no manifest range or runtime dependency
+changes.
+
+Validated with make check-contract, make lint, make test, make test-race, make
+build, full PostgreSQL 17 make test-db (api 28.010s / database 1.905s), both npm
+dependency audits, govulncheck v1.6.0 and make docs-pdf. No test schemas remain
+and pgcrypto is preserved. The tag-triggered workflow builds and verifies the
+offline image, SBOM and browser gates before publication.

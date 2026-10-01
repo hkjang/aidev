@@ -1,7 +1,7 @@
 ---
 title: "작업함 — 사람 판단 필요"
 description: "사람이 결정해야 할 항목 30건 (러너가 처리 중 50건) — 열린 PR(리뷰 보류·보호 파일·CI 실패·승인 대기), 배포 복구, 수정 과제. 각 항목에 변경 요약·실패 근거·권장 조치가 붙어 있다."
-last_modified_at: 2026-10-01 22:03:35 +0900
+last_modified_at: 2026-10-01 22:39:14 +0900
 type: report
 ---
 {% raw %}
@@ -48,6 +48,8 @@ type: report
 - **vibe-code** — CI 실패로 PR 미머지
 - **vibe-code** — CI 실패로 PR 미머지
 - **vibe-code** — 최신 릴리즈 v1.4.6 자산 0개 (이전 v1.4.0: 2개)
+- **dataworks** — 수정 과제 대기 중 — 오류 대응(자동 적재): 마지막 회차가 &#x27;verify-failed&#x27; 로 끝났습니다. fix-round: verify failed: 실패한 검증: npm run lint   # CI에서 가져옴 (exit 1)
+- **hunter** — 수정 과제 대기 중 — 오류 대응(자동 적재): 마지막 회차가 &#x27;verify-failed&#x27; 로 끝났습니다. verify failed: 실패한 검증: cd web &amp;&amp; npm test --silent (exit 9)
 
 
 [← 대시보드](https://hkjang.github.io/aidev/)

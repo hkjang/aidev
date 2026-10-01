@@ -18,3 +18,7 @@
 - 못 본 것: 프런트·SDK(범위 밖, npm 미실행), 전체 DB 회귀의 다른 패키지, 문서 PDF. loadAPIKeyPolicyContext 의 ErrNoRows 전파와 만료 키 last_used_at 갱신은 기존 문제로 이번 diff 밖(fail-closed 라 차단 아님, ideas 에 남길 가치 있음).
 - [러너 22:02] review approved — 리뷰 승인 (risk=low)
 - [러너 22:02] pr created — https://github.com/hkjang/igame/pull/32
+- [러너 22:07] ci passed — 검사 1개 모두 success
+- [러너 22:07] merge done — e0aae1f
+- [러너 22:21] release published — v0.7.26
+- [러너 22:39] assets verified — v0.7.26 자산 1개 (이전 v0.7.25: 1)

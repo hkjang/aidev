@@ -262,3 +262,4 @@
 - 보류 아이디어: serviceLocation 이 설정 읽기 실패를 삼켜 시간대가 조용히 Asia/Seoul 이 됨 (가치 3 / 위험 2 / M) / `loadAPIKeyPolicyContext` 가 `api_keys` 설정 부재(`pgx.ErrNoRows`)에 자기 기본값을 버리고 에러를 올려 API 키 인증 전체가 401 이 됨 — 다른 호출처는 ErrNoRows 를 허용함, 다만 seed 가 행을 넣고 삭제 경로가 없어 도달성 미확인 (가치 2 / 위험 2 / S, 신규) / settings PG fixture 의 `preserve` 가 `updated_by=NULL` 로 복원 (가치 2 / 위험 1 / S) / secretbox 의 변조·잘못된 키·손상 포맷 거부 회귀 보강 (가치 2 / 위험 1 / S)
 - 과제서: 없음 — 이번 회차에는 정찰 과제서가 없어 보류 목록 재평가 + 신규 후보로 직접 선택했다.
 
+- 릴리즈: v0.7.26 (2026-10-01, run 2026-10-01-214225-igame-improve)

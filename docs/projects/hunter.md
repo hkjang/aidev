@@ -1,7 +1,7 @@
 ---
 title: "hunter — 자율 개선 이력"
 description: "hunter: 자율 개선 회차 28회, 릴리즈 2건. 최근 릴리즈 v1.18.0."
-last_modified_at: 2026-10-01 22:03:35 +0900
+last_modified_at: 2026-10-01 22:39:14 +0900
 ---
 {% raw %}
 <script type="application/ld+json">
@@ -18,7 +18,7 @@ last_modified_at: 2026-10-01 22:03:35 +0900
   "name": "hkjang",
   "url": "https://github.com/hkjang"
  },
- "dateModified": "2026-10-01T22:03:35+09:00",
+ "dateModified": "2026-10-01T22:39:14+09:00",
  "version": "1.18.0"
 }
 </script>
@@ -35,6 +35,7 @@ last_modified_at: 2026-10-01 22:03:35 +0900
 <dt>저장소</dt><dd><a href="https://github.com/hkjang/hunter">https://github.com/hkjang/hunter</a></dd>
 <dt>마지막 회차</dt><dd>2026-10-01 21:52 KST — <span class="pill pill-other">• 기타</span> verify failed: 실패한 검증: cd web &amp;&amp; npm test --silent (exit 9)</dd>
 <dt>최근 릴리즈</dt><dd><a href="https://github.com/hkjang/hunter/releases/tag/v1.18.0">v1.18.0</a> — released <a href="https://github.com/hkjang/hunter/releases">전체 릴리즈 →</a></dd>
+<dt>수정 과제</dt><dd>⚠️ 오류 대응(자동 적재): 마지막 회차가 &#x27;verify-failed&#x27; 로 끝났습니다. verify failed: 실패한 검증: cd web &amp;&amp; npm test --silent (exit 9)</dd>
 </dl>
 
 ## 회차 이력
