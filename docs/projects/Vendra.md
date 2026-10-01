@@ -1,7 +1,7 @@
 ---
 title: "Vendra — 자율 개선 이력"
 description: "Vendra: 자율 개선 회차 47회, 릴리즈 23건. 최근 릴리즈 v0.7.65 (자산 1개)."
-last_modified_at: 2026-10-01 14:59:00 +0900
+last_modified_at: 2026-10-01 15:16:47 +0900
 ---
 {% raw %}
 <script type="application/ld+json">
@@ -18,7 +18,7 @@ last_modified_at: 2026-10-01 14:59:00 +0900
   "name": "hkjang",
   "url": "https://github.com/hkjang"
  },
- "dateModified": "2026-10-01T14:59:00+09:00",
+ "dateModified": "2026-10-01T15:16:47+09:00",
  "version": "0.7.65"
 }
 </script>
@@ -35,6 +35,7 @@ last_modified_at: 2026-10-01 14:59:00 +0900
 <dt>저장소</dt><dd><a href="https://github.com/hkjang/Vendra">https://github.com/hkjang/Vendra</a></dd>
 <dt>마지막 회차</dt><dd>2026-10-01 14:24 KST — <span class="pill pill-other">• 기타</span> verify failed: 실패한 검증: cd web &amp;&amp; npm test --silent (exit 1)</dd>
 <dt>최근 릴리즈</dt><dd><a href="https://github.com/hkjang/Vendra/releases/tag/v0.7.65">v0.7.65</a> — released · 자산 1개 (이전 v0.7.64: 1개) <a href="https://github.com/hkjang/Vendra/releases">전체 릴리즈 →</a></dd>
+<dt>수정 과제</dt><dd>⚠️ 오류 대응(자동 적재): 마지막 회차가 &#x27;verify-failed&#x27; 로 끝났습니다. verify failed: 실패한 검증: cd web &amp;&amp; npm test --silent (exit 1)</dd>
 </dl>
 
 ## 회차 이력
