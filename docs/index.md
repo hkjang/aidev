@@ -1,7 +1,7 @@
 ---
 title: "aidev 자율 개선 대시보드"
 description: "Claude Code 자율 개선 에이전트가 hkjang 의 프로젝트를 개선·테스트·머지·릴리즈한 일일 보고. 오늘 12회차·릴리즈 1건, 누적 1789회차·릴리즈 613건, 주의 필요 13건."
-last_modified_at: 2026-10-02 03:28:38 +0900
+last_modified_at: 2026-10-02 03:37:38 +0900
 ---
 {% raw %}
 <script type="application/ld+json">
@@ -17,7 +17,7 @@ last_modified_at: 2026-10-02 03:28:38 +0900
   "name": "hkjang",
   "url": "https://github.com/hkjang"
  },
- "dateModified": "2026-10-02T03:28:38+09:00"
+ "dateModified": "2026-10-02T03:37:38+09:00"
 }
 </script>
 
@@ -369,7 +369,7 @@ last_modified_at: 2026-10-02 03:28:38 +0900
 
 # aidev 자율 개선 대시보드
 
-<p class="tldr"><strong>한 줄 요약.</strong> Claude Code 자율 개선 에이전트가 hkjang 의 프로젝트를 개선·테스트·머지·릴리즈한 일일 보고. 오늘 12회차·릴리즈 1건, 누적 1789회차·릴리즈 613건, 주의 필요 13건. 회차가 끝날 때마다 자동 갱신됩니다 (마지막 갱신 <time datetime="2026-10-02T03:28:38+09:00" data-rel>2026-10-02 03:28</time> KST).</p>
+<p class="tldr"><strong>한 줄 요약.</strong> Claude Code 자율 개선 에이전트가 hkjang 의 프로젝트를 개선·테스트·머지·릴리즈한 일일 보고. 오늘 12회차·릴리즈 1건, 누적 1789회차·릴리즈 613건, 주의 필요 13건. 회차가 끝날 때마다 자동 갱신됩니다 (마지막 갱신 <time datetime="2026-10-02T03:37:38+09:00" data-rel>2026-10-02 03:37</time> KST).</p>
 
 <div class="alerts" role="alert"><strong>⚠️ 주의 필요 13건</strong> <span class="meta">— 새 경고는 GitHub Issue·Slack·이메일·Windows 알림으로도 보냅니다</span><ul><li><a href="https://hkjang.github.io/aidev/projects/vibe-code/">vibe-code</a> — CI 실패로 PR 미머지 <span class=meta>(2026-10-01 01:18)</span></li><li><a href="https://hkjang.github.io/aidev/projects/DartFly/">DartFly</a> — CI 실패로 PR 미머지 <span class=meta>(2026-10-01 02:05)</span></li><li><a href="https://hkjang.github.io/aidev/projects/DartFly/">DartFly</a> — CI 실패로 PR 미머지 <span class=meta>(2026-10-01 03:16)</span></li><li><a href="https://hkjang.github.io/aidev/projects/vibe-code/">vibe-code</a> — CI 실패로 PR 미머지 <span class=meta>(2026-10-01 03:49)</span></li><li><a href="https://hkjang.github.io/aidev/projects/DartFly/">DartFly</a> — CI 실패로 PR 미머지 <span class=meta>(2026-10-01 05:10)</span></li><li><a href="https://hkjang.github.io/aidev/projects/vibe-code/">vibe-code</a> — CI 실패로 PR 미머지 <span class=meta>(2026-10-01 05:56)</span></li><li><a href="https://hkjang.github.io/aidev/projects/vibe-code/">vibe-code</a> — CI 실패로 PR 미머지 <span class=meta>(2026-10-01 06:50)</span></li><li><a href="https://hkjang.github.io/aidev/projects/vibe-code/">vibe-code</a> — CI 실패로 PR 미머지 <span class=meta>(2026-10-01 07:59)</span></li><li><a href="https://hkjang.github.io/aidev/projects/vibe-code/">vibe-code</a> — CI 실패로 PR 미머지 <span class=meta>(2026-10-01 08:59)</span></li><li><a href="https://hkjang.github.io/aidev/projects/qurio/">qurio</a> — 보호 파일 변경 — 자동 머지 안 함, 사람 검토 필요 <span class=meta>(2026-10-01 11:08)</span></li><li><a href="https://hkjang.github.io/aidev/projects/vibe-code/">vibe-code</a> — 최신 릴리즈 v1.4.6 자산 0개 (이전 v1.4.0: 2개)</li><li><a href="https://hkjang.github.io/aidev/projects/jikim/">jikim</a> — 수정 과제 대기 중 — 오류 대응(자동 적재): 마지막 회차가 &#x27;verify-failed&#x27; 로 끝났습니다. verify failed: 실패한 검증: cd web &amp;&amp; npm test --silent (exit 1)</li><li><a href="https://hkjang.github.io/aidev/projects/jupiq/">jupiq</a> — 수정 과제 대기 중 — 오류 대응(자동 적재): 마지막 회차가 &#x27;verify-failed&#x27; 로 끝났습니다. verify failed: 실패한 검증: cd web &amp;&amp; npm test --silent (exit 1)</li></ul></div>
 
