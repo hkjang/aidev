@@ -242,3 +242,11 @@
 - 과제서: 기각 — 지정된 실패(PR #29 React 검사)는 base에 이미 고쳐져 있고 릴리즈 경로도 로컬에서 전부 통과해 고칠 것이 없었으므로, 재현으로 증명한 뒤 보류 아이디어를 구현했다.
 
 - 릴리즈: v1.8.7 (2026-09-29, run 2026-09-29-191711-jupiq-improve)
+## 2026-10-02
+- 선택: 서버 `writeJSON`이 인코딩 실패를 버려 200 + 빈 JSON 본문을 내보내는 것을 500 error 봉투로 바꾼다 (가치 3 / 위험 2 / 작업량 S)
+- 결과: 성공
+- 요약: `internal/api/helpers.go:29 writeJSON`이 `w.WriteHeader(status)`를 먼저 하고 `json.NewEncoder(w).Encode` 오류를 버려, 직렬화가 실패하면 상태코드가 이미 200으로 확정된 채 본문만 비는 응답이 나갔다. marshal-first로 바꿔 실패를 되돌릴 수 있는 시점에 알고 500 + `{"error":{"code":"internal_error",…}}` 고정 봉투(직렬화가 필요 없는 const 문자열이라 여기서 또 실패할 수 없다)를 쓰게 했고, 실패 시 `slog.Default().Error`로 원래 오류를 남긴다(`cmd/jupiq/main.go:25`가 `slog.SetDefault`를 하므로 설정된 JSON 로거로 간다). 프로덕션 파일 1개만 바꿨다 — `data`/`list`/`apiError` 시그니처·`core_handlers.go` 호출부·openapi·프런트는 무변경. NaN이 응답까지 가는 실제 유입 경로는 이번에도 확인하지 못했고(수집 입구 `validPrometheusSample`이 막는다) 커밋 메시지에 그 사실을 "계약 방어 + 거짓 200 제거"로 적었다. 검증: 신규 테스트 9개(성공 바이트 회귀 4 + 실패 봉투 5)를 먼저 빨갛게 만든 뒤 고쳤고, `gofmt -l .` 무출력·`go vet ./...`·`go test -count=1 ./...`·`go test -count=1 -race ./...`·`go test -count=1 -run 'OpenAPI|UndocumentedRoute' ./internal/api`(4개 PASS)·`go build ./...`·`git diff --check` 전부 통과. 임시 `postgres:16-alpine`(5434)로 `make test-integration`(store 4.785s / api 1.080s)과 `-race` 통합(store 7.948s / api 4.616s)도 통과했고 api 통합 `-v` SKIP 0건으로 `apiError`/`data`를 타는 기존 통합 테스트가 성공 경로 무변경을 증명한다. 컨테이너는 제거했다.
+- 실패 재현: `write_json_test.go:106: status = 200 body = "", want 500 + error 봉투` (data NaN·list +Inf·중첩 NaN·func(){}·chan int 5개 서브테스트 전부 동일). 되돌림 확인도 했다: 실패 분기를 지우고 `payload, _ := json.Marshal(value)`로 되돌리자 같은 5개가 `status = 200 body = "\n"`으로 다시 빨개졌고 원복 후 통과했다. 성공 바이트 회귀 테스트 4개는 수정 전에도 통과해 종전 바이트(끝 개행 포함)를 고정했다.
+- 보류 아이디어: resource_usage/metrics 응답이 DB double precision 값을 가드 없이 생 float64로 내보내는 것(출구 유한성 검사 — 이제 거짓 200은 없어졌으니 '값을 0·null·생략 중 무엇으로 표현할지' 계약 결정만 남았다) / `numberFromAny`의 string 분기가 ParseFloat 오류를 버려 "NaN"·"Inf"를 통과시키는 것(호출자 9곳 모두 int64 캐스팅이라 지금은 무해) / OpenAPI page_size 상한 불일치 정리(/users maximum 100 vs pageBounds 200 — 실제 `?page_size=150` 응답으로 어느 쪽이 사실인지 먼저 확인할 것) / internal/store 순수 헬퍼 5개 표 기반 테스트(네 회차 연속 차선, 다음에 고르거나 rejected로 내릴 것) / 메일 발송 기록 limit의 잘못된 정수 HTTP 회귀 테스트 보강(abc/-1)
+- 과제서: 채택 — 과제서의 진단(helpers.go:29가 WriteHeader를 먼저 하고 Encode 오류를 버린다, 호출자 7곳, 함정은 끝 개행 1바이트)이 코드와 정확히 일치했고 수용 기준 5개를 모두 실제 `ResponseWriter`로 충족했다.
+

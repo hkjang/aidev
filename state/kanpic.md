@@ -283,3 +283,11 @@
 - 과제서: 채택 — 현재 코드와 실제 TCP 12사례가 시한·취소 누락을 확인했고 프로덕션 1개·테스트 1개 범위에서 해결했다.
 
 - 릴리즈: v0.258.0 (2026-09-29, run 2026-09-29-081226-kanpic-improve)
+## 2026-10-02
+- 선택: 일정 트리거의 일·요일 OR 판정이 `*/N` 별표 필드를 제한으로 오해한다 (가치 3 / 위험 2 / 작업량 S)
+- 결과: 성공
+- 요약: `parseCronField` 이 "제한되지 않음" 을 `raw == "*"` 로만 판정해 `*/2` 같은 별표+step 필드가 제한으로 분류되고, 그 결과 `0 0 */2 * MON` 이 crontab(5) 의 "두 필드가 **모두** 제한일 때만 OR" 규칙을 벗어나 홀숫날 전부 + 모든 월요일에 실행됐다 — 자동화는 사람 없이 `ApplyCells` 로 셀을 바꾸므로 요청하지 않은 날의 실행이 데이터 변경으로 남는다. 판정을 `strings.HasPrefix(raw, "*")` 로 옮기고(필드 첫 글자만 보므로 `1,*/2` 는 제한으로 남는다) 플래그 이름을 의미대로 `unrestricted` 로 바꾼 뒤, `matchesDay` 의 4갈래 switch 를 "한쪽이라도 제한되지 않았으면 AND, 둘 다 제한이면 OR" 두 줄로 줄였다(왜 그런지는 한국어 주석). 테스트는 프로덕션 `ParseSchedule`→`Next` 를 연속 5회 돌려 실제 반환 시각의 날짜·요일을 비교하는 표 하나로, 결함 사례 2개와 바뀌면 안 되는 대조 사례 4개를 같은 자리에 못 박았다. 검증: `go test ./internal/automation -run TestSchedule -v`(빨강 2 부속 → 초록 6), `go test ./internal/automation -count=1`, `go test ./...`(20패키지 ok), `go vet ./...`, `go build ./...`, `gofmt -l ./cmd ./internal ./pkg`(출력 없음), `./scripts/check-release-docs.sh`(v0.258.0), `./scripts/check-commit-identities.sh HEAD`(exit 0). 프로덕션 1파일·커밋 1개(b1f3a81). `allowed` 채우기·DST·윤일·시간대 경로와 `service.go`·문서·PDF 는 손대지 않았다.
+- 실패 재현: `schedule_test.go:140: "0 0 */2 * MON" 다음 실행=[2026-10-31 Sat 00:00 2026-11-01 Sun 00:00 2026-11-02 Mon 00:00 2026-11-03 Tue 00:00 2026-11-05 Thu 00:00], want [2026-11-09 Mon 00:00 ...]` / `schedule_test.go:140: "0 0 1 * */2" 다음 실행=[2026-10-31 Sat 00:00 2026-11-01 Sun 00:00 2026-11-03 Tue 00:00 ...], want [2026-11-01 Sun 00:00 2026-12-01 Tue 00:00 ...]` — 같은 실행에서 대조 사례 4개는 처음부터 통과했다. 고친 뒤 `strings.HasPrefix` 한 줄만 `raw == "*"` 로 원복하니 정확히 그 두 사례만 같은 출력으로 다시 빨강이 됐다.
+- 보류 아이디어: `@midnight`·`@annually` cron 별칭을 더한다(차선 후보, 이번엔 1순위가 성립해 미실행 — `cronAliases` 두 줄 + USER_GUIDE 별칭 목록) / `SAT-SUN` 같은 감싸는 요일·월 범위 지원 — cron 구현마다 갈리는 계약 결정이라 결정 전 변경 금지 / 봄철 DST 로 사라진 벽시계 시각의 일정을 건너뛰는 대신 전이 직후 한 번 실행한다 — `TestScheduleSkipsNonexistentDSTWallTime` 이 현 동작을 의도로 못 박고 있다 / 관리자 가이드 ADMIN_GUIDE.md:785 의 외부 호출 오류 코드를 실제 `#N/A` 와 맞춘다(여덟 회차 연속 보류, PDF 재생성 동반) / `compareLists.looksLikeIdentifier` 는 `007.5` 까지 번호로 보아 파일·클립보드 두 문과 갈린다 — 키 비교 계약 결정 전 변경 금지
+- 과제서: 채택 — 과제서의 재현 결과가 지금 코드와 정확히 일치했고(`0 0 */2 * MON` 이 토·일·화·목에 실행), 건드릴 파일 2개·세 자리 수정·`allowed` 와 DST 손대지 않기·대조 사례 유지를 모두 그대로 따랐다.
+

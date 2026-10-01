@@ -1,0 +1,183 @@
+{
+  "run_id": "2026-10-02-013734-jikim-improve",
+  "generated": "2026-10-02T01:46:35+09:00",
+  "run": {
+    "run_id": "2026-10-02-013734-jikim-improve",
+    "project": "jikim",
+    "kind": "improve",
+    "started": "2026-10-02T01:37:35+09:00",
+    "model": "claude-opus-5",
+    "policy_version": "4a9e91ac7",
+    "prompts_hash": "ce085c79e18002e2",
+    "runner_version": "1bd5f0cd4",
+    "arm": "no-lessons",
+    "experiment": "roles-2026-09",
+    "finished": "2026-10-02T01:46:34+09:00",
+    "outcome": "verify-failed"
+  },
+  "record": {
+    "ts": "2026-10-02T01:46:34+09:00",
+    "date": "2026-10-02",
+    "project": "jikim",
+    "result": "verify failed: 실패한 검증: cd web && npm test --silent (exit 1)",
+    "outcome": "verify-failed",
+    "run_id": "2026-10-02-013734-jikim-improve",
+    "base_sha": "eeca59153f2aec4b6027cc4ef344fa161451c6cc",
+    "head_sha": "23bc1b6bb9d215f57b65fde30540302150796a75",
+    "pr": "",
+    "stages": {
+      "base": {
+        "state": "pinned",
+        "reason": "main@eeca591",
+        "at": "2026-10-02T01:37:39+09:00"
+      },
+      "autonomy": {
+        "state": "release",
+        "reason": "",
+        "at": "2026-10-02T01:37:39+09:00"
+      },
+      "scout": {
+        "state": "done",
+        "reason": "AI 채팅 입력 검증 실패를 전부 `secret_material_rejected` 로 보고하는 문제 분리 (가치 3 / 위험 1 / 작업량 S)",
+        "at": "2026-10-02T01:42:21+09:00"
+      },
+      "brief": {
+        "state": "accepted",
+        "reason": "채택 — 배선 사실(라우트 server.go:141, 거절이 `s.store` 앞에서 반환되는 ai.go:89→93→97 순서, `secret_material_rejected` 가 저장소",
+        "at": "2026-10-02T01:46:28+09:00"
+      },
+      "verify": {
+        "state": "failed",
+        "reason": "실패한 검증: cd web && npm test --silent (exit 1)",
+        "at": "2026-10-02T01:46:34+09:00"
+      }
+    },
+    "campaign": "",
+    "autonomy": "release",
+    "arm": "no-lessons",
+    "experiment": "roles-2026-09",
+    "engine": "claude",
+    "files": 2,
+    "additions": 111,
+    "deletions": 2,
+    "tests": 1,
+    "title": "fix: separate malformed AI chat requests from Secret material rejections"
+  },
+  "stages": {
+    "base": {
+      "state": "pinned",
+      "reason": "main@eeca591",
+      "at": "2026-10-02T01:37:39+09:00"
+    },
+    "autonomy": {
+      "state": "release",
+      "reason": "",
+      "at": "2026-10-02T01:37:39+09:00"
+    },
+    "scout": {
+      "state": "done",
+      "reason": "AI 채팅 입력 검증 실패를 전부 `secret_material_rejected` 로 보고하는 문제 분리 (가치 3 / 위험 1 / 작업량 S)",
+      "at": "2026-10-02T01:42:21+09:00"
+    },
+    "brief": {
+      "state": "accepted",
+      "reason": "채택 — 배선 사실(라우트 server.go:141, 거절이 `s.store` 앞에서 반환되는 ai.go:89→93→97 순서, `secret_material_rejected` 가 저장소",
+      "at": "2026-10-02T01:46:28+09:00"
+    },
+    "verify": {
+      "state": "failed",
+      "reason": "실패한 검증: cd web && npm test --silent (exit 1)",
+      "at": "2026-10-02T01:46:34+09:00"
+    }
+  },
+  "provenance": {
+    "model": "claude-opus-5",
+    "policy_version": "4a9e91ac7",
+    "prompts_hash": "ce085c79e18002e2",
+    "runner_version": "1bd5f0cd4",
+    "base_sha": "eeca59153f2aec4b6027cc4ef344fa161451c6cc",
+    "head_sha": "23bc1b6bb9d215f57b65fde30540302150796a75",
+    "pr": ""
+  },
+  "verification": {
+    "runner": {
+      "source": "auto",
+      "commands": [
+        {
+          "cmd": "go build ./...",
+          "exit": 0,
+          "seconds": 1
+        },
+        {
+          "cmd": "go vet ./...",
+          "exit": 0,
+          "seconds": 0
+        },
+        {
+          "cmd": "go test ./...",
+          "exit": 0,
+          "seconds": 1
+        },
+        {
+          "cmd": "cd web && [ -d node_modules ] || npm ci --no-audit --no-fund",
+          "exit": 0,
+          "seconds": 0
+        },
+        {
+          "cmd": "cd web && npm test --silent",
+          "exit": 1,
+          "seconds": 3
+        }
+      ]
+    },
+    "runner_gate": {
+      "ok": false,
+      "state": "verify-failed",
+      "reason": "실패한 검증: cd web && npm test --silent (exit 1)"
+    },
+    "after_rebase": null,
+    "review": null,
+    "ci_gate": null
+  },
+  "release": {
+    "result": null,
+    "assets_sha256": []
+  },
+  "approval": null,
+  "usage": [
+    {
+      "ts": "2026-10-02T01:42:20+09:00",
+      "date": "2026-10-02",
+      "project": "jikim",
+      "phase": "scout",
+      "run_id": "2026-10-02-013734-jikim-improve",
+      "campaign": "",
+      "subtype": "success",
+      "engine": "claude",
+      "duration_ms": 303557,
+      "num_turns": 27,
+      "cost_usd": 1.6501244999999998,
+      "input_tokens": 36,
+      "output_tokens": 19177,
+      "cache_read": 1045779,
+      "cache_create": 64763
+    },
+    {
+      "ts": "2026-10-02T01:46:28+09:00",
+      "date": "2026-10-02",
+      "project": "jikim",
+      "phase": "improve",
+      "run_id": "2026-10-02-013734-jikim-improve",
+      "campaign": "",
+      "subtype": "success",
+      "engine": "claude",
+      "duration_ms": 270510,
+      "num_turns": 35,
+      "cost_usd": 1.874421,
+      "input_tokens": 54,
+      "output_tokens": 15302,
+      "cache_read": 1691742,
+      "cache_create": 64573
+    }
+  ]
+}
