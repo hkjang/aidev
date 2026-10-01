@@ -1,7 +1,7 @@
 ---
 title: "jupiq — 자율 개선 이력"
 description: "jupiq: 자율 개선 회차 47회, 릴리즈 19건. 최근 릴리즈 v1.8.7 (자산 1개)."
-last_modified_at: 2026-10-02 05:49:03 +0900
+last_modified_at: 2026-10-02 06:35:04 +0900
 ---
 {% raw %}
 <script type="application/ld+json">
@@ -18,7 +18,7 @@ last_modified_at: 2026-10-02 05:49:03 +0900
   "name": "hkjang",
   "url": "https://github.com/hkjang"
  },
- "dateModified": "2026-10-02T05:49:03+09:00",
+ "dateModified": "2026-10-02T06:35:04+09:00",
  "version": "1.8.7"
 }
 </script>
@@ -35,6 +35,7 @@ last_modified_at: 2026-10-02 05:49:03 +0900
 <dt>저장소</dt><dd><a href="https://github.com/hkjang/jupiq">https://github.com/hkjang/jupiq</a></dd>
 <dt>마지막 회차</dt><dd>2026-10-02 05:26 KST — <span class="pill pill-other">• 기타</span> fix-round: verify failed: 실패한 검증: npm run lint   # CI에서 가져옴 (exit 1)</dd>
 <dt>최근 릴리즈</dt><dd><a href="https://github.com/hkjang/jupiq/releases/tag/v1.8.7">v1.8.7</a> — released · 자산 1개 (이전 v1.8.6: 1개) <a href="https://github.com/hkjang/jupiq/releases">전체 릴리즈 →</a></dd>
+<dt>수정 과제</dt><dd>⚠️ 오류 대응(자동 적재): 마지막 회차가 &#x27;verify-failed&#x27; 로 끝났습니다. fix-round: verify failed: 실패한 검증: npm run lint   # CI에서 가져옴 (exit 1)</dd>
 </dl>
 
 ## 회차 이력
