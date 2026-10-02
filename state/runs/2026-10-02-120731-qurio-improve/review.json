@@ -1,0 +1,15 @@
+{
+  "verdict": "approve",
+  "reasons": [],
+  "notes": [
+    "테스트 유효성 직접 확인: 원장에 '- 실패 재현:' 줄이 없어 base(main@3f7cf65)의 sqlsafe.go 를 되돌려 새 테스트를 돌렸다. sqlsafe_test.go:479 와 dbexec/policy_test.go:171 두 곳 모두 base 에서 실패한다(reasons=[Oracle SELECT의 비허용 함수 호출 amount()...]). 테스트는 실제로 바뀐 경로를 지난다 — 가짜 테스트 아님.",
+    "핵심 불변식 재현 성공: 74질의 x 2방언(146판정) 스윕을 base/HEAD 로 덤프해 diff. PostgreSQL 73행 diff 0, Oracle 13행만 blocked->low 로 바뀌며 전부 평범한 읽기 전용 식(amount=(SELECT...), amount*(1+rate), label||(...), CASE WHEN a=(1), 연산자 뒤 주석/공백)이다. side_effect_fn ('x')/dbms_lock.sleep(10)/utl_http.request/dbms_xmlgen.getxml/\"quoted\"(...)/TABLE(dbms_xplan.display())/NEXTVAL/@link 은 모두 blocked 유지 — 새로 통과하는 위험 질의 0건.",
+    "sqlsafe.go:1016 의 `continue` 가 건너뛰는 것은 함수 호출 사유뿐이다(oracleParenthesisKeywords 분기는 동일 효과, NEXTVAL/CURRVAL·database link 검사는 별도 루프/필드). scanOraclePolicy:1155 가 word 토큰에 raw slice `sql[start:index]` 와 `start` 를 함께 넣으므로 `start+len(value)` 는 정확한 끝 오프셋이고, quoted 식별자는 start 를 기록하지 않아 `!nameToken.quoted` 가드가 정확히 맞다.",
+    "남는 우려(차단 아님, 공격 경로 미확인): callAdjacent(sqlsafe.go:744)의 `unicode.IsSpace(rune(sql[cursor]))` 는 바이트를 rune 으로 캐스팅하므로 멀티바이트 공백(U+00A0, U+3000)과 NUL·0x01~0x1f·0x7f 제어문자가 trivia 로 인식되지 않고 default 로 떨어져 fail-OPEN 된다. 즉 `dbms_lock.sleep\\u00a0(10)` 이 이제 Oracle 에서 low 로 통과한다. 다만 (a) Oracle·PostgreSQL 어느 쪽도 이 문자를 토큰 구분자로 받지 않아(ORA-00911 invalid character) 서버에서 파싱 실패하므로 실행 가능한 우회가 아니고, (b) 동일 동작이 89b3e76 으로 이미 머지된 PostgreSQL 게이트에 존재한다(HEAD 에서 pg_ro=true 로 재현) — 이 PR 이 새로 만든 위험 등급이 아니라 기존 모델을 Oracle 로 확장한 것이다. 다음 회차에서 두 방언 동시에 ASCII 공백만 허용하도록 좁히는 것이 옳다.",
+    "주석 문구 하나는 느슨하다: 'both dialects share ... the same trivia syntax'(sqlsafe.go:718) — PostgreSQL 은 중첩 블록 주석을 허용하지만 flatBlockCommentEnd 는 평면 처리다. 다행히 그 경우 스캐너가 '주석이 닫히지 않았습니다' 로 fail-closed 되는 것을 확인했다(probe: nestedcmt -> blocked). 동작 문제는 없고 문구만 과한 일반화.",
+    "범위·되돌리기: 프로덕션 변경은 sqlsafe.go 1파일 +11/-5(식별자 rename + Oracle 게이트 4줄), 마이그레이션·워크플로·인증·의존성 무변경. revert 로 완전히 되돌아온다. 개인정보 신규 수집·전송 없음, 사유 문자열은 기존대로 식별자만 담는다(boundedToken) — legal 소견 없음.",
+    "검증 명령: gofmt -l(clean), go vet ./internal/domain/...(clean), go test ./...(28패키지 전체 통과). 통합 테스트(-tags=integration)와 실 Oracle 서버 검증은 하지 않았다 — 구현자가 자백한 '실 Oracle DB 미연결'은 그대로 남는 미검증 구간이고, 이 변경은 질의를 통과시키는 방향이므로 릴리즈 워크플로의 Oracle 단계에서 최종 확인이 필요하다."
+  ],
+  "risk": "medium",
+  "blocking": []
+}

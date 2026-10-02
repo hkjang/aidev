@@ -18,3 +18,19 @@
 - 다음 역할이 조심할 것: 새 테스트 3개는 DB 없이 돈다. `TestAHashInsideAHeadingIsNotAClosingSequence` 는 고치기 전에도 green 인 계약 고정용이므로 "red 를 못 봤다" 가 아니다. 미닫힘 펜스 재생 루프도 같은 `handle` 을 부르므로 새 규칙이 자동으로 적용되지만 그 자리의 테스트는 두지 않았다.
 - [러너 12:23] brief accepted — 채택 — 재현 여섯 입력과 권장 형태(`TrimRight` 뒤 끝 글자가 공백/탭이거나 빈 문자열일 때만)가 현재 코드와 그대로 맞아
 - [러너 12:23] verify passed — 검증 9개 통과 (auto)
+
+## 비평 노트
+- 확인한 것: base(70a0c4e) 를 detach 워크트리로 꺼내 새 테스트만 얹어 **red 를 직접 재현**했다 — 닫는 해시 3건과 `## ###` 가 FAIL 하고 출력이 주장한 증상(제목·덱 이름·`!source` locator 세 곳)과 같다. `TestAHashInsideAHeadingIsNotAClosingSequence` 만 base 에서 green 으로, 구현자가 밝힌 대로 계약 고정용이다.
+- 경계도 새 코드에 직접 입력 14개를 넣어 봤다: `# 요약 ## ##`→`요약 ##`, `# 1 ## 2 ##`→`1 ## 2`, `# ##`·`# #`→빈 제목, `# C# 도입 ##`→`C# 도입`, `# 제목#`·전각 공백 앞 `##`→그대로. 전부 CommonMark 와 맞다. `closing[len-1]` 바이트 검사는 UTF-8 연속 바이트(0x80~0xBF)가 0x20/0x09 와 겹치지 않아 안전하다. 서버 `go vet ./...` + `go test -race ./...` 통과. 구현자가 테스트를 두지 않았다던 미닫힘 펜스 재생 경로도 손으로 확인했고 새 규칙이 적용된다.
+- 못 본 것: DB(DSN 없음)·웹·Docker·릴리즈 스크립트. 웹·API·마이그레이션 변경이 없어 필요하다고 보지 않았다.
+- 승인이어도 남는 우려(릴리즈가 적을 때 참고): `# 제목 \###` 는 여전히 `제목 \###` 로 백슬래시가 보인다(기존 동작, 범위 밖이라 커밋에 명시됨). 테스트 세 번째 입력의 끝 공백은 `readMarkdown` 의 TrimSpace 때문에 `atxHeading` 까지 가지 않아 중복이다 — 해롭지는 않다.
+- 다음 회차: 수평선 `---`/`***` 는 같은 `handle` 을 건드리므로 이번 변경과 묶지 말라는 정찰 메모가 유효하다. 보안·법무 차단 사유 없음(인증·비밀값·의존성·개인정보에 닿지 않고, 제목 끝 문자를 덜어내는 변경이라 덱 DSL 에 새 문자 종류를 노출하지 않는다).
+- [러너 12:28] review approved — 리뷰 승인 (risk=low)
+- [러너 12:28] pr created — https://github.com/hkjang/ptium/pull/40
+- [러너 12:33] ci passed — 검사 1개 모두 success
+- [러너 12:33] merge done — 5bad44a
+- [러너 12:43] release published — v1.69.54
+- [러너 12:43] gh-release created — GitHub Release v1.69.54
+- [러너 12:43] manifest ok — ptium-1.69.54.tar.gz ptium-1.69.54.tar.gz.sha256 docker-compose.ptium-1.69.54.yml ptium-1.69.54.env.example load-ptium-1.69.54.ps1 load-ptium-1.69.54.sh ptium-1.69.54.kubernetes.yaml 
+- [러너 12:43] assets uploaded — 7개
+- [러너 12:43] assets verified — v1.69.54 자산 7개 (이전 v1.69.53: 7)
