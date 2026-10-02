@@ -1,0 +1,76 @@
+release: ReSSO v0.9.97
+
+Every error the two client-credential lookups behind /token, /revoke and
+introspection can return was read as a wrong secret, and the 401 was the least
+of what followed. The attempt was charged to both failure limiters — twenty per
+Client and two hundred per source address, inside a window fixed from its first
+failure and cleared only by a success — so a clients table that stopped
+answering spent a relying party's whole budget in the seconds that party takes
+to retry a refresh, and left it answering 429 for the rest of the five minutes
+*after* the table came back: the outage over, the secret always right, the
+relying party still down. A busy Realm did the same to the source address,
+taking every other Client sharing it. The same attempt was counted in
+resso_client_auth_failures_total, which the operations guide reads as a
+misconfigured secret or somebody guessing one, so a store fault raised a
+credential incident that never happened in the one series that question is
+answered from. And the store error itself went nowhere at all — the three
+callers hand it to writeClientAuthError, which looks only for the rate-limit
+case — so the fault that did both of the above left no line anywhere.
+
+verifyOIDCClient now names the step it reached and clientAuthUndecided
+separates a fault on this side from a decision against the credential. An
+undecided attempt touches neither limiter, is counted under
+resso_client_auth_errors_total{stage} — client for the lookup, secret for the
+verification, a stored digest that will not decode included — and leaves one
+ERROR line, a client authentication could not be decided, carrying trace_id,
+realm, route and stage. The client_id is kept out of it: it is an unverified
+value anybody can send without a credential. An identifier nobody registered
+stays on the counted path, because it is a real answer and the one somebody
+cycling identifiers gets, which is the bound both limiters exist for.
+
+That bound only holds while nothing excluded from the limiters can be reached
+on demand, and two things could. A client_id that is not valid UTF-8, or that
+carries a NUL, is refused by PostgreSQL as a query parameter rather than
+answered as a missing row (SQLSTATE 22021), and that refusal is
+indistinguishable at every caller from the clients table having stopped — so
+client_id=bad-%ff, on requests that carry no credential at all, rang this
+service's own outage alarm against a healthy database, bounded by neither
+limiter and as often as the caller liked. Such an identifier is now settled as
+store.ErrNotFound in ClientByIdentifier, before the query, where the fact that
+no row can hold those bytes belongs. The second is a caller that hangs up while
+its credential is being verified: hanging up ends the request context, and
+whatever the verification was waiting on hands that cancellation straight back
+— the Argon2 queue for a Client still holding a v0.2 secret_hash, which an
+unauthenticated caller can fill with wrong secrets and then abandon its next
+requests against, and pgx for the lookup otherwise. An attempt whose request is
+already over is now undecided without being recorded and without spending
+either budget. Nothing on this side failed, nobody is waiting for the answer,
+and charging it would open a worse hole than the one it closes: anybody could
+lock any Client, and any source address, out of all three of these endpoints by
+sending twenty requests under that client_id and abandoning each one. A real
+fault that coincides with a caller going away is dropped along with it — the
+attempt cannot be attributed to either side, and a fault that lasts is reported
+by the next request still there to be answered. Both of these are the auth_time
+incident of docs/operations.md again, and the answer is the same one: settle
+the value where it is known rather than asking a question whose refusal reads
+as an outage.
+
+The responses are deliberately unchanged, all three still 401 invalid_client.
+The endpoints sharing this helper do not share a contract for a fault on this
+side — token's 500, revoke's 503 temporarily_unavailable, introspection's 200
+active=false — so that is a change per endpoint and not one made here.
+
+Also in this release: every script in web/package.json puts the directory of
+npm's own Node at the front of PATH. npm prepends the node_modules/.bin of
+every ancestor directory when it runs a script, so a node package installed at
+home level shadowed the Node this project pins; vitest resolved that shim
+through its #!/usr/bin/env node shebang and ran on 20.19.2, and jsdom threw at
+module load because worker_threads.markAsUncloneable arrived in 22.10.0 — 26 of
+29 test files never got collected. No dependency or lockfile edit: the runtime
+was broken, not the tests.
+
+The operations guide's two client-authentication alert entries and the README's
+metric table say which exceptions were closed, that the longest-lasting damage
+is the limiter rather than the response, and which log line to search for.
+Stamps the version in the Makefile, console package metadata and both compose
+files, with no schema or configuration changes.
