@@ -10,3 +10,6 @@
 - 구현자가 조심할 것: `web/src/api.ts` 시그니처를 바꾸면 18개 페이지가 영향권이다 — 티켓은 컴포넌트 안 `useRef` 로만. 디바운스는 넣지 말 것(수용 기준 3 의 재현 조건이 바뀐다).
 - `.tsx` 는 vitest `include: ["src/**/*.test.ts"]` 에 안 잡히고 testing-library 의존성도 없다 — 증거는 실서버 + `channel:"chrome"` 브라우저뿐이다(2026-09-27~30 선례와 동일).
 - [러너 18:33] scout done — 방문 목록에서 늦게 도착한 이전 질의 응답이 목록을 오염시키는 문제 닫기 (가치 3 / 위험 1 / 작업량 M)
+- [러너 19:13] improve timeout — 단계 제한 시간 초과
+- [러너 19:13] brief accepted — 채택 — 지정한 파일 1개·근거·수용 기준 5개가 지금 코드와 정확히 맞았고 프로덕션 파일 1개로 끝났다. 과제서가 미확�
+- [러너 19:13] improve error — error: agent produced no result (TIMEOUT )

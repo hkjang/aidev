@@ -1,119 +1,16 @@
 [
-  {
-    "title": "main CI 의 go test 가 사이트 현지 자정 직전 30분에만 실패하는 원인 수정",
-    "value": 4,
-    "risk": 1,
-    "size": "S",
-    "status": "done",
-    "note": "visitBody 의 startAt=now+30m 이 현지 23:30 이후 다음 날로 넘어가 /api/v1/lobby/today 와 통계 span 에서 빠졌다. startsTodayAtSite/visitToday 로 사이트의 다음 현지 자정을 읽어 lead 를 줄인다. 재현 하네스로 양방향 인과 확인, 프로덕션 코드 0개 파일.",
-    "updated": "2026-10-02"
-  },
-  {
-    "title": "KeysPage 의 Promise.all(...).then(...) 에 .catch 가 없어 로드 실패가 조용히 사라진다",
-    "value": 2,
-    "risk": 1,
-    "size": "S",
-    "status": "pending",
-    "note": "KeysPage.tsx:57-58. v2.8.8 의 loadReference/refError/refLoading + 닫기 없는 Alert + 다시 불러오기 선례를 적용하면 프로덕션 파일 1개. origin/auto/2026-09-29-1232 가 같은 성격의 Scanner·Lobby 수정이므로 미머지 상태에서는 diff 확인 필요.",
-    "updated": "2026-10-02"
-  },
-  {
-    "title": "저장소 e2e 'registers a site, a lobby and an organization from the admin console' 가 로컬에서 실패한다",
-    "value": 2,
-    "risk": 1,
-    "size": "S",
-    "status": "pending",
-    "note": "visit-flow.spec.ts:117 의 getByRole('button', { name: '추가' }).nth(1) 근처. 지난 회차에 수정 전 번들 + 새 DB 로도 재현해 기존 결함으로 확인했다. 다만 CI e2e 잡은 run 93·95 에서 모두 통과하므로 로컬 환경 의존 가능성이 크다 — 먼저 CI 와 로컬의 차이를 좁힐 것.",
-    "updated": "2026-10-02"
-  },
-  {
-    "title": "TestSelfRegistrationRecordsVisitorConsent 의 consented_at DESC LIMIT 1 타이브레이크 취약성",
-    "value": 2,
-    "risk": 1,
-    "size": "S",
-    "status": "pending",
-    "note": "host/self 두 기록의 시각이 같으면 어느 쪽이 나올지 결정되지 않는다. 2026-09-28 전체 실행에서 실제 1회 실패. 이번 회차의 DB 전체 실행 7회는 모두 통과했다. consent_records 에 결정적 타이브레이크(예: source 또는 id)를 넣는 방향.",
-    "updated": "2026-10-02"
-  },
-  {
-    "title": "visitBody 자체를 사이트 달력 인식형으로 바꿔 앞으로의 today-기반 테스트를 보호",
-    "value": 2,
-    "risk": 2,
-    "size": "M",
-    "status": "pending",
-    "note": "신규. 이번 회차는 today 를 단정하는 두 테스트만 visitToday 로 옮겼고 visitBody 는 그대로 뒀다 — 호출 지점이 약 40곳이고 대부분은 현지 날짜와 무관한 '곧' 일정만 필요하다. 전부 옮기려면 시그니처를 testEnv 메서드로 바꿔야 해 diff 가 커진다. 다음 today-기반 테스트가 추가될 때 재평가.",
-    "updated": "2026-10-02"
-  },
-  {
-    "title": "로비 검색·탭 전환에서 늦은 이전 조회 응답 무시",
-    "value": 3,
-    "risk": 2,
-    "size": "M",
-    "status": "pending",
-    "note": "LobbyPage:load 가 query/tab/lobbyFilter 마다 요청하지만 모든 완료가 setData 하며 순번·취소가 없다. 실제 응답 역전을 브라우저로 재현한 뒤 고를 것. SSE·loadRef 계약 보존 필요.",
-    "updated": "2026-10-02"
-  },
-  {
-    "title": "연속 가져오기 응답 역전 방지(요청 순번·업로드 busy)",
-    "value": 2,
-    "risk": 1,
-    "size": "S",
-    "status": "pending",
-    "note": "VisitFormPage importVisitors 의 요청 경합 우려. 실제 역전 브라우저 재현이 여전히 미확인이라 근거가 약하다.",
-    "updated": "2026-10-02"
-  },
-  {
-    "title": "실제 서버 + 실제 dist 로 도는 화면 회귀 실행을 저장소에 넣기",
-    "value": 3,
-    "risk": 2,
-    "size": "M",
-    "status": "pending",
-    "note": "매 회차 손으로 재구성한다. CI 에 이미 e2e 잡이 있으므로 '로컬 재사용 진입점' 으로 범위를 좁혀야 성립한다. 알아낸 것: 8080 이 다른 프로젝트 컨테이너에 잡혀 있어 전용 도커 네트워크 + 호스트 18099 로 띄워야 하고, Playwright 번들 chromium 이 없어 channel:'chrome'(/usr/bin/google-chrome) 이 필요하고, CGO_ENABLED=0 정적 빌드를 alpine 컨테이너에 마운트하면 충분하다.",
-    "updated": "2026-10-02"
-  },
-  {
-    "title": "제출 차단 사유를 원인 필드(동의 체크박스·차량번호·반입 장비)에도 error/helperText 로 표시",
-    "value": 2,
-    "risk": 1,
-    "size": "S",
-    "status": "pending",
-    "note": "submitBlockReason 단일 안내는 v2.8.9 에서 고정됐다. duplicatePhoneErrors 가 '배열로 칸에 붙이고 한 줄은 그중 첫 항목' 선례를 만들었으니 같은 방식으로 확장할 수 있다. '빈 최초 입력을 빨갛게 하지 않는다' 정책은 유지.",
-    "updated": "2026-10-02"
-  },
-  {
-    "title": "가져오기 미리보기 응답에 인식 헤더 행 번호와 무시된 열 안내",
-    "value": 2,
-    "risk": 1,
-    "size": "M",
-    "status": "pending",
-    "note": "origin/auto/2026-09-21-0654 여전히 미머지여서 인접 변경 보류.",
-    "updated": "2026-10-02"
-  },
-  {
-    "title": "MCP OAuth 후속 — 설정 확인 버튼과 감사 source 구분(mcp-oauth)",
-    "value": 3,
-    "risk": 1,
-    "size": "S",
-    "status": "pending",
-    "note": "origin/auto/2026-09-18-0533 여전히 미머지. 병합 뒤 재평가.",
-    "updated": "2026-10-02"
-  },
-  {
-    "title": "STARTTLS 가짜 릴레이로 auto TLS 승격과 PLAIN 선택을 고정하는 테스트",
-    "value": 3,
-    "risk": 1,
-    "size": "S",
-    "status": "pending",
-    "note": "origin/auto/2026-09-16-1212 여전히 미머지. 실제 SMTP 프로토콜 서버 기반 검증을 쓰고 손제작 전송 객체로 대체하지 말 것.",
-    "updated": "2026-10-02"
-  },
-  {
-    "title": "비밀번호 재설정 메일의 동기 발송을 큐로 이관",
-    "value": 3,
-    "risk": 2,
-    "size": "M",
-    "status": "pending",
-    "note": "mail.go:issuePasswordReset 의 platform.SendMail 동기 호출. 미머지 메일 브랜치와 충돌하고 토큰·재시도 의미까지 얽혀 한 세션 범위를 넘는다.",
-    "updated": "2026-10-02"
-  }
+  {"title":"방문 목록(VisitsPage)에서 늦은 이전 질의 응답이 목록을 오염시킨다 — load/loadMore 공용 요청 티켓","value":3,"risk":1,"size":"M","status":"pending","note":"이번 회차 선택. VisitsPage.tsx:35 load / :43 loadMore 가 순번 없이 커밋한다. loadMore 가 setItems((current)=>[...current,...]) 로 덧붙이므로 비행 중 검색어를 바꾸면 새 결과 아래에 옛 질의 행이 붙고 setNextCursor 가 옛 커서로 덮여 다음 페이지도 계속 오염된다. 프로덕션 1개 파일. 재현은 cursor= 요청만 page.route 로 지연.","updated":"2026-10-02"},
+  {"title":"로비 현황(LobbyPage)에서 늦은 이전 조회 응답 무시","value":3,"risk":2,"size":"M","status":"pending","note":"이번 회차 차선 후보. LobbyPage.tsx:30 load 가 useCallback([tab,query,lobbyFilter]) 인데 모든 완료가 무조건 setData 한다. 덧붙이기가 없어 오염이 일시적이라 1순위보다 증상이 약하다. SSE 한 번 구독·loadRef·빈 lobbyId 계약 보존 필요. 실제 응답 역전 브라우저 재현은 여전히 미확인.","updated":"2026-10-02"},
+  {"title":"VisitsPage 검색이 키 입력마다 limit=100 조회를 보낸다 (디바운스 없음)","value":2,"risk":2,"size":"S","status":"pending","note":"신규. onChange→q→buildQuery→load 재생성→useEffect([load]) 라 글자 수만큼 요청이 나가고 onKeyDown Enter 핸들러는 사실상 중복이다. UX 의미 변경(Enter 전용으로 돌릴지)이 섞이므로 응답 경합 수정과 분리할 것 — 함께 고치면 경합 재현 조건이 바뀐다.","updated":"2026-10-02"},
+  {"title":"KeysPage 의 Promise.all(...).then(...) 에 .catch 가 없다","value":2,"risk":1,"size":"S","status":"done","note":"이번 회차에 코드로 확인 — KeysPage.tsx 의 load 는 이미 .then(([keys, keyPolicy]) => {...}).catch((e) => setError(e.message)) 로 끝난다. 더는 결함이 아니다.","updated":"2026-10-02"},
+  {"title":"저장소 e2e 'registers a site, a lobby and an organization from the admin console' 가 로컬에서 실패한다","value":2,"risk":1,"size":"S","status":"pending","note":"visit-flow.spec.ts:117 getByRole('button',{name:'추가'}).nth(1) 근처. 수정 전 번들 + 새 DB 로도 재현돼 기존 결함으로 확인했으나 CI e2e 잡은 run 93·95 에서 모두 통과 — 환경 의존 가능성이 크다. 먼저 CI 와 로컬 차이를 좁힐 것. 이번 회차 미재검증.","updated":"2026-10-02"},
+  {"title":"TestSelfRegistrationRecordsVisitorConsent 의 consented_at DESC LIMIT 1 타이브레이크 취약성","value":2,"risk":1,"size":"S","status":"pending","note":"host/self 두 기록의 시각이 같으면 어느 쪽이 나올지 결정되지 않는다. 2026-09-28 전체 실행에서 실제 1회 실패, 이후 전체 실행은 모두 통과. consent_records 에 결정적 타이브레이크(source 또는 id)를 넣는 방향. 이번 회차 DB 미실행.","updated":"2026-10-02"},
+  {"title":"visitBody 자체를 사이트 달력 인식형으로 바꿔 앞으로의 today-기반 테스트를 보호","value":2,"risk":2,"size":"M","status":"pending","note":"v2.8.12(571ab67) 가 today 를 단정하는 두 테스트만 visitToday 로 옮겼고 visitBody 는 그대로다. 호출 지점이 약 40곳이고 대부분 현지 날짜와 무관한 '곧' 일정만 필요해 전부 옮기면 시그니처를 testEnv 메서드로 바꿔야 한다. 다음 today-기반 테스트가 추가될 때 재평가.","updated":"2026-10-02"},
+  {"title":"연속 가져오기 응답 역전 방지(요청 순번·업로드 busy) — VisitFormPage importVisitors","value":2,"risk":1,"size":"S","status":"pending","note":"실제 역전 브라우저 재현이 여전히 미확인이라 근거가 약하다. VisitsPage 티켓 패턴이 머지되면 같은 선례를 적용하기 쉬워진다.","updated":"2026-10-02"},
+  {"title":"실제 서버 + 실제 dist 로 도는 화면 회귀 실행을 저장소에 넣기","value":3,"risk":2,"size":"M","status":"pending","note":"매 회차 손으로 재구성한다. CI 에 이미 e2e 잡이 있으므로 '로컬 재사용 진입점' 으로 범위를 좁혀야 성립한다. 알아낸 것: 8080 이 다른 프로젝트 컨테이너에 잡혀 전용 도커 네트워크 + 호스트 18099 필요, Playwright 번들 chromium 없어 channel:'chrome'(/usr/bin/google-chrome) 필요, CGO_ENABLED=0 정적 빌드를 alpine 컨테이너에 마운트하면 충분.","updated":"2026-10-02"},
+  {"title":"제출 차단 사유를 원인 필드(동의 체크박스·차량번호·반입 장비)에도 error/helperText 로 표시","value":2,"risk":1,"size":"S","status":"pending","note":"submitBlockReason 단일 안내는 v2.8.9 에서 고정. duplicatePhoneErrors 가 '배열로 칸에 붙이고 한 줄은 그중 첫 항목' 선례를 만들었으니 같은 방식으로 확장 가능. '빈 최초 입력을 빨갛게 하지 않는다' 정책 유지.","updated":"2026-10-02"},
+  {"title":"가져오기 미리보기 응답에 인식 헤더 행 번호와 무시된 열 안내","value":2,"risk":1,"size":"M","status":"pending","note":"origin/auto/2026-09-21-0654 미머지 여부 이번 회차 미확인. 파일이 겹치면 인접 변경 보류.","updated":"2026-10-02"},
+  {"title":"MCP OAuth 후속 — 설정 확인 버튼과 감사 source 구분(mcp-oauth)","value":3,"risk":1,"size":"S","status":"pending","note":"origin/auto/2026-09-18-0533 미머지 여부 이번 회차 미확인. 병합 뒤 재평가.","updated":"2026-10-02"},
+  {"title":"STARTTLS 가짜 릴레이로 auto TLS 승격과 PLAIN 선택을 고정하는 테스트","value":3,"risk":1,"size":"S","status":"pending","note":"origin/auto/2026-09-16-1212 미머지 여부 이번 회차 미확인. 실제 SMTP 프로토콜 서버 기반 검증을 쓰고 손제작 전송 객체로 대체하지 말 것.","updated":"2026-10-02"},
+  {"title":"비밀번호 재설정 메일의 동기 발송을 큐로 이관","value":3,"risk":2,"size":"M","status":"rejected","note":"mail.go:issuePasswordReset 의 platform.SendMail 동기 호출. 미머지 메일 브랜치와 충돌하고 토큰·재시도 의미까지 얽혀 한 세션(45분) 범위를 넘는다 — 자율 회차 과제로는 성립하지 않는다.","updated":"2026-10-02"}
 ]
