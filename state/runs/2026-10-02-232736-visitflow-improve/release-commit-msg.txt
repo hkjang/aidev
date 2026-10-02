@@ -1,0 +1,27 @@
+chore(release): VisitFlow v2.8.14
+
+- 「방문 일정 수정」 다이얼로그가 저장이 막힌 이유를 말하고 신청 화면과 같은 경계를
+  쓰게 한다. 이 다이얼로그는 신청 화면이 쓰는 `scheduleError` 계약을 인라인으로 다시
+  써서 세 가지가 어긋나 있었다 — ① 31일 상한이 없어 40일 창에서도 저장 버튼이 열린 채
+  서버 `updateVisit`(`internal/app/visits.go:890`)의 `schedule_too_long` 까지 왕복해야
+  알 수 있었고, ② 방문 목적을 `!edit?.purpose` 로만 봐서 공백만 넣은 값이 서버의
+  `strings.TrimSpace` 검사(같은 파일 886)에서 `invalid_visit` 으로 돌아왔고, ③ 무엇보다
+  버튼이 잠긴 이유를 말하지 않았다 — v2.8.9·v2.8.10·v2.8.11 에서 세 번 고친 바로 그
+  결함 유형이다. `web/src/schedule.ts` 에 기존 `scheduleError` 위에 얹은 순수 함수
+  `visitEditError` 하나를 두고, 칸의 `helperText`·버튼 `disabled`·`saveEdit` 가드가 그
+  한 값만 읽게 배선했다(신청 화면 관례대로 날짜 칸에는 일정 몫만 붙여 방문 목적 안내가
+  날짜 칸을 빨갛게 하지 않는다). 서버는 건드리지 않았다 — 경계는 이미 맞으므로 두 경로가
+  같은 입력을 같은 값으로 읽게 만든 것이다. 프로덕션 2개 파일
+  (`schedule.ts`, `VisitsPage.tsx`) + 테스트 1개.
+
+- 검증: vitest 79→88개(수정 전 red `TypeError: (0 , visitEditError) is not a function`
+  → 수정 후 `88 passed`), `npm run lint`(tsc -b)·`npm run build`, `gofmt -l .` 빈 출력·
+  `go build ./...`·`go vet ./...`, 그리고 `bash scripts/local-e2e.sh` 로 실제 번들을
+  임베드한 서버 + 실제 Chromium 에서 12 passed. 남은 한계는 정직하게 적는다: 수정 **전**
+  번들로 「40일 창에서 저장 버튼이 열린다」를 브라우저로 직접 보여 주지는 못했다(두 번
+  시도 모두 임시 스펙 자체의 선택자에서 깨졌고 제품 때문이 아니다). 그 항목은 vitest
+  red→green, 수정 후 브라우저 통과, 옛 인라인 식에 기간 항·trim 이 아예 없다는 소스
+  사실로 뒷받침된다.
+
+버전 표기(README, docs/index.html, web/package.json, web/package-lock.json)를
+2.8.14로 올린다.
