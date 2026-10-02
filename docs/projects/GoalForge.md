@@ -1,7 +1,7 @@
 ---
 title: "GoalForge — 자율 개선 이력"
-description: "GoalForge: 자율 개선 회차 5회, 릴리즈 2건. 최근 릴리즈 v0.42.0."
-last_modified_at: 2026-10-03 03:20:46 +0900
+description: "GoalForge: 자율 개선 회차 6회, 릴리즈 3건. 최근 릴리즈 v0.42.0 (자산 7개)."
+last_modified_at: 2026-10-03 03:23:46 +0900
 ---
 {% raw %}
 <script type="application/ld+json">
@@ -11,35 +11,35 @@ last_modified_at: 2026-10-03 03:20:46 +0900
  "name": "GoalForge",
  "codeRepository": "https://github.com/hkjang/goalforge",
  "url": "https://hkjang.github.io/aidev/projects/GoalForge/",
- "description": "GoalForge: 자율 개선 회차 5회, 릴리즈 2건. 최근 릴리즈 v0.42.0.",
+ "description": "GoalForge: 자율 개선 회차 6회, 릴리즈 3건. 최근 릴리즈 v0.42.0 (자산 7개).",
  "inLanguage": "ko",
  "maintainer": {
   "@type": "Person",
   "name": "hkjang",
   "url": "https://github.com/hkjang"
  },
- "dateModified": "2026-10-03T03:20:46+09:00",
+ "dateModified": "2026-10-03T03:23:46+09:00",
  "version": "0.42.0"
 }
 </script>
 
 # GoalForge
 
-<p class="tldr"><strong>요약.</strong> GoalForge: 자율 개선 회차 5회, 릴리즈 2건. 최근 릴리즈 v0.42.0. <span class="pill pill-released" title="14일: 릴리즈 2, 실패 0, 경고 0, 회귀 0">건강 A</span> <span class="meta">14일: 릴리즈 2, 실패 0, 경고 0, 회귀 0</span></p>
+<p class="tldr"><strong>요약.</strong> GoalForge: 자율 개선 회차 6회, 릴리즈 3건. 최근 릴리즈 v0.42.0 (자산 7개). <span class="pill pill-released" title="14일: 릴리즈 3, 실패 0, 경고 0, 회귀 0">건강 A</span> <span class="meta">14일: 릴리즈 3, 실패 0, 경고 0, 회귀 0</span></p>
 
-<ul class="stats"><li><b>5</b><span>회차</span></li><li><b>1</b><span>프로젝트</span></li><li><b>2</b><span>배포 준비 완료</span></li><li><b>0</b><span>릴리즈 진행 중</span></li><li><b>0</b><span>병합 완료</span></li><li><b>1</b><span>검토 대기</span></li><li><b>1</b><span>검증 실패</span></li><li><b>1</b><span>변경 없음</span></li><li><b>0</b><span>실행 오류</span></li><li><b>$33.02</b><span>비용</span></li><li><b>1시간 41분</b><span>에이전트 시간</span></li></ul>
+<ul class="stats"><li><b>6</b><span>회차</span></li><li><b>1</b><span>프로젝트</span></li><li><b>3</b><span>배포 준비 완료</span></li><li><b>0</b><span>릴리즈 진행 중</span></li><li><b>0</b><span>병합 완료</span></li><li><b>1</b><span>검토 대기</span></li><li><b>1</b><span>검증 실패</span></li><li><b>1</b><span>변경 없음</span></li><li><b>0</b><span>실행 오류</span></li><li><b>$33.02</b><span>비용</span></li><li><b>1시간 41분</b><span>에이전트 시간</span></li></ul>
 
 ## 현황
 
 <dl class="kv">
 <dt>저장소</dt><dd><a href="https://github.com/hkjang/goalforge">https://github.com/hkjang/goalforge</a></dd>
-<dt>마지막 회차</dt><dd>2026-10-01 02:18 KST — <span class="pill pill-released">🚀 릴리즈</span> merged <a href="https://github.com/hkjang/goalforge/pull/49">PR #49</a>, released <a href="https://github.com/hkjang/goalforge/releases/tag/v0.31.0">v0.31.0</a></dd>
-<dt>최근 릴리즈</dt><dd><a href="https://github.com/hkjang/goalforge/releases/tag/v0.42.0">v0.42.0</a> — released <a href="https://github.com/hkjang/goalforge/releases">전체 릴리즈 →</a></dd>
+<dt>마지막 회차</dt><dd>2026-10-03 03:23 KST — <span class="pill pill-released">🚀 릴리즈</span> merged <a href="https://github.com/hkjang/goalforge/pull/67">PR #67</a>, released <a href="https://github.com/hkjang/goalforge/releases/tag/v0.42.0">v0.42.0</a></dd>
+<dt>최근 릴리즈</dt><dd><a href="https://github.com/hkjang/goalforge/releases/tag/v0.42.0">v0.42.0</a> — released · 자산 7개 (이전 v0.41.0: 7개) <a href="https://github.com/hkjang/goalforge/releases">전체 릴리즈 →</a></dd>
 </dl>
 
 ## 회차 이력
 
-<div class="table-wrap"><table class="rt"><thead><tr><th>일시</th><th class="primary">프로젝트</th><th>결과</th></tr></thead><tbody><tr data-status="released"><td data-label="일시">2026-10-01 02:18</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/GoalForge/">GoalForge</a></td><td data-label="결과"><span class="pill pill-released" title="outcome=release-ready">배포 준비 완료</span> merged <a href="https://github.com/hkjang/goalforge/pull/49">PR #49</a>, released <a href="https://github.com/hkjang/goalforge/releases/tag/v0.31.0">v0.31.0</a><div class="meta">4파일 <span style="color:var(--good)">+129</span>/<span style="color:var(--bad)">−10</span> · 테스트 2 — 목표를 기다리는 프로젝트가 15분마다 고장으로 보고되지 않는다</div></td></tr><tr data-status="nochange"><td data-label="일시">2026-09-29 15:12</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/GoalForge/">GoalForge</a></td><td data-label="결과"><span class="pill pill-nochange" title="outcome=no-change">변경 없음</span> no change</td></tr><tr data-status="released"><td data-label="일시">2026-09-29 03:20</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/GoalForge/">GoalForge</a></td><td data-label="결과"><span class="pill pill-released" title="outcome=release-ready">배포 준비 완료</span> fix-round: merged <a href="https://github.com/hkjang/goalforge/pull/31">PR #31</a>, released <a href="https://github.com/hkjang/goalforge/releases/tag/v0.19.0">v0.19.0</a><div class="meta">4파일 <span style="color:var(--good)">+140</span>/<span style="color:var(--bad)">−0</span> · 테스트 3 — push 를 하지 않는 효과 테스트까지 함께 꺼지지 않는다</div></td></tr><tr data-status="other"><td data-label="일시">2026-09-29 00:41</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/GoalForge/">GoalForge</a></td><td data-label="결과"><span class="pill pill-failed" title="outcome=verify-failed">검증 실패</span> verify failed: 실패한 검증: go test ./... (exit 1)<div class="meta">8파일 <span style="color:var(--good)">+149</span>/<span style="color:var(--bad)">−28</span> · 테스트 3 — Accept the window units the report surfaces advertise</div></td></tr><tr data-status="other"><td data-label="일시">2026-09-28 03:30</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/GoalForge/">GoalForge</a></td><td data-label="결과"><span class="pill pill-merged" title="outcome=review-pending">검토 대기</span> CI no-ci, PR open <a href="https://github.com/hkjang/goalforge/pull/7">PR #7</a><div class="meta">2파일 <span style="color:var(--good)">+97</span>/<span style="color:var(--bad)">−0</span> · 테스트 1 — Keep AI commits attributable when the environment sets a git identity</div></td></tr></tbody></table></div>
+<div class="table-wrap"><table class="rt"><thead><tr><th>일시</th><th class="primary">프로젝트</th><th>결과</th></tr></thead><tbody><tr data-status="released"><td data-label="일시">2026-10-03 03:23</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/GoalForge/">GoalForge</a></td><td data-label="결과"><span class="pill pill-released" title="outcome=release-ready">배포 준비 완료</span> merged <a href="https://github.com/hkjang/goalforge/pull/67">PR #67</a>, released <a href="https://github.com/hkjang/goalforge/releases/tag/v0.42.0">v0.42.0</a><div class="meta">4파일 <span style="color:var(--good)">+258</span>/<span style="color:var(--bad)">−2</span> · 테스트 2 — 무인 스윕이 같은 병합을 15분마다 다시 승인하던 것을 고친다</div></td></tr><tr data-status="released"><td data-label="일시">2026-10-01 02:18</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/GoalForge/">GoalForge</a></td><td data-label="결과"><span class="pill pill-released" title="outcome=release-ready">배포 준비 완료</span> merged <a href="https://github.com/hkjang/goalforge/pull/49">PR #49</a>, released <a href="https://github.com/hkjang/goalforge/releases/tag/v0.31.0">v0.31.0</a><div class="meta">4파일 <span style="color:var(--good)">+129</span>/<span style="color:var(--bad)">−10</span> · 테스트 2 — 목표를 기다리는 프로젝트가 15분마다 고장으로 보고되지 않는다</div></td></tr><tr data-status="nochange"><td data-label="일시">2026-09-29 15:12</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/GoalForge/">GoalForge</a></td><td data-label="결과"><span class="pill pill-nochange" title="outcome=no-change">변경 없음</span> no change</td></tr><tr data-status="released"><td data-label="일시">2026-09-29 03:20</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/GoalForge/">GoalForge</a></td><td data-label="결과"><span class="pill pill-released" title="outcome=release-ready">배포 준비 완료</span> fix-round: merged <a href="https://github.com/hkjang/goalforge/pull/31">PR #31</a>, released <a href="https://github.com/hkjang/goalforge/releases/tag/v0.19.0">v0.19.0</a><div class="meta">4파일 <span style="color:var(--good)">+140</span>/<span style="color:var(--bad)">−0</span> · 테스트 3 — push 를 하지 않는 효과 테스트까지 함께 꺼지지 않는다</div></td></tr><tr data-status="other"><td data-label="일시">2026-09-29 00:41</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/GoalForge/">GoalForge</a></td><td data-label="결과"><span class="pill pill-failed" title="outcome=verify-failed">검증 실패</span> verify failed: 실패한 검증: go test ./... (exit 1)<div class="meta">8파일 <span style="color:var(--good)">+149</span>/<span style="color:var(--bad)">−28</span> · 테스트 3 — Accept the window units the report surfaces advertise</div></td></tr><tr data-status="other"><td data-label="일시">2026-09-28 03:30</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/GoalForge/">GoalForge</a></td><td data-label="결과"><span class="pill pill-merged" title="outcome=review-pending">검토 대기</span> CI no-ci, PR open <a href="https://github.com/hkjang/goalforge/pull/7">PR #7</a><div class="meta">2파일 <span style="color:var(--good)">+97</span>/<span style="color:var(--bad)">−0</span> · 테스트 1 — Keep AI commits attributable when the environment sets a git identity</div></td></tr></tbody></table></div>
 
 ## 비용·사용량
 
