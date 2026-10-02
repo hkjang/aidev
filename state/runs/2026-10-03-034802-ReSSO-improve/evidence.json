@@ -1,0 +1,229 @@
+{
+  "run_id": "2026-10-03-034802-ReSSO-improve",
+  "generated": "2026-10-03T04:34:28+09:00",
+  "run": {
+    "run_id": "2026-10-03-034802-ReSSO-improve",
+    "project": "ReSSO",
+    "kind": "improve",
+    "started": "2026-10-03T03:48:02+09:00",
+    "model": "claude-opus-5",
+    "policy_version": "4a9e91ac7",
+    "prompts_hash": "ce085c79e18002e2",
+    "runner_version": "1bd5f0cd4",
+    "arm": "no-scout",
+    "experiment": "roles-2026-09",
+    "finished": "2026-10-03T04:34:28+09:00",
+    "outcome": "review-pending"
+  },
+  "record": {
+    "ts": "2026-10-03T04:34:28+09:00",
+    "date": "2026-10-03",
+    "project": "ReSSO",
+    "result": "review held, PR open https://github.com/hkjang/ReSSO/pull/35",
+    "outcome": "review-pending",
+    "run_id": "2026-10-03-034802-ReSSO-improve",
+    "base_sha": "bdfeeb2ec875accd4c10f714fa12e19986d80c77",
+    "head_sha": "59b6c346b6d379f5aa0ab1bd9575fa48279b5d4a",
+    "pr": "https://github.com/hkjang/ReSSO/pull/35",
+    "stages": {
+      "base": {
+        "state": "pinned",
+        "reason": "main@bdfeeb2",
+        "at": "2026-10-03T03:48:09+09:00"
+      },
+      "autonomy": {
+        "state": "release",
+        "reason": "",
+        "at": "2026-10-03T03:48:09+09:00"
+      },
+      "verify": {
+        "state": "passed",
+        "reason": "검증 7개 통과 (auto)",
+        "at": "2026-10-03T04:06:54+09:00"
+      },
+      "review": {
+        "state": "missing",
+        "reason": "리뷰 결과 없음/손상: missing — 보류",
+        "at": "2026-10-03T04:34:15+09:00"
+      },
+      "repair": {
+        "state": "done",
+        "reason": "# 수리 요약 (59b6c34)  비평가의 지적이 맞았다. 재현 확인: `ClientByIdentifier`에 `\"bad-\\xff\\xfe-utf8\"` 또는 `\"bad-\\x00-nul\"`을 넘기면 PostgreSQL이 `invalid byte sequence for ",
+        "at": "2026-10-03T04:19:15+09:00"
+      },
+      "pr": {
+        "state": "created",
+        "reason": "https://github.com/hkjang/ReSSO/pull/35",
+        "at": "2026-10-03T04:34:23+09:00"
+      }
+    },
+    "campaign": "",
+    "autonomy": "release",
+    "arm": "no-scout",
+    "experiment": "roles-2026-09",
+    "engine": "claude",
+    "files": 7,
+    "additions": 395,
+    "deletions": 7,
+    "tests": 2,
+    "title": "fix: stop a client_id no row could hold from reporting an outage the database was not having"
+  },
+  "stages": {
+    "base": {
+      "state": "pinned",
+      "reason": "main@bdfeeb2",
+      "at": "2026-10-03T03:48:09+09:00"
+    },
+    "autonomy": {
+      "state": "release",
+      "reason": "",
+      "at": "2026-10-03T03:48:09+09:00"
+    },
+    "verify": {
+      "state": "passed",
+      "reason": "검증 7개 통과 (auto)",
+      "at": "2026-10-03T04:06:54+09:00"
+    },
+    "review": {
+      "state": "missing",
+      "reason": "리뷰 결과 없음/손상: missing — 보류",
+      "at": "2026-10-03T04:34:15+09:00"
+    },
+    "repair": {
+      "state": "done",
+      "reason": "# 수리 요약 (59b6c34)  비평가의 지적이 맞았다. 재현 확인: `ClientByIdentifier`에 `\"bad-\\xff\\xfe-utf8\"` 또는 `\"bad-\\x00-nul\"`을 넘기면 PostgreSQL이 `invalid byte sequence for ",
+      "at": "2026-10-03T04:19:15+09:00"
+    },
+    "pr": {
+      "state": "created",
+      "reason": "https://github.com/hkjang/ReSSO/pull/35",
+      "at": "2026-10-03T04:34:23+09:00"
+    }
+  },
+  "provenance": {
+    "model": "claude-opus-5",
+    "policy_version": "4a9e91ac7",
+    "prompts_hash": "ce085c79e18002e2",
+    "runner_version": "1bd5f0cd4",
+    "base_sha": "bdfeeb2ec875accd4c10f714fa12e19986d80c77",
+    "head_sha": "59b6c346b6d379f5aa0ab1bd9575fa48279b5d4a",
+    "pr": "https://github.com/hkjang/ReSSO/pull/35"
+  },
+  "verification": {
+    "runner": {
+      "source": "auto",
+      "commands": [
+        {
+          "cmd": "go build ./...",
+          "exit": 0,
+          "seconds": 1
+        },
+        {
+          "cmd": "go vet ./...",
+          "exit": 0,
+          "seconds": 0
+        },
+        {
+          "cmd": "go test ./...",
+          "exit": 0,
+          "seconds": 1
+        },
+        {
+          "cmd": "cd web && [ -d node_modules ] || npm ci --no-audit --no-fund",
+          "exit": 0,
+          "seconds": 0
+        },
+        {
+          "cmd": "cd web && npm test --silent",
+          "exit": 0,
+          "seconds": 5
+        },
+        {
+          "cmd": "cd web && [ -d node_modules ] || npm ci --no-audit --no-fund",
+          "exit": 0,
+          "seconds": 0
+        },
+        {
+          "cmd": "cd web && npm run build --silent",
+          "exit": 0,
+          "seconds": 10
+        }
+      ]
+    },
+    "runner_gate": {
+      "ok": true,
+      "state": "verified",
+      "reason": "검증 7개 통과 (auto)"
+    },
+    "after_rebase": null,
+    "review": null,
+    "ci_gate": null
+  },
+  "release": {
+    "result": null,
+    "assets_sha256": []
+  },
+  "approval": null,
+  "usage": [
+    {
+      "ts": "2026-10-03T04:06:32+09:00",
+      "date": "2026-10-03",
+      "project": "ReSSO",
+      "phase": "improve",
+      "run_id": "2026-10-03-034802-ReSSO-improve",
+      "campaign": "",
+      "subtype": "success",
+      "engine": "claude",
+      "duration_ms": 1100745,
+      "num_turns": 60,
+      "cost_usd": 4.8892405,
+      "input_tokens": 100,
+      "output_tokens": 41808,
+      "cache_read": 5134841,
+      "cache_create": 127612
+    },
+    {
+      "ts": "2026-10-03T04:11:30+09:00",
+      "date": "2026-10-03",
+      "project": "ReSSO",
+      "phase": "review",
+      "run_id": "2026-10-03-034802-ReSSO-improve",
+      "campaign": "",
+      "subtype": "success",
+      "engine": "claude",
+      "duration_ms": 273044,
+      "num_turns": 24,
+      "cost_usd": 1.548915,
+      "input_tokens": 32,
+      "output_tokens": 16672,
+      "cache_read": 935810,
+      "cache_create": 66405
+    },
+    {
+      "ts": "2026-10-03T04:18:56+09:00",
+      "date": "2026-10-03",
+      "project": "ReSSO",
+      "phase": "repair",
+      "run_id": "2026-10-03-034802-ReSSO-improve",
+      "campaign": "",
+      "subtype": "success",
+      "engine": "claude",
+      "duration_ms": 442508,
+      "num_turns": 42,
+      "cost_usd": 2.284162,
+      "input_tokens": 68,
+      "output_tokens": 19302,
+      "cache_read": 2206404,
+      "cache_create": 69807
+    },
+    {
+      "ts": "2026-10-03T04:34:15+09:00",
+      "date": "2026-10-03",
+      "project": "ReSSO",
+      "phase": "review",
+      "run_id": "2026-10-03-034802-ReSSO-improve",
+      "subtype": "unknown",
+      "cost_usd": null
+    }
+  ]
+}

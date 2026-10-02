@@ -25,3 +25,6 @@
 - 여전히 확신 없는 곳: ① 구현 노트의 ①(`password.VerifyContext` ctx 취소가 Limiter를 깎지 않는 것)은 이번에도 실험하지 않았다 — 지적 범위 밖이라 손대지 않았다. ② `stage="secret"` 분기는 아직 테스트가 지나지 않는다(VerifyClientSecret은 uuid만 DB에 넘기므로 호출자가 고를 수 있는 입력은 없다고 읽기로 판단). ③ 세 Endpoint의 이쪽 장애 응답 통일(500/503/200)은 여전히 후속 과제.
 - 다음 역할이 조심할 것: 새 단언 (g)는 (f) 뒤에 와야 한다(주소 Limiter 누적 카운트에 의존). `clients_test.go`의 단위 테스트는 DB 없이 돈다.
 - [러너 04:19] repair done — # 수리 요약 (59b6c34)  비평가의 지적이 맞았다. 재현 확인: `ClientByIdentifier`에 `"bad-\xff\xfe-utf8"` 또는 `"bad-\x00-nul"`을 넘기면 PostgreSQL이 `invalid byte sequence for 
+- [러너 04:34] review timeout — 단계 제한 시간 초과
+- [러너 04:34] review missing — 리뷰 결과 없음/손상: missing — 보류
+- [러너 04:34] pr created — https://github.com/hkjang/ReSSO/pull/35
