@@ -286,7 +286,7 @@ AI 답은 판단을 돕는 자료이지 결재 근거가 아닙니다. 화면 �
 |---|---|
 | `search_suppliers` | 이름·사업자번호·공급업체 번호로 공급업체를 검색 |
 | `get_supplier` | Supplier 360 핵심 정보를 조회 |
-| `compare_suppliers` | 여러 공급업체의 비용·평가·위험·계약·이슈를 비교 |
+| `compare_suppliers` | 여러 공급업체의 비용·평가 점수·위험 등급을 나란히 비교 |
 | `get_supplier_risk` | 공급업체 리스크를 조회 |
 | `get_supplier_score` | 평가 점수와 이력을 조회 |
 | `search_contracts` | 계약을 검색 |
