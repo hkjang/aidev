@@ -29,3 +29,5 @@
 - 보안·법무 차단 없음: 양쪽 모두 fail-open → fail-closed 로 좁히는 변경이고, 새 엔드포인트·개인정보·비밀값·수제 암호 비교·마이그레이션이 없어 revert 로 완전히 되돌아온다.
 - [러너 07:20] review approved — 리뷰 승인 (risk=low)
 - [러너 07:20] pr created — https://github.com/hkjang/bbmcp/pull/1
+- [러너 07:22] ci passed — 검사 3개 모두 success
+- [러너 07:22] merge done — 4e26f2d
