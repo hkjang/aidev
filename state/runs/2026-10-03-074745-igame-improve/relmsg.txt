@@ -1,0 +1,37 @@
+feat: release igame v0.7.27
+
+Ships as a patch release the OIDC login outage reporting fix landed since
+v0.7.26. oidcLogin and oidcCallback folded the error from loadOIDCSetting into
+the same branch as !cfg.Enabled, so two site-wide login outages — a transient
+database failure on a path settingRaw deliberately does not cache, and a
+Secrets.Open failure after the installation key changed — were both answered
+with "OIDC login is not configured", and writeError never received the error so
+nothing was logged either. An operator saw a correctly configured SSO appear to
+switch itself off with no trace in the server log. A single oidcUnreadable
+helper now sends only errors that are not pgx.ErrNoRows to serverError as 503
+oidc_unavailable, which records the cause alongside the request identity. Every
+not-configured response is left exactly as it was: a freshly installed
+enabled=false, an empty issuer or client_id, and a missing row still answer 404
+on login and 400 oidc_disabled on the callback, and the callback still consumes
+the flow state before it reads the setting. Two product files
+(internal/api/auth.go, web/src/api/errorMessages.ts), two tests and one
+paragraph of docs/api.md. Causality was shown with four mutations, each reverted
+and re-greened: removing the pgx.ErrNoRows exemption misclassifies a missing row
+as an outage, removing either the login or the callback split reds only that
+side, and swapping serverError back to writeError keeps the 503 but reds the
+four log assertions. Schema and game content are unchanged and no migration
+rides with it.
+
+Moves VERSION, the Compose image tag and the web and SDK package versions
+together as the release contract requires, updates release documentation, and
+rebuilds the two enterprise manuals for v0.7.27. The administrator guide examples
+move with them while the photographed v0.7.11 provenance and the two separately
+published guide PDFs remain intact. RealmGuard content 0.3.1 and Defense Series
+content 0.4.0 are retained.
+
+Validated with make check-contract, make lint, make test, make test-race, make
+build including the offline bundle check, full PostgreSQL 17 make test-db (api
+26.784s / database 1.830s), both npm dependency audits, govulncheck v1.6.0 and
+make docs-pdf. No test schemas remain and pgcrypto is preserved. The
+tag-triggered workflow builds and verifies the offline image, SBOM and browser
+gates before publication.

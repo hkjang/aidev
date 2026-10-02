@@ -1,0 +1,251 @@
+{
+  "run_id": "2026-10-03-074735-git-ctx-improve",
+  "generated": "2026-10-03T08:37:29+09:00",
+  "run": {
+    "run_id": "2026-10-03-074735-git-ctx-improve",
+    "project": "git-ctx",
+    "kind": "improve",
+    "started": "2026-10-03T07:47:35+09:00",
+    "model": "claude-opus-5",
+    "policy_version": "4a9e91ac7",
+    "prompts_hash": "ce085c79e18002e2",
+    "runner_version": "1bd5f0cd4",
+    "arm": "no-scout",
+    "experiment": "roles-2026-09",
+    "finished": "2026-10-03T08:37:29+09:00",
+    "outcome": "verify-failed"
+  },
+  "record": {
+    "ts": "2026-10-03T08:37:29+09:00",
+    "date": "2026-10-03",
+    "project": "git-ctx",
+    "result": "CI failed, PR open https://github.com/hkjang/git-ctx/pull/44",
+    "outcome": "verify-failed",
+    "run_id": "2026-10-03-074735-git-ctx-improve",
+    "base_sha": "04a1db6b7e41e8aabe5a80a49dab473c7ceea032",
+    "head_sha": "bd38e4eb88428c3eba71eed0da2968ca967ea9f9",
+    "pr": "https://github.com/hkjang/git-ctx/pull/44",
+    "stages": {
+      "base": {
+        "state": "pinned",
+        "reason": "main@04a1db6",
+        "at": "2026-10-03T07:47:39+09:00"
+      },
+      "autonomy": {
+        "state": "release",
+        "reason": "",
+        "at": "2026-10-03T07:47:39+09:00"
+      },
+      "verify": {
+        "state": "passed",
+        "reason": "검증 4개 통과 (auto)",
+        "at": "2026-10-03T08:03:03+09:00"
+      },
+      "review": {
+        "state": "approved",
+        "reason": "리뷰 승인 (risk=low)",
+        "at": "2026-10-03T08:30:13+09:00"
+      },
+      "repair": {
+        "state": "done",
+        "reason": "비평 지적은 전부 맞았다. 재현(실제 `Server.ServeHTTP` 왕복): 청크 하나가 ```bash 를 열고 닫지 않으면 `search-semantic` 의 `### ` 12개가 `result_count=1`, `find-runbook`",
+        "at": "2026-10-03T08:22:54+09:00"
+      },
+      "pr": {
+        "state": "created",
+        "reason": "https://github.com/hkjang/git-ctx/pull/44",
+        "at": "2026-10-03T08:30:20+09:00"
+      },
+      "ci": {
+        "state": "failed",
+        "reason": "성공이 아닌 검사: Known vulnerabilities=failure · 실패한 검사: ? 잡: Known vulnerabilities ",
+        "at": "2026-10-03T08:37:29+09:00"
+      }
+    },
+    "campaign": "",
+    "autonomy": "release",
+    "arm": "no-scout",
+    "experiment": "roles-2026-09",
+    "engine": "claude",
+    "files": 8,
+    "additions": 463,
+    "deletions": 39,
+    "tests": 6,
+    "title": "fix(mcp): key the budget's fence awareness to the tools that fence their content, not every answer"
+  },
+  "stages": {
+    "base": {
+      "state": "pinned",
+      "reason": "main@04a1db6",
+      "at": "2026-10-03T07:47:39+09:00"
+    },
+    "autonomy": {
+      "state": "release",
+      "reason": "",
+      "at": "2026-10-03T07:47:39+09:00"
+    },
+    "verify": {
+      "state": "passed",
+      "reason": "검증 4개 통과 (auto)",
+      "at": "2026-10-03T08:03:03+09:00"
+    },
+    "review": {
+      "state": "approved",
+      "reason": "리뷰 승인 (risk=low)",
+      "at": "2026-10-03T08:30:13+09:00"
+    },
+    "repair": {
+      "state": "done",
+      "reason": "비평 지적은 전부 맞았다. 재현(실제 `Server.ServeHTTP` 왕복): 청크 하나가 ```bash 를 열고 닫지 않으면 `search-semantic` 의 `### ` 12개가 `result_count=1`, `find-runbook`",
+      "at": "2026-10-03T08:22:54+09:00"
+    },
+    "pr": {
+      "state": "created",
+      "reason": "https://github.com/hkjang/git-ctx/pull/44",
+      "at": "2026-10-03T08:30:20+09:00"
+    },
+    "ci": {
+      "state": "failed",
+      "reason": "성공이 아닌 검사: Known vulnerabilities=failure · 실패한 검사: ? 잡: Known vulnerabilities ",
+      "at": "2026-10-03T08:37:29+09:00"
+    }
+  },
+  "provenance": {
+    "model": "claude-opus-5",
+    "policy_version": "4a9e91ac7",
+    "prompts_hash": "ce085c79e18002e2",
+    "runner_version": "1bd5f0cd4",
+    "base_sha": "04a1db6b7e41e8aabe5a80a49dab473c7ceea032",
+    "head_sha": "bd38e4eb88428c3eba71eed0da2968ca967ea9f9",
+    "pr": "https://github.com/hkjang/git-ctx/pull/44"
+  },
+  "verification": {
+    "runner": {
+      "source": "auto",
+      "commands": [
+        {
+          "cmd": "go build ./...",
+          "exit": 0,
+          "seconds": 2
+        },
+        {
+          "cmd": "go vet ./...",
+          "exit": 0,
+          "seconds": 0
+        },
+        {
+          "cmd": "go test ./...",
+          "exit": 0,
+          "seconds": 101
+        },
+        {
+          "cmd": "go build -tags sqlite_fts5 ./...   # CI에서 가져옴",
+          "exit": 0,
+          "seconds": 2
+        }
+      ]
+    },
+    "runner_gate": {
+      "ok": true,
+      "state": "verified",
+      "reason": "검증 4개 통과 (auto)"
+    },
+    "after_rebase": null,
+    "review": {
+      "verdict": "approve",
+      "reasons": [],
+      "notes": [
+        "budget.go:123 `fencesContent` is a hand-maintained tool-name allowlist decoupled from the only real criterion (`contentFence` at format.go:207, used at format.go:179 and 421). Nothing fails if a third formatter starts wrapping content in a fence — that tool silently keeps the old miscount-and-short-cut behaviour. A test asserting the two lists agree would close this; no current defect.",
+        "budget.go:131-133 the comment says \"Every other formatter writes the indexed content as prose\", but `formatRepositoryMap` (format.go:379) does wrap pretty-printed JSON in a ```json fence. Harmless in fact (MarshalIndent never emits a line starting with `### ` or `- `, and that path is byte-for-byte main's), but the comment overstates the rule.",
+        "clampResponse's `strings.LastIndex(text, \"\\n### Notes\\n\")` (budget.go:41) is still fence-unaware, as the implementer flagged. Verified it is unchanged from main and not worsened: on a read-file answer whose content holds a literal `### Notes` line the split still lands inside the fence, leaving an orphan closing fence after the notice. Pre-existing, out of this scope.",
+        "The `#### ` code-search rule is still keyed on the `## Code Search\\n` prefix (codeSearchHits, budget.go:197) rather than the tool name, so the diff leaves two different discriminators in one file. Checked: no other formatter produces that prefix, so no live defect — but the next change here should unify them.",
+        "Release note wording: scope the claim to read-file and get-symbol-context. The prose formatters (search-semantic, find-runbook, search-code, export-context, query-docs) deliberately keep main's behaviour, and the upstream cause — `parse` at internal/indexer/indexer.go:1110 splitting on headings without fence state, which produces the unbalanced chunks — is untouched. Fixing that would change the reindex fingerprint.",
+        "Verified reversibility: code-only, no schema or migration, no external state. The audited `result_count` for read-file moves from a content-derived number to 0 and get-symbol-context stays at 4; only the admin console reads the column and no doc pins its semantics (grep over docs/ and web/ for `result_count` is empty)."
+      ],
+      "risk": "low",
+      "blocking": []
+    },
+    "ci_gate": {
+      "ok": false,
+      "state": "failed",
+      "reason": "성공이 아닌 검사: Known vulnerabilities=failure",
+      "checks": 5,
+      "bad": 1
+    }
+  },
+  "release": {
+    "result": null,
+    "assets_sha256": []
+  },
+  "approval": null,
+  "usage": [
+    {
+      "ts": "2026-10-03T08:01:17+09:00",
+      "date": "2026-10-03",
+      "project": "git-ctx",
+      "phase": "improve",
+      "run_id": "2026-10-03-074735-git-ctx-improve",
+      "campaign": "",
+      "subtype": "success",
+      "engine": "claude",
+      "duration_ms": 818857,
+      "num_turns": 52,
+      "cost_usd": 5.4675255,
+      "input_tokens": 98,
+      "output_tokens": 50631,
+      "cache_read": 5520761,
+      "cache_create": 144088
+    },
+    {
+      "ts": "2026-10-03T08:10:01+09:00",
+      "date": "2026-10-03",
+      "project": "git-ctx",
+      "phase": "review",
+      "run_id": "2026-10-03-074735-git-ctx-improve",
+      "campaign": "",
+      "subtype": "success",
+      "engine": "claude",
+      "duration_ms": 415602,
+      "num_turns": 43,
+      "cost_usd": 3.1817977500000008,
+      "input_tokens": 80,
+      "output_tokens": 23179,
+      "cache_read": 2727676,
+      "cache_create": 80066
+    },
+    {
+      "ts": "2026-10-03T08:21:09+09:00",
+      "date": "2026-10-03",
+      "project": "git-ctx",
+      "phase": "repair",
+      "run_id": "2026-10-03-074735-git-ctx-improve",
+      "campaign": "",
+      "subtype": "success",
+      "engine": "claude",
+      "duration_ms": 667976,
+      "num_turns": 71,
+      "cost_usd": 5.111421500000003,
+      "input_tokens": 134,
+      "output_tokens": 38841,
+      "cache_read": 6056373,
+      "cache_create": 111154
+    },
+    {
+      "ts": "2026-10-03T08:30:13+09:00",
+      "date": "2026-10-03",
+      "project": "git-ctx",
+      "phase": "review",
+      "run_id": "2026-10-03-074735-git-ctx-improve",
+      "campaign": "",
+      "subtype": "success",
+      "engine": "claude",
+      "duration_ms": 437410,
+      "num_turns": 49,
+      "cost_usd": 2.884366,
+      "input_tokens": 92,
+      "output_tokens": 22306,
+      "cache_read": 3043332,
+      "cache_create": 80459
+    }
+  ]
+}
