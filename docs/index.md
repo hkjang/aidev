@@ -1,7 +1,7 @@
 ---
 title: "aidev 자율 개선 대시보드"
 description: "Claude Code 자율 개선 에이전트가 hkjang 의 프로젝트를 개선·테스트·머지·릴리즈한 일일 보고. 오늘 11회차·릴리즈 10건, 누적 1846회차·릴리즈 640건, 주의 필요 2건."
-last_modified_at: 2026-10-03 06:46:09 +0900
+last_modified_at: 2026-10-03 06:55:29 +0900
 ---
 {% raw %}
 <script type="application/ld+json">
@@ -17,7 +17,7 @@ last_modified_at: 2026-10-03 06:46:09 +0900
   "name": "hkjang",
   "url": "https://github.com/hkjang"
  },
- "dateModified": "2026-10-03T06:46:09+09:00"
+ "dateModified": "2026-10-03T06:55:29+09:00"
 }
 </script>
 
@@ -369,7 +369,7 @@ last_modified_at: 2026-10-03 06:46:09 +0900
 
 # aidev 자율 개선 대시보드
 
-<p class="tldr"><strong>한 줄 요약.</strong> Claude Code 자율 개선 에이전트가 hkjang 의 프로젝트를 개선·테스트·머지·릴리즈한 일일 보고. 오늘 11회차·릴리즈 10건, 누적 1846회차·릴리즈 640건, 주의 필요 2건. 회차가 끝날 때마다 자동 갱신됩니다 (마지막 갱신 <time datetime="2026-10-03T06:46:09+09:00" data-rel>2026-10-03 06:46</time> KST).</p>
+<p class="tldr"><strong>한 줄 요약.</strong> Claude Code 자율 개선 에이전트가 hkjang 의 프로젝트를 개선·테스트·머지·릴리즈한 일일 보고. 오늘 11회차·릴리즈 10건, 누적 1846회차·릴리즈 640건, 주의 필요 2건. 회차가 끝날 때마다 자동 갱신됩니다 (마지막 갱신 <time datetime="2026-10-03T06:55:29+09:00" data-rel>2026-10-03 06:55</time> KST).</p>
 
 <div class="alerts" role="alert"><strong>⚠️ 주의 필요 2건</strong> <span class="meta">— 새 경고는 GitHub Issue·Slack·이메일·Windows 알림으로도 보냅니다</span><ul><li><a href="https://hkjang.github.io/aidev/projects/mmcp/">mmcp</a> — 보호 파일 변경 — 자동 머지 안 함, 사람 검토 필요 <span class=meta>(2026-10-02 07:46)</span></li><li><a href="https://hkjang.github.io/aidev/projects/vibe-code/">vibe-code</a> — 최신 릴리즈 v1.4.6 자산 0개 (이전 v1.4.0: 2개)</li></ul></div>
 
