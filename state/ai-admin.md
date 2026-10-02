@@ -327,3 +327,4 @@
 - 보류 아이디어: 비스트리밍 chat 본문 절단 시 감사 `reason` 계약을 테스트로 고정 (2/1/S — 아홉 회차 연속 차선, 프로덕션 0개로 가장 쌈) · 감사 CSV 문서의 "성공 다운로드=전체 이벤트" 문구를 50,000건 상한(`audit_events.go:18 auditExportLimit = 50000` 으로 코드 확인)과 맞추기 (1/1/S — 이번에 같은 `docs/api.md` 감사 절을 열었지만 다른 주장이라 묶지 않았다) · `updateKeyScope` 의 `name` 을 varchar(160)·trim 계약에 맞춰 400 으로 막기 (2/1/S — 결함은 그대로지만 2026-10-01 verify-failed 접근) · `updateKeyScope`·`updateRole` 의 `description` 이 trim 되지 않는 비대칭 (1/1/S) · 회전 승인 실행의 `errKeyStale` 반환 지점을 `details` 필드명으로 구별 (2/2/M — `workflow.go` 위험 구역)
 - 과제서: 채택 — 결함·코드 위치(`auth_handlers.go:70`·`server.go:566`/`:588`·`001_ai_admin.sql` varchar(500))·재사용 헬퍼(`truncateRunes`)·재사용 셋업·username 단위 레이트 리미터(IP 전역 잠금 없음)가 모두 현재 코드와 정확히 일치했고, 지정된 방식 그대로 수용 기준 1~3을 red→green→byte-revert-red 로 증명했다.
 
+- 릴리즈: v1.2.33 (2026-10-03, run 2026-10-03-050752-ai-admin-improve)
