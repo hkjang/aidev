@@ -1,0 +1,15 @@
+실패한 검사: ?
+잡: govulncheck
+실패 단계: Scan
+govulncheck	Scan	2026-10-02T05:39:58.2418468Z ##[error]      #1: internal/platform/telemetry/telemetry.go:43:23: telemetry.Init calls trace.WithBatcher, which eventually calls otlptrace.Exporter.ExportSpans
+govulncheck	Scan	2026-10-02T05:39:58.2427080Z ##[error]      #2: internal/application/settings_catalog.go:111:23: application.SettingsDefinitions calls sync.Once.Do, which eventually calls otlptrace.Exporter.Shutdown
+govulncheck	Scan	2026-10-02T05:39:58.2429216Z ##[error]      #3: internal/platform/telemetry/telemetry.go:30:31: telemetry.Init calls otlptracehttp.New, which calls otlptrace.New
+govulncheck	Scan	2026-10-02T05:39:58.2431082Z ##[error]      #4: internal/application/settings_catalog.go:111:23: application.SettingsDefinitions calls sync.Once.Do, which eventually calls otlptrace.Shutdown
+govulncheck	Scan	2026-10-02T05:39:58.2433064Z ##[error]      #5: internal/application/settings_catalog.go:111:23: application.SettingsDefinitions calls sync.Once.Do, which eventually calls otlptrace.Start
+govulncheck	Scan	2026-10-02T05:39:58.2434742Z ##[error]      #6: internal/platform/telemetry/telemetry.go:17:2: telemetry.init calls otlptracehttp.init, which calls otlptrace.init
+govulncheck	Scan	2026-10-02T05:39:58.2436437Z ##[error]      #7: internal/platform/telemetry/telemetry.go:43:23: telemetry.Init calls trace.WithBatcher, which eventually calls tracetransform.Spans
+govulncheck	Scan	2026-10-02T05:39:58.2438212Z ##[error]      #8: internal/platform/telemetry/telemetry.go:17:2: telemetry.init calls otlptracehttp.init, which eventually calls tracetransform.init
+govulncheck	Scan	2026-10-02T05:39:58.2442617Z ##[error]      #1: internal/platform/telemetry/telemetry.go:30:31: telemetry.Init calls otlptracehttp.New, which eventually calls counter.NextExporterID
+govulncheck	Scan	2026-10-02T05:39:58.2444250Z ##[error]      #2: internal/platform/telemetry/telemetry.go:17:2: telemetry.init calls otlptracehttp.init, which calls counter.init
+govulncheck	Scan	2026-10-02T05:39:58.2446050Z ##[error]      #3: internal/platform/telemetry/telemetry.go:30:31: telemetry.Init calls otlptracehttp.New, which eventually calls envconfig.EnvOptionsReader.Apply
+govulncheck	Scan	2026-10-02T05:39:58.2447814Z ##[error]      #4: internal/platform/telemetry/telemetry.go:30:31: telemetry.Init calls otlptracehttp.New, which eventually calls envconfig.WithBool
