@@ -1,0 +1,27 @@
+{
+  "base": {
+    "state": "pinned",
+    "reason": "main@758bd7e",
+    "at": "2026-10-03T02:37:26+09:00"
+  },
+  "autonomy": {
+    "state": "release",
+    "reason": "",
+    "at": "2026-10-03T02:37:26+09:00"
+  },
+  "verify": {
+    "state": "passed",
+    "reason": "검증 3개 통과 (policy)",
+    "at": "2026-10-03T03:06:44+09:00"
+  },
+  "review": {
+    "state": "rejected",
+    "reason": "리뷰 거절: internal/analyzer/security.go:327-330 capability 검사는 Restricted 의 허용 목록(NET_BIND_SERVICE 하나)을 쓰는데, 이번 변경이 그 위반을 `failsBaseline` 버킷으로 옮겨 Level=\"privileged\" 로 올립니다. PSS Baseline 이 허용하는 기본 capability(AUDIT_WRITE·CHOWN·DAC_OVERRIDE·FOWNER·FSETID·KILL·MKNOD·NET_BIND_SERVICE·SETFCAP·SETGID·SETPCAP·SETUID·SYS_CHROOT)를 추가한 워크로드가 Baseline 을 만족하는데도 privileged 로 올라갑니다. go test -overlay 로 양쪽을 돌려 확인: `capabilities.add:[CHOWN]` 만 다른 하드닝된 Pod 가 main 에서 level=baseline, HEAD 에서 level=privileged, 포스처 점수 90→72(Privileged 8점). 결과로 (a) k8s_notify.go:308 이 그 워크로드를 새로 알립니다 — 구현자가 runAsUser=0 에서 피하려 한 바로 그 오탐 페이지, (b) admin_k8s_dw.go:83 이 pod-security-privileged/high fact 로 영구 기록, (c) admin_secops.go:122 권고가 'privileged workload 제거 또는 예외 승인' 으로 뒤집힙니다. 수리: failsBaseline 에는 Baseline 기본 허용 목록 밖의 add 만 넣고, 그 목록 안의 add 는 failsRestricted 로 보내십시오(Restricted 는 NET_BIND_SERVICE 만 허용하므로 등급은 baseline 이 맞습니다). / internal/analyzer/security.go:399-413 + internal/analyzer/security_pss_level_test.go:98 명시적 `seccompProfile.type=Unconfined` 는 PSS 에서 Baseline 실패입니다(Baseline Seccomp 통제: 'must not be explicitly set to Unconfined', 허용값 Undefined/nil·RuntimeDefault·Localhost). 미설정만 Restricted 전용 실패입니다. 코드는 두 경우를 모두 failsRestricted 에 넣어 Unconfined Pod 가 여전히 level=baseline 으로 남습니다(overlay 확인: seccomp-Unconfined → level=baseline, HEAD/main 동일) — 즉 이 PR 이 닫았다고 말하는 '알림이 한 번도 안 가는 Baseline 실패' 구멍이 이 통제에서는 그대로입니다. 더구나 새 테스트가 'seccompProfile=Unconfined fails Restricted but not Baseline' 을 정답으로 고정해 틀린 의미를 못으로 박습니다. / docs/K8S_OPERATIONS_HUB.md:7-37 문서가 `failsBaseline` 을 'Baseline 허용 목록 밖의 capability' 로, `seccompProfile` 을 Restricted 전용 통제로 설명하지만 코드는 그 계약을 구현하지 않습니다(위 두 항목). 운영자는 CHOWN·SETUID 추가 워크로드가 알림을 받을 것을 이 문장으로 예측할 수 없고, 릴리즈 노트가 사전 점검을 지시한 '새로 privileged 로 올라오는 워크로드' 범위를 실제보다 좁게 알립니다.",
+    "at": "2026-10-03T03:11:38+09:00"
+  },
+  "repair": {
+    "state": "done",
+    "reason": "# 수리 요약 (7fedbb3)  비평의 세 지적 모두 맞았고 전부 고쳤습니다. (1) capability 검사가 Restricted 허용 목록(NET_BIND_SERVICE)으로 Baseline 을 판정해 `add:[CHOWN]` ",
+    "at": "2026-10-03T03:20:32+09:00"
+  }
+}
