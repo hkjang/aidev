@@ -28,3 +28,7 @@
 - 릴리즈 노트용: 외부 계약(HTTP 200 + `isError:true`) 불변, 마이그레이션·VERSION·의존성·문서 변경 없음, 단일 커밋 revert 로 완전 복구. 남은 같은 구멍은 `auth.go:155` 하나(의도적 범위 밖).
 - [러너 11:24] review approved — 리뷰 승인 (risk=low)
 - [러너 11:24] pr created — https://github.com/hkjang/orbit/pull/17
+- [러너 11:27] ci passed — 검사 1개 모두 success
+- [러너 11:27] merge done — 4456e75
+- [러너 11:32] release published — v0.7.7
+- [러너 11:33] assets verified — v0.7.7 자산 1개 (이전 v0.7.6: 1)

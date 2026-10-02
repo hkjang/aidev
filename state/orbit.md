@@ -139,3 +139,4 @@
 - 보류 아이디어: AI 제공자 SSE 파서(`ai.go:proxyAIStream`)의 여러 `data:` 줄 합치기·프레임 경계·EOF flush·`[DONE]` 무시를 httptest 제공자 서버로 고정 (2/1/S); `auth.go:155 userByAPIKey` 의 `rows.Err()` 누락 — 401 fail-closed 라 데이터 손실이 아니고 보호 경로 (2/3/S); `exportData` 가 섹션 중간 실패 시 파싱 불가능한 미완결 JSON 을 200 으로 내보냄 — 배열을 닫고 `"complete":false` 로 끝내면 진단 가능 (2/2/S); `safeAIError` 의 `message[:300]` 이 UTF-8 룬을 쪼개 한국어 제공자 오류 꼬리가 깨짐 (2/1/S); `mcp.go` 의 나머지 세 도구가 uuid 모양 아닌 `person_id` 를 그대로 uuid 컬럼에 넘겨 메시지 충실도만 떨어짐 (2/2/S)
 - 과제서: 채택 — 지정한 자리(`mcp.go` 151~160줄의 구조, 224~231줄의 매핑, `requestHasScope` 의 authInfo 부재 시 true, people 13컬럼)가 지금 코드와 정확히 일치해 수용 기준 1~3 을 그대로 구현했고, 과제서가 미확인으로 남긴 `people` rename 시 FK 동반 이동과 "잘린 결과는 0행" 예측 둘 다 실제 postgres 로 사실로 확정했다.
 
+- 릴리즈: v0.7.7 (2026-10-02, run 2026-10-02-110721-orbit-improve)
