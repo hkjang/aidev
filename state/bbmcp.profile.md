@@ -1,0 +1,28 @@
+# bbmcp 프로필 (2026-10-03)
+
+- 목적: Bitbucket Server 6.9.1 앞에 두는 MCP 게이트웨이. AI 가 호출할 때마다 **요청자 본인의 Bitbucket 유효 권한**을 확인해, 서비스 계정의 넓은 권한이 사용자 권한으로 승격되지 않게 막는다.
+- 스택: Go 1.24 (모듈 `github.com/hkjang/bbmcp`), PostgreSQL (pgx/v5), Keycloak OIDC (go-oidc/v3, golang-jwt/v5), chi 라우터, 웹 콘솔은 `web/` (npm, Node 22) → `internal/webui/dist` 로 임베드. 단일 도커 이미지 배포.
+- 구조:
+  - `cmd/` 엔트리포인트. `internal/api/` HTTP 서버·관리/개인 콘솔 API·MCP OAuth(RFC 9728/8414/7591).
+  - `internal/mcp/` JSON-RPC·MCP 서버. `internal/tools/` 도구 레지스트리(33종)와 `executor.go` 의 호출 파이프라인 — 정책 → 권한 → 브랜치 제한 → 승인 → 자격증명 → 핸들러 순.
+  - `internal/permission/` Bitbucket 유효 권한 해석(플러그인 우선, REST 폴백, fail-closed). `internal/policy/` 프로젝트·저장소·브랜치 허용/차단과 위험도 상한.
+  - `internal/approval/` 인자 해시·PR version 에 묶인 1회용 승인. `internal/audit/` 감사 로그. `internal/identity/` Keycloak sub ↔ Bitbucket user.id 고정 매핑.
+  - `internal/auth/` OIDC·세션·로컬 계정. `internal/crypto/` 봉인(Sealer). `internal/settings/` DB 설정 저장소. `internal/database/migrations` 스키마.
+  - `internal/bitbucket/` 업스트림 클라이언트·어댑터. `internal/aiproxy/` Anthropic/OpenAI 호환 스트리밍 프록시. `docs/` 는 GitHub Pages 정적 사이트(main/docs 분기 게시).
+- 빌드·테스트:
+  - `go build ./...`, `go vet ./...`
+  - `TEST_DATABASE_URL='postgres://bbmcp:bbmcp@localhost:5432/bbmcp_test?sslmode=disable' go test ./... -count=1 -p 1` — **`-p 1` 필수**(DB 를 공유하고 테스트마다 TRUNCATE 한다).
+  - 웹: `cd web && npm ci && npm run check && npm run build`
+  - CI(`.github/workflows/ci.yml`) 3잡: go(postgres:16-alpine 서비스) / web / 도커 이미지 빌드 + 컨테이너 기동 점검(`/healthz`, `/api/config`). 이미지 잡이 가장 오래 걸린다.
+- 관례: 커밋 메시지는 한국어 + Conventional Commits 접두사(`feat:`, `fix:`, `chore:`, `test:`). 주석·식별자는 영어, 사용자에게 보이는 문자열·오류 메시지는 한국어. 설정은 환경변수 4개(`DATABASE_URL`, `BOOTSTRAP_ADMIN`, `BOOTSTRAP_ADMIN_PASSWORD`, `ENCRYPTION_KEY`) + 나머지는 DB `settings` 테이블. 마이그레이션은 `internal/database/migrations` 에 두고 기동 시 `db.Migrate` 가 적용. TODO/FIXME 주석은 저장소에 0건.
+- 위험 구역:
+  - `internal/auth/*`, `internal/api/oauth.go`·`auth_handlers.go` — Keycloak 리다이렉트 URI 와 사일런트 SSO 로 최근 2커밋 연속 수정(`aef897e`, `1ca1c97`). 건드리면 로그인이 바로 깨진다.
+  - `internal/database/migrations` — 되돌리기 어렵다.
+  - `internal/permission/resolver.go`, `internal/approval/approval.go` — 제품의 보안 주장 자체. fail-closed 전제를 깨는 변경 금지.
+  - `Dockerfile` / `.github/workflows/ci.yml` — alpine 빌드에서 rollup 네이티브 모듈이 빠져 한 번 깨진 적 있다(`3eb143d`). 릴리즈·빌드 경로 변경은 이미지 잡까지 통과 확인 필요.
+- 자주 깨지는 곳: (회차 기록이 아직 없어 git log 기준) alpine 이미지의 웹 빌드 의존성, Keycloak 리다이렉트 URI 검증.
+- 검증 함정:
+  - `TEST_DATABASE_URL` 이 없으면 DB 통합 테스트가 **조용히 `t.Skip`** 된다(`internal/tools/integration_test.go:newFixture`, `internal/api/testdb_test.go`, `internal/apikey/testdb_test.go`). "테스트 통과"가 실제로는 "전부 건너뜀"일 수 있으니 Postgres 를 띄우고 돌릴 것.
+  - `-p 1` 없이 돌리면 패키지들이 같은 DB 를 동시에 TRUNCATE 해 서로를 깨뜨린다.
+  - `internal/tools/integration_test.go` 의 `fakeBitbucket` 은 httptest 로 Bitbucket 6.9.1 응답을 흉내내는 **기존 프로덕션 배선 하네스**다(Executor·Resolver·Policy·Approval·Audit 실제 타입). 새 목을 만들지 말고 이것을 확장할 것.
+  - 테스트가 없는 패키지: `internal/mcp`, `internal/identity`, `internal/approval`, `internal/audit`, `internal/aiproxy`, `internal/settings`, `internal/config`, `internal/permission/resolver.go` (간접 커버만).

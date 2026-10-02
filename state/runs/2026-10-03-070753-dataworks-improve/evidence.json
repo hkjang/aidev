@@ -1,0 +1,146 @@
+{
+  "run_id": "2026-10-03-070753-dataworks-improve",
+  "generated": "2026-10-03T07:18:53+09:00",
+  "run": {
+    "run_id": "2026-10-03-070753-dataworks-improve",
+    "project": "dataworks",
+    "kind": "improve",
+    "started": "2026-10-03T07:07:54+09:00",
+    "model": "claude-opus-5",
+    "policy_version": "4a9e91ac7",
+    "prompts_hash": "ce085c79e18002e2",
+    "runner_version": "1bd5f0cd4",
+    "arm": "no-scout",
+    "experiment": "roles-2026-09",
+    "finished": "2026-10-03T07:18:52+09:00",
+    "outcome": "verify-failed"
+  },
+  "record": {
+    "ts": "2026-10-03T07:18:53+09:00",
+    "date": "2026-10-03",
+    "project": "dataworks",
+    "result": "verify failed: 실패한 검증: cd web && npm test --silent (exit 1)",
+    "outcome": "verify-failed",
+    "run_id": "2026-10-03-070753-dataworks-improve",
+    "base_sha": "98c508154d1068c9c38a8034f15de9ab159753ec",
+    "head_sha": "5fcc7a38fe4e871e0a879d747fcba6586106eb1b",
+    "pr": "",
+    "stages": {
+      "base": {
+        "state": "pinned",
+        "reason": "main@98c5081",
+        "at": "2026-10-03T07:07:58+09:00"
+      },
+      "autonomy": {
+        "state": "release",
+        "reason": "",
+        "at": "2026-10-03T07:07:59+09:00"
+      },
+      "verify": {
+        "state": "failed",
+        "reason": "실패한 검증: cd web && npm test --silent (exit 1)",
+        "at": "2026-10-03T07:18:52+09:00"
+      }
+    },
+    "campaign": "",
+    "autonomy": "release",
+    "arm": "no-scout",
+    "experiment": "roles-2026-09",
+    "engine": "claude",
+    "files": 3,
+    "additions": 234,
+    "deletions": 7,
+    "tests": 1,
+    "title": "fix(dataworks): surface evidence pack source read failures"
+  },
+  "stages": {
+    "base": {
+      "state": "pinned",
+      "reason": "main@98c5081",
+      "at": "2026-10-03T07:07:58+09:00"
+    },
+    "autonomy": {
+      "state": "release",
+      "reason": "",
+      "at": "2026-10-03T07:07:59+09:00"
+    },
+    "verify": {
+      "state": "failed",
+      "reason": "실패한 검증: cd web && npm test --silent (exit 1)",
+      "at": "2026-10-03T07:18:52+09:00"
+    }
+  },
+  "provenance": {
+    "model": "claude-opus-5",
+    "policy_version": "4a9e91ac7",
+    "prompts_hash": "ce085c79e18002e2",
+    "runner_version": "1bd5f0cd4",
+    "base_sha": "98c508154d1068c9c38a8034f15de9ab159753ec",
+    "head_sha": "5fcc7a38fe4e871e0a879d747fcba6586106eb1b",
+    "pr": ""
+  },
+  "verification": {
+    "runner": {
+      "source": "auto",
+      "commands": [
+        {
+          "cmd": "go build ./...",
+          "exit": 0,
+          "seconds": 1
+        },
+        {
+          "cmd": "go vet ./...",
+          "exit": 0,
+          "seconds": 0
+        },
+        {
+          "cmd": "go test ./...",
+          "exit": 0,
+          "seconds": 39
+        },
+        {
+          "cmd": "cd web && [ -d node_modules ] || npm ci --no-audit --no-fund",
+          "exit": 0,
+          "seconds": 9
+        },
+        {
+          "cmd": "cd web && npm test --silent",
+          "exit": 1,
+          "seconds": 1
+        }
+      ]
+    },
+    "runner_gate": {
+      "ok": false,
+      "state": "verify-failed",
+      "reason": "실패한 검증: cd web && npm test --silent (exit 1)"
+    },
+    "after_rebase": null,
+    "review": null,
+    "ci_gate": null
+  },
+  "release": {
+    "result": null,
+    "assets_sha256": []
+  },
+  "approval": null,
+  "usage": [
+    {
+      "ts": "2026-10-03T07:18:02+09:00",
+      "date": "2026-10-03",
+      "project": "dataworks",
+      "phase": "improve",
+      "run_id": "2026-10-03-070753-dataworks-improve",
+      "campaign": "",
+      "subtype": "success",
+      "engine": "claude",
+      "duration_ms": 602355,
+      "num_turns": 60,
+      "cost_usd": 5.220859000000002,
+      "input_tokens": 114,
+      "output_tokens": 33819,
+      "cache_read": 6003248,
+      "cache_create": 137319
+    }
+  ]
+}
