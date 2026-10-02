@@ -268,3 +268,4 @@
 - 보류 아이디어: events/revisions 스토어 상한이 호출자 요청(2000/1000)을 조용히 500/1000 으로 깎는 계약 불일치 — 호출자 40곳, DW fact 한 경로만 (4/3/L) / `ScorePodSecurity`(CLU-OCP-03 런타임 시큐리티)와 `classifyPodSecurity` 가 hostPath 파드의 프로파일을 다르게 표시 — 계약이 다른 두 분류기라 통합 금지, 화면에 어느 계약인지 적는 쪽으로 (2/2/S, 신규) / notify scan 의 전 클러스터 스캔이 2000행 예산을 모든 클러스터가 공유해 어느 클러스터가 빠졌는지 말하지 않음 (3/2/M) / PSS Restricted 의 volume 타입 화이트리스트 — 이번에 hostPath 만 등급에 반영했고 나머지 금지 타입(nfs·iscsi 등)은 여전히 미검사 (2/3/M)
 - 과제서: 채택 — 과제서가 "다음 회차 후보" 로 올린 SEC-01 을 골랐다. 단, 과제서가 "현 동작을 고정한다" 고 적은 `runtimesecurity_test.go:23` 은 실제로는 별개 함수 `ScorePodSecurity` 를 고정하고 있어 이 변경과 무관했고, `policy_rule_parity_test.go`·`security_seccomp_test.go` 도 수정 없이 통과했다.
 
+- 릴리즈: v0.9.294 (2026-10-03, run 2026-10-03-023721-Clustara-improve)

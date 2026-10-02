@@ -33,3 +33,11 @@
 - 릴리즈 노트에 넣을 것: baseline→privileged 이동으로 (1) 해당 워크로드가 신규 알림(6시간 dedup, 1건/워크로드 — 로그·모니터링 DaemonSet 에 몰릴 수 있고 실 클러스터 증가 폭은 여전히 미측정), (2) 포스처 점수가 워크로드당 2→8점으로 더 떨어짐, (3) DW `security_finding.rule` 이 `pod-security-baseline`→`pod-security-privileged`·severity medium→high 로 바뀌어 rule 별 집계 대시보드에 단차, (4) `admin_secops.go:121` 추천 문구가 hostPath DaemonSet 에도 "privileged workload 제거 또는 예외 승인" 으로 뜸(등급상 맞지만 호스트 마운트를 설명하지는 않음).
 - 못 본 것: 실 Kubernetes·실 PostgreSQL·ClickHouse·Keycloak·브라우저(SQLite+httptest 만). `admin_ui.go` Pod Security 표·KPI 는 세 등급을 일반적으로 처리해 하드코딩 파손은 없음을 코드로 확인했지만 렌더링은 미확인 — 구현 노트의 미검증 ①②③ 중 ②는 코드 수준에서만 해소, ①③ 은 그대로 남습니다.
 - [러너 03:26] review approved — 리뷰 승인 (risk=medium)
+- [러너 03:26] pr created — https://github.com/hkjang/clustara/pull/34
+- [러너 03:27] ci passed — 검사 없음 — 정책으로 허용
+- [러너 03:27] merge done — 7fedbb3
+- [러너 03:34] release published — v0.9.294
+- [러너 03:34] gh-release created — GitHub Release v0.9.294
+- [러너 03:34] manifest ok — clustara-v0.9.294.tar.gz clustara-v0.9.294.tar.gz.sha256 README-offline-v0.9.294.md 
+- [러너 03:34] assets uploaded — 3개
+- [러너 03:34] assets verified — v0.9.294 자산 3개 (이전 v0.9.293: 3)
