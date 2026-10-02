@@ -1,0 +1,183 @@
+{
+  "run_id": "2026-10-02-182735-umm-improve",
+  "generated": "2026-10-02T18:37:02+09:00",
+  "run": {
+    "run_id": "2026-10-02-182735-umm-improve",
+    "project": "umm",
+    "kind": "improve",
+    "started": "2026-10-02T18:27:36+09:00",
+    "model": "claude-opus-5",
+    "policy_version": "4a9e91ac7",
+    "prompts_hash": "ce085c79e18002e2",
+    "runner_version": "1bd5f0cd4",
+    "arm": "no-arbiter",
+    "experiment": "roles-2026-09",
+    "finished": "2026-10-02T18:37:01+09:00",
+    "outcome": "verify-failed"
+  },
+  "record": {
+    "ts": "2026-10-02T18:37:01+09:00",
+    "date": "2026-10-02",
+    "project": "umm",
+    "result": "verify failed: 실패한 검증: cd web && npm test --silent (exit 1)",
+    "outcome": "verify-failed",
+    "run_id": "2026-10-02-182735-umm-improve",
+    "base_sha": "715fd97e84f16935019c9bc52282a534951deca3",
+    "head_sha": "a6bef86bb8a8d2e9527939f6cae81a15bf8fae4d",
+    "pr": "",
+    "stages": {
+      "base": {
+        "state": "pinned",
+        "reason": "main@715fd97",
+        "at": "2026-10-02T18:27:43+09:00"
+      },
+      "autonomy": {
+        "state": "release",
+        "reason": "",
+        "at": "2026-10-02T18:27:43+09:00"
+      },
+      "scout": {
+        "state": "done",
+        "reason": "같은 이름의 부를 둘 이상 제안받으면 그 나눔을 받지 않기 (가치 3 / 위험 1 / 작업량 S)",
+        "at": "2026-10-02T18:32:29+09:00"
+      },
+      "brief": {
+        "state": "accepted",
+        "reason": "채택 — 과제서의 근거가 지금 코드와 정확히 맞았습니다(`usableSections` 가 중복 제목만 통과시킴, `usableHeading` 이 이미 trim",
+        "at": "2026-10-02T18:36:43+09:00"
+      },
+      "verify": {
+        "state": "failed",
+        "reason": "실패한 검증: cd web && npm test --silent (exit 1)",
+        "at": "2026-10-02T18:37:00+09:00"
+      }
+    },
+    "campaign": "",
+    "autonomy": "release",
+    "arm": "no-arbiter",
+    "experiment": "roles-2026-09",
+    "engine": "claude",
+    "files": 2,
+    "additions": 59,
+    "deletions": 0,
+    "tests": 1,
+    "title": "Refuse a division that gives two parts the same name"
+  },
+  "stages": {
+    "base": {
+      "state": "pinned",
+      "reason": "main@715fd97",
+      "at": "2026-10-02T18:27:43+09:00"
+    },
+    "autonomy": {
+      "state": "release",
+      "reason": "",
+      "at": "2026-10-02T18:27:43+09:00"
+    },
+    "scout": {
+      "state": "done",
+      "reason": "같은 이름의 부를 둘 이상 제안받으면 그 나눔을 받지 않기 (가치 3 / 위험 1 / 작업량 S)",
+      "at": "2026-10-02T18:32:29+09:00"
+    },
+    "brief": {
+      "state": "accepted",
+      "reason": "채택 — 과제서의 근거가 지금 코드와 정확히 맞았습니다(`usableSections` 가 중복 제목만 통과시킴, `usableHeading` 이 이미 trim",
+      "at": "2026-10-02T18:36:43+09:00"
+    },
+    "verify": {
+      "state": "failed",
+      "reason": "실패한 검증: cd web && npm test --silent (exit 1)",
+      "at": "2026-10-02T18:37:00+09:00"
+    }
+  },
+  "provenance": {
+    "model": "claude-opus-5",
+    "policy_version": "4a9e91ac7",
+    "prompts_hash": "ce085c79e18002e2",
+    "runner_version": "1bd5f0cd4",
+    "base_sha": "715fd97e84f16935019c9bc52282a534951deca3",
+    "head_sha": "a6bef86bb8a8d2e9527939f6cae81a15bf8fae4d",
+    "pr": ""
+  },
+  "verification": {
+    "runner": {
+      "source": "auto",
+      "commands": [
+        {
+          "cmd": "go build ./...",
+          "exit": 0,
+          "seconds": 1
+        },
+        {
+          "cmd": "go vet ./...",
+          "exit": 0,
+          "seconds": 1
+        },
+        {
+          "cmd": "go test ./...",
+          "exit": 0,
+          "seconds": -2
+        },
+        {
+          "cmd": "cd web && [ -d node_modules ] || npm ci --no-audit --no-fund",
+          "exit": 0,
+          "seconds": 16
+        },
+        {
+          "cmd": "cd web && npm test --silent",
+          "exit": 1,
+          "seconds": 1
+        }
+      ]
+    },
+    "runner_gate": {
+      "ok": false,
+      "state": "verify-failed",
+      "reason": "실패한 검증: cd web && npm test --silent (exit 1)"
+    },
+    "after_rebase": null,
+    "review": null,
+    "ci_gate": null
+  },
+  "release": {
+    "result": null,
+    "assets_sha256": []
+  },
+  "approval": null,
+  "usage": [
+    {
+      "ts": "2026-10-02T18:32:29+09:00",
+      "date": "2026-10-02",
+      "project": "umm",
+      "phase": "scout",
+      "run_id": "2026-10-02-182735-umm-improve",
+      "campaign": "",
+      "subtype": "success",
+      "engine": "claude",
+      "duration_ms": 308916,
+      "num_turns": 30,
+      "cost_usd": 1.9914240000000003,
+      "input_tokens": 44,
+      "output_tokens": 18648,
+      "cache_read": 1523668,
+      "cache_create": 76317
+    },
+    {
+      "ts": "2026-10-02T18:36:43+09:00",
+      "date": "2026-10-02",
+      "project": "umm",
+      "phase": "improve",
+      "run_id": "2026-10-02-182735-umm-improve",
+      "campaign": "",
+      "subtype": "success",
+      "engine": "claude",
+      "duration_ms": 274382,
+      "num_turns": 32,
+      "cost_usd": 1.8853064999999998,
+      "input_tokens": 50,
+      "output_tokens": 13337,
+      "cache_read": 1714703,
+      "cache_create": 69428
+    }
+  ]
+}
