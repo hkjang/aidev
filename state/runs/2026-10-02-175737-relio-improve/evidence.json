@@ -1,0 +1,208 @@
+{
+  "run_id": "2026-10-02-175737-relio-improve",
+  "generated": "2026-10-02T18:12:18+09:00",
+  "run": {
+    "run_id": "2026-10-02-175737-relio-improve",
+    "project": "relio",
+    "kind": "improve",
+    "started": "2026-10-02T17:57:38+09:00",
+    "model": "claude-opus-5",
+    "policy_version": "4a9e91ac7",
+    "prompts_hash": "ce085c79e18002e2",
+    "runner_version": "1bd5f0cd4",
+    "arm": "baseline",
+    "experiment": "roles-2026-09",
+    "finished": "2026-10-02T18:12:18+09:00",
+    "outcome": "verify-failed"
+  },
+  "record": {
+    "ts": "2026-10-02T18:12:18+09:00",
+    "date": "2026-10-02",
+    "project": "relio",
+    "result": "fix-round: verify failed: 실패한 검증: npm run typecheck && npm run build   # CI에서 가져옴 (exit 1)",
+    "outcome": "verify-failed",
+    "run_id": "2026-10-02-175737-relio-improve",
+    "base_sha": "494d00fa04644274302c814151e64791afd8b702",
+    "head_sha": "81c8f34c0adfc5c33c77fa4a1bb1b6938e723850",
+    "pr": "",
+    "stages": {
+      "base": {
+        "state": "pinned",
+        "reason": "main@494d00f",
+        "at": "2026-10-02T17:57:42+09:00"
+      },
+      "autonomy": {
+        "state": "low-risk",
+        "reason": "롤백 PR ",
+        "at": "2026-10-02T17:57:42+09:00"
+      },
+      "scout": {
+        "state": "done",
+        "reason": "`web/package.json` 의 `test` 스크립트에서 Node 버전에 따라 전개되지 않는 `**` 글롭을 없애기 (가치 4 / 위험 1 / �",
+        "at": "2026-10-02T18:02:20+09:00"
+      },
+      "brief": {
+        "state": "fallback",
+        "reason": "차선 — 과제서가 지목한 **파일과 줄은 맞았지만 원인 진단이 틀렸다**. 정찰은 셸의 `node --version`(v22.23.1)을 npm 스크립트 ",
+        "at": "2026-10-02T18:12:09+09:00"
+      },
+      "verify": {
+        "state": "failed",
+        "reason": "실패한 검증: npm run typecheck && npm run build   # CI에서 가져옴 (exit 1)",
+        "at": "2026-10-02T18:12:18+09:00"
+      }
+    },
+    "campaign": "",
+    "autonomy": "low-risk",
+    "arm": "baseline",
+    "experiment": "roles-2026-09",
+    "engine": "claude",
+    "files": 1,
+    "additions": 1,
+    "deletions": 1,
+    "tests": 0,
+    "title": "fix(web): npm test 를 npm 이 실행 중인 node 로 돌려 낡은 node 혼입을 막는다"
+  },
+  "stages": {
+    "base": {
+      "state": "pinned",
+      "reason": "main@494d00f",
+      "at": "2026-10-02T17:57:42+09:00"
+    },
+    "autonomy": {
+      "state": "low-risk",
+      "reason": "롤백 PR ",
+      "at": "2026-10-02T17:57:42+09:00"
+    },
+    "scout": {
+      "state": "done",
+      "reason": "`web/package.json` 의 `test` 스크립트에서 Node 버전에 따라 전개되지 않는 `**` 글롭을 없애기 (가치 4 / 위험 1 / �",
+      "at": "2026-10-02T18:02:20+09:00"
+    },
+    "brief": {
+      "state": "fallback",
+      "reason": "차선 — 과제서가 지목한 **파일과 줄은 맞았지만 원인 진단이 틀렸다**. 정찰은 셸의 `node --version`(v22.23.1)을 npm 스크립트 ",
+      "at": "2026-10-02T18:12:09+09:00"
+    },
+    "verify": {
+      "state": "failed",
+      "reason": "실패한 검증: npm run typecheck && npm run build   # CI에서 가져옴 (exit 1)",
+      "at": "2026-10-02T18:12:18+09:00"
+    }
+  },
+  "provenance": {
+    "model": "claude-opus-5",
+    "policy_version": "4a9e91ac7",
+    "prompts_hash": "ce085c79e18002e2",
+    "runner_version": "1bd5f0cd4",
+    "base_sha": "494d00fa04644274302c814151e64791afd8b702",
+    "head_sha": "81c8f34c0adfc5c33c77fa4a1bb1b6938e723850",
+    "pr": ""
+  },
+  "verification": {
+    "runner": {
+      "source": "auto",
+      "commands": [
+        {
+          "cmd": "go build ./...",
+          "exit": 0,
+          "seconds": 0
+        },
+        {
+          "cmd": "go vet ./...",
+          "exit": 0,
+          "seconds": 1
+        },
+        {
+          "cmd": "go test ./...",
+          "exit": 0,
+          "seconds": 0
+        },
+        {
+          "cmd": "cd web && [ -d node_modules ] || npm ci --no-audit --no-fund",
+          "exit": 0,
+          "seconds": 0
+        },
+        {
+          "cmd": "cd web && npm test --silent",
+          "exit": 0,
+          "seconds": 0
+        },
+        {
+          "cmd": "cd web && [ -d node_modules ] || npm ci --no-audit --no-fund",
+          "exit": 0,
+          "seconds": 0
+        },
+        {
+          "cmd": "cd web && npm run typecheck --silent",
+          "exit": 0,
+          "seconds": 2
+        },
+        {
+          "cmd": "cd web && [ -d node_modules ] || npm ci --no-audit --no-fund",
+          "exit": 0,
+          "seconds": 0
+        },
+        {
+          "cmd": "cd web && npm run build --silent",
+          "exit": 0,
+          "seconds": 5
+        },
+        {
+          "cmd": "npm run typecheck && npm run build   # CI에서 가져옴",
+          "exit": 1,
+          "seconds": 0
+        }
+      ]
+    },
+    "runner_gate": {
+      "ok": false,
+      "state": "verify-failed",
+      "reason": "실패한 검증: npm run typecheck && npm run build   # CI에서 가져옴 (exit 1)"
+    },
+    "after_rebase": null,
+    "review": null,
+    "ci_gate": null
+  },
+  "release": {
+    "result": null,
+    "assets_sha256": []
+  },
+  "approval": null,
+  "usage": [
+    {
+      "ts": "2026-10-02T18:02:20+09:00",
+      "date": "2026-10-02",
+      "project": "relio",
+      "phase": "scout",
+      "run_id": "2026-10-02-175737-relio-improve",
+      "campaign": "",
+      "subtype": "success",
+      "engine": "claude",
+      "duration_ms": 300491,
+      "num_turns": 28,
+      "cost_usd": 1.7197700000000002,
+      "input_tokens": 38,
+      "output_tokens": 18787,
+      "cache_read": 1167830,
+      "cache_create": 66599
+    },
+    {
+      "ts": "2026-10-02T18:12:09+09:00",
+      "date": "2026-10-02",
+      "project": "relio",
+      "phase": "improve",
+      "run_id": "2026-10-02-175737-relio-improve",
+      "campaign": "",
+      "subtype": "success",
+      "engine": "claude",
+      "duration_ms": 642483,
+      "num_turns": 53,
+      "cost_usd": 3.711188,
+      "input_tokens": 96,
+      "output_tokens": 37342,
+      "cache_read": 3697836,
+      "cache_create": 92824
+    }
+  ]
+}
