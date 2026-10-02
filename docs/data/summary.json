@@ -1,12 +1,12 @@
 {
- "generated": "2026-10-03T08:37:34+09:00",
+ "generated": "2026-10-03T08:48:28+09:00",
  "site": "https://hkjang.github.io/aidev",
- "description": "Claude Code 자율 개선 에이전트가 hkjang 의 프로젝트를 개선·테스트·머지·릴리즈한 일일 보고. 오늘 15회차·릴리즈 12건, 누적 1850회차·릴리즈 642건, 주의 필요 3건.",
+ "description": "Claude Code 자율 개선 에이전트가 hkjang 의 프로젝트를 개선·테스트·머지·릴리즈한 일일 보고. 오늘 16회차·릴리즈 13건, 누적 1851회차·릴리즈 643건, 주의 필요 3건.",
  "today": {
   "date": "2026-10-03",
-  "total": 15,
-  "projects": 14,
-  "released": 12,
+  "total": 16,
+  "projects": 15,
+  "released": 13,
   "merged": 0,
   "nochange": 0,
   "failed": 1,
@@ -15,8 +15,8 @@
   "sessions": 67
  },
  "totals": {
-  "runs": 1850,
-  "released": 642,
+  "runs": 1851,
+  "released": 643,
   "days": 32,
   "cost_usd": 7053.77,
   "minutes": 19394,
@@ -48,16 +48,18 @@
  ],
  "fix_queue": [],
  "health": {
-  "checked": "2026-10-03T08:15:04+09:00",
-  "last_run": "2026-10-03T07:29:51+09:00",
-  "seconds_since_last": 2710,
+  "checked": "2026-10-03T08:45:03+09:00",
+  "last_run": "2026-10-03T08:37:29+09:00",
+  "seconds_since_last": 452,
   "runner_pid": "575869",
-  "runner_age_seconds": 2108,
+  "runner_age_seconds": 3931,
   "scheduler_status": "실행 중",
-  "scheduler_next_run": "2026-10-03 오전 8:20:00",
+  "scheduler_next_run": "2026-10-03 오전 8:50:00",
   "disk_percent": 80,
-  "ok": true,
-  "problems": [],
+  "ok": false,
+  "problems": [
+   "측정 감사: 원격에 없는 릴리즈 태그 1건 — 그 저장소의 다음 릴리즈를 막는다"
+  ],
   "actions": []
  },
  "lessons": [
@@ -1677,25 +1679,25 @@
   "rows": [
    {
     "role": "정찰 scout",
-    "calls": 555,
-    "metric": "과제서 91% · 구현자 채택 95% · 과제서 회차의 PR 도달 70%",
+    "calls": 556,
+    "metric": "과제서 91% · 구현자 채택 95% · 과제서 회차의 PR 도달 71%",
     "cost": 625.08
    },
    {
     "role": "구현 builder",
-    "calls": 642,
+    "calls": 643,
     "metric": "러너 검증 통과 93% · 변경 없음 118",
     "cost": 1508.45
    },
    {
     "role": "비평 critic",
-    "calls": 430,
-    "metric": "최종 승인 98% · 한 번이라도 거절 37 · 승인·머지 뒤 회귀 0/346",
+    "calls": 431,
+    "metric": "최종 승인 98% · 한 번이라도 거절 38 · 승인·머지 뒤 회귀 0/347",
     "cost": 686.88
    },
    {
     "role": "수리 repairer",
-    "calls": 36,
+    "calls": 37,
     "metric": "고쳐서 재검증 통과 100% · 손대지 않음 0",
     "cost": 59.65
    },
@@ -1707,7 +1709,7 @@
    },
    {
     "role": "릴리즈 releaser",
-    "calls": 396,
+    "calls": 397,
     "metric": "완전한 릴리즈 76%",
     "cost": 552.67
    },
@@ -1745,7 +1747,7 @@
     "role": "실제 게시 릴리즈 (원격 태그 기준)",
     "calls": 706,
     "cost": null,
-    "metric": "저장소 40개 · 게시 706건 (사람 252건) · 태그만 만들고 미게시 1건 — CI 가 릴리즈 커밋을 막은 저장소 · 누적 회차 기록에는 642건 — 64건이 기록에서 빠졌다"
+    "metric": "저장소 40개 · 게시 706건 (사람 252건) · 태그만 만들고 미게시 1건 — CI 가 릴리즈 커밋을 막은 저장소 · 누적 회차 기록에는 643건 — 63건이 기록에서 빠졌다"
    },
    {
     "role": "머지 뒤 30일 (postmerge)",
@@ -1774,7 +1776,7 @@
   ],
   "advice": [
    "측정이 어긋났다 — 원격에 없는 릴리즈 태그 1건 — 그 저장소의 다음 릴리즈를 막는다 (release_project 의 describe 검사가 로컬 태그를 보므로, 보류된 태그가 base 끝을 가리키면 릴리즈가 영구히 멈춘다.)",
-   "실제 릴리즈 태그(706건)가 누적 회차 기록(642건)보다 64건 많다 — 기록 경로에 빠지는 자리가 남아 있다 (bin/released.py 가 태그로 센 값)",
+   "실제 릴리즈 태그(706건)가 누적 회차 기록(643건)보다 63건 많다 — 기록 경로에 빠지는 자리가 남아 있다 (bin/released.py 가 태그로 센 값)",
    "jikim 은 머지한 변경의 93% 를 사람이 다시 고쳤다 — 자율화 단계를 낮추거나(state/jikim.policy.json 의 autonomy) 검증 명령을 늘릴 것"
   ]
  },
@@ -2163,7 +2165,7 @@
   {
    "metric": "완전한 릴리즈 비율",
    "value": "94%",
-   "detail": "릴리즈 시도 319건 중 자산 검증까지 301건"
+   "detail": "릴리즈 시도 320건 중 자산 검증까지 302건"
   },
   {
    "metric": "사람의 재작업률",
@@ -2192,7 +2194,7 @@
   }
  ],
  "outcomes_today": {
-  "release-ready": 12,
+  "release-ready": 13,
   "review-pending": 1,
   "verify-failed": 2,
   "releasing": 0,
@@ -2203,8 +2205,8 @@
  "days": [
   {
    "date": "2026-10-03",
-   "total": 15,
-   "released": 12,
+   "total": 16,
+   "released": 13,
    "merged": 0,
    "nochange": 0,
    "failed": 1,
@@ -2477,8 +2479,8 @@
    "key": "2026-W40",
    "url": "https://hkjang.github.io/aidev/weekly/2026-W40/",
    "days": 6,
-   "total": 285,
-   "released": 106,
+   "total": 286,
+   "released": 107,
    "merged": 19,
    "nochange": 17,
    "failed": 32,
@@ -2539,8 +2541,8 @@
    "key": "2026-10",
    "url": "https://hkjang.github.io/aidev/monthly/2026-10/",
    "days": 3,
-   "total": 115,
-   "released": 42,
+   "total": 116,
+   "released": 43,
    "merged": 3,
    "nochange": 0,
    "failed": 11,
@@ -2928,22 +2930,25 @@
    "name": "igame",
    "repo": "https://github.com/hkjang/igame",
    "page": "https://hkjang.github.io/aidev/projects/igame/",
-   "runs": 48,
-   "released": 23,
-   "last_ts": "2026-10-01T22:39:12+09:00",
+   "runs": 49,
+   "released": 24,
+   "last_ts": "2026-10-03T08:48:25+09:00",
    "last_status": "released",
-   "last_result": "merged https://github.com/hkjang/igame/pull/32, released v0.7.26",
+   "last_result": "merged https://github.com/hkjang/igame/pull/33, released v0.7.27",
    "cost": 206.92,
    "minutes": 458,
    "grade": "B",
-   "grade_why": "14일: 릴리즈 10, 실패 0, 경고 1, 회귀 0",
+   "grade_why": "14일: 릴리즈 11, 실패 0, 경고 1, 회귀 0",
    "lessons": 1,
    "ideas_pending": 11,
    "ideas_total": 12,
    "release": {
     "status": "released",
     "version": "0.7.27",
-    "tag": "v0.7.27"
+    "tag": "v0.7.27",
+    "assets_count": 1,
+    "prev_tag": "v0.7.26",
+    "prev_assets_count": 1
    }
   },
   {
