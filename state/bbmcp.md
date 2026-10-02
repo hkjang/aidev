@@ -6,3 +6,4 @@
 - 보류 아이디어: `internal/mcp/jsonrpc.go` 프레이밍 단위 테스트(테스트 0건, DB 불필요) / `internal/identity/mapper.go` 매핑 고정 규칙 테스트 / `internal/approval/redactArgs` 스크럽 누락 키(key, credential, authorization, pat, apikey) 보강 / `internal/permission/resolver.go` 캐시·fail-closed 경로 테스트 / `Executor.prVersion`·`prTargetBranch` 의 오류 삼킴 정리(브랜치 제한 경로까지 영향, 별 회차)
 - 과제서: 채택 — 과제서의 근거 2건이 현재 코드와 정확히 일치하고 수용 기준 3개를 그대로 충족했다.
 
+- 릴리즈: v0.2.2 (2026-10-03, run 2026-10-03-070743-bbmcp-improve)

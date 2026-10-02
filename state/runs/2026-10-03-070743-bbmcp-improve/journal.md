@@ -31,3 +31,8 @@
 - [러너 07:20] pr created — https://github.com/hkjang/bbmcp/pull/1
 - [러너 07:22] ci passed — 검사 3개 모두 success
 - [러너 07:22] merge done — 4e26f2d
+- [러너 07:29] release published — v0.2.2
+- [러너 07:29] gh-release created — GitHub Release v0.2.2
+- [러너 07:29] manifest ok — bbmcp-v0.2.2.tar.gz bbmcp-v0.2.2.tar.gz.sha256 
+- [러너 07:29] assets uploaded — 2개
+- [러너 07:29] assets verified — v0.2.2 자산 2개 (이전 v0.2.1: 2)
