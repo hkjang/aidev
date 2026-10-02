@@ -1,0 +1,176 @@
+{
+  "run_id": "2026-10-02-201236-umm-improve",
+  "generated": "2026-10-02T20:38:54+09:00",
+  "run": {
+    "run_id": "2026-10-02-201236-umm-improve",
+    "project": "umm",
+    "kind": "improve",
+    "started": "2026-10-02T20:12:36+09:00",
+    "model": "claude-opus-5",
+    "policy_version": "4a9e91ac7",
+    "prompts_hash": "ce085c79e18002e2",
+    "runner_version": "1bd5f0cd4",
+    "arm": "no-scout",
+    "experiment": "roles-2026-09",
+    "finished": "2026-10-02T20:38:54+09:00",
+    "outcome": "verify-failed"
+  },
+  "record": {
+    "ts": "2026-10-02T20:38:54+09:00",
+    "date": "2026-10-02",
+    "project": "umm",
+    "result": "fix-round: verify failed: 실패한 검증: npm run lint   # CI에서 가져옴 (exit 1)",
+    "outcome": "verify-failed",
+    "run_id": "2026-10-02-201236-umm-improve",
+    "base_sha": "715fd97e84f16935019c9bc52282a534951deca3",
+    "head_sha": "2d8ad128ed5c6c39fcc6880631d56eaba5334973",
+    "pr": "",
+    "stages": {
+      "base": {
+        "state": "pinned",
+        "reason": "main@715fd97",
+        "at": "2026-10-02T20:12:43+09:00"
+      },
+      "autonomy": {
+        "state": "release",
+        "reason": "",
+        "at": "2026-10-02T20:12:44+09:00"
+      },
+      "verify": {
+        "state": "failed",
+        "reason": "실패한 검증: npm run lint   # CI에서 가져옴 (exit 1)",
+        "at": "2026-10-02T20:38:52+09:00"
+      }
+    },
+    "campaign": "",
+    "autonomy": "release",
+    "arm": "no-scout",
+    "experiment": "roles-2026-09",
+    "engine": "claude",
+    "files": 2,
+    "additions": 142,
+    "deletions": 3,
+    "tests": 0,
+    "title": "Run the frontend tests on the Node version this package declares, not whichever one PATH offers first"
+  },
+  "stages": {
+    "base": {
+      "state": "pinned",
+      "reason": "main@715fd97",
+      "at": "2026-10-02T20:12:43+09:00"
+    },
+    "autonomy": {
+      "state": "release",
+      "reason": "",
+      "at": "2026-10-02T20:12:44+09:00"
+    },
+    "verify": {
+      "state": "failed",
+      "reason": "실패한 검증: npm run lint   # CI에서 가져옴 (exit 1)",
+      "at": "2026-10-02T20:38:52+09:00"
+    }
+  },
+  "provenance": {
+    "model": "claude-opus-5",
+    "policy_version": "4a9e91ac7",
+    "prompts_hash": "ce085c79e18002e2",
+    "runner_version": "1bd5f0cd4",
+    "base_sha": "715fd97e84f16935019c9bc52282a534951deca3",
+    "head_sha": "2d8ad128ed5c6c39fcc6880631d56eaba5334973",
+    "pr": ""
+  },
+  "verification": {
+    "runner": {
+      "source": "auto",
+      "commands": [
+        {
+          "cmd": "go build ./...",
+          "exit": 0,
+          "seconds": 1
+        },
+        {
+          "cmd": "go vet ./...",
+          "exit": 0,
+          "seconds": 1
+        },
+        {
+          "cmd": "go test ./...",
+          "exit": 0,
+          "seconds": 1
+        },
+        {
+          "cmd": "cd web && [ -d node_modules ] || npm ci --no-audit --no-fund",
+          "exit": 0,
+          "seconds": 0
+        },
+        {
+          "cmd": "cd web && npm test --silent",
+          "exit": 0,
+          "seconds": 8
+        },
+        {
+          "cmd": "cd web && [ -d node_modules ] || npm ci --no-audit --no-fund",
+          "exit": 0,
+          "seconds": 0
+        },
+        {
+          "cmd": "cd web && npm run typecheck --silent",
+          "exit": 0,
+          "seconds": 1
+        },
+        {
+          "cmd": "cd web && [ -d node_modules ] || npm ci --no-audit --no-fund",
+          "exit": 0,
+          "seconds": 0
+        },
+        {
+          "cmd": "cd web && npm run build --silent",
+          "exit": 0,
+          "seconds": 1
+        },
+        {
+          "cmd": "go build -ldflags '-X main.version=ci' -o /tmp/umm-ci ./cmd/umm   # CI에서 가져옴",
+          "exit": 0,
+          "seconds": 1
+        },
+        {
+          "cmd": "npm run lint   # CI에서 가져옴",
+          "exit": 1,
+          "seconds": 0
+        }
+      ]
+    },
+    "runner_gate": {
+      "ok": false,
+      "state": "verify-failed",
+      "reason": "실패한 검증: npm run lint   # CI에서 가져옴 (exit 1)"
+    },
+    "after_rebase": null,
+    "review": null,
+    "ci_gate": null
+  },
+  "release": {
+    "result": null,
+    "assets_sha256": []
+  },
+  "approval": null,
+  "usage": [
+    {
+      "ts": "2026-10-02T20:38:37+09:00",
+      "date": "2026-10-02",
+      "project": "umm",
+      "phase": "improve",
+      "run_id": "2026-10-02-201236-umm-improve",
+      "campaign": "",
+      "subtype": "success",
+      "engine": "claude",
+      "duration_ms": 1705511,
+      "num_turns": 52,
+      "cost_usd": 4.083452499999999,
+      "input_tokens": 96,
+      "output_tokens": 45644,
+      "cache_read": 3798245,
+      "cache_create": 104275
+    }
+  ]
+}
