@@ -18,3 +18,7 @@
 - 릴리즈 노트용: Oracle 전용 완화. 그전까지 `WHERE amount = (SELECT …)`·`amount * (1 + rate)`·`CASE WHEN a = (1)` 같은 스칼라 서브쿼리·산술 질의가 허위 함수 호출 사유로 차단됐던 것이 풀린다. PostgreSQL 판정은 비트 단위로 불변.
 - [러너 12:32] review approved — 리뷰 승인 (risk=medium)
 - [러너 12:32] pr created — https://github.com/hkjang/qurio/pull/31
+- [러너 12:50] ci passed — 검사 1개 모두 success
+- [러너 12:50] merge done — 4b29d08
+- [러너 13:34] release published — v1.4.10
+- [러너 13:59] assets verified — v1.4.10 자산 1개 (이전 v1.4.7: 1)

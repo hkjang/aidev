@@ -146,3 +146,4 @@
 - 보류 아이디어: `ci.yml` 에 `timeout-minutes` 가 없다 — 멈춘 잡이 기본 6시간을 점유한다(release.yml 은 60분) (2/1/S); legacyapi 통합 테스트 10파일 `defer pool.Close()` → `t.Cleanup(pool.Close)`, main 에 54곳 잔존 — a8f0775 미머지라 runtimeapi·intelligenceapi·platformapi 는 피할 것 (3/2/M); 픽스처 DELETE 미등록 통합 테스트 3파일에 정리 추가, 잔존 13행 (3/2/S); `internal/store` 통합 테스트 6파일 DSN 을 `QURIO_TEST_POSTGRES_DSN` 전용·연결 오류 Fatal 로 (3/2/M); **[신규]** dbexec `postgresRelationAt` 가 PostgreSQL `ROWS FROM (f(), g()) AS t(a,b)` 를 관계로 읽지 못해 `ErrUnqualifiedRelation` 으로 오거부 — 이번 회차 오탐 스윕 47건 중 유일한 선재 오탐으로 실측, 니치 문법이라 범위 밖 유지 (2/2/S)
 - 과제서: (없음 — 정찰 과제서가 붙지 않은 회차라 1~4단계를 직접 수행했다)
 
+- 릴리즈: v1.4.10 (2026-10-02, run 2026-10-02-120731-qurio-improve)
