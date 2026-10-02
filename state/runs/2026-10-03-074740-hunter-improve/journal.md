@@ -27,3 +27,4 @@
 - [러너 08:08] pr created — https://github.com/hkjang/hunter/pull/17
 - [러너 08:26] ci passed — 검사 1개 모두 success
 - [러너 08:26] merge done — 441ad13
+- [러너 08:53] release ci-blocked — 릴리즈 커밋 CI: timeout — 제한 시간 안에 CI 완료를 확인하지 못함 (태그 보류)
