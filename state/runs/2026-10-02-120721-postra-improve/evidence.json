@@ -1,0 +1,183 @@
+{
+  "run_id": "2026-10-02-120721-postra-improve",
+  "generated": "2026-10-02T12:20:57+09:00",
+  "run": {
+    "run_id": "2026-10-02-120721-postra-improve",
+    "project": "postra",
+    "kind": "improve",
+    "started": "2026-10-02T12:07:22+09:00",
+    "model": "claude-opus-5",
+    "policy_version": "4a9e91ac7",
+    "prompts_hash": "ce085c79e18002e2",
+    "runner_version": "1bd5f0cd4",
+    "arm": "baseline",
+    "experiment": "roles-2026-09",
+    "finished": "2026-10-02T12:20:57+09:00",
+    "outcome": "verify-failed"
+  },
+  "record": {
+    "ts": "2026-10-02T12:20:57+09:00",
+    "date": "2026-10-02",
+    "project": "postra",
+    "result": "verify failed: 실패한 검증: cd web && npm test --silent (exit 1)",
+    "outcome": "verify-failed",
+    "run_id": "2026-10-02-120721-postra-improve",
+    "base_sha": "1d382aa4ae9154247289a713536413f9ffcdda82",
+    "head_sha": "c8c22af7feedaa7c2412c2c353e0050cdbdc853d",
+    "pr": "",
+    "stages": {
+      "base": {
+        "state": "pinned",
+        "reason": "main@1d382aa",
+        "at": "2026-10-02T12:07:30+09:00"
+      },
+      "autonomy": {
+        "state": "release",
+        "reason": "",
+        "at": "2026-10-02T12:07:30+09:00"
+      },
+      "scout": {
+        "state": "done",
+        "reason": "POP3 가져오기(fetch) 단계 진단이 실제 경과 시간을 기록하고 TOP 실패를 TOP 으로 보고하게 (가치 3 / 위험 1 / ",
+        "at": "2026-10-02T12:12:14+09:00"
+      },
+      "brief": {
+        "state": "accepted",
+        "reason": "채택 — 근거(두 줄만 elapsed 0, `Top` 의 동사 오기, `syncTiming` 의 `ElapsedMS==0` 분기, 호출자 쪽에서 `start` 를 잡는 쪽이 변경이",
+        "at": "2026-10-02T12:19:58+09:00"
+      },
+      "verify": {
+        "state": "failed",
+        "reason": "실패한 검증: cd web && npm test --silent (exit 1)",
+        "at": "2026-10-02T12:20:56+09:00"
+      }
+    },
+    "campaign": "",
+    "autonomy": "release",
+    "arm": "baseline",
+    "experiment": "roles-2026-09",
+    "engine": "claude",
+    "files": 2,
+    "additions": 123,
+    "deletions": 2,
+    "tests": 1,
+    "title": "fix(pop3): record real fetch elapsed time and label TOP failures as TOP"
+  },
+  "stages": {
+    "base": {
+      "state": "pinned",
+      "reason": "main@1d382aa",
+      "at": "2026-10-02T12:07:30+09:00"
+    },
+    "autonomy": {
+      "state": "release",
+      "reason": "",
+      "at": "2026-10-02T12:07:30+09:00"
+    },
+    "scout": {
+      "state": "done",
+      "reason": "POP3 가져오기(fetch) 단계 진단이 실제 경과 시간을 기록하고 TOP 실패를 TOP 으로 보고하게 (가치 3 / 위험 1 / ",
+      "at": "2026-10-02T12:12:14+09:00"
+    },
+    "brief": {
+      "state": "accepted",
+      "reason": "채택 — 근거(두 줄만 elapsed 0, `Top` 의 동사 오기, `syncTiming` 의 `ElapsedMS==0` 분기, 호출자 쪽에서 `start` 를 잡는 쪽이 변경이",
+      "at": "2026-10-02T12:19:58+09:00"
+    },
+    "verify": {
+      "state": "failed",
+      "reason": "실패한 검증: cd web && npm test --silent (exit 1)",
+      "at": "2026-10-02T12:20:56+09:00"
+    }
+  },
+  "provenance": {
+    "model": "claude-opus-5",
+    "policy_version": "4a9e91ac7",
+    "prompts_hash": "ce085c79e18002e2",
+    "runner_version": "1bd5f0cd4",
+    "base_sha": "1d382aa4ae9154247289a713536413f9ffcdda82",
+    "head_sha": "c8c22af7feedaa7c2412c2c353e0050cdbdc853d",
+    "pr": ""
+  },
+  "verification": {
+    "runner": {
+      "source": "auto",
+      "commands": [
+        {
+          "cmd": "go build ./...",
+          "exit": 0,
+          "seconds": 1
+        },
+        {
+          "cmd": "go vet ./...",
+          "exit": 0,
+          "seconds": 1
+        },
+        {
+          "cmd": "go test ./...",
+          "exit": 0,
+          "seconds": 45
+        },
+        {
+          "cmd": "cd web && [ -d node_modules ] || npm ci --no-audit --no-fund",
+          "exit": 0,
+          "seconds": 9
+        },
+        {
+          "cmd": "cd web && npm test --silent",
+          "exit": 1,
+          "seconds": 2
+        }
+      ]
+    },
+    "runner_gate": {
+      "ok": false,
+      "state": "verify-failed",
+      "reason": "실패한 검증: cd web && npm test --silent (exit 1)"
+    },
+    "after_rebase": null,
+    "review": null,
+    "ci_gate": null
+  },
+  "release": {
+    "result": null,
+    "assets_sha256": []
+  },
+  "approval": null,
+  "usage": [
+    {
+      "ts": "2026-10-02T12:12:14+09:00",
+      "date": "2026-10-02",
+      "project": "postra",
+      "phase": "scout",
+      "run_id": "2026-10-02-120721-postra-improve",
+      "campaign": "",
+      "subtype": "success",
+      "engine": "claude",
+      "duration_ms": 310254,
+      "num_turns": 28,
+      "cost_usd": 1.800548,
+      "input_tokens": 34,
+      "output_tokens": 18766,
+      "cache_read": 1139756,
+      "cache_create": 76135
+    },
+    {
+      "ts": "2026-10-02T12:19:58+09:00",
+      "date": "2026-10-02",
+      "project": "postra",
+      "phase": "improve",
+      "run_id": "2026-10-02-120721-postra-improve",
+      "campaign": "",
+      "subtype": "success",
+      "engine": "claude",
+      "duration_ms": 506113,
+      "num_turns": 34,
+      "cost_usd": 2.0995185,
+      "input_tokens": 54,
+      "output_tokens": 16262,
+      "cache_read": 1911017,
+      "cache_create": 73719
+    }
+  ]
+}

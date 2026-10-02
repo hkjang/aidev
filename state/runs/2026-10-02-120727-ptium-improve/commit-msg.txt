@@ -1,0 +1,22 @@
+Take a heading's closing hashes off its name
+
+Markdown lets a heading be written closed — "## 분기 요약 ##" — and atxHeading
+counted only the hashes at the front, leaving the ones at the end as letters of
+the title. The first heading of a document becomes the deck's name, so a title
+written that way filed the deck under "분기 요약 ##" and put that locator after
+the file on every slide's citation; the author's only remedy was to delete
+characters markdown says are not there.
+
+A space in front of the run is what makes it punctuation, as CommonMark has it,
+and insisting on the space is what keeps "# C# 도입" and "# 제목#" whole — a
+heading naming a language after a hash, and a word spelled with one. Nothing
+but hashes after the opening run ("## ###") is markdown's empty heading, which
+this reader already had a shape for.
+
+Out of scope: a closing sequence escaped with a backslash ("# 제목 \###"), which
+CommonMark reads as "제목 ###". The run here ends on the backslash rather than a
+space, so that line keeps reading exactly as it did.
+
+The leading-hash count (1-6) and the "space or end of line after the hashes"
+rule are untouched, as are the deck DSL's own "#" headings in
+internal/deck/source.go, deckWriter, and the number parsers.
