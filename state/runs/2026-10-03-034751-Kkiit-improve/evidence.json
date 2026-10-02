@@ -1,0 +1,253 @@
+{
+  "run_id": "2026-10-03-034751-Kkiit-improve",
+  "generated": "2026-10-03T04:16:54+09:00",
+  "run": {
+    "run_id": "2026-10-03-034751-Kkiit-improve",
+    "project": "Kkiit",
+    "kind": "improve",
+    "started": "2026-10-03T03:47:52+09:00",
+    "model": "claude-opus-5",
+    "policy_version": "4a9e91ac7",
+    "prompts_hash": "ce085c79e18002e2",
+    "runner_version": "1bd5f0cd4",
+    "arm": "no-scout",
+    "experiment": "roles-2026-09",
+    "finished": "2026-10-03T04:16:53+09:00",
+    "outcome": "release-ready"
+  },
+  "record": {
+    "ts": "2026-10-03T04:16:53+09:00",
+    "date": "2026-10-03",
+    "project": "Kkiit",
+    "result": "merged https://github.com/hkjang/Kkiit/pull/17, released v0.4.12",
+    "outcome": "release-ready",
+    "run_id": "2026-10-03-034751-Kkiit-improve",
+    "base_sha": "cb5070443eacff9963853cd7d21ccd7bf50b4955",
+    "head_sha": "947f4dc5a93922fccd0621dacfffec8568a60911",
+    "pr": "https://github.com/hkjang/Kkiit/pull/17",
+    "stages": {
+      "base": {
+        "state": "pinned",
+        "reason": "main@cb50704",
+        "at": "2026-10-03T03:47:56+09:00"
+      },
+      "autonomy": {
+        "state": "release",
+        "reason": "",
+        "at": "2026-10-03T03:47:56+09:00"
+      },
+      "verify": {
+        "state": "passed",
+        "reason": "검증 2개 통과 (policy)",
+        "at": "2026-10-03T04:03:38+09:00"
+      },
+      "review": {
+        "state": "approved",
+        "reason": "리뷰 승인 (risk=low)",
+        "at": "2026-10-03T04:08:18+09:00"
+      },
+      "pr": {
+        "state": "created",
+        "reason": "https://github.com/hkjang/Kkiit/pull/17",
+        "at": "2026-10-03T04:08:25+09:00"
+      },
+      "ci": {
+        "state": "passed",
+        "reason": "검사 없음 — 정책으로 허용",
+        "at": "2026-10-03T04:08:57+09:00"
+      },
+      "merge": {
+        "state": "done",
+        "reason": "947f4dc5a93922fccd0621dacfffec8568a60911",
+        "at": "2026-10-03T04:09:02+09:00"
+      },
+      "release": {
+        "state": "published",
+        "reason": "v0.4.12",
+        "at": "2026-10-03T04:15:45+09:00"
+      },
+      "assets": {
+        "state": "verified",
+        "reason": "v0.4.12 자산 1개 (이전 v0.4.11: 1)",
+        "at": "2026-10-03T04:16:52+09:00"
+      }
+    },
+    "campaign": "",
+    "autonomy": "release",
+    "arm": "no-scout",
+    "experiment": "roles-2026-09",
+    "engine": "claude",
+    "files": 3,
+    "additions": 58,
+    "deletions": 4,
+    "tests": 1,
+    "title": "fix: 가입 저장 실패를 이미 쓰는 아이디로 안내하지 않다"
+  },
+  "stages": {
+    "base": {
+      "state": "pinned",
+      "reason": "main@cb50704",
+      "at": "2026-10-03T03:47:56+09:00"
+    },
+    "autonomy": {
+      "state": "release",
+      "reason": "",
+      "at": "2026-10-03T03:47:56+09:00"
+    },
+    "verify": {
+      "state": "passed",
+      "reason": "검증 2개 통과 (policy)",
+      "at": "2026-10-03T04:03:38+09:00"
+    },
+    "review": {
+      "state": "approved",
+      "reason": "리뷰 승인 (risk=low)",
+      "at": "2026-10-03T04:08:18+09:00"
+    },
+    "pr": {
+      "state": "created",
+      "reason": "https://github.com/hkjang/Kkiit/pull/17",
+      "at": "2026-10-03T04:08:25+09:00"
+    },
+    "ci": {
+      "state": "passed",
+      "reason": "검사 없음 — 정책으로 허용",
+      "at": "2026-10-03T04:08:57+09:00"
+    },
+    "merge": {
+      "state": "done",
+      "reason": "947f4dc5a93922fccd0621dacfffec8568a60911",
+      "at": "2026-10-03T04:09:02+09:00"
+    },
+    "release": {
+      "state": "published",
+      "reason": "v0.4.12",
+      "at": "2026-10-03T04:15:45+09:00"
+    },
+    "assets": {
+      "state": "verified",
+      "reason": "v0.4.12 자산 1개 (이전 v0.4.11: 1)",
+      "at": "2026-10-03T04:16:52+09:00"
+    }
+  },
+  "provenance": {
+    "model": "claude-opus-5",
+    "policy_version": "4a9e91ac7",
+    "prompts_hash": "ce085c79e18002e2",
+    "runner_version": "1bd5f0cd4",
+    "base_sha": "cb5070443eacff9963853cd7d21ccd7bf50b4955",
+    "head_sha": "947f4dc5a93922fccd0621dacfffec8568a60911",
+    "pr": "https://github.com/hkjang/Kkiit/pull/17"
+  },
+  "verification": {
+    "runner": {
+      "source": "policy",
+      "commands": [
+        {
+          "cmd": "go build ./... && go vet ./... && go test ./...",
+          "exit": 0,
+          "seconds": 2
+        },
+        {
+          "cmd": "cd web && npm ci --no-audit --no-fund && npm run build --silent",
+          "exit": 0,
+          "seconds": 20
+        }
+      ]
+    },
+    "runner_gate": {
+      "ok": true,
+      "state": "verified",
+      "reason": "검증 2개 통과 (policy)"
+    },
+    "after_rebase": null,
+    "review": {
+      "verdict": "approve",
+      "reasons": [],
+      "notes": [
+        "테스트가 변경을 실제로 검증함을 직접 증명했다. 원장에 `- 실패 재현:` 줄이 없어 리뷰어가 재현했다: PostgreSQL 16 폐기 컨테이너(포트 55447)로 `go test -run TestIntegrationRegisterSeparatesStorageFailureFromDuplicate` 를 HEAD 에서 PASS(0.75s), `git show main:internal/httpapi/auth.go` 로 되돌린 상태에서 FAIL — 출력이 `status=409 want=500 body={\"error\":{\"code\":\"account_exists\",...}}` 로 이번 변경이 고치는 증상과 정확히 일치했다. 되돌린 파일은 즉시 복원해 `git diff HEAD -- internal/httpapi docs cmd` 가 비었다.",
+        "전체 검증 재실행: `gofmt -l cmd internal` 무출력, `go vet ./cmd/... ./internal/...` 무출력, DSN 을 준 `go test ./cmd/... ./internal/...` 전부 ok(internal/httpapi 82.3s — 통합이 SKIP 아니라 실제로 돌았다). 병렬화하지 않았다.",
+        "구현자가 의심한 세 곳을 확인했다. (1) dist: 커밋 947f4dc 는 3개 파일뿐이고 dist 를 담지 않았다 — 머지 내용은 깨끗하다. 다만 **작업 트리에는 되돌리지 못한 `npm run build` 산출물이 그대로 남아 있다**(index.html 의 해시 교체 + assets 5개 삭제/5개 미추적). 세션 시작 시점 git status 와 동일하니 리뷰어가 만든 것은 아니다. 릴리즈 단계가 `git add -A` 를 하면 금지된 산출물이 커밋된다 — 릴리즈 전에 `git checkout -- internal/ui/dist && git clean -fd internal/ui/dist` 필요. (2) NUL(22021) 외의 저장 실패는 리뷰어도 실측하지 않았으나 분기가 `isUniqueViolation(err)` 단일 조건이라 23505 아닌 모든 오류가 같은 500 으로 간다는 것은 코드상 자명하다. (3) user_roles 분기도 코드 검토로 타당 — userID 가 새 uuid 라 23505 불가, 500 이 맞다.",
+        "경계·누수·일관성 확인: `defer tx.Rollback` 유지, err 섀도잉 없음, 실패 응답이 원 DB 오류를 노출하지 않음, decodeJSON 은 400 만 내므로 openapi 에 더할 코드가 빠지지 않았다. openapi 에 추가한 400/403/409/500/503 다섯 개 모두 핸들러에 실재하는 경로다(503 registration_unavailable, 403 registration_disabled, 400 invalid_json·invalid_registration·weak_password). 커밋 메시지가 코드와 어긋나지 않는다. `writeError(w, 500, …)` 의 숫자 리터럴은 같은 핸들러의 기존 관례와 같다 — 취향 문제.",
+        "보안·법무 소견: 차단 없음. 인증·인가·권한 범위를 넓히지 않고, 새 엔드포인트·새 식별자·새 의존성·손으로 만든 암호 비교가 없고, 개인정보를 새로 수집·전송하지 않는다(username/email/display_name 은 기존 수집 항목, 성공 감사 로그의 username 기록도 기존 동작). 다만 비차단 관찰: 이제 409 가 \"중복\"만을 뜻하게 되어 공개 가입 엔드포인트의 아이디·이메일 존재 확인 신호가 더 선명해졌다. main 에서도 실제 중복에는 409 를 돌려줬으므로 새로 생긴 노출은 아니고, 가입에 아이디 사용 가능 여부 안내는 기능상 필요하다. 레이트 리밋이 이 경로를 덮는지는 이번 범위에서 확인하지 않았다 — 다음 회차 과제.",
+        "범위: openapi 에 이번 변경이 만든 500 외 네 개 코드를 함께 적은 것은 약간의 범위 확장이지만 전부 사실과 맞고 프로필이 상시 결함으로 지목한 항목이다. 되돌리기: 코드·문서·테스트만이고 마이그레이션·외부 상태 변경이 없어 revert 로 완전히 돌아온다.",
+        "보지 못한 것: 웹 단계(`npm run lint`·`npm run build`)와 `npm --prefix web test` 를 리뷰어도 돌리지 않았다 — 웹 소스가 diff 에 없고, 이 기계의 PATH 앞 node 가 v20.19.2 로 README 하한(24+) 미달이라는 구현자 진단을 재확인하지 않았다. CI(release.yml)에는 make check·DB 통합 단계가 없으므로 이 변경의 통합 검증은 이 리뷰의 로컬 실행이 유일한 증거다."
+      ],
+      "risk": "low",
+      "blocking": []
+    },
+    "ci_gate": {
+      "ok": false,
+      "state": "no-ci",
+      "reason": "이 커밋에 검사가 없음 (정책 allow_merge_without_ci 가 없으면 차단)",
+      "checks": 0
+    }
+  },
+  "release": {
+    "result": {
+      "status": "released",
+      "version": "0.4.12",
+      "tag": "v0.4.12",
+      "title": "Kkiit v0.4.12",
+      "notes_file": "",
+      "github_release": false,
+      "assets": [],
+      "reason": ""
+    },
+    "assets_sha256": []
+  },
+  "approval": null,
+  "usage": [
+    {
+      "ts": "2026-10-03T04:03:15+09:00",
+      "date": "2026-10-03",
+      "project": "Kkiit",
+      "phase": "improve",
+      "run_id": "2026-10-03-034751-Kkiit-improve",
+      "campaign": "",
+      "subtype": "success",
+      "engine": "claude",
+      "duration_ms": 916217,
+      "num_turns": 69,
+      "cost_usd": 4.8473595000000005,
+      "input_tokens": 128,
+      "output_tokens": 42383,
+      "cache_read": 5405209,
+      "cache_create": 108454
+    },
+    {
+      "ts": "2026-10-03T04:08:18+09:00",
+      "date": "2026-10-03",
+      "project": "Kkiit",
+      "phase": "review",
+      "run_id": "2026-10-03-034751-Kkiit-improve",
+      "campaign": "",
+      "subtype": "success",
+      "engine": "claude",
+      "duration_ms": 276702,
+      "num_turns": 27,
+      "cost_usd": 1.2624994999999997,
+      "input_tokens": 40,
+      "output_tokens": 12389,
+      "cache_read": 938909,
+      "cache_create": 48312
+    },
+    {
+      "ts": "2026-10-03T04:15:08+09:00",
+      "date": "2026-10-03",
+      "project": "Kkiit",
+      "phase": "release",
+      "run_id": "2026-10-03-034751-Kkiit-improve",
+      "campaign": "",
+      "subtype": "success",
+      "engine": "claude",
+      "duration_ms": 355364,
+      "num_turns": 27,
+      "cost_usd": 1.3753944999999999,
+      "input_tokens": 46,
+      "output_tokens": 12572,
+      "cache_read": 1150429,
+      "cache_create": 48565
+    }
+  ]
+}

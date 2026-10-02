@@ -1,0 +1,27 @@
+{
+  "base": {
+    "state": "pinned",
+    "reason": "main@bdfeeb2",
+    "at": "2026-10-03T03:48:09+09:00"
+  },
+  "autonomy": {
+    "state": "release",
+    "reason": "",
+    "at": "2026-10-03T03:48:09+09:00"
+  },
+  "verify": {
+    "state": "passed",
+    "reason": "검증 7개 통과 (auto)",
+    "at": "2026-10-03T04:06:54+09:00"
+  },
+  "review": {
+    "state": "rejected",
+    "reason": "리뷰 거절: internal/httpserver/oidc.go:855 clientAuthUndecided 의 핵심 전제가 거짓이다. 주석(oidc.go:836-841)은 \"nothing excluded here can be reached on demand: the errors left are a store that will not answer and a stored digest that will not decode, neither of which a caller chooses\" 라고 단언하지만, 호출자가 `client_id` 하나로 고를 수 있다. 실험으로 확인했다(리뷰어 probe, PostgreSQL 실제 기동): `POST /realms/master/protocol/openid-connect/token` 에 `client_id=bad-%ff%fe-utf8` 또는 `client_id=bad-%00-nul` 을 보내면 ClientByIdentifier(store/clients.go:39) 가 `ERROR: invalid byte sequence for encoding \"UTF8\" (SQLSTATE 22021)` 를 돌려준다 — pgx.ErrNoRows 가 아니므로 scanClient 이 그대로 올리고 store.ErrNotFound 가 아니므로 clientAuthUndecided 가 true 가 된다. 결과: `resso_client_auth_errors_total{stage=\"client\"} 2` 와 ERROR 로그 두 줄, 인증 없이 반복 가능. / docs/operations.md:90 그 결과로 문서가 코드와 어긋난다. \"이 계열이 오르면 Client 쪽이 아니라 이쪽을 보세요\" 와 README.md:192 의 설명은 이제 사실이 아니다 — 외부의 미인증 호출자가 정상인 데이터베이스에 대해 이 경보를 올릴 수 있다. 이것은 바로 같은 파일 operations.md:93 이 과거 사고로 기록하고 clamp 로 고친 `auth_time` 선례와 동일하다(\"인증 없는 호출자가 쿼리 파라미터 하나로 정상인 저장소에 대한 경보를 울릴 수 있었다는 뜻입니다\"). 저장소가 일곱 회차에 걸쳐 세운 관용구를 새 계열이 되돌린다. / internal/httpserver/oidc.go:768-771 같은 구멍이 Rate limiter 를 bounded 에서 unbounded 로 바꾼다. Allowed() 검사는 store 조회보다 먼저 돌고, 이 경로는 bucket.limiter.Fail() 을 부르지 않으므로 잘못된 UTF-8 `client_id` 로 보내는 시도는 영원히 Limiter 를 건드리지 않는다. 수정 전에는 같은 요청이 자격증명 실패로 집계되어 주소당 200회/5분에서 짧게 끊겼고 그 뒤 요청은 store 조회 전에 429 로 끝났다. 수정 후에는 요청마다 DB 왕복 1회 + ERROR 로그 1줄이 한도 없이 쌓인다. 이 변경의 목적은 \"장애가 예산을 깎지 않게\" 하는 것이었으나, 호출자가 고를 수 있는 입력까지 같은 면제에 들어간 것은 의도가 아니다(주석이 스스로 그렇게 말한다).",
+    "at": "2026-10-03T04:11:30+09:00"
+  },
+  "repair": {
+    "state": "done",
+    "reason": "# 수리 요약 (59b6c34)  비평가의 지적이 맞았다. 재현 확인: `ClientByIdentifier`에 `\"bad-\\xff\\xfe-utf8\"` 또는 `\"bad-\\x00-nul\"`을 넘기면 PostgreSQL이 `invalid byte sequence for ",
+    "at": "2026-10-03T04:19:15+09:00"
+  }
+}
