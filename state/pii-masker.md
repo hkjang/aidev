@@ -212,3 +212,17 @@
 - 과제서: 채택 — 현재 HEAD에 여섯 시간 설정의 무검사 곱셈이 남아 있었으며 Load와 실제 HTTP 회귀 모두 수정 전에 결함을 재현했다.
 
 - 릴리즈: v1.0.31 (2026-09-29, run 2026-09-29-100231-pii-masker-improve)
+## 2026-10-02
+- 선택: `PII_MASKER_MAX_FILE_SIZE_MB`의 MiB 곱셈 오버플로 방어 (가치 3 / 위험 1 / 작업량 S)
+- 결과: 성공
+- 요약: `config.go:148`이 MB 값을 검사 없이 `1024*1024`로 곱해, `8796093022208` 이상에서 `MaxFileSizeBytes`가 음수(정확히 `MinInt64`)로 감싸고 업로드 경로 세 곳이 모두 그 음수를 읽어 **빈 파일이 아닌 모든 업로드가 413 `payload_too_large`로 거절**되었습니다(수정 전 실제 응답을 실행해 기록: `request body exceeds the maximum size of -9223372036854710272 bytes` — `http.MaxBytesReader`가 음수 n을 즉시 초과로 보므로 세 지점 중 여기서 먼저 끊긴다는 정찰의 미확인 항목도 이번에 해소). 지시대로 `envInt` 함수는 손대지 않고 호출 지점 한 곳만 새 헬퍼 `envMebibytes`(`strconv.ParseInt` + 곱셈 전 `math.MaxInt64/mebibyte` 상한 검사, `envDuration`과 같은 톤의 주석)로 교체했습니다. 검증은 `Load()` 경유 테이블 테스트 13건(경계 8796093022207/8796093022208 양쪽, 양수로 감싸는 `17592186044417`→1MiB까지 포함, 모든 입력에서 `> 0` 단언)과 프로덕션 배선을 끝까지 지나는 HTTP 회귀 `TestOverflowingMaxFileSizeStillAcceptsAnUpload`(리스너 → `config.Load()` → `app.New` → `Serve` → 작은 PNG `POST /v1/mask` → 200)로 했고, 프로덕션 수정만 되돌려 두 테스트가 다시 실패하는 것까지 확인한 뒤 복원했습니다. `go test -count=1 ./...`(rc=0, ok 8패키지)·`go vet ./...`·`go build ./...`·`gofmt -l ./cmd ./internal`(무출력)·`git diff --check`·`go test -race -count=1 ./internal/config ./internal/app`·`GOARCH=386 go test -count=1 ./internal/config` 전부 통과. 프로덕션 파일 1개(`internal/config/config.go`), README 환경변수 문단에 한 문장.
+- 실패 재현: `config_test.go:256: PII_MASKER_MAX_FILE_SIZE_MB="8796093022208": max file size -9223372036854775808 is not a usable limit` / `app_test.go:621: a 984 byte upload was refused with status 413 while the size limit was -9223372036854775808: {"error":{"code":"payload_too_large","message":"request body exceeds the maximum size of -9223372036854710272 bytes","retryable":false}}`
+- 보류 아이디어:
+  - `internal/config`의 나머지 정규화 함수(`normalizeAllowHosts`·`normalizePIILang`·`normalizePIISchema`·`normalizeAuthMode`·`envBool`)의 `Load()` 경유 테이블 테스트 (가치 2 / 위험 1 / 작업량 S)
+  - `handleCreateJob`·`handleGetJob`·`handleHistory`의 `download_url` 결정을 공용 헬퍼로 (가치 2 / 위험 1 / 작업량 S)
+  - gorilla/mux 405 응답에 `Allow` 헤더 (가치 1 / 위험 2 / 작업량 S)
+  - 이력 조회에서 전체 job 복제 전 상위 limit 선별 (가치 2 / 위험 2 / 작업량 M)
+  - 동기 슬롯 대기열의 메모리 상한 (가치 3 / 위험 3 / 작업량 M)
+- 과제서: 채택 — `config.go:148`의 무검사 곱셈이 현재 HEAD에 그대로 남아 있었고, 수용 기준 세 개(경계 테이블·프로덕션 배선 HTTP 회귀·되돌림 재현)를 지목된 방식대로 모두 재현·검증했다.
+
+- 릴리즈: v1.0.32 (2026-10-02, run 2026-10-02-110731-pii-masker-improve)

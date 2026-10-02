@@ -1,0 +1,65 @@
+[
+  {
+    "title": "Vitest 도입 + 순수 로직(rankPlayers / derivePhase / computeCounts) 회귀 테스트",
+    "value": 4,
+    "risk": 2,
+    "size": "M",
+    "status": "pending",
+    "note": "이번 회차 선택. 저장소에 테스트 파일이 0개이고 test 스크립트도 없어, 모든 후속 회차가 검증 명령을 갖지 못한다. 설정 파일 없이 vitest 기본값으로 src/lib/*.test.ts 만 추가. useRoom.ts 의 counts useMemo 를 computeCounts 로 추출해 프로덕션에서 실제 쓰이는 함수를 테스트한다.",
+    "updated": "2026-10-02"
+  },
+  {
+    "title": "탈락 모드 정답률·미선택 분모 불일치 (reveal.total 이 탈락자 포함)",
+    "value": 4,
+    "risk": 3,
+    "size": "S",
+    "status": "pending",
+    "note": "차선 후보. 0003_elimination.sql:114 의 v_total 은 전체 플레이어, Display.tsx:50 은 그 rv.total 로 정답률을 계산. 같은 화면의 Field 는 클라이언트 counts(생존자 기준)를 쓴다 → 두 경로가 같은 개념을 다른 분모로 읽음. 100명 중 50명 탈락 + 생존자 전원 정답이면 50% 로 표시. 마이그레이션(보호 경로)이고 로컬 검증 수단이 없어 이번 회차에서 제외.",
+    "updated": "2026-10-02"
+  },
+  {
+    "title": "reveal.eliminated 가 이번 라운드 탈락자가 아니라 누적 탈락자 수",
+    "value": 2,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "0003_elimination.sql:148-149 의 count 가 players 갱신 '뒤에' 실행되고 조건이 'eliminated' 전체라 누적값이 된다. 현재 Display.tsx 는 이 값을 쓰지 않아 영향이 보이지 않음(Admin/Play 는 미확인). 마이그레이션 변경 필요.",
+    "updated": "2026-10-02"
+  },
+  {
+    "title": "CI 에 PR 대상 typecheck/test 잡 추가",
+    "value": 3,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "pages.yml 은 push:[main] 과 workflow_dispatch 에만 돈다 → PR 에 자동 검증이 전혀 없다. 기존 배포 워크플로를 수정하지 말고 별도 ci.yml 을 추가하는 편이 릴리즈 경로 위험이 없다. Vitest 도입(1번) 이후가 순서상 맞다.",
+    "updated": "2026-10-02"
+  },
+  {
+    "title": "useRoom 의 4초 전역 폴링을 단계별로 조정",
+    "value": 3,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "useRoom.ts:109 가 상태와 무관하게 4초마다 rooms+players+answers 3쿼리를 돈다. 방 정원이 500명(join_room 의 ROOM_FULL 기준)이라 Display/참가자 수백 탭이 동시에 폴링하면 Supabase 쿼리량이 커진다. finished/waiting 단계에서 간격을 늘리는 정도의 소폭 개선. 실측 수치는 미확인.",
+    "updated": "2026-10-02"
+  },
+  {
+    "title": "관리자 세션 토큰 localStorage 저장 재검토",
+    "value": 2,
+    "risk": 3,
+    "size": "S",
+    "status": "pending",
+    "note": "session.ts:31-35 가 24시간 유효한 관리자 토큰을 localStorage 평문 보관. XSS 가 생기면 그대로 탈취된다. sessionStorage 전환은 관리자가 탭을 닫으면 재로그인해야 해서 행사 운영상 역효과일 수 있음 → 가치/위험 판단이 갈리는 항목. 인증 경계(보호 경로)라 단독 회차로 신중히.",
+    "updated": "2026-10-02"
+  },
+  {
+    "title": "닉네임 길이 제약 불일치 정리 (RPC 1~12 vs 테이블 check 1~16)",
+    "value": 1,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "0001_init.sql:37 은 nickname 1~16, join_room(0001_init.sql:153) 은 1~12 를 강제. 중복 시 접미사(v_base||v_i)가 붙어 최대 15자까지 늘어나므로 현재는 깨지지 않는다. 실질 버그는 아니고 문서/상수 정리 수준.",
+    "updated": "2026-10-02"
+  }
+]

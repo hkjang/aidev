@@ -1,0 +1,22 @@
+# ox-arena 프로필 (2026-10-02)
+
+- 목적: 행사장에서 참가자들이 휴대폰으로 O/X 를 고르면 대형화면 속 캐릭터가 실시간으로 움직이는 멀티플레이어 OX 퀴즈 게임. 전용 서버 없이 정적 호스팅 + Supabase 로 운영.
+- 스택: TypeScript + React 18 + react-router-dom 6(HashRouter 추정 — 주소가 `/#/...`), Vite 5, qrcode.react. 백엔드는 Supabase(Postgres `SECURITY DEFINER` RPC + Realtime `postgres_changes`). 배포는 GitHub Pages.
+- 구조:
+  - `src/pages/` — `Play.tsx`(참가자 모바일), `Display.tsx`(행사장 대형화면), `Admin.tsx`(관리자). 화면 3개가 전부.
+  - `src/lib/supabase.ts` — 클라이언트 + `rpc()` 래퍼. `src/lib/types.ts` — `Room`/`Player`/`Question` 타입과 `rankPlayers` 공동순위.
+  - `src/lib/useRoom.ts` — 핵심 훅. 서버 시계 동기화(`syncClock`/`serverNow`), `derivePhase`, Realtime 구독 + 4초 폴링 폴백, `counts` 집계.
+  - `src/lib/session.ts` — localStorage 기반 플레이어/관리자 토큰 보관, `join`/`resume`. `src/lib/util.ts` — `useRoomId`, `joinUrl`, 에러코드→한국어 `errMsg`.
+  - `src/components/` — `Character`, `Field`, `Leaderboard`(+`Podium`), `Timer`.
+  - `supabase/migrations/000{1,2,3}_*.sql` + `seed.sql` — 스키마·RLS·모든 게임 로직. 0001 초기, 0002 realtime, 0003 탈락 옵션/본인 퇴장.
+- 빌드·테스트: `npm i` → `npm run dev`(Vite), `npm run build`(= `tsc --noEmit && vite build`), `npm run preview`. **테스트 프레임워크·테스트 파일 없음**(2026-10-02 기준). 마이그레이션은 Supabase SQL Editor 에 사람이 순서대로 붙여넣는 방식 — 로컬 적용 수단(`supabase/config.toml`, CLI 설정) 없음.
+- 관례: 커밋 메시지는 영어 Conventional Commits(`feat: …`), 코드 주석·UI 문자열·README 는 한국어. 설정은 `VITE_SUPABASE_URL`/`VITE_SUPABASE_KEY` 환경변수(GitHub Actions Variables)로 주입, `src/lib/supabase.ts` 에 기본값 fallback 있음(미확인 — 파일 미열람). 마이그레이션은 번호 접두사 새 파일 추가 방식이고 기존 파일은 `create or replace` 로 함수를 통째로 재정의한다. 문서는 README 한 곳뿐(`docs/` 없음).
+- 위험 구역:
+  - `supabase/migrations/**` — 게임 로직 전체가 여기 있고, 되돌리려면 운영 DB 에서 사람이 SQL 을 다시 실행해야 한다. 로컬 검증 수단이 없다.
+  - `admin_login` / `admin_sessions` / `player_tokens` / RLS 정책(`0001_init.sql:73-97`) — 인증·권한 경계. 함수 시그니처를 바꾸면 끝의 `grant execute on function …` 목록도 같이 고쳐야 하고, 빠뜨리면 그 RPC 가 클라이언트에서 통째로 막힌다(0003 이 `admin_update_room` 인자 수를 바꾸며 `drop function` + 재grant 한 전례).
+  - `.github/workflows/pages.yml` — 유일한 릴리즈 경로. main push 시 바로 배포된다.
+- 자주 깨지는 곳: (이전 회차 기록 없음 — 2026-10-02 가 첫 정찰) 현재 확인된 잠재 결함은 탈락 모드에서 서버 `reveal.total`(전체 인원)과 클라이언트 `counts.alive`(생존자) 분모가 어긋나 `Display.tsx:50` 정답률이 낮게 나오는 것.
+- 검증 함정:
+  - CI(`pages.yml`)는 **main push 와 수동 실행에만** 돈다. PR 에 돌아가는 검증이 없다.
+  - 앱을 실제로 띄우려면 Supabase 프로젝트와 publishable key 가 필요하다. 로컬에서 게임 흐름을 end-to-end 로 돌려 볼 수 없다 → 순수 로직 단위 테스트가 현실적으로 유일한 자동 검증 수단.
+  - 이 샌드박스에서는 `npm ci`/`npm i` 가 승인 거부로 막혀 있었다. 구현자 환경에서는 먼저 기준선(`npm i && npm run build`)이 녹색인지 확인하고 시작할 것.
