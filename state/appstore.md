@@ -302,3 +302,4 @@
 - 보류 아이디어: `/my/apps` 의 빈 상태가 필터 없는 화면에서 "조건을 바꾸어" 보라는 일반 문구를 보여 준다 (2/1/S, 이번 차선 후보 — `personal-pages.tsx:120` 의 `EmptyState` 가 title/description 없이 렌더) · 가이드 문서 여러 개를 한 번에 고르면 실패 메시지가 마지막 한 건만 남는다 (2/1/S, 복수 메시지 렌더 디자인 선행) · 상위 100개 밖의 즐겨찾기 앱이 /favorites 에 안 나옴 (3/3/M, 공개 API 계약 변경 수반) · clientAddress 가 RemoteAddr 만 보아 reverse proxy 뒤에서 rate limit 이 전역 (3/3/M, 신뢰 프록시 정책 선행 · 보호 경로) · 관리자 시스템 설정의 Page Size 가 어디에도 쓰이지 않는다 (3/3/M, publicConfig 응답에도 없어 공개 API 계약 과제)
 - 과제서: 채택 — 지목한 `public-pages.tsx:469-475` 의 인라인 블록, `app-status.tsx` 14줄, line 30 에 `app-status` import 부재, `Badge` 가 92·419·465·603 에서 계속 쓰임이 모두 현재 코드와 정확히 일치했고 수용 기준 4건과 "프로덕션 1개 + 테스트 1개" 제약을 그대로 지켰다. 기준선 테스트 수도 과제서가 미확인이라 한 95건과 일치했다.
 
+- 릴리즈: v2.11.12 (2026-10-03, run 2026-10-03-050757-appstore-improve)
