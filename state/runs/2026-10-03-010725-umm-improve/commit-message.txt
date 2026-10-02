@@ -1,0 +1,36 @@
+Release v0.76.4 keep npm inside this checkout, and run the frontend tests on a Node that can run them
+
+Nothing a person using umm can see has changed. The screens, the API and the
+data are what v0.76.3 shipped; what changed is what someone who clones umm and
+runs its tests met, twice, and neither failure was umm's.
+
+The frontend lives in web/, so the repository root had no package.json and npm
+walked up out of the checkout looking for one -- on a developer machine that is
+the home directory. Asked at the root, npm answered with a name of {} and
+dependencies this repository does not declare, so `npm test` there reported
+`Missing script: "test"`, and a foreign file that did define a script of that
+name would have run instead with nothing in the exit code to tell the two
+apart. A private root package.json anchors npm here and forwards the scripts CI
+runs with working-directory: web, using the same `npm --prefix web` form the
+Makefile already uses. It carries no `version` field: check-version.sh guards
+VERSION against web/package.json by path, and a third copy of that number would
+be one more place for a release to break.
+
+Delegating alone still failed everything. npm builds a lifecycle script's PATH
+by prepending every ancestor's node_modules/.bin, up to the filesystem root
+with nothing bounding it, so a `node` package installed above the clone shadows
+the interpreter the developer chose. Here that was 20.19.2 against the 22.23.1
+a shell gets. The test entry points then break in three ways that never name
+Node: below 22.10 undici reads markAsUncloneable at require time and every
+worker dies before a test runs; from 25 an unflagged built-in localStorage
+outranks jsdom's and 58 of 186 tests fail as if the product were broken; below
+22.18 the offline-queue script cannot strip types from the .ts it imports. So
+engines.node declares the two bands that work rather than a floor -- a floor
+cannot keep out a failure that arrives from above -- and the test scripts go
+through a wrapper that prefers a supported interpreter, scans PATH outside
+node_modules when npm's own execpath has been poisoned by the nested delegation,
+and refuses rather than running anyway and blaming the tests.
+
+Nothing was loosened. The workflows, Makefile, Dockerfile and the npm audit
+threshold are untouched, and release.yml had no npm step to begin with. No
+production code changed; the release is configuration, scripts and these notes.
