@@ -15,3 +15,5 @@
 - [러너 15:19] pr created — https://github.com/hkjang/seaton/pull/40
 - [러너 15:24] ci passed — 검사 2개 모두 success
 - [러너 15:24] merge done — cd7d20e
+- [러너 15:40] release published — v1.4.13
+- [러너 15:42] assets verified — v1.4.13 자산 1개 (이전 v1.4.12: 1)
