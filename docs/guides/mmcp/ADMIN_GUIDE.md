@@ -1,8 +1,8 @@
 # mmcp 관리자 가이드
 
-**mmcp v1.0.0 관리자 가이드** — Mattermost MCP Gateway
+**mmcp v1.0.1 관리자 가이드** — Mattermost MCP Gateway
 
-이 문서는 폐쇄망(오프라인) 환경에 mmcp v1.0.0을 설치하고 운영하는 관리자를 위한 안내서입니다. 일반 사용자의 MCP 클라이언트 연결 방법은 콘솔의 **내 공간 > MCP 연결 가이드** 화면을 참고하세요.
+이 문서는 폐쇄망(오프라인) 환경에 mmcp v1.0.1을 설치하고 운영하는 관리자를 위한 안내서입니다. 일반 사용자의 MCP 클라이언트 연결 방법은 콘솔의 **내 공간 > MCP 연결 가이드** 화면을 참고하세요.
 
 ---
 
@@ -45,7 +45,7 @@ flowchart LR
     end
     Browser["브라우저<br/>(관리 콘솔 · 내 공간)"]
 
-    subgraph mmcp["mmcp v1.0.0 컨테이너 :8080"]
+    subgraph mmcp["mmcp v1.0.1 컨테이너 :8080"]
         MCP["/mcp<br/>Streamable HTTP"]
         OAuth["/oauth/*<br/>OAuth 2.1 인가 서버"]
         Console["관리 콘솔 / API"]
@@ -117,11 +117,11 @@ flowchart LR
 | 컨테이너 런타임 | Docker + Docker Compose |
 | 데이터베이스 | PostgreSQL (별도 준비. `compose.offline.yml`에는 PostgreSQL 서비스가 포함되어 있지 않습니다) |
 | 네트워크 | mmcp → PostgreSQL, Keycloak, Mattermost 접근 가능 / 사용자·MCP 클라이언트 → mmcp `8080` 접근 가능 |
-| 릴리스 파일 | `mmcp-v1.0.0.tar.gz`, `릴리스 노트의 SHA-256 값` ([GitHub Releases](https://github.com/hkjang/mmcp/releases)에서 받아 반입) |
+| 릴리스 파일 | `mmcp-v1.0.1.tar.gz`, `릴리스 노트의 SHA-256 값` ([GitHub Releases](https://github.com/hkjang/mmcp/releases)에서 받아 반입) |
 
-이미지 특성(mmcp v1.0.0):
+이미지 특성(mmcp v1.0.1):
 
-- 이미지 태그 `mmcp:v1.0.0`, `linux/amd64`, distroless `static-debian12:nonroot` 기반, 비루트 사용자로 실행
+- 이미지 태그 `mmcp:v1.0.1`, `linux/amd64`, distroless `static-debian12:nonroot` 기반, 비루트 사용자로 실행
 - 포트 `8080`, `HEALTHCHECK`는 `/mmcp healthcheck` (컨테이너 내부에서 `http://127.0.0.1:8080/api/health` 호출)
 - 읽기 전용 루트 파일시스템 지원 (`compose.offline.yml`은 `read_only: true`, `/tmp` tmpfs, `no-new-privileges`, `cap_drop: ALL`로 실행)
 - 시작 시 DB 마이그레이션을 자동 적용
@@ -130,13 +130,13 @@ flowchart LR
 
 ```bash
 # 무결성 확인 (GitHub 릴리스 노트에 적힌 SHA-256 값과 같아야 합니다)
-sha256sum mmcp-v1.0.0.tar.gz   # 릴리스 노트의 SHA-256 값과 비교
+sha256sum mmcp-v1.0.1.tar.gz   # 릴리스 노트의 SHA-256 값과 비교
 
-# 이미지 로드 → "Loaded image: mmcp:v1.0.0"
-docker load -i mmcp-v1.0.0.tar.gz
+# 이미지 로드 → "Loaded image: mmcp:v1.0.1"
+docker load -i mmcp-v1.0.1.tar.gz
 
 # 네트워크 없이 실행되는지 확인
-docker run --rm --network none mmcp:v1.0.0 version
+docker run --rm --network none mmcp:v1.0.1 version
 ```
 
 ### 2.3 환경변수 (.env)
@@ -153,7 +153,7 @@ mmcp가 읽는 환경변수는 정확히 4개입니다. 그 외 모든 설정은
 키 생성:
 
 ```bash
-docker run --rm mmcp:v1.0.0 gen-key
+docker run --rm mmcp:v1.0.1 gen-key
 ```
 
 `.env` 예시 (`.env.example` 기반):
@@ -175,7 +175,30 @@ docker compose -f compose.offline.yml ps      # health: healthy 확인
 docker logs mmcp | head                        # "mmcp ready" 로그 확인
 ```
 
-### 2.5 CLI 하위 명령
+### 2.5 리버스 프록시 뒤에 둘 때
+
+mmcp가 Keycloak과 MCP 클라이언트에 알려 주는 주소(Keycloak `redirect_uri`, OAuth·MCP 메타데이터, 401 응답의 `resource_metadata`)는 모두 **사용자가 실제로 접속하는 외부 주소**여야 합니다. 내부 주소(`http://mmcp:8080`)가 나가면 Keycloak이 **`Invalid parameter: redirect_uri`** 로 로그인을 거부하고, MCP 클라이언트는 자신이 접속한 주소와 메타데이터의 resource가 달라 OAuth를 진행하지 못합니다.
+
+1. **일반 설정 > Public URL**에 외부 주소(예: `https://mcp.company.co.kr`)를 저장하는 것이 가장 확실합니다.
+2. Public URL이 비어 있으면 mmcp는 프록시가 보내는 `X-Forwarded-Proto`, `X-Forwarded-Host`(필요 시 `X-Forwarded-Port`) 또는 RFC 7239 `Forwarded` 헤더로 외부 주소를 계산합니다. Nginx 예:
+
+```nginx
+location / {
+    proxy_pass http://mmcp:8080;
+    proxy_set_header Host              $host;
+    proxy_set_header X-Forwarded-Proto $scheme;
+    proxy_set_header X-Forwarded-Host  $host;
+    proxy_set_header X-Forwarded-Port  $server_port;
+    proxy_set_header X-Forwarded-For   $proxy_add_x_forwarded_for;
+    proxy_buffering off;   # /api/admin/logs/stream (SSE)
+}
+```
+
+3. **Keycloak 연동 > 연결 테스트**는 mmcp가 보낼 `redirect_uri`와 로그아웃 후 주소를 Keycloak에 실제로 보내 보고, 등록되지 않았다면 등록해야 할 정확한 값을 알려 줍니다. 오른쪽 가이드 카드의 주소도 서버가 실제로 사용하는 값입니다.
+
+> 클라이언트 IP(허용목록·호출 한도·감사)와 쿠키 Secure 판단은 보안상 **접근 제어 > 프록시 헤더 신뢰**를 켠 경우에만 프록시 헤더를 사용합니다.
+
+### 2.6 CLI 하위 명령
 
 이미지의 엔트리포인트는 `/mmcp`이며, 다음 하위 명령을 지원합니다.
 
@@ -183,7 +206,7 @@ docker logs mmcp | head                        # "mmcp ready" 로그 확인
 |---|---|
 | `serve` (기본) | 서버 실행. `-addr` 플래그 기본값은 `:8080` (컨테이너 HEALTHCHECK가 8080을 가정하므로 변경하지 않는 것을 권장) |
 | `healthcheck` | `/api/health`가 200이면 0으로 종료 (컨테이너 HEALTHCHECK용) |
-| `version` | 버전·커밋·빌드 시각 출력 (예: `mmcp v1.0.0 (...)`) |
+| `version` | 버전·커밋·빌드 시각 출력 (예: `mmcp v1.0.1 (...)`) |
 | `gen-key` | 32바이트 무작위 키를 base64로 출력 |
 | `reset-admin-password` | `BOOTSTRAP_ADMIN` 계정의 비밀번호를 `BOOTSTRAP_ADMIN_PASSWORD`로 재설정하고 잠금 해제·활성화 (비상 복구용) |
 
@@ -630,7 +653,7 @@ ENCRYPTION_KEY (마스터 키, 환경변수 — DB에 저장되지 않음)
 
 ```bash
 # 1) 새 키 생성
-docker run --rm mmcp:v1.0.0 gen-key
+docker run --rm mmcp:v1.0.1 gen-key
 
 # 2) .env에서 새 키를 앞에, 이전 키를 뒤에 두고 재시작
 #    ENCRYPTION_KEY="<새 키>,<이전 키>"
@@ -743,9 +766,9 @@ pg_restore -d "$POSTGRES_DSN" --clean --if-exists mmcp-YYYYMMDD.dump
 
 1. 설정 내보내기와 DB 덤프를 받습니다.
 2. 새 릴리스 아카이브를 반입해 `sha256sum` 값을 릴리스 노트와 비교하고 `docker load` 합니다.
-3. `compose.offline.yml`의 `image:` 태그(현재 `mmcp:v1.0.0`)를 새 태그로 바꿉니다.
+3. `compose.offline.yml`의 `image:` 태그(현재 `mmcp:v1.0.1`)를 새 태그로 바꿉니다.
 4. `docker compose -f compose.offline.yml up -d` — 시작 시 DB 마이그레이션이 자동 적용되며 로그에 `migrations applied`가 남습니다.
-5. 시스템 정보 화면에서 버전(현재 v1.0.0에서 바뀌었는지)과 마이그레이션을 확인합니다.
+5. 시스템 정보 화면에서 버전(현재 v1.0.1에서 바뀌었는지)과 마이그레이션을 확인합니다.
 
 ![시스템 정보](screenshots/about.webp)
 
@@ -755,7 +778,7 @@ pg_restore -d "$POSTGRES_DSN" --clean --if-exists mmcp-YYYYMMDD.dump
 
 ```bash
 # .env의 BOOTSTRAP_ADMIN_PASSWORD를 새 값으로 바꾼 뒤
-docker run --rm --env-file .env mmcp:v1.0.0 reset-admin-password
+docker run --rm --env-file .env mmcp:v1.0.1 reset-admin-password
 # → "password reset for admin"
 ```
 
@@ -767,7 +790,7 @@ docker run --rm --env-file .env mmcp:v1.0.0 reset-admin-password
 
 | 경로 | 인증 | 용도 |
 |---|---|---|
-| `/api/health` | 없음 | 생존 확인. `{"status":"ok","version":"v1.0.0",...}` |
+| `/api/health` | 없음 | 생존 확인. `{"status":"ok","version":"v1.0.1",...}` |
 | `/api/ready` | 없음 | 준비 상태. DB와 설정된 상위 시스템(Keycloak JWKS, Mattermost ping)이 응답해야 200, 아니면 503과 구성요소별 상태 |
 | `/api/version` | 없음 | 빌드 정보 |
 | `/metrics` | 관리자 IP 허용목록 | Prometheus 형식. 일반 설정에서 끄면 404 |
@@ -803,13 +826,16 @@ docker run --rm --env-file .env mmcp:v1.0.0 reset-admin-password
 | 컨테이너 unhealthy | 서버 미기동 또는 8080 이외 포트로 실행 | `docker logs mmcp` 확인, `-addr` 변경 여부 확인 |
 | 관리 콘솔 `IP_DENIED` | 관리자 IP 허용목록에 현재 IP 없음 | 허용된 IP에서 접속해 수정. 프록시 뒤라면 프록시 헤더 신뢰 설정 확인 |
 | 로그인 시 `ACCOUNT_LOCKED` | 연속 실패로 잠김 | 사용자 화면에서 잠금 해제, 관리자는 `reset-admin-password` |
-| MCP 메타데이터/리다이렉트 주소가 내부 주소로 나옴 | Public URL 미설정 | 일반 설정에서 Public URL 저장 |
+| MCP 메타데이터/리다이렉트 주소가 내부 주소로 나옴 | Public URL 미설정이고 프록시가 X-Forwarded-* 헤더를 보내지 않음 | 일반 설정에서 Public URL 저장 또는 프록시 헤더 설정 ([2.5](#25-리버스-프록시-뒤에-둘-때)) |
+| Claude Code·Codex에서 MCP OAuth 로그인이 진행되지 않음 | 메타데이터의 resource/인가 서버 주소가 클라이언트가 접속한 주소와 다름, 또는 Keycloak 로그인 단계 실패 | `curl {외부주소}/.well-known/oauth-protected-resource/mcp`의 `resource`가 `{외부주소}/mcp`인지 확인하고 Keycloak 연결 테스트 실행 |
 
 ### 17.2 Keycloak
 
 | 증상 | 원인 | 조치 |
 |---|---|---|
 | 로그인 화면에 SSO 오류 (`sso=config`) | Discovery 실패, CA 미신뢰 | Keycloak 연동 > 연결 테스트, 사설 CA PEM 등록 |
+| Keycloak 화면에 `Invalid parameter: redirect_uri` | mmcp가 보낸 redirect_uri가 Keycloak 클라이언트의 Valid redirect URIs에 없음 (대개 프록시 뒤에서 내부 주소가 전달됨) | Keycloak 연결 테스트로 실제 값을 확인해 등록하거나 Public URL 설정 ([2.5](#25-리버스-프록시-뒤에-둘-때)) |
+| 로그아웃 시 Keycloak `Invalid redirect uri` | Valid post logout redirect URIs 미등록 | `{Public URL}/login?logged_out=1` 또는 `+` 등록, 또는 '로그아웃 시 Keycloak 세션도 종료' 끄기 |
 | `sso=exchange` | Client Secret 불일치, redirect URI 미등록 | Secret 재입력, `{Public URL}/auth/oidc/callback` 등록 |
 | `sso=state` | 로그인 상태 쿠키 없음·만료·서명 불일치 | 쿠키 허용 확인, 다시 로그인. 마스터 키 교체 직후라면 재시도 |
 | `sso=provision` | 사용자명 클레임 없음, 자동 생성 꺼짐, 비활성 계정, 다른 Keycloak 계정에 이미 연결된 username | 클레임/매퍼 확인, 자동 생성 설정, 사용자 상태 확인 |
