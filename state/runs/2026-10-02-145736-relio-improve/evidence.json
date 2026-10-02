@@ -1,0 +1,183 @@
+{
+  "run_id": "2026-10-02-145736-relio-improve",
+  "generated": "2026-10-02T15:09:40+09:00",
+  "run": {
+    "run_id": "2026-10-02-145736-relio-improve",
+    "project": "relio",
+    "kind": "improve",
+    "started": "2026-10-02T14:57:37+09:00",
+    "model": "claude-opus-5",
+    "policy_version": "4a9e91ac7",
+    "prompts_hash": "ce085c79e18002e2",
+    "runner_version": "1bd5f0cd4",
+    "arm": "no-arbiter",
+    "experiment": "roles-2026-09",
+    "finished": "2026-10-02T15:09:40+09:00",
+    "outcome": "verify-failed"
+  },
+  "record": {
+    "ts": "2026-10-02T15:09:40+09:00",
+    "date": "2026-10-02",
+    "project": "relio",
+    "result": "verify failed: 실패한 검증: cd web && npm test --silent (exit 1)",
+    "outcome": "verify-failed",
+    "run_id": "2026-10-02-145736-relio-improve",
+    "base_sha": "494d00fa04644274302c814151e64791afd8b702",
+    "head_sha": "0affd5e28afc1e20c72cc7d19eda7c4fa68451d4",
+    "pr": "",
+    "stages": {
+      "base": {
+        "state": "pinned",
+        "reason": "main@494d00f",
+        "at": "2026-10-02T14:57:39+09:00"
+      },
+      "autonomy": {
+        "state": "low-risk",
+        "reason": "롤백 PR ",
+        "at": "2026-10-02T14:57:40+09:00"
+      },
+      "scout": {
+        "state": "done",
+        "reason": "ESCAPE 선언 검사를 **줄 단위**에서 **비교 단위**로 옮기기 — 19개 비교 중 18개가 \"같은 줄의 다른 ESCAPE\" 에 ",
+        "at": "2026-10-02T15:03:28+09:00"
+      },
+      "brief": {
+        "state": "accepted",
+        "reason": "채택 — 과제서가 센 19개/8줄 분포와 지목한 자리(`search_test.go:58-63` 의 줄 단위 `Contains`, `:89` 정규식 재사용 가능성, `:102` ",
+        "at": "2026-10-02T15:09:38+09:00"
+      },
+      "verify": {
+        "state": "failed",
+        "reason": "실패한 검증: cd web && npm test --silent (exit 1)",
+        "at": "2026-10-02T15:09:40+09:00"
+      }
+    },
+    "campaign": "",
+    "autonomy": "low-risk",
+    "arm": "no-arbiter",
+    "experiment": "roles-2026-09",
+    "engine": "claude",
+    "files": 1,
+    "additions": 105,
+    "deletions": 64,
+    "tests": 1,
+    "title": "test(crm): ESCAPE 선언 검사를 줄 단위에서 비교 단위로 옮김"
+  },
+  "stages": {
+    "base": {
+      "state": "pinned",
+      "reason": "main@494d00f",
+      "at": "2026-10-02T14:57:39+09:00"
+    },
+    "autonomy": {
+      "state": "low-risk",
+      "reason": "롤백 PR ",
+      "at": "2026-10-02T14:57:40+09:00"
+    },
+    "scout": {
+      "state": "done",
+      "reason": "ESCAPE 선언 검사를 **줄 단위**에서 **비교 단위**로 옮기기 — 19개 비교 중 18개가 \"같은 줄의 다른 ESCAPE\" 에 ",
+      "at": "2026-10-02T15:03:28+09:00"
+    },
+    "brief": {
+      "state": "accepted",
+      "reason": "채택 — 과제서가 센 19개/8줄 분포와 지목한 자리(`search_test.go:58-63` 의 줄 단위 `Contains`, `:89` 정규식 재사용 가능성, `:102` ",
+      "at": "2026-10-02T15:09:38+09:00"
+    },
+    "verify": {
+      "state": "failed",
+      "reason": "실패한 검증: cd web && npm test --silent (exit 1)",
+      "at": "2026-10-02T15:09:40+09:00"
+    }
+  },
+  "provenance": {
+    "model": "claude-opus-5",
+    "policy_version": "4a9e91ac7",
+    "prompts_hash": "ce085c79e18002e2",
+    "runner_version": "1bd5f0cd4",
+    "base_sha": "494d00fa04644274302c814151e64791afd8b702",
+    "head_sha": "0affd5e28afc1e20c72cc7d19eda7c4fa68451d4",
+    "pr": ""
+  },
+  "verification": {
+    "runner": {
+      "source": "auto",
+      "commands": [
+        {
+          "cmd": "go build ./...",
+          "exit": 0,
+          "seconds": 1
+        },
+        {
+          "cmd": "go vet ./...",
+          "exit": 0,
+          "seconds": 0
+        },
+        {
+          "cmd": "go test ./...",
+          "exit": 0,
+          "seconds": 0
+        },
+        {
+          "cmd": "cd web && [ -d node_modules ] || npm ci --no-audit --no-fund",
+          "exit": 0,
+          "seconds": 0
+        },
+        {
+          "cmd": "cd web && npm test --silent",
+          "exit": 1,
+          "seconds": 0
+        }
+      ]
+    },
+    "runner_gate": {
+      "ok": false,
+      "state": "verify-failed",
+      "reason": "실패한 검증: cd web && npm test --silent (exit 1)"
+    },
+    "after_rebase": null,
+    "review": null,
+    "ci_gate": null
+  },
+  "release": {
+    "result": null,
+    "assets_sha256": []
+  },
+  "approval": null,
+  "usage": [
+    {
+      "ts": "2026-10-02T15:03:28+09:00",
+      "date": "2026-10-02",
+      "project": "relio",
+      "phase": "scout",
+      "run_id": "2026-10-02-145736-relio-improve",
+      "campaign": "",
+      "subtype": "success",
+      "engine": "claude",
+      "duration_ms": 377089,
+      "num_turns": 26,
+      "cost_usd": 1.9025200000000004,
+      "input_tokens": 32,
+      "output_tokens": 24960,
+      "cache_read": 1056580,
+      "cache_create": 75007
+    },
+    {
+      "ts": "2026-10-02T15:09:37+09:00",
+      "date": "2026-10-02",
+      "project": "relio",
+      "phase": "improve",
+      "run_id": "2026-10-02-145736-relio-improve",
+      "campaign": "",
+      "subtype": "success",
+      "engine": "claude",
+      "duration_ms": 403832,
+      "num_turns": 38,
+      "cost_usd": 2.8590994999999997,
+      "input_tokens": 68,
+      "output_tokens": 27886,
+      "cache_read": 2638479,
+      "cache_create": 84237
+    }
+  ]
+}
