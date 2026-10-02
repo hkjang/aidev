@@ -1,27 +1,27 @@
 {
- "generated": "2026-10-02T19:13:59+09:00",
+ "generated": "2026-10-02T19:34:30+09:00",
  "site": "https://hkjang.github.io/aidev",
- "description": "Claude Code 자율 개선 에이전트가 hkjang 의 프로젝트를 개선·테스트·머지·릴리즈한 일일 보고. 오늘 43회차·릴리즈 13건, 누적 1820회차·릴리즈 625건, 주의 필요 13건.",
+ "description": "Claude Code 자율 개선 에이전트가 hkjang 의 프로젝트를 개선·테스트·머지·릴리즈한 일일 보고. 오늘 44회차·릴리즈 14건, 누적 1821회차·릴리즈 626건, 주의 필요 13건.",
  "today": {
   "date": "2026-10-02",
-  "total": 43,
+  "total": 44,
   "projects": 22,
-  "released": 13,
+  "released": 14,
   "merged": 1,
   "nochange": 0,
   "failed": 1,
-  "cost_usd": 200.97,
-  "minutes": 693,
-  "sessions": 89
+  "cost_usd": 208.06,
+  "minutes": 718,
+  "sessions": 92
  },
  "totals": {
-  "runs": 1820,
-  "released": 625,
+  "runs": 1821,
+  "released": 626,
   "days": 31,
-  "cost_usd": 6823.54,
-  "minutes": 18680,
-  "tokens_in": 7291302320,
-  "tokens_out": 58817913
+  "cost_usd": 6830.63,
+  "minutes": 18705,
+  "tokens_in": 7298174596,
+  "tokens_out": 58879314
  },
  "alerts": [
   {
@@ -1905,27 +1905,27 @@
   "rows": [
    {
     "role": "정찰 scout",
-    "calls": 544,
+    "calls": 545,
     "metric": "과제서 91% · 구현자 채택 95% · 과제서 회차의 PR 도달 70%",
     "cost": 601.62
    },
    {
     "role": "구현 builder",
-    "calls": 642,
+    "calls": 643,
     "metric": "러너 검증 통과 94% · 변경 없음 118",
     "cost": 1629.04
    },
    {
     "role": "비평 critic",
-    "calls": 427,
-    "metric": "최종 승인 97% · 한 번이라도 거절 37 · 승인·머지 뒤 회귀 0/339",
-    "cost": 702.59
+    "calls": 428,
+    "metric": "최종 승인 97% · 한 번이라도 거절 38 · 승인·머지 뒤 회귀 0/340",
+    "cost": 704.22
    },
    {
     "role": "수리 repairer",
-    "calls": 31,
+    "calls": 32,
     "metric": "고쳐서 재검증 통과 100% · 손대지 않음 0",
-    "cost": 41.63
+    "cost": 45.94
    },
    {
     "role": "중재 arbiter",
@@ -1935,9 +1935,9 @@
    },
    {
     "role": "릴리즈 releaser",
-    "calls": 388,
+    "calls": 389,
     "metric": "완전한 릴리즈 75%",
-    "cost": 526.45
+    "cost": 527.6
    },
    {
     "role": "PR 심사 shepherd-reviewer",
@@ -1965,15 +1965,15 @@
    },
    {
     "role": "측정 자기 감사",
-    "calls": 3,
+    "calls": 4,
     "cost": null,
-    "metric": "[medium] 실험 arm no-repair 의 처치 노출이 3% — 그 arm 의 null 결과는 '효과 없음' 이 아니다 · [medium] 실험 arm no-arbiter 의 처치 노출이 0% — 그 arm 의 null 결과는 '효과 없음' 이 아니다 · [low] 닫힌 캠페인 5개의 적용률이 35% 미만 — PR 은 열렸지만 표준이 들어가지 않았다"
+    "metric": "[high] 원격에 없는 릴리즈 태그 1건 — 그 저장소의 다음 릴리즈를 막는다 · [medium] 실험 arm no-repair 의 처치 노출이 3% — 그 arm 의 null 결과는 '효과 없음' 이 아니다 · [medium] 실험 arm no-arbiter 의 처치 노출이 0% — 그 arm 의 null 결과는 '효과 없음' 이 아니다"
    },
    {
     "role": "실제 게시 릴리즈 (원격 태그 기준)",
     "calls": 689,
     "cost": null,
-    "metric": "저장소 39개 · 게시 689건 (사람 249건) · 누적 회차 기록에는 625건 — 64건이 기록에서 빠졌다"
+    "metric": "저장소 39개 · 게시 689건 (사람 249건) · 태그만 만들고 미게시 1건 — CI 가 릴리즈 커밋을 막은 저장소 · 누적 회차 기록에는 626건 — 63건이 기록에서 빠졌다"
    },
    {
     "role": "머지 뒤 30일 (postmerge)",
@@ -2001,7 +2001,8 @@
    }
   ],
   "advice": [
-   "실제 릴리즈 태그(689건)가 누적 회차 기록(625건)보다 64건 많다 — 기록 경로에 빠지는 자리가 남아 있다 (bin/released.py 가 태그로 센 값)",
+   "측정이 어긋났다 — 원격에 없는 릴리즈 태그 1건 — 그 저장소의 다음 릴리즈를 막는다 (release_project 의 describe 검사가 로컬 태그를 보므로, 보류된 태그가 base 끝을 가리키면 릴리즈가 영구히 멈춘다.)",
+   "실제 릴리즈 태그(689건)가 누적 회차 기록(626건)보다 63건 많다 — 기록 경로에 빠지는 자리가 남아 있다 (bin/released.py 가 태그로 센 값)",
    "jikim 은 머지한 변경의 93% 를 사람이 다시 고쳤다 — 자율화 단계를 낮추거나(state/jikim.policy.json 의 autonomy) 검증 명령을 늘릴 것"
   ]
  },
@@ -2389,7 +2390,7 @@
   {
    "metric": "완전한 릴리즈 비율",
    "value": "94%",
-   "detail": "릴리즈 시도 311건 중 자산 검증까지 291건"
+   "detail": "릴리즈 시도 312건 중 자산 검증까지 292건"
   },
   {
    "metric": "사람의 재작업률",
@@ -2403,7 +2404,7 @@
   },
   {
    "metric": "유효 개선당 비용",
-   "value": "$10.63",
+   "value": "$10.65",
    "detail": "비용 확인된 유효 개선 330건, 미확인 세션 558"
   },
   {
@@ -2420,7 +2421,7 @@
  "outcomes_today": {
   "verify-failed": 13,
   "review-pending": 15,
-  "release-ready": 13,
+  "release-ready": 14,
   "releasing": 1,
   "error": 1,
   "merged": 0,
@@ -2429,12 +2430,12 @@
  "days": [
   {
    "date": "2026-10-02",
-   "total": 43,
-   "released": 13,
+   "total": 44,
+   "released": 14,
    "merged": 1,
    "nochange": 0,
    "failed": 1,
-   "cost_usd": 200.97
+   "cost_usd": 208.06
   },
   {
    "date": "2026-10-01",
@@ -2703,13 +2704,13 @@
    "key": "2026-W40",
    "url": "https://hkjang.github.io/aidev/weekly/2026-W40/",
    "days": 5,
-   "total": 255,
-   "released": 89,
+   "total": 256,
+   "released": 90,
    "merged": 18,
    "nochange": 17,
    "failed": 31,
-   "cost": 1148.77,
-   "minutes": 3856
+   "cost": 1155.86,
+   "minutes": 3881
   },
   {
    "key": "2026-W39",
@@ -2765,13 +2766,13 @@
    "key": "2026-10",
    "url": "https://hkjang.github.io/aidev/monthly/2026-10/",
    "days": 2,
-   "total": 85,
-   "released": 25,
+   "total": 86,
+   "released": 26,
    "merged": 2,
    "nochange": 0,
    "failed": 10,
-   "cost": 467.99,
-   "minutes": 1525
+   "cost": 475.09,
+   "minutes": 1550
   },
   {
    "key": "2026-09",
@@ -3717,24 +3718,24 @@
    "name": "seaton",
    "repo": "https://github.com/hkjang/seaton",
    "page": "https://hkjang.github.io/aidev/projects/seaton/",
-   "runs": 24,
-   "released": 10,
-   "last_ts": "2026-10-02T15:42:06+09:00",
+   "runs": 25,
+   "released": 11,
+   "last_ts": "2026-10-02T19:34:29+09:00",
    "last_status": "released",
-   "last_result": "merged https://github.com/hkjang/seaton/pull/40, released v1.4.13",
-   "cost": 170.12,
-   "minutes": 513,
+   "last_result": "merged https://github.com/hkjang/seaton/pull/41, released v1.4.14",
+   "cost": 177.21,
+   "minutes": 538,
    "grade": "C",
-   "grade_why": "14일: 릴리즈 7, 실패 0, 경고 2, 회귀 0",
+   "grade_why": "14일: 릴리즈 8, 실패 0, 경고 2, 회귀 0",
    "lessons": 0,
    "ideas_pending": 13,
    "ideas_total": 14,
    "release": {
     "status": "released",
-    "version": "1.4.13",
-    "tag": "v1.4.13",
+    "version": "1.4.14",
+    "tag": "v1.4.14",
     "assets_count": 1,
-    "prev_tag": "v1.4.12",
+    "prev_tag": "v1.4.13",
     "prev_assets_count": 1
    }
   },
