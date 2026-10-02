@@ -271,3 +271,4 @@
 - 보류 아이디어: LobbyPage 늦은 응답 무시 — **기각**(전제가 거짓: 선례로 든 VisitsPage 티켓 PR 이 머지된 적 없다. 같은 접근 재제출 금지에 걸리므로 다른 방향이 필요하다) / `emergencyRoster`(kiosk.go:231)와 `exportAuditLogsCSV`(exports.go:123)가 행별 `Scan` 오류를 조용히 삼키고도 `count` 를 완전한 수치로 보고한다 — 같은 파일의 `runAutomaticCheckouts` 는 올바르게 `return err` 한다. 다만 해당 열이 모두 `NOT NULL`(`visitors.name_encrypted/phone_encrypted`, `audit_logs.details jsonb NOT NULL DEFAULT '{}'`)이라 지금은 도달 불가라 실패 테스트를 쓸 수 없다(가치 2/위험 1/S, 신규) / `csvCell`(exports.go:38)이 첫 **바이트**만 보는데 주석의 위협 모델은 "Excel 이 앞의 탭·CR 을 떼고 판단한다"다 — 탭·CR 자체가 집합에 있어 실질 우회는 못 찾았고 Excel 의 실제 스트립 동작을 이 환경에서 확인할 수 없어 근거 없이 취약점이라 주장하지 않았다(가치 2/위험 2/S, 신규) / `TestSelfRegistrationRecordsVisitorConsent` 의 `consented_at DESC LIMIT 1` 타이브레이크 취약성(가치 2/위험 1/S) / `visitBody` 자체를 사이트 달력 인식형으로(가치 2/위험 2/M)
 - 과제서: 없음 — 이번 회차에는 정찰 과제서가 없어 1~4단계를 직접 수행했다. 보류 1순위의 전제가 거짓인 것을 코드로 확인해 기각하고 다른 과제를 골랐다.
 
+- 릴리즈: v2.8.14 (2026-10-02, run 2026-10-02-232736-visitflow-improve)
