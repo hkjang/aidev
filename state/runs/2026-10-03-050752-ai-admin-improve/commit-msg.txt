@@ -1,0 +1,39 @@
+chore: release ai-admin v1.2.33
+
+The merged change bounded the audited resource identifier at the recording path
+so a caller can no longer drop its own audit record by length alone, adding
+storableResourceID to internal/server/server.go — login records a failed
+attempt with the submitted username, which arrives before authentication and
+carries no length validation of its own (the handler rejects only an empty
+value), while ai_admin.audit_event.resource_id is varchar(500), and because
+s.audit swallows the INSERT error into s.logger.Warn a login failed with a
+username of 501 characters or more still answered 401 invalid_credentials while
+leaving no audit row at all — the same defect request_id (varchar(80)) had
+already been protected against by boundedRequestID, with resource_id the only
+one left out — so the new helper reuses the package's existing truncateRunes to
+cut the value to 500 runes before storage and both INSERT paths, audit and
+auditInTx, now apply that same rule, which matters because one swallows its
+error and the other returns it and rolls the surrounding transaction back, so
+fixing a single path would have left the two disagreeing — with the limit
+counted in characters rather than bytes so a Hangul resource_id is still
+preserved to 500 characters, with values of 500 characters or fewer untouched
+and the surrounding behavior — the trim of leading and trailing whitespace, and
+a successful login's resource_id staying NULL — unchanged, and without turning
+toward rejecting an over-long username with 400, which would have changed the
+401 contract and leaked account existence through length, proved against a real
+PostgreSQL round trip by a new integration test that drives POST
+/api/v1/auth/login with no session helper and holds that usernames of 1000
+ASCII characters, 600 Hangul characters and 501 Hangul characters each keep the
+401 invalid_credentials response while leaving exactly one
+action='auth.login' AND result='failure' row whose length(resource_id) is 500
+and whose octet_length matches rune truncation, with the expected value
+computed independently inside the test by []rune slicing so a wrong limit
+cannot satisfy its own test, by red, green and byte-revert-red (the three
+over-long cases failed at zero audit rows before the fix, and switching the
+limit to byte truncation fails the Hangul cases again) — and left VERSION and
+CHANGELOG.md untouched, so this release advances the patch number by one — the
+increment every release so far has used — and records the change under today's
+date.
+
+Bumped 1.2.32 to 1.2.33 in every file scripts/verify-version.sh checks and
+added the v1.2.33 changelog entry.

@@ -1,0 +1,27 @@
+- 과제: 실패한 로그인의 감사 기록이 사라지지 않게 `audit_event.resource_id`(varchar(500)) 상한을 감사 기록 경로에서 지키기 (가치 3 / 위험 2 / 작업량 S)
+- 왜: `login`(`internal/server/auth_handlers.go:70`)은 실패한 로그인을 `s.audit(r, auth.Principal{}, "auth.login", "session", strings.TrimSpace(request.Username), "failure", …)` 로 남기면서 **인증 전 공격자가 보낸 username 원문**을 `ai_admin.audit_event.resource_id varchar(500)`(`internal/database/migrations/001_ai_admin.sql:213`)에 그대로 넣는다. username 에는 길이 검증이 전혀 없고(`auth_handlers.go:48` 은 `TrimSpace(...) == ""` 만 본다, 본문 한도는 `decodeJSON` 의 2MiB) `s.audit`(`internal/server/server.go:566-585`)은 INSERT 실패를 `s.logger.Warn` 으로 삼키므로, 501자 이상 username 으로 로그인을 실패시키면 응답은 그대로 401 `invalid_credentials` 인데 감사 테이블에는 **행이 아예 남지 않는다** — 호출자가 자기 실패 로그인을 지울 수 있다. 같은 저장소가 이미 같은 결함을 `request_id` 에 대해 `boundedRequestID`/`storableRequestID`(`server.go:413-440`)로 막아 두었고("chi copies the identifier straight out of the untrusted X-Request-Id header … an over-long or non-UTF-8 header makes the audit INSERT fail — letting a caller drop its own audit record") `resource_id` 만 빠져 있다. 고치면 감사 추적이 인증 전 입력으로 끊기지 않고, `auditInTx`(`server.go:587-611`, 오류를 **반환**해 트랜잭션을 되돌린다) 쪽의 같은 위험도 함께 막힌다.
+- 수용 기준:
+  1) 501자 이상(ASCII 1000자·한글 600자 둘 다) username 으로 `POST /api/v1/auth/login` 을 실패시키면 응답은 지금과 같은 401 `invalid_credentials` 이고, `ai_admin.audit_event` 에 `action='auth.login' AND result='failure'` 행이 **정확히 1건** 생기며 `resource_id` 의 rune 길이가 500 이하다(한글도 500 rune 까지 보존 — 바이트 절단이 아님).
+  2) 기존 동작 불변: 정상 username(짧은 값)의 실패 로그인은 `resource_id` 가 trim 된 원문 그대로이고, 성공 로그인은 `resource_id` 가 NULL(`nullString("")`)·`result='success'` 그대로다. 500자 정확히는 절단되지 않는다.
+  3) 테스트가 증명할 것: 수정 전 1)의 감사 행 개수가 0 이어서 FAIL 하고(= 감사 기록이 실제로 사라진다는 직접 증거), 수정 후 PASS(`-v` 로 SKIP 아님 확인). 상한 로직을 rune 대신 `len()` 바이트 기준으로 바꾸면 한글 사례가 다시 FAIL 하는 역검증까지 할 것.
+- 건드릴 파일:
+  - `internal/server/server.go:566` `(*Server).audit` 과 `:587` `(*Server).auditInTx` — `nullString(resourceID)` 로 넘기기 전에 컬럼 상한으로 한 번 정규화한다. 같은 패키지에 이미 있는 `truncateRunes`(`internal/server/oidc.go:817`, `[]rune` 변환이라 잘못된 UTF-8 도 U+FFFD 로 치환된다)를 재사용하고, 상한은 `requestIDMaximum`(`server.go:414`)과 같은 스타일로 `// auditResourceIDMaximum matches ai_admin.audit_event.resource_id (varchar(500)).` 주석을 단 상수로 둘 것. **두 함수가 같은 값을 같은 규칙으로 쓰게** 한다(한쪽만 고치지 말 것 — `audit` 은 오류를 삼키고 `auditInTx` 는 트랜잭션을 되돌리므로 증상이 다르다).
+  - `internal/server/audit_resource_id_integration_test.go`(신규) — 아래 셋업 재사용.
+  - (선택, 범위를 넘기지 말 것) `docs/api.md` 의 감사 이벤트 설명에 "resource_id 는 500자에서 잘린다" 한 줄. 프로덕션 파일은 1개로 끝낼 것.
+- 검증 명령:
+  - 셋업: 새 포트로 전용 폐기 DB — `docker run -d --rm --name ai-admin-pg-1003 -e POSTGRES_PASSWORD=postgres -p 55511:5432 postgres:16-alpine` 후 `export TEST_POSTGRES_DSN='postgres://postgres:postgres@127.0.0.1:55511/postgres?sslmode=disable'`(55432·55433·55439·55444·55451·55461·55471·55481·55491·55501 은 과거 회차가 쓴 이력이 있다).
+  - red/green: `go test -count=1 -run TestLoginAuditSurvivesOverlongUsername ./internal/server/ -v` (SKIP 이 아니어야 한다)
+  - 전체: `go test -race -count=1 ./...` (internal/server 약 120~135초)
+  - `make lint`(gofmt·go vet·verify-version 1.2.32), `go build ./...`
+  - 웹 변경이 없으므로 `npm test`·`internal/ui/dist` 재빌드는 불필요. VERSION·CHANGELOG 는 건드리지 말 것(릴리즈 단계 전용).
+- 테스트 작성 메모(확인한 것만):
+  - 셋업은 `internal/server/auth_failure_integration_test.go:22-45` 를 그대로 복사하면 된다 — `TEST_POSTGRES_DSN` 가드 → `database.Open` → `DROP SCHEMA IF EXISTS ai_admin CASCADE; DROP SCHEMA IF EXISTS aiportal CASCADE` → `db.Migrate` → `db.Seed(ctx,"admin@example.com","integration-password")` → `secrets.New(bytes.Repeat([]byte{7},32))` → `New(db, cipher, slog.New(slog.NewTextHandler(io.Discard,nil))).Handler()`.
+  - 로그인은 세션 헬퍼(`signIn`) 없이 `httptest.NewRequest(http.MethodPost,"/api/v1/auth/login", bytes.NewReader(body))` + `Content-Type: application/json` 으로 직접 치면 된다(라우트는 `internal/server/server.go:89` 의 공개 `r.Post("/api/v1/auth/login", s.login)`). 감사 행은 `db.Pool.QueryRow(ctx, "SELECT count(*), coalesce(max(length(resource_id)),0) FROM ai_admin.audit_event WHERE action='auth.login' AND result='failure'")` 로 센다 — PostgreSQL `length()` 는 문자 수라 rune 기준 500 확인에 쓸 수 있다.
+  - **로그인 레이트 리미터는 username 단위다**(`internal/server/login_limit.go:13-32`: `loginBackoffAfter = 5`, 10분 창, IP 전역 잠금은 **없다** — "deployments behind one reverse proxy must not let a handful of failures block every user"). 사례마다 다른 username 을 쓰면 429 를 피할 수 있다. 그래도 각 응답이 401 `invalid_credentials` 인지 먼저 단정해 429 `login_rate_limited`(이 경우는 감사 행 자체를 남기지 않는다)와 구별할 것.
+- 위험과 피할 것:
+  - `internal/auth`·세션 생성 경로는 건드리지 말 것 — 거기는 이미 `truncate(userAgent,1000)`(`internal/auth/auth.go:381`)와 `net.ParseIP` 로 같은 계열 문제를 막아 두었다. 이번 과제는 `internal/server` 의 감사 기록 경로 한 곳이다.
+  - username 자체를 400 으로 거부하는 쪽으로 틀지 말 것(`app_user.username varchar(190)` 근거로 유혹이 있다): 401 `invalid_credentials` 응답 계약이 바뀌고 username 길이로 계정 존재 여부를 흘릴 여지가 생긴다. 감사 기록 경로에서만 막는다.
+  - `details` jsonb·`action`·`resource_type`(모두 호출부 상수)·`result`(CHECK 제약) 은 손대지 말 것. 범위는 `resource_id` 하나다.
+  - `boundedRequestID`/`storableRequestID`(`server.go:413-440`)와 `.github/workflows`·`internal/database/migrations`·`workflow.go` 의 승인 트랜잭션 분기는 건드리지 말 것.
+  - 2026-09-25 교훈: 과제서가 지정한 "방법" 이 수용 기준과 어긋나면 기준을 우선할 것. grep 결과를 증거로 제출하지 말고 실제 DB 왕복으로 red→green 을 보일 것.
+- 차선 후보: 비스트리밍 chat 본문 절단 시 감사 `reason` 계약을 테스트로 고정(`relayChatBody` `internal/server/providers.go:721-751` 의 `client_write_failed`/`upstream_read_failed` 구분을 `chat_truncation_integration_test.go` 셋업 재사용으로 `result=failure`·`details.reason=upstream_read_failed`·`complete=false` 로 못박기 — 프로덕션 파일 0개, 여덟 회차 연속 차선).

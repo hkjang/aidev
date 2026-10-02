@@ -1,0 +1,36 @@
+chore(release): AppStore v2.11.12
+
+공개 앱 상세 머리말의 상태 배지가 영문 내부값 published 를 그대로 그려,
+한국어 UI 한가운데서 모든 사용자에게 내부 enum 이 보이던 문제를 고친 patch
+릴리스입니다. 같은 값을 내 앱 목록은 공용 표로 "게시됨" 이라 보여 주므로
+같은 상태가 화면마다 갈렸습니다. 서버와 schema는 바뀌지 않았습니다.
+
+Version
+
+web/package.json·package-lock.json, docker-compose.yml, README, GitHub Pages
+문서와 docs/USER_GUIDE.md·docs/ADMIN_GUIDE.md의 버전 표기를 v2.11.12로
+올렸습니다. 관리자 가이드의 롤백 예시는 한 칸 밀어 appstore-v2.11.11-stopped를
+가리킵니다.
+
+Screenshots and guide PDFs
+
+실제 번들에서 desktop/mobile 캡처 90개를 다시 생성했습니다. 이번 수정이 지나는
+앱 상세 캡처 2개(desktop·mobile)는 배지 글자가 published 에서 게시됨 으로
+바뀌었습니다. 관리자 AI 설정 캡처 2개는 내용이 같고 lossy WebP 재인코딩 잡음과
+전체 페이지 아래쪽 빈 여백만 다릅니다(공통 영역 평균 차 0.03/255, 늘어난 영역은
+배경색 단색). 나머지 86개는 v2.11.11과 byte 단위로 동일합니다. 기존 스크립트로
+PDF를 재생성하고 표지 버전, v2.11.12 태그를 가리키는 문서 간 링크와 file://
+링크 부재를 확인했습니다.
+
+Migration
+
+서버·schema 변경은 없습니다. 기존 설치는 image만 교체하면 됩니다.
+internal/webui/dist는 기존 관례대로 유지하며 Dockerfile이 번들을 새로 빌드합니다.
+
+검증: Go race 테스트 전체 패키지·vet·gofmt·build, React 97건,
+lint·Prettier·build, 오프라인·환경·문서 검사 통과. Playwright는
+--workers=2 --retries=2 로 81 passed/1 skipped. CI 기본값(worker 무제한)은 이
+기계에서 OOM 으로 종료되어 worker를 2로 묶었습니다. DB DSN 미설정으로 DB 통합
+검증은 skip이며 실제 DB/Keycloak은 검증하지 않았습니다. Docker
+build/load/smoke, SHA-256 및 GitHub Release 게시는 태그 워크플로가 수행합니다.
+이 세션에서는 원격 전송을 수행하지 않았습니다.
