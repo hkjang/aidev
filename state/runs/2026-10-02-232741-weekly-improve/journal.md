@@ -20,3 +20,7 @@
 - 못 본 것: mutation-check·authz-check 는 돌리지 않았다(제자리 소스 변경, 과거 시간 초과 — 구현자와 같은 이유). 프런트 검증은 변경이 없어 생략했다. 실제 리버스 프록시가 내보내는 XFF 형태로는 확인하지 못했다(구현자와 동일한 미확인 지점).
 - [러너 23:52] review approved — 리뷰 승인 (risk=low)
 - [러너 23:53] pr created — https://github.com/hkjang/weekly/pull/28
+- [러너 00:13] ci passed — 검사 1개 모두 success
+- [러너 00:13] merge done — bf71b25
+- [러너 00:45] release published — v0.315.0
+- [러너 00:46] assets verified — v0.315.0 자산 1개 (이전 v0.314.0: 1)

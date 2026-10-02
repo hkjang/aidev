@@ -301,3 +301,4 @@
 - 보류 아이디어: `searchStatus`(semantic.go:431)가 세 count 질의 오류를 버려 200 과 `items:0, embedded:0, stale:0` 으로 답함 — 질의 실패와 '임베딩 0건' 이 화면에서 같아 보이나 Confluence 에서 두 번 고친 것과 같은 모양이라 세 번째 반복이 됨 (3/1/S) · `deleteAttachment`(attachments.go:409)의 참조 수 질의 오류를 버려 `remaining=0` 으로 읽고 아직 쓰이는 파일을 지움 — 질의 실패를 재현할 방법을 먼저 정해야 함 (2/2/S) · 관리자 카드에서 실패한 발송을 다시 시도로 큐에 되돌리기 — 세 큐의 재시도 계약을 먼저 정해야 함 (3/3/M) · README·docs/MCP.md·AdminPage 의 MCP '읽기 전용' 서술이 `mcpwrite.go` 보다 낡음, CHECKS.md 의 authz-check 소요 시간·병행 금지 모순과 묶어 문서 회차로 (2/1/S) · AdminPage·DashboardPage 를 렌더하는 프런트 시험이 없어 조건부 문장이 타입 검사 밖에서 검증되지 않음 (2/2/M)
 - 과제서: 기각 — 이번 회차에 정찰 과제서는 없었고, 프로필의 보류 목록은 모두 가치 3 이하이거나 계약 결정이 선행돼야 하는 것들이라, 프로필이 다루지 않은 `auth.go` 의 주소 파싱 결함(로그인 불가 + 속도 제한 무력화)을 직접 찾아 골랐습니다.
 
+- 릴리즈: v0.315.0 (2026-10-02, run 2026-10-02-232741-weekly-improve)
