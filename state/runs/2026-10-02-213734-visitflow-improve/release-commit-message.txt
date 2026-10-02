@@ -1,0 +1,30 @@
+chore(release): VisitFlow v2.8.13
+
+- 실제 `npm run build` 산출물을 임베드한 실제 서버와 실제 브라우저로 도는 e2e 를
+  저장소의 한 명령(`bash scripts/local-e2e.sh`)으로 고정한다. 원장에 5회차 연속으로
+  "하네스를 손으로 재구성했다" 가 적혀 있었고 직전 회차는 그 비용 때문에 벽시계
+  타임아웃으로 끝났다. 스크립트 한 번이 web 의존성 설치 → `npm run build` →
+  `cmd/visitflow/webdist` 임베드 → 서버 빌드 → PostgreSQL·서버 컨테이너 기동 →
+  `/readyz` 대기 → `npm run test:e2e` 를 하고, `trap` 이 실패·Ctrl-C 를 포함한 모든
+  종료 경로에서 **임시 복사본**으로 추적된 webdist 스텁을 되돌린다(`git checkout --`
+  는 이 저장소에서 작업을 날린 적이 있어 쓰지 않는다). 서버가
+  `cmd/visitflow/main.go` 에서 `Addr: ":8080"` 을 하드코딩하므로 앱은 컨테이너로
+  띄우고, 호스트 포트는 `-p 127.0.0.1::8080` 로 OS 가 고른 뒤 `docker port` 로 읽는다
+  — 포트를 박지 않은 것은 개발 기계에서 8080·5432 말고 18099 까지 이미 점유되어
+  있었기 때문이다(고정하려면 `VISITFLOW_LOCAL_E2E_PORT`). PostgreSQL 은 전용
+  네트워크의 `--network-alias postgres` 로만 붙어 호스트 포트를 쓰지 않는다.
+  컨테이너·네트워크는 실행마다 고유한 `vf-local-e2e-$$-$RANDOM` 접두사를 달아 자기가
+  만든 것만 지우고 남의 컨테이너는 건드리지 않는다. 검사를 느슨하게 한 곳은 없다 —
+  `npm run test:e2e` 를 그대로 부르고 종료 코드를 그대로 전달한다.
+  `web/playwright.config.ts` 는 `VISITFLOW_E2E_BROWSER_CHANNEL` 이 설정된 때만
+  조건부 스프레드로 `channel` 을 더하므로, env 가 없으면 키가 아예 없어 CI 는 번들
+  chromium 그대로다. 프로덕션 Go/React 0개 파일, 총 3개 파일(신규 스크립트,
+  config 한 블록, README 한 문단).
+
+- 원장이 다섯 회차 동안 "환경 의존 실패" 로 적어 온 e2e 스펙
+  `registers a site, a lobby and an organization from the admin console` 은 이
+  스크립트로 돌린 실행에서 모두 통과했다. 원인은 호스트 환경이 아니라 손으로 재사용한
+  데이터베이스의 상태 오염이었고, 매 실행이 새 DB 와 새 서버를 받으면 재현되지 않는다.
+
+버전 표기(README, docs/index.html, web/package.json, web/package-lock.json)를
+2.8.13으로 올린다.
