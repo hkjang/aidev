@@ -148,3 +148,4 @@
 - 보류 아이디어: `safeAIError` 의 `message[:300]` 이 UTF-8 룬을 쪼개 한국어 제공자 오류 꼬리가 U+FFFD 로 깨짐 — DB 불필요, 순수 함수 시험으로 증명 가능 (2/1/S); AI 제공자 SSE 파서(`ai.go:proxyAIStream`)의 여러 `data:` 줄 합치기·프레임 경계·EOF flush·`[DONE]` 회귀 시험 — 결함 없는 공백 보강 (2/1/S); `auth.go:155 userByAPIKey` 의 `rows.Err()` 누락 — 401 fail-closed 라 데이터 손실이 아니고 보호 경로 (2/3/S); `mcp.go` 의 나머지 세 도구가 uuid 모양 아닌 `person_id` 를 uuid 컬럼에 그대로 넘겨 메시지 충실도만 떨어짐 (2/2/S); `web/src/pages` 테스트 0개 — 페이지 통합 시험 기반 만들기 (2/2/M)
 - 과제서: 채택 — 지정한 자리(export.go 75~87 의 구조, `breakPeopleRowStream`·`seedNamedPerson`·`seedRelationship` 재사용, nil Vault 때문에 0행이어야 한다는 제약, 씨앗→뷰 순서)가 지금 코드와 정확히 일치해 수용 기준 1~4 를 그대로 구현했고, 과제서가 미확인으로 남긴 "export 질의에서도 뷰 주입이 rows.Err() 에만 오류를 남긴다" 를 실제 postgres 로 사실로 확정했다. 권장 선택 사항인 `failed_section` 도 넣었다(추가 전용 필드).
 
+- 릴리즈: v0.7.8 (2026-10-03, run 2026-10-03-181733-orbit-improve)
