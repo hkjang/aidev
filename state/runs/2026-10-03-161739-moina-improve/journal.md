@@ -30,3 +30,5 @@
 - [러너 16:32] pr created — https://github.com/hkjang/moina/pull/39
 - [러너 16:41] ci passed — 검사 2개 모두 success
 - [러너 16:41] merge done — 3fe4190
+- [러너 16:54] release published — v0.1.41
+- [러너 16:59] assets verified — v0.1.41 자산 1개 (이전 v0.1.40: 1)

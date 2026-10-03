@@ -1,0 +1,41 @@
+moyro v0.2.44
+
+Team invitation by email is gated and audited again. `POST
+/api/v4/teams/{teamID}/invite/email` was registered twice inside the same
+authenticated group in `router.go`: once at line 756 for
+`inviteTeamMembersByEmail`, which carries the guest guard, the `requireTeamAdmin`
+gate and the `team.invite.email` audit row, and again three hundred lines later
+for the gateless `inviteTeamMembersFromBody` stub, which keeps only the guest
+guard and answers 200 immediately.
+
+chi stores one handler per method+pattern, so the later registration did not add a
+fallback — it replaced the real handler. The endpoint answered 200 OK to any
+authenticated caller, including a plain team member holding no `team_admin` role,
+and recorded no audit row. That is a missing authorization check. The handler's own
+doc comment describes the endpoint as admin-only and audited, and the
+`requireTeamAdmin` gate added in v0.2.41 was unreachable from this route, which is
+why that release's tests never saw it.
+
+The duplicate registration is removed so the gated handler owns the pattern, with a
+comment recording why restoring it would not be a no-op. The `/teams/members/invite`
+mapping still resolves to the stub on purpose and is pinned by a subtest against
+over-correction. An administrator's success response is byte-identical at
+`{"status":"OK"}`. What changes is that a non-administrator now receives 403 rather
+than a false 200, and that the audit row appears.
+
+Operators integrating against this route should note the contract change. Callers
+that relied on the unconditional 200 will now be refused unless they hold
+`team_admin`. The webapp, the e2e suite, the published documentation and both
+OpenAPI documents were checked and none of them consume this route, but
+integrations outside the repository are affected.
+
+There is no schema change, no migration, no new route, no new error id and no web
+change. One line of production code is removed.
+
+The regression test is the first in this package to boot the production router
+rather than copy chi patterns by hand, because a defect in registration order is
+structurally invisible to a pattern-copying test. It runs against a real PostgreSQL
+schema built by `store.Migrate`, the real `auth`, `pluginhost` and `ws.Hub`, a real
+login token passing production `requireAuth`, and real HTTP requests, with no
+hand-built doubles. It was red before the change, green after, and red again in
+exactly the same two subtests when the duplicate line was restored.

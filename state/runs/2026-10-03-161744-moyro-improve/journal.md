@@ -19,3 +19,5 @@
 - 다음 회차: `/teams/members/invite` 는 여전히 무게이트 200 no-op 이고 이번 테스트가 그 200 을 고정했다. 지금은 무해(상태 변화 없음)하나 저 스텁이 실제 초대 로직을 갖게 되면 테스트가 무게이트를 계속 승인한다 — ideas.json 에 남길 것. 릴리즈 노트에 403 전환을 명시할 것.
 - [러너 16:40] review approved — 리뷰 승인 (risk=low)
 - [러너 16:40] pr created — https://github.com/hkjang/moyro/pull/32
+- [러너 16:53] ci passed — 검사 3개 모두 success
+- [러너 16:53] merge done — 76c6c95

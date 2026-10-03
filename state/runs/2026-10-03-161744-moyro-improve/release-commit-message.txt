@@ -1,0 +1,60 @@
+release: carry release markers to v0.2.44
+
+v0.2.44 ships one server authorization fix already merged to main. There is no
+schema change, no new route, no new error id and no web change.
+
+`POST /api/v4/teams/{teamID}/invite/email` was registered twice inside the same
+authenticated group in `router.go`. The first registration at line 756 bound
+`inviteTeamMembersByEmail`, which carries the guest guard, the `requireTeamAdmin`
+gate and the `team.invite.email` audit row. Three hundred lines later the second
+registration bound the gateless `inviteTeamMembersFromBody` stub, which keeps only
+the guest guard and answers 200 immediately. chi stores one handler per
+method+pattern, so the later registration did not install a fallback — it replaced
+the real handler outright. The endpoint therefore returned 200 OK to any
+authenticated caller, a plain team member with no `team_admin` role included, and
+wrote no audit row at all. That is a missing authorization check, not a cosmetic
+duplication. The handler's own doc comment at `compat_wave_handlers.go:1301`
+describes the endpoint as admin-only and audited, and the `requireTeamAdmin` gate
+that the v0.2.41 work placed at `compat_wave_handlers.go:1317` was unreachable from
+this route, which is why that round's tests never observed it.
+
+The fix deletes the duplicate registration so the gated handler owns the pattern,
+and leaves a comment recording why re-adding it is not a no-op. One line of
+production code is removed and eight lines of comment are added. The
+`/teams/members/invite` mapping still points at the stub deliberately and is pinned
+by its own subtest against over-correction. An administrator's success response
+stays byte-identical at `{"status":"OK"}`; what changes is that a non-administrator
+now receives 403 instead of a false 200, and that the audit row appears.
+
+This is a deliberate contract change for callers that relied on the unconditional
+200. The webapp, the e2e suite, the published docs and both OpenAPI documents were
+checked and none of them consume this route, but an integration outside this
+repository that depended on the ungated behaviour will now be refused unless it
+holds `team_admin`.
+
+The regression test is the first in this package to boot the production
+`NewRouter(cfg, db, hub, host, logger)` rather than copy chi patterns by hand,
+because a defect in registration order is structurally invisible to a
+pattern-copying test. It runs against a real PostgreSQL isolated schema built by
+`store.Migrate`, the real `auth`, `pluginhost` and `ws.Hub`, a real `auth.Login`
+token passing production `requireAuth`, and `httptest.NewServer` over real HTTP,
+with no hand-built doubles. It was observed red before the change, green after, and
+red again in exactly the same two subtests when the duplicate line was restored.
+Note that it skips without `MOYRO_TEST_POSTGRES_DSN`, so an `ok` from a run without
+a database does not mean it executed.
+
+Verified on the release tree in the order `release.yml` runs it, with a real
+PostgreSQL DSN supplied: `go build ./...`, `go vet ./...` and `go test -race -p 1
+-count=1 ./...` at 49 packages ok and 0 failures, `httpapi` taking 47.4s where it
+takes 0.17s without a database, which confirms the database tests actually ran.
+`plugin-sdk/go` tests and vet pass. In `webapp`, a clean `npm ci`, then `npm audit
+--omit=dev --audit-level=high` and `npm audit --audit-level=high` both at 0
+vulnerabilities, then `npm test` at 49 files and 224 tests on Node v22.23.1, then
+`npm run typecheck` and `npm run build`. `node scripts/verify-pages.mjs` passes at
+5 HTML pages, 47 screenshots, 16 routes and 7 brand PNGs against the bumped
+markers, and `bash scripts/check-source-sizes.sh` passes. `git diff --check` is
+clean and this commit touches no Go file.
+
+The gates this machine cannot run are the ones the release job owns: the
+`linux/amd64` image build, `scripts/verify-release.sh` against the exported
+archive, and the Playwright product-UI pass. They run on the tag push.
