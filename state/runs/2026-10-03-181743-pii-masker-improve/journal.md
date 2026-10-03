@@ -11,3 +11,12 @@
 - 다음 역할이 조심할 것: 새 HTTP 회귀는 내장 mock을 쓰지 않는다 — mock은 `image/jpeg`를 415로 거부하므로, 이 테스트를 `startAppServerWithConfig`로 옮기면 마스킹에 도달하지 못하고 실패한다. 테스트는 외부 네트워크·DB 없이 돈다.
 - [러너 18:26] brief accepted — 채택 — 과제서의 근거(engine.go의 `format == "png" ||` 선행 조건과 service.go의 선언 MIME 그대로 대입)가 현재 HEAD와 정확히 일치
 - [러너 18:26] verify passed — 검증 3개 통과 (policy)
+
+## 비평 노트
+- 확인함: 두 신규 테스트를 HEAD 복사본에서 engine.go만 main으로 되돌려 실제 실패를 재현(원장에 `실패 재현:` 줄이 없었다) — 증상이 과제와 일치. 미확신 (2)는 해소(SupportedMIMEs는 config.go:155 하드코딩, env 오버라이드 없음 → jpg·format fallback 분기는 도달 불가하지만 무해). 미확신 (3)은 프로브로 측정.
+- 거절 사유 1건: README.md:17과 engine.go:500-501이 선언 MIME이 "파일 이름 확장자"까지 정한다고 하지만 MaskedFilename은 업로드 이름만 쓴다. 이름 `sample.png` + 선언 `image/jpeg` 업로드 → `masked_sample.png`에 JPEG 바이트(실측). 수리가 먼저 볼 파일: README.md:17, internal/masking/engine.go:498-502. 프로덕션 switch 로직은 옳으므로 문구만 고치면 된다.
+- 승인 쪽 우려(릴리즈 노트): 폭 65535px 초과 PNG를 image/jpeg로 선언하면 이제 `jpeg: image is too large to encode`로 실패한다(변경 전 PNG로 성공). ValidateImageDimensions는 총 5천만 픽셀만 보므로 70000x100이 검증을 통과한다. 조용한 손상은 아니다.
+- 못 본 것: Docker 빌드(Go 1.25.0), -race, 32비트/Windows, JPEG 재인코딩의 시각 품질.
+- 보안·법무 차단 없음: 인가·비밀값·삭제 경로 미접촉, 새 PII 수집 없음, 검은 박스는 인코딩 전에 픽셀을 덮으므로 손실 압축으로 복원 불가.
+- [러너 18:30] review rejected — 리뷰 거절: README.md:17 그리고 internal/masking/engine.go:500-501 — 둘 다 선언 MIME이 마스킹 결과 '파일 이름 확장자'까지 정한다고 주장하지만 코드는 그렇지 �
+- [러너 18:30] pr created — https://github.com/hkjang/pii-masker/pull/31

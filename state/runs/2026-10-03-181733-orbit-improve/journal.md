@@ -17,3 +17,14 @@
 - 다음 역할이 조심할 것: `internal/server/export_db_test.go` 는 `ORBIT_TEST_DATABASE_URL` 이 없으면 전부 SKIP 이다(CI 에 postgres 가 없으므로 CI 초록은 이 시험의 증거가 아니다). 이 파일은 `breakPeopleRowStream` 으로 `people` 테이블 DDL 을 바꾸므로 `t.Parallel()` 금지이고, 하위 시험 순서(씨앗 → 정상 경로 → 뷰 → 실패 경로)를 바꾸면 뷰가 자동 갱신 가능 뷰가 아니라 INSERT 가 깨진다. `failed_section` 은 추가 전용 필드이며 `complete===true` 를 보는 기존 소비자를 깨지 않는다.
 - [러너 18:26] brief accepted — 채택 — 지정한 자리(export.go 75~87 의 구조, `breakPeopleRowStream`·`seedNamedPerson`·`seedRelationship` 재사용, nil Vault 때문에 0행이어�
 - [러너 18:26] verify passed — 검증 7개 통과 (auto)
+
+## 비평 노트
+- 격리 postgres(55717)로 red→green 을 직접 재현했다: 고친 뒤 새 시험 3개 PASS, `export.go:86~87` 두 줄만 되돌리면 원장의 `실패 재현` 줄과 본문 접두사(`,"people":[`)까지 똑같이 FAIL. 정상 경로 하위 시험은 되돌린 코드에서도 PASS. DSN 준 `go test -race ./...`·`go vet`·`gofmt` 전부 깨끗하고 작업 트리는 원복해 뒀다.
+- 구현자가 미검증으로 남긴 섹션 2~4 실패 경로는 코드로 확인했다 — 루프 본문이 섹션마다 동일하고 분기가 `section.name` 만 참조해 비대칭이 없다(실측은 여전히 `people` 하나뿐). 범위 이탈·마이그레이션·되돌리기 어려운 변경 없음, revert 는 커밋 하나로 끝난다.
+- 보안: 경로는 `authenticate` 아래이고 네 질의 전부 `user_id=$1` 로만 긁으며 요청 식별자를 쓰지 않는다. 새 필드 `failed_section` 은 고정 네 값뿐 — 차단 사유 아님.
+- 승인이어도 남는 우려(법무): 부분 내보내기는 평문 개인정보를 일부 반출하면서 `data.export` 감사 기록을 남기지 않고, 새 시험이 `audits != 0` 을 실패로 못 박아 그것을 의도된 동작으로 고정했다(export_db_test.go:124~134). 앞으로 부분 반출도 감사하려면 이 단언을 함께 고쳐야 한다 — 다음 회차 후보.
+- 못 본 것: 웹 UI 실제 다운로드 동작, 쓰기 실패(클라이언트 단절)로 끊기는 부류(이 가드는 질의·복호화 실패만 구제한다), docs 의 `/personal/export` 설명(아예 없음).
+- [러너 18:29] review approved — 리뷰 승인 (risk=low)
+- [러너 18:29] pr created — https://github.com/hkjang/orbit/pull/18
+- [러너 18:32] ci passed — 검사 1개 모두 success
+- [러너 18:32] merge done — bc34c6d

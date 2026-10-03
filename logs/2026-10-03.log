@@ -1908,3 +1908,30 @@ reports: 32 day(s), 5 week(s), 2 month(s), 1865 run(s), 3734 usage row(s), 50 pr
 notify: 1 new alert(s)
 notify: commented on issue #1
 notify: toast shown
+[18:29:36] aidev synced: run(2026-10-03): ox-arena — guarded files, PR open https://github.com/hkjang/ox-arena/pull/2
+[18:29:50] orbit: review — 25 turns, 3m, $1.49, success
+[18:29:50] orbit: [review] approved — 리뷰 승인 (risk=low)
+branch 'auto/2026-10-03-1817' set up to track 'origin/auto/2026-10-03-1817'.
+[18:29:56] orbit: [pr] created — https://github.com/hkjang/orbit/pull/18
+[18:29:58] orbit: waiting for CI on bc34c6d (no-ci)
+[18:30:46] pii-masker: review — 27 turns, 3m, $1.39, success
+[18:30:46] pii-masker: [review] rejected — 리뷰 거절: README.md:17 그리고 internal/masking/engine.go:500-501 — 둘 다 선언 MIME이 마스킹 결과 '파일 이름 확장자'까지 정한다고 주장하지만 코드는 그렇지 않다. 다운로드 이름은 service.go:617의 document.MaskedFilename(input.Attachment.Name) → attachment.go:142-144로, 업로드된 파일 이름을 그대로 쓰고 MIME은 보지 않는다. 실측(HEAD 복사본에 프로브 테스트 투입): 이름 sample.png + 선언 image/jpeg + 실제 PNG 바이트 업로드 → output.file_name="masked_sample.png", output.mime_type="image/jpeg", 실제 바이트=jpeg. 즉 README가 '어긋나지 않습니다'라고 보장한 세 값 중 파일 이름 확장자는 여전히 어긋나며, 이 경로에서는 이번 변경이 어긋남을 새로 만든다(변경 전에는 이름 .png와 PNG 바이트가 일치했다). 수리는 README.md:17의 '·파일 이름 확장자' 절과 engine.go의 'it also picks the masked file name's extension' 문장을 떼거나 실제 동작대로 고치면 된다 — 프로덕션 switch 로직 자체는 옳다.
+branch 'auto/2026-10-03-1817' set up to track 'origin/auto/2026-10-03-1817'.
+[18:30:54] pii-masker: [pr] created — https://github.com/hkjang/pii-masker/pull/31
+https://github.com/hkjang/pii-masker/pull/31#issuecomment-5967793282
+evidence: /mnt/c/Users/USER/projects/aidev/state/runs/2026-10-03-181743-pii-masker-improve/evidence.json
+[18:32:22] orbit: [ci] passed — 검사 1개 모두 success
+[18:32:26] orbit: [merge] done — bc34c6d78e62175d2435b10da80d2f3b105eb0bc
+From https://github.com/hkjang/orbit
+ * branch            main       -> FETCH_HEAD
+   735c26b..a30bb84  main       -> origin/main
+Updating 735c26b..a30bb84
+Fast-forward
+ internal/server/export.go         |  11 ++-
+ internal/server/export_db_test.go | 150 ++++++++++++++++++++++++++++++++++++++
+ 2 files changed, 159 insertions(+), 2 deletions(-)
+ create mode 100644 internal/server/export_db_test.go
+Preparing worktree (detached HEAD a30bb84)
+HEAD is now at a30bb84 Merge pull request #18 from hkjang/auto/2026-10-03-1817
+reports: 32 day(s), 5 week(s), 2 month(s), 1866 run(s), 3737 usage row(s), 50 project page(s), 6 alert(s)
+notify: no new alerts
