@@ -10,3 +10,12 @@
 - 조심할 것: 빈 `재직상태` 는 지금 active 로 저장된다 — 오류로 만들면 조직만 고치는 흔한 파일이 전부 거절된다. 양식은 `active`, 내보낸 CSV 는 `재직` 이라 두 모양 다 통과해야 한다. 부분 성공 계약(틀린 행만 건너뛰기)을 전체 400 으로 바꾸지 말 것. findOrganization 의 사용자 문장이 함께 접히면 10-02 회차 동작이 사라진다.
 - 선택 항목 ③(upsertEmployee 의 409 → 400)은 `employee_conflict` 가 employees.go:198 한 곳뿐이고 테스트가 단정하지 않음을 확인해 안전하지만, 없어도 수용 기준은 다 선다.
 - [러너 01:22] scout done — 직원 가져오기가 재직상태 값을 검증하고, 저장 실패 사유에 DB 원문을 보이지 않게 한다 (가치 3 / 위험 1 /
+
+## 구현 노트
+- 무엇을 왜: `재직상태` 오타 한 칸이 `employees.status` 의 CHECK 를 쳐 pgx 원문(`... "employees_status_check" (SQLSTATE 23514)`)이 실패 행 사유로 화면에 떴다. `normalizeEmployeeStatus` 순수 함수 + `inputError` 타입으로 사용자 문장만 통과시킨다. 프로덕션 1파일(employees.go), 커밋 e356ab6.
+- 과제서와 다르게 한 것: 정규화를 `importEmployees` 안이 아니라 두 경로가 함께 쓰는 `saveEmployee` 에 두었다. 같은 값을 두 입력 경로가 다르게 읽는 것을 애초에 막고, 과제서가 선택으로 남긴 ③(단건 저장의 409 고정 문장)이 같은 자리로 함께 닫힌다. `employee_conflict` 가 한 곳뿐이고 테스트·문서가 409 를 단정하지 않음을 grep 으로 직접 재확인한 뒤 400 으로 바꿨다 — **단건 저장의 응답 코드가 바뀐 유일한 외부 계약 변경이니 비평가는 여기를 먼저 볼 것.**
+- 확신 없는 곳: ① 전체 E2E 실패 2건(mcp-oauth·tracking)을 **변경 전 이미지로 다시 돌려 대조하지는 않았다** — 이전 회차 기록과 같은 2건·같은 환경 원인(E2E_COLLECTOR_HOST 기본값 127.0.0.1)이라고 판단했다. ② UI 가 `POST /employees` 에 세 코드 외의 status 를 보내는 경로가 있는지는 코드로 다 훑지 않았다. 있으면 그 화면이 이제 400 을 받는다(E2E 18건·vitest 159건은 녹색).
+- 일부러 하지 않은 것: `sync.go` 의 status 검증(계약이 다르다 — 한 행이 틀리면 트랜잭션 전체 롤백), `migrations.sql` 의 CHECK(검증은 입력단에서), 퇴직자 좌석 자동 해제(차선 후보로 남김), PDF 재생성(09-17 이후 관례).
+- 다음 역할이 조심할 것: `employees_test.go` 는 순수 함수라 DB 없이 돈다. E2E 는 시드 직원 E007·E008 을 실제로 바꾸고 `keepingEmployee` 를 겹쳐 되돌린다. **seed.mjs 는 도면이 이미 있으면 `repair()` 로 빠져 직원을 다시 POST 하지 않는다** — 손으로 curl 을 쏴 시드 직원을 바꿔 두면 재시드로 복구되지 않고 다음 spec 이 엉뚱한 이유로 깨진다(이번에 employee-filter 의 '10행' 단정이 그렇게 한 번 깨졌고, DB 컨테이너를 새로 만들어 18건 전부 녹색을 확인했다). 손 검증 뒤에는 DB 를 새로 만들 것.
+- [러너 01:35] brief accepted — 채택 — 과제서가 지목한 다섯 자리(employees.go:229-248 의 인라인 분기, 244 의 `err.Error()`, migrations.sql:34 의 CHECK, sync.go:121-127 �
+- [러너 01:35] verify passed — 검증 7개 통과 (auto)

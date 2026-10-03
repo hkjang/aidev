@@ -18,3 +18,15 @@
 - 다음 역할 주의: DB 불필요, 순수 소스·embed 불변식이다 — **실제 PostgreSQL 이 그 값을 받는지는 증명하지 않는다.** `migrations/` 나 `parameters.go` 의 enum 을 건드리면 이 테스트가 짚어 준다. 개수 가드 2개(`knownEnumQueries = 26`·`knownCheckConstraints = 42`)는 정당하게 늘어날 때 함께 올려야 한다. 최종 `git diff --stat` 빈 출력, 신규 1파일만.
 - [러너 01:29] brief accepted — 채택 — 과제서의 실측이 거의 전부 코드와 일치했다: CHECK **42개/12파일**과 컬럼별 분포(`status` 11·`severity` 3·`voice_type`·`r
 - [러너 01:29] verify passed — 검증 10개 통과 (auto)
+
+## 비평 노트
+- 확인한 것: 섭동 red 6회 직접 재현(migrations CHECK 값 제거→:307 / parameters.go 값 추가→:307 / 한쪽 표만 변경→:295 모호 / CHECK 통째 삭제→:271 개수가드 41<42 / forecast_category 에 CHECK 추가→:323 제외 드리프트 / CHECK 없는 신규 enum 파라미터→:301). 모두 git checkout -- 로 복원, 최종 diff 는 신규 테스트 1파일 331줄·프로덕션 0줄. go build·vet·test ./... 전부 통과, gofmt 공백. 교체 의미론 실측(provider=014 6값, event_type=016 10값)과 제외 5개 근거 전부 소스 대조.
+- 못 본 것: npm typecheck/test/build 와 make test(프런트 0줄 변경·npm ci 네트워크). 실제 PostgreSQL 이 그 값을 받는지는 이 테스트도 나도 증명하지 않는다 — 순수 소스·embed 불변식이다.
+- 승인이어도 남는 우려: enum_contract_test.go:314-316 주석이 "오늘 모호한 것은 status·severity 뿐" 이라 적었으나 resource 도 모호하다(009:10 5값 vs 009:27 4값) — resource 는 공표 파라미터가 아니어서 판정에는 영향 없는 주석 오류. effectiveCheckValues:246 의 found[0] 은 map 순회 순서를 타서 동일 집합 다중 표일 때 실패 메시지의 file:line 만 비결정적(판정은 결정적). CHECK 를 정당하게 **제거**하는 다음 변경은 knownCheckConstraints=42 를 함께 내려야 하고, 그때 실패 문구는 "순회가 깨졌다" 로 오해를 유도한다.
+- 보안·법무: 차단 사유 없음. 신규 경로·인가 변경·비밀값·개인정보·외부 의존성·라이선스 복제 전무, 읽는 대상은 저장소 내 migrations embed 와 api.OpenAPI() 뿐.
+- 판정: approve / risk low / blocking 없음.
+- [러너 01:33] review approved — 리뷰 승인 (risk=low)
+- [러너 01:33] pr created — https://github.com/hkjang/relio/pull/42
+- [러너 01:37] ci passed — 검사 2개 모두 success
+- [러너 01:37] merge done — 37fd5e4
+- [러너 01:37] release skipped — 자율화 단계 low-risk — 릴리즈는 사람이
