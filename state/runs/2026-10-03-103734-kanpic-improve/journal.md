@@ -19,3 +19,16 @@
 - 다음 역할이 조심할 것: 새 테스트 둘 다 DB·네트워크 없이 돈다(`go test ./internal/automation`). 오류 문구를 또 손대면 `TestScheduleRejectsUnknownAliasesWithSupportedList` 가 "five fields" 부재와 지원 별칭 7개 전부 포함을 단언하므로 목록을 `cronAliases` 에서 만드는 성질을 깨지 말 것. 웹·DB 통합·브라우저 E2E 는 Go 파서 안쪽 변경이라 돌리지 않았다.
 - [러너 10:48] brief accepted — 채택 — 과제서의 재현(`@midnight`·`@annually`·`@reboot` 이 모두 "five fields" 로 거절)이 지금 코드와 정확히 일치했고, 건드릴 �
 - [러너 10:49] verify passed — 검증 7개 통과 (auto)
+
+## 비평 노트
+- 확인: `main` 의 schedule.go 로 되돌려 새 테스트 둘을 돌리니 `@midnight`·`@annually`·`@MIDNIGHT`·공백패딩 4개와 문구 테스트가 실제로 빨강이었다(원장 재현과 일치). `go build ./...`·`go vet ./...`·`go test ./...` 전부 통과, 작업 트리 깨끗. 별칭 7개 모두 crontab(5) 값과 일치하고, 저장된 Cron 은 service.go:910 에서 이미 5필드로 정규화되므로 새 `@` 분기가 기존 행을 깨뜨리지 않는다. 웹은 cron 을 클라이언트 검증 없이 그대로 POST 하므로 UI 쪽 불일치도 없다.
+- **구현자가 못 본 PDF 를 검증했다**: `pymupdf`(설치돼 있음)로 텍스트가 멀쩡히 추출된다 — 다음 회차는 바이트 grep 대신 이것을 쓸 것. 신·구 55쪽 동일, 공백 정규화 후 내용 차이는 **새 문장 하나뿐**이고 `@midnight`·`@annually`·`@reboot` 가 지면에 들어갔다. `Tj`/`Td` 가 6.5배 줄어든 것은 글자마다 Td 를 찍던 방식이 런 단위로 묶인 렌더러 차이이며(`BT` 는 6863→6868 로 사실상 동일) 내용 유실이 아니다 — 17KB 감소의 정체다.
+- 남는 우려(차단 아님, 승인): `internal/httpapi/mcp.go:1840` 의 MCP 도구 설명이 아직 `@hourly/@daily/@weekly/@monthly/@yearly` 5개만 열거해 새 별칭 2개가 빠졌다. 동작은 멀쩡하고 과소 안내일 뿐이지만, MCP 클라이언트(AI)가 목록을 읽고 식을 고르는 유일한 자리라 이번 변경의 "발견 가능성" 목적이 그 경로에서만 닿지 않는다. 다음 회차 한 줄 과제로 적합.
+- 못 본 것: 웹 단위테스트·DB 통합·브라우저 E2E(Go 파서 내부 변경이라 영향 없다고 판단해 생략), PDF 를 눈으로 렌더한 것은 아니다(텍스트 레이어만 확인).
+- 보안·법무: 인증·권한·비밀값·개인정보·의존성 변화 없음. 오류 문구가 사용자 입력을 `%q` 로 400 본문에 되돌려주지만 바로 위 `unknown schedule timezone %q` 와 같은 기존 패턴이라 새 공격 경로가 아니다.
+- [러너 10:53] review approved — 리뷰 승인 (risk=low)
+- [러너 10:53] pr created — https://github.com/hkjang/kanpic/pull/39
+- [러너 10:59] ci passed — 검사 2개 모두 success
+- [러너 11:00] merge done — 1d42074
+- [러너 11:11] release published — v0.260.0
+- [러너 11:13] assets verified — v0.260.0 자산 2개 (이전 v0.259.0: 2)

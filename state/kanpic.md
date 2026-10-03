@@ -300,3 +300,4 @@
 - 보류 아이디어: 자동화 일정 다음 실행 시각 계약을 월말·시간대 표로 못 박는다(`0 0 31 * *`@Asia/Seoul 의 월 건너뜀·`0 0 29 2 *` 4년 주기·`30 1 * * *`@America/New_York 가을 DST 1회 실행 — 지금 전부 올바르나 테스트가 없다, 테스트 전용이라 no-change 위험) / cron 필드가 `+5`·`-0` 같은 부호 붙은 수를 받아들인다(`cronValue` 의 `strconv.Atoi`, 기존 저장된 일정을 깨뜨릴 수 있어 단독 과제로만) / 관리자 가이드 `ADMIN_GUIDE.md:785` 의 외부 호출 오류 코드를 실제 `#N/A` 와 맞춘다(열 회차 연속 보류, PDF 재생성 동반, 이번에도 소스 재확인 안 함) / `SendNow` 의 `record` 만 요청 컨텍스트를 쓴다 — `Notify` 와 달리 `WithoutCancel` 이 아니다(실제 유실 재현에 Postgres 필요) / `compareLists.looksLikeIdentifier` 는 `007.5` 까지 번호로 보아 파일·클립보드 두 문과 갈린다(키 비교 계약 결정 전 변경 금지)
 - 과제서: 채택 — 과제서의 재현(`@midnight`·`@annually`·`@reboot` 이 모두 "five fields" 로 거절)이 지금 코드와 정확히 일치했고, 건드릴 파일 4개(프로덕션 1)·정렬한 별칭 목록·`ErrInvalid` 래핑 유지·`matchesDay`/DST/`strconv.Atoi` 손대지 않기·USER_GUIDE 하나만 PDF 재생성을 모두 그대로 따랐다.
 
+- 릴리즈: v0.260.0 (2026-10-03, run 2026-10-03-103734-kanpic-improve)
