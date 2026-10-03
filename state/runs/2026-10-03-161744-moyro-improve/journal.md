@@ -21,3 +21,5 @@
 - [러너 16:40] pr created — https://github.com/hkjang/moyro/pull/32
 - [러너 16:53] ci passed — 검사 3개 모두 success
 - [러너 16:53] merge done — 76c6c95
+- [러너 17:14] release published — v0.2.44
+- [러너 17:32] assets verified — v0.2.44 자산 1개 (이전 v0.2.43: 1)
