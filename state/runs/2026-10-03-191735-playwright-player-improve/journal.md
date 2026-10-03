@@ -4,3 +4,6 @@
 - [러너 19:17] autonomy release — 
 - [러너 19:27] scout timeout — 단계 제한 시간 초과
 - [러너 19:27] scout done — 브라우저 없는 체크아웃에서 스모크 2건이 거짓 FAIL 로 뜨는 것 수정 (가치 5 / 위험 1 / 작업량 S)
+- [러너 20:09] improve timeout — 단계 제한 시간 초과
+- [러너 20:09] brief unstated — 구현자가 과제서 판정을 적지 않음
+- [러너 20:09] improve error — error: agent produced no result (TIMEOUT )
