@@ -19,3 +19,14 @@
 - 다음 역할이 조심할 것: `employees_test.go` 는 순수 함수라 DB 없이 돈다. E2E 는 시드 직원 E007·E008 을 실제로 바꾸고 `keepingEmployee` 를 겹쳐 되돌린다. **seed.mjs 는 도면이 이미 있으면 `repair()` 로 빠져 직원을 다시 POST 하지 않는다** — 손으로 curl 을 쏴 시드 직원을 바꿔 두면 재시드로 복구되지 않고 다음 spec 이 엉뚱한 이유로 깨진다(이번에 employee-filter 의 '10행' 단정이 그렇게 한 번 깨졌고, DB 컨테이너를 새로 만들어 18건 전부 녹색을 확인했다). 손 검증 뒤에는 DB 를 새로 만들 것.
 - [러너 01:35] brief accepted — 채택 — 과제서가 지목한 다섯 자리(employees.go:229-248 의 인라인 분기, 244 의 `err.Error()`, migrations.sql:34 의 CHECK, sync.go:121-127 �
 - [러너 01:35] verify passed — 검증 7개 통과 (auto)
+
+## 비평 노트
+- 판정 approve(위험 low, 차단 없음). 구현자가 의심한 두 자리를 직접 봤다 — ② POST /api/v1/employees 를 부르는 UI 경로는 없다(web/src 는 GET 과 /employees/import 뿐, POST 호출자는 seed.mjs·seat-detail·employee-import spec 이고 모두 API 가 준 코드를 되돌려 보낸다). openapi.go:18·API_AND_MCP.md 가 상태코드를 안 적어 409→400 문서 불일치도 없다.
+- 정규화는 좁히지 않고 넓히기만 한다(기존 통과 7가지 전부 유지 + 공백 허용). 새 E2E 가 조직 열 없는 CSV 로 E007·E008 소속을 지우지만 keepingEmployee 가 organizationId(types.go:34 가 실제로 돌려준다)로 복구해 employee-filter 전제를 오염시키지 않는다. userMessage 의 고정 문장은 seats.go:399-407 assignmentFailure 와 같은 관례다.
+- 내가 돌린 것: gofmt·go vet·go test -run TestNormalizeEmployeeStatus -v(2 PASS). 못 본 것: 실서버 E2E 전체와 vitest/tsc(서버·DB 미기동) — 원장의 실패 재현 줄(변경 전 curl 의 SQLSTATE 23514 원문, 새 spec 빨간 출력)이 증상과 맞아 그것으로 갈음했다.
+- 승인이어도 남는 우려(릴리즈 노트·다음 회차): ① POST /employees 가 잘못된 재직상태·못 찾은 조직코드에 409 employee_conflict 대신 400 invalid_employee 를 준다 — 유일한 외부 계약 변경. ② 재직상태 열이 없는 파일은 여전히 파일에 적힌 전원을 active 로 되돌린다(문서에는 사실대로 적힘, 다음 회차 후보). ③ sync.go:120-126 은 아직 trim·한국어 라벨을 안 받는다. ④ seats.go:279 가 같은 종류로 err.Error() 를 아직 싣는다.
+- [러너 01:40] review approved — 리뷰 승인 (risk=low)
+- [러너 01:40] pr created — https://github.com/hkjang/seaton/pull/42
+- [러너 01:45] ci passed — 검사 2개 모두 success
+- [러너 01:45] merge done — e356ab6
+- [러너 01:54] release ci-blocked — 릴리즈 커밋 CI: failed — 성공이 아닌 검사: deploy=failure · 실패한 검사: ? 잡: deploy  (태그 보류)
