@@ -203,3 +203,4 @@
 - 보류 아이디어: POP3 `retrBody` 프레이밍 상한 — `.` 없는 RETR 이 수집 워커를 붙잡는다. PR #22 와 같은 함수라 사람 반려 여부 확인이 먼저 (가치 4/위험 3/M); `Makefile: frontend-test` 가 의존성 설치를 보장하게(`npm ci` 선행 또는 `node_modules` 가드) — 깨끗한 워크트리에서 성립하지 않는다 (가치 3/위험 1/S); POP3 명령 대기 중 context 취소 전파(List/UIDL/Retrieve/Top/Delete/Quit 전부 `ctx` 를 받고도 쓰지 않는다) (가치 3/위험 3/M); `runSync`:259 의 `sess.List` 실패를 조용히 무시하는 것 — 이번 회차 픽스처가 그 경로를 실제로 지난다(모든 Size 가 0 이 되어 사전 oversize 선별이 꺼지지만 아무 진단도 남지 않는다) (가치 3/위험 2/S); README govulncheck 로컬 예시를 CI 핀(v1.6.0)에 정렬 (가치 2/위험 1/S).
 - 과제서: 기각 — 이번 회차에는 정찰 과제서 없이 프로필과 보류 목록만 있었다. 보류 1·2순위(POP3 `retrBody`/MaxMessageBytes)는 PR #22 의 사람 반려 여부가 여전히 미확인(`gh` 미인증)이라 규칙대로 착수하지 않았고, 11회 연속 차선이던 `max_message_bytes` 문서화 과제를 코드로 확인하다 그 규약이 애초에 구현에서 깨져 있는 것을 발견해 그쪽을 골랐다(문서 한 줄은 함께 넣었다).
 
+- 릴리즈: v0.25.4 (2026-10-03, run 2026-10-03-191740-postra-improve)
