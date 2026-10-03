@@ -1,0 +1,36 @@
+# playwright-player 프로필 (2026-10-03)
+
+- 목적: Playwright 를 상태 유지형 REST API + Streamable MCP 로 감싸, 오프라인망에 `docker load` 로 반입해 쓰는 브라우저 자동화 서버. 산출물은 git 태그가 아니라 **동작이 검증된 도커 이미지**다.
+- 스택: Node.js (`engines: >=22`, ESM, `"type": "module"`), express 4, playwright + @playwright/test 1.58.2, swagger-ui-dist. DB 없음 — `data/` 아래 파일시스템 영속화(runs, artifacts, storage-states, environments, datasets, schedules). 프런트는 `public/` 의 정적 HTML/JS.
+- 구조:
+  - `server.js` — **11,581행 단일 파일**이 API·MCP·실행 큐·녹화·워크플로 컴파일러·권한까지 전부 담는다. 모듈 분리 없음.
+  - `public/` — 내장 페이지(`/`, `/playground`, `/runs`, `/demo/test-page`, `/docs`)와 `/ui/*` 자산. 플레이스홀더 치환 방식(`{{...}}`).
+  - `tools/smoke-test.mjs` — **4,205행 단일 E2E 스모크 스위트**. 유일한 자동 테스트. 스크래치 포트·스크래치 디렉터리로 서버를 띄워 REST·MCP·실제 브라우저 세션을 모두 때린다.
+  - `tools/offline-load-run.{sh,ps1}` — 오프라인 반입 스크립트.
+  - `scripts/` — API 로 실행되는 Playwright spec 샘플 9개(`smoke.spec.js`, `chat-offline-workspace.spec.js` 등). 형제 모듈 import 가 있다(`helpers.js`).
+  - `docs/` — `RELEASE_CHECKLIST.md`(정본), `guides/` 한·영 쌍, GitHub Pages 용 `index.html`.
+  - 루트에 한국어 보고서 `*_KO.md` 다수 + 66KB `README.md`.
+- 빌드·테스트:
+  - `npm run check` → `node --check server.js`. 의존성 없이 돈다. 빠르다.
+  - `npm test` → `node tools/smoke-test.mjs`. **느리다**(실제 브라우저 세션·큐 대기 포함, 내부 타임아웃이 180초 단위). 브라우저 없으면 다수 SKIP.
+  - 릴리즈 검증: `SMOKE_REQUIRE_BROWSER=1 npm test` → 브라우저 미설치를 FAIL 로 승격.
+  - 브라우저 필요: `npx playwright install chromium` (대용량 다운로드).
+  - `docker build` → `docker run` 으로 `docs/RELEASE_CHECKLIST.md` 3절 표 전체를 손으로 확인. 생략 금지가 문서에 명시돼 있다.
+- 관례: 커밋 메시지는 **영어 한 줄, 명령형 현재형, 결과 지향**("Record scenarios from the browser, with verified locators"). 설정은 전부 **환경변수**(PORT, API_TOKEN, SCRIPTS_DIR, RUNS_DIR, URL_ALLOWLIST, LLM_BASE_URL, MAX_CONCURRENT_RUNS …). DB 마이그레이션 없음. 문서·보고서는 한국어, 가이드만 `-ko`/`-en` 쌍. `.github/workflows` **없음** — CI 파이프라인이 존재하지 않고 검증은 전부 로컬 명령이다.
+- 위험 구역:
+  - `principals.json` 기반 역할·범위 권한, 승인 게이트(`decidedByVerified`), MCP `tools/list` 필터링 — 깨지면 `/mcp` 가 권한 우회로가 된다. 릴리즈 체크리스트가 각각 별도 항목으로 확인한다.
+  - `secrets/` 와 `{{secret.NAME}}` 스크러빙 — 로그·감사에 평문이 남으면 이미지를 받은 모든 곳에 유출. 식별자만 넘기고 스크럽 이전 원문을 넘기지 말 것.
+  - 도커 entrypoint 의 권한 축소(비root) + 마운트된 호스트 `scripts/` 소유권 — v0.3.0·v0.4.0·v0.5.1·v0.6.0 이 여기서 깨져 나갔다.
+  - `URL_ALLOWLIST` 는 세션과 스크립트 실행이 **서로 다른 메커니즘**을 쓴다. 한쪽만 고치면 안 된다.
+- 자주 깨지는 곳:
+  - 볼륨 마운트 없이 띄우면 통과하지만 마운트하면 깨지는 부류(릴리즈 2회 유출).
+  - 세션 생성 경로 — 스크립트 실행만 확인하면 놓친다(릴리즈 2회 유출).
+  - 버전 보고 불일치(v0.13.0 이 0.12.0 으로 보고) → 이제 `package.json` 에서 읽는다.
+  - 스크립트 스냅샷이 단일 파일만 복사해 형제 모듈 import 하는 spec 9개 중 7개가 API 실행 불가였던 적이 있다.
+  - 녹화(`startRecording`) 의 중복 제거가 `step.value` 만 비교해 `selectOption`(`step.values`)·`press`(`step.key`) 를 삼킨다 — **미수정, 보류 아이디어로 남아 있음**.
+- 검증 함정:
+  - **CI 가 없다.** "워크플로가 실패했다" 는 GitHub Actions 가 아니라 자율 러너의 릴리즈 단계를 뜻한다.
+  - **새 워크트리에 `node_modules` 가 없다.** `npm test` 는 `Cannot find module 'swagger-ui-dist/package.json'` 로 즉사하지만 harness 는 그것을 모르고 **56초**를 폴링한 뒤 `server did not become healthy` 만 남긴다(2026-10-03 실측). `npm install` 은 playwright 포함이라 수 분 걸린다 — 회차 시간 예산을 먼저 떼어 둘 것.
+  - 이 환경의 node 는 **v20.19.2** 인데 `engines` 는 `>=22` 다. node 20 에서 전체 suite 가 초록인지는 **미확인**.
+  - 브라우저 없는 체크아웃에서는 browser-dependent 검사가 SKIP 된다. 일부 지점은 그룹 SKIP 과 검사 SKIP 을 **두 줄로** 찍어 skipped 집계가 부풀려진다(`tools/smoke-test.mjs:1313/1546/1834`).
+  - 스모크 내부 대기가 길다: `waitForRuns` 180초, `waitForHealth` 60초, 녹화 검사 25초. 실패 시 벽시계가 빠르게 쌓인다.

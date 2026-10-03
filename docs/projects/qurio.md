@@ -1,7 +1,7 @@
 ---
 title: "qurio — 자율 개선 이력"
 description: "qurio: 자율 개선 회차 28회, 릴리즈 3건. 최근 릴리즈 v1.4.10 (자산 1개)."
-last_modified_at: 2026-10-03 20:51:45 +0900
+last_modified_at: 2026-10-03 21:54:27 +0900
 ---
 {% raw %}
 <script type="application/ld+json">
@@ -18,7 +18,7 @@ last_modified_at: 2026-10-03 20:51:45 +0900
   "name": "hkjang",
   "url": "https://github.com/hkjang"
  },
- "dateModified": "2026-10-03T20:51:45+09:00",
+ "dateModified": "2026-10-03T21:54:27+09:00",
  "version": "1.4.10"
 }
 </script>
@@ -35,6 +35,7 @@ last_modified_at: 2026-10-03 20:51:45 +0900
 <dt>저장소</dt><dd><a href="https://github.com/hkjang/qurio">https://github.com/hkjang/qurio</a></dd>
 <dt>마지막 회차</dt><dd>2026-10-03 20:47 KST — <span class="pill pill-other">• 기타</span> verify failed: 실패한 검증: cd web &amp;&amp; npm test --silent (exit 1)</dd>
 <dt>최근 릴리즈</dt><dd><a href="https://github.com/hkjang/qurio/releases/tag/v1.4.10">v1.4.10</a> — released · 자산 1개 (이전 v1.4.7: 1개) <a href="https://github.com/hkjang/qurio/releases">전체 릴리즈 →</a></dd>
+<dt>수정 과제</dt><dd>⚠️ 오류 대응(자동 적재): 마지막 회차가 &#x27;verify-failed&#x27; 로 끝났습니다. verify failed: 실패한 검증: cd web &amp;&amp; npm test --silent (exit 1)</dd>
 </dl>
 
 ## 회차 이력
