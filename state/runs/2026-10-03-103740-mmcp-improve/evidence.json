@@ -1,0 +1,183 @@
+{
+  "run_id": "2026-10-03-103740-mmcp-improve",
+  "generated": "2026-10-03T10:49:25+09:00",
+  "run": {
+    "run_id": "2026-10-03-103740-mmcp-improve",
+    "project": "mmcp",
+    "kind": "improve",
+    "started": "2026-10-03T10:37:40+09:00",
+    "model": "claude-opus-5",
+    "policy_version": "4a9e91ac7",
+    "prompts_hash": "ce085c79e18002e2",
+    "runner_version": "1bd5f0cd4",
+    "arm": "no-journal",
+    "experiment": "roles-2026-09",
+    "finished": "2026-10-03T10:49:25+09:00",
+    "outcome": "verify-failed"
+  },
+  "record": {
+    "ts": "2026-10-03T10:49:25+09:00",
+    "date": "2026-10-03",
+    "project": "mmcp",
+    "result": "verify failed: 실패한 검증: cd web && npm test --silent (exit 1)",
+    "outcome": "verify-failed",
+    "run_id": "2026-10-03-103740-mmcp-improve",
+    "base_sha": "b782c5faa92626eef8bb6fc854c7ffb106b5a817",
+    "head_sha": "f8f7aab2cfabbf0e05ff6fbf2f79f59258dcaa37",
+    "pr": "",
+    "stages": {
+      "base": {
+        "state": "pinned",
+        "reason": "main@b782c5f",
+        "at": "2026-10-03T10:37:44+09:00"
+      },
+      "autonomy": {
+        "state": "release",
+        "reason": "",
+        "at": "2026-10-03T10:37:44+09:00"
+      },
+      "scout": {
+        "state": "done",
+        "reason": "`internal/logbuf` 에 첫 테스트 — 링 버퍼 래핑·Snapshot 순서·Subscribe 해제 계약·slog.Handler 배선 (가치 3 / 위험 ",
+        "at": "2026-10-03T10:41:11+09:00"
+      },
+      "brief": {
+        "state": "accepted",
+        "reason": "채택 — 과제서의 근거가 현재 코드와 정확히 일치했다(`[no test files]`, `WithGroup`/`logger.With` 프로덕션 호출처 0건, `admin_api.g",
+        "at": "2026-10-03T10:49:14+09:00"
+      },
+      "verify": {
+        "state": "failed",
+        "reason": "실패한 검증: cd web && npm test --silent (exit 1)",
+        "at": "2026-10-03T10:49:24+09:00"
+      }
+    },
+    "campaign": "",
+    "autonomy": "release",
+    "arm": "no-journal",
+    "experiment": "roles-2026-09",
+    "engine": "claude",
+    "files": 1,
+    "additions": 419,
+    "deletions": 0,
+    "tests": 1,
+    "title": "test: cover internal/logbuf ring buffer, subscriptions, and handler wiring"
+  },
+  "stages": {
+    "base": {
+      "state": "pinned",
+      "reason": "main@b782c5f",
+      "at": "2026-10-03T10:37:44+09:00"
+    },
+    "autonomy": {
+      "state": "release",
+      "reason": "",
+      "at": "2026-10-03T10:37:44+09:00"
+    },
+    "scout": {
+      "state": "done",
+      "reason": "`internal/logbuf` 에 첫 테스트 — 링 버퍼 래핑·Snapshot 순서·Subscribe 해제 계약·slog.Handler 배선 (가치 3 / 위험 ",
+      "at": "2026-10-03T10:41:11+09:00"
+    },
+    "brief": {
+      "state": "accepted",
+      "reason": "채택 — 과제서의 근거가 현재 코드와 정확히 일치했다(`[no test files]`, `WithGroup`/`logger.With` 프로덕션 호출처 0건, `admin_api.g",
+      "at": "2026-10-03T10:49:14+09:00"
+    },
+    "verify": {
+      "state": "failed",
+      "reason": "실패한 검증: cd web && npm test --silent (exit 1)",
+      "at": "2026-10-03T10:49:24+09:00"
+    }
+  },
+  "provenance": {
+    "model": "claude-opus-5",
+    "policy_version": "4a9e91ac7",
+    "prompts_hash": "ce085c79e18002e2",
+    "runner_version": "1bd5f0cd4",
+    "base_sha": "b782c5faa92626eef8bb6fc854c7ffb106b5a817",
+    "head_sha": "f8f7aab2cfabbf0e05ff6fbf2f79f59258dcaa37",
+    "pr": ""
+  },
+  "verification": {
+    "runner": {
+      "source": "auto",
+      "commands": [
+        {
+          "cmd": "go build ./...",
+          "exit": 0,
+          "seconds": 1
+        },
+        {
+          "cmd": "go vet ./...",
+          "exit": 0,
+          "seconds": 0
+        },
+        {
+          "cmd": "go test ./...",
+          "exit": 0,
+          "seconds": 1
+        },
+        {
+          "cmd": "cd web && [ -d node_modules ] || npm ci --no-audit --no-fund",
+          "exit": 0,
+          "seconds": 7
+        },
+        {
+          "cmd": "cd web && npm test --silent",
+          "exit": 1,
+          "seconds": 0
+        }
+      ]
+    },
+    "runner_gate": {
+      "ok": false,
+      "state": "verify-failed",
+      "reason": "실패한 검증: cd web && npm test --silent (exit 1)"
+    },
+    "after_rebase": null,
+    "review": null,
+    "ci_gate": null
+  },
+  "release": {
+    "result": null,
+    "assets_sha256": []
+  },
+  "approval": null,
+  "usage": [
+    {
+      "ts": "2026-10-03T10:41:10+09:00",
+      "date": "2026-10-03",
+      "project": "mmcp",
+      "phase": "scout",
+      "run_id": "2026-10-03-103740-mmcp-improve",
+      "campaign": "",
+      "subtype": "success",
+      "engine": "claude",
+      "duration_ms": 210084,
+      "num_turns": 18,
+      "cost_usd": 1.144209,
+      "input_tokens": 26,
+      "output_tokens": 13354,
+      "cache_read": 623418,
+      "cache_create": 49852
+    },
+    {
+      "ts": "2026-10-03T10:49:14+09:00",
+      "date": "2026-10-03",
+      "project": "mmcp",
+      "phase": "improve",
+      "run_id": "2026-10-03-103740-mmcp-improve",
+      "campaign": "",
+      "subtype": "success",
+      "engine": "claude",
+      "duration_ms": 495058,
+      "num_turns": 29,
+      "cost_usd": 2.5554635,
+      "input_tokens": 52,
+      "output_tokens": 37039,
+      "cache_read": 1716317,
+      "cache_create": 77107
+    }
+  ]
+}

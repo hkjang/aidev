@@ -1,0 +1,161 @@
+{
+  "run_id": "2026-10-03-103729-jupiq-improve",
+  "generated": "2026-10-03T10:47:41+09:00",
+  "run": {
+    "run_id": "2026-10-03-103729-jupiq-improve",
+    "project": "jupiq",
+    "kind": "improve",
+    "started": "2026-10-03T10:37:30+09:00",
+    "model": "claude-opus-5",
+    "policy_version": "4a9e91ac7",
+    "prompts_hash": "ce085c79e18002e2",
+    "runner_version": "1bd5f0cd4",
+    "arm": "no-scout",
+    "experiment": "roles-2026-09",
+    "finished": "2026-10-03T10:47:41+09:00",
+    "outcome": "verify-failed"
+  },
+  "record": {
+    "ts": "2026-10-03T10:47:41+09:00",
+    "date": "2026-10-03",
+    "project": "jupiq",
+    "result": "verify failed: 실패한 검증: npm run lint   # CI에서 가져옴 (exit 1)",
+    "outcome": "verify-failed",
+    "run_id": "2026-10-03-103729-jupiq-improve",
+    "base_sha": "92ff88c8ad078f2342f1d69e9b02d3e78a001958",
+    "head_sha": "1559a3e405fc72dd39d7a627e3a0ca60905ff2cd",
+    "pr": "",
+    "stages": {
+      "base": {
+        "state": "pinned",
+        "reason": "main@92ff88c",
+        "at": "2026-10-03T10:37:34+09:00"
+      },
+      "autonomy": {
+        "state": "release",
+        "reason": "",
+        "at": "2026-10-03T10:37:34+09:00"
+      },
+      "verify": {
+        "state": "failed",
+        "reason": "실패한 검증: npm run lint   # CI에서 가져옴 (exit 1)",
+        "at": "2026-10-03T10:47:40+09:00"
+      }
+    },
+    "campaign": "",
+    "autonomy": "release",
+    "arm": "no-scout",
+    "experiment": "roles-2026-09",
+    "engine": "claude",
+    "files": 2,
+    "additions": 77,
+    "deletions": 1,
+    "tests": 1,
+    "title": "fix: 진행 중인 시간대에 소비량 0 버킷을 쓰지 않는다"
+  },
+  "stages": {
+    "base": {
+      "state": "pinned",
+      "reason": "main@92ff88c",
+      "at": "2026-10-03T10:37:34+09:00"
+    },
+    "autonomy": {
+      "state": "release",
+      "reason": "",
+      "at": "2026-10-03T10:37:34+09:00"
+    },
+    "verify": {
+      "state": "failed",
+      "reason": "실패한 검증: npm run lint   # CI에서 가져옴 (exit 1)",
+      "at": "2026-10-03T10:47:40+09:00"
+    }
+  },
+  "provenance": {
+    "model": "claude-opus-5",
+    "policy_version": "4a9e91ac7",
+    "prompts_hash": "ce085c79e18002e2",
+    "runner_version": "1bd5f0cd4",
+    "base_sha": "92ff88c8ad078f2342f1d69e9b02d3e78a001958",
+    "head_sha": "1559a3e405fc72dd39d7a627e3a0ca60905ff2cd",
+    "pr": ""
+  },
+  "verification": {
+    "runner": {
+      "source": "auto",
+      "commands": [
+        {
+          "cmd": "go build ./...",
+          "exit": 0,
+          "seconds": 0
+        },
+        {
+          "cmd": "go vet ./...",
+          "exit": 0,
+          "seconds": 0
+        },
+        {
+          "cmd": "go test ./...",
+          "exit": 0,
+          "seconds": 1
+        },
+        {
+          "cmd": "cd web && [ -d node_modules ] || npm ci --no-audit --no-fund",
+          "exit": 0,
+          "seconds": 0
+        },
+        {
+          "cmd": "cd web && npm test --silent",
+          "exit": 0,
+          "seconds": 5
+        },
+        {
+          "cmd": "cd web && [ -d node_modules ] || npm ci --no-audit --no-fund",
+          "exit": 0,
+          "seconds": 0
+        },
+        {
+          "cmd": "cd web && npm run build --silent",
+          "exit": 0,
+          "seconds": 10
+        },
+        {
+          "cmd": "npm run lint   # CI에서 가져옴",
+          "exit": 1,
+          "seconds": 0
+        }
+      ]
+    },
+    "runner_gate": {
+      "ok": false,
+      "state": "verify-failed",
+      "reason": "실패한 검증: npm run lint   # CI에서 가져옴 (exit 1)"
+    },
+    "after_rebase": null,
+    "review": null,
+    "ci_gate": null
+  },
+  "release": {
+    "result": null,
+    "assets_sha256": []
+  },
+  "approval": null,
+  "usage": [
+    {
+      "ts": "2026-10-03T10:47:22+09:00",
+      "date": "2026-10-03",
+      "project": "jupiq",
+      "phase": "improve",
+      "run_id": "2026-10-03-103729-jupiq-improve",
+      "campaign": "",
+      "subtype": "success",
+      "engine": "claude",
+      "duration_ms": 603677,
+      "num_turns": 56,
+      "cost_usd": 4.452992499999999,
+      "input_tokens": 106,
+      "output_tokens": 33934,
+      "cache_read": 4906805,
+      "cache_create": 115071
+    }
+  ]
+}
