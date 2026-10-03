@@ -1,0 +1,282 @@
+{
+  "run_id": "2026-10-04-070309-AgentHub-improve",
+  "generated": "2026-10-04T07:29:01+09:00",
+  "run": {
+    "run_id": "2026-10-04-070309-AgentHub-improve",
+    "project": "AgentHub",
+    "kind": "improve",
+    "started": "2026-10-04T07:03:09+09:00",
+    "model": "claude-opus-5",
+    "policy_version": "4a9e91ac7",
+    "prompts_hash": "ce085c79e18002e2",
+    "runner_version": "1bd5f0cd4",
+    "arm": "baseline",
+    "experiment": "roles-2026-09",
+    "finished": "2026-10-04T07:29:00+09:00",
+    "outcome": "review-pending"
+  },
+  "record": {
+    "ts": "2026-10-04T07:29:00+09:00",
+    "date": "2026-10-04",
+    "project": "AgentHub",
+    "result": "review held, PR open https://github.com/hkjang/AgentHub/pull/41",
+    "outcome": "review-pending",
+    "run_id": "2026-10-04-070309-AgentHub-improve",
+    "base_sha": "a9ac80104b45b0d15887dbaf36b138407b914e19",
+    "head_sha": "cbbc4fb706fe21b14e59ea2e551cacf7b1ddb146",
+    "pr": "https://github.com/hkjang/AgentHub/pull/41",
+    "stages": {
+      "base": {
+        "state": "pinned",
+        "reason": "main@a9ac801",
+        "at": "2026-10-04T07:03:14+09:00"
+      },
+      "autonomy": {
+        "state": "release",
+        "reason": "",
+        "at": "2026-10-04T07:03:14+09:00"
+      },
+      "scout": {
+        "state": "done",
+        "reason": "붙여 넣은 추적 코드에서 읽어 낸 출처의 개수·합계 길이에 상한을 두어, 8KiB 스니펫 하나가 정책 헤더를 ",
+        "at": "2026-10-04T07:08:58+09:00"
+      },
+      "brief": {
+        "state": "accepted",
+        "reason": "채택 — ProviderCustom 분기의 무제한 출처, `MaxSnippetBytes` 가 유일한 상한인 점, 두 쓰기 경로의 공통 지점, `tracking_test.go:126` ",
+        "at": "2026-10-04T07:16:21+09:00"
+      },
+      "verify": {
+        "state": "passed",
+        "reason": "검증 5개 통과 (auto)",
+        "at": "2026-10-04T07:16:54+09:00"
+      },
+      "review": {
+        "state": "rejected",
+        "reason": "리뷰 거절: internal/tracking/tracking.go:94-105 주석이 \"이 두 상한이 묶는 최악의 경우\" 를 15921 바이트라고 단언하지만 코드는 그것을 강제하지 않는다. 상한은 룬으로 세고 예산은 바이트인데, 같은 주석이 \"주소를 한국어로 쓸 수 있으니 룬으로 센다\" 고 적어 둔 그 이유 때문에 한 룬이 3바이트가 된다. 직접 측정: 허용 목록 64개×64룬 + 스니펫 32개×32룬을 모두 한국어(U+AC00)로 채우면 Validate() 가 통과하고 pagePolicy() 가 33513 바이트를 쓴다(ASCII 동일 구성은 15921 로 구현자의 측정값과 일치하므로 측정 방식은 같다). 즉 이 두 상한만으로도 예산의 두 배를 넘고, 바로 다음 문장이 \"막아야 할 같은 크기\" 라고 지목한 제공자 주소 24339 바이트보다 크다. / internal/tracking/tracking.go:94-95 상수 1024 를 고른 근거 문장 자체가 틀렸다 — \"1024 runes ... holds that tripled at a little over three kilobytes\". 한국어 출처를 합계 상한까지 채운 스니펫 하나만으로 헤더가 5229 바이트(base ≈ 330)이므로 약 4.9KiB 이고, 3KiB 는 ASCII 일 때만 맞다. / internal/api/tracking_test.go:292-299, 358-417 새 테스트와 carried 주석이 \"the worst case the two of them can build together ... as much of the header as these limits account for\" 를 측정한다고 말하지만 ASCII 만 측정한다. 실제로 예산을 넘기는 구성(멀티바이트 주소)에서는 header > carried 단언이 결코 깨지지 않으므로, 테스트가 선언한 불변을 고정하지 못한다. 이전 회차가 거절당한 것과 같은 계열 — 코드가 지키지 않는 상한을 주석·테스트가 선언하는 자리 — 이며, 수리가 문장을 \"이 두 설정만\" 으로 좁혔지만 좁힌 문장도 여전히 거짓이다. 고치는 길은 셋 중 하나: 예산을 룬으로 말하기(바이트는 최대 3배라고 함께 적기), 테스트가 멀티바이트 최악의 경우를 측정·단언하기, 또는 합계 상한을 바이트로 두기.",
+        "at": "2026-10-04T07:28:54+09:00"
+      },
+      "repair": {
+        "state": "done",
+        "reason": "# 수리 요약 (시도 2)  - 비평가의 지적이 맞았다. 임시 probe 테스트로 직접 측정: `Settings{Enabled:true, Provider:matomo, MatomoURL:\"https://\"+8000×'a'+\".corp.example\", Matomo",
+        "at": "2026-10-04T07:24:31+09:00"
+      },
+      "pr": {
+        "state": "created",
+        "reason": "https://github.com/hkjang/AgentHub/pull/41",
+        "at": "2026-10-04T07:28:59+09:00"
+      }
+    },
+    "campaign": "",
+    "autonomy": "release",
+    "arm": "baseline",
+    "experiment": "roles-2026-09",
+    "engine": "claude",
+    "files": 3,
+    "additions": 267,
+    "deletions": 11,
+    "tests": 2,
+    "title": "docs: 헤더 예산 주석이 상한에 걸리지 않는 제공자 주소를 숨기지 않게 한다"
+  },
+  "stages": {
+    "base": {
+      "state": "pinned",
+      "reason": "main@a9ac801",
+      "at": "2026-10-04T07:03:14+09:00"
+    },
+    "autonomy": {
+      "state": "release",
+      "reason": "",
+      "at": "2026-10-04T07:03:14+09:00"
+    },
+    "scout": {
+      "state": "done",
+      "reason": "붙여 넣은 추적 코드에서 읽어 낸 출처의 개수·합계 길이에 상한을 두어, 8KiB 스니펫 하나가 정책 헤더를 ",
+      "at": "2026-10-04T07:08:58+09:00"
+    },
+    "brief": {
+      "state": "accepted",
+      "reason": "채택 — ProviderCustom 분기의 무제한 출처, `MaxSnippetBytes` 가 유일한 상한인 점, 두 쓰기 경로의 공통 지점, `tracking_test.go:126` ",
+      "at": "2026-10-04T07:16:21+09:00"
+    },
+    "verify": {
+      "state": "passed",
+      "reason": "검증 5개 통과 (auto)",
+      "at": "2026-10-04T07:16:54+09:00"
+    },
+    "review": {
+      "state": "rejected",
+      "reason": "리뷰 거절: internal/tracking/tracking.go:94-105 주석이 \"이 두 상한이 묶는 최악의 경우\" 를 15921 바이트라고 단언하지만 코드는 그것을 강제하지 않는다. 상한은 룬으로 세고 예산은 바이트인데, 같은 주석이 \"주소를 한국어로 쓸 수 있으니 룬으로 센다\" 고 적어 둔 그 이유 때문에 한 룬이 3바이트가 된다. 직접 측정: 허용 목록 64개×64룬 + 스니펫 32개×32룬을 모두 한국어(U+AC00)로 채우면 Validate() 가 통과하고 pagePolicy() 가 33513 바이트를 쓴다(ASCII 동일 구성은 15921 로 구현자의 측정값과 일치하므로 측정 방식은 같다). 즉 이 두 상한만으로도 예산의 두 배를 넘고, 바로 다음 문장이 \"막아야 할 같은 크기\" 라고 지목한 제공자 주소 24339 바이트보다 크다. / internal/tracking/tracking.go:94-95 상수 1024 를 고른 근거 문장 자체가 틀렸다 — \"1024 runes ... holds that tripled at a little over three kilobytes\". 한국어 출처를 합계 상한까지 채운 스니펫 하나만으로 헤더가 5229 바이트(base ≈ 330)이므로 약 4.9KiB 이고, 3KiB 는 ASCII 일 때만 맞다. / internal/api/tracking_test.go:292-299, 358-417 새 테스트와 carried 주석이 \"the worst case the two of them can build together ... as much of the header as these limits account for\" 를 측정한다고 말하지만 ASCII 만 측정한다. 실제로 예산을 넘기는 구성(멀티바이트 주소)에서는 header > carried 단언이 결코 깨지지 않으므로, 테스트가 선언한 불변을 고정하지 못한다. 이전 회차가 거절당한 것과 같은 계열 — 코드가 지키지 않는 상한을 주석·테스트가 선언하는 자리 — 이며, 수리가 문장을 \"이 두 설정만\" 으로 좁혔지만 좁힌 문장도 여전히 거짓이다. 고치는 길은 셋 중 하나: 예산을 룬으로 말하기(바이트는 최대 3배라고 함께 적기), 테스트가 멀티바이트 최악의 경우를 측정·단언하기, 또는 합계 상한을 바이트로 두기.",
+      "at": "2026-10-04T07:28:54+09:00"
+    },
+    "repair": {
+      "state": "done",
+      "reason": "# 수리 요약 (시도 2)  - 비평가의 지적이 맞았다. 임시 probe 테스트로 직접 측정: `Settings{Enabled:true, Provider:matomo, MatomoURL:\"https://\"+8000×'a'+\".corp.example\", Matomo",
+      "at": "2026-10-04T07:24:31+09:00"
+    },
+    "pr": {
+      "state": "created",
+      "reason": "https://github.com/hkjang/AgentHub/pull/41",
+      "at": "2026-10-04T07:28:59+09:00"
+    }
+  },
+  "provenance": {
+    "model": "claude-opus-5",
+    "policy_version": "4a9e91ac7",
+    "prompts_hash": "ce085c79e18002e2",
+    "runner_version": "1bd5f0cd4",
+    "base_sha": "a9ac80104b45b0d15887dbaf36b138407b914e19",
+    "head_sha": "cbbc4fb706fe21b14e59ea2e551cacf7b1ddb146",
+    "pr": "https://github.com/hkjang/AgentHub/pull/41"
+  },
+  "verification": {
+    "runner": {
+      "source": "auto",
+      "commands": [
+        {
+          "cmd": "go build ./...",
+          "exit": 0,
+          "seconds": 3
+        },
+        {
+          "cmd": "go vet ./...",
+          "exit": 0,
+          "seconds": 1
+        },
+        {
+          "cmd": "go test ./...",
+          "exit": 0,
+          "seconds": 18
+        },
+        {
+          "cmd": "cd web && [ -d node_modules ] || npm ci --no-audit --no-fund",
+          "exit": 0,
+          "seconds": 6
+        },
+        {
+          "cmd": "cd web && npm run build --silent",
+          "exit": 0,
+          "seconds": 4
+        }
+      ]
+    },
+    "runner_gate": {
+      "ok": true,
+      "state": "verified",
+      "reason": "검증 5개 통과 (auto)"
+    },
+    "after_rebase": null,
+    "review": {
+      "verdict": "reject",
+      "reasons": [
+        "internal/tracking/tracking.go:94-105 주석이 \"이 두 상한이 묶는 최악의 경우\" 를 15921 바이트라고 단언하지만 코드는 그것을 강제하지 않는다. 상한은 룬으로 세고 예산은 바이트인데, 같은 주석이 \"주소를 한국어로 쓸 수 있으니 룬으로 센다\" 고 적어 둔 그 이유 때문에 한 룬이 3바이트가 된다. 직접 측정: 허용 목록 64개×64룬 + 스니펫 32개×32룬을 모두 한국어(U+AC00)로 채우면 Validate() 가 통과하고 pagePolicy() 가 33513 바이트를 쓴다(ASCII 동일 구성은 15921 로 구현자의 측정값과 일치하므로 측정 방식은 같다). 즉 이 두 상한만으로도 예산의 두 배를 넘고, 바로 다음 문장이 \"막아야 할 같은 크기\" 라고 지목한 제공자 주소 24339 바이트보다 크다.",
+        "internal/tracking/tracking.go:94-95 상수 1024 를 고른 근거 문장 자체가 틀렸다 — \"1024 runes ... holds that tripled at a little over three kilobytes\". 한국어 출처를 합계 상한까지 채운 스니펫 하나만으로 헤더가 5229 바이트(base ≈ 330)이므로 약 4.9KiB 이고, 3KiB 는 ASCII 일 때만 맞다.",
+        "internal/api/tracking_test.go:292-299, 358-417 새 테스트와 carried 주석이 \"the worst case the two of them can build together ... as much of the header as these limits account for\" 를 측정한다고 말하지만 ASCII 만 측정한다. 실제로 예산을 넘기는 구성(멀티바이트 주소)에서는 header > carried 단언이 결코 깨지지 않으므로, 테스트가 선언한 불변을 고정하지 못한다. 이전 회차가 거절당한 것과 같은 계열 — 코드가 지키지 않는 상한을 주석·테스트가 선언하는 자리 — 이며, 수리가 문장을 \"이 두 설정만\" 으로 좁혔지만 좁힌 문장도 여전히 거짓이다. 고치는 길은 셋 중 하나: 예산을 룬으로 말하기(바이트는 최대 3배라고 함께 적기), 테스트가 멀티바이트 최악의 경우를 측정·단언하기, 또는 합계 상한을 바이트로 두기."
+      ],
+      "notes": [
+        "코드 자체의 검사 배선·상수 위치·룬 계산·거절(자르지 않음) 선택은 옳다. 실패 재현을 독립적으로 확인했다 — Validate() 의 새 블록만 떼어 낸 사본에서 새 테스트가 5건 실패한다(1개 8007룬, 32개 1025룬, 33개 1023룬, 한국어 32개 1056룬, provider=none 저장). gofmt·go vet 깨끗, internal/tracking·internal/api 테스트 통과, 측정 로그 24813/15921 재확인.",
+        "같은 룬/바이트 혼동이 diff 밖에도 있다(선재 결함): internal/tracking/tracking.go:66-68 의 \"a little under 12.5 kilobytes\", internal/api/tracking_test.go:335 의 grown(바이트) == 3*(4096+64)(룬) 단언. 위 거절을 고치는 사람이 함께 덮는 것이 자연스럽다.",
+        "릴리즈 노트: 상한을 넘는 스니펫이 이미 저장된 배포에서는 한 번 클릭 허용(internal/api/tracking.go)이 저장된 설정 전체에 Validate() 를 돌리므로 400 이 된다. 커밋 메시지에 밝혀져 있고 의도된 성질이다.",
+        "docs/ADMIN_GUIDE.md:374 는 아직 \"8KB 를 넘으면 저장되지 않습니다\" 만 말한다 — 새 거절 사유(출처 개수·합계 길이)가 정본 가이드에 없다. 허용 출처 행도 64개·4096룬 상한을 적지 않는다(선재).",
+        "TestThePagePolicyHeaderIsBoundedByTheAllowListLimit 의 예산 단언이 13KiB→16KiB 로 느슨해졌다. 정확한 단언(grown == 3*(total+entries))은 남아 있어 목록 전용 회귀는 여전히 잡힌다.",
+        "보안·법무 관점에서 차단 사유는 없다. 이 변경은 관리자 작성 값에 대한 입력 검증을 좁히기만 하고, 새 경로·새 인가·새 비밀값·새 개인정보 수집이 없다. 남은 헤더 과대 구성은 이미 관리자 권한을 가진 주체가 자기 콘솔을 넘어뜨리는 경로이므로 권한 상승이나 타 사용자 데이터 접근이 아니다.",
+        "보지 못한 것: web/src 의 AdminSettings.tsx(새 오류 문구의 화면 표현), DSN 이 없어 설정 PUT 의 live 경로, 브라우저 e2e."
+      ],
+      "risk": "low",
+      "blocking": []
+    },
+    "ci_gate": null
+  },
+  "release": {
+    "result": null,
+    "assets_sha256": []
+  },
+  "approval": null,
+  "usage": [
+    {
+      "ts": "2026-10-04T07:08:58+09:00",
+      "date": "2026-10-04",
+      "project": "AgentHub",
+      "phase": "scout",
+      "run_id": "2026-10-04-070309-AgentHub-improve",
+      "campaign": "",
+      "subtype": "error_max_budget_usd",
+      "engine": "claude",
+      "duration_ms": 375789,
+      "num_turns": 23,
+      "cost_usd": 2.0428325000000003,
+      "input_tokens": 38,
+      "output_tokens": 22470,
+      "cache_read": 1210503,
+      "cache_create": 79175
+    },
+    {
+      "ts": "2026-10-04T07:16:21+09:00",
+      "date": "2026-10-04",
+      "project": "AgentHub",
+      "phase": "improve",
+      "run_id": "2026-10-04-070309-AgentHub-improve",
+      "campaign": "",
+      "subtype": "success",
+      "engine": "claude",
+      "duration_ms": 481534,
+      "num_turns": 42,
+      "cost_usd": 3.332499500000001,
+      "input_tokens": 78,
+      "output_tokens": 28547,
+      "cache_read": 3315589,
+      "cache_create": 96064
+    },
+    {
+      "ts": "2026-10-04T07:21:07+09:00",
+      "date": "2026-10-04",
+      "project": "AgentHub",
+      "phase": "review",
+      "run_id": "2026-10-04-070309-AgentHub-improve",
+      "campaign": "",
+      "subtype": "success",
+      "engine": "claude",
+      "duration_ms": 271816,
+      "num_turns": 26,
+      "cost_usd": 1.7603854999999997,
+      "input_tokens": 46,
+      "output_tokens": 16270,
+      "cache_read": 1333111,
+      "cache_create": 68685
+    },
+    {
+      "ts": "2026-10-04T07:24:22+09:00",
+      "date": "2026-10-04",
+      "project": "AgentHub",
+      "phase": "repair",
+      "run_id": "2026-10-04-070309-AgentHub-improve",
+      "campaign": "",
+      "subtype": "success",
+      "engine": "claude",
+      "duration_ms": 209678,
+      "num_turns": 29,
+      "cost_usd": 1.5718885,
+      "input_tokens": 52,
+      "output_tokens": 11145,
+      "cache_read": 1438927,
+      "cache_create": 57354
+    },
+    {
+      "ts": "2026-10-04T07:28:54+09:00",
+      "date": "2026-10-04",
+      "project": "AgentHub",
+      "phase": "review",
+      "run_id": "2026-10-04-070309-AgentHub-improve",
+      "campaign": "",
+      "subtype": "success",
+      "engine": "claude",
+      "duration_ms": 282647,
+      "num_turns": 21,
+      "cost_usd": 1.6605370000000002,
+      "input_tokens": 36,
+      "output_tokens": 16870,
+      "cache_read": 1062154,
+      "cache_create": 70753
+    }
+  ]
+}

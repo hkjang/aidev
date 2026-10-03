@@ -1,0 +1,42 @@
+{
+  "base": {
+    "state": "pinned",
+    "reason": "main@a9ac801",
+    "at": "2026-10-04T07:03:14+09:00"
+  },
+  "autonomy": {
+    "state": "release",
+    "reason": "",
+    "at": "2026-10-04T07:03:14+09:00"
+  },
+  "scout": {
+    "state": "done",
+    "reason": "붙여 넣은 추적 코드에서 읽어 낸 출처의 개수·합계 길이에 상한을 두어, 8KiB 스니펫 하나가 정책 헤더를 ",
+    "at": "2026-10-04T07:08:58+09:00"
+  },
+  "brief": {
+    "state": "accepted",
+    "reason": "채택 — ProviderCustom 분기의 무제한 출처, `MaxSnippetBytes` 가 유일한 상한인 점, 두 쓰기 경로의 공통 지점, `tracking_test.go:126` ",
+    "at": "2026-10-04T07:16:21+09:00"
+  },
+  "verify": {
+    "state": "passed",
+    "reason": "검증 5개 통과 (auto)",
+    "at": "2026-10-04T07:16:54+09:00"
+  },
+  "review": {
+    "state": "rejected",
+    "reason": "리뷰 거절: internal/tracking/tracking.go:94-105 주석이 \"이 두 상한이 묶는 최악의 경우\" 를 15921 바이트라고 단언하지만 코드는 그것을 강제하지 않는다. 상한은 룬으로 세고 예산은 바이트인데, 같은 주석이 \"주소를 한국어로 쓸 수 있으니 룬으로 센다\" 고 적어 둔 그 이유 때문에 한 룬이 3바이트가 된다. 직접 측정: 허용 목록 64개×64룬 + 스니펫 32개×32룬을 모두 한국어(U+AC00)로 채우면 Validate() 가 통과하고 pagePolicy() 가 33513 바이트를 쓴다(ASCII 동일 구성은 15921 로 구현자의 측정값과 일치하므로 측정 방식은 같다). 즉 이 두 상한만으로도 예산의 두 배를 넘고, 바로 다음 문장이 \"막아야 할 같은 크기\" 라고 지목한 제공자 주소 24339 바이트보다 크다. / internal/tracking/tracking.go:94-95 상수 1024 를 고른 근거 문장 자체가 틀렸다 — \"1024 runes ... holds that tripled at a little over three kilobytes\". 한국어 출처를 합계 상한까지 채운 스니펫 하나만으로 헤더가 5229 바이트(base ≈ 330)이므로 약 4.9KiB 이고, 3KiB 는 ASCII 일 때만 맞다. / internal/api/tracking_test.go:292-299, 358-417 새 테스트와 carried 주석이 \"the worst case the two of them can build together ... as much of the header as these limits account for\" 를 측정한다고 말하지만 ASCII 만 측정한다. 실제로 예산을 넘기는 구성(멀티바이트 주소)에서는 header > carried 단언이 결코 깨지지 않으므로, 테스트가 선언한 불변을 고정하지 못한다. 이전 회차가 거절당한 것과 같은 계열 — 코드가 지키지 않는 상한을 주석·테스트가 선언하는 자리 — 이며, 수리가 문장을 \"이 두 설정만\" 으로 좁혔지만 좁힌 문장도 여전히 거짓이다. 고치는 길은 셋 중 하나: 예산을 룬으로 말하기(바이트는 최대 3배라고 함께 적기), 테스트가 멀티바이트 최악의 경우를 측정·단언하기, 또는 합계 상한을 바이트로 두기.",
+    "at": "2026-10-04T07:28:54+09:00"
+  },
+  "repair": {
+    "state": "done",
+    "reason": "# 수리 요약 (시도 2)  - 비평가의 지적이 맞았다. 임시 probe 테스트로 직접 측정: `Settings{Enabled:true, Provider:matomo, MatomoURL:\"https://\"+8000×'a'+\".corp.example\", Matomo",
+    "at": "2026-10-04T07:24:31+09:00"
+  },
+  "pr": {
+    "state": "created",
+    "reason": "https://github.com/hkjang/AgentHub/pull/41",
+    "at": "2026-10-04T07:28:59+09:00"
+  }
+}
