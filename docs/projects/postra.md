@@ -1,7 +1,7 @@
 ---
 title: "postra — 자율 개선 이력"
 description: "postra: 자율 개선 회차 30회, 릴리즈 14건. 최근 릴리즈 v0.25.4 (자산 5개)."
-last_modified_at: 2026-10-03 23:45:51 +0900
+last_modified_at: 2026-10-04 00:58:29 +0900
 ---
 {% raw %}
 <script type="application/ld+json">
@@ -18,14 +18,14 @@ last_modified_at: 2026-10-03 23:45:51 +0900
   "name": "hkjang",
   "url": "https://github.com/hkjang"
  },
- "dateModified": "2026-10-03T23:45:51+09:00",
+ "dateModified": "2026-10-04T00:58:29+09:00",
  "version": "0.25.4"
 }
 </script>
 
 # postra
 
-<p class="tldr"><strong>요약.</strong> postra: 자율 개선 회차 30회, 릴리즈 14건. 최근 릴리즈 v0.25.4 (자산 5개). <span class="pill pill-failed" title="14일: 릴리즈 10, 실패 2, 경고 4, 회귀 0">건강 D</span> <span class="meta">14일: 릴리즈 10, 실패 2, 경고 4, 회귀 0</span></p>
+<p class="tldr"><strong>요약.</strong> postra: 자율 개선 회차 30회, 릴리즈 14건. 최근 릴리즈 v0.25.4 (자산 5개). <span class="pill pill-merged" title="14일: 릴리즈 10, 실패 1, 경고 3, 회귀 0">건강 C</span> <span class="meta">14일: 릴리즈 10, 실패 1, 경고 3, 회귀 0</span></p>
 
 <ul class="stats"><li><b>30</b><span>회차</span></li><li><b>1</b><span>프로젝트</span></li><li><b>14</b><span>배포 준비 완료</span></li><li><b>0</b><span>릴리즈 진행 중</span></li><li><b>2</b><span>병합 완료</span></li><li><b>3</b><span>검토 대기</span></li><li><b>8</b><span>검증 실패</span></li><li><b>0</b><span>변경 없음</span></li><li><b>3</b><span>실행 오류</span></li><li><b>$184.57</b><span>비용</span></li><li><b>9시간 15분</b><span>에이전트 시간</span></li></ul>
 
