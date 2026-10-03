@@ -1,0 +1,4 @@
+문제: README.md:17과 internal/masking/engine.go:500-501이 선언 MIME이 마스킹 결과의 '파일 이름 확장자'까지 정한다고 주장했지만, 다운로드 이름은 service.go:617 → document.MaskedFilename(attachment.go:142)으로 업로드 이름을 그대로 쓰고 MIME을 보지 않는다.
+재현: internal/httpapi에 임시 프로브 테스트 투입(커밋 안 함, 실행 후 삭제) — 이름 sample.png + 선언 image/jpeg + 실제 PNG 바이트 업로드 → `file_name="masked_sample.png" ext=".png" mime_type="image/jpeg" actual_format="jpeg"`. engine.go만 origin/main으로 되돌린 같은 프로브는 `actual_format="png"`이므로 이름/바이트 어긋남은 이번 변경이 새로 만든 것이 맞다.
+수리: 문구만 고쳤다. README에서 '·파일 이름 확장자' 절을 떼고 `output.file_name`은 업로드 이름을 그대로 쓰므로 확장자가 선언 형식과 다를 수 있다고 명시했다. engine.go 주석의 "it also picks the masked file name's extension" 문장도 실제 동작(이름은 이 타입에서 파생되지 않는다)으로 바꿨다. 프로덕션 switch 로직과 기존 테스트 2개는 손대지 않았다.
+검증: `go build ./...`, `go vet ./...`, `gofmt -l ./cmd ./internal`(출력 없음), `go test -count=1 ./...` 전 패키지 ok, `git diff --check` 통과. 커밋 dca7436, 변경 파일은 README.md와 internal/masking/engine.go 둘뿐.

@@ -234,3 +234,4 @@
 - 보류 아이디어: 내장 mock이 `image/jpeg` 업로드를 거부함 (2/2/S — 이번 회차에 직접 확인: 선언 `image/jpeg`는 mock에서 415로 끊겨 마스킹까지 못 감) / `/v1/config/public` 제한값 양수 불변식 + `uploadBodyHeadroomBytes` 경계 테스트 (2/1/S, 이번 차선 후보) / `internal/config` 나머지 정규화 함수의 `Load()` 경유 테이블 테스트 (2/1/S) / `buildMultipartBody` 헬퍼의 `contentType` 인자가 쓰이지 않아 테스트가 선언 MIME을 실제로 보내지 않음 (2/2/S — 신규) / `cloneJob`이 `Metadata.Error`·`Engine.Debug`·`Confidence` 포인터를 저장본과 공유 (2/2/S)
 - 과제서: 채택 — 과제서의 근거(engine.go의 `format == "png" ||` 선행 조건과 service.go의 선언 MIME 그대로 대입)가 현재 HEAD와 정확히 일치했고, 수용 기준 3개를 지목된 방식(`startAppServerWithUpstream` + 직접 만든 handler, mock 무수정, 프로덕션 파일 1개)대로 모두 재현·검증했다.
 
+- 릴리즈: v1.0.33 (2026-10-03, run 2026-10-03-185554-pii-masker-approve)
