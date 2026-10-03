@@ -1,0 +1,185 @@
+{
+  "run_id": "2026-10-04-043721-weekly-improve",
+  "generated": "2026-10-04T05:05:31+09:00",
+  "run": {
+    "run_id": "2026-10-04-043721-weekly-improve",
+    "project": "weekly",
+    "kind": "improve",
+    "started": "2026-10-04T04:37:22+09:00",
+    "model": "claude-opus-5",
+    "policy_version": "4a9e91ac7",
+    "prompts_hash": "ce085c79e18002e2",
+    "runner_version": "1bd5f0cd4",
+    "arm": "no-scout",
+    "experiment": "roles-2026-09",
+    "finished": "2026-10-04T05:05:31+09:00",
+    "outcome": "review-pending"
+  },
+  "record": {
+    "ts": "2026-10-04T05:05:31+09:00",
+    "date": "2026-10-04",
+    "project": "weekly",
+    "result": "review held, PR open https://github.com/hkjang/weekly/pull/29",
+    "outcome": "review-pending",
+    "run_id": "2026-10-04-043721-weekly-improve",
+    "base_sha": "af45b2cba239a54b9b8c362bc67213acea4dc18e",
+    "head_sha": "f6c96e640056d3a387ed7a7606a863276118e6a9",
+    "pr": "https://github.com/hkjang/weekly/pull/29",
+    "stages": {
+      "base": {
+        "state": "pinned",
+        "reason": "main@af45b2c",
+        "at": "2026-10-04T04:37:27+09:00"
+      },
+      "autonomy": {
+        "state": "release",
+        "reason": "",
+        "at": "2026-10-04T04:37:27+09:00"
+      },
+      "verify": {
+        "state": "passed",
+        "reason": "검증 7개 통과 (auto)",
+        "at": "2026-10-04T04:51:39+09:00"
+      },
+      "review": {
+        "state": "missing",
+        "reason": "리뷰 결과 없음/손상: missing — 보류",
+        "at": "2026-10-04T05:05:21+09:00"
+      },
+      "pr": {
+        "state": "created",
+        "reason": "https://github.com/hkjang/weekly/pull/29",
+        "at": "2026-10-04T05:05:29+09:00"
+      }
+    },
+    "campaign": "",
+    "autonomy": "release",
+    "arm": "no-scout",
+    "experiment": "roles-2026-09",
+    "engine": "claude",
+    "files": 4,
+    "additions": 141,
+    "deletions": 8,
+    "tests": 1,
+    "title": "docs: 로그인 차단 안내 시간과 차단 기록의 두 실패 횟수를 운영 문서에 적습니다"
+  },
+  "stages": {
+    "base": {
+      "state": "pinned",
+      "reason": "main@af45b2c",
+      "at": "2026-10-04T04:37:27+09:00"
+    },
+    "autonomy": {
+      "state": "release",
+      "reason": "",
+      "at": "2026-10-04T04:37:27+09:00"
+    },
+    "verify": {
+      "state": "passed",
+      "reason": "검증 7개 통과 (auto)",
+      "at": "2026-10-04T04:51:39+09:00"
+    },
+    "review": {
+      "state": "missing",
+      "reason": "리뷰 결과 없음/손상: missing — 보류",
+      "at": "2026-10-04T05:05:21+09:00"
+    },
+    "pr": {
+      "state": "created",
+      "reason": "https://github.com/hkjang/weekly/pull/29",
+      "at": "2026-10-04T05:05:29+09:00"
+    }
+  },
+  "provenance": {
+    "model": "claude-opus-5",
+    "policy_version": "4a9e91ac7",
+    "prompts_hash": "ce085c79e18002e2",
+    "runner_version": "1bd5f0cd4",
+    "base_sha": "af45b2cba239a54b9b8c362bc67213acea4dc18e",
+    "head_sha": "f6c96e640056d3a387ed7a7606a863276118e6a9",
+    "pr": "https://github.com/hkjang/weekly/pull/29"
+  },
+  "verification": {
+    "runner": {
+      "source": "auto",
+      "commands": [
+        {
+          "cmd": "go build ./...",
+          "exit": 0,
+          "seconds": 0
+        },
+        {
+          "cmd": "go vet ./...",
+          "exit": 0,
+          "seconds": 0
+        },
+        {
+          "cmd": "go test ./...",
+          "exit": 0,
+          "seconds": 149
+        },
+        {
+          "cmd": "cd frontend && [ -d node_modules ] || npm ci --no-audit --no-fund",
+          "exit": 0,
+          "seconds": 2
+        },
+        {
+          "cmd": "cd frontend && npm test --silent",
+          "exit": 0,
+          "seconds": 1
+        },
+        {
+          "cmd": "cd frontend && [ -d node_modules ] || npm ci --no-audit --no-fund",
+          "exit": 0,
+          "seconds": 0
+        },
+        {
+          "cmd": "cd frontend && npm run build --silent",
+          "exit": 0,
+          "seconds": 1
+        }
+      ]
+    },
+    "runner_gate": {
+      "ok": true,
+      "state": "verified",
+      "reason": "검증 7개 통과 (auto)"
+    },
+    "after_rebase": null,
+    "review": null,
+    "ci_gate": null
+  },
+  "release": {
+    "result": null,
+    "assets_sha256": []
+  },
+  "approval": null,
+  "usage": [
+    {
+      "ts": "2026-10-04T04:49:05+09:00",
+      "date": "2026-10-04",
+      "project": "weekly",
+      "phase": "improve",
+      "run_id": "2026-10-04-043721-weekly-improve",
+      "campaign": "",
+      "subtype": "success",
+      "engine": "claude",
+      "duration_ms": 759363,
+      "num_turns": 59,
+      "cost_usd": 4.902760000000001,
+      "input_tokens": 112,
+      "output_tokens": 33493,
+      "cache_read": 5540610,
+      "cache_create": 129457
+    },
+    {
+      "ts": "2026-10-04T05:05:21+09:00",
+      "date": "2026-10-04",
+      "project": "weekly",
+      "phase": "review",
+      "run_id": "2026-10-04-043721-weekly-improve",
+      "subtype": "unknown",
+      "cost_usd": null
+    }
+  ]
+}

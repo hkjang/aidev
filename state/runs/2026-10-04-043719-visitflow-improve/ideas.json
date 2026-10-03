@@ -1,19 +1,128 @@
 [
-  {"title":"방문 상세 「알림 재발송」이 실패를 말없이 삼키고 성공도 거짓으로 단정한다","value":3,"risk":1,"size":"S","status":"pending","note":"이번 회차 선택. VisitsPage.tsx:89 의 인라인 onClick={async} 이 이 파일에서 유일하게 try/catch 가 없다 — 서버 409(visit_not_notifiable visits.go:1231, no_valid_qr visits.go:1266)·403 이 화면에 아무 변화도 남기지 않는다. 성공 응답 {queued:N} 도 버리고 고정 문구로 단정한다. api.ts:14-48 의 APIError extends Error 가 서버 한국어 메시지를 Error.message 로 올려 주는 것을 이번에 확인했으므로 추가 배선 없이 고쳐진다. 이 엔드포인트에 Go 테스트 0건.","updated":"2026-10-04"},
-  {"title":"e2e 스펙이 방금 만든 방문 한 건을 결정적으로 집는 헬퍼","value":3,"risk":1,"size":"S","status":"pending","note":"이번 회차 차선 후보. 가치 2→3: 최근 두 회차가 브라우저 검증을 전부 여기서 먹었고 2327 회차는 이 때문에 수정 전/후 짝 실행을 끝내 못 했다. VisitsPage.tsx:82 의 placeholder 로 검색 범위가 방문번호/회사/담당자뿐임을 확인했다 — 방문자 이름으로는 걸러지지 않는다. 제출 완료 화면의 VF- 번호를 읽어 그것으로 검색하는 헬퍼가 정답. 프로덕션 코드 0개.","updated":"2026-10-04"},
-  {"title":"emergencyRoster·exportAuditLogsCSV 가 행별 Scan 오류를 삼키고도 count 를 완전한 수치로 보고한다","value":2,"risk":1,"size":"S","status":"pending","note":"변동 없음. kiosk.go:231·exports.go:123. 같은 계열의 runAutomaticCheckouts 는 올바르게 return err 한다. 해당 열이 모두 NOT NULL 이라 지금은 도달 불가해 실패 테스트를 쓸 수 없다. 열 추가·조인 변경으로 길이 생기거나 강건성 과제로 묶을 때 재평가.","updated":"2026-10-04"},
-  {"title":"csvCell 이 첫 바이트만 보고 수식 주입을 판정한다","value":2,"risk":2,"size":"S","status":"pending","note":"변동 없음. exports.go:38 rune(value[0]). 탭·CR 자체가 금지 집합에 있어 실질 우회를 못 찾았다. 선행 공백·개행을 Excel 이 떼고 평가하는지 이 환경에서 확인할 수 없다 — 실제 Excel/LibreOffice 로 확인할 수 있을 때만 다룰 것.","updated":"2026-10-04"},
-  {"title":"local-e2e.sh 에 데이터 시딩과 page.route 지연 주입 하네스 추가","value":2,"risk":2,"size":"M","status":"pending","note":"변동 없음. 주 용도였던 경합·역전 재현(요청 티켓) 접근이 머지되지 않아 수요가 줄었다. 위의 'VF- 번호 선택자 헬퍼' 가 더 싸고 먼저다.","updated":"2026-10-04"},
-  {"title":"VisitsPage 검색이 키 입력마다 limit=100 조회를 보낸다 (디바운스 없음)","value":2,"risk":2,"size":"S","status":"pending","note":"이번 회차 재확인. VisitsPage.tsx:82 onChange→q→buildQuery(28행, deps [period,status,q])→load 재생성→useEffect([load], 52행) 이라 글자 수만큼 요청이 나가고 같은 줄의 onKeyDown Enter 핸들러는 사실상 중복이다. Enter 전용으로 돌릴지라는 UX 판단이 섞여 있어 가치 2.","updated":"2026-10-04"},
-  {"title":"TestSelfRegistrationRecordsVisitorConsent 의 consented_at DESC LIMIT 1 타이브레이크 취약성","value":2,"risk":1,"size":"S","status":"pending","note":"변동 없음. host/self 두 기록의 시각이 같으면 어느 쪽이 나올지 결정되지 않는다(2026-09-28 실제 1회 실패). source 또는 id 로 결정적 타이브레이크. 이번 회차는 DB 통합 테스트를 돌리지 않았다.","updated":"2026-10-04"},
-  {"title":"visitBody 자체를 사이트 달력 인식형으로 바꿔 앞으로의 today-기반 테스트를 보호","value":2,"risk":2,"size":"M","status":"pending","note":"변동 없음. v2.8.12 가 두 곳만 visitToday 로 옮겼고 visitBody 는 그대로다. 호출 지점 약 40곳이라 전부 옮기면 시그니처를 testEnv 메서드로 바꿔야 한다. 다음 today-기반 테스트가 추가될 때 재평가.","updated":"2026-10-04"},
-  {"title":"제출 차단 사유를 원인 필드(동의 체크박스·차량번호·반입 장비)에도 error/helperText 로 표시","value":2,"risk":1,"size":"S","status":"pending","note":"변동 없음. duplicatePhoneErrors(배열로 칸에 붙이고 한 줄은 첫 항목)와 v2.8.14 의 editScheduleMessage(일정 몫만 날짜 칸에)가 선례를 둘 만들었다. '빈 최초 입력을 빨갛게 하지 않는다' 정책 유지.","updated":"2026-10-04"},
-  {"title":"가져오기 미리보기 응답에 인식 헤더 행 번호와 무시된 열 안내","value":2,"risk":1,"size":"M","status":"pending","note":"변동 없음. importHeaderRow 가 상위 10행까지만 헤더를 찾고 못 찾으면 rows[0] 로 되돌아가 '이름(name) 열이 필요합니다' 를 내므로, 실제 헤더가 11행 이하면 열이 있어도 그 메시지가 나온다(주석에 의도된 트레이드오프로 적혀 있다). 미리보기가 headerRow 를 돌려주면 거절 이유를 알 수 있다.","updated":"2026-10-04"},
-  {"title":"MCP OAuth 후속 — 설정 확인 버튼과 감사 source 구분(mcp-oauth)","value":3,"risk":1,"size":"S","status":"pending","note":"변동 없음. origin/auto/2026-09-18-0533 미머지 여부 이번 회차도 미확인. 병합 뒤 재평가.","updated":"2026-10-04"},
-  {"title":"STARTTLS 가짜 릴레이로 auto TLS 승격과 PLAIN 선택을 고정하는 테스트","value":3,"risk":1,"size":"S","status":"pending","note":"변동 없음. origin/auto/2026-09-16-1212 미머지 여부 이번 회차도 미확인. 실제 SMTP 프로토콜 서버 기반 검증을 쓰고 손제작 전송 객체로 대체하지 말 것.","updated":"2026-10-04"},
-  {"title":"cmd/visitflow 의 :8080 하드코딩을 env 로 받을 수 있게 하기","value":2,"risk":3,"size":"S","status":"pending","note":"변동 없음. local-e2e.sh 가 컨테이너로 우회하므로 급하지 않다. Dockerfile EXPOSE·healthcheck·CI e2e·release 가 모두 걸리는 릴리즈 경로 변경이라 위험 3.","updated":"2026-10-04"},
-  {"title":"KeysPage 의 Promise.all 에 .catch 없음","value":2,"risk":1,"size":"S","status":"done","note":"해결됨. 이번 회차에 KeysPage.tsx 를 읽어 load() 의 Promise.all([...]).then(...).catch((e) => setError(e.message)) 를 확인했다.","updated":"2026-10-04"},
-  {"title":"LobbyPage 에서 늦은 이전 조회 응답 무시 (요청 티켓)","value":3,"risk":2,"size":"M","status":"rejected","note":"기각 유지. 선례로 든 VisitsPage 요청 티켓 PR 이 머지된 적이 없다 — 이번 회차에 grep -rn requestSeq web/src/ 가 0건임을 재확인했다. 같은 접근 재제출 금지에 걸린다.","updated":"2026-10-04"},
-  {"title":"저장소 e2e 'registers a site, a lobby and an organization' 로컬 실패","value":2,"risk":1,"size":"S","status":"done","note":"해결됨. 원인은 호스트 환경이 아니라 손으로 재사용한 DB 의 상태 오염이었고, scripts/local-e2e.sh 가 매 실행에 새 DB·새 서버를 주면 통과한다(2137 회차 3회 통과).","updated":"2026-10-04"},
-  {"title":"실제 서버+dist 로 도는 화면 회귀를 저장소의 한 명령으로","value":4,"risk":2,"size":"M","status":"done","note":"해결됨. scripts/local-e2e.sh (v2.8.13, b4f0781).","updated":"2026-10-04"}
+  {
+    "title": "방문 상세 「알림 재발송」이 실패를 말없이 삼키고 성공도 거짓으로 단정한다",
+    "value": 3,
+    "risk": 1,
+    "size": "S",
+    "status": "done",
+    "note": "이번 회차 구현. 인라인 onClick={async} 을 이름 붙은 resendNotification 으로 꺼내 실패는 서버의 한국어 메시지(409 visit_not_notifiable / no_valid_qr, 403 forbidden)를 기존 error Alert 로, 성공은 응답의 queued 건수를 보고하게 했다. queued===0 이 도달 가능함을 실측했다(발송 규칙이 만든 행만 세므로 visit_confirmed 규칙을 끄면 200 {queued:0}) — 그 경우 성공이라 단정하지 않는다. 수정 전/후 브라우저 짝 실행으로 침묵(MuiAlert 0개 + unhandled rejection)과 수정 후 메시지 표시를 모두 관찰했다. Go 통합 테스트 1개로 엔드포인트 계약(queued>=1, queued==0, visit_not_notifiable)을 고정했다.",
+    "updated": "2026-10-04"
+  },
+  {
+    "title": "e2e 스펙이 방금 만든 방문 한 건을 결정적으로 집는 헬퍼",
+    "value": 3,
+    "risk": 1,
+    "size": "S",
+    "status": "done",
+    "note": "이번 회차에 함께 구현. createVisit 이 패스 URL 과 함께 완료 화면의 VF- 방문번호를 돌려주고, openVisitDetail(page, requestNo) 이 목록 검색창에 그 번호를 채워 toHaveCount(1) 로 좁힌 뒤 상세 다이얼로그를 연다. 목록 검색이 방문번호/회사/담당자만 본다는 점을 주석으로 남겼다. 최근 세 회차가 먹던 strict mode violation 이 사라졌다.",
+    "updated": "2026-10-04"
+  },
+  {
+    "title": "web/e2e 가 tsc -b 로 타입 검사되지 않는다",
+    "value": 2,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "신규. tsconfig.app.json 의 include 는 [\"src\"], tsconfig.node.json 은 [\"vite.config.ts\"] 뿐이므로 web/e2e 와 web/screenshots 는 어느 프로젝트에도 들어가지 않는다. Playwright 는 esbuild transpile-only 로 돌므로 스펙의 타입 오류는 런타임까지 드러나지 않는다. e2e 전용 tsconfig 를 references 에 추가하는 작은 변경이지만 지금 스펙들이 타입 검사를 통과할지는 미확인이고, lint 를 깨뜨리면 CI test 잡이 멈추므로 먼저 통과 여부를 확인할 것.",
+    "updated": "2026-10-04"
+  },
+  {
+    "title": "emergencyRoster·exportAuditLogsCSV 가 행별 Scan 오류를 삼키고도 count 를 완전한 수치로 보고한다",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "변동 없음. kiosk.go:231·exports.go:123. 같은 계열의 runAutomaticCheckouts 는 올바르게 return err 한다. 해당 열이 모두 NOT NULL 이라 지금은 도달 불가해 실패 테스트를 쓸 수 없다. 열 추가·조인 변경으로 길이 생기거나 강건성 과제로 묶을 때 재평가.",
+    "updated": "2026-10-04"
+  },
+  {
+    "title": "csvCell 이 첫 바이트만 보고 수식 주입을 판정한다",
+    "value": 2,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "변동 없음. exports.go:38 rune(value[0]). 탭·CR 자체가 금지 집합에 있어 실질 우회를 못 찾았다. 선행 공백·개행을 Excel 이 떼고 평가하는지 이 환경에서 확인할 수 없다 — 실제 Excel/LibreOffice 로 확인할 수 있을 때만 다룰 것.",
+    "updated": "2026-10-04"
+  },
+  {
+    "title": "local-e2e.sh 에 데이터 시딩과 page.route 지연 주입 하네스 추가",
+    "value": 2,
+    "risk": 2,
+    "size": "M",
+    "status": "pending",
+    "note": "변동 없음. 이번 회차는 개별 스펙만 돌리려고 /tmp 에 임시 드라이버를 썼는데, scripts/local-e2e.sh 가 playwright 인자를 통과시키면(\"$@\") 그것만으로도 반복 비용이 줄었을 것이다 — 시딩보다 이 한 줄이 먼저다. 다만 스크립트가 지금 인자를 받으면 usage 로 거절하므로 계약 변경이다.",
+    "updated": "2026-10-04"
+  },
+  {
+    "title": "VisitsPage 검색이 키 입력마다 limit=100 조회를 보낸다 (디바운스 없음)",
+    "value": 2,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "변동 없음. VisitsPage.tsx:82 onChange→q→buildQuery→load 재생성→useEffect([load]) 라 글자 수만큼 요청이 나가고 같은 줄의 onKeyDown Enter 핸들러는 사실상 중복이다. 이번에 e2e 헬퍼가 fill() 로 한 번만 입력해 요청이 1건인 것을 이용했다(waitForResponse 가 성립한다) — 디바운스를 넣으면 그 헬퍼의 대기 조건을 같이 손봐야 한다. Enter 전용으로 돌릴지라는 UX 판단이 섞여 있어 가치 2.",
+    "updated": "2026-10-04"
+  },
+  {
+    "title": "TestSelfRegistrationRecordsVisitorConsent 의 consented_at DESC LIMIT 1 타이브레이크 취약성",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "변동 없음. host/self 두 기록의 시각이 같으면 어느 쪽이 나올지 결정되지 않는다(2026-09-28 실제 1회 실패). source 또는 id 로 결정적 타이브레이크. 이번 회차의 DB 전체 실행(internal/app 57.929s)은 통과했다.",
+    "updated": "2026-10-04"
+  },
+  {
+    "title": "visitBody 자체를 사이트 달력 인식형으로 바꿔 앞으로의 today-기반 테스트를 보호",
+    "value": 2,
+    "risk": 2,
+    "size": "M",
+    "status": "pending",
+    "note": "변동 없음. v2.8.12 가 두 곳만 visitToday 로 옮겼고 visitBody 는 그대로다. 이번에 추가한 TestResendVisitNotificationQueuesAndRefusesACancelledVisit 도 visitToday 를 썼다(세 번째 호출 지점). 나머지 약 40곳은 구멍이 남아 있고 전부 옮기면 시그니처를 testEnv 메서드로 바꿔야 한다.",
+    "updated": "2026-10-04"
+  },
+  {
+    "title": "제출 차단 사유를 원인 필드(동의 체크박스·차량번호·반입 장비)에도 error/helperText 로 표시",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "변동 없음. duplicatePhoneErrors 와 v2.8.14 의 editScheduleMessage 가 선례를 둘 만들었다. '빈 최초 입력을 빨갛게 하지 않는다' 정책 유지.",
+    "updated": "2026-10-04"
+  },
+  {
+    "title": "가져오기 미리보기 응답에 인식 헤더 행 번호와 무시된 열 안내",
+    "value": 2,
+    "risk": 1,
+    "size": "M",
+    "status": "pending",
+    "note": "변동 없음. importHeaderRow 가 상위 10행까지만 헤더를 찾고 못 찾으면 rows[0] 로 되돌아가 '이름(name) 열이 필요합니다' 를 내므로, 실제 헤더가 11행 이하면 열이 있어도 그 메시지가 나온다(주석에 의도된 트레이드오프로 적혀 있다). 미리보기가 headerRow 를 돌려주면 거절 이유를 알 수 있다.",
+    "updated": "2026-10-04"
+  },
+  {
+    "title": "MCP OAuth 후속 — 설정 확인 버튼과 감사 source 구분(mcp-oauth)",
+    "value": 3,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "변동 없음. origin/auto/2026-09-18-0533 미머지 여부 이번 회차도 미확인. 병합 뒤 재평가.",
+    "updated": "2026-10-04"
+  },
+  {
+    "title": "STARTTLS 가짜 릴레이로 auto TLS 승격과 PLAIN 선택을 고정하는 테스트",
+    "value": 3,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "변동 없음. origin/auto/2026-09-16-1212 미머지 여부 이번 회차도 미확인. 실제 SMTP 프로토콜 서버 기반 검증을 쓰고 손제작 전송 객체로 대체하지 말 것.",
+    "updated": "2026-10-04"
+  },
+  {
+    "title": "LobbyPage 늦은 응답 무시 (요청 티켓)",
+    "value": 3,
+    "risk": 2,
+    "size": "M",
+    "status": "rejected",
+    "note": "2026-10-02-2327 회차에서 기각된 그대로 유지. 전제로 삼았던 'VisitsPage 에 머지된 요청 티켓 선례' 가 거짓이고(main 에 requestSeq 0건, 이번 회차도 재확인) 같은 접근 재제출은 금지다.",
+    "updated": "2026-10-04"
+  }
 ]

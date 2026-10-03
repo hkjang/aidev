@@ -11,3 +11,6 @@
 - 다음 역할이 조심할 것: 새 시험 2개는 실제 PostgreSQL 이 있어야 돕니다(`WEEKLY_TEST_POSTGRES_DSN`, 이번엔 `docker start weekly-test-pg` 로 15434 를 올렸습니다). 둘 다 `auth.max_login_attempts_per_ip` 를 켜고 실패를 쌓은 뒤 성공 비밀번호가 429 를 받는 경로라, 실패 누적의 `loginFailureDelay` 때문에 각 1.8~2.5초가 걸립니다.
 - 프런트 파일은 한 줄도 바꾸지 않아 `npm` 검증은 돌리지 않았고, `docs/OPERATIONS.md` 는 렌더 HTML 이 없어 `render-docs.py` 도 돌리지 않았습니다.
 - [러너 04:51] verify passed — 검증 7개 통과 (auto)
+- [러너 05:05] review timeout — 단계 제한 시간 초과
+- [러너 05:05] review missing — 리뷰 결과 없음/손상: missing — 보류
+- [러너 05:05] pr created — https://github.com/hkjang/weekly/pull/29
