@@ -1,0 +1,183 @@
+{
+  "run_id": "2026-10-04-011745-umm-improve",
+  "generated": "2026-10-04T01:29:07+09:00",
+  "run": {
+    "run_id": "2026-10-04-011745-umm-improve",
+    "project": "umm",
+    "kind": "improve",
+    "started": "2026-10-04T01:17:46+09:00",
+    "model": "claude-opus-5",
+    "policy_version": "4a9e91ac7",
+    "prompts_hash": "ce085c79e18002e2",
+    "runner_version": "1bd5f0cd4",
+    "arm": "baseline",
+    "experiment": "roles-2026-09",
+    "finished": "2026-10-04T01:29:07+09:00",
+    "outcome": "verify-failed"
+  },
+  "record": {
+    "ts": "2026-10-04T01:29:07+09:00",
+    "date": "2026-10-04",
+    "project": "umm",
+    "result": "verify failed: 실패한 검증: npm test --silent (exit 1)",
+    "outcome": "verify-failed",
+    "run_id": "2026-10-04-011745-umm-improve",
+    "base_sha": "b4bddea14127e15127a55ffd435d96f7a8c96ad9",
+    "head_sha": "ff95ff4327f8d57380a71b719ce2e82424c20dd5",
+    "pr": "",
+    "stages": {
+      "base": {
+        "state": "pinned",
+        "reason": "main@b4bddea",
+        "at": "2026-10-04T01:17:53+09:00"
+      },
+      "autonomy": {
+        "state": "release",
+        "reason": "",
+        "at": "2026-10-04T01:17:53+09:00"
+      },
+      "scout": {
+        "state": "done",
+        "reason": "모델이 번호나 따옴표를 붙여 보낸 제목이 그대로 슬라이드 머리글에 오른다 — 서식만 떼고 라벨을 남기",
+        "at": "2026-10-04T01:22:06+09:00"
+      },
+      "brief": {
+        "state": "accepted",
+        "reason": "채택 — 과제서의 근거가 실행 결과와 정확히 맞았습니다. '미확인' 으로 남긴 추론(`strings.Trim(label, \"\\\"'“”‘’`\")` 이 `- ",
+        "at": "2026-10-04T01:29:03+09:00"
+      },
+      "verify": {
+        "state": "failed",
+        "reason": "실패한 검증: npm test --silent (exit 1)",
+        "at": "2026-10-04T01:29:07+09:00"
+      }
+    },
+    "campaign": "",
+    "autonomy": "release",
+    "arm": "baseline",
+    "experiment": "roles-2026-09",
+    "engine": "claude",
+    "files": 3,
+    "additions": 145,
+    "deletions": 8,
+    "tests": 2,
+    "title": "Strip the formatting a model wraps a proposed heading in instead of putting it on a slide"
+  },
+  "stages": {
+    "base": {
+      "state": "pinned",
+      "reason": "main@b4bddea",
+      "at": "2026-10-04T01:17:53+09:00"
+    },
+    "autonomy": {
+      "state": "release",
+      "reason": "",
+      "at": "2026-10-04T01:17:53+09:00"
+    },
+    "scout": {
+      "state": "done",
+      "reason": "모델이 번호나 따옴표를 붙여 보낸 제목이 그대로 슬라이드 머리글에 오른다 — 서식만 떼고 라벨을 남기",
+      "at": "2026-10-04T01:22:06+09:00"
+    },
+    "brief": {
+      "state": "accepted",
+      "reason": "채택 — 과제서의 근거가 실행 결과와 정확히 맞았습니다. '미확인' 으로 남긴 추론(`strings.Trim(label, \"\\\"'“”‘’`\")` 이 `- ",
+      "at": "2026-10-04T01:29:03+09:00"
+    },
+    "verify": {
+      "state": "failed",
+      "reason": "실패한 검증: npm test --silent (exit 1)",
+      "at": "2026-10-04T01:29:07+09:00"
+    }
+  },
+  "provenance": {
+    "model": "claude-opus-5",
+    "policy_version": "4a9e91ac7",
+    "prompts_hash": "ce085c79e18002e2",
+    "runner_version": "1bd5f0cd4",
+    "base_sha": "b4bddea14127e15127a55ffd435d96f7a8c96ad9",
+    "head_sha": "ff95ff4327f8d57380a71b719ce2e82424c20dd5",
+    "pr": ""
+  },
+  "verification": {
+    "runner": {
+      "source": "auto",
+      "commands": [
+        {
+          "cmd": "go build ./...",
+          "exit": 0,
+          "seconds": 1
+        },
+        {
+          "cmd": "go vet ./...",
+          "exit": 0,
+          "seconds": 0
+        },
+        {
+          "cmd": "go test ./...",
+          "exit": 0,
+          "seconds": 1
+        },
+        {
+          "cmd": "[ -d node_modules ] || npm ci --no-audit --no-fund",
+          "exit": 0,
+          "seconds": 0
+        },
+        {
+          "cmd": "npm test --silent",
+          "exit": 1,
+          "seconds": 0
+        }
+      ]
+    },
+    "runner_gate": {
+      "ok": false,
+      "state": "verify-failed",
+      "reason": "실패한 검증: npm test --silent (exit 1)"
+    },
+    "after_rebase": null,
+    "review": null,
+    "ci_gate": null
+  },
+  "release": {
+    "result": null,
+    "assets_sha256": []
+  },
+  "approval": null,
+  "usage": [
+    {
+      "ts": "2026-10-04T01:22:06+09:00",
+      "date": "2026-10-04",
+      "project": "umm",
+      "phase": "scout",
+      "run_id": "2026-10-04-011745-umm-improve",
+      "campaign": "",
+      "subtype": "success",
+      "engine": "claude",
+      "duration_ms": 270400,
+      "num_turns": 26,
+      "cost_usd": 1.8131074999999999,
+      "input_tokens": 42,
+      "output_tokens": 16488,
+      "cache_read": 1384555,
+      "cache_create": 70842
+    },
+    {
+      "ts": "2026-10-04T01:29:03+09:00",
+      "date": "2026-10-04",
+      "project": "umm",
+      "phase": "improve",
+      "run_id": "2026-10-04-011745-umm-improve",
+      "campaign": "",
+      "subtype": "success",
+      "engine": "claude",
+      "duration_ms": 448800,
+      "num_turns": 43,
+      "cost_usd": 3.2010149999999995,
+      "input_tokens": 80,
+      "output_tokens": 24388,
+      "cache_read": 3325370,
+      "cache_create": 92823
+    }
+  ]
+}
