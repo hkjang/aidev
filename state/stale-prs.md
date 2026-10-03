@@ -1,7 +1,10 @@
-# 열린 러너 PR (2026-10-03 23:45 기준)
+# 열린 러너 PR (2026-10-04 06:15 기준)
 
-- [종결] vibe-code #7 (판정 3일 전) https://github.com/hkjang/vibe-code/pull/7 — 수정·심사를 2번 시도했지만 통과하지 못함 — 사람이 봐야 한다
-- [종결] nexabuilder #50 (판정 3일 전) https://github.com/hkjang/nexabuilder/pull/50 — 수정·심사를 2번 시도했지만 통과하지 못함 — 사람이 봐야 한다
+- [종결] DartFly #18 (판정 3일 전) https://github.com/hkjang/DartFly/pull/18 — 수정·심사를 2번 시도했지만 통과하지 못함 — 사람이 봐야 한다
+- [종결] vibe-code #10 (판정 3일 전) https://github.com/hkjang/vibe-code/pull/10 — 수정·심사를 2번 시도했지만 통과하지 못함 — 사람이 봐야 한다
+- [종결] vibe-code #9 (판정 3일 전) https://github.com/hkjang/vibe-code/pull/9 — 수정·심사를 2번 시도했지만 통과하지 못함 — 사람이 봐야 한다
+- [종결] vibe-code #8 (판정 3일 전) https://github.com/hkjang/vibe-code/pull/8 — 수정·심사를 2번 시도했지만 통과하지 못함 — 사람이 봐야 한다
+- [오래됨] jasql #5 (10일) https://github.com/hkjang/jasql/pull/5 — auto-improve: emit reporting-unit time ranges in question order
 - [오래됨] appstore #30 (10일) https://github.com/hkjang/appstore/pull/30 — auto-improve: fix: count and page the favorites view by what it shows
 - [오래됨] vibe-coders #23 (10일) https://github.com/hkjang/vibe-coders/pull/23 — auto-improve: build(web): accept a forwarded quiet flag in the tsc and vite scripts
 - [오래됨] jasql #4 (11일) https://github.com/hkjang/jasql/pull/4 — auto-improve: fix eval verbose status for cases with missing diagnostics
@@ -9,26 +12,26 @@
 - [오래됨] muni #22 (12일) https://github.com/hkjang/muni/pull/22 — auto-improve: fix: DOCX 신규 가져오기에서 제목과 같은 첫 H1 제거
 - [오래됨] git-ctx #35 (12일) https://github.com/hkjang/git-ctx/pull/35 — auto-improve: fix(contentsecurity): preserve YAML list siblings when masking block scalars
 - [오래됨] visitflow #21 (12일) https://github.com/hkjang/visitflow/pull/21 — auto-improve: fix(import): warn about duplicate headers and selected columns
-- [오래됨] sqlon #10 (12일) https://github.com/hkjang/sqlon/pull/10 — auto-improve: fix(mcp): 비동기 잡 조회·취소에도 결과 만료를 적용합니다
-- [오래됨] muni #21 (12일) https://github.com/hkjang/muni/pull/21 — auto-improve: fix: 워크스페이스 ZIP에서 목록 파일과 동명 문서의 충돌을 막습니다
-- [오래됨] jasql #2 (12일) https://github.com/hkjang/jasql/pull/2 — auto-improve: Reject invalid calendar dates in time expressions
+- [오래됨] sqlon #10 (13일) https://github.com/hkjang/sqlon/pull/10 — auto-improve: fix(mcp): 비동기 잡 조회·취소에도 결과 만료를 적용합니다
+- [오래됨] muni #21 (13일) https://github.com/hkjang/muni/pull/21 — auto-improve: fix: 워크스페이스 ZIP에서 목록 파일과 동명 문서의 충돌을 막습니다
+- [오래됨] jasql #2 (13일) https://github.com/hkjang/jasql/pull/2 — auto-improve: Reject invalid calendar dates in time expressions
 - [오래됨] git-ctx #33 (13일) https://github.com/hkjang/git-ctx/pull/33 — auto-improve: fix(contentsecurity): preserve curl command when masking credentials
 - [오래됨] sqlon #9 (13일) https://github.com/hkjang/sqlon/pull/9 — auto-improve: fix(mcp): 프로파일 카탈로그 조회 인증과 사용자 권한을 연결합니다
 - [오래됨] muni #20 (13일) https://github.com/hkjang/muni/pull/20 — auto-improve: fix: HTML 파일을 가져올 때도 제목과 같은 첫 H1 은 본문에서 뺍니다
 - [오래됨] git-ctx #32 (13일) https://github.com/hkjang/git-ctx/pull/32 — auto-improve: fix(contentsecurity): leave a variable reference in a credential's place alone
-- [오래됨] sqlon #8 (13일) https://github.com/hkjang/sqlon/pull/8 — auto-improve: feat(mcp): REST 감사 항목에 인증 사용자를 actor 로 기록합니다
+- [오래됨] sqlon #8 (14일) https://github.com/hkjang/sqlon/pull/8 — auto-improve: feat(mcp): REST 감사 항목에 인증 사용자를 actor 로 기록합니다
 - [오래됨] AgentHub #29 (15일) https://github.com/hkjang/AgentHub/pull/29 — auto-improve: fix: the trail filed whatever sample the Pod put in a DLP report
 - [오래됨] orbit #6 (15일) https://github.com/hkjang/orbit/pull/6 — auto-improve: feat(mcp): 개인 키 없이 Keycloak 액세스 토큰으로 /mcp 에 들어올 수 있게 한다
 - [오래됨] jupiq #18 (16일) https://github.com/hkjang/jupiq/pull/18 — auto-improve: docs: 관리자·사용자 가이드에 MCP SSO(OAuth) 설정과 연결 방법을 더한다
 - [오래됨] Kkiit #6 (16일) https://github.com/hkjang/Kkiit/pull/6 — auto-improve: feat: /mcp 를 Keycloak 액세스 토큰(OAuth 2.1)으로도 열다 — 키 체계는 그대로
 - [오래됨] sqlon #6 (16일) https://github.com/hkjang/sqlon/pull/6 — auto-improve: fix(mcp): REST 변경 관리 승인·감사 행위자를 인증 사용자로 기록합니다
 - [오래됨] releasedock #17 (16일) https://github.com/hkjang/releasedock/pull/17 — auto-improve: chore: run gofmt and go vet before the tests in CI and make test
-- [오래됨] git-ctx #29 (16일) https://github.com/hkjang/git-ctx/pull/29 — auto-improve: fix(contentsecurity): keep the line break an Authorization header folds on
-- [오래됨] invenqor #22 (16일) https://github.com/hkjang/invenqor/pull/22 — auto-improve: feat: an MCP relation names both of its ends instead of two UUIDs
+- [오래됨] git-ctx #29 (17일) https://github.com/hkjang/git-ctx/pull/29 — auto-improve: fix(contentsecurity): keep the line break an Authorization header folds on
+- [오래됨] invenqor #22 (17일) https://github.com/hkjang/invenqor/pull/22 — auto-improve: feat: an MCP relation names both of its ends instead of two UUIDs
 - [오래됨] umm #158 (17일) https://github.com/hkjang/umm/pull/158 — auto-improve: Tell the people who are waiting, through the company relay
-- [오래됨] jikim #28 (17일) https://github.com/hkjang/jikim/pull/28 — auto-improve: feat: send approval and rotation-failure mail through a company SMTP relay
-- [오래됨] sqlon #4 (17일) https://github.com/hkjang/sqlon/pull/4 — auto-improve: feat(handoff): DBA 다이제스트를 다른 서비스로 넘기는 단일 사용 표(claim) 발급 — HANDOFF-STANDARD 보내는 쪽
-- [오래됨] orbit #3 (17일) https://github.com/hkjang/orbit/pull/3 — auto-improve: feat(handoff): 승인된 기억을 다른 사내 서비스로 넘긴다
+- [오래됨] jikim #28 (18일) https://github.com/hkjang/jikim/pull/28 — auto-improve: feat: send approval and rotation-failure mail through a company SMTP relay
+- [오래됨] sqlon #4 (18일) https://github.com/hkjang/sqlon/pull/4 — auto-improve: feat(handoff): DBA 다이제스트를 다른 서비스로 넘기는 단일 사용 표(claim) 발급 — HANDOFF-STANDARD 보내는 쪽
+- [오래됨] orbit #3 (18일) https://github.com/hkjang/orbit/pull/3 — auto-improve: feat(handoff): 승인된 기억을 다른 사내 서비스로 넘긴다
 - [오래됨] postra #10 (18일) https://github.com/hkjang/postra/pull/10 — auto-improve: feat(notify): send event notifications through a company SMTP relay
 - [오래됨] qurio #13 (19일) https://github.com/hkjang/qurio/pull/13 — auto-improve: feat: hand saved CSV results to other intranet services with single-use claims
 - [오래됨] sqlon #2 (19일) https://github.com/hkjang/sqlon/pull/2 — auto-improve: feat(auth): Keycloak 세션이 있으면 로그인 화면 없이 들어오는 silent SSO(prompt=none)를 추가합니다

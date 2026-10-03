@@ -310,3 +310,4 @@
 - 보류 아이디어: `embeddingStatus`(semantic.go:431)가 세 count 질의 오류를 버려 200 과 `items:0, embedded:0, stale:0` 으로 답함 — Confluence 에서 두 번 고친 것과 같은 모양이라 세 번째 반복이 되는 점은 감안 (3/1/S) · `cleanupAttachmentFiles`(attachments.go:604)가 행 0건인 보고서 디렉터리를 `RemoveAll` 하므로, 첫 업로드의 `MkdirAll` 과 커밋 사이에 30분 유지보수 스윕이 끼면 행만 남고 파일이 지워짐 — 경합이라 결정적 재현 방법을 먼저 정해야 함 (3/3/M) · `deleteAttachment`(attachments.go:471)의 참조 수 질의 오류를 버려 `remaining=0` 으로 읽고 아직 쓰이는 파일을 지움 — 질의 실패 재현 방법을 먼저 정해야 함 (2/2/S) · README·docs/MCP.md·AdminPage 의 MCP '읽기 전용' 서술이 `mcpwrite.go` 보다 낡음, CHECKS.md 의 authz-check 소요 시간·병행 금지 모순과 묶어 문서 회차로 (2/1/S) · AdminPage·DashboardPage 를 렌더하는 프런트 시험이 없어 조건부 문장이 타입 검사 밖에서 검증되지 않음 (2/2/M)
 - 과제서: 기각 — 이번 회차에 정찰 과제서는 없었고, 프로필의 보류 목록은 모두 가치 3 이하이거나 계약 결정·재현 방법이 선행돼야 하는 것들이라, 프로필이 다루지 않은 `loginthrottle.go` 의 남은 시간 계산 결함(차단 안내가 실제 차단 기간을 말하지 않음)을 직접 찾아 골랐습니다.
 
+- 릴리즈: v0.316.0 (2026-10-04, run 2026-10-04-053947-weekly-approve)
