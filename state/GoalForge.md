@@ -52,3 +52,4 @@
 - 보류 아이디어: ① `AutoApproveMerges` 가 `DailyLimit` 을 전혀 보지 않는다 — 병합 승인은 `auto_approvals` 에 기록되지 않아 셀 수단 자체가 없고 기록 경로 설계가 선행(단독 회차) ② `internal/model` 의 `ParseCriterion` 계약 테스트 — 패키지가 여전히 `[no test files]` 이고 `window.go` 는 다섯 회차째 미머지(선행 PR 비의존 S 과제) ③ 테스트용 git 저장소 부트스트랩 헬퍼를 공유 패키지로 정리(`requirePushable` 3중 복제 + 기존 중복 6곳) ④ 커밋이 옮겨간 뒤 남은 옛 커밋의 자동 병합 승인 철회(`StaleApprovalError` 로 소비만 막고 APPROVED 로 영구히 남는다) ⑤ `internal/procctl`·`internal/testscript` 테스트 공백(release.yml 이 windows/macos 에서 돌려 procctl 의 OS 분기가 실제 실행된다).
 - 과제서: 기각 — 정찰 과제서가 없었고(회차 노트에 단계 판정만 있었다), 보류 목록을 코드로 재평가한 뒤 `internal/policy/gatekind.go` 를 직접 읽어 문서화된 의도와 코드가 어긋난 자리를 찾아 골랐다.
 
+- 릴리즈: v0.49.0 (2026-10-04, run 2026-10-04-070319-GoalForge-improve)
