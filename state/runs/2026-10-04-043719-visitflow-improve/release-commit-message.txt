@@ -1,0 +1,35 @@
+chore(release): VisitFlow v2.8.15
+
+- 방문 상세의 「알림 재발송」이 실패를 말없이 삼키고 성공도 거짓으로 단정하던 것을
+  고친다. `web/src/pages/VisitsPage.tsx` 에서 이 버튼만 `try/catch` 없는 인라인
+  `onClick={async …}` 이어서 두 방향으로 틀려 있었다 — ① 서버가 409 를 주면
+  `setNotice` 에 닿기 전에 reject 되어 화면이 전혀 바뀌지 않고 unhandled rejection
+  으로만 남아 운영자는 클릭이 닿았는지조차 알 수 없었고, ② 성공해도 응답
+  `{queued:N}` 을 버리고 늘 "알림을 다시 등록했습니다" 로 단정했다. 같은 파일의
+  `cancelSeries` 를 본뜬 이름 붙은 `resendNotification` 으로 꺼내 실패는 서버의
+  한국어 메시지를 기존 `error` Alert 로, 성공은 실제 건수를 보고하게 했다.
+  `queued===0` 은 방어가 아니라 실제로 도달한다 — `queueNotificationEventCountTx`
+  (`internal/app/notification_config.go:1009`)는 발송 규칙이 만든 행만 세고
+  `queueHostMailTx` 는 세지 않으므로, 시드된 `visit_confirmed` 규칙을 끄면 서버가
+  `200 {"queued":0}` 을 준다. 그래서 0건은 성공 notice 가 아니라 "재발송할 알림이
+  0건입니다. 메시지 발송 규칙이 꺼져 있는지 확인해 주세요." 로 알린다. 서버
+  (`resendVisitNotification` 의 상태 집합·권한)와 버튼 렌더 조건, `api.ts` 는
+  건드리지 않았다 — 화면이 서버의 답을 그대로 전하게 만든 것뿐이다. 프로덕션 1개
+  파일(13줄), 테스트 2개. 테스트가 0개였던 이 엔드포인트에 Go 통합 테스트가 건수·
+  0건 응답·`visit_not_notifiable` 거절을 고정하고, e2e 는 다이얼로그를 열어 둔 채
+  밖에서 방문을 취소해 실제 거절을 몰아 준다.
+
+- 검증(릴리스 시점에 다시 실행): `npm ci`(package.json·lock 일치)·`npm run lint`
+  (tsc -b)·`npm test` 88 passed·`npm run build`, `gofmt -l .` 빈 출력·
+  `go build ./...`·`go vet ./...`·`git diff --check` 빈 출력, 그리고 임시
+  PostgreSQL 16 컨테이너에 `VISITFLOW_TEST_DSN` 을 주고 `go test ./... -count=1`
+  (internal/app **57.606s** — SKIP 아님), `bash scripts/local-e2e.sh`
+  **11 passed / 종료 코드 0**. 구현 회차의 red→green 은 수정 전 번들·실제 서버·실제
+  Chromium 으로 짝지었다 — 새 영구 스펙은 수정 전 `element(s) not found` 로 1 failed
+  였고, 침묵 자체는 임시 프로브로 `409` 응답에 `MuiAlert count :: 0` 을, 수정 후 같은
+  조작에서 `count :: 1` 과 rejection 없음을 실측했다. Go 통합 테스트는 수정 전에도
+  통과한다(서버는 원래 옳고 이 테스트는 계약 가드다) — 바뀐 경로를 지나는지는 변이
+  두 개로 증명했다.
+
+버전 표기(README, docs/index.html, web/package.json, web/package-lock.json)를
+2.8.15로 올린다.
