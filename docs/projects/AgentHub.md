@@ -1,7 +1,7 @@
 ---
 title: "AgentHub — 자율 개선 이력"
 description: "AgentHub: 자율 개선 회차 60회, 릴리즈 31건. 최근 릴리즈 v0.258.0 (자산 8개)."
-last_modified_at: 2026-10-04 23:37:42 +0900
+last_modified_at: 2026-10-05 00:17:10 +0900
 ---
 {% raw %}
 <script type="application/ld+json">
@@ -18,14 +18,14 @@ last_modified_at: 2026-10-04 23:37:42 +0900
   "name": "hkjang",
   "url": "https://github.com/hkjang"
  },
- "dateModified": "2026-10-04T23:37:42+09:00",
+ "dateModified": "2026-10-05T00:17:10+09:00",
  "version": "0.258.0"
 }
 </script>
 
 # AgentHub
 
-<p class="tldr"><strong>요약.</strong> AgentHub: 자율 개선 회차 60회, 릴리즈 31건. 최근 릴리즈 v0.258.0 (자산 8개). <span class="pill pill-merged" title="14일: 릴리즈 10, 실패 0, 경고 2, 회귀 0">건강 C</span> <span class="meta">14일: 릴리즈 10, 실패 0, 경고 2, 회귀 0</span></p>
+<p class="tldr"><strong>요약.</strong> AgentHub: 자율 개선 회차 60회, 릴리즈 31건. 최근 릴리즈 v0.258.0 (자산 8개). <span class="pill pill-merged" title="14일: 릴리즈 8, 실패 0, 경고 2, 회귀 0">건강 C</span> <span class="meta">14일: 릴리즈 8, 실패 0, 경고 2, 회귀 0</span></p>
 
 <ul class="stats"><li><b>60</b><span>회차</span></li><li><b>1</b><span>프로젝트</span></li><li><b>32</b><span>배포 준비 완료</span></li><li><b>1</b><span>릴리즈 진행 중</span></li><li><b>2</b><span>병합 완료</span></li><li><b>21</b><span>검토 대기</span></li><li><b>0</b><span>검증 실패</span></li><li><b>1</b><span>변경 없음</span></li><li><b>3</b><span>실행 오류</span></li><li><b>$269.48</b><span>비용</span></li><li><b>10시간 21분</b><span>에이전트 시간</span></li></ul>
 

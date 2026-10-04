@@ -1,7 +1,7 @@
 ---
 title: "igame — 자율 개선 이력"
 description: "igame: 자율 개선 회차 50회, 릴리즈 25건. 최근 릴리즈 v0.7.28 (자산 1개)."
-last_modified_at: 2026-10-04 23:37:42 +0900
+last_modified_at: 2026-10-05 00:17:10 +0900
 ---
 {% raw %}
 <script type="application/ld+json">
@@ -18,14 +18,14 @@ last_modified_at: 2026-10-04 23:37:42 +0900
   "name": "hkjang",
   "url": "https://github.com/hkjang"
  },
- "dateModified": "2026-10-04T23:37:42+09:00",
+ "dateModified": "2026-10-05T00:17:10+09:00",
  "version": "0.7.28"
 }
 </script>
 
 # igame
 
-<p class="tldr"><strong>요약.</strong> igame: 자율 개선 회차 50회, 릴리즈 25건. 최근 릴리즈 v0.7.28 (자산 1개). <span class="pill pill-merged" title="14일: 릴리즈 11, 실패 0, 경고 1, 회귀 0">건강 B</span> <span class="meta">14일: 릴리즈 11, 실패 0, 경고 1, 회귀 0</span></p>
+<p class="tldr"><strong>요약.</strong> igame: 자율 개선 회차 50회, 릴리즈 25건. 최근 릴리즈 v0.7.28 (자산 1개). <span class="pill pill-merged" title="14일: 릴리즈 10, 실패 0, 경고 1, 회귀 0">건강 B</span> <span class="meta">14일: 릴리즈 10, 실패 0, 경고 1, 회귀 0</span></p>
 
 <ul class="stats"><li><b>50</b><span>회차</span></li><li><b>1</b><span>프로젝트</span></li><li><b>26</b><span>배포 준비 완료</span></li><li><b>2</b><span>릴리즈 진행 중</span></li><li><b>3</b><span>병합 완료</span></li><li><b>11</b><span>검토 대기</span></li><li><b>2</b><span>검증 실패</span></li><li><b>2</b><span>변경 없음</span></li><li><b>4</b><span>실행 오류</span></li><li><b>$217.93</b><span>비용</span></li><li><b>8시간 0분</b><span>에이전트 시간</span></li></ul>
 
