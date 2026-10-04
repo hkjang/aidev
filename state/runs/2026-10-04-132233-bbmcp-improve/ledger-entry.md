@@ -1,0 +1,7 @@
+## 2026-10-04
+- 선택: 승인 레코드의 인자 스크럽 누락 키 보강 (`internal/approval/redactArgs`) (가치 4 / 위험 2 / 작업량 S)
+- 결과: 성공
+- 요약: `redactArgs` 가 `token|secret|password` 세 조건문만 보던 것을 패키지 수준 `sensitiveKeyParts` 슬라이스 순회로 바꾸고 `credential`/`authorization`/`bearer`/`apikey`/`api_key`/`accesskey`/`access_key`/`passwd`/`privatekey`/`private_key` 를 추가했다 — 이 이름들로 들어온 값이 `approval_requests.arguments_redacted` 에 원문으로 저장돼 `GET /api/admin/approvals` 로 관리 콘솔에 나가던 경로를 닫았다. 감사 쪽 `redactKeys` 는 베끼지 않았다(승인자는 diff/content/text 본문을 봐야 하고, `pat` 부분일치는 실제 도구 인자 `path` 를 가린다). 프로덕션 파일 1개 + 테스트 1건. 검증은 docker postgres:16-alpine 을 띄우고 `go build ./... && go vet ./...` 통과, `TEST_DATABASE_URL=… go test ./... -count=1 -p 1` 전체 통과(테스트 패키지 9개 ok), `-v` 로 `--- SKIP` 0건 확인.
+- 실패 재현: `integration_test.go:463: Arguments["apiKey"] = super-secret-pat, want "[redacted]"` / `integration_test.go:463: Arguments["authorization"] = Bearer super-secret-pat-3, want "[redacted]"` (수정 전, 8개 키 중 7개가 DB 를 거쳐 원문으로 돌아왔다 — `bearerToken` 만 기존 `token` 조건에 걸려 통과)
+- 보류 아이디어: `internal/mcp/jsonrpc.go` 프레이밍 단위 테스트(테스트 0건, DB 불필요) / `internal/identity/mapper.go` 매핑 고정 규칙 테스트 / `internal/permission/resolver.go` 캐시·fail-closed 경로 테스트 / `Executor.prVersion`·`prTargetBranch` 의 오류 삼킴 정리(브랜치 제한 경로까지 영향, 별 회차) / `internal/audit` 의 `pat` 부분일치가 `path` 를 과다 스크럽
+- 과제서: 채택 — 근거(`redactArgs` 3개 하드코딩 조건, 미필터 args map, `scan()`→`GET /api/admin/approvals` 노출)가 현재 코드와 정확히 일치했고 수용 기준 3개를 그대로 충족했다.
