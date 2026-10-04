@@ -1,0 +1,276 @@
+#0 building with "default" instance using docker driver
+
+#1 [internal] load build definition from Dockerfile
+#1 transferring dockerfile:
+#1 transferring dockerfile: 2.19kB done
+#1 DONE 1.1s
+
+#2 resolve image config for docker-image://docker.io/docker/dockerfile:1.7
+#2 DONE 1.4s
+
+#3 docker-image://docker.io/docker/dockerfile:1.7@sha256:a57df69d0ea827fb7266491f2813635de6f17269be881f696fbfdf2d83dda33e
+#3 resolve docker.io/docker/dockerfile:1.7@sha256:a57df69d0ea827fb7266491f2813635de6f17269be881f696fbfdf2d83dda33e 0.0s done
+#3 CACHED
+
+#4 [internal] load metadata for docker.io/library/debian:bookworm-slim
+#4 DONE 1.3s
+
+#5 [internal] load metadata for docker.io/library/node:24-bookworm-slim
+#5 ...
+
+#6 [internal] load metadata for docker.io/library/golang:1.24-bookworm
+#6 DONE 1.3s
+
+#5 [internal] load metadata for docker.io/library/node:24-bookworm-slim
+#5 DONE 2.2s
+
+#7 [internal] load .dockerignore
+#7 transferring context: 99B done
+#7 DONE 0.0s
+
+#8 [internal] load build context
+#8 DONE 0.0s
+
+#9 [go-build 1/7] FROM docker.io/library/golang:1.24-bookworm@sha256:1a6d4452c65dea36aac2e2d606b01b4a029ec90cc1ae53890540ce6173ea77ac
+#9 resolve docker.io/library/golang:1.24-bookworm@sha256:1a6d4452c65dea36aac2e2d606b01b4a029ec90cc1ae53890540ce6173ea77ac 0.0s done
+#9 DONE 0.0s
+
+#10 [web-build 1/6] FROM docker.io/library/node:24-bookworm-slim@sha256:0e0ff40c39bc087845bfb27465a0df4ea419520094bc35842ff83dd8cbe6f9b6
+#10 resolve docker.io/library/node:24-bookworm-slim@sha256:0e0ff40c39bc087845bfb27465a0df4ea419520094bc35842ff83dd8cbe6f9b6 0.0s done
+#10 DONE 0.0s
+
+#11 [stage-2 1/3] FROM docker.io/library/debian:bookworm-slim@sha256:3783cc01769c7b2b1b83a5c5ad96c815348e28ed7da68e2e3687004faa906251
+#11 resolve docker.io/library/debian:bookworm-slim@sha256:3783cc01769c7b2b1b83a5c5ad96c815348e28ed7da68e2e3687004faa906251 0.0s done
+#11 CACHED
+
+#8 [internal] load build context
+#8 transferring context: 21.31MB 0.1s done
+#8 DONE 0.1s
+
+#12 [go-build 2/7] WORKDIR /src
+#12 CACHED
+
+#10 [web-build 1/6] FROM docker.io/library/node:24-bookworm-slim@sha256:0e0ff40c39bc087845bfb27465a0df4ea419520094bc35842ff83dd8cbe6f9b6
+#10 DONE 0.1s
+
+#13 [go-build 3/7] COPY go.mod go.sum ./
+#13 DONE 0.1s
+
+#14 [go-build 4/7] RUN go mod download
+#14 ...
+
+#10 [web-build 1/6] FROM docker.io/library/node:24-bookworm-slim@sha256:0e0ff40c39bc087845bfb27465a0df4ea419520094bc35842ff83dd8cbe6f9b6
+#10 sha256:a0498254f698ab1b2c7d0d1ce51ebdea22c1f01e620433118a5c764fab93a3dc 445B / 445B 0.2s done
+#10 sha256:2a11efab31915186066efa212f7ba10e7ff63c5d49d21d07c4a8377a2993e70b 1.71MB / 1.71MB 0.9s done
+#10 sha256:1c473ca5523b8180b93f87dd2961339837b4d84db4d4998197a64984462b5164 24.12MB / 50.86MB 5.1s
+#10 sha256:eab09f3e3981ba4ceab089988dd081db334f2221594d7873f6b9e123f32d2105 3.31kB / 3.31kB 0.8s done
+#10 extracting sha256:eab09f3e3981ba4ceab089988dd081db334f2221594d7873f6b9e123f32d2105 0.0s done
+#10 ...
+
+#14 [go-build 4/7] RUN go mod download
+#14 DONE 5.5s
+
+#10 [web-build 1/6] FROM docker.io/library/node:24-bookworm-slim@sha256:0e0ff40c39bc087845bfb27465a0df4ea419520094bc35842ff83dd8cbe6f9b6
+#10 sha256:1c473ca5523b8180b93f87dd2961339837b4d84db4d4998197a64984462b5164 27.26MB / 50.86MB 5.4s
+#10 ...
+
+#15 [stage-2 2/3] RUN apt-get update && apt-get install -y --no-install-recommends ca-certificates tzdata &&     rm -rf /var/lib/apt/lists/* &&     groupadd --gid 10001 relio && useradd --uid 10001 --gid 10001 --no-create-home --shell /usr/sbin/nologin relio &&     mkdir -p /var/lib/relio/secrets /var/lib/relio/uploads /var/lib/relio/exports &&     chown -R 10001:10001 /var/lib/relio
+#15 0.325 Get:1 http://deb.debian.org/debian bookworm InRelease [151 kB]
+#15 0.345 Get:2 http://deb.debian.org/debian bookworm-updates InRelease [55.4 kB]
+#15 0.353 Get:3 http://deb.debian.org/debian-security bookworm-security InRelease [34.8 kB]
+#15 0.400 Get:4 http://deb.debian.org/debian bookworm/main amd64 Packages [8790 kB]
+#15 3.020 Get:5 http://deb.debian.org/debian bookworm-updates/main amd64 Packages [6924 B]
+#15 3.023 Get:6 http://deb.debian.org/debian-security bookworm-security/main amd64 Packages [346 kB]
+#15 3.599 Fetched 9384 kB in 3s (2850 kB/s)
+#15 3.599 Reading package lists...
+#15 3.895 Reading package lists...
+#15 4.262 Building dependency tree...
+#15 4.358 Reading state information...
+#15 4.440 The following additional packages will be installed:
+#15 4.440   libssl3 openssl
+#15 4.460 The following NEW packages will be installed:
+#15 4.460   ca-certificates libssl3 openssl
+#15 4.461 The following packages will be upgraded:
+#15 4.461   tzdata
+#15 4.520 1 upgraded, 3 newly installed, 0 to remove and 1 not upgraded.
+#15 4.520 Need to get 3948 kB of archives.
+#15 4.520 After this operation, 8951 kB of additional disk space will be used.
+#15 4.520 Get:1 http://deb.debian.org/debian-security bookworm-security/main amd64 tzdata all 2026c-0+deb12u1 [304 kB]
+#15 4.658 Get:2 http://deb.debian.org/debian-security bookworm-security/main amd64 libssl3 amd64 3.0.22-1~deb12u1 [2039 kB]
+#15 5.086 Get:3 http://deb.debian.org/debian-security bookworm-security/main amd64 openssl amd64 3.0.22-1~deb12u1 [1442 kB]
+#15 5.236 Get:4 http://deb.debian.org/debian-security bookworm-security/main amd64 ca-certificates all 20250419~deb12u1 [162 kB]
+#15 5.389 debconf: delaying package configuration, since apt-utils is not installed
+#15 5.407 Fetched 3948 kB in 1s (4856 kB/s)
+#15 5.435 (Reading database ... (Reading database ... 5%(Reading database ... 10%(Reading database ... 15%(Reading database ... 20%(Reading database ... 25%(Reading database ... 30%(Reading database ... 35%(Reading database ... 40%(Reading database ... 45%(Reading database ... 50%(Reading database ... 55%(Reading database ... 60%(Reading database ... 65%(Reading database ... 70%(Reading database ... 75%(Reading database ... 80%(Reading database ... 85%(Reading database ... 90%(Reading database ... 95%(Reading database ... 100%(Reading database ... 6096 files and directories currently installed.)
+#15 5.458 Preparing to unpack .../tzdata_2026c-0+deb12u1_all.deb ...
+#15 5.561 Unpacking tzdata (2026c-0+deb12u1) over (2026b-0+deb12u1) ...
+#15 ...
+
+#16 [go-build 5/7] COPY . .
+#16 DONE 0.2s
+
+#10 [web-build 1/6] FROM docker.io/library/node:24-bookworm-slim@sha256:0e0ff40c39bc087845bfb27465a0df4ea419520094bc35842ff83dd8cbe6f9b6
+#10 sha256:1c473ca5523b8180b93f87dd2961339837b4d84db4d4998197a64984462b5164 32.51MB / 50.86MB 5.9s
+#10 sha256:1c473ca5523b8180b93f87dd2961339837b4d84db4d4998197a64984462b5164 35.65MB / 50.86MB 6.2s
+#10 sha256:1c473ca5523b8180b93f87dd2961339837b4d84db4d4998197a64984462b5164 38.80MB / 50.86MB 6.5s
+#10 sha256:1c473ca5523b8180b93f87dd2961339837b4d84db4d4998197a64984462b5164 42.99MB / 50.86MB 6.8s
+#10 sha256:1c473ca5523b8180b93f87dd2961339837b4d84db4d4998197a64984462b5164 46.14MB / 50.86MB 7.1s
+#10 sha256:1c473ca5523b8180b93f87dd2961339837b4d84db4d4998197a64984462b5164 49.28MB / 50.86MB 7.4s
+#10 sha256:1c473ca5523b8180b93f87dd2961339837b4d84db4d4998197a64984462b5164 50.86MB / 50.86MB 7.5s done
+#10 extracting sha256:1c473ca5523b8180b93f87dd2961339837b4d84db4d4998197a64984462b5164
+#10 extracting sha256:1c473ca5523b8180b93f87dd2961339837b4d84db4d4998197a64984462b5164 1.3s done
+#10 DONE 8.9s
+
+#15 [stage-2 2/3] RUN apt-get update && apt-get install -y --no-install-recommends ca-certificates tzdata &&     rm -rf /var/lib/apt/lists/* &&     groupadd --gid 10001 relio && useradd --uid 10001 --gid 10001 --no-create-home --shell /usr/sbin/nologin relio &&     mkdir -p /var/lib/relio/secrets /var/lib/relio/uploads /var/lib/relio/exports &&     chown -R 10001:10001 /var/lib/relio
+#15 7.518 Selecting previously unselected package libssl3:amd64.
+#15 7.520 Preparing to unpack .../libssl3_3.0.22-1~deb12u1_amd64.deb ...
+#15 7.525 Unpacking libssl3:amd64 (3.0.22-1~deb12u1) ...
+#15 7.630 Selecting previously unselected package openssl.
+#15 7.631 Preparing to unpack .../openssl_3.0.22-1~deb12u1_amd64.deb ...
+#15 7.634 Unpacking openssl (3.0.22-1~deb12u1) ...
+#15 7.724 Selecting previously unselected package ca-certificates.
+#15 7.725 Preparing to unpack .../ca-certificates_20250419~deb12u1_all.deb ...
+#15 7.728 Unpacking ca-certificates (20250419~deb12u1) ...
+#15 7.790 Setting up libssl3:amd64 (3.0.22-1~deb12u1) ...
+#15 7.798 Setting up tzdata (2026c-0+deb12u1) ...
+#15 7.854 debconf: unable to initialize frontend: Dialog
+#15 7.854 debconf: (TERM is not set, so the dialog frontend is not usable.)
+#15 7.854 debconf: falling back to frontend: Readline
+#15 7.854 debconf: unable to initialize frontend: Readline
+#15 7.854 debconf: (Can't locate Term/ReadLine.pm in @INC (you may need to install the Term::ReadLine module) (@INC contains: /etc/perl /usr/local/lib/x86_64-linux-gnu/perl/5.36.0 /usr/local/share/perl/5.36.0 /usr/lib/x86_64-linux-gnu/perl5/5.36 /usr/share/perl5 /usr/lib/x86_64-linux-gnu/perl-base /usr/lib/x86_64-linux-gnu/perl/5.36 /usr/share/perl/5.36 /usr/local/lib/site_perl) at /usr/share/perl5/Debconf/FrontEnd/Readline.pm line 7.)
+#15 7.854 debconf: falling back to frontend: Teletype
+#15 7.882 
+#15 7.882 Current default time zone: 'Etc/UTC'
+#15 7.884 Local time is now:      Sun Oct  4 20:00:03 UTC 2026.
+#15 7.884 Universal Time is now:  Sun Oct  4 20:00:03 UTC 2026.
+#15 7.884 Run 'dpkg-reconfigure tzdata' if you wish to change it.
+#15 7.884 
+#15 7.940 Setting up openssl (3.0.22-1~deb12u1) ...
+#15 7.952 Setting up ca-certificates (20250419~deb12u1) ...
+#15 8.004 debconf: unable to initialize frontend: Dialog
+#15 8.004 debconf: (TERM is not set, so the dialog frontend is not usable.)
+#15 8.004 debconf: falling back to frontend: Readline
+#15 8.004 debconf: unable to initialize frontend: Readline
+#15 8.004 debconf: (Can't locate Term/ReadLine.pm in @INC (you may need to install the Term::ReadLine module) (@INC contains: /etc/perl /usr/local/lib/x86_64-linux-gnu/perl/5.36.0 /usr/local/share/perl/5.36.0 /usr/lib/x86_64-linux-gnu/perl5/5.36 /usr/share/perl5 /usr/lib/x86_64-linux-gnu/perl-base /usr/lib/x86_64-linux-gnu/perl/5.36 /usr/share/perl/5.36 /usr/local/lib/site_perl) at /usr/share/perl5/Debconf/FrontEnd/Readline.pm line 7.)
+#15 8.004 debconf: falling back to frontend: Teletype
+#15 8.406 Updating certificates in /etc/ssl/certs...
+#15 ...
+
+#10 [web-build 1/6] FROM docker.io/library/node:24-bookworm-slim@sha256:0e0ff40c39bc087845bfb27465a0df4ea419520094bc35842ff83dd8cbe6f9b6
+#10 extracting sha256:2a11efab31915186066efa212f7ba10e7ff63c5d49d21d07c4a8377a2993e70b 0.1s done
+#10 extracting sha256:a0498254f698ab1b2c7d0d1ce51ebdea22c1f01e620433118a5c764fab93a3dc 0.0s done
+#10 DONE 8.9s
+
+#17 [web-build 2/6] WORKDIR /src/web
+#17 DONE 0.1s
+
+#15 [stage-2 2/3] RUN apt-get update && apt-get install -y --no-install-recommends ca-certificates tzdata &&     rm -rf /var/lib/apt/lists/* &&     groupadd --gid 10001 relio && useradd --uid 10001 --gid 10001 --no-create-home --shell /usr/sbin/nologin relio &&     mkdir -p /var/lib/relio/secrets /var/lib/relio/uploads /var/lib/relio/exports &&     chown -R 10001:10001 /var/lib/relio
+#15 9.000 150 added, 0 removed; done.
+#15 9.025 Processing triggers for libc-bin (2.36-9+deb12u14) ...
+#15 9.058 Processing triggers for ca-certificates (20250419~deb12u1) ...
+#15 9.064 Updating certificates in /etc/ssl/certs...
+#15 ...
+
+#18 [web-build 3/6] COPY web/package.json web/package-lock.json ./
+#18 DONE 0.0s
+
+#19 [web-build 4/6] RUN npm ci
+#19 ...
+
+#15 [stage-2 2/3] RUN apt-get update && apt-get install -y --no-install-recommends ca-certificates tzdata &&     rm -rf /var/lib/apt/lists/* &&     groupadd --gid 10001 relio && useradd --uid 10001 --gid 10001 --no-create-home --shell /usr/sbin/nologin relio &&     mkdir -p /var/lib/relio/secrets /var/lib/relio/uploads /var/lib/relio/exports &&     chown -R 10001:10001 /var/lib/relio
+#15 9.519 0 added, 0 removed; done.
+#15 9.519 Running hooks in /etc/ca-certificates/update.d...
+#15 9.521 done.
+#15 DONE 9.6s
+
+#19 [web-build 4/6] RUN npm ci
+#19 2.279 
+#19 2.279 added 69 packages, and audited 70 packages in 2s
+#19 2.279 
+#19 2.279 9 packages are looking for funding
+#19 2.279   run `npm fund` for details
+#19 2.279 
+#19 2.279 found 0 vulnerabilities
+#19 2.280 npm warn install-scripts 1 package has install scripts not yet covered by allowScripts:
+#19 2.280 npm warn install-scripts   esbuild@0.28.2 (postinstall: node install.js)
+#19 2.280 npm warn install-scripts
+#19 2.280 npm warn install-scripts Run `npm install-scripts ls` to review, or `npm install-scripts approve <pkg>` to allow.
+#19 2.281 npm notice
+#19 2.281 npm notice New major version of npm available! 11.19.0 -> 12.2.0
+#19 2.281 npm notice Changelog: https://github.com/npm/cli/releases/tag/v12.2.0
+#19 2.281 npm notice To update run: npm install -g npm@12.2.0
+#19 2.281 npm notice
+#19 DONE 2.5s
+
+#20 [web-build 5/6] COPY web/ ./
+#20 DONE 0.1s
+
+#21 [web-build 6/6] RUN npm run build
+#21 -0.611 
+#21 -0.611 > relio-web@0.1.0 build
+#21 -0.611 > tsc -b && vite build
+#21 -0.611 
+#21 0.894 vite v7.3.6 building client environment for production...
+#21 0.923 <script src="/analytics.js"> in "/index.html" can't be bundled without type="module" attribute
+#21 0.932 transforming...
+#21 1.586 ✓ 55 modules transformed.
+#21 1.746 rendering chunks...
+#21 1.754 computing gzip size...
+#21 1.766 ../internal/webui/dist/index.html                   0.85 kB │ gzip:   0.51 kB
+#21 1.766 ../internal/webui/dist/assets/index-TPi-qKVA.css  116.82 kB │ gzip:  24.43 kB
+#21 1.766 ../internal/webui/dist/assets/index-DwLYr3DH.js   570.86 kB │ gzip: 158.23 kB
+#21 1.766 
+#21 1.766 (!) Some chunks are larger than 500 kB after minification. Consider:
+#21 1.766 - Using dynamic import() to code-split the application
+#21 1.766 - Use build.rollupOptions.output.manualChunks to improve chunking: https://rollupjs.org/configuration-options/#output-manualchunks
+#21 1.766 - Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.
+#21 1.766 ✓ built in 857ms
+#21 DONE 1.8s
+
+#22 [go-build 6/7] COPY --from=web-build /src/internal/webui/dist/ ./internal/webui/dist/
+#22 DONE 0.0s
+
+#23 [go-build 7/7] RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go test ./... &&     CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -trimpath       -ldflags="-s -w -X github.com/hkjang/relio/internal/platform/version.Version=scout-deaf151 -X github.com/hkjang/relio/internal/platform/version.GitCommit=deaf151 -X github.com/hkjang/relio/internal/platform/version.BuildDate=unknown -X github.com/hkjang/relio/internal/platform/version.Edition=Community"       -o /out/relio ./cmd/relio
+#23 7.151 ?   	github.com/hkjang/relio/cmd/relio	[no test files]
+#23 7.158 ok  	github.com/hkjang/relio/internal/admin	0.003s
+#23 7.159 ok  	github.com/hkjang/relio/internal/analytics	0.005s
+#23 7.164 ok  	github.com/hkjang/relio/internal/api	0.009s
+#23 7.164 ok  	github.com/hkjang/relio/internal/apikey	0.004s
+#23 7.164 ok  	github.com/hkjang/relio/internal/approval	0.005s
+#23 7.164 ok  	github.com/hkjang/relio/internal/audit	0.006s
+#23 7.905 ok  	github.com/hkjang/relio/internal/auth	0.751s
+#23 7.905 ok  	github.com/hkjang/relio/internal/config	0.003s
+#23 7.905 ok  	github.com/hkjang/relio/internal/crm	0.043s
+#23 7.905 ok  	github.com/hkjang/relio/internal/intelligence	0.025s
+#23 7.905 ok  	github.com/hkjang/relio/internal/job	0.012s
+#23 14.22 ok  	github.com/hkjang/relio/internal/mail	7.059s
+#23 14.22 ok  	github.com/hkjang/relio/internal/mcp	0.037s
+#23 14.22 ok  	github.com/hkjang/relio/internal/oidc	0.200s
+#23 14.22 ok  	github.com/hkjang/relio/internal/personal	0.006s
+#23 14.22 ok  	github.com/hkjang/relio/internal/platform/database	0.043s
+#23 14.22 ok  	github.com/hkjang/relio/internal/platform/httpx	0.055s
+#23 14.22 ?   	github.com/hkjang/relio/internal/platform/ids	[no test files]
+#23 14.22 ok  	github.com/hkjang/relio/internal/platform/secrets	0.013s
+#23 14.22 ok  	github.com/hkjang/relio/internal/platform/timezone	0.008s
+#23 14.22 ?   	github.com/hkjang/relio/internal/platform/version	[no test files]
+#23 14.22 ok  	github.com/hkjang/relio/internal/relationship	0.006s
+#23 14.22 ok  	github.com/hkjang/relio/internal/server	0.204s
+#23 14.22 ok  	github.com/hkjang/relio/internal/voice	0.004s
+#23 14.22 ok  	github.com/hkjang/relio/internal/webui	0.002s
+#23 14.22 ?   	github.com/hkjang/relio/migrations	[no test files]
+#23 DONE 20.9s
+
+#24 [stage-2 3/3] COPY --from=go-build /out/relio /usr/local/bin/relio
+#24 DONE 0.1s
+
+#25 exporting to image
+#25 exporting layers
+#25 exporting layers 0.4s done
+#25 exporting manifest sha256:5c800b33931b50312b537cb7d2fa1dc00abf22ecd3a173ed7b5a23f22536b73d 0.0s done
+#25 exporting config sha256:713f5c2cf55eefdfa2f9c1768450e5c97f9f155e986fc556e8a16e47acd45135 0.0s done
+#25 exporting attestation manifest sha256:144952d8727c5e4bc57cc63eab85235f9b87c3fa5c97f3e692a6154e62c4bd89 0.0s done
+#25 exporting manifest list sha256:050f46a3482fd0b28759b8953e032ed1f8cc2fd14d051546f4f968458272a16d 0.0s done
+#25 naming to docker.io/library/relio:scout-20261005-deaf151 done
+#25 unpacking to docker.io/library/relio:scout-20261005-deaf151
+#25 unpacking to docker.io/library/relio:scout-20261005-deaf151 0.5s done
+#25 DONE 1.0s
