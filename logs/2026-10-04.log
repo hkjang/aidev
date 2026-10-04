@@ -1692,3 +1692,26 @@ notify: no new alerts
 [14:59:43] aidev synced: run(2026-10-04): git-ctx — no change
 reports: 33 day(s), 5 week(s), 2 month(s), 1910 run(s), 3860 usage row(s), 52 project page(s), 5 alert(s)
 notify: no new alerts
+[15:01:10] aidev synced: run(2026-10-04): dataworks — verify failed: 실패한 검증: cd web && npm test --silent (exit 1)
+[15:01:50] hunter: review — 33 turns, 5m, $2.26, success
+[15:01:50] hunter: [review] rejected — 리뷰 거절: web/src/resource-form-state.ts:61 프로덕션 주석이 "findings expires_at has no write-time validator at all" 이라고 단정하지만 internal/app/domain.go:486-491 이 status=="accepted" 인 모든 쓰기에서 time.Parse(time.RFC3339, str(m,"expires_at")) 와 expiry.After(time.Now()) 를 요구해 확장 연도 문자열을 400 으로 거절한다. 다음 유지보수자가 이 주석을 믿고 domain.go:486 검사를 "아무것도 막지 않는 중복"으로 지우거나 반대로 이미 있는 검증기를 다시 추가할 수 있는, 코드와 설명의 직접 모순이다. / internal/app/testdata/resource-datetime.json:2 (note) 와 web/tests/resource-form-state.test.mjs:88-93, internal/app/resource_datetime_test.go:91-94, 그리고 커밋 메시지 본문이 같은 거짓 서술을 반복한다 — "저장된 뒤 dashboard rollup(domain.go:704)·hunter_finding_timestamp(finding_ops.go:145) 이 비활성 위험 수용으로 읽어 발견 건이 계속 open 으로 집계된다". findings expires_at 을 읽는 네 곳(domain.go:703, finding_ops.go:145, notifications_queue.go:299, maintenance.go:12) 모두 status='accepted' 를 전제로 하고, status=accepted 를 쓸 수 있는 유일한 경로가 domain.go:486 이며 finding_bulk.go:71-74 는 accepted 를 허용 상태에서 제외한다. 따라서 "조용히 저장되어 오집계된다"는 도달 경로가 존재하지 않는다. 이번 변경의 유일한 1순위 근거가 사실이 아니다. / internal/app/resource_datetime_test.go:95-98 그 서술의 증거로 붙은 단언이 구성상 항상 참이다. acceptedActive := parseErr == nil && parsed.After(time.Now()) 인데 같은 테스트의 55-59 행이 이미 parseErr == nil == v.Accepted 와 parsed.After(time.Now()) == v.Future 를 단언했으므로 v.Accepted && v.Future 와 같아지는 것은 자동이다. 이 블록은 Hunter 코드를 한 줄도 호출하지 않으면서 "rollup read of expires_at" 로 실패 메시지를 적어, 서버 결함의 증거처럼 보이지만 아무것도 검증하지 않는다(리뷰 기준 1 의 '항상 참인 조건').
+[15:04:56] hunter: repair — 26 turns, 3m, $1.6, success
+[15:04:58] hunter: verify `go build ./...` → exit 0 (2s)
+[15:04:58] hunter: verify `go vet ./...` → exit 0 (0s)
+[15:05:01] hunter: verify `go test ./...` → exit 0 (3s)
+[15:05:01] hunter: verify `cd web && [ -d node_modules ] || npm ci --no-audit --no-fund` → exit 0 (0s)
+[15:05:01] hunter: verify `cd web && npm test --silent` → exit 0 (0s)
+[15:05:01] hunter: verify `cd web && [ -d node_modules ] || npm ci --no-audit --no-fund` → exit 0 (0s)
+[15:05:02] hunter: verify `cd web && npm run typecheck --silent` → exit 0 (1s)
+[15:05:02] hunter: verify `cd web && [ -d node_modules ] || npm ci --no-audit --no-fund` → exit 0 (0s)
+[15:05:03] hunter: verify `cd web && npm run build --silent` → exit 0 (1s)
+[15:05:04] hunter: [repair] done — # 수리 요약 (11398ed)  - 비평 3건 모두 사실이었다. `internal/app/domain.go:486-491` 이 status=="accepted" 인 모든 findings 쓰기에서 RFC3339+미래를 요구하므로 "findings ex
+[15:10:52] hunter: review — 35 turns, 5m, $2.54, success
+[15:10:52] hunter: [review] approved — 리뷰 승인 (risk=low)
+branch 'auto/2026-10-04-1442' set up to track 'origin/auto/2026-10-04-1442'.
+[15:10:59] hunter: [pr] created — https://github.com/hkjang/hunter/pull/18
+[15:11:01] hunter: waiting for CI on 11398ed (no-ci)
+[15:30:55] hunter: [ci] timeout — 제한 시간 안에 CI 완료를 확인하지 못함
+evidence: /mnt/c/Users/USER/projects/aidev/state/runs/2026-10-04-144232-hunter-improve/evidence.json
+reports: 33 day(s), 5 week(s), 2 month(s), 1911 run(s), 3863 usage row(s), 52 project page(s), 5 alert(s)
+notify: no new alerts
