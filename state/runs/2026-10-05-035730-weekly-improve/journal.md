@@ -28,3 +28,6 @@
 - 미확인: 실제 DB 장애·ID 재사용/수동 복원·프런트; 전체 Go/build/vet는 기존 로그만 확인. 판정 상세는 review.json.
 - [러너 04:16] review approved — 리뷰 승인 (risk=low)
 - [러너 04:16] pr created — https://github.com/hkjang/weekly/pull/30
+- [러너 04:40] ci passed — 검사 1개 모두 success
+- [러너 04:40] merge done — 6dbab0b
+- [러너 04:40] release missing — 릴리즈 결과 없음/손상: missing
