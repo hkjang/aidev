@@ -1,7 +1,7 @@
 ---
 title: "aidev 자율 개선 대시보드"
 description: "Claude Code 자율 개선 에이전트가 hkjang 의 프로젝트를 개선·테스트·머지·릴리즈한 일일 보고. 오늘 24회차·릴리즈 9건, 누적 1951회차·릴리즈 687건, 주의 필요 3건."
-last_modified_at: 2026-10-05 08:39:42 +0900
+last_modified_at: 2026-10-05 08:47:26 +0900
 ---
 {% raw %}
 <script type="application/ld+json">
@@ -17,7 +17,7 @@ last_modified_at: 2026-10-05 08:39:42 +0900
   "name": "hkjang",
   "url": "https://github.com/hkjang"
  },
- "dateModified": "2026-10-05T08:39:42+09:00"
+ "dateModified": "2026-10-05T08:47:26+09:00"
 }
 </script>
 
@@ -369,11 +369,11 @@ last_modified_at: 2026-10-05 08:39:42 +0900
 
 # aidev 자율 개선 대시보드
 
-<p class="tldr"><strong>한 줄 요약.</strong> Claude Code 자율 개선 에이전트가 hkjang 의 프로젝트를 개선·테스트·머지·릴리즈한 일일 보고. 오늘 24회차·릴리즈 9건, 누적 1951회차·릴리즈 687건, 주의 필요 3건. 회차가 끝날 때마다 자동 갱신됩니다 (마지막 갱신 <time datetime="2026-10-05T08:39:42+09:00" data-rel>2026-10-05 08:39</time> KST).</p>
+<p class="tldr"><strong>한 줄 요약.</strong> Claude Code 자율 개선 에이전트가 hkjang 의 프로젝트를 개선·테스트·머지·릴리즈한 일일 보고. 오늘 24회차·릴리즈 9건, 누적 1951회차·릴리즈 687건, 주의 필요 3건. 회차가 끝날 때마다 자동 갱신됩니다 (마지막 갱신 <time datetime="2026-10-05T08:47:26+09:00" data-rel>2026-10-05 08:47</time> KST).</p>
 
 <div class="alerts" role="alert"><strong>⚠️ 주의 필요 3건</strong> <span class="meta">— 새 경고는 GitHub Issue·Slack·이메일·Windows 알림으로도 보냅니다</span><ul><li><a href="https://hkjang.github.io/aidev/projects/yeopjari/">yeopjari</a> — 보호 파일 변경 — 자동 머지 안 함, 사람 검토 필요 <span class=meta>(2026-10-04 04:51)</span></li><li><a href="https://hkjang.github.io/aidev/projects/mmcp/">mmcp</a> — 보호 파일 변경 — 자동 머지 안 함, 사람 검토 필요 <span class=meta>(2026-10-04 21:43)</span></li><li><a href="https://hkjang.github.io/aidev/projects/vibe-code/">vibe-code</a> — 최신 릴리즈 v1.4.6 자산 0개 (이전 v1.4.0: 2개)</li></ul></div>
 
-<div class="alerts ok" role="status"><strong>🩺 러너 정상</strong> <span class="meta">— 마지막 회차 18분 전 · 스케줄러 실행 중 · 다음 실행 2026-10-05 오전 8:20:00 · 디스크 81% · 최근 7일 회귀 0건 · 점검 08:15</span></div>
+<div class="alerts ok" role="status"><strong>🩺 러너 정상</strong> <span class="meta">— 마지막 회차 5분 전 · 스케줄러 실행 중 · 다음 실행 2026-10-05 오전 8:50:00 · 디스크 81% · 최근 7일 회귀 0건 · 점검 08:45</span></div>
 
 
 <p><a href="https://hkjang.github.io/aidev/inbox/"><strong>📥 작업함</strong></a> — 열린 러너 PR·복구·수정 과제 43건 (그중 사람 필요 33건)</p>
