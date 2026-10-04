@@ -28,3 +28,7 @@
 - 다음 회차/릴리즈 노트: 동작 변화 0, 계약·spa/assets 무변경, revert 로 완전 복구된다. 릴리즈 노트에는 "진단 로그 추가(동작 불변)" 로만 적으면 된다. `internal/application` 에 `t.Parallel()` 을 도입하면 이 테스트의 `slog.SetDefault` 전역 교체가 깨진다는 구현 노트는 유효하다.
 - [러너 00:20] review approved — 리뷰 승인 (risk=low)
 - [러너 00:21] pr created — https://github.com/hkjang/postra/pull/34
+- [러너 00:27] ci passed — 검사 10개 모두 success
+- [러너 00:27] merge done — f55346b
+- [러너 00:39] release published — v0.25.5
+- [러너 00:40] assets verified — v0.25.5 자산 5개 (이전 v0.25.4: 5)
