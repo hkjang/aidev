@@ -1,0 +1,21 @@
+- 과제: 전체 모드 릴리즈 실시간 로그가 브라우저가 포기한 연결을 알리고 수동 재연결을 주기 (가치 3 / 위험 1 / 작업량 S)
+- 왜: `useReleaseLogs` 의 `source.onerror = () => setConnected(false)`(ReleaseDetailPage.tsx:145)는 브라우저가 스스로 재시도 중인 CONNECTING 과 완전히 포기한 CLOSED 를 구분하지 않아, 서버가 스트림을 거절했을 때(사용자당 3개 한도 `stream_limit` 429) 화면은 "로그 연결 대기" 만 영구히 띄운 채 로그가 멈추고 운영자에게는 되살릴 방법이 없다. 단순 모드 두 화면은 v0.5.24 에서 같은 결함을 CLOSED 안내 + "다시 연결" 로 고쳤고, 전체 모드에는 이미 커서를 보존한 재연결 배선(`streamAttempt`)이 있어 그 배선만 사람 손에 열어 주면 된다.
+- 수용 기준: 1) `readyState === 2`(CLOSED) 인 error 에서만 경고가 뜨고, `readyState === 0`(CONNECTING, 브라우저 자동 재시도)에서는 경고가 뜨지 않는다 2) 경고의 "다시 연결" 을 누르면 마지막 커서(`?after=<마지막 서버 id>`)로 **하나만** 새 스트림을 열고, 이미 표시된 줄과 잘림 안내(`truncated`)는 그대로 남는다 3) 재연결이 열리면(`onopen`) 경고가 사라진다 4) 정상 종료(`end {}`) 뒤에 뒤늦게 error 가 와도 경고가 뜨지 않는다 — 현재 `onerror` 에는 `stopped` 가드가 없고 `end` 핸들러가 `source.close()` 를 부르므로 그때 readyState 는 CLOSED 다. 새 핸들러는 `stopped` 를 반드시 본다 5) 자동 재시도 루프는 넣지 않는다 — error 하나로 새 스트림이 생기지 않음을 테스트가 증명한다(이미 `:111-112` 에 `expect(TestEventSource.instances).toHaveLength(1)` 가 있다) 6) 기존 `max_duration` 재연결·릴리즈 이동 초기화·`지우기` 동작은 그대로다(기존 웹 테스트 140건 전부 통과)
+- 건드릴 파일:
+  - `web/src/pages/releases/ReleaseDetailPage.tsx:82-153` — `useReleaseLogs`: `:145` 의 `source.onerror = () => setConnected(false)` 를 `readyState` 와 `stopped` 를 보는 핸들러로 바꾸고 `const [streamLost, setStreamLost] = useState(false)` 를 더한다. 훅 반환값(`:152`)에 `streamLost` 와 `reconnect`(= `setStreamLost(false)` + `setStreamAttempt((n) => n + 1)`)를 더한다 — 재연결 배선은 `:87/:140/:150` 에 이미 있다. `onopen`(`:105`)에서 `setStreamLost(false)`. 재연결 시 `cursor.current` 를 건드리지 말 것(그대로여야 이어받는다). 초기화는 리셋 effect(`:89-95`)에만.
+  - CLOSED 판정은 새로 쓰지 말고 이미 export 된 것을 재사용한다 — `web/src/pages/simple/SimpleRunDetailPage.tsx:111` `export function streamDisconnected(readyState: number): boolean { return readyState === STREAM_CLOSED /* 2 */ }`. `SimpleDeployPage.tsx:25` 가 이미 그 파일에서 import 하는 선례가 있다. 같은 판정을 두 번 쓰면 두 경로가 갈라진다. 단순 모드 쪽 파일은 **읽기만** 하고 수정하지 말 것(공용 util 파일로 옮기면 파일이 4개로 늘어난다).
+  - 같은 파일 `LogPanel`(`:316-345`) — `useReleaseLogs` 분해(`:317`)에 두 값을 받고, `truncated` Alert(`:341-345`) **위**에 `severity="warning"` Alert 로 끊김 안내 + `action={<Button color="inherit" size="small" onClick={reconnect}>다시 연결</Button>}`. 문구는 `SimpleDeployPage.tsx:654`("실시간 로그 연결이 끊겼습니다. 아래 로그는 끊긴 시점까지입니다. …")를 참고해 전체 모드에 맞게 쓴다(배포 자체는 계속 진행된다는 안내 포함).
+  - `web/src/pages/releases/ReleaseDetailPage.stream.test.tsx` — 신규 테스트. 실제 App 라우트 렌더(`:62-72` 의 헬퍼)와 `TestEventSource`(`:11-31`, 프로퍼티 콜백을 직접 호출)를 쓰고 새 대역을 만들지 말 것. **이 대역에는 `readyState` 가 없다**(현재 `undefined` 이므로 `streamDisconnected` 가 항상 false 다) — 단순 모드 대역의 검증된 패턴을 그대로 옮긴다: `readyState = 1`, `close() { this.closed = true; this.readyState = 2 }`, `emitError(readyState: number) { this.readyState = readyState; if (readyState === 2) this.closed = true; this.onerror?.(…) }` (`SimpleDeployPage.stream.test.tsx:25,36,46-48`). 기존 `emit(source, 'error')` 를 쓰는 테스트(`:111`)가 깨지지 않게 할 것.
+  - 프로덕션 1 파일 + 테스트 1 파일. 그 이상 벌리지 말 것.
+- 검증 명령:
+  - `cd web && npm ci`(node_modules 없으면 필수) → `npm test -- --run`(기준선 140건, 13 파일) → `npx tsc -b --noEmit` → `npm run build`
+  - 집중 실행: `cd web && npm test -- --run src/pages/releases/ReleaseDetailPage.stream.test.tsx`
+  - 백엔드 0 파일 변경이면 Go 테스트는 돌리지 않아도 된다(돌린다면 `TEST_POSTGRES_DSN` 없이는 DB 테스트가 SKIP 되므로 통합 검증으로 보고하지 말 것)
+  - 커밋 전 `web/dist` 삭제, `VERSION` 손대지 않기, `git diff --check`
+- 위험과 피할 것:
+  - 자동 재연결을 넣지 말 것. 끊김의 가장 흔한 원인이 스트림 한도(3/user)라서 자동 루프는 그 한도를 다시 때린다(v0.5.24 에서 같은 판단을 했다).
+  - 리셋 effect(deps `[releaseId, enabled]`)와 스트림 effect(deps `[releaseId, enabled, streamAttempt]`)의 역할을 섞지 말 것. 표시 줄·잘림 플래그 초기화를 스트림 effect 로 옮기면 v0.5.24/v0.5.26 이 고친 결함(재연결 때 로그·잘림 안내 소실)이 재발하고 기존 테스트가 잡는다.
+  - `cursor.current` 는 재연결에서 유지, 릴리즈 전환에서만 0. 끊김 플래그도 리셋 effect 에서만 지운다.
+  - 서버·백엔드·`auth`/`migrations`/`.github/workflows` 는 건드리지 않는다. 단순 모드 두 화면의 기존 문구·동작도 건드리지 않는다(문구를 공유하려 두 파일을 리팩터하면 파일 수가 늘고 회귀 위험이 커진다).
+  - 문구는 한국어, 커밋 메시지는 영어 `fix:`.
+- 차선 후보: 단순 모드 `SimpleRunDetailPage.tsx:435` 의 형제 패키지 링크가 런 id 를 `encodeURIComponent` 없이 끼워 넣어 같은 파일·`SimpleRunsPage.tsx:122`·배포 화면과 불일치하는 것 정리 (가치 1 / 위험 1 / S) — 다만 런 id 형식을 백엔드에서 먼저 확인해 '불필요한 방어'인지 판정할 것.

@@ -1,16 +1,137 @@
 [
-  {"title":"Clamp the negative Playwright step duration the API passes straight through","value":4,"risk":2,"size":"S","status":"pending","note":"이번 회차 1순위. HEAD 에서 세 지점 재확인: server.js:1196(renderStepReporter 가 리턴하는 템플릿 문자열 안 — 다른 프로세스에서 도는 코드라 헬퍼 호출 불가), server.js:1252(flattenReportSteps 폴백), server.js:2421(테스트 레벨). grep 으로 Playwright 출처 passthrough 는 이 셋뿐이고 나머지 durationMs 는 elapsedMs() 단조 시계임을 확인. README.md:948 이 '음수가 되지 않는다' 로 계약을 명시하고 tools/smoke-test.mjs:2815 가 이미 FAIL 로 잡는다. 두 번째 소비자 server.js:4998(LLM evidence)도 같은 값을 되읽는다.","updated":"2026-10-04"},
-  {"title":"Re-land the verified recording-panel sync fix (d2f428d) so npm test stops failing on main","value":5,"risk":1,"size":"S","status":"pending","note":"이번 회차 차선 후보. 커밋 d2f428d 가 이 워크트리 object store 에 존재함을 git cat-file -t 로 확인. 단독으로 올릴 것 — 직전 회차가 이것과 음수 duration 을 한 과제서에 묶었다가 회차 결과 no-change 로 끝났다.","updated":"2026-10-04"},
-  {"title":"Re-land the harness fix that never reached main: stop() awaits an already-exited child, so a boot failure exits 13 with no summary line","value":5,"risk":1,"size":"S","status":"pending","note":"HEAD 에 여전히 없음(tools/harness-selftest.mjs 부재). 커밋 254a099 로 로컬 보존. 4파일이라 이번 회차에서 일부러 제외 — npm test 실패의 원인이 아니다.","updated":"2026-10-04"},
-  {"title":"Re-land the CI workflow (5476435) that adds .github/workflows/ci.yml","value":4,"risk":1,"size":"S","status":"pending","note":"이 회차에서 재확인: main 에 .github/workflows 디렉터리 자체가 없다(ls 실패). 러너 PR 에 'CI 검사 없음' 이 계속 나타난다. 음수 duration + 녹화 패널 두 결함이 고쳐진 뒤 올리면 smoke 잡을 continue-on-error 없이 게이트로 걸 수 있다.","updated":"2026-10-04"},
-  {"title":"Give the generated step reporter a browser-free regression check","value":3,"risk":2,"size":"S","status":"pending","note":"NEW — renderStepReporter 가 만드는 trim() 의 duration/null 매핑을 증명하는 유일한 수단이 6분짜리 브라우저 스위트 1건(tools/smoke-test.mjs:2815)이다. 리포터 소스를 임시 파일로 써서 가짜 step 트리로 호출하는 수준이면 수 초에 끝난다. 단 '손으로 만든 대역으로 결함을 증명하지 말 것' 규칙과 부딪히므로 스모크를 대체하지 말고 보강으로만 둘 것.","updated":"2026-10-04"},
-  {"title":"Recording dedupe swallows distinct selectOption/press steps","value":4,"risk":2,"size":"S","status":"pending","note":"server.js:7359-7366 에서 비교가 action/locator/previous.value===step.value 뿐 — selectOption 의 step.values 와 press 의 step.key 가 600ms 안에서 삼켜진다. 서명을 [action, locator, value, values, key] 로 넓힐 것. 브라우저 필요. 이 회차에서는 코드 재확인 안 함(미확인).","updated":"2026-10-04"},
-  {"title":"The other 11 waitForHealth call sites can still burn the full 60s budget on a dead server","value":4,"risk":1,"size":"S","status":"pending","note":"254a099 가 먼저 들어가야 성립한다(superviseServer 가 main 에 없다).","updated":"2026-10-04"},
-  {"title":"Automate the Dockerfile build (and a minimal container check) in CI","value":4,"risk":3,"size":"M","status":"pending","note":"릴리즈가 v0.3.0·v0.4.0·v0.5.1·v0.6.0 네 번 entrypoint/마운트에서 깨졌는데 검증이 전부 수동이다. CI 자체가 main 에 없으므로 그것부터.","updated":"2026-10-04"},
-  {"title":"Audit the remaining smoke checks for fixed sleeps standing in for observable post-conditions","value":3,"risk":1,"size":"M","status":"pending","note":"tools/smoke-test.mjs 의 단독 wait-for { sleepMs } 지점들. 유휴 상태에서는 전부 통과하므로 반드시 부하를 걸어 실패를 먼저 볼 것.","updated":"2026-10-04"},
-  {"title":"npm audit reports 2 known advisories (body-parser DoS low, qs moderate) and both have patch-level fixes","value":3,"risk":2,"size":"S","status":"pending","note":"이 회차에도 재측정 못 함 — node_modules 가 없고 npm ci 실행에 승인이 필요하다. lockfile 변경이므로 docker build 까지 확인 필요.","updated":"2026-10-04"},
-  {"title":"Promote the CI smoke job from reporting to gating","value":4,"risk":1,"size":"S","status":"pending","note":"선행조건 둘: CI 워크플로가 main 에 있을 것(지금 없다), 그리고 음수 duration·녹화 패널 두 결함이 고쳐질 것. 그 뒤 continue-on-error 한 줄 삭제.","updated":"2026-10-04"},
-  {"title":"check() double-reports group-level and check-level SKIP as two lines","value":2,"risk":1,"size":"S","status":"pending","note":"tools/smoke-test.mjs:34-45 가 bare 'skip' 만 인식하므로 { skip: reason } 반환 경로를 먼저 넣어야 한다. 2026-10-03 의 '브라우저 없는 체크아웃 거짓 FAIL' 가설과 같은 코드 지점이고 그 회차는 error 로 끝났다 — 단독 과제로는 가치가 낮다.","updated":"2026-10-04"},
-  {"title":"recorderLocatorCandidates double-escapes quotes into an invalid CSS selector","value":2,"risk":2,"size":"S","status":"pending","note":"server.js:3845/3847. 같은 선택자를 만드는 page_inspect 경로를 같은 변경에서 end-to-end 로 확인할 것. 이 회차 미확인.","updated":"2026-10-04"},
-  {"title":"Backfill or clamp-on-read the negative step durations already persisted in run records","value":2,"risk":1,"size":"S","status":"rejected","note":"NEW 로 올렸다가 바로 기각 — 이 저장소에는 마이그레이션 관례가 없고(DB 없음, data/ 파일시스템), 옛 run 레코드는 증거 보관물이라 사후 수정이 오히려 감사 가치를 깎는다. 1순위 과제서에 '한계로 적어 둘 것' 으로 반영했다.","updated":"2026-10-04"}
+  {
+    "title": "Clamp the negative Playwright step duration the API passes straight through",
+    "value": 4,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "이번 회차 1순위. HEAD 에서 세 지점 재확인: server.js:1196(renderStepReporter 가 리턴하는 템플릿 문자열 안 — 다른 프로세스에서 도는 코드라 헬퍼 호출 불가), server.js:1252(flattenReportSteps 폴백), server.js:2421(테스트 레벨). grep 으로 Playwright 출처 passthrough 는 이 셋뿐이고 나머지 durationMs 는 elapsedMs() 단조 시계임을 확인. README.md:948 이 '음수가 되지 않는다' 로 계약을 명시하고 tools/smoke-test.mjs:2815 가 이미 FAIL 로 잡는다. 두 번째 소비자 server.js:4998(LLM evidence)도 같은 값을 되읽는다.",
+    "updated": "2026-10-04"
+  },
+  {
+    "title": "Re-land the verified recording-panel sync fix (d2f428d) so npm test stops failing on main",
+    "value": 5,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "이번 회차 차선 후보. 커밋 d2f428d 가 이 워크트리 object store 에 존재함을 git cat-file -t 로 확인. 단독으로 올릴 것 — 직전 회차가 이것과 음수 duration 을 한 과제서에 묶었다가 회차 결과 no-change 로 끝났다.",
+    "updated": "2026-10-04"
+  },
+  {
+    "title": "Re-land the harness fix that never reached main: stop() awaits an already-exited child, so a boot failure exits 13 with no summary line",
+    "value": 5,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "HEAD 에 여전히 없음(tools/harness-selftest.mjs 부재). 커밋 254a099 로 로컬 보존. 4파일이라 이번 회차에서 일부러 제외 — npm test 실패의 원인이 아니다.",
+    "updated": "2026-10-04"
+  },
+  {
+    "title": "Re-land the CI workflow (5476435) that adds .github/workflows/ci.yml",
+    "value": 4,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "이 회차에서 재확인: main 에 .github/workflows 디렉터리 자체가 없다(ls 실패). 러너 PR 에 'CI 검사 없음' 이 계속 나타난다. 음수 duration + 녹화 패널 두 결함이 고쳐진 뒤 올리면 smoke 잡을 continue-on-error 없이 게이트로 걸 수 있다.",
+    "updated": "2026-10-04"
+  },
+  {
+    "title": "Give the generated step reporter a browser-free regression check",
+    "value": 3,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "NEW — renderStepReporter 가 만드는 trim() 의 duration/null 매핑을 증명하는 유일한 수단이 6분짜리 브라우저 스위트 1건(tools/smoke-test.mjs:2815)이다. 리포터 소스를 임시 파일로 써서 가짜 step 트리로 호출하는 수준이면 수 초에 끝난다. 단 '손으로 만든 대역으로 결함을 증명하지 말 것' 규칙과 부딪히므로 스모크를 대체하지 말고 보강으로만 둘 것.",
+    "updated": "2026-10-04"
+  },
+  {
+    "title": "Recording dedupe swallows distinct selectOption/press steps",
+    "value": 4,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "server.js:7359-7366 에서 비교가 action/locator/previous.value===step.value 뿐 — selectOption 의 step.values 와 press 의 step.key 가 600ms 안에서 삼켜진다. 서명을 [action, locator, value, values, key] 로 넓힐 것. 브라우저 필요. 이 회차에서는 코드 재확인 안 함(미확인).",
+    "updated": "2026-10-04"
+  },
+  {
+    "title": "The other 11 waitForHealth call sites can still burn the full 60s budget on a dead server",
+    "value": 4,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "254a099 가 먼저 들어가야 성립한다(superviseServer 가 main 에 없다).",
+    "updated": "2026-10-04"
+  },
+  {
+    "title": "Automate the Dockerfile build (and a minimal container check) in CI",
+    "value": 4,
+    "risk": 3,
+    "size": "M",
+    "status": "pending",
+    "note": "릴리즈가 v0.3.0·v0.4.0·v0.5.1·v0.6.0 네 번 entrypoint/마운트에서 깨졌는데 검증이 전부 수동이다. CI 자체가 main 에 없으므로 그것부터.",
+    "updated": "2026-10-04"
+  },
+  {
+    "title": "Audit the remaining smoke checks for fixed sleeps standing in for observable post-conditions",
+    "value": 3,
+    "risk": 1,
+    "size": "M",
+    "status": "pending",
+    "note": "tools/smoke-test.mjs 의 단독 wait-for { sleepMs } 지점들. 유휴 상태에서는 전부 통과하므로 반드시 부하를 걸어 실패를 먼저 볼 것.",
+    "updated": "2026-10-04"
+  },
+  {
+    "title": "npm audit reports 2 known advisories (body-parser DoS low, qs moderate) and both have patch-level fixes",
+    "value": 3,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "이 회차에도 재측정 못 함 — node_modules 가 없고 npm ci 실행에 승인이 필요하다. lockfile 변경이므로 docker build 까지 확인 필요.",
+    "updated": "2026-10-04"
+  },
+  {
+    "title": "Promote the CI smoke job from reporting to gating",
+    "value": 4,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "선행조건 둘: CI 워크플로가 main 에 있을 것(지금 없다), 그리고 음수 duration·녹화 패널 두 결함이 고쳐질 것. 그 뒤 continue-on-error 한 줄 삭제.",
+    "updated": "2026-10-04"
+  },
+  {
+    "title": "check() double-reports group-level and check-level SKIP as two lines",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "tools/smoke-test.mjs:34-45 가 bare 'skip' 만 인식하므로 { skip: reason } 반환 경로를 먼저 넣어야 한다. 2026-10-03 의 '브라우저 없는 체크아웃 거짓 FAIL' 가설과 같은 코드 지점이고 그 회차는 error 로 끝났다 — 단독 과제로는 가치가 낮다.",
+    "updated": "2026-10-04"
+  },
+  {
+    "title": "recorderLocatorCandidates double-escapes quotes into an invalid CSS selector",
+    "value": 2,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "server.js:3845/3847. 같은 선택자를 만드는 page_inspect 경로를 같은 변경에서 end-to-end 로 확인할 것. 이 회차 미확인.",
+    "updated": "2026-10-04"
+  },
+  {
+    "title": "Backfill or clamp-on-read the negative step durations already persisted in run records",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "rejected",
+    "note": "NEW 로 올렸다가 바로 기각 — 이 저장소에는 마이그레이션 관례가 없고(DB 없음, data/ 파일시스템), 옛 run 레코드는 증거 보관물이라 사후 수정이 오히려 감사 가치를 깎는다. 1순위 과제서에 '한계로 적어 둘 것' 으로 반영했다.",
+    "updated": "2026-10-04"
+  },
+  {
+    "title": "GitHub Actions CI 워크플로 추가 — 러너가 돌리는 검증 명령을 그대로 CI 로",
+    "value": 5,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "updated": "2026-10-05",
+    "note": "이 저장소에는 워크플로 파일이 없어 러너 PR 이 전부 \"CI 검사 없음\" 으로 막힌다. 러너가 이미 돌리는 검증 명령(build·vet·test)을 그대로 .github/workflows/ci.yml 로 옮겨라. 이 파일은 보호 경로라 사람 승인을 받는다."
+  }
 ]

@@ -1,0 +1,39 @@
+Leave YAML front matter off the slides
+
+Dropping the rules around front matter (9517fbc) left the worse half of the
+problem behind: the header Jekyll, Hugo and Obsidian write above the first
+line of a file is the document's own bookkeeping, and with its two "---"
+gone, what reached the deck was a slide named after the file carrying one
+bullet of "title: 보고서" — above the document that had a title of its own.
+A header is not a point of anything, so readMarkdown now cuts those lines
+off the slice before it reads the first of them.
+
+The whole of the risk runs the other way, and it is the largest this reader
+can take: skipping to the next "---" in a document that merely opens with a
+rule would drop every slide down to that line, which for a memo with a
+divider above the title and another under the last sentence is the memo. So
+frontMatterLines asks for three things, and when any of them fails it skips
+nothing at all — the way an unclosed fence gives its lines back rather than
+swallowing the rest of the file. The first line must be exactly "---"
+(trailing spaces come off, leading ones do not: a header begins in the first
+column). A later line must close it with the same "---". And the first line
+with anything on it between the two must be a YAML mapping key — something
+before a colon with no space or tab in it. That last one is this reader's
+own rule rather than anything YAML or CommonMark says, and it is the guard
+that tells a header from a document fenced in rules: a header written in a
+way it does not recognise costs the author the one bullet of metadata they
+had, while a document mistaken for a header costs them the document.
+
+The lines are cut from the slice rather than counted past, so the lookahead
+and the skip flag go on meaning what they say, and the cut is applied once
+to the file — the unclosed-fence replay reads held lines, which can never be
+the top of the document. isThematicBreak, atxHeading, underlinesHeading,
+fenceOf, isRule, withoutListMarker, writer.go and the number parsers are
+untouched; the one comment edit in underlinesHeading drops front matter from
+the list of things "-" is still doing, which is now one fewer, and changes
+no behavior.
+
+Deliberately not in scope: using the header's "title:" as the deck's name.
+That reaches titleOf, @cover and every !source locator, and is its own
+decision. Also still out: reading a row of "-" as a setext h2, stripping the
+">" of a quote, and indented code blocks.
