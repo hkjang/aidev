@@ -28,3 +28,8 @@
 - [러너 09:19] pr created — https://github.com/hkjang/invenqor/pull/30
 - [러너 09:23] ci passed — 검사 11개 모두 success
 - [러너 09:24] merge done — 8503960
+- [러너 09:37] release published — v0.2.42
+- [러너 09:37] gh-release created — GitHub Release v0.2.42
+- [러너 09:37] manifest ok — ADMIN_GUIDE.md ADMIN_GUIDE.pdf API_MCP_GUIDE.md API_MCP_GUIDE.pdf EXECUTIVE_REPORT.md EXECUTIVE_REPORT.pdf RELEASE_NOTES_v0.2.42.md SERVER_INSTALLATION.md SERVER_INSTALLATION.pdf USER_GUIDE.md USER_GU
+- [러너 09:39] assets uploaded — 29개
+- [러너 09:39] assets verified — v0.2.42 자산 29개 (이전 v0.2.41: 29)

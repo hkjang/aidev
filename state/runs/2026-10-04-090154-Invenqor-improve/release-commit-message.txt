@@ -1,0 +1,36 @@
+chore: release v0.2.42
+
+Versions, guides, the offline bundle reference and the release PDFs move to
+0.2.42, and the notes are added for a release that fixes one defect in the
+Server's asset API. openapi.yaml declares the shared {assetId} path parameter as
+format: uuid and promises a single 404 for GET, PATCH, DELETE and restore and a
+single 200 for the history and relations reads, but five handlers passed
+chi.URLParam(request, "assetID") straight into WHERE id = $1 without looking at
+it. assets.id, asset_changes.asset_id and asset_relations.source_asset_id and
+target_asset_id are UUID columns on PostgreSQL and TEXT on the SQLite fallback,
+so a spelling the contract never declared diverged per dialect in both
+directions. Measured on postgres:17-alpine: the urn:uuid: form and anything that
+is no UUID at all failed the UUID input conversion with SQLSTATE 22P02 and
+surfaced through internalError as a 500 none of these paths declares, while the
+brace-wrapped and unhyphenated 32-character forms were silently normalised,
+found the real row and carried the request out - a PATCH addressed that way
+renamed the asset and a DELETE left it flagged deleted, writing six asset_changes
+rows, where the fallback matched nothing and answered 404. In the other
+direction an upper-case 36-character id, which is the declared canonical form,
+was folded by PostgreSQL but not by SQLite's TEXT comparison, so a caller
+spelling it exactly as the contract allows found no asset on the fallback. This
+applies the canonicalUUID helper v0.2.40 added for splitAsset and v0.2.41
+applied to mergeAssets to these five handlers as well, through a small
+assetIDParam that reads the path parameter and returns it only in the canonical
+form. The three paths that declare 404 answer 404 ASSET_NOT_FOUND and the two
+that declare 200 alone answer an empty list, so the set of response codes does
+not widen and both dialects now answer the same code - one openapi.yaml already
+records. Every handler decides before any query runs and outside BeginTx, so a
+refusal writes nothing at all and the error path never enters the transaction
+where reporting an error deadlocks the single-connection fallback. The console
+routes and the API-key /api/v1/external/... routes share these handlers, so one
+production file closes both entrances and routing is untouched. The three tests
+added here drive the real router and a real Runtime across all five paths and
+count assets.status, assets.deleted_at, assets.name and asset_changes rows
+rather than only the response code, and pass on SQLite and on PostgreSQL 17. No
+migration, no OpenAPI change, no console change, no Agent behaviour change.
