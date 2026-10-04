@@ -286,3 +286,14 @@
 - 보류 아이디어: 들여쓴 뒤에도 `  - ---`·`  - # x` 는 CommonMark 에서 목록 항목 **안의** 수평선·머리글로 읽힌다 — 0열 마커(둘째 줄이 바로 위 줄을 setext 머리글로 바꾸는 최악의 경우)는 막혔지만 중첩된 블록 구조는 남는다. 문서용 이스케이프가 필요한지 실제 렌더러로 먼저 확인할 것 (가치 2 / 위험 2 / S) / make test-go 를 CI 와 같은 `-p 1` 직렬 실행으로 맞추기 — 착수 전 격리 DSN 으로 `-p 1` 없이 3회 돌려 경합을 먼저 증거로 붙일 것 (가치 3 / 위험 1 / S) / Node 하한이 `web/package.json` engines·ci.yml(24)·Dockerfile(node:24-alpine) 세 곳에 따로 적혀 있고 드리프트 검사가 없음 — 빌드·릴리즈 경로라 docker build 까지 확인 필요 (가치 2 / 위험 2 / S) / 캔버스 공간 이름 대체값이 한국어 UI 에 영어 'My Space' 로 뜬다 — `CanvasPage.tsx`, 공백 한 칸 이름이 truthy 로 통과하는 문제도 같은 자리, 증명이 Playwright (가치 2 / 위험 1 / S) / 파일 이름 새니타이즈 네 곳의 계약 차이가 `content_disposition.go:30-32` 주석과 어긋남 — 통합 금지, 고칠 것이 주석뿐이라 그 파일을 여는 다른 과제에 곁들일 것 (가치 2 / 위험 1 / S)
 - 과제서: 채택 — 과제서의 근거가 지금 코드와 정확히 맞았습니다(`outline.go:74` 가 `point.Text` 를 날것으로 씀, `outline_test.go` 에 여러 줄 본문 시험 0건, `splitLines` 가 같은 패키지에 이미 있음, `Depth` 는 `min(depth,1)` 로 상한이 있어 들여쓰기 상한 아이디어는 `rejected`). 예측한 실패 모양("차례는 `- 첫 줄`/`둘째 줄`(0열)", `"결론\n---"` → 0열 `---`)도 시험 출력과 글자 그대로 일치했습니다. 과제서가 **미확인**으로 남긴 렌더러 동작은 지시대로 수용 기준 2를 "0열 마커가 출력에 없다" 로 단언해 피했고, 그 대신 남는 한계(들여쓴 `  - ---` 는 항목 안의 수평선으로 읽힌다)를 보류 아이디어로 적었습니다 — 과제서가 금지한 `escapeLine` 반입이나 두 작성기 통합은 하지 않았습니다.
 
+## 2026-10-05
+- 선택: 수정 과제 — `npm test --silent` 실행 전 누락된 web 의존성 설치 (가치 4 / 위험 1 / 작업량 S)
+- 결과: 변경없음
+- 요약: main@6aaf940에서 지정 명령의 exit 1을 재현했고, 원인은 web/node_modules 미설치였으며 기존 래퍼는 이미 정확한 원인과 설치 명령을 안내했습니다. CI와 동일하게 `npm ci --prefix web`만 실행한 뒤 같은 명령이 20파일·218시험 PASS(exit 0)가 되었고, 설치 디렉터리를 잠시 치우면 같은 실패가 재발하며 복원하면 다시 218시험 PASS여서 원인을 입증했습니다. 코드·워크플로·버전 변경은 0파일이며 커밋도 만들지 않았습니다. lint(기존 경고 있음)·typecheck·offline-queue·build·PWA(150 assets)·i18n(1060키)·version 검사·audit high 전부 exit 0이고 audit에는 low 1건이 남습니다.
+- 실패 재현: `run-on-supported-node: vitest is not installed: nothing resolves vitest/package.json from /home/hkjang/.cache/auto-improve-wt/umm/web/package.json. Run `npm ci --prefix /home/hkjang/.cache/auto-improve-wt/umm/web` first. This is a missing install, not an unsupported interpreter.` / `EXIT=1`. 새 테스트 추가는 못 함 — 코드 결함이 아니라 설치 전 상태이며 기존 설치 누락 테스트가 이미 3개 있어 동일 테스트를 중복하지 않았습니다. 실제 루트 npm 진입점으로 설치 전/후/재제거/복원을 확인했습니다.
+- 보류 아이디어: 러너의 새 체크아웃 검증 전에 `npm ci --prefix web` 선행 — 영구 재발 방지는 러너에서 해야 하며 이번 허용 범위 밖이라 미수정 (가치 4 / 위험 1 / 작업량 S)
+  - make test-go를 CI처럼 직렬화 — 격리 DB에서 경합 재현 선행 (가치 3 / 위험 1 / 작업량 S)
+  - Node 선언 세 곳의 드리프트 확인 — 릴리즈 이미지 빌드 검증 필요 (가치 2 / 위험 2 / 작업량 S)
+  - 캔버스 My Space 대체값 번역 — 실제 UI 경로 재현 필요 (가치 2 / 위험 1 / 작업량 S)
+- 과제서: 채택 — 지정된 실패 조사와 로컬 검증 복구를 수행했으나, 저장소 코드 결함이라는 전제는 성립하지 않았습니다. release.yml에는 npm 테스트가 없고 ci.yml은 이미 설치를 선행하므로 워크플로 수정은 불필요합니다. 새 checkout의 외부 러너가 설치를 생략하면 재발하며, 그 러너의 영구 수정·원격 워크플로 실행은 이번에 하지 않았습니다.
+
