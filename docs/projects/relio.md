@@ -1,7 +1,7 @@
 ---
 title: "relio — 자율 개선 이력"
 description: "relio: 자율 개선 회차 56회, 릴리즈 13건. 최근 릴리즈 v1.11.20 (자산 1개)."
-last_modified_at: 2026-10-05 03:44:14 +0900
+last_modified_at: 2026-10-05 04:14:19 +0900
 ---
 {% raw %}
 <script type="application/ld+json">
@@ -18,7 +18,7 @@ last_modified_at: 2026-10-05 03:44:14 +0900
   "name": "hkjang",
   "url": "https://github.com/hkjang"
  },
- "dateModified": "2026-10-05T03:44:14+09:00",
+ "dateModified": "2026-10-05T04:14:19+09:00",
  "version": "1.11.20"
 }
 </script>
@@ -35,6 +35,7 @@ last_modified_at: 2026-10-05 03:44:14 +0900
 <dt>저장소</dt><dd><a href="https://github.com/hkjang/relio">https://github.com/hkjang/relio</a></dd>
 <dt>마지막 회차</dt><dd>2026-10-05 03:44 KST — <span class="pill pill-other">• 기타</span> error: agent produced no result (TIMEOUT )</dd>
 <dt>최근 릴리즈</dt><dd><a href="https://github.com/hkjang/relio/releases/tag/v1.11.20">v1.11.20</a> — released · 자산 1개 (이전 v1.11.19: 1개) <a href="https://github.com/hkjang/relio/releases">전체 릴리즈 →</a></dd>
+<dt>수정 과제</dt><dd>⚠️ 오류 대응(자동 적재): 마지막 회차가 &#x27;error&#x27; 로 끝났습니다. error: agent produced no result (TIMEOUT )</dd>
 </dl>
 
 ## 회차 이력

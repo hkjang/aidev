@@ -1,0 +1,66 @@
+
+ RUN  v3.2.7 /home/hkjang/.cache/auto-improve-wt/vibe-code
+
+ ✓ tests/unit/verification.test.ts (10 tests) 5ms
+fatal: not a git repository (or any of the parent directories): .git
+ ❯ tests/unit/verification-git.test.ts (20 tests | 1 failed) 1593ms
+   ✓ gitChangedFiles with real Git repositories > preserves the untracked path "한글.ts" with core.quotePath=true 65ms
+   ✓ gitChangedFiles with real Git repositories > preserves the untracked path "with spaces.ts" with core.quotePath=true 70ms
+   ✓ gitChangedFiles with real Git repositories > preserves the untracked path " leading.ts" with core.quotePath=true 69ms
+   ✓ gitChangedFiles with real Git repositories > preserves the untracked path "trailing.ts " with core.quotePath=true 70ms
+   ✓ gitChangedFiles with real Git repositories > preserves the untracked path "a -> b.ts" with core.quotePath=true 74ms
+   ✓ gitChangedFiles with real Git repositories > preserves the untracked path "ordinary.ts" with core.quotePath=true 67ms
+   ✓ gitChangedFiles with real Git repositories > preserves the modified tracked path "한글.ts" with core.quotePath=true 83ms
+   ✓ gitChangedFiles with real Git repositories > preserves the modified tracked path "with spaces.ts" with core.quotePath=true 88ms
+   ✓ gitChangedFiles with real Git repositories > preserves the modified tracked path " leading.ts" with core.quotePath=true 91ms
+   ✓ gitChangedFiles with real Git repositories > preserves the modified tracked path "trailing.ts " with core.quotePath=true 97ms
+   ✓ gitChangedFiles with real Git repositories > preserves the modified tracked path "a -> b.ts" with core.quotePath=true 91ms
+   ✓ gitChangedFiles with real Git repositories > preserves the modified tracked path "ordinary.ts" with core.quotePath=true 84ms
+   ✓ gitChangedFiles with real Git repositories > continues to include deleted files 65ms
+   ✓ gitChangedFiles with real Git repositories > returns only the rename destination once and keeps the following change 92ms
+   ✓ gitChangedFiles with real Git repositories > returns an empty list for a clean repository 60ms
+   ✓ gitChangedFiles with real Git repositories > returns an empty list outside a Git repository 7ms
+   ✓ Git changes through project discovery and test suggestions > suggests the existing Korean test for tests/한글.test.ts 98ms
+   ✓ Git changes through project discovery and test suggestions > suggests the existing Korean test for src/계산.ts 103ms
+   ✓ Git changes through project discovery and test suggestions > suggests a staged Korean rename destination rather than the removed source 108ms
+   × Git changes through project discovery and test suggestions > leaves the index, working files and local/global configuration untouched 113ms
+     → expected { files: { …(6) }, state: [ …(4) ] } to deeply equal { files: { …(6) }, state: [ …(4) ] }
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/unit/verification-git.test.ts > Git changes through project discovery and test suggestions > leaves the index, working files and local/global configuration untouched
+AssertionError: expected { files: { …(6) }, state: [ …(4) ] } to deeply equal { files: { …(6) }, state: [ …(4) ] }
+
+- Expected
++ Received
+
+@@ -6,11 +6,11 @@
+      "tests/새파일.test.ts": "5d8f65d2774e206bc9f7a7a4ad39ca2dc563b5c31e46ab57ef4874961237ce29",
+      "tracked.txt": "da68f54607d5f5644954096ce1597c006c5bb9f2497e07441bf064b81003ef8a",
+      "untracked.ts": "5d8f65d2774e206bc9f7a7a4ad39ca2dc563b5c31e46ab57ef4874961237ce29",
+    },
+    "state": [
+-     "0cad3d42b1d61df4abd0c4747bde07a04d0e2ec19b3acdb390733e2d3ca75f4d",
++     "4dcbf506c39b1e38f5479579f9cee5ac0579730aded4e91cbdab5365d7cb2070",
+      "137151da6845652df228c009c108a5c44f2020476fa29a559c7c8d86415eb771",
+      null,
+      null,
+    ],
+  }
+
+ ❯ tests/unit/verification-git.test.ts:164:70
+    162|   suggestTestCommands(changed, readProjectInfo(ws, changed));
+    163| 
+    164|   expect({ files: workingFiles(ws), state: stateFiles.map(digest) }).t…
+       |                                                                      ^
+    165|  });
+    166| });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed | 1 passed (2)
+      Tests  1 failed | 29 passed (30)
+   Start at  04:08:20
+   Duration  1.97s (transform 137ms, setup 0ms, collect 301ms, tests 1.60s, environment 0ms, prepare 101ms)
+

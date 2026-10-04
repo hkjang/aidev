@@ -1,0 +1,16 @@
+COMMAND: go test ./internal/app -run TestAttachmentCleanup -count=1 -v -timeout 120s
+=== RUN   TestAttachmentCleanupPreservesTheFirstUploadWhileItsInsertWaits
+    attachmentcleanup_test.go:89: successful upload has available:false in the attachment list
+    attachmentcleanup_test.go:89: successful upload then image GET=404: ATTACHMENT_FILE_MISSING 첨부 이미지 파일이 서버에 없습니다. 이미지를 다시 첨부해 주세요.
+--- FAIL: TestAttachmentCleanupPreservesTheFirstUploadWhileItsInsertWaits (0.90s)
+=== RUN   TestAttachmentCleanupRemovesOnlyDeletedReports
+--- PASS: TestAttachmentCleanupRemovesOnlyDeletedReports (0.36s)
+=== RUN   TestAttachmentCleanupPreservesFilesWhenTheParentQueryFails
+--- PASS: TestAttachmentCleanupPreservesFilesWhenTheParentQueryFails (0.38s)
+=== RUN   TestAttachmentCleanupKeepsAnEmptyDirectoryForALiveReport
+    attachmentcleanup_test.go:175: cleanup removed a live report's empty directory: stat /tmp/TestAttachmentCleanupKeepsAnEmptyDirectoryForALiveReport1298877832/001/attachments/1: no such file or directory
+--- FAIL: TestAttachmentCleanupKeepsAnEmptyDirectoryForALiveReport (0.33s)
+FAIL
+FAIL	github.com/hkjang/weekly/internal/app	2.010s
+FAIL
+EXIT=1

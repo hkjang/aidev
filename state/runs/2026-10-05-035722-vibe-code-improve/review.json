@@ -1,0 +1,18 @@
+{
+  "verdict": "reject",
+  "reasons": [
+    "src/features/verification.ts:194 [P1][security][릴리즈 차단] NUL 출력에서 복원한 줄바꿈을 경로 그대로 반환하면서 기존 suggestTestCommands(159행)의 문자열 결합 → suggestTests(317행) → runShellCommand(70행, shell:true)에 전달해 새로운 명령 주입 경로를 연다. 공격자가 POSIX 작업 트리에 tests/safe.test.ts\\ntouch REVIEW_MARKER\\n#.test.ts 파일(\\n은 실제 LF)을 추가하고 사용자가 해당 테스트 추천을 선택하면 파일명 속 touch가 별도 명령으로 실행된다. 공격자는 VS Code 사용자 권한의 임의 명령 실행을 얻는다. 실제 임시 Git과 프로덕션 gitChangedFiles/readProjectInfo/suggestTestCommands/runShellCommand로 비교했으며 main은 표식 미생성, HEAD는 표식 생성이었다. npx만 종료 코드 0의 무해한 임시 실행 파일로 대체하여 테스트 코드나 패키지 실행 효과와 분리했다. 기존 셸 인용 문제가 있었다는 사실과 별개로 이번 변경 전에는 이 LF 공격이 실행되지 않았다. 추천 실행은 파일 경로를 argv로 분리해 셸 해석 없이 전달하거나, 안전하게 전달할 수 없는 경로의 실행 추천을 차단하고 실제 실행 경계에서 표식이 생성되지 않는 회귀 검증을 추가해야 한다."
+  ],
+  "notes": [
+    "검토 대상 main@51148a2...HEAD@0e76328: 프로덕션 1파일과 실제 Git 테스트 1파일만 변경. NUL R/C 원본 건너뛰기, 오류 시 빈 배열, index 불변, 호출부 연결, 문서와 범위 및 revert 가능성을 확인했다. 별도 데이터 마이그레이션이나 외부 상태 변경은 없다.",
+    "Node 20.19.2에서 verification-git.test.ts와 verification.test.ts 31개를 직접 재실행해 모두 통과했다. 원장의 실패 재현 줄과 git-path-red.log에서 한글/화살표 경로 AssertionError를 확인했다. 신규 테스트는 실효성이 있으나 추천 명령의 실행 안전성까지 검증하지 않는다.",
+    "구현자의 전체 106개 테스트/typecheck/build 통과 로그와 CI 정의를 읽었다. 이번 리뷰에서는 전체 check, Windows 패키징, VS Code UI, 원격 CI를 실행하지 않았다. runtime assets 누락 경고 및 Windows 패키징의 조건부 생략 가능성은 남는다.",
+    "개인정보 흐름은 기존 로컬 작업 경로 → 추천 → 선택한 명령의 로컬 감사/검증 기록으로 확인했다. 새 외부 전송·수집 목적·의존성·라이선스·외부 약속 변경은 없으며 legal 차단 근거는 찾지 못했다.",
+    "전용 Skill 도구가 없어 /home/hkjang/.claude/plugins/marketplaces/headcount/plugins 아래 legal-risk/skills/privacy-and-data-protection/SKILL.md, security/skills/security-architecture-review/SKILL.md, technology/skills/code-review/SKILL.md를 읽어 적용했다. 법무/보안 sources 목록도 확인했으며 법률 적합성이나 외부 표준 인증 판정은 하지 않았다.",
+    "security 차단 소견은 구현·수리·중재가 해제할 수 없으며, 사용자 지침에 따라 통과에는 운영자(CEO)의 이름·사유·만료가 명시된 위험 수용이 필요하다. 저장소 코드는 수정하지 않았다."
+  ],
+  "risk": "high",
+  "blocking": [
+    "security"
+  ]
+}

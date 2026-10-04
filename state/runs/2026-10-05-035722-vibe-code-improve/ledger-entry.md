@@ -1,0 +1,11 @@
+## 2026-10-05
+- 선택: 변경 파일 테스트 추천의 Git 경로 파싱을 NUL 구분 출력으로 고치기 (가치 4 / 위험 1 / 작업량 M)
+- 결과: 성공
+- 요약: `gitChangedFiles`가 porcelain NUL 레코드의 고정 상태 3문자만 제거하고 R/C의 추가 원본 레코드를 건너뛰도록 고쳐 한글·공백·화살표 경로와 rename 목적지를 보존했으며, 실제 index 변경이 발견되어 `--no-optional-locks`로 읽기 중 캐시 쓰기도 막았다(프로덕션 1파일+신규 테스트 1파일, 커밋 `0e76328`, 작성자 hkjang). 실제 fs/Git 테스트 21개로 경로·삭제·rename/copy·빈 목록·index/작업 파일/로컬·전역 설정 불변과 `gitChangedFiles → readProjectInfo → suggestTestCommands`의 한글 테스트/소스 추천을 검증했고, export를 유지한 채 수정만 되돌리자 같은 9개 AssertionError가 재발했다. Node 20.19.2에서 export 기준선(typecheck+기존 verification 10개), 최종 집중(typecheck+31개), `npm run check`(12 files/106 tests+build), `node --check dist/extension.js` 및 `node --check dist/extension.core.js` 모두 exit 0이며, 빌드의 런타임 자산 누락 경고는 남아 Windows 패키징·VS Code UI·원격 CI를 검증한 것은 아니다(`validation/export-baseline-node20.log`, `git-path-final-focused.log`, `git-path-full-check.log`; 추천 명령의 셸 인용은 범위 밖).
+- 실패 재현: `AssertionError: expected [ '\355\225\234\352\270\200.ts' ] to deeply equal [ '한글.ts' ]` / `AssertionError: expected [ 'b.ts' ] to deeply equal [ 'a -> b.ts' ]` — 최초 집중 실행 9 failed | 21 passed(30), export 유지 재역전 실행 9 failed | 22 passed(31); `validation/git-path-red.log`, `validation/git-path-causation-red.log`. NUL만 적용 시 1 failed | 29 passed로 index 불변만 실패(`git-path-nul-only.log`), 선택적 잠금 해제 후 모두 통과.
+- 보류 아이디어:
+  - 하위 디렉터리 Python test_*.py 직접 추천 (가치 3 / 위험 1 / S): 지정 차선 유지, 별개 분류 결함이라 혼합하지 않음.
+  - 공백·셸 메타문자 경로의 명령 인자 quoting (가치 4 / 위험 3 / M): Windows/POSIX 실행 계약 필요, 이번 추천 문자열을 실행하지 않음.
+  - CI package 자산 누락 시 조용히 skip되는 경로 (가치 4 / 위험 2 / M): 보호 경로이며 Windows 검증 미실행, 변경하지 않음.
+  - readRecentAudit의 최근 N일/파일 개수 불일치 (가치 4 / 위험 1 / S): 미머지 기존 과제와 중복이므로 재제출하지 않음.
+- 과제서: 채택 — 코드와 재현이 일치했고 지정한 두 파일에서 완료; 수용 기준 4 검증 중 Git status의 index 갱신을 발견하여 brief.md에 기록하고 같은 호출에 `--no-optional-locks`만 추가했다.

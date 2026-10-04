@@ -1,0 +1,11 @@
+## 2026-10-05
+- 선택: 첨부 정리 작업이 첫 업로드의 저장 중인 이미지를 지우지 않게 한다 (가치 4 / 위험 2 / 작업량 M)
+- 결과: 성공
+- 요약: cleanupAttachmentFiles가 첨부 행 개수 대신 부모 weekly_reports의 존재를 읽어, 부모 부재를 확인한 경우에만 디렉터리를 삭제하도록 바꿨으며 조회 오류·생존 보고서는 보존한다. 실제 newTestServer/Handler와 scratch PostgreSQL의 SHARE 잠금으로 첫 업로드 INSERT 대기를 관측한 새 시험을 먼저 실패시킨 뒤 201·목록 available:true·이미지 GET 200 및 원본 바이트 일치를 확인했고, HTTP 보고서 삭제 후 cascade/디렉터리 정리·다른 보고서 보존·취소 context 보존·살아 있는 보고서의 빈 디렉터리 보존까지 4개 시험으로 검증했다. 지정 첨부/유지보수 시험 12개(4.051s), 실제 DB go test ./... -count=1(internal/app 166.788s), go vet ./..., go build ./..., openapi-check(119경로), paging-check(목록 10곳), guard-check --changed 8ab3712(11개 도달, 신규 시험 cleanupAttachmentFiles 69/75/75/69%), git diff --check와 정찰 run-probe.py(1.291s)가 모두 exit 0이며, 원래 코드를 잠시 복원해 동일 실패를 재확인한 후 수정본을 복구하고 6dbab0b로 커밋했다(프로덕션 1+시험 1+문서 1파일, 작업 트리 깨끗함).
+- 실패 재현: `attachmentcleanup_test.go:86: successful upload has available:false in the attachment list` / `attachmentcleanup_test.go:86: successful upload then image GET=404: ATTACHMENT_FILE_MISSING 첨부 이미지 파일이 서버에 없습니다. 이미지를 다시 첨부해 주세요.` — red-tests.txt의 수정 전 원문이며 새 시험 실패·exit 1, 기존 시험은 통과했다.
+- 보류 아이디어:
+  - embeddingStatus의 실패한 통계 질의를 임베딩 0건으로 답하지 않게 한다 (가치 3 / 위험 1 / 작업량 S). 차선으로 유지하며 실패 UI 계약 확인 필요.
+  - deleteAttachment의 참조 수 질의 오류 시 아직 쓰는 파일을 보존한다 (가치 2 / 위험 2 / 작업량 S). DELETE 이후 SELECT만 실패하는 실제 재현이 선행돼야 함.
+  - 동시 첨부 업로드가 보고서당 개수 상한을 넘지 않게 한다 (가치 3 / 위험 3 / 작업량 M). 정찰 신규 후보를 유지하며 동시 초과 HTTP 재현은 미실행.
+  - 이미지 헤더만 정상이고 본문이 잘린 첨부를 거절한다 (가치 3 / 위험 2 / 작업량 M). 정찰 신규 후보를 유지하며 전체 디코딩의 픽셀 메모리 비용 검토 필요.
+- 과제서: 채택 — 현재 코드와 실제 수정 전 실패가 과제서의 파일 선저장/행 후커밋 경합에 일치했고, 부모 부재 기준으로 좁힌 수정만으로 수용 기준 3개를 충족했다.

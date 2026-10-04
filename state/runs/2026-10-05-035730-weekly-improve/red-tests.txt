@@ -1,0 +1,25 @@
+COMMAND: go test ./internal/app -run Test.*Attachment|TestARefusedAttachmentUpload|TestTheMaintenanceSweep|TestMaintenanceSweeps -count=1 -v -timeout 120s
+=== RUN   TestAttachmentCleanupPreservesTheFirstUploadWhileItsInsertWaits
+    attachmentcleanup_test.go:86: successful upload has available:false in the attachment list
+    attachmentcleanup_test.go:86: successful upload then image GET=404: ATTACHMENT_FILE_MISSING 첨부 이미지 파일이 서버에 없습니다. 이미지를 다시 첨부해 주세요.
+--- FAIL: TestAttachmentCleanupPreservesTheFirstUploadWhileItsInsertWaits (0.98s)
+=== RUN   TestSafeAttachmentPathStaysInsideTheDirectory
+--- PASS: TestSafeAttachmentPathStaysInsideTheDirectory (0.00s)
+=== RUN   TestAttachmentAvailabilityReflectsTheStoredFile
+--- PASS: TestAttachmentAvailabilityReflectsTheStoredFile (0.00s)
+=== RUN   TestARefusedAttachmentUploadStoresNoneOfTheImages
+--- PASS: TestARefusedAttachmentUploadStoresNoneOfTheImages (0.39s)
+=== RUN   TestFailedAttachmentWriteLeavesNothingBehind
+--- PASS: TestFailedAttachmentWriteLeavesNothingBehind (0.00s)
+=== RUN   TestAttachmentWriteIsAllOrNothing
+--- PASS: TestAttachmentWriteIsAllOrNothing (0.00s)
+=== RUN   TestTheMaintenanceSweepThrowsAwayOnlyWhatThePolicySays
+--- PASS: TestTheMaintenanceSweepThrowsAwayOnlyWhatThePolicySays (0.36s)
+=== RUN   TestMaintenanceSweepsWithoutWaitingForItsFirstTick
+--- PASS: TestMaintenanceSweepsWithoutWaitingForItsFirstTick (0.27s)
+=== RUN   TestAnOversizedAttachmentUploadIsNotCalledMalformed
+--- PASS: TestAnOversizedAttachmentUploadIsNotCalledMalformed (0.80s)
+FAIL
+FAIL	github.com/hkjang/weekly/internal/app	2.861s
+FAIL
+EXIT=1

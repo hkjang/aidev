@@ -1,0 +1,246 @@
+
+ RUN  v3.2.7 /home/hkjang/.cache/auto-improve-wt/vibe-code
+
+ ✓ tests/unit/verification.test.ts (10 tests) 6ms
+fatal: not a git repository (or any of the parent directories): .git
+ ❯ tests/unit/verification-git.test.ts (21 tests | 9 failed) 1698ms
+   × gitChangedFiles with real Git repositories > preserves the untracked path "한글.ts" with core.quotePath=true 70ms
+     → expected [ '\355\225\234\352\270\200.ts' ] to deeply equal [ '한글.ts' ]
+   ✓ gitChangedFiles with real Git repositories > preserves the untracked path "with spaces.ts" with core.quotePath=true 60ms
+   ✓ gitChangedFiles with real Git repositories > preserves the untracked path " leading.ts" with core.quotePath=true 63ms
+   ✓ gitChangedFiles with real Git repositories > preserves the untracked path "trailing.ts " with core.quotePath=true 71ms
+   × gitChangedFiles with real Git repositories > preserves the untracked path "a -> b.ts" with core.quotePath=true 66ms
+     → expected [ 'b.ts' ] to deeply equal [ 'a -> b.ts' ]
+   ✓ gitChangedFiles with real Git repositories > preserves the untracked path "ordinary.ts" with core.quotePath=true 66ms
+   × gitChangedFiles with real Git repositories > preserves the modified tracked path "한글.ts" with core.quotePath=true 91ms
+     → expected [ '\355\225\234\352\270\200.ts' ] to deeply equal [ '한글.ts' ]
+   ✓ gitChangedFiles with real Git repositories > preserves the modified tracked path "with spaces.ts" with core.quotePath=true 77ms
+   ✓ gitChangedFiles with real Git repositories > preserves the modified tracked path " leading.ts" with core.quotePath=true 85ms
+   ✓ gitChangedFiles with real Git repositories > preserves the modified tracked path "trailing.ts " with core.quotePath=true 91ms
+   × gitChangedFiles with real Git repositories > preserves the modified tracked path "a -> b.ts" with core.quotePath=true 92ms
+     → expected [ 'b.ts' ] to deeply equal [ 'a -> b.ts' ]
+   ✓ gitChangedFiles with real Git repositories > preserves the modified tracked path "ordinary.ts" with core.quotePath=true 90ms
+   ✓ gitChangedFiles with real Git repositories > continues to include deleted files 58ms
+   × gitChangedFiles with real Git repositories > returns only the rename destination once and keeps the following change 99ms
+     → expected [ …(2) ] to deeply equal [ 'tests/a 새파일 -> 이름.test.ts', …(1) ]
+   ✓ gitChangedFiles with real Git repositories > skips a copy source record without losing its independent modification or the next file 133ms
+   ✓ gitChangedFiles with real Git repositories > returns an empty list for a clean repository 79ms
+   ✓ gitChangedFiles with real Git repositories > returns an empty list outside a Git repository 6ms
+   × Git changes through project discovery and test suggestions > suggests the existing Korean test for tests/한글.test.ts 104ms
+     → expected [ …(2) ] to deeply equal [ …(2) ]
+   × Git changes through project discovery and test suggestions > suggests the existing Korean test for src/계산.ts 87ms
+     → expected [ 'npm test' ] to deeply equal [ …(2) ]
+   × Git changes through project discovery and test suggestions > suggests a staged Korean rename destination rather than the removed source 94ms
+     → expected [ …(2) ] to deeply equal [ …(2) ]
+   × Git changes through project discovery and test suggestions > leaves the index, working files and local/global configuration untouched 114ms
+     → expected { files: { …(6) }, state: [ …(4) ] } to deeply equal { files: { …(6) }, state: [ …(4) ] }
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 9 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/unit/verification-git.test.ts > gitChangedFiles with real Git repositories > preserves the untracked path "한글.ts" with core.quotePath=true
+AssertionError: expected [ '\355\225\234\352\270\200.ts' ] to deeply equal [ '한글.ts' ]
+
+- Expected
++ Received
+
+  [
+-   "한글.ts",
++   "\\355\\225\\234\\352\\270\\200.ts",
+  ]
+
+ ❯ tests/unit/verification-git.test.ts:78:31
+     76|   write(ws, file);
+     77| 
+     78|   expect(gitChangedFiles(ws)).toEqual([file]);
+       |                               ^
+     79|  });
+     80| 
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/9]⎯
+
+ FAIL  tests/unit/verification-git.test.ts > gitChangedFiles with real Git repositories > preserves the untracked path "a -> b.ts" with core.quotePath=true
+AssertionError: expected [ 'b.ts' ] to deeply equal [ 'a -> b.ts' ]
+
+- Expected
++ Received
+
+  [
+-   "a -> b.ts",
++   "b.ts",
+  ]
+
+ ❯ tests/unit/verification-git.test.ts:78:31
+     76|   write(ws, file);
+     77| 
+     78|   expect(gitChangedFiles(ws)).toEqual([file]);
+       |                               ^
+     79|  });
+     80| 
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/9]⎯
+
+ FAIL  tests/unit/verification-git.test.ts > gitChangedFiles with real Git repositories > preserves the modified tracked path "한글.ts" with core.quotePath=true
+AssertionError: expected [ '\355\225\234\352\270\200.ts' ] to deeply equal [ '한글.ts' ]
+
+- Expected
++ Received
+
+  [
+-   "한글.ts",
++   "\\355\\225\\234\\352\\270\\200.ts",
+  ]
+
+ ❯ tests/unit/verification-git.test.ts:87:31
+     85|   write(ws, file, "export const value = 2;\n");
+     86| 
+     87|   expect(gitChangedFiles(ws)).toEqual([file]);
+       |                               ^
+     88|  });
+     89| 
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/9]⎯
+
+ FAIL  tests/unit/verification-git.test.ts > gitChangedFiles with real Git repositories > preserves the modified tracked path "a -> b.ts" with core.quotePath=true
+AssertionError: expected [ 'b.ts' ] to deeply equal [ 'a -> b.ts' ]
+
+- Expected
++ Received
+
+  [
+-   "a -> b.ts",
++   "b.ts",
+  ]
+
+ ❯ tests/unit/verification-git.test.ts:87:31
+     85|   write(ws, file, "export const value = 2;\n");
+     86| 
+     87|   expect(gitChangedFiles(ws)).toEqual([file]);
+       |                               ^
+     88|  });
+     89| 
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/9]⎯
+
+ FAIL  tests/unit/verification-git.test.ts > gitChangedFiles with real Git repositories > returns only the rename destination once and keeps the following change
+AssertionError: expected [ …(2) ] to deeply equal [ 'tests/a 새파일 -> 이름.test.ts', …(1) ]
+
+- Expected
++ Received
+
+  [
+-   "tests/a 새파일 -> 이름.test.ts",
++   "\"tests/a \\354\\203\\210\\355\\214\\214\\354\\235\\274",
+    "z-after.ts",
+  ]
+
+ ❯ tests/unit/verification-git.test.ts:110:31
+    108|   expect(git(ws, ["status", "--porcelain", "-z"])).toBe(`R  ${destinat…
+    109| 
+    110|   expect(gitChangedFiles(ws)).toEqual([destination, "z-after.ts"]);
+       |                               ^
+    111|  });
+    112| 
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/9]⎯
+
+ FAIL  tests/unit/verification-git.test.ts > Git changes through project discovery and test suggestions > suggests the existing Korean test for tests/한글.test.ts
+AssertionError: expected [ …(2) ] to deeply equal [ …(2) ]
+
+- Expected
++ Received
+
+  [
+-   "npx vitest run tests/한글.test.ts",
++   "npx vitest run tests//355/225/234/352/270/200.test.ts",
+    "npm test",
+  ]
+
+ ❯ tests/unit/verification-git.test.ts:151:68
+    149| 
+    150|   expect(fs.existsSync(path.join(ws, testFile))).toBe(true);
+    151|   expect(suggestTestCommands(changed, info).map((s) => s.command)).toE…
+       |                                                                    ^
+    152|  });
+    153| 
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[6/9]⎯
+
+ FAIL  tests/unit/verification-git.test.ts > Git changes through project discovery and test suggestions > suggests the existing Korean test for src/계산.ts
+AssertionError: expected [ 'npm test' ] to deeply equal [ …(2) ]
+
+- Expected
++ Received
+
+  [
+-   "npx vitest run tests/계산.test.ts",
+    "npm test",
+  ]
+
+ ❯ tests/unit/verification-git.test.ts:151:68
+    149| 
+    150|   expect(fs.existsSync(path.join(ws, testFile))).toBe(true);
+    151|   expect(suggestTestCommands(changed, info).map((s) => s.command)).toE…
+       |                                                                    ^
+    152|  });
+    153| 
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[7/9]⎯
+
+ FAIL  tests/unit/verification-git.test.ts > Git changes through project discovery and test suggestions > suggests a staged Korean rename destination rather than the removed source
+AssertionError: expected [ …(2) ] to deeply equal [ …(2) ]
+
+- Expected
++ Received
+
+  [
+-   "npx vitest run tests/새파일.test.ts",
++   "npx vitest run \"tests//354/203/210/355/214/214/354/235/274.test.ts",
+    "npm test",
+  ]
+
+ ❯ tests/unit/verification-git.test.ts:159:92
+    157|   const changed = gitChangedFiles(ws);
+    158| 
+    159|   expect(suggestTestCommands(changed, readProjectInfo(ws, changed)).ma…
+       |                                                                                            ^
+    160|    "npx vitest run tests/새파일.test.ts", "npm test",
+    161|   ]);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[8/9]⎯
+
+ FAIL  tests/unit/verification-git.test.ts > Git changes through project discovery and test suggestions > leaves the index, working files and local/global configuration untouched
+AssertionError: expected { files: { …(6) }, state: [ …(4) ] } to deeply equal { files: { …(6) }, state: [ …(4) ] }
+
+- Expected
++ Received
+
+@@ -6,11 +6,11 @@
+      "tests/새파일.test.ts": "5d8f65d2774e206bc9f7a7a4ad39ca2dc563b5c31e46ab57ef4874961237ce29",
+      "tracked.txt": "da68f54607d5f5644954096ce1597c006c5bb9f2497e07441bf064b81003ef8a",
+      "untracked.ts": "5d8f65d2774e206bc9f7a7a4ad39ca2dc563b5c31e46ab57ef4874961237ce29",
+    },
+    "state": [
+-     "72fc60baf408627af0407c7dd5ba4b18b683f5ec028497f69cbe92d2198b9ade",
++     "fdb7501127dbbefa8dd689c414b0ceb178f9c6f16b36b647c1ae016416eef34e",
+      "137151da6845652df228c009c108a5c44f2020476fa29a559c7c8d86415eb771",
+      null,
+      null,
+    ],
+  }
+
+ ❯ tests/unit/verification-git.test.ts:179:70
+    177|   suggestTestCommands(changed, readProjectInfo(ws, changed));
+    178| 
+    179|   expect({ files: workingFiles(ws), state: stateFiles.map(digest) }).t…
+       |                                                                      ^
+    180|  });
+    181| });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[9/9]⎯
+
+
+ Test Files  1 failed | 1 passed (2)
+      Tests  9 failed | 22 passed (31)
+   Start at  04:09:33
+   Duration  2.08s (transform 145ms, setup 0ms, collect 320ms, tests 1.70s, environment 0ms, prepare 102ms)
+

@@ -1,0 +1,22 @@
+const fs=require('node:fs'), path=require('node:path'), cp=require('node:child_process'), Module=require('node:module');
+const ts=require('/mnt/c/Users/USER/projects/vibe-code/node_modules/typescript');
+const root='/home/hkjang/.cache/auto-improve-wt/vibe-code';
+const out=__dirname;
+// Diagnostic loader: execute existing TypeScript bodies unchanged, exposing only two private readers in memory.
+require.extensions['.ts']=(mod,file)=>{let source=fs.readFileSync(file,'utf8');if(file===path.join(root,'src/features/verification.ts'))source+='\nexport { gitChangedFiles, readProjectInfo };\n';mod._compile(ts.transpileModule(source,{compilerOptions:{module:ts.ModuleKind.CommonJS,target:ts.ScriptTarget.ES2022,esModuleInterop:true}}).outputText,file);};
+const original=Module._resolveFilename;
+Module._resolveFilename=function(request,parent,...rest){if(request==='vscode')return path.join(root,'tests/unit/vscode-stub.ts');return original.call(this,request,parent,...rest);};
+const {gitChangedFiles,readProjectInfo,suggestTestCommands}=require(path.join(root,'src/features/verification.ts'));
+const dir=fs.mkdtempSync(path.join(out,'git-repro-'));
+const git=(args)=>cp.execFileSync('git',args,{cwd:dir,encoding:'utf8'});
+git(['init','-q']);git(['config','core.quotePath','true']);
+fs.writeFileSync(path.join(dir,'package.json'),JSON.stringify({devDependencies:{vitest:'*'}}));
+fs.mkdirSync(path.join(dir,'tests'));
+fs.writeFileSync(path.join(dir,'tests/한글.test.ts'),'');
+fs.writeFileSync(path.join(dir,'tests/a -> b.test.ts'),'');
+const changed=gitChangedFiles(dir);
+console.log(JSON.stringify({stage:'untracked',raw:git(['status','--porcelain','--untracked-files=all']),changed,suggestions:suggestTestCommands(changed,readProjectInfo(dir,changed))},null,2));
+git(['add','.']);git(['-c','user.name=Scout','-c','user.email=scout@example.invalid','-c','commit.gpgsign=false','commit','-qm','fixture']);
+git(['mv','tests/한글.test.ts','tests/새파일.test.ts']);
+console.log(JSON.stringify({stage:'rename',raw:git(['status','--porcelain','--untracked-files=all']),changed:gitChangedFiles(dir),nul:git(['status','--porcelain','-z','--untracked-files=all']).split('\0')},null,2));
+console.log(JSON.stringify({stage:'python-fallback',suggestions:suggestTestCommands(['pkg/test_util.py'],{packageScripts:{},devDependencies:[],hasGoMod:false,hasPytest:true,hasCargo:false,existingFiles:new Set(['pkg/test_util.py'])})},null,2));
