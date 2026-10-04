@@ -28,3 +28,4 @@
 - 사소한 흠(차단 아님): `request_body.go:54-56` 이 본문없음 관용을 "a published contract" 라 적었는데 실제로 `docs/` 어디에도 공표된 바 없고 구현 노트 스스로 "의존 호출자 미확인" 이라 한다 — 다음 회차가 이 주석을 근거로 쓰지 않도록 "미확인 기존 동작이라 보수적으로 보존" 으로 완화하면 좋다. 또 쓰기 배치 7곳 중 여기만 본문없음을 허용하는 유일한 예외가 되었다(나머지는 모두 엄격한 `decodeCollectionBody`).
 - [러너 19:27] review approved — 리뷰 승인 (risk=low)
 - [러너 19:27] pr created — https://github.com/hkjang/moyro/pull/33
+- [러너 19:35] ci failed — 성공이 아닌 검사: verify=failure · 실패한 검사: ? 잡: verify 
