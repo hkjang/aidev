@@ -1,0 +1,6 @@
+# 수리 요약 (0daad74)
+
+- 비평이 맞았다. 전용 폐기 `postgres:16-alpine`(포트 55611, 검사 후 삭제)로 브랜치 HEAD 에서 재현 — `{"theme":"light","sidebarState":{"w":1e1000000}}` 과 `aiDefaults` 쪽 `1e1000000`·`1e-1000000` 이 모두 **500 `preferences_update_failed`** 였고 같은 요청의 `theme` 도 저장되지 않았다. `UseNumber()` 가 지수 범위를 보지 않고 literal 을 그대로 재직렬화해 jsonb 가 22003(value overflows numeric format)으로 거부한 것이다.
+- 고친 방법: 이미 전수 순회하던 `jsonObjectHasNUL` 을 `storableJSONValue` 로 고쳐(이름·주석이 하는 일과 맞게) `json.Number` case 를 추가하고, `storableJSONNumber` 가 literal 에서 최상위 유효숫자의 자리와 scale 을 직접 구해 numeric 한계(소수점 앞 131072·뒤 16383)와 견준다. float64 로 바꾸지 않으므로 큰 정수 정밀도는 그대로다. 경계는 PG 16 에서 `'{"a":<literal>}'::jsonb` 로 직접 확인했다(`1e131071`·`1e-16383`·`0.1e131072`·`0.0e1000000` 통과, `1e131072`·`1e-16384`·`1.5e-16383`·`0e-1000000`·131073자리 정수 거부).
+- 테스트: 통합에 두 필드 × 범위 위/아래·배열 안·중첩 6개 거절 서브테스트와 경계값(`1e131071`·`1e-16383`·`1e1000`)이 실제로 저장되는 서브테스트, 단위에 `storableJSONNumber` 경계 28개와 객체 테이블 11개를 추가. `storableJSONNumber` 를 `return true` 로 되돌리면 그 6개가 500 으로 다시 FAIL 하는 것으로 역검증했다. 계약 문서(`docs/api.md`)도 숫자 범위를 적어 맞췄다.
+- 검증 전부 실행·통과 출력 확인: `make lint`, `go build ./...`, `TEST_POSTGRES_DSN` 주고 `go test -race -count=1 ./...`(internal/server 135.001s — SKIP 아님), `cd web && npm ci && npm test`(18 files / 81 tests). `internal/ui/dist`·VERSION·CHANGELOG 는 손대지 않았다.
