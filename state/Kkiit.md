@@ -150,3 +150,6 @@
 - 보류 아이디어: `npm --prefix web test` 글롭 결함은 **기각** — 원인이 저장소가 아니라 이 기계였다. `npm run` 이 PATH 에 끼어든 `/home/hkjang/node_modules/node/bin/node`(v20.19.2, 선언된 Node 24+ 하한 미달)로 스크립트를 돌려서 글롭이 안 맞았고, 선언·CI 버전인 node:24.18.0 컨테이너에서는 현행 스크립트가 `npm test` 로 10건 모두 통과한다(확인). 고치려 했던 `node --test`(무인자)는 그 node 20 에서 **조용히 0건**이 되어 더 나쁘다 — 되돌렸다 · 감사에 요청 본문 구조체를 그대로 넘기는 곳은 2곳이 아니라 10곳(admin_users 91/152, admin 462, approvals 193/233/332, auth 265, finance 147, notifications 248, profile 93)이고 자격증명은 이미 따로 걸러져(admin.go:304) 증명된 피해가 없어 S 가 아니라 정책 설계 M 이다 · `retryDomainEvent`(events.go:104)·`updateOrganizationMember`(organizations.go:256)·`deleteCoupon`(coupons.go:350)의 404 가르기 — 파라미터가 uuid·선검증 enum 뿐이라 HTTP 로 DB 오류를 만들 경로가 없어 404 회귀 + 분기 단위 검증까지만 가능 · 가이드·openapi 의 메서드·응답 코드를 실제 라우터와 대조 — openapi_test.go 가 경로만 비교해 이번 '400'·'403'·'409'·'500'·'503' 누락도 사람 눈으로 찾았다 (M) · README 환경변수 계약을 필수 4개 + 선택 SHUTDOWN_DRAIN_SECONDS 로 정리 (S, 미확인)
 
 - 릴리즈: v0.4.12 (2026-10-03, run 2026-10-03-034751-Kkiit-improve)
+## 2026-10-04
+- (원장 항목에 비밀/내부 정보 의심 문자열이 있어 비공개 기록으로 옮김 — run 2026-10-04-090158-Kkiit-improve)
+
