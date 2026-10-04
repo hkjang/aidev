@@ -28,3 +28,10 @@
 - 프로필 정정은 구현 노트가 맞다: `eslint.config.mjs` 는 기본 4항목뿐이라 e2e 뒤 lint 전에 `rm -rf playwright-report test-results` 가 필요하다(이번에도 그렇게 해야 lint 0 이었다).
 - [러너 13:44] review approved — 리뷰 승인 (risk=low)
 - [러너 13:44] pr created — https://github.com/hkjang/cutover/pull/12
+- [러너 13:45] ci passed — 검사 없음 — 정책으로 허용
+- [러너 13:45] merge done — 60e659a
+- [러너 13:52] release published — v1.14.0
+- [러너 13:52] gh-release created — GitHub Release v1.14.0
+- [러너 13:52] manifest ok — cutover-v1.14.0.tar.gz 
+- [러너 13:52] assets uploaded — 1개
+- [러너 13:52] assets verified — v1.14.0 자산 1개 (이전 v1.13.0: 1)

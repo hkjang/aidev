@@ -30,3 +30,14 @@
 - [러너 13:34] pr created — https://github.com/hkjang/appstore/pull/37
 - [러너 13:39] ci passed — 검사 2개 모두 success
 - [러너 13:39] merge done — 892c1b8
+
+## 릴리즈 노트
+- v2.11.13 (patch, 이전 10회가 모두 patch) 을 `e9aee8a` 로 커밋하고 주석 태그 `v2.11.13` 을 달았다. detached HEAD 그대로이고 원격 전송은 하지 않았다 — 커밋·태그 push 와 GitHub Release 생성·자산 업로드는 `release.yml` 이 태그 push 에 반응해 전부 수행하므로 `github_release:false` / `assets:[]` 다.
+- 버전 표기 17파일: web/package.json·package-lock.json(자기 version 2곳만 — line 2626 의 `baseline-browser-mapping: ^2.11.12` 는 무관한 의존성이라 건드리지 않았다), docker-compose.yml, README, docs/USER_GUIDE.md·ADMIN_GUIDE.md, docs/index.html, docs/guides 5곳, screenshot manifest, 캡처 2개, PDF 2개. ADMIN_GUIDE 롤백 예시는 관례대로 한 칸 밀어 `appstore-v2.11.12-stopped`.
+- 캡처 90개 재생성: 88개 byte 동일. `/my/apps` 캡처도 동일 — fixture 소유자에게 앱이 있어 이번 수정이 지나는 빈 상태를 캡처가 밟지 않는다(구현·비평 노트가 코드로 예측한 그대로). 관리자 AI 캡처 2개만 변했고 Chromium 으로 디코딩해 비교했다: 공통 영역 평균 차 desktop 0.038/255·mobile 0.017/255, 최대 24~27 이 픽셀의 0.02% 이하(lossy WebP 재인코딩), 차이의 본체는 전체 페이지 아래 여백 높이(desktop 1905→1810, mobile 8867→9012). desktop 의 늘어난 쪽은 단색 배경(30,32,33), mobile 의 늘어난 145행은 luma 19~80 으로 배경·카드 경계 범위이며 글자 밝기(다크 테마 ~200+) 픽셀은 없다. v2.11.12 에서도 같은 두 캡처가 반대 방향으로 흔들렸고 이번 변경은 관리자 AI route 를 지나지 않는다 — 이 페이지의 full-page 높이가 실행마다 흔들리는 것은 이 저장소의 기존 성질로 보인다.
+- 다음 역할이 조심할 것 ①: **이 런처 환경은 `HOME` 을 run 디렉터리(`.../home`)로 덮는다.** 그래서 Playwright 가 브라우저를 못 찾고, `test:e2e` 와 `publish-doc-screenshots.mjs` **둘 다** 실패한다(후자는 PNG→WebP 변환에 브라우저를 쓴다). `PLAYWRIGHT_BROWSERS_PATH=/home/hkjang/.cache/ms-playwright` 를 주면 된다 — 요구 revision chromium-1234 가 그곳에 설치돼 있다. `npx playwright install` 은 필요 없었다.
+- 조심할 것 ②: `scripts/build-guide-pdfs.sh` 는 여전히 mode 644 라 `sh ./scripts/...` 로 불러야 한다(`GUIDE_TOOL` 기본 경로 `/mnt/c/Users/USER/projects/aidev/tools/guide` 는 존재했다). 이 스크립트도 브라우저를 쓰므로 같은 env 가 필요하다.
+- 조심할 것 ③: manifest 의 `generatedForVersion` 이 semver 이기만 하면 `check-docs.sh` 는 통과한다 — 버전을 올리지 않고도 초록불이 나오므로 캡처 재생성 누락을 이 검사가 잡아 주지 않는다. 실제로 manifest 갱신 전에 check-docs 가 통과하는 것을 관측했다.
+- 검증(모두 exit 0): gofmt·go vet·`go test -race` 전 패키지, React 99건, lint(`--max-warnings 0`), `prettier --check`, web build, check-offline-assets, check-env-contract, check-docs(manifest 갱신 후 재실행), `go build ./cmd/server`(산출물은 /tmp 로 빼 워크트리를 더럽히지 않았다), Playwright 81 passed/1 skipped(retry 0). PDF 는 표지 v2.11.13·태그 링크 2개씩·`file://` 0건 확인. DB DSN 미설정으로 DB 통합과 실제 Keycloak 은 검증하지 않았고, Docker build/load/smoke 와 SHA-256 은 태그 워크플로가 수행한다.
+- `internal/webui/dist` 는 기존 관례대로 손대지 않았다(이전 릴리즈 커밋들도 포함하지 않는다). 커밋 파일 수 17개는 v2.11.12(19개, 캡처 4개 변경)와 같은 모양이다.
+- [러너 13:53] release published — v2.11.13

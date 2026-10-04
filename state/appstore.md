@@ -311,3 +311,4 @@
 - 보류 아이디어: `/my/apps/:id/edit` 에서 앱을 찾지 못하면 영문 라이브러리 오류가 그대로 보인다 (3/1/S, 이번 차선 후보 — TanStack Query v5 의 undefined 처리 동작을 아직 실행해 확인하지 못함) · `Field` 가 error 를 렌더하면서 `aria-invalid`/`aria-describedby` 를 컨트롤에 연결하지 않는다 (2/2/M, 공용 컴포넌트라 영향 범위가 넓고 children 계약 설계 선행) · `/favorites` 에서 검색하면 즐겨찾기가 있는데도 "즐겨찾기한 앱이 없습니다" 가 뜬다 (3/2/S, `public-pages.tsx` 가 review-pending 인 `0898f7a` 와 같은 파일이라 보류) · 상위 100개 밖의 즐겨찾기 앱이 `/favorites` 에 안 나옴 (3/3/M, 공개 API 계약 변경 수반) · `clientAddress` 가 `RemoteAddr` 만 보아 reverse proxy 뒤에서 rate limit 이 전역 (3/3/M, 신뢰 프록시 정책 선행 · 보호 경로)
 - 과제서: 채택 — 지목한 `personal-pages.tsx:120` 의 bare `EmptyState`, `ui.tsx:258-260` 의 기본값, 대시보드 `:78-83` 의 "등록한 앱이 없습니다", `personal-pages.test.tsx` 의 기존 `/my/apps` 하네스가 모두 현재 코드와 정확히 일치했고 수용 기준 4건과 "프로덕션 1개 + 테스트 1개" 제약을 그대로 지켰다. 기준선 테스트 수도 과제서가 미확인이라 한 97건과 일치했다.
 
+- 릴리즈: v2.11.13 (2026-10-04, run 2026-10-04-132228-appstore-improve)
