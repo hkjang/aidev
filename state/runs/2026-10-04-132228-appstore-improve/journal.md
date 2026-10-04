@@ -41,3 +41,4 @@
 - 검증(모두 exit 0): gofmt·go vet·`go test -race` 전 패키지, React 99건, lint(`--max-warnings 0`), `prettier --check`, web build, check-offline-assets, check-env-contract, check-docs(manifest 갱신 후 재실행), `go build ./cmd/server`(산출물은 /tmp 로 빼 워크트리를 더럽히지 않았다), Playwright 81 passed/1 skipped(retry 0). PDF 는 표지 v2.11.13·태그 링크 2개씩·`file://` 0건 확인. DB DSN 미설정으로 DB 통합과 실제 Keycloak 은 검증하지 않았고, Docker build/load/smoke 와 SHA-256 은 태그 워크플로가 수행한다.
 - `internal/webui/dist` 는 기존 관례대로 손대지 않았다(이전 릴리즈 커밋들도 포함하지 않는다). 커밋 파일 수 17개는 v2.11.12(19개, 캡처 4개 변경)와 같은 모양이다.
 - [러너 13:53] release published — v2.11.13
+- [러너 13:55] assets verified — v2.11.13 자산 1개 (이전 v2.11.12: 1)
