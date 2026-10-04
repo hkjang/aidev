@@ -280,3 +280,4 @@
 - 보류 아이디어: `serviceLocation` 이 설정 읽기 실패를 삼켜 시간대가 조용히 Asia/Seoul 이 됨 — 호출처 6곳이라 통째로 해야 함 (가치 3 / 위험 2 / M) / 페이지된 목록 7곳이 유일하지 않은 컬럼으로만 정렬해 OFFSET 페이지 경계에서 동점 행이 건너뛰거나 겹칠 수 있음 — 랭킹은 이미 `score DESC,id` 로 고정돼 있어 계약이 갈라져 있다, 재현은 PG 정렬 알고리즘 의존이라 먼저 실측 필요 (가치 3 / 위험 2 / M, 신규) / secretbox `Open` 의 `v1:` 접두사 없음·base64 깨짐·`len<NonceSize`·1비트 변조 거부 회귀 보강 (가치 2 / 위험 1 / S) / `loadAPIKeyPolicyContext` 가 `api_keys` 설정 부재에 ErrNoRows 를 올려 전 키 401 — 도달 경로를 먼저 증명할 것 (가치 2 / 위험 2 / S)
 - 과제서: 기각 — 과제서의 1순위였던 `loadAISetting` 은 지금 코드에서 성립하지 않는다: `ai.go:16` 은 이미 `s.serverError(..., 503, "ai_disabled", ..., err)` 로 원인을 로그에 남기며 503 을 답해 OIDC 와 달리 숨겨진 장애가 아니다. `service.timezone` 무검증 가설도 `validateSetting` 이 이미 `time.LoadLocation` 으로 거부하는 것을 확인해 기각했고, 대신 직접 찾은 `total` 계약 위반을 골랐다.
 
+- 릴리즈: v0.7.28 (2026-10-04, run 2026-10-04-164210-igame-improve)
