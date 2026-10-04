@@ -27,3 +27,7 @@
 - 승인 후 남는 우려(릴리즈·다음 회차): `invalid_ai_request` 는 문서 없는 새 공개 계약 문자열이다 — 릴리즈 노트에 코드 변경을 명시하고, `docs/guides/api-guide.md` 의 AI error code 표를 다음 회차에서 만들 것. 다섯 형식 오류가 여전히 한 code 를 공유한다는 점도 후속 후보다.
 - [러너 16:54] review approved — 리뷰 승인 (risk=low)
 - [러너 16:54] pr created — https://github.com/hkjang/jikim/pull/50
+- [러너 16:57] ci passed — 검사 2개 모두 success
+- [러너 16:57] merge done — 03cbae1
+- [러너 17:05] release published — v0.2.28
+- [러너 17:09] assets verified — v0.2.28 자산 2개 (이전 v0.2.27: 2)

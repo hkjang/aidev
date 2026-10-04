@@ -247,3 +247,4 @@
 - 보류 아이디어: docs/guides/api-guide.md 에 AI 엔드포인트 error code 표가 없다 (2/1/S — 이번에 code 가 하나 늘어 적을 목록이 다섯으로 확정됐다. 이번 회차엔 docs/·web/src/ 어디에도 AI error code 가 계약으로 적혀 있지 않아 문서를 건드릴 필요가 없었다) / AIConfig 의 temperature 범위 클램프 누락 (2/1/S — 쓰기 경로 validateSetting 이 0~2 를 강제해 관찰 가능한 변화 증명이 선행 조건, 5회 연속 미실행) / 추적이 켜진 동안의 CSP 리포트 폭주에 속도 제한 또는 동일 출처 검증 (3/3/M — 새 계약 필요) / retryWebhookDelivery 왕복 테스트 공백 (2/1/M — PostgreSQL 통합 경로가 더 정직) / baoKVWrite create·update 판정 TOCTOU (3/3/M — 트랜잭션·동시성 검증 필요)
 - 과제서: 채택 — 근거와 배선 사실이 모두 코드와 정확히 맞았다(ai.go:94 가 저장소 유일한 자리, `invalid_ai_request` 미사용, 거절이 `s.store` 앞에서 반환되는 순서, `revokeServer` 하네스 재사용 가능, `DisallowUnknownFields`·`maxJSONBody` 2MiB 로 280KB 본문 통과). 262144 케이스에 대한 과제서의 경고도 유효했고 공백 섞은 입력으로 의도한 분기를 때림을 code·message 로 확인했다. 지정한 파일 2개·sentinel 형태를 그대로 구현했고, 과제서가 꼭 보라고 한 `bash scripts/verify.sh` 가 exit 0 으로 끝나 지난 회차의 실패 자리가 닫힌 것도 확인했다.
 
+- 릴리즈: v0.2.28 (2026-10-04, run 2026-10-04-164215-jikim-improve)
