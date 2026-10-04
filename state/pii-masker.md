@@ -243,3 +243,4 @@
 - 보류 아이디어: `GOARCH=386`에서 `TestValidateImageDimensionsRejectsPixelBomb`가 실패 — 32비트에서 Go PNG 디코더가 해상도 검사보다 먼저 `dimension overflow`를 돌려줌 (2/1/S, 신규, HEAD에서도 재현되는 기존 실패) / `/v1/config/public` 제한값 양수 불변식 + `uploadBodyHeadroomBytes` 경계 테스트 (2/1/S) / `internal/config` 나머지 정규화 함수의 `Load()` 경유 테이블 테스트 (2/1/S) / `buildMultipartBody` 헬퍼의 `contentType` 인자가 쓰이지 않아 20여 개 호출부가 선언 MIME을 실제로 보내지 않음 (2/2/S) / `cloneJob`이 `Metadata.Error`·`Engine.Debug`·`Confidence` 포인터를 저장본과 공유 (2/2/S)
 - 과제서: 기각 — 정찰 과제서가 없었고(journal.md에 러너의 base pin 두 줄뿐), 보류 목록 1위였던 "내장 mock이 image/jpeg를 거부함"은 이번에 코드로 확인한 결과 `prepareUpstreamAttachment`가 JPEG를 PNG로 바꿔 보내므로 프로덕션 경로에서 도달 불가였다(그 전제가 틀렸고, 대신 그 함수 자체의 결함을 찾아 고쳤다).
 
+- 릴리즈: v1.0.34 (2026-10-04, run 2026-10-04-000157-pii-masker-improve)

@@ -18,3 +18,10 @@
 - 판정: approve / risk low / blocking 없음(인증·인가·allowlist·비밀값·외부 수신자·데이터 항목 변화 없음, PNG 패스스루는 헤더만 읽어 픽셀 버퍼 미할당).
 - [러너 00:19] review approved — 리뷰 승인 (risk=low)
 - [러너 00:19] pr created — https://github.com/hkjang/pii-masker/pull/32
+- [러너 00:20] ci passed — 검사 없음 — 정책으로 허용
+- [러너 00:20] merge done — a058efb
+- [러너 00:23] release published — v1.0.34
+- [러너 00:23] gh-release created — GitHub Release v1.0.34
+- [러너 00:23] manifest ok — pii-masker-image.tar.gz 
+- [러너 00:23] assets uploaded — 1개
+- [러너 00:23] assets verified — v1.0.34 자산 1개 (이전 v1.0.33: 1)

@@ -19,3 +19,12 @@
 - 다음 역할이 조심할 것: 새 테스트는 루프백 TCP(127.0.0.1:0)만 쓰고 외부 DB 는 필요 없다 — 다만 `slog.SetDefault` 를 전역 교체하므로 이 패키지에 `t.Parallel()` 을 도입하면 깨진다(현재 0건). 돌지 않은 검사: PostgreSQL(`POSTRA_TEST_PG`)·브라우저 e2e·프런트 빌드(프런트 미변경, `spa/assets` 드리프트 0 확인).
 - [러너 00:14] brief accepted — 채택 — 근거가 전부 코드와 맞았다(`lerr` 폐기, 모든 Size 0, 사전 선별 무력화, `sentFolderPass` 의 관용구, `scriptedMaildrop(refuseL
 - [러너 00:15] verify passed — 검증 9개 통과 (auto)
+
+## 비평 노트
+- 확인했다: 원장에 `- 실패 재현:` 이 없어 직접 재현했다 — 프로덕션 else 블록만 떼면 `LIST_refused` 가 `log mentions "pre-fetch size screen" = false, want true` 로 실패하고 복원하면 통과한다(테스트가 정말 새 경로를 지난다). `go vet`, `-race` 로 신규+인접 3개 테스트, `go build ./...`, `postra-contracts -check`, `gofmt -l` 전부 통과. 검사 후 워크트리 복원 확인.
+- 구현자가 의심한 두 자리는 결함이 아니다: `ClassifyInbound`(inbound_error.go:57-103)는 fallback `"other"` 까지 닫힌 레이블만 반환하고 POP3 `-ERR` 은 `readResponse`(pop3/client.go:230)의 `*InboundRejected` 로 `"rejected"` 가 되어 단언과 맞다. `lockedBuffer` 는 관용구가 아니지만 틀리지 않았다(취향).
+- 누출·권한: `providerDiagnostic` 고정 문장 + 레이블만 로그에 들어가고, 어댑터 오류에 실제로 있는 서버 원문(`-ERR LIST not available`)은 테스트가 단언으로 막는다. 새 개인정보·엔드포인트·비밀값 없음 — security/legal 차단 사유 없음.
+- 승인이어도 남는 우려: 경고가 `MaxMessageBytes <= 0`(상한 끔)에서도 떠서 공허할 수 있다(동기화당 1줄, 범람 아님). UIDL 성공 + LIST **부분** 응답으로 일부만 Size 0 이 되는 분기는 여전히 조용하다(기존 동작, 범위 밖). 돌지 않은 검사: PG·브라우저 e2e·프런트 빌드·gosec.
+- 다음 회차/릴리즈 노트: 동작 변화 0, 계약·spa/assets 무변경, revert 로 완전 복구된다. 릴리즈 노트에는 "진단 로그 추가(동작 불변)" 로만 적으면 된다. `internal/application` 에 `t.Parallel()` 을 도입하면 이 테스트의 `slog.SetDefault` 전역 교체가 깨진다는 구현 노트는 유효하다.
+- [러너 00:20] review approved — 리뷰 승인 (risk=low)
+- [러너 00:21] pr created — https://github.com/hkjang/postra/pull/34
