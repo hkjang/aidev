@@ -1,0 +1,68 @@
+release: ReSSO v0.9.98
+
+A clients table that would not report a verdict was answered by the token
+endpoint with 401 invalid_client, which means "the secret you sent is not the
+one on file". A relying party reading that does what the standard says to do
+with it: page somebody, or rotate the credential. The secret was right the whole
+time — a lookup that never completed decided nothing about it — so the outage
+ends and the integration that could have resumed untouched has instead been
+taken apart by hand. The response is the longest-lived piece of that failure,
+because it is the one a human acts on.
+
+v0.9.97 split this failure off both failure limiters, off
+resso_client_auth_failures_total and into resso_client_auth_errors_total{stage}
+with a log line, and deliberately left the response alone: the three endpoints
+sharing authenticateOIDCClient have three different contracts for a fault on
+this side — the token endpoint's 500, revoke's 503 temporarily_unavailable,
+introspection's 200 active=false — so it wrote that the answer is a change per
+endpoint. This release is the token endpoint's, and it draws the same line that
+endpoint already draws for four lookups of its own: the Realm in the route, the
+refresh token, the account, and the signing key. Client authentication was the
+one step standing in front of all four without it.
+
+An undecided authentication now answers 500 server_error with a body that says
+only what is known — the client credential could not be verified; no attempt has
+been counted against this client, retry after a short delay. It does not claim
+the secret was checked, because it was not read at all, and it says the attempt
+cost the caller nothing, which is what tells a relying party a retry is worth
+making. No WWW-Authenticate header and no invalid_client go out with it.
+
+clientAuthUndecided now reports two things rather than one: whether the attempt
+was undecided, and whether it is a fault this service has claimed. Only the
+second kind is wrapped in the new errClientAuthUndecided and answered 500. A
+caller that ended its own request stays unwrapped and keeps the 401 every
+undecided attempt used to get, written to a connection nobody is reading —
+otherwise an unauthenticated caller could set this route's
+resso_http_requests_total{status="500"} as it pleased by sending requests under
+any client_id and abandoning them, reopening in the status code the hole
+v0.9.97 closed in the limiters and the metrics. The request context is read once,
+in that helper, because it is a value that changes underneath a reader: a second
+look could disagree with the first, and the two signals would then be describing
+different requests.
+
+Everything else answers as before. A credential that was read and refused, an
+identifier nobody registered, an identifier no row can hold and a throttled
+caller are all still 401 invalid_client and 429, and what spends which budget is
+unchanged from v0.9.97. Introspection and revocation are untouched: the marked
+error reaches writeClientAuthError, which looks only for the rate-limit case, so
+both still answer 401 — not because 401 is right for them, but because neither
+503 nor 200 active=false can be chosen without also deciding introspection's new
+stage label and what revoke tells a caller whose token it never looked at.
+
+No metric is added. resso_token_errors_total's only label is grant_type, and at
+this point the form field has not been checked against client.GrantTypes — it is
+unvalidated input from an unauthenticated request, so counting it opens the label
+that methodLabel and routePattern exist to keep shut. The Realm branch above
+declined the same series for the same reason. This failure is already counted
+under resso_client_auth_errors_total{stage}, and the 500 shows in
+resso_http_requests_total{route,status}. Neither the secret nor the client_id
+appears in a response, a log line or a label.
+
+The operations guide's resso_client_auth_errors_total entry had to be corrected
+rather than extended: v0.9.97 wrote there that both answers are 401
+invalid_client, and this change makes that false. It now says token answers 500
+and the other two 401, and why the token failure is not in token_errors. The
+README's metric table is unchanged because no series was added.
+
+Stamps the version in the Makefile, console package metadata, .env.example and
+both compose files, with no schema or configuration changes.

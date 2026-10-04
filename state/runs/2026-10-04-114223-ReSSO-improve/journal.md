@@ -20,3 +20,7 @@
 - 다음 회차: 센티널이 생겼으니 introspection(200 active=false + stage 라벨)·revocation(503)은 분기 추가만 남았고, operations.md:90 이 "아직 401" 이라고 이미 적어 두었으니 그 문장도 함께 고쳐야 한다.
 - [러너 12:11] review approved — 리뷰 승인 (risk=low)
 - [러너 12:11] pr created — https://github.com/hkjang/ReSSO/pull/36
+- [러너 12:18] ci passed — 검사 2개 모두 success
+- [러너 12:19] merge done — ad4e847
+- [러너 12:35] release published — v0.9.98
+- [러너 12:41] assets verified — v0.9.98 자산 2개 (이전 v0.9.97: 2)
