@@ -1,0 +1,92 @@
+{
+  "week": "2026-W41",
+  "generated": "2026-10-05T00:20:44+09:00",
+  "cost_usd": 1.041763,
+  "constraint": "유한한 자원은 hkjang 한 명의 검토·재수정 시간이고, 적체 PR 70건과 머지 뒤 사람 수정 26.7%가 그것을 두 갈래로 소모한다",
+  "proposals": [
+    {
+      "cmd": [
+        "stop",
+        "jikim",
+        "머지 14건 중 13건(93%)을 사람이 다시 고쳤다 — 자율화 재설정 전까지 중지"
+      ],
+      "why": "jikim 사람 수정 13/14=93%, 대시보드가 직접 지목",
+      "gives_up": "jikim 자동 개선(주 2~3회차)",
+      "revert": "resume jikim",
+      "n": 1,
+      "applied": null
+    },
+    {
+      "cmd": [
+        "stop",
+        "ai-admin",
+        "머지 22건 중 20건(91%)을 사람이 다시 고쳤다 — 같은 이유"
+      ],
+      "why": "ai-admin 20/22=91%; 1·2번 합쳐 머지 36건이 사람 수정 33건을 낳았다",
+      "gives_up": "ai-admin 자동 개선",
+      "revert": "resume ai-admin",
+      "n": 2,
+      "applied": null
+    },
+    {
+      "cmd": [
+        "stop",
+        "sqlon",
+        "보호 파일 채널에 PR 13건·21일 적체, 자동 머지 구조적으로 불가"
+      ],
+      "why": "열린 PR 70건 중 13건(19%)이 sqlon, 최고령 2026-09-14",
+      "gives_up": "sqlon 개선 전면 정지",
+      "revert": "resume sqlon",
+      "n": 3,
+      "applied": null
+    },
+    {
+      "cmd": [
+        "stop",
+        "jasql",
+        "보호 파일 경고 대상에 PR 5건 적체 — 사람이 처리할 때까지"
+      ],
+      "why": "sqlon+jasql 18건 = 적체의 26%, 둘 다 자동 머지 불가 채널",
+      "gives_up": "jasql 개선",
+      "revert": "resume jasql",
+      "n": 4,
+      "applied": null
+    },
+    {
+      "cmd": [
+        "stop",
+        "madi",
+        "열린 PR 5건·최고령 21일 — 적체 해소 전까지"
+      ],
+      "why": "madi 5건이 2026-09-14부터 닫히지 않는다",
+      "gives_up": "madi 개선",
+      "revert": "resume madi",
+      "n": 5,
+      "applied": null
+    },
+    {
+      "cmd": [
+        "draft-campaign",
+        "머지 뒤 사람이 다시 고친 비율이 높은 저장소(jikim·ai-admin·relio·Quantoss·Vendra)의 검증 명령을 실제 회귀를 잡는 수준으로 올린다"
+      ],
+      "why": "이 5곳이 사람 수정 63/90건을 차지; 검증이 통과해도 회귀를 못 본다는 가설을 작은 비용으로 검증",
+      "gives_up": "비활성 캠페인 6개 위에 7번째 설계 시간",
+      "revert": "discard-draft <slug>",
+      "n": 6,
+      "applied": null
+    }
+  ],
+  "not_doing": [
+    "정찰(scout) 끄기 — no-scout 우위가 p 0.0297→0.0958 로 약해졌다, 다음 주 재측정",
+    "shepherd off — '사람 필요' 53%는 높지만 끄면 승인 69건도 사라진다",
+    "캠페인 예산·종료일 조정 — 6개 전부 done·지출 $0, 2주 연속 상정된 pause 폐기",
+    "비용 상한 — 제약은 돈이 아니라 사람이고 상한은 잘 돌아가는 41개 저장소를 같이 자른다",
+    "사람 수정 0인 저장소(pii-masker·umm·visitflow·dataworks)에 회차 증설 — 뒤탈 없음은 확인했지만 가치 증거는 없다"
+  ],
+  "role_advice": [
+    "중재 arbiter: 17일 호출 0·발화 전제 0건 — 조건을 넓히거나 역할을 접고, 노출 0%인 no-arbiter arm 과 노출 5%인 no-repair arm 을 실험에서 제거해 134 회차를 측정 가능한 arm 으로 돌릴 것",
+    "구현 builder: 사람 수정률이 파일 10+개 44.7% vs 1-3개 14.2% — 구현 프롬프트에 변경 파일 수 상한/쪼개기 지시를 넣는 것이 단일 최대 레버",
+    "릴리즈 releaser: '완전한 릴리즈' 가 대시보드 94% vs 성적표 76% 로 2주 연속 어긋난다 — 분모 통일",
+    "PR 수리 shepherd-fixer: 108회 중 푸시 성공 28% — 실패 사유를 분류해 시도하지 않을 조건을 정할 것"
+  ]
+}
