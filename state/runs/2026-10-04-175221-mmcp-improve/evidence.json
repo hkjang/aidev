@@ -1,0 +1,183 @@
+{
+  "run_id": "2026-10-04-175221-mmcp-improve",
+  "generated": "2026-10-04T18:06:49+09:00",
+  "run": {
+    "run_id": "2026-10-04-175221-mmcp-improve",
+    "project": "mmcp",
+    "kind": "improve",
+    "started": "2026-10-04T17:52:21+09:00",
+    "model": "claude-opus-5",
+    "policy_version": "4a9e91ac7",
+    "prompts_hash": "ce085c79e18002e2",
+    "runner_version": "1bd5f0cd4",
+    "arm": "no-arbiter",
+    "experiment": "roles-2026-09",
+    "finished": "2026-10-04T18:06:49+09:00",
+    "outcome": "verify-failed"
+  },
+  "record": {
+    "ts": "2026-10-04T18:06:49+09:00",
+    "date": "2026-10-04",
+    "project": "mmcp",
+    "result": "verify failed: 실패한 검증: cd web && npm test --silent (exit 1)",
+    "outcome": "verify-failed",
+    "run_id": "2026-10-04-175221-mmcp-improve",
+    "base_sha": "b782c5faa92626eef8bb6fc854c7ffb106b5a817",
+    "head_sha": "6cd637b8b6c2f6f677e8c6d07d6d0cbe75ebb2ac",
+    "pr": "",
+    "stages": {
+      "base": {
+        "state": "pinned",
+        "reason": "main@b782c5f",
+        "at": "2026-10-04T17:52:25+09:00"
+      },
+      "autonomy": {
+        "state": "release",
+        "reason": "",
+        "at": "2026-10-04T17:52:26+09:00"
+      },
+      "scout": {
+        "state": "done",
+        "reason": "`BOOTSTRAP_ADMIN_PASSWORD` 가 72바이트를 넘으면 `mmcp reset-password` 가 `password_hash=''` 를 쓰고 \"password reset for ...\" 를",
+        "at": "2026-10-04T17:57:02+09:00"
+      },
+      "brief": {
+        "state": "accepted",
+        "reason": "채택 — 과제서의 근거가 현재 코드와 글자 단위로 일치했고(`main.go:146` 의 `hash, _ :=`, `users.go:169` 의 올바른 에러 반환, `in",
+        "at": "2026-10-04T18:06:45+09:00"
+      },
+      "verify": {
+        "state": "failed",
+        "reason": "실패한 검증: cd web && npm test --silent (exit 1)",
+        "at": "2026-10-04T18:06:48+09:00"
+      }
+    },
+    "campaign": "",
+    "autonomy": "release",
+    "arm": "no-arbiter",
+    "experiment": "roles-2026-09",
+    "engine": "claude",
+    "files": 5,
+    "additions": 172,
+    "deletions": 5,
+    "tests": 1,
+    "title": "fix: reject BOOTSTRAP_ADMIN_PASSWORD over 72 bytes instead of wiping the admin hash"
+  },
+  "stages": {
+    "base": {
+      "state": "pinned",
+      "reason": "main@b782c5f",
+      "at": "2026-10-04T17:52:25+09:00"
+    },
+    "autonomy": {
+      "state": "release",
+      "reason": "",
+      "at": "2026-10-04T17:52:26+09:00"
+    },
+    "scout": {
+      "state": "done",
+      "reason": "`BOOTSTRAP_ADMIN_PASSWORD` 가 72바이트를 넘으면 `mmcp reset-password` 가 `password_hash=''` 를 쓰고 \"password reset for ...\" 를",
+      "at": "2026-10-04T17:57:02+09:00"
+    },
+    "brief": {
+      "state": "accepted",
+      "reason": "채택 — 과제서의 근거가 현재 코드와 글자 단위로 일치했고(`main.go:146` 의 `hash, _ :=`, `users.go:169` 의 올바른 에러 반환, `in",
+      "at": "2026-10-04T18:06:45+09:00"
+    },
+    "verify": {
+      "state": "failed",
+      "reason": "실패한 검증: cd web && npm test --silent (exit 1)",
+      "at": "2026-10-04T18:06:48+09:00"
+    }
+  },
+  "provenance": {
+    "model": "claude-opus-5",
+    "policy_version": "4a9e91ac7",
+    "prompts_hash": "ce085c79e18002e2",
+    "runner_version": "1bd5f0cd4",
+    "base_sha": "b782c5faa92626eef8bb6fc854c7ffb106b5a817",
+    "head_sha": "6cd637b8b6c2f6f677e8c6d07d6d0cbe75ebb2ac",
+    "pr": ""
+  },
+  "verification": {
+    "runner": {
+      "source": "auto",
+      "commands": [
+        {
+          "cmd": "go build ./...",
+          "exit": 0,
+          "seconds": 0
+        },
+        {
+          "cmd": "go vet ./...",
+          "exit": 0,
+          "seconds": 1
+        },
+        {
+          "cmd": "go test ./...",
+          "exit": 0,
+          "seconds": 1
+        },
+        {
+          "cmd": "cd web && [ -d node_modules ] || npm ci --no-audit --no-fund",
+          "exit": 0,
+          "seconds": 0
+        },
+        {
+          "cmd": "cd web && npm test --silent",
+          "exit": 1,
+          "seconds": 0
+        }
+      ]
+    },
+    "runner_gate": {
+      "ok": false,
+      "state": "verify-failed",
+      "reason": "실패한 검증: cd web && npm test --silent (exit 1)"
+    },
+    "after_rebase": null,
+    "review": null,
+    "ci_gate": null
+  },
+  "release": {
+    "result": null,
+    "assets_sha256": []
+  },
+  "approval": null,
+  "usage": [
+    {
+      "ts": "2026-10-04T17:57:02+09:00",
+      "date": "2026-10-04",
+      "project": "mmcp",
+      "phase": "scout",
+      "run_id": "2026-10-04-175221-mmcp-improve",
+      "campaign": "",
+      "subtype": "success",
+      "engine": "claude",
+      "duration_ms": 281385,
+      "num_turns": 24,
+      "cost_usd": 1.8610059999999997,
+      "input_tokens": 36,
+      "output_tokens": 19424,
+      "cache_read": 1227392,
+      "cache_create": 76153
+    },
+    {
+      "ts": "2026-10-04T18:06:45+09:00",
+      "date": "2026-10-04",
+      "project": "mmcp",
+      "phase": "improve",
+      "run_id": "2026-10-04-175221-mmcp-improve",
+      "campaign": "",
+      "subtype": "success",
+      "engine": "claude",
+      "duration_ms": 599129,
+      "num_turns": 53,
+      "cost_usd": 3.7806675000000007,
+      "input_tokens": 100,
+      "output_tokens": 30497,
+      "cache_read": 4129105,
+      "cache_create": 95319
+    }
+  ]
+}
