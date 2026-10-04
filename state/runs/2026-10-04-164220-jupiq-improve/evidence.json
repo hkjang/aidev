@@ -1,0 +1,198 @@
+{
+  "run_id": "2026-10-04-164220-jupiq-improve",
+  "generated": "2026-10-04T16:54:54+09:00",
+  "run": {
+    "run_id": "2026-10-04-164220-jupiq-improve",
+    "project": "jupiq",
+    "kind": "improve",
+    "started": "2026-10-04T16:42:21+09:00",
+    "model": "claude-opus-5",
+    "policy_version": "4a9e91ac7",
+    "prompts_hash": "ce085c79e18002e2",
+    "runner_version": "1bd5f0cd4",
+    "arm": "no-arbiter",
+    "experiment": "roles-2026-09",
+    "finished": "2026-10-04T16:54:53+09:00",
+    "outcome": "verify-failed"
+  },
+  "record": {
+    "ts": "2026-10-04T16:54:53+09:00",
+    "date": "2026-10-04",
+    "project": "jupiq",
+    "result": "verify failed: 실패한 검증: npm run lint   # CI에서 가져옴 (exit 1)",
+    "outcome": "verify-failed",
+    "run_id": "2026-10-04-164220-jupiq-improve",
+    "base_sha": "92ff88c8ad078f2342f1d69e9b02d3e78a001958",
+    "head_sha": "9d9065caa72f202e58a5183eea6faef6cceef3ad",
+    "pr": "",
+    "stages": {
+      "base": {
+        "state": "pinned",
+        "reason": "main@92ff88c",
+        "at": "2026-10-04T16:42:25+09:00"
+      },
+      "autonomy": {
+        "state": "release",
+        "reason": "",
+        "at": "2026-10-04T16:42:25+09:00"
+      },
+      "scout": {
+        "state": "done",
+        "reason": "메일 본문을 8BITMIME 협상 없이 생 8비트로 보내는 것을 quoted-printable 7비트 인코딩으로 바꾼다 (가치 3 / 위�",
+        "at": "2026-10-04T16:47:12+09:00"
+      },
+      "brief": {
+        "state": "accepted",
+        "reason": "채택 — `compose`(202행)의 `8bit` 헤더·생 본문과 `startSession`이 STARTTLS·AUTH만 보는 것, `fakeRelay.handle`이 `250 8BITMIME`를 무조건 �",
+        "at": "2026-10-04T16:54:15+09:00"
+      },
+      "verify": {
+        "state": "failed",
+        "reason": "실패한 검증: npm run lint   # CI에서 가져옴 (exit 1)",
+        "at": "2026-10-04T16:54:52+09:00"
+      }
+    },
+    "campaign": "",
+    "autonomy": "release",
+    "arm": "no-arbiter",
+    "experiment": "roles-2026-09",
+    "engine": "claude",
+    "files": 2,
+    "additions": 126,
+    "deletions": 10,
+    "tests": 1,
+    "title": "fix: 메일 본문을 협상 없는 8비트 대신 quoted-printable로 보낸다"
+  },
+  "stages": {
+    "base": {
+      "state": "pinned",
+      "reason": "main@92ff88c",
+      "at": "2026-10-04T16:42:25+09:00"
+    },
+    "autonomy": {
+      "state": "release",
+      "reason": "",
+      "at": "2026-10-04T16:42:25+09:00"
+    },
+    "scout": {
+      "state": "done",
+      "reason": "메일 본문을 8BITMIME 협상 없이 생 8비트로 보내는 것을 quoted-printable 7비트 인코딩으로 바꾼다 (가치 3 / 위�",
+      "at": "2026-10-04T16:47:12+09:00"
+    },
+    "brief": {
+      "state": "accepted",
+      "reason": "채택 — `compose`(202행)의 `8bit` 헤더·생 본문과 `startSession`이 STARTTLS·AUTH만 보는 것, `fakeRelay.handle`이 `250 8BITMIME`를 무조건 �",
+      "at": "2026-10-04T16:54:15+09:00"
+    },
+    "verify": {
+      "state": "failed",
+      "reason": "실패한 검증: npm run lint   # CI에서 가져옴 (exit 1)",
+      "at": "2026-10-04T16:54:52+09:00"
+    }
+  },
+  "provenance": {
+    "model": "claude-opus-5",
+    "policy_version": "4a9e91ac7",
+    "prompts_hash": "ce085c79e18002e2",
+    "runner_version": "1bd5f0cd4",
+    "base_sha": "92ff88c8ad078f2342f1d69e9b02d3e78a001958",
+    "head_sha": "9d9065caa72f202e58a5183eea6faef6cceef3ad",
+    "pr": ""
+  },
+  "verification": {
+    "runner": {
+      "source": "auto",
+      "commands": [
+        {
+          "cmd": "go build ./...",
+          "exit": 0,
+          "seconds": 0
+        },
+        {
+          "cmd": "go vet ./...",
+          "exit": 0,
+          "seconds": 0
+        },
+        {
+          "cmd": "go test ./...",
+          "exit": 0,
+          "seconds": 9
+        },
+        {
+          "cmd": "cd web && [ -d node_modules ] || npm ci --no-audit --no-fund",
+          "exit": 0,
+          "seconds": 10
+        },
+        {
+          "cmd": "cd web && npm test --silent",
+          "exit": 0,
+          "seconds": 6
+        },
+        {
+          "cmd": "cd web && [ -d node_modules ] || npm ci --no-audit --no-fund",
+          "exit": 0,
+          "seconds": 0
+        },
+        {
+          "cmd": "cd web && npm run build --silent",
+          "exit": 0,
+          "seconds": 11
+        },
+        {
+          "cmd": "npm run lint   # CI에서 가져옴",
+          "exit": 1,
+          "seconds": 0
+        }
+      ]
+    },
+    "runner_gate": {
+      "ok": false,
+      "state": "verify-failed",
+      "reason": "실패한 검증: npm run lint   # CI에서 가져옴 (exit 1)"
+    },
+    "after_rebase": null,
+    "review": null,
+    "ci_gate": null
+  },
+  "release": {
+    "result": null,
+    "assets_sha256": []
+  },
+  "approval": null,
+  "usage": [
+    {
+      "ts": "2026-10-04T16:47:12+09:00",
+      "date": "2026-10-04",
+      "project": "jupiq",
+      "phase": "scout",
+      "run_id": "2026-10-04-164220-jupiq-improve",
+      "campaign": "",
+      "subtype": "error_max_budget_usd",
+      "engine": "claude",
+      "duration_ms": 290036,
+      "num_turns": 25,
+      "cost_usd": 2.0394780000000003,
+      "input_tokens": 36,
+      "output_tokens": 18589,
+      "cache_read": 1259272,
+      "cache_create": 86067
+    },
+    {
+      "ts": "2026-10-04T16:54:15+09:00",
+      "date": "2026-10-04",
+      "project": "jupiq",
+      "phase": "improve",
+      "run_id": "2026-10-04-164220-jupiq-improve",
+      "campaign": "",
+      "subtype": "success",
+      "engine": "claude",
+      "duration_ms": 431337,
+      "num_turns": 33,
+      "cost_usd": 3.0215820000000004,
+      "input_tokens": 60,
+      "output_tokens": 28564,
+      "cache_read": 2660684,
+      "cache_create": 97684
+    }
+  ]
+}
