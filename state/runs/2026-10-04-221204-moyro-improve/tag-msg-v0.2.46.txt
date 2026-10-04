@@ -1,0 +1,79 @@
+moyro v0.2.46
+
+The release archive verification now reports what it saw when it refuses an
+archive. This is a release-tooling tag: there is no production code change, no
+server change, no web change, no API or schema change, no migration, no new
+route and no new error id. The only non-marker file in the tag is
+`scripts/verify-release.sh`, which runs in the release job and is not part of
+the shipped image.
+
+`scripts/verify-release.sh` checked the loaded image's web UI and reported
+version with two bare pipelines — `probe_get "${base_url}/" | grep -F
+'<title>moyro</title>'` and the matching `"Version":"${version}"` assertion
+against `/api/v4/config/client`. Under the script's own `set -Eeuo pipefail` a
+`grep -F` that does not match exits 1 having written nothing to stdout or
+stderr, so a release failing at that point produced a log containing only the
+name of a failed step. Three distinct faults were indistinguishable in that
+log: a probe that never reached the container, a page served with a different
+title, and an image whose served version disagreed with the tag being released.
+The two `login` calls failed the same silent way, and since the second runs
+after `docker restart`, the log could not say whether first start or restart
+recovery was at fault.
+
+Both body assertions now go through `assert_probe_contains`, which keeps the
+same `grep -F`, the same literals and the same `exit 1`, and on failure writes
+the URL, the expected literal, the received byte count and the first 2000 bytes
+of the actual response to stderr. A probe that dies before its body can be
+checked is reported separately together with a 50-line tail of the application
+log, so an unreachable container is no longer confused with a page that is
+served but does not match. The two `login` calls take a label and name which of
+the two attempts — first start, or after restart — was refused.
+
+No gate is weakened. No step is removed, made conditional, wrapped in `|| true`
+or given `continue-on-error`, no timeout is extended, and `.github/workflows/`
+is byte-identical to v0.2.45. Every input that exited 1 before this change still
+exits 1; only what the failure writes on its way out has changed.
+
+The failure path was exercised rather than argued. Before the change, a
+`linux/amd64` image built with a one-character title difference, exported as a
+real archive and given to the real script against a real PostgreSQL container
+and an `--internal` network, exited 1 with not one line on stdout or stderr.
+After the change the same archive reports the URL, the expected literal and the
+HTML actually served. A genuine archive still passes to exit 0.
+
+Verified on this tree in the order `release.yml` runs it, against a real
+PostgreSQL container and the four checksum-pinned Mattermost plugin fixtures.
+`go test -race -p 1 -count=1 ./...` at 49 packages ok and 0 failures, with
+`httpapi` at 51.656s and `pluginhost` at 62.346s rather than the fraction of a
+second each takes when the database and the archives are absent, which confirms
+those tests executed instead of skipping. `go vet ./...` clean, `plugin-sdk/go`
+tests and vet clean, `govulncheck` reporting this code affected by 0
+vulnerabilities. In `webapp`, a clean `npm ci`, then `npm audit --omit=dev
+--audit-level=high` and `npm audit --audit-level=high` both at 0 vulnerabilities
+as of 2026-10-04 13:58 UTC, then `npm test` at 49 files and 224 tests on Node
+v22.23.1, then `npm run typecheck` and `npm run build`. `node
+scripts/verify-pages.mjs` passes against the bumped markers at 5 HTML pages, 47
+product screenshots, 16 navigable routes and 7 brand PNGs, and `bash
+scripts/check-source-sizes.sh` passes.
+
+The three gates the release job owns were run on this machine against this tag's
+commit rather than deferred to the tag push, which is what the last several tags
+had to do. The `linux/amd64` image build succeeded with `VERSION`, `COMMIT`,
+`BUILD_DATE` and `SOURCE_DATE_EPOCH` derived from commit
+20c1daa6063a4c169dee5bc607b77fbc9ad812a1 exactly as the workflow derives them.
+`scripts/verify-product-ui.sh` passed 77 Playwright tests in 3.8 minutes against
+the built image, including the six visual-regression snapshots. The image was
+exported with `docker save` and `gzip -n -9` to `moyro-v0.2.46.tar.gz`, and
+`scripts/verify-release.sh` with `EXPECTED_COMMIT` set to that commit passed the
+exported archive at "offline startup, web UI, version, bootstrap login, and
+restart" — so the patched probe assertions were themselves exercised on the real
+release path, in their passing direction, by the archive this tag describes.
+
+One marker change is worth noting for anyone reading the next tag's diff. The
+version markers move to 0.2.46 across the same 21 files as every recent release,
+130 occurrences of which 122 carry the `v` prefix, and no stale `0.2.4x` marker
+remains anywhere in the tree.
+
+Release assets are not attached by hand. `release.yml` builds the image, exports
+`moyro-v0.2.46.tar.gz`, verifies it and creates the GitHub release with the
+SHA-256 in the notes when this tag is pushed.

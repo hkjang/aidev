@@ -1,0 +1,63 @@
+release: carry release markers to v0.2.46
+
+v0.2.46 ships one release-tooling fix already merged to main. There is no
+production code change: no server change, no web change, no API or schema
+change, no new route and no new error id. The only non-marker file in this tag
+is `scripts/verify-release.sh`, which runs in the release job and never in the
+shipped image.
+
+`scripts/verify-release.sh` asserted the loaded image's web UI and version with
+two bare pipelines, `probe_get "${base_url}/" | grep -F '<title>moyro</title>'`
+and the matching `"Version":"${version}"` check against
+`/api/v4/config/client`. Under the script's own `set -Eeuo pipefail` a
+non-matching `grep -F` exits 1 having written nothing to stdout or stderr, so
+the release job's log recorded only a failed step. Three different faults —
+a probe that never reached the container, a page that was served but carried a
+different title, and an image whose served version disagreed with the tag being
+released — were indistinguishable in the log, and a release failing there could
+not be diagnosed without re-running the build locally. The two `login` calls
+failed the same silent way, and because the second runs after
+`docker restart`, the log could not even say whether first start or restart
+recovery was at fault.
+
+The fix wraps both body assertions in `assert_probe_contains`, which keeps the
+same `grep -F`, the same literals and the same `exit 1`, and on failure writes
+the URL, the expected literal, the received byte count and the first 2000 bytes
+of the actual response to stderr. A probe that dies before its body can be
+checked is reported separately, with a 50-line tail of the application log, so
+an unreachable container is no longer confused with a mismatched page. The two
+`login` calls take a label and say which of the two — first start or after
+restart — refused the bootstrap credentials.
+
+No gate is weakened. No step is deleted, made conditional, wrapped in
+`|| true` or given `continue-on-error`, no timeout is extended, and
+`.github/workflows/` is byte-identical to v0.2.45. Every input that exited 1
+before this change still exits 1; what changes is only what the failure writes
+to stderr on its way out. The failure path was exercised directly rather than
+reasoned about: a `linux/amd64` image built with a one-character title
+difference, exported as a real archive and fed to the real script against a real
+PostgreSQL container, produced no output at all before the change and the URL,
+the expected literal and the served HTML after it, while a genuine archive still
+passes to exit 0.
+
+Verified on this release tree in the order `release.yml` runs it, against a real
+PostgreSQL container and the four checksum-pinned Mattermost plugin fixtures:
+`go test -race -p 1 -count=1 ./...` at 49 packages ok and 0 failures, with
+`httpapi` at 51.656s and `pluginhost` at 62.346s rather than the fraction of a
+second each takes when the database and the archives are absent, which confirms
+those tests executed instead of skipping. `go vet ./...` clean, `plugin-sdk/go`
+tests and vet clean, and `govulncheck` reporting this code affected by 0
+vulnerabilities. In `webapp`, a clean `npm ci`, then
+`npm audit --omit=dev --audit-level=high` and `npm audit --audit-level=high`
+both at 0 vulnerabilities as of 2026-10-04 13:58 UTC, then `npm test` at 49
+files and 224 tests on Node v22.23.1, then `npm run typecheck` and
+`npm run build`. `node scripts/verify-pages.mjs` passes against the bumped
+markers at 5 HTML pages, 47 screenshots, 16 routes and 7 brand PNGs, and
+`bash scripts/check-source-sizes.sh` passes. `git diff --check` is clean and
+this commit touches no Go file.
+
+The three remaining gates belong to the release job and depend on this commit's
+own hash, so they run against the tag rather than against this commit in
+isolation: the `linux/amd64` image build, `scripts/verify-release.sh` against
+the exported archive, and the Playwright product-UI pass. Their results are
+recorded in the annotation of the tag that points here.
