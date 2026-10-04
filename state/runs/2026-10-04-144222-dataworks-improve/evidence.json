@@ -1,0 +1,183 @@
+{
+  "run_id": "2026-10-04-144222-dataworks-improve",
+  "generated": "2026-10-04T14:58:16+09:00",
+  "run": {
+    "run_id": "2026-10-04-144222-dataworks-improve",
+    "project": "dataworks",
+    "kind": "improve",
+    "started": "2026-10-04T14:42:22+09:00",
+    "model": "claude-opus-5",
+    "policy_version": "4a9e91ac7",
+    "prompts_hash": "ce085c79e18002e2",
+    "runner_version": "1bd5f0cd4",
+    "arm": "no-arbiter",
+    "experiment": "roles-2026-09",
+    "finished": "2026-10-04T14:58:15+09:00",
+    "outcome": "verify-failed"
+  },
+  "record": {
+    "ts": "2026-10-04T14:58:15+09:00",
+    "date": "2026-10-04",
+    "project": "dataworks",
+    "result": "verify failed: 실패한 검증: cd web && npm test --silent (exit 1)",
+    "outcome": "verify-failed",
+    "run_id": "2026-10-04-144222-dataworks-improve",
+    "base_sha": "98c508154d1068c9c38a8034f15de9ab159753ec",
+    "head_sha": "e64199aea175a86ca0135f9152dc5be3c4263cfd",
+    "pr": "",
+    "stages": {
+      "base": {
+        "state": "pinned",
+        "reason": "main@98c5081",
+        "at": "2026-10-04T14:42:26+09:00"
+      },
+      "autonomy": {
+        "state": "release",
+        "reason": "",
+        "at": "2026-10-04T14:42:26+09:00"
+      },
+      "scout": {
+        "state": "done",
+        "reason": "`usableEntitlement` 가 `GetContractScope` 조회 오류를 \"계약 없음\" 과 함께 `continue` 로 묶어, 서버 오류가 403 `contract",
+        "at": "2026-10-04T14:47:24+09:00"
+      },
+      "brief": {
+        "state": "accepted",
+        "reason": "채택 — 근거 세 지점(:252-255 의 한 덩어리 조건, :70 의 `candidates[0]` 되돌림, :100-104 의 기존 500)이 현재 코드와 정확히 일치",
+        "at": "2026-10-04T14:57:22+09:00"
+      },
+      "verify": {
+        "state": "failed",
+        "reason": "실패한 검증: cd web && npm test --silent (exit 1)",
+        "at": "2026-10-04T14:58:15+09:00"
+      }
+    },
+    "campaign": "",
+    "autonomy": "release",
+    "arm": "no-arbiter",
+    "experiment": "roles-2026-09",
+    "engine": "claude",
+    "files": 3,
+    "additions": 227,
+    "deletions": 5,
+    "tests": 1,
+    "title": "fix(dataworks): surface contract scope read failures from the entitlement walk"
+  },
+  "stages": {
+    "base": {
+      "state": "pinned",
+      "reason": "main@98c5081",
+      "at": "2026-10-04T14:42:26+09:00"
+    },
+    "autonomy": {
+      "state": "release",
+      "reason": "",
+      "at": "2026-10-04T14:42:26+09:00"
+    },
+    "scout": {
+      "state": "done",
+      "reason": "`usableEntitlement` 가 `GetContractScope` 조회 오류를 \"계약 없음\" 과 함께 `continue` 로 묶어, 서버 오류가 403 `contract",
+      "at": "2026-10-04T14:47:24+09:00"
+    },
+    "brief": {
+      "state": "accepted",
+      "reason": "채택 — 근거 세 지점(:252-255 의 한 덩어리 조건, :70 의 `candidates[0]` 되돌림, :100-104 의 기존 500)이 현재 코드와 정확히 일치",
+      "at": "2026-10-04T14:57:22+09:00"
+    },
+    "verify": {
+      "state": "failed",
+      "reason": "실패한 검증: cd web && npm test --silent (exit 1)",
+      "at": "2026-10-04T14:58:15+09:00"
+    }
+  },
+  "provenance": {
+    "model": "claude-opus-5",
+    "policy_version": "4a9e91ac7",
+    "prompts_hash": "ce085c79e18002e2",
+    "runner_version": "1bd5f0cd4",
+    "base_sha": "98c508154d1068c9c38a8034f15de9ab159753ec",
+    "head_sha": "e64199aea175a86ca0135f9152dc5be3c4263cfd",
+    "pr": ""
+  },
+  "verification": {
+    "runner": {
+      "source": "auto",
+      "commands": [
+        {
+          "cmd": "go build ./...",
+          "exit": 0,
+          "seconds": 1
+        },
+        {
+          "cmd": "go vet ./...",
+          "exit": 0,
+          "seconds": 0
+        },
+        {
+          "cmd": "go test ./...",
+          "exit": 0,
+          "seconds": 42
+        },
+        {
+          "cmd": "cd web && [ -d node_modules ] || npm ci --no-audit --no-fund",
+          "exit": 0,
+          "seconds": 8
+        },
+        {
+          "cmd": "cd web && npm test --silent",
+          "exit": 1,
+          "seconds": 1
+        }
+      ]
+    },
+    "runner_gate": {
+      "ok": false,
+      "state": "verify-failed",
+      "reason": "실패한 검증: cd web && npm test --silent (exit 1)"
+    },
+    "after_rebase": null,
+    "review": null,
+    "ci_gate": null
+  },
+  "release": {
+    "result": null,
+    "assets_sha256": []
+  },
+  "approval": null,
+  "usage": [
+    {
+      "ts": "2026-10-04T14:47:24+09:00",
+      "date": "2026-10-04",
+      "project": "dataworks",
+      "phase": "scout",
+      "run_id": "2026-10-04-144222-dataworks-improve",
+      "campaign": "",
+      "subtype": "success",
+      "engine": "claude",
+      "duration_ms": 293989,
+      "num_turns": 21,
+      "cost_usd": 1.7656735000000003,
+      "input_tokens": 24,
+      "output_tokens": 20699,
+      "cache_read": 864137,
+      "cache_create": 81601
+    },
+    {
+      "ts": "2026-10-04T14:57:22+09:00",
+      "date": "2026-10-04",
+      "project": "dataworks",
+      "phase": "improve",
+      "run_id": "2026-10-04-144222-dataworks-improve",
+      "campaign": "",
+      "subtype": "success",
+      "engine": "claude",
+      "duration_ms": 596400,
+      "num_turns": 47,
+      "cost_usd": 3.6978104999999997,
+      "input_tokens": 88,
+      "output_tokens": 27571,
+      "cache_read": 3975411,
+      "cache_create": 102039
+    }
+  ]
+}
