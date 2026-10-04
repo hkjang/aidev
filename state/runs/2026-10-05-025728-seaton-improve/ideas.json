@@ -1,0 +1,110 @@
+[
+  {
+    "title": "직원 가져오기·단건 저장으로 퇴직 처리한 직원의 좌석을 해제한다",
+    "value": 3,
+    "risk": 2,
+    "size": "M",
+    "status": "pending",
+    "note": "이번 회차 선택. sync.go:139-146 의 해제 루프를 공유 함수로 뽑아 saveEmployee 가 status=retired 일 때 부른다. seat_history.source 에 CHECK 가 없음을 확인했으므로 마이그레이션이 필요 없고, format.ts SOURCE_LABELS 에 employee_import 한 줄만 더하면 된다. 위험은 DB 가 아니라 E2E 복구 — keepingEmployee 가 좌석 배정을 되돌리지 않는다.",
+    "updated": "2026-10-05"
+  },
+  {
+    "title": "가져오기 실패 행 사유에 어느 열이 비었는지 적기",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "차선 후보. employees.go:298-300 의 fail(\"사번/이름 누락\") 이 사번·이름 중 무엇이 빈지 가리지 않는다. normalizeEmployeeStatus(147) 가 세운 꼴로 맞출 수 있다. 기존 E2E·문서가 그 문장을 단정하는지 먼저 grep 할 것.",
+    "updated": "2026-10-05"
+  },
+  {
+    "title": "E2E 환경 의존 spec 2건(mcp-oauth·tracking) 준비 절차를 web/e2e/README.md 로 고정",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "문서만이라 위험 0. 굳힐 내용: 전용 bridge + postgres:16-alpine + '-p 127.0.0.1:<port>:8080', 준비 확인은 /readyz, PLAYWRIGHT_BROWSERS_PATH, 포트 고정 금지, 변경 전 이미지는 반드시 새로 빌드, 실패 원인은 E2E_COLLECTOR_HOST 기본값 127.0.0.1, seed.mjs 는 도면이 있으면 repair() 로 빠져 직원을 다시 POST 하지 않는다. 다만 사용자에게 보이는 개선이 아니라 다섯 회차 연속 차선으로 밀렸다 — 다음에 또 밀리면 가치를 1로 내릴 것.",
+    "updated": "2026-10-05"
+  },
+  {
+    "title": "목록 핸들러가 rows.Err()·Scan 오류를 삼켜 부분 목록을 200 으로 반환",
+    "value": 3,
+    "risk": 2,
+    "size": "M",
+    "status": "pending",
+    "note": "일곱 회차 연속 '증명 수단 없음'. 이번에도 employees.go:23-29(listOrganizations)·80-85(listEmployees)·412-418(listHistory) 세 자리를 다시 확인했다. 올바른 꼴은 같은 파일의 findOrganization(172-195). Scan 실패를 일부러 일으킬 수단이 여전히 없다 — 아래 하네스 조사 과제가 선행이다.",
+    "updated": "2026-10-05"
+  },
+  {
+    "title": "internal/app 에 DB 붙은 테스트 하네스 도입 가능성만 조사",
+    "value": 3,
+    "risk": 2,
+    "size": "M",
+    "status": "pending",
+    "note": "코드를 고치지 않고 수단만 조사하는 회차. POSTGRES_TEST_DSN + migrations.sql 적용 + DSN 없으면 t.Skip. 제약: ci.yml 의 test job 에 postgres service 가 없어(e2e job 에만 있다) 그대로면 CI 영구 skip. 지금 internal/app 의 테스트는 DB 없는 여섯 개(auth·analyzer·mcpoauth·tracking·vlm·employees).",
+    "updated": "2026-10-05"
+  },
+  {
+    "title": "내보낸 직원목록 CSV 에 조직코드 열 추가",
+    "value": 3,
+    "risk": 3,
+    "size": "M",
+    "status": "pending",
+    "note": "사람의 판단 필요. f32ea65 이후 조직을 새로 만들지 않으므로 그 행은 오류로 걸린다 — 급함이 내려갔다. 직원 API 가 조직 external_id 를 주지 않아 서버 변경이 따르고, 96c911e 가 철회한 왕복 안내와 인접하다.",
+    "updated": "2026-10-05"
+  },
+  {
+    "title": "직원 목록 500건 상한에 total·더 보기 붙이기",
+    "value": 2,
+    "risk": 2,
+    "size": "M",
+    "status": "pending",
+    "note": "서버 쪽 본이 같은 파일에 있다 — listHistory(394-422)가 historyCountCap 5000 으로 끊은 total·totalCapped 를 내려주고 HistoryPage 가 쓴다. 그 꼴을 listEmployees(64-87)로 옮기면 되지만 501명 시드가 필요해 S 로 쪼개기 어렵다.",
+    "updated": "2026-10-05"
+  },
+  {
+    "title": "요청 순번 규칙을 lib 헬퍼로 뽑아 여러 화면이 공유",
+    "value": 2,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "EmployeesPage.load·HistoryPage.load 두 곳. 순수 헬퍼 단위테스트는 배선 결함을 증명하지 못하므로 세 번째 화면이 나올 때가 뽑을 때다. 이번에도 그대로 둠.",
+    "updated": "2026-10-05"
+  },
+  {
+    "title": "이력 화면의 조회 파라미터를 load 와 exportCsv 가 한 함수로 짓게 하기",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "HistoryPage.tsx:82 와 134 가 source·q·기간을 각각 조립한다(이번에 두 줄을 직접 확인했다). 지금 두 곳이 일치해 관측된 결함 없는 순수 예방. PAGE_SIZE 100 vs EXPORT_LIMIT 500 차이는 보존해야 한다.",
+    "updated": "2026-10-05"
+  },
+  {
+    "title": "가져오기 실패 배너가 다음 조회까지 남는 것이 맞는지 판단",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "upload·assignFromFile 의 catch 가 load 를 부르지 않아 파일 오류 배너가 다음 조회까지 남고, 성공 message 와 error 배너가 동시에 뜬다. 어느 쪽이 맞는 동작인지 먼저 정해야 하는 설계 판단.",
+    "updated": "2026-10-05"
+  },
+  {
+    "title": "listEmployees 가 알 수 없는 status·assignment 값을 조용히 빈 목록으로 돌려준다",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "새 후보. employees.go:67-73 은 status·assignment 를 검증하지 않고 SQL 비교에 그대로 넣어, ?status=bogus 가 400 이 아니라 items:[] 로 돌아온다. listHistory 는 같은 파일에서 기간을 parseBound 로 검증해 invalid_filter 400 을 돌려주는 꼴을 이미 갖고 있다(344-361). 다만 URL 을 신뢰하지 않는 지금 프런트(employeeQuery)가 잘못된 값을 보내지 않으므로 사용자에게 보이는 결함은 아니고, 400 으로 바꾸면 URL 복원 경로가 깨질 수 있어 기본값으로 떨어뜨리는 쪽이 안전하다.",
+    "updated": "2026-10-05"
+  },
+  {
+    "title": "importEmployees 가 올린 파일의 행 수에 상한이 없다",
+    "value": 2,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "새 후보. importEmployees(269-313)는 rows[1:] 전체를 행마다 독립 쿼리로 돈다 — 상한이 readSpreadsheet 의 바이트 제한뿐인지 읽지 않았다(미확인). 인사 동기화는 본문을 io.LimitReader(20MB)로 끊는 꼴을 갖고 있다(sync.go:78). 재현 수단(큰 파일)을 만들기 쉬워 증명은 가능하지만, 실제 운영 규모를 모르는 채 상한을 정하면 정상 사용을 막을 수 있다 — 먼저 readSpreadsheet 의 현재 상한을 확인할 것.",
+    "updated": "2026-10-05"
+  }
+]
