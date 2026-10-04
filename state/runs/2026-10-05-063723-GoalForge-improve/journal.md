@@ -30,3 +30,12 @@
 - [러너 06:54] pr created — https://github.com/hkjang/goalforge/pull/80
 - [러너 07:00] ci passed — 검사 5개 모두 success
 - [러너 07:01] merge done — f6d9e5c
+
+## 릴리즈 노트
+- 준비 완료: v0.52.0, 릴리즈 커밋 37bbc7f, 최신 두 릴리즈와 같은 lightweight tag. GUIDE 기준 버전만 갱신.
+- 검증: 전체 32개 테스트 패키지·build/vet/gofmt/tidy, 6개 플랫폼 교차 빌드·체크섬·Linux 버전 스모크 통과. 기존 push 테스트 4개 skip, 신규 테스트 모두 실행.
+- CI 사전 근거: PR SHA의 3개 OS 및 빌드·포맷 검사 모두 success. 새 태그 CI는 외부 러너 푸시 후 실행됨.
+- 인계: release-notes.md, release-verification.md, release.json. 태그 CI가 Release·자산을 생성하므로 github_release=false/assets=[]. 원격 조작 없음.
+- 스킬: Skill 도구 부재로 요청한 두 로컬 SKILL.md를 읽어 적용; Tier 3, 릴리즈 노트만 준비.
+- [러너 07:14] release published — v0.52.0
+- [러너 07:25] assets verified — v0.52.0 자산 7개 (이전 v0.51.0: 7)
