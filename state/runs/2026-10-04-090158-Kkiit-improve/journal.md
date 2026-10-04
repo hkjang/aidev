@@ -23,3 +23,4 @@
 - [러너 09:20] ci passed — 검사 없음 — 정책으로 허용
 - [러너 09:20] merge done — 0ba25f7
 - [러너 09:26] release published — v0.4.13
+- [러너 09:27] assets verified — v0.4.13 자산 1개 (이전 v0.4.12: 1)
