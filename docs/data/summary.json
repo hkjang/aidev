@@ -1,27 +1,27 @@
 {
- "generated": "2026-10-04T15:30:58+09:00",
+ "generated": "2026-10-04T16:11:23+09:00",
  "site": "https://hkjang.github.io/aidev",
- "description": "Claude Code 자율 개선 에이전트가 hkjang 의 프로젝트를 개선·테스트·머지·릴리즈한 일일 보고. 오늘 35회차·릴리즈 15건, 누적 1911회차·릴리즈 668건, 주의 필요 5건.",
+ "description": "Claude Code 자율 개선 에이전트가 hkjang 의 프로젝트를 개선·테스트·머지·릴리즈한 일일 보고. 오늘 36회차·릴리즈 15건, 누적 1912회차·릴리즈 668건, 주의 필요 5건.",
  "today": {
   "date": "2026-10-04",
-  "total": 35,
+  "total": 36,
   "projects": 25,
   "released": 15,
-  "merged": 2,
+  "merged": 3,
   "nochange": 2,
   "failed": 1,
-  "cost_usd": 253.95,
-  "minutes": 694,
-  "sessions": 99
+  "cost_usd": 261.3,
+  "minutes": 707,
+  "sessions": 101
  },
  "totals": {
-  "runs": 1911,
+  "runs": 1912,
   "released": 668,
   "days": 33,
-  "cost_usd": 7457.21,
-  "minutes": 20553,
-  "tokens_in": 7912088559,
-  "tokens_out": 64151970
+  "cost_usd": 7464.56,
+  "minutes": 20566,
+  "tokens_in": 7920518556,
+  "tokens_out": 64199531
  },
  "alerts": [
   {
@@ -62,17 +62,19 @@
  ],
  "fix_queue": [],
  "health": {
-  "checked": "2026-10-04T15:15:04+09:00",
-  "last_run": "2026-10-04T14:58:15+09:00",
-  "seconds_since_last": 1007,
-  "runner_pid": "2515205",
-  "runner_age_seconds": 2726,
-  "scheduler_status": "실행 중",
-  "scheduler_next_run": "2026-10-04 오후 3:20:00",
+  "checked": "2026-10-04T15:45:04+09:00",
+  "last_run": "2026-10-04T15:30:56+09:00",
+  "seconds_since_last": 846,
+  "runner_pid": "",
+  "runner_age_seconds": 0,
+  "scheduler_status": "준비",
+  "scheduler_next_run": "2026-10-04 오후 3:50:00",
   "disk_percent": 80,
   "ok": true,
   "problems": [],
-  "actions": []
+  "actions": [
+   "소유 프로세스 없는 잠금 파일을 제거했다"
+  ]
  },
  "lessons": [
   {
@@ -943,23 +945,6 @@
   },
   {
    "kind": "PR",
-   "project": "hunter",
-   "title": "auto-improve: docs: correct the datetime guard rationale and drop the vacuous rollup assertion",
-   "url": "https://github.com/hkjang/hunter/pull/18",
-   "sha": "11398ed",
-   "summary": "5파일 +401/−24 · CI timeout, PR open https://github.com/hkjang/hunter/pull/18",
-   "why": "scout: failed — 과제서 없음 — 구현자가 직접 고른다; review: approved — 리뷰 승인 (risk=low); ci: timeout — 제한 시간 안에 CI 완료를 확인하지 못함",
-   "evidence": "https://github.com/hkjang/aidev/tree/main/state/runs/2026-10-04-144232-hunter-improve",
-   "labels": "",
-   "action": "PR 처리기가 매시간 살핀다 (아직 순서가 오지 않음) · 승인: PR 라벨 aidev-approved / 반려: aidev-rejected — 다음 회차에 러너가 승인 당시 커밋에만 CI 확인 후 머지·닫기",
-   "date": "2026-10-04",
-   "shepherd": "",
-   "shepherd_action": "",
-   "shepherd_detail": "",
-   "needs_human": false
-  },
-  {
-   "kind": "PR",
    "project": "ai-admin",
    "title": "auto-improve: fix: aiDefaults 를 요청 원문이 아니라 검증을 통과한 값으로 저장해 짝 없는 surrogate·깨진 UTF-8 이 jsonb 에 닿아 500 이 되는 것을 막기",
    "url": "https://github.com/hkjang/ai-admin/pull/38",
@@ -968,11 +953,11 @@
    "why": "review: rejected — 리뷰 거절: internal/server/users.go:636 storablePreferenceObject 가 UseNumber() 로 숫자 ",
    "evidence": "https://github.com/hkjang/aidev/tree/main/state/runs/2026-10-04-114232-ai-admin-improve",
    "labels": "",
-   "action": "PR 처리기가 다음 시간에 다시 시도 · 승인: PR 라벨 aidev-approved / 반려: aidev-rejected — 다음 회차에 러너가 승인 당시 커밋에만 CI 확인 후 머지·닫기",
+   "action": "PR 처리기가 사람에게 넘김 — 수정·심사를 2번 시도했지만 통과하지 못함 — 사람이 봐야 한다 · 승인: PR 라벨 aidev-approved / 반려: aidev-rejected — 다음 회차에 러너가 승인 당시 커밋에만 CI 확인 후 머지·닫기",
    "date": "2026-10-04",
-   "shepherd": "리뷰 거절 · 심사 거절 → 다음 시간에 수정 (10-04 14:20) — - internal/server/users.go:511-520·543·563·636 두 객체의 직렬화 크기에 상한이 없어, 받아들인 숫자 literal 하나가 jsonb 에서 ~16000배로 부풀고 그것이 이제 조회 응답으로도 나간다. HEAD 를 빌드해 전용 폐기 postgres:16",
-   "shepherd_action": "review-reject",
-   "shepherd_detail": "- internal/server/users.go:511-520·543·563·636 두 객체의 직렬화 크기에 상한이 없어, 받아들인 숫자 literal 하나가 jsonb 에서 ~16000배로 부풀고 그것이 이제 조회 응답으로도 나간다. HEAD 를 빌드해 전용 폐기 postgres:16-alpine(포트 55781)에 붙인 실제 서버로 재현 — (a) 15,906바이트 본문 PATCH /api/v1/preferences {\"aiDefaults\":{\"k0\":1e131071,…,\"k999\":1e131071}} → 200, length(ai_defaults::text)=131,081,890, 바로 다음 GET /api/v1/preferences → 131,081,114 바이트 응답. (b) 같은 literal 을 sidebarState 에 담은 24,025바이트 본문 → 200, 그 뒤 sidebarState 를 담지 않은 PATCH {\"theme\":\"light\"} 가 833ms (users.go:543 이 131MB 를 읽고 :563 이 다시 직렬화한다 — 모든 설정 변경이 이 비용을 낸다). main 에서는 둘 다 닿지 않는다: main users.go:534 가 sidebarState 를 float64 objectValue 로 통과시켜 1e131071 이 null 이 됐고, main getPreferences 는 decodeRaw 로 읽어 aiDefaults 를 null 로 내려보냈다 — 이 변경이 새로 만든 경로다. 본문 ~160KB 로 jsonb 1GB 상한에 닿고, 그때 한 번의 GET 이 pgx []byte·디코딩된 map·json.Encoder 버퍼로 1GB 를 세 번 잡는다. server.go:137-138 은 역할 제한이 없어 로그인한 모든 사용자가 단일 컨테이너 콘솔에서 이것을 할 수 있다. 고칠 자리: numericMaxIntegerDigits 옆에 직렬화 바이트 상한(또는 숫자 literal 자릿수 상한)을 두고 storablePreferenceObject 가 그것으로도 400 을 내게 한다 — locale·timezone·displayName 과 같은 선례다.\n- docs/api.md:97 과 internal/server/preference_object_integration_test.go:214 가 그 무한대 계약을 명시적으로 못 박아, 한 번의 PATCH 가 서버에 잡게 할 수 있는 크기에 아무 테스트도 상한을 두지 않는다. 문서는 \"1e131071·1e-16383 은 저장되고\" 라고만 적어 크기 상한을 언급하지 않고, \"numbers at the edge of the numeric range are stored\" 서브테스트는 131KB 로 부푸는 것을 기대값으로 단언한다(:220 len(stored) < 131071 이면 FAIL). 상한을 넣는 수리는 이 문장과 이 서브테스트를 함께 고쳐야 하고, 상한을 넘는 본문이 400 이 되는 것과 그때 같은 요청의 theme 이 저장되지 않는 것을 새 서브테스트로 못 박아야 한다.",
+   "shepherd": "리뷰 거절 · 사람 필요 (10-04 15:36) — 수정·심사를 2번 시도했지만 통과하지 못함 — 사람이 봐야 한다",
+   "shepherd_action": "needs-human",
+   "shepherd_detail": "수정·심사를 2번 시도했지만 통과하지 못함 — 사람이 봐야 한다",
    "needs_human": false
   },
   {
@@ -1456,16 +1441,16 @@
   }
  ],
  "shepherd": {
-  "last_pass": "2026-10-04T13:59:14+09:00",
+  "last_pass": "2026-10-04T15:35:22+09:00",
   "enabled": true,
   "today": {
-   "needs-human": 1,
-   "approve": 4,
+   "needs-human": 2,
+   "approve": 5,
    "fix-pushed": 4,
    "review-reject": 2
   },
-  "total": 486,
-  "pending_human": 133
+  "total": 488,
+  "pending_human": 134
  },
  "agents": {
   "rows": [
@@ -1485,7 +1470,7 @@
     "role": "비평 critic",
     "calls": 435,
     "metric": "최종 승인 97% · 한 번이라도 거절 39 · 승인·머지 뒤 회귀 0/354",
-    "cost": 654.24
+    "cost": 656.91
    },
    {
     "role": "수리 repairer",
@@ -1501,15 +1486,15 @@
    },
    {
     "role": "릴리즈 releaser",
-    "calls": 409,
+    "calls": 410,
     "metric": "완전한 릴리즈 76%",
-    "cost": 590.92
+    "cost": 595.61
    },
    {
     "role": "PR 심사 shepherd-reviewer",
-    "calls": 171,
-    "metric": "승인 67 · 거절 13 · 사람 필요 91 · 승인 뒤 회귀 0",
-    "cost": 274.02
+    "calls": 173,
+    "metric": "승인 68 · 거절 13 · 사람 필요 92 · 승인 뒤 회귀 0",
+    "cost": 276.69
    },
    {
     "role": "PR 수리 shepherd-fixer",
@@ -1531,15 +1516,15 @@
    },
    {
     "role": "측정 자기 감사",
-    "calls": 3,
+    "calls": 4,
     "cost": null,
-    "metric": "[medium] 실험 arm no-repair 의 처치 노출이 4% — 그 arm 의 null 결과는 '효과 없음' 이 아니다 · [medium] 실험 arm no-arbiter 의 처치 노출이 0% — 그 arm 의 null 결과는 '효과 없음' 이 아니다 · [low] 닫힌 캠페인 5개의 적용률이 35% 미만 — PR 은 열렸지만 표준이 들어가지 않았다"
+    "metric": "[high] 원격에 없는 릴리즈 태그 1건 — 그 저장소의 다음 릴리즈를 막는다 · [medium] 실험 arm no-repair 의 처치 노출이 4% — 그 arm 의 null 결과는 '효과 없음' 이 아니다 · [medium] 실험 arm no-arbiter 의 처치 노출이 0% — 그 arm 의 null 결과는 '효과 없음' 이 아니다"
    },
    {
     "role": "실제 게시 릴리즈 (원격 태그 기준)",
     "calls": 732,
     "cost": null,
-    "metric": "저장소 40개 · 게시 732건 (사람 278건) · 누적 회차 기록에는 668건 — 64건이 기록에서 빠졌다"
+    "metric": "저장소 40개 · 게시 732건 (사람 278건) · 태그만 만들고 미게시 1건 — CI 가 릴리즈 커밋을 막은 저장소 · 누적 회차 기록에는 668건 — 64건이 기록에서 빠졌다"
    },
    {
     "role": "머지 뒤 30일 (postmerge)",
@@ -1567,6 +1552,7 @@
    }
   ],
   "advice": [
+   "측정이 어긋났다 — 원격에 없는 릴리즈 태그 1건 — 그 저장소의 다음 릴리즈를 막는다 (release_project 의 describe 검사가 로컬 태그를 보므로, 보류된 태그가 base 끝을 가리키면 릴리즈가 영구히 멈춘다.)",
    "실제 릴리즈 태그(732건)가 누적 회차 기록(668건)보다 64건 많다 — 기록 경로에 빠지는 자리가 남아 있다 (bin/released.py 가 태그로 센 값)",
    "jikim 은 머지한 변경의 93% 를 사람이 다시 고쳤다 — 자율화 단계를 낮추거나(state/jikim.policy.json 의 autonomy) 검증 명령을 늘릴 것"
   ]
@@ -1957,8 +1943,8 @@
   },
   {
    "metric": "완전한 릴리즈 비율",
-   "value": "94%",
-   "detail": "릴리즈 시도 333건 중 자산 검증까지 312건"
+   "value": "93%",
+   "detail": "릴리즈 시도 334건 중 자산 검증까지 312건"
   },
   {
    "metric": "사람의 재작업률",
@@ -1972,7 +1958,7 @@
   },
   {
    "metric": "유효 개선당 비용",
-   "value": "$10.27",
+   "value": "$10.30",
    "detail": "비용 확인된 유효 개선 342건, 미확인 세션 558"
   },
   {
@@ -1990,7 +1976,7 @@
   "review-pending": 12,
   "verify-failed": 4,
   "merged": 1,
-  "releasing": 1,
+  "releasing": 2,
   "release-ready": 15,
   "no-change": 2,
   "error": 0
@@ -1998,12 +1984,12 @@
  "days": [
   {
    "date": "2026-10-04",
-   "total": 35,
+   "total": 36,
    "released": 15,
-   "merged": 2,
+   "merged": 3,
    "nochange": 2,
    "failed": 1,
-   "cost_usd": 253.95
+   "cost_usd": 261.3
   },
   {
    "date": "2026-10-03",
@@ -2272,13 +2258,13 @@
    "key": "2026-W40",
    "url": "https://hkjang.github.io/aidev/weekly/2026-W40/",
    "days": 7,
-   "total": 346,
+   "total": 347,
    "released": 132,
-   "merged": 24,
+   "merged": 25,
    "nochange": 19,
    "failed": 33,
-   "cost": 1782.44,
-   "minutes": 5729
+   "cost": 1789.79,
+   "minutes": 5743
   },
   {
    "key": "2026-W39",
@@ -2334,13 +2320,13 @@
    "key": "2026-10",
    "url": "https://hkjang.github.io/aidev/monthly/2026-10/",
    "days": 4,
-   "total": 176,
+   "total": 177,
    "released": 68,
-   "merged": 8,
+   "merged": 9,
    "nochange": 2,
    "failed": 12,
-   "cost": 1101.66,
-   "minutes": 3399
+   "cost": 1109.01,
+   "minutes": 3412
   },
   {
    "key": "2026-09",
@@ -2701,13 +2687,13 @@
    "name": "hunter",
    "repo": "https://github.com/hkjang/hunter",
    "page": "https://hkjang.github.io/aidev/projects/hunter/",
-   "runs": 32,
+   "runs": 33,
    "released": 2,
-   "last_ts": "2026-10-04T15:30:56+09:00",
-   "last_status": "other",
-   "last_result": "CI timeout, PR open https://github.com/hkjang/hunter/pull/18",
-   "cost": 214.33,
-   "minutes": 608,
+   "last_ts": "2026-10-04T16:11:17+09:00",
+   "last_status": "merged",
+   "last_result": "merged https://github.com/hkjang/hunter/pull/18 (approved), release tag held (timeout)",
+   "cost": 221.68,
+   "minutes": 621,
    "grade": "C",
    "grade_why": "14일: 릴리즈 1, 실패 1, 경고 3, 회귀 0",
    "lessons": 0,
@@ -2715,8 +2701,8 @@
    "ideas_total": 9,
    "release": {
     "status": "released",
-    "version": "1.20.0",
-    "tag": "v1.20.0"
+    "version": "1.21.0",
+    "tag": "v1.21.0"
    }
   },
   {
