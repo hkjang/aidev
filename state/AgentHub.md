@@ -338,3 +338,4 @@
   web/scripts Node 회귀 테스트를 CI 기본 검증에 포함 (3/2/S).
 - 과제서: 채택 — 현재 Validate의 제공자 길이 검사 누락과 originOf→PolicySources→pagePolicy의 세 지시문 증폭이 일치했고, 지정 과대 입력의 24339바이트를 새 테스트로 재측정했다.
 
+- 릴리즈: v0.259.0 (2026-10-05, run 2026-10-05-054722-AgentHub-improve)
