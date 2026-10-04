@@ -1,7 +1,7 @@
 ---
 title: "sqlon — 자율 개선 이력"
 description: "sqlon: 자율 개선 회차 18회, 릴리즈 1건. 최근 릴리즈 v0.1.5 (자산 6개)."
-last_modified_at: 2026-10-04 21:43:28 +0900
+last_modified_at: 2026-10-04 21:53:22 +0900
 ---
 {% raw %}
 <script type="application/ld+json">
@@ -18,7 +18,7 @@ last_modified_at: 2026-10-04 21:43:28 +0900
   "name": "hkjang",
   "url": "https://github.com/hkjang"
  },
- "dateModified": "2026-10-04T21:43:28+09:00",
+ "dateModified": "2026-10-04T21:53:22+09:00",
  "version": "0.1.5"
 }
 </script>
