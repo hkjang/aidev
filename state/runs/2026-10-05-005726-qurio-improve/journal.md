@@ -28,3 +28,7 @@
 - 못 본 것: 실 Oracle 인스턴스 없음(`TestOracleLive` 미실행; 위 퍼즈의 oracle 52만 비교로 대체), 통합/웹/E2E 는 변경이 닿지 않아 미실행. 범위 밖 `appendUnique` quadratic 과 미머지 `-count=1`·3bf8799 는 그대로다. 워크트리는 검증용 임시 파일을 모두 제거해 clean 로 되돌렸다.
 - [러너 01:30] review approved — 리뷰 승인 (risk=low)
 - [러너 01:30] pr created — https://github.com/hkjang/qurio/pull/33
+- [러너 01:47] ci passed — 검사 1개 모두 success
+- [러너 01:47] merge done — 5d8a1b5
+- [러너 02:13] release published — v1.4.12
+- [러너 02:39] assets verified — v1.4.12 자산 1개 (이전 v1.4.10: 1)
