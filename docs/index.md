@@ -1,7 +1,7 @@
 ---
 title: "aidev 자율 개선 대시보드"
 description: "Claude Code 자율 개선 에이전트가 hkjang 의 프로젝트를 개선·테스트·머지·릴리즈한 일일 보고. 오늘 36회차·릴리즈 15건, 누적 1912회차·릴리즈 668건, 주의 필요 5건."
-last_modified_at: 2026-10-04 16:11:23 +0900
+last_modified_at: 2026-10-04 16:25:27 +0900
 ---
 {% raw %}
 <script type="application/ld+json">
@@ -17,7 +17,7 @@ last_modified_at: 2026-10-04 16:11:23 +0900
   "name": "hkjang",
   "url": "https://github.com/hkjang"
  },
- "dateModified": "2026-10-04T16:11:23+09:00"
+ "dateModified": "2026-10-04T16:25:27+09:00"
 }
 </script>
 
@@ -369,11 +369,11 @@ last_modified_at: 2026-10-04 16:11:23 +0900
 
 # aidev 자율 개선 대시보드
 
-<p class="tldr"><strong>한 줄 요약.</strong> Claude Code 자율 개선 에이전트가 hkjang 의 프로젝트를 개선·테스트·머지·릴리즈한 일일 보고. 오늘 36회차·릴리즈 15건, 누적 1912회차·릴리즈 668건, 주의 필요 5건. 회차가 끝날 때마다 자동 갱신됩니다 (마지막 갱신 <time datetime="2026-10-04T16:11:23+09:00" data-rel>2026-10-04 16:11</time> KST).</p>
+<p class="tldr"><strong>한 줄 요약.</strong> Claude Code 자율 개선 에이전트가 hkjang 의 프로젝트를 개선·테스트·머지·릴리즈한 일일 보고. 오늘 36회차·릴리즈 15건, 누적 1912회차·릴리즈 668건, 주의 필요 5건. 회차가 끝날 때마다 자동 갱신됩니다 (마지막 갱신 <time datetime="2026-10-04T16:25:27+09:00" data-rel>2026-10-04 16:25</time> KST).</p>
 
 <div class="alerts" role="alert"><strong>⚠️ 주의 필요 5건</strong> <span class="meta">— 새 경고는 GitHub Issue·Slack·이메일·Windows 알림으로도 보냅니다</span><ul><li><a href="https://hkjang.github.io/aidev/projects/yeopjari/">yeopjari</a> — 보호 파일 변경 — 자동 머지 안 함, 사람 검토 필요 <span class=meta>(2026-10-04 04:51)</span></li><li><a href="https://hkjang.github.io/aidev/projects/sqlon/">sqlon</a> — 보호 파일 변경 — 자동 머지 안 함, 사람 검토 필요 <span class=meta>(2026-10-03 10:22)</span></li><li><a href="https://hkjang.github.io/aidev/projects/mmcp/">mmcp</a> — 보호 파일 변경 — 자동 머지 안 함, 사람 검토 필요 <span class=meta>(2026-10-03 16:01)</span></li><li><a href="https://hkjang.github.io/aidev/projects/mmcp/">mmcp</a> — 보호 파일 변경 — 자동 머지 안 함, 사람 검토 필요 <span class=meta>(2026-10-03 18:05)</span></li><li><a href="https://hkjang.github.io/aidev/projects/ox-arena/">ox-arena</a> — 보호 파일 변경 — 자동 머지 안 함, 사람 검토 필요 <span class=meta>(2026-10-03 18:26)</span></li></ul></div>
 
-<div class="alerts ok" role="status"><strong>🩺 러너 정상</strong> <span class="meta">— 마지막 회차 14분 전 · 스케줄러 준비 · 다음 실행 2026-10-04 오후 3:50:00 · 디스크 80% · 최근 7일 회귀 0건 · 점검 15:45</span><ul><li>조치: 소유 프로세스 없는 잠금 파일을 제거했다</li></ul></div>
+<div class="alerts" role="status"><strong>🩺 러너 점검 필요</strong> <span class="meta">— 마지막 회차 3분 전 · 스케줄러 준비 · 다음 실행 2026-10-04 오후 4:20:00 · 디스크 81% · 최근 7일 회귀 0건 · 점검 16:15</span><ul><li>측정 감사: 원격에 없는 릴리즈 태그 1건 — 그 저장소의 다음 릴리즈를 막는다</li></ul></div>
 
 
 <p><a href="https://hkjang.github.io/aidev/inbox/"><strong>📥 작업함</strong></a> — 열린 러너 PR·복구·수정 과제 47건 (그중 사람 필요 35건)</p>
