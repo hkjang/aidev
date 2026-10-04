@@ -23,3 +23,4 @@
 - [러너 18:17] ci passed — 검사 2개 모두 success
 - [러너 18:17] merge done — 00e430b
 - [러너 18:31] release published — v0.1.42
+- [러너 18:36] assets verified — v0.1.42 자산 1개 (이전 v0.1.41: 1)
