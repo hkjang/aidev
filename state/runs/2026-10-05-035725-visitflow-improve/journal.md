@@ -28,3 +28,6 @@
 - 미검증: Go DB 통합·타 부서 격리 실행·QR/알림 테이블 직접 단정·상세 검토 폼. 요청 스킬 3개는 전용 도구 부재로 로컬 SKILL.md를 읽어 적용했다.
 - [러너 04:16] review approved — 리뷰 승인 (risk=low)
 - [러너 04:16] pr created — https://github.com/hkjang/visitflow/pull/35
+- [러너 04:19] ci passed — 검사 2개 모두 success
+- [러너 04:20] merge done — 0b5d077
+- [러너 04:20] release missing — 릴리즈 결과 없음/손상: missing
