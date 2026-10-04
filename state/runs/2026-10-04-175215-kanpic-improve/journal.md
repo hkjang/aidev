@@ -29,3 +29,7 @@
 - 릴리즈 노트에 쓸 것: "시스템 로그의 `error` 속성이 DB·CSV 에도 원인 문자열로 남는다(이전 `{}`), 그룹 속성은 중첩 객체로." 옛 `{}` 행은 백필하지 않았으니 과거 기록에는 원인이 없다. 마이그레이션·스키마·외부 상태 변경이 없어 revert 로 완전히 돌아온다.
 - [러너 18:08] review approved — 리뷰 승인 (risk=low)
 - [러너 18:08] pr created — https://github.com/hkjang/kanpic/pull/40
+- [러너 18:16] ci passed — 검사 2개 모두 success
+- [러너 18:17] merge done — 7e5904d
+- [러너 18:28] release published — v0.261.0
+- [러너 18:31] assets verified — v0.261.0 자산 2개 (이전 v0.260.0: 2)

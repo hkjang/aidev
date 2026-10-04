@@ -20,3 +20,6 @@
 - 다음 회차: `httpapi`에 `t.Parallel()`을 추가하면 `admin_report_resolve_postgres_integration_test.go:127`의 전역 logger 교체가 깨집니다. resolveReport 네 출구는 handler 값이 같아 실패 지점 구분이 안 되니 후속 이관 때 구분자를 고려.
 - [러너 18:08] review approved — 리뷰 승인 (risk=low)
 - [러너 18:08] pr created — https://github.com/hkjang/moina/pull/40
+- [러너 18:17] ci passed — 검사 2개 모두 success
+- [러너 18:17] merge done — 00e430b
+- [러너 18:31] release published — v0.1.42

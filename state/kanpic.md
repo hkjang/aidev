@@ -309,3 +309,4 @@
 - 보류 아이디어: `persistentHandler.WithAttrs`/`WithGroup` 가 handler 수준 속성을 DB 행에서 떨어뜨린다 — 프로덕션에 `logger.With(` 호출자가 없어 증명할 자리가 없다 / cron 필드가 `+5`·`-0` 같은 부호 붙은 수를 받아들인다(`cronValue` 의 `strconv.Atoi`, 저장된 일정을 깨뜨릴 수 있어 단독 과제로만) / 자동화 일정 다음 실행 시각 계약을 월말·시간대 표로 못 박는다(테스트 전용이라 no-change 위험) / 관리자 가이드 `ADMIN_GUIDE.md:785` 의 외부 호출 오류 코드를 실제 `#N/A` 와 맞춘다(열두 회차 연속 보류, PDF 재생성 동반, 이번에도 소스 재확인 안 함) / 시스템 로그의 `time.Time` 속성이 콘솔은 밀리초, DB 는 나노초 정밀도로 적힌다(이번에 표현 차이를 확인했고 일부러 바꾸지 않았다 — 저장 쪽이 더 정밀하다)
 - 과제서: 채택 — 과제서의 재현이 지금 코드와 정확히 맞았고(`"error", err` → `{}`, group → `[{Key,Value:{}}]`), 건드릴 파일 2개(프로덕션 1)·`newPersistentHandler` 추출·`run()` 금지·DB/SQL/CSV 손대지 않기·`WithAttrs` 미루기를 모두 그대로 따랐다.
 
+- 릴리즈: v0.261.0 (2026-10-04, run 2026-10-04-175215-kanpic-improve)
