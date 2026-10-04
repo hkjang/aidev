@@ -1,0 +1,36 @@
+# 옆자리(yeopjari) 프로필 (2026-10-05)
+- 목적: 회사 이메일 확인 기반 익명 커뮤니티, 기업 리뷰·연봉 집계, 업무 지역 중고거래를 클라우드와 오프라인 도커에서 제공한다.
+- 기준: main@32869c9. 이전 프로필 없음. 운영 실환경 상태는 이번 정찰에서 검증하지 않았다.
+- 스택: TypeScript/Node >=22, React 19·Mantine 9·Vite 8, PostgreSQL 16/RLS, postgres.js, Vitest 4, ESLint 9; Node 서버 esbuild 번들.
+- 구조:
+  - packages/core/src: 런타임 공통 app/http/routes/auth/settings/domain/jobs, JPEG 정제·storage·메일·SSO·AI·MCP.
+  - apps/server/src: Node 어댑터와 StaticFiles, bootstrap·set-password·키 교체·공시·로고 수집 명령.
+  - apps/web/src: React SPA; apps/web/public은 배포 정적 자산/헤더.
+  - functions/[[path]].ts: Cloudflare Pages 어댑터; workers/scheduler: cron 호출 Worker.
+  - db/migrations: 번호순 SQL 스키마·RLS·함수·시드; db/data: 오프라인 기업 스냅샷.
+  - deploy: PostgreSQL 포함 오프라인 Docker 이미지·entrypoint·백업; supabase/functions: heavy 어댑터.
+  - scripts: migrate/seed/e2e, 문서 생성, 로고·공시·백업·측정·배포 스크립트.
+  - engineering: architecture.md/security.md/performance.md/design.md 내부 기술 문서.
+  - docs: scripts/build-docs.mjs가 생성하는 공개 가이드·GitHub Pages 사이트; 내부 문서를 넣지 않는다.
+- 빌드·테스트:
+  - 최초 npm ci; npm run check = npm run lint && npm run typecheck && npm run test.
+  - npm test = vitest run; include packages/**/*.test.ts 및 apps/**/*.test.ts, Node 환경, timeout 20초.
+  - 추적된 단위 테스트는 packages/core/src/__tests__의 16파일. server/functions 테스트는 확인되지 않았다.
+  - npm run build: core → web → server. npm run dev / npm run dev:web 존재.
+  - 통합(느림·DB/서버 필요): BASE=http://localhost:8787 DATABASE_URL=<격리 로컬 관리자 DB> node scripts/e2e.mjs.
+  - migrate/seed는 실제 DB를 변경한다. e2e도 계정·데이터·설정·공유 quota를 변경하므로 운영 DB에 실행 금지.
+  - 정찰 환경 Node v22.23.1/npm 10.9.8. 작업 트리에 node_modules가 없어 npm test exit127(vitest not found). 전체 검사 결과 미확인.
+  - image.ts 실제 실행만 외부 체크아웃의 설치된 esbuild/jpeg-js로 메모리 번들하여 확인; 이 저장소 잠금파일 기준 검증은 아니다.
+- 관례: 최근 커밋은 한국어 설명에 docs/fix/feat/perf/security/logos 등 접두사, 일부 영어. package.json workspaces(core/server/web).
+- 설정: .env.example과 YEOPJARI_* 환경변수, settings/registry.ts의 운영 설정. 로컬 운영 scripts/local.sh는 ~/.config/yeopjari/cloud.env를 읽으므로 무심코 실행하지 않는다.
+- 마이그레이션: db/migrations SQL을 scripts/migrate.mjs로 적용하는 구조(README 확인); 새 규칙은 RLS/권한과 함께 검증해야 한다.
+- 위험 구역: auth/session·http/pipeline·db.ts·db/migrations는 익명성/행 격리/CSRF/MFA/권한에 직결. functions의 캐시는 회원 응답 격리가 중요.
+- 위험 구역: .github/workflows/release.yml·deploy·scripts/release.sh는 버전/태그/도커 자산 배포 경로. 바꾸면 실제 릴리즈까지 검증 필요.
+- 위험 구역: 회원 사진·백업은 비공개, 기업 로고만 공개 버킷. mediaRoutes는 sanitise의 full/thumb를 각각 저장한다.
+- 자주 깨지는 곳: engineering/performance.md에 Placement·DB 직결·transaction pooler·Hyperdrive query cache의 실패/회귀와 금지 조합 기록. 성능 추측만으로 재도입 금지.
+- 자주 깨지는 곳: pg-connect.test.ts는 Unix socket URL의 스크립트/런타임 해석 일치를 검사한다. 한쪽 파서만 바꾸면 오프라인 기동 회귀 가능.
+- 검증 함정: PR CI 없음; release.yml은 tag/manual로 도커 빌드·smoke·아카이브. npm test 통과가 DB RLS/릴리즈 성공을 뜻하지 않는다.
+- 검증 함정: e2e 연봉 선등록·최소 표본·사분위수·상세/목록 차단 테스트는 이미 있다. salaryLeak/visibleRows는 undefined도 성공 처리하므로 해당 RLS assertion의 신뢰성은 별도 개선 필요.
+- 검증 함정: 이전 쿠키 수정 성공 기록과 pinned main이 다르다(readCookies는 보호 없는 decodeURIComponent). 머지 여부 미확인; 이전 과제 중복 선정 금지.
+- 검증 함정: JPEG EXIF 버퍼 런타임 속성은 jpeg-js 타입 선언에 없다. 실제 JPEG 헤더·디코딩으로 증명하고 코덱/Ctx 대역이나 소스 grep으로 대체하지 않는다.
+- 탐색: CLAUDE.md/저장소 AGENTS.md/독립 ROADMAP·TODO 파일은 발견하지 못했다. 주요 소스 TODO/FIXME 검색 결과 없음; 남은 일은 engineering 문서에 기술.
