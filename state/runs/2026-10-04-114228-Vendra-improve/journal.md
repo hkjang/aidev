@@ -37,3 +37,14 @@
 - [러너 12:08] pr created — https://github.com/hkjang/Vendra/pull/139
 - [러너 12:10] ci passed — 검사 2개 모두 success
 - [러너 12:10] merge done — efafce8
+
+## 릴리즈 노트
+- 방식 확인(추측 아님): 최근 태그 3개(v0.7.65·v0.7.66·v0.7.67)는 전부 `git cat-file -t` = **commit** = 경량 태그이고, 각각 **PR 머지 커밋을 직접** 가리킨다(8887dc2·bfef041·887bd84). 릴리즈 커밋은 없다 — `git log --oneline -60 | grep -iE 'release|버전|version|[0-9]+\.[0-9]+\.[0-9]+'` 무출력. `git diff --stat v0.7.66..v0.7.67 -- CHANGELOG.md web/package.json Makefile` 도 무출력 = 버전 파일 무변경이 관례다.
+- 버전 파일은 **일부러 건드리지 않았다**: `web/package.json` 은 0.6.21, `Makefile` 의 `VERSION ?= 0.6.21` 로 둘 다 22회차 넘게 멈춰 있고, 실제 버전은 `release.yml` 이 `${GITHUB_REF_NAME#v}` 로 태그에서 뽑아 `-X ...httpapi.Version` 으로 주입한다. CHANGELOG.md 도 v0.6.45(2026-08-26)에서 멈춘 유물이라 추가하지 않았다 — 지금 쓰면 관례를 새로 만드는 일이 된다.
+- 한 일: **경량 태그 `v0.7.68` 을 HEAD(a07d57b, 머지 #139)에 만든 것뿐.** 커밋 0개, 브랜치 이동 0, 작업 트리 clean. 증가 단위는 패치 — v0.7.48~v0.7.67 이 빈칸 없이 패치만 올려 왔고 이번 변경은 프로덕션 3파일(+29/-4)이다.
+- 자산·릴리즈 생성은 **내가 하지 않는다**: `release.yml` 이 `v*` 태그 푸시에 걸려 `scripts/offline-release.sh` 로 `dist/vendra-v0.7.68.tar.gz` 를 만들고 `gzip -t`·`docker image inspect` 로 검증한 뒤 `softprops/action-gh-release` 가 제목 `Vendra v0.7.68` 과 `generate_release_notes: true` 로 Release 를 만든다. 그래서 release.json 은 `github_release: false`, `assets: []`, `notes_file: ""` 다(본문은 GitHub 가 생성 — 과거 릴리즈 본문의 `## What's Changed` 양식이 그 산물이다).
+- 릴리즈 전 검증(이 기계): 전용 `vendra-1004-improve-pg`(127.0.0.1:55471)의 세 DB 를 **DROP/CREATE 로 새로 만들어** CI 와 같은 조건을 맞추고 세 DSN 으로 `go test ./internal/... ./cmd/... -count=1` **전부 ok**(httpapi 27.994s). 신규 3건을 이름으로 다시 돌려 PASS 확인(`TestSupplierSpendDoorOpensTheSameOnEveryTool`·`TestEverySupplierSpendPermissionIsReadTheSameWay`·`TestDashboardReadsTheSameSupplierSpendDoor`). `gofmt -l internal cmd` 무출력, `go vet ./internal/... ./cmd/...` 통과. Dockerfile 과 같은 ldflags(`Version=0.7.68`)로 `CGO_ENABLED=0 GOOS=linux go build ./cmd/vendra` 성공(13.2MB) — 태그가 띄울 이미지 빌드의 Go 단계를 선반영한 것.
+- 웹은 이 워크트리에서 돌리지 않았다(`web/node_modules` 없음, 이번 범위 web diff 0). 공백이 아니다 — `ci-efafce8aff23.json` 에 원격 CI 의 `go`·`web` 두 체크가 efafce8 에서 **둘 다 success** 로 남아 있고, 그 web 잡이 `tsc -b`·`eslint --max-warnings 0`·`npm test`·`npm run build` 를 전부 돈다.
+- 다음 릴리즈가 알아야 할 것: ① 태그를 푸시하는 것은 러너다 — 이 세션은 원격에 아무것도 보내지 않았다. ② 도커 빌드 자산은 워크플로가 만들므로 로컬 `dist/` 산출물을 만들지 말 것(assets 빈 배열이 정상). ③ 비평 노트의 「0 vs null 통일」을 손대면 이 회차가 추가한 테스트 `:253` 의 `spendByName` 단언도 같이 고쳐야 한다.
+- [러너 12:14] release published — v0.7.68
+- [러너 12:15] assets verified — v0.7.68 자산 1개 (이전 v0.7.67: 1)
