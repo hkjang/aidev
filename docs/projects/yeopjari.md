@@ -1,7 +1,7 @@
 ---
 title: "yeopjari — 자율 개선 이력"
-description: "yeopjari: 자율 개선 회차 1회, 릴리즈 0건. 최근 릴리즈 없음."
-last_modified_at: 2026-10-05 06:00:30 +0900
+description: "yeopjari: 자율 개선 회차 2회, 릴리즈 0건. 최근 릴리즈 없음."
+last_modified_at: 2026-10-05 06:04:00 +0900
 ---
 {% raw %}
 <script type="application/ld+json">
@@ -11,33 +11,33 @@ last_modified_at: 2026-10-05 06:00:30 +0900
  "name": "yeopjari",
  "codeRepository": "https://github.com/hkjang/yeopjari",
  "url": "https://hkjang.github.io/aidev/projects/yeopjari/",
- "description": "yeopjari: 자율 개선 회차 1회, 릴리즈 0건. 최근 릴리즈 없음.",
+ "description": "yeopjari: 자율 개선 회차 2회, 릴리즈 0건. 최근 릴리즈 없음.",
  "inLanguage": "ko",
  "maintainer": {
   "@type": "Person",
   "name": "hkjang",
   "url": "https://github.com/hkjang"
  },
- "dateModified": "2026-10-05T06:00:30+09:00"
+ "dateModified": "2026-10-05T06:04:00+09:00"
 }
 </script>
 
 # yeopjari
 
-<p class="tldr"><strong>요약.</strong> yeopjari: 자율 개선 회차 1회, 릴리즈 0건. 최근 릴리즈 없음. <span class="pill pill-merged" title="14일: 릴리즈 0, 실패 0, 경고 1, 회귀 0">건강 B</span> <span class="meta">14일: 릴리즈 0, 실패 0, 경고 1, 회귀 0</span></p>
+<p class="tldr"><strong>요약.</strong> yeopjari: 자율 개선 회차 2회, 릴리즈 0건. 최근 릴리즈 없음. <span class="pill pill-merged" title="14일: 릴리즈 0, 실패 0, 경고 1, 회귀 0">건강 B</span> <span class="meta">14일: 릴리즈 0, 실패 0, 경고 1, 회귀 0</span></p>
 
-<ul class="stats"><li><b>1</b><span>회차</span></li><li><b>1</b><span>프로젝트</span></li><li><b>0</b><span>배포 준비 완료</span></li><li><b>0</b><span>릴리즈 진행 중</span></li><li><b>0</b><span>병합 완료</span></li><li><b>1</b><span>검토 대기</span></li><li><b>0</b><span>검증 실패</span></li><li><b>0</b><span>변경 없음</span></li><li><b>0</b><span>실행 오류</span></li><li><b>$3.58</b><span>비용</span></li><li><b>11분</b><span>에이전트 시간</span></li></ul>
+<ul class="stats"><li><b>2</b><span>회차</span></li><li><b>1</b><span>프로젝트</span></li><li><b>0</b><span>배포 준비 완료</span></li><li><b>0</b><span>릴리즈 진행 중</span></li><li><b>0</b><span>병합 완료</span></li><li><b>2</b><span>검토 대기</span></li><li><b>0</b><span>검증 실패</span></li><li><b>0</b><span>변경 없음</span></li><li><b>0</b><span>실행 오류</span></li><li><b>$3.58</b><span>비용</span></li><li><b>11분</b><span>에이전트 시간</span></li></ul>
 
 ## 현황
 
 <dl class="kv">
 <dt>저장소</dt><dd><a href="https://github.com/hkjang/yeopjari">https://github.com/hkjang/yeopjari</a></dd>
-<dt>마지막 회차</dt><dd>2026-10-04 04:51 KST — <span class="pill pill-other">• 기타</span> <strong>guarded files</strong>, PR open <a href="https://github.com/hkjang/yeopjari/pull/1">PR #1</a></dd>
+<dt>마지막 회차</dt><dd>2026-10-05 06:03 KST — <span class="pill pill-other">• 기타</span> CI no-ci, PR open <a href="https://github.com/hkjang/yeopjari/pull/2">PR #2</a></dd>
 </dl>
 
 ## 회차 이력
 
-<div class="table-wrap"><table class="rt"><thead><tr><th>일시</th><th class="primary">프로젝트</th><th>결과</th></tr></thead><tbody><tr data-status="other"><td data-label="일시">2026-10-04 04:51</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/yeopjari/">yeopjari</a></td><td data-label="결과"><span class="pill pill-merged" title="outcome=review-pending">검토 대기</span> <strong>guarded files</strong>, PR open <a href="https://github.com/hkjang/yeopjari/pull/1">PR #1</a><div class="meta">3파일 <span style="color:var(--good)">+103</span>/<span style="color:var(--bad)">−2</span> · 테스트 1 — fix(http): 클라이언트가 보낸 퍼센트 인코딩으로 500 이 나지 않게 한다</div></td></tr></tbody></table></div>
+<div class="table-wrap"><table class="rt"><thead><tr><th>일시</th><th class="primary">프로젝트</th><th>결과</th></tr></thead><tbody><tr data-status="other"><td data-label="일시">2026-10-05 06:03</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/yeopjari/">yeopjari</a></td><td data-label="결과"><span class="pill pill-merged" title="outcome=review-pending">검토 대기</span> CI no-ci, PR open <a href="https://github.com/hkjang/yeopjari/pull/2">PR #2</a><div class="meta">1파일 <span style="color:var(--good)">+174</span>/<span style="color:var(--bad)">−0</span> · 테스트 1 — test: 사진 정제의 EXIF·GPS와 주석 제거 검증</div></td></tr><tr data-status="other"><td data-label="일시">2026-10-04 04:51</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/yeopjari/">yeopjari</a></td><td data-label="결과"><span class="pill pill-merged" title="outcome=review-pending">검토 대기</span> <strong>guarded files</strong>, PR open <a href="https://github.com/hkjang/yeopjari/pull/1">PR #1</a><div class="meta">3파일 <span style="color:var(--good)">+103</span>/<span style="color:var(--bad)">−2</span> · 테스트 1 — fix(http): 클라이언트가 보낸 퍼센트 인코딩으로 500 이 나지 않게 한다</div></td></tr></tbody></table></div>
 
 ## 비용·사용량
 

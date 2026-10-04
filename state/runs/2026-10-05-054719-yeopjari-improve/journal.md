@@ -28,3 +28,4 @@
 - 남는 범위: SOS 이전 헤더만 검사하므로 코덱 교체 시 재검토 필요. mediaRoutes 저장 연결은 소스로 확인했지만 HTTP·DB/RLS·저장소 E2E 및 빌드·릴리즈는 재실행하지 않음.
 - [러너 05:59] review approved — 리뷰 승인 (risk=low)
 - [러너 05:59] pr created — https://github.com/hkjang/yeopjari/pull/2
+- [러너 06:03] ci no-ci — 이 커밋에 검사가 없음 (정책 allow_merge_without_ci 가 없으면 차단)
