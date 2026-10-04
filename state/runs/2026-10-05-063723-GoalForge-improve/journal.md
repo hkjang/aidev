@@ -28,3 +28,5 @@
 - 한계/다음 회차: 로컬 main=dd6dcb0, 원장·origin/main=96c90ac(이번 변경은 테스트 3개뿐); Windows/macOS·교차 빌드 미검증, 기존 push 테스트 4개 skip과 DISABLED 환경을 전체 통과에 섞지 말 것.
 - [러너 06:54] review approved — 리뷰 승인 (risk=low)
 - [러너 06:54] pr created — https://github.com/hkjang/goalforge/pull/80
+- [러너 07:00] ci passed — 검사 5개 모두 success
+- [러너 07:01] merge done — f6d9e5c

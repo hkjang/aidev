@@ -1,0 +1,74 @@
+[
+  {
+    "check": "format",
+    "command": [
+      "gofmt",
+      "-l",
+      "./cmd",
+      "./internal"
+    ],
+    "exit_code": 0,
+    "seconds": 0.12,
+    "log": "/mnt/c/Users/USER/projects/aidev/state/runs/2026-10-05-063723-GoalForge-improve/release-format.log"
+  },
+  {
+    "check": "tidy",
+    "command": [
+      "go",
+      "mod",
+      "tidy"
+    ],
+    "exit_code": 0,
+    "seconds": 0.12,
+    "log": "/mnt/c/Users/USER/projects/aidev/state/runs/2026-10-05-063723-GoalForge-improve/release-tidy.log"
+  },
+  {
+    "check": "tidy-drift",
+    "command": [
+      "git",
+      "diff",
+      "--exit-code",
+      "--",
+      "go.mod",
+      "go.sum"
+    ],
+    "exit_code": 0,
+    "seconds": 0.12,
+    "log": "/mnt/c/Users/USER/projects/aidev/state/runs/2026-10-05-063723-GoalForge-improve/release-tidy-drift.log"
+  },
+  {
+    "check": "build",
+    "command": [
+      "go",
+      "build",
+      "./..."
+    ],
+    "exit_code": 0,
+    "seconds": 1.76,
+    "log": "/mnt/c/Users/USER/projects/aidev/state/runs/2026-10-05-063723-GoalForge-improve/release-build.log"
+  },
+  {
+    "check": "vet",
+    "command": [
+      "go",
+      "vet",
+      "./..."
+    ],
+    "exit_code": 0,
+    "seconds": 0.72,
+    "log": "/mnt/c/Users/USER/projects/aidev/state/runs/2026-10-05-063723-GoalForge-improve/release-vet.log"
+  },
+  {
+    "check": "test",
+    "command": [
+      "go",
+      "test",
+      "./...",
+      "-count=1",
+      "-json"
+    ],
+    "exit_code": 0,
+    "seconds": 45.62,
+    "log": "/mnt/c/Users/USER/projects/aidev/state/runs/2026-10-05-063723-GoalForge-improve/release-test.log"
+  }
+]

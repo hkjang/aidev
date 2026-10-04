@@ -36,3 +36,4 @@
 - 요청한 두 스킬은 전용 도구 미제공으로 로컬 SKILL.md를 읽어 적용. Tier 3 릴리즈 노트와 운영 인계는 release-preparation.md 참고.
 - release.yml이 태그 푸시 시 단일 tar.gz 자산 및 GitHub Release를 생성하므로 assets=[], github_release=false. 원격 전송 없음. release.json과 release-notes.md를 회차 경로에 기록했다.
 - [러너 07:00] release published — v0.4.14
+- [러너 07:01] assets verified — v0.4.14 자산 1개 (이전 v0.4.13: 1)
