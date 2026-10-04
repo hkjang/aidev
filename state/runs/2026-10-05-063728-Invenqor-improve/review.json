@@ -1,0 +1,17 @@
+{
+  "verdict": "reject",
+  "reasons": [
+    "server/internal/mail/mail.go:427 [P1][security·차단] 요청한 main...HEAD에 추가된 LOGIN 인증은 TLS 없이 SMTP 비밀번호를 전송한다. 메일 활성화·자격증명 설정·기본 security=auto 조건에서 네트워크 공격자가 EHLO의 STARTTLS를 제거하고 AUTH LOGIN만 광고하면 사용자명과 비밀번호를 Base64로 획득해 SMTP 계정을 사용할 수 있다. server.Name은 smtp.NewClient에 전달한 config.Host이므로 !server.TLS && server.Name != a.host 조건은 원격 서버 인증이나 평문 차단으로 작동하지 않는다. 원본 mail.go/message.go 복사본과 실제 net/smtp·TCP를 이용한 재현에서 두 합성 자격증명의 전송과 인증 성공을 확인했다. LOGIN은 TLS 없이는 자격증명 전송 전에 거부하고, STARTTLS 제거 및 LOGIN-only 서버에 대한 회귀 테스트를 추가해야 한다. 이 코드는 152c6ba에서 추가됐으며 이번 UUID 커밋 79f1889가 도입한 결함은 아니다."
+  ],
+  "notes": [
+    "기준 불일치: 로컬 main=c9527e7, origin/main 및 회차 고정 base=12ada2f, HEAD=79f1889. 명시적으로 요청한 git diff main...HEAD는 66개 파일이며 SMTP 변경을 포함한다. 12ada2f...HEAD는 assets.go와 새 테스트 2개 파일뿐이고 이 좁은 차이에서는 거절할 실제 결함을 찾지 못했다. 본 reject는 로컬 main 기준이다.",
+    "정확성·테스트: 원장의 실패 재현 줄, red-postgres.log, revert-sqlite.log와 신규 테스트의 실제 Runtime·인증·라우터·DB/감사 단언을 대조했다. 직접 실행한 AssetRoutes|AssetCollections|Merge|Split|Relation|ExternalAPI 필터가 SQLite(httpapi 10.317s), PostgreSQL 17(httpapi 16.139s) 모두 통과했다. 고유 PostgreSQL 컨테이너는 종료 후 제거됐다.",
+    "보안 재현 증거: review-smtp-evidence.md 및 assets/review-smtp_test.go. 저장소 코드를 수정하지 않고 임시 복사본에서 실행했으며 실제 자격증명·외부 메일 서버는 사용하지 않았다. 기존 mail_test.go는 인증 없는 릴레이를 검증하지만 LOGIN의 TLS 거절 경로는 검증하지 않는다.",
+    "권한·개인정보: 관계 두 경로의 인증, relations.write 및 콘솔 CSRF를 확인했다. DELETE 부모 assetID 미사용은 기존 동작이고 전역 관계 권한 체계에서 이번 수정으로 새 인가 우회가 생긴 증거는 없다. UUID 변경은 새 개인정보 수집·전송·보존·의존성·마이그레이션을 추가하지 않는다. 이전 메일 변경은 계정 알림 목적, 관리자 접근 제어, 본문 미저장과 90일 로그 정리 코드를 갖는다. 별도 legal 차단 근거는 확인하지 못했다.",
+    "검증 한계: 이번 세션에서 전체 suite·vet·빌드·Web/Rust·PDF·실제 배포·외부 SMTP/Keycloak은 재실행하지 않았다. 로컬 main에 포함된 과거 릴리즈 전체의 모든 동작을 검증한 것은 아니다. 전체 양 DB suite·vet·빌드는 구현자의 기록과 구분했다. OpenAPI의 관계 생성 400 설명은 UUID 형식 오류도 포함하도록 다음 문서 작업에서 보완할 수 있다."
+  ],
+  "risk": "high",
+  "blocking": [
+    "security"
+  ]
+}

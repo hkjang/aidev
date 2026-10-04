@@ -1,0 +1,13 @@
+{
+  "verdict": "approve",
+  "reasons": [],
+  "notes": [
+    "정확성·테스트(비차단): coupons.go:50의 몫·나머지 산식은 양수 int64와 1~100%에서 내림 결과를 보존하고 중간 곱셈 및 합계가 넘치지 않는다. 원장의 실패 재현과 unit-red.log/integration-red.log가 이번 증상에 부합한다. 경계값 단위 테스트와 폐기 PostgreSQL 16에서 큰 금액 쿠폰·기존 쿠폰 결제/정산/환불·조직 주문 접근 통제 통합 3건을 독립 실행해 모두 통과했으며 go vet, 변경 파일 gofmt, HEAD diff 검사도 통과했다.",
+    "보안·개인정보(비차단): 인증/인가, 식별자 범위, SQL 매개변수화 및 데이터 흐름을 확인했다. 변경은 할인 산식과 합성 데이터 테스트에 한정되며 신규 개인정보 수집/전송, 외부 업체, 의존성, 비밀값, 권한 확대가 없다. security/legal 차단 소견 없음.",
+    "검증 한계·기존 위험(비차단): internal/httpapi/disputes.go:415의 refund*(amount-discount) 중간 오버플로 가능성과 orders.go:485의 float64 정산 계산은 main에도 존재한다. 큰 금액의 결제·납품·정산·환불 전체 경로와 실제 발생 빈도는 이번 리뷰에서 검증하지 않았다. 전체 테스트·웹·릴리즈 빌드는 재실행하지 않았다.",
+    "설명·범위(비차단): 새 통합 테스트의 payable_amount=0은 구매자 결제액이며 판매자 정산액 0을 검증한 것이 아니다. 릴리즈 설명에서도 이를 구분해야 한다. HEAD 변경은 3파일뿐이며 스키마/마이그레이션 변경이 없어 코드 revert가 가능하다. 리뷰 시작부터 존재한 internal/ui/dist 작업 트리 변경은 HEAD 밖이며 건드리지 않았다.",
+    "절차: Skill 호출 도구가 없어 로컬 legal-risk:privacy-and-data-protection, security:security-architecture-review, technology:code-review SKILL.md를 직접 읽고 적용했다."
+  ],
+  "risk": "low",
+  "blocking": []
+}

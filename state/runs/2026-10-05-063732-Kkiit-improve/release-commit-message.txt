@@ -1,0 +1,25 @@
+Kkiit v0.4.14 — 퍼센트 쿠폰 할인 계산의 정수 오버플로 방지
+
+v0.4.13 이후 들어온 수정 하나를 담는다.
+
+- `computeDiscount`(`coupons.go`)의 percent 분기에서 `amount*rate`가
+  int64를 넘쳐 큰 양수 주문 금액에도 할인이 적용되지 않거나 잘못
+  계산되던 것을 고친다. 몫·나머지로 나누어 계산해 정수 내림 할인액을
+  유지한다. 최소 주문 금액·fixed·최대 할인·오류 처리는 보존했다.
+  math/big 기대값으로 14개 경계 금액과 1~100%를 검증하고, 실제 서버와
+  PostgreSQL에서 관리자 쿠폰 생성→판매자 상품 등록·공개→구매자
+  preview 200/order 201을 확인했다. 1<<57 원금의 전액 할인과 구매자
+  결제액 0, orders/coupon_redemptions의 int64 저장값을 검증했다.
+  판매자 정산액이나 큰 금액의 후속 결제·납품·정산·환불을 검증한 것은
+  아니다. 구현 단계에서 수정 전 실패와 산식 복원 시 재실패도 확인했다.
+
+버전 표기(VERSION·compose·web/package·openapi·README)를 0.4.14로 올린다.
+
+gofmt · go build · go vet · go test, web lint · test · build 전부 통과.
+전체 Go 테스트·서브테스트 221건 및 별도 make test-integration 88건을
+전용 PostgreSQL 16에서 통과했다(실패·테스트 SKIP 0). 웹 테스트 10건은
+선언된 Node.js 24.18.0 컨테이너에서 통과했다. build가 다시 쓴
+internal/ui/dist는 기존 릴리즈 관례대로 커밋에서 제외했다.
+
+태그 푸시 후 기존 release.yml이 이미지 빌드·압축·재로드 검증 및
+GitHub Release 생성을 수행한다. 이 단계에서는 원격에 보내지 않는다.

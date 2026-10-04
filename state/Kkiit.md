@@ -154,3 +154,16 @@
 - (원장 항목에 비밀/내부 정보 의심 문자열이 있어 비공개 기록으로 옮김 — run 2026-10-04-090158-Kkiit-improve)
 
 - 릴리즈: v0.4.13 (2026-10-04, run 2026-10-04-090158-Kkiit-improve)
+## 2026-10-05
+- 선택: 퍼센트 쿠폰 할인 계산의 int64 중간 곱셈 오버플로 방지 (가치 3 / 위험 2 / 작업량 S)
+- 결과: 성공
+- 요약: computeDiscount의 percent 분기만 몫·나머지 산식으로 바꿔 큰 양수 int64 금액에서도 내림 정수 할인액을 유지하고 기존 최소 주문·fixed·최대 할인·오류 처리는 보존했다. math/big 기대값으로 14개 경계 금액과 1~100%를 검증하고, 전용 PostgreSQL 16 및 실제 integrationServer에서 관리자 쿠폰 생성→판매자 상품 등록·공개→구매자 preview 200/order 201을 실행해 1<<57 원금의 전액 할인·지급액 0과 orders/coupon_redemptions int64 저장값을 확인했다. 원래 산식 복원 시 재실패를 확인한 뒤 수정본에서 전체 통합 88건 및 전체 Go 테스트·서브테스트 221건 PASS(테스트 SKIP 0), Go vet/build·gofmt·diff 검사를 통과했으며 26cefd5로 커밋했다(프로덕션 1파일, 테스트 2파일).
+- 실패 재현: `coupons_test.go:35: amount=144115188075855872 rate=64 discount=0 ok=false want=92233720368547758 applicable=true` / `integration_test.go:867: POST /api/v1/coupons/preview status=409 want=200 body={"error":{"code":"coupon_not_applicable","message":"이 주문에는 할인이 적용되지 않습니다."}}`
+- 보류 아이디어:
+  - README 환경변수 계약을 필수 4개 + 선택 SHUTDOWN_DRAIN_SECONDS로 정리 (가치 2 / 위험 1 / S) — 1순위 HTTP 재현이 성립하여 차선은 구현하지 않음.
+  - 알 수 없는 승인 조건을 편집할 때 유실 안내/보존 (가치 3 / 위험 2 / M) — 브라우저 검증이 필요한 별도 과제.
+  - 가이드 문서·openapi의 API 메서드·응답 코드를 실제 라우터와 대조 (가치 2 / 위험 2 / M) — 좁은 계약과 실제 호출 검증부터 설계.
+  - 주문 추가 옵션 가격 합산의 int64 오버플로 검증 (가치 3 / 위험 3 / M) — price += optionPrice 경로는 읽었으나 실제 HTTP 결과는 미검증이며 이번 쿠폰 산식에 섞지 않음.
+- 과제서: 채택 — 과제서가 미확인으로 남긴 큰 가격의 실제 상품 등록·공개 및 쿠폰 HTTP 경로가 재현되어 수용 기준을 단위·실제 DB 통합으로 모두 검증했다.
+
+- 릴리즈: v0.4.14 (2026-10-05, run 2026-10-05-063732-Kkiit-improve)

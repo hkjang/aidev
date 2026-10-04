@@ -1,0 +1,112 @@
+running the suite against postgres:17-alpine
+?   	github.com/hkjang/invenqor/server/cmd/invenqor-server	[no test files]
+ok  	github.com/hkjang/invenqor/server/internal/agents	0.004s [no tests to run]
+ok  	github.com/hkjang/invenqor/server/internal/apikeys	0.004s [no tests to run]
+ok  	github.com/hkjang/invenqor/server/internal/apitime	0.002s [no tests to run]
+?   	github.com/hkjang/invenqor/server/internal/audit	[no test files]
+ok  	github.com/hkjang/invenqor/server/internal/auth	0.004s [no tests to run]
+ok  	github.com/hkjang/invenqor/server/internal/bootstrap	0.003s [no tests to run]
+ok  	github.com/hkjang/invenqor/server/internal/classify	0.004s [no tests to run]
+ok  	github.com/hkjang/invenqor/server/internal/config	0.003s [no tests to run]
+ok  	github.com/hkjang/invenqor/server/internal/diagnostics	0.004s [no tests to run]
+ok  	github.com/hkjang/invenqor/server/internal/durablefs	0.003s [no tests to run]
+--- FAIL: TestRelationCreateRejectsInvalidInputWithoutWrites (0.98s)
+    --- FAIL: TestRelationCreateRejectsInvalidInputWithoutWrites/console (0.52s)
+        --- FAIL: TestRelationCreateRejectsInvalidInputWithoutWrites/console/source/unhyphenated (0.02s)
+            asset_relation_validation_test.go:112: relation response = 201 "", want 400 INVALID_RELATION: {"id":"c665a982-bffb-4891-acce-e623c2eb19be"}
+            asset_relation_validation_test.go:114: relations after rejected create = 1, want unchanged 0
+            asset_relation_validation_test.go:117: create audits after rejected create = 1, want unchanged 0
+        --- FAIL: TestRelationCreateRejectsInvalidInputWithoutWrites/console/source/not_a_uuid_at_all (0.01s)
+            asset_relation_validation_test.go:112: relation response = 409 "RELATION_CONFLICT", want 400 INVALID_RELATION: {"error":{"code":"RELATION_CONFLICT","message":"The relation could not be created."},"request_id":"DESKTOP-C9ASR69/GQo5yCxLuF-000004"}
+        --- FAIL: TestRelationCreateRejectsInvalidInputWithoutWrites/console/source/urn_prefixed (0.01s)
+            asset_relation_validation_test.go:112: relation response = 409 "RELATION_CONFLICT", want 400 INVALID_RELATION: {"error":{"code":"RELATION_CONFLICT","message":"The relation could not be created."},"request_id":"DESKTOP-C9ASR69/GQo5yCxLuF-000005"}
+        --- FAIL: TestRelationCreateRejectsInvalidInputWithoutWrites/console/source/brace_wrapped (0.01s)
+            asset_relation_validation_test.go:112: relation response = 201 "", want 400 INVALID_RELATION: {"id":"183eb2fc-2d4b-4186-bf51-b99046c6ffbb"}
+            asset_relation_validation_test.go:114: relations after rejected create = 2, want unchanged 1
+            asset_relation_validation_test.go:117: create audits after rejected create = 2, want unchanged 1
+        --- FAIL: TestRelationCreateRejectsInvalidInputWithoutWrites/console/target/not_a_uuid_at_all (0.01s)
+            asset_relation_validation_test.go:112: relation response = 409 "RELATION_CONFLICT", want 400 INVALID_RELATION: {"error":{"code":"RELATION_CONFLICT","message":"The relation could not be created."},"request_id":"DESKTOP-C9ASR69/GQo5yCxLuF-000007"}
+        --- FAIL: TestRelationCreateRejectsInvalidInputWithoutWrites/console/target/urn_prefixed (0.01s)
+            asset_relation_validation_test.go:112: relation response = 409 "RELATION_CONFLICT", want 400 INVALID_RELATION: {"error":{"code":"RELATION_CONFLICT","message":"The relation could not be created."},"request_id":"DESKTOP-C9ASR69/GQo5yCxLuF-000008"}
+        --- FAIL: TestRelationCreateRejectsInvalidInputWithoutWrites/console/target/brace_wrapped (0.01s)
+            asset_relation_validation_test.go:112: relation response = 201 "", want 400 INVALID_RELATION: {"id":"ea93ff5b-9e71-4de6-a6f2-df3b77bff453"}
+            asset_relation_validation_test.go:114: relations after rejected create = 3, want unchanged 2
+            asset_relation_validation_test.go:117: create audits after rejected create = 3, want unchanged 2
+        --- FAIL: TestRelationCreateRejectsInvalidInputWithoutWrites/console/target/unhyphenated (0.01s)
+            asset_relation_validation_test.go:112: relation response = 201 "", want 400 INVALID_RELATION: {"id":"20999269-032c-4216-a037-8313171e07ce"}
+            asset_relation_validation_test.go:114: relations after rejected create = 4, want unchanged 3
+            asset_relation_validation_test.go:117: create audits after rejected create = 4, want unchanged 3
+    --- FAIL: TestRelationCreateRejectsInvalidInputWithoutWrites/external (0.46s)
+        --- FAIL: TestRelationCreateRejectsInvalidInputWithoutWrites/external/source/not_a_uuid_at_all (0.01s)
+            asset_relation_validation_test.go:112: relation response = 409 "RELATION_CONFLICT", want 400 INVALID_RELATION: {"error":{"code":"RELATION_CONFLICT","message":"The relation could not be created."},"request_id":"DESKTOP-C9ASR69/GQo5yCxLuF-000017"}
+        --- FAIL: TestRelationCreateRejectsInvalidInputWithoutWrites/external/source/urn_prefixed (0.01s)
+            asset_relation_validation_test.go:112: relation response = 409 "RELATION_CONFLICT", want 400 INVALID_RELATION: {"error":{"code":"RELATION_CONFLICT","message":"The relation could not be created."},"request_id":"DESKTOP-C9ASR69/GQo5yCxLuF-000018"}
+        --- FAIL: TestRelationCreateRejectsInvalidInputWithoutWrites/external/source/brace_wrapped (0.01s)
+            asset_relation_validation_test.go:112: relation response = 201 "", want 400 INVALID_RELATION: {"id":"84a9adc1-8e74-4a6f-bc06-01a3a288bcec"}
+            asset_relation_validation_test.go:114: relations after rejected create = 1, want unchanged 0
+            asset_relation_validation_test.go:117: create audits after rejected create = 1, want unchanged 0
+        --- FAIL: TestRelationCreateRejectsInvalidInputWithoutWrites/external/source/unhyphenated (0.01s)
+            asset_relation_validation_test.go:112: relation response = 201 "", want 400 INVALID_RELATION: {"id":"1b08155f-ffe4-43c5-82cf-89f4ded623f1"}
+            asset_relation_validation_test.go:114: relations after rejected create = 2, want unchanged 1
+            asset_relation_validation_test.go:117: create audits after rejected create = 2, want unchanged 1
+        --- FAIL: TestRelationCreateRejectsInvalidInputWithoutWrites/external/target/unhyphenated (0.01s)
+            asset_relation_validation_test.go:112: relation response = 201 "", want 400 INVALID_RELATION: {"id":"9dfe7d9f-c4ae-479d-9aa1-c8ac16026e6a"}
+            asset_relation_validation_test.go:114: relations after rejected create = 3, want unchanged 2
+            asset_relation_validation_test.go:117: create audits after rejected create = 3, want unchanged 2
+        --- FAIL: TestRelationCreateRejectsInvalidInputWithoutWrites/external/target/not_a_uuid_at_all (0.01s)
+            asset_relation_validation_test.go:112: relation response = 409 "RELATION_CONFLICT", want 400 INVALID_RELATION: {"error":{"code":"RELATION_CONFLICT","message":"The relation could not be created."},"request_id":"DESKTOP-C9ASR69/GQo5yCxLuF-000022"}
+        --- FAIL: TestRelationCreateRejectsInvalidInputWithoutWrites/external/target/urn_prefixed (0.01s)
+            asset_relation_validation_test.go:112: relation response = 409 "RELATION_CONFLICT", want 400 INVALID_RELATION: {"error":{"code":"RELATION_CONFLICT","message":"The relation could not be created."},"request_id":"DESKTOP-C9ASR69/GQo5yCxLuF-000023"}
+        --- FAIL: TestRelationCreateRejectsInvalidInputWithoutWrites/external/target/brace_wrapped (0.01s)
+            asset_relation_validation_test.go:112: relation response = 201 "", want 400 INVALID_RELATION: {"id":"a1f7acf5-9ab8-4c69-a2a5-5dc89759fce4"}
+            asset_relation_validation_test.go:114: relations after rejected create = 4, want unchanged 3
+            asset_relation_validation_test.go:117: create audits after rejected create = 4, want unchanged 3
+--- FAIL: TestRelationDeleteValidatesIDBeforeWriting (0.88s)
+    --- FAIL: TestRelationDeleteValidatesIDBeforeWriting/console (0.45s)
+        --- FAIL: TestRelationDeleteValidatesIDBeforeWriting/console/not_a_uuid_at_all (0.02s)
+            asset_relation_validation_test.go:172: relation response = 500 "INTERNAL_ERROR", want 404 RELATION_NOT_FOUND: {"error":{"code":"INTERNAL_ERROR","message":"The server could not complete the request."},"request_id":"DESKTOP-C9ASR69/GQo5yCxLuF-000031"}
+        --- FAIL: TestRelationDeleteValidatesIDBeforeWriting/console/urn_prefixed (0.02s)
+            asset_relation_validation_test.go:172: relation response = 500 "INTERNAL_ERROR", want 404 RELATION_NOT_FOUND: {"error":{"code":"INTERNAL_ERROR","message":"The server could not complete the request."},"request_id":"DESKTOP-C9ASR69/GQo5yCxLuF-000033"}
+        --- FAIL: TestRelationDeleteValidatesIDBeforeWriting/console/brace_wrapped (0.02s)
+            asset_relation_validation_test.go:172: relation response = 200 "", want 404 RELATION_NOT_FOUND: {"deleted":true}
+            asset_relation_validation_test.go:173: relation state = (95df9888-851e-4d30-a540-60b476b7f241, a358c17d-4292-4d0f-8582-1bc0a14fcb43, ended=true), want (95df9888-851e-4d30-a540-60b476b7f241, a358c17d-4292-4d0f-8582-1bc0a14fcb43, ended=false)
+            asset_relation_validation_test.go:175: delete audits = 1, want unchanged 0
+        --- FAIL: TestRelationDeleteValidatesIDBeforeWriting/console/unhyphenated (0.02s)
+            asset_relation_validation_test.go:172: relation response = 200 "", want 404 RELATION_NOT_FOUND: {"deleted":true}
+            asset_relation_validation_test.go:173: relation state = (30cfed91-1c80-48e8-a80d-5af0d5e13a7d, 07297d98-1156-4f57-91a3-59bcc8117467, ended=true), want (30cfed91-1c80-48e8-a80d-5af0d5e13a7d, 07297d98-1156-4f57-91a3-59bcc8117467, ended=false)
+            asset_relation_validation_test.go:175: delete audits = 2, want unchanged 1
+    --- FAIL: TestRelationDeleteValidatesIDBeforeWriting/external (0.43s)
+        --- FAIL: TestRelationDeleteValidatesIDBeforeWriting/external/not_a_uuid_at_all (0.02s)
+            asset_relation_validation_test.go:172: relation response = 500 "INTERNAL_ERROR", want 404 RELATION_NOT_FOUND: {"error":{"code":"INTERNAL_ERROR","message":"The server could not complete the request."},"request_id":"DESKTOP-C9ASR69/GQo5yCxLuF-000046"}
+        --- FAIL: TestRelationDeleteValidatesIDBeforeWriting/external/urn_prefixed (0.01s)
+            asset_relation_validation_test.go:172: relation response = 500 "INTERNAL_ERROR", want 404 RELATION_NOT_FOUND: {"error":{"code":"INTERNAL_ERROR","message":"The server could not complete the request."},"request_id":"DESKTOP-C9ASR69/GQo5yCxLuF-000048"}
+        --- FAIL: TestRelationDeleteValidatesIDBeforeWriting/external/brace_wrapped (0.02s)
+            asset_relation_validation_test.go:172: relation response = 200 "", want 404 RELATION_NOT_FOUND: {"deleted":true}
+            asset_relation_validation_test.go:173: relation state = (ccec5793-a6aa-4725-a0e7-94771aed8e7b, c73983c6-0cfc-4f61-a4d3-b6e48745ee50, ended=true), want (ccec5793-a6aa-4725-a0e7-94771aed8e7b, c73983c6-0cfc-4f61-a4d3-b6e48745ee50, ended=false)
+            asset_relation_validation_test.go:175: delete audits = 1, want unchanged 0
+        --- FAIL: TestRelationDeleteValidatesIDBeforeWriting/external/unhyphenated (0.01s)
+            asset_relation_validation_test.go:172: relation response = 200 "", want 404 RELATION_NOT_FOUND: {"deleted":true}
+            asset_relation_validation_test.go:173: relation state = (35544017-f03c-4ee3-aeb7-fde792c53c72, 81970307-8e7e-4e41-ab2c-78c862b7cbce, ended=true), want (35544017-f03c-4ee3-aeb7-fde792c53c72, 81970307-8e7e-4e41-ab2c-78c862b7cbce, ended=false)
+            asset_relation_validation_test.go:175: delete audits = 2, want unchanged 1
+--- FAIL: TestRelationUpperCaseIDsAreCanonicalInRowsAndAudit (0.78s)
+    --- FAIL: TestRelationUpperCaseIDsAreCanonicalInRowsAndAudit/console (0.36s)
+        asset_relation_validation_test.go:206: audit target = "8FF4CF20-2572-450F-8C8C-39EB9FCEB597", want "8ff4cf20-2572-450f-8c8c-39eb9fceb597"
+        asset_relation_validation_test.go:230: delete audit resource_id = "92B260B8-73C7-43B7-9822-3B05CB24A1DF", want "92b260b8-73c7-43b7-9822-3b05cb24a1df"
+    --- FAIL: TestRelationUpperCaseIDsAreCanonicalInRowsAndAudit/external (0.42s)
+        asset_relation_validation_test.go:206: audit target = "DDF7D035-BB77-4AEB-A70A-BE10E0BA38F7", want "ddf7d035-bb77-4aeb-a70a-be10e0ba38f7"
+        asset_relation_validation_test.go:230: delete audit resource_id = "D554C3F5-2850-4733-8C4F-A0C48F7F985D", want "d554c3f5-2850-4733-8c4f-a0c48f7f985d"
+FAIL
+FAIL	github.com/hkjang/invenqor/server/internal/httpapi	3.487s
+ok  	github.com/hkjang/invenqor/server/internal/ingest	0.004s [no tests to run]
+ok  	github.com/hkjang/invenqor/server/internal/mail	0.004s [no tests to run]
+ok  	github.com/hkjang/invenqor/server/internal/querydsl	0.003s [no tests to run]
+ok  	github.com/hkjang/invenqor/server/internal/softwarecatalog	0.004s [no tests to run]
+ok  	github.com/hkjang/invenqor/server/internal/spool	0.003s [no tests to run]
+ok  	github.com/hkjang/invenqor/server/internal/storage	0.005s [no tests to run]
+?   	github.com/hkjang/invenqor/server/internal/storagetest	[no test files]
+ok  	github.com/hkjang/invenqor/server/internal/tracking	0.003s [no tests to run]
+ok  	github.com/hkjang/invenqor/server/internal/updates	0.004s [no tests to run]
+?   	github.com/hkjang/invenqor/server/internal/version	[no test files]
+ok  	github.com/hkjang/invenqor/server/internal/webui	0.004s [no tests to run]
+?   	github.com/hkjang/invenqor/server/migrations	[no test files]
+FAIL
