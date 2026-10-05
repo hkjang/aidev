@@ -1,0 +1,117 @@
+moyro v0.2.47
+
+The custom profile value PATCH handlers refuse a body they could not read
+instead of reporting a save that never happened. This is a server behavior fix.
+There is no schema change, no migration, no new route and no web change. One
+error id is added and two decode calls change.
+
+`patchCustomProfileValuesGlobal` and `patchUserCustomProfileValues` in
+`compat_wave_handlers_final.go` read their map-shaped body with
+`_ = decodeCappedBody(w, r, &values)`, discarding the decode error. A body over
+`collectionBodyMaxBytes` — one mebibyte — or one truncated mid-object left
+`values` nil, and `customprofile.Service.PatchUserValues` returns on
+`len(values) == 0` before it opens a transaction, so not a single row was
+written. Both handlers then re-read the stored map with `GetUserValues` and
+answered 200 carrying it.
+
+That last step is what made this the worst-shaped member of its class. The
+response to a refused write was byte-identical to the response to a successful
+one: a 200 with a fully populated profile map. The caller has nothing to
+inspect — no empty collection, no zero count, no error field. v0.2.45 fixed the
+same `_ = decodeCappedBody` pattern on bulk user delete, where the giveaway was
+at least an honest `{"status":"OK","count":0}`; here there was no giveaway at
+all.
+
+The false success also reached the ledger. Each handler writes an
+`audit.ActionCustomValuesPatch` row, and `patchUserCustomProfileValues` is the
+support path an administrator uses to backfill another user's profile, so an
+operation that never happened was recorded in the audit trail under the
+operator's name.
+
+Both call sites now use `decodeOptionalCollectionBody`, the helper v0.2.45 added
+for exactly this shape of endpoint, under the single new error id
+`api.custom_profile.values.patch.invalid_body` that both handlers share. An
+oversized body is refused with 413 and a malformed one with 400, and the
+refusal is written before `h.audit.LogAsync` runs, so a refused request leaves
+no audit row. Because the `Optional` variant lets `io.EOF` through, a bodyless
+PATCH still answers 200 with the current map, a literal `null` or `{}` body is
+still a 200 no-op, and the contract that clears a field by sending a `null`
+value is unchanged. `request_body.go` is byte-identical to v0.2.46, so
+`decodeCappedBody`, `decodeCollectionBody`, `drainCappedBody` and
+`tooManyBatchItems` keep their behavior and the other callers that deliberately
+tolerate a malformed body continue to do so. The scope was not widened to the
+remaining `_ = decodeCappedBody` call sites.
+
+Operators integrating against these two routes should note the narrow contract
+change. A caller that sent an oversized or truncated body and read the false 200
+as a save now receives 413 or 400 and should retry with a body under the cap. A
+caller sending a well-formed body, an empty body, or no body at all sees a
+byte-identical response. The webapp's two callers in `compat.ts` always send a
+small well-formed map and are unaffected, and neither OpenAPI document
+describes the refused-body case, so integrations outside the repository are the
+only ones affected.
+
+The defect was observed before it was fixed rather than argued from the code. A
+new `custom_profile_values_body_cap_postgres_test.go` runs sixteen subtests
+against a real PostgreSQL instance on an isolated schema with `store.Migrate`,
+driving a chi router and the real `customprofile` and `audit` services — the
+audit service real rather than nil, because the existing sibling tests leave
+`h.audit` nil and a nil service never calls `LogAsync`, which would let an
+"audit row absent" assertion pass for the wrong reason. Seven subtests failed
+before the change, including the one that states the defect exactly:
+`status = 200, want 413 (body {"field-dept":"Support"})` — the refused body's
+response carrying the previous save's bytes. Sixteen of sixteen pass after it
+under `-race`. Causation was checked in three directions: reverting either
+decode line fails only that handler's subtests plus the shared audit subtest,
+reverting both leaves every preservation assertion passing, and substituting
+`decodeCollectionBody` for the `Optional` variant fails only the two bodyless
+PATCH cases.
+
+Verified on this release tree in the order `release.yml` runs it, against a real
+PostgreSQL container and the four checksum-pinned Mattermost plugin fixtures:
+`go test -race -p 1 -count=1 ./...` at 49 packages ok and 0 failures, with
+`httpapi` at 57.642s and `pluginhost` at 61.664s rather than the fraction of a
+second each takes when the database and the archives are absent, which confirms
+those tests executed instead of skipping. An earlier run of the same suite
+before the fixtures were fetched put `pluginhost` at 27.478s, which is the
+difference the archive-backed subtests account for.
+`go build ./...` and `go vet ./...` clean, `plugin-sdk/go`
+tests and vet clean, and `govulncheck` reporting this code affected by 0
+vulnerabilities. In `webapp`, a clean `npm ci`, then
+`npm audit --omit=dev --audit-level=high` and `npm audit --audit-level=high`
+both at 0 vulnerabilities as of 2026-10-05, then `npm test` at 49 files and 224
+tests on Node v22.23.1, then `npm run typecheck` and `npm run build`.
+`node scripts/verify-pages.mjs` passes against the bumped markers at 5 HTML
+pages, 47 product screenshots, 16 navigable routes and 7 brand PNGs, and
+`bash scripts/check-source-sizes.sh` passes.
+
+The three gates the release job owns were run on this machine against this tag's
+commit rather than deferred to the tag push. The `linux/amd64` image build
+succeeded with `VERSION`, `COMMIT`, `BUILD_DATE` and `SOURCE_DATE_EPOCH` derived
+from commit 400519741a05980b51328b111071c0ceb7dc5ce9 exactly as the workflow
+derives them, and the built image carries `linux/amd64` with the
+`org.opencontainers.image.version` label at `v0.2.47` and the revision label at
+that commit. `scripts/verify-product-ui.sh` passed its contract checks and then
+77 Playwright tests in 3.9 minutes against the built image, including the six
+visual-regression snapshots, capturing 47 screens, with the four
+checksum-pinned plugin fixtures supplied so the plugin-compatibility spec ran
+rather than refusing to start. The image was exported with `docker save` and
+`gzip -n -9` to `moyro-v0.2.47.tar.gz` at 20509269 bytes, and
+`scripts/verify-release.sh` with `EXPECTED_COMMIT` set to that commit passed the
+exported archive at "offline startup, web UI, version, bootstrap login, and
+restart".
+
+The first attempt at the image build failed and is worth recording so the next
+tag does not read it as a code fault. `npm ci` inside the `web-build` stage
+aborted with `ECONNRESET` against the npm registry while the plugin fixtures
+were downloading concurrently on the same link. Nothing in the tree was changed
+between that attempt and the clean rebuild.
+
+One marker change is worth noting for anyone reading the next tag's diff. The
+version markers move to 0.2.47 across the same 21 files as every recent release,
+130 occurrences of which 122 carry the `v` prefix, and no stale `0.2.4x` marker
+remains anywhere in the tree.
+
+Release assets are not attached by hand. `release.yml` builds the image, exports
+`moyro-v0.2.47.tar.gz`, verifies it and creates the GitHub release with the
+SHA-256 in the notes when this tag is pushed.
