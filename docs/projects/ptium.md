@@ -1,7 +1,7 @@
 ---
 title: "ptium — 자율 개선 이력"
 description: "ptium: 자율 개선 회차 56회, 릴리즈 27건. 최근 릴리즈 v1.69.56 (자산 7개)."
-last_modified_at: 2026-10-05 14:30:53 +0900
+last_modified_at: 2026-10-05 15:21:09 +0900
 ---
 {% raw %}
 <script type="application/ld+json">
@@ -18,7 +18,7 @@ last_modified_at: 2026-10-05 14:30:53 +0900
   "name": "hkjang",
   "url": "https://github.com/hkjang"
  },
- "dateModified": "2026-10-05T14:30:53+09:00",
+ "dateModified": "2026-10-05T15:21:09+09:00",
  "version": "1.69.56"
 }
 </script>

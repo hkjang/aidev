@@ -168,3 +168,4 @@
 - 보류 아이디어: due_date 의 두 번째 파서(`hunter_finding_timestamp` plpgsql 정규식)와 Go RFC3339 의 수락 범위 차이 확인 (3/2/M, HUNTER_TEST_DSN 필요) / web 테스트 러너 Node 하한을 `engines`(>=22.18)로 선언해 툴체인 드리프트를 경고로 만들기 (3/1/S, 릴리즈 경로 인접 — 이번 차선 후보였다) / 공통 폼 `datetime-local` 컨트롤에 `max`·`step` 선언해 거절될 연도를 입력 단계에서 알리기 (2/2/S, 시간대 의존이라 화면 검증 필요) / `oidcReturnTo`(Go)·`safeReturnPath`(TS) 공유 벡터 교차 검증 (3/2/M, 의도된 fallback 차이 보존) / 목록 CSV 내보내기의 범위 밖 숫자 타임스탬프 `RangeError` 방어 (2/1/S — 이번 수정으로 공통 폼의 같은 모양은 닫혔고 `list-export.ts:39` 가 마지막 `toISOString` 호출부)
 - 과제서: 채택 — 지목한 파일·행(`resource-form-state.ts:83`, `domain.go:436`·792)과 결함 메커니즘·수정 방식(`SubmitField.default?: unknown` 추가 + 순수 헬퍼 분리, 호출부 무변경)이 현재 코드와 정확히 맞았고, 미확인으로 남긴 기준선 108 도 실측과 일치했다. 과제서가 명시하지 않은 세부 하나만 더 정했다: 공백만 남은 입력은 수정 전에 파싱 오류를 냈는데 과제서의 "빈/공백 입력 → 선언 default" 지시대로 선언 컨테이너를 보내게 바꿨다.
 
+- 릴리즈: v1.22.0 (2026-10-05, run 2026-10-05-144212-hunter-approve)
