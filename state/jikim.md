@@ -260,3 +260,4 @@
 - 보류 아이디어: `oidcLogout` 이 OIDCConfig 읽기 실패를 조용히 /login 리다이렉트로 접음 (2/2/S — 성공·실패 모두 302 라 WARN 로그라는 새 계약이 필요하다) / docs/guides/api-guide.md 에 AI 엔드포인트 error code 표 추가 (2/1/S — 관찰 가능한 동작 변화가 없어 5회 연속 차선) / 추적이 켜진 동안의 CSP 리포트 폭주에 속도 제한 또는 동일 출처 검증 (3/3/M — 새 계약 필요) / retryWebhookDelivery 왕복 테스트 공백 (2/1/M — PostgreSQL 통합 경로가 더 정직) / baoKVWrite create·update 판정 TOCTOU (3/3/M — 트랜잭션·동시성 검증 필요)
 - 과제서: 채택 — 근거가 코드와 정확히 맞았고(oidc.go:440-449 의 두 분기, store/oidc.go:51-69 의 오류 구분, `storeError` 가 500 에서만 message 를 가리는 것, `policySimulate` 가 이미 `GetUser` 오류를 `storeError` 로 넘기는 것) 지정한 파일 2개·seam 2개·분기 형태·하네스(`quietServer`·`captureWebhookLog`·`decodeErrorCode`·`assertNoDriverDetail`·`assertSingleStoreErrorLog`·`driverFailure`)를 그대로 써서 수용 기준 5개를 모두 충족했다. 어긋난 사실 한 가지: 과제서는 `model` 이 oidc.go 에 이미 import 되어 있다고 했으나 실제로는 없어 한 줄 추가했다(빌드 실패로 즉시 드러났다).
 
+- 릴리즈: v0.2.30 (2026-10-06, run 2026-10-06-070758-jikim-improve)

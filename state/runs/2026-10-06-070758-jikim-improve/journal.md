@@ -18,3 +18,16 @@
 - 다음 역할 주의: 새 테스트는 DB 없이 돈다(`quietServer()` + seam 2개). 거절 3개 케이스는 수정 전에도 통과하므로 "통과한다"만으로는 분기 쪼개기가 살아 있다는 증명이 못 된다 — 장애 2개(`login code read outage`·`user read outage`)가 그 증명이다. `assertSingleStoreErrorLog` 는 ERROR 줄에 `SQLSTATE 28P01` 을 요구하므로 장애 케이스 전용이고, 거절 케이스는 새로 넣은 `assertNoStoreErrorLog` 로 ERROR 0줄을 센다.
 - [러너 07:20] brief accepted — 채택 — 근거가 코드와 정확히 맞았고(oidc.go:440-449 의 두 분기, store/oidc.go:51-69 의 오류 구분, `storeError` 가 500 에서만 message
 - [러너 07:20] verify passed — 검증 7개 통과 (auto)
+
+## 비평 노트
+- 수정 전 재현을 직접 했다: oidc.go:452-467 의 두 분기만 되돌려 돌리니 장애 2케이스가 `status=401 (원하는 값 500)` 로 실패, 거절 3케이스는 통과 — 테스트가 새 경로를 정말 지난다. 파일 복원 후 트리 깨끗, `go vet ./...` 무출력, `go test ./... -count=1` 전체 green.
+- 구현자가 의심한 자리(비-500 storeError 가 err.Error() 원문을 인증 없는 엔드포인트로 흘리는 것)는 도달 불가로 확인: ConsumeOIDCLoginCode 는 mapError 를 쓰지 않아 센티넬을 감싸지 않고(store/oidc.go:51-69), GetUser 쪽은 users.id 가 text(migrations/001_init.sql:2)라 22P02 이 불가하며 SELECT 에 23505·23503 도 없다 → ErrNotFound 외에는 나올 게 없다.
+- 못 본 것: 실제 PostgreSQL 장애·Keycloak 왕복(DSN·IdP 없음), 프런트 npm 검증(node_modules 없음 — 코드는 읽었다: OidcCallbackPage·silentSso 모두 status 분기 없음, 재시도 루프 없음).
+- 승인이지만 릴리즈 노트에 남길 것: `user read outage` 는 로그인 코드가 이미 소비된 뒤 500 이므로 같은 코드 재시도는 401 이고 사용자는 Keycloak 왕복을 다시 해야 한다(아래 SecurityConfig·CreateSession 과 같은 성질, 창이 읽기 한 번 넓어짐).
+- 다음 회차: `oidcLogout`(oidc.go:409-446)이 여전히 모든 실패를 같은 302 /login 으로 접는 열린 자리다. 차단 사유 없음(security·legal 모두 공격 경로 없음).
+- [러너 07:23] review approved — 리뷰 승인 (risk=low)
+- [러너 07:24] pr created — https://github.com/hkjang/jikim/pull/52
+- [러너 07:27] ci passed — 검사 2개 모두 success
+- [러너 07:27] merge done — 18a822d
+- [러너 07:35] release published — v0.2.30
+- [러너 07:39] assets verified — v0.2.30 자산 2개 (이전 v0.2.29: 2)
