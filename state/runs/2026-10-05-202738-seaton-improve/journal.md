@@ -37,3 +37,4 @@
 - 검증: `go build ./...`·`go vet ./...`·`go test ./...`(internal/app 포함 전부 ok)·`gofmt -l .`(출력 없음)·`git diff --check` 통과. README 가 적은 로컬 릴리즈 검증도 그대로 밟았다 — `bash scripts/release-image.sh 1.4.16` 으로 `seaton:v1.4.16` 이미지를 굽고 `gzip -t SeatOn-v1.4.16.tar.gz`(47,628,268바이트) 통과, 이미지가 실제로 뜨는지까지 확인한 뒤 산출물은 지웠다(워크플로가 다시 굽는다).
 - 자산은 비워 둔다(`assets: []`, `github_release: false`): `.github/workflows/release.yml` 이 `v*.*.*` 태그 push 에 반응해 `SeatOn-v1.4.16.tar.gz` 를 굽고 `gh release create --generate-notes --title "SeatOn v1.4.16"` 로 릴리즈까지 만든다. 사람이 올릴 것은 없다.
 - [러너 21:02] release published — v1.4.16
+- [러너 21:04] assets verified — v1.4.16 자산 1개 (이전 v1.4.15: 1)
