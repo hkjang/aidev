@@ -1,7 +1,7 @@
 ---
 title: "client.irumx.app — 자율 개선 이력"
 description: "client.irumx.app: 자율 개선 회차 1회, 릴리즈 0건. 최근 릴리즈 없음."
-last_modified_at: 2026-10-06 04:04:07 +0900
+last_modified_at: 2026-10-06 04:45:55 +0900
 ---
 {% raw %}
 <script type="application/ld+json">
@@ -18,7 +18,7 @@ last_modified_at: 2026-10-06 04:04:07 +0900
   "name": "hkjang",
   "url": "https://github.com/hkjang"
  },
- "dateModified": "2026-10-06T04:04:07+09:00"
+ "dateModified": "2026-10-06T04:45:55+09:00"
 }
 </script>
 
@@ -26,7 +26,7 @@ last_modified_at: 2026-10-06 04:04:07 +0900
 
 <p class="tldr"><strong>요약.</strong> client.irumx.app: 자율 개선 회차 1회, 릴리즈 0건. 최근 릴리즈 없음. <span class="pill pill-merged" title="14일: 릴리즈 0, 실패 0, 경고 0, 회귀 0">건강 B</span> <span class="meta">14일: 릴리즈 0, 실패 0, 경고 0, 회귀 0</span></p>
 
-<ul class="stats"><li><b>1</b><span>회차</span></li><li><b>1</b><span>프로젝트</span></li><li><b>0</b><span>배포 준비 완료</span></li><li><b>0</b><span>릴리즈 진행 중</span></li><li><b>0</b><span>병합 완료</span></li><li><b>1</b><span>검토 대기</span></li><li><b>0</b><span>검증 실패</span></li><li><b>0</b><span>변경 없음</span></li><li><b>0</b><span>실행 오류</span></li><li><b>$10.12</b><span>비용</span></li><li><b>24분</b><span>에이전트 시간</span></li></ul>
+<ul class="stats"><li><b>1</b><span>회차</span></li><li><b>1</b><span>프로젝트</span></li><li><b>0</b><span>배포 준비 완료</span></li><li><b>0</b><span>릴리즈 진행 중</span></li><li><b>0</b><span>병합 완료</span></li><li><b>1</b><span>검토 대기</span></li><li><b>0</b><span>검증 실패</span></li><li><b>0</b><span>변경 없음</span></li><li><b>0</b><span>실행 오류</span></li><li><b>$16.06</b><span>비용</span></li><li><b>52분</b><span>에이전트 시간</span></li></ul>
 
 ## 현황
 
@@ -41,7 +41,7 @@ last_modified_at: 2026-10-06 04:04:07 +0900
 
 ## 비용·사용량
 
-<div class="table-wrap"><table class="rt"><caption class="meta">최근 30세션</caption><thead><tr><th>시각</th><th class="primary">프로젝트</th><th>단계</th><th class="num">시간</th><th class="num">턴</th><th class="num">비용</th><th class="num">토큰 입력/출력</th><th>종료</th></tr></thead><tbody><tr data-status="other"><td data-label="시각">04:03</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/client.irumx.app/">client.irumx.app</a></td><td data-label="단계">비평</td><td data-label="시간" class="num">5분</td><td data-label="턴" class="num">19</td><td data-label="비용" class="num">$1.47</td><td data-label="토큰 입력/출력" class="num">790K / 19K</td><td data-label="종료">success</td></tr><tr data-status="other"><td data-label="시각">03:57</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/client.irumx.app/">client.irumx.app</a></td><td data-label="단계">개선</td><td data-label="시간" class="num">14분</td><td data-label="턴" class="num">95</td><td data-label="비용" class="num">$6.81</td><td data-label="토큰 입력/출력" class="num">8.8M / 45K</td><td data-label="종료">success</td></tr><tr data-status="other"><td data-label="시각">03:43</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/client.irumx.app/">client.irumx.app</a></td><td data-label="단계">정찰</td><td data-label="시간" class="num">5분</td><td data-label="턴" class="num">24</td><td data-label="비용" class="num">$1.84</td><td data-label="토큰 입력/출력" class="num">1.2M / 21K</td><td data-label="종료">success</td></tr></tbody></table></div>
+<div class="table-wrap"><table class="rt"><caption class="meta">최근 30세션</caption><thead><tr><th>시각</th><th class="primary">프로젝트</th><th>단계</th><th class="num">시간</th><th class="num">턴</th><th class="num">비용</th><th class="num">토큰 입력/출력</th><th>종료</th></tr></thead><tbody><tr data-status="other"><td data-label="시각">04:39</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/client.irumx.app/">client.irumx.app</a></td><td data-label="단계">비평</td><td data-label="시간" class="num">8분</td><td data-label="턴" class="num">31</td><td data-label="비용" class="num">$2.61</td><td data-label="토큰 입력/출력" class="num">1.9M / 30K</td><td data-label="종료">success</td></tr><tr data-status="other"><td data-label="시각">04:30</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/client.irumx.app/">client.irumx.app</a></td><td data-label="단계">개선</td><td data-label="시간" class="num">19분</td><td data-label="턴" class="num">51</td><td data-label="비용" class="num">$3.33</td><td data-label="토큰 입력/출력" class="num">3.6M / 28K</td><td data-label="종료">success</td></tr><tr data-status="other"><td data-label="시각">04:03</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/client.irumx.app/">client.irumx.app</a></td><td data-label="단계">비평</td><td data-label="시간" class="num">5분</td><td data-label="턴" class="num">19</td><td data-label="비용" class="num">$1.47</td><td data-label="토큰 입력/출력" class="num">790K / 19K</td><td data-label="종료">success</td></tr><tr data-status="other"><td data-label="시각">03:57</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/client.irumx.app/">client.irumx.app</a></td><td data-label="단계">개선</td><td data-label="시간" class="num">14분</td><td data-label="턴" class="num">95</td><td data-label="비용" class="num">$6.81</td><td data-label="토큰 입력/출력" class="num">8.8M / 45K</td><td data-label="종료">success</td></tr><tr data-status="other"><td data-label="시각">03:43</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/client.irumx.app/">client.irumx.app</a></td><td data-label="단계">정찰</td><td data-label="시간" class="num">5분</td><td data-label="턴" class="num">24</td><td data-label="비용" class="num">$1.84</td><td data-label="토큰 입력/출력" class="num">1.2M / 21K</td><td data-label="종료">success</td></tr></tbody></table></div>
 
 ## 아이디어 백로그 — 대기 7 / 전체 8
 
