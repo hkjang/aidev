@@ -19,3 +19,5 @@
 - 못 본 것: go test -race -p 1 ./... 전체와 웹 typecheck/build/e2e(서버 1파일 변경이라 생략), 실제 메일 클라이언트 육안 비교. 보안·법무 차단 사유 없음.
 - [러너 08:27] review approved — 리뷰 승인 (risk=low)
 - [러너 08:27] pr created — https://github.com/hkjang/moyro/pull/36
+- [러너 08:40] ci passed — 검사 3개 모두 success
+- [러너 08:40] merge done — aec1f15

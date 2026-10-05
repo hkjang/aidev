@@ -1,27 +1,27 @@
 {
- "generated": "2026-10-06T08:24:02+09:00",
+ "generated": "2026-10-06T08:40:58+09:00",
  "site": "https://hkjang.github.io/aidev",
- "description": "Claude Code 자율 개선 에이전트가 hkjang 의 프로젝트를 개선·테스트·머지·릴리즈한 일일 보고. 오늘 20회차·릴리즈 13건, 누적 2018회차·릴리즈 726건, 주의 필요 2건.",
+ "description": "Claude Code 자율 개선 에이전트가 hkjang 의 프로젝트를 개선·테스트·머지·릴리즈한 일일 보고. 오늘 21회차·릴리즈 14건, 누적 2019회차·릴리즈 727건, 주의 필요 2건.",
  "today": {
   "date": "2026-10-06",
-  "total": 20,
-  "projects": 19,
-  "released": 13,
+  "total": 21,
+  "projects": 20,
+  "released": 14,
   "merged": 2,
   "nochange": 0,
   "failed": 1,
-  "cost_usd": 186.95,
-  "minutes": 526,
-  "sessions": 77
+  "cost_usd": 191.25,
+  "minutes": 540,
+  "sessions": 79
  },
  "totals": {
-  "runs": 2018,
-  "released": 726,
+  "runs": 2019,
+  "released": 727,
   "days": 35,
-  "cost_usd": 8128.21,
-  "minutes": 22433,
-  "tokens_in": 8607442691,
-  "tokens_out": 69955361
+  "cost_usd": 8132.51,
+  "minutes": 22447,
+  "tokens_in": 8611350039,
+  "tokens_out": 69994338
  },
  "alerts": [
   {
@@ -1347,21 +1347,21 @@
   "rows": [
    {
     "role": "정찰 scout",
-    "calls": 496,
+    "calls": 497,
     "metric": "과제서 89% · 구현자 채택 96% · 과제서 회차의 PR 도달 75%",
     "cost": 703.66
    },
    {
     "role": "구현 builder",
-    "calls": 582,
+    "calls": 583,
     "metric": "러너 검증 통과 91% · 변경 없음 67",
     "cost": 1686.33
    },
    {
     "role": "비평 critic",
-    "calls": 420,
-    "metric": "최종 승인 97% · 한 번이라도 거절 35 · 승인·머지 뒤 회귀 0/341",
-    "cost": 734.34
+    "calls": 421,
+    "metric": "최종 승인 97% · 한 번이라도 거절 35 · 승인·머지 뒤 회귀 0/342",
+    "cost": 735.94
    },
    {
     "role": "수리 repairer",
@@ -1377,9 +1377,9 @@
    },
    {
     "role": "릴리즈 releaser",
-    "calls": 404,
+    "calls": 405,
     "metric": "완전한 릴리즈 80%",
-    "cost": 685.88
+    "cost": 688.58
    },
    {
     "role": "PR 심사 shepherd-reviewer",
@@ -1407,15 +1407,15 @@
    },
    {
     "role": "측정 자기 감사",
-    "calls": 3,
+    "calls": 4,
     "cost": null,
-    "metric": "[medium] 실험 arm no-repair 의 처치 노출이 4% — 그 arm 의 null 결과는 '효과 없음' 이 아니다 · [medium] 실험 arm no-arbiter 의 처치 노출이 0% — 그 arm 의 null 결과는 '효과 없음' 이 아니다 · [low] 닫힌 캠페인 5개의 적용률이 35% 미만 — PR 은 열렸지만 표준이 들어가지 않았다"
+    "metric": "[high] 원격에 없는 릴리즈 태그 1건 — 그 저장소의 다음 릴리즈를 막는다 · [medium] 실험 arm no-repair 의 처치 노출이 4% — 그 arm 의 null 결과는 '효과 없음' 이 아니다 · [medium] 실험 arm no-arbiter 의 처치 노출이 0% — 그 arm 의 null 결과는 '효과 없음' 이 아니다"
    },
    {
     "role": "실제 게시 릴리즈 (원격 태그 기준)",
     "calls": 790,
     "cost": null,
-    "metric": "저장소 40개 · 게시 790건 (사람 281건) · 누적 회차 기록에는 726건 — 64건이 기록에서 빠졌다"
+    "metric": "저장소 40개 · 게시 790건 (사람 281건) · 태그만 만들고 미게시 1건 — CI 가 릴리즈 커밋을 막은 저장소 · 누적 회차 기록에는 727건 — 63건이 기록에서 빠졌다"
    },
    {
     "role": "머지 뒤 30일 (postmerge)",
@@ -1443,7 +1443,8 @@
    }
   ],
   "advice": [
-   "실제 릴리즈 태그(790건)가 누적 회차 기록(726건)보다 64건 많다 — 기록 경로에 빠지는 자리가 남아 있다 (bin/released.py 가 태그로 센 값)",
+   "측정이 어긋났다 — 원격에 없는 릴리즈 태그 1건 — 그 저장소의 다음 릴리즈를 막는다 (release_project 의 describe 검사가 로컬 태그를 보므로, 보류된 태그가 base 끝을 가리키면 릴리즈가 영구히 멈춘다.)",
+   "실제 릴리즈 태그(790건)가 누적 회차 기록(727건)보다 63건 많다 — 기록 경로에 빠지는 자리가 남아 있다 (bin/released.py 가 태그로 센 값)",
    "jikim 은 머지한 변경의 93% 를 사람이 다시 고쳤다 — 자율화 단계를 낮추거나(state/jikim.policy.json 의 autonomy) 검증 명령을 늘릴 것"
   ]
  },
@@ -1835,7 +1836,7 @@
   {
    "metric": "완전한 릴리즈 비율",
    "value": "93%",
-   "detail": "릴리즈 시도 350건 중 자산 검증까지 324건"
+   "detail": "릴리즈 시도 351건 중 자산 검증까지 325건"
   },
   {
    "metric": "사람의 재작업률",
@@ -1849,7 +1850,7 @@
   },
   {
    "metric": "유효 개선당 비용",
-   "value": "$11.50",
+   "value": "$11.52",
    "detail": "비용 확인된 유효 개선 337건, 미확인 세션 299"
   },
   {
@@ -1864,7 +1865,7 @@
   }
  ],
  "outcomes_today": {
-  "release-ready": 13,
+  "release-ready": 14,
   "review-pending": 3,
   "releasing": 2,
   "verify-failed": 2,
@@ -1875,12 +1876,12 @@
  "days": [
   {
    "date": "2026-10-06",
-   "total": 20,
-   "released": 13,
+   "total": 21,
+   "released": 14,
    "merged": 2,
    "nochange": 0,
    "failed": 1,
-   "cost_usd": 186.95
+   "cost_usd": 191.25
   },
   {
    "date": "2026-10-05",
@@ -2149,13 +2150,13 @@
    "key": "2026-W41",
    "url": "https://hkjang.github.io/aidev/weekly/2026-W41/",
    "days": 2,
-   "total": 91,
-   "released": 48,
+   "total": 92,
+   "released": 49,
    "merged": 7,
    "nochange": 3,
    "failed": 2,
-   "cost": 546.59,
-   "minutes": 1563
+   "cost": 550.89,
+   "minutes": 1577
   },
   {
    "key": "2026-W40",
@@ -2223,13 +2224,13 @@
    "key": "2026-10",
    "url": "https://hkjang.github.io/aidev/monthly/2026-10/",
    "days": 6,
-   "total": 283,
-   "released": 126,
+   "total": 284,
+   "released": 127,
    "merged": 16,
    "nochange": 6,
    "failed": 15,
-   "cost": 1772.67,
-   "minutes": 5279
+   "cost": 1776.96,
+   "minutes": 5293
   },
   {
    "key": "2026-09",
@@ -2915,8 +2916,8 @@
    "last_ts": "2026-10-05T18:44:43+09:00",
    "last_status": "released",
    "last_result": "merged https://github.com/hkjang/moyro/pull/35, released v0.2.47",
-   "cost": 278.93,
-   "minutes": 819,
+   "cost": 280.53,
+   "minutes": 824,
    "grade": "C",
    "grade_why": "14일: 릴리즈 12, 실패 1, 경고 2, 회귀 0",
    "lessons": 1,
@@ -2935,24 +2936,24 @@
    "name": "muni",
    "repo": "https://github.com/hkjang/muni",
    "page": "https://hkjang.github.io/aidev/projects/muni/",
-   "runs": 38,
-   "released": 24,
-   "last_ts": "2026-10-05T17:58:39+09:00",
+   "runs": 39,
+   "released": 25,
+   "last_ts": "2026-10-06T08:40:56+09:00",
    "last_status": "released",
-   "last_result": "merged https://github.com/hkjang/muni/pull/34, released v0.54.0",
-   "cost": 217.4,
-   "minutes": 571,
+   "last_result": "merged https://github.com/hkjang/muni/pull/35, released v0.55.0",
+   "cost": 220.1,
+   "minutes": 580,
    "grade": "A",
-   "grade_why": "14일: 릴리즈 10, 실패 0, 경고 0, 회귀 0",
+   "grade_why": "14일: 릴리즈 11, 실패 0, 경고 0, 회귀 0",
    "lessons": 1,
    "ideas_pending": 9,
    "ideas_total": 10,
    "release": {
     "status": "released",
-    "version": "0.54.0",
-    "tag": "v0.54.0",
+    "version": "0.55.0",
+    "tag": "v0.55.0",
     "assets_count": 1,
-    "prev_tag": "v0.53.0",
+    "prev_tag": "v0.54.0",
     "prev_assets_count": 1
    }
   },
