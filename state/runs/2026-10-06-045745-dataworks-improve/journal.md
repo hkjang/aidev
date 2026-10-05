@@ -27,3 +27,4 @@
 - [러너 05:16] pr created — https://github.com/hkjang/dataworks/pull/35
 - [러너 05:29] ci passed — 검사 2개 모두 success
 - [러너 05:29] merge done — f9444fb
+- [러너 05:59] release ci-blocked — 릴리즈 커밋 CI: timeout — 제한 시간 안에 CI 완료를 확인하지 못함 (태그 보류)
