@@ -320,3 +320,4 @@
 - 보류 아이디어: `/favorites` 에서 검색하면 즐겨찾기가 있는데도 "즐겨찾기한 앱이 없습니다" 가 뜬다 (3/2/S — `public-pages.tsx` 가 review-pending 인 `0898f7a` 와 같은 파일이라 계속 보류) · `app-form-page` 의 등록·수정 happy path 와 검증 실패가 여전히 무검증 (3/1/M — 이번 회차가 만든 하네스 위에 덧붙이면 작업량이 줄어든다) · `Field` 가 error 를 렌더하면서 `aria-invalid`/`aria-describedby` 를 컨트롤에 연결하지 않는다 (2/2/M, 공용 컴포넌트 · children 계약 설계 선행) · 상위 100개 밖의 즐겨찾기 앱이 `/favorites` 에 안 나옴 (3/3/M, 공개 API 계약 변경 수반) · `clientAddress` 가 `RemoteAddr` 만 보아 reverse proxy 뒤에서 rate limit 이 전역 (3/3/M, 신뢰 프록시 정책 선행 · 보호 경로)
 - 과제서: 채택 — 지목한 `app-form-page.tsx:71-75`·`:128-141`·`:12-22` 와 `ui.tsx` 의 `EmptyState`/`ButtonLink`/`ErrorState:292`, `app-form-page.test.tsx` 부재, 기준선 99건이 모두 현재 코드와 일치했고 수용 기준 4건과 "프로덕션 파일 1개" 제약을 그대로 지켰다. 단 과제서가 미확인이라 한 전제는 실행해 확인했고 화면에 실제로 나온 문구는 "Query data cannot be undefined…" 가 아니라 ``["my-app","<id>"] data is undefined`` 였다(수정안은 그대로 성립).
 
+- 릴리즈: v2.11.14 (2026-10-05, run 2026-10-05-100726-appstore-improve)
