@@ -248,3 +248,7 @@
 - 과제서: 채택 — 근거와 배선 사실이 모두 코드와 정확히 맞았다(ai.go:94 가 저장소 유일한 자리, `invalid_ai_request` 미사용, 거절이 `s.store` 앞에서 반환되는 순서, `revokeServer` 하네스 재사용 가능, `DisallowUnknownFields`·`maxJSONBody` 2MiB 로 280KB 본문 통과). 262144 케이스에 대한 과제서의 경고도 유효했고 공백 섞은 입력으로 의도한 분기를 때림을 code·message 로 확인했다. 지정한 파일 2개·sentinel 형태를 그대로 구현했고, 과제서가 꼭 보라고 한 `bash scripts/verify.sh` 가 exit 0 으로 끝나 지난 회차의 실패 자리가 닫힌 것도 확인했다.
 
 - 릴리즈: v0.2.28 (2026-10-04, run 2026-10-04-164215-jikim-improve)
+## 2026-10-05
+- (원장 항목에 비밀/내부 정보 의심 문자열이 있어 비공개 기록으로 옮김 — run 2026-10-05-133740-jikim-improve)
+
+- 릴리즈: v0.2.29 (2026-10-05, run 2026-10-05-133740-jikim-improve)
