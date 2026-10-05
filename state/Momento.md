@@ -203,3 +203,7 @@
 - 과제서: 채택 — 인용한 행 번호(AdminPage.tsx 3709 `JSON.parse(form.schemaText)`·3768 `label="JSON Schema"`·3775 Alert·3350 `NetworkErrorAlert`·78-80 import, admin.go 1395-1446 의 세 코드와 1410·1421 의 `ON CONFLICT`/`site_key` 경고, adminErrors.ts 65-75 `refusal`·78-83 상수, 테스트의 `apiError` 헬퍼, `.ts` 확장자 관례)가 모두 현재 코드와 일치했고 수용 기준 3개를 그대로 구현·증명했다. 과제서가 "먼저 재현부터 하라" 며 미확인으로 남긴 핵심(react-query 가 `mutationFn` 의 동기 throw 를 `save.error` 로 잡는지)은 **성립했다** — 실제 브라우저에서 영문 SyntaxError 가 Alert 에 뜨는 것을 보고 시작했고, 서버에 도달한 POST 가 0건인 것까지 확인해 '요청이 가기 전에 던져진다' 는 진단도 함께 증명했다. 과제서가 경고한 `DEFINITION_SAVE_FAILED` 원인 특정은 하지 않았다(DB 재현 없음). 과제서에 없던 단언 하나를 더 뒀다고 기록한다: 코드가 붙은 서버 거절의 메시지에 'JSON' 이 들어 있어도 구문 분기로 가로채이지 않는다 — 보조 패턴을 `!code` 로 가둔 것이 실제로 동작함을 묶는다.
 
 - 릴리즈: v0.34.57 (2026-10-05, run 2026-10-05-085124-Momento-improve)
+## 2026-10-06
+- (원장 항목에 비밀/내부 정보 의심 문자열이 있어 비공개 기록으로 옮김 — run 2026-10-06-011806-Momento-improve)
+
+- 릴리즈: v0.34.58 (2026-10-06, run 2026-10-06-011806-Momento-improve)

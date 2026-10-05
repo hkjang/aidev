@@ -1,0 +1,85 @@
+release: ReSSO v0.9.100
+
+Introspection is the question a resource server asks about somebody else's
+token, and the one thing it was never supposed to say is anything about the
+asker's own credential that is not true. A clients table that would not report
+a verdict, or a stored digest that would not decode, was answered with 401
+invalid_client "client authentication failed". That answer says the secret the
+caller sent is not the one on file, and what a resource server does with it is
+page somebody or rotate a credential — so the outage ends and an integration
+that could have resumed untouched has instead been taken apart by hand. Nothing
+read that secret. A lookup that never completed judged nothing about it.
+
+This endpoint's contract for a fault on its own side was already written down
+and already kept in five places: a Realm, a revocation state, a session, an
+account and a refresh token that cannot be looked up all answer 200
+active=false and show up only in resso_introspection_errors_total{stage}. The
+client authentication standing in front of all five was the last step here
+without that line. v0.9.97 split this failure off both failure limiters, off
+resso_client_auth_failures_total and into resso_client_auth_errors_total{stage}
+with a log line, and left the response as a change per endpoint because the
+three endpoints sharing authenticateOIDCClient have three different contracts
+for it; v0.9.98 was the token endpoint's 500, v0.9.99 was revoke's 503, and
+this release is the last of the three.
+
+An undecided authentication now answers 200 active=false and is counted under
+resso_introspection_errors_total{stage="client_auth"}. The body is the same
+constant this endpoint already gives for a token it has never seen and for
+another client's refresh token, so nothing new is disclosed about any token,
+and no error key and no WWW-Authenticate header go out with it.
+
+RFC 7662 does not require the 401 here, and the text was read rather than
+assumed. §2.3 attaches that status to a condition this case does not meet —
+"its credentials are invalid" — and states no requirement at all for a caller
+whose authentication was never established; the note that follows it is about
+the token, requiring active=false rather than an error for a properly formed
+and authorized query. §2.1's "MUST also require some form of authorization"
+says of itself that it is there to prevent token scanning, and a body that is a
+constant across every token leaves nothing to scan. The endpoint still requires
+the credential: during a fault it cannot read it, and active=false is the
+direction that fails closed. The argument is recorded at the branch with the
+section numbers, because the next person to read the branch is the one who
+needs it.
+
+Nothing is logged. The attempt is added to the series directly rather than
+through recordUnjudgedIntrospection, whose own line — introspection could not
+judge a token — would be the second line written for one fault:
+clientAuthUndecided has already written an ERROR carrying the stage, the route
+and the reason. That is the judgement revoke made in v0.9.99 when it added no
+line of its own, and why this stage goes around the helper is recorded both at
+the branch and above the helper.
+
+Everything else answers as before. The branch sits in front of the whole
+condition rather than inside it, so a credential that was read and refused, an
+identifier nobody registered, a throttled caller, a switched-off Client and a
+public Client all keep the 401 they have always had — the last two arrive with
+no error at all and could not have reached the new branch in any case. The
+caller that hangs up is the one that matters: clientAuthUndecided does not mark
+it, so an unauthenticated caller cannot drive this endpoint's fault series
+wherever it likes by sending requests under any client_id and abandoning them.
+The hole v0.9.97 closed in the limiters and v0.9.98 closed in the status code
+does not reopen here.
+
+No metric is added. This is one new label value on the series this endpoint
+already reports its faults through, and metrics.go is untouched. Because the
+answer is a 200, the outage is invisible in resso_http_requests_total{route,
+status} — it no longer even raises the 401 it used to — so that series is the
+only place it shows, which is what the operations guide now says to alert on.
+Neither the secret nor the client_id appears in a response, a log line or a
+label.
+
+The operations guide's resso_client_auth_errors_total entry had to be corrected
+rather than extended: v0.9.99 wrote there that introspection still answers 401
+invalid_client, and this change makes that false. It now gives all three
+answers — token's 500, revoke's 503 with its audit entry, introspection's 200
+active=false. The resso_introspection_errors_total entry gained the six stage
+values and what client_auth means: not that a secret was wrong, that none was
+judged; a wrong secret is still a 401 and still in
+resso_client_auth_failures_total; and this stage leaves no introspection could
+not judge a token line. The README's metric table is unchanged because no
+series was added. Four comments in oidc.go were corrected, one more than this
+change set out to touch — errClientAuthUndecided's own doc still said only the
+token endpoint's answer was implemented.
+
+Stamps the version in the Makefile, console package metadata, .env.example and
+both compose files, with no schema or configuration changes.

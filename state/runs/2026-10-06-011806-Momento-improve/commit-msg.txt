@@ -1,0 +1,43 @@
+release: v0.34.58
+
+The 「망 대역 추가」 form now screens a malformed CIDR before it is sent, which
+is the next step after the previous four releases rather than a fifth repeat of
+them: those fixed the sentence shown after a failure, and this removes the
+failure. The 「CIDR」 box is the only hand-typed CIDR in the console and 「추가」
+gated on `!form.name || !form.cidr`, so it only ever stopped an empty box —
+10.20.30 with no prefix length, 10.20.30.0/33 out of range, /abc not a number
+and 1.2.3.4.5/24 with five octets all crossed the network and came back as the
+server's 400 INVALID_CIDR (admin.go:812 net.ParseCIDR), while the box's own
+placeholder was showing the right shape directly above it. A new pure module
+web/src/pages/cidrRule.ts decides it in the form, following passwordRule.ts in
+the same directory. It also moves the sentence that describes correct notation
+out of describeNetworkError and into a CIDR_RULE constant both sides read, so
+the form's helperText and the INVALID_CIDR Alert say the same thing by
+construction; until now that sentence lived only inside adminErrors.ts, which
+means a reader could only learn the correct notation *after* getting it wrong.
+The server stays the authority and the screen is a mirror of it, so the blocked
+set is only what ParseCIDR certainly refuses — a screen stricter than the
+server leaves no way to enter a value the server would accept. Host bits to the
+right of the netmask pass: 10.20.30.1/24 is not blocked, is not coloured as an
+error, and gets a neutral line naming the computed start address instead,
+because whether the Postgres `cidr` column refuses what ParseCIDR accepted was
+not reproduced against a database here and so is not claimed either way. IPv6
+bodies and leading zeros in an IPv4 address pass as well, both being cheaper to
+let make one round trip than to risk refusing something valid. Leading zeros in
+the prefix length were the place where memory would have been wrong: /024 and
+/00000000024 are *accepted* by ParseCIDR, measured by running 29 values through
+Go rather than recalled, so the digits are read as a decimal value the way the
+server's dtoi reads them and not matched as a shape. Blocking and error colour
+are separate states on purpose: an unfinished entry closes the button without
+turning the box red, and an untouched form shows the rule rather than a
+complaint. Verification went past the pure functions twice. A generated corpus
+of 890 values (888 after dedup) was run through both Go ParseCIDR and judgeCIDR:
+of the 727 the screen blocks, the server would have accepted none. And the built
+dist was served against a stand-in for /api/v1/me, /api/v1/sites and
+/api/v1/networks and driven through headless Chrome, reading the button's
+disabled state, the helperText DOM, the Mui-error class and the number of POSTs
+that reached the server — zero for all four values, and one carrying the typed
+value verbatim for 10.20.30.1/24. The same harness against the reverted tree
+fails 20 checks and lets 5 POSTs through. The existing word-for-word assertion
+on INVALID_CIDR passes unedited. Three production files and one test file, 211
+to 223 web tests. No server, Go, API or database change.
