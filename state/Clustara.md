@@ -290,3 +290,12 @@
 - 과제서: 채택 — 핸들러의 무메타데이터 응답과 스토어 500 제한을 현 코드 및 수정 전 실제 HTTP 실패로 확인했고 지정한 4파일 범위를 지켰다.
 
 - 릴리즈: v0.9.296 (2026-10-05, run 2026-10-05-074848-Clustara-approve)
+## 2026-10-06
+- 선택: notify scan 의 클러스터 목록 조회 실패를 "등록된 클러스터 없음" 폴백과 구별해 보고 (가치 3 / 위험 1 / 작업량 S)
+- 결과: 성공
+- 요약: `notifyScanTargets`(`k8s_notify.go:188`)가 `ListK8sClusters` 오류에 `[]string{""}` 을 돌려주고 오류를 버려, 등록 클러스터가 없는 정상 설치의 폴백과 **완전히 같은** 응답을 냈다. 그래서 `cluster_id` 없는 함대 전체 cron 스캔(ADMIN_GUIDE 권장 사용법)이 v0.9.295 가 없앤 "모든 클러스터가 한 창을 공유해 조용한 클러스터가 평가되지 않는" 동작으로 조용히 퇴행해도 응답은 `clusters_scanned:1`·오류 키 없음으로 건강한 설치와 한 글자도 다르지 않았다. 반환을 `([]string, error)` 로 바꿔 오류를 호출자에 올리고, `window` 맵에 `events_error` 와 같은 결로 `clusters_error` + 별도 `clusters_notice`(한국어 운영자 안내)를 선택적으로 실었다. 폴백 동작·주석의 계약은 그대로이고 **500 으로 올리지 않았다** — 요청을 깨면 cron 스캔이 아예 안 돌아 알림이 끊긴다. 감사 로그는 끝의 `for k, v := range window { audit[k] = v }` 병합으로 두 키를 자동 획득(테스트로 확인). 검증: 신규 테스트 2개(실 SQLite + `store.Open`/`Migrate` + `store.NewAsyncLogger` + `NewServer` + `httptest.NewServer(server.Routes())` + httptest Mattermost webhook, 실제 `kube.InventoryFromObject` privileged Pod, 오류 재현은 두 번째 커넥션에서 `DROP TABLE k8s_clusters` — 손으로 만든 대역·주입 객체 없음)를 먼저 붙여 빨강 확인 → 수정 → `gofmt -l`(출력 없음) → `go build ./...` → `go vet ./...` → `go test ./internal/proxy -run 'NotifyScan|K8sNotify' -count=1`(ok 2.591s) → `go test ./... -count=1`(20 패키지 전부 ok, proxy 88.815s, store 27.016s, 실패 0). 인과 확인으로 `window["clusters_error"]` 블록 조건만 막아 같은 테스트가 다시 빨강이 되는 것을 보고 복원했다. 프로덕션 파일 1개, 6a491a8 로 커밋.
+- 실패 재현: `--- FAIL: TestNotifyScanDistinguishesAClusterListFailureFromAnEmptyRegistry` / `k8s_notify_registry_test.go:102: a failed cluster listing answers identically to an empty registry: map[clusters_scanned:1 clusters_truncated:[] evaluated_rca:0 evaluated_security:1 events:0 events_truncated:false resources:1 revisions:0 revisions_truncated:false sent:1 timezone:Local truncated:false undeliverable:0]`
+- 보류 아이디어: 팬아웃 스캔에서 한 클러스터의 인벤토리 조회 오류가 500 으로 전 함대 스캔을 중단시킴 — events/revisions 는 기록하고 계속 도는데 계약이 엇갈림 (3/2/M) / `/admin/k8s/inventory` 의 실효 조회 상한·창 포화 미표시 — 이번 차선 (2/1/S) / quiet hours 조기 반환이 이미 계산한 window(이제 `clusters_error` 포함)를 전부 버려 조용한 시간 cron 이 DB 고장을 전혀 못 봄 — 이번 변경으로 가치 상승 (3/1/S) / events·revisions 스토어 상한이 나머지 호출자 요청을 조용히 깎는 계약 불일치 (4/3/L) / notify scan 의 podsec·rbac dedup 키에 Kind 없음 — 8회 연속 밀림, 1순위로 적지 말 것 (2/1/S)
+- 과제서: 채택 — 과제서의 근거(`[]string{""}` 폴백 동일성, 호출자 1곳, 감사 맵의 window 병합, 수정 전 기준선)가 현 코드와 정확히 맞았고, 지정한 프로덕션 1파일 + 신규 테스트 1파일 범위를 그대로 지켰다.
+
+- 릴리즈: v0.9.297 (2026-10-06, run 2026-10-06-001752-Clustara-improve)

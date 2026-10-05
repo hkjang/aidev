@@ -65,3 +65,11 @@
 - 과제서: 채택 — 기존 하네스 변경 없이 테스트 파일 3개만으로 지정된 실제 입력·저장·실패 보존 경로를 모두 검증했다.
 
 - 릴리즈: v0.52.0 (2026-10-05, run 2026-10-05-063723-GoalForge-improve)
+## 2026-10-06
+- 선택: doctor 가 게이트 없는 완료 조건까지 proof kind OK 로 세지 않게 한다 (가치 3 / 위험 1 / 작업량 S)
+- 결과: 성공
+- 요약: `internal/diagnostics/readiness.go:kindChecks` 가 종류를 요구하는 조건마다 `demanded++` 를 먼저 하고 그 다음에 같은 이름의 게이트 유무를 보며 `continue` 했으므로, 증거가 영원히 쌓이지 않는 미측정 조건도 "검증 종류를 요구하는 완료 조건 N개가 알맞은 게이트로 측정됩니다" OK 집계에 들어갔다. 종류를 요구하는 조건이 전부 미측정이면 `demanded > 0` 이 성립해 그 OK 를 반환하고 함수가 거기서 끝나므로 뒤의 `behavioural` 분기까지 건너뛰어, 증거 경로가 하나도 없는 설정이 proof kind OK 로 설명되고 빌드 전용 게이트 경고도 나오지 않았다. 집계를 `covered` 확인 뒤로 옮겨 게이트가 실제로 답하는 조건만 세고, 세는 대상이 바뀌었으므로 변수명도 `measured` 로 바꿨다. 미측정 조건은 `criteria coverage` 가 이미 FAIL 로 말하므로 proof kind 에서 새로 FAIL 을 만들지 않았다(중복 보고 금지). 프로덕션 파일 1개 + 테스트 1개. 검증: `go test ./internal/diagnostics -count=1` ok, `go test ./internal/diagnostics ./internal/policy ./cmd/goalforge -count=1` 모두 ok(CLI 2.226s), `go test ./... -count=1` **exit 0**(실패·에러 줄 없음), `go vet ./...`·`go build ./...` 무출력, `gofmt -l ./cmd ./internal` 무출력, `go mod tidy` 후 go.mod/go.sum 드리프트 없음. 기존 테스트 6개의 기대값은 하나도 바뀌지 않았다(과제서의 예상과 일치, 이번에 실행으로 확인).
+- 실패 재현: `readiness_test.go:165: a criterion with no gate is measured by nothing: "검증 종류를 요구하는 완료 조건 1개가 알맞은 게이트로 측정됩니다"` / `readiness_test.go:195: only the measured criterion may be counted, got "검증 종류를 요구하는 완료 조건 2개가 알맞은 게이트로 측정됩니다"` — 둘 다 고치기 전에 돌려 눈으로 확인했고 수정 후 통과. 수정 뒤 집계 순서만 원래대로 되돌리자 같은 두 테스트가 같은 메시지로 다시 실패하는 것까지 확인해 인과를 고정하고 즉시 원복했다(`git status` 로 의도한 2개 파일만 변경됨을 확인).
+- 보류 아이디어: ① AutoApproveMerges 가 DailyLimit 을 보지 않는다 — 병합 승인 집계·감사 기록 경로 설계가 선행, 권한 봉투라 단독 회차 (4/3/M). ② 테스트용 git 저장소 부트스트랩 헬퍼를 공유 패키지로 정리 — `requirePushable` 3중 복제, remote 이름 단위 환경 프로브 교훈을 함께 지켜야 함 (3/2/M). ③ 커밋이 옮겨간 뒤 남은 옛 커밋의 자동 병합 승인 철회 — `StaleApprovalError` 가 소비만 막고 APPROVED 로 남는다, 철회 시점·감사 설계 필요 (3/3/M). ④ retention `dayDuration` 의 비유한 수·오버플로 거절 — 차선 후보였으며 이번엔 손대지 않았다, 호출부의 `<= 0` 거절 여부를 실행으로 먼저 확인할 것 (3/2/S). ⑤ 같은 `CheckReadiness` 결과를 네 소비자(plan/mcp/api/CLI)가 같은 결론으로 번역하는지 end-to-end 고정 — 이번에 WARN 이 새로 등장할 수 있게 되었으므로 근거가 조금 더 강해졌다 (2/1/S).
+- 과제서: 채택 — 지목한 두 줄(`demanded++` 가 `covered` 확인보다 앞)이 지금 코드와 정확히 일치했고, 수용 기준 4개·검증 명령·"FAIL 을 새로 만들지 말 것" 제약까지 모두 그대로 실행으로 확인됐다.
+
