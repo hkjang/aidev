@@ -30,3 +30,5 @@
 - [러너 21:31] pr created — https://github.com/hkjang/umm/pull/166
 - [러너 21:49] ci passed — 검사 1개 모두 success
 - [러너 21:49] merge done — 17e1741
+- [러너 22:08] release published — v0.76.6
+- [러너 22:09] assets verified — v0.76.6 자산 3개 (이전 v0.76.5: 3)
