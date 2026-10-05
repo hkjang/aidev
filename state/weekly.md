@@ -331,3 +331,4 @@
 - 보류 아이디어: `embeddingStatus`(semantic.go:431)가 실패한 통계 질의를 `items:0, embedded:0, stale:0` 으로 답함 — 500 을 내면 AdminPage 실패 문구가 같이 필요하고 같은 모양의 수정이 세 번째가 됨 (3/1/S) · `uploadAttachments`(attachments.go:269)의 `nextOrder` 질의 오류를 버려 질의 실패 시 0 부터 다시 세며 기존 번호와 겹침 — 이번 수정과 같은 증상의 두 번째 입구이나 질의 실패 주입이 필요 (2/2/S) · 동시 첨부 업로드가 보고서당 개수 상한을 넘김(214·218행 검사가 275행 `tx.Begin` 보다 앞) — 초과 HTTP 재현 미실행 (3/3/M) · 본문이 잘린 이미지 첨부를 거절(243행이 `DecodeConfig` 만 씀) — 전체 디코딩은 10MB×20장에서 픽셀 메모리 폭탄 (2/3/M) · README·docs/MCP.md·AdminPage 의 MCP '읽기 전용' 서술 정정과 CHECKS.md authz-check 시간 모순을 한 문서 회차로 (2/1/S)
 - 과제서: 채택 — 과제서의 4단계 실패 경로를 실제 HTTP 로 그대로 거쳐 중복 `sortOrder` 를 재현했고, 지정한 프로덕션 1파일의 `CASE` 수정만으로 수용 기준 3개를 모두 충족했습니다(과제서가 예견하지 못한 것은 `sqlparams_test.go` 의 매개변수 재사용 가드 하나뿐이며, 그 가드가 지시한 절차대로 PREPARE 로 형을 확인해 사유와 함께 등록했습니다).
 
+- 릴리즈: v0.317.0 (2026-10-05, run 2026-10-05-222749-weekly-improve)

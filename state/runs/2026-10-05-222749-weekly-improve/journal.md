@@ -27,3 +27,7 @@
 - 작은 흠: `attachments.go:444` 의 "nothing to race" 는 과하다 — 같은 목적지로 들어가는 동시 PATCH 둘은 서로 다른 행이라 잠금 없이 같은 `max+1` 을 읽는다(269행 업로드도 동일, 새 위험 아님).
 - [러너 22:54] review approved — 리뷰 승인 (risk=low)
 - [러너 22:54] pr created — https://github.com/hkjang/weekly/pull/31
+- [러너 23:20] ci passed — 검사 1개 모두 success
+- [러너 23:20] merge done — a844817
+- [러너 23:56] release published — v0.317.0
+- [러너 23:58] assets verified — v0.317.0 자산 1개 (이전 v0.316.0: 1)
