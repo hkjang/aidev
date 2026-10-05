@@ -1,7 +1,7 @@
 ---
 title: "releasedock — 자율 개선 이력"
 description: "releasedock: 자율 개선 회차 40회, 릴리즈 28건. 최근 릴리즈 v0.5.30 (자산 2개)."
-last_modified_at: 2026-10-06 07:44:37 +0900
+last_modified_at: 2026-10-06 08:24:02 +0900
 ---
 {% raw %}
 <script type="application/ld+json">
@@ -18,7 +18,7 @@ last_modified_at: 2026-10-06 07:44:37 +0900
   "name": "hkjang",
   "url": "https://github.com/hkjang"
  },
- "dateModified": "2026-10-06T07:44:37+09:00",
+ "dateModified": "2026-10-06T08:24:02+09:00",
  "version": "0.5.30"
 }
 </script>
