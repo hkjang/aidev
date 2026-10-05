@@ -1,0 +1,68 @@
+release: carry release markers to v0.2.47
+
+v0.2.47 ships one server fix already merged to main. The two custom profile
+value PATCH handlers now refuse a body they could not read instead of answering
+200 with a response a client cannot tell apart from a real save. There is no
+schema change, no migration, no new route and no web change. One error id is
+added and two decode calls change.
+
+`patchCustomProfileValuesGlobal` and `patchUserCustomProfileValues` in
+`compat_wave_handlers_final.go` read their map-shaped body with
+`_ = decodeCappedBody(w, r, &values)`, discarding the decode error. A body over
+`collectionBodyMaxBytes` — or one truncated mid-object — left `values` nil, and
+`customprofile.Service.PatchUserValues` returns on `len(values) == 0` before it
+opens a transaction, so not a single row was written. Both handlers then re-read
+the stored map with `GetUserValues` and answered 200 carrying it, so a refused
+write produced a 200 and a populated profile map that is byte-identical to the
+response of a successful save. That is a worse shape than the empty
+`{"status":"OK","count":0}` envelope v0.2.45 fixed on bulk user delete, because
+nothing in the response hints that the write was dropped.
+
+The false success also reached the ledger. Each handler writes an
+`audit.ActionCustomValuesPatch` row, and `patchUserCustomProfileValues` is the
+support path an administrator uses to backfill another user's profile, so an
+operation that never happened was recorded under the operator's name.
+
+Both call sites now use `decodeOptionalCollectionBody`, the helper v0.2.45 added
+for exactly this shape of endpoint, under the single new error id
+`api.custom_profile.values.patch.invalid_body` that both handlers share. An
+oversized body is refused with 413 and a malformed one with 400, and the refusal
+is written before `h.audit.LogAsync` runs. Because the `Optional` variant lets
+`io.EOF` through, a bodyless PATCH still answers 200 with the current map, a
+literal `null` or `{}` body is still a 200 no-op, and the contract that clears a
+field by sending a `null` value is unchanged. `request_body.go` is untouched, so
+`decodeCappedBody`, `decodeCollectionBody`, `drainCappedBody` and
+`tooManyBatchItems` keep their behavior and the other callers that deliberately
+tolerate a malformed body continue to do so.
+
+Operators integrating against these two routes should note the narrow contract
+change. A caller that sent an oversized or truncated body and read the false 200
+as a save now receives 413 or 400 and should retry with a body under the cap. A
+caller sending a well-formed body, an empty body, or no body at all sees a
+byte-identical response. The webapp's two callers always send a small
+well-formed map and are unaffected, and neither OpenAPI document describes the
+refused-body case, so integrations outside the repository are the only ones
+affected.
+
+Verified on this release tree in the order `release.yml` runs it, against a real
+PostgreSQL container: `go test -race -p 1 -count=1 ./...` at 49 packages ok and
+0 failures, with `httpapi` at 57.762s rather than the fraction of a second it
+takes when the database is absent, which confirms the database-backed
+regression executed instead of skipping. The checksum-pinned Mattermost plugin
+fixtures were not fetched on this machine, so the archive-backed `pluginhost`
+subtests skipped and the release job remains the first place they run.
+`go build ./...` and `go vet ./...` clean, `plugin-sdk/go` tests and vet clean,
+and `govulncheck` reporting this code affected by 0 vulnerabilities. In
+`webapp`, a clean `npm ci`, then `npm audit --omit=dev --audit-level=high` and
+`npm audit --audit-level=high` both at 0 vulnerabilities as of 2026-10-05, then
+`npm test` at 49 files and 224 tests on Node v22.23.1, then `npm run typecheck`
+and `npm run build`. `node scripts/verify-pages.mjs` passes against the bumped
+markers at 5 HTML pages, 47 screenshots, 16 routes and 7 brand PNGs, and
+`bash scripts/check-source-sizes.sh` passes. `git diff --check` is clean and
+this commit touches no Go file.
+
+The three remaining gates belong to the release job and depend on this commit's
+own hash, so they run against the tag rather than against this commit in
+isolation: the `linux/amd64` image build, `scripts/verify-release.sh` against
+the exported archive, and the Playwright product-UI pass. Their results are
+recorded in the annotation of the tag that points here.
