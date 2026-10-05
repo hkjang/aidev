@@ -28,3 +28,4 @@
 - 다음 회차 1순위: 같은 패턴의 마지막 열린 사례 — `resources.tsx:282` `contribution_points` 가 **max 미선언**인데 `domain.go:500` 은 10000 초과를 거절한다. `interval_minutes` 는 이미 서버와 일치하므로 할 일 없음. 비운 입력의 `""` → 서버 `def` 폴백(`scopes.max_requests` 지우면 10 저장)도 여전히 pending.
 - [러너 05:20] review approved — 리뷰 승인 (risk=low)
 - [러너 05:20] pr created — https://github.com/hkjang/hunter/pull/20
+- [러너 05:40] ci timeout — 제한 시간 안에 CI 완료를 확인하지 못함
