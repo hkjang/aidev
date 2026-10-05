@@ -1,0 +1,55 @@
+chore: release ai-admin v1.2.35
+
+The merged change closed the remaining varchar and jsonb write paths against the
+NUL code point, reusing the helper the previous release introduced rather than
+adding a second one — PostgreSQL's varchar cannot store U+0000 at any length and
+jsonb cannot store \u0000 either (22P05), yet three paths validated with only
+emptiness and utf8.RuneCountInString and so handed NUL straight to the INSERT or
+UPDATE, turning a caller's malformed input into 500 rather than 400:
+updateRole's name in internal/server/users.go, where role.name is varchar(120)
+and the failure answered role_update_failed; createKey's name in
+internal/server/keys.go, where api_key.name is varchar(160) and the failure
+answered key_create_failed; and validateProviderRequest's name, defaultModel and
+availableModels in internal/server/providers.go, which are varchar(160),
+varchar(240) and jsonb and whose failures answered provider_create_failed and
+provider_update_failed — because encoding/json decodes "\u0000" into a Go string
+holding an actual 0x00 byte, strings.TrimSpace does not remove it and its rune
+count is one, so no length or blankness check could ever have caught it — fixed
+by calling storableInVarchar (internal/server/users.go, strings.ContainsRune(value,
+0)) with its name and implementation unchanged from the v1.2.34 release that wrote
+it for app_user.display_name and email, from the same package and at the exact
+spots where these three handlers already pin length and emptiness to "400 before
+the write", with the error codes deliberately not unified but taken from each
+handler's existing vocabulary — name_invalid, key_invalid and provider_invalid —
+so no caller sees a code it did not see before, with a one-line rationale comment
+beside each limit literal following the convention already in these files and with
+the call site for available_models noting explicitly that the column is jsonb and
+not varchar, and with the test reading the runes of the decoded value, which
+leaves the six-character literal \u0000 stored exactly as it was — and since one
+validateProviderRequest covers provider creation, update and approval execution
+alike, workflow.go, updateKeyScope and updatePreferences were left untouched
+rather than fixed speculatively, over three production files and five changed
+spots, proved against a real PostgreSQL round trip by a new integration test that
+drives the actual PATCH /api/v1/roles/{id}, POST /api/v1/keys and POST and PATCH
+/api/v1/ai/providers routes and checks, for each of twelve rejections — leading,
+trailing and only-NUL role names, trailing, embedded and only-NUL key names, and
+name, defaultModel and availableModels[i] on both provider create and provider
+update — that the response is 400 and that the stored state is unchanged by
+SELECT every time: role.name and updated_at, the api_key row count, and the
+provider's name, default_model, available_models and updated_at, while pinning
+six regressions in the same test (the literal \u0000 stored and read back at 200
+or 201 on all three paths, and the existing limits held — role 120 characters at
+200 against 121 and whitespace-only at 400, key 160 at 201 against 161 and
+whitespace-only at 400, provider 160 and 240 at 200 against 161 and 241 at 400) —
+with the defect shown by red, green and revert-red: all twelve NUL cases failed
+with those 500s before the fix, all eighteen subtests passed after it, and putting
+storableInVarchar back to return true failed the same twelve while the six
+regressions kept passing — with go test -race -count=1 ./..., make lint and
+go build ./... all passing and one sentence added to each of the role, API key and
+AI provider sections of docs/api.md, and with no web change so internal/ui/dist is
+untouched — and left VERSION and CHANGELOG.md untouched, so this release advances
+the patch number by one — the increment every release so far has used — and
+records the change under today's date.
+
+Bumped 1.2.34 to 1.2.35 in every file scripts/verify-version.sh checks and
+added the v1.2.35 changelog entry.
