@@ -17,3 +17,11 @@
 - 보류 아이디어: http/pipeline.ts CSRF·본문 크기 한계 테스트 [3/2/M] — 실제 DB·createApp 배선 필요, 대역 금지.
 - 과제서: 채택 — 현재 sanitise와 mediaRoutes가 정찰 근거와 일치하고 지정된 테스트 1파일만으로 수용 기준을 충족했다.
 
+## 2026-10-05
+- 선택: IndexNow 알림이 publicUrl 설정 오류에 트랜잭션 뒤에서 터지지 않게 하고, 키·요청 본문 계약을 테스트로 묶는다 (가치 3 / 위험 1 / 작업량 S)
+- 결과: 성공
+- 요약: `pingIndexNowStatus` 의 `new URL(env.publicUrl)` 이 try 밖에 있어 스킴 없는 설정값(`yeopjari.bid`) 하나로 TypeError 가 호출자까지 올라갔다 — `jobs/disclosures.ts:296` 은 트랜잭션 커밋 뒤에 부르므로 글을 다 올린 아침 공시 작업이 실패로 기록되고 `/api/v1/internal/indexnow` 는 500 이 된다. 파싱을 try 로 감싸 `error publicUrl 설정이 주소가 아닙니다` 를 돌려주고(dev/offline/빈 목록은 그대로 `skipped`, `sent`·`http n`·`error …` 문자열은 손대지 않음 — `ops.ts` 가 그대로 노출한다), 프로덕션 파일은 `seo/indexnow.ts` 1개만 고쳤다. 새 테스트 19건은 스텁한 `globalThis.fetch` 가 실제로 받은 본문·헤더를 읽어 assert 한다(실제 네트워크 호출 없음): 잘못된 publicUrl 3값에서 비던짐·fetch 미호출, 키가 `public-pages.ts` 의 `/^[0-9a-f]{32}\.txt$/` 게이트 통과·같은 env 결정성·tokenSign 다르면 키도 다름, host/key/keyLocation/urlList·중복 제거·1000개 상한, `user-agent` 헤더(c730b67 회귀), `sent`/`http 429`/80자 절단 오류. 검증: `npx vitest run …/indexnow.test.ts` (19/19), `npm run check` = lint + 3 워크스페이스 typecheck + `vitest run` 28파일 247건 모두 exit 0. 커밋 507ea8a.
+- 실패 재현: `FAIL packages/core/src/__tests__/indexnow.test.ts > pingIndexNowStatus 설정 오류 > publicUrl 이 "yeopjari.bid" 면 pingIndexNow 는 false 다` / `Caused by: TypeError: Invalid URL ❯ pingIndexNowStatus packages/core/src/seo/indexnow.ts:31:18` (고치기 전 7건 실패 / 12건 통과 — 계약 테스트 12건은 기존 동작을 그대로 고정하므로 처음부터 통과)
+- 보류 아이디어: PR 에서 도는 CI 워크플로가 없다(lint/typecheck/test) — 보호·릴리즈 경로라 사람 승인 회차용 [5/3/M] · 연봉 RLS E2E 가 쿼리·결과 파싱 실패를 성공 처리하지 않게(격리 PostgreSQL 필요) [4/2/M] · Node StaticFiles 실제 파일 기반 HEAD·SPA·경로 격리 테스트(차선 후보 3회 연속, server 워크스페이스에 추적 테스트 0) [3/1/S] · 사진 입력 바이트·형식 한계의 AppError 회귀 테스트 [3/1/S] · http/pipeline.ts CSRF·본문 크기 한계 단위 테스트(실제 DB·createApp 배선 필요) [3/2/M]
+- 과제서: 채택 — 근거가 지금 코드와 정확히 맞았다(indexnow.ts:31 의 try 밖 `new URL`, disclosures.ts:296 의 커밋 뒤 호출, public-pages.ts:775 의 키 게이트, ops.ts:477 의 문자열 노출까지). 다만 프로필이 말한 cookies-params.test.ts 는 이 main 에 없다(2026-10-04 회차 미머지).
+

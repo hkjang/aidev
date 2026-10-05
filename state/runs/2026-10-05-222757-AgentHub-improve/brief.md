@@ -1,0 +1,23 @@
+- 과제: 제공자 설정으로 렌더링되는 추적 스니펫의 크기에 상한을 둔다 (사이트 id·measurement id·제공자 URL 전체 길이) (가치 3 / 위험 2 / 작업량 S)
+- 왜: 붙여 넣은 스니펫은 `MaxSnippetBytes = 8KiB` 로 묶여 있는데, 제공자 분기가 **만들어 내는** 스니펫에는 어떤 크기 상한도 없다 — `Settings.Snippet()` 은 `MomentoSiteID`·`MeasurementID`·`MatomoSiteID` 와 `MomentoURL`·`MatomoURL` **전체**(경로·쿼리 포함)를 모든 페이지의 HTML 로 그대로 찍어 내며, `Validate()` 가 이들에 대해 검사하는 것은 "비어 있지 않은지"(289·296·300행)와 URL 의 **출처** 길이(278행, `MaxProviderOriginRunes`)뿐이다. 즉 경로가 8000룬인 MatomoURL 이나 1MB 짜리 measurement id 는 저장되고, `internal/api/tracking.go:140` 의 `serveIndex` → `injectSnippet(page, settings.Snippet(nonce), …)` 를 통해 추적이 켜진 **모든 페이지 응답 본문**에 실려 나간다(정찰에서 호출 지점을 직접 열어 확인; `Snippet()` 의 다른 프로덕션 호출자는 `tracking.go:323` 의 `Active` 뿐이다). 고치면 같은 설정 문서에서 나오는 두 경로(붙여 넣기 / 제공자)가 같은 크기 규율을 받는다.
+- 수용 기준: 1) `MomentoSiteID`·`MeasurementID`·`MatomoSiteID` 가 상한을 넘으면 `Validate()` 가 **저장 전에** 거절하고, 어느 필드인지와 실제 길이를 메시지에 담는다 2) `MomentoURL`·`MatomoURL` 의 **전체 길이**(출처뿐 아니라 경로·쿼리까지)에 상한이 생기되, 기존 출처 상한(`MaxProviderOriginRunes = 300`)과 기존 "http(s)://호스트 형태" 검사는 그대로 남는다 3) 비활성(`Enabled=false`)·`provider=none`·프록시 모드에서도 거절된다(제공자 출처 검사가 이미 그렇게 하는 것과 같은 이유 — 나중 쓰기가 provider 만 뒤집으면 바로 나간다) 4) 테스트가 ASCII·한국어로 경계±1룬을 고정하고, 상한 안쪽의 최대 설정이 만드는 `Snippet("")` 길이를 **실제로 재서** 기록한다 5) 기존 테스트(`internal/tracking/tracking_test.go` 의 `G-1`·`agenthub`·`x`·`3` 같은 짧은 값, 40×81룬 허용 목록)는 하나도 깨지지 않는다
+- 건드릴 파일:
+  - `internal/tracking/tracking.go` — 프로덕션 파일은 **이 하나뿐**. (a) `MaxProviderOriginRunes`(62행) 옆에 새 상수 두 개를 산문 주석과 함께 둔다: 사이트/측정 id 용(예 `MaxProviderIDRunes = 200`) 과 제공자 URL 전체용(예 `MaxProviderURLRunes = 1024`). 숫자는 구현자가 정하되 **기존 테스트가 통과하는 값**이어야 하고, 고른 이유(GA4 `G-XXXXXXXXXX`, Matomo 사이트 id 는 정수, Momento 사이트 id 는 짧은 슬러그 / 경로가 있는 수집기 주소에 여유)를 주석에 적는다. (b) `Validate()` 의 제공자 출처 루프(275-281행) **직후, `if !s.Enabled` (282행) 앞에** 새 검사를 넣는다 — 같은 자리여야 비활성·미선택에서도 걸린다. 세 id 는 275행과 같은 `[]struct{ name, value string }` 루프로 묶는 것이 기존 모양과 맞는다.
+  - `internal/tracking/tracking_test.go` — 경계 테스트. 기존 거절 표(`tracking_test.go:111-118` 의 map) 에 새 항목을 더하는 방식과, 제공자 출처 테스트(`:194` 근처, `:216` 의 `MomentoURL: raw` 표) 의 모양을 따를 것.
+  - `internal/api/tracking_test.go` — (선택) 제공자 출처 때처럼 `decodeTrackingSettings`/`validateSetting` 경로가 같은 입력을 거절하는지 한 건. `:520` 의 `valid` map 과 `:536` 의 `decodeTrackingSettings` 호출이 본뜰 자리다. **주의: 이 함수 호출 통과는 실제 HTTP/DB 저장의 증명이 아니다** — 과거 회차가 같은 주의를 남겼다.
+- 검증 명령:
+  - `go test ./internal/tracking ./internal/api` — 정찰에서 실제로 실행했고 수정 전 기준 통과(tracking cached / api 1.767s)
+  - `go test -race -p 1 ./cmd/... ./internal/...` (DSN 없으면 live 는 skip)
+  - `go build ./... && go vet ./internal/tracking ./internal/api && gofmt -l internal/tracking internal/api`
+  - **수정 전 실패를 먼저 보여 줄 것**: 상수만 넣고 `Validate()` 에 배선하지 않은 상태에서 새 테스트가 "과대 id 가 받아들여졌다 (n자)" 로 실패하는 출력을 회차 노트에 남긴다. 상한 안쪽 최대 설정의 `Snippet("")` 바이트 수는 추정하지 말고 테스트가 재게 한다.
+- 위험과 피할 것:
+  - `Snippet()`·`PolicySources()`·`pagePolicy`·`originOf`·`splitHosts` 를 **고치지 말 것**. 렌더링 쪽에서 자르면 저장값과 페이지가 갈라진다. 거절하되 trim 하지 않는 것이 이 저장소의 관례다(상수 주석들이 명시).
+  - 상한은 **룬** 단위로 세고, 주석에서 룬과 바이트를 혼동하지 말 것 — 커밋 `c9fa51f`·`cbbc4fb` 가 정확히 그 혼동을 바로잡았다. 한국어 주소는 룬당 3바이트다.
+  - 기존 테스트가 "상한이 없다" 를 고정해 둔 자리를 깨지 않도록 숫자를 고를 것(2026-09-30 회차가 합계 2048 룬을 골랐다가 40×81룬 목록 테스트와 충돌했다).
+  - `MomentoEnvironment` 는 이미 32자 + 마크업 문자 검사가 있다(233행). 다시 손대지 말 것.
+  - **이것은 크기 문제이지 주입 문제가 아니다.** 세 id 와 두 URL 은 `Snippet()` 안에서 모두 `html.EscapeString` 을 거친다(341·350·357·362행, 직접 확인). 마크업 문자 검사를 새로 넣으려 하지 말고 길이만 보라 — `MomentoEnvironment` 의 `ContainsAny` 를 베껴 오면 이미 탈출되는 값에 두 번째 계약을 만드는 셈이고, 기존 설정을 거절할 수 있다.
+  - 콘솔 쪽 입력(`web/src/pages/AdminSettings.tsx:167` 의 measurement id 등)에는 `maxLength` 가 없다(직접 확인). UI 안내 추가는 **이번 과제가 아니다**(별도 보류 아이디어) — 파일 수를 늘리지 말 것.
+  - 보호 경로 금지: `internal/api/auth.go`·`mcpoauth.go`·세션 게이트웨이·`internal/store/migrations`·`.github/workflows`.
+  - `runtime-images.json` 의 어떤 이미지도 `internal/tracking`·`internal/api` 를 sourcePaths 에 두지 않는다(이전 회차들이 매니페스트를 직접 읽어 확인) → BASE_VERSION 상향 불필요. 구현자가 한 번 더 확인하면 더 좋다.
+  - 커밋 관례: 영어 conventional prefix + 한국어 설명. Co-Authored-By 같은 trailer 는 붙이지 않는다.
+- 차선 후보: guide-shots 의 복원 실패가 problems 요약 출력을 건너뛰는 것을 고친다 (2/1/S) — `web/scripts/guide-shots.mjs` 의 `withGuideSettings` 가 복원 중 throw 하면 그 뒤의 요약이 출력되지 않는다. `cd web && node --test scripts/*.test.mjs` 로 검증하되, `guide-settings-check.test.mjs` 는 소스를 `requestTimeoutMs` 부터 `  if (problems.length)` 앞까지 잘라 vm 에서 돌리므로 그 앵커를 건드리면 테스트가 함께 움직인다.
