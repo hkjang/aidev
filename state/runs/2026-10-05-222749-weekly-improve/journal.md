@@ -18,3 +18,12 @@
 - 다음 역할이 조심할 것: 새 시험 3개는 **DB 가 있어야 돈다** — `WEEKLY_TEST_POSTGRES_DSN` 없이 돈 SKIP 은 성공이 아니다(`weekly-test-pg` 15434, 자격은 `docker inspect` 로 자식 환경에만). `-run 'Attachment'` 로는 새 시험이 **안 잡힌다**(이름에 Attachment 가 없다) — `-run 'Attachment|Capture|SortOrder|Placement'` 를 쓸 것. `guard-check` 기준은 `f7488dd`.
 - [러너 22:45] brief accepted — 채택 — 과제서의 4단계 실패 경로를 실제 HTTP 로 그대로 거쳐 중복 `sortOrder` 를 재현했고, 지정한 프로덕션 1파일의 `CASE` 
 - [러너 22:48] verify passed — 검증 7개 통과 (auto)
+
+## 비평 노트
+- 확인: main 핸들러를 overlay 로 끼워 새 시험을 돌렸고 머리 시험이 주장한 문구 그대로 실패(`BEFORE holds b.png and c.png on the same sortOrder 1`), 수정본에서 3개 통과. guard-check `--changed f7488dd` 9개·build/vet·`Attachment|Capture|SortOrder|Placement|Export|Pptx|SQL`·openapi 통과, 트리 깨끗. 승인.
+- 못 본 것: 프런트 렌더 시험(이 저장소에 없음), npm 전체 검증, 운영 DB 의 기존 중복 `sort_order`.
+- **남는 우려(릴리즈 노트)**: 서버가 호출자가 보내지 않은 `sort_order` 를 쓰는데 응답은 `{"id":…}` 뿐이고 `AttachmentPanel.tsx:78-84` 의 `change()` 는 성공 시 reload 를 안 한다. 실제 HTTP 로 재현 — BEFORE=x(0),y(1)/AFTER=a(0) 에서 a 를 BEFORE 로 옮긴 뒤(서버 2, 캐시 0) ↑ 한 번이면 x=0,y=0 중복. **main 에서도 같은 최종 상태라 퇴행은 아니며**(그래서 거절하지 않음) 두 입구 중 프런트 쪽이 남았다.
+- 다음 회차 후보: `updateAttachment` 응답에 바뀐 `sortOrder` 를 싣거나 `change()` 가 placement 변경 시 `load()` 하게 하기; `sqlparams_test.go` 허용 목록을 파일 단위에서 (파일, 질의) 단위로 좁히기.
+- 작은 흠: `attachments.go:444` 의 "nothing to race" 는 과하다 — 같은 목적지로 들어가는 동시 PATCH 둘은 서로 다른 행이라 잠금 없이 같은 `max+1` 을 읽는다(269행 업로드도 동일, 새 위험 아님).
+- [러너 22:54] review approved — 리뷰 승인 (risk=low)
+- [러너 22:54] pr created — https://github.com/hkjang/weekly/pull/31

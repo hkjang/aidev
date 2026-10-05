@@ -19,3 +19,16 @@
 - 다음 역할이 조심할 것: 새 live 서브테스트(`trackingallowlist_live_test.go` 의 `an oversized provider id or address never reaches a page`)는 **DB 가 있어야 돈다** — `AGENTHUB_TEST_DSN` 없으면 상위 테스트가 skip 되고 아무 신호도 남지 않는다. 반대로 `internal/api/tracking_test.go` 에 더한 두 건은 `validateSetting` 단위 호출이라 **HTTP/DB 저장의 증명이 아니다**. `internal/tracking` 의 측정 테스트는 `MaxSnippetBytes` 와의 대칭을 단정하므로, 제공자 상한을 올리면 그것이 먼저 실패한다.
 - [러너 22:47] brief accepted — 채택 — 근거가 현재 코드와 정확히 일치했다(세 id 에 길이 검사 없음, 278행이 `originOf` 결과만 봄, `Snippet()` 의 네 포맷이 
 - [러너 22:47] verify passed — 검증 5개 통과 (auto)
+
+## 비평 노트
+- 확인한 것: 검사가 `if !s.Enabled` 앞에 있고 `Validate` 가 선두에서 `Normalized()` 를 부르므로 길이는 `Snippet()` 이 쓰는 값과 같은 값에 대해 센다. 주석의 바이트 수 네 개(1585/3987/5188/6389)가 측정 로그와 정확히 일치. `validateSetting` 호출 지점은 routes.go:1542 하나뿐 — 폭발 반경은 관리자 설정 PUT 뿐이고 마이그레이션·외부 상태 없음.
+- 테스트 효력을 직접 시험했다: tracking.go 의 두 비교를 `+100000` 으로 무력화하니 tracking 4건·모드 전수·api 2건이 "was accepted" 로 실패하고 live 서브테스트가 PUT 200 과 `/runs` 본문 905바이트를 재현했다. 일회용 postgres(55448)로 live 6개 서브테스트 통과 확인. 검증 후 파일 복원, 작업 트리 깨끗.
+- 못 본 것: web 명령 일체(node_modules 없음), 실제 조직의 수집기 주소 길이, 프록시 헤더 예산, PDF.
+- 승인이어도 남는 우려: ① **쓰기 전용 상한** — `cachedTrackingSettings` 가 수리하지 않으므로 이미 저장된 과대 값은 계속 나간다. 릴리즈 노트에 "새 저장에만 적용" 을 적을 것. ② 200/1024 가 실제 주소로 미검증 — 1024룬 넘는 경로를 쓰는 배포는 재저장이 거절된다(상수 한 줄 revert 로 복구). ③ `AdminSettings.tsx` 에 세 id·두 URL 의 maxLength·안내가 없어 관리자는 저장 시점에야 거절을 본다.
+- 다음 회차가 알 것: 새 live 서브테스트는 DSN 없으면 skip 되어 CI 에 신호를 남기지 않는다. 보안·법무 차단 없음(주입 아님 — 네 포맷 모두 EscapeString, 개인정보 신규 수집 없음).
+- [러너 22:51] review approved — 리뷰 승인 (risk=low)
+- [러너 22:51] pr created — https://github.com/hkjang/AgentHub/pull/43
+- [러너 22:54] ci passed — 검사 1개 모두 success
+- [러너 22:54] merge done — e2432d8
+- [러너 23:01] release published — v0.260.0
+- [러너 23:06] assets verified — v0.260.0 자산 8개 (이전 v0.259.0: 8)
