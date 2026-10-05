@@ -1,0 +1,64 @@
+
+ RUN  v3.2.7 /home/hkjang/.cache/auto-improve-wt/vibe-code
+
+ ✓ tests/unit/goal-loop.test.ts (3 tests) 2ms
+ ❯ tests/unit/goal-age.test.ts (5 tests | 2 failed) 8ms
+   × stamp age across timestamp notations > reads Z, +09:00 and KST notations of one instant as the same age 5ms
+     → expected [ 18, 9, 9 ] to deeply equal [ 9, 9, 9 ]
+   × stamp age across timestamp notations > honours a negative offset instead of assuming KST 1ms
+     → expected 22 to be 9 // Object.is equality
+   ✓ stamp age across timestamp notations > still reads an offset-less stamp as KST 1ms
+   ✓ stamp age across timestamp notations > agrees with the shared parser on every notation, so the stale-warning and auto-resume paths cannot diverge 0ms
+   ✓ stamp age across timestamp notations > keeps Infinity for a missing or date-only stamp 0ms
+ ✓ tests/unit/goal-health.test.ts (4 tests) 4ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/unit/goal-age.test.ts > stamp age across timestamp notations > reads Z, +09:00 and KST notations of one instant as the same age
+AssertionError: expected [ 18, 9, 9 ] to deeply equal [ 9, 9, 9 ]
+
+- Expected
++ Received
+
+  [
+-   9,
++   18,
+    9,
+    9,
+  ]
+
+ ❯ tests/unit/goal-age.test.ts:19:28
+     17|   const offset = goalAgeHours(goalTemplate(OFFSET), NOW);
+     18|   const kst = goalAgeHours(goalTemplate(KST), NOW);
+     19|   expect([z, offset, kst]).toEqual([9, 9, 9]);
+       |                            ^
+     20|  });
+     21| 
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+ FAIL  tests/unit/goal-age.test.ts > stamp age across timestamp notations > honours a negative offset instead of assuming KST
+AssertionError: expected 22 to be 9 // Object.is equality
+
+- Expected
++ Received
+
+- 9
++ 22
+
+ ❯ tests/unit/goal-age.test.ts:24:72
+     22|  it("honours a negative offset instead of assuming KST", () => {
+     23|   // 2026-10-04 23:00-04:00 is 2026-10-05 03:00 UTC — the same instant…
+     24|   expect(goalAgeHours(goalTemplate("2026-10-04T23:00:00-04:00"), NOW))…
+       |                                                                        ^
+     25|  });
+     26| 
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯
+
+
+ Test Files  1 failed | 2 passed (3)
+      Tests  2 failed | 10 passed (12)
+   Start at  21:25:58
+   Duration  364ms (transform 159ms, setup 0ms, collect 334ms, tests 14ms, environment 0ms, prepare 155ms)
+
