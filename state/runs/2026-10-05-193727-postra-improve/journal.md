@@ -27,3 +27,6 @@
 - 내가 **못 본 것**: 전체 `go test -race`(Go 미변경), PostgreSQL 검사, 브라우저 e2e, 콜드 경로의 실제 `npm ci` 완주(분기 발화만 증명).
 - [러너 19:51] review approved — 리뷰 승인 (risk=low)
 - [러너 19:51] pr created — https://github.com/hkjang/postra/pull/35
+- [러너 19:57] ci passed — 검사 10개 모두 success
+- [러너 19:57] merge done — 6a989bf
+- [러너 20:09] release ci-blocked — 릴리즈 커밋 CI: failed — 성공이 아닌 검사: build · vet · test (race)=failure · 실패한 검사: ? 잡: build · vet · test (race)  (태그 보류)

@@ -19,3 +19,19 @@
 - 다음 역할이 조심할 것: 새 테스트 8개 중 2개(`TestAQuoteMarkerInsideASentenceIsNotAMarker`·`TestAQuoteInsideACodeBlockIsStillCode`)는 **고치기 전후 모두 green** 인 계약 고정용이다 — red 가 아니었던 것이 정상이다. 나머지 6개가 red 였다(출력은 원장에 있다). 커밋 5bf8a38, 프로덕션 1파일.
 - [러너 19:48] brief accepted — 채택 — 재현 문자열 `- \> 인용입니다.`·수용 기준 7개·건드릴 파일 세 자리가 현재 코드와 정확히 맞았고, 권장한 `without
 - [러너 19:49] verify passed — 검증 9개 통과 (auto)
+
+## 비평 노트
+- red 를 직접 재현했다: base(b3b4138) 를 임시 워크트리에 떼어 새 테스트 파일만 얹어 돌렸고 정확히 6개가 FAIL(`- \> 인용입니다.` 출력 확인), 나머지 2개는 구현자 말대로 green 인 계약 고정용이었다. 브랜치에서 `go vet ./internal/docs` + `go test ./...` 전체 ok. 임시 워크트리는 제거했고 대상 트리는 손대지 않았다.
+- 경계 14가지를 직접 실행해 봤다(중첩 `>>`/`> >`, `>` 단독, `>인용`(공백 없음), 인용 안 `#`·`-`·`|`·`|---|`, 인용 안 수평선, `!source`/`@cover`/`#해시` 재이스케이프, front matter 뒤 인용, 미닫힘 펜스 재생). 재귀는 `withoutQuoteMarker` 가 선두 `>` 를 다 벗기므로 한 단계로 끝난다 — 무한 루프 없음.
+- 승인이어도 남는 두 가지(둘 다 **이번 변경이 만든 것이 아님**, 앞뒤 모두 동일하게 어긋남): ① 인용 안 펜스(`> ```$`)는 여전히 펜스로 안 읽혀 ``` 가 요점으로 남고 경고도 없다(펜스 판정이 `handle` 밖 루프에 있어 재귀가 닿지 않는다 — 다음 회차 1순위 후보). ② `> 소제목` 밑에 **인용 안 된** `===` 이 오면 제목이 된다(base 에서도 `\> 소제목` 제목이었으므로 개선 방향).
+- 못 본 것: 실제 PPTX/PDF 렌더링과 DB 연동(PTIUM_TEST_DSN 없음), docx·pdf 실파일 회귀(해당 코드·`escapeLine` 무변경이라 생략 타당). 웹은 변경 없음.
+- 보안·법무 소견 없음: 입력 파서의 문자열 처리만 바뀌고 인증·식별자·비밀값·개인정보·의존성에 닿지 않는다. 릴리즈 노트에는 "인용 줄의 `>` 가 떨어진다" 와 "목록 안 인용(`- > …`)은 아직 그대로" 를 함께 적을 것.
+- [러너 19:52] review approved — 리뷰 승인 (risk=low)
+- [러너 19:53] pr created — https://github.com/hkjang/ptium/pull/43
+- [러너 19:56] ci passed — 검사 1개 모두 success
+- [러너 19:56] merge done — 5bf8a38
+- [러너 20:07] release published — v1.69.57
+- [러너 20:07] gh-release created — GitHub Release v1.69.57
+- [러너 20:07] manifest ok — ptium-1.69.57.tar.gz ptium-1.69.57.tar.gz.sha256 docker-compose.ptium-1.69.57.yml ptium-1.69.57.env.example load-ptium-1.69.57.ps1 load-ptium-1.69.57.sh ptium-1.69.57.kubernetes.yaml 
+- [러너 20:07] assets uploaded — 7개
+- [러너 20:07] assets verified — v1.69.57 자산 7개 (이전 v1.69.56: 7)
