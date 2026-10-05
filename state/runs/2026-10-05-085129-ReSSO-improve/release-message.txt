@@ -1,0 +1,67 @@
+release: ReSSO v0.9.99
+
+Revocation is what somebody reaches for when a token has leaked, and the only
+question it is asked is whether that token is now dead. A clients table that
+would not report a verdict, or a stored digest that would not decode, was
+answered with 401 invalid_client "client authentication failed" and left no
+entry in the trail at all. That answer says the secret the caller sent is not
+the one on file, so a relying party rotates a credential that was right the
+whole time or pages somebody about it — and the token it called about was never
+looked for, so it is still live and still issuing access. The one answer that
+said so was not given.
+
+RFC 7009 section 2.2.1 is written for this state: the client is to assume the
+token still exists and may retry. The four faults further down this handler
+already answer with it and with the same body text, so the branch added in
+front of writeClientAuthError reuses both rather than inventing a third way to
+say the same thing. v0.9.97 wrote that the three endpoints sharing
+authenticateOIDCClient have three different contracts for a fault on this side
+and that the response is therefore a change per endpoint; v0.9.98 was the token
+endpoint's 500, this release is revoke's 503, and introspection is the one left.
+
+An undecided authentication now answers 503 temporarily_unavailable with the
+body this handler already uses — the token could not be revoked and is still
+valid; retry after a short delay. It says the token is still live, which is the
+thing the caller needs and the thing 401 denied it. No WWW-Authenticate header
+and no invalid_client go out with it.
+
+The failure is now recorded as TOKEN_REVOKED FAILURE with revoked=none, where
+before there was no entry whatsoever — the Realm branch immediately above wrote
+that absence down as a defect of its own. The entry is keyed on the Realm rather
+than the Client: client_id arrives on an unauthenticated request and nothing has
+checked it at this point, so recording it would put unverified input in the trail
+for the audit output to hand back, while realm.Name is the party this route did
+resolve. Nothing is logged either, because clientAuthUndecided has already
+written the ERROR line naming the step and the error, and a second line for one
+fault would only make it look like two.
+
+Everything else answers as before. A credential that was read and refused, an
+identifier nobody registered, a throttled caller and a caller that hung up all
+keep the answer they have always had, and what spends which rate-limit budget is
+unchanged. The hang-up case is the one that matters: clientAuthUndecided does not
+mark it, so an unauthenticated caller cannot put this route's
+resso_http_requests_total{route,status="503"} wherever it likes by sending
+requests under any client_id and abandoning them — the hole v0.9.98 closed in the
+status code does not reopen here.
+
+Introspection is untouched. Its contract for a fault on this side is 200
+active=false, which cannot be reached without also settling whether RFC 7662
+means to hand a 200 to a caller it never established was authorized to ask, and
+what introspection's new stage label is. It still answers 401.
+
+No metric is added. This failure is already counted under
+resso_client_auth_errors_total{stage}, and the 503 shows in
+resso_http_requests_total{route,status}. Neither the secret nor the client_id
+appears in a response, a log line, a label or the trail.
+
+The operations guide's resso_client_auth_errors_total entry had to be corrected
+rather than extended: v0.9.98 wrote there that introspection and revocation both
+still answer 401 invalid_client, and this change makes that false. It now gives
+revoke's 503 and its audit entry, and leaves introspection as the one still
+answering 401. The README's metric table is unchanged because no series was
+added. The comment above the helper, which counted two endpoints as not yet
+having a branch, now names introspection as the only one and records why 503 was
+the right status here.
+
+Stamps the version in the Makefile, console package metadata, .env.example and
+both compose files, with no schema or configuration changes.
