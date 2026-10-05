@@ -1,0 +1,118 @@
+#0 building with "default" instance using docker driver
+
+#1 [internal] load build definition from Dockerfile
+#1 transferring dockerfile:
+#1 transferring dockerfile: 1.17kB done
+#1 DONE 0.5s
+
+#2 [internal] load metadata for docker.io/library/node:22-alpine
+#2 DONE 1.3s
+
+#3 [internal] load .dockerignore
+#3 transferring context: 136B done
+#3 DONE 0.0s
+
+#4 [deps 1/4] FROM docker.io/library/node:22-alpine@sha256:0a7108bf6c7bf5de370ffb1a3ed6be93d405b43ff159f681a8d18c0e2bc2e402
+#4 resolve docker.io/library/node:22-alpine@sha256:0a7108bf6c7bf5de370ffb1a3ed6be93d405b43ff159f681a8d18c0e2bc2e402 0.0s done
+#4 DONE 0.0s
+
+#5 [internal] load build context
+#5 transferring context: 3.95MB 0.0s done
+#5 DONE 0.1s
+
+#6 [deps 2/4] WORKDIR /app
+#6 CACHED
+
+#7 [deps 3/4] COPY package.json package-lock.json* ./
+#7 CACHED
+
+#8 [deps 4/4] RUN npm ci --legacy-peer-deps
+#8 CACHED
+
+#9 [builder 3/5] COPY --from=deps /app/node_modules ./node_modules
+#9 CACHED
+
+#10 [builder 4/5] COPY . .
+#10 DONE 0.1s
+
+#11 [builder 5/5] RUN npm run build
+#11 0.766 
+#11 0.766 > kcb-dashboard@0.1.0 build
+#11 0.766 > next build
+#11 0.766 
+#11 1.240 ▲ Next.js 16.3.3 (Turbopack)
+#11 1.324 ✓ Running next.config.ts took 83ms
+#11 1.339 - Experiments (use with caution):
+#11 1.339   · serverActions
+#11 1.339 
+#11 1.365   Creating an optimized production build ...
+#11 3.964 ✓ Compiled successfully in 2.4s
+#11 3.967   Running TypeScript ...
+#11 7.851   Finished TypeScript in 3.9s ...
+#11 7.854   Collecting page data using 19 workers ...
+#11 8.928   Generating static pages using 19 workers (0/17) ...
+#11 9.256   Generating static pages using 19 workers (4/17) 
+#11 9.340   Generating static pages using 19 workers (8/17) 
+#11 9.359   Generating static pages using 19 workers (12/17) 
+#11 9.394 ✓ Generating static pages using 19 workers (17/17) in 466ms
+#11 9.399   Finalizing page optimization ...
+#11 9.721 
+#11 9.723 Route (app)
+#11 9.723 ┌ ƒ /
+#11 9.723 ├ ƒ /_not-found
+#11 9.723 ├ ƒ /admin
+#11 9.723 ├ ƒ /api/activities
+#11 9.723 ├ ƒ /api/activities/import
+#11 9.723 ├ ƒ /api/activities/reset-visitor
+#11 9.723 ├ ƒ /api/auth/login
+#11 9.723 ├ ƒ /api/auth/session
+#11 9.723 ├ ƒ /api/csp-report
+#11 9.723 ├ ƒ /api/mail
+#11 9.723 ├ ƒ /api/mail/deliveries
+#11 9.723 ├ ƒ /api/mail/test
+#11 9.723 ├ ƒ /api/tracking
+#11 9.723 ├ ƒ /api/tracking/violations
+#11 9.723 ├ ƒ /momento/[...path]
+#11 9.723 └ ƒ /pc
+#11 9.723 
+#11 9.723 
+#11 9.723 ƒ Proxy (Middleware)
+#11 9.723 
+#11 9.723 ƒ  (Dynamic)  server-rendered on demand
+#11 9.723 
+#11 9.791 npm notice
+#11 9.791 npm notice New major version of npm available! 10.9.9 -> 12.2.0
+#11 9.791 npm notice Changelog: https://github.com/npm/cli/releases/tag/v12.2.0
+#11 9.791 npm notice To update run: npm install -g npm@12.2.0
+#11 9.791 npm notice
+#11 DONE 9.9s
+
+#12 [runner 3/8] RUN addgroup --system --gid 1001 nodejs
+#12 CACHED
+
+#13 [runner 4/8] RUN adduser --system --uid 1001 nextjs
+#13 CACHED
+
+#14 [runner 5/8] COPY --from=builder /app/public ./public
+#14 CACHED
+
+#15 [runner 6/8] COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
+#15 DONE 0.4s
+
+#16 [runner 7/8] COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
+#16 DONE 0.1s
+
+#17 [runner 8/8] RUN mkdir -p /app/data /app/uploads && chown -R nextjs:nodejs /app/data /app/uploads
+#17 DONE 0.2s
+
+#18 exporting to image
+#18 exporting layers
+#18 exporting layers 1.4s done
+#18 exporting manifest sha256:481dd2f028a09df97e3b40be9ee832aa462c4ce25dee5196ac282561b3f69e0e 0.0s done
+#18 exporting config sha256:97e1c85339cdea6b62b28adcf864190d1ddb99f4ca5759d5e6f8784e986044a2 0.0s done
+#18 exporting attestation manifest sha256:df3d688fe26c393e665feb6f6e48885285e0bd9371a20c8ea37c9726129b6971 0.0s done
+#18 exporting manifest list sha256:be0610c7fcb10056aef580e01494c5c209388741344117cd99778a7ea3ef35ae 0.0s done
+#18 naming to docker.io/library/cutover:v1.15.0 done
+#18 unpacking to docker.io/library/cutover:v1.15.0
+#18 unpacking to docker.io/library/cutover:v1.15.0 0.7s done
+#18 DONE 2.2s
