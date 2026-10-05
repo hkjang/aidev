@@ -1,0 +1,27 @@
+# 이룸검수 (client.irumx.app) 프로필 (2026-10-06)
+
+- 목적: 외주 개발의 작업 범위·추가 작업·납품 검수를 개발업체(테넌트)와 고객이 같은 화면에서 확인하는 멀티테넌트 SaaS. "어디까지 만들기로 했는지 / 무엇을 납품했는지 / 고객이 어떤 버전을 승인했는지" 를 고칠 수 없는 기록으로 남기는 것이 핵심.
+- 스택: TypeScript. 화면 React 19 + Vite 8 + React Router 8 + TanStack Query. API Cloudflare Workers + Hono 4. DB D1 + Drizzle 0.45. 파일 비공개 R2. 인증 Better Auth 이메일 OTP(초대제, `disableSignUp`). 메일 Resend. Cron 5분. 시험 Playwright 1.63(단위도 Playwright 로 돌린다 — Vitest 없음).
+- 구조:
+  - `src/worker/` — `index.ts`(진입·Cron) → `app.ts` → `routes/`(me·projects·requests·scope·changes·releases·approvals·invitations·workspaces·activity·files·ops), `services/`(approvals·approval-view·files·outbox·mail·invites·audit·numbering·cleanup), `auth.ts`·`access.ts`(인증과 프로젝트 권한을 분리), `db/schema.ts`(545줄)·`db/client.ts`, `lib/util.ts`·`lib/errors.ts`
+  - `src/shared/` — `domain.ts`(역할×동작 권한 표, 상태 이름·라벨, FILE_POLICY), `kakao.ts`(붙여넣기 분석기 — 순수 함수만). 서버·화면이 함께 import 한다.
+  - `src/client/` — `pages/`(project·requests·releases·studio·scope·changes·auth·certificate·client·ops), `components/`(ui·decision·comments), `lib/`(api·types·format·flash), `styles/`(tokens·base·app·static CSS)
+  - `migrations/` — `0000_init.sql`, `0001_guards.sql`(발행본 고정·결정 불변 SQLite 트리거), `meta/`(drizzle 스냅샷)
+  - `tests/` — `kakao.spec`·`guard.spec`(unit), `api-flow`·`api-security`(api), `ui-flow`·`ui-mobile`(브라우저), `shots.spec`(SHOTS=1), `api.ts`(헬퍼), `mock-resend.mjs`
+  - `scripts/` — subset-font·verify-build·db-local·admin·deploy·backup-drill·screenshots. 정적 화면은 루트 `index.html`·`privacy.html`·`app.html`.
+  - `docs/` — architecture·spec-coverage·operations·deploy·privacy·qa(+ `qa/shots` 115장)
+- 빌드·테스트:
+  - `npm ci` — **새 워크트리에는 node_modules 가 없다. 먼저 설치.**
+  - `npm run check` — tsc 3개 프로젝트(app·worker·node) `--noEmit`. 가장 빠른 관문.
+  - `npm run build` — 글꼴 서브셋 → check → vite build → `scripts/verify-build.mjs`. **오래 걸림.**
+  - `npm test` — Playwright 46개. `playwright.config.ts` 의 `webServer` 가 가짜 Resend(8799) + `scripts/db-local.mjs` + `wrangler dev :8798`(`--persist-to .wrangler/test-state`, `--test-scheduled`)를 띄운다. `dist/` 가 있어야 하므로 `npm run build` 선행. `workers: 1`(메일 기록·로컬 D1 공유).
+  - `npm run shots`(115장 캡처), `npm run backup-drill -- --local .wrangler/test-state`, `npm run admin -- add-workspace …`, `npm run deploy`.
+- 관례: 커밋 메시지·주석·문서·식별자 라벨 전부 **한국어**. 커밋 제목은 "무엇을 왜" 한 줄(`이룸검수 v2: 개발업체·고객 화면을 나눈 멀티테넌트 SaaS로 재구성`). 설정은 `wrangler.jsonc` vars + `wrangler secret`(`.dev.vars.example` 참고). 마이그레이션은 `drizzle-kit generate`(`npm run db:migrate`) + 손으로 쓴 트리거 SQL. 문서는 `docs/`, 요구사항 대응은 `docs/spec-coverage.md`. 파일 머리마다 그 파일의 규칙을 한국어로 적는 주석이 있다 — 코드를 바꾸면 그 주석도 고친다.
+- 위험 구역: `src/worker/auth.ts`(OTP 해시·만료·시도 제한), `src/worker/access.ts`(기본 거부 권한 검사), `src/shared/domain.ts` 의 `PROJECT_MATRIX`(`approval.decide` 는 `approver` 만 — 개발업체가 고객 대신 승인 못 함), `src/worker/services/approvals.ts`(결정·상태·이력·알림을 **한 D1 batch** 로, 0행 UPDATE 를 batch 안 선점 장치로 롤백), `migrations/0001_guards.sql`(발행본 고정 트리거), `src/worker/services/files.ts`(내용 기반 형식 판별·PDF 구조 검사·비공개 R2), `wrangler.jsonc`(운영 D1 id·라우트·ratelimit). 여기를 건드리면 api-security 15개를 반드시 함께 돌릴 것.
+- 자주 깨지는 곳: (이 저장소의 교훈 기록은 아직 없다 — 커밋 3개, 자동 개선 회차 첫 회) `docs/qa.md` 가 적은 v2 개발 중 실제 결함은 모두 **대체된 승인 요청의 링크·알림·이력 표기**와 **시험 쪽 오판**(앱 셸의 200 을 Cron 실행으로 오인, 기대값 미리 고정)이었다. 상태 전이와 "무엇으로 대체되었는지" 를 잇는 부분이 약점.
+- 검증 함정:
+  - **CI 가 없다**(`.github/` 없음). 모든 검증은 로컬 명령. `.github/workflows` 는 보호 경로로 두고 건드리지 말 것.
+  - 단위 시험도 Playwright 라, `--project=unit` 만 골라도 `webServer`(wrangler dev + 가짜 Resend)가 뜨고 `dist/` 를 요구한다.
+  - 빌드를 다시 했으면 떠 있는 `wrangler dev`(:8798)를 끄고 다시 띄워야 새 자산이 보인다(README 명시).
+  - 메일은 `tests/mock-resend.mjs`(8799)로 가로챈다 — 실제 Resend 키 없이 돈다. `tests/worker-test.env` 가 시험용 환경.
+  - 포트 8798·8799 선점, `.wrangler/test-state` 의 남은 상태가 결과를 흔든다. `reuseExistingServer: true` 라 옛 서버가 떠 있으면 조용히 그걸 쓴다.

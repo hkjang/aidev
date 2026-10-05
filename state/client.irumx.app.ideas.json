@@ -1,0 +1,74 @@
+[
+  {
+    "title": "붙여넣기 분석기: 메일에 섞인 카톡 한 줄이 입력 전체를 가로채 앞부분을 버린다",
+    "value": 4,
+    "risk": 2,
+    "size": "S",
+    "status": "done",
+    "note": "parseKakao 가 첫 머리줄 앞의 비어 있지 않은 줄을 센다 — 내보내기 머리말(EXPORT_HEADER)·PC_DATE·MOBILE_DATE·MOBILE_SYSTEM 이 아닌 줄이 있으면 '깨끗한 내보내기가 아님' 으로 null 을 돌려 list/paragraphs 로 떨어진다. 실패 재현 확인 후 고침(tests/kakao.spec.ts 3개 추가, 기존 9개 무수정 통과).",
+    "updated": "2026-10-06"
+  },
+  {
+    "title": "list 형식이 글머리표 아닌 줄을 말없이 버린다 — 카톡 한 줄이 섞인 메일에서 그 한 줄이 사라진다",
+    "value": 3,
+    "risk": 3,
+    "size": "M",
+    "status": "pending",
+    "note": "이번 회차에서 드러났다: 섞인 붙여넣기가 list 로 떨어지면 parseList(src/shared/kakao.ts:153) 가 글머리표 없는 산문(인사·서명·섞여 들어온 카톡 한 줄)을 버린다 — 의도된 설계이고 기존 테스트가 고정하고 있어(항목 3개만) 이번 범위에서 건드리지 않았다. 요청 낱말이 있는 산문 줄은 남길지(HINT 재사용), 아니면 '버린 줄 수' 를 ParseResult 에 알려 화면에서 안내할지 정해야 한다. 후자가 위험이 낮다.",
+    "updated": "2026-10-06"
+  },
+  {
+    "title": "MAX_INPUT 자르기가 두 경로에서 다르게 읽힌다(라우트는 400 거절, normalize 는 slice+truncated)",
+    "value": 3,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "src/worker/routes/requests.ts:169 가 text.length > MAX_INPUT 을 먼저 400 으로 거절하므로 normalize() 의 truncated 는 API 경로에서 절대 켜지지 않는다(죽은 분기). 자를지 거절할지 한쪽을 정본으로 하고 ParseResult.truncated 주석을 맞춘다. 이번 회차 차선 후보였다 — 그대로 다음 후보.",
+    "updated": "2026-10-06"
+  },
+  {
+    "title": "PDF 구조 검사의 오탐 — 압축 스트림의 우연한 /JS·/AA 바이트로 정상 인쇄 PDF 가 거절될 수 있다",
+    "value": 3,
+    "risk": 4,
+    "size": "M",
+    "status": "pending",
+    "note": "src/worker/services/files.ts:38 PDF_ACTIVE 가 latin1 전체 텍스트를 훑는다. 재현 자료(실제 PDF)를 만들기 어렵고 느슨하게 고치면 보안 검사가 약해진다 — 위험 대비 가치가 낮다. 손대면 api-security 15개를 함께 돌릴 것.",
+    "updated": "2026-10-06"
+  },
+  {
+    "title": "요청 목록이 하나짜리 번호 항목을 문단으로 떨어뜨린다(parseList 가 bulletCount>=2 요구)",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "src/shared/kakao.ts:154. 요청이 하나뿐인 메일은 list 가 아니라 paragraphs 가 되어 suggested 규칙이 달라진다(목록은 전부 고르고 문단은 HINT 필요). 이번 회차와 같은 파일이라 미뤘다 — 이제 충돌 없음.",
+    "updated": "2026-10-06"
+  },
+  {
+    "title": "상태 전이 '무엇으로 대체되었는지' 연결 검증 보강",
+    "value": 3,
+    "risk": 3,
+    "size": "M",
+    "status": "pending",
+    "note": "docs/qa.md 가 v2 개발 중 고친 실제 결함으로 '대체된 승인 요청이 새 요청을 가리키지 않던 것' 을 꼽는다. superseded 계열(scope·change·release·approval)이 모두 후속 id 를 남기는지 api 시험으로 확인할 가치. services/approvals.ts(보호 구역)를 건드릴 수 있어 읽기 조사부터.",
+    "updated": "2026-10-06"
+  },
+  {
+    "title": "첫 메시지 앞에 PC 내보내기의 시스템 알림 줄이 있으면 진짜 내보내기도 카톡으로 읽지 않는다",
+    "value": 2,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "이번 회차가 만든 의도된 보수성: 알아보는 머리말은 EXPORT_HEADER·PC_DATE·MOBILE_DATE·MOBILE_SYSTEM 뿐이라, PC 내보내기 맨 앞의 '김고객님이 이개발님을 초대하였습니다.' 같은 평문 알림 줄은 '깨끗한 내보내기가 아님' 으로 본다 → list/paragraphs 로 떨어진다(자료 손실은 없고 author·at 만 비는 완만한 열화). 느슨하게 하면 결함이 되돌아오므로 비대칭을 보고 엄격을 골랐다. 실제 내보내기 파일을 손에 넣어 알림 줄 형태를 확인한 뒤에만 패턴을 넓힐 것.",
+    "updated": "2026-10-06"
+  },
+  {
+    "title": "이 환경에서 npx 가 node v20 을 집어 wrangler 가 뜨지 않는다 — 시험 실행 함정",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "/home/hkjang/node_modules/.bin/node 가 v20.19.2 라, npx 가 상위 디렉터리를 거슬러 올라가 그것을 먼저 쓴다. 그래서 scripts/db-local.mjs 의 'npx wrangler d1 migrations apply' 가 조용히 실패하고 빈 D1 로 wrangler dev 가 떠 api 시험이 'no such table: verification' 500 으로 깨진다. 이번엔 워크트리 node_modules/.bin/node 심링크(gitignore 대상)로 우회했다. 저장소 쪽 항구 대책은 db-local.mjs 가 종료 코드를 확인·보고하게 하거나 process.execPath 로 wrangler 를 부르는 것(전역 설정은 건드리지 않는다).",
+    "updated": "2026-10-06"
+  }
+]
