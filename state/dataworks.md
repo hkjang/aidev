@@ -307,3 +307,4 @@
 - 보류 아이디어: `src/features/auth/silent-sso.test.ts` 가 Node 25 에서 실패 — 이번에 런처를 보수적으로 만들어 게이트는 막았지만 원인은 미조사, CI 가 Node 25 로 올라가면 터진다 (3/2/S — 신규, 이번 범위(검증 배선) 밖이라 제외) / `npm ci` 가 high 취약점 2건 보고 — `npm audit` 으로 특정 후 lock 재생성 없이 최소 변경 (3/2/S) / 저장소 루트의 `scripts/*.mjs` 는 어떤 린터도 거치지 않음 + web 의 `.js`/`.mjs` 가 규칙 0개로 린트됨(5ed6876 이 이 두 번째 절반을 고치지만 이번엔 불필요해 가져오지 않음) (3/2/S) / keep-dist-placeholder 테스트의 `logLevel:'silent'` 가 vite 오류를 삼켜 실패 원인이 안 보임 (3/1/S) / 타임스탬프 네 읽기 경로(contractScopeActive·액션센터·store.EntitlementActive·bestApprovalStatus)의 계약 테스트 고정 (2/1/S)
 - 과제서: 채택 — 0단계 재현이 과제서의 예측(127 과 1 의 구분, ENOENT → exit 1, cherry-pick 무충돌)을 모두 확증했고 수용 기준 1~6 을 전부 실행으로 확인했다. 두 곳만 과제서와 다르다: (가) 폴백 후보를 버전 **오름차순**으로 골랐다 — 지시대로 내림차순을 쓰면 Node 25 가 뽑혀 게이트가 되레 깨지는 것을 실행으로 확인했다. (나) 과제서가 몰랐던 세 번째 원인(`--silent` 가 중첩 npm 의 배너를 지워 `root-npm-scripts.test.ts` 가 깨짐)을 찾아 함께 고쳤다 — 이것이 "의존성이 설치된 러너 환경에서의 exit 1" 을 설명한다.
 
+- 릴리즈: v0.9.67 (2026-10-05, run 2026-10-05-123440-dataworks-approve)

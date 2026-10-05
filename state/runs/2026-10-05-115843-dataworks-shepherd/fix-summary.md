@@ -1,0 +1,7 @@
+# 수리 요약 — PR #34 (CI `Web lint / test / build` 실패)
+
+- 문제: CI 의 Test 스텝만 11초 만에 실패했다(Install·Lint 성공, Build 스킵). 원인은 새 테스트 `web/src/test/root-npm-scripts.test.ts` 의 `runs the web eslint from the repository root` 가 **vitest 기본 테스트 제한시간 5000ms** 를 쓰는데, 그 안에서 npm → npm → eslint 를 새로 띄워 프로젝트 전체를 린트한다는 것. 같은 린트가 CI 의 독립 Lint 스텝만으로 5초 걸린다.
+- 재현: Node 24.21.0(CI 와 같은 major) + 깨끗한 `git archive` 체크아웃 + `npm ci` 후 `taskset -c 0` 으로 코어 하나에 묶어 `vitest run src/test/root-npm-scripts.test.ts` → `Error: Test timed out in 5000ms.` / exit 1. 코어를 넉넉히 준 상태에서는 4029ms 로 간신히 통과해 로컬에서만 녹색이었다.
+- 고친 것: 두 테스트 파일의 **프로세스를 띄우는 사례에만 명시적 테스트 제한시간**을 줬다(`root-npm-scripts` 2건 → 180s = 이미 있던 `spawnSync` 상한과 동일, `run-with-supported-node launcher` 5건 → 120s = 같은 파일의 첫 사례와 동일). 벽시계 상한은 `spawnSync` 쪽 하나로 모아 자식이 멈추면 기존 단언이 보고하게 했다. **단언은 한 줄도 바꾸지 않았고**(`status === 0`, 출력에 `eslint` 포함, `Missing script` 없음) 테스트를 지우거나 CI 워크플로·검증 명령을 건드리지도 않았다.
+- 검증: 같은 1코어 명령이 이제 통과한다(해당 테스트 7330ms — eslint 를 실제로 끝까지 돌린다). Node 24 깨끗한 트리에서 CI 와 같은 `npm ci && npm run lint && npm test && npm run build` 전 과정 통과(11파일/36테스트), 릴리즈 게이트 4종(`cd web && npm test --silent`, 루트 `npm run lint`·`npm test`·`npm run build`)도 통과하고 빌드 뒤 `git status` 가 깨끗하다. Go 잡은 이 PR 에서 원래 success 이고 Go 변경은 0건이다.
+- 남은 불확실: CI 로그 본문은 못 봤다(토큰 없음 — 403). 스텝별 결과·소요시간과 로컬 재현으로 좁힌 것이고, 러너의 실제 코어 수·디스크 속도는 추정이다. 비평가가 지적한 선존 결함(Node 25 에서 `silent-sso.test.ts` 실패, `.mjs` 린트 사각지대)은 이번 범위 밖이라 손대지 않았다.

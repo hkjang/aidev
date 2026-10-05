@@ -1712,3 +1712,74 @@ evidence: /mnt/c/Users/USER/projects/aidev/state/runs/2026-10-05-111721-cutover-
 [11:55:51] aidev synced: run(2026-10-05): git-ctx — review held, PR open https://github.com/hkjang/git-ctx/pull/46
 reports: 34 day(s), 6 week(s), 2 month(s), 1960 run(s), 4011 usage row(s), 52 project page(s), 4 alert(s)
 notify: no new alerts
+[11:57:21] aidev synced: run(2026-10-05): cutover — merged https://github.com/hkjang/cutover/pull/13, release bad-assets
+[11:57:21] done
+[11:57:42] shepherd: 후보 92건 (한 번에 최대 6건, 오늘 $3.135974/$150)
+[11:58:45] === shepherd dataworks PR #34 (원인 ci, run 2026-10-05-115843-dataworks-shepherd)
+Preparing worktree (detached HEAD 9d43941)
+HEAD is now at 9d43941 fix(build): survive a fresh worktree and an intercepted npm in web verification
+[12:20:02] 다른 러너(pid 385053)가 실행 중 — 겹쳐 돌리지 않는다 (flock 뒤에서 실행하세요)
+[12:20:34] dataworks: improve — 69 turns, 23m, $4.39, success
+[12:20:38] dataworks: verify `go build ./...` → exit 0 (4s)
+[12:20:40] dataworks: verify `go vet ./...` → exit 0 (2s)
+[12:21:18] dataworks: verify `go test ./...` → exit 0 (38s)
+[12:21:18] dataworks: verify `cd web && [ -d node_modules ] || npm ci --no-audit --no-fund` → exit 0 (0s)
+[12:21:22] dataworks: verify `cd web && npm test --silent` → exit 0 (4s)
+[12:21:22] dataworks: verify `cd web && [ -d node_modules ] || npm ci --no-audit --no-fund` → exit 0 (0s)
+[12:21:26] dataworks: verify `cd web && npm run build --silent` → exit 0 (4s)
+[12:21:30] dataworks: verify `npm run lint   # CI에서 가져옴` → exit 0 (4s)
+[12:21:33] dataworks: [shepherd] PR #34 ci → fix-pushed — # 수리 요약 — PR #34 (CI `Web lint / test / build` 실패)  - 문제: CI 의 Test 스텝만 11초 만에 실패했다(Install·Lint 성공, Build 스킵).
+https://github.com/hkjang/dataworks/pull/34#issuecomment-5987530559
+Preparing worktree (detached HEAD cf3131c)
+HEAD is now at cf3131c fix(build): give the subprocess-spawning web verification tests a timeout that fits a CI runner
+[12:28:44] dataworks: review — 31 turns, 7m, $2.37, success
+https://github.com/hkjang/dataworks/pull/34#issuecomment-5987592347
+[12:28:49] dataworks: [shepherd] PR #34 ci → approve — risk=low — 리뷰 승인 (risk=low) 
+[12:28:53] === shepherd git-ctx PR #46 (원인 review-missing, run 2026-10-05-122852-git-ctx-shepherd)
+Preparing worktree (detached HEAD 1f15215)
+HEAD is now at 1f15215 fix(mcp): stop reserving a content heading titled Notes as the answer's Notes section
+[12:30:01] 다른 러너(pid 385053)가 실행 중 — 겹쳐 돌리지 않는다 (flock 뒤에서 실행하세요)
+[12:34:12] git-ctx: review — 30 turns, 5m, $2.02, success
+https://github.com/hkjang/git-ctx/pull/46#issuecomment-5987637341
+[12:34:15] git-ctx: [shepherd] PR #46 review-missing → approve — risk=low — 리뷰 승인 (risk=low) 
+[12:34:16] shepherd: 처리 2건 — 승인 2 · 수정 푸시 1 · 사람 필요 0 (오늘 $11.906776/$150)
+[12:34:42] dataworks: waiting for CI on cf3131c (success)
+[12:35:15] dataworks: [merge] done — cf3131ce72c21c681d2f19251b6b85b6ca507a72 (사람 승인)
+hint: Diverging branches can't be fast-forwarded, you need to either:
+hint: 
+hint: 	git merge --no-ff
+hint: 
+hint: or:
+hint: 
+hint: 	git rebase
+hint: 
+hint: Disable this message with "git config advice.diverging false"
+fatal: Not possible to fast-forward, aborting.
+Preparing worktree (detached HEAD 2727638)
+HEAD is now at 2727638 Merge pull request #34 from hkjang/auto/2026-10-05-1117
+[12:40:01] 다른 러너(pid 385053)가 실행 중 — 겹쳐 돌리지 않는다 (flock 뒤에서 실행하세요)
+[12:42:47] dataworks: release — 42 turns, 8m, $2.29, success
+[12:42:51] dataworks: waiting for CI on 31f420d (no-ci)
+[12:45:04] 다른 러너(pid 385053)가 실행 중 — 겹쳐 돌리지 않는다 (flock 뒤에서 실행하세요)
+[12:45:42] dataworks: [release] published — v0.9.67
+From https://github.com/hkjang/dataworks
+ * branch            main       -> FETCH_HEAD
+hint: Diverging branches can't be fast-forwarded, you need to either:
+hint: 
+hint: 	git merge --no-ff
+hint: 
+hint: or:
+hint: 
+hint: 	git rebase
+hint: 
+hint: Disable this message with "git config advice.diverging false"
+fatal: Not possible to fast-forward, aborting.
+https://github.com/hkjang/dataworks/releases/tag/v0.9.67
+[12:45:45] dataworks: [gh-release] created — GitHub Release v0.9.67
+[12:45:46] dataworks: [manifest] ok — dataworks-v0.9.67.tar.gz 
+[12:45:48] dataworks: uploaded dataworks-v0.9.67.tar.gz (279d6858bb6344319c350f8e3a4ade7fdba55fa0293db9d8ba5da67e5830d889)
+[12:45:48] dataworks: [assets] uploaded — 1개
+[12:45:49] dataworks: [assets] verified — v0.9.67 자산 1개 (이전 v0.9.66: 1)
+evidence: /mnt/c/Users/USER/projects/aidev/state/runs/2026-10-05-123440-dataworks-approve/evidence.json
+reports: 34 day(s), 6 week(s), 2 month(s), 1961 run(s), 4015 usage row(s), 52 project page(s), 3 alert(s)
+notify: no new alerts
