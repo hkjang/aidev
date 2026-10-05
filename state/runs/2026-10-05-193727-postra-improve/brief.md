@@ -1,0 +1,18 @@
+- 과제: `make frontend-test` 가 깨끗한 워크트리에서 성립하게 한다 (가치 3 / 위험 1 / 작업량 S)
+- 왜: `Makefile:15` 의 `frontend-test` 는 `cd web && npm run typecheck` + `npm test` 만 하고 의존성 설치를 하지 않아, `web/node_modules` 가 없는 깨끗한 체크아웃·러너 워크트리에서 바로 실패한다(`Makefile:11` 의 `frontend` 타깃만 `npm ci --no-audit --no-fund` 를 한다). 고치면 정찰·구현·수리가 프런트 게이트를 재현할 때 "내 환경이 깨졌나" 를 의심하지 않고 한 명령으로 돌릴 수 있다.
+- 수용 기준: 1) `rm -rf web/node_modules && make frontend-test` 가 exit 0 2) `web/node_modules` 가 이미 있을 때는 `npm ci` 를 **다시 하지 않는다**(재실행이 눈에 띄게 빨라야 한다 — `make frontend-test` 두 번 연속 실행의 두 번째가 설치 로그 없이 끝난다) 3) `npm test` 가 여전히 50 files / 426 tests 를 전부 돌린다(skip·`--passWithNoTests` 금지), `make frontend-check` 는 변경 없이 그대로 exit 0, `internal/transport/spa/assets` 드리프트 0건
+- 건드릴 파일: `Makefile:15` `frontend-test` 타깃 — `web/node_modules` 유무를 보는 가드 뒤에 `npm ci --no-audit --no-fund` 를 선행시킨다(`frontend` 타깃과 같은 플래그). 재사용 가능한 `.PHONY` 가 아닌 가드 레시피 한 줄(`@test -d web/node_modules || (cd web && $(NPM) ci --no-audit --no-fund)`)이 `frontend-check` 의 `@test -z "$$(...)"` 관용구와 같은 모양이다. 프로덕션 Go/TS 코드 0개.
+- 검증 명령:
+  - `cd /home/hkjang/.cache/auto-improve-wt/postra`
+  - 수정 전 재현: `make frontend-test` → 실패를 출력으로 기록. **이 워크트리에는 지금 `web/node_modules` 가 아예 없다**(정찰이 `ls -d web/node_modules` → `No such file or directory` 로 실측), 그래서 아무 것도 지우지 않고 바로 재현된다. 이미 설치돼 있다면 `rm -rf web/node_modules` 를 먼저. 미확인: 정찰 세션에서 `make frontend-test` 실행 승인이 나지 않아 **실패 메시지 원문은 확인하지 못했다** — 구현자가 첫 단계로 출력을 남길 것(`npm run typecheck` 단계에서 `tsc`/`vitest` 바이너리 부재로 깨질 것으로 추정)
+  - 수정 후: `make frontend-test` → exit 0 (설치 포함, 수 분)
+  - 멱등성: 바로 이어서 `make frontend-test` → exit 0 이고 설치 로그 없음
+  - 회귀: `make frontend-check` → exit 0, `git status --porcelain --untracked-files=all -- internal/transport/spa/assets` 빈 출력
+  - `git diff --check` → exit 0. Go 쪽은 손대지 않으므로 `go build ./...` 한 번으로 충분하다(전체 race 테스트 불필요).
+- 위험과 피할 것:
+  - **파일을 새로 만들지 말 것.** `web/scripts` 등 `web/` 아래에 파일을 추가하면 Tailwind v4 자동 콘텐츠 탐지가 주석의 영어를 유틸리티로 승격시켜 **모든 청크 해시가 바뀌고 자산 드리프트 33건**이 난다(2026-10-02 실측). `web/src/styles.css` 의 `@source not "../scripts"` 줄은 절대 지우지 말 것. 이 과제는 `Makefile` 한 파일만 고치면 끝난다.
+  - `.github/workflows/*` 는 건드리지 말 것 — CI 는 `npm ci` 를 따로 수행하며 이번 변경이 CI 동작을 바꿀 필요가 없다. 릴리즈·빌드 경로 변경은 릴리즈까지 통과를 요구하므로 `build`/`frontend`/`frontend-check`/`build-offline` 타깃은 손대지 않는다.
+  - `web/package.json` 의 `test` 스크립트(`web/scripts/engine-node.mjs` 래퍼)는 건드리지 말 것 — Node 인터프리터 가드이며 깨면 `npm test` 가 undici 오류 48건으로 되돌아간다.
+  - `npm ci` 를 무조건 선행시키면 매 호출이 수 분 걸려 DX 가 더 나빠진다 — 가드로 멱등하게 할 것(수용 기준 2 가 이것을 묶는다).
+- 덧붙일 수 있는 한 줄(선택, 같은 파일 아님): 이번 정찰이 실측한 README 자기모순 — `README.md:302` 는 "보안 스캐너(`govulncheck`·`gosec`·`cyclonedx-gomod`)도 고정 버전으로 설치해 재현성을 확보합니다" 라고 쓰면서 `README.md:309` 의 로컬 예시는 `go run golang.org/x/vuln/cmd/govulncheck@latest ./...` 다(CI 는 `@v1.6.0` 핀, 2026-10-02 실측으로 로컬에서 깨끗함). 한 단어(`@latest` → `@v1.6.0`) 교체로 닫힌다. 다만 Makefile 과 별개 파일이므로 **1순위가 깔끔히 끝났을 때만** 같은 PR 에 넣고, 아니면 다음 회차로 넘길 것.
+- 차선 후보: **POP3 implicit TLS 인증서 검증 기본값 회귀 테스트** (가치 2 / 위험 1 / 작업량 S) — `internal/adapters/pop3/client.go` 의 `Dial` 에 있는 `SecurityTLS` 분기와 `InsecureSkipVerify` 기본 false 를, 기존 `internal/adapters/pop3/client_test.go` 의 `selfSigned` 헬퍼 + `net.Listen("tcp","127.0.0.1:0")` 스크립트 서버로 묶는다(프로덕션 변경 0개). 검증: `go test -race -count=1 -timeout=120s ./internal/adapters/pop3/`(약 3~5초).

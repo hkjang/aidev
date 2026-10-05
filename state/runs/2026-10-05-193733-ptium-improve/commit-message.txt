@@ -1,0 +1,27 @@
+Take the marker off a quoted line
+
+readMarkdown had no case for a block quote, so "> 인용입니다." fell through to
+the default branch and became a point of its own text. escapeLine protects a
+point opening with ">" — that is how the deck DSL writes a cover subtitle — so
+what the author got on the slide was "- \> 인용입니다.": a backslash nobody
+typed, in front of a marker that was never meant to be read aloud.
+
+The marker now comes off in the reader, before any other shape is considered,
+and the line is read again without it. That is what makes a quote the outermost
+block markdown says it is: the heading, list item or table row written inside
+the quote is read as that block, with no rule repeated for it. Nesting comes
+off whole, written ">>" or "> >", and a marker with nothing after it is the
+blank line it is. Nothing is warned about — a marker is punctuation that says
+where a sentence came from, not a paragraph that failed to arrive, the same as
+a rule or a header.
+
+escapeLine is untouched. A point opening with ">" that the Word or PDF reader
+built out of a paragraph still has to be protected; only this reader knows the
+character was markup.
+
+Out of scope, deliberately: a quote inside a list item ("- > 인용") still goes
+to the list branch and keeps its backslash, because unquoting there means
+recursing out of withoutListMarker's contract. A heading underlined inside a
+quote ("> 제목" over "> ===") is not read either — the lookahead is handed the
+line as the file wrote it, so that next goes on meaning the line the caller is
+about to skip.
