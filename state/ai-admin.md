@@ -343,3 +343,4 @@
 - 보류 아이디어: 비스트리밍 chat 본문 절단 시 감사 `reason` 계약을 테스트로 고정 (2/1/S — 열두 회차 연속 차선, 프로덕션 0개로 가장 쌈) · 감사 CSV 문서의 '성공 다운로드=전체 이벤트' 문구를 50,000건 상한과 맞추기 (1/1/S — 이번에 `docs/api.md` 를 열었지만 프로필·사용자 절이라 감사 절과는 묶지 않았다) · `updateKeyScope` 의 `name` 을 varchar(160)·trim 계약에 맞춰 400 으로 막기 (2/1/S — 2026-10-01 커밋 b5146f2 이 verify-failed 로 main 에 없어 결함 잔존, 재시도 전 그 실패 원인부터) · `updateKeyScope`·`updateRole` 의 `description` 이 trim 되지 않는 비대칭 (1/1/S) · 웹 폼의 서버 상한 동기화 묶음(`RolesPage` 120자·key-scope 이름 160자·`CurrentUser.department` 죽은 타입 제거) (1/1/S — `internal/ui/dist` 재빌드가 따라온다)
 - 과제서: 채택 — 결함·코드 위치(`users.go:88-113`·`:413-446`)·`varchar(190)`/`varchar(320)`·라우트(`server.go:130`/`:139`)·재사용 셋업(`profile_unknown_field_integration_test.go:25-54`)·헬퍼 이름이 비어 있다는 점이 모두 현재 코드와 정확히 일치했고, 수용 기준 1~5 를 지정된 방식 그대로 red→green→revert-red 로 증명했다. 과제서가 "미확인" 이라 적은 PostgreSQL varchar NUL 거부 전제도 red 500 으로 먼저 확인한 뒤 시작했다.
 
+- 릴리즈: v1.2.34 (2026-10-05, run 2026-10-05-100721-ai-admin-improve)

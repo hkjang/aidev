@@ -1,7 +1,7 @@
 ---
 title: "bbmcp — 자율 개선 이력"
 description: "bbmcp: 자율 개선 회차 3회, 릴리즈 3건. 최근 릴리즈 v0.2.4 (자산 2개)."
-last_modified_at: 2026-10-05 10:31:43 +0900
+last_modified_at: 2026-10-05 10:47:45 +0900
 ---
 {% raw %}
 <script type="application/ld+json">
@@ -18,7 +18,7 @@ last_modified_at: 2026-10-05 10:31:43 +0900
   "name": "hkjang",
   "url": "https://github.com/hkjang"
  },
- "dateModified": "2026-10-05T10:31:43+09:00",
+ "dateModified": "2026-10-05T10:47:45+09:00",
  "version": "0.2.4"
 }
 </script>

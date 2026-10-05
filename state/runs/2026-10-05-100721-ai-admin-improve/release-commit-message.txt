@@ -1,0 +1,46 @@
+chore: release ai-admin v1.2.34
+
+The merged change rejected the NUL code point before it could reach the two
+varchar columns that cannot hold it, adding storableInVarchar to
+internal/server/users.go — ai_admin.app_user.display_name is varchar(190) and
+email is varchar(320), and PostgreSQL's varchar cannot store U+0000 at any
+length, yet both handlers that write those columns validated with only
+strings.TrimSpace and utf8.RuneCountInString: updateProfile's displayName and
+email, and updateUser's displayName — so because encoding/json decodes
+"\u0000" into a Go string holding an actual 0x00 byte, TrimSpace does not
+remove it and its rune count is one, a caller's malformed input surfaced not as
+400 but as a failed UPDATE answering 500 profile_update_failed or
+user_update_failed — with the new one-line helper, strings.ContainsRune(value,
+0), placed at the three spots where these same handlers already pin length,
+emptiness and email shape to "400 before the write", so the two paths writing
+the same column were fixed together rather than one of them left behind, and
+with the error codes deliberately not unified but taken from each handler's
+existing vocabulary — profile_invalid, email_invalid and name_invalid — so no
+caller sees a code it did not see before, and with the test reading the runes
+of the decoded value, which leaves the six-character literal \u0000 stored
+exactly as it was, and with a rejected request never starting the write so
+display_name, email and updated_at all stay as they were, proved against a real
+PostgreSQL round trip by a new integration test that drives the actual PATCH
+/api/v1/profile and PATCH /api/v1/users/{id} routes and checks, for each of
+seven rejections — trailing, leading and only-NUL display names on the profile,
+a NUL in the profile email, and trailing, embedded and only-NUL display names
+on the user — that the response is 400 and that all three stored values are
+unchanged by SELECT every time, while pinning four regressions in the same test
+(the literal \u0000 stored and read back at 200, a 190-character Hangul name at
+200 against 191 characters and whitespace-only at 400 profile_invalid,
+updateUser's empty, whitespace-only and 191-character names at 400
+name_invalid against 190 at 200, and an email without @ at 400 email_invalid
+against a valid one at 200), with the defect shown by red, green and
+revert-red: all seven NUL cases failed with those 500s before the fix, all
+eleven passed after it, and putting storableInVarchar back to return true
+failed the same seven while the four regressions kept passing — and without
+touching or reusing the updatePreferences names that the unmerged branch
+auto/2026-10-04-1142 introduced, over one production file with go test -race
+-count=1 ./..., make lint and go build ./... all passing and one sentence
+added to each of the profile and user sections of docs/api.md, and with no web
+change so internal/ui/dist is untouched — and left VERSION and CHANGELOG.md
+untouched, so this release advances the patch number by one — the increment
+every release so far has used — and records the change under today's date.
+
+Bumped 1.2.33 to 1.2.34 in every file scripts/verify-version.sh checks and
+added the v1.2.34 changelog entry.
