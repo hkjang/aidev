@@ -28,3 +28,5 @@
 - [러너 02:45] pr created — https://github.com/hkjang/ai-admin/pull/40
 - [러너 02:54] ci passed — 검사 2개 모두 success
 - [러너 02:54] merge done — 3dce1a1
+- [러너 03:07] release published — v1.2.35
+- [러너 03:08] assets verified — v1.2.35 자산 2개 (이전 v1.2.34: 2)

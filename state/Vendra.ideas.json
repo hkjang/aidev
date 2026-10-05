@@ -1,119 +1,16 @@
 [
-  {
-    "title": "대시보드의 activeContractValue 가 contract.amount.read 를 모르고 ₩0 을 답한다",
-    "value": 4,
-    "risk": 2,
-    "size": "S",
-    "status": "done",
-    "note": "2026-10-05 commit ae0eaff. analytics.go:27 의 showContractValue 에 hasPermission(p,\"contract.amount.read\") 를 더하고 중복 || hasPermission(p,\"*\") 를 뺐다(permissionMatches 가 got==\"*\" 를 먼저 본다 — [\"*\"]·[\"*.read\"] 행으로 단정). spend.read·analytics.read 는 그대로 두어 넓히기만 했고 contract.read 동시 요구로 좁히지 않았다. suppliers.go 의 canReadSupplierSpend 주석을 두 문이 여전히 다르다는 사실을 유지한 채로 고쳐 썼다. 신규 dashboard_contract_amount_integration_test.go 가 같은 세션의 계약 상세 금액과 대시보드 합계를 대조한다.",
-    "updated": "2026-10-05"
-  },
-  {
-    "title": "analyze_spend 가 supplier.financial.read 역할에게 도구 자체를 거부한다",
-    "value": 2,
-    "risk": 2,
-    "size": "S",
-    "status": "pending",
-    "note": "mcpCall 의 required 맵(integrations.go:476-482)이 analyze_spend→spend.read 를 요구하므로, supplier.financial.read 만 받은 역할은 search_suppliers·get_supplier 에서 같은 컬럼의 실측값을 받으면서 analyze_spend 에는 'Insufficient permission' 을 받는다. 거부는 0 과 달리 거짓말이 아니라서 가치가 낮다. 권한 게이트라 위험 구역. 2026-10-05 의 차선 후보였고 1순위가 성립해 쓰이지 않았다.",
-    "updated": "2026-10-05"
-  },
-  {
-    "title": "가려진 지출이 0(허구의 사실)으로 나가는 것 — ELSE 0 과 END(null) 이 같은 가림을 다르게 답한다",
-    "value": 3,
-    "risk": 3,
-    "size": "M",
-    "status": "pending",
-    "note": "search_suppliers(integrations.go:542)·compare_suppliers(:591)·공급망(analytics.go:681)은 ELSE 0, recommend_suppliers(:695)·AI 업체 요약(:194)·get_expiring_contracts 의 amount(:662)는 END(null). redactSupplier 자신이 AnnualSpend=0 이라 0 이 관례이므로 MCP 만 null 로 바꾸면 get_supplier 와 갈라진다 — 한쪽만 고치지 말 것. supplier.AnnualSpend 가 float64 라 null 을 내려면 타입 변경이 따라와 M. 계약 결정 선행. 참고: 2026-10-05 에 추가한 대시보드의 activeContractValue 도 가림을 0 으로 답하지만, 계약 상세는 redactObject 가 키를 아예 떨어뜨려(null) 모양이 또 다르다 — 이 결정에 그 자리도 같이 넣어야 한다.",
-    "updated": "2026-10-05"
-  },
-  {
-    "title": "CI 의 node-version: 22 를 .nvmrc + node-version-file 로 patch 까지 고정",
-    "value": 3,
-    "risk": 2,
-    "size": "S",
-    "status": "pending",
-    "note": "2026-10-05 재확인: 여전히 타당하나 .github/workflows 는 보호 경로이고 구현 세션에서 CI 실행으로 검증할 수 없다. 78bcc83 이 engines.node=>=22 를 선언했으므로 한 곳에서 읽게 묶을 여지는 남아 있다. 단독 회차로.",
-    "updated": "2026-10-05"
-  },
-  {
-    "title": "npm run build·eslint 도 같은 PATH 오염 위에서 돈다 — 빌드 경로 인터프리터 고정",
-    "value": 3,
-    "risk": 3,
-    "size": "S",
-    "status": "pending",
-    "note": "2026-10-05 재확인: vite 8·tsc 는 node 20.19 에서 우연히 돌아 지금 통과하므로 '실패하는 테스트를 먼저' 를 만들기 어렵다. 래퍼 패턴은 web/scripts/run-vitest.mjs 가 본보기.",
-    "updated": "2026-10-05"
-  },
-  {
-    "title": "eslint.config.js 의 ignores 가 dist 만 적어 coverage/ 생성물을 린트한다",
-    "value": 2,
-    "risk": 1,
-    "size": "S",
-    "status": "pending",
-    "note": "CI 는 eslint src 만 돌려 영향이 없어 가치가 낮다. ignores 에 coverage 를 더하는 한 줄. 2026-10-05 기준 3순위 후보였다.",
-    "updated": "2026-10-05"
-  },
-  {
-    "title": "web/package.json 의 test 가 래퍼를 지나는지 고정하는 가드 테스트",
-    "value": 2,
-    "risk": 1,
-    "size": "S",
-    "status": "pending",
-    "note": "78bcc83 이 test 를 node scripts/run-vitest.mjs run 으로 바꿨지만 누군가 vitest run 으로 되돌리면 120줄 벽이 조용히 돌아온다. package.json 의 scripts.test·engines.node 를 읽는 vitest 단위 테스트 한 건.",
-    "updated": "2026-10-05"
-  },
-  {
-    "title": "numberArg·riskCeilingArg 오류 문구에 도구 이름이 없어 형제 헬퍼와 불일치",
-    "value": 2,
-    "risk": 1,
-    "size": "S",
-    "status": "pending",
-    "note": "2026-10-05 확인: fcce3d7(브랜치 auto/2026-10-01-1412)이 아직 main 의 조상이 아니다(git merge-base --is-ancestor → NOT_MERGED). 호출 지점 integrations.go:~671·675 가 그 PR 이 고치는 category 줄과 맞붙어 있어 지금 손대면 충돌한다. 그 PR 병합까지 보류.",
-    "updated": "2026-10-05"
-  },
-  {
-    "title": "MCP 의 범위 밖 숫자(limit:0·days:0·-1)가 기본값=상한으로 넓어지는 것",
-    "value": 2,
-    "risk": 2,
-    "size": "S",
-    "status": "pending",
-    "note": "intArg 의 f<1→def 는 주석과 TestIntArgStaysInRange 가 계약으로 고정한 동작이고 스키마에 minimum 을 주장하지 않는 이유다. 뒤집으려면 계약 결정이 선행.",
-    "updated": "2026-10-05"
-  },
-  {
-    "title": "compare_suppliers 입력 ID 개수와 응답 크기 상한(maxItems)",
-    "value": 2,
-    "risk": 3,
-    "size": "M",
-    "status": "pending",
-    "note": "스키마에 minItems 2 만 있고 maxItems 없음. 정당한 비교를 잘라낼 위험이 있어 상한 값 결정이 선행하고, TestMCPNumericSchemaMaximumsMatchEnforcedCeilings 가 maximum 만 보므로 그 표도 같이 봐야 한다.",
-    "updated": "2026-10-05"
-  },
-  {
-    "title": "MCP 도구 호출이 실패·권한거부일 때 감사 기록 없음 + 성공 경로가 인자 원문을 감사에 넣는 것",
-    "value": 2,
-    "risk": 3,
-    "size": "S",
-    "status": "pending",
-    "note": "2026-10-05 재확인: a.audit.record 는 성공 이후(integrations.go:513)에만 불리고 map{'arguments': call.Arguments} 로 인자 원문을 넘긴다 — '감사로 넘기는 값은 식별자만' 지시와 어긋난다. 감사는 위험 구역이라 설계 결정 선행.",
-    "updated": "2026-10-05"
-  },
-  {
-    "title": "REST parseLimit 이 숫자 아닌 limit 을 조용히 기본값으로 읽는 것",
-    "value": 2,
-    "risk": 3,
-    "size": "S",
-    "status": "pending",
-    "note": "objects.go 의 parseLimit 이 strconv.Atoi 오류를 버린다. 호출자가 web/src 라 400 으로 바꾸면 UI 가 깨질 수 있고 '계약이 다른 파서를 통합하지 말 것' 지시에 걸린다.",
-    "updated": "2026-10-05"
-  },
-  {
-    "title": "대시보드가 가린 activeContractValue·annualSpend 를 0 으로 답하는 것을 웹이 ₩0 카드로 렌더하는지 확인",
-    "value": 3,
-    "risk": 2,
-    "size": "S",
-    "status": "pending",
-    "note": "신규(2026-10-05 구현 회차). 이번 회차는 API 응답만으로 수용 기준을 세웠고 web/src 가 가려진 KPI 를 어떻게 보여 주는지는 확인하지 않았다. 금액 권한이 전혀 없는 역할에게는 지금도 ₩0 카드가 나가므로(이번 변경이 좁히지 않은 자리), 「가려짐」을 0 과 구분해 보여 주는 쪽이 남은 개선이다. 다만 0 을 null 로 바꾸는 것은 위 'ELSE 0 / END(null)' 계약 결정과 같은 결정이므로 거기에 묶어야 한다.",
-    "updated": "2026-10-05"
-  }
+  {"title":"업무 목록이 적용하지 못한 정렬(order=amount_desc)을 응답에 말하지 않는다 — 적용된 order 를 돌려주기","value":4,"risk":1,"size":"S","status":"done","note":"commit fe3f618. 새 objectOrderApplied 가 '무엇이 적용됐나'의 유일한 출처이고 objectOrderBy 가 그것을 switch 한다 — 시그니처·반환 SQL 무변경이라 TestObjectOrderByProtectsRedactedAmounts 가 고치지 않은 채로 대조군 역할을 했다. 응답에 \"order\" 추가(truncated 와 같은 모양). 400 으로 거절하지 않는 이유는 웹이 URL 값을 그대로 되보내기 때문.","updated":"2026-10-06"},
+  {"title":"웹이 적용된 정렬을 사용자에게 보여 주기 — 드롭다운이 요청한 정렬과 응답의 order 가 다를 때 말해 주기","value":3,"risk":2,"size":"S","status":"pending","note":"API 쪽은 fe3f618 로 끝났다. web/src/pages/Objects.tsx:176 이 URL 파라미터만 믿고 select 를 그리므로 응답의 order 와 다르면 화면이 말해야 한다. 2026-10-06 확인: applied 값 네 개(updated_desc/due_asc/amount_desc/title_asc)가 :327-330 의 <option value> 와 정확히 일치하므로 변환 표 없이 문자열 비교로 끝난다. 응답 타입(:198)에 order?: string 을 더하는 것부터.","updated":"2026-10-06"},
+  {"title":"eslint.config.js 의 ignores 에 coverage 를 더하는 한 줄","value":2,"risk":1,"size":"S","status":"pending","note":"2026-10-06 재확인: 여전히 타당. npm test -- --coverage 뒤 npm run lint 가 생성물을 린트해 실측 3 warnings. CI 는 eslint src 만 돌려 지금은 영향이 없어 가치가 낮다.","updated":"2026-10-06"},
+  {"title":"web/package.json 의 test 가 run-vitest.mjs 래퍼를 지나는지 고정하는 가드 테스트","value":2,"risk":1,"size":"S","status":"pending","note":"78bcc83 이 test 를 node scripts/run-vitest.mjs run 으로 바꿨지만 누군가 vitest run 으로 되돌리면 120줄 벽이 조용히 돌아온다. package.json 의 scripts.test·engines.node 를 읽는 vitest 단위 테스트 한 건. 주의: 이 워크트리에는 web/node_modules 가 없어 웹 테스트를 돌리려면 npm ci 가 먼저다.","updated":"2026-10-06"},
+  {"title":"가려진 지출이 0(허구의 사실)으로 나가는 것 — ELSE 0 과 END(null) 이 같은 가림을 다르게 답한다","value":3,"risk":3,"size":"M","status":"pending","note":"integrations.go:531 구역(search_suppliers·compare_suppliers)과 analytics.go:692 는 ELSE 0, recommend_suppliers·AI 업체 요약·get_expiring_contracts 의 amount 는 END(null). redactSupplier 자신이 AnnualSpend=0 이라 0 이 관례이고 supplier.AnnualSpend 가 float64 라 null 을 내려면 타입 변경이 따라와 M. 대시보드의 activeContractValue·annualSpend 도 0 인 반면 계약 상세는 redactObject 가 키를 떨어뜨려(null) 모양이 또 다르다 — 한 결정에 네 모양을 전부 넣어야 한다. 계약 결정 선행.","updated":"2026-10-06"},
+  {"title":"CI 의 node-version: 22 를 .nvmrc + node-version-file 로 patch 까지 고정","value":3,"risk":2,"size":"S","status":"pending","note":"여전히 타당하나 .github/workflows 는 보호 경로이고 구현 세션에서 CI 실행으로 검증할 수 없다. 78bcc83 이 engines.node=>=22 를 선언했으므로 한 곳에서 읽게 묶을 여지는 남아 있다. 단독 회차로.","updated":"2026-10-06"},
+  {"title":"npm run build·eslint 도 같은 PATH 오염 위에서 돈다 — 빌드 경로 인터프리터 고정","value":3,"risk":3,"size":"S","status":"pending","note":"vite 8·tsc 는 node 20.19 에서 우연히 돌아 지금 통과하므로 '실패하는 테스트를 먼저' 를 만들기 어렵다. 래퍼 패턴은 web/scripts/run-vitest.mjs 가 본보기.","updated":"2026-10-06"},
+  {"title":"analyze_spend 가 supplier.financial.read 역할에게 도구 자체를 거부한다","value":2,"risk":2,"size":"S","status":"pending","note":"mcpCall 의 required 맵(integrations.go:493)이 analyze_spend→spend.read 를 요구하므로 supplier.financial.read 만 받은 역할은 search_suppliers·get_supplier 에서 같은 컬럼의 실측값을 받으면서 analyze_spend 에는 'Insufficient permission' 을 받는다. 거부는 0 과 달리 거짓말이 아니라서 가치가 낮다. 권한 게이트라 위험 구역.","updated":"2026-10-06"},
+  {"title":"대시보드가 가린 activeContractValue·annualSpend 를 0 으로 답하는 것을 웹이 ₩0 카드로 렌더하는 것","value":3,"risk":2,"size":"S","status":"pending","note":"금액 권한이 전혀 없는 역할에게는 지금도 ₩0 카드가 나간다. 「가려짐」을 0 과 구분해 보여 주는 쪽이 남은 개선이지만 0→null 은 위 'ELSE 0 / END(null)' 계약 결정과 같은 결정이므로 거기에 묶어야 한다.","updated":"2026-10-06"},
+  {"title":"numberArg·riskCeilingArg 오류 문구에 도구 이름이 없어 형제 헬퍼와 불일치","value":2,"risk":1,"size":"S","status":"pending","note":"2026-10-06 재확인: fcce3d7(브랜치 auto/2026-10-01-1412)이 여전히 main 의 조상이 아니다(여덟 회차째). 호출 지점이 그 PR 이 고치는 category 줄과 맞붙어 있어 지금 손대면 충돌한다. 그 PR 병합까지 보류.","updated":"2026-10-06"},
+  {"title":"MCP 의 범위 밖 숫자(limit:0·days:0·-1)가 기본값=상한으로 넓어지는 것","value":2,"risk":2,"size":"S","status":"pending","note":"intArg 의 f<1→def 는 주석과 TestIntArgStaysInRange 가 계약으로 고정한 동작이고 스키마에 minimum 을 주장하지 않는 이유다. 뒤집으려면 계약 결정이 선행.","updated":"2026-10-06"},
+  {"title":"compare_suppliers 입력 ID 개수와 응답 크기 상한(maxItems)","value":2,"risk":3,"size":"M","status":"pending","note":"스키마에 minItems 2 만 있고 maxItems 없음. 정당한 비교를 잘라낼 위험이 있어 상한 값 결정이 선행하고, TestMCPNumericSchemaMaximumsMatchEnforcedCeilings 가 maximum 만 보므로 그 표도 같이 봐야 한다.","updated":"2026-10-06"},
+  {"title":"listObjects 가 스캔 실패 행을 조용히 버리는 것","value":2,"risk":2,"size":"S","status":"rejected","note":"2026-10-05 정찰이 코드로 확인: scanObject 가 읽는 비포인터 컬럼이 전부 NOT NULL 이라 실패를 만들 수 없다 — 테스트로 드러낼 수 없는 결함이므로 기각.","updated":"2026-10-06"},
+  {"title":"MCP 권한 게이트의 required 맵과 mcpTools·역할 permission 대조 가드 테스트","value":2,"risk":1,"size":"S","status":"rejected","note":"2026-10-04 회차가 코드로 확인: search_suppliers 가 risk_level·grade·score 를 risk.read/evaluation.read 없이 답하는 것은 누락이 아니다 — 그 셋은 suppliers 테이블의 열이고 get_supplier_risk/get_supplier_score 가 게이트하는 것은 risks·evaluations 테이블의 개별 레코드로, 다른 데이터다. 대조할 불변식이 없으므로 기각.","updated":"2026-10-06"}
 ]
