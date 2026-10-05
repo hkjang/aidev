@@ -27,3 +27,13 @@
 - 승인. 다음 회차가 알 것: 같은 삼킴이 `seats.go:36`·`maps.go:27·72·126`·`keys.go:28`·`dashboard.go:317`·`detection.go:468` 에 남아 있고, `employees.go:432-451` 의 listHistory 중복 doc 주석은 main 부터 있던 기존 흠이다.
 - [러너 20:47] review approved — 리뷰 승인 (risk=low)
 - [러너 20:47] pr created — https://github.com/hkjang/seaton/pull/44
+- [러너 20:52] ci passed — 검사 2개 모두 success
+- [러너 20:52] merge done — a3cc4a5
+
+## 릴리즈 노트
+- v1.4.16 을 이전 회차와 똑같은 방식으로 냈다 — 패치 한 칸(1.4.15→1.4.16), 문서 버전 표기 갱신 커밋(`docs: v1.4.16 기준으로 문서 정비`, e86f453) + 같은 본문의 **주석 태그** `v1.4.16`. detached HEAD 에서 커밋·태그했고 원격에는 아무것도 보내지 않았다.
+- 바뀐 파일 10개는 직전 세 릴리즈(50768e3·61dbe3c·c051c38)와 같은 목록이다: `README.md`(8줄)·`docs/ADMIN_GUIDE.md`(9줄)·`docs/USER_GUIDE.md`(1줄)·`docs/ROADMAP_PLAN.md`(1줄) 의 버전 문자열을 고치고, `python3 scripts/build-docs.py` 로 HTML(+ROADMAP_PLAN.pdf)을, `aidev/tools/guide/md2pdf.mjs --version v1.4.16` 로 USER_GUIDE.pdf·ADMIN_GUIDE.pdf 를 다시 구웠다.
+- 주의할 것 하나: `build-docs.py` 전체 실행은 `EXECUTIVE_REPORT.html`·`USER_GROUPS_ANALYSIS.html` 에도 figure/figcaption CSS 3줄을 더한다(두 파일은 v1.4.0 이후 재생성되지 않아 생성기보다 낡았다). 이번 릴리즈 범위가 아니므로 네 파일을 `git checkout` 으로 되돌렸다 — 다음에 문서 생성기 정비를 할 때 따로 한 커밋으로 묶는 편이 낫다.
+- 검증: `go build ./...`·`go vet ./...`·`go test ./...`(internal/app 포함 전부 ok)·`gofmt -l .`(출력 없음)·`git diff --check` 통과. README 가 적은 로컬 릴리즈 검증도 그대로 밟았다 — `bash scripts/release-image.sh 1.4.16` 으로 `seaton:v1.4.16` 이미지를 굽고 `gzip -t SeatOn-v1.4.16.tar.gz`(47,628,268바이트) 통과, 이미지가 실제로 뜨는지까지 확인한 뒤 산출물은 지웠다(워크플로가 다시 굽는다).
+- 자산은 비워 둔다(`assets: []`, `github_release: false`): `.github/workflows/release.yml` 이 `v*.*.*` 태그 push 에 반응해 `SeatOn-v1.4.16.tar.gz` 를 굽고 `gh release create --generate-notes --title "SeatOn v1.4.16"` 로 릴리즈까지 만든다. 사람이 올릴 것은 없다.
+- [러너 21:02] release published — v1.4.16

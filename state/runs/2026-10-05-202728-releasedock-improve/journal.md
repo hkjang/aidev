@@ -29,3 +29,5 @@
 - [러너 20:47] pr created — https://github.com/hkjang/releasedock/pull/34
 - [러너 20:49] ci passed — 검사 1개 모두 success
 - [러너 20:49] merge done — 18a53ce
+- [러너 20:56] release published — v0.5.30
+- [러너 20:59] assets verified — v0.5.30 자산 2개 (이전 v0.5.29: 2)
