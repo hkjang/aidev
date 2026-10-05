@@ -20,3 +20,4 @@
 - 다음 회차 후보: `JsonInput validationError`(resources.tsx:1051)는 구문만 검사해 모양 오류가 제출 때만 보인다 → 인라인으로 당기기. `SubmitField.default?` 가 optional 이라 `default` 없는 미래 json 필드는 조용히 객체 모드.
 - [러너 13:56] review approved — 리뷰 승인 (risk=low)
 - [러너 13:57] pr created — https://github.com/hkjang/hunter/pull/19
+- [러너 14:15] ci timeout — 제한 시간 안에 CI 완료를 확인하지 못함

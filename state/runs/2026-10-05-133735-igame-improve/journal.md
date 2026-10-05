@@ -21,3 +21,4 @@
 - [러너 13:56] pr created — https://github.com/hkjang/igame/pull/35
 - [러너 14:02] ci passed — 검사 1개 모두 success
 - [러너 14:02] merge done — 1b98e36
+- [러너 14:13] release published — v0.7.29
