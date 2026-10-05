@@ -28,3 +28,7 @@
 - 남는 우려(릴리즈 노트): 웹은 아직 `order` 를 읽지 않아 **화면의 드롭다운은 여전히 「금액 높은순」** 이다 — 고친 것은 API 응답이지 화면이 아니니 노트가 「화면이 바로잡힘」으로 읽히지 않게 할 것. 사소: objects.go:93-94 가 `hasPermission` 을 두 번 평가(무해).
 - [러너 03:09] review approved — 리뷰 승인 (risk=low)
 - [러너 03:10] pr created — https://github.com/hkjang/Vendra/pull/141
+- [러너 03:12] ci passed — 검사 2개 모두 success
+- [러너 03:12] merge done — fe3f618
+- [러너 03:15] release published — v0.7.70
+- [러너 03:16] assets verified — v0.7.70 자산 1개 (이전 v0.7.69: 1)

@@ -370,3 +370,4 @@
 - 보류 아이디어: 웹이 적용된 정렬을 사용자에게 보여 주기 — 드롭다운이 요청한 값과 응답의 `order` 가 다를 때 말해 주기, 네 값 이름이 웹 드롭다운과 정확히 일치하므로 매핑 표가 필요 없다 (3/2/S) / `eslint.config.js` 의 `ignores` 에 `coverage` 를 더하는 한 줄 (2/1/S) / `web/package.json` 의 `test` 가 `run-vitest.mjs` 래퍼를 지나는지 고정하는 가드 (2/1/S) / 가려진 지출이 0 으로 나가는 것 — `ELSE 0` 과 `END(null)` 불일치 (3/3/M) / CI 의 `node-version: 22` 를 `.nvmrc`+`node-version-file` 로 patch 까지 고정 (3/2/S)
 - 과제서: 채택 — 근거가 코드와 좌표까지 그대로 맞았고(`:119-131` 의 조용한 낙하, `:113` 의 응답 키 4개, `order` 를 읽는 자리 1곳) 수용 기준 1~4 를 그대로 구현했다. 과제서가 예상하지 못한 것 둘: ① `objectOrderBy` 의 `case "amount_desc"` 안에 남은 `if amountVisible` 은 `objectOrderApplied` 가 이미 답한 뒤라 죽은 분기가 되므로, 두 번 묻는 것이 곧 어긋나는 길이라는 주석과 함께 걷어냈다(반환 SQL 문자열은 그대로 — 기존 테스트가 증인이다). ② `applied` 가 쓸 값 네 개(`updated_desc`/`due_asc`/`amount_desc`/`title_asc`)가 웹 드롭다운의 `<option value>` 네 개와 **정확히 일치**한다(Objects.tsx:327-330, 기본값 `:176` 포함) — 다음 회차의 웹 후속은 변환 표 없이 문자열을 그대로 비교하면 된다.
 
+- 릴리즈: v0.7.70 (2026-10-06, run 2026-10-06-022753-Vendra-improve)
