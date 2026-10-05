@@ -70,5 +70,14 @@
     "status": "pending",
     "note": "/home/hkjang/node_modules/.bin/node 가 v20.19.2 라, npx 가 상위 디렉터리를 거슬러 올라가 그것을 먼저 쓴다. 그래서 scripts/db-local.mjs 의 'npx wrangler d1 migrations apply' 가 조용히 실패하고 빈 D1 로 wrangler dev 가 떠 api 시험이 'no such table: verification' 500 으로 깨진다. 이번엔 워크트리 node_modules/.bin/node 심링크(gitignore 대상)로 우회했다. 저장소 쪽 항구 대책은 db-local.mjs 가 종료 코드를 확인·보고하게 하거나 process.execPath 로 wrangler 를 부르는 것(전역 설정은 건드리지 않는다).",
     "updated": "2026-10-06"
+  },
+  {
+    "title": "GitHub Actions CI 워크플로 추가 — 러너가 돌리는 검증 명령을 그대로 CI 로",
+    "value": 5,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "updated": "2026-10-06",
+    "note": "이 저장소에는 워크플로 파일이 없어 러너 PR 이 전부 \"CI 검사 없음\" 으로 막힌다. 러너가 이미 돌리는 검증 명령(build·vet·test)을 그대로 .github/workflows/ci.yml 로 옮겨라. 이 파일은 보호 경로라 사람 승인을 받는다."
   }
 ]
