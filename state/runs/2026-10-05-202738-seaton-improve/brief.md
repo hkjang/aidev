@@ -1,0 +1,23 @@
+# 과제서 (2026-10-05 정찰, base main@9a3fec6)
+
+- 과제: 직원·조직·이력 목록이 행 읽기 실패를 삼키고 부분 목록을 200 으로 돌려주는 것을 멈춘다 (가치 3 / 위험 2 / 작업량 M)
+- 왜: `internal/app/employees.go` 의 세 목록 핸들러가 `if rows.Scan(...) == nil` 로 실패한 행을 조용히 버리고 `rows.Err()` 를 전혀 보지 않는다 — 연결이 중간에 끊기거나 타입이 어긋나면 "직원 3명"이 200 으로 나가고 관리자는 그것이 전부라고 믿는다. 같은 파일 `findOrganization`(employees.go:186) 과 `grid.go:158` 은 이미 올바른 꼴을 갖고 있다.
+- 핵심: 이 과제는 여덟 회차 연속 "증명 수단 없음"으로 탈락했다. 이번 회차에 길이 열렸다 — 지난 회차가 `fakeReleaser`/`fakeRow`(employees_test.go:76-110)로 pgx 경계를 작은 인터페이스로 가려 단위테스트한 선례를 만들었고, `pgx.Rows`(v5.7.6 rows.go:27-57)에 `Next() bool`·`Scan(dest ...any) error`·`Err() error` 가 모두 있어 **3메서드 인터페이스로 가릴 수 있음을 이번 정찰이 확인했다**. 서버에 querier 를 주입하지 말 것(범위 폭발). 스캔 루프만 빼면 된다.
+- 수용 기준: 1) Scan 실패나 `rows.Err()` 가 있으면 세 핸들러가 부분 목록 200 대신 `notFoundOrServer`(server.go:258 — `database_error` 500)로 응답한다 2) 정상 경로의 응답 바디·키 이름·`total`/`totalCapped` 계약은 그대로다 3) `go test ./internal/app` 에 가짜 rows 로 "Scan 실패 → 오류", "Err() 실패 → 오류", "정상 → 전체 행" 을 단정하는 테스트가 있고, 그 테스트가 변경 전 코드에서는 컴파일 실패(헬퍼 없음)로 붉다.
+- 건드릴 파일 (프로덕션 1개):
+  - `internal/app/employees.go` — ① 3메서드 인터페이스 하나 추가(`rowScanner` 등: `Next() bool` / `Scan(...any) error` / `Err() error`) ② `listOrganizations`(16-32)·`listEmployees`(65-88)·`listHistory`(478-491)의 `for rows.Next()` 루프를 각각 `([]T, error)` 를 돌려주는 순수 함수로 빼고(예: `scanOrganizations`/`scanEmployees`/`scanHistory`), 핸들러는 `rows, err := s.db.Query(...)` → `defer rows.Close()` → `items, err := scanX(rows)` → `if err != nil { notFoundOrServer(w, err); return }` ③ Scan 오류는 삼키지 않고 즉시 반환, 루프 뒤 `rows.Err()` 도 반환.
+  - `internal/app/employees_test.go` — 가짜 rows(`fakeReleaser` 와 같은 꼴) 로 위 세 경우를 단정. 이 파일의 기존 테스트 5건(`internal/app` 전체 67건)은 건드리지 말 것.
+- 검증 명령 (이 정찰에서 `go build ./... && go vet ./... && go test ./...` 가 녹색임을 실제로 확인했다 — base 는 깨끗하다):
+  - `go build ./... && go vet ./... && go test ./... && gofmt -l .` (gofmt 는 출력이 없어야 한다)
+  - 새 테스트만: `go test ./internal/app -run 'Scan' -v`
+  - 역검증(필수): 헬퍼를 추가하기 **전에** 테스트 파일만 먼저 써서 `go test ./internal/app` 가 `undefined: scanEmployees` 로 build failed 인 것을 적어 둘 것 — 지난 세 회차가 모두 이 순서로 실패를 먼저 기록했다.
+  - 프런트·E2E 는 응답 계약이 그대로이므로 필수가 아니다. 다만 `listHistory` 를 건드리므로 시간이 남으면 `cd web && npm ci && npm test` 한 번(이 체크아웃에 node_modules 없음).
+- 위험과 피할 것:
+  - **다른 파일의 같은 패턴까지 손대지 말 것.** `seats.go`·`dashboard.go`·`maps.go` 에도 비슷한 루프가 있지만 이번 회차는 `employees.go` 한 파일로 끝낸다(파일 수가 재작업률을 가른다).
+  - `pgx.CollectRows`/`RowToStructByPos` 로 바꾸지 말 것 — 인자가 `pgx.Rows` 전체(9메서드)라 가짜를 만들기 어렵고, 열 순서·`COALESCE` 와 구조체 태그의 짝을 새로 맞춰야 해서 조용한 회귀 위험이 커진다.
+  - `listEmployees` 의 SQL·`limit` 상한 500·`($n='' OR ...)` 조건을 바꾸지 말 것(필터 URL 보존 E2E 와 `employeeQuery` 계약이 그 위에 있다).
+  - `listHistory` 의 `total`·`totalCapped`(historyCountCap 5000)·`PAGE_SIZE` 계약 유지. `items` 가 빈 배열이어야 하는 자리에 `nil` 을 돌려주면 JSON 이 `null` 이 되어 프런트가 깨진다 — 헬퍼는 `[]T{}` 로 시작할 것.
+  - 보호 경로(auth.go·mcpoauth.go·migrations.sql·.github/workflows)는 건드리지 않는다. DB 스키마 변경 없음. 의존성 추가 없음(`pgx` 만 쓴다).
+  - **미확인**: `rows.Err()` 를 `rows.Close()` 보다 **먼저** 부를 때 pgx 가 무엇을 돌려주는지 직접 실험하지 않았다. pgx v5.7.6 `rows.go:32-35` 주석은 "Err 은 Close 뒤 또는 Next 가 false 를 돌려준 뒤에만 부를 것"이라고 적는다 — `for rows.Next()` 가 false 로 끝난 뒤에 부르면 규약에 맞고, `grid.go:150-158` 은 `rows.Close()` 뒤에 부르는 꼴이다. Scan 오류로 루프를 **중간에** 끊고 바로 반환하는 경우에는 `rows.Err()` 를 보지 말고 Scan 오류 자체를 반환할 것(Scan 실패 시 pgx 가 rows 를 닫는다).
+  - 참고: `seats.go`·`maps.go`·`keys.go`·`detection.go`·`mcp.go` 에도 같은 패턴이 남는다 — 이번에 고치지 않는다. `dashboard.go`(163-233) 와 `grid.go`(158), `employees.go:181-189`(`findOrganization`) 는 이미 올바르다.
+- 차선 후보: 가져오기 실패 행 사유에 어느 열이 비었는지 적기 (2/1/S — `employees.go` 의 `fail("사번/이름 누락")` 이 사번·이름 중 무엇이 빈지 가리지 않는다. `normalizeEmployeeStatus` 가 세운 "어느 값이 문제인지 적는다" 꼴에 맞춘다. 착수 전 `grep -rn "사번/이름 누락" web docs internal` 로 기존 E2E·문서가 그 문장을 단정하는지 확인할 것)
