@@ -318,3 +318,4 @@
 - 보류 아이디어: IMPORTDATA 는 `LazyQuotes=true`, 업로드·사용자 명단은 false — 같은 파일이 한쪽에서만 읽힌다(계약 재결정이라 결정 전 변경 금지) / cron 필드가 `+5`·`-0` 같은 부호 붙은 수를 받아들인다(차선 후보, 저장된 일정을 깨뜨릴 수 있어 단독 과제로만) / `persistentHandler.WithAttrs`/`WithGroup` 가 handler 수준 속성을 DB 행에서 떨어뜨린다(프로덕션에 `logger.With(` 호출자가 없어 관찰되는 결함이 아니다) / 관리자 가이드 `ADMIN_GUIDE.md:785` 의 외부 호출 오류 코드를 실제 정책과 맞춘다(열네 회차 연속 보류 — 이번에 `parseCSV` 의 읽기 실패·새 UTF-8 거절이 둘 다 실제로 `#VALUE!` 임을 코드로 확인했으니, 문서가 어긋난 자리는 `#N/A` 를 쓰는 fetch/정책 오류 쪽으로 좁혀진다) / 깨진 UTF-16 복구 계약을 원격·업로드 실제 입구에서 고정한다(이번에 두 입구 비교 테스트가 하나 생겨 남은 공백이 줄었다 — 재평가 필요)
 - 과제서: 채택 — 과제서의 재현이 지금 코드와 정확히 맞았고(`parseCSV` 는 rows=2 cols=2 에 `utf8.Valid=false` 인 칸 값, `importexport.Parse` 는 거절), 건드릴 파일 2개(프로덕션 1)·`#VALUE!` 유지·인코딩 추측 금지·`LazyQuotes`/`delimited`/`importexport`/캐시 손대지 않기를 모두 그대로 따랐다.
 
+- 릴리즈: v0.262.0 (2026-10-05, run 2026-10-05-161703-kanpic-improve)

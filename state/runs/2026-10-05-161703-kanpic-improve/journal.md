@@ -28,3 +28,7 @@
 - 다음 회차 후보로 남는 자리: WEBSERVICE 는 여전히 비-UTF-8 본문을 `Text` 로 칸에 넣는다(`fetcher.go:181`) — 업로드 상대가 없어 이번 대칭과는 무관하다.
 - [러너 16:27] review approved — 리뷰 승인 (risk=low)
 - [러너 16:27] pr created — https://github.com/hkjang/kanpic/pull/41
+- [러너 16:36] ci passed — 검사 2개 모두 success
+- [러너 16:36] merge done — 0fd9038
+- [러너 16:49] release published — v0.262.0
+- [러너 16:50] assets verified — v0.262.0 자산 1개 (이전 v0.261.0: 2)
