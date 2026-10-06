@@ -1,0 +1,44 @@
+Release v0.76.8 make the local test target ask what CI asks of the frontend
+
+Nothing a person using umm can see has changed. The screens, the API and the
+data are what v0.76.7 shipped; what changed is the answer `make test-web` gives,
+and whether that answer agrees with CI.
+
+The Frontend section of .github/workflows/ci.yml runs nine gates. test-web ran
+four of them. Among the five it did not run was `npm audit --audit-level=high`,
+which is the gate that turned the v0.76.7 round red -- so the gate that rejected
+the work could not be run from the repository at all. Pull request #167 passed
+every local check and failed only in CI, main was equally red at the same
+moment, and that red read as a defect in the pull request. One round went to
+repairing it.
+
+The four gates test-web already ran answer from the tree: the same commit gives
+the same verdict today as yesterday. `npm audit` asks a registry instead, and
+the registry publishes new advisories daily, so a tree nobody has touched goes
+from green to red by the calendar. source-map-js 1.2.1 picked up
+GHSA-68fv-2mgg-jv7q (high) and dompurify 3.4.14 picked up two low advisories
+while this repository's code stood still. A gate whose verdict comes from the
+date rather than the commit is exactly the one a person needs to be able to ask
+before pushing.
+
+test-web now runs the same eight gates in the order ci.yml runs them. Order is
+part of the fix: the two whose verdict does not depend on the commit come first,
+for the same reason ci.yml puts the version check ahead of everything slow, so a
+vulnerable lockfile stops at the second gate rather than after build and
+verify:pwa. `npm ci` is the one CI step deliberately not repeated -- installing
+is `make web`'s job, and a test target that deletes a working node_modules is an
+environment change that cannot be undone.
+
+Nothing was loosened. The threshold stays --audit-level=high, and the workflows,
+Dockerfile, engines and the Go side are untouched; this change only adds checks
+locally. Keeping the two lists in step is enforced by a comment above the target
+rather than by a parser, because reading ci.yml with a second YAML parser turns
+one contract into two; that comment is the weakest link in the change and is
+written down as such.
+
+The failure was reproduced without a stand-in. Reverting the six lockfile lines
+4f2de72 raised rebuilds the lockfile CI actually rejected, and on that one tree
+the old target exits 0 with 230 tests passed while the new one exits non-zero at
+the audit naming GHSA-68fv-2mgg-jv7q. Restoring the lockfile returns all eight
+gates to 0. The release is fifteen lines of Makefile, those notes, and the
+version.
