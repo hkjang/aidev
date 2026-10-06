@@ -20,3 +20,7 @@
 - 다음 회차가 알 것 ② `embeddingstatusunread_test.go:46` 이 정상 카드의 키 집합을 문자열로 못박았다. status 구조체에 필드를 **더하기만** 해도 깨지니, 그 실패를 회귀로 오해하지 말 것.
 - [러너 23:27] review approved — 리뷰 승인 (risk=low)
 - [러너 23:27] pr created — https://github.com/hkjang/weekly/pull/32
+- [러너 23:52] ci passed — 검사 1개 모두 success
+- [러너 23:52] merge done — 7a366e7
+- [러너 00:19] release published — v0.318.0
+- [러너 00:20] assets verified — v0.318.0 자산 1개 (이전 v0.317.0: 1)
