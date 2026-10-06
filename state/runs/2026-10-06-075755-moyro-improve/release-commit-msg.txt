@@ -1,0 +1,74 @@
+release: carry release markers to v0.2.48
+
+v0.2.48 ships one server fix already merged to main. The daily digest mail now
+cuts mention excerpts on character boundaries instead of byte offsets, so a
+Korean mention no longer reaches the recipient as invalid UTF-8. There is no
+schema change, no migration, no new route, no new error id and no web change.
+One production file changes, by eight added and four removed lines plus a
+seven-line comment.
+
+`loadMentions` in `digest/worker.go` shortened each excerpt with
+`if len(excerpt) > 160 { excerpt = excerpt[:160] + "…" }`, where both `len` and
+the slice count bytes. The digest templates this product renders are entirely
+Korean — `email/template.go` emits `<html lang="ko">`, addresses the recipient
+as "안녕하세요, {{.Recipient}}님." and subjects the mail
+"[moyro] 멘션 %d건이 기다리고 있어요" — and a Hangul syllable is three UTF-8
+bytes. Because 160 is not a multiple of three, a Korean mention longer than 160
+bytes was cut inside a character almost every time, which made the rendered mail
+body itself invalid UTF-8 and left the recipient's mail client drawing U+FFFD at
+the cut. The same line also made the limit asymmetric: an English mention got
+160 characters where a Korean one got roughly 53.
+
+The repository had already settled this question in four other places, and the
+digest excerpt was the only holdout. `knowledge.truncateRunes` counts runes and
+appends the same "…", `scheduled.truncateError` and
+`webhooks.truncateDeliveryError` cut on bytes and then walk back until
+`utf8.ValidString` holds, and `automations.truncateError` slices a rune array.
+The fix adds a package-local `truncateRunes(value string, limit int)` following
+the first of those precedents and changes the one call site. Since a rune is a
+byte in ASCII, ASCII excerpts are byte-for-byte identical, and a message at or
+under 160 characters is returned unchanged, so the only behavior that moves is
+the one case of a multi-byte excerpt over the limit.
+
+Operators should note one consequence worth expecting rather than a contract
+change: a Korean excerpt now carries up to 160 characters, so about 480 bytes
+where it previously carried 160, and digest mail bodies containing long Korean
+mentions grow accordingly. Reading the 160 as a character count is what the
+Korean templates and the `knowledge.truncateRunes` precedent both imply, but a
+deployment that sized digest mail against the old byte ceiling will see larger
+messages. No API path, response shape or stored value is affected.
+
+Verification carries one new seam. `server/internal/digest/worker_postgres_test.go`
+is the first test in the `digest` package, which previously reported
+`[no test files]`, and it requires `MOYRO_TEST_POSTGRES_DSN` or it skips. It
+drives the production `(*Worker).tick` against an isolated schema on a real
+PostgreSQL instance after `store.Migrate`, so the candidate selection SQL, the
+`loadMentions` detail SQL and `email.RenderDigest` are all the real ones and
+only the `email.Sender` SMTP hop is substituted. Its fixture puts 200 Hangul
+syllables and 200 ASCII characters in two channels for the same recipient, so a
+single mail carries both excerpts and the corruption and the preservation are
+observed in one run.
+
+Verified on this release tree in the order `release.yml` runs it, against a real
+PostgreSQL container: `go test -race -p 1 -count=1 ./...` at 50 packages ok and
+0 failures, with `httpapi` at 55.838s rather than the fraction of a second it
+takes when the database is absent, which confirms the database-backed tests
+executed instead of skipping, and `digest` at 1.924s, which confirms the new
+regression is among them. The checksum-pinned Mattermost plugin fixtures were
+not fetched on this machine, so the archive-backed `pluginhost` subtests skipped
+and the release job remains the first place they run. `go build ./...` and
+`go vet ./...` clean, `plugin-sdk/go` tests and vet clean, and `govulncheck`
+reporting this code affected by 0 vulnerabilities. In `webapp`, a clean
+`npm ci`, then `npm audit --omit=dev --audit-level=high` and
+`npm audit --audit-level=high` both at 0 vulnerabilities as of 2026-10-06, then
+`npm test` at 49 files and 224 tests on Node v22.23.1, then `npm run typecheck`
+and `npm run build`. `node scripts/verify-pages.mjs` passes against the bumped
+markers at 5 HTML pages, 47 screenshots, 16 routes and 7 brand PNGs, and
+`bash scripts/check-source-sizes.sh` passes. `git diff --check` is clean and
+this commit touches no Go file.
+
+The three remaining gates belong to the release job and depend on this commit's
+own hash, so they run against the tag rather than against this commit in
+isolation: the `linux/amd64` image build, `scripts/verify-release.sh` against
+the exported archive, and the Playwright product-UI pass. Their results are
+recorded in the annotation of the tag that points here.

@@ -21,3 +21,4 @@
 - [러너 08:27] pr created — https://github.com/hkjang/moyro/pull/36
 - [러너 08:40] ci passed — 검사 3개 모두 success
 - [러너 08:40] merge done — aec1f15
+- [러너 08:58] release push-failed — 릴리즈 커밋 푸시 실패 (conflict)

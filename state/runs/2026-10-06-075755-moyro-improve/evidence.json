@@ -1,0 +1,269 @@
+{
+  "run_id": "2026-10-06-075755-moyro-improve",
+  "generated": "2026-10-06T08:58:41+09:00",
+  "run": {
+    "run_id": "2026-10-06-075755-moyro-improve",
+    "project": "moyro",
+    "kind": "improve",
+    "started": "2026-10-06T07:57:55+09:00",
+    "model": "claude-opus-5",
+    "policy_version": "4a9e91ac7",
+    "prompts_hash": "ce085c79e18002e2",
+    "runner_version": "1bd5f0cd4",
+    "arm": "baseline",
+    "experiment": "roles-2026-09",
+    "finished": "2026-10-06T08:58:41+09:00",
+    "outcome": "merged"
+  },
+  "record": {
+    "ts": "2026-10-06T08:58:41+09:00",
+    "date": "2026-10-06",
+    "project": "moyro",
+    "result": "merged https://github.com/hkjang/moyro/pull/36, release push failed",
+    "outcome": "merged",
+    "run_id": "2026-10-06-075755-moyro-improve",
+    "base_sha": "400519741a05980b51328b111071c0ceb7dc5ce9",
+    "head_sha": "aec1f154cb7f6fb1385aa0576ca031d408ffba47",
+    "pr": "https://github.com/hkjang/moyro/pull/36",
+    "stages": {
+      "base": {
+        "state": "pinned",
+        "reason": "main@4005197",
+        "at": "2026-10-06T07:58:02+09:00"
+      },
+      "autonomy": {
+        "state": "release",
+        "reason": "",
+        "at": "2026-10-06T07:58:02+09:00"
+      },
+      "scout": {
+        "state": "failed",
+        "reason": "과제서 없음 — 구현자가 직접 고른다 (예산 초과로 중단)",
+        "at": "2026-10-06T08:02:56+09:00"
+      },
+      "verify": {
+        "state": "passed",
+        "reason": "검증 2개 통과 (policy)",
+        "at": "2026-10-06T08:22:00+09:00"
+      },
+      "review": {
+        "state": "approved",
+        "reason": "리뷰 승인 (risk=low)",
+        "at": "2026-10-06T08:27:00+09:00"
+      },
+      "pr": {
+        "state": "created",
+        "reason": "https://github.com/hkjang/moyro/pull/36",
+        "at": "2026-10-06T08:27:09+09:00"
+      },
+      "ci": {
+        "state": "passed",
+        "reason": "검사 3개 모두 success",
+        "at": "2026-10-06T08:40:29+09:00"
+      },
+      "merge": {
+        "state": "done",
+        "reason": "aec1f154cb7f6fb1385aa0576ca031d408ffba47",
+        "at": "2026-10-06T08:40:35+09:00"
+      },
+      "release": {
+        "state": "push-failed",
+        "reason": "릴리즈 커밋 푸시 실패 (conflict)",
+        "at": "2026-10-06T08:58:39+09:00"
+      }
+    },
+    "campaign": "",
+    "autonomy": "release",
+    "arm": "baseline",
+    "experiment": "roles-2026-09",
+    "engine": "claude",
+    "files": 2,
+    "additions": 249,
+    "deletions": 5,
+    "tests": 1,
+    "title": "fix: cut digest mention excerpts on character boundaries"
+  },
+  "stages": {
+    "base": {
+      "state": "pinned",
+      "reason": "main@4005197",
+      "at": "2026-10-06T07:58:02+09:00"
+    },
+    "autonomy": {
+      "state": "release",
+      "reason": "",
+      "at": "2026-10-06T07:58:02+09:00"
+    },
+    "scout": {
+      "state": "failed",
+      "reason": "과제서 없음 — 구현자가 직접 고른다 (예산 초과로 중단)",
+      "at": "2026-10-06T08:02:56+09:00"
+    },
+    "verify": {
+      "state": "passed",
+      "reason": "검증 2개 통과 (policy)",
+      "at": "2026-10-06T08:22:00+09:00"
+    },
+    "review": {
+      "state": "approved",
+      "reason": "리뷰 승인 (risk=low)",
+      "at": "2026-10-06T08:27:00+09:00"
+    },
+    "pr": {
+      "state": "created",
+      "reason": "https://github.com/hkjang/moyro/pull/36",
+      "at": "2026-10-06T08:27:09+09:00"
+    },
+    "ci": {
+      "state": "passed",
+      "reason": "검사 3개 모두 success",
+      "at": "2026-10-06T08:40:29+09:00"
+    },
+    "merge": {
+      "state": "done",
+      "reason": "aec1f154cb7f6fb1385aa0576ca031d408ffba47",
+      "at": "2026-10-06T08:40:35+09:00"
+    },
+    "release": {
+      "state": "push-failed",
+      "reason": "릴리즈 커밋 푸시 실패 (conflict)",
+      "at": "2026-10-06T08:58:39+09:00"
+    }
+  },
+  "provenance": {
+    "model": "claude-opus-5",
+    "policy_version": "4a9e91ac7",
+    "prompts_hash": "ce085c79e18002e2",
+    "runner_version": "1bd5f0cd4",
+    "base_sha": "400519741a05980b51328b111071c0ceb7dc5ce9",
+    "head_sha": "aec1f154cb7f6fb1385aa0576ca031d408ffba47",
+    "pr": "https://github.com/hkjang/moyro/pull/36"
+  },
+  "verification": {
+    "runner": {
+      "source": "policy",
+      "commands": [
+        {
+          "cmd": "cd server && go build ./... && go vet ./... && go test ./...",
+          "exit": 0,
+          "seconds": 4
+        },
+        {
+          "cmd": "cd webapp && ([ -d node_modules ] || npm ci --no-audit --no-fund) && npm run typecheck --silent && npm test --silent",
+          "exit": 0,
+          "seconds": 27
+        }
+      ]
+    },
+    "runner_gate": {
+      "ok": true,
+      "state": "verified",
+      "reason": "검증 2개 통과 (policy)"
+    },
+    "after_rebase": null,
+    "review": {
+      "verdict": "approve",
+      "reasons": [],
+      "notes": [
+        "server/internal/digest/worker.go:183 결함과 수정 모두 실측 확인: worker.go 를 main 판으로 되돌려 새 테스트를 돌리니 `worker_postgres_test.go:91: text body is not valid UTF-8 (638 bytes)` 와 룬 절단 substring 부재로 2개 서브테스트 RED, HEAD 에서 3개 전부 GREEN(-count=3 반복도 안정). ASCII 서브테스트만 수정 전에도 통과하는데 이는 '바뀌지 않는 절반' 을 고정하려는 의도이고 주석에 명시돼 있다.",
+        "구현 노트의 미확인 항목 (1) 해소: html/template 은 깨진 UTF-8 을 U+FFFD 로 바꾸지 않고 raw 바이트를 그대로 통과시킨다(별도 스니펫으로 `<div>가\\xea</div>` 확인). 그리고 `strings.ContainsRune(s, utf8.RuneError)` 는 Go IndexRune 의 특수분기 때문에 리터럴 U+FFFD 뿐 아니라 '디코드 실패 바이트' 에도 참이다. 즉 테스트의 HTML 단언 4줄은 죽은 코드가 아니고 수정 전 코드에서 실제로 발동한다 — 텍스트 쪽 t.Fatalf 가 먼저 끊어서 보이지 않았을 뿐이다.",
+        "구현 노트의 미확인 항목 (2) 판단: 160 을 '자 수' 로 읽은 선택은 가까운 선례(knowledge.truncateRunes + maxExcerptRunes=1200, 사용자 노출 excerpt)와 일치한다. scheduled.truncateError / webhooks.truncateDeliveryError 의 바이트 상한 방식은 DB 컬럼 바이트 한도용이고 digest excerpt 는 DB 에 저장되지 않으므로 해당 없다. SMTP 길이는 안전: 한글 160자=480바이트, 4바이트 룬 최악 640바이트 + 접두어 ≈ 700바이트로 RFC 5321 의 998 옥텟 줄 한도 미만. 다만 다이제스트 메일 1건당 멘션 본문 바이트가 한국어 기준 약 3배로 늘어난다는 점은 릴리즈 노트에 적을 만하다.",
+        "보안 소견(차단 아님): 인증·인가·비밀값·의존성 무변경. 신뢰할 수 없는 입력(게시글 본문)이 템플릿에 닿는 경로는 그대로이고 html/template 이스케이프도 그대로다. 오히려 개선 방향 — 수정 전에는 깨진 선행 바이트가 그대로 메일 본문에 들어가 관용적 UTF-8 디코더의 바이트 흡수 모호성을 남겼는데(실제 공격 경로는 성립하지 않음: 깨진 바이트 뒤에 오는 것은 공격자가 못 만드는 `…` 와 `</div>`), 이번 변경이 그 모호성을 제거한다. 법무/개인정보 소견(차단 아님): 새 수집·새 수신자·새 보존 없음 — 본인 채널 내용이 본인 주소로 가는 기존 목적 그대로이고, 늘어난 것은 같은 목적 내의 excerpt 길이뿐이다.",
+        "남는 우려 두 개 — (a) truncateRunes 단위 테스트가 없어 `MOYRO_TEST_POSTGRES_DSN` 없는 환경에서는 이 회귀가 전부 skip 된다(digest 패키지의 유일한 테스트). CI DB job(PG15/16)이 돌리므로 머지 차단 사유는 아니지만, knowledge/service_test.go 처럼 DB 불필요한 헬퍼 테스트 3줄을 더하면 비DB 실행에서도 지켜진다. (b) email/sender.go composeMultipart 은 Content-Transfer-Encoding 헤더를 아예 설정하지 않아 8bit 본문을 raw 로 쓴다 — 이번 diff 와 무관한 선존 문제이나 UTF-8 메일 본문을 다루는 다음 회차가 볼 자리다.",
+        "검증 실행: (worktree 깨끗함 유지, 임시 되돌림은 복원 확인) go build ./... / go vet ./internal/digest ./internal/email 무출력, gofmt -l internal/digest 무출력(선존 9파일 미접촉), 실제 DB 로 ./internal/digest ./internal/email ./internal/knowledge ./internal/httpapi 전부 ok, scripts/check-source-sizes.sh exit=0, 테스트 스키마 잔존 0개. 미실행: go test -race -p 1 ./... 전체, 웹(typecheck/build/e2e) — 이번 diff 가 서버 1파일이라 생략."
+      ],
+      "risk": "low",
+      "blocking": []
+    },
+    "ci_gate": {
+      "ok": true,
+      "state": "success",
+      "reason": "검사 3개 모두 success",
+      "checks": 3
+    }
+  },
+  "release": {
+    "result": {
+      "status": "released",
+      "version": "0.2.48",
+      "tag": "v0.2.48",
+      "title": "moyro v0.2.48",
+      "notes_file": "/mnt/c/Users/USER/projects/aidev/state/runs/2026-10-06-075755-moyro-improve/release-notes-v0.2.48.txt",
+      "github_release": false,
+      "assets": [],
+      "reason": ""
+    },
+    "assets_sha256": []
+  },
+  "approval": null,
+  "usage": [
+    {
+      "ts": "2026-10-06T08:02:55+09:00",
+      "date": "2026-10-06",
+      "project": "moyro",
+      "phase": "scout",
+      "run_id": "2026-10-06-075755-moyro-improve",
+      "campaign": "",
+      "subtype": "error_max_budget_usd",
+      "engine": "claude",
+      "duration_ms": 296364,
+      "num_turns": 26,
+      "cost_usd": 2.0360945,
+      "input_tokens": 40,
+      "output_tokens": 18884,
+      "cache_read": 1388179,
+      "cache_create": 81013
+    },
+    {
+      "ts": "2026-10-06T08:21:27+09:00",
+      "date": "2026-10-06",
+      "project": "moyro",
+      "phase": "improve",
+      "run_id": "2026-10-06-075755-moyro-improve",
+      "campaign": "",
+      "subtype": "success",
+      "engine": "claude",
+      "duration_ms": 1144160,
+      "num_turns": 69,
+      "cost_usd": 5.8380495,
+      "input_tokens": 132,
+      "output_tokens": 39492,
+      "cache_read": 6877999,
+      "cache_create": 141109
+    },
+    {
+      "ts": "2026-10-06T08:27:00+09:00",
+      "date": "2026-10-06",
+      "project": "moyro",
+      "phase": "review",
+      "run_id": "2026-10-06-075755-moyro-improve",
+      "campaign": "",
+      "subtype": "success",
+      "engine": "claude",
+      "duration_ms": 304644,
+      "num_turns": 23,
+      "cost_usd": 1.5946155,
+      "input_tokens": 40,
+      "output_tokens": 17063,
+      "cache_read": 1085741,
+      "cache_create": 62497
+    },
+    {
+      "ts": "2026-10-06T08:58:35+09:00",
+      "date": "2026-10-06",
+      "project": "moyro",
+      "phase": "release",
+      "run_id": "2026-10-06-075755-moyro-improve",
+      "campaign": "",
+      "subtype": "success",
+      "engine": "claude",
+      "duration_ms": 1103342,
+      "num_turns": 50,
+      "cost_usd": 2.745827500000001,
+      "input_tokens": 82,
+      "output_tokens": 23053,
+      "cache_read": 2803605,
+      "cache_create": 76729
+    }
+  ]
+}
