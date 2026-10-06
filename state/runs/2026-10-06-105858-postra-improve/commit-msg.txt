@@ -1,0 +1,50 @@
+docs(release): record the implicit-TLS certificate verification tests for v0.25.8
+
+Bump the workspace package version, point README and dist/README at the new
+release, and add the v0.25.8 notes for a test-only release that changes 0 lines
+of production code.
+
+A new account's inbound security defaults to implicit TLS --
+normSecurity(in.POP3Security, domain.SecurityTLS) in
+internal/application/accounts.go -- so that is the dial most installations
+make, and neither inbound adapter had a single test over it. Every TLS test in
+both client_test.go files asked for SecurityStartTLS with InsecureSkipVerify:
+true, so tlsCfg's InsecureSkipVerify (pop3/client.go:69, imap/client.go:54)
+could be pinned to a constant true and nothing in either package would go red.
+A change that spread the per-account opt-in into the global default could have
+passed the suite. The outbound adapter has carried the same guarantee all along
+in smtp/client_test.go, so this was an asymmetry rather than a deliberate gap.
+
+Each adapter gets one test with two halves against the same self-signed
+implicit-TLS listener, differing in that one field and nothing else: the
+default options must fail with a *domain.InboundError whose Stage is
+tls_handshake and Class is "tls_certificate" -- the pair sync_diagnostics.go
+renders as the untrusted-certificate sentence rather than as a failed TCP
+connection -- and the opt-in half must still establish the session, which is
+what makes the first half a statement about the default instead of about an
+unreachable server. The error string is asserted to carry only the adapter's
+prefix and Go's x509 text, never the greeting the server sent. Because implicit
+TLS runs TCP and the handshake in one dialer call, only the error type
+separates the two stages, so connectFailure's TLS branch in both adapters --
+until now untested -- is pinned as well.
+
+The release notes say what the tests deliberately do not pin: tlsCfg's
+MinVersion, since Go's own client default is already TLS 1.2 and dropping that
+line would not fail this test. They also state plainly that verification
+behaviour did not change -- a self-signed mail server still needs the
+per-account InsecureSkipVerify opt-in, and that opt-in exists for offline and
+self-hosted deployments.
+
+dist/README's banner is rewritten rather than renumbered. It had carried
+v0.25.6's development-only wording since that release, so v0.25.7 shipped with
+a banner describing changes that were not its own; it now describes this
+release and names v0.25.7 as the version whose behaviour the artifacts match.
+
+Verified before tagging: go test -race -count=1 -timeout=900s ./... over 25
+packages with 0 failures, -count=3 over the two adapter packages with no
+flakes, build, vet, gofmt, go mod tidy clean, postra-contracts -check exit 0,
+gosec medium+ 141 files 0 issues, git diff --check clean, and make
+frontend-check leaving internal/transport/spa/assets unchanged after the
+version bump, which the release workflow re-checks for the tagged /app bundle.
+External PostgreSQL and browser e2e were not run: the change is a Go test-only
+addition and the frontend source is untouched.

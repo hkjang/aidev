@@ -15,3 +15,4 @@
 - 일부러 하지 않은 것: ① 사유 **개수 상한** — 기준 3(판정 불변)을 깨고 UI 문자열이 생기는 별개 과제라 ideas.json 에 분리(1MiB 질의가 여전히 사유 8만여 개·약 6.8MB 를 낸다). ② `appendUnique`·`removeReason` 삭제 — `Analyze` 호출부(76·88)는 키워드 표 크기로 묶여 있어 그대로 두는 것이 변경면을 줄인다. ③ 판정 로직(허용목록·`callAdjacent`·`postgresAliasColumnList`·`fromItemContext`·`postgresCTEColumnList`·`scanOraclePolicy`) 한 줄도 안 건드림.
 - 다음 역할이 조심할 것: 통합 테스트는 DB 가 있어야 돈다(폐기 PostgreSQL 17 + `POSTGRES_DSN`·`QURIO_INTEGRATION_DSN`·`QURIO_TEST_POSTGRES_DSN` 세 env 동일 지정 → fresh-install → migrations). 이번엔 55617 로 3회 연속 exit 0 / 30 ok. 과제서가 예고한 credential_race 2회차 결함은 **재현되지 않았다**(3회 전부 녹색) — 선재 결함이지만 재현 조건 미특정으로 기록만 했다. `reasonSetIndexThreshold`(sqlsafe.go:209)를 maxint 로 바꾸면 스케일 테스트 3개만 red·정합성 전부 green 으로 인과를 다시 확인할 수 있다.
 - [러너 11:22] brief accepted — 채택 — 지목한 행(`appendUnique` 192, `postgresReadOnlyViolations` 418 의 네 호출부, `oracleReadOnlyViolations` 1067 의 1071·1096·1105, `AnalyzeD
+- [러너 11:25] verify failed — 실패한 검증: cd web && npm test --silent (exit 1)
