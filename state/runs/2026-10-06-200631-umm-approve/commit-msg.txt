@@ -1,0 +1,55 @@
+Release v0.76.7 give the four downloads of a space one file-name rule instead of four
+
+A space can be downloaded four ways -- the Markdown backup, the outline, the
+canvas image and the PDF -- and v0.76.6 made all four take their name from one
+space name. What each of them then did with that name was four decisions, not
+one: only the PDF stripped the characters a file name cannot hold, and the other
+three wrote the space name straight into anchor.download.
+
+So a space whose name carries a `/` or a `:` -- which is what writing a date or a
+quarter into the name produces -- had three of its four file names rewritten by
+the browser. What the browser substitutes is the browser's choice, which means
+the name stopped being ours, and four files out of one space arrived under names
+that did not match each other.
+
+downloadFileName in web/src/lib/download-name.ts is now the one place that
+decides. The four call sites in CanvasPage call it instead of assembling their
+own string; the outline passes its suffix, already translated by the caller, so a
+Korean reader gets -차례 and an English reader -outline. The character set is
+Windows' forbidden set, the narrowest of the three platforms, so a name this
+produces is legal everywhere. Nothing else is touched: spaces, dots and Korean
+are part of what someone named their space, and a name holding no forbidden
+character comes back exactly as it went in.
+
+It does not trim or default. spaceDisplayName finished that in v0.76.6 and the
+name arriving here is already trimmed and already defaulted. It also does not
+share code with internal/httpapi's safeFilename, dispositionSafe,
+attachmentDisposition and handoffFilename, which only look alike: those answer
+what a Content-Disposition header may carry, where the encoding rules rather
+than the file system set the limits, and merging two contracts that merely
+resemble each other would make one of them wrong.
+
+The PDF name is unchanged. It was the one of the four that was already right,
+and the other three were moved to it rather than it to them, so nobody's
+existing PDF is renamed. What the forbidden characters become, and how long a
+file name may be, are not decided here.
+
+The lockfile carries two patch bumps with this. The v0.76.6 lockfile did not pass
+npm audit --audit-level=high, which is CI's Frontend dependency audit step, so
+the build was red for a reason unrelated to the product: source-map-js 1.2.1 ->
+1.2.2 (high, GHSA-68fv-2mgg-jv7q, reached through vite/postcss and jsdom, so
+build and test tooling only) and dompurify 3.4.14 -> 3.4.16 (GHSA-p98j-92pf-mc4p
+and GHSA-6688-9rhm-gjv2). dompurify is an optional dependency of jspdf and does
+ship in the bundle as the purify.es chunk; the canvas PDF path hands jspdf an
+image rather than HTML so it does not reach those functions, but it is shipped
+code and goes out patched. The declared ranges in package.json are untouched and
+no other package moved.
+
+The test names the four downloads in the order the canvas offers them, strips the
+parts meant to differ -- the extension and the outline suffix -- and asserts the
+remainder is identical across all four, so fixing one site and leaving three
+fails it. Restoring the previous form inside the new module fails two of the five
+and passes three, so they are not passing by refusing everything.
+
+Nothing stored changed and no Go code changed; the release is one module, its
+test, four call sites, two lockfile lines and these notes.
