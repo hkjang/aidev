@@ -1,0 +1,5 @@
+비평 세 건 모두 맞았다. `allowedHostsUsage` 가 `/[,\s]+/` 로 나눠, 서버의 splitHosts(FieldsFunc, `,`·` `·`\n`·`\r`·`\t` 다섯 글자)가 안 나누는 유니코드 공백에서 콘솔만 나눴다 — 실측(임시 Go 테스트로 splitHosts 직접 호출): 출처 20개를 U+00A0·U+3000·U+2028·\v·\f·U+2029·U+202F·U+205F·U+1680 로 이으면 서버는 **항목 1개 499룬**으로 읽어 MaxAllowedHostRunes(300) 로 거절하는데 콘솔은 `20개 / 480자`(전부 상한 안)로 안내했다.
+수리: 구분자를 `HOST_SEPARATOR = /[, \t\r\n]+/` 로 못박고, 같은 부류의 남은 어긋남 하나도 같이 고쳤다 — JS `trim()` 은 U+FEFF 를 떼고 U+0085 를 남기는데 Go `TrimSpace`(unicode.IsSpace) 는 정반대라, U+FEFF 앞 300룬 항목을 콘솔이 300(상한 안)으로 세고 서버는 301 로 거절했다. `HOST_TRIM` 으로 IsSpace 집합을 직접 적었다. 31행 주석은 이제 참이다.
+테스트: Go 소스의 splitHosts 본문에서 `letter == '…'` 를 파싱해 구분자가 그 다섯 뿐임을 못박고, 그 밖의 유니코드 공백 9종에서 `{entries:1, runes:499}` 를, TrimSpace 차이 4건(U+0085 앞/뒤, U+FEFF, NBSP)을 단언한다. 13개 기대값은 모두 실제 splitHosts 출력에서 측정했다(임시 Go 테스트는 삭제, 커밋 안 함).
+역전 검증: 옛 `/[,\s]+/` 로 되돌리면 새 테스트 2건이 실패하고, split 만 고치고 `trim()` 만 되돌리면 1건이 실패한다. 단언을 느슨하게 한 곳은 없다(14건 → 17건).
+검증: `cd web && node --test scripts/*.test.mjs` 147/147 통과, `npm run lint` 통과, `npm run build` 성공, `go test ./internal/tracking ./internal/api` 통과.
