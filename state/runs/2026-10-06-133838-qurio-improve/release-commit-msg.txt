@@ -1,0 +1,27 @@
+chore: release Qurio v1.4.13
+
+Bump the release contract to 1.4.13 for the deterministic web test gate (three
+component tests each held only one wait that never actually waited for the mocked
+response, so `cd web && npm test` failed two of five runs on 1.4.12:
+`LegacyParityOperations` asserted the short-term window textbox before the
+administrator-cap string that only the GET response can produce, and that
+`findBy*` was already satisfied by the `shortTermWindow === 10` default render, so
+the synchronous cap assertion raced the response; `AdminAskOriginalLauncher`
+clicked the target-user `Select` while `usersLoading || users.length === 0` still
+held it disabled, and React drops mouse events on a disabled form control, so the
+dropdown never opened; and `ParityCatalogPages` waited for the filtered search
+*request* to be issued rather than for its response to render, then clicked the
+row detail button synchronously while the table was still reloading. All three
+now wait for a state only the response can produce — the cap string through
+`findByText`, the Select through `waitFor(() => expect(...).toBeEnabled())`, and
+the row button through `findByRole` — with every role and accessible-name string
+unchanged and no `timeout` increase, no `retry` and no `vite.config.ts`
+relaxation. A 500 ms delay injected into the one mocked response that each test
+races turns all three into deterministic failures before the change and passes
+after it, and restoring the old assertions under the same probe fails again; the
+50 ms probe tried previously missed every one of them because the first render of
+these files costs 300-400 ms, so a 50 ms response commits before the test reaches
+its race. The gate then ran five consecutive times at 27 files and 134 tests, all
+green, where 1.4.12 broke on two of five. Only test files changed, so application
+behavior is identical): VERSION, compose image, web package, docs, embedded SPA
+build, and the 0047 release identity migration.
