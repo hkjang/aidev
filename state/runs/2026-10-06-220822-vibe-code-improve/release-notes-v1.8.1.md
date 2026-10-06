@@ -1,0 +1,17 @@
+## 1.8.1 — CRLF 목표 파일의 줄바꿈 보존
+
+One fix. Ticking a goal's completion criteria rewrote the whole goal file's line endings, which turned a two-line edit into a diff of every line — on Windows, which is this extension's primary target.
+
+### Fixes (수정)
+
+- **Ticking 완료 기준 no longer rewrites the whole file's line endings.** Moving a plan to `done` calls `applyPlanCriteria`, which ticks the linked criteria and writes `.vibe-code/goals/current.md` back. `tickCriteria` split that text on `/\r?\n/` and rejoined it with `\n`, so a CRLF goal file came back entirely LF: an edit that should have touched one or two checkbox lines landed as a diff of every line in the file. CRLF goal files are ordinary here — Windows is the primary target and packaging and the smoke tests are all PowerShell — so this is a path that is actually taken. The function now reads the file's line ending and restores it, which is what its sibling `checkLine` in `src/features/verification.ts` already did for the same job of ticking one checkbox by index: `detectEol`, `normalizeEol(...).split("\n")`, `restoreEol`. Preserving line endings is a contract this repository states explicitly elsewhere — `src/util/markdown.ts` exports those three helpers, and "줄바꿈은 보존한다" is in the JSDoc of `writeSection`, `setLine`, `touchPlan`, `setTaskDone`, `toggleCheckbox` and `moveTaskToSection`. `tickCriteria` was the one exception.
+
+### Internal (내부)
+
+- Deliberately unchanged: the numbering, the section scan, the checkbox substitution and the signature of `tickCriteria`. Its 1-based index contract — indented sub-items are counted — is the same in all three places that depend on it (`taskLines` in `linkPlanToCriteria`, `taskEntries` in `goalStatusReport`, and `tickCriteria` itself), and none of them moved. All 13 `split(/\r?\n/)` sites in `src/` were read: the other 12 are read-only (goal lint, JSONL parsing in the journal summary, command audit and plans, report output and parsing, the plan CodeLens, `markdown.ts`), and `tickCriteria` was the only one that writes a file back — so no second write path is left out of step with this one. One production file changed.
+
+### Verification (검증)
+
+- `tests/unit/goal-catalog.test.ts` gains 3 tests, 123 in all (120 + 3), with no existing expectation changed. One pins CRLF preservation at the pure boundary; one goes end to end through a real `WorkspacePaths` from `ensureWorkspacePaths`, `applyPlanCriteria` and a real `fs.writeFileSync` into a temporary directory, then reads the file back off disk; the third guards that an LF file stays LF. The first two were confirmed failing before the fix — `expected false to be true` on `ticked.includes("\r\n")`, and `expected undefined to be 38`, zero `\r\n` on disk where 38 went in — and reverting only `src/features/goal-catalog.ts` reproduced the same two failures with the same messages.
+- Scope worth stating: this pins the bytes written to the goal file, not the VS Code UI flow. The `setCurrentPlanStatus` command needs a quick pick and a `CoreHost`, which the shared `tests/unit/vscode-stub.ts` does not provide, so the test starts at `applyPlanCriteria` — the function that command calls — and everything below it is production code against the real filesystem.
+- `npm run check` (typecheck + 16 files / 123 tests + build) and `node --check` on both bundles pass on Node 20 for this tag. The Windows package, the isolated-install smoke test and the Extension Host test run in `.github/workflows/release-vsix.yml`, which packages this tag and attaches the VSIX.

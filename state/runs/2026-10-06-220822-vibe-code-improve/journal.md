@@ -20,3 +20,6 @@
 - [러너 22:20] pr created — https://github.com/hkjang/vibe-code/pull/19
 - [러너 22:24] ci passed — 검사 3개 모두 success
 - [러너 22:24] merge done — 8da4c5d
+- [러너 22:34] release published — v1.8.1
+- [러너 22:35] gh-release created — GitHub Release v1.8.1
+- [러너 22:38] assets verified — v1.8.1 자산 2개 (이전 v1.8.0: 2)

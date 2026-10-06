@@ -1,0 +1,37 @@
+chore(release): VisitFlow v2.8.17
+
+- 프로필 대화상자가 기준정보 조회 실패를 「부서·대리 담당자 없음」으로 단정하고 메일 알림
+  토글의 저장 실패를 되돌리지 않던 것을 고친다. `web/src/components/AppShell.tsx` 의
+  `openProfile` 은 대화상자를 먼저 열고(`setProfileOpen(true)`) `/api/v1/reference-data` 를
+  catch 없이 await 했다 — 조회가 실패하면 「소속 부서」에 `미지정` 하나, 「대리 담당자」에
+  `지정 안 함` 하나만 남은 화면이 **정상처럼** 보이고, 오류는 `void openProfile()` 때문에
+  unhandled rejection 으로 사라지고, 바로 다음 줄의 메일 알림 조회는 아예 실행되지 않아
+  「메일 알림」 섹션이 통째로 없어졌다. 실패 표시는 전용 `referenceFailed` 플래그 하나에서만
+  나오게 했다 — `ReferenceData.hosts` 는 `web/src/types.ts:83` 에서 optional 이라 혼자인
+  테넌트는 대리 담당자 목록이 **정상적으로** 비므로, 배열이 빈 것을 실패의 근거로 삼을 수
+  없다. 두 select 의 `error`·`helperText` 가 그 한 값만 읽고, 「대리 담당자」의 기존
+  helperText 는 덮지 않고 앞에 합쳤다. 메일 알림 조회는 try 블록 **앞**으로 옮겨 참조
+  데이터의 성공 여부와 무관하게 돈다. Alert 문구는 한국어 문장을 앞에 두고 원인을 괄호로
+  붙인다 — 네트워크 실패의 `e.message` 는 브라우저가 주는 영어("Failed to fetch")라
+  v2.8.16 과 같은 판단이다. `saveMailPrefs` 는 진입에서 `previous` 를 잡아 `catch` 에서
+  `setMailPrefs(previous)` 로 되돌리고 서버 메시지를 기존 `profileError` Alert 에 띄운다.
+  「저장」(`saveProfile`)과 서버는 건드리지 않았다. 프로덕션 1개 파일 + e2e 영구 스펙 3개.
+
+- 검증(릴리스 시점에 다시 실행): `npm ci`(package.json·lock 일치)·`npm run lint`(tsc -b)·
+  `npm test` **98 passed**·`npm run build`, `gofmt -l .` 빈 출력·`go build ./...`·
+  `go vet ./...`·`git diff --check` 빈 출력, 임시 PostgreSQL 16 컨테이너에
+  `VISITFLOW_TEST_DSN` 을 주고 `go test ./... -count=1`(internal/app **58.637s** — SKIP
+  아님), 그리고 `bash scripts/local-e2e.sh` **21 passed / 종료 코드 0**(기준 18개 + 새 스펙
+  3개). 구현 회차의 red→green 은 수정 전 `AppShell.tsx`·실제 `npm run build` 임베드·실서버·
+  실제 Chrome 으로 짝지어 `2 failed / 19 passed` 를 먼저 받았다 — 실패 스펙은
+  `getByRole('dialog').getByText(/기준정보를 불러오지 못했습니다/)` 에서
+  `element(s) not found`, 토글 스펙은 PUT 500 뒤 `toBeChecked()` 가 `Received: unchecked`
+  였고, 같은 실행의 error-context 가 증상 전체(오류가 전혀 없는 대화상자 스냅샷,
+  `combobox "대리 담당자"` 다음이 곧바로 `separator: 비밀번호 변경` — 「메일 알림」 섹션
+  부재)를 담았다. 정상 경로 스펙은 수정 **전에도** 통과해, 선택자가 제품이 아니라 스펙 탓으로
+  깨진 것이 아님을 확인했다. 남은 한계는 정직하게 적는다 — `saveMailPrefs` 의 `previous` 는
+  렌더 클로저의 `mailPrefs` 라 매우 빠른 연속 토글에서 중간 상태가 섞일 수 있고(기존 낙관적
+  갱신과 같은 한계), `web/e2e` 는 아직 `tsc -b` 의 타입 검사 대상이 아니다.
+
+버전 표기(README, docs/index.html, web/package.json, web/package-lock.json)를
+2.8.17로 올린다.
