@@ -30,3 +30,4 @@
 - [러너 22:30] ci passed — 검사 2개 모두 success
 - [러너 22:30] merge done — ab0e6b7
 - [러너 22:40] release published — v2.8.17
+- [러너 22:42] assets verified — v2.8.17 자산 1개 (이전 v2.8.16: 1)
