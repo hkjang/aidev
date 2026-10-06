@@ -1,0 +1,37 @@
+{
+  "base": {
+    "state": "pinned",
+    "reason": "main@9e32f63",
+    "at": "2026-10-06T09:48:01+09:00"
+  },
+  "autonomy": {
+    "state": "release",
+    "reason": "",
+    "at": "2026-10-06T09:48:01+09:00"
+  },
+  "scout": {
+    "state": "done",
+    "reason": "업스트림 좌표 때문에 마스킹이 실패한 요청을 `/v1/mask`가 400 `invalid`/`retryable:false`로 보고하는 것 고치기 (",
+    "at": "2026-10-06T09:55:24+09:00"
+  },
+  "brief": {
+    "state": "accepted",
+    "reason": "채택 — 과제서의 근거(`mapError`의 fallback과 `handleMask`의 400 강등, 호출부 두 곳이 placeRegion 에러를 감싸지 않음, `processing_fa",
+    "at": "2026-10-06T10:01:57+09:00"
+  },
+  "verify": {
+    "state": "passed",
+    "reason": "검증 3개 통과 (policy)",
+    "at": "2026-10-06T10:02:00+09:00"
+  },
+  "review": {
+    "state": "rejected",
+    "reason": "리뷰 거절: internal/masking/engine.go:428 `target.Width <= 0 || target.Height <= 0` 분기는 업스트림 응답이 아니라 **업로드한 문서**가 원인인데도 `*RegionPlacementError`로 바뀌어 `masking_failed`/502/`retryable:true`로 나갑니다. `target`은 두 호출부 모두 문서에서만 옵니다 — 이미지는 `document.ValidateImageDimensions`(image.go:22)가 0을 이미 거르므로 이 분기에 도달하는 유일한 경로는 PDF 페이지 크기(engine.go:565 `pdfPageDims`)입니다. 즉 이 분기는 **구조적으로 업스트림 원인이 될 수 없는데** 업스트림 실패로 재분류되었습니다. 재현: `/MediaBox [0 0 0 0]` 인 1페이지 PDF를 만들어 `MaskPDFFile`에 정상 좌표(10,10)-(100,40)을 주면 `page 1 has no usable dimensions` 가 돌아오고 `errors.As(err, &*RegionPlacementError)` 가 true 입니다(정상 `[0 0 595 842]` PDF는 nil). 수정 전에는 `processing_failed`/400/`retryable:false`(올바른 분류)였습니다. 결과적으로 손상된 업로드를 보낸 클라이언트가 \"서버 쪽 문제이니 재시도하라\"는 답을 받고 결정적으로 영원히 실패하는 재시도를 돌리며, 업스트림 실패 지표에 클라이언트 원인 실패가 섞입니다. 고치는 법: 이 한 줄만 `fmt.Errorf`로 되돌리고(= 좌표가 아니라 문서에 관한 거절이므로) `engine_test.go:259` 표에서 `page without usable dimensions` 케이스를 빼면 됩니다. / internal/masking/engine.go:399-405 새 타입의 주석이 코드와 반대를 말합니다 — \"the page reports no size to map onto\" 를 이 타입의 사례로 명시해 두고 바로 다음 문장에서 \"The upload itself was readable - a decode or a PDF parse would have failed first - so callers classify this as an unusable upstream answer rather than a bad request, and the same upload sent again may well succeed\" 라고 단언합니다. 위 재현 케이스에서는 parse 가 성공했고 원인이 업로드이며 재시도는 결코 성공하지 못합니다. README.md:85 의 \"업로드는 정상이었고 응답만 쓸 수 없었던 masking_failed\"·\"요청에 잘못이 없어 같은 요청을 다시 보내면 성공할 수 있으므로 retryable 이 true\" 도 같은 이유로 사실과 어긋납니다(항목 3: 동작과 설명의 불일치).",
+    "at": "2026-10-06T10:06:00+09:00"
+  },
+  "pr": {
+    "state": "created",
+    "reason": "https://github.com/hkjang/pii-masker/pull/34",
+    "at": "2026-10-06T10:06:08+09:00"
+  }
+}

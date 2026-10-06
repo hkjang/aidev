@@ -1,0 +1,11 @@
+## 2026-10-06
+- 선택: 문제가 진행되지 않는 동안에도 계속 도는 Timer 의 20Hz 리렌더 루프 멈추기 (가치 3 / 위험 2 / 작업량 S)
+- 결과: 성공
+- 요약: `useNow` 시그니처를 `number | null` 로 넓혀 `null` 이면 `setInterval` 을 걸지 않게 하고, `Timer` 는 `room.status === 'playing'` 일 때만 50ms, `Display` 는 `room?.status === 'playing'` 일 때만 200ms 를 요청하게 했다(프로덕션 3파일, +8/-3). 재시작 시 `now` 가 낡은 값이 되는 것을 막기 위해 인터벌을 걸기 바로 전에 `setNow(serverNow())` 를 호출한다. 검증은 **실제 브라우저 실측**으로 했다 — 이 샌드박스에 Python Playwright + chromium(1243)이 이미 깔려 있는 것을 발견해서, 프로덕션 `Timer` 를 실제 `react-dom/client` 로 마운트하고 `window.setInterval` 을 감싸 **살아 있는 50ms 인터벌 개수를 직접 셌다**(커밋하지 않은 임시 하네스 `__probe__/`, 커밋 전 삭제 + `git status --porcelain` 클린 확인). 기준선 `npm i`/`npm run build` EXIT 0(434.14 kB) → 변경 후 EXIT 0(434.24 kB), 89 modules 동일(프로브가 번들에 섞이지 않은 증거).
+- 실패 재현: 수정 전 프로브 실행 — 네 개의 비-playing 상태 모두에서 `Timer` 가 아무것도 그리지 않는데(`렌더='(null)'`) 50ms 인터벌이 살아 있었다. 즉 과제서가 "실행 증거로 증명할 수단이 없다" 고 한 수용기준 1·2 를 실측으로 레드→그린 확인했다:
+  `[FAIL] status=waiting 에서 50ms interval 0개: live50=1, 렌더='(null)'` (ready/revealed/finished 동일, 4건) → 수정 후 전부 `live50=0`, `status=playing` 에서만 `live50=1`.
+  그리고 수용기준 3 은 **변이 테스트**로 그 한 줄이 실제로 일하는지 증명했다. `setNow(serverNow())` 만 지우고 revealed 3초 체류 후 playing 전환 시 페인트된 숫자를 rAF 로 샘플링:
+  `페인트된 추이: [(null), t=19ms:'7', t=69ms:'3', t=1018ms:'2']` → `[FAIL] 4 초과=['7']`. 줄을 되돌리면 `[(null), t=5ms:'3', t=1005ms:'2']` 로 그린. 과제서가 1순위 위험으로 지목한 "카운트다운 첫 프레임에 엉뚱한 숫자" 가 실재함을 수치로 재현했다.
+  덧붙여 수용기준 4 는 vite `ssrLoadModule` 로 프로덕션 `derivePhase` 를 불러 실측했고, 프로브가 무의미하지 않다는 **음성 대조**까지 넣었다: `waiting/ready/revealed/finished` 는 `now=[0, 지금, 지금+1e12]` 에 대해 전부 IDENTICAL, `playing` 만 `[countdown, countdown, locked]` 로 DIFFERS.
+- 보류 아이디어: ①카운트다운 첫 프레임 `Math.ceil` 반올림 아티팩트 — 이번 실측에서 **새로 발견**했다. 기준선에서도 재시작 첫 프레임에 '4' 가 한 번 스친다(`now` 가 최대 한 틱 낡은 상태로 `Math.ceil((s-now)/1000)`); 이번 수정으로 우연히 사라졌지만 `Timer.tsx:11` 의 반올림 자체는 그대로다 ②탈락 모드 정답률·미선택 분모 불일치(`0003:114` `v_total` 이 탈락자 포함 — SQL 보호 경로, 사람 검토 붙는 단독 회차로) ③`Play.tsx:61` 의 같은 `useNow(200)` 루프 — 이번에 머지 대기 PR 충돌로 제외했고, 그 PR 정리 후 한 줄로 끝난다 ④`useRoom` 4초 전역 폴링을 단계별 조정(`pollIntervalMs(phase)`) ⑤라우트별 코드 스플리팅(`main.tsx` React.lazy — 여전히 434 kB 단일 청크)
+- 과제서: 채택 — 1순위를 지정된 3파일(선택 과제 `Display.tsx` 포함)로 그대로 구현하고 수용기준 1~6 을 모두 충족했다. 과제서가 "증명 수단 없음" 으로 남긴 수용기준 1·2 는 샌드박스에 이미 있던 Playwright+chromium 으로 실제 브라우저 실측이 가능해서 코드 읽기 대신 실행 증거로 채웠다.

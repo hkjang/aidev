@@ -1,0 +1,225 @@
+{
+  "run_id": "2026-10-06-094752-pii-masker-improve",
+  "generated": "2026-10-06T10:06:10+09:00",
+  "run": {
+    "run_id": "2026-10-06-094752-pii-masker-improve",
+    "project": "pii-masker",
+    "kind": "improve",
+    "started": "2026-10-06T09:47:53+09:00",
+    "model": "claude-opus-5",
+    "policy_version": "4a9e91ac7",
+    "prompts_hash": "ce085c79e18002e2",
+    "runner_version": "1bd5f0cd4",
+    "arm": "no-repair",
+    "experiment": "roles-2026-09",
+    "finished": "2026-10-06T10:06:09+09:00",
+    "outcome": "review-pending"
+  },
+  "record": {
+    "ts": "2026-10-06T10:06:09+09:00",
+    "date": "2026-10-06",
+    "project": "pii-masker",
+    "result": "review held, PR open https://github.com/hkjang/pii-masker/pull/34",
+    "outcome": "review-pending",
+    "run_id": "2026-10-06-094752-pii-masker-improve",
+    "base_sha": "9e32f6346edfb10a52edd3e6ed9856849a416321",
+    "head_sha": "e4015bbf94ab0c96d6b92377970e061d7ec3bccf",
+    "pr": "https://github.com/hkjang/pii-masker/pull/34",
+    "stages": {
+      "base": {
+        "state": "pinned",
+        "reason": "main@9e32f63",
+        "at": "2026-10-06T09:48:01+09:00"
+      },
+      "autonomy": {
+        "state": "release",
+        "reason": "",
+        "at": "2026-10-06T09:48:01+09:00"
+      },
+      "scout": {
+        "state": "done",
+        "reason": "업스트림 좌표 때문에 마스킹이 실패한 요청을 `/v1/mask`가 400 `invalid`/`retryable:false`로 보고하는 것 고치기 (",
+        "at": "2026-10-06T09:55:24+09:00"
+      },
+      "brief": {
+        "state": "accepted",
+        "reason": "채택 — 과제서의 근거(`mapError`의 fallback과 `handleMask`의 400 강등, 호출부 두 곳이 placeRegion 에러를 감싸지 않음, `processing_fa",
+        "at": "2026-10-06T10:01:57+09:00"
+      },
+      "verify": {
+        "state": "passed",
+        "reason": "검증 3개 통과 (policy)",
+        "at": "2026-10-06T10:02:00+09:00"
+      },
+      "review": {
+        "state": "rejected",
+        "reason": "리뷰 거절: internal/masking/engine.go:428 `target.Width <= 0 || target.Height <= 0` 분기는 업스트림 응답이 아니라 **업로드한 문서**가 원인인데도 `*RegionPlacementError`로 바뀌어 `masking_failed`/502/`retryable:true`로 나갑니다. `target`은 두 호출부 모두 문서에서만 옵니다 — 이미지는 `document.ValidateImageDimensions`(image.go:22)가 0을 이미 거르므로 이 분기에 도달하는 유일한 경로는 PDF 페이지 크기(engine.go:565 `pdfPageDims`)입니다. 즉 이 분기는 **구조적으로 업스트림 원인이 될 수 없는데** 업스트림 실패로 재분류되었습니다. 재현: `/MediaBox [0 0 0 0]` 인 1페이지 PDF를 만들어 `MaskPDFFile`에 정상 좌표(10,10)-(100,40)을 주면 `page 1 has no usable dimensions` 가 돌아오고 `errors.As(err, &*RegionPlacementError)` 가 true 입니다(정상 `[0 0 595 842]` PDF는 nil). 수정 전에는 `processing_failed`/400/`retryable:false`(올바른 분류)였습니다. 결과적으로 손상된 업로드를 보낸 클라이언트가 \"서버 쪽 문제이니 재시도하라\"는 답을 받고 결정적으로 영원히 실패하는 재시도를 돌리며, 업스트림 실패 지표에 클라이언트 원인 실패가 섞입니다. 고치는 법: 이 한 줄만 `fmt.Errorf`로 되돌리고(= 좌표가 아니라 문서에 관한 거절이므로) `engine_test.go:259` 표에서 `page without usable dimensions` 케이스를 빼면 됩니다. / internal/masking/engine.go:399-405 새 타입의 주석이 코드와 반대를 말합니다 — \"the page reports no size to map onto\" 를 이 타입의 사례로 명시해 두고 바로 다음 문장에서 \"The upload itself was readable - a decode or a PDF parse would have failed first - so callers classify this as an unusable upstream answer rather than a bad request, and the same upload sent again may well succeed\" 라고 단언합니다. 위 재현 케이스에서는 parse 가 성공했고 원인이 업로드이며 재시도는 결코 성공하지 못합니다. README.md:85 의 \"업로드는 정상이었고 응답만 쓸 수 없었던 masking_failed\"·\"요청에 잘못이 없어 같은 요청을 다시 보내면 성공할 수 있으므로 retryable 이 true\" 도 같은 이유로 사실과 어긋납니다(항목 3: 동작과 설명의 불일치).",
+        "at": "2026-10-06T10:06:00+09:00"
+      },
+      "pr": {
+        "state": "created",
+        "reason": "https://github.com/hkjang/pii-masker/pull/34",
+        "at": "2026-10-06T10:06:08+09:00"
+      }
+    },
+    "campaign": "",
+    "autonomy": "release",
+    "arm": "no-repair",
+    "experiment": "roles-2026-09",
+    "engine": "claude",
+    "files": 5,
+    "additions": 252,
+    "deletions": 9,
+    "tests": 2,
+    "title": "Report unusable upstream mask coordinates as an upstream failure"
+  },
+  "stages": {
+    "base": {
+      "state": "pinned",
+      "reason": "main@9e32f63",
+      "at": "2026-10-06T09:48:01+09:00"
+    },
+    "autonomy": {
+      "state": "release",
+      "reason": "",
+      "at": "2026-10-06T09:48:01+09:00"
+    },
+    "scout": {
+      "state": "done",
+      "reason": "업스트림 좌표 때문에 마스킹이 실패한 요청을 `/v1/mask`가 400 `invalid`/`retryable:false`로 보고하는 것 고치기 (",
+      "at": "2026-10-06T09:55:24+09:00"
+    },
+    "brief": {
+      "state": "accepted",
+      "reason": "채택 — 과제서의 근거(`mapError`의 fallback과 `handleMask`의 400 강등, 호출부 두 곳이 placeRegion 에러를 감싸지 않음, `processing_fa",
+      "at": "2026-10-06T10:01:57+09:00"
+    },
+    "verify": {
+      "state": "passed",
+      "reason": "검증 3개 통과 (policy)",
+      "at": "2026-10-06T10:02:00+09:00"
+    },
+    "review": {
+      "state": "rejected",
+      "reason": "리뷰 거절: internal/masking/engine.go:428 `target.Width <= 0 || target.Height <= 0` 분기는 업스트림 응답이 아니라 **업로드한 문서**가 원인인데도 `*RegionPlacementError`로 바뀌어 `masking_failed`/502/`retryable:true`로 나갑니다. `target`은 두 호출부 모두 문서에서만 옵니다 — 이미지는 `document.ValidateImageDimensions`(image.go:22)가 0을 이미 거르므로 이 분기에 도달하는 유일한 경로는 PDF 페이지 크기(engine.go:565 `pdfPageDims`)입니다. 즉 이 분기는 **구조적으로 업스트림 원인이 될 수 없는데** 업스트림 실패로 재분류되었습니다. 재현: `/MediaBox [0 0 0 0]` 인 1페이지 PDF를 만들어 `MaskPDFFile`에 정상 좌표(10,10)-(100,40)을 주면 `page 1 has no usable dimensions` 가 돌아오고 `errors.As(err, &*RegionPlacementError)` 가 true 입니다(정상 `[0 0 595 842]` PDF는 nil). 수정 전에는 `processing_failed`/400/`retryable:false`(올바른 분류)였습니다. 결과적으로 손상된 업로드를 보낸 클라이언트가 \"서버 쪽 문제이니 재시도하라\"는 답을 받고 결정적으로 영원히 실패하는 재시도를 돌리며, 업스트림 실패 지표에 클라이언트 원인 실패가 섞입니다. 고치는 법: 이 한 줄만 `fmt.Errorf`로 되돌리고(= 좌표가 아니라 문서에 관한 거절이므로) `engine_test.go:259` 표에서 `page without usable dimensions` 케이스를 빼면 됩니다. / internal/masking/engine.go:399-405 새 타입의 주석이 코드와 반대를 말합니다 — \"the page reports no size to map onto\" 를 이 타입의 사례로 명시해 두고 바로 다음 문장에서 \"The upload itself was readable - a decode or a PDF parse would have failed first - so callers classify this as an unusable upstream answer rather than a bad request, and the same upload sent again may well succeed\" 라고 단언합니다. 위 재현 케이스에서는 parse 가 성공했고 원인이 업로드이며 재시도는 결코 성공하지 못합니다. README.md:85 의 \"업로드는 정상이었고 응답만 쓸 수 없었던 masking_failed\"·\"요청에 잘못이 없어 같은 요청을 다시 보내면 성공할 수 있으므로 retryable 이 true\" 도 같은 이유로 사실과 어긋납니다(항목 3: 동작과 설명의 불일치).",
+      "at": "2026-10-06T10:06:00+09:00"
+    },
+    "pr": {
+      "state": "created",
+      "reason": "https://github.com/hkjang/pii-masker/pull/34",
+      "at": "2026-10-06T10:06:08+09:00"
+    }
+  },
+  "provenance": {
+    "model": "claude-opus-5",
+    "policy_version": "4a9e91ac7",
+    "prompts_hash": "ce085c79e18002e2",
+    "runner_version": "1bd5f0cd4",
+    "base_sha": "9e32f6346edfb10a52edd3e6ed9856849a416321",
+    "head_sha": "e4015bbf94ab0c96d6b92377970e061d7ec3bccf",
+    "pr": "https://github.com/hkjang/pii-masker/pull/34"
+  },
+  "verification": {
+    "runner": {
+      "source": "policy",
+      "commands": [
+        {
+          "cmd": "go build ./...",
+          "exit": 0,
+          "seconds": 0
+        },
+        {
+          "cmd": "go vet ./...",
+          "exit": 0,
+          "seconds": 0
+        },
+        {
+          "cmd": "go test -count=1 ./...",
+          "exit": 0,
+          "seconds": 2
+        }
+      ]
+    },
+    "runner_gate": {
+      "ok": true,
+      "state": "verified",
+      "reason": "검증 3개 통과 (policy)"
+    },
+    "after_rebase": null,
+    "review": {
+      "verdict": "reject",
+      "reasons": [
+        "internal/masking/engine.go:428 `target.Width <= 0 || target.Height <= 0` 분기는 업스트림 응답이 아니라 **업로드한 문서**가 원인인데도 `*RegionPlacementError`로 바뀌어 `masking_failed`/502/`retryable:true`로 나갑니다. `target`은 두 호출부 모두 문서에서만 옵니다 — 이미지는 `document.ValidateImageDimensions`(image.go:22)가 0을 이미 거르므로 이 분기에 도달하는 유일한 경로는 PDF 페이지 크기(engine.go:565 `pdfPageDims`)입니다. 즉 이 분기는 **구조적으로 업스트림 원인이 될 수 없는데** 업스트림 실패로 재분류되었습니다. 재현: `/MediaBox [0 0 0 0]` 인 1페이지 PDF를 만들어 `MaskPDFFile`에 정상 좌표(10,10)-(100,40)을 주면 `page 1 has no usable dimensions` 가 돌아오고 `errors.As(err, &*RegionPlacementError)` 가 true 입니다(정상 `[0 0 595 842]` PDF는 nil). 수정 전에는 `processing_failed`/400/`retryable:false`(올바른 분류)였습니다. 결과적으로 손상된 업로드를 보낸 클라이언트가 \"서버 쪽 문제이니 재시도하라\"는 답을 받고 결정적으로 영원히 실패하는 재시도를 돌리며, 업스트림 실패 지표에 클라이언트 원인 실패가 섞입니다. 고치는 법: 이 한 줄만 `fmt.Errorf`로 되돌리고(= 좌표가 아니라 문서에 관한 거절이므로) `engine_test.go:259` 표에서 `page without usable dimensions` 케이스를 빼면 됩니다.",
+        "internal/masking/engine.go:399-405 새 타입의 주석이 코드와 반대를 말합니다 — \"the page reports no size to map onto\" 를 이 타입의 사례로 명시해 두고 바로 다음 문장에서 \"The upload itself was readable - a decode or a PDF parse would have failed first - so callers classify this as an unusable upstream answer rather than a bad request, and the same upload sent again may well succeed\" 라고 단언합니다. 위 재현 케이스에서는 parse 가 성공했고 원인이 업로드이며 재시도는 결코 성공하지 못합니다. README.md:85 의 \"업로드는 정상이었고 응답만 쓸 수 없었던 masking_failed\"·\"요청에 잘못이 없어 같은 요청을 다시 보내면 성공할 수 있으므로 retryable 이 true\" 도 같은 이유로 사실과 어긋납니다(항목 3: 동작과 설명의 불일치)."
+      ],
+      "notes": [
+        "검증은 실재합니다. 프로덕션 2파일만 `git checkout main --` 로 되돌려 신규 통합 테스트를 직접 돌렸고 원장의 `- 실패 재현:` 과 **글자 단위로 같은** 두 줄이 재현됐습니다(`integration_test.go:1707 unexpected status 400, want 502` / `:1747 want masking_failed`). 복원 후 `go build`·`go vet`·`gofmt -l`·`go test -count=1 ./...`(8패키지 ok) 전부 통과. `TestMaskKeepsClientCausedFailuresAsBadRequest` 두 케이스는 수정 전에도 통과하는 순수 가드이며 원장이 그 사실을 정직하게 적어 뒀습니다 — 가드 목적이므로 결함 아님.",
+        "보안·법무 차단 사유 없음(`blocking` 비움). 새 인증·인가 경로 없고, 식별자·비밀값·의존성·삭제 로직을 건드리지 않습니다. `handleMask`(server.go:153)는 무수정이고 상태코드 분기도 기존 그대로입니다. 새로 노출되는 `Error.Detail` 은 좌표·페이지 번호·페이지 크기뿐이고 PII 값이나 업스트림 본문을 담지 않으며, 수신자는 그 파일을 올린 당사자입니다(목적·보존·접근 통제에 변화 없음). UI(index.html:1197 `showError`)는 이미 `message`+`code`+`detail` 을 렌더하므로 `masking_failed` 도 그대로 표시됩니다.",
+        "남는 우려 1 — `service.go:618` \"output identical to the original\" 도 `retryable:true` 인데, 이 자리는 업스트림이 아니라 마스킹 엔진이나 이미 검게 칠해진 입력이 원인일 수 있어 재시도가 결정적으로 같은 결과를 냅니다. 구현자가 스스로 의심한 `retryable:true` 판단 중 가장 약한 자리입니다. 거절 사유로는 안 올렸습니다(과제서가 요구한 값이고 업로드 원인이라 단정할 근거를 못 만들었습니다) — 다음 회차에서 재검토할 값.",
+        "남는 우려 2 — README:80-83 의 열거에 `page N has no usable dimensions` 케이스가 **어느 줄에도 없습니다**(수정 전에도 없었음). 위 거절을 수리할 때 400 으로 남기든 README 에 한 줄 추가하든 이 공백을 같이 닫아 주세요. 릴리즈 노트에는 `masking_failed` 가 **신규 에러 코드**이며 기존 클라이언트의 `processing_failed` 처리 분기를 지나치게 된다는 점을 적어야 합니다(동기 400→502 변화 포함, 사실상 계약 변경).",
+        "못 본 것: Docker 빌드, `GOARCH=386`, Windows Rename 경로는 이번에도 확인하지 않았습니다(프로필의 미확인 항목 그대로). PDF `maskPDFFileInternal` 의 \"refers to page %d but the document has %d page(s)\" 가 혼자 `processing_failed` 로 남은 것은 범위 밖 판단에 동의합니다 — 다만 그쪽은 업스트림이 준 페이지 번호가 원인이라 분류가 반대로 뒤집혀 있어, 위 거절 사유와 합쳐 \"문서가 원인인가 좌표가 원인인가\" 축으로 한 번에 정리하는 편이 낫습니다."
+      ],
+      "risk": "medium",
+      "blocking": []
+    },
+    "ci_gate": null
+  },
+  "release": {
+    "result": null,
+    "assets_sha256": []
+  },
+  "approval": null,
+  "usage": [
+    {
+      "ts": "2026-10-06T09:55:24+09:00",
+      "date": "2026-10-06",
+      "project": "pii-masker",
+      "phase": "scout",
+      "run_id": "2026-10-06-094752-pii-masker-improve",
+      "campaign": "",
+      "subtype": "success",
+      "engine": "claude",
+      "duration_ms": 455443,
+      "num_turns": 31,
+      "cost_usd": 2.922406,
+      "input_tokens": 56,
+      "output_tokens": 28633,
+      "cache_read": 2291382,
+      "cache_create": 106061
+    },
+    {
+      "ts": "2026-10-06T10:01:57+09:00",
+      "date": "2026-10-06",
+      "project": "pii-masker",
+      "phase": "improve",
+      "run_id": "2026-10-06-094752-pii-masker-improve",
+      "campaign": "",
+      "subtype": "success",
+      "engine": "claude",
+      "duration_ms": 403297,
+      "num_turns": 49,
+      "cost_usd": 3.4169224999999996,
+      "input_tokens": 86,
+      "output_tokens": 27620,
+      "cache_read": 3578485,
+      "cache_create": 93675
+    },
+    {
+      "ts": "2026-10-06T10:06:00+09:00",
+      "date": "2026-10-06",
+      "project": "pii-masker",
+      "phase": "review",
+      "run_id": "2026-10-06-094752-pii-masker-improve",
+      "campaign": "",
+      "subtype": "success",
+      "engine": "claude",
+      "duration_ms": 244784,
+      "num_turns": 24,
+      "cost_usd": 1.525302,
+      "input_tokens": 42,
+      "output_tokens": 13922,
+      "cache_read": 1163484,
+      "cache_create": 59530
+    }
+  ]
+}
