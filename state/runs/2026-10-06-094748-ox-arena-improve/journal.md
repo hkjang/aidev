@@ -27,3 +27,4 @@
 - security/legal: 차단 없음. 클라이언트 렌더 타이밍 3파일 +8/-3, 인증·비밀값·RLS·마이그레이션·의존성·개인정보 표면 무접촉.
 - [러너 10:05] review approved — 리뷰 승인 (risk=low)
 - [러너 10:05] pr created — https://github.com/hkjang/ox-arena/pull/4
+- [러너 10:10] ci no-ci — 이 커밋에 검사가 없음 (정책 allow_merge_without_ci 가 없으면 차단)

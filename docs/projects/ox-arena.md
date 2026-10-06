@@ -1,7 +1,7 @@
 ---
 title: "ox-arena — 자율 개선 이력"
-description: "ox-arena: 자율 개선 회차 3회, 릴리즈 0건. 최근 릴리즈 없음."
-last_modified_at: 2026-10-06 10:06:14 +0900
+description: "ox-arena: 자율 개선 회차 4회, 릴리즈 0건. 최근 릴리즈 없음."
+last_modified_at: 2026-10-06 10:10:25 +0900
 ---
 {% raw %}
 <script type="application/ld+json">
@@ -11,33 +11,33 @@ last_modified_at: 2026-10-06 10:06:14 +0900
  "name": "ox-arena",
  "codeRepository": "https://github.com/hkjang/ox-arena",
  "url": "https://hkjang.github.io/aidev/projects/ox-arena/",
- "description": "ox-arena: 자율 개선 회차 3회, 릴리즈 0건. 최근 릴리즈 없음.",
+ "description": "ox-arena: 자율 개선 회차 4회, 릴리즈 0건. 최근 릴리즈 없음.",
  "inLanguage": "ko",
  "maintainer": {
   "@type": "Person",
   "name": "hkjang",
   "url": "https://github.com/hkjang"
  },
- "dateModified": "2026-10-06T10:06:14+09:00"
+ "dateModified": "2026-10-06T10:10:25+09:00"
 }
 </script>
 
 # ox-arena
 
-<p class="tldr"><strong>요약.</strong> ox-arena: 자율 개선 회차 3회, 릴리즈 0건. 최근 릴리즈 없음. <span class="pill pill-merged" title="14일: 릴리즈 0, 실패 0, 경고 1, 회귀 0">건강 B</span> <span class="meta">14일: 릴리즈 0, 실패 0, 경고 1, 회귀 0</span></p>
+<p class="tldr"><strong>요약.</strong> ox-arena: 자율 개선 회차 4회, 릴리즈 0건. 최근 릴리즈 없음. <span class="pill pill-merged" title="14일: 릴리즈 0, 실패 0, 경고 1, 회귀 0">건강 B</span> <span class="meta">14일: 릴리즈 0, 실패 0, 경고 1, 회귀 0</span></p>
 
-<ul class="stats"><li><b>3</b><span>회차</span></li><li><b>1</b><span>프로젝트</span></li><li><b>0</b><span>배포 준비 완료</span></li><li><b>0</b><span>릴리즈 진행 중</span></li><li><b>0</b><span>병합 완료</span></li><li><b>3</b><span>검토 대기</span></li><li><b>0</b><span>검증 실패</span></li><li><b>0</b><span>변경 없음</span></li><li><b>0</b><span>실행 오류</span></li><li><b>$18.69</b><span>비용</span></li><li><b>1시간 16분</b><span>에이전트 시간</span></li></ul>
+<ul class="stats"><li><b>4</b><span>회차</span></li><li><b>1</b><span>프로젝트</span></li><li><b>0</b><span>배포 준비 완료</span></li><li><b>0</b><span>릴리즈 진행 중</span></li><li><b>0</b><span>병합 완료</span></li><li><b>4</b><span>검토 대기</span></li><li><b>0</b><span>검증 실패</span></li><li><b>0</b><span>변경 없음</span></li><li><b>0</b><span>실행 오류</span></li><li><b>$18.69</b><span>비용</span></li><li><b>1시간 16분</b><span>에이전트 시간</span></li></ul>
 
 ## 현황
 
 <dl class="kv">
 <dt>저장소</dt><dd><a href="https://github.com/hkjang/ox-arena">https://github.com/hkjang/ox-arena</a></dd>
-<dt>마지막 회차</dt><dd>2026-10-05 19:15 KST — <span class="pill pill-other">• 기타</span> CI no-ci, PR open <a href="https://github.com/hkjang/ox-arena/pull/3">PR #3</a></dd>
+<dt>마지막 회차</dt><dd>2026-10-06 10:10 KST — <span class="pill pill-other">• 기타</span> CI no-ci, PR open <a href="https://github.com/hkjang/ox-arena/pull/4">PR #4</a></dd>
 </dl>
 
 ## 회차 이력
 
-<div class="table-wrap"><table class="rt"><thead><tr><th>일시</th><th class="primary">프로젝트</th><th>결과</th></tr></thead><tbody><tr data-status="other"><td data-label="일시">2026-10-05 19:15</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/ox-arena/">ox-arena</a></td><td data-label="결과"><span class="pill pill-merged" title="outcome=review-pending">검토 대기</span> CI no-ci, PR open <a href="https://github.com/hkjang/ox-arena/pull/3">PR #3</a><div class="meta">1파일 <span style="color:var(--good)">+2</span>/<span style="color:var(--bad)">−1</span> · <em>테스트 없음</em> — fix: disable O/X buttons during the 3s countdown</div></td></tr><tr data-status="other"><td data-label="일시">2026-10-03 18:26</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/ox-arena/">ox-arena</a></td><td data-label="결과"><span class="pill pill-merged" title="outcome=review-pending">검토 대기</span> <strong>guarded files</strong>, PR open <a href="https://github.com/hkjang/ox-arena/pull/2">PR #2</a><div class="meta">1파일 <span style="color:var(--good)">+17</span>/<span style="color:var(--bad)">−0</span> · <em>테스트 없음</em> — ci: verify PRs with npm ci / test / build in a separate workflow</div></td></tr><tr data-status="other"><td data-label="일시">2026-10-02 11:43</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/ox-arena/">ox-arena</a></td><td data-label="결과"><span class="pill pill-merged" title="outcome=review-pending">검토 대기</span> CI no-ci, PR open <a href="https://github.com/hkjang/ox-arena/pull/1">PR #1</a><div class="meta">7파일 <span style="color:var(--good)">+660</span>/<span style="color:var(--bad)">−23</span> · 테스트 3 — test: add Vitest and regression tests for pure game logic</div></td></tr></tbody></table></div>
+<div class="table-wrap"><table class="rt"><thead><tr><th>일시</th><th class="primary">프로젝트</th><th>결과</th></tr></thead><tbody><tr data-status="other"><td data-label="일시">2026-10-06 10:10</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/ox-arena/">ox-arena</a></td><td data-label="결과"><span class="pill pill-merged" title="outcome=review-pending">검토 대기</span> CI no-ci, PR open <a href="https://github.com/hkjang/ox-arena/pull/4">PR #4</a><div class="meta">3파일 <span style="color:var(--good)">+8</span>/<span style="color:var(--bad)">−3</span> · <em>테스트 없음</em> — perf: stop the 20Hz timer loop while no question is in progress</div></td></tr><tr data-status="other"><td data-label="일시">2026-10-05 19:15</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/ox-arena/">ox-arena</a></td><td data-label="결과"><span class="pill pill-merged" title="outcome=review-pending">검토 대기</span> CI no-ci, PR open <a href="https://github.com/hkjang/ox-arena/pull/3">PR #3</a><div class="meta">1파일 <span style="color:var(--good)">+2</span>/<span style="color:var(--bad)">−1</span> · <em>테스트 없음</em> — fix: disable O/X buttons during the 3s countdown</div></td></tr><tr data-status="other"><td data-label="일시">2026-10-03 18:26</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/ox-arena/">ox-arena</a></td><td data-label="결과"><span class="pill pill-merged" title="outcome=review-pending">검토 대기</span> <strong>guarded files</strong>, PR open <a href="https://github.com/hkjang/ox-arena/pull/2">PR #2</a><div class="meta">1파일 <span style="color:var(--good)">+17</span>/<span style="color:var(--bad)">−0</span> · <em>테스트 없음</em> — ci: verify PRs with npm ci / test / build in a separate workflow</div></td></tr><tr data-status="other"><td data-label="일시">2026-10-02 11:43</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/ox-arena/">ox-arena</a></td><td data-label="결과"><span class="pill pill-merged" title="outcome=review-pending">검토 대기</span> CI no-ci, PR open <a href="https://github.com/hkjang/ox-arena/pull/1">PR #1</a><div class="meta">7파일 <span style="color:var(--good)">+660</span>/<span style="color:var(--bad)">−23</span> · 테스트 3 — test: add Vitest and regression tests for pure game logic</div></td></tr></tbody></table></div>
 
 ## 비용·사용량
 
