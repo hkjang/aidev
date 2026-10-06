@@ -1,0 +1,101 @@
+[
+  {
+    "title": "주문 생성의 추가 옵션 가격 합산 int64 오버플로를 400 으로 거절",
+    "value": 3,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "이번 회차 1순위. orders.go:95 price += optionPrice 에 상한 없음. validateTalent(talents.go:263-285)는 음수만 거절, talent_options.price 는 bigint CHECK(price>=0) 이라 2^62 옵션 등록 가능. 한 번 감싸면 음수 -> orders.amount CHECK 위반으로 불명확한 500, 두 번 감싸면(합 2^64) price==0 으로 주문이 201 로 성공해 원장에 거짓 금액이 커밋된다. 위험을 3->2 로 낮춤: 수정이 옵션 루프의 가드 한 곳이고 마이그레이션·결제·상태표를 건드리지 않는다. 함정은 rows.Next() 루프 안에서 return 하면 pgx 행 집합이 닫히지 않는 것 — 플래그를 세워 rows.Close() 뒤에 거절해야 한다.",
+    "updated": "2026-10-07"
+  },
+  {
+    "title": "REQUIREMENT_PENDING 이 어떤 HTTP 경로로도 도달하지 않는 死상태",
+    "value": 3,
+    "risk": 4,
+    "size": "M",
+    "status": "pending",
+    "note": "2026-10-06 발견, 이번 회차에 orderTransitions(orders.go:19)에 PAID->REQUIREMENT_PENDING 이 여전히 선언되어 있는 것만 재확인. pay 가 PAID->READY 를 같은 트랜잭션에 커밋해 그 상태에 머물 수 없다. '이 상태가 제품상 필요한가' 를 먼저 결정해야 하는 제품 결정 과제이고 결제·상태표·원장을 동시에 건드려 자율 회차에 맞지 않는다.",
+    "updated": "2026-10-07"
+  },
+  {
+    "title": "통합 테스트를 같은 DB 에 두 번 돌리면 메일 릴레이·Agent 조사 테스트가 실패",
+    "value": 2,
+    "risk": 1,
+    "size": "M",
+    "status": "pending",
+    "note": "2026-10-06 에 baseline 에서도 재현해 사전 존재 결함으로 확인. 고치는 쪽이 테스트 격리(테스트별 스키마)냐 eventually 기한이냐를 먼저 정해야 해 S 가 아니다. 이번 회차 미재확인. 구현자에게는 '자기 변경 탓으로 오인하지 말 것' 으로 과제서에 경고로만 반영했다.",
+    "updated": "2026-10-07"
+  },
+  {
+    "title": "err!=nil||RowsAffected()==0 남은 8곳 가르기",
+    "value": 2,
+    "risk": 1,
+    "size": "M",
+    "status": "pending",
+    "note": "approvals.go:229, coupons.go:351, events.go:104, finance.go:101, identity.go:110, keys.go:183, organizations.go:256, reports.go:291. 이번 회차 미재확인(건수는 2026-10-06 집계 그대로). 남은 8곳은 모두 파라미터가 uuid·선검증 enum 뿐이라 자연 HTTP 입력으로 DB 오류를 만들 경로가 없고, 지난 회차들이 쓴 NUL/22021 수법이 통하지 않아 404 회귀 + 분기 단위 검증까지만 가능하다. 이 계열 캠페인은 증거를 댈 수 있는 사례를 모두 소진했다고 본다.",
+    "updated": "2026-10-07"
+  },
+  {
+    "title": "가이드 문서·openapi 의 API 메서드·응답 코드를 실제 라우터와 대조",
+    "value": 2,
+    "risk": 2,
+    "size": "M",
+    "status": "pending",
+    "note": "평가 유지, 이번 회차 미재확인. openapi_test.go 가 라우트 경로만 비교하고 응답 코드는 대조하지 않아 지난 다섯 회차가 전부 사람 눈으로 누락을 찾았다. 전 API 일괄 확장은 한 세션을 넘기므로 '핸들러가 내는 상태 코드 집합을 정적으로 모아 openapi 와 대조하는 테스트' 같은 좁은 계약부터 설계해야 한다.",
+    "updated": "2026-10-07"
+  },
+  {
+    "title": "감사 기록이 요청 본문 구조체를 그대로 넘기는 10곳",
+    "value": 2,
+    "risk": 2,
+    "size": "M",
+    "status": "pending",
+    "note": "admin_users 91/152, admin 462, approvals 193/233/332, auth 265, finance 147, notifications 248, profile 93. 이번 회차 미재확인. 자격증명은 이미 따로 걸러져(admin.go:304) 증명된 유출이 없어 정책 설계가 선행해야 한다. 운영자 지시('식별자만 details 로 넘길 것')와 방향이 같으므로 언젠가 해야 하지만 S 가 아니다.",
+    "updated": "2026-10-07"
+  },
+  {
+    "title": "알 수 없는 승인 조건을 편집할 때 유실 안내/보존",
+    "value": 3,
+    "risk": 2,
+    "size": "M",
+    "status": "pending",
+    "note": "web/src/pages/AdminPage.tsx ApprovalAdmin.save 가 알려진 조건 5개로 재구성해 알 수 없는 조건을 유실할 수 있다. 이번 회차 미재확인. 브라우저 검증이 필요하고 추적되는 internal/ui/dist 번들이 바뀌어 자율 회차의 검증 수단과 맞지 않는다.",
+    "updated": "2026-10-07"
+  },
+  {
+    "title": "README 환경변수 계약을 필수 4개 + 선택 SHUTDOWN_DRAIN_SECONDS 로 정리",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "이번 회차 차선 후보. 프로필에 기록된 불일치(README 실행 계약의 '네 개뿐' vs Config 의 선택 환경변수)는 이번 회차 미재확인이라 구현자가 먼저 README 와 internal/config 를 대조해야 한다. 가치가 작아 1순위를 밀어내지 못한다.",
+    "updated": "2026-10-07"
+  },
+  {
+    "title": "setTalentStatus 의 SELECT ... FOR UPDATE 실패를 404 와 500 으로 가르기",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "평가 유지, 이번 회차 미재확인. 자연 HTTP 입력으로 DB 장애를 재현할 길이 없어 증거가 약하다. 위 '남은 8곳' 과 같은 계열 한계.",
+    "updated": "2026-10-07"
+  },
+  {
+    "title": "주문 추가 옵션의 additional_days 합산과 due_at 시간 범위 검증",
+    "value": 1,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "신규(이번 회차 발견). orders.go:96 days += extraDays 와 orders.go:104 time.Now().AddDate(0,0,days) 에 상한이 없다. 다만 옵션당 AdditionalDays <= 365(talents.go:284)로 묶여 있어 int 를 넘기려면 수백만 개 옵션이 필요하고, 현실적 피해는 '먼 미래 due_at' 정도다. 1순위와 같은 함수·같은 루프라 같이 고치고 싶은 유혹이 있지만 과제서에서 명시적으로 범위 밖으로 뺐다 — 한 가드씩 증명해야 변이 검증이 성립한다.",
+    "updated": "2026-10-07"
+  },
+  {
+    "title": "옵션 조회 루프가 rows.Err() 와 Scan 실패를 조용히 삼킨다",
+    "value": 2,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "신규(이번 회차 발견). orders.go:88-100 의 for rows.Next() 가 Scan 오류를 continue 로 넘기고 루프 뒤 rows.Err() 를 전혀 보지 않는다. 결과적으로 전송 중단·Scan 실패가 '판매 중이 아닌 항목이 있습니다' 400(orders.go:102)으로 둔갑한다 — 이 저장소가 다섯 회차 동안 고쳐 온 '저장 실패를 없는 것으로 둔갑' 과 같은 계열이다. 다만 자연 HTTP 입력으로 Scan 실패를 만들 경로가 미확인이라 증거가 약하고, 1순위가 같은 루프를 건드리므로 이번에는 피했다(같은 세션에 겹치면 변이 검증이 섞인다). 1순위가 머지된 다음 회차 후보.",
+    "updated": "2026-10-07"
+  }
+]
