@@ -1,0 +1,47 @@
+chore: release v0.2.45
+
+Versions, guides, the offline bundle reference and the release PDFs move to
+0.2.45, and the notes are added for a release that fixes one defect in the
+Server's proposed relation review API and closes one newly published advisory
+that was failing the production dependency audit. openapi.yaml declares
+{relationId} on POST /api/v1/assets/relations/{relationId}/{decision} as
+format: uuid and promises 200, 400 and 404 - no 500 - but
+reviewProposedRelation put chi.URLParam(request, "relationID") straight into
+UPDATE asset_relations ... WHERE id = $6. asset_relations.id is a UUID column on
+PostgreSQL and TEXT on the SQLite fallback, so a spelling other than the
+declared one ended the same request differently per dialect. Measured before the
+fix on both dialects: not-a-uuid and the urn:uuid: form failed PostgreSQL's uuid
+input with SQLSTATE 22P02 and surfaced as a 500 this path never declares, the
+brace-wrapped and unhyphenated forms were folded into a hit so a review
+addressed that way really did move asset_relations.status off proposed and write
+an asset.relation.approve or asset.relation.reject audit, and an upper-case
+36-character id - which format: uuid allows - was folded by PostgreSQL where the
+fallback's string comparison matched nothing; SQLite answered 404 in all four
+of the first cases. So the same call either reviewed the proposal or did not
+depending on which storage engine it ran against, and audit_logs.resource_id is
+TEXT on both dialects, so the caller's non-canonical spelling was stored and
+re-exported verbatim. This is the fifth site of the defect v0.2.40 closed in
+split, v0.2.41 in merge, v0.2.42 across the five {assetId} single-asset paths
+and v0.2.43 in the two relation writes, and it is closed the same way: the same
+canonicalUUID the four before it used, placed immediately after the decision
+check and ahead of both the UPDATE and recordAdminAudit, returning the 404
+PROPOSAL_NOT_FOUND an unknown proposal already gets. The response code set does
+not widen - only the undeclared 500 disappears - a refused request moves neither
+asset_relations.status nor audit_logs, and the normalised id is what reaches the
+SQL and the audit trail, so an upper-case request now answers 200 on both
+dialects and records the canonical form. This path is session-only, with no
+API-key /api/v1/external/... twin, so there is one entrance. No migration, no
+OpenAPI change, no console change, no Agent behaviour change; already-reviewed
+proposals are not reverted and the notes carry the query that finds them. The
+two tests added here drive the real router with real session and CSRF
+credentials, send all four non-canonical spellings through both approve and
+reject, and read the relation row and the asset_relation audit count back out to
+catch a 404 that had already reviewed, rather than checking only the response
+code; the upper-case case asserts the stored audit resource_id is canonical.
+They pass on SQLite and on PostgreSQL 17. The second change is build-only:
+npm audit --omit=dev --audit-level=high failed on the newly published
+GHSA-68fv-2mgg-jv7q in source-map-js 1.2.1, which the console does not use
+directly but reaches through vite - a production dependency - and postcss.
+postcss requires ^1.2.1, so moving to 1.2.2 changes one lockfile entry and
+leaves package.json alone; the console bundle is unaffected and
+server/internal/webui/dist is unchanged.
