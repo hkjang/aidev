@@ -261,3 +261,4 @@
 - 보류 아이디어: integration 테스트 헬퍼 `buildMultipartBody`가 `contentType` 인자를 무시해 20여 개 호출부가 선언 MIME을 실제로 보내지 않음 (3/2/S) / `maskPDFFileInternal`의 "mask region refers to page %d but the document has %d page(s)" 도 같은 부류인데 이번 범위에서 제외해 혼자 `processing_failed`·400으로 남음 (2/1/S, 신규) / 폴백이 걸린 값의 가림 영역이 bbox 폴리곤 전체 → 축 정렬 경계 사각형으로 바뀜 (2/1/S) / `GOARCH=386`에서 `TestValidateImageDimensionsRejectsPixelBomb` 실패 (2/1/S, 이번에도 재실행 안 함) / `cloneJob`이 `Metadata.Error`·`Engine.Debug`·`Confidence` 포인터를 저장본과 공유 (2/2/S)
 - 과제서: 채택 — 과제서의 근거(`mapError`의 fallback과 `handleMask`의 400 강등, 호출부 두 곳이 placeRegion 에러를 감싸지 않음, `processing_failed` 단언 테스트가 `integration_test.go:489` 한 건뿐)가 현재 HEAD와 정확히 일치했고 수용 기준 5개를 지목된 방식(`server.go` 무수정, 프로덕션 2파일, 직접 만든 업스트림 핸들러)대로 모두 달성했다. 과제서가 "세 개의 fmt.Errorf"라 했지만 `placeRegion`에는 네 개가 있어 네 개 전부를 같은 타입으로 바꿨다.
 
+- 릴리즈: v1.0.36 (2026-10-06, run 2026-10-06-120408-pii-masker-approve)

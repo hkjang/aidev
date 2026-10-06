@@ -1,0 +1,7 @@
+# 수리 요약 — PR #44 (ptium)
+
+- 문제: CI `verify` 가 web 단계 마지막 `npm audit --audit-level=high` 에서 exit 1. 로컬에서 `npm ci` 후 같은 명령을 돌려 CI 로그와 **같은 4건**(source-map-js high, tinypool critical 2건, @vitest/mocker moderate)을 재현했다. 이 PR 의 diff 는 `docs/USER_GUIDE.md` 한 파일뿐이라 문서 변경이 만든 실패가 아니고, 잠긴 의존성에 새 권고가 붙은 것이다(main 에서도 같이 실패한다).
+- 고친 것: `npm audit fix`(비파괴)로 postcss 를 8.5.29 로 올려 source-map-js 를 1.2.2 로 보냈고, tinypool 은 vitest 3 계열에 패치 버전이 없어 `vitest ^3.2.7 → ^5.0.3` 으로 올렸다(vitest 4·5 는 tinypool 의존을 아예 버렸다). 덮어쓰기(overrides)로 tinypool 2.x 를 vitest 3 에 밀어넣는 더 작은 수단은 선언 범위 밖 조합이라 버렸다.
+- 딸린 수정: vitest 4 에서 없어진 `test.environmentMatchGlobs` 때문에 `.test.tsx` 가 jsdom 을 못 받아 42개가 `document is not defined` 로 깨졌다. 공식 대체인 `test.projects` 두 개(rules=node/`*.test.ts`, components=jsdom/`*.test.tsx`)로 옮겨 node/jsdom 분리 의도를 그대로 남겼다. CI 는 vitest 를 돌리지 않지만 `npm test` 는 271/271 통과(바꾸기 전과 같은 수)를 확인했다.
+- 검증(모두 로컬, CI 와 같은 명령): `npm ci`=0 · `npm run typecheck`=0 · `npm run build`=0 · `npm audit --audit-level=high` → **found 0 vulnerabilities**, exit 0 · `npm test` 48파일 271테스트 통과 · server `go test -race ./...`(26패키지 ok)+`go vet ./...` 통과 · `docker build --build-arg VERSION=ci` 통과. 커밋 d174036. 테스트를 지우거나 느슨하게 하지 않았고 `.github/workflows/ci.yml` 은 건드리지 않았다.
+- 확신 없는 곳: `npm run test:watch` 와 e2e 브라우저 스윕은 돌려보지 않았다. `vitest.config.ts` 는 `tsconfig.node.json` 의 include 밖이라 tsc 가 보지 않는다 — 설정의 근거는 실제 테스트 실행뿐이다. vite 8 의 "esbuild 대신 oxc" 경고는 이번 변경 전에도 나던 것으로 손대지 않았다.
