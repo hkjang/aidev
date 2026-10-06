@@ -1,5 +1,5 @@
 {
- "generated": "2026-10-06T15:33:17+09:00",
+ "generated": "2026-10-06T15:38:58+09:00",
  "site": "https://hkjang.github.io/aidev",
  "description": "Claude Code 자율 개선 에이전트가 hkjang 의 프로젝트를 개선·테스트·머지·릴리즈한 일일 보고. 오늘 38회차·릴리즈 18건, 누적 2036회차·릴리즈 731건, 주의 필요 3건.",
  "today": {
@@ -854,11 +854,11 @@
    "why": "review: approved — 리뷰 승인 (risk=low); ci: failed — 성공이 아닌 검사: verify=failure · 실패한 검사: ? 잡: verify ",
    "evidence": "https://github.com/hkjang/aidev/tree/main/state/runs/2026-10-06-105903-ptium-improve",
    "labels": "",
-   "action": "PR 처리기가 다음 시간에 다시 시도 · 승인: PR 라벨 aidev-approved / 반려: aidev-rejected — 다음 회차에 러너가 승인 당시 커밋에만 CI 확인 후 머지·닫기",
+   "action": "PR 처리기가 사람에게 넘김 — base 와 충돌하는데 자동 리베이스로 풀리지 않음 — 수동 해결 필요 · 승인: PR 라벨 aidev-approved / 반려: aidev-rejected — 다음 회차에 러너가 승인 당시 커밋에만 CI 확인 후 머지·닫기",
    "date": "2026-10-06",
-   "shepherd": "CI 실패 · 심사 거절 → 다음 시간에 수정 (10-06 12:02) — - docs/USER_GUIDE.md:307-308 — 새로 적은 한계 중 '양쪽 `|` 없이 그린 표(`분기 | 매출` 처럼 쓰면 표가 아니라 줄마다 요점이 됩니다)' 가 프로덕션 배선과 어긋납니다. docs 리더는 그 줄들을 요점으로 쓰지만, 그 소스는 저장 뒤 deck.ParseS",
-   "shepherd_action": "review-reject",
-   "shepherd_detail": "- docs/USER_GUIDE.md:307-308 — 새로 적은 한계 중 '양쪽 `|` 없이 그린 표(`분기 | 매출` 처럼 쓰면 표가 아니라 줄마다 요점이 됩니다)' 가 프로덕션 배선과 어긋납니다. docs 리더는 그 줄들을 요점으로 쓰지만, 그 소스는 저장 뒤 deck.ParseSource 를 지나고(internal/httpapi/handlers_import.go:279 → storeImportedSource, internal/httpapi/handlers_source.go:173), internal/deck/source.go:410~468 이 파이프가 든 요점 2줄 이상을 한 블록으로 걷어 올립니다 — 2열이면 kind=comparison, 3열 이상이면 kind=table, `--- | ---` 줄은 isTableRule 로 사라집니다. 임시 probe 로 docs.Read+deck.ParseSource 를 실제로 돌려 확인했습니다: `# 분기 실적` + `분기 | 매출`/`--- | ---`/`Q1 | 100`/`Q2 | 120` → `block kind=comparison rows=[[분기 매출][Q1 100][Q2 120]]`, 3열 표본 → `kind=table`. 즉 사용자가 보는 결과는 '줄마다 요점' 이 아니라 비교/표 블록이고, 가이드는 멀쩡히 들어오는 표를 고쳐 쓰라고 시킵니다. 고치는 법: 그 괄호 절을 지우거나 end-to-end 동작으로 다시 쓰십시오(마크다운 리더는 표로 읽지 않지만 2열은 비교, 3열 이상은 표 블록으로 들어오고 구분행은 사라진다). 같은 틀린 문장이 정찰 프로필의 '아직 안 하는 것' 목록에도 있으니 함께 고치십시오.",
+   "shepherd": "충돌 · 사람 필요 (10-06 15:38) — base 와 충돌하는데 자동 리베이스로 풀리지 않음 — 수동 해결 필요",
+   "shepherd_action": "needs-human",
+   "shepherd_detail": "base 와 충돌하는데 자동 리베이스로 풀리지 않음 — 수동 해결 필요",
    "needs_human": false
   },
   {
@@ -973,11 +973,11 @@
    "why": "guard: held — frontend/src/auth/AuthContext.test.tsx ",
    "evidence": "https://github.com/hkjang/aidev/tree/main/state/runs/2026-10-06-091749-moina-improve",
    "labels": "",
-   "action": "PR 처리기가 다음 시간에 다시 시도 · 승인: PR 라벨 aidev-approved / 반려: aidev-rejected — 다음 회차에 러너가 승인 당시 커밋에만 CI 확인 후 머지·닫기",
+   "action": "PR 처리기가 사람에게 넘김 — 수정·심사를 2번 시도했지만 통과하지 못함 — 사람이 봐야 한다 · 승인: PR 라벨 aidev-approved / 반려: aidev-rejected — 다음 회차에 러너가 승인 당시 커밋에만 CI 확인 후 머지·닫기",
    "date": "2026-10-06",
-   "shepherd": "보호 파일 · 심사 결과 없음 → 다시 시도 (10-06 11:39) — worktree 준비 실패",
-   "shepherd_action": "review-invalid",
-   "shepherd_detail": "worktree 준비 실패",
+   "shepherd": "보호 파일 · 사람 필요 (10-06 15:38) — 수정·심사를 2번 시도했지만 통과하지 못함 — 사람이 봐야 한다",
+   "shepherd_action": "needs-human",
+   "shepherd_detail": "수정·심사를 2번 시도했지만 통과하지 못함 — 사람이 봐야 한다",
    "needs_human": false
   },
   {
@@ -1393,18 +1393,18 @@
   }
  ],
  "shepherd": {
-  "last_pass": "2026-10-06T11:38:05+09:00",
+  "last_pass": "2026-10-06T15:37:27+09:00",
   "enabled": true,
   "today": {
-   "needs-human": 3,
+   "needs-human": 5,
    "fix-pushed": 3,
    "approve": 4,
    "fix-failed": 2,
    "review-invalid": 2,
    "review-reject": 1
   },
-  "total": 517,
-  "pending_human": 141
+  "total": 519,
+  "pending_human": 143
  },
  "agents": {
   "rows": [
@@ -1446,8 +1446,8 @@
    },
    {
     "role": "PR 심사 shepherd-reviewer",
-    "calls": 146,
-    "metric": "승인 64 · 거절 12 · 사람 필요 70 · 승인 뒤 회귀 0",
+    "calls": 148,
+    "metric": "승인 64 · 거절 12 · 사람 필요 72 · 승인 뒤 회귀 0",
     "cost": 278.32
    },
    {
@@ -1478,7 +1478,7 @@
     "role": "실제 게시 릴리즈 (원격 태그 기준)",
     "calls": 795,
     "cost": null,
-    "metric": "저장소 40개 · 게시 795건 (사람 283건) · 태그만 만들고 미게시 1건 — CI 가 릴리즈 커밋을 막은 저장소 · 누적 회차 기록에는 731건 — 64건이 기록에서 빠졌다"
+    "metric": "저장소 40개 · 게시 795건 (사람 284건) · 태그만 만들고 미게시 1건 — CI 가 릴리즈 커밋을 막은 저장소 · 누적 회차 기록에는 731건 — 64건이 기록에서 빠졌다"
    },
    {
     "role": "머지 뒤 30일 (postmerge)",
@@ -1919,7 +1919,7 @@
   {
    "metric": "예외 처리 소요 시간(중앙값)",
    "value": "1.9시간",
-   "detail": "해결된 경고 347건"
+   "detail": "해결된 경고 348건"
   },
   {
    "metric": "실행 오류",
