@@ -31,3 +31,5 @@
 - [러너 02:29] release published — v0.9.298
 - [러너 02:29] gh-release created — GitHub Release v0.9.298
 - [러너 02:30] manifest ok — clustara-v0.9.298.tar.gz clustara-v0.9.298.tar.gz.sha256 README-offline-v0.9.298.md 
+- [러너 02:30] assets uploaded — 3개
+- [러너 02:30] assets verified — v0.9.298 자산 3개 (이전 v0.9.297: 3)
