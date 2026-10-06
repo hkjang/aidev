@@ -26,3 +26,8 @@
 - 승인 뒤 남는 우려(릴리즈 노트감): 내려받은 파일 서식이 실시간 화면과 다르다 — 타임스탬프·레벨 열 없이 stderr 만 `[stderr] ` 접두사(공유하는 writeSimpleRunLog). '전체'라는 약속은 지키므로 거짓은 아니나 나란히 비교하는 운영자는 다른 모양을 본다.
 - 다음 회차: 과제서 선택 항목 6(RELEASE_LOG_TRUNCATED_NOTICE)이 그대로 남았다. 또 `releases/{id}`·`/logs`·`/logs/stream` 셋 다 권한만 보고 릴리즈 범위는 보지 않는다 — 선재 조건이고 지금 공격 경로는 없지만, 테넌트 분리가 들어오면 세 곳을 함께 고쳐야 한다.
 - [러너 16:22] review approved — 리뷰 승인 (risk=low)
+- [러너 16:22] pr created — https://github.com/hkjang/releasedock/pull/35
+- [러너 16:25] ci passed — 검사 1개 모두 success
+- [러너 16:25] merge done — 1f97008
+- [러너 16:33] release published — v0.5.31
+- [러너 16:36] assets verified — v0.5.31 자산 2개 (이전 v0.5.30: 2)
