@@ -25,3 +25,7 @@
 - 돌린 검증: gofmt 0건 / go build ./... / go vet / `go test -race` pop3 5.1s·imap 4.4s·application 79.9s 전부 ok. 못 본 것: 전체 race 스위트, `POSTRA_TEST_PG`, 브라우저 e2e, gosec.
 - [러너 10:07] review approved — 리뷰 승인 (risk=low)
 - [러너 10:07] pr created — https://github.com/hkjang/postra/pull/36
+- [러너 10:14] ci passed — 검사 10개 모두 success
+- [러너 10:14] merge done — 1c9f526
+- [러너 10:25] release published — v0.25.7
+- [러너 10:26] assets verified — v0.25.7 자산 4개 (이전 v0.25.5: 5)
