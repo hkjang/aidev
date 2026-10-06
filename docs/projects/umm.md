@@ -1,7 +1,7 @@
 ---
 title: "umm — 자율 개선 이력"
 description: "umm: 자율 개선 회차 41회, 릴리즈 20건. 최근 릴리즈 v0.76.8 (자산 3개)."
-last_modified_at: 2026-10-06 22:42:06 +0900
+last_modified_at: 2026-10-06 23:28:41 +0900
 ---
 {% raw %}
 <script type="application/ld+json">
@@ -18,14 +18,14 @@ last_modified_at: 2026-10-06 22:42:06 +0900
   "name": "hkjang",
   "url": "https://github.com/hkjang"
  },
- "dateModified": "2026-10-06T22:42:06+09:00",
+ "dateModified": "2026-10-06T23:28:41+09:00",
  "version": "0.76.8"
 }
 </script>
 
 # umm
 
-<p class="tldr"><strong>요약.</strong> umm: 자율 개선 회차 41회, 릴리즈 20건. 최근 릴리즈 v0.76.8 (자산 3개). <span class="pill pill-merged" title="14일: 릴리즈 8, 실패 2, 경고 3, 회귀 1">건강 C</span> <span class="meta">14일: 릴리즈 8, 실패 2, 경고 3, 회귀 1</span></p>
+<p class="tldr"><strong>요약.</strong> umm: 자율 개선 회차 41회, 릴리즈 20건. 최근 릴리즈 v0.76.8 (자산 3개). <span class="pill pill-failed" title="14일: 릴리즈 8, 실패 2, 경고 3, 회귀 2">건강 D</span> <span class="meta">14일: 릴리즈 8, 실패 2, 경고 3, 회귀 2</span></p>
 
 <ul class="stats"><li><b>41</b><span>회차</span></li><li><b>1</b><span>프로젝트</span></li><li><b>22</b><span>배포 준비 완료</span></li><li><b>0</b><span>릴리즈 진행 중</span></li><li><b>1</b><span>병합 완료</span></li><li><b>6</b><span>검토 대기</span></li><li><b>11</b><span>검증 실패</span></li><li><b>1</b><span>변경 없음</span></li><li><b>0</b><span>실행 오류</span></li><li><b>$187.87</b><span>비용</span></li><li><b>9시간 7분</b><span>에이전트 시간</span></li></ul>
 
@@ -35,6 +35,7 @@ last_modified_at: 2026-10-06 22:42:06 +0900
 <dt>저장소</dt><dd><a href="https://github.com/hkjang/umm">https://github.com/hkjang/umm</a></dd>
 <dt>마지막 회차</dt><dd>2026-10-06 22:21 KST — <span class="pill pill-other">• 기타</span> verify failed: 실패한 검증: npm test --silent (exit 1)</dd>
 <dt>최근 릴리즈</dt><dd><a href="https://github.com/hkjang/umm/releases/tag/v0.76.8">v0.76.8</a> — released · 자산 3개 (이전 v0.76.7: 3개) <a href="https://github.com/hkjang/umm/releases">전체 릴리즈 →</a></dd>
+<dt>수정 과제</dt><dd>⚠️ 오류 대응(자동 적재): 마지막 회차가 &#x27;verify-failed&#x27; 로 끝났습니다. verify failed: 실패한 검증: npm test --silent (exit 1)</dd>
 </dl>
 
 ## 회차 이력
@@ -51,6 +52,7 @@ last_modified_at: 2026-10-06 22:42:06 +0900
 
 ## 교훈 (깨졌던 변경)
 
+- 2026-10-06 **demoted** — 자율화 단계 release → low-risk: 회귀(reverted) 2026-10-06T22:38:39+09:00
 - 2026-10-06 **reverted** — PR #167 &quot;auto-improve: Name the four downloads of a space by one standard instead of four&quot; 가 머지 뒤 되돌려짐(29149e5). 같은 접근은 다시 시도하지 말 것. ([링크](https://github.com/hkjang/umm/pull/167))
 
 ## 원장 (에이전트가 남긴 기록)

@@ -1,0 +1,83 @@
+[
+  {
+    "title": "브라우저 오류 알림의 중복 묶음 서명에 오류 종류·내용을 넣는다 (한 경로의 다른 오류가 삼켜짐)",
+    "value": 4,
+    "risk": 2,
+    "size": "S",
+    "status": "done",
+    "note": "구현 완료(커밋 50005e3). alertSignature(method, path, code, extra='') 를 pipeline.ts 에서 export 하고 alertOperator 에 기본값 '' 인 마지막 인자를 더했다 — extra 가 '' 이면 예전 서명과 바이트 동일(공백도 안 붙음, 단위 테스트로 고정). client-errors.ts 는 스크럽된 메시지와 kind 로 FNV-1a 8자 hex 지문(clientErrorFingerprint)을 만들어 넘긴다. 폴딩된 경로는 folded 변수 하나로 모아 서명·DB path 칼럼·메일이 어긋날 수 없게 했고 지문은 path 칼럼에 섞지 않는다. e2e 에 /today 로 메시지·kind 가 다른 4건을 보내 서명 3행 + 중복 1건 occurrences=2 를 확인하는 검사를 더했다 — 고치기 전 159/1 실패, 고친 뒤 160/0.",
+    "updated": "2026-10-06"
+  },
+  {
+    "title": "util/validate.ts·util/text.ts 단위 테스트 공백 메우기",
+    "value": 3,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "이번 회차 차선 후보였고 그대로 유효하다. 단위 테스트는 여전히 rules.test.ts·vendor-postgres.test.ts 둘뿐인데(이번에 rules.test.ts 에 블록 2개가 늘어 39개) parse/v.* 는 모든 쓰기 라우트가 지난다. 확인한 엣지: v.string 은 길이를 UTF-16 단위로, v.text 는 코드포인트([...text].length)로 센다 / v.text({min:0}) 의 빈 문자열 통과 / v.int 의 문자열 강제변환 / v.optional 의 ''→fallback / v.array 가 항목 실패 시 부분 배열 반환 / mailboxKey('+tag@x.com') 경계.",
+    "updated": "2026-10-06"
+  },
+  {
+    "title": "util/text.ts 의 isSafeLink 는 아무도 쓰지 않는 죽은 코드이고 주석이 없는 보호를 주장한다",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "저장소 전체에서 호출부 0개. 주석은 '명백한 사설 범위(private ranges)를 막는다'고 쓰여 있으나 코드는 169.254.169.254 와 metadata.google.internal 두 호스트만 막는다 — 10.x/127.0.0.1/localhost/::1/10진수 인코딩 IP 는 통과. tidyBody·excerpt 도 호출부 없음. 지우거나(권장) 주석을 사실에 맞추거나. 죽은 코드라 가치는 낮다.",
+    "updated": "2026-10-06"
+  },
+  {
+    "title": "v.instant 가 ISO-8601 이 아닌 문자열도 받아들인다",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "validate.ts 의 instant 는 new Date(value) 로 NaN 만 거른다. 주석은 'ISO-8601 instant'라고 하지만 '2026', 'Dec 25' 같은 입력도 통과하고 엔진·시간대에 따라 다른 Date 가 된다. 호출부(안전 공유 시각 등)가 사용자 입력인지 확인한 뒤 정규식으로 좁힐 것 — 호출부 미확인.",
+    "updated": "2026-10-06"
+  },
+  {
+    "title": "pipeline.ts 의 alertOperator 가 normalisePath(path) 를 세 번 따로 계산한다",
+    "value": 1,
+    "risk": 1,
+    "size": "S",
+    "status": "done",
+    "note": "1순위 과제를 하면서 함께 정리됐다. 이제 folded 변수 하나를 DB path 칼럼과 메일이 공유하고, 서명은 alertSignature 안에서 한 번만 조립된다(원시 path 를 넘기므로 순수 함수 두 번 호출이지만 결과가 같음이 보장되고 idempotence 가정이 필요 없다).",
+    "updated": "2026-10-06"
+  },
+  {
+    "title": "launch.ts 의 waitingFor 가 published_at 이 NULL 인 회원에게 잘못된 순번을 준다",
+    "value": 3,
+    "risk": 3,
+    "size": "M",
+    "status": "pending",
+    "note": "미확인 가설, 이번 회차에 확인하지 않았다. waitingFor 의 ahead 는 p.published_at <= (SELECT published_at FROM your.profiles WHERE account_id = $3) 로 센다. 그 서브쿼리가 NULL 이면 비교가 전부 NULL → ahead=0 → 모든 대기자가 '1번'으로 보인다. WAITING 조건은 p.state='active' 만 요구하므로 state='active' 이면서 published_at IS NULL 인 행이 가능한지 db/migrations 의 제약과 발행 경로를 먼저 확인해야 한다. 가능하지 않다면 rejected.",
+    "updated": "2026-10-06"
+  },
+  {
+    "title": "브라우저 오류의 IGNORED 목록이 'Failed to fetch'·'NetworkError' 를 전부 버린다",
+    "value": 2,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "client-errors.ts 의 IGNORED. 회원 쪽 네트워크 잡음을 거르려는 의도는 맞지만, API 가 실제로 죽어 모든 요청이 'Failed to fetch' 로 실패하는 장애가 정확히 이 필터에 걸려 조용해진다. 서버 쪽 지표로 그 경우를 따로 보는지 확인하지 않았다 — 확인 전에는 손대지 말 것(잡음 폭탄 위험). 이번 회차의 서명 분리로 '여러 오류가 한 행에 뭉치는' 쪽 문제는 사라졌으나 이 필터 문제는 그대로다.",
+    "updated": "2026-10-06"
+  },
+  {
+    "title": "scripts/e2e.mjs 가 가짜 서버 포트 18998·18997 을 하드코딩해 같은 기계의 다른 세션과 충돌한다",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "이번 회차에 실제로 막혔다: 다른 저장소 세션의 scripts/fake-toss.mjs 가 18998 을 쥐고 있어 e2e 가 EADDRINUSE 로 중단됐고(가짜 yeopjari OAuth 절), 포트를 임시로 옮겨서야 돌았다. e2e.mjs 가 포트를 환경변수(기본 18998/18997)로 읽게 하고 서버의 YOUR_YEOPJARI_URL 과 맞추면 병렬 세션에서 막히지 않는다. 254·294·306행(OAuth)과 894·899·900·918행(푸시) 두 곳. CI 는 단독 러너라 기본값으로 그대로 돈다.",
+    "updated": "2026-10-06"
+  },
+  {
+    "title": "e2e 가 서버 자신의 실패(500) 서명을 한 번도 만들지 않아 alertOperator 의 서버 경로가 배선 수준으로 검증되지 않는다",
+    "value": 3,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "이번 회차에 확인: e2e 를 완주한 뒤 your_priv.error_alerts 에는 CLIENT 행 4개만 있고 서버 실패 행이 하나도 없다. 서명 문자열을 바꾸는 변경이 운영 DB 의 억제 상태를 한꺼번에 푸는데도 그 경로는 단위 테스트(alertSignature)만 지킨다. 개발 전용으로 일부러 500 을 내는 경로가 있는지 찾아보고(없으면 만들지 말 것), 있으면 e2e 에 'POST <경로> internal' 모양의 서명 행이 생기는지 검사 한 줄을 더할 가치가 있다.",
+    "updated": "2026-10-06"
+  }
+]

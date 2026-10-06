@@ -1,0 +1,38 @@
+# yeopjari-your 프로필 (2026-10-06)
+
+- 목적: 회사 메일로 인증된 직장인끼리의 소개팅 서비스(your, https://your.yeopjari.bid). 매일 12시(KST)에 4명만 소개하고, 같은 회사 메일로 인증한 사람끼리는 서로 보이지 않는다.
+- 스택: TypeScript(ESM, Node ≥22) · PostgreSQL 16 (Supabase 서울, RLS 중심) · React 19 + Mantine 9 + Vite SPA · Cloudflare Pages Function + Hyperdrive + R2 + Resend · Durable Object(실시간 대화) · vitest 4 · playwright(스크린샷) · eslint 9 + typescript-eslint
+- 구조:
+  - `packages/core` 런타임 비의존 코어. `http/`(router, pipeline — 요청 실행·오류 알림), `routes/`(18개 라우트 모듈), `domain/`(rounds, people, work, launch, push, catalog, idv), `auth/`, `settings/`(registry 25KB + service), `util/`(crypto, text, time, validate), `media/`(image EXIF 제거, photo-links 서명, storage), `mail/`, `audit.ts`, `quota.ts`, `env.ts`, `errors.ts`
+  - `packages/core/src/vendor/postgres` 왕복을 줄이려 패치한 postgres.js 사본 (`PATCHED.md`) — 손대지 말 것
+  - `apps/server` Node 어댑터(로컬·어플라이언스), `apps/web` SPA, `functions` Pages Function 어댑터
+  - `workers/scheduler` 10분 cron → 정리 작업 호출, `workers/realtime` ChatRoom Durable Object
+  - `db/migrations` 0001_schema ~ 0010 (스키마 `your`/`your_priv`, 역할 `your_app`, RLS)
+  - `scripts` migrate · e2e(1016행, 157검사) · screenshots · seed-demo · deploy-pages · smoke-prod · latency-lab · dev-reset
+  - `engineering` architecture.md / security.md / design.md / performance.md (내부 문서, CLAUDE.md 는 없음)
+- 빌드·테스트:
+  - `npm run check` = lint + typecheck(core→server→web) + `vitest run` — 가볍다
+  - `npm run build` = web + server
+  - `node scripts/eytest` 아님. e2e: `bash scripts/dev-reset.sh` 로 DB 초기화+마이그레이션+:8788 서버, 그 뒤 `node scripts/e2e.mjs` (BASE/DATABASE_URL 환경변수, Docker `postgres:16-alpine` 을 127.0.0.1:55440 로 띄워야 함) — **느리고 외부 의존**
+  - `node scripts/screenshots.mjs` 실제 브라우저 70장(콘솔 오류·가로 넘침 0), `node scripts/latency-lab.mjs` 지연 재현
+  - CI `.github/workflows/check.yml` 이 push·PR 마다 check + 빌드 + PostgreSQL 16 위 e2e 전체를 돌린다
+- 관례:
+  - 커밋 메시지는 **한국어 한 줄, 평서문·현재형**, 기능 번호를 괄호로(`(0009)`). 영어 커밋 없음.
+  - 코드 주석은 **영어**, 사용자에게 보이는 문자열·검증 메시지는 **한국어**(`util/validate.ts` 가 조사까지 맞춘다: `koreanParticle`)
+  - 모듈 머리마다 "왜 이렇게 했는지"를 설명하는 긴 블록 주석을 둔다 — 새 코드도 그 밀도를 맞출 것
+  - 설정은 DB 설정 레지스트리(`settings/registry.ts`)와 `wrangler.toml [vars]` + `~/.config/yeopjari-your/cloud.env` 비밀값
+  - 마이그레이션은 번호 붙은 `db/migrations/NNNN_*.sql` 를 `node scripts/migrate.mjs` 로 전진만
+  - 단위 테스트는 `packages/core/src/__tests__/*.test.ts` 두 개뿐(`rules.test.ts`, `vendor-postgres.test.ts`) — 검증 무게가 e2e 에 쏠려 있다
+- 위험 구역:
+  - `db/migrations/**` 전진 전용 · `packages/core/src/auth/**` (세션·MFA) · `packages/core/src/vendor/postgres`(패치 사본)
+  - RLS 가 보안의 본체다. `your.profiles`/`your.likes`/`your.messages`/`your.profile_photos` 정책과 `your_priv.can_see` 를 건드리면 "같은 회사 숨김·넘김 비공개·사진 잠금"이 조용히 깨진다. 애플리케이션 조건으로 대체하지 말 것.
+  - 결제대행사 심사 요건(사업자 정보·환불 정책, 커밋 148827c·f4a924c)과 `settings/registry.ts` 의 `business.*`
+  - `media/image.ts` 는 EXIF/GPS 제거를 위해 픽셀로 재인코딩한다 — 우회 경로를 만들지 말 것
+  - 회사 메일 원문은 1시간 내 삭제, 남는 것은 mailbox/도메인 HMAC(`your_priv.work_domains`)
+- 자주 깨지는 곳: (이 저장소의 과거 회차 기록 없음 — 미확인)
+- 검증 함정:
+  - e2e 는 Docker PostgreSQL 16 + 서버 기동이 필요하고 157검사가 **배선을 증명하는 유일한 수단**이다. 단위 테스트만으로는 라우트 배선이 검증되지 않는다.
+  - `your_priv.error_alerts` 는 `signature` 가 PK 이고 창(window) 안에서는 메일을 억제한다 — 서명 문자열을 바꾸면 운영 DB 의 억제 상태가 한꺼번에 풀린다.
+  - e2e 가 `signature LIKE 'CLIENT /chat/:id%'` 처럼 **문자열 모양에 의존하는 검사**를 쓴다(`scripts/e2e.mjs:800`).
+  - Cloudflare 계정 한도가 다른 서비스와 공유된다(2026-10-05 Hyperdrive 일일 한도 소진 장애, 커밋 9d1e5d8).
+  - `scripts/seed-demo.mjs` 는 로컬에서만 돌도록 막혀 있다.

@@ -1,0 +1,48 @@
+chore(release): VisitFlow v2.8.18
+
+- 「내 API 키」 화면이 받아 보지 못한 정책을 사실처럼 말하고 폐기 실패를 삼키던 것을 고친다.
+  `web/src/pages/KeysPage.tsx` 의 `policy` 가 하드코딩 추측값 `{read,write,mcp}/90일/10개` 을
+  초기값으로 들고 있어서 `/api/v1/api-key-policy` 조회가 실패해도 info Alert 이 「현재 허용
+  Scope는 read, write, mcp이며 기본 만료는 90일, 활성 키 한도는 10개입니다.」를 **사실로
+  단정**했다 — 관리자가 Scope 를 좁혀 두었어도 그렇게 말한다. 같은 추측값이 생성 대화상자의
+  Scope 체크박스 3개를 만들어 「생성」이 서버에 400 `invalid_scopes` 를 받으러 나갔다. 플래그를
+  하나 더 두는 대신 `policy` 자체를 `ApiKeyPolicy | null` 로 바꿨다 — 플래그는 추측값을 **그대로
+  들고 있는** 둘째 진실원이 되어 어느 독자가 플래그를 안 읽으면 다시 추측을 말하게 되는데, null
+  은 추측값을 타입으로 표현 불가능하게 만들고 `tsc` 가 모든 독자(Alert·`openCreate`·`openEdit`·
+  FormGroup·「생성」 `disabled`)에게 null 처리를 강제하므로 "한쪽만 고쳐 두 경로가 다른 값을
+  본다" 가 컴파일 단계에서 막힌다. 실패하면 Alert 은 숫자를 말하지 않고 정책을 못 불러왔다고만
+  하고, 대화상자는 Scope 를 모른다고 말하고 「생성」은 비활성이다(기존 error Alert 은 그대로
+  서버·네트워크 메시지를 보여 준다). `policy.allowedScopes` 가 짧거나 비었다는 사실은 실패의
+  근거로 쓰지 않았다 — Scope 가 1개뿐인 테넌트는 **정상적으로** 그렇게 보이므로 실패는
+  `policy === null` 에서만 나온다(v2.8.17 의 `ReferenceData.hosts` 와 같은 판단). `revoke` 는
+  같은 파일의 `rotate` 꼴로 try/catch 로 감싸 DELETE 실패를 error Alert 에 띄운다 — 그 전에는
+  404 를 받아도 info Alert 뿐이고 오류는 unhandled rejection 으로 사라졌다. 서버·`api.ts`·CSRF·
+  `confirm()` 문구는 건드리지 않았다. 프로덕션 1개 파일 + e2e 영구 스펙 3개.
+
+- 검증(릴리스 시점에 다시 실행): `npm ci`(package.json·lock 일치)·`npm run lint`(tsc -b)·
+  `npm test` **98 passed**·`npm run build`, `gofmt -l .` 빈 출력·`go build ./...`·`go vet ./...`·
+  `git diff --check` 빈 출력, 임시 PostgreSQL 16 컨테이너에 `VISITFLOW_TEST_DSN` 을 주고
+  `go test ./... -count=1`(internal/app **58.755s** — SKIP 아님), 그리고
+  `bash scripts/local-e2e.sh` **24 passed (55.8s) / 종료 코드 0**(기준 21개 + 새 스펙 3개).
+  구현 회차의 red→green 은 수정 전 `KeysPage.tsx`·실제 `npm run build` 임베드·새 PostgreSQL·
+  실서버·실제 Chrome 으로 짝지어 `2 failed / 22 passed` 를 먼저 받았다 — 정책 스펙은
+  `expect(locator).toContainText(expected) failed` 로 `unexpected value "키 원문은 … 현재 허용
+  Scope는 read, write, mcp이며 기본 만료는 90일, 활성 키 한도는 10개입니다."`(정책을 받지 못한
+  화면이 추측값을 단정), 폐기 스펙은 `getByRole('alert').filter({ hasText: '활성 API 키가
+  없습니다' })` 에서 `element(s) not found` 였다. 나머지 증상은 같은 수정 전 번들에 임시 프로브를
+  실어 직접 실측했다 — 체크박스 `3`개(`read|write|mcp`), 「생성」 `disabled :: false`,
+  정책 없이 나간 `POST /api/v1/api-keys count :: 1`, `DELETE status :: 404` 인데
+  `alert count after failed revoke :: 1`(info Alert 뿐), `page errors :: ["활성 API 키가
+  없습니다"]`. 정상 경로 스펙은 수정 **전에도** 통과해 선택자가 제품이 아니라 스펙 탓으로 깨진
+  것이 아님을 확인했고, 서버가 준 값을 `page.evaluate` 로 받아 와 체크박스 개수와 맞춰 보므로
+  Scope 가 1개뿐인 테넌트에서도 성립한다. 폐기 실패 스펙은 꼬리에서 `page.unroute` 후 성공
+  폐기까지 해 "성공하면 목록이 갱신된다" 도 영구 가드로 고정한다. 남은 한계는 정직하게 적는다 —
+  「생성」 `disabled` 의 `!policy` 항은 현재 코드에서 중복이다(`policy===null` 이면
+  `openCreate` 가 `scopes=[]` 로 두므로 `!scopes.length` 가 이미 막는다). 의도를 게이트에
+  명시하는 방어로 남겼고 e2e 가 그 항을 단독으로 입증하지는 않는다. `load()` 가 늦게 실패하면
+  이전에 성공한 정책을 null 로 되돌리지 않으므로(v2.8.16 RosterPage 의 "마지막으로 받은 값"
+  선례) `policy===null` 은 "한 번도 받지 못함" 을 뜻한다. `web/e2e` 는 아직 `tsc -b` 의 타입
+  검사 대상이 아니다.
+
+버전 표기(README, docs/index.html, web/package.json, web/package-lock.json)를
+2.8.18로 올린다.
