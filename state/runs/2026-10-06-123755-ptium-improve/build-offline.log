@@ -1,0 +1,107 @@
+#0 building with "default" instance using docker driver
+
+#1 [internal] load build definition from Dockerfile
+#1 transferring dockerfile: 1.66kB done
+#1 DONE 0.0s
+
+#2 [internal] load metadata for docker.io/library/alpine:3.21
+#2 DONE 0.0s
+
+#3 [internal] load metadata for docker.io/library/golang:1.24-alpine
+#3 DONE 1.2s
+
+#4 [internal] load metadata for docker.io/library/node:22-alpine
+#4 DONE 1.2s
+
+#5 [internal] load .dockerignore
+#5 transferring context:
+#5 transferring context: 205B done
+#5 DONE 0.1s
+
+#6 [stage-2 1/4] FROM docker.io/library/alpine:3.21@sha256:ce64758a109eb420d874a118f87920e625e12d3634e03b4a5573fd9f6e5d3507
+#6 resolve docker.io/library/alpine:3.21@sha256:ce64758a109eb420d874a118f87920e625e12d3634e03b4a5573fd9f6e5d3507 0.0s done
+#6 DONE 0.0s
+
+#7 [api-build 1/6] FROM docker.io/library/golang:1.24-alpine@sha256:8bee1901f1e530bfb4a7850aa7a479d17ae3a18beb6e09064ed54cfd245b7191
+#7 resolve docker.io/library/golang:1.24-alpine@sha256:8bee1901f1e530bfb4a7850aa7a479d17ae3a18beb6e09064ed54cfd245b7191 0.0s done
+#7 DONE 0.0s
+
+#8 [web-build 1/6] FROM docker.io/library/node:22-alpine@sha256:0a7108bf6c7bf5de370ffb1a3ed6be93d405b43ff159f681a8d18c0e2bc2e402
+#8 resolve docker.io/library/node:22-alpine@sha256:0a7108bf6c7bf5de370ffb1a3ed6be93d405b43ff159f681a8d18c0e2bc2e402 0.0s done
+#8 DONE 0.0s
+
+#9 [internal] load build context
+#9 transferring context: 9.78MB 0.1s done
+#9 DONE 0.1s
+
+#10 [api-build 2/6] WORKDIR /src/server
+#10 CACHED
+
+#11 [api-build 3/6] COPY server/go.mod server/go.sum ./
+#11 CACHED
+
+#12 [api-build 4/6] RUN go mod download
+#12 CACHED
+
+#13 [api-build 5/6] COPY server/ ./
+#13 CACHED
+
+#14 [api-build 6/6] RUN CGO_ENABLED=0 GOOS=linux go build     -trimpath     -ldflags="-s -w -X main.version=1.69.58"     -o /out/ptium ./cmd/ptium
+#14 DONE 6.7s
+
+#15 [web-build 4/6] RUN npm ci
+#15 CACHED
+
+#16 [web-build 5/6] COPY web/ ./
+#16 CACHED
+
+#17 [web-build 2/6] WORKDIR /src/web
+#17 CACHED
+
+#18 [web-build 3/6] COPY web/package.json web/package-lock.json ./
+#18 CACHED
+
+#19 [stage-2 2/4] RUN apk add --no-cache ca-certificates tzdata     && addgroup -g 65532 -S ptium     && adduser -u 65532 -S -D -H -G ptium ptium     && mkdir -p /app/web     && chown -R ptium:ptium /app
+#19 CACHED
+
+#20 [web-build 6/6] RUN npm run build
+#20 CACHED
+
+#21 [stage-2 3/4] COPY --from=api-build /out/ptium /app/ptium
+#21 DONE 0.1s
+
+#22 [stage-2 4/4] COPY --from=web-build /src/web/dist/ /app/web/
+#22 DONE 0.0s
+
+#23 exporting to image
+#23 exporting layers
+#23 exporting layers 0.5s done
+#23 exporting manifest sha256:cabf3a3de69566ebed72af2918bf0267e9760c7de5d6b2e8ca54c5a4f4ade232 0.0s done
+#23 exporting config sha256:32911a43d2bdbd6becf33628705994247613562d90994dfdf8a72c18ea8df0fb 0.0s done
+#23 exporting attestation manifest sha256:60db6ff5ff93986c5f08727111d842edf2feef9d64956c8a7c2bf7a7de44f6b1 0.0s done
+#23 exporting manifest list sha256:b766e677b028f8a4438a4c9d3bf41dc6de81f94bd0d08c35e67aa74e021c8e8c 0.0s done
+#23 naming to docker.io/library/ptium:1.69.58 done
+#23 unpacking to docker.io/library/ptium:1.69.58 0.1s done
+#23 naming to docker.io/library/ptium-1.69.58:latest done
+#23 unpacking to docker.io/library/ptium-1.69.58:latest done
+#23 DONE 0.8s
+note: 4 resources decode and are named; no cluster was reachable to check them against the API schema
+── ptium:1.69.58 on an empty database ──
+   templates seeded: 50
+   generated: completed with 6 slide(s)
+   measured: defects 0 advisories 1
+   pptx 39,753 bytes  pdf 2,110,281 bytes  handout 2,112,197 bytes
+   preview 1,087 bytes · workspace 769 bytes
+
+0 failure(s)
+── ptium:1.69.44 wrote it, ptium:1.69.58 opens it ──
+   ptium:1.69.44 made a deck: completed, 5 slide(s)
+   settings after the upgrade: {'ai.max_output_tokens': '16000', 'ai.reasoning': '"auto"', 'ai.timeout_seconds': '300', 'generation.outline_pass': 'true', 'generation.repair_passes': '3'}
+   after the upgrade: 예전 버전에서 만든 덱 · 5 slide(s) · completed
+   measured: 0 defect(s), 1 advisory(ies)
+   exported and drawn · source 38 lines
+   rolled back to ptium:1.69.44: the deck still opens with 5 slide(s)
+
+0 failure(s)
+Created /home/hkjang/.cache/auto-improve-wt/ptium-release/dist/ptium-1.69.58.tar.gz
+SHA256  0b1df8025d84969ee2abb9b4f94d7eb2e28d2747c7feded885d425ce408ce1d3
