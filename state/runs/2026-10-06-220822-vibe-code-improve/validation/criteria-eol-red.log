@@ -1,0 +1,59 @@
+
+ RUN  v3.2.7 /home/hkjang/.cache/auto-improve-wt/vibe-code
+
+ ❯ tests/unit/goal-catalog.test.ts (6 tests | 2 failed) 15ms
+   ✓ goal catalog > slugifies titles while keeping Korean 2ms
+   ✓ goal catalog > builds a goal file from a preset 1ms
+   ✓ goal catalog > ticks linked criteria by index 1ms
+   × tickCriteria keeps the goal file's line endings > returns a CRLF goal unchanged apart from the ticked boxes 4ms
+     → expected false to be true // Object.is equality
+   × tickCriteria keeps the goal file's line endings > writes current.md back with its CRLF endings through applyPlanCriteria 6ms
+     → expected undefined to be 38 // Object.is equality
+   ✓ tickCriteria keeps the goal file's line endings > leaves an LF goal on LF 0ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/unit/goal-catalog.test.ts > tickCriteria keeps the goal file's line endings > returns a CRLF goal unchanged apart from the ticked boxes
+AssertionError: expected false to be true // Object.is equality
+
+- Expected
++ Received
+
+- true
++ false
+
+ ❯ tests/unit/goal-catalog.test.ts:65:35
+     63|   const ticked = tickCriteria(crlf, [1, 3]);
+     64|   expect(ticked.split("\n").length).toBe(crlf.split("\n").length);
+     65|   expect(ticked.includes("\r\n")).toBe(true);
+       |                                   ^
+     66|   expect(ticked.replace(/\r\n/g, "\n").includes("\n")).toBe(true);
+     67|   // Every line is byte-identical except the two that were ticked.
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+ FAIL  tests/unit/goal-catalog.test.ts > tickCriteria keeps the goal file's line endings > writes current.md back with its CRLF endings through applyPlanCriteria
+AssertionError: expected undefined to be 38 // Object.is equality
+
+- Expected: 
+38
+
++ Received: 
+undefined
+
+ ❯ tests/unit/goal-catalog.test.ts:82:40
+     80|   expect(indexes).toEqual([1, 3]);
+     81|   const after = fs.readFileSync(path.join(ws, ".vibe-code", "goals", "…
+     82|   expect(after.match(/\r\n/g)?.length).toBe(crlf.match(/\r\n/g)?.lengt…
+       |                                        ^
+     83|   expect(after.match(/(?<!\r)\n/g)).toBeNull();
+     84|   expect(section(after, "완료 기준").split("\n").map((l) => l.slice(0, 5))…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  2 failed | 4 passed (6)
+   Start at  22:12:33
+   Duration  404ms (transform 139ms, setup 0ms, collect 168ms, tests 15ms, environment 0ms, prepare 66ms)
+

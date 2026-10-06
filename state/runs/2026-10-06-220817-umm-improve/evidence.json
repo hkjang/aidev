@@ -1,0 +1,183 @@
+{
+  "run_id": "2026-10-06-220817-umm-improve",
+  "generated": "2026-10-06T22:21:39+09:00",
+  "run": {
+    "run_id": "2026-10-06-220817-umm-improve",
+    "project": "umm",
+    "kind": "improve",
+    "started": "2026-10-06T22:08:17+09:00",
+    "model": "claude-opus-5",
+    "policy_version": "4a9e91ac7",
+    "prompts_hash": "ce085c79e18002e2",
+    "runner_version": "1bd5f0cd4",
+    "arm": "baseline",
+    "experiment": "roles-2026-09",
+    "finished": "2026-10-06T22:21:39+09:00",
+    "outcome": "verify-failed"
+  },
+  "record": {
+    "ts": "2026-10-06T22:21:39+09:00",
+    "date": "2026-10-06",
+    "project": "umm",
+    "result": "verify failed: 실패한 검증: npm test --silent (exit 1)",
+    "outcome": "verify-failed",
+    "run_id": "2026-10-06-220817-umm-improve",
+    "base_sha": "29149e5303822cf366a09f0351a6440e8f42ee3a",
+    "head_sha": "fa919650a07ae39f7c8d27690e524dec94a068c5",
+    "pr": "",
+    "stages": {
+      "base": {
+        "state": "pinned",
+        "reason": "main@29149e5",
+        "at": "2026-10-06T22:08:25+09:00"
+      },
+      "autonomy": {
+        "state": "release",
+        "reason": "",
+        "at": "2026-10-06T22:08:26+09:00"
+      },
+      "scout": {
+        "state": "done",
+        "reason": "`make test-go` 가 CI 의 Go 게이트 다섯 개 중 한 개만 돌린다 — 지난 회차가 `test-web` 에서 닫은 드리프트의 나",
+        "at": "2026-10-06T22:13:16+09:00"
+      },
+      "brief": {
+        "state": "accepted",
+        "reason": "채택 — 과제서의 근거가 지금 코드와 전부 맞았습니다(`Makefile:7-9` 의 두 줄, `ci.yml` 의 Go 게이트 다섯 개와 줄 번호, `ci.ym",
+        "at": "2026-10-06T22:21:34+09:00"
+      },
+      "verify": {
+        "state": "failed",
+        "reason": "실패한 검증: npm test --silent (exit 1)",
+        "at": "2026-10-06T22:21:39+09:00"
+      }
+    },
+    "campaign": "",
+    "autonomy": "release",
+    "arm": "baseline",
+    "experiment": "roles-2026-09",
+    "engine": "claude",
+    "files": 1,
+    "additions": 16,
+    "deletions": 1,
+    "tests": 0,
+    "title": "Run the Go gates of CI from make test-go, so the race detector and the vulnerability scan stop being CI-only"
+  },
+  "stages": {
+    "base": {
+      "state": "pinned",
+      "reason": "main@29149e5",
+      "at": "2026-10-06T22:08:25+09:00"
+    },
+    "autonomy": {
+      "state": "release",
+      "reason": "",
+      "at": "2026-10-06T22:08:26+09:00"
+    },
+    "scout": {
+      "state": "done",
+      "reason": "`make test-go` 가 CI 의 Go 게이트 다섯 개 중 한 개만 돌린다 — 지난 회차가 `test-web` 에서 닫은 드리프트의 나",
+      "at": "2026-10-06T22:13:16+09:00"
+    },
+    "brief": {
+      "state": "accepted",
+      "reason": "채택 — 과제서의 근거가 지금 코드와 전부 맞았습니다(`Makefile:7-9` 의 두 줄, `ci.yml` 의 Go 게이트 다섯 개와 줄 번호, `ci.ym",
+      "at": "2026-10-06T22:21:34+09:00"
+    },
+    "verify": {
+      "state": "failed",
+      "reason": "실패한 검증: npm test --silent (exit 1)",
+      "at": "2026-10-06T22:21:39+09:00"
+    }
+  },
+  "provenance": {
+    "model": "claude-opus-5",
+    "policy_version": "4a9e91ac7",
+    "prompts_hash": "ce085c79e18002e2",
+    "runner_version": "1bd5f0cd4",
+    "base_sha": "29149e5303822cf366a09f0351a6440e8f42ee3a",
+    "head_sha": "fa919650a07ae39f7c8d27690e524dec94a068c5",
+    "pr": ""
+  },
+  "verification": {
+    "runner": {
+      "source": "auto",
+      "commands": [
+        {
+          "cmd": "go build ./...",
+          "exit": 0,
+          "seconds": 0
+        },
+        {
+          "cmd": "go vet ./...",
+          "exit": 0,
+          "seconds": 1
+        },
+        {
+          "cmd": "go test ./...",
+          "exit": 0,
+          "seconds": 2
+        },
+        {
+          "cmd": "[ -d node_modules ] || npm ci --no-audit --no-fund",
+          "exit": 0,
+          "seconds": 1
+        },
+        {
+          "cmd": "npm test --silent",
+          "exit": 1,
+          "seconds": 0
+        }
+      ]
+    },
+    "runner_gate": {
+      "ok": false,
+      "state": "verify-failed",
+      "reason": "실패한 검증: npm test --silent (exit 1)"
+    },
+    "after_rebase": null,
+    "review": null,
+    "ci_gate": null
+  },
+  "release": {
+    "result": null,
+    "assets_sha256": []
+  },
+  "approval": null,
+  "usage": [
+    {
+      "ts": "2026-10-06T22:13:16+09:00",
+      "date": "2026-10-06",
+      "project": "umm",
+      "phase": "scout",
+      "run_id": "2026-10-06-220817-umm-improve",
+      "campaign": "",
+      "subtype": "success",
+      "engine": "claude",
+      "duration_ms": 309432,
+      "num_turns": 23,
+      "cost_usd": 1.8462644999999998,
+      "input_tokens": 40,
+      "output_tokens": 16019,
+      "cache_read": 1444559,
+      "cache_create": 72331
+    },
+    {
+      "ts": "2026-10-06T22:21:34+09:00",
+      "date": "2026-10-06",
+      "project": "umm",
+      "phase": "improve",
+      "run_id": "2026-10-06-220817-umm-improve",
+      "campaign": "",
+      "subtype": "success",
+      "engine": "claude",
+      "duration_ms": 534551,
+      "num_turns": 25,
+      "cost_usd": 2.1816335,
+      "input_tokens": 42,
+      "output_tokens": 21059,
+      "cache_read": 1627697,
+      "cache_create": 84110
+    }
+  ]
+}
