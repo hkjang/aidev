@@ -1,0 +1,26 @@
+=== gofmt -l cmd internal ===
+[]
+gofmt: CLEAN
+=== go build ===
+build rc=0
+=== go vet ===
+vet rc=0
+=== go test (full, with DSN) ===
+?   	github.com/hkjang/Kkiit/cmd/kkiit	[no test files]
+ok  	github.com/hkjang/Kkiit/internal/analytics	0.003s
+ok  	github.com/hkjang/Kkiit/internal/config	0.003s
+ok  	github.com/hkjang/Kkiit/internal/cryptox	0.003s
+ok  	github.com/hkjang/Kkiit/internal/database	0.005s
+ok  	github.com/hkjang/Kkiit/internal/httpapi	89.296s
+ok  	github.com/hkjang/Kkiit/internal/mail	0.010s
+?   	github.com/hkjang/Kkiit/internal/mail/mailtest	[no test files]
+ok  	github.com/hkjang/Kkiit/internal/netguard	0.004s
+ok  	github.com/hkjang/Kkiit/internal/password	0.238s
+?   	github.com/hkjang/Kkiit/internal/ui	[no test files]
+ok  	github.com/hkjang/Kkiit/internal/worker	0.004s
+go test rc=0
+=== recreate fresh DB ===
+=== make test-integration (fresh DB) ===
+KKIIT_TEST_DSN=postgres://user:pass@localhost:55702/kkiit_fresh go test ./internal/httpapi/ -run Integration -count=1 -timeout 300s
+ok  	github.com/hkjang/Kkiit/internal/httpapi	95.040s
+integration rc=0

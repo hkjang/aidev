@@ -1,0 +1,42 @@
+Kkiit v0.4.16 — 주문 추가 옵션 가격 합산의 int64 오버플로 수정
+
+v0.4.15 이후 들어온 수정 하나를 담는다.
+
+- `createOrder`(`orders.go`)가 상품·패키지 가격에서 출발해 선택된 추가
+  옵션을 상한 검사 없이 `price += optionPrice` 로 더하던 것을 고친다.
+  판매자 입력에도 상한이 없어(`validateTalent` 는 `Price < 0` 만 거절,
+  `talent_options.price` 는 `bigint CHECK (price >= 0)`) 합계가 int64 를
+  넘길 수 있었다. 한 번 감싸면 `price` 가 음수가 되어 `orders.amount` 의
+  `CHECK (amount >= 0)` 위반으로 구매자에게 원인 불명의 500
+  `order_failed` 가 나갔고, 두 번 감싸면(2^62 옵션 4개, 합 2^64) `price`
+  가 0 이 되어 주문이 201 로 성공하면서 `orders.amount`·`order_timeline`·
+  감사 기록·`payable_amount` 에 전부 0 이 커밋됐다 — 원장에 거짓 금액이
+  들어가는 경로였다. 옵션 조회 루프에서 더하기 전에
+  `optionPrice > math.MaxInt64-price` 를 검사해 400
+  `order_amount_too_large` 로 거절한다. 루프 안에서 바로 `return` 하지
+  않고 지역 플래그를 세워 `rows.Close()` 뒤에 거절하는데, 중간 return 은
+  pgx 행 집합을 닫지 않고 빠져나가기 때문이다. 합계가 정확히
+  `math.MaxInt64` 인 경계는 거절하지 않는다. 쿠폰·예산 예약·상태표·결제
+  경로는 건드리지 않았고, 같은 루프의 `days += extraDays` 는 옵션당
+  `AdditionalDays <= 365` 로 묶여 있어 범위 밖으로 두었다. 폐기
+  PostgreSQL 16 과 실제 라우터·실제 DB 왕복으로 2^64 합계가 `amount: 0`
+  짜리 주문을 커밋하는 것을 먼저 실패로 재현한 뒤 통과시켰고, 가드 제거
+  → 다시 201·`amount 0`, 비교를 `>=` 로 → `math.MaxInt64` 경계가 400 으로
+  두 변이가 서로 다른 지점에서 실패하는 것도 확인했다. `openapi.yaml` 의
+  `POST /orders` 응답에 핸들러가 실제로 내는 `403`·`404`·`500` 과 새
+  코드를 더해 실제 동작과 맞췄다. 프런트는 `error.message` 를 그대로
+  띄우므로 `web/` 과 `internal/ui/dist` 는 건드리지 않았다. 판매자
+  정산이나 큰 금액의 후속 결제·납품·환불을 검증한 것은 아니다.
+
+버전 표기(VERSION·compose·web/package·openapi·README)를 0.4.16 으로 올린다.
+
+gofmt · go build · go vet · go test, web lint · test · build 전부 통과.
+전체 `go test ./cmd/... ./internal/...` 통과(httpapi 89.3초). 버릴
+PostgreSQL 16(16.15, docker 29.7.2)에 새로 만든 DB 로 `make test-integration`
+도 통과(95.0초). 웹 검사 3종은 선언·CI 버전인 node:24.18.0 컨테이너에서
+돌려 lint 무결, 테스트 10건 통과, build 성공을 확인했다 — 이 기계의 Node 는
+22.23.1 이다. build 가 다시 쓴 `internal/ui/dist` 는 청크 해시가 달라졌고,
+기존 릴리즈 관례대로 HEAD 로 되돌려 이번 커밋에서 제외했다.
+
+태그 푸시 후 기존 release.yml 이 이미지 빌드·압축·재로드 검증 및 GitHub
+Release 생성을 수행한다. 이 단계에서는 원격에 보내지 않는다.

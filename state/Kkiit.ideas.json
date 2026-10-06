@@ -1,21 +1,21 @@
 [
   {
-    "title": "MCP submit_requirement 가 주문 양식 검증(normalizeRequirements)을 건너뛴다",
+    "title": "주문 생성의 추가 옵션 가격 합산 int64 오버플로를 400 으로 거절",
     "value": 3,
     "risk": 2,
     "size": "S",
     "status": "done",
-    "note": "2026-10-06 구현·커밋(026afbc). mcp.go:401 에 uuid.Parse → s.DB.Begin → SELECT talent_id → normalizeRequirements(requireAll=true) → UPDATE → Commit 을 넣었다. requireAll 은 상태로 나누지 않고 항상 true(커밋 메시지에 기록). 저장 실패를 '갱신할 수 있는 주문이 아닙니다' 와 가르는 분기도 함께. 실제 POST /mcp → 실제 PG 왕복 테스트 2건을 먼저 실패시킨 뒤 통과, 변이 3종(requireAll, 정규화 결과 저장, uuid.Parse) 모두 재실패 확인. docs/mcp.md 에 한 단락.",
-    "updated": "2026-10-06"
+    "note": "구현 완료(56ebc35). orders.go 의 옵션 조회 루프에서 더하기 전에 optionPrice > math.MaxInt64-price 를 검사하고, 루프 안에서 return 하지 않고 지역 플래그를 세워 rows.Close() 뒤에 400 order_amount_too_large 로 거절한다. 2^62 옵션 4개(합 2^64)가 amount 0 짜리 주문을 201 로 커밋하는 것을 실제 DB 로 먼저 재현한 뒤 수정했고, 가드 제거와 >= 변이가 서로 다른 지점에서 각각 실패하는 것을 확인했다. 미확인이었던 두 가지도 확정: 2^62 가격 옵션은 POST /talents·publish 를 그대로 통과하고, POST /talents 응답은 {id,status} 뿐이라 옵션 uuid 는 pool 로 읽어야 한다.",
+    "updated": "2026-10-07"
   },
   {
-    "title": "mcpSubmitRequirement 의 order_id 를 Go 에서 uuid.Parse 로 먼저 거절",
+    "title": "옵션 조회 루프가 rows.Err() 와 Scan 실패를 조용히 삼킨다",
     "value": 2,
-    "risk": 1,
+    "risk": 2,
     "size": "S",
-    "status": "done",
-    "note": "2026-10-06 위 1순위의 ①단계로 함께 구현. 비-uuid 문자열이 PG 22P02 를 일으켜 '요구사항을 갱신할 수 있는 주문이 아닙니다' 로 둔갑하던 것을 'order_id 는 주문 식별자(uuid)여야 합니다' 로 가른다. 테스트가 이 메시지를 고정하고, 되돌리면 재실패한다.",
-    "updated": "2026-10-06"
+    "status": "pending",
+    "note": "orders.go:88-100 의 for rows.Next() 가 Scan 오류를 continue 로 넘기고 루프 뒤 rows.Err() 를 전혀 보지 않는다. 전송 중단·Scan 실패가 '판매 중이 아닌 항목이 있습니다' 400 으로 둔갑한다 — 이 저장소가 여러 회차 고쳐 온 '저장/조회 실패를 없는 것으로 둔갑' 과 같은 계열. 이번 회차에 오버플로 가드를 넣으며 같은 루프를 읽었고 코드 모양을 재확인했으나, 한 세션에 같은 루프를 두 번 바꾸면 변이 검증이 섞이므로 손대지 않았다. 이제 1순위가 머지되므로 다음 회차 유력 후보. 남은 약점은 자연 HTTP 입력으로 Scan 실패를 만들 경로가 미확인이라는 것 — 증거를 어떻게 댈지 먼저 정해야 한다.",
+    "updated": "2026-10-07"
   },
   {
     "title": "REQUIREMENT_PENDING 이 어떤 HTTP 경로로도 도달하지 않는 死상태",
@@ -23,62 +23,8 @@
     "risk": 4,
     "size": "M",
     "status": "pending",
-    "note": "2026-10-06 신규 발견(이번 회차 구현 중 확인). /orders/{id}/pay 가 PAID→READY 를 같은 트랜잭션에서 커밋하므로(orders.go:329,332) PAID 는 머무는 상태가 아니고, 그 결과 orderTransitions 의 PAID→REQUIREMENT_PENDING(orders.go:19, orders.manage 필요)도 걸 수 없다. applyOrderTransition/REQUIREMENT_PENDING 전수 grep 결과 그 상태를 쓰는 다른 경로가 없다. 따라서 submit_requirement 의 REQUIREMENT_PENDING→READY 승격 분기와 상태표의 그 전이가 둘 다 실무에서 돌지 않는다. 판매자가 양식을 늦게 요구하는 흐름을 살리려면 pay 가 양식 완성 여부로 READY/REQUIREMENT_PENDING 을 가르게 해야 하는데, 결제·상태표·원장 경로를 동시에 건드려 위험이 높다. 다음 회차가 고르려면 먼저 '이 상태가 제품상 필요한가' 를 결정해야 한다.",
-    "updated": "2026-10-06"
-  },
-  {
-    "title": "통합 테스트를 같은 DB 에 두 번 돌리면 메일 릴레이·Agent 조사 테스트가 실패",
-    "value": 2,
-    "risk": 1,
-    "size": "M",
-    "status": "pending",
-    "note": "2026-10-06 신규 발견. 깨끗한 DB 1회차는 90건 전부 PASS 지만, 같은 DB 에 -run Integration 을 다시 돌리면 TestIntegrationMailNotificationsLeaveThroughTheRelay(40초 만료)와 TestIntegrationAgentCanResearchBeforeBuying 이 실패한다. 이번 회차 변경을 되돌린 baseline 에서도 같은 2건이 재현되어 사전 존재 결함으로 확인(내 변경과 무관). outbox/notification 적체가 eventually 기한을 넘기는 것으로 보이나 원인은 미확정. 재현은 쉽지만 고치는 쪽이 테스트 격리(테스트별 스키마)냐 eventually 기한이냐를 먼저 정해야 한다.",
-    "updated": "2026-10-06"
-  },
-  {
-    "title": "주문 추가 옵션 가격 합산의 int64 오버플로",
-    "value": 3,
-    "risk": 3,
-    "size": "M",
-    "status": "pending",
-    "note": "이번 회차 차선이었으나 1순위가 성립해 구현하지 않음(코드 재확인은 orders.go:60-102 범위에서 함). orders.go:95 price += optionPrice 에 상한 없음, validateTalent(talents.go:265,283)는 음수만 거절. orders.amount 는 CHECK (amount >= 0)(001_initial.sql:252)이라 음수 합계는 500 으로 터지고 그 전에 음수 price 가 resolveCoupon(:131)·reserveBudget(:159)에 들어간다. 2026-10-05 회차가 1<<57 가격 상품의 등록·공개을 실제로 성공시킨 전례가 있으므로 HTTP 재현 가능성이 높다. 다만 orders.go 는 원장 경로.",
-    "updated": "2026-10-06"
-  },
-  {
-    "title": "err!=nil||RowsAffected()==0 남은 8곳 가르기",
-    "value": 2,
-    "risk": 1,
-    "size": "M",
-    "status": "pending",
-    "note": "2026-10-06 갱신: mcp.go:409 를 이번에 가르면서 9곳에서 8곳으로 줄었다 — approvals.go:229, coupons.go:351, events.go:104, finance.go:101, identity.go:110, keys.go:183, organizations.go:256, reports.go:291. 남은 8곳은 모두 파라미터가 uuid·선검증 enum 뿐이라 자연 HTTP 입력으로 DB 오류를 만들 경로가 없고(지난 회차들이 성공시킨 NUL/22021 수법이 통하지 않는다) 404 회귀 + 분기 단위 검증까지만 가능해 증거가 약하다.",
-    "updated": "2026-10-06"
-  },
-  {
-    "title": "가이드 문서·openapi 의 API 메서드·응답 코드를 실제 라우터와 대조",
-    "value": 2,
-    "risk": 2,
-    "size": "M",
-    "status": "pending",
-    "note": "평가 유지(이번 미재확인). openapi_test.go 가 라우트 경로만 비교하고 응답 코드는 대조하지 않는다. 좁은 계약부터 설계해야 하며 전 API 일괄 확장은 한 세션을 넘긴다.",
-    "updated": "2026-10-06"
-  },
-  {
-    "title": "감사 기록이 요청 본문 구조체를 그대로 넘기는 곳들",
-    "value": 2,
-    "risk": 2,
-    "size": "M",
-    "status": "pending",
-    "note": "평가 유지(이번 미재확인). 10곳(admin_users 91/152, admin 462, approvals 193/233/332, auth 265, finance 147, notifications 248, profile 93)이고 자격증명은 이미 따로 걸러져(admin.go:304) 증명된 유출이 없다. 정책 선행 필요. 참고로 이번 회차는 mcp.go 의 감사 호출이 넘기는 값을 정규화 '결과'(= 실제로 저장되는 값)로 바꿨다.",
-    "updated": "2026-10-06"
-  },
-  {
-    "title": "알 수 없는 승인 조건을 편집할 때 유실 안내/보존",
-    "value": 3,
-    "risk": 2,
-    "size": "M",
-    "status": "pending",
-    "note": "평가 유지(이번 미재확인). AdminPage.tsx ApprovalAdmin.save 가 알려진 조건 5개로 재구성해 알 수 없는 조건을 유실할 수 있다. 브라우저 검증이 필요한 별도 과제.",
-    "updated": "2026-10-06"
+    "note": "2026-10-06 발견. pay 가 PAID->READY 를 같은 트랜잭션에 커밋해 그 상태에 머물 수 없고, orderTransitions(orders.go:19)의 PAID->REQUIREMENT_PENDING 과 submit_requirement 의 승격 분기가 둘 다 실무에서 돌지 않는다. 이번 회차 미재확인(orders.go 를 읽었으나 상태표는 과제 범위 밖). '이 상태가 제품상 필요한가' 를 먼저 결정해야 하는 제품 결정 과제이고 결제·상태표·원장을 동시에 건드려 자율 회차에 맞지 않는다.",
+    "updated": "2026-10-07"
   },
   {
     "title": "README 환경변수 계약을 필수 4개 + 선택 SHUTDOWN_DRAIN_SECONDS 로 정리",
@@ -86,43 +32,70 @@
     "risk": 1,
     "size": "S",
     "status": "pending",
-    "note": "프로필에 기록된 불일치 유지(이번 미재확인). 가치가 작아 상위 후보를 밀어내지 못한다.",
-    "updated": "2026-10-06"
+    "note": "이번 회차 차선 후보였으나 1순위의 피해 재현이 성립해 손대지 않았고 README/internal/config 대조도 하지 않았다. 프로필에 기록된 불일치(README 실행 계약의 '네 개뿐' vs Config 의 선택 환경변수)는 2026-10-05 이후 미재확인이라 구현자가 먼저 두 파일을 대조해야 한다. 가치가 작아 결함 수정을 밀어내지 못한다.",
+    "updated": "2026-10-07"
+  },
+  {
+    "title": "가이드 문서·openapi 의 API 메서드·응답 코드를 실제 라우터와 대조",
+    "value": 2,
+    "risk": 2,
+    "size": "M",
+    "status": "pending",
+    "note": "openapi_test.go 가 라우트 경로만 비교하고 응답 코드는 대조하지 않아 여섯 회차 연속 사람 눈으로 누락을 찾고 있다 — 이번 회차도 POST /orders 의 '403'·'404'·'500' 누락을 손으로 찾았다. 전 API 일괄 확장은 한 세션을 넘기므로 '핸들러가 내는 상태 코드 집합을 정적으로 모아 openapi 와 대조하는 테스트' 같은 좁은 계약부터 설계해야 한다. 회차마다 같은 비용을 다시 치르고 있으므로 값이 누적되는 중.",
+    "updated": "2026-10-07"
+  },
+  {
+    "title": "err!=nil||RowsAffected()==0 남은 8곳 가르기",
+    "value": 2,
+    "risk": 1,
+    "size": "M",
+    "status": "rejected",
+    "note": "approvals 229, coupons 351, events 104, finance 101, identity 110, keys 183, organizations 256, reports 291. 남은 8곳은 모두 파라미터가 uuid·선검증 enum 뿐이라 자연 HTTP 입력으로 DB 오류를 만들 경로가 없고, 지난 회차들이 쓴 NUL/22021 수법이 통하지 않는다. 증거를 댈 수 있는 사례를 모두 소진했으므로 rejected 로 내린다 — 404 회귀 확인만 하는 변경은 이 러너의 비평 기준(테스트가 바뀐 경로를 지나야 한다)을 만족시킬 수 없다. 재개하려면 DB 오류를 주입할 수 있는 수단이 먼저 생겨야 한다.",
+    "updated": "2026-10-07"
+  },
+  {
+    "title": "통합 테스트를 같은 DB 에 두 번 돌리면 메일 릴레이·Agent 조사 테스트가 실패",
+    "value": 2,
+    "risk": 2,
+    "size": "M",
+    "status": "pending",
+    "note": "이번 회차에 TestIntegrationMailNotificationsLeaveThroughTheRelay 가 깨끗한 DB 의 -run Integration 전체 실행에서 1회 실패하는 것을 관측했다(mail_integration_test.go:160, digest subject=\"[Kkiit] 수정 요청 ...\" — 두 알림이 한 통으로 묶이지 않고 결제 완료 메일이 먼저 빠져나갔다). 같은 조건 재실행 93 PASS, 전체 go test 두 차례 통과, 이 테스트를 새 테스트들 바로 뒤에 붙여 3회 연속 통과로 내 변경과 무관함을 확인했다 — 부하에 따라 digest 묶음 창이 어긋나는 사전 존재 경합이다. 두 번 돌리면 실패한다는 종전 기록보다 범위가 넓다(깨끗한 DB 에서도 간헐 실패). 고치는 쪽이 테스트 격리냐 묶음 창 대기냐를 먼저 정해야 해 S 가 아니다.",
+    "updated": "2026-10-07"
+  },
+  {
+    "title": "감사 기록이 요청 본문 구조체를 그대로 넘기는 10곳",
+    "value": 2,
+    "risk": 2,
+    "size": "M",
+    "status": "pending",
+    "note": "admin_users 91/152, admin 462, approvals 193/233/332, auth 265, finance 147, notifications 248, profile 93. 이번 회차 미재확인. 자격증명은 이미 따로 걸러져(admin.go:304) 증명된 유출이 없어 정책 설계가 선행해야 한다. 운영자 지시('식별자만 details 로 넘길 것')와 방향이 같으므로 언젠가 해야 하지만 S 가 아니다.",
+    "updated": "2026-10-07"
+  },
+  {
+    "title": "알 수 없는 승인 조건을 편집할 때 유실 안내/보존",
+    "value": 3,
+    "risk": 2,
+    "size": "M",
+    "status": "pending",
+    "note": "web/src/pages/AdminPage.tsx ApprovalAdmin.save 가 알려진 조건 5개로 재구성해 알 수 없는 조건을 유실할 수 있다(toggle 은 원래 조건 보존). 이번 회차 미재확인. 브라우저 검증이 필요하고 추적되는 internal/ui/dist 번들이 바뀌어 자율 회차의 검증 수단과 맞지 않는다.",
+    "updated": "2026-10-07"
+  },
+  {
+    "title": "주문 추가 옵션의 additional_days 합산과 due_at 시간 범위 검증",
+    "value": 1,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "orders.go 의 days += extraDays 와 time.Now().AddDate(0,0,days) 에 상한이 없다. 다만 옵션당 AdditionalDays <= 365(talents.go:284)로 묶여 있어 int 를 넘기려면 수백만 개 옵션이 필요하고 현실적 피해는 '먼 미래 due_at' 정도다. 이번 회차에 같은 루프를 건드렸지만 과제서가 명시적으로 범위 밖으로 뺐고, 한 가드씩 증명해야 변이 검증이 성립하므로 손대지 않았다. 이번에 추가한 TestIntegrationOrderAddsOrdinaryOptionPricesAndDays 가 정상 일수 합산(3+2+2=7)을 고정해 두었으므로 다음에 손댈 때 회귀 가드는 이미 있다.",
+    "updated": "2026-10-07"
   },
   {
     "title": "setTalentStatus 의 SELECT ... FOR UPDATE 실패를 404 와 500 으로 가르기",
     "value": 2,
     "risk": 1,
     "size": "S",
-    "status": "pending",
-    "note": "평가 유지(이번 미재확인). 자연 HTTP 입력으로 DB 장애 재현이 미확인이라 증거가 약하다.",
-    "updated": "2026-10-06"
-  },
-  {
-    "title": "revokeMyAPIKey 의 404 active_key_not_found 를 DB 오류와 가르기",
-    "value": 2,
-    "risk": 1,
-    "size": "S",
     "status": "rejected",
-    "note": "증거 설계가 성립하지 않아 기각. keys.go:182-186 의 UPDATE 파라미터가 uuid 둘뿐이라 자연 HTTP 입력으로 DB 오류를 만들 경로가 없고, 지난 회차들이 성공시킨 NUL(22021) 수법이 통하지 않는다. 위 '남은 8곳' 항목에 흡수한다.",
-    "updated": "2026-10-06"
-  },
-  {
-    "title": "retryDomainEvent 의 404 event_not_retryable 가르기",
-    "value": 2,
-    "risk": 1,
-    "size": "S",
-    "status": "rejected",
-    "note": "revokeMyAPIKey 와 같은 한계로 기각. events.go:104 의 UPDATE 가 uuid 만 받아 증거 설계가 불가하다. 위 '남은 8곳' 항목에 흡수한다.",
-    "updated": "2026-10-06"
-  },
-  {
-    "title": "POST /me/portfolios 의 openapi 응답에 '500' 추가",
-    "value": 1,
-    "risk": 1,
-    "size": "S",
-    "status": "rejected",
-    "note": "단독 가치가 너무 작아 기각. 'openapi 응답 코드 대조' 과제에 흡수하는 편이 낫다.",
-    "updated": "2026-10-06"
+    "note": "위 'err!=nil||RowsAffected()==0 남은 8곳' 과 같은 한계로 rejected. 자연 HTTP 입력으로 DB 장애를 재현할 길이 없어 테스트가 바뀐 경로를 지날 수 없다.",
+    "updated": "2026-10-07"
   }
 ]

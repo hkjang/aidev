@@ -1,7 +1,7 @@
 ---
 title: "GoalForge — 자율 개선 이력"
 description: "GoalForge: 자율 개선 회차 10회, 릴리즈 6건. 최근 릴리즈 v0.53.0 (자산 7개)."
-last_modified_at: 2026-10-07 04:48:17 +0900
+last_modified_at: 2026-10-07 05:23:31 +0900
 ---
 {% raw %}
 <script type="application/ld+json">
@@ -18,7 +18,7 @@ last_modified_at: 2026-10-07 04:48:17 +0900
   "name": "hkjang",
   "url": "https://github.com/hkjang"
  },
- "dateModified": "2026-10-07T04:48:17+09:00",
+ "dateModified": "2026-10-07T05:23:31+09:00",
  "version": "0.53.0"
 }
 </script>
@@ -35,6 +35,7 @@ last_modified_at: 2026-10-07 04:48:17 +0900
 <dt>저장소</dt><dd><a href="https://github.com/hkjang/goalforge">https://github.com/hkjang/goalforge</a></dd>
 <dt>마지막 회차</dt><dd>2026-10-07 04:47 KST — <span class="pill pill-other">• 기타</span> error: pr create</dd>
 <dt>최근 릴리즈</dt><dd><a href="https://github.com/hkjang/goalforge/releases/tag/v0.53.0">v0.53.0</a> — released · 자산 7개 (이전 v0.52.0: 7개) <a href="https://github.com/hkjang/goalforge/releases">전체 릴리즈 →</a></dd>
+<dt>수정 과제</dt><dd>⚠️ 오류 대응(자동 적재): 마지막 회차가 &#x27;error&#x27; 로 끝났습니다. error: pr create</dd>
 </dl>
 
 ## 회차 이력
