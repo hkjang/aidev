@@ -29,3 +29,13 @@
 - [러너 12:28] pr created — https://github.com/hkjang/appstore/pull/40
 - [러너 12:33] ci passed — 검사 2개 모두 success
 - [러너 12:34] merge done — 27b0dbf
+
+## 릴리즈 노트
+- `755d25b`: `chore(release): AppStore v2.11.16`, 동일 HEAD에 hkjang 주석 태그 `v2.11.16`. detached HEAD 유지, 작업 트리 깨끗함, 원격 전송 없음.
+- 요청한 marketing:product-launch / technology:release-and-deployment 원문을 Skill 도구 부재로 읽고 적용. Tier 3 개선으로 기존 커밋·태그의 한국어 노트 관례 유지.
+- package/lock·Compose·README/Pages·가이드 버전 갱신, 캡처 90개 재생성(88개 동일; 관리자 AI 2개는 과거 릴리즈와 동일한 높이 변동), PDF 27/37쪽과 링크 검증.
+- Go race/vet/gofmt·새 번들 embed 후 Go build, React 111 passed, lint/Prettier/build, E2E 81 passed/1 skipped(재시도 없음), 환경/오프라인/문서/버전/diff 검사 통과. 브라우저 경로 지정·PDF 스크립트 sh 실행으로 도구 환경 실패 해결.
+- DB DSN 미설정으로 DB 통합 skip, 실제 DB/Keycloak/SecCheck 미검증. Docker build/load/smoke와 GitHub Release/자산은 release.yml이 태그 푸시 후 생성하므로 github_release=false, assets=[].
+- `release.json`, `release-notes.md`, `release-report.md`, `release-logs/`를 회차 디렉터리에 저장.
+- [러너 12:45] release published — v2.11.16
+- [러너 12:48] assets verified — v2.11.16 자산 1개 (이전 v2.11.15: 1)

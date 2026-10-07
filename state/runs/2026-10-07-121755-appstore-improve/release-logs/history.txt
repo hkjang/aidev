@@ -1,0 +1,350 @@
+$ git tag --sort=-creatordate
+v2.11.15
+v2.11.14
+v2.11.13
+v2.11.12
+v2.11.11
+v2.11.10
+v2.11.9
+v2.11.8
+v2.11.7
+v2.11.6
+v2.11.5
+v2.11.4
+v2.11.3
+v2.11.2
+v2.11.1
+v2.11.0
+v2.10.0
+v2.9.0
+v2.8.0
+v2.7.0
+v2.6.1
+v2.6.0
+v2.5.8
+v2.5.7
+v2.5.6
+v2.5.5
+v2.5.4
+v2.5.3
+v2.5.2
+v2.5.1
+v2.5.0
+v2.4.0
+v2.3.1
+v2.3.0
+v2.2.1
+v2.2.0
+v2.1.4
+v2.1.3
+v2.1.2
+v2.1.1
+v2.1.0
+v2.0.0
+
+$ git show --stat v2.11.15
+tag v2.11.15
+Tagger: hkjang <gagagiga@naver.com>
+Date:   Tue Oct 6 02:48:34 2026 +0900
+
+AppStore v2.11.15
+
+보안 심의 화면의 "앱 상태" 가 영문 내부값 `draft` 를 그대로 보여 주던 문제를 고친 patch 릴리스입니다.
+
+- 소유자가 `/my/apps` 에서 들어가는 보안 심의 화면(`/my/apps/:id/security`)의 "심의 상태" 카드에서, "앱 상태" 가 서버가 보낸 DB enum 을 그대로 그렸습니다. 한국어 UI 한가운데서 "앱 상태: draft" 와 "pending_review" 가 보였습니다.
+- 같은 카드의 "SecCheck 상태" 는 이미 한국어로 보여 주고 있었고, 관리자·내 앱·앱 상세는 모두 공용 표로 `초안`·`검토 대기` 라 부릅니다. 한 제품 안에서 같은 상태가 화면마다 갈렸습니다.
+- 이제 심의 화면도 그 공용 표를 읽습니다. 라벨 표가 한 곳이라 화면 사이의 표기가 어긋날 수 없습니다. 배지의 색과 동작은 그대로입니다.
+- 표에 없는 상태값은 종전처럼 받은 값을 그대로 보여 줍니다. 모르는 상태가 화면에서 사라지지 않습니다.
+- 프로덕션 화면·라우터·실제 API 클라이언트를 쓰고 HTTP 경계만 바꾼 Vitest 2건을 더했습니다(전체 105건).
+- 버전 표기와 사용자·관리자 가이드 PDF를 갱신했습니다. 화면 캡처 90개 중 87개는 v2.11.14와 동일합니다.
+
+schema 변경은 없습니다. 기존 설치는 image만 교체하면 됩니다.
+
+commit 8370b8dde315d3d1f7de4eb53c05ae066bbfd3ff
+Author: hkjang <gagagiga@naver.com>
+Date:   Tue Oct 6 02:48:27 2026 +0900
+
+    chore(release): AppStore v2.11.15
+    
+    보안 심의 화면(`/my/apps/:id/security`)의 "심의 상태" 카드가 "앱 상태" 로 서버가
+    보낸 DB enum 을 그대로 그려, 한국어 UI 한가운데서 소유자에게 "앱 상태: draft" 와
+    "pending_review" 가 보이던 문제를 고친 patch 릴리스입니다. 같은 카드의 SecCheck
+    상태는 이미 한국어였고 관리자·내 앱·앱 상세는 공용 표로 "초안"·"검토 대기" 라
+    부르므로, 같은 상태가 화면마다 갈렸습니다. 서버와 schema는 바뀌지 않았습니다.
+    
+    Version
+    
+    web/package.json·package-lock.json, docker-compose.yml, README, GitHub Pages
+    문서와 docs/USER_GUIDE.md·docs/ADMIN_GUIDE.md의 버전 표기를 v2.11.15로
+    올렸습니다. 관리자 가이드의 롤백 예시는 한 칸 밀어 appstore-v2.11.14-stopped를
+    가리킵니다.
+    
+    Screenshots and guide PDFs
+    
+    실제 번들에서 desktop/mobile 캡처 90개를 다시 생성했습니다. 87개는 v2.11.14와
+    byte 단위로 동일합니다. 이번 수정이 지나는 보안 심의 캡처 2개(desktop·mobile)는
+    내용이 바뀌었습니다 — "앱 상태" 행이 draft 에서 초안 으로 읽히며, 두 캡처의
+    pixel 크기는 1440x1144·1082x4725 로 그대로입니다. 관리자 AI 설정 desktop 캡처
+    1개만 더 다르고 내용은 같습니다 — 새로 생성한 파일이 v2.11.13 이 실어 보낸 것과
+    byte 단위로 동일하고, 전체 페이지 높이가 1905에서 1810으로 돌아가 v2.11.14 에서
+    늘어난 95px 을 그대로 되돌립니다. 이 캡처는 두 상태를 왕복하는 기존 불안정성이며
+    이번 변경은 관리자 AI route 를 지나지 않습니다. mobile 캡처는 이번에는 흔들리지
+    않았습니다. 기존 스크립트로 PDF를 재생성하고 v2.11.15 태그를 가리키는 문서 간
+    링크와 file:// 링크 부재를 확인했습니다.
+    
+    Migration
+    
+    서버·schema 변경은 없습니다. 기존 설치는 image만 교체하면 됩니다.
+    internal/webui/dist는 기존 관례대로 유지하며 Dockerfile이 번들을 새로 빌드합니다.
+    
+    검증: Go race 테스트 전체 패키지·vet·gofmt·build, React 105건,
+    lint(--max-warnings 0)·Prettier·build, 오프라인·환경·문서 검사 통과. Playwright는
+    --workers=2 --retries=2 로 81 passed/1 skipped이며 retry 없이 통과했습니다. HOME이
+    run 디렉터리로 덮여 있어 PLAYWRIGHT_BROWSERS_PATH로 설치된 브라우저 경로를
+    지정했습니다. DB DSN 미설정으로 DB 통합 검증은 skip이며 실제 DB/Keycloak은
+    검증하지 않았습니다. Docker build/load/smoke, SHA-256 및 GitHub Release 게시는
+    태그 워크플로가 수행합니다. 이 세션에서는 원격 전송을 수행하지 않았습니다.
+
+ README.md                                          |  24 +--
+ docker-compose.yml                                 |   4 +-
+ docs/ADMIN_GUIDE.md                                |  24 +--
+ docs/ADMIN_GUIDE.pdf                               | Bin 6590200 -> 6589801 bytes
+ docs/USER_GUIDE.md                                 |   2 +-
+ docs/USER_GUIDE.pdf                                | Bin 5493820 -> 5494285 bytes
+ .../screenshots/captures/admin-ai-desktop.webp     | Bin 79000 -> 78650 bytes
+ .../captures/my-app-security-desktop.webp          | Bin 65650 -> 66066 bytes
+ .../captures/my-app-security-mobile.webp           | Bin 167264 -> 167174 bytes
+ docs/assets/screenshots/manifest.json              | 190 ++++++++++-----------
+ docs/guides/admin/index.html                       |   6 +-
+ docs/guides/offline/index.html                     |  18 +-
+ docs/guides/release/index.html                     |  18 +-
+ docs/guides/upgrade/index.html                     |  12 +-
+ docs/guides/user/index.html                        |   2 +-
+ docs/index.html                                    |   8 +-
+ web/package-lock.json                              |   4 +-
+ web/package.json                                   |   2 +-
+ 18 files changed, 157 insertions(+), 157 deletions(-)
+
+$ git show --stat v2.11.14
+tag v2.11.14
+Tagger: hkjang <gagagiga@naver.com>
+Date:   Mon Oct 5 10:54:41 2026 +0900
+
+AppStore v2.11.14
+
+`/my/apps/:id/edit` 에서 앱을 찾지 못하면 쿼리 라이브러리의 영문 내부 문구가 한국어 UI 에 그대로 보이던 문제를 고친 patch 릴리스입니다.
+
+- 내 앱 목록에 그 id 가 없으면 화면에 "화면을 불러오지 못했습니다" 와 함께 ``["my-app","<id>"] data is undefined`` 가 보였습니다. 영문 내부 문구에 쿼리 키 원문까지 붙은 것입니다.
+- 삭제된 앱의 수정 주소를 북마크했거나 남의 앱 id 를 넣은 소유자가 이것을 읽었고, 돌아갈 링크도 없어 화면에서 막혔습니다.
+- 이제 "앱을 찾을 수 없습니다" 와 `내가 등록한 앱` 으로 돌아가는 링크를 보여 줍니다. "없음" 을 오류가 아닌 정상 데이터로 다루고, 로딩과 오류 분기 뒤에서만 판단하므로 불러오는 중에 깜빡이지 않습니다.
+- 401·500 같은 실제 HTTP 오류는 그대로 오류 화면과 "다시 시도" 로 남습니다. "없음" 과 "오류" 를 섞지 않았습니다.
+- 프로덕션 라우터·Provider·실제 API 클라이언트를 쓰고 HTTP 경계만 바꾼 Vitest 4건을 더했습니다(전체 103건).
+- 버전 표기와 사용자·관리자 가이드 PDF를 갱신했습니다. 화면 캡처 90개 중 89개는 v2.11.13과 동일합니다.
+
+schema 변경은 없습니다. 기존 설치는 image만 교체하면 됩니다.
+
+commit b52032c3821402ce7da7f5b2ca6720d00f09a63f
+Author: hkjang <gagagiga@naver.com>
+Date:   Mon Oct 5 10:54:33 2026 +0900
+
+    chore(release): AppStore v2.11.14
+    
+    `/my/apps/:id/edit` 에서 내 앱 목록에 그 id 가 없을 때 queryFn 이 undefined 를
+    반환해 TanStack Query v5 가 그것을 오류로 바꾸고, 오류 화면이 그 문구를 그대로
+    노출하던 문제를 고친 patch 릴리스입니다. 화면에는 "화면을 불러오지 못했습니다"
+    아래에 ["my-app","<id>"] data is undefined 가 보였고, 삭제된 앱의 수정 주소를
+    북마크한 소유자는 돌아갈 링크도 없었습니다. 서버와 schema는 바뀌지 않았습니다.
+    
+    Version
+    
+    web/package.json·package-lock.json, docker-compose.yml, README, GitHub Pages
+    문서와 docs/USER_GUIDE.md·docs/ADMIN_GUIDE.md의 버전 표기를 v2.11.14로
+    올렸습니다. 관리자 가이드의 롤백 예시는 한 칸 밀어 appstore-v2.11.13-stopped를
+    가리킵니다.
+    
+    Screenshots and guide PDFs
+    
+    실제 번들에서 desktop/mobile 캡처 90개를 다시 생성했습니다. 89개는 v2.11.13과
+    byte 단위로 동일합니다. 이번 수정이 지나는 /my/apps/:id/edit 캡처도 동일한데,
+    캡처 fixture 가 실제로 가진 앱의 수정 화면을 열어 not-found 경로를 지나지 않기
+    때문입니다. 관리자 AI 설정 desktop 캡처 1개만 다르며 내용은 같습니다 — 새로
+    생성한 파일이 v2.11.12 가 실어 보낸 것과 byte 단위로 동일하고, 전체 페이지
+    높이가 1810에서 1905로 돌아가 v2.11.13 에서 95px 줄어든 것을 그대로 되돌립니다.
+    이 캡처는 두 상태를 왕복하는 기존 불안정성이며 이번 변경은 관리자 AI route 를
+    지나지 않습니다. mobile 캡처는 이번에는 흔들리지 않았습니다. 기존 스크립트로
+    PDF를 재생성하고 v2.11.14 태그를 가리키는 문서 간 링크와 file:// 링크 부재를
+    확인했습니다.
+    
+    Migration
+    
+    서버·schema 변경은 없습니다. 기존 설치는 image만 교체하면 됩니다.
+    internal/webui/dist는 기존 관례대로 유지하며 Dockerfile이 번들을 새로 빌드합니다.
+    
+    검증: Go race 테스트·vet·gofmt·build, React 103건, lint(--max-warnings 0)·
+    Prettier·build, 오프라인·환경·문서 검사 통과. Playwright는 --workers=2
+    --retries=2 로 81 passed/1 skipped. HOME이 run 디렉터리로 덮여 있어
+    PLAYWRIGHT_BROWSERS_PATH로 설치된 브라우저 경로를 지정했습니다. DB DSN
+    미설정으로 DB 통합 검증은 skip이며 실제 DB/Keycloak은 검증하지 않았습니다.
+    Docker build/load/smoke, SHA-256 및 GitHub Release 게시는 태그 워크플로가
+    수행합니다. 이 세션에서는 원격 전송을 수행하지 않았습니다.
+
+ README.md                                          |  24 +--
+ docker-compose.yml                                 |   4 +-
+ docs/ADMIN_GUIDE.md                                |  24 +--
+ docs/ADMIN_GUIDE.pdf                               | Bin 6589807 -> 6590200 bytes
+ docs/USER_GUIDE.md                                 |   2 +-
+ docs/USER_GUIDE.pdf                                | Bin 5493821 -> 5493820 bytes
+ .../screenshots/captures/admin-ai-desktop.webp     | Bin 78650 -> 79000 bytes
+ docs/assets/screenshots/manifest.json              | 186 ++++++++++-----------
+ docs/guides/admin/index.html                       |   6 +-
+ docs/guides/offline/index.html                     |  18 +-
+ docs/guides/release/index.html                     |  18 +-
+ docs/guides/upgrade/index.html                     |  12 +-
+ docs/guides/user/index.html                        |   2 +-
+ docs/index.html                                    |   8 +-
+ web/package-lock.json                              |   4 +-
+ web/package.json                                   |   2 +-
+ 16 files changed, 155 insertions(+), 155 deletions(-)
+
+$ git show --stat v2.11.13
+tag v2.11.13
+Tagger: hkjang <gagagiga@naver.com>
+Date:   Sun Oct 4 13:46:17 2026 +0900
+
+AppStore v2.11.13
+
+`/my/apps` 의 빈 상태가 필터가 하나도 없는 화면에서 "조건을 바꾸어" 보라고 안내하던 문제를 고친 patch 릴리스입니다.
+
+- 앱을 한 번도 등록하지 않은 소유자가 그 화면에서 처음 읽는 문장이 공용 기본 문구 "표시할 항목이 없습니다 / 조건을 바꾸거나 새 항목을 등록해 보세요." 였습니다. 그 화면에는 검색·필터·정렬이 없어 바꿀 "조건" 자체가 없었습니다.
+- 같은 데이터를 읽는 대시보드가 이미 쓰고 있는 "등록한 앱이 없습니다" 로 제목을 맞추고, 설명을 "앱을 등록하면 상태와 검토 결과를 여기에서 확인할 수 있습니다." 로 바꿨습니다. 두 화면이 같은 상황을 같은 말로 설명합니다.
+- 기존 "앱 등록" 버튼과 다른 화면 6곳이 공유하는 공용 기본 문구는 그대로입니다.
+- 프로덕션 Provider·라우터·실제 API 클라이언트를 쓰고 HTTP 경계만 바꾼 Vitest 2건을 더했습니다(전체 99건).
+- 버전 표기와 사용자·관리자 가이드 PDF를 갱신했습니다. 화면 캡처 90개 중 88개는 v2.11.12와 동일합니다.
+
+schema 변경은 없습니다. 기존 설치는 image만 교체하면 됩니다.
+
+commit e9aee8adfed7a7d2d889a432b30878f3e8f2196a
+Author: hkjang <gagagiga@naver.com>
+Date:   Sun Oct 4 13:46:06 2026 +0900
+
+    chore(release): AppStore v2.11.13
+    
+    `/my/apps` 의 빈 상태가 공용 기본 문구를 그대로 써서, 검색·필터·정렬이 하나도
+    없는 화면에서 "조건을 바꾸거나 새 항목을 등록해 보세요" 라고 안내하던 문제를
+    고친 patch 릴리스입니다. 앱을 한 번도 등록하지 않은 소유자가 그 화면에서 처음
+    읽는 문장이 이것이었고, 바꿀 "조건" 자체가 없었습니다. 서버와 schema는
+    바뀌지 않았습니다.
+    
+    Version
+    
+    web/package.json·package-lock.json, docker-compose.yml, README, GitHub Pages
+    문서와 docs/USER_GUIDE.md·docs/ADMIN_GUIDE.md의 버전 표기를 v2.11.13으로
+    올렸습니다. 관리자 가이드의 롤백 예시는 한 칸 밀어 appstore-v2.11.12-stopped를
+    가리킵니다.
+    
+    Screenshots and guide PDFs
+    
+    실제 번들에서 desktop/mobile 캡처 90개를 다시 생성했습니다. 88개는 v2.11.12와
+    byte 단위로 동일합니다. 이번 수정이 지나는 /my/apps 캡처도 동일한데, 캡처
+    fixture 의 소유자에게는 앱이 있어 빈 상태를 지나지 않기 때문입니다. 관리자 AI
+    설정 캡처 2개만 다르며 내용은 같습니다 — 공통 영역은 lossy WebP 재인코딩
+    잡음이고(평균 차 desktop 0.04/255·mobile 0.02/255, 최대 24~27 이 전체 픽셀의
+    0.02% 이하), 나머지는 전체 페이지 아래쪽 여백 높이가 desktop 95px 줄고 mobile
+    145px 늘어난 것입니다. v2.11.12 에서도 같은 두 캡처가 반대 방향으로 흔들렸고
+    이번 변경은 관리자 AI route 를 지나지 않습니다. 기존 스크립트로 PDF를
+    재생성하고 표지 버전, v2.11.13 태그를 가리키는 문서 간 링크와 file:// 링크
+    부재를 확인했습니다.
+    
+    Migration
+    
+    서버·schema 변경은 없습니다. 기존 설치는 image만 교체하면 됩니다.
+    internal/webui/dist는 기존 관례대로 유지하며 Dockerfile이 번들을 새로 빌드합니다.
+    
+    검증: Go race 테스트·vet·gofmt·build, React 99건, lint(--max-warnings 0)·
+    Prettier·build, 오프라인·환경·문서 검사 통과. Playwright는 retry 없이
+    81 passed/1 skipped. HOME이 run 디렉터리로 덮여 있어 Playwright 브라우저를
+    찾지 못하던 것은 설치된 동일 revision(chromium-1234) 경로를 지정해 해결했습니다.
+    DB DSN 미설정으로 DB 통합 검증은 skip이며 실제 DB/Keycloak은 검증하지 않았습니다.
+    Docker build/load/smoke, SHA-256 및 GitHub Release 게시는 태그 워크플로가
+    수행합니다. 이 세션에서는 원격 전송을 수행하지 않았습니다.
+
+ README.md                                          |  24 +--
+ docker-compose.yml                                 |   4 +-
+ docs/ADMIN_GUIDE.md                                |  24 +--
+ docs/ADMIN_GUIDE.pdf                               | Bin 6590201 -> 6589807 bytes
+ docs/USER_GUIDE.md                                 |   2 +-
+ docs/USER_GUIDE.pdf                                | Bin 5493822 -> 5493821 bytes
+ .../screenshots/captures/admin-ai-desktop.webp     | Bin 79000 -> 78650 bytes
+ .../screenshots/captures/admin-ai-mobile.webp      | Bin 198424 -> 198938 bytes
+ docs/assets/screenshots/manifest.json              | 190 ++++++++++-----------
+ docs/guides/admin/index.html                       |   6 +-
+ docs/guides/offline/index.html                     |  18 +-
+ docs/guides/release/index.html                     |  18 +-
+ docs/guides/upgrade/index.html                     |  12 +-
+ docs/guides/user/index.html                        |   2 +-
+ docs/index.html                                    |   8 +-
+ web/package-lock.json                              |   4 +-
+ web/package.json                                   |   2 +-
+ 17 files changed, 157 insertions(+), 157 deletions(-)
+
+$ git log --oneline -60
+45d6407 Merge pull request #40 from hkjang/auto/2026-10-07-1217
+27b0dbf fix(web): show security review final results in Korean
+8370b8d chore(release): AppStore v2.11.15
+7f38fc2 Merge pull request #39 from hkjang/auto/2026-10-06-0228
+781f16e fix(web): name the app status in Korean on the security review screen
+b52032c chore(release): AppStore v2.11.14
+9d326e2 Merge pull request #38 from hkjang/auto/2026-10-05-1007
+3cbef71 fix(web): tell owners the app is missing on /my/apps/:id/edit
+e9aee8a chore(release): AppStore v2.11.13
+f85f115 Merge pull request #37 from hkjang/auto/2026-10-04-1322
+892c1b8 fix(web): tell owners with no apps to register one on /my/apps
+eab31c6 chore(release): AppStore v2.11.12
+4f60bba Merge pull request #36 from hkjang/auto/2026-10-03-0508
+eaaf999 fix(web): label the app detail status badge in Korean
+17be5ee chore(release): AppStore v2.11.11
+17d980b Merge pull request #35 from hkjang/auto/2026-10-01-1452
+4ffaa90 fix(web): hide the review's store link until the app is published
+f44d9fd chore(release): AppStore v2.11.10
+c61d732 Merge pull request #34 from hkjang/auto/2026-09-29-0601
+28092fd fix(web): preserve the catalog page when switching views
+3ab1829 chore(release): AppStore v2.11.9
+7dd4e0c fix(web): keep a sign-out in force when silent SSO is on
+415f1c7 chore(release): AppStore v2.11.8
+92f48ff Merge pull request #33 from hkjang/auto/2026-09-28-0632
+96fb687 fix(web): keep the palette selection on the item the user picked
+697c92d chore(release): AppStore v2.11.7
+90caa1e Merge pull request #32 from hkjang/auto/2026-09-27-0942
+1355503 fix(web): hide recent palette destinations the session may not reach
+e14957d chore(release): AppStore v2.11.6
+a587419 Merge pull request #31 from hkjang/auto/2026-09-26-1442
+73122f8 fix(web): stop the catalog reloading when a favorite heart is toggled
+3f0c566 chore(release): AppStore v2.11.5
+4ee7153 Merge pull request #26 from hkjang/auto/2026-09-20-2144
+a80264c Merge pull request #29 from hkjang/auto/2026-09-22-0954
+7170190 docs: clarify browser-local favorites storage
+019f7d1 chore(release): AppStore v2.11.4
+6e4b5de Merge pull request #28 from hkjang/auto/2026-09-21-1154
+721ad4a test: cover available login methods and bootstrap recovery
+f6b35f0 fix: open mobile navigation before favorites E2E clicks
+a4d9997 fix: hide favorites on owner apps without a public page
+a858bf4 chore(release): AppStore v2.11.3
+372f03b Merge pull request #25 from hkjang/auto/2026-09-20-0934
+dcf0264 test: cover the refused-silent-SSO login notice end to end
+5b6fae4 feat: tell the visitor why a silent SSO attempt left them on the login page
+a1a7719 chore(release): AppStore v2.11.2
+b70a2ef Merge pull request #24 from hkjang/auto/2026-09-19-0703
+5d5315f fix: drop a truncated trailing SSE block instead of showing the fragment as chat text
+67e1f2b fix: deliver the final AI chat SSE event when the stream closes without a blank line
+b3323ff chore(release): AppStore v2.11.1
+92390bb Merge pull request #22 from hkjang/auto/2026-09-17-0313
+e1a886d fix: open an owner's unpublished app card on the edit screen, not a 404
+6bf5799 chore(release): AppStore v2.11.0
+d513938 Merge pull request #21 from hkjang/auto/2026-09-16-1130
+88c05aa fix: target the page heading in the reviewer e2e test
+17b8560 feat: give a reviewer the app itself, and a comment on every decision
+13487cf chore(release): AppStore v2.10.0
+af71665 Merge pull request #20 from hkjang/auto/2026-09-16-1030
+f69e71b feat: require a SecCheck security review before an app reaches the catalog
+c520051 chore(release): AppStore v2.9.0
+90bd8c7 Merge branch 'feat/bundled-guides'

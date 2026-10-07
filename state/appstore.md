@@ -344,3 +344,4 @@
 - 검증 한계: 이번 프런트 표시 변경에서는 Go race/build, DB·Keycloak 통합, Docker smoke, 전체 E2E를 실행하지 않았다. E2E는 실제 번들·Chromium과 HTTP fixture이며 실제 SecCheck 서비스 연동 성공을 뜻하지 않는다. 최초 Prettier 검사는 추가 테스트의 줄바꿈으로 실패해 포맷 후 재검사 통과했다. npm의 기존 whatwg-encoding 폐기 안내와 E2E의 NO_COLOR/FORCE_COLOR 환경 경고가 있었으며 테스트·빌드는 성공했다.
 - 범위: REMOTE_STATUS, appStatusLabel, 배지, verified 기반 제출 조건, 서버·API 계약, mock fixture를 변경하지 않았다. 14개 기존 아이디어(정찰에서 추가한 2개 포함)를 유지하고 이번 항목만 done으로 갱신했다. 산출물은 기존 ignore 대상이며 커밋에 포함하지 않았고 버전·릴리즈·원격 변경도 없다.
 
+- 릴리즈: v2.11.16 (2026-10-07, run 2026-10-07-121755-appstore-improve)
