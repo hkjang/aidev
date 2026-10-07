@@ -1,7 +1,7 @@
 ---
 title: "playwright-player — 자율 개선 이력"
 description: "playwright-player: 자율 개선 회차 7회, 릴리즈 0건. 최근 릴리즈 없음."
-last_modified_at: 2026-10-08 01:20:21 +0900
+last_modified_at: 2026-10-08 01:54:02 +0900
 ---
 {% raw %}
 <script type="application/ld+json">
@@ -18,7 +18,7 @@ last_modified_at: 2026-10-08 01:20:21 +0900
   "name": "hkjang",
   "url": "https://github.com/hkjang"
  },
- "dateModified": "2026-10-08T01:20:21+09:00"
+ "dateModified": "2026-10-08T01:54:02+09:00"
 }
 </script>
 
