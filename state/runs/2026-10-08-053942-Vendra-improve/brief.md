@@ -1,0 +1,28 @@
+- 과제: 업무 목록 조회가 실패했을 때 화면이 **서버가 말한 이유**를 말하고 다시 시도할 수 있게 하기 — 지금은 12초간 「불러오는 중」을 주장한 뒤 틀린 원인을 추측한다 (가치 3 / 위험 2 / 작업량 S)
+- 왜: `web/src/pages/Objects.tsx` 의 `load`(:209-224)는 `.then` 만 달려 있어 `api` 가 거부하면 `setResult` 가 돌지 않고, `loading = result.key !== requestKey`(:298)가 영원히 참이 되어 `<Loading />`(:399-400) 만 그려진다 — `APIError` 가 들고 온 `message`·`status`·`code`(api.ts:18-32, 예: 권한 없음 403 의 서버 문구, `요청 실패 (500)`)는 어디에도 쓰이지 않고 버려지며 unhandled rejection 만 남는다. `Loading` 자체가 12초 뒤 탈출구를 내주기는 하지만(components.tsx:21-31) 그 문구는 「연결이 끊겼거나 서비스가 재시작 중일 수 있습니다」라는 **추측**이고 버튼은 `window.location.reload()` 라 403·422 같은 반복되는 거부에는 같은 12초 기다림으로 되돌아온다 — 즉 이 저장소가 일곱 회차 고쳐 온 것과 같은 모양의 거짓(가려진·실패한 것을 다른 사실로 답하기)이다. 계약·발주·검수·Invoice·지급 등 **모든 업무 목록 화면이 이 한 컴포넌트**(`ObjectList`)를 쓰므로 한 자리를 고치면 전부 고쳐진다.
+- 수용 기준:
+  1) 목록 요청이 `APIError(403, "…")` 로 거부되면 스피너 대신 서버가 보낸 그 문구가 화면에 보이고, 누르면 같은 요청을 다시 보내는 「다시 시도」 버튼이 있다(페이지 리로드가 아니라 `load()` 재호출 — 테스트에서 호출 횟수로 단정 가능).
+  2) 거부가 `Error` 가 아닐 때(또는 메시지가 빈 문자열일 때)도 한국어 기본 문구로 끝난다 — 빈 `<Empty>` 나 「불러오는 중」이 남지 않는다.
+  3) 실패 뒤 필터·정렬을 바꿔 새 요청이 나가면 **이전 실패 문구가 남지 않는다**(아래 「건드릴 파일」의 key 방식이 이것을 구조적으로 보장한다). 성공 응답이 오면 문구가 사라진다.
+  4) 성공 경로는 한 글자도 달라지지 않는다 — 기존 `objects-order.test.tsx` 5개가 **고치지 않은 채로** 통과한다(대조군). `truncated` 배너와 `appliedOrder` 드롭다운 동작 무변경.
+  5) 테스트가 증명하는 것: ① 거부 시 서버 문구가 보이고 스피너가 사라진다 ② 「다시 시도」가 `api` 를 한 번 더 부르고 그 호출이 성공하면 목록이 그려진다 ③ 실패 후 성공 시 문구가 사라진다. 인과는 `.catch` 한 블록만 되돌려 이 테스트들만 실패하는 것으로 확인한다.
+- 건드릴 파일 (프로덕션 1개 + 신규 테스트 1개):
+  - `web/src/pages/Objects.tsx:209` `ObjectList.load` — `.then` 뒤에 `.catch` 를 붙인다. `loadSequence` 시퀀스 가드를 `.then` 과 **똑같이** 적용해(`if (sequence !== loadSequence.current) return;`) 늦게 도착한 옛 실패가 새 결과를 덮지 않게 한다. 문구는 `cause instanceof Error && cause.message ? cause.message : "목록을 불러오지 못했습니다"`.
+  - `web/src/pages/Objects.tsx:190-195` 상태 — 실패를 **`requestKey` 와 함께** 담을 것: `const [failure, setFailure] = useState<{ key: string; message: string }>({ key: "", message: "" })`. `:298` 의 `result.key !== requestKey` 와 같은 관용구이고, 이것이 기준 3을 공짜로 만든다 — `load` 시작에서 `setFailure("")` 로 지우는 방식은 효과가 effect 이후에 적용되어 **필터를 바꾼 직후 한 프레임 동안 옛 실패가 번쩍인다**. 렌더에서는 `const failed = failure.key === requestKey ? failure.message : ""`.
+  - `web/src/pages/Objects.tsx:399-408` 렌더 — `{loading ? <Loading/> : <ObjectTable/>}` 를 세 갈래로: `loading && failed` → `<Empty title="목록을 불러오지 못했습니다" description={failed} action={<button className="button secondary" onClick={() => void load()}><RefreshCw/>다시 시도</button>} />`, `loading` → `<Loading/>`, 그 외 → 지금 그대로 `<ObjectTable/>`. 행이 이미 떠 있는데 **새로고침만** 실패한 경우(`!loading && failed`, `onSaved`/`ObjectTable.onSubmit` 경로)는 `:398` 의 `viewError` 배너와 같은 모양으로 한 줄 배너를 내고 행은 그대로 둔다 — WorkInbox 가 바로 이 결정을 주석으로 적어 뒀다(`WorkInbox.tsx:164-171`: 「a failed refresh keeps the rows the reader is looking at」).
+  - `web/src/pages/Objects.tsx:10-26` import — `RefreshCw` 를 lucide-react 목록에 **추가해야 한다**(알파벳 순서 유지: `Plus` 다음). `Empty`·`AlertCircle` 은 이미 import 되어 있다(`:30`, `:10`).
+  - **본보기를 그대로 베낄 것**: `web/src/pages/WorkInbox.tsx:91-110`(시퀀스 가드 + try/catch + 한국어 기본 문구)과 `:164-190`(`<Empty title/description/action>` + `RefreshCw` + 「다시 시도」, 그리고 왜 이렇게 하는지 적은 주석 문체). 새 주석도 이 문체로 — 「고치지 않으면 무엇이 잘못 전달되나」를 적는다.
+  - `web/src/pages/objects-error.test.tsx` (신규) — 하네스는 `objects-order.test.tsx:1-37` 을 그대로 복사한다(`vi.mock("../api", importOriginal 전개 + api: vi.fn())`, `MemoryRouter initialEntries`, `<Objects type="contract" />`, path 로 분기하는 `mockImplementation`). 목록 path 만 `throw new APIError(403, "계약을 조회할 권한이 없습니다")` 하고 `/api/v1/suppliers`·`/api/v1/me/saved-views` 는 성공시킨다(그 둘은 자체 `.catch` 가 있어 영향 없음).
+- 검증 명령 (이 워크트리에는 `web/node_modules` 가 **없다** — 첫 명령이 몇 분 걸린다):
+  - `cd web && npm ci --ignore-scripts`
+  - `cd web && npm test` — 기준선은 **23 files / 103 tests**(2026-10-07 회차가 실측해 기록한 수치; 이 정찰 세션에서는 설치 비용 때문에 돌리지 않았다 = 미확인). 고친 뒤 24 files 로 늘고 전부 통과해야 한다. `npm test` 는 `node scripts/run-vitest.mjs run` 래퍼를 지난다(Node 22 미만이면 한 줄로 실패).
+  - `cd web && npx tsc -b --noEmit` / `npx eslint src --max-warnings 0` / `npm run build`
+  - Go 는 손대지 않으므로 회귀 확인용으로만: `gofmt -l internal cmd`(무출력), `go vet ./internal/... ./cmd/...`
+- 위험과 피할 것:
+  - **`beforeEach` 에서 mock 을 reset 하지 말 것.** `vitest.config` 가 `restoreMocks` 를 켜 두었고, 거부를 남긴 mock 을 reset 하면 그 거부가 이 파일의 실패로 보고된다 — `objects-order.test.tsx:40-42` 에 그 경고가 주석으로 박혀 있다. 이 과제는 **거부를 일부러 만드는 첫 Objects 테스트**이므로 이 함정에 가장 가깝다: `mockImplementation` 안에서 `throw` 하고(거부 promise 를 변수에 담아 두지 말고) 테스트마다 `waitFor` 로 화면에 문구가 뜬 것까지 기다려 떠다니는 rejection 을 남기지 말 것.
+  - **401 을 특별취급하지 말 것.** 전역 로그아웃 처리는 부트의 `/api/v1/me` 한 곳뿐이고(`App.tsx:116`·`:145`, `sessionUnavailable` 은 api.ts:117) 목록 401 을 가로채는 곳은 없다. WorkInbox 도 메시지만 보여 준다. 리다이렉트를 새로 넣는 것은 이 과제 범위 밖이다.
+  - `ObjectTable` 의 `onSubmit` 타입은 `() => void`(`:493`)이고 `submit`·일괄승인(`:505`·`:536`)이 await 하지 않으므로, `load` 안에서 거부를 삼켜도 호출자의 계약은 바뀌지 않는다 — 그래도 `onSaved`(`:417`)와 `onSubmit`(`:405`)이 같은 `load` 를 부른다는 것을 알고 세 갈래 렌더를 짤 것.
+  - 같이 건드리지 말 것: 공급업체 조회(`:228-232`)·저장된 보기(`:233-242`)의 `.catch(() => {})` (별 아이디어로 남겨 둠), `saveView` 가 담는 `filters: { q, status, order }`(`:275`, 저장된 보기가 적용 불가한 정렬을 보관하는 문제 — 별 아이디어), `objectOrderApplied`/서버 Go 코드, 권한 게이트, migrations, `.github/workflows`.
+  - 성공 경로를 바꾸면 안 된다: `truncated`(`:300`)·`answeredOrder`/`appliedOrder`(`:306-309`)는 모두 `loading` 에서 파생되므로 `loading` 의 **정의를 건드리지 말고** 분기만 더할 것.
+  - 기존 테스트 파일은 한 글자도 고치지 말 것(추가만). `gate.py secrets` 를 diff 에 먼저 돌릴 것.
+- 차선 후보: **저장된 보기가 적용되지 않는 정렬을 영구히 되살리는 것 고치기**(2/2/S) — `Objects.tsx:275` 의 `saveView` 가 `filters: { q, status, order }` 로 **URL 의 요청값**을 담으므로, 금액 권한이 없는 사용자가 `amount_desc` 상태에서 보기를 저장하면 그 보기는 매번 적용되지 않는 정렬을 요청하고 매번 「요청한 정렬을 적용할 수 없어…」 배너를 띄운다. 이제 화면이 `appliedOrder`(`:309`)를 알고 있으므로 한 줄이면 된다. 단 **어느 쪽을 저장할지 결정이 선행한다**: 적용된 값을 저장하면 나중에 권한이 생겨도 금액순으로 돌아오지 않는다. 1순위가 성립하지 않으면 이쪽을 고르고, 그 결정을 주석으로 적을 것.
