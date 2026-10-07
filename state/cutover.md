@@ -198,3 +198,4 @@
 - 과제서: 채택 — 근거가 현재 코드와 정확히 일치했고(route.ts:90 에 존재 검사 없음, activityData.ts:262-264 → :308 throw → 400 `INVALID_DATA`, 배너 문구는 activityData.ts:43) 수용 기준 1~5 를 모두 충족했다. 과제서의 "조용한 200 이 아니다" 는 주의를 그대로 지켜 실패 재현 출력에 400 본문을 남겼다. 과제서가 과거 기록 기준으로만 적어 둔 것들을 이번에 실측해 확인: `expectNotFoundAndUnchanged` 는 실제로 `:57-70` 에 있고(`:61` 이 404 단정), ADMIN_GUIDE 5.6 절 `PUT /api/activities` 행은 303행이었으며, 기준선은 단위 95 / e2e 38 로 과제서 수치와 일치했다. 수용 기준 4(숫자 `parentId` → 400 `UNSUPPORTED_ACTION`)는 `e2e/admin-put-contract.spec.ts:78` 이 이미 지키고 있어 중복 테스트를 더하지 않았고, 전체 e2e 에서 통과를 확인했다.
 
 - 릴리즈: v1.16.0 (2026-10-07, run 2026-10-07-142805-cutover-improve)
+- 릴리즈: v1.17.0 (2026-10-07, run 2026-10-07-151444-cutover-approve)
