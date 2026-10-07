@@ -19,3 +19,16 @@
 - 다음 역할이 조심할 것: 새 테스트는 **DB 가 있어야 돈다**(`eval "$(scripts/test-services.sh)"` 를 같은 셸에서). `make test` 첫 실행은 `internal/federation` 이 `/tmp/resso-test-certs/ca.crt` 없음으로 깨졌다 — 이 변경과 무관하며 `scripts/test-services.sh --stop` 후 재생성으로 통과했다(ideas.json 에 후보로 적었다). `webui/dist/index.html` 은 복원했다.
 - [러너 08:23] brief accepted — 채택 — 근거(166-177 이 raw 오류를 돌려 `errors.Is(ErrCodeReuse)` 를 거짓으로 만드는 것, 형제 경로 295·299 + 687-705 에 답이 완성�
 - [러너 08:23] verify passed — 검증 7개 통과 (auto)
+
+## 비평 노트
+- 판정 approve. 가장 먼저 구현 노트의 "확신 없는 곳" 을 쳤다: 프로덕션 2파일만 `git checkout main --` 로 되돌리고 새 테스트를 돌려 `integration_test.go:2396: 1 reuse events were recorded, want 2` 실패 → HEAD 통과를 **직접** 재현했다. 테스트는 실제로 바뀐 경로를 지난다. 응답이 400 `invalid_grant` 그대로인 것(기각된 `5bed9dc` 와 겹치지 않는 것)도 코드와 단언 양쪽에서 확인했다.
+- 실제 서비스로 재실행: `go test -race ./internal/httpserver ./internal/store` → ok 144.970s/95.320s(SKIP 아님), `make lint` golangci-lint 0 + govulncheck 0, `gofmt -l`·`go vet` 깨끗. `AuthorizationCode.UserID`·`SessionID` 가 값 타입이라 과제서의 panic 진단이 틀렸다는 구현자의 정정도 맞다. 호출자는 하나뿐이고(`httpserver/oidc.go:541`) 비-zero `code` 반환이 다른 경로에 새지 않는다. `ListAudit` 는 bigserial id 순이라 `trail[1]` 이 결정적이다.
+- 못 본 것: `tx.Commit` 실패 경로(store/oidc.go:186-189)는 나도 재현하지 못했다. `Exec` 경로와 대칭이고 형제 경로(316)와 같아 위험은 낮지만 Commit 실패는 원리상 모호해(ack 만 잃고 실제로는 커밋됐을 수 있음) 그때 `tokens_revoked:false` 가 거짓 경보가 된다 — 형제 경로가 이미 같은 성질이므로 이번 결함은 아니다. **릴리즈 노트에서 과장하지 말 것.**
+- 릴리즈가 먼저 볼 것: 작업 트리의 `webui/dist/index.html` 이 **지금 dirty** 다(커밋에는 없음). 로컬 빌드 해시를 가리키니 `git add -A` 로 쓸어 담지 말고 `git checkout -- webui/dist/index.html`.
+- 다음 회차용: 감사 항목의 `target_id` 는 요청을 인증한 Client 인데 폐기 범위는 `code.ClientID` 다 — B 가 A 의 코드를 재생하면 기록이 B 에 달린다(이번 diff 가 만든 것 아님). 보안·법무 차단 사유 없음: 새 개인정보 없고(boolean 하나), 로그의 pgx 오류 파라미터는 UUID 둘뿐이며 코드·verifier 미노출을 실행으로 확인했다.
+- [러너 08:31] review approved — 리뷰 승인 (risk=low)
+- [러너 08:31] pr created — https://github.com/hkjang/ReSSO/pull/39
+- [러너 08:38] ci passed — 검사 2개 모두 success
+- [러너 08:38] merge done — 87cb26a
+- [러너 08:56] release published — v0.9.101
+- [러너 09:01] assets verified — v0.9.101 자산 2개 (이전 v0.9.100: 2)

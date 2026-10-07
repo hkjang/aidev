@@ -1,0 +1,54 @@
+release: ReSSO v0.9.101
+
+A code presented twice means it leaked, and the response to that leak is
+revoking the refresh tokens the code could have produced. When that revocation
+failed, RedeemAuthorizationCode returned the database error unchanged, so
+errors.Is(err, store.ErrCodeReuse) was false in the grant — and that one
+condition is what decides whether AUTHORIZATION_CODE_REUSED is written at all.
+The entry the operations guide sends a reader to the audit screen to look for
+was never created, no line was logged, and the caller got the same
+invalid_grant a mistyped code gets. The code leaked, the response to the leak
+failed, and the trail said nothing had happened.
+
+The refresh token path has answered this for some time. ErrFamilyNotRevoked
+rides along with ErrTokenReuse so the detection survives its own failed
+response, and the grant reads it to record family_revoked=false plus an error
+line. This release moves that idiom to codes: the reuse branch wraps its Exec
+and Commit failures as ErrCodeReuse + ErrFamilyNotRevoked, and returns the code
+with them. The two returns it replaces gave the zero value, which the caller
+then wrote into the entry as the account and session — an actor_id no user row
+has, so the write failed its foreign key and the entry was lost a second way.
+
+The grant adds tokens_revoked=false to the detail and logs the event once, at
+the severity the outcome earns. The ordinary revoked replay keeps the warning it
+has always had, authorization code replayed; a revocation that did not land
+raises an error line instead, and that line opens with the same phrase. The
+operations guide sends a reader looking for replayed codes, so the worst of them
+must not be the one that search misses, and one event is still one line. The
+reason goes in the log and not in the detail, which is stored verbatim and
+handed back by the audit screen; the code and its verifier go in neither.
+
+The answer to the caller does not change. A replay is a dead grant either way,
+400 invalid_grant "authorization code is invalid or expired", before and after.
+
+ErrFamilyNotRevoked's doc now says it accompanies either reuse sentinel, and
+that what is left usable differs between the two: the replayed token's whole
+family for ErrTokenReuse, and for ErrCodeReuse the refresh tokens of the one
+session and client the code was issued for, which is as far as a leaked code
+can reach.
+
+The operations guide's entry for this event claimed the tokens had already been
+revoked, which this change makes only sometimes true, so it was corrected rather
+than extended: what tokens_revoked=false means, that the session it names has to
+be ended by hand from the console because the tokens are still live, and where
+in the log to find the reason.
+
+The integration test runs the production wiring against real PostgreSQL, mines
+both codes from the real /auth redirect, and breaks the revocation on its own by
+moving refresh_tokens.revoked_at out of the way — narrow enough to leave the
+code lookup, the audit write and the first exchange's token INSERT working. It
+pins both outcomes, including the answered replay, which nothing asserted
+through the endpoint before.
+
+Stamps the version in the Makefile, console package metadata, .env.example and
+both compose files, with no schema or configuration changes.
