@@ -1,0 +1,19 @@
+{
+  "verdict": "approve",
+  "recommend": "merge",
+  "reasons": [],
+  "notes": [
+    "테스트가 실제로 변경을 검증함: 되쓰기(domain.go:414)를 빼면 TestContributionPointsStoredValueReadsTheSameEverywhere 는 browser=7.5 vs server=7 로, TestResourceNumberBoundsTruncateSubmittedDecimals 는 `m[d.Field] != d.Stored`(float64(7.5) != int(7)) 로 실패한다. 항상 참인 단언이 아니다. 공유 벡터의 새 reject 열은 min-1/max+1 거절을 검증기 원문 메시지와 완전 일치로 묶고, TS 쪽 deepStrictEqual 은 resourceNumberBounds 전체를 벡터와 동일성 비교하므로 한쪽만 늘리면 깨진다.",
+    "실측 통과: go vet ./... / gofmt -l (변경 2파일, 출력 없음) / go test -count=1 ./internal/app (ok) / 새 세 테스트 24개 하위케이스 전부 PASS / npm --prefix web test = 113 pass 0 fail 0 skip / npm run typecheck / npm run build (vite 성공) / prettier --check (변경 3파일) / node scripts/verify-pentagi.mjs = 312파일 / git diff --check 깨끗. 작업 트리도 clean.",
+    "구현자가 남긴 '의도한 동작 변화' 확인: 되쓰기가 키 없던 발견 건에 contribution_points: 0 을 넣는다. 전수 grep 으로 '키 없음'과 0 을 구분하는 독자가 없음을 확인했다 — domain.go:738 `points > 0`, domain.go:860 CSV `strconv.Itoa(number(...))`, web/src/pages.tsx:1080-1081/1103 `Number(...)` 가 전부이며 SQL·GraphQL·보고서 독자는 없다. openapi.json:9691/11322 는 이미 integer/0/10000 으로 되쓰기와 일치. findingFingerprint 는 이 필드를 쓰지 않아 중복 식별에 영향 없음.",
+    "되돌리기: 되쓰기는 한 방향 데이터 변경이다. revert 해도 이미 0 으로 정규화된 null, 7 로 잘린 7.5, 0 이 된 문자열 \"50\" 은 돌아오지 않는다. 다만 영향은 기여 점수 한 칸(리더보드·CSV·기여 페이지)에 한정되고, Go 독자 두 곳은 변경 전에도 이미 그 값을 잘라 읽고 있었으므로 손실은 '브라우저에만 보였던 소수부'다. 마이그레이션·열 삭제·외부 상태 변경은 없다.",
+    "권한 경계 변화 없음: domain.go:516-518 의 `if !managerial(u) { m[\"contribution_points\"] = old[...] }` 가 범위 검사보다 여전히 먼저 실행된다(순서 보존). 비관리 사용자가 점수를 올릴 경로는 생기지 않았고, 범위 밖 저장값이 비관리 수정을 막는 기존 동작은 이 PR 이전과 동일하며 넓어지지 않았다.",
+    "범위: 변경 6파일(프로덕션 3 = domain.go, resource-form-state.ts, resources.tsx)이 모두 커밋 메시지가 말하는 두 가지(기여 점수 되쓰기+상한 선언, 예약 간격의 정수 잠금)에 대응한다. 리팩터·포맷·의존성 갱신 혼입 없음. schedules interval_minutes 는 min/max 값은 그대로이고 integer: true 만 새로 붙는다 — 커밋 메시지가 명시한다. resources.tsx 의 number 필드 9개 전부가 이제 공유 표를 spread 한다(그 외 선언 없음 확인).",
+    "보안·법무 차단 소견 없음: auth/oidc/session/migrations 를 건드리지 않고, 새 라우트·공개 경로·의존성·런타임 환경변수·암호 비교가 없다. 비밀값 노출 경로 없고(점수는 비밀값 아님), 신뢰할 수 없는 입력이 쿼리·명령·서버측 요청에 닿지 않는다. 개인정보 수집 항목이 늘지 않았다(저장 필드 집합 동일, 값 형만 정규화).",
+    "docs/release-v1.23.0.md:9 는 이 두 필드가 '그대로'라고 적고 있어 머지 후 현재 main 과 어긋난다. ba302db 관례상 VERSION·릴리즈 노트는 별도 release 커밋이 담당하므로 이 PR 의 누락은 아니지만, 다음 릴리즈 노트가 그 문장을 명시적으로 대체해야 한다.",
+    "못 본 것: HUNTER_TEST_DSN 이 없어 `go test -race ./...`(a.validateResource 의 HTTP 전체 경로 — 서비스 접근·workflow 설정 포함)를 돌리지 못했다. 대신 domain.go:463-520 findings 분기에 조기 `return nil` 이 없어 validateContributionPoints 호출이 무조건 도달함을 읽어 확인했다. 브라우저 DOM 실측(Mantine clampBehavior \"blur\"·allowDecimal), docker build, 화면 캡처, 문서 재생성(문서 변경 없음)도 미실행.",
+    "약한 증거 한 가지: TS 의 \"every bounded number field spreads the shared bounds\" 는 resources.tsx 소스 문자열 검사다(동작 증거 아님). main 에 이미 있던 패턴이고 렌더러가 f.min/f.max/f.integer 를 실제로 NumberInput 에 넘기는 것은 resources.tsx:1018-1021 을 읽어 확인했으나, 이 단언 자체는 배선 증거가 아니다."
+  ],
+  "risk": "medium",
+  "blocking": []
+}
