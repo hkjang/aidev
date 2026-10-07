@@ -1,0 +1,30 @@
+# irumx-www 프로필 (2026-10-07)
+
+- 목적: 이룸엑스(IRUMX) 기업 홈페이지 — 회사 소개, 자체 서비스 16개 소개, 협업 분야, 문의 접수. https://www.irumx.app
+- 스택: Astro 7 정적 생성 + TypeScript, CSS 변수 토큰(`src/styles/tokens.css`), Pretendard Variable 부분 집합 자체 호스팅, Cloudflare Workers Static Assets 배포 + `/api/*` 전용 Worker. DB·CMS·분석 도구 없음. Node ≥ 22.12.
+- 구조:
+  - `src/config/site.ts`(회사·연락처·메뉴 값), `src/config/seo.ts`(JSON-LD)
+  - `src/content/services.ts`(1723줄 — 서비스 데이터의 단일 출처), `collaboration.ts`, `company.ts`
+  - `src/pages/` — `/`, `/about`, `/services`, `/services/[slug].astro`(610줄), `/partnership`, `/contact`, `/privacy`, `404`, `robots.txt.ts`, `llms.txt.ts`, `llms-full.txt.ts`
+  - `src/components/` 14개(Header, Footer, ServiceShowcase, ContactTool, Faq, HeroGraphic …), `src/scripts/`(site.ts 메뉴·등장효과, contact.ts 문의 도구)
+  - `src/lib/inquiry.ts` — 문의 검증·문장 구성. **브라우저와 Worker 가 같이 쓴다**
+  - `worker/index.ts`(348줄) — `/api/inquiry`(Turnstile→속도제한→Resend 발송), `/api/resend-inbound`(수신 메일 전달); `worker/svix.ts` 웹훅 서명
+  - `scripts/` — subset-font, make-images, verify-build(248줄, dist 정적 점검), screenshots, deploy, serve-static, capture-*
+  - `tests/` — Playwright 만(site, contact, contact-send, contact-email, inbound) + `mock-resend.mjs` 가짜 Resend
+- 빌드·테스트:
+  - `npm run build` = subset-font → `astro check` → `astro build` → `node scripts/verify-build.mjs` (수십 초)
+  - `npm run test:build` — 빌드 3벌(dist / dist-draft / dist-email). **몇 분 걸린다**
+  - `npm test` — Playwright. `playwright.config.ts` 의 webServer 가 wrangler dev(8788) + mock-resend(8790) + 정적서버(8789, 8791)를 띄우므로 `test:build` 를 먼저 돌려야 dist-draft·dist-email 가 있다. `workers: 1` 고정(가짜 Resend 기록 공유)
+  - 단위 테스트 러너 없음 — 모든 검증이 Playwright e2e + verify-build 정적 점검
+- 관례: 커밋 메시지·코드 주석·문서 전부 **한국어**, 명령형 짧은 제목. 설정은 `src/config/*.ts` 상수와 환경변수(`CONTACT_MODE`, `SITE_ENV`, `PUBLIC_TURNSTILE_SITE_KEY`, `ASTRO_OUT_DIR`). 마이그레이션 없음(DB 없음). 문서는 `docs/`(deploy, content, assets-licenses, launch-checklist, qa-report, qa/).
+- 위험 구역:
+  - `worker/index.ts` + `worker/svix.ts` + `src/lib/inquiry.ts` — 운영 중인 문의 접수·메일 전달. Turnstile 비밀키, Resend API 키, Svix 웹훅 서명, 속도 제한. 개인정보를 저장·로깅하지 않는 설계이므로 로그에 입력값을 넣지 말 것.
+  - `wrangler.jsonc`(`run_worker_first` 로 `/api/*` 만 Worker), `public/_headers`(CSP — `/contact` 만 challenges.cloudflare.com 허용). 인라인 스크립트는 CSP 로 금지되고 verify-build 가 잡는다.
+  - `scripts/deploy.mjs` — 운영 배포.
+- 자주 깨지는 곳: (회차 기록 없음 — 이번이 첫 프로필) 관찰된 구조적 약점: 서비스 페이지 목록이 `scripts/verify-build.mjs` 사이트맵 확인부와 `tests/site.spec.ts:3` `PAGES` 두 곳에 손으로 적혀 있어 서비스 추가 때마다 수동 갱신이 필요하다.
+- 검증 함정:
+  - **CI 없음**(`.github/` 디렉터리 자체가 없다). 모든 검증이 로컬 수동 실행이다.
+  - `scripts/verify-build.mjs:18-19` 가 `harfbuzzjs`·`fontverter` 를 import 하지만 `package.json` 에 선언이 없다 — `subset-font` 전이 의존성 호이스팅에 기대고 있다(이번 회차 과제).
+  - `npm test` 는 Playwright 가 설치된 Chromium 을 쓴다(`npx playwright install chromium` 필요).
+  - `verify-build.mjs` 는 `SITE_ENV=production` 여부로 robots 기대값을 뒤집는다 — 로컬 기본은 preview(noindex 기대).
+  - `dist-draft`·`dist-email` 이 없으면 Playwright webServer 가 기동 실패한다.

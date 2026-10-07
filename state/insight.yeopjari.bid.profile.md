@@ -1,0 +1,30 @@
+# 옆자리 인사이트 (insight.yeopjari.bid) 프로필 (2026-10-07)
+
+- 목적: 옆자리(yeopjari.bid) 회원 직장인과, 실무자 목소리가 필요한 기업을 잇는 유료 리서치·제품 테스트 중개. 참여자 신원·회사는 기업에 절대 노출하지 않는 것이 핵심 제약.
+- 스택: TypeScript(ESM, node>=22) 모노레포(npm workspaces). React 19 + Mantine 9 + Vite SPA. 런타임 비의존 코어 + Node 어댑터(로컬) / Cloudflare Pages Function 어댑터(운영). Postgres(Supabase 서울, `insight`/`insight_priv` 스키마, Hyperdrive 경유) + Resend 메일 + cron Worker.
+- 구조:
+  - `packages/core/src` — 전부가 여기 있다. `http/`(pipeline 525줄·router·respond), `auth/`(session·password·cookies·scopes·principal·captcha), `routes/`(team 896 · admin 813 · studies 635 · auth 444 · sso 440 · participant · meta · internal · export · client-errors · helpers), `domain/`(eligibility 472 · studies · catalog · work), `settings/`(registry 424 + service), `util/`(crypto 429 · validate · text · time · csv · ics), `quota.ts`, `audit.ts`, `db.ts`, `mail/`.
+  - `packages/core/vendor/postgres` — postgres.js 패치 사본(`PATCHED.md`). 손대지 말 것. CF용 사본(`cf/`)이 따로 있다.
+  - `apps/web/src` — `routes/`(Admin 1511 · Team 1388 · Participant 810 · Studies 499 · ForTeams · Landing · Start · Auth · Public · Settings), `api/`(client·types·cache·errors), `components/`, `state/`.
+  - `apps/server` — 로컬 Node 어댑터 + `bootstrap`/`set-password`. `functions/[[path]].ts` — Pages 어댑터. `workers/scheduler` — 10분 cron.
+  - `db/migrations` — 0001_schema · 0002_security(RLS·역할) · 0003_alerts_activity. `scripts/` — migrate·e2e·screenshots·seed-demo·deploy-pages·smoke-prod·totp·harness·ci-env. `engineering/` — architecture·security·design·performance.
+- 빌드·테스트:
+  - `npm run check` = lint + typecheck + `vitest run`(단위 40개). 빠르다.
+  - `npm run build` (web + server) → `node scripts/e2e.mjs` **151개, 실서버 + 실 Postgres 필요**(느림). `node scripts/screenshots.mjs [dir]` 85장, 실제 Chromium 필요(느림).
+  - 로컬 준비: docker postgres:16-alpine `127.0.0.1:55442`, `cp .env.example .env.dev`, `bash scripts/dev-reset.sh`(:8789), `node scripts/seed-demo.mjs`.
+  - 단위 테스트는 `packages/**/*.test.ts` + `apps/**/*.test.ts` 만 집는다(`vitest.config.ts`), 현재 사실상 `packages/core/src/__tests__/rules.test.ts` + `vendor-postgres.test.ts` 둘뿐. `testTimeout: 20s`(crypto 때문).
+- 관례: 커밋 메시지는 **한국어 산문 한 줄**(머리말 태그 없음, 예: "모집과 진행을 돕는 장치: 새 연구 알림, 예상 인원, 결과 요약 외"). 테스트 이름도 한국어 서술형("마지막 자리를 두 사람이 가질 수 없다" 식). 주석은 **왜**를 적는 긴 산문체이고 설계 결정의 근거를 담는다 — 흉내 낼 것. 설정은 `settings/registry.ts` 의 키(`reward.max_amount` 등)로, env 는 `env.ts`. 마이그레이션은 번호 붙은 SQL 추가(기존 파일 수정 금지). 문서는 `engineering/*.md`, 사용자용은 `README.md`.
+- 위험 구역:
+  - `db/migrations/*` — RLS 가 개인정보 보호의 실체다(`insight.studies` RLS, `insight_priv.excluded_from()`, `studies_guard` 트리거). 기존 파일 수정 금지.
+  - `routes/sso.ts` — 옆자리 OAuth 2.1 + PKCE, 기밀 클라이언트. 토큰 즉시 폐기. 회사 이름은 받아 오지 않는 것이 계약.
+  - `auth/*` + `http/pipeline.ts` — 세션·MFA·감사. `audit.ts` 의 `details` 에 보호 대상 **원문을 넣지 말 것**(식별자만).
+  - `util/crypto.ts` + `payout_profiles.sealed`(AES-GCM) — 보상 수령 정보 봉인. 열람은 반드시 감사 기록.
+  - `quota.ts:windowStart()` — 값이 그대로 DB 유일 키에 들어간다. 바꾸면 모든 제한이 한 번 리셋된다.
+  - `packages/core/vendor/postgres/*` — 패치 사본. 업스트림과 다르다.
+- 자주 깨지는 곳: (이 저장소의 회차 기록이 아직 없다 — 미확인.) 구조적으로 위험한 자리: Node 어댑터와 Pages Function 어댑터가 갈라져 한쪽만 고쳐지는 것, `vendor/postgres` 와 `vendor/postgres/cf` 두 사본의 불일치, 같은 종류의 파서가 `domain/eligibility.ts`(`isWebLink`)와 `util/text.ts`(`isSafeLink`, **현재 호출처 0**)에 중복되어 있는 것.
+- 검증 함정:
+  - 단위 테스트는 DB 없이 돌지만 e2e·screenshots 는 실제 Postgres 와 실제 Chromium 을 요구한다. CI 는 `npx playwright install --with-deps chromium` 을 screenshots 직전에 한다(1bfe5a2 가 그걸 고친 커밋).
+  - `scripts/smoke-prod.mjs` 와 `deploy-pages.sh` 는 저장소 밖 `~/.config/yeopjari{,-insight}/cloud.env` 자격 증명을 요구한다 — 로컬·CI 에서 돌지 않는다.
+  - `seed-demo.mjs` 는 로컬에서만 동작(가짜 옆자리 :18999 포함).
+  - **일부 자동화 환경(이 정찰 세션 포함)에서는 node/npm 실행 자체가 승인되지 않는다.** 그럴 때는 명령을 돌렸다고 쓰지 말고 미확인으로 남길 것.
+  - Hyperdrive 쿼리 캐시는 OFF 여야 한다(RLS 가 트랜잭션마다 신원을 정하므로 캐시가 남의 행을 재생하면 유출).

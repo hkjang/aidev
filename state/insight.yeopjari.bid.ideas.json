@@ -1,0 +1,65 @@
+[
+  {
+    "title": "일·월 제한의 Retry-After 가 KST 경계를 9시간 넘겨 잡힌다 (quota.ts:retryAfterSeconds)",
+    "value": 4,
+    "risk": 2,
+    "size": "S",
+    "status": "done",
+    "note": "windowStart() 가 KST 날짜의 UTC 자정을 라벨로 쓰는데 retryAfterSeconds 가 그 라벨을 실제 전환 시각으로 오해했다. 098cc43 에서 kstDayStart(at)+1일 / Date.UTC(kstY, kstM, 1)-9h 로 직접 계산하도록 고치고 rules.test.ts 에 day 2건·month 2건·minute 불변·windowStart ISO 고정 테스트를 추가. windowStart() 본문은 손대지 않았다. 확인한 것: e2e 에 retry-after 값을 단정하는 곳이 없다(grep).",
+    "updated": "2026-10-07"
+  },
+  {
+    "title": "util/text.ts:isSafeLink() 가 호출처 0인 죽은 코드이고 주석의 사설망 차단 약속을 지키지 않는다",
+    "value": 3,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "실제 링크 검사는 domain/eligibility.ts:isWebLink (routes/team.ts:278 parseLinks 경유). 주석은 'obvious private ranges' 차단을 말하지만 169.254.169.254 와 metadata.google.internal 두 호스트만 막는다. (a) 죽은 함수와 주석의 약속을 같이 지우기 또는 (b) isWebLink 쪽에 사설 범위 차단을 좁게 넣고 parseLinks 테스트를 늘리기. 두 파서를 통합하지는 말 것. 이번 회차의 차선 후보였다.",
+    "updated": "2026-10-07"
+  },
+  {
+    "title": "util/time.ts 에 단위 테스트가 전혀 없다 (kstWindowOn·parseClock·overlaps·backoffMs)",
+    "value": 3,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "이번 회차로 kstDayStart·kstParts 는 quota 테스트를 통해 간접적으로 덮였지만, kstWindowOn 의 점심/퇴근 창, parseClock 의 47시간 클램프, backoffMs 의 '캡 전에 지터' 계약, overlaps 의 half-open 경계는 아직 아무 테스트도 지나가지 않는다. 다음 회차 최우선 후보.",
+    "updated": "2026-10-07"
+  },
+  {
+    "title": "domain/catalog.ts (152줄) 와 util/text.ts:maskEmail·mailboxKey 의 엣지케이스 테스트 공백",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "maskEmail: 로컬 1글자, 점 없는 도메인, 선행 점. mailboxKey: '+tag@x.com' 처럼 로컬이 + 로 시작할 때. catalog.ts 는 직무·업종 분류표로 화면·조건 판정 양쪽이 의존하는데 테스트가 없다. 내용 미확인(파일을 열지 않았다).",
+    "updated": "2026-10-07"
+  },
+  {
+    "title": "quota.ts:usage() 주석이 'one round trip' 이라고 하지만 Promise.all 로 쿼리 n개를 보낸다",
+    "value": 2,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "postgres.js 가 파이프라인하면 왕복은 줄지만 주석이 단정하는 수준은 아니다. 운영은 Pacific 왕복 비용을 신경 쓰는 코드베이스라 사실 확인이 필요. 코드를 고치지 않고 주석만 정확히 할 수도 있다. 측정 없이 건드리면 안 되는 쪽. 이번 회차에서는 과제서의 '겸사겸사 고치지 말 것' 지시에 따라 의도적으로 손대지 않았다.",
+    "updated": "2026-10-07"
+  },
+  {
+    "title": "단위 테스트가 파일 한 개(rules.test.ts)에 전부 모여 있다",
+    "value": 2,
+    "risk": 1,
+    "size": "M",
+    "status": "pending",
+    "note": "이번 회차로 229줄 → 258줄, 테스트 40개 → 44개가 되었다. vitest.config.ts 는 packages/**/*.test.ts 를 집으므로 도메인별로 쪼갤 수 있지만 지금 규모에서는 이득이 작고 diff 가 커져 사람 손을 타기 쉽다. 테스트가 세 배로 늘기 전에는 하지 말 것.",
+    "updated": "2026-10-07"
+  },
+  {
+    "title": "worktree 에 node_modules 가 없어 회차마다 npm install 이 필요하고 package-lock.json 이 흔들린다",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "이번 회차에서 npm install 이 package-lock.json 에 peer:true 표시 26줄을 추가해 손으로 되돌려야 했다(커밋에서 제외). lockfile 이 npm 10.9.8 로 만들어진 것과 다른 버전으로 쓰여 있는 듯하다. 'npm ci' 를 쓰면 lockfile 을 건드리지 않는다 — 다음 구현자는 install 대신 ci 를 쓰거나, 커밋 전 git status 로 lockfile 을 반드시 확인할 것.",
+    "updated": "2026-10-07"
+  }
+]

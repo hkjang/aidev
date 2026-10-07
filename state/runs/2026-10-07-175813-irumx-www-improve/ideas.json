@@ -1,0 +1,65 @@
+[
+  {
+    "title": "빌드 스크립트의 미선언 전이 의존성(harfbuzzjs·fontverter) 선언 + 미선언 import 검사 추가",
+    "value": 4,
+    "risk": 1,
+    "size": "S",
+    "status": "done",
+    "note": "scripts/verify-build.mjs:18-19 가 둘을 직접 import 하지만 package.json devDependencies 에 없었다. lock 의 1.6.2·2.0.0 을 캐럿으로 선언하고 scripts/verify-deps.mjs 를 만들어 npm run build 첫 단계로 끼웠다. 커밋 a930b5d. npm install --package-lock-only 는 로컬 npm 10.9.8 이 optional 패키지의 libc 필드 148줄을 지워 버려서 쓰지 않고, lock 의 root devDependencies 두 줄만 직접 넣고 npm ci 로 정합성을 확인했다.",
+    "updated": "2026-10-07"
+  },
+  {
+    "title": "서비스 페이지 목록 드리프트 감지(verify-build 사이트맵 목록 vs tests/site.spec.ts PAGES)",
+    "value": 4,
+    "risk": 2,
+    "size": "M",
+    "status": "pending",
+    "note": "같은 17개 경로가 scripts/verify-build.mjs:210 과 tests/site.spec.ts:3 두 곳에 하드코딩. 커밋 cd1a0a8·e2af87e 에서 서비스 16개가 늘며 둘 다 수동 갱신됐다. 합치지 말고(각자 다른 계약 — 하나는 dist 파일, 하나는 HTTP 응답) dist/services/*.html 기준 누락 감지만 추가. 이번 회차 차선 후보였고 그대로 유효하다.",
+    "updated": "2026-10-07"
+  },
+  {
+    "title": "src/lib/inquiry.ts 순수 함수 단위 테스트(validate·composeSubject·composeText·mailtoHref)",
+    "value": 3,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "브라우저와 Worker 가 같이 쓰는 검증 규칙인데 e2e 로만 간접 검증된다. @playwright/test 로 브라우저 없는 spec 을 추가하면 새 의존성 없이 가능. 다만 playwright.config 의 webServer 4개(wrangler dev·mock-resend·정적서버 2개)가 같이 기동되는 점을 피해야 한다 — 여전히 미확인.",
+    "updated": "2026-10-07"
+  },
+  {
+    "title": "worker/index.ts handleInbound 첨부 누적 용량 계산 오류",
+    "value": 2,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "worker/index.ts:281-286 — 내려받은 뒤 total 에 더한 다음 한도 초과면 skip 하지만 total 을 되돌리지 않아, 그 뒤 들어갈 수 있는 작은 첨부까지 전부 skip 된다. 20MB 첨부를 가짜 서버로 만들어야 해 테스트 비용이 크고 운영 중 보호 경로(메일 전달)라 보류.",
+    "updated": "2026-10-07"
+  },
+  {
+    "title": "handleInbound 의 FORWARD_TO 루프 감지가 500 을 돌려 Resend 가 무한 재시도",
+    "value": 2,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "worker/index.ts:245 fail(500,'loop') — 설정 실수(FORWARD_TO 가 전달 수신함 중 하나)는 재시도로 해결되지 않는다. 200 + skipped 로 바꾸고 console.error 만 남기는 것이 맞아 보이지만, 운영 중 보호 경로이고 Resend 재시도 정책을 확인하지 못했다(미확인).",
+    "updated": "2026-10-07"
+  },
+  {
+    "title": "verify-deps.mjs 검사 범위를 tests/·루트 설정 파일·*.astro 로 넓히기",
+    "value": 2,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "이번에 만든 verify-deps.mjs 는 과제서 범위대로 scripts/*.mjs·worker/*.ts·src/**/*.ts 만 본다. tests/*.ts(@playwright/test), astro.config.mjs(astro/config·@astrojs/sitemap), playwright.config.ts 는 지금 전부 선언돼 있어 넓혀도 통과하는 것을 확인했지만 이번 범위에서 뺐다. src/**/*.astro 는 프런트매터 파싱이 필요하고 astro: 접두사·가상 모듈이 섞여 거짓 실패 위험이 있어 별도 판단 필요.",
+    "updated": "2026-10-07"
+  },
+  {
+    "title": "npm install --package-lock-only 가 lock 의 libc 메타데이터를 지우는 문제 메모화",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "이 환경의 npm 10.9.8 로 --package-lock-only 를 돌리면 optional 플랫폼 패키지(@rollup/*·sharp·workerd 등)의 libc:[glibc|musl] 필드 148줄이 삭제된다. libc 는 musl/glibc 환경에서 optional 의존성 선택에 쓰이므로 지워지면 Alpine 등에서 잘못된 바이너리가 깔릴 수 있다. docs/ 에 '락 갱신은 npm 버전을 확인하고, diff 가 의도한 줄만인지 보라' 로 한 줄 남기면 다음 회차가 같은 함정을 다시 밟지 않는다.",
+    "updated": "2026-10-07"
+  }
+]
