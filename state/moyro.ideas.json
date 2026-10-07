@@ -1,12 +1,21 @@
 [
   {
+    "title": "searchFiles/searchTeamFiles 의 rows.Err() 누락 — 행 순회 중 DB 장애가 200 '결과 없음' 으로 나간다",
+    "value": 3,
+    "risk": 1,
+    "size": "S",
+    "status": "done",
+    "note": "2026-10-08 구현·커밋(52c6d99). 루프 뒤 rows.Err() 검사를 넣고 Scan 오류의 continue 를 같은 500 반환으로 교체. 새 오류 id·새 상태 코드 없음, SQL·가시성 조건 미변경. 신규 file_search_rows_fault_postgres_test.go 8 서브테스트(RED 5건 선관찰). 배운 것: pgx v5 는 이 쿼리를 스트리밍하므로 뷰 기반 순회-중간 장애(0으로 나누기)가 Pool.Query 성공 + rows.Err()!=nil 로 나타난다 — 정찰의 미확인 사항 해소. 또 pgx 는 Scan 실패를 Rows 에 fatal 로 표시하므로 Scan 분기를 continue 로 되돌려도 테스트가 통과한다(그 경로도 rows.Err() 가 잡는다) — Scan 분기는 테스트로 단독 관찰되지 않고, 명시적 return 은 드라이버 정책을 빌리지 않기 위한 것이다.",
+    "updated": "2026-10-08"
+  },
+  {
     "title": "postsByIDsReactions 가 DB 장애를 200 {} (반응 없음) 으로 보고하는 것 차단 — 형제 listReactions 의 500 api.reaction.list.app_error 재사용",
     "value": 3,
     "risk": 2,
     "size": "S",
     "status": "pending",
-    "note": "이번 회차 선택. late.go:329-350 의 세 continue 가 ChannelForPost/IsMember/ListForPost 오류를 전부 삼켜 DB 순단 중 200 + {} 가 나간다 — 거부가 아니라 조용히 틀린 데이터. 같은 세 메서드를 같은 순서로 읽는 handlers.go:2488-2507(listReactions)은 ListForPost 오류를 이미 500 api.reaction.list.app_error 로 낸다. pgx.ErrNoRows(없는/삭제된 게시글)와 비회원 필터는 주석이 선언한 계약이므로 보존. 본문 상한 413 도 같은 함수라 함께. 프로덕션 1파일 1함수.",
-    "updated": "2026-10-06"
+    "note": "2026-10-08 과제서 차선 후보로 남았고 미구현. compat_wave_handlers_late.go:304 의 루프에서 'ch, err := ChannelForPost; if err != nil || ch == \"\" { continue }' / 'ok, _ := IsMember' / 'list, err := ListForPost; if err != nil { continue }' 세 곳이 오류를 삼킨다. pgx.ErrNoRows(없는/삭제된 글) 와 비회원 필터는 함수 주석이 선언한 계약이므로 보존. 400/403/404→500 재분류 계열에 가까워 09-28~10-05 연속 계열 규칙과 닿는다 — 이번 회차(rows.Err())가 그 계열을 끊었으므로 다음 회차에는 집을 수 있다.",
+    "updated": "2026-10-08"
   },
   {
     "title": "postsByIDsReactions(late.go:311) 의 io.LimitReader 64 KiB 조용한 절단 — 413 대신 400 'expected ids array'",
@@ -14,8 +23,8 @@
     "risk": 1,
     "size": "S",
     "status": "pending",
-    "note": "2026-10-06: 이번 1순위의 수용 기준 4 로 흡수했다(같은 함수이므로 분리하면 같은 줄을 두 번 건드린다). 1순위가 상한 변경 때문에 범위가 넓다고 판단되면 이것만 단독 제출하는 3순위 경로로 남긴다. request_body.go:11-19 가 'every collection-shaped body reads through decodeCollectionBody' 라 적는데 이 한 곳이 예외. 두 json.Unmarshal 폴백([...] 와 {ids:[...]}) 때문에 원시 바이트가 필요해 공용 디코더로 치환 불가.",
-    "updated": "2026-10-06"
+    "note": "2026-10-08 변화 없음. 위 항목과 같은 함수이므로 분리 제출하면 같은 줄을 두 번 건드린다 — 묶어서만 다룰 것. 두 json.Unmarshal 폴백([...] 와 {ids:[...]}) 때문에 원시 바이트가 필요해 공용 decodeCollectionBody 로 치환 불가.",
+    "updated": "2026-10-08"
   },
   {
     "title": "listReactions(handlers.go:2491/2497) 가 ChannelForPost 장애를 404, IsMember 장애를 403 으로 접는 것 분리",
@@ -23,35 +32,35 @@
     "risk": 2,
     "size": "S",
     "status": "pending",
-    "note": "2026-10-06 신규. 이번 1순위의 형제 경로이고, 이번 회차는 수용 기준 6 의 대조 단언으로 현재 동작만 고정한다(고치지 않는다). 같이 고치면 파일 2개 + 09-28~10-02 다섯 회차가 연속으로 다룬 httpapi 404/403 재분류 계열을 다시 여는 것이 된다. 1순위가 머지된 뒤 별도 회차로.",
-    "updated": "2026-10-06"
+    "note": "2026-10-08 미재확인. 상태코드 재분류 계열. 위 postsByIDsReactions 항목이 머지된 뒤 별도 회차로.",
+    "updated": "2026-10-08"
   },
   {
-    "title": "createCustomProfileField / patchCustomProfileField 의 `_ = decodeCappedBody` (final.go:1219/1245)",
+    "title": "searchFiles/searchTeamFiles 의 감사 details 에 사용자 검색어(terms)가 원문으로 들어가는 것 재검토",
     "value": 2,
     "risk": 2,
     "size": "S",
     "status": "pending",
-    "note": "2026-10-06 재확인, 이번 차선 후보. create 는 디코드 실패 시 CreateField(\"\",\"\",nil) 로 떨어져 결과적으로 400 이 나므로 상태코드는 이미 맞다(메시지만 오해를 준다). patch 는 모든 포인터가 nil 이 되어 no-op 패치가 200 + ActionCustomFieldPatch 감사행으로 성공 보고된다. 단건 쓰기라 빈 본문 {} 계약(현재 200 no-op)과 응답에서 구별이 안 되는 것이 본질이고 선행해서 계약을 정해야 한다. 2026-10-05 머지분과 같은 파일.",
-    "updated": "2026-10-06"
+    "note": "2026-10-08 이번 회차에서 코드로 재확인(final.go:802/860 — 줄번호는 이번 변경으로 각각 +12/+20 이동). 운영자 규칙('스캔 대상 문자열을 details 로 넘기지 말고 식별자만')과 형태가 닿지만 이것은 사용자 자신의 검색어이고 보호 대상 값이 아니다. 고치면 감사 스키마·감사 출력 계약 변경이 되어 S 를 넘는다. 이번 과제서가 명시적으로 범위 밖으로 지정했고 그대로 지켰다.",
+    "updated": "2026-10-08"
   },
   {
-    "title": "customprofile 패키지 단위 테스트: 빈 맵 no-op / null DELETE 계약",
+    "title": "createCustomProfileField / patchCustomProfileField 의 `_ = decodeCappedBody` (final.go:1209/1233)",
+    "value": 2,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "2026-10-08 변화 없음(이번 변경으로 줄번호 +20 이동 — 다음 회차에 재확인). patch 는 모든 포인터가 nil 이 되어 no-op 패치가 200 + ActionCustomFieldPatch 감사행으로 성공 보고된다. 단건 쓰기라 빈 본문 {} 계약(현재 200 no-op)과 응답에서 구별이 안 되는 것이 본질이고 선행해서 계약을 정해야 한다. 10-04·10-05 두 회차가 연속으로 decodeCappedBody 계열이었으므로 당분간 쉴 것.",
+    "updated": "2026-10-08"
+  },
+  {
+    "title": "테스트 없는 서버 패키지 중 behavioral 한 곳에 단위 테스트 추가",
     "value": 2,
     "risk": 1,
     "size": "S",
     "status": "pending",
-    "note": "2026-10-06: 패키지는 여전히 [no test files](go test ./internal/... 로 재확인). 2026-10-05 의 httpapi 테스트가 두 전제를 간접 고정했으므로 겹침이 크다. 가치 2 유지.",
-    "updated": "2026-10-06"
-  },
-  {
-    "title": "테스트 없는 서버 패키지 11개 중 behavioral 한 곳에 단위 테스트 추가",
-    "value": 3,
-    "risk": 1,
-    "size": "M",
-    "status": "pending",
-    "note": "2026-10-06 부분 진행: digest 에 첫 테스트를 넣었고 그 과정에서 이번 회차의 결함(excerpt 바이트 절단)을 찾았으므로 이 범주는 실제로 수확이 있다. 남은 무테스트 패키지: commands, customprofile, metrics, bookmarks, userstatus, preferences, postacks, tos, savedposts, application. 이번에 commands/service.go(394줄) 전체를 정독했는데 결함이 없었다 — trigger 정규화·partial unique index(commands_team_trigger_idx)·isUniqueViolation(23505)·validTrigger 모두 맞다. 다음 회차는 commands 를 다시 감사하지 말고 metrics 나 bookmarks 로 갈 것. digest 테스트 하네스(worker_postgres_test.go 의 newDigestTestDB)가 격리 스키마 패턴의 네 번째 사례다.",
-    "updated": "2026-10-06"
+    "note": "2026-10-08 변화 없음. 남은 무테스트 패키지와 줄수: bookmarks 213, userstatus 178, preferences 171, postacks 129, tos 123, savedposts 107 (+ customprofile, application). metrics(223)·commands(394) 는 정독 완료로 결함 없음 — 재감사 금지. 다음엔 bookmarks 나 userstatus 부터. 2026-10-06 회차가 digest 에 첫 테스트를 넣어 결함을 찾은 전례가 있다.",
+    "updated": "2026-10-08"
   },
   {
     "title": "러너에 릴리즈 실패 로그 접근 수단 주기(gh 인증 또는 실패 로그 스냅샷)",
@@ -59,8 +68,8 @@
     "risk": 1,
     "size": "S",
     "status": "pending",
-    "note": "저장소 밖 러너 과제라 구현 회차가 집을 수 없다. 2026-10-04 두 회차가 모두 gh 미인증으로 실패 단계를 지목하지 못했다. 2026-10-06 변화 없음(이번 회차도 gh 미사용).",
-    "updated": "2026-10-06"
+    "note": "저장소 밖 러너 과제라 구현 회차가 집을 수 없다. 2026-10-04 두 회차가 모두 gh 미인증으로 실패 단계를 지목하지 못했다. 2026-10-08 변화 없음(이번 회차도 gh 미사용·push 권한 없음).",
+    "updated": "2026-10-08"
   },
   {
     "title": "나머지 `_ = decodeCappedBody` 호출자들의 경로별 계약 확인",
@@ -68,8 +77,8 @@
     "risk": 3,
     "size": "M",
     "status": "pending",
-    "note": "남은 14곳: final.go 384/765/821/1009/1219/1245/1424/1580/1646/1742/1776 + enterprise_compat_handlers.go:20 + admin_compat_handlers.go:211. request_body.go:77-81 이 '일부 compat 스텁은 깨진 본문을 의도적으로 관용한다' 고 명시하므로 일괄 수정 금지. 경로별로 '쓰기인가 / 거짓 성공을 보고하는가' 두 질문만 센다. 2026-10-06 미재확인.",
-    "updated": "2026-10-06"
+    "note": "2026-10-08 변화 없음. 765/821 은 이번 회차와 같은 두 함수인데 과제서가 명시적으로 범위 밖으로 지정했고 그대로 지켰다(decodeCappedBody 는 손대지 않았다). request_body.go:77-81 이 '일부 compat 스텁은 깨진 본문을 의도적으로 관용한다' 고 명시하므로 일괄 수정 금지. 경로별로 '쓰기인가 / 거짓 성공을 보고하는가' 두 질문만 센다.",
+    "updated": "2026-10-08"
   },
   {
     "title": "프로덕션 NewRouter 를 띄우는 라우팅 계약 테스트를 더 넓히기",
@@ -77,88 +86,43 @@
     "risk": 1,
     "size": "M",
     "status": "pending",
-    "note": "2026-10-06 실측: 프로덕션 NewRouter 를 실제 DB·실제 pluginhost·실제 hub 로 띄우고 chi.Walk 로 719개 라우트를 열거해 전부 무인증 요청을 보냈다. 401 이 아닌 응답은 정확히 설계상 공개된 집합뿐이었다 — system/ping, config/client, license/client, oauth/{provider}/{login,callback}, users(가입), users/login, invites/{id}, teams/invite/{id}, users/email/verify{,/send}, users/password/reset{,/send}, 그리고 /api/moyro/v1 쪽 system/info·tracking/csp-report·auth/oidc·auth/session·auth/sso. 즉 지금 인가 구멍은 없다. 따라서 이 과제를 \"결함 수정\" 으로 집으면 RED 를 만들 수 없고(통과하는 테스트가 먼저 나온다), 10-03 이 지운 중복 등록 줄을 되돌리는 역방향 확인만 가능하다. 그 전제로 집을 것. 중복 method+pattern 은 chi.Walk 로는 보이지 않는다(트라이가 하나로 접는다) — router.go 를 소스로 세거나 등록 래퍼를 두는 수밖에 없다.",
-    "updated": "2026-10-06"
+    "note": "2026-10-08 변화 없음. 2026-10-06 실측: chi.Walk 로 719개 라우트를 무인증 호출했고 401 이 아닌 응답은 설계상 공개된 집합뿐 — 지금 인가 구멍은 없다. 따라서 '결함 수정' 으로는 RED 를 만들 수 없고 '미래 방지' 성격이다. 중복 method+pattern 은 chi.Walk 로 안 보인다(트라이가 하나로 접는다) — router.go 를 소스로 세거나 등록 래퍼를 두는 수밖에 없다. 그 전제로만 집을 것. 이번 테스트도 router.go 패턴을 손으로 복사했다.",
+    "updated": "2026-10-08"
   },
   {
-    "title": "verify-product-ui.sh / fetch-plugin-test-fixtures.sh 의 남은 침묵 실패 지점 점검",
+    "title": "customprofile 패키지 단위 테스트: 빈 맵 no-op / null DELETE 계약",
     "value": 2,
     "risk": 1,
     "size": "S",
     "status": "pending",
-    "note": "2026-10-04 회차가 verify-release.sh 의 HTTP 프로브만 고쳤다. verify-product-ui.sh 는 실패 시 docker logs 를 찍는 cleanup trap 이 이미 있어 우선순위 낮음. 2026-10-06 미재확인.",
-    "updated": "2026-10-06"
+    "note": "2026-10-08 미재확인. 2026-10-05 의 httpapi 테스트가 두 전제를 간접 고정했으므로 겹침이 크다. 가치 2 유지.",
+    "updated": "2026-10-08"
   },
   {
-    "title": "나머지 h.channels.Get 호출자 약 10곳의 404 접기 경로별 확인",
-    "value": 2,
-    "risk": 3,
-    "size": "M",
-    "status": "pending",
-    "note": "경로마다 계약이 다르다(final.go:391 404, handlers.go:1463/2005 404, 1410/1437 은 오류를 버림, native_approval.go:233 400). 일괄 수정 금지. 09-28~10-05 다섯 회차가 연속 httpapi 상태코드 재분류였으므로 이 계열은 당분간 쉬는 것이 좋다. 2026-10-06 미재확인.",
-    "updated": "2026-10-06"
-  },
-  {
-    "title": "북마크 4개 핸들러(late.go 1058/1090/1150/1247)의 ok, _ := IsMember 403 위장 분리",
+    "title": "digest.loadMentions 가 '멘션' 이 아니라 'mention_count>0 인 채널의 모든 미열람 글 20건' 을 보내는 근사",
     "value": 2,
     "risk": 2,
     "size": "M",
     "status": "pending",
-    "note": "list 의 system-admin 예외 때문에 관리자 우회 시 장애 정책부터 결정해야 한다. 이번 1순위(postsByIDsReactions)에는 admin 예외가 없어서 그 선행 결정이 필요 없다는 점이 선택 이유 중 하나다. 2026-10-06 미재확인.",
-    "updated": "2026-10-06"
+    "note": "2026-10-08 미재확인. 주석이 스스로 인정하고 있다. 고치려면 멘션 판정 SQL 과 알림 정책 결정이 선행된다.",
+    "updated": "2026-10-08"
   },
   {
-    "title": "denyGuestMutation / denyGuestEnumeration 의 UserByID DB 오류 401 위장 분리",
+    "title": "격리 스키마 장애 주입 관용구를 테스트 헬퍼 주석에 문서화",
     "value": 2,
-    "risk": 3,
-    "size": "M",
-    "status": "pending",
-    "note": "guest_access.go:14/27 이 UserByID 오류를 전부 401 로 접어 삭제된 사용자와 DB 장애가 구분되지 않는다. 호출 지점 20곳 이상이라 회귀 범위가 넓다. 다른 과제에 합치지 말 것. 2026-10-06 미재확인.",
-    "updated": "2026-10-06"
-  },
-  {
-    "title": "preferences upsert/delete 의 400 을 원인별 400/500 으로 분리",
-    "value": 3,
-    "risk": 2,
-    "size": "M",
-    "status": "pending",
-    "note": "서비스에 ErrInvalid 센티널이 없어 선행 작업 필요. auto/2026-09-07-0240 중복 작업 기록 재조회 선행. preferences 패키지는 [no test files] 이기도 하다. 2026-10-06 미재확인.",
-    "updated": "2026-10-06"
-  },
-  {
-    "title": "digest 멘션 excerpt 의 바이트 절단(worker.go:179-182)을 룬 절단으로 — 한국어 다이제스트 메일이 깨진 UTF-8 로 발송되던 것",
-    "value": 3,
-    "risk": 1,
-    "size": "S",
-    "status": "done",
-    "updated": "2026-10-06",
-    "note": "2026-10-06 구현. msg[:160] 이 한글 음절(3바이트) 중간을 잘라 메일 본문이 유효하지 않은 UTF-8 이 되고 수신자 클라이언트가 U+FFFD 를 그렸다. 저장소에는 이미 룬/UTF-8 안전 절단이 4곳(knowledge.truncateRunes, scheduled.truncateError, webhooks.truncateDeliveryError, automations.truncateError) 있었고 digest 만 예외였다. 프로덕션 1파일, 신규 DB 회귀 1파일."
-  },
-  {
-    "title": "프로덕션 NewRouter 의 미인증 /api/v4 표면을 명시 allowlist 로 고정하는 라우트 인벤토리 테스트",
-    "value": 3,
     "risk": 1,
     "size": "S",
     "status": "pending",
-    "updated": "2026-10-06",
-    "note": "2026-10-06 이번 회차가 일회용 프로브로 실제 목록을 확정했으므로(위 항목 참조) allowlist 를 손으로 추측하지 않고 그대로 적을 수 있다. 가치는 \"미래에 공개 라우트가 늘어나는 것을 사람이 보게 하는 것\" 이고, 지금 결함은 없다. 프로브 구현: router.(chi.Routes) + chi.Walk 로 열거 → {param} 을 더미로 치환 → 무인증 요청 → 401 이 아닌 것만 비교. 주의: users/login 과 password/reset 계열은 로그인 리미터 때문에 연속 호출 시 429 를 돌려주므로 \"401 이 아니다\" 집합에 들어온다 — allowlist 는 상태코드가 아니라 method+pattern 으로 비교해야 한다."
+    "note": "2026-10-08 가치 상향(1→2). 여러 회차가 매번 주입 방법을 다시 고르고 있고, 이제 관용구가 네 개로 늘었다: ALTER TABLE ... RENAME(FK 를 건드리지 않고 테이블을 숨긴다, 10-07), DROP TABLE(10-04 이전), 같은 열 목록의 VIEW + 0으로 나누기(순회 중간 오류 → rows.Err(), 2026-10-08 신규), ALTER COLUMN ... TYPE text USING(Scan 실패, 2026-10-08 신규). newOperationsTestDB(native_operations_postgres_test.go:86) 주석에 모아 두면 다음 회차가 재발견하지 않는다. 프로덕션 0파일.",
+    "updated": "2026-10-08"
   },
   {
-    "title": "digest loadMentions 가 \"멘션\" 이 아니라 \"멘션 카운트가 0 이 아닌 채널의 모든 미열람 글\" 을 보내는 근사",
-    "value": 2,
-    "risk": 2,
-    "size": "M",
-    "status": "pending",
-    "updated": "2026-10-06",
-    "note": "2026-10-06 발견(수정 안 함). worker.go 의 주석이 스스로 \"approximates what the client sees\" 라고 적고 있다 — cm.mention_count>0 인 채널에서 last_viewed_at 이후의 글 20개를 전부 담으므로, 바쁜 채널에서 멘션 1건이 붙으면 관계없는 잡담 19건이 메일로 나간다. 고치려면 멘션 판정 자체(@username / @channel / @here)를 SQL 로 들여와야 하고 이것은 제품 결정이 섞인다(알림 정책과 일관성). 이번 회차 범위에서 일부러 뺐다."
-  },
-  {
-    "title": "unackPost 가 ackPost 와 달리 채널 멤버십을 확인하지 않는 비대칭(late.go:627 vs :600)",
+    "title": "metrics 패키지(223줄) 감사",
     "value": 1,
     "risk": 1,
     "size": "S",
     "status": "rejected",
-    "updated": "2026-10-06",
-    "note": "2026-10-06 조사 후 기각. uid != caller 는 이미 403 이므로 지울 수 있는 것은 자기 자신의 ack 뿐이고, 채널을 떠난 뒤 자기 ack 를 정리하는 것은 막을 이유가 없다. 여기에 멤버십 게이트를 넣으면 떠난 채널의 ack 가 영구히 남는다. 두 핸들러의 WS 브로드캐스트는 둘 다 ChannelID 로 스코프되어 있고 ws.DatabaseAudienceResolver 가 fail-closed 이므로 누출도 없다. 다음 회차는 다시 집지 말 것."
+    "note": "2026-10-08 정찰이 전부 정독해 결함 없음. commands(394줄, 2026-10-06 정독)와 함께 재감사 금지.",
+    "updated": "2026-10-08"
   }
 ]
