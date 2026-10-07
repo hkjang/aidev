@@ -1,7 +1,7 @@
 ---
 title: "eval.irumx.app — 자율 개선 이력"
 description: "eval.irumx.app: 자율 개선 회차 3회, 릴리즈 0건. 최근 릴리즈 없음."
-last_modified_at: 2026-10-07 19:44:09 +0900
+last_modified_at: 2026-10-07 19:52:58 +0900
 ---
 {% raw %}
 <script type="application/ld+json">
@@ -18,7 +18,7 @@ last_modified_at: 2026-10-07 19:44:09 +0900
   "name": "hkjang",
   "url": "https://github.com/hkjang"
  },
- "dateModified": "2026-10-07T19:44:09+09:00"
+ "dateModified": "2026-10-07T19:52:58+09:00"
 }
 </script>
 
