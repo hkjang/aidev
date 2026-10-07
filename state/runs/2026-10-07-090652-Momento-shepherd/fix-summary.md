@@ -1,0 +1,5 @@
+- 재현: web에서 CI 명령 실행 시 source-map-js@1.2.1의 GHSA-68fv-2mgg-jv7q(high)로 npm audit 종료 1을 확인했다.
+- 원인·수정: vite → postcss의 전이 의존성 잠금이 취약 버전이었다. web/package-lock.json만 1.2.2로 갱신했다(버전·URL·integrity 3줄).
+- 인과 검증: 수정 전 HEAD 잠금 파일로 일시 복원해 동일 audit 실패를 재확인한 뒤 수정본을 복구했다. 추가 테스트 없이 기존 audit 게이트를 사용했다.
+- 재검증: web에서 npm ci && npm audit && npm run lint && npm test && npm run build 종료 0; 취약점 0, 테스트 234 통과·skip 0, 기존 청크 크기 경고. Node 22.23.1/npm 10.9.8 사용; CI Node 24 및 Go·DB·SDK·Docker 전체 검증은 미실행.
+- 커밋: 97e3063 (잠금 파일만); 기존 기능·테스트·CI 명령 보존, 산출물 미커밋, push 안 함.
