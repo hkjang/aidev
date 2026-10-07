@@ -333,3 +333,4 @@
 - 보류 아이디어: 유실된 web 린트 수정 5ed6876 되살리기 — `web/eslint.config.js` 가 `files: ['**/*.{ts,tsx}']` 블록 하나뿐임을 이번에 코드로 재확인했고 HEAD(af463ee)에 여전히 없다 (3/2/S — npm ci 선행이 필요해 이번 Go 과제를 택했다) / `store.FactoryDashboard`(internal/store/factory.go:484·493·494·496)가 `product_ideas` 외 네 집계의 오류를 `_ =` 로 삼켜 상위에서 오류를 반환해도 일부 KPI 는 여전히 0 으로 조용히 떨어짐 (3/2/S — 신규, `internal/store` 위험 구역이라 분리) / `admin_dataworks.go` 의 `ListRetirementCandidates`(:1684)·`ListProposalFeedback`·`ListPOCOutcomes`·`ListProductRelationships`·`ListRegulatoryTrace`(admin_dataworks_ops.go:872·873·920·980) 가 같은 계열로 오류를 버림 (3/2/M — 신규, 엔드포인트가 많아 한 회차 범위를 넘는다) / `web/src/features/auth/silent-sso.test.ts` 가 Node 25 에서 실패, 원인 미조사 (3/2/S) / `npm ci` 가 high 취약점 2건 보고 — `npm audit` 으로 특정 후 lock 재생성 없이 최소 변경 (3/2/S)
 - 과제서: (정찰 과제서 없음 — 회차 노트에 러너의 base·autonomy 줄만 있었다)
 
+- 릴리즈: v0.9.70 (2026-10-07, run 2026-10-07-142807-dataworks-improve)

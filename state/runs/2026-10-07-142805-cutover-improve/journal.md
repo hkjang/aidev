@@ -33,3 +33,4 @@
 - [러너 14:49] release published — v1.16.0
 - [러너 14:49] gh-release created — GitHub Release v1.16.0
 - [러너 14:49] manifest failed — 누락/불량: cutover-v1.16.0.tar.gz(too-small)
+- [러너 15:02] assets missing — 이전 v1.15.0 엔 1개, v1.16.0 엔 0개 — 워크플로: null: null/null
