@@ -27,3 +27,5 @@
 - 한계/릴리즈 참고: 전체 React/lint/E2E·Go race/build·DB/Keycloak·실제 SecCheck·사용자 간 격리·Docker는 이번 심사에서 실행하지 않음. mock E2E 통과를 실제 연동 보증으로 쓰지 말 것.
 - [러너 12:28] review approved — 리뷰 승인 (risk=low)
 - [러너 12:28] pr created — https://github.com/hkjang/appstore/pull/40
+- [러너 12:33] ci passed — 검사 2개 모두 success
+- [러너 12:34] merge done — 27b0dbf
