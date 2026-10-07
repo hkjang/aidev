@@ -1,0 +1,23 @@
+- 과제: Admin 설정 폼(`RoomSettings`)의 "선택 시간(초)" 입력 깨짐과 서버 값 미반영 고치기 (가치 3 / 위험 1 / 작업량 S)
+- 왜: `src/pages/Admin.tsx:180` 이 `value={dur}` + `onChange={(e) => setDur(Number(e.target.value))}` 인 제어 입력이라, 운영자가 "7" 을 지우려 백스페이스를 누르면 `Number('') === 0` 이 state 에 들어가 입력칸이 즉시 `0` 으로 되돌아가고, 이어서 "15" 를 치면 `015` 가 된다. 그 상태로 저장을 누르면 `duration_sec` 의 DB 제약(`supabase/migrations/0001_init.sql:11` — `check (duration_sec between 3 and 60)`)을 위반하는데, `admin_update_room`(`0003_elimination.sql:6-16`)은 범위를 다듬지 않고 그대로 `update` 하며 `errMsg`(`src/lib/util.ts:13-29`, 매핑 11건)에 제약 위반용 항목이 없으므로 **영문 Postgres 메시지가 `Admin.tsx:91` 의 `.err` 바에 그대로 노출**된다. 행사 진행 중 운영자가 보는 유일한 설정 화면에서 벌어지는 일이다.
+- 수용 기준:
+  1. "선택 시간(초)" 입력칸을 전부 지우면 빈 칸으로 남는다(`0` 이 강제로 들어가지 않는다). 지운 뒤 "15" 를 타이핑하면 값이 `15` 다(`015` 가 아니다).
+  2. 값이 비었거나 숫자가 아니거나 3~60 범위 밖이면 **저장 버튼이 비활성**이고 그 이유가 한국어로 보인다. 즉 `admin_update_room` 에 범위 밖 `p_duration` 이 전송될 경로가 코드에서 사라진다(= 영문 check-constraint 메시지가 `.err` 바에 뜰 수 없다). `'abc'` 입력 시 `Number('abc') === NaN` → `JSON.stringify` 에서 `null` → 서버 `coalesce(p_duration, duration_sec)` 가 조용히 무시하는 "저장했는데 안 바뀌는" 경로도 같이 막힌다.
+  3. `room.duration_sec` / `room.name` / `room.elimination` 이 서버에서 바뀌면(다른 기기에서 저장, 또는 `admin_reset` 후) 폼이 새 값을 보여 준다. 지금은 `useState(room.name)` 류 초기값만 쓰고 `Admin.tsx:143` 에 `key` 도 없어 영구히 과거 값을 보여 준다.
+  4. 증명: 임시 Playwright 하네스로 `RoomSettings` 를 `react-dom/client` 에 직접 마운트해 (1)(2)(3)을 **수정 전 레드 → 수정 후 그린**으로 실측한다. `RoomSettings` 의 props 는 순수 데이터(`room`)와 주입 함수(`act`)뿐이라 `Play.tsx` 의 `Game` 과 달리 Supabase 없이 마운트된다 — 그러려면 `export function RoomSettings` 로 export 만 추가하면 된다(같은 파일, 런타임 동작 불변). 하네스는 커밋하지 말고 지운 뒤 `git status --porcelain` 이 깨끗함을 확인할 것. 상설 테스트(vitest)는 **금지** — 아래 위험 항목 참조.
+  5. `npm run build` 가 EXIT 0 이고, `git diff --stat` 이 `src/pages/Admin.tsx` **1파일**이다.
+- 건드릴 파일:
+  - `src/pages/Admin.tsx:173-185` `RoomSettings` — ① `dur` 를 `number` 대신 **문자열 state** 로 들고(`useState(String(room.duration_sec))`) `onChange` 는 원문을 그대로 저장, 저장 시점에 `Number()` 로 한 번 변환. ② `const durNum = Number(dur); const durOk = /^\d+$/.test(dur.trim()) && durNum >= 3 && durNum <= 60;` 같은 가드로 저장 버튼 `disabled={!durOk}` + 범위 안내 문구(`<p className="hint">` 또는 `.err`, `src/styles.css:10` 에 둘 다 있음). ③ `useEffect(() => setDur(String(room.duration_sec)), [room.duration_sec])` 꼴로 서버 값 동기화(3필드 각각, 의존성은 **객체가 아니라 원시값**).
+  - (선택, 같은 함수 안) `name` 이 공백만일 때 서버가 `nullif(btrim(p_name),'')` 로 기존 이름을 유지하는데 UI 는 저장됐다고 보이는 문제 — 저장 버튼을 `!name.trim()` 일 때도 비활성으로. 범위를 넘기면 버릴 것.
+- 검증 명령:
+  - `npm i` (기준선 복원) → `npm run build` (= `tsc --noEmit && vite build`). **이 샌드박스에서는 `npm i` 가 승인 거부로 막혀 있어 이번 정찰은 빌드를 실측하지 못했다(미확인). 구현자는 반드시 기준선이 녹색인지부터 확인하고 시작할 것.**
+  - 테스트 러너는 base 에 없다(`package.json` 에 `test` 스크립트·vitest 없음 — 2026-10-08 재확인). `npm test` 는 존재하지 않으므로 쓰지 말 것.
+  - 임시 하네스: Playwright+chromium 이 `/home/hkjang/.cache/ms-playwright` 에 이미 있다(2026-10-06 회차가 실제로 사용). `PLAYWRIGHT_BROWSERS_PATH` 를 넘겨야 한다(HOME 이 임시 디렉터리로 바뀌어 있음).
+- 위험과 피할 것:
+  - **머지 대기 PR 4건과 경로가 겹치면 안 된다.** base 는 여전히 `main@f68a6fa` 이고 과거 4회차의 결과물이 하나도 머지되지 않았다(2026-10-08 확인: `.github/workflows/` 에 `pages.yml` 뿐, `package.json` 에 vitest 없음, `Play.tsx`·`useRoom.ts`·`Timer.tsx`·`Display.tsx` 모두 원본). 따라서 **`package.json` / `package-lock.json` / `.github/workflows/**` / `src/pages/Play.tsx` / `src/lib/useRoom.ts` / `src/components/Timer.tsx` / `src/pages/Display.tsx` / `src/lib/phase.ts`(신규 생성도 금지) 를 건드리지 말 것.** `Admin.tsx` 는 네 PR 어느 쪽도 손대지 않은 파일이라 이번 과제로 고른 것이다.
+  - **`<RoomSettings key={...}>` 로 리마운트해 ③을 해결하려 하지 말 것.** `useRoom` 은 4초마다 폴링해 `room` 객체를 **새로 만든다**(`src/lib/useRoom.ts:109` 부근) — 객체 신원이나 `JSON.stringify(room)` 을 key 로 쓰면 운영자가 타이핑하는 중에 4초마다 입력이 날아간다. 반드시 원시값 의존성 `useEffect` 로 할 것.
+  - `supabase/migrations/**` 금지. 제약을 완화하거나 `admin_update_room` 에 clamp 를 넣는 쪽으로 가지 말 것 — 보호 경로이고 이 저장소에는 로컬 SQL 실행 수단이 없다(`supabase/config.toml` 없음). 이번 과제는 **클라이언트에서 잘못된 값이 나가지 않게 막는 것**만이다.
+  - `src/lib/util.ts` 의 `errMsg` 에 매핑을 추가하는 쪽으로 번지지 말 것 — `Play.tsx:94` 의 `errMsg(e) === 'LOCKED'` 비교가 "매핑이 없어 원문이 그대로 반환된다" 는 사실에 의존하고, `Play.tsx` 는 머지 대기 경로다.
+  - `Admin.tsx:52` 의 `useNow(200)` 낭비 루프가 눈에 보이겠지만 **이번에 고치지 말 것** — `useNow` 의 `null` 지원이 머지 대기 PR(`useRoom.ts`)에 있어 base 에서는 컴파일되지 않는다.
+  - `Admin.tsx` 안의 `Questions`/`parseCsv`/`importFile` 로 범위를 넓히지 말 것(별도 아이디어로 `ideas.json` 에 올려 두었다).
+- 차선 후보: **Questions 가져오기 입력 검증** — `Admin.tsx:231` `importFile` 이 `JSON.parse` 결과가 배열인지 확인하지 않아 객체/숫자를 넣으면 `confirm('undefined개 문제를 불러옵니다…')` 가 뜬 뒤 그대로 `admin_import_questions` 로 전송된다. `Array.isArray` + 빈 배열 거절 + 항목에 `text` 가 있는지 검사로 끝난다(같은 1파일, S). 1순위가 성립하지 않으면 이것을 고를 것. 3순위는 `src/main.tsx` 라우트별 코드 스플리팅(React.lazy+Suspense)이지만 절감이 미미할 수 있어 전/후 청크 크기 실측을 수용 기준에 넣어야 한다.
