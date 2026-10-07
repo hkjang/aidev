@@ -13,5 +13,25 @@
     "state": "done",
     "reason": "관리자 목록 페이지네이션에 유일한 tiebreak 을 넣어 OFFSET 경계에서 행이 겹치거나 사라지지 않게 하기 (가",
     "at": "2026-10-07T18:03:21+09:00"
+  },
+  "brief": {
+    "state": "accepted",
+    "reason": "채택 — 근거가 지금 코드와 정확히 일치했고(세 ORDER BY, `gameSelect` 의 `g` 별칭과 `g.id` 선택, `audit_logs.id` bigserial) 지정한 �",
+    "at": "2026-10-07T18:17:13+09:00"
+  },
+  "verify": {
+    "state": "passed",
+    "reason": "검증 4개 통과 (policy)",
+    "at": "2026-10-07T18:17:50+09:00"
+  },
+  "review": {
+    "state": "rejected",
+    "reason": "리뷰 거절: docs/api.md:10 이 새 보증을 `## 공통 규칙`(모든 목록에 적용되는 preamble, 8행 \"목록은 limit/offset 을 사용합니다\" 바로 아래)에 넣었으나 코드가 그 보증을 지키지 않는다. 이번 수정은 admin.go 의 세 쿼리뿐이고, 같은 limit/offset 계약을 쓰는 나머지 세 페이지 목록은 여전히 유일 키 없이 정렬한다 — catalog.go:130 `ORDER BY g.name`(공개 게임 목록, 그런데 migrations/001_initial.sql:83 에서 `name` 은 UNIQUE 가 아니고 `slug` 만 UNIQUE 이므로 동명 게임에서 정확히 이 버그가 난다), catalog.go:990 `ORDER BY gs.started_at DESC`, extended.go:581 `ORDER BY s.created_at DESC`(한 요청·배치가 쓴 점수는 이번 수정이 다루는 바로 그 방식으로 동점이 된다). 문서를 읽고 `GET /api/v1/games` 를 offset 으로 완주하는 클라이언트는 조용히 행을 잃는다. 수리: 이 줄을 관리자 목록(users/audit/games)으로 한정하거나, 세 쿼리에도 같은 tiebreak 을 넣어 문장을 참으로 만들 것. / docs/api.md:10 뒷문장 \"`offset`을 끝까지 넘기면 각 행이 정확히 한 번씩 나옵니다\" 는 수정된 세 목록에서도 참이 아니다. ORDER BY 에 유일 키를 더하면 **한 쿼리 안의** 순서가 전순서가 될 뿐이고, 페이지 요청은 서로 다른 statement·다른 스냅샷이다. 페이지 사이에 행이 INSERT/DELETE 되면 여전히 같은 행이 두 페이지에 나오거나 한 번도 나오지 않는다(새 테스트가 Green 인 이유도 교란을 INSERT 가 아닌 UPDATE 로 넣었기 때문이다 — admin_order_pg_test.go:200-212 의 patchUser). 보증을 \"동점 행도 페이지 경계가 결정론이다\" 까지로 낮출 것.",
+    "at": "2026-10-07T18:23:31+09:00"
+  },
+  "repair": {
+    "state": "done",
+    "reason": "# 수리 요약 (시도 2)  - 문제: docs/api.md:10 이 `## 공통 규칙`(모든 limit/offset 목록) 자리에서 두 가지를 과장했다 — ① 유일 키 tiebreak 은 admin.go 의 세 목록�",
+    "at": "2026-10-07T18:27:37+09:00"
   }
 }

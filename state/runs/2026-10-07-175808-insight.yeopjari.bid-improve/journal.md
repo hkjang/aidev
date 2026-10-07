@@ -28,3 +28,7 @@
 - 릴리즈 노트 표현: `retryAfter` 는 `apps/web/src/api/client.ts:181` 에서 파싱만 되고 화면에 렌더되지 않는다. "사용자에게 보이는 시각" 이 아니라 "HTTP `retry-after` 헤더 값 정정" 으로 적어야 정확하다.
 - [러너 18:10] review approved — 리뷰 승인 (risk=low)
 - [러너 18:11] pr created — https://github.com/hkjang/insight.yeopjari.bid/pull/1
+- [러너 18:15] ci passed — 검사 1개 모두 success
+- [러너 18:15] merge done — 098cc43
+- [러너 18:26] release published — v0.1.1
+- [러너 18:26] assets n/a — 이전 릴리즈에도 자산 없음

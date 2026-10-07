@@ -4,8 +4,8 @@
     "value": 3,
     "risk": 1,
     "size": "S",
-    "status": "pending",
-    "note": "이번 회차 1순위. 이전의 '페이지된 목록 7곳' 아이디어를 admin.go 한 파일(listUsers:571, listAuditLogs:709, adminListGames:746)로 좁혀 S 로 내렸다. 이번에 직접 확인: 세 질의 모두 ORDER BY created_at DESC 뿐이고, realmguard.go:1879 의 랭킹은 이미 score DESC,created_at,id 로 유일 키까지 정렬해 계약이 갈라져 있다. gameSelect(catalog.go:120)는 별칭 g 로 g.id 를 이미 선택한다. audit_logs 는 id bigint 가 있어 완전한 tiebreak 가 가능하다. Red 는 admin_total_pg_test.go 의 adminListFixture(+patchUser)를 재사용해 동일 created_at 6행 + 페이지 사이 UPDATE 로 만들 것.",
+    "status": "done",
+    "note": "2026-10-07 구현. listUsers(admin.go:571)·listAuditLogs(:709)·adminListGames(:746) 의 ORDER BY 에 각각 id DESC / a.id DESC / g.id DESC 를 덧붙였다. 프로덕션 1파일. 신규 admin_order_pg_test.go 가 실제 Router+실제 PG17 로 동일 created_at 집합을 끝까지 페이지하며 각 id 가 정확히 한 번 나오는지 센다. 변이 3개로 인과 확인(각각 자기 목록만 Red, 5/5 재현). 실측 교훈 둘: ① UPDATE 는 힙 튜플을 테이블 끝으로 옮기므로 Red 를 만들려면 '이미 본 행' 을 PATCH 해야 한다('아직 못 본 행' 은 PASS) ② limit=1 전체 순회(top-N heapsort bound 의존)는 games 에서 flaky 였다 — 힙 이동 방식으로 바꿔 안정화. 도달성은 추정보다 높았다: adminListGames 는 마이그레이션이 카탈로그를 한 문장으로 seed 하므로 갓 설치한 상태에서 이미 9행 중 3행이 누락됐다.",
     "updated": "2026-10-07"
   },
   {
@@ -14,7 +14,7 @@
     "risk": 2,
     "size": "S",
     "status": "pending",
-    "note": "위 과제에서 의도적으로 잘라 낸 조각. 프로덕션 파일을 1개로 유지하려고 이번에는 제외했다. catalog.go:130 은 ORDER BY g.name 이라 동명 게임에서만 동점이 생기고, catalog.go:990 은 gs.started_at DESC 다. 1순위가 머지된 다음 회차에 같은 모양으로 할 것.",
+    "note": "2026-10-07 의 1순위에서 프로덕션 파일을 1개로 유지하려고 의도적으로 잘라 낸 조각. 이제 admin.go 세 질의가 머지됐으므로 같은 모양으로 이어서 할 수 있고, admin_order_pg_test.go 의 pageIDs·assertEachRowHandedOutOnce·requireSharedTimestamps 헬퍼를 그대로 재사용하면 된다. catalog.go:130 은 ORDER BY g.name 이라 동명 게임에서만 동점이 생기고, catalog.go:990 은 gs.started_at DESC 다. Red 는 '이미 본 행' 을 쓰는 힙 이동 방식으로 만들 것 — limit=1 bound 방식은 flaky 였다.",
     "updated": "2026-10-07"
   },
   {
@@ -23,25 +23,7 @@
     "risk": 1,
     "size": "S",
     "status": "pending",
-    "note": "이번 회차 차선 후보. 이전의 'cmd/igame 설치키 길이 기동 회귀' 를 코드를 읽어 다시 조준한 것이다. 확인한 것: cmd/igame/main.go:59 가 config.Load() 뒤에 secretbox.New 를 부르고, config.go:85 validateKey 는 정확히 32바이트만 허용하므로 secretbox 가 받는 16·24바이트도 기동에서는 거부된다 — 즉 관문은 config 이고 cmd/igame 에 새 테스트를 얹을 필요가 없다(기동 배선은 os.Exit 라 테스트하기 어렵다). config_test.go 의 TestParseEncryptionKey 는 happy 3개 + \"short\" 하나뿐. base64/hex 의 16·24·31·33바이트, 접두사 단독(0바이트), 홀수 hex, 패딩 없는 base64, Load 의 TrimSpace, 오류가 키 값을 노출하지 않는 것이 미검증.",
-    "updated": "2026-10-07"
-  },
-  {
-    "title": "serviceLocation 이 설정 읽기 실패를 삼켜 시간대가 조용히 Asia/Seoul 이 됨",
-    "value": 3,
-    "risk": 3,
-    "size": "M",
-    "status": "rejected",
-    "note": "여덟 회차 연속 보류 끝에 기각한다. extended.go:16 의 `_ = s.setting(...)` 이 원인이지만 호출처가 admin.go(:547 adminDashboard 포함)·extended.go:40/683·defense.go·catalog.go·auditexport.go·realmguard.go 로 프로덕션 6파일이고 parseAdminTime 시그니처까지 번진다. playAllowed(catalog.go)는 같은 읽기를 인라인으로 두고 에러를 올려 계약이 이미 갈라져 있어 쪼갤 모양이 없다. 이전 회차의 자기 지시('다음 회차에도 못 찾으면 rejected')를 따른다. 더 작게 다시 조준할 수 있는 날이 오면 새 항목으로 올릴 것 — 이 항목은 되살리지 말 것.",
-    "updated": "2026-10-07"
-  },
-  {
-    "title": "loadAPIKeyPolicyContext 가 api_keys 설정 부재 시 자기 기본값을 버리고 ErrNoRows 를 올림",
-    "value": 2,
-    "risk": 2,
-    "size": "S",
-    "status": "rejected",
-    "note": "다섯 회차 연속 도달성 미증명. 001_initial.sql:242 가 행을 seed 하고 제품에 system_settings DELETE 경로가 없으며, putSetting 은 api_keys 를 이미 upsert 로 쓴다. 이전 회차의 자기 지시('증명하지 못하면 rejected')를 따른다.",
+    "note": "2026-10-07 의 차선 후보였고 1순위가 성립해 하지 않았다. 확인된 계약: cmd/igame/main.go:59 가 config.Load() 뒤에 secretbox.New 를 부르고 config.go:85 validateKey 는 정확히 32바이트만 허용하므로 secretbox 가 받는 16·24바이트도 기동에서는 거부된다 — 관문은 config 이다. config_test.go 의 TestParseEncryptionKey 는 happy 3개 + \"short\" 하나뿐. 미검증: base64/hex 의 16·24·31·33바이트, 접두사 단독(0바이트), 홀수 hex, 패딩 없는 base64(StdEncoding), Load 의 TrimSpace, 오류 메시지가 키 값을 노출하지 않는 것. 에러 문구는 비교하지 말 것.",
     "updated": "2026-10-07"
   },
   {
@@ -50,7 +32,16 @@
     "risk": 2,
     "size": "S",
     "status": "pending",
-    "note": "catalog.go:389-392 의 startErr/endErr continue(이전 회차 근거, 2026-10-07 에도 재확인하지 않음 — 미확인). 신규 쓰기는 validateSetting 의 playWindowTime 이 막으므로 남은 것은 검증 도입 이전 legacy 행뿐이고 도달성은 여전히 미확인. 고칠 때 '정책을 평가할 수 없으면 거부' 라는 playAllowed 의 방향과 맞출 것.",
+    "note": "catalog.go:389-392 의 startErr/endErr continue (이전 회차 근거, 2026-10-07 에도 재확인하지 않음 — 미확인). 신규 쓰기는 validateSetting 의 playWindowTime 이 막으므로 남은 것은 검증 도입 이전 legacy 행뿐이고 도달성은 여전히 미확인. 고칠 때 '정책을 평가할 수 없으면 거부' 라는 playAllowed 의 방향과 맞출 것.",
+    "updated": "2026-10-07"
+  },
+  {
+    "title": "serviceLocation 이 설정 읽기 실패를 삼켜 시간대가 조용히 Asia/Seoul 이 됨",
+    "value": 3,
+    "risk": 3,
+    "size": "M",
+    "status": "pending",
+    "note": "여덟 회차 연속 보류. 호출처 6곳으로 프로덕션 파일 상한에 걸리고 playAllowed 와 계약이 갈라져 쪼갤 모양을 또 찾지 못했다. 2026-10-07 에도 재조준하지 못했다 — 다음 회차에도 쪼갤 모양을 못 찾으면 rejected 로 내릴 것.",
     "updated": "2026-10-07"
   },
   {
@@ -59,7 +50,7 @@
     "risk": 1,
     "size": "S",
     "status": "pending",
-    "note": "settings_put_pg_test.go 의 preserve 가 value/updated_at 만 기억하고 apikey_scope_pg_test.go 가 재사용한다. seed 행의 updated_by 가 원래 NULL 이라 증상이 없어 가치 2 를 넘기지 못한다. 세 회차 연속 보류.",
+    "note": "settings_put_pg_test.go 의 preserve 가 value/updated_at 만 기억하고 apikey_scope_pg_test.go 가 재사용한다. seed 행의 updated_by 가 원래 NULL 이라 증상이 없어 가치 2 를 넘기지 못한다. 네 회차 연속 보류.",
     "updated": "2026-10-07"
   },
   {
@@ -77,16 +68,7 @@
     "risk": 3,
     "size": "M",
     "status": "pending",
-    "note": "validateSetting(admin.go:172-)이 json.Unmarshal 을 쓴다. oidc·ai 는 별도 본문 구조체로 이미 거부하고 docs/api.md:97 이 그것을 계약으로 명시. 영향이 편집 가능 7개 키 전부로 넓고 기존 여분 필드 호환성 미확인 — 위험 3.",
-    "updated": "2026-10-07"
-  },
-  {
-    "title": "끝난 세션에 계속 result 를 덧붙일 수 있음",
-    "value": 2,
-    "risk": 2,
-    "size": "S",
-    "status": "rejected",
-    "note": "catalog.go finishGameSession 의 status IN ('active','finished'). 재시도 멱등성 계약이 미확정이라 버그로 단정할 수 없고 정책 결정이 사람 몫이다 — 자율 회차에 적합하지 않아 기각한다.",
+    "note": "validateSetting(admin.go:172-)이 json.Unmarshal 을 쓴다. oidc·ai 는 별도 본문 구조체로 이미 거부하고 docs/api.md 가 그것을 계약으로 명시. 영향이 편집 가능 7개 키 전부로 넓고 기존 여분 필드 호환성 미확인 — 위험 3.",
     "updated": "2026-10-07"
   },
   {
@@ -99,12 +81,21 @@
     "updated": "2026-10-07"
   },
   {
-    "title": "secretbox 의 거부 경로와 AAD 결합을 회귀로 고정",
+    "title": "loadAPIKeyPolicyContext 가 api_keys 설정 부재 시 ErrNoRows 를 올려 전 키 401",
+    "value": 2,
+    "risk": 2,
+    "size": "S",
+    "status": "rejected",
+    "note": "다섯 회차 연속 도달성을 증명하지 못했다. seed 가 행을 넣고 제품 코드에 system_settings DELETE 경로가 없어 도달 경로가 없다. 이전 회차의 자기 지시대로 rejected 로 내린다 — 다음 정찰이 다시 집어 들지 말 것.",
+    "updated": "2026-10-07"
+  },
+  {
+    "title": "secretbox Open 의 거부 경로와 AAD 결합 회귀 보강",
     "value": 2,
     "risk": 1,
     "size": "S",
     "status": "done",
-    "note": "2026-10-07 회차에서 secretbox_reject_test.go 로 완료(프로덕션 0파일, v0.7.29 기준). 같은 영역을 또 고르지 말 것.",
+    "note": "2026-10-07 직전 회차에 secretbox_reject_test.go 로 구현 완료(프로덕션 0파일). Open 의 11개 거부 입력, AAD 결합을 독립 crypto/aes+cipher.NewGCM 으로 검증, New 의 16/24/32 허용과 nil/빈/31/33 거부.",
     "updated": "2026-10-07"
   }
 ]

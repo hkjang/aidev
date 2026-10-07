@@ -6,3 +6,4 @@
 - 보류 아이디어: util/text.ts:isSafeLink() 가 호출처 0인 죽은 코드이고 주석의 사설망 차단 약속을 지키지 않는다 / util/time.ts 에 단위 테스트가 전혀 없다(kstWindowOn·parseClock 47시간 클램프·backoffMs 의 "캡 전에 지터") / domain/catalog.ts 와 maskEmail·mailboxKey 의 엣지케이스 테스트 공백 / quota.ts:usage() 의 "one round trip" 주석이 실제(Promise.all 로 쿼리 n개)와 어긋난다 / rules.test.ts 한 파일에 단위 테스트가 전부 모여 있다(테스트가 세 배로 늘기 전에는 손대지 말 것).
 - 과제서: 채택 — 과제서의 근거·수용 기준·손으로 한 검산이 지금 코드와 전부 일치했고 수정 범위도 프로덕션 파일 1개로 끝났다.
 
+- 릴리즈: v0.1.1 (2026-10-07, run 2026-10-07-175808-insight.yeopjari.bid-improve)
