@@ -27,3 +27,6 @@
 - 릴리즈 주의: 경로·쿼리·fragment의 원문 역슬래시가 포함된 내부 링크는 라벨 텍스트로 바뀐다. 의도된 허용 축소이며 저장 문서의 사용 여부는 미확인이다.
 - [러너 13:37] review approved — 리뷰 승인 (risk=low)
 - [러너 13:37] pr created — https://github.com/hkjang/biz.irumx.app/pull/1
+- [러너 13:47] ci passed — 검사 1개 모두 success
+- [러너 13:47] merge done — c1f9a2b
+- [러너 13:47] release missing — 릴리즈 결과 없음/손상: missing

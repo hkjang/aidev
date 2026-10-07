@@ -1,30 +1,21 @@
 [
   {
-    "title": "붙여넣기 분석기: 메일에 섞인 카톡 한 줄이 입력 전체를 가로채 앞부분을 버린다",
-    "value": 4,
-    "risk": 2,
-    "size": "S",
-    "status": "done",
-    "note": "parseKakao 가 첫 머리줄 앞의 비어 있지 않은 줄을 센다 — 내보내기 머리말(EXPORT_HEADER)·PC_DATE·MOBILE_DATE·MOBILE_SYSTEM 이 아닌 줄이 있으면 '깨끗한 내보내기가 아님' 으로 null 을 돌려 list/paragraphs 로 떨어진다. 실패 재현 확인 후 고침(tests/kakao.spec.ts 3개 추가, 기존 9개 무수정 통과).",
-    "updated": "2026-10-06"
-  },
-  {
     "title": "list 형식이 글머리표 아닌 줄을 말없이 버린다 — 카톡 한 줄이 섞인 메일에서 그 한 줄이 사라진다",
     "value": 3,
     "risk": 3,
     "size": "M",
     "status": "pending",
-    "note": "이번 회차에서 드러났다: 섞인 붙여넣기가 list 로 떨어지면 parseList(src/shared/kakao.ts:153) 가 글머리표 없는 산문(인사·서명·섞여 들어온 카톡 한 줄)을 버린다 — 의도된 설계이고 기존 테스트가 고정하고 있어(항목 3개만) 이번 범위에서 건드리지 않았다. 요청 낱말이 있는 산문 줄은 남길지(HINT 재사용), 아니면 '버린 줄 수' 를 ParseResult 에 알려 화면에서 안내할지 정해야 한다. 후자가 위험이 낮다.",
-    "updated": "2026-10-06"
+    "note": "parseList가 비들여쓰기 산문을 버리고 tests/kakao.spec.ts가 목록 3개만 기대함을 확인. 버린 줄 수 안내가 정책 변경보다 낮은 위험. 이전 혼합 입력 수정은 현재 base에 없어 카톡 한 줄 사례는 그 선행 변경이 반영된 뒤 재평가.",
+    "updated": "2026-10-07"
   },
   {
     "title": "MAX_INPUT 자르기가 두 경로에서 다르게 읽힌다(라우트는 400 거절, normalize 는 slice+truncated)",
-    "value": 3,
-    "risk": 2,
+    "value": 2,
+    "risk": 1,
     "size": "S",
     "status": "pending",
-    "note": "src/worker/routes/requests.ts:169 가 text.length > MAX_INPUT 을 먼저 400 으로 거절하므로 normalize() 의 truncated 는 API 경로에서 절대 켜지지 않는다(죽은 분기). 자를지 거절할지 한쪽을 정본으로 하고 ParseResult.truncated 주석을 맞춘다. 이번 회차 차선 후보였다 — 그대로 다음 후보.",
-    "updated": "2026-10-06"
+    "note": "현재 requests.ts 252행의 HTTP 거절과 normalize의 절단 모두 확인. 레이어별 계약일 수 있어 정책 통일은 불필요; 주석과 경계값 시험으로 계약을 명시하는 차선 후보. truncated 자체는 메시지 개수 제한에도 쓰여 죽은 필드가 아니다. 이번 구현에서 순수 함수 200,000/200,001자 경계 시험은 추가했다. HTTP 허용/400 경계 시험과 레이어 계약 문서는 남아 있어 pending 유지.",
+    "updated": "2026-10-07"
   },
   {
     "title": "PDF 구조 검사의 오탐 — 압축 스트림의 우연한 /JS·/AA 바이트로 정상 인쇄 PDF 가 거절될 수 있다",
@@ -32,17 +23,17 @@
     "risk": 4,
     "size": "M",
     "status": "pending",
-    "note": "src/worker/services/files.ts:38 PDF_ACTIVE 가 latin1 전체 텍스트를 훑는다. 재현 자료(실제 PDF)를 만들기 어렵고 느슨하게 고치면 보안 검사가 약해진다 — 위험 대비 가치가 낮다. 손대면 api-security 15개를 함께 돌릴 것.",
-    "updated": "2026-10-06"
+    "note": "services/files.ts PDF_ACTIVE가 전체 latin1 텍스트를 훑는 구조 확인. 실제 정상 PDF 오탐은 미재현. 보안 완화 위험 때문에 보류.",
+    "updated": "2026-10-07"
   },
   {
     "title": "요청 목록이 하나짜리 번호 항목을 문단으로 떨어뜨린다(parseList 가 bulletCount>=2 요구)",
     "value": 2,
-    "risk": 1,
+    "risk": 2,
     "size": "S",
     "status": "pending",
-    "note": "src/shared/kakao.ts:154. 요청이 하나뿐인 메일은 list 가 아니라 paragraphs 가 되어 suggested 규칙이 달라진다(목록은 전부 고르고 문단은 HINT 필요). 이번 회차와 같은 파일이라 미뤘다 — 이제 충돌 없음.",
-    "updated": "2026-10-06"
+    "note": "bulletCount < 2이면 null인 현재 코드 확인. 단일 번호가 목록인지 일반 문장인지 모호해 기존 위험 1을 2로 상향; 자동 선택 정책 변경이므로 이번에는 제외.",
+    "updated": "2026-10-07"
   },
   {
     "title": "상태 전이 '무엇으로 대체되었는지' 연결 검증 보강",
@@ -50,34 +41,70 @@
     "risk": 3,
     "size": "M",
     "status": "pending",
-    "note": "docs/qa.md 가 v2 개발 중 고친 실제 결함으로 '대체된 승인 요청이 새 요청을 가리키지 않던 것' 을 꼽는다. superseded 계열(scope·change·release·approval)이 모두 후속 id 를 남기는지 api 시험으로 확인할 가치. services/approvals.ts(보호 구역)를 건드릴 수 있어 읽기 조사부터.",
-    "updated": "2026-10-06"
+    "note": "api-security.spec.ts에서 납품 supersededBy truthy, 승인자 변경 차단 확인. 모든 대상의 후속 id 정확성까지는 미확인. 이미 있는 기본 커버리지와 중복하지 않도록 대상별 조사부터 필요.",
+    "updated": "2026-10-07"
   },
   {
     "title": "첫 메시지 앞에 PC 내보내기의 시스템 알림 줄이 있으면 진짜 내보내기도 카톡으로 읽지 않는다",
     "value": 2,
-    "risk": 2,
+    "risk": 1,
     "size": "S",
-    "status": "pending",
-    "note": "이번 회차가 만든 의도된 보수성: 알아보는 머리말은 EXPORT_HEADER·PC_DATE·MOBILE_DATE·MOBILE_SYSTEM 뿐이라, PC 내보내기 맨 앞의 '김고객님이 이개발님을 초대하였습니다.' 같은 평문 알림 줄은 '깨끗한 내보내기가 아님' 으로 본다 → list/paragraphs 로 떨어진다(자료 손실은 없고 author·at 만 비는 완만한 열화). 느슨하게 하면 결함이 되돌아오므로 비대칭을 보고 엄격을 골랐다. 실제 내보내기 파일을 손에 넣어 알림 줄 형태를 확인한 뒤에만 패턴을 넓힐 것.",
-    "updated": "2026-10-06"
+    "status": "rejected",
+    "note": "이 항목은 이전 회차의 보수적 머리말 판별 도입을 전제로 하지만 현재 155a4ee parseKakao에는 그 검사가 없고 hits>0이면 파싱한다. 현 base에는 성립하지 않음. 선행 PR 반영 뒤 실제 내보내기 자료로 다시 평가 가능.",
+    "updated": "2026-10-07"
   },
   {
     "title": "이 환경에서 npx 가 node v20 을 집어 wrangler 가 뜨지 않는다 — 시험 실행 함정",
     "value": 2,
-    "risk": 1,
+    "risk": 2,
     "size": "S",
     "status": "pending",
-    "note": "/home/hkjang/node_modules/.bin/node 가 v20.19.2 라, npx 가 상위 디렉터리를 거슬러 올라가 그것을 먼저 쓴다. 그래서 scripts/db-local.mjs 의 'npx wrangler d1 migrations apply' 가 조용히 실패하고 빈 D1 로 wrangler dev 가 떠 api 시험이 'no such table: verification' 500 으로 깨진다. 이번엔 워크트리 node_modules/.bin/node 심링크(gitignore 대상)로 우회했다. 저장소 쪽 항구 대책은 db-local.mjs 가 종료 코드를 확인·보고하게 하거나 process.execPath 로 wrangler 를 부르는 것(전역 설정은 건드리지 않는다).",
-    "updated": "2026-10-06"
+    "note": "이번 npm exec -- node --version에서 v20.19.2 선택을 직접 확인했다(셸 node는 v22.23.1). gitignore된 node_modules/.bin/node에 Node 22 실행 파일 심링크를 두자 npm exec도 v22.23.1이 됐고 Wrangler 시험 서버가 정상 실행됐다. 전역 Node·프로젝트 스크립트는 변경하지 않았으며 재설치 후 적용할 환경 준비 절차는 후속 후보.",
+    "updated": "2026-10-07"
   },
   {
     "title": "GitHub Actions CI 워크플로 추가 — 러너가 돌리는 검증 명령을 그대로 CI 로",
     "value": 5,
+    "risk": 3,
+    "size": "M",
+    "status": "pending",
+    "note": "현재 .github 없음. package.json에는 build/check/test가 있고 vet는 없음. 러너의 CI 없음 판정은 제공 기록이며 독립 검증 안 함. Node·Chromium·Wrangler 준비가 필요해 S/위험1에서 M/위험3으로 재평가; 보호 경로이므로 이번에는 선택하지 않음.",
+    "updated": "2026-10-07"
+  },
+  {
+    "title": "붙여넣기 분석기의 메시지 4,000자 절단을 알림에 반영",
+    "value": 4,
+    "risk": 1,
+    "size": "S",
+    "status": "done",
+    "note": "커밋 09e7133. 개별 본문 길이를 기존 truncated OR 조건에 반영하고 일반화한 경고를 표시. 수정 전 단위 4 failed/26 passed, 조건 되돌림 시 4,001자 3개 재실패, UI 기존 문구도 실제 API 경로에서 실패 확인. check/build 통과, kakao 30 passed, desktop ui-flow 9 passed, 전체 npm test 122 passed (4.2m). 프로덕션 2파일·시험 2파일이며 기존 형식 판별·자동 선택·HTTP 400 정책은 그대로.",
+    "updated": "2026-10-07"
+  },
+  {
+    "title": "순수 함수 단위 시험을 Wrangler·D1 준비 없이 실행하도록 분리",
+    "value": 3,
+    "risk": 2,
+    "size": "M",
+    "status": "pending",
+    "note": "신규. playwright.config.ts 전역 webServer 때문에 kakao/domain 순수 시험에도 dist와 D1 준비 필요. guard는 getPlatformProxy를 써 환경 요구가 다르므로 순수 시험만 별도 구성하는 방안을 조사. 이번 범위에서는 설정 변경하지 않음.",
+    "updated": "2026-10-07"
+  },
+  {
+    "title": "긴 선행 공백이 있는 붙여넣기 입력의 분석 지연 조사",
+    "value": 3,
+    "risk": 2,
+    "size": "M",
+    "status": "pending",
+    "note": "이번 전체 입력 경계 시험의 초기 fixture(약 20만 선행 공백 + 짧은 본문)가 단위 시험에서 각각 13.8초/14.8초 걸렸다. 정규화로 제거되는 NUL로 같은 전체 입력 경계를 검증하면 각 4ms였다. 공백 처리 정규식의 비용이 의심되지만 정확한 병목은 미확정. 동작 보존 성능 재현부터 하고 이번 범위에서는 수정하지 않음.",
+    "updated": "2026-10-07"
+  },
+  {
+    "title": "붙여넣기 입력창의 200,000자 상한 안내",
+    "value": 3,
     "risk": 1,
     "size": "S",
     "status": "pending",
-    "updated": "2026-10-06",
-    "note": "이 저장소에는 워크플로 파일이 없어 러너 PR 이 전부 \"CI 검사 없음\" 으로 막힌다. 러너가 이미 돌리는 검증 명령(build·vet·test)을 그대로 .github/workflows/ci.yml 로 옮겨라. 이 파일은 보호 경로라 사람 승인을 받는다."
+    "note": "ImportRequests의 textarea는 maxLength=200000이지만 입력 도움말에는 상한 안내가 없다. 사용자가 큰 원문을 붙여 넣기 전에 나눌 수 있도록 한도 문구나 문자 수 안내를 검토. 실제 클립보드의 초과 입력 처리 방식은 이번 브라우저 시험에서 미검증이므로 후속 재현 필요.",
+    "updated": "2026-10-07"
   }
 ]
