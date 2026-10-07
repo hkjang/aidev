@@ -35,3 +35,6 @@
 - 검증: 일회용 PG17(15441) 로 `make test-db` 전체 PASS, `-run WhenTimestampsTie` 3/3 PASS, `go vet` 무출력, 잔여 스키마 0, 컨테이너 제거.
 - 확신 없는 곳: 세 공개/모더레이션 목록의 tiebreak 미해결은 의도적 잔여물이다 — 문서가 이제 그것을 약속하지 않지만, 다음 회차에서 실제로 집어 들 가치는 여전히 있다(특히 동명 게임이 있는 설치의 `GET /api/v1/games`).
 - [러너 18:27] repair done — # 수리 요약 (시도 2)  - 문제: docs/api.md:10 이 `## 공통 규칙`(모든 limit/offset 목록) 자리에서 두 가지를 과장했다 — ① 유일 키 tiebreak 은 admin.go 의 세 목록�
+- [러너 18:41] review timeout — 단계 제한 시간 초과
+- [러너 18:41] review missing — 리뷰 결과 없음/손상: missing — 보류
+- [러너 18:41] pr created — https://github.com/hkjang/igame/pull/37
