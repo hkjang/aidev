@@ -300,7 +300,7 @@ curl -s -o /dev/null -w '%{http_code}\n' http://localhost:3000/api/activities
 | 메서드 | 경로 | 하는 일 |
 |---|---|---|
 | `GET` | `/api/activities` | 상황판 데이터 전체. 인증 없음. |
-| `PUT` 🔒 | `/api/activities` | 상태 변경·편집·추가·이동·삭제·제목 변경. 본문에 `activities` 배열, 또는 `action`(`add`/`delete`/`move`), 또는 `dashboardTitle`. 저장 전 5.2절과 같은 검증을 거칩니다. `activities` 배열과 함께 `expectedLastUpdated`를 보내면 저장된 `lastUpdated`와 다를 때 `409`(`STALE_SNAPSHOT`)로 거절합니다(4.5절). 보내지 않으면 검사하지 않습니다. `action`(`delete`/`move`)이나 `targetId`+`newStatus`로 지정한 `targetId`가 저장된 목록에 없으면 **아무것도 쓰지 않고** `404`(`TARGET_NOT_FOUND`)로 거절합니다 — 다른 곳에서 이미 지운 행을 건드린 경우입니다. |
+| `PUT` 🔒 | `/api/activities` | 상태 변경·편집·추가·이동·삭제·제목 변경. 본문에 `activities` 배열, 또는 `action`(`add`/`delete`/`move`), 또는 `dashboardTitle`. 저장 전 5.2절과 같은 검증을 거칩니다. `activities` 배열과 함께 `expectedLastUpdated`를 보내면 저장된 `lastUpdated`와 다를 때 `409`(`STALE_SNAPSHOT`)로 거절합니다(4.5절). 보내지 않으면 검사하지 않습니다. `action`(`delete`/`move`)이나 `targetId`+`newStatus`로 지정한 `targetId`가 저장된 목록에 없으면 **아무것도 쓰지 않고** `404`(`TARGET_NOT_FOUND`)로 거절합니다 — 다른 곳에서 이미 지운 행을 건드린 경우입니다. `action: "add"`의 `parentId`도 같습니다(`null`은 최상위 추가라 거절하지 않습니다). |
 | `POST` 🔒 | `/api/activities/import` | `multipart/form-data`의 `file` 필드로 `activity.json` 업로드. 성공 시 자동 백업. |
 | `POST` 🔒 | `/api/activities/reset-visitor` | `visitorCount`를 0으로. 화면에 버튼은 없고, 현재 코드는 방문자 수를 올리지도 않습니다. |
 | `POST` | `/api/auth/login` | `{"pw":"...","role":"admin"|"user"}`. 관리자면 세션 쿠키 발급. |
