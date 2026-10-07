@@ -18,3 +18,4 @@
 - 일부러 안 한 것: 과제서가 범위 밖으로 지정한 `_ = decodeCappedBody`(:765/:821) 와 감사 details 의 `terms`(:802/:860), 차선 후보 `postsByIDsReactions`. `gofmt -l internal/httpapi` 의 기존 9파일도 손대지 않았다(변경·신규 2파일만 clean 확인).
 - 다음 역할이 조심할 것: **새 테스트는 DB 가 있어야 돈다**. `MOYRO_TEST_POSTGRES_DSN` 없으면 skip 되고 httpapi 가 0.17s 에 `ok` 를 내므로 통과로 오인 금지(DB 포함 시 60.8s). 컨테이너 `moyro-pg-improve`/호스트 55433 사용(`docker start` 로 기동). 테스트는 격리 스키마 안에서 `file_infos` 를 VIEW 로 바꿨다 되돌리므로 중간에 죽으면 그 스키마만 오염되고 다른 테스트에는 영향 없다.
 - [러너 01:55] brief accepted — 채택 — 근거가 현재 코드와 정확히 일치했다(`:793-800`/`:851-858` 의 `rows.Err()` 부재, `:796`/`:854` 의 `continue`, 같은 함수가 이�
+- [러너 01:55] verify passed — 검증 2개 통과 (policy)
