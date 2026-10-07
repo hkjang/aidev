@@ -1,0 +1,233 @@
+{
+  "run_id": "2026-10-07-161808-hunter-improve",
+  "generated": "2026-10-07T16:55:10+09:00",
+  "run": {
+    "run_id": "2026-10-07-161808-hunter-improve",
+    "project": "hunter",
+    "kind": "improve",
+    "started": "2026-10-07T16:18:09+09:00",
+    "model": "claude-opus-5",
+    "policy_version": "4a9e91ac7",
+    "prompts_hash": "ce085c79e18002e2",
+    "runner_version": "1bd5f0cd4",
+    "arm": "no-scout",
+    "experiment": "roles-2026-09",
+    "finished": "2026-10-07T16:55:10+09:00",
+    "outcome": "review-pending"
+  },
+  "record": {
+    "ts": "2026-10-07T16:55:10+09:00",
+    "date": "2026-10-07",
+    "project": "hunter",
+    "result": "CI timeout, PR open https://github.com/hkjang/hunter/pull/21",
+    "outcome": "review-pending",
+    "run_id": "2026-10-07-161808-hunter-improve",
+    "base_sha": "ba302dbbed75f97700eced5c592f56955f295f7a",
+    "head_sha": "bcbaf64be27745c3fafb911a93746bea29b22ae4",
+    "pr": "https://github.com/hkjang/hunter/pull/21",
+    "stages": {
+      "base": {
+        "state": "pinned",
+        "reason": "main@ba302db",
+        "at": "2026-10-07T16:18:14+09:00"
+      },
+      "autonomy": {
+        "state": "release",
+        "reason": "",
+        "at": "2026-10-07T16:18:14+09:00"
+      },
+      "verify": {
+        "state": "passed",
+        "reason": "검증 9개 통과 (auto)",
+        "at": "2026-10-07T16:30:02+09:00"
+      },
+      "review": {
+        "state": "approved",
+        "reason": "리뷰 승인 (risk=low)",
+        "at": "2026-10-07T16:36:24+09:00"
+      },
+      "pr": {
+        "state": "created",
+        "reason": "https://github.com/hkjang/hunter/pull/21",
+        "at": "2026-10-07T16:36:33+09:00"
+      },
+      "ci": {
+        "state": "timeout",
+        "reason": "제한 시간 안에 CI 완료를 확인하지 못함",
+        "at": "2026-10-07T16:55:09+09:00"
+      }
+    },
+    "campaign": "",
+    "autonomy": "release",
+    "arm": "no-scout",
+    "experiment": "roles-2026-09",
+    "engine": "claude",
+    "files": 6,
+    "additions": 202,
+    "deletions": 60,
+    "tests": 2,
+    "title": "fix: store one contribution score and declare the form bounds the server accepts"
+  },
+  "stages": {
+    "base": {
+      "state": "pinned",
+      "reason": "main@ba302db",
+      "at": "2026-10-07T16:18:14+09:00"
+    },
+    "autonomy": {
+      "state": "release",
+      "reason": "",
+      "at": "2026-10-07T16:18:14+09:00"
+    },
+    "verify": {
+      "state": "passed",
+      "reason": "검증 9개 통과 (auto)",
+      "at": "2026-10-07T16:30:02+09:00"
+    },
+    "review": {
+      "state": "approved",
+      "reason": "리뷰 승인 (risk=low)",
+      "at": "2026-10-07T16:36:24+09:00"
+    },
+    "pr": {
+      "state": "created",
+      "reason": "https://github.com/hkjang/hunter/pull/21",
+      "at": "2026-10-07T16:36:33+09:00"
+    },
+    "ci": {
+      "state": "timeout",
+      "reason": "제한 시간 안에 CI 완료를 확인하지 못함",
+      "at": "2026-10-07T16:55:09+09:00"
+    }
+  },
+  "provenance": {
+    "model": "claude-opus-5",
+    "policy_version": "4a9e91ac7",
+    "prompts_hash": "ce085c79e18002e2",
+    "runner_version": "1bd5f0cd4",
+    "base_sha": "ba302dbbed75f97700eced5c592f56955f295f7a",
+    "head_sha": "bcbaf64be27745c3fafb911a93746bea29b22ae4",
+    "pr": "https://github.com/hkjang/hunter/pull/21"
+  },
+  "verification": {
+    "runner": {
+      "source": "auto",
+      "commands": [
+        {
+          "cmd": "go build ./...",
+          "exit": 0,
+          "seconds": 3
+        },
+        {
+          "cmd": "go vet ./...",
+          "exit": 0,
+          "seconds": 0
+        },
+        {
+          "cmd": "go test ./...",
+          "exit": 0,
+          "seconds": 1
+        },
+        {
+          "cmd": "cd web && [ -d node_modules ] || npm ci --no-audit --no-fund",
+          "exit": 0,
+          "seconds": 0
+        },
+        {
+          "cmd": "cd web && npm test --silent",
+          "exit": 0,
+          "seconds": 0
+        },
+        {
+          "cmd": "cd web && [ -d node_modules ] || npm ci --no-audit --no-fund",
+          "exit": 0,
+          "seconds": 0
+        },
+        {
+          "cmd": "cd web && npm run typecheck --silent",
+          "exit": 0,
+          "seconds": 1
+        },
+        {
+          "cmd": "cd web && [ -d node_modules ] || npm ci --no-audit --no-fund",
+          "exit": 0,
+          "seconds": 0
+        },
+        {
+          "cmd": "cd web && npm run build --silent",
+          "exit": 0,
+          "seconds": 2
+        }
+      ]
+    },
+    "runner_gate": {
+      "ok": true,
+      "state": "verified",
+      "reason": "검증 9개 통과 (auto)"
+    },
+    "after_rebase": null,
+    "review": {
+      "verdict": "approve",
+      "reasons": [],
+      "notes": [
+        "internal/app/domain.go:410 되쓰기(m[\"contribution_points\"]=points)는 되돌릴 수 없는 한 방향 데이터 변경이다. 커밋을 revert해도 이미 저장된 7.5->7, null/\"\"->0 은 복구되지 않는다. 다만 7 은 이미 서버 순위표(domain.go:738)·CSV(domain.go:860)가 보고하던 값이고 openapi.json(9691, 11322)이 integer/minimum 0/maximum 10000 으로 선언한 값이므로 영향은 기여 페이지(web/src/pages.tsx:1080-1081,1209)가 소수점을 잃는 것뿐이다. 릴리즈 노트에 적을 것.",
+        "공유 벡터의 findings 행은 validateContributionPoints 단독으로만 검증한다(resource_number_bounds_test.go:76-77). 그 바로 앞에 있는 domain.go:516-518 `if !managerial(u) { m[\"contribution_points\"] = old[\"contribution_points\"] }` 와의 상호작용은 테스트가 지나지 않는다 — 범위 밖 값이 저장돼 있으면(범위 검사 이전 시기에만 가능) 비관리 사용자의 모든 수정이 \"기여 점수는 0~10000 범위입니다\"로 거절되고, 그 사용자는 해당 필드를 바꿀 권한이 없어 스스로 풀 수 없다. 이 PR 이전부터 동일한 코드 경로였고 이번 변경이 넓히지 않았다.",
+        "docs/release-v1.23.0.md:9 가 \"발견 건의 기여 점수(contribution_points)와 예약의 반복 간격(interval_minutes)은 그대로입니다\"라고 명시적으로 약속한다. 이번 변경이 정확히 그 두 필드를 바꾸므로 다음 릴리즈 노트가 이를 대체한다고 적어야 한다. VERSION/web/docs 는 1.23.0 으로 일치하며 이 PR 은 버전을 올리지 않는다(릴리즈 역할 몫).",
+        "새 reject 열은 서버 메시지와 완전 일치를 요구한다(resource_number_bounds_test.go:116,196). validateScope/validatePolicy/validateSchedule/validateContributionPoints 중 하나의 문구를 바꾸면 testdata/resource-number-bounds.json 도 같이 고쳐야 한다. 이전의 prefix 검사보다 엄격해졌다.",
+        "구현자가 미검증으로 남긴 Mantine 동작은 설치된 소스에서 확인했다: @mantine/core NumberInput.cjs:62 `clampBehavior: \"blur\"` 기본값, :385 `decimalScale: allowDecimal ? decimalScale : 0`. DOM/브라우저 실측은 여전히 없다. 폼 상한은 admin 에게만 보이는 필드이므로(resources.tsx:288 admin:true, 렌더 필터 :906) lead 는 API 로 여전히 범위 밖 값을 보내 400 을 받을 수 있다 — 서버 검사가 유일한 경계라는 점은 유지된다.",
+        "실측: npm --prefix web test 113통과/0실패/0skip, go test -count=1 -run '^(TestResourceNumberBounds|TestContributionPoints)' ./internal/app 전부 PASS(bounds 9행), npm run typecheck 0, prettier --check 통과, gofmt -l 빈 출력, go vet 0, node scripts/verify-pentagi.mjs 312파일, git diff --check 0. 미실행: HUNTER_TEST_DSN 기반 go test -race ./...(a.validateResource HTTP 전체 경로), npm run build + 자산복사 + go build ./cmd/hunter, 문서 재생성, Docker, 화면 캡처.",
+        "검토 부서 소견: security 차단 없음 — 새 라우트·권한 확장·비밀값·암호 비교·신뢰 불가 입력의 쿼리 도달 없음. managerial 게이트(domain.go:516)와 admin:manage 범위는 그대로이고 공격 경로가 없다. legal 차단 없음 — 새 개인정보 수집·전송·보존 변경, 새 의존성·라이선스, 외부 약속 문구 없음. 기여 점수는 이미 수집·표시되던 필드이며 저장 형식만 openapi 선언에 맞춘다."
+      ],
+      "risk": "low",
+      "blocking": []
+    },
+    "ci_gate": {
+      "ok": false,
+      "state": "pending",
+      "reason": "완료되지 않은 검사: verify",
+      "checks": 1,
+      "pending": 1
+    }
+  },
+  "release": {
+    "result": null,
+    "assets_sha256": []
+  },
+  "approval": null,
+  "usage": [
+    {
+      "ts": "2026-10-07T16:29:54+09:00",
+      "date": "2026-10-07",
+      "project": "hunter",
+      "phase": "improve",
+      "run_id": "2026-10-07-161808-hunter-improve",
+      "campaign": "",
+      "subtype": "success",
+      "engine": "claude",
+      "duration_ms": 763103,
+      "num_turns": 71,
+      "cost_usd": 6.370888999999997,
+      "input_tokens": 136,
+      "output_tokens": 43527,
+      "cache_read": 7760608,
+      "cache_create": 140173
+    },
+    {
+      "ts": "2026-10-07T16:36:24+09:00",
+      "date": "2026-10-07",
+      "project": "hunter",
+      "phase": "review",
+      "run_id": "2026-10-07-161808-hunter-improve",
+      "campaign": "",
+      "subtype": "success",
+      "engine": "claude",
+      "duration_ms": 413148,
+      "num_turns": 35,
+      "cost_usd": 2.9990805000000003,
+      "input_tokens": 64,
+      "output_tokens": 23890,
+      "cache_read": 2771821,
+      "cache_create": 101560
+    }
+  ]
+}
