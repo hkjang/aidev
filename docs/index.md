@@ -1,7 +1,7 @@
 ---
 title: "aidev 자율 개선 대시보드"
 description: "Claude Code 자율 개선 에이전트가 hkjang 의 프로젝트를 개선·테스트·머지·릴리즈한 일일 보고. 오늘 1회차·릴리즈 1건, 누적 2123회차·릴리즈 757건, 주의 필요 3건."
-last_modified_at: 2026-10-08 00:42:00 +0900
+last_modified_at: 2026-10-08 00:51:01 +0900
 ---
 {% raw %}
 <script type="application/ld+json">
@@ -17,7 +17,7 @@ last_modified_at: 2026-10-08 00:42:00 +0900
   "name": "hkjang",
   "url": "https://github.com/hkjang"
  },
- "dateModified": "2026-10-08T00:42:00+09:00"
+ "dateModified": "2026-10-08T00:51:01+09:00"
 }
 </script>
 
@@ -369,11 +369,11 @@ last_modified_at: 2026-10-08 00:42:00 +0900
 
 # aidev 자율 개선 대시보드
 
-<p class="tldr"><strong>한 줄 요약.</strong> Claude Code 자율 개선 에이전트가 hkjang 의 프로젝트를 개선·테스트·머지·릴리즈한 일일 보고. 오늘 1회차·릴리즈 1건, 누적 2123회차·릴리즈 757건, 주의 필요 3건. 회차가 끝날 때마다 자동 갱신됩니다 (마지막 갱신 <time datetime="2026-10-08T00:42:00+09:00" data-rel>2026-10-08 00:42</time> KST).</p>
+<p class="tldr"><strong>한 줄 요약.</strong> Claude Code 자율 개선 에이전트가 hkjang 의 프로젝트를 개선·테스트·머지·릴리즈한 일일 보고. 오늘 1회차·릴리즈 1건, 누적 2123회차·릴리즈 757건, 주의 필요 3건. 회차가 끝날 때마다 자동 갱신됩니다 (마지막 갱신 <time datetime="2026-10-08T00:51:01+09:00" data-rel>2026-10-08 00:51</time> KST).</p>
 
 <div class="alerts" role="alert"><strong>⚠️ 주의 필요 3건</strong> <span class="meta">— 새 경고는 GitHub Issue·Slack·이메일·Windows 알림으로도 보냅니다</span><ul><li><a href="https://hkjang.github.io/aidev/projects/Invenqor/">Invenqor</a> — 보호 파일 변경 — 자동 머지 안 함, 사람 검토 필요 <span class=meta>(2026-10-07 07:36)</span></li><li><a href="https://hkjang.github.io/aidev/projects/irumx-www/">irumx-www</a> — 보호 파일 변경 — 자동 머지 안 함, 사람 검토 필요 <span class=meta>(2026-10-07 20:57)</span></li><li><a href="https://hkjang.github.io/aidev/projects/irumx-www/">irumx-www</a> — 보호 파일 변경 — 자동 머지 안 함, 사람 검토 필요 <span class=meta>(2026-10-07 23:19)</span></li></ul></div>
 
-<div class="alerts" role="status"><strong>🩺 러너 점검 필요</strong> <span class="meta">— 마지막 회차 6분 전 · 스케줄러 실행 중 · 다음 실행 2026-10-08 오전 12:20:00 · 디스크 85% · 최근 7일 회귀 2건 · 점검 00:15</span><ul><li>aidev 자기 동기화 2회 연속 실패 — logs/sync.log 확인</li><li>측정 감사: 원격에 없는 릴리즈 태그 2건 — 그 저장소의 다음 릴리즈를 막는다</li></ul></div>
+<div class="alerts" role="status"><strong>🩺 러너 점검 필요</strong> <span class="meta">— 마지막 회차 3분 전 · 스케줄러 준비 · 다음 실행 2026-10-08 오전 12:50:00 · 디스크 85% · 최근 7일 회귀 2건 · 점검 00:45</span><ul><li>측정 감사: 원격에 없는 릴리즈 태그 2건 — 그 저장소의 다음 릴리즈를 막는다</li><li>조치: 소유 프로세스 없는 잠금 파일을 제거했다</li></ul></div>
 
 
 <p><a href="https://hkjang.github.io/aidev/inbox/"><strong>📥 작업함</strong></a> — 열린 러너 PR·복구·수정 과제 48건 (그중 사람 필요 38건)</p>
@@ -426,7 +426,7 @@ last_modified_at: 2026-10-08 00:42:00 +0900
 
 ## 품질 지표 (최근 14일)
 
-<ul class="stats"><li title="관찰 24h 지난 머지 379건 중 회귀 없음 378건"><b>100%</b><span>검증된 개선 완료율</span></li><li title="릴리즈 시도 358건 중 자산 검증까지 327건"><b>91%</b><span>완전한 릴리즈 비율</span></li><li title="되돌림·롤백 1건 / 관찰 머지 379건"><b>0%</b><span>사람의 재작업률</span></li><li title="회귀 1건 / 관찰 머지 379건"><b>0%</b><span>변경 후 회귀율</span></li><li title="비용 확인된 유효 개선 357건, 미확인 세션 194"><b>$11.27</b><span>유효 개선당 비용</span></li><li title="해결된 경고 364건"><b>1.8시간</b><span>예외 처리 소요 시간(중앙값)</span></li><li title="최근 14일"><b>9</b><span>실행 오류</span></li></ul>
+<ul class="stats"><li title="관찰 24h 지난 머지 379건 중 회귀 없음 378건"><b>100%</b><span>검증된 개선 완료율</span></li><li title="릴리즈 시도 358건 중 자산 검증까지 327건"><b>91%</b><span>완전한 릴리즈 비율</span></li><li title="되돌림·롤백 1건 / 관찰 머지 379건"><b>0%</b><span>사람의 재작업률</span></li><li title="회귀 1건 / 관찰 머지 379건"><b>0%</b><span>변경 후 회귀율</span></li><li title="비용 확인된 유효 개선 357건, 미확인 세션 194"><b>$11.27</b><span>유효 개선당 비용</span></li><li title="해결된 경고 366건"><b>1.8시간</b><span>예외 처리 소요 시간(중앙값)</span></li><li title="최근 14일"><b>9</b><span>실행 오류</span></li></ul>
 
 '검증된 개선'은 머지 후 24시간 관찰에서 회귀(main CI 실패·되돌림·롤백)가 없는 변경. '완전한 릴리즈'는 태그·Release·필수 자산 검증까지 끝난 것. 비용이 확인되지 않은 세션은 0이 아니라 '미확인'으로 뺀다.
 
