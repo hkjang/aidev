@@ -19,3 +19,13 @@
 - 다음 역할 주의: 전역 변경 테스트는 parallel 금지. 창 0으로 회귀를 우회하지 말고, 늦은 실패 해제는 시각 비교나 무조건 delete로 바꾸지 말 것.
 - Skill 도구가 없어 요청한 technology 세 스킬을 로컬 SKILL.md에서 읽어 적용. 정찰의 후보·상태 목록은 유지하고 이번 선택만 done으로 갱신함.
 - [러너 04:47] brief accepted — 채택 — 지정한 원인이 현재 코드와 일치했고, 양수 창에서 실패→성공→억제·동시 요청·가짜 시계의 오래된 예약 보호
+- [러너 04:49] verify passed — 검증 3개 통과 (auto)
+
+## 비평 노트
+- reject / security: 거절된 W1을 상속한 W2만 자동 승인·병합해 W1 파일이 main에 들어가는 경로를 실제 Git·SQLite 임시 overlay로 재현. 수리는 internal/app/service.go:396 및 internal/store/sqlite/commits.go:80부터 보고 AutoApproveMerges의 선행 커밋 승인 경계를 확인할 것.
+- 기준 주의: 로컬 main=dd6dcb0의 요청 diff는 38개 파일; 결함은 c83ceef에서 도입되어 origin/main=pinned 2cbfeed에도 존재. 이번 8f8a0f3 notify 4파일에서는 차단 결함 없음.
+- notify race/count=2, 전체 32개 테스트 패키지, vet/diff 검사 통과; 기존 push 제한 skip 4개. 재현 명령·임시 overlay 경로는 review.json에 기록했고 저장소는 수정하지 않음.
+- 법무 차단 없음. Windows/macOS·운영 PostgreSQL·외부 실송신 미검증; 실패 뒤 다음 Post만 복구하며 자동 재시도·최종 전달 보장은 아님.
+- [러너 04:57] review rejected — 리뷰 거절: internal/app/service.go:396 [P1/security, 차단] LatestGoalCommit의 미병합 커밋을 다음 작업의 base로 상속하면서 선행 작업의 병합 거절을 전파하지 않습�
+- [러너 04:57] review blocked — 검토 부서 차단 소견(security) — 수리·중재 없이 운영자의 위험 수용(risk-accepted) 필요
+- [러너 04:57] pr created — https://github.com/hkjang/goalforge/pull/83

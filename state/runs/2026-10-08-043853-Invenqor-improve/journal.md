@@ -19,3 +19,12 @@
 - 일부러 하지 않은 것: 기존 행 보정, null 정책 강화, auth·스키마·문서·릴리즈 변경. 범위를 확대하지 않고 정찰의 기존 아이디어 14개를 유지하며 선택 항목만 done으로 갱신했다.
 - 다음 역할 주의: PostgreSQL 검증은 Docker와 빈 포트가 필요하고 스크립트가 지정 이름의 컨테이너를 삭제하므로 고유 이름을 사용해야 한다. 이번 전용 컨테이너는 정리됨. 전용 Skill 도구 부재로 로컬 technology SKILL.md 3개를 읽어 적용했다.
 - [러너 04:47] brief accepted — 채택 — 코드와 공개 계약이 과제서와 일치했고 두 인증 경로의 0→1 결함을 실제로 재현했으며, 제안된 최소 수정으로 �
+- [러너 04:48] verify passed — 검증 8개 통과 (auto)
+
+## 비평 노트
+- approve / low / blocking 없음: 7250899의 기본값·0 보존, 실제 라우터·DB·GET·감사 단언과 원장의 수정 전 실패를 확인했다.
+- 독립 검증: SQLite·PostgreSQL 17 전체 Go suite, vet, 변경 파일 gofmt·diff 검사 통과; 최초 Docker 포트 오류는 빈 포트 55549로 해소하고 전용 컨테이너 정리 완료.
+- 기준 주의: 로컬 main=c9527e7(과거 변경 71파일), 고정 base·origin/main=ab7c89b(신규 2파일). 과거 배포 변경 전체 재심사와 브라우저·web/Rust·Pages 검증은 하지 않았다.
+- 릴리즈는 신규 생성의 0 보존임을 명시할 것: 기존 행 복원과 null 정책 변경은 없다. 요청 스킬 3개는 전용 도구 부재로 로컬 SKILL.md를 읽어 적용했다.
+- [러너 04:52] review approved — 리뷰 승인 (risk=low)
+- [러너 04:52] pr created — https://github.com/hkjang/invenqor/pull/35

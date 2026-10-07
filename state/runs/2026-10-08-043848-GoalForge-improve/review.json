@@ -1,0 +1,18 @@
+{
+  "verdict": "reject",
+  "reasons": [
+    "internal/app/service.go:396 [P1/security, 차단] LatestGoalCommit의 미병합 커밋을 다음 작업의 base로 상속하면서 선행 작업의 병합 거절을 전파하지 않습니다(internal/store/sqlite/commits.go:80은 DISCARDED만 제외). 검증 완료된 W1의 MERGE_BRANCH 승인을 사람이 REJECTED로 만든 뒤 W2를 그 커밋 위에서 실행하면, AutoApproveMerges는 W2만 심사·승인하고 W2의 ConsumeScopedApproval 및 MergeVerified가 W1까지 main에 반영합니다. 실제 Git·SQLite 재현에서 W1 승인은 계속 REJECTED인데 W1 파일이 main에 나타났습니다. 거절된 변경을 가진 실행 주체가 허용 범위의 후속 작업을 통해 사람의 병합 거절을 우회할 수 있습니다. 후속 커밋이 반영할 전체 미병합 선행 작업의 승인·거절·자동 승인 범위를 병합 전에 검증하거나, 선행 작업을 별도 승인·병합하기 전에는 후속 자동 병합을 거부해야 합니다."
+  ],
+  "notes": [
+    "기준 불일치: 로컬 main=dd6dcb0, origin/main 및 회차 pinned base=2cbfeed, HEAD=8f8a0f3입니다. 요청한 git diff main...HEAD는 38개 파일이며 위 결함은 그 범위의 c83ceef 변경에서 발생했습니다. 이미 origin/main에도 존재하므로 이번 웹훅 커밋이 만든 회귀로 귀속하면 안 됩니다. pinned base 2cbfeed...HEAD의 4개 notify 파일에서는 차단 결함을 찾지 못했습니다.",
+    "검증: go test -race ./internal/notify -count=2 통과; go test ./... -count=1 -json에서 32개 테스트 패키지 통과, 실패 0. 기존 Git push 환경 제한으로 테스트 4개 skip, procctl/testscript는 테스트 없음. go vet ./... 및 git diff --check main...HEAD 통과. 저장소 git status는 깨끗합니다.",
+    "보안 재현: go test -overlay=/tmp/goalforge-review-1xslf6fn/overlay.json ./internal/observer -run ^TestReviewRejectedAncestorCannotRideApprovedDescendant$ -count=1 -v 가 REJECTED first work reached main through the automatically approved second work로 실패했습니다. 임시 overlay만 사용했고 저장소 소스·테스트는 편집하지 않았습니다.",
+    "원장 실패 재현 출력과 새 notify 테스트의 실제 요청 수 단언을 대조했습니다. HTTP 500·잘못된 URL·취소 context 후 재전송, 성공 후 억제, 동시 호출, 창 경계·0 창, 오래된 예약 해제 보호를 확인했습니다. 실패 후 다음 Post만 허용하며 단발 COMPLETED 알림의 자동 재시도·전달 보장은 아닙니다.",
+    "법무·개인정보: 이번 webhook 변경은 기존 project/name/state/reason/text 전송과 redaction, 환경변수로 지정하는 수신처를 유지합니다. 새 개인정보 항목·외부 업체·영구 저장·의존성·마이그레이션 변경은 발견하지 못했으며 legal 차단 없음. Windows/macOS 직접 실행, 운영 PostgreSQL 및 외부 웹훅 실송신은 검증하지 않았습니다.",
+    "Skill 도구는 제공되지 않아 headcount 로컬의 legal-risk:privacy-and-data-protection, security:security-architecture-review, technology:code-review SKILL.md를 읽고 적용했습니다."
+  ],
+  "risk": "high",
+  "blocking": [
+    "security"
+  ]
+}
