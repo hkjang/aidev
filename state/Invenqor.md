@@ -1111,3 +1111,15 @@
   아닌 Pages 배포였고, 그래서 CI 가 못 잡은 구멍 자체가 고칠 대상이었다. 정찰 프로필은 docs/ 가
   Pages 발행 소스라는 사실을 적고 있지 않다 — 다음 정찰이 보탤 것.
 
+## 2026-10-08
+- 선택: 자산 관계 생성에서 명시적 confidence: 0을 저장·조회·감사까지 보존 (가치 3 / 위험 1 / 작업량 S)
+- 결과: 성공
+- 요약: createAssetRelation이 JSON을 읽기 전에 confidence 기본값을 1로 설정하고, 명시적 0을 1로 덮어쓰던 후처리를 제거했다. 실제 Runtime/라우터와 발급된 인증을 거치는 콘솔·외부 REST 테스트에서 생략/null은 1, 명시적 0/1/0.8은 요청값이 DB·같은 인증 경로의 GET·relation.create 감사 after_json에 숫자로 보존됨을 확인했으며, 범위·UUID·충돌 회귀도 양 DB에서 통과했다. 검증: SQLite `cd server && go test ./internal/httpapi/ -run 'Relation' -count=1` ok(httpapi 3.312s), PostgreSQL `POSTGRES_CONTAINER=invenqor-impl-20261008-043853-confidence POSTGRES_PORT=55548 ./scripts/test-postgres.sh -run 'Relation' -count=1` ok(httpapi 7.254s), `cd server && go test ./... && go vet ./...` ok(httpapi 29.652s, storage 19.942s; vet 출력 없음), `go build -o /dev/null ./cmd/invenqor-server` 성공, 지정 두 파일 `gofmt -l` 및 `git diff --check` 출력 없음. 커밋 7250899, 프로덕션 1파일 + 기존 테스트 1파일.
+- 실패 재현: 수정 전 `cd server && go test ./internal/httpapi/ -run '^TestRelationCreateStoresConfidenceWithinDeclaredRange$' -count=1`의 console/external 모두 `asset_relation_validation_test.go:322: stored confidence = 1, want 0` / `asset_relation_validation_test.go:354: audit confidence = 1, want number 0` (exit 1). GET도 `confidence = 1, want number 0`으로 실패했다. 최소 수정 뒤 같은 테스트 통과(0.470s), 프로덕션 수정만 되돌리자 동일한 DB·GET·감사 실패가 재현됐고 다시 수정한 최종 상태에서 위 전체 검증을 수행했다.
+- 보류 아이디어:
+  - 관계 생성 confidence JSON 타입 오류 회귀 테스트 보강 (가치 2 / 위험 1 / S): 문자열·bool·배열·객체·1e309의 400과 행/감사 무변경 검증은 차선으로 보존; 이번에는 주 과제 해결로 미구현.
+  - REST 관계 valid_from 날짜 직렬화의 양 DB 일관성 점검 (가치 3 / 위험 2 / S): 실제 HTTP 날짜 파싱 실패 재현부터 진행; MCP와 통합하지 않는다.
+  - 관계 삭제를 부모 assetID에 속한 관계로 제한 (가치 4 / 위험 2 / M): incoming/outgoing 부모 정책과 실제 잘못된 부모 요청 재현이 선행돼야 한다.
+  - canonicalUUID를 쓰지 않는 나머지 id 경로 점검 (가치 3 / 위험 2 / M): MCP 한 파일로 좁히고 하위 서비스 검증 여부부터 확인한다.
+- 과제서: 채택 — 코드와 공개 계약이 과제서와 일치했고 두 인증 경로의 0→1 결함을 실제로 재현했으며, 제안된 최소 수정으로 양 DB 수용 기준을 충족했다.
+
