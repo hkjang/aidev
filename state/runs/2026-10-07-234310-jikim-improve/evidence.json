@@ -1,0 +1,267 @@
+{
+  "run_id": "2026-10-07-234310-jikim-improve",
+  "generated": "2026-10-08T00:08:04+09:00",
+  "run": {
+    "run_id": "2026-10-07-234310-jikim-improve",
+    "project": "jikim",
+    "kind": "improve",
+    "started": "2026-10-07T23:43:11+09:00",
+    "model": "claude-opus-5",
+    "policy_version": "4a9e91ac7",
+    "prompts_hash": "ce085c79e18002e2",
+    "runner_version": "1bd5f0cd4",
+    "arm": "no-scout",
+    "experiment": "roles-2026-09",
+    "finished": "2026-10-08T00:08:04+09:00",
+    "outcome": "releasing"
+  },
+  "record": {
+    "ts": "2026-10-08T00:08:04+09:00",
+    "date": "2026-10-07",
+    "project": "jikim",
+    "result": "merged https://github.com/hkjang/jikim/pull/53, release tag held (api-error)",
+    "outcome": "releasing",
+    "run_id": "2026-10-07-234310-jikim-improve",
+    "base_sha": "9c725a36600ad56ee4c6035ee29028b6f6c3abc1",
+    "head_sha": "90b82b189b309dcc40b6201d9eebc263ef96fee1",
+    "pr": "https://github.com/hkjang/jikim/pull/53",
+    "stages": {
+      "base": {
+        "state": "pinned",
+        "reason": "main@9c725a3",
+        "at": "2026-10-07T23:43:13+09:00"
+      },
+      "autonomy": {
+        "state": "release",
+        "reason": "",
+        "at": "2026-10-07T23:43:13+09:00"
+      },
+      "verify": {
+        "state": "passed",
+        "reason": "검증 7개 통과 (auto)",
+        "at": "2026-10-07T23:53:29+09:00"
+      },
+      "review": {
+        "state": "approved",
+        "reason": "리뷰 승인 (risk=low)",
+        "at": "2026-10-07T23:56:20+09:00"
+      },
+      "pr": {
+        "state": "created",
+        "reason": "https://github.com/hkjang/jikim/pull/53",
+        "at": "2026-10-07T23:56:27+09:00"
+      },
+      "ci": {
+        "state": "passed",
+        "reason": "검사 2개 모두 success",
+        "at": "2026-10-08T00:00:34+09:00"
+      },
+      "merge": {
+        "state": "done",
+        "reason": "90b82b189b309dcc40b6201d9eebc263ef96fee1",
+        "at": "2026-10-08T00:00:42+09:00"
+      },
+      "release": {
+        "state": "ci-blocked",
+        "reason": "릴리즈 커밋 CI: api-error — API 오류: gh api failed (태그 보류)",
+        "at": "2026-10-08T00:08:00+09:00"
+      }
+    },
+    "campaign": "",
+    "autonomy": "release",
+    "arm": "no-scout",
+    "experiment": "roles-2026-09",
+    "engine": "claude",
+    "files": 3,
+    "additions": 90,
+    "deletions": 2,
+    "tests": 1,
+    "title": "fix: report the OIDC settings read behind an MCP SSO save as a server fault"
+  },
+  "stages": {
+    "base": {
+      "state": "pinned",
+      "reason": "main@9c725a3",
+      "at": "2026-10-07T23:43:13+09:00"
+    },
+    "autonomy": {
+      "state": "release",
+      "reason": "",
+      "at": "2026-10-07T23:43:13+09:00"
+    },
+    "verify": {
+      "state": "passed",
+      "reason": "검증 7개 통과 (auto)",
+      "at": "2026-10-07T23:53:29+09:00"
+    },
+    "review": {
+      "state": "approved",
+      "reason": "리뷰 승인 (risk=low)",
+      "at": "2026-10-07T23:56:20+09:00"
+    },
+    "pr": {
+      "state": "created",
+      "reason": "https://github.com/hkjang/jikim/pull/53",
+      "at": "2026-10-07T23:56:27+09:00"
+    },
+    "ci": {
+      "state": "passed",
+      "reason": "검사 2개 모두 success",
+      "at": "2026-10-08T00:00:34+09:00"
+    },
+    "merge": {
+      "state": "done",
+      "reason": "90b82b189b309dcc40b6201d9eebc263ef96fee1",
+      "at": "2026-10-08T00:00:42+09:00"
+    },
+    "release": {
+      "state": "ci-blocked",
+      "reason": "릴리즈 커밋 CI: api-error — API 오류: gh api failed (태그 보류)",
+      "at": "2026-10-08T00:08:00+09:00"
+    }
+  },
+  "provenance": {
+    "model": "claude-opus-5",
+    "policy_version": "4a9e91ac7",
+    "prompts_hash": "ce085c79e18002e2",
+    "runner_version": "1bd5f0cd4",
+    "base_sha": "9c725a36600ad56ee4c6035ee29028b6f6c3abc1",
+    "head_sha": "90b82b189b309dcc40b6201d9eebc263ef96fee1",
+    "pr": "https://github.com/hkjang/jikim/pull/53"
+  },
+  "verification": {
+    "runner": {
+      "source": "auto",
+      "commands": [
+        {
+          "cmd": "go build ./...",
+          "exit": 0,
+          "seconds": 1
+        },
+        {
+          "cmd": "go vet ./...",
+          "exit": 0,
+          "seconds": 0
+        },
+        {
+          "cmd": "go test ./...",
+          "exit": 0,
+          "seconds": 1
+        },
+        {
+          "cmd": "cd web && [ -d node_modules ] || npm ci --no-audit --no-fund",
+          "exit": 0,
+          "seconds": 0
+        },
+        {
+          "cmd": "cd web && npm test --silent",
+          "exit": 0,
+          "seconds": 8
+        },
+        {
+          "cmd": "cd web && [ -d node_modules ] || npm ci --no-audit --no-fund",
+          "exit": 0,
+          "seconds": 0
+        },
+        {
+          "cmd": "cd web && npm run build --silent",
+          "exit": 0,
+          "seconds": 4
+        }
+      ]
+    },
+    "runner_gate": {
+      "ok": true,
+      "state": "verified",
+      "reason": "검증 7개 통과 (auto)"
+    },
+    "after_rebase": null,
+    "review": {
+      "verdict": "approve",
+      "reasons": [],
+      "notes": [
+        "재현 독립 확인: resource_handlers.go:755-758 의 errors.Is 분기만 되돌리고 `go test ./internal/httpapi/ -run TestUpdateSettingsReportsOIDCReadOutageAsServerFault` 를 돌려 `storage outage` 서브테스트가 원장과 동일한 출력(`status=400 (원하는 값 500)` + body 에 `host=postgres.internal user=jikim_app ... SQLSTATE 28P01`)으로 red 가 되는 것을 확인했고, 복원 후 패키지 전체 green(0.668s), gofmt/go vet 무출력. 거절 3개 서브테스트는 기존 계약을 못박는 쪽이라 red 가 아닌 것이 정상이다.",
+        "구현자가 의심한 (1) seam 교체 검증: oidc.go:43-47 `loadOIDCConfig` 는 `oidcConfigLoader != nil` 일 때만 우회하는 nil-폴백이고 `s.oidcConfigLoader` 는 프로덕션 부트스트랩에서 설정되지 않는다(grep 결과 테스트 3곳뿐). 따라서 mcp_oauth.go:397 의 교체는 프로덕션 경로에서 `s.store.OIDCConfig` 와 동일하다 — 테스트로 못박히지는 않았으나 코드로 확인 가능한 범위다.",
+        "구현자가 의심한 (2) ErrInvalid 경로는 실제 결함 가능성이 남아 있다: store.go:184 `mapError` 가 22P02/23503/23514 를 `fmt.Errorf(\"%w: %s\", ErrInvalid, pgErr.Message)` 로 접고 server.go:457-465 `storeError` 는 500 일 때만 message 를 가리므로, 이 계열은 400 `invalid_request` + pgErr.Message 원문으로 나간다. 다만 (a) DSN·SQLSTATE 는 포함되지 않고 (b) 저장소 전체가 같은 규칙이며 (c) OIDCConfig 단일 행 조회가 그 SQLSTATE 를 내는 경로는 이 환경에서 재현 불가 — 이번 변경이 새로 만든 결함이 아니므로 차단하지 않는다. 별도 회차 후보로 남길 가치는 있다.",
+        "보안·법무 관점에서 차단 사유 없음: 인증·인가 경로(withAuth·requireRoles·requireOIDCForMCPOAuth 의 '들어온 값 우선' 로직·mcp_oauth.go 의 리소스 식별자/WWW-Authenticate 범위)는 한 줄도 바뀌지 않았고, 변경 방향이 응답 본문의 비밀값(DSN·자격증명 사용자명) 노출을 줄이는 쪽이다. 새로 수집·전송하는 개인정보 없음. 서버 ERROR 로그에는 원문이 남지만 이는 기존 storeError 규칙이다.",
+        "범위·되돌리기: 프로덕션 2파일 + 테스트 1파일, 마이그레이션·워크플로·CHANGELOG·버전 무변경이라 revert 로 완전히 되돌아온다. 프런트는 SettingsPage.tsx:631 에서 같은 조건을 클라이언트 측에서 먼저 막고 error code 로 분기하지 않으므로 400→500 전환에 깨지는 화면이 없다(web/node_modules 부재로 프런트 테스트는 돌리지 않았고, diff 에 프런트 파일이 없어 불필요하다고 판단).",
+        "릴리즈 단계 주의: main HEAD 가 이미 `9c725a3 fix: release ... for v0.2.30` 이므로 scripts/version.sh 의 JIKIM_VERSION 은 v0.2.30 이다. 이 회차의 릴리즈 커밋은 v0.2.31 로 올려야 하고, 프로필에 적힌 'v0.2.29' 는 낡은 값이다."
+      ],
+      "risk": "low",
+      "blocking": []
+    },
+    "ci_gate": {
+      "ok": true,
+      "state": "success",
+      "reason": "검사 2개 모두 success",
+      "checks": 2
+    }
+  },
+  "release": {
+    "result": {
+      "status": "released",
+      "version": "0.2.31",
+      "tag": "v0.2.31",
+      "title": "jikim v0.2.31",
+      "notes_file": "",
+      "github_release": false,
+      "assets": [],
+      "reason": ""
+    },
+    "assets_sha256": []
+  },
+  "approval": null,
+  "usage": [
+    {
+      "ts": "2026-10-07T23:53:15+09:00",
+      "date": "2026-10-07",
+      "project": "jikim",
+      "phase": "improve",
+      "run_id": "2026-10-07-234310-jikim-improve",
+      "campaign": "",
+      "subtype": "success",
+      "engine": "claude",
+      "duration_ms": 632523,
+      "num_turns": 66,
+      "cost_usd": 6.981768500000001,
+      "input_tokens": 126,
+      "output_tokens": 32376,
+      "cache_read": 8617797,
+      "cache_create": 186284
+    },
+    {
+      "ts": "2026-10-07T23:56:20+09:00",
+      "date": "2026-10-07",
+      "project": "jikim",
+      "phase": "review",
+      "run_id": "2026-10-07-234310-jikim-improve",
+      "campaign": "",
+      "subtype": "success",
+      "engine": "claude",
+      "duration_ms": 167775,
+      "num_turns": 21,
+      "cost_usd": 1.0830595,
+      "input_tokens": 28,
+      "output_tokens": 9328,
+      "cache_read": 705739,
+      "cache_create": 49685
+    },
+    {
+      "ts": "2026-10-08T00:05:21+09:00",
+      "date": "2026-10-07",
+      "project": "jikim",
+      "phase": "release",
+      "run_id": "2026-10-07-234310-jikim-improve",
+      "campaign": "",
+      "subtype": "success",
+      "engine": "claude",
+      "duration_ms": 264952,
+      "num_turns": 31,
+      "cost_usd": 2.08894,
+      "input_tokens": 50,
+      "output_tokens": 15767,
+      "cache_read": 1787470,
+      "cache_create": 80078
+    }
+  ]
+}

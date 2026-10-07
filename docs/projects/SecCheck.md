@@ -1,7 +1,7 @@
 ---
 title: "SecCheck — 자율 개선 이력"
 description: "SecCheck: 자율 개선 회차 35회, 릴리즈 2건. 최근 릴리즈 v1.0.146 (자산 1개)."
-last_modified_at: 2026-10-07 23:38:15 +0900
+last_modified_at: 2026-10-08 00:08:35 +0900
 ---
 {% raw %}
 <script type="application/ld+json">
@@ -18,14 +18,14 @@ last_modified_at: 2026-10-07 23:38:15 +0900
   "name": "hkjang",
   "url": "https://github.com/hkjang"
  },
- "dateModified": "2026-10-07T23:38:15+09:00",
+ "dateModified": "2026-10-08T00:08:35+09:00",
  "version": "1.0.146"
 }
 </script>
 
 # SecCheck
 
-<p class="tldr"><strong>요약.</strong> SecCheck: 자율 개선 회차 35회, 릴리즈 2건. 최근 릴리즈 v1.0.146 (자산 1개). <span class="pill pill-merged" title="14일: 릴리즈 0, 실패 1, 경고 1, 회귀 0">건강 C</span> <span class="meta">14일: 릴리즈 0, 실패 1, 경고 1, 회귀 0</span></p>
+<p class="tldr"><strong>요약.</strong> SecCheck: 자율 개선 회차 35회, 릴리즈 2건. 최근 릴리즈 v1.0.146 (자산 1개). <span class="pill pill-merged" title="14일: 릴리즈 0, 실패 0, 경고 0, 회귀 0">건강 B</span> <span class="meta">14일: 릴리즈 0, 실패 0, 경고 0, 회귀 0</span></p>
 
 <ul class="stats"><li><b>35</b><span>회차</span></li><li><b>1</b><span>프로젝트</span></li><li><b>2</b><span>배포 준비 완료</span></li><li><b>0</b><span>릴리즈 진행 중</span></li><li><b>0</b><span>병합 완료</span></li><li><b>7</b><span>검토 대기</span></li><li><b>19</b><span>검증 실패</span></li><li><b>4</b><span>변경 없음</span></li><li><b>3</b><span>실행 오류</span></li><li><b>$179.77</b><span>비용</span></li><li><b>6시간 59분</b><span>에이전트 시간</span></li></ul>
 
