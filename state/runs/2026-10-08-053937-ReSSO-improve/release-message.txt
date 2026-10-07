@@ -1,0 +1,57 @@
+release: ReSSO v0.9.102
+
+The audit entry for AUTHORIZATION_CODE_REUSED is the only record that a code
+leaked, and the operations guide sends a reader to search it by account. The
+name in it comes from a UserByID made after the grant is already lost, and that
+call's error went to _. While users could not be read the entry was still
+written, but its actor column was blank and nothing in the logs or the metrics
+said why. A search by account could never return it, and a reader could not tell
+that blank apart from a code that belonged to nobody.
+
+The refresh token path has answered this for some time. It passes
+userLookupFailed before its rotation for this very reason, and the comment there
+names this defect in as many words. The code reuse branch was the one left
+dropping the error, so this release moves the same helper to it: the lookup now
+goes through userLookupFailed, and its verdict steers the signals and nothing
+else. The detail gains actor_resolved=false, and the helper leaves its ERROR
+line, the account named in the grant could not be looked up, and
+resso_token_errors_total{grant_type="authorization_code"}. What this change adds
+is the one key; the other two were already the helper's. The reason stays in the
+log and not in the detail, which is stored verbatim and handed back by the audit
+screen. An ordinary replay whose lookup succeeded carries no actor_resolved key
+at all, so the shape of the existing entry is unchanged.
+
+The answer to the caller does not change. A replay is a dead grant either way,
+400 invalid_grant "authorization code is invalid or expired", before and after.
+Answering 500 server_error here was deliberately not done: the redemption that
+detected the replay spent the code, so there is no retry for a 500 to invite,
+and it was a separate change that was submitted and rejected.
+
+store.ErrNotFound keeps making no noise, because the helper filters it. An
+account that is genuinely gone is a real answer to the question rather than a
+blank this server owes an explanation for. That branch cannot be reached by a
+deleted account in any case: authorization_codes.user_id is ON DELETE CASCADE,
+so a deleted account takes its codes with it and no reuse is detected at all.
+
+The integration test runs the production wiring against real PostgreSQL, mines
+both codes from the real /auth redirect, and hides the accounts on its own by
+renaming users out of the way, restoring it before the assertions. It pins both
+outcomes: the ordinary replay keeps its blank-free actor, its single warning and
+no sample on the error series, and the replay during the outage keeps its 400
+and its two entries while recording actor_resolved=false with one error line and
+one count. The registry prints HELP and TYPE for a series with no samples, so
+the absence assertion reads a sample line rather than the series name. That the
+audit entry survives the outage at all was verified by running it rather than
+assumed: the foreign key on audit_events.actor_id follows the renamed table.
+
+The operations guide's two lines were corrected rather than extended. The
+AUTHORIZATION_CODE_REUSED entry now says what actor_resolved=false means, that
+it is a failed lookup and not a missing account, and that the session_id in the
+detail is how to find the owner when the account column cannot be searched. The
+resso_token_errors_total bullet gained the exception to its own sentence that
+this family is answered with 500 server_error: the lookup after a detected
+replay counts here and logs the same line, but answers 400 as before, because
+the code is already spent.
+
+Stamps the version in the Makefile, console package metadata, .env.example and
+both compose files, with no schema or configuration changes.
