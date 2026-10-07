@@ -1,0 +1,98 @@
+
+> appstore-web@2.11.15 test
+> vitest run src/features/security-check/security-check.test.tsx
+
+
+ RUN  v3.2.7 /home/hkjang/.cache/auto-improve-wt/appstore/web
+
+ ❯ src/features/security-check/security-check.test.tsx (12 tests | 3 failed) 536ms
+   ✓ App security check > shows the block to paste into SecCheck and withholds submission 83ms
+   ✓ App security check > verifies a review and then opens submission 198ms
+   ✓ App security check > names the app status in Korean instead of showing the stored value 12ms
+   ✓ App security check > falls back to the stored value for a status it does not know 10ms
+   × App security check > names the final result APPROVED as 승인됨 14ms
+     → expect(element).toHaveTextContent()
+
+Expected element to have text content:
+  최종 결과승인됨
+Received:
+  최종 결과APPROVED
+   × App security check > names the final result CONDITIONAL as 조건부 승인 11ms
+     → expect(element).toHaveTextContent()
+
+Expected element to have text content:
+  최종 결과조건부 승인
+Received:
+  최종 결과CONDITIONAL
+   × App security check > names the final result REJECTED as 반려됨 11ms
+     → expect(element).toHaveTextContent()
+
+Expected element to have text content:
+  최종 결과반려됨
+Received:
+  최종 결과REJECTED
+   ✓ App security check > preserves the fallback for an empty final result 13ms
+   ✓ App security check > preserves the fallback for an missing final result 11ms
+   ✓ App security check > preserves the fallback for an unknown final result 12ms
+   ✓ App security check > explains why a review was refused 156ms
+   ✓ Security verified badge > labels a cleared app and stays away otherwise 2ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 3 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/features/security-check/security-check.test.tsx > App security check > names the final result APPROVED as 승인됨
+Error: expect(element).toHaveTextContent()
+
+Expected element to have text content:
+  최종 결과승인됨
+Received:
+  최종 결과APPROVED
+ ❯ src/features/security-check/security-check.test.tsx:135:17
+    133|     await screen.findByText(/APPSTORE-SECURITY-CHECK/);
+    134|     const row = screen.getByText("최종 결과").closest(".meta-row");
+    135|     expect(row).toHaveTextContent(`최종 결과${label}`);
+       |                 ^
+    136|     expect(row).not.toHaveTextContent(finalResult);
+    137|     expect(screen.queryByRole("button", { name: /검토 제출/ })).toBeNull();
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/3]⎯
+
+ FAIL  src/features/security-check/security-check.test.tsx > App security check > names the final result CONDITIONAL as 조건부 승인
+Error: expect(element).toHaveTextContent()
+
+Expected element to have text content:
+  최종 결과조건부 승인
+Received:
+  최종 결과CONDITIONAL
+ ❯ src/features/security-check/security-check.test.tsx:135:17
+    133|     await screen.findByText(/APPSTORE-SECURITY-CHECK/);
+    134|     const row = screen.getByText("최종 결과").closest(".meta-row");
+    135|     expect(row).toHaveTextContent(`최종 결과${label}`);
+       |                 ^
+    136|     expect(row).not.toHaveTextContent(finalResult);
+    137|     expect(screen.queryByRole("button", { name: /검토 제출/ })).toBeNull();
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/3]⎯
+
+ FAIL  src/features/security-check/security-check.test.tsx > App security check > names the final result REJECTED as 반려됨
+Error: expect(element).toHaveTextContent()
+
+Expected element to have text content:
+  최종 결과반려됨
+Received:
+  최종 결과REJECTED
+ ❯ src/features/security-check/security-check.test.tsx:135:17
+    133|     await screen.findByText(/APPSTORE-SECURITY-CHECK/);
+    134|     const row = screen.getByText("최종 결과").closest(".meta-row");
+    135|     expect(row).toHaveTextContent(`최종 결과${label}`);
+       |                 ^
+    136|     expect(row).not.toHaveTextContent(finalResult);
+    137|     expect(screen.queryByRole("button", { name: /검토 제출/ })).toBeNull();
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/3]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  3 failed | 9 passed (12)
+   Start at  12:23:17
+   Duration  1.30s (transform 102ms, setup 80ms, collect 233ms, tests 536ms, environment 211ms, prepare 58ms)
+

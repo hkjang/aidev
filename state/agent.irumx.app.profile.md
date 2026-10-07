@@ -1,0 +1,37 @@
+# 이룸에이전트(agent.irumx.app) 프로필 (2026-10-07)
+- 목적: 개인·팀이 AI에 업무를 맡기고 도구 사용·승인·비용·결과물을 확인하는 서비스.
+- 기준: main@0e65235, package.json v0.8.1. 기존 프로필·개선 기록 없음.
+- 스택: TypeScript, React 19, React Router, TanStack Query, Vite; Cloudflare Workers/Hono, D1/Drizzle, 비공개 R2, Queues/Cron, Better Auth 이메일 OTP.
+- 모델: Workers AI 운영자 제공 모델, Anthropic/OpenAI 호환 BYOK; 외부 MCP OAuth 연결.
+- 구조:
+  - src/client/app·features·components·lib: 앱 배선, 업무 화면, 공통 UI, HTTP/query 도우미.
+  - src/shared: 화면·서버 공통 domain/models/catalog/cron 계약.
+  - src/worker/index.ts·app.ts·api: Worker 라우팅, 공통 요청 처리, 업무 API.
+  - src/worker/domain·jobs: 실행/승인/예약/예산/자료 도메인과 큐·Cron 처리.
+  - src/worker/adapters: 모델/MCP/메일/문서/client 연계 경계.
+  - src/worker/security·policies·auth: 자격증명 보호, 외부 요청 제한, 테넌트/공간 권한, 인증.
+  - migrations·src/worker/db: SQL 스키마/불변성 가드/데이터 접근.
+  - tests·tests/mocks: Playwright unit/API/브라우저, 외부 서비스 흉내 서버.
+  - scripts·docs·public: 빌드/배포/운영 검사, 설계·수용 문서, 정적 자산.
+- 빌드·테스트:
+  - Node >=22.12.0. 준비 npm ci; npm run check(TypeScript 3개 설정).
+  - npm run build: 폰트 subset → check → Vite → verify-build.mjs(자산·보안·SEO 검사).
+  - npx playwright test --project=unit --project=api --project=desktop --project=mobile (수분 소요; 이번 환경 미실행).
+  - 예약 집중: npx playwright test --project=unit --project=api tests/unit-core.spec.ts tests/api-schedule.spec.ts.
+  - 단독 계산 재현: node --experimental-strip-types --input-type=module로 src/shared/cron.ts import 가능(Node 22.23.1 확인).
+- 관례: 최근 커밋 10개는 한국어 버전·기능 설명형. git log -30 결과 전체가 10개였다.
+- 설정: package.json, wrangler.jsonc, .dev.vars.example, tests/worker-test.env. 비밀 값은 운영 외부 파일/Cloudflare 관리(배포 문서).
+- 마이그레이션: drizzle-kit generate(npm run db:migrate), migrations SQL. 배포 시 remote migrations 적용; 임의로 운영 실행 금지.
+- 문서: README에 docs 목록; architecture/acceptance/deployment/performance 등. CLAUDE.md·AGENTS.md·전용 roadmap·저장소 CI 설정은 검색에서 없음.
+- 계획 자료: docs/deployment.md의 미완료 출시 점검표, docs/performance.md의 다음 후보. TODO/FIXME 표시는 src/tests/docs 검색에서 없음.
+- 품질: docs/acceptance.md에 2026-10-06 unit17/api45/desktop2/mobile1=65 통과 기록. 정찰 재검증 결과가 아니다.
+- 이번 확인: Node 실제 cron 소스 검사 3 pass/1 fail. Lord Howe shift에서 n=1과 n=5의 첫 시각 불일치 재현.
+- 위험 구역: auth·security·policies는 인증/자격증명/격리, domain/engine·runs·approvals는 중복 실행/외부 쓰기 승인, migrations는 감사·발행본 불변성과 관계됨.
+- 운영 위험: scripts/deploy.mjs는 원격 DB·리소스·서비스 변경. tests/live-*는 실제 서비스와 과금 가능하므로 LIVE=1은 별도 범위.
+- 자주 깨지는 곳: 이 저장소의 과거 실패 기록은 없음. 운영자 공통 교훈은 프로덕션 배선 테스트, 감사 원문 유출 방지, 다른 계약의 파서 통합 금지.
+- 검증 함정:
+  - 이 정찰 작업 트리에 node_modules 없음. npm run check는 tsc 없음, npm test -- --list는 @playwright/test 없음으로 실패. 설치 후 전체 통과 여부 미확인.
+  - unit도 Playwright 공통 webServer를 시작하며 빌드 결과와 로컬 D1/R2/Queues가 필요하다.
+  - 외부 흉내 서버 8871~8875, Worker 8870. reuseExistingServer=true 때문에 구 빌드 재사용 가능.
+  - scripts/db-local.mjs는 지정 persist 경로를 비움(.wrangler/test-state). 개인 개발 DB를 넘기지 않는다.
+  - 실제 Anthropic 키, 실제 OAuth 토큰 교환, 실제 client 연계, 운영 Queues/Cron 지연은 문서상 미검증.

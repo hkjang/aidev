@@ -1,0 +1,74 @@
+[
+  {
+    "title": "DST shift 예약의 다음 실행 순서와 조회 개수 일관성 수정",
+    "value": 4,
+    "risk": 2,
+    "size": "M",
+    "status": "done",
+    "note": "6b7ac2b에서 nextRuns의 shift 조기 중단만 제거. 새 단위/API 테스트로 수정 전 3 failed / 4 passed, 수정 후 최종 34 passed. n별 접두·순차 조회·경계·중복 제거와 실제 상세 HTTP 응답을 검증했다.",
+    "updated": "2026-10-07"
+  },
+  {
+    "title": "예약 repeat 입력 형식을 검증해 잘못된 요청을 400으로 반환",
+    "value": 4,
+    "risk": 2,
+    "size": "M",
+    "status": "pending",
+    "note": "차선. repeatToCron(undefined/null/{}/{every:day,time:3}) TypeError 재현. planSchedule은 Repeat로 단언하고 CronError만 변환하므로 서버 오류 경로 가능; 실제 HTTP 상태 재현은 미확인. 도메인 입력 경계로 좁힌다.",
+    "updated": "2026-10-07"
+  },
+  {
+    "title": "결과물 복사 실패를 성공 알림으로 표시하지 않기",
+    "value": 3,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "src/client/features/artifacts/artifacts.tsx:Preview는 clipboard 거부를 catch로 삼키거나 API 부재여도 성공 flash를 표시한다. 성공/거부/미지원 브라우저 흐름을 분리할 가치가 있다. 소스 확인, 브라우저 재현 미확인.",
+    "updated": "2026-10-07"
+  },
+  {
+    "title": "결과물 목록 조회 오류를 빈 목록과 구분해 표시",
+    "value": 3,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "Artifacts는 list.error를 표시하지 않고 data 부재를 []로 간주한다. 조회 실패가 아직 결과물 없음처럼 보인다. 기존 ErrorNotice 사용 및 재시도 흐름 후보. 네트워크 오류 브라우저 재현 미확인.",
+    "updated": "2026-10-07"
+  },
+  {
+    "title": "실행을 전환한 뒤 도착한 이전 폴링 응답 무시",
+    "value": 4,
+    "risk": 3,
+    "size": "M",
+    "status": "pending",
+    "note": "src/client/features/runs/live.tsx:useRunEvents의 cleanup은 closed=true지만 비동기 poll 응답은 closed 검사 없이 add/setStatus한다. 이전 실행 응답이 새 실행에 섞일 가능성. 실제 지연 HTTP 응답을 이용한 브라우저 재현 선행 필요; 확정 결함으로 단정하지 않음.",
+    "updated": "2026-10-07"
+  },
+  {
+    "title": "순수 계산 단위 테스트를 외부 서버 기동 없이 실행하는 경로 분리",
+    "value": 3,
+    "risk": 2,
+    "size": "M",
+    "status": "pending",
+    "note": "playwright.config.ts의 공통 webServer는 unit에도 적용되고 unit-core는 순수 계산과 로컬 D1을 섞는다. 빠른 회귀 검증 개선 후보지만 테스트 실행 구성 분리가 필요해 이번 계산 오류보다 후순위. 실제 새 구성 미검증.",
+    "updated": "2026-10-07"
+  },
+  {
+    "title": "로컬 테스트가 다른 작업 트리의 기존 Worker를 재사용하지 않도록 확인",
+    "value": 3,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "이번 실행에서 8870 포트가 원본 저장소의 기존 workerd에 점유되어 있었다. 설정의 reuseExistingServer=true 때문에 구 빌드 재사용 가능. 이번에는 네트워크 네임스페이스로 격리했으며, 향후 테스트 시작 시 서버 소유 경로 확인 또는 명시적 재사용 옵션을 검토한다.",
+    "updated": "2026-10-07"
+  },
+  {
+    "title": "테스트 실행 시 하위 프로세스의 Node 버전도 확인",
+    "value": 3,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "현재 셸은 Node 22.23.1이나 npm exec가 상위 /home/hkjang/node_modules/.bin/node의 20.19.2를 선택해 Wrangler 기동 실패를 실제 확인. 이번에는 회차 전용 npm script-shell에서 PATH만 고정했다. 전역 파일을 수정하지 않는 사전 진단 후보.",
+    "updated": "2026-10-07"
+  }
+]

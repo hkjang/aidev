@@ -329,3 +329,18 @@
 - 보류 아이디어: `/favorites` 에서 검색하면 즐겨찾기가 있는데도 "즐겨찾기한 앱이 없습니다" 가 뜬다 (3/2/S — `public-pages.tsx:385-403` 현재 코드에 그대로 있으나 `0898f7a` 가 HEAD `b52032c` 에서도 main 미포함으로 다섯 회차 연속 review-pending 이라 계속 보류) · `app-form-page` 의 등록·수정 제출 happy path 와 검증 실패가 무검증 (3/1/M — 2026-10-05 가 만든 하네스 위에 덧붙이면 되지만 출력이 변하지 않는 순수 테스트 추가는 반려 이력이 있어 단독 제출은 판단 필요) · 보안 심의 화면의 "최종 결과"(`finalResult`, `owner-page.tsx:249`)도 SecCheck 원문을 그대로 보여 준다 (2/2/S — 자유 문자열인지 enum 인지 `internal/seccheck` 응답 파싱으로 계약을 확정하기 전에는 표를 만들면 모르는 값이 사라질 위험) · `Field` 가 error 를 렌더하면서 `aria-invalid`/`aria-describedby` 를 컨트롤에 연결하지 않는다 (2/2/M, 공용 컴포넌트 · children 두 계약 설계 선행) · 가이드 문서 여러 개를 한 번에 고르면 실패 메시지가 마지막 한 건만 남는다 (2/1/S, 복수 메시지 렌더 디자인 선행)
 
 - 릴리즈: v2.11.15 (2026-10-06, run 2026-10-06-022803-appstore-improve)
+## 2026-10-07
+- 선택: 보안 심의 화면의 “최종 결과”를 한국어로 표시 (가치 3 / 위험 1 / 작업량 S)
+- 결과: 성공
+- 요약: `owner-page.tsx`가 finalResult를 그대로 렌더하는 것이 원인이어서 화면 로컬 표로 APPROVED→승인됨, CONDITIONAL→조건부 승인, REJECTED→반려됨을 표시하고 빈 값·누락은 —, 미지 값은 원문을 보존했다. 기존 HTTP 하네스에 최종 결과 `.meta-row` DOM 검사 6건을 추가해 번역 3건의 수정 전 실패·수정 후 통과·제품 수정 원복 시 재실패를 확인했고, 기존 E2E는 확인 전 — / 확인 후 승인됨·APPROVED 부재 및 제출 버튼 노출을 desktop/mobile에서 검증했다. 전체 React 111건·lint·build·수정 3파일 Prettier·오프라인 자산/환경/문서 계약 검사 및 대상 E2E 2건이 모두 통과해 프로덕션 1파일+테스트 2파일만 `27b0dbf`로 커밋했다.
+- 실패 재현: `FAIL  src/features/security-check/security-check.test.tsx > App security check > names the final result APPROVED as 승인됨` / `Tests  3 failed | 9 passed (12)` — 실제 실패 DOM은 `최종 결과APPROVED`였고 CONDITIONAL·REJECTED도 원값으로 동일 실패했다(`red.log`, `revert-red.log`).
+- 보류 아이디어: 가이드 문서 복수 선택 실패 안내 개선 (가치 2 / 위험 1 / 작업량 S) — 차선, 첫 실패 사유와 실패 수로 개선 가능.
+- 보류 아이디어: app-form-page 등록·수정 제출 happy path와 검증 실패 공백 (가치 3 / 위험 1 / 작업량 M) — 사용자 결함 수정과 묶어서 수행.
+- 보류 아이디어: 즐겨찾기 검색 결과 없음 안내 (가치 3 / 위험 2 / 작업량 S) — 미병합 변경과 중복 위험, 원격 상태 미확인으로 유지.
+- 보류 아이디어: Field 오류와 aria-invalid/aria-describedby 연결 (가치 2 / 위험 2 / 작업량 M) — 공용 children 계약 설계 필요.
+- 과제서: 채택 — HEAD 8370b8d, 원값 렌더 경로, 서버 결과 enum과 기존 E2E mock의 finalResult 응답이 모두 일치해 지정한 범위와 수용 기준을 그대로 구현했다.
+- 스킬: Skill 호출 도구가 없어 `/mnt/c/Users/USER/projects/headcount/plugins/technology/skills/{completion-verification,systematic-debugging,test-driven-development}/SKILL.md` 원문을 읽고 적용했다. HTTP 응답의 finalResult가 실제 DOM까지 전달됨을 수정 전 실패로 확인했고, 제품 파일만 원복해 같은 3건이 재실패하므로 HTTP mock·다른 상태 행의 라벨로 우연히 통과한 경우를 배제했다.
+- 검증 근거: `npm --prefix web ci --no-audit --no-fund` 성공 후 대상 Vitest 기준선 6 passed(`baseline.log`), 회귀 추가 후 3 failed/9 passed(`red.log`), 수정 후 12 passed(`green.log`), 원복 후 3 failed/9 passed(`revert-red.log`). 복원·포맷 후 `npm --prefix web test` 17 files/111 passed(`react-tests.log`), `npm --prefix web run lint` exit 0(`lint.log`), `npm --prefix web run build` exit 0(`build.log`), `./scripts/check-offline-assets.sh web/dist`, `./scripts/check-env-contract.sh`, `./scripts/check-docs.sh` 모두 exit 0(각 로그). 수정 3파일 Prettier와 `git diff --check` 통과. `npx playwright install chromium` 성공 후 `CI=true npm --prefix web run test:e2e -- --grep '보안 심의를 마쳐야 앱을 제출할 수 있다' --workers=2 --retries=0 --reporter=list` 2 passed/0 skipped(`e2e.log`).
+- 검증 한계: 이번 프런트 표시 변경에서는 Go race/build, DB·Keycloak 통합, Docker smoke, 전체 E2E를 실행하지 않았다. E2E는 실제 번들·Chromium과 HTTP fixture이며 실제 SecCheck 서비스 연동 성공을 뜻하지 않는다. 최초 Prettier 검사는 추가 테스트의 줄바꿈으로 실패해 포맷 후 재검사 통과했다. npm의 기존 whatwg-encoding 폐기 안내와 E2E의 NO_COLOR/FORCE_COLOR 환경 경고가 있었으며 테스트·빌드는 성공했다.
+- 범위: REMOTE_STATUS, appStatusLabel, 배지, verified 기반 제출 조건, 서버·API 계약, mock fixture를 변경하지 않았다. 14개 기존 아이디어(정찰에서 추가한 2개 포함)를 유지하고 이번 항목만 done으로 갱신했다. 산출물은 기존 ignore 대상이며 커밋에 포함하지 않았고 버전·릴리즈·원격 변경도 없다.
+

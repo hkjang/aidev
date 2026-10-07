@@ -353,3 +353,15 @@
 - 과제서: 채택 — 결함·코드 위치(`users.go:272-282`·`keys.go:118`·`providers.go:477-505`)·컬럼 타입(`varchar(120)`/`varchar(160)`/`varchar(160)`·`varchar(240)`·`jsonb`)·500 코드·라우트·재사용 셋업(`profile_nul_integration_test.go`)·헬퍼 위치가 모두 현재 코드와 정확히 일치했고, 수용 기준 1~5 를 지정된 방식 그대로 red(세 경로 모두 실제 500)→green→revert-red 로 증명했다. 과제서가 권한 포트 55541 로 `docker run` 이 이 환경에서 동작했다.
 
 - 릴리즈: v1.2.35 (2026-10-06, run 2026-10-06-022757-ai-admin-improve)
+## 2026-10-07
+- 선택: 비스트리밍 chat의 upstream 연결 절단이 실패 응답·감사 기록으로 남는 계약을 통합 테스트로 고정 (가치 2 / 위험 1 / 작업량 S)
+- 결과: 성공
+- 요약: `internal/server/chat_truncation_integration_test.go`에 `TestChatNonStreamingTruncationAuditContract`의 정상 JSON·upstream 절단 두 서브테스트를 추가했다(테스트 1파일, 프로덕션 0개; 커밋 8e65c33). 전용 PostgreSQL 16의 Migrate/Seed → New(...).Handler() → 실제 로그인·공급자 생성 API → HTTP chat 경로에서 stream:false·identity 인코딩·유한 timeout을 사용하고, 전체 JSON/64 KiB prefix+Flush/Hijack/Close를 각각 보내 HTTP 200의 정상 원문 또는 io.ReadAll 오류와 비어 있지 않은 prefix만 전달됨을 확인하며, 고유 요청 ID+공급자 ID로 정확히 1건의 감사 result/reason 및 complete/stream의 JSON boolean 존재·값을 검증한다. 기존 3개 기준 테스트 PASS(1.264s), 신규 단독 PASS(0.744s), 관련 4개 `go test -race -count=3 -run 'Test(ChatNonStreamingTruncationAuditContract|ChatAnswerCutShortIsNotDeliveredAsComplete|ChatNonStreamingResponseContentTypeContract|RelayChatBodyReportsWhyTheAnswerStopped)$' -v ./internal/server` PASS(41.284s, SKIP 없음), `go test -race -count=1 -v ./...` exit 0(서버 160.579s; TEST_KEYCLOAK_ISSUER 미설정 Keycloak E2E 1건만 SKIP, 원문 go-test-race.log), `make lint`·`go build ./...`·`git diff --check` 통과 후 컨테이너 정리와 깨끗한 작업 트리를 확인했다.
+- 실패 재현: 못 함 — 과제서가 지정한 기존 정상 동작의 테스트 공백 보강으로, 프로덕션 수정 전 신규 테스트의 첫 실행부터 `--- PASS: TestChatNonStreamingTruncationAuditContract (0.74s)` / `ok github.com/hkjang/ai-admin/internal/server 0.744s`였다. 실제 upstream 절단과 호출자의 read error는 재현했지만 제품 결함·실패 테스트를 재현한 것은 아니다. 실패를 만들기 위한 프로덕션 변경이나 역변이는 하지 않았다.
+- 보류 아이디어:
+  - updatePreferences sidebarState·aiDefaults 검증 미머지 처리 (가치 3 / 위험 1 / S) — f66d25c 처리 결정 전 재구현 금지.
+  - updateKeyScope 이름 검증 보강 (가치 2 / 위험 1 / S) — b5146f2 verify-failed 원인 확인 전 같은 접근 재시도 금지.
+  - 감사 CSV 문서의 전체 이벤트 문구를 50,000건 상한과 맞추기 (가치 1 / 위험 1 / S) — 이번 테스트 범위와 무관하여 보류.
+  - 프로필 email 빈 문자열의 NULL 삭제·생략/null 유지 계약 테스트·문서화 (가치 1 / 위험 1 / S) — 차선 후보 유지, 400으로 동작 변경하지 않음.
+- 과제서: 채택 — 현재 코드의 stream:true 절단 테스트와 비스트리밍 성공 단위 사례만으로는 최종 HTTP·감사 실패 계약이 보호되지 않아, 지정된 테스트 1파일·정상/절단 두 사례와 실제 DB/HTTP 배선 그대로 구현했다.
+

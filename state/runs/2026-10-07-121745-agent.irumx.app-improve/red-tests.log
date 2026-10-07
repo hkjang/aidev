@@ -1,0 +1,134 @@
+[WebServer] (node:1831094) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+[WebServer] (node:1831103) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+[WebServer] (node:1831112) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+[WebServer] (node:1831121) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+[WebServer] (node:1831137) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+[WebServer] (node:1831565) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+[WebServer] ▲ [WARNING] AI bindings always access remote resources, and so may incur usage charges even in local dev. To suppress this warning, set `remote: true` for the binding definition in your configuration file.
+[WebServer] 
+[WebServer] 
+
+Running 7 tests using 1 worker
+
+(node:1831713) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✘  1 [unit] › tests/unit-core.spec.ts:46:5 › 시각·예약 › 30분 서머타임 shift — 다음 1회는 같은 UTC 순서의 접두 목록 (10ms)
+(node:1831749) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓  2 [unit] › tests/unit-core.spec.ts:46:5 › 시각·예약 › 30분 서머타임 shift — 다음 2회는 같은 UTC 순서의 접두 목록 (8ms)
+  ✓  3 [unit] › tests/unit-core.spec.ts:46:5 › 시각·예약 › 30분 서머타임 shift — 다음 5회는 같은 UTC 순서의 접두 목록 (3ms)
+  ✘  4 [unit] › tests/unit-core.spec.ts:62:3 › 시각·예약 › 30분 서머타임 shift — 한 회씩 조회해도 다섯 회 일괄 조회와 같다 (11ms)
+(node:1831796) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓  5 [unit] › tests/unit-core.spec.ts:78:3 › 시각·예약 › 30분 서머타임 shift — after와 같은 정상·이동 회차는 제외한다 (10ms)
+  ✓  6 [unit] › tests/unit-core.spec.ts:89:3 › 시각·예약 › 30분 서머타임 shift — 이동 회차와 정상 회차가 겹치면 한 번만 반환한다 (2ms)
+(node:1831818) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✘  7 [api] › tests/api-schedule.spec.ts:13:1 › 30분 서머타임 shift — 예약 상세의 다음 회차가 UTC 순서대로 빠짐없이 나온다 (354ms)
+
+
+  1) [unit] › tests/unit-core.spec.ts:46:5 › 시각·예약 › 30분 서머타임 shift — 다음 1회는 같은 UTC 순서의 접두 목록 ──────
+
+    Error: expect(received).toEqual(expected) // deep equality
+
+    - Expected  - 1
+    + Received  + 2
+
+      Array [
+        Object {
+    -     "utc": 1791041400000,
+    +     "note": "shifted",
+    +     "utc": 1791042300000,
+        },
+      ]
+
+      55 |         { utc: Date.parse('2026-10-05T15:15:00Z') },
+      56 |       ];
+    > 57 |       expect(runs).toEqual(expected.slice(0, n));
+         |                    ^
+      58 |       expect(fmtWall(runs[0]!.utc, 'Australia/Lord_Howe')).toBe('2026-10-04 02:30 (일)');
+      59 |     });
+      60 |   }
+        at /home/hkjang/.cache/auto-improve-wt/agent.irumx.app/tests/unit-core.spec.ts:57:20
+
+    Error Context: test-results/unit-core-시각·예약-30분-서머타임-shift-—-다음-1회는-같은-UTC-순서의-접두-목록-unit/error-context.md
+
+  2) [unit] › tests/unit-core.spec.ts:62:3 › 시각·예약 › 30분 서머타임 shift — 한 회씩 조회해도 다섯 회 일괄 조회와 같다 ─────
+
+    Error: expect(received).toEqual(expected) // deep equality
+
+    - Expected  - 3
+    + Received  + 3
+
+    @@ -1,10 +1,7 @@
+      Array [
+        Object {
+    -     "utc": 1791041400000,
+    -   },
+    -   Object {
+          "note": "shifted",
+          "utc": 1791042300000,
+        },
+        Object {
+          "utc": 1791126900000,
+    @@ -12,7 +9,10 @@
+        Object {
+          "utc": 1791127800000,
+        },
+        Object {
+          "utc": 1791213300000,
+    +   },
+    +   Object {
+    +     "utc": 1791214200000,
+        },
+      ]
+
+      72 |       cursor = run!.utc;
+      73 |     }
+    > 74 |     expect(sequential).toEqual(batch);
+         |                        ^
+      75 |     expect(new Set(sequential.map((x) => x.utc)).size).toBe(5);
+      76 |   });
+      77 |
+        at /home/hkjang/.cache/auto-improve-wt/agent.irumx.app/tests/unit-core.spec.ts:74:24
+
+    Error Context: test-results/unit-core-시각·예약-30분-서머타임-shift-—-한-회씩-조회해도-다섯-회-일괄-조회와-같다-unit/error-context.md
+
+  3) [api] › tests/api-schedule.spec.ts:13:1 › 30분 서머타임 shift — 예약 상세의 다음 회차가 UTC 순서대로 빠짐없이 나온다 ────
+
+    Error: expect(received).toEqual(expected) // deep equality
+
+    - Expected  - 1
+    + Received  + 1
+
+      Array [
+        "2026-10-02T16:00:00.000Z",
+    -   "2026-10-03T15:30:00.000Z",
+        "2026-10-03T15:45:00.000Z",
+        "2026-10-04T15:15:00.000Z",
+        "2026-10-04T15:30:00.000Z",
+    +   "2026-10-05T15:15:00.000Z",
+      ]
+
+      21 |   const detail = await p.api.get(`/api/w/${p.ws}/schedules/${s.id}`);
+      22 |   expect(detail.schedule.status).toBe('paused');
+    > 23 |   expect(detail.upcoming.map((x: { utcIso: string }) => x.utcIso)).toEqual([
+         |                                                                    ^
+      24 |     '2026-10-02T16:00:00.000Z',
+      25 |     '2026-10-03T15:30:00.000Z',
+      26 |     '2026-10-03T15:45:00.000Z',
+        at /home/hkjang/.cache/auto-improve-wt/agent.irumx.app/tests/api-schedule.spec.ts:23:68
+
+    Error Context: test-results/api-schedule-30분-서머타임-shif-2d9c2-세의-다음-회차가-UTC-순서대로-빠짐없이-나온다-api/error-context.md
+
+  3 failed
+    [unit] › tests/unit-core.spec.ts:46:5 › 시각·예약 › 30분 서머타임 shift — 다음 1회는 같은 UTC 순서의 접두 목록 ───────
+    [unit] › tests/unit-core.spec.ts:62:3 › 시각·예약 › 30분 서머타임 shift — 한 회씩 조회해도 다섯 회 일괄 조회와 같다 ──────
+    [api] › tests/api-schedule.spec.ts:13:1 › 30분 서머타임 shift — 예약 상세의 다음 회차가 UTC 순서대로 빠짐없이 나온다 ─────
+  4 passed (9.0s)
