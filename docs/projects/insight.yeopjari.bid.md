@@ -1,7 +1,7 @@
 ---
 title: "insight.yeopjari.bid — 자율 개선 이력"
 description: "insight.yeopjari.bid: 자율 개선 회차 1회, 릴리즈 1건. 최근 릴리즈 v0.1.1 (자산 0개)."
-last_modified_at: 2026-10-07 22:45:39 +0900
+last_modified_at: 2026-10-07 23:19:12 +0900
 ---
 {% raw %}
 <script type="application/ld+json">
@@ -18,7 +18,7 @@ last_modified_at: 2026-10-07 22:45:39 +0900
   "name": "hkjang",
   "url": "https://github.com/hkjang"
  },
- "dateModified": "2026-10-07T22:45:39+09:00",
+ "dateModified": "2026-10-07T23:19:12+09:00",
  "version": "0.1.1"
 }
 </script>
