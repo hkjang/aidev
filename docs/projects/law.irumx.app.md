@@ -1,7 +1,7 @@
 ---
 title: "law.irumx.app — 자율 개선 이력"
 description: "law.irumx.app: 자율 개선 회차 2회, 릴리즈 1건. 최근 릴리즈 없음."
-last_modified_at: 2026-10-08 07:55:13 +0900
+last_modified_at: 2026-10-08 08:33:05 +0900
 ---
 {% raw %}
 <script type="application/ld+json">
@@ -18,7 +18,7 @@ last_modified_at: 2026-10-08 07:55:13 +0900
   "name": "hkjang",
   "url": "https://github.com/hkjang"
  },
- "dateModified": "2026-10-08T07:55:13+09:00"
+ "dateModified": "2026-10-08T08:33:05+09:00"
 }
 </script>
 
