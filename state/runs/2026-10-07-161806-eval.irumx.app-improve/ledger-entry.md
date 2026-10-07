@@ -1,0 +1,7 @@
+## 2026-10-07
+- 선택: 시험 세션 캐시와 로컬 D1 비우기가 어긋나 두 번째 실행이 깨지는 것 고치기 (가치 3 / 위험 1 / 작업량 S)
+- 결과: 성공
+- 요약: `scripts/db-local.mjs` 가 `--persist-to` 디렉터리만 지우고 `tests/helpers.ts` 가 쓰는 `.wrangler/test-sessions`(로그인 쿠키 보관)는 남겨, `auth.ts` 의 `cookieCache`(5분) 때문에 DB 를 비운 직후에도 남은 쿠키로 `/api/me` 가 사람을 돌려주고 `workspaces` 만 비어 `ownerApi` 가 TypeError 로 터졌다. db-local 이 세션 보관도 함께 지우게 하고(한 줄), `login` 의 캐시 재사용 조건에 "세션이 DB 에 실제로 있다"는 신호(`me.workspaces?.length || me.operator`)를 더하고, `ownerApi` 는 업체 공간이 없으면 한국어 안내로 throw 하게 했다. 프로덕션 코드 0개 — 시험 보조 2개. 검증: 재현(끄고 5분 안에 재실행 → TypeError) → 고친 뒤 같은 절차로 두 번째 실행 통과 · 세션 캐시만 남고 DB 가 바뀐 상태를 억지로 만든 실행에서도 통과(캐시를 버리고 재로그인) · 업체 공간 없는 계정(`ops@eval.test`)에서 한국어 안내가 나오는지 임시 시험으로 확인(확인 뒤 삭제) · `npm run build && npm test` 전체.
+- 실패 재현: `TypeError: Cannot read properties of undefined (reading 'id')` / `at ownerApi (tests/helpers.ts:94:38)` — run1 16:25:26 통과 후 `wrangler dev`(:8860)를 끄고 16:25:29 에 같은 명령(`npx playwright test --project=api --grep "주소 검사"`)을 다시 돌려 재현.
+- 보류 아이디어: 예산·시험 수 한도 동시 예약 시험(수용 시험 12, 4/2/S — main 머지 상태 먼저 확인) · 예산 시험이 바꾼 업체 공간 한도를 teardown 으로 보장해 되돌리기(3/2/M) · 큐 중복 전달 시험(수용 시험 10, 4/3/M — 프로덕션 훅 필요) · 비밀 모양 문자열 가림을 원문·보고서 출력 경로로만 좁히기(수용 시험 23, 3/4/M) · 워크트리에 node_modules 가 없을 때 build 가 subset-font 스택만 남기고 죽는 것을 안내로 바꾸기(2/1/S)
+- 과제서: 채택 — 과제서가 지목한 다섯 줄(db-local 의 rmSync · helpers 의 storageState 경로 · cookieCache 300초 · me.ts 의 workspaces 별도 조회 · ownerApi 의 `workspaces[0].id`)이 코드와 그대로 맞았고, 미확인으로 표시한 "5분 창 안에 두 번 돌려야 재현된다" 는 타이밍도 그대로 재현됐다.
