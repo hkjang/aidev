@@ -28,3 +28,4 @@
 - 릴리즈는 신규 생성의 0 보존임을 명시할 것: 기존 행 복원과 null 정책 변경은 없다. 요청 스킬 3개는 전용 도구 부재로 로컬 SKILL.md를 읽어 적용했다.
 - [러너 04:52] review approved — 리뷰 승인 (risk=low)
 - [러너 04:52] pr created — https://github.com/hkjang/invenqor/pull/35
+- [러너 05:12] ci timeout — 제한 시간 안에 CI 완료를 확인하지 못함
