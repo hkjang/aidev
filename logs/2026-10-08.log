@@ -170,10 +170,64 @@ notify: toast shown
 [01:53:59] law.irumx.app: [ci] api-error — API 오류: gh api failed
 evidence: /mnt/c/Users/USER/projects/aidev/state/runs/2026-10-08-013826-law.irumx.app-improve/evidence.json
 [01:55:11] moyro: improve — 38 turns, 11m, $3.39, success
-[01:55:11] moyro: [brief] accepted — 채택 — 근거가 현재 코드와 정확히 일치했다(`:793-800`/`:851-858` 의 `rows.Err()` 부재, `:796`/`:854` 의 `continue`, 같은 함수가 이�
+[01:55:11] moyro: [brief] accepted — 채택 — 근거가 현재 코드와 정확히 일치했다(`:793-800`/`:851-858` 의 `rows.Err()` 부재, `:796`/`:854` 의 `continue`, 같은 함수가 이
 [01:55:20] moyro: verify `cd server && go build ./... && go vet ./... && go test ./...` → exit 0 (6s)
 reports: 37 day(s), 6 week(s), 2 month(s), 2126 run(s), 4421 usage row(s), 61 project page(s), 5 alert(s)
 notify: no new alerts
 [01:55:49] moyro: verify `cd webapp && ([ -d node_modules ] || npm ci --no-audit --no-fund) && npm run typecheck --silent && npm test --silent` → exit 0 (28s)
 [01:55:50] moyro: [verify] passed — 검증 2개 통과 (policy)
 [01:56:43] aidev sync FAILED: run(2026-10-08): moina — guarded files, PR open https://github.com/hkjang/moina/pull/44 (연속 1회) — logs/sync.log
+[01:59:06] aidev sync FAILED: run(2026-10-08): law.irumx.app — CI api-error, PR open https://github.com/hkjang/law.irumx.app/pull/1 (연속 2회) — logs/sync.log
+[02:01:29] moyro: review — 28 turns, 5m, $1.64, success
+[02:01:29] moyro: [review] approved — 리뷰 승인 (risk=low)
+branch 'auto/2026-10-08-0138' set up to track 'origin/auto/2026-10-08-0138'.
+[02:01:39] moyro: [pr] created — https://github.com/hkjang/moyro/pull/37
+[02:01:44] moyro: waiting for CI on 52c6d99 (api-error)
+[02:02:45] moyro: [ci] passed — 검사 없음 — 정책으로 허용
+[02:02:52] moyro: [merge] done — 52c6d99e5718dde376ff96caf31e1153381cc38b
+From https://github.com/hkjang/moyro
+ * branch            main       -> FETCH_HEAD
+   2adff5d..104758a  main       -> origin/main
+Updating 2adff5d..104758a
+Fast-forward
+ .../internal/httpapi/compat_wave_handlers_final.go |  26 ++-
+ .../file_search_rows_fault_postgres_test.go        | 238 +++++++++++++++++++++
+ 2 files changed, 262 insertions(+), 2 deletions(-)
+ create mode 100644 server/internal/httpapi/file_search_rows_fault_postgres_test.go
+Preparing worktree (detached HEAD 104758a)
+Updating files:  69% (461/665)Updating files:  70% (466/665)Updating files:  71% (473/665)Updating files:  72% (479/665)Updating files:  73% (486/665)Updating files:  74% (493/665)Updating files:  75% (499/665)Updating files:  76% (506/665)Updating files:  77% (513/665)Updating files:  78% (519/665)Updating files:  79% (526/665)Updating files:  80% (532/665)Updating files:  81% (539/665)Updating files:  82% (546/665)Updating files:  83% (552/665)Updating files:  84% (559/665)Updating files:  85% (566/665)Updating files:  86% (572/665)Updating files:  87% (579/665)Updating files:  88% (586/665)Updating files:  89% (592/665)Updating files:  90% (599/665)Updating files:  91% (606/665)Updating files:  92% (612/665)Updating files:  93% (619/665)Updating files:  94% (626/665)Updating files:  95% (632/665)Updating files:  96% (639/665)Updating files:  97% (646/665)Updating files:  98% (652/665)Updating files:  99% (659/665)Updating files: 100% (665/665)Updating files: 100% (665/665), done.
+HEAD is now at 104758a Merge pull request #37 from hkjang/auto/2026-10-08-0138
+[02:25:33] moyro: release — 56 turns, 22m, $3.73, success
+[02:25:38] moyro: waiting for CI on 879082e (no-ci-allowed)
+[02:38:25] moyro: [release] published — v0.2.49
+From https://github.com/hkjang/moyro
+ * branch            main       -> FETCH_HEAD
+Updating 104758a..879082e
+Fast-forward
+ README.md                                        |  6 ++--
+ docs/ADMIN_GUIDE.md                              | 14 ++++----
+ docs/USER_GUIDE.md                               |  2 +-
+ docs/guides/admin-guide.html                     | 34 +++++++++---------
+ docs/guides/offline-deployment.html              | 44 ++++++++++++------------
+ docs/guides/user-guide.html                      | 12 +++----
+ docs/index.html                                  | 38 ++++++++++----------
+ docs/index.md                                    |  6 ++--
+ docs/moyro-product-spec.md                       | 20 +++++------
+ docs/offline-deployment.md                       | 30 ++++++++--------
+ docs/openapi-moyro.yaml                          |  2 +-
+ docs/openapi-v4.yaml                             |  4 +--
+ plugin-sdk/js/package.json                       |  2 +-
+ plugins/com.moyro.hello/README.md                |  2 +-
+ scripts/verify-pages.mjs                         |  4 +--
+ webapp/e2e/product-pages.spec.ts                 |  2 +-
+ webapp/package-lock.json                         | 10 +++---
+ webapp/package.json                              |  2 +-
+ webapp/src/components/IntegrationsPanel.tsx      |  2 +-
+ webapp/src/features/admin/LegacyAdminRoute.tsx   |  4 +--
+ webapp/src/features/system/SystemInfoContext.tsx |  2 +-
+ 21 files changed, 121 insertions(+), 121 deletions(-)
+[02:57:11] moyro: [assets] verified — v0.2.49 자산 1개 (이전 v0.2.47: 1)
+fatal: '/home/hkjang/.cache/auto-improve-wt/moyro' is not a working tree
+evidence: /mnt/c/Users/USER/projects/aidev/state/runs/2026-10-08-013836-moyro-improve/evidence.json
+reports: 37 day(s), 6 week(s), 2 month(s), 2127 run(s), 4424 usage row(s), 61 project page(s), 5 alert(s)
+notify: no new alerts

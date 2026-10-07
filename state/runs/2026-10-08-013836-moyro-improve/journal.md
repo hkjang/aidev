@@ -19,3 +19,15 @@
 - 다음 역할이 조심할 것: **새 테스트는 DB 가 있어야 돈다**. `MOYRO_TEST_POSTGRES_DSN` 없으면 skip 되고 httpapi 가 0.17s 에 `ok` 를 내므로 통과로 오인 금지(DB 포함 시 60.8s). 컨테이너 `moyro-pg-improve`/호스트 55433 사용(`docker start` 로 기동). 테스트는 격리 스키마 안에서 `file_infos` 를 VIEW 로 바꿨다 되돌리므로 중간에 죽으면 그 스키마만 오염되고 다른 테스트에는 영향 없다.
 - [러너 01:55] brief accepted — 채택 — 근거가 현재 코드와 정확히 일치했다(`:793-800`/`:851-858` 의 `rows.Err()` 부재, `:796`/`:854` 의 `continue`, 같은 함수가 이�
 - [러너 01:55] verify passed — 검증 2개 통과 (policy)
+
+## 비평 노트
+- 판정 approve / risk low / blocking 없음. **게이트가 이 변경을 실행하지 않았다**: verify.json 의 `go test ./...` 는 DSN 없이 6초에 끝나 새 테스트를 skip 했다. 직접 재실행했다 — 수정 포함 GREEN(4.15s), `compat_wave_handlers_final.go` 만 main 으로 되돌리면 ledger 와 글자까지 같은 RED 5건이고 보존 단언 3건은 그때도 PASS. httpapi 전체 DB 실행 ok 52.0s, gofmt/vet clean, 작업 트리 원복 확인.
+- 구현자가 의심한 Scan 분기는 회귀 위험 없음: 쿼리에서 COALESCE 안 된 모든 열이 baseline.up.sql:97-110 에서 NOT NULL 이라 정상 데이터가 500 이 되는 경로가 없다. SQL·LIMIT 50·가시성 서브쿼리·401 가드는 한 글자도 안 바뀌어 인가 변경 아님.
+- 승인이어도 남는 것: 500 본문의 `err.Error()` 원시 DB 오류 노출(기존 관례이고 `terms` 는 이스케이프된 파라미터라 공격 경로 없음 — 패키지 단위 과제), 그리고 **이제 500 이면 file.search 감사 행이 남지 않는다**(의도·테스트 고정이지만 실패한 검색이 원장에서 안 보임 — 릴리즈 노트·탐지 과제).
+- 못 본 것: 진짜 연결 단절 중간 끊김(구현자도 미재현), webapp 쪽, -race 전체.
+- [러너 02:01] review approved — 리뷰 승인 (risk=low)
+- [러너 02:01] pr created — https://github.com/hkjang/moyro/pull/37
+- [러너 02:02] ci passed — 검사 없음 — 정책으로 허용
+- [러너 02:02] merge done — 52c6d99
+- [러너 02:38] release published — v0.2.49
+- [러너 02:57] assets verified — v0.2.49 자산 1개 (이전 v0.2.47: 1)

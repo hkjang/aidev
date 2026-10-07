@@ -1,0 +1,106 @@
+release: carry release markers to v0.2.49
+
+v0.2.49 ships two server fixes already merged to main. File search now reports a
+database fault raised while it walks its result rows instead of answering "no
+file matches", and the daily digest mail cuts mention excerpts on character
+boundaries instead of byte offsets. There is no schema change, no migration, no
+new route, no new error id and no web source change. Two production files
+change, by 40 added and 7 removed lines including comments.
+
+This tag follows v0.2.47 rather than v0.2.48 because no v0.2.48 was ever
+published. A v0.2.48 annotated tag exists in a local worktree, pointing at a
+marker commit built on the merge of pull request #36, but neither that commit
+nor that tag is present on `origin`: `git ls-remote --tags origin` stops at
+v0.2.47, and the GitHub release list stops there too, so the release job never
+ran for it. The local tag is left exactly where it is. Moving it would destroy
+the only remaining record of that attempt, and its commit is not an ancestor of
+this one, so `release.yml`'s "release tag must point to a commit on origin/main"
+check could not pass for it in any case. v0.2.48 is therefore retired as a
+version number, and the digest fix whose notes it carried ships here instead.
+An operator upgrading from the last published image, v0.2.47, receives both
+fixes in this one.
+
+`searchFiles` and `searchTeamFiles` in `compat_wave_handlers_final.go` ran
+`for rows.Next()` and never checked `rows.Err()`. pgx streams this query: the
+pool hands back a `Rows` with no error, and a failure arriving mid-iteration
+only ends the loop, because `Next()` answers `false` and parks the error on the
+`Rows` for a caller who asks. Neither handler asked. Both then fell through to
+their normal success path and emitted 200 with
+`{"order":[],"file_infos":{}}` — the exact body a search with no hits produces,
+which a client and a user can only read as "that file is not here". A database
+outage was indistinguishable from an empty result set. The two 500s these
+functions already own, `api.file.search.app_error` and
+`api.file.search.team.app_error`, were reachable only when the query failed to
+*start*.
+
+The fix adds a `rows.Err()` check after each loop that reports through those
+same two existing ids, and replaces the `continue` on a `rows.Scan` error with
+the same 500 return. Both refusals end before `h.audit.LogAsync`, so a search
+that was refused is not written to the ledger as a search that happened — the
+ordering v0.2.47 and the 2026-09-27 upload work both settled. This repository
+had already made `rows.Err()` its own convention in 43 other files;
+`compat_wave_handlers_final.go` was the single production file using
+`rows.Next()` that omitted it everywhere.
+
+No error id and no status code is introduced, and the SQL, the `LIMIT 50`, the
+`store.LikeContains` term handling and the visibility conditions — the
+`channel_members` subquery, the `c.team_id` predicate and `delete_at = 0` — are
+untouched, so nothing about who may see which file moves. A genuinely empty
+search still answers 200 with an empty result, and an empty `terms` still
+returns 200 early. The `_ = decodeCappedBody` calls in the same two functions
+and the `terms` value in their audit details were held out of scope.
+
+One consequence is worth expecting rather than a contract change: a deployment
+whose monitoring treated file search as an endpoint that does not fail will
+begin to see 500s from these two routes during a database incident, where it
+previously saw 200s. That is the fault becoming visible, not a new fault.
+
+The digest half is the fix v0.2.48's notes described. `loadMentions` in
+`digest/worker.go` shortened each excerpt with `excerpt[:160]`, where both `len`
+and the slice count bytes, while the templates this product renders are Korean
+and a Hangul syllable is three UTF-8 bytes. A Korean mention over 160 bytes was
+cut inside a character, which left the rendered mail body invalid UTF-8 and the
+recipient's client drawing U+FFFD at the cut, and it capped a Korean excerpt at
+roughly 53 characters against an English one's 160. A package-local
+`truncateRunes` now counts runes, following `knowledge.truncateRunes`. ASCII
+excerpts are byte-for-byte unchanged, and a Korean excerpt now carries up to 160
+characters — about 480 bytes where it carried 160 — so digest mail containing
+long Korean mentions grows accordingly.
+
+This commit carries one change beyond the version markers. `npm audit
+--audit-level=high`, which `release.yml` runs as a release gate, began failing
+on GHSA-68fv-2mgg-jv7q, a high-severity event-loop denial of service in
+`source-map-js` at 1.0.0 through 1.2.1. It reaches this tree only as a
+development transitive dependency, under `vite`'s `postcss` and under `jsdom`'s
+`css-tree`, so it is absent from the shipped bundle and the `--omit=dev` audit
+was already clean; it is not part of the server image at all. The remedy is
+lockfile-only: `webapp/package-lock.json` moves `source-map-js` from 1.2.1 to
+1.2.2, a semver patch inside both consumers' existing ranges, so no manifest
+dependency changes and no direct dependency is added, removed or re-ranged.
+Both audits then report 0 vulnerabilities.
+
+Verified on this release tree in the order `release.yml` runs it, against a real
+PostgreSQL instance: `go test -race -p 1 -count=1 ./...` at 50 packages ok and 0
+failures, with `httpapi` at 59.156s rather than the fraction of a second it
+takes when the database is absent, which confirms the database-backed tests —
+including the new `file_search_rows_fault_postgres_test.go` — executed instead
+of skipping, and `digest` at 1.942s, which confirms the digest regression ran
+too. The checksum-pinned Mattermost plugin fixtures were not fetched on this
+machine and none of the four `MOYRO_TEST_*_PLUGIN_ARCHIVE` variables were set,
+so the archive-backed `pluginhost` subtests skipped while the rest of that
+package passed at 26.433s; the release job remains the first place those run.
+`go build ./...` and `go vet ./...` clean, `plugin-sdk/go` tests and vet clean,
+and `govulncheck` v1.7.0 reporting this code affected by 0 vulnerabilities. In
+`webapp`, a clean `npm ci`, then `npm audit --omit=dev --audit-level=high` and
+`npm audit --audit-level=high` both at 0 vulnerabilities as of 2026-10-08, then
+`npm test` at 49 files and 224 tests on Node v22.23.1, then `npm run typecheck`
+and `npm run build`. `node scripts/verify-pages.mjs` passes against the bumped
+markers at 5 HTML pages, 47 screenshots, 16 routes and 7 brand PNGs, and `bash
+scripts/check-source-sizes.sh` passes. `git diff --check` is clean and this
+commit touches no Go file.
+
+The three remaining gates belong to the release job and depend on this commit's
+own hash, so they run against the tag rather than against this commit in
+isolation: the `linux/amd64` image build, `scripts/verify-release.sh` against
+the exported archive, and the Playwright product-UI pass. Their results are
+recorded in the annotation of the tag that points here.
