@@ -1,7 +1,7 @@
 ---
 title: "jasql — 자율 개선 이력"
 description: "jasql: 자율 개선 회차 10회, 릴리즈 2건. 최근 릴리즈 v0.31.2 (자산 7개)."
-last_modified_at: 2026-10-07 19:36:45 +0900
+last_modified_at: 2026-10-07 19:40:17 +0900
 ---
 {% raw %}
 <script type="application/ld+json">
@@ -18,7 +18,7 @@ last_modified_at: 2026-10-07 19:36:45 +0900
   "name": "hkjang",
   "url": "https://github.com/hkjang"
  },
- "dateModified": "2026-10-07T19:36:45+09:00",
+ "dateModified": "2026-10-07T19:40:17+09:00",
  "version": "0.31.2"
 }
 </script>
