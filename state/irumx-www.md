@@ -14,3 +14,11 @@
 - 보류 아이디어: ① 서비스 페이지 목록 드리프트 감지(verify-build 사이트맵 목록 vs tests/site.spec.ts PAGES — 합치지 말고 감지만) ② src/lib/inquiry.ts 순수 함수 단위 테스트 ③ worker/index.ts handleInbound 첨부 누적 용량 계산 오류(초과분을 total 에서 되돌리지 않아 이후 작은 첨부까지 skip) ④ handleInbound 의 FORWARD_TO 루프 감지가 500 을 돌려 Resend 가 무한 재시도 ⑤ 지난 회차 브랜치(auto/2026-10-07-1758)의 harfbuzzjs·fontverter 선언 + verify-deps.mjs 가 main 에 들어가지 못했다 — 같은 변경을 다시 올릴 것인지 판단 필요
 - 과제서: 채택 — 과제서가 지목한 `npm test --silent` 실패를 그대로 재현해 두 가지 원인을 모두 고쳤다.
 
+## 2026-10-07
+- 선택: GitHub Actions CI 워크플로 추가 — 로컬 검증 명령(빌드·타입 검사·Playwright)을 그대로 (가치 5 / 위험 1 / 작업량 S)
+- 결과: 성공
+- 요약: `.github/` 디렉터리 자체가 없어 러너 PR 이 전부 "CI 검사 없음" 으로 막혀 있었다. README '명령' 의 검증 명령을 느슨하게 하지 않고 그대로 `.github/workflows/ci.yml` 한 파일에 옮겼다 — `actions/setup-node@v4` 가 `.nvmrc`(v22.23.1)를 읽고 npm 캐시를 쓰며, `npm ci` → `npm run build`(글꼴 부분 집합·astro check·astro build·verify-build) → `npx playwright install --with-deps chromium` → `npm run test:build`(빌드 세 벌) → `npm test` 순서다. push 는 main, pull_request 는 전부(같은 커밋을 두 번 돌리지 않으려고). 검증: 로컬에서 같은 순서를 실제로 돌려 `npm run build` → `✓ 모두 통과`(exit 0), `npm run test:build` exit 0, `npm test` → 71 통과·3 실패·4 건너뜀 — 실패 3건은 모두 외부 연결이 없어서(`net::ERR_INTERNET_DISCONNECTED`, Turnstile 위젯) 난 것이고 GitHub 러너에는 연결이 있다. 워크플로 자체는 actionlint 1.7.7 통과(exit 0). 바꾼 파일은 ci.yml 하나뿐이다(`git show --stat`: 1 file changed).
+- 실패 재현: 못 함 — 재현 대상이 "PR 에 CI 검사가 하나도 없다" 라서 증거는 저장소 상태(`.github/` 없음, 커밋 전 `ls -a` 로 확인)이고, 워크플로 실행 자체는 이 세션에 푸시·`gh` 권한이 없어 띄울 수 없다. 대신 CI 가 돌릴 명령 순서를 로컬에서 그대로 실행해 통과를 확인했다. 이 기계의 8788·8789 는 다른 프로젝트 개발 서버가 잡고 있어, `npm test` 는 빈 네트워크 namespace(`unshare -rn` + `ip link set lo up`)에서 돌렸다 — 그래서 위 3건이 연결 없음으로 실패했다.
+- 보류 아이디어: ① 서비스 페이지 목록 드리프트 감지(verify-build:210 vs tests/site.spec.ts:3 — 합치지 말고 감지만) ② harfbuzzjs·fontverter 선언 + verify-deps.mjs 를 main 에 다시 올리기(auto/2026-10-07-1758 의 a930b5d cherry-pick) ③ pretest·free-ports.mjs 가 main 에 없어 `npm test` 가 혼자 못 돈다 ④ Playwright 3건이 외부 Turnstile 연결에 의존(폐쇄망·Cloudflare 장애 시 CI 빨개짐) ⑤ CI 에서 Playwright 브라우저 캐시 캐싱(매 실행 114MB 다운로드)
+- 과제서: 채택 — 명세대로 ci.yml 한 파일만 더했고, 테스트를 새로 쓰거나 고치지 않았으며 명령도 그대로 옮겼다.
+
