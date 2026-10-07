@@ -1,0 +1,141 @@
+#0 building with "default" instance using docker driver
+
+#1 [internal] load build definition from Dockerfile
+#1 DONE 0.0s
+
+#1 [internal] load build definition from Dockerfile
+#1 transferring dockerfile: 1.17kB done
+#1 DONE 0.0s
+
+#2 [internal] load metadata for docker.io/library/node:22-alpine
+#2 DONE 1.3s
+
+#3 [internal] load .dockerignore
+#3 transferring context: 136B done
+#3 DONE 0.0s
+
+#4 [deps 1/4] FROM docker.io/library/node:22-alpine@sha256:0a7108bf6c7bf5de370ffb1a3ed6be93d405b43ff159f681a8d18c0e2bc2e402
+#4 resolve docker.io/library/node:22-alpine@sha256:0a7108bf6c7bf5de370ffb1a3ed6be93d405b43ff159f681a8d18c0e2bc2e402 0.0s done
+#4 DONE 0.0s
+
+#5 [internal] load build context
+#5 transferring context: 3.96MB 0.0s done
+#5 DONE 0.1s
+
+#6 [deps 2/4] WORKDIR /app
+#6 CACHED
+
+#7 [deps 3/4] COPY package.json package-lock.json* ./
+#7 DONE 0.0s
+
+#8 [deps 4/4] RUN npm ci --legacy-peer-deps
+#8 21.53 
+#8 21.53 added 401 packages, and audited 402 packages in 21s
+#8 21.53 
+#8 21.53 146 packages are looking for funding
+#8 21.53   run `npm fund` for details
+#8 21.57 
+#8 21.57 10 vulnerabilities (9 high, 1 critical)
+#8 21.57 
+#8 21.57 To address issues that do not require attention, run:
+#8 21.57   npm audit fix
+#8 21.57 
+#8 21.57 To address all issues (including breaking changes), run:
+#8 21.57   npm audit fix --force
+#8 21.57 
+#8 21.57 Run `npm audit` for details.
+#8 21.57 npm notice
+#8 21.57 npm notice New major version of npm available! 10.9.9 -> 12.2.0
+#8 21.57 npm notice Changelog: https://github.com/npm/cli/releases/tag/v12.2.0
+#8 21.57 npm notice To update run: npm install -g npm@12.2.0
+#8 21.57 npm notice
+#8 DONE 23.4s
+
+#9 [builder 3/5] COPY --from=deps /app/node_modules ./node_modules
+#9 DONE 4.5s
+
+#10 [builder 4/5] COPY . .
+#10 DONE 0.3s
+
+#11 [builder 5/5] RUN npm run build
+#11 0.529 
+#11 0.529 > kcb-dashboard@0.1.0 build
+#11 0.529 > next build
+#11 0.529 
+#11 0.854 ▲ Next.js 16.3.3 (Turbopack)
+#11 0.891 ✓ Running next.config.ts took 37ms
+#11 0.905 - Experiments (use with caution):
+#11 0.905   · serverActions
+#11 0.905 
+#11 0.931   Creating an optimized production build ...
+#11 3.751 ✓ Compiled successfully in 2.6s
+#11 3.754   Running TypeScript ...
+#11 7.524   Finished TypeScript in 3.8s ...
+#11 7.527   Collecting page data using 19 workers ...
+#11 8.443   Generating static pages using 19 workers (0/17) ...
+#11 8.823   Generating static pages using 19 workers (4/17) 
+#11 8.950   Generating static pages using 19 workers (8/17) 
+#11 8.971   Generating static pages using 19 workers (12/17) 
+#11 9.004 ✓ Generating static pages using 19 workers (17/17) in 560ms
+#11 9.009   Finalizing page optimization ...
+#11 9.350 
+#11 9.353 Route (app)
+#11 9.353 ┌ ƒ /
+#11 9.353 ├ ƒ /_not-found
+#11 9.353 ├ ƒ /admin
+#11 9.353 ├ ƒ /api/activities
+#11 9.353 ├ ƒ /api/activities/import
+#11 9.353 ├ ƒ /api/activities/reset-visitor
+#11 9.353 ├ ƒ /api/auth/login
+#11 9.353 ├ ƒ /api/auth/session
+#11 9.353 ├ ƒ /api/csp-report
+#11 9.353 ├ ƒ /api/mail
+#11 9.353 ├ ƒ /api/mail/deliveries
+#11 9.353 ├ ƒ /api/mail/test
+#11 9.353 ├ ƒ /api/tracking
+#11 9.353 ├ ƒ /api/tracking/violations
+#11 9.353 ├ ƒ /momento/[...path]
+#11 9.353 └ ƒ /pc
+#11 9.353 
+#11 9.353 
+#11 9.353 ƒ Proxy (Middleware)
+#11 9.353 
+#11 9.353 ƒ  (Dynamic)  server-rendered on demand
+#11 9.353 
+#11 9.409 npm notice
+#11 9.409 npm notice New major version of npm available! 10.9.9 -> 12.2.0
+#11 9.409 npm notice Changelog: https://github.com/npm/cli/releases/tag/v12.2.0
+#11 9.409 npm notice To update run: npm install -g npm@12.2.0
+#11 9.409 npm notice
+#11 DONE 9.6s
+
+#12 [runner 4/8] RUN adduser --system --uid 1001 nextjs
+#12 CACHED
+
+#13 [runner 3/8] RUN addgroup --system --gid 1001 nodejs
+#13 CACHED
+
+#14 [runner 5/8] COPY --from=builder /app/public ./public
+#14 CACHED
+
+#15 [runner 6/8] COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
+#15 DONE 0.6s
+
+#16 [runner 7/8] COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
+#16 DONE 0.1s
+
+#17 [runner 8/8] RUN mkdir -p /app/data /app/uploads && chown -R nextjs:nodejs /app/data /app/uploads
+#17 DONE 0.3s
+
+#18 exporting to image
+#18 exporting layers
+#18 exporting layers 1.5s done
+#18 exporting manifest sha256:8be73236bca66ab55a1754b25badccb2c92524c2fda2dd6417a9843bc4f7e741 0.0s done
+#18 exporting config sha256:32eca953ecfebb8c05b59df15683ef80e79fc218e784ef7787596d08756a9f5b 0.0s done
+#18 exporting attestation manifest sha256:c6b4dc710f15fd660110a21ea702145b88a65036720ee2518365b935f5b2a958 0.0s done
+#18 exporting manifest list sha256:380111c6672cb313ba231515bd7dcd26dbae49d7295fd8a1f70f0dfd0a441f9c
+#18 exporting manifest list sha256:380111c6672cb313ba231515bd7dcd26dbae49d7295fd8a1f70f0dfd0a441f9c 0.0s done
+#18 naming to docker.io/library/cutover:v1.16.0 done
+#18 unpacking to docker.io/library/cutover:v1.16.0
+#18 unpacking to docker.io/library/cutover:v1.16.0 0.8s done
+#18 DONE 2.6s

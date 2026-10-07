@@ -1,0 +1,56 @@
+[
+  {
+    "title": "예산·시험 수 한도 동시 예약 시험(수용 시험 12)",
+    "value": 4,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "이번 회차 선택. docs/spec-coverage.md 12번이 🟡 — 순차 시험만 있다. tests/api-targets.spec.ts 에 Promise.all 동시 5건 + GET /api/w/:ws/usage 로 합계 검증. 프로덕션 코드 0개.",
+    "updated": "2026-10-07"
+  },
+  {
+    "title": "큐 중복 전달 시험(수용 시험 10)",
+    "value": 4,
+    "risk": 3,
+    "size": "M",
+    "status": "pending",
+    "note": "engine.ts processTrial 의 lease·generation 가드는 있지만 같은 메시지를 두 번 보내는 시험이 없다. 시험에서 큐에 직접 두 번 넣는 경로가 있는지 미확인 — 없으면 시험용 훅이 필요해 위험이 올라간다.",
+    "updated": "2026-10-07"
+  },
+  {
+    "title": "모델 출력 속 비밀 모양 문자열 자동 가림(수용 시험 23)",
+    "value": 3,
+    "risk": 4,
+    "size": "M",
+    "status": "pending",
+    "note": "대응표 23번 🟡. 다만 이 서비스는 합성 자료의 '표식(marker) 노출'을 판정 근거로 쓴다 — 자동 가림이 판정기 역검증(40개)을 망칠 수 있다. 가림 범위를 원문·보고서 출력 경로로만 좁히지 않으면 위험. 운영자 교훈('감사 details 에 검출 대상 문자열을 넘기지 말 것')과 같은 결.",
+    "updated": "2026-10-07"
+  },
+  {
+    "title": "개발/보류(holdout) 사례 묶음 구분",
+    "value": 3,
+    "risk": 3,
+    "size": "L",
+    "status": "pending",
+    "note": "docs/spec-coverage.md 14장 ⬜. 데이터셋·실험·판단 화면·보고서까지 번지는 기능으로 파일 6개를 넘긴다 — 한 회차 과제로 부적합, 쪼개야 함.",
+    "updated": "2026-10-07"
+  },
+  {
+    "title": "GitHub Actions CI 추가(빌드·시험 자동화)",
+    "value": 2,
+    "risk": 4,
+    "size": "M",
+    "status": "rejected",
+    "note": ".github 가 아예 없고 시험이 wrangler dev + 가짜 서버 4개를 띄워야 한다(수 분). 운영자가 workflows 경로는 피하라고 반복 지시 — 기각.",
+    "updated": "2026-10-07"
+  },
+  {
+    "title": "util.ts 주석의 없는 시험 파일 참조 정리(tests/guard.spec.ts)",
+    "value": 1,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "src/worker/lib/util.ts:76 주석이 tests/guard.spec.ts 를 가리키지만 그 파일은 없다(가드는 experiments·engine·usage 의 batch 경로에서 간접적으로만 확인됨). 과제로는 너무 작아 다른 변경에 끼워 갈 것.",
+    "updated": "2026-10-07"
+  }
+]
