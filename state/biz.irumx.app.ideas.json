@@ -1,0 +1,56 @@
+[
+  {
+    "title": "Markdown 내부 링크의 역슬래시 우회 차단",
+    "value": 4,
+    "risk": 1,
+    "size": "S",
+    "status": "done",
+    "note": "c1f9a2b: 내부 경로의 원문 역슬래시를 거절. 실제 Markdown SSR 13개 시험에서 수정 전 4실패/9통과, 수정 후 13통과, 조건 제거 재실패까지 확인. check 전체 54개 및 웹/서버 build 통과. 브라우저 클릭과 저장 문서 사용 여부는 미확인.",
+    "updated": "2026-10-07"
+  },
+  {
+    "title": "원장 CSV 수식 중립화와 인용 처리의 API 회귀 시험",
+    "value": 4,
+    "risk": 2,
+    "size": "M",
+    "status": "pending",
+    "note": "finance.ts csvCell에 수식 중립화 구현은 이미 있음. scripts/e2e.mjs 648~650은 BOM·머리글만 확인. 실제 API로 위험 접두사/따옴표/개행 필드를 내보내는 시험 후보. DB 준비와 원장 fixture 비용 때문에 이번에는 보류; 취약점으로 단정하지 않음.",
+    "updated": "2026-10-07"
+  },
+  {
+    "title": "달력 날짜 검증의 윤년·월말 회귀 시험 보강",
+    "value": 3,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "차선. util/validate.ts v.day는 Date ISO 왕복 검증을 이미 수행. 기존 domain.test.ts에 해당 경계값 시험 없음. 실제 parseOne/v.day로 정상 윤일·없는 날짜·형식·필드 오류 계약을 검증하며 구현 변경 불필요.",
+    "updated": "2026-10-07"
+  },
+  {
+    "title": "클립보드 복사 폴백 예외 시 textarea 정리",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "apps/web/src/lib/download.ts copyText는 execCommand가 throw하면 area.remove에 도달하지 않음. try/finally와 실패 반환 계약을 검토할 작은 후보. 실제 브라우저 예외 재현은 미확인이고 사용 빈도 영향도 확인 전이라 보류.",
+    "updated": "2026-10-07"
+  },
+  {
+    "title": "상대 시간 표기의 분·시·일 경계 확인과 회귀 시험",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "apps/web/src/lib/format.ts relative는 분/시/일마다 Math.round하므로 59분30초가 1시간 전, 23시간30분이 1일 전이 됨. 제품이 원한 반올림인지 미확인; 요구를 단정해 고치지 말고 경계 계약부터 정리할 것.",
+    "updated": "2026-10-07"
+  },
+  {
+    "title": "주요 화면의 오늘 날짜를 한국 시간으로 변경",
+    "value": 2,
+    "risk": 2,
+    "size": "S",
+    "status": "rejected",
+    "note": "download.ts today는 브라우저 현지 시간이지만 확인한 InvoiceEditor·Calendar는 이미 한국 날짜를 계산하는 format.ts today를 사용. 관찰된 사용자 결함이 없어 중복 도우미만 보고 광범위 통합하는 접근을 기각.",
+    "updated": "2026-10-07"
+  }
+]

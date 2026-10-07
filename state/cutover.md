@@ -173,3 +173,19 @@
 - 프로필 정정: e2e 기준선은 **32 가 아니라 33** 이다(spec 파일 12개 + 신규 1 = 13). 프로필의 "32 passed / spec 13개" 는 main@c304e91 에 머지된 PR #13 의 수리 커밋 `9da830b` 가 `admin-stale-overwrite.spec.ts` 에 4번째 테스트를 더한 것을 반영하지 않은 수치다(`playwright test --list` 로 파일별 건수 확인).
 
 - 릴리즈: v1.15.0 (2026-10-06, run 2026-10-06-033756-cutover-improve)
+## 2026-10-07
+- 선택: 유효한 긴 ID를 가진 부모에도 하위 작업을 추가할 수 있도록 신규 ID 길이 제한 (가치 3 / 위험 2 / 작업량 S)
+- 결과: 성공
+- 요약: addActivity의 부모 ID+시각 연결을 함수 내부 globalThis.crypto.randomUUID()로 교체해 부모 길이와 같은 밀리초의 연속 추가에 영향받지 않는 36자 ID를 생성한다. 기존 ID·parentId·level·기본값·배열 끝 추가·입력 불변성을 유지하며 프로덕션 1파일과 단위/E2E 테스트 2파일만 변경했다(커밋 16c3384). 실제 검증기를 호출하는 단위 6건 및 로그인 세션·격리 개발 서버의 PUT 응답과 후속 GET 회귀 1건을 추가했고, 단위 101건·전체 E2E 39건·타입/lint/build/diff 검사를 통과했다.
+- 실패 재현: `not ok 1 - 120자 ID 부모 아래 자식과 그 아래 손자를 추가해도 업로드 검증을 통과한다` / `error: 'activity.json 데이터 형식이 올바르지 않습니다.'` — 수정 전 집중 단위 26 pass / 3 fail, 나머지 실패 2건은 고정 Date.now의 ID 중복이다(unit-red.log).
+- 원인 확인: 수정 전 실제 addActivity 결과를 실제 validateActivityImport에 넘긴 직접 호출에서 `{"childIdLength":134,"issues":[{"path":"activities[1].id","message":"id는 120자 이하여야 합니다."}]}`를 확인했다. API 회귀도 Expected: 200 / Received: 400, INVALID_DATA와 activities[3].id의 같은 제한 오류로 실패했다(e2e-red.log; 기존 항목 3개를 seed하므로 자식 인덱스는 3). 따라서 저장 I/O나 UI 폴링이 아니라 신규 ID 생성과 검증 상한의 충돌이다.
+- 검증: 기준선 `node --test lib/*.test.ts lib/mail/*.test.ts lib/tracking/*.test.ts` 95 pass. 수정 후 `node --test lib/treeUtils.test.ts lib/activityData.test.ts` 29 pass; 원래 ID 생성으로만 잠시 되돌려 동일 명령 26 pass / 3 fail(exit 1), 수정 재적용 후 29 pass. 최종 전체 단위 명령 101 pass / 0 fail / 0 skipped; `npx tsc --noEmit`, `npm run lint`, `npm run build` 모두 exit 0. `PLAYWRIGHT_CHROMIUM_PATH=/usr/bin/google-chrome npx playwright test e2e/tree-ops.spec.ts` 3 passed(5.4s); `PLAYWRIGHT_CHROMIUM_PATH=/usr/bin/google-chrome npm run test:e2e` 39 passed(1.3m), 재시도·skip 없음. 마지막 `git diff --check` exit 0. 단위와 E2E는 순차 실행했고 lint는 E2E 이전, 확인한 생성 보고서는 실행 후 정리했다.
+- 보류 아이디어:
+  - validateActivityImport 제한값 경계 테스트 보강 (가치 2 / 위험 1 / 작업량 S) — 121자 거절 및 제목/개수 경계 전체 보강은 별도 과제.
+  - 상태 전파를 lib/treeUtils propagateStatus로 옮겨 API 분기와 통일 (가치 3 / 위험 2 / 작업량 M) — 이번 ID 생성과 독립된 계약 통합.
+  - npm run test:unit의 lib/**/*.test.ts 글롭 수정 (가치 2 / 위험 2 / 작업량 S) — 정찰의 실행 한계대로 명시 경로 전체 명령으로 검증, 스크립트 변경 제외.
+  - level 50 부모 아래 추가 정책 정리 (가치 2 / 위험 1 / 작업량 S) — 기존 검증 상한 유지, UI 정책 변경 제외.
+- 과제서: 채택 — 부모 접두사+Date.now 생성, 120자 검증 상한, 실제 PUT 경로 및 ID 형식 무관 문서 계약이 현재 코드와 일치했고 결정적 단위/API 실패를 재현했다.
+- 범위·검증 한계: 저장소 안 ID 접두사 의존은 검색과 ADMIN_GUIDE 4.3으로 배제했으나 저장소 밖 소비자의 의존은 확인하지 못했다. UUID 자체의 충돌 재시도, level 50 정책, 저장 동시성·인증·메일·배포·ESLint/단위 스크립트는 의도적으로 건드리지 않았다. 새 의존성 없음. npm ci --legacy-peer-deps는 성공했으며 audit가 10건(9 high / 1 critical)을 보고했지만 취약점 영향 분석·의존성 갱신은 이번 범위 밖으로 남겼다. Node MODULE_TYPELESS_PACKAGE_JSON 및 E2E 색상 환경 경고는 있었고, 전체 E2E의 SMTP 연결 실패 로그는 릴레이 중단 검증의 예상 출력이었다.
+- 스킬: Skill/skills.list/skills.read 호출 도구가 없어 /home/hkjang/.claude/plugins/marketplaces/headcount/plugins/technology/skills/ 아래 completion-verification, systematic-debugging, test-driven-development 정본을 직접 읽고 적용했다. 코드 작성 전에 설치된 Next.js Server and Client Components 및 Server and Client Boundary 가이드를 읽었다. 정찰의 기존 14개 아이디어(신규 2개 포함)는 모두 유지하고 선택 과제와 시각 충돌 과제를 done으로 갱신했다.
+

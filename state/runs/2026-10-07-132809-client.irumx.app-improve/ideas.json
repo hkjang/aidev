@@ -1,0 +1,110 @@
+[
+  {
+    "title": "list 형식이 글머리표 아닌 줄을 말없이 버린다 — 카톡 한 줄이 섞인 메일에서 그 한 줄이 사라진다",
+    "value": 3,
+    "risk": 3,
+    "size": "M",
+    "status": "pending",
+    "note": "parseList가 비들여쓰기 산문을 버리고 tests/kakao.spec.ts가 목록 3개만 기대함을 확인. 버린 줄 수 안내가 정책 변경보다 낮은 위험. 이전 혼합 입력 수정은 현재 base에 없어 카톡 한 줄 사례는 그 선행 변경이 반영된 뒤 재평가.",
+    "updated": "2026-10-07"
+  },
+  {
+    "title": "MAX_INPUT 자르기가 두 경로에서 다르게 읽힌다(라우트는 400 거절, normalize 는 slice+truncated)",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "현재 requests.ts 252행의 HTTP 거절과 normalize의 절단 모두 확인. 레이어별 계약일 수 있어 정책 통일은 불필요; 주석과 경계값 시험으로 계약을 명시하는 차선 후보. truncated 자체는 메시지 개수 제한에도 쓰여 죽은 필드가 아니다. 이번 구현에서 순수 함수 200,000/200,001자 경계 시험은 추가했다. HTTP 허용/400 경계 시험과 레이어 계약 문서는 남아 있어 pending 유지.",
+    "updated": "2026-10-07"
+  },
+  {
+    "title": "PDF 구조 검사의 오탐 — 압축 스트림의 우연한 /JS·/AA 바이트로 정상 인쇄 PDF 가 거절될 수 있다",
+    "value": 3,
+    "risk": 4,
+    "size": "M",
+    "status": "pending",
+    "note": "services/files.ts PDF_ACTIVE가 전체 latin1 텍스트를 훑는 구조 확인. 실제 정상 PDF 오탐은 미재현. 보안 완화 위험 때문에 보류.",
+    "updated": "2026-10-07"
+  },
+  {
+    "title": "요청 목록이 하나짜리 번호 항목을 문단으로 떨어뜨린다(parseList 가 bulletCount>=2 요구)",
+    "value": 2,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "bulletCount < 2이면 null인 현재 코드 확인. 단일 번호가 목록인지 일반 문장인지 모호해 기존 위험 1을 2로 상향; 자동 선택 정책 변경이므로 이번에는 제외.",
+    "updated": "2026-10-07"
+  },
+  {
+    "title": "상태 전이 '무엇으로 대체되었는지' 연결 검증 보강",
+    "value": 3,
+    "risk": 3,
+    "size": "M",
+    "status": "pending",
+    "note": "api-security.spec.ts에서 납품 supersededBy truthy, 승인자 변경 차단 확인. 모든 대상의 후속 id 정확성까지는 미확인. 이미 있는 기본 커버리지와 중복하지 않도록 대상별 조사부터 필요.",
+    "updated": "2026-10-07"
+  },
+  {
+    "title": "첫 메시지 앞에 PC 내보내기의 시스템 알림 줄이 있으면 진짜 내보내기도 카톡으로 읽지 않는다",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "rejected",
+    "note": "이 항목은 이전 회차의 보수적 머리말 판별 도입을 전제로 하지만 현재 155a4ee parseKakao에는 그 검사가 없고 hits>0이면 파싱한다. 현 base에는 성립하지 않음. 선행 PR 반영 뒤 실제 내보내기 자료로 다시 평가 가능.",
+    "updated": "2026-10-07"
+  },
+  {
+    "title": "이 환경에서 npx 가 node v20 을 집어 wrangler 가 뜨지 않는다 — 시험 실행 함정",
+    "value": 2,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "이번 npm exec -- node --version에서 v20.19.2 선택을 직접 확인했다(셸 node는 v22.23.1). gitignore된 node_modules/.bin/node에 Node 22 실행 파일 심링크를 두자 npm exec도 v22.23.1이 됐고 Wrangler 시험 서버가 정상 실행됐다. 전역 Node·프로젝트 스크립트는 변경하지 않았으며 재설치 후 적용할 환경 준비 절차는 후속 후보.",
+    "updated": "2026-10-07"
+  },
+  {
+    "title": "GitHub Actions CI 워크플로 추가 — 러너가 돌리는 검증 명령을 그대로 CI 로",
+    "value": 5,
+    "risk": 3,
+    "size": "M",
+    "status": "pending",
+    "note": "현재 .github 없음. package.json에는 build/check/test가 있고 vet는 없음. 러너의 CI 없음 판정은 제공 기록이며 독립 검증 안 함. Node·Chromium·Wrangler 준비가 필요해 S/위험1에서 M/위험3으로 재평가; 보호 경로이므로 이번에는 선택하지 않음.",
+    "updated": "2026-10-07"
+  },
+  {
+    "title": "붙여넣기 분석기의 메시지 4,000자 절단을 알림에 반영",
+    "value": 4,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "이번 선택(신규). Node로 kakao/list/paragraphs 각각 4,001자가 4,000자로 잘리면서 truncated=false인 결함 재현. parseConversation과 ImportRequests의 경고를 변경, 프로덕션 2파일. 기존 혼합 입력 가로채기 수정과 독립.",
+    "updated": "2026-10-07"
+  },
+  {
+    "title": "순수 함수 단위 시험을 Wrangler·D1 준비 없이 실행하도록 분리",
+    "value": 3,
+    "risk": 2,
+    "size": "M",
+    "status": "pending",
+    "note": "신규. playwright.config.ts 전역 webServer 때문에 kakao/domain 순수 시험에도 dist와 D1 준비 필요. guard는 getPlatformProxy를 써 환경 요구가 다르므로 순수 시험만 별도 구성하는 방안을 조사. 이번 범위에서는 설정 변경하지 않음.",
+    "updated": "2026-10-07"
+  },
+  {
+    "title": "긴 선행 공백이 있는 붙여넣기 입력의 분석 지연 조사",
+    "value": 3,
+    "risk": 2,
+    "size": "M",
+    "status": "pending",
+    "note": "이번 전체 입력 경계 시험의 초기 fixture(약 20만 선행 공백 + 짧은 본문)가 단위 시험에서 각각 13.8초/14.8초 걸렸다. 정규화로 제거되는 NUL로 같은 전체 입력 경계를 검증하면 각 4ms였다. 공백 처리 정규식의 비용이 의심되지만 정확한 병목은 미확정. 동작 보존 성능 재현부터 하고 이번 범위에서는 수정하지 않음.",
+    "updated": "2026-10-07"
+  },
+  {
+    "title": "붙여넣기 입력창의 200,000자 상한 안내",
+    "value": 3,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "ImportRequests의 textarea는 maxLength=200000이지만 입력 도움말에는 상한 안내가 없다. 사용자가 큰 원문을 붙여 넣기 전에 나눌 수 있도록 한도 문구나 문자 수 안내를 검토. 실제 클립보드의 초과 입력 처리 방식은 이번 브라우저 시험에서 미검증이므로 후속 재현 필요.",
+    "updated": "2026-10-07"
+  }
+]

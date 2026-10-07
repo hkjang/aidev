@@ -1,0 +1,38 @@
+[WebServer] (node:1964946) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+Running 1 test using 1 worker
+
+  ✘  1 e2e/tree-ops.spec.ts:46:5 › 120자 ID 부모 아래 추가한 자식이 저장되고 기존 항목은 유지된다 (268ms)
+
+
+  1) e2e/tree-ops.spec.ts:46:5 › 120자 ID 부모 아래 추가한 자식이 저장되고 기존 항목은 유지된다 ────────────────────────────
+
+    Error: {"error":"activity.json 데이터 형식이 올바르지 않습니다.","code":"INVALID_DATA","details":[{"path":"activities[3].id","message":"id는 120자 이하여야 합니다."}]}
+
+    expect(received).toBe(expected) // Object.is equality
+
+    Expected: 200
+    Received: 400
+
+      52 |
+      53 |   const added = await request.put('/api/activities', { data: { action: 'add', parentId: parent.id } });
+    > 54 |   expect(added.status(), await added.text()).toBe(200);
+         |                                              ^
+      55 |   const saved = (await added.json()).activities as Activity[];
+      56 |   expect(saved).toHaveLength(seed.length + 1);
+      57 |   expect(saved.slice(0, -1)).toEqual(seed);
+        at /home/hkjang/.cache/auto-improve-wt/cutover/e2e/tree-ops.spec.ts:54:46
+
+    Error Context: test-results/tree-ops-120자-ID-부모-아래-추가한-자식이-저장되고-기존-항목은-유지된다/error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/tree-ops-120자-ID-부모-아래-추가한-자식이-저장되고-기존-항목은-유지된다/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/tree-ops-120자-ID-부모-아래-추가한-자식이-저장되고-기존-항목은-유지된다/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  1 failed
+    e2e/tree-ops.spec.ts:46:5 › 120자 ID 부모 아래 추가한 자식이 저장되고 기존 항목은 유지된다 ─────────────────────────────

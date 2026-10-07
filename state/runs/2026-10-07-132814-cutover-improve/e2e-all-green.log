@@ -1,0 +1,54 @@
+
+> kcb-dashboard@0.1.0 test:e2e
+> playwright test
+
+[WebServer] (node:1970173) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+Running 39 tests using 1 worker
+
+[WebServer] (node:1970394) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+  ✓   1 e2e/activity-import.spec.ts:7:5 › 관리자 activity.json 업로드 검증·반영·상황판 동기화 (3.5s)
+  ✓   2 e2e/admin-edit-stale.spec.ts:70:5 › 다른 관리자가 바꾼 뒤 편집을 열면 입력에 화면에 보이는 최신 값이 들어 있다 (3.6s)
+  ✓   3 e2e/admin-edit-stale.spec.ts:80:5 › 다른 관리자가 바꾼 뒤 편집을 열고 그대로 저장해도 그 값이 되돌아가지 않는다 (3.7s)
+  ✓   4 e2e/admin-empty-tree.spec.ts:51:5 › activities 가 비어 있어도 최상위 작업을 화면에서 추가할 수 있다 (852ms)
+  ✓   5 e2e/admin-empty-tree.spec.ts:71:5 › 최상위 추가 PUT 이 실패하면 실패 배너가 보이고 항목이 늘지 않는다 (808ms)
+  ✓   6 e2e/admin-missing-target.spec.ts:72:5 › 없는 targetId 의 delete PUT 은 404 이고 저장 내용이 그대로다 (85ms)
+  ✓   7 e2e/admin-missing-target.spec.ts:76:5 › 없는 targetId 의 move PUT 은 404 이고 저장 내용이 그대로다 (108ms)
+  ✓   8 e2e/admin-missing-target.spec.ts:81:5 › 없는 targetId 의 상태변경 PUT 은 404 이고 저장 내용이 그대로다 (85ms)
+  ✓   9 e2e/admin-missing-target.spec.ts:85:5 › 분기 자체가 성립하지 않는 요청은 404 가 아니라 400 UNSUPPORTED_ACTION 이다 (69ms)
+  ✓  10 e2e/admin-missing-target.spec.ts:100:5 › 기존 200 계약은 그대로다 — dashboardTitle 단독과 targetId 를 함께 보내는 배열 PUT (107ms)
+  ✓  11 e2e/admin-put-contract.spec.ts:68:5 › 인식할 수 있는 변경 지시도 dashboardTitle 도 없는 PUT 은 400 이고 저장 내용이 그대로다 (81ms)
+  ✓  12 e2e/admin-put-contract.spec.ts:72:5 › 빈 객체 PUT 도 400 이고 저장 내용이 그대로다 (78ms)
+  ✓  13 e2e/admin-put-contract.spec.ts:76:5 › action 은 알지만 인자가 계약에 맞지 않는 PUT 은 400 이다 (152ms)
+  ✓  14 e2e/admin-put-contract.spec.ts:87:5 › dashboardTitle 단독 PUT 은 200 이고 제목만 바뀐다 (84ms)
+  ✓  15 e2e/admin-put-contract.spec.ts:98:5 › 빈 배열 activities PUT 은 200 이고 트리를 비운다 (73ms)
+  ✓  16 e2e/admin-save-failure.spec.ts:73:5 › 활동 상태 변경 PUT 이 실패하면 관리 화면에 실패 메시지가 보이고, 성공하면 사라진다 (817ms)
+  ✓  17 e2e/admin-save-failure.spec.ts:92:5 › 활동 변경이 401 이면 다시 로그인 화면으로 돌아간다 (738ms)
+  ✓  18 e2e/admin-save-failure.spec.ts:111:5 › 삭제 확인창은 한 번만 뜨고 실제로 지우는 항목의 제목을 보여 준다 (829ms)
+  ✓  19 e2e/admin-save-failure.spec.ts:132:5 › 인라인 편집 저장이 실패하면 입력이 닫히지 않고 입력한 값이 남는다 (1.0s)
+  ✓  20 e2e/admin-save-failure.spec.ts:155:5 › 상황판 제목 저장이 실패하면 편집이 닫히지 않고 실패 메시지가 보인다 (1.0s)
+  ✓  21 e2e/admin-session-cookie.spec.ts:16:5 › 관리자 세션 쿠키의 Secure 는 요청이 HTTPS 로 왔을 때만 붙는다 (50ms)
+  ✓  22 e2e/admin-stale-overwrite.spec.ts:102:5 › 읽기가 죽어 있어도 혼자 하는 연속 저장은 409 가 되지 않는다 (3.7s)
+  ✓  23 e2e/admin-stale-overwrite.spec.ts:121:5 › 오래된 스냅샷으로 상태를 바꾸면 409 가 뜨고 다른 관리자의 변경이 되돌아가지 않는다 (846ms)
+  ✓  24 e2e/admin-stale-overwrite.spec.ts:149:5 › expectedLastUpdated 가 저장된 값과 다른 전체 배열 PUT 은 409 STALE_SNAPSHOT 이고 아무것도 쓰지 않는다 (82ms)
+  ✓  25 e2e/admin-stale-overwrite.spec.ts:165:5 › expectedLastUpdated 가 맞거나 아예 없는 전체 배열 PUT 은 그대로 200 이다 (101ms)
+  ✓  26 e2e/dashboard-load-failure.spec.ts:72:5 › 첫 로드부터 GET 이 500 이면 표준 상황판은 빈 트리 대신 읽기 실패 화면을 보여 준다 (888ms)
+  ✓  27 e2e/dashboard-load-failure.spec.ts:85:5 › 표준 상황판은 성공 후 폴링이 500 으로 바뀌어도 직전 트리를 유지하고 경고만 띄운다 (15.8s)
+  ✓  28 e2e/dashboard-load-failure.spec.ts:106:5 › 전광판도 첫 로드 실패에는 오류 화면을, 폴링 실패에는 경고 배너를 보여 준다 (14.8s)
+  ✓  29 e2e/dashboard-load-failure.spec.ts:126:5 › 관리자 화면은 읽기 실패를 저장 실패 배너와 구분되는 admin-load-error 로 남긴다 (8.9s)
+  ✓  30 e2e/mail.spec.ts:83:5 › 기본값은 꺼짐: 상태를 바꿔도 아무것도 나가지 않고 설정 파일도 생기지 않는다 (1.2s)
+  ✓  31 e2e/mail.spec.ts:108:5 › 켜면 지연 알림이 릴레이로 나가고 기록에 남으며 비밀번호는 되읽히지 않는다 (1.2s)
+[WebServer] 메일 발송 실패 [activity.delayed] → pmo@corp.example: SMTP 연결 실패 (127.0.0.1:45329): connect ECONNREFUSED 127.0.0.1:45329
+[WebServer] 메일 발송 실패 [test] → me@corp.example: SMTP 연결 실패 (127.0.0.1:45329): connect ECONNREFUSED 127.0.0.1:45329
+  ✓  32 e2e/mail.spec.ts:181:5 › 릴레이가 죽어 있어도 요청은 정상으로 끝나고 실패가 기록되며, 스위치를 끄면 그 종류만 멎는다 (3.8s)
+  ✓  33 e2e/mobile-clock.spec.ts:5:5 › 모바일 상황판 헤더 시계가 초 단위로 실시간 갱신된다 (1.9s)
+  ✓  34 e2e/tracking.spec.ts:76:5 › 기본값은 꺼짐: 스니펫이 없고 정책은 nonce 와 앱 오리진만 허용한다 (1.8s)
+  ✓  35 e2e/tracking.spec.ts:103:5 › Momento 를 켜면 nonce 가 붙은 스니펫이 head 에 들어가고 같은 오리진 프록시로 수집이 들어온다 (960ms)
+  ✓  36 e2e/tracking.spec.ts:193:5 › 정책 위반 신고가 기록되고 관리 화면에서 허용 목록에 더할 수 있다 (1.3s)
+  ✓  37 e2e/tree-ops.spec.ts:46:5 › 120자 ID 부모 아래 추가한 자식이 저장되고 기존 항목은 유지된다 (94ms)
+  ✓  38 e2e/tree-ops.spec.ts:72:5 › 임의 id 트리에서 부모를 지우면 parentId 로 이어진 하위까지 함께 사라진다 (68ms)
+  ✓  39 e2e/tree-ops.spec.ts:84:5 › 관리 화면에서 임의 id 부모의 상태를 바꾸면 parentId 로 이어진 하위에 내려간다 (754ms)
+
+  39 passed (1.3m)

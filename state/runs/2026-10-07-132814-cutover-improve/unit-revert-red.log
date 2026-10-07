@@ -1,0 +1,306 @@
+TAP version 13
+# (node:1966027) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///home/hkjang/.cache/auto-improve-wt/cutover/lib/activityData.test.ts is not specified and it doesn't parse as CommonJS.
+# Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+# To eliminate this warning, add "type": "module" to /home/hkjang/.cache/auto-improve-wt/cutover/package.json.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: validateActivityImport 정상 입력
+    # Subtest: 최상위와 자식 2건을 통과시키고 id·parentId 의 앞뒤 공백을 trim 한다
+    ok 1 - 최상위와 자식 2건을 통과시키고 id·parentId 의 앞뒤 공백을 trim 한다
+      ---
+      duration_ms: 0.934155
+      type: 'test'
+      ...
+    # Subtest: dashboardTitle 의 앞뒤 공백을 trim 해서 돌려준다
+    ok 2 - dashboardTitle 의 앞뒤 공백을 trim 해서 돌려준다
+      ---
+      duration_ms: 0.083944
+      type: 'test'
+      ...
+    # Subtest: dashboardTitle 을 주지 않으면 undefined 를 돌려준다
+    ok 3 - dashboardTitle 을 주지 않으면 undefined 를 돌려준다
+      ---
+      duration_ms: 0.0617
+      type: 'test'
+      ...
+    # Subtest: 빈 activities 배열은 throw 하지 않고 빈 배열을 돌려준다
+    ok 4 - 빈 activities 배열은 throw 하지 않고 빈 배열을 돌려준다
+      ---
+      duration_ms: 0.054088
+      type: 'test'
+      ...
+    1..4
+ok 1 - validateActivityImport 정상 입력
+  ---
+  duration_ms: 1.678115
+  type: 'suite'
+  ...
+# Subtest: validateActivityImport 최상위 형식 오류
+    # Subtest: 최상위 값이 객체가 아니면(배열) path '$' 오류 1건으로 throw 한다
+    ok 1 - 최상위 값이 객체가 아니면(배열) path '$' 오류 1건으로 throw 한다
+      ---
+      duration_ms: 0.142344
+      type: 'test'
+      ...
+    # Subtest: 최상위 값이 객체가 아니면(문자열) path '$' 오류 1건으로 throw 한다
+    ok 2 - 최상위 값이 객체가 아니면(문자열) path '$' 오류 1건으로 throw 한다
+      ---
+      duration_ms: 0.07533
+      type: 'test'
+      ...
+    # Subtest: 최상위 값이 객체가 아니면(null) path '$' 오류 1건으로 throw 한다
+    ok 3 - 최상위 값이 객체가 아니면(null) path '$' 오류 1건으로 throw 한다
+      ---
+      duration_ms: 0.112181
+      type: 'test'
+      ...
+    # Subtest: activities 가 배열이 아니면 path 'activities' 오류 1건으로 throw 한다
+    ok 4 - activities 가 배열이 아니면 path 'activities' 오류 1건으로 throw 한다
+      ---
+      duration_ms: 0.154917
+      type: 'test'
+      ...
+    1..4
+ok 2 - validateActivityImport 최상위 형식 오류
+  ---
+  duration_ms: 0.654088
+  type: 'suite'
+  ...
+# Subtest: validateActivityImport 관계 오류의 issues[].path
+    # Subtest: id 가 중복되면 뒤쪽 항목의 id 경로를 가리키고 메시지에 앞쪽 인덱스를 담는다
+    ok 1 - id 가 중복되면 뒤쪽 항목의 id 경로를 가리키고 메시지에 앞쪽 인덱스를 담는다
+      ---
+      duration_ms: 0.229025
+      type: 'test'
+      ...
+    # Subtest: 부모가 존재하지 않으면 parentId 경로를 가리킨다
+    ok 2 - 부모가 존재하지 않으면 parentId 경로를 가리킨다
+      ---
+      duration_ms: 0.148405
+      type: 'test'
+      ...
+    # Subtest: 부모 level 보다 정확히 1 크지 않으면 자식의 level 경로를 가리킨다
+    ok 3 - 부모 level 보다 정확히 1 크지 않으면 자식의 level 경로를 가리킨다
+      ---
+      duration_ms: 0.107264
+      type: 'test'
+      ...
+    # Subtest: 자기 자신을 부모로 지정하면 parentId 경로로 자기참조·순환 2건이 난다
+    ok 4 - 자기 자신을 부모로 지정하면 parentId 경로로 자기참조·순환 2건이 난다
+      ---
+      duration_ms: 0.148812
+      type: 'test'
+      ...
+    # Subtest: 최상위인데 level 이 1 이 아니면 level 경로를 가리킨다
+    ok 5 - 최상위인데 level 이 1 이 아니면 level 경로를 가리킨다
+      ---
+      duration_ms: 0.05839
+      type: 'test'
+      ...
+    # Subtest: 두 항목이 서로를 부모로 가리키면 순환 오류는 1건만 난다
+    ok 6 - 두 항목이 서로를 부모로 가리키면 순환 오류는 1건만 난다
+      ---
+      duration_ms: 0.069522
+      type: 'test'
+      ...
+    1..6
+ok 3 - validateActivityImport 관계 오류의 issues[].path
+  ---
+  duration_ms: 0.8944
+  type: 'suite'
+  ...
+# Subtest: validateActivityImport 의 '진행중' 정규화
+    # Subtest: status '진행중' 을 '진행' 으로 바꾸고 변환 건수를 세어 돌려준다
+    ok 1 - status '진행중' 을 '진행' 으로 바꾸고 변환 건수를 세어 돌려준다
+      ---
+      duration_ms: 0.069896
+      type: 'test'
+      ...
+    1..1
+ok 4 - validateActivityImport 의 '진행중' 정규화
+  ---
+  duration_ms: 0.097441
+  type: 'suite'
+  ...
+# Subtest: validateActivityImport 의 issues 상한
+    # Subtest: 오류가 50건을 넘으면 50건 + 생략 안내 1건만 돌려준다
+    ok 1 - 오류가 50건을 넘으면 50건 + 생략 안내 1건만 돌려준다
+      ---
+      duration_ms: 7.871227
+      type: 'test'
+      ...
+    1..1
+ok 5 - validateActivityImport 의 issues 상한
+  ---
+  duration_ms: 7.946238
+  type: 'suite'
+  ...
+# (node:1966028) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///home/hkjang/.cache/auto-improve-wt/cutover/lib/treeUtils.test.ts is not specified and it doesn't parse as CommonJS.
+# Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+# To eliminate this warning, add "type": "module" to /home/hkjang/.cache/auto-improve-wt/cutover/package.json.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: addActivity
+    # Subtest: 120자 ID 부모 아래 자식과 그 아래 손자를 추가해도 업로드 검증을 통과한다
+    not ok 1 - 120자 ID 부모 아래 자식과 그 아래 손자를 추가해도 업로드 검증을 통과한다
+      ---
+      duration_ms: 1.033872
+      type: 'test'
+      location: '/home/hkjang/.cache/auto-improve-wt/cutover/lib/treeUtils.test.ts:21:3'
+      failureType: 'testCodeFailure'
+      error: 'activity.json 데이터 형식이 올바르지 않습니다.'
+      code: 'ERR_TEST_FAILURE'
+      name: 'ActivityImportValidationError'
+      stack: |-
+        validateActivityImport (file:///home/hkjang/.cache/auto-improve-wt/cutover/lib/activityData.ts:308:32)
+        TestContext.<anonymous> (file:///home/hkjang/.cache/auto-improve-wt/cutover/lib/treeUtils.test.ts:27:22)
+        Test.runInAsyncScope (node:async_hooks:214:14)
+        Test.run (node:internal/test_runner/test:1047:25)
+        Test.start (node:internal/test_runner/test:944:17)
+        node:internal/test_runner/test:1440:71
+        node:internal/per_context/primordials:466:82
+        new Promise (<anonymous>)
+        new SafePromise (node:internal/per_context/primordials:435:3)
+        node:internal/per_context/primordials:466:9
+      ...
+    # Subtest: 입력과 기존 ID·순서를 유지하고 기본값의 자식을 배열 끝에 추가한다
+    ok 2 - 입력과 기존 ID·순서를 유지하고 기본값의 자식을 배열 끝에 추가한다
+      ---
+      duration_ms: 0.313871
+      type: 'test'
+      ...
+    # Subtest: 빈 배열에 최상위 작업을 추가하면 level 1과 기본값을 유지한다
+    ok 3 - 빈 배열에 최상위 작업을 추가하면 level 1과 기본값을 유지한다
+      ---
+      duration_ms: 0.228146
+      type: 'test'
+      ...
+    # Subtest: 기존 트리에 최상위 작업을 추가하면 level 1과 기본값을 유지한다
+    ok 4 - 기존 트리에 최상위 작업을 추가하면 level 1과 기본값을 유지한다
+      ---
+      duration_ms: 0.158624
+      type: 'test'
+      ...
+    # Subtest: 같은 시각에 최상위 작업을 연속 추가해도 ID가 다르다
+    not ok 5 - 같은 시각에 최상위 작업을 연속 추가해도 ID가 다르다
+      ---
+      duration_ms: 0.698507
+      type: 'test'
+      location: '/home/hkjang/.cache/auto-improve-wt/cutover/lib/treeUtils.test.ts:78:5'
+      failureType: 'testCodeFailure'
+      error: |-
+        Expected "actual" to be strictly unequal to:
+        
+        '1800000000000'
+      code: 'ERR_ASSERTION'
+      name: 'AssertionError'
+      expected: '1800000000000'
+      actual: '1800000000000'
+      operator: 'notStrictEqual'
+      stack: |-
+        TestContext.<anonymous> (file:///home/hkjang/.cache/auto-improve-wt/cutover/lib/treeUtils.test.ts:85:14)
+        Test.runInAsyncScope (node:async_hooks:214:14)
+        Test.run (node:internal/test_runner/test:1047:25)
+        Suite.processPendingSubtests (node:internal/test_runner/test:744:18)
+        Test.postRun (node:internal/test_runner/test:1173:19)
+        Test.run (node:internal/test_runner/test:1101:12)
+        async Suite.processPendingSubtests (node:internal/test_runner/test:744:7)
+      ...
+    # Subtest: 같은 시각에 같은 부모 아래 작업을 연속 추가해도 ID가 다르다
+    not ok 6 - 같은 시각에 같은 부모 아래 작업을 연속 추가해도 ID가 다르다
+      ---
+      duration_ms: 0.148141
+      type: 'test'
+      location: '/home/hkjang/.cache/auto-improve-wt/cutover/lib/treeUtils.test.ts:78:5'
+      failureType: 'testCodeFailure'
+      error: |-
+        Expected "actual" to be strictly unequal to:
+        
+        'parent-1800000000000'
+      code: 'ERR_ASSERTION'
+      name: 'AssertionError'
+      expected: 'parent-1800000000000'
+      actual: 'parent-1800000000000'
+      operator: 'notStrictEqual'
+      stack: |-
+        TestContext.<anonymous> (file:///home/hkjang/.cache/auto-improve-wt/cutover/lib/treeUtils.test.ts:85:14)
+        Test.runInAsyncScope (node:async_hooks:214:14)
+        Test.run (node:internal/test_runner/test:1047:25)
+        Suite.processPendingSubtests (node:internal/test_runner/test:744:18)
+        Test.postRun (node:internal/test_runner/test:1173:19)
+        Test.run (node:internal/test_runner/test:1101:12)
+        async Suite.processPendingSubtests (node:internal/test_runner/test:744:7)
+      ...
+    1..6
+not ok 6 - addActivity
+  ---
+  duration_ms: 3.272451
+  type: 'suite'
+  location: '/home/hkjang/.cache/auto-improve-wt/cutover/lib/treeUtils.test.ts:20:1'
+  failureType: 'subtestsFailed'
+  error: '3 subtests failed'
+  code: 'ERR_TEST_FAILURE'
+  ...
+# Subtest: collectDescendantIds
+    # Subtest: parentId 관계를 따라 대상과 모든 하위를 모은다
+    ok 1 - parentId 관계를 따라 대상과 모든 하위를 모은다
+      ---
+      duration_ms: 0.191196
+      type: 'test'
+      ...
+    # Subtest: 없는 id 는 자기 자신만 돌려준다
+    ok 2 - 없는 id 는 자기 자신만 돌려준다
+      ---
+      duration_ms: 0.14824
+      type: 'test'
+      ...
+    # Subtest: parentId 가 순환해도 무한루프 없이 끝난다
+    ok 3 - parentId 가 순환해도 무한루프 없이 끝난다
+      ---
+      duration_ms: 0.236308
+      type: 'test'
+      ...
+    1..3
+ok 7 - collectDescendantIds
+  ---
+  duration_ms: 0.755477
+  type: 'suite'
+  ...
+# Subtest: deleteActivity
+    # Subtest: 초기 데이터에서 "2" 를 지우면 2 와 2-1~2-4 만 빠지고 나머지 15개는 남는다
+    ok 1 - 초기 데이터에서 "2" 를 지우면 2 와 2-1~2-4 만 빠지고 나머지 15개는 남는다
+      ---
+      duration_ms: 0.218741
+      type: 'test'
+      ...
+    # Subtest: id 접두사가 다른 임의 id 트리에서도 parentId 관계로 3단 하위까지 지운다
+    ok 2 - id 접두사가 다른 임의 id 트리에서도 parentId 관계로 3단 하위까지 지운다
+      ---
+      duration_ms: 0.055002
+      type: 'test'
+      ...
+    # Subtest: id 가 "1-" 로 시작해도 parentId 가 다르면 "1" 삭제 때 남는다
+    ok 3 - id 가 "1-" 로 시작해도 parentId 가 다르면 "1" 삭제 때 남는다
+      ---
+      duration_ms: 0.044298
+      type: 'test'
+      ...
+    # Subtest: 없는 id 를 지우면 아무것도 바뀌지 않는다
+    ok 4 - 없는 id 를 지우면 아무것도 바뀌지 않는다
+      ---
+      duration_ms: 0.027644
+      type: 'test'
+      ...
+    1..4
+ok 8 - deleteActivity
+  ---
+  duration_ms: 0.421453
+  type: 'suite'
+  ...
+1..8
+# tests 29
+# suites 8
+# pass 26
+# fail 3
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 130.990544

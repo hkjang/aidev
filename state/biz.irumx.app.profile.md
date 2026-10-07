@@ -1,0 +1,24 @@
+# 이룸비즈 (biz.irumx.app) 프로필 (2026-10-07)
+- 목적: 중소기업의 조직·전자결재·업무·영업·재무·보조원장을 연결하고 화면·AI·MCP에서 같은 권한으로 처리하는 그룹웨어·ERP.
+- 스택: Node 22+, TypeScript ESM/npm workspaces, React 19·Mantine 9·Vite, PostgreSQL 16(로컬); 운영 문서상 Supabase PostgreSQL·Cloudflare Pages/Functions·Hyperdrive·R2·Workers AI.
+- 구조:
+  - `packages/core/src`: 공통 HTTP 파이프라인·라우터·도메인·API, Node/Workers에서 공유.
+  - `packages/core/src/auth`: OAuth·세션·토큰·테넌트·콘솔 인증.
+  - `apps/web/src`: React 화면; `/w/:ws` 회사 공간·`/admin` 콘솔·공개 페이지, components/Markdown 공용 렌더러.
+  - `apps/server`: 로컬 Node 서버 및 정적 파일 제공.
+  - `db/migrations`: SQL 마이그레이션; 조직/RLS·결재 엔진·원장·업무·메일 알림(architecture 문서에 0010까지 기재).
+  - `functions`, `workers/scheduler`: Pages 요청 진입과 5분 주기 작업.
+  - `scripts`, `fixtures`: 빌드/개발 DB·가짜 OAuth/AI·e2e·브라우저·배포·운영 도구.
+  - `docs`: requirements(다음 판 범위 포함), architecture, security, auth-integration, deployment, operations, design, seo, 생성 API 목록.
+- 빌드·테스트:
+  - `npm ci --no-audit --fund=false`; `npm run check` = ESLint + 세 workspace 타입 검사 + Vitest.
+  - `npm test -- apps/web/src/components/Markdown.test.ts` 같은 파일 지정 가능(신규 시험 작성 뒤); Vitest include는 packages/apps의 `**/*.test.ts`, node 환경.
+  - `npm run build`: 웹 Vite 및 서버 빌드. 테스트·빌드의 현재 통과 여부 미확인.
+  - `npm run e2e`: 실제 PostgreSQL + 로컬 서버 + fake OAuth/AI 필요. `npm run ui`, `npm run screens`, `npm run a11y`: Playwright Chromium·데모 시드도 필요(전체 CI 최대 30분).
+  - `npm run routes`: API 문서 재생성; route-catalogue 시험이 docs/api-routes.md·openapi.yaml과 실제 라우터의 일치를 확인.
+- 관례: 최근 커밋은 한국어 설명형. 설정은 .env.example/개발 .env.dev 및 런타임 바인딩. SQL 적용은 `npm run migrate`(소유자 DATABASE_URL), 앱은 별도 biz_app 역할. 저장소 내 CLAUDE.md·AGENTS.md·별도 로드맵 파일은 발견하지 못함.
+- 위험 구역: auth/session·tenant/RLS, db/migrations의 결재 엔진·불변 원장, finance·결재 쓰기 경로, 공유 운영 DB·배포 및 .github/workflows. 문서상 운영 배포는 수동 승인 절차.
+- 자주 깨지는 곳: 이전 개선/반려 기록 없음. architecture는 FOR ALL RLS 정책의 재귀 사고를 명시. ESLint 주석은 React setState updater에서 event.currentTarget 참조 실패를 설명하며 전용 규칙으로 금지.
+- 검증 함정: 이번 정찰 체크아웃에는 node_modules가 없어 `npm test -- --reporter=dot`가 vitest: not found(127). Node v22.23.1/npm 10.9.8 확인. 주 작업 트리의 기존 TypeScript/React로 이번 소스를 메모리 변환·SSR 재현했으나 CI 통과를 대신하지 않음.
+- 검증 함정: scripts/ci-env.mjs·dev-reset.sh·마이그레이션·시드는 환경/DB를 변경한다. 읽기 전용 정찰에서는 실행하지 않음. DB/e2e의 실제 연결 상태는 미확인.
+- 현재 품질 근거: CI가 lint/types/unit/build→Postgres migrations/seed→API e2e→UI flows/screens/axe를 정의. TODO/FIXME 검색의 결과는 정책 초안 감지 문자열뿐이며 작업 TODO 목록은 없었음. git log -30에 총 8커밋, 기준 main@022da5b.

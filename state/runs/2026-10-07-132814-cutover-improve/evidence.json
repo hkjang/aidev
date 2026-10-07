@@ -1,0 +1,200 @@
+{
+  "run_id": "2026-10-07-132814-cutover-improve",
+  "generated": "2026-10-07T13:39:49+09:00",
+  "run": {
+    "run_id": "2026-10-07-132814-cutover-improve",
+    "project": "cutover",
+    "kind": "improve",
+    "started": "2026-10-07T13:28:14+09:00",
+    "model": "claude-opus-5",
+    "policy_version": "4a9e91ac7",
+    "prompts_hash": "ce085c79e18002e2",
+    "runner_version": "1bd5f0cd4",
+    "arm": "no-lessons",
+    "experiment": "roles-2026-09",
+    "finished": "2026-10-07T13:39:48+09:00",
+    "outcome": "review-pending"
+  },
+  "record": {
+    "ts": "2026-10-07T13:39:48+09:00",
+    "date": "2026-10-07",
+    "project": "cutover",
+    "result": "review held, PR open https://github.com/hkjang/cutover/pull/15",
+    "outcome": "review-pending",
+    "run_id": "2026-10-07-132814-cutover-improve",
+    "base_sha": "51ffd03c3db9bd47fb1e1eaa36d7562b87187bd7",
+    "head_sha": "16c33847f4fda0c2923e57f96586b55fc1b058d1",
+    "pr": "https://github.com/hkjang/cutover/pull/15",
+    "stages": {
+      "base": {
+        "state": "pinned",
+        "reason": "main@51ffd03",
+        "at": "2026-10-07T13:28:19+09:00"
+      },
+      "autonomy": {
+        "state": "release",
+        "reason": "",
+        "at": "2026-10-07T13:28:19+09:00"
+      },
+      "scout": {
+        "state": "done",
+        "reason": "유효한 긴 ID를 가진 부모에도 하위 작업을 추가할 수 있도록 신규 ID 길이 제한 (가치 3 / 위험 2 / 작업량 S)",
+        "at": "2026-10-07T13:33:03+09:00"
+      },
+      "brief": {
+        "state": "accepted",
+        "reason": "채택 — 부모 접두사+Date.now 생성, 120자 검증 상한, 실제 PUT 경로 및 ID 형식 무관 문서 계약이 현재 코드와 일치했고 결정�",
+        "at": "2026-10-07T13:39:13+09:00"
+      },
+      "verify": {
+        "state": "passed",
+        "reason": "검증 1개 통과 (policy)",
+        "at": "2026-10-07T13:39:33+09:00"
+      },
+      "review": {
+        "state": "missing",
+        "reason": "리뷰 결과 없음/손상: missing — 보류",
+        "at": "2026-10-07T13:39:40+09:00"
+      },
+      "pr": {
+        "state": "created",
+        "reason": "https://github.com/hkjang/cutover/pull/15",
+        "at": "2026-10-07T13:39:46+09:00"
+      }
+    },
+    "campaign": "",
+    "autonomy": "release",
+    "arm": "no-lessons",
+    "experiment": "roles-2026-09",
+    "engine": "codex",
+    "files": 3,
+    "additions": 104,
+    "deletions": 3,
+    "tests": 2,
+    "title": "fix: 긴 ID 부모 아래 작업 추가가 검증에서 거절되는 문제 수정"
+  },
+  "stages": {
+    "base": {
+      "state": "pinned",
+      "reason": "main@51ffd03",
+      "at": "2026-10-07T13:28:19+09:00"
+    },
+    "autonomy": {
+      "state": "release",
+      "reason": "",
+      "at": "2026-10-07T13:28:19+09:00"
+    },
+    "scout": {
+      "state": "done",
+      "reason": "유효한 긴 ID를 가진 부모에도 하위 작업을 추가할 수 있도록 신규 ID 길이 제한 (가치 3 / 위험 2 / 작업량 S)",
+      "at": "2026-10-07T13:33:03+09:00"
+    },
+    "brief": {
+      "state": "accepted",
+      "reason": "채택 — 부모 접두사+Date.now 생성, 120자 검증 상한, 실제 PUT 경로 및 ID 형식 무관 문서 계약이 현재 코드와 일치했고 결정�",
+      "at": "2026-10-07T13:39:13+09:00"
+    },
+    "verify": {
+      "state": "passed",
+      "reason": "검증 1개 통과 (policy)",
+      "at": "2026-10-07T13:39:33+09:00"
+    },
+    "review": {
+      "state": "missing",
+      "reason": "리뷰 결과 없음/손상: missing — 보류",
+      "at": "2026-10-07T13:39:40+09:00"
+    },
+    "pr": {
+      "state": "created",
+      "reason": "https://github.com/hkjang/cutover/pull/15",
+      "at": "2026-10-07T13:39:46+09:00"
+    }
+  },
+  "provenance": {
+    "model": "claude-opus-5",
+    "policy_version": "4a9e91ac7",
+    "prompts_hash": "ce085c79e18002e2",
+    "runner_version": "1bd5f0cd4",
+    "base_sha": "51ffd03c3db9bd47fb1e1eaa36d7562b87187bd7",
+    "head_sha": "16c33847f4fda0c2923e57f96586b55fc1b058d1",
+    "pr": "https://github.com/hkjang/cutover/pull/15"
+  },
+  "verification": {
+    "runner": {
+      "source": "policy",
+      "commands": [
+        {
+          "cmd": "npm ci --no-audit --no-fund && npx tsc --noEmit && npm run build --silent",
+          "exit": 0,
+          "seconds": 20
+        }
+      ]
+    },
+    "runner_gate": {
+      "ok": true,
+      "state": "verified",
+      "reason": "검증 1개 통과 (policy)"
+    },
+    "after_rebase": null,
+    "review": null,
+    "ci_gate": null
+  },
+  "release": {
+    "result": null,
+    "assets_sha256": []
+  },
+  "approval": null,
+  "usage": [
+    {
+      "ts": "2026-10-07T13:33:02+09:00",
+      "date": "2026-10-07",
+      "project": "cutover",
+      "phase": "scout",
+      "run_id": "2026-10-07-132814-cutover-improve",
+      "campaign": "",
+      "subtype": "success",
+      "engine": "codex",
+      "duration_ms": 0,
+      "num_turns": 1,
+      "cost_usd": null,
+      "input_tokens": 548149,
+      "output_tokens": 9757,
+      "cache_read": 480128,
+      "cache_create": 0
+    },
+    {
+      "ts": "2026-10-07T13:39:13+09:00",
+      "date": "2026-10-07",
+      "project": "cutover",
+      "phase": "improve",
+      "run_id": "2026-10-07-132814-cutover-improve",
+      "campaign": "",
+      "subtype": "success",
+      "engine": "codex",
+      "duration_ms": 0,
+      "num_turns": 1,
+      "cost_usd": null,
+      "input_tokens": 2273430,
+      "output_tokens": 10240,
+      "cache_read": 2132608,
+      "cache_create": 0
+    },
+    {
+      "ts": "2026-10-07T13:39:40+09:00",
+      "date": "2026-10-07",
+      "project": "cutover",
+      "phase": "review",
+      "run_id": "2026-10-07-132814-cutover-improve",
+      "campaign": "",
+      "subtype": "success",
+      "engine": "claude",
+      "duration_ms": 512,
+      "num_turns": 1,
+      "cost_usd": 0,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read": 0,
+      "cache_create": 0
+    }
+  ]
+}

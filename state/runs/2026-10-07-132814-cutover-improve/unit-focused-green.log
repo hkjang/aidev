@@ -1,0 +1,248 @@
+TAP version 13
+# (node:1966289) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///home/hkjang/.cache/auto-improve-wt/cutover/lib/activityData.test.ts is not specified and it doesn't parse as CommonJS.
+# Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+# To eliminate this warning, add "type": "module" to /home/hkjang/.cache/auto-improve-wt/cutover/package.json.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: validateActivityImport 정상 입력
+    # Subtest: 최상위와 자식 2건을 통과시키고 id·parentId 의 앞뒤 공백을 trim 한다
+    ok 1 - 최상위와 자식 2건을 통과시키고 id·parentId 의 앞뒤 공백을 trim 한다
+      ---
+      duration_ms: 0.979124
+      type: 'test'
+      ...
+    # Subtest: dashboardTitle 의 앞뒤 공백을 trim 해서 돌려준다
+    ok 2 - dashboardTitle 의 앞뒤 공백을 trim 해서 돌려준다
+      ---
+      duration_ms: 0.100697
+      type: 'test'
+      ...
+    # Subtest: dashboardTitle 을 주지 않으면 undefined 를 돌려준다
+    ok 3 - dashboardTitle 을 주지 않으면 undefined 를 돌려준다
+      ---
+      duration_ms: 0.060557
+      type: 'test'
+      ...
+    # Subtest: 빈 activities 배열은 throw 하지 않고 빈 배열을 돌려준다
+    ok 4 - 빈 activities 배열은 throw 하지 않고 빈 배열을 돌려준다
+      ---
+      duration_ms: 0.055794
+      type: 'test'
+      ...
+    1..4
+ok 1 - validateActivityImport 정상 입력
+  ---
+  duration_ms: 1.729827
+  type: 'suite'
+  ...
+# Subtest: validateActivityImport 최상위 형식 오류
+    # Subtest: 최상위 값이 객체가 아니면(배열) path '$' 오류 1건으로 throw 한다
+    ok 1 - 최상위 값이 객체가 아니면(배열) path '$' 오류 1건으로 throw 한다
+      ---
+      duration_ms: 0.143048
+      type: 'test'
+      ...
+    # Subtest: 최상위 값이 객체가 아니면(문자열) path '$' 오류 1건으로 throw 한다
+    ok 2 - 최상위 값이 객체가 아니면(문자열) path '$' 오류 1건으로 throw 한다
+      ---
+      duration_ms: 0.04003
+      type: 'test'
+      ...
+    # Subtest: 최상위 값이 객체가 아니면(null) path '$' 오류 1건으로 throw 한다
+    ok 3 - 최상위 값이 객체가 아니면(null) path '$' 오류 1건으로 throw 한다
+      ---
+      duration_ms: 0.271487
+      type: 'test'
+      ...
+    # Subtest: activities 가 배열이 아니면 path 'activities' 오류 1건으로 throw 한다
+    ok 4 - activities 가 배열이 아니면 path 'activities' 오류 1건으로 throw 한다
+      ---
+      duration_ms: 0.17354
+      type: 'test'
+      ...
+    1..4
+ok 2 - validateActivityImport 최상위 형식 오류
+  ---
+  duration_ms: 0.762749
+  type: 'suite'
+  ...
+# Subtest: validateActivityImport 관계 오류의 issues[].path
+    # Subtest: id 가 중복되면 뒤쪽 항목의 id 경로를 가리키고 메시지에 앞쪽 인덱스를 담는다
+    ok 1 - id 가 중복되면 뒤쪽 항목의 id 경로를 가리키고 메시지에 앞쪽 인덱스를 담는다
+      ---
+      duration_ms: 0.225164
+      type: 'test'
+      ...
+    # Subtest: 부모가 존재하지 않으면 parentId 경로를 가리킨다
+    ok 2 - 부모가 존재하지 않으면 parentId 경로를 가리킨다
+      ---
+      duration_ms: 0.220886
+      type: 'test'
+      ...
+    # Subtest: 부모 level 보다 정확히 1 크지 않으면 자식의 level 경로를 가리킨다
+    ok 3 - 부모 level 보다 정확히 1 크지 않으면 자식의 level 경로를 가리킨다
+      ---
+      duration_ms: 0.144456
+      type: 'test'
+      ...
+    # Subtest: 자기 자신을 부모로 지정하면 parentId 경로로 자기참조·순환 2건이 난다
+    ok 4 - 자기 자신을 부모로 지정하면 parentId 경로로 자기참조·순환 2건이 난다
+      ---
+      duration_ms: 0.161209
+      type: 'test'
+      ...
+    # Subtest: 최상위인데 level 이 1 이 아니면 level 경로를 가리킨다
+    ok 5 - 최상위인데 level 이 1 이 아니면 level 경로를 가리킨다
+      ---
+      duration_ms: 0.05906
+      type: 'test'
+      ...
+    # Subtest: 두 항목이 서로를 부모로 가리키면 순환 오류는 1건만 난다
+    ok 6 - 두 항목이 서로를 부모로 가리키면 순환 오류는 1건만 난다
+      ---
+      duration_ms: 0.070325
+      type: 'test'
+      ...
+    1..6
+ok 3 - validateActivityImport 관계 오류의 issues[].path
+  ---
+  duration_ms: 1.021805
+  type: 'suite'
+  ...
+# Subtest: validateActivityImport 의 '진행중' 정규화
+    # Subtest: status '진행중' 을 '진행' 으로 바꾸고 변환 건수를 세어 돌려준다
+    ok 1 - status '진행중' 을 '진행' 으로 바꾸고 변환 건수를 세어 돌려준다
+      ---
+      duration_ms: 0.064814
+      type: 'test'
+      ...
+    1..1
+ok 4 - validateActivityImport 의 '진행중' 정규화
+  ---
+  duration_ms: 0.091302
+  type: 'suite'
+  ...
+# Subtest: validateActivityImport 의 issues 상한
+    # Subtest: 오류가 50건을 넘으면 50건 + 생략 안내 1건만 돌려준다
+    ok 1 - 오류가 50건을 넘으면 50건 + 생략 안내 1건만 돌려준다
+      ---
+      duration_ms: 7.374971
+      type: 'test'
+      ...
+    1..1
+ok 5 - validateActivityImport 의 issues 상한
+  ---
+  duration_ms: 7.424802
+  type: 'suite'
+  ...
+# (node:1966290) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///home/hkjang/.cache/auto-improve-wt/cutover/lib/treeUtils.test.ts is not specified and it doesn't parse as CommonJS.
+# Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+# To eliminate this warning, add "type": "module" to /home/hkjang/.cache/auto-improve-wt/cutover/package.json.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: addActivity
+    # Subtest: 120자 ID 부모 아래 자식과 그 아래 손자를 추가해도 업로드 검증을 통과한다
+    ok 1 - 120자 ID 부모 아래 자식과 그 아래 손자를 추가해도 업로드 검증을 통과한다
+      ---
+      duration_ms: 1.252524
+      type: 'test'
+      ...
+    # Subtest: 입력과 기존 ID·순서를 유지하고 기본값의 자식을 배열 끝에 추가한다
+    ok 2 - 입력과 기존 ID·순서를 유지하고 기본값의 자식을 배열 끝에 추가한다
+      ---
+      duration_ms: 0.408408
+      type: 'test'
+      ...
+    # Subtest: 빈 배열에 최상위 작업을 추가하면 level 1과 기본값을 유지한다
+    ok 3 - 빈 배열에 최상위 작업을 추가하면 level 1과 기본값을 유지한다
+      ---
+      duration_ms: 0.145325
+      type: 'test'
+      ...
+    # Subtest: 기존 트리에 최상위 작업을 추가하면 level 1과 기본값을 유지한다
+    ok 4 - 기존 트리에 최상위 작업을 추가하면 level 1과 기본값을 유지한다
+      ---
+      duration_ms: 0.146447
+      type: 'test'
+      ...
+    # Subtest: 같은 시각에 최상위 작업을 연속 추가해도 ID가 다르다
+    ok 5 - 같은 시각에 최상위 작업을 연속 추가해도 ID가 다르다
+      ---
+      duration_ms: 0.239784
+      type: 'test'
+      ...
+    # Subtest: 같은 시각에 같은 부모 아래 작업을 연속 추가해도 ID가 다르다
+    ok 6 - 같은 시각에 같은 부모 아래 작업을 연속 추가해도 ID가 다르다
+      ---
+      duration_ms: 0.114942
+      type: 'test'
+      ...
+    1..6
+ok 6 - addActivity
+  ---
+  duration_ms: 2.929704
+  type: 'suite'
+  ...
+# Subtest: collectDescendantIds
+    # Subtest: parentId 관계를 따라 대상과 모든 하위를 모은다
+    ok 1 - parentId 관계를 따라 대상과 모든 하위를 모은다
+      ---
+      duration_ms: 0.195145
+      type: 'test'
+      ...
+    # Subtest: 없는 id 는 자기 자신만 돌려준다
+    ok 2 - 없는 id 는 자기 자신만 돌려준다
+      ---
+      duration_ms: 0.193132
+      type: 'test'
+      ...
+    # Subtest: parentId 가 순환해도 무한루프 없이 끝난다
+    ok 3 - parentId 가 순환해도 무한루프 없이 끝난다
+      ---
+      duration_ms: 0.198467
+      type: 'test'
+      ...
+    1..3
+ok 7 - collectDescendantIds
+  ---
+  duration_ms: 0.842445
+  type: 'suite'
+  ...
+# Subtest: deleteActivity
+    # Subtest: 초기 데이터에서 "2" 를 지우면 2 와 2-1~2-4 만 빠지고 나머지 15개는 남는다
+    ok 1 - 초기 데이터에서 "2" 를 지우면 2 와 2-1~2-4 만 빠지고 나머지 15개는 남는다
+      ---
+      duration_ms: 0.158492
+      type: 'test'
+      ...
+    # Subtest: id 접두사가 다른 임의 id 트리에서도 parentId 관계로 3단 하위까지 지운다
+    ok 2 - id 접두사가 다른 임의 id 트리에서도 parentId 관계로 3단 하위까지 지운다
+      ---
+      duration_ms: 0.045849
+      type: 'test'
+      ...
+    # Subtest: id 가 "1-" 로 시작해도 parentId 가 다르면 "1" 삭제 때 남는다
+    ok 3 - id 가 "1-" 로 시작해도 parentId 가 다르면 "1" 삭제 때 남는다
+      ---
+      duration_ms: 0.045618
+      type: 'test'
+      ...
+    # Subtest: 없는 id 를 지우면 아무것도 바뀌지 않는다
+    ok 4 - 없는 id 를 지우면 아무것도 바뀌지 않는다
+      ---
+      duration_ms: 0.024267
+      type: 'test'
+      ...
+    1..4
+ok 8 - deleteActivity
+  ---
+  duration_ms: 0.334947
+  type: 'suite'
+  ...
+1..8
+# tests 29
+# suites 8
+# pass 29
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 117.739614
