@@ -27,3 +27,5 @@
 - 릴리즈 전 정리: `webui/dist/index.html` 워킹트리 오염(verify 의 `npm run build` 산출물)을 되돌릴 것. CHANGELOG.md 항목은 아직 없다.
 - [러너 06:10] review approved — 리뷰 승인 (risk=low)
 - [러너 06:10] pr created — https://github.com/hkjang/ReSSO/pull/40
+- [러너 06:17] ci passed — 검사 2개 모두 success
+- [러너 06:17] merge done — 1a1d2be
