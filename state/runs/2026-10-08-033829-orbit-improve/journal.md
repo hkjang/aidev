@@ -30,3 +30,12 @@
 - [러너 03:54] pr created — https://github.com/hkjang/orbit/pull/22
 - [러너 03:56] ci passed — 검사 1개 모두 success
 - [러너 03:56] merge done — 5cf61a2
+
+## 릴리즈 노트
+- v0.7.12 (패치). 최근 20회 릴리즈 커밋이 전부 `chore(release): vX.Y.Z` 로 VERSION 한 줄만 바꾸고(`git show --numstat` 로 v0.7.11·v0.7.10·v0.7.9 확인), 주석 태그 `vX.Y.Z` 의 메시지가 `Orbit vX.Y.Z` 였다. 그대로 따랐다: VERSION `0.7.11`→`0.7.12`(끝 개행 유지), 커밋 5c97a1a, 주석 태그 v0.7.12, 작성자는 환경 그대로(hkjang <gagagiga@naver.com>), 트레일러 없음. detached HEAD 에서 커밋·태그했고 브랜치는 만들지 않았다.
+- 버전이 적힌 곳은 `VERSION` **하나뿐**임을 확인했다 — `grep -rn 0\.7\.11` 이 코드·문서·워크플로·Makefile 전체에서 0건이고, `web/package.json` 은 0.1.0 으로 릴리즈와 무관하게 고정(과거 릴리즈 커밋도 건드린 적 없음). Makefile 과 Dockerfile 은 VERSION 을 읽어 ldflags/빌드인자로 넘기므로 추가 수정이 없다. CHANGELOG.md·docs/RELEASE*.md 는 저장소에 존재하지 않는다.
+- 자산·GitHub Release 는 **만들지 않았다** — `.github/workflows/release.yml` 이 `v*.*.*` 태그 푸시에 반응해 이미지를 빌드하고 `orbit-$TAG.tar.gz` 로 저장·검증한 뒤 `gh release create --generate-notes --title "Orbit $TAG"` 로 릴리즈까지 직접 만든다. 따라서 `release.json` 은 `github_release:false`, `assets:[]`, `notes_file:""`(본문은 GitHub 자동 생성 — v0.7.9~v0.7.11 본문이 전부 "## What's Changed … by @hkjang in <PR>" 양식인 것과 일치).
+- 릴리즈 전 검증은 CI(ci.yml)가 밟는 것을 이 기계에서 같은 순서로 전부 돌렸다: `go test -race -count=1 ./...` 초록(config·secure·server·scripts ok, DB 시험은 DSN 없어 SKIP — 버전 범프 후 한 번 더 돌려 초록 재확인), `npm ci` → `npm run test -- --run` 16파일 121시험 통과, `npm run build` 성공, 그리고 release.yml 과 동일한 `docker build --platform linux/amd64 --build-arg VERSION=v0.7.12 …` 성공(확인용 태그 `orbit:relcheck-v0.7.12` 는 지웠다). 검사 전용 스크립트(version-check 류)는 저장소에 없다. `node` 는 v22.23.1 로 CI 의 24 와 다르지만 테스트·빌드 모두 통과했다.
+- 다음 역할이 알아야 할 것: 자동 생성 릴리즈 본문에는 PR 제목 한 줄만 들어가므로, 비평 노트가 남긴 행동 변화(중괄호·하이픈 없는 32자 16진수 person id 가 postgres 캐스팅으로 통했으나 이제 REST 두 핸들러에서도 404/400)는 릴리즈 본문에 **담기지 않는다**. 외부에서 직접 REST 를 치는 사용자가 있다면 docs/API.md 쪽에 적어야 하고, 그 문서화는 이미 여섯 회차 연속 보류 아이디어로 올라와 있다.
+- [러너 04:03] release published — v0.7.12
+- [러너 04:04] assets verified — v0.7.12 자산 1개 (이전 v0.7.11: 1)
