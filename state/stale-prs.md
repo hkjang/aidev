@@ -1,32 +1,33 @@
-# 열린 러너 PR (2026-10-07 12:45 기준)
+# 열린 러너 PR (2026-10-07 19:15 기준)
 
-- [오래됨] jasql #9 (10일) https://github.com/hkjang/jasql/pull/9 — auto-improve: add a gofmt gate to CI and clear the existing drift
+- [종결] ai-admin #38 (판정 3일 전) https://github.com/hkjang/ai-admin/pull/38 — 수정·심사를 2번 시도했지만 통과하지 못함 — 사람이 봐야 한다
+- [오래됨] jasql #9 (11일) https://github.com/hkjang/jasql/pull/9 — auto-improve: add a gofmt gate to CI and clear the existing drift
 - [오래됨] sqlon #15 (11일) https://github.com/hkjang/sqlon/pull/15 — auto-improve: ci: GitHub Actions 워크플로로 빌드·정적분석·테스트를 자동 실행합니다
 - [오래됨] qurio #22 (11일) https://github.com/hkjang/qurio/pull/22 — auto-improve: fix(test): close integration pools via t.Cleanup so fixture deletes still run
 - [오래됨] sqlon #14 (11일) https://github.com/hkjang/sqlon/pull/14 — auto-improve: fix(mcp): GET /api/metrics 에 인증을 요구해 DB 프로파일 인벤토리 노출을 막습니다
 - [오래됨] moina #32 (11일) https://github.com/hkjang/moina/pull/32 — auto-improve: fix: CI image 잡이 실패하면 깨진 e2e 화면·route를 job summary에 적습니다
-- [오래됨] hunter #11 (11일) https://github.com/hkjang/hunter/pull/11 — auto-improve: fix: select release notes by minor series instead of an open-ended comparison
+- [오래됨] hunter #11 (12일) https://github.com/hkjang/hunter/pull/11 — auto-improve: fix: select release notes by minor series instead of an open-ended comparison
 - [오래됨] sqlon #12 (13일) https://github.com/hkjang/sqlon/pull/12 — auto-improve: fix(mcp): 결과 캐시 키에 바인드 변수를 포함합니다
 - [오래됨] jasql #5 (13일) https://github.com/hkjang/jasql/pull/5 — auto-improve: emit reporting-unit time ranges in question order
 - [오래됨] appstore #30 (13일) https://github.com/hkjang/appstore/pull/30 — auto-improve: fix: count and page the favorites view by what it shows
-- [오래됨] vibe-coders #23 (13일) https://github.com/hkjang/vibe-coders/pull/23 — auto-improve: build(web): accept a forwarded quiet flag in the tsc and vite scripts
-- [오래됨] jasql #4 (14일) https://github.com/hkjang/jasql/pull/4 — auto-improve: fix eval verbose status for cases with missing diagnostics
+- [오래됨] vibe-coders #23 (14일) https://github.com/hkjang/vibe-coders/pull/23 — auto-improve: build(web): accept a forwarded quiet flag in the tsc and vite scripts
+- [오래됨] jasql #4 (15일) https://github.com/hkjang/jasql/pull/4 — auto-improve: fix eval verbose status for cases with missing diagnostics
 - [오래됨] SecCheck #15 (15일) https://github.com/hkjang/SecCheck/pull/15 — auto-improve: Reject non-string MCP review report filters
 - [오래됨] muni #22 (15일) https://github.com/hkjang/muni/pull/22 — auto-improve: fix: DOCX 신규 가져오기에서 제목과 같은 첫 H1 제거
-- [오래됨] git-ctx #35 (15일) https://github.com/hkjang/git-ctx/pull/35 — auto-improve: fix(contentsecurity): preserve YAML list siblings when masking block scalars
+- [오래됨] git-ctx #35 (16일) https://github.com/hkjang/git-ctx/pull/35 — auto-improve: fix(contentsecurity): preserve YAML list siblings when masking block scalars
 - [오래됨] visitflow #21 (16일) https://github.com/hkjang/visitflow/pull/21 — auto-improve: fix(import): warn about duplicate headers and selected columns
 - [오래됨] sqlon #10 (16일) https://github.com/hkjang/sqlon/pull/10 — auto-improve: fix(mcp): 비동기 잡 조회·취소에도 결과 만료를 적용합니다
 - [오래됨] muni #21 (16일) https://github.com/hkjang/muni/pull/21 — auto-improve: fix: 워크스페이스 ZIP에서 목록 파일과 동명 문서의 충돌을 막습니다
 - [오래됨] jasql #2 (16일) https://github.com/hkjang/jasql/pull/2 — auto-improve: Reject invalid calendar dates in time expressions
 - [오래됨] git-ctx #33 (16일) https://github.com/hkjang/git-ctx/pull/33 — auto-improve: fix(contentsecurity): preserve curl command when masking credentials
-- [오래됨] sqlon #9 (16일) https://github.com/hkjang/sqlon/pull/9 — auto-improve: fix(mcp): 프로파일 카탈로그 조회 인증과 사용자 권한을 연결합니다
-- [오래됨] muni #20 (16일) https://github.com/hkjang/muni/pull/20 — auto-improve: fix: HTML 파일을 가져올 때도 제목과 같은 첫 H1 은 본문에서 뺍니다
+- [오래됨] sqlon #9 (17일) https://github.com/hkjang/sqlon/pull/9 — auto-improve: fix(mcp): 프로파일 카탈로그 조회 인증과 사용자 권한을 연결합니다
+- [오래됨] muni #20 (17일) https://github.com/hkjang/muni/pull/20 — auto-improve: fix: HTML 파일을 가져올 때도 제목과 같은 첫 H1 은 본문에서 뺍니다
 - [오래됨] git-ctx #32 (17일) https://github.com/hkjang/git-ctx/pull/32 — auto-improve: fix(contentsecurity): leave a variable reference in a credential's place alone
 - [오래됨] sqlon #8 (17일) https://github.com/hkjang/sqlon/pull/8 — auto-improve: feat(mcp): REST 감사 항목에 인증 사용자를 actor 로 기록합니다
-- [오래됨] AgentHub #29 (18일) https://github.com/hkjang/AgentHub/pull/29 — auto-improve: fix: the trail filed whatever sample the Pod put in a DLP report
+- [오래됨] AgentHub #29 (19일) https://github.com/hkjang/AgentHub/pull/29 — auto-improve: fix: the trail filed whatever sample the Pod put in a DLP report
 - [오래됨] orbit #6 (19일) https://github.com/hkjang/orbit/pull/6 — auto-improve: feat(mcp): 개인 키 없이 Keycloak 액세스 토큰으로 /mcp 에 들어올 수 있게 한다
 - [오래됨] jupiq #18 (19일) https://github.com/hkjang/jupiq/pull/18 — auto-improve: docs: 관리자·사용자 가이드에 MCP SSO(OAuth) 설정과 연결 방법을 더한다
-- [오래됨] Kkiit #6 (19일) https://github.com/hkjang/Kkiit/pull/6 — auto-improve: feat: /mcp 를 Keycloak 액세스 토큰(OAuth 2.1)으로도 열다 — 키 체계는 그대로
+- [오래됨] Kkiit #6 (20일) https://github.com/hkjang/Kkiit/pull/6 — auto-improve: feat: /mcp 를 Keycloak 액세스 토큰(OAuth 2.1)으로도 열다 — 키 체계는 그대로
 - [오래됨] sqlon #6 (20일) https://github.com/hkjang/sqlon/pull/6 — auto-improve: fix(mcp): REST 변경 관리 승인·감사 행위자를 인증 사용자로 기록합니다
 - [오래됨] releasedock #17 (20일) https://github.com/hkjang/releasedock/pull/17 — auto-improve: chore: run gofmt and go vet before the tests in CI and make test
 - [오래됨] git-ctx #29 (20일) https://github.com/hkjang/git-ctx/pull/29 — auto-improve: fix(contentsecurity): keep the line break an Authorization header folds on

@@ -308,3 +308,4 @@
 - 보류 아이디어: `extended.go:581`(점수 심사)·`catalog.go:130`(게임 목록 `ORDER BY g.name`)·`catalog.go:990`(내 세션 기록 `gs.started_at DESC`)의 같은 tiebreak — 프로덕션 1파일 유지를 위해 이번에 의도적으로 제외 (가치 2 / 위험 2 / S) / `ENCRYPTION_KEY` 파싱의 거부 경로 회귀 고정 — 이번 차선 후보, 1순위가 성립해 하지 않았다 (가치 2 / 위험 1 / S) / `playWindowsAllow` 가 파싱 안 되는 window 를 조용히 건너뛰어 그 window 만 fail-open — legacy 행만 남아 도달성 미확인 (가치 2 / 위험 2 / S) / `serviceLocation` 이 설정 읽기 실패를 삼켜 시간대가 조용히 Asia/Seoul 이 됨 — 여덟 회차 연속 보류, 쪼갤 모양을 또 못 찾았으므로 다음 회차에 못 찾으면 rejected 로 내릴 것 (가치 3 / 위험 3 / M) / settings PG fixture 의 `preserve` 가 `updated_by=NULL` 로 복원 — 증상이 없어 가치 2 를 못 넘김, 네 회차 연속 보류 (가치 2 / 위험 1 / S)
 - 과제서: 채택 — 근거가 지금 코드와 정확히 일치했고(세 ORDER BY, `gameSelect` 의 `g` 별칭과 `g.id` 선택, `audit_logs.id` bigserial) 지정한 파일·범위·금지사항을 그대로 지켰다. Red 레시피의 UPDATE 대상 방향과 games 테스트 방식 두 곳만 실측에 따라 바꿨다(위에 상술).
 
+- 릴리즈: v0.7.30 (2026-10-07, run 2026-10-07-185140-igame-approve)

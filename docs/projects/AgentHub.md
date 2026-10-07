@@ -1,7 +1,7 @@
 ---
 title: "AgentHub — 자율 개선 이력"
 description: "AgentHub: 자율 개선 회차 64회, 릴리즈 34건. 최근 릴리즈 v0.261.0 (자산 8개)."
-last_modified_at: 2026-10-07 18:41:27 +0900
+last_modified_at: 2026-10-07 19:25:36 +0900
 ---
 {% raw %}
 <script type="application/ld+json">
@@ -18,7 +18,7 @@ last_modified_at: 2026-10-07 18:41:27 +0900
   "name": "hkjang",
   "url": "https://github.com/hkjang"
  },
- "dateModified": "2026-10-07T18:41:27+09:00",
+ "dateModified": "2026-10-07T19:25:36+09:00",
  "version": "0.261.0"
 }
 </script>
