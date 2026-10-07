@@ -1,7 +1,7 @@
 ---
 title: "law.irumx.app — 자율 개선 이력"
-description: "law.irumx.app: 자율 개선 회차 1회, 릴리즈 0건. 최근 릴리즈 없음."
-last_modified_at: 2026-10-08 02:57:18 +0900
+description: "law.irumx.app: 자율 개선 회차 2회, 릴리즈 1건. 최근 릴리즈 없음."
+last_modified_at: 2026-10-08 03:13:31 +0900
 ---
 {% raw %}
 <script type="application/ld+json">
@@ -11,37 +11,39 @@ last_modified_at: 2026-10-08 02:57:18 +0900
  "name": "law.irumx.app",
  "codeRepository": "https://github.com/hkjang/law.irumx.app",
  "url": "https://hkjang.github.io/aidev/projects/law.irumx.app/",
- "description": "law.irumx.app: 자율 개선 회차 1회, 릴리즈 0건. 최근 릴리즈 없음.",
+ "description": "law.irumx.app: 자율 개선 회차 2회, 릴리즈 1건. 최근 릴리즈 없음.",
  "inLanguage": "ko",
  "maintainer": {
   "@type": "Person",
   "name": "hkjang",
   "url": "https://github.com/hkjang"
  },
- "dateModified": "2026-10-08T02:57:18+09:00"
+ "dateModified": "2026-10-08T03:13:31+09:00"
 }
 </script>
 
 # law.irumx.app
 
-<p class="tldr"><strong>요약.</strong> law.irumx.app: 자율 개선 회차 1회, 릴리즈 0건. 최근 릴리즈 없음. <span class="pill pill-merged" title="14일: 릴리즈 0, 실패 0, 경고 0, 회귀 0">건강 B</span> <span class="meta">14일: 릴리즈 0, 실패 0, 경고 0, 회귀 0</span></p>
+<p class="tldr"><strong>요약.</strong> law.irumx.app: 자율 개선 회차 2회, 릴리즈 1건. 최근 릴리즈 없음. <span class="pill pill-released" title="14일: 릴리즈 1, 실패 0, 경고 0, 회귀 0">건강 A</span> <span class="meta">14일: 릴리즈 1, 실패 0, 경고 0, 회귀 0</span></p>
 
-<ul class="stats"><li><b>1</b><span>회차</span></li><li><b>1</b><span>프로젝트</span></li><li><b>0</b><span>배포 준비 완료</span></li><li><b>0</b><span>릴리즈 진행 중</span></li><li><b>0</b><span>병합 완료</span></li><li><b>1</b><span>검토 대기</span></li><li><b>0</b><span>검증 실패</span></li><li><b>0</b><span>변경 없음</span></li><li><b>0</b><span>실행 오류</span></li><li><b>$4.24</b><span>비용</span></li><li><b>12분</b><span>에이전트 시간</span></li></ul>
+<ul class="stats"><li><b>2</b><span>회차</span></li><li><b>1</b><span>프로젝트</span></li><li><b>0</b><span>배포 준비 완료</span></li><li><b>1</b><span>릴리즈 진행 중</span></li><li><b>0</b><span>병합 완료</span></li><li><b>1</b><span>검토 대기</span></li><li><b>0</b><span>검증 실패</span></li><li><b>0</b><span>변경 없음</span></li><li><b>0</b><span>실행 오류</span></li><li><b>$7.64</b><span>비용</span></li><li><b>21분</b><span>에이전트 시간</span></li></ul>
 
 ## 현황
 
 <dl class="kv">
 <dt>저장소</dt><dd><a href="https://github.com/hkjang/law.irumx.app">https://github.com/hkjang/law.irumx.app</a></dd>
-<dt>마지막 회차</dt><dd>2026-10-08 01:54 KST — <span class="pill pill-other">• 기타</span> CI api-error, PR open <a href="https://github.com/hkjang/law.irumx.app/pull/1">PR #1</a></dd>
+<dt>마지막 회차</dt><dd>2026-10-08 03:13 KST — <span class="pill pill-released">🚀 릴리즈</span> merged <a href="https://github.com/hkjang/law.irumx.app/pull/1">PR #1</a> (approved), released <a href="https://github.com/hkjang/law.irumx.app/releases/tag/0.1.2">0.1.2</a></dd>
+<dt>최근 릴리즈</dt><dd>released — released</dd>
+<dt>사유</dt><dd>e2e·acceptance·ui-flows 는 이 기계에서 돌리지 못했다(개발 서버가 :8810 을 점유 중, PostgreSQL 17 클라이언트 없음) — check.yml 이 main 푸시마다 전부 돌린다. 통과한 검증: lint·types, 단위 96, 웹·서버 빌드, VERSION·wrangler LAW_VERSION 일치.</dd>
 </dl>
 
 ## 회차 이력
 
-<div class="table-wrap"><table class="rt"><thead><tr><th>일시</th><th class="primary">프로젝트</th><th>결과</th></tr></thead><tbody><tr data-status="other"><td data-label="일시">2026-10-08 01:54</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/law.irumx.app/">law.irumx.app</a></td><td data-label="결과"><span class="pill pill-merged" title="outcome=review-pending">검토 대기</span> CI api-error, PR open <a href="https://github.com/hkjang/law.irumx.app/pull/1">PR #1</a><div class="meta">2파일 <span style="color:var(--good)">+11</span>/<span style="color:var(--bad)">−3</span> · 테스트 1 — 링크 안전 검사: 루트 라벨(끝 점)이 붙은 내부 호스트도 차단</div></td></tr></tbody></table></div>
+<div class="table-wrap"><table class="rt"><thead><tr><th>일시</th><th class="primary">프로젝트</th><th>결과</th></tr></thead><tbody><tr data-status="released"><td data-label="일시">2026-10-08 03:13</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/law.irumx.app/">law.irumx.app</a></td><td data-label="결과"><span class="pill pill-merged" title="outcome=releasing">릴리즈 진행 중</span> merged <a href="https://github.com/hkjang/law.irumx.app/pull/1">PR #1</a> (approved), released <a href="https://github.com/hkjang/law.irumx.app/releases/tag/0.1.2">0.1.2</a></td></tr><tr data-status="other"><td data-label="일시">2026-10-08 01:54</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/law.irumx.app/">law.irumx.app</a></td><td data-label="결과"><span class="pill pill-merged" title="outcome=review-pending">검토 대기</span> CI api-error, PR open <a href="https://github.com/hkjang/law.irumx.app/pull/1">PR #1</a><div class="meta">2파일 <span style="color:var(--good)">+11</span>/<span style="color:var(--bad)">−3</span> · 테스트 1 — 링크 안전 검사: 루트 라벨(끝 점)이 붙은 내부 호스트도 차단</div></td></tr></tbody></table></div>
 
 ## 비용·사용량
 
-<div class="table-wrap"><table class="rt"><caption class="meta">최근 30세션</caption><thead><tr><th>시각</th><th class="primary">프로젝트</th><th>단계</th><th class="num">시간</th><th class="num">턴</th><th class="num">비용</th><th class="num">토큰 입력/출력</th><th>종료</th></tr></thead><tbody><tr data-status="other"><td data-label="시각">01:51</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/law.irumx.app/">law.irumx.app</a></td><td data-label="단계">비평</td><td data-label="시간" class="num">2분</td><td data-label="턴" class="num">17</td><td data-label="비용" class="num">$0.85</td><td data-label="토큰 입력/출력" class="num">614K / 8K</td><td data-label="종료">success</td></tr><tr data-status="other"><td data-label="시각">01:48</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/law.irumx.app/">law.irumx.app</a></td><td data-label="단계">개선</td><td data-label="시간" class="num">10분</td><td data-label="턴" class="num">44</td><td data-label="비용" class="num">$3.39</td><td data-label="토큰 입력/출력" class="num">3.3M / 29K</td><td data-label="종료">success</td></tr></tbody></table></div>
+<div class="table-wrap"><table class="rt"><caption class="meta">최근 30세션</caption><thead><tr><th>시각</th><th class="primary">프로젝트</th><th>단계</th><th class="num">시간</th><th class="num">턴</th><th class="num">비용</th><th class="num">토큰 입력/출력</th><th>종료</th></tr></thead><tbody><tr data-status="other"><td data-label="시각">03:13</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/law.irumx.app/">law.irumx.app</a></td><td data-label="단계">릴리즈</td><td data-label="시간" class="num">5분</td><td data-label="턴" class="num">37</td><td data-label="비용" class="num">$2.04</td><td data-label="토큰 입력/출력" class="num">2.0M / 18K</td><td data-label="종료">success</td></tr><tr data-status="other"><td data-label="시각">03:06</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/law.irumx.app/">law.irumx.app</a></td><td data-label="단계">비평</td><td data-label="시간" class="num">3분</td><td data-label="턴" class="num">26</td><td data-label="비용" class="num">$1.35</td><td data-label="토큰 입력/출력" class="num">1.2M / 11K</td><td data-label="종료">success</td></tr><tr data-status="other"><td data-label="시각">01:51</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/law.irumx.app/">law.irumx.app</a></td><td data-label="단계">비평</td><td data-label="시간" class="num">2분</td><td data-label="턴" class="num">17</td><td data-label="비용" class="num">$0.85</td><td data-label="토큰 입력/출력" class="num">614K / 8K</td><td data-label="종료">success</td></tr><tr data-status="other"><td data-label="시각">01:48</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/law.irumx.app/">law.irumx.app</a></td><td data-label="단계">개선</td><td data-label="시간" class="num">10분</td><td data-label="턴" class="num">44</td><td data-label="비용" class="num">$3.39</td><td data-label="토큰 입력/출력" class="num">3.3M / 29K</td><td data-label="종료">success</td></tr></tbody></table></div>
 
 ## 아이디어 백로그 — 대기 5 / 전체 7
 
@@ -51,6 +53,8 @@ last_modified_at: 2026-10-08 02:57:18 +0900
 
 ## 2026-10-08
 - (원장 항목에 비밀/내부 정보 의심 문자열이 있어 비공개 기록으로 옮김 — run 2026-10-08-013826-law.irumx.app-improve)
+
+- 릴리즈: 0.1.2 (2026-10-08, run 2026-10-08-030708-law.irumx.app-approve)
 
 
 [← 대시보드](https://hkjang.github.io/aidev/) · [교훈 모음](https://hkjang.github.io/aidev/lessons/)
