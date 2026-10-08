@@ -28,3 +28,6 @@
 - 새 개인정보 처리·권한 확대·비밀 노출·파괴적 변경 없음. 커밋 밖 webui/dist/index.html asset 해시 변경은 관찰만 했으며 코드/산출물은 수정하지 않았다.
 - [러너 19:25] review approved — 리뷰 승인 (risk=low)
 - [러너 19:25] pr created — https://github.com/hkjang/ReSSO/pull/41
+- [러너 19:32] ci passed — 검사 2개 모두 success
+- [러너 19:32] merge done — 147fce8
+- [러너 19:32] release missing — 릴리즈 결과 없음/손상: missing
