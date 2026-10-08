@@ -1,0 +1,25 @@
+=== RUN   TestReplaceTextPreservesLiteralWhitespace
+=== RUN   TestReplaceTextPreservesLiteralWhitespace/surrounding_spaces
+    e2e_test.go:419: stored body = "<p> dog | cat |cat</p>", want "<p>cat| dog |cat</p>"
+=== RUN   TestReplaceTextPreservesLiteralWhitespace/whitespace_only
+    e2e_test.go:413: expected APPROVAL_REQUIRED: map[code:UPSTREAM_UNAVAILABLE message:replace_text 에는 find 가 필요합니다 requestId:DESKTOP-C9ASR69/BU2DZiT0za-000025]
+=== RUN   TestReplaceTextPreservesLiteralWhitespace/tabs_and_newlines
+    e2e_test.go:419: stored body = "<p>dog|&#x9;cat\n|cat</p>", want "<p>cat|dog|cat</p>"
+=== RUN   TestReplaceTextPreservesLiteralWhitespace/delete_first_match
+    e2e_test.go:419: stored body = "<p>| cat | cat </p>", want "<p>cat|| cat </p>"
+--- FAIL: TestReplaceTextPreservesLiteralWhitespace (9.50s)
+    --- FAIL: TestReplaceTextPreservesLiteralWhitespace/surrounding_spaces (2.60s)
+    --- FAIL: TestReplaceTextPreservesLiteralWhitespace/whitespace_only (1.54s)
+    --- FAIL: TestReplaceTextPreservesLiteralWhitespace/tabs_and_newlines (2.57s)
+    --- FAIL: TestReplaceTextPreservesLiteralWhitespace/delete_first_match (2.57s)
+=== RUN   TestReplaceTextApprovalBindsLiteralWhitespace
+=== RUN   TestReplaceTextApprovalBindsLiteralWhitespace/find
+    e2e_test.go:438: changed find whitespace accepted: code="", isError=false
+=== RUN   TestReplaceTextApprovalBindsLiteralWhitespace/body
+    e2e_test.go:438: changed body whitespace accepted: code="", isError=false
+--- FAIL: TestReplaceTextApprovalBindsLiteralWhitespace (4.17s)
+    --- FAIL: TestReplaceTextApprovalBindsLiteralWhitespace/find (2.11s)
+    --- FAIL: TestReplaceTextApprovalBindsLiteralWhitespace/body (2.06s)
+FAIL
+FAIL	github.com/hkjang/confmcp/hack/e2e	13.676s
+FAIL

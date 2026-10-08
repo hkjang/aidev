@@ -1,0 +1,47 @@
+[
+  {
+    "title": "replace_text 공백 보존과 승인 인자 결합 검증",
+    "value": 4,
+    "risk": 2,
+    "size": "M",
+    "status": "done",
+    "note": "prepareUpdate의 find 원문 공백을 보존하고 replace_text의 find/body만 승인 해시에 원문으로 결합했다. MCP 승인·쓰기·재조회 6사례의 red→green→원복 red를 확인했다. 프로덕션 2파일, 테스트 2파일; 커밋 4b31c74.",
+    "updated": "2026-10-08"
+  },
+  {
+    "title": "MCP 세션 종료의 인증과 소유자 검증",
+    "value": 4,
+    "risk": 3,
+    "size": "M",
+    "status": "pending",
+    "note": "DELETE /mcp는 인증 없이 세션 ID만으로 closed_at을 갱신한다. 세션 관리 계약과 다른 사용자 접근을 실제 HTTP로 검증할 필요가 있다.",
+    "updated": "2026-10-08"
+  },
+  {
+    "title": "MCP 정수 인자의 소수·접미 문자열 거부",
+    "value": 3,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "toInt가 float 값을 절삭하고 Sscanf가 숫자 접두사를 수용한다. expectedVersion과 pagination 계약을 나누어 검토해야 한다.",
+    "updated": "2026-10-08"
+  },
+  {
+    "title": "MCP 요청 본문 크기 초과의 명시적 거부",
+    "value": 3,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "handlePost의 LimitReader는 8MiB 뒤를 읽지 않아 유효 JSON 접두사와 초과 데이터를 구분하지 않는다. 경계 입력 회귀 테스트 후보.",
+    "updated": "2026-10-08"
+  },
+  {
+    "title": "문서의 존재하지 않는 e2e 실행 명령 수정",
+    "value": 3,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "README와 관리자 가이드가 없는 hack/e2e.sh를 안내한다. 실제 go test -tags e2e 명령 또는 최소 실행 스크립트가 필요하다.",
+    "updated": "2026-10-08"
+  }
+]

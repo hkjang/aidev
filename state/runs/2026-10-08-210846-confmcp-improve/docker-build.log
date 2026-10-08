@@ -1,0 +1,215 @@
+#0 building with "default" instance using docker driver
+
+#1 [internal] load build definition from Dockerfile
+#1 transferring dockerfile: 2.51kB done
+#1 DONE 0.0s
+
+#2 resolve image config for docker-image://docker.io/docker/dockerfile:1
+#2 DONE 1.3s
+
+#3 docker-image://docker.io/docker/dockerfile:1@sha256:4edf897a3ffa55b89f906fc8cc78afdb3f1834cc9c7083565e611a8a7d5fe99e
+#3 resolve docker.io/docker/dockerfile:1@sha256:4edf897a3ffa55b89f906fc8cc78afdb3f1834cc9c7083565e611a8a7d5fe99e 0.0s done
+#3 CACHED
+
+#4 [internal] load metadata for docker.io/library/node:22-alpine
+#4 DONE 1.2s
+
+#5 [internal] load metadata for docker.io/library/golang:1.26-alpine
+#5 DONE 1.2s
+
+#6 [internal] load metadata for docker.io/library/alpine:3.21
+#6 DONE 1.2s
+
+#7 [internal] load .dockerignore
+#7 transferring context: 151B done
+#7 DONE 0.0s
+
+#8 [server 1/9] FROM docker.io/library/golang:1.26-alpine@sha256:8ac98ca534ac3f51e1f420a1dd2c15e74c75cfa0f23f3ad27eb5d7236c349a0c
+#8 resolve docker.io/library/golang:1.26-alpine@sha256:8ac98ca534ac3f51e1f420a1dd2c15e74c75cfa0f23f3ad27eb5d7236c349a0c 0.0s done
+#8 DONE 0.0s
+
+#9 [stage-2 1/4] FROM docker.io/library/alpine:3.21@sha256:ce64758a109eb420d874a118f87920e625e12d3634e03b4a5573fd9f6e5d3507
+#9 resolve docker.io/library/alpine:3.21@sha256:ce64758a109eb420d874a118f87920e625e12d3634e03b4a5573fd9f6e5d3507 0.0s done
+#9 DONE 0.0s
+
+#10 [web 1/6] FROM docker.io/library/node:22-alpine@sha256:0a7108bf6c7bf5de370ffb1a3ed6be93d405b43ff159f681a8d18c0e2bc2e402
+#10 resolve docker.io/library/node:22-alpine@sha256:0a7108bf6c7bf5de370ffb1a3ed6be93d405b43ff159f681a8d18c0e2bc2e402 0.0s done
+#10 DONE 0.0s
+
+#11 [internal] load build context
+#11 transferring context: 5.39MB 0.1s done
+#11 DONE 0.1s
+
+#12 [web 2/6] WORKDIR /src/web
+#12 CACHED
+
+#13 [server 2/9] RUN apk add --no-cache ca-certificates tzdata
+#13 CACHED
+
+#14 [server 3/9] WORKDIR /src
+#14 CACHED
+
+#15 [web 3/6] COPY web/package.json web/package-lock.json ./
+#15 DONE 0.1s
+
+#16 [server 4/9] COPY go.mod go.sum ./
+#16 DONE 0.0s
+
+#17 [server 5/9] RUN go mod download
+#17 DONE 5.1s
+
+#18 [web 4/6] RUN npm ci --no-audit --no-fund
+#18 ...
+
+#19 [server 6/9] COPY cmd ./cmd
+#19 DONE 0.1s
+
+#20 [server 7/9] COPY internal ./internal
+#20 DONE 0.1s
+
+#18 [web 4/6] RUN npm ci --no-audit --no-fund
+#18 16.56 
+#18 16.56 added 123 packages in 16s
+#18 16.56 npm notice
+#18 16.56 npm notice New major version of npm available! 10.9.9 -> 12.2.0
+#18 16.56 npm notice Changelog: https://github.com/npm/cli/releases/tag/v12.2.0
+#18 16.56 npm notice To update run: npm install -g npm@12.2.0
+#18 16.56 npm notice
+#18 DONE 17.1s
+
+#21 [web 5/6] COPY web/ ./
+#21 DONE 0.2s
+
+#22 [web 6/6] RUN npm run build
+#22 0.293 
+#22 0.293 > confmcp-web@0.1.0 build
+#22 0.293 > tsc -b && vite build
+#22 0.293 
+#22 4.338 vite v5.4.21 building for production...
+#22 4.377 transforming...
+#22 10.14 ✓ 7093 modules transformed.
+#22 10.88 rendering chunks...
+#22 10.94 computing gzip size...
+#22 10.97 ../internal/webui/dist/index.html                                            0.85 kB │ gzip:   0.53 kB
+#22 10.97 ../internal/webui/dist/assets/PretendardVariable.subset.66-C3HqaDeY.woff2    8.25 kB
+#22 10.97 ../internal/webui/dist/assets/PretendardVariable.subset.64-CTbrgYF9.woff2    8.26 kB
+#22 10.97 ../internal/webui/dist/assets/PretendardVariable.subset.65-B66rjuyf.woff2   11.11 kB
+#22 10.97 ../internal/webui/dist/assets/PretendardVariable.subset.68-DS9B48d0.woff2   16.34 kB
+#22 10.97 ../internal/webui/dist/assets/PretendardVariable.subset.73-DMrK970F.woff2   18.34 kB
+#22 10.97 ../internal/webui/dist/assets/PretendardVariable.subset.72-pYYGrEQR.woff2   19.51 kB
+#22 10.97 ../internal/webui/dist/assets/PretendardVariable.subset.75-CxKdrRNf.woff2   20.00 kB
+#22 10.97 ../internal/webui/dist/assets/PretendardVariable.subset.90-BF7RiZjm.woff2   20.85 kB
+#22 10.97 ../internal/webui/dist/assets/PretendardVariable.subset.67-BmuXdlDy.woff2   21.84 kB
+#22 10.97 ../internal/webui/dist/assets/PretendardVariable.subset.89-DOzqWPpX.woff2   21.86 kB
+#22 10.97 ../internal/webui/dist/assets/PretendardVariable.subset.74-D4tQnymK.woff2   22.39 kB
+#22 10.97 ../internal/webui/dist/assets/PretendardVariable.subset.84-Brb8EsYQ.woff2   24.49 kB
+#22 10.97 ../internal/webui/dist/assets/PretendardVariable.subset.87-Lzui2vbK.woff2   24.66 kB
+#22 10.97 ../internal/webui/dist/assets/PretendardVariable.subset.76-DhPm2b_q.woff2   24.92 kB
+#22 10.97 ../internal/webui/dist/assets/PretendardVariable.subset.85-Byo_x2hf.woff2   25.10 kB
+#22 10.97 ../internal/webui/dist/assets/PretendardVariable.subset.88-CqX6JSgh.woff2   25.64 kB
+#22 10.97 ../internal/webui/dist/assets/PretendardVariable.subset.86-XG7lTN_6.woff2   25.72 kB
+#22 10.97 ../internal/webui/dist/assets/PretendardVariable.subset.77-DwaxqOC8.woff2   26.04 kB
+#22 10.97 ../internal/webui/dist/assets/PretendardVariable.subset.79-XpoyPP38.woff2   26.22 kB
+#22 10.97 ../internal/webui/dist/assets/PretendardVariable.subset.81-BZzF9Hb3.woff2   26.30 kB
+#22 10.97 ../internal/webui/dist/assets/PretendardVariable.subset.82-BgAHe30u.woff2   26.50 kB
+#22 10.97 ../internal/webui/dist/assets/PretendardVariable.subset.78-DhqRbBzT.woff2   26.55 kB
+#22 10.97 ../internal/webui/dist/assets/PretendardVariable.subset.83-DF-zBLLe.woff2   26.96 kB
+#22 10.97 ../internal/webui/dist/assets/PretendardVariable.subset.70-BUXiAGMT.woff2   27.55 kB
+#22 10.97 ../internal/webui/dist/assets/PretendardVariable.subset.37-BD6FyOtY.woff2   27.92 kB
+#22 10.97 ../internal/webui/dist/assets/PretendardVariable.subset.71-DuPZj8us.woff2   28.32 kB
+#22 10.97 ../internal/webui/dist/assets/PretendardVariable.subset.80-DsV9Qp_h.woff2   28.80 kB
+#22 10.97 ../internal/webui/dist/assets/PretendardVariable.subset.63-B35xsm4O.woff2   28.82 kB
+#22 10.97 ../internal/webui/dist/assets/PretendardVariable.subset.40-BDaOfdUe.woff2   29.84 kB
+#22 10.97 ../internal/webui/dist/assets/PretendardVariable.subset.43-DHdpry7N.woff2   30.38 kB
+#22 10.97 ../internal/webui/dist/assets/PretendardVariable.subset.7-E2HaA55t.woff2    31.91 kB
+#22 10.97 ../internal/webui/dist/assets/PretendardVariable.subset.1-C-__qv6_.woff2    32.04 kB
+#22 10.97 ../internal/webui/dist/assets/PretendardVariable.subset.44-qHopVhdd.woff2   32.14 kB
+#22 10.97 ../internal/webui/dist/assets/PretendardVariable.subset.24-CmkE8Q8D.woff2   32.30 kB
+#22 10.97 ../internal/webui/dist/assets/PretendardVariable.subset.10-DzSWztS8.woff2   33.03 kB
+#22 10.97 ../internal/webui/dist/assets/PretendardVariable.subset.41-BUACvzZC.woff2   33.19 kB
+#22 10.97 ../internal/webui/dist/assets/PretendardVariable.subset.50-C8IyFH7L.woff2   33.23 kB
+#22 10.97 ../internal/webui/dist/assets/PretendardVariable.subset.54-Dt2-cQkx.woff2   33.34 kB
+#22 10.97 ../internal/webui/dist/assets/PretendardVariable.subset.5-K_MNGNCe.woff2    33.62 kB
+#22 10.97 ../internal/webui/dist/assets/PretendardVariable.subset.6-Bxhohlcm.woff2    33.97 kB
+#22 10.97 ../internal/webui/dist/assets/PretendardVariable.subset.9-Btb3bmS6.woff2    34.01 kB
+#22 10.97 ../internal/webui/dist/assets/PretendardVariable.subset.55-jFgflYjX.woff2   34.18 kB
+#22 10.98 ../internal/webui/dist/assets/PretendardVariable.subset.39-B_7wfth9.woff2   34.26 kB
+#22 10.98 ../internal/webui/dist/assets/PretendardVariable.subset.52-CNgqKOOJ.woff2   34.36 kB
+#22 10.98 ../internal/webui/dist/assets/PretendardVariable.subset.0-BHUkWNFR.woff2    34.57 kB
+#22 10.98 ../internal/webui/dist/assets/PretendardVariable.subset.53-BSRnyb-u.woff2   34.57 kB
+#22 10.98 ../internal/webui/dist/assets/PretendardVariable.subset.42-Dp-5mnyL.woff2   34.61 kB
+#22 10.98 ../internal/webui/dist/assets/PretendardVariable.subset.45-BniyRFfm.woff2   34.66 kB
+#22 10.98 ../internal/webui/dist/assets/PretendardVariable.subset.36-Dn5IBRQB.woff2   34.69 kB
+#22 10.98 ../internal/webui/dist/assets/PretendardVariable.subset.34-CaCS33Md.woff2   34.72 kB
+#22 10.98 ../internal/webui/dist/assets/PretendardVariable.subset.69-YT16ymcp.woff2   34.78 kB
+#22 10.98 ../internal/webui/dist/assets/PretendardVariable.subset.38-D4hu443z.woff2   34.81 kB
+#22 10.98 ../internal/webui/dist/assets/PretendardVariable.subset.62-DGSAWCfb.woff2   34.88 kB
+#22 10.98 ../internal/webui/dist/assets/PretendardVariable.subset.33--0OT__YQ.woff2   34.92 kB
+#22 10.98 ../internal/webui/dist/assets/PretendardVariable.subset.17-BfZSA-Xc.woff2   34.94 kB
+#22 10.98 ../internal/webui/dist/assets/PretendardVariable.subset.4-Bvh2YGoc.woff2    35.16 kB
+#22 10.98 ../internal/webui/dist/assets/PretendardVariable.subset.56-BwZdvJZQ.woff2   35.18 kB
+#22 10.98 ../internal/webui/dist/assets/PretendardVariable.subset.35-DWFYRGLp.woff2   35.35 kB
+#22 10.98 ../internal/webui/dist/assets/PretendardVariable.subset.27-CT6nuW9L.woff2   35.42 kB
+#22 10.98 ../internal/webui/dist/assets/PretendardVariable.subset.61-PUuTnod4.woff2   35.64 kB
+#22 10.98 ../internal/webui/dist/assets/PretendardVariable.subset.15-D04iXIE3.woff2   35.67 kB
+#22 10.98 ../internal/webui/dist/assets/PretendardVariable.subset.13-C42mj_j2.woff2   35.71 kB
+#22 10.98 ../internal/webui/dist/assets/PretendardVariable.subset.47-B-cWO2pw.woff2   35.72 kB
+#22 10.98 ../internal/webui/dist/assets/PretendardVariable.subset.57-BwFDg-Fs.woff2   35.96 kB
+#22 10.98 ../internal/webui/dist/assets/PretendardVariable.subset.51-Bxd0gTAs.woff2   36.02 kB
+#22 10.98 ../internal/webui/dist/assets/PretendardVariable.subset.49-BblQVys9.woff2   36.05 kB
+#22 10.98 ../internal/webui/dist/assets/PretendardVariable.subset.20-Ig1-z3n5.woff2   36.13 kB
+#22 10.98 ../internal/webui/dist/assets/PretendardVariable.subset.14-Bl512uUX.woff2   36.51 kB
+#22 10.98 ../internal/webui/dist/assets/PretendardVariable.subset.46-BMRq7xC-.woff2   36.54 kB
+#22 10.98 ../internal/webui/dist/assets/PretendardVariable.subset.8-CRbJhhyA.woff2    36.70 kB
+#22 10.98 ../internal/webui/dist/assets/PretendardVariable.subset.21-yKPEdLXC.woff2   37.27 kB
+#22 10.98 ../internal/webui/dist/assets/PretendardVariable.subset.11-CqVmlKJn.woff2   37.40 kB
+#22 10.98 ../internal/webui/dist/assets/PretendardVariable.subset.48-Ct-fWrPO.woff2   37.78 kB
+#22 10.98 ../internal/webui/dist/assets/PretendardVariable.subset.60-CeHezjjf.woff2   37.78 kB
+#22 10.98 ../internal/webui/dist/assets/PretendardVariable.subset.16-BQUnS2GX.woff2   37.92 kB
+#22 10.98 ../internal/webui/dist/assets/PretendardVariable.subset.12-BHuZSgT0.woff2   37.94 kB
+#22 10.98 ../internal/webui/dist/assets/PretendardVariable.subset.91-Csm0YNoH.woff2   38.00 kB
+#22 10.98 ../internal/webui/dist/assets/PretendardVariable.subset.30-CWDM1c0J.woff2   38.45 kB
+#22 10.98 ../internal/webui/dist/assets/PretendardVariable.subset.28-CpO0Y96p.woff2   38.47 kB
+#22 10.98 ../internal/webui/dist/assets/PretendardVariable.subset.22-CSqxKoOs.woff2   38.68 kB
+#22 10.98 ../internal/webui/dist/assets/PretendardVariable.subset.59-CMkWjhdo.woff2   38.97 kB
+#22 10.98 ../internal/webui/dist/assets/PretendardVariable.subset.29-D6hjrUWm.woff2   39.29 kB
+#22 10.98 ../internal/webui/dist/assets/PretendardVariable.subset.32-CGnFWD2i.woff2   40.22 kB
+#22 10.98 ../internal/webui/dist/assets/PretendardVariable.subset.23-DK80wi0t.woff2   40.28 kB
+#22 10.98 ../internal/webui/dist/assets/PretendardVariable.subset.26-Sozl8dw8.woff2   40.32 kB
+#22 10.98 ../internal/webui/dist/assets/PretendardVariable.subset.3-Dqw33sf4.woff2    40.65 kB
+#22 10.98 ../internal/webui/dist/assets/PretendardVariable.subset.58-DlucQts_.woff2   41.56 kB
+#22 10.98 ../internal/webui/dist/assets/PretendardVariable.subset.18-CwAxMC3C.woff2   41.60 kB
+#22 10.98 ../internal/webui/dist/assets/PretendardVariable.subset.31-CdmyZ5mm.woff2   41.89 kB
+#22 10.98 ../internal/webui/dist/assets/PretendardVariable.subset.25-CsoWBIZB.woff2   42.03 kB
+#22 10.98 ../internal/webui/dist/assets/PretendardVariable.subset.19-CJu4Zcdo.woff2   42.33 kB
+#22 10.98 ../internal/webui/dist/assets/PretendardVariable.subset.2-dCZkyKLw.woff2    43.92 kB
+#22 10.98 ../internal/webui/dist/assets/index-6VkXd8f1.css                           254.14 kB │ gzip:  44.77 kB
+#22 10.98 ../internal/webui/dist/assets/index-BD-7jINV.js                            779.75 kB │ gzip: 240.46 kB
+#22 10.98 ✓ built in 6.62s
+#22 DONE 11.1s
+
+#23 [server 8/9] COPY --from=web /src/internal/webui/dist ./internal/webui/dist
+#23 DONE 0.1s
+
+#24 [server 9/9] RUN go build -trimpath       -ldflags "-s -w         -X github.com/hkjang/confmcp/internal/version.Version=0.0.0         -X github.com/hkjang/confmcp/internal/version.Commit=unknown         -X github.com/hkjang/confmcp/internal/version.BuildDate=unknown"       -o /out/confmcp ./cmd/server
+#24 DONE 6.9s
+
+#25 [stage-2 2/4] RUN apk add --no-cache ca-certificates tzdata curl &&     addgroup -g 10001 -S confmcp &&     adduser -u 10001 -S -G confmcp -h /home/confmcp confmcp
+#25 CACHED
+
+#26 [stage-2 3/4] COPY --from=server /out/confmcp /usr/local/bin/confmcp
+#26 DONE 0.0s
+
+#27 [stage-2 4/4] WORKDIR /home/confmcp
+#27 DONE 0.1s
+
+#28 exporting to image
+#28 exporting layers
+#28 exporting layers 0.5s done
+#28 exporting manifest sha256:7bee71d2ed4ba5597c393b094a3e029305e3cd09013a8ecc3ac3cdd448c97e29 0.0s done
+#28 exporting config sha256:97919111f9cd89e9abe4c827f502d6e0d6451a96a6866808b762e616ab3612ac 0.0s done
+#28 exporting attestation manifest sha256:40048cf036a0094a494aa18795de2d04e21d6b05d0e81f10db261970496a405f 0.0s done
+#28 exporting manifest list sha256:fa988ae06de8e5d2e9b6c6e0f58671e3d98f7298f9cdf52a73b1d8abc012cfd8 0.0s done
+#28 naming to docker.io/library/confmcp-improve-20261008:check done
+#28 unpacking to docker.io/library/confmcp-improve-20261008:check 0.1s done
+#28 DONE 0.7s

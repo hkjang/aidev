@@ -1,0 +1,125 @@
+
+> kcb-dashboard@0.1.0 test:e2e
+> playwright test e2e/admin-save-failure.spec.ts --grep 실제 검증 실패
+
+[WebServer] (node:2031598) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+[WebServer] (node:2031611) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+Running 2 tests using 1 worker
+
+(node:2031669) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✘  1 e2e/admin-save-failure.spec.ts:202:5 › 행 제목·시간의 실제 검증 실패는 모든 상세를 보여 주고 올바른 값으로 재시도할 수 있다 (11.6s)
+(node:2032092) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+[WebServer] (node:2032291) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+  ✘  2 e2e/admin-save-failure.spec.ts:249:5 › 상황판 제목의 실제 검증 실패는 제한 원인을 보여 주고 재저장하면 상세와 편집을 닫는다 (6.2s)
+
+
+  1) e2e/admin-save-failure.spec.ts:202:5 › 행 제목·시간의 실제 검증 실패는 모든 상세를 보여 주고 올바른 값으로 재시도할 수 있다 ──────
+
+    Error: expect(locator).toContainText(expected) failed
+
+    Locator: getByTestId('admin-save-error')
+    Expected substring: "title은 300자 이하여야 합니다."
+    Received string:    "activity.json 데이터 형식이 올바르지 않습니다."
+    Timeout: 5000ms
+
+    Call log:
+      - Expect "soft toContainText" with timeout 5000ms
+      - waiting for getByTestId('admin-save-error')
+        14 × locator resolved to <div role="alert" data-testid="admin-save-error" class="mb-6 flex items-start gap-2 rounded-2xl border border-red-200 bg-red-50 p-4 font-medium text-red-800">…</div>
+           - unexpected value "activity.json 데이터 형식이 올바르지 않습니다."
+
+
+      231 |   const banner = page.getByTestId('admin-save-error');
+      232 |   await expect(banner).toContainText(validationSummary);
+    > 233 |   await expect.soft(banner).toContainText('title은 300자 이하여야 합니다.');
+          |                             ^
+      234 |   await expect.soft(banner).toContainText('time은 100자 이하여야 합니다.');
+      235 |
+      236 |   await titleInput.fill('[E2E] 검증 후 수정본');
+        at /home/hkjang/.cache/auto-improve-wt/cutover/e2e/admin-save-failure.spec.ts:233:29
+
+    Error: expect(locator).toContainText(expected) failed
+
+    Locator: getByTestId('admin-save-error')
+    Expected substring: "time은 100자 이하여야 합니다."
+    Received string:    "activity.json 데이터 형식이 올바르지 않습니다."
+    Timeout: 5000ms
+
+    Call log:
+      - Expect "soft toContainText" with timeout 5000ms
+      - waiting for getByTestId('admin-save-error')
+        14 × locator resolved to <div role="alert" data-testid="admin-save-error" class="mb-6 flex items-start gap-2 rounded-2xl border border-red-200 bg-red-50 p-4 font-medium text-red-800">…</div>
+           - unexpected value "activity.json 데이터 형식이 올바르지 않습니다."
+
+
+      232 |   await expect(banner).toContainText(validationSummary);
+      233 |   await expect.soft(banner).toContainText('title은 300자 이하여야 합니다.');
+    > 234 |   await expect.soft(banner).toContainText('time은 100자 이하여야 합니다.');
+          |                             ^
+      235 |
+      236 |   await titleInput.fill('[E2E] 검증 후 수정본');
+      237 |   await timeInput.fill('10:00 ~ 11:00');
+        at /home/hkjang/.cache/auto-improve-wt/cutover/e2e/admin-save-failure.spec.ts:234:29
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/admin-save-failure-행-제목·시간-79c9a-상세를-보여-주고-올바른-값으로-재시도할-수-있다/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/admin-save-failure-행-제목·시간-79c9a-상세를-보여-주고-올바른-값으로-재시도할-수-있다/error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/admin-save-failure-행-제목·시간-79c9a-상세를-보여-주고-올바른-값으로-재시도할-수-있다/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/admin-save-failure-행-제목·시간-79c9a-상세를-보여-주고-올바른-값으로-재시도할-수-있다/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  2) e2e/admin-save-failure.spec.ts:249:5 › 상황판 제목의 실제 검증 실패는 제한 원인을 보여 주고 재저장하면 상세와 편집을 닫는다 ───────
+
+    Error: expect(locator).toContainText(expected) failed
+
+    Locator: getByTestId('admin-save-error')
+    Expected substring: "dashboardTitle은 100자 이하여야 합니다."
+    Received string:    "activity.json 데이터 형식이 올바르지 않습니다."
+    Timeout: 5000ms
+
+    Call log:
+      - Expect "soft toContainText" with timeout 5000ms
+      - waiting for getByTestId('admin-save-error')
+        14 × locator resolved to <div role="alert" data-testid="admin-save-error" class="mb-6 flex items-start gap-2 rounded-2xl border border-red-200 bg-red-50 p-4 font-medium text-red-800">…</div>
+           - unexpected value "activity.json 데이터 형식이 올바르지 않습니다."
+
+
+      257 |   await expect(titleInput).toHaveValue('가'.repeat(101));
+      258 |   const banner = page.getByTestId('admin-save-error');
+    > 259 |   await expect.soft(banner).toContainText('dashboardTitle은 100자 이하여야 합니다.');
+          |                             ^
+      260 |
+      261 |   await titleInput.fill('[E2E] 검증 후 상황판');
+      262 |   const accepted = waitForPut(page);
+        at /home/hkjang/.cache/auto-improve-wt/cutover/e2e/admin-save-failure.spec.ts:259:29
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/admin-save-failure-상황판-제목의-70f2e-원인을-보여-주고-재저장하면-상세와-편집을-닫는다/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/admin-save-failure-상황판-제목의-70f2e-원인을-보여-주고-재저장하면-상세와-편집을-닫는다/error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/admin-save-failure-상황판-제목의-70f2e-원인을-보여-주고-재저장하면-상세와-편집을-닫는다/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/admin-save-failure-상황판-제목의-70f2e-원인을-보여-주고-재저장하면-상세와-편집을-닫는다/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  2 failed
+    e2e/admin-save-failure.spec.ts:202:5 › 행 제목·시간의 실제 검증 실패는 모든 상세를 보여 주고 올바른 값으로 재시도할 수 있다 ───────
+    e2e/admin-save-failure.spec.ts:249:5 › 상황판 제목의 실제 검증 실패는 제한 원인을 보여 주고 재저장하면 상세와 편집을 닫는다 ────────

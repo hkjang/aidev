@@ -1,0 +1,11 @@
+## 2026-10-08
+- 선택: 레거시 factory 상품 목록 GET의 아이디어·대시보드 조회 실패를 500으로 전달 (가치 4 / 위험 1 / 작업량 S)
+- 결과: 성공
+- 요약: handleFactoryProducts가 ListProductIdeas·FactoryDashboard 오류를 버리던 두 지점을 기존 상품 조회와 같은 HTTP 500/server_error/products_failed 즉시 반환으로 바꿨고 실패 본문에는 error만 남긴다; 프로덕션 한 함수·테스트 한 파일·OPERATIONS 운영 문단 4줄, 총 3파일이며 커밋 d0f5c75(author hkjang, 트레일러 없음)이다. 실제 SQLite+NewServer(...).Routes()의 신규 TestFactoryProductsRejectsUnavailableSources에서 아이디어 id 전용 뷰(전용 dashboard는 200), risk/PoC rename(상품·아이디어 정상, 전용 dashboard는 500)의 세 거짓 200을 먼저 확인했고 수정 후 네 장애 사례(기존 상품 조회 포함)가 500·정확한 type/code·성공 키 부재를 만족했으며, rename 직후 등록한 각 cleanup의 전체 정상 본문 복귀·빈 DB의 빈 배열/0 KPI·draft/review 2건의 내용/순서·status trim과 전역 아이디어/KPI·실제 생성 수 기준 비교·65개 중 최신 50개 제한도 통과했다. 신규 테스트 red exit 1(세 장애만 실패)→green exit 0(0.303s)→프로덕션 파일만 원본으로 임시 복귀 시 같은 세 실패→수정본 복원 뒤 기존 dashboard 테스트 PASS(0.314s), go test ./internal/store ./internal/proxy -count=1 PASS(16.710s/42.407s), go build ./...·go vet ./... exit 0(출력 없음), go test ./... -count=1 16패키지 PASS(proxy 43.069s/store 15.818s), go run ./cmd/api-surface-audit 550 routes/612 paths·4개 누락 목록 모두 [], gofmt -l 출력 없음, git diff --check exit 0을 확인했다; PostgreSQL·브라우저·웹 검증은 미실행이며 web/store/auth/CI·릴리즈 경로는 수정하지 않았다.
+- 실패 재현: `    --- FAIL: TestFactoryProductsRejectsUnavailableSources/ideas_only (0.03s)` / `    --- FAIL: TestFactoryProductsRejectsUnavailableSources/risk_reviews (0.03s)` — 테스트만 추가한 상태에서 `go test ./internal/proxy -run '^TestFactoryProductsRejectsUnavailableSources$' -count=1 -v` exit 1, 세 사례 모두 `status = 200, want 500`; poc_plans도 실패했고 products 대조군 및 정상/복구 단언은 통과했다. 원문: assets/test-red.log, 수정 후: assets/test-green.log, 재역전: assets/test-reverted.log.
+- 보류 아이디어:
+  - 유실된 web JS/MJS 린트 규칙 복구 (가치 3 / 위험 2 / 작업량 S) — 정찰의 config·실행 회귀 테스트 한정안을 유지; 이번 설치/실행 미수행.
+  - graph의 feedback/outcomes/relationships 조회 실패 처리 (가치 3 / 위험 2 / 작업량 M) — 세 읽기와 두 HTTP 호출자의 장애 재현부터; 1순위가 유효해 착수하지 않음.
+  - 상품 상세 GET의 definition·risk·poc 조회 장애 구분 (가치 3 / 위험 2 / 작업량 M) — 정찰 신규 후보 보존; 상세 계약과 HTTP 장애를 별도로 확인해야 함.
+  - Proposal A/B 생성 이벤트 저장 실패 처리 (가치 3 / 위험 3 / 작업량 M) — 정찰 신규 후보 보존; 부분 저장·재시도 정책이 미확인이라 함께 수정하지 않음.
+- 과제서: 채택 — HEAD 39f9d99와 두 오류 무시 지점이 일치했고 지정된 세 SQLite 장애 레버로 수정 전 실패·수정 후 500·각 스키마 복구 후 전체 정상 응답을 확인했다; 기존 상품 오류 및 50개 제한 대조만 보강했으며 프로덕션 범위·쿼리 순서·SQL·성공 계약은 그대로다.

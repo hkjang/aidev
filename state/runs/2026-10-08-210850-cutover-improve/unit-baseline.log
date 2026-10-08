@@ -1,0 +1,936 @@
+
+> kcb-dashboard@0.1.0 test:unit
+> node --test "lib/**/*.test.ts"
+
+TAP version 13
+# (node:2012410) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///home/hkjang/.cache/auto-improve-wt/cutover/lib/activityData.test.ts is not specified and it doesn't parse as CommonJS.
+# Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+# To eliminate this warning, add "type": "module" to /home/hkjang/.cache/auto-improve-wt/cutover/package.json.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: validateActivityImport 정상 입력
+    # Subtest: 최상위와 자식 2건을 통과시키고 id·parentId 의 앞뒤 공백을 trim 한다
+    ok 1 - 최상위와 자식 2건을 통과시키고 id·parentId 의 앞뒤 공백을 trim 한다
+      ---
+      duration_ms: 1.553516
+      type: 'test'
+      ...
+    # Subtest: dashboardTitle 의 앞뒤 공백을 trim 해서 돌려준다
+    ok 2 - dashboardTitle 의 앞뒤 공백을 trim 해서 돌려준다
+      ---
+      duration_ms: 0.156383
+      type: 'test'
+      ...
+    # Subtest: dashboardTitle 을 주지 않으면 undefined 를 돌려준다
+    ok 3 - dashboardTitle 을 주지 않으면 undefined 를 돌려준다
+      ---
+      duration_ms: 0.179274
+      type: 'test'
+      ...
+    # Subtest: 빈 activities 배열은 throw 하지 않고 빈 배열을 돌려준다
+    ok 4 - 빈 activities 배열은 throw 하지 않고 빈 배열을 돌려준다
+      ---
+      duration_ms: 0.08733
+      type: 'test'
+      ...
+    1..4
+ok 1 - validateActivityImport 정상 입력
+  ---
+  duration_ms: 2.92939
+  type: 'suite'
+  ...
+# Subtest: validateActivityImport 제한값 경계
+    # Subtest: 120자 id를 허용하고 반환값에 보존한다
+    ok 1 - 120자 id를 허용하고 반환값에 보존한다
+      ---
+      duration_ms: 0.242913
+      type: 'test'
+      ...
+    # Subtest: 121자 id는 activities[0].id 오류 1건으로 거절한다
+    ok 2 - 121자 id는 activities[0].id 오류 1건으로 거절한다
+      ---
+      duration_ms: 0.185575
+      type: 'test'
+      ...
+    # Subtest: 100자 dashboardTitle을 허용하고 반환값에 보존한다
+    ok 3 - 100자 dashboardTitle을 허용하고 반환값에 보존한다
+      ---
+      duration_ms: 0.344358
+      type: 'test'
+      ...
+    # Subtest: 101자 dashboardTitle은 dashboardTitle 오류 1건으로 거절한다
+    ok 4 - 101자 dashboardTitle은 dashboardTitle 오류 1건으로 거절한다
+      ---
+      duration_ms: 0.314798
+      type: 'test'
+      ...
+    # Subtest: 앞뒤 공백을 제외한 dashboardTitle이 100자이면 허용하고 공백을 제거한다
+    ok 5 - 앞뒤 공백을 제외한 dashboardTitle이 100자이면 허용하고 공백을 제거한다
+      ---
+      duration_ms: 0.351588
+      type: 'test'
+      ...
+    # Subtest: 고유 id를 가진 루트 5000개를 허용하고 개수와 첫·마지막 id를 보존한다
+    ok 6 - 고유 id를 가진 루트 5000개를 허용하고 개수와 첫·마지막 id를 보존한다
+      ---
+      duration_ms: 8.532288
+      type: 'test'
+      ...
+    # Subtest: 고유 id를 가진 루트 5001개는 activities 오류 1건으로 거절한다
+    ok 7 - 고유 id를 가진 루트 5001개는 activities 오류 1건으로 거절한다
+      ---
+      duration_ms: 11.335472
+      type: 'test'
+      ...
+    1..7
+ok 2 - validateActivityImport 제한값 경계
+  ---
+  duration_ms: 21.707788
+  type: 'suite'
+  ...
+# Subtest: validateActivityImport 최상위 형식 오류
+    # Subtest: 최상위 값이 객체가 아니면(배열) path '$' 오류 1건으로 throw 한다
+    ok 1 - 최상위 값이 객체가 아니면(배열) path '$' 오류 1건으로 throw 한다
+      ---
+      duration_ms: 0.176734
+      type: 'test'
+      ...
+    # Subtest: 최상위 값이 객체가 아니면(문자열) path '$' 오류 1건으로 throw 한다
+    ok 2 - 최상위 값이 객체가 아니면(문자열) path '$' 오류 1건으로 throw 한다
+      ---
+      duration_ms: 0.074273
+      type: 'test'
+      ...
+    # Subtest: 최상위 값이 객체가 아니면(null) path '$' 오류 1건으로 throw 한다
+    ok 3 - 최상위 값이 객체가 아니면(null) path '$' 오류 1건으로 throw 한다
+      ---
+      duration_ms: 0.036359
+      type: 'test'
+      ...
+    # Subtest: activities 가 배열이 아니면 path 'activities' 오류 1건으로 throw 한다
+    ok 4 - activities 가 배열이 아니면 path 'activities' 오류 1건으로 throw 한다
+      ---
+      duration_ms: 0.067562
+      type: 'test'
+      ...
+    1..4
+ok 3 - validateActivityImport 최상위 형식 오류
+  ---
+  duration_ms: 0.569426
+  type: 'suite'
+  ...
+# Subtest: validateActivityImport 관계 오류의 issues[].path
+    # Subtest: id 가 중복되면 뒤쪽 항목의 id 경로를 가리키고 메시지에 앞쪽 인덱스를 담는다
+    ok 1 - id 가 중복되면 뒤쪽 항목의 id 경로를 가리키고 메시지에 앞쪽 인덱스를 담는다
+      ---
+      duration_ms: 0.193638
+      type: 'test'
+      ...
+    # Subtest: 부모가 존재하지 않으면 parentId 경로를 가리킨다
+    ok 2 - 부모가 존재하지 않으면 parentId 경로를 가리킨다
+      ---
+      duration_ms: 0.146277
+      type: 'test'
+      ...
+    # Subtest: 부모 level 보다 정확히 1 크지 않으면 자식의 level 경로를 가리킨다
+    ok 3 - 부모 level 보다 정확히 1 크지 않으면 자식의 level 경로를 가리킨다
+      ---
+      duration_ms: 0.076587
+      type: 'test'
+      ...
+    # Subtest: 자기 자신을 부모로 지정하면 parentId 경로로 자기참조·순환 2건이 난다
+    ok 4 - 자기 자신을 부모로 지정하면 parentId 경로로 자기참조·순환 2건이 난다
+      ---
+      duration_ms: 0.216692
+      type: 'test'
+      ...
+    # Subtest: 최상위인데 level 이 1 이 아니면 level 경로를 가리킨다
+    ok 5 - 최상위인데 level 이 1 이 아니면 level 경로를 가리킨다
+      ---
+      duration_ms: 0.29465
+      type: 'test'
+      ...
+    # Subtest: 두 항목이 서로를 부모로 가리키면 순환 오류는 1건만 난다
+    ok 6 - 두 항목이 서로를 부모로 가리키면 순환 오류는 1건만 난다
+      ---
+      duration_ms: 0.245831
+      type: 'test'
+      ...
+    1..6
+ok 4 - validateActivityImport 관계 오류의 issues[].path
+  ---
+  duration_ms: 1.38264
+  type: 'suite'
+  ...
+# Subtest: validateActivityImport 의 '진행중' 정규화
+    # Subtest: status '진행중' 을 '진행' 으로 바꾸고 변환 건수를 세어 돌려준다
+    ok 1 - status '진행중' 을 '진행' 으로 바꾸고 변환 건수를 세어 돌려준다
+      ---
+      duration_ms: 0.258562
+      type: 'test'
+      ...
+    1..1
+ok 5 - validateActivityImport 의 '진행중' 정규화
+  ---
+  duration_ms: 0.324212
+  type: 'suite'
+  ...
+# Subtest: validateActivityImport 의 issues 상한
+    # Subtest: 오류가 50건을 넘으면 50건 + 생략 안내 1건만 돌려준다
+    ok 1 - 오류가 50건을 넘으면 50건 + 생략 안내 1건만 돌려준다
+      ---
+      duration_ms: 0.352799
+      type: 'test'
+      ...
+    1..1
+ok 6 - validateActivityImport 의 issues 상한
+  ---
+  duration_ms: 0.412989
+  type: 'suite'
+  ...
+# (node:2012411) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///home/hkjang/.cache/auto-improve-wt/cutover/lib/adminSession.test.ts is not specified and it doesn't parse as CommonJS.
+# Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+# To eliminate this warning, add "type": "module" to /home/hkjang/.cache/auto-improve-wt/cutover/package.json.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: 관리자 세션 쿠키 Secure 판정
+    # Subtest: 설정이 없으면 요청 프로토콜을 따른다
+    ok 1 - 설정이 없으면 요청 프로토콜을 따른다
+      ---
+      duration_ms: 0.457907
+      type: 'test'
+      ...
+    # Subtest: 리버스 프록시의 X-Forwarded-Proto 가 앱 서버 프로토콜보다 우선한다
+    ok 2 - 리버스 프록시의 X-Forwarded-Proto 가 앱 서버 프로토콜보다 우선한다
+      ---
+      duration_ms: 0.116328
+      type: 'test'
+      ...
+    # Subtest: 프록시가 여러 겹이면 첫 값(클라이언트와 맞닿은 쪽)만 본다
+    ok 3 - 프록시가 여러 겹이면 첫 값(클라이언트와 맞닿은 쪽)만 본다
+      ---
+      duration_ms: 0.062762
+      type: 'test'
+      ...
+    # Subtest: 빈 X-Forwarded-Proto 는 없는 것으로 본다
+    ok 4 - 빈 X-Forwarded-Proto 는 없는 것으로 본다
+      ---
+      duration_ms: 0.083233
+      type: 'test'
+      ...
+    # Subtest: ADMIN_COOKIE_SECURE=true 면 평문 HTTP 요청에도 Secure 를 붙인다
+    ok 5 - ADMIN_COOKIE_SECURE=true 면 평문 HTTP 요청에도 Secure 를 붙인다
+      ---
+      duration_ms: 0.068319
+      type: 'test'
+      ...
+    # Subtest: ADMIN_COOKIE_SECURE=false 면 HTTPS 요청에도 붙이지 않는다
+    ok 6 - ADMIN_COOKIE_SECURE=false 면 HTTPS 요청에도 붙이지 않는다
+      ---
+      duration_ms: 0.051458
+      type: 'test'
+      ...
+    # Subtest: auto·빈 값·알 수 없는 값은 요청 프로토콜을 따른다
+    ok 7 - auto·빈 값·알 수 없는 값은 요청 프로토콜을 따른다
+      ---
+      duration_ms: 0.374026
+      type: 'test'
+      ...
+    1..7
+ok 7 - 관리자 세션 쿠키 Secure 판정
+  ---
+  duration_ms: 3.094501
+  type: 'suite'
+  ...
+# (node:2012412) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///home/hkjang/.cache/auto-improve-wt/cutover/lib/mail/config.test.ts is not specified and it doesn't parse as CommonJS.
+# Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+# To eliminate this warning, add "type": "module" to /home/hkjang/.cache/auto-improve-wt/cutover/package.json.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: 메일 설정 기본값
+    # Subtest: 꺼져 있고 포트 25 · auto · 인증 없음이다
+    ok 1 - 꺼져 있고 포트 25 · auto · 인증 없음이다
+      ---
+      duration_ms: 0.52936
+      type: 'test'
+      ...
+    # Subtest: 꺼진 기본값은 검증을 통과한다 — 새로 설치한 곳이 달라지지 않는다
+    ok 2 - 꺼진 기본값은 검증을 통과한다 — 새로 설치한 곳이 달라지지 않는다
+      ---
+      duration_ms: 0.625683
+      type: 'test'
+      ...
+    1..2
+ok 8 - 메일 설정 기본값
+  ---
+  duration_ms: 1.841109
+  type: 'suite'
+  ...
+# Subtest: 정규화
+    # Subtest: 모르는 값은 기본값으로 돌아가고 문자열 포트도 받는다
+    ok 1 - 모르는 값은 기본값으로 돌아가고 문자열 포트도 받는다
+      ---
+      duration_ms: 0.281238
+      type: 'test'
+      ...
+    # Subtest: 비밀번호는 빠졌거나 빈 문자열이면 기존 값을 유지하고, password_clear 로만 지운다
+    ok 2 - 비밀번호는 빠졌거나 빈 문자열이면 기존 값을 유지하고, password_clear 로만 지운다
+      ---
+      duration_ms: 0.817234
+      type: 'test'
+      ...
+    # Subtest: base_url 의 끝 슬래시를 떼어낸다
+    ok 3 - base_url 의 끝 슬래시를 떼어낸다
+      ---
+      duration_ms: 0.186132
+      type: 'test'
+      ...
+    1..3
+ok 9 - 정규화
+  ---
+  duration_ms: 1.484273
+  type: 'suite'
+  ...
+# Subtest: 비밀번호는 되읽히지 않는다
+    # Subtest: 공개 모양에는 password 가 없고 password_set 만 있다
+    ok 1 - 공개 모양에는 password 가 없고 password_set 만 있다
+      ---
+      duration_ms: 0.211093
+      type: 'test'
+      ...
+    1..1
+ok 10 - 비밀번호는 되읽히지 않는다
+  ---
+  duration_ms: 0.428423
+  type: 'suite'
+  ...
+# Subtest: 검증
+    # Subtest: 켜면 릴레이 주소와 보내는 주소가 필요하다
+    ok 1 - 켜면 릴레이 주소와 보내는 주소가 필요하다
+      ---
+      duration_ms: 0.413345
+      type: 'test'
+      ...
+    # Subtest: 꺼져 있으면 값을 조금씩 채우며 저장할 수 있다
+    ok 2 - 꺼져 있으면 값을 조금씩 채우며 저장할 수 있다
+      ---
+      duration_ms: 0.086509
+      type: 'test'
+      ...
+    # Subtest: 주소 모양, 포트 범위, 사용자 이름 없는 비밀번호를 잡아낸다
+    ok 3 - 주소 모양, 포트 범위, 사용자 이름 없는 비밀번호를 잡아낸다
+      ---
+      duration_ms: 0.305686
+      type: 'test'
+      ...
+    1..3
+ok 11 - 검증
+  ---
+  duration_ms: 1.010019
+  type: 'suite'
+  ...
+# Subtest: 받는 사람
+    # Subtest: 쉼표·세미콜론·줄바꿈으로 나누고 대소문자만 다른 중복은 하나로 본다
+    ok 1 - 쉼표·세미콜론·줄바꿈으로 나누고 대소문자만 다른 중복은 하나로 본다
+      ---
+      duration_ms: 0.278573
+      type: 'test'
+      ...
+    1..1
+ok 12 - 받는 사람
+  ---
+  duration_ms: 0.433032
+  type: 'suite'
+  ...
+# Subtest: 이벤트 스위치
+    # Subtest: 종류별로 끌 수 있고 시험 발송은 늘 허용된다
+    ok 1 - 종류별로 끌 수 있고 시험 발송은 늘 허용된다
+      ---
+      duration_ms: 0.17575
+      type: 'test'
+      ...
+    1..1
+ok 13 - 이벤트 스위치
+  ---
+  duration_ms: 0.255136
+  type: 'suite'
+  ...
+# (node:2012418) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///home/hkjang/.cache/auto-improve-wt/cutover/lib/mail/events.test.ts is not specified and it doesn't parse as CommonJS.
+# Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+# To eliminate this warning, add "type": "module" to /home/hkjang/.cache/auto-improve-wt/cutover/package.json.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: 메일감 고르기
+    # Subtest: 상태가 그대로면 아무것도 고르지 않는다
+    ok 1 - 상태가 그대로면 아무것도 고르지 않는다
+      ---
+      duration_ms: 1.552517
+      type: 'test'
+      ...
+    # Subtest: 제목·시간 편집이나 추가·삭제는 메일감이 아니다
+    ok 2 - 제목·시간 편집이나 추가·삭제는 메일감이 아니다
+      ---
+      duration_ms: 0.22402
+      type: 'test'
+      ...
+    # Subtest: 지연은 어느 단계든 잡고, 지연이 풀리면 해소로 잡는다
+    ok 3 - 지연은 어느 단계든 잡고, 지연이 풀리면 해소로 잡는다
+      ---
+      duration_ms: 0.316829
+      type: 'test'
+      ...
+    # Subtest: 최상위 작업 완료는 잡고 하위 작업 완료는 잡지 않는다
+    ok 4 - 최상위 작업 완료는 잡고 하위 작업 완료는 잡지 않는다
+      ---
+      duration_ms: 0.220194
+      type: 'test'
+      ...
+    # Subtest: 마지막 최상위 작업이 완료되면 훈련 완료도 함께 잡힌다
+    ok 5 - 마지막 최상위 작업이 완료되면 훈련 완료도 함께 잡힌다
+      ---
+      duration_ms: 0.206446
+      type: 'test'
+      ...
+    1..5
+ok 14 - 메일감 고르기
+  ---
+  duration_ms: 4.006278
+  type: 'suite'
+  ...
+# Subtest: 한 통으로 묶기
+    # Subtest: 한 번의 조작이 만든 변화를 한 통으로 묶고 가장 급한 것이 제목이 된다
+    ok 1 - 한 번의 조작이 만든 변화를 한 통으로 묶고 가장 급한 것이 제목이 된다
+      ---
+      duration_ms: 0.551571
+      type: 'test'
+      ...
+    # Subtest: 스위치를 끄면 그 종류만 멎는다
+    ok 2 - 스위치를 끄면 그 종류만 멎는다
+      ---
+      duration_ms: 0.41595
+      type: 'test'
+      ...
+    # Subtest: 훈련 완료는 제목이 다르다
+    ok 3 - 훈련 완료는 제목이 다르다
+      ---
+      duration_ms: 0.426856
+      type: 'test'
+      ...
+    1..3
+ok 15 - 한 통으로 묶기
+  ---
+  duration_ms: 1.749791
+  type: 'suite'
+  ...
+# Subtest: 본문과 MIME
+    # Subtest: base_url 이 있을 때만 링크가 붙는다
+    ok 1 - base_url 이 있을 때만 링크가 붙는다
+      ---
+      duration_ms: 0.447575
+      type: 'test'
+      ...
+    # Subtest: 한글 제목과 이름은 RFC 2047 로 인코딩되고 ASCII 는 그대로 둔다
+    ok 2 - 한글 제목과 이름은 RFC 2047 로 인코딩되고 ASCII 는 그대로 둔다
+      ---
+      duration_ms: 0.712558
+      type: 'test'
+      ...
+    # Subtest: 줄 머리의 마침표를 겹쳐 본문이 DATA 를 일찍 끝내지 못하게 한다
+    ok 3 - 줄 머리의 마침표를 겹쳐 본문이 DATA 를 일찍 끝내지 못하게 한다
+      ---
+      duration_ms: 0.169774
+      type: 'test'
+      ...
+    # Subtest: 메시지에 필요한 헤더가 모두 있고 본문 앞에 빈 줄이 있다
+    ok 4 - 메시지에 필요한 헤더가 모두 있고 본문 앞에 빈 줄이 있다
+      ---
+      duration_ms: 0.77571
+      type: 'test'
+      ...
+    1..4
+ok 16 - 본문과 MIME
+  ---
+  duration_ms: 2.409887
+  type: 'suite'
+  ...
+# 메일 발송 실패 [test] → a@corp.example: SMTP 연결 실패 (relay:25): ECONNREFUSED
+# 메일 발송 실패 [test] → b@corp.example: SMTP 연결 실패 (relay:25): ECONNREFUSED
+# 메일 발송 실패 [test] → me@corp.example: RCPT TO 실패: 550 No such user
+# 메일 알림 처리 중 오류가 났지만 상황판 저장에는 영향이 없습니다: Error: disk
+#     at Object.readConfig (file:///home/hkjang/.cache/auto-improve-wt/cutover/lib/mail/service.test.ts:127:73)
+#     at Object.config (file:///home/hkjang/.cache/auto-improve-wt/cutover/lib/mail/service.ts:140:24)
+#     at notifyActivityChanges (file:///home/hkjang/.cache/auto-improve-wt/cutover/lib/mail/service.ts:223:34)
+#     at TestContext.<anonymous> (file:///home/hkjang/.cache/auto-improve-wt/cutover/lib/mail/service.test.ts:128:11)
+#     at Test.runInAsyncScope (node:async_hooks:214:14)
+#     at Test.run (node:internal/test_runner/test:1047:25)
+#     at Suite.processPendingSubtests (node:internal/test_runner/test:744:18)
+#     at Test.postRun (node:internal/test_runner/test:1173:19)
+#     at Test.run (node:internal/test_runner/test:1101:12)
+#     at async Suite.processPendingSubtests (node:internal/test_runner/test:744:7)
+# (node:2012424) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///home/hkjang/.cache/auto-improve-wt/cutover/lib/mail/service.test.ts is not specified and it doesn't parse as CommonJS.
+# Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+# To eliminate this warning, add "type": "module" to /home/hkjang/.cache/auto-improve-wt/cutover/package.json.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: 알림 발송
+    # Subtest: 꺼져 있으면 보내지도 기록하지도 않는다
+    ok 1 - 꺼져 있으면 보내지도 기록하지도 않는다
+      ---
+      duration_ms: 0.60827
+      type: 'test'
+      ...
+    # Subtest: 명부의 모두에게 한 통씩 보내고 성공을 기록한다
+    ok 2 - 명부의 모두에게 한 통씩 보내고 성공을 기록한다
+      ---
+      duration_ms: 1.713487
+      type: 'test'
+      ...
+    # Subtest: 릴레이가 죽어 있으면 한 번 더 시도한 뒤 실패로 기록하고 던지지 않는다
+    ok 3 - 릴레이가 죽어 있으면 한 번 더 시도한 뒤 실패로 기록하고 던지지 않는다
+      ---
+      duration_ms: 1.199517
+      type: 'test'
+      ...
+    # Subtest: 켜져 있지만 설정이 모자라면 보내지 않고 이유를 남긴다
+    ok 4 - 켜져 있지만 설정이 모자라면 보내지 않고 이유를 남긴다
+      ---
+      duration_ms: 0.30842
+      type: 'test'
+      ...
+    1..4
+ok 17 - 알림 발송
+  ---
+  duration_ms: 4.700398
+  type: 'suite'
+  ...
+# Subtest: 시험 발송
+    # Subtest: 바로 보내고 결과를 돌려주며 실패는 던진다
+    ok 1 - 바로 보내고 결과를 돌려주며 실패는 던진다
+      ---
+      duration_ms: 0.696296
+      type: 'test'
+      ...
+    1..1
+ok 18 - 시험 발송
+  ---
+  duration_ms: 0.79049
+  type: 'suite'
+  ...
+# Subtest: 상황판 변경 → 메일
+    # Subtest: 지연으로 바뀌면 한 통이 나가고, 스위치를 끄면 그 종류만 멎는다
+    ok 1 - 지연으로 바뀌면 한 통이 나가고, 스위치를 끄면 그 종류만 멎는다
+      ---
+      duration_ms: 0.934319
+      type: 'test'
+      ...
+    # Subtest: 메일감이 없으면 설정조차 읽지 않는다
+    ok 2 - 메일감이 없으면 설정조차 읽지 않는다
+      ---
+      duration_ms: 0.385104
+      type: 'test'
+      ...
+    # Subtest: 설정을 읽다 실패해도 던지지 않는다
+    ok 3 - 설정을 읽다 실패해도 던지지 않는다
+      ---
+      duration_ms: 0.80447
+      type: 'test'
+      ...
+    1..3
+ok 19 - 상황판 변경 → 메일
+  ---
+  duration_ms: 2.393924
+  type: 'suite'
+  ...
+# Subtest: 릴레이 옵션
+    # Subtest: 465 포트에 auto 면 처음부터 TLS 로 붙고, EHLO 이름은 보내는 주소의 도메인이다
+    ok 1 - 465 포트에 auto 면 처음부터 TLS 로 붙고, EHLO 이름은 보내는 주소의 도메인이다
+      ---
+      duration_ms: 0.376457
+      type: 'test'
+      ...
+    1..1
+ok 20 - 릴레이 옵션
+  ---
+  duration_ms: 0.537898
+  type: 'suite'
+  ...
+# (node:2012426) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///home/hkjang/.cache/auto-improve-wt/cutover/lib/mail/smtp.test.ts is not specified and it doesn't parse as CommonJS.
+# Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+# To eliminate this warning, add "type": "module" to /home/hkjang/.cache/auto-improve-wt/cutover/package.json.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: SMTP 클라이언트
+    # Subtest: 인증 없는 릴레이(auto)에 한 통을 보내고 본문의 마침표 겹침을 릴레이가 되돌린다
+    ok 1 - 인증 없는 릴레이(auto)에 한 통을 보내고 본문의 마침표 겹침을 릴레이가 되돌린다
+      ---
+      duration_ms: 48.395455
+      type: 'test'
+      ...
+    # Subtest: 릴레이가 받는 사람을 거절하면 이유가 담긴 오류가 난다
+    ok 2 - 릴레이가 받는 사람을 거절하면 이유가 담긴 오류가 난다
+      ---
+      duration_ms: 2.764815
+      type: 'test'
+      ...
+    # Subtest: 죽은 릴레이는 연결 실패로 끝나고 매달리지 않는다
+    ok 3 - 죽은 릴레이는 연결 실패로 끝나고 매달리지 않는다
+      ---
+      duration_ms: 1.102374
+      type: 'test'
+      ...
+    # Subtest: 인사 뒤 끊기는 릴레이도 오류로 끝난다
+    ok 4 - 인사 뒤 끊기는 릴레이도 오류로 끝난다
+      ---
+      duration_ms: 1.150222
+      type: 'test'
+      ...
+    1..4
+ok 21 - SMTP 클라이언트
+  ---
+  duration_ms: 59.786718
+  type: 'suite'
+  ...
+# Subtest: SMTP 인증
+    # Subtest: 서버가 AUTH 를 알리면 PLAIN 으로 인증하고, 틀리면 비밀번호가 오류 문장에 들어가지 않는다
+    ok 1 - 서버가 AUTH 를 알리면 PLAIN 으로 인증하고, 틀리면 비밀번호가 오류 문장에 들어가지 않는다
+      ---
+      duration_ms: 50.255992
+      type: 'test'
+      ...
+    # Subtest: 사용자 이름이 비어 있으면 서버가 AUTH 를 알려도 인증하지 않는다
+    ok 2 - 사용자 이름이 비어 있으면 서버가 AUTH 를 알려도 인증하지 않는다
+      ---
+      duration_ms: 42.845274
+      type: 'test'
+      ...
+    # Subtest: 서버가 AUTH 를 지원하지 않는데 사용자 이름이 있으면 안내와 함께 실패한다
+    ok 3 - 서버가 AUTH 를 지원하지 않는데 사용자 이름이 있으면 안내와 함께 실패한다
+      ---
+      duration_ms: 1.598959
+      type: 'test'
+      ...
+    # Subtest: starttls 를 강제했는데 서버가 알리지 않으면 실패한다
+    ok 4 - starttls 를 강제했는데 서버가 알리지 않으면 실패한다
+      ---
+      duration_ms: 2.020394
+      type: 'test'
+      ...
+    1..4
+ok 22 - SMTP 인증
+  ---
+  duration_ms: 97.101572
+  type: 'suite'
+  ...
+# (node:2012436) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///home/hkjang/.cache/auto-improve-wt/cutover/lib/tracking/core.test.ts is not specified and it doesn't parse as CommonJS.
+# Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+# To eliminate this warning, add "type": "module" to /home/hkjang/.cache/auto-improve-wt/cutover/package.json.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: 기본값
+    # Subtest: 꺼져 있고 provider 는 none 이다
+    ok 1 - 꺼져 있고 provider 는 none 이다
+      ---
+      duration_ms: 0.777644
+      type: 'test'
+      ...
+    # Subtest: 모르는 값은 기본값으로 돌아간다
+    ok 2 - 모르는 값은 기본값으로 돌아간다
+      ---
+      duration_ms: 0.664894
+      type: 'test'
+      ...
+    1..2
+ok 23 - 기본값
+  ---
+  duration_ms: 2.106968
+  type: 'suite'
+  ...
+# Subtest: 스니펫 렌더링
+    # Subtest: 꺼져 있으면 어떤 경로에도 붙지 않는다
+    ok 1 - 꺼져 있으면 어떤 경로에도 붙지 않는다
+      ---
+      duration_ms: 0.128627
+      type: 'test'
+      ...
+    # Subtest: Momento 는 프록시 경로를 기본으로 쓰고 외부 출처가 정책에 나오지 않는다
+    ok 2 - Momento 는 프록시 경로를 기본으로 쓰고 외부 출처가 정책에 나오지 않는다
+      ---
+      duration_ms: 0.332512
+      type: 'test'
+      ...
+    # Subtest: Momento 프록시를 끄면 수집기 출처가 정책에 더해진다
+    ok 3 - Momento 프록시를 끄면 수집기 출처가 정책에 더해진다
+      ---
+      duration_ms: 0.162079
+      type: 'test'
+      ...
+    # Subtest: GA4 는 로더와 인라인 두 개를 만들고 구글 출처를 안다
+    ok 4 - GA4 는 로더와 인라인 두 개를 만들고 구글 출처를 안다
+      ---
+      duration_ms: 0.207516
+      type: 'test'
+      ...
+    # Subtest: 붙여 넣은 스니펫은 script 태그만 구조로 바꾸고 on* 속성과 기존 nonce 는 버린다
+    ok 5 - 붙여 넣은 스니펫은 script 태그만 구조로 바꾸고 on* 속성과 기존 nonce 는 버린다
+      ---
+      duration_ms: 0.648844
+      type: 'test'
+      ...
+    1..5
+ok 24 - 스니펫 렌더링
+  ---
+  duration_ms: 1.820618
+  type: 'suite'
+  ...
+# Subtest: 문자열 직렬화 (body 삽입)
+    # Subtest: 모든 태그에 nonce 를 달고 속성값과 닫는 태그를 이스케이프한다
+    ok 1 - 모든 태그에 nonce 를 달고 속성값과 닫는 태그를 이스케이프한다
+      ---
+      duration_ms: 0.367487
+      type: 'test'
+      ...
+    1..1
+ok 25 - 문자열 직렬화 (body 삽입)
+  ---
+  duration_ms: 0.509149
+  type: 'suite'
+  ...
+# Subtest: 정책 출처
+    # Subtest: 스니펫에 적힌 http(s) 출처를 중복 없이 읽어 낸다
+    ok 1 - 스니펫에 적힌 http(s) 출처를 중복 없이 읽어 낸다
+      ---
+      duration_ms: 0.312949
+      type: 'test'
+      ...
+    # Subtest: allowed_hosts 는 모든 지시어에 더해지고 잘못된 모양은 버린다
+    ok 2 - allowed_hosts 는 모든 지시어에 더해지고 잘못된 모양은 버린다
+      ---
+      duration_ms: 0.42069
+      type: 'test'
+      ...
+    # Subtest: 와일드카드 항목이 하위 도메인을 허용한다
+    ok 3 - 와일드카드 항목이 하위 도메인을 허용한다
+      ---
+      duration_ms: 0.105109
+      type: 'test'
+      ...
+    # Subtest: 허용 목록에 더할 때 이미 있으면 그대로 둔다
+    ok 4 - 허용 목록에 더할 때 이미 있으면 그대로 둔다
+      ---
+      duration_ms: 0.083114
+      type: 'test'
+      ...
+    1..4
+ok 26 - 정책 출처
+  ---
+  duration_ms: 1.035359
+  type: 'suite'
+  ...
+# Subtest: 페이지 정책
+    # Subtest: 꺼져 있으면 앱 오리진과 nonce 만 허용하고 report-uri 가 없다
+    ok 1 - 꺼져 있으면 앱 오리진과 nonce 만 허용하고 report-uri 가 없다
+      ---
+      duration_ms: 0.184289
+      type: 'test'
+      ...
+    # Subtest: 켜면 스니펫 출처와 report-uri 가 들어가고 unsafe-inline 은 여전히 없다
+    ok 2 - 켜면 스니펫 출처와 report-uri 가 들어가고 unsafe-inline 은 여전히 없다
+      ---
+      duration_ms: 0.153205
+      type: 'test'
+      ...
+    # Subtest: include_admin 이 꺼져 있으면 관리 화면에는 붙지 않고 정책도 원래대로다
+    ok 3 - include_admin 이 꺼져 있으면 관리 화면에는 붙지 않고 정책도 원래대로다
+      ---
+      duration_ms: 0.127244
+      type: 'test'
+      ...
+    # Subtest: 비화면 경로에는 붙지 않는다
+    ok 4 - 비화면 경로에는 붙지 않는다
+      ---
+      duration_ms: 0.108103
+      type: 'test'
+      ...
+    # Subtest: 개발 서버에서만 unsafe-eval 과 웹소켓을 더한다
+    ok 5 - 개발 서버에서만 unsafe-eval 과 웹소켓을 더한다
+      ---
+      duration_ms: 0.1177
+      type: 'test'
+      ...
+    1..5
+ok 27 - 페이지 정책
+  ---
+  duration_ms: 0.869751
+  type: 'suite'
+  ...
+# Subtest: 설정 검증
+    # Subtest: 8KB 를 넘는 스니펫은 저장되지 않는다
+    ok 1 - 8KB 를 넘는 스니펫은 저장되지 않는다
+      ---
+      duration_ms: 0.317542
+      type: 'test'
+      ...
+    # Subtest: 켜져 있을 때만 provider 필수값을 요구한다
+    ok 2 - 켜져 있을 때만 provider 필수값을 요구한다
+      ---
+      duration_ms: 1.030679
+      type: 'test'
+      ...
+    # Subtest: 정책 헤더에 들어가는 값은 모양을 엄격히 본다
+    ok 3 - 정책 헤더에 들어가는 값은 모양을 엄격히 본다
+      ---
+      duration_ms: 0.189628
+      type: 'test'
+      ...
+    # Subtest: 직접 입력은 script 태그가 있어야 한다
+    ok 4 - 직접 입력은 script 태그가 있어야 한다
+      ---
+      duration_ms: 0.114393
+      type: 'test'
+      ...
+    1..4
+ok 28 - 설정 검증
+  ---
+  duration_ms: 1.761513
+  type: 'suite'
+  ...
+# (node:2012442) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///home/hkjang/.cache/auto-improve-wt/cutover/lib/tracking/violations.test.ts is not specified and it doesn't parse as CommonJS.
+# Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+# To eliminate this warning, add "type": "module" to /home/hkjang/.cache/auto-improve-wt/cutover/package.json.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: 차단 기록
+    # Subtest: 출처와 지시어를 기억하고 같은 출처는 쌓이지 않는다
+    ok 1 - 출처와 지시어를 기억하고 같은 출처는 쌓이지 않는다
+      ---
+      duration_ms: 7.192443
+      type: 'test'
+      ...
+    # Subtest: http 출처가 아닌 것은 버리고 지시어가 없으면 connect-src 로 둔다
+    ok 2 - http 출처가 아닌 것은 버리고 지시어가 없으면 connect-src 로 둔다
+      ---
+      duration_ms: 0.154146
+      type: 'test'
+      ...
+    # Subtest: 현재 설정이 허용하는 출처는 표시된다
+    ok 3 - 현재 설정이 허용하는 출처는 표시된다
+      ---
+      duration_ms: 0.183047
+      type: 'test'
+      ...
+    # Subtest: 고리 버퍼는 가장 오래된 것을 밀어낸다
+    ok 4 - 고리 버퍼는 가장 오래된 것을 밀어낸다
+      ---
+      duration_ms: 0.501108
+      type: 'test'
+      ...
+    1..4
+ok 29 - 차단 기록
+  ---
+  duration_ms: 8.66412
+  type: 'suite'
+  ...
+# (node:2012449) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///home/hkjang/.cache/auto-improve-wt/cutover/lib/treeUtils.test.ts is not specified and it doesn't parse as CommonJS.
+# Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+# To eliminate this warning, add "type": "module" to /home/hkjang/.cache/auto-improve-wt/cutover/package.json.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: addActivity
+    # Subtest: 120자 ID 부모 아래 자식과 그 아래 손자를 추가해도 업로드 검증을 통과한다
+    ok 1 - 120자 ID 부모 아래 자식과 그 아래 손자를 추가해도 업로드 검증을 통과한다
+      ---
+      duration_ms: 2.004096
+      type: 'test'
+      ...
+    # Subtest: 입력과 기존 ID·순서를 유지하고 기본값의 자식을 배열 끝에 추가한다
+    ok 2 - 입력과 기존 ID·순서를 유지하고 기본값의 자식을 배열 끝에 추가한다
+      ---
+      duration_ms: 0.459766
+      type: 'test'
+      ...
+    # Subtest: 빈 배열에 최상위 작업을 추가하면 level 1과 기본값을 유지한다
+    ok 3 - 빈 배열에 최상위 작업을 추가하면 level 1과 기본값을 유지한다
+      ---
+      duration_ms: 0.148146
+      type: 'test'
+      ...
+    # Subtest: 기존 트리에 최상위 작업을 추가하면 level 1과 기본값을 유지한다
+    ok 4 - 기존 트리에 최상위 작업을 추가하면 level 1과 기본값을 유지한다
+      ---
+      duration_ms: 0.222291
+      type: 'test'
+      ...
+    # Subtest: 같은 시각에 최상위 작업을 연속 추가해도 ID가 다르다
+    ok 5 - 같은 시각에 최상위 작업을 연속 추가해도 ID가 다르다
+      ---
+      duration_ms: 1.392935
+      type: 'test'
+      ...
+    # Subtest: 같은 시각에 같은 부모 아래 작업을 연속 추가해도 ID가 다르다
+    ok 6 - 같은 시각에 같은 부모 아래 작업을 연속 추가해도 ID가 다르다
+      ---
+      duration_ms: 0.209905
+      type: 'test'
+      ...
+    1..6
+ok 30 - addActivity
+  ---
+  duration_ms: 5.568847
+  type: 'suite'
+  ...
+# Subtest: collectDescendantIds
+    # Subtest: parentId 관계를 따라 대상과 모든 하위를 모은다
+    ok 1 - parentId 관계를 따라 대상과 모든 하위를 모은다
+      ---
+      duration_ms: 0.269771
+      type: 'test'
+      ...
+    # Subtest: 없는 id 는 자기 자신만 돌려준다
+    ok 2 - 없는 id 는 자기 자신만 돌려준다
+      ---
+      duration_ms: 0.28273
+      type: 'test'
+      ...
+    # Subtest: parentId 가 순환해도 무한루프 없이 끝난다
+    ok 3 - parentId 가 순환해도 무한루프 없이 끝난다
+      ---
+      duration_ms: 0.361499
+      type: 'test'
+      ...
+    1..3
+ok 31 - collectDescendantIds
+  ---
+  duration_ms: 1.285994
+  type: 'suite'
+  ...
+# Subtest: deleteActivity
+    # Subtest: 초기 데이터에서 "2" 를 지우면 2 와 2-1~2-4 만 빠지고 나머지 15개는 남는다
+    ok 1 - 초기 데이터에서 "2" 를 지우면 2 와 2-1~2-4 만 빠지고 나머지 15개는 남는다
+      ---
+      duration_ms: 0.317845
+      type: 'test'
+      ...
+    # Subtest: id 접두사가 다른 임의 id 트리에서도 parentId 관계로 3단 하위까지 지운다
+    ok 2 - id 접두사가 다른 임의 id 트리에서도 parentId 관계로 3단 하위까지 지운다
+      ---
+      duration_ms: 0.143791
+      type: 'test'
+      ...
+    # Subtest: id 가 "1-" 로 시작해도 parentId 가 다르면 "1" 삭제 때 남는다
+    ok 3 - id 가 "1-" 로 시작해도 parentId 가 다르면 "1" 삭제 때 남는다
+      ---
+      duration_ms: 0.090497
+      type: 'test'
+      ...
+    # Subtest: 없는 id 를 지우면 아무것도 바뀌지 않는다
+    ok 4 - 없는 id 를 지우면 아무것도 바뀌지 않는다
+      ---
+      duration_ms: 0.032035
+      type: 'test'
+      ...
+    1..4
+ok 32 - deleteActivity
+  ---
+  duration_ms: 0.702269
+  type: 'suite'
+  ...
+1..32
+# tests 108
+# suites 32
+# pass 108
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 282.339843
