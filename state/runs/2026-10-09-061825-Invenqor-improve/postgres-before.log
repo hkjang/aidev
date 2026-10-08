@@ -1,0 +1,174 @@
+running the suite against postgres:17-alpine
+?   	github.com/hkjang/invenqor/server/cmd/invenqor-server	[no test files]
+ok  	github.com/hkjang/invenqor/server/internal/agents	0.005s [no tests to run]
+ok  	github.com/hkjang/invenqor/server/internal/apikeys	0.005s [no tests to run]
+ok  	github.com/hkjang/invenqor/server/internal/apitime	0.003s [no tests to run]
+?   	github.com/hkjang/invenqor/server/internal/audit	[no test files]
+ok  	github.com/hkjang/invenqor/server/internal/auth	0.004s [no tests to run]
+ok  	github.com/hkjang/invenqor/server/internal/bootstrap	0.003s [no tests to run]
+ok  	github.com/hkjang/invenqor/server/internal/classify	0.004s [no tests to run]
+ok  	github.com/hkjang/invenqor/server/internal/config	0.004s [no tests to run]
+ok  	github.com/hkjang/invenqor/server/internal/diagnostics	0.005s [no tests to run]
+ok  	github.com/hkjang/invenqor/server/internal/durablefs	0.003s [no tests to run]
+--- FAIL: TestMCPAssetIDsRequireCanonicalUUID (0.57s)
+    --- FAIL: TestMCPAssetIDsRequireCanonicalUUID/legacy (0.06s)
+        --- FAIL: TestMCPAssetIDsRequireCanonicalUUID/legacy/asset_get (0.03s)
+            --- FAIL: TestMCPAssetIDsRequireCanonicalUUID/legacy/asset_get/not_uuid (0.00s)
+                mcp_asset_id_validation_test.go:162: validation error = "ERROR: invalid input syntax for type uuid: \"not-a-uuid\" (SQLSTATE 22P02)", want "asset_get"
+                mcp_asset_id_validation_test.go:162: validation error = "ERROR: invalid input syntax for type uuid: \"not-a-uuid\" (SQLSTATE 22P02)", want "asset_id"
+                mcp_asset_id_validation_test.go:162: validation error = "ERROR: invalid input syntax for type uuid: \"not-a-uuid\" (SQLSTATE 22P02)", want "36"
+                mcp_asset_id_validation_test.go:162: validation error = "ERROR: invalid input syntax for type uuid: \"not-a-uuid\" (SQLSTATE 22P02)", want "hyphen"
+                mcp_asset_id_validation_test.go:162: validation error = "ERROR: invalid input syntax for type uuid: \"not-a-uuid\" (SQLSTATE 22P02)", want "UUID"
+                mcp_asset_id_validation_test.go:162: validation error leaked database details: "ERROR: invalid input syntax for type uuid: \"not-a-uuid\" (SQLSTATE 22P02)"
+                mcp_asset_id_validation_test.go:162: validation error leaked database details: "ERROR: invalid input syntax for type uuid: \"not-a-uuid\" (SQLSTATE 22P02)"
+            --- FAIL: TestMCPAssetIDsRequireCanonicalUUID/legacy/asset_get/urn (0.00s)
+                mcp_asset_id_validation_test.go:162: validation error = "ERROR: invalid input syntax for type uuid: \"urn:uuid:abcdefab-cdef-4abc-8def-abcdefabcdef\" (SQLSTATE 22P02)", want "asset_get"
+                mcp_asset_id_validation_test.go:162: validation error = "ERROR: invalid input syntax for type uuid: \"urn:uuid:abcdefab-cdef-4abc-8def-abcdefabcdef\" (SQLSTATE 22P02)", want "asset_id"
+                mcp_asset_id_validation_test.go:162: validation error = "ERROR: invalid input syntax for type uuid: \"urn:uuid:abcdefab-cdef-4abc-8def-abcdefabcdef\" (SQLSTATE 22P02)", want "36"
+                mcp_asset_id_validation_test.go:162: validation error = "ERROR: invalid input syntax for type uuid: \"urn:uuid:abcdefab-cdef-4abc-8def-abcdefabcdef\" (SQLSTATE 22P02)", want "hyphen"
+                mcp_asset_id_validation_test.go:162: validation error = "ERROR: invalid input syntax for type uuid: \"urn:uuid:abcdefab-cdef-4abc-8def-abcdefabcdef\" (SQLSTATE 22P02)", want "UUID"
+                mcp_asset_id_validation_test.go:162: validation error leaked database details: "ERROR: invalid input syntax for type uuid: \"urn:uuid:abcdefab-cdef-4abc-8def-abcdefabcdef\" (SQLSTATE 22P02)"
+                mcp_asset_id_validation_test.go:162: validation error leaked database details: "ERROR: invalid input syntax for type uuid: \"urn:uuid:abcdefab-cdef-4abc-8def-abcdefabcdef\" (SQLSTATE 22P02)"
+            --- FAIL: TestMCPAssetIDsRequireCanonicalUUID/legacy/asset_get/braces (0.00s)
+                mcp_asset_id_validation_test.go:162: isError = false, want true; result = map[string]interface {}{"content":[]interface {}{map[string]interface {}{"text":"{\"asset\":{\"id\":\"abcdefab-cdef-4abc-8def-abcdefabcdef\",\"asset_key\":\"uuid-asset\",\"name\":\"uuid-asset\",\"type\":\"process\",\"status\":\"active\",\"criticality\":\"normal\",\"environment\":\"other\",\"owner_department\":\"\",\"location\":\"\",\"confidence\":1,\"attributes\":{},\"custom_fields\":{},\"source\":\"agent\",\"first_seen_at\":\"2026-10-08T21:26:33.377631Z\",\"last_seen_at\":\"2026-10-08T21:26:33.377631Z\",\"deleted_at\":null}}", "type":"text"}}, "isError":false, "structuredContent":map[string]interface {}{"asset":map[string]interface {}{"asset_key":"uuid-asset", "attributes":map[string]interface {}{}, "confidence":1, "criticality":"normal", "custom_fields":map[string]interface {}{}, "deleted_at":interface {}(nil), "environment":"other", "first_seen_at":"2026-10-08T21:26:33.377631Z", "id":"abcdefab-cdef-4abc-8def-abcdefabcdef", "last_seen_at":"2026-10-08T21:26:33.377631Z", "location":"", "name":"uuid-asset", "owner_department":"", "source":"agent", "status":"active", "type":"process"}}}
+            --- FAIL: TestMCPAssetIDsRequireCanonicalUUID/legacy/asset_get/unhyphenated (0.00s)
+                mcp_asset_id_validation_test.go:162: isError = false, want true; result = map[string]interface {}{"content":[]interface {}{map[string]interface {}{"text":"{\"asset\":{\"id\":\"abcdefab-cdef-4abc-8def-abcdefabcdef\",\"asset_key\":\"uuid-asset\",\"name\":\"uuid-asset\",\"type\":\"process\",\"status\":\"active\",\"criticality\":\"normal\",\"environment\":\"other\",\"owner_department\":\"\",\"location\":\"\",\"confidence\":1,\"attributes\":{},\"custom_fields\":{},\"source\":\"agent\",\"first_seen_at\":\"2026-10-08T21:26:33.377631Z\",\"last_seen_at\":\"2026-10-08T21:26:33.377631Z\",\"deleted_at\":null}}", "type":"text"}}, "isError":false, "structuredContent":map[string]interface {}{"asset":map[string]interface {}{"asset_key":"uuid-asset", "attributes":map[string]interface {}{}, "confidence":1, "criticality":"normal", "custom_fields":map[string]interface {}{}, "deleted_at":interface {}(nil), "environment":"other", "first_seen_at":"2026-10-08T21:26:33.377631Z", "id":"abcdefab-cdef-4abc-8def-abcdefabcdef", "last_seen_at":"2026-10-08T21:26:33.377631Z", "location":"", "name":"uuid-asset", "owner_department":"", "source":"agent", "status":"active", "type":"process"}}}
+        --- FAIL: TestMCPAssetIDsRequireCanonicalUUID/legacy/asset_relations (0.03s)
+            --- FAIL: TestMCPAssetIDsRequireCanonicalUUID/legacy/asset_relations/not_uuid (0.00s)
+                mcp_asset_id_validation_test.go:162: validation error = "ERROR: invalid input syntax for type uuid: \"not-a-uuid\" (SQLSTATE 22P02)", want "asset_relations"
+                mcp_asset_id_validation_test.go:162: validation error = "ERROR: invalid input syntax for type uuid: \"not-a-uuid\" (SQLSTATE 22P02)", want "asset_id"
+                mcp_asset_id_validation_test.go:162: validation error = "ERROR: invalid input syntax for type uuid: \"not-a-uuid\" (SQLSTATE 22P02)", want "36"
+                mcp_asset_id_validation_test.go:162: validation error = "ERROR: invalid input syntax for type uuid: \"not-a-uuid\" (SQLSTATE 22P02)", want "hyphen"
+                mcp_asset_id_validation_test.go:162: validation error = "ERROR: invalid input syntax for type uuid: \"not-a-uuid\" (SQLSTATE 22P02)", want "UUID"
+                mcp_asset_id_validation_test.go:162: validation error leaked database details: "ERROR: invalid input syntax for type uuid: \"not-a-uuid\" (SQLSTATE 22P02)"
+                mcp_asset_id_validation_test.go:162: validation error leaked database details: "ERROR: invalid input syntax for type uuid: \"not-a-uuid\" (SQLSTATE 22P02)"
+            --- FAIL: TestMCPAssetIDsRequireCanonicalUUID/legacy/asset_relations/urn (0.00s)
+                mcp_asset_id_validation_test.go:162: validation error = "ERROR: invalid input syntax for type uuid: \"urn:uuid:abcdefab-cdef-4abc-8def-abcdefabcdef\" (SQLSTATE 22P02)", want "asset_relations"
+                mcp_asset_id_validation_test.go:162: validation error = "ERROR: invalid input syntax for type uuid: \"urn:uuid:abcdefab-cdef-4abc-8def-abcdefabcdef\" (SQLSTATE 22P02)", want "asset_id"
+                mcp_asset_id_validation_test.go:162: validation error = "ERROR: invalid input syntax for type uuid: \"urn:uuid:abcdefab-cdef-4abc-8def-abcdefabcdef\" (SQLSTATE 22P02)", want "36"
+                mcp_asset_id_validation_test.go:162: validation error = "ERROR: invalid input syntax for type uuid: \"urn:uuid:abcdefab-cdef-4abc-8def-abcdefabcdef\" (SQLSTATE 22P02)", want "hyphen"
+                mcp_asset_id_validation_test.go:162: validation error = "ERROR: invalid input syntax for type uuid: \"urn:uuid:abcdefab-cdef-4abc-8def-abcdefabcdef\" (SQLSTATE 22P02)", want "UUID"
+                mcp_asset_id_validation_test.go:162: validation error leaked database details: "ERROR: invalid input syntax for type uuid: \"urn:uuid:abcdefab-cdef-4abc-8def-abcdefabcdef\" (SQLSTATE 22P02)"
+                mcp_asset_id_validation_test.go:162: validation error leaked database details: "ERROR: invalid input syntax for type uuid: \"urn:uuid:abcdefab-cdef-4abc-8def-abcdefabcdef\" (SQLSTATE 22P02)"
+            --- FAIL: TestMCPAssetIDsRequireCanonicalUUID/legacy/asset_relations/braces (0.00s)
+                mcp_asset_id_validation_test.go:162: isError = false, want true; result = map[string]interface {}{"content":[]interface {}{map[string]interface {}{"text":"{\"count\":2,\"has_more\":false,\"limit\":50,\"next_offset\":2,\"offset\":0,\"relations\":[{\"confidence\":1,\"id\":\"aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa\",\"relation_type\":\"runs_on\",\"source\":\"manual\",\"source_asset_id\":\"abcdefab-cdef-4abc-8def-abcdefabcdef\",\"target_asset_id\":\"bcdefabc-defa-4bcd-8efa-bcdefabcdefa\",\"valid_from\":\"2026-10-09T06:26:33.387586+09:00\",\"valid_to\":null},{\"confidence\":1,\"id\":\"bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb\",\"relation_type\":\"runs_on\",\"source\":\"manual\",\"source_asset_id\":\"bcdefabc-defa-4bcd-8efa-bcdefabcdefa\",\"target_asset_id\":\"abcdefab-cdef-4abc-8def-abcdefabcdef\",\"valid_from\":\"2026-10-09T06:26:33.388837+09:00\",\"valid_to\":null}]}", "type":"text"}}, "isError":false, "structuredContent":map[string]interface {}{"count":2, "has_more":false, "limit":50, "next_offset":2, "offset":0, "relations":[]interface {}{map[string]interface {}{"confidence":1, "id":"aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa", "relation_type":"runs_on", "source":"manual", "source_asset_id":"abcdefab-cdef-4abc-8def-abcdefabcdef", "target_asset_id":"bcdefabc-defa-4bcd-8efa-bcdefabcdefa", "valid_from":"2026-10-09T06:26:33.387586+09:00", "valid_to":interface {}(nil)}, map[string]interface {}{"confidence":1, "id":"bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb", "relation_type":"runs_on", "source":"manual", "source_asset_id":"bcdefabc-defa-4bcd-8efa-bcdefabcdefa", "target_asset_id":"abcdefab-cdef-4abc-8def-abcdefabcdef", "valid_from":"2026-10-09T06:26:33.388837+09:00", "valid_to":interface {}(nil)}}}}
+            --- FAIL: TestMCPAssetIDsRequireCanonicalUUID/legacy/asset_relations/unhyphenated (0.00s)
+                mcp_asset_id_validation_test.go:162: isError = false, want true; result = map[string]interface {}{"content":[]interface {}{map[string]interface {}{"text":"{\"count\":2,\"has_more\":false,\"limit\":50,\"next_offset\":2,\"offset\":0,\"relations\":[{\"confidence\":1,\"id\":\"aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa\",\"relation_type\":\"runs_on\",\"source\":\"manual\",\"source_asset_id\":\"abcdefab-cdef-4abc-8def-abcdefabcdef\",\"target_asset_id\":\"bcdefabc-defa-4bcd-8efa-bcdefabcdefa\",\"valid_from\":\"2026-10-09T06:26:33.387586+09:00\",\"valid_to\":null},{\"confidence\":1,\"id\":\"bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb\",\"relation_type\":\"runs_on\",\"source\":\"manual\",\"source_asset_id\":\"bcdefabc-defa-4bcd-8efa-bcdefabcdefa\",\"target_asset_id\":\"abcdefab-cdef-4abc-8def-abcdefabcdef\",\"valid_from\":\"2026-10-09T06:26:33.388837+09:00\",\"valid_to\":null}]}", "type":"text"}}, "isError":false, "structuredContent":map[string]interface {}{"count":2, "has_more":false, "limit":50, "next_offset":2, "offset":0, "relations":[]interface {}{map[string]interface {}{"confidence":1, "id":"aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa", "relation_type":"runs_on", "source":"manual", "source_asset_id":"abcdefab-cdef-4abc-8def-abcdefabcdef", "target_asset_id":"bcdefabc-defa-4bcd-8efa-bcdefabcdefa", "valid_from":"2026-10-09T06:26:33.387586+09:00", "valid_to":interface {}(nil)}, map[string]interface {}{"confidence":1, "id":"bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb", "relation_type":"runs_on", "source":"manual", "source_asset_id":"bcdefabc-defa-4bcd-8efa-bcdefabcdefa", "target_asset_id":"abcdefab-cdef-4abc-8def-abcdefabcdef", "valid_from":"2026-10-09T06:26:33.388837+09:00", "valid_to":interface {}(nil)}}}}
+    --- FAIL: TestMCPAssetIDsRequireCanonicalUUID/modern (0.06s)
+        --- FAIL: TestMCPAssetIDsRequireCanonicalUUID/modern/asset_get (0.03s)
+            --- FAIL: TestMCPAssetIDsRequireCanonicalUUID/modern/asset_get/braces (0.00s)
+                mcp_asset_id_validation_test.go:162: isError = false, want true; result = map[string]interface {}{"_meta":map[string]interface {}{"io.modelcontextprotocol/serverInfo":map[string]interface {}{"name":"invenqor", "version":"0.2.46"}}, "content":[]interface {}{map[string]interface {}{"text":"{\"asset\":{\"id\":\"abcdefab-cdef-4abc-8def-abcdefabcdef\",\"asset_key\":\"uuid-asset\",\"name\":\"uuid-asset\",\"type\":\"process\",\"status\":\"active\",\"criticality\":\"normal\",\"environment\":\"other\",\"owner_department\":\"\",\"location\":\"\",\"confidence\":1,\"attributes\":{},\"custom_fields\":{},\"source\":\"agent\",\"first_seen_at\":\"2026-10-08T21:26:33.377631Z\",\"last_seen_at\":\"2026-10-08T21:26:33.377631Z\",\"deleted_at\":null}}", "type":"text"}}, "isError":false, "resultType":"complete", "structuredContent":map[string]interface {}{"asset":map[string]interface {}{"asset_key":"uuid-asset", "attributes":map[string]interface {}{}, "confidence":1, "criticality":"normal", "custom_fields":map[string]interface {}{}, "deleted_at":interface {}(nil), "environment":"other", "first_seen_at":"2026-10-08T21:26:33.377631Z", "id":"abcdefab-cdef-4abc-8def-abcdefabcdef", "last_seen_at":"2026-10-08T21:26:33.377631Z", "location":"", "name":"uuid-asset", "owner_department":"", "source":"agent", "status":"active", "type":"process"}}}
+            --- FAIL: TestMCPAssetIDsRequireCanonicalUUID/modern/asset_get/unhyphenated (0.00s)
+                mcp_asset_id_validation_test.go:162: isError = false, want true; result = map[string]interface {}{"_meta":map[string]interface {}{"io.modelcontextprotocol/serverInfo":map[string]interface {}{"name":"invenqor", "version":"0.2.46"}}, "content":[]interface {}{map[string]interface {}{"text":"{\"asset\":{\"id\":\"abcdefab-cdef-4abc-8def-abcdefabcdef\",\"asset_key\":\"uuid-asset\",\"name\":\"uuid-asset\",\"type\":\"process\",\"status\":\"active\",\"criticality\":\"normal\",\"environment\":\"other\",\"owner_department\":\"\",\"location\":\"\",\"confidence\":1,\"attributes\":{},\"custom_fields\":{},\"source\":\"agent\",\"first_seen_at\":\"2026-10-08T21:26:33.377631Z\",\"last_seen_at\":\"2026-10-08T21:26:33.377631Z\",\"deleted_at\":null}}", "type":"text"}}, "isError":false, "resultType":"complete", "structuredContent":map[string]interface {}{"asset":map[string]interface {}{"asset_key":"uuid-asset", "attributes":map[string]interface {}{}, "confidence":1, "criticality":"normal", "custom_fields":map[string]interface {}{}, "deleted_at":interface {}(nil), "environment":"other", "first_seen_at":"2026-10-08T21:26:33.377631Z", "id":"abcdefab-cdef-4abc-8def-abcdefabcdef", "last_seen_at":"2026-10-08T21:26:33.377631Z", "location":"", "name":"uuid-asset", "owner_department":"", "source":"agent", "status":"active", "type":"process"}}}
+            --- FAIL: TestMCPAssetIDsRequireCanonicalUUID/modern/asset_get/not_uuid (0.00s)
+                mcp_asset_id_validation_test.go:162: validation error = "ERROR: invalid input syntax for type uuid: \"not-a-uuid\" (SQLSTATE 22P02)", want "asset_get"
+                mcp_asset_id_validation_test.go:162: validation error = "ERROR: invalid input syntax for type uuid: \"not-a-uuid\" (SQLSTATE 22P02)", want "asset_id"
+                mcp_asset_id_validation_test.go:162: validation error = "ERROR: invalid input syntax for type uuid: \"not-a-uuid\" (SQLSTATE 22P02)", want "36"
+                mcp_asset_id_validation_test.go:162: validation error = "ERROR: invalid input syntax for type uuid: \"not-a-uuid\" (SQLSTATE 22P02)", want "hyphen"
+                mcp_asset_id_validation_test.go:162: validation error = "ERROR: invalid input syntax for type uuid: \"not-a-uuid\" (SQLSTATE 22P02)", want "UUID"
+                mcp_asset_id_validation_test.go:162: validation error leaked database details: "ERROR: invalid input syntax for type uuid: \"not-a-uuid\" (SQLSTATE 22P02)"
+                mcp_asset_id_validation_test.go:162: validation error leaked database details: "ERROR: invalid input syntax for type uuid: \"not-a-uuid\" (SQLSTATE 22P02)"
+            --- FAIL: TestMCPAssetIDsRequireCanonicalUUID/modern/asset_get/urn (0.00s)
+                mcp_asset_id_validation_test.go:162: validation error = "ERROR: invalid input syntax for type uuid: \"urn:uuid:abcdefab-cdef-4abc-8def-abcdefabcdef\" (SQLSTATE 22P02)", want "asset_get"
+                mcp_asset_id_validation_test.go:162: validation error = "ERROR: invalid input syntax for type uuid: \"urn:uuid:abcdefab-cdef-4abc-8def-abcdefabcdef\" (SQLSTATE 22P02)", want "asset_id"
+                mcp_asset_id_validation_test.go:162: validation error = "ERROR: invalid input syntax for type uuid: \"urn:uuid:abcdefab-cdef-4abc-8def-abcdefabcdef\" (SQLSTATE 22P02)", want "36"
+                mcp_asset_id_validation_test.go:162: validation error = "ERROR: invalid input syntax for type uuid: \"urn:uuid:abcdefab-cdef-4abc-8def-abcdefabcdef\" (SQLSTATE 22P02)", want "hyphen"
+                mcp_asset_id_validation_test.go:162: validation error = "ERROR: invalid input syntax for type uuid: \"urn:uuid:abcdefab-cdef-4abc-8def-abcdefabcdef\" (SQLSTATE 22P02)", want "UUID"
+                mcp_asset_id_validation_test.go:162: validation error leaked database details: "ERROR: invalid input syntax for type uuid: \"urn:uuid:abcdefab-cdef-4abc-8def-abcdefabcdef\" (SQLSTATE 22P02)"
+                mcp_asset_id_validation_test.go:162: validation error leaked database details: "ERROR: invalid input syntax for type uuid: \"urn:uuid:abcdefab-cdef-4abc-8def-abcdefabcdef\" (SQLSTATE 22P02)"
+        --- FAIL: TestMCPAssetIDsRequireCanonicalUUID/modern/asset_relations (0.03s)
+            --- FAIL: TestMCPAssetIDsRequireCanonicalUUID/modern/asset_relations/not_uuid (0.00s)
+                mcp_asset_id_validation_test.go:162: validation error = "ERROR: invalid input syntax for type uuid: \"not-a-uuid\" (SQLSTATE 22P02)", want "asset_relations"
+                mcp_asset_id_validation_test.go:162: validation error = "ERROR: invalid input syntax for type uuid: \"not-a-uuid\" (SQLSTATE 22P02)", want "asset_id"
+                mcp_asset_id_validation_test.go:162: validation error = "ERROR: invalid input syntax for type uuid: \"not-a-uuid\" (SQLSTATE 22P02)", want "36"
+                mcp_asset_id_validation_test.go:162: validation error = "ERROR: invalid input syntax for type uuid: \"not-a-uuid\" (SQLSTATE 22P02)", want "hyphen"
+                mcp_asset_id_validation_test.go:162: validation error = "ERROR: invalid input syntax for type uuid: \"not-a-uuid\" (SQLSTATE 22P02)", want "UUID"
+                mcp_asset_id_validation_test.go:162: validation error leaked database details: "ERROR: invalid input syntax for type uuid: \"not-a-uuid\" (SQLSTATE 22P02)"
+                mcp_asset_id_validation_test.go:162: validation error leaked database details: "ERROR: invalid input syntax for type uuid: \"not-a-uuid\" (SQLSTATE 22P02)"
+            --- FAIL: TestMCPAssetIDsRequireCanonicalUUID/modern/asset_relations/urn (0.00s)
+                mcp_asset_id_validation_test.go:162: validation error = "ERROR: invalid input syntax for type uuid: \"urn:uuid:abcdefab-cdef-4abc-8def-abcdefabcdef\" (SQLSTATE 22P02)", want "asset_relations"
+                mcp_asset_id_validation_test.go:162: validation error = "ERROR: invalid input syntax for type uuid: \"urn:uuid:abcdefab-cdef-4abc-8def-abcdefabcdef\" (SQLSTATE 22P02)", want "asset_id"
+                mcp_asset_id_validation_test.go:162: validation error = "ERROR: invalid input syntax for type uuid: \"urn:uuid:abcdefab-cdef-4abc-8def-abcdefabcdef\" (SQLSTATE 22P02)", want "36"
+                mcp_asset_id_validation_test.go:162: validation error = "ERROR: invalid input syntax for type uuid: \"urn:uuid:abcdefab-cdef-4abc-8def-abcdefabcdef\" (SQLSTATE 22P02)", want "hyphen"
+                mcp_asset_id_validation_test.go:162: validation error = "ERROR: invalid input syntax for type uuid: \"urn:uuid:abcdefab-cdef-4abc-8def-abcdefabcdef\" (SQLSTATE 22P02)", want "UUID"
+                mcp_asset_id_validation_test.go:162: validation error leaked database details: "ERROR: invalid input syntax for type uuid: \"urn:uuid:abcdefab-cdef-4abc-8def-abcdefabcdef\" (SQLSTATE 22P02)"
+                mcp_asset_id_validation_test.go:162: validation error leaked database details: "ERROR: invalid input syntax for type uuid: \"urn:uuid:abcdefab-cdef-4abc-8def-abcdefabcdef\" (SQLSTATE 22P02)"
+            --- FAIL: TestMCPAssetIDsRequireCanonicalUUID/modern/asset_relations/braces (0.00s)
+                mcp_asset_id_validation_test.go:162: isError = false, want true; result = map[string]interface {}{"_meta":map[string]interface {}{"io.modelcontextprotocol/serverInfo":map[string]interface {}{"name":"invenqor", "version":"0.2.46"}}, "content":[]interface {}{map[string]interface {}{"text":"{\"count\":2,\"has_more\":false,\"limit\":50,\"next_offset\":2,\"offset\":0,\"relations\":[{\"confidence\":1,\"id\":\"aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa\",\"relation_type\":\"runs_on\",\"source\":\"manual\",\"source_asset_id\":\"abcdefab-cdef-4abc-8def-abcdefabcdef\",\"target_asset_id\":\"bcdefabc-defa-4bcd-8efa-bcdefabcdefa\",\"valid_from\":\"2026-10-09T06:26:33.387586+09:00\",\"valid_to\":null},{\"confidence\":1,\"id\":\"bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb\",\"relation_type\":\"runs_on\",\"source\":\"manual\",\"source_asset_id\":\"bcdefabc-defa-4bcd-8efa-bcdefabcdefa\",\"target_asset_id\":\"abcdefab-cdef-4abc-8def-abcdefabcdef\",\"valid_from\":\"2026-10-09T06:26:33.388837+09:00\",\"valid_to\":null}]}", "type":"text"}}, "isError":false, "resultType":"complete", "structuredContent":map[string]interface {}{"count":2, "has_more":false, "limit":50, "next_offset":2, "offset":0, "relations":[]interface {}{map[string]interface {}{"confidence":1, "id":"aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa", "relation_type":"runs_on", "source":"manual", "source_asset_id":"abcdefab-cdef-4abc-8def-abcdefabcdef", "target_asset_id":"bcdefabc-defa-4bcd-8efa-bcdefabcdefa", "valid_from":"2026-10-09T06:26:33.387586+09:00", "valid_to":interface {}(nil)}, map[string]interface {}{"confidence":1, "id":"bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb", "relation_type":"runs_on", "source":"manual", "source_asset_id":"bcdefabc-defa-4bcd-8efa-bcdefabcdefa", "target_asset_id":"abcdefab-cdef-4abc-8def-abcdefabcdef", "valid_from":"2026-10-09T06:26:33.388837+09:00", "valid_to":interface {}(nil)}}}}
+            --- FAIL: TestMCPAssetIDsRequireCanonicalUUID/modern/asset_relations/unhyphenated (0.00s)
+                mcp_asset_id_validation_test.go:162: isError = false, want true; result = map[string]interface {}{"_meta":map[string]interface {}{"io.modelcontextprotocol/serverInfo":map[string]interface {}{"name":"invenqor", "version":"0.2.46"}}, "content":[]interface {}{map[string]interface {}{"text":"{\"count\":2,\"has_more\":false,\"limit\":50,\"next_offset\":2,\"offset\":0,\"relations\":[{\"confidence\":1,\"id\":\"aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa\",\"relation_type\":\"runs_on\",\"source\":\"manual\",\"source_asset_id\":\"abcdefab-cdef-4abc-8def-abcdefabcdef\",\"target_asset_id\":\"bcdefabc-defa-4bcd-8efa-bcdefabcdefa\",\"valid_from\":\"2026-10-09T06:26:33.387586+09:00\",\"valid_to\":null},{\"confidence\":1,\"id\":\"bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb\",\"relation_type\":\"runs_on\",\"source\":\"manual\",\"source_asset_id\":\"bcdefabc-defa-4bcd-8efa-bcdefabcdefa\",\"target_asset_id\":\"abcdefab-cdef-4abc-8def-abcdefabcdef\",\"valid_from\":\"2026-10-09T06:26:33.388837+09:00\",\"valid_to\":null}]}", "type":"text"}}, "isError":false, "resultType":"complete", "structuredContent":map[string]interface {}{"count":2, "has_more":false, "limit":50, "next_offset":2, "offset":0, "relations":[]interface {}{map[string]interface {}{"confidence":1, "id":"aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa", "relation_type":"runs_on", "source":"manual", "source_asset_id":"abcdefab-cdef-4abc-8def-abcdefabcdef", "target_asset_id":"bcdefabc-defa-4bcd-8efa-bcdefabcdefa", "valid_from":"2026-10-09T06:26:33.387586+09:00", "valid_to":interface {}(nil)}, map[string]interface {}{"confidence":1, "id":"bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb", "relation_type":"runs_on", "source":"manual", "source_asset_id":"bcdefabc-defa-4bcd-8efa-bcdefabcdefa", "target_asset_id":"abcdefab-cdef-4abc-8def-abcdefabcdef", "valid_from":"2026-10-09T06:26:33.388837+09:00", "valid_to":interface {}(nil)}}}}
+--- FAIL: TestMCPAssetGetCanonicalUUIDFindsMergedAsset (0.46s)
+    --- FAIL: TestMCPAssetGetCanonicalUUIDFindsMergedAsset/ABCDEFAB-CDEF-4ABC-8DEF-ABCDEFABCDEF (0.00s)
+        mcp_asset_id_validation_test.go:198: merged asset lookup = map[string]interface {}{"content":[]interface {}{map[string]interface {}{"text":"asset not found", "type":"text"}}, "isError":true}
+--- FAIL: TestMCPAssetIDsRejectNonCanonicalUUIDBeforeQuery (0.27s)
+    --- FAIL: TestMCPAssetIDsRejectNonCanonicalUUIDBeforeQuery/asset_relations/not_uuid (0.00s)
+        mcp_asset_id_validation_test.go:229: validation error = "sql: database is closed", want "asset_relations"
+        mcp_asset_id_validation_test.go:229: validation error = "sql: database is closed", want "asset_id"
+        mcp_asset_id_validation_test.go:229: validation error = "sql: database is closed", want "36"
+        mcp_asset_id_validation_test.go:229: validation error = "sql: database is closed", want "hyphen"
+        mcp_asset_id_validation_test.go:229: validation error = "sql: database is closed", want "UUID"
+        mcp_asset_id_validation_test.go:229: validation error leaked database details: "sql: database is closed"
+    --- FAIL: TestMCPAssetIDsRejectNonCanonicalUUIDBeforeQuery/asset_relations/urn (0.00s)
+        mcp_asset_id_validation_test.go:229: validation error = "sql: database is closed", want "asset_relations"
+        mcp_asset_id_validation_test.go:229: validation error = "sql: database is closed", want "asset_id"
+        mcp_asset_id_validation_test.go:229: validation error = "sql: database is closed", want "36"
+        mcp_asset_id_validation_test.go:229: validation error = "sql: database is closed", want "hyphen"
+        mcp_asset_id_validation_test.go:229: validation error = "sql: database is closed", want "UUID"
+        mcp_asset_id_validation_test.go:229: validation error leaked database details: "sql: database is closed"
+    --- FAIL: TestMCPAssetIDsRejectNonCanonicalUUIDBeforeQuery/asset_relations/braces (0.00s)
+        mcp_asset_id_validation_test.go:229: validation error = "sql: database is closed", want "asset_relations"
+        mcp_asset_id_validation_test.go:229: validation error = "sql: database is closed", want "asset_id"
+        mcp_asset_id_validation_test.go:229: validation error = "sql: database is closed", want "36"
+        mcp_asset_id_validation_test.go:229: validation error = "sql: database is closed", want "hyphen"
+        mcp_asset_id_validation_test.go:229: validation error = "sql: database is closed", want "UUID"
+        mcp_asset_id_validation_test.go:229: validation error leaked database details: "sql: database is closed"
+    --- FAIL: TestMCPAssetIDsRejectNonCanonicalUUIDBeforeQuery/asset_relations/unhyphenated (0.00s)
+        mcp_asset_id_validation_test.go:229: validation error = "sql: database is closed", want "asset_relations"
+        mcp_asset_id_validation_test.go:229: validation error = "sql: database is closed", want "asset_id"
+        mcp_asset_id_validation_test.go:229: validation error = "sql: database is closed", want "36"
+        mcp_asset_id_validation_test.go:229: validation error = "sql: database is closed", want "hyphen"
+        mcp_asset_id_validation_test.go:229: validation error = "sql: database is closed", want "UUID"
+        mcp_asset_id_validation_test.go:229: validation error leaked database details: "sql: database is closed"
+    --- FAIL: TestMCPAssetIDsRejectNonCanonicalUUIDBeforeQuery/asset_get/unhyphenated (0.00s)
+        mcp_asset_id_validation_test.go:229: validation error = "sql: database is closed", want "asset_get"
+        mcp_asset_id_validation_test.go:229: validation error = "sql: database is closed", want "asset_id"
+        mcp_asset_id_validation_test.go:229: validation error = "sql: database is closed", want "36"
+        mcp_asset_id_validation_test.go:229: validation error = "sql: database is closed", want "hyphen"
+        mcp_asset_id_validation_test.go:229: validation error = "sql: database is closed", want "UUID"
+        mcp_asset_id_validation_test.go:229: validation error leaked database details: "sql: database is closed"
+    --- FAIL: TestMCPAssetIDsRejectNonCanonicalUUIDBeforeQuery/asset_get/not_uuid (0.00s)
+        mcp_asset_id_validation_test.go:229: validation error = "sql: database is closed", want "asset_get"
+        mcp_asset_id_validation_test.go:229: validation error = "sql: database is closed", want "asset_id"
+        mcp_asset_id_validation_test.go:229: validation error = "sql: database is closed", want "36"
+        mcp_asset_id_validation_test.go:229: validation error = "sql: database is closed", want "hyphen"
+        mcp_asset_id_validation_test.go:229: validation error = "sql: database is closed", want "UUID"
+        mcp_asset_id_validation_test.go:229: validation error leaked database details: "sql: database is closed"
+    --- FAIL: TestMCPAssetIDsRejectNonCanonicalUUIDBeforeQuery/asset_get/urn (0.00s)
+        mcp_asset_id_validation_test.go:229: validation error = "sql: database is closed", want "asset_get"
+        mcp_asset_id_validation_test.go:229: validation error = "sql: database is closed", want "asset_id"
+        mcp_asset_id_validation_test.go:229: validation error = "sql: database is closed", want "36"
+        mcp_asset_id_validation_test.go:229: validation error = "sql: database is closed", want "hyphen"
+        mcp_asset_id_validation_test.go:229: validation error = "sql: database is closed", want "UUID"
+        mcp_asset_id_validation_test.go:229: validation error leaked database details: "sql: database is closed"
+    --- FAIL: TestMCPAssetIDsRejectNonCanonicalUUIDBeforeQuery/asset_get/braces (0.00s)
+        mcp_asset_id_validation_test.go:229: validation error = "sql: database is closed", want "asset_get"
+        mcp_asset_id_validation_test.go:229: validation error = "sql: database is closed", want "asset_id"
+        mcp_asset_id_validation_test.go:229: validation error = "sql: database is closed", want "36"
+        mcp_asset_id_validation_test.go:229: validation error = "sql: database is closed", want "hyphen"
+        mcp_asset_id_validation_test.go:229: validation error = "sql: database is closed", want "UUID"
+        mcp_asset_id_validation_test.go:229: validation error leaked database details: "sql: database is closed"
+FAIL
+FAIL	github.com/hkjang/invenqor/server/internal/httpapi	1.311s
+ok  	github.com/hkjang/invenqor/server/internal/ingest	0.005s [no tests to run]
+ok  	github.com/hkjang/invenqor/server/internal/mail	0.005s [no tests to run]
+ok  	github.com/hkjang/invenqor/server/internal/querydsl	0.004s [no tests to run]
+ok  	github.com/hkjang/invenqor/server/internal/softwarecatalog	0.004s [no tests to run]
+ok  	github.com/hkjang/invenqor/server/internal/spool	0.003s [no tests to run]
+ok  	github.com/hkjang/invenqor/server/internal/storage	0.005s [no tests to run]
+?   	github.com/hkjang/invenqor/server/internal/storagetest	[no test files]
+ok  	github.com/hkjang/invenqor/server/internal/tracking	0.003s [no tests to run]
+ok  	github.com/hkjang/invenqor/server/internal/updates	0.004s [no tests to run]
+?   	github.com/hkjang/invenqor/server/internal/version	[no test files]
+ok  	github.com/hkjang/invenqor/server/internal/webui	0.005s [no tests to run]
+?   	github.com/hkjang/invenqor/server/migrations	[no test files]
+FAIL

@@ -1,0 +1,11 @@
+## 2026-10-09
+- 선택: Config.Load의 선택 종료 대기 환경변수 경계 회귀 테스트 (가치 2 / 위험 1 / 작업량 S)
+- 결과: 성공
+- 요약: internal/config/config_test.go에 TestLoadShutdownDrainSeconds를 추가하여 실제 Load의 오류 유무와 DrainSeconds를 13개 입력(미지정·빈 값·공백만·-1·121·abc·1.5·int 오버플로·0·1·5·120·앞뒤 공백 12)으로 고정했고, 필수 네 환경변수는 테스트 상수로 설정하며 t.Setenv cleanup과 os.Unsetenv로 실제 미지정 및 환경 복원을 처리했다. 최초 미지정/0/120 세 서브테스트 PASS 후 전체 13개를 추가해 `go test ./internal/config -run '^TestLoadShutdownDrainSeconds$' -count=1 -v` 13개 PASS, `SHUTDOWN_DRAIN_SECONDS=99 go test ./internal/config -count=1 -v` 기존 3개와 새 테스트 PASS, `go test ./cmd/... ./internal/...` 종료 0(일부 캐시), `go vet ./internal/config`·`go build ./cmd/... ./internal/...`·`gofmt -l internal/config/config_test.go`·`git diff --check` 종료 0 및 무출력을 확인하고 947ce35로 커밋했다(프로덕션 0파일, 테스트 1파일, 작업 트리 깨끗함). 실제 DB 통합은 검증하지 않았으며 `go test ./internal/httpapi -run '^TestIntegrationOrderRejectsOptionTotalPastInt64$' -count=1 -v`는 KKIIT_TEST_DSN 미설정으로 SKIP였고, 이 테스트는 설정 해석과 Load 배선만 증명하며 SIGTERM 경과시간·서버 종료 완료는 증명하지 않는다.
+- 실패 재현: 못 함 — 과제서대로 기존 정상 동작의 테스트 공백을 보강하는 회차이며 Load/intFromEnv가 이미 계약을 충족하여 최초 세 서브테스트부터 PASS였다. 프로덕션 수정이나 의도적 결함 주입 없이 테스트만 추가했으며, 버그를 재현·수정했다고 주장하지 않는다.
+- 보류 아이디어:
+  - Config.Load 암호화 키의 Base64/hex 입력 계약 회귀 테스트 (가치 2 / 위험 1 / 작업량 S) — 지정된 1순위가 성립하여 차선은 별도 회차로 유지.
+  - Config.Load 필수 환경변수 누락·공백 및 비밀번호 원문 유지 계약 테스트 (가치 2 / 위험 1 / 작업량 S) — 이번 종료 대기 계약과 합치지 않음.
+  - 옵션 조회 루프의 rows.Err/Scan 실패 처리 (가치 2 / 위험 2 / 작업량 S) — 자연 HTTP→실제 DB 실패 재현은 여전히 미확인.
+  - 알 수 없는 승인 조건의 편집 시 보존/유실 안내 (가치 3 / 위험 2 / 작업량 M) — 브라우저 재현과 제품 정책 판단이 필요한 별도 범위.
+- 과제서: 채택 — 현재 Load/intFromEnv의 동작과 기존 테스트 공백이 과제서와 일치하여 지정된 테스트 한 파일만 수정하고 모든 지정 검증 명령을 실행했다; 절차 1~4는 정찰 과제서로 갈음하고 ideas.json의 기존 13개(정찰 신규 2개 포함)를 유지하며 선택 항목만 done으로 갱신했다.
