@@ -1,7 +1,7 @@
 ---
 title: "madi — 자율 개선 이력"
 description: "madi: 자율 개선 회차 148회, 릴리즈 0건. 최근 릴리즈 v0.4.0."
-last_modified_at: 2026-10-08 16:50:30 +0900
+last_modified_at: 2026-10-08 17:06:22 +0900
 ---
 {% raw %}
 <script type="application/ld+json">
@@ -18,7 +18,7 @@ last_modified_at: 2026-10-08 16:50:30 +0900
   "name": "hkjang",
   "url": "https://github.com/hkjang"
  },
- "dateModified": "2026-10-08T16:50:30+09:00",
+ "dateModified": "2026-10-08T17:06:22+09:00",
  "version": "0.4.0"
 }
 </script>

@@ -1,0 +1,14 @@
+{
+  "verdict": "approve",
+  "recommend": "merge",
+  "reasons": [],
+  "notes": [
+    "검토 대상 b5fd4c0 대 origin/main cbbf578: web/src/lib/api.ts와 api.test.ts만 변경. SSE 문법과 error→done 계약을 유지하며 예외 시 취소, 원래 예외 재전파, reader 잠금 해제를 추가한다. 범위 이탈·마이그레이션·외부 상태 변경이 없어 revert 가능하다.",
+    "검증: 공개 apiClient 표적 테스트 19/19, 전체 웹 27파일 141/141, typecheck, diff --check 통과. 기존 수정 전 11실패/8통과 로그도 확인했다.",
+    "독립 Chromium 검증: 현재 api.ts를 실행하고 실제 fetch와 로컬 HTTP SSE 서버를 사용했다. 정상·서버 오류·콜백 오류·abort·agent·legacy 6경로에서 잠금 해제와 서버 응답 종료를 확인했고 원래 오류 및 error→done 순서를 보존했다. 같은 프로브의 origin/main은 6경로 모두 잠금을 남겼다. 증거: browser-sse-review.mjs, browser-sse-review.log, web-tests.log.",
+    "세 부서 스킬은 전용 Skill 도구 부재로 로컬 SKILL.md를 읽어 적용했다. security/legal 차단 소견 없음: 새 인증·권한 경로, 비밀 출력, 개인정보 수집·저장·공유·보존 변경, 의존성 추가가 없다. 기존 SSE 데이터를 기존 콜백에 전달하며 감사 details 기록을 추가하지 않는다.",
+    "web/src/lib/api.ts:379의 await cancel은 영원히 완료되지 않는 사용자 정의 source에서 오류 전달·잠금 해제를 지연시킬 수 있다. 현재 프로덕션은 clone/tee 없이 fetch 응답을 직접 전달하고 실제 Chromium에서도 완료되어 비차단 참고로 남긴다. Go·DB·전체 제품 E2E·원격 CI 상태와 운영 서버의 자원 절감량은 이번 세션에서 검증하지 않았다."
+  ],
+  "risk": "low",
+  "blocking": []
+}
