@@ -234,3 +234,14 @@
 - 과제서: 채택 — 인용한 행 번호(AdminPage.tsx 3745 `JSON.parse(form.schemaText)`·3804 `label="JSON Schema"`·3815 `disabled={!site || !form.name}`·80 `describeEventDefinitionError` import, adminErrors.ts 347 의 `error instanceof SyntaxError || (!code && /JSON/.test(message))` 와 352 의 하드코딩 문장, cidrRule.ts 69-71 의 빈 칸 처리, test/adminErrors.test.mjs 986 의 `코드가 붙은 실패는…` 테스트, `.ts` 확장자 관례)가 **모두** 현재 코드와 일치했고 수용 기준 4개를 그대로 구현·증명했다. 과제서가 미확인으로 남긴 web 테스트 총수는 변경 전 **248** 로 직접 찍어 확인했다(이전 회차 기록과 일치). 과제서가 적은 '화면이 서버보다 좁아질 위험이 구조적으로 없다' 는 판단도 성립했다 — 브라우저에서 `null`·`[1,2]` 가 막히지 않고 「저장」 이 열려 있는 것을 확인했다. 과제서에 없던 것 둘을 기록한다: (a) `AdminPage.tsx` 의 import 는 **확장자 없이** 적었다(`from "./schemaTextRule"`) — 주변 `cidrRule`·`retentionRule` import 가 모두 그렇고 vite·tsc 경로이므로 관례를 따랐다; `.ts` 가 필요한 것은 node --test 가 직접 읽는 `adminErrors.ts`·테스트 쪽뿐이다. (b) 칸이 깨지지 않았을 때 서 있는 기본 설명도 모듈이 `SCHEMA_TEXT_HELP` 로 정하게 했다 — 과제서는 '`<기본 설명>`' 으로만 적었는데, 안내와 기본 설명이 같은 자리에서 나오지 않으면 다음 회차가 또 두 곳을 고치게 된다.
 
 - 릴리즈: v0.34.61 (2026-10-08, run 2026-10-08-081903-Momento-approve)
+## 2026-10-08
+- 선택: Custom Dimension 등록·갱신 실패를 한국어로 안내한다 (가치 3 / 위험 1 / 작업량 S)
+- 결과: 성공
+- 요약: describeDimensionError를 추가해 서버 여섯 코드와 REQUEST_FAILED를 한국어로 안내하고 DimensionsAdmin 저장 Alert 한 곳에 연결했다(프로덕션 2파일+테스트 1파일); INVALID_DIMENSION은 두 라벨과 첫 글자·허용 문자·1~128자 규칙을 함께 안내하며 500의 원문은 중립 본문 아래 detail로만 보존한다. 순수 테스트 11개를 먼저 추가해 원문 반환 구현에서 9개 실패를 확인했고, 구현 후 270/270 통과 및 대조 구현 복원 시 같은 실패를 재확인했으며 실제 프로덕션 앱의 HTTP 오류 9사례와 편집·성공 초기화·목록 재조회·삭제·버튼 조건을 포함한 브라우저 10/10 시나리오가 통과했다. web·SDK 최종 게이트(audit 포함, SDK 29/29)와 Go race·vet·govulncheck가 exit 0이며 DB 통합은 DSN 미설정으로 skip, Docker와 실제 DB 장애 재현은 미실행이다; Vite 청크 경고 및 govulncheck 비호출 취약점 보고와 하네스의 두 실패·수정 이력은 journal에 남겼다.
+- 실패 재현: `not ok 3 - Custom Dimension INVALID_DIMENSION 는 한국어로 고칠 곳이나 다음 행동을 안내한다` / `+ 'name and property_key must use letters, numbers, underscore, dot, or hyphen'` (web-red-identity.log, npm test exit 1; 새 11건 중 9건 실패·기존 259건 통과).
+- 보류 아이디어: 설정 저장 실패 한국어 안내 (가치 2 / 위험 2 / 작업량 M) — 여러 설정 그룹 계약 확인 필요.
+  Custom Dimension 입력 칸에 규칙 helperText 안내 (가치 2 / 위험 1 / 작업량 S) — 이번 오류 안내와 분리.
+  보존 정책 빈 입력의 Number("")→0 변환 수정 (가치 2 / 위험 2 / 작업량 M) — 빈 문자열 상태·payload 분리 필요.
+  README 개발 명령의 cd 누적 수정 (가치 3 / 위험 1 / 작업량 S) — 차선 유지, 이번 범위 제외.
+- 과제서: 채택 — 여섯 서버 코드·PropertyKeyPattern·upsert·원문 저장 Alert가 현재 코드와 일치하여 지정한 3파일 범위로 수용 기준을 구현·검증했다.
+

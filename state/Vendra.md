@@ -389,3 +389,15 @@
 - 과제서: 채택 — 근거가 코드와 좌표까지 그대로 맞았고(`load` :209 에 `.catch` 없음, `loading` :298 의 파생, `Loading` 의 12초 추측, 모든 업무 목록이 이 컴포넌트) 수용 기준 1~5 를 그대로 구현했다. 과제서와 **한 곳 다르게** 했다: 기본 문구를 과제서의 `"목록을 불러오지 못했습니다"` 가 아니라 `"목록을 조회하지 못했습니다"` 로 했다 — 과제서가 지정한 `<Empty title>` 과 글자가 같아서 그대로 쓰면 제목과 설명에 **같은 문장이 두 번** 찍히고(`TestingLibraryElementError: Found multiple elements with the text: 목록을 불러오지 못했습니다` 로 실제로 터졌다), 과제서가 베끼라고 한 WorkInbox 가 바로 이것을 피해 제목(`업무를 불러오지 못했습니다`)과 기본 문구(`업무를 조회하지 못했습니다`)를 다르게 쓰고 있다. 과제서가 예상하지 못한 것 하나: 실패를 `requestKey` 와 함께 담으면 **성공 시 지우는 일이 따로 필요하다**(둘 다 같은 키를 들 수 있으므로) — 기준 3 의 「성공하면 문구가 사라진다」를 위해 `.then` 에 `setFailure` 를 더했고, 성공 경로의 렌더 횟수를 늘리지 않으려 함수형 갱신으로 실패가 없을 때는 같은 객체를 돌려주게 했다(그래서 `objects-order.test.tsx` 5개가 그대로 통과한다).
 
 - 릴리즈: v0.7.72 (2026-10-08, run 2026-10-08-053942-Vendra-improve)
+## 2026-10-08
+- 선택: 자동 저장 중 신규 업무 제출이 비워진 폼 이벤트를 읽어 저장되지 않는 문제 수정 (가치 4 / 위험 1 / 작업량 S)
+- 결과: 성공
+- 요약: NewObject.save에서 FormData를 첫 await 전에 확보하여 React가 currentTarget을 비운 뒤에도 제출 당시 입력값으로 저장하도록 고쳤고, 진행 중 PUT을 기다리는 순서와 기존 오류 정책을 유지했다(commit fd56d79, 프로덕션 1파일 + 신규 테스트 1파일). 실제 Objects·React DOM 이벤트·HTMLFormElement/FormData·원본 api/post/put/del을 통과하는 fetch 경계 테스트 4개로 제출 스냅샷과 POST 1회→초안 DELETE→닫기·목록 재조회, 즉시 제출, PUT 500 후 저장, POST 오류 표시·재시도를 확인했으며 수정만 되돌려 같은 실패도 다시 확인했다. npm ci --ignore-scripts 후 지정된 3파일 테스트 15개와 npm test 전체 25파일/113개가 모두 통과(미처리 rejection 및 skip 없음), npx tsc -b --noEmit && npx eslint src --max-warnings 0 && npm run build 통과; 웹 전용 변경으로 Go/DB 통합 및 실제 브라우저 실행은 하지 않았다.
+- 실패 재현: `AssertionError: expected [] to have a length of 1 but got +0` / `TypeError: Failed to construct 'FormData': parameter 1 is not of type 'HTMLFormElement'.` — Objects.tsx:787, 수정 전 `npm test --prefix web -- src/pages/objects-draft-submit.test.tsx`에서 2 failed | 2 passed (4), Errors 2 errors. 첫 실행의 체크박스 접근성 이름 불일치는 하네스 오류로 제외하고 정정 후 위 결함을 확인했다. 로그: assets/draft-submit-red.log, 수정 되돌림: assets/draft-submit-revert.log.
+- 보류 아이디어:
+  - 저장된 보기 조회 실패 표시와 전용 재시도 (가치 3 / 위험 2 / 작업량 M) — 차선 후보 유지.
+  - 자동 저장 응답 대기 중 중복 제출 방지 (가치 3 / 위험 2 / 작업량 S) — 별도 재현·정책 검토 필요.
+  - 초안 DELETE 실패 후 저장 성공 유지 실행 테스트 (가치 2 / 위험 1 / 작업량 S) — 현재 정책은 변경하지 않음.
+  - 늦은 초안 복원 응답이 입력을 덮어쓰지 않는 실행 테스트 (가치 2 / 위험 1 / 작업량 S) — 현재 보호 조건은 유지.
+- 과제서: 채택 — 실제 저장소에서 PUT 대기 후 FormData 오류와 POST 부재가 재현됐고, 제시한 첫 await 전 스냅샷 확보만으로 수용 기준을 만족했다.
+
