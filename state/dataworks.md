@@ -334,3 +334,15 @@
 - 과제서: (정찰 과제서 없음 — 회차 노트에 러너의 base·autonomy 줄만 있었다)
 
 - 릴리즈: v0.9.70 (2026-10-07, run 2026-10-07-142807-dataworks-improve)
+## 2026-10-08
+- 선택: FactoryDashboard의 집계 조회 실패를 정상 KPI 0건으로 숨기지 않기 (가치 4 / 위험 1 / 작업량 S)
+- 결과: 성공
+- 요약: FactoryDashboard의 상태별 COUNT 6회와 리스크·PoC·AVG 조회 오류를 반환해 10개 집계 모두 실패 시 기존 부분 구조체와 오류를 전달하도록 고쳤으며, SQL 조건·순서·s.bind·COALESCE·반올림은 유지했다(프로덕션 1파일 + 테스트 2파일 + OPERATIONS 1파일, 커밋 c835720). 실제 SQLite와 NewServer(...).Routes()에서 테이블 rename·status 전용 뷰로 12개 HTTP 단언의 수정 전 200 실패 → 수정 후 500/기존 오류 코드 및 KPI 본문 부재를 확인했고, 아이디어 조회 오류 4개 단언·각 cleanup 이후 네 라우트의 200/0 복귀·여섯 상태별 1~6건·리스크 69/70/71 경계·pending PoC 2건·양수 평균 반올림(80.5→81, 80.333…→80)도 통과했다. 프로덕션 파일만 HEAD 원본으로 되돌려 같은 12개 실패가 재발함을 확인한 뒤 복원했으며, 신규 테스트·기존 store/proxy 전체(15.288s/40.584s)·go build ./...·go vet ./...·go test ./... -count=1(16패키지 PASS, proxy 42.477s/store 14.909s)·go run ./cmd/api-surface-audit(550 routes/612 paths, 누락 4항목 모두 [])·git diff --check 모두 통과했다; PostgreSQL 장애 재현과 웹 검증은 미실행이고 legacy factory/products의 호출부 오류 무시는 범위 밖이다.
+- 실패 재현: `admin_dataworks_catalog_read_test.go:387: unavailable products: status = 200, want 500: {"dashboard":{"ideas_total":0,"draft_products":0,"review_products":0,"risk_review_products":0,"approved_products":0,"published_products":0,"archived_products":0,"high_risk_reviews":0,"pending_poc_plans":0,"average_revenue_score":0}}` / `admin_dataworks_catalog_read_test.go:387: unavailable average_revenue: status = 200, want 500: {"dashboard":{"ideas_total":0,"draft_products":0,"review_products":0,"risk_review_products":0,"approved_products":0,"published_products":0,"archived_products":0,"high_risk_reviews":0,"pending_poc_plans":0,"average_revenue_score":0}}` (명령: `go test ./internal/proxy -run '^TestFactoryDashboardRejectsUnavailableAggregates$' -count=1 -v`, exit 1; 원문 test-red.log, 재역전 test-reverted.log)
+- 보류 아이디어:
+  - 유실된 web JS/MJS 린트 규칙 복구 (가치 3 / 위험 2 / 작업량 S) — config와 실행 회귀 테스트로 제한, 설치/검증 미실행.
+  - graph의 feedback/outcomes/relationships 조회 실패 처리 (가치 3 / 위험 2 / 작업량 M) — 세 읽기로 좁혀 실제 HTTP 오류 재현 후 추진.
+  - 레거시 factory 상품 목록 GET의 아이디어·대시보드 오류 처리 (가치 3 / 위험 1 / 작업량 S) — handleFactoryProducts는 여전히 오류를 버리므로 이번 수정으로 해결됐다고 주장하지 않음.
+  - keep-dist-placeholder 테스트의 Vite 오류 로그 보존 (가치 3 / 위험 1 / 작업량 S) — 진단 개선 후보이며 현재 릴리즈 실패 원인으로 단정하지 않음.
+- 과제서: 채택 — HEAD a528bcd와 대상 코드가 일치했고 지정된 SQLite/HTTP 장애 레버로 수용 기준의 실패·복구·정상 계산을 실행 확인했다.
+

@@ -1,30 +1,21 @@
 [
   {
-    "title": "KPI·분석·검토 큐 GET 세 곳이 카탈로그 조회 실패를 '빈 팩토리 / 대기 0건' 으로 숨김",
-    "value": 4,
-    "risk": 1,
-    "size": "S",
-    "status": "done",
-    "note": "handleDataWorksHome(admin_dataworks.go:29-31)·handleDataWorksAnalytics(:760-761)·handleDataWorksReviews 의 risk_review 조회(:678)가 오류를 _ 로 버렸다. 특히 /reviews 는 같은 응답의 review_pending 은 이미 500 을 내는데 risk_review_pending 만 null 이 되어 '리스크 검토 대기 없음' 으로 읽혔다. dashboard_failed·analytics_failed 신규 + 기존 reviews_failed 재사용으로 500 반환. 테스트는 프로덕션 라우트 + 실제 SQLite 에서 테이블 rename(home/analytics)과 description 을 risk_review 행만 NULL 로 돌리는 뷰 치환(reviews)으로 6사례. 커밋 7a883be.",
-    "updated": "2026-10-07"
-  },
-  {
     "title": "유실된 web 린트 수정 5ed6876 되살리기 — .js/.mjs 가 규칙 0개로 린트되는 사각지대",
     "value": 3,
     "risk": 2,
     "size": "S",
     "status": "pending",
-    "note": "2026-10-07 에 코드로 재확인: web/eslint.config.js 는 files: ['**/*.{ts,tsx}'] 설정 객체 하나뿐이라 web/scripts/run-with-supported-node.mjs(릴리즈 게이트 경로)와 eslint.config.js 자신이 '린트 대상이지만 규칙 0개' 로 조용히 통과한다. 5ed6876 은 HEAD(af463ee)에 없다 — 2026-10-01~10-04 유실군의 마지막 1건(Go 3건은 10-06 에 되살렸다). web/eslint.config.js 1파일에 **/*.{js,mjs} 블록을 추가하고 js.configs.recommended 를 붙이는 방식. globals 패키지는 의존성에 없으니 Node 전역 인라인 선언, lock 재생성 금지. 주의: web/node_modules 가 워크트리에 없어 npm ci(수분)가 선행된다.",
-    "updated": "2026-10-07"
+    "note": "HEAD a528bcd에도 TS/TSX 블록만 있다. 원 커밋은 HEAD 조상이 아님(exit 1). web/node_modules 부재. 런처·lock·CI 변경 없이 config와 회귀 테스트만 복구할 수 있으나 npm 설치 및 실행은 이번에 미확인.",
+    "updated": "2026-10-08"
   },
   {
     "title": "store.FactoryDashboard 가 product_ideas 외 네 집계의 오류를 삼켜 상위 수정 뒤에도 일부 KPI 가 조용히 0",
-    "value": 3,
-    "risk": 2,
+    "value": 4,
+    "risk": 1,
     "size": "S",
-    "status": "pending",
-    "note": "신규(2026-10-07). internal/store/factory.go:484(상태별 상품 수)·493(high risk reviews)·494(pending POC plans)·496(평균 revenue)이 모두 `_ = s.db.QueryRowContext(...).Scan(...)` 이다. :479 의 product_ideas 만 오류를 반환한다. 그래서 이번 회차가 /home·/analytics·/funnel 에서 FactoryDashboard 의 오류를 반환하게 해도, data_products 가 읽히지 않는 상황에서 PublishedProducts 등은 여전히 0 으로 내려간다(이번 회차는 ListDataProducts 쪽으로 500 이 나서 가려진다). internal/store 는 마이그레이션 위험 구역이지만 이 변경은 스키마를 건드리지 않는다. 재현 레버: product_ideas 는 남기고 data_products 만 rename 한 뒤 FactoryDashboard 를 직접 호출.",
-    "updated": "2026-10-07"
+    "status": "done",
+    "note": "커밋 c835720: 10개 집계 모두 오류 반환, SQL·조회 순서·부분 구조체 보존. 실제 SQLite/Routes의 12개 새 HTTP 실패 red→green 및 원본 재역전 실패 확인. 빈 DB·정상 집계/반올림·전체 Go 검증 PASS. PostgreSQL 장애 레버 미실행.",
+    "updated": "2026-10-08"
   },
   {
     "title": "admin_dataworks(_ops) 의 남은 목록 조회 5곳이 같은 계열로 오류를 버림",
@@ -32,8 +23,8 @@
     "risk": 2,
     "size": "M",
     "status": "pending",
-    "note": "신규(2026-10-07) grep 결과: admin_dataworks.go:1684 ListRetirementCandidates, admin_dataworks_ops.go:872 ListProposalFeedback, :873 ListPOCOutcomes, :920 ListProductRelationships, :980 ListRegulatoryTrace, :690 LatestProductRiskReview, :970 LatestDataAssetReadinessScore. 엔드포인트가 서로 달라 한 회차에 다 덮으면 테스트 사례가 커진다 — 두 덩어리로 쪼개 돌릴 것. 1684 는 retirement 평가 응답이라 의미 변경 여부를 먼저 볼 것.",
-    "updated": "2026-10-07"
+    "note": "재확인: retirement는 admin_dataworks.go:1717, graph는 admin_dataworks_ops.go:872/873/920. graph 세 읽기만 한 묶음으로 좁힐 것. :970/980은 legacyDataWorksPublishGate 내부이며 rg상 호출자가 없어 실제 라우트 결함으로 단정 금지. :690 리스크 조회는 별도 평가.",
+    "updated": "2026-10-08"
   },
   {
     "title": "web/src/features/auth/silent-sso.test.ts 가 Node 25 에서 실패 — 원인 미조사",
@@ -41,8 +32,8 @@
     "risk": 2,
     "size": "S",
     "status": "pending",
-    "note": "실행 확인(2026-10-05): 22.23.1 PASS / 23.11.1 PASS / 25.0.0 FAIL / 25.9.0 FAIL. 증상은 sessionStorage 가 SecurityError 를 던질 때 shouldAttemptSilentSSO 가 false 대신 true 를 돌려주는 것(silent-sso.test.ts:77). jsdom/undici 의 Node 25 동작 차이인지 제품 결함인지 미확인. 런처 폴백이 최저 지원 버전을 고르게 해 게이트만 막혀 있고 CI 가 Node 25 로 올라가면 터진다. 재현에 npm ci 가 필요해 네 회차 연속 밀렸다.",
-    "updated": "2026-10-07"
+    "note": "테스트는 전역 Storage.prototype.getItem을 spy하고 제품은 window.sessionStorage를 읽는 구조 그대로. Node 25 실제 재실행은 의존성 부재로 미수행. 과거 실패 기록을 유지하며 런처 우회 확대는 금지.",
+    "updated": "2026-10-08"
   },
   {
     "title": "npm ci 가 high 취약점 2건 보고 — npm audit 으로 특정 후 lock 재생성 없이 최소 변경",
@@ -50,26 +41,26 @@
     "risk": 2,
     "size": "S",
     "status": "pending",
-    "note": "여러 회차의 npm ci 출력에서 계속 '2 high severity vulnerabilities'. npm install 로 lock 을 재생성하지 말 것(lockfileVersion 3, @rolldown/binding-* 16종). 2026-10-06·10-07 두 회차 모두 web 을 건드리지 않아 npm 을 아예 돌리지 않았으므로 여전히 미확인.",
-    "updated": "2026-10-07"
+    "note": "이번 npm ci/audit 미실행. 2건은 과거 기록이며 현재 취약점 수·패키지는 미확인. 단순 최신화나 lock 전체 재생성 금지.",
+    "updated": "2026-10-08"
   },
   {
-    "title": "퍼블리시 게이트 조립의 선택적 조회(SLA·비용·품질 결과·리스크 리뷰) 오류를 '증거 없음' 과 구분",
+    "title": "퍼블리시 게이트 조립의 선택적 조회(SLA·비용·품질 결과·리스크 리뷰) 오류를 증거 없음과 구분",
     "value": 2,
     "risk": 3,
     "size": "M",
     "status": "pending",
-    "note": "2026-10-07 에 좌표 재확인: admin_dataworks.go:1760 GetProductSLA, :1767 GetProductCost(과거 원장의 1750·1758·1769·1775 는 4700560 되살리기와 이번 회차로 재배치됐다 — grep 으로 다시 잡을 것). 게이트는 닫히는 방향이라 접근은 막히지 않지만 원인이 안 보인다. 게이트 의미가 바뀔 수 있어 운영자 판단 필요 — 자율 회차에서는 뒤로.",
-    "updated": "2026-10-07"
+    "note": "admin_dataworks.go:1793/1800 이후 선택적 조회가 여전히 오류를 버림. 게이트 정책 의미가 달라질 수 있으므로 이번 범위 제외.",
+    "updated": "2026-10-08"
   },
   {
     "title": "GetContractScope 가 NOT NULL 컬럼을 COALESCE 없이 string 으로 스캔해 손상된 행 하나가 전체 조회를 깨뜨림",
     "value": 2,
     "risk": 3,
     "size": "S",
-    "status": "pending",
-    "note": "allowed_fields·masking_policy 만 COALESCE 되어 있고 valid_from·valid_to·purpose·status 등은 NULL 이면 scan 오류다. 스키마가 NOT NULL 이라 정상 경로에서는 안 나지만 외부 도구가 넣은 행·뷰·PostgreSQL 쪽에서는 가능. internal/store 는 마이그레이션 위험 구역이라 보류. 고칠 때 dataworks_runtime_entitlement_test.go 의 뷰 치환 레버(valid_from 을 NULL 로)가 깨진다는 점을 먼저 보라. 같은 성질을 data_products.description 으로 쓰는 레버가 이번 회차 admin_dataworks_catalog_read_test.go 에도 생겼으니 둘 다 확인할 것.",
-    "updated": "2026-10-07"
+    "status": "rejected",
+    "note": "GetContractScope:362의 정상 스키마 계약은 NOT NULL이다. NULL을 임의 기본값으로 바꾸면 손상된 계약을 정상처럼 읽을 수 있으며, 현재 오류 반환은 기존 계약 조회 회귀 테스트가 보장하는 동작이다. 실제 지원 입력이 실패하는 증거 없이 내결함성 수정으로 추진하지 않는다.",
+    "updated": "2026-10-08"
   },
   {
     "title": "저장소 루트의 scripts/*.mjs 가 어떤 린터도 거치지 않음 (eslint 가 cwd=web 으로만 돈다)",
@@ -77,17 +68,17 @@
     "risk": 2,
     "size": "S",
     "status": "pending",
-    "note": "5ed6876 되살리기는 web 안의 .js/.mjs 만 고친다. 루트 scripts/web-run.mjs 는 여전히 린트 밖이다. 두 건을 합치면 web/eslint.config.js + 루트 린트 배선이라 범위가 커진다 — 5ed6876 먼저. scripts/web-run.mjs 는 보호 파일이라 배선 변경은 신중할 것.",
-    "updated": "2026-10-07"
+    "note": "scripts/web-run.mjs:runInWeb 및 루트 package.json에서 cwd=web 위임 재확인. web 내부 JS 린트 복구와 분리. 릴리즈 배선 보호 경로.",
+    "updated": "2026-10-08"
   },
   {
-    "title": "keep-dist-placeholder 테스트의 logLevel:'silent' 를 걷어 실제 vite 실패 원인이 로그에 남게 하기",
+    "title": "keep-dist-placeholder 테스트의 logLevel:silent 를 걷어 실제 vite 실패 원인이 로그에 남게 하기",
     "value": 3,
     "risk": 1,
     "size": "S",
     "status": "pending",
-    "note": "web/src/test/keep-dist-placeholder.test.ts 1파일. 보호 파일 목록에 들어 있어 자율 회차에서 건드리기 꺼려졌고 여러 회차에서 1순위에 밀렸다. 진단 가치만 있고 결함 수정은 아니다.",
-    "updated": "2026-10-07"
+    "note": "web/src/test/keep-dist-placeholder.test.ts:buildFixture에 logLevel: silent 유지. 실패를 재현한 것은 아니므로 진단 개선 후보로만 유지; 현재 릴리즈 실패 원인이라고 쓰지 않는다.",
+    "updated": "2026-10-08"
   },
   {
     "title": "dataWorksTimestampOK 를 통과한 타임스탬프를 네 읽기 경로가 같게 읽는지 계약 테스트로 고정",
@@ -95,8 +86,8 @@
     "risk": 1,
     "size": "S",
     "status": "pending",
-    "note": "contractScopeActive / 액션 센터 루프 / store.EntitlementActive / bestApprovalStatus. 프로덕션 0파일로 위험이 가장 낮지만, 즉시 통과하는 테스트는 결함을 증명하지 못한다 — 먼저 어긋나는 입력(오프셋 표기·Z 없는 값·나노초 자릿수)을 찾을 것. 파서 통합은 금지.",
-    "updated": "2026-10-07"
+    "note": "dataWorksTimestampOK:1846 및 contractScopeActive, bestApprovalStatus의 RFC3339Nano/trim 확인. 차이 나는 유효 입력은 아직 미확인. 파서 통합 대신 실제 반례 발견 후 좁게 테스트.",
+    "updated": "2026-10-08"
   },
   {
     "title": "같은 step 에 승인 행이 둘 이상이면 bestApprovalStatus 가 첫 approved 를 돌려줘 나중 rejected 가 게이트를 막지 못함",
@@ -104,8 +95,8 @@
     "risk": 3,
     "size": "M",
     "status": "pending",
-    "note": "internal/dataworks/domain.go:668 의 즉시 반환. 어느 행이 이기는지는 API 의미 선택이라 자율 변경 제외 유지.",
-    "updated": "2026-10-07"
+    "note": "domain.go:668 이후 즉시 approved/waived 반환 유지. 최신 행 우선인지 승인 하나로 충분한지 제품 정책 미확인이라 자율 선택 제외.",
+    "updated": "2026-10-08"
   },
   {
     "title": "contract scope 가 revoked·suspended 인데 그 계약을 가리키는 active 엔타이틀먼트가 액션 센터에 안 뜸",
@@ -113,25 +104,34 @@
     "risk": 3,
     "size": "M",
     "status": "pending",
-    "note": "계약 루프는 비활성 scope 를 의도적으로 건너뛰고(25a99bb 주석) 엔타이틀먼트 루프는 계약을 조회하지 않아 런타임 403 contract_scope_inactive 가 운영 화면에 안 보인다. 새 action type 이라 web 4파일 동반 + 운영자가 일부러 닫은 경우 노이즈 — 보류.",
-    "updated": "2026-10-07"
+    "note": "런타임 계약 검증은 유지. 액션 센터 계약/권한 결합 누락의 이번 실행 재현은 미확인. 새 action type과 web 동반 및 의도적 비활성 계약 노이즈 때문에 보류.",
+    "updated": "2026-10-08"
   },
   {
-    "title": "고아 Contract Scope·Entitlement 전용 운영 경고",
-    "value": 2,
-    "risk": 2,
+    "title": "레거시 factory 상품 목록 GET이 아이디어·대시보드 조회 오류를 버림",
+    "value": 3,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "구현 중에도 admin_factory.go:110의 dashboard, _ 호출을 재확인. 이번 FactoryDashboard 오류 전파 수정 후에도 호출부가 오류를 버리는 별도 결함. 아이디어/리스크/PoC 장애를 실제 SQLite+HTTP로 재현하고 products_failed 등 기존 계약을 확인한 뒤 좁게 수정할 후보.",
+    "updated": "2026-10-08"
+  },
+  {
+    "title": "상품 정의 생성의 자산 관계 저장 실패를 성공 응답에서 식별 가능하게 하기",
+    "value": 3,
+    "risk": 3,
     "size": "M",
     "status": "pending",
-    "note": "새 action type 이라 web 동반, 파일 수 상한에 걸린다. 여러 회차에서 밀렸다.",
-    "updated": "2026-10-07"
+    "note": "신규. admin_dataworks_ops.go:persistProductAssetRelationships:948가 UpsertProductRelationship 오류를 버리고 admin_factory.go:308이 호출. 상품 정의는 이미 저장된 뒤라 단순 500 처리 시 재시도 중복·부분 저장 계약이 미확인. 트랜잭션/응답 정책을 판단하기 전 보류; 이번 과제에 섞지 않는다.",
+    "updated": "2026-10-08"
   },
   {
-    "title": "docs/Clustara_Detailed_Manual.md 와 .html 이 Pages 에서 같은 출력 경로를 다툼",
+    "title": "Clustara 상세 매뉴얼 MD와 HTML의 Pages 출력 경로 충돌 해소",
     "value": 3,
     "risk": 2,
     "size": "S",
     "status": "pending",
-    "note": "2026-10-07 Pages 재현에서 발견. 저장소에 _config.yml·.nojekyll 이 없어 jekyll-optional-front-matter 가 front matter 없는 docs/*.md 를 전부 페이지로 렌더한다. 그래서 Clustara_Detailed_Manual.md → /Clustara_Detailed_Manual.html 과 손으로 쓴 정적 docs/Clustara_Detailed_Manual.html 이 같은 경로로 간다(로컬 빌드 로그: Writing: _site/Clustara_Detailed_Manual.html). 실제 사이트에서 어느 쪽이 서빙되는지 확인한 뒤 고칠 것 — 둘 중 하나를 정본으로 정하거나 Jekyll 쪽을 좁히는 방향으로만. CI 실패와는 무관하다.",
-    "updated": "2026-10-07"
+    "note": "이전 비구조화 기록에서 보존. docs/Clustara_Detailed_Manual.md와 .html이 모두 존재함을 재확인. 실제 Jekyll 최종 산출물 충돌은 이번 재실행 미확인. 수동 HTML/PDF 정본 정책 확인 후 좁게 해결.",
+    "updated": "2026-10-08"
   }
 ]

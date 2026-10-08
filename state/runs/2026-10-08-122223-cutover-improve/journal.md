@@ -26,3 +26,19 @@
 - 단위108 pass/0 fail/0 skipped, 변경 파일 ESLint·전체 tsc --noEmit --incremental false·diff --check 통과; 저장소 코드 수정 없음.
 - 로컬 main=cd9d1f3은 낡아 56파일 diff; 원장 base=aec0adc=HEAD^ 기준 이번 변경은 테스트1파일+61줄. 누적56파일 전체 재감사·build/E2E/audit는 미완료이며 릴리즈 때 base 대조 필요.
 - 요청 스킬3개는 도구 부재로 로컬 정본 직접 적용. 이번 합성 입력 테스트는 개인정보·권한·외부 상태를 추가하지 않으며 기존 모듈 타입 경고가 남는다.
+- [러너 12:32] review approved — 리뷰 승인 (risk=low)
+- [러너 12:32] pr created — https://github.com/hkjang/cutover/pull/17
+- [러너 12:33] ci passed — 검사 없음 — 정책으로 허용
+- [러너 12:33] merge done — 9c1ec0a
+
+## 릴리즈 노트
+- v1.18.0: 기존 마이너 증가·머지 커밋 직접 주석 태그 관례를 확인하고 b5f424a에 태그 작성. hkjang 작성자 유지, 브랜치/버전 파일/추가 커밋/소스 변경 없음.
+- 단위108건·lint·타입·Next build 통과. E2E는 격리 HOME의 Chromium 경로 문제를 기존 브라우저 캐시 지정으로 해결한 후 전체41건 통과. 최초 실패와 최종 성공 로그 모두 보존.
+- 기존 Dockerfile 빌드 및 이미지 smoke 4경로 모두200, API 활동 배열 확인. 임시 컨테이너 종료. 동일 이미지 docker save | gzip 자산84,432,987바이트 생성·gzip/manifest/레이어 확인.
+- 자산: assets/cutover-v1.18.0.tar.gz. 노트: release-notes-v1.18.0.md. release.json status=released, github_release=true. 원격 푸시/게시/업로드 없음.
+- marketing:product-launch 및 technology:release-and-deployment는 도구 부재로 로컬 정본 직접 적용. Tier3 노트만 작성, 배포/복구·검증 한계 기재. 자세한 관례·검증은 release-audit.md 및 release-*.log/json에 보존.
+- [러너 12:39] release published — v1.18.0
+- [러너 12:39] gh-release created — GitHub Release v1.18.0
+- [러너 12:39] manifest ok — cutover-v1.18.0.tar.gz 
+- [러너 12:39] assets uploaded — 1개
+- [러너 12:39] assets verified — v1.18.0 자산 1개 (이전 v1.17.0: 1)

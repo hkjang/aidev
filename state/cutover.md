@@ -214,3 +214,4 @@
 - 스킬: Skill/skills.list/read 호출 도구가 없어 /home/hkjang/.claude/plugins/marketplaces/headcount/plugins/technology/skills/ 아래 completion-verification·systematic-debugging·test-driven-development/SKILL.md를 직접 읽고 적용했다. 공개 반환값과 오류를 검증했고 대역·소스 문자열 테스트는 사용하지 않았다. 원인·수정 대상은 기능 결함이 아닌 경계 회귀 테스트 공백이며 기존 treeUtils의120자 부모 추가·자기참조2개 issues 테스트는 그대로 유지했다.
 - 기록: unit-baseline.log·unit-final.log에 실제 전체 출력을 보존했다. ideas.json 기존16개(정찰 신규2개 포함)를 모두 유지하고 선택 과제를 done으로 갱신했다. 절차1~4는 지정 과제서로 갈음해 후보 재선정·범위 확대 없음.
 
+- 릴리즈: v1.18.0 (2026-10-08, run 2026-10-08-122223-cutover-improve)

@@ -13,8 +13,8 @@
     "value": 4,
     "risk": 1,
     "size": "S",
-    "status": "pending",
-    "note": "이번 선택. internal/store/factory.go:477-498에서 상태별 COUNT 6회와 리스크/PoC/평균 조회 오류를 무시. 상위 네 라우트는 이미 오류를 처리하므로 프로덕션 1파일. 실제 서버 격리 재현 결과는 brief.md 및 scout-reproduction.json 참조.",
+    "status": "done",
+    "note": "커밋 c835720: 10개 집계 모두 오류 반환, SQL·조회 순서·부분 구조체 보존. 실제 SQLite/Routes의 12개 새 HTTP 실패 red→green 및 원본 재역전 실패 확인. 빈 DB·정상 집계/반올림·전체 Go 검증 PASS. PostgreSQL 장애 레버 미실행.",
     "updated": "2026-10-08"
   },
   {
@@ -113,7 +113,7 @@
     "risk": 1,
     "size": "S",
     "status": "pending",
-    "note": "신규. internal/proxy/admin_factory.go:handleFactoryProducts:109-110에서 ListProductIdeas와 FactoryDashboard 오류를 무시. /admin/factory/products 배선 server.go:413 확인. 이번 store 수정 이후에도 여기는 부분 응답 가능하므로 별도 HTTP 회귀 테스트와 products_failed 처리 후보.",
+    "note": "구현 중에도 admin_factory.go:110의 dashboard, _ 호출을 재확인. 이번 FactoryDashboard 오류 전파 수정 후에도 호출부가 오류를 버리는 별도 결함. 아이디어/리스크/PoC 장애를 실제 SQLite+HTTP로 재현하고 products_failed 등 기존 계약을 확인한 뒤 좁게 수정할 후보.",
     "updated": "2026-10-08"
   },
   {
