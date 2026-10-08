@@ -1,0 +1,11 @@
+## 2026-10-08
+- 선택: IMAP 열거 실패 뒤 빈 목록·부분 인덱스를 정상 캐시로 반환하지 않게 한다 (가치 4 / 위험 2 / 작업량 M)
+- 결과: 성공
+- 요약: ensureIndex가 FETCH 전에 indexed=true를 켜고 공유 인덱스에 배치별로 누적하던 것을 로컬 임시 슬라이스에 모아 전체 성공 때만 커밋하도록 고쳤다(프로덕션 1파일, 테스트 포함 3파일; 커밋 59faa19). 실제 TCP 서버와 프로덕션 Dialer로 첫/후속 배치의 지속 거절, 첫 배치부터 재시도, 2001건의 정확한 번호·UIDL·크기와 성공 캐시 재사용, 빈 메일함을 검증했고, CreateAccount→StartSync→GetJob에서 수정 전 succeeded/seen:0을 재현한 뒤 수정 후 failed/enumerate/FETCH/rejected 및 저장 작업 전체에 서버 표식 미포함을 확인했다; indexed만 뒤로 옮긴 변이는 4001건 중복으로 실패해 로컬 누적의 필요성도 확인하고 원복했다. 최종 `go test -race -count=1 -timeout=900s ./internal/application ./internal/adapters/imap ./internal/adapters/pop3` PASS(application 88.796s / IMAP 5.120s / POP3 5.593s), `go build ./...`, `go vet ./...`, `make lint-format`, `go run ./cmd/postra-contracts -check`, `git diff --check` 모두 exit 0이며 전체 저장소 Go 테스트·외부 PostgreSQL·브라우저 e2e·프런트 빌드는 범위 밖으로 미실행했다.
+- 실패 재현: `client_test.go:1025: attempt 2: messages=0 err=<nil>, want error and no partial results` / `imap_sync_test.go:172: sync status = succeeded, want failed (stats=map[duplicate:0 failed:0 new:0 oversize:0 parse_error:0 seen:0] error="")` — 수정 전 어댑터 테스트 exit 1; 앱 테스트는 원래 ensureIndex를 잠시 복원하여 exit 1 확인 후 finally에서 즉시 수정본으로 원복. 전체 출력은 imap-adapter-red.log, imap-app-red.log, imap-partial-mutation.log에 보관.
+- 보류 아이디어:
+  - POP3·IMAP greeting 실패 진단의 Timeout을 실제 connectTO로 맞춘다 (가치 3 / 위험 1 / S): 지정된 차선이며 1순위가 성립해 미착수; 실제 침묵 서버 재현은 미확인.
+  - POP3/IMAP 명령 대기 중 context 취소 전파 (가치 3 / 위험 3 / M): 다수 경로 변경이 필요해 보류; IMAP Idle의 기존 취소 watcher와 구분.
+  - IMAP ListMailboxes 리터럴 폴더명 지원 (가치 2 / 위험 2 / S): 운영 사례 미확인, 서로 다른 파서 통합·확장 없이 별도 검토 필요.
+  - POP3 retrBody 프레이밍 상한 (가치 4 / 위험 3 / M): PR #22/04b15be 반려 여부 미확인으로 동일 접근 착수 금지 유지.
+- 과제서: 채택 — 선행 완료 표시와 공유 인덱스 누적이 실제 UIDL→List 폴백을 빈/부분 성공으로 바꾸는 것을 수정 전 실행으로 확인했으며, 지정한 3파일 범위에서 수용 기준을 모두 검증했다.

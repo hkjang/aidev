@@ -1,0 +1,13 @@
+--- FAIL: TestAQuotedListItemLosesItsQuoteMarkersInEveryTextFormat (0.00s)
+    --- FAIL: TestAQuotedListItemLosesItsQuoteMarkersInEveryTextFormat/.md (0.00s)
+        markdownquote_test.go:187: read "# 제목\n\n- > 인용입니다.\n" as "# 제목\n@cover\n> 월간 보고서.md\n\n# 제목\n- \\> 인용입니다.\n!source 월간 보고서.md | 제목\n\n", want "# 제목\n@cover\n> 월간 보고서.md\n\n# 제목\n- 인용입니다.\n!source 월간 보고서.md | 제목\n\n"
+    --- FAIL: TestAQuotedListItemLosesItsQuoteMarkersInEveryTextFormat/.markdown (0.00s)
+        markdownquote_test.go:187: read "# 제목\n\n- > 인용입니다.\n" as "# 제목\n@cover\n> 월간 보고서.markdown\n\n# 제목\n- \\> 인용입니다.\n!source 월간 보고서.markdown | 제목\n\n", want "# 제목\n@cover\n> 월간 보고서.markdown\n\n# 제목\n- 인용입니다.\n!source 월간 보고서.markdown | 제목\n\n"
+    --- FAIL: TestAQuotedListItemLosesItsQuoteMarkersInEveryTextFormat/.txt (0.00s)
+        markdownquote_test.go:187: read "# 제목\n\n- > 인용입니다.\n" as "# 제목\n@cover\n> 월간 보고서.txt\n\n# 제목\n- \\> 인용입니다.\n!source 월간 보고서.txt | 제목\n\n", want "# 제목\n@cover\n> 월간 보고서.txt\n\n# 제목\n- 인용입니다.\n!source 월간 보고서.txt | 제목\n\n"
+--- FAIL: TestEmptyQuotedListItemsDoNotStartAContinuationSlide (0.00s)
+    markdownquote_test.go:219: read "# 제목\n- 하나\n- 둘\n- 셋\n- 넷\n- 다섯\n- >\n- >>\n" as "# 제목\n@cover\n> 월간 보고서.md\n\n# 제목\n- 하나\n- 둘\n- 셋\n- 넷\n- 다섯\n!source 월간 보고서.md | 제목\n\n# 제목 (계속)\n- \\>\n- \\>>\n!source 월간 보고서.md | 제목 (계속)\n\n", want "# 제목\n@cover\n> 월간 보고서.md\n\n# 제목\n- 하나\n- 둘\n- 셋\n- 넷\n- 다섯\n!source 월간 보고서.md | 제목\n\n"
+    markdownquote_test.go:222: empty quoted items started a continuation: "# 제목\n@cover\n> 월간 보고서.md\n\n# 제목\n- 하나\n- 둘\n- 셋\n- 넷\n- 다섯\n!source 월간 보고서.md | 제목\n\n# 제목 (계속)\n- \\>\n- \\>>\n!source 월간 보고서.md | 제목 (계속)\n\n"
+FAIL
+FAIL	github.com/hkjang/ptium/server/internal/docs	0.006s
+FAIL

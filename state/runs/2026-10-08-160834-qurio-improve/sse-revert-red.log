@@ -1,0 +1,173 @@
+
+> qurio-web@1.4.14 pretest
+> node ./scripts/ensure-deps.mjs
+
+
+> qurio-web@1.4.14 test
+> vitest run --run src/lib/api.test.ts
+
+
+ RUN  v4.1.11 /home/hkjang/.cache/auto-improve-wt/qurio/web
+
+ ❯ src/lib/api.test.ts (19 tests | 11 failed) 28ms
+     × decodes server-sent streaming deltas in order 10ms
+     × cancels and unlocks an open chat stream while preserving the server error 2ms
+     × cleans up after 'onDelta' throws (cancel rejects: false) 1ms
+     × cleans up after 'onEvent' throws (cancel rejects: false) 1ms
+     × cleans up after 'onDelta' throws (cancel rejects: true) 1ms
+     × cleans up after 'onEvent' throws (cancel rejects: true) 1ms
+     × unlocks a chat stream when its reader fails and preserves the read error 1ms
+     × unlocks when the final unterminated chat event callback throws 1ms
+     × parses named, multiline SSE events across arbitrary CRLF chunk boundaries 1ms
+     × surfaces an error event from a legacy Code stream 1ms
+     × delivers the terminal done event before surfacing a streamed agent error 1ms
+
+⎯⎯⎯⎯⎯⎯ Failed Tests 11 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/lib/api.test.ts > apiClient > decodes server-sent streaming deltas in order
+AssertionError: expected true to be false // Object.is equality
+
+- Expected
++ Received
+
+- false
++ true
+
+ ❯ src/lib/api.test.ts:25:25
+     23|
+     24|     expect(deltas).toEqual(['안녕', '하세요']);
+     25|     expect(body.locked).toBe(false);
+       |                         ^
+     26|     expect(cancel).not.toHaveBeenCalled();
+     27|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/11]⎯
+
+ FAIL  src/lib/api.test.ts > apiClient > cancels and unlocks an open chat stream while preserving the server error
+AssertionError: expected "vi.fn()" to be called 1 times, but got 0 times
+ ❯ src/lib/api.test.ts:46:22
+     44|       await expect(result).rejects.toBeInstanceOf(ApiError);
+     45|       await expect(result).rejects.toMatchObject({ status: 502, messag…
+     46|       expect(cancel).toHaveBeenCalledTimes(1);
+       |                      ^
+     47|       expect(body.locked).toBe(false);
+     48|     } finally {
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/11]⎯
+
+ FAIL  src/lib/api.test.ts > apiClient > cleans up after 'onDelta' throws (cancel rejects: false)
+ FAIL  src/lib/api.test.ts > apiClient > cleans up after 'onEvent' throws (cancel rejects: false)
+ FAIL  src/lib/api.test.ts > apiClient > cleans up after 'onDelta' throws (cancel rejects: true)
+ FAIL  src/lib/api.test.ts > apiClient > cleans up after 'onEvent' throws (cancel rejects: true)
+AssertionError: expected "vi.fn()" to be called 1 times, but got 0 times
+ ❯ src/lib/api.test.ts:78:22
+     76|       expect(onEvent).toHaveBeenCalledTimes(1);
+     77|       expect(onDelta).toHaveBeenCalledTimes(callback === 'onDelta' ? 1…
+     78|       expect(cancel).toHaveBeenCalledTimes(1);
+       |                      ^
+     79|       expect(body.locked).toBe(false);
+     80|     } finally {
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/11]⎯
+
+ FAIL  src/lib/api.test.ts > apiClient > unlocks a chat stream when its reader fails and preserves the read error
+AssertionError: expected true to be false // Object.is equality
+
+- Expected
++ Received
+
+- false
++ true
+
+ ❯ src/lib/api.test.ts:106:27
+    104|
+    105|       expect(deltas).toEqual(['안녕']);
+    106|       expect(body.locked).toBe(false);
+       |                           ^
+    107|       // An errored stream rejects cancellation without calling the so…
+    108|       expect(cancel).not.toHaveBeenCalled();
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/11]⎯
+
+ FAIL  src/lib/api.test.ts > apiClient > unlocks when the final unterminated chat event callback throws
+AssertionError: expected true to be false // Object.is equality
+
+- Expected
++ Received
+
+- false
++ true
+
+ ❯ src/lib/api.test.ts:130:25
+    128|     })).rejects.toBe(sentinel);
+    129|
+    130|     expect(body.locked).toBe(false);
+       |                         ^
+    131|     expect(cancel).not.toHaveBeenCalled();
+    132|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/11]⎯
+
+ FAIL  src/lib/api.test.ts > apiClient > parses named, multiline SSE events across arbitrary CRLF chunk boundaries
+AssertionError: expected true to be false // Object.is equality
+
+- Expected
++ Received
+
+- false
++ true
+
+ ❯ src/lib/api.test.ts:159:25
+    157|       { event: 'done', id: 'evt-7', retry: undefined, data: '{"status"…
+    158|     ]);
+    159|     expect(body.locked).toBe(false);
+       |                         ^
+    160|   });
+    161|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[6/11]⎯
+
+ FAIL  src/lib/api.test.ts > apiClient > surfaces an error event from a legacy Code stream
+AssertionError: expected true to be false // Object.is equality
+
+- Expected
++ Received
+
+- false
++ true
+
+ ❯ src/lib/api.test.ts:216:25
+    214|     })).rejects.toMatchObject({ status: 502, message: '내부 모델 연결이 중단되었습…
+    215|     expect(events).toEqual(['error', 'done']);
+    216|     expect(body.locked).toBe(false);
+       |                         ^
+    217|     expect(cancel).not.toHaveBeenCalled();
+    218|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[7/11]⎯
+
+ FAIL  src/lib/api.test.ts > apiClient > delivers the terminal done event before surfacing a streamed agent error
+AssertionError: expected true to be false // Object.is equality
+
+- Expected
++ Received
+
+- false
++ true
+
+ ❯ src/lib/api.test.ts:277:25
+    275|
+    276|     expect(events).toEqual(['error', 'done']);
+    277|     expect(body.locked).toBe(false);
+       |                         ^
+    278|     expect(cancel).not.toHaveBeenCalled();
+    279|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[8/11]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  11 failed | 8 passed (19)
+   Start at  16:21:00
+   Duration  864ms (transform 311ms, setup 165ms, import 281ms, tests 28ms, environment 295ms)
+

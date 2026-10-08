@@ -1,0 +1,8 @@
+2026/10/08 16:19:20 INFO app: initializing vector store provider provider=sqlite
+--- FAIL: TestSyncIMAPEnumerationFailureIsNotSuccess (0.24s)
+    imap_sync_test.go:172: sync status = succeeded, want failed (stats=map[duplicate:0 failed:0 new:0 oversize:0 parse_error:0 seen:0] error="")
+    imap_sync_test.go:176: diagnostic = &{Stage: Command: Class: Code: ElapsedMS:0 TimeoutMS:0 Attempts:1 Recovered: Protocol:imap Host:127.0.0.1 Port:41875 Security:none HostSessions:0 AccountSessions:0 SlotWaitMS:0 Sent:none SentStage: SentClass: Summary:IMAP 127.0.0.1:41875 (none) · 서버에 보낸 메일함이 없어 건너뛰었습니다}, want IMAP enumerate/FETCH rejection
+    imap_sync_test.go:196: IMAP commands = [LOGIN SELECT FETCH 1:1 (UID RFC822.SIZE) LIST LOGOUT], want [LOGIN SELECT FETCH 1:1 (UID RFC822.SIZE) FETCH 1:1 (UID RFC822.SIZE)] (UIDL and List must both try enumeration)
+FAIL
+FAIL	postra/internal/application	0.289s
+FAIL
