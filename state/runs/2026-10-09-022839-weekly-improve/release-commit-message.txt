@@ -1,0 +1,20 @@
+chore: v0.319.0 을 냅니다
+
+첨부 순서를 읽지 못한 업로드가 저장 전에 거절되게 한 cdc51f0 을 담습니다.
+버전 파일과 한국어 릴리즈 본문·로드맵을 갱신하고 로드맵 HTML·PDF 와 두 안내서
+HTML 을 다시 만들었습니다. 잠금 파일의 오래된 루트 버전 두 곳도 맞췄으며
+의존성은 바꾸지 않았습니다.
+
+uploadAttachments 의 nextOrder Scan 오류를 확인해 실패 시 트랜잭션·이미지
+파일 쓰기 전에 500 QUERY_FAILED 를 반환합니다. 실제 PostgreSQL·HTTP 시험이
+기존 행·파일·이미지 바이트 보존, 복구 뒤 단일 재시도와 BEFORE/AFTER 독립
+순서를 검증합니다. 마이그레이션·환경변수·설정 변경은 없습니다.
+
+별도 시험 DB 의 전체 Go 시험이 통과했습니다(internal/app 178.567초).
+참조 PPTX 파일이 없어 해당 시험 1개는 SKIP 입니다. vet/build/gofmt,
+변경 관련 가드 14개, 버전·OpenAPI·쪽넘김·모달 검사, 프런트엔드 두 시간대
+각 173개 시험·타입 검사·프로덕션 빌드·scripts/build.sh, 백업·복구 왕복을
+통과했습니다. UI 클릭과 새 오류 시나리오 PPTX 출력은 별도 미검증입니다.
+mutation/authz, gh 가 필요한 advisory release-check, Docker 설치 검사는
+실행하지 않았습니다. 기존 태그 워크플로가 오프라인 자산과 GitHub Release 를
+만들며 이 단계에서는 원격 푸시를 하지 않습니다.

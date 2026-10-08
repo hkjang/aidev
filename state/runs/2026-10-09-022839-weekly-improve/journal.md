@@ -28,3 +28,15 @@
 - 릴리즈/다음 회차: PATCH 최대 순서값 허용·동시 업로드 문제는 기존 범위로 남으며 이번 보장은 순서 조회 실패 시 저장 중단임.
 - [러너 02:50] review approved — 리뷰 승인 (risk=low)
 - [러너 02:50] pr created — https://github.com/hkjang/weekly/pull/33
+- [러너 03:15] ci passed — 검사 1개 모두 success
+- [러너 03:15] merge done — cdc51f0
+
+## 릴리즈 노트
+- 37efe44: chore: v0.319.0 을 냅니다. 기존 주석 태그 형식으로 v0.319.0 작성; detached HEAD 유지·hkjang 작성자·원격 푸시 없음.
+- 기존 0.x 마이너 증가 관례와 한국어 본문·로드맵·생성 문서 갱신. package-lock 루트 버전 두 곳도 맞추고 의존성은 유지.
+- 실제 별도 PostgreSQL DB 전체 Go PASS(internal/app 178.567초), 참조 PPTX 부재 시험 1개 SKIP. vet/build/gofmt, 가드 14개, 버전/OpenAPI/paging/modal, 프런트 두 시간대 각 173개·lint·프로덕션/실행 파일 빌드, 문서 생성, 백업·복구 PASS.
+- 릴리즈 본문에 오류 조건·검증 한계·배포 중단 기준·롤백 기록. UI 클릭·새 오류 PPTX·다른 DB 장애 주입·mutation/authz·원격 release-check·Docker install-check 미실행.
+- 태그 워크플로가 GitHub Release 및 Docker tar.gz 단일 자산을 생성하므로 github_release=false, assets=[]. release.json과 release-notes-v0.319.0.md를 회차 폴더에 보존.
+- Skill 도구가 없어 지정 두 스킬의 headcount 실파일을 읽고 적용(Tier three). 운영 배포 및 외부 사용자 체험·사후 관찰은 수행하지 않음.
+- [러너 03:38] release published — v0.319.0
+- [러너 03:40] assets verified — v0.319.0 자산 1개 (이전 v0.318.0: 1)
