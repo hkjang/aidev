@@ -1,0 +1,139 @@
+.bootstrap-login-form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.bootstrap-login-form label {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  color: #44535e;
+  font-size: var(--font-ui);
+  font-weight: 600;
+}
+
+.bootstrap-login-form input {
+  height: 43px;
+  border: 1px solid #d8e0e3;
+  border-radius: 8px;
+  padding: 0 12px;
+  outline: 0;
+  font-size: var(--font-ui);
+}
+
+.bootstrap-login-form input:focus {
+  border-color: #64a9a2;
+  box-shadow: 0 0 0 3px #0f766e14;
+}
+
+.bootstrap-login-form button {
+  margin-top: 4px;
+}
+
+.bootstrap-login-form button:disabled {
+  cursor: wait;
+  opacity: .65;
+}
+
+.login-error {
+  border: 1px solid #efd0ce;
+  border-radius: 7px;
+  background: #fff3f2;
+  color: #a23b3b;
+  padding: 9px 11px;
+  font-size: var(--font-body);
+}
+
+/* The organisation account is the door; the local administrator is folded
+   away underneath it as the recovery path, the way the appstore login does. */
+.notice {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  padding: 12px 14px;
+  margin-bottom: 18px;
+  border-radius: 10px;
+  background: var(--primary-soft);
+  color: #1f4f4b;
+  font-size: 13px;
+  line-height: 1.55;
+}
+
+.notice svg {
+  flex: none;
+  margin-top: 1px;
+  color: var(--primary);
+}
+
+.sso-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  text-decoration: none;
+}
+
+.local-login-toggle {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  margin-top: 22px;
+  padding: 14px 0 0;
+  border: 0;
+  border-top: 1px solid #edf0f1;
+  color: #6b7a84;
+  background: transparent;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.local-login-toggle:hover {
+  color: #1f2d36;
+}
+
+.local-login-toggle span {
+  flex: 1;
+  text-align: left;
+}
+
+.local-login-toggle svg:last-child {
+  transition: transform .2s ease;
+}
+
+.rotate-180 {
+  transform: rotate(180deg);
+}
+
+.bootstrap-login-form.fallback {
+  margin-top: 16px;
+}
+
+/* Shown for the moment between deciding on a silent sign-in and leaving for
+   Keycloak, so the login screen does not flash first. */
+.sso-splash {
+  height: 100%;
+  min-height: 60vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  color: var(--muted);
+  font-size: 14px;
+}
+
+.sso-splash-spinner {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  border: 3px solid var(--primary-soft);
+  border-top-color: var(--primary);
+  animation: sso-spin .9s linear infinite;
+}
+
+@keyframes sso-spin {
+  to { transform: rotate(360deg); }
+}
