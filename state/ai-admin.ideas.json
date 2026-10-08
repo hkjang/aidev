@@ -1,21 +1,12 @@
 [
   {
-    "title": "비스트리밍 chat 본문 절단 시 감사 reason 계약을 테스트로 고정",
-    "value": 2,
-    "risk": 1,
-    "size": "S",
-    "status": "done",
-    "note": "TestChatNonStreamingTruncationAuditContract의 정상/절단 두 서브테스트 추가. 실제 Migrate/Seed·로그인·공급자 생성·HTTP chat 배선으로 200 정상 원문과 절단 read error, 요청별 감사 정확히 1건 및 result/reason/complete/stream을 확인. 신규 단독 PASS(0.744s), 관련 4개 -race -count=3 PASS(41.284s), SKIP 없음. 프로덕션 수정 없음. timeout/cancel/write 재현은 범위 밖. 전체 go test -race -count=1 -v ./... exit 0(서버 160.579s; Keycloak E2E 1건만 환경 미설정 SKIP), make lint 및 go build ./... PASS. 커밋 8e65c33.",
-    "updated": "2026-10-07"
-  },
-  {
     "title": "updatePreferences 의 sidebarState·aiDefaults jsonb 검증이 main 에 없음",
     "value": 3,
     "risk": 1,
     "size": "S",
     "status": "pending",
-    "note": "users.go:updatePreferences 직접 확인: RawMessage를 검증 없이 처리. 두 헬퍼 검색 0건. f66d25c는 auto/2026-10-04-1142에만 있고 main에는 없음. 미머지 복구 여부가 먼저이며 재구현 금지.",
-    "updated": "2026-10-07"
+    "note": "users.go:updatePreferences RawMessage 무검증 저장 잔존. f66d25c는 auto/2026-10-04-1142에만 있음. 기존 브랜치 처리 결정 전 재구현 금지.",
+    "updated": "2026-10-08"
   },
   {
     "title": "updateKeyScope 의 name 을 varchar(160)·trim 계약에 맞춰 400 으로 막기",
@@ -23,17 +14,8 @@
     "risk": 1,
     "size": "S",
     "status": "pending",
-    "note": "keys.go:updateKeyScope는 검증 없이 request.Name을 UPDATE. b5146f2 포함 브랜치는 auto/2026-10-01-1412이며 main 미포함. verify-failed 원인 미확인: 같은 접근 재시도 금지.",
-    "updated": "2026-10-07"
-  },
-  {
-    "title": "updateKeyScope·updateRole 의 description 이 trim 되지 않는 비대칭",
-    "value": 1,
-    "risk": 1,
-    "size": "S",
-    "status": "rejected",
-    "note": "두 핸들러 직접 확인. text 설명의 선행/후행 공백을 제거해야 한다는 API 요구는 확인되지 않음. 단순 비대칭만으로 기존 저장 의미를 바꾸는 개선은 타당성이 낮아 기각; NUL 검증은 별도 문제.",
-    "updated": "2026-10-07"
+    "note": "keys.go:updateKeyScope 무검증 UPDATE 잔존. b5146f2는 auto/2026-10-01-1412에만 있음. verify-failed 원인 미확인으로 같은 접근 재시도 금지.",
+    "updated": "2026-10-08"
   },
   {
     "title": "감사 CSV 문서의 '성공 다운로드=전체 이벤트' 문구를 50,000건 상한과 맞추기",
@@ -41,8 +23,8 @@
     "risk": 1,
     "size": "S",
     "status": "pending",
-    "note": "docs/api.md 감사 절에 모두 담긴 것이라는 문구 잔존, audit_events.go auditExportLimit=50000 및 endpoint 표 상한 확인. 사실상 문서 오류이나 단독 가치는 낮고 이번 테스트 과제와 무관.",
-    "updated": "2026-10-07"
+    "note": "docs/api.md 감사 절의 모두 담긴 것 문구와 audit_events.go:auditExportLimit=50000 불일치 재확인. 이번 chat 계약과 무관하여 묶지 않음.",
+    "updated": "2026-10-08"
   },
   {
     "title": "updateProfile 의 email 빈 문자열이 '변경 없음' 이 아니라 'NULL 로 삭제' 인 계약이 문서에 없음",
@@ -50,17 +32,17 @@
     "risk": 1,
     "size": "S",
     "status": "pending",
-    "note": "users.go:updateProfile에서 Email 포인터 supplied + trim 빈값이면 SQL NULL 쓰기 확인, 생략/null은 유지. docs/api.md에 빈값 의미 없음. 실제 빈값 재현은 미실행. 차선은 현재 동작 테스트·문서화만, 400 변경 금지.",
-    "updated": "2026-10-07"
+    "note": "users.go:updateProfile Email 포인터·emailSupplied SQL로 빈값은 NULL, 생략/null은 유지 확인. docs/api.md에는 의미 없음. HTTP 재현 미확인. 차선: 테스트/문서화만, 400 변경 금지.",
+    "updated": "2026-10-08"
   },
   {
     "title": "웹 폼의 서버 상한 동기화 묶음(RolesPage 120자·key-scope 이름 160자·CurrentUser.department 죽은 타입 제거)",
     "value": 1,
-    "risk": 1,
+    "risk": 2,
     "size": "S",
     "status": "pending",
-    "note": "RolesPage 역할 이름 Input에 상한 없음, types/api.ts:27 department 잔존 확인. scope 편집은 SecurityKeysPage.tsx이며 이름 PATCH 경로 확인; scope Input 상세 상한은 미확인. 앱 수정 시 dist 재빌드, 백엔드 scope 검증 실패 이력과 분리.",
-    "updated": "2026-10-07"
+    "note": "RolesPage와 SecurityKeysPage 권한 이름 Input에 maxLength 없음, types/api.ts department 잔존 재확인. 단순 HTML maxLength는 UTF-16 단위라 Go rune 상한과 다를 수 있어 접근 검토 필요. dist 재빌드 및 scope 실패 이력 때문에 위험 2로 재평가.",
+    "updated": "2026-10-08"
   },
   {
     "title": "회전 승인 실행의 errKeyStale 반환 지점을 details 필드명으로 구별",
@@ -68,8 +50,8 @@
     "risk": 2,
     "size": "M",
     "status": "pending",
-    "note": "workflow.go:executeApprovedOperation에 다수 errKeyStale 반환 잔존을 검색 확인. 분기별 의미 재분석은 미확인. 위험 구역이므로 이번 선택에서 제외.",
-    "updated": "2026-10-07"
+    "note": "workflow.go에 다수 errKeyStale 반환 잔존. 분기별 세부 계약 미확인. 승인 위험 구역이고 details에 원문을 넣는 방식 금지.",
+    "updated": "2026-10-08"
   },
   {
     "title": "chat 요청의 upstream 비스트리밍 응답 크기 상한",
@@ -77,8 +59,8 @@
     "risk": 3,
     "size": "S",
     "status": "pending",
-    "note": "providers.go 성공은 relayChatBody로 무제한 복사, 오류 응답만 LimitReader(64<<10), client.Timeout 적용 확인. 허용 크기 정책 미정이며 동작 변경 위험이 커 보류.",
-    "updated": "2026-10-07"
+    "note": "providers.go:relayChatBody 성공 응답 무제한 복사, 실패 응답 LimitReader(64<<10) 확인. 허용 크기 정책 미정이므로 보류.",
+    "updated": "2026-10-08"
   },
   {
     "title": "합성 레거시 스키마·데모 시드를 scripts/ 의 재사용 가능한 SQL 로 승격",
@@ -86,8 +68,8 @@
     "risk": 2,
     "size": "M",
     "status": "pending",
-    "note": "integration_test.go:946 부근 합성 CREATE TABLE/INSERT 묶음 직접 확인. Pages CI 44개 이미지 일치 조건 유지 중. SQL 분리 조각으로 제한해도 소비자 분석 필요, 이번 범위 초과.",
-    "updated": "2026-10-07"
+    "note": "integration_test.go 946~983 부근 CREATE/INSERT 묶음 잔존. Pages CI 44개 WebP 일치 조건 재확인. 소비자 전체 분석 미확인이라 이번 범위 제외.",
+    "updated": "2026-10-08"
   },
   {
     "title": "legacyRequestTrend·legacyTokenTotal 실패를 화면에서 구별할 수 없음",
@@ -95,8 +77,8 @@
     "risk": 2,
     "size": "M",
     "status": "pending",
-    "note": "legacy.go:75/87 직접 확인: Scan 오류 무시 및 Query 오류 빈 배열, rows.Err 확인 없음. 화면 전달 변경과 웹 dist 갱신 필요해 테스트 1파일 과제보다 큼.",
-    "updated": "2026-10-07"
+    "note": "legacy.go:legacyTokenTotal Scan 오류 무시, legacyRequestTrend Query 오류 빈 배열·rows.Err 누락 잔존. 최종 화면 계약 변경 범위가 더 큼.",
+    "updated": "2026-10-08"
   },
   {
     "title": "공급자 생성·수정이 거부하는 값을 승인 실행 경로에서도 같은 코드로 거부하는지 테스트로 고정",
@@ -104,17 +86,17 @@
     "risk": 2,
     "size": "M",
     "status": "pending",
-    "note": "workflow.go:executeApprovedProviderChange가 normalize 후 validateProviderRequest(request,true) 호출함을 확인. 저장 payload 변형·승인 트랜잭션 경유 방법은 미확인. 일반 API와 승인 오류 코드는 같다고 가정하지 말 것. 독립 승인 셋업 때문에 위험/작업량 재평가.",
-    "updated": "2026-10-07"
+    "note": "workflow.go:executeApprovedProviderChange가 normalizeProviderRequest 뒤 validateProviderRequest(request,true) 호출 재확인. 승인 실패 오류 코드는 일반 API와 같다고 가정하지 말 것. 별도 승인 셋업 미확인.",
+    "updated": "2026-10-08"
   },
   {
     "title": "chat 요청의 첫 JSON 뒤에 붙은 추가 JSON·쓰레기 문자를 거부",
-    "value": 2,
-    "risk": 2,
+    "value": 3,
+    "risk": 1,
     "size": "S",
-    "status": "pending",
-    "note": "신규. providers.go:chatCompletions는 Decoder.Decode 한 번 후 EOF 검사를 하지 않음. 정상 객체 뒤 두 번째 객체가 무시될 가능성은 소스상 추론이며 HTTP 재현 미실행. 미래 과제는 chat 한 경로로 제한하고 공용 decodeJSON까지 확대하지 말 것.",
-    "updated": "2026-10-07"
+    "status": "done",
+    "note": "424a42e 구현 완료. 같은 Decoder의 두 번째 Decode가 정확히 io.EOF일 때만 진행한다. 전용 PostgreSQL Migrate/Seed → New(...).Handler() → signIn → 실제 공급자 생성/HTTP chat으로 후행 객체/null/쓰레기 및 공백 포함 4 MiB 초과의 수정 전 200·upstream 1회를 재현했다. 수정 후 400 invalid_json·upstream 0회, 공급자 선택 전 거부, 정상/공백/정확히 4 MiB의 200·1회·messages/seed 보존·provider_id 제거·최종 JSON 전달을 8개 사례로 확인했다. EOF 검사 제거 시 같은 실패 재현 후 복구·재통과. 관련/전체 race, lint, build, diff 통과. Keycloak E2E 1건은 환경 미설정 SKIP; 웹과 첫 값 null은 범위 밖.",
+    "updated": "2026-10-08"
   },
   {
     "title": "chat 요청 최상위 null을 공급자 설정 오류가 아닌 invalid_json으로 거부",
@@ -122,16 +104,43 @@
     "risk": 1,
     "size": "S",
     "status": "pending",
-    "note": "신규. chatCompletions의 map 디코딩 후 nil 검사 없이 provider_id와 기본 공급자 조회로 진행함을 확인. null이 503 또는 모델 오류로 나갈 가능성은 추론, 기본 공급자 유무별 실제 응답 미확인. 먼저 프로덕션 라우트 테스트로 재현할 것.",
-    "updated": "2026-10-07"
+    "note": "실제 HTTP에서 기본 공급자 미설정일 때 null → 503 provider_not_configured·upstream 0회 재현. 기본 공급자 존재 시 응답/잠재 panic은 미확인. 선택한 후행 JSON 문제와 분리.",
+    "updated": "2026-10-08"
   },
   {
-    "title": "auto-improve: fix: aiDefaults 를 요청 원문이 아니라 검증을 통과한 값으로 저장해 짝 없는 surrogate·깨진 UTF-8 이 jsonb 에 닿아 500 이 되는 것을 막기",
+    "title": "chat 확장 숫자(seed)의 2^53 초과 정수 정밀도를 upstream까지 보존",
     "value": 3,
     "risk": 2,
     "size": "M",
     "status": "pending",
-    "updated": "2026-10-07",
-    "note": "https://github.com/hkjang/ai-admin/pull/38 (PR 처리기가 3일 전에 더 진행할 수 없다고 판정했고(수정·심사를 2번 시도했지만 통과하지 못함) 그 뒤 사람 손이 닿지 않았습니다) 로 닫힘 — 다시 하려면 처음부터"
+    "note": "신규. 실제 HTTP 입력 seed=9007199254740993가 upstream에서 9007199254740992로 바뀜을 재현. map[string]any float64 Decode 후 Marshal 경로. numberAsInt는 json.Number도 지원하지만 Int64 처리 때문에 지수표기 토큰 계약 변경 가능성이 있어 UseNumber를 무턱대고 도입하지 말 것. 별도 숫자 호환성 과제.",
+    "updated": "2026-10-08"
+  },
+  {
+    "title": "프로필 PATCH의 후행 JSON 거부를 한 라우트로 제한해 검토",
+    "value": 2,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "신규. response.go:decodeJSON은 1회 Decode, users.go:updateProfile에서 사용함을 직접 확인. 정상 프로필 객체 뒤 추가 JSON 수용 가능성은 소스상 추론이며 HTTP 재현 미확인. 모든 라우트 공용 파서를 한꺼번에 강화하지 말고 한 경로 계약부터 검토.",
+    "updated": "2026-10-08"
+  },
+  {
+    "title": "비스트리밍 chat 본문 절단 시 감사 reason 계약을 테스트로 고정",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "done",
+    "note": "이전 회차 8e65c33 구현 성공 기록 있음. git branch --contains로 auto/2026-10-07-1217 및 origin 브랜치만 확인, 현재 main에는 아직 없음. done은 구현 완료 이력이며 main 머지 완료 의미가 아님. 재구현 금지.",
+    "updated": "2026-10-08"
+  },
+  {
+    "title": "updateKeyScope·updateRole description trim 비대칭만 통일",
+    "value": 1,
+    "risk": 1,
+    "size": "S",
+    "status": "rejected",
+    "note": "이전 개선 기록의 보류 항목 유지. text 컬럼 계약이며 trim 통일만으로 사용자 입력 의미를 바꿀 근거가 없음. 관찰 가능한 오류나 명시적 요구가 생기기 전 단독 과제로 선정하지 않음.",
+    "updated": "2026-10-08"
   }
 ]

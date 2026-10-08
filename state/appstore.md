@@ -345,3 +345,20 @@
 - 범위: REMOTE_STATUS, appStatusLabel, 배지, verified 기반 제출 조건, 서버·API 계약, mock fixture를 변경하지 않았다. 14개 기존 아이디어(정찰에서 추가한 2개 포함)를 유지하고 이번 항목만 done으로 갱신했다. 산출물은 기존 ignore 대상이며 커밋에 포함하지 않았고 버전·릴리즈·원격 변경도 없다.
 
 - 릴리즈: v2.11.16 (2026-10-07, run 2026-10-07-121755-appstore-improve)
+## 2026-10-08
+- 선택: 앱 등록·수정 완료 화면에 저장 응답의 실제 상태를 표시한다 (가치 3 / 위험 1 / 작업량 M)
+- 결과: 성공
+- 요약: AppFormPage가 저장 결과를 버리고 boolean만 보관해 모든 완료 화면에 즉시 게시/검토 대기를 예고하는 것이 원인이었다. onSuccess(saved)의 StoreApp을 보관해 기존 appStatusLabel로 현재 상태를 표시하고 안내를 중립적으로 바꿨으며, 문서 적용 성공 후에만 완료되는 순서·제목·내 앱 이동을 보존했다. 제품 1파일과 테스트 2파일을 edc94a7로 커밋했고, HTTP 경계만 대체한 대상 Vitest 19건·전체 React 126건·lint·Prettier·build·offline/env/docs/diff 검사 및 실제 Vite 번들 desktop/mobile E2E 2건이 통과했다.
+- 실패 재현: `× Saved application completion > shows the POST response status draft as 초안` / `Expected element to have text content: 현재 상태: 초안 / Received: 앱이 등록되었습니다승인 Workflow 설정에 따라 즉시 게시되거나 검토 대기 상태가 됩니다.내 앱으로 이동` (red.log: 9 failed | 10 passed, 제품 파일만 원복한 revert-red.log에서도 동일 9건 실패)
+- 보류 아이디어: 가이드 문서 복수 선택 시 첫 실패 사유와 실패 수 표시 (가치 2 / 위험 1 / 작업량 S) — 차선이며 이번 범위에서 제외.
+- 보류 아이디어: app-form-page 입력 검증 및 첨부 실패·재시도 공백 (가치 3 / 위험 1 / 작업량 M) — 제출/업로드 실패 일부 보강, 전체 validation·삭제·재시도까지 완료한 것은 아님.
+- 보류 아이디어: 즐겨찾기 검색 결과 없음 안내 (가치 3 / 위험 2 / 작업량 S) — 미병합 변경과 중복 위험 유지.
+- 보류 아이디어: Field 오류와 aria-invalid/aria-describedby 연결 (가치 2 / 위험 2 / 작업량 M) — 공용 children 계약 영향으로 보류.
+- 과제서: 채택 — HEAD 755d25b의 boolean 완료 상태·고정 예고 문구와 create/update API의 StoreApp 반환이 과제서와 일치해 지정 범위 그대로 구현했다.
+- 스킬: Skill 호출 도구가 없어 `/mnt/c/Users/USER/projects/headcount/plugins/technology/skills/{completion-verification,systematic-debugging,test-driven-development}/SKILL.md` 원문을 읽고 적용했다. 원인 가설을 실제 제출 DOM으로 검증하고 수정 전 실패→수정 후 통과→제품만 원복 시 재실패→복원 후 통과를 확인했다.
+- 테스트 범위: 기존 수정 대상 없음/목록 복귀/초기값/조회 500 4건 유지. 신규 15건은 POST draft/published/pending_review/누락/미지 값 5건, 기존 published 조회와 다른 PUT pending_review/rejected/archived 3건, 등록·수정 목록 이동 2건, POST/PUT 실패 2건, 등록·수정 후 문서 업로드 실패 2건, 문서 적용을 기다린 후 완료 1건이다. AppFormPage·MyAppsPage·실제 API 클라이언트·React Router·QueryClient·AuthProvider·FavoritesProvider를 사용하고 fetch만 대체했다. E2E는 실제 앱 라우터와 번들에서 폼 입력·등록·초안 완료·내 앱 이동을 desktop/mobile 모두 실행했다.
+- 검증 근거: `npm --prefix web ci --no-audit --no-fund` 성공, `npm --prefix web test -- src/pages/app-form-page.test.tsx` 기준선 4 passed(baseline.log), 신규 추가 시 9 failed/10 passed(red.log), 수정 후 19 passed(green.log), 제품 원복 시 9 failed/10 passed(revert-red.log), 최종 복원·포맷·타입 수정 후 19 passed(green-final.log). `npm --prefix web test` 17 files/126 passed(react-tests.log), `npm --prefix web run lint` exit 0(lint.log), `(cd web && npx prettier --check src/pages/app-form-page.tsx src/pages/app-form-page.test.tsx e2e/core.spec.ts)` exit 0(prettier.log), `npm --prefix web run build` exit 0(build.log), `./scripts/check-offline-assets.sh web/dist`, `./scripts/check-env-contract.sh`, `./scripts/check-docs.sh` 모두 exit 0(offline.log/env.log/docs.log). `(cd web && npx playwright install chromium)` exit 0(chromium.log), `CI=true npm --prefix web run test:e2e -- --grep '초안 등록 완료 상태를 표시한다' --workers=2 --retries=0 --reporter=list` 2 passed/0 skipped(e2e.log), `git diff --check` exit 0(diff-check.log).
+- 검증 중 수정: 최초 build에서 새 Vitest getByRole의 지원되지 않는 exact 옵션을 TS2769로 검출(build-initial.log)해 제거하고 대상/전체 테스트·lint·포맷·build를 다시 통과했다. Chromium 설치는 첫 다운로드 후 chmod ENOENT가 한 번 발생했으나 도구의 자동 재시도 후 성공했으며 원인은 확정하지 않았다. npm의 기존 whatwg-encoding 폐기 안내와 Playwright의 NO_COLOR/FORCE_COLOR 경고가 있었고 최종 모든 지정 검사는 성공했다.
+- 검증 한계: Go build/race, 실제 DB·Keycloak·SecCheck 통합, Docker smoke, 전체 E2E는 이번 프런트 표시 범위에서 실행하지 않았다. HTTP fixture 결과는 실제 보안 게이트 연동 성공을 뜻하지 않으며, 문서 업로드 재시도 구조·보안 정책·공용 라벨 함수는 변경하지 않았다.
+- 범위: 버전·릴리즈·원격 변경 없음. 산출물은 기존 ignore 대상이며 커밋에는 제품 1파일+테스트 2파일만 포함했다. 정찰의 신규 2개를 포함한 기존 아이디어 15개를 모두 유지하고 이번 선택을 done으로 갱신했다.
+

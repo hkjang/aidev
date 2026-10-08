@@ -1,0 +1,13 @@
+{
+  "verdict": "approve",
+  "reasons": [],
+  "notes": [
+    "[정확성·테스트/비차단] main@71dad05...HEAD@424a42e의 3파일을 확인했다. 같은 Decoder의 두 번째 Decode가 정확히 io.EOF일 때만 공급자 선택으로 진행한다. 원장 실패 재현과 red/revert-red 로그는 실제 후행 입력의 200·upstream 1회 및 미존재 공급자의 503을 보여 주며 수정 대상 증상과 일치한다.",
+    "[독립 검증/비차단] 새 전용 폐기 PostgreSQL에서 TestChatRequestJSONContract(8사례), TestChatNonStreamingResponseContentTypeContract, TestChatAnswerCutShortIsNotDeliveredAsComplete, TestRelayChatBodyReportsWhyTheAnswerStopped, TestEndToEndAPI를 -race -count=1 -v로 실행: 최상위 5개 PASS, SKIP 없음, 29.643초. 정확히 4 MiB 허용/1바이트 초과 거부, 공급자 호출 횟수, 요청 필드 보존, 응답 전달 확인. 전용 컨테이너 제거 완료.",
+    "[정확성/기존 문제·비차단] internal/server/providers.go:597: 첫 값이 null이면 payload가 nil이고 활성 기본 공급자 로드 후 model 대입에서 panic→500 경로가 남는다. main의 동일 경로와 대조했으며 이번 변경이 도입한 회귀는 아니다. null의 실제 HTTP 재현은 이번 리뷰에서 수행하지 않았다. 별도 회차에서 최상위 객체 검증과 기본 공급자 포함 테스트를 검토할 것.",
+    "[보안·개인정보·범위/비차단] authenticate→aiRequestSecurity→ai.use/ai:chat 검사와 기존 공급자 선택·비밀값 처리·로그/감사 경로를 확인했다. 기존 채팅 데이터의 공급자 전송 외 새로운 수집·저장·전송·보존 변경이 없고 거부 본문을 로그나 오류에 추가하지 않는다. 권한 확대·새 의존성·라이선스 변경·마이그레이션·외부 약속 추가 없이 revert 가능하다. 이번 diff에서 구체적인 신규 공격 경로나 부서 차단 사유를 발견하지 못했다.",
+    "[검증 한계/비차단] 전체 race/lint/build는 구현 로그를 확인했고 전체 재실행은 하지 않았다. Keycloak 실제 E2E 및 웹 테스트/빌드는 이번 리뷰에서 실행하지 않았다. 전용 Skill 도구가 없어 설치된 legal-risk:privacy-and-data-protection, security:security-architecture-review, technology:code-review의 SKILL.md와 관련 sources.md를 직접 읽어 적용했다. 저장소 코드는 수정하지 않았다."
+  ],
+  "risk": "low",
+  "blocking": []
+}

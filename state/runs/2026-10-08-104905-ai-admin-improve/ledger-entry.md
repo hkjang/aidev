@@ -1,0 +1,11 @@
+## 2026-10-08
+- 선택: chat 요청의 첫 JSON 뒤 추가 JSON·쓰레기 문자를 공급자 호출 전에 400으로 거부 (가치 3 / 위험 1 / 작업량 S)
+- 결과: 성공
+- 요약: `chatCompletions`가 같은 Decoder로 두 번째 값을 읽어 정확히 `io.EOF`일 때만 공급자 선택으로 진행하도록 수정하고, 기존 4 MiB 한도·자유 확장 필드·float64 파싱·오류 코드/메시지는 유지했다(424a42e, 프로덕션 `providers.go` 1파일 + 신규 통합 테스트 1파일 + `docs/api.md` 계약 한 문장). 전용 폐기 PostgreSQL의 Migrate/Seed → New(...).Handler() → signIn → 실제 HTTP 공급자 생성·chat 경로에서 후행 객체/null/쓰레기 및 공백 포함 4 MiB 초과가 수정 전 200·upstream 1회임을 확인했고, 수정 후 거부 5사례의 400 invalid_json·호출 0회와 정상/공백/정확히 4 MiB의 200·호출 1회·messages/seed=42 보존·provider_id 제거·최종 JSON 원문 전달을 확인했다. 신규 단독 8사례 PASS(0.717s), EOF 검사만 제거해 같은 5사례 FAIL 후 복구·재통과, 관련 4개 `go test -race -count=1 -run 'Test(ChatRequestJSONContract|ChatNonStreamingResponseContentTypeContract|ChatAnswerCutShortIsNotDeliveredAsComplete|RelayChatBodyReportsWhyTheAnswerStopped)$' -v ./internal/server` PASS(14.511s, SKIP 없음), `go test -race -count=1 -v ./...` exit 0(서버 153.940s, TEST_KEYCLOAK_ISSUER 미설정 E2E 1건만 SKIP), `make lint`·`go build ./...`·`git diff --check` 통과 후 전용 컨테이너 제거와 깨끗한 작업 트리를 확인했다.
+- 실패 재현: `chat_request_json_integration_test.go:190: upstream calls=1 want=0` / `chat_request_json_integration_test.go:193: status=200 want=400 body={"id":"chatcmpl-json-contract","choices":[{"message":{"role":"assistant","content":"안녕하세요 {} null xyz"}}]}` — 후행 객체/null/쓰레기/4 MiB 초과 공백 4건 동일; 미존재 공급자+후행 객체는 400 대신 503 provider_unavailable(로그: chat-json-red.log, 역검증: chat-json-revert-red.log).
+- 보류 아이디어:
+  - updatePreferences sidebarState·aiDefaults 검증 미머지 처리 (가치 3 / 위험 1 / S) — f66d25c 처리 결정 전 재구현 금지.
+  - updateKeyScope 이름 검증 보강 (가치 2 / 위험 1 / S) — b5146f2 verify-failed 원인 확인 전 같은 접근 재시도 금지.
+  - 감사 CSV 문서의 전체 이벤트 문구를 50,000건 상한과 맞추기 (가치 1 / 위험 1 / S) — 이번 chat 절 외 수정 금지 범위에 따라 보류.
+  - 프로필 email 빈 문자열의 NULL 삭제·생략/null 유지 계약 테스트·문서화 (가치 1 / 위험 1 / S) — 차선 유지, 기존 동작을 400으로 변경하지 않음.
+- 과제서: 채택 — 현재 Decode 1회와 공급자 선택 순서가 과제서와 일치했고, 지정된 3파일 범위·실제 DB/HTTP 배선으로 수용 기준을 red→green→revert-red→green 검증했으며 미확인이던 4 MiB 초과 후행 공백도 수정 전 재현했다.

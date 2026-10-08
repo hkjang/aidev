@@ -94,8 +94,8 @@
     "value": 3,
     "risk": 1,
     "size": "S",
-    "status": "pending",
-    "note": "이번 선택. providers.go:chatCompletions Decode 1회. 실제 main 서버+전용 PostgreSQL+로그인/공급자 API로 후행 {}·null·xyz 모두 200, upstream 각 1회 재현. 정상/공백도 200/1회. 프로덕션 1파일+통합 1파일+문서, 같은 Decoder의 두 번째 Decode가 정확히 EOF일 때만 수용.",
+    "status": "done",
+    "note": "424a42e 구현 완료. 같은 Decoder의 두 번째 Decode가 정확히 io.EOF일 때만 진행한다. 전용 PostgreSQL Migrate/Seed → New(...).Handler() → signIn → 실제 공급자 생성/HTTP chat으로 후행 객체/null/쓰레기 및 공백 포함 4 MiB 초과의 수정 전 200·upstream 1회를 재현했다. 수정 후 400 invalid_json·upstream 0회, 공급자 선택 전 거부, 정상/공백/정확히 4 MiB의 200·1회·messages/seed 보존·provider_id 제거·최종 JSON 전달을 8개 사례로 확인했다. EOF 검사 제거 시 같은 실패 재현 후 복구·재통과. 관련/전체 race, lint, build, diff 통과. Keycloak E2E 1건은 환경 미설정 SKIP; 웹과 첫 값 null은 범위 밖.",
     "updated": "2026-10-08"
   },
   {

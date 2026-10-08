@@ -5,7 +5,7 @@
     "risk": 1,
     "size": "M",
     "status": "pending",
-    "note": "기존 app-form-page.test.tsx는 수정 대상 없음/복귀/초기값/조회 500 4건뿐. 이번 완료 상태 과제로 제출 경로 일부를 보강하되 전체 validation·첨부 실패 공백까지 해결됐다고 처리하지 말 것.",
+    "note": "부분 보강: HTTP 경계만 대체해 등록/수정 저장 상태, POST/PUT 500, 후속 문서 업로드 500, 문서 대기 후 성공, 완료 후 내 앱 이동을 추가했다. 기존 조회 4건 보존. 전체 입력 validation·첨부 삭제 실패·업로드 실패 후 재시도 계약은 미검증이므로 pending 유지.",
     "updated": "2026-10-08"
   },
   {
@@ -103,8 +103,8 @@
     "value": 3,
     "risk": 1,
     "size": "M",
-    "status": "pending",
-    "note": "이번 선택. createApp/submitOrHold의 draft 성공 반환, AppFormPage 완료 고정 문구를 확인. 저장 응답 status+appStatusLabel 재사용; 제품 1파일/테스트 2파일. 브라우저 재현은 미실행, Vitest는 의존성 부재 exit 127.",
+    "status": "done",
+    "note": "edc94a7로 완료. onSuccess(saved)의 StoreApp을 완료 상태로 보관하고 appStatusLabel로 실제 응답 상태를 표시한다. 제품 1파일 + 테스트 2파일. 대상 Vitest 19건(신규 15), 전체 126건, 실제 Vite 번들 desktop/mobile E2E 2건 통과. 수정 전/제품 원복 시 동일 9건 실패 확인.",
     "updated": "2026-10-08"
   },
   {

@@ -5,8 +5,8 @@
     "risk": 1,
     "size": "M",
     "status": "pending",
-    "note": "app-form-page.test.tsx의 기존 4건은 없음/복귀/폼 초기값/500만 검사한다. createApp/updateApp 및 documents.apply 제출 공백 유지. 순수 테스트 단독 제출보다 사용자 결함 수정과 함께 처리.",
-    "updated": "2026-10-07"
+    "note": "부분 보강: HTTP 경계만 대체해 등록/수정 저장 상태, POST/PUT 500, 후속 문서 업로드 500, 문서 대기 후 성공, 완료 후 내 앱 이동을 추가했다. 기존 조회 4건 보존. 전체 입력 validation·첨부 삭제 실패·업로드 실패 후 재시도 계약은 미검증이므로 pending 유지.",
+    "updated": "2026-10-08"
   },
   {
     "title": "/favorites 에서 검색하면 즐겨찾기가 있는데도 '즐겨찾기한 앱이 없습니다' 가 뜬다",
@@ -14,8 +14,8 @@
     "risk": 2,
     "size": "S",
     "status": "pending",
-    "note": "public-pages.tsx:385 부근 동일 문구와 !favoritesOnly 액션 제한 확인. 0898f7a가 HEAD 8370b8d의 조상이 아님(exit 1); 원격 PR 상태 미확인. 중복 위험 때문에 계속 보류.",
-    "updated": "2026-10-07"
+    "note": "public-pages.tsx의 favoritesOnly 고정 빈 안내/액션 제한 유지. 0898f7a는 현재 HEAD 조상이 아님(exit 1). 원격 PR 상태 미확인으로 중복 위험 유지.",
+    "updated": "2026-10-08"
   },
   {
     "title": "Field 가 error 를 렌더하면서 aria-invalid/aria-describedby 를 컨트롤에 연결하지 않는다",
@@ -23,8 +23,8 @@
     "risk": 2,
     "size": "M",
     "status": "pending",
-    "note": "ui.tsx:Field의 error span은 role=alert만 있으며 두 children 계약 유지. 공용 컴포넌트 영향과 주입 방식 설계 필요.",
-    "updated": "2026-10-07"
+    "note": "ui.tsx:Field는 ReactNode 또는 render function children을 지원하며 오류 span role=alert만 제공. 공용 계약 영향 때문에 보류.",
+    "updated": "2026-10-08"
   },
   {
     "title": "가이드 문서 여러 개를 한 번에 고르면 실패 메시지가 마지막 한 건만 남는다",
@@ -32,17 +32,8 @@
     "risk": 1,
     "size": "S",
     "status": "pending",
-    "note": "guide-documents.tsx:useGuideDocumentDraft.add의 error=failure와 setPickError(error) 확인. 차선: 첫 실패 사유+실패 파일 수로 범위를 축소하고 기존 alert 재사용.",
-    "updated": "2026-10-07"
-  },
-  {
-    "title": "보안 심의 화면의 '최종 결과'(finalResult) 가 SecCheck 원문 코드를 그대로 보여 준다",
-    "value": 3,
-    "risk": 1,
-    "size": "S",
-    "status": "done",
-    "note": "27b0dbf: owner-page.tsx의 최종 결과 행에 로컬 3개 라벨과 원문/빈 값 폴백 적용. HTTP 하네스 DOM 6건 추가: 번역 3건 수정 전 및 원복 시 실패, 수정 후 전체 111건 통과. 기존 E2E에 최종 결과 행 단정 추가, desktop/mobile 모두 통과. verified 및 서버 계약 불변.",
-    "updated": "2026-10-07"
+    "note": "guide-documents.tsx:useGuideDocumentDraft.add에서 error=failure로 덮음. 첫 실패 사유+실패 수로 좁힌 차선; 기존 alert와 테스트 하네스 재사용 가능.",
+    "updated": "2026-10-08"
   },
   {
     "title": "E2E mock API 의 public config override 가 기본값에 덮여 무효",
@@ -50,8 +41,8 @@
     "risk": 1,
     "size": "S",
     "status": "pending",
-    "note": "mock-api.ts:314의 ...options.config 뒤에 siteName/workflowEnabled 등 기본값을 덮음. 설정 주입이 필요한 사용자 시나리오와 묶어야 함. 이번 과제는 mock 수정 불필요.",
-    "updated": "2026-10-07"
+    "note": "mock-api.ts /public/config에서 ...options.config 뒤에 siteName/workflowEnabled 등 기본값 배치 유지. 설정에 의존하는 사용자 시나리오와 묶어야 하며 이번 scoped POST fixture에는 불필요.",
+    "updated": "2026-10-08"
   },
   {
     "title": "상위 100개 밖의 즐겨찾기 앱이 /favorites 에 아예 안 나옴",
@@ -59,8 +50,8 @@
     "risk": 3,
     "size": "M",
     "status": "pending",
-    "note": "public-pages.tsx의 pageSize=favoritesOnly?100:24 및 응답 slug 필터 재확인. public_handlers.go:listApps 상한 100. 조회/API 계약과 미병합 변경 중복 위험 유지.",
-    "updated": "2026-10-07"
+    "note": "public-pages.tsx pageSize=100 뒤 slug 필터, public_handlers.go:listApps maximum=100 유지. API 계약/미병합 변경 중복 위험으로 보류.",
+    "updated": "2026-10-08"
   },
   {
     "title": "clientAddress 가 RemoteAddr 만 보아 reverse proxy 뒤에서 rate limit 이 전역",
@@ -68,8 +59,8 @@
     "risk": 3,
     "size": "M",
     "status": "pending",
-    "note": "ratelimit.go:clientAddress가 r.RemoteAddr만 파싱하는 현재 구현 확인. 신뢰 프록시 정책부터 정해야 하므로 이번에 보호 경로 변경 금지.",
-    "updated": "2026-10-07"
+    "note": "ratelimit.go:clientAddress는 RemoteAddr만 사용. 실제 프록시 설정은 미확인; 신뢰 프록시 정책 선행으로 보호 경로 제외.",
+    "updated": "2026-10-08"
   },
   {
     "title": "관리자 시스템 설정의 Page Size 가 어디에도 쓰이지 않는다",
@@ -77,8 +68,8 @@
     "risk": 3,
     "size": "M",
     "status": "pending",
-    "note": "기존 표현 보정: model 선언 외 settings 검증/기본값 참조는 있다. 그러나 publicConfig 응답은 pageSize를 전달하지 않고 listApps는 pagination(r,24,100) 고정이다. 설정 연동 과제로 유지.",
-    "updated": "2026-10-07"
+    "note": "기존 제목 유지하되 표현 보정: PageSize는 store/settings.go 검증과 기본값에서 사용된다. publicConfigResponse에는 없고 목록 기본 pagination(r,24,100)이 고정이라 UI/API 연동은 미해결.",
+    "updated": "2026-10-08"
   },
   {
     "title": "여러 탭에서 즐겨찾기 변경이 열린 다른 탭에 반영되지 않음",
@@ -86,8 +77,8 @@
     "risk": 2,
     "size": "M",
     "status": "pending",
-    "note": "favorites.tsx 전체 확인: 초기 localStorage 읽기와 toggle의 쓰기만 있고 storage 구독 없음. 동시 갱신 손실/브라우저 탭 테스트 필요.",
-    "updated": "2026-10-07"
+    "note": "favorites.tsx는 초기 localStorage 읽기와 toggle 쓰기만 있고 storage 구독 없음. 실제 탭 동시 변경 테스트 필요.",
+    "updated": "2026-10-08"
   },
   {
     "title": "팔레트가 최근 이동 항목을 앱 삭제·비공개 전환 뒤에도 계속 제시",
@@ -95,8 +86,8 @@
     "risk": 2,
     "size": "M",
     "status": "pending",
-    "note": "command-palette.tsx:readRecent filter는 menu와 app-admin만 거르고 나머지 true. 삭제/공개 여부 확인 정책 및 조회 설계 필요.",
-    "updated": "2026-10-07"
+    "note": "command-palette.tsx:results의 recent filter는 menu/app-admin 권한을 걸러도 나머지는 true. 공개 상태 확인 정책 필요; 실제 삭제 재현은 미확인.",
+    "updated": "2026-10-08"
   },
   {
     "title": "소유자가 볼 수 있는 검토 이력이 마지막 한 건뿐",
@@ -104,25 +95,43 @@
     "risk": 2,
     "size": "M",
     "status": "pending",
-    "note": "personal_handlers.go:myApps가 LatestReviewsByApp를 조회하는 현재 경로 확인. 의도한 정책 여부 미확인이고 API/UI 확장이라 보류.",
-    "updated": "2026-10-07"
+    "note": "personal_handlers.go:myApps가 LatestReviewsByApp만 읽음. 의도한 정책 여부 미확인이라 이번 범위 제외.",
+    "updated": "2026-10-08"
   },
   {
     "title": "초안으로 저장된 앱도 등록 완료 화면에서 즉시 게시 또는 검토 대기라고 안내",
     "value": 3,
     "risk": 1,
-    "size": "S",
-    "status": "pending",
-    "note": "신규. app-form-page.tsx:complete 화면의 고정 문구는 draft를 설명하지 않는다. app_handlers.go:createApp은 보안 게이트로 draft 보존 가능. save 응답 상태 기반 안내가 후보이며 보안 필요 여부를 status만으로 단정하지 말 것. 실행 재현 미확인.",
-    "updated": "2026-10-07"
+    "size": "M",
+    "status": "done",
+    "note": "edc94a7로 완료. onSuccess(saved)의 StoreApp을 완료 상태로 보관하고 appStatusLabel로 실제 응답 상태를 표시한다. 제품 1파일 + 테스트 2파일. 대상 Vitest 19건(신규 15), 전체 126건, 실제 Vite 번들 desktop/mobile E2E 2건 통과. 수정 전/제품 원복 시 동일 9건 실패 확인.",
+    "updated": "2026-10-08"
   },
   {
-    "title": "앱 생성 후 문서 업로드 실패 시 다시 등록을 누르면 createApp을 다시 호출",
-    "value": 4,
+    "title": "문서 업로드 실패 뒤 신규 등록을 재시도하면 앱 생성부터 다시 요청한다",
+    "value": 3,
     "risk": 3,
     "size": "M",
     "status": "pending",
-    "note": "신규. AppFormPage.save는 createApp 후 documents.apply를 실행하고 실패하면 complete=false 유지; 재시도도 createApp 경로다. guide draft는 전체 성공 전 pending을 비우지 않아 부분 업로드 재시도도 별도 문제다. 코드 경로 확인, 중복/slug 충돌 실제 HTTP 재현 미확인. 이번에는 읽은 경로의 잠재 결함으로 기록하며 별도 복구 설계 필요.",
-    "updated": "2026-10-07"
+    "note": "신규. AppFormPage mutationFn은 createApp 후 documents.apply를 호출하고 실패 시 saved id를 유지하지 않는다. 다음 submit은 다시 POST하므로 slug 중복으로 재시도가 막힐 가능성. 사용자 피해 실행 재현·서버 오류 응답은 미확인이며 부분 성공/재시도 계약 설계 필요.",
+    "updated": "2026-10-08"
+  },
+  {
+    "title": "내 앱 첫 50개 밖의 앱은 수정 주소에서 찾을 수 없다고 표시될 수 있다",
+    "value": 3,
+    "risk": 3,
+    "size": "M",
+    "status": "pending",
+    "note": "신규. personal_handlers.go:myApps default limit 50, api.ts:myApps는 페이지 인자 없는 단일 GET 후 listFrom, AppFormPage는 그 목록에서 id를 find한다. 소유 앱 51개 이상에서 오래된 앱의 수정 조회 누락 가능. 실제 DB 재현/대안 조회 권한 계약은 미확인; API·목록 페이지네이션 범위라 보류.",
+    "updated": "2026-10-08"
+  },
+  {
+    "title": "보안 심의 화면의 최종 결과를 한국어로 표시",
+    "value": 3,
+    "risk": 1,
+    "size": "S",
+    "status": "done",
+    "note": "이전 회차 완료 항목도 보존. HEAD에 27b0dbf가 포함됐고 owner-page.tsx의 FINAL_RESULT 및 최종 결과 폴백 확인. 이번에는 다시 선택하지 않는다.",
+    "updated": "2026-10-08"
   }
 ]
