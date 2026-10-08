@@ -1,0 +1,19 @@
+fix: release the pagination overflow default fix for v0.2.33
+
+큰 limit/offset의 십진수 누적이 int 범위를 넘어 작은 양수로 감기면서
+다른 페이지를 반환하던 문제를 고친 PR #55를 릴리즈합니다. 누적 전에
+범위를 검사하여 기본값 limit=50, offset=0을 유지합니다. 기존 숫자 문법,
+정상값과 목록 계약은 유지하며 기능 변경을 추가하지 않았습니다.
+
+기존 패치 릴리즈와 같은 방식으로 버전 파일, 문서 프로파일과 CHANGELOG를
+v0.2.33으로 갱신했습니다. 화면 캡처의 v0.2.9 출처와 두 가이드 PDF의
+v0.2.18 표지는 유지합니다. 기존 PDF 변환기가 저장소에 없어 같은 판형으로
+재생성하지 않았으며 Markdown 본문은 갱신했습니다.
+
+./scripts/verify.sh 전체(Go test·vet·gofmt, 웹 테스트 59개·lint·build,
+문서·Compose), go test ./... -count=1과 소스 버전 일치 검사가 통과했습니다.
+이번 로컬 실행은 DSN 미설정으로 PostgreSQL 통합 테스트를 건너뛰었습니다.
+구현 단계의 실제 PostgreSQL 회귀 6개 통과와 비평·머지 전 CI 통과 기록을
+확인했습니다. 기존 500kB 청크 경고는 남습니다. 이미지 빌드, PostgreSQL
+스모크, 브라우저 E2E, 번들 생성과 GitHub Release 게이트는 기존대로 태그
+푸시 후 release.yml이 수행합니다. 이번 세션은 원격 푸시나 게시를 하지 않습니다.

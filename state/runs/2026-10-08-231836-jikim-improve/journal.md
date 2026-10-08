@@ -27,3 +27,12 @@
 - [러너 23:28] pr created — https://github.com/hkjang/jikim/pull/55
 - [러너 23:33] ci passed — 검사 2개 모두 success
 - [러너 23:33] merge done — fb7ecd8
+
+## 릴리즈 노트
+- 두 요청 스킬의 로컬 원문을 적용. Tier 3, 기존 패치 증가·20개 파일·한국어 CHANGELOG·영문 커밋 제목·주석 태그 관례를 확인하고 v0.2.33 준비 완료.
+- 릴리즈 커밋 3ffa7e8, 주석 태그 v0.2.33(jikim v0.2.33). hkjang 작성자 유지, detached HEAD 유지, 작업 트리 clean, 태그·HEAD·소스 버전 일치 확인.
+- bash scripts/verify.sh 및 go test ./... -count=1 exit 0. 웹 59/59, vet·포맷·lint·build·문서·Compose 통과. PostgreSQL 통합은 DSN 미설정으로 이번에는 skip; 구현 통과·독립 비평·머지 전 CI 성공 기록 확인. 500kB 청크 경고 유지.
+- release.yml이 태그 푸시 후 이미지·스모크·브라우저 E2E·tar.gz/sha256·GitHub Release를 수행하므로 release.json의 github_release=false, assets=[]. 원격 작업은 수행하지 않았음.
+- release.json, release-notes.md, release-validation.md와 검증 로그를 회차 디렉터리에 보존. 캡처 v0.2.9와 PDF v0.2.18 출처 유지 및 PDF 변환기 부재는 CHANGELOG에 명시.
+- [러너 23:40] release published — v0.2.33
+- [러너 23:44] assets verified — v0.2.33 자산 2개 (이전 v0.2.32: 2)
