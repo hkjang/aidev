@@ -1,0 +1,11 @@
+## 2026-10-09
+- 선택: POP3·IMAP greeting 실패 진단의 Timeout을 실제 connectTO로 맞춘다 (가치 3 / 위험 1 / 작업량 M)
+- 결과: 성공
+- 요약: greeting은 connectTO로 기다리면서 실패 진단에는 commandTO를 기록하던 POP3 1곳·IMAP 읽기/BYE 2곳을 수정했다(커밋 bf0b12d, 프로덕션 2파일·테스트 3파일); deadline·기본값·공통 failed·재시도 정책은 유지했다. 실제 TCP 침묵/즉시 거절의 greeting 분류·1초 예산·Elapsed>0·cleanup 전 peer EOF, 성공 greeting 이후 거절 명령의 4초 예산을 확인했고, 실제 어댑터와 관리자 설정→CreateAccount→StartSync→GetJob에서 양쪽 저장 Job의 failed/greeting/timeout·TimeoutMS=1000·제한 1.0초·조기 중단 문구 없음, 거절 원문 표식 미포함, 동일 Summary의 incident를 검증했다. 수정 전 어댑터 실패→수정 후 통과→원래 코드 복원 시 어댑터 및 신규 앱 테스트 재실패→수정본 복원 후 통과를 확인했으며, 최종 `go test -race -count=1 -timeout=900s ./internal/application ./internal/adapters/imap ./internal/adapters/pop3` PASS(application 88.856s / IMAP 5.563s / POP3 6.161s), `go build ./...`, `go vet ./...`, `make lint-format`, `go run ./cmd/postra-contracts -check`, `git diff --check` 모두 exit 0; 전체 저장소 테스트·외부 PostgreSQL·브라우저·프런트 빌드·보안 스캐너는 미실행했다.
+- 실패 재현: `client_test.go:972: greeting Timeout = 4s, want 1s` / `sync_diagnostics_test.go:500: TimeoutMS = 4000, want 1000` — 양쪽 프로토콜 timeout/rejected에서 재현. 앱 timeout Summary도 `제한 4.0초 중 1.0초에 중단(이 단계의 제한 시간에는 이르지 않았습니다)`였음. 원문 로그: greeting-adapters-red.log, greeting-adapters-revert.log, greeting-app-red.log. 통과 로그: greeting-adapters-green.log, greeting-app-green.log, greeting-packages.log 및 check-*.log.
+- 보류 아이디어:
+  - POP3 retrBody 프레이밍 상한 (가치 4 / 위험 3 / M): PR #22/04b15be 반려 여부 미확인으로 동일 접근 착수 금지 유지.
+  - POP3/IMAP 명령 대기 중 context 취소 전파 (가치 3 / 위험 3 / M): 여러 경로 변경이 필요하므로 이번 메타데이터 수정과 분리.
+  - IMAP 알 수 없는 greeting 거부 (가치 3 / 위험 2 / M): 별도 유효성 계약과 실제 wire 재현이 필요하여 보류.
+  - POP3 greeting 단일 행 수신량 상한 (가치 3 / 위험 3 / M): 메모리·호환성 재현 미확인, 공통 파서 확장과 묶지 않고 별도 검토.
+- 과제서: 채택 — 지정된 세 반환과 앱 요약까지의 원인을 수정 전 실행으로 확인했고, 지정 5파일에서 수용 기준과 최종 검증을 모두 충족했다.

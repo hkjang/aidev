@@ -1,0 +1,137 @@
+[
+  {
+    "title": "POP3 retrBody 에 프레이밍 상한",
+    "value": 4,
+    "risk": 3,
+    "size": "M",
+    "status": "pending",
+    "note": "retrBody 무제한 bytes.Buffer와 루프별 deadline 재확인. PR #22/04b15be 반려 여부 미확인; 동일 접근 착수 금지.",
+    "updated": "2026-10-09"
+  },
+  {
+    "title": "POP3 본문 수신에 MaxMessageBytes 상한 적용 (미병합 04b15be 병합 경로로만)",
+    "value": 4,
+    "risk": 3,
+    "size": "M",
+    "status": "pending",
+    "note": "크기 상한 없음 재확인. PR #22 판단 전 재구현 금지, <=0 무제한 유지.",
+    "updated": "2026-10-09"
+  },
+  {
+    "title": "POP3/IMAP 명령 대기 중 context 취소 전파 (List/UIDL/Retrieve/Top/Delete/Quit)",
+    "value": 3,
+    "risk": 3,
+    "size": "M",
+    "status": "pending",
+    "note": "명령 경로가 ctx를 I/O에 전달하지 않음. IMAP Idle watcher는 별도로 존재. 다수 경로 수정으로 보류.",
+    "updated": "2026-10-09"
+  },
+  {
+    "title": "web/src/app/App.tsx 의 tracking 동적 import 가 같은 파일의 정적 import 때문에 무효",
+    "value": 2,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "App.tsx의 BrowserTracking 정적 import와 TrackingPage lazy import 재확인. 빌드 재실행 미확인; 자산 전량 변경 위험.",
+    "updated": "2026-10-09"
+  },
+  {
+    "title": "IMAP enumerate 단계 FETCH 실패가 어느 배치에서 났는지 남기지 않는다",
+    "value": 2,
+    "risk": 2,
+    "size": "M",
+    "status": "pending",
+    "note": "ensureIndex에는 배치 맥락 진단 없음. Stage는 fetch가 아닌 enumerate. 직전 회차 인덱스 수정 59faa19가 현재 HEAD 조상 아님; 별도 구현을 재제출하지 않는다.",
+    "updated": "2026-10-09"
+  },
+  {
+    "title": "IMAP ListMailboxes 가 리터럴({n})로 돌아온 폴더명을 조용히 버린다",
+    "value": 2,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "실제 literal 이름이 전달되지 않는 문제는 유효. 다만 제목의 버린다는 단정은 부정확: ListMailboxes 정규식은 {n} 토큰을 이름으로 잡을 수 있고 SentMailbox도 별도 파서다. 실제 wire 재현 미확인, 파서 통합 금지.",
+    "updated": "2026-10-09"
+  },
+  {
+    "title": "POP3 enumerate 단계 cmd 경과가 readList 대기를 포함하지 않는 비대칭",
+    "value": 2,
+    "risk": 2,
+    "size": "S",
+    "status": "rejected",
+    "note": "readList가 deadline을 갱신하고 구간별 시간을 기록한다. 비대칭 자체를 결함으로 볼 근거가 없어 이 접근 기각; 실제 오진 증거가 생기면 별도 후보.",
+    "updated": "2026-10-09"
+  },
+  {
+    "title": "cyclonedx-gomod 가 git 워크트리에서 메인 모듈 버전을 못 읽는 것을 README 보안 스캐너 절에 메모",
+    "value": 1,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "차선. README 미기재·release v1.10.0 핀 확인. 과거 worktree 실패/full clone 성공 기록만 근거이며 이번 도구 미실행, CI 변경 금지.",
+    "updated": "2026-10-09"
+  },
+  {
+    "title": "implicit TLS 경로에 MinVersion(TLS 1.2) 하한을 실제로 묶는 테스트",
+    "value": 2,
+    "risk": 1,
+    "size": "M",
+    "status": "pending",
+    "note": "명시 MinVersion은 양쪽 존재. Go 기본값 때문에 단순 TLS1.1 거부는 배선 삭제를 잡지 못함; 유효한 변이 검증 미확인.",
+    "updated": "2026-10-09"
+  },
+  {
+    "title": "POP3·IMAP greeting 실패 진단의 Timeout을 실제 connectTO로 맞춘다",
+    "value": 3,
+    "risk": 1,
+    "size": "M",
+    "status": "done",
+    "note": "bf0b12d에서 구현 완료. 프로덕션 2파일의 반환 3곳만 수정. 실제 TCP 침묵·거절·후속 명령 대조군 및 관리자 설정→CreateAccount→StartSync→GetJob→incident 회귀 검증. 수정 전과 원복 변이에서 4s/4000 오기록 재현, 수정 후 영향 3패키지 race·build·vet·format·contracts·diff 검사 통과. main 반영·릴리즈는 이번 세션 범위 밖.",
+    "updated": "2026-10-09"
+  },
+  {
+    "title": "IMAP 알 수 없는 greeting을 정상 세션 시작으로 받아들이지 않게 한다",
+    "value": 3,
+    "risk": 2,
+    "size": "M",
+    "status": "pending",
+    "note": "신규. Dial은 PREAUTH/BYE만 구분하고 그 밖의 문자열도 LOGIN/SELECT로 진행한다. 유효 greeting 판정·대소문자 계약·실제 TCP 재현은 미확인; 이번 예산 수정과 분리.",
+    "updated": "2026-10-09"
+  },
+  {
+    "title": "POP3 greeting 단일 행 수신량에 독립 상한을 둔다",
+    "value": 3,
+    "risk": 3,
+    "size": "M",
+    "status": "pending",
+    "note": "신규. readGreeting은 textproto.ReadLine으로 단일 행을 읽어 시간 제한 외 바이트 상한이 없다. IMAP readBoundedLine과 대비되지만 실제 메모리 재현·서버 호환성은 미확인. retrBody/공통 파서 확장과 묶지 말고 별도 검토.",
+    "updated": "2026-10-09"
+  },
+  {
+    "title": "IMAP 열거 실패 뒤 빈 목록·부분 인덱스를 정상 캐시로 반환하지 않게 한다",
+    "value": 4,
+    "risk": 2,
+    "size": "M",
+    "status": "done",
+    "note": "10-08 구현 기록 59faa19에서 완료. 현재 pinned main c40b91d에는 미반영(git merge-base --is-ancestor exit 1); 구현 완료와 main 반영을 구별하며 이번 재구현 금지.",
+    "updated": "2026-10-09"
+  },
+  {
+    "title": "make frontend-test 가 깨끗한 워크트리에서 의존성 설치를 보장하게 한다",
+    "value": 3,
+    "risk": 1,
+    "size": "S",
+    "status": "done",
+    "note": "Makefile의 node_modules 가드 확인, ae0c4a2가 최근 로그에 있음.",
+    "updated": "2026-10-09"
+  },
+  {
+    "title": "README govulncheck 로컬 예시를 CI 핀 v1.6.0에 정렬",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "done",
+    "note": "README와 ci.yml 모두 v1.6.0 확인, 6a989bf 포함.",
+    "updated": "2026-10-09"
+  }
+]

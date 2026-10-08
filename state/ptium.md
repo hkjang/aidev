@@ -410,3 +410,15 @@
   - vitest.config.ts TypeScript 검사 포함 (가치 3 / 위험 3 / 작업량 M) — 의존성 타입 충돌 여부 진단이 먼저이며 웹 범위 제외.
 - 과제서: 채택 — 현 코드의 목록 분기와 결함이 과제서와 일치하여 지정 세 파일만 수정했고 flush·공유 목록 헬퍼·escapeLine을 보존했다; `- ---` 자체는 기존 수평선이므로 `- > ---`의 비재귀 요점 계약만은 Read 쌍 대신 기대 Source를 직접 검증했다.
 
+## 2026-10-09
+- 선택: 제품 /guide 가져오기 설명에 지원되는 TSV·일반 텍스트를 명시하기 (가치 2 / 위험 1 / 작업량 S)
+- 결과: 성공
+- 요약: GuidePage.tsx의 #import 첫 문단에 TSV(.tsv)·일반 텍스트(.txt)를 code 요소로 넣고, 읽기 목록에 TSV는 엑셀·CSV와 함께, TXT는 워드·마크다운과 함께 안내하며 TXT도 마크다운 규칙을 따른다고 명시했다(프로덕션 1파일, 새 테스트 0개, 커밋 02e307d). 변경 전 `cd web && npm ci && npm run typecheck && npm run build && npm test`, 변경 후 `cd web && npm run typecheck && npm run build && npm test` 모두 exit 0·Vitest 48파일/271개 통과, `cd server && go test -count=1 ./internal/docs` 3.323초 통과, `git diff --check` 통과·diff stat 1파일 4+/3-를 확인했다. 실제 Chromium에서 변경 전후 /guide#import에 접근했으나 API 8080 연결 실패로 /login?return_to=%2Fguide 및 502 오류 화면에 머물러 안내 표시·목차·/presentations 이동은 미확인이다(guide-final-access.png/json); docs 테스트를 UI 증거로 삼지 않았다.
+- 실패 재현: 못 함 — 과제서가 문구 수정 전용 소스 문자열 검사·구현 복제 테스트와 새 테스트 파일을 금지하여 추가하지 않았다. 편집 전 GuidePage 두 누락과 docs.Read의 TSV/TXT 지원 배선을 확인했지만, 실제 화면은 로그인/API 환경 부재로 열리지 않아 UI 누락의 red/green 및 되돌림 검증은 하지 못했다. 기존 테스트는 변경 전후 모두 통과했으며 이를 결함 재현으로 주장하지 않는다.
+- 보류 아이디어:
+  - 로컬 make test에서 기존 Vitest도 실행하기 (가치 3 / 위험 2 / 작업량 S) — 별도 npm test는 이번에 통과했으나 1순위가 미해결이어서 차선은 변경하지 않음.
+  - 외곽 파이프 없는 GFM 표 인식 (가치 3 / 위험 3 / 작업량 M) — 앞보기·일반 문장 오탐 계약이 필요하며 이번 런타임 재현 없음.
+  - setext h2 지원 (가치 2 / 위험 3 / 작업량 S) — 수평선·목록 우선순위 계약은 별도 작업.
+  - vitest.config.ts TypeScript 검사 포함 (가치 3 / 위험 3 / 작업량 M) — 현재 웹 검증은 통과하나 검사 범위를 넓혔을 때 타입 충돌 여부는 미확인.
+- 과제서: 채택 — HEAD eba092b의 GuidePage 두 누락과 docs.Read 분기 및 업로드 accept가 정찰과 일치하여 지정된 문구 두 곳만 수정했다.
+
