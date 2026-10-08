@@ -1,0 +1,19 @@
+# Release preparation audit — v0.9.103
+
+Initial HEAD: 1aa9d22f5bcd80b3b4622cd5512048b8c0f16ac9; detached and clean.
+
+Applied skills: marketing:product-launch and technology:release-and-deployment, read from the local headcount plugin because no Skill tool is available. Tier three: development workflow improvement; release notes only. Prior independent critic result: approve / low. No external announcement or deployment is performed here.
+
+History checked: latest ten tags, full git show --stat for v0.9.102/v0.9.101/v0.9.100, tag annotations and pointed-to commit messages, last sixty commit subjects, tracked version locations, CHANGELOG, README release instructions, Makefile, scripts/release-image.sh, ci.yaml and release.yaml. Recent annotated tags copy their English release commit messages. Version increments are patches. CHANGELOG uses Korean entries headed by version, 수정, 확인 and Upgrade notes.
+
+Changes since v0.9.102 include PR #41 (147fce8, reject missing/unreadable CA during TLS test service reuse) and PR #42 (c1b71bb, preserve preparation failure in the LDAP guide). Both are included in the new notes.
+
+Version locations: Makefile v0.9.103-dev; .env.example and both compose defaults v0.9.103; web/package.json and the two root package-lock versions 0.9.103. Unchanged historical defaults: internal/version/version.go v0.2.1-dev; Dockerfile v0.0.0-dev, both overridden at link time for releases. Guides document/screenshot v0.9.77 and contain historical upgrade examples. They were not part of the last three release stamp commits and are preserved.
+
+The provided GitHub Releases use titles ReSSO vX.Y.Z, Docker image/archive/SHA-256 lines, generated What's Changed and Full Changelog. Assets are release-sha256.txt and resso-vX.Y.Z.tar.gz. The v*.*.* tag workflow builds linux/amd64, tests the image, packages and checksums it, verifies offline reload and damaged archive rejection, then creates the GitHub Release and attaches both assets. Therefore github_release=false and assets=[]; the runner pushes the local commit/tag and CI produces the release assets. scripts/release-image.sh is the optional local image builder; Makefile release invokes it. There is no separate release/version-check script.
+
+Local release gates follow v0.9.102: make lint, make test, make build VERSION=v0.9.103, version consistency and git diff --check. Additional checks cover the actual missing-CA diagnostic, guide block syntax, fresh TLS verification, container identity/start times and CA metadata preservation. Any failed gate prevents local tagging; this agent is responsible for restoring only its release edits if validation cannot be completed. No schema or runtime behavior rollout is involved. CI image smoke/load/publication gates remain pending the runner's tag push.
+
+Target users: contributors running LDAP integration tests. Next-use acceptance signal: preparation failure returns nonzero and no tests follow; with the existing CA path, TLS verification runs and passes. Runtime users have no configuration action. No adoption telemetry or post-publication outcome is claimed.
+
+Validation completed: make lint/test/build succeeded; Go race 13 packages passed (some cached), frontend 29 files/161 tests passed; fresh TLS test passed in 1.082s without SKIP. No actual Make SKIP warning was printed; the nonverbose complete suite does not establish a total zero SKIP count. npm reports 5 vulnerabilities (2 moderate, 3 high); govulncheck reports 3 uncalled module vulnerabilities. Existing test services and CA metadata are unchanged. Generated tracked index.html was restored and the local validation binary removed. go version -m did not expose link flags for this trimmed binary, so the additional identity assertion was corrected to verify the successful build invocation in release-build.log; runtime image identity remains a CI gate.

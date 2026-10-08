@@ -28,3 +28,14 @@
 - 시작부터 있던 webui/dist/index.html 미커밋 변경은 HEAD 밖이며 그대로 보존; 전용 Skill 도구 대신 요청된 로컬 SKILL.md 3개 적용.
 - [러너 07:11] review approved — 리뷰 승인 (risk=low)
 - [러너 07:12] pr created — https://github.com/hkjang/ReSSO/pull/42
+- [러너 07:20] ci passed — 검사 2개 모두 success
+- [러너 07:20] merge done — c1b71bb
+
+## 릴리즈 노트
+- `2dc5657`: 기존 6개 버전 파일과 한국어 CHANGELOG를 v0.9.103으로 갱신하고 detached HEAD에서 `release: ReSSO v0.9.103` 커밋·동일 본문의 주석 태그를 만들었다. 태그는 현재 HEAD를 가리키고 작업 트리는 깨끗하다.
+- v0.9.102 이후 PR #41(CA 누락 검사)과 #42(가이드의 준비 실패 보존)를 모두 포함했다. product-launch/release-and-deployment는 Skill 도구 부재로 로컬 headcount SKILL.md를 읽어 적용했고 Tier three로 분류했다.
+- make lint, make test(Go race 13개 패키지·일부 캐시, vet, vitest 29파일/161개, 빌드), make build VERSION=v0.9.103, 버전 일치, diff --check 통과. 실제 CA 누락 프로브 exit 1/후속 없음, Bash 블록 구문, TLS race -count=1 PASS(1.082s, SKIP 없음)를 재확인했다. 전체 Go SKIP 0은 별도 단언하지 않는다.
+- npm 취약점 5건(중간 2·높음 3)과 미호출 Go 모듈 취약점 3건은 미해결이다. 기존 컨테이너 ID/시작 시각·CA 메타데이터 불변. --stop 실행 없음. 빌드가 바꾼 index.html은 복원하고 검증용 바이너리는 제거했다.
+- 태그 워크플로가 GitHub Release 및 resso-v0.9.103.tar.gz/release-sha256.txt를 생성하므로 github_release=false, assets=[]. 로컬 자산 생성/업로드/푸시 없음. CI의 이미지 검증과 실제 공개는 러너가 태그를 푸시한 뒤 수행된다. release.json과 release-notes.md는 회차 경로에 보존했다.
+- [러너 07:35] release published — v0.9.103
+- [러너 07:40] assets verified — v0.9.103 자산 2개 (이전 v0.9.102: 2)
