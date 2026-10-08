@@ -30,3 +30,16 @@
 - [러너 05:42] pr created — https://github.com/hkjang/clustara/pull/39
 - [러너 05:43] ci passed — 검사 없음 — 정책으로 허용
 - [러너 05:43] merge done — 08cfc7f
+
+## 릴리즈 노트
+- marketing:product-launch·technology:release-and-deployment 스킬을 로컬에서 읽고 적용했다(Skill 도구 미제공). Tier 3 개선으로 한국어 릴리즈 노트·운영 문서를 작성했다.
+- 최근 3개 릴리즈와 동일하게 v0.9.299 패치, chore: release v0.9.299 커밋(5c5beef), lightweight 태그를 현재 detached HEAD에 생성했다. 버전·문서·changelog 3파일만 변경, 작업 트리 깨끗함.
+- GPU/릴리즈 좁은 게이트, gofmt, diff --check, go build ./..., 서버 단독 빌드, go vet ./..., go test ./... -count=1 통과(19패키지, proxy 73.398s, store 17.003s).
+- scripts/release.sh로 linux/amd64 Docker 패키지·SHA256·오프라인 가이드 3종을 만들고 지정 assets 경로에 복사했다. 체크섬·이미지 digest·모든 blob 무결성과 같은 이미지의 health/ready/admin/capacity HTTP 200·v0.9.299 표시를 확인한 뒤 컨테이너를 종료했다.
+- release.json·release-notes-v0.9.299.md·검증/빌드 로그·release-artifact-validation.json을 회차 경로에 보존했다. GitHub Release 생성 자동화 없음으로 github_release=true. 원격 전송은 하지 않았다.
+- 실제 클러스터·GPU·PostgreSQL·브라우저·외부 사용자·golden prompt 검증은 미실행, 배포 후 24시간 AMD/Intel 대표 클러스터 확인과 중단/롤백 기준을 릴리즈 노트에 명시했다.
+- [러너 05:50] release published — v0.9.299
+- [러너 05:50] gh-release created — GitHub Release v0.9.299
+- [러너 05:50] manifest ok — clustara-v0.9.299.tar.gz clustara-v0.9.299.tar.gz.sha256 README-offline-v0.9.299.md 
+- [러너 05:51] assets uploaded — 3개
+- [러너 05:51] assets verified — v0.9.299 자산 3개 (이전 v0.9.298: 3)
