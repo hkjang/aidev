@@ -25,3 +25,5 @@
 - 신규 개인정보 처리·권한 확대·의존성·마이그레이션 없음; 릴리즈 내역에는 범위 초과 limit/offset의 기본값 복귀를 반영하면 된다.
 - [러너 23:28] review approved — 리뷰 승인 (risk=low)
 - [러너 23:28] pr created — https://github.com/hkjang/jikim/pull/55
+- [러너 23:33] ci passed — 검사 2개 모두 success
+- [러너 23:33] merge done — fb7ecd8
