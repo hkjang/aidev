@@ -357,3 +357,14 @@
 - 과제서: 기각 — 과제서의 핵심 가설("8.7초는 jq 프로세스 생성 비용")이 **측정으로 틀렸다**. 과제서가 "구현자는 먼저 jq 가 지배적인지 확인한 뒤 고치고, git 쪽이 지배적이면 차선 후보로 옮기는 것이 옳다" 고 적어 둔 그 조건이 성립한다. 실측: `check-versions` 는 jq 128회 + git 72회를 띄우고, **jq 는 호출당 7.0ms**(100회 0.70s)인데 **git show 는 호출당 115ms**(100회 11.5s)다 → git 이 전체 ~8초의 85%. 원인은 저장소가 아니라 이 워크트리다 — `git rev-parse --git-common-dir` 가 `/mnt/c/Users/USER/projects/AgentHub/.git`(Windows 9p)를 가리키고, 같은 머신의 로컬 디스크(/tmp)에 만든 git 저장소에서 같은 `git show` 100회는 **0.62s**(6.2ms/회)다 — 19배 차이. 즉 buildinfo 17~18초는 CI 에 없는 환경 비용이고, 저장소 쪽에서 되돌릴 수 있는 것이 아니다. 과제서가 권한 형태(시작 시 jq 한 번으로 전부 프리필)를 실제로 만들어 재 보기까지 했다: jq 호출 128→73 으로 줄었지만 벽시계는 변화 없음(수정 전 3.97/9.42/10.35s vs 캐시 3회 7.69/10.37/10.43s — 9p 캐시 변동이 효과를 완전히 덮는다). 수용 기준 1("눈에 띄게 줄어든다")을 만족할 수 없어 프로토타입은 되돌렸고 `scripts/` 는 한 줄도 바뀌지 않았다. 기준 1 의 두 숫자: `go test ./internal/buildinfo -count=1` 수정 전 **18.598s**, 캐시로는 줄지 않음(측정 불가 수준).
 
 - 릴리즈: v0.261.0 (2026-10-07, run 2026-10-07-031239-AgentHub-improve)
+## 2026-10-09
+- 선택: 가이드 추적 캡처의 CSP 보고에 제한 시간을 적용해 전역 설정 복원 경계로 빠져나오게 한다 (가치 3 / 위험 1 / 작업량 S)
+- 결과: 성공
+- 요약: 커밋 de09ba8; 프로덕션 guide-shots.mjs 1파일과 guide-settings-check.test.mjs 1파일을 수정해 기존 AGENTHUB_GUIDE_REQUEST_TIMEOUT_MS(미설정 30000ms)를 실제 captureTracking 호출부와 page.evaluate 직렬화 인자를 거쳐 CSP fetch의 AbortSignal.timeout에 연결했다. 실제 호출부→실제 captureTracking→실제 withGuideSettings를 실행하는 신규 회귀 7건은 정상 POST/Content-Type/본문/204 판정/촬영·정리 순서/skip, 진짜 AbortSignal의 50ms 중단 뒤 네 원본 복원 시도와 복원 실패보다 원래 보고 오류 우선을 검증하며, signal·호출부 전달·직렬화 인자를 각각 제거하면 5/6/6건 실패하고 원복 뒤 통과했다. node --check web/scripts/guide-shots.mjs, cd web && node --test scripts/guide-settings-check.test.mjs(80 pass), cd web && node --test scripts/*.test.mjs(154 pass, fail/skip 0), npm ci && npm run lint && npm run test:sso && npm run build, go test -race -p 1 ./cmd/... ./internal/..., 이미지 check-versions, kubectl kustomize, docker compose config --quiet, git diff --check가 통과했으며 실제 브라우저·관리자 DB는 미검증(AGENTHUB_TEST_DSN 없음), npm ci의 기존 의존성 high 경고 2건은 별도 후보로 기록했다.
+- 실패 재현: `not ok 52 - a stalled real tracking report restores all settings despite no restoration failure` / `actual: 'the request was sent without a deadline and would never return'` (프로덕션 수정 전 80건 중 75 pass / 5 fail; 정상 경로도 timeout: undefined 대 75/30000으로 실패).
+- 보류 아이디어: 복원 실패가 guide-shots의 problems 요약 출력을 건너뛰는 문제 (2/1/S).
+  guide-shots 추적 캡처의 기존 CSP 위반 전체 삭제 방지 (3/2/M).
+  web/scripts Node 회귀 테스트를 CI 기본 검증에 포함 (3/2/S).
+  가이드 요청 제한 시간 환경변수의 유효 범위를 시작 시 검사 (2/1/S).
+- 과제서: 채택 — CSP fetch에만 signal이 없고 외부 withGuideSettings 안에서 대기하는 구조가 현재 코드와 일치했으며, 내부 finally를 옮기지 않고 제한 시간 배선만 추가했다.
+

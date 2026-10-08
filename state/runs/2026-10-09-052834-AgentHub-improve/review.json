@@ -1,0 +1,13 @@
+{
+  "verdict": "approve",
+  "reasons": [],
+  "notes": [
+    "검증: 전체 Node 회귀 154건 통과(fail/skip 0), node --check 및 git diff --check 통과. 현재 테스트를 main의 수정 전 프로덕션 코드에 적용하면 제한 시간 누락으로 5건 실패하여 원장의 실패 재현과 일치했다.",
+    "정확성·비차단: 실제 호출부→captureTracking→withGuideSettings를 Chromium 154의 page.evaluate와 로컬 HTTP 서버로 실행했다. 정상 204, 보고 무응답, 보고 무응답+첫 복원 503에서 네 원본 복원 요청을 확인했고 무응답은 100ms 제한 시간 오류를 유지했다. UI 촬영은 대역이며 실제 관리자 인증·DB 저장·배포 및 Go 전체 테스트는 이번 리뷰에서 검증하지 않았다.",
+    "보안·개인정보·비차단: 요청된 세 SKILL.md를 로컬에서 읽어 적용했다(전용 Skill 도구 없음). 변경은 기존 동일 출처의 합성 CSP 보고에 제한 시간을 추가하며 새 인가 경로·권한 확대·비밀값·개인정보 수집/전송 항목·의존성을 도입하지 않는다. 변경에서 구체적인 공격 경로 또는 legal 차단 사유를 발견하지 않았다.",
+    "테스트 운영·비차단: web/package.json:12 및 .github/workflows/ci.yaml:31의 test:sso는 신규 회귀를 실행하지 않는다. 릴리즈 검증에서 node --test scripts/*.test.mjs를 명시 실행할 것.",
+    "기존 위험·비차단: web/scripts/guide-shots.mjs:458의 전체 추적 위반 DELETE와 제한 시간 환경변수 유효범위 검사는 이번 diff의 변경 대상이 아니다. 폐기 가능한 배포 전제를 유지하고 별도 후속 과제로 추적할 것. 이번 변경은 마이그레이션 없이 코드 revert로 되돌릴 수 있다."
+  ],
+  "risk": "low",
+  "blocking": []
+}

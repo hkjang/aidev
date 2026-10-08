@@ -1,0 +1,12 @@
+{
+  "verdict": "approve",
+  "reasons": [],
+  "notes": [
+    "정확성·테스트: 원장 실패 재현은 AMD/Intel 빈 GPU 행 증상과 일치한다. 실제 SQLite→InventoryFromObject→Server.Routes→HTTP JSON 테스트와 단위 경계 테스트를 검토했고, 공급자 합산·동명 클러스터 격리·정렬·CPU·음수 Idle 보존을 확인했다.",
+    "검증: 관련 회귀 테스트, gofmt 무출력, git diff --check, go build ./..., go vet ./..., go test ./... -count=1 모두 직접 통과 확인(proxy 66.216s, store 16.836s). 수정 전 코드 재실행은 하지 않았으며 원장 실패 출력과 main 대비 코드 경로를 대조했다.",
+    "보안·개인정보·범위: 기존 관리자 인가와 바인딩된 cluster_id 조회를 확인했다. 변경은 기존 인벤토리 수치 집계에 한정되며 신규 개인정보 수집·보관·외부 전송, 권한 확대, 비밀값, 의존성, 마이그레이션 변경이 없다. 차단 소견 없음; 데이터 변환 없이 코드 revert 가능.",
+    "검증 한계·후속 참고: 실제 Kubernetes/GPU 장치, PostgreSQL, 브라우저 렌더링은 미검증이다. 비용 podRequestGPU는 의도적으로 NVIDIA 전용을 유지하므로 용량의 세 공급자 합계와 지원 범위가 다르다. 기존 조회 상한과 init 합산 의미도 이번 변경 범위 밖이다."
+  ],
+  "risk": "low",
+  "blocking": []
+}
