@@ -1,0 +1,12 @@
+## 2026-10-08
+- 선택: 공개 게임 목록의 동명 게임을 ID로 보조 정렬하여 페이지 순서를 고정하기 (가치 3 / 위험 2 / 작업량 M)
+- 결과: 성공
+- 요약: 로그인한 GET /api/v1/games의 ORDER BY를 g.name,g.id로 좁혀 이름 우선 정렬과 동명 UUID 오름차순을 보장했다. 실제 PostgreSQL 17·New(...).Router()·DB 세션 쿠키로 역순 UUID 6개와 이름/필터 대조군의 응답 순서·유일성·items/limit/offset을 확인하고, 이미 반환된 행을 실제 관리자 PUT으로 description만 수정한 뒤 정렬/필터 필드 유지와 순회 결과를 검증했다. 제품 1파일+테스트 1파일+문서 1파일, 커밋 f357db0이며 수정 전 실패→한 줄 수정 후 통과→보조 키 제거 재실패→복원 후 race 5회와 전체 DB/Go 검증 통과를 확인했다.
+- 실패 재현: `catalog_order_pg_test.go:141: catalog name/id order: got [10000000-0000-0000-0000-000000000005 10000000-0000-0000-0000-000000000006 10000000-0000-0000-0000-000000000004 10000000-0000-0000-0000-000000000003 10000000-0000-0000-0000-000000000002 10000000-0000-0000-0000-000000000001], want [10000000-0000-0000-0000-000000000001 10000000-0000-0000-0000-000000000002 10000000-0000-0000-0000-000000000003 10000000-0000-0000-0000-000000000004 10000000-0000-0000-0000-000000000005 10000000-0000-0000-0000-000000000006]`
+- 검증: `IGAME_TEST_DSN=… go test ./internal/api -run '^TestCatalogList' -count=1 -v` 수정 전 두 상위 테스트 FAIL(0.898s), 수정 후 PASS(0.965s); 보조 정렬만 제거한 변이에서 두 테스트 모두 다시 FAIL(catalog-revert-red.log). 최종 `IGAME_TEST_DSN=… go test ./internal/api -run '^TestCatalogList' -race -count=5 -v` PASS(6.391s, 상위 테스트 2개씩 5회, skip 없음); `make test-db DSN=…` PASS(api 33.391s/database 2.330s). `go test ./cmd/... ./internal/... ./migrations/... -count=1` PASS(이 명령은 DSN 없이 실행해 PG는 skip, 앞의 별도 DB 명령으로 검증); `go vet ./cmd/... ./internal/... ./migrations/...`, `go build ./cmd/... ./internal/... ./migrations/...`, `gofmt -l internal/api/catalog.go internal/api/catalog_order_pg_test.go`, `git diff --check` 모두 종료 0. DSN은 과제서의 localhost:15432 및 public,igame_test_extensions이며 잔여 api_test_/migrate_ 스키마 0개·전용 pgcrypto 스키마 유지 확인 후 직접 만든 컨테이너만 제거했다. 원본 실행 로그는 같은 회차 디렉터리에 저장했다.
+- 보류 아이디어:
+  - 점수 심사·내 세션 기록의 페이지 보조 정렬 (가치 3 / 위험 2 / 작업량 M): 공개 목록만 완료, 나머지 경로는 확장하지 않았다.
+  - README RealmGuard 서버 재현 설명 정합성 (가치 2 / 위험 1 / 작업량 S): 주 과제가 재현되어 차선은 보류했다.
+  - 공개 카탈로그 q 리터럴 특수문자 검색의 PG/Router 회귀 (가치 2 / 위험 1 / 작업량 M): 이번 일반 이름 검색 검증은 %, _, 역슬래시 계약을 대체하지 않는다.
+  - 공개 카탈로그 favorite 필터의 사용자별 격리 회귀 (가치 2 / 위험 1 / 작업량 M): 이번 한 사용자 필터 검증은 두 사용자 격리 검증을 대체하지 않는다.
+- 과제서: 채택 — 현재 코드와 근거가 일치하고 기존 fixture를 재사용한 실제 PG 순서 Red가 재현되어 지정한 3파일 범위를 지켰다. pageIDs는 items만 읽어 envelope 검증을 위해 신규 파일 내 HTTP page 헬퍼를 사용했으며 기존 fixture/다른 목록은 수정하지 않았다.

@@ -25,3 +25,23 @@
 - 커밋: `fde293d` — 과제 링크: 500자 초과 주소를 자르지 않고 입력 오류로 거절 (작성자 hkjang, 트레일러 없음). 커밋 뒤 git diff --check 통과, git status --short 출력 없음.
 
 - 릴리즈: v0.1.4 (2026-10-08, run 2026-10-08-133829-insight.yeopjari.bid-improve)
+## 2026-10-08
+- 선택: 제출 답변 URL이 500자를 넘으면 자르지 말고 입력 오류로 거절하기 (가치 4 / 위험 2 / 작업량 M)
+- 결과: 성공
+- 요약: judgeSubmission이 URL을 500자로 절단한 뒤 검사해 다른 주소로 성공 저장하는 원인을 확인하고, URL만 text(value, Infinity)로 정규화한 뒤 빈 값·500자 초과·http(s) 순으로 검증하도록 수정했다. 경계·정규화·UTF-16 길이·필수/선택·여러 질문 오류 수집·text(500)/long(4000) 유지 단위 테스트를 추가하고, 실제 제출 API와 참여자/기업 GET으로 500자 완전 보존 및 501자 거절 시 전체 답변/제출 시각 보존을 확인했다. 오류에는 URL 원문을 넣지 않으며 parseLinks·공통 text/isWebLink·라우트·UI는 바꾸지 않았다.
+- 실패 재현: `AssertionError: expected function to throw an error, but it didn't` / `Tests  7 failed | 60 passed (67)` — 수정 전 공개 parseForm→judgeSubmission 실행. 수정만 되돌려 동일 7실패를 재확인했고 복구 후 67개 통과.
+- 보류 아이디어: isSafeLink 죽은 코드·사설망 차단 주석 축소 (가치 3 / 위험 2 / S)
+- 보류 아이디어: maskEmail·mailboxKey 현재 계약 경계 테스트, catalog와 분리 (가치 2 / 위험 1 / S)
+- 보류 아이디어: quota usage one round trip 주석을 실제 측정과 비교 (가치 2 / 위험 2 / S)
+- 보류 아이디어: README 로컬 설치 안내를 npm ci로 맞추기 (가치 2 / 위험 1 / S)
+- 보류 아이디어: API client 204 쓰기의 캐시 무효화 누락, 실제 소비 경로 확인 우선 (가치 2 / 위험 1 / S)
+- 보류 아이디어: README·architecture의 낡은 테스트 개수 안내 정리 (가치 2 / 위험 1 / S)
+- 보류 아이디어: 월 quota purge의 실제 DB 회귀 확인, 운영 사용 여부부터 확인 (가치 2 / 위험 3 / M)
+- 과제서: 채택 — 현재 코드에서도 검증 전 URL 절단이 재현되어 지정한 프로덕션 1개와 테스트 2개 파일 범위 그대로 구현했다.
+- 검증: `npm ci --no-audit --fund=false` 성공(기존 eslint deprecated 경고, lockfile 무변경); 기준 `npm run test -- packages/core/src/__tests__/rules.test.ts` 32통과→추가 후 7실패/60통과→수정 후 67통과→수정 되돌림 7실패→복구 후 67통과. 최종 `npm run check`는 lint·3 workspace typecheck·5파일/98테스트 통과, `npm run build` 성공, `git diff --check` 통과.
+- 실서버 검증: `BASE=http://localhost:18790 DATABASE_URL=postgres://postgres@127.0.0.1:55483/insight APP_DATABASE_URL=postgres://insight_app@127.0.0.1:55483/insight node scripts/e2e.mjs`(실행 시 개발용 자격증명과 TMPDIR를 프로세스 환경으로 전달) → `180 passed, 0 failed`. 새 PostgreSQL 16 컨테이너에 정식 migration 4개 적용, irumx_gateway→insight_app 전환을 쓰는 정식 빌드 서버, 하네스의 fake OAuth :18999 사용. 제출은 평점 오류·500자 성공·501자 실패 3회로 분당 제한 안에서 실행했다.
+- 시행착오: 첫 E2E 실행은 기존 `submitted` 변수와 새 GET 응답 변수 이름이 겹쳐 SyntaxError, 같은 상태의 lint도 no-redeclare 실패했다. 새 변수만 submittedTask로 바꾸고 실제 E2E 전체 및 최종 check를 재실행해 모두 통과했다.
+- 범위/정리: 3개 파일(프로덕션 1개)만 커밋, 빌드 산출물은 기존 .gitignore로 제외. 이번 검증 서버·컨테이너/익명 볼륨 종료·삭제, 기존 E2E 운영자 지정 테스트가 생성한 임시 credential fixture 디렉터리를 삭제했다. 기존 개발 설정 파일과 서비스는 변경하지 않았다. 브라우저 화면·운영 배포는 범위 밖이라 미실행.
+- 스킬: Skill 호출 도구가 제공되지 않아 /home/hkjang/.claude/plugins/marketplaces/headcount/plugins/technology/skills/ 아래 completion-verification, systematic-debugging, test-driven-development의 SKILL.md를 직접 읽고 실패→최소 수정→성공→수정 되돌림 실패→복구→전체 검증을 적용했다.
+- 커밋: `739ea33` — 제출 답변: 500자 초과 URL을 자르지 않고 입력 오류로 거절 (작성자 hkjang, 트레일러 없음). 커밋 후 작업 트리 깨끗함.
+

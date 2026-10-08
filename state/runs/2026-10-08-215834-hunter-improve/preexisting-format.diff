@@ -1,0 +1,43 @@
+--- HEAD
++++ prettier(HEAD)
+@@ -666,7 +666,9 @@
+                   </Stack>
+                 ) : tab === "mcp" ? (
+                   <McpOAuthSettings
+-                    value={(values.mcp?.oauth as McpOAuth) || mcpOAuthValues().oauth}
++                    value={
++                      (values.mcp?.oauth as McpOAuth) || mcpOAuthValues().oauth
++                    }
+                     publicURL={
+                       values.general?.public_url || window.location.origin
+                     }
+@@ -706,7 +708,11 @@
+                   />
+                 )}
+                 {tab === "oidc" && (
+-                  <Alert color="teal" mt="xl" title="Keycloak · ReSSO 연결 안내">
++                  <Alert
++                    color="teal"
++                    mt="xl"
++                    title="Keycloak · ReSSO 연결 안내"
++                  >
+                     <Text size="sm">
+                       Client authentication을 활성화하고 Standard flow를
+                       사용하세요. Valid redirect URI에 다음 주소를 등록하면
+@@ -1610,11 +1616,11 @@
+           {config.mcp_sso_enabled ? (
+             <Alert color="teal" mt="md" title="키 없이 SSO 로 연결하기">
+               <Text size="sm">
+-                이 서버는 사내 SSO(Keycloak) 액세스 토큰도 받습니다. 키를
+-                만들지 말고 MCP 클라이언트에 아래 주소 하나만 넣으세요. 처음
+-                연결할 때 클라이언트가 SSO 로그인 창을 띄우고, 이미 로그인돼
+-                있으면 바로 연결됩니다. 이 화면에 로그인한 계정 그대로이며 권한은
+-                관리자가 정한 범위와 내 역할의 교집합입니다.
++                이 서버는 사내 SSO(Keycloak) 액세스 토큰도 받습니다. 키를 만들지
++                말고 MCP 클라이언트에 아래 주소 하나만 넣으세요. 처음 연결할 때
++                클라이언트가 SSO 로그인 창을 띄우고, 이미 로그인돼 있으면 바로
++                연결됩니다. 이 화면에 로그인한 계정 그대로이며 권한은 관리자가
++                정한 범위와 내 역할의 교집합입니다.
+               </Text>
+               <Code
+                 block

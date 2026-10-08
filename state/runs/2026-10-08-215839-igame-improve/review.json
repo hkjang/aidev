@@ -1,0 +1,13 @@
+{
+  "verdict": "approve",
+  "reasons": [],
+  "notes": [
+    "[정확성·테스트/비차단] main...HEAD의 3파일과 실패 재현 원장·red/green/revert-red 로그를 확인했다. 실패는 동명 UUID 순서 불일치이며 새 테스트는 실제 Router/세션/PG를 통과한다. 리뷰 세션에서도 PG17의 TestCatalogList 2개가 -race로 PASS(2.053s), DSN을 설정한 전체 Go 테스트 PASS(api 34.497s/database 2.022s), go vet·gofmt·diff 검사 PASS.",
+    "[보안·데이터/비차단] 인증·인가·쿼리 바인딩·favorite의 principal UserID 조건이 유지된다. 임시 서버 HTTP probe에서 익명 401, 일반 사용자 2명의 favorite 필터/표시 격리와 요청 user_id 무시, %, _, 역슬래시 리터럴 검색 및 SQL 형태 입력의 데이터 처리를 확인했다. 이번 변경에서 구체적인 공격 경로를 찾지 못했다.",
+    "[개인정보·범위·복구/비차단] 기존 사용자 ID/즐겨찾기 조회의 목적·저장·접근 범위가 바뀌지 않으며 신규 개인정보 수집·보존·외부 전송, 의존성·라이선스·인증·마이그레이션 변경이 없다. 문서의 정렬 약속은 구현과 일치하고 OFFSET 한계도 명시한다. 코드 revert로 되돌릴 수 있다.",
+    "[검증 한계/비차단] .github/workflows/ci.yml에는 PG 서비스/IGAME_TEST_DSN이 없어 새 PG 회귀는 일반 CI에서 skip된다. 이번 리뷰는 실제 PG 실행으로 보완했으나 지속 검증 공백은 남는다. 동시 삽입·삭제/정렬·필터 변경의 snapshot 보증, frontend·배포 이미지 빌드·대규모 성능은 검증하지 않았다.",
+    "[절차] 전용 Skill 도구가 없어 설치된 legal-risk:privacy-and-data-protection, security:security-architecture-review, technology:code-review의 SKILL.md와 관련 sources.md를 직접 읽어 적용했다. 저장소 코드는 수정하지 않았다."
+  ],
+  "risk": "low",
+  "blocking": []
+}
