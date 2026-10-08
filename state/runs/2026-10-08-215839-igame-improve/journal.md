@@ -27,3 +27,14 @@
 - 잔여: 일반 CI는 DSN 없어 PG 회귀 skip; 동시 데이터 변경 snapshot·frontend/이미지 빌드·대규모 성능 미검증. 전용 Skill 도구 부재로 요청한 3개 SKILL.md를 직접 읽어 적용.
 - [러너 22:17] review approved — 리뷰 승인 (risk=low)
 - [러너 22:17] pr created — https://github.com/hkjang/igame/pull/39
+- [러너 22:24] ci passed — 검사 1개 모두 success
+- [러너 22:24] merge done — f357db0
+
+## 릴리즈 노트
+- 5969bec: 기존 17파일 관례로 v0.7.32 버전·한국어 README 릴리즈 설명·문서·매뉴얼 PDF 2개 갱신, 주석 태그 v0.7.32(igame v0.7.32) 생성. detached HEAD·hkjang 유지, 원격 전송 없음.
+- make check-contract/lint/test/test-race/build(offline bundle 포함)/docs-pdf 및 diff PASS. PostgreSQL 17 make test-db PASS(api 34.450s/database 1.982s); 카탈로그 두 테스트 race 5회 PASS(6.578s, skip 없음). npm audit 두 트리 0건, pinned govulncheck v1.6.0 reachable 0건·미호출 module advisory 3건. release-*.log 보존.
+- 테스트 스키마 잔여 0개·전용 pgcrypto 유지 확인 후 이번에 만든 컨테이너와 익명 볼륨만 제거.
+- release.json status=released, github_release=false, assets=[]: 기존 tag workflow가 archive/SBOM·image scan·clean-load·live API/browser gate를 실행하고 단일 tar.gz를 게시한다. 이 배포 단계들은 로컬에서 실행했다고 주장하지 않는다. 릴리즈 노트 본문과 절차·검증·롤백 인계는 이 회차 디렉터리에 보존.
+- 전용 Skill 도구 부재로 marketing:product-launch 및 technology:release-and-deployment의 설치된 SKILL.md와 sources를 직접 읽음. Tier three로 분류해 릴리즈 노트만 준비; 새 기능·스키마·워크플로 변경 없음.
+- [러너 22:36] release published — v0.7.32
+- [러너 22:53] assets verified — v0.7.32 자산 1개 (이전 v0.7.31: 1)

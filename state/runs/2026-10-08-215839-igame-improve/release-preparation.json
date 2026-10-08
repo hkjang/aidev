@@ -1,0 +1,57 @@
+{
+  "base_commit": "ab80c961d7751c78c321d4e1557f1c3c040d7815",
+  "version": "0.7.32",
+  "launch_tier": 3,
+  "audience": "Authenticated users paging through the public game catalog, particularly games with tied names.",
+  "change": "GET /api/v1/games orders by name ASC, id ASC.",
+  "scope_limit": "No snapshot guarantee across inserts, deletes or sorting/filter changes; play history and score moderation lists remain outside this change.",
+  "readiness": "Implementation and independent critic PostgreSQL/Router validation are documented in journal.md; release-specific gates and PDF regeneration are recorded in release-*.log.",
+  "release_convention": {
+    "commit": "feat: release igame v0.7.32",
+    "tag": "annotated v0.7.32, annotation igame v0.7.32",
+    "notes": "Korean current-release paragraph in README.md; no CHANGELOG.md",
+    "version_files": "VERSION, docker-compose.yml, web and SDK package manifests/locks, versioned docs; internal/version values injected with ldflags",
+    "historical_versions": "Photographed guide v0.7.11 provenance and historical feature/content versions retained"
+  },
+  "publication": {
+    "owner": "external runner and .github/workflows/release.yml",
+    "trigger": "v* tag push",
+    "release_title": "v0.7.32",
+    "asset": "igame-v0.7.32.tar.gz",
+    "sbom_checksums": "workflow evidence, not Release assets",
+    "local_remote_actions": "none"
+  },
+  "abort_criteria": "Any required local gate failing prevents the local release; archive, clean-load, image vulnerability, live API and browser gate failures prevent workflow publication.",
+  "rollback": {
+    "owner": "hkjang / deployment operator",
+    "trigger": "After deployment, any repeatable catalog name/id ordering regression or catalog API failure relative to v0.7.31 halts rollout.",
+    "action": "Redeploy the retained v0.7.31 image using the existing deployment procedure; this patch introduces no schema migration.",
+    "local_execution": "No service deployment was performed in this session."
+  },
+  "follow_up": "At the first deployment, the deployment operator checks readiness and catalog paging with tied names, and monitors catalog error/support reports for 24 hours. No deployment/adoption success is claimed by this preparation.",
+  "skills": [
+    "/home/hkjang/.claude/plugins/marketplaces/headcount/plugins/marketing/skills/product-launch/SKILL.md",
+    "/home/hkjang/.claude/plugins/marketplaces/headcount/plugins/technology/skills/release-and-deployment/SKILL.md"
+  ],
+  "skill_loading": "No dedicated Skill tool is exposed; installed SKILL.md files and references/sources.md were read directly. No store, advertising or license-policy determination required external source consultation.",
+  "validation": {
+    "deps": "PASS",
+    "contract": "PASS",
+    "lint": "PASS",
+    "test": "PASS (web: 41 files / 246 tests)",
+    "race": "PASS",
+    "build": "PASS including offline bundle check",
+    "test-db": "PASS api 34.450s, database 1.982s",
+    "catalog-race": "PASS 2 tests x 5, no skips, 6.578s",
+    "sdk-audit": "0 vulnerabilities",
+    "web-audit": "0 vulnerabilities",
+    "govulncheck": "v1.6.0: no reachable vulnerabilities; 3 uncalled module advisories",
+    "docs-pdf": "PASS 2 manuals for 0.7.32, 2026-10-08",
+    "diff": "PASS",
+    "cleanup": "0 remaining test schemas; dedicated pgcrypto schema intact; only created DB container and its anonymous volume removed"
+  },
+  "warnings": "Non-fatal jsdom test warnings and Vite chunk-size warning remain in the passing logs.",
+  "deferred_to_tag_workflow": "Offline Docker archive, SBOM, clean Docker load, final-image scan, live-service and browser smoke gates. Not run or represented as locally validated.",
+  "release_commit": "5969bec39add14a0f7987498fa2e3bec6215199d",
+  "final_state": "Clean detached HEAD; annotated v0.7.32 points to the release commit; no remote publishing performed."
+}
