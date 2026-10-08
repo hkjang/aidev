@@ -39,3 +39,4 @@
 - 태그 workflow가 GitHub Release와 단일 Docker archive를 생성하므로 release.json의 github_release=false, assets=[]. 원격 푸시·게시 없음. 이미지/SBOM/clean-load/서비스·브라우저 smoke는 workflow에 남으며 로컬 완료로 주장하지 않음.
 - 인계 파일: release.json, release-notes.md, release-evidence.md 및 release-*.log. 러너가 커밋·태그를 푸시한 뒤 workflow gate 통과를 확인해야 실제 게시가 완료됨.
 - [러너 14:06] release published — v0.7.31
+- [러너 14:23] assets verified — v0.7.31 자산 1개 (이전 v0.7.30: 1)
