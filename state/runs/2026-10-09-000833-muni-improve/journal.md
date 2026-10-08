@@ -20,3 +20,14 @@
 - 결과 기록: ledger-entry.md 1개 항목과 ideas.json의 기존 12항목 유지·선택 항목 done 갱신. 빌드 바이너리는 삭제했고 저장소 산출물은 커밋하지 않았다.
 - [러너 00:21] brief accepted — 채택 — claimed의 빈 초기값과 API 허용 입력을 실제 라우트 실패로 확인해 지정한 최소 수정 및 수용 기준을 충족했다.
 - [러너 00:21] verify passed — 검증 7개 통과 (auto)
+
+## 비평 노트
+- approve / low / blocking 없음: 세 부서 SKILL.md를 직접 읽고 예약·자식 경로·접미사·본문/안내 대응, 권한 경계와 실패 재현 로그를 확인했다.
+- 전용 PostgreSQL에서 관련 live 8개를 2회 실행해 PASS 16/SKIP 0/FAIL 0; 새 18조합도 두 번 통과. 컨테이너 종료·삭제, 코드 수정 없음.
+- 로컬 main=1045e13은 오래됨: 요청 diff/log 확인 후 고정 base=origin/main=9d781ef 대비 a212314의 2파일을 상세 검증했다. 과거 80파일 전체 재심사는 아니며 기존 webui/dist/index.html 미커밋 변경은 보존했다.
+- Windows/macOS 실제 추출은 못 봤다. 임의 파일/폴더·가상 휴지통 충돌은 별건으로 남고 릴리즈 설명은 고정 목록.md 충돌 해결로 한정한다.
+- [러너 00:25] review approved — 리뷰 승인 (risk=low)
+- [러너 00:25] pr created — https://github.com/hkjang/muni/pull/37
+- [러너 00:32] ci passed — 검사 2개 모두 success
+- [러너 00:32] merge done — a212314
+- [러너 00:32] release missing — 릴리즈 결과 없음/손상: missing
