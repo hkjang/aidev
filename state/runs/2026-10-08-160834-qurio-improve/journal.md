@@ -20,3 +20,12 @@
 - 다음 역할 주의: errored ReadableStream은 underlying cancel을 호출하지 않으며, agent/legacy는 error 뒤 done과 EOF까지 소비해야 함; 열린 테스트 stream의 자체 정리는 단정 뒤 finally에서만 수행.
 - [러너 16:25] brief accepted — 채택 — 기준 cbbf578과 reader 정리 누락을 현재 코드·실행으로 확인했고 지정한 두 파일에서 수용 기준을 충족했으며 차선
 - [러너 16:28] verify passed — 검증 9개 통과 (auto)
+
+## 비평 노트
+- approve / low / blocking 없음: diff·로그·공개 호출부·원장 실패 재현 확인, 표적 Vitest 19/19 통과. 코드는 수정하지 않음.
+- 세 부서 스킬은 전용 도구 부재로 로컬 SKILL.md 적용; 신규 개인정보 처리·권한 확대·비밀 노출·의존성·마이그레이션 변경 없음.
+- api.ts:379에서 미완료 cancel은 오류 전파·잠금 해제를 지연하지만 현재 fetch 경로의 발생 근거 없음; Node 실제 HTTP 프로브는 원래 오류·잠금 해제·서버 연결 종료 확인. 향후 tee/사용자 정의 source 도입 시 재검토.
+- 브라우저·서버 자원 절감량과 Go·DB·E2E는 미검증; 릴리즈 설명에 절감량을 단정하지 말 것.
+- [러너 16:31] review approved — 리뷰 승인 (risk=low)
+- [러너 16:31] pr created — https://github.com/hkjang/qurio/pull/36
+- [러너 16:50] ci timeout — 제한 시간 안에 CI 완료를 확인하지 못함
