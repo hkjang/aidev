@@ -18,3 +18,16 @@
 - 확신 없는 곳·검증 못 한 것: 실제 카메라 하드웨어 및 제한된 siteScope 계정은 별도 브라우저 미검증; 빈 목록은 실제 JSON의 lobbies만 []로 바꾼 HTTP fixture이며 서버 빈 테넌트 증거가 아님.
 - 일부러 제외: 카메라 생명주기·scope 계산·체크인/서버/API·재시도 버튼·타입검사 배선·릴리즈; 기존 계약 보존. 세 technology 스킬은 전용 도구가 없어 로컬 headcount SKILL.md를 직접 읽고 적용.
 - 다음 역할 주의: local-e2e는 인자 없이 Docker/새 DB가 필요하며 이번 수정 후 첫 두 실행은 초기화 PostgreSQL 종료 경합으로 브라우저 전에 실패(각 로그 보존); 스크립트 백업 복원으로 webdist 스텁 유지, 테스트 산출물 제거.
+- [러너 02:45] brief accepted — 채택 — 현재 코드에 catch가 없고 verify가 공용 error를 지워 전용 오류가 필요하다는 전제가 맞았으며 지정한 두 파일 안에
+- [러너 02:45] verify passed — 검증 7개 통과 (auto)
+
+## 비평 노트
+- approve / low / blocking 없음: 두 파일 diff·커밋·세 headcount 스킬을 확인했고 실제 거절 결함을 찾지 못함. 코드 수정 없음.
+- 카메라·scope 미검증 지점부터 확인; 기존 로직·서버 빈 lobbyId 계약·인증/사이트 검사는 유지되며 신규 개인정보 처리·외부 전송·비가역 변경 없음.
+- 실패 재현 원장과 before/reverted 로그의 Alert 부재를 대조, 최종 E2E 26 passed 확인; 직접 lint·Vitest 98개·TestSiteScope·diff --check 통과.
+- 브라우저 E2E 재실행·실제 카메라·제한된 siteScope 계정·빈 테넌트는 미검증; 빈 목록은 HTTP fixture. 기존 PostgreSQL 초기화 경합과 E2E 정규 타입검사 공백은 후속 추적.
+- [러너 02:47] review approved — 리뷰 승인 (risk=low)
+- [러너 02:47] pr created — https://github.com/hkjang/visitflow/pull/39
+- [러너 02:50] ci passed — 검사 2개 모두 success
+- [러너 02:50] merge done — 78a7206
+- [러너 02:51] release missing — 릴리즈 결과 없음/손상: missing

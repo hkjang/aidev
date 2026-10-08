@@ -1,21 +1,12 @@
 [
   {
-    "title": "KeysPage 가 받아 보지 못한 API 키 정책을 사실처럼 말하고 폐기(DELETE) 실패를 삼킨다",
-    "value": 3,
-    "risk": 1,
-    "size": "S",
-    "status": "done",
-    "note": "이번 회차 구현(커밋 625264b). policy 를 ApiKeyPolicy|null 로 바꿔 하드코딩 추측값을 제거하고 Alert·openCreate·openEdit·FormGroup·「생성」 disabled 가 그 한 값만 읽게 했으며 revoke 를 rotate 꼴 try/catch 로 감쌌다. 프로덕션 1파일 + 영구 e2e 스펙 3개. 수정 전 번들에서 2 failed → 수정 후 24 passed.",
-    "updated": "2026-10-06"
-  },
-  {
     "title": "ScannerPage 의 reference-data 조회에 catch 가 없어 로비 선택이 조용히 빈다",
-    "value": 2,
+    "value": 3,
     "risk": 2,
     "size": "S",
-    "status": "pending",
-    "note": "ScannerPage.tsx:21 의 .then(...) 에 catch 가 없다. 이번 회차 차선 후보였다. KeysPage·AppShell·RosterPage 에서 세 번 쓴 같은 패턴(전용 실패 플래그 하나, 빈 배열을 실패 근거로 쓰지 않음)을 그대로 적용할 수 있으나 같은 파일이 카메라 start/stop·cleanup·scope 를 한 줄짜리 밀집 코드로 들고 있어 위험이 한 단 높다 — 카메라 코드는 건드리지 말 것. 이 계열에서 남은 마지막 화면이다.",
-    "updated": "2026-10-06"
+    "status": "done",
+    "note": "전용 referenceError 문자열과 catch를 추가하고 독립 Alert 및 처리 로비 error/helperText가 공유. 실제 UI 영구 E2E 2개로 조회 실패→QR 검증 후 유지→새로고침 복구/서로 다른 실제 로비 수동 선택, 로딩 중/HTTP 200 빈 목록의 무오류를 확인. 수정 전 및 수정 되돌림 1 failed/25 passed, 수정 후 및 최종 26 passed. 카메라·scope·체크인 계약 미변경.",
+    "updated": "2026-10-09"
   },
   {
     "title": "apiKeyPolicy 와 validScopes 가 같은 설정을 다르게 읽는다 (빈 값 fallback 불일치)",
@@ -23,8 +14,8 @@
     "risk": 2,
     "size": "S",
     "status": "pending",
-    "note": "이번 회차에 keys.go 전체를 다시 읽어 재확인했다. apiKeyPolicy(13-18행)는 getSetting 오류를 _ 로 버리고 strings.Fields('')→[] 를 200 으로 주는데 validScopes(210-212행)는 빈 설정에 'read write mcp' 로 되돌아간다. 다만 0005_baseline.sql:450 이 'read write mcp' 를 시드하고 settings.go:287-298 이 빈 값 저장을 막아 빈 설정은 DB 오류로만 도달한다 — 손으로 만든 대역 없이 실패를 재현할 수 없어 또 보류. 도달 경로를 찾으면 그때 다룬다. 참고: 화면 쪽은 이번 회차로 닫혀 더는 추측값을 말하지 않는다.",
-    "updated": "2026-10-06"
+    "note": "keys.go:13/205, settings.go:287 및 baseline:450 재확인. 시드와 정상 설정 저장에서 빈 값 차단. 정상 운영 실패 도달 경로는 여전히 미확인, 근거 없는 서버 수정 보류.",
+    "updated": "2026-10-09"
   },
   {
     "title": "web/e2e 가 tsc -b 로 타입 검사되지 않는다",
@@ -32,8 +23,8 @@
     "risk": 2,
     "size": "S",
     "status": "pending",
-    "note": "이번 회차에 스펙을 약 100줄 더 늘려 visit-flow.spec.ts 가 24개 test(파라미터화 포함)를 들고 있는데도 npm run lint 는 그 파일을 보지 않는다(tsconfig.app.json include:['src'], tsconfig.node.json 은 vite.config.ts 뿐). 별도 tsconfig.e2e.json + 참조 추가로 한정하고 릴리즈·Docker·workflows 경로는 건드리지 말 것. 누적 분량이 커지며 가치가 서서히 오른다.",
-    "updated": "2026-10-06"
+    "note": "정규 npm lint는 여전히 e2e를 포함하지 않는다. 이번 신규 스펙 포함 npx tsc --noEmit --strict --skipLibCheck --target ES2022 --module ESNext --moduleResolution Bundler e2e/visit-flow.spec.ts playwright.config.ts는 통과. 정규 배선은 이번에 섞지 않음.",
+    "updated": "2026-10-09"
   },
   {
     "title": "emergencyRoster·exportAuditLogsCSV·listAPIKeys 가 행별 Scan 오류를 삼키고도 count 를 완전한 수치로 보고한다",
@@ -41,8 +32,8 @@
     "risk": 1,
     "size": "S",
     "status": "pending",
-    "note": "유지. kiosk.go:231·exports.go:123 과 같은 꼴로 listAPIKeys(keys.go:36)도 rows.Scan 결과를 == nil 로만 보고 오류 행을 조용히 건너뛴다(이번 회차에 keys.go 를 읽으며 재확인). 해당 열이 NOT NULL 이라 실패 도달 경로가 없어 실패 테스트를 쓸 수 없다 — 근거 없는 수정 금지.",
-    "updated": "2026-10-06"
+    "note": "kiosk.go:231, exports.go:123, keys.go:36 재확인. 정확히는 listAPIKeys는 count 필드 없이 items를 반환한다. 필수열 계약은 이전 기록을 참고했으며 이번엔 전체 스키마 미재검증. 재현 가능한 Scan 실패 경로 미확인.",
+    "updated": "2026-10-09"
   },
   {
     "title": "VisitsPage 검색이 키 입력마다 limit=100 조회를 보낸다 (디바운스 없음)",
@@ -50,8 +41,8 @@
     "risk": 2,
     "size": "S",
     "status": "pending",
-    "note": "유지. 기존 e2e 의 waitForResponse(q=...) 와 엮이므로 다른 과제에 섞지 말 것. openVisitDetail 헬퍼가 이 응답을 기다리므로 디바운스를 넣으면 그 헬퍼도 함께 봐야 한다. 이번 회차 재열람 안 함(미확인).",
-    "updated": "2026-10-06"
+    "note": "VisitsPage:28~52 q→buildQuery→load→useEffect 의존성 재확인. openVisitDetail의 q 응답 대기와 연동됨. 기각된 요청 티켓 접근을 다시 제안하지 않는다.",
+    "updated": "2026-10-09"
   },
   {
     "title": "local-e2e.sh PostgreSQL 임시 서버 준비 확인 경합",
@@ -59,8 +50,8 @@
     "risk": 2,
     "size": "S",
     "status": "pending",
-    "note": "유지. 이번 회차 3회 실행에서 모두 재현되지 않았다(2026-10-05 첫 실행 이후 누적 미재현이 계속된다). 검증·릴리즈 경로를 건드리는 스크립트 변경이라 수정은 릴리즈까지 통과 확인이 필요하고, 재현되지 않는 동안은 손대지 않는 쪽이 낫다.",
-    "updated": "2026-10-06"
+    "note": "이번 구현의 수정 후 E2E 첫 두 실행에서 PostgreSQL did not become ready 및 초기화 임시 서버 종료 로그로 재현. 제품·스크립트 수정 없이 세 번째 실행은 26 passed. 환경 경합과 제품 실패를 분리해 e2e-after.log / e2e-after-retry.log / e2e-after-retry2.log에 보존. 스크립트 수정은 별도 과제.",
+    "updated": "2026-10-09"
   },
   {
     "title": "csvCell 이 첫 바이트만 보고 수식 주입을 판정한다",
@@ -68,8 +59,8 @@
     "risk": 2,
     "size": "S",
     "status": "pending",
-    "note": "유지. 실제 Excel/LibreOffice 해석을 확인하기 전에는 취약점으로 단정하지 않는다. 이번 회차 재열람 안 함(미확인).",
-    "updated": "2026-10-06"
+    "note": "exports.go:37 첫 바이트 검사 유지. 실제 Excel/LibreOffice 우회 해석은 미확인; 취약점으로 확정하지 않음.",
+    "updated": "2026-10-09"
   },
   {
     "title": "TestSelfRegistrationRecordsVisitorConsent 의 consented_at DESC LIMIT 1 타이브레이크 취약성",
@@ -77,8 +68,8 @@
     "risk": 1,
     "size": "S",
     "status": "pending",
-    "note": "유지. 제품 상세 쿼리에도 같은 정렬이 있어 테스트만 바꾸는 접근은 재검토 필요. 이번 회차도 VISITFLOW_TEST_DSN 미설정으로 DB 통합 SKIP, 재현 여부 미확인.",
-    "updated": "2026-10-06"
+    "note": "integration_test.go:472와 visits.go:842 동일 정렬 재확인. 이번 go test는 DB 통합 SKIP이므로 재현 미확인. 테스트만 고쳐 제품 계약과 벌어지게 하지 않음.",
+    "updated": "2026-10-09"
   },
   {
     "title": "visitBody 자체를 사이트 달력 인식형으로 바꿔 today-기반 테스트를 보호",
@@ -86,8 +77,8 @@
     "risk": 2,
     "size": "M",
     "status": "pending",
-    "note": "유지. 호출 지점이 약 40곳이다. 이미 고친 두 today 테스트를 반복하지 말고 새 재현 근거가 있을 때만 제한된 호출부만 다룬다.",
-    "updated": "2026-10-06"
+    "note": "integration_test.go:261 여전히 now+30분 UTC. 기존 제한된 today fixture 수정은 재실행할 과제가 아님. 전역 helper 변경은 영향이 크고 새 재현 없음.",
+    "updated": "2026-10-09"
   },
   {
     "title": "제출 차단 사유를 원인 필드(동의 체크박스·차량번호·반입 장비)에도 helperText 로 표시",
@@ -95,8 +86,8 @@
     "risk": 1,
     "size": "S",
     "status": "pending",
-    "note": "유지. 이번 회차 VisitFormPage 재열람 안 함(미확인).",
-    "updated": "2026-10-06"
+    "note": "VisitFormPage:154~155 차량 required와 장비 고정 helperText, 동의 checkbox 유지. 전체 제출 사유는 이미 존재하므로 추가 국소 안내의 가치만 평가.",
+    "updated": "2026-10-09"
   },
   {
     "title": "가져오기 미리보기 응답에 인식 헤더 행 번호와 무시된 열 안내",
@@ -104,8 +95,8 @@
     "risk": 1,
     "size": "M",
     "status": "pending",
-    "note": "유지. 응답 필드 추가 + 화면 안내까지 필요해 가치 대비 작업량이 크다.",
-    "updated": "2026-10-06"
+    "note": "import.go previewVisitorImport는 visitors/warnings만 반환하고 importHeaderRow는 행 인덱스 인식. 헤더 위치/무시열 UI 안내는 아직 없어 유효하나 이번보다 범위 큼.",
+    "updated": "2026-10-09"
   },
   {
     "title": "폐기(revoke) 성공 뒤에도 비활성 행이 목록에 영구히 남아 활성 키를 찾기 어렵다",
@@ -113,16 +104,43 @@
     "risk": 1,
     "size": "S",
     "status": "pending",
-    "note": "신규. listAPIKeys(keys.go:22)는 user_id 로만 걸러 폐기·만료된 키까지 created_at DESC 전부 돌려주고 KeysPage 는 opacity 0.5 로만 구분한다. 이번 회차 e2e 로 폐기된 행이 그대로 남는 것을 실제로 봤다. '폐기·만료 숨기기' 토글이나 상태 Chip 이 자연스럽지만 서버 쿼리를 건드리면 계약이 바뀌므로 화면 쪽 필터로 한정하는 편이 안전하다. 활성 키 한도(maxActiveKeys)와 화면의 행 수가 어긋나 보이는 혼동도 같이 닫힌다.",
-    "updated": "2026-10-06"
+    "note": "keys.go listAPIKeys의 user_id 조건 및 KeysPage items.map/opacity 재확인. 회전 유예(graceUntil) 중인 키는 즉시 비활성으로 숨기면 안 됨. 화면 필터 과제로 유지.",
+    "updated": "2026-10-09"
   },
   {
-    "title": "「생성」이 비활성인 이유가 Scope 를 모두 해제한 경우에는 화면에 읽히지 않는다",
+    "title": "만료된 API 키의 수정·회전 버튼이 계속 활성으로 보인다",
     "value": 2,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "신규. KeysPage:195/200 disabled는 revokedAt만 확인하나 keys.go update/rotate는 expires_at>now()를 요구. 만료 표시/동작 비활성화를 화면에 한정할 수 있으나 실제 만료 시각 E2E 설계 미확인.",
+    "updated": "2026-10-09"
+  },
+  {
+    "title": "QR 확인 버튼이 공백만 입력해도 활성인데 클릭은 조용히 무시된다",
+    "value": 1,
     "risk": 1,
     "size": "S",
     "status": "pending",
-    "note": "신규. 이번 회차로 정책 미수신 사유는 대화상자에 문장으로 읽히게 됐지만, 정책이 정상이고 사용자가 체크박스를 모두 해제한 경우에는 disabled={!policy || !name || !scopes.length} 중 뒤의 두 조건이 이유를 말하지 않는다(이 저장소가 v2.8.9~v2.8.11, v2.8.14 에서 네 번 고친 결함 유형). schedule.ts 의 visitEditError 처럼 순수 함수 하나가 helperText·disabled·submit 가드를 공유하는 기존 계약을 그대로 쓸 수 있다.",
-    "updated": "2026-10-06"
+    "note": "신규. ScannerPage 버튼은 !token, verify는 !value.trim()으로 판단하여 불일치. 국소 disabled 조건/입력 안내 후보지만 기준정보 실패보다 사용자 영향 작아 이번에 섞지 않음.",
+    "updated": "2026-10-09"
+  },
+  {
+    "title": "내 API 키 화면의 추측 정책 표시와 폐기 실패 누락",
+    "value": 3,
+    "risk": 1,
+    "size": "S",
+    "status": "done",
+    "note": "이전 개선 재확인 항목. HEAD 625264b의 policy=null, load catch, revoke try/catch가 현재 KeysPage에 존재.",
+    "updated": "2026-10-09"
+  },
+  {
+    "title": "LobbyPage 늦은 응답 무시를 VisitsPage 요청 티켓 선례로 다시 구현",
+    "value": 3,
+    "risk": 2,
+    "size": "M",
+    "status": "rejected",
+    "note": "이전 기각 유지. 현재 VisitsPage에도 requestSeq 선례 없음. 미머지 접근을 다른 화면에 반복 제출하지 않는다.",
+    "updated": "2026-10-09"
   }
 ]

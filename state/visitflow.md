@@ -319,3 +319,14 @@
 - 과제서: 채택 — 지정한 파일 2개·행 번호(51·56-59·80·81·94-98·122-125·223·247)·수용 기준 1~5 가 지금 코드와 정확히 맞았고 프로덕션 1개 파일로 끝났다. 과제서가 미확인으로 남긴 「기준 스펙 수 20 vs 21」 의 어긋남을 원인까지 닫았다(358행 `for` 루프가 한 `test(` 를 두 번 등록한다 — 기록이 맞다). 과제서와 두 곳 다르게 했다 — ⓐ `policyLoaded` 플래그 대신 `policy: ApiKeyPolicy | null` 로 갔다: 플래그는 추측값을 **그대로 들고 있는** 두 번째 진실원이 되어 어느 독자가 플래그를 안 읽으면 다시 추측을 말하게 되는데, null 로 만들면 `tsc` 가 모든 독자에게 null 처리를 강제해 같은 결함이 컴파일에서 막힌다(독자가 읽는 "한 값" 이라는 요구는 그대로 지킨다). ⓑ 스펙을 2~3개 중 **3개**로 하고, DELETE 실패 스펙 꼬리에 `page.unroute` 후 성공 폐기까지 붙여 수용 기준 4의 "성공하면 목록이 갱신된다" 도 영구 가드로 고정했다. 과제서의 경고대로 `policy.allowedScopes` 가 짧거나 비었다는 사실은 실패 근거로 쓰지 않았고(실패는 `policy === null` 에서만 나온다), 정상 경로 스펙은 서버가 준 값을 `page.evaluate` 로 받아 와 그 숫자와 체크박스 개수를 맞춰 보므로 Scope 가 1개뿐인 테넌트에서도 성립한다.
 
 - 릴리즈: v2.8.18 (2026-10-06, run 2026-10-06-225801-visitflow-improve)
+## 2026-10-09
+- 선택: QR 스캐너의 기준정보 조회 실패를 명시하고 QR 검증 뒤에도 안내 유지하기 (가치 3 / 위험 2 / 작업량 S)
+- 결과: 성공
+- 요약: 기준정보 Promise의 catch 누락으로 실패가 화면에 드러나지 않던 경로에 전용 referenceError 문자열을 추가하고, 별도 한국어 Alert와 처리 로비 error/helperText가 함께 읽도록 했다(프로덕션 1파일 + 테스트 1파일, 커밋 78a7206); QR 검증·카메라·scope·체크인 조건은 그대로 두었다. 영구 Playwright 2개가 실제 배포용 번들·새 PostgreSQL·실서버·Chrome으로 실패→실제 QR 검증 후 안내 유지/미처리 pageerror 없음→새로고침 복구/실제 첫 로비 자동 선택과 다른 실제 로비 수동 선택, 조회 대기/HTTP 200 빈 목록의 무오류 및 체크인 버튼 활성 상태를 확인한다. 검증은 npm ci 후 npm run lint·npm test(98 passed)·npm run build, 별도 E2E TypeScript 검사, go test ./... -count=1(DB 통합 DSN 미설정으로 SKIP), git diff --check가 통과했고 bash scripts/local-e2e.sh는 수정 전 1 failed/25 passed → 수정 후 26 passed → 제품 수정만 되돌림 1 failed/25 passed → 최종 복원 및 수동 선택 보강 후 26 passed(1.1m)였으며, 수정 후 첫 두 실행의 PostgreSQL 준비 경합 실패는 e2e-after.log와 e2e-after-retry.log에 별도로 보존했다.
+- 실패 재현: `Error: expect(locator).toBeVisible() failed` / `Locator: getByRole('alert').filter({ hasText: '로비 목록을 불러오지 못했습니다. 페이지를 새로고침해 주세요.' })` / `Error: element(s) not found` — e2e-before.log 및 e2e-reverted.log 모두 새 안내 단정만 실패, 나머지 25개 통과; 제품 빌드 정상.
+- 보류 아이디어: web/e2e 정규 TypeScript 검사 배선 (가치 2 / 위험 2 / 작업량 S) — 이번 독립 tsc는 통과했지만 npm lint 범위는 그대로다.
+- 보류 아이디어: local-e2e.sh PostgreSQL 임시 서버 준비 확인 경합 (가치 2 / 위험 2 / 작업량 S) — 이번 두 번 실제 재현; 스크립트를 바꾸지 않은 다음 실행과 후속 두 실행은 브라우저까지 정상 진행했다.
+- 보류 아이디어: 만료된 API 키 수정·회전 버튼의 활성 표시 (가치 2 / 위험 2 / 작업량 S) — 정찰 후보 유지, 이번 범위 밖이다.
+- 보류 아이디어: 공백 QR 입력에서 확인 버튼이 활성인 표시 불일치 (가치 1 / 위험 1 / 작업량 S) — 정찰 후보 유지, 이번 기준정보 실패 처리에 섞지 않았다.
+- 과제서: 채택 — 현재 코드에 catch가 없고 verify가 공용 error를 지워 전용 오류가 필요하다는 전제가 맞았으며 지정한 두 파일 안에서 구현·실제 UI 검증을 완료했다.
+

@@ -1,0 +1,13 @@
+{
+  "verdict": "approve",
+  "reasons": [],
+  "notes": [
+    "[정확성·테스트/비차단] main...HEAD 두 파일을 확인했다. referenceError는 QR 검증·카메라의 공용 오류 초기화와 분리되며, 조회 대기와 정상 빈 목록에는 오류를 표시하지 않는다. 빈 lobbyId 허용 서버 계약과 기존 카메라·scope 로직은 유지된다.",
+    "[테스트/비차단] ledger-entry.md의 실패 재현을 e2e-before.log·e2e-reverted.log와 대조했다. 오류 Alert 부재로 실패하므로 수정 증상과 일치한다. 최종 e2e-final.log는 26 passed이며 새 테스트는 실제 QR 검증 후 안내 유지·새로고침 복구·로비 선택을 단언한다. 이번 리뷰에서는 브라우저 E2E를 재실행하지 않았다.",
+    "[검증/비차단] 리뷰에서 npm run lint, npm test(98 passed), go test ./internal/app -run ^TestSiteScope$ -count=1, git diff --check main...HEAD 통과. 일반 lint는 E2E를 타입 검사하지 않으며, Vitest 98개는 새 브라우저 테스트의 실행 증거가 아니다.",
+    "[보안·개인정보/비차단] 기존 인증·로비 역할 검사와 QR·체크인의 siteAllowed 호출을 확인했다. 이번 diff에는 권한 확대, 신규 개인정보 수집·저장·외부 전송, 비밀값 노출, 의존성·라이선스 변경, 외부 약속 문구가 없다. 추가 상태는 고정 오류 문구이며 데이터 마이그레이션 없이 revert 가능하다. 변경으로 생기는 구체적 공격 경로나 법무 차단 사유는 발견하지 못했다.",
+    "[검증 한계/비차단] 실제 카메라와 제한된 siteScope 계정의 브라우저 경로는 미검증이다. TestSiteScope 통과는 전체 인가 통합 검증을 대신하지 않는다. 빈 목록은 HTTP fixture이며 실제 빈 테넌트 증거가 아니다. local-e2e의 기존 PostgreSQL 초기화 경합은 후속 회차에서 추적할 사항이다."
+  ],
+  "risk": "low",
+  "blocking": []
+}

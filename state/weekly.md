@@ -341,3 +341,15 @@
 - 과제서: 채택 — 과제서의 두 자리(431·446행)와 피해 경로가 현재 코드·실제 HTTP 응답과 그대로 일치했고 지정한 프로덕션 1파일로 수용 기준 4개를 모두 충족했습니다. 다만 과제서가 "미확인"으로 남긴 프런트 소비 지점은 `grep -rn "admin/embeddings" frontend/src` 로 실제 두 곳이 확인됐고(과제서가 지시한 확인 절차대로), 과제서가 예견하지 못한 것은 "배치는 성공하고 집계만 실패" 를 단순 테이블 rename 으로는 만들 수 없다는 점 하나입니다 — 두 질의가 같은 테이블을 읽으므로 rename 하면 `embedPending` 이 먼저 실패해 502 가 됩니다. 게이트웨이 핸들러를 훅으로 써 배치 도중에 rename 하는 방법으로 HTTP 재현을 살렸습니다.
 
 - 릴리즈: v0.318.0 (2026-10-06, run 2026-10-06-225806-weekly-improve)
+## 2026-10-09
+- 선택: 첨부 업로드가 순서 조회 실패를 0번으로 저장하지 않게 한다 (가치 3 / 위험 1 / 작업량 S)
+- 결과: 성공
+- 요약: uploadAttachments의 nextOrder Scan 오류를 무시하던 한 줄을 명시적 오류 검사로 바꿔, 실패하면 트랜잭션·이미지 파일 쓰기 전에 HTTP 500 QUERY_FAILED와 순서 조회 실패 문구를 반환한다(프로덕션 1파일+시험 1파일, 커밋 cdc51f0). 실제 PostgreSQL과 newTestServer/App.Handler()를 거치는 새 시험 2개로 공개 PATCH 상한 입력의 수정 전 실패·수정 후 통과·원본 복원 시 재실패를 확인했고, 거절 전후 목록 ID·순서·건수/디스크 파일 목록/기존 이미지 GET 200·바이트 보존, PATCH 복구 후 같은 이미지의 단일 저장·그룹 끝 배치, AFTER/BEFORE 독립 max+1과 201 응답을 검증했다. 지정 신규 시험(1.622s), 관련 시험(8.947s), 실제 DB go test ./... -count=1(internal/app 177.632s), go vet ./..., go build ./..., openapi-check(119경로), paging-check(10목록), guard-check --changed f291f8c(12개 도달, 새 시험 uploadAttachments 55%/53%), gofmt·git diff --check가 모두 통과했으며 UI 클릭/PPTX 출력·프런트 npm 검증은 이번 범위 밖이라 미실행했다.
+- 실패 재현: `attachmentuploadorder_test.go:47: upload with an unreadable next order answered 201, want 500: {"success":true,"data":[{"id":3,"filename":"c.png","caption":"","placement":"AFTER","sortOrder":0,"sizeBytes":85,"width":10,"height":10,"createdAt":"2026-10-09T02:39:25.099067+09:00","available":true}],"traceId":"b624e47570d7d925"}` / `--- FAIL: TestAttachmentUploadOrderQueryFailurePreservesImagesAndAllowsRetry (1.01s)` — red-tests.txt 원문이며 새 행·파일 생성과 복구 재시도의 중복도 같은 실행에서 실패했다. 정상 그룹 회귀 시험은 수정 전에도 통과했다.
+- 보류 아이디어:
+  - adminUsers의 알 수 없는 role 필터를 400으로 거절 (가치 2 / 위험 1 / 작업량 S): 정찰 차선을 유지하며 HTTP 재현부터 진행; reviewer 상한은 별개.
+  - 동시 첨부 업로드의 보고서당 개수 상한 보장 (가치 3 / 위험 3 / 작업량 M): 동시 초과 HTTP 재현·다른 쓰기 경로 영향 평가가 선행돼야 한다.
+  - 본문이 잘린 이미지 첨부 거절 (가치 2 / 위험 3 / 작업량 M): DecodeConfig 이후 본문 검증과 픽셀 메모리 제한을 함께 검토해야 한다.
+  - deleteAttachment의 참조 수 조회 실패 시 파일 보존 (가치 2 / 위험 2 / 작업량 S): DELETE 성공 후 SELECT만 실패하는 결정적 재현이 필요하다.
+- 과제서: 채택 — 현재 코드의 Scan 오류 무시와 실제 HTTP의 201·중복 0번 저장이 정찰 근거와 일치했고 지정 2파일 범위로 수용 기준을 검증했다.
+

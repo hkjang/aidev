@@ -1,0 +1,13 @@
+{
+  "verdict": "approve",
+  "reasons": [],
+  "notes": [
+    "정확성·테스트(비차단): attachments.go:269에서 Scan 실패 시 트랜잭션·이미지 파일 쓰기 전에 500 QUERY_FAILED로 반환하며 multipart 정리 defer도 실행된다. 원장의 실패 재현 및 red/reverted 출력은 수정 전 201·중복 순서·새 행/파일 생성 증상과 일치한다.",
+    "독립 검증: 시험용 PostgreSQL에서 go test ./internal/app -run 'Attachment|Capture|SortOrder|Placement' -count=1 -v 실행, 신규 2개와 타인 접근 차단을 포함한 25개 모두 PASS(8.160초, SKIP 없음). git diff --check main...HEAD 통과. 전체 Go/build/vet/guard는 구현 기록을 확인했으며 이번 리뷰에서 재실행하지 않았다.",
+    "보안·데이터(비차단): 기존 인증·CSRF·보고서 소유권 검사 뒤의 매개변수화된 조회에 오류 처리만 추가한다. 이미지/파일명/사용자·보고서 식별자의 기존 DB·로컬 저장, 접근·삭제 경로를 확인했으며 신규 개인정보 수집·외부 전송·권한 확대·비밀 노출·의존성 추가가 없어 security/legal 차단 소견은 없다.",
+    "잔여 범위(비차단): 명시 sortOrder=2147483647 저장은 계속 허용되므로 해당 placement 업로드는 순서 수정 전까지 거절된다. 자동 재번호·동시 업로드 직렬화는 이번 변경의 보장이 아니다. UI 클릭 및 새 오류 시나리오의 PPTX 출력, 오버플로 외 DB 장애 주입은 미검증이다.",
+    "범위·복구(비차단): 프로덕션 1파일과 테스트 1파일만 변경했고 커밋 설명과 동작이 일치한다. 마이그레이션·외부 상태 변경이 없어 코드 revert로 되돌릴 수 있다."
+  ],
+  "risk": "low",
+  "blocking": []
+}
