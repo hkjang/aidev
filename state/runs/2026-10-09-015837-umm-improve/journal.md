@@ -28,3 +28,4 @@
 - 다음 회차·릴리즈 참고: CI의 npx playwright test에는 pree2e가 적용되지 않음. Skill 도구 부재로 지정 세 로컬 SKILL.md를 읽어 적용.
 - [러너 02:10] review approved — 리뷰 승인 (risk=low)
 - [러너 02:10] pr created — https://github.com/hkjang/umm/pull/170
+- [러너 02:14] ci failed — 성공이 아닌 검사: verify=failure · 실패한 검사: ? 잡: verify 
