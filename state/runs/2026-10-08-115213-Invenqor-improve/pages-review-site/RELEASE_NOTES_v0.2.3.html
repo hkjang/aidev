@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+<!-- Begin Jekyll SEO tag v2.8.0 -->
+<title>Invenqor Server v0.2.3 릴리즈 노트 | Invenqor</title>
+<meta name="generator" content="Jekyll v3.10.0" />
+<meta property="og:title" content="Invenqor Server v0.2.3 릴리즈 노트" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="서버 자산을 수집하는 Rust Agent와 Go 중앙 서버, React 관리 콘솔을 결합한 자산 인텔리전스 플랫폼. 단순 인벤토리 수집기를 넘어 인증, RBAC, 변경 이력, 자산 관계, 감사 로그, 안전한 Query DSL까지 포함하는 구조로 확장" />
+<meta property="og:description" content="서버 자산을 수집하는 Rust Agent와 Go 중앙 서버, React 관리 콘솔을 결합한 자산 인텔리전스 플랫폼. 단순 인벤토리 수집기를 넘어 인증, RBAC, 변경 이력, 자산 관계, 감사 로그, 안전한 Query DSL까지 포함하는 구조로 확장" />
+<link rel="canonical" href="https://github.com/pages/hkjang/Invenqor/RELEASE_NOTES_v0.2.3.html" />
+<meta property="og:url" content="https://github.com/pages/hkjang/Invenqor/RELEASE_NOTES_v0.2.3.html" />
+<meta property="og:site_name" content="Invenqor" />
+<meta property="og:type" content="website" />
+<meta name="twitter:card" content="summary" />
+<meta property="twitter:title" content="Invenqor Server v0.2.3 릴리즈 노트" />
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"WebPage","description":"서버 자산을 수집하는 Rust Agent와 Go 중앙 서버, React 관리 콘솔을 결합한 자산 인텔리전스 플랫폼. 단순 인벤토리 수집기를 넘어 인증, RBAC, 변경 이력, 자산 관계, 감사 로그, 안전한 Query DSL까지 포함하는 구조로 확장","headline":"Invenqor Server v0.2.3 릴리즈 노트","url":"https://github.com/pages/hkjang/Invenqor/RELEASE_NOTES_v0.2.3.html"}</script>
+<!-- End Jekyll SEO tag -->
+
+    <link rel="stylesheet" href="/pages/hkjang/Invenqor/assets/css/style.css?v=">
+    <!-- start custom head snippets, customize with your own _includes/head-custom.html file -->
+
+<!-- Setup Google Analytics -->
+
+
+
+<!-- You can set your favicon here -->
+<!-- link rel="shortcut icon" type="image/x-icon" href="/pages/hkjang/Invenqor/favicon.ico" -->
+
+<!-- end custom head snippets -->
+
+  </head>
+  <body>
+    <div class="container-lg px-3 my-5 markdown-body">
+      
+      <h1><a href="https://github.com/pages/hkjang/Invenqor/">Invenqor</a></h1>
+      
+
+      <h1 id="invenqor-server-v023-릴리즈-노트">Invenqor Server v0.2.3 릴리즈 노트</h1>
+
+<p>릴리즈 일자: 2026-07-29
+호환 Agent: v0.2.1</p>
+
+<h2 id="핵심-변경">핵심 변경</h2>
+
+<h3 id="운영-설정-화면">운영 설정 화면</h3>
+
+<ul>
+  <li>PostgreSQL 현재 모드·대상·schema·설정 원천과 안전한 장애 요약을 표시합니다.</li>
+  <li>새 PostgreSQL DSN을 schema 변경 없이 연결 테스트하고, 성공한 값만
+AES-256-GCM 암호화 저장합니다.</li>
+  <li><code class="language-plaintext highlighter-rouge">INVENQOR_POSTGRES_DSN</code>, <code class="language-plaintext highlighter-rouge">POSTGRES_DSN</code>, <code class="language-plaintext highlighter-rouge">postgres_dsn</code> 환경변수를 우선순위에
+따라 지원합니다.</li>
+  <li>환경변수 우선 적용과 재기동 필요 상태를 화면에 명확하게 표시합니다.</li>
+</ul>
+
+<h3 id="keycloak-ssooidc">Keycloak SSO/OIDC</h3>
+
+<ul>
+  <li>Issuer/Realm, Client ID/Secret, Redirect/Logout URI, Scope, Claim, Email domain,
+기본 역할과 자동 사용자 생성을 관리하는 화면을 제공합니다.</li>
+  <li>Role/Group mapping, <code class="language-plaintext highlighter-rouge">realm_access.roles</code> 같은 중첩 Claim과 사설 CA PEM을
+지원합니다.</li>
+  <li>Issuer discovery와 TLS 신뢰를 저장 전에 테스트합니다.</li>
+  <li>Client Secret 없이 활성화하거나 존재하지 않는 Invenqor 역할을 mapping하는
+설정을 거부합니다.</li>
+  <li>SSO 로그인마다 프로필과 Keycloak 원천 역할을 동기화하고 회수된 역할을
+제거합니다.</li>
+  <li>비활성화·삭제된 SSO 사용자는 같은 subject로 자동 재생성하지 않습니다.</li>
+  <li>로컬 Session 폐기 후 Keycloak end-session logout을 지원합니다.</li>
+</ul>
+
+<h3 id="사용자와-권한-관리">사용자와 권한 관리</h3>
+
+<ul>
+  <li>로컬 사용자 생성, 검색, 프로필, 역할, 활성 상태, 잠금 해제, 비밀번호 초기화와
+삭제 기능을 제공합니다.</li>
+  <li>로컬 역할과 Keycloak 역할 원천을 분리하고 SSO 역할은 화면에서 명확하게
+식별합니다.</li>
+  <li>비활성화·삭제 시 Session과 사용자가 발급한 API key를 즉시 폐기합니다.</li>
+  <li>자기 비활성화·강등·삭제와 마지막 활성 Super Admin 제거를 차단합니다.</li>
+  <li>관리 작업을 감사 로그에 기록합니다.</li>
+</ul>
+
+<h3 id="ui와-운영성">UI와 운영성</h3>
+
+<ul>
+  <li>로그인 화면과 콘솔 상단에 실행 중인 Server 버전을 표시합니다.</li>
+  <li>Keycloak이 활성화된 경우에만 SSO 로그인 버튼을 노출합니다.</li>
+  <li>사용자 권한에 따라 접근 가능한 메뉴만 표시합니다.</li>
+  <li>설정·사용자 화면을 실제 관리 API와 연결하고 실패 사유를 표시합니다.</li>
+</ul>
+
+<h2 id="문서와-api">문서와 API</h2>
+
+<ul>
+  <li>사용자·관리자·임원 보고서와 Server 설치 가이드를 Markdown/PDF로 갱신했습니다.</li>
+  <li>PostgreSQL, Keycloak, 사용자 관리 API를 <code class="language-plaintext highlighter-rouge">openapi.yaml</code>에 추가했습니다.</li>
+  <li>Keycloak Client 생성, 중첩 Claim, Role/Group mapping, 사설 CA와 비상 접근
+운영 절차를 문서화했습니다.</li>
+</ul>
+
+<h2 id="검증">검증</h2>
+
+<ul>
+  <li>Go 전체 테스트 및 <code class="language-plaintext highlighter-rouge">go vet</code></li>
+  <li>React/Vitest 6개 테스트와 production build</li>
+  <li>npm audit 취약점 0건</li>
+  <li>Redocly OpenAPI lint</li>
+  <li>온라인·오프라인 Docker Compose 렌더링</li>
+  <li>실제 PostgreSQL 17 + Server Docker E2E</li>
+  <li>소문자 <code class="language-plaintext highlighter-rouge">postgres_dsn</code>, 환경변수 초기 관리자, 사용자 RBAC, Keycloak 설정과
+내장 웹 콘솔 E2E</li>
+</ul>
+
+<h2 id="릴리즈-자산">릴리즈 자산</h2>
+
+<ul>
+  <li>오프라인 Docker 번들: <code class="language-plaintext highlighter-rouge">invenqor-0.2.3.tar.gz</code></li>
+  <li>번들 체크섬: <code class="language-plaintext highlighter-rouge">invenqor-0.2.3.tar.gz.sha256</code></li>
+  <li>Helm chart: <code class="language-plaintext highlighter-rouge">invenqor-0.2.3.tgz</code></li>
+  <li>Helm chart 체크섬: <code class="language-plaintext highlighter-rouge">invenqor-0.2.3.tgz.sha256</code></li>
+  <li><code class="language-plaintext highlighter-rouge">compose.offline.yaml</code>, <code class="language-plaintext highlighter-rouge">openapi.yaml</code></li>
+  <li>사용자·관리자·임원·Server 설치·API/MCP 가이드 MD/PDF</li>
+</ul>
+
+<p>오프라인 번들에는 <code class="language-plaintext highlighter-rouge">linux/amd64</code>용 <code class="language-plaintext highlighter-rouge">invenqor-server:0.2.3</code>과
+<code class="language-plaintext highlighter-rouge">postgres:17-alpine</code> 이미지가 포함됩니다. Agent v0.2.1 배포 파일은 별도
+<a href="https://github.com/hkjang/invenqor-agents/releases/tag/v0.2.1"><code class="language-plaintext highlighter-rouge">invenqor-agents</code></a>
+릴리즈에서 제공합니다.</p>
+
+
+      
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/anchor-js/4.1.0/anchor.min.js" integrity="sha256-lZaRhKri35AyJSypXXs4o6OPFTbTmUoltBbDCbdzegg=" crossorigin="anonymous"></script>
+    <script>anchors.add();</script>
+  </body>
+</html>

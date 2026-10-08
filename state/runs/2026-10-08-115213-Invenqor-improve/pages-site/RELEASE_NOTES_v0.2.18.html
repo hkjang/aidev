@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+<!-- Begin Jekyll SEO tag v2.8.0 -->
+<title>Invenqor Server·Agent v0.2.18 릴리즈 노트 | Invenqor</title>
+<meta name="generator" content="Jekyll v3.10.0" />
+<meta property="og:title" content="Invenqor Server·Agent v0.2.18 릴리즈 노트" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="서버 자산을 수집하는 Rust Agent와 Go 중앙 서버, React 관리 콘솔을 결합한 자산 인텔리전스 플랫폼. 단순 인벤토리 수집기를 넘어 인증, RBAC, 변경 이력, 자산 관계, 감사 로그, 안전한 Query DSL까지 포함하는 구조로 확장" />
+<meta property="og:description" content="서버 자산을 수집하는 Rust Agent와 Go 중앙 서버, React 관리 콘솔을 결합한 자산 인텔리전스 플랫폼. 단순 인벤토리 수집기를 넘어 인증, RBAC, 변경 이력, 자산 관계, 감사 로그, 안전한 Query DSL까지 포함하는 구조로 확장" />
+<link rel="canonical" href="https://github.com/pages/hkjang/Invenqor/RELEASE_NOTES_v0.2.18.html" />
+<meta property="og:url" content="https://github.com/pages/hkjang/Invenqor/RELEASE_NOTES_v0.2.18.html" />
+<meta property="og:site_name" content="Invenqor" />
+<meta property="og:type" content="website" />
+<meta name="twitter:card" content="summary" />
+<meta property="twitter:title" content="Invenqor Server·Agent v0.2.18 릴리즈 노트" />
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"WebPage","description":"서버 자산을 수집하는 Rust Agent와 Go 중앙 서버, React 관리 콘솔을 결합한 자산 인텔리전스 플랫폼. 단순 인벤토리 수집기를 넘어 인증, RBAC, 변경 이력, 자산 관계, 감사 로그, 안전한 Query DSL까지 포함하는 구조로 확장","headline":"Invenqor Server·Agent v0.2.18 릴리즈 노트","url":"https://github.com/pages/hkjang/Invenqor/RELEASE_NOTES_v0.2.18.html"}</script>
+<!-- End Jekyll SEO tag -->
+
+    <link rel="stylesheet" href="/pages/hkjang/Invenqor/assets/css/style.css?v=">
+    <!-- start custom head snippets, customize with your own _includes/head-custom.html file -->
+
+<!-- Setup Google Analytics -->
+
+
+
+<!-- You can set your favicon here -->
+<!-- link rel="shortcut icon" type="image/x-icon" href="/pages/hkjang/Invenqor/favicon.ico" -->
+
+<!-- end custom head snippets -->
+
+  </head>
+  <body>
+    <div class="container-lg px-3 my-5 markdown-body">
+      
+      <h1><a href="https://github.com/pages/hkjang/Invenqor/">Invenqor</a></h1>
+      
+
+      <h1 id="invenqor-serveragent-v0218-릴리즈-노트">Invenqor Server·Agent v0.2.18 릴리즈 노트</h1>
+
+<p>릴리즈 일자: 2026-08-26
+호환 Agent: v0.2.18 (Linux·Windows)</p>
+
+<p>이번 릴리즈에서 고친 결함들은 공통점이 하나 있습니다. <strong>이미 존재하던 검증이
+실행되지 않고 있었습니다.</strong> 전부 CI가 초록불인 채로 운영까지 갔습니다.</p>
+
+<h2 id="1-서버-인스턴스-여럿이-동시에-뜨면-하나만-살아남았습니다">1. 서버 인스턴스 여럿이 동시에 뜨면 하나만 살아남았습니다</h2>
+
+<p>rolling update, 또는 replica가 2개 이상인 Deployment는 여러 인스턴스를 같은
+데이터베이스에 동시에 붙입니다. <strong>하나를 제외한 전부가 기동 중
+<code class="language-plaintext highlighter-rouge">SCHEMA_MIGRATION_FAILURE</code>로 종료됐습니다.</strong> 6개를 동시에 놓으면 5개가 죽습니다.</p>
+
+<p>마이그레이션 자체는 이미 PostgreSQL advisory lock으로 보호되고 있었습니다. 그런데
+마이그레이션 이력 테이블 생성이 <strong>락을 잡기 전에</strong> 실행됐습니다. PostgreSQL의
+<code class="language-plaintext highlighter-rouge">CREATE TABLE IF NOT EXISTS</code>는 동시 생성에 대해 원자적이지 않습니다 — 각 인스턴스가
+테이블이 없는 것을 확인하고, 각자 만들고, 진 쪽은 <code class="language-plaintext highlighter-rouge">pg_type_typname_nsp_index</code>의
+duplicate key로 실패합니다. SQLite는 writer를 직렬화하므로 fallback 모드에서는
+드러나지 않았습니다.</p>
+
+<p>이력 테이블을 락이 잡힌 커넥션에서 만드는 것이 수정의 전부입니다.</p>
+
+<p><strong>함께 고친 것</strong>: 마이그레이션 실패의 원인이 통째로 버려지고 있었습니다. 운영자는
+<code class="language-plaintext highlighter-rouge">SCHEMA_MIGRATION_FAILURE</code> 코드만 받고 어떤 문장이 실패했는지 알 방법이
+없었습니다 — 재현하는 것 말고는. 이제 실패 원인이 서버 로그에 남습니다. health
+엔드포인트가 반환하는 필드는 그대로 credential-free입니다.</p>
+
+<h2 id="2-제안된-관계의-승인거부가-전부-http-500이었습니다">2. 제안된 관계의 승인·거부가 전부 HTTP 500이었습니다</h2>
+
+<p><code class="language-plaintext highlighter-rouge">UPDATE</code>가 파라미터 하나를 <code class="language-plaintext highlighter-rouge">reviewed_at</code>과 <code class="language-plaintext highlighter-rouge">valid_to</code>의 <code class="language-plaintext highlighter-rouge">CASE</code>에 함께 썼습니다.
+PostgreSQL은 파라미터가 등장하는 모든 자리에서 타입을 추론하는데, 다른 가지가 맨
+<code class="language-plaintext highlighter-rouge">NULL</code>인 <code class="language-plaintext highlighter-rouge">CASE</code> 안에서는 타임스탬프 컬럼이 준 것과 다른 타입을 추론합니다. 문장이
+파싱조차 되지 않아 <strong>분류 검토 큐 전체를 운영에서 쓸 수 없었습니다.</strong></p>
+
+<p><code class="language-plaintext highlighter-rouge">valid_to</code>를 Go에서 계산해 별도 파라미터로 넘기고 <code class="language-plaintext highlighter-rouge">CASE</code>를 없앴습니다.</p>
+
+<h2 id="3-알려진-취약점이-있는-go-툴체인으로-빌드하고-있었습니다">3. 알려진 취약점이 있는 Go 툴체인으로 빌드하고 있었습니다</h2>
+
+<p><code class="language-plaintext highlighter-rouge">go.mod</code>가 <code class="language-plaintext highlighter-rouge">go 1.25.0</code>으로 고정돼 있어 CI가 정확히 그 버전을 설치했고,
+<strong>코드가 실제로 호출하는 표준 라이브러리 취약점이 31개</strong>였습니다 — 부트스트랩에서
+도달하는 <code class="language-plaintext highlighter-rouge">net/mail.ParseAddress</code>의 서비스 거부 포함.</p>
+
+<p>배포되는 컨테이너 이미지는 영향이 없었습니다. Dockerfile이 최신 패치를 따라가는
+<code class="language-plaintext highlighter-rouge">golang:1.25-alpine</code>을 쓰기 때문입니다. 영향받은 것은 CI와, <code class="language-plaintext highlighter-rouge">go</code> 지시자를 그대로
+믿고 소스에서 빌드하는 경우입니다. 바닥을 <strong>1.25.14</strong>로 올렸습니다 — 측정해서
+정했습니다: 1.25.2는 24개, 1.25.6은 19개가 남고, 1.25.14는 0개입니다.</p>
+
+<h2 id="4-windows-os가-알려준-길이를-검증-없이-쓰고-있었습니다">4. Windows: OS가 알려준 길이를 검증 없이 쓰고 있었습니다</h2>
+
+<p>네 곳이 Win32가 돌려준 길이로 버퍼를 잘랐습니다. Win32는 그 길이가 버퍼에 맞는다고
+약속하지 않습니다 — <code class="language-plaintext highlighter-rouge">GetLogicalDriveStringsW</code>는 버퍼가 작으면 <em>필요한 크기</em>를
+반환하고, 드라이버는 고정 필드보다 긴 하드웨어 주소를 보고할 수 있습니다.</p>
+
+<p>서비스 개수도 클램프했습니다. 이 버퍼는 우리 프로세스 소유라 SCM이 보고한 개수와
+실제 용량이 어긋날 수 있고, 이건 panic이 아니라 <strong>할당 밖 읽기</strong>라 unwind로도 잡히지
+않습니다.</p>
+
+<h2 id="5-계정-변경이-세션-없는-호출자에게-실패할-수-있었습니다">5. 계정 변경이 세션 없는 호출자에게 실패할 수 있었습니다</h2>
+
+<p><code class="language-plaintext highlighter-rouge">ChangePassword</code>가 <code class="language-plaintext highlighter-rouge">sessions.id</code>(UUID)를 <code class="language-plaintext highlighter-rouge">principal.SessionID</code>와 비교하는데, 세션
+없는 principal은 빈 문자열을, API 키 principal은 <code class="language-plaintext highlighter-rouge">api_key:&lt;id&gt;</code>를 담고 있습니다.
+PostgreSQL은 SQLSTATE 22P02로 거부합니다. 현재 마운트된 라우트는 세션 인증
+하위이므로 운영에서 도달하지는 않지만, 서비스 메서드는 어디서든 호출 가능합니다.
+세션이 있을 때만 제외 조건을 붙입니다.</p>
+
+<h2 id="검증-자체를-고쳤습니다">검증 자체를 고쳤습니다</h2>
+
+<p>위 결함들이 CI 초록불 상태로 통과한 이유입니다.</p>
+
+<ul>
+  <li><strong>PostgreSQL 테스트</strong>: Go 스위트가 SQLite fallback에서만 돌고 있었습니다. 이제
+모든 패키지가 <code class="language-plaintext highlighter-rouge">internal/storagetest</code>로 저장소를 열고, CI에 실제 PostgreSQL 잡이
+있습니다. <code class="language-plaintext highlighter-rouge">scripts/test-postgres.sh</code>로 로컬에서도 돌릴 수 있습니다.</li>
+  <li><strong>Linux E2E</strong>: 스크립트 3개, 1135줄이 CI에서 한 번도 실행되지 않았습니다. 셋 다
+CI에 들어갔습니다. 위 1번 결함이 여기서 나왔습니다.</li>
+  <li><strong>Windows 수집기</strong>: 네이티브 Windows E2E가 카테고리 4개만 확인하고 있었습니다.
+이제 10개 수집기가 모두 시작하고 모두 끝났는지, 오류가 없는지 확인하고, 죽은
+수집기가 있으면 이름을 지목합니다.</li>
+  <li><strong>의존성 감사</strong>: 웹만 검사하고 있었습니다. Rust와 Go도 매 실행 검사합니다.
+위 3번 결함이 여기서 나왔습니다.</li>
+  <li><strong>readiness 대기</strong>: E2E의 모든 대기 루프가 시도를 소진하면 그냥 통과했습니다.
+이제 어떤 서비스를 기다렸는지와 마지막 시도의 실제 오류를 말하고 실패합니다.</li>
+</ul>
+
+<h2 id="호환성">호환성</h2>
+
+<ul>
+  <li>데이터베이스 마이그레이션이 없습니다.</li>
+  <li>소스에서 빌드하려면 Go 1.25.14 이상이 필요합니다.</li>
+  <li>API 응답 형식 변경이 없습니다.</li>
+</ul>
+
+
+      
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/anchor-js/4.1.0/anchor.min.js" integrity="sha256-lZaRhKri35AyJSypXXs4o6OPFTbTmUoltBbDCbdzegg=" crossorigin="anonymous"></script>
+    <script>anchors.add();</script>
+  </body>
+</html>

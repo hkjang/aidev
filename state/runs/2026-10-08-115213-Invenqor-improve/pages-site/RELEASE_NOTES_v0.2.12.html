@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+<!-- Begin Jekyll SEO tag v2.8.0 -->
+<title>Invenqor Server·Agent v0.2.12 릴리즈 노트 | Invenqor</title>
+<meta name="generator" content="Jekyll v3.10.0" />
+<meta property="og:title" content="Invenqor Server·Agent v0.2.12 릴리즈 노트" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="서버 자산을 수집하는 Rust Agent와 Go 중앙 서버, React 관리 콘솔을 결합한 자산 인텔리전스 플랫폼. 단순 인벤토리 수집기를 넘어 인증, RBAC, 변경 이력, 자산 관계, 감사 로그, 안전한 Query DSL까지 포함하는 구조로 확장" />
+<meta property="og:description" content="서버 자산을 수집하는 Rust Agent와 Go 중앙 서버, React 관리 콘솔을 결합한 자산 인텔리전스 플랫폼. 단순 인벤토리 수집기를 넘어 인증, RBAC, 변경 이력, 자산 관계, 감사 로그, 안전한 Query DSL까지 포함하는 구조로 확장" />
+<link rel="canonical" href="https://github.com/pages/hkjang/Invenqor/RELEASE_NOTES_v0.2.12.html" />
+<meta property="og:url" content="https://github.com/pages/hkjang/Invenqor/RELEASE_NOTES_v0.2.12.html" />
+<meta property="og:site_name" content="Invenqor" />
+<meta property="og:type" content="website" />
+<meta name="twitter:card" content="summary" />
+<meta property="twitter:title" content="Invenqor Server·Agent v0.2.12 릴리즈 노트" />
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"WebPage","description":"서버 자산을 수집하는 Rust Agent와 Go 중앙 서버, React 관리 콘솔을 결합한 자산 인텔리전스 플랫폼. 단순 인벤토리 수집기를 넘어 인증, RBAC, 변경 이력, 자산 관계, 감사 로그, 안전한 Query DSL까지 포함하는 구조로 확장","headline":"Invenqor Server·Agent v0.2.12 릴리즈 노트","url":"https://github.com/pages/hkjang/Invenqor/RELEASE_NOTES_v0.2.12.html"}</script>
+<!-- End Jekyll SEO tag -->
+
+    <link rel="stylesheet" href="/pages/hkjang/Invenqor/assets/css/style.css?v=">
+    <!-- start custom head snippets, customize with your own _includes/head-custom.html file -->
+
+<!-- Setup Google Analytics -->
+
+
+
+<!-- You can set your favicon here -->
+<!-- link rel="shortcut icon" type="image/x-icon" href="/pages/hkjang/Invenqor/favicon.ico" -->
+
+<!-- end custom head snippets -->
+
+  </head>
+  <body>
+    <div class="container-lg px-3 my-5 markdown-body">
+      
+      <h1><a href="https://github.com/pages/hkjang/Invenqor/">Invenqor</a></h1>
+      
+
+      <h1 id="invenqor-serveragent-v0212-릴리즈-노트">Invenqor Server·Agent v0.2.12 릴리즈 노트</h1>
+
+<p>릴리즈 일자: 2026-07-30
+호환 Agent: v0.2.12 (Linux·Windows)</p>
+
+<p><strong>Windows 서비스가 시작 직후 종료되어 아무것도 수집하지 못했습니다.</strong> Windows
+Agent를 설치한 경우 이 릴리즈로 교체하십시오. Server와 Linux Agent는 영향이
+없습니다.</p>
+
+<h2 id="1-서비스-상태-핸들이-잘려-서비스가-죽었습니다">1. 서비스 상태 핸들이 잘려 서비스가 죽었습니다</h2>
+
+<p><code class="language-plaintext highlighter-rouge">SERVICE_STATUS_HANDLE</code>은 핸들, 즉 <strong>포인터 크기</strong> 타입입니다. 이를 32비트로
+선언해 x64에서 상위 32비트가 잘렸고, 잘린 핸들로 <code class="language-plaintext highlighter-rouge">SetServiceStatus</code>를 호출하니
+모든 상태 보고가 실패했습니다. Service Control Manager는 서비스가 <code class="language-plaintext highlighter-rouge">RUNNING</code>을
+보고하는 것을 끝내 보지 못했고, 시작 제한 시간이 지나면 <strong>시작 실패로 판정해
+프로세스를 종료</strong>했습니다.</p>
+
+<p>그래서 첫 수집에 도달하지 못했고, 큐에 아무것도 쌓이지 않았고, 등록도 없었습니다.
+<code class="language-plaintext highlighter-rouge">--diagnose</code>는 이 모든 것과 무관하게 정상을 보고했습니다 — Server 도달 경로만
+검사했기 때문입니다.</p>
+
+<p><code class="language-plaintext highlighter-rouge">isize</code>로 수정했습니다. 상태 보고가 거부되면 이제 로그에 기록합니다.</p>
+
+<h2 id="2-서비스-열거가-무한-반복될-수-있었습니다">2. 서비스 열거가 무한 반복될 수 있었습니다</h2>
+
+<p><code class="language-plaintext highlighter-rouge">!ok != 0</code>은 논리 부정이 아니라 <strong>비트 반전</strong>입니다. 어떤 <code class="language-plaintext highlighter-rouge">i32</code>에 대해서도 0이
+아니므로 모든 결과에 “데이터가 더 있다”고 판정했고, 예상치 못한 오류가 종료 조건이
+없는 반복으로 흘러들어갔습니다. 수집기 하나가 멈추면 주기 전체가 멈추므로 큐에
+아무것도 쌓이지 않습니다 — 1번과 증상이 같습니다.</p>
+
+<p>조건을 바로잡고 재시도 횟수에 상한을 두었으며, 초기 버퍼를 256 KiB로 키워 대부분의
+호스트에서 한 번의 호출로 끝나게 했습니다.</p>
+
+<h2 id="3-무엇보다-이-문제를-볼-방법이-없었습니다">3. 무엇보다, 이 문제를 볼 방법이 없었습니다</h2>
+
+<p>Windows 서비스의 표준 오류는 어디에도 남지 않습니다. 서비스로 동작하는 동안 Agent가
+기록한 모든 것이 버려졌고, 그래서 한 번도 수집하지 못한 서비스가 정상으로 보였습니다.</p>
+
+<ul>
+  <li>
+    <p><strong>Agent가 로그 파일을 씁니다</strong>: <code class="language-plaintext highlighter-rouge">%ProgramData%\Invenqor\state\agent.log</code>.
+8 MiB에서 한 번 회전해 최대 16 MiB를 사용합니다.</p>
+
+    <div class="language-powershell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">Get-Content</span><span class="w"> </span><span class="s2">"</span><span class="nv">$</span><span class="nn">env</span><span class="p">:</span><span class="nv">ProgramData</span><span class="s2">\Invenqor\state\agent.log"</span><span class="w"> </span><span class="nt">-Tail</span><span class="w"> </span><span class="nx">50</span><span class="w"> </span><span class="nt">-Wait</span><span class="w">
+</span></code></pre></div>    </div>
+  </li>
+  <li>
+    <p><strong><code class="language-plaintext highlighter-rouge">--diagnose</code>가 서비스 자체를 점검합니다.</strong> 이전의 모든 점검은 “이 호스트가
+Server에 도달해 등록할 수 있는가”를 답했고, 그 전부가 통과하는 동안 서비스는
+죽어 있었습니다. 두 항목을 추가했습니다.</p>
+
+    <table>
+      <thead>
+        <tr>
+          <th>항목</th>
+          <th>판정</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code class="language-plaintext highlighter-rouge">service</code></td>
+          <td>SCM이 보고하는 서비스 상태와 마지막 종료 코드. 실행 중이 아니면 실패</td>
+        </tr>
+        <tr>
+          <td><code class="language-plaintext highlighter-rouge">collection activity</code></td>
+          <td>마지막 수집 완료 시각. 한 번도 없거나 두 주기 이상 지났으면 실패</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <p>세 상태(한 번도 없음 / 오래됨 / 정상)를 각각 확인했습니다. 이번 사례에서
+<code class="language-plaintext highlighter-rouge">--diagnose</code>는 이제 <code class="language-plaintext highlighter-rouge">OK</code> 대신 실패를 보고합니다.</p>
+  </li>
+</ul>
+
+<h2 id="이미-설치된-windows-호스트">이미 설치된 Windows 호스트</h2>
+
+<p>새 패키지에서 <code class="language-plaintext highlighter-rouge">install.ps1</code>을 다시 실행하면 됩니다. 설정과 미전송 큐는 유지됩니다.</p>
+
+<div class="language-powershell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">.</span><span class="n">\scripts\install.ps1</span><span class="w">
+</span><span class="o">&amp;</span><span class="w"> </span><span class="s2">"</span><span class="nv">$</span><span class="nn">env</span><span class="p">:</span><span class="nv">ProgramFiles</span><span class="s2">\Invenqor\invenqor-agent.exe"</span><span class="w"> </span><span class="se">`
+</span><span class="w">  </span><span class="nt">--config</span><span class="w"> </span><span class="s2">"</span><span class="nv">$</span><span class="nn">env</span><span class="p">:</span><span class="nv">ProgramData</span><span class="s2">\Invenqor\config.toml"</span><span class="w"> </span><span class="nt">--diagnose</span><span class="w">
+</span><span class="n">Get-Content</span><span class="w"> </span><span class="s2">"</span><span class="nv">$</span><span class="nn">env</span><span class="p">:</span><span class="nv">ProgramData</span><span class="s2">\Invenqor\state\agent.log"</span><span class="w"> </span><span class="nt">-Tail</span><span class="w"> </span><span class="nx">30</span><span class="w">
+</span></code></pre></div></div>
+
+<p><code class="language-plaintext highlighter-rouge">--diagnose</code>를 관리자 PowerShell에서 실행하면 서비스 상태 항목까지 포함됩니다.
+일반 계정에서는 SCM을 조회할 수 없어 해당 항목이 <code class="language-plaintext highlighter-rouge">SKIP</code>으로 표시됩니다.</p>
+
+<h2 id="호환성">호환성</h2>
+
+<ul>
+  <li>데이터베이스 마이그레이션이 없습니다. Server와 Linux Agent 동작 변경이 없습니다.</li>
+  <li>Linux Agent도 <code class="language-plaintext highlighter-rouge">--diagnose</code>에 <code class="language-plaintext highlighter-rouge">collection activity</code> 항목이 추가됩니다. 수집이
+두 주기 이상 멈춘 호스트는 이제 실패로 보고되므로, <code class="language-plaintext highlighter-rouge">--diagnose</code>의 종료 코드를
+감시에 사용하는 경우 확인하십시오. 서비스 상태 항목은 Windows에만 나타납니다.</li>
+  <li>Windows에서 로그 파일이 새로 생성됩니다. 상태 디렉터리 용량 한도와 별개로 최대
+16 MiB를 사용합니다.</li>
+</ul>
+
+
+      
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/anchor-js/4.1.0/anchor.min.js" integrity="sha256-lZaRhKri35AyJSypXXs4o6OPFTbTmUoltBbDCbdzegg=" crossorigin="anonymous"></script>
+    <script>anchors.add();</script>
+  </body>
+</html>

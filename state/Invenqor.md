@@ -1123,3 +1123,15 @@
   - canonicalUUID를 쓰지 않는 나머지 id 경로 점검 (가치 3 / 위험 2 / M): MCP 한 파일로 좁히고 하위 서비스 검증 여부부터 확인한다.
 - 과제서: 채택 — 코드와 공개 계약이 과제서와 일치했고 두 인증 경로의 0→1 결함을 실제로 재현했으며, 제안된 최소 수정으로 양 DB 수용 기준을 충족했다.
 
+## 2026-10-08
+- 선택: GitHub Pages Jekyll 빌드를 깨뜨린 SQL 예제 수정과 실제 빌드 회귀 테스트 (가치 5 / 위험 1 / 작업량 S)
+- 결과: 성공
+- 요약: main@ab7c89b에 이전 aa960d6 수정이 병합되지 않았음을 로컬 이력으로 확인했고, docs/RELEASE_NOTES_v0.2.45.md:150의 SQL 패턴을 `LIKE ('{' || '%')`로 바꿔 Liquid 태그 시작과의 충돌을 없앴다. `bash scripts/test-pages-build.sh /mnt/c/Users/USER/projects/aidev/state/runs/2026-10-08-115213-Invenqor-improve/pages-site`로 공식 고정 이미지의 github-pages 232/Jekyll 3.10.0/Liquid 4.0.4 전체 빌드를 실패→성공→원복 실패→최종 성공(exit 0, done in 2.125 seconds) 순서로 검증했다. 생성 HTML에서 추출한 SQL의 중괄호 접두사 선택 결과를 실제 SQLite/PostgreSQL에서 확인했고 bash -n 및 git diff --check도 통과했다; 커밋 964e954, 변경은 기존 문서 1파일과 테스트 스크립트 1파일이며 CI 게이트·버전·릴리즈 항목 추가는 없다.
+- 실패 재현: 수정 전 위 명령 exit 1 — `Liquid Exception: Liquid syntax error (line 150): Tag '{%' was not properly terminated with regexp: /\%\}/ in RELEASE_NOTES_v0.2.45.md` / `github-pages 232 | Error:  Liquid syntax error (line 150): Tag '{%' was not properly terminated with regexp: /\%\}/` (전체 출력 pages-before.log, 원복 확인 pages-reverted.log).
+- 보류 아이디어:
+  - Pages 실제 빌드 회귀 테스트의 PR CI 연결 (가치 4 / 위험 2 / S): 이번에는 원인 수정과 재현 테스트만, workflow 자동 연결은 별도 과제.
+  - Pages 생성 HTML 내부 링크·앵커 검증 (가치 3 / 위험 1 / M): 추측 대신 실제 산출물의 실패 재현부터.
+  - SERVER_INSTALLATION.md Go 템플릿 보존 (가치 3 / 위험 2 / S): 실제 HTML에서 --format 인자가 빈 문자열로 바뀜을 확인했으나 이번 빌드 실패의 원인은 아니므로 미수정.
+  - REST 관계 valid_from 날짜 직렬화 점검 (가치 3 / 위험 2 / S): 실제 양 DB HTTP 재현 선행, 이번 미선택.
+- 과제서: 채택 — 지목한 문서·행과 동일한 Jekyll 실패를 실제로 재현했고 검사 완화 없이 같은 명령의 성공을 확인했다. GitHub 쓰기·배포는 실행하지 않아 원격 main 재실행 결과는 미확인이다.
+

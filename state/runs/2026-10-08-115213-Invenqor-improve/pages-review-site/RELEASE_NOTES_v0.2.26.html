@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+<!-- Begin Jekyll SEO tag v2.8.0 -->
+<title>Invenqor Server·Agent v0.2.26 릴리즈 노트 | Invenqor</title>
+<meta name="generator" content="Jekyll v3.10.0" />
+<meta property="og:title" content="Invenqor Server·Agent v0.2.26 릴리즈 노트" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="서버 자산을 수집하는 Rust Agent와 Go 중앙 서버, React 관리 콘솔을 결합한 자산 인텔리전스 플랫폼. 단순 인벤토리 수집기를 넘어 인증, RBAC, 변경 이력, 자산 관계, 감사 로그, 안전한 Query DSL까지 포함하는 구조로 확장" />
+<meta property="og:description" content="서버 자산을 수집하는 Rust Agent와 Go 중앙 서버, React 관리 콘솔을 결합한 자산 인텔리전스 플랫폼. 단순 인벤토리 수집기를 넘어 인증, RBAC, 변경 이력, 자산 관계, 감사 로그, 안전한 Query DSL까지 포함하는 구조로 확장" />
+<link rel="canonical" href="https://github.com/pages/hkjang/Invenqor/RELEASE_NOTES_v0.2.26.html" />
+<meta property="og:url" content="https://github.com/pages/hkjang/Invenqor/RELEASE_NOTES_v0.2.26.html" />
+<meta property="og:site_name" content="Invenqor" />
+<meta property="og:type" content="website" />
+<meta name="twitter:card" content="summary" />
+<meta property="twitter:title" content="Invenqor Server·Agent v0.2.26 릴리즈 노트" />
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"WebPage","description":"서버 자산을 수집하는 Rust Agent와 Go 중앙 서버, React 관리 콘솔을 결합한 자산 인텔리전스 플랫폼. 단순 인벤토리 수집기를 넘어 인증, RBAC, 변경 이력, 자산 관계, 감사 로그, 안전한 Query DSL까지 포함하는 구조로 확장","headline":"Invenqor Server·Agent v0.2.26 릴리즈 노트","url":"https://github.com/pages/hkjang/Invenqor/RELEASE_NOTES_v0.2.26.html"}</script>
+<!-- End Jekyll SEO tag -->
+
+    <link rel="stylesheet" href="/pages/hkjang/Invenqor/assets/css/style.css?v=">
+    <!-- start custom head snippets, customize with your own _includes/head-custom.html file -->
+
+<!-- Setup Google Analytics -->
+
+
+
+<!-- You can set your favicon here -->
+<!-- link rel="shortcut icon" type="image/x-icon" href="/pages/hkjang/Invenqor/favicon.ico" -->
+
+<!-- end custom head snippets -->
+
+  </head>
+  <body>
+    <div class="container-lg px-3 my-5 markdown-body">
+      
+      <h1><a href="https://github.com/pages/hkjang/Invenqor/">Invenqor</a></h1>
+      
+
+      <h1 id="invenqor-serveragent-v0226-릴리즈-노트">Invenqor Server·Agent v0.2.26 릴리즈 노트</h1>
+
+<p>릴리즈 일자: 2026-09-08
+호환 Agent: v0.2.26 (Linux·Windows)</p>
+
+<p>이번 릴리즈는 제품 동작을 바꾸지 않습니다. 바뀐 것은 <strong>검증</strong>입니다 — 프로그램이
+API Key로 외부 API를 호출할 때 지나는 경로 전체가 지금까지 테스트에서 <strong>한 번도
+실행된 적이 없었습니다.</strong> 읽기만 되었을 뿐 돌아간 적이 없는 코드였고, 이번
+릴리즈는 그 경로를 테스트로 고정합니다.</p>
+
+<h2 id="1-api-key로-외부-api를-호출하는-경로에-테스트가-없었습니다">1. API Key로 외부 API를 호출하는 경로에 테스트가 없었습니다</h2>
+
+<p><code class="language-plaintext highlighter-rouge">/api/v1/external/*</code>는 사람이 콘솔에서 쓰는 입구가 아니라 <strong>프로그램이 자격
+증명 하나로 쓰는 입구</strong>입니다. 그 자격 증명이 지나는 단계 — 401과 그 응답이
+달고 나가는 challenge 헤더, 키별 유량 제한, scope 검사, 감사 로그에 남는 이름 —
+가운데 어느 것도 테스트에서 실행되지 않았습니다. 세 가지를 고정했습니다.</p>
+
+<ul>
+  <li><strong>유량 제한은 키마다 따로 셉니다.</strong> 한도를 넘은 키는 <code class="language-plaintext highlighter-rouge">429</code>와
+<code class="language-plaintext highlighter-rouge">API_RATE_LIMITED</code>, 그리고 <strong><code class="language-plaintext highlighter-rouge">Retry-After</code></strong> 를 받습니다. 이 헤더가 없으면
+호출하는 쪽에는 기다릴 간격이 없어 즉시 다시 시도하고, 그것은 이 제한이 막으려던
+바로 그 동작입니다. 같은 시각 <strong>다른 키는 영향을 받지 않고</strong> <code class="language-plaintext highlighter-rouge">200</code>을 받으며,
+창이 지나면 원래 키도 다시 통과합니다. 재시도 루프에 빠진 통합 하나가 배포
+전체의 다른 프로그램에게 <code class="language-plaintext highlighter-rouge">429</code>를 돌려주는 일이 없다는 뜻입니다.</li>
+  <li><strong>쓸 수 없는 자격 증명은 자격 증명 문제로 거절합니다.</strong> 키가 아예 없는 경우,
+우리 키가 아닌 값, 우리 접두사에 모르는 비밀값, 그리고 <strong>폐기된 키</strong> 모두
+<code class="language-plaintext highlighter-rouge">401</code>과 <code class="language-plaintext highlighter-rouge">INVALID_API_KEY</code>, <code class="language-plaintext highlighter-rouge">WWW-Authenticate</code>를 받습니다. 빈 목록으로 답하지
+않습니다 — 빈 목록은 호출하는 쪽에서 “그곳에 아무것도 없다”로 읽힙니다. 폐기는
+만료가 아니라 <strong>다음 요청부터</strong> 듣습니다.</li>
+  <li><strong>키는 발급 시 고른 scope까지만 합니다.</strong> 읽기 전용 키의 쓰기는 <code class="language-plaintext highlighter-rouge">403</code>과
+<code class="language-plaintext highlighter-rouge">FORBIDDEN</code>으로 거절되고, 허용된 쓰기는 감사 로그에 소유자가 아니라
+<strong><code class="language-plaintext highlighter-rouge">api-key:&lt;이름&gt;</code></strong> 으로 기록됩니다. 통합이 한 일과 그 키를 만든 사람이 한 일이
+콘솔에서 구분됩니다.</li>
+</ul>
+
+<h2 id="검증">검증</h2>
+
+<ul>
+  <li><strong>테스트가 헛돌지 않는지 확인했습니다.</strong> <code class="language-plaintext highlighter-rouge">Retry-After</code>를 설정하는 줄을 지우고,
+유량 제한의 <code class="language-plaintext highlighter-rouge">Allow(KeyID)</code>를 <code class="language-plaintext highlighter-rouge">Allow("shared")</code>로 바꿔 각각 실패하는 것을 본 뒤
+되돌렸습니다.</li>
+  <li><strong>두 저장 모드에서.</strong> <code class="language-plaintext highlighter-rouge">go test ./...</code>이 SQLite fallback과
+<code class="language-plaintext highlighter-rouge">scripts/test-postgres.sh</code>의 실제 PostgreSQL 양쪽에서 전 패키지를 통과하고,
+<code class="language-plaintext highlighter-rouge">go vet</code>·<code class="language-plaintext highlighter-rouge">go build</code>·<code class="language-plaintext highlighter-rouge">gofmt</code>가 통과합니다.</li>
+  <li>Agent(Rust)와 콘솔 코드, 공개 계약(<code class="language-plaintext highlighter-rouge">openapi.yaml</code>)은 이번 릴리즈에서 바뀌지
+않았습니다.</li>
+</ul>
+
+<h2 id="호환성">호환성</h2>
+
+<ul>
+  <li>데이터베이스 마이그레이션이 없습니다.</li>
+  <li>API 응답 형식 변경이 없습니다.</li>
+  <li><strong>동작 변경이 없습니다.</strong> 서버와 Agent의 코드는 버전 문자열 외에 바뀌지
+않았으므로, v0.2.25에서 올라오는 배포는 이미지·패키지 교체만으로 끝납니다.</li>
+</ul>
+
+
+      
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/anchor-js/4.1.0/anchor.min.js" integrity="sha256-lZaRhKri35AyJSypXXs4o6OPFTbTmUoltBbDCbdzegg=" crossorigin="anonymous"></script>
+    <script>anchors.add();</script>
+  </body>
+</html>

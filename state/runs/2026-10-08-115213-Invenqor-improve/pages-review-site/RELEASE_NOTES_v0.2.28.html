@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+<!-- Begin Jekyll SEO tag v2.8.0 -->
+<title>Invenqor Server·Agent v0.2.28 릴리즈 노트 | Invenqor</title>
+<meta name="generator" content="Jekyll v3.10.0" />
+<meta property="og:title" content="Invenqor Server·Agent v0.2.28 릴리즈 노트" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="서버 자산을 수집하는 Rust Agent와 Go 중앙 서버, React 관리 콘솔을 결합한 자산 인텔리전스 플랫폼. 단순 인벤토리 수집기를 넘어 인증, RBAC, 변경 이력, 자산 관계, 감사 로그, 안전한 Query DSL까지 포함하는 구조로 확장" />
+<meta property="og:description" content="서버 자산을 수집하는 Rust Agent와 Go 중앙 서버, React 관리 콘솔을 결합한 자산 인텔리전스 플랫폼. 단순 인벤토리 수집기를 넘어 인증, RBAC, 변경 이력, 자산 관계, 감사 로그, 안전한 Query DSL까지 포함하는 구조로 확장" />
+<link rel="canonical" href="https://github.com/pages/hkjang/Invenqor/RELEASE_NOTES_v0.2.28.html" />
+<meta property="og:url" content="https://github.com/pages/hkjang/Invenqor/RELEASE_NOTES_v0.2.28.html" />
+<meta property="og:site_name" content="Invenqor" />
+<meta property="og:type" content="website" />
+<meta name="twitter:card" content="summary" />
+<meta property="twitter:title" content="Invenqor Server·Agent v0.2.28 릴리즈 노트" />
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"WebPage","description":"서버 자산을 수집하는 Rust Agent와 Go 중앙 서버, React 관리 콘솔을 결합한 자산 인텔리전스 플랫폼. 단순 인벤토리 수집기를 넘어 인증, RBAC, 변경 이력, 자산 관계, 감사 로그, 안전한 Query DSL까지 포함하는 구조로 확장","headline":"Invenqor Server·Agent v0.2.28 릴리즈 노트","url":"https://github.com/pages/hkjang/Invenqor/RELEASE_NOTES_v0.2.28.html"}</script>
+<!-- End Jekyll SEO tag -->
+
+    <link rel="stylesheet" href="/pages/hkjang/Invenqor/assets/css/style.css?v=">
+    <!-- start custom head snippets, customize with your own _includes/head-custom.html file -->
+
+<!-- Setup Google Analytics -->
+
+
+
+<!-- You can set your favicon here -->
+<!-- link rel="shortcut icon" type="image/x-icon" href="/pages/hkjang/Invenqor/favicon.ico" -->
+
+<!-- end custom head snippets -->
+
+  </head>
+  <body>
+    <div class="container-lg px-3 my-5 markdown-body">
+      
+      <h1><a href="https://github.com/pages/hkjang/Invenqor/">Invenqor</a></h1>
+      
+
+      <h1 id="invenqor-serveragent-v0228-릴리즈-노트">Invenqor Server·Agent v0.2.28 릴리즈 노트</h1>
+
+<p>릴리즈 일자: 2026-09-08
+호환 Agent: v0.2.28 (Linux·Windows)</p>
+
+<p>이번 릴리즈는 결함 하나를 고칩니다. 자리는 <strong>Query DSL의 <code class="language-plaintext highlighter-rouge">attributes.*</code> 등호
+(<code class="language-plaintext highlighter-rouge">=</code>)</strong>이고, 증상은 이전 릴리즈들과 같은 종류 — <strong>오류 없이 받아들여진 뒤 조용히
+짧아진 목록</strong> — 입니다. 다만 이번에는 그 목록이 <strong>저장 모드에 따라 달랐습니다.</strong>
+PostgreSQL에서는 제대로 답하던 질의가 SQLite fallback에서는 빈 목록이었습니다.</p>
+
+<h2 id="1-속성-등호가-agent가-보고한-숫자를-한-번도-맞히지-못했습니다">1. 속성 등호가 Agent가 보고한 숫자를 한 번도 맞히지 못했습니다</h2>
+
+<p><code class="language-plaintext highlighter-rouge">attributes.*</code> 절은 자산에 저장된 JSON 문서에서 꺼낸 값을 <strong>호출자가 입력한
+문자열</strong>과 비교합니다. 그러므로 값을 꺼내는 쪽이 두 저장 모드 모두에서 그 값을
+<strong>텍스트로</strong> 내놓아야 합니다. PostgreSQL의 <code class="language-plaintext highlighter-rouge">#&gt;&gt;</code>는 그렇게 합니다. SQLite의
+<code class="language-plaintext highlighter-rouge">json_extract</code>는 값을 <strong>SQL 타입 그대로</strong> 돌려주고, 그 비교는 아무것도 변환하지
+않습니다 — INTEGER는 TEXT 파라미터와 결코 같지 않고, JSON 불리언은 <code class="language-plaintext highlighter-rouge">'true'</code>가
+아니라 <code class="language-plaintext highlighter-rouge">1</code>로 도착합니다.</p>
+
+<p>그래서 SQLite fallback에서 <code class="language-plaintext highlighter-rouge">attributes.cpu_count = 8</code>은 정확히 그렇게 보고한
+호스트들을 두고도 <strong>HTTP 200과 빈 목록</strong>을 돌려주었고, 거울상인
+<code class="language-plaintext highlighter-rouge">attributes.cpu_count != 8</code>은 <strong>8을 가진 자산까지 포함해 전부</strong>를 남겼습니다.
+같은 질의가 PostgreSQL에서는 맞게 답했습니다.</p>
+
+<p>하필 그 값들이 Agent가 가장 많이 보고하는 종류입니다 — CPU 개수, 메모리 바이트
+수, 포트 번호는 모두 JSON 숫자로 저장됩니다. 수집된 것의 큰 부분이 여기에
+해당하는데, 어느 응답에도 <strong>값이 그 값이 아닌 무언가로 비교되었다는 표시가
+없었습니다.</strong> <code class="language-plaintext highlighter-rouge">/api/v1/query/validate</code>는 그 표현식을 이미 <code class="language-plaintext highlighter-rouge">valid</code>라고 답한
+뒤였습니다.</p>
+
+<p>이제 SQLite 쪽 추출이 값을 <strong>PostgreSQL이 렌더링하는 것과 같은 텍스트로</strong>
+접습니다. 두 모드가 같은 질의에 같은 답을 돌려줍니다.</p>
+
+<ul>
+  <li><strong>없는 키는 그대로 둡니다.</strong> SQL <code class="language-plaintext highlighter-rouge">NULL</code>은 접지 않으므로, 그 키를 한 번도 보고한
+적 없는 자산은 여전히 <code class="language-plaintext highlighter-rouge">NULL</code>로 추출되고 v0.2.25에서 고친 부등호의
+<code class="language-plaintext highlighter-rouge">IS NULL OR ...</code> 절이 그 자산을 계속 알아봅니다.</li>
+  <li><strong>정렬 비교는 여전히 숫자를 숫자로 비교합니다.</strong> <code class="language-plaintext highlighter-rouge">&gt;</code>·<code class="language-plaintext highlighter-rouge">&lt;</code>·<code class="language-plaintext highlighter-rouge">&gt;=</code>·<code class="language-plaintext highlighter-rouge">&lt;=</code>는 접지 않은
+원본 추출을 쓰므로, v0.2.20에서 고친 “자릿수 문자열 비교” 문제가 되돌아오지
+않습니다.</li>
+</ul>
+
+<h2 id="검증">검증</h2>
+
+<ul>
+  <li><strong>엔드포인트 너머에서.</strong> <code class="language-plaintext highlighter-rouge">cpu_count</code>를 JSON 숫자로 가진 자산과 다른 값을 가진
+자산을 만들고 <code class="language-plaintext highlighter-rouge">/api/v1/query/execute</code>로 <code class="language-plaintext highlighter-rouge">attributes.cpu_count = 8</code>을 실행해
+전자가 돌아오는지 확인합니다. 이 테스트는 <strong>수정 전 SQLite에서 실제로 빈 목록으로
+실패</strong>하고 수정 후 통과합니다. 불리언과 부등호 쪽도 같은 방식으로 함께 고정했습니다.</li>
+  <li><strong>컴파일 결과를 고정했습니다.</strong> 등식이 두 모드에서 각각 <code class="language-plaintext highlighter-rouge">#&gt;&gt;</code>·<code class="language-plaintext highlighter-rouge">json_extract</code>
+기준으로 어떤 SQL 모양이 되는지를 단위 테스트로 고정하고, SQLite 기대값을 쓰던
+기존 두 테스트(정렬·<code class="language-plaintext highlighter-rouge">!=</code>)를 새 렌더링에 맞게 갱신했습니다.</li>
+  <li><strong>두 저장 모드에서.</strong> <code class="language-plaintext highlighter-rouge">go test ./...</code>이 SQLite fallback과
+<code class="language-plaintext highlighter-rouge">scripts/test-postgres.sh</code>의 실제 PostgreSQL 양쪽에서 전 패키지를 통과하고,
+<code class="language-plaintext highlighter-rouge">go vet</code>·<code class="language-plaintext highlighter-rouge">go build</code>·<code class="language-plaintext highlighter-rouge">gofmt</code>가 통과합니다.</li>
+  <li>문법 응답(<code class="language-plaintext highlighter-rouge">GET /api/v1/query/grammar</code>)과 HTTP 계약이 바뀌지 않아
+<code class="language-plaintext highlighter-rouge">openapi.yaml</code>·콘솔·Agent(Rust) 코드는 이번 릴리즈에서 바뀌지 않았습니다.</li>
+</ul>
+
+<h2 id="호환성">호환성</h2>
+
+<ul>
+  <li>데이터베이스 마이그레이션이 없습니다.</li>
+  <li>API 응답 형식 변경이 없습니다.</li>
+  <li><strong>SQLite fallback에서 동작이 달라집니다.</strong> 숫자·불리언 속성에 대한 <code class="language-plaintext highlighter-rouge">=</code> 절이
+이제 실제로 일치하는 자산을 돌려주므로 결과가 늘어나고, 같은 속성에 대한 <code class="language-plaintext highlighter-rouge">!=</code>
+절은 그 자산들을 빼므로 결과가 줄어듭니다. <strong>PostgreSQL 배포에서는 답이 달라지지
+않습니다</strong> — 그쪽은 처음부터 맞게 답하고 있었습니다.</li>
+  <li>문자열 속성에 대한 질의는 두 모드 모두 그대로입니다.</li>
+</ul>
+
+
+      
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/anchor-js/4.1.0/anchor.min.js" integrity="sha256-lZaRhKri35AyJSypXXs4o6OPFTbTmUoltBbDCbdzegg=" crossorigin="anonymous"></script>
+    <script>anchors.add();</script>
+  </body>
+</html>

@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+<!-- Begin Jekyll SEO tag v2.8.0 -->
+<title>Invenqor Server·Agent v0.2.38 릴리즈 노트 | Invenqor</title>
+<meta name="generator" content="Jekyll v3.10.0" />
+<meta property="og:title" content="Invenqor Server·Agent v0.2.38 릴리즈 노트" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="서버 자산을 수집하는 Rust Agent와 Go 중앙 서버, React 관리 콘솔을 결합한 자산 인텔리전스 플랫폼. 단순 인벤토리 수집기를 넘어 인증, RBAC, 변경 이력, 자산 관계, 감사 로그, 안전한 Query DSL까지 포함하는 구조로 확장" />
+<meta property="og:description" content="서버 자산을 수집하는 Rust Agent와 Go 중앙 서버, React 관리 콘솔을 결합한 자산 인텔리전스 플랫폼. 단순 인벤토리 수집기를 넘어 인증, RBAC, 변경 이력, 자산 관계, 감사 로그, 안전한 Query DSL까지 포함하는 구조로 확장" />
+<link rel="canonical" href="https://github.com/pages/hkjang/Invenqor/RELEASE_NOTES_v0.2.38.html" />
+<meta property="og:url" content="https://github.com/pages/hkjang/Invenqor/RELEASE_NOTES_v0.2.38.html" />
+<meta property="og:site_name" content="Invenqor" />
+<meta property="og:type" content="website" />
+<meta name="twitter:card" content="summary" />
+<meta property="twitter:title" content="Invenqor Server·Agent v0.2.38 릴리즈 노트" />
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"WebPage","description":"서버 자산을 수집하는 Rust Agent와 Go 중앙 서버, React 관리 콘솔을 결합한 자산 인텔리전스 플랫폼. 단순 인벤토리 수집기를 넘어 인증, RBAC, 변경 이력, 자산 관계, 감사 로그, 안전한 Query DSL까지 포함하는 구조로 확장","headline":"Invenqor Server·Agent v0.2.38 릴리즈 노트","url":"https://github.com/pages/hkjang/Invenqor/RELEASE_NOTES_v0.2.38.html"}</script>
+<!-- End Jekyll SEO tag -->
+
+    <link rel="stylesheet" href="/pages/hkjang/Invenqor/assets/css/style.css?v=">
+    <!-- start custom head snippets, customize with your own _includes/head-custom.html file -->
+
+<!-- Setup Google Analytics -->
+
+
+
+<!-- You can set your favicon here -->
+<!-- link rel="shortcut icon" type="image/x-icon" href="/pages/hkjang/Invenqor/favicon.ico" -->
+
+<!-- end custom head snippets -->
+
+  </head>
+  <body>
+    <div class="container-lg px-3 my-5 markdown-body">
+      
+      <h1><a href="https://github.com/pages/hkjang/Invenqor/">Invenqor</a></h1>
+      
+
+      <h1 id="invenqor-serveragent-v0238-릴리즈-노트">Invenqor Server·Agent v0.2.38 릴리즈 노트</h1>
+
+<p>릴리즈 일자: 2026-09-20
+호환 Agent: v0.2.38 (Linux·Windows)</p>
+
+<p>이번 릴리즈는 결함 하나를 고칩니다. 자리는 <strong>MCP 도구 <code class="language-plaintext highlighter-rouge">asset_get</code></strong> 이고, 문제는
+콘솔에서 다른 자산으로 <strong>병합된 자산의 UUID 로 물으면 존재한 적 없는 UUID 와
+글자까지 같은 <code class="language-plaintext highlighter-rouge">asset not found</code> 만 돌려주었다</strong>는 점입니다. 이제 병합된 자산은
+<code class="language-plaintext highlighter-rouge">merged_into</code> 로 어느 자산(primary)으로 합쳐졌는지와 언제 합쳐졌는지를 답하므로,
+모델은 그 UUID 로 다시 불러 지금의 자산에 닿을 수 있습니다. 콘솔과 Agent 는
+손대지 않았습니다.</p>
+
+<h2 id="1-mcp-asset_get-이-병합된-자산을-없는-자산과-같게-답했습니다">1. MCP <code class="language-plaintext highlighter-rouge">asset_get</code> 이 병합된 자산을 없는 자산과 같게 답했습니다</h2>
+
+<p>콘솔에서 자산 A 를 B 로 병합하면 A 는 <code class="language-plaintext highlighter-rouge">status='merged'</code> 가 되고 <code class="language-plaintext highlighter-rouge">deleted_at</code> 이
+찍힙니다. REST <code class="language-plaintext highlighter-rouge">GET /api/v1/assets/{id}</code> 와 콘솔 상세 화면은 그 자산을 여전히
+“병합됨” 으로 보여 주지만, MCP <code class="language-plaintext highlighter-rouge">asset_get</code> 은 <code class="language-plaintext highlighter-rouge">deleted_at IS NULL</code> 로만 걸러
+<strong><code class="language-plaintext highlighter-rouge">asset not found</code></strong> 라고 답했습니다. 이전 대화, <code class="language-plaintext highlighter-rouge">asset_search</code> 결과, 관계 edge
+에 남아 있던 A 의 UUID 로 다시 묻는 모델은 자산이 사라졌다고 결론냈고, B 로
+가는 길은 어디에도 없었습니다.</p>
+
+<p>이제 live 조회가 비면 <strong>그 UUID 가 병합된 자산인지 한 번 더 봅니다.</strong></p>
+
+<ul>
+  <li><strong>병합된 secondary 는 primary 를 안내합니다.</strong> <code class="language-plaintext highlighter-rouge">asset</code> 키 없이
+<code class="language-plaintext highlighter-rouge">{ "merged_into": "&lt;primary UUID&gt;", "merged_at": "&lt;RFC 3339&gt;", "message": "..." }</code>
+를 돌려줍니다. <code class="language-plaintext highlighter-rouge">merged_into</code> 로 <code class="language-plaintext highlighter-rouge">asset_get</code> 을 다시 부르면 상세가 옵니다.
+primary 는 예전 그대로 <code class="language-plaintext highlighter-rouge">asset</code> 으로 답합니다.</li>
+  <li><strong>한 단계만 안내합니다.</strong> A→B→C 로 두 번 병합되었으면 A 는 B 를 받고, B 를 다시
+물으면 C 를 받습니다. 체인을 따라가지 않으므로 순환이 생길 수 없습니다.</li>
+  <li><strong>존재하지 않는 UUID 는 예전 그대로 <code class="language-plaintext highlighter-rouge">asset not found</code> 입니다.</strong> 병합 표시가
+없는 삭제 자산도 같습니다.</li>
+  <li><strong>조회 실패는 숨기지 않습니다.</strong> primary 는 <code class="language-plaintext highlighter-rouge">asset_changes</code> 의 <code class="language-plaintext highlighter-rouge">merged</code> 변경
+행(<code class="language-plaintext highlighter-rouge">after_json.secondary_ids</code>)에서 찾는데, 이 열은 PostgreSQL 에서 JSONB,
+SQLite fallback 에서 TEXT 라 엔진마다 다른 JSON 연산(<code class="language-plaintext highlighter-rouge">@&gt;</code> · <code class="language-plaintext highlighter-rouge">json_each</code>)으로
+묻습니다. 그 문장이 실패하면 오류를 그대로 돌려주고 <code class="language-plaintext highlighter-rouge">asset not found</code> 로 접지
+않습니다 — SQLite 테스트만 통과한 채 운영에서 조용히 틀리는 길을 막기
+위해서입니다.</li>
+</ul>
+
+<p>도구 설명(<code class="language-plaintext highlighter-rouge">Description</code>)에 병합 자산의 응답 모양을 적어 MCP 클라이언트가 도구
+목록에서 바로 읽을 수 있게 했고, API·MCP 가이드의 도구 표 <code class="language-plaintext highlighter-rouge">asset_get</code> 행도 같은
+내용으로 고쳤습니다.</p>
+
+<h2 id="검증">검증</h2>
+
+<ul>
+  <li><strong>실제 병합 경로로 테스트했습니다.</strong> 대역 없이 REST <code class="language-plaintext highlighter-rouge">POST /api/v1/assets/merge</code>
+로 병합한 뒤 <code class="language-plaintext highlighter-rouge">asset_get</code> 을 불러 secondary(<code class="language-plaintext highlighter-rouge">merged_into</code>==primary ·
+<code class="language-plaintext highlighter-rouge">merged_at</code> RFC 3339 · <code class="language-plaintext highlighter-rouge">asset</code> 없음), primary(그대로 <code class="language-plaintext highlighter-rouge">asset</code>), 무작위 UUID
+(<code class="language-plaintext highlighter-rouge">asset not found</code>), 두 단계 체인(한 단계만)을 확인합니다. 수정 전에는 두 테스트
+모두 <code class="language-plaintext highlighter-rouge">asset not found</code> 로 실패했습니다.</li>
+  <li><strong>두 저장 엔진 모두에서 통과합니다.</strong> <code class="language-plaintext highlighter-rouge">go test ./...</code>(SQLite fallback)와
+<code class="language-plaintext highlighter-rouge">scripts/test-postgres.sh</code>(postgres:17-alpine) 전 패키지가 통과합니다. PostgreSQL
+분기를 일부러 뒤집어 그쪽에서 빨강이 되는 것까지 확인해, 그 분기가 실제로
+실행된다는 것을 보았습니다.</li>
+  <li><strong>Server.</strong> <code class="language-plaintext highlighter-rouge">go vet</code> · <code class="language-plaintext highlighter-rouge">gofmt -l</code> 빈 출력 · <code class="language-plaintext highlighter-rouge">go build</code> 가 통과합니다. 콘솔
+정적 파일(<code class="language-plaintext highlighter-rouge">server/internal/webui/dist</code>)은 바뀌지 않았습니다.</li>
+  <li><strong>Agent.</strong> Rust 코드는 이번 릴리즈에서 바뀌지 않았습니다. 릴리즈 커밋에서
+<code class="language-plaintext highlighter-rouge">cargo fmt --all -- --check</code> · <code class="language-plaintext highlighter-rouge">cargo clippy --all-targets -D warnings</code> ·
+<code class="language-plaintext highlighter-rouge">cargo test --all-targets</code> 가 통과합니다.</li>
+</ul>
+
+<h2 id="호환성">호환성</h2>
+
+<ul>
+  <li><strong>데이터베이스 마이그레이션이 없습니다.</strong> <code class="language-plaintext highlighter-rouge">assets</code> 에 열을 더하지 않고 이미
+기록되는 <code class="language-plaintext highlighter-rouge">asset_changes</code> 를 읽습니다.</li>
+  <li><strong>REST API 응답 형식 변경이 없습니다.</strong> 바뀐 것은 MCP <code class="language-plaintext highlighter-rouge">asset_get</code> 의 병합 자산
+응답뿐이고, 그 경우는 이전에 오류였으므로 성공 응답의 모양은 그대로입니다.
+scope 는 그대로 <code class="language-plaintext highlighter-rouge">assets.read</code> 입니다.</li>
+  <li><strong>알려진 제한.</strong> <code class="language-plaintext highlighter-rouge">secondary_ids</code> 는 병합 요청이 보낸 글자 그대로 저장되므로,
+콘솔이 아닌 호출자가 대문자 UUID 로 병합한 옛 자산은 조회가 찾지 못해 예전처럼
+<code class="language-plaintext highlighter-rouge">asset not found</code> 로 남습니다. 콘솔은 소문자를 보냅니다.</li>
+  <li><strong>콘솔이 바뀌지 않았습니다.</strong> 임베디드 정적 파일은 v0.2.37 과 같습니다.</li>
+  <li><strong>Agent 의 동작 변경이 없습니다.</strong> 설정 파일, 큐, 전송 프로토콜은 이전과 같고
+버전 문자열만 올라갑니다. 기존 Agent 는 서두르지 않아도 Server 와의 호환에
+영향이 없습니다.</li>
+</ul>
+
+
+      
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/anchor-js/4.1.0/anchor.min.js" integrity="sha256-lZaRhKri35AyJSypXXs4o6OPFTbTmUoltBbDCbdzegg=" crossorigin="anonymous"></script>
+    <script>anchors.add();</script>
+  </body>
+</html>

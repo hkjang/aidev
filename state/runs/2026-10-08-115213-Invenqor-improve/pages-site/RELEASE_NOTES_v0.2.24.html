@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+<!-- Begin Jekyll SEO tag v2.8.0 -->
+<title>Invenqor Server·Agent v0.2.24 릴리즈 노트 | Invenqor</title>
+<meta name="generator" content="Jekyll v3.10.0" />
+<meta property="og:title" content="Invenqor Server·Agent v0.2.24 릴리즈 노트" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="서버 자산을 수집하는 Rust Agent와 Go 중앙 서버, React 관리 콘솔을 결합한 자산 인텔리전스 플랫폼. 단순 인벤토리 수집기를 넘어 인증, RBAC, 변경 이력, 자산 관계, 감사 로그, 안전한 Query DSL까지 포함하는 구조로 확장" />
+<meta property="og:description" content="서버 자산을 수집하는 Rust Agent와 Go 중앙 서버, React 관리 콘솔을 결합한 자산 인텔리전스 플랫폼. 단순 인벤토리 수집기를 넘어 인증, RBAC, 변경 이력, 자산 관계, 감사 로그, 안전한 Query DSL까지 포함하는 구조로 확장" />
+<link rel="canonical" href="https://github.com/pages/hkjang/Invenqor/RELEASE_NOTES_v0.2.24.html" />
+<meta property="og:url" content="https://github.com/pages/hkjang/Invenqor/RELEASE_NOTES_v0.2.24.html" />
+<meta property="og:site_name" content="Invenqor" />
+<meta property="og:type" content="website" />
+<meta name="twitter:card" content="summary" />
+<meta property="twitter:title" content="Invenqor Server·Agent v0.2.24 릴리즈 노트" />
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"WebPage","description":"서버 자산을 수집하는 Rust Agent와 Go 중앙 서버, React 관리 콘솔을 결합한 자산 인텔리전스 플랫폼. 단순 인벤토리 수집기를 넘어 인증, RBAC, 변경 이력, 자산 관계, 감사 로그, 안전한 Query DSL까지 포함하는 구조로 확장","headline":"Invenqor Server·Agent v0.2.24 릴리즈 노트","url":"https://github.com/pages/hkjang/Invenqor/RELEASE_NOTES_v0.2.24.html"}</script>
+<!-- End Jekyll SEO tag -->
+
+    <link rel="stylesheet" href="/pages/hkjang/Invenqor/assets/css/style.css?v=">
+    <!-- start custom head snippets, customize with your own _includes/head-custom.html file -->
+
+<!-- Setup Google Analytics -->
+
+
+
+<!-- You can set your favicon here -->
+<!-- link rel="shortcut icon" type="image/x-icon" href="/pages/hkjang/Invenqor/favicon.ico" -->
+
+<!-- end custom head snippets -->
+
+  </head>
+  <body>
+    <div class="container-lg px-3 my-5 markdown-body">
+      
+      <h1><a href="https://github.com/pages/hkjang/Invenqor/">Invenqor</a></h1>
+      
+
+      <h1 id="invenqor-serveragent-v0224-릴리즈-노트">Invenqor Server·Agent v0.2.24 릴리즈 노트</h1>
+
+<p>릴리즈 일자: 2026-09-04
+호환 Agent: v0.2.24 (Linux·Windows)</p>
+
+<p>이번 릴리즈는 결함 하나를 고칩니다. 자리는 <strong>API Key의 scope</strong>이고, 증상은
+v0.2.23까지와 같은 종류 — <strong>오류 없이 받아들여진 뒤 나중에 틀린 답으로 드러나는
+것</strong> — 입니다. 콘솔에서 체크박스 하나를 지우면 만들 수 없어야 할 상태의 키가
+남았고, 그 키는 죽은 것도 산 것도 아니었습니다.</p>
+
+<h2 id="1-api-key가-scope-하나-없는-상태로-남을-수-있었습니다">1. API Key가 scope 하나 없는 상태로 남을 수 있었습니다</h2>
+
+<p>키를 <strong>만들 때는</strong> 언제나 scope가 최소 하나 필요했습니다. scope가 없는 키는
+비활성화된 키가 아니기 때문입니다 — 그런 키도 인증에는 성공하고, <code class="language-plaintext highlighter-rouge">last_used_at</code>을
+기록하고, rate limit을 통과한 뒤, <strong>모든 엔드포인트에서 scope 검사에 걸려</strong>
+거절됩니다. 호출하는 쪽에서 보면 폐기된 자격 증명이 아니라 고장 난 API로 읽히고,
+콘솔의 키 목록은 그 키를 아무 설명 없이 활성으로 보여줍니다.</p>
+
+<p>그런데 <strong>이미 있는 키를 바꾸는 두 경로</strong>가 그 규칙을 건너뛰었습니다.</p>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">PATCH /api/v1/admin/api-keys/{id}</code>에 <code class="language-plaintext highlighter-rouge">{"scopes": []}</code>를 보내면 목록이 빈
+목록으로 교체되고 <strong>HTTP 200</strong>이 돌아왔습니다.</li>
+  <li><code class="language-plaintext highlighter-rouge">DELETE /api/v1/admin/api-keys/{id}/scopes/{scope}</code>로 <strong>마지막 남은 scope</strong>를
+지워도 마찬가지였습니다.</li>
+</ul>
+
+<p>콘솔은 scope마다 체크박스를 하나씩 그리고 그 체크박스를 이 DELETE로 토글하므로,
+마지막 상자를 지우는 클릭 한 번이면 생성 폼이 거부하는 상태에 도달했습니다.</p>
+
+<p>이제 목록 전체를 다루는 호출자들이 검사 하나를 공유합니다. <code class="language-plaintext highlighter-rouge">RequireScopes</code>가
+결과 목록을 검증하고 빈 목록을 거절하며, <code class="language-plaintext highlighter-rouge">Create</code>·<code class="language-plaintext highlighter-rouge">Update</code>·낙관적 scope 변경이
+모두 이 함수를 지납니다. <code class="language-plaintext highlighter-rouge">ValidScopes</code>는 빈 목록을 계속 받아들입니다 —
+<code class="language-plaintext highlighter-rouge">AddScopes</code>와 <code class="language-plaintext highlighter-rouge">RemoveScope</code>는 결과가 아니라 조각을 넘기기 때문입니다. 세 거절은
+모두 <strong>400 <code class="language-plaintext highlighter-rouge">INVALID_SCOPES</code></strong> 하나로 보고되므로, 스크립트가 규칙 하나에 대한 세
+가지 답을 구분할 필요가 없습니다. 공개 계약(OpenAPI)에도 생성 시 <code class="language-plaintext highlighter-rouge">scopes</code>가
+<code class="language-plaintext highlighter-rouge">minItems: 1</code>이고 scope 제거가 400을 낼 수 있다고 적혔습니다.</p>
+
+<h2 id="검증">검증</h2>
+
+<ul>
+  <li><strong>저장 계층에서.</strong> 이미 만들어진 키에 대해 목록 교체와 마지막 scope 제거가
+모두 <code class="language-plaintext highlighter-rouge">ErrScopesRequired</code>로 거절되고, <strong>거절된 뒤 키의 scope가 그대로 남아
+있는지</strong>를 고정했습니다. 증상이 “성공한 척하는 200”이었으므로 오류 코드만
+보지 않고 저장된 상태까지 확인합니다.</li>
+  <li><strong>HTTP 경로까지.</strong> 새 테스트가 생성 → 마지막 scope DELETE → 빈 목록 PATCH →
+scope 없는 생성까지 엔드포인트 너머에서 돌며, 네 자리 모두 400
+<code class="language-plaintext highlighter-rouge">INVALID_SCOPES</code>인지와 키가 원래 scope를 유지하는지를 확인합니다.</li>
+  <li><strong>두 저장 모드에서.</strong> <code class="language-plaintext highlighter-rouge">go test ./...</code>이 SQLite fallback과
+<code class="language-plaintext highlighter-rouge">scripts/test-postgres.sh</code>의 실제 PostgreSQL 양쪽에서 전 패키지를 통과하고,
+<code class="language-plaintext highlighter-rouge">go vet</code>·<code class="language-plaintext highlighter-rouge">go build</code>·<code class="language-plaintext highlighter-rouge">gofmt</code>, Agent 쪽 <code class="language-plaintext highlighter-rouge">cargo fmt</code>·<code class="language-plaintext highlighter-rouge">cargo clippy</code>·<code class="language-plaintext highlighter-rouge">cargo test</code>,
+콘솔 빌드와 OpenAPI 계약 검사가 통과합니다.</li>
+</ul>
+
+<h2 id="호환성">호환성</h2>
+
+<ul>
+  <li>데이터베이스 마이그레이션이 없습니다.</li>
+  <li>API 응답 형식 변경이 없습니다.</li>
+  <li><strong>동작이 달라집니다.</strong> 빈 <code class="language-plaintext highlighter-rouge">scopes</code> 목록으로 보내던 <code class="language-plaintext highlighter-rouge">PATCH</code>와 마지막 scope를
+지우던 <code class="language-plaintext highlighter-rouge">DELETE</code>는 이제 200 대신 400 <code class="language-plaintext highlighter-rouge">INVALID_SCOPES</code>를 돌려줍니다. 키를
+폐기하려면 scope를 비우지 말고 <code class="language-plaintext highlighter-rouge">DELETE /api/v1/admin/api-keys/{id}</code>로
+revoke하십시오.</li>
+  <li>이전 릴리즈에서 이미 scope가 비워진 키가 있다면 그대로 남아 있습니다. 그 키는
+어떤 요청도 통과시키지 못하므로, scope를 다시 부여하거나 revoke하십시오.</li>
+</ul>
+
+
+      
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/anchor-js/4.1.0/anchor.min.js" integrity="sha256-lZaRhKri35AyJSypXXs4o6OPFTbTmUoltBbDCbdzegg=" crossorigin="anonymous"></script>
+    <script>anchors.add();</script>
+  </body>
+</html>

@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+<!-- Begin Jekyll SEO tag v2.8.0 -->
+<title>Invenqor Server·Agent v0.2.6 릴리즈 노트 | Invenqor</title>
+<meta name="generator" content="Jekyll v3.10.0" />
+<meta property="og:title" content="Invenqor Server·Agent v0.2.6 릴리즈 노트" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="서버 자산을 수집하는 Rust Agent와 Go 중앙 서버, React 관리 콘솔을 결합한 자산 인텔리전스 플랫폼. 단순 인벤토리 수집기를 넘어 인증, RBAC, 변경 이력, 자산 관계, 감사 로그, 안전한 Query DSL까지 포함하는 구조로 확장" />
+<meta property="og:description" content="서버 자산을 수집하는 Rust Agent와 Go 중앙 서버, React 관리 콘솔을 결합한 자산 인텔리전스 플랫폼. 단순 인벤토리 수집기를 넘어 인증, RBAC, 변경 이력, 자산 관계, 감사 로그, 안전한 Query DSL까지 포함하는 구조로 확장" />
+<link rel="canonical" href="https://github.com/pages/hkjang/Invenqor/RELEASE_NOTES_v0.2.6.html" />
+<meta property="og:url" content="https://github.com/pages/hkjang/Invenqor/RELEASE_NOTES_v0.2.6.html" />
+<meta property="og:site_name" content="Invenqor" />
+<meta property="og:type" content="website" />
+<meta name="twitter:card" content="summary" />
+<meta property="twitter:title" content="Invenqor Server·Agent v0.2.6 릴리즈 노트" />
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"WebPage","description":"서버 자산을 수집하는 Rust Agent와 Go 중앙 서버, React 관리 콘솔을 결합한 자산 인텔리전스 플랫폼. 단순 인벤토리 수집기를 넘어 인증, RBAC, 변경 이력, 자산 관계, 감사 로그, 안전한 Query DSL까지 포함하는 구조로 확장","headline":"Invenqor Server·Agent v0.2.6 릴리즈 노트","url":"https://github.com/pages/hkjang/Invenqor/RELEASE_NOTES_v0.2.6.html"}</script>
+<!-- End Jekyll SEO tag -->
+
+    <link rel="stylesheet" href="/pages/hkjang/Invenqor/assets/css/style.css?v=">
+    <!-- start custom head snippets, customize with your own _includes/head-custom.html file -->
+
+<!-- Setup Google Analytics -->
+
+
+
+<!-- You can set your favicon here -->
+<!-- link rel="shortcut icon" type="image/x-icon" href="/pages/hkjang/Invenqor/favicon.ico" -->
+
+<!-- end custom head snippets -->
+
+  </head>
+  <body>
+    <div class="container-lg px-3 my-5 markdown-body">
+      
+      <h1><a href="https://github.com/pages/hkjang/Invenqor/">Invenqor</a></h1>
+      
+
+      <h1 id="invenqor-serveragent-v026-릴리즈-노트">Invenqor Server·Agent v0.2.6 릴리즈 노트</h1>
+
+<p>릴리즈 일자: 2026-07-29
+호환 Agent: v0.2.6 (이번 릴리즈부터 Server와 Agent 버전을 동일하게 관리합니다)</p>
+
+<h2 id="이번-릴리즈가-해결하는-문제">이번 릴리즈가 해결하는 문제</h2>
+
+<p>자동 등록이 되지 않을 때 <strong>원인을 확인할 방법이 없었습니다.</strong> Agent가 Server에
+도달조차 하지 못하면 Server에는 아무 기록도 남지 않고, Agent 쪽에서도 등록 실패와
+전송 실패가 같은 문장으로 기록되었으며 실제 원인은 로그에 출력되지 않았습니다.</p>
+
+<p>v0.2.6은 등록·연동 실패를 <strong>양쪽 모두에서, 실패한 상태에서도</strong> 확인할 수 있게
+만듭니다.</p>
+
+<h2 id="핵심-변경">핵심 변경</h2>
+
+<h3 id="1-등록이-조용히-실패하지-않습니다-agent">1. 등록이 조용히 실패하지 않습니다 (Agent)</h3>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">server.url</code>이 없으면 기동 시 경고를 남깁니다. 이전에는 로그 한 줄 없이 수집만
+하고 등록을 시도하지 않아 정상 Agent와 구분할 수 없었습니다. 배포 패키지의
+<code class="language-plaintext highlighter-rouge">config.toml</code>은 <code class="language-plaintext highlighter-rouge">url</code>이 주석 처리된 상태로 제공되므로 이 경우가 가장 흔했습니다.</li>
+  <li>기동 시 <code class="language-plaintext highlighter-rouge">agent transport configured</code>에 적용된 Server URL, 인증 방식, 상태
+디렉터리, 등록 상태를 함께 기록합니다.</li>
+  <li>등록 실패와 전송 실패를 분리해 기록합니다. 이전에는 등록 실패도
+<code class="language-plaintext highlighter-rouge">delivery failed</code>로 표시되었습니다.</li>
+  <li>모든 실패에 안정적인 원인 코드, Server <code class="language-plaintext highlighter-rouge">request_id</code>, 조치 문구가 붙습니다.</li>
+  <li>운영체제 수준 원인이 로그에 나타납니다. <code class="language-plaintext highlighter-rouge">Connection refused</code>,
+<code class="language-plaintext highlighter-rouge">certificate has expired</code> 같은 근본 원인이 이전에는 유실되었습니다.</li>
+  <li><code class="language-plaintext highlighter-rouge">install.sh</code>는 <code class="language-plaintext highlighter-rouge">server.url</code>이 없을 때 다음 단계와 검증 명령을 출력합니다.</li>
+  <li><code class="language-plaintext highlighter-rouge">--once</code>는 Server가 설정돼 있는데 전달에 실패하면 종료 코드 2를 반환합니다.
+이전에는 실패해도 0이었기 때문에 설치 자동화가 실패를 감지할 수 없었습니다.</li>
+</ul>
+
+<h3 id="2---diagnose-상태를-바꾸지-않는-등록-자체-진단-agent">2. <code class="language-plaintext highlighter-rouge">--diagnose</code>: 상태를 바꾸지 않는 등록 자체 진단 (Agent)</h3>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>invenqor-agent <span class="nt">--config</span> /etc/invenqor-agent/config.toml <span class="nt">--diagnose</span>
+</code></pre></div></div>
+
+<p>설정 파일 → 상태 디렉터리 → 큐 → 저장된 자격 증명 → URL 형식 → TLS →
+이름 해석 → 도달성 → Server 신원 → <strong>Server가 인식한 출처 IP</strong> → 등록 정책 →
+장비 자격 증명 유효성 순으로 점검하고, 처음 실패한 항목에 원인 코드와 조치를
+함께 출력합니다. 등록·전송·자격 증명 교체를 하지 않으므로 운영 중에도 안전하며,
+실패가 있으면 0이 아닌 코드로 종료합니다. <code class="language-plaintext highlighter-rouge">--json</code>으로 기계 판독 출력을 얻습니다.</p>
+
+<h3 id="3-statusjson과---status-agent">3. <code class="language-plaintext highlighter-rouge">status.json</code>과 <code class="language-plaintext highlighter-rouge">--status</code> (Agent)</h3>
+
+<p><code class="language-plaintext highlighter-rouge">/var/lib/invenqor-agent/status.json</code>에 등록 상태, 마지막 실패 코드와 Server
+<code class="language-plaintext highlighter-rouge">request_id</code>, 큐 깊이, 전송 실적을 매 주기 기록합니다(권한 <code class="language-plaintext highlighter-rouge">0600</code>). 저널을
+열람할 수 없는 환경에서도 원인을 확인할 수 있고, <code class="language-plaintext highlighter-rouge">--status</code>는 사람이 읽는 요약을
+출력하며 정상 여부를 종료 코드로 반환합니다.</p>
+
+<h3 id="4-get-v1agentpreflight-server">4. <code class="language-plaintext highlighter-rouge">GET /v1/agent/preflight</code> (Server)</h3>
+
+<p>자격 증명 없이 호출할 수 있는 사전 점검 API입니다. 상태를 만들지 않고 다음을
+돌려줍니다.</p>
+
+<ul>
+  <li>Server가 인식한 <strong>출처 IP</strong>(신뢰 프록시 판정 적용 후)</li>
+  <li>등록 모드, Token 요구 여부, 네트워크 허용 여부</li>
+  <li><code class="language-plaintext highlighter-rouge">would_enroll</code>과 거부 사유 코드 — 실제 등록 엔드포인트와 <strong>동일한 판정 로직</strong>을
+사용하므로 사전 점검 결과와 실제 등록 결과가 어긋나지 않습니다</li>
+  <li>Authorization 헤더로 장비 Token을 함께 보내면 그 Token의 유효성</li>
+</ul>
+
+<p>호출은 진단 로그에 <code class="language-plaintext highlighter-rouge">AGENT_PREFLIGHT_READY</code> 또는 <code class="language-plaintext highlighter-rouge">AGENT_PREFLIGHT_BLOCKED</code>로
+기록되므로, <strong>등록에 실패해 콘솔에 나타나지 않는 장비의 시도도</strong> 관리자가 확인할
+수 있습니다.</p>
+
+<h3 id="5-잘못된-url이-콘솔-html을-반환하지-않습니다-server">5. 잘못된 URL이 콘솔 HTML을 반환하지 않습니다 (Server)</h3>
+
+<p><code class="language-plaintext highlighter-rouge">server.url</code>에 경로가 섞이면(<code class="language-plaintext highlighter-rouge">https://host:7070/invenqor</code>) 이전에는 콘솔 SPA가
+HTTP 200과 HTML로 응답하고 Agent는 JSON 파싱 오류만 남겼습니다. 이제 경로에
+<code class="language-plaintext highlighter-rouge">/v1/agent/</code>가 포함된 요청은 JSON 404 <code class="language-plaintext highlighter-rouge">AGENT_ENDPOINT_NOT_FOUND</code>로 응답하고
+진단 로그에 기록되며, Agent는 이를 <code class="language-plaintext highlighter-rouge">SERVER_RESPONSE_NOT_JSON</code> 또는
+<code class="language-plaintext highlighter-rouge">AGENT_ENDPOINT_NOT_FOUND</code>로 분류해 조치 문구를 출력합니다. 잘못된 HTTP 메서드는
+<code class="language-plaintext highlighter-rouge">AGENT_ENDPOINT_METHOD_NOT_ALLOWED</code>로 기록됩니다.</p>
+
+<h3 id="6-등록-진단-요약-api와-콘솔-패널-server">6. 등록 진단 요약 API와 콘솔 패널 (Server)</h3>
+
+<p><code class="language-plaintext highlighter-rouge">GET /api/v1/admin/diagnostics/enrollment</code> (<code class="language-plaintext highlighter-rouge">agents.read</code>)는 지정 기간의 등록
+활동을 집계합니다.</p>
+
+<ul>
+  <li>등록 성공·거부, 사전 점검 차단, 전송 실패 건수</li>
+  <li>원인 코드별 발생 횟수와 <strong>조치 문구</strong></li>
+  <li><strong>출처 IP·Agent별 마지막 판정</strong>(실패한 출처를 먼저 정렬)</li>
+  <li><strong>등록은 됐지만 첫 수집 이벤트가 없는 Agent</strong> 목록</li>
+</ul>
+
+<p>같은 내용을 콘솔 <strong>Agent 관리 → 등록 진단</strong> 패널에서 확인할 수 있습니다. 기존
+<strong>Server 진단 로그</strong>는 무엇을 검색해야 하는지 이미 아는 경우에만 유용했지만, 이
+패널은 검색어 없이 실패 중인 등록을 보여줍니다.</p>
+
+<h3 id="7-교차-조회용-x-request-id">7. 교차 조회용 <code class="language-plaintext highlighter-rouge">X-Request-Id</code></h3>
+
+<p>모든 Server 응답에 <code class="language-plaintext highlighter-rouge">X-Request-Id</code>가 포함됩니다. Agent는 이 값을 로그와
+<code class="language-plaintext highlighter-rouge">status.json</code>에 기록하므로 Agent 로그, 프록시 로그, Server 진단 로그를 하나의
+식별자로 연결할 수 있습니다.</p>
+
+<h2 id="오류-코드와-조치">오류 코드와 조치</h2>
+
+<table>
+  <thead>
+    <tr>
+      <th>코드</th>
+      <th>조치</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">SERVER_UNREACHABLE</code></td>
+      <td>URL·라우팅·방화벽(7070/TCP outbound) 확인</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">SERVER_TIMEOUT</code></td>
+      <td><code class="language-plaintext highlighter-rouge">timeout_seconds</code> 상향, 중간 프록시 점검</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">TLS_REJECTED</code></td>
+      <td><code class="language-plaintext highlighter-rouge">ca_file</code>에 사설 CA 인증서 지정</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">SERVER_RESPONSE_NOT_JSON</code></td>
+      <td><code class="language-plaintext highlighter-rouge">server.url</code>을 scheme·host·port만으로 설정</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">AGENT_ENDPOINT_NOT_FOUND</code></td>
+      <td>같은 조치</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">AGENT_AUTO_ENROLLMENT_DISABLED</code></td>
+      <td>콘솔에서 자동 등록 활성화</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">AGENT_SOURCE_NOT_ALLOWED</code></td>
+      <td>허용 목록에 출처 IP/CIDR 추가</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">AGENT_ENROLLMENT_UNAUTHORIZED</code></td>
+      <td>발급 Token을 <code class="language-plaintext highlighter-rouge">enrollment_token_file</code>에 기록</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">AGENT_ALREADY_CLAIMED</code></td>
+      <td>복제본의 <code class="language-plaintext highlighter-rouge">agent-id</code>, <code class="language-plaintext highlighter-rouge">enrollment-claim.json</code> 삭제</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">AGENT_BLOCKED</code></td>
+      <td>콘솔에서 차단 해제</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">AGENT_UNAUTHORIZED</code></td>
+      <td>자동으로 재등록됩니다. 반복되면 Token 회전 확인</td>
+    </tr>
+  </tbody>
+</table>
+
+<h2 id="호환성">호환성</h2>
+
+<ul>
+  <li>데이터베이스 마이그레이션이 없습니다. 기존 <code class="language-plaintext highlighter-rouge">diagnostic_logs</code> 테이블을 사용합니다.</li>
+  <li>기존 Agent(v0.2.5 이하)는 그대로 동작합니다. 새 진단 기능만 사용할 수 없습니다.</li>
+  <li>v0.2.6 Agent는 이전 Server에도 접속합니다. <code class="language-plaintext highlighter-rouge">/v1/agent/preflight</code>가 없으면
+<code class="language-plaintext highlighter-rouge">--diagnose</code>가 해당 항목만 <code class="language-plaintext highlighter-rouge">WARN</code>으로 표시하고 나머지 점검은 계속합니다.</li>
+  <li>등록 정책, Token, 장비 자격 증명, 큐 형식은 변경되지 않았습니다.</li>
+  <li><code class="language-plaintext highlighter-rouge">--once</code>의 종료 코드가 0에서 2로 바뀔 수 있습니다. 전달 실패를 무시해야 하는
+자동화가 있다면 종료 코드 처리를 확인하십시오.</li>
+</ul>
+
+<h2 id="확인-방법">확인 방법</h2>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># Agent 장비에서</span>
+invenqor-agent <span class="nt">--config</span> /etc/invenqor-agent/config.toml <span class="nt">--diagnose</span>
+invenqor-agent <span class="nt">--config</span> /etc/invenqor-agent/config.toml <span class="nt">--status</span>
+
+<span class="c"># 임의 장비에서</span>
+curl <span class="nt">-s</span> https://invenqor.example.com:7070/v1/agent/preflight | jq .enrollment
+
+<span class="c"># 콘솔에서</span>
+Agent 관리 → 등록 진단
+Server 진단 로그 → component: Agent 등록 / Agent 전송
+</code></pre></div></div>
+
+
+      
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/anchor-js/4.1.0/anchor.min.js" integrity="sha256-lZaRhKri35AyJSypXXs4o6OPFTbTmUoltBbDCbdzegg=" crossorigin="anonymous"></script>
+    <script>anchors.add();</script>
+  </body>
+</html>

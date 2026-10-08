@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+<!-- Begin Jekyll SEO tag v2.8.0 -->
+<title>Invenqor Server·Agent v0.2.44 릴리즈 노트 | Invenqor</title>
+<meta name="generator" content="Jekyll v3.10.0" />
+<meta property="og:title" content="Invenqor Server·Agent v0.2.44 릴리즈 노트" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="서버 자산을 수집하는 Rust Agent와 Go 중앙 서버, React 관리 콘솔을 결합한 자산 인텔리전스 플랫폼. 단순 인벤토리 수집기를 넘어 인증, RBAC, 변경 이력, 자산 관계, 감사 로그, 안전한 Query DSL까지 포함하는 구조로 확장" />
+<meta property="og:description" content="서버 자산을 수집하는 Rust Agent와 Go 중앙 서버, React 관리 콘솔을 결합한 자산 인텔리전스 플랫폼. 단순 인벤토리 수집기를 넘어 인증, RBAC, 변경 이력, 자산 관계, 감사 로그, 안전한 Query DSL까지 포함하는 구조로 확장" />
+<link rel="canonical" href="https://github.com/pages/hkjang/Invenqor/RELEASE_NOTES_v0.2.44.html" />
+<meta property="og:url" content="https://github.com/pages/hkjang/Invenqor/RELEASE_NOTES_v0.2.44.html" />
+<meta property="og:site_name" content="Invenqor" />
+<meta property="og:type" content="website" />
+<meta name="twitter:card" content="summary" />
+<meta property="twitter:title" content="Invenqor Server·Agent v0.2.44 릴리즈 노트" />
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"WebPage","description":"서버 자산을 수집하는 Rust Agent와 Go 중앙 서버, React 관리 콘솔을 결합한 자산 인텔리전스 플랫폼. 단순 인벤토리 수집기를 넘어 인증, RBAC, 변경 이력, 자산 관계, 감사 로그, 안전한 Query DSL까지 포함하는 구조로 확장","headline":"Invenqor Server·Agent v0.2.44 릴리즈 노트","url":"https://github.com/pages/hkjang/Invenqor/RELEASE_NOTES_v0.2.44.html"}</script>
+<!-- End Jekyll SEO tag -->
+
+    <link rel="stylesheet" href="/pages/hkjang/Invenqor/assets/css/style.css?v=">
+    <!-- start custom head snippets, customize with your own _includes/head-custom.html file -->
+
+<!-- Setup Google Analytics -->
+
+
+
+<!-- You can set your favicon here -->
+<!-- link rel="shortcut icon" type="image/x-icon" href="/pages/hkjang/Invenqor/favicon.ico" -->
+
+<!-- end custom head snippets -->
+
+  </head>
+  <body>
+    <div class="container-lg px-3 my-5 markdown-body">
+      
+      <h1><a href="https://github.com/pages/hkjang/Invenqor/">Invenqor</a></h1>
+      
+
+      <h1 id="invenqor-serveragent-v0244-릴리즈-노트">Invenqor Server·Agent v0.2.44 릴리즈 노트</h1>
+
+<p>릴리즈 일자: 2026-10-06
+호환 Agent: v0.2.44 (Linux·Windows)</p>
+
+<p>이번 릴리즈는 결함 하나를 고칩니다. 자리는 <strong>자산 관계 생성 API</strong>
+(<code class="language-plaintext highlighter-rouge">POST /api/v1/assets/{assetId}/relations</code> 와 API key 로 들어오는
+<code class="language-plaintext highlighter-rouge">POST /api/v1/external/assets/{assetId}/relations</code>)이고, 문제는
+<strong><code class="language-plaintext highlighter-rouge">openapi.yaml</code> 이 <code class="language-plaintext highlighter-rouge">minimum: 0, maximum: 1</code> 로 선언한 <code class="language-plaintext highlighter-rouge">confidence</code> 를 구현이
+전혀 검사하지 않았다</strong>는 점입니다. 두 경로의 요청 본문 스키마와
+<code class="language-plaintext highlighter-rouge">GET .../relations</code> 의 응답 스키마가 모두 같은 범위를 약속하는데,
+<code class="language-plaintext highlighter-rouge">createAssetRelation</code> 에는 <code class="language-plaintext highlighter-rouge">0 → 1</code> 승격만 있고 범위 검사가 없어 <code class="language-plaintext highlighter-rouge">-5</code> 나 <code class="language-plaintext highlighter-rouge">42</code> 가
+그대로 저장되고 <strong>그 뒤 조회가 자기 응답 스키마가 금지한 값을 돌려주었습니다.</strong>
+v0.2.40 부터 v0.2.43 까지가 같은 두 경로에서 id 의 <em>모양</em>을 계약에 맞춘 데
+이어, 이번에는 본문 숫자의 <em>범위</em>를 맞춥니다. 콘솔과 Agent 는 손대지
+않았습니다.</p>
+
+<h2 id="1-계약이-선언한-범위를-아무도-지키지-않았습니다">1. 계약이 선언한 범위를 아무도 지키지 않았습니다</h2>
+
+<p><code class="language-plaintext highlighter-rouge">openapi.yaml</code> 은 이 값을 세 곳에서 같은 범위로 선언합니다.</p>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">createAssetRelation</code> 요청 본문 — <code class="language-plaintext highlighter-rouge">confidence: {type: number, minimum: 0, maximum: 1, default: 1}</code></li>
+  <li><code class="language-plaintext highlighter-rouge">externalCreateAssetRelation</code> 요청 본문 — 같은 선언</li>
+  <li><code class="language-plaintext highlighter-rouge">AssetRelation</code> 응답 스키마 — <code class="language-plaintext highlighter-rouge">confidence: {type: number, minimum: 0, maximum: 1}</code>,
+그리고 <code class="language-plaintext highlighter-rouge">confidence</code> 는 <code class="language-plaintext highlighter-rouge">required</code> 목록에 있습니다. 이 스키마가
+<code class="language-plaintext highlighter-rouge">listAssetRelations</code> 와 <code class="language-plaintext highlighter-rouge">externalListAssetRelations</code> 의 응답 본문입니다.</li>
+</ul>
+
+<p>그런데 쓰는 쪽에는 검사가 없었습니다. <code class="language-plaintext highlighter-rouge">createAssetRelation</code> 은 본문을 디코드한
+뒤 <code class="language-plaintext highlighter-rouge">if input.Confidence == 0 { input.Confidence = 1 }</code> 하나만 거쳐
+<code class="language-plaintext highlighter-rouge">INSERT INTO asset_relations</code> 로 값을 넘겼습니다. 저장 계층도 막지 않습니다 —
+<code class="language-plaintext highlighter-rouge">asset_relations.confidence</code> 는 PostgreSQL 에서
+<code class="language-plaintext highlighter-rouge">DOUBLE PRECISION NOT NULL DEFAULT 1.0</code>, SQLite fallback 에서
+<code class="language-plaintext highlighter-rouge">REAL NOT NULL DEFAULT 1.0</code> 이고 <strong>두 방언 어느 쪽에도 <code class="language-plaintext highlighter-rouge">CHECK</code> 가 없습니다.</strong>
+즉 계약·핸들러·스키마 세 층 가운데 범위를 아는 것은 계약뿐이었습니다.</p>
+
+<p><strong>수정 전 동작을 두 방언에서 직접 재어 보았습니다.</strong> 콘솔·외부 두 입구 ×
+<code class="language-plaintext highlighter-rouge">-0.5</code>·<code class="language-plaintext highlighter-rouge">1.5</code>·<code class="language-plaintext highlighter-rouge">-1</code>·<code class="language-plaintext highlighter-rouge">42</code> 의 여덟 경우가 PostgreSQL 과 SQLite fallback 양쪽에서
+<strong>전부 201 로 관계 행과 <code class="language-plaintext highlighter-rouge">relation.create</code> 감사 기록을 남겼습니다.</strong> 이 결함은
+v0.2.40–v0.2.43 이 닫은 것들과 달리 방언 사이에서 갈라지지 않습니다 — 두
+방언이 똑같이, 똑같은 방향으로 계약을 어겼습니다.</p>
+
+<p>남는 결과는 읽는 쪽에 있습니다. 한 번 들어간 범위 밖 값은
+<code class="language-plaintext highlighter-rouge">GET .../relations</code> 가 <code class="language-plaintext highlighter-rouge">minimum: 0, maximum: 1</code> 로 선언한 자리에 그대로 실려
+나가므로, 생성된 스키마로 응답을 검증하는 클라이언트는 <strong>서버가 자기 계약을
+위반한 응답</strong>을 받습니다. <code class="language-plaintext highlighter-rouge">confidence</code> 를 0 과 1 사이의 비율로 해석해 임계값과
+비교하는 호출자에게는 <code class="language-plaintext highlighter-rouge">42</code> 가 언제나 임계값을 넘고 <code class="language-plaintext highlighter-rouge">-5</code> 가 언제나 못 넘습니다.</p>
+
+<h2 id="2-쓰기-전에-범위를-봅니다">2. 쓰기 전에 범위를 봅니다</h2>
+
+<p><code class="language-plaintext highlighter-rouge">targetID</code> 를 정규형으로 바꾼 직후, <code class="language-plaintext highlighter-rouge">INSERT</code> 와 <code class="language-plaintext highlighter-rouge">recordAdminAudit</code> 보다 앞에서
+범위를 확인합니다.</p>
+
+<ul>
+  <li><strong>범위 밖이면 400 <code class="language-plaintext highlighter-rouge">INVALID_RELATION</code> 입니다.</strong> <code class="language-plaintext highlighter-rouge">confidence &lt; 0</code> 또는
+<code class="language-plaintext highlighter-rouge">confidence &gt; 1</code> 이면 거기서 돌아갑니다.</li>
+  <li><strong>응답 코드 집합을 넓히지 않았습니다.</strong> 두 생성 경로가 이미 400
+<code class="language-plaintext highlighter-rouge">INVALID_RELATION</code> 을 선언하고 있으므로, 구현을 문서에 맞춘 것이지 계약을
+바꾼 것이 아닙니다. <code class="language-plaintext highlighter-rouge">openapi.yaml</code> 은 손대지 않았습니다.</li>
+  <li><strong>거절된 요청은 아무 것도 남기지 않습니다.</strong> 검사가 <code class="language-plaintext highlighter-rouge">INSERT</code> 앞에 있으므로
+<code class="language-plaintext highlighter-rouge">asset_relations</code> 행도, <code class="language-plaintext highlighter-rouge">audit_logs</code> 의 <code class="language-plaintext highlighter-rouge">relation.create</code> 기록도 쓰이지
+않습니다.</li>
+  <li><strong>경계값은 그대로 받습니다.</strong> <code class="language-plaintext highlighter-rouge">0</code> 과 <code class="language-plaintext highlighter-rouge">1</code> 은 범위 안이므로 거절 대상이
+아니고, 필드를 생략하면 이전과 같이 <code class="language-plaintext highlighter-rouge">1</code> 이 됩니다.</li>
+  <li><strong>콘솔과 외부 API 가 함께 고쳐졌습니다.</strong> 두 경로가 같은 핸들러를
+공유하므로 프로덕션 파일 한 개(<code class="language-plaintext highlighter-rouge">server/internal/httpapi/assets.go</code>) 열 줄로
+두 입구가 같이 닫혔습니다. 라우팅은 손대지 않았습니다.</li>
+</ul>
+
+<h3 id="이번에-고치지-않은-것">이번에 고치지 않은 것</h3>
+
+<p><strong>명시적 <code class="language-plaintext highlighter-rouge">confidence: 0</code> 은 여전히 <code class="language-plaintext highlighter-rouge">1</code> 로 승격됩니다.</strong> <code class="language-plaintext highlighter-rouge">openapi.yaml</code> 의
+<code class="language-plaintext highlighter-rouge">default: 1</code> 은 값이 <em>없을</em> 때만 적용되는 규칙이므로, 호출자가 <code class="language-plaintext highlighter-rouge">0</code> 을 적어
+보냈는데 <code class="language-plaintext highlighter-rouge">1</code> 이 저장되는 지금 동작은 엄밀히는 틀렸습니다. 다만 “없음” 과 <code class="language-plaintext highlighter-rouge">0</code>
+을 구분하려면 입력 구조체의 <code class="language-plaintext highlighter-rouge">float64</code> 를 <code class="language-plaintext highlighter-rouge">*float64</code> 로 바꿔야 하고 그것은 이
+결함과 별개의 변경이라, 이번 범위에서 제외했습니다. 대신 <strong>지금 동작을
+테스트로 고정</strong>해 두어 조용히 달라지지 않게 했습니다. 0 과 1 중 어느 쪽을
+뜻했는지가 중요한 호출자는 당장은 <code class="language-plaintext highlighter-rouge">0</code> 대신 아주 작은 값을 쓰거나, 이 항목이
+닫히기를 기다려야 합니다.</p>
+
+<p><strong>이미 저장된 범위 밖 값은 고치지 않습니다.</strong> 마이그레이션도, 열의 <code class="language-plaintext highlighter-rouge">CHECK</code> 도
+더하지 않았습니다. 이번 변경은 새로 들어오는 쓰기만 막습니다 — 아래 “호환성”
+의 점검 질의를 보십시오.</p>
+
+<h2 id="검증">검증</h2>
+
+<ul>
+  <li><strong>회귀 테스트 2건을 더했습니다.</strong> 대역 없이 실제 라우터와 실제 세션·API key
+를 지나 콘솔·외부 두 입구를 각각 통과합니다. 거절 쪽은 <code class="language-plaintext highlighter-rouge">-0.5</code>·<code class="language-plaintext highlighter-rouge">1.5</code>·<code class="language-plaintext highlighter-rouge">-1</code>·<code class="language-plaintext highlighter-rouge">42</code>
+가 400 <code class="language-plaintext highlighter-rouge">INVALID_RELATION</code> 이 되는 것과 <strong><code class="language-plaintext highlighter-rouge">asset_relations</code> 행 수·
+<code class="language-plaintext highlighter-rouge">relation.create</code> 감사 수가 그대로인 것</strong>을 함께 셉니다. 수락 쪽은 생략·<code class="language-plaintext highlighter-rouge">0</code>·
+<code class="language-plaintext highlighter-rouge">1</code>·<code class="language-plaintext highlighter-rouge">0.8</code> 네 경우가 201 이 되는 것에 그치지 않고 <strong>저장된 <code class="language-plaintext highlighter-rouge">confidence</code> 를
+행에서 다시 읽어</strong> 각각 <code class="language-plaintext highlighter-rouge">1</code>·<code class="language-plaintext highlighter-rouge">1</code>·<code class="language-plaintext highlighter-rouge">1</code>·<code class="language-plaintext highlighter-rouge">0.8</code> 인지 확인합니다.</li>
+  <li><strong>두 저장 엔진 모두에서 통과합니다.</strong> <code class="language-plaintext highlighter-rouge">go test ./...</code>(SQLite fallback)와
+<code class="language-plaintext highlighter-rouge">scripts/test-postgres.sh</code>(postgres:17-alpine) 전 패키지가 통과합니다. 이
+결함은 방언을 가리지 않으므로 두 쪽에서 똑같이 재현되고 똑같이 닫힙니다.</li>
+  <li><strong>Server.</strong> <code class="language-plaintext highlighter-rouge">go vet</code> · <code class="language-plaintext highlighter-rouge">gofmt -l</code> 빈 출력 · <code class="language-plaintext highlighter-rouge">go build</code> 가 통과합니다. 콘솔
+정적 파일(<code class="language-plaintext highlighter-rouge">server/internal/webui/dist</code>)은 바뀌지 않았습니다.</li>
+  <li><strong>OpenAPI.</strong> <code class="language-plaintext highlighter-rouge">@redocly/cli lint openapi.yaml</code> 이 통과합니다. 계약은 버전
+문자열만 올라갔습니다.</li>
+  <li><strong>Agent.</strong> Rust 코드는 이번 릴리즈에서 바뀌지 않았습니다. 릴리즈 커밋에서
+<code class="language-plaintext highlighter-rouge">cargo fmt --all -- --check</code> · <code class="language-plaintext highlighter-rouge">cargo clippy --all-targets -D warnings</code> ·
+<code class="language-plaintext highlighter-rouge">cargo test --all-targets</code> 가 통과합니다.</li>
+</ul>
+
+<h2 id="호환성">호환성</h2>
+
+<ul>
+  <li><strong>데이터베이스 마이그레이션이 없습니다.</strong> 열을 더하거나 바꾸지 않고,
+<code class="language-plaintext highlighter-rouge">INSERT</code> 앞에서 숫자의 범위를 한 번 더 볼 뿐입니다.</li>
+  <li><strong>OpenAPI 문서가 바뀌지 않았습니다.</strong> <code class="language-plaintext highlighter-rouge">minimum: 0, maximum: 1</code> 은 이미
+적혀 있었고 400 도 이미 선언되어 있었습니다. 구현이 뒤늦게 그것을 지킵니다.</li>
+  <li><strong>범위 안의 값을 쓰던 호출자에게는 아무 변화가 없습니다.</strong> 생략·<code class="language-plaintext highlighter-rouge">0</code>·<code class="language-plaintext highlighter-rouge">1</code> 과
+그 사이의 모든 값이 이전과 똑같이 동작하고, 201 응답의 모양도 권한과 CSRF
+검증도 그대로입니다. 달라지는 것은 <strong>계약이 선언하지 않은 범위로
+<code class="language-plaintext highlighter-rouge">confidence</code> 를 보내던 요청</strong>뿐입니다 — 201 을 받던 그 요청이 이제 400
+<code class="language-plaintext highlighter-rouge">INVALID_RELATION</code> 을 받습니다.</li>
+  <li>
+    <p><strong>이미 쌓인 범위 밖 값은 남아 있습니다.</strong> 과거에 들어간 값을 고치는
+마이그레이션은 없습니다. 영향을 확인하려면 다음을 돌려 보십시오.</p>
+
+    <div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">SELECT</span> <span class="n">id</span><span class="p">,</span> <span class="n">source_asset_id</span><span class="p">,</span> <span class="n">target_asset_id</span><span class="p">,</span> <span class="n">confidence</span>
+  <span class="k">FROM</span> <span class="n">asset_relations</span>
+ <span class="k">WHERE</span> <span class="n">confidence</span> <span class="o">&lt;</span> <span class="mi">0</span> <span class="k">OR</span> <span class="n">confidence</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">;</span>
+</code></pre></div>    </div>
+
+    <p>행이 나오면 그 관계를 다시 만들거나 <code class="language-plaintext highlighter-rouge">confidence</code> 를 범위 안으로 직접 고쳐야
+합니다. 0행이면 할 일이 없습니다.</p>
+  </li>
+  <li><strong>자동 분류와 ingest 가 만드는 관계는 이번 변경에 닿지 않습니다.</strong> 그 경로는
+호출자 입력을 받지 않고 <code class="language-plaintext highlighter-rouge">0.8</code> 등 범위 안의 값을 직접 정하므로, <code class="language-plaintext highlighter-rouge">classify</code> ·
+<code class="language-plaintext highlighter-rouge">ingest</code> · <code class="language-plaintext highlighter-rouge">softwarecatalog</code> 의 동작은 그대로입니다.</li>
+  <li><strong>관계 읽기·삭제의 계약은 그대로입니다.</strong> <code class="language-plaintext highlighter-rouge">GET .../relations</code> 와
+<code class="language-plaintext highlighter-rouge">DELETE .../relations/{relationId}</code> 는 v0.2.42 · v0.2.43 이 정한 대로
+답합니다. 이번 변경은 생성 한 곳에만 닿습니다.</li>
+  <li><strong><code class="language-plaintext highlighter-rouge">merge</code>·<code class="language-plaintext highlighter-rouge">split</code>·단건 다섯 곳·관계 쓰기 두 곳의 id 검증은 그대로입니다.</strong>
+v0.2.40 – v0.2.43 이 정한 대로 동작합니다.</li>
+  <li><strong>알려진 제한.</strong> 트랜잭션 안에서 오류를 보고하면 SQLite fallback 이
+교착하는 문제는 그대로 남아 있습니다. 목록 핸들러 가운데
+<code class="language-plaintext highlighter-rouge">assetHistory</code> · <code class="language-plaintext highlighter-rouge">assetRelations</code> 에 <code class="language-plaintext highlighter-rouge">rows.Err()</code> 검사가 없는 것도
+그대로입니다. 두 항목 모두 운영 기본값인 PostgreSQL 에는 해당하지 않거나
+500 으로 끝나며, 재현 수단이 없어 아직 손대지 않았습니다.</li>
+  <li><strong>콘솔이 바뀌지 않았습니다.</strong> 임베디드 정적 파일은 v0.2.43 과 같습니다.</li>
+  <li><strong>Agent 의 동작 변경이 없습니다.</strong> 설정 파일, 큐, 전송 프로토콜은 이전과
+같고 버전 문자열만 올라갑니다. 기존 Agent 는 서두르지 않아도 Server 와의
+호환에 영향이 없습니다.</li>
+</ul>
+
+
+      
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/anchor-js/4.1.0/anchor.min.js" integrity="sha256-lZaRhKri35AyJSypXXs4o6OPFTbTmUoltBbDCbdzegg=" crossorigin="anonymous"></script>
+    <script>anchors.add();</script>
+  </body>
+</html>

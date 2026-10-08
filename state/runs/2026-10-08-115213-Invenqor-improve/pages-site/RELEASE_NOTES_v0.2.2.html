@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+<!-- Begin Jekyll SEO tag v2.8.0 -->
+<title>Invenqor Server v0.2.2 릴리즈 노트 | Invenqor</title>
+<meta name="generator" content="Jekyll v3.10.0" />
+<meta property="og:title" content="Invenqor Server v0.2.2 릴리즈 노트" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="서버 자산을 수집하는 Rust Agent와 Go 중앙 서버, React 관리 콘솔을 결합한 자산 인텔리전스 플랫폼. 단순 인벤토리 수집기를 넘어 인증, RBAC, 변경 이력, 자산 관계, 감사 로그, 안전한 Query DSL까지 포함하는 구조로 확장" />
+<meta property="og:description" content="서버 자산을 수집하는 Rust Agent와 Go 중앙 서버, React 관리 콘솔을 결합한 자산 인텔리전스 플랫폼. 단순 인벤토리 수집기를 넘어 인증, RBAC, 변경 이력, 자산 관계, 감사 로그, 안전한 Query DSL까지 포함하는 구조로 확장" />
+<link rel="canonical" href="https://github.com/pages/hkjang/Invenqor/RELEASE_NOTES_v0.2.2.html" />
+<meta property="og:url" content="https://github.com/pages/hkjang/Invenqor/RELEASE_NOTES_v0.2.2.html" />
+<meta property="og:site_name" content="Invenqor" />
+<meta property="og:type" content="website" />
+<meta name="twitter:card" content="summary" />
+<meta property="twitter:title" content="Invenqor Server v0.2.2 릴리즈 노트" />
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"WebPage","description":"서버 자산을 수집하는 Rust Agent와 Go 중앙 서버, React 관리 콘솔을 결합한 자산 인텔리전스 플랫폼. 단순 인벤토리 수집기를 넘어 인증, RBAC, 변경 이력, 자산 관계, 감사 로그, 안전한 Query DSL까지 포함하는 구조로 확장","headline":"Invenqor Server v0.2.2 릴리즈 노트","url":"https://github.com/pages/hkjang/Invenqor/RELEASE_NOTES_v0.2.2.html"}</script>
+<!-- End Jekyll SEO tag -->
+
+    <link rel="stylesheet" href="/pages/hkjang/Invenqor/assets/css/style.css?v=">
+    <!-- start custom head snippets, customize with your own _includes/head-custom.html file -->
+
+<!-- Setup Google Analytics -->
+
+
+
+<!-- You can set your favicon here -->
+<!-- link rel="shortcut icon" type="image/x-icon" href="/pages/hkjang/Invenqor/favicon.ico" -->
+
+<!-- end custom head snippets -->
+
+  </head>
+  <body>
+    <div class="container-lg px-3 my-5 markdown-body">
+      
+      <h1><a href="https://github.com/pages/hkjang/Invenqor/">Invenqor</a></h1>
+      
+
+      <h1 id="invenqor-server-v022-릴리즈-노트">Invenqor Server v0.2.2 릴리즈 노트</h1>
+
+<p>릴리즈 일자: 2026-07-29</p>
+
+<h2 id="핵심-변경">핵심 변경</h2>
+
+<ul>
+  <li>쉘이 없는 Distroless 컨테이너에서도 초기 관리자를 자동 생성할 수 있도록
+<code class="language-plaintext highlighter-rouge">INVENQOR_BOOTSTRAP_ADMIN</code>과 <code class="language-plaintext highlighter-rouge">INVENQOR_BOOTSTRAP_ADMIN_PASSWORD</code>를
+지원합니다.</li>
+  <li>요청된 호환 이름 <code class="language-plaintext highlighter-rouge">bootstrap_admin</code>, <code class="language-plaintext highlighter-rouge">bootstrap_admin_password</code>와
+Compose용 <code class="language-plaintext highlighter-rouge">BOOTSTRAP_ADMIN</code>, <code class="language-plaintext highlighter-rouge">BOOTSTRAP_ADMIN_PASSWORD</code>도 지원합니다.</li>
+  <li>Kubernetes Secret을 환경변수 값으로 노출하지 않도록
+<code class="language-plaintext highlighter-rouge">INVENQOR_BOOTSTRAP_ADMIN_PASSWORD_FILE</code>을 지원합니다.</li>
+  <li>최초 생성은 PostgreSQL의 공유 claim을 원자적으로 소비합니다. 여러 Server
+Pod가 동시에 시작해도 관리자 한 명만 생성됩니다.</li>
+  <li>사용자가 이미 존재하면 환경변수로 기존 계정이나 비밀번호를 변경하지 않습니다.</li>
+  <li>기존 일회성 bootstrap token 방식은 환경변수를 사용하지 않는 설치를 위해
+그대로 유지합니다.</li>
+</ul>
+
+<h2 id="보안과-운영-특성">보안과 운영 특성</h2>
+
+<ul>
+  <li>초기 비밀번호는 정책 검증 뒤 Argon2id hash로만 저장합니다.</li>
+  <li>평문 비밀번호는 로그와 감사 이벤트에 기록하지 않으며, 시작 처리 직후 프로세스
+설정에서도 제거합니다.</li>
+  <li>직접 전달한 환경변수는 <code class="language-plaintext highlighter-rouge">docker inspect</code>에서 보일 수 있습니다. 계정 생성 후
+제거하거나 Kubernetes에서는 Secret file mount 방식을 사용하십시오.</li>
+  <li>Server 이미지는 비루트 Distroless 구조를 유지합니다. 이미지 내부에
+<code class="language-plaintext highlighter-rouge">/bin/bash</code>나 <code class="language-plaintext highlighter-rouge">/bin/sh</code>는 포함하지 않습니다.</li>
+</ul>
+
+<h2 id="배포-파일">배포 파일</h2>
+
+<ul>
+  <li>오프라인 Docker 번들: <code class="language-plaintext highlighter-rouge">invenqor-0.2.2.tar.gz</code></li>
+  <li>Helm chart: <code class="language-plaintext highlighter-rouge">invenqor-0.2.2.tgz</code></li>
+  <li>Offline Compose, OpenAPI 명세, 사용자·관리자·임원·Server·API/MCP 가이드의
+Markdown 및 PDF</li>
+  <li>Agent는 별도 저장소의
+<a href="https://github.com/hkjang/invenqor-agents/releases/tag/v0.2.1">Invenqor Agents v0.2.1</a>
+릴리즈를 사용합니다.</li>
+</ul>
+
+<h2 id="검증">검증</h2>
+
+<ul>
+  <li>Go 전체 테스트와 race detector, <code class="language-plaintext highlighter-rouge">go vet</code></li>
+  <li>실제 Docker 이미지의 환경변수 및 password file 초기 관리자 생성·로그인</li>
+  <li>동일 PostgreSQL에 연결한 Server 2개 동시 기동과 단일 관리자 생성</li>
+  <li>재기동 시 기존 비밀번호 불변 확인</li>
+  <li>Helm lint·template 및 Kubernetes client dry-run</li>
+  <li>Online/Offline Compose 설정 검증</li>
+  <li>Trivy filesystem/image HIGH·CRITICAL 취약점 및 secret scan</li>
+</ul>
+
+
+      
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/anchor-js/4.1.0/anchor.min.js" integrity="sha256-lZaRhKri35AyJSypXXs4o6OPFTbTmUoltBbDCbdzegg=" crossorigin="anonymous"></script>
+    <script>anchors.add();</script>
+  </body>
+</html>

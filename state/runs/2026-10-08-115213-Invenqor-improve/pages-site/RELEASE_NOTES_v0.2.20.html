@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+<!-- Begin Jekyll SEO tag v2.8.0 -->
+<title>Invenqor Server·Agent v0.2.20 릴리즈 노트 | Invenqor</title>
+<meta name="generator" content="Jekyll v3.10.0" />
+<meta property="og:title" content="Invenqor Server·Agent v0.2.20 릴리즈 노트" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="서버 자산을 수집하는 Rust Agent와 Go 중앙 서버, React 관리 콘솔을 결합한 자산 인텔리전스 플랫폼. 단순 인벤토리 수집기를 넘어 인증, RBAC, 변경 이력, 자산 관계, 감사 로그, 안전한 Query DSL까지 포함하는 구조로 확장" />
+<meta property="og:description" content="서버 자산을 수집하는 Rust Agent와 Go 중앙 서버, React 관리 콘솔을 결합한 자산 인텔리전스 플랫폼. 단순 인벤토리 수집기를 넘어 인증, RBAC, 변경 이력, 자산 관계, 감사 로그, 안전한 Query DSL까지 포함하는 구조로 확장" />
+<link rel="canonical" href="https://github.com/pages/hkjang/Invenqor/RELEASE_NOTES_v0.2.20.html" />
+<meta property="og:url" content="https://github.com/pages/hkjang/Invenqor/RELEASE_NOTES_v0.2.20.html" />
+<meta property="og:site_name" content="Invenqor" />
+<meta property="og:type" content="website" />
+<meta name="twitter:card" content="summary" />
+<meta property="twitter:title" content="Invenqor Server·Agent v0.2.20 릴리즈 노트" />
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"WebPage","description":"서버 자산을 수집하는 Rust Agent와 Go 중앙 서버, React 관리 콘솔을 결합한 자산 인텔리전스 플랫폼. 단순 인벤토리 수집기를 넘어 인증, RBAC, 변경 이력, 자산 관계, 감사 로그, 안전한 Query DSL까지 포함하는 구조로 확장","headline":"Invenqor Server·Agent v0.2.20 릴리즈 노트","url":"https://github.com/pages/hkjang/Invenqor/RELEASE_NOTES_v0.2.20.html"}</script>
+<!-- End Jekyll SEO tag -->
+
+    <link rel="stylesheet" href="/pages/hkjang/Invenqor/assets/css/style.css?v=">
+    <!-- start custom head snippets, customize with your own _includes/head-custom.html file -->
+
+<!-- Setup Google Analytics -->
+
+
+
+<!-- You can set your favicon here -->
+<!-- link rel="shortcut icon" type="image/x-icon" href="/pages/hkjang/Invenqor/favicon.ico" -->
+
+<!-- end custom head snippets -->
+
+  </head>
+  <body>
+    <div class="container-lg px-3 my-5 markdown-body">
+      
+      <h1><a href="https://github.com/pages/hkjang/Invenqor/">Invenqor</a></h1>
+      
+
+      <h1 id="invenqor-serveragent-v0220-릴리즈-노트">Invenqor Server·Agent v0.2.20 릴리즈 노트</h1>
+
+<p>릴리즈 일자: 2026-09-03
+호환 Agent: v0.2.20 (Linux·Windows)</p>
+
+<p>이번 릴리즈는 결함 하나를 고칩니다. v0.2.19에서 고친 것들과 같은 종류 —
+<strong>오류 없이 틀린 답을 주던 것</strong> — 이고, 이번에는 질의가 물어본 속성 키 자체가
+바뀌어 있었습니다.</p>
+
+<h2 id="1-속성-질의가-자기가-찾는-키를-소문자로-바꿔-물었습니다">1. 속성 질의가 자기가 찾는 키를 소문자로 바꿔 물었습니다</h2>
+
+<p>자산 질의 DSL의 파서는 컬럼을 대소문자 구분 없이 쓸 수 있도록 <strong>필드 이름 전체를
+소문자로 접었습니다.</strong> 그런데 <code class="language-plaintext highlighter-rouge">attributes.</code> 뒤는 컬럼이 아니라 저장된 JSON 문서의
+키이고, JSON 키는 대소문자를 구분합니다.</p>
+
+<p>자산 API, MCP 도구, 또는 다른 시스템에서 가져온 자산은 호출자가 쓴 키를 그대로
+들고 있고, 그런 키에는 대문자가 흔합니다. <code class="language-plaintext highlighter-rouge">attributes.assetTag</code>는 <code class="language-plaintext highlighter-rouge">assettag</code>를
+찾는 경로로 컴파일됐고, 그런 키를 가진 문서는 없으므로 질의는 <strong>오류 없이 HTTP
+200에 0건</strong>을 돌려줬습니다. 게다가 <code class="language-plaintext highlighter-rouge">/query/validate</code>는 그 식을 이미 “유효하다”고
+답한 뒤였습니다. 두 저장 모드 모두 영향을 받았습니다 — PostgreSQL의 <code class="language-plaintext highlighter-rouge">#&gt;&gt;</code> 경로도,
+SQLite의 <code class="language-plaintext highlighter-rouge">json_extract</code> 경로도 대소문자를 무시하지 않습니다.</p>
+
+<p>이제 접는 것은 <code class="language-plaintext highlighter-rouge">attributes.</code> 접두사뿐이고, 키는 입력된 대소문자를 그대로
+유지합니다. 컬럼 이름은 종전대로 대소문자를 가리지 않습니다. 콘솔이 렌더링하는
+문법 참조에도 이 속성 경로가 대소문자를 구분한다고 적혔습니다.</p>
+
+<h2 id="검증">검증</h2>
+
+<ul>
+  <li><strong>속성 경로의 대소문자.</strong> 파서·컴파일러 수준에서 대문자가 섞인 키가 두 저장
+모드의 경로에 그대로 실리는지, 그리고 컬럼 필드는 여전히 어떤 대소문자로 써도
+같은 컬럼이 되는지 고정했습니다.</li>
+  <li><strong>HTTP 경로까지.</strong> 대문자가 든 키로 자산을 만든 뒤 그 키로 질의해 자산이 실제로
+돌아오는 것을 엔드포인트 너머에서 확인합니다. 결함의 증상이 “오류 없는 0건”이라
+파서 단언만으로는 회귀를 놓칠 수 있기 때문입니다. 이 테스트는 SQLite fallback과
+CI의 PostgreSQL 잡에서 모두 돕니다.</li>
+</ul>
+
+<h2 id="호환성">호환성</h2>
+
+<ul>
+  <li>데이터베이스 마이그레이션이 없습니다.</li>
+  <li>API 응답 형식 변경이 없습니다.</li>
+  <li>대문자가 섞인 속성 키를 지금까지 소문자로 적어 우연히 맞춰 쓰던 질의는
+없습니다(그런 질의는 0건을 돌려주고 있었습니다). 저장된 질의에 <code class="language-plaintext highlighter-rouge">attributes.</code>
+경로가 있다면 자산에 기록된 대소문자와 같은지 확인하십시오.</li>
+</ul>
+
+
+      
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/anchor-js/4.1.0/anchor.min.js" integrity="sha256-lZaRhKri35AyJSypXXs4o6OPFTbTmUoltBbDCbdzegg=" crossorigin="anonymous"></script>
+    <script>anchors.add();</script>
+  </body>
+</html>
