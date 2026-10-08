@@ -199,3 +199,18 @@
 
 - 릴리즈: v1.16.0 (2026-10-07, run 2026-10-07-142805-cutover-improve)
 - 릴리즈: v1.17.0 (2026-10-07, run 2026-10-07-151444-cutover-approve)
+## 2026-10-08
+- 선택: validateActivityImport의 ID·상황판 제목·활동 개수 상한 경계 테스트 보강 (가치 2 / 위험 1 / 작업량 S)
+- 결과: 성공
+- 요약: lib/activityData.test.ts 한 파일에 실제 validateActivityImport를 호출하는 7개 it를 추가해 ID120/121, dashboardTitle100/101·공백 제거 후100, 고유 루트5000/5001 경계를 고정했다. 허용 입력의 반환 ID·제목·개수를 검증하며, 거절 3건은 기존 issuesOf의 ActivityImportValidationError 검사와 정확한 단일 issues 경로로 다른 원인의 실패를 배제한다. Node v22.23.1에서 npm run test:unit 기준선101 pass/0 fail/0 skipped → 최종108 pass/0 fail/0 skipped 및 git diff --check exit0; 프로덕션0파일·테스트1파일(+61줄), 커밋9c1ec0a(hkjang, 트레일러 없음), 커밋 후 작업 트리 깨끗함.
+- 실패 재현: 못 함 — 정상 동작을 영구 테스트로 고정하는 과제이며 수용 기준4가 사전 실패 조건을 면제한다. 신규7건은 프로덕션 무수정 상태에서 첫 실행부터 통과했다. 결함 수정이나 red→green을 주장하지 않는다.
+- 보류 아이디어:
+  - level50 부모 아래 추가 정책 정리 (2/1/S) — UI/서버 오류 계약 결정 필요, 이번 제외.
+  - 상태 전파 위치·API 계약 통일 검토 (3/2/M) — 현재 전파·409 계약 판단 필요, 이번 제외.
+  - 자기참조·순환 issues 중복 제거 검토 (2/2/S) — 기존2건 계약과 테스트 유지.
+  - 관리자 가이드4.4 제목 저장 실패 설명 정정 (2/1/S) — 차선 과제는 미선택.
+- 과제서: 채택 — 현재 코드에 7개 경계 사례가 없고 제한값·trim 규칙이 일치해 지정 테스트만 추가했다.
+- 검증 한계: lint·타입 검사·Next build·브라우저 E2E·npm ci·audit는 실행하지 않았다(테스트 전용 과제의 지정 검증 범위). node_modules/next/dist/docs가 없어 Next 가이드 미열람이며 앱/API 코드는 작성하지 않았다. 기존 MODULE_TYPELESS_PACKAGE_JSON 경고는 유지; package.json 및 실행 스크립트 변경 없음.
+- 스킬: Skill/skills.list/read 호출 도구가 없어 /home/hkjang/.claude/plugins/marketplaces/headcount/plugins/technology/skills/ 아래 completion-verification·systematic-debugging·test-driven-development/SKILL.md를 직접 읽고 적용했다. 공개 반환값과 오류를 검증했고 대역·소스 문자열 테스트는 사용하지 않았다. 원인·수정 대상은 기능 결함이 아닌 경계 회귀 테스트 공백이며 기존 treeUtils의120자 부모 추가·자기참조2개 issues 테스트는 그대로 유지했다.
+- 기록: unit-baseline.log·unit-final.log에 실제 전체 출력을 보존했다. ideas.json 기존16개(정찰 신규2개 포함)를 모두 유지하고 선택 과제를 done으로 갱신했다. 절차1~4는 지정 과제서로 갈음해 후보 재선정·범위 확대 없음.
+
