@@ -1,0 +1,112 @@
+{
+  "starting_head": "6a752e555b8b0500dc555b0ede23cbac0715ed6c",
+  "skills": {
+    "access": "No Skill tool available; read local SKILL.md and references/sources.md.",
+    "marketing": "marketing:product-launch (tier three; release notes only)",
+    "technology": "technology:release-and-deployment (existing gates, same artifact, rollback criteria)"
+  },
+  "release_history": {
+    "previous_tags": [
+      "v1.69.58",
+      "v1.69.57",
+      "v1.69.56"
+    ],
+    "tag_type": "annotated",
+    "commit_format": "Release 1.69.xx",
+    "annotation_format": "Ptium v1.69.xx",
+    "notes": "docs/release-notes-v1.69.xx.md (Korean)",
+    "github_release": true,
+    "ci": "main push/pull_request validation only; no tag release or asset publishing"
+  },
+  "version_inventory": {
+    "VERSION": "1.69.59",
+    "api/openapi.yaml service.version": "1.69.59",
+    "deploy/kubernetes.yaml image": "ptium:1.69.59",
+    "docs/offline-deployment.md artifact references": "1.69.59",
+    "web/package.json and web/package-lock.json": "0.1.0 (independent package version, unchanged by prior releases)",
+    "api/openapi.yaml info.version": "0.1.0 (API version)",
+    "server/cmd/ptium/main.go": "dev default; build injects VERSION",
+    "docker-compose.offline.yml": "1.4.0 template fallback; build stamps generated copy",
+    " .env.offline.example": "0.11.0 template value; build stamps generated copy",
+    "docs/ADMIN_GUIDE.md": "1.69.32 example log (historical sample)"
+  },
+  "execution_constraints": {
+    "branch": "detached HEAD retained",
+    "remote_mutations": false,
+    "release_sh": "reuse preflight and bundle validation, omit main branch restriction per user; invoke unmodified build-offline.sh; no publishing commands"
+  },
+  "limitations": [
+    "Implementation browser evidence stopped at login/API 502; guide rendering, navigation and rollback UI are unverified.",
+    "No outside-team first-use session possible unattended; release notes assign this to deployment validation.",
+    "Production rollout and 7-day support measurement are follow-up criteria, not completed claims."
+  ],
+  "validation": {
+    "go_test_race": "passed",
+    "go_vet": "passed",
+    "internal_docs_gofmt": "passed",
+    "npm_ci": "passed",
+    "npm_typecheck": "passed",
+    "npm_build": "passed",
+    "npm_test": {
+      "files": 48,
+      "tests": 271,
+      "result": "passed"
+    },
+    "npm_audit_high": {
+      "exit_code": 0,
+      "moderate": 2
+    },
+    "git_diff_check": "passed",
+    "database_unit_tests": "PTIUM_TEST_DSN absent; DB-backed tests skip, container integration is checked by bundle build",
+    "release_preflight": "passed; same release.sh checks with detached HEAD instead of main",
+    "offline_build": "exit 0",
+    "firstrun": "0 failures",
+    "upgrade": {
+      "from": "1.69.44",
+      "to": "1.69.59",
+      "failures": 0
+    },
+    "kubernetes": "4 YAML resources decoded and named; cluster unavailable for API schema validation",
+    "bundle_checks": "all 7 nonempty; generated env and compose stamp passed; copied archive SHA-256, both tags, platform, version and commit verified",
+    "archive_sha256": "c763fa808c75ad5b2e7f9d06e2633948bf3c2ebfd45426ab5a9a9e7e973d4ee1"
+  },
+  "release_commit": "606e391da2cf721f5050140bd3e9737a6a092d33",
+  "assets": [
+    {
+      "path": "/mnt/c/Users/USER/projects/aidev/state/runs/2026-10-09-005834-ptium-improve/assets/ptium-1.69.59.tar.gz",
+      "bytes": 12638887
+    },
+    {
+      "path": "/mnt/c/Users/USER/projects/aidev/state/runs/2026-10-09-005834-ptium-improve/assets/ptium-1.69.59.tar.gz.sha256",
+      "bytes": 86
+    },
+    {
+      "path": "/mnt/c/Users/USER/projects/aidev/state/runs/2026-10-09-005834-ptium-improve/assets/docker-compose.ptium-1.69.59.yml",
+      "bytes": 2153
+    },
+    {
+      "path": "/mnt/c/Users/USER/projects/aidev/state/runs/2026-10-09-005834-ptium-improve/assets/ptium-1.69.59.env.example",
+      "bytes": 1832
+    },
+    {
+      "path": "/mnt/c/Users/USER/projects/aidev/state/runs/2026-10-09-005834-ptium-improve/assets/load-ptium-1.69.59.ps1",
+      "bytes": 2699
+    },
+    {
+      "path": "/mnt/c/Users/USER/projects/aidev/state/runs/2026-10-09-005834-ptium-improve/assets/load-ptium-1.69.59.sh",
+      "bytes": 1164
+    },
+    {
+      "path": "/mnt/c/Users/USER/projects/aidev/state/runs/2026-10-09-005834-ptium-improve/assets/ptium-1.69.59.kubernetes.yaml",
+      "bytes": 7548
+    }
+  ],
+  "tag": {
+    "name": "v1.69.59",
+    "type": "annotated",
+    "annotation": "Ptium v1.69.59",
+    "commit": "606e391da2cf721f5050140bd3e9737a6a092d33"
+  },
+  "remote_mutations": false,
+  "completed": true
+}

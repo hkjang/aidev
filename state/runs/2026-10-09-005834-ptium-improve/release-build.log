@@ -1,0 +1,161 @@
+── building v1.69.59 ──
+#0 building with "default" instance using docker driver
+
+#1 [internal] load build definition from Dockerfile
+#1 transferring dockerfile: 1.66kB done
+#1 DONE 0.0s
+
+#2 [internal] load metadata for docker.io/library/alpine:3.21
+#2 DONE 0.0s
+
+#3 [internal] load metadata for docker.io/library/node:22-alpine
+#3 ...
+
+#4 [internal] load metadata for docker.io/library/golang:1.24-alpine
+#4 DONE 1.2s
+
+#3 [internal] load metadata for docker.io/library/node:22-alpine
+#3 DONE 1.2s
+
+#5 [internal] load .dockerignore
+#5 transferring context:
+#5 transferring context: 205B done
+#5 DONE 0.3s
+
+#6 [web-build 1/6] FROM docker.io/library/node:22-alpine@sha256:0a7108bf6c7bf5de370ffb1a3ed6be93d405b43ff159f681a8d18c0e2bc2e402
+#6 resolve docker.io/library/node:22-alpine@sha256:0a7108bf6c7bf5de370ffb1a3ed6be93d405b43ff159f681a8d18c0e2bc2e402 0.0s done
+#6 DONE 0.0s
+
+#7 [api-build 1/6] FROM docker.io/library/golang:1.24-alpine@sha256:8bee1901f1e530bfb4a7850aa7a479d17ae3a18beb6e09064ed54cfd245b7191
+#7 resolve docker.io/library/golang:1.24-alpine@sha256:8bee1901f1e530bfb4a7850aa7a479d17ae3a18beb6e09064ed54cfd245b7191 0.0s done
+#7 DONE 0.0s
+
+#8 [stage-2 1/4] FROM docker.io/library/alpine:3.21@sha256:ce64758a109eb420d874a118f87920e625e12d3634e03b4a5573fd9f6e5d3507
+#8 resolve docker.io/library/alpine:3.21@sha256:ce64758a109eb420d874a118f87920e625e12d3634e03b4a5573fd9f6e5d3507 0.0s done
+#8 DONE 0.0s
+
+#9 [internal] load build context
+#9 transferring context: 9.78MB 0.1s done
+#9 DONE 0.1s
+
+#10 [api-build 2/6] WORKDIR /src/server
+#10 CACHED
+
+#11 [api-build 3/6] COPY server/go.mod server/go.sum ./
+#11 CACHED
+
+#12 [api-build 4/6] RUN go mod download
+#12 CACHED
+
+#13 [web-build 2/6] WORKDIR /src/web
+#13 CACHED
+
+#14 [web-build 3/6] COPY web/package.json web/package-lock.json ./
+#14 DONE 0.1s
+
+#15 [api-build 5/6] COPY server/ ./
+#15 DONE 0.1s
+
+#16 [api-build 6/6] RUN CGO_ENABLED=0 GOOS=linux go build     -trimpath     -ldflags="-s -w -X main.version=1.69.59"     -o /out/ptium ./cmd/ptium
+#16 ...
+
+#17 [web-build 4/6] RUN npm ci
+#17 1.337 npm warn deprecated whatwg-encoding@3.1.1: Use @exodus/bytes instead for a more spec-conformant and faster implementation
+#17 ...
+
+#16 [api-build 6/6] RUN CGO_ENABLED=0 GOOS=linux go build     -trimpath     -ldflags="-s -w -X main.version=1.69.59"     -o /out/ptium ./cmd/ptium
+#16 DONE 7.6s
+
+#18 [stage-2 2/4] RUN apk add --no-cache ca-certificates tzdata     && addgroup -g 65532 -S ptium     && adduser -u 65532 -S -D -H -G ptium ptium     && mkdir -p /app/web     && chown -R ptium:ptium /app
+#18 CACHED
+
+#19 [stage-2 3/4] COPY --from=api-build /out/ptium /app/ptium
+#19 DONE 0.0s
+
+#17 [web-build 4/6] RUN npm ci
+#17 8.236 
+#17 8.236 added 153 packages, and audited 154 packages in 8s
+#17 8.236 
+#17 8.236 34 packages are looking for funding
+#17 8.236   run `npm fund` for details
+#17 8.239 
+#17 8.239 2 moderate severity vulnerabilities
+#17 8.239 
+#17 8.239 To address all issues (including breaking changes), run:
+#17 8.239   npm audit fix --force
+#17 8.239 
+#17 8.239 Run `npm audit` for details.
+#17 8.240 npm notice
+#17 8.240 npm notice New major version of npm available! 10.9.9 -> 12.2.0
+#17 8.240 npm notice Changelog: https://github.com/npm/cli/releases/tag/v12.2.0
+#17 8.240 npm notice To update run: npm install -g npm@12.2.0
+#17 8.240 npm notice
+#17 DONE 8.4s
+
+#20 [web-build 5/6] COPY web/ ./
+#20 DONE 0.1s
+
+#21 [web-build 6/6] RUN npm run build
+#21 0.319 
+#21 0.319 > ptium-web@0.1.0 build
+#21 0.319 > tsc -b && vite build
+#21 0.319 
+#21 0.883 vite v8.2.0 building client environment for production...
+#21 0.902 [2Ktransforming...✓ 1858 modules transformed.
+#21 1.205 rendering chunks...
+#21 1.268 computing gzip size...
+#21 1.275 dist/index.html                   0.76 kB │ gzip:   0.47 kB
+#21 1.275 dist/assets/index-CxmjkKL4.css  162.38 kB │ gzip:  29.93 kB
+#21 1.275 dist/assets/index-jy4S1tKF.js   723.54 kB │ gzip: 210.03 kB
+#21 1.275 
+#21 1.275 ✓ built in 390ms
+#21 1.276 [plugin builtin:vite-reporter] 
+#21 1.276 (!) Some chunks are larger than 500 kB after minification. Consider:
+#21 1.276 - Using dynamic import() to code-split the application
+#21 1.276 - Use build.rolldownOptions.output.codeSplitting to improve chunking: https://rolldown.rs/reference/OutputOptions.codeSplitting
+#21 1.276 - Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.
+#21 DONE 1.3s
+
+#22 [stage-2 4/4] COPY --from=web-build /src/web/dist/ /app/web/
+#22 DONE 0.0s
+
+#23 exporting to image
+#23 exporting layers
+#23 exporting layers 0.5s done
+#23 exporting manifest sha256:17a181c2b8a42c5e74387cbc1fcae2d1d45dc44745925015e2d61bc448a831a2 0.0s done
+#23 exporting config sha256:3e9dd798d4dfa26bc5f7434ffc5adb49db162ed67c646fa705adecc5977cef6d 0.0s done
+#23 exporting attestation manifest sha256:4bbb68fa247a362da063bfafa74798735ac4c57d73ad625ef666d7bea690f84a 0.0s done
+#23 exporting manifest list sha256:55bc5507659f1da5ca6561a34ea61e7b76fe7371cd89148a1c7e845b852b5288 0.0s done
+#23 naming to docker.io/library/ptium:1.69.59 done
+#23 unpacking to docker.io/library/ptium:1.69.59 0.1s done
+#23 naming to docker.io/library/ptium-1.69.59:latest done
+#23 unpacking to docker.io/library/ptium-1.69.59:latest done
+#23 DONE 0.8s
+note: 4 resources decode and are named; no cluster was reachable to check them against the API schema
+── ptium:1.69.59 on an empty database ──
+   templates seeded: 50
+   generated: completed with 6 slide(s)
+   measured: defects 0 advisories 1
+   pptx 39,752 bytes  pdf 2,110,281 bytes  handout 2,112,197 bytes
+   preview 1,087 bytes · workspace 769 bytes
+
+0 failure(s)
+── ptium:1.69.44 wrote it, ptium:1.69.59 opens it ──
+   ptium:1.69.44 made a deck: completed, 5 slide(s)
+   settings after the upgrade: {'ai.max_output_tokens': '16000', 'ai.reasoning': '"auto"', 'ai.timeout_seconds': '300', 'generation.outline_pass': 'true', 'generation.repair_passes': '3'}
+   after the upgrade: 예전 버전에서 만든 덱 · 5 slide(s) · completed
+   measured: 0 defect(s), 1 advisory(ies)
+   exported and drawn · source 38 lines
+   rolled back to ptium:1.69.44: the deck still opens with 5 slide(s)
+
+0 failure(s)
+Created /home/hkjang/.cache/auto-improve-wt/ptium-release/dist/ptium-1.69.59.tar.gz
+SHA256  c763fa808c75ad5b2e7f9d06e2633948bf3c2ebfd45426ab5a9a9e7e973d4ee1
+── dry run: everything is ready for v1.69.59, nothing was pushed ──
+   dist/ptium-1.69.59.tar.gz
+   dist/ptium-1.69.59.tar.gz.sha256
+   dist/docker-compose.ptium-1.69.59.yml
+   dist/ptium-1.69.59.env.example
+   dist/load-ptium-1.69.59.ps1
+   dist/load-ptium-1.69.59.sh
+   dist/ptium-1.69.59.kubernetes.yaml

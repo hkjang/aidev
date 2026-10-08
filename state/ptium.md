@@ -422,3 +422,4 @@
   - vitest.config.ts TypeScript 검사 포함 (가치 3 / 위험 3 / 작업량 M) — 현재 웹 검증은 통과하나 검사 범위를 넓혔을 때 타입 충돌 여부는 미확인.
 - 과제서: 채택 — HEAD eba092b의 GuidePage 두 누락과 docs.Read 분기 및 업로드 accept가 정찰과 일치하여 지정된 문구 두 곳만 수정했다.
 
+- 릴리즈: v1.69.59 (2026-10-09, run 2026-10-09-005834-ptium-improve)
