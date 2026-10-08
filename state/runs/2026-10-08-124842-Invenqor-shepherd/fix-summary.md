@@ -1,0 +1,5 @@
+- 문제: Go 1.25.14/govulncheck v1.6.0으로 GO-2026-6629 및 종료 3 재현; pgx가 x/text v0.40.0의 precis를 호출함.
+- 수정: server/go.mod의 x/text를 v0.41.0으로 올리고 go.sum 정리(연쇄 x/mod·x/tools 체크섬 포함); 기존 Pages 변경·CI·테스트는 유지.
+- 검증: govulncheck 실패→성공→원복 실패→최종 성공(호출 취약점 0); Go 전체 테스트 SQLite/PostgreSQL, vet, build, mod verify, tidy -diff, diff --check 통과.
+- 커밋: 567ec3b (964e954 위 새 커밋), push 안 함. 로그는 이 run의 govulncheck-*.log, go-test*.log 및 repair-verification.md.
+- 한계: 호출되지 않는 모듈 취약점 4건은 기존과 동일; Rust/web/Pages/E2E 및 원격 CI·배포는 이번 수리에서 재실행하지 않음.

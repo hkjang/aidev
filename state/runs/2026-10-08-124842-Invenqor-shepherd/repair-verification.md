@@ -1,0 +1,13 @@
+# 수리 검증
+- 환경: Go 1.25.14, govulncheck v1.6.0 (CI와 동일).
+- 재현: server에서 `govulncheck ./...` → GO-2026-6629, agents/service.go:522 경로, 종료 3 (govulncheck-before.log).
+- 원인: `go mod why -m golang.org/x/text` → internal/storage → pgx/v5/pgconn → x/text/secure/precis.
+- 수정: `go get golang.org/x/text@v0.41.0` 및 `go mod tidy`. x/text의 요구로 x/mod v0.38.0, x/tools v0.48.0 체크섬도 갱신.
+- 인과 검증: 수정 후 감사 종료 0 → HEAD의 go.mod/go.sum 복원 후 동일 취약점 종료 3 → 수정본 복구 후 종료 0. 로그: govulncheck-{after,reverted,final}.log.
+- 최종 감사: 호출 가능한 취약점 0. 호출하지 않는 모듈 수준 취약점 4건은 기존과 동일.
+- `GOTOOLCHAIN=go1.25.14 go test ./...`: SQLite 전체 suite 종료 0 (go-test.log).
+- `GOTOOLCHAIN=go1.25.14 go vet ./...`, `go build ./cmd/invenqor-server`, `go mod verify`, `go mod tidy -diff`, `git diff --check`: 모두 종료 0. 빌드 바이너리 제거.
+- 테스트 추가 없음: 의존성 수정의 회귀 검증은 기존 CI 감사 명령으로 수행하며, 실패·성공·원복 실패를 실제 확인. CI와 테스트 코드는 변경하지 않음.
+- 범위 밖 Rust/web/Pages 빌드·E2E 및 원격 CI·배포는 이번 수리에서 실행하지 않음.
+- `GOTOOLCHAIN=go1.25.14 POSTGRES_CONTAINER=invenqor-repair-36-20261008-124842 POSTGRES_PORT=55549 ./scripts/test-postgres.sh`: PostgreSQL 17 전체 `go test ./...` 종료 0 (go-test-postgres.log); 전용 컨테이너 정리 완료.
+- 최종 커밋: 567ec3b, 부모 964e954; 작업 트리 깨끗함, push 없음.

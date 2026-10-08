@@ -1,0 +1,731 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <!-- Primary SEO Meta Tags -->
+  <title>Invenqor - Next-Gen Linux Asset Collection & IT Asset Management (ITAM) Platform</title>
+  <meta name="title" content="Invenqor - Next-Gen Linux Asset Collection & IT Asset Management (ITAM) Platform" />
+  <meta name="description" content="Invenqor features Zero-Touch agent registration, ultra-lightweight Rust runtime, Go-based central server, and AI/MCP(Model Context Protocol) 연동을 지원하는 차세대 엔터프라이즈 Linux IT 자산 수집 및 보안 관리 솔루션입니다." />
+  <meta name="keywords" content="Invenqor, IT자산관리, ITAM, Linux 자산수집, Rust Agent, Go Server, MCP, Model Context Protocol, 자산이력관리, Zero-Touch, 서버보안, 인프라가시성" />
+  <meta name="author" content="hkjang / Invenqor Team" />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://hkjang.github.io/invenqor/" />
+
+  <!-- Open Graph / Facebook / Kakao -->
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://hkjang.github.io/invenqor/" />
+  <meta property="og:title" content="Invenqor - Next-Gen Linux Asset Collection & IT Asset Management Platform" />
+  <meta property="og:description" content="Enterprise IT asset visibility through Zero-Touch registration, Musl static Rust agent, Go/PostgreSQL server, and AI MCP integration." />
+  <meta property="og:image" content="https://hkjang.github.io/invenqor/assets/og-image.jpg" />
+  <meta property="og:locale" content="en_US" />
+  <meta property="og:site_name" content="Invenqor" />
+
+  <!-- Twitter Meta Tags -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:url" content="https://hkjang.github.io/invenqor/" />
+  <meta name="twitter:title" content="Invenqor - Enterprise Linux Asset Management Platform" />
+  <meta name="twitter:description" content="Zero-touch registration, zero external runtime, Go/PostgreSQL server, and native AI/MCP integration." />
+  <meta name="twitter:image" content="https://hkjang.github.io/invenqor/assets/og-image.jpg" />
+
+  <!-- Favicon & Styles -->
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🛡️</text></svg>" />
+  <link rel="stylesheet" href="styles.css" />
+
+  <!-- AEO (Answer Engine Optimization) & AI Search JSON-LD Structured Data -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "SoftwareApplication",
+        "@id": "https://hkjang.github.io/invenqor/#software",
+        "name": "Invenqor",
+        "operatingSystem": "Linux (RHEL, Ubuntu, Debian, CentOS, Rocky Linux, Alpine, Amazon Linux)",
+        "applicationCategory": "BusinessApplication",
+        "description": "Enterprise Linux IT Asset Management & Security Platform featuring Zero-Touch Agent Registration, Musl Static Rust Collector, Go Server with PostgreSQL/SQLite, and Streamable HTTP MCP Integration for AI Agents.",
+        "softwareVersion": "v0.2.15",
+        "license": "https://github.com/hkjang/invenqor/blob/main/LICENSE",
+        "url": "https://hkjang.github.io/invenqor/",
+        "author": {
+          "@type": "Organization",
+          "name": "Invenqor Project",
+          "url": "https://github.com/hkjang/invenqor",
+          "email": "gagagiga@naver.com"
+        }
+      },
+      {
+        "@type": "Organization",
+        "@id": "https://hkjang.github.io/invenqor/#organization",
+        "name": "Invenqor",
+        "url": "https://hkjang.github.io/invenqor/",
+        "email": "gagagiga@naver.com",
+        "sameAs": [
+          "https://github.com/hkjang/invenqor"
+        ]
+      },
+      {
+        "@type": "FAQPage",
+        "@id": "https://hkjang.github.io/invenqor/#faq",
+        "mainEntity": [
+          {
+            "@type": "Question",
+            "name": "What is Invenqor?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Invenqor utilizes Linux system /proc, /sys, /etc without external language runtimes to OS, CPU, 메모리, 네트워크, 프로세스, 패키지, 서비스, 컨테이너 자산 정보를 수집하고 Go 기반 중앙 서버 및 React 콘솔로 관리하는 차세대 IT 자산 관리 플랫폼입니다."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Zero-Touch 에이전트 등록은 어떻게 동작하나요?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Server URL 지정만으로 장비별 고유 Token을 자동 발급하며, 외부에서 내부로의 인바운드 포트 오픈 없이 아웃바운드 HTTPS (포트 7070) 통신만으로 안전하게 자산 등록 및 동기화가 이루어집니다."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Invenqor의 AI 및 MCP (Model Context Protocol) 연동 기능은 무엇인가요?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Invenqor Server는 Streamable HTTP MCP (Model Context Protocol) 자산 도구를 내장하고 있어, Claude, AGY 등 AI 에이전트가 인프라 토폴로지 및 자산 상태를 자연어로 질의하고 실시간으로 분석할 수 있습니다."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "네트워크 장애 발생 시 수집된 데이터는 손실되나요?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "아닙니다. Invenqor Agent는 로컬 JSONL 큐 스풀을 내장하여 서버 전송 완료(HTTP 2xx & accepted: true)가 확인될 때까지 안전하게 보존하며 지수 백오프(Exponential Backoff) 기반으로 자동 재시도합니다."
+            }
+          }
+        ]
+      }
+    ]
+  }
+  </script>
+<script id="auto-lang-detector">
+(function() {
+  var SAVED_KEY = 'user_lang_pref';
+  var userPref = localStorage.getItem(SAVED_KEY);
+  if (!userPref) {
+    var navLang = (navigator.language || (navigator.languages && navigator.languages[0]) || '').toLowerCase();
+    var isKoBrowser = navLang.indexOf('ko') === 0;
+    var isEnPage = window.location.pathname.indexOf('index_en.html') !== -1;
+    if (!isKoBrowser && !isEnPage) {
+      var target = window.location.href.replace(/index\.html$/, 'index_en.html');
+      if (target === window.location.href) target = 'index_en.html';
+      window.location.replace(target);
+    } else if (isKoBrowser && isEnPage) {
+      var target = window.location.href.replace(/index_en\.html$/, 'index.html');
+      if (target === window.location.href) target = 'index.html';
+      window.location.replace(target);
+    }
+  }
+
+  document.addEventListener('DOMContentLoaded', function() {
+    var langBtns = document.querySelectorAll('.lang-btn, [data-lang], #btn-ko, #btn-en, #localeToggle, #btn-lang-toggle');
+    langBtns.forEach(function(btn) {
+      btn.addEventListener('click', function() {
+        var lang = btn.getAttribute('data-lang') || (btn.textContent || '').trim().toLowerCase();
+        if (lang.indexOf('en') !== -1) {
+          localStorage.setItem(SAVED_KEY, 'en');
+        } else if (lang.indexOf('ko') !== -1) {
+          localStorage.setItem(SAVED_KEY, 'ko');
+        }
+      });
+    });
+  });
+})();
+</script>
+
+<style>
+/* Sponsor button styling */
+.sponsor-btn, .btn-sponsor, .button-sponsor {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  border-radius: 999px;
+  border: 1px solid rgba(225, 29, 72, 0.35);
+  background: rgba(225, 29, 72, 0.1);
+  color: #f43f5e !important;
+  font-weight: 700;
+  font-size: 13px;
+  line-height: 1.2;
+  text-decoration: none !important;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+.sponsor-btn:hover, .btn-sponsor:hover, .button-sponsor:hover {
+  background: #e11d48 !important;
+  color: #ffffff !important;
+  border-color: #e11d48 !important;
+  box-shadow: 0 4px 14px rgba(225, 29, 72, 0.35);
+  transform: translateY(-1px);
+}
+</style>
+</head>
+<body>
+
+  <!-- Navigation Bar -->
+  <header class="navbar">
+    <div class="container nav-container">
+      <a href="#" class="logo-brand">
+        <div class="logo-icon">
+          <svg viewBox="0 0 24 24">
+            <path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-5.45 9-12V5l-9-4zm-2 16l-4-4 1.41-1.41L10 14.17l6.59-6.59L18 9l-8 8z"/>
+          </svg>
+        </div>
+        <span>Invenqor</span>
+      </a>
+
+      <ul class="nav-links">
+        <li><a href="#features" data-i18n-kr="주요 기능" data-i18n-en="Features">Features</a></li>
+        <li><a href="#architecture" data-i18n-kr="아키텍처" data-i18n-en="Architecture">Architecture</a></li>
+        <li><a href="#quickstart" data-i18n-kr="빠른 시작" data-i18n-en="Quick Start">Quickstart</a></li>
+        <li><a href="#docs" data-i18n-kr="기술 문서" data-i18n-en="Docs">Docs</a></li>
+        <li><a href="#faq" data-i18n-kr="FAQ" data-i18n-en="FAQ">FAQ</a></li>
+      </ul>
+
+      <button id="mobile-menu-btn" class="mobile-menu-btn" aria-label="Open/Close Menu">
+          <svg width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
+        </button>
+      <div class="nav-actions">
+        <a href="https://github.com/sponsors/hkjang" target="_blank" rel="noopener" class="sponsor-btn btn-sponsor button-sponsor">💖 Sponsor</a>
+        <!-- Bilingual Language Switcher -->
+        <div class="lang-switcher">
+          <button type="button" class="lang-btn active" data-lang="kr">한글</button>
+          <button type="button" class="lang-btn" data-lang="en">EN</button>
+        </div>
+
+        <a href="https://github.com/hkjang/invenqor" target="_blank" class="btn-github">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/>
+          </svg>
+          <span>GitHub</span>
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <!-- Hero Section -->
+    <section class="hero-section">
+      <div class="container">
+        <div class="hero-badge">
+          <span class="badge-dot"></span>
+          <span data-i18n-kr="Invenqor v0.2.15 릴리즈 — Enterprise Ready" data-i18n-en="Invenqor v0.2.15 Released — Enterprise Ready">Invenqor v0.2.15 Released — Enterprise Ready</span>
+        </div>
+
+        <h1 class="hero-title" data-i18n-kr="Linux IT 자산 자동화 & <span class='gradient-text'>Next-Gen Linux IT Asset Automation & <span class='gradient-text'>Security Visibility</span></span>" data-i18n-en="Next-Gen Linux IT Asset Automation & <span class='gradient-text'>Security Visibility</span>">
+          Linux IT 자산 자동화 & <span class="gradient-text">보안 가시성의 새로운 기준</span>
+        </h1>
+
+        <p class="hero-description" data-i18n-kr="Zero-Touch 에이전트 자동 등록, Musl 초경량 Rust 컬렉터, Go/PostgreSQL 중앙 서버 및 AI MCP(Model Context Protocol) 통합을 지원하는 차세대 엔터프라이즈 자산 관리 플랫폼입니다." data-i18n-en="Next-generation enterprise IT asset platform featuring Zero-Touch agent registration, Musl ultra-lightweight Rust collector, Go/PostgreSQL server, and native AI MCP integration.">
+          Zero-Touch 에이전트 자동 등록, Musl 초경량 Rust 컬렉터, Go/PostgreSQL 중앙 서버 및 AI MCP(Model Context Protocol) 통합을 지원하는 차세대 엔터프라이즈 자산 관리 플랫폼입니다.
+        </p>
+
+        <div class="hero-cta-group">
+          <a href="#quickstart" class="btn-primary" data-i18n-kr="🚀 1분 만에 시작하기" data-i18n-en="🚀 Quick Start in 1 Min">🚀 Quick Start in 1 Min</a>
+          <a href="#docs" class="btn-secondary" data-i18n-kr="📘 기술 문서 살펴보기" data-i18n-en="📘 Read Documentation">📘 Read Documentation</a>
+        </div>
+
+        <!-- Interactive Showcase Window -->
+        <div class="showcase-wrapper">
+          <div class="showcase-header">
+            <div class="window-dots">
+              <span class="dot dot-red"></span>
+              <span class="dot dot-yellow"></span>
+              <span class="dot dot-green"></span>
+            </div>
+            <div class="showcase-tabs">
+              <button class="tab-btn active" data-tab="tab-console" data-i18n-kr="📊 Web Console" data-i18n-en="📊 Web Console">📊 Web Console</button>
+              <button class="tab-btn" data-tab="tab-cli" data-i18n-kr="💻 Rust Agent CLI" data-i18n-en="💻 Rust Agent CLI">💻 Rust Agent CLI</button>
+              <button class="tab-btn" data-tab="tab-mcp" data-i18n-kr="🤖 AI MCP Stream" data-i18n-en="🤖 AI MCP Stream">🤖 AI MCP Stream</button>
+            </div>
+          </div>
+
+          <div class="showcase-body">
+            <!-- Tab 1: Web Console -->
+            <div class="tab-content active" id="tab-console">
+              <img src="assets/og-image.jpg" alt="Invenqor Web Management Console" class="showcase-img" />
+            </div>
+
+            <!-- Tab 2: Rust Agent CLI -->
+            <div class="tab-content" id="tab-cli">
+              <div class="cli-box">
+                <div><span class="cli-prompt">$</span> <span class="cli-cmd">invenqor-agent --config /etc/invenqor/config.toml --diagnose</span></div>
+                <div class="cli-out">[2026-08-01T08:40:00Z INFO] Validating configuration... OK</div>
+                <div class="cli-out">[2026-08-01T08:40:00Z INFO] Checking Preflight API: GET https://invenqor-server:7070/v1/agent/preflight</div>
+                <div class="cli-highlight">[OK] Server Reachable | Origin IP: 192.168.1.50 | Status: Zero-Touch Registration Ready</div>
+                <br />
+                <div><span class="cli-prompt">$</span> <span class="cli-cmd">invenqor-agent --status</span></div>
+                <div class="cli-out">{</div>
+                <div class="cli-out">  "agent_id": "4b9a1c82-8e11-4f1a-b389-9e0c1f44e120",</div>
+                <div class="cli-out">  "server_url": "https://invenqor.internal:7070",</div>
+                <div class="cli-out">  "queued_events": 0,</div>
+                <div class="cli-highlight">  "last_successful_sync": "2026-08-01T08:39:55Z",</div>
+                <div class="cli-highlight">  "health": "HEALTHY"</div>
+                <div class="cli-out">}</div>
+              </div>
+            </div>
+
+            <!-- Tab 3: AI MCP Stream -->
+            <div class="tab-content" id="tab-mcp">
+              <div class="cli-box">
+                <div><span class="cli-prompt">AI Agent &gt;</span> <span class="cli-cmd">"Show all Linux nodes with CPU core &gt; 8 and missing security patches"</span></div>
+                <div class="cli-out">[MCP Tool Invocation] list_assets({ query: "cpu_cores > 8 AND status = 'active'" })</div>
+                <div class="cli-highlight">✓ MCP Tool Stream Response: 14 Nodes Found across Production Subnet (10.0.4.0/24)</div>
+                <div class="cli-out">- node-prod-01 (10.0.4.12): Linux 6.8.0-musl | CPU: 16 Cores | RAM: 64GB | Packages: 412</div>
+                <div class="cli-out">- node-prod-02 (10.0.4.13): Linux 6.8.0-musl | CPU: 32 Cores | RAM: 128GB | Packages: 408</div>
+                <div class="cli-highlight">✓ Real-time Asset Topology Streamed to AI Assistant via HTTP Streamable MCP</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Metrics Section -->
+    <section class="metrics-strip">
+      <div class="container">
+        <div class="metrics-grid">
+          <div>
+            <div class="metric-num gradient-text">0 Inbound</div>
+            <div class="metric-label" data-i18n-kr="방화벽 인바운드 오픈 필요 없음 (Outbound Only 7070)" data-i18n-en="Zero Inbound Port Required (Outbound Only 7070)">Zero Inbound Port Required (Outbound Only 7070)</div>
+          </div>
+          <div>
+            <div class="metric-num gradient-text">&lt; 10MB</div>
+            <div class="metric-label" data-i18n-kr="초경량 Rust Musl 정적 바이너리 메모리 사용량" data-i18n-en="Ultra-lightweight Rust Musl Static Binary Memory">Ultra-lightweight Rust Musl Static Binary Memory</div>
+          </div>
+          <div>
+            <div class="metric-num gradient-text">100% Zero-Touch</div>
+            <div class="metric-label" data-i18n-kr="Server URL로 장비별 토큰 자동 발급 & 수집" data-i18n-en="Automated Device Token Issuance & Discovery">Automated Device Token Issuance & Discovery</div>
+          </div>
+          <div>
+            <div class="metric-num gradient-text">Native MCP</div>
+            <div class="metric-label" data-i18n-kr="Model Context Protocol 표준 지원 AI 자산 검색" data-i18n-en="Native AI Agent Integration via Streamable MCP">Native AI Agent Integration via Streamable MCP</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Core Features Section -->
+    <section id="features" class="section">
+      <div class="container">
+        <div class="section-header">
+          <span class="section-tag" data-i18n-kr="KEY CAPABILITIES" data-i18n-en="KEY CAPABILITIES">KEY CAPABILITIES</span>
+          <h2 class="section-title" data-i18n-kr="엔터프라이즈 환경을 위한 차세대 자산 관리" data-i18n-en="Next-Generation Enterprise Asset Management">Next-Generation Enterprise Asset Management</h2>
+          <p class="section-desc" data-i18n-kr="운영 부하를 최소화하면서 완벽한 자산 가시성과 보안 제어를 제공합니다." data-i18n-en="Delivering complete infrastructure visibility and security control with zero operational friction.">
+            운영 부하를 최소화하면서 완벽한 자산 가시성과 보안 제어를 제공합니다.
+          </p>
+        </div>
+
+        <div class="features-grid">
+          <!-- Card 1 -->
+          <div class="feature-card">
+            <div class="feature-icon">⚡</div>
+            <h3 data-i18n-kr="Zero-Touch 등록 & 수집" data-i18n-en="Zero-Touch Registration">Zero-Touch Registration</h3>
+            <p data-i18n-kr="복잡한 사전 토큰 설정이나 외부 언어 런타임 없이, Server URL만으로 장비별 토큰을 자동 발급하고 첫 접속 즉시 자산화합니다." data-i18n-en="Automated token generation and device onboarding with server URL only, eliminating complex manual setup.">
+              복잡한 사전 토큰 설정이나 외부 언어 런타임 없이, Server URL만으로 장비별 토큰을 자동 발급하고 첫 접속 즉시 자산화합니다.
+            </p>
+            <ul class="feature-bullets">
+              <li data-i18n-kr="장비 고유 UUID 기반 자동 토큰 발급" data-i18n-en="Automated token issuance via agent UUID">Automated token issuance via agent UUID</li>
+              <li data-i18n-kr="점진적 기능 저하 (Progressive Degradation)" data-i18n-en="Progressive degradation fault-isolation">Progressive degradation fault-isolation</li>
+              <li data-i18n-kr="시스템 영향 없는 무중단 비침습 수집" data-i18n-en="Non-intrusive /proc and /sys collection">Non-intrusive /proc and /sys collection</li>
+            </ul>
+          </div>
+
+          <!-- Card 2 -->
+          <div class="feature-card">
+            <div class="feature-icon">🦀</div>
+            <h3 data-i18n-kr="초경량 Rust 컬렉터" data-i18n-en="Ultra-Lightweight Rust Agent">Ultra-Lightweight Rust Agent</h3>
+            <p data-i18n-kr="Python, Node.js 등 지저분한 의존성이 필요 없는 single Musl 정적 바이너리로 x86_64 및 aarch64 시스템을 완벽 지원합니다." data-i18n-en="Single Musl static binary with zero external runtime dependencies for x86_64 and aarch64 Linux distributions.">
+              Python, Node.js 등 지저분한 의존성이 필요 없는 single Musl 정적 바이너리로 x86_64 및 aarch64 시스템을 완벽 지원합니다.
+            </p>
+            <ul class="feature-bullets">
+              <li data-i18n-kr="x86_64 / aarch64 Musl 정적 컴파일" data-i18n-en="x86_64 & aarch64 Musl static builds">x86_64 & aarch64 Musl static builds</li>
+              <li data-i18n-kr="로컬 JSONL 큐 스풀 (네트워크 장애 대비)" data-i18n-en="Resilient local JSONL queue spooling">Resilient local JSONL queue spooling</li>
+              <li data-i18n-kr="스냅샷 해시 기반 변경 감지 & 델타 전송" data-i18n-en="Snapshot hash-based delta synchronization">Snapshot hash-based delta synchronization</li>
+            </ul>
+          </div>
+
+          <!-- Card 3 -->
+          <div class="feature-card">
+            <div class="feature-icon">🤖</div>
+            <h3 data-i18n-kr="AI MCP (Model Context Protocol)" data-i18n-en="Native AI MCP Integration">AI MCP (Model Context Protocol)</h3>
+            <p data-i18n-kr="Claude, AGY 등 AI Agent가 자산 정규화 정보, 토폴로지, 보안 상태를 실시간 자연어로 질의하고 자동 조치할 수 있는 Streamable HTTP MCP를 제공합니다." data-i18n-en="Built-in Streamable HTTP MCP server allowing LLMs to query live asset state and infrastructure topologies via standard protocol.">
+              Claude, AGY 등 AI Agent가 자산 정규화 정보, 토폴로지, 보안 상태를 실시간 자연어로 질의하고 자동 조치할 수 있는 Streamable HTTP MCP를 제공합니다.
+            </p>
+            <ul class="feature-bullets">
+              <li data-i18n-kr="Streamable HTTP MCP 엔드포인트" data-i18n-en="Streamable HTTP MCP Endpoint">Streamable HTTP MCP Endpoint</li>
+              <li data-i18n-kr="Scoped API Key 안전한 권한 제어" data-i18n-en="Scoped API Key life-cycle control">Scoped API Key life-cycle control</li>
+              <li data-i18n-kr="OpenAPI v3 스키마 표준 준수" data-i18n-en="OpenAPI v3 standard compliant">OpenAPI v3 standard compliant</li>
+            </ul>
+          </div>
+
+          <!-- Card 4 -->
+          <div class="feature-card">
+            <div class="feature-icon">🛡️</div>
+            <h3 data-i18n-kr="엔터프라이즈 보안 & SSO" data-i18n-en="Enterprise Security & SSO">Enterprise Security & SSO</h3>
+            <p data-i18n-kr="Ed25519 바이너리 서명, Keycloak OIDC 통합, mTLS / Bearer 토큰 인증 및 RBAC(역할 기반 접근 제어)로 무장되어 있습니다." data-i18n-en="Ed25519 binary signing, Keycloak OIDC SSO, mTLS / bearer tokens, and fine-grained RBAC for enterprise compliance.">
+              Ed25519 바이너리 서명, Keycloak OIDC 통합, mTLS / Bearer 토큰 인증 및 RBAC(역할 기반 접근 제어)로 무장되어 있습니다.
+            </p>
+            <ul class="feature-bullets">
+              <li data-i18n-kr="Keycloak OIDC 자동 셋업 & SSO" data-i18n-en="Keycloak OIDC SSO integration">Keycloak OIDC SSO integration</li>
+              <li data-i18n-kr="Ed25519 서명 기반 안전한 에이전트 무선 업데이트" data-i18n-en="Ed25519 signed rolling OTA updates">Ed25519 signed rolling OTA updates</li>
+              <li data-i18n-kr="전체 감사 로그 & IP/CIDR 접근 통제" data-i18n-en="Comprehensive audit logging & IP/CIDR control">Comprehensive audit logging & IP/CIDR control</li>
+            </ul>
+          </div>
+
+          <!-- Card 5 -->
+          <div class="feature-card">
+            <div class="feature-icon">🏢</div>
+            <h3 data-i18n-kr="유연한 하이브리드 서버" data-i18n-en="Flexible Hybrid Server">Flexible Hybrid Server</h3>
+            <p data-i18n-kr="단일 바이너리 로컬 SQLite 기동부터 PostgreSQL Primary + Kubernetes 멀티 파드 로드밸런싱 확장까지 지원합니다." data-i18n-en="Scalable Go backend supporting single-node embedded SQLite mode up to multi-pod PostgreSQL enterprise K8s deployments.">
+              단일 바이너리 로컬 SQLite 기동부터 PostgreSQL Primary + Kubernetes 멀티 파드 로드밸런싱 확장까지 지원합니다.
+            </p>
+            <ul class="feature-bullets">
+              <li data-i18n-kr="PostgreSQL Advisory Migration Lock" data-i18n-en="PostgreSQL advisory lock migration">PostgreSQL Advisory Migration Lock</li>
+              <li data-i18n-kr="단일 TCP 7070 포트 (API + Agent + Console)" data-i18n-en="Unified TCP port 7070 service">Unified TCP port 7070 service</li>
+              <li data-i18n-kr="Kubernetes Helm Chart 공식 제공" data-i18n-en="Official Kubernetes Helm Charts">Official Kubernetes Helm Charts</li>
+            </ul>
+          </div>
+
+          <!-- Card 6 -->
+          <div class="feature-card">
+            <div class="feature-icon">🔍</div>
+            <h3 data-i18n-kr="자산 정규화 & Query DSL" data-i18n-en="Asset Normalization & DSL">Asset Normalization & DSL</h3>
+            <p data-i18n-kr="OS, CPU, 메모리, 네트워크, 프로세스, DEB/RPM 패키지, systemd 서비스, 계정, 컨테이너 자산의 이력 및 관계를 체계적으로 추적합니다." data-i18n-en="Normalize OS, hardware, packages, services, accounts, and container environments with powerful querying.">
+              OS, CPU, 메모리, 네트워크, 프로세스, DEB/RPM 패키지, systemd 서비스, 계정, 컨테이너 자산의 이력 및 관계를 체계적으로 추적합니다.
+            </p>
+            <ul class="feature-bullets">
+              <li data-i18n-kr="자산 자동 병합 및 분리 정규화 엔진" data-i18n-en="Automatic asset merge & separation engine">Automatic asset merge & separation engine</li>
+              <li data-i18n-kr="자산 조건 검색 Query DSL" data-i18n-en="Asset filtering Query DSL">Asset filtering Query DSL</li>
+              <li data-i18n-kr="7일 추이 및 건강 상태 운영 통계" data-i18n-en="7-day trend & health operation metrics">7-day trend & health operation metrics</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Architecture Flow Section -->
+    <section id="architecture" class="section" style="background: rgba(13, 18, 29, 0.3);">
+      <div class="container">
+        <div class="section-header">
+          <span class="section-tag" data-i18n-kr="ARCHITECTURE" data-i18n-en="ARCHITECTURE">ARCHITECTURE</span>
+          <h2 class="section-title" data-i18n-kr="안전하고 단순한 데이터 파이프라인" data-i18n-en="Secure & Streamlined Data Pipeline">Secure & Streamlined Data Pipeline</h2>
+          <p class="section-desc" data-i18n-kr="Invenqor는 아웃바운드 전용 단일 포트 통신 구조로 기업의 네트워크 보안 가이드라인을 철저히 준수합니다." data-i18n-en="Outbound-only unified port telemetry designed to meet strict enterprise compliance.">
+            Invenqor는 아웃바운드 전용 단일 포트 통신 구조로 기업의 네트워크 보안 가이드라인을 철저히 준수합니다.
+          </p>
+        </div>
+
+        <div class="arch-card">
+          <div class="arch-flow">
+            <div class="flow-step">
+              <div class="flow-num">1</div>
+              <div class="flow-info">
+                <h4 data-i18n-kr="Rust Agent 비침습 수집" data-i18n-en="Rust Agent Non-Intrusive Collection">Rust Agent Non-Intrusive Collection</h4>
+                <p data-i18n-kr="Linux /proc, /sys를 직접 조회하여 zero-overhead로 시스템 자산 스냅샷 생성" data-i18n-en="Reads /proc, /sys directly with zero overhead to build system snapshot">Reads /proc, /sys directly with zero overhead to build system snapshot</p>
+              </div>
+            </div>
+
+            <div class="flow-step">
+              <div class="flow-num">2</div>
+              <div class="flow-info">
+                <h4 data-i18n-kr="Outbound HTTPS (TCP 7070)" data-i18n-en="Outbound HTTPS (TCP 7070)">Outbound HTTPS (TCP 7070)</h4>
+                <p data-i18n-kr="인바운드 포트 타공 없이 단일 TCP 포트로 암호화 전송 및 idempotency key 처리" data-i18n-en="Secure single port encrypted sync with idempotent event queueing">Secure single port encrypted sync with idempotent event queueing</p>
+              </div>
+            </div>
+
+            <div class="flow-step">
+              <div class="flow-num">3</div>
+              <div class="flow-info">
+                <h4 data-i18n-kr="Go Central Server & DB" data-i18n-en="Go Central Server & DB">Go Central Server & DB</h4>
+                <p data-i18n-kr="PostgreSQL / SQLite 기반 자산 정규화, 이력 차분 저장, Keycloak OIDC 통합" data-i18n-en="Asset normalization engine, diff history storage, Keycloak OIDC SSO">Asset normalization engine, diff history storage, Keycloak OIDC SSO</p>
+              </div>
+            </div>
+
+            <div class="flow-step">
+              <div class="flow-num">4</div>
+              <div class="flow-info">
+                <h4 data-i18n-kr="React Console & AI MCP Interface" data-i18n-en="React Console & AI MCP Interface">React Console & AI MCP Interface</h4>
+                <p data-i18n-kr="웹 관리 대시보드와 Streamable HTTP MCP를 통한 AI Agent 실시간 자산 질의" data-i18n-en="Web management dashboard and Streamable HTTP MCP for AI agents">Web management dashboard and Streamable HTTP MCP for AI agents</p>
+              </div>
+            </div>
+          </div>
+
+          <div style="text-align: center;">
+            <div class="cli-box" style="font-size: 0.85rem; text-align: left;">
+              <div style="color: var(--primary-cyan); font-weight: bold; margin-bottom: 8px;">// Gateway Request Sample</div>
+              <div class="cli-cmd">POST /v1/agent/events HTTP/1.1</div>
+              <div class="cli-out">Host: invenqor.example.com:7070</div>
+              <div class="cli-out">Content-Type: application/json</div>
+              <div class="cli-out">Authorization: Bearer dev_tok_991823...</div>
+              <div class="cli-out">X-Invenqor-Agent-Id: 4b9a1c82-8e11-4f1a...</div>
+              <div class="cli-out">X-Invenqor-Event-Id: 8812c190-21a4-44...</div>
+              <br />
+              <div class="cli-highlight">{ "kind": "inventory", "snapshot": { ... } }</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Quick Start Section -->
+    <section id="quickstart" class="section">
+      <div class="container">
+        <div class="section-header">
+          <span class="section-tag" data-i18n-kr="GET STARTED" data-i18n-en="GET STARTED">GET STARTED</span>
+          <h2 class="section-title" data-i18n-kr="Docker Compose로 1분 만에 서버 실행" data-i18n-en="Launch Server in 1 Minute with Docker">Launch Server in 1 Minute with Docker</h2>
+          <p class="section-desc" data-i18n-kr="단 한 줄의 명령어만으로 Invenqor 중앙 서버와 DB, 관리 콘솔을 즉시 기동할 수 있습니다." data-i18n-en="Start the Invenqor central server, database, and admin console in seconds.">
+            단 한 줄의 명령어만으로 Invenqor 중앙 서버와 DB, 관리 콘솔을 즉시 기동할 수 있습니다.
+          </p>
+        </div>
+
+        <div class="quickstart-box">
+          <div class="code-header">
+            <div class="code-title">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="var(--primary-cyan)">
+                <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/>
+              </svg>
+              <span data-i18n-kr="1. Server Quick Launch (Docker Compose)" data-i18n-en="1. Server Quick Launch (Docker Compose)">1. Server Quick Launch (Docker Compose)</span>
+            </div>
+            <button type="button" class="btn-copy" data-copy-target="code-docker" data-i18n-kr="복사" data-i18n-en="Copy">Copy</button>
+          </div>
+          <div class="code-snippet" id="code-docker">export POSTGRES_PASSWORD='change-me-with-a-long-random-value'
+export BOOTSTRAP_ADMIN='admin'
+export BOOTSTRAP_ADMIN_PASSWORD='ChangeMe-With-A-Strong-Password-42!'
+docker compose up -d --build
+# Open Web Console: http://127.0.0.1:7070</div>
+        </div>
+
+        <div class="quickstart-box">
+          <div class="code-header">
+            <div class="code-title">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="var(--primary-cyan)">
+                <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/>
+              </svg>
+              <span data-i18n-kr="2. Linux Agent Install (Single Command)" data-i18n-en="2. Linux Agent Install (Single Command)">2. Linux Agent Install (Single Command)</span>
+            </div>
+            <button type="button" class="btn-copy" data-copy-target="code-agent" data-i18n-kr="복사" data-i18n-en="Copy">Copy</button>
+          </div>
+          <div class="code-snippet" id="code-agent">tar -xzf invenqor-agent-linux-x86_64.tar.gz
+sudo ./invenqor-agent-linux-x86_64/scripts/install.sh
+# Diagnostic status check:
+invenqor-agent --config /etc/invenqor/config.toml --diagnose</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Documentation Portal Section -->
+    <section id="docs" class="section" style="background: rgba(13, 18, 29, 0.4);">
+      <div class="container">
+        <div class="section-header">
+          <span class="section-tag" data-i18n-kr="DOCUMENTATION PORTAL" data-i18n-en="DOCUMENTATION PORTAL">DOCUMENTATION PORTAL</span>
+          <h2 class="section-title" data-i18n-kr="역할별 공식 기술 가이드 문서" data-i18n-en="Role-Based Official Documentation">Role-Based Official Documentation</h2>
+          <p class="section-desc" data-i18n-kr="사용자, 시스템 관리자, 플랫폼 운영자 및 임원을 위한 상세 가이드를 제공합니다." data-i18n-en="Comprehensive Markdown and PDF guides for users, admins, operators, and executives.">
+            사용자, 시스템 관리자, 플랫폼 운영자 및 임원을 위한 상세 가이드를 제공합니다.
+          </p>
+        </div>
+
+        <div class="docs-grid">
+          <!-- Doc 1 -->
+          <div class="doc-card">
+            <div>
+              <div class="doc-card-header">
+                <span class="doc-icon">📘</span>
+                <h3 data-i18n-kr="사용자 가이드" data-i18n-en="User Guide">User Guide</h3>
+              </div>
+              <p data-i18n-kr="설치 후 기본 사용, 자산 조회, 에이전트 상태 확인 및 일상 문제 해결 안내" data-i18n-en="Package selection, installation, basic usage, status check, and troubleshooting.">
+                설치 후 기본 사용, 자산 조회, 에이전트 상태 확인 및 일상 문제 해결 안내
+              </p>
+            </div>
+            <div class="doc-links">
+              <a href="USER_GUIDE.md" target="_blank" class="doc-link-btn">Markdown</a>
+              <a href="USER_GUIDE.pdf" target="_blank" class="doc-link-btn">PDF Download</a>
+            </div>
+          </div>
+
+          <!-- Doc 2 -->
+          <div class="doc-card">
+            <div>
+              <div class="doc-card-header">
+                <span class="doc-icon">🔐</span>
+                <h3 data-i18n-kr="관리자 가이드" data-i18n-en="Admin Guide">Admin Guide</h3>
+              </div>
+              <p data-i18n-kr="전체 수집 필드, 대규모 배포, 보안 통제, 모니터링, Keycloak OIDC 연동" data-i18n-en="Telemetry fields, authentication contracts, security controls, monitoring, and Keycloak SSO.">
+                전체 수집 필드, 대규모 배포, 보안 통제, 모니터링, Keycloak OIDC 연동
+              </p>
+            </div>
+            <div class="doc-links">
+              <a href="ADMIN_GUIDE.md" target="_blank" class="doc-link-btn">Markdown</a>
+              <a href="ADMIN_GUIDE.pdf" target="_blank" class="doc-link-btn">PDF Download</a>
+            </div>
+          </div>
+
+          <!-- Doc 3 -->
+          <div class="doc-card">
+            <div>
+              <div class="doc-card-header">
+                <span class="doc-icon">🛠️</span>
+                <h3 data-i18n-kr="서버 설치 & K8s 가이드" data-i18n-en="Server Installation Guide">Server Installation Guide</h3>
+              </div>
+              <p data-i18n-kr="PostgreSQL / SQLite, 오프라인 폐쇄망 배포, Helm Ingress K8s 멀티 파드 구성" data-i18n-en="PostgreSQL/SQLite setup, air-gapped offline deployment, and Kubernetes Helm chart instructions.">
+                PostgreSQL / SQLite, 오프라인 폐쇄망 배포, Helm Ingress K8s 멀티 파드 구성
+              </p>
+            </div>
+            <div class="doc-links">
+              <a href="SERVER_INSTALLATION.md" target="_blank" class="doc-link-btn">Markdown</a>
+              <a href="SERVER_INSTALLATION.pdf" target="_blank" class="doc-link-btn">PDF Download</a>
+            </div>
+          </div>
+
+          <!-- Doc 4 -->
+          <div class="doc-card">
+            <div>
+              <div class="doc-card-header">
+                <span class="doc-icon">📊</span>
+                <h3 data-i18n-kr="임원 보고서" data-i18n-en="Executive Report">Executive Report</h3>
+              </div>
+              <p data-i18n-kr="도입 가치, 통제 경계, 위험 분석, 단계별 확산안 및 의사결정 요약" data-i18n-en="Business value, security boundary control, risk mitigation, and phase-by-phase rollout plan.">
+                도입 가치, 통제 경계, 위험 분석, 단계별 확산안 및 의사결정 요약
+              </p>
+            </div>
+            <div class="doc-links">
+              <a href="EXECUTIVE_REPORT.md" target="_blank" class="doc-link-btn">Markdown</a>
+              <a href="EXECUTIVE_REPORT.pdf" target="_blank" class="doc-link-btn">PDF Download</a>
+            </div>
+          </div>
+
+          <!-- Doc 5 -->
+          <div class="doc-card">
+            <div>
+              <div class="doc-card-header">
+                <span class="doc-icon">⚡</span>
+                <h3 data-i18n-kr="API & MCP 가이드" data-i18n-en="API & MCP Guide">API & MCP Guide</h3>
+              </div>
+              <p data-i18n-kr="RESTful 자산 API 연동, Scoped API Key 발급, Streamable HTTP MCP AI 연동" data-i18n-en="REST asset management API, scoped API key lifecycle, and Streamable HTTP MCP integration.">
+                RESTful 자산 API 연동, Scoped API Key 발급, Streamable HTTP MCP AI 연동
+              </p>
+            </div>
+            <div class="doc-links">
+              <a href="API_MCP_GUIDE.md" target="_blank" class="doc-link-btn">Markdown</a>
+              <a href="API_MCP_GUIDE.pdf" target="_blank" class="doc-link-btn">PDF Download</a>
+            </div>
+          </div>
+
+          <!-- Doc 6 -->
+          <div class="doc-card">
+            <div>
+              <div class="doc-card-header">
+                <span class="doc-icon">🚀</span>
+                <h3 data-i18n-kr="v0.2.15 릴리즈 노트" data-i18n-en="v0.2.15 Release Notes">v0.2.15 Release Notes</h3>
+              </div>
+              <p data-i18n-kr="Invenqor v0.2.15 최신 변경사항, 보안 개선 및 빌드 검증 증적" data-i18n-en="Latest functional enhancements, security hardening, and build verification artifacts.">
+                Invenqor v0.2.15 최신 변경사항, 보안 개선 및 빌드 검증 증적
+              </p>
+            </div>
+            <div class="doc-links">
+              <a href="RELEASE_NOTES_v0.2.15.md" target="_blank" class="doc-link-btn">View Notes</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- FAQ Section (AEO optimized) -->
+    <section id="faq" class="section">
+      <div class="container">
+        <div class="section-header">
+          <span class="section-tag" data-i18n-kr="FREQUENTLY ASKED QUESTIONS" data-i18n-en="FREQUENTLY ASKED QUESTIONS">FREQUENTLY ASKED QUESTIONS</span>
+          <h2 class="section-title" data-i18n-kr="자주 묻는 질문" data-i18n-en="Frequently Asked Questions">Frequently Asked Questions</h2>
+          <p class="section-desc" data-i18n-kr="Invenqor 도입 및 운용에 관한 핵심 질문에 명확하게 답변해 드립니다." data-i18n-en="Clear answers to common questions about deploying and operating Invenqor.">
+            Invenqor 도입 및 운용에 관한 핵심 질문에 명확하게 답변해 드립니다.
+          </p>
+        </div>
+
+        <div class="faq-grid">
+          <!-- Q1 -->
+          <div class="faq-item active">
+            <button type="button" class="faq-question">
+              <span data-i18n-kr="Q. Invenqor는 기존 ITAM 솔루션과 무엇이 다른가요?" data-i18n-en="Q. How is Invenqor different from legacy ITAM solutions?">Q. How is Invenqor different from legacy ITAM solutions?</span>
+              <span class="faq-icon">▼</span>
+            </button>
+            <div class="faq-answer" data-i18n-kr="Invenqor는 Python이나 Node.js 같은 무거운 언어 런타임에 의존하지 않는 초경량 Rust 단일 정적 바이너리 에이전트를 사용합니다. 시스템 내부 /proc, /sys 조회를 통해 비침습 수집을 수행하며, Zero-Touch 등록 및 Streamable HTTP MCP 표준을 통해 Claude, AGY 등 AI Agent와 자연어로 자산을 조회·분석할 수 있습니다." data-i18n-en="Invenqor uses an ultra-lightweight Rust static binary collector with zero language runtime dependencies. It reads /proc and /sys with non-intrusive progressive degradation and natively provides Streamable HTTP MCP for AI agents to query asset state via natural language.">
+              Invenqor는 Python이나 Node.js 같은 무거운 언어 런타임에 의존하지 않는 초경량 Rust 단일 정적 바이너리 에이전트를 사용합니다. 시스템 내부 /proc, /sys 조회를 통해 비침습 수집을 수행하며, Zero-Touch 등록 및 Streamable HTTP MCP 표준을 통해 Claude, AGY 등 AI Agent와 자연어로 자산을 조회·분석할 수 있습니다.
+            </div>
+          </div>
+
+          <!-- Q2 -->
+          <div class="faq-item">
+            <button type="button" class="faq-question">
+              <span data-i18n-kr="Q. Linux 자산 수집 시 운영 중인 시스템에 부하를 주나요?" data-i18n-en="Q. Does asset collection cause performance overhead on production servers?">Q. Does asset collection cause performance overhead on production servers?</span>
+              <span class="faq-icon">▼</span>
+            </button>
+            <div class="faq-answer" data-i18n-kr="전혀 부담을 주지 않습니다. 메모리 사용량은 10MB 미만이며, CPU 사용률도 극도로 작습니다. 또한 특정 디바이스나 패키지 DB 조회가 안 될 경우 해당 항목만 건너뛰는 '점진적 기능 저하(Progressive Degradation)' 원칙으로 시스템 안정성을 최우선합니다." data-i18n-en="No. Memory footprint is under 10MB and CPU impact is negligible. It prioritizes stability with progressive degradation, safely skipping unreadable components without halting system execution.">
+              전혀 부담을 주지 않습니다. 메모리 사용량은 10MB 미만이며, CPU 사용률도 극도로 작습니다. 또한 특정 디바이스나 패키지 DB 조회가 안 될 경우 해당 항목만 건너뛰는 '점진적 기능 저하(Progressive Degradation)' 원칙으로 시스템 안정성을 최우선합니다.
+            </div>
+          </div>
+
+          <!-- Q3 -->
+          <div class="faq-item">
+            <button type="button" class="faq-question">
+              <span data-i18n-kr="Q. 외부 인터넷이 연결되지 않은 오프라인/폐쇄망 환경도 지원되나요?" data-i18n-en="Q. Is offline or air-gapped environment supported?">Q. Is offline or air-gapped environment supported?</span>
+              <span class="faq-icon">▼</span>
+            </button>
+            <div class="faq-answer" data-i18n-kr="네, 완전한 폐쇄망 배포를 지원합니다. 오프라인 Docker 이미지 bundle 및 SQLite/PostgreSQL 로컬 기동, tar.gz 수동 설치 바이너리를 제공하므로 외부 인터넷 접속 없이 사내 단독 망에서 완벽히 운영 가능합니다." data-i18n-en="Yes. Invenqor provides complete offline tarball packages, air-gapped Docker image bundles, and local PostgreSQL/SQLite options that run smoothly in isolated enterprise networks.">
+              네, 완전한 폐쇄망 배포를 지원합니다. 오프라인 Docker 이미지 bundle 및 SQLite/PostgreSQL 로컬 기동, tar.gz 수동 설치 바이너리를 제공하므로 외부 인터넷 접속 없이 사내 단독 망에서 완벽히 운영 가능합니다.
+            </div>
+          </div>
+
+          <!-- Q4 -->
+          <div class="faq-item">
+            <button type="button" class="faq-question">
+              <span data-i18n-kr="Q. AI 에이전트는 Invenqor 자산 데이터에 어떻게 접근하나요?" data-i18n-en="Q. How do AI agents access Invenqor asset telemetry?">Q. How do AI agents access Invenqor asset telemetry?</span>
+              <span class="faq-icon">▼</span>
+            </button>
+            <div class="faq-answer" data-i18n-kr="Invenqor Server에는 Streamable HTTP MCP (Model Context Protocol) 자산 서버 기능이 탑재되어 있습니다. Scoped API Key를 통해 접근 권한을 제한한 후 LLM 기반 에이전트(Claude Desktop, Cursor, AGY 등)에 URL만 등록하면 자연어로 인프라를 조회하고 취약점을 파악할 수 있습니다." data-i18n-en="Invenqor Server features a built-in Streamable HTTP Model Context Protocol (MCP) server. After configuring scoped API keys, AI assistants can query real-time asset topologies, hardware specs, and software packages using natural language.">
+              Invenqor Server에는 Streamable HTTP MCP (Model Context Protocol) 자산 서버 기능이 탑재되어 있습니다. Scoped API Key를 통해 접근 권한을 제한한 후 LLM 기반 에이전트(Claude Desktop, Cursor, AGY 등)에 URL만 등록하면 자연어로 인프라를 조회하고 취약점을 파악할 수 있습니다.
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Footer with Small Mail Contact -->
+  <footer>
+    <div class="container footer-content">
+      <div class="footer-brand">
+        <div class="logo-icon" style="width:28px; height:28px;">
+          <svg viewBox="0 0 24 24" style="width:16px; height:16px;">
+            <path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-5.45 9-12V5l-9-4zm-2 16l-4-4 1.41-1.41L10 14.17l6.59-6.59L18 9l-8 8z"/>
+          </svg>
+        </div>
+        <span>Invenqor Agent & Server</span>
+      </div>
+
+      <p class="footer-desc" data-i18n-kr="Linux 자산 자동화, 보안 가시성, Zero-Touch 컬렉터 및 AI MCP 생태계를 선도합니다." data-i18n-en="Leading Linux asset automation, security visibility, zero-touch collector, and AI MCP ecosystem.">
+        Linux 자산 자동화, 보안 가시성, Zero-Touch 컬렉터 및 AI MCP 생태계를 선도합니다.
+      </p>
+
+      <!-- Mail Contact Link Requirement -->
+      <div class="footer-contact">
+        <span data-i18n-kr="✉️ 제품 문의 및 제휴:" data-i18n-en="✉️ Inquiries & Support:">✉️ Inquiries & Support:</span>
+        <a href="mailto:gagagiga@naver.com">gagagiga@naver.com</a>
+      </div>
+
+      <div class="copyright">
+        © 2026 Invenqor Project. Released under Open Source License. Published on GitHub Pages.
+      </div>
+    </div>
+  </footer>
+
+  <!-- Scripts -->
+  <script src="app.js"></script>
+</body>
+</html>

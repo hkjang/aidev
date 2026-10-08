@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+<!-- Begin Jekyll SEO tag v2.8.0 -->
+<title>Invenqor Server·Agent v0.2.37 릴리즈 노트 | Invenqor</title>
+<meta name="generator" content="Jekyll v3.10.0" />
+<meta property="og:title" content="Invenqor Server·Agent v0.2.37 릴리즈 노트" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="서버 자산을 수집하는 Rust Agent와 Go 중앙 서버, React 관리 콘솔을 결합한 자산 인텔리전스 플랫폼. 단순 인벤토리 수집기를 넘어 인증, RBAC, 변경 이력, 자산 관계, 감사 로그, 안전한 Query DSL까지 포함하는 구조로 확장" />
+<meta property="og:description" content="서버 자산을 수집하는 Rust Agent와 Go 중앙 서버, React 관리 콘솔을 결합한 자산 인텔리전스 플랫폼. 단순 인벤토리 수집기를 넘어 인증, RBAC, 변경 이력, 자산 관계, 감사 로그, 안전한 Query DSL까지 포함하는 구조로 확장" />
+<link rel="canonical" href="https://github.com/pages/hkjang/Invenqor/RELEASE_NOTES_v0.2.37.html" />
+<meta property="og:url" content="https://github.com/pages/hkjang/Invenqor/RELEASE_NOTES_v0.2.37.html" />
+<meta property="og:site_name" content="Invenqor" />
+<meta property="og:type" content="website" />
+<meta name="twitter:card" content="summary" />
+<meta property="twitter:title" content="Invenqor Server·Agent v0.2.37 릴리즈 노트" />
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"WebPage","description":"서버 자산을 수집하는 Rust Agent와 Go 중앙 서버, React 관리 콘솔을 결합한 자산 인텔리전스 플랫폼. 단순 인벤토리 수집기를 넘어 인증, RBAC, 변경 이력, 자산 관계, 감사 로그, 안전한 Query DSL까지 포함하는 구조로 확장","headline":"Invenqor Server·Agent v0.2.37 릴리즈 노트","url":"https://github.com/pages/hkjang/Invenqor/RELEASE_NOTES_v0.2.37.html"}</script>
+<!-- End Jekyll SEO tag -->
+
+    <link rel="stylesheet" href="/pages/hkjang/Invenqor/assets/css/style.css?v=">
+    <!-- start custom head snippets, customize with your own _includes/head-custom.html file -->
+
+<!-- Setup Google Analytics -->
+
+
+
+<!-- You can set your favicon here -->
+<!-- link rel="shortcut icon" type="image/x-icon" href="/pages/hkjang/Invenqor/favicon.ico" -->
+
+<!-- end custom head snippets -->
+
+  </head>
+  <body>
+    <div class="container-lg px-3 my-5 markdown-body">
+      
+      <h1><a href="https://github.com/pages/hkjang/Invenqor/">Invenqor</a></h1>
+      
+
+      <h1 id="invenqor-serveragent-v0237-릴리즈-노트">Invenqor Server·Agent v0.2.37 릴리즈 노트</h1>
+
+<p>릴리즈 일자: 2026-09-18
+호환 Agent: v0.2.37 (Linux·Windows)</p>
+
+<p>이번 릴리즈는 결함 하나를 고칩니다. 자리는 <strong>관리 콘솔의 Query DSL 화면</strong>이고,
+v0.2.31 이 “알려진 제한”으로 남겨 둔 것의 뒷일입니다. v0.2.31 은
+<code class="language-plaintext highlighter-rouge">POST /api/v1/query/execute</code> 에 <code class="language-plaintext highlighter-rouge">offset</code> 을 붙여 REST·API key 호출자가 한도 너머의
+결과를 끝까지 순회할 수 있게 했지만, <strong>콘솔은 여전히 첫 페이지만 보여 주고 조건을
+좁히라고만 안내했습니다.</strong> 이제 콘솔에서도 같은 질의를 이어서 넘겨 볼 수 있습니다.
+Server 는 손대지 않았습니다.</p>
+
+<h2 id="1-콘솔의-query-dsl-화면이-첫-페이지-너머로-갈-수-없었습니다">1. 콘솔의 Query DSL 화면이 첫 페이지 너머로 갈 수 없었습니다</h2>
+
+<p>Query DSL 화면은 실행 응답에서 <code class="language-plaintext highlighter-rouge">items</code> 와 <code class="language-plaintext highlighter-rouge">truncated</code> 만 읽었습니다. 조건에 맞는
+자산이 <code class="language-plaintext highlighter-rouge">limit</code>(기본 100, 최대 500) 보다 많으면 제목이 <strong>“결과 100건 이상”</strong> 이 되고
+“조건을 좁히거나 limit 을 올려 다시 실행하십시오” 라는 안내가 붙을 뿐, 나머지
+자산으로 가는 길이 화면에는 없었습니다. 1,200대가 조용해진 인벤토리에서
+<code class="language-plaintext highlighter-rouge">last_seen_at &lt; "now - 720h"</code> 를 실행하면 화면은 100대를 보여 주었고, <strong>나머지
+1,100대는 콘솔로는 닿을 수 없었습니다.</strong> Server 는 v0.2.31 부터 <code class="language-plaintext highlighter-rouge">total</code> ·
+<code class="language-plaintext highlighter-rouge">offset</code> · <code class="language-plaintext highlighter-rouge">has_more</code> · <code class="language-plaintext highlighter-rouge">next_offset</code> 을 이미 돌려주고 있었으므로, 응답에 있는
+것을 화면이 쓰지 않은 것입니다.</p>
+
+<p>이제 결과 패널이 <strong>Server 가 말한 그대로를 그립니다.</strong></p>
+
+<ul>
+  <li><strong>제목은 맞은 수입니다.</strong> <code class="language-plaintext highlighter-rouge">결과 N건</code> 의 N 은 이번 페이지의 행 수가 아니라 조건에
+맞는 자산 전체 수(<code class="language-plaintext highlighter-rouge">total</code>)입니다. 오른쪽에는 <code class="language-plaintext highlighter-rouge">1–100 표시 · limit 100</code> 처럼 지금
+표에 있는 범위와 한 번에 읽는 최대 건수가 붙습니다.</li>
+  <li><strong>이전·다음으로 이어서 읽습니다.</strong> 한도 너머에 행이 있으면 자산 목록과 같은
+<strong>이전</strong> · <strong>다음</strong> 버튼이 표 아래에 나타나고, 같은 표현식을 Server 가 되돌려
+준 <code class="language-plaintext highlighter-rouge">offset</code> 에서 이어서 실행합니다. 다음 페이지는 <code class="language-plaintext highlighter-rouge">offset + 표시 건수</code>
+(= <code class="language-plaintext highlighter-rouge">next_offset</code>)이고, 요청값이 아니라 Server 가 실제로 읽은 위치를 씁니다.</li>
+  <li><strong>질의 실행은 언제나 첫 페이지부터입니다.</strong> 표현식이나 <code class="language-plaintext highlighter-rouge">limit</code> 을 바꾸고
+<strong>질의 실행</strong> 을 누르면 <code class="language-plaintext highlighter-rouge">offset</code> 0 에서 다시 시작합니다.</li>
+  <li><strong>끝을 지난 페이지와 0건을 구분합니다.</strong> 두 번 누르는 사이에 자산이 지워지거나
+병합되어 페이지가 비면 “이 페이지에는 자산이 없습니다” 로 안내하고 <strong>이전</strong> 으로
+돌아갈 수 있습니다. 조건에 맞는 자산이 처음부터 없으면 예전처럼 “조건에 맞는
+자산이 없습니다” 입니다.</li>
+  <li><strong>거부된 질의는 건수를 보이지 않습니다.</strong> 구문 오류나 권한 거부로 실행이
+실패하면 제목은 “결과” 로만 남고 이전 결과의 수가 남아 있지 않습니다.</li>
+</ul>
+
+<p>사용자 가이드 12.5 와 Server 설치 가이드 19.4 의 “이 화면에는 다음 페이지가
+없으므로” 라는 안내를 고쳤고, <code class="language-plaintext highlighter-rouge">query-result.png</code> 를 새 화면으로 다시 찍었습니다.</p>
+
+<h2 id="검증">검증</h2>
+
+<ul>
+  <li><strong>렌더 단위 테스트.</strong> 결과 패널을 <code class="language-plaintext highlighter-rouge">QueryResultPanel</code> 로 떼어 브라우저 없이
+Server 응답만으로 그려지는 글자와 버튼을 고정했습니다 — 첫 실행 전, 한 페이지에
+다 들어가는 결과, 한도 너머 1,200건의 첫 페이지, 마지막 페이지의 범위와 버튼
+상태, 끝을 지난 빈 페이지와 0건의 구분, 거부된 실행의 6개입니다. 콘솔의 vitest
+는 150개 통과합니다.</li>
+  <li><strong>실제 Server 에서 걸어 보았습니다.</strong> SQLite fallback 의 Server 에 자산 7개를
+만들고 재빌드한 임베디드 콘솔을 headless Chrome 으로 열어 <code class="language-plaintext highlighter-rouge">limit</code> 3 으로
+1→2→3 페이지, 이전, 재실행, 1 페이지 삭제 뒤 끝을 지난 페이지, 0건, 거부까지
+화면 글자와 버튼의 disabled 상태를 확인했습니다.</li>
+  <li><strong>Server·콘솔.</strong> <code class="language-plaintext highlighter-rouge">npm run build</code> 의 산출물이 <code class="language-plaintext highlighter-rouge">server/internal/webui/dist</code> 와
+같고(재빌드해 diff 없음), <code class="language-plaintext highlighter-rouge">tsc -b</code> · <code class="language-plaintext highlighter-rouge">go test ./...</code> · <code class="language-plaintext highlighter-rouge">go vet</code> · <code class="language-plaintext highlighter-rouge">gofmt</code> ·
+<code class="language-plaintext highlighter-rouge">go build</code> 가 통과합니다.</li>
+  <li><strong>Agent.</strong> Rust 코드는 이번 릴리즈에서 바뀌지 않았습니다. 릴리즈 커밋에서
+<code class="language-plaintext highlighter-rouge">cargo fmt --all -- --check</code> · <code class="language-plaintext highlighter-rouge">cargo clippy --all-targets -D warnings</code> ·
+<code class="language-plaintext highlighter-rouge">cargo test --all-targets</code> 가 통과합니다.</li>
+</ul>
+
+<h2 id="호환성">호환성</h2>
+
+<ul>
+  <li><strong>데이터베이스 마이그레이션이 없습니다.</strong></li>
+  <li><strong>API 응답 형식 변경이 없습니다.</strong> <code class="language-plaintext highlighter-rouge">POST /api/v1/query/execute</code> 의 입력과 응답은
+v0.2.31 그대로이고, 콘솔이 이미 있던 <code class="language-plaintext highlighter-rouge">offset</code> · <code class="language-plaintext highlighter-rouge">total</code> · <code class="language-plaintext highlighter-rouge">has_more</code> 를 쓰기
+시작했을 뿐입니다. REST 의 다른 엔드포인트, MCP 도구, scope 는 바뀌지 않았습니다.</li>
+  <li><strong>Server 코드가 바뀌지 않았습니다.</strong> 바뀐 것은 Server 에 내장된 콘솔 정적
+파일뿐이므로, 새 이미지로 바꾸면 화면이 곧바로 새 동작을 합니다.</li>
+  <li><strong>Agent 의 동작 변경이 없습니다.</strong> 설정 파일, 큐, 전송 프로토콜은 이전과 같고
+버전 문자열만 올라갑니다. 기존 Agent 는 서두르지 않아도 Server 와의 호환에
+영향이 없습니다.</li>
+</ul>
+
+
+      
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/anchor-js/4.1.0/anchor.min.js" integrity="sha256-lZaRhKri35AyJSypXXs4o6OPFTbTmUoltBbDCbdzegg=" crossorigin="anonymous"></script>
+    <script>anchors.add();</script>
+  </body>
+</html>

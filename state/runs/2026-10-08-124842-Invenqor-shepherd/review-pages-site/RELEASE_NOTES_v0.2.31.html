@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+<!-- Begin Jekyll SEO tag v2.8.0 -->
+<title>Invenqor Server·Agent v0.2.31 릴리즈 노트 | Invenqor</title>
+<meta name="generator" content="Jekyll v3.10.0" />
+<meta property="og:title" content="Invenqor Server·Agent v0.2.31 릴리즈 노트" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="서버 자산을 수집하는 Rust Agent와 Go 중앙 서버, React 관리 콘솔을 결합한 자산 인텔리전스 플랫폼. 단순 인벤토리 수집기를 넘어 인증, RBAC, 변경 이력, 자산 관계, 감사 로그, 안전한 Query DSL까지 포함하는 구조로 확장" />
+<meta property="og:description" content="서버 자산을 수집하는 Rust Agent와 Go 중앙 서버, React 관리 콘솔을 결합한 자산 인텔리전스 플랫폼. 단순 인벤토리 수집기를 넘어 인증, RBAC, 변경 이력, 자산 관계, 감사 로그, 안전한 Query DSL까지 포함하는 구조로 확장" />
+<link rel="canonical" href="https://github.com/pages/hkjang/Invenqor/RELEASE_NOTES_v0.2.31.html" />
+<meta property="og:url" content="https://github.com/pages/hkjang/Invenqor/RELEASE_NOTES_v0.2.31.html" />
+<meta property="og:site_name" content="Invenqor" />
+<meta property="og:type" content="website" />
+<meta name="twitter:card" content="summary" />
+<meta property="twitter:title" content="Invenqor Server·Agent v0.2.31 릴리즈 노트" />
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"WebPage","description":"서버 자산을 수집하는 Rust Agent와 Go 중앙 서버, React 관리 콘솔을 결합한 자산 인텔리전스 플랫폼. 단순 인벤토리 수집기를 넘어 인증, RBAC, 변경 이력, 자산 관계, 감사 로그, 안전한 Query DSL까지 포함하는 구조로 확장","headline":"Invenqor Server·Agent v0.2.31 릴리즈 노트","url":"https://github.com/pages/hkjang/Invenqor/RELEASE_NOTES_v0.2.31.html"}</script>
+<!-- End Jekyll SEO tag -->
+
+    <link rel="stylesheet" href="/pages/hkjang/Invenqor/assets/css/style.css?v=">
+    <!-- start custom head snippets, customize with your own _includes/head-custom.html file -->
+
+<!-- Setup Google Analytics -->
+
+
+
+<!-- You can set your favicon here -->
+<!-- link rel="shortcut icon" type="image/x-icon" href="/pages/hkjang/Invenqor/favicon.ico" -->
+
+<!-- end custom head snippets -->
+
+  </head>
+  <body>
+    <div class="container-lg px-3 my-5 markdown-body">
+      
+      <h1><a href="https://github.com/pages/hkjang/Invenqor/">Invenqor</a></h1>
+      
+
+      <h1 id="invenqor-serveragent-v0231-릴리즈-노트">Invenqor Server·Agent v0.2.31 릴리즈 노트</h1>
+
+<p>릴리즈 일자: 2026-09-10
+호환 Agent: v0.2.31 (Linux·Windows)</p>
+
+<p>이번 릴리즈는 결함 하나를 고칩니다. 자리는 <strong>Query DSL 실행
+(<code class="language-plaintext highlighter-rouge">POST /api/v1/query/execute</code>)</strong>이고, 지난 릴리즈가 붙인 표시의 뒷일입니다.
+v0.2.29는 결과가 잘렸다는 사실을 <code class="language-plaintext highlighter-rouge">truncated</code>로 알리게 했지만, <strong>잘린 나머지를
+가져올 방법은 여전히 없었습니다.</strong> 이제 나머지를 가져올 수 있습니다.</p>
+
+<h2 id="1-한도를-넘는-질의-결과에는-두-번째-페이지가-없었습니다">1. 한도를 넘는 질의 결과에는 두 번째 페이지가 없었습니다</h2>
+
+<p>Query DSL 실행은 한 번에 기본 100건, 최대 500건까지 읽습니다. 그런데 이
+엔드포인트에는 <strong>offset이 없었습니다.</strong> 조건에 맞는 자산이 한도보다 많으면
+<code class="language-plaintext highlighter-rouge">truncated</code>가 <code class="language-plaintext highlighter-rouge">true</code>로 돌아올 뿐, 그다음 자산을 요청할 방법이 없었습니다.</p>
+
+<p>남은 방법은 <strong>조건을 잘게 쪼개는 것</strong>뿐이었습니다. 각 변형이 한도 아래로 들어올
+때까지 표현식을 좁히고, 그 조각들을 호출한 쪽에서 다시 이어 붙여야 했습니다.
+1,200대가 조용해진 인벤토리에서 <code class="language-plaintext highlighter-rouge">last_seen_at &lt; "now - 720h"</code>를 <code class="language-plaintext highlighter-rouge">limit</code> 500으로
+실행하면 500건이 돌아왔고, <strong>나머지 700대로 가는 길이 없었습니다.</strong> 이
+엔드포인트는 API key로도 열리므로, 그렇게 쪼개는 쪽은 대개 사람이 보는 콘솔이
+아니라 스크립트였습니다.</p>
+
+<p>이제 실행 입력이 <strong><code class="language-plaintext highlighter-rouge">/api/v1/assets</code>와 같은 <code class="language-plaintext highlighter-rouge">offset</code>을 받습니다.</strong></p>
+
+<ul>
+  <li><strong>끝까지 순회할 수 있습니다.</strong> 응답이 <code class="language-plaintext highlighter-rouge">offset</code>·<code class="language-plaintext highlighter-rouge">has_more</code>·<code class="language-plaintext highlighter-rouge">next_offset</code>을
+돌려주므로, <code class="language-plaintext highlighter-rouge">has_more</code>가 <code class="language-plaintext highlighter-rouge">true</code>인 동안 직전 응답의 <code class="language-plaintext highlighter-rouge">next_offset</code>을 그대로
+<code class="language-plaintext highlighter-rouge">offset</code>에 넣어 다시 실행하면 전체 결과를 남김없이 읽습니다.</li>
+  <li><strong><code class="language-plaintext highlighter-rouge">total</code>은 조건에 맞는 전체 수입니다.</strong> 페이지 인자가 붙기 전의 같은
+표현식으로 <code class="language-plaintext highlighter-rouge">COUNT(*)</code>를 한 번 더 물어, 응답이 <strong>건네준 수가 아니라 맞은 수</strong>를
+말합니다. <code class="language-plaintext highlighter-rouge">query.execute</code> 감사 로그에도 <code class="language-plaintext highlighter-rouge">total</code>과 <code class="language-plaintext highlighter-rouge">offset</code>이 함께 남습니다.</li>
+  <li><strong><code class="language-plaintext highlighter-rouge">truncated</code>는 그대로입니다.</strong> 뜻도 값도 <code class="language-plaintext highlighter-rouge">has_more</code>와 같으므로, offset이 없던
+시절에 작성된 호출자는 고치지 않아도 그대로 동작합니다.</li>
+  <li><code class="language-plaintext highlighter-rouge">offset</code>은 음수면 0으로, 1,000,000을 넘으면 1,000,000으로 맞춰집니다.</li>
+</ul>
+
+<h2 id="2-같은-초에-수집된-자산들의-페이지-순서가-정해져-있지-않았습니다">2. 같은 초에 수집된 자산들의 페이지 순서가 정해져 있지 않았습니다</h2>
+
+<p>페이지를 나누려면 <strong>행 사이에 흔들리지 않는 순서</strong>가 있어야 합니다. 정렬은
+<code class="language-plaintext highlighter-rouge">last_seen_at DESC</code> 하나뿐이었는데, 한 번에 수집된 자산들은 이 값을 <strong>초 단위까지
+공유합니다.</strong> 그 안에서의 순서는 엔진이 정하게 남아 있었고, 그대로 페이지를
+걸었다면 같은 자산이 두 페이지에 나타나고 다른 자산은 어느 페이지에도 나타나지
+않았을 것입니다.</p>
+
+<p>정렬에 <code class="language-plaintext highlighter-rouge">id</code>가 동점 처리로 더해져 순서가 전순서가 되었습니다. 페이지를 도입하는
+같은 변경에서 함께 고쳤으므로, 이 증상은 릴리즈된 적이 없습니다.</p>
+
+<h2 id="3-행을-읽다-끊긴-질의가-200으로-돌아갔습니다">3. 행을 읽다 끊긴 질의가 200으로 돌아갔습니다</h2>
+
+<p>결과 행을 훑는 반복문이 <code class="language-plaintext highlighter-rouge">rows.Err()</code>를 확인하지 않았습니다. 반복 도중 연결이
+끊기거나 스캔이 실패하면 반복은 조용히 끝나고, <strong>그때까지 모인 행이 정상 응답으로</strong>
+나갔습니다 — 오류 없이 짧아진 목록입니다. 이제 반복이 끝난 뒤 오류를 확인하고,
+있으면 500으로 답합니다.</p>
+
+<h2 id="검증">검증</h2>
+
+<ul>
+  <li><strong>끝까지 걸어 보았습니다.</strong> 한도보다 많은 자산을 만들고 <code class="language-plaintext highlighter-rouge">next_offset</code>으로 이어
+받아 전체가 <strong>중복 없이, 빠짐없이</strong> 모이는지, <code class="language-plaintext highlighter-rouge">total</code>이 맞은 수와 같은지,
+마지막 페이지에서 <code class="language-plaintext highlighter-rouge">has_more</code>가 <code class="language-plaintext highlighter-rouge">false</code>가 되는지를 고정했습니다.</li>
+  <li><strong>경계에서.</strong> 결과 끝을 지난 <code class="language-plaintext highlighter-rouge">offset</code>이 빈 목록과 <code class="language-plaintext highlighter-rouge">has_more</code> <code class="language-plaintext highlighter-rouge">false</code>를 돌려주면서도
+<code class="language-plaintext highlighter-rouge">total</code>은 여전히 맞은 수를 말하는지, 결과가 <strong>정확히 한도에서 끝날 때</strong>
+<code class="language-plaintext highlighter-rouge">has_more</code>가 <code class="language-plaintext highlighter-rouge">false</code>인지(한 행을 더 읽고 버리는 방식)를 고정했습니다.</li>
+  <li><strong>동점 순서.</strong> <code class="language-plaintext highlighter-rouge">last_seen_at</code>을 공유하는 자산들에 대한 페이지 순회 테스트를
+회귀 방어용으로 남겼습니다.</li>
+  <li><strong>되돌려 확인했습니다.</strong> 수정을 되돌리면 위 테스트들이 정확히 그 지점에서
+실패합니다.</li>
+  <li><strong>저장 모드 양쪽에서.</strong> <code class="language-plaintext highlighter-rouge">go test ./...</code>가 SQLite fallback과 실제
+PostgreSQL(<code class="language-plaintext highlighter-rouge">scripts/test-postgres.sh</code>) 양쪽에서 전 패키지 통과하고,
+<code class="language-plaintext highlighter-rouge">go vet</code>·<code class="language-plaintext highlighter-rouge">go build</code>·<code class="language-plaintext highlighter-rouge">gofmt</code>가 통과합니다.</li>
+  <li><strong>계약 문서.</strong> <code class="language-plaintext highlighter-rouge">openapi.yaml</code>에 <code class="language-plaintext highlighter-rouge">QueryInput.offset</code>과 두 execute 엔드포인트의 새
+응답 필드를 기술했고, <code class="language-plaintext highlighter-rouge">@redocly/cli@2.47.0 lint</code>의 경고 수가 변경 전과 같은
+6개(모두 기존 것)임을 확인했습니다. <code class="language-plaintext highlighter-rouge">docs/API_MCP_GUIDE.md</code>에 페이징 설명과 curl
+예시를 넣었습니다.</li>
+</ul>
+
+<h2 id="호환성">호환성</h2>
+
+<ul>
+  <li>데이터베이스 마이그레이션이 없습니다.</li>
+  <li><strong>응답에 키가 추가되기만 했습니다.</strong> <code class="language-plaintext highlighter-rouge">items</code>·<code class="language-plaintext highlighter-rouge">count</code>·<code class="language-plaintext highlighter-rouge">ast</code>·<code class="language-plaintext highlighter-rouge">limit</code>·<code class="language-plaintext highlighter-rouge">truncated</code>는
+이름도 뜻도 값도 그대로이고, <code class="language-plaintext highlighter-rouge">offset</code>·<code class="language-plaintext highlighter-rouge">total</code>·<code class="language-plaintext highlighter-rouge">has_more</code>·<code class="language-plaintext highlighter-rouge">next_offset</code>이
+더해졌습니다. 관리 콘솔은 <code class="language-plaintext highlighter-rouge">items</code>와 <code class="language-plaintext highlighter-rouge">truncated</code>만 읽으므로 영향이 없습니다.</li>
+  <li><code class="language-plaintext highlighter-rouge">offset</code>을 주지 않는 요청은 예전과 똑같이 첫 페이지를 받습니다.</li>
+  <li><strong>알려진 제한.</strong> 콘솔의 Query DSL 화면은 아직 <code class="language-plaintext highlighter-rouge">total</code>·<code class="language-plaintext highlighter-rouge">offset</code>을 쓰지 않아 첫
+페이지만 보여 줍니다. 전체 순회는 REST·API key 호출자에게 열려 있습니다.</li>
+  <li>MCP 도구, REST의 다른 엔드포인트, scope는 바뀌지 않았습니다.</li>
+  <li>Agent(Rust) 동작은 이번 릴리즈에서 바뀌지 않았습니다.</li>
+</ul>
+
+
+      
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/anchor-js/4.1.0/anchor.min.js" integrity="sha256-lZaRhKri35AyJSypXXs4o6OPFTbTmUoltBbDCbdzegg=" crossorigin="anonymous"></script>
+    <script>anchors.add();</script>
+  </body>
+</html>

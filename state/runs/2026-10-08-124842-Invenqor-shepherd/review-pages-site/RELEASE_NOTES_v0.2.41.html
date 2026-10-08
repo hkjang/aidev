@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+<!-- Begin Jekyll SEO tag v2.8.0 -->
+<title>Invenqor Server·Agent v0.2.41 릴리즈 노트 | Invenqor</title>
+<meta name="generator" content="Jekyll v3.10.0" />
+<meta property="og:title" content="Invenqor Server·Agent v0.2.41 릴리즈 노트" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="서버 자산을 수집하는 Rust Agent와 Go 중앙 서버, React 관리 콘솔을 결합한 자산 인텔리전스 플랫폼. 단순 인벤토리 수집기를 넘어 인증, RBAC, 변경 이력, 자산 관계, 감사 로그, 안전한 Query DSL까지 포함하는 구조로 확장" />
+<meta property="og:description" content="서버 자산을 수집하는 Rust Agent와 Go 중앙 서버, React 관리 콘솔을 결합한 자산 인텔리전스 플랫폼. 단순 인벤토리 수집기를 넘어 인증, RBAC, 변경 이력, 자산 관계, 감사 로그, 안전한 Query DSL까지 포함하는 구조로 확장" />
+<link rel="canonical" href="https://github.com/pages/hkjang/Invenqor/RELEASE_NOTES_v0.2.41.html" />
+<meta property="og:url" content="https://github.com/pages/hkjang/Invenqor/RELEASE_NOTES_v0.2.41.html" />
+<meta property="og:site_name" content="Invenqor" />
+<meta property="og:type" content="website" />
+<meta name="twitter:card" content="summary" />
+<meta property="twitter:title" content="Invenqor Server·Agent v0.2.41 릴리즈 노트" />
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"WebPage","description":"서버 자산을 수집하는 Rust Agent와 Go 중앙 서버, React 관리 콘솔을 결합한 자산 인텔리전스 플랫폼. 단순 인벤토리 수집기를 넘어 인증, RBAC, 변경 이력, 자산 관계, 감사 로그, 안전한 Query DSL까지 포함하는 구조로 확장","headline":"Invenqor Server·Agent v0.2.41 릴리즈 노트","url":"https://github.com/pages/hkjang/Invenqor/RELEASE_NOTES_v0.2.41.html"}</script>
+<!-- End Jekyll SEO tag -->
+
+    <link rel="stylesheet" href="/pages/hkjang/Invenqor/assets/css/style.css?v=">
+    <!-- start custom head snippets, customize with your own _includes/head-custom.html file -->
+
+<!-- Setup Google Analytics -->
+
+
+
+<!-- You can set your favicon here -->
+<!-- link rel="shortcut icon" type="image/x-icon" href="/pages/hkjang/Invenqor/favicon.ico" -->
+
+<!-- end custom head snippets -->
+
+  </head>
+  <body>
+    <div class="container-lg px-3 my-5 markdown-body">
+      
+      <h1><a href="https://github.com/pages/hkjang/Invenqor/">Invenqor</a></h1>
+      
+
+      <h1 id="invenqor-serveragent-v0241-릴리즈-노트">Invenqor Server·Agent v0.2.41 릴리즈 노트</h1>
+
+<p>릴리즈 일자: 2026-10-03
+호환 Agent: v0.2.41 (Linux·Windows)</p>
+
+<p>이번 릴리즈는 결함 하나를 고칩니다. 자리는 <strong>자산 병합 API
+<code class="language-plaintext highlighter-rouge">POST /api/v1/assets/merge</code></strong> 이고, 문제는 <strong><code class="language-plaintext highlighter-rouge">openapi.yaml</code> 이 <code class="language-plaintext highlighter-rouge">format: uuid</code> 로
+선언한 모양이 아닌 id 를 받았을 때 PostgreSQL 과 SQLite fallback 이 서로 다른
+답을 했다</strong>는 점입니다. 공개 계약은 이 엔드포인트의 오류를 400 하나로만
+약속하는데, 운영 기본값인 PostgreSQL 에서는 500 이 되거나 <strong>거절해야 할 요청을
+200 으로 수행했습니다.</strong> v0.2.40 이 <code class="language-plaintext highlighter-rouge">split</code> 에서 닫은 것과 같은 결함이 <code class="language-plaintext highlighter-rouge">merge</code>
+에 남아 있었습니다. 이제 <code class="language-plaintext highlighter-rouge">primary_id</code> 와 <code class="language-plaintext highlighter-rouge">secondary_ids</code> 의 모든 원소를
+트랜잭션을 열기 전에 정규형 UUID 로만 받고, 아니면 아무 것도 쓰지 않은 채
+400 으로 거절합니다. 콘솔과 Agent 는 손대지 않았습니다.</p>
+
+<h2 id="1-merge-가-같은-요청에-방언마다-다른-코드를-답했습니다">1. merge 가 같은 요청에 방언마다 다른 코드를 답했습니다</h2>
+
+<p><code class="language-plaintext highlighter-rouge">mergeAssets</code> 는 <code class="language-plaintext highlighter-rouge">primary_id</code> 와 <code class="language-plaintext highlighter-rouge">secondary_ids</code> 를 <code class="language-plaintext highlighter-rouge">uuid.Parse</code> 모양 검사
+(<code class="language-plaintext highlighter-rouge">missingAssetID</code>)만 거쳐 보낸 글자 그대로 SQL 로 넘겼습니다. <code class="language-plaintext highlighter-rouge">assets.id</code> 와
+<code class="language-plaintext highlighter-rouge">asset_sources.asset_id</code> 는 PostgreSQL 에서 UUID 열이고 SQLite fallback 에서
+TEXT 라, <code class="language-plaintext highlighter-rouge">uuid.Parse</code> 가 받아 주는 비정규형 철자는 한쪽에서만 조회 자체가
+오류가 되거나 조용히 정규화되었습니다. 증상이 세 갈래였고 셋 다 나빴습니다.</p>
+
+<ul>
+  <li><strong><code class="language-plaintext highlighter-rouge">urn:uuid:</code> 표기는 PostgreSQL 에서 500 이었습니다.</strong> UUID 열 입력 변환이
+SQLSTATE 22P02 로 거절해 조회 자체가 실패했고, <code class="language-plaintext highlighter-rouge">internalError</code> 를 거쳐
+<strong>계약에 없는 500 <code class="language-plaintext highlighter-rouge">INTERNAL_ERROR</code></strong> 가 되었습니다. 같은 입력에 SQLite
+fallback 은 TEXT 비교로 0행을 만나 400 을 답했습니다.</li>
+  <li><strong>중괄호·하이픈 없는 32자 표기는 PostgreSQL 에서 병합을 수행했습니다.</strong>
+이쪽이 더 나빴습니다. 두 표기 모두 <code class="language-plaintext highlighter-rouge">openapi.yaml</code> 이 선언하지 않은 모양인데
+<code class="language-plaintext highlighter-rouge">uuid.Parse</code> 는 통과시키고, PostgreSQL 은 <strong>조용히 정규화해 실제 행을
+찾아냈습니다</strong> — 즉 거절되어야 할 요청이 200 으로 성공하며 <code class="language-plaintext highlighter-rouge">asset_sources</code>
+를 옮기고 <code class="language-plaintext highlighter-rouge">assets.status='merged'</code> 와 <code class="language-plaintext highlighter-rouge">asset_changes</code> · <code class="language-plaintext highlighter-rouge">audit_logs</code> 를
+남겼습니다. 같은 요청에 SQLite fallback 은 모두 400 이었습니다.</li>
+  <li><strong>대문자 UUID 는 병합 결과를 MCP 가 찾지 못하게 만들었습니다.</strong> 대문자는
+계약이 선언한 정규형이고 PostgreSQL 은 접어서 같은 행을 찾지만, SQLite 의
+TEXT 비교는 접지 않습니다. 더구나 보낸 대문자가 그대로
+<code class="language-plaintext highlighter-rouge">asset_changes.after_json</code> 과 <code class="language-plaintext highlighter-rouge">audit_logs</code> 에 들어가, 문자 일치로 묻는 MCP
+<code class="language-plaintext highlighter-rouge">merged_into</code> 조회(<code class="language-plaintext highlighter-rouge">mcp.go:747</code>·<code class="language-plaintext highlighter-rouge">752</code>, 두 방언 모두)가 <strong>병합된 자산을
+못 찾았습니다</strong> — v0.2.38 이 세운 안내가 이 경로에서만 조용히 깨져
+있었습니다.</li>
+</ul>
+
+<p>이제 <strong><code class="language-plaintext highlighter-rouge">canonicalUUID</code> 가 36자 하이픈 표기만 받습니다.</strong></p>
+
+<ul>
+  <li><strong>모양 검사를 트랜잭션 전에 합니다.</strong> <code class="language-plaintext highlighter-rouge">decodeJSON</code> 직후·<code class="language-plaintext highlighter-rouge">BeginTx</code> 전에
+<code class="language-plaintext highlighter-rouge">primary_id</code> 와 <code class="language-plaintext highlighter-rouge">secondary_ids</code> 각 원소를 확인하고, 아니면 400
+<code class="language-plaintext highlighter-rouge">INVALID_MERGE</code> 로 끝냅니다. 트랜잭션을 열기 전이므로 <code class="language-plaintext highlighter-rouge">assets</code> ·
+<code class="language-plaintext highlighter-rouge">asset_sources</code> · <code class="language-plaintext highlighter-rouge">asset_changes</code> · <code class="language-plaintext highlighter-rouge">audit_logs</code> 어느 것도 건드리지
+않습니다.</li>
+  <li><strong>정규형만 아래로 흐릅니다.</strong> 존재 확인 쿼리, 자기 병합 스킵,
+<code class="language-plaintext highlighter-rouge">asset_sources</code> 이동, <code class="language-plaintext highlighter-rouge">asset_changes</code> 의 <code class="language-plaintext highlighter-rouge">secondary_ids</code> metadata, 감사
+기록이 모두 지역 변수 <code class="language-plaintext highlighter-rouge">primaryID</code> · <code class="language-plaintext highlighter-rouge">secondaryIDs</code> 만 읽습니다. 호출자가
+보낸 철자가 저장소에 남는 자리는 더 이상 없으므로, 대문자로 병합해도 MCP
+<code class="language-plaintext highlighter-rouge">merged_into</code> 가 primary 를 가리킵니다.</li>
+  <li><strong><code class="language-plaintext highlighter-rouge">missingAssetID</code> 의 모양 검사를 지웠습니다.</strong> 호출자가 하나뿐이고 그
+호출자가 호출 전에 정규화를 끝내므로 더는 닿지 않는 코드였습니다. 그 전제를
+주석으로 적어 두었습니다.</li>
+  <li><strong>폴백의 동작은 바뀌지 않습니다.</strong> 오류 코드는 SQLite fallback 이 이미
+답하던 400 <code class="language-plaintext highlighter-rouge">INVALID_MERGE</code> 를 그대로 두었으므로, 달라지는 것은 PostgreSQL
+쪽의 500 과 잘못된 200 뿐입니다.</li>
+</ul>
+
+<h2 id="검증">검증</h2>
+
+<ul>
+  <li><strong>고치기 전에 실패를 먼저 확인했습니다.</strong> <code class="language-plaintext highlighter-rouge">scripts/test-postgres.sh</code> 로
+PostgreSQL 에서 <code class="language-plaintext highlighter-rouge">urn:uuid:</code> 가 500 <code class="language-plaintext highlighter-rouge">INTERNAL_ERROR</code> 로, 중괄호·하이픈 없는
+32자 표기가 200 으로 병합을 수행하는 것, 대문자 철자가 PostgreSQL 에서만
+병합되는 것을 실제로 재현한 뒤 고쳤습니다. SQLite fallback 에서는 같은
+테스트 일부가 고치기 전에도 통과합니다 — 방언 차이가 그대로 드러나는
+자리라, <code class="language-plaintext highlighter-rouge">scripts/test-postgres.sh</code> 없이는 이 결함의 재현이 반쪽입니다.</li>
+  <li><strong>회귀 테스트 4건을 더했습니다.</strong> 대역 없이 실제 라우터로
+<code class="language-plaintext highlighter-rouge">POST /api/v1/assets/merge</code> 를 부릅니다 — 비정규형 <code class="language-plaintext highlighter-rouge">primary_id</code>, 비정규형
+<code class="language-plaintext highlighter-rouge">secondary_ids</code>(<code class="language-plaintext highlighter-rouge">urn:uuid:</code> · 중괄호 · 하이픈 없음 각각), 대문자 id 의
+정규형 접힘, 그리고 대문자로 병합한 뒤 MCP <code class="language-plaintext highlighter-rouge">asset_get</code> 이 <code class="language-plaintext highlighter-rouge">merged_into</code> 로
+primary 를 가리키는 것. 응답 코드만 보지 않고 <code class="language-plaintext highlighter-rouge">assets.status</code> ·
+<code class="language-plaintext highlighter-rouge">asset_sources.asset_id</code> · <code class="language-plaintext highlighter-rouge">asset_changes.after_json</code> · <code class="language-plaintext highlighter-rouge">audit_logs</code> 행
+수를 직접 셉니다. 거절 경로는 <strong>아무 것도 기록되지 않은 것</strong>까지
+확인합니다. v0.2.39 가 추가한 존재 확인 테스트 3건은 그대로 통과합니다.</li>
+  <li><strong>두 저장 엔진 모두에서 통과합니다.</strong> <code class="language-plaintext highlighter-rouge">go test ./...</code>(SQLite fallback)와
+<code class="language-plaintext highlighter-rouge">scripts/test-postgres.sh</code>(postgres:17-alpine) 전 패키지가 통과합니다.</li>
+  <li><strong>Server.</strong> <code class="language-plaintext highlighter-rouge">go vet</code> · <code class="language-plaintext highlighter-rouge">gofmt -l</code> 빈 출력 · <code class="language-plaintext highlighter-rouge">go build</code> 가 통과합니다. 콘솔
+정적 파일(<code class="language-plaintext highlighter-rouge">server/internal/webui/dist</code>)은 바뀌지 않았습니다.</li>
+  <li><strong>Agent.</strong> Rust 코드는 이번 릴리즈에서 바뀌지 않았습니다. 릴리즈 커밋에서
+<code class="language-plaintext highlighter-rouge">cargo fmt --all -- --check</code> · <code class="language-plaintext highlighter-rouge">cargo clippy --all-targets -D warnings</code> ·
+<code class="language-plaintext highlighter-rouge">cargo test --all-targets</code> 가 통과합니다.</li>
+</ul>
+
+<h2 id="호환성">호환성</h2>
+
+<ul>
+  <li><strong>데이터베이스 마이그레이션이 없습니다.</strong> 열을 더하거나 바꾸지 않고, 쿼리에
+닿기 전에 입력의 모양을 한 번 더 볼 뿐입니다.</li>
+  <li><strong>OpenAPI 문서가 바뀌지 않았습니다.</strong> 이미 적혀 있던 <code class="language-plaintext highlighter-rouge">format: uuid</code> 와
+<code class="language-plaintext highlighter-rouge">"400": Primary or secondary assets missing</code> 을 구현이 뒤늦게 지킨 것이라,
+계약 쪽은 손대지 않았습니다. 응답 코드 집합도 그대로입니다.</li>
+  <li><strong>정상 병합의 응답은 그대로입니다.</strong> 200 과 본문의 모양도, <code class="language-plaintext highlighter-rouge">assets.merge</code>
+권한과 CSRF 검증도 이전과 같습니다. 달라지는 것은 <strong>계약이 선언하지 않은
+모양으로 id 를 보내던 요청</strong>뿐입니다 — PostgreSQL 에서 500 을 받던 호출자는
+이제 400 을 받고, 중괄호나 하이픈 없는 표기로 <strong>병합이 되던</strong> 호출자는 이제
+400 을 받습니다. 정규형 36자 UUID 를 보내던 호출자에게는 아무 변화가
+없습니다.</li>
+  <li><strong>대문자 id 로 병합하던 호출자는 이제 두 방언에서 같게 동작합니다.</strong> 대문자는
+계약이 선언한 정규형이라 계속 받아들이지만, 저장되는 글자가 소문자 정규형으로
+바뀝니다. 이전에 PostgreSQL 에서 대문자로 병합해 둔 자산의
+<code class="language-plaintext highlighter-rouge">asset_changes.after_json</code> 과 <code class="language-plaintext highlighter-rouge">audit_logs</code> 에는 대문자가 남아 있고, 그
+과거 행을 고치지는 않습니다 — MCP <code class="language-plaintext highlighter-rouge">merged_into</code> 안내는 <code class="language-plaintext highlighter-rouge">assets</code> 테이블을
+보므로 과거 병합에도 영향이 없습니다.</li>
+  <li><strong>알려진 제한.</strong> 트랜잭션 안에서 오류를 보고하면 SQLite fallback 이
+교착하는 문제는 그대로 남아 있습니다. 이번 수정은 트랜잭션을 열기 전에
+거절하므로 merge 의 입력 검증 경로가 그 길로 들어가지 않게 되었을 뿐이고,
+<code class="language-plaintext highlighter-rouge">mergeAssets</code> 의 트랜잭션 안쪽과 ingest 등 다른 핸들러의 <code class="language-plaintext highlighter-rouge">internalError</code> 는
+v0.2.40 과 같습니다. 운영 기본값인 PostgreSQL 에서는 500 이 되며, fallback 을
+쓰는 평가·개발 환경에만 해당합니다.</li>
+  <li><strong>콘솔이 바뀌지 않았습니다.</strong> 임베디드 정적 파일은 v0.2.40 과 같습니다.</li>
+  <li><strong>Agent 의 동작 변경이 없습니다.</strong> 설정 파일, 큐, 전송 프로토콜은 이전과
+같고 버전 문자열만 올라갑니다. 기존 Agent 는 서두르지 않아도 Server 와의
+호환에 영향이 없습니다.</li>
+</ul>
+
+
+      
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/anchor-js/4.1.0/anchor.min.js" integrity="sha256-lZaRhKri35AyJSypXXs4o6OPFTbTmUoltBbDCbdzegg=" crossorigin="anonymous"></script>
+    <script>anchors.add();</script>
+  </body>
+</html>

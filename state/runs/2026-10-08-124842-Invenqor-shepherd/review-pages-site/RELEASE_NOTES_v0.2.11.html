@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+<!-- Begin Jekyll SEO tag v2.8.0 -->
+<title>Invenqor Server·Agent v0.2.11 릴리즈 노트 | Invenqor</title>
+<meta name="generator" content="Jekyll v3.10.0" />
+<meta property="og:title" content="Invenqor Server·Agent v0.2.11 릴리즈 노트" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="서버 자산을 수집하는 Rust Agent와 Go 중앙 서버, React 관리 콘솔을 결합한 자산 인텔리전스 플랫폼. 단순 인벤토리 수집기를 넘어 인증, RBAC, 변경 이력, 자산 관계, 감사 로그, 안전한 Query DSL까지 포함하는 구조로 확장" />
+<meta property="og:description" content="서버 자산을 수집하는 Rust Agent와 Go 중앙 서버, React 관리 콘솔을 결합한 자산 인텔리전스 플랫폼. 단순 인벤토리 수집기를 넘어 인증, RBAC, 변경 이력, 자산 관계, 감사 로그, 안전한 Query DSL까지 포함하는 구조로 확장" />
+<link rel="canonical" href="https://github.com/pages/hkjang/Invenqor/RELEASE_NOTES_v0.2.11.html" />
+<meta property="og:url" content="https://github.com/pages/hkjang/Invenqor/RELEASE_NOTES_v0.2.11.html" />
+<meta property="og:site_name" content="Invenqor" />
+<meta property="og:type" content="website" />
+<meta name="twitter:card" content="summary" />
+<meta property="twitter:title" content="Invenqor Server·Agent v0.2.11 릴리즈 노트" />
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"WebPage","description":"서버 자산을 수집하는 Rust Agent와 Go 중앙 서버, React 관리 콘솔을 결합한 자산 인텔리전스 플랫폼. 단순 인벤토리 수집기를 넘어 인증, RBAC, 변경 이력, 자산 관계, 감사 로그, 안전한 Query DSL까지 포함하는 구조로 확장","headline":"Invenqor Server·Agent v0.2.11 릴리즈 노트","url":"https://github.com/pages/hkjang/Invenqor/RELEASE_NOTES_v0.2.11.html"}</script>
+<!-- End Jekyll SEO tag -->
+
+    <link rel="stylesheet" href="/pages/hkjang/Invenqor/assets/css/style.css?v=">
+    <!-- start custom head snippets, customize with your own _includes/head-custom.html file -->
+
+<!-- Setup Google Analytics -->
+
+
+
+<!-- You can set your favicon here -->
+<!-- link rel="shortcut icon" type="image/x-icon" href="/pages/hkjang/Invenqor/favicon.ico" -->
+
+<!-- end custom head snippets -->
+
+  </head>
+  <body>
+    <div class="container-lg px-3 my-5 markdown-body">
+      
+      <h1><a href="https://github.com/pages/hkjang/Invenqor/">Invenqor</a></h1>
+      
+
+      <h1 id="invenqor-serveragent-v0211-릴리즈-노트">Invenqor Server·Agent v0.2.11 릴리즈 노트</h1>
+
+<p>릴리즈 일자: 2026-07-30
+호환 Agent: v0.2.11 (Linux·Windows)</p>
+
+<p><strong>v0.2.10의 Windows 설치 스크립트가 실행되지 않습니다.</strong> v0.2.10으로 Windows
+Agent를 설치하려던 경우 이 릴리즈로 교체하십시오. Linux Agent와 Server는 영향이
+없습니다.</p>
+
+<h2 id="설치-스크립트가-windows-powershell에서-즉시-실패했습니다">설치 스크립트가 Windows PowerShell에서 즉시 실패했습니다</h2>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>'$IsWindows' 변수는 아직 설정되지 않았으므로 검색할 수 없습니다.
+</code></pre></div></div>
+
+<p><code class="language-plaintext highlighter-rouge">install.ps1</code>이 플랫폼 확인에 <code class="language-plaintext highlighter-rouge">$IsWindows</code>를 사용했습니다. 이 자동 변수는
+<strong>PowerShell 6 이상에만 존재</strong>하며, Windows에 기본 포함되어 운영자가 실제로 여는
+셸인 <strong>Windows PowerShell 5.1에는 없습니다.</strong> 스크립트가 <code class="language-plaintext highlighter-rouge">Set-StrictMode</code>를
+사용하므로 설정되지 않은 변수를 읽는 것은 종료 오류이고, 따라서 아무것도 설치되지
+않은 상태로 첫 줄에서 중단됐습니다.</p>
+
+<p><code class="language-plaintext highlighter-rouge">[System.Environment]::OSVersion.Platform</code>으로 교체했습니다. 모든 에디션·모든
+플랫폼에 존재하므로 에디션 판별이 필요하지 않습니다. <code class="language-plaintext highlighter-rouge">uninstall.ps1</code>에도 같은
+문제가 있어 함께 고쳤습니다.</p>
+
+<p><strong>왜 놓쳤는가</strong>: 검증을 컨테이너의 PowerShell 7로만 수행했습니다. 7에는
+<code class="language-plaintext highlighter-rouge">$IsWindows</code>가 있으므로 문제가 드러나지 않았습니다. 정작 대상 셸인 5.1에서는
+확인하지 않았습니다.</p>
+
+<h2 id="같은-종류의-결함이-다시-나가지-못하게-했습니다">같은 종류의 결함이 다시 나가지 못하게 했습니다</h2>
+
+<p><code class="language-plaintext highlighter-rouge">packaging/build-zip.sh</code>가 패키지를 만들기 전에 <code class="language-plaintext highlighter-rouge">verify-scripts.ps1</code>을 실행하고,
+실패하면 <strong>패키지를 만들지 않습니다.</strong></p>
+
+<ol>
+  <li>스크립트가 파싱되는지</li>
+  <li>PSScriptAnalyzer 오류가 없는지</li>
+  <li>PSScriptAnalyzer 호환성 규칙이 5.1에 대해 아무것도 보고하지 않는지</li>
+  <li><strong>5.1 이후에 추가된 자동 변수를 참조하지 않는지</strong></li>
+</ol>
+
+<p>네 번째가 핵심입니다. PSScriptAnalyzer의 호환성 규칙은 구문과 cmdlet을 검사하지만
+자동 변수는 검사하지 않으므로 <code class="language-plaintext highlighter-rouge">$IsWindows</code>를 잡아내지 못합니다. 실제로 이 결함을
+되살려 확인했더니 1~3번은 모두 통과했습니다. 잡으려던 결함을 놓치는 검사는 없는
+것보다 나쁘므로, 5.1에 없는 자동 변수(<code class="language-plaintext highlighter-rouge">$IsWindows</code>, <code class="language-plaintext highlighter-rouge">$IsLinux</code>, <code class="language-plaintext highlighter-rouge">$IsMacOS</code>,
+<code class="language-plaintext highlighter-rouge">$IsCoreCLR</code>, <code class="language-plaintext highlighter-rouge">$PSStyle</code> 등)를 구문 트리에서 직접 찾습니다.</p>
+
+<p>결함을 되살린 상태로 패키징을 실행해 <code class="language-plaintext highlighter-rouge">build-zip.sh</code>가 종료 코드 1로 중단하고
+zip을 만들지 않는 것을 확인했습니다. PowerShell을 사용할 수 없는 빌드 환경에서는
+검증을 건너뛴다는 사실을 출력하고 실패합니다. 의도적으로 건너뛰려면
+<code class="language-plaintext highlighter-rouge">SKIP_SCRIPT_VERIFY=1</code>이 필요합니다.</p>
+
+<h2 id="호환성">호환성</h2>
+
+<ul>
+  <li>데이터베이스 마이그레이션이 없습니다. Server와 Linux Agent 동작 변경이 없습니다.</li>
+  <li>Windows Agent 실행 파일 자체는 v0.2.10과 기능이 같습니다. 변경은 설치 스크립트에
+한정됩니다. 이미 v0.2.10을 설치하는 데 성공했다면(PowerShell 7에서 실행한 경우)
+교체하지 않아도 동작하지만, 다음 업그레이드부터 이 릴리즈의 스크립트를
+사용하십시오.</li>
+</ul>
+
+
+      
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/anchor-js/4.1.0/anchor.min.js" integrity="sha256-lZaRhKri35AyJSypXXs4o6OPFTbTmUoltBbDCbdzegg=" crossorigin="anonymous"></script>
+    <script>anchors.add();</script>
+  </body>
+</html>

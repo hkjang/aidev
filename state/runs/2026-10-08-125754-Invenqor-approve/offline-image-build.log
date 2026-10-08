@@ -1,0 +1,141 @@
+#0 building with "default" instance using docker driver
+
+#1 [internal] load build definition from Dockerfile
+#1 transferring dockerfile: 2.13kB done
+#1 DONE 0.1s
+
+#2 [internal] load metadata for gcr.io/distroless/static-debian12:nonroot
+#2 DONE 0.1s
+
+#3 [internal] load metadata for docker.io/library/golang:1.25-alpine
+#3 DONE 1.2s
+
+#4 [internal] load metadata for docker.io/library/node:22-alpine
+#4 DONE 1.2s
+
+#5 [internal] load .dockerignore
+#5 transferring context:
+#5 transferring context: 493B done
+#5 DONE 0.3s
+
+#6 [internal] load build context
+#6 DONE 0.0s
+
+#7 [server 1/5] FROM docker.io/library/golang:1.25-alpine@sha256:1ae0735f00daffa3aaf1363a5184c0d2dc55c78e3db4ec70241cdac97bf84b59
+#7 resolve docker.io/library/golang:1.25-alpine@sha256:1ae0735f00daffa3aaf1363a5184c0d2dc55c78e3db4ec70241cdac97bf84b59 0.1s done
+#7 DONE 0.1s
+
+#8 [web 1/6] FROM docker.io/library/node:22-alpine@sha256:0a7108bf6c7bf5de370ffb1a3ed6be93d405b43ff159f681a8d18c0e2bc2e402
+#8 resolve docker.io/library/node:22-alpine@sha256:0a7108bf6c7bf5de370ffb1a3ed6be93d405b43ff159f681a8d18c0e2bc2e402 0.1s done
+#8 DONE 0.1s
+
+#9 [stage-2 1/3] FROM gcr.io/distroless/static-debian12:nonroot@sha256:afa5c872c891853ca7fcf1f12c3edb23f7eeef36189728842dd51042ff57f7ab
+#9 resolve gcr.io/distroless/static-debian12:nonroot@sha256:afa5c872c891853ca7fcf1f12c3edb23f7eeef36189728842dd51042ff57f7ab 0.1s done
+#9 DONE 0.1s
+
+#6 [internal] load build context
+#6 transferring context: 2.58MB 0.0s done
+#6 DONE 0.1s
+
+#10 [web 2/6] WORKDIR /src/web
+#10 CACHED
+
+#11 [server 2/5] WORKDIR /src
+#11 CACHED
+
+#12 [web 3/6] COPY web/package*.json ./
+#12 DONE 0.1s
+
+#13 [server 3/5] COPY server/ ./server/
+#13 DONE 0.2s
+
+#14 [web 4/6] RUN npm ci
+#14 5.509 
+#14 5.509 added 108 packages, and audited 109 packages in 5s
+#14 5.509 
+#14 5.510 19 packages are looking for funding
+#14 5.510   run `npm fund` for details
+#14 5.514 
+#14 5.514 3 vulnerabilities (1 moderate, 2 critical)
+#14 5.514 
+#14 5.514 To address all issues (including breaking changes), run:
+#14 5.514   npm audit fix --force
+#14 5.514 
+#14 5.514 Run `npm audit` for details.
+#14 5.515 npm notice
+#14 5.515 npm notice New major version of npm available! 10.9.9 -> 12.2.0
+#14 5.515 npm notice Changelog: https://github.com/npm/cli/releases/tag/v12.2.0
+#14 5.515 npm notice To update run: npm install -g npm@12.2.0
+#14 5.515 npm notice
+#14 DONE 5.8s
+
+#15 [web 5/6] COPY web/ ./
+#15 DONE 0.1s
+
+#16 [web 6/6] RUN npm run build
+#16 0.391 
+#16 0.391 > invenqor-console@0.2.46 build
+#16 0.391 > tsc -b && vite build && node scripts/sync-embedded.mjs
+#16 0.391 
+#16 4.330 vite v7.3.6 building client environment for production...
+#16 4.385 transforming...
+#16 6.204 ✓ 1595 modules transformed.
+#16 6.362 rendering chunks...
+#16 6.370 computing gzip size...
+#16 6.380 dist/index.html                   0.45 kB │ gzip:   0.29 kB
+#16 6.380 dist/assets/index-DU5XvrDD.css   70.43 kB │ gzip:  13.84 kB
+#16 6.380 dist/assets/index-BeEh1etb.js   435.01 kB │ gzip: 132.22 kB
+#16 6.381 ✓ built in 2.03s
+#16 6.471 Synchronized the React build into the Server embedded UI.
+#16 DONE 6.5s
+
+#17 [server 4/5] COPY --from=web /src/web/dist/ ./server/internal/webui/dist/
+#17 DONE 0.1s
+
+#18 [server 5/5] RUN cd server &&     pkg=github.com/hkjang/invenqor/server/internal/version &&     ldflags="-s -w -X ${pkg}.Commit=16f2592270fe874b12cdc1461443492a9d186bc5 -X ${pkg}.BuildTime=2026-10-08T04:07:33Z" &&     if [ -n "0.2.46" ]; then ldflags="${ldflags} -X ${pkg}.Version=0.2.46"; fi &&     CGO_ENABLED=0 go build -trimpath -ldflags="${ldflags}"     -o /out/invenqor-server ./cmd/invenqor-server     && mkdir -p /out/state
+#18 0.437 go: downloading golang.org/x/sys v0.47.0
+#18 0.437 go: downloading github.com/google/uuid v1.6.0
+#18 0.448 go: downloading github.com/coreos/go-oidc/v3 v3.20.0
+#18 0.451 go: downloading golang.org/x/crypto v0.54.0
+#18 0.452 go: downloading golang.org/x/oauth2 v0.36.0
+#18 0.479 go: downloading github.com/jackc/pgx/v5 v5.10.0
+#18 0.480 go: downloading modernc.org/sqlite v1.54.0
+#18 0.504 go: downloading github.com/go-chi/chi/v5 v5.3.1
+#18 0.507 go: downloading golang.org/x/sync v0.22.0
+#18 0.763 go: downloading github.com/go-jose/go-jose/v4 v4.1.4
+#18 1.219 go: downloading github.com/jackc/puddle/v2 v2.2.2
+#18 1.219 go: downloading golang.org/x/text v0.41.0
+#18 1.219 go: downloading github.com/jackc/pgservicefile v0.0.0-20240606120523-5a60cdf6a761
+#18 1.219 go: downloading github.com/jackc/pgpassfile v1.0.0
+#18 4.719 go: downloading modernc.org/libc v1.74.1
+#18 7.862 go: downloading github.com/dustin/go-humanize v1.0.1
+#18 7.862 go: downloading modernc.org/memory v1.11.0
+#18 7.862 go: downloading modernc.org/mathutil v1.7.1
+#18 7.933 go: downloading github.com/remyoudompheng/bigfft v0.0.0-20230129092748-24d4a6f8daec
+#18 DONE 17.2s
+
+#9 [stage-2 1/3] FROM gcr.io/distroless/static-debian12:nonroot@sha256:afa5c872c891853ca7fcf1f12c3edb23f7eeef36189728842dd51042ff57f7ab
+#9 CACHED
+
+#19 [stage-2 2/3] COPY --from=server /out/invenqor-server /usr/local/bin/invenqor-server
+#19 DONE 0.6s
+
+#20 [stage-2 3/3] COPY --chown=65532:65532 --from=server /out/state /var/lib/invenqor-server
+#20 DONE 0.1s
+
+#21 exporting to image
+#21 exporting layers
+#21 exporting layers 0.6s done
+#21 exporting manifest sha256:f6bf552ae95195dce899809ac620665949e9ad196fd6abf45512c4431a1ab966 0.0s done
+#21 exporting config sha256:3421bac07a78da6a3ab5f20eba02fef62431146ecd62ea09742c451e1bba4a9c 0.0s done
+#21 exporting attestation manifest sha256:d07b1655461ea96c131a3d435a0fe3504466355ee6d9ce5d683481e8433f85cc 0.0s done
+#21 exporting manifest list sha256:d572abe6021f16e27295f6bfa4a3cff32ec6fb7557f366516b751596eccaed4a
+#21 exporting manifest list sha256:d572abe6021f16e27295f6bfa4a3cff32ec6fb7557f366516b751596eccaed4a 0.0s done
+#21 naming to docker.io/library/invenqor:v0.2.46 done
+#21 unpacking to docker.io/library/invenqor:v0.2.46 0.1s done
+#21 DONE 0.9s
+17-alpine: Pulling from library/postgres
+Digest: sha256:b0f9560a2de083e2cc7382e75f808c7381a32852a7ec49117deedb300e552b24
+Status: Image is up to date for postgres:17-alpine
+docker.io/library/postgres:17-alpine
+/mnt/c/Users/USER/projects/aidev/state/runs/2026-10-08-125754-Invenqor-approve/assets/invenqor-v0.2.46.tar.gz

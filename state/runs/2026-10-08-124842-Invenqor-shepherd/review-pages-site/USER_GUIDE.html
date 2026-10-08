@@ -1,0 +1,1259 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+<!-- Begin Jekyll SEO tag v2.8.0 -->
+<title>Invenqor | 서버 자산을 수집하는 Rust Agent와 Go 중앙 서버, React 관리 콘솔을 결합한 자산 인텔리전스 플랫폼. 단순 인벤토리 수집기를 넘어 인증, RBAC, 변경 이력, 자산 관계, 감사 로그, 안전한 Query DSL까지 포함하는 구조로 확장</title>
+<meta name="generator" content="Jekyll v3.10.0" />
+<meta property="og:title" content="Invenqor" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="서버 자산을 수집하는 Rust Agent와 Go 중앙 서버, React 관리 콘솔을 결합한 자산 인텔리전스 플랫폼. 단순 인벤토리 수집기를 넘어 인증, RBAC, 변경 이력, 자산 관계, 감사 로그, 안전한 Query DSL까지 포함하는 구조로 확장" />
+<meta property="og:description" content="서버 자산을 수집하는 Rust Agent와 Go 중앙 서버, React 관리 콘솔을 결합한 자산 인텔리전스 플랫폼. 단순 인벤토리 수집기를 넘어 인증, RBAC, 변경 이력, 자산 관계, 감사 로그, 안전한 Query DSL까지 포함하는 구조로 확장" />
+<link rel="canonical" href="https://github.com/pages/hkjang/Invenqor/USER_GUIDE.html" />
+<meta property="og:url" content="https://github.com/pages/hkjang/Invenqor/USER_GUIDE.html" />
+<meta property="og:site_name" content="Invenqor" />
+<meta property="og:type" content="website" />
+<meta name="twitter:card" content="summary" />
+<meta property="twitter:title" content="Invenqor" />
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"WebPage","description":"서버 자산을 수집하는 Rust Agent와 Go 중앙 서버, React 관리 콘솔을 결합한 자산 인텔리전스 플랫폼. 단순 인벤토리 수집기를 넘어 인증, RBAC, 변경 이력, 자산 관계, 감사 로그, 안전한 Query DSL까지 포함하는 구조로 확장","headline":"Invenqor","url":"https://github.com/pages/hkjang/Invenqor/USER_GUIDE.html"}</script>
+<!-- End Jekyll SEO tag -->
+
+    <link rel="stylesheet" href="/pages/hkjang/Invenqor/assets/css/style.css?v=">
+    <!-- start custom head snippets, customize with your own _includes/head-custom.html file -->
+
+<!-- Setup Google Analytics -->
+
+
+
+<!-- You can set your favicon here -->
+<!-- link rel="shortcut icon" type="image/x-icon" href="/pages/hkjang/Invenqor/favicon.ico" -->
+
+<!-- end custom head snippets -->
+
+  </head>
+  <body>
+    <div class="container-lg px-3 my-5 markdown-body">
+      
+      <h1><a href="https://github.com/pages/hkjang/Invenqor/">Invenqor</a></h1>
+      
+
+      <blockquote>
+  <p><strong>대상 버전</strong> Agent v0.2.45 · Server v0.2.45 · <strong>문서 버전</strong> 1.1 ·
+<strong>기준일</strong> 2026-09-10 · <strong>문서 등급</strong> 공개</p>
+</blockquote>
+
+<h2 id="이-문서의-목적">이 문서의 목적</h2>
+
+<p>이 가이드는 Invenqor Agent를 한 대의 Linux 서버 또는 Windows PC·서버에 설치하고 정상 동작을
+확인해야 하는 사용자와 현장 운영자를 위한 문서입니다. 중앙 게이트웨이 설계,
+인증서 수명주기, 대량 배포와 상세 데이터 사전은
+<a href="ADMIN_GUIDE.md">관리자 가이드</a>를 참조하십시오.</p>
+
+<p>이 문서를 마치면 다음 작업을 수행할 수 있습니다.</p>
+
+<ol>
+  <li>서버 CPU에 맞는 패키지를 선택하고 체크섬을 검증합니다.</li>
+  <li>에이전트를 설치하고 게이트웨이 주소와 인증을 설정합니다.</li>
+  <li>서비스 상태, 로그, 수집 결과와 전송 대기열을 확인합니다.</li>
+  <li>기본적인 장애를 구분하고 안전하게 제거합니다.</li>
+</ol>
+
+<blockquote>
+  <p>Invenqor Agent v0.2.45는 Server v0.2.45와 중앙 관리 콘솔을 함께 사용합니다.
+서버 설치와 수집 데이터 처리 원칙은 <a href="SERVER_INSTALLATION.md">Server 설치 및 운영 가이드</a>를 참조하십시오.</p>
+</blockquote>
+
+<p>이 문서의 화면 캡처는 모두 v0.2.45 Server를 실제로 띄워 촬영한 것입니다. 자산·
+계정·호스트 이름은 전부 가공한 예시 값입니다. 다시 촬영하려면
+<code class="language-plaintext highlighter-rouge">node scripts/capture-guide-screenshots.mjs</code>를 실행하십시오. 이 스크립트는 임시
+디렉터리에 자체 Server를 띄워 촬영하고 끝나면 지우므로 운영 배포에 접근하지
+않습니다.</p>
+
+<h2 id="처음-5분">처음 5분</h2>
+
+<p>에이전트가 이미 설치된 환경에서 관리자에게 계정을 받았다면, 다음 세 단계만으로
+자산이 보이는 곳까지 도달합니다. 에이전트를 직접 설치해야 한다면 3장부터
+읽으십시오.</p>
+
+<p><strong>1단계 — 로그인합니다.</strong> 브라우저로 관리자가 알려준 Server 주소(기본 포트
+<code class="language-plaintext highlighter-rouge">7070</code>)를 열고 사용자 ID와 비밀번호를 입력한 뒤 <strong>안전하게 로그인</strong>을 누릅니다.
+TOTP를 등록한 계정만 <strong>Authenticator 코드</strong>를 입력합니다. 조직이 Keycloak을
+활성화한 경우에만 <strong>Keycloak으로 계속</strong> 버튼이 함께 나타납니다.</p>
+
+<p><img src="assets/guide/login.png" alt="관리 콘솔 로그인 화면 — 사용자 ID와 비밀번호로 로그인하고, 하단에서 실행 중인 Server 버전을 확인한다" /></p>
+
+<p><strong>2단계 — 수집이 살아 있는지 확인합니다.</strong> 로그인하면 <strong>운영 현황</strong>이 열립니다.
+<code class="language-plaintext highlighter-rouge">정상 Agent</code>가 <code class="language-plaintext highlighter-rouge">6 / 6</code>처럼 분모와 같고 <code class="language-plaintext highlighter-rouge">24시간 수집</code>의 <code class="language-plaintext highlighter-rouge">실패</code>가 0이면 수집은
+정상입니다. 숫자가 어긋나면 오른쪽 <strong>운영 주의 항목</strong>이 무엇을 먼저 볼지
+알려 줍니다.</p>
+
+<p><img src="assets/guide/dashboard.png" alt="운영 현황 — 관리 자산, 자산 최신성, 정상 Agent, 24시간 수집을 KPI로 보고 7일 추이와 운영 주의 항목을 함께 확인한다" /></p>
+
+<p><strong>3단계 — 내 장비를 찾습니다.</strong> 왼쪽 <strong>자산</strong>을 누르고 검색란에 호스트 이름을
+입력합니다. 행을 누르면 오른쪽에서 수집 원천, 변경 이력, 관계를 볼 수 있습니다.
+여기까지 보이면 그 장비의 수집은 성공한 것입니다.</p>
+
+<p><img src="assets/guide/assets.png" alt="자산 인벤토리 — 이름·유형·환경·중요도·상태로 걸러 관리 대상 구성 항목을 본다" /></p>
+
+<h2 id="1-제품-이해하기">1. 제품 이해하기</h2>
+
+<p>Invenqor Agent는 Linux의 <code class="language-plaintext highlighter-rouge">/proc</code>, <code class="language-plaintext highlighter-rouge">/sys</code>, <code class="language-plaintext highlighter-rouge">/etc</code>와 Windows 레지스트리·Win32·
+Service Control Manager에서 운영체제 정보를 읽어 자산 스냅샷을 만듭니다. 수집은 외부에서 서버로 접속하는 방식이 아니라, 에이전트가
+설정된 HTTPS 게이트웨이로 결과를 보내는 <strong>outbound-only</strong> 방식입니다.</p>
+
+<p>기본 수집 범위는 다음과 같습니다.</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>영역</th>
+      <th>대표 수집 내용</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>시스템</td>
+      <td>호스트명, 배포판, 커널, 아키텍처, 부팅 시각, 시간대</td>
+    </tr>
+    <tr>
+      <td>CPU·메모리</td>
+      <td>논리 CPU 수, CPU 모델, load average, <code class="language-plaintext highlighter-rouge">/proc/meminfo</code> 메모리 지표</td>
+    </tr>
+    <tr>
+      <td>파일시스템</td>
+      <td>장치, 마운트 지점, 파일시스템, 옵션, 용량과 inode 사용량</td>
+    </tr>
+    <tr>
+      <td>네트워크</td>
+      <td>인터페이스, MAC/IP, 상태, MTU, 기본 경로, DNS, 로컬 포트</td>
+    </tr>
+    <tr>
+      <td>프로세스</td>
+      <td>PID, 이름, 상태, 부모 PID, UID/GID, 실행 파일 경로</td>
+    </tr>
+    <tr>
+      <td>소프트웨어</td>
+      <td>dpkg, apk, rpm 또는 Windows Uninstall 레지스트리로 확인한 설치 제품</td>
+    </tr>
+    <tr>
+      <td>서비스</td>
+      <td>systemd, OpenRC 또는 SysV 서비스와 활성화 관련 상태</td>
+    </tr>
+    <tr>
+      <td>계정</td>
+      <td>사용자명, UID/GID, 홈, 셸, 보조 그룹</td>
+    </tr>
+    <tr>
+      <td>컨테이너</td>
+      <td>런타임 소켓, 컨테이너 내부 실행 여부, cgroup 버전</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>프로세스 명령행은 비밀번호나 토큰을 포함할 수 있으므로 기본값에서는 수집하지
+않습니다. 파일 내용, 사용자 비밀번호 해시, 프로세스 환경변수, 원격 명령 실행
+결과도 수집하지 않습니다.</p>
+
+<p>Server는 원시 프로세스·서비스·설치 패키지를 내장 카탈로그와 자동 대조해
+PostgreSQL, Microsoft SQL Server, IIS, NGINX, Docker, 보안 Agent 같은 주요
+제품으로 정규화합니다. 원시 프로세스는 판별 증거로 보존하되 기본 자산 화면에서는
+숨기므로, 사용자가 수백 PID를 하나씩 분류하거나 매핑표를 관리할 필요가 없습니다.</p>
+
+<h2 id="2-설치-전-준비">2. 설치 전 준비</h2>
+
+<h3 id="21-지원-환경">2.1 지원 환경</h3>
+
+<ul>
+  <li>CPU: Linux <code class="language-plaintext highlighter-rouge">x86_64</code>/<code class="language-plaintext highlighter-rouge">aarch64</code>, Windows <code class="language-plaintext highlighter-rouge">x86_64</code></li>
+  <li>운영체제: Linux, Windows 10/11, Windows Server 2016 이상</li>
+  <li>검증 기준: CentOS 7, Red Hat UBI 8/9, Ubuntu 22.04/24.04 LTS, Alpine</li>
+  <li>권장 기준: Kernel 3.10 이상, RHEL 계열 7 이상, Ubuntu 22.04 이상,
+Debian 10 이상</li>
+  <li>호환 목표: Alpine, Amazon Linux, SUSE</li>
+  <li>서비스 관리자: systemd, OpenRC 또는 SysV init</li>
+  <li>네트워크: Server의 단일 HTTPS TCP 7070 outbound</li>
+</ul>
+
+<p>초기 폐쇄망 설치에서 <code class="language-plaintext highlighter-rouge">http://사설IP:7070</code>, localhost 또는 내부 DNS/Kubernetes
+서비스명을 사용하면 별도 옵션 없이 URL만으로 연결할 수 있습니다. 신뢰 경계를
+넘는 트래픽은 반드시 HTTPS를 사용하십시오.</p>
+
+<p>오래된 커널과 배포판은 핵심 <code class="language-plaintext highlighter-rouge">/proc</code> 수집만 가능할 수 있습니다. 정적 바이너리는
+외부 언어 런타임을 요구하지 않지만, 실제 사용하는 시스템 호출보다 오래된 커널의
+실행을 보장하지는 않습니다.</p>
+
+<h3 id="22-cpu-아키텍처-확인">2.2 CPU 아키텍처 확인</h3>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">uname</span> <span class="nt">-m</span>
+</code></pre></div></div>
+
+<table>
+  <thead>
+    <tr>
+      <th>출력</th>
+      <th>받을 파일</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">x86_64</code></td>
+      <td><code class="language-plaintext highlighter-rouge">invenqor-agent-linux-x86_64.tar.gz</code></td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">aarch64</code> 또는 <code class="language-plaintext highlighter-rouge">arm64</code></td>
+      <td><code class="language-plaintext highlighter-rouge">invenqor-agent-linux-aarch64.tar.gz</code></td>
+    </tr>
+  </tbody>
+</table>
+
+<p>표에 없는 아키텍처에서는 제공된 바이너리를 실행하지 마십시오.</p>
+
+<h3 id="23-준비할-정보">2.3 준비할 정보</h3>
+
+<p>설치 전에 관리자에게 다음 정보를 받습니다.</p>
+
+<ul>
+  <li>게이트웨이 기본 URL(예: <code class="language-plaintext highlighter-rouge">https://inventory.example.internal</code>)</li>
+  <li>인증 방식: URL-only 자동 등록(기본), 보호망용 enrollment token 또는 예외
+장비별 bearer token/mTLS PEM</li>
+  <li>사설 인증기관을 사용한다면 CA 인증서 파일</li>
+  <li>조직에서 정한 수집 주기와 프로세스 명령행 수집 정책</li>
+</ul>
+
+<p>게이트웨이가 아직 없다면 URL 없이 설치할 수 있습니다. 수집 결과는 로컬 큐에
+보존되지만 기본 100 MiB 한도에 도달하기 전에 게이트웨이를 설정하거나 운영
+정책을 결정해야 합니다.</p>
+
+<h2 id="3-패키지-받기와-검증">3. 패키지 받기와 검증</h2>
+
+<p>GitHub 릴리즈 페이지에서 아키텍처에 맞는 <code class="language-plaintext highlighter-rouge">.tar.gz</code>와 같은 이름의
+<code class="language-plaintext highlighter-rouge">.sha256</code> 파일을 같은 디렉터리에 받습니다.</p>
+
+<p>폐쇄망에 Linux와 Windows 배포본을 함께 반입하는 관리자는
+<code class="language-plaintext highlighter-rouge">invenqor-agents-0.2.45.tar.gz</code>와 같은 이름의 <code class="language-plaintext highlighter-rouge">.sha256</code>을 사용할 수 있습니다.
+묶음을 한 번 검증·해제한 뒤 대상 장비에는 아키텍처에 맞는 개별 패키지와 그
+체크섬만 전달하십시오.</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>curl <span class="nt">-LO</span> https://github.com/hkjang/invenqor/releases/download/v0.2.45/invenqor-agent-linux-x86_64.tar.gz
+curl <span class="nt">-LO</span> https://github.com/hkjang/invenqor/releases/download/v0.2.45/invenqor-agent-linux-x86_64.tar.gz.sha256
+<span class="nb">sha256sum</span> <span class="nt">-c</span> invenqor-agent-linux-x86_64.tar.gz.sha256
+</code></pre></div></div>
+
+<p>정상이면 다음과 같이 표시됩니다.</p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>invenqor-agent-linux-x86_64.tar.gz: OK
+</code></pre></div></div>
+
+<blockquote>
+  <p><strong>검증 실패 시 중단:</strong> <code class="language-plaintext highlighter-rouge">FAILED</code>가 표시되면 압축을 풀거나
+실행하지 마십시오. 파일을 삭제하고 신뢰할 수 있는 네트워크에서 다시 받으십시오.</p>
+</blockquote>
+
+<h2 id="4-설치">4. 설치</h2>
+
+<h3 id="41-압축-해제">4.1 압축 해제</h3>
+
+<p>x86_64 예시:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">tar</span> <span class="nt">-xzf</span> invenqor-agent-linux-x86_64.tar.gz
+<span class="nb">cd </span>invenqor-agent-linux-x86_64
+</code></pre></div></div>
+
+<p>aarch64에서는 디렉터리 이름도 <code class="language-plaintext highlighter-rouge">invenqor-agent-linux-aarch64</code>입니다.</p>
+
+<p>패키지는 다음 구성으로 되어 있습니다.</p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>bin/invenqor-agent              실행 파일
+config/config.toml              안전한 기본 설정
+scripts/install.sh              설치 스크립트
+scripts/uninstall.sh            제거 스크립트
+service/invenqor-agent.service  systemd 정의
+service/invenqor-agent.openrc   OpenRC 정의
+service/invenqor-agent.init     SysV init 정의
+README.md                       제품 설명
+</code></pre></div></div>
+
+<h3 id="42-설치-스크립트-실행">4.2 설치 스크립트 실행</h3>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">sudo</span> ./scripts/install.sh
+</code></pre></div></div>
+
+<p>스크립트는 다음 작업을 수행합니다.</p>
+
+<ul>
+  <li>비로그인 시스템 계정과 그룹 <code class="language-plaintext highlighter-rouge">invenqor-agent</code> 생성</li>
+  <li>실행 파일을 <code class="language-plaintext highlighter-rouge">/opt/invenqor-agent/bin/invenqor-agent</code>에 설치</li>
+  <li>최초 설치일 때만 <code class="language-plaintext highlighter-rouge">/etc/invenqor-agent/config.toml</code> 생성</li>
+  <li>상태 디렉터리 <code class="language-plaintext highlighter-rouge">/var/lib/invenqor-agent</code> 생성</li>
+  <li>발견한 init 시스템에 서비스를 등록하고 즉시 시작</li>
+</ul>
+
+<p>기존 설정 파일은 덮어쓰지 않습니다. 재설치 후에도 설정과 미전송 큐는 유지됩니다.</p>
+
+<h3 id="43-설치-결과-확인">4.3 설치 결과 확인</h3>
+
+<p>systemd:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">sudo </span>systemctl status invenqor-agent <span class="nt">--no-pager</span>
+<span class="nb">sudo </span>journalctl <span class="nt">-u</span> invenqor-agent <span class="nt">-n</span> 50 <span class="nt">--no-pager</span>
+</code></pre></div></div>
+
+<p>OpenRC:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">sudo </span>rc-service invenqor-agent status
+</code></pre></div></div>
+
+<p>SysV init:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">sudo </span>service invenqor-agent status
+</code></pre></div></div>
+
+<p>버전 확인:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>/opt/invenqor-agent/bin/invenqor-agent <span class="nt">--version</span>
+</code></pre></div></div>
+
+<p>예상 출력은 <code class="language-plaintext highlighter-rouge">invenqor-agent 0.2.45</code>입니다.</p>
+
+<h2 id="44-windows에-설치하기">4.4 Windows에 설치하기</h2>
+
+<p>Windows는 별도 배포본을 사용합니다. <code class="language-plaintext highlighter-rouge">invenqor-agent-windows-x86_64.zip</code>을 받아
+체크섬을 확인하고, 압축을 푼 뒤 <strong>관리자 권한 PowerShell</strong>에서 설치합니다.</p>
+
+<div class="language-powershell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$release</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">'https://github.com/hkjang/invenqor/releases/download/v0.2.45'</span><span class="w">
+</span><span class="n">Invoke-WebRequest</span><span class="w"> </span><span class="s2">"</span><span class="nv">$release</span><span class="s2">/invenqor-agent-windows-x86_64.zip"</span><span class="w"> </span><span class="nt">-OutFile</span><span class="w"> </span><span class="nx">invenqor-agent-windows-x86_64.zip</span><span class="w">
+</span><span class="n">Invoke-WebRequest</span><span class="w"> </span><span class="s2">"</span><span class="nv">$release</span><span class="s2">/invenqor-agent-windows-x86_64.zip.sha256"</span><span class="w"> </span><span class="nt">-OutFile</span><span class="w"> </span><span class="nx">invenqor-agent-windows-x86_64.zip.sha256</span><span class="w">
+</span><span class="p">(</span><span class="n">Get-FileHash</span><span class="w"> </span><span class="nx">invenqor-agent-windows-x86_64.zip</span><span class="w"> </span><span class="nt">-Algorithm</span><span class="w"> </span><span class="nx">SHA256</span><span class="p">)</span><span class="o">.</span><span class="nf">Hash</span><span class="o">.</span><span class="nf">ToLower</span><span class="p">()</span><span class="w">
+</span><span class="n">Get-Content</span><span class="w"> </span><span class="nx">invenqor-agent-windows-x86_64.zip.sha256</span><span class="w">   </span><span class="c"># 두 값이 같아야 합니다</span><span class="w">
+</span><span class="n">Expand-Archive</span><span class="w"> </span><span class="nx">invenqor-agent-windows-x86_64.zip</span><span class="w"> </span><span class="nt">-DestinationPath</span><span class="w"> </span><span class="o">.</span><span class="w">
+</span><span class="n">Set-Location</span><span class="w"> </span><span class="nx">invenqor-agent-windows-x86_64</span><span class="w">
+</span><span class="o">.</span><span class="n">\scripts\install.ps1</span><span class="w">
+</span></code></pre></div></div>
+
+<p>설치되는 위치:</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>경로</th>
+      <th>내용</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">%ProgramFiles%\Invenqor\invenqor-agent.exe</code></td>
+      <td>실행 파일</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">%ProgramData%\Invenqor\config.toml</code></td>
+      <td>설정 파일</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">%ProgramData%\Invenqor\state\</code></td>
+      <td>식별자와 미전송 큐</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">%ProgramData%\Invenqor\service-name</code></td>
+      <td>Installer가 관리하는 Windows 서비스명</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>Server 주소를 설정하고 재시작합니다. TOML의 작은따옴표 문자열은 이스케이프가
+필요 없으므로 Windows 경로를 그대로 적을 수 있습니다.</p>
+
+<div class="language-powershell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">notepad</span><span class="w"> </span><span class="s2">"</span><span class="nv">$</span><span class="nn">env</span><span class="p">:</span><span class="nv">ProgramData</span><span class="s2">\Invenqor\config.toml"</span><span class="w">
+</span><span class="n">Restart-Service</span><span class="w"> </span><span class="nx">invenqor-agent</span><span class="w">
+</span></code></pre></div></div>
+
+<p>상태 확인:</p>
+
+<div class="language-powershell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">Get-Service</span><span class="w"> </span><span class="nx">invenqor-agent</span><span class="w">
+</span><span class="o">&amp;</span><span class="w"> </span><span class="s2">"</span><span class="nv">$</span><span class="nn">env</span><span class="p">:</span><span class="nv">ProgramFiles</span><span class="s2">\Invenqor\invenqor-agent.exe"</span><span class="w"> </span><span class="err">`</span><span class="w">
+  </span><span class="nt">--config</span><span class="w"> </span><span class="s2">"</span><span class="nv">$</span><span class="nn">env</span><span class="p">:</span><span class="nv">ProgramData</span><span class="s2">\Invenqor\config.toml"</span><span class="w"> </span><span class="nt">--diagnose</span><span class="w">
+</span></code></pre></div></div>
+
+<p>Windows 서비스에는 표준 오류를 볼 콘솔이 없으므로 Agent가
+<code class="language-plaintext highlighter-rouge">%ProgramData%\Invenqor\state\agent.log</code>에 로그를 기록합니다. 8 MiB에서
+<code class="language-plaintext highlighter-rouge">agent.log.1</code>로 회전하며, 서비스 기동 자체가 실패하면 Windows 시스템 이벤트
+로그의 Service Control Manager 항목도 확인합니다.</p>
+
+<div class="language-powershell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">&amp;</span><span class="w"> </span><span class="s2">"</span><span class="nv">$</span><span class="nn">env</span><span class="p">:</span><span class="nv">ProgramFiles</span><span class="s2">\Invenqor\invenqor-agent.exe"</span><span class="w"> </span><span class="err">`</span><span class="w">
+  </span><span class="nt">--config</span><span class="w"> </span><span class="s2">"</span><span class="nv">$</span><span class="nn">env</span><span class="p">:</span><span class="nv">ProgramData</span><span class="s2">\Invenqor\config.toml"</span><span class="w"> </span><span class="nt">--status</span><span class="w">
+</span></code></pre></div></div>
+
+<p>이후 절의 명령은 Linux 기준입니다. Windows에서는 실행 파일 경로와
+<code class="language-plaintext highlighter-rouge">--config</code> 값만 위의 경로로 바꿔 같은 방식으로 사용하십시오. 서비스 제어는
+<code class="language-plaintext highlighter-rouge">Restart-Service</code> / <code class="language-plaintext highlighter-rouge">Stop-Service</code> / <code class="language-plaintext highlighter-rouge">Start-Service</code>를 사용합니다.</p>
+
+<p>기본 서비스명은 <code class="language-plaintext highlighter-rouge">invenqor-agent</code>입니다. 조직 표준에 따라 다른 이름을 써야 할 때만
+<code class="language-plaintext highlighter-rouge">install.ps1 -ServiceName 'Invenqor Agent Finance'</code>로 설치하고 이후 업그레이드에도
+같은 값을 사용하십시오. Agent는 보호된 <code class="language-plaintext highlighter-rouge">service-name</code> 파일에서 이를 자동 복구하므로
+일반 <code class="language-plaintext highlighter-rouge">--diagnose</code> 명령에 이름을 반복할 필요가 없습니다. 파일을 직접 고치면 진단과
+자동 업데이트 재시작이 실제 SCM 서비스와 달라질 수 있습니다.</p>
+
+<h2 id="5-최초-설정">5. 최초 설정</h2>
+
+<p>설정 파일은 TOML 형식이며 알 수 없는 키가 있으면 실행을 거부합니다. 수정 전에
+백업하고, 비밀값이 포함된 파일을 메신저나 이슈에 첨부하지 마십시오.</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">sudo cp</span> <span class="nt">-a</span> /etc/invenqor-agent/config.toml <span class="se">\</span>
+  /etc/invenqor-agent/config.toml.before-change
+sudoedit /etc/invenqor-agent/config.toml
+</code></pre></div></div>
+
+<h3 id="51-자동-등록-예시">5.1 자동 등록 예시</h3>
+
+<div class="language-toml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nn">[server]</span>
+<span class="py">url</span> <span class="p">=</span> <span class="s">"https://inventory.example.internal"</span>
+<span class="py">timeout_seconds</span> <span class="p">=</span> <span class="mi">30</span>
+</code></pre></div></div>
+
+<p>기본 Server에서는 URL만 설정하면 Agent가 최초 전송 전에 자동 등록하고 장비
+전용 Token을 상태 디렉터리에 <code class="language-plaintext highlighter-rouge">0600</code>으로 저장합니다. 이후 설정 파일에 장비별
+<code class="language-plaintext highlighter-rouge">bearer_token</code>을 복사할 필요가 없습니다.</p>
+
+<p><code class="language-plaintext highlighter-rouge">url</code>에는 scheme, host와 선택적 port만 입력합니다. <code class="language-plaintext highlighter-rouge">/api</code>, <code class="language-plaintext highlighter-rouge">/v1/agent</code> 같은 path,
+query, fragment, <code class="language-plaintext highlighter-rouge">user:password@</code> 형식의 인증정보를 붙이면 Agent가 기동 단계에서
+거부합니다. 외부 Ingress가 <code class="language-plaintext highlighter-rouge">https://inventory.example.internal</code>을 받아 내부
+Server <code class="language-plaintext highlighter-rouge">7070</code>으로 전달한다면 외부 HTTPS origin만 입력하고 <code class="language-plaintext highlighter-rouge">:7070</code>을 덧붙이지
+않습니다.</p>
+
+<p>인터넷 또는 신뢰하지 않는 망에서 Server 7070에 접근할 수 있다면 관리자가
+enrollment token 보호 모드를 사용할 수 있습니다. 이 경우에만 다음 항목을
+추가하고 Token 파일을 <code class="language-plaintext highlighter-rouge">root:invenqor-agent</code>, <code class="language-plaintext highlighter-rouge">0640</code>으로 설치합니다.</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">sudo install</span> <span class="nt">-m</span> 0640 <span class="nt">-o</span> root <span class="nt">-g</span> invenqor-agent <span class="se">\</span>
+  enrollment.token /etc/invenqor-agent/enrollment.token
+</code></pre></div></div>
+
+<div class="language-toml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="py">enrollment_token_file</span> <span class="p">=</span> <span class="s">"/etc/invenqor-agent/enrollment.token"</span>
+</code></pre></div></div>
+
+<p>수동 등록이 필요한 예외 장비만 <code class="language-plaintext highlighter-rouge">bearer_token = "ivq_at_..."</code>을 사용합니다.</p>
+
+<h3 id="52-mtls와-사설-ca-예시">5.2 mTLS와 사설 CA 예시</h3>
+
+<div class="language-toml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nn">[server]</span>
+<span class="py">url</span> <span class="p">=</span> <span class="s">"https://inventory.example.internal"</span>
+<span class="py">ca_file</span> <span class="p">=</span> <span class="s">"/etc/invenqor-agent/ca.pem"</span>
+<span class="py">client_identity_pem</span> <span class="p">=</span> <span class="s">"/etc/invenqor-agent/device.pem"</span>
+<span class="py">timeout_seconds</span> <span class="p">=</span> <span class="mi">30</span>
+</code></pre></div></div>
+
+<p><code class="language-plaintext highlighter-rouge">device.pem</code>은 클라이언트 인증서 체인과 개인키가 하나의 PEM에 있어야 합니다.
+권한을 제한합니다.</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">sudo chown </span>root:invenqor-agent <span class="se">\</span>
+  /etc/invenqor-agent/ca.pem /etc/invenqor-agent/device.pem
+<span class="nb">sudo chmod </span>0640 /etc/invenqor-agent/ca.pem
+<span class="nb">sudo chmod </span>0640 /etc/invenqor-agent/device.pem
+</code></pre></div></div>
+
+<h3 id="53-설정-검증과-재시작">5.3 설정 검증과 재시작</h3>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">sudo</span> <span class="nt">-u</span> invenqor-agent <span class="se">\</span>
+  /opt/invenqor-agent/bin/invenqor-agent <span class="se">\</span>
+  <span class="nt">--config</span> /etc/invenqor-agent/config.toml <span class="se">\</span>
+  <span class="nt">--validate-config</span>
+</code></pre></div></div>
+
+<p><code class="language-plaintext highlighter-rouge">configuration is valid</code>가 출력되면 서비스를 재시작합니다.</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">sudo </span>systemctl restart invenqor-agent
+<span class="nb">sudo </span>systemctl status invenqor-agent <span class="nt">--no-pager</span>
+</code></pre></div></div>
+
+<p>OpenRC는 <code class="language-plaintext highlighter-rouge">sudo rc-service invenqor-agent restart</code>, SysV는
+<code class="language-plaintext highlighter-rouge">sudo service invenqor-agent restart</code>를 사용합니다.</p>
+
+<h2 id="6-정상-동작-확인">6. 정상 동작 확인</h2>
+
+<h3 id="60-등록연동-자체-진단-가장-먼저-실행">6.0 등록·연동 자체 진단 (가장 먼저 실행)</h3>
+
+<p>Agent가 콘솔에 나타나지 않을 때 가장 먼저 실행합니다. 상태를 바꾸지 않으므로
+운영 중에도 안전하며, 문제가 있으면 0이 아닌 코드로 종료합니다.</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">sudo</span> <span class="nt">-u</span> invenqor-agent <span class="se">\</span>
+  /opt/invenqor-agent/bin/invenqor-agent <span class="se">\</span>
+  <span class="nt">--config</span> /etc/invenqor-agent/config.toml <span class="nt">--diagnose</span>
+</code></pre></div></div>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>invenqor-agent 0.2.45 registration diagnosis at 2026-08-24T09:12:44Z
+  host          app-web-01
+  agent-id      d8d847a5-7a75-48bc-8ee8-c8e1af94f74c
+  config        /etc/invenqor-agent/config.toml
+  server.url    https://inventory.example:7070
+
+  [PASS] configuration file            read /etc/invenqor-agent/config.toml
+  [PASS] state directory               /var/lib/invenqor-agent is writable, agent-id d8d847a5…
+  [PASS] durable queue                 0 undelivered event(s), 0 of 104857600 bytes used
+  [PASS] stored credential             a device credential exists for this Server URL
+  [PASS] server.url                    https://inventory.example:7070 (scheme https, host inventory.example, port 7070)
+  [PASS] transport encryption          HTTPS is configured
+  [PASS] name resolution               inventory.example resolves to 10.10.4.20:7070
+  [PASS] server reachability           GET /health/ready answered READY
+  [PASS] server identity               Invenqor Server 0.2.45 (pod invenqor-0, database POSTGRES)
+  [PASS] observed source address       the Server sees this host as 10.20.7.31
+  [PASS] registration policy           mode open, network any: this host may register
+  [PASS] device credential             accepted by the Server as agent d8d847a5… (auto_bearer)
+
+  result: OK - the Agent can reach the Server and register
+</code></pre></div></div>
+
+<p>실패한 항목에는 원인 코드와 조치가 함께 출력됩니다. 예를 들어 Server의 등록
+허용 목록에 이 호스트가 없으면 다음과 같이 표시됩니다.</p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  [FAIL] registration policy           mode open, network allowlist: The Agent source IP is not permitted…
+         code: AGENT_SOURCE_NOT_ALLOWED
+         fix:  Add the observed source address, or its CIDR, to the registration allowlist…
+</code></pre></div></div>
+
+<p><code class="language-plaintext highlighter-rouge">--json</code>을 덧붙이면 같은 결과를 기계 판독용 JSON으로 출력합니다. 점검 항목은
+설정 → 상태 디렉터리 → URL → DNS → 도달성 → Server 정책 → 자격 증명 순서이므로,
+처음 실패한 항목이 곧 원인입니다.</p>
+
+<p>Agent 바이너리 없이 확인해야 하면 아무 장비에서 사전 점검 API를 호출합니다.
+Server가 인식한 출처 IP와 등록 가능 여부를 그대로 돌려줍니다.</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>curl <span class="nt">-s</span> https://inventory.example:7070/v1/agent/preflight | jq .enrollment
+</code></pre></div></div>
+
+<h3 id="61-로그-확인">6.1 로그 확인</h3>
+
+<p>systemd:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">sudo </span>journalctl <span class="nt">-u</span> invenqor-agent <span class="nt">--since</span> <span class="s2">"10 minutes ago"</span> <span class="nt">--no-pager</span>
+</code></pre></div></div>
+
+<p>기동 직후 <code class="language-plaintext highlighter-rouge">agent transport configured</code> 한 줄에 적용된 Server URL, 인증 방식,
+등록 상태가 함께 기록됩니다. 정상 수집 시 <code class="language-plaintext highlighter-rouge">queued collection event</code>, 정상 전송 시
+<code class="language-plaintext highlighter-rouge">delivered queued events</code> 메시지를 확인할 수 있습니다.</p>
+
+<p><code class="language-plaintext highlighter-rouge">server.url</code>이 설정되지 않은 경우에는 기동 시 다음 경고가 남고, 수집 결과는
+로컬 큐에만 쌓입니다. 등록이 진행되지 않는 가장 흔한 원인입니다.</p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>WARN server.url is not configured: inventory is collected into the local queue only,
+     no registration is attempted, and nothing is sent to a Server
+</code></pre></div></div>
+
+<p>등록이나 전송이 실패하면 한 줄에 원인 코드, Server의 <code class="language-plaintext highlighter-rouge">request_id</code>, 조치가 함께
+기록되므로 콘솔의 <strong>Server 진단 로그</strong>에서 같은 <code class="language-plaintext highlighter-rouge">request_id</code>로 서버 측 기록을
+바로 찾을 수 있습니다.</p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>WARN Server exchange failed stage="automatic enrollment" code=AGENT_SOURCE_NOT_ALLOWED
+     http_status=Some(403) path=/v1/agent/enroll request_id=invenqor-0/abc-000123
+     remediation=The Server registration allowlist rejects this host's source IP…
+</code></pre></div></div>
+
+<p>실시간 로그:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">sudo </span>journalctl <span class="nt">-u</span> invenqor-agent <span class="nt">-f</span>
+</code></pre></div></div>
+
+<h3 id="62-로컬-상태-확인">6.2 로컬 상태 확인</h3>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">sudo ls</span> <span class="nt">-la</span> /var/lib/invenqor-agent
+<span class="nb">sudo </span>find /var/lib/invenqor-agent/queue <span class="nt">-maxdepth</span> 1 <span class="se">\</span>
+  <span class="nt">-type</span> f <span class="nt">-name</span> <span class="s1">'*.jsonl'</span> <span class="nt">-printf</span> <span class="s1">'%f %s bytes\n'</span>
+<span class="nb">sudo du</span> <span class="nt">-sh</span> /var/lib/invenqor-agent/queue
+</code></pre></div></div>
+
+<table>
+  <thead>
+    <tr>
+      <th>파일·디렉터리</th>
+      <th>의미</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">agent-id</code></td>
+      <td>설치 단위를 식별하는 UUID, 권한 <code class="language-plaintext highlighter-rouge">0600</code></td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">inventory.json</code></td>
+      <td>직전 유효 인벤토리</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">snapshot.sha256</code></td>
+      <td>변경 감지용 안정 해시</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">last-heartbeat</code></td>
+      <td>마지막 이벤트/하트비트 시각</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">status.json</code></td>
+      <td>등록·전송·큐 상태와 마지막 실패 원인, 권한 <code class="language-plaintext highlighter-rouge">0600</code></td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">enrollment-claim.json</code></td>
+      <td>이 장비의 등록 청구 값, 권한 <code class="language-plaintext highlighter-rouge">0600</code></td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">device-credential.json</code></td>
+      <td>자동 발급된 장비 전용 Token, 권한 <code class="language-plaintext highlighter-rouge">0600</code></td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">queue/*.jsonl</code></td>
+      <td>아직 서버가 수락하지 않은 이벤트</td>
+    </tr>
+  </tbody>
+</table>
+
+<p><code class="language-plaintext highlighter-rouge">status.json</code>은 매 주기마다 갱신되며, 저널을 열람할 수 없는 환경에서도 등록
+실패 원인을 남기는 것이 목적입니다. 사람이 읽는 요약은 <code class="language-plaintext highlighter-rouge">--status</code>로 확인합니다.</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">sudo</span> <span class="nt">-u</span> invenqor-agent <span class="se">\</span>
+  /opt/invenqor-agent/bin/invenqor-agent <span class="se">\</span>
+  <span class="nt">--config</span> /etc/invenqor-agent/config.toml <span class="nt">--status</span>
+</code></pre></div></div>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>invenqor-agent 0.2.45 on app-web-01
+  updated       2026-08-24T09:14:02Z
+  server.url    https://inventory.example:7070
+  registration  failed (the Server rejected or could not be reached for registration)
+  queue         3 event(s), 41231 of 104857600 bytes
+  delivered     0 event(s), last success never
+  last error    AGENT_SOURCE_NOT_ALLOWED during automatic enrollment at 2026-08-24T09:14:02Z
+                The Agent source IP is not permitted by the enrollment policy.
+                server request_id invenqor-0/abc-000123
+                fix: The Server registration allowlist rejects this host's source IP…
+  summary       registration is failing (AGENT_SOURCE_NOT_ALLOWED): …
+</code></pre></div></div>
+
+<p>정상 상태에서는 종료 코드 0, 등록이나 전송이 밀려 있으면 1을 반환하므로 감시
+스크립트에서 그대로 사용할 수 있습니다. <code class="language-plaintext highlighter-rouge">--json</code>으로 원본 구조를 얻습니다.</p>
+
+<p>큐 파일은 서버가 2xx 응답과 <code class="language-plaintext highlighter-rouge">accepted: true</code>를 모두 반환한 후에만 삭제됩니다.
+전송 장애 중 큐 파일이 증가하는 것은 데이터 보존 동작입니다.</p>
+
+<h3 id="63-한-번만-수집하기">6.3 한 번만 수집하기</h3>
+
+<p><code class="language-plaintext highlighter-rouge">--once</code>는 수집 결과 JSON을 화면에 출력하고 전송도 한 번 시도합니다. 운영
+서비스와 같은 상태 디렉터리를 동시에 사용하면 안 되므로 먼저 서비스를 멈춥니다.</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">sudo </span>systemctl stop invenqor-agent
+<span class="nb">sudo</span> <span class="nt">-u</span> invenqor-agent <span class="se">\</span>
+  /opt/invenqor-agent/bin/invenqor-agent <span class="se">\</span>
+  <span class="nt">--config</span> /etc/invenqor-agent/config.toml <span class="se">\</span>
+  <span class="nt">--once</span>
+<span class="nb">sudo </span>systemctl start invenqor-agent
+</code></pre></div></div>
+
+<blockquote>
+  <p><strong>출력 취급:</strong> 한 번 수집 결과에는 계정명, 설치 소프트웨어,
+네트워크 주소, 프로세스 정보가 들어 있습니다. 티켓이나 채팅에 원문을 붙이지 말고
+조직의 자산정보 등급에 따라 보관하십시오.</p>
+</blockquote>
+
+<h2 id="7-일상-운영">7. 일상 운영</h2>
+
+<h3 id="71-기본-주기">7.1 기본 주기</h3>
+
+<ul>
+  <li>전체 수집: 900초(15분)</li>
+  <li>변경이 없을 때 하트비트: 300초(5분)</li>
+  <li>전송 실패 재시도: 1초부터 2배씩 증가, 최대 3600초</li>
+  <li>로컬 큐 한도: 100 MiB</li>
+  <li>요청 타임아웃: 30초</li>
+</ul>
+
+<p>설정 변경은 관리자 승인 아래 수행하십시오. 지나치게 짧은 주기는 서버와
+게이트웨이 부하를 높이고, 지나치게 긴 주기는 자산 변경 탐지 시간을 늦춥니다.</p>
+
+<h3 id="72-서비스-명령">7.2 서비스 명령</h3>
+
+<table>
+  <thead>
+    <tr>
+      <th>작업</th>
+      <th>systemd 명령</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>상태</td>
+      <td><code class="language-plaintext highlighter-rouge">sudo systemctl status invenqor-agent</code></td>
+    </tr>
+    <tr>
+      <td>시작</td>
+      <td><code class="language-plaintext highlighter-rouge">sudo systemctl start invenqor-agent</code></td>
+    </tr>
+    <tr>
+      <td>중지</td>
+      <td><code class="language-plaintext highlighter-rouge">sudo systemctl stop invenqor-agent</code></td>
+    </tr>
+    <tr>
+      <td>재시작</td>
+      <td><code class="language-plaintext highlighter-rouge">sudo systemctl restart invenqor-agent</code></td>
+    </tr>
+    <tr>
+      <td>부팅 시 자동 시작 확인</td>
+      <td><code class="language-plaintext highlighter-rouge">sudo systemctl is-enabled invenqor-agent</code></td>
+    </tr>
+    <tr>
+      <td>최근 로그</td>
+      <td><code class="language-plaintext highlighter-rouge">sudo journalctl -u invenqor-agent -n 100</code></td>
+    </tr>
+  </tbody>
+</table>
+
+<h3 id="73-프로세스-명령행-수집">7.3 프로세스 명령행 수집</h3>
+
+<p>기본값 <code class="language-plaintext highlighter-rouge">include_process_cmdline = false</code>를 유지하는 것을 권장합니다. 반드시
+필요하다면 보안·개인정보 책임자의 승인, 중앙 저장소 접근 통제, 보존 기간을 먼저
+확정한 뒤 활성화하십시오.</p>
+
+<div class="language-toml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nn">[collectors]</span>
+<span class="py">include_process_cmdline</span> <span class="p">=</span> <span class="kc">true</span>
+</code></pre></div></div>
+
+<p>명령행에는 데이터베이스 비밀번호, API 토큰, 개인 경로가 포함될 수 있습니다.</p>
+
+<h2 id="8-문제-해결">8. 문제 해결</h2>
+
+<h3 id="80-agent가-콘솔에-보이지-않음">8.0 Agent가 콘솔에 보이지 않음</h3>
+
+<p>가장 흔한 순서대로 확인합니다. 1번만으로 대부분 판정됩니다.</p>
+
+<ol>
+  <li><code class="language-plaintext highlighter-rouge">--diagnose</code>를 실행합니다(6.0). 처음 <code class="language-plaintext highlighter-rouge">[FAIL]</code>이 표시된 항목이 원인이며 조치가
+함께 출력됩니다.</li>
+  <li><code class="language-plaintext highlighter-rouge">--status</code>로 마지막 실패 코드와 Server <code class="language-plaintext highlighter-rouge">request_id</code>를 확인합니다(6.2).</li>
+  <li><code class="language-plaintext highlighter-rouge">server.url</code>이 설정돼 있는지 확인합니다. 주석 처리된 상태로 서비스가 기동하면
+수집만 하고 등록은 시도하지 않습니다.</li>
+</ol>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">grep</span> <span class="nt">-n</span> <span class="s1">'^\s*url'</span> /etc/invenqor-agent/config.toml
+</code></pre></div></div>
+
+<ol>
+  <li>관리자에게 콘솔 <strong>Agent 관리 → 등록 진단</strong> 패널 확인을 요청합니다. Agent가
+Server에 도달했지만 정책에 막힌 경우, 등록조차 되지 않은 장비의 출처 IP와
+원인 코드가 그 화면에 남습니다.</li>
+</ol>
+
+<p>주요 원인 코드와 조치:</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>코드</th>
+      <th>원인</th>
+      <th>조치</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">SERVER_UNREACHABLE</code></td>
+      <td>TCP 연결 실패</td>
+      <td>URL·라우팅·방화벽(7070/TCP outbound) 확인</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">SERVER_TIMEOUT</code></td>
+      <td>응답 지연</td>
+      <td><code class="language-plaintext highlighter-rouge">timeout_seconds</code> 상향, 중간 프록시 점검</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">TLS_REJECTED</code></td>
+      <td>서버 인증서 검증 실패</td>
+      <td><code class="language-plaintext highlighter-rouge">ca_file</code>에 사설 CA 인증서 지정</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">SERVER_RESPONSE_NOT_JSON</code></td>
+      <td>콘솔·프록시가 대신 응답</td>
+      <td><code class="language-plaintext highlighter-rouge">server.url</code>을 scheme·host·port만으로 설정</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">AGENT_ENDPOINT_NOT_FOUND</code></td>
+      <td>URL에 경로가 포함됨</td>
+      <td>같은 조치</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">AGENT_AUTO_ENROLLMENT_DISABLED</code></td>
+      <td>Server가 자동 등록 비활성</td>
+      <td>콘솔에서 자동 등록 활성화</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">AGENT_SOURCE_NOT_ALLOWED</code></td>
+      <td>출처 IP가 허용 목록 밖</td>
+      <td>허용 목록에 IP/CIDR 추가</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">AGENT_ENROLLMENT_UNAUTHORIZED</code></td>
+      <td>공용 등록 Token 불일치</td>
+      <td>발급 Token을 <code class="language-plaintext highlighter-rouge">enrollment_token_file</code>에 기록</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">AGENT_ALREADY_CLAIMED</code></td>
+      <td>이미지 복제로 agent-id 중복</td>
+      <td>복제본의 <code class="language-plaintext highlighter-rouge">agent-id</code>, <code class="language-plaintext highlighter-rouge">enrollment-claim.json</code> 삭제</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">AGENT_BLOCKED</code></td>
+      <td>관리자가 차단</td>
+      <td>콘솔에서 차단 해제</td>
+    </tr>
+  </tbody>
+</table>
+
+<h3 id="81-windows-agent가-운영체제-확인-전으로-표시됨">8.1 Windows Agent가 “운영체제 확인 전”으로 표시됨</h3>
+
+<p>먼저 <strong>Agent</strong> 화면의 <code class="language-plaintext highlighter-rouge">last_inventory_at</code>을 확인하십시오. 비어 있으면 운영체제
+판별 문제가 아니라 아직 첫 inventory가 도착하지 않은 것이므로 <code class="language-plaintext highlighter-rouge">--diagnose</code>,
+<code class="language-plaintext highlighter-rouge">--status</code>와 <code class="language-plaintext highlighter-rouge">agent.log</code>의 전송 오류부터 해결합니다.</p>
+
+<p>첫 inventory 시각은 있는데 운영체제만 비어 있다면 먼저 Server가 v0.2.14 이상인지
+확인하십시오. 이전 버전 Server는 Windows가 전송한 최상위 <code class="language-plaintext highlighter-rouge">os_name</code>을 읽지
+못했습니다. v0.2.14 이상 Server는 기존 Agent 형식과 새 <code class="language-plaintext highlighter-rouge">os_release</code> 호환 형식을 모두
+이해하고, 이미 저장된 기존 <code class="language-plaintext highlighter-rouge">system</code> 원천도 다음 heartbeat에서 다시 투영합니다.
+따라서 Agent를 먼저 올리지 않아도 자동 복구되며, Agent v0.2.45로 순차 업데이트하면
+구 Server와의 양방향 wire 호환도 확보됩니다. <code class="language-plaintext highlighter-rouge">%ProgramData%\Invenqor\state</code>를
+삭제하거나 Agent를 재등록하지 마십시오.</p>
+
+<div class="language-powershell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">&amp;</span><span class="w"> </span><span class="s2">"</span><span class="nv">$</span><span class="nn">env</span><span class="p">:</span><span class="nv">ProgramFiles</span><span class="s2">\Invenqor\invenqor-agent.exe"</span><span class="w"> </span><span class="nt">--version</span><span class="w">
+</span><span class="o">&amp;</span><span class="w"> </span><span class="s2">"</span><span class="nv">$</span><span class="nn">env</span><span class="p">:</span><span class="nv">ProgramFiles</span><span class="s2">\Invenqor\invenqor-agent.exe"</span><span class="w"> </span><span class="err">`</span><span class="w">
+  </span><span class="nt">--config</span><span class="w"> </span><span class="s2">"</span><span class="nv">$</span><span class="nn">env</span><span class="p">:</span><span class="nv">ProgramData</span><span class="s2">\Invenqor\config.toml"</span><span class="w"> </span><span class="nt">--status</span><span class="w">
+</span><span class="n">Get-Content</span><span class="w"> </span><span class="s2">"</span><span class="nv">$</span><span class="nn">env</span><span class="p">:</span><span class="nv">ProgramData</span><span class="s2">\Invenqor\state\agent.log"</span><span class="w"> </span><span class="nt">-Tail</span><span class="w"> </span><span class="nx">80</span><span class="w">
+</span></code></pre></div></div>
+
+<p>다음 수집 주기를 기다리기 어렵다면 서비스를 중단한 뒤 <code class="language-plaintext highlighter-rouge">--once</code>를 한 번 실행하고
+다시 시작할 수 있습니다. 운영 서비스와 <code class="language-plaintext highlighter-rouge">--once</code>가 같은 상태 디렉터리를 동시에
+사용해서는 안 됩니다.</p>
+
+<h3 id="82-서비스가-시작되지-않음">8.2 서비스가 시작되지 않음</h3>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">sudo </span>systemctl status invenqor-agent <span class="nt">--no-pager</span>
+<span class="nb">sudo </span>journalctl <span class="nt">-u</span> invenqor-agent <span class="nt">-n</span> 100 <span class="nt">--no-pager</span>
+<span class="nb">sudo</span> <span class="nt">-u</span> invenqor-agent <span class="se">\</span>
+  /opt/invenqor-agent/bin/invenqor-agent <span class="se">\</span>
+  <span class="nt">--config</span> /etc/invenqor-agent/config.toml <span class="se">\</span>
+  <span class="nt">--validate-config</span>
+</code></pre></div></div>
+
+<p>주요 원인:</p>
+
+<ul>
+  <li>TOML 오타 또는 지원하지 않는 설정 키</li>
+  <li>설정, CA, mTLS PEM 파일 읽기 권한 부족</li>
+  <li>상태 디렉터리 쓰기 권한 부족</li>
+  <li><code class="language-plaintext highlighter-rouge">interval_seconds</code>, <code class="language-plaintext highlighter-rouge">heartbeat_seconds</code>, <code class="language-plaintext highlighter-rouge">timeout_seconds</code>,
+<code class="language-plaintext highlighter-rouge">max_processes</code>가 0</li>
+  <li>release 바이너리에 <code class="language-plaintext highlighter-rouge">http://</code> URL 사용</li>
+</ul>
+
+<h3 id="83-tls-또는-인증-오류">8.3 TLS 또는 인증 오류</h3>
+
+<p>확인 순서:</p>
+
+<ol>
+  <li>URL이 <code class="language-plaintext highlighter-rouge">https://</code>로 시작하고 DNS가 올바른지 확인합니다.</li>
+  <li>서버 시간이 크게 어긋나지 않았는지 확인합니다.</li>
+  <li>사설 CA라면 <code class="language-plaintext highlighter-rouge">ca_file</code> 경로와 PEM 내용을 확인합니다.</li>
+  <li>mTLS라면 인증서 체인과 개인키가 같은 <code class="language-plaintext highlighter-rouge">client_identity_pem</code>에 있는지,
+만료되지 않았는지 확인합니다.</li>
+  <li>bearer token이 장비에 맞게 발급됐고 공백 없이 입력됐는지 확인합니다.</li>
+  <li>게이트웨이가 <code class="language-plaintext highlighter-rouge">{"accepted":true}</code> JSON을 반환하는지 관리자에게 확인합니다.</li>
+</ol>
+
+<p>Server가 요청을 거부하면 Agent 로그에는 다음처럼 HTTP 상태 외에 안전한 오류
+코드, API 경로와 request ID가 함께 표시됩니다.</p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>WARN Server exchange failed stage="automatic enrollment" code=AGENT_SOURCE_NOT_ALLOWED
+     http_status=Some(403) path=/v1/agent/enroll request_id=invenqor-0/abc-000123
+     server_message=The Agent source IP is not permitted by the enrollment policy.
+     remediation=The Server registration allowlist rejects this host's source IP…
+</code></pre></div></div>
+
+<p>같은 내용이 <code class="language-plaintext highlighter-rouge">status.json</code>에도 남으므로 로그 유실 시에도 조회할 수 있습니다.</p>
+
+<p><code class="language-plaintext highlighter-rouge">request_id</code> 전체를 관리자에게 전달하십시오. 관리자는 <strong>Server 로그</strong> 화면에서
+같은 ID를 검색해 요청을 처리한 Pod, 판정 IP, 정책 버전과 실패 단계를 확인할 수
+있습니다. Agent 로그나 문의 내용에 등록 Token, 장비 Token, Secret, 원문
+인벤토리를 붙이지 마십시오.</p>
+
+<h3 id="84-수집기-오류">8.4 수집기 오류</h3>
+
+<p>에이전트는 한 수집기가 실패해도 나머지 수집을 계속합니다. 권한, 오래된
+배포판의 명령 차이, <code class="language-plaintext highlighter-rouge">/proc</code> 또는 <code class="language-plaintext highlighter-rouge">/sys</code> 마운트 제한을 확인하십시오. 수집기
+오류가 있는 주기에는 누락된 자산을 삭제로 판단하지 않아 잘못된 대량 삭제를
+방지합니다.</p>
+
+<h3 id="85-큐가-계속-증가함">8.5 큐가 계속 증가함</h3>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">sudo du</span> <span class="nt">-sh</span> /var/lib/invenqor-agent/queue
+<span class="nb">sudo </span>find /var/lib/invenqor-agent/queue <span class="nt">-type</span> f <span class="nt">-name</span> <span class="s1">'*.jsonl'</span> | <span class="nb">wc</span> <span class="nt">-l</span>
+</code></pre></div></div>
+
+<p>게이트웨이 연결, TLS, 인증, 응답 형식을 확인합니다. 큐 파일을 수동 삭제하면
+미전송 인벤토리를 잃습니다. 복구 전 삭제하지 말고 관리자에게 전달하십시오.
+큐가 한도에 도달하면 기존 이벤트를 보존하고 새 이벤트 생성을 실패시킵니다.</p>
+
+<h2 id="9-제거">9. 제거</h2>
+
+<p>압축을 풀어 둔 원본 패키지 디렉터리에서 실행합니다.</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">sudo</span> ./scripts/uninstall.sh
+</code></pre></div></div>
+
+<p>제거 스크립트는 서비스와 바이너리를 제거하지만 다음 데이터는 의도적으로
+보존합니다.</p>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">/etc/invenqor-agent</code>: 설정, 인증서 참조 파일</li>
+  <li><code class="language-plaintext highlighter-rouge">/var/lib/invenqor-agent</code>: 장비 ID, 직전 인벤토리, 미전송 큐</li>
+</ul>
+
+<p>보존 데이터까지 삭제하려면 먼저 감사·복구·보존 정책과 미전송 여부를 확인한 후
+관리자가 별도로 처리해야 합니다.</p>
+
+<h2 id="10-자주-묻는-질문">10. 자주 묻는 질문</h2>
+
+<h3 id="서버에-inbound-포트를-열어야-합니까">서버에 inbound 포트를 열어야 합니까?</h3>
+
+<p>아닙니다. 에이전트는 설정된 게이트웨이로 HTTPS outbound 연결만 시작합니다.</p>
+
+<h3 id="게이트웨이-없이-사용할-수-있습니까">게이트웨이 없이 사용할 수 있습니까?</h3>
+
+<p>가능합니다. <code class="language-plaintext highlighter-rouge">server.url</code>을 생략하면 로컬 수집과 큐 보존만 수행합니다. 장기간
+운영하면 큐 용량 정책이 필요합니다.</p>
+
+<h3 id="수집-실패가-에이전트-전체-중단으로-이어집니까">수집 실패가 에이전트 전체 중단으로 이어집니까?</h3>
+
+<p>대부분의 수집기는 서로 격리되어 있어 한 수집기의 오류가 나머지를 중단시키지
+않습니다. 다만 상태 저장 실패나 잘못된 설정처럼 핵심 기능 오류는 실행에 영향을
+줄 수 있습니다.</p>
+
+<h3 id="에이전트가-취약점을-판정합니까">에이전트가 취약점을 판정합니까?</h3>
+
+<p>아닙니다. 패키지 인벤토리는 수집하지만 CVE 매핑, 위험도 계산, 정책 판정은 중앙
+시스템의 역할입니다.</p>
+
+<h3 id="자동-업데이트나-원격-명령을-지원합니까">자동 업데이트나 원격 명령을 지원합니까?</h3>
+
+<p>서명된 Agent 자동 업데이트는 선택적으로 지원합니다. 관리자가 승인·서명한
+새 버전만 다운로드하고 SHA-256, 크기, version/channel/OS/Architecture와 rollback
+의도를 함께 보호하는 Ed25519 manifest v2 서명을 고정 공개키로 검증한 뒤
+스테이징합니다. 설치 직전에 새 바이너리를 제한된 시간·출력 범위에서 실행해
+버전을 확인하므로 실행되지 않는 빌드는 설치되지 않고 기존 바이너리가 유지됩니다.
+교체는 원자적이며
+이전 바이너리를 <code class="language-plaintext highlighter-rouge">.previous</code>로 보존합니다. systemd는 즉시, OpenRC와 SysV는 서비스
+시작 시 적용합니다. Windows service는 LocalSystem 권한으로 검증된 파일을 자동
+교체하고 SCM recovery 동작으로 새 버전을 재시작합니다. <code class="language-plaintext highlighter-rouge">Content-Length</code>가 없는
+Ingress 응답도 manifest 크기를 넘지 않는 범위에서 안전하게 받을 수 있습니다.
+한 대를 지금 갱신하려면 <code class="language-plaintext highlighter-rouge">--update-now</code>를 실행하고, 현재 실행
+버전과 대기 중인 버전은 <code class="language-plaintext highlighter-rouge">--status</code>로 확인합니다. 설정 방법은
+<a href="SERVER_INSTALLATION.md#8-서명된-agent-자동-업데이트">Server 설치 및 운영 가이드</a>를
+참조하십시오. 원격 셸이나 임의 명령 실행은 지원하지 않습니다.</p>
+
+<h2 id="11-관리-콘솔-로그인과-계정">11. 관리 콘솔 로그인과 계정</h2>
+
+<p>로그인 화면 하단에는 현재 Server 버전이 표시됩니다. 로그인 후에는 상단 버전
+chip에서 같은 버전과 build 정보를 확인할 수 있어 장애 문의 시 실행 버전을
+정확히 전달할 수 있습니다.</p>
+
+<p>조직 관리자가 Keycloak을 활성화한 경우에만 <strong>Keycloak으로 계속</strong> 버튼이
+나타납니다. 버튼을 누르면 조직 로그인 화면으로 이동하며, 인증 후 원래
+Invenqor 서비스로 돌아옵니다. Keycloak 계정의 이름, Email과 SSO 역할은 로그인
+때마다 조직 정책에 맞게 동기화됩니다.</p>
+
+<ul>
+  <li>로컬 계정 비밀번호를 잊은 경우 Invenqor 관리자에게 초기화를 요청합니다.</li>
+  <li>Keycloak 비밀번호·MFA·잠금은 조직 Keycloak 관리자에게 문의합니다.</li>
+  <li>계정이 비활성화되면 기존 브라우저 Session과 API key도 사용할 수 없습니다.</li>
+  <li>화면 메뉴는 부여된 역할의 권한에 따라 자동으로 숨겨집니다.</li>
+  <li>SSO 장애 시 로컬 비상 관리자 계정 사용 여부는 조직 운영 절차를 따릅니다.</li>
+</ul>
+
+<h2 id="12-관리-콘솔-사용">12. 관리 콘솔 사용</h2>
+
+<p><strong>운영 현황</strong>은 Server가 PostgreSQL에서 실시간 집계한 값만 사용합니다. 관리
+자산 수, 최근 24시간 내 확인된 자산, 30분 내 연결된 Agent, 최근 24시간 수집
+이벤트와 실패 건수를 KPI로 표시합니다. 7일 수집 추이, 중요도·환경·유형·수집
+원천 분포와 점검 필요 자산/Agent를 함께 보고 수집 공백을 우선 처리하십시오.
+관리 자산 KPI와 기본 자산 목록은 원시 process 관찰을 제외해 PID 수가 자산 수를
+부풀리지 않으며, <strong>주요 소프트웨어</strong> 요약을 함께 표시합니다.</p>
+
+<p>주요 화면과 실제 동작은 다음과 같습니다.</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>화면</th>
+      <th>사용할 수 있는 기능</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>자산</td>
+      <td>관리 가능한 구성 항목 중심 목록, 이름·유형·환경·중요도·상태 필터와 정렬, <strong>프로세스 관찰 포함</strong> 전환, CSV 내려받기, 등록·수정·삭제·복원, 상세·원천·이력·관계 조회</td>
+    </tr>
+    <tr>
+      <td>자산 고급 작업</td>
+      <td>선택 자산 병합, 선택 수집 원천을 새 자산으로 분리, 관계 생성·삭제</td>
+    </tr>
+    <tr>
+      <td>주요 소프트웨어</td>
+      <td>서비스·프로세스·설치 패키지를 자동 결합한 제품·호스트·버전·설치/실행 상태, 역할·상태·확신도 필터와 판별 근거 상세</td>
+    </tr>
+    <tr>
+      <td>Agent</td>
+      <td>상태·최근 수집 시각 확인, 예외 장비 수동 등록, Token 회전, 차단·해제, mTLS 인증서 등록</td>
+    </tr>
+    <tr>
+      <td>설정 → Agent 등록</td>
+      <td>신규 Agent의 URL-only/Token 모드, IP/CIDR allowlist와 신뢰 프록시를 즉시 전환</td>
+    </tr>
+    <tr>
+      <td>Query DSL</td>
+      <td>Server가 제공하는 필드·연산자 목록, 자주 쓰는 질의 불러오기, 구문과 AST 검증, 제한 건수 내 결과 조회</td>
+    </tr>
+    <tr>
+      <td>API · MCP 키</td>
+      <td>최소권한 scope 선택, 이름 변경, scope 추가·삭제, 무중단 회전과 폐기, 만료 임박 경고와 미사용 키 표시</td>
+    </tr>
+    <tr>
+      <td>감사 로그</td>
+      <td>전체 기록 대상 검색과 행위·자원·결과·기간 조건, 총 건수와 페이징, CSV 내려받기, 같은 request ID의 Server 로그로 이동</td>
+    </tr>
+    <tr>
+      <td>Server 로그</td>
+      <td>모든 Pod의 Agent 등록·전송 실패와 Server 오류를 request ID로 검색, 구성요소·Pod 목록은 기록된 값에서 생성</td>
+    </tr>
+    <tr>
+      <td>내 보안</td>
+      <td>현재 다중요소 인증 상태 확인, QR 스캔 등록, 복구 코드 저장·재발급, 로컬 비밀번호 변경</td>
+    </tr>
+    <tr>
+      <td>우측 상단 프로필</td>
+      <td>내 보안, 개인화, 로그아웃으로 이동</td>
+    </tr>
+    <tr>
+      <td>개인화</td>
+      <td>화면 테마, 정보 밀도, 로그인 시작 화면, 운영 통계 새로고침 주기, 화면 움직임 최소화</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>각 화면의 실제 모습과 자주 쓰는 순서는 12.2부터 화면별로 정리했습니다.</p>
+
+<p>화면의 생성·수정·삭제 버튼은 해당 권한이 있을 때만 나타납니다. 작업 실패 시
+표시되는 서버 오류를 확인하고, 권한 오류는 관리자에게 역할을 요청하십시오.
+페이지를 새로 열거나 Keycloak에서 돌아온 경우에도 브라우저는 현재 Session에
+연결된 CSRF 보호 값을 자동 사용하므로 사용자가 Token을 복사할 필요가 없습니다.
+개인화 설정은 사용자 ID별로 현재 브라우저에 저장되며 다른 사용자나 Server
+운영 설정에는 영향을 주지 않습니다. 현재 주 메뉴와 <strong>설정</strong>의 하위 메뉴는
+<code class="language-plaintext highlighter-rouge">#/settings/keycloak</code> 같은 URL과 사용자별 브라우저 상태에 함께 저장되어
+새로고침·뒤로가기·다시 로그인 후에도 유지됩니다. 권한이 회수된 메뉴나 잘못된
+URL은 접근 가능한 첫 화면으로 안전하게 복구됩니다.</p>
+
+<h3 id="121-주요-소프트웨어-결과-읽기">12.1 주요 소프트웨어 결과 읽기</h3>
+
+<p>한 행은 전사 공통 제품 하나가 아니라 <strong>제품이 한 호스트에 설치되거나 실행된
+인스턴스 하나</strong>입니다. 같은 PostgreSQL 제품이 10개 호스트에서 확인되면 제품 수는
+1, 인스턴스와 관리 호스트는 각각 10으로 집계됩니다. 행을 누르면 다음 근거를
+확인할 수 있습니다.</p>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">설치 확인</code>: 설치 패키지 또는 서비스 등록이 확인됨</li>
+  <li><code class="language-plaintext highlighter-rouge">실행 관찰</code>: 프로세스만 확인돼 설치 방식은 특정할 수 없음</li>
+  <li><code class="language-plaintext highlighter-rouge">실행 중</code>: 실행 프로세스 또는 활성 서비스가 확인됨</li>
+  <li><code class="language-plaintext highlighter-rouge">중지</code>: 서비스가 존재하고 중지 상태임</li>
+  <li><code class="language-plaintext highlighter-rouge">미확인</code>: 설치는 확인됐지만 현재 실행 여부를 판정할 증거가 없음</li>
+</ul>
+
+<p>신뢰도 80% 이상은 <strong>높음</strong>, 미만은 <strong>검토 권장</strong>입니다. 이는 보안 위험도가 아니라
+제품 식별 근거의 강도입니다. 상세 화면의 서비스·프로세스·패키지와 원천 ID를
+확인해 판단하십시오. v0.2.45 내장 카탈로그는 인프라와 보안 제품에 더해
+Office/Microsoft 365, Chrome·Edge·Firefox, Teams·Zoom, Java·.NET,
+MECM·Tanium·BigFix, Elastic Agent·Wazuh 등 51개 주요 제품을 식별합니다.
+카탈로그에 없는 일반 프로세스는 제품으로 추측하지 않으므로,
+목록에 없다는 사실만으로 해당 프로그램이 설치되지 않았다고 단정해서는 안 됩니다.
+Chrome·Java처럼 범용 process 단독 신호는 오탐 방지를 위해 제품으로 승격하지
+않으므로 패키지·서비스·고유 경로 근거를 함께 확인하십시오.</p>
+
+<p>원시 PID가 필요한 장애·보안 조사는 <strong>자산 → 프로세스 관찰 포함</strong>을 켜거나 유형을
+<code class="language-plaintext highlighter-rouge">process</code>로 검색합니다. 이 전환은 데이터를 새로 수집하거나 삭제하지 않고 화면
+범위만 변경합니다.</p>
+
+<p><img src="assets/guide/software-products.png" alt="주요 소프트웨어 — 제품별 운영 분포와 식별 품질을 보고 역할·제조사·실행 상태로 걸러 본다" /></p>
+
+<h3 id="122-자산-상세-읽기">12.2 자산 상세 읽기</h3>
+
+<p>목록에서 행을 누르면 오른쪽에 상세가 열립니다. 위쪽 표는 자산 키·유형·상태·
+중요도·환경·원천과 최초/최근 확인 시각이고, 그 아래로 <strong>수집 원천</strong>, <strong>자산
+관계</strong>가 이어집니다. 수집 원천의 <code class="language-plaintext highlighter-rouge">payload</code>를 펼치면 Agent가 실제로 보낸 값을
+그대로 확인할 수 있어, 화면 값이 이상할 때 무엇이 들어왔는지 바로 대조할 수
+있습니다.</p>
+
+<p><img src="assets/guide/asset-detail.png" alt="자산 상세 — 수집 원천의 원본 payload와 자산 관계를 같은 화면에서 확인한다" /></p>
+
+<p>자주 쓰는 순서는 다음과 같습니다.</p>
+
+<ol>
+  <li>검색란에 호스트 이름을 넣어 대상을 찾습니다.</li>
+  <li>행을 눌러 <strong>최근 확인</strong> 시각이 최신인지 봅니다. 오래되었으면 그 장비의
+에이전트를 8장 절차로 점검합니다.</li>
+  <li><strong>수집 원천</strong>에서 어떤 수집기가 이 자산을 만들었는지 확인합니다.</li>
+  <li><strong>자산 관계</strong>에서 이 장비 위에서 무엇이 도는지(<code class="language-plaintext highlighter-rouge">runs_on</code>), 무엇에
+의존하는지(<code class="language-plaintext highlighter-rouge">depends_on</code>) 확인합니다.</li>
+</ol>
+
+<h3 id="123-시각화로-전체-구성-보기">12.3 시각화로 전체 구성 보기</h3>
+
+<p><strong>시각화</strong>는 같은 필터 한 벌을 모든 탭이 공유합니다. 기간(7·30·90·180일),
+환경, 중요도, 유형을 고르면 상단 KPI와 아래 <strong>구성 · 위험 매트릭스 · 신선도 ·
+증감 · 성장 추이 · 관계</strong> 탭이 모두 같은 모집단을 사용하므로 화면 사이에서
+숫자가 어긋나지 않습니다. <code class="language-plaintext highlighter-rouge">담당 미지정</code>이 크면 담당 부서를 채워야 할 자산이
+그만큼 남아 있다는 뜻입니다.</p>
+
+<p><img src="assets/guide/visualization.png" alt="자산 시각화 — 기간·환경·중요도·유형 필터를 공유하는 구성 트리맵" /></p>
+
+<h3 id="124-agent-상태-확인">12.4 Agent 상태 확인</h3>
+
+<p><strong>Agent</strong> 화면은 위쪽 <strong>등록 진단</strong>과 아래쪽 장비 카드 목록으로 나뉩니다. 등록
+진단은 최근 24시간의 등록 성공·거부·사전 점검 차단·전송 실패·첫 수집 대기를
+출처 IP와 오류 코드로 보여 줍니다. 콘솔에 아예 나타나지 않는 장비는 목록이
+아니라 이 패널에서 찾습니다(8.0 참조).</p>
+
+<p><img src="assets/guide/agents.png" alt="Agent 관리 — 등록 진단 패널에서 최근 24시간의 등록 성공과 거부를 출처별로 확인한다" /></p>
+
+<p>아래로 내리면 등록된 장비가 카드로 표시됩니다. 각 카드는 상태, 버전, 운영체제,
+인증 방식과 최근 연결 시각을 보여 주며, 권한이 있으면 토큰 회전·mTLS 등록·차단을
+같은 자리에서 수행할 수 있습니다.</p>
+
+<p><img src="assets/guide/agents-list.png" alt="Agent 목록 — 장비별 상태, 버전, 운영체제, 인증 방식과 최근 연결 시각" /></p>
+
+<h3 id="125-query-dsl로-찾기">12.5 Query DSL로 찾기</h3>
+
+<p><strong>Query DSL</strong>은 검증과 실행을 분리합니다. 편집기에 조건을 쓰고 <strong>구문 검증</strong>을
+누르면 서버가 파싱만 하고, <strong>질의 실행</strong>을 눌러야 결과를 읽습니다. 오른쪽
+<strong>사용 가능한 필드</strong>는 Server가 실제로 제공하는 필드 목록이므로, 문서를 찾지 말고
+이 목록에서 골라 편집기에 넣으십시오. <strong>자주 쓰는 질의</strong>를 누르면 예시가 편집기에
+그대로 들어갑니다.</p>
+
+<p><img src="assets/guide/query.png" alt="Query DSL — 편집기에서 조건을 검증한 뒤 실행하고, 오른쪽에서 사용 가능한 필드를 확인한다" /></p>
+
+<p>결과는 아래 패널에 표로 나옵니다. 제목의 <code class="language-plaintext highlighter-rouge">결과 N건</code>이 조건에 맞는 자산 전체
+수이고, 오른쪽 <code class="language-plaintext highlighter-rouge">1–100 표시 · limit 100</code>이 그중 지금 표에 있는 범위와 한 번에
+읽을 최대 건수입니다. 조건에 맞는 자산이 <code class="language-plaintext highlighter-rouge">limit</code>보다 많으면 어디까지 표시
+중인지 안내가 붙고 표 아래에 <strong>이전</strong>·<strong>다음</strong> 버튼이 나타나므로, 조건을
+좁히지 않아도 같은 질의로 끝까지 넘겨 볼 수 있습니다. <strong>질의 실행</strong>을 다시
+누르면 첫 페이지부터 시작합니다.</p>
+
+<p><img src="assets/guide/query-result.png" alt="Query DSL 결과 — 조건에 맞는 자산을 자산 목록과 같은 표로 확인한다" /></p>
+
+<h3 id="126-내-보안과-개인화">12.6 내 보안과 개인화</h3>
+
+<p>우측 상단 프로필 메뉴의 <strong>내 보안</strong>에서 다중요소 인증(TOTP)을 등록하고 복구
+코드를 보관합니다. 로컬 계정은 같은 화면에서 비밀번호를 바꿀 수 있습니다.
+Keycloak 계정의 비밀번호와 MFA는 조직 Keycloak에서 관리하므로 이 화면에
+나타나지 않습니다.</p>
+
+<p><img src="assets/guide/account-security.png" alt="내 계정 보안 — 로컬 비밀번호 변경과 TOTP 다중요소 인증 등록. 아직 등록하지 않은 계정은 상단에 안내가 표시된다" /></p>
+
+<p><strong>개인화</strong>는 <strong>화면 테마</strong>, <strong>정보 밀도</strong>, <strong>로그인 시작 화면</strong>, <strong>운영 통계
+새로고침</strong> 주기와 <strong>화면 움직임 최소화</strong>를 현재 브라우저에 사용자 ID별로 저장합니다. 다른 사용자나 Server 운영 설정에는
+영향을 주지 않으므로 보안 설정 용도로 쓰지 마십시오.</p>
+
+<p><img src="assets/guide/preferences.png" alt="개인화 — 화면 테마, 정보 밀도, 로그인 시작 화면과 운영 통계 새로고침 주기를 사용자별로 저장한다" /></p>
+
+<h2 id="13-자주-하는-작업">13. 자주 하는 작업</h2>
+
+<table>
+  <thead>
+    <tr>
+      <th>하려는 일</th>
+      <th>순서</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>새로 설치한 장비가 올라왔는지 확인</td>
+      <td><strong>Agent → 등록 진단</strong>에서 <code class="language-plaintext highlighter-rouge">등록 성공</code>이 늘었는지 보고, <strong>자산</strong>에서 호스트 이름으로 검색합니다.</td>
+    </tr>
+    <tr>
+      <td>특정 제품이 깔린 장비 전부 찾기</td>
+      <td><strong>주요 소프트웨어</strong>에서 제품 이름을 검색하고 <code class="language-plaintext highlighter-rouge">호스트</code> 열을 봅니다. 원시 프로세스까지 필요하면 <strong>자산 → 프로세스 관찰 포함</strong>을 켭니다.</td>
+    </tr>
+    <tr>
+      <td>하루 넘게 보고가 없는 장비 찾기</td>
+      <td><strong>Query DSL</strong>에 <code class="language-plaintext highlighter-rouge">last_seen_at &lt; "now - 24h"</code>를 넣고 실행합니다.</td>
+    </tr>
+    <tr>
+      <td>자산 목록을 표로 내려받기</td>
+      <td><strong>자산</strong>에서 조건을 건 뒤 <strong>CSV 내려받기</strong>를 누릅니다. 화면에 적용된 필터가 그대로 적용됩니다.</td>
+    </tr>
+    <tr>
+      <td>누가 무엇을 바꿨는지 확인</td>
+      <td><strong>감사 로그</strong>에서 행위·자원·기간으로 검색하고, 필요하면 같은 request ID의 <strong>Server 로그</strong>로 이동합니다.</td>
+    </tr>
+    <tr>
+      <td>연동 스크립트용 키 만들기</td>
+      <td><strong>API · MCP 키</strong>에서 필요한 scope만 골라 발급합니다. 원문은 발급 순간에만 보이므로 그 자리에서 보관하십시오.</td>
+    </tr>
+  </tbody>
+</table>
+
+<h2 id="14-용어">14. 용어</h2>
+
+<table>
+  <thead>
+    <tr>
+      <th>화면에 나오는 말</th>
+      <th>뜻</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>자산(Asset)</td>
+      <td>관리 대상이 되는 구성 항목 하나. 호스트, 서비스, 주요 소프트웨어 인스턴스 등이 모두 자산입니다.</td>
+    </tr>
+    <tr>
+      <td>자산 키(Asset key)</td>
+      <td>수집 원천이 부여한 고유 문자열. 같은 장비를 다시 수집해도 같은 자산으로 합쳐지게 하는 기준입니다.</td>
+    </tr>
+    <tr>
+      <td>수집 원천(Source)</td>
+      <td>이 자산의 근거가 된 수집기와 그 원본 payload. 하나의 자산에 여러 원천이 붙을 수 있습니다.</td>
+    </tr>
+    <tr>
+      <td>관계(Relation)</td>
+      <td>자산 사이의 연결. <code class="language-plaintext highlighter-rouge">runs_on</code>은 “이 위에서 돈다”, <code class="language-plaintext highlighter-rouge">depends_on</code>은 “이것에 의존한다”를 뜻합니다.</td>
+    </tr>
+    <tr>
+      <td>최신성</td>
+      <td><code class="language-plaintext highlighter-rouge">최근 확인</code> 시각이 최근 24시간 이내인지 여부. 수집이 멈춘 자산을 찾는 기준입니다.</td>
+    </tr>
+    <tr>
+      <td>프로세스 관찰</td>
+      <td>정규화되지 않은 원시 PID 관찰. 기본 목록에서는 숨기고 주요 소프트웨어의 식별 근거로만 씁니다.</td>
+    </tr>
+    <tr>
+      <td>확신도(Confidence)</td>
+      <td>제품 식별 근거의 강도. 보안 위험도가 아닙니다. 80% 이상이 <strong>높음</strong>입니다.</td>
+    </tr>
+    <tr>
+      <td>scope</td>
+      <td>API·MCP 키가 할 수 있는 일의 범위. 키마다 필요한 것만 골라 부여합니다.</td>
+    </tr>
+  </tbody>
+</table>
+
+<p class="small">문서 오류 및 제품 문의:
+<a href="https://github.com/hkjang/invenqor">GitHub 저장소</a> ·
+보안 취약점 보고 절차: <a href="https://github.com/hkjang/invenqor/blob/v0.2.45/SECURITY.md">SECURITY.md</a></p>
+
+
+      
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/anchor-js/4.1.0/anchor.min.js" integrity="sha256-lZaRhKri35AyJSypXXs4o6OPFTbTmUoltBbDCbdzegg=" crossorigin="anonymous"></script>
+    <script>anchors.add();</script>
+  </body>
+</html>

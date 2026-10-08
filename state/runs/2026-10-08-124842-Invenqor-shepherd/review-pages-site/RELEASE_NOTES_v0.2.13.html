@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+<!-- Begin Jekyll SEO tag v2.8.0 -->
+<title>Invenqor Server·Agent v0.2.13 릴리즈 노트 | Invenqor</title>
+<meta name="generator" content="Jekyll v3.10.0" />
+<meta property="og:title" content="Invenqor Server·Agent v0.2.13 릴리즈 노트" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="서버 자산을 수집하는 Rust Agent와 Go 중앙 서버, React 관리 콘솔을 결합한 자산 인텔리전스 플랫폼. 단순 인벤토리 수집기를 넘어 인증, RBAC, 변경 이력, 자산 관계, 감사 로그, 안전한 Query DSL까지 포함하는 구조로 확장" />
+<meta property="og:description" content="서버 자산을 수집하는 Rust Agent와 Go 중앙 서버, React 관리 콘솔을 결합한 자산 인텔리전스 플랫폼. 단순 인벤토리 수집기를 넘어 인증, RBAC, 변경 이력, 자산 관계, 감사 로그, 안전한 Query DSL까지 포함하는 구조로 확장" />
+<link rel="canonical" href="https://github.com/pages/hkjang/Invenqor/RELEASE_NOTES_v0.2.13.html" />
+<meta property="og:url" content="https://github.com/pages/hkjang/Invenqor/RELEASE_NOTES_v0.2.13.html" />
+<meta property="og:site_name" content="Invenqor" />
+<meta property="og:type" content="website" />
+<meta name="twitter:card" content="summary" />
+<meta property="twitter:title" content="Invenqor Server·Agent v0.2.13 릴리즈 노트" />
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"WebPage","description":"서버 자산을 수집하는 Rust Agent와 Go 중앙 서버, React 관리 콘솔을 결합한 자산 인텔리전스 플랫폼. 단순 인벤토리 수집기를 넘어 인증, RBAC, 변경 이력, 자산 관계, 감사 로그, 안전한 Query DSL까지 포함하는 구조로 확장","headline":"Invenqor Server·Agent v0.2.13 릴리즈 노트","url":"https://github.com/pages/hkjang/Invenqor/RELEASE_NOTES_v0.2.13.html"}</script>
+<!-- End Jekyll SEO tag -->
+
+    <link rel="stylesheet" href="/pages/hkjang/Invenqor/assets/css/style.css?v=">
+    <!-- start custom head snippets, customize with your own _includes/head-custom.html file -->
+
+<!-- Setup Google Analytics -->
+
+
+
+<!-- You can set your favicon here -->
+<!-- link rel="shortcut icon" type="image/x-icon" href="/pages/hkjang/Invenqor/favicon.ico" -->
+
+<!-- end custom head snippets -->
+
+  </head>
+  <body>
+    <div class="container-lg px-3 my-5 markdown-body">
+      
+      <h1><a href="https://github.com/pages/hkjang/Invenqor/">Invenqor</a></h1>
+      
+
+      <h1 id="invenqor-serveragent-v0213-릴리즈-노트">Invenqor Server·Agent v0.2.13 릴리즈 노트</h1>
+
+<p>릴리즈 일자: 2026-07-30
+호환 Agent: v0.2.13 (Linux·Windows)</p>
+
+<p>v0.2.12에서 Windows 서비스는 실행되지만 <strong>수집 주기가 한 번도 완료되지 않는</strong> 사례를
+확인했습니다. 원인은 수집기 하나가 반환하지 않으면 주기 전체가 영구히 멈추는
+구조였습니다.</p>
+
+<h2 id="1-멈춘-수집기가-주기-전체를-세웠습니다">1. 멈춘 수집기가 주기 전체를 세웠습니다</h2>
+
+<p>설계 원칙은 “수집기 하나가 실패해도 나머지는 계속 수집한다”였고, 이는 수집기가
+<strong>오류를 반환할 때만</strong> 성립했습니다. <strong>반환하지 않을 때</strong>는 성립하지 않았습니다.
+<code class="language-plaintext highlighter-rouge">collect_all</code>이 각 수집기를 기한 없이 기다렸으므로, 블로킹 시스템 호출 하나가
+영원히 대기하면 수집도 큐 적재도 전송도 등록도 일어나지 않고, 서비스는 완전히
+정상으로 보였습니다.</p>
+
+<ul>
+  <li>수집기별 <strong>60초 기한</strong>을 둡니다. 초과하면 해당 수집기를 포기하고 오류로 보고하며
+나머지 주기는 계속 진행합니다.</li>
+  <li>기한을 초과한 수집기는 <strong>이후 주기에서 호출하지 않습니다.</strong> 블로킹 작업은 취소할
+수 없어 스레드가 계속 점유되므로, 매 주기 다시 호출하면 스레드 풀이 고갈됩니다.
+Agent를 재시작하면 다시 시도합니다.</li>
+  <li>멈추는 수집기와 정상 수집기를 함께 실행해, 정상 수집기의 레코드가 그대로 도착하고
+멈춤이 오류로 보고되며 다음 주기에는 건너뛰는 것을 테스트로 고정했습니다.</li>
+</ul>
+
+<p>이 변경은 Linux에도 적용됩니다. 응답하지 않는 NFS 마운트나 멈춘 <code class="language-plaintext highlighter-rouge">rpm</code> 호출에서
+같은 일이 일어날 수 있습니다.</p>
+
+<h2 id="2-windows에서-네트워크-대기를-유발하던-두-호출">2. Windows에서 네트워크 대기를 유발하던 두 호출</h2>
+
+<ul>
+  <li><strong>네트워크 드라이브의 용량과 레이블을 조회하지 않습니다.</strong> 매핑된 공유가 사라진
+경우 <code class="language-plaintext highlighter-rouge">GetDiskFreeSpaceEx</code>와 <code class="language-plaintext highlighter-rouge">GetVolumeInformation</code>이 SMB 제한 시간까지 대기합니다.
+드라이브 자체는 계속 보고하되 크기는 측정하지 않습니다. 어차피 다른 호스트의
+저장 공간입니다.</li>
+  <li><strong>로컬 그룹 구성원 조회를 권한 관련 그룹으로 한정합니다.</strong> <code class="language-plaintext highlighter-rouge">NetLocalGroupGetMembers</code>
+레벨 3은 구성원 SID를 <code class="language-plaintext highlighter-rouge">DOMAIN\이름</code>으로 변환하며, 도메인 가입 호스트에서는 이것이
+도메인 컨트롤러 호출입니다. 내장 그룹 전체(약 25개)에 대해 수행하면 느리거나
+도달 불가한 DC의 영향이 그만큼 커집니다. 인벤토리가 답해야 하는 질문은 “어떤
+계정이 권한을 가졌는가”이므로 Administrators, Remote Desktop Users,
+Backup Operators, Power Users, Remote Management Users만 조회합니다.</li>
+</ul>
+
+<h2 id="원인-확정-방법">원인 확정 방법</h2>
+
+<p>기한이 생겼으므로 이제 어느 수집기가 멈추는지 보고서에 남습니다. 다음 주기 이후
+<code class="language-plaintext highlighter-rouge">--diagnose</code>와 로그에서 확인하십시오.</p>
+
+<div class="language-powershell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">Get-Content</span><span class="w"> </span><span class="s2">"</span><span class="nv">$</span><span class="nn">env</span><span class="p">:</span><span class="nv">ProgramData</span><span class="s2">\Invenqor\state\agent.log"</span><span class="w"> </span><span class="nt">-Tail</span><span class="w"> </span><span class="nx">40</span><span class="w">
+</span><span class="o">&amp;</span><span class="w"> </span><span class="s2">"</span><span class="nv">$</span><span class="nn">env</span><span class="p">:</span><span class="nv">ProgramFiles</span><span class="s2">\Invenqor\invenqor-agent.exe"</span><span class="w"> </span><span class="err">`</span><span class="w">
+  </span><span class="nt">--config</span><span class="w"> </span><span class="s2">"</span><span class="nv">$</span><span class="nn">env</span><span class="p">:</span><span class="nv">ProgramData</span><span class="s2">\Invenqor\config.toml"</span><span class="w"> </span><span class="nt">--status</span><span class="w"> </span><span class="nt">--json</span><span class="w"> </span><span class="o">|</span><span class="w">
+  </span><span class="n">ConvertFrom-Json</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="n">Select-Object</span><span class="w"> </span><span class="nt">-ExpandProperty</span><span class="w"> </span><span class="nx">collection</span><span class="w">
+</span></code></pre></div></div>
+
+<p>수집기별 오류는 <code class="language-plaintext highlighter-rouge">--status --json</code>의 <code class="language-plaintext highlighter-rouge">collection.collector_errors</code>와 Server의
+수집 이벤트에 함께 담깁니다.</p>
+
+<h2 id="호환성">호환성</h2>
+
+<ul>
+  <li>데이터베이스 마이그레이션이 없습니다. Server 동작 변경이 없습니다.</li>
+  <li>수집기 기한(60초)이 Linux에도 적용됩니다. 정상적인 수집기는 훨씬 빠르게 끝나므로
+영향이 없지만, 매우 느린 사용자 환경이 있다면 확인하십시오.</li>
+  <li>Windows에서 네트워크 드라이브의 <code class="language-plaintext highlighter-rouge">total_bytes</code>·<code class="language-plaintext highlighter-rouge">free_bytes</code>·<code class="language-plaintext highlighter-rouge">filesystem</code>·<code class="language-plaintext highlighter-rouge">label</code>이
+비어 있게 됩니다. <code class="language-plaintext highlighter-rouge">drive_type</code>은 계속 <code class="language-plaintext highlighter-rouge">network</code>로 보고합니다.</li>
+</ul>
+
+
+      
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/anchor-js/4.1.0/anchor.min.js" integrity="sha256-lZaRhKri35AyJSypXXs4o6OPFTbTmUoltBbDCbdzegg=" crossorigin="anonymous"></script>
+    <script>anchors.add();</script>
+  </body>
+</html>

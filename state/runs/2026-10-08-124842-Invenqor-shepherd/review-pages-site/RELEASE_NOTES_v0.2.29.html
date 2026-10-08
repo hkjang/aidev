@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+<!-- Begin Jekyll SEO tag v2.8.0 -->
+<title>Invenqor Server·Agent v0.2.29 릴리즈 노트 | Invenqor</title>
+<meta name="generator" content="Jekyll v3.10.0" />
+<meta property="og:title" content="Invenqor Server·Agent v0.2.29 릴리즈 노트" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="서버 자산을 수집하는 Rust Agent와 Go 중앙 서버, React 관리 콘솔을 결합한 자산 인텔리전스 플랫폼. 단순 인벤토리 수집기를 넘어 인증, RBAC, 변경 이력, 자산 관계, 감사 로그, 안전한 Query DSL까지 포함하는 구조로 확장" />
+<meta property="og:description" content="서버 자산을 수집하는 Rust Agent와 Go 중앙 서버, React 관리 콘솔을 결합한 자산 인텔리전스 플랫폼. 단순 인벤토리 수집기를 넘어 인증, RBAC, 변경 이력, 자산 관계, 감사 로그, 안전한 Query DSL까지 포함하는 구조로 확장" />
+<link rel="canonical" href="https://github.com/pages/hkjang/Invenqor/RELEASE_NOTES_v0.2.29.html" />
+<meta property="og:url" content="https://github.com/pages/hkjang/Invenqor/RELEASE_NOTES_v0.2.29.html" />
+<meta property="og:site_name" content="Invenqor" />
+<meta property="og:type" content="website" />
+<meta name="twitter:card" content="summary" />
+<meta property="twitter:title" content="Invenqor Server·Agent v0.2.29 릴리즈 노트" />
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"WebPage","description":"서버 자산을 수집하는 Rust Agent와 Go 중앙 서버, React 관리 콘솔을 결합한 자산 인텔리전스 플랫폼. 단순 인벤토리 수집기를 넘어 인증, RBAC, 변경 이력, 자산 관계, 감사 로그, 안전한 Query DSL까지 포함하는 구조로 확장","headline":"Invenqor Server·Agent v0.2.29 릴리즈 노트","url":"https://github.com/pages/hkjang/Invenqor/RELEASE_NOTES_v0.2.29.html"}</script>
+<!-- End Jekyll SEO tag -->
+
+    <link rel="stylesheet" href="/pages/hkjang/Invenqor/assets/css/style.css?v=">
+    <!-- start custom head snippets, customize with your own _includes/head-custom.html file -->
+
+<!-- Setup Google Analytics -->
+
+
+
+<!-- You can set your favicon here -->
+<!-- link rel="shortcut icon" type="image/x-icon" href="/pages/hkjang/Invenqor/favicon.ico" -->
+
+<!-- end custom head snippets -->
+
+  </head>
+  <body>
+    <div class="container-lg px-3 my-5 markdown-body">
+      
+      <h1><a href="https://github.com/pages/hkjang/Invenqor/">Invenqor</a></h1>
+      
+
+      <h1 id="invenqor-serveragent-v0229-릴리즈-노트">Invenqor Server·Agent v0.2.29 릴리즈 노트</h1>
+
+<p>릴리즈 일자: 2026-09-09
+호환 Agent: v0.2.29 (Linux·Windows)</p>
+
+<p>이번 릴리즈는 결함 하나를 고칩니다. 자리는 <strong>Query DSL 실행
+(<code class="language-plaintext highlighter-rouge">POST /api/v1/query/execute</code>)</strong>이고, 증상은 이전 릴리즈들과 같은 종류 — <strong>오류
+없이 받아들여진 뒤 조용히 짧아진 결과</strong> — 입니다. 다만 이번에는 그 결과를 더 받아낼
+방법이 아예 없어, 잘렸다는 사실 자체가 유일하게 남길 수 있는 표시였습니다.</p>
+
+<h2 id="1-한도에-걸린-질의-결과가-전부인-것처럼-보였습니다">1. 한도에 걸린 질의 결과가 전부인 것처럼 보였습니다</h2>
+
+<p>Query DSL 실행은 정해진 행 수까지만 읽습니다 — 기본 100행, 최대 500행입니다.
+그런데 한도에 닿아 잘린 결과도 <strong>전부인 것처럼</strong> 돌려주었습니다.
+1,200대가 조용해진 인벤토리에서 <code class="language-plaintext highlighter-rouge">last_seen_at &lt; "now - 720h"</code>를 실행하면 100건과
+<code class="language-plaintext highlighter-rouge">count</code> 100이 돌아왔고, <strong>응답 어디에도 나머지 1,100대가 있다는 표시가
+없었습니다.</strong> 이 엔드포인트에는 offset이 없으므로, 두 번째 요청으로 그것을 알아낼
+방법도 없었습니다.</p>
+
+<p>같은 핸들러가 <code class="language-plaintext highlighter-rouge">/api/v1/external/query/execute</code>도 처리합니다. 그쪽은 API Key를 가진
+<strong>프로그램이 읽는 입구</strong>이고, 행 수가 자신이 요청한 한도에 정확히 떨어졌다는 것을
+알아차릴 사람도 화면도 없습니다.</p>
+
+<p>이제 실행은 <strong>한도보다 한 행을 더 읽습니다.</strong> 그래서 정확히 한도에서 끝난 결과는
+여전히 완전한 것으로 보고되고, 더 있는 경우에만 잘렸다고 말합니다.</p>
+
+<ul>
+  <li><strong>응답이 두 가지를 함께 돌려줍니다.</strong> <code class="language-plaintext highlighter-rouge">truncated</code>는 조건에 맞는 자산이 돌려준
+것보다 많은지이고, <code class="language-plaintext highlighter-rouge">limit</code>은 기본값과 상한을 적용한 뒤 <strong>실제로 적용된</strong> 행
+수입니다. 기존 <code class="language-plaintext highlighter-rouge">items</code>·<code class="language-plaintext highlighter-rouge">count</code>·<code class="language-plaintext highlighter-rouge">ast</code>는 그대로입니다.</li>
+  <li><strong>감사 기록도 같이 압니다.</strong> <code class="language-plaintext highlighter-rouge">query.execute</code> 항목에 <code class="language-plaintext highlighter-rouge">truncated</code>가 남으므로, 부분
+결과가 인벤토리 전체에 대한 증적으로 보관되지 않습니다.</li>
+  <li><strong>콘솔은 추측을 그만둡니다.</strong> 지금까지는 행 수가 limit과 같은지를 보고 “잘렸을 수
+있음”이라고 했습니다 — 정확히 한도에서 끝난 완전한 결과도 그렇게 불렸습니다. 이제
+Server가 말한 것을 그대로 표시하고, 조건을 좁히거나 limit을 올리라고 안내합니다.</li>
+</ul>
+
+<h2 id="검증">검증</h2>
+
+<ul>
+  <li><strong>엔드포인트 너머에서.</strong> 한도보다 많은 자산을 만들고 <code class="language-plaintext highlighter-rouge">/api/v1/query/execute</code>를
+실행해 <code class="language-plaintext highlighter-rouge">truncated</code>가 <code class="language-plaintext highlighter-rouge">true</code>이고 <code class="language-plaintext highlighter-rouge">items</code>가 한도까지만 돌아오는지, 결과가 <strong>정확히
+한도에서 끝날 때는</strong> <code class="language-plaintext highlighter-rouge">truncated</code>가 <code class="language-plaintext highlighter-rouge">false</code>인지, 호출자가 limit을 주지 않았을 때
+기본 100이 적용된 값으로 보고되는지, 그리고 감사 항목에 <code class="language-plaintext highlighter-rouge">truncated</code>가 남는지를
+고정했습니다. 이 테스트는 <strong>수정 전 실제로 실패</strong>하고 수정 후 통과합니다.</li>
+  <li><strong>공개 계약에 적었습니다.</strong> <code class="language-plaintext highlighter-rouge">openapi.yaml</code>의 세션·API Key 두 실행 엔드포인트가
+<code class="language-plaintext highlighter-rouge">limit</code>·<code class="language-plaintext highlighter-rouge">truncated</code>를 응답 필드로 기술하고, 이 엔드포인트가 더 페이지를 주지
+않으므로 <code class="language-plaintext highlighter-rouge">truncated</code>가 유일한 신호라는 점을 함께 적습니다. CI와 같은
+<code class="language-plaintext highlighter-rouge">@redocly/cli</code> lint를 통과합니다.</li>
+  <li><strong>서버와 콘솔 양쪽에서.</strong> <code class="language-plaintext highlighter-rouge">go test ./...</code>·<code class="language-plaintext highlighter-rouge">go vet</code>·<code class="language-plaintext highlighter-rouge">go build</code>·<code class="language-plaintext highlighter-rouge">gofmt</code>와 콘솔의
+<code class="language-plaintext highlighter-rouge">npm test</code>·<code class="language-plaintext highlighter-rouge">npm run build</code>가 통과하고, 체크인된 <code class="language-plaintext highlighter-rouge">server/internal/webui/dist</code>가
+React 빌드 결과와 일치합니다.</li>
+</ul>
+
+<h2 id="호환성">호환성</h2>
+
+<ul>
+  <li>데이터베이스 마이그레이션이 없습니다.</li>
+  <li><strong>응답에 필드가 추가되기만 합니다.</strong> <code class="language-plaintext highlighter-rouge">items</code>·<code class="language-plaintext highlighter-rouge">count</code>·<code class="language-plaintext highlighter-rouge">ast</code>를 읽던 기존 클라이언트는
+그대로 동작합니다.</li>
+  <li>Query DSL 문법과 권한(<code class="language-plaintext highlighter-rouge">queries.execute</code>)은 바뀌지 않았습니다.</li>
+  <li><strong>여전히 offset은 없습니다.</strong> <code class="language-plaintext highlighter-rouge">truncated</code>가 <code class="language-plaintext highlighter-rouge">true</code>이면 조건을 좁히거나 limit을
+올려(최대 500) 다시 실행하십시오.</li>
+  <li>Agent(Rust) 동작은 이번 릴리즈에서 바뀌지 않았습니다.</li>
+</ul>
+
+
+      
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/anchor-js/4.1.0/anchor.min.js" integrity="sha256-lZaRhKri35AyJSypXXs4o6OPFTbTmUoltBbDCbdzegg=" crossorigin="anonymous"></script>
+    <script>anchors.add();</script>
+  </body>
+</html>
