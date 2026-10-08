@@ -1,7 +1,7 @@
 ---
 title: "qurio — 자율 개선 이력"
 description: "qurio: 자율 개선 회차 37회, 릴리즈 4건. 최근 릴리즈 v1.4.14."
-last_modified_at: 2026-10-08 21:32:15 +0900
+last_modified_at: 2026-10-08 21:38:00 +0900
 ---
 {% raw %}
 <script type="application/ld+json">
@@ -18,7 +18,7 @@ last_modified_at: 2026-10-08 21:32:15 +0900
   "name": "hkjang",
   "url": "https://github.com/hkjang"
  },
- "dateModified": "2026-10-08T21:32:15+09:00",
+ "dateModified": "2026-10-08T21:38:00+09:00",
  "version": "1.4.14"
 }
 </script>
