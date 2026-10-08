@@ -1,0 +1,30 @@
+const __vite_ssr_import_0__ = await __vite_ssr_import__("vitest", {"importedNames":["describe","expect","it"]});
+const __vite_ssr_import_1__ = await __vite_ssr_import__("/src/features/goal-loop.ts", {"importedNames":["buildPromptContext"]});
+const __vite_ssr_import_2__ = await __vite_ssr_import__("/src/features/goals.ts", {"importedNames":["goalTemplate"]});
+
+
+
+(0,__vite_ssr_import_0__.describe)("buildPromptContext", () => {
+  const goal = (0,__vite_ssr_import_2__.goalTemplate)("2026-09-22 10:00:00 KST").replace("상태: draft", "상태: active");
+  (0,__vite_ssr_import_0__.it)("summarizes an active goal for the system prompt", () => {
+    const text = (0,__vite_ssr_import_1__.buildPromptContext)(goal);
+    (0,__vite_ssr_import_0__.expect)(text).toContain("VIBE CODE GOAL STATE");
+    (0,__vite_ssr_import_0__.expect)(text).toContain("- 목표: 새 목표");
+    (0,__vite_ssr_import_0__.expect)(text).toContain("지금 단계: discovery");
+    (0,__vite_ssr_import_0__.expect)(text).toContain("- Now: 목표 설명 작성");
+    (0,__vite_ssr_import_0__.expect)(text).toContain("- Next: 첫 번째 작은 작업 선택");
+    (0,__vite_ssr_import_0__.expect)(text).toContain("완료 기준 진행: 0/3");
+    (0,__vite_ssr_import_0__.expect)(text.startsWith("\n\n====\n\nVIBE CODE GOAL STATE")).toBe(true);
+  });
+  (0,__vite_ssr_import_0__.it)("returns nothing for done goals or empty text", () => {
+    (0,__vite_ssr_import_0__.expect)((0,__vite_ssr_import_1__.buildPromptContext)("")).toBe("");
+    (0,__vite_ssr_import_0__.expect)((0,__vite_ssr_import_1__.buildPromptContext)(goal.replace("상태: active", "상태: done"))).toBe("");
+  });
+  (0,__vite_ssr_import_0__.it)("tells the model when Now is empty", () => {
+    const empty = goal.replace("- [ ] 목표 설명 작성", "- [x] 목표 설명 작성");
+    (0,__vite_ssr_import_0__.expect)((0,__vite_ssr_import_1__.buildPromptContext)(empty)).toContain("Now: (비어 있음");
+  });
+});
+
+//# sourceMappingSource=vite-node
+//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJtYXBwaW5ncyI6IkFBQUE7QUFDQTtBQUNBOzs7O0dBRUEsZ0NBQVMsc0JBQXNCLE1BQU07QUFDcEMsUUFBTSxVQUFPLG9DQUFhLHlCQUF5QixFQUFFLFFBQVEsYUFBYSxZQUFZO0FBRXRGLCtCQUFHLG1EQUFtRCxNQUFNO0FBQzNELFVBQU0sVUFBTywwQ0FBbUIsSUFBSTtBQUNwQyxxQ0FBTyxJQUFJLEVBQUUsVUFBVSxzQkFBc0I7QUFDN0MscUNBQU8sSUFBSSxFQUFFLFVBQVUsWUFBWTtBQUNuQyxxQ0FBTyxJQUFJLEVBQUUsVUFBVSxrQkFBa0I7QUFDekMscUNBQU8sSUFBSSxFQUFFLFVBQVUsaUJBQWlCO0FBQ3hDLHFDQUFPLElBQUksRUFBRSxVQUFVLHVCQUF1QjtBQUM5QyxxQ0FBTyxJQUFJLEVBQUUsVUFBVSxlQUFlO0FBQ3RDLHFDQUFPLEtBQUssV0FBVyxrQ0FBa0MsQ0FBQyxFQUFFLEtBQUssSUFBSTtBQUFBLEVBQ3RFLENBQUM7QUFFRCwrQkFBRyxnREFBZ0QsTUFBTTtBQUN4RCx3Q0FBTywwQ0FBbUIsRUFBRSxDQUFDLEVBQUUsS0FBSyxFQUFFO0FBQ3RDLHdDQUFPLDBDQUFtQixLQUFLLFFBQVEsY0FBYyxVQUFVLENBQUMsQ0FBQyxFQUFFLEtBQUssRUFBRTtBQUFBLEVBQzNFLENBQUM7QUFFRCwrQkFBRyxxQ0FBcUMsTUFBTTtBQUM3QyxVQUFNLFFBQVEsS0FBSyxRQUFRLGtCQUFrQixnQkFBZ0I7QUFDN0Qsd0NBQU8sMENBQW1CLEtBQUssQ0FBQyxFQUFFLFVBQVUsYUFBYTtBQUFBLEVBQzFELENBQUM7QUFDRixDQUFDIiwibmFtZXMiOltdLCJpZ25vcmVMaXN0IjpbXSwic291cmNlcyI6WyJnb2FsLWxvb3AudGVzdC50cyJdLCJzb3VyY2VzQ29udGVudCI6WyJpbXBvcnQgeyBkZXNjcmliZSwgZXhwZWN0LCBpdCB9IGZyb20gXCJ2aXRlc3RcIjtcbmltcG9ydCB7IGJ1aWxkUHJvbXB0Q29udGV4dCB9IGZyb20gXCIuLi8uLi9zcmMvZmVhdHVyZXMvZ29hbC1sb29wXCI7XG5pbXBvcnQgeyBnb2FsVGVtcGxhdGUgfSBmcm9tIFwiLi4vLi4vc3JjL2ZlYXR1cmVzL2dvYWxzXCI7XG5cbmRlc2NyaWJlKFwiYnVpbGRQcm9tcHRDb250ZXh0XCIsICgpID0+IHtcblx0Y29uc3QgZ29hbCA9IGdvYWxUZW1wbGF0ZShcIjIwMjYtMDktMjIgMTA6MDA6MDAgS1NUXCIpLnJlcGxhY2UoXCLsg4Htg5w6IGRyYWZ0XCIsIFwi7IOB7YOcOiBhY3RpdmVcIik7XG5cblx0aXQoXCJzdW1tYXJpemVzIGFuIGFjdGl2ZSBnb2FsIGZvciB0aGUgc3lzdGVtIHByb21wdFwiLCAoKSA9PiB7XG5cdFx0Y29uc3QgdGV4dCA9IGJ1aWxkUHJvbXB0Q29udGV4dChnb2FsKTtcblx0XHRleHBlY3QodGV4dCkudG9Db250YWluKFwiVklCRSBDT0RFIEdPQUwgU1RBVEVcIik7XG5cdFx0ZXhwZWN0KHRleHQpLnRvQ29udGFpbihcIi0g66qp7ZGcOiDsg4gg66qp7ZGcXCIpO1xuXHRcdGV4cGVjdCh0ZXh0KS50b0NvbnRhaW4oXCLsp4DquIgg64uo6rOEOiBkaXNjb3ZlcnlcIik7XG5cdFx0ZXhwZWN0KHRleHQpLnRvQ29udGFpbihcIi0gTm93OiDrqqntkZwg7ISk66qFIOyekeyEsVwiKTtcblx0XHRleHBlY3QodGV4dCkudG9Db250YWluKFwiLSBOZXh0OiDssqsg67KI7Ke4IOyekeydgCDsnpHsl4Ug7ISg7YOdXCIpO1xuXHRcdGV4cGVjdCh0ZXh0KS50b0NvbnRhaW4oXCLsmYTro4wg6riw7KSAIOynhO2WiTogMC8zXCIpO1xuXHRcdGV4cGVjdCh0ZXh0LnN0YXJ0c1dpdGgoXCJcXG5cXG49PT09XFxuXFxuVklCRSBDT0RFIEdPQUwgU1RBVEVcIikpLnRvQmUodHJ1ZSk7XG5cdH0pO1xuXG5cdGl0KFwicmV0dXJucyBub3RoaW5nIGZvciBkb25lIGdvYWxzIG9yIGVtcHR5IHRleHRcIiwgKCkgPT4ge1xuXHRcdGV4cGVjdChidWlsZFByb21wdENvbnRleHQoXCJcIikpLnRvQmUoXCJcIik7XG5cdFx0ZXhwZWN0KGJ1aWxkUHJvbXB0Q29udGV4dChnb2FsLnJlcGxhY2UoXCLsg4Htg5w6IGFjdGl2ZVwiLCBcIuyDge2DnDogZG9uZVwiKSkpLnRvQmUoXCJcIik7XG5cdH0pO1xuXG5cdGl0KFwidGVsbHMgdGhlIG1vZGVsIHdoZW4gTm93IGlzIGVtcHR5XCIsICgpID0+IHtcblx0XHRjb25zdCBlbXB0eSA9IGdvYWwucmVwbGFjZShcIi0gWyBdIOuqqe2RnCDshKTrqoUg7J6R7ISxXCIsIFwiLSBbeF0g66qp7ZGcIOyEpOuqhSDsnpHshLFcIik7XG5cdFx0ZXhwZWN0KGJ1aWxkUHJvbXB0Q29udGV4dChlbXB0eSkpLnRvQ29udGFpbihcIk5vdzogKOu5hOyWtCDsnojsnYxcIik7XG5cdH0pO1xufSk7XG4iXSwiZmlsZSI6Ii9ob21lL2hramFuZy8uY2FjaGUvYXV0by1pbXByb3ZlLXd0L3ZpYmUtY29kZS90ZXN0cy91bml0L2dvYWwtbG9vcC50ZXN0LnRzIn0=

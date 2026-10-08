@@ -1,0 +1,11 @@
+=== RUN   TestAttachmentUploadOrderQueryFailurePreservesImagesAndAllowsRetry
+    attachmentuploadorder_test.go:47: upload with an unreadable next order answered 201, want 500: {"success":true,"data":[{"id":3,"filename":"c.png","caption":"","placement":"AFTER","sortOrder":0,"sizeBytes":85,"width":10,"height":10,"createdAt":"2026-10-09T02:39:25.099067+09:00","available":true}],"traceId":"b624e47570d7d925"}
+    attachmentuploadorder_test.go:53: refused upload changed attachment IDs, orders or rows: before=[{1 a.png  AFTER 0 85 8 8 2026-10-09 02:39:25.074933 +0900 KST true} {2 b.png  AFTER 2147483647 85 9 9 2026-10-09 02:39:25.074933 +0900 KST true}] after=[{1 a.png  AFTER 0 85 8 8 2026-10-09 02:39:25.074933 +0900 KST true} {3 c.png  AFTER 0 85 10 10 2026-10-09 02:39:25.099067 +0900 KST true} {2 b.png  AFTER 2147483647 85 9 9 2026-10-09 02:39:25.074933 +0900 KST true}]
+    attachmentuploadorder_test.go:56: refused upload changed disk files: before=[5c47ca51f9463ca0eb3daecca7685315ee2ca38b60f455db44d1bcc0ae732f16.png a46a87d142c406867b6c791b2359de0f70d3dbe37fbcaccf43f2898613c456d1.png] after=[1e2479ab73e16b4c2cba302a2484b34528bba090fd928b4e19144405eb0fac8c.png 5c47ca51f9463ca0eb3daecca7685315ee2ca38b60f455db44d1bcc0ae732f16.png a46a87d142c406867b6c791b2359de0f70d3dbe37fbcaccf43f2898613c456d1.png]
+    attachmentuploadorder_test.go:83: retry must store c.png once at the group end: [{1 a.png  AFTER 0 85 8 8 2026-10-09 02:39:25.074933 +0900 KST true} {3 c.png  AFTER 0 85 10 10 2026-10-09 02:39:25.099067 +0900 KST true} {2 b.png  AFTER 7 85 9 9 2026-10-09 02:39:25.074933 +0900 KST true} {4 c.png  AFTER 8 85 10 10 2026-10-09 02:39:25.116293 +0900 KST true}]
+--- FAIL: TestAttachmentUploadOrderQueryFailurePreservesImagesAndAllowsRetry (1.01s)
+=== RUN   TestAttachmentUploadOrderCountsEachPlacementIndependently
+--- PASS: TestAttachmentUploadOrderCountsEachPlacementIndependently (0.43s)
+FAIL
+FAIL	github.com/hkjang/weekly/internal/app	1.484s
+FAIL

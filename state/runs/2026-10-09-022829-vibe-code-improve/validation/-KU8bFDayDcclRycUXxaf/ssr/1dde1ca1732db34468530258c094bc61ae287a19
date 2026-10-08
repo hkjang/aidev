@@ -1,0 +1,132 @@
+__vite_ssr_exportName__("waitForMcpOAuthCallback", () => { try { return waitForMcpOAuthCallback } catch {} });
+__vite_ssr_exportName__("expectMcpOAuthIssuer", () => { try { return expectMcpOAuthIssuer } catch {} });
+__vite_ssr_exportName__("isWaiting", () => { try { return isWaiting } catch {} });
+__vite_ssr_exportName__("pendingCount", () => { try { return pendingCount } catch {} });
+const __vite_ssr_import_0__ = await __vite_ssr_import__("node:http");
+
+const page = (title, body) => `<!doctype html><html lang="ko"><head><meta charset="utf-8"><title>${title}</title><meta name="color-scheme" content="light dark"><style>body{font:15px/1.6 system-ui,sans-serif;max-width:32rem;margin:15vh auto;padding:0 1rem;color:#1f2328;background:#fff;word-break:keep-all}h1{font-size:1.25rem}small{color:#59636e}@media (prefers-color-scheme:dark){body{color:#e6edf3;background:#1f1f1f}small{color:#9198a1}}</style></head><body><h1>${title}</h1><p>${body}</p></body></html>`;
+const SUCCESS = page("로그인되었습니다", "이 창을 닫고 VS Code로 돌아가세요. MCP 서버에 곧 연결됩니다.<br><small>Signed in. You can close this window and return to VS Code.</small>");
+const UNKNOWN = page("이 로그인 요청은 끝났습니다", "시간이 지났거나 이미 처리된 요청입니다. VS Code의 MCP 연결 뷰에서 다시 로그인하세요.<br><small>This sign-in request expired or was already used. Sign in again from VS Code.</small>");
+const escapeHtml = (s) => s.replace(/[&<>"']/g, (c) => `&#${c.charCodeAt(0)};`);
+class Router {
+  constructor(port, path) {
+    this.port = port;
+    this.path = path;
+  }
+  port;
+  path;
+  waiters = /* @__PURE__ */ new Map();
+  server;
+  closing = Promise.resolve();
+  get pending() {
+    return this.waiters.size;
+  }
+  has(state) {
+    return this.waiters.has(state);
+  }
+  expectIssuer(state, issuer, required) {
+    const w = this.waiters.get(state);
+    if (w) w.issuer = { issuer, required };
+    return !!w;
+  }
+  wait(state, timeoutMs) {
+    this.drop(state);
+    const promise = new Promise((resolve, reject) => {
+      const timer = setTimeout(() => this.settle(state, (w) => w.reject(new Error("Authentication timed out"))), timeoutMs);
+      this.waiters.set(state, { resolve, reject, timer });
+    });
+    void this.listen();
+    return { promise, cancel: () => this.drop(state) };
+  }
+  drop(state) {
+    const w = this.waiters.get(state);
+    if (!w) return;
+    clearTimeout(w.timer);
+    this.waiters.delete(state);
+    this.idle();
+  }
+  settle(state, fn) {
+    const w = this.waiters.get(state);
+    if (!w) return;
+    clearTimeout(w.timer);
+    this.waiters.delete(state);
+    fn(w);
+    this.idle();
+  }
+  idle() {
+    if (this.waiters.size > 0 || !this.server) return;
+    const server = this.server;
+    this.server = void 0;
+    this.closing = new Promise((done) => server.close(() => done()));
+    server.closeAllConnections?.();
+  }
+  async listen() {
+    if (this.server) return;
+    await this.closing;
+    if (this.server || this.waiters.size === 0) return;
+    const server = __vite_ssr_import_0__.createServer((req, res) => this.handle(req, res));
+    this.server = server;
+    server.on("error", (error) => {
+      if (this.server === server) this.server = void 0;
+      const message = error.code === "EADDRINUSE" ? `로그인 응답을 받을 포트 ${this.port}을(를) 다른 프로그램이 쓰고 있습니다. 그 프로그램을 닫고 다시 로그인하세요. (Port ${this.port} is already in use.)` : `로그인 응답을 받을 로컬 서버를 열지 못했습니다: ${error.message}`;
+      for (const state of [...this.waiters.keys()]) this.settle(state, (w) => w.reject(new Error(message)));
+    });
+    server.listen(this.port, "127.0.0.1");
+  }
+  handle(req, res) {
+    const send = (status, html) => {
+      res.writeHead(status, { "Content-Type": "text/html; charset=utf-8", "Cache-Control": "no-store", Connection: "close" });
+      res.end(html);
+    };
+    let url;
+    try {
+      url = new URL(req.url ?? "", `http://127.0.0.1:${this.port}`);
+    } catch {
+      return send(400, UNKNOWN);
+    };
+    if (url.pathname !== this.path) return send(404, page("Not Found", ""));
+    const state = url.searchParams.get("state") ?? "";
+    if (!state || !this.waiters.has(state)) return send(400, UNKNOWN);
+    const expected = this.waiters.get(state)?.issuer;
+    const iss = url.searchParams.get("iss");
+    if (expected && (iss !== null ? iss !== expected.issuer : expected.required)) {
+      send(400, page("로그인 응답을 거부했습니다", "로그인을 요청한 인증 서버가 아닌 다른 서버에서 온 응답입니다. VS Code에서 다시 로그인하세요."));
+      return this.settle(state, (w) => w.reject(new Error(`OAuth response from the wrong authorization server: expected iss ${expected.issuer}, got ${iss ?? "none"} (RFC 9207)`)));
+    };
+    const error = url.searchParams.get("error");
+    if (error) {
+      const detail = url.searchParams.get("error_description") || error;
+      send(400, page("로그인하지 못했습니다", `인증 서버가 거절했습니다: ${escapeHtml(detail)}`));
+      return this.settle(state, (w) => w.reject(new Error(`OAuth error: ${detail}`)));
+    };
+    const code = url.searchParams.get("code");
+    if (!code) {
+      send(400, page("로그인하지 못했습니다", "인증 코드가 없는 응답입니다."));
+      return this.settle(state, (w) => w.reject(new Error("Missing code parameter")));
+    };
+    send(200, SUCCESS);
+    this.settle(state, (w) => w.resolve({ code, state }));
+  }
+}
+const routers = /* @__PURE__ */ new Map();
+function router(port, path) {
+  const key = `${port}${path}`;
+  let r = routers.get(key);
+  if (!r) routers.set(key, r = new Router(port, path));
+  return r;
+}
+function waitForMcpOAuthCallback(state, opts) {
+  return router(opts.port, opts.path).wait(state, opts.timeoutMs);
+};
+function expectMcpOAuthIssuer(state, port, path, issuer, required) {
+  return routers.get(`${port}${path}`)?.expectIssuer(state, issuer, required) ?? false;
+};
+function isWaiting(state, port, path) {
+  return routers.get(`${port}${path}`)?.has(state) ?? false;
+};
+function pendingCount(port, path) {
+  return routers.get(`${port}${path}`)?.pending ?? 0;
+}
+
+//# sourceMappingSource=vite-node
+//# sourceMappingURL=data:application/json;charset=utf-8;base64,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TUFBYyxNQUFjLFFBQWdCLFVBQTRCO0FBQzNILFNBQU8sUUFBUSxJQUFJLEdBQUcsSUFBSSxHQUFHLElBQUksRUFBRSxHQUFHLGFBQWEsT0FBTyxRQUFRLFFBQVEsS0FBSztBQUNoRjtBQUdPLFNBQVMsVUFBVSxPQUFlLE1BQWMsTUFBdUI7QUFDN0UsU0FBTyxRQUFRLElBQUksR0FBRyxJQUFJLEdBQUcsSUFBSSxFQUFFLEdBQUcsSUFBSSxLQUFLLEtBQUs7QUFDckQ7QUFHTyxTQUFTLGFBQWEsTUFBYyxNQUFzQjtBQUNoRSxTQUFPLFFBQVEsSUFBSSxHQUFHLElBQUksR0FBRyxJQUFJLEVBQUUsR0FBRyxXQUFXO0FBQ2xEIiwibmFtZXMiOltdLCJpZ25vcmVMaXN0IjpbXSwic291cmNlcyI6WyJjYWxsYmFjay50cyJdLCJzb3VyY2VzQ29udGVudCI6WyJpbXBvcnQgKiBhcyBodHRwIGZyb20gXCJub2RlOmh0dHBcIjtcblxuLy8gT25lIGxvb3BiYWNrIGxpc3RlbmVyIGZvciBldmVyeSBNQ1AgT0F1dGggc2lnbi1pbiBpbiBmbGlnaHQuXG4vL1xuLy8gVGhlIGNvcmUgZ2l2ZXMgZWFjaCBzZXJ2ZXIgaXRzIG93biBjYWxsYmFjayBzZXJ2ZXIgb24gdGhlIHNhbWUgZml4ZWQgcG9ydCAoMTI3LjAuMC4xOjE0NTYsIHRoZVxuLy8gcmVkaXJlY3QgVVJJIHJlZ2lzdGVyZWQgd2l0aCB0aGUgYXV0aG9yaXphdGlvbiBzZXJ2ZXIpLCBzbyBhIHNlY29uZCBzaWduLWluIHdoaWxlIG9uZSBpcyBwZW5kaW5nXG4vLyBmYWlsZWQgd2l0aCBcInBvcnQgYWxyZWFkeSBpbiB1c2VcIiDigJQgdHdvIE9BdXRoIHNlcnZlcnMgYXQgc3RhcnR1cCB3ZXJlIGVub3VnaC4gSGVyZSBhbGwgd2FpdHMgc2hhcmVcbi8vIG9uZSBsaXN0ZW5lciBhbmQgdGhlIGF1dGhvcml6YXRpb24gcmVzcG9uc2UgaXMgcm91dGVkIGJ5IGl0cyBgc3RhdGVgLCB3aGljaCBpcyByYW5kb20gcGVyIHJlcXVlc3Rcbi8vIGFuZCBpcyBhbHNvIHdoYXQga2VlcHMgYSBmb3JnZWQgY2FsbGJhY2sgZnJvbSBjb21wbGV0aW5nIHNvbWVvbmUgZWxzZSdzIHNpZ24taW4uXG4vLyBUaGUgbGlzdGVuZXIgZXhpc3RzIG9ubHkgd2hpbGUgYSBzaWduLWluIGlzIHdhaXRpbmcuXG4vL1xuLy8gTWl4LXVwIGRlZmVuY2UgKFJGQyA5MjA3KTogd2l0aCBzZXZlcmFsIGF1dGhvcml6YXRpb24gc2VydmVycyBhbnN3ZXJpbmcgb24gb25lIGxpc3RlbmVyLCBhIHJlc3BvbnNlXG4vLyBtdXN0IGFsc28gY29tZSBmcm9tIHRoZSBzZXJ2ZXIgdGhlIHJlcXVlc3Qgd2VudCB0by4gV2hlbiB0aGUgc2lnbi1pbiBwcm9tcHQga25vd3MgdGhlIGV4cGVjdGVkXG4vLyBpc3N1ZXIgKGZyb20gdGhlIGNvcmUncyBkaXNjb3Zlcnkgc3RhdGUpLCBhIHJlc3BvbnNlIHdob3NlIGBpc3NgIGRpZmZlcnMgaXMgcmVmdXNlZCwgYW5kIHNvIGlzIG9uZVxuLy8gd2l0aG91dCBgaXNzYCBmcm9tIGEgc2VydmVyIHRoYXQgc2FpZCBpdCBhbHdheXMgc2VuZHMgaXQuXG5cbmV4cG9ydCBpbnRlcmZhY2UgQ2FsbGJhY2tSZXN1bHQge1xuXHRjb2RlOiBzdHJpbmc7XG5cdHN0YXRlOiBzdHJpbmc7XG59XG5cbmV4cG9ydCBpbnRlcmZhY2UgQ2FsbGJhY2tXYWl0IHtcblx0cHJvbWlzZTogUHJvbWlzZTxDYWxsYmFja1Jlc3VsdD47XG5cdC8qKiBEcm9wIHRoZSB3YWl0IHdpdGhvdXQgc2V0dGxpbmcgaXQgKHRoZSBjb3JlIHN1cGVyc2VkZWQgb3IgY2xvc2VkIHRoaXMgc2lnbi1pbikuICovXG5cdGNhbmNlbCgpOiB2b2lkO1xufVxuXG5leHBvcnQgaW50ZXJmYWNlIENhbGxiYWNrT3B0aW9ucyB7XG5cdHBvcnQ6IG51bWJlcjtcblx0cGF0aDogc3RyaW5nO1xuXHR0aW1lb3V0TXM6IG51bWJlcjtcbn1cblxuaW50ZXJmYWNlIFdhaXRlciB7XG5cdHJlc29sdmUodmFsdWU6IENhbGxiYWNrUmVzdWx0KTogdm9pZDtcblx0cmVqZWN0KGVycm9yOiBFcnJvcik6IHZvaWQ7XG5cdHRpbWVyOiBSZXR1cm5UeXBlPHR5cGVvZiBzZXRUaW1lb3V0Pjtcblx0aXNzdWVyPzogeyBpc3N1ZXI6IHN0cmluZzsgcmVxdWlyZWQ6IGJvb2xlYW4gfTtcbn1cblxuY29uc3QgcGFnZSA9ICh0aXRsZTogc3RyaW5nLCBib2R5OiBzdHJpbmcpID0+XG5cdGA8IWRvY3R5cGUgaHRtbD48aHRtbCBsYW5nPVwia29cIj48aGVhZD48bWV0YSBjaGFyc2V0PVwidXRmLThcIj48dGl0bGU+JHt0aXRsZX08L3RpdGxlPjxtZXRhIG5hbWU9XCJjb2xvci1zY2hlbWVcIiBjb250ZW50PVwibGlnaHQgZGFya1wiPjxzdHlsZT5ib2R5e2ZvbnQ6MTVweC8xLjYgc3lzdGVtLXVpLHNhbnMtc2VyaWY7bWF4LXdpZHRoOjMycmVtO21hcmdpbjoxNXZoIGF1dG87cGFkZGluZzowIDFyZW07Y29sb3I6IzFmMjMyODtiYWNrZ3JvdW5kOiNmZmY7d29yZC1icmVhazprZWVwLWFsbH1oMXtmb250LXNpemU6MS4yNXJlbX1zbWFsbHtjb2xvcjojNTk2MzZlfUBtZWRpYSAocHJlZmVycy1jb2xvci1zY2hlbWU6ZGFyayl7Ym9keXtjb2xvcjojZTZlZGYzO2JhY2tncm91bmQ6IzFmMWYxZn1zbWFsbHtjb2xvcjojOTE5OGExfX08L3N0eWxlPjwvaGVhZD48Ym9keT48aDE+JHt0aXRsZX08L2gxPjxwPiR7Ym9keX08L3A+PC9ib2R5PjwvaHRtbD5gO1xuXG5jb25zdCBTVUNDRVNTID0gcGFnZShcIuuhnOq3uOyduOuQmOyXiOyKteuLiOuLpFwiLCBcIuydtCDssL3snYQg64ur6rOgIFZTIENvZGXroZwg64+M7JWE6rCA7IS47JqULiBNQ1Ag7ISc67KE7JeQIOqzpyDsl7DqsrDrkKnri4jri6QuPGJyPjxzbWFsbD5TaWduZWQgaW4uIFlvdSBjYW4gY2xvc2UgdGhpcyB3aW5kb3cgYW5kIHJldHVybiB0byBWUyBDb2RlLjwvc21hbGw+XCIpO1xuY29uc3QgVU5LTk9XTiA9IHBhZ2UoXCLsnbQg66Gc6re47J24IOyalOyyreydgCDrgZ3rgqzsirXri4jri6RcIiwgXCLsi5zqsITsnbQg7KeA64Ks6rGw64KYIOydtOuvuCDsspjrpqzrkJwg7JqU7LKt7J6F64uI64ukLiBWUyBDb2Rl7J2YIE1DUCDsl7DqsrAg67ew7JeQ7IScIOuLpOyLnCDroZzqt7jsnbjtlZjshLjsmpQuPGJyPjxzbWFsbD5UaGlzIHNpZ24taW4gcmVxdWVzdCBleHBpcmVkIG9yIHdhcyBhbHJlYWR5IHVzZWQuIFNpZ24gaW4gYWdhaW4gZnJvbSBWUyBDb2RlLjwvc21hbGw+XCIpO1xuY29uc3QgZXNjYXBlSHRtbCA9IChzOiBzdHJpbmcpID0+IHMucmVwbGFjZSgvWyY8PlwiJ10vZywgKGMpID0+IGAmIyR7Yy5jaGFyQ29kZUF0KDApfTtgKTtcblxuY2xhc3MgUm91dGVyIHtcblx0cHJpdmF0ZSByZWFkb25seSB3YWl0ZXJzID0gbmV3IE1hcDxzdHJpbmcsIFdhaXRlcj4oKTtcblx0cHJpdmF0ZSBzZXJ2ZXI6IGh0dHAuU2VydmVyIHwgdW5kZWZpbmVkO1xuXHRwcml2YXRlIGNsb3Npbmc6IFByb21pc2U8dm9pZD4gPSBQcm9taXNlLnJlc29sdmUoKTtcblxuXHRjb25zdHJ1Y3Rvcihcblx0XHRwcml2YXRlIHJlYWRvbmx5IHBvcnQ6IG51bWJlcixcblx0XHRwcml2YXRlIHJlYWRvbmx5IHBhdGg6IHN0cmluZyxcblx0KSB7fVxuXG5cdGdldCBwZW5kaW5nKCk6IG51bWJlciB7XG5cdFx0cmV0dXJuIHRoaXMud2FpdGVycy5zaXplO1xuXHR9XG5cblx0aGFzKHN0YXRlOiBzdHJpbmcpOiBib29sZWFuIHtcblx0XHRyZXR1cm4gdGhpcy53YWl0ZXJzLmhhcyhzdGF0ZSk7XG5cdH1cblxuXHRleHBlY3RJc3N1ZXIoc3RhdGU6IHN0cmluZywgaXNzdWVyOiBzdHJpbmcsIHJlcXVpcmVkOiBib29sZWFuKTogYm9vbGVhbiB7XG5cdFx0Y29uc3QgdyA9IHRoaXMud2FpdGVycy5nZXQoc3RhdGUpO1xuXHRcdGlmICh3KSB3Lmlzc3VlciA9IHsgaXNzdWVyLCByZXF1aXJlZCB9O1xuXHRcdHJldHVybiAhIXc7XG5cdH1cblxuXHR3YWl0KHN0YXRlOiBzdHJpbmcsIHRpbWVvdXRNczogbnVtYmVyKTogQ2FsbGJhY2tXYWl0IHtcblx0XHR0aGlzLmRyb3Aoc3RhdGUpO1xuXHRcdGNvbnN0IHByb21pc2UgPSBuZXcgUHJvbWlzZTxDYWxsYmFja1Jlc3VsdD4oKHJlc29sdmUsIHJlamVjdCkgPT4ge1xuXHRcdFx0Y29uc3QgdGltZXIgPSBzZXRUaW1lb3V0KCgpID0+IHRoaXMuc2V0dGxlKHN0YXRlLCAodykgPT4gdy5yZWplY3QobmV3IEVycm9yKFwiQXV0aGVudGljYXRpb24gdGltZWQgb3V0XCIpKSksIHRpbWVvdXRNcyk7XG5cdFx0XHR0aGlzLndhaXRlcnMuc2V0KHN0YXRlLCB7IHJlc29sdmUsIHJlamVjdCwgdGltZXIgfSk7XG5cdFx0fSk7XG5cdFx0dm9pZCB0aGlzLmxpc3RlbigpO1xuXHRcdHJldHVybiB7IHByb21pc2UsIGNhbmNlbDogKCkgPT4gdGhpcy5kcm9wKHN0YXRlKSB9O1xuXHR9XG5cblx0cHJpdmF0ZSBkcm9wKHN0YXRlOiBzdHJpbmcpOiB2b2lkIHtcblx0XHRjb25zdCB3ID0gdGhpcy53YWl0ZXJzLmdldChzdGF0ZSk7XG5cdFx0aWYgKCF3KSByZXR1cm47XG5cdFx0Y2xlYXJUaW1lb3V0KHcudGltZXIpO1xuXHRcdHRoaXMud2FpdGVycy5kZWxldGUoc3RhdGUpO1xuXHRcdHRoaXMuaWRsZSgpO1xuXHR9XG5cblx0cHJpdmF0ZSBzZXR0bGUoc3RhdGU6IHN0cmluZywgZm46ICh3OiBXYWl0ZXIpID0+IHZvaWQpOiB2b2lkIHtcblx0XHRjb25zdCB3ID0gdGhpcy53YWl0ZXJzLmdldChzdGF0ZSk7XG5cdFx0aWYgKCF3KSByZXR1cm47XG5cdFx0Y2xlYXJUaW1lb3V0KHcudGltZXIpO1xuXHRcdHRoaXMud2FpdGVycy5kZWxldGUoc3RhdGUpO1xuXHRcdGZuKHcpO1xuXHRcdHRoaXMuaWRsZSgpO1xuXHR9XG5cblx0cHJpdmF0ZSBpZGxlKCk6IHZvaWQge1xuXHRcdGlmICh0aGlzLndhaXRlcnMuc2l6ZSA+IDAgfHwgIXRoaXMuc2VydmVyKSByZXR1cm47XG5cdFx0Y29uc3Qgc2VydmVyID0gdGhpcy5zZXJ2ZXI7XG5cdFx0dGhpcy5zZXJ2ZXIgPSB1bmRlZmluZWQ7XG5cdFx0dGhpcy5jbG9zaW5nID0gbmV3IFByb21pc2UoKGRvbmUpID0+IHNlcnZlci5jbG9zZSgoKSA9PiBkb25lKCkpKTtcblx0XHRzZXJ2ZXIuY2xvc2VBbGxDb25uZWN0aW9ucz8uKCk7XG5cdH1cblxuXHRwcml2YXRlIGFzeW5jIGxpc3RlbigpOiBQcm9taXNlPHZvaWQ+IHtcblx0XHRpZiAodGhpcy5zZXJ2ZXIpIHJldHVybjtcblx0XHRhd2FpdCB0aGlzLmNsb3Npbmc7XG5cdFx0aWYgKHRoaXMuc2VydmVyIHx8IHRoaXMud2FpdGVycy5zaXplID09PSAwKSByZXR1cm47XG5cdFx0Y29uc3Qgc2VydmVyID0gaHR0cC5jcmVhdGVTZXJ2ZXIoKHJlcSwgcmVzKSA9PiB0aGlzLmhhbmRsZShyZXEsIHJlcykpO1xuXHRcdHRoaXMuc2VydmVyID0gc2VydmVyO1xuXHRcdHNlcnZlci5vbihcImVycm9yXCIsIChlcnJvcjogTm9kZUpTLkVycm5vRXhjZXB0aW9uKSA9PiB7XG5cdFx0XHRpZiAodGhpcy5zZXJ2ZXIgPT09IHNlcnZlcikgdGhpcy5zZXJ2ZXIgPSB1bmRlZmluZWQ7XG5cdFx0XHRjb25zdCBtZXNzYWdlID1cblx0XHRcdFx0ZXJyb3IuY29kZSA9PT0gXCJFQUREUklOVVNFXCJcblx0XHRcdFx0XHQ/IGDroZzqt7jsnbgg7J2R64u17J2EIOuwm+ydhCDtj6ztirggJHt0aGlzLnBvcnR97J2EKOulvCkg64uk66W4IO2UhOuhnOq3uOueqOydtCDsk7Dqs6Ag7J6I7Iq164uI64ukLiDqt7gg7ZSE66Gc6re4656o7J2EIOuLq+qzoCDri6Tsi5wg66Gc6re47J247ZWY7IS47JqULiAoUG9ydCAke3RoaXMucG9ydH0gaXMgYWxyZWFkeSBpbiB1c2UuKWBcblx0XHRcdFx0XHQ6IGDroZzqt7jsnbgg7J2R64u17J2EIOuwm+ydhCDroZzsu6wg7ISc67KE66W8IOyXtOyngCDrqrvtlojsirXri4jri6Q6ICR7ZXJyb3IubWVzc2FnZX1gO1xuXHRcdFx0Zm9yIChjb25zdCBzdGF0ZSBvZiBbLi4udGhpcy53YWl0ZXJzLmtleXMoKV0pIHRoaXMuc2V0dGxlKHN0YXRlLCAodykgPT4gdy5yZWplY3QobmV3IEVycm9yKG1lc3NhZ2UpKSk7XG5cdFx0fSk7XG5cdFx0c2VydmVyLmxpc3Rlbih0aGlzLnBvcnQsIFwiMTI3LjAuMC4xXCIpO1xuXHR9XG5cblx0cHJpdmF0ZSBoYW5kbGUocmVxOiBodHRwLkluY29taW5nTWVzc2FnZSwgcmVzOiBodHRwLlNlcnZlclJlc3BvbnNlKTogdm9pZCB7XG5cdFx0Y29uc3Qgc2VuZCA9IChzdGF0dXM6IG51bWJlciwgaHRtbDogc3RyaW5nKSA9PiB7XG5cdFx0XHRyZXMud3JpdGVIZWFkKHN0YXR1cywgeyBcIkNvbnRlbnQtVHlwZVwiOiBcInRleHQvaHRtbDsgY2hhcnNldD11dGYtOFwiLCBcIkNhY2hlLUNvbnRyb2xcIjogXCJuby1zdG9yZVwiLCBDb25uZWN0aW9uOiBcImNsb3NlXCIgfSk7XG5cdFx0XHRyZXMuZW5kKGh0bWwpO1xuXHRcdH07XG5cdFx0bGV0IHVybDogVVJMO1xuXHRcdHRyeSB7XG5cdFx0XHR1cmwgPSBuZXcgVVJMKHJlcS51cmwgPz8gXCJcIiwgYGh0dHA6Ly8xMjcuMC4wLjE6JHt0aGlzLnBvcnR9YCk7XG5cdFx0fSBjYXRjaCB7XG5cdFx0XHRyZXR1cm4gc2VuZCg0MDAsIFVOS05PV04pO1xuXHRcdH1cblx0XHRpZiAodXJsLnBhdGhuYW1lICE9PSB0aGlzLnBhdGgpIHJldHVybiBzZW5kKDQwNCwgcGFnZShcIk5vdCBGb3VuZFwiLCBcIlwiKSk7XG5cdFx0Y29uc3Qgc3RhdGUgPSB1cmwuc2VhcmNoUGFyYW1zLmdldChcInN0YXRlXCIpID8/IFwiXCI7XG5cdFx0Ly8gT25seSBhIHN0YXRlIHdlIGlzc3VlZCBhbmQgYXJlIHN0aWxsIHdhaXRpbmcgb24gaXMgYW5zd2VyZWQ7IGFueXRoaW5nIGVsc2UgdG91Y2hlcyBubyBzaWduLWluLlxuXHRcdGlmICghc3RhdGUgfHwgIXRoaXMud2FpdGVycy5oYXMoc3RhdGUpKSByZXR1cm4gc2VuZCg0MDAsIFVOS05PV04pO1xuXHRcdGNvbnN0IGV4cGVjdGVkID0gdGhpcy53YWl0ZXJzLmdldChzdGF0ZSk/Lmlzc3Vlcjtcblx0XHRjb25zdCBpc3MgPSB1cmwuc2VhcmNoUGFyYW1zLmdldChcImlzc1wiKTtcblx0XHRpZiAoZXhwZWN0ZWQgJiYgKGlzcyAhPT0gbnVsbCA/IGlzcyAhPT0gZXhwZWN0ZWQuaXNzdWVyIDogZXhwZWN0ZWQucmVxdWlyZWQpKSB7XG5cdFx0XHRzZW5kKDQwMCwgcGFnZShcIuuhnOq3uOyduCDsnZHri7XsnYQg6rGw67aA7ZaI7Iq164uI64ukXCIsIFwi66Gc6re47J247J2EIOyalOyyre2VnCDsnbjspp0g7ISc67KE6rCAIOyVhOuLjCDri6Trpbgg7ISc67KE7JeQ7IScIOyYqCDsnZHri7XsnoXri4jri6QuIFZTIENvZGXsl5DshJwg64uk7IucIOuhnOq3uOyduO2VmOyEuOyalC5cIikpO1xuXHRcdFx0cmV0dXJuIHRoaXMuc2V0dGxlKHN0YXRlLCAodykgPT4gdy5yZWplY3QobmV3IEVycm9yKGBPQXV0aCByZXNwb25zZSBmcm9tIHRoZSB3cm9uZyBhdXRob3JpemF0aW9uIHNlcnZlcjogZXhwZWN0ZWQgaXNzICR7ZXhwZWN0ZWQuaXNzdWVyfSwgZ290ICR7aXNzID8/IFwibm9uZVwifSAoUkZDIDkyMDcpYCkpKTtcblx0XHR9XG5cdFx0Y29uc3QgZXJyb3IgPSB1cmwuc2VhcmNoUGFyYW1zLmdldChcImVycm9yXCIpO1xuXHRcdGlmIChlcnJvcikge1xuXHRcdFx0Y29uc3QgZGV0YWlsID0gdXJsLnNlYXJjaFBhcmFtcy5nZXQoXCJlcnJvcl9kZXNjcmlwdGlvblwiKSB8fCBlcnJvcjtcblx0XHRcdHNlbmQoNDAwLCBwYWdlKFwi66Gc6re47J247ZWY7KeAIOuqu+2WiOyKteuLiOuLpFwiLCBg7J247KadIOyEnOuyhOqwgCDqsbDsoIjtlojsirXri4jri6Q6ICR7ZXNjYXBlSHRtbChkZXRhaWwpfWApKTtcblx0XHRcdHJldHVybiB0aGlzLnNldHRsZShzdGF0ZSwgKHcpID0+IHcucmVqZWN0KG5ldyBFcnJvcihgT0F1dGggZXJyb3I6ICR7ZGV0YWlsfWApKSk7XG5cdFx0fVxuXHRcdGNvbnN0IGNvZGUgPSB1cmwuc2VhcmNoUGFyYW1zLmdldChcImNvZGVcIik7XG5cdFx0aWYgKCFjb2RlKSB7XG5cdFx0XHRzZW5kKDQwMCwgcGFnZShcIuuhnOq3uOyduO2VmOyngCDrqrvtlojsirXri4jri6RcIiwgXCLsnbjspp0g7L2U65Oc6rCAIOyXhuuKlCDsnZHri7XsnoXri4jri6QuXCIpKTtcblx0XHRcdHJldHVybiB0aGlzLnNldHRsZShzdGF0ZSwgKHcpID0+IHcucmVqZWN0KG5ldyBFcnJvcihcIk1pc3NpbmcgY29kZSBwYXJhbWV0ZXJcIikpKTtcblx0XHR9XG5cdFx0c2VuZCgyMDAsIFNVQ0NFU1MpO1xuXHRcdHRoaXMuc2V0dGxlKHN0YXRlLCAodykgPT4gdy5yZXNvbHZlKHsgY29kZSwgc3RhdGUgfSkpO1xuXHR9XG59XG5cbmNvbnN0IHJvdXRlcnMgPSBuZXcgTWFwPHN0cmluZywgUm91dGVyPigpO1xuXG5mdW5jdGlvbiByb3V0ZXIocG9ydDogbnVtYmVyLCBwYXRoOiBzdHJpbmcpOiBSb3V0ZXIge1xuXHRjb25zdCBrZXkgPSBgJHtwb3J0fSR7cGF0aH1gO1xuXHRsZXQgciA9IHJvdXRlcnMuZ2V0KGtleSk7XG5cdGlmICghcikgcm91dGVycy5zZXQoa2V5LCAociA9IG5ldyBSb3V0ZXIocG9ydCwgcGF0aCkpKTtcblx0cmV0dXJuIHI7XG59XG5cbi8qKiBDb3JlIGhvb2s6IHdhaXQgZm9yIHRoZSBhdXRob3JpemF0aW9uIHJlc3BvbnNlIGNhcnJ5aW5nIGBzdGF0ZWAgb24gdGhlIHNoYXJlZCBsb29wYmFjayBsaXN0ZW5lci4gKi9cbmV4cG9ydCBmdW5jdGlvbiB3YWl0Rm9yTWNwT0F1dGhDYWxsYmFjayhzdGF0ZTogc3RyaW5nLCBvcHRzOiBDYWxsYmFja09wdGlvbnMpOiBDYWxsYmFja1dhaXQge1xuXHRyZXR1cm4gcm91dGVyKG9wdHMucG9ydCwgb3B0cy5wYXRoKS53YWl0KHN0YXRlLCBvcHRzLnRpbWVvdXRNcyk7XG59XG5cbi8qKlxuICogQmluZCBhIHdhaXRpbmcgc2lnbi1pbiB0byB0aGUgYXV0aG9yaXphdGlvbiBzZXJ2ZXIgaXQgd2FzIHNlbnQgdG8gKFJGQyA5MjA3KS4gYHJlcXVpcmVkYCB3aGVuIHRoZVxuICogc2VydmVyIGFkdmVydGlzZWQgYGF1dGhvcml6YXRpb25fcmVzcG9uc2VfaXNzX3BhcmFtZXRlcl9zdXBwb3J0ZWRgLiBGYWxzZSBpZiBub3RoaW5nIGlzIHdhaXRpbmcuXG4gKi9cbmV4cG9ydCBmdW5jdGlvbiBleHBlY3RNY3BPQXV0aElzc3VlcihzdGF0ZTogc3RyaW5nLCBwb3J0OiBudW1iZXIsIHBhdGg6IHN0cmluZywgaXNzdWVyOiBzdHJpbmcsIHJlcXVpcmVkOiBib29sZWFuKTogYm9vbGVhbiB7XG5cdHJldHVybiByb3V0ZXJzLmdldChgJHtwb3J0fSR7cGF0aH1gKT8uZXhwZWN0SXNzdWVyKHN0YXRlLCBpc3N1ZXIsIHJlcXVpcmVkKSA/PyBmYWxzZTtcbn1cblxuLyoqIFdoZXRoZXIgYSBzaWduLWluIHdpdGggdGhpcyBgc3RhdGVgIGlzIHN0aWxsIHdhaXRpbmcgKGl0cyBicm93c2VyIFVSTCB3b3VsZCBzdGlsbCBjb21wbGV0ZSkuICovXG5leHBvcnQgZnVuY3Rpb24gaXNXYWl0aW5nKHN0YXRlOiBzdHJpbmcsIHBvcnQ6IG51bWJlciwgcGF0aDogc3RyaW5nKTogYm9vbGVhbiB7XG5cdHJldHVybiByb3V0ZXJzLmdldChgJHtwb3J0fSR7cGF0aH1gKT8uaGFzKHN0YXRlKSA/PyBmYWxzZTtcbn1cblxuLyoqIFNpZ24taW5zIGN1cnJlbnRseSB3YWl0aW5nIG9uIHRoaXMgbGlzdGVuZXIgKHRlc3RzIGFuZCBkaWFnbm9zdGljcykuICovXG5leHBvcnQgZnVuY3Rpb24gcGVuZGluZ0NvdW50KHBvcnQ6IG51bWJlciwgcGF0aDogc3RyaW5nKTogbnVtYmVyIHtcblx0cmV0dXJuIHJvdXRlcnMuZ2V0KGAke3BvcnR9JHtwYXRofWApPy5wZW5kaW5nID8/IDA7XG59XG4iXSwiZmlsZSI6Ii9zcmMvZmVhdHVyZXMvbWNwL2NhbGxiYWNrLnRzIn0=

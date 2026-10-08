@@ -1,0 +1,155 @@
+[
+  {
+    "title": "adminUsers 의 역할 필터가 알 수 없는 값을 받으면 필터를 조용히 버린다",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "admin.go:adminUsers의 validRole 실패 무시 및 roles가 비면 WHERE 생략을 재확인. 이번 차선. HTTP 미재현. role 검증만 좁히고 reviewer 상한은 신규 별도 항목으로 분리.",
+    "updated": "2026-10-09"
+  },
+  {
+    "title": "uploadAttachments 의 nextOrder 질의 오류가 순서를 0 부터 다시 세게 한다",
+    "value": 3,
+    "risk": 1,
+    "size": "S",
+    "status": "done",
+    "note": "cdc51f0에서 nextOrder Scan 오류를 즉시 HTTP 500 QUERY_FAILED로 반환. 공개 PATCH의 integer 상한으로 정식 시험 수정 전 실패→후 통과→원본 복원 시 재실패 확인. 실제 PostgreSQL/newTestServer/Handler로 목록 ID·순서·건수, 디스크 파일 목록, 기존 이미지 GET 바이트 보존과 PATCH 복구 후 단일 저장·그룹 끝 배치 및 BEFORE/AFTER 독립 max+1 검증. 전체 Go·vet·build·계약·가드 통과. PATCH 상한·재번호·동시성은 변경하지 않음.",
+    "updated": "2026-10-09"
+  },
+  {
+    "title": "동시 첨부 업로드가 보고서당 개수 상한을 넘지 않게 한다",
+    "value": 3,
+    "risk": 3,
+    "size": "M",
+    "status": "pending",
+    "note": "attachments.go:214 count/218 상한이 tx.Begin보다 앞인 구조 유지. 동시 초과 HTTP 재현은 여전히 미실행. 부모 잠금 도입은 다른 쓰기 경로 영향 평가 필요.",
+    "updated": "2026-10-09"
+  },
+  {
+    "title": "본문이 잘린 이미지 첨부를 거절한다 (헤더만 검사하는 DecodeConfig)",
+    "value": 2,
+    "risk": 3,
+    "size": "M",
+    "status": "pending",
+    "note": "attachments.go:243 DecodeConfig만 호출함을 재확인. 픽셀 메모리 제한 없는 전체 Decode 도입은 피할 것. 기본 10MB×20이며 attachmentLimits는 설정 상한 50MB×100까지 허용. 잘린 이미지 업로드/출력 재현 미실행.",
+    "updated": "2026-10-09"
+  },
+  {
+    "title": "deleteAttachment 의 참조 수 질의 오류 시 아직 쓰는 파일을 보존한다",
+    "value": 2,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "attachments.go:deleteAttachment의 DELETE 후 count Scan 오류 무시와 remaining==0이면 os.Remove 유지. 실제 DELETE 성공 뒤 SELECT만 실패시키는 훅은 미확인. 단순 table rename은 DELETE도 깨므로 결정적 재현부터 필요.",
+    "updated": "2026-10-09"
+  },
+  {
+    "title": "관리자 카드에서 실패한 발송을 다시 시도로 큐에 되돌리기",
+    "value": 3,
+    "risk": 3,
+    "size": "M",
+    "status": "pending",
+    "note": "mail.go의 MaxAttempts, retryDelay, next_attempt_at 및 3개 큐 UNION 재확인. 재큐잉 쓰기 계약·중복 발송 방지·타 큐 worker는 이번 미확인. 45분 과제로 선택하지 않음.",
+    "updated": "2026-10-09"
+  },
+  {
+    "title": "README·docs/MCP.md·AdminPage 의 MCP 읽기 전용 서술 정정",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "README/MCP 도입의 읽기 전용 문구와 mcpwrite.go:mcpMayWrite(session 또는 mcp:write)가 불일치. AdminPage는 Keycloak 토큰 설명이므로 토큰별 계약을 확인하고 일괄 치환 금지. CHECKS 시간 모순과 문서 회차로 유지.",
+    "updated": "2026-10-09"
+  },
+  {
+    "title": "CHECKS.md authz-check 실행 시간과 병행 금지 정정",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "CHECKS 표 수 분/본문 수십 분과 authz-check.py 머리말 forty minutes or more·제자리 변경 주의를 재확인. docs 정정 과제와 함께 진행 가능. 실제 소요 시간은 이번 측정 안 함.",
+    "updated": "2026-10-09"
+  },
+  {
+    "title": "AdminPage·DashboardPage 를 렌더하는 프런트 시험 보강",
+    "value": 3,
+    "risk": 2,
+    "size": "M",
+    "status": "pending",
+    "note": "frontend/src/*test*의 두 컴포넌트 참조 검색 결과 없음. SettingsTab countsUnread/remainingUnread 분기가 있으나 기존 시험은 react-dom/server 중심이며 DOM 시험 의존성은 package.json에 없음. AdminPage 임베딩 카드 한 흐름으로 좁혀야 함; Dashboard 전체 확장 금지.",
+    "updated": "2026-10-09"
+  },
+  {
+    "title": "mutation-check 가 budget 을 지키고 진행 상태를 출력하게 한다",
+    "value": 2,
+    "risk": 2,
+    "size": "M",
+    "status": "pending",
+    "note": "scripts/mutation-check.py:run_test subprocess.run에 timeout이 없고 루프 사이만 budget 검사하는 구조 유지. 실제 프로세스 종료/원본 복구 시험 필요. 제자리 변경 도구이므로 이번 실행 안 함.",
+    "updated": "2026-10-09"
+  },
+  {
+    "title": "Confluence 수동 요청의 queued=false 를 화면 알림에 반영",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "AdminPage.tsx:152 sync는 post 반환값 무시, forceConfluenceSync:362 RUNNING이면 queued:false 유지. 작은 개선이나 화면 행동 시험 기반이 없어 선택 후보보다 비용 불확실.",
+    "updated": "2026-10-09"
+  },
+  {
+    "title": "집계 질의 실패를 사실처럼 답하는 나머지 `_ =` 자리를 한 번에 훑는다",
+    "value": 2,
+    "risk": 2,
+    "size": "M",
+    "status": "pending",
+    "note": "이번 회차 uploadAttachments nextOrder Scan 오류 처리는 완료. deleteAttachment의 참조 count 오류 무시는 남아 있고 semantic 집계는 이전 회차에서 수정됨. 저장소 전체 개수는 미조사. 새 무시만 막는 계약 가드로 한정하며 정적 검사를 행동 시험의 대체로 취급하지 않을 것.",
+    "updated": "2026-10-09"
+  },
+  {
+    "title": "검토 책임자 선택기가 500명 이후 후보를 조용히 누락하지 않게 한다",
+    "value": 3,
+    "risk": 2,
+    "size": "M",
+    "status": "pending",
+    "note": "신규. AdminPage.tsx:UsersTab load가 role 필터+limit=500 한 페이지만 읽어 setReviewers(leads.items), leads.total은 사용하지 않음. admin.go:userPageMaximum=500 확인. 이전 role 항목의 미확인 부가 우려를 독립 후보로 구체화. 검색형 선택기 또는 잘림 안내 중 좁은 해법 검토; 501명 UI 재현 미실행.",
+    "updated": "2026-10-09"
+  },
+  {
+    "title": "사용자 검색에서 늦게 도착한 이전 응답이 최신 검색 결과를 덮지 않게 한다",
+    "value": 3,
+    "risk": 2,
+    "size": "M",
+    "status": "pending",
+    "note": "신규. AdminPage.tsx:UsersTab load의 Promise.all 후 무조건 setUsers/setTotal, 300ms debounce cleanup은 timer만 취소함. in-flight 응답의 순서 보호 없음. 역순 응답에서 최신 query와 행이 어긋날 가능성; 브라우저 재현 미실행. 다른 탭의 공통 API 리팩터로 확대 금지.",
+    "updated": "2026-10-09"
+  },
+  {
+    "title": "첨부 정리가 첫 업로드의 저장 중인 이미지를 보존한다",
+    "value": 4,
+    "risk": 2,
+    "size": "M",
+    "status": "done",
+    "note": "과거 선택 해결 재확인. cleanupAttachmentFiles는 부모 weekly_reports EXISTS가 false인 경우만 RemoveAll; 오류/생존 부모는 보존. 재선택 금지.",
+    "updated": "2026-10-09"
+  },
+  {
+    "title": "임베딩 현황이 실패한 집계를 0건으로 답하지 않는다",
+    "value": 3,
+    "risk": 1,
+    "size": "S",
+    "status": "done",
+    "note": "과거 선택 해결 재확인. semantic.go countsUnread 및 pendingEmbeddingCount error 반환, AdminPage 두 소비 분기 존재. UI 렌더 시험 보강은 별도 pending.",
+    "updated": "2026-10-09"
+  },
+  {
+    "title": "관리자 서비스 설정 조회 실패를 무한 로딩 대신 오류와 재시도로 표시한다",
+    "value": 3,
+    "risk": 2,
+    "size": "M",
+    "status": "pending",
+    "note": "신규. AdminPage.tsx:SettingsTab load는 settings API 실패를 catch하지 않으며 useEffect는 반환 Promise를 처리하지 않고 settings 미설정이면 Spinner를 반환한다. ConfluenceTab에는 이미 failure 상태가 있다. HTTP 실패 후 DOM 렌더 재현은 미실행. 서비스 설정 탭의 최초 적재만 좁혀 수정하고 다른 탭 공통화는 피할 것.",
+    "updated": "2026-10-09"
+  }
+]

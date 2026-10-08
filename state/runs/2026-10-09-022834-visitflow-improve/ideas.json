@@ -1,0 +1,146 @@
+[
+  {
+    "title": "ScannerPage 의 reference-data 조회에 catch 가 없어 로비 선택이 조용히 빈다",
+    "value": 3,
+    "risk": 2,
+    "size": "S",
+    "status": "done",
+    "note": "전용 referenceError 문자열과 catch를 추가하고 독립 Alert 및 처리 로비 error/helperText가 공유. 실제 UI 영구 E2E 2개로 조회 실패→QR 검증 후 유지→새로고침 복구/서로 다른 실제 로비 수동 선택, 로딩 중/HTTP 200 빈 목록의 무오류를 확인. 수정 전 및 수정 되돌림 1 failed/25 passed, 수정 후 및 최종 26 passed. 카메라·scope·체크인 계약 미변경.",
+    "updated": "2026-10-09"
+  },
+  {
+    "title": "apiKeyPolicy 와 validScopes 가 같은 설정을 다르게 읽는다 (빈 값 fallback 불일치)",
+    "value": 2,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "keys.go:13/205, settings.go:287 및 baseline:450 재확인. 시드와 정상 설정 저장에서 빈 값 차단. 정상 운영 실패 도달 경로는 여전히 미확인, 근거 없는 서버 수정 보류.",
+    "updated": "2026-10-09"
+  },
+  {
+    "title": "web/e2e 가 tsc -b 로 타입 검사되지 않는다",
+    "value": 2,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "정규 npm lint는 여전히 e2e를 포함하지 않는다. 이번 신규 스펙 포함 npx tsc --noEmit --strict --skipLibCheck --target ES2022 --module ESNext --moduleResolution Bundler e2e/visit-flow.spec.ts playwright.config.ts는 통과. 정규 배선은 이번에 섞지 않음.",
+    "updated": "2026-10-09"
+  },
+  {
+    "title": "emergencyRoster·exportAuditLogsCSV·listAPIKeys 가 행별 Scan 오류를 삼키고도 count 를 완전한 수치로 보고한다",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "kiosk.go:231, exports.go:123, keys.go:36 재확인. 정확히는 listAPIKeys는 count 필드 없이 items를 반환한다. 필수열 계약은 이전 기록을 참고했으며 이번엔 전체 스키마 미재검증. 재현 가능한 Scan 실패 경로 미확인.",
+    "updated": "2026-10-09"
+  },
+  {
+    "title": "VisitsPage 검색이 키 입력마다 limit=100 조회를 보낸다 (디바운스 없음)",
+    "value": 2,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "VisitsPage:28~52 q→buildQuery→load→useEffect 의존성 재확인. openVisitDetail의 q 응답 대기와 연동됨. 기각된 요청 티켓 접근을 다시 제안하지 않는다.",
+    "updated": "2026-10-09"
+  },
+  {
+    "title": "local-e2e.sh PostgreSQL 임시 서버 준비 확인 경합",
+    "value": 2,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "이번 구현의 수정 후 E2E 첫 두 실행에서 PostgreSQL did not become ready 및 초기화 임시 서버 종료 로그로 재현. 제품·스크립트 수정 없이 세 번째 실행은 26 passed. 환경 경합과 제품 실패를 분리해 e2e-after.log / e2e-after-retry.log / e2e-after-retry2.log에 보존. 스크립트 수정은 별도 과제.",
+    "updated": "2026-10-09"
+  },
+  {
+    "title": "csvCell 이 첫 바이트만 보고 수식 주입을 판정한다",
+    "value": 2,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "exports.go:37 첫 바이트 검사 유지. 실제 Excel/LibreOffice 우회 해석은 미확인; 취약점으로 확정하지 않음.",
+    "updated": "2026-10-09"
+  },
+  {
+    "title": "TestSelfRegistrationRecordsVisitorConsent 의 consented_at DESC LIMIT 1 타이브레이크 취약성",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "integration_test.go:472와 visits.go:842 동일 정렬 재확인. 이번 go test는 DB 통합 SKIP이므로 재현 미확인. 테스트만 고쳐 제품 계약과 벌어지게 하지 않음.",
+    "updated": "2026-10-09"
+  },
+  {
+    "title": "visitBody 자체를 사이트 달력 인식형으로 바꿔 today-기반 테스트를 보호",
+    "value": 2,
+    "risk": 2,
+    "size": "M",
+    "status": "pending",
+    "note": "integration_test.go:261 여전히 now+30분 UTC. 기존 제한된 today fixture 수정은 재실행할 과제가 아님. 전역 helper 변경은 영향이 크고 새 재현 없음.",
+    "updated": "2026-10-09"
+  },
+  {
+    "title": "제출 차단 사유를 원인 필드(동의 체크박스·차량번호·반입 장비)에도 helperText 로 표시",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "VisitFormPage:154~155 차량 required와 장비 고정 helperText, 동의 checkbox 유지. 전체 제출 사유는 이미 존재하므로 추가 국소 안내의 가치만 평가.",
+    "updated": "2026-10-09"
+  },
+  {
+    "title": "가져오기 미리보기 응답에 인식 헤더 행 번호와 무시된 열 안내",
+    "value": 2,
+    "risk": 1,
+    "size": "M",
+    "status": "pending",
+    "note": "import.go previewVisitorImport는 visitors/warnings만 반환하고 importHeaderRow는 행 인덱스 인식. 헤더 위치/무시열 UI 안내는 아직 없어 유효하나 이번보다 범위 큼.",
+    "updated": "2026-10-09"
+  },
+  {
+    "title": "폐기(revoke) 성공 뒤에도 비활성 행이 목록에 영구히 남아 활성 키를 찾기 어렵다",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "keys.go listAPIKeys의 user_id 조건 및 KeysPage items.map/opacity 재확인. 회전 유예(graceUntil) 중인 키는 즉시 비활성으로 숨기면 안 됨. 화면 필터 과제로 유지.",
+    "updated": "2026-10-09"
+  },
+  {
+    "title": "만료된 API 키의 수정·회전 버튼이 계속 활성으로 보인다",
+    "value": 2,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "신규. KeysPage:195/200 disabled는 revokedAt만 확인하나 keys.go update/rotate는 expires_at>now()를 요구. 만료 표시/동작 비활성화를 화면에 한정할 수 있으나 실제 만료 시각 E2E 설계 미확인.",
+    "updated": "2026-10-09"
+  },
+  {
+    "title": "QR 확인 버튼이 공백만 입력해도 활성인데 클릭은 조용히 무시된다",
+    "value": 1,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "신규. ScannerPage 버튼은 !token, verify는 !value.trim()으로 판단하여 불일치. 국소 disabled 조건/입력 안내 후보지만 기준정보 실패보다 사용자 영향 작아 이번에 섞지 않음.",
+    "updated": "2026-10-09"
+  },
+  {
+    "title": "내 API 키 화면의 추측 정책 표시와 폐기 실패 누락",
+    "value": 3,
+    "risk": 1,
+    "size": "S",
+    "status": "done",
+    "note": "이전 개선 재확인 항목. HEAD 625264b의 policy=null, load catch, revoke try/catch가 현재 KeysPage에 존재.",
+    "updated": "2026-10-09"
+  },
+  {
+    "title": "LobbyPage 늦은 응답 무시를 VisitsPage 요청 티켓 선례로 다시 구현",
+    "value": 3,
+    "risk": 2,
+    "size": "M",
+    "status": "rejected",
+    "note": "이전 기각 유지. 현재 VisitsPage에도 requestSeq 선례 없음. 미머지 접근을 다른 화면에 반복 제출하지 않는다.",
+    "updated": "2026-10-09"
+  }
+]

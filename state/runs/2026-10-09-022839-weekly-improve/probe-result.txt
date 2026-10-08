@@ -1,0 +1,11 @@
+=== RUN   TestASentSortOrderIsStoredAsSent
+--- PASS: TestASentSortOrderIsStoredAsSent (2.51s)
+=== RUN   TestScoutUploadOrderQueryOverflow
+    scout_uploadorder_test.go:12: upload response: 201 {"success":true,"data":[{"id":3,"filename":"c.png","caption":"","placement":"AFTER","sortOrder":0,"sizeBytes":87,"width":13,"height":13,"createdAt":"2026-10-09T02:30:53.551468+09:00","available":true}],"traceId":"7398ec2b8083e2bc"}
+    scout_uploadorder_test.go:14: listed order: map[a.png:0 b.png:2147483647 c.png:0]
+    scout_uploadorder_test.go:15: failed next-order query must refuse upload; got HTTP 201
+    scout_uploadorder_test.go:16: failed query stored a new attachment: got 3 rows, want 2
+--- FAIL: TestScoutUploadOrderQueryOverflow (0.55s)
+FAIL
+FAIL	github.com/hkjang/weekly/internal/app	3.190s
+FAIL

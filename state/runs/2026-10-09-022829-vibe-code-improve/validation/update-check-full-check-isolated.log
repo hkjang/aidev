@@ -1,0 +1,58 @@
+
+> vibe-code@1.10.0 check
+> npm run typecheck && npm run test && npm run build
+
+
+> vibe-code@1.10.0 typecheck
+> tsc -p tsconfig.json --noEmit
+
+
+> vibe-code@1.10.0 test
+> vitest run
+
+
+ RUN  v3.2.7 /home/hkjang/.cache/auto-improve-wt/vibe-code
+
+ ✓ tests/unit/manifest.test.ts (4 tests) 5ms
+ ✓ tests/unit/semver.test.ts (2 tests) 2ms
+ ✓ tests/unit/usage.test.ts (5 tests) 5ms
+ ✓ tests/unit/goal-age.test.ts (5 tests) 3ms
+ ✓ tests/unit/mcp-detect.test.ts (10 tests) 9ms
+ ✓ tests/unit/mcp.test.ts (13 tests) 10ms
+ ✓ tests/unit/reports.test.ts (11 tests) 9ms
+ ✓ tests/unit/goal-loop.test.ts (3 tests) 3ms
+ ✓ tests/unit/seeds.test.ts (3 tests) 117ms
+ ✓ tests/unit/goal-health.test.ts (4 tests) 6ms
+ ✓ tests/unit/journal-summary.test.ts (7 tests) 6ms
+ ✓ tests/unit/verification.test.ts (10 tests) 11ms
+ ✓ tests/unit/design.test.ts (12 tests) 17ms
+ ✓ tests/unit/markdown.test.ts (22 tests) 18ms
+ ✓ tests/unit/goal-metrics.test.ts (4 tests) 11ms
+ ✓ tests/unit/goal-catalog.test.ts (6 tests) 137ms
+ ✓ tests/unit/update-check.test.ts (10 tests) 310ms
+ ✓ tests/unit/plans.test.ts (16 tests) 647ms
+ ✓ tests/unit/mcp-callback.test.ts (6 tests) 876ms
+ ✓ tests/unit/checkpoints.test.ts (9 tests) 9331ms
+   ✓ createCheckpoint > snapshots uncommitted tracked changes and untracked files, skipping ignored ones  1795ms
+   ✓ createCheckpoint > leaves the working tree, index and stash stack untouched  1940ms
+   ✓ createCheckpoint > does not leave its temporary index behind in the checkpoints directory  1408ms
+   ✓ createCheckpoint > writes a restore block whose commands actually run against the snapshot  1745ms
+   ✓ createCheckpoint > reports a clean working tree without pinning a ref  1384ms
+   ✓ createCheckpoint > snapshots a repository that has no commits yet  1003ms
+
+ Test Files  20 passed (20)
+      Tests  162 passed (162)
+   Start at  02:39:38
+   Duration  9.91s (transform 1.55s, setup 0ms, collect 6.72s, tests 11.54s, environment 3ms, prepare 1.72s)
+
+
+> vibe-code@1.10.0 build
+> node scripts/build.mjs
+
+staged dist/extension.core.js (20.3 MB)
+warning: dist/ is missing runtime assets: node_modules, i18n, workers, tree-sitter.wasm, tiktoken_bg.wasm
+         copy them from an existing release VSIX (extension/dist/) before packaging.
+
+  dist/extension.js  306.0kb
+
+⚡ Done in 20ms

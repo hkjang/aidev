@@ -1,0 +1,101 @@
+
+ RUN  v3.2.7 /home/hkjang/.cache/auto-improve-wt/vibe-code
+
+ ✓ tests/unit/semver.test.ts (2 tests) 2ms
+ ❯ tests/unit/update-check.test.ts (10 tests | 4 failed) 183ms
+   × latestVsixVersion > selects the actual package file even when a directory has a newer VSIX name 22ms
+     → expected '99.0.0' to be '1.10.1' // Object.is equality
+   × latestVsixVersion > returns undefined when only VSIX-named directories exist 12ms
+     → expected '99.0.0' to be undefined
+   ✓ latestVsixVersion > returns undefined for an empty directory 6ms
+   ✓ latestVsixVersion > orders package files numerically by version segment 23ms
+   ✓ latestVsixVersion > ignores unrelated names and other extensions 40ms
+   ✓ latestVsixVersion > allows a symbolic link to a package file 21ms
+   × latestVsixVersion > excludes symbolic links to directories 18ms
+     → expected '99.0.0' to be undefined
+   × latestVsixVersion > excludes broken symbolic links 13ms
+     → expected '99.0.0' to be undefined
+   ✓ latestVsixVersion > keeps a valid candidate when another entry cannot be statted 19ms
+   ✓ latestVsixVersion > propagates a directory read failure to the caller 6ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 4 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/unit/update-check.test.ts > latestVsixVersion > selects the actual package file even when a directory has a newer VSIX name
+AssertionError: expected '99.0.0' to be '1.10.1' // Object.is equality
+
+Expected: "1.10.1"
+Received: "99.0.0"
+
+ ❯ tests/unit/update-check.test.ts:35:19
+     33| 
+     34|   const version = latestVsixVersion(dir);
+     35|   expect(version).toBe("1.10.1");
+       |                   ^
+     36|   // Use the same install-input path construction as checkForUpdates.
+     37|   expect(fs.statSync(path.join(dir, `vibe-code-${version}.vsix`)).isFi…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/4]⎯
+
+ FAIL  tests/unit/update-check.test.ts > latestVsixVersion > returns undefined when only VSIX-named directories exist
+AssertionError: expected '99.0.0' to be undefined
+
+- Expected: 
+undefined
+
++ Received: 
+"99.0.0"
+
+ ❯ tests/unit/update-check.test.ts:42:34
+     40|  it("returns undefined when only VSIX-named directories exist", () => {
+     41|   fs.mkdirSync(path.join(dir, "vibe-code-99.0.0.vsix"));
+     42|   expect(latestVsixVersion(dir)).toBeUndefined();
+       |                                  ^
+     43|  });
+     44| 
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/4]⎯
+
+ FAIL  tests/unit/update-check.test.ts > latestVsixVersion > excludes symbolic links to directories
+AssertionError: expected '99.0.0' to be undefined
+
+- Expected: 
+undefined
+
++ Received: 
+"99.0.0"
+
+ ❯ tests/unit/update-check.test.ts:82:34
+     80|   fs.mkdirSync(target);
+     81|   symlink(context, target, "vibe-code-99.0.0.vsix", "dir");
+     82|   expect(latestVsixVersion(dir)).toBeUndefined();
+       |                                  ^
+     83|  });
+     84| 
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/4]⎯
+
+ FAIL  tests/unit/update-check.test.ts > latestVsixVersion > excludes broken symbolic links
+AssertionError: expected '99.0.0' to be undefined
+
+- Expected: 
+undefined
+
++ Received: 
+"99.0.0"
+
+ ❯ tests/unit/update-check.test.ts:87:34
+     85|  it("excludes broken symbolic links", (context) => {
+     86|   symlink(context, path.join(dir, "missing.vsix"), "vibe-code-99.0.0.v…
+     87|   expect(latestVsixVersion(dir)).toBeUndefined();
+       |                                  ^
+     88|  });
+     89| 
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/4]⎯
+
+
+ Test Files  1 failed | 1 passed (2)
+      Tests  4 failed | 8 passed (12)
+   Start at  02:38:06
+   Duration  512ms (transform 127ms, setup 0ms, collect 326ms, tests 186ms, environment 0ms, prepare 130ms)
+

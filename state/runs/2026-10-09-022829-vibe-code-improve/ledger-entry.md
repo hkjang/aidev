@@ -1,0 +1,14 @@
+## 2026-10-09
+- 선택: 공유 폴더 업데이트 탐색에서 VSIX 이름의 디렉터리를 설치 후보에서 제외 (가치 3 / 위험 1 / 작업량 S)
+- 결과: 성공
+- 요약: 이름만 비교하던 latestVsixVersion에 파일명 매칭 후 statSync().isFile() 검사를 추가해 디렉터리·디렉터리 링크·깨진 링크를 제외하고 파일 링크 및 기존 숫자 정렬은 보존했다(프로덕션 1파일 + 신규 테스트 1파일, ccfeaf2, 작성자 hkjang). 실제 fs 신규 10개 테스트가 기존 export부터 설치 입력과 같은 path.join 결과의 파일 여부까지 확인하며, 수정 전과 프로덕션만 재역전했을 때 같은 4개 AssertionError가 발생하고 복원 후 집중 12개가 통과했다. Node20.19.2에서 npm run check(타입 검사 + 20 files/162 tests, skip 0 + build)와 두 번들 node --check가 통과했으며 기존 semver 테스트·공유 스텁·보호 경로·버전은 변경하지 않았다.
+- 실패 재현: `AssertionError: expected '99.0.0' to be '1.10.1' // Object.is equality` / `AssertionError: expected '99.0.0' to be undefined` — `npx vitest run tests/unit/update-check.test.ts tests/unit/semver.test.ts`: 4 failed | 8 passed (12), validation/update-check-red.log 및 update-check-causation-red.log에서 동일 재현.
+- 보류 아이디어:
+  - 하위 디렉터리 Python test_*.py 직접 테스트 추천 (가치 3 / 위험 1 / S): 차선 유지, 별개 결함이라 포함하지 않음.
+  - 추천 명령의 공백·셸 메타문자 경로 quoting (가치 4 / 위험 3 / M): Windows/POSIX 실행 계약과 실제 실행 검증 필요.
+  - listGoals 마지막 갱신 정렬 (가치 2 / 위험 2 / S): 혼합 시각 형식의 정렬 계약 결정 필요.
+  - 로드맵 릴리즈 자동화 현황 정정 (가치 2 / 위험 1 / S): 정찰에서 발굴한 문서 후보 유지, 이번 코드 수정에 혼합하지 않음.
+- 과제서: 채택 — main@6eaede8의 이름 전용 후보 선택과 실제 fs 재현이 과제서 근거와 일치하여 지정한 두 파일 및 수용 기준으로 완료했다.
+- 검증 범위/한계: 파일 선택과 설치 입력 경로까지만 실행 검증했으며 알림·실제 설치 UI, Windows 패키징, 원격 CI/PR 상태는 미검증이다. ZIP 내용·SemVer 확장·TOCTOU는 의도적으로 제외했다. 빌드는 기존 런타임 자산 누락 경고를 남겼고 npm ci는 취약점 4건(중간 1/높음 1/치명 2)을 보고했으며 의존성 변경은 하지 않았다.
+- 실행 환경: 회차 validation을 TMPDIR로 둔 첫 전체 검사는 기존 체크포인트 테스트가 상위 aidev 저장소를 탐색해 중단했다. 별도 임시 index 잔여물만 정리했고 refs/vibe-checkpoints가 비어 있음을 확인했으며, GIT_CEILING_DIRECTORIES=$TMPDIR를 지정한 동일 전체 명령은 통과했다(상위 index 사전 해시 미수집, 미참조 객체 잔류 가능성은 validation/full-check-environment-note.md 참조). 최종 근거는 validation/update-check-full-check-isolated.log 및 update-check-bundle-syntax.log이며 빌드 산출물은 기존 .gitignore로 제외되어 커밋하지 않았다.
+- 실측: 환경 확인부터 검증·커밋까지 약 5분(02:36~02:41), 의존성 설치 1초, 최종 전체 테스트 9.91초. 정찰의 29~45분은 예측치였으며 이번은 추가 기능 없이 조기 완료했다.

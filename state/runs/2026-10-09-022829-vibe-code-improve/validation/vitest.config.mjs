@@ -1,0 +1,9 @@
+export default {
+ root: '/home/hkjang/.cache/auto-improve-wt/vibe-code',
+ cacheDir: '/mnt/c/Users/USER/projects/aidev/state/runs/2026-10-09-022829-vibe-code-improve/validation/vite-cache',
+ resolve: { alias: {
+  vscode: '/home/hkjang/.cache/auto-improve-wt/vibe-code/tests/unit/vscode-stub.ts',
+  vitest: '/mnt/c/Users/USER/projects/vibe-code/node_modules/vitest/dist/index.js'
+ } },
+ test: { include: ['tests/unit/**/*.test.ts'], server: { deps: { inline: [/vitest/] } } }
+};
