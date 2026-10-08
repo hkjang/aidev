@@ -1,0 +1,673 @@
+?   	github.com/hkjang/ai-admin/cmd/ai-admin	[no test files]
+=== RUN   TestTruncateKeepsValidUTF8WithinACharacterLimit
+=== RUN   TestTruncateKeepsValidUTF8WithinACharacterLimit/short_ascii_is_untouched
+=== RUN   TestTruncateKeepsValidUTF8WithinACharacterLimit/invalid_bytes_are_dropped
+=== RUN   TestTruncateKeepsValidUTF8WithinACharacterLimit/cut_lands_on_a_rune_boundary
+=== RUN   TestTruncateKeepsValidUTF8WithinACharacterLimit/limit_counts_characters_not_bytes
+--- PASS: TestTruncateKeepsValidUTF8WithinACharacterLimit (0.00s)
+    --- PASS: TestTruncateKeepsValidUTF8WithinACharacterLimit/short_ascii_is_untouched (0.00s)
+    --- PASS: TestTruncateKeepsValidUTF8WithinACharacterLimit/invalid_bytes_are_dropped (0.00s)
+    --- PASS: TestTruncateKeepsValidUTF8WithinACharacterLimit/cut_lands_on_a_rune_boundary (0.00s)
+    --- PASS: TestTruncateKeepsValidUTF8WithinACharacterLimit/limit_counts_characters_not_bytes (0.00s)
+PASS
+ok  	github.com/hkjang/ai-admin/internal/auth	1.013s
+?   	github.com/hkjang/ai-admin/internal/buildinfo	[no test files]
+=== RUN   TestLoadRequiresExactlyConfiguredSecrets
+--- PASS: TestLoadRequiresExactlyConfiguredSecrets (0.00s)
+=== RUN   TestLoadRejectsMissingAndWeakValues
+--- PASS: TestLoadRejectsMissingAndWeakValues (0.00s)
+=== RUN   TestLoadRejectsInvalidEncryptionKey
+--- PASS: TestLoadRejectsInvalidEncryptionKey (0.00s)
+PASS
+ok  	github.com/hkjang/ai-admin/internal/config	1.012s
+?   	github.com/hkjang/ai-admin/internal/database	[no test files]
+=== RUN   TestProtectedScopes
+--- PASS: TestProtectedScopes (0.00s)
+PASS
+ok  	github.com/hkjang/ai-admin/internal/keyscope	1.013s
+=== RUN   TestCipherRoundTripAndAuthentication
+--- PASS: TestCipherRoundTripAndAuthentication (0.00s)
+=== RUN   TestCipherRejectsInvalidKey
+--- PASS: TestCipherRejectsInvalidKey (0.00s)
+PASS
+ok  	github.com/hkjang/ai-admin/internal/secrets	1.012s
+=== RUN   TestApprovalCommentContract
+--- PASS: TestApprovalCommentContract (8.60s)
+=== RUN   TestSanitizeApprovalPayloadMasksNestedCredentialsAndLegacySensitiveFields
+--- PASS: TestSanitizeApprovalPayloadMasksNestedCredentialsAndLegacySensitiveFields (0.00s)
+=== RUN   TestSanitizeApprovalPayloadAllowsAuditableBreakGlassValuesButNeverCredentials
+--- PASS: TestSanitizeApprovalPayloadAllowsAuditableBreakGlassValuesButNeverCredentials (0.00s)
+=== RUN   TestCanonicalApprovalFieldNormalizesCamelCase
+--- PASS: TestCanonicalApprovalFieldNormalizesCamelCase (0.00s)
+=== RUN   TestAuditExportNeutralizesControlPrefixes
+=== RUN   TestAuditExportNeutralizesControlPrefixes/equals
+=== RUN   TestAuditExportNeutralizesControlPrefixes/plus
+=== RUN   TestAuditExportNeutralizesControlPrefixes/minus
+=== RUN   TestAuditExportNeutralizesControlPrefixes/at
+=== RUN   TestAuditExportNeutralizesControlPrefixes/tab
+=== RUN   TestAuditExportNeutralizesControlPrefixes/CR
+=== RUN   TestAuditExportNeutralizesControlPrefixes/plain
+=== RUN   TestAuditExportNeutralizesControlPrefixes/empty
+=== RUN   TestAuditExportNeutralizesControlPrefixes/apostrophe
+=== RUN   TestAuditExportNeutralizesControlPrefixes/quote_comma_newline
+=== RUN   TestAuditExportNeutralizesControlPrefixes/embedded_controls
+--- PASS: TestAuditExportNeutralizesControlPrefixes (4.65s)
+    --- PASS: TestAuditExportNeutralizesControlPrefixes/equals (0.02s)
+    --- PASS: TestAuditExportNeutralizesControlPrefixes/plus (0.01s)
+    --- PASS: TestAuditExportNeutralizesControlPrefixes/minus (0.01s)
+    --- PASS: TestAuditExportNeutralizesControlPrefixes/at (0.01s)
+    --- PASS: TestAuditExportNeutralizesControlPrefixes/tab (0.01s)
+    --- PASS: TestAuditExportNeutralizesControlPrefixes/CR (0.01s)
+    --- PASS: TestAuditExportNeutralizesControlPrefixes/plain (0.01s)
+    --- PASS: TestAuditExportNeutralizesControlPrefixes/empty (0.01s)
+    --- PASS: TestAuditExportNeutralizesControlPrefixes/apostrophe (0.01s)
+    --- PASS: TestAuditExportNeutralizesControlPrefixes/quote_comma_newline (0.01s)
+    --- PASS: TestAuditExportNeutralizesControlPrefixes/embedded_controls (0.01s)
+=== RUN   TestStreamAuditCSVWritesEveryRow
+--- PASS: TestStreamAuditCSVWritesEveryRow (0.00s)
+=== RUN   TestStreamAuditCSVReportsTruncation
+=== RUN   TestStreamAuditCSVReportsTruncation/row_scan_failure
+=== RUN   TestStreamAuditCSVReportsTruncation/stream_failure
+--- PASS: TestStreamAuditCSVReportsTruncation (0.00s)
+    --- PASS: TestStreamAuditCSVReportsTruncation/row_scan_failure (0.00s)
+    --- PASS: TestStreamAuditCSVReportsTruncation/stream_failure (0.00s)
+=== RUN   TestRecovererKeepsAbortAndAnswersOtherPanics
+--- PASS: TestRecovererKeepsAbortAndAnswersOtherPanics (0.00s)
+=== RUN   TestAccessLogRecordsAbortedRequests
+--- PASS: TestAccessLogRecordsAbortedRequests (0.00s)
+=== RUN   TestLoginAuditSurvivesOverlongUsername
+=== RUN   TestLoginAuditSurvivesOverlongUsername/ascii_far_beyond_the_column
+=== RUN   TestLoginAuditSurvivesOverlongUsername/hangul_far_beyond_the_column
+=== RUN   TestLoginAuditSurvivesOverlongUsername/one_rune_beyond_the_column
+=== RUN   TestLoginAuditSurvivesOverlongUsername/exactly_at_the_column_limit
+=== RUN   TestLoginAuditSurvivesOverlongUsername/hangul_exactly_at_the_column_limit
+=== RUN   TestLoginAuditSurvivesOverlongUsername/short_name_keeps_its_trimmed_form
+=== RUN   TestLoginAuditSurvivesOverlongUsername/successful_login_keeps_a_null_resource
+--- PASS: TestLoginAuditSurvivesOverlongUsername (16.97s)
+    --- PASS: TestLoginAuditSurvivesOverlongUsername/ascii_far_beyond_the_column (2.11s)
+    --- PASS: TestLoginAuditSurvivesOverlongUsername/hangul_far_beyond_the_column (2.12s)
+    --- PASS: TestLoginAuditSurvivesOverlongUsername/one_rune_beyond_the_column (2.08s)
+    --- PASS: TestLoginAuditSurvivesOverlongUsername/exactly_at_the_column_limit (2.13s)
+    --- PASS: TestLoginAuditSurvivesOverlongUsername/hangul_exactly_at_the_column_limit (2.06s)
+    --- PASS: TestLoginAuditSurvivesOverlongUsername/short_name_keeps_its_trimmed_form (2.11s)
+    --- PASS: TestLoginAuditSurvivesOverlongUsername/successful_login_keeps_a_null_resource (2.00s)
+=== RUN   TestAuthenticationKeepsRefusingCheckedCredentials
+--- PASS: TestAuthenticationKeepsRefusingCheckedCredentials (6.41s)
+=== RUN   TestAuthenticationReportsBackendFailureInsteadOfExpiredSession
+=== RUN   TestAuthenticationReportsBackendFailureInsteadOfExpiredSession/no_credential_is_rejected_without_touching_the_database
+=== RUN   TestAuthenticationReportsBackendFailureInsteadOfExpiredSession/a_malformed_API_key_is_rejected_without_touching_the_database
+=== RUN   TestAuthenticationReportsBackendFailureInsteadOfExpiredSession/an_unverifiable_session_cookie_fails_instead_of_expiring
+=== RUN   TestAuthenticationReportsBackendFailureInsteadOfExpiredSession/an_unverifiable_API_key_fails_instead_of_being_revoked
+--- PASS: TestAuthenticationReportsBackendFailureInsteadOfExpiredSession (0.00s)
+    --- PASS: TestAuthenticationReportsBackendFailureInsteadOfExpiredSession/no_credential_is_rejected_without_touching_the_database (0.00s)
+    --- PASS: TestAuthenticationReportsBackendFailureInsteadOfExpiredSession/a_malformed_API_key_is_rejected_without_touching_the_database (0.00s)
+    --- PASS: TestAuthenticationReportsBackendFailureInsteadOfExpiredSession/an_unverifiable_session_cookie_fails_instead_of_expiring (0.00s)
+    --- PASS: TestAuthenticationReportsBackendFailureInsteadOfExpiredSession/an_unverifiable_API_key_fails_instead_of_being_revoked (0.00s)
+=== RUN   TestMCPAuthenticationSeparatesBackendFailureFromChallenge
+--- PASS: TestMCPAuthenticationSeparatesBackendFailureFromChallenge (0.00s)
+=== RUN   TestAuthMeReturnsGrantsInAscendingCodeOrder
+--- PASS: TestAuthMeReturnsGrantsInAscendingCodeOrder (4.38s)
+=== RUN   TestRelayChatBodyReportsWhyTheAnswerStopped
+=== RUN   TestRelayChatBodyReportsWhyTheAnswerStopped/whole_body_delivered
+=== RUN   TestRelayChatBodyReportsWhyTheAnswerStopped/upstream_hangs_up_mid_answer
+=== RUN   TestRelayChatBodyReportsWhyTheAnswerStopped/provider_timeout
+=== RUN   TestRelayChatBodyReportsWhyTheAnswerStopped/request_abandoned
+=== RUN   TestRelayChatBodyReportsWhyTheAnswerStopped/caller_stopped_reading
+=== RUN   TestRelayChatBodyReportsWhyTheAnswerStopped/caller_cannot_receive_streamed_chunks
+=== RUN   TestRelayChatBodyReportsWhyTheAnswerStopped/non-streaming_body_delivered
+--- PASS: TestRelayChatBodyReportsWhyTheAnswerStopped (0.00s)
+    --- PASS: TestRelayChatBodyReportsWhyTheAnswerStopped/whole_body_delivered (0.00s)
+    --- PASS: TestRelayChatBodyReportsWhyTheAnswerStopped/upstream_hangs_up_mid_answer (0.00s)
+    --- PASS: TestRelayChatBodyReportsWhyTheAnswerStopped/provider_timeout (0.00s)
+    --- PASS: TestRelayChatBodyReportsWhyTheAnswerStopped/request_abandoned (0.00s)
+    --- PASS: TestRelayChatBodyReportsWhyTheAnswerStopped/caller_stopped_reading (0.00s)
+    --- PASS: TestRelayChatBodyReportsWhyTheAnswerStopped/caller_cannot_receive_streamed_chunks (0.00s)
+    --- PASS: TestRelayChatBodyReportsWhyTheAnswerStopped/non-streaming_body_delivered (0.00s)
+=== RUN   TestChatRequestJSONContract
+=== RUN   TestChatRequestJSONContract/without_default_provider
+=== RUN   TestChatRequestJSONContract/without_default_provider/null
+=== RUN   TestChatRequestJSONContract/without_default_provider/null_with_json_whitespace
+=== RUN   TestChatRequestJSONContract/without_default_provider/array
+=== RUN   TestChatRequestJSONContract/without_default_provider/string
+=== RUN   TestChatRequestJSONContract/without_default_provider/number
+=== RUN   TestChatRequestJSONContract/without_default_provider/boolean_true
+=== RUN   TestChatRequestJSONContract/without_default_provider/boolean_false
+=== RUN   TestChatRequestJSONContract/with_default_provider
+=== RUN   TestChatRequestJSONContract/with_default_provider/null
+=== RUN   TestChatRequestJSONContract/with_default_provider/null_with_json_whitespace
+=== RUN   TestChatRequestJSONContract/with_default_provider/array
+=== RUN   TestChatRequestJSONContract/with_default_provider/string
+=== RUN   TestChatRequestJSONContract/with_default_provider/number
+=== RUN   TestChatRequestJSONContract/with_default_provider/boolean_true
+=== RUN   TestChatRequestJSONContract/with_default_provider/boolean_false
+=== RUN   TestChatRequestJSONContract/single_object
+=== RUN   TestChatRequestJSONContract/trailing_json_whitespace
+=== RUN   TestChatRequestJSONContract/whitespace_at_4_mib_limit
+=== RUN   TestChatRequestJSONContract/default_provider_and_model
+=== RUN   TestChatRequestJSONContract/trailing_object
+=== RUN   TestChatRequestJSONContract/trailing_null
+=== RUN   TestChatRequestJSONContract/trailing_garbage
+=== RUN   TestChatRequestJSONContract/whitespace_over_4_mib_limit
+=== RUN   TestChatRequestJSONContract/reject_before_provider_selection
+--- PASS: TestChatRequestJSONContract (4.73s)
+    --- PASS: TestChatRequestJSONContract/without_default_provider (0.03s)
+        --- PASS: TestChatRequestJSONContract/without_default_provider/null (0.01s)
+        --- PASS: TestChatRequestJSONContract/without_default_provider/null_with_json_whitespace (0.00s)
+        --- PASS: TestChatRequestJSONContract/without_default_provider/array (0.01s)
+        --- PASS: TestChatRequestJSONContract/without_default_provider/string (0.00s)
+        --- PASS: TestChatRequestJSONContract/without_default_provider/number (0.00s)
+        --- PASS: TestChatRequestJSONContract/without_default_provider/boolean_true (0.00s)
+        --- PASS: TestChatRequestJSONContract/without_default_provider/boolean_false (0.00s)
+    --- PASS: TestChatRequestJSONContract/with_default_provider (0.02s)
+        --- PASS: TestChatRequestJSONContract/with_default_provider/null (0.00s)
+        --- PASS: TestChatRequestJSONContract/with_default_provider/null_with_json_whitespace (0.00s)
+        --- PASS: TestChatRequestJSONContract/with_default_provider/array (0.00s)
+        --- PASS: TestChatRequestJSONContract/with_default_provider/string (0.00s)
+        --- PASS: TestChatRequestJSONContract/with_default_provider/number (0.00s)
+        --- PASS: TestChatRequestJSONContract/with_default_provider/boolean_true (0.00s)
+        --- PASS: TestChatRequestJSONContract/with_default_provider/boolean_false (0.00s)
+    --- PASS: TestChatRequestJSONContract/single_object (0.00s)
+    --- PASS: TestChatRequestJSONContract/trailing_json_whitespace (0.00s)
+    --- PASS: TestChatRequestJSONContract/whitespace_at_4_mib_limit (0.16s)
+    --- PASS: TestChatRequestJSONContract/default_provider_and_model (0.01s)
+    --- PASS: TestChatRequestJSONContract/trailing_object (0.00s)
+    --- PASS: TestChatRequestJSONContract/trailing_null (0.00s)
+    --- PASS: TestChatRequestJSONContract/trailing_garbage (0.00s)
+    --- PASS: TestChatRequestJSONContract/whitespace_over_4_mib_limit (0.14s)
+    --- PASS: TestChatRequestJSONContract/reject_before_provider_selection (0.01s)
+=== RUN   TestChatNonStreamingResponseContentTypeContract
+=== RUN   TestChatNonStreamingResponseContentTypeContract/plain_json
+=== RUN   TestChatNonStreamingResponseContentTypeContract/json_with_parameter_and_mixed_case
+=== RUN   TestChatNonStreamingResponseContentTypeContract/structured_json_suffix
+=== RUN   TestChatNonStreamingResponseContentTypeContract/no_content_type_header
+=== RUN   TestChatNonStreamingResponseContentTypeContract/html_is_rejected
+=== RUN   TestChatNonStreamingResponseContentTypeContract/plain_text_is_rejected
+=== RUN   TestChatNonStreamingResponseContentTypeContract/unparsable_content_type_is_rejected
+--- PASS: TestChatNonStreamingResponseContentTypeContract (4.49s)
+    --- PASS: TestChatNonStreamingResponseContentTypeContract/plain_json (0.01s)
+    --- PASS: TestChatNonStreamingResponseContentTypeContract/json_with_parameter_and_mixed_case (0.01s)
+    --- PASS: TestChatNonStreamingResponseContentTypeContract/structured_json_suffix (0.01s)
+    --- PASS: TestChatNonStreamingResponseContentTypeContract/no_content_type_header (0.01s)
+    --- PASS: TestChatNonStreamingResponseContentTypeContract/html_is_rejected (0.01s)
+    --- PASS: TestChatNonStreamingResponseContentTypeContract/plain_text_is_rejected (0.01s)
+    --- PASS: TestChatNonStreamingResponseContentTypeContract/unparsable_content_type_is_rejected (0.01s)
+=== RUN   TestChatAnswerCutShortIsNotDeliveredAsComplete
+--- PASS: TestChatAnswerCutShortIsNotDeliveredAsComplete (4.38s)
+=== RUN   TestDashboardProvidersMapEnabledToStatus
+--- PASS: TestDashboardProvidersMapEnabledToStatus (0.00s)
+=== RUN   TestDashboardProvidersFailInsteadOfShrinking
+--- PASS: TestDashboardProvidersFailInsteadOfShrinking (0.00s)
+=== RUN   TestDashboardReportsApplicationQueryFailure
+--- PASS: TestDashboardReportsApplicationQueryFailure (0.00s)
+=== RUN   TestDatabaseFailuresAreNotReportedAsBusinessRuleConflicts
+--- PASS: TestDatabaseFailuresAreNotReportedAsBusinessRuleConflicts (4.51s)
+=== RUN   TestEndToEndAPI
+--- PASS: TestEndToEndAPI (15.89s)
+=== RUN   TestKeyRotationChecksTheOwnerAccount
+--- PASS: TestKeyRotationChecksTheOwnerAccount (8.48s)
+=== RUN   TestKeyIssuanceForAnotherUserChecksTheTargetAccount
+--- PASS: TestKeyIssuanceForAnotherUserChecksTheTargetAccount (8.37s)
+=== RUN   TestProtectedKeyScopesRejectUserAssignability
+=== RUN   TestProtectedKeyScopesRejectUserAssignability/admin:read
+=== RUN   TestProtectedKeyScopesRejectUserAssignability/admin:write
+=== RUN   TestProtectedKeyScopesRejectUserAssignability/legacy:config
+--- PASS: TestProtectedKeyScopesRejectUserAssignability (0.00s)
+    --- PASS: TestProtectedKeyScopesRejectUserAssignability/admin:read (0.00s)
+    --- PASS: TestProtectedKeyScopesRejectUserAssignability/admin:write (0.00s)
+    --- PASS: TestProtectedKeyScopesRejectUserAssignability/legacy:config (0.00s)
+=== RUN   TestKeyScopeStateFailsClosedOnLookupError
+--- PASS: TestKeyScopeStateFailsClosedOnLookupError (0.00s)
+=== RUN   TestMarshalLegacyManagedYAML
+--- PASS: TestMarshalLegacyManagedYAML (0.00s)
+=== RUN   TestMarshalLegacyManagedYAMLOmitsSeededDefaults
+--- PASS: TestMarshalLegacyManagedYAMLOmitsSeededDefaults (0.00s)
+=== RUN   TestSecretSettingViewIsAlwaysMasked
+--- PASS: TestSecretSettingViewIsAlwaysMasked (0.00s)
+=== RUN   TestLegacyExportAuthorization
+=== RUN   TestLegacyExportAuthorization/session
+=== RUN   TestLegacyExportAuthorization/missing_scope
+=== RUN   TestLegacyExportAuthorization/missing_permission
+--- PASS: TestLegacyExportAuthorization (0.00s)
+    --- PASS: TestLegacyExportAuthorization/session (0.00s)
+    --- PASS: TestLegacyExportAuthorization/missing_scope (0.00s)
+    --- PASS: TestLegacyExportAuthorization/missing_permission (0.00s)
+=== RUN   TestExpandedLegacyResourcesAgainstPostgres
+--- PASS: TestExpandedLegacyResourcesAgainstPostgres (0.37s)
+=== RUN   TestLegacyResourceAliasesAndManagement
+--- PASS: TestLegacyResourceAliasesAndManagement (0.00s)
+=== RUN   TestSensitiveLegacyColumnClassification
+--- PASS: TestSensitiveLegacyColumnClassification (0.00s)
+=== RUN   TestMCPLegacyProjectionExcludesIdentityAndFileMetadata
+--- PASS: TestMCPLegacyProjectionExcludesIdentityAndFileMetadata (0.00s)
+=== RUN   TestValidateExpandedLegacyResources
+--- PASS: TestValidateExpandedLegacyResources (0.00s)
+=== RUN   TestOptionalLegacyTextDoesNotStringifyJSONNull
+--- PASS: TestOptionalLegacyTextDoesNotStringifyJSONNull (0.00s)
+=== RUN   TestBannedWordDuplicateReferenceValidation
+--- PASS: TestBannedWordDuplicateReferenceValidation (0.00s)
+=== RUN   TestLegacySchemaForMutationRequiresRuntimeFingerprint
+--- PASS: TestLegacySchemaForMutationRequiresRuntimeFingerprint (0.00s)
+=== RUN   TestNoticeAndSynonymUnsafeDeletesFailClosed
+--- PASS: TestNoticeAndSynonymUnsafeDeletesFailClosed (0.00s)
+=== RUN   TestLegacySynonymEndpointAndPythonPayload
+--- PASS: TestLegacySynonymEndpointAndPythonPayload (0.00s)
+=== RUN   TestValidateLibraryAndLegacyAdmin
+--- PASS: TestValidateLibraryAndLegacyAdmin (0.00s)
+=== RUN   TestValidateTypedLegacyPolicies
+=== RUN   TestValidateTypedLegacyPolicies/retention
+=== RUN   TestValidateTypedLegacyPolicies/retention_range
+=== RUN   TestValidateTypedLegacyPolicies/ocr
+=== RUN   TestValidateTypedLegacyPolicies/ocr_range
+=== RUN   TestValidateTypedLegacyPolicies/file
+=== RUN   TestValidateTypedLegacyPolicies/file_range
+=== RUN   TestValidateTypedLegacyPolicies/extensions
+=== RUN   TestValidateTypedLegacyPolicies/duplicate_extension
+=== RUN   TestValidateTypedLegacyPolicies/notes
+=== RUN   TestValidateTypedLegacyPolicies/missing_fixed_note_group
+=== RUN   TestValidateTypedLegacyPolicies/cycle
+=== RUN   TestValidateTypedLegacyPolicies/cycle_range
+=== RUN   TestValidateTypedLegacyPolicies/legacy_file
+=== RUN   TestValidateTypedLegacyPolicies/legacy_file_positive
+--- PASS: TestValidateTypedLegacyPolicies (0.00s)
+    --- PASS: TestValidateTypedLegacyPolicies/retention (0.00s)
+    --- PASS: TestValidateTypedLegacyPolicies/retention_range (0.00s)
+    --- PASS: TestValidateTypedLegacyPolicies/ocr (0.00s)
+    --- PASS: TestValidateTypedLegacyPolicies/ocr_range (0.00s)
+    --- PASS: TestValidateTypedLegacyPolicies/file (0.00s)
+    --- PASS: TestValidateTypedLegacyPolicies/file_range (0.00s)
+    --- PASS: TestValidateTypedLegacyPolicies/extensions (0.00s)
+    --- PASS: TestValidateTypedLegacyPolicies/duplicate_extension (0.00s)
+    --- PASS: TestValidateTypedLegacyPolicies/notes (0.00s)
+    --- PASS: TestValidateTypedLegacyPolicies/missing_fixed_note_group (0.00s)
+    --- PASS: TestValidateTypedLegacyPolicies/cycle (0.00s)
+    --- PASS: TestValidateTypedLegacyPolicies/cycle_range (0.00s)
+    --- PASS: TestValidateTypedLegacyPolicies/legacy_file (0.00s)
+    --- PASS: TestValidateTypedLegacyPolicies/legacy_file_positive (0.00s)
+=== RUN   TestSafeLegacyURL
+--- PASS: TestSafeLegacyURL (0.00s)
+=== RUN   TestMCPAcceptsKeycloakTokensForRegisteredAccountsOnly
+--- PASS: TestMCPAcceptsKeycloakTokensForRegisteredAccountsOnly (7.43s)
+=== RUN   TestLooksLikeJWTSeparatesTokensFromKeysAndGarbage
+--- PASS: TestLooksLikeJWTSeparatesTokensFromKeysAndGarbage (0.00s)
+=== RUN   TestMCPAccessClaimsProblemRefusesWhatIsNotAnAPICredential
+--- PASS: TestMCPAccessClaimsProblemRefusesWhatIsNotAnAPICredential (0.00s)
+=== RUN   TestMCPAudienceCheckNamesWhatItSawAndWhatToConfigure
+--- PASS: TestMCPAudienceCheckNamesWhatItSawAndWhatToConfigure (0.00s)
+=== RUN   TestValidMCPResourceRequiresAQuotableAbsoluteURL
+--- PASS: TestValidMCPResourceRequiresAQuotableAbsoluteURL (0.00s)
+=== RUN   TestThrottledTransportLetsOneRequestThroughPerInterval
+--- PASS: TestThrottledTransportLetsOneRequestThroughPerInterval (0.15s)
+=== RUN   TestMCPChallengePointsAtMetadataOnlyWhileActive
+--- PASS: TestMCPChallengePointsAtMetadataOnlyWhileActive (0.00s)
+=== RUN   TestProbeOIDCClientAuthentication
+=== RUN   TestProbeOIDCClientAuthentication/valid_client_credentials
+=== RUN   TestProbeOIDCClientAuthentication/invalid_client_credentials
+--- PASS: TestProbeOIDCClientAuthentication (0.00s)
+    --- PASS: TestProbeOIDCClientAuthentication/valid_client_credentials (0.00s)
+    --- PASS: TestProbeOIDCClientAuthentication/invalid_client_credentials (0.00s)
+=== RUN   TestValidateOIDCDiagnosticEndpoint
+--- PASS: TestValidateOIDCDiagnosticEndpoint (0.00s)
+=== RUN   TestOIDCLoginFailureClassification
+=== RUN   TestOIDCLoginFailureClassification/inactive_account
+=== RUN   TestOIDCLoginFailureClassification/provisioning_outage
+=== RUN   TestOIDCLoginFailureClassification/account_rejected_before_the_session
+=== RUN   TestOIDCLoginFailureClassification/session_write_outage
+--- PASS: TestOIDCLoginFailureClassification (0.00s)
+    --- PASS: TestOIDCLoginFailureClassification/inactive_account (0.00s)
+    --- PASS: TestOIDCLoginFailureClassification/provisioning_outage (0.00s)
+    --- PASS: TestOIDCLoginFailureClassification/account_rejected_before_the_session (0.00s)
+    --- PASS: TestOIDCLoginFailureClassification/session_write_outage (0.00s)
+=== RUN   TestOIDCFailureStage
+--- PASS: TestOIDCFailureStage (0.00s)
+=== RUN   TestOIDCLoginFailuresSeparateAccountProblemsFromOutages
+--- PASS: TestOIDCLoginFailuresSeparateAccountProblemsFromOutages (2.37s)
+=== RUN   TestOIDCUserProvisioning
+--- PASS: TestOIDCUserProvisioning (2.41s)
+=== RUN   TestOIDCCallbackFailureAuditReference
+--- PASS: TestOIDCCallbackFailureAuditReference (2.30s)
+=== RUN   TestKeycloakOIDCAuthorizationCodeLogin
+    oidc_keycloak_e2e_test.go:33: TEST_KEYCLOAK_ISSUER is not set
+--- SKIP: TestKeycloakOIDCAuthorizationCodeLogin (0.00s)
+=== RUN   TestSilentOIDCAttemptIsGatedBySettingAndRefusalIsNotAFailure
+--- PASS: TestSilentOIDCAttemptIsGatedBySettingAndRefusalIsNotAFailure (2.37s)
+=== RUN   TestPreferenceLocaleAndTimezoneAcceptOnlyStorableValues
+--- PASS: TestPreferenceLocaleAndTimezoneAcceptOnlyStorableValues (0.00s)
+=== RUN   TestProfileAndUserRejectNULBeforeTheDatabase
+=== RUN   TestProfileAndUserRejectNULBeforeTheDatabase/profile_display_name_with_a_trailing_NUL
+=== RUN   TestProfileAndUserRejectNULBeforeTheDatabase/profile_display_name_with_a_leading_NUL
+=== RUN   TestProfileAndUserRejectNULBeforeTheDatabase/profile_display_name_that_is_only_a_NUL
+=== RUN   TestProfileAndUserRejectNULBeforeTheDatabase/profile_email_with_a_NUL
+=== RUN   TestProfileAndUserRejectNULBeforeTheDatabase/user_display_name_with_a_trailing_NUL
+=== RUN   TestProfileAndUserRejectNULBeforeTheDatabase/user_display_name_with_an_embedded_NUL
+=== RUN   TestProfileAndUserRejectNULBeforeTheDatabase/user_display_name_that_is_only_a_NUL
+=== RUN   TestProfileAndUserRejectNULBeforeTheDatabase/literal_backslash-u_escape_is_stored_verbatim
+=== RUN   TestProfileAndUserRejectNULBeforeTheDatabase/existing_profile_rules
+=== RUN   TestProfileAndUserRejectNULBeforeTheDatabase/existing_user_rules
+=== RUN   TestProfileAndUserRejectNULBeforeTheDatabase/existing_email_rules
+--- PASS: TestProfileAndUserRejectNULBeforeTheDatabase (4.42s)
+    --- PASS: TestProfileAndUserRejectNULBeforeTheDatabase/profile_display_name_with_a_trailing_NUL (0.00s)
+    --- PASS: TestProfileAndUserRejectNULBeforeTheDatabase/profile_display_name_with_a_leading_NUL (0.00s)
+    --- PASS: TestProfileAndUserRejectNULBeforeTheDatabase/profile_display_name_that_is_only_a_NUL (0.00s)
+    --- PASS: TestProfileAndUserRejectNULBeforeTheDatabase/profile_email_with_a_NUL (0.00s)
+    --- PASS: TestProfileAndUserRejectNULBeforeTheDatabase/user_display_name_with_a_trailing_NUL (0.00s)
+    --- PASS: TestProfileAndUserRejectNULBeforeTheDatabase/user_display_name_with_an_embedded_NUL (0.00s)
+    --- PASS: TestProfileAndUserRejectNULBeforeTheDatabase/user_display_name_that_is_only_a_NUL (0.00s)
+    --- PASS: TestProfileAndUserRejectNULBeforeTheDatabase/literal_backslash-u_escape_is_stored_verbatim (0.00s)
+    --- PASS: TestProfileAndUserRejectNULBeforeTheDatabase/existing_profile_rules (0.01s)
+    --- PASS: TestProfileAndUserRejectNULBeforeTheDatabase/existing_user_rules (0.01s)
+    --- PASS: TestProfileAndUserRejectNULBeforeTheDatabase/existing_email_rules (0.01s)
+=== RUN   TestProfileAndPreferenceSaveReportTheActualOutcome
+--- PASS: TestProfileAndPreferenceSaveReportTheActualOutcome (4.33s)
+=== RUN   TestProfileRejectsUnsupportedFields
+=== RUN   TestProfileRejectsUnsupportedFields/string
+=== RUN   TestProfileRejectsUnsupportedFields/empty_string
+=== RUN   TestProfileRejectsUnsupportedFields/null
+=== RUN   TestProfileRejectsUnsupportedFields/department_only
+=== RUN   TestProfileRejectsUnsupportedFields/unrelated_unknown_field
+--- PASS: TestProfileRejectsUnsupportedFields (4.41s)
+    --- PASS: TestProfileRejectsUnsupportedFields/string (0.00s)
+    --- PASS: TestProfileRejectsUnsupportedFields/empty_string (0.00s)
+    --- PASS: TestProfileRejectsUnsupportedFields/null (0.00s)
+    --- PASS: TestProfileRejectsUnsupportedFields/department_only (0.00s)
+    --- PASS: TestProfileRejectsUnsupportedFields/unrelated_unknown_field (0.00s)
+=== RUN   TestProviderBaseURLLengthIsRejectedBeforeTheDatabase
+=== RUN   TestProviderBaseURLLengthIsRejectedBeforeTheDatabase/creating_with_a_base_URL_wider_than_the_column
+=== RUN   TestProviderBaseURLLengthIsRejectedBeforeTheDatabase/creating_with_a_base_URL_exactly_the_column_width
+=== RUN   TestProviderBaseURLLengthIsRejectedBeforeTheDatabase/updating_to_a_base_URL_wider_than_the_column
+=== RUN   TestProviderBaseURLLengthIsRejectedBeforeTheDatabase/updating_to_2000_Hangul_characters
+=== RUN   TestProviderBaseURLLengthIsRejectedBeforeTheDatabase/existing_base_URL_rules_are_unchanged
+--- PASS: TestProviderBaseURLLengthIsRejectedBeforeTheDatabase (4.38s)
+    --- PASS: TestProviderBaseURLLengthIsRejectedBeforeTheDatabase/creating_with_a_base_URL_wider_than_the_column (0.00s)
+    --- PASS: TestProviderBaseURLLengthIsRejectedBeforeTheDatabase/creating_with_a_base_URL_exactly_the_column_width (0.01s)
+    --- PASS: TestProviderBaseURLLengthIsRejectedBeforeTheDatabase/updating_to_a_base_URL_wider_than_the_column (0.00s)
+    --- PASS: TestProviderBaseURLLengthIsRejectedBeforeTheDatabase/updating_to_2000_Hangul_characters (0.01s)
+    --- PASS: TestProviderBaseURLLengthIsRejectedBeforeTheDatabase/existing_base_URL_rules_are_unchanged (0.02s)
+=== RUN   TestHostileRequestHeadersDoNotBreakAuditingOrLogin
+--- PASS: TestHostileRequestHeadersDoNotBreakAuditingOrLogin (6.34s)
+=== RUN   TestUpdateRoleValidatesName
+=== RUN   TestUpdateRoleValidatesName/longer_than_the_column
+=== RUN   TestUpdateRoleValidatesName/blank
+=== RUN   TestUpdateRoleValidatesName/whitespace_only
+=== RUN   TestUpdateRoleValidatesName/exactly_the_column_width
+=== RUN   TestUpdateRoleValidatesName/surrounding_whitespace_is_trimmed
+=== RUN   TestUpdateRoleValidatesName/omitted_name_is_kept
+--- PASS: TestUpdateRoleValidatesName (4.35s)
+    --- PASS: TestUpdateRoleValidatesName/longer_than_the_column (0.00s)
+    --- PASS: TestUpdateRoleValidatesName/blank (0.00s)
+    --- PASS: TestUpdateRoleValidatesName/whitespace_only (0.00s)
+    --- PASS: TestUpdateRoleValidatesName/exactly_the_column_width (0.01s)
+    --- PASS: TestUpdateRoleValidatesName/surrounding_whitespace_is_trimmed (0.01s)
+    --- PASS: TestUpdateRoleValidatesName/omitted_name_is_kept (0.01s)
+=== RUN   TestCollectRowsReturnsEveryRow
+--- PASS: TestCollectRowsReturnsEveryRow (0.00s)
+=== RUN   TestCollectRowsReturnsEmptySliceForNoRows
+--- PASS: TestCollectRowsReturnsEmptySliceForNoRows (0.00s)
+=== RUN   TestCollectRowsFailsOnScanError
+--- PASS: TestCollectRowsFailsOnScanError (0.00s)
+=== RUN   TestCollectRowsFailsOnStreamError
+--- PASS: TestCollectRowsFailsOnStreamError (0.00s)
+=== RUN   TestValidateProviderRequest
+--- PASS: TestValidateProviderRequest (0.00s)
+=== RUN   TestValidateProviderRequestCountsCharactersNotBytes
+--- PASS: TestValidateProviderRequestCountsCharactersNotBytes (0.00s)
+=== RUN   TestProviderAvailableModelsAreNormalizedAndBounded
+--- PASS: TestProviderAvailableModelsAreNormalizedAndBounded (0.00s)
+=== RUN   TestValidateLegacyMutation
+--- PASS: TestValidateLegacyMutation (0.00s)
+=== RUN   TestLoginLimiterUsesBoundedUsernameBackoff
+--- PASS: TestLoginLimiterUsesBoundedUsernameBackoff (0.00s)
+=== RUN   TestSafeCSVCell
+=== RUN   TestSafeCSVCell/equals
+=== RUN   TestSafeCSVCell/plus
+=== RUN   TestSafeCSVCell/minus
+=== RUN   TestSafeCSVCell/at
+=== RUN   TestSafeCSVCell/tab
+=== RUN   TestSafeCSVCell/CR
+=== RUN   TestSafeCSVCell/tab_only
+=== RUN   TestSafeCSVCell/CR_only
+=== RUN   TestSafeCSVCell/empty
+=== RUN   TestSafeCSVCell/Korean
+=== RUN   TestSafeCSVCell/plain
+=== RUN   TestSafeCSVCell/apostrophe
+=== RUN   TestSafeCSVCell/quoted
+=== RUN   TestSafeCSVCell/comma
+=== RUN   TestSafeCSVCell/newline
+=== RUN   TestSafeCSVCell/embedded_newline
+=== RUN   TestSafeCSVCell/embedded_tab
+=== RUN   TestSafeCSVCell/embedded_CR
+=== RUN   TestSafeCSVCell/space_before_formula
+--- PASS: TestSafeCSVCell (0.00s)
+    --- PASS: TestSafeCSVCell/equals (0.00s)
+    --- PASS: TestSafeCSVCell/plus (0.00s)
+    --- PASS: TestSafeCSVCell/minus (0.00s)
+    --- PASS: TestSafeCSVCell/at (0.00s)
+    --- PASS: TestSafeCSVCell/tab (0.00s)
+    --- PASS: TestSafeCSVCell/CR (0.00s)
+    --- PASS: TestSafeCSVCell/tab_only (0.00s)
+    --- PASS: TestSafeCSVCell/CR_only (0.00s)
+    --- PASS: TestSafeCSVCell/empty (0.00s)
+    --- PASS: TestSafeCSVCell/Korean (0.00s)
+    --- PASS: TestSafeCSVCell/plain (0.00s)
+    --- PASS: TestSafeCSVCell/apostrophe (0.00s)
+    --- PASS: TestSafeCSVCell/quoted (0.00s)
+    --- PASS: TestSafeCSVCell/comma (0.00s)
+    --- PASS: TestSafeCSVCell/newline (0.00s)
+    --- PASS: TestSafeCSVCell/embedded_newline (0.00s)
+    --- PASS: TestSafeCSVCell/embedded_tab (0.00s)
+    --- PASS: TestSafeCSVCell/embedded_CR (0.00s)
+    --- PASS: TestSafeCSVCell/space_before_formula (0.00s)
+=== RUN   TestBoundedRequestIDReplacesIdentifiersTheAuditTrailCannotStore
+=== RUN   TestBoundedRequestIDReplacesIdentifiersTheAuditTrailCannotStore/generated_when_absent
+=== RUN   TestBoundedRequestIDReplacesIdentifiersTheAuditTrailCannotStore/proxy_supplied
+=== RUN   TestBoundedRequestIDReplacesIdentifiersTheAuditTrailCannotStore/longer_than_the_audit_column
+=== RUN   TestBoundedRequestIDReplacesIdentifiersTheAuditTrailCannotStore/exactly_the_audit_column
+=== RUN   TestBoundedRequestIDReplacesIdentifiersTheAuditTrailCannotStore/not_valid_utf-8
+=== RUN   TestBoundedRequestIDReplacesIdentifiersTheAuditTrailCannotStore/whitespace
+=== RUN   TestBoundedRequestIDReplacesIdentifiersTheAuditTrailCannotStore/control_character
+--- PASS: TestBoundedRequestIDReplacesIdentifiersTheAuditTrailCannotStore (0.00s)
+    --- PASS: TestBoundedRequestIDReplacesIdentifiersTheAuditTrailCannotStore/generated_when_absent (0.00s)
+    --- PASS: TestBoundedRequestIDReplacesIdentifiersTheAuditTrailCannotStore/proxy_supplied (0.00s)
+    --- PASS: TestBoundedRequestIDReplacesIdentifiersTheAuditTrailCannotStore/longer_than_the_audit_column (0.00s)
+    --- PASS: TestBoundedRequestIDReplacesIdentifiersTheAuditTrailCannotStore/exactly_the_audit_column (0.00s)
+    --- PASS: TestBoundedRequestIDReplacesIdentifiersTheAuditTrailCannotStore/not_valid_utf-8 (0.00s)
+    --- PASS: TestBoundedRequestIDReplacesIdentifiersTheAuditTrailCannotStore/whitespace (0.00s)
+    --- PASS: TestBoundedRequestIDReplacesIdentifiersTheAuditTrailCannotStore/control_character (0.00s)
+=== RUN   TestValidateSetting
+--- PASS: TestValidateSetting (0.00s)
+=== RUN   TestSafeOIDCReturnPath
+--- PASS: TestSafeOIDCReturnPath (0.00s)
+=== RUN   TestAPIScopeMapping
+--- PASS: TestAPIScopeMapping (0.00s)
+=== RUN   TestSPAServesCacheableBundleWithoutDirectoryListings
+--- PASS: TestSPAServesCacheableBundleWithoutDirectoryListings (0.03s)
+=== RUN   TestUnsupportedMethodsReturnTheJSONErrorEnvelope
+--- PASS: TestUnsupportedMethodsReturnTheJSONErrorEnvelope (0.00s)
+=== RUN   TestProbeEndpointsAnswerHeadLikeGet
+--- PASS: TestProbeEndpointsAnswerHeadLikeGet (0.01s)
+=== RUN   TestListAllKeysRequiresAdministrativeAPIScope
+--- PASS: TestListAllKeysRequiresAdministrativeAPIScope (0.00s)
+=== RUN   TestMCPOriginValidation
+--- PASS: TestMCPOriginValidation (0.00s)
+=== RUN   TestProviderApprovalPayloadOmitsSecret
+--- PASS: TestProviderApprovalPayloadOmitsSecret (0.00s)
+=== RUN   TestProviderAuthFailsClosedForInvalidStoredCredential
+--- PASS: TestProviderAuthFailsClosedForInvalidStoredCredential (0.00s)
+=== RUN   TestChatLimiterEnforcesGlobalActorAndProviderBounds
+=== RUN   TestChatLimiterEnforcesGlobalActorAndProviderBounds/actor
+=== RUN   TestChatLimiterEnforcesGlobalActorAndProviderBounds/provider
+=== RUN   TestChatLimiterEnforcesGlobalActorAndProviderBounds/global
+--- PASS: TestChatLimiterEnforcesGlobalActorAndProviderBounds (0.00s)
+    --- PASS: TestChatLimiterEnforcesGlobalActorAndProviderBounds/actor (0.00s)
+    --- PASS: TestChatLimiterEnforcesGlobalActorAndProviderBounds/provider (0.00s)
+    --- PASS: TestChatLimiterEnforcesGlobalActorAndProviderBounds/global (0.00s)
+=== RUN   TestOpenAPIMatchesImplementedRoutesAndPathParameters
+--- PASS: TestOpenAPIMatchesImplementedRoutesAndPathParameters (0.01s)
+=== RUN   TestOpenAPIAdminResourceMutationContracts
+--- PASS: TestOpenAPIAdminResourceMutationContracts (0.00s)
+=== RUN   TestPrepareSettingsUpdateClassifiesLegacyRestartAndIgnoresEmptySecrets
+--- PASS: TestPrepareSettingsUpdateClassifiesLegacyRestartAndIgnoresEmptySecrets (0.00s)
+=== RUN   TestPrepareSettingsUpdateRejectsEmptyAndInvalidCatalogValues
+--- PASS: TestPrepareSettingsUpdateRejectsEmptyAndInvalidCatalogValues (0.00s)
+=== RUN   TestLegacySettingsApprovalStoresSecretsOnlyInCiphertext
+--- PASS: TestLegacySettingsApprovalStoresSecretsOnlyInCiphertext (0.00s)
+=== RUN   TestSettingVersionSnapshotsRejectStaleOrIncompleteApprovals
+--- PASS: TestSettingVersionSnapshotsRejectStaleOrIncompleteApprovals (0.00s)
+=== RUN   TestPagePolicyAddsNonceAndSourcesOnlyWhileActive
+--- PASS: TestPagePolicyAddsNonceAndSourcesOnlyWhileActive (0.00s)
+=== RUN   TestSecurityHeadersNarrowPolicyForNonPagePaths
+--- PASS: TestSecurityHeadersNarrowPolicyForNonPagePaths (0.00s)
+=== RUN   TestTrackedShellInjectsSnippetWithMatchingNonce
+--- PASS: TestTrackedShellInjectsSnippetWithMatchingNonce (0.00s)
+=== RUN   TestCSPReportWithoutConfigurationIsIgnored
+--- PASS: TestCSPReportWithoutConfigurationIsIgnored (0.00s)
+=== RUN   TestMomentoProxyIsClosedWithoutConfiguration
+--- PASS: TestMomentoProxyIsClosedWithoutConfiguration (0.00s)
+=== RUN   TestTrackingEndToEnd
+--- PASS: TestTrackingEndToEnd (4.45s)
+=== RUN   TestListUsersRejectsOverlongQuery
+--- PASS: TestListUsersRejectsOverlongQuery (4.37s)
+=== RUN   TestListUsersPaginationHasStableOrder
+=== RUN   TestListUsersPaginationHasStableOrder/filtered/size=2
+=== RUN   TestListUsersPaginationHasStableOrder/filtered/size=3
+=== RUN   TestListUsersPaginationHasStableOrder/all/size=2
+=== RUN   TestListUsersPaginationHasStableOrder/all/size=3
+--- PASS: TestListUsersPaginationHasStableOrder (4.41s)
+    --- PASS: TestListUsersPaginationHasStableOrder/filtered/size=2 (0.03s)
+    --- PASS: TestListUsersPaginationHasStableOrder/filtered/size=3 (0.02s)
+    --- PASS: TestListUsersPaginationHasStableOrder/all/size=2 (0.02s)
+    --- PASS: TestListUsersPaginationHasStableOrder/all/size=3 (0.01s)
+=== RUN   TestVarcharNULWrites
+=== RUN   TestVarcharNULWrites/role_name
+=== RUN   TestVarcharNULWrites/role_name/trailing_NUL
+=== RUN   TestVarcharNULWrites/role_name/leading_NUL
+=== RUN   TestVarcharNULWrites/role_name/only_a_NUL
+=== RUN   TestVarcharNULWrites/role_name/literal_backslash-u_escape_is_stored
+=== RUN   TestVarcharNULWrites/role_name/length_boundary
+=== RUN   TestVarcharNULWrites/api_key_name
+=== RUN   TestVarcharNULWrites/api_key_name/trailing_NUL
+=== RUN   TestVarcharNULWrites/api_key_name/embedded_NUL
+=== RUN   TestVarcharNULWrites/api_key_name/only_a_NUL
+=== RUN   TestVarcharNULWrites/api_key_name/literal_backslash-u_escape_is_stored
+=== RUN   TestVarcharNULWrites/api_key_name/length_boundary
+=== RUN   TestVarcharNULWrites/provider_name,_default_model_and_available_models
+=== RUN   TestVarcharNULWrites/provider_name,_default_model_and_available_models/creating_with_a_name_with_a_NUL
+=== RUN   TestVarcharNULWrites/provider_name,_default_model_and_available_models/creating_with_a_default_model_with_a_NUL
+=== RUN   TestVarcharNULWrites/provider_name,_default_model_and_available_models/creating_with_a_available_model_entry_with_a_NUL
+=== RUN   TestVarcharNULWrites/provider_name,_default_model_and_available_models/updating_to_a_name_with_a_NUL
+=== RUN   TestVarcharNULWrites/provider_name,_default_model_and_available_models/updating_to_a_default_model_with_a_NUL
+=== RUN   TestVarcharNULWrites/provider_name,_default_model_and_available_models/updating_to_a_available_model_entry_with_a_NUL
+=== RUN   TestVarcharNULWrites/provider_name,_default_model_and_available_models/literal_backslash-u_escape_is_stored
+=== RUN   TestVarcharNULWrites/provider_name,_default_model_and_available_models/length_boundaries
+--- PASS: TestVarcharNULWrites (4.46s)
+    --- PASS: TestVarcharNULWrites/role_name (0.03s)
+        --- PASS: TestVarcharNULWrites/role_name/trailing_NUL (0.00s)
+        --- PASS: TestVarcharNULWrites/role_name/leading_NUL (0.00s)
+        --- PASS: TestVarcharNULWrites/role_name/only_a_NUL (0.00s)
+        --- PASS: TestVarcharNULWrites/role_name/literal_backslash-u_escape_is_stored (0.01s)
+        --- PASS: TestVarcharNULWrites/role_name/length_boundary (0.01s)
+    --- PASS: TestVarcharNULWrites/api_key_name (0.02s)
+        --- PASS: TestVarcharNULWrites/api_key_name/trailing_NUL (0.00s)
+        --- PASS: TestVarcharNULWrites/api_key_name/embedded_NUL (0.00s)
+        --- PASS: TestVarcharNULWrites/api_key_name/only_a_NUL (0.00s)
+        --- PASS: TestVarcharNULWrites/api_key_name/literal_backslash-u_escape_is_stored (0.01s)
+        --- PASS: TestVarcharNULWrites/api_key_name/length_boundary (0.01s)
+    --- PASS: TestVarcharNULWrites/provider_name,_default_model_and_available_models (0.04s)
+        --- PASS: TestVarcharNULWrites/provider_name,_default_model_and_available_models/creating_with_a_name_with_a_NUL (0.00s)
+        --- PASS: TestVarcharNULWrites/provider_name,_default_model_and_available_models/creating_with_a_default_model_with_a_NUL (0.00s)
+        --- PASS: TestVarcharNULWrites/provider_name,_default_model_and_available_models/creating_with_a_available_model_entry_with_a_NUL (0.00s)
+        --- PASS: TestVarcharNULWrites/provider_name,_default_model_and_available_models/updating_to_a_name_with_a_NUL (0.00s)
+        --- PASS: TestVarcharNULWrites/provider_name,_default_model_and_available_models/updating_to_a_default_model_with_a_NUL (0.00s)
+        --- PASS: TestVarcharNULWrites/provider_name,_default_model_and_available_models/updating_to_a_available_model_entry_with_a_NUL (0.00s)
+        --- PASS: TestVarcharNULWrites/provider_name,_default_model_and_available_models/literal_backslash-u_escape_is_stored (0.01s)
+        --- PASS: TestVarcharNULWrites/provider_name,_default_model_and_available_models/length_boundaries (0.01s)
+=== RUN   TestClassifyApprovalExecutionLegacyErrors
+=== RUN   TestClassifyApprovalExecutionLegacyErrors/stale_row_version
+=== RUN   TestClassifyApprovalExecutionLegacyErrors/row_removed
+=== RUN   TestClassifyApprovalExecutionLegacyErrors/reference_conflict
+=== RUN   TestClassifyApprovalExecutionLegacyErrors/database_unique_conflict
+=== RUN   TestClassifyApprovalExecutionLegacyErrors/synonym_runtime
+=== RUN   TestClassifyApprovalExecutionLegacyErrors/key_owner_deactivated
+=== RUN   TestClassifyApprovalExecutionLegacyErrors/key_owner_lookup_failed
+--- PASS: TestClassifyApprovalExecutionLegacyErrors (0.00s)
+    --- PASS: TestClassifyApprovalExecutionLegacyErrors/stale_row_version (0.00s)
+    --- PASS: TestClassifyApprovalExecutionLegacyErrors/row_removed (0.00s)
+    --- PASS: TestClassifyApprovalExecutionLegacyErrors/reference_conflict (0.00s)
+    --- PASS: TestClassifyApprovalExecutionLegacyErrors/database_unique_conflict (0.00s)
+    --- PASS: TestClassifyApprovalExecutionLegacyErrors/synonym_runtime (0.00s)
+    --- PASS: TestClassifyApprovalExecutionLegacyErrors/key_owner_deactivated (0.00s)
+    --- PASS: TestClassifyApprovalExecutionLegacyErrors/key_owner_lookup_failed (0.00s)
+PASS
+ok  	github.com/hkjang/ai-admin/internal/server	156.319s
+=== RUN   TestCatalogDefinitionsAndDefaults
+--- PASS: TestCatalogDefinitionsAndDefaults (0.00s)
+=== RUN   TestValidateJSONTypesAndRanges
+=== RUN   TestValidateJSONTypesAndRanges/session_valid
+=== RUN   TestValidateJSONTypesAndRanges/session_too_small
+=== RUN   TestValidateJSONTypesAndRanges/integer_rejects_decimal
+=== RUN   TestValidateJSONTypesAndRanges/boolean_rejects_string
+=== RUN   TestValidateJSONTypesAndRanges/list_valid
+=== RUN   TestValidateJSONTypesAndRanges/list_rejects_mixed_values
+=== RUN   TestValidateJSONTypesAndRanges/schema_valid
+=== RUN   TestValidateJSONTypesAndRanges/schema_rejects_SQL
+=== RUN   TestValidateJSONTypesAndRanges/schema_rejects_admin_internals
+=== RUN   TestValidateJSONTypesAndRanges/schema_rejects_catalog
+=== RUN   TestValidateJSONTypesAndRanges/schema_rejects_pg_prefix
+=== RUN   TestValidateJSONTypesAndRanges/schema_rejects_information_schema
+=== RUN   TestValidateJSONTypesAndRanges/secret_rejects_plain_channel
+=== RUN   TestValidateJSONTypesAndRanges/url_allows_internal_http
+=== RUN   TestValidateJSONTypesAndRanges/url_rejects_credentials
+=== RUN   TestValidateJSONTypesAndRanges/url_rejects_non-http
+=== RUN   TestValidateJSONTypesAndRanges/url_rejects_missing_host
+=== RUN   TestValidateJSONTypesAndRanges/path_rejects_newline
+=== RUN   TestValidateJSONTypesAndRanges/unused_inventory_rejects_writes
+=== RUN   TestValidateJSONTypesAndRanges/unknown_rejected
+=== RUN   TestValidateJSONTypesAndRanges/trailing_JSON_rejected
+--- PASS: TestValidateJSONTypesAndRanges (0.00s)
+    --- PASS: TestValidateJSONTypesAndRanges/session_valid (0.00s)
+    --- PASS: TestValidateJSONTypesAndRanges/session_too_small (0.00s)
+    --- PASS: TestValidateJSONTypesAndRanges/integer_rejects_decimal (0.00s)
+    --- PASS: TestValidateJSONTypesAndRanges/boolean_rejects_string (0.00s)
+    --- PASS: TestValidateJSONTypesAndRanges/list_valid (0.00s)
+    --- PASS: TestValidateJSONTypesAndRanges/list_rejects_mixed_values (0.00s)
+    --- PASS: TestValidateJSONTypesAndRanges/schema_valid (0.00s)
+    --- PASS: TestValidateJSONTypesAndRanges/schema_rejects_SQL (0.00s)
+    --- PASS: TestValidateJSONTypesAndRanges/schema_rejects_admin_internals (0.00s)
+    --- PASS: TestValidateJSONTypesAndRanges/schema_rejects_catalog (0.00s)
+    --- PASS: TestValidateJSONTypesAndRanges/schema_rejects_pg_prefix (0.00s)
+    --- PASS: TestValidateJSONTypesAndRanges/schema_rejects_information_schema (0.00s)
+    --- PASS: TestValidateJSONTypesAndRanges/secret_rejects_plain_channel (0.00s)
+    --- PASS: TestValidateJSONTypesAndRanges/url_allows_internal_http (0.00s)
+    --- PASS: TestValidateJSONTypesAndRanges/url_rejects_credentials (0.00s)
+    --- PASS: TestValidateJSONTypesAndRanges/url_rejects_non-http (0.00s)
+    --- PASS: TestValidateJSONTypesAndRanges/url_rejects_missing_host (0.00s)
+    --- PASS: TestValidateJSONTypesAndRanges/path_rejects_newline (0.00s)
+    --- PASS: TestValidateJSONTypesAndRanges/unused_inventory_rejects_writes (0.00s)
+    --- PASS: TestValidateJSONTypesAndRanges/unknown_rejected (0.00s)
+    --- PASS: TestValidateJSONTypesAndRanges/trailing_JSON_rejected (0.00s)
+PASS
+ok  	github.com/hkjang/ai-admin/internal/settingscatalog	1.022s
+=== RUN   TestReadConfigDefaultsToOff
+--- PASS: TestReadConfigDefaultsToOff (0.00s)
+=== RUN   TestReadConfigIgnoresUnreadableValues
+--- PASS: TestReadConfigIgnoresUnreadableValues (0.00s)
+=== RUN   TestMomentoProxySnippetNamesNoExternalOrigin
+--- PASS: TestMomentoProxySnippetNamesNoExternalOrigin (0.00s)
+=== RUN   TestMomentoDirectSnippetAddsCollectorOrigin
+--- PASS: TestMomentoDirectSnippetAddsCollectorOrigin (0.00s)
+=== RUN   TestIncompleteProvidersInjectNothing
+--- PASS: TestIncompleteProvidersInjectNothing (0.00s)
+=== RUN   TestAdminPagesExcludedUnlessAsked
+--- PASS: TestAdminPagesExcludedUnlessAsked (0.00s)
+=== RUN   TestNonceIsAppliedToEveryScriptTag
+--- PASS: TestNonceIsAppliedToEveryScriptTag (0.00s)
+=== RUN   TestSnippetOriginsAndAllowedHosts
+--- PASS: TestSnippetOriginsAndAllowedHosts (0.00s)
+=== RUN   TestGoogleAndMatomoSources
+--- PASS: TestGoogleAndMatomoSources (0.00s)
+=== RUN   TestRecorderKeepsDistinctOriginsAndMarksAllowed
+--- PASS: TestRecorderKeepsDistinctOriginsAndMarksAllowed (0.00s)
+=== RUN   TestRecorderEvictsOldestBeyondLimit
+--- PASS: TestRecorderEvictsOldestBeyondLimit (0.00s)
+PASS
+ok  	github.com/hkjang/ai-admin/internal/tracking	1.017s
+?   	github.com/hkjang/ai-admin/internal/ui	[no test files]

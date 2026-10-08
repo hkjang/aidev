@@ -1,0 +1,129 @@
+== bbmcp v0.2.10 (410645f) ==
+-- 도커 이미지 빌드: bbmcp:v0.2.10
+#0 building with "default" instance using docker driver
+
+#1 [internal] load build definition from Dockerfile
+#1 transferring dockerfile: 2.24kB done
+#1 DONE 0.0s
+
+#2 resolve image config for docker-image://docker.io/docker/dockerfile:1
+#2 DONE 1.3s
+
+#3 docker-image://docker.io/docker/dockerfile:1@sha256:4edf897a3ffa55b89f906fc8cc78afdb3f1834cc9c7083565e611a8a7d5fe99e
+#3 resolve docker.io/docker/dockerfile:1@sha256:4edf897a3ffa55b89f906fc8cc78afdb3f1834cc9c7083565e611a8a7d5fe99e 0.0s done
+#3 CACHED
+
+#4 [internal] load metadata for docker.io/library/node:22-alpine
+#4 DONE 1.2s
+
+#5 [internal] load metadata for docker.io/library/golang:1.24-alpine
+#5 DONE 1.2s
+
+#6 [internal] load metadata for docker.io/library/alpine:3.20
+#6 DONE 1.2s
+
+#7 [internal] load .dockerignore
+#7 transferring context: 130B done
+#7 DONE 0.0s
+
+#8 [internal] load build context
+#8 DONE 0.0s
+
+#9 [stage-2 1/4] FROM docker.io/library/alpine:3.20@sha256:d9e853e87e55526f6b2917df91a2115c36dd7c696a35be12163d44e6e2a4b6bc
+#9 resolve docker.io/library/alpine:3.20@sha256:d9e853e87e55526f6b2917df91a2115c36dd7c696a35be12163d44e6e2a4b6bc 0.0s done
+#9 DONE 0.0s
+
+#10 [web 1/6] FROM docker.io/library/node:22-alpine@sha256:0a7108bf6c7bf5de370ffb1a3ed6be93d405b43ff159f681a8d18c0e2bc2e402
+#10 resolve docker.io/library/node:22-alpine@sha256:0a7108bf6c7bf5de370ffb1a3ed6be93d405b43ff159f681a8d18c0e2bc2e402 0.0s done
+#10 DONE 0.0s
+
+#11 [server 1/8] FROM docker.io/library/golang:1.24-alpine@sha256:8bee1901f1e530bfb4a7850aa7a479d17ae3a18beb6e09064ed54cfd245b7191
+#11 resolve docker.io/library/golang:1.24-alpine@sha256:8bee1901f1e530bfb4a7850aa7a479d17ae3a18beb6e09064ed54cfd245b7191 0.0s done
+#11 DONE 0.0s
+
+#8 [internal] load build context
+#8 transferring context: 2.20MB 0.0s done
+#8 DONE 0.1s
+
+#12 [server 2/8] RUN apk add --no-cache ca-certificates tzdata git
+#12 CACHED
+
+#13 [web 2/6] WORKDIR /src/web
+#13 CACHED
+
+#14 [server 3/8] WORKDIR /src
+#14 CACHED
+
+#15 [web 3/6] COPY web/package.json web/package-lock.json ./
+#15 DONE 0.0s
+
+#16 [server 4/8] COPY go.mod go.sum ./
+#16 DONE 0.1s
+
+#17 [server 5/8] RUN go mod download
+#17 DONE 4.0s
+
+#18 [web 4/6] RUN npm ci --no-audit --no-fund
+#18 ...
+
+#19 [server 6/8] COPY . .
+#19 DONE 0.1s
+
+#18 [web 4/6] RUN npm ci --no-audit --no-fund
+#18 14.91 
+#18 14.91 added 122 packages in 14s
+#18 14.91 npm notice
+#18 14.91 npm notice New major version of npm available! 10.9.9 -> 12.2.0
+#18 14.91 npm notice Changelog: https://github.com/npm/cli/releases/tag/v12.2.0
+#18 14.91 npm notice To update run: npm install -g npm@12.2.0
+#18 14.91 npm notice
+#18 DONE 15.4s
+
+#20 [web 5/6] COPY web/ ./
+#20 DONE 0.2s
+
+#21 [web 6/6] RUN npm run build
+#21 0.302 
+#21 0.302 > bbmcp-web@0.1.0 build
+#21 0.302 > tsc -b && vite build
+#21 0.302 
+#21 3.785 vite v5.4.21 building for production...
+#21 3.824 transforming...
+#21 9.161 ✓ 7086 modules transformed.
+#21 9.458 rendering chunks...
+#21 9.468 computing gzip size...
+#21 9.488 ../internal/webui/dist/index.html                   0.85 kB │ gzip:   0.50 kB
+#21 9.488 ../internal/webui/dist/assets/index-r2YD_Tqm.css  204.74 kB │ gzip:  30.01 kB
+#21 9.488 ../internal/webui/dist/assets/index-DTGcVMQH.js   676.13 kB │ gzip: 209.15 kB
+#21 9.488 ✓ built in 5.68s
+#21 DONE 9.6s
+
+#22 [server 7/8] COPY --from=web /src/internal/webui/dist ./internal/webui/dist
+#22 DONE 0.0s
+
+#23 [server 8/8] RUN go build -trimpath       -ldflags "-s -w         -X github.com/hkjang/bbmcp/internal/version.Version=0.2.10         -X github.com/hkjang/bbmcp/internal/version.Commit=410645f         -X github.com/hkjang/bbmcp/internal/version.BuildDate=2026-10-08T11:20:41Z"       -o /out/bbmcp ./cmd/server
+#23 DONE 6.2s
+
+#24 [stage-2 2/4] RUN apk add --no-cache ca-certificates tzdata curl &&     addgroup -g 10001 -S bbmcp &&     adduser -u 10001 -S -G bbmcp -h /home/bbmcp bbmcp
+#24 CACHED
+
+#25 [stage-2 3/4] COPY --from=server /out/bbmcp /usr/local/bin/bbmcp
+#25 DONE 0.1s
+
+#26 [stage-2 4/4] WORKDIR /home/bbmcp
+#26 DONE 0.1s
+
+#27 exporting to image
+#27 exporting layers
+#27 exporting layers done
+#27 exporting manifest sha256:84003326827d0179419c931881b1c667d550c62c45ce82d74a07cfbbad2931f6 0.0s done
+#27 exporting config sha256:cbf0b5f2d329ec1245e77c481f5b4f7369522d20b6d432a7ad0c732d1c91f1fb 0.0s done
+#27 exporting attestation manifest sha256:45191fd95061e6455ff984a69c706a882d30c32c60fb4152c3135c54d8296e5e 0.0s done
+#27 exporting manifest list sha256:1f56f4602f718282cb608d76100c5991798f55224ffa896107ef5aa2b4bc7d80 0.0s done
+#27 naming to docker.io/library/bbmcp:v0.2.10 done
+#27 unpacking to docker.io/library/bbmcp:v0.2.10 0.1s done
+#27 DONE -1.5s
+완료: bbmcp:v0.2.10
+-- 이미지 저장: bbmcp-v0.2.10.tar.gz
+-rw-r--r-- 1 hkjang hkjang 12M Oct  8 20:21 bbmcp-v0.2.10.tar.gz
+d115e45ef4a681bd5b9ccd3b0406ad2d826cb6ed87d066e8b21cd03b422a0330  bbmcp-v0.2.10.tar.gz

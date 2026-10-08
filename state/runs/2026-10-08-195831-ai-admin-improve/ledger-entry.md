@@ -1,0 +1,11 @@
+## 2026-10-08
+- 선택: chat 최상위 null을 공급자 조회 전에 400 invalid_json으로 거부 (가치 3 / 위험 1 / 작업량 S)
+- 결과: 성공
+- 요약: 첫 Decode에서 nil map을 거부하도록 `providers.go` 조건 하나를 보강하고 단일 JSON 객체·최상위 null 거부 계약을 `docs/api.md`에 명시했다(커밋 e12916a, 프로덕션 1파일·테스트 1파일·문서 1파일). 전용 PostgreSQL 16의 Migrate/Seed → New(db,cipher,logger).Handler() → signIn → 실제 공급자 생성 API·설정 PATCH API·HTTP chat을 통과하는 기존 fixture에 null/공백 null 및 배열·문자열·숫자·boolean의 기본 공급자 미설정/설정 14사례와 정상 기본 공급자/model 보충 1사례를 추가해 기존 8사례와 총 23사례를 검증했으며, null 거부는 upstream 0회이고 정상 객체는 upstream 1회·200 JSON·messages/seed=42 보존·provider_id 제거를 확인했다. 단독 테스트 red(0.681s) → green(0.737s) → nil 검사만 제거해 동일 null 4건 red(0.753s) → 복원 green(0.780s), 전체 `go test -race -count=1 -v ./...` exit 0(서버 156.319s), `make lint`·`go build ./...`·`git diff --check` exit 0이며 전용 컨테이너 ai-admin-null-contract-pg 제거 완료; TEST_KEYCLOAK_ISSUER 미설정으로 실제 Keycloak E2E 1건만 SKIP, 웹 테스트·번들 빌드는 변경 범위 밖으로 미실행했다(로그 chat-null-*.log, go-test-race.log, make-lint.log, go-build.log, git-diff-check.log).
+- 실패 재현: `chat_request_json_integration_test.go:149: status=503 want=400 body={"error":{"code":"provider_not_configured","message":"기본 AI 공급자가 설정되지 않았습니다."}}` / `chat_request_json_integration_test.go:149: status=500 want=400 body={"error":{"code":"internal_error","message":"요청 처리 중 오류가 발생했습니다."}}` — 미설정/설정 각각 null·공백 null 2건씩만 FAIL, 나머지 19건 PASS, SKIP 없음. 첫 Decode가 null을 오류 없이 nil map으로 받아 미설정 시 UUID 선택 실패, 정상 공급자 설정 시 model 대입 panic으로 이어졌으며 nil 검사 제거 역검증에서도 같은 결과였다.
+- 보류 아이디어:
+  - updatePreferences sidebarState·aiDefaults 검증 미머지 처리 (가치 3 / 위험 1 / 작업량 S) — f66d25c 기존 브랜치 처리 전 재구현 금지.
+  - updateKeyScope 이름 검증 (가치 2 / 위험 1 / 작업량 S) — b5146f2 verify-failed 원인 확인 전 동일 접근 재시도 금지.
+  - 감사 CSV 문서의 전체 이벤트 문구를 50,000건 상한과 맞추기 (가치 1 / 위험 1 / 작업량 S) — 이번 chat 계약과 독립 과제.
+  - 프로필 email 빈 문자열 NULL 삭제·생략/null 유지 계약 테스트·문서화 (가치 1 / 위험 1 / 작업량 S) — 차선 유지, 기존 동작을 400으로 바꾸지 않음.
+- 과제서: 채택 — 현재 첫 Decode/EOF·공급자 조회 순서와 기존 8사례 fixture가 과제서와 일치해 지정된 3파일 범위로 구현하고 실제 DB/HTTP red→green→revert-red→green을 확인했다.

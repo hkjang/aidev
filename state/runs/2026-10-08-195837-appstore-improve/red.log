@@ -1,0 +1,119 @@
+
+> appstore-web@2.11.16 test
+> vitest run src/features/apps/guide-documents.test.tsx
+
+
+ RUN  v3.2.7 /home/hkjang/.cache/auto-improve-wt/appstore/web
+
+ ❯ src/features/apps/guide-documents.test.tsx (11 tests | 5 failed) 281ms
+   ✓ guide document rules > refuses an extension, an empty file, an oversized file and a full app 1ms
+   × guide documents on an app form > summarizes rejected files with the first reason in one alert 63ms
+     → expected '둘째.pdf: 빈 파일은 첨부할 수 없습니다.' to be '첫째.pdf: 빈 파일은 첨부할 수 없습니다. (총 2개 파일 첨부…' // Object.is equality
+   × guide documents on an app form > keeps stored and pending files and stages mixed picks in selection order 50ms
+     → expected '둘째.pdf: 빈 파일은 첨부할 수 없습니다.' to be '첫째.pdf: 빈 파일은 첨부할 수 없습니다. (총 2개 파일 첨부…' // Object.is equality
+   × guide documents on an app form > clears the summary on a valid pick and keeps later single failures unchanged 14ms
+     → expect(element).toHaveTextContent()
+
+Expected element to have text content:
+  총 2개 파일 첨부 실패
+Received:
+  둘째.pdf: 빈 파일은 첨부할 수 없습니다.
+   × guide documents on an app form > counts duplicate names once per rejected file across stored, pending and current picks 29ms
+     → expected 'NEW.pdf: 같은 이름의 문서가 이미 있습니다.' to be '운영 가이드.PDF: 같은 이름의 문서가 이미 있습니다. (총 3개…' // Object.is equality
+   × guide documents on an app form > counts each file over the attachment limit without dropping accepted files 29ms
+     → expected '가이드 문서는 앱당 10개까지 첨부할 수 있습니다.' to be '가이드 문서는 앱당 10개까지 첨부할 수 있습니다. (총 2개 파일…' // Object.is equality
+   ✓ guide documents on an app form > stages a picked file and a removal until the form is saved 51ms
+   ✓ guide documents on an app form > refuses a name the app already carries 19ms
+   ✓ guide documents on an app form > keeps an oversized pick off the wire and explains why 13ms
+   ✓ guide documents on the app detail page > offers every attachment as a download without a session 8ms
+   ✓ guide documents on the app detail page > stays away when an app has nothing attached 3ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 5 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/features/apps/guide-documents.test.tsx > guide documents on an app form > summarizes rejected files with the first reason in one alert
+AssertionError: expected '둘째.pdf: 빈 파일은 첨부할 수 없습니다.' to be '첫째.pdf: 빈 파일은 첨부할 수 없습니다. (총 2개 파일 첨부…' // Object.is equality
+
+Expected: "첫째.pdf: 빈 파일은 첨부할 수 없습니다. (총 2개 파일 첨부 실패)"
+Received: "둘째.pdf: 빈 파일은 첨부할 수 없습니다."
+
+ ❯ src/features/apps/guide-documents.test.tsx:96:51
+     94| 
+     95|     expect(screen.getAllByRole("alert")).toHaveLength(1);
+     96|     expect(screen.getByRole("alert").textContent).toBe(
+       |                                                   ^
+     97|       "첫째.pdf: 빈 파일은 첨부할 수 없습니다. (총 2개 파일 첨부 실패)",
+     98|     );
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/5]⎯
+
+ FAIL  src/features/apps/guide-documents.test.tsx > guide documents on an app form > keeps stored and pending files and stages mixed picks in selection order
+AssertionError: expected '둘째.pdf: 빈 파일은 첨부할 수 없습니다.' to be '첫째.pdf: 빈 파일은 첨부할 수 없습니다. (총 2개 파일 첨부…' // Object.is equality
+
+Expected: "첫째.pdf: 빈 파일은 첨부할 수 없습니다. (총 2개 파일 첨부 실패)"
+Received: "둘째.pdf: 빈 파일은 첨부할 수 없습니다."
+
+ ❯ src/features/apps/guide-documents.test.tsx:117:51
+    115|     ]);
+    116| 
+    117|     expect(screen.getByRole("alert").textContent).toBe(
+       |                                                   ^
+    118|       "첫째.pdf: 빈 파일은 첨부할 수 없습니다. (총 2개 파일 첨부 실패)",
+    119|     );
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/5]⎯
+
+ FAIL  src/features/apps/guide-documents.test.tsx > guide documents on an app form > clears the summary on a valid pick and keeps later single failures unchanged
+Error: expect(element).toHaveTextContent()
+
+Expected element to have text content:
+  총 2개 파일 첨부 실패
+Received:
+  둘째.pdf: 빈 파일은 첨부할 수 없습니다.
+ ❯ src/features/apps/guide-documents.test.tsx:135:39
+    133|     const input = screen.getByLabelText("가이드 문서 파일 선택");
+    134|     await user.upload(input, [new File([], "첫째.pdf"), new File([], "둘째…
+    135|     expect(screen.getByRole("alert")).toHaveTextContent("총 2개 파일 첨부 실패…
+       |                                       ^
+    136| 
+    137|     await user.upload(input, new File(["guide"], "정상.pdf"));
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/5]⎯
+
+ FAIL  src/features/apps/guide-documents.test.tsx > guide documents on an app form > counts duplicate names once per rejected file across stored, pending and current picks
+AssertionError: expected 'NEW.pdf: 같은 이름의 문서가 이미 있습니다.' to be '운영 가이드.PDF: 같은 이름의 문서가 이미 있습니다. (총 3개…' // Object.is equality
+
+Expected: "운영 가이드.PDF: 같은 이름의 문서가 이미 있습니다. (총 3개 파일 첨부 실패)"
+Received: "NEW.pdf: 같은 이름의 문서가 이미 있습니다."
+
+ ❯ src/features/apps/guide-documents.test.tsx:163:51
+    161|     ]);
+    162| 
+    163|     expect(screen.getByRole("alert").textContent).toBe(
+       |                                                   ^
+    164|       "운영 가이드.PDF: 같은 이름의 문서가 이미 있습니다. (총 3개 파일 첨부 실패)",
+    165|     );
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/5]⎯
+
+ FAIL  src/features/apps/guide-documents.test.tsx > guide documents on an app form > counts each file over the attachment limit without dropping accepted files
+AssertionError: expected '가이드 문서는 앱당 10개까지 첨부할 수 있습니다.' to be '가이드 문서는 앱당 10개까지 첨부할 수 있습니다. (총 2개 파일…' // Object.is equality
+
+Expected: "가이드 문서는 앱당 10개까지 첨부할 수 있습니다. (총 2개 파일 첨부 실패)"
+Received: "가이드 문서는 앱당 10개까지 첨부할 수 있습니다."
+
+ ❯ src/features/apps/guide-documents.test.tsx:182:51
+    180|     ]);
+    181| 
+    182|     expect(screen.getByRole("alert").textContent).toBe(
+       |                                                   ^
+    183|       "가이드 문서는 앱당 10개까지 첨부할 수 있습니다. (총 2개 파일 첨부 실패)",
+    184|     );
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/5]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  5 failed | 6 passed (11)
+   Start at  20:06:21
+   Duration  987ms (transform 85ms, setup 70ms, collect 156ms, tests 281ms, environment 209ms, prepare 49ms)
+

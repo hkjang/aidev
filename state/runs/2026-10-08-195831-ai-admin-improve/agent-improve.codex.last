@@ -1,0 +1,6 @@
+`e12916a` 커밋 완료. chat 최상위 `null`을 공급자 조회 전에 400 `invalid_json`으로 거부합니다.
+
+- 수정 전 503/500 재현 → 수정 후 통과 → nil 검사 제거 시 재실패 → 복원 후 23사례 통과.
+- 전용 DB에서 `go test -race -count=1 -v ./...`, `make lint`, `go build ./...`, `git diff --check` 모두 exit 0.
+- Keycloak E2E 1건은 환경 미설정으로 SKIP. 웹 검증은 범위 밖으로 미실행.
+- DB 컨테이너 정리, 깨끗한 작업 트리, 지정된 원장·아이디어·구현 노트 기록까지 확인했습니다.

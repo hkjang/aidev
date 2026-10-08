@@ -1,0 +1,16 @@
+## 2026-10-08
+- 선택: 가이드 문서 복수 선택 시 첫 실패 사유와 전체 실패 수를 표시한다 (가치 2 / 위험 1 / 작업량 S)
+- 결과: 성공
+- 요약: useGuideDocumentDraft.add가 오류를 매번 덮어쓰는 원인을 실제 hook+field DOM에서 재현하고, 첫 실패 사유를 보존하면서 현재 선택 배치의 거부 파일을 각각 한 번 세도록 수정했다. 실패가 둘 이상이면 기존 단일 alert에 `(총 N개 파일 첨부 실패)`를 붙이며 단일 오류·정상 파일 순서·stored/pending 보존·중복 및 개수 제한·저장 전 대기 계약을 유지했다. 기존 6건을 유지한 DOM 11건, 전체 React 131건, 실제 번들 Chromium desktop/mobile E2E 4건과 지정 정적·빌드·계약 검사를 통과해 제품 1파일+테스트 2파일을 469e89a로 커밋했다.
+- 실패 재현: `Expected: "첫째.pdf: 빈 파일은 첨부할 수 없습니다. (총 2개 파일 첨부 실패)"` / `Received: "둘째.pdf: 빈 파일은 첨부할 수 없습니다."` — red.log에서 5 failed | 6 passed (11), 제품 수정만 임시 제거한 revert-red.log에서도 동일 5건 실패. 복원 후 green-final.log는 11 passed.
+- 보류 아이디어: 앱 상세 가이드 문서 조회 실패 안내와 다시 시도 (가치 3 / 위험 1 / 작업량 S) — 차선, 오류 분기 부재만 확인했고 이번에 확장하지 않았다.
+- 보류 아이디어: 첨부 삭제 취소가 개수·중복 제한을 넘길 가능성 (가치 3 / 위험 2 / 작업량 M) — UX 정책과 실행 재현 필요.
+- 보류 아이디어: 즐겨찾기 검색 결과 없음 안내 (가치 3 / 위험 2 / 작업량 S) — 미병합 변경 중복 위험 유지.
+- 보류 아이디어: Field 오류와 aria-invalid/aria-describedby 연결 (가치 2 / 위험 2 / 작업량 M) — 공용 children 계약 설계 필요.
+- 과제서: 채택 — HEAD bb1ca54의 오류 덮어쓰기, 실제 hook+field 하네스와 /submit 배선이 과제서와 일치했고 지정 범위와 수용 기준을 구현했다.
+- 스킬: Skill 호출 도구가 없어 `/mnt/c/Users/USER/projects/headcount/plugins/technology/skills/{completion-verification,systematic-debugging,test-driven-development}/SKILL.md` 원문을 읽고 적용했다. 원인 재현→최소 수정→제품 원복 시 재실패→복원 통과로 인과를 검증했다.
+- 추가 테스트: DOM 5건은 단일 alert의 첫 사유/총수, 정상·실패 혼합과 기존 파일/순서 보존, 후속 정상 선택의 오류 해제와 단일 오류 원문, stored/pending/현재 배치의 대소문자 무시 중복, 10개 초과 거부 수를 검증한다. 실제 useGuideDocumentDraft·GuideDocumentsField·QueryClient와 사용자 파일 선택을 사용하고 fetch만 대체했다. 신규 E2E 1건은 실제 AppFormPage /submit에서 빈 PDF 2개+정상 PDF 선택, 대기 표시와 후속 정상 선택, POST/DELETE 부재를 검증하며 기존 관리자 테스트는 변경하지 않았다.
+- 검증 근거: `npm --prefix web ci --no-audit --no-fund` 성공(install.log), `npm --prefix web test -- src/features/apps/guide-documents.test.tsx` 기준선 6 passed(baseline.log) → 5 failed/6 passed(red.log) → 11 passed(green.log), 제품 원복 5 failed/6 passed(revert-red.log) → 복원 11 passed(green-final.log). `npm --prefix web test` 17 files/131 passed(react-tests.log), `npm --prefix web run lint` exit 0(lint.log), `npx prettier --check src/features/apps/guide-documents.tsx src/features/apps/guide-documents.test.tsx e2e/core.spec.ts`(web에서 실행) exit 0(prettier.log), `npm --prefix web run build` exit 0(build.log).
+- 검증 근거: `./scripts/check-offline-assets.sh web/dist`, `./scripts/check-env-contract.sh`, `./scripts/check-docs.sh`, `git diff --check` 모두 exit 0(offline.log/env.log/docs.log/diff-check.log). web에서 `npx playwright install chromium` 성공(chromium.log), `CI=true npm --prefix web run test:e2e -- --grep '가이드 문서 복수 선택 실패를 요약한다|소유자는 앱 수정 화면에서 가이드 문서를 첨부하고 삭제를 예약한다' --workers=2 --retries=0 --reporter=list` 4 passed/0 skipped(e2e.log).
+- 검증 한계: E2E는 실제 번들·Chromium 및 HTTP fixture이며 실제 서버·DB·Keycloak 통합 증거는 아니다. 이번 프런트 표시 변경에서는 Go build/race, 전체 E2E, Docker smoke를 실행하지 않았다. npm의 기존 whatwg-encoding 폐기 안내와 Playwright의 NO_COLOR/FORCE_COLOR 환경 경고가 있었으나 지정 검사는 모두 통과했다.
+- 범위/실측: 제품 변경은 add 1곳의 8줄 diff이며 pickError 타입·단일 alert·검증 규칙·업로드/삭제 재시도는 그대로다. 정찰 신규 2개를 포함한 기존 아이디어 15개를 유지하고 이번 항목만 done으로 갱신했다. 실행 로그·커밋 시각 기준 설치 후 기준선 20:05:35부터 커밋 20:08:21까지 2분 46초였다(준비·기록 시간 제외). 정찰 추정 30~45분보다 짧았고 범위 확대나 예비비 사용은 없었다. 빌드·테스트 산출물은 기존 ignore 대상이고 커밋에서 제외했으며 버전·릴리즈·원격 변경은 없다.
