@@ -19,3 +19,4 @@
 - 일부러 하지 않은 것: SSE 문법·JSON·EOF 계약, 인증·signal·서버·SQL 정책·의존성 변경과 UTF-8 차선 테스트는 지정 범위를 지키기 위해 제외.
 - 다음 역할 주의: errored ReadableStream은 underlying cancel을 호출하지 않으며, agent/legacy는 error 뒤 done과 EOF까지 소비해야 함; 열린 테스트 stream의 자체 정리는 단정 뒤 finally에서만 수행.
 - [러너 16:25] brief accepted — 채택 — 기준 cbbf578과 reader 정리 누락을 현재 코드·실행으로 확인했고 지정한 두 파일에서 수용 기준을 충족했으며 차선
+- [러너 16:28] verify passed — 검증 9개 통과 (auto)
