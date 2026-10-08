@@ -1,0 +1,13 @@
+chore: release ai-admin v1.2.36
+
+The merged chat request fix checks the same JSON decoder for io.EOF before
+provider selection. Trailing JSON, garbage and whitespace exceeding the
+4 MiB limit now return the existing 400 invalid_json without an upstream
+call, while valid requests retain extension fields and float64 parsing.
+
+Bumped 1.2.35 to 1.2.36 in every file scripts/verify-version.sh checks and
+added the v1.2.36 changelog entry.
+
+Validated the full Go race suite against disposable PostgreSQL and real
+Keycloak with no skips, lint, Go build, 81 web tests, the web build and
+all 44 Pages screenshot references.

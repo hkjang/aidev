@@ -30,3 +30,12 @@
 - [러너 11:05] pr created — https://github.com/hkjang/ai-admin/pull/42
 - [러너 11:12] ci passed — 검사 2개 모두 success
 - [러너 11:12] merge done — 424a42e
+
+## 릴리즈 노트
+- v1.2.35/34/33의 주석 태그·커밋·18파일 버전 갱신 관례와 release.yml의 자동 이미지/체크섬/GitHub Release 생성을 실제 확인했다.
+- dc0f868: chore: release ai-admin v1.2.36. 같은 18파일 갱신과 한국어 CHANGELOG 추가, hkjang 주석 태그 v1.2.36 작성, detached HEAD·작업 트리 깨끗함.
+- 전용 PostgreSQL·실제 Keycloak을 포함한 전체 Go 1.26.6 race PASS(서버 167.650초, SKIP 없음), Go build·lint·버전 검사 PASS. Node 26 웹 18파일 81테스트·빌드와 Pages 44개 스크린샷 참조 검사 PASS.
+- 기존 package-offline.sh·verify-offline.sh PASS, linux/amd64·OCI version/commit 일치·SHA256SUMS 검증. 검증용 tar.gz와 SHA256SUMS는 지정 assets/에 보존; 자동 게시 워크플로가 있으므로 인계 JSON assets는 []·github_release는 false.
+- release.json·release-notes.md·release-readiness.md·release-validation.md와 release-*.log에 근거 보존. 전용 테스트 컨테이너 제거, 원격 전송 없음.
+- [러너 11:30] release published — v1.2.36
+- [러너 11:31] assets verified — v1.2.36 자산 2개 (이전 v1.2.35: 2)
