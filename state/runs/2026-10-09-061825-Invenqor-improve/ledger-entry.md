@@ -1,0 +1,11 @@
+## 2026-10-09
+- 선택: MCP asset_get·asset_relations의 asset_id를 canonicalUUID로 검증·정규화 (가치 3 / 위험 1 / 작업량 M)
+- 결과: 성공
+- 요약: 두 핸들러에서 arguments.Err() 다음·첫 SQL 전에 기존 canonicalUUID를 호출해 정규화한 ID를 조회와 병합 안내에 사용하고, 비정규 입력은 도구 이름·asset_id·36자 하이픈 UUID 형식을 설명하는 기존 HTTP 200/result.isError 오류로 반환하도록 수정했다(7b97262, 프로덕션 1파일 10줄 + 신규 테스트 1파일). 새 TestMCP 3개가 실제 인증 HTTP의 legacy/modern 전체 입력표, 고정 UUID의 대소문자·공백, 활성 inbound/outbound와 종료 관계 제외, 미존재 응답, 별도 REST 병합 fixture의 대문자 안내, 닫힌 실제 DB를 통한 SQL 이전 거부를 검증하며, 수정 전 SQLite/PostgreSQL 실패 → SQLite 통과 → 수정만 원복해 SQLite 재실패 → 최종 양 DB 통과를 확인했다. 최종 검증은 `(cd server && go test ./internal/httpapi/ -run 'MCP|Arguments' -count=1)` ok 6.242s, `POSTGRES_CONTAINER=invenqor-20261009-061825-mcp-uuid POSTGRES_PORT=55549 ./scripts/test-postgres.sh -run 'MCP|Arguments' -count=1` ok httpapi 9.907s(매 실행 전 빈 포트 확인), `(cd server && go test ./... && go vet ./... && go build -o /dev/null ./cmd/invenqor-server)` exit 0(httpapi 46.871s, storage 21.865s; vet/build 빈 출력), 지정 두 파일 gofmt -l 및 git diff --check 빈 출력이며, 로그는 이 회차 폴더의 sqlite-before/reverted/after.log·postgres-before/after.log·go-test/vet/build.log에 보관했다.
+- 실패 재현: 수정 전 새 테스트 명령 `go test ./internal/httpapi/ -run 'TestMCPAssetIDs|TestMCPAssetGetCanonicalUUID' -count=1`은 SQLite exit 1(0.843s); 같은 필터 PostgreSQL 스크립트도 exit 1(httpapi 1.311s). 실제 출력 두 줄: `mcp_asset_id_validation_test.go:198: merged asset lookup = map[string]interface {}{"content":[]interface {}{map[string]interface {}{"text":"asset not found", "type":"text"}}, "isError":true}` / `mcp_asset_id_validation_test.go:162: validation error = "ERROR: invalid input syntax for type uuid: \"not-a-uuid\" (SQLSTATE 22P02)", want "asset_id"`. PostgreSQL 중괄호형·32자형은 두 도구에서 isError=false로 조용히 성공했고, SQLite 대문자 조회와 양 DB 대문자 병합 안내는 누락됐다; 수정만 원복한 동일 SQLite 필터도 exit 1(0.933s).
+- 보류 아이디어:
+  - 관계 생성 confidence JSON 타입 오류 회귀 테스트 보강 (가치 2 / 위험 1 / S): 1순위 재현·해결로 차선은 미구현, 미병합 confidence=0 수정과 섞지 않음.
+  - canonicalUUID 미적용 나머지 users/api_keys/agents 입력 점검 (가치 3 / 위험 1 / M): MCP 두 곳만 완료, 나머지 하위 서비스 검증 여부 미확인.
+  - 관계 삭제를 경로 부모 assetID에 속한 관계로 제한 (가치 4 / 위험 2 / M): 양 끝점 허용 정책과 실제 잘못된 부모 요청 재현이 선행돼야 함.
+  - REST 관계 valid_from 날짜 직렬화 양 DB 일관성 점검 (가치 3 / 위험 2 / S): 실제 HTTP 파싱 실패 재현부터 수행, 이번 범위 밖.
+- 과제서: 채택 — 두 핸들러·공용 파서·canonicalUUID의 현재 코드가 과제서와 일치했고 실제 양 DB MCP 요청에서 차이를 재현했으며 지정한 두 파일만으로 수용 기준을 충족했다.

@@ -23,7 +23,7 @@
     "risk": 1,
     "size": "M",
     "status": "pending",
-    "note": "이번 선택은 mcpAssetGet/mcpAssetRelations 두 곳만. 선언은 uuid이나 RequiredString 뒤 SQL 직접 입력 확인. 두 핸들러+테스트 1파일로 한정; users/api_keys/agents 하위 서비스는 미확인.",
+    "note": "MCP mcpAssetGet/mcpAssetRelations 두 곳은 이번 7b97262에서 검증·정규화 완료, 실제 인증 HTTP 및 양 DB 회귀 통과. 나머지 users/api_keys/agents 하위 서비스 검증 여부는 미확인이라 이 넓은 점검 항목은 pending으로 유지한다.",
     "updated": "2026-10-09"
   },
   {
@@ -168,6 +168,15 @@
     "size": "S",
     "status": "rejected",
     "note": "이전 정찰의 실제 USER_GUIDE.md GET이 200이므로 전반적 404 가설에 따른 일괄 링크 변경은 부적합. 특정 링크/앵커 점검은 별도 pending 유지.",
+    "updated": "2026-10-09"
+  },
+  {
+    "title": "MCP asset_get·asset_relations의 asset_id를 canonicalUUID로 검증·정규화",
+    "value": 3,
+    "risk": 1,
+    "size": "M",
+    "status": "done",
+    "note": "7b97262. 두 SQL 진입점에서 기존 canonicalUUID 재사용, 도구 이름·asset_id·36자 하이픈 UUID 안내를 기존 HTTP 200/isError 경로로 반환. 고정 UUID의 정상/비정규 입력, active 양방향 관계, 미존재, 대문자 병합 안내를 실제 인증 HTTP로 양 DB에서 확인. 닫힌 실제 DB 검사로 SQL 이전 거부도 검증. 수정 전 양 DB 실패, 최소 수정 후 성공, 수정 원복 SQLite 재실패, 최종 MCP/Arguments 양 DB 및 전체 Go test/vet/build 통과.",
     "updated": "2026-10-09"
   }
 ]

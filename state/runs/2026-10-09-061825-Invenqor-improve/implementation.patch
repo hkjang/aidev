@@ -1,0 +1,28 @@
+diff --git a/server/internal/httpapi/mcp.go b/server/internal/httpapi/mcp.go
+index ab6880e..7add5d6 100644
+--- a/server/internal/httpapi/mcp.go
++++ b/server/internal/httpapi/mcp.go
+@@ -695,6 +695,11 @@ func (s *Server) mcpAssetGet(r *http.Request, arguments *mcpArguments) (any, err
+ 	if err := arguments.Err(); err != nil {
+ 		return nil, err
+ 	}
++	assetID, ok := canonicalUUID(input.AssetID)
++	if !ok {
++		return nil, errors.New("asset_get: asset_id must be a 36-character hyphenated UUID")
++	}
++	input.AssetID = assetID
+ 	asset, err := scanAsset(s.database.DB().QueryRowContext(r.Context(),
+ 		`SELECT `+assetColumns+` FROM assets WHERE id=$1 AND deleted_at IS NULL`,
+ 		input.AssetID,
+@@ -783,6 +788,11 @@ func (s *Server) mcpAssetRelations(r *http.Request, arguments *mcpArguments) (an
+ 	if err := arguments.Err(); err != nil {
+ 		return nil, err
+ 	}
++	assetID, ok := canonicalUUID(input.AssetID)
++	if !ok {
++		return nil, errors.New("asset_relations: asset_id must be a 36-character hyphenated UUID")
++	}
++	input.AssetID = assetID
+ 	rows, err := s.database.DB().QueryContext(r.Context(),
+ 		`SELECT id, source_asset_id, relation_type, target_asset_id,
+ 		 valid_from, valid_to, source, confidence

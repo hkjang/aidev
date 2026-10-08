@@ -28,3 +28,6 @@
 - 보안·개인정보 차단 근거 없음. 시작 시 존재한 미커밋 internal/ui/dist 변경은 원인 미확인·미수정이며 HEAD 심사 밖; 후속 커밋 혼입 주의.
 - [러너 06:26] review approved — 리뷰 승인 (risk=low)
 - [러너 06:26] pr created — https://github.com/hkjang/Kkiit/pull/23
+- [러너 06:27] ci passed — 검사 없음 — 정책으로 허용
+- [러너 06:27] merge done — 947ce35
+- [러너 06:27] release missing — 릴리즈 결과 없음/손상: missing
