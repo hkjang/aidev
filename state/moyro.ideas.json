@@ -1,38 +1,29 @@
 [
   {
-    "title": "searchFiles/searchTeamFiles 의 rows.Err() 누락 — 행 순회 중 DB 장애가 200 '결과 없음' 으로 나간다",
-    "value": 3,
-    "risk": 1,
-    "size": "S",
-    "status": "done",
-    "note": "2026-10-08 구현·커밋(52c6d99). 루프 뒤 rows.Err() 검사를 넣고 Scan 오류의 continue 를 같은 500 반환으로 교체. 새 오류 id·새 상태 코드 없음, SQL·가시성 조건 미변경. 신규 file_search_rows_fault_postgres_test.go 8 서브테스트(RED 5건 선관찰). 배운 것: pgx v5 는 이 쿼리를 스트리밍하므로 뷰 기반 순회-중간 장애(0으로 나누기)가 Pool.Query 성공 + rows.Err()!=nil 로 나타난다 — 정찰의 미확인 사항 해소. 또 pgx 는 Scan 실패를 Rows 에 fatal 로 표시하므로 Scan 분기를 continue 로 되돌려도 테스트가 통과한다(그 경로도 rows.Err() 가 잡는다) — Scan 분기는 테스트로 단독 관찰되지 않고, 명시적 return 은 드라이버 정책을 빌리지 않기 위한 것이다.",
-    "updated": "2026-10-08"
-  },
-  {
-    "title": "postsByIDsReactions 가 DB 장애를 200 {} (반응 없음) 으로 보고하는 것 차단 — 형제 listReactions 의 500 api.reaction.list.app_error 재사용",
+    "title": "postsByIDsReactions 가 DB 장애를 200 {} (반응 없음) 으로 보고하는 것 차단",
     "value": 3,
     "risk": 2,
     "size": "S",
     "status": "pending",
-    "note": "2026-10-08 과제서 차선 후보로 남았고 미구현. compat_wave_handlers_late.go:304 의 루프에서 'ch, err := ChannelForPost; if err != nil || ch == \"\" { continue }' / 'ok, _ := IsMember' / 'list, err := ListForPost; if err != nil { continue }' 세 곳이 오류를 삼킨다. pgx.ErrNoRows(없는/삭제된 글) 와 비회원 필터는 함수 주석이 선언한 계약이므로 보존. 400/403/404→500 재분류 계열에 가까워 09-28~10-05 연속 계열 규칙과 닿는다 — 이번 회차(rows.Err())가 그 계열을 끊었으므로 다음 회차에는 집을 수 있다.",
+    "note": "compat_wave_handlers_late.go:304-356 재확인. ChannelForPost 오류 continue, IsMember 오류 무시, ListForPost 오류 continue가 그대로다. 필터 계약과 본문 상한을 함께 검토해야 하며 최근 상태코드 수정 반복을 피하려 이번에는 선택하지 않음.",
     "updated": "2026-10-08"
   },
   {
-    "title": "postsByIDsReactions(late.go:311) 의 io.LimitReader 64 KiB 조용한 절단 — 413 대신 400 'expected ids array'",
+    "title": "postsByIDsReactions 의 io.LimitReader 64 KiB 조용한 절단",
     "value": 2,
     "risk": 1,
     "size": "S",
     "status": "pending",
-    "note": "2026-10-08 변화 없음. 위 항목과 같은 함수이므로 분리 제출하면 같은 줄을 두 번 건드린다 — 묶어서만 다룰 것. 두 json.Unmarshal 폴백([...] 와 {ids:[...]}) 때문에 원시 바이트가 필요해 공용 decodeCollectionBody 로 치환 불가.",
+    "note": "late.go:311 재확인. io.ReadAll 오류도 버린다. bare 배열/{ids} 이중 파서 유지 필요. 위 같은 함수 과제와 묶어서만 진행.",
     "updated": "2026-10-08"
   },
   {
-    "title": "listReactions(handlers.go:2491/2497) 가 ChannelForPost 장애를 404, IsMember 장애를 403 으로 접는 것 분리",
+    "title": "listReactions 가 ChannelForPost 장애를 404, IsMember 장애를 403 으로 접는 것 분리",
     "value": 2,
     "risk": 2,
     "size": "S",
     "status": "pending",
-    "note": "2026-10-08 미재확인. 상태코드 재분류 계열. 위 postsByIDsReactions 항목이 머지된 뒤 별도 회차로.",
+    "note": "handlers.go:listReactions 재확인. 기존 분기 그대로다. postsByIDsReactions 뒤 별도 회차로; 이번엔 동일 계열 반복 방지.",
     "updated": "2026-10-08"
   },
   {
@@ -41,16 +32,16 @@
     "risk": 2,
     "size": "S",
     "status": "pending",
-    "note": "2026-10-08 이번 회차에서 코드로 재확인(final.go:802/860 — 줄번호는 이번 변경으로 각각 +12/+20 이동). 운영자 규칙('스캔 대상 문자열을 details 로 넘기지 말고 식별자만')과 형태가 닿지만 이것은 사용자 자신의 검색어이고 보호 대상 값이 아니다. 고치면 감사 스키마·감사 출력 계약 변경이 되어 S 를 넘는다. 이번 과제서가 명시적으로 범위 밖으로 지정했고 그대로 지켰다.",
+    "note": "final.go:816/882 재확인. terms가 details에 그대로 들어감. 보호 대상값인지 정책 미확인; 감사 계약 변경을 이번 과제에 섞지 않음.",
     "updated": "2026-10-08"
   },
   {
-    "title": "createCustomProfileField / patchCustomProfileField 의 `_ = decodeCappedBody` (final.go:1209/1233)",
+    "title": "createCustomProfileField / patchCustomProfileField 의 _ = decodeCappedBody",
     "value": 2,
     "risk": 2,
     "size": "S",
     "status": "pending",
-    "note": "2026-10-08 변화 없음(이번 변경으로 줄번호 +20 이동 — 다음 회차에 재확인). patch 는 모든 포인터가 nil 이 되어 no-op 패치가 200 + ActionCustomFieldPatch 감사행으로 성공 보고된다. 단건 쓰기라 빈 본문 {} 계약(현재 200 no-op)과 응답에서 구별이 안 되는 것이 본질이고 선행해서 계약을 정해야 한다. 10-04·10-05 두 회차가 연속으로 decodeCappedBody 계열이었으므로 당분간 쉴 것.",
+    "note": "final.go 두 함수에서 오류 무시 재확인. 단건 빈 본문 계약 결정 필요. 10-04/10-05 연속 본문 거부 계열을 반복하지 않음.",
     "updated": "2026-10-08"
   },
   {
@@ -59,7 +50,7 @@
     "risk": 1,
     "size": "S",
     "status": "pending",
-    "note": "2026-10-08 변화 없음. 남은 무테스트 패키지와 줄수: bookmarks 213, userstatus 178, preferences 171, postacks 129, tos 123, savedposts 107 (+ customprofile, application). metrics(223)·commands(394) 는 정독 완료로 결함 없음 — 재감사 금지. 다음엔 bookmarks 나 userstatus 부터. 2026-10-06 회차가 digest 에 첫 테스트를 넣어 결함을 찾은 전례가 있다.",
+    "note": "bookmarks와 userstatus를 정독했고 go test가 둘 다 [no test files]임을 확인. 이번엔 userstatus를 실제 NewRouter lifecycle로 검증하는 별도 좁은 후보를 선택했다. application/postcommand에는 테스트가 있으므로 이전의 application 무테스트 일반화는 부정확하다. metrics/commands 재감사하지 않음. 이번 구현은 httpapi 통합 테스트이므로 userstatus 패키지 자체의 단위 테스트는 여전히 없음. lifecycle 테스트와 중복되지 않는 계약만 다음 후보로 삼을 것.",
     "updated": "2026-10-08"
   },
   {
@@ -67,17 +58,17 @@
     "value": 5,
     "risk": 1,
     "size": "S",
-    "status": "pending",
-    "note": "저장소 밖 러너 과제라 구현 회차가 집을 수 없다. 2026-10-04 두 회차가 모두 gh 미인증으로 실패 단계를 지목하지 못했다. 2026-10-08 변화 없음(이번 회차도 gh 미사용·push 권한 없음).",
+    "status": "rejected",
+    "note": "러너 개선 자체는 유효하지만 이 저장소 구현 범위 밖이므로 저장소 후보에서는 rejected. gh 인증 상태는 이번 미확인. 반복해서 구현자에게 외부 승인·로그 대기를 과제로 넘기지 않음.",
     "updated": "2026-10-08"
   },
   {
-    "title": "나머지 `_ = decodeCappedBody` 호출자들의 경로별 계약 확인",
+    "title": "나머지 _ = decodeCappedBody 호출자들의 경로별 계약 확인",
     "value": 2,
     "risk": 3,
     "size": "M",
     "status": "pending",
-    "note": "2026-10-08 변화 없음. 765/821 은 이번 회차와 같은 두 함수인데 과제서가 명시적으로 범위 밖으로 지정했고 그대로 지켰다(decodeCappedBody 는 손대지 않았다). request_body.go:77-81 이 '일부 compat 스텁은 깨진 본문을 의도적으로 관용한다' 고 명시하므로 일괄 수정 금지. 경로별로 '쓰기인가 / 거짓 성공을 보고하는가' 두 질문만 센다.",
+    "note": "request_body.go의 관용 스텁 설명 및 final.go 쓰기/검색 호출 일부 재확인. 전체 호출자는 미감사; 공용 decoder 일괄 수정 금지.",
     "updated": "2026-10-08"
   },
   {
@@ -86,7 +77,7 @@
     "risk": 1,
     "size": "M",
     "status": "pending",
-    "note": "2026-10-08 변화 없음. 2026-10-06 실측: chi.Walk 로 719개 라우트를 무인증 호출했고 401 이 아닌 응답은 설계상 공개된 집합뿐 — 지금 인가 구멍은 없다. 따라서 '결함 수정' 으로는 RED 를 만들 수 없고 '미래 방지' 성격이다. 중복 method+pattern 은 chi.Walk 로 안 보인다(트라이가 하나로 접는다) — router.go 를 소스로 세거나 등록 래퍼를 두는 수밖에 없다. 그 전제로만 집을 것. 이번 테스트도 router.go 패턴을 손으로 복사했다.",
+    "note": "이번 presence lifecycle 통합 테스트로 실제 NewRouter 사용 테스트가 invite 이메일 경로와 presence 2곳으로 확대됨. 이 넓은 후보는 다른 경로용으로 pending 유지; 완료한 presence 후보와 중복 구현 금지. 719 무인증 경로 감사는 이번 재실행하지 않음.",
     "updated": "2026-10-08"
   },
   {
@@ -95,16 +86,16 @@
     "risk": 1,
     "size": "S",
     "status": "pending",
-    "note": "2026-10-08 미재확인. 2026-10-05 의 httpapi 테스트가 두 전제를 간접 고정했으므로 겹침이 크다. 가치 2 유지.",
+    "note": "customprofile/service.go:PatchUserValues의 len==0 반환 및 null DELETE 재확인. 기존 HTTP 회귀와 중복되어 우선순위 낮음.",
     "updated": "2026-10-08"
   },
   {
-    "title": "digest.loadMentions 가 '멘션' 이 아니라 'mention_count>0 인 채널의 모든 미열람 글 20건' 을 보내는 근사",
+    "title": "digest.loadMentions 가 멘션 대신 mention_count>0 채널의 모든 미열람 글 20건을 보내는 근사",
     "value": 2,
     "risk": 2,
     "size": "M",
     "status": "pending",
-    "note": "2026-10-08 미재확인. 주석이 스스로 인정하고 있다. 고치려면 멘션 판정 SQL 과 알림 정책 결정이 선행된다.",
+    "note": "digest/worker.go:loadMentions의 주석·SQL 재확인. 현재도 같은 근사이며 UTF-8 개선은 이미 반영. 실제 멘션 정책 결정이 필요하므로 이번 제외.",
     "updated": "2026-10-08"
   },
   {
@@ -113,16 +104,34 @@
     "risk": 1,
     "size": "S",
     "status": "pending",
-    "note": "2026-10-08 가치 상향(1→2). 여러 회차가 매번 주입 방법을 다시 고르고 있고, 이제 관용구가 네 개로 늘었다: ALTER TABLE ... RENAME(FK 를 건드리지 않고 테이블을 숨긴다, 10-07), DROP TABLE(10-04 이전), 같은 열 목록의 VIEW + 0으로 나누기(순회 중간 오류 → rows.Err(), 2026-10-08 신규), ALTER COLUMN ... TYPE text USING(Scan 실패, 2026-10-08 신규). newOperationsTestDB(native_operations_postgres_test.go:86) 주석에 모아 두면 다음 회차가 재발견하지 않는다. 프로덕션 0파일.",
+    "note": "newOperationsTestDB와 file_search_rows_fault_postgres_test.go의 RENAME+VIEW, ALTER TYPE, incoming_webhook_member_errors_postgres_test.go의 DROP TABLE을 재확인. 헬퍼 주석은 t.Helper 바로 시작해 아직 관용구 설명 없음. 이번 차선.",
     "updated": "2026-10-08"
   },
   {
-    "title": "metrics 패키지(223줄) 감사",
-    "value": 1,
+    "title": "실제 WebSocket 연결·해제가 수동 DND/away 상태를 보존하는 통합 회귀 테스트",
+    "value": 3,
     "risk": 1,
+    "size": "M",
+    "status": "done",
+    "note": "신규 presence_lifecycle_postgres_test.go 1파일로 구현. 실제 NewRouter/auth.Register/Login/HTTP PUT·GET/gorilla WebSocket/격리 PostgreSQL로 자동 상태 대조군과 수동 DND·away의 연결·해제·재연결을 확인. 각 PUT 이벤트를 먼저 소비하고 lifecycle 이벤트 후 payload·GET·DB를 대조한다. focused -race에서 3개 시나리오와 6개 연결 하위 테스트 PASS, skip 0. 프로덕션 변경 0파일; 현재 결함 수정이 아니므로 인위적 RED 없음. 커밋 c86e957. 전체 실제 DB go test -race -p 1 -count=1 ./... 50패키지 ok/exit 0, build/vet/크기/포맷/diff 통과. 기존 외부 플러그인 아카이브 테스트 skip 한계는 원장 참조.",
+    "updated": "2026-10-08"
+  },
+  {
+    "title": "북마크 Reorder의 dense 재배열 주석과 실제 단일행 UPDATE 불일치 확인",
+    "value": 2,
+    "risk": 2,
+    "size": "M",
+    "status": "pending",
+    "note": "신규. bookmarks/service.go:Reorder 주석은 나머지 항목까지 재배열한다고 하지만 실제 SQL은 대상 1행 sort_order만 변경한다. List는 sort_order/create_at으로 정렬. 외부 sort_order 인덱스 계약과 소비자 UX는 미확인이라 이번 구현 과제로 택하지 않음; 09-21 사이드바 재정렬과 별개이나 동시성까지 확대 금지.",
+    "updated": "2026-10-08"
+  },
+  {
+    "title": "userstatus.Get이 DB 장애도 정상 offline으로 합성하는 경로별 계약 검토",
+    "value": 2,
+    "risk": 2,
     "size": "S",
-    "status": "rejected",
-    "note": "2026-10-08 정찰이 전부 정독해 결함 없음. commands(394줄, 2026-10-06 정독)와 함께 재감사 금지.",
+    "status": "pending",
+    "note": "신규. userstatus/service.go:Get이 모든 QueryRow.Scan 오류에 Offline,nil을 반환하는 반면 GetMany/GetCustomStatus는 장애를 반환함을 확인. SetAuto의 되읽기도 영향. 상태코드/오류 재분류 반복이므로 보류하고 이번 lifecycle 테스트에 섞지 않음.",
     "updated": "2026-10-08"
   }
 ]

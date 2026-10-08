@@ -337,3 +337,15 @@
 - 과제서: 채택 — 근거가 현재 코드와 정확히 일치했다(`:793-800`/`:851-858` 의 `rows.Err()` 부재, `:796`/`:854` 의 `continue`, 같은 함수가 이미 소유한 두 500 id, 이 파일만 `rows.Err()` 가 전무하다는 grep 결과). 수용 기준 1~6 을 실제 DB 회귀로 모두 충족했다. 정찰이 미확인으로 남긴 두 가지가 해소됐다: 컨테이너 `moyro-pg-improve`/55433 은 살아 있었고(`docker start` 성공), **pgx v5 는 이 쿼리를 스트리밍해 `Pool.Query` 가 성공으로 돌아온 뒤 `rows.Err()` 에 오류를 얹는다** — 그래서 과제서가 "미확인" 으로 적은 뷰 기반 순회-중간 장애 주입이 **실제로 RED 를 만들었고**, 대안으로 적어 둔 Scan 장애도 함께 썼다(둘 다 사용). 다만 Scan 장애는 결국 `rows.Err()` 가 잡으므로 수용 기준 2 를 테스트로 단독 증명하지는 못한다 — 위 요약에 그대로 적었다.
 
 - 릴리즈: v0.2.49 (2026-10-08, run 2026-10-08-013836-moyro-improve)
+## 2026-10-08
+- 선택: 실제 WebSocket 연결·해제가 수동 DND/away 상태를 보존하는 통합 회귀 테스트 (가치 3 / 위험 1 / 작업량 M)
+- 결과: 성공
+- 요약: `server/internal/httpapi/presence_lifecycle_postgres_test.go` 1파일을 추가해 실제 `NewRouter`·`auth.Register/Login`·`httptest.NewServer`·Bearer 헤더 WebSocket·격리 PostgreSQL을 통과하는 수동 DND/away 보존과 자동 offline→online→offline 대조군을 고정했다(프로덕션 변경 0파일, 커밋 `c86e957`, 작성자 hkjang). 관찰자 자신의 최초 online 및 각 PUT 이벤트를 먼저 소비하고, 연결·해제·재연결마다 한 reader가 deadline 안에 대상 `status_change`를 받은 뒤 `data.status`, JSON 문자열 `data.payload`, 대상 본인의 GET, DB의 status/manual을 대조하며 마지막 관찰자 정리만 DB offline 폴링으로 기다린다. 실제 DSN을 자식 프로세스 환경에만 주어 `cd server && go test -race -count=1 -v ./internal/httpapi -run 'TestPresenceSocketLifecyclePreservesManualStatus|TestPresenceAndCustomStatusWebSocketAudiencePostgres|TestInviteByEmailRouteKeepsTeamAdminGate'`가 10.999s exit 0(신규 5.30s, 3개 시나리오·6개 연결 하위 테스트, focused 전체 skip 0), `cd server && go test -race -p 1 -count=1 ./...`가 50패키지 ok/FAIL 0/exit 0(httpapi 71.134s), `go build ./...`, `go vet ./...`, `bash scripts/check-source-sizes.sh`, gofmt 및 diff 검사가 통과했다; 단 외부 플러그인 아카이브 4개가 없어 기존 `TestMattermostArchivesInstallRunAndSurviveRestart`는 skip됨을 별도 verbose 실행으로 확인했고 웹·릴리즈 검증은 범위 밖으로 미실행했다.
+- 실패 재현: 못 함 — 현재 제품 결함을 수정하는 과제가 아니라 정상 동작의 배선 테스트 공백 보강이므로 새 테스트의 최초 실행부터 PASS였고, 과제서 지시대로 인위적인 RED나 운영 코드 변경을 만들지 않았다. 기존 presence_scope 테스트는 직접 handlers/hub.Register로 audience를 확인하여 이번 실제 라우터 lifecycle 검증을 대체하지 못한다.
+- 보류 아이디어:
+  - 격리 스키마 장애 주입 관용구를 newOperationsTestDB 주석에 문서화 (가치 2 / 위험 1 / S) — 본 과제 완료로 차선 불필요, pending 유지.
+  - customprofile 빈 맵 no-op/null DELETE 단위 계약 (가치 2 / 위험 1 / S) — 기존 HTTP 검증과 중복되지 않는 범위부터 확인.
+  - 북마크 Reorder의 dense 재배열 주석과 단일행 UPDATE 불일치 확인 (가치 2 / 위험 2 / M) — 외부 sort_order 계약 미확인, 별도 후보 유지.
+  - userstatus.Get의 DB 장애→정상 offline 합성 계약 검토 (가치 2 / 위험 2 / S) — 현재 lifecycle 테스트에 오류 정책 변경을 섞지 않음.
+- 과제서: 채택 — 명시된 실제 배선과 테스트 공백이 현재 코드에 존재했고, 테스트 1파일·프로덕션 0파일로 수용 기준을 충족했다. 요청한 회사 스킬 3개는 전용 Skill 도구에는 없지만 `/home/hkjang/.claude/plugins/marketplaces/headcount/plugins/technology/skills/{completion-verification,systematic-debugging,test-driven-development}/SKILL.md`를 실제로 찾아 읽고 검증·보고 절차를 적용했다(정찰의 로컬 미발견 기록 정정); RED 예외는 사용자 과제서가 우선한다.
+

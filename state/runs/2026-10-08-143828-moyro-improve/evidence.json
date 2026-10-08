@@ -1,0 +1,205 @@
+{
+  "run_id": "2026-10-08-143828-moyro-improve",
+  "generated": "2026-10-08T14:55:40+09:00",
+  "run": {
+    "run_id": "2026-10-08-143828-moyro-improve",
+    "project": "moyro",
+    "kind": "improve",
+    "started": "2026-10-08T14:38:28+09:00",
+    "model": "claude-opus-5",
+    "policy_version": "4a9e91ac7",
+    "prompts_hash": "ce085c79e18002e2",
+    "runner_version": "1bd5f0cd4",
+    "arm": "baseline",
+    "experiment": "roles-2026-09",
+    "finished": "2026-10-08T14:55:40+09:00",
+    "outcome": "review-pending"
+  },
+  "record": {
+    "ts": "2026-10-08T14:55:40+09:00",
+    "date": "2026-10-08",
+    "project": "moyro",
+    "result": "review held, PR open https://github.com/hkjang/moyro/pull/38",
+    "outcome": "review-pending",
+    "run_id": "2026-10-08-143828-moyro-improve",
+    "base_sha": "879082e98491023627de41f0a50ea3f92382bafe",
+    "head_sha": "c86e95751264738925daa6f50ed19668d86e77cf",
+    "pr": "https://github.com/hkjang/moyro/pull/38",
+    "stages": {
+      "base": {
+        "state": "pinned",
+        "reason": "main@879082e",
+        "at": "2026-10-08T14:38:35+09:00"
+      },
+      "autonomy": {
+        "state": "release",
+        "reason": "",
+        "at": "2026-10-08T14:38:35+09:00"
+      },
+      "scout": {
+        "state": "done",
+        "reason": "실제 WebSocket 연결·해제가 수동 DND/away 상태를 보존하는 통합 회귀 테스트 (가치 3 / 위험 1 / 작업량 M)",
+        "at": "2026-10-08T14:44:53+09:00"
+      },
+      "brief": {
+        "state": "accepted",
+        "reason": "채택 — 명시된 실제 배선과 테스트 공백이 현재 코드에 존재했고, 테스트 1파일·프로덕션 0파일로 수용 기준을 충족했�",
+        "at": "2026-10-08T14:54:47+09:00"
+      },
+      "verify": {
+        "state": "passed",
+        "reason": "검증 2개 통과 (policy)",
+        "at": "2026-10-08T14:55:22+09:00"
+      },
+      "review": {
+        "state": "missing",
+        "reason": "리뷰 결과 없음/손상: missing — 보류",
+        "at": "2026-10-08T14:55:29+09:00"
+      },
+      "pr": {
+        "state": "created",
+        "reason": "https://github.com/hkjang/moyro/pull/38",
+        "at": "2026-10-08T14:55:37+09:00"
+      }
+    },
+    "campaign": "",
+    "autonomy": "release",
+    "arm": "baseline",
+    "experiment": "roles-2026-09",
+    "engine": "codex",
+    "files": 1,
+    "additions": 261,
+    "deletions": 0,
+    "tests": 1,
+    "title": "test: cover manual presence across real websocket reconnects"
+  },
+  "stages": {
+    "base": {
+      "state": "pinned",
+      "reason": "main@879082e",
+      "at": "2026-10-08T14:38:35+09:00"
+    },
+    "autonomy": {
+      "state": "release",
+      "reason": "",
+      "at": "2026-10-08T14:38:35+09:00"
+    },
+    "scout": {
+      "state": "done",
+      "reason": "실제 WebSocket 연결·해제가 수동 DND/away 상태를 보존하는 통합 회귀 테스트 (가치 3 / 위험 1 / 작업량 M)",
+      "at": "2026-10-08T14:44:53+09:00"
+    },
+    "brief": {
+      "state": "accepted",
+      "reason": "채택 — 명시된 실제 배선과 테스트 공백이 현재 코드에 존재했고, 테스트 1파일·프로덕션 0파일로 수용 기준을 충족했�",
+      "at": "2026-10-08T14:54:47+09:00"
+    },
+    "verify": {
+      "state": "passed",
+      "reason": "검증 2개 통과 (policy)",
+      "at": "2026-10-08T14:55:22+09:00"
+    },
+    "review": {
+      "state": "missing",
+      "reason": "리뷰 결과 없음/손상: missing — 보류",
+      "at": "2026-10-08T14:55:29+09:00"
+    },
+    "pr": {
+      "state": "created",
+      "reason": "https://github.com/hkjang/moyro/pull/38",
+      "at": "2026-10-08T14:55:37+09:00"
+    }
+  },
+  "provenance": {
+    "model": "claude-opus-5",
+    "policy_version": "4a9e91ac7",
+    "prompts_hash": "ce085c79e18002e2",
+    "runner_version": "1bd5f0cd4",
+    "base_sha": "879082e98491023627de41f0a50ea3f92382bafe",
+    "head_sha": "c86e95751264738925daa6f50ed19668d86e77cf",
+    "pr": "https://github.com/hkjang/moyro/pull/38"
+  },
+  "verification": {
+    "runner": {
+      "source": "policy",
+      "commands": [
+        {
+          "cmd": "cd server && go build ./... && go vet ./... && go test ./...",
+          "exit": 0,
+          "seconds": 5
+        },
+        {
+          "cmd": "cd webapp && ([ -d node_modules ] || npm ci --no-audit --no-fund) && npm run typecheck --silent && npm test --silent",
+          "exit": 0,
+          "seconds": 29
+        }
+      ]
+    },
+    "runner_gate": {
+      "ok": true,
+      "state": "verified",
+      "reason": "검증 2개 통과 (policy)"
+    },
+    "after_rebase": null,
+    "review": null,
+    "ci_gate": null
+  },
+  "release": {
+    "result": null,
+    "assets_sha256": []
+  },
+  "approval": null,
+  "usage": [
+    {
+      "ts": "2026-10-08T14:44:52+09:00",
+      "date": "2026-10-08",
+      "project": "moyro",
+      "phase": "scout",
+      "run_id": "2026-10-08-143828-moyro-improve",
+      "campaign": "",
+      "subtype": "success",
+      "engine": "codex",
+      "duration_ms": 0,
+      "num_turns": 1,
+      "cost_usd": null,
+      "input_tokens": 742503,
+      "output_tokens": 10618,
+      "cache_read": 660736,
+      "cache_create": 0
+    },
+    {
+      "ts": "2026-10-08T14:54:47+09:00",
+      "date": "2026-10-08",
+      "project": "moyro",
+      "phase": "improve",
+      "run_id": "2026-10-08-143828-moyro-improve",
+      "campaign": "",
+      "subtype": "success",
+      "engine": "codex",
+      "duration_ms": 0,
+      "num_turns": 1,
+      "cost_usd": null,
+      "input_tokens": 2373622,
+      "output_tokens": 14019,
+      "cache_read": 2280448,
+      "cache_create": 0
+    },
+    {
+      "ts": "2026-10-08T14:55:29+09:00",
+      "date": "2026-10-08",
+      "project": "moyro",
+      "phase": "review",
+      "run_id": "2026-10-08-143828-moyro-improve",
+      "campaign": "",
+      "subtype": "success",
+      "engine": "claude",
+      "duration_ms": 558,
+      "num_turns": 1,
+      "cost_usd": 0,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read": 0,
+      "cache_create": 0
+    }
+  ]
+}

@@ -28,3 +28,14 @@
 - 후속/릴리즈 유의: 8KiB 초과 보고서 미기록 수정이며 속도 제한·DoS 해결로 설명하지 말 것.
 - [러너 14:50] review approved — 리뷰 승인 (risk=low)
 - [러너 14:50] pr created — https://github.com/hkjang/jikim/pull/54
+- [러너 14:53] ci passed — 검사 2개 모두 success
+- [러너 14:53] merge done — 9f47ec9
+
+## 릴리즈 노트
+- v0.2.32 준비 완료: 릴리즈 커밋 `096aa39`, 주석 태그 `v0.2.32` (`jikim v0.2.32`), detached HEAD·hkjang 유지, 작업 트리 clean.
+- 실제 최신 태그는 v0.2.30이나 base에는 v0.2.31 릴리즈 커밋 aac28af와 버전·CHANGELOG가 이미 있어 패치 하나를 올림. 기존과 같은 20개 버전·문서 파일만 갱신.
+- verify.sh 전체 exit 0(프런트 59/59), CSP 경계·추적 지정 테스트 -count=1 exit 0, 버전·태그·HEAD 일치와 diff --check 통과.
+- release.yml이 태그 푸시 후 이미지·스모크·E2E·번들 2개·GitHub Release를 생성하므로 github_release=false, assets=[]. 원격 작업 없음.
+- 로컬 PostgreSQL 연동 DSN 없음, 새 태그 이미지·E2E·번들은 CI 수행 대기. 기존 500kB 청크 경고와 PDF v0.2.18 제한은 유지·문서화. 캡처 v0.2.9 출처 유지.
+- marketing:product-launch 및 technology:release-and-deployment 로컬 원본 적용(Skill 도구 미노출). Tier 3·릴리즈 노트 범위이며 속도 제한/DoS 해결로 설명하지 않음.
+- release.json, release-notes.md, release-report.md, release-validation.json과 검증 로그를 회차 디렉터리에 저장.
