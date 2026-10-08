@@ -28,3 +28,6 @@
 - 세 요청 스킬은 Skill 도구 부재로 로컬 SKILL.md를 읽어 적용; 새 개인정보 흐름·권한 확대·비가역 변경 및 이번 diff의 차단 결함은 발견하지 못했다.
 - [러너 19:25] review approved — 리뷰 승인 (risk=low)
 - [러너 19:25] pr created — https://github.com/hkjang/Vendra/pull/144
+- [러너 19:27] ci passed — 검사 2개 모두 success
+- [러너 19:27] merge done — fd56d79
+- [러너 19:27] release missing — 릴리즈 결과 없음/손상: missing
