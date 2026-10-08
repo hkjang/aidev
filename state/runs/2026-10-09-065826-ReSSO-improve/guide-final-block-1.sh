@@ -1,0 +1,3 @@
+test_env="$(scripts/test-services.sh)" &&
+  eval "$test_env" &&
+  go test ./internal/...

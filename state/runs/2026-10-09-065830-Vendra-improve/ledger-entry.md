@@ -1,0 +1,11 @@
+## 2026-10-09
+- 선택: 자동 저장 응답 대기 중 신규 업무 중복 제출 방지 (가치 4 / 위험 2 / 작업량 S)
+- 결과: 성공
+- 요약: NewObject.save의 submitted ref를 동기적으로 검사하고 첫 await 전에 버튼을 잠가 PUT·POST·DELETE 대기 중 중복 생성을 차단했다(commit 011c5a3, 프로덕션 1파일 + 기존 테스트 파일에 3개 추가). 실제 Objects·React DOM 이벤트·HTMLFormElement/FormData·원본 api/post/put/del을 통과하고 fetch만 대체해 첫 스냅샷, POST/DELETE 각 1회, 모달 닫힘·목록 GET 2회와 DELETE 실패 정책을 검증했으며 기존 4개 테스트는 수정하지 않았다. npm ci --ignore-scripts --prefix web 성공 후 집중 기준선 15개 → 수정 전 2 failed/16 passed → 수정 후 18개 통과, 가드/busy 개별 되돌림에서 각각 1개 실패를 확인하고 복원했으며 전체 npm test --prefix web 25파일/116개(미처리 rejection·skip 없음), web의 npx tsc -b --noEmit·npx eslint src --max-warnings 0·npm run build가 모두 통과했다.
+- 실패 재현: `Error: expect(element).toBeDisabled()` / `Received element is not disabled:`; `AssertionError: expected [ [ '/api/v1/contracts', …(1) ], …(5) ] to have a length of 1 but got 6` — assets/implementation-red.log, 수정 전 집중 실행에서 신규 2개만 실패.
+- 보류 아이디어:
+  - 저장된 보기 조회 실패 표시와 전용 재시도 (3/2/M) — 이번 과제서의 차선 후보 유지.
+  - 늦은 초안 복원 응답이 입력을 덮어쓰지 않는 실행 테스트 (2/1/S) — 기존 보호 조건 유지, 늦은 GET 미검증.
+  - 겹친 초안 PUT 완료 순서 역전 확인 (3/3/M) — 중복 submit과 별개이며 서버 최종 값 재현 필요.
+  - 업무 유형 전환 뒤 늦은 저장된 보기 응답 확인 (3/2/M) — 실제 라우트 전환 재현 필요.
+- 과제서: 채택 — 현재 코드가 근거와 일치하고 실제 폼 이벤트에서 버튼 미잠금·중복 POST가 재현되어 지정한 ref 가드와 busy 이동만으로 수정했다.
