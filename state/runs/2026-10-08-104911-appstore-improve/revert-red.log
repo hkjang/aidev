@@ -1,0 +1,243 @@
+
+> appstore-web@2.11.16 test
+> vitest run src/pages/app-form-page.test.tsx
+
+
+ RUN  v3.2.7 /home/hkjang/.cache/auto-improve-wt/appstore/web
+
+ ❯ src/pages/app-form-page.test.tsx (19 tests | 9 failed) 2851ms
+   ✓ Edit screen for an app the owner cannot see > names the missing app in Korean instead of leaking the query library's message 61ms
+   ✓ Edit screen for an app the owner cannot see > offers a way back to the owner's app list 42ms
+   ✓ Edit screen for an app the owner owns > fills the form with the stored values 29ms
+   ✓ Edit screen for an app the owner owns > still reports a real transport failure as an error, not as a missing app 16ms
+   × Saved application completion > shows the POST response status draft as 초안 383ms
+     → expect(element).toHaveTextContent()
+
+Expected element to have text content:
+  현재 상태: 초안
+Received:
+  앱이 등록되었습니다승인 Workflow 설정에 따라 즉시 게시되거나 검토 대기 상태가 됩니다.내 앱으로 이동
+   × Saved application completion > shows the POST response status published as 게시됨 267ms
+     → expect(element).toHaveTextContent()
+
+Expected element to have text content:
+  현재 상태: 게시됨
+Received:
+  앱이 등록되었습니다승인 Workflow 설정에 따라 즉시 게시되거나 검토 대기 상태가 됩니다.내 앱으로 이동
+   × Saved application completion > shows the POST response status pending_review as 검토 대기 247ms
+     → expect(element).toHaveTextContent()
+
+Expected element to have text content:
+  현재 상태: 검토 대기
+Received:
+  앱이 등록되었습니다승인 Workflow 설정에 따라 즉시 게시되거나 검토 대기 상태가 됩니다.내 앱으로 이동
+   × Saved application completion > shows the POST response status undefined as — 279ms
+     → expect(element).toHaveTextContent()
+
+Expected element to have text content:
+  현재 상태: —
+Received:
+  앱이 등록되었습니다승인 Workflow 설정에 따라 즉시 게시되거나 검토 대기 상태가 됩니다.내 앱으로 이동
+   × Saved application completion > shows the POST response status quarantined as quarantined 272ms
+     → expect(element).toHaveTextContent()
+
+Expected element to have text content:
+  현재 상태: quarantined
+Received:
+  앱이 등록되었습니다승인 Workflow 설정에 따라 즉시 게시되거나 검토 대기 상태가 됩니다.내 앱으로 이동
+   × Saved application completion > shows PUT status pending_review instead of the previously published status 24ms
+     → expect(element).toHaveTextContent()
+
+Expected element to have text content:
+  현재 상태: 검토 대기
+Received:
+  앱이 수정되었습니다승인 Workflow 설정에 따라 즉시 게시되거나 검토 대기 상태가 됩니다.내 앱으로 이동
+   × Saved application completion > shows PUT status rejected instead of the previously published status 21ms
+     → expect(element).toHaveTextContent()
+
+Expected element to have text content:
+  현재 상태: 반려
+Received:
+  앱이 수정되었습니다승인 Workflow 설정에 따라 즉시 게시되거나 검토 대기 상태가 됩니다.내 앱으로 이동
+   × Saved application completion > shows PUT status archived instead of the previously published status 24ms
+     → expect(element).toHaveTextContent()
+
+Expected element to have text content:
+  현재 상태: 보관됨
+Received:
+  앱이 수정되었습니다승인 Workflow 설정에 따라 즉시 게시되거나 검토 대기 상태가 됩니다.내 앱으로 이동
+   ✓ Saved application completion > navigates to the owner's apps after saving (edit=false) 255ms
+   ✓ Saved application completion > navigates to the owner's apps after saving (edit=true) 30ms
+   ✓ Saved application completion > keeps the form error after a save failure (edit=false) 248ms
+   ✓ Saved application completion > keeps the form error after a save failure (edit=true) 26ms
+   ✓ Saved application completion > keeps the form error when documents fail after saving (edit=false)  321ms
+   ✓ Saved application completion > keeps the form error when documents fail after saving (edit=true) 41ms
+   × Saved application completion > waits for document application before showing the saved status 264ms
+     → expect(element).toHaveTextContent()
+
+Expected element to have text content:
+  현재 상태: 초안
+Received:
+  앱이 등록되었습니다승인 Workflow 설정에 따라 즉시 게시되거나 검토 대기 상태가 됩니다.내 앱으로 이동
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 9 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/pages/app-form-page.test.tsx > Saved application completion > shows the POST response status draft as 초안
+Error: expect(element).toHaveTextContent()
+
+Expected element to have text content:
+  현재 상태: 초안
+Received:
+  앱이 등록되었습니다승인 Workflow 설정에 따라 즉시 게시되거나 검토 대기 상태가 됩니다.내 앱으로 이동
+ ❯ src/pages/app-form-page.test.tsx:199:45
+    197| 
+    198|     const heading = await screen.findByRole("heading", { name: "앱이 등록되…
+    199|     expect(heading.closest(".state-panel")).toHaveTextContent(`현재 상태: …
+       |                                             ^
+    200|     expect(heading.closest(".state-panel")).not.toHaveTextContent(/즉시 …
+    201|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/9]⎯
+
+ FAIL  src/pages/app-form-page.test.tsx > Saved application completion > shows the POST response status published as 게시됨
+Error: expect(element).toHaveTextContent()
+
+Expected element to have text content:
+  현재 상태: 게시됨
+Received:
+  앱이 등록되었습니다승인 Workflow 설정에 따라 즉시 게시되거나 검토 대기 상태가 됩니다.내 앱으로 이동
+ ❯ src/pages/app-form-page.test.tsx:199:45
+    197| 
+    198|     const heading = await screen.findByRole("heading", { name: "앱이 등록되…
+    199|     expect(heading.closest(".state-panel")).toHaveTextContent(`현재 상태: …
+       |                                             ^
+    200|     expect(heading.closest(".state-panel")).not.toHaveTextContent(/즉시 …
+    201|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/9]⎯
+
+ FAIL  src/pages/app-form-page.test.tsx > Saved application completion > shows the POST response status pending_review as 검토 대기
+Error: expect(element).toHaveTextContent()
+
+Expected element to have text content:
+  현재 상태: 검토 대기
+Received:
+  앱이 등록되었습니다승인 Workflow 설정에 따라 즉시 게시되거나 검토 대기 상태가 됩니다.내 앱으로 이동
+ ❯ src/pages/app-form-page.test.tsx:199:45
+    197| 
+    198|     const heading = await screen.findByRole("heading", { name: "앱이 등록되…
+    199|     expect(heading.closest(".state-panel")).toHaveTextContent(`현재 상태: …
+       |                                             ^
+    200|     expect(heading.closest(".state-panel")).not.toHaveTextContent(/즉시 …
+    201|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/9]⎯
+
+ FAIL  src/pages/app-form-page.test.tsx > Saved application completion > shows the POST response status undefined as —
+Error: expect(element).toHaveTextContent()
+
+Expected element to have text content:
+  현재 상태: —
+Received:
+  앱이 등록되었습니다승인 Workflow 설정에 따라 즉시 게시되거나 검토 대기 상태가 됩니다.내 앱으로 이동
+ ❯ src/pages/app-form-page.test.tsx:199:45
+    197| 
+    198|     const heading = await screen.findByRole("heading", { name: "앱이 등록되…
+    199|     expect(heading.closest(".state-panel")).toHaveTextContent(`현재 상태: …
+       |                                             ^
+    200|     expect(heading.closest(".state-panel")).not.toHaveTextContent(/즉시 …
+    201|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/9]⎯
+
+ FAIL  src/pages/app-form-page.test.tsx > Saved application completion > shows the POST response status quarantined as quarantined
+Error: expect(element).toHaveTextContent()
+
+Expected element to have text content:
+  현재 상태: quarantined
+Received:
+  앱이 등록되었습니다승인 Workflow 설정에 따라 즉시 게시되거나 검토 대기 상태가 됩니다.내 앱으로 이동
+ ❯ src/pages/app-form-page.test.tsx:199:45
+    197| 
+    198|     const heading = await screen.findByRole("heading", { name: "앱이 등록되…
+    199|     expect(heading.closest(".state-panel")).toHaveTextContent(`현재 상태: …
+       |                                             ^
+    200|     expect(heading.closest(".state-panel")).not.toHaveTextContent(/즉시 …
+    201|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/9]⎯
+
+ FAIL  src/pages/app-form-page.test.tsx > Saved application completion > shows PUT status pending_review instead of the previously published status
+Error: expect(element).toHaveTextContent()
+
+Expected element to have text content:
+  현재 상태: 검토 대기
+Received:
+  앱이 수정되었습니다승인 Workflow 설정에 따라 즉시 게시되거나 검토 대기 상태가 됩니다.내 앱으로 이동
+ ❯ src/pages/app-form-page.test.tsx:216:45
+    214| 
+    215|     const heading = await screen.findByRole("heading", { name: "앱이 수정되…
+    216|     expect(heading.closest(".state-panel")).toHaveTextContent(`현재 상태: …
+       |                                             ^
+    217|     expect(heading.closest(".state-panel")).not.toHaveTextContent(/게시됨…
+    218|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[6/9]⎯
+
+ FAIL  src/pages/app-form-page.test.tsx > Saved application completion > shows PUT status rejected instead of the previously published status
+Error: expect(element).toHaveTextContent()
+
+Expected element to have text content:
+  현재 상태: 반려
+Received:
+  앱이 수정되었습니다승인 Workflow 설정에 따라 즉시 게시되거나 검토 대기 상태가 됩니다.내 앱으로 이동
+ ❯ src/pages/app-form-page.test.tsx:216:45
+    214| 
+    215|     const heading = await screen.findByRole("heading", { name: "앱이 수정되…
+    216|     expect(heading.closest(".state-panel")).toHaveTextContent(`현재 상태: …
+       |                                             ^
+    217|     expect(heading.closest(".state-panel")).not.toHaveTextContent(/게시됨…
+    218|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[7/9]⎯
+
+ FAIL  src/pages/app-form-page.test.tsx > Saved application completion > shows PUT status archived instead of the previously published status
+Error: expect(element).toHaveTextContent()
+
+Expected element to have text content:
+  현재 상태: 보관됨
+Received:
+  앱이 수정되었습니다승인 Workflow 설정에 따라 즉시 게시되거나 검토 대기 상태가 됩니다.내 앱으로 이동
+ ❯ src/pages/app-form-page.test.tsx:216:45
+    214| 
+    215|     const heading = await screen.findByRole("heading", { name: "앱이 수정되…
+    216|     expect(heading.closest(".state-panel")).toHaveTextContent(`현재 상태: …
+       |                                             ^
+    217|     expect(heading.closest(".state-panel")).not.toHaveTextContent(/게시됨…
+    218|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[8/9]⎯
+
+ FAIL  src/pages/app-form-page.test.tsx > Saved application completion > waits for document application before showing the saved status
+Error: expect(element).toHaveTextContent()
+
+Expected element to have text content:
+  현재 상태: 초안
+Received:
+  앱이 등록되었습니다승인 Workflow 설정에 따라 즉시 게시되거나 검토 대기 상태가 됩니다.내 앱으로 이동
+ ❯ src/pages/app-form-page.test.tsx:267:45
+    265|     finishUpload(jsonResponse({ id: "document-id" }, 201));
+    266|     const heading = await screen.findByRole("heading", { name: "앱이 등록되…
+    267|     expect(heading.closest(".state-panel")).toHaveTextContent("현재 상태: …
+       |                                             ^
+    268|   });
+    269| });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[9/9]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  9 failed | 10 passed (19)
+   Start at  10:56:32
+   Duration  3.74s (transform 199ms, setup 89ms, collect 288ms, tests 2.85s, environment 230ms, prepare 52ms)
+

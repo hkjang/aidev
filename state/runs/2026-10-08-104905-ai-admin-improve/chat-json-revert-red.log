@@ -1,0 +1,35 @@
+=== RUN   TestChatRequestJSONContract
+=== RUN   TestChatRequestJSONContract/single_object
+=== RUN   TestChatRequestJSONContract/trailing_json_whitespace
+=== RUN   TestChatRequestJSONContract/whitespace_at_4_mib_limit
+=== RUN   TestChatRequestJSONContract/trailing_object
+    chat_request_json_integration_test.go:190: upstream calls=1 want=0
+    chat_request_json_integration_test.go:193: status=200 want=400 body={"id":"chatcmpl-json-contract","choices":[{"message":{"role":"assistant","content":"안녕하세요 {} null xyz"}}]}
+    chat_request_json_integration_test.go:204: error code="" want=invalid_json
+=== RUN   TestChatRequestJSONContract/trailing_null
+    chat_request_json_integration_test.go:190: upstream calls=1 want=0
+    chat_request_json_integration_test.go:193: status=200 want=400 body={"id":"chatcmpl-json-contract","choices":[{"message":{"role":"assistant","content":"안녕하세요 {} null xyz"}}]}
+    chat_request_json_integration_test.go:204: error code="" want=invalid_json
+=== RUN   TestChatRequestJSONContract/trailing_garbage
+    chat_request_json_integration_test.go:190: upstream calls=1 want=0
+    chat_request_json_integration_test.go:193: status=200 want=400 body={"id":"chatcmpl-json-contract","choices":[{"message":{"role":"assistant","content":"안녕하세요 {} null xyz"}}]}
+    chat_request_json_integration_test.go:204: error code="" want=invalid_json
+=== RUN   TestChatRequestJSONContract/whitespace_over_4_mib_limit
+    chat_request_json_integration_test.go:190: upstream calls=1 want=0
+    chat_request_json_integration_test.go:193: status=200 want=400 body={"id":"chatcmpl-json-contract","choices":[{"message":{"role":"assistant","content":"안녕하세요 {} null xyz"}}]}
+    chat_request_json_integration_test.go:204: error code="" want=invalid_json
+=== RUN   TestChatRequestJSONContract/reject_before_provider_selection
+    chat_request_json_integration_test.go:193: status=503 want=400 body={"error":{"code":"provider_unavailable","message":"선택한 AI 공급자를 사용할 수 없습니다."}}
+    chat_request_json_integration_test.go:204: error code="provider_unavailable" want=invalid_json
+--- FAIL: TestChatRequestJSONContract (1.23s)
+    --- PASS: TestChatRequestJSONContract/single_object (0.01s)
+    --- PASS: TestChatRequestJSONContract/trailing_json_whitespace (0.00s)
+    --- PASS: TestChatRequestJSONContract/whitespace_at_4_mib_limit (0.01s)
+    --- FAIL: TestChatRequestJSONContract/trailing_object (0.01s)
+    --- FAIL: TestChatRequestJSONContract/trailing_null (0.00s)
+    --- FAIL: TestChatRequestJSONContract/trailing_garbage (0.00s)
+    --- FAIL: TestChatRequestJSONContract/whitespace_over_4_mib_limit (0.01s)
+    --- FAIL: TestChatRequestJSONContract/reject_before_provider_selection (0.00s)
+FAIL
+FAIL	github.com/hkjang/ai-admin/internal/server	1.233s
+FAIL
