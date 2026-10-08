@@ -39,3 +39,5 @@
 - 로컬 PostgreSQL 연동 DSN 없음, 새 태그 이미지·E2E·번들은 CI 수행 대기. 기존 500kB 청크 경고와 PDF v0.2.18 제한은 유지·문서화. 캡처 v0.2.9 출처 유지.
 - marketing:product-launch 및 technology:release-and-deployment 로컬 원본 적용(Skill 도구 미노출). Tier 3·릴리즈 노트 범위이며 속도 제한/DoS 해결로 설명하지 않음.
 - release.json, release-notes.md, release-report.md, release-validation.json과 검증 로그를 회차 디렉터리에 저장.
+- [러너 15:02] release published — v0.2.32
+- [러너 15:06] assets verified — v0.2.32 자산 2개 (이전 v0.2.30: 2)
