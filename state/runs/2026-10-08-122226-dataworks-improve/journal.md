@@ -28,3 +28,6 @@
 - 미검증: 실제 PostgreSQL·웹/브라우저/Pages; 전체 Go 검증은 기존 로그 확인. legacy admin_factory.go:110 오류 무시는 후속 과제이며 이번 해결로 홍보하지 말 것.
 - [러너 12:40] review approved — 리뷰 승인 (risk=low)
 - [러너 12:40] pr created — https://github.com/hkjang/dataworks/pull/38
+- [러너 12:43] ci passed — 검사 2개 모두 success
+- [러너 12:43] merge done — c835720
+- [러너 12:43] release missing — 릴리즈 결과 없음/손상: missing
