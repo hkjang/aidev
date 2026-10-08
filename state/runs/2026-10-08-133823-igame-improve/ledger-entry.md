@@ -1,0 +1,12 @@
+## 2026-10-08
+- 선택: ENCRYPTION_KEY의 32바이트·인코딩 거부 계약을 실제 config.Load 경로에서 회귀로 고정 (가치 2 / 위험 1 / 작업량 S)
+- 결과: 성공
+- 요약: config_test.go 한 파일에서 TestParseEncryptionKey 25개와 새 TestLoadEncryptionKeyContract 30개 사례를 실행하여 plain·hex·표준 padded base64의 정확한 복원 바이트, 0·16·24·31·33바이트/잘못된 인코딩 거부, UTF-8 바이트 경계, Load의 바깥 whitespace 처리와 오류의 payload 비노출·반환 키 부재를 고정했다. 실제 Load에 t.Setenv로 네 필수 환경변수를 통제하고 나머지 세 설정을 항상 유효하게 두며 성공 대조군과 키 오류 식별을 포함했고, 기존 bootstrap 암호 경계 테스트는 유지했다. 커밋 9003e19(테스트 1파일 +103/-10, 제품 0파일); 아래 검증은 모두 통과했으나 PostgreSQL·프로세스 종료·로그·DB 기동 전체는 검증하지 않았다.
+- 실패 재현: 못 함 — 확인된 결함 수정이 아닌 테스트 공백 보강이며 변경 전 패키지도 PASS(0.003s), 새 parser/Load 테스트도 각각 최초 실행부터 PASS(각 0.003s). 제품 코드 수정이나 변이 실행 없이 기존 계약을 고정했으므로 Red→Green이나 버그 해결을 주장하지 않는다.
+- 검증: `go test ./internal/config -run '^TestParseEncryptionKey$' -count=1 -v` PASS(25개); `go test ./internal/config -run '^TestLoadEncryptionKeyContract$' -count=1 -v` PASS(30개); `go test ./internal/config -count=1 -v` PASS(0.006s, 상위 4개); `go test ./internal/config -race -count=3` PASS(1.036s); `go test ./cmd/... ./internal/... ./migrations/... -count=1 -json` 종료 0, 실패 이벤트 0(출력 go-test.jsonl). 전체 Go에서 API 54개/database 4개 테스트가 DSN 부재로 skip됐고 version/migrations는 테스트 파일 없음. `go vet ./cmd/... ./internal/... ./migrations/...`, `go build ./cmd/... ./internal/... ./migrations/...`, `gofmt -l internal/config/config_test.go`, `git diff --check` 모두 종료 0·무출력.
+- 보류 아이디어:
+  - 공개 listGames부터 페이지 tiebreak 분리 — 가치 2 / 위험 2 / M; name을 유지하고 이미 본 행을 수정하는 실제 PG/router Red가 선행되어야 함.
+  - settings PG fixture updated_by 복원 — 가치 2 / 위험 1 / S; 과거 구현 착지 여부부터 확인하며 이번에는 재구현하지 않음.
+  - README RealmGuard 서버 재현 설명 정합성 — 가치 2 / 위험 1 / S; 키 관문 테스트보다 우선하지 않아 범위에서 제외.
+  - 키 외 필수 환경변수 누락 집계·비밀 비노출 — 가치 2 / 위험 1 / S; 별도 Load 과제로 유지.
+- 과제서: 채택 — 현재 config.go·config_test.go와 main 호출 순서가 정찰 근거와 일치하여 지정된 테스트 1파일 범위로 구현했고 차선 전환 조건은 성립하지 않았다.
