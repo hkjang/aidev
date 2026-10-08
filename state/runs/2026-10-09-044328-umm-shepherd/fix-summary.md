@@ -1,0 +1,5 @@
+- 원인: x/text v0.40.0의 GO-2026-6629가 pgx.ConnectConfig→precis.Profile.String 경로에서 CI govulncheck를 실패시킴; 동일 명령으로 재현(exit 1).
+- 수정: go.mod/go.sum만 x/text v0.41.0으로 갱신; 새 커밋 c53a678, 원래 웹 변경·워크플로·검증 명령 보존, push 없음.
+- 인과 검증: 기존 govulncheck를 회귀 검사로 사용(새 테스트 없음); 수정 후 PASS→구버전 복원 시 동일 FAIL→수정 재복원 후 PASS(호출되는 취약점 0, 미호출 취약점 보고는 남음).
+- 검증: go vet ./..., 격리 PostgreSQL 17 연결 go test -p 1 ./..., go test -race -count=1 ./internal/intelligence, go build, go mod verify, make test-web(252시험·빌드·PWA), 버전·diff 검사 PASS.
+- 한계: 기존 웹 lint 경고 50개; 외부 AI·설정 조건부 시험은 미검증/skip, 브라우저 E2E·Docker 이미지·전체 CI 미실행. 재현·검증 로그는 같은 디렉터리 fix-*.log에 보존.
