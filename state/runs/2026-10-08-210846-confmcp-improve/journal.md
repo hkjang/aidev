@@ -28,3 +28,8 @@
 - 검증: 별도 PostgreSQL DB 포함 전체 Go test/build/vet, 웹 ci/check/build, 버전 일치, diff·shell 검사, Docker build/save/load, SHA-256 및 적재한 동일 이미지의 HTTP·내장 웹 자산·버전 0.1.1/커밋 9a153b4 점검 통과.
 - 자산: assets/confmcp-v0.1.1.tar.gz, assets/confmcp-v0.1.1.tar.gz.sha256. 본문: release-notes-v0.1.1.md. 러너 결과: release.json, 상세 인계: release-handoff.md.
 - 배포·롤백 시 기존 공백 포함 승인 및 재시도 키 영향, 재승인·문서 상태 확인을 관리자 가이드와 본문에 명시했다. 실제 Confluence·Java 플러그인·Keycloak 및 운영 배포는 미검증이며 E2E는 구현 단계 결과를 인계했다.
+- [러너 21:32] release published — v0.1.1
+- [러너 21:32] gh-release created — GitHub Release v0.1.1
+- [러너 21:32] manifest ok — confmcp-v0.1.1.tar.gz confmcp-v0.1.1.tar.gz.sha256 
+- [러너 21:32] assets uploaded — 2개
+- [러너 21:32] assets verified — v0.1.1 자산 2개 (이전 v0.1.0: 1)
