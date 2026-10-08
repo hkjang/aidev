@@ -27,3 +27,5 @@
 - 릴리즈는 기존 TSV/TXT 지원의 안내 보완으로 설명할 것. 세 부서 스킬은 전용 도구 부재로 로컬 파일을 읽었고, 신규 데이터 처리·권한·의존성·외부 상태 변경은 없다.
 - [러너 01:10] review approved — 리뷰 승인 (risk=low)
 - [러너 01:10] pr created — https://github.com/hkjang/ptium/pull/47
+- [러너 01:15] ci passed — 검사 1개 모두 success
+- [러너 01:15] merge done — 02e307d

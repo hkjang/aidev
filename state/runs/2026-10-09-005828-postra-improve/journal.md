@@ -19,3 +19,6 @@
 - deadline·기본값·session.failed·재시도·STARTTLS·TLS·retrBody·ensureIndex·계약/UI/문서는 범위 밖이라 미변경. 원문 raw POP3 에러 자체의 정제도 범위 밖.
 - 다음 역할: fastRetries는 전역이므로 새 앱 테스트에 t.Parallel 금지. EOF는 cleanup 전 확인하며 서버의 5초 deadline을 정상 종료 증거로 취급하지 않는다. 릴리즈·push 미실행.
 - [러너 01:11] brief accepted — 채택 — 지정된 세 반환과 앱 요약까지의 원인을 수정 전 실행으로 확인했고, 지정 5파일에서 수용 기준과 최종 검증을 �
+- [러너 01:12] verify passed — 검증 9개 통과 (auto)
+- [러너 01:12] review missing — 리뷰 결과 없음/손상: missing — 보류
+- [러너 01:13] pr created — https://github.com/hkjang/postra/pull/39
