@@ -28,3 +28,5 @@
 - 릴리즈 시 null 응답 503/500→400 invalid_json 변경을 알릴 것. 전용 Skill 도구 미노출로 지정 3개 SKILL.md를 직접 적용; 저장소 코드는 수정하지 않음.
 - [러너 20:14] review approved — 리뷰 승인 (risk=low)
 - [러너 20:14] pr created — https://github.com/hkjang/ai-admin/pull/43
+- [러너 20:23] ci passed — 검사 2개 모두 success
+- [러너 20:23] merge done — e12916a

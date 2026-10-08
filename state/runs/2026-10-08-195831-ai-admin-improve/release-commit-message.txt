@@ -1,0 +1,12 @@
+chore: release ai-admin v1.2.37
+
+The merged chat request fix rejects a nil map after the first JSON decode,
+returning 400 invalid_json for top-level null before provider selection.
+The API documentation now states the single JSON object contract.
+
+Bumped 1.2.36 to 1.2.37 in every file scripts/verify-version.sh checks and
+added the v1.2.37 changelog entry.
+
+Validated the full Go race suite against disposable PostgreSQL and real
+Keycloak with no skips, including all 23 chat JSON contract cases, lint,
+Go build, 81 web tests, the web build and all 44 Pages screenshot references.

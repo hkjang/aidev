@@ -30,3 +30,15 @@
 - [러너 20:16] pr created — https://github.com/hkjang/bbmcp/pull/5
 - [러너 20:17] ci passed — 검사 3개 모두 success
 - [러너 20:18] merge done — 13b44b9
+
+## 릴리즈 노트
+- 완료: v0.2.10, 커밋 410645f, 기존 형식의 주석 태그. Tier 3 패치로 한국어 릴리즈 노트와 기존 규칙의 자산 4개를 준비했다.
+- 검증: Go build/vet, 전체 9패키지 131 PASS·SKIP/FAIL 0, 웹 check/build, 버전 일치 통과. 자산 체크섬/내용/권한 및 재적재 이미지 기동·UI·API·버전/커밋 확인 통과.
+- 우회: 실행 비트 없는 기존 스크립트를 bash 로 실행하고 패키징 부분을 재현. 최초 host 네트워크 smoke timeout 은 bridge 내부 DB 연결로 해결했다. 기능·스크립트 동작 변경 없음.
+- 한계: 실제 운영 배포·Bitbucket 호출·외부 신규 설치 체험 미실행. 원격 푸시/업로드 없음. 후속 운영 기준과 근거는 release-verification.md 에 기록.
+- 인계: release.json, release-notes.md, assets/ 아래 4개 파일. GitHub Release 는 CI 자동 생성이 없어 러너가 생성해야 한다.
+- [러너 20:27] release published — v0.2.10
+- [러너 20:27] gh-release created — GitHub Release v0.2.10
+- [러너 20:27] manifest ok — bbmcp-deploy-v0.2.10.tar.gz bbmcp-deploy-v0.2.10.tar.gz.sha256 bbmcp-v0.2.10.tar.gz bbmcp-v0.2.10.tar.gz.sha256 
+- [러너 20:27] assets uploaded — 4개
+- [러너 20:27] assets verified — v0.2.10 자산 4개 (이전 v0.2.9: 4)
