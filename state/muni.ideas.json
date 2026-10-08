@@ -5,8 +5,8 @@
     "risk": 3,
     "size": "M",
     "status": "pending",
-    "note": "export.go:safeFilename의 치환 목록 확인. 다섯 경로 공유와 Windows 실제 동작 미확인 때문에 보류.",
-    "updated": "2026-10-08"
+    "note": "export.go:safeFilename의 치환은 구분자/CR/LF/NUL만 포함한다. 공유 경로 영향과 실제 Windows 재현 미확인으로 보류.",
+    "updated": "2026-10-09"
   },
   {
     "title": "운영 안내의 외부 PostgreSQL 백업·복구 명령 정정",
@@ -14,8 +14,8 @@
     "risk": 1,
     "size": "S",
     "status": "pending",
-    "note": "README 외부 DB 계약, compose muni 단일 서비스, Dockerfile 및 OPERATIONS의 postgres 서비스·볼륨 가정 확인. 차선 후보. 실제 외부 DB 복구 명령 검증은 미실행.",
-    "updated": "2026-10-08"
+    "note": "README는 사전 준비 PostgreSQL, compose.example.yaml은 muni만 제공. OPERATIONS.md는 postgres 서비스·볼륨을 가정하는 불일치가 남음. 차선; 실제 복구 미검증.",
+    "updated": "2026-10-09"
   },
   {
     "title": "240룬을 넘는 제목에서 본문 H1 이 중복으로 남는 것",
@@ -23,8 +23,8 @@
     "risk": 2,
     "size": "S",
     "status": "pending",
-    "note": "importDocument는 제목부터 절단하고 dropLeadingTitle는 정확히 같은 H1만 제거. 여전히 남아 있으며 원래 제목 비교와 절단 비교 중 계약 결정 필요.",
-    "updated": "2026-10-08"
+    "note": "importDocument가 cutFilenameRunes(title,240) 뒤 dropLeadingTitle을 호출한다. 원래 제목과 저장 제목 중 비교 계약이 필요해 보류.",
+    "updated": "2026-10-09"
   },
   {
     "title": "폴더 이름 중복을 만드는 쪽(createFolder)에 형제 이름 안내를 넣을지 판단",
@@ -32,17 +32,8 @@
     "risk": 3,
     "size": "M",
     "status": "pending",
-    "note": "workspaces.go:createFolder는 공백·120룬·부모만 확인하고 형제 이름 중복은 검사하지 않음. API 거절과 UI 경고의 계약 미결정.",
-    "updated": "2026-10-08"
-  },
-  {
-    "title": "가져오기 머리말·꼬리말 200룬 절단에도 AI 안내 문구가 붙는 것",
-    "value": 3,
-    "risk": 1,
-    "size": "S",
-    "status": "done",
-    "note": "e503055: HWPX Build/Parse가 한글 201룬을 그대로 전달함을 실행으로 확인. HTTP 네 호출을 cutFilenameRunes로 교체. 두 라우트 live 테스트(각 5행) 수정 전 FAIL → 수정 후 PASS → 네 호출 원복 FAIL, 복구 뒤 HTTP PASS 249 / SKIP 0 / FAIL 0. DB·응답·경계 공백·삽입 대상 불변 검증.",
-    "updated": "2026-10-08"
+    "note": "workspaces.go:createFolder의 공백·120룬·부모 검사 확인. 중복 금지 없음; API 거절 또는 UI 안내 계약 미정.",
+    "updated": "2026-10-09"
   },
   {
     "title": "CI 에 e2e(playwright) 단계 넣기",
@@ -50,8 +41,8 @@
     "risk": 2,
     "size": "M",
     "status": "pending",
-    "note": "ci.yml과 playwright.config.ts 재확인: e2e 단계 없고 외부 8080 서버 기대. 보호 workflow와 계정·브라우저 준비가 있어 이번 범위 밖.",
-    "updated": "2026-10-08"
+    "note": "ci.yml은 Go/프런트 build/unit, Playwright는 외부 8080 서버를 전제. 보호 workflow와 계정/브라우저 준비 때문에 제외.",
+    "updated": "2026-10-09"
   },
   {
     "title": "PDF 가져오기에서 본문 첫 줄이 metadata 제목과 같으면 빼기",
@@ -59,17 +50,17 @@
     "risk": 2,
     "size": "S",
     "status": "pending",
-    "note": "parseUpload의 PDF 분기는 유지되며 profile 이후 변경은 workspace_export뿐. PDF 첫 블록 형식은 이번에도 미확인; 해결됐다고 판단할 근거 없음.",
-    "updated": "2026-10-08"
+    "note": "pdfImport는 Document.JSON과 result.Title을 분리 반환. PDF 첫 블록 형태와 제거 기준은 미확인이라 해결됐다고 볼 근거 없음.",
+    "updated": "2026-10-09"
   },
   {
     "title": "다른 내보내기·목록 쿼리에도 정렬 동률이 남아 있는지 훑기",
     "value": 2,
-    "risk": 1,
+    "risk": 2,
     "size": "S",
     "status": "pending",
-    "note": "workspace_export의 d.id 반영 확인. listFolders는 ORDER BY parent_id NULLS FIRST,name만 사용하며 같은 이름 형제 생성 가능. 실제 사이드바 순서 영향은 프런트 미확인이라 미선택.",
-    "updated": "2026-10-08"
+    "note": "listFolders는 ORDER BY parent_id NULLS FIRST,name이며 ID 동률 해소 없음. 프런트 재정렬과 실제 사용자 영향은 미확인. workspace_export 문서 ID 정렬은 이미 완료.",
+    "updated": "2026-10-09"
   },
   {
     "title": "live 테스트가 admin 워크스페이스에 문서를 남기는 것",
@@ -77,8 +68,8 @@
     "risk": 2,
     "size": "S",
     "status": "pending",
-    "note": "provision_live_test.go:liveServer는 example.com 사용자 중심 삭제이며 adminWorkspace/importFile을 쓰는 이름 테스트는 문서 cleanup 없음. 현재 잔존 행 수는 DB 미접속으로 미확인. 공용 헬퍼 개편은 이번 제외.",
-    "updated": "2026-10-08"
+    "note": "liveServer는 example.com 테스트 계정 중심 삭제. workspace_export의 documentInFolder/folderNamed는 이미 자기 ID cleanup이 있으므로 이 헬퍼를 고칠 필요 없음. 다른 이름 테스트 잔존 데이터는 이번 DB 미접속으로 미확인; 공용 헬퍼 개편 제외.",
+    "updated": "2026-10-09"
   },
   {
     "title": "워크스페이스 ZIP의 파일 경로와 폴더 경로 충돌 방지",
@@ -86,8 +77,8 @@
     "risk": 2,
     "size": "M",
     "status": "pending",
-    "note": "신규. exportWorkspace의 used는 목록.md만 선점하고 폴더 claim은 별도. 예: 루트 Report 문서와 Report.md 폴더 아래 문서는 Report.md 및 Report.md/하위.md가 될 가능성. 정적 근거만 있으며 실제 라우트·압축해제 재현 미확인.",
-    "updated": "2026-10-08"
+    "note": "exportWorkspace.used와 folderPaths.claimed가 분리돼 Report.md와 Report.md/하위.md가 공존할 정적 근거 유지. 이번에는 고정 목록.md 충돌만 별도 신규 과제로 분리; 임의 파일/폴더 충돌은 미해결.",
+    "updated": "2026-10-09"
   },
   {
     "title": "README make test 설명에 프런트 단위 테스트 포함하기",
@@ -95,16 +86,25 @@
     "risk": 1,
     "size": "S",
     "status": "pending",
-    "note": "신규. README:157은 placeholder+Go+타입체크만 적지만 Makefile:test는 npm test도 실행. 검증 가능한 문서 정정이나 사용자 결함보다 가치 낮음.",
-    "updated": "2026-10-08"
+    "note": "README 개발과 검증의 주석에는 npm test가 빠지고 Makefile:test에는 포함된다. 현재도 유효하나 사용자 결함보다 가치 낮음.",
+    "updated": "2026-10-09"
   },
   {
-    "title": "워크스페이스 ZIP 문서 정렬 동률에 문서 ID 순서 추가",
+    "title": "워크스페이스 ZIP의 루트 목록.md 폴더가 고정 안내 파일과 충돌하지 않게 하기",
     "value": 3,
     "risk": 1,
     "size": "S",
     "status": "done",
-    "note": "cdffbfe 반영을 workspace_export.go:84의 ORDER BY d.folder_id NULLS FIRST,d.title,d.id와 최근 로그로 확인. 재선택 금지.",
-    "updated": "2026-10-08"
+    "note": "a212314: folderPaths.claimed에 entryKey(workspaceManifestName)를 예약했다. 실제 API 폴더 생성과 GET export.zip의 18개 조합에서 수정 전 경로 접두사 충돌 FAIL → 수정 후 PASS → 예약 원복 시 새 테스트만 FAIL을 확인했다. 원래 대소문자·부모 대응·본문·안내·휴지통 분리를 보존한다.",
+    "updated": "2026-10-09"
+  },
+  {
+    "title": "가상 휴지통 디렉터리와 동명 사용자 폴더의 ZIP 경로 분리",
+    "value": 3,
+    "risk": 2,
+    "size": "M",
+    "status": "pending",
+    "note": "신규. exportWorkspace는 삭제 문서에 path.Join(\"휴지통\",directory)를 붙이나 folderPaths는 휴지통을 예약하지 않음. 루트 휴지통 폴더의 활성 문서와 삭제 문서가 같은 디렉터리에 섞일 정적 근거. live 재현 및 경로 정책은 미확인, 이번 제외.",
+    "updated": "2026-10-09"
   }
 ]

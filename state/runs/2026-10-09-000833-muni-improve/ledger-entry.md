@@ -1,0 +1,11 @@
+## 2026-10-09
+- 선택: 워크스페이스 ZIP의 루트 목록.md 폴더가 고정 안내 파일과 충돌하지 않게 하기 (가치 3 / 위험 1 / 작업량 S)
+- 결과: 성공
+- 요약: folderPaths.claimed에 entryKey(workspaceManifestName)를 예약해 루트 목록.md/목록.MD 폴더가 ZIP에서 기존 접미사 규칙으로 이동하고, 고정 안내 파일과 문서가 함께 보존되도록 했다(프로덕션 1파일·테스트 1파일, 커밋 a212314). 실제 API로 생성한 단일·대소문자·중복·접미사 폴더에 대해 md/html/txt × trash=false/true 총 18조합으로 파일/디렉터리 접두사 충돌 부재, 안내 1개와 최종 경로, 본문·자식·README/목록.md 불변 및 기존 문서 제목 예약을 확인했으며 예약 한 줄 원복 시 새 테스트만 FAIL 1, 기존 관련 PASS 4로 인과를 검증했다. 전용 postgres:16-alpine에서 MUNI_TEST_DSN을 설정해 새 테스트 PASS, 관련 PASS 5, go test -count=1 ./... 15패키지 ok, go test -count=1 -v ./internal/httpapi PASS 248/SKIP 0/FAIL 0(Chromium PDF 포함), go vet ./..., 지정 파일 gofmt -l, placeholder 검사, git diff --check, CGO_ENABLED=0 go build -trimpath 및 프런트 npm run lint와 npm test(42파일·297테스트) 모두 exit 0을 확인했다.
+- 실패 재현: `workspace_export_live_test.go:286: index file 목록.md is a directory prefix of document "목록.md/하위.md"` / `workspace_export_live_test.go:328: folder "목록.md" exported as "목록.md", want a distinct directory preserving its case` — 수정 전 18조합 모두 FAIL이며 컴파일·환경 실패가 아니다.
+- 보류 아이디어:
+  - safeFilename의 Windows 금지 문자 처리 (3/3/M) — 공유 경로 영향과 실제 Windows 재현이 미확인이다.
+  - 운영 안내의 외부 PostgreSQL 백업·복구 명령 정정 (3/1/S) — 과제서 차선으로 유지하며 복구 명령은 이번 미검증이다.
+  - 임의 문서 파일과 폴더의 ZIP 경로 충돌 방지 (3/2/M) — Report.md 대 Report.md/하위.md는 고정 안내 파일 예약과 별건이다.
+  - 가상 휴지통과 동명 사용자 폴더의 ZIP 경로 분리 (3/2/M) — 경로 정책과 live 재현이 필요해 이번 범위에서 제외했다.
+- 과제서: 채택 — claimed의 빈 초기값과 API 허용 입력을 실제 라우트 실패로 확인해 지정한 최소 수정 및 수용 기준을 충족했다.
