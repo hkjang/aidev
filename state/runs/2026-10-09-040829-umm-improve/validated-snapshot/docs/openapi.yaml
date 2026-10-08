@@ -1,0 +1,2946 @@
+openapi: 3.1.0
+info:
+  title: umm API
+  version: 0.8.1
+  description: |
+    Spatial Thought Memory, collaboration, automation and Dream Layer API.
+    Supported Canvas mutation requests can include an `Idempotency-Key` header (8-128 safe characters) for replay-safe offline synchronization.
+    Personal preferences, API-key lifecycle operations and all administrator operations require an interactive browser session; bearer API keys cannot call them.
+    Errors use RFC 9457 Problem Details and note version conflicts include the latest server note.
+servers:
+  - url: /api/v1
+security:
+  - cookieAuth: []
+  - bearerAuth: []
+tags:
+  - name: Auth
+  - name: Thoughts
+  - name: Collaboration
+  - name: Review
+  - name: AI
+  - name: Personal
+  - name: Webhooks
+  - name: Dream
+  - name: Workflow
+  - name: Observability
+  - name: Admin
+paths:
+  /meta:
+    get:
+      operationId: get_meta
+      security: []
+      summary: Get public service name, version and enabled login methods
+      responses:
+        '200': { description: Public metadata, content: { application/json: { schema: { $ref: '#/components/schemas/Meta' } } } }
+  /auth/login:
+    post:
+      operationId: post_auth_login
+      security: []
+      tags: [Auth]
+      summary: Sign in with the local password; concurrent guesses share the configured PostgreSQL-backed ceiling
+      requestBody:
+        required: true
+        content: { application/json: { schema: { type: object, required: [username, password], properties: { username: { type: string }, password: { type: string, format: password } } } } }
+      responses:
+        '200': { description: Signed in, headers: { Set-Cookie: { schema: { type: string } } }, content: { application/json: { schema: { $ref: '#/components/schemas/User' } } } }
+        '401': { $ref: '#/components/responses/Error' }
+        '429': { description: login-locked Problem Details with Retry-After after the shared failure ceiling, content: { application/problem+json: { schema: { $ref: '#/components/schemas/Error' } } } }
+        '503': { description: Fail-closed response when the durable throttle cannot be checked or committed, content: { application/json: { schema: { $ref: '#/components/schemas/Error' } } } }
+  /auth/oidc/start:
+    get:
+      operationId: get_auth_oidc_start
+      security: []
+      tags: [Auth]
+      summary: Begin Keycloak Authorization Code flow
+      description: >-
+        return_to must be a site path — starting with one slash, not two — or it becomes /.
+        prompt=none asks Keycloak to answer from an existing session without drawing a screen (silent SSO);
+        it is honoured only while the administrator has turned auto_login on, and is otherwise treated as an
+        ordinary login so that appending it to a URL cannot change the flow.
+      parameters:
+        - { in: query, name: return_to, schema: { type: string, default: / } }
+        - { in: query, name: prompt, schema: { type: string, enum: [none] } }
+      responses: { '302': { description: Redirect to Keycloak } }
+  /auth/oidc/callback:
+    get:
+      operationId: get_auth_oidc_callback
+      security: []
+      tags: [Auth]
+      summary: Complete Keycloak Authorization Code flow
+      description: >-
+        When Keycloak answers with error instead of code the browser is sent to the login screen:
+        /login?sso=none for login_required, interaction_required and consent_required (the ordinary reply to a
+        silent prompt=none attempt when there is no session — the marker tells the browser not to try again),
+        /login?sso=error for anything else.
+      parameters:
+        - { in: query, name: state, required: true, schema: { type: string } }
+        - { in: query, name: code, schema: { type: string } }
+        - { in: query, name: error, schema: { type: string } }
+      responses: { '302': { description: Session established and redirected to return_to, or refused and redirected to /login } }
+  /auth/logout:
+    post:
+      operationId: post_auth_logout
+      tags: [Auth]
+      summary: Revoke the current browser session
+      responses: { '200': { description: Signed out } }
+  /me:
+    get:
+      operationId: get_me
+      tags: [Auth]
+      summary: Get the authenticated user
+      responses: { '200': { description: Current user, content: { application/json: { schema: { $ref: '#/components/schemas/User' } } } } }
+  /metrics:
+    get:
+      operationId: get_metrics
+      tags: [Observability]
+      summary: Export Prometheus request and build metrics
+      description: Requires an administrator browser session or an API key with the explicit metrics:read scope. A regular browser session and an administrator-owned key without that scope are denied.
+      x-required-scope: metrics:read
+      responses:
+        '200': { description: Prometheus text exposition, content: { text/plain: { schema: { type: string } } } }
+        '403': { description: Administrator session or dedicated metrics scope required }
+  /today:
+    get:
+      operationId: get_today
+      tags: [Review]
+      summary: Get the daily review dashboard
+      description: Returns due thoughts, unconnected thoughts, recent collaboration activity and onboarding progress. Pending Dreams require dreams:read and current owner/member access to their space; otherwise they are omitted and the count reflects only accessible Dreams.
+      x-required-scope: notes:read
+      responses:
+        '200': { description: Daily review, content: { application/json: { schema: { $ref: '#/components/schemas/TodayReview' } } } }
+  /onboarding:
+    get:
+      operationId: get_onboarding
+      tags: [Review]
+      summary: Get contextual onboarding progress
+      x-required-scope: notes:read
+      responses:
+        '200': { description: Onboarding progress, content: { application/json: { schema: { $ref: '#/components/schemas/OnboardingProgress' } } } }
+  /onboarding/complete:
+    post:
+      operationId: post_onboarding_complete
+      tags: [Review]
+      summary: Mark contextual onboarding as complete
+      x-required-scope: notes:write
+      responses: { '200': { description: Onboarding completed } }
+  /spaces:
+    get:
+      operationId: get_spaces
+      tags: [Thoughts]
+      summary: List visible spaces
+      x-required-scope: spaces:read
+      responses: { '200': { description: Spaces, content: { application/json: { schema: { type: object, properties: { spaces: { type: array, items: { $ref: '#/components/schemas/Space' } } } } } } } }
+    post:
+      operationId: post_spaces
+      tags: [Thoughts]
+      summary: Create a space
+      x-required-scope: notes:write
+      requestBody: { required: true, content: { application/json: { schema: { type: object, required: [name], properties: { name: { type: string, maxLength: 200 } } } } } }
+      responses: { '201': { description: Space created, content: { application/json: { schema: { $ref: '#/components/schemas/Space' } } } } }
+  /search:
+    get:
+      operationId: get_search
+      tags: [Thoughts]
+      summary: Hybrid semantic and lexical search across accessible spaces
+      x-required-scope: notes:read
+      parameters:
+        - { in: query, name: q, required: true, schema: { type: string, maxLength: 200 } }
+        - { in: query, name: spaceId, schema: { type: string, format: uuid } }
+        - { in: query, name: kind, schema: { type: string } }
+        - { in: query, name: updatedFrom, schema: { type: string, format: date-time } }
+        - { in: query, name: updatedTo, schema: { type: string, format: date-time } }
+        - { $ref: '#/components/parameters/Cursor' }
+        - { in: query, name: limit, schema: { type: integer, minimum: 1, maximum: 50, default: 20 } }
+      responses:
+        '200':
+          description: Ranked note shortcuts
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [notes, nextCursor]
+                properties:
+                  notes: { type: array, items: { $ref: '#/components/schemas/NoteSearchResult' } }
+                  nextCursor: { type: string }
+                  noteLines:
+                    type: object
+                    description: >
+                      Maps a result to the line of thinking it belongs to, when it belongs to
+                      one. A result whose line is 'abandoned' was considered and set aside,
+                      with the reason recorded, and must not be presented as current. Search
+                      is where a thought is met most often, and an unlabelled result reads
+                      exactly like a live one.
+                    additionalProperties: { $ref: '#/components/schemas/Branch' }
+  /spaces/{spaceId}/notes:
+    parameters:
+      - { $ref: '#/components/parameters/SpaceID' }
+    get:
+      operationId: get_spaces_spaceId_notes
+      tags: [Thoughts]
+      summary: List or search notes and edges in a space
+      x-required-scope: notes:read
+      parameters:
+        - { in: query, name: q, schema: { type: string } }
+      responses:
+        '200':
+          description: Canvas graph
+          content: { application/json: { schema: { type: object, properties: { notes: { type: array, items: { $ref: '#/components/schemas/Note' } }, edges: { type: array, items: { $ref: '#/components/schemas/Edge' } } } } } }
+    post:
+      operationId: post_spaces_spaceId_notes
+      tags: [Thoughts]
+      summary: Drop a post-it onto the canvas
+      x-required-scope: notes:write
+      parameters:
+        - { $ref: '#/components/parameters/IdempotencyKey' }
+      requestBody: { required: true, content: { application/json: { schema: { $ref: '#/components/schemas/NoteWrite' } } } }
+      responses: { '201': { description: Note created, content: { application/json: { schema: { $ref: '#/components/schemas/Note' } } } } }
+  /spaces/{spaceId}:
+    parameters:
+      - { $ref: '#/components/parameters/SpaceID' }
+    put:
+      operationId: put_spaces_spaceId
+      tags: [Thoughts]
+      summary: Rename a space or change its AI exclusion policy
+      x-required-scope: notes:write
+      requestBody:
+        required: true
+        content: { application/json: { schema: { type: object, required: [name], properties: { name: { type: string, minLength: 1, maxLength: 200 }, aiExcluded: { type: boolean, description: Exclude every note in this space from AI processing and remote embedding gateways } } } } }
+      responses:
+        '200': { description: Space updated, content: { application/json: { schema: { $ref: '#/components/schemas/Space' } } } }
+    delete:
+      operationId: delete_spaces_spaceId
+      tags: [Thoughts]
+      summary: Permanently delete an owned space and its contents
+      description: Only the owner can delete a space. Notes, edges, Dream records and membership data in it are removed by cascade.
+      x-required-scope: notes:write
+      responses:
+        '204': { description: Space deleted }
+        '403': { $ref: '#/components/responses/Error' }
+  /notes/{noteId}:
+    parameters:
+      - { $ref: '#/components/parameters/NoteID' }
+    put:
+      operationId: put_notes_noteId
+      tags: [Thoughts]
+      summary: Autosave note content, appearance and position
+      description: Uses optimistic concurrency. Send the last server version; a stale version returns 409. A caller who can still view the note but no longer edit its space receives a terminal note-read-only 403 Problem Details response.
+      x-required-scope: notes:write
+      parameters:
+        - { $ref: '#/components/parameters/IdempotencyKey' }
+      requestBody: { required: true, content: { application/json: { schema: { $ref: '#/components/schemas/NoteUpdate' } } } }
+      responses:
+        '200': { description: Updated note, content: { application/json: { schema: { $ref: '#/components/schemas/Note' } } } }
+        '403': { $ref: '#/components/responses/Error' }
+        '404': { $ref: '#/components/responses/Error' }
+        '409': { $ref: '#/components/responses/Error' }
+        '500': { $ref: '#/components/responses/Error' }
+    delete:
+      operationId: delete_notes_noteId
+      tags: [Thoughts]
+      summary: Soft-delete a note
+      x-required-scope: notes:write
+      parameters:
+        - { $ref: '#/components/parameters/IdempotencyKey' }
+      responses: { '204': { description: Deleted } }
+  /notes/{noteId}/related:
+    parameters:
+      - { $ref: '#/components/parameters/NoteID' }
+    get:
+      operationId: get_notes_noteId_related
+      tags: [Thoughts]
+      summary: Discover semantically related thoughts with the offline embedding
+      x-required-scope: notes:read
+      parameters:
+        - { in: query, name: limit, schema: { type: integer, minimum: 1, maximum: 20, default: 8 } }
+      responses:
+        '200': { description: Ranked related thoughts, content: { application/json: { schema: { type: object, properties: { related: { type: array, items: { $ref: '#/components/schemas/RelatedNote' } } } } } } }
+  /notes/{noteId}/backlinks:
+    parameters:
+      - { $ref: '#/components/parameters/NoteID' }
+    get:
+      operationId: get_notes_noteId_backlinks
+      tags: [Thoughts]
+      summary: List incoming and outgoing thought links
+      x-required-scope: notes:read
+      responses:
+        '200': { description: Backlinks, content: { application/json: { schema: { type: object, required: [backlinks], properties: { backlinks: { type: array, items: { $ref: '#/components/schemas/Backlink' } } } } } } }
+  /notes/{noteId}/review:
+    parameters:
+      - { $ref: '#/components/parameters/NoteID' }
+    post:
+      operationId: post_notes_noteId_review
+      tags: [Review]
+      summary: Complete, snooze or pin a thought review
+      x-required-scope: notes:write
+      requestBody:
+        required: true
+        content: { application/json: { schema: { type: object, properties: { snoozeDays: { type: integer, minimum: 1, maximum: 365 }, pinned: { type: boolean }, complete: { type: boolean, default: true, description: Set false to change only the pinned state without completing the review. } } } } }
+      responses:
+        '200': { description: Updated review item, content: { application/json: { schema: { $ref: '#/components/schemas/ReviewItem' } } } }
+  /notes/{noteId}/comments:
+    parameters:
+      - { $ref: '#/components/parameters/NoteID' }
+    get:
+      operationId: get_notes_noteId_comments
+      tags: [Collaboration]
+      summary: List note comments and mention metadata
+      x-required-scope: notes:read
+      responses:
+        '200': { description: Comments, content: { application/json: { schema: { type: object, required: [comments], properties: { comments: { type: array, items: { $ref: '#/components/schemas/Comment' } } } } } } }
+    post:
+      operationId: post_notes_noteId_comments
+      tags: [Collaboration]
+      summary: Add a comment and notify mentioned space members
+      x-required-scope: notes:write
+      parameters:
+        - { $ref: '#/components/parameters/IdempotencyKey' }
+      requestBody:
+        required: true
+        content: { application/json: { schema: { type: object, required: [body], properties: { body: { type: string, minLength: 1, maxLength: 4000 }, parentId: { type: [string, 'null'], format: uuid } } } } }
+      responses:
+        '201': { description: Comment created, content: { application/json: { schema: { $ref: '#/components/schemas/Comment' } } } }
+  /comments/{commentId}/resolve:
+    parameters:
+      - { $ref: '#/components/parameters/CommentID' }
+    put:
+      operationId: put_comments_commentId_resolve
+      tags: [Collaboration]
+      summary: Resolve or reopen a comment thread; permanently forbidden replays return comment-mutation-forbidden
+      x-required-scope: notes:write
+      parameters:
+        - { $ref: '#/components/parameters/IdempotencyKey' }
+      requestBody:
+        required: true
+        content: { application/json: { schema: { type: object, required: [resolved], properties: { resolved: { type: boolean } } } } }
+      responses:
+        '200': { description: Updated comment, content: { application/json: { schema: { $ref: '#/components/schemas/Comment' } } } }
+        '403': { description: Terminal comment-mutation-forbidden Problem Details when the current session can no longer mutate the comment, content: { application/problem+json: { schema: { $ref: '#/components/schemas/Error' } } } }
+  /comments/{commentId}:
+    parameters:
+      - { $ref: '#/components/parameters/CommentID' }
+    delete:
+      operationId: delete_comments_commentId
+      tags: [Collaboration]
+      summary: Soft-delete an authored or managed comment; permanently forbidden replays return comment-mutation-forbidden
+      x-required-scope: notes:write
+      parameters:
+        - { $ref: '#/components/parameters/IdempotencyKey' }
+      responses:
+        '204': { description: Comment deleted }
+        '403': { description: Terminal comment-mutation-forbidden Problem Details when the current session can no longer mutate the comment, content: { application/problem+json: { schema: { $ref: '#/components/schemas/Error' } } } }
+  /notes/{noteId}/history:
+    parameters:
+      - { $ref: '#/components/parameters/NoteID' }
+    get:
+      operationId: get_notes_noteId_history
+      tags: [Thoughts]
+      summary: List autosaved revisions of a note
+      responses:
+        '200': { description: Revisions, content: { application/json: { schema: { type: object, properties: { history: { type: array, items: { $ref: '#/components/schemas/NoteRevision' } } } } } } }
+  /notes/{noteId}/restore/{version}:
+    parameters:
+      - { $ref: '#/components/parameters/NoteID' }
+      - { in: path, name: version, required: true, schema: { type: integer, minimum: 1 } }
+    post:
+      operationId: post_notes_noteId_restore_version
+      tags: [Thoughts]
+      summary: Restore a prior revision while preserving the current state in history
+      responses: { '200': { description: Restored note, content: { application/json: { schema: { $ref: '#/components/schemas/Note' } } } } }
+  /spaces/{spaceId}/clusters:
+    parameters:
+      - { $ref: '#/components/parameters/SpaceID' }
+    get:
+      operationId: get_spaces_spaceId_clusters
+      tags: [Thoughts]
+      summary: Group a space into the handful of things it is about
+      x-required-scope: notes:read
+      responses:
+        '200': { description: Thought clusters, content: { application/json: { schema: { type: object, properties: { clusters: { type: array, items: { $ref: '#/components/schemas/ThoughtCluster' } } } } } } }
+  /spaces/{spaceId}/presentation/preview:
+    parameters:
+      - { $ref: '#/components/parameters/SpaceID' }
+    get:
+      operationId: get_spaces_spaceId_presentation_preview
+      tags: [Thoughts]
+      summary: See what this space would become as a talk, without making anything
+      description: >-
+        Compiles the space's thoughts and connections into an ordered talk and
+        returns it with the Ptium deck source it produced. Nothing is created
+        and nothing is recorded. Slide text is the author's own sentences,
+        unchanged. `checked` says whether Ptium measured the result against a
+        real template, which it can only do against a deck that already exists —
+        pass `deckId` for that.
+      x-required-scope: notes:read
+      parameters:
+        - { in: query, name: title, schema: { type: string } }
+        - { in: query, name: includeExcluded, schema: { type: boolean } }
+        - { in: query, name: oneSlidePerThought, schema: { type: boolean }, description: Turn off grouping thoughts by where they sit on the canvas. }
+        - { in: query, name: nameGroups, schema: { type: boolean }, description: "Ask the chat model to name each group. Only the headings; the sentences on the slides are the author's either way." }
+        - { in: query, name: sectionDeck, schema: { type: boolean }, description: Ask the chat model where a long talk divides into parts. Adds heading slides and moves nothing. }
+        - { in: query, name: maxSlides, schema: { type: integer, minimum: 1, maximum: 500 }, description: "Cap the talk at this many slides. Omitted or 0 means no cap. The slides carrying least are dropped and what they held is reported in the storyline's Trimmed, never silently. Anything that is not a number is read as no cap rather than refused." }
+        - { in: query, name: deckId, schema: { type: string } }
+      responses:
+        '200': { description: The compiled talk, content: { application/json: { schema: { $ref: '#/components/schemas/PresentationPreview' } } } }
+        '400': { description: Nothing in this space can become a talk }
+  /spaces/{spaceId}/presentations:
+    parameters:
+      - { $ref: '#/components/parameters/SpaceID' }
+    get:
+      operationId: get_spaces_spaceId_presentations
+      tags: [Thoughts]
+      summary: List the talks made from this space
+      x-required-scope: notes:read
+      responses:
+        '200': { description: Presentation links, content: { application/json: { schema: { type: object, properties: { presentations: { type: array, items: { $ref: '#/components/schemas/PresentationLink' } } } } } } }
+    post:
+      operationId: post_spaces_spaceId_presentations
+      tags: [Thoughts]
+      summary: Compile this space into a Ptium deck
+      description: >-
+        Creates a deck in Ptium and compiles the space into it. Requires
+        notes:write rather than notes:read because it sends the author's
+        thoughts to another service and creates something there.
+      x-required-scope: notes:write
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                title: { type: string }
+                noteIds: { type: array, items: { type: string, format: uuid } }
+                includeExcluded: { type: boolean }
+                oneSlidePerThought: { type: boolean, description: Turn off grouping thoughts by where they sit on the canvas. What the person connected still travels together. }
+                nameGroups: { type: boolean, description: "Ask the chat model to name each group of thoughts that were put together by position. Only the headings: the sentences on the slides are the author's either way. Opt-in, because it sends those thoughts to the gateway and makes the deck stop being the same every time. Ignored when no chat model is configured." }
+                sectionDeck: { type: boolean, description: "Ask the chat model where a long talk divides into parts. Adds heading slides and moves nothing: the order is a follows chain or the layout the author made, and rearranging it would override what they said. Ignored below 12 slides or with no chat model." }
+                maxSlides: { type: integer, minimum: 1, maximum: 500, description: "Cap the talk at this many slides. Omitted or 0 means no cap. Ranking is deterministic and reads only the graph — how many thoughts reached a slide, whether it holds a recorded disagreement — so the same space and the same cap always give the same deck. Part headings count against it too. What did not fit is recorded as trimmedCount." }
+      responses:
+        '201': { description: The deck, content: { application/json: { schema: { type: object, properties: { link: { $ref: '#/components/schemas/PresentationLink' }, warnings: { type: array, items: { type: string } } } } } } }
+        '400': { description: Nothing in this space can become a talk }
+        '409': { description: No Ptium is configured }
+        '422': { $ref: '#/components/responses/PtiumFailure' }
+        '502': { $ref: '#/components/responses/PtiumFailure' }
+        '504': { $ref: '#/components/responses/PtiumFailure' }
+  /presentations/{linkId}/retry:
+    parameters:
+      - { in: path, name: linkId, required: true, schema: { type: string, format: uuid } }
+    post:
+      operationId: post_presentations_linkId_retry
+      tags: [Thoughts]
+      summary: Compile the space again into the deck a failed attempt already made
+      description: >-
+        Making a deck is two calls: Ptium opens one, then umm compiles source
+        into it. When the second fails the deck exists and is empty, and making
+        another would leave the first behind. This applies source to the deck
+        that is already there. Ptium's source endpoint replaces rather than
+        appends, so running it twice is the same as running it once. The space
+        is recompiled rather than replayed from the stored source, because the
+        thinking has probably moved on. Only a failed attempt may be retried.
+      x-required-scope: notes:write
+      responses:
+        '200': { description: The deck, now compiled, content: { application/json: { schema: { type: object, properties: { link: { $ref: '#/components/schemas/PresentationLink' }, warnings: { type: array, items: { type: string } } } } } } }
+        '404': { description: No failed attempt with this id that the caller may write to }
+        '422': { $ref: '#/components/responses/PtiumFailure' }
+        '502': { $ref: '#/components/responses/PtiumFailure' }
+        '504': { $ref: '#/components/responses/PtiumFailure' }
+  /presentations/{linkId}/sources:
+    parameters:
+      - { in: path, name: linkId, required: true, schema: { type: string, format: uuid } }
+    get:
+      operationId: get_presentations_linkId_sources
+      tags: [Thoughts]
+      summary: Which thoughts each slide quotes, and the source umm compiled
+      description: >-
+        The slides carry the author's own words, so being able to get back to
+        the note is being able to check that nothing was put in their mouth.
+      x-required-scope: notes:read
+      responses:
+        '200': { description: Slide sources and what has changed since, content: { application/json: { schema: { type: object, properties: { source: { type: string }, sources: { type: array, items: { $ref: '#/components/schemas/SlideSource' } }, stale: { type: array, items: { $ref: '#/components/schemas/StaleSlide' } } } } } } }
+        '404': { description: No such presentation }
+  /notes/{noteId}/presentations:
+    parameters:
+      - { $ref: '#/components/parameters/NoteID' }
+    get:
+      operationId: get_notes_noteId_presentations
+      tags: [Thoughts]
+      summary: Which talks quote this thought
+      x-required-scope: notes:read
+      responses:
+        '200': { description: Presentation links, content: { application/json: { schema: { type: object, properties: { presentations: { type: array, items: { $ref: '#/components/schemas/PresentationLink' } } } } } } }
+  /notes/{noteId}/attachments:
+    post:
+      operationId: attach_picture
+      tags: [Notes]
+      summary: Put a picture on a thought
+      description: |
+        The part of a decision that is not a sentence — a whiteboard photo, a
+        screenshot of the thing being argued about — kept with the thought
+        rather than outside the space that holds everything else about it.
+
+        Nothing the upload says about itself is believed. The type is decided by
+        reading the leading bytes, and only PNG, JPEG, GIF and WebP are kept at
+        all. SVG is excluded deliberately: it is XML, it can carry script, and
+        these bytes are served from the application's own origin. A filename is
+        kept only as a label and never decides a type.
+
+        Sent as `multipart/form-data` with the picture in a `file` part. At most
+        5MB per picture and 8 per thought; both are refused rather than
+        truncated, with the limit in the answer.
+
+        Needs edit permission on the space, like writing the thought.
+      parameters:
+        - { name: noteId, in: path, required: true, schema: { type: string, format: uuid } }
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required: [file]
+              properties:
+                file: { type: string, format: binary }
+      responses:
+        '201':
+          description: The stored picture, without its bytes
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Attachment' }
+        '404': { $ref: '#/components/responses/Error' }
+        '409': { $ref: '#/components/responses/Error' }
+        '413': { $ref: '#/components/responses/Error' }
+        '415': { $ref: '#/components/responses/Error' }
+  /spaces/{spaceId}/attachments:
+    get:
+      operationId: list_space_attachments
+      tags: [Notes]
+      summary: The pictures on a space's thoughts
+      description: Without bytes. A canvas draws them by fetching each one, which is also where the access check happens.
+      parameters:
+        - { name: spaceId, in: path, required: true, schema: { type: string, format: uuid } }
+      responses:
+        '200':
+          description: The pictures
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  attachments:
+                    type: array
+                    items: { $ref: '#/components/schemas/Attachment' }
+  /attachments/{attachmentId}:
+    get:
+      operationId: read_attachment
+      tags: [Notes]
+      summary: The picture itself
+      description: |
+        Served with the type that was read off the bytes when they were stored,
+        `X-Content-Type-Options: nosniff`, and a Content-Security-Policy of its
+        own that permits nothing — so a body a browser could be talked into
+        treating as a document could still do nothing. Cached immutably because
+        a row is never rewritten: a changed picture is a new row with a new id.
+
+        A picture nobody may read and a picture that does not exist answer the
+        same way, because telling those apart tells a stranger what exists.
+      parameters:
+        - { name: attachmentId, in: path, required: true, schema: { type: string, format: uuid } }
+      responses:
+        '200':
+          description: The bytes
+          content:
+            image/png: { schema: { type: string, format: binary } }
+            image/jpeg: { schema: { type: string, format: binary } }
+            image/gif: { schema: { type: string, format: binary } }
+            image/webp: { schema: { type: string, format: binary } }
+        '404': { $ref: '#/components/responses/Error' }
+    delete:
+      operationId: delete_attachment
+      tags: [Notes]
+      summary: Remove a picture
+      description: Needs edit permission, like putting one on. Deleting the thought removes its pictures too.
+      parameters:
+        - { name: attachmentId, in: path, required: true, schema: { type: string, format: uuid } }
+      responses:
+        '204': { description: Removed }
+        '404': { $ref: '#/components/responses/Error' }
+  /spaces/{spaceId}/rewind:
+    get:
+      operationId: rewind_space
+      tags: [Notes]
+      summary: What the space looked like at an instant
+      description: |
+        Every note update snapshots the state it replaces — the words, and where
+        the note sat — so this reads material that has been accumulating since
+        revisions were introduced. A revision holds the state *before* the
+        change that created it, so a note's state at an instant is the earliest
+        revision recorded after that instant, and if nothing was recorded after
+        it the note has not changed since.
+
+        Thoughts written later are absent. Thoughts deleted since come back,
+        because they were on the canvas then.
+
+        Connections removed since cannot be drawn: a deletion event has only
+        ever carried the edge's id, and the row itself is gone. `removedEdges`
+        counts them so the answer can say a connection is missing rather than
+        showing a canvas that quietly omits it. Connections that still exist
+        appear from when they were drawn, and only when both ends were already
+        on the canvas.
+
+        Pictures are dated the same way: `attachments` holds the ones that were
+        on those thoughts at that instant, so a canvas showing June does not
+        show a screenshot pasted in August. A picture whose thought has been
+        deleted since cannot be fetched — the bytes are served against a thought
+        that is not deleted — so it is counted in `removedAttachments` rather
+        than handed over as a broken image.
+      parameters:
+        - { name: spaceId, in: path, required: true, schema: { type: string, format: uuid } }
+        - name: at
+          in: query
+          schema: { type: string, format: date-time }
+          description: RFC3339. Defaults to now. An unparsable value is refused rather than answered for now, because someone who asked about June and was shown today would not know they had been.
+      responses:
+        '200':
+          description: The space at that instant
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  at: { type: string, format: date-time }
+                  notes:
+                    type: array
+                    items: { $ref: '#/components/schemas/Note' }
+                  edges:
+                    type: array
+                    items: { $ref: '#/components/schemas/Edge' }
+                  removedEdges:
+                    type: integer
+                    description: Connections deleted between that instant and now. They existed then and cannot be drawn.
+                  attachments:
+                    type: array
+                    description: The pictures that were on those thoughts at that instant. Pictures added since are absent, the same as thoughts written since.
+                    items: { $ref: '#/components/schemas/Attachment' }
+                  removedAttachments:
+                    type: integer
+                    description: Pictures that were on the canvas then and cannot be drawn now, because the thought they hung on has been deleted since. A picture deleted outright leaves no row and is not counted here.
+                  earliest:
+                    type: string
+                    format: date-time
+                    description: The first moment this space has anything to show, so a control cannot offer a date before it existed.
+        '400': { $ref: '#/components/responses/Error' }
+        '404': { $ref: '#/components/responses/Error' }
+  /spaces/{spaceId}/events:
+    parameters:
+      - { $ref: '#/components/parameters/SpaceID' }
+    get:
+      operationId: get_spaces_spaceId_events
+      tags: [Collaboration]
+      summary: Subscribe to authorized canvas changes with Server-Sent Events
+      parameters:
+        - { in: query, name: after, schema: { type: integer, format: int64 } }
+      responses:
+        '200': { description: Space change event stream, content: { text/event-stream: { schema: { type: string } } } }
+  /spaces/{spaceId}/members:
+    parameters:
+      - { $ref: '#/components/parameters/SpaceID' }
+    get:
+      operationId: get_spaces_spaceId_members
+      tags: [Collaboration]
+      summary: List space members and the caller's management capability
+      responses:
+        '200': { description: Members, content: { application/json: { schema: { type: object, properties: { members: { type: array, items: { $ref: '#/components/schemas/SpaceMember' } }, canManage: { type: boolean } } } } } }
+    post:
+      operationId: post_spaces_spaceId_members
+      tags: [Collaboration]
+      summary: Share a space immediately or create a configured approval request
+      requestBody: { required: true, content: { application/json: { schema: { type: object, required: [username, permission], properties: { username: { type: string }, permission: { type: string, enum: [view, edit, manage] } } } } } }
+      responses: { '201': { description: Shared immediately }, '202': { description: Approval required }, '403': { $ref: '#/components/responses/Error' } }
+  /spaces/{spaceId}/members/{memberId}:
+    parameters:
+      - { $ref: '#/components/parameters/SpaceID' }
+      - { in: path, name: memberId, required: true, schema: { type: string, format: uuid } }
+    delete:
+      operationId: delete_spaces_spaceId_members_memberId
+      tags: [Collaboration]
+      summary: Remove a non-owner space member
+      responses: { '204': { description: Member removed }, '403': { $ref: '#/components/responses/Error' } }
+  /spaces/{spaceId}/export/authorize:
+    parameters:
+      - { $ref: '#/components/parameters/SpaceID' }
+    get:
+      operationId: get_spaces_spaceId_export_authorize
+      tags: [Workflow]
+      summary: Check whether an export is currently authorized
+      parameters:
+        - { in: query, name: format, schema: { type: string, enum: [markdown, image, pdf] } }
+      responses: { '200': { description: Export allowed }, '409': { description: Approval required } }
+  /spaces/{spaceId}/export/outline:
+    get:
+      operationId: export_space_outline
+      tags: [Notes]
+      summary: The space as a document, in the order the graph puts it
+      description: |
+        A different question from the Markdown export. That one answers "give
+        me everything back later" and carries ids, coordinates and connections
+        so a space can be restored from it. This one answers "I want to start
+        writing this up", and carries none of that — the author's own sentences
+        as headings and prose, and nothing a reader would skip past.
+
+        The order is not umm's guess: a `follows` chain is somebody stating a
+        sequence outright, and failing that it is the arrangement they made on
+        the canvas. It compiles through the same path a deck preview does, so
+        what comes out is what the preview showed. No model is involved and
+        Ptium does not need to be configured.
+
+        Subject to the same approval gate as any other export, because this is
+        the space's words leaving it.
+      parameters:
+        - { name: spaceId, in: path, required: true, schema: { type: string, format: uuid } }
+        - { in: query, name: title, schema: { type: string }, description: Overrides the space's name as the document title. }
+        - { in: query, name: includeExcluded, schema: { type: boolean }, description: Include thoughts their author held back from analysis. Off unless asked. }
+        - { in: query, name: oneSlidePerThought, schema: { type: boolean }, description: Turn off grouping thoughts by where they sit, giving one section per thought. }
+      responses:
+        '200':
+          description: The document
+          content:
+            text/markdown:
+              schema: { type: string }
+        '400': { $ref: '#/components/responses/Error' }
+        '404': { $ref: '#/components/responses/Error' }
+        '409':
+          description: A team lead has to approve this export first
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error: { type: string }
+                  code: { type: string, enum: [approval_required] }
+  /spaces/{spaceId}/export/markdown:
+    parameters:
+      - { $ref: '#/components/parameters/SpaceID' }
+    get:
+      operationId: get_spaces_spaceId_export_markdown
+      tags: [Thoughts]
+      summary: Export notes and connections as Markdown
+      responses: { '200': { description: Markdown file, content: { text/markdown: { schema: { type: string } } } }, '409': { description: Approval required } }
+  /handoff/targets:
+    get:
+      operationId: get_handoff_targets
+      tags: [Thoughts]
+      summary: Where a space can be sent, and as whom
+      description: |
+        The services an administrator has named in the `handoff` settings
+        section, kept to those that receive what umm sends (`markdown`). Empty
+        on a new installation, and the canvas shows no "send to another
+        service" menu while it is. `source` is the origin the receiving service
+        will be told to collect from: the configured public URL, or failing
+        that the origin this request arrived at.
+      responses:
+        '200':
+          description: Targets
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [targets, source, format]
+                properties:
+                  targets:
+                    type: array
+                    items:
+                      type: object
+                      required: [name, origin]
+                      properties:
+                        name: { type: string }
+                        origin: { type: string, format: uri, description: "Scheme and host only. The browser opens `<origin>/handoff?source=<source>&claim=<claim>`." }
+                  source: { type: string, format: uri }
+                  format: { type: string, enum: [markdown] }
+  /handoff/claims:
+    post:
+      operationId: post_handoff_claims
+      tags: [Thoughts]
+      summary: Issue a single-use claim for a space, to hand it to another service
+      description: |
+        The sending half of the in-house handoff standard. The claim is bound
+        to one space this person may read, is good for five minutes and for one
+        collection, and widens nothing: the space is checked the way every
+        export is, through the same approval gate, and the document is rendered
+        as this person. The document is the space's outline — its sentences in
+        the order the graph puts them — rendered now and kept with the claim,
+        so what is collected is exactly what `bytes` announced.
+
+        The claim never reaches the audit log or the access log.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [resource, format]
+              properties:
+                resource: { type: string, format: uuid, description: The space. }
+                format: { type: string, enum: [markdown], description: umm sends Markdown and nothing else. }
+      responses:
+        '201':
+          description: The claim
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [claim, source, filename, content_type, bytes, expires_at]
+                properties:
+                  claim: { type: string, description: 256 bits of randomness, URL-safe. }
+                  source: { type: string, format: uri, description: Where to collect it from — this service's origin. }
+                  filename: { type: string }
+                  content_type: { type: string, enum: ['text/markdown; charset=utf-8'] }
+                  bytes: { type: integer }
+                  expires_at: { type: string, format: date-time }
+        '400': { $ref: '#/components/responses/Error' }
+        '404': { $ref: '#/components/responses/Error' }
+        '409':
+          description: A team lead has to approve this export first
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error: { type: string }
+                  code: { type: string, enum: [approval_required] }
+  /handoff/claims/{claim}:
+    parameters:
+      - { in: path, name: claim, required: true, schema: { type: string } }
+    get:
+      operationId: get_handoff_claims_claim
+      security: []
+      tags: [Thoughts]
+      summary: Collect a handed-off document; the claim is the credential
+      description: |
+        No sign-in. The claim is spent by this request: a second collection,
+        an expired claim and a claim that was never issued all answer 404, and
+        the answer does not say which.
+      responses:
+        '200':
+          description: The document, named by Content-Disposition
+          headers:
+            Content-Disposition: { schema: { type: string }, description: "attachment; filename=\"...\"; filename*=UTF-8''..." }
+          content:
+            text/markdown:
+              schema: { type: string }
+        '404': { $ref: '#/components/responses/Error' }
+  /spaces/{spaceId}/edges:
+    parameters:
+      - { $ref: '#/components/parameters/SpaceID' }
+    post:
+      operationId: post_spaces_spaceId_edges
+      tags: [Thoughts]
+      summary: Connect two notes
+      x-required-scope: notes:write
+      parameters:
+        - { $ref: '#/components/parameters/IdempotencyKey' }
+      requestBody: { required: true, content: { application/json: { schema: { $ref: '#/components/schemas/EdgeWrite' } } } }
+      responses: { '201': { description: Edge created, content: { application/json: { schema: { $ref: '#/components/schemas/Edge' } } } } }
+  /ai/assist:
+    post:
+      operationId: post_ai_assist
+      tags: [AI]
+      summary: Quietly develop selected thoughts with the configured internal AI Gateway
+      description: Revalidates and locks every selected note, space, and current membership through the external AI call; completed access revocation or AI exclusion prevents prompt dispatch.
+      x-required-scope: ai:assist
+      requestBody: { required: true, content: { application/json: { schema: { type: object, required: [noteIds, mode], properties: { noteIds: { type: array, minItems: 1, maxItems: 20, items: { type: string, format: uuid } }, mode: { type: string, enum: [summarize, questions, expand, challenge, actions] } } } } } }
+      responses: { '200': { description: Generated thought aid }, '400': { $ref: '#/components/responses/Error' }, '429': { $ref: '#/components/responses/Error' }, '503': { $ref: '#/components/responses/Error' } }
+  /preferences:
+    get:
+      operationId: get_preferences
+      tags: [Personal]
+      summary: Get personal Dream and UI preferences (browser session only)
+      x-session-only: true
+      responses: { '200': { description: Preferences, content: { application/json: { schema: { $ref: '#/components/schemas/Preferences' } } } } }
+    put:
+      operationId: put_preferences
+      tags: [Personal]
+      summary: Partially update personal preferences (browser session only)
+      description: Omitted fields retain their latest stored values. Overlapping partial requests are merged atomically, and an explicit null clears dream_pause_until.
+      x-session-only: true
+      requestBody: { required: true, content: { application/json: { schema: { $ref: '#/components/schemas/PreferencesPatch' } } } }
+      responses: { '200': { description: Preferences saved } }
+  /api-keys:
+    get:
+      operationId: get_api_keys
+      tags: [Personal]
+      summary: List personal key metadata and allowed scopes
+      x-session-only: true
+      responses: { '200': { description: Key list; secrets are never returned } }
+    post:
+      operationId: post_api_keys
+      tags: [Personal]
+      summary: Create a personal API/MCP key
+      x-session-only: true
+      description: The secret is returned exactly once.
+      requestBody:
+        required: true
+        content: { application/json: { schema: { type: object, required: [name, scopes], properties: { name: { type: string }, scopes: { type: array, items: { type: string } }, expiresDays: { type: integer, minimum: 1, maximum: 3650 } } } } }
+      responses: { '201': { description: Key metadata and one-time secret } }
+  /ai-usage:
+    get:
+      operationId: get_my_ai_usage
+      tags: [Personal, AI]
+      summary: What your own thoughts were sent to an AI model for
+      x-session-only: true
+      description: |
+        umm lets someone hold a note back from analysis, hold a whole space
+        back, and keep note bodies off an embedding gateway. That is a promise,
+        and this is where a person checks it for themselves. It is scoped to the
+        caller's own calls in the query, never filtered afterwards.
+
+        A session only: this is the record of what happened to somebody's
+        writing, and a key issued to a script has no business reading it.
+
+        Two things travel with the list so it cannot be misread.
+        `usage.retentionDays` is how long umm keeps these at all — without it a
+        list that stops ninety days back reads as ninety quiet days.
+        `embeddingsLeaveThisMachine` reports whether note bodies currently go to
+        an embedding gateway, because a list of chat-model calls otherwise looks
+        like the whole story: embeddings are sent in batches that can span
+        several people's notes in a shared space, so naming one person for one
+        batch would be a guess where the policy is a fact.
+
+        An entry with an empty `purpose` was recorded before v0.67.0. That means
+        "not recorded", not "unknown purpose".
+      parameters:
+        - name: days
+          in: query
+          schema: { type: integer, minimum: 1, maximum: 365, default: 30 }
+          description: How far back to look. Out-of-range or unparsable values fall back to 30 rather than failing, because this is a screen someone is reading.
+      responses:
+        '200':
+          description: The caller's own AI calls, newest first
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  usage:
+                    type: object
+                    properties:
+                      entries:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            at: { type: string, format: date-time }
+                            purpose:
+                              type: string
+                              enum: ['', dream, assist, ask, agent, develop, deck-headings, deck-sections]
+                            model: { type: string }
+                            status:
+                              type: string
+                              enum: [success, failed]
+                              description: A failed call still sent the prompt, so it is listed.
+                            inputTokens: { type: integer }
+                            outputTokens: { type: integer }
+                      counts:
+                        type: object
+                        additionalProperties: { type: integer }
+                        description: Calls of each purpose in the window, over all of them rather than only the ones listed.
+                      total: { type: integer }
+                      truncated: { type: boolean, description: The window held more calls than entries lists. }
+                      retentionDays: { type: integer }
+                  since: { type: string, format: date-time }
+                  days: { type: integer }
+                  embeddingsLeaveThisMachine:
+                    type: boolean
+                    description: Whether the words in a note currently go to an embedding gateway. False means the offline algorithm and nothing sent.
+                  embeddingModel: { type: string, description: Empty when nothing is sent. }
+                  purposes:
+                    type: array
+                    items: { type: string }
+                    description: The vocabulary, in the order a person reads it.
+  /sessions:
+    get:
+      operationId: get_sessions
+      tags: [Personal]
+      summary: List the browser sessions currently signed in to this account
+      x-session-only: true
+      description: The session making the request is flagged with `current`. Session tokens are never returned.
+      responses:
+        '200':
+          description: Active sessions, most recently used first
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  sessions:
+                    type: array
+                    items: { $ref: '#/components/schemas/Session' }
+  /sessions/{sessionId}:
+    delete:
+      operationId: delete_session
+      tags: [Personal]
+      summary: End one signed-in session
+      x-session-only: true
+      description: Ending the current session also clears this browser's cookie.
+      parameters:
+        - { in: path, name: sessionId, required: true, schema: { type: string, format: uuid } }
+      responses:
+        '204': { description: Session ended }
+        '404': { description: No such session for this account }
+  /sessions/revoke-others:
+    post:
+      operationId: post_sessions_revoke_others
+      tags: [Personal]
+      summary: Sign every other device out
+      x-session-only: true
+      responses:
+        '200':
+          description: Number of sessions that were ended
+          content:
+            application/json: { schema: { type: object, properties: { revoked: { type: integer } } } }
+  /notifications:
+    get:
+      operationId: get_notifications
+      tags: [Personal]
+      summary: List personal Dream and collaboration notifications
+      x-required-scope: notes:read
+      parameters:
+        - { $ref: '#/components/parameters/Cursor' }
+        - { in: query, name: limit, schema: { type: integer, minimum: 1, maximum: 100, default: 30 } }
+      responses:
+        '200':
+          description: Notifications, navigation targets and unread count
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [notifications, unread, nextCursor]
+                properties:
+                  notifications: { type: array, items: { $ref: '#/components/schemas/Notification' } }
+                  unread: { type: integer, minimum: 0 }
+                  nextCursor: { type: string }
+  /notifications/{notificationId}/read:
+    parameters:
+      - { in: path, name: notificationId, required: true, schema: { type: string, format: uuid } }
+    post:
+      operationId: post_notifications_notificationId_read
+      tags: [Personal]
+      summary: Mark a notification as read
+      x-required-scope: notes:read
+      responses: { '200': { description: Marked read }, '404': { $ref: '#/components/responses/Error' } }
+  /api-keys/{keyId}:
+    parameters:
+      - { $ref: '#/components/parameters/KeyID' }
+    put:
+      operationId: put_api_keys_keyId
+      tags: [Personal]
+      summary: Change scopes on an active personal key
+      x-session-only: true
+      requestBody: { required: true, content: { application/json: { schema: { type: object, required: [scopes], properties: { scopes: { type: array, items: { type: string } } } } } } }
+      responses: { '200': { description: Scopes changed } }
+    delete:
+      operationId: delete_api_keys_keyId
+      tags: [Personal]
+      summary: Revoke a personal key immediately
+      x-session-only: true
+      responses: { '204': { description: Revoked } }
+  /api-keys/{keyId}/rotate:
+    parameters:
+      - { $ref: '#/components/parameters/KeyID' }
+    post:
+      operationId: post_api_keys_keyId_rotate
+      tags: [Personal]
+      summary: Rotate a key with the configured overlap window
+      x-session-only: true
+      description: Returns the replacement secret exactly once. The old key remains valid only for the administrator-configured overlap period.
+      responses: { '201': { description: Replacement key and one-time secret } }
+  /webhooks:
+    get:
+      operationId: get_webhooks
+      tags: [Webhooks]
+      summary: List signed webhook subscriptions
+      x-required-scope: webhooks:write
+      responses:
+        '200': { description: Webhook subscriptions and supported events, content: { application/json: { schema: { type: object, required: [webhooks, supportedEvents], properties: { webhooks: { type: array, items: { $ref: '#/components/schemas/Webhook' } }, supportedEvents: { type: array, items: { type: string } } } } } } }
+    post:
+      operationId: post_webhooks
+      tags: [Webhooks]
+      summary: Create an HTTPS webhook subscription
+      description: Private, loopback, link-local and reserved targets are rejected. The HMAC secret is returned exactly once.
+      x-required-scope: webhooks:write
+      requestBody:
+        required: true
+        content: { application/json: { schema: { $ref: '#/components/schemas/WebhookWrite' } } }
+      responses:
+        '201': { description: Webhook ID and one-time signing secret }
+  /webhooks/{webhookId}:
+    parameters:
+      - { $ref: '#/components/parameters/WebhookID' }
+    put:
+      operationId: put_webhooks_webhookId
+      tags: [Webhooks]
+      summary: Replace a webhook subscription
+      x-required-scope: webhooks:write
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              allOf:
+                - { $ref: '#/components/schemas/WebhookWrite' }
+                - { type: object, required: [active], properties: { active: { type: boolean } } }
+      responses: { '200': { description: Webhook updated } }
+    delete:
+      operationId: delete_webhooks_webhookId
+      tags: [Webhooks]
+      summary: Delete a webhook and its delivery history
+      x-required-scope: webhooks:write
+      responses: { '204': { description: Webhook deleted } }
+  /webhooks/{webhookId}/test:
+    parameters:
+      - { $ref: '#/components/parameters/WebhookID' }
+    post:
+      operationId: post_webhooks_webhookId_test
+      tags: [Webhooks]
+      summary: Send a signed connection-test event
+      x-required-scope: webhooks:write
+      responses: { '200': { description: Delivery succeeded }, '502': { $ref: '#/components/responses/Error' } }
+  /webhooks/{webhookId}/rotate-secret:
+    parameters:
+      - { $ref: '#/components/parameters/WebhookID' }
+    post:
+      operationId: post_webhooks_webhookId_rotate_secret
+      tags: [Webhooks]
+      summary: Replace the webhook HMAC secret
+      description: The new secret is returned exactly once.
+      x-required-scope: webhooks:write
+      responses: { '200': { description: One-time replacement secret } }
+  /dreams:
+    get:
+      operationId: get_dreams
+      tags: [Dream]
+      summary: List personal Dreams whose spaces the caller can currently access, with authorized sources and review status
+      x-required-scope: dreams:read
+      parameters:
+        - { $ref: '#/components/parameters/Cursor' }
+        - { in: query, name: limit, schema: { type: integer, minimum: 1, maximum: 100, default: 30 } }
+      responses: { '200': { description: Dream inbox, content: { application/json: { schema: { type: object, required: [dreams, nextCursor], properties: { dreams: { type: array, items: { $ref: '#/components/schemas/DreamCandidate' } }, nextCursor: { type: string } } } } } } }
+  /dreams/{dreamId}/feedback:
+    parameters:
+      - { in: path, name: dreamId, required: true, schema: { type: string, format: uuid } }
+    post:
+      operationId: post_dreams_dreamId_feedback
+      tags: [Dream]
+      summary: Record idempotent Dream feedback under a transaction-locked current space membership
+      x-required-scope: dreams:read
+      requestBody: { required: true, content: { application/json: { schema: { type: object, required: [action], properties: { action: { type: string, enum: [exposed, kept, edited, connected, expanded, moved, deleted, hidden, regenerated] }, reason: { type: string, enum: [too_obvious, irrelevant, incorrect, repetitive, too_frequent] } } } } } }
+      responses: { '200': { description: Feedback recorded } }
+  /dreams/{dreamId}/accept:
+    parameters:
+      - { in: path, name: dreamId, required: true, schema: { type: string, format: uuid } }
+    post:
+      operationId: post_dreams_dreamId_accept
+      tags: [Dream]
+      summary: Accept a staged Dream and materialize its note and source edges
+      x-required-scope: [dreams:read, notes:write]
+      requestBody: { required: true, content: { application/json: { schema: { type: object, properties: { content: { type: string, maxLength: 2000, description: Optional developed content to accept instead of the original candidate } } } } } }
+      responses: { '201': { description: Accepted canvas note, content: { application/json: { schema: { $ref: '#/components/schemas/Note' } } } } }
+  /dreams/{dreamId}/regenerate:
+    parameters:
+      - { in: path, name: dreamId, required: true, schema: { type: string, format: uuid } }
+    post:
+      operationId: post_dreams_dreamId_regenerate
+      tags: [Dream]
+      summary: Generate a distinct alternative from the same source notes
+      description: Locks the Dream, eligible source notes, source spaces and current memberships through the external AI call so completed access revocation prevents prompt dispatch and state changes.
+      x-required-scope: dreams:read
+      responses: { '200': { description: Replaced Dream candidate, content: { application/json: { schema: { $ref: '#/components/schemas/DreamCandidate' } } } }, '429': { $ref: '#/components/responses/Error' }, '503': { $ref: '#/components/responses/Error' } }
+  /dreams/{dreamId}/develop:
+    parameters:
+      - { in: path, name: dreamId, required: true, schema: { type: string, format: uuid } }
+    post:
+      operationId: post_dreams_dreamId_develop
+      tags: [Dream]
+      summary: Expand, challenge or turn a Dream into actions
+      description: Holds a transaction-scoped lease on the Dream, eligible sources and every current space membership until the external AI call finishes.
+      x-required-scope: dreams:read
+      requestBody: { required: true, content: { application/json: { schema: { type: object, required: [mode], properties: { mode: { type: string, enum: [expand, challenge, actions] } } } } } }
+      responses: { '200': { description: Developed Dream text, content: { application/json: { schema: { type: object, required: [mode, content, model, inputTokens, outputTokens], properties: { mode: { type: string }, content: { type: string }, model: { type: string }, inputTokens: { type: integer }, outputTokens: { type: integer } } } } } }, '429': { $ref: '#/components/responses/Error' }, '503': { $ref: '#/components/responses/Error' } }
+  /dreams/{dreamId}/developed-note:
+    parameters:
+      - { in: path, name: dreamId, required: true, schema: { type: string, format: uuid } }
+    post:
+      operationId: post_dreams_dreamId_developed_note
+      tags: [Dream]
+      summary: Atomically save developed Dream text as a note and expanded edge
+      description: Identical retries return the existing note and edge with created=false.
+      x-required-scope: [dreams:read, notes:write]
+      requestBody: { required: true, content: { application/json: { schema: { type: object, required: [content], properties: { content: { type: string, minLength: 1, maxLength: 2000 } } } } } }
+      responses:
+        '200': { description: Existing materialization returned for an identical retry, content: { application/json: { schema: { $ref: '#/components/schemas/DevelopmentMaterialization' } } } }
+        '201': { description: Developed note and edge created atomically, content: { application/json: { schema: { $ref: '#/components/schemas/DevelopmentMaterialization' } } } }
+  /approvals:
+    get:
+      operationId: get_approvals
+      tags: [Workflow]
+      summary: List requests visible to the user, team lead or administrator
+      responses: { '200': { description: Approval requests } }
+    post:
+      operationId: post_approvals
+      tags: [Workflow]
+      summary: Request review for an action
+      description: If the administrator has not enabled this action, returns required=false and approved without creating a workflow record.
+      x-required-scope: approvals:write
+      requestBody:
+        required: true
+        content: { application/json: { schema: { type: object, required: [resourceType, resourceId, action], properties: { resourceType: { type: string }, resourceId: { type: string, format: uuid }, action: { type: string }, comment: { type: string } } } } }
+      responses: { '200': { description: No workflow required }, '201': { description: Pending request created } }
+  /approvals/{requestId}/decision:
+    parameters:
+      - { in: path, name: requestId, required: true, schema: { type: string, format: uuid } }
+    post:
+      operationId: post_approvals_requestId_decision
+      tags: [Workflow]
+      summary: Approve or reject as matching team lead or administrator
+      requestBody: { required: true, content: { application/json: { schema: { type: object, required: [decision], properties: { decision: { type: string, enum: [approved, rejected] }, comment: { type: string } } } } } }
+      responses: { '200': { description: Decision saved }, '403': { $ref: '#/components/responses/Error' } }
+  /admin/settings:
+    get:
+      operationId: get_admin_settings
+      tags: [Admin]
+      summary: Get all service settings with masked secrets
+      responses: { '200': { description: Setting sections } }
+  /admin/settings/{section}:
+    parameters:
+      - { in: path, name: section, required: true, schema: { type: string, enum: [general, oidc, security, workflow, dream, ai_gateway, intelligence, ptium, analytics, handoff] } }
+    put:
+      operationId: put_admin_settings_section
+      tags: [Admin]
+      summary: Replace one settings section
+      description: >
+        OIDC client_secret and the AI gateway's api_key and embedding_api_key are AES-256-GCM
+        encrypted before PostgreSQL storage. Masked secret saves merge the latest ciphertext
+        under the same per-setting transaction lock used by master-key rotation.
+
+        The `analytics` section is visitor tracking: `enabled` (off by default), `provider`
+        (`momento` first — the in-house collector — then `ga4`, `gtm`, `matomo`, `custom`, `none`),
+        `momento_url`, `momento_site_id`, `momento_proxy` (serve the tracker and its events
+        through umm's own `/momento` path so no outside origin enters the content security
+        policy), `measurement_id`, `matomo_url`, `matomo_site_id`, `custom_snippet` (at most
+        8 KB, must contain a script tag), `allowed_hosts` (extra origins, `https://host`, comma
+        separated), `include_admin` and `placement` (`head` or `body`). Saving takes effect on
+        the next page load; the response nonce is added to every script tag of the snippet and
+        the snippet's origins to `script-src`, `connect-src` and `img-src` of that page only.
+        `'unsafe-inline'` is never added. A save that would render nothing — a provider with
+        its id missing, a snippet without a script tag — is refused with 400.
+        The `handoff` section is `{"targets": [{"name", "origin", "formats": [...]}]}` — the
+        services a space may be sent to; `origin` is a scheme and host with no path, and
+        `formats` are the standard's words (markdown, docx, csv, xlsx, txt, pptx). Empty by default.
+      requestBody: { required: true, content: { application/json: { schema: { type: object, additionalProperties: true } } } }
+      responses: { '200': { description: Saved }, '400': { $ref: '#/components/responses/Error' } }
+  /admin/oidc/test:
+    post:
+      operationId: post_admin_oidc_test
+      tags: [Admin]
+      summary: Test OIDC Discovery and client configuration
+      responses: { '200': { description: Discovery succeeded }, '400': { $ref: '#/components/responses/Error' } }
+  /admin/users:
+    get:
+      operationId: get_admin_users
+      tags: [Admin]
+      summary: List users, roles, teams and status
+      responses: { '200': { description: Users } }
+  /admin/users/{userId}:
+    parameters:
+      - { in: path, name: userId, required: true, schema: { type: string, format: uuid } }
+    put:
+      operationId: put_admin_users_userId
+      tags: [Admin]
+      summary: Update role, active state and team
+      requestBody: { required: true, content: { application/json: { schema: { type: object, required: [role, active, teamName], properties: { role: { type: string, enum: [user, team_lead, admin] }, active: { type: boolean }, teamName: { type: string } } } } } }
+      responses: { '200': { description: User updated } }
+  /admin/metrics:
+    get:
+      operationId: get_admin_metrics
+      tags: [Admin]
+      summary: Get product, Dream quality, token and cost metrics
+      responses: { '200': { description: Current operational metrics } }
+  /edges/{edgeId}:
+    delete:
+      operationId: delete_edge
+      tags: [Notes]
+      summary: Remove a connection
+      description: Also how an inferred suggestion is dismissed. Requires edit or manage permission on the space.
+      parameters:
+        - { name: edgeId, in: path, required: true, schema: { type: string, format: uuid } }
+      responses:
+        '204': { description: Connection removed }
+        '404': { $ref: '#/components/responses/Error' }
+  /edges/{edgeId}/reason:
+    put:
+      operationId: set_edge_reason
+      tags: [Notes]
+      summary: Record why a connection was drawn
+      description: |
+        Separate from creating the edge because that is when the reason is least
+        likely to be known: someone drags a line because two thoughts belong
+        together and works out why afterwards. A reason that could only be given
+        at the moment the line is drawn is one that mostly would not be given.
+
+        An empty or blank reason clears it, which is the normal state. Source,
+        target and relation are what the line is and cannot be changed here.
+        Requires edit or manage permission on the space, the same as drawing the
+        line: annotating a space is changing it.
+      parameters:
+        - { name: edgeId, in: path, required: true, schema: { type: string, format: uuid } }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [reason]
+              properties:
+                reason: { type: string, maxLength: 200 }
+      responses:
+        '200': { description: The connection, with its reason, content: { application/json: { schema: { $ref: '#/components/schemas/Edge' } } } }
+        '400': { $ref: '#/components/responses/Error' }
+        '404': { $ref: '#/components/responses/Error' }
+  /edges/{edgeId}/accept:
+    post:
+      operationId: accept_edge_suggestion
+      tags: [Notes, AI]
+      summary: Stand behind an inferred connection
+      description: |
+        Turns an edge with origin=auto into origin=manual and clears its
+        confidence: once a person has decided a connection is real, a score
+        describing how far it stood out from the rest of the workspace no longer
+        says anything about it. Only inferred edges can be accepted.
+      parameters:
+        - { name: edgeId, in: path, required: true, schema: { type: string, format: uuid } }
+      responses:
+        '200': { description: The accepted connection, content: { application/json: { schema: { $ref: '#/components/schemas/Edge' } } } }
+        '404': { $ref: '#/components/responses/Error' }
+  /spaces/{spaceId}/links/suggest:
+    post:
+      operationId: suggest_links
+      tags: [Notes, AI]
+      summary: Propose connections between thoughts that sit unusually close
+      description: |
+        Scores every pair in the space against the workspace's own distribution
+        and records the ones that stand out as edges with origin=auto and a
+        confidence, which the interface shows as suggestions.
+
+        It refuses to run unless the configured embedding backend has been
+        measured as semantic (see /admin/embedding-quality). The offline default
+        ranks two sentences that share words above two that share meaning, so
+        proposing from it would connect notes that merely reuse vocabulary. The
+        outcome field says which case applied.
+      parameters:
+        - { name: spaceId, in: path, required: true, schema: { type: string, format: uuid } }
+      responses:
+        '200': { description: What the run produced and why, content: { application/json: { schema: { $ref: '#/components/schemas/SuggestionResult' } } } }
+        '500': { $ref: '#/components/responses/Error' }
+  /ai/ask:
+    post:
+      operationId: post_ai_ask
+      tags: [AI, Notes]
+      summary: Answer a question from the person's own thoughts
+      description: |
+        Retrieves what the person already wrote and answers only from that. The
+        sources are returned in the order the model was given them, so a citation
+        like [2] resolves and a claim with no citation is visible as one.
+
+        Retrieval searches and then follows one step along the graph, because the
+        answer to a question is often recorded next to the thought that raises it
+        rather than inside it.
+
+        Nothing marked as excluded from AI reaches the gateway — not by search and
+        not through a connection. excluded counts what was left out, so a partial
+        answer does not read as a complete one.
+
+        When nothing matched, grounded is false and no model is called: an answer
+        with no sources is the failure this endpoint exists to avoid, and asking
+        for one anyway invites it. Requires a configured chat model and consumes
+        the AI quota.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { type: object, required: [question], properties: { question: { type: string, maxLength: 500 } } }
+      responses:
+        '200':
+          description: The answer and what it stands on
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [answer, sources, excluded, grounded]
+                properties:
+                  answer: { type: string, description: Empty when grounded is false }
+                  grounded: { type: boolean, description: False when nothing matched and no model was called }
+                  excluded: { type: integer, minimum: 0, description: Thoughts that matched but are excluded from AI }
+                  model: { type: string }
+                  sources:
+                    type: array
+                    items:
+                      type: object
+                      required: [ref, noteId, spaceId, content, via]
+                      properties:
+                        ref: { type: integer, minimum: 1, description: The number the answer cites }
+                        noteId: { type: string, format: uuid }
+                        spaceId: { type: string, format: uuid }
+                        content: { type: string }
+                        via: { type: string, enum: [match, connection] }
+        # 412 means no chat model is configured. It is separate from 502 because
+        # an administrator can fix it in a minute, and separate from the embedding
+        # model, which this endpoint does not use.
+        '400': { $ref: '#/components/responses/Error' }
+        '412': { $ref: '#/components/responses/Error' }
+        '429': { $ref: '#/components/responses/Error' }
+        '502': { $ref: '#/components/responses/Error' }
+  /spaces/{spaceId}/branches:
+    get:
+      operationId: get_space_branches
+      tags: [Notes]
+      summary: List the lines of thinking in a space
+      description: |
+        A branch is a line of thinking that was explored: named by a person, and
+        resolved by a person as adopted or abandoned.
+
+        umm never decides a line was abandoned on its own. A month of silence is
+        not a decision, and treating it as one would quietly bury work that was
+        merely paused.
+
+        assignments maps each thought to the branch it belongs to, so a caller can
+        label a note without walking every branch.
+      parameters:
+        - { name: spaceId, in: path, required: true, schema: { type: string, format: uuid } }
+      responses:
+        '200':
+          description: The lines and which thoughts are filed under each
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [branches, assignments]
+                properties:
+                  branches: { type: array, items: { $ref: '#/components/schemas/Branch' } }
+                  assignments:
+                    type: object
+                    description: noteId to branchId
+                    additionalProperties: { type: string, format: uuid }
+        '500': { $ref: '#/components/responses/Error' }
+    post:
+      operationId: post_space_branches
+      tags: [Notes]
+      summary: Start a line of thinking
+      description: |
+        The root thought is optional. A line often grows out of something already
+        written, but not always, and requiring one would push people to invent a
+        parent note that says nothing. When given, it must be a thought in the
+        same space.
+      parameters:
+        - { name: spaceId, in: path, required: true, schema: { type: string, format: uuid } }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [name]
+              properties:
+                name: { type: string, maxLength: 80 }
+                rootNoteId: { type: string, format: uuid, nullable: true }
+      responses:
+        '201': { description: The line, content: { application/json: { schema: { $ref: '#/components/schemas/Branch' } } } }
+        '400': { $ref: '#/components/responses/Error' }
+  /branches/{branchId}/resolve:
+    post:
+      operationId: post_branch_resolve
+      tags: [Notes]
+      summary: Record what became of a line, and why
+      description: |
+        The reason is required and the request is refused without one. A branch
+        marked abandoned with no reason is the same forgetting this feature exists
+        to prevent, one step later: you know you rejected it and no longer know
+        what for.
+
+        Once a line is abandoned, every thought in it is labelled as such wherever
+        it surfaces — search, /ai/ask sources, and the assistant's lookups. That
+        labelling is the point: a rejected option that reads as current is how
+        someone acts on it twice.
+      parameters:
+        - { name: branchId, in: path, required: true, schema: { type: string, format: uuid } }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [status, resolution]
+              properties:
+                status: { type: string, enum: [adopted, abandoned] }
+                resolution: { type: string, minLength: 1, maxLength: 1000 }
+      responses:
+        '200': { description: The resolved line, content: { application/json: { schema: { $ref: '#/components/schemas/Branch' } } } }
+        '400': { $ref: '#/components/responses/Error' }
+  /branches/{branchId}/reopen:
+    post:
+      operationId: post_branch_reopen
+      tags: [Notes]
+      summary: Put a resolved line back in play
+      description: |
+        Separate from resolving because it is a different thing to say. The reason
+        is cleared, since it described a decision that no longer stands and would
+        read as current if it stayed.
+      parameters:
+        - { name: branchId, in: path, required: true, schema: { type: string, format: uuid } }
+      responses:
+        '200': { description: The reopened line, content: { application/json: { schema: { $ref: '#/components/schemas/Branch' } } } }
+        '400': { $ref: '#/components/responses/Error' }
+  /branches/{branchId}:
+    delete:
+      operationId: delete_branch
+      tags: [Notes]
+      summary: Stop tracking a line
+      description: |
+        The thoughts stay. Removing a branch means the line is no longer tracked,
+        not that the thinking never happened.
+      parameters:
+        - { name: branchId, in: path, required: true, schema: { type: string, format: uuid } }
+      responses:
+        '200': { description: Removed, content: { application/json: { schema: { type: object, properties: { ok: { type: boolean } } } } } }
+        '400': { $ref: '#/components/responses/Error' }
+  /notes/{noteId}/branch:
+    put:
+      operationId: put_note_branch
+      tags: [Notes]
+      summary: File a thought under a line, or take it out of one
+      description: |
+        A null branchId clears it. The branch must be in the same space as the
+        thought, otherwise the label would refer to something its readers cannot
+        see.
+      parameters:
+        - { name: noteId, in: path, required: true, schema: { type: string, format: uuid } }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                branchId: { type: string, format: uuid, nullable: true }
+      responses:
+        '200': { description: Filed, content: { application/json: { schema: { type: object, properties: { ok: { type: boolean } } } } } }
+        '400': { $ref: '#/components/responses/Error' }
+  /turning-points:
+    get:
+      operationId: get_turning_points
+      tags: [Notes]
+      summary: What changed in someone's thinking, in the order it changed
+      description: |
+        Six months later the question is rarely "what did I write" but "what did
+        we decide about this, and why". The reason is the part that goes missing
+        first, so it travels with the decision.
+
+        Everything here was marked by a person: a line of thinking adopted or set
+        aside, a question marked as answered, two thoughts marked as being in
+        tension. umm does not read a burst of activity and call it a turning
+        point, and it does not decide a line was abandoned because it went quiet.
+        A record that mixes decisions with guesses is worse than no record,
+        because when you need it you cannot tell which is which.
+
+        An open line is not here. Nothing has been decided yet, and listing it
+        would turn a record of decisions into a list of work in progress.
+
+        Newest first, capped at 120. Only spaces the person can read.
+      parameters:
+        - name: spaceId
+          in: query
+          required: false
+          schema: { type: string, format: uuid }
+          description: Narrow to one space. Omitted, it covers every space they can read.
+      responses:
+        '200':
+          description: What was marked, newest first
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [points, hasMore]
+                properties:
+                  hasMore:
+                    type: boolean
+                    description: >
+                      True when there are marked decisions older than the newest 120 returned.
+                      A record that stops without saying so reads as the whole story.
+                  points:
+                    type: array
+                    items:
+                      type: object
+                      required: [kind, at, spaceId, space, subject, detail]
+                      properties:
+                        kind:
+                          type: string
+                          enum: [adopted, abandoned, answered, contradicted]
+                        at: { type: string, format: date-time }
+                        spaceId: { type: string, format: uuid }
+                        space: { type: string }
+                        subject: { type: string, description: The line's name, the question, or the claim }
+                        detail:
+                          type: string
+                          description: >
+                            Why a line was resolved, the thought that answered a question, or
+                            the counter-claim. Empty when there is no second half, rather than
+                            filled with something invented.
+                        noteId: { type: string, format: uuid }
+        '400': { $ref: '#/components/responses/Error' }
+        '500': { $ref: '#/components/responses/Error' }
+  /ai/agent:
+    post:
+      operationId: post_ai_agent
+      tags: [AI, Notes]
+      summary: Let an assistant look around before answering
+      description: |
+        Answers a question the way a person would: it looks, reads what it found,
+        and looks again if it needs to, instead of answering from one retrieval.
+
+        It reads and never writes. The tools bound to the model are all lookups
+        (search, questions marked open, contradictions marked by hand) — nothing
+        that creates, links, merges or deletes is offered at all, so a proposal
+        comes back as text for the person to act on. That boundary is the tool
+        list itself, not a permission flag.
+
+        steps records every lookup it made, so an answer can be checked rather
+        than taken on faith. Nothing marked as excluded from AI is reachable
+        through any tool, and excluded counts what was held back across all of
+        them.
+
+        Each turn is one model call charged to the person's daily quota, and a
+        run is capped at 6 lookups. When the cap is reached the assistant is
+        asked once more without tools so what it learned is not lost, and
+        truncated is true — the answer was cut short, not concluded. Requires a
+        configured chat model.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { type: object, required: [task], properties: { task: { type: string, maxLength: 500 } } }
+      responses:
+        '200':
+          description: The answer and every lookup behind it
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [answer, steps, excluded, truncated]
+                properties:
+                  answer: { type: string }
+                  truncated: { type: boolean, description: True when the step cap was reached before the assistant finished }
+                  excluded: { type: integer, minimum: 0, description: Thoughts left out because they are excluded from AI, summed over every lookup }
+                  model: { type: string }
+                  steps:
+                    type: array
+                    description: What the assistant looked at, in order
+                    items:
+                      type: object
+                      required: [tool, input, summary]
+                      properties:
+                        tool: { type: string, enum: [search_thoughts, find_open_questions, find_contradictions] }
+                        input: { type: string, description: The arguments the model chose, as JSON }
+                        summary: { type: string, description: What that lookup returned, in one line }
+        '400': { $ref: '#/components/responses/Error' }
+        # 412 means no chat model is configured, same as /ai/ask.
+        '412': { $ref: '#/components/responses/Error' }
+        '429': { $ref: '#/components/responses/Error' }
+        '502': { $ref: '#/components/responses/Error' }
+  /open-questions:
+    get:
+      operationId: get_open_questions
+      tags: [Notes]
+      summary: Questions nothing has been recorded as answering
+      description: |
+        Both halves are marked, not inferred. umm does not read a note and decide
+        it is asking something — a sentence ending in a question mark often is
+        not a question, and a real question is often written without one — and it
+        does not decide that another note answers it.
+
+        Open therefore means nobody has drawn an answer, not that umm searched
+        for one. An empty result is not "everything is answered", and a caller
+        must not present it as such.
+
+        attempts counts connections pointing at the question that are not
+        answers: the difference between a question nobody has touched and one
+        that has been argued over without settling.
+      parameters:
+        - { name: spaceId, in: query, required: false, schema: { type: string, format: uuid } }
+      responses:
+        '200':
+          description: Open questions, most recent first
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [questions]
+                properties:
+                  questions:
+                    type: array
+                    items:
+                      type: object
+                      required: [note, spaceId, space, attempts]
+                      properties:
+                        note: { $ref: '#/components/schemas/Note' }
+                        spaceId: { type: string, format: uuid }
+                        space: { type: string }
+                        attempts: { type: integer, minimum: 0 }
+        '400': { $ref: '#/components/responses/Error' }
+  /contradictions:
+    get:
+      operationId: get_contradictions
+      tags: [Notes]
+      summary: Disagreements that were recorded between thoughts
+      description: |
+        Recorded, not detected. umm does not read two notes and conclude they
+        conflict; these are connections a person or an agent drew with the
+        contradicts relation.
+
+        That difference decides how the result may be presented: an empty list
+        means nobody has marked any disagreement, not that the workspace is free
+        of them, so a caller must not render a zero beside the word.
+      parameters:
+        - { name: spaceId, in: query, required: false, schema: { type: string, format: uuid }, description: Narrow to one space; omit for every space the caller can read }
+      responses:
+        '200':
+          description: Recorded disagreements, most recent first
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [contradictions]
+                properties:
+                  contradictions:
+                    type: array
+                    items:
+                      type: object
+                      required: [edgeId, spaceId, space, claim, counter, origin]
+                      properties:
+                        edgeId: { type: string, format: uuid }
+                        spaceId: { type: string, format: uuid }
+                        space: { type: string }
+                        claim: { $ref: '#/components/schemas/Note' }
+                        counter: { $ref: '#/components/schemas/Note' }
+                        origin: { type: string, description: Who recorded the disagreement }
+        '400': { $ref: '#/components/responses/Error' }
+  /morning-brief:
+    get:
+      operationId: get_morning_brief
+      tags: [Notes, AI]
+      summary: What accumulated while you were away
+      description: |
+        Counts only what umm actually produced. There is no row for
+        contradictions or for thoughts whose importance rose, because umm detects
+        neither, and a zero beside a category it never examined would read as
+        "there are none" rather than "nobody looked".
+
+        For the same reason the response carries `skipped`: an empty duplicates
+        list means something different depending on whether the embedding backend
+        was fit to find them. `quiet` is true only when there is nothing to report
+        *and* nothing was skipped — the one case where "nothing happened" is the
+        whole story.
+
+        Dreams are omitted for a key without the dreams:read scope; the rest of
+        the brief is still returned.
+      parameters:
+        - { name: hours, in: query, required: false, schema: { type: integer, minimum: 1, maximum: 2160, default: 24 }, description: How far back to look. Defaults to a day, the cadence Dream runs on. }
+      responses:
+        '200': { description: The brief, content: { application/json: { schema: { $ref: '#/components/schemas/MorningBrief' } } } }
+        '400': { $ref: '#/components/responses/Error' }
+  /capture:
+    post:
+      operationId: post_capture
+      tags: [Notes]
+      summary: Write a thought down without choosing where it belongs
+      description: |
+        Takes no space id on purpose. A thought arrives before you know where it
+        goes, and asking first is why thoughts get written somewhere else. The
+        thought lands in the caller's inbox — an ordinary space, so search,
+        embeddings, Dream and connections all work on it — and can be filed later
+        with /notes/{noteId}/move.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { type: object, required: [content], properties: { content: { type: string } } }
+      responses:
+        '201': { description: The captured thought, content: { application/json: { schema: { $ref: '#/components/schemas/Note' } } } }
+        '400': { $ref: '#/components/responses/Error' }
+  /notes/{noteId}/merge:
+    post:
+      operationId: post_note_merge
+      tags: [Notes]
+      summary: Fold one thought into another
+      description: |
+        The path note survives; mergeId is soft-deleted.
+
+        content is required and is not derived: umm can tell that two notes say
+        nearly the same thing, but not which words the person wants to keep, and
+        concatenating them produces a note that says everything twice.
+
+        Eight tables hang off a note, and each is handled deliberately rather
+        than left to a cascade. Connections and comments follow the thought;
+        connections that would become a note linked to itself, or a duplicate of
+        one the survivor already had, are dropped and counted. Dream citations
+        follow. Review schedules and revisions stay behind, because a schedule is
+        one person's recall timing for a card they saw and a revision is the
+        history of a row that is going away — carrying either across would
+        describe the surviving thought with events that did not happen to it.
+        The survivor's stored vector is discarded, since it describes text that
+        no longer exists.
+
+        Both notes must be in the same space and writable. A connection needs
+        both endpoints in one space, so merging across spaces would either strand
+        the connections or move a thought somewhere its author did not put it.
+      parameters:
+        - { name: noteId, in: path, required: true, schema: { type: string, format: uuid } }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [mergeId, content]
+              properties:
+                mergeId: { type: string, format: uuid }
+                content: { type: string, description: What the surviving thought says }
+      responses:
+        '200':
+          description: The surviving thought and what moved
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [note, movedEdges, droppedEdges, movedComments]
+                properties:
+                  note: { $ref: '#/components/schemas/Note' }
+                  movedEdges: { type: integer, minimum: 0 }
+                  droppedEdges: { type: integer, minimum: 0, description: Self-links and duplicates the survivor already had }
+                  movedComments: { type: integer, minimum: 0 }
+        '400': { $ref: '#/components/responses/Error' }
+        '404': { $ref: '#/components/responses/Error' }
+  /notes/{noteId}/move:
+    post:
+      operationId: post_note_move
+      tags: [Notes]
+      summary: File a thought into another space
+      description: |
+        Requires write access to both the origin and the destination.
+
+        Connections are scoped to a space and need both endpoints in it, so a
+        note that leaves cannot keep them: they are removed and the count comes
+        back as removedEdges, so a caller can say what the move costs before the
+        person agrees rather than have them discover it afterwards.
+      parameters:
+        - { name: noteId, in: path, required: true, schema: { type: string, format: uuid } }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { type: object, required: [spaceId], properties: { spaceId: { type: string, format: uuid } } }
+      responses:
+        '200':
+          description: The filed thought and what the move removed
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [note, removedEdges]
+                properties:
+                  note: { $ref: '#/components/schemas/Note' }
+                  removedEdges: { type: integer, minimum: 0 }
+        '400': { $ref: '#/components/responses/Error' }
+        '404': { $ref: '#/components/responses/Error' }
+  /notes/{noteId}/space-suggestions:
+    get:
+      operationId: get_note_space_suggestions
+      tags: [Notes, AI]
+      summary: Where a captured thought might belong
+      description: |
+        basis says what the ranking rests on. "meaning" when the embedding
+        backend has been measured as semantic and the ranking is by closeness to
+        what each space holds; "recent" when it has not, in which case these are
+        simply the spaces worked in most recently. Presenting word overlap as
+        understanding would be worse than admitting the limit, so umm says which
+        it is doing.
+      parameters:
+        - { name: noteId, in: path, required: true, schema: { type: string, format: uuid } }
+      responses:
+        '200':
+          description: Candidate homes, best first
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [suggestions]
+                properties:
+                  suggestions:
+                    type: array
+                    items:
+                      type: object
+                      required: [space, score, basis]
+                      properties:
+                        space: { $ref: '#/components/schemas/Space' }
+                        score: { type: number }
+                        basis: { type: string, enum: [meaning, recent] }
+  /admin/ai-gateway/discover:
+    get:
+      operationId: get_admin_ai_gateway_discover
+      tags: [Admin, AI]
+      summary: Look for an embedding gateway at the addresses umm documents
+      description: |
+        Removes the last piece of friction in configuring a real embedding model:
+        knowing what it is called. Each reachable gateway is asked for its
+        OpenAI-compatible model list.
+
+        The addresses probed are compiled into the binary and are never read from
+        the request — probing a supplied address would make this endpoint a way
+        of reaching whatever the server can reach.
+
+        likelyEmbedding is a hint from the model name, not a finding: a gateway
+        lists every model it serves and nothing in the response says which ones
+        embed. It puts the plausible ones first; /admin/ai-gateway/test and
+        /admin/embedding-quality are what settle it.
+      responses:
+        '200':
+          description: Gateways that answered, in the order umm prefers them
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [gateways]
+                properties:
+                  gateways:
+                    type: array
+                    items:
+                      type: object
+                      required: [baseUrl, models]
+                      properties:
+                        baseUrl: { type: string }
+                        models:
+                          type: array
+                          items:
+                            type: object
+                            required: [name, likelyEmbedding]
+                            properties:
+                              name: { type: string }
+                              likelyEmbedding: { type: boolean }
+  /admin/ptium/test:
+    post:
+      operationId: post_admin_ptium_test
+      tags: [Admin]
+      summary: Check that Ptium answers and accepts the key
+      description: |
+        Lists Ptium's templates, which is an authenticated read: a reply proves
+        the address answers, that it is a Ptium, and that the credential works —
+        all three at once. Without it the first sign of a wrong address or a
+        rejected key is someone trying to make a deck and being handed a status
+        code they cannot act on.
+
+        An omitted or masked api_key falls back to the stored one, so an
+        administrator can test an unchanged connection without retyping the
+        secret. The templates come back with the result so the settings screen
+        can offer them by name rather than asking for a pasted UUID.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                base_url: { type: string }
+                api_key: { type: string }
+                timeout_seconds: { type: integer }
+      responses:
+        '200':
+          description: Ptium answered
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok: { type: boolean }
+                  message: { type: string }
+                  templates:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id: { type: string }
+                        name: { type: string }
+                        kind: { type: string }
+        '400': { description: No address, a malformed one, or Ptium refused }
+  /admin/ai-gateway/test:
+    post:
+      operationId: post_admin_ai_gateway_test
+      tags: [Admin, AI]
+      summary: Probe an embedding gateway before saving it
+      description: |
+        Embeds two short strings against the supplied address and model and
+        reports what happened. This separates the two failures an administrator
+        can fix from this screen — a wrong address and a wrong model name — from
+        the third, a working model that is not semantic, which
+        /admin/embedding-quality answers.
+
+        An omitted or masked api_key falls back to the stored one, so an
+        unchanged gateway can be tested without retyping the secret. A key that
+        cannot be decrypted is treated as absent rather than sent as ciphertext.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [embedding_model]
+              description: >
+                Probes the gateway embeddings are actually sent to. With embedding_base_url set
+                that address is used and api_key is not sent there; otherwise base_url and
+                api_key are, which is where embeddings go in that case. One of the two
+                addresses is required. Resolved by the same rule the runtime uses, so a
+                passing probe means the server that embeds is the one that passed.
+              properties:
+                base_url: { type: string, description: Chat gateway address; used for embeddings when no embedding address is set }
+                embedding_base_url: { type: string, description: Where embeddings go, when they have their own server }
+                embedding_model: { type: string }
+                api_key: { type: string, description: Sent only when base_url is the address being probed }
+                embedding_api_key:
+                  type: string
+                  description: >
+                    Sent when embedding_base_url is the address being probed. Empty means no
+                    authentication — the common case for an embedding server — and only the
+                    mask means "the one already saved".
+      responses:
+        '200':
+          description: The probe result. ok is false with a detail when the gateway refused or was unreachable; this is not an HTTP error because the request itself succeeded.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [ok]
+                properties:
+                  ok: { type: boolean }
+                  detail: { type: string, description: Present when ok is false }
+                  model: { type: string }
+                  dimensions: { type: integer, description: Vector width the gateway returned }
+        '400': { $ref: '#/components/responses/Error' }
+  /admin/embedding-quality:
+    get:
+      operationId: get_admin_embedding_quality
+      tags: [Admin, AI]
+      summary: Measure what the configured embedding backend actually captures
+      description: |
+        Scores a hand-labelled set of Korean and English sentence pairs with the
+        configured embedding backend and reports whether it separates meaning
+        from shared vocabulary. discrimination is mean(paraphrase) - mean(lexical-decoy)
+        and pairwiseAccuracy is the fraction of paraphrase-versus-decoy comparisons
+        ranked the right way round. neighbourPurity measures the separate question
+        related thoughts and clustering actually ask: across labelled topic groups,
+        how often is a sentence's nearest match from its own topic. A lexical
+        backend scores near zero on the first pair and near chance on the second,
+        and every feature that reports related thoughts, clusters or Dream pairs is
+        lexical with it. fellBack is true when a model is configured but the vectors
+        came from the offline algorithm anyway. Cached for ten minutes per backend;
+        refresh=true forces a new measurement.
+      parameters:
+        - { name: refresh, in: query, required: false, schema: { type: boolean }, description: Re-measure instead of serving the cached report }
+      responses:
+        '200': { description: Embedding quality report, content: { application/json: { schema: { $ref: '#/components/schemas/EmbeddingQualityReport' } } } }
+        '502': { $ref: '#/components/responses/Error' }
+  /admin/security/encryption:
+    get:
+      operationId: get_admin_security_encryption
+      tags: [Admin]
+      summary: Inspect master-key rotation readiness
+      responses:
+        '200': { description: 'Primary key ID, fallback count and pending encrypted values', content: { application/json: { schema: { $ref: '#/components/schemas/EncryptionKeyStatus' } } } }
+  /admin/security/encryption/rotate:
+    post:
+      operationId: post_admin_security_encryption_rotate
+      tags: [Admin]
+      summary: Transactionally re-encrypt secrets with the primary key
+      description: Requires the previous key in ENCRYPTION_KEY_PREVIOUS until every stored value has been rotated and verified. OIDC and AI Gateway setting writes are serialized with rotation so masked saves cannot restore stale ciphertext.
+      responses: { '200': { description: Rotation result }, '409': { $ref: '#/components/responses/Error' } }
+  /admin/ai-evals:
+    get:
+      operationId: get_admin_ai_evals
+      tags: [Admin, AI]
+      summary: List Dream evaluation cases and their latest runs
+      responses: { '200': { description: Evaluation cases } }
+    post:
+      operationId: post_admin_ai_evals
+      tags: [Admin, AI]
+      summary: Create a grounding and quality evaluation case
+      requestBody:
+        required: true
+        content: { application/json: { schema: { $ref: '#/components/schemas/AIEvalCaseWrite' } } }
+      responses: { '201': { description: Evaluation case created } }
+  /admin/ai-evals/{caseId}:
+    parameters:
+      - { $ref: '#/components/parameters/CaseID' }
+    delete:
+      operationId: delete_admin_ai_evals_caseId
+      tags: [Admin, AI]
+      summary: Delete an evaluation case and its run history
+      responses: { '204': { description: Evaluation case deleted } }
+  /admin/ai-evals/{caseId}/run:
+    parameters:
+      - { $ref: '#/components/parameters/CaseID' }
+    post:
+      operationId: post_admin_ai_evals_caseId_run
+      tags: [Admin, AI]
+      summary: Run a Dream evaluation against the configured gateway
+      responses: { '200': { description: Scored evaluation result }, '502': { $ref: '#/components/responses/Error' } }
+  /admin/dreams/run:
+    post:
+      operationId: post_admin_dreams_run
+      tags: [Admin]
+      summary: Manually enqueue eligible users
+      responses: { '202': { description: Queued } }
+  /admin/audit:
+    get:
+      operationId: get_admin_audit
+      tags: [Admin]
+      summary: Page through immutable audit events
+      parameters:
+        - { $ref: '#/components/parameters/Cursor' }
+        - { in: query, name: limit, schema: { type: integer, minimum: 1, maximum: 300, default: 100 } }
+      parameters:
+        - { $ref: '#/components/parameters/Cursor' }
+        - { in: query, name: limit, schema: { type: integer, minimum: 1, maximum: 300, default: 100 } }
+        - { in: query, name: actor, schema: { type: string }, description: Username, or "system" for entries with no actor }
+        - { in: query, name: action, schema: { type: string }, description: One of the actions the log holds }
+        - { in: query, name: resourceType, schema: { type: string } }
+        - { in: query, name: resourceId, schema: { type: string } }
+        - { in: query, name: from, schema: { type: string, format: date-time } }
+        - { in: query, name: to, schema: { type: string, format: date-time } }
+      responses: { '200': { description: Audit events, the actions in use, and an opaque next cursor } }
+  /admin/spaces:
+    get:
+      operationId: get_admin_spaces
+      tags: [Admin]
+      summary: List spaces with their owner, members and thought count
+      parameters:
+        - { $ref: '#/components/parameters/Cursor' }
+        - { in: query, name: limit, schema: { type: integer, minimum: 1, maximum: 200, default: 50 } }
+        - { in: query, name: owner, schema: { type: string }, description: Restrict to one owner by username }
+        - { in: query, name: ownerInactive, schema: { type: boolean }, description: Only spaces owned by a deactivated account }
+      responses: { '200': { description: Spaces and opaque next cursor } }
+  /admin/spaces/{spaceId}/members:
+    get:
+      operationId: get_admin_space_members
+      tags: [Admin]
+      summary: Who can reach one space, and with what permission
+      parameters:
+        - { $ref: '#/components/parameters/SpaceID' }
+      responses: { '200': { description: The owner and every member } }
+  /admin/spaces/{spaceId}/owner:
+    put:
+      operationId: put_admin_space_owner
+      tags: [Admin]
+      summary: Hand a space to another active user
+      parameters:
+        - { $ref: '#/components/parameters/SpaceID' }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [userId]
+              properties: { userId: { type: string, format: uuid } }
+      responses:
+        '200': { description: The new owner, and whether the previous one kept access }
+        '400': { description: An inbox, an inactive recipient, or already the owner }
+        '404': { description: No such space or user }
+  /admin/intelligence/preview:
+    get:
+      operationId: get_admin_intelligence_preview
+      tags: [Admin]
+      summary: What a proposed pair of bands would do to the thoughts already stored
+      description: >-
+        Measures the bands in force and the proposed ones against the same
+        sample of the largest spaces. Writes nothing. Omitting a parameter
+        previews the value currently in force; a value outside 0-4 is refused
+        rather than replaced. When `semantic` is false the canvas groups by
+        position and the cluster band decides nothing, so the cluster figures
+        are left at zero and must not be read as counts; the related figures
+        are unaffected.
+      parameters:
+        - { in: query, name: related_band, schema: { type: number, minimum: 0, maximum: 4 } }
+        - { in: query, name: cluster_band, schema: { type: number, minimum: 0, maximum: 4 } }
+      responses:
+        '200': { description: Current and proposed outcomes over the same sampled notes }
+        '400': { description: A band outside the range the settings accept }
+  /admin/webhooks:
+    get:
+      operationId: get_admin_webhooks
+      tags: [Admin]
+      summary: Every webhook in the installation, worst first
+      description: >-
+        The destination is reported as scheme and host only. A hook address with
+        a token in its path is itself the credential, so the path is not
+        returned.
+      parameters:
+        - { in: query, name: failing, schema: { type: boolean }, description: Only webhooks with failures recorded }
+      responses: { '200': { description: Webhooks with owner, destination, failures and waiting deliveries } }
+  /admin/webhooks/{webhookId}/pause:
+    post:
+      operationId: post_admin_webhook_pause
+      tags: [Admin]
+      summary: Stop a webhook delivering without deleting its configuration
+      parameters:
+        - { in: path, name: webhookId, required: true, schema: { type: string, format: uuid } }
+      responses:
+        '200': { description: Paused, or already paused }
+        '404': { description: No such webhook }
+  /admin/analytics/violations:
+    get:
+      operationId: get_admin_analytics_violations
+      tags: [Admin]
+      summary: What the content security policy refused while tracking was on
+      description: |
+        While visitor tracking is on, every tracked page's policy names `report-uri /csp-report`
+        and the browser posts each refusal there. umm keeps the distinct origins — at most a
+        hundred, in memory, per instance — with the directive that refused each, most recent
+        first. `allowed` marks an origin the current setting already covers, so a snippet that
+        has since been fixed stops showing as a problem. The settings screen turns each entry
+        into one click that adds the origin to `allowed_hosts`.
+
+        Nothing is recorded while tracking is off: an idle installation does not keep a list
+        anyone outside could fill.
+      responses:
+        '200':
+          description: Refused origins, most recent first
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  active: { type: boolean, description: Whether tracking is on and reports are being kept }
+                  reportPath: { type: string, example: /csp-report }
+                  violations:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        origin: { type: string, example: https://cdn.tracker.example }
+                        directive: { type: string, example: connect-src }
+                        page: { type: string, description: Path of the page that reported it }
+                        count: { type: integer }
+                        firstSeen: { type: string, format: date-time }
+                        lastSeen: { type: string, format: date-time }
+                        allowed: { type: boolean }
+    delete:
+      operationId: delete_admin_analytics_violations
+      tags: [Admin]
+      summary: Empty the list of refused origins
+      description: What an administrator does after fixing a snippet, to see whether anything is still refused.
+      responses:
+        '200': { description: Emptied }
+components:
+  securitySchemes:
+    cookieAuth: { type: apiKey, in: cookie, name: umm_session }
+    bearerAuth: { type: http, scheme: bearer, bearerFormat: umm_key }
+  parameters:
+    SpaceID: { in: path, name: spaceId, required: true, schema: { type: string, format: uuid } }
+    NoteID: { in: path, name: noteId, required: true, schema: { type: string, format: uuid } }
+    CommentID: { in: path, name: commentId, required: true, schema: { type: string, format: uuid } }
+    KeyID: { in: path, name: keyId, required: true, schema: { type: string, format: uuid } }
+    WebhookID: { in: path, name: webhookId, required: true, schema: { type: string, format: uuid } }
+    CaseID: { in: path, name: caseId, required: true, schema: { type: string, format: uuid } }
+    Cursor: { in: query, name: cursor, description: Opaque cursor returned as nextCursor, schema: { type: string } }
+    IdempotencyKey: { in: header, name: Idempotency-Key, description: 'Replay-safe Canvas mutation key; the live-renewed 2-minute lease and response complete atomically with the mutation, and successful responses are retained for 24 hours', schema: { type: string, minLength: 8, maxLength: 128, pattern: '^[A-Za-z0-9._:-]+$' } }
+  responses:
+    PtiumFailure:
+      description: >-
+        A Ptium call that did not work, sorted by who can do something about it.
+        `type` ends in the kind and `failure` repeats it as a bare string, so a
+        client can branch without parsing the URL. `detail` is umm's own
+        sentence about what to do. `ptiumDetail` is Ptium's own explanation,
+        present only when Ptium said something worth repeating — a proxy's HTML
+        error page is not passed through. `technical` is the underlying error
+        and is sent to administrators only, because it names internal hosts, Go
+        types and SQL constraints.
+      content:
+        application/problem+json:
+          schema:
+            type: object
+            properties:
+              type: { type: string }
+              title: { type: string }
+              status: { type: integer }
+              detail: { type: string }
+              failure: { type: string, enum: [unreachable, timed-out, unauthorized, no-api, rejected, remote-error, unexpected-response, not-recorded, other] }
+              ptiumStatus: { type: integer, description: The status Ptium answered with, when it answered. }
+              ptiumDetail: { type: string }
+              ptiumId: { type: string, description: The deck Ptium opened before compiling failed. Present when a deck was left behind, which is when retrying into it is the right move rather than making another. }
+              deckLeftBehind: { type: boolean }
+              technical: { type: string, description: Administrators only. }
+              requestId: { type: string }
+    Error: { description: RFC 9457 Problem Details, content: { application/problem+json: { schema: { $ref: '#/components/schemas/Error' } } } }
+  schemas:
+    Error:
+      type: object
+      required: [type, title, status, detail, error]
+      properties:
+        type: { type: string, format: uri-reference }
+        title: { type: string }
+        status: { type: integer, minimum: 400, maximum: 599 }
+        detail: { type: string }
+        error: { type: string, description: Backward-compatible alias for detail }
+        requestId: { type: string }
+        clientVersion: { type: integer }
+        latest: { $ref: '#/components/schemas/Note' }
+    Meta:
+      type: object
+      required: [serviceName, version, oidcEnabled, oidcAutoLogin, mcpOAuth, dreamEnabled, dreamAllowUserDisable, mcpProtocol]
+      properties: { serviceName: { type: string }, version: { type: string }, oidcEnabled: { type: boolean }, oidcAutoLogin: { type: boolean, description: Whether the browser should try a silent prompt=none sign-in before showing the login screen; never true while oidcEnabled is false }, mcpOAuth: { type: boolean, description: Whether /mcp accepts a Keycloak access token in place of a key, in which case /.well-known/oauth-protected-resource/mcp describes the resource; never true while oidcEnabled is false }, dreamEnabled: { type: boolean }, dreamAllowUserDisable: { type: boolean }, mcpProtocol: { type: string } }
+    Session:
+      type: object
+      required: [id, current, createdAt, lastSeenAt, expiresAt]
+      properties:
+        id: { type: string, format: uuid }
+        userAgent: { type: string, description: Reported browser, truncated for display }
+        clientIp: { type: string }
+        current: { type: boolean, description: True for the session making the request }
+        createdAt: { type: string, format: date-time }
+        lastSeenAt: { type: string, format: date-time }
+        expiresAt: { type: string, format: date-time }
+    User:
+      type: object
+      required: [id, username, displayName, role, active]
+      properties:
+        id: { type: string, format: uuid }
+        username: { type: string }
+        displayName: { type: string }
+        email: { type: string }
+        role: { type: string, enum: [user, team_lead, admin] }
+        teamId: { type: [string, 'null'], format: uuid }
+        active: { type: boolean }
+    Space:
+      type: object
+      required: [id, ownerId, name, color, aiExcluded, isInbox]
+      properties:
+        id: { type: string, format: uuid }
+        ownerId: { type: string, format: uuid }
+        name: { type: string }
+        color: { type: string }
+        aiExcluded: { type: boolean, description: Exclude every note in this space from AI processing and remote embedding gateways }
+        isInbox: { type: boolean, description: Where unfiled captures land. An ordinary space in every other respect, but it cannot be deleted — removing it would leave captures with nowhere to go and the next one would silently make a new one. }
+    DreamSource:
+      type: object
+      required: [noteId, title, excerpt, rank, similarityScore, cited]
+      properties:
+        noteId: { type: string, format: uuid }
+        title: { type: string }
+        excerpt: { type: string }
+        rank: { type: integer, minimum: 1 }
+        similarityScore: { type: number }
+        cited: { type: boolean }
+    DreamCandidate:
+      type: object
+      required: [dreamId, type, generatedAt, qualityScore, qualityLabel, status, spaceId, spaceName, content, rationale, suggestedAction, generation, sources]
+      properties:
+        dreamId: { type: string, format: uuid }
+        type: { type: string, enum: [connection, question, expansion, contrarian, rediscovery, action, pattern] }
+        generatedAt: { type: string, format: date-time }
+        exposedAt: { type: string, format: date-time }
+        acceptedAt: { type: string, format: date-time }
+        qualityScore: { type: number, minimum: 0, maximum: 1, description: Internal score; the UI presents qualityLabel instead }
+        qualityLabel: { type: string, enum: [근거 충분, 새로운 연결, 검토 필요] }
+        status: { type: string, enum: [created, exposed, kept, deleted] }
+        noteId: { type: string, format: uuid }
+        spaceId: { type: string, format: uuid }
+        spaceName: { type: string }
+        content: { type: string }
+        rationale: { type: string }
+        suggestedAction: { type: string }
+        generation: { type: integer, minimum: 1 }
+        dismissedReason: { type: string }
+        sources: { type: array, items: { $ref: '#/components/schemas/DreamSource' } }
+    NoteWrite:
+      type: object
+      required: [content, x, y]
+      properties:
+        content: { type: string }
+        title: { type: string }
+        color: { type: string, enum: [yellow, blue, purple, green, red, gray, lavender] }
+        kind:
+          type: string
+          enum: [thought, question, idea]
+          default: thought
+          description: |
+            What the thought is. Marked, never inferred: umm does not read a note
+            and decide it is a question. A value outside the vocabulary is
+            rejected with 400 and an allowedKinds list rather than rewritten,
+            which would file a thought as something the person did not say it was.
+            "idea" is written when a Dream is materialised.
+        aiExcluded: { type: boolean, description: Exclude this note from AI processing and remote embedding gateways }
+        x: { type: number }
+        y: { type: number }
+        width: { type: number, minimum: 120 }
+        height: { type: number, minimum: 80 }
+        rotation: { type: number }
+    Note:
+      allOf:
+        - { $ref: '#/components/schemas/NoteWrite' }
+        - type: object
+          required: [id, spaceId, authorId, source, version, createdAt, updatedAt]
+          properties:
+            id: { type: string, format: uuid }
+            spaceId: { type: string, format: uuid }
+            authorId: { type: string, format: uuid }
+            source: { type: string, enum: [user, dream, api, mcp] }
+            version: { type: integer }
+            relatedCount: { type: integer, minimum: 0 }
+            createdAt: { type: string, format: date-time }
+            updatedAt: { type: string, format: date-time }
+    NoteSearchResult:
+      type: object
+      required: [id, spaceId, spaceName, title, content, kind, updatedAt, score, reason]
+      properties:
+        id: { type: string, format: uuid }
+        spaceId: { type: string, format: uuid }
+        spaceName: { type: string }
+        title: { type: string }
+        content: { type: string }
+        kind:
+          type: string
+          enum: [thought, question, idea]
+          default: thought
+          description: |
+            What the thought is. Marked, never inferred: umm does not read a note
+            and decide it is a question. A value outside the vocabulary is
+            rejected with 400 and an allowedKinds list rather than rewritten,
+            which would file a thought as something the person did not say it was.
+            "idea" is written when a Dream is materialised.
+        updatedAt: { type: string, format: date-time }
+        score: { type: number, minimum: 0, maximum: 1 }
+        reason: { type: string }
+    NoteUpdate:
+      allOf:
+        - { $ref: '#/components/schemas/NoteWrite' }
+        - type: object
+          required: [version]
+          properties:
+            version: { type: integer, minimum: 0 }
+    RelatedNote:
+      type: object
+      required: [note, score, reason]
+      properties:
+        note: { $ref: '#/components/schemas/Note' }
+        score: { type: number, minimum: 0, maximum: 1 }
+        reason: { type: string }
+    PresentationLink:
+      type: object
+      description: >-
+        umm's record that a space produced a deck. Ptium owns the presentation
+        and its slides; only the link is kept here, so nothing drifts when the
+        deck is edited.
+      properties:
+        id: { type: string, format: uuid }
+        spaceId: { type: string, format: uuid }
+        ptiumId: { type: string, description: Ptium's identifier for the deck. Opaque to umm. }
+        title: { type: string }
+        status: { type: string, enum: [pending, generating, ready, failed] }
+        error: { type: string, description: The underlying error, when it failed. Names internal hosts and Go types, so it is for whoever fixes it rather than for display. }
+        failureKind: { type: string, description: "What sort of failure it was, which decides the sentence a reader is shown and whether retrying can help. One of unreachable, timed-out, unauthorized, no-api, rejected, remote-error, unexpected-response, not-recorded, other. Empty on decks recorded before v0.60.0 and on decks that did not fail." }
+        compiledSource: { type: string, description: The deck source umm sent. Omitted from list responses. }
+        thoughtCount: { type: integer }
+        excludedCount: { type: integer, description: Thoughts deliberately left out, so the count on screen is the real one. }
+        trimmedCount: { type: integer, description: "Thoughts left out only because the talk was capped at a length. Apart from excludedCount because the remedy differs: raising the cap brings these back, and nothing brings back a thought its author held out of analysis. 0 on decks recorded before v0.64.0." }
+        createdBy: { type: string, format: uuid, nullable: true }
+        url: { type: string, description: Where the deck can be opened. Computed on every read, never stored. Absent when no Ptium is configured. }
+        staleSlides:
+          type: integer
+          description: >-
+            How many of this deck's slides quote a thought that has since been
+            rewritten or deleted. Moving a thought does not count: the check is
+            on the words, not the note's version, which also changes when a note
+            is dragged.
+    SlideSource:
+      type: object
+      required: [slidePosition, noteId]
+      properties:
+        slidePosition:
+          type: integer
+          description: >-
+            Position in the deck, one-based, rather than a Ptium slide id: a
+            slide id changes when the deck is recompiled and umm has no way to
+            learn that it did.
+        noteId: { type: string, format: uuid }
+    StaleSlide:
+      type: object
+      required: [slidePosition, noteId, reason]
+      properties:
+        slidePosition: { type: integer }
+        noteId: { type: string, format: uuid }
+        reason:
+          type: string
+          enum: [changed, deleted]
+          description: >-
+            A rewritten thought and a deleted one call for different things —
+            one slide can be brought up to date, the other has lost its source
+            entirely — so they are not collapsed into "out of date".
+        content: { type: string, description: What the thought says now, so the change can be seen without leaving the deck. Empty for a deleted one. }
+    PresentationPreview:
+      type: object
+      properties:
+        storyline:
+          type: object
+          description: The talk in umm's own terms — order, grouping, and the author's sentences.
+        source: { type: string, description: The same talk written in Ptium's deck source language. }
+        slideCount: { type: integer, description: Present only when Ptium checked it. }
+        warnings: { type: array, items: { type: string } }
+        checked:
+          type: boolean
+          description: >-
+            Whether Ptium measured this against a real template. False on a
+            first preview, because Ptium can only dry-run source against a deck
+            that already exists. Without this flag, a preview with no warnings
+            and one that was never checked look identical.
+    ThoughtCluster:
+      type: object
+      required: [id, label, noteIds, cohesion, basis]
+      properties:
+        id: { type: string }
+        label: { type: string }
+        noteIds: { type: array, items: { type: string, format: uuid } }
+        cohesion:
+          type: number
+          minimum: 0
+          maximum: 1
+          description: |
+            Comparable only within one basis. For a meaning cluster it is an
+            average similarity; for a proximity cluster it is a tightness of
+            placement. Ranking across the two says nothing.
+        basis:
+          type: string
+          enum: [meaning, proximity]
+          description: |
+            What grouped these notes. "meaning" when the embedding backend has
+            been measured as semantic. "proximity" when it has not: at low zoom
+            clusters replace the notes themselves, and grouping by shared
+            vocabulary there produces a confidently wrong picture of the
+            workspace. Where a note sits is something a person decided, so
+            grouping by placement reports a real structure rather than an
+            invented one — and a caller must present the two differently because
+            they are different claims.
+    NoteRevision:
+      type: object
+      required: [version, content, title, color, kind, x, y, width, height, rotation, createdAt]
+      properties:
+        version: { type: integer, minimum: 1 }
+        content: { type: string }
+        title: { type: string }
+        color: { type: string }
+        kind:
+          type: string
+          enum: [thought, question, idea]
+          default: thought
+          description: |
+            What the thought is. Marked, never inferred: umm does not read a note
+            and decide it is a question. A value outside the vocabulary is
+            rejected with 400 and an allowedKinds list rather than rewritten,
+            which would file a thought as something the person did not say it was.
+            "idea" is written when a Dream is materialised.
+        x: { type: number }
+        y: { type: number }
+        width: { type: number }
+        height: { type: number }
+        rotation: { type: number }
+        createdAt: { type: string, format: date-time }
+    SpaceMember:
+      type: object
+      required: [id, username, displayName, email, permission]
+      properties:
+        id: { type: string, format: uuid }
+        username: { type: string }
+        displayName: { type: string }
+        email: { type: string }
+        permission: { type: string, enum: [owner, view, edit, manage] }
+    EdgeWrite:
+      type: object
+      required: [source, target]
+      properties:
+        source: { type: string, format: uuid }
+        target: { type: string, format: uuid }
+        relation:
+          type: string
+          default: related
+          enum: [related, supports, contradicts, refines, expands, follows]
+          description: |
+            What the connection asserts. Omit it for a line that says only "these
+            belong together". A value outside the vocabulary is rejected with 400
+            and an allowedRelations list rather than being rewritten, so a
+            connection is never recorded that the caller did not describe.
+            Provenance is not a request field: see Edge.origin.
+        reason:
+          type: string
+          maxLength: 200
+          description: |
+            Why this connection was drawn, in the author's own words. The
+            relation says what kind of connection it is; nothing else says why,
+            and that is the half that disappears first.
+
+            Optional, and usually empty here: someone draws a line because two
+            thoughts belong together and works out why afterwards, so it is
+            normally written later through PUT /edges/{edgeId}/reason. Empty
+            means the author did not feel the need rather than that a reason is
+            missing, and must never be rendered as an absence.
+
+            Past 200 characters the request is refused with 400 and a maxLength
+            rather than truncated: storing half of somebody's sentence is worse
+            than not storing it. The bound counts characters, not bytes.
+    Branch:
+      type: object
+      required: [id, spaceId, name, status, resolution]
+      properties:
+        id: { type: string, format: uuid }
+        spaceId: { type: string, format: uuid }
+        rootNoteId: { type: string, format: uuid, description: The thought the line grew out of, when there is one }
+        name: { type: string }
+        status:
+          type: string
+          enum: [open, adopted, abandoned]
+          description: |
+            open is the ordinary state. adopted and abandoned are recorded by a
+            person and always carry a reason.
+        resolution: { type: string, description: Why it was adopted or set aside. Empty only while open. }
+        resolvedAt: { type: string, format: date-time }
+        notes: { type: integer, minimum: 0, description: Thoughts currently filed under this line }
+    Edge:
+      allOf:
+        - { $ref: '#/components/schemas/EdgeWrite' }
+        - type: object
+          required: [id, spaceId, origin]
+          properties:
+            id: { type: string, format: uuid }
+            spaceId: { type: string, format: uuid }
+            origin:
+              type: string
+              enum: [manual, agent, dream, development, import, auto]
+              description: |
+                Who made the connection, set by the server and never accepted from
+                a request body. manual is a line drawn through the web interface,
+                agent one asserted through MCP, dream and development ones written
+                when a Dream is accepted or developed, import one created while
+                importing a document, and auto one umm inferred on its own.
+            confidence:
+              type: number
+              minimum: 0
+              maximum: 1
+              description: |
+                Present only when origin is auto. A person drawing a line is not
+                expressing a probability, so it is absent for every other origin.
+    Attachment:
+      type: object
+      required: [id, noteId, contentType, byteSize, createdAt]
+      properties:
+        id: { type: string, format: uuid }
+        noteId: { type: string, format: uuid }
+        contentType:
+          type: string
+          enum: [image/png, image/jpeg, image/gif, image/webp]
+          description: Read off the bytes when they were stored, never taken from the upload.
+        byteSize: { type: integer }
+        filename: { type: string, description: What the person called it, kept only to label a download. Never used to decide a type. }
+        uploadedBy: { type: string, format: uuid }
+        createdAt: { type: string, format: date-time }
+    Backlink:
+      type: object
+      required: [edge, note, direction]
+      properties:
+        edge: { $ref: '#/components/schemas/Edge' }
+        note: { $ref: '#/components/schemas/Note' }
+        direction: { type: string, enum: [incoming, outgoing] }
+    Comment:
+      type: object
+      required: [id, noteId, authorId, author, username, body, mentions, createdAt, updatedAt]
+      properties:
+        id: { type: string, format: uuid }
+        noteId: { type: string, format: uuid }
+        authorId: { type: string, format: uuid }
+        author: { type: string }
+        username: { type: string }
+        parentId: { type: [string, 'null'], format: uuid }
+        body: { type: string, maxLength: 4000 }
+        mentions: { type: array, items: { type: string } }
+        resolvedAt: { type: [string, 'null'], format: date-time }
+        resolvedBy: { type: [string, 'null'], format: uuid }
+        createdAt: { type: string, format: date-time }
+        updatedAt: { type: string, format: date-time }
+    ReviewItem:
+      type: object
+      required: [id, spaceId, spaceName, title, content, pinned, updatedAt, reason]
+      properties:
+        id: { type: string, format: uuid }
+        spaceId: { type: string, format: uuid }
+        spaceName: { type: string }
+        title: { type: string }
+        content: { type: string }
+        pinned: { type: boolean }
+        updatedAt: { type: string, format: date-time }
+        reason: { type: string }
+    OnboardingProgress:
+      type: object
+      required: [percent, steps]
+      properties:
+        completedAt: { type: [string, 'null'], format: date-time }
+        percent: { type: integer, minimum: 0, maximum: 100 }
+        steps:
+          type: array
+          items:
+            type: object
+            required: [key, label, description, done, target]
+            properties: { key: { type: string }, label: { type: string }, description: { type: string }, done: { type: boolean }, target: { type: string } }
+    TodayReview:
+      type: object
+      required: [review, orphans, dreams, activity, onboarding, counts]
+      properties:
+        review: { type: array, items: { $ref: '#/components/schemas/ReviewItem' } }
+        orphans: { type: array, items: { $ref: '#/components/schemas/ReviewItem' } }
+        dreams: { type: array, items: { type: object, additionalProperties: true } }
+        activity: { type: array, items: { type: object, additionalProperties: true } }
+        onboarding: { $ref: '#/components/schemas/OnboardingProgress' }
+        counts: { type: object, additionalProperties: { type: integer, minimum: 0 } }
+    WebhookWrite:
+      type: object
+      required: [name, url, events]
+      properties:
+        name: { type: string, minLength: 1, maxLength: 200 }
+        url: { type: string, format: uri, maxLength: 2048, pattern: '^https://' }
+        events: { type: array, minItems: 1, items: { type: string } }
+    Webhook:
+      allOf:
+        - { $ref: '#/components/schemas/WebhookWrite' }
+        - type: object
+          required: [id, active, failureCount, lastError, createdAt, updatedAt]
+          properties:
+            id: { type: string, format: uuid }
+            active: { type: boolean }
+            failureCount: { type: integer, minimum: 0 }
+            lastDeliveredAt: { type: [string, 'null'], format: date-time }
+            lastError: { type: string }
+            createdAt: { type: string, format: date-time }
+            updatedAt: { type: string, format: date-time }
+    AIEvalCaseWrite:
+      type: object
+      required: [name, dreamType, inputNotes, expectedTerms, forbiddenTerms, active]
+      properties:
+        name: { type: string, minLength: 1, maxLength: 200 }
+        dreamType: { type: string, enum: [connection, question, expansion, contrarian, rediscovery, action, pattern, free] }
+        inputNotes: { type: array, minItems: 2, maxItems: 20, items: { type: string, maxLength: 1200 } }
+        expectedTerms: { type: array, maxItems: 20, items: { type: string, maxLength: 100 } }
+        forbiddenTerms: { type: array, maxItems: 20, items: { type: string, maxLength: 100 } }
+        active: { type: boolean }
+    MorningBrief:
+      type: object
+      required: [since, dreams, suggestions, unfiled, duplicates, contradictions, questions, skipped, quiet]
+      properties:
+        since: { type: string, format: date-time }
+        dreams:
+          type: array
+          items:
+            type: object
+            required: [kind, count]
+            properties: { kind: { type: string }, count: { type: integer, minimum: 1 } }
+        suggestions: { type: integer, minimum: 0, description: Connections umm proposed that nobody has answered }
+        unfiled: { type: integer, minimum: 0, description: Captured thoughts still sitting in the inbox }
+        duplicates:
+          type: array
+          items:
+            type: object
+            required: [spaceId, space, first, second, score]
+            properties:
+              spaceId: { type: string, format: uuid }
+              space: { type: string }
+              first: { $ref: '#/components/schemas/Note' }
+              second: { $ref: '#/components/schemas/Note' }
+              score: { type: number }
+              setAside:
+                description: >
+                  Present when exactly one of the two sits in a line that was decided
+                  against. The pair then means work is being redone that someone
+                  already chose not to do, and the reason comes with it. Absent when
+                  both are in the same set-aside line, since the decision covers both.
+                allOf:
+                  - $ref: '#/components/schemas/Branch'
+              setAsideNoteId:
+                type: string
+                format: uuid
+                description: Which of the two is the one in that line.
+        skipped:
+          type: array
+          description: What umm did not examine, so an empty list above is not read as an all-clear.
+          items:
+            type: object
+            required: [kind, reason]
+            properties:
+              kind:
+          type: string
+          enum: [thought, question, idea]
+          default: thought
+          description: |
+            What the thought is. Marked, never inferred: umm does not read a note
+            and decide it is a question. A value outside the vocabulary is
+            rejected with 400 and an allowedKinds list rather than rewritten,
+            which would file a thought as something the person did not say it was.
+            "idea" is written when a Dream is materialised.
+              reason:
+                type: string
+                enum: [backend-not-semantic, disabled, space-too-large]
+                description: >
+                  space-too-large: finding duplicates compares every pair, so the work grows
+                  with the square of the space. Past the bound only the most recent thoughts
+                  were compared and the rest were left, which is reported rather than passed
+                  over — a partial pass must not read as a clean bill of health.
+        questions:
+          type: array
+          description: |
+            Questions marked open with nothing recorded as answering them. Both
+            halves are marked rather than inferred, so an empty list means nothing
+            is marked open — not that everything has been answered.
+          items:
+            type: object
+            required: [note, spaceId, space, attempts]
+            properties:
+              note: { $ref: '#/components/schemas/Note' }
+              spaceId: { type: string, format: uuid }
+              space: { type: string }
+              attempts: { type: integer, minimum: 0 }
+        contradictions:
+          type: array
+          description: |
+            Disagreements someone recorded, capped for readability. umm does not
+            detect these, so an empty list means nobody has marked any rather
+            than that the workspace has none — the interface shows nothing at all
+            in that case rather than a zero.
+          items:
+            type: object
+            required: [edgeId, spaceId, space, claim, counter, origin]
+            properties:
+              edgeId: { type: string, format: uuid }
+              spaceId: { type: string, format: uuid }
+              space: { type: string }
+              claim: { $ref: '#/components/schemas/Note' }
+              counter: { $ref: '#/components/schemas/Note' }
+              origin: { type: string }
+        quiet: { type: boolean, description: Nothing to report and nothing skipped }
+    SuggestionResult:
+      type: object
+      required: [outcome, edges, considered]
+      properties:
+        outcome:
+          type: string
+          enum: [suggested, no-candidates, backend-not-semantic, too-few-notes]
+          description: |
+            suggested — at least one connection was proposed. no-candidates — the
+            backend can judge and nothing stood out. backend-not-semantic — the
+            active embedding scores vocabulary above meaning, so umm declined to
+            guess. too-few-notes — not enough notes to say what unusually similar
+            means here.
+        edges:
+          type: array
+          items: { $ref: '#/components/schemas/Edge' }
+        considered: { type: integer, minimum: 0, description: Pairs scored, so a quiet result is distinguishable from no attempt }
+    EmbeddingQualityReport:
+      type: object
+      required: [algorithm, model, classes, discrimination, pairwiseAccuracy, pairs, topicSeparation, neighbourPurity, sentences, accuracyBar, purityBar, semantic, fellBack]
+      properties:
+        algorithm: { type: string, description: Identifier of the algorithm that produced the vectors }
+        model: { type: string, description: Configured model name; empty when no gateway model is set }
+        classes:
+          type: array
+          items:
+            type: object
+            required: [class, mean, min, max, count]
+            properties:
+              class: { type: string, enum: [paraphrase, related, lexical-decoy, unrelated] }
+              mean: { type: number }
+              min: { type: number }
+              max: { type: number }
+              count: { type: integer, minimum: 1 }
+        discrimination: { type: number, description: mean(paraphrase) - mean(lexical-decoy); negative means vocabulary outranks meaning }
+        pairwiseAccuracy: { type: number, minimum: 0, maximum: 1 }
+        pairs: { type: integer, minimum: 1 }
+        topicSeparation: { type: number, description: mean(same-topic similarity) - mean(different-topic similarity) }
+        neighbourPurity: { type: number, minimum: 0, maximum: 1, description: Fraction of sentences whose nearest match shares its topic; this is the question related thoughts and clustering ask }
+        sentences: { type: integer, minimum: 1 }
+        accuracyBar: { type: number, minimum: 0, maximum: 1, description: The pairwise-accuracy threshold this verdict was judged against, configurable under the intelligence settings }
+        purityBar: { type: number, minimum: 0, maximum: 1, description: The same-topic-neighbour threshold this verdict was judged against }
+        semantic: { type: boolean, description: Whether the backend is usable as a semantic layer }
+        fellBack: { type: boolean, description: A model is configured but these vectors came from the offline algorithm }
+    EncryptionKeyStatus:
+      type: object
+      required: [keyId, fallbackKeys, encryptedValues, pendingRotation, unreadable]
+      properties:
+        keyId: { type: string }
+        fallbackKeys: { type: integer, minimum: 0 }
+        encryptedValues: { type: integer, minimum: 0 }
+        pendingRotation: { type: integer, minimum: 0 }
+        unreadable: { type: integer, minimum: 0 }
+    DevelopmentMaterialization:
+      type: object
+      required: [note, edge, created]
+      properties:
+        note: { $ref: '#/components/schemas/Note' }
+        edge: { $ref: '#/components/schemas/Edge' }
+        created: { type: boolean }
+    Notification:
+      type: object
+      required: [id, kind, title, body, resourceType, resourceId, resourceSpaceId, metadata, readAt, createdAt]
+      properties:
+        id: { type: string, format: uuid }
+        kind:
+          type: string
+          enum: [thought, question, idea]
+          default: thought
+          description: |
+            What the thought is. Marked, never inferred: umm does not read a note
+            and decide it is a question. A value outside the vocabulary is
+            rejected with 400 and an allowedKinds list rather than rewritten,
+            which would file a thought as something the person did not say it was.
+            "idea" is written when a Dream is materialised.
+        title: { type: string }
+        body: { type: string }
+        resourceType: { type: string, enum: [dream, space, note] }
+        resourceId: { type: [string, 'null'], format: uuid }
+        resourceSpaceId: { type: [string, 'null'], format: uuid }
+        metadata: { type: object, additionalProperties: true }
+        readAt: { type: [string, 'null'], format: date-time }
+        createdAt: { type: string, format: date-time }
+    Preferences:
+      type: object
+      required: [dream_enabled, dream_frequency, dream_style, dream_notifications, include_old_notes, theme, locale, edge_style, review_digest]
+      properties:
+        dream_enabled: { type: boolean }
+        dream_frequency: { type: string, enum: [daily, three_week, weekly] }
+        dream_style: { type: string, enum: [auto, connection, question, expansion, free] }
+        dream_notifications: { type: boolean }
+        include_old_notes: { type: boolean }
+        dream_pause_until: { type: [string, 'null'], format: date-time }
+        theme: { type: string, enum: [light, dark, system] }
+        locale: { type: string }
+        edge_style: { type: string, enum: [bezier, smoothstep, straight], default: bezier }
+        review_digest: { type: boolean, default: true }
+    PreferencesPatch:
+      type: object
+      description: A presence-aware partial preference update; omitted fields are preserved.
+      properties:
+        dream_enabled: { type: boolean }
+        dream_frequency: { type: string, enum: [daily, three_week, weekly] }
+        dream_style: { type: string, enum: [auto, connection, question, expansion, free] }
+        dream_notifications: { type: boolean }
+        include_old_notes: { type: boolean }
+        dream_pause_until: { type: [string, 'null'], format: date-time }
+        theme: { type: string, enum: [light, dark, system] }
+        locale: { type: string, enum: [ko, en] }
+        edge_style: { type: string, enum: [bezier, smoothstep, straight] }
+        review_digest: { type: boolean }

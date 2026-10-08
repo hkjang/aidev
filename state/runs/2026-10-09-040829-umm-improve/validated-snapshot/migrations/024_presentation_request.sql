@@ -1,0 +1,22 @@
+-- What the person asked for when they made this deck.
+--
+-- Making a deck is two calls: Ptium opens one, then umm compiles source into
+-- it. When the second fails, umm offers to retry into the deck that is already
+-- there, and that retry recompiles the space — deliberately, because the
+-- thinking has usually moved on since it failed.
+--
+-- What it had no way to recompile was the same talk. The choices lived in the
+-- request that failed and nowhere else, so a deck built from six selected
+-- thoughts and capped at twenty slides came back on retry as the whole space,
+-- uncapped, under the same title and into the same deck. Nothing said so, which
+-- is the part that matters: somebody pressed 다시 시도 and was handed a
+-- different talk than the one they had asked for.
+--
+-- So the choices are stored beside the link, the same way `trimmed_count` is
+-- stored rather than recomputed: by the time anybody retries, the only record
+-- of what was asked for is this row. Opaque to the database on purpose — the
+-- compiler owns what the shape means, the way it owns the deck source — and
+-- '{}' for every row written before this, which decodes to every default and is
+-- exactly what a retry did then.
+ALTER TABLE presentation_links
+  ADD COLUMN IF NOT EXISTS request jsonb NOT NULL DEFAULT '{}'::jsonb;

@@ -1,0 +1,58 @@
+[
+  {
+    "check": "vuln-final",
+    "command": "go run golang.org/x/vuln/cmd/govulncheck@latest ./...",
+    "exit": 0,
+    "seconds": 4.66,
+    "isolated_postgres": "17.11"
+  },
+  {
+    "check": "vet",
+    "command": "go vet ./...",
+    "exit": 0,
+    "seconds": 0.99,
+    "isolated_postgres": "17.11"
+  },
+  {
+    "check": "go-tests",
+    "command": "go test -p 1 ./... -count=1",
+    "exit": 0,
+    "seconds": 80.79,
+    "isolated_postgres": "17.11"
+  },
+  {
+    "check": "race",
+    "command": "go test -race -count=1 ./internal/intelligence",
+    "exit": 0,
+    "seconds": 6.23,
+    "isolated_postgres": "17.11"
+  },
+  {
+    "check": "go-build",
+    "command": "go build ./...",
+    "exit": 0,
+    "seconds": 0.93,
+    "isolated_postgres": "17.11"
+  },
+  {
+    "check": "version",
+    "command": "./scripts/check-version.sh",
+    "exit": 0,
+    "seconds": 0.02,
+    "isolated_postgres": "17.11"
+  },
+  {
+    "check": "diff-check",
+    "command": "git diff --check",
+    "exit": 0,
+    "seconds": 0.12,
+    "isolated_postgres": "17.11"
+  },
+  {
+    "check": "store-integration",
+    "command": "go test ./internal/store -run 'Test.*Integration' -count=1 -v",
+    "exit": 0,
+    "seconds": 41.83,
+    "isolated_postgres": "17.11"
+  }
+]

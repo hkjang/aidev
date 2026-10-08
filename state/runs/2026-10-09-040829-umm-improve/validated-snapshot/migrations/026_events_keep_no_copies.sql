@@ -1,0 +1,20 @@
+-- The collaboration log was keeping a copy of everybody's writing, for good.
+--
+-- AppendSpaceEvent marshals one payload and uses it for three things: the
+-- webhook delivery a subscriber asked for, the response body an idempotent
+-- replay has to return, and a row in space_events. The first two need the
+-- writing and are cleaned up — webhook deliveries within thirty days, an
+-- idempotency record within a day. The third needed none of it and was cleaned
+-- up never.
+--
+-- So every note body, every edit of it, and the sentence beside every
+-- connection accumulated in space_events indefinitely. Including notes their
+-- author had since deleted: a note is soft-deleted, and nothing removed the
+-- copies of its text sitting in the log. Measured on a test database, 629 of
+-- 662 rows carried note content, and deleting a note left its text behind.
+--
+-- One consumer reads this table — the open canvas, over SSE — and it reads
+-- actorId and refetches. It never looked at the payload at all.
+--
+-- From here the log records that something changed, not what was in it.
+UPDATE space_events SET payload = '{}'::jsonb WHERE payload <> '{}'::jsonb;

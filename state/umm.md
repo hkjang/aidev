@@ -352,3 +352,15 @@
   - 문서 허브의 중복 사용자 가이드 링크 제거 (가치 1 / 위험 1 / S) — 정찰 후보 유지, 이번 범위 제외.
 - 과제서: 채택 — 세 훅 누락과 기존 가드 재사용 가능성을 현재 코드 및 실제 npm 실행으로 확인했고 지정한 두 파일만 수정했으며, Prettier 검증 명령의 실행 디렉터리만 바로잡았습니다.
 
+## 2026-10-09
+- 선택: 수정 과제 — CI Go vulnerability scan을 막는 x/text GO-2026-6629 해소 (가치 5 / 위험 1 / 작업량 S)
+- 결과: 성공
+- 요약: main@e54875c에서 CI와 같은 govulncheck 명령으로 GO-2026-6629 및 store.go:221의 pgx→precis 호출 경로를 재현한 뒤 go.mod/go.sum 두 파일의 x/text v0.40.0→v0.41.0 및 체크섬만 수정해 81a8b5e으로 커밋했습니다(작성자 hkjang, 트레일러 없음, 앱 코드·신규 시험 파일 0개). 같은 스캔은 실패→통과→두 파일 원복 시 재실패→수정 복구 후 통과했으며 go mod verify·vet·전체 시험 15패키지·race·build·버전·diff 검사 모두 exit 0, 격리 PostgreSQL 17.11의 store 통합은 156 PASS/3 SKIP으로 lease 연결 경로도 실제 PASS했습니다. npm ci --prefix web 선행 후 npm test --silent 23파일/240시험 및 make test-web 8게이트가 exit 0이고, 기존 웹 lint 경고 50개·외부 임베딩/벡터 관련 SKIP 3개·비호출 취약점 경고(패키지 1/모듈 4)는 남았으며 원격 CI·제품 E2E·이미지 빌드·릴리즈는 수행하지 않았습니다(명령별 증거는 impl-verification.md와 impl-*.log).
+- 실패 재현: 신규 시험 대신 과제서가 지정한 기존 CI 보안 게이트 `go run golang.org/x/vuln/cmd/govulncheck@latest ./...`를 수정 전에 실행: `Vulnerability #1: GO-2026-6629` / `#1: internal/store/store.go:221:32: store.Store.beginExternalLease calls pgx.ConnectConfig, which eventually calls precis.Profile.String` — `Found in: golang.org/x/text@v0.40.0`, `GOVULNCHECK_EXIT=1` (impl-vuln-base.log); 원복해 같은 실패 재확인(impl-vuln-reverted.log), 최종 `No vulnerabilities found.` / `EXIT=0`(impl-vuln-final.log).
+- 보류 아이디어:
+  - 설치 누락 두 진입점 메시지를 실제 프로세스로 비교 (가치 2 / 위험 1 / 작업량 S) — 진단 통합 없이 보류.
+  - edge-vocabulary의 알려진 라벨 12개를 실제 타입·translate로 검증 (가치 2 / 위험 1 / 작업량 S) — 지정 수리와 무관하여 보류.
+  - format 설치 누락을 기존 가드로 안내 (가치 2 / 위험 1 / 작업량 S) — 기존 소스를 쓰지 않는 fixture 재현이 선행되어야 함.
+  - 문서 허브의 중복 사용자 가이드 링크 제거 (가치 1 / 위험 1 / 작업량 S) — 정찰 후보 유지, 이번 변경 제외.
+- 과제서: 채택 — 현재 베이스·취약점·호출 경로가 과제서와 일치했고 기존 8e877bf의 두 파일 diff만 적용했으며, 저장된 실패는 ci.yml Go 스캔이므로 release.yml 두 번 실패라고 주장하지 않았습니다; 외부 러너도 반드시 npm ci --prefix web를 선행해야 합니다.
+
