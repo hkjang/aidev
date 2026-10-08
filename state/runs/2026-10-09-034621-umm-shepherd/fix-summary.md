@@ -1,0 +1,5 @@
+- 원인: pgx 경유 x/text v0.40.0의 GO-2026-6629; CI와 같은 govulncheck 명령으로 동일 호출 경로·exit 1(exit status 3)을 재현했다.
+- 수정: go.mod/go.sum에서 x/text만 v0.41.0으로 갱신; 기존 웹 변경·테스트·CI 명령 보존. 새 커밋 8e877bf, push 없음.
+- 검증: go run golang.org/x/vuln/cmd/govulncheck@latest ./... 실패→통과→원복 재실패→복구 통과(exit 0, 호출 가능한 취약점 0건); 기존 검사를 회귀 검증으로 사용, 새 시험 없음.
+- 추가 통과: go vet ./..., 격리 PostgreSQL 17 연결 go test -p 1 ./...(15패키지), go test -race -count=1 ./internal/intelligence, 서버 빌드, go mod verify, 버전·diff 검사.
+- 한계: 외부 임베딩 조건부 시험·웹·브라우저 E2E·전체 Docker CI 미검증; 호출되지 않는 패키지/모듈 취약점 경고는 남음. 재실패·통과·Go 시험 로그를 이 디렉터리에 보존했다.
