@@ -1,0 +1,11 @@
+## 2026-10-08
+- 선택: 이미지에 존재하지 않는 페이지의 마스킹 영역을 성공으로 처리하지 않기 (가치 3 / 위험 2 / 작업량 S)
+- 결과: 성공
+- 요약: MaskImageFile의 영역 루프에 페이지 번호 검사를 추가해 음수 또는 1 초과 페이지를 기존 RegionPlacementError로 거절하고 결과 바이트를 반환하지 않도록 했으며, 직접 호출 page 0/1과 HTTP 생략/0/1의 실제 PNG 픽셀 마스킹 및 기존 PNG/JPEG 인코딩은 유지했습니다. app.New → 실제 HTTP 리스너 → 업스트림 클라이언트 → 서비스 → 렌더러를 지나는 PDF/PNG 표 테스트로 동기 502·failed·masking_failed·retryable:true·JSON만 반환, 비동기 202 후 동일 실패·download_url 없음·결과 GET 404를 확인했고, 수정 전 새 거절 테스트 실패와 수정 후 통과 및 프로덕션 guard만 제거한 재실패까지 확인했습니다. 프로덕션 1파일(engine.go 4줄), 테스트 2파일, README 1파일을 변경했고 go test -count=1 ./internal/masking ./internal/httpapi(2패키지 ok), go test -count=1 ./...(9개 테스트 패키지 ok), go vet ./..., go build ./..., go test -race -count=1 ./internal/masking ./internal/httpapi(ok 1.084s/1.990s), gofmt -l ./cmd ./internal(무출력), git diff --check(무출력) 모두 종료 코드 0으로 통과하여 88e8ace로 커밋했습니다.
+- 실패 재현: `engine_test.go:327: expected masking to fail for missing page 3, got 316 result bytes` / `integration_test.go:1729: unexpected status 200, want 502` — 비동기도 expected job status "failed"에 실제 completed로 실패; 직접 2/3/-1 단독 및 정상 영역 뒤 혼합 6건 모두 실패. 전체 출력은 assets/implementation-red.log, guard 제거 재실패는 assets/implementation-reverted.log, 수정 전 정상/생략 호환성 통과는 assets/compatibility-before.log. 최초 테스트 작성 때 Gray/Gray16 비교 타입 불일치를 수정했고 이 테스트 자체 오류는 결함 재현으로 세지 않았습니다.
+- 보류 아이디어:
+  - GOARCH=386 픽셀 폭탄 테스트 픽스처를 아키텍처에 독립적으로 만들기 (가치 2 / 위험 1 / 작업량 S) — 정찰에서 확인된 기존 실패, 이번 범위 밖이며 재실행하지 않음.
+  - integration 공통 multipart 헬퍼의 contentType 무시 수정 (가치 3 / 위험 2 / 작업량 S) — 이번에는 기존 명시 MIME 헬퍼로 우회하고 공통 계약은 유지.
+  - 정규화 bbox의 부분 마스킹 폭 1 보정과 좌표 단위 판정의 최종 출력 검증 (가치 4 / 위험 3 / 작업량 M) — 정찰 신규 후보 유지, 이번 미검증.
+  - 업스트림 소수 페이지 번호의 정수 절삭 허용 여부 검증 (가치 3 / 위험 3 / 작업량 M) — 정찰 신규 후보 유지, 파서 강화는 범위 밖.
+- 과제서: 채택 — 현재 코드에 페이지 검사 누락이 그대로 있었고 지정된 정상 좌표·프로덕션 배선 테스트에서 잘못된 성공을 재현하여 수용 기준을 모두 검증했습니다.

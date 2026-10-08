@@ -1,0 +1,210 @@
+{
+  "run_id": "2026-10-08-152851-pii-masker-improve",
+  "generated": "2026-10-08T15:43:15+09:00",
+  "run": {
+    "run_id": "2026-10-08-152851-pii-masker-improve",
+    "project": "pii-masker",
+    "kind": "improve",
+    "started": "2026-10-08T15:28:52+09:00",
+    "model": "claude-opus-5",
+    "policy_version": "4a9e91ac7",
+    "prompts_hash": "ce085c79e18002e2",
+    "runner_version": "1bd5f0cd4",
+    "arm": "baseline",
+    "experiment": "roles-2026-09",
+    "finished": "2026-10-08T15:43:15+09:00",
+    "outcome": "review-pending"
+  },
+  "record": {
+    "ts": "2026-10-08T15:43:15+09:00",
+    "date": "2026-10-08",
+    "project": "pii-masker",
+    "result": "review held, PR open https://github.com/hkjang/pii-masker/pull/36",
+    "outcome": "review-pending",
+    "run_id": "2026-10-08-152851-pii-masker-improve",
+    "base_sha": "19b4426b2aec5f2d24319c537b64c590f63db00c",
+    "head_sha": "88e8aceabc9ec15ca7ec6892e8d354f9801087d5",
+    "pr": "https://github.com/hkjang/pii-masker/pull/36",
+    "stages": {
+      "base": {
+        "state": "pinned",
+        "reason": "main@19b4426",
+        "at": "2026-10-08T15:29:01+09:00"
+      },
+      "autonomy": {
+        "state": "release",
+        "reason": "",
+        "at": "2026-10-08T15:29:01+09:00"
+      },
+      "scout": {
+        "state": "done",
+        "reason": "이미지에 존재하지 않는 페이지의 마스킹 영역을 성공으로 처리하지 않기 (가치 3 / 위험 2 / 작업량 S)",
+        "at": "2026-10-08T15:38:04+09:00"
+      },
+      "brief": {
+        "state": "accepted",
+        "reason": "채택 — 현재 코드에 페이지 검사 누락이 그대로 있었고 지정된 정상 좌표·프로덕션 배선 테스트에서 잘못된 성공을 재�",
+        "at": "2026-10-08T15:42:56+09:00"
+      },
+      "verify": {
+        "state": "passed",
+        "reason": "검증 3개 통과 (policy)",
+        "at": "2026-10-08T15:42:59+09:00"
+      },
+      "review": {
+        "state": "missing",
+        "reason": "리뷰 결과 없음/손상: missing — 보류",
+        "at": "2026-10-08T15:43:07+09:00"
+      },
+      "pr": {
+        "state": "created",
+        "reason": "https://github.com/hkjang/pii-masker/pull/36",
+        "at": "2026-10-08T15:43:13+09:00"
+      }
+    },
+    "campaign": "",
+    "autonomy": "release",
+    "arm": "baseline",
+    "experiment": "roles-2026-09",
+    "engine": "codex",
+    "files": 4,
+    "additions": 213,
+    "deletions": 46,
+    "tests": 2,
+    "title": "Reject mask regions on pages an image does not have"
+  },
+  "stages": {
+    "base": {
+      "state": "pinned",
+      "reason": "main@19b4426",
+      "at": "2026-10-08T15:29:01+09:00"
+    },
+    "autonomy": {
+      "state": "release",
+      "reason": "",
+      "at": "2026-10-08T15:29:01+09:00"
+    },
+    "scout": {
+      "state": "done",
+      "reason": "이미지에 존재하지 않는 페이지의 마스킹 영역을 성공으로 처리하지 않기 (가치 3 / 위험 2 / 작업량 S)",
+      "at": "2026-10-08T15:38:04+09:00"
+    },
+    "brief": {
+      "state": "accepted",
+      "reason": "채택 — 현재 코드에 페이지 검사 누락이 그대로 있었고 지정된 정상 좌표·프로덕션 배선 테스트에서 잘못된 성공을 재�",
+      "at": "2026-10-08T15:42:56+09:00"
+    },
+    "verify": {
+      "state": "passed",
+      "reason": "검증 3개 통과 (policy)",
+      "at": "2026-10-08T15:42:59+09:00"
+    },
+    "review": {
+      "state": "missing",
+      "reason": "리뷰 결과 없음/손상: missing — 보류",
+      "at": "2026-10-08T15:43:07+09:00"
+    },
+    "pr": {
+      "state": "created",
+      "reason": "https://github.com/hkjang/pii-masker/pull/36",
+      "at": "2026-10-08T15:43:13+09:00"
+    }
+  },
+  "provenance": {
+    "model": "claude-opus-5",
+    "policy_version": "4a9e91ac7",
+    "prompts_hash": "ce085c79e18002e2",
+    "runner_version": "1bd5f0cd4",
+    "base_sha": "19b4426b2aec5f2d24319c537b64c590f63db00c",
+    "head_sha": "88e8aceabc9ec15ca7ec6892e8d354f9801087d5",
+    "pr": "https://github.com/hkjang/pii-masker/pull/36"
+  },
+  "verification": {
+    "runner": {
+      "source": "policy",
+      "commands": [
+        {
+          "cmd": "go build ./...",
+          "exit": 0,
+          "seconds": 0
+        },
+        {
+          "cmd": "go vet ./...",
+          "exit": 0,
+          "seconds": 1
+        },
+        {
+          "cmd": "go test -count=1 ./...",
+          "exit": 0,
+          "seconds": 1
+        }
+      ]
+    },
+    "runner_gate": {
+      "ok": true,
+      "state": "verified",
+      "reason": "검증 3개 통과 (policy)"
+    },
+    "after_rebase": null,
+    "review": null,
+    "ci_gate": null
+  },
+  "release": {
+    "result": null,
+    "assets_sha256": []
+  },
+  "approval": null,
+  "usage": [
+    {
+      "ts": "2026-10-08T15:38:03+09:00",
+      "date": "2026-10-08",
+      "project": "pii-masker",
+      "phase": "scout",
+      "run_id": "2026-10-08-152851-pii-masker-improve",
+      "campaign": "",
+      "subtype": "success",
+      "engine": "codex",
+      "duration_ms": 0,
+      "num_turns": 1,
+      "cost_usd": null,
+      "input_tokens": 836387,
+      "output_tokens": 12505,
+      "cache_read": 759168,
+      "cache_create": 0
+    },
+    {
+      "ts": "2026-10-08T15:42:55+09:00",
+      "date": "2026-10-08",
+      "project": "pii-masker",
+      "phase": "improve",
+      "run_id": "2026-10-08-152851-pii-masker-improve",
+      "campaign": "",
+      "subtype": "success",
+      "engine": "codex",
+      "duration_ms": 0,
+      "num_turns": 1,
+      "cost_usd": null,
+      "input_tokens": 955527,
+      "output_tokens": 7424,
+      "cache_read": 898176,
+      "cache_create": 0
+    },
+    {
+      "ts": "2026-10-08T15:43:06+09:00",
+      "date": "2026-10-08",
+      "project": "pii-masker",
+      "phase": "review",
+      "run_id": "2026-10-08-152851-pii-masker-improve",
+      "campaign": "",
+      "subtype": "success",
+      "engine": "claude",
+      "duration_ms": 521,
+      "num_turns": 1,
+      "cost_usd": 0,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read": 0,
+      "cache_create": 0
+    }
+  ]
+}

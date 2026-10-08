@@ -1,0 +1,12 @@
+Commit: e503055
+MUNI_TEST_DSN: dedicated disposable PostgreSQL 16 container (no production database)
+go test -count=1 -v ./internal/hwpx -run '^TestTheHeaderAndFooterAreWrittenAndReadBack$': exit 0, PASS 1
+MUNI_TEST_DSN set; go test -count=1 -v ./internal/httpapi -run 'Test(Imported|Inserted)PageFurniture': before fix exit 1 FAIL 2; after fix exit 0 PASS 2; four calls reverted exit 1 FAIL 2. All runs SKIP 0; each test has five cases.
+After restoring fix:
+MUNI_TEST_DSN set; go test -count=1 -v ./internal/httpapi: exit 0, top-level PASS 249 / SKIP 0 / FAIL 0
+MUNI_TEST_DSN set; go test -count=1 ./...: exit 0, 15 packages ok, 3 without tests (nonverbose output does not enumerate test-level skips)
+go vet ./...: exit 0
+gofmt -l internal/httpapi/import_attachments.go internal/httpapi/import_name_length_live_test.go: empty output
+scripts/check-webui-placeholder.sh: exit 0
+git diff --check: exit 0
+Frontend tests and make build intentionally excluded as scoped by assignment.
