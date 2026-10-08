@@ -1,0 +1,30 @@
+feat: release igame v0.7.31
+
+Ships as a patch release the encryption-key contract tests landed since
+v0.7.30. Twenty-five parser cases and thirty real Load cases pin the existing
+32-byte key, raw/hex/base64 encoding, UTF-8 byte-length, whitespace and error
+non-disclosure contracts. The parser retains its input while Load trims outer
+whitespace. Invalid keys must not be returned. Existing bootstrap tests remain.
+This closes a test gap: the pre-change package and the new tests all passed on
+first execution. No reproduced defect, Red-to-Green or mutation result is
+claimed, and no product-code or schema change rides with it.
+
+Moves VERSION, the Compose image tag and the web and SDK package versions
+together as the release contract requires, updates the Korean README release
+note and versioned documentation, and rebuilds the two enterprise manuals for
+v0.7.31. Photographed guide provenance and separately published guide PDFs are
+retained. RealmGuard content 0.3.1 and Defense Series content 0.4.0 are unchanged.
+
+Validated with make check-contract, make lint, make test, make test-race,
+make build including the offline bundle check, PostgreSQL 17 make test-db
+(api 53.414s / database 2.717s), both npm dependency audits, govulncheck v1.6.0,
+make docs-pdf and git diff --check. No test schemas remain and pgcrypto is
+preserved. The preinstalled scanner was incompatible with Go 1.26; rebuilding
+the same pinned scanner with the current toolchain fixed the tooling failure.
+The resulting scan reports no reachable vulnerabilities and three uncalled
+module advisories. Node audits report zero vulnerabilities.
+
+The tag-triggered workflow will build and verify the offline image and SBOM,
+run the live-service and browser gates, and publish the single archive.
+Those deployed-service checks have not run locally. No remote publication is
+performed by this release preparation.

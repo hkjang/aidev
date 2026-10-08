@@ -28,3 +28,7 @@
 - 후속 참고: 기존 LinksEditor는 task_links[i] 오류를 표시하지 않아 화면은 일반 입력 오류만 안내한다. API 검증 과제 범위 밖의 UI 개선이며, 기존 절단 데이터 복구도 별도다.
 - [러너 13:51] review approved — 리뷰 승인 (risk=low)
 - [러너 13:52] pr created — https://github.com/hkjang/insight.yeopjari.bid/pull/2
+- [러너 13:56] ci passed — 검사 1개 모두 success
+- [러너 13:56] merge done — fde293d
+- [러너 14:04] release published — v0.1.4
+- [러너 14:04] assets n/a — 이전 릴리즈에도 자산 없음

@@ -24,3 +24,4 @@
 - 스킬: Skill 호출 도구가 없어 /home/hkjang/.claude/plugins/marketplaces/headcount/plugins/technology/skills/ 아래 completion-verification, systematic-debugging, test-driven-development의 SKILL.md를 직접 읽고 실패→최소 수정→성공→수정 되돌림 실패→최종 검증 절차를 적용했다.
 - 커밋: `fde293d` — 과제 링크: 500자 초과 주소를 자르지 않고 입력 오류로 거절 (작성자 hkjang, 트레일러 없음). 커밋 뒤 git diff --check 통과, git status --short 출력 없음.
 
+- 릴리즈: v0.1.4 (2026-10-08, run 2026-10-08-133829-insight.yeopjari.bid-improve)

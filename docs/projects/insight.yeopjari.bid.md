@@ -1,7 +1,7 @@
 ---
 title: "insight.yeopjari.bid — 자율 개선 이력"
-description: "insight.yeopjari.bid: 자율 개선 회차 1회, 릴리즈 1건. 최근 릴리즈 v0.1.1 (자산 0개)."
-last_modified_at: 2026-10-08 13:51:56 +0900
+description: "insight.yeopjari.bid: 자율 개선 회차 2회, 릴리즈 2건. 최근 릴리즈 v0.1.4 (자산 0개)."
+last_modified_at: 2026-10-08 14:05:02 +0900
 ---
 {% raw %}
 <script type="application/ld+json">
@@ -11,39 +11,39 @@ last_modified_at: 2026-10-08 13:51:56 +0900
  "name": "insight.yeopjari.bid",
  "codeRepository": "https://github.com/hkjang/insight.yeopjari.bid",
  "url": "https://hkjang.github.io/aidev/projects/insight.yeopjari.bid/",
- "description": "insight.yeopjari.bid: 자율 개선 회차 1회, 릴리즈 1건. 최근 릴리즈 v0.1.1 (자산 0개).",
+ "description": "insight.yeopjari.bid: 자율 개선 회차 2회, 릴리즈 2건. 최근 릴리즈 v0.1.4 (자산 0개).",
  "inLanguage": "ko",
  "maintainer": {
   "@type": "Person",
   "name": "hkjang",
   "url": "https://github.com/hkjang"
  },
- "dateModified": "2026-10-08T13:51:56+09:00",
- "version": "0.1.1"
+ "dateModified": "2026-10-08T14:05:02+09:00",
+ "version": "0.1.4"
 }
 </script>
 
 # insight.yeopjari.bid
 
-<p class="tldr"><strong>요약.</strong> insight.yeopjari.bid: 자율 개선 회차 1회, 릴리즈 1건. 최근 릴리즈 v0.1.1 (자산 0개). <span class="pill pill-released" title="14일: 릴리즈 1, 실패 0, 경고 0, 회귀 0">건강 A</span> <span class="meta">14일: 릴리즈 1, 실패 0, 경고 0, 회귀 0</span></p>
+<p class="tldr"><strong>요약.</strong> insight.yeopjari.bid: 자율 개선 회차 2회, 릴리즈 2건. 최근 릴리즈 v0.1.4 (자산 0개). <span class="pill pill-released" title="14일: 릴리즈 2, 실패 0, 경고 0, 회귀 0">건강 A</span> <span class="meta">14일: 릴리즈 2, 실패 0, 경고 0, 회귀 0</span></p>
 
-<ul class="stats"><li><b>1</b><span>회차</span></li><li><b>1</b><span>프로젝트</span></li><li><b>1</b><span>배포 준비 완료</span></li><li><b>0</b><span>릴리즈 진행 중</span></li><li><b>0</b><span>병합 완료</span></li><li><b>0</b><span>검토 대기</span></li><li><b>0</b><span>검증 실패</span></li><li><b>0</b><span>변경 없음</span></li><li><b>0</b><span>실행 오류</span></li><li><b>$6.94</b><span>비용</span></li><li><b>19분</b><span>에이전트 시간</span></li></ul>
+<ul class="stats"><li><b>2</b><span>회차</span></li><li><b>1</b><span>프로젝트</span></li><li><b>2</b><span>배포 준비 완료</span></li><li><b>0</b><span>릴리즈 진행 중</span></li><li><b>0</b><span>병합 완료</span></li><li><b>0</b><span>검토 대기</span></li><li><b>0</b><span>검증 실패</span></li><li><b>0</b><span>변경 없음</span></li><li><b>0</b><span>실행 오류</span></li><li><b>$6.94</b><span>비용</span></li><li><b>19분</b><span>에이전트 시간</span></li></ul>
 
 ## 현황
 
 <dl class="kv">
 <dt>저장소</dt><dd><a href="https://github.com/hkjang/insight.yeopjari.bid">https://github.com/hkjang/insight.yeopjari.bid</a></dd>
-<dt>마지막 회차</dt><dd>2026-10-07 18:26 KST — <span class="pill pill-released">🚀 릴리즈</span> merged <a href="https://github.com/hkjang/insight.yeopjari.bid/pull/1">PR #1</a>, released <a href="https://github.com/hkjang/insight.yeopjari.bid/releases/tag/v0.1.1">v0.1.1</a></dd>
-<dt>최근 릴리즈</dt><dd><a href="https://github.com/hkjang/insight.yeopjari.bid/releases/tag/v0.1.1">v0.1.1</a> — released · 자산 0개 <a href="https://github.com/hkjang/insight.yeopjari.bid/releases">전체 릴리즈 →</a></dd>
+<dt>마지막 회차</dt><dd>2026-10-08 14:04 KST — <span class="pill pill-released">🚀 릴리즈</span> merged <a href="https://github.com/hkjang/insight.yeopjari.bid/pull/2">PR #2</a>, released <a href="https://github.com/hkjang/insight.yeopjari.bid/releases/tag/v0.1.4">v0.1.4</a></dd>
+<dt>최근 릴리즈</dt><dd><a href="https://github.com/hkjang/insight.yeopjari.bid/releases/tag/v0.1.4">v0.1.4</a> — released · 자산 0개 <a href="https://github.com/hkjang/insight.yeopjari.bid/releases">전체 릴리즈 →</a></dd>
 </dl>
 
 ## 회차 이력
 
-<div class="table-wrap"><table class="rt"><thead><tr><th>일시</th><th class="primary">프로젝트</th><th>결과</th></tr></thead><tbody><tr data-status="released"><td data-label="일시">2026-10-07 18:26</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/insight.yeopjari.bid/">insight.yeopjari.bid</a></td><td data-label="결과"><span class="pill pill-released" title="outcome=release-ready">배포 준비 완료</span> merged <a href="https://github.com/hkjang/insight.yeopjari.bid/pull/1">PR #1</a>, released <a href="https://github.com/hkjang/insight.yeopjari.bid/releases/tag/v0.1.1">v0.1.1</a><div class="meta">2파일 <span style="color:var(--good)">+61</span>/<span style="color:var(--bad)">−13</span> · 테스트 1 — 일·월 쓰기 제한이 알려 주는 재시도 시각을 한국 자정에 맞춘다</div></td></tr></tbody></table></div>
+<div class="table-wrap"><table class="rt"><thead><tr><th>일시</th><th class="primary">프로젝트</th><th>결과</th></tr></thead><tbody><tr data-status="released"><td data-label="일시">2026-10-08 14:04</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/insight.yeopjari.bid/">insight.yeopjari.bid</a></td><td data-label="결과"><span class="pill pill-released" title="outcome=release-ready">배포 준비 완료</span> merged <a href="https://github.com/hkjang/insight.yeopjari.bid/pull/2">PR #2</a>, released <a href="https://github.com/hkjang/insight.yeopjari.bid/releases/tag/v0.1.4">v0.1.4</a><div class="meta">3파일 <span style="color:var(--good)">+69</span>/<span style="color:var(--bad)">−1</span> · 테스트 1 — 과제 링크: 500자 초과 주소를 자르지 않고 입력 오류로 거절</div></td></tr><tr data-status="released"><td data-label="일시">2026-10-07 18:26</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/insight.yeopjari.bid/">insight.yeopjari.bid</a></td><td data-label="결과"><span class="pill pill-released" title="outcome=release-ready">배포 준비 완료</span> merged <a href="https://github.com/hkjang/insight.yeopjari.bid/pull/1">PR #1</a>, released <a href="https://github.com/hkjang/insight.yeopjari.bid/releases/tag/v0.1.1">v0.1.1</a><div class="meta">2파일 <span style="color:var(--good)">+61</span>/<span style="color:var(--bad)">−13</span> · 테스트 1 — 일·월 쓰기 제한이 알려 주는 재시도 시각을 한국 자정에 맞춘다</div></td></tr></tbody></table></div>
 
 ## 비용·사용량
 
-<div class="table-wrap"><table class="rt"><caption class="meta">최근 30세션</caption><thead><tr><th>시각</th><th class="primary">프로젝트</th><th>단계</th><th class="num">시간</th><th class="num">턴</th><th class="num">비용</th><th class="num">토큰 입력/출력</th><th>종료</th></tr></thead><tbody><tr data-status="other"><td data-label="시각">13:49</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/insight.yeopjari.bid/">insight.yeopjari.bid</a></td><td data-label="단계">개선</td><td data-label="시간" class="num">0분</td><td data-label="턴" class="num">1</td><td data-label="비용" class="num">$0.00</td><td data-label="토큰 입력/출력" class="num">3.9M / 10K</td><td data-label="종료">success</td></tr><tr data-status="other"><td data-label="시각">13:43</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/insight.yeopjari.bid/">insight.yeopjari.bid</a></td><td data-label="단계">정찰</td><td data-label="시간" class="num">0분</td><td data-label="턴" class="num">1</td><td data-label="비용" class="num">$0.00</td><td data-label="토큰 입력/출력" class="num">1.5M / 9K</td><td data-label="종료">success</td></tr><tr data-status="other"><td data-label="시각">18:21</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/insight.yeopjari.bid/">insight.yeopjari.bid</a></td><td data-label="단계">릴리즈</td><td data-label="시간" class="num">6분</td><td data-label="턴" class="num">30</td><td data-label="비용" class="num">$1.87</td><td data-label="토큰 입력/출력" class="num">1.6M / 20K</td><td data-label="종료">success</td></tr><tr data-status="other"><td data-label="시각">18:10</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/insight.yeopjari.bid/">insight.yeopjari.bid</a></td><td data-label="단계">비평</td><td data-label="시간" class="num">3분</td><td data-label="턴" class="num">23</td><td data-label="비용" class="num">$1.35</td><td data-label="토큰 입력/출력" class="num">1.1M / 12K</td><td data-label="종료">success</td></tr><tr data-status="other"><td data-label="시각">18:07</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/insight.yeopjari.bid/">insight.yeopjari.bid</a></td><td data-label="단계">개선</td><td data-label="시간" class="num">4분</td><td data-label="턴" class="num">33</td><td data-label="비용" class="num">$1.89</td><td data-label="토큰 입력/출력" class="num">1.9M / 14K</td><td data-label="종료">success</td></tr><tr data-status="other"><td data-label="시각">18:03</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/insight.yeopjari.bid/">insight.yeopjari.bid</a></td><td data-label="단계">정찰</td><td data-label="시간" class="num">6분</td><td data-label="턴" class="num">28</td><td data-label="비용" class="num">$1.83</td><td data-label="토큰 입력/출력" class="num">1.3M / 20K</td><td data-label="종료">success</td></tr></tbody></table></div>
+<div class="table-wrap"><table class="rt"><caption class="meta">최근 30세션</caption><thead><tr><th>시각</th><th class="primary">프로젝트</th><th>단계</th><th class="num">시간</th><th class="num">턴</th><th class="num">비용</th><th class="num">토큰 입력/출력</th><th>종료</th></tr></thead><tbody><tr data-status="other"><td data-label="시각">14:00</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/insight.yeopjari.bid/">insight.yeopjari.bid</a></td><td data-label="단계">릴리즈</td><td data-label="시간" class="num">0분</td><td data-label="턴" class="num">1</td><td data-label="비용" class="num">$0.00</td><td data-label="토큰 입력/출력" class="num">1.1M / 6K</td><td data-label="종료">success</td></tr><tr data-status="other"><td data-label="시각">13:51</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/insight.yeopjari.bid/">insight.yeopjari.bid</a></td><td data-label="단계">비평</td><td data-label="시간" class="num">0분</td><td data-label="턴" class="num">1</td><td data-label="비용" class="num">$0.00</td><td data-label="토큰 입력/출력" class="num">968K / 4K</td><td data-label="종료">success</td></tr><tr data-status="other"><td data-label="시각">13:49</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/insight.yeopjari.bid/">insight.yeopjari.bid</a></td><td data-label="단계">개선</td><td data-label="시간" class="num">0분</td><td data-label="턴" class="num">1</td><td data-label="비용" class="num">$0.00</td><td data-label="토큰 입력/출력" class="num">3.9M / 10K</td><td data-label="종료">success</td></tr><tr data-status="other"><td data-label="시각">13:43</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/insight.yeopjari.bid/">insight.yeopjari.bid</a></td><td data-label="단계">정찰</td><td data-label="시간" class="num">0분</td><td data-label="턴" class="num">1</td><td data-label="비용" class="num">$0.00</td><td data-label="토큰 입력/출력" class="num">1.5M / 9K</td><td data-label="종료">success</td></tr><tr data-status="other"><td data-label="시각">18:21</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/insight.yeopjari.bid/">insight.yeopjari.bid</a></td><td data-label="단계">릴리즈</td><td data-label="시간" class="num">6분</td><td data-label="턴" class="num">30</td><td data-label="비용" class="num">$1.87</td><td data-label="토큰 입력/출력" class="num">1.6M / 20K</td><td data-label="종료">success</td></tr><tr data-status="other"><td data-label="시각">18:10</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/insight.yeopjari.bid/">insight.yeopjari.bid</a></td><td data-label="단계">비평</td><td data-label="시간" class="num">3분</td><td data-label="턴" class="num">23</td><td data-label="비용" class="num">$1.35</td><td data-label="토큰 입력/출력" class="num">1.1M / 12K</td><td data-label="종료">success</td></tr><tr data-status="other"><td data-label="시각">18:07</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/insight.yeopjari.bid/">insight.yeopjari.bid</a></td><td data-label="단계">개선</td><td data-label="시간" class="num">4분</td><td data-label="턴" class="num">33</td><td data-label="비용" class="num">$1.89</td><td data-label="토큰 입력/출력" class="num">1.9M / 14K</td><td data-label="종료">success</td></tr><tr data-status="other"><td data-label="시각">18:03</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/insight.yeopjari.bid/">insight.yeopjari.bid</a></td><td data-label="단계">정찰</td><td data-label="시간" class="num">6분</td><td data-label="턴" class="num">28</td><td data-label="비용" class="num">$1.83</td><td data-label="토큰 입력/출력" class="num">1.3M / 20K</td><td data-label="종료">success</td></tr></tbody></table></div>
 
 ## 아이디어 백로그 — 대기 6 / 전체 9
 
@@ -76,6 +76,8 @@ last_modified_at: 2026-10-08 13:51:56 +0900
 - 범위/정리: 변경 3개(프로덕션 1개), lockfile 무변경, 빌드 산출물은 기존 .gitignore로 제외. 검증용 서버·컨테이너 종료, e2e 기존 운영자 지정 테스트가 만든 임시 credential fixture 2개 삭제. `git diff --check` 통과 및 `git status --short`로 지정 파일만 확인. UI 스크린샷·운영 배포 검증은 범위 밖이라 미실행.
 - 스킬: Skill 호출 도구가 없어 /home/hkjang/.claude/plugins/marketplaces/headcount/plugins/technology/skills/ 아래 completion-verification, systematic-debugging, test-driven-development의 SKILL.md를 직접 읽고 실패→최소 수정→성공→수정 되돌림 실패→최종 검증 절차를 적용했다.
 - 커밋: `fde293d` — 과제 링크: 500자 초과 주소를 자르지 않고 입력 오류로 거절 (작성자 hkjang, 트레일러 없음). 커밋 뒤 git diff --check 통과, git status --short 출력 없음.
+
+- 릴리즈: v0.1.4 (2026-10-08, run 2026-10-08-133829-insight.yeopjari.bid-improve)
 
 
 [← 대시보드](https://hkjang.github.io/aidev/) · [교훈 모음](https://hkjang.github.io/aidev/lessons/)

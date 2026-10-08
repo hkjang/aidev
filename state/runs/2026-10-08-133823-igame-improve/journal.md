@@ -29,3 +29,13 @@
 - [러너 13:48] pr created — https://github.com/hkjang/igame/pull/38
 - [러너 13:54] ci passed — 검사 1개 모두 success
 - [러너 13:55] merge done — 9003e19
+
+## 릴리즈 노트
+- a84073a: `feat: release igame v0.7.31`, detached HEAD에서 hkjang 작성자 유지·트레일러 없음. 주석 태그 `v0.7.31` (`igame v0.7.31`)는 같은 커밋을 가리킴. 작업 트리 clean.
+- 기존 패치 증가·17파일 릴리즈 관례 유지: 버전/Compose/Web·SDK/문서 갱신, 한국어 README에 테스트 보강만 명시, 기업용 PDF 2개 재생성. 제품 코드 변경·버그 해결·Red→Green 주장 없음.
+- make check-contract/lint/test/test-race/build/docs-pdf, PostgreSQL 17 make test-db(API 53.414s/database 2.717s), Node audit 2개, govulncheck v1.6.0, diff 검사 PASS. PostgreSQL 임시 컨테이너 제거, 테스트 스키마 0개·pgcrypto 보존 확인.
+- 기존 govulncheck의 Go 1.25 빌드 호환성 오류는 같은 v1.6.0을 현재 Go로 다시 빌드하여 해소. 최종 reachable 취약점 0개·호출되지 않는 모듈 advisory 3개, Node 취약점 0개.
+- marketing:product-launch / technology:release-and-deployment 로컬 SKILL.md 적용(전용 Skill 도구 부재). Tier 3로 노트만 준비.
+- 태그 workflow가 GitHub Release와 단일 Docker archive를 생성하므로 release.json의 github_release=false, assets=[]. 원격 푸시·게시 없음. 이미지/SBOM/clean-load/서비스·브라우저 smoke는 workflow에 남으며 로컬 완료로 주장하지 않음.
+- 인계 파일: release.json, release-notes.md, release-evidence.md 및 release-*.log. 러너가 커밋·태그를 푸시한 뒤 workflow gate 통과를 확인해야 실제 게시가 완료됨.
+- [러너 14:06] release published — v0.7.31
