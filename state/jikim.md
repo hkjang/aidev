@@ -264,3 +264,15 @@
 ## 2026-10-07
 - (원장 항목에 비밀/내부 정보 의심 문자열이 있어 비공개 기록으로 옮김 — run 2026-10-07-234310-jikim-improve)
 
+## 2026-10-08
+- 선택: CSP 리포트 8KiB 초과 본문을 잘라 정상 기록하는 문제 수정 (가치 3 / 위험 1 / 작업량 S)
+- 결과: 성공
+- 요약: receiveCSPReport가 앞 8192바이트의 유효 JSON만 파싱해 초과 본문도 기록하던 원인을 최대 8193바이트 읽기와 파싱 전 길이 검사로 수정했으며, 204·빈 응답과 설정 gate를 유지했다(프로덕션 1파일·테스트 1파일, 커밋 9f47ec9). 실제 Server.routes POST→실제 Recorder→인증된 관리자 GET 경계 테스트 10개에서 정상/정확한 상한 4개는 처음부터 통과하고 초과 6개는 수정 전 실패·수정 후 통과했으며, 수정 두 줄을 되돌리면 같은 6개가 다시 실패하는 것도 확인한 뒤 복원했다. `go test ./internal/httpapi/ -run 'CSPReportBodySizeBoundary|PolicyReports|Tracking' -count=1 -v`, `go test ./... -count=1`, `go vet ./...`, `gofmt -l internal/httpapi/tracking.go internal/httpapi/tracking_test.go`(출력 없음), `bash scripts/verify.sh` 모두 exit 0(프런트 59/59, 문서·Compose 포함); PostgreSQL 연동은 DSN 미설정으로 skip, 브라우저·이미지 E2E는 미실행이며 빌드의 500kB 초과 청크 경고는 남아 있다.
+- 실패 재현: `tracking_test.go:354: recorded reports=1, want 0 (body bytes=8193, content length=8193)` / `tracking_test.go:354: recorded reports=1, want 0 (body bytes=8193, content length=-1)` — 첫 지정 명령 exit 1, 8193·9216바이트 공백 패딩 및 8192바이트 뒤 x의 알려진/미지 길이 6개만 실패했다.
+- 보류 아이디어:
+  - Momento 프록시 Authorization·X-Vault-Token 제거 왕복 테스트 보강 (3/1/S): 실제 collector 관찰을 추가할 공백이며 이번 1순위 재현으로 차선 미선택.
+  - 추적 활성 중 CSP 리포트 속도 제한 또는 동일 출처 검증 (3/3/M): 별도 신뢰·제한 계약이 필요하며 이번 입력 완전성 수정으로 해결되지 않음.
+  - retryWebhookDelivery 왕복 테스트 공백 (2/1/M): PostgreSQL 연동 검증이 선행되어야 함.
+  - baoKVWrite create/update 판정 TOCTOU (3/3/M): DB·동시성·권한 계약 검증이 필요한 별도 범위.
+- 과제서: 채택 — 실제 코드·라우트·Recorder·기존 하네스가 근거와 일치하고 상한 초과 결함을 실행 재현하여 지정된 두 파일만 수정했다.
+

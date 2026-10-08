@@ -1,0 +1,90 @@
+=== RUN   TestScheduleNextSupportsStepsRangesNamesAndTimezone
+--- PASS: TestScheduleNextSupportsStepsRangesNamesAndTimezone (0.00s)
+=== RUN   TestScheduleAliasesLeapDayAndCronDayOrSemantics
+--- PASS: TestScheduleAliasesLeapDayAndCronDayOrSemantics (0.00s)
+=== RUN   TestScheduleCombinesDayAndWeekdayByRestriction
+=== RUN   TestScheduleCombinesDayAndWeekdayByRestriction/별표_step_인_일_필드는_요일과_AND
+=== RUN   TestScheduleCombinesDayAndWeekdayByRestriction/별표_step_인_요일_필드는_일과_AND
+=== RUN   TestScheduleCombinesDayAndWeekdayByRestriction/두_필드가_모두_제한이면_OR_로_남는다
+=== RUN   TestScheduleCombinesDayAndWeekdayByRestriction/일_필드가_별표면_요일만_본다
+=== RUN   TestScheduleCombinesDayAndWeekdayByRestriction/요일_이름만_제한하면_그_요일에만_돈다
+=== RUN   TestScheduleCombinesDayAndWeekdayByRestriction/요일_필드가_별표면_일만_본다
+--- PASS: TestScheduleCombinesDayAndWeekdayByRestriction (0.00s)
+    --- PASS: TestScheduleCombinesDayAndWeekdayByRestriction/별표_step_인_일_필드는_요일과_AND (0.00s)
+    --- PASS: TestScheduleCombinesDayAndWeekdayByRestriction/별표_step_인_요일_필드는_일과_AND (0.00s)
+    --- PASS: TestScheduleCombinesDayAndWeekdayByRestriction/두_필드가_모두_제한이면_OR_로_남는다 (0.00s)
+    --- PASS: TestScheduleCombinesDayAndWeekdayByRestriction/일_필드가_별표면_요일만_본다 (0.00s)
+    --- PASS: TestScheduleCombinesDayAndWeekdayByRestriction/요일_이름만_제한하면_그_요일에만_돈다 (0.00s)
+    --- PASS: TestScheduleCombinesDayAndWeekdayByRestriction/요일_필드가_별표면_일만_본다 (0.00s)
+=== RUN   TestScheduleAliasesMatchEquivalentCronExpressions
+=== RUN   TestScheduleAliasesMatchEquivalentCronExpressions/@hourly
+=== RUN   TestScheduleAliasesMatchEquivalentCronExpressions/@daily
+=== RUN   TestScheduleAliasesMatchEquivalentCronExpressions/@midnight
+=== RUN   TestScheduleAliasesMatchEquivalentCronExpressions/@weekly
+=== RUN   TestScheduleAliasesMatchEquivalentCronExpressions/@monthly
+=== RUN   TestScheduleAliasesMatchEquivalentCronExpressions/@yearly
+=== RUN   TestScheduleAliasesMatchEquivalentCronExpressions/@annually
+=== RUN   TestScheduleAliasesMatchEquivalentCronExpressions/@MIDNIGHT
+=== RUN   TestScheduleAliasesMatchEquivalentCronExpressions/__@annually__
+--- PASS: TestScheduleAliasesMatchEquivalentCronExpressions (0.00s)
+    --- PASS: TestScheduleAliasesMatchEquivalentCronExpressions/@hourly (0.00s)
+    --- PASS: TestScheduleAliasesMatchEquivalentCronExpressions/@daily (0.00s)
+    --- PASS: TestScheduleAliasesMatchEquivalentCronExpressions/@midnight (0.00s)
+    --- PASS: TestScheduleAliasesMatchEquivalentCronExpressions/@weekly (0.00s)
+    --- PASS: TestScheduleAliasesMatchEquivalentCronExpressions/@monthly (0.00s)
+    --- PASS: TestScheduleAliasesMatchEquivalentCronExpressions/@yearly (0.00s)
+    --- PASS: TestScheduleAliasesMatchEquivalentCronExpressions/@annually (0.00s)
+    --- PASS: TestScheduleAliasesMatchEquivalentCronExpressions/@MIDNIGHT (0.00s)
+    --- PASS: TestScheduleAliasesMatchEquivalentCronExpressions/__@annually__ (0.00s)
+=== RUN   TestScheduleSkipsNonexistentDSTWallTime
+--- PASS: TestScheduleSkipsNonexistentDSTWallTime (0.00s)
+=== RUN   TestScheduleNextTraversesCalendarDates
+=== RUN   TestScheduleNextTraversesCalendarDates/Santiago_midnight_DST
+panic: test timed out after 10s
+	running tests:
+		TestScheduleNextTraversesCalendarDates (10s)
+		TestScheduleNextTraversesCalendarDates/Santiago_midnight_DST (10s)
+
+goroutine 72 [running]:
+testing.(*M).startAlarm.func1()
+	/home/hkjang/sdk/go1.26.7/src/testing/testing.go:2802 +0x354
+created by time.goFunc
+	/home/hkjang/sdk/go1.26.7/src/time/sleep.go:215 +0x2d
+
+goroutine 1 [chan receive]:
+testing.(*T).Run(0x2c43fbdf6008, {0x72063d?, 0x0?}, 0x739ae8)
+	/home/hkjang/sdk/go1.26.7/src/testing/testing.go:2109 +0x4e5
+testing.runTests.func1(0x2c43fbdf6008)
+	/home/hkjang/sdk/go1.26.7/src/testing/testing.go:2585 +0x3e
+testing.tRunner(0x2c43fbdf6008, 0x2c43fb945c58)
+	/home/hkjang/sdk/go1.26.7/src/testing/testing.go:2036 +0xea
+testing.runTests({0x70a371, 0x6}, {0x718462, 0x1a}, 0x2c43fbd91620, {0xa164a0, 0x10, 0x10}, {0xc2a9e964c9a2c498, 0x2547dd3e7, ...})
+	/home/hkjang/sdk/go1.26.7/src/testing/testing.go:2583 +0x505
+testing.(*M).Run(0x2c43fb8a01e0)
+	/home/hkjang/sdk/go1.26.7/src/testing/testing.go:2443 +0x6ac
+main.main()
+	_testmain.go:76 +0x9b
+
+goroutine 70 [chan receive]:
+testing.(*T).Run(0x2c43fb95afc8, {0x714fc0?, 0x50a61d?}, 0x2c43fbab6d80)
+	/home/hkjang/sdk/go1.26.7/src/testing/testing.go:2109 +0x4e5
+kanpic/internal/automation.TestScheduleNextTraversesCalendarDates(0x2c43fb95afc8)
+	/home/hkjang/.cache/auto-improve-wt/kanpic/internal/automation/schedule_test.go:250 +0x2de
+testing.tRunner(0x2c43fb95afc8, 0x739ae8)
+	/home/hkjang/sdk/go1.26.7/src/testing/testing.go:2036 +0xea
+created by testing.(*T).Run in goroutine 1
+	/home/hkjang/sdk/go1.26.7/src/testing/testing.go:2101 +0x4c5
+
+goroutine 71 [runnable]:
+time.Time.Month({0x0?, 0xee22ece30?, 0x2c43fbd80af0?})
+	/home/hkjang/sdk/go1.26.7/src/time/time.go:824 +0xb8
+kanpic/internal/automation.(*Schedule).Next(0x2c43fba16b60, {0x19?, 0x7140a8?, 0x0?})
+	/home/hkjang/.cache/auto-improve-wt/kanpic/internal/automation/schedule.go:122 +0x451
+kanpic/internal/automation.TestScheduleNextTraversesCalendarDates.func1(0x2c43fb95b208)
+	/home/hkjang/.cache/auto-improve-wt/kanpic/internal/automation/schedule_test.go:260 +0x1ac
+testing.tRunner(0x2c43fb95b208, 0x2c43fbab6d80)
+	/home/hkjang/sdk/go1.26.7/src/testing/testing.go:2036 +0xea
+created by testing.(*T).Run in goroutine 70
+	/home/hkjang/sdk/go1.26.7/src/testing/testing.go:2101 +0x4c5
+FAIL	kanpic/internal/automation	10.018s
+FAIL

@@ -1,0 +1,50 @@
+=== RUN   TestScheduleNextTraversesCalendarDates
+=== RUN   TestScheduleNextTraversesCalendarDates/Santiago_missing_00:30
+panic: test timed out after 10s
+	running tests:
+		TestScheduleNextTraversesCalendarDates (10s)
+		TestScheduleNextTraversesCalendarDates/Santiago_missing_00:30 (10s)
+
+goroutine 66 [running]:
+testing.(*M).startAlarm.func1()
+	/home/hkjang/sdk/go1.26.7/src/testing/testing.go:2802 +0x354
+created by time.goFunc
+	/home/hkjang/sdk/go1.26.7/src/time/sleep.go:215 +0x2d
+
+goroutine 1 [chan receive]:
+testing.(*T).Run(0x1a42797fa008, {0x72063d?, 0x0?}, 0x739ae8)
+	/home/hkjang/sdk/go1.26.7/src/testing/testing.go:2109 +0x4e5
+testing.runTests.func1(0x1a42797fa008)
+	/home/hkjang/sdk/go1.26.7/src/testing/testing.go:2585 +0x3e
+testing.tRunner(0x1a42797fa008, 0x1a42797b1c58)
+	/home/hkjang/sdk/go1.26.7/src/testing/testing.go:2036 +0xea
+testing.runTests({0x70a371, 0x6}, {0x718462, 0x1a}, 0x1a42799c3410, {0xa164a0, 0x10, 0x10}, {0xc2a9e96ccf4a0879, 0x254892f2e, ...})
+	/home/hkjang/sdk/go1.26.7/src/testing/testing.go:2583 +0x505
+testing.(*M).Run(0x1a42796a8140)
+	/home/hkjang/sdk/go1.26.7/src/testing/testing.go:2443 +0x6ac
+main.main()
+	_testmain.go:76 +0x9b
+
+goroutine 28 [chan receive]:
+testing.(*T).Run(0x1a42797fa248, {0x7158de?, 0x50a61d?}, 0x1a427974de60)
+	/home/hkjang/sdk/go1.26.7/src/testing/testing.go:2109 +0x4e5
+kanpic/internal/automation.TestScheduleNextTraversesCalendarDates(0x1a42797fa248)
+	/home/hkjang/.cache/auto-improve-wt/kanpic/internal/automation/schedule_test.go:250 +0x2de
+testing.tRunner(0x1a42797fa248, 0x739ae8)
+	/home/hkjang/sdk/go1.26.7/src/testing/testing.go:2036 +0xea
+created by testing.(*T).Run in goroutine 1
+	/home/hkjang/sdk/go1.26.7/src/testing/testing.go:2101 +0x4c5
+
+goroutine 29 [runnable]:
+time.Time.Year({0x0?, 0xee22ece30?, 0x1a42799e3110?})
+	/home/hkjang/sdk/go1.26.7/src/time/time.go:817 +0xbd
+kanpic/internal/automation.(*Schedule).Next(0x1a4279a33040, {0x19?, 0x7140a8?, 0x0?})
+	/home/hkjang/.cache/auto-improve-wt/kanpic/internal/automation/schedule.go:110 +0x1e5
+kanpic/internal/automation.TestScheduleNextTraversesCalendarDates.func1(0x1a42797fa488)
+	/home/hkjang/.cache/auto-improve-wt/kanpic/internal/automation/schedule_test.go:260 +0x1ac
+testing.tRunner(0x1a42797fa488, 0x1a427974de60)
+	/home/hkjang/sdk/go1.26.7/src/testing/testing.go:2036 +0xea
+created by testing.(*T).Run in goroutine 28
+	/home/hkjang/sdk/go1.26.7/src/testing/testing.go:2101 +0x4c5
+FAIL	kanpic/internal/automation	10.033s
+FAIL

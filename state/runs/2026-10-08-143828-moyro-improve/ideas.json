@@ -1,0 +1,137 @@
+[
+  {
+    "title": "postsByIDsReactions 가 DB 장애를 200 {} (반응 없음) 으로 보고하는 것 차단",
+    "value": 3,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "compat_wave_handlers_late.go:304-356 재확인. ChannelForPost 오류 continue, IsMember 오류 무시, ListForPost 오류 continue가 그대로다. 필터 계약과 본문 상한을 함께 검토해야 하며 최근 상태코드 수정 반복을 피하려 이번에는 선택하지 않음.",
+    "updated": "2026-10-08"
+  },
+  {
+    "title": "postsByIDsReactions 의 io.LimitReader 64 KiB 조용한 절단",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "late.go:311 재확인. io.ReadAll 오류도 버린다. bare 배열/{ids} 이중 파서 유지 필요. 위 같은 함수 과제와 묶어서만 진행.",
+    "updated": "2026-10-08"
+  },
+  {
+    "title": "listReactions 가 ChannelForPost 장애를 404, IsMember 장애를 403 으로 접는 것 분리",
+    "value": 2,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "handlers.go:listReactions 재확인. 기존 분기 그대로다. postsByIDsReactions 뒤 별도 회차로; 이번엔 동일 계열 반복 방지.",
+    "updated": "2026-10-08"
+  },
+  {
+    "title": "searchFiles/searchTeamFiles 의 감사 details 에 사용자 검색어(terms)가 원문으로 들어가는 것 재검토",
+    "value": 2,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "final.go:816/882 재확인. terms가 details에 그대로 들어감. 보호 대상값인지 정책 미확인; 감사 계약 변경을 이번 과제에 섞지 않음.",
+    "updated": "2026-10-08"
+  },
+  {
+    "title": "createCustomProfileField / patchCustomProfileField 의 _ = decodeCappedBody",
+    "value": 2,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "final.go 두 함수에서 오류 무시 재확인. 단건 빈 본문 계약 결정 필요. 10-04/10-05 연속 본문 거부 계열을 반복하지 않음.",
+    "updated": "2026-10-08"
+  },
+  {
+    "title": "테스트 없는 서버 패키지 중 behavioral 한 곳에 단위 테스트 추가",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "bookmarks와 userstatus를 정독했고 go test가 둘 다 [no test files]임을 확인. 이번엔 userstatus를 실제 NewRouter lifecycle로 검증하는 별도 좁은 후보를 선택했다. application/postcommand에는 테스트가 있으므로 이전의 application 무테스트 일반화는 부정확하다. metrics/commands 재감사하지 않음. 이번 구현은 httpapi 통합 테스트이므로 userstatus 패키지 자체의 단위 테스트는 여전히 없음. lifecycle 테스트와 중복되지 않는 계약만 다음 후보로 삼을 것.",
+    "updated": "2026-10-08"
+  },
+  {
+    "title": "러너에 릴리즈 실패 로그 접근 수단 주기(gh 인증 또는 실패 로그 스냅샷)",
+    "value": 5,
+    "risk": 1,
+    "size": "S",
+    "status": "rejected",
+    "note": "러너 개선 자체는 유효하지만 이 저장소 구현 범위 밖이므로 저장소 후보에서는 rejected. gh 인증 상태는 이번 미확인. 반복해서 구현자에게 외부 승인·로그 대기를 과제로 넘기지 않음.",
+    "updated": "2026-10-08"
+  },
+  {
+    "title": "나머지 _ = decodeCappedBody 호출자들의 경로별 계약 확인",
+    "value": 2,
+    "risk": 3,
+    "size": "M",
+    "status": "pending",
+    "note": "request_body.go의 관용 스텁 설명 및 final.go 쓰기/검색 호출 일부 재확인. 전체 호출자는 미감사; 공용 decoder 일괄 수정 금지.",
+    "updated": "2026-10-08"
+  },
+  {
+    "title": "프로덕션 NewRouter 를 띄우는 라우팅 계약 테스트를 더 넓히기",
+    "value": 3,
+    "risk": 1,
+    "size": "M",
+    "status": "pending",
+    "note": "이번 presence lifecycle 통합 테스트로 실제 NewRouter 사용 테스트가 invite 이메일 경로와 presence 2곳으로 확대됨. 이 넓은 후보는 다른 경로용으로 pending 유지; 완료한 presence 후보와 중복 구현 금지. 719 무인증 경로 감사는 이번 재실행하지 않음.",
+    "updated": "2026-10-08"
+  },
+  {
+    "title": "customprofile 패키지 단위 테스트: 빈 맵 no-op / null DELETE 계약",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "customprofile/service.go:PatchUserValues의 len==0 반환 및 null DELETE 재확인. 기존 HTTP 회귀와 중복되어 우선순위 낮음.",
+    "updated": "2026-10-08"
+  },
+  {
+    "title": "digest.loadMentions 가 멘션 대신 mention_count>0 채널의 모든 미열람 글 20건을 보내는 근사",
+    "value": 2,
+    "risk": 2,
+    "size": "M",
+    "status": "pending",
+    "note": "digest/worker.go:loadMentions의 주석·SQL 재확인. 현재도 같은 근사이며 UTF-8 개선은 이미 반영. 실제 멘션 정책 결정이 필요하므로 이번 제외.",
+    "updated": "2026-10-08"
+  },
+  {
+    "title": "격리 스키마 장애 주입 관용구를 테스트 헬퍼 주석에 문서화",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "newOperationsTestDB와 file_search_rows_fault_postgres_test.go의 RENAME+VIEW, ALTER TYPE, incoming_webhook_member_errors_postgres_test.go의 DROP TABLE을 재확인. 헬퍼 주석은 t.Helper 바로 시작해 아직 관용구 설명 없음. 이번 차선.",
+    "updated": "2026-10-08"
+  },
+  {
+    "title": "실제 WebSocket 연결·해제가 수동 DND/away 상태를 보존하는 통합 회귀 테스트",
+    "value": 3,
+    "risk": 1,
+    "size": "M",
+    "status": "done",
+    "note": "신규 presence_lifecycle_postgres_test.go 1파일로 구현. 실제 NewRouter/auth.Register/Login/HTTP PUT·GET/gorilla WebSocket/격리 PostgreSQL로 자동 상태 대조군과 수동 DND·away의 연결·해제·재연결을 확인. 각 PUT 이벤트를 먼저 소비하고 lifecycle 이벤트 후 payload·GET·DB를 대조한다. focused -race에서 3개 시나리오와 6개 연결 하위 테스트 PASS, skip 0. 프로덕션 변경 0파일; 현재 결함 수정이 아니므로 인위적 RED 없음.",
+    "updated": "2026-10-08"
+  },
+  {
+    "title": "북마크 Reorder의 dense 재배열 주석과 실제 단일행 UPDATE 불일치 확인",
+    "value": 2,
+    "risk": 2,
+    "size": "M",
+    "status": "pending",
+    "note": "신규. bookmarks/service.go:Reorder 주석은 나머지 항목까지 재배열한다고 하지만 실제 SQL은 대상 1행 sort_order만 변경한다. List는 sort_order/create_at으로 정렬. 외부 sort_order 인덱스 계약과 소비자 UX는 미확인이라 이번 구현 과제로 택하지 않음; 09-21 사이드바 재정렬과 별개이나 동시성까지 확대 금지.",
+    "updated": "2026-10-08"
+  },
+  {
+    "title": "userstatus.Get이 DB 장애도 정상 offline으로 합성하는 경로별 계약 검토",
+    "value": 2,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "신규. userstatus/service.go:Get이 모든 QueryRow.Scan 오류에 Offline,nil을 반환하는 반면 GetMany/GetCustomStatus는 장애를 반환함을 확인. SetAuto의 되읽기도 영향. 상태코드/오류 재분류 반복이므로 보류하고 이번 lifecycle 테스트에 섞지 않음.",
+    "updated": "2026-10-08"
+  }
+]
