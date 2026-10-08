@@ -1,7 +1,7 @@
 ---
 title: "aidev 자율 개선 대시보드"
 description: "Claude Code 자율 개선 에이전트가 hkjang 의 프로젝트를 개선·테스트·머지·릴리즈한 일일 보고. 오늘 23회차·릴리즈 5건, 누적 2225회차·릴리즈 781건, 주의 필요 2건."
-last_modified_at: 2026-10-09 07:40:47 +0900
+last_modified_at: 2026-10-09 07:47:50 +0900
 ---
 {% raw %}
 <script type="application/ld+json">
@@ -17,7 +17,7 @@ last_modified_at: 2026-10-09 07:40:47 +0900
   "name": "hkjang",
   "url": "https://github.com/hkjang"
  },
- "dateModified": "2026-10-09T07:40:47+09:00"
+ "dateModified": "2026-10-09T07:47:50+09:00"
 }
 </script>
 
@@ -369,16 +369,16 @@ last_modified_at: 2026-10-09 07:40:47 +0900
 
 # aidev 자율 개선 대시보드
 
-<p class="tldr"><strong>한 줄 요약.</strong> Claude Code 자율 개선 에이전트가 hkjang 의 프로젝트를 개선·테스트·머지·릴리즈한 일일 보고. 오늘 23회차·릴리즈 5건, 누적 2225회차·릴리즈 781건, 주의 필요 2건. 회차가 끝날 때마다 자동 갱신됩니다 (마지막 갱신 <time datetime="2026-10-09T07:40:47+09:00" data-rel>2026-10-09 07:40</time> KST).</p>
+<p class="tldr"><strong>한 줄 요약.</strong> Claude Code 자율 개선 에이전트가 hkjang 의 프로젝트를 개선·테스트·머지·릴리즈한 일일 보고. 오늘 23회차·릴리즈 5건, 누적 2225회차·릴리즈 781건, 주의 필요 2건. 회차가 끝날 때마다 자동 갱신됩니다 (마지막 갱신 <time datetime="2026-10-09T07:47:50+09:00" data-rel>2026-10-09 07:47</time> KST).</p>
 
 <div class="alerts" role="alert"><strong>⚠️ 주의 필요 2건</strong> <span class="meta">— 새 경고는 GitHub Issue·Slack·이메일·Windows 알림으로도 보냅니다</span><ul><li><a href="https://hkjang.github.io/aidev/projects/irumx-www/">irumx-www</a> — 보호 파일 변경 — 자동 머지 안 함, 사람 검토 필요 <span class=meta>(2026-10-08 01:20)</span></li><li><a href="https://hkjang.github.io/aidev/projects/moina/">moina</a> — 보호 파일 변경 — 자동 머지 안 함, 사람 검토 필요 <span class=meta>(2026-10-08 01:51)</span></li></ul></div>
 
-<div class="alerts" role="status"><strong>🩺 러너 점검 필요</strong> <span class="meta">— 마지막 회차 5분 전 · 스케줄러 실행 중 · 다음 실행 2026-10-09 오전 7:20:00 · 디스크 87% · 최근 7일 회귀 2건 · 점검 07:15</span><ul><li>aidev 자기 동기화 2회 연속 실패 — logs/sync.log 확인</li><li>측정 감사: 원격에 없는 릴리즈 태그 2건 — 그 저장소의 다음 릴리즈를 막는다</li></ul></div>
+<div class="alerts" role="status"><strong>🩺 러너 점검 필요</strong> <span class="meta">— 마지막 회차 4분 전 · 스케줄러 실행 중 · 다음 실행 2026-10-09 오전 7:50:00 · 디스크 87% · 최근 7일 회귀 2건 · 점검 07:45</span><ul><li>aidev 자기 동기화 2회 연속 실패 — logs/sync.log 확인</li><li>측정 감사: 원격에 없는 릴리즈 태그 2건 — 그 저장소의 다음 릴리즈를 막는다</li></ul></div>
 
 
 <p><a href="https://hkjang.github.io/aidev/inbox/"><strong>📥 작업함</strong></a> — 열린 러너 PR·복구·수정 과제 69건 (그중 사람 필요 54건)</p>
 
-<p>🧹 <strong>PR 처리기</strong> — 매시간 검토 대기 PR 을 진단해 고치고 심사해 승인 · 마지막 실행 2026-10-09 06:35 · 오늘 승인 1 · 수정 푸시 1 · 사람 필요 6 <span class="meta">(기록: state/shepherd.jsonl)</span></p>
+<p>🧹 <strong>PR 처리기</strong> — 매시간 검토 대기 PR 을 진단해 고치고 심사해 승인 · 마지막 실행 2026-10-09 07:45 · 오늘 승인 1 · 수정 푸시 1 · 사람 필요 6 <span class="meta">(기록: state/shepherd.jsonl)</span></p>
 
 [운영 문서](https://github.com/hkjang/aidev#readme) · [원장](https://github.com/hkjang/aidev/tree/main/state) · [실행 이력](https://github.com/hkjang/aidev/commits/main) · [경고 이슈](https://github.com/hkjang/aidev/issues?q=label%3Aalert) · [교훈 27건](https://hkjang.github.io/aidev/lessons/) · [경험 보고 논문](https://hkjang.github.io/aidev/paper/ko/) ([EN](https://hkjang.github.io/aidev/paper/)) · [Atom 피드](https://hkjang.github.io/aidev/feed.xml) · [summary.json](https://hkjang.github.io/aidev/data/summary.json)
 
@@ -440,7 +440,7 @@ last_modified_at: 2026-10-09 07:40:47 +0900
 
 ## 비용·사용량
 
-<ul class="stats"><li><b>$0.00</b><span>오늘 비용</span></li><li><b>0분</b><span>오늘 에이전트 시간</span></li><li><b>80</b><span>오늘 세션</span></li><li><b>$8702.52</b><span>누적 비용</span></li><li><b>403시간 0분</b><span>누적 시간</span></li><li><b>9523.1M/76.2M</b><span>누적 토큰 입력/출력</span></li></ul>
+<ul class="stats"><li><b>$0.00</b><span>오늘 비용</span></li><li><b>0분</b><span>오늘 에이전트 시간</span></li><li><b>83</b><span>오늘 세션</span></li><li><b>$8702.52</b><span>누적 비용</span></li><li><b>403시간 1분</b><span>누적 시간</span></li><li><b>9523.1M/76.2M</b><span>누적 토큰 입력/출력</span></li></ul>
 
 claude -p 가 세션마다 보고한 추정값(정액제에서는 참고값). 회차별 내역은 각 일일 보고와 프로젝트 페이지, 원본은 [usage.jsonl](https://hkjang.github.io/aidev/data/usage.jsonl).
 
