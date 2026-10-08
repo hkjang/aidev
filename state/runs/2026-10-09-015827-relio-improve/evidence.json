@@ -1,0 +1,255 @@
+{
+  "run_id": "2026-10-09-015827-relio-improve",
+  "generated": "2026-10-09T02:09:58+09:00",
+  "run": {
+    "run_id": "2026-10-09-015827-relio-improve",
+    "project": "relio",
+    "kind": "improve",
+    "started": "2026-10-09T01:58:28+09:00",
+    "model": "claude-opus-5",
+    "policy_version": "4a9e91ac7",
+    "prompts_hash": "ce085c79e18002e2",
+    "runner_version": "1bd5f0cd4",
+    "arm": "no-scout",
+    "experiment": "roles-2026-09",
+    "finished": "2026-10-09T02:09:58+09:00",
+    "outcome": "merged"
+  },
+  "record": {
+    "ts": "2026-10-09T02:09:58+09:00",
+    "date": "2026-10-09",
+    "project": "relio",
+    "result": "merged https://github.com/hkjang/relio/pull/46",
+    "outcome": "merged",
+    "run_id": "2026-10-09-015827-relio-improve",
+    "base_sha": "329656c6d4f2f5389c539cfecf54bcb1a0572182",
+    "head_sha": "30c957b8f5d75aa29768bfa4b6d899dd62add084",
+    "pr": "https://github.com/hkjang/relio/pull/46",
+    "stages": {
+      "base": {
+        "state": "pinned",
+        "reason": "main@329656c",
+        "at": "2026-10-09T01:58:34+09:00"
+      },
+      "autonomy": {
+        "state": "low-risk",
+        "reason": "롤백 PR ",
+        "at": "2026-10-09T01:58:34+09:00"
+      },
+      "verify": {
+        "state": "passed",
+        "reason": "검증 10개 통과 (auto)",
+        "at": "2026-10-09T02:04:34+09:00"
+      },
+      "review": {
+        "state": "approved",
+        "reason": "리뷰 승인 (risk=low)",
+        "at": "2026-10-09T02:06:24+09:00"
+      },
+      "pr": {
+        "state": "created",
+        "reason": "https://github.com/hkjang/relio/pull/46",
+        "at": "2026-10-09T02:06:30+09:00"
+      },
+      "ci": {
+        "state": "passed",
+        "reason": "검사 2개 모두 success",
+        "at": "2026-10-09T02:09:49+09:00"
+      },
+      "merge": {
+        "state": "done",
+        "reason": "30c957b8f5d75aa29768bfa4b6d899dd62add084",
+        "at": "2026-10-09T02:09:55+09:00"
+      },
+      "release": {
+        "state": "skipped",
+        "reason": "자율화 단계 low-risk — 릴리즈는 사람이",
+        "at": "2026-10-09T02:09:58+09:00"
+      }
+    },
+    "campaign": "",
+    "autonomy": "low-risk",
+    "arm": "no-scout",
+    "experiment": "roles-2026-09",
+    "engine": "codex",
+    "files": 2,
+    "additions": 57,
+    "deletions": 1,
+    "tests": 1,
+    "title": "fix(web): 읽을 수 없는 API 성공 응답을 오류로 처리"
+  },
+  "stages": {
+    "base": {
+      "state": "pinned",
+      "reason": "main@329656c",
+      "at": "2026-10-09T01:58:34+09:00"
+    },
+    "autonomy": {
+      "state": "low-risk",
+      "reason": "롤백 PR ",
+      "at": "2026-10-09T01:58:34+09:00"
+    },
+    "verify": {
+      "state": "passed",
+      "reason": "검증 10개 통과 (auto)",
+      "at": "2026-10-09T02:04:34+09:00"
+    },
+    "review": {
+      "state": "approved",
+      "reason": "리뷰 승인 (risk=low)",
+      "at": "2026-10-09T02:06:24+09:00"
+    },
+    "pr": {
+      "state": "created",
+      "reason": "https://github.com/hkjang/relio/pull/46",
+      "at": "2026-10-09T02:06:30+09:00"
+    },
+    "ci": {
+      "state": "passed",
+      "reason": "검사 2개 모두 success",
+      "at": "2026-10-09T02:09:49+09:00"
+    },
+    "merge": {
+      "state": "done",
+      "reason": "30c957b8f5d75aa29768bfa4b6d899dd62add084",
+      "at": "2026-10-09T02:09:55+09:00"
+    },
+    "release": {
+      "state": "skipped",
+      "reason": "자율화 단계 low-risk — 릴리즈는 사람이",
+      "at": "2026-10-09T02:09:58+09:00"
+    }
+  },
+  "provenance": {
+    "model": "claude-opus-5",
+    "policy_version": "4a9e91ac7",
+    "prompts_hash": "ce085c79e18002e2",
+    "runner_version": "1bd5f0cd4",
+    "base_sha": "329656c6d4f2f5389c539cfecf54bcb1a0572182",
+    "head_sha": "30c957b8f5d75aa29768bfa4b6d899dd62add084",
+    "pr": "https://github.com/hkjang/relio/pull/46"
+  },
+  "verification": {
+    "runner": {
+      "source": "auto",
+      "commands": [
+        {
+          "cmd": "go build ./...",
+          "exit": 0,
+          "seconds": 1
+        },
+        {
+          "cmd": "go vet ./...",
+          "exit": 0,
+          "seconds": 0
+        },
+        {
+          "cmd": "go test ./...",
+          "exit": 0,
+          "seconds": 1
+        },
+        {
+          "cmd": "cd web && [ -d node_modules ] || npm ci --no-audit --no-fund",
+          "exit": 0,
+          "seconds": 0
+        },
+        {
+          "cmd": "cd web && npm test --silent",
+          "exit": 0,
+          "seconds": 1
+        },
+        {
+          "cmd": "cd web && [ -d node_modules ] || npm ci --no-audit --no-fund",
+          "exit": 0,
+          "seconds": 0
+        },
+        {
+          "cmd": "cd web && npm run typecheck --silent",
+          "exit": 0,
+          "seconds": 3
+        },
+        {
+          "cmd": "cd web && [ -d node_modules ] || npm ci --no-audit --no-fund",
+          "exit": 0,
+          "seconds": 0
+        },
+        {
+          "cmd": "cd web && npm run build --silent",
+          "exit": 0,
+          "seconds": 5
+        },
+        {
+          "cmd": "npm run typecheck && npm run build   # CI에서 가져옴",
+          "exit": 0,
+          "seconds": 8
+        }
+      ]
+    },
+    "runner_gate": {
+      "ok": true,
+      "state": "verified",
+      "reason": "검증 10개 통과 (auto)"
+    },
+    "after_rebase": null,
+    "review": {
+      "verdict": "approve",
+      "reasons": [],
+      "notes": [
+        "정확성·테스트(비차단): web/src/api.ts:15-24와 web/test/api.test.ts:9-50 확인. 실제 HTTP/fetch로 새 오류 경로 및 204·정상 JSON·기존 HTTP 오류 처리를 검증하며, api-red.log의 Missing expected rejection 3건은 이번 수정 증상과 일치한다. 독립 실행 npm --prefix web test 38/38 및 git diff --check 통과.",
+        "보안·개인정보(비차단): 인증·CSRF·credentials·인가 경계 변경, 신규 수집·저장·외부 전송·의존성 추가가 없다. 새 오류에 응답 원문을 포함하지 않으며, 변경으로 생긴 구체적 공격 경로나 법무 차단 사유를 발견하지 못했다.",
+        "검증 한계(비차단): 실제 브라우저 클릭·CRM DB·프록시 장애·Docker 업그레이드와 테넌트 격리 통합 테스트는 실행하지 않았다. 정상 JSON의 스키마 검증은 변경 범위 밖이다.",
+        "릴리즈 참고(비차단): invalid_response는 응답 해석 실패이며 서버 쓰기 작업의 실패를 보장하지 않는다. 현재 안내처럼 처리 결과를 먼저 확인해야 하며 자동 재시도는 추가되지 않았다. 데이터·마이그레이션 변경 없이 revert 가능하다.",
+        "절차: Skill 도구 미노출로 요청된 legal-risk:privacy-and-data-protection, security:security-architecture-review, technology:code-review의 로컬 SKILL.md를 직접 읽고 적용했다."
+      ],
+      "risk": "low",
+      "blocking": []
+    },
+    "ci_gate": {
+      "ok": true,
+      "state": "success",
+      "reason": "검사 2개 모두 success",
+      "checks": 2
+    }
+  },
+  "release": {
+    "result": null,
+    "assets_sha256": []
+  },
+  "approval": null,
+  "usage": [
+    {
+      "ts": "2026-10-09T02:04:14+09:00",
+      "date": "2026-10-09",
+      "project": "relio",
+      "phase": "improve",
+      "run_id": "2026-10-09-015827-relio-improve",
+      "campaign": "",
+      "subtype": "success",
+      "engine": "codex",
+      "duration_ms": 0,
+      "num_turns": 1,
+      "cost_usd": null,
+      "input_tokens": 1006530,
+      "output_tokens": 9989,
+      "cache_read": 929792,
+      "cache_create": 0
+    },
+    {
+      "ts": "2026-10-09T02:06:24+09:00",
+      "date": "2026-10-09",
+      "project": "relio",
+      "phase": "review",
+      "run_id": "2026-10-09-015827-relio-improve",
+      "campaign": "",
+      "subtype": "success",
+      "engine": "codex",
+      "duration_ms": 0,
+      "num_turns": 1,
+      "cost_usd": null,
+      "input_tokens": 330966,
+      "output_tokens": 2811,
+      "cache_read": 282368,
+      "cache_create": 0
+    }
+  ]
+}

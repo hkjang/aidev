@@ -406,3 +406,16 @@
 - 과제서: 채택 — 과제서의 실측이 코드와 전부 일치했다: 실패 단계가 `test / Frontend security audit`, audit 명령이 `ci.yml:30`·`release.yml:34` 두 곳에만 존재, `Makefile:13-16` 의 레시피 모양, `6b95f32` 가 lockfile 1파일 3+/3- 이고 `web/package.json` 에 1.2.2 요구가 없음, `lockfileVersion: 3`, postcss 의 범위가 `^1.2.1`. 과제서가 "가장 먼저 돌려 확정하라" 고 한 미확인 전제도 확정했다 — **HEAD 의 audit 은 exit 0**(기준 1 충족, 기준 2 는 할 일 없음). 지정된 수용 기준 1·2·4·5·6 을 그대로 구현·검증했고, 기준 3 만 과제서 자신의 위험 항목에 따라 lockfile 0줄로 이탈했다(바로 위 "기준 3 이탈" — 과제서가 몰랐던 사실 두 개: override 는 어느 npm 으로도 lockfile 에 기록되지 않고, 로컬 npm 10.9.8 이 재생성하면 `libc` 메타데이터 42줄을 퇴행시킨다). 과제서의 경고대로 `web/package.json:10` 의 `"$npm_node_execpath"` 와 `**` 글롭은 한 글자도 건드리지 않았고, esbuild 선언은 lockfile diff 판독을 지키려고 같은 회차에 섞지 않았다.
 - 스킬 적용: `technology:completion-verification`·`systematic-debugging`·`test-driven-development` 를 Skill 도구로 불러 적용했다(이번 세션은 노출됨 — 2026-10-05 회차와 달라진 점). 디버깅 스킬의 "고친 뒤 버그를 되돌려 같은 테스트가 다시 실패하는지 확인" 을 섭동 ③ 으로 그대로 수행했고, 검증 스킬의 "명령과 출력이 증거" 에 따라 모든 exit code 를 위에 적었다. 네트워크가 필요한 명령(`npm ci`·`audit`)은 이번 세션에서 실제로 돌아갔다.
 
+## 2026-10-09
+- 선택: 프런트 API 클라이언트가 읽을 수 없는 성공 응답을 성공 객체로 반환하지 않게 수정 (가치 4 / 위험 1 / 작업량 S)
+- 결과: 성공
+- 요약: web/src/api.ts의 response.json().catch(() => ({}))가 HTTP 200 HTML·빈 본문·잘린 201 JSON을 성공으로 반환하는 결함을 실제 HTTP 서버와 원래 fetch/api() 호출로 재현했다. JSON을 읽지 못한 2xx 응답은 원문 없이 invalid_response APIError와 처리 결과 확인 안내를 반환하게 했으며, 204·정상 JSON·기존 비정상 HTTP 응답 처리는 유지했다. 프로덕션 1파일(+4/-1), 테스트 1파일(11건); make test(Go test/vet, npm ci/audit 0 vulnerabilities/typecheck, 프런트 38/38, build), Node 24.21.0 프런트 38/38, go test -race ./..., go build ./..., 환경·정적 자산·이전 공개 릴리즈 선택 8건 검사, git diff --check 모두 exit 0이고 커밋 30c957b 뒤 작업 트리는 깨끗하다.
+- 실패 재현: `not ok 1 - api handles HTML success over HTTP` / `error: 'Missing expected rejection.'` — 수정 전 node --test web/test/api.test.ts exit 1(3 실패/8 성공, api-red.log). 수정 후 11/11 성공, HEAD의 옛 api.ts를 잠시 복원해 같은 3건 재실패(api-reverted-red.log), 수정 복원 후 11/11 성공(api-restored-green.log).
+- 보류 아이디어: web/package.json에 esbuild 직접 devDependency 선언 (가치 3 / 위험 2 / S) — 전이 의존성이며 lockfile 변동을 별도 검토.
+- 보류 아이디어: Makefile test에 previous-release-tag-test.sh 연결 (가치 3 / 위험 1 / S) — 현재 CI만 실행, 이번에는 실제 클라이언트 오류 처리를 우선.
+- 보류 아이디어: 감사 목록 from/to 기간 필터 (가치 3 / 위험 1 / M) — REST·SQL·OpenAPI에 모두 없고 실제 DB 실행 증명이 필요.
+- 보류 아이디어: 잘못된 날짜의 프런트 포매터 예외 처리 (가치 3 / 위험 1 / S) — 신규 후보, 실제 화면에서 RangeError 재현 후 범위를 정할 것.
+- 후보 정리: 기존 11항목 유지·재평가, 새 2항목 추가 총 13항목을 ideas.json에 기록. KnowledgeStatuses 검증은 이미 공유 집합을 사용하고 번역 맵·검색 부분집합은 별도 계약이어서 중복 제거 후보를 rejected로 닫았다. 이번 구현 항목은 done, 나머지 11개는 pending이다. candidate-assessment.md에 점수표와 프로젝트 요약을 보존했다.
+- 검증 한계: 새 테스트는 실제 로컬 HTTP/fetch를 통한 공통 클라이언트의 최종 반환/오류 계약을 검증한다. 실제 CRM DB·브라우저 화면 클릭·리버스 프록시 장애 자체·Docker 오프라인/업그레이드는 실행하지 않았다. secrets DB 통합 3건은 RELIO_TEST_POSTGRES_DSN 미설정으로 skip임을 verbose 실행으로 확인했다. Vite의 기존 analytics.js module 속성 및 500 kB 초과 번들 경고는 남는다. package/lockfile·워크플로·마이그레이션·버전은 변경하지 않았고 빌드 산출물은 기존 ignore 대상이며 커밋에는 소스·테스트 2파일만 있다.
+- 스킬 적용: Skill 도구가 미노출되어 /home/hkjang/.claude/plugins/marketplaces/headcount/plugins/technology/skills/{completion-verification,systematic-debugging,test-driven-development}/SKILL.md를 직접 읽었다. 사전 실패→최소 수정→통과→옛 코드 복원 재실패→수정 복원 통과 및 프로젝트 실제 게이트 실행 절차를 따랐다. 별도 정찰 과제서는 없으며 제공된 프로젝트 프로필부터 확인했다.
+

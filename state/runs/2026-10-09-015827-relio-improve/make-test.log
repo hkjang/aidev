@@ -1,0 +1,303 @@
+go test ./...
+?   	github.com/hkjang/relio/cmd/relio	[no test files]
+ok  	github.com/hkjang/relio/internal/admin	0.006s
+ok  	github.com/hkjang/relio/internal/analytics	0.006s
+ok  	github.com/hkjang/relio/internal/api	0.015s
+ok  	github.com/hkjang/relio/internal/apikey	0.005s
+ok  	github.com/hkjang/relio/internal/approval	0.005s
+ok  	github.com/hkjang/relio/internal/audit	0.006s
+ok  	github.com/hkjang/relio/internal/auth	0.797s
+ok  	github.com/hkjang/relio/internal/config	0.004s
+ok  	github.com/hkjang/relio/internal/crm	0.068s
+ok  	github.com/hkjang/relio/internal/intelligence	0.014s
+ok  	github.com/hkjang/relio/internal/job	0.016s
+ok  	github.com/hkjang/relio/internal/mail	7.029s
+ok  	github.com/hkjang/relio/internal/mcp	0.037s
+ok  	github.com/hkjang/relio/internal/oidc	0.128s
+ok  	github.com/hkjang/relio/internal/personal	0.006s
+ok  	github.com/hkjang/relio/internal/platform/database	0.057s
+ok  	github.com/hkjang/relio/internal/platform/httpx	0.074s
+?   	github.com/hkjang/relio/internal/platform/ids	[no test files]
+ok  	github.com/hkjang/relio/internal/platform/secrets	0.022s
+ok  	github.com/hkjang/relio/internal/platform/timezone	0.009s
+?   	github.com/hkjang/relio/internal/platform/version	[no test files]
+ok  	github.com/hkjang/relio/internal/relationship	0.005s
+ok  	github.com/hkjang/relio/internal/server	0.315s
+ok  	github.com/hkjang/relio/internal/voice	0.004s
+ok  	github.com/hkjang/relio/internal/webui	0.003s
+?   	github.com/hkjang/relio/migrations	[no test files]
+go vet ./...
+cd web && npm ci && npm audit --audit-level=high && npm run typecheck && npm test && npm run build
+
+added 69 packages, and audited 70 packages in 1s
+
+9 packages are looking for funding
+  run `npm fund` for details
+
+found 0 vulnerabilities
+found 0 vulnerabilities
+
+> relio-web@0.1.0 typecheck
+> tsc -b --pretty false
+
+
+> relio-web@0.1.0 test
+> "$npm_node_execpath" --test 'test/**/*.test.ts'
+
+TAP version 13
+# Subtest: api handles HTML success over HTTP
+ok 1 - api handles HTML success over HTTP
+  ---
+  duration_ms: 16.918181
+  type: 'test'
+  ...
+# Subtest: api handles empty success over HTTP
+ok 2 - api handles empty success over HTTP
+  ---
+  duration_ms: 4.952121
+  type: 'test'
+  ...
+# Subtest: api handles truncated creation response over HTTP
+ok 3 - api handles truncated creation response over HTTP
+  ---
+  duration_ms: 2.499903
+  type: 'test'
+  ...
+# Subtest: api handles non-JSON gateway error over HTTP
+ok 4 - api handles non-JSON gateway error over HTTP
+  ---
+  duration_ms: 3.183319
+  type: 'test'
+  ...
+# Subtest: api handles empty error over HTTP
+ok 5 - api handles empty error over HTTP
+  ---
+  duration_ms: 2.972059
+  type: 'test'
+  ...
+# Subtest: api handles structured API error over HTTP
+ok 6 - api handles structured API error over HTTP
+  ---
+  duration_ms: 1.805131
+  type: 'test'
+  ...
+# Subtest: api handles JSON object over HTTP
+ok 7 - api handles JSON object over HTTP
+  ---
+  duration_ms: 2.854393
+  type: 'test'
+  ...
+# Subtest: api handles created JSON object over HTTP
+ok 8 - api handles created JSON object over HTTP
+  ---
+  duration_ms: 1.715085
+  type: 'test'
+  ...
+# Subtest: api handles JSON array over HTTP
+ok 9 - api handles JSON array over HTTP
+  ---
+  duration_ms: 4.270267
+  type: 'test'
+  ...
+# Subtest: api handles JSON null over HTTP
+ok 10 - api handles JSON null over HTTP
+  ---
+  duration_ms: 2.442289
+  type: 'test'
+  ...
+# Subtest: api handles no content over HTTP
+ok 11 - api handles no content over HTTP
+  ---
+  duration_ms: 1.67881
+  type: 'test'
+  ...
+# Subtest: dateTime renders the day and a 24h clock down to the second
+ok 12 - dateTime renders the day and a 24h clock down to the second
+  ---
+  duration_ms: 8.236765
+  type: 'test'
+  ...
+# Subtest: date keeps stopping at the day so the other pages are unchanged
+ok 13 - date keeps stopping at the day so the other pages are unchanged
+  ---
+  duration_ms: 0.322591
+  type: 'test'
+  ...
+# Subtest: dateTime falls back to the same em dash as date for a missing value
+ok 14 - dateTime falls back to the same em dash as date for a missing value
+  ---
+  duration_ms: 0.141247
+  type: 'test'
+  ...
+# Subtest: SSO login renders with storage access blocked, autoLogin=false
+ok 15 - SSO login renders with storage access blocked, autoLogin=false
+  ---
+  duration_ms: 6.829922
+  type: 'test'
+  ...
+# Subtest: SSO login renders with getItem blocked, autoLogin=false
+ok 16 - SSO login renders with getItem blocked, autoLogin=false
+  ---
+  duration_ms: 0.946108
+  type: 'test'
+  ...
+# Subtest: SSO login renders with invalid URL, autoLogin=false
+ok 17 - SSO login renders with invalid URL, autoLogin=false
+  ---
+  duration_ms: 0.918139
+  type: 'test'
+  ...
+# Subtest: SSO login renders with empty, autoLogin=false
+ok 18 - SSO login renders with empty, autoLogin=false
+  ---
+  duration_ms: 0.743023
+  type: 'test'
+  ...
+# Subtest: SSO login renders with disallowed path, autoLogin=false
+ok 19 - SSO login renders with disallowed path, autoLogin=false
+  ---
+  duration_ms: 1.012159
+  type: 'test'
+  ...
+# Subtest: SSO login renders with remembered path, autoLogin=false
+ok 20 - SSO login renders with remembered path, autoLogin=false
+  ---
+  duration_ms: 1.553115
+  type: 'test'
+  ...
+# Subtest: SSO login renders with storage access blocked, autoLogin=true
+ok 21 - SSO login renders with storage access blocked, autoLogin=true
+  ---
+  duration_ms: 0.699116
+  type: 'test'
+  ...
+# Subtest: SSO login renders with getItem blocked, autoLogin=true
+ok 22 - SSO login renders with getItem blocked, autoLogin=true
+  ---
+  duration_ms: 0.716524
+  type: 'test'
+  ...
+# Subtest: SSO login renders with invalid URL, autoLogin=true
+ok 23 - SSO login renders with invalid URL, autoLogin=true
+  ---
+  duration_ms: 1.309024
+  type: 'test'
+  ...
+# Subtest: SSO login renders with empty, autoLogin=true
+ok 24 - SSO login renders with empty, autoLogin=true
+  ---
+  duration_ms: 1.015686
+  type: 'test'
+  ...
+# Subtest: SSO login renders with disallowed path, autoLogin=true
+ok 25 - SSO login renders with disallowed path, autoLogin=true
+  ---
+  duration_ms: 0.959651
+  type: 'test'
+  ...
+# Subtest: SSO login renders with remembered path, autoLogin=true
+ok 26 - SSO login renders with remembered path, autoLogin=true
+  ---
+  duration_ms: 0.728718
+  type: 'test'
+  ...
+# Subtest: a header row is skipped, whatever it is called
+ok 27 - a header row is skipped, whatever it is called
+  ---
+  duration_ms: 1.047977
+  type: 'test'
+  ...
+# Subtest: either column order works: the all-digit cell is the code
+ok 28 - either column order works: the all-digit cell is the code
+  ---
+  duration_ms: 0.126615
+  type: 'test'
+  ...
+# Subtest: tabs, quotes, a BOM and blank lines are tolerated
+ok 29 - tabs, quotes, a BOM and blank lines are tolerated
+  ---
+  duration_ms: 0.153266
+  type: 'test'
+  ...
+# Subtest: a line with one cell is kept so the server can report it
+ok 30 - a line with one cell is kept so the server can report it
+  ---
+  duration_ms: 0.098592
+  type: 'test'
+  ...
+# Subtest: a default installation never tries: auto login is off
+ok 31 - a default installation never tries: auto login is off
+  ---
+  duration_ms: 0.735587
+  type: 'test'
+  ...
+# Subtest: with auto login on, a fresh tab on an application path tries once
+ok 32 - with auto login on, a fresh tab on an application path tries once
+  ---
+  duration_ms: 0.470501
+  type: 'test'
+  ...
+# Subtest: the refusal marker in the address stops a retry even with empty storage
+ok 33 - the refusal marker in the address stops a retry even with empty storage
+  ---
+  duration_ms: 0.138449
+  type: 'test'
+  ...
+# Subtest: the login, callback, API, MCP and discovery paths never start an attempt
+ok 34 - the login, callback, API, MCP and discovery paths never start an attempt
+  ---
+  duration_ms: 0.231614
+  type: 'test'
+  ...
+# Subtest: signing out suppresses auto login until a session exists again
+ok 35 - signing out suppresses auto login until a session exists again
+  ---
+  duration_ms: 0.145025
+  type: 'test'
+  ...
+# Subtest: unreadable storage counts as already attempted
+ok 36 - unreadable storage counts as already attempted
+  ---
+  duration_ms: 0.160049
+  type: 'test'
+  ...
+# Subtest: a write that does not stick also refuses to leave
+ok 37 - a write that does not stick also refuses to leave
+  ---
+  duration_ms: 0.067161
+  type: 'test'
+  ...
+# Subtest: return_to only carries a same-origin path
+ok 38 - return_to only carries a same-origin path
+  ---
+  duration_ms: 0.063079
+  type: 'test'
+  ...
+1..38
+# tests 38
+# suites 0
+# pass 38
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 139.469191
+
+> relio-web@0.1.0 build
+> tsc -b && vite build
+
+vite v7.3.6 building client environment for production...
+<script src="/analytics.js"> in "/index.html" can't be bundled without type="module" attribute
+transforming...
+✓ 55 modules transformed.
+rendering chunks...
+computing gzip size...
+../internal/webui/dist/index.html                   0.85 kB │ gzip:   0.51 kB
+../internal/webui/dist/assets/index-TPi-qKVA.css  116.82 kB │ gzip:  24.43 kB
+../internal/webui/dist/assets/index-C6UKI_11.js   570.99 kB │ gzip: 158.27 kB
+
+(!) Some chunks are larger than 500 kB after minification. Consider:
+- Using dynamic import() to code-split the application
+- Use build.rollupOptions.output.manualChunks to improve chunking: https://rollupjs.org/configuration-options/#output-manualchunks
+- Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.
+✓ built in 875ms

@@ -1,0 +1,11 @@
+## 2026-10-09
+- 선택: dev·preview·e2e에서도 설치 누락을 기존 가드로 설명하기 (가치 2 / 위험 1 / 작업량 S)
+- 결과: 성공
+- 요약: 원인은 세 npm 진입점에 pre* 배선이 없는 것이었으며, web/package.json에 predev·prepreview(vite)·pree2e(@playwright/test) 세 항목만 추가하고 기존 명령 본문은 유지했습니다(프로덕션 1파일 + 시험 1파일, 커밋 c719700, 작성자 hkjang, 버전 0.76.8 유지). npm ci --prefix web 후 기존 가드 시험 10개 통과를 기준선으로 확인하고 실제 manifest/가드 복사 fixture의 npm 자식 프로세스 시험 9개 및 설치된 npm CLI 대조군 3개를 더해 22개 통과했으며, 훅만 원복하면 같은 7개 실패가 재발하고 복구 후 전체 웹 시험 23파일·252개가 통과했고 실제 체크아웃의 node_modules도 잠시 이동/복원하여 세 진입점 모두 패키지명·package.json 절대경로·npm ci --prefix 안내·exit 1을 확인했습니다. make test-web의 8게이트(offline-queue, audit 0 vulnerabilities, typecheck, lint, i18n 1060키, test 252개, build, PWA 150 assets)·수정 시험 Prettier·check-version 모두 exit 0이고 dev/preview --help 및 e2e --list(129 tests in 38 files)도 exit 0이나 제품 E2E·DB·Go·Docker는 이번 범위 밖으로 미실행했으며, lint의 미변경 src 파일 경고 50개는 남고 과제서의 루트 npm --prefix web exec -- prettier --check scripts/require-installed.test.mjs는 상대경로를 찾지 못해 exit 2여서 web 디렉터리에서 npm exec -- prettier --check scripts/require-installed.test.mjs로 경로를 바로잡고 포맷 수정 후 통과했습니다.
+- 실패 재현: `AssertionError: expected 'sh: 1: vite: not found\n' to contain 'vite is not installed: nothing resolv…'` / `Tests  7 failed | 15 passed (22)` — red.log, reverted-red.log에 원문 보존; dev/preview의 exit 127→1 단언도 실패했고 e2e fixture는 `error: unknown command 'test'`라 설치 안내 단언이 실패했습니다(정찰 실제 경로의 ERR_MODULE_NOT_FOUND와 달랐으며 실패 문구를 같다고 가정하지 않음).
+- 보류 아이디어:
+  - 설치 누락 두 진입점 메시지를 실제 프로세스 결과로 비교 (가치 2 / 위험 1 / S) — 통합 없이 진단 드리프트만 검사, 이번 범위 제외.
+  - edge-vocabulary 알려진 라벨 12개와 로케일 전환 재조회 계약 (가치 2 / 위험 1 / S) — 실제 타입·translate 사용, 폴백 버그 주장 금지.
+  - format 설치 누락을 기존 가드로 안내 (가치 2 / 위험 1 / S) — 소스를 바꾸지 않는 fixture에서 먼저 재현, 이번 범위 제외.
+  - 문서 허브의 중복 사용자 가이드 링크 제거 (가치 1 / 위험 1 / S) — 정찰 후보 유지, 이번 범위 제외.
+- 과제서: 채택 — 세 훅 누락과 기존 가드 재사용 가능성을 현재 코드 및 실제 npm 실행으로 확인했고 지정한 두 파일만 수정했으며, Prettier 검증 명령의 실행 디렉터리만 바로잡았습니다.

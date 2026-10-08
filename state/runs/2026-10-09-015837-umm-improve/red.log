@@ -1,0 +1,125 @@
+
+> umm-web@0.76.8 test
+> node scripts/run-on-supported-node.mjs vitest run scripts/require-installed.test.mjs
+
+
+ RUN  v4.1.11 /home/hkjang/.cache/auto-improve-wt/umm/web
+
+ ❯ scripts/require-installed.test.mjs (22 tests | 7 failed) 3511ms
+     × tells dev which dependency is missing, where it looked, and how to install 98ms
+     × tells preview which dependency is missing, where it looked, and how to install 93ms
+     × tells e2e which dependency is missing, where it looked, and how to install 339ms
+     × refuses dev with exit 1 92ms
+     × refuses preview with exit 1 93ms
+     × blames neither the interpreter nor a missing bin for dev 93ms
+     × blames neither the interpreter nor a missing bin for preview 95ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 7 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  scripts/require-installed.test.mjs > a frontend gate run in a checkout where npm ci has not run > tells dev which dependency is missing, where it looked, and how to install
+AssertionError: expected 'sh: 1: vite: not found\n' to contain 'vite is not installed: nothing resolv…'
+
+- Expected
++ Received
+
+- vite is not installed: nothing resolves vite/package.json from /tmp/umm-web-uninstalled-eLiXBw/package.json. Run `npm ci --prefix /tmp/umm-web-uninstalled-eLiXBw` first. This is a missing install, not an unsupported interpreter.
++ sh: 1: vite: not found
++
+
+ ❯ scripts/require-installed.test.mjs:89:26
+     87|       const run = runNpmScript(root, script);
+     88|
+     89|       expect(run.stderr).toContain(missingInstallSentence(dependency, …
+       |                          ^
+     90|     },
+     91|     120_000,
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/7]⎯
+
+ FAIL  scripts/require-installed.test.mjs > a frontend gate run in a checkout where npm ci has not run > tells preview which dependency is missing, where it looked, and how to install
+AssertionError: expected 'sh: 1: vite: not found\n' to contain 'vite is not installed: nothing resolv…'
+
+- Expected
++ Received
+
+- vite is not installed: nothing resolves vite/package.json from /tmp/umm-web-uninstalled-zGOImE/package.json. Run `npm ci --prefix /tmp/umm-web-uninstalled-zGOImE` first. This is a missing install, not an unsupported interpreter.
++ sh: 1: vite: not found
++
+
+ ❯ scripts/require-installed.test.mjs:89:26
+     87|       const run = runNpmScript(root, script);
+     88|
+     89|       expect(run.stderr).toContain(missingInstallSentence(dependency, …
+       |                          ^
+     90|     },
+     91|     120_000,
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/7]⎯
+
+ FAIL  scripts/require-installed.test.mjs > a frontend gate run in a checkout where npm ci has not run > tells e2e which dependency is missing, where it looked, and how to install
+AssertionError: expected 'error: unknown command \'test\'\n' to contain '@playwright/test is not installed: no…'
+
+- Expected
++ Received
+
+- @playwright/test is not installed: nothing resolves @playwright/test/package.json from /tmp/umm-web-uninstalled-788Aqa/package.json. Run `npm ci --prefix /tmp/umm-web-uninstalled-788Aqa` first. This is a missing install, not an unsupported interpreter.
++ error: unknown command 'test'
++
+
+ ❯ scripts/require-installed.test.mjs:89:26
+     87|       const run = runNpmScript(root, script);
+     88|
+     89|       expect(run.stderr).toContain(missingInstallSentence(dependency, …
+       |                          ^
+     90|     },
+     91|     120_000,
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/7]⎯
+
+ FAIL  scripts/require-installed.test.mjs > a frontend gate run in a checkout where npm ci has not run > refuses dev with exit 1
+ FAIL  scripts/require-installed.test.mjs > a frontend gate run in a checkout where npm ci has not run > refuses preview with exit 1
+AssertionError: expected 127 to be 1 // Object.is equality
+
+- Expected
++ Received
+
+- 1
++ 127
+
+ ❯ scripts/require-installed.test.mjs:99:26
+     97|       const run = runNpmScript(checkoutWithoutInstall(), script);
+     98|
+     99|       expect(run.status).toBe(1);
+       |                          ^
+    100|     },
+    101|     120_000,
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/7]⎯
+
+ FAIL  scripts/require-installed.test.mjs > a frontend gate run in a checkout where npm ci has not run > blames neither the interpreter nor a missing bin for dev
+ FAIL  scripts/require-installed.test.mjs > a frontend gate run in a checkout where npm ci has not run > blames neither the interpreter nor a missing bin for preview
+AssertionError: expected 'sh: 1: vite: not found\n' not to contain 'vite: not found'
+
+- Expected
++ Received
+
+- vite: not found
++ sh: 1: vite: not found
++
+
+ ❯ scripts/require-installed.test.mjs:122:32
+    120|       expect(run.stderr).not.toContain('Require stack');
+    121|       for (const bin of ['tsc', 'oxlint', 'prettier', 'vite', 'playwri…
+    122|         expect(run.stderr).not.toContain(`${bin}: not found`);
+       |                                ^
+    123|       }
+    124|     },
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/7]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  7 failed | 15 passed (22)
+   Start at  02:05:47
+   Duration  4.01s (transform 20ms, setup 52ms, import 13ms, tests 3.51s, environment 357ms)
+

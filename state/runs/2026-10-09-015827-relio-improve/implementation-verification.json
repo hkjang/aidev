@@ -1,0 +1,88 @@
+{
+  "commit": "30c957b",
+  "production_files": [
+    "web/src/api.ts"
+  ],
+  "test_files": [
+    "web/test/api.test.ts"
+  ],
+  "checks": [
+    {
+      "command": "node --test web/test/api.test.ts (before fix)",
+      "exit": 1,
+      "passed": 8,
+      "failed": 3,
+      "log": "api-red.log"
+    },
+    {
+      "command": "node --test web/test/api.test.ts (after fix)",
+      "exit": 0,
+      "passed": 11,
+      "failed": 0,
+      "log": "api-green.log"
+    },
+    {
+      "command": "node --test web/test/api.test.ts (original source restored)",
+      "exit": 1,
+      "passed": 8,
+      "failed": 3,
+      "log": "api-reverted-red.log"
+    },
+    {
+      "command": "node --test web/test/api.test.ts (fix restored)",
+      "exit": 0,
+      "passed": 11,
+      "failed": 0,
+      "log": "api-restored-green.log"
+    },
+    {
+      "command": "make test",
+      "exit": 0,
+      "frontend_passed": 38,
+      "audit_vulnerabilities": 0,
+      "log": "make-test.log"
+    },
+    {
+      "command": "npm exec --yes --package=node@24 -- node --test 'web/test/**/*.test.ts'",
+      "exit": 0,
+      "node": "24.21.0",
+      "passed": 38,
+      "log": "node24-tests.log"
+    },
+    {
+      "command": "go test -race ./...",
+      "exit": 0,
+      "log": "go-race.log"
+    },
+    {
+      "command": "go build ./...",
+      "exit": 0
+    },
+    {
+      "command": "./scripts/check-env-contract.sh",
+      "exit": 0
+    },
+    {
+      "command": "./scripts/check-static-assets.sh",
+      "exit": 0
+    },
+    {
+      "command": "./scripts/previous-release-tag-test.sh",
+      "exit": 0
+    },
+    {
+      "command": "git diff --check",
+      "exit": 0
+    },
+    {
+      "command": "cmp internal/webui/dist/README web/public/README",
+      "exit": 0
+    }
+  ],
+  "limitations": [
+    "secrets DB integration tests: 3 skipped (DSN unset)",
+    "browser interaction and actual CRM DB not tested",
+    "Docker offline/upgrade not run",
+    "existing Vite analytics.js and large chunk warnings"
+  ]
+}
