@@ -1,7 +1,7 @@
 ---
 title: "moyro — 자율 개선 이력"
 description: "moyro: 자율 개선 회차 56회, 릴리즈 26건. 최근 릴리즈 v0.2.49 (자산 1개)."
-last_modified_at: 2026-10-09 17:10:31 +0900
+last_modified_at: 2026-10-09 23:20:36 +0900
 ---
 {% raw %}
 <script type="application/ld+json">
@@ -18,7 +18,7 @@ last_modified_at: 2026-10-09 17:10:31 +0900
   "name": "hkjang",
   "url": "https://github.com/hkjang"
  },
- "dateModified": "2026-10-09T17:10:31+09:00",
+ "dateModified": "2026-10-09T23:20:36+09:00",
  "version": "0.2.49"
 }
 </script>
