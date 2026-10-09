@@ -23,3 +23,23 @@
 - [오래됨] git-ctx #33 (18일) https://github.com/hkjang/git-ctx/pull/33 — auto-improve: fix(contentsecurity): preserve curl command when masking credentials
 - [오래됨] sqlon #9 (18일) https://github.com/hkjang/sqlon/pull/9 — auto-improve: fix(mcp): 프로파일 카탈로그 조회 인증과 사용자 권한을 연결합니다
 - [오래됨] muni #20 (18일) https://github.com/hkjang/muni/pull/20 — auto-improve: fix: HTML 파일을 가져올 때도 제목과 같은 첫 H1 은 본문에서 뺍니다
+- [오래됨] git-ctx #32 (18일) https://github.com/hkjang/git-ctx/pull/32 — auto-improve: fix(contentsecurity): leave a variable reference in a credential's place alone
+- [오래됨] sqlon #8 (19일) https://github.com/hkjang/sqlon/pull/8 — auto-improve: feat(mcp): REST 감사 항목에 인증 사용자를 actor 로 기록합니다
+- [오래됨] AgentHub #29 (20일) https://github.com/hkjang/AgentHub/pull/29 — auto-improve: fix: the trail filed whatever sample the Pod put in a DLP report
+- [오래됨] orbit #6 (20일) https://github.com/hkjang/orbit/pull/6 — auto-improve: feat(mcp): 개인 키 없이 Keycloak 액세스 토큰으로 /mcp 에 들어올 수 있게 한다
+- [오래됨] jupiq #18 (21일) https://github.com/hkjang/jupiq/pull/18 — auto-improve: docs: 관리자·사용자 가이드에 MCP SSO(OAuth) 설정과 연결 방법을 더한다
+- [오래됨] Kkiit #6 (21일) https://github.com/hkjang/Kkiit/pull/6 — auto-improve: feat: /mcp 를 Keycloak 액세스 토큰(OAuth 2.1)으로도 열다 — 키 체계는 그대로
+- [오래됨] sqlon #6 (22일) https://github.com/hkjang/sqlon/pull/6 — auto-improve: fix(mcp): REST 변경 관리 승인·감사 행위자를 인증 사용자로 기록합니다
+- [오래됨] releasedock #17 (22일) https://github.com/hkjang/releasedock/pull/17 — auto-improve: chore: run gofmt and go vet before the tests in CI and make test
+- [오래됨] git-ctx #29 (22일) https://github.com/hkjang/git-ctx/pull/29 — auto-improve: fix(contentsecurity): keep the line break an Authorization header folds on
+- [오래됨] invenqor #22 (22일) https://github.com/hkjang/invenqor/pull/22 — auto-improve: feat: an MCP relation names both of its ends instead of two UUIDs
+- [오래됨] umm #158 (22일) https://github.com/hkjang/umm/pull/158 — auto-improve: Tell the people who are waiting, through the company relay
+- [오래됨] jikim #28 (23일) https://github.com/hkjang/jikim/pull/28 — auto-improve: feat: send approval and rotation-failure mail through a company SMTP relay
+- [오래됨] sqlon #4 (23일) https://github.com/hkjang/sqlon/pull/4 — auto-improve: feat(handoff): DBA 다이제스트를 다른 서비스로 넘기는 단일 사용 표(claim) 발급 — HANDOFF-STANDARD 보내는 쪽
+- [오래됨] orbit #3 (23일) https://github.com/hkjang/orbit/pull/3 — auto-improve: feat(handoff): 승인된 기억을 다른 사내 서비스로 넘긴다
+- [오래됨] postra #10 (23일) https://github.com/hkjang/postra/pull/10 — auto-improve: feat(notify): send event notifications through a company SMTP relay
+- [오래됨] qurio #13 (24일) https://github.com/hkjang/qurio/pull/13 — auto-improve: feat: hand saved CSV results to other intranet services with single-use claims
+- [오래됨] sqlon #2 (24일) https://github.com/hkjang/sqlon/pull/2 — auto-improve: feat(auth): Keycloak 세션이 있으면 로그인 화면 없이 들어오는 silent SSO(prompt=none)를 추가합니다
+- [오래됨] trace #1 (24일) https://github.com/hkjang/trace/pull/1 — auto-improve: feat(auth): add silent SSO auto-login via OIDC prompt=none
+- [오래됨] DartFly #4 (24일) https://github.com/hkjang/DartFly/pull/4 — auto-improve: feat: 저장 결과를 다른 사내 서비스로 넘기기 (HANDOFF 표준 보내는 쪽, csv)
+- [오래됨] madi #2 (24일) https://github.com/hkjang/madi/pull/2 — auto-improve: feat: add admin-configured visitor tracking snippet with nonce CSP
