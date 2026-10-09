@@ -1,7 +1,7 @@
 ---
 title: "Invenqor — 자율 개선 이력"
 description: "Invenqor: 자율 개선 회차 64회, 릴리즈 26건. 최근 릴리즈 v0.2.46 (자산 29개)."
-last_modified_at: 2026-10-10 03:10:20 +0900
+last_modified_at: 2026-10-10 05:50:34 +0900
 ---
 {% raw %}
 <script type="application/ld+json">
@@ -18,7 +18,7 @@ last_modified_at: 2026-10-10 03:10:20 +0900
   "name": "hkjang",
   "url": "https://github.com/hkjang"
  },
- "dateModified": "2026-10-10T03:10:20+09:00",
+ "dateModified": "2026-10-10T05:50:34+09:00",
  "version": "0.2.46"
 }
 </script>
