@@ -1,7 +1,7 @@
 ---
 title: "confmcp — 자율 개선 이력"
 description: "confmcp: 자율 개선 회차 2회, 릴리즈 1건. 최근 릴리즈 v0.1.1 (자산 2개)."
-last_modified_at: 2026-10-09 10:44:22 +0900
+last_modified_at: 2026-10-09 10:48:58 +0900
 ---
 {% raw %}
 <script type="application/ld+json">
@@ -18,7 +18,7 @@ last_modified_at: 2026-10-09 10:44:22 +0900
   "name": "hkjang",
   "url": "https://github.com/hkjang"
  },
- "dateModified": "2026-10-09T10:44:22+09:00",
+ "dateModified": "2026-10-09T10:48:58+09:00",
  "version": "0.1.1"
 }
 </script>
