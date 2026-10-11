@@ -1,7 +1,7 @@
 ---
 title: "apt.irumx.app — 자율 개선 이력"
 description: "apt.irumx.app: 자율 개선 회차 3회, 릴리즈 0건. 최근 릴리즈 없음."
-last_modified_at: 2026-10-11 21:48:27 +0900
+last_modified_at: 2026-10-12 03:20:34 +0900
 ---
 {% raw %}
 <script type="application/ld+json">
@@ -18,7 +18,7 @@ last_modified_at: 2026-10-11 21:48:27 +0900
   "name": "hkjang",
   "url": "https://github.com/hkjang"
  },
- "dateModified": "2026-10-11T21:48:27+09:00"
+ "dateModified": "2026-10-12T03:20:34+09:00"
 }
 </script>
 
