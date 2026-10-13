@@ -21,3 +21,4 @@
 - [러너 08:37] pr created — https://github.com/hkjang/review.yeopjari.bid/pull/2
 - [러너 08:41] ci passed — 검사 1개 모두 success
 - [러너 08:41] merge done — 807ab20
+- [러너 08:50] release published — 0.7.4

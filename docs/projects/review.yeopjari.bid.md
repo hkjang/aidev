@@ -1,7 +1,7 @@
 ---
 title: "review.yeopjari.bid — 자율 개선 이력"
-description: "review.yeopjari.bid: 자율 개선 회차 1회, 릴리즈 1건. 최근 릴리즈 없음."
-last_modified_at: 2026-10-14 08:46:42 +0900
+description: "review.yeopjari.bid: 자율 개선 회차 2회, 릴리즈 2건. 최근 릴리즈 없음."
+last_modified_at: 2026-10-14 08:50:15 +0900
 ---
 {% raw %}
 <script type="application/ld+json">
@@ -11,38 +11,38 @@ last_modified_at: 2026-10-14 08:46:42 +0900
  "name": "review.yeopjari.bid",
  "codeRepository": "https://github.com/hkjang/review.yeopjari.bid",
  "url": "https://hkjang.github.io/aidev/projects/review.yeopjari.bid/",
- "description": "review.yeopjari.bid: 자율 개선 회차 1회, 릴리즈 1건. 최근 릴리즈 없음.",
+ "description": "review.yeopjari.bid: 자율 개선 회차 2회, 릴리즈 2건. 최근 릴리즈 없음.",
  "inLanguage": "ko",
  "maintainer": {
   "@type": "Person",
   "name": "hkjang",
   "url": "https://github.com/hkjang"
  },
- "dateModified": "2026-10-14T08:46:42+09:00"
+ "dateModified": "2026-10-14T08:50:15+09:00"
 }
 </script>
 
 # review.yeopjari.bid
 
-<p class="tldr"><strong>요약.</strong> review.yeopjari.bid: 자율 개선 회차 1회, 릴리즈 1건. 최근 릴리즈 없음. <span class="pill pill-released" title="14일: 릴리즈 1, 실패 0, 경고 0, 회귀 0">건강 A</span> <span class="meta">14일: 릴리즈 1, 실패 0, 경고 0, 회귀 0</span></p>
+<p class="tldr"><strong>요약.</strong> review.yeopjari.bid: 자율 개선 회차 2회, 릴리즈 2건. 최근 릴리즈 없음. <span class="pill pill-released" title="14일: 릴리즈 2, 실패 0, 경고 0, 회귀 0">건강 A</span> <span class="meta">14일: 릴리즈 2, 실패 0, 경고 0, 회귀 0</span></p>
 
-<ul class="stats"><li><b>1</b><span>회차</span></li><li><b>1</b><span>프로젝트</span></li><li><b>0</b><span>배포 준비 완료</span></li><li><b>1</b><span>릴리즈 진행 중</span></li><li><b>0</b><span>병합 완료</span></li><li><b>0</b><span>검토 대기</span></li><li><b>0</b><span>검증 실패</span></li><li><b>0</b><span>변경 없음</span></li><li><b>0</b><span>실행 오류</span></li><li><b>$17.33</b><span>비용</span></li><li><b>45분</b><span>에이전트 시간</span></li></ul>
+<ul class="stats"><li><b>2</b><span>회차</span></li><li><b>1</b><span>프로젝트</span></li><li><b>0</b><span>배포 준비 완료</span></li><li><b>2</b><span>릴리즈 진행 중</span></li><li><b>0</b><span>병합 완료</span></li><li><b>0</b><span>검토 대기</span></li><li><b>0</b><span>검증 실패</span></li><li><b>0</b><span>변경 없음</span></li><li><b>0</b><span>실행 오류</span></li><li><b>$19.50</b><span>비용</span></li><li><b>54분</b><span>에이전트 시간</span></li></ul>
 
 ## 현황
 
 <dl class="kv">
 <dt>저장소</dt><dd><a href="https://github.com/hkjang/review.yeopjari.bid">https://github.com/hkjang/review.yeopjari.bid</a></dd>
-<dt>마지막 회차</dt><dd>2026-10-06 19:48 KST — <span class="pill pill-released">🚀 릴리즈</span> merged <a href="https://github.com/hkjang/review.yeopjari.bid/pull/1">PR #1</a>, released <a href="https://github.com/hkjang/review.yeopjari.bid/releases/tag/0.3.0">0.3.0</a></dd>
+<dt>마지막 회차</dt><dd>2026-10-14 08:50 KST — <span class="pill pill-released">🚀 릴리즈</span> merged <a href="https://github.com/hkjang/review.yeopjari.bid/pull/2">PR #2</a>, released <a href="https://github.com/hkjang/review.yeopjari.bid/releases/tag/0.7.4">0.7.4</a></dd>
 <dt>최근 릴리즈</dt><dd>released — released</dd>
 </dl>
 
 ## 회차 이력
 
-<div class="table-wrap"><table class="rt"><thead><tr><th>일시</th><th class="primary">프로젝트</th><th>결과</th></tr></thead><tbody><tr data-status="released"><td data-label="일시">2026-10-06 19:48</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/review.yeopjari.bid/">review.yeopjari.bid</a></td><td data-label="결과"><span class="pill pill-merged" title="outcome=releasing">릴리즈 진행 중</span> merged <a href="https://github.com/hkjang/review.yeopjari.bid/pull/1">PR #1</a>, released <a href="https://github.com/hkjang/review.yeopjari.bid/releases/tag/0.3.0">0.3.0</a><div class="meta">2파일 <span style="color:var(--good)">+197</span>/<span style="color:var(--bad)">−5</span> · 테스트 1 — 렌더되는 링크에서 루프백·사설·링크로컬 대역을 주석대로 실제로 막음</div></td></tr></tbody></table></div>
+<div class="table-wrap"><table class="rt"><thead><tr><th>일시</th><th class="primary">프로젝트</th><th>결과</th></tr></thead><tbody><tr data-status="released"><td data-label="일시">2026-10-14 08:50</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/review.yeopjari.bid/">review.yeopjari.bid</a></td><td data-label="결과"><span class="pill pill-merged" title="outcome=releasing">릴리즈 진행 중</span> merged <a href="https://github.com/hkjang/review.yeopjari.bid/pull/2">PR #2</a>, released <a href="https://github.com/hkjang/review.yeopjari.bid/releases/tag/0.7.4">0.7.4</a><div class="meta">2파일 <span style="color:var(--good)">+32</span>/<span style="color:var(--bad)">−4</span> · <em>테스트 없음</em> — 파트너 이름을 띄어쓰기까지 그대로 — 보여 줄 때 다듬던 입력란이 공백을 삼키던 것</div></td></tr><tr data-status="released"><td data-label="일시">2026-10-06 19:48</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/review.yeopjari.bid/">review.yeopjari.bid</a></td><td data-label="결과"><span class="pill pill-merged" title="outcome=releasing">릴리즈 진행 중</span> merged <a href="https://github.com/hkjang/review.yeopjari.bid/pull/1">PR #1</a>, released <a href="https://github.com/hkjang/review.yeopjari.bid/releases/tag/0.3.0">0.3.0</a><div class="meta">2파일 <span style="color:var(--good)">+197</span>/<span style="color:var(--bad)">−5</span> · 테스트 1 — 렌더되는 링크에서 루프백·사설·링크로컬 대역을 주석대로 실제로 막음</div></td></tr></tbody></table></div>
 
 ## 비용·사용량
 
-<div class="table-wrap"><table class="rt"><caption class="meta">최근 30세션</caption><thead><tr><th>시각</th><th class="primary">프로젝트</th><th>단계</th><th class="num">시간</th><th class="num">턴</th><th class="num">비용</th><th class="num">토큰 입력/출력</th><th>종료</th></tr></thead><tbody><tr data-status="other"><td data-label="시각">08:37</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/review.yeopjari.bid/">review.yeopjari.bid</a></td><td data-label="단계">비평</td><td data-label="시간" class="num">6분</td><td data-label="턴" class="num">37</td><td data-label="비용" class="num">$2.38</td><td data-label="토큰 입력/출력" class="num">2.3M / 21K</td><td data-label="종료">success</td></tr><tr data-status="other"><td data-label="시각">08:31</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/review.yeopjari.bid/">review.yeopjari.bid</a></td><td data-label="단계">개선</td><td data-label="시간" class="num">12분</td><td data-label="턴" class="num">62</td><td data-label="비용" class="num">$5.27</td><td data-label="토큰 입력/출력" class="num">6.1M / 39K</td><td data-label="종료">success</td></tr><tr data-status="other"><td data-label="시각">19:48</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/review.yeopjari.bid/">review.yeopjari.bid</a></td><td data-label="단계">릴리즈</td><td data-label="시간" class="num">7분</td><td data-label="턴" class="num">56</td><td data-label="비용" class="num">$3.09</td><td data-label="토큰 입력/출력" class="num">3.6M / 24K</td><td data-label="종료">success</td></tr><tr data-status="other"><td data-label="시각">19:37</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/review.yeopjari.bid/">review.yeopjari.bid</a></td><td data-label="단계">비평</td><td data-label="시간" class="num">5분</td><td data-label="턴" class="num">20</td><td data-label="비용" class="num">$1.40</td><td data-label="토큰 입력/출력" class="num">911K / 18K</td><td data-label="종료">success</td></tr><tr data-status="other"><td data-label="시각">19:32</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/review.yeopjari.bid/">review.yeopjari.bid</a></td><td data-label="단계">개선</td><td data-label="시간" class="num">10분</td><td data-label="턴" class="num">53</td><td data-label="비용" class="num">$3.63</td><td data-label="토큰 입력/출력" class="num">3.8M / 33K</td><td data-label="종료">success</td></tr><tr data-status="other"><td data-label="시각">19:22</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/review.yeopjari.bid/">review.yeopjari.bid</a></td><td data-label="단계">정찰</td><td data-label="시간" class="num">5분</td><td data-label="턴" class="num">24</td><td data-label="비용" class="num">$1.56</td><td data-label="토큰 입력/출력" class="num">934K / 18K</td><td data-label="종료">success</td></tr></tbody></table></div>
+<div class="table-wrap"><table class="rt"><caption class="meta">최근 30세션</caption><thead><tr><th>시각</th><th class="primary">프로젝트</th><th>단계</th><th class="num">시간</th><th class="num">턴</th><th class="num">비용</th><th class="num">토큰 입력/출력</th><th>종료</th></tr></thead><tbody><tr data-status="other"><td data-label="시각">08:50</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/review.yeopjari.bid/">review.yeopjari.bid</a></td><td data-label="단계">릴리즈</td><td data-label="시간" class="num">8분</td><td data-label="턴" class="num">40</td><td data-label="비용" class="num">$2.18</td><td data-label="토큰 입력/출력" class="num">2.3M / 17K</td><td data-label="종료">success</td></tr><tr data-status="other"><td data-label="시각">08:37</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/review.yeopjari.bid/">review.yeopjari.bid</a></td><td data-label="단계">비평</td><td data-label="시간" class="num">6분</td><td data-label="턴" class="num">37</td><td data-label="비용" class="num">$2.38</td><td data-label="토큰 입력/출력" class="num">2.3M / 21K</td><td data-label="종료">success</td></tr><tr data-status="other"><td data-label="시각">08:31</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/review.yeopjari.bid/">review.yeopjari.bid</a></td><td data-label="단계">개선</td><td data-label="시간" class="num">12분</td><td data-label="턴" class="num">62</td><td data-label="비용" class="num">$5.27</td><td data-label="토큰 입력/출력" class="num">6.1M / 39K</td><td data-label="종료">success</td></tr><tr data-status="other"><td data-label="시각">19:48</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/review.yeopjari.bid/">review.yeopjari.bid</a></td><td data-label="단계">릴리즈</td><td data-label="시간" class="num">7분</td><td data-label="턴" class="num">56</td><td data-label="비용" class="num">$3.09</td><td data-label="토큰 입력/출력" class="num">3.6M / 24K</td><td data-label="종료">success</td></tr><tr data-status="other"><td data-label="시각">19:37</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/review.yeopjari.bid/">review.yeopjari.bid</a></td><td data-label="단계">비평</td><td data-label="시간" class="num">5분</td><td data-label="턴" class="num">20</td><td data-label="비용" class="num">$1.40</td><td data-label="토큰 입력/출력" class="num">911K / 18K</td><td data-label="종료">success</td></tr><tr data-status="other"><td data-label="시각">19:32</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/review.yeopjari.bid/">review.yeopjari.bid</a></td><td data-label="단계">개선</td><td data-label="시간" class="num">10분</td><td data-label="턴" class="num">53</td><td data-label="비용" class="num">$3.63</td><td data-label="토큰 입력/출력" class="num">3.8M / 33K</td><td data-label="종료">success</td></tr><tr data-status="other"><td data-label="시각">19:22</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/review.yeopjari.bid/">review.yeopjari.bid</a></td><td data-label="단계">정찰</td><td data-label="시간" class="num">5분</td><td data-label="턴" class="num">24</td><td data-label="비용" class="num">$1.56</td><td data-label="토큰 입력/출력" class="num">934K / 18K</td><td data-label="종료">success</td></tr></tbody></table></div>
 
 ## 아이디어 백로그 — 대기 7 / 전체 9
 
@@ -61,6 +61,8 @@ last_modified_at: 2026-10-14 08:46:42 +0900
 - 실패 재현: `FAIL  파트너 이름: 띄어쓰기가 있는 이름을 그대로 입력 :: value="메가존클라우드"` / `FAIL  파트너 이름: 다 지워도 입력란이 남아 다시 쓸 수 있음`
 - 보류 아이디어: ① util/text.ts 나머지 순수 함수(mailboxKey·maskEmail·koreanParticle·excerpt·tidyBody) 단위 테스트 보강 [3/1/S] ② 일·월 쿼터의 window_start 가 KST 날짜를 UTC 자정으로 라벨링해 Retry-After 가 9시간 과장됨 [2/2/S, 신규] ③ clientIpFrom 이 cf-connecting-ip 빈 문자열에서 폴백하지 않음 [2/1/S] ④ e2e 상태 의존 검사 멱등성 — 이번 회차 관측으로는 dev-reset 직후 218/0 이라 "더러운 DB 에서만 실패" 가 확정됨 [3/2/M] ⑤ domain/products.ts 의 slugify 가 어디서도 쓰이지 않는 죽은 코드(한글 이름은 빈 슬러그가 됨) [1/1/S, 신규]
 - 과제서: 기각 — 정찰 과제서가 없었음(journal.md 에 러너 2줄뿐), 1~4단계를 직접 수행했다.
+
+- 릴리즈: 0.7.4 (2026-10-14, run 2026-10-14-081827-review.yeopjari.bid-improve)
 
 
 [← 대시보드](https://hkjang.github.io/aidev/) · [교훈 모음](https://hkjang.github.io/aidev/lessons/)

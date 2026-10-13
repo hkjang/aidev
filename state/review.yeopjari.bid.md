@@ -10,3 +10,4 @@
 - 보류 아이디어: ① util/text.ts 나머지 순수 함수(mailboxKey·maskEmail·koreanParticle·excerpt·tidyBody) 단위 테스트 보강 [3/1/S] ② 일·월 쿼터의 window_start 가 KST 날짜를 UTC 자정으로 라벨링해 Retry-After 가 9시간 과장됨 [2/2/S, 신규] ③ clientIpFrom 이 cf-connecting-ip 빈 문자열에서 폴백하지 않음 [2/1/S] ④ e2e 상태 의존 검사 멱등성 — 이번 회차 관측으로는 dev-reset 직후 218/0 이라 "더러운 DB 에서만 실패" 가 확정됨 [3/2/M] ⑤ domain/products.ts 의 slugify 가 어디서도 쓰이지 않는 죽은 코드(한글 이름은 빈 슬러그가 됨) [1/1/S, 신규]
 - 과제서: 기각 — 정찰 과제서가 없었음(journal.md 에 러너 2줄뿐), 1~4단계를 직접 수행했다.
 
+- 릴리즈: 0.7.4 (2026-10-14, run 2026-10-14-081827-review.yeopjari.bid-improve)
