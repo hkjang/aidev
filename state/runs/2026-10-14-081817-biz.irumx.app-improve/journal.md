@@ -29,3 +29,4 @@
 - [러너 08:31] pr created — https://github.com/hkjang/biz.irumx.app/pull/3
 - [러너 08:41] ci passed — 검사 1개 모두 success
 - [러너 08:41] merge done — 7a92754
+- [러너 08:46] release published — 0.1.3
