@@ -1,0 +1,27 @@
+# 이룸비즈 (biz.irumx.app) 프로필 (2026-10-14)
+- 목적: 중소기업의 조직·전자결재·업무·영업·재무·보조원장을 연결하고 화면·AI·MCP 에서 같은 권한으로 처리하는 그룹웨어·ERP.
+- 스택: Node 22+, TypeScript ESM/npm workspaces, React 19·Mantine 9·Vite, PostgreSQL 16; 운영은 Supabase PostgreSQL·Cloudflare Pages/Functions·Hyperdrive(공유 게이트웨이 역할 irumx_gateway → 트랜잭션마다 biz_app 전환)·R2·Workers AI.
+- 구조:
+  - `packages/core/src`: 공통 HTTP 파이프라인(`http/respond.ts` 의 `redirect`/오류 응답)·라우터·도메인·API. Node/Workers 공유.
+  - `packages/core/src/auth`, `packages/core/src/routes/sso.ts`: OAuth(옆자리)·세션·테넌트·콘솔 인증. 복귀 경로 가드 `safeNext`, 봉인된 flow 쿠키.
+  - `packages/core/src/util`: `validate.ts`(v.day/money/decimal 등 입력 검증), `text.ts`, `time.ts`(KST 경계·백오프), `crypto.ts`.
+  - `apps/web/src`: React 화면. `lib/format.ts`(krw/krwShort/relative), `lib/nav.ts`(safeNext 사본), `components/Markdown.ts`(safeHref).
+  - `apps/server`: 로컬 Node 서버·정적 파일. `db/migrations`: SQL(조직/RLS·결재 엔진·불변 원장·업무·메일 알림).
+  - `functions`, `workers/scheduler`: Pages 진입과 5분 주기 작업. `scripts`, `fixtures`: 개발 DB·가짜 OAuth/AI·e2e·배포 도구. `docs`: requirements/architecture/security/auth-integration/deployment/operations/생성 API 목록.
+- 빌드·테스트:
+  - 체크아웃에 node_modules 가 없다 → `npm ci --no-audit --fund=false` 먼저(ESLint 지원 종료 경고 1건은 정상).
+  - `npm run check` = `eslint .` + 세 워크스페이스 tsc + `vitest run`(2026-10-14 기준 82개 시험).
+  - 파일 지정: `npm test -- packages/core/src/__tests__/domain.test.ts`. vitest include 는 `packages/**/*.test.ts`·`apps/**/*.test.ts`, environment 는 **node**(DOM 없음), testTimeout 20s.
+  - `npm run build`(웹 Vite + 서버), `npm run routes`(API 문서 재생성 — route-catalogue 시험이 docs/api-routes.md·openapi.yaml 과 실제 라우터 일치를 검사).
+  - `npm run e2e`/`ui`/`screens`/`a11y`: 실제 PostgreSQL + 로컬 서버 + fake OAuth/AI + Playwright Chromium 필요(CI 최대 30분). 읽기 전용 정찰에서는 돌리지 않음.
+- 관례: 커밋 메시지는 한국어 설명형(`영역: 무엇을 왜`). 시험은 `packages/core/src/__tests__/*.test.ts` 와 소스 옆(`apps/web/src/lib/format.test.ts`). core 내부 import 는 `.js` 확장자(`../routes/sso.js`). 설정은 `.env.example`/`.env.dev`·런타임 바인딩. SQL 적용은 `npm run migrate`(소유자 DATABASE_URL). 저장소 내 CLAUDE.md/AGENTS.md/로드맵 파일 없음. 버전은 `VERSION`(현재 0.1.2).
+- 위험 구역: `routes/sso.ts`·`auth/*`(세션·테넌트·RLS), `db/migrations`(결재 엔진·불변 원장), finance 쓰기 경로, 공유 운영 DB·Hyperdrive·`.github/workflows`. 운영 배포는 수동 승인.
+- 자주 깨지는 곳(교훈):
+  - 같은 역할의 작은 파서·가드가 여러 경로에 중복돼 있다(`safeNext` 2곳, 금액·날짜 포맷 2곳). 운영자 지시: 통합하지 말고 좁히는 방향으로만 고친다.
+  - 경계 반올림이 반복 결함원이다(`krwShort` 의 억/만 분기, `relative` 의 단계별 Math.round). 음수는 `Math.round` 의 동점 처리(+∞ 방향) 때문에 양수와 비대칭이 된다 — 크기 반올림 후 부호 재부착이 이 저장소에서 통한 형태.
+  - 링크/경로 가드는 역슬래시·제어문자 변형에서 샌다(2026-10-07 Markdown safeHref 수정). 고칠 때는 허용 조건을 좁히는 쪽으로.
+- 검증 함정:
+  - vitest environment 가 node 라 DOM 이 필요한 코드(`lib/download.ts` 의 copyText/saveBytes)는 시험할 수 없다. jsdom 추가는 의존성 변경이라 회차 범위 밖.
+  - 워크스페이스 경계를 넘는 import 는 tsc 가 워크스페이스별로 돌아 깨진다 — 시험 케이스 표를 공용 모듈로 빼지 말고 각 워크스페이스에 복제.
+  - DB·OAuth·브라우저가 필요한 경로(원장 CSV 의 csvCell, 손익 기간 검증)는 한 세션에 증명하기 어렵다.
+  - 운영자 지시: 손으로 만든 대역·소스 문자열 검사를 증거로 삼지 말고 프로덕션 배선을 지나는 실행 시험으로 증명하고, 최종 출력까지 효과가 남는지 확인할 것.

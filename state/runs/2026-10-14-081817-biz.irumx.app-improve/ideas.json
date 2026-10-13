@@ -1,0 +1,83 @@
+[
+  {
+    "title": "로그인 복귀 경로 가드 safeNext 의 회귀 시험과 두 사본 일치 고정",
+    "value": 4,
+    "risk": 1,
+    "size": "S",
+    "status": "done",
+    "note": "2026-10-14 구현(커밋 7a92754). packages/core/src/__tests__/domain.test.ts 에 15개 케이스 표 + apps/web/src/lib/nav.test.ts 신규(같은 표 복제 + undefined 1건). 프로덕션 변경 0파일. 가드 변이 3회로 시험이 실제 조건을 보는 것을 증명. 탭 문자 케이스는 지시대로 제외 — 지금 통과하지만 올바른 동작인지 미확인이라 계약으로 못 박지 않았다.",
+    "updated": "2026-10-14"
+  },
+  {
+    "title": "달력 날짜 검증 v.day 의 윤년·월말 회귀 시험 보강",
+    "value": 3,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "이번 회차 차선 후보. validate.ts:216 의 v.day 는 /^\\d{4}-\\d{2}-\\d{2}$/ + ISO 왕복 + 2000~2100 범위로 동작. domain.test.ts 에 경계 시험이 없어 2024-02-29 통과 / 2023-02-29·2026-04-31·2026-02-30 거절 / 2026-1-1·20260101 형식 거절 / 1999-12-31·2101-01-01 범위 거절, 2000-01-01·2100-12-31 통과만 고정하면 된다. 프로덕션 변경 없고 DB 불필요 — 다음 회차 유력.",
+    "updated": "2026-10-14"
+  },
+  {
+    "title": "원장 CSV 수식 중립화와 인용 처리의 API 회귀 시험",
+    "value": 3,
+    "risk": 2,
+    "size": "M",
+    "status": "pending",
+    "note": "유지. csvCell 은 비공개 함수라 ctx.sql·권한·감사를 지나는 e2e 가 필요하고 DB·원장 fixture 비용이 커서 한 세션에 안 끝난다. 취약점 수정이 아니라 계약 고정 가치뿐.",
+    "updated": "2026-10-14"
+  },
+  {
+    "title": "클립보드 복사 폴백 예외 시 textarea 정리",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "유지. download.ts:15 copyText 의 execCommand('copy') 가 throw 하면 area.remove() 에 도달하지 못해 opacity:0 fixed textarea 가 DOM 에 남는다. vitest environment 가 node 라 DOM 시험 환경이 없고(jsdom 추가는 의존성 변경), 손으로 만든 document 대역으로 증명하는 것은 운영자 지시에 어긋난다.",
+    "updated": "2026-10-14"
+  },
+  {
+    "title": "상대 시간 표기 relative 의 분·시·일 경계와 미래 시각 처리",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "유지. format.ts:46 relative 은 단계마다 Math.round 라 59분30초가 '1시간 전', 23시간30분이 '1일 전' 이 되고 '60분 전' 은 나오지 않으며 미래 시각은 모두 '방금'. 제품이 원한 반올림인지 미확인 — 요구를 단정해 고치지 말 것.",
+    "updated": "2026-10-14"
+  },
+  {
+    "title": "프로젝트 손익 조회의 from/to 역순 검증 누락",
+    "value": 2,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "유지. finance.ts 의 period() 는 to < from 을 막지만 프로젝트 손익 라우트는 각각 parseOne(v.day) 로만 받아 역순에서 빈 집합·0원 손익을 정상 응답으로 낸다. period() 로 교체하면 기본값 의미가 달라지고 증명에 API e2e(DB) 가 필요.",
+    "updated": "2026-10-14"
+  },
+  {
+    "title": "krwShort 의 10억 이상 표기가 '10.0억' 으로 소수점을 남기는 문제",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "유지. format.ts:16 의 man>=10000 에서 (man/10000).toFixed(1) 이라 999,950,000원이 '10.0억'. 조·십억 단위 표기 정책이 제품에 정의돼 있는지 미확인이라 단정해 고치지 말 것.",
+    "updated": "2026-10-14"
+  },
+  {
+    "title": "v.money / v.decimal 이 '0x10'·'1e5' 같은 문자열을 Number() 로 받아들이는 관용성",
+    "value": 1,
+    "risk": 2,
+    "size": "S",
+    "status": "rejected",
+    "note": "기각. validate.ts:234/251 의 Number(value.replace(/[,\\s]/g,'')) 라 '0x10'→16, '1e5'→100000 이 통과하지만 값은 수치로 잘 정의되고 주입 위험이 없다. 좁히면 '1,000'·'1 000' 같은 정상 입력이나 지수 표기를 쓰는 화면이 깨질 수 있어 가치보다 위험이 크다.",
+    "updated": "2026-10-14"
+  },
+  {
+    "title": "safeNext 가 탭·제어문자를 포함한 경로를 통과시키는 것의 실제 영향 확인",
+    "value": 2,
+    "risk": 3,
+    "size": "M",
+    "status": "pending",
+    "note": "신규(이번 회차에 일부러 시험에서 제외한 부분). '/\\t/evil.com'(실제 탭) 은 safeNext 를 통과한다. 서버 최종 복귀는 sso.ts:302 의 new URL(flow.next_path, publicUrl) 뒤 target.pathname + target.search 만 쓰므로 외부 출처로 나가지 않는 것으로 읽히지만 브라우저 실행 확인은 안 됐다. 화면 사본(nav.ts)의 소비자가 이 값을 그대로 location 에 넣는지도 확인이 필요. 가드를 좁히는 것은 로그인 경로 변경이라 위험 3 — 먼저 e2e 로 실제 영향을 확인한 뒤에만 손댈 것.",
+    "updated": "2026-10-14"
+  }
+]
