@@ -1,15 +1,16 @@
-# 열린 러너 PR (2026-10-13 04:45 기준)
+# 열린 러너 PR (2026-10-13 11:15 기준)
 
+- [오래됨] sqlon #16 (10일) https://github.com/hkjang/sqlon/pull/16 — auto-improve: ci: 러너가 돌리는 build·vet·test·크로스빌드를 GitHub Actions 로 옮깁니다
 - [오래됨] ox-arena #1 (10일) https://github.com/hkjang/ox-arena/pull/1 — auto-improve: test: add Vitest and regression tests for pure game logic
-- [오래됨] mmcp #1 (10일) https://github.com/hkjang/mmcp/pull/1 — auto-improve: fix: make `npm test` work from a clean checkout and pin the Node that runs vitest
-- [오래됨] qurio #30 (11일) https://github.com/hkjang/qurio/pull/30 — auto-improve: ci: stop the integration gate from passing on cached test results
-- [오래됨] vibe-code #14 (11일) https://github.com/hkjang/vibe-code/pull/14 — auto-improve: fix: 감사 exitCode 누락을 세 읽기 경로가 같은 술어로 읽는다
+- [오래됨] mmcp #1 (11일) https://github.com/hkjang/mmcp/pull/1 — auto-improve: fix: make `npm test` work from a clean checkout and pin the Node that runs vitest
+- [오래됨] qurio #30 (12일) https://github.com/hkjang/qurio/pull/30 — auto-improve: ci: stop the integration gate from passing on cached test results
+- [오래됨] vibe-code #14 (12일) https://github.com/hkjang/vibe-code/pull/14 — auto-improve: fix: 감사 exitCode 누락을 세 읽기 경로가 같은 술어로 읽는다
 - [오래됨] qurio #29 (13일) https://github.com/hkjang/qurio/pull/29 — auto-improve: fix(sqlsafe): allow unqualified PostgreSQL alias column lists
-- [오래됨] moina #36 (13일) https://github.com/hkjang/moina/pull/36 — auto-improve: fix: CI image 잡이 실패하면 깨진 e2e 화면·route를 job summary에 적습니다
+- [오래됨] moina #36 (14일) https://github.com/hkjang/moina/pull/36 — auto-improve: fix: CI image 잡이 실패하면 깨진 e2e 화면·route를 job summary에 적습니다
 - [오래됨] goalforge #7 (15일) https://github.com/hkjang/goalforge/pull/7 — auto-improve: Keep AI commits attributable when the environment sets a git identity
 - [오래됨] jasql #9 (16일) https://github.com/hkjang/jasql/pull/9 — auto-improve: add a gofmt gate to CI and clear the existing drift
 - [오래됨] sqlon #15 (16일) https://github.com/hkjang/sqlon/pull/15 — auto-improve: ci: GitHub Actions 워크플로로 빌드·정적분석·테스트를 자동 실행합니다
-- [오래됨] qurio #22 (16일) https://github.com/hkjang/qurio/pull/22 — auto-improve: fix(test): close integration pools via t.Cleanup so fixture deletes still run
+- [오래됨] qurio #22 (17일) https://github.com/hkjang/qurio/pull/22 — auto-improve: fix(test): close integration pools via t.Cleanup so fixture deletes still run
 - [오래됨] sqlon #14 (17일) https://github.com/hkjang/sqlon/pull/14 — auto-improve: fix(mcp): GET /api/metrics 에 인증을 요구해 DB 프로파일 인벤토리 노출을 막습니다
 - [오래됨] moina #32 (17일) https://github.com/hkjang/moina/pull/32 — auto-improve: fix: CI image 잡이 실패하면 깨진 e2e 화면·route를 job summary에 적습니다
 - [오래됨] hunter #11 (17일) https://github.com/hkjang/hunter/pull/11 — auto-improve: fix: select release notes by minor series instead of an open-ended comparison
@@ -18,24 +19,24 @@
 - [오래됨] appstore #30 (19일) https://github.com/hkjang/appstore/pull/30 — auto-improve: fix: count and page the favorites view by what it shows
 - [오래됨] vibe-coders #23 (19일) https://github.com/hkjang/vibe-coders/pull/23 — auto-improve: build(web): accept a forwarded quiet flag in the tsc and vite scripts
 - [오래됨] jasql #4 (20일) https://github.com/hkjang/jasql/pull/4 — auto-improve: fix eval verbose status for cases with missing diagnostics
-- [오래됨] SecCheck #15 (20일) https://github.com/hkjang/SecCheck/pull/15 — auto-improve: Reject non-string MCP review report filters
+- [오래됨] SecCheck #15 (21일) https://github.com/hkjang/SecCheck/pull/15 — auto-improve: Reject non-string MCP review report filters
 - [오래됨] muni #22 (21일) https://github.com/hkjang/muni/pull/22 — auto-improve: fix: DOCX 신규 가져오기에서 제목과 같은 첫 H1 제거
 - [오래됨] git-ctx #35 (21일) https://github.com/hkjang/git-ctx/pull/35 — auto-improve: fix(contentsecurity): preserve YAML list siblings when masking block scalars
-- [오래됨] visitflow #21 (21일) https://github.com/hkjang/visitflow/pull/21 — auto-improve: fix(import): warn about duplicate headers and selected columns
-- [오래됨] sqlon #10 (21일) https://github.com/hkjang/sqlon/pull/10 — auto-improve: fix(mcp): 비동기 잡 조회·취소에도 결과 만료를 적용합니다
+- [오래됨] visitflow #21 (22일) https://github.com/hkjang/visitflow/pull/21 — auto-improve: fix(import): warn about duplicate headers and selected columns
+- [오래됨] sqlon #10 (22일) https://github.com/hkjang/sqlon/pull/10 — auto-improve: fix(mcp): 비동기 잡 조회·취소에도 결과 만료를 적용합니다
 - [오래됨] muni #21 (22일) https://github.com/hkjang/muni/pull/21 — auto-improve: fix: 워크스페이스 ZIP에서 목록 파일과 동명 문서의 충돌을 막습니다
 - [오래됨] jasql #2 (22일) https://github.com/hkjang/jasql/pull/2 — auto-improve: Reject invalid calendar dates in time expressions
 - [오래됨] git-ctx #33 (22일) https://github.com/hkjang/git-ctx/pull/33 — auto-improve: fix(contentsecurity): preserve curl command when masking credentials
 - [오래됨] sqlon #9 (22일) https://github.com/hkjang/sqlon/pull/9 — auto-improve: fix(mcp): 프로파일 카탈로그 조회 인증과 사용자 권한을 연결합니다
 - [오래됨] muni #20 (22일) https://github.com/hkjang/muni/pull/20 — auto-improve: fix: HTML 파일을 가져올 때도 제목과 같은 첫 H1 은 본문에서 뺍니다
-- [오래됨] git-ctx #32 (22일) https://github.com/hkjang/git-ctx/pull/32 — auto-improve: fix(contentsecurity): leave a variable reference in a credential's place alone
+- [오래됨] git-ctx #32 (23일) https://github.com/hkjang/git-ctx/pull/32 — auto-improve: fix(contentsecurity): leave a variable reference in a credential's place alone
 - [오래됨] sqlon #8 (23일) https://github.com/hkjang/sqlon/pull/8 — auto-improve: feat(mcp): REST 감사 항목에 인증 사용자를 actor 로 기록합니다
 - [오래됨] AgentHub #29 (24일) https://github.com/hkjang/AgentHub/pull/29 — auto-improve: fix: the trail filed whatever sample the Pod put in a DLP report
-- [오래됨] orbit #6 (24일) https://github.com/hkjang/orbit/pull/6 — auto-improve: feat(mcp): 개인 키 없이 Keycloak 액세스 토큰으로 /mcp 에 들어올 수 있게 한다
+- [오래됨] orbit #6 (25일) https://github.com/hkjang/orbit/pull/6 — auto-improve: feat(mcp): 개인 키 없이 Keycloak 액세스 토큰으로 /mcp 에 들어올 수 있게 한다
 - [오래됨] jupiq #18 (25일) https://github.com/hkjang/jupiq/pull/18 — auto-improve: docs: 관리자·사용자 가이드에 MCP SSO(OAuth) 설정과 연결 방법을 더한다
 - [오래됨] Kkiit #6 (25일) https://github.com/hkjang/Kkiit/pull/6 — auto-improve: feat: /mcp 를 Keycloak 액세스 토큰(OAuth 2.1)으로도 열다 — 키 체계는 그대로
-- [오래됨] sqlon #6 (25일) https://github.com/hkjang/sqlon/pull/6 — auto-improve: fix(mcp): REST 변경 관리 승인·감사 행위자를 인증 사용자로 기록합니다
-- [오래됨] releasedock #17 (25일) https://github.com/hkjang/releasedock/pull/17 — auto-improve: chore: run gofmt and go vet before the tests in CI and make test
+- [오래됨] sqlon #6 (26일) https://github.com/hkjang/sqlon/pull/6 — auto-improve: fix(mcp): REST 변경 관리 승인·감사 행위자를 인증 사용자로 기록합니다
+- [오래됨] releasedock #17 (26일) https://github.com/hkjang/releasedock/pull/17 — auto-improve: chore: run gofmt and go vet before the tests in CI and make test
 - [오래됨] git-ctx #29 (26일) https://github.com/hkjang/git-ctx/pull/29 — auto-improve: fix(contentsecurity): keep the line break an Authorization header folds on
 - [오래됨] invenqor #22 (26일) https://github.com/hkjang/invenqor/pull/22 — auto-improve: feat: an MCP relation names both of its ends instead of two UUIDs
 - [오래됨] umm #158 (26일) https://github.com/hkjang/umm/pull/158 — auto-improve: Tell the people who are waiting, through the company relay
@@ -46,5 +47,5 @@
 - [오래됨] qurio #13 (28일) https://github.com/hkjang/qurio/pull/13 — auto-improve: feat: hand saved CSV results to other intranet services with single-use claims
 - [오래됨] sqlon #2 (28일) https://github.com/hkjang/sqlon/pull/2 — auto-improve: feat(auth): Keycloak 세션이 있으면 로그인 화면 없이 들어오는 silent SSO(prompt=none)를 추가합니다
 - [오래됨] trace #1 (28일) https://github.com/hkjang/trace/pull/1 — auto-improve: feat(auth): add silent SSO auto-login via OIDC prompt=none
-- [오래됨] DartFly #4 (28일) https://github.com/hkjang/DartFly/pull/4 — auto-improve: feat: 저장 결과를 다른 사내 서비스로 넘기기 (HANDOFF 표준 보내는 쪽, csv)
-- [오래됨] madi #2 (28일) https://github.com/hkjang/madi/pull/2 — auto-improve: feat: add admin-configured visitor tracking snippet with nonce CSP
+- [오래됨] DartFly #4 (29일) https://github.com/hkjang/DartFly/pull/4 — auto-improve: feat: 저장 결과를 다른 사내 서비스로 넘기기 (HANDOFF 표준 보내는 쪽, csv)
+- [오래됨] madi #2 (29일) https://github.com/hkjang/madi/pull/2 — auto-improve: feat: add admin-configured visitor tracking snippet with nonce CSP
