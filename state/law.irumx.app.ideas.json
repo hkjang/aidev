@@ -1,29 +1,47 @@
 [
   {
-    "title": "PR #5 CI 실패 원인 확정 후 저장소 안이면 수정 (우선 과제)",
-    "value": 4,
-    "risk": 2,
-    "size": "S",
-    "status": "rejected",
-    "note": "저장소 밖으로 확정 — 고칠 코드 없음. 네 번째 회차에서도 `gh auth status` 미인증이라 로그 직접 조회는 불가했으나, 세 회차의 증거가 일치한다: PR #5(ffd2bf6) `check` 잡이 3초에 끝나고 실패 로그가 비어 npm ci 에도 닿지 못했고(131017·144314 수리 노트), 동일 신호였던 PR #4 잡 115634810274 의 체크런 주석 원문이 보존돼 있다 — 'The job was not started because recent account payments have failed or your spending limit needs to be increased. Please check the Billing & plans section in your settings'(110037/fix-summary.md:3). 사람이 Billing & plans 를 풀고 같은 커밋으로 재실행하는 것 외에 에이전트가 할 일이 없다. 정찰이 배제한 가설 2개도 그대로 유효(existsSync 는 acceptance.mjs:15 에 import 되어 있고, 양성 대조 정규식은 mailer.ts:71 + maskAddress 출력과 맞는다).",
-    "updated": "2026-10-14"
-  },
-  {
-    "title": "util/validate.ts 경계 테스트 (string·text·int·optional 네 개부터)",
+    "title": "env.ts loadEnv 전반 특성화 테스트 집합 (DB URL 별칭·키 3종·서명 키·publicUrl 파싱·bool/enumOf 표)",
     "value": 3,
     "risk": 1,
     "size": "M",
     "status": "done",
-    "note": "신규 packages/core/src/__tests__/validate-boundaries.test.ts 90건. parseOne/parse 를 실제로 호출하는 특성화 테스트로 현재 계약만 기록(프로덕션 0파일, 검증기 무변경). 고정한 것: string 은 trim 후 UTF-16 단위 길이, text 는 원문 보존 + 코드포인트 길이 + CR/제어문자 정규화 + min:0 의 '' 반환, int 는 Number() 강제변환(0x10→16, 1e3→1000, '' 거부), optional 은 '' 만 부재로 보고 공백 문자열은 내부 검증기로 넘김. 오류 메시지는 eul/eun 조사까지 문자열 그대로. 돌연변이 10건이 각각 1~8건을 실패시켜 프로덕션 경로 통과를 증명. npm run check 통과(7 files / 193 tests, 646 warnings 유지).",
+    "note": "이번 회차 구현. 신규 packages/core/src/__tests__/env-loading.test.ts 104건, 프로덕션 0파일. 돌연변이 20건 중 19건이 잡혔다. 살아남은 1건은 env.ts:119 parsed.hostname.toLowerCase() — URL 파서가 이미 호스트를 정규화하므로 중복 호출(동작 변경이라 제거하지 않고 주석에 기록).",
     "updated": "2026-10-14"
   },
   {
-    "title": "v 객체 남은 8개 멤버(uuid·email·instant·oneOf·array·object·json·bool) 경계 테스트",
+    "title": "dev 파생 키의 purpose 분리를 실제로 적용 — 현재 session/secrets/match 세 키가 바이트까지 동일",
+    "value": 3,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "신규 — 이번 회차에 실측으로 발견. env.ts:210 의 시드 접두사 'law-development-key-do-not-use-in-production:' 가 45자인데 :212 의 루프가 i 를 0..31 만 돌아 seed.charCodeAt(i) 가 전부 공통 접두사 안에 떨어진다 → purpose 인자가 출력 바이트에 한 번도 닿지 못하고 세 키 모두 6c7e4970…8fa8. Env 타입이 'purpose-separated keys' 라고 부르는데 dev 에서는 분리가 없다. 운영은 키 3종을 명시하지 않으면 기동을 거부하므로 dev 한정이고 운영 취약점은 아니다. 고치면 기존 dev DB 의 봉인 데이터(secrets·flow 쿠키·match 해시)가 읽히지 않게 되므로 dev:reset 전제를 확인할 것 — env-loading.test.ts 의 'derives one shared key for all three dev purposes' 가 뒤집어야 하는 단 하나의 기대값이다.",
+    "updated": "2026-10-14"
+  },
+  {
+    "title": "loadEnv 의 잘못된 LAW_PUBLIC_URL 을 EnvError 로 감싸기",
+    "value": 2,
+    "risk": 3,
+    "size": "S",
+    "status": "pending",
+    "note": "env.ts:116 의 new URL(publicUrl) 이 던지면 EnvError 가 아닌 TypeError 가 올라가 워커 기동 실패 원인이 불명확해지고, EnvError 를 잡아 읽을 수 있는 오류를 내는 호출자가 이것은 못 잡는다. 이번 회차의 특성화 테스트가 현재 동작('throws a TypeError rather than an EnvError' 4케이스)을 고정했으므로 이제 안전해졌다 — 그 기대값을 뒤집는 것이 변경의 전부가 되게 할 수 있다. 다만 상위 호출자(apps/server, functions/[[path]])의 오류 처리를 아직 읽지 않았다 — 먼저 호출자 조사.",
+    "updated": "2026-10-14"
+  },
+  {
+    "title": "v 검증기 남은 멤버 경계 테스트 — oneOf·bool·json 세 개만",
+    "value": 3,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "이번 회차 차선 후보였으나 과제서 본안을 채택해 미착수. PR #6 의 validate-boundaries.test.ts 가 미머지라 string·text·int·optional 과 파일명(validate-enum-json.test.ts 를 쓸 것)·멤버를 겹치지 말 것. oneOf 는 목록 7개 이상이면 값을 메시지에 넣지 않고(:171), json 은 undefined 를 null 로 바꾼다(:217) — 줄 번호는 앞 회차 인용이고 이번에도 재확인하지 않음(미확인).",
+    "updated": "2026-10-14"
+  },
+  {
+    "title": "v 객체 남은 8개 멤버(uuid·email·instant·oneOf·array·object·json·bool) 전체 경계 테스트",
     "value": 3,
     "risk": 1,
     "size": "M",
     "status": "pending",
-    "note": "신규. validate-boundaries.test.ts 가 씨앗이고 run() 헬퍼를 재사용하면 된다. 주목할 자리: email 의 EMAIL_RE(:50)는 보수적이라 254자 상한과 점 있는 도메인을 요구하고 uuid 는 소문자로 되돌리며(:132), oneOf 는 목록이 7개 이상이면 값을 메시지에 넣지 않고(:171), array 는 min 기본값 0 이고 실패한 항목만 빼고 나머지를 돌려주며(:191), object 는 배열을 거부하고(:201) json 은 undefined 를 null 로 바꾼다(:217). instant 는 new Date(value) 라 '2026-13-01' 같은 값의 판정이 엔진 의존 — 그 한 건만 조심. 검증기는 넓히지 말고 기록만.",
+    "note": "instant 는 new Date(value) 라 '2026-13-01' 판정이 엔진 의존 — 그 한 건만 조심. 검증기는 넓히지 말고 기록만. PR #6 머지 후 한 파일로 하는 편이 깔끔하다.",
     "updated": "2026-10-14"
   },
   {
@@ -32,7 +50,7 @@
     "risk": 3,
     "size": "S",
     "status": "pending",
-    "note": "PR #5 가 넣은 대조는 server.log 전체를 보는데, CI 에서 그 파일은 서버 기동 단계부터 누적되고 e2e 단계가 이미 메일을 보낸다 — acceptance 가 메일을 한 통도 안 보내도 e2e 가 남긴 줄로 통과한다. acceptance 시작 시점의 파일 크기를 기억해 그 뒤 꼬리만 훑는 방향. 조이는 변경이지만 CI 를 빨갛게 만들 위험이 있어 PR #5 가 머지된 뒤 별도 회차로. DB·서버 필요.",
+    "note": "check.yml:66 이 server.log 를 서버 기동부터 누적하고 :70 e2e 가 먼저 메일을 보내므로, acceptance 가 메일을 한 통도 안 보내도 양성 대조가 e2e 가 남긴 줄로 통과한다(이번 회차에도 워크플로를 직접 읽어 재확인: :62-68 기동, :69-70 e2e, :71-77 acceptance 가 같은 server.log 를 공유). acceptance 시작 시점의 파일 크기를 기억해 꼬리만 훑는 방향. 조이는 변경이지만 DB·서버 필요 + CI 를 빨갛게 만들 위험 — Actions 결제가 풀린 뒤 별도 회차로.",
     "updated": "2026-10-14"
   },
   {
@@ -41,16 +59,7 @@
     "risk": 2,
     "size": "M",
     "status": "pending",
-    "note": "after-commit 작업 실패가 stderr 한 줄뿐이고 request_id 가 없어 어느 요청의 후속 작업이 깨졌는지 알 수 없다. 호출자 2곳(pipeline.ts:208/:411). 경보까지 붙이면 record_error_alert 창을 건드려 M. 미머지 브랜치의 background-redact.test.ts 가 출력 형식을 고정하므로 필드 추가 시 같이 갱신.",
-    "updated": "2026-10-14"
-  },
-  {
-    "title": "env.ts loadEnv 전반 단위 테스트 집합",
-    "value": 3,
-    "risk": 1,
-    "size": "M",
-    "status": "pending",
-    "note": "env-mock-providers.test.ts 의 prodRaw() 헬퍼 재사용. 남은 것: LAW_DATABASE_URL 없음, LAW_SIGNING_KEY 없음, 32바이트 아닌 키, dev 키, publicUrl 파싱. loadEnv 는 던지면 워커가 기동 못 하는 곳이라 조건을 넓히지 말고 현재 동작만 고정.",
+    "note": "after-commit 작업 실패가 stderr 한 줄뿐이고 request_id 가 없다. 호출자 2곳(pipeline.ts:208/:411). 미머지 브랜치의 background-redact.test.ts 가 출력 형식을 고정하므로 그 PR 머지 후에 할 것 — 지금 하면 충돌한다.",
     "updated": "2026-10-14"
   },
   {
@@ -59,7 +68,7 @@
     "risk": 2,
     "size": "M",
     "status": "pending",
-    "note": "'없음' 을 단언하는 검사가 대상 자체를 못 읽어도 통과하는 자리 찾기. 후보: mails() 기반 검사(AT-19/AT-26), 파일 없으면 통과하는 증빙·내보내기 검사(AT-11/AT-20/AT-24), count=0 이 곧 '없음' 인 adminSql 검사. 조이는 방향 전용, 먼저 조사만. DB·서버 필요.",
+    "note": "'없음' 을 단언하는 검사가 대상 자체를 못 읽어도 통과하는 자리 찾기. 후보: mails() 기반 검사(AT-19/AT-26), 파일 없으면 통과하는 증빙·내보내기 검사(AT-11/AT-20/AT-24), count=0 이 곧 '없음' 인 adminSql 검사. 조사만 먼저. DB·서버 필요.",
     "updated": "2026-10-14"
   },
   {
@@ -77,7 +86,7 @@
     "risk": 2,
     "size": "L",
     "status": "pending",
-    "note": "packages/core/src 16,790줄에 __tests__ 는 소수. 한 회차로는 불가 — modules/forms.ts 의 단계·조건 평가부터.",
+    "note": "packages/core/src 16,790줄에 __tests__ 는 이제 7개 파일. 한 회차로는 불가 — modules/forms.ts 의 단계·조건 평가부터 쪼갤 것.",
     "updated": "2026-10-14"
   },
   {
@@ -90,12 +99,12 @@
     "updated": "2026-10-14"
   },
   {
-    "title": "주민번호 패턴의 과잉 차단을 좁힐지 판단",
-    "value": 2,
-    "risk": 3,
+    "title": "PR #6 / #5 / #4 의 CI 실패 — 저장소 밖(Actions 결제·지출한도)",
+    "value": 5,
+    "risk": 1,
     "size": "S",
-    "status": "pending",
-    "note": "사람 판단 대기. 운영자의 '넓히지 말고 좁히는 방향만' 지시와 방향이 반대고, 좁히면 실제 주민번호를 놓칠 위험. acceptance 쪽 RRN 정규식이 이미 더 좁다 — 두 파서를 통합하려 들지 말 것.",
+    "status": "rejected",
+    "note": "코드로 고칠 수 없어 기각(여섯 회차 연속 같은 신호). 이번 회차에 .github/workflows/check.yml 을 다시 읽어 저장소 쪽 원인 없음을 재확인: 첫 run step(:44-50)이 apt-get update && apt-get install postgresql-client-17 이라 어느 step 이든 들어갔으면 3초를 넘는다. YAML 유효, 액션 세 개 모두 현행, continue-on-error·조기 종료 경로 없음. 보존된 체크런 주석 원문: 'The job was not started because recent account payments have failed or your spending limit needs to be increased'. 사람이 GitHub Billing & plans 에서 복구한 뒤 같은 커밋을 재실행하면 된다 — 175134 회차가 CI 순서를 로컬 docker 로 끝까지 돌려(npm ci → check → build → migrate 13건 → rls-probe exit 0 → e2e 27/27 → acceptance 26/26) 코드 무결을 이미 증명했다. 워크플로를 느슨하게 고쳐 초록을 만드는 것은 금지.",
     "updated": "2026-10-14"
   }
 ]
