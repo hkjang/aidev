@@ -68,3 +68,11 @@
   - canonical URL과 실제 HTML 경로 불일치 감지 (가치 3 / 위험 1 / 작업량 S)
 - 과제서: 채택 — 현재 고정 목록과 공개 서비스 생성 방식이 정찰 근거와 일치했고, 지정한 두 파일 안에서 실제 CLI로 세 수용 기준을 검증했다.
 
+## 2026-10-15
+- 선택: 러너의 검증 명령을 .github/workflows/ci.yml 로 옮김 (가치 5 / 위험 1 / 작업량 S)
+- 결과: 성공
+- 요약: `.github/` 가 아예 없어 러너 PR 3건이 전부 "CI 검사 없음" 으로 막혀 있었다(`git check-ignore` 와 `ls -a` 로 부재 확인). README '명령' 의 검증 순서를 느슨하게 하지 않고 그대로 한 파일로 옮겼다 — `actions/setup-node@v4`(node-version `22`, npm 캐시; 이 저장소에 `.nvmrc` 가 없고 engines 는 `>=22.12`) → `npm ci` → `npm run build`(글꼴 부분 집합·astro check·astro build·verify-build) → `npx playwright install --with-deps chromium` → `npm run test:build`(빌드 세 벌) → `npm test`. push 는 main, pull_request 는 전부(같은 커밋 두 번 방지), concurrency 로 이전 실행 취소, 실패 시에만 `test-results/` 업로드. 검증은 워크플로를 눈으로 읽는 데서 그치지 않고 **ci.yml 에서 run 단계를 파싱해 깨끗한 클론에서 그 순서대로 실행**했다(`git clone` → `/tmp/ci-sim`, `CI=true`, node_modules·astro 캐시 없음): `npm ci` exit 0(6s) → `npm run build` exit 0(35s, `✓ 모두 통과`) → Chromium 설치 exit 0 → `npm run test:build` exit 0(8s) → `npm test` exit 0(28s, **77 통과·기존 폭 조건 4 건너뜀·0 실패**). 워크플로 자체는 actionlint 1.7.7 exit 0, PyYAML 파싱으로 `on: [push, pull_request]` 와 단계 목록을 확인했다. 바꾼 파일은 ci.yml 하나(`git show --stat`: 1 file changed, 59 insertions). 테스트·스크립트·소스·문서는 건드리지 않았고 CHANGELOG 도 저장소에 없어 더하지 않았다.
+- 실패 재현: 못 함 — 재현 대상이 "PR 에 CI 검사가 하나도 없다" 라서 red 상태의 증거는 저장소 상태 자체이고(커밋 전 `.github` 없음), 워크플로 실행은 이 세션에 push·`gh` 권한이 없어 띄울 수 없다. 명세가 새 테스트 작성을 금지해 실패하는 테스트도 추가하지 않았다. 대신 ci.yml 이 선언한 명령을 깨끗한 클론에서 그대로 돌려 전부 exit 0 임을 확인했다. 단, `--with-deps` 는 이 샌드박스에서 `sudo: a password is required` 로 실행 불가(GitHub 호스티드 러너는 무비밀번호 sudo) — 그 한 단계만 `npx playwright install chromium` 으로 바꿔 시뮬레이션했다.
+- 보류 아이디어: ① CI 에서 Playwright 브라우저 캐시 캐싱(매 실행 114MB 다운로드) ② `npm run build` 와 `npm run test:build` 가 같은 dist 빌드를 두 번 하므로 CI 시간이 겹친다 — 스크립트를 고쳐야 해 이번 회차 범위 밖 ③ scripts/serve-static.mjs 하드닝이 main 에 없다(startsWith(base) 경로 검사·404 헤더 뒤 무방비 readFile) ④ harfbuzzjs·fontverter 직접 의존성 미선언 + verify-deps.mjs 부재 ⑤ src/lib/inquiry.ts 순수 함수 경계값 단위 테스트(validate(constructor) 유형 오류는 현 HEAD 에 그대로 남아 있음)
+- 과제서: 채택 — 명세대로 ci.yml 한 파일만 더했고, 테스트를 새로 쓰거나 고치지 않았으며 검증 명령도 그대로 옮겼다.
+

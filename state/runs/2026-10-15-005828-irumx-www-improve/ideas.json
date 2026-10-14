@@ -1,0 +1,128 @@
+[
+  {
+    "title": "GitHub Actions CI 워크플로 추가 — 러너가 돌리는 검증 명령을 그대로 CI 로",
+    "value": 5,
+    "risk": 1,
+    "size": "S",
+    "status": "done",
+    "note": "이번 회차 구현. .github/workflows/ci.yml 한 파일로 npm ci → npm run build → npx playwright install --with-deps chromium → npm run test:build → npm test. push(main)·pull_request. 깨끗한 클론에서 같은 단계를 실행해 전부 exit 0(npm test 77 통과·4 건너뜀), actionlint 1.7.7 exit 0. --with-deps 단계만 샌드박스 sudo 제약으로 미실행. 보호 경로라 사람 승인 필요.",
+    "updated": "2026-10-15"
+  },
+  {
+    "title": "GitHub Actions CI 워크플로(ci.yml) 를 main 에 다시 올리기",
+    "value": 5,
+    "risk": 2,
+    "size": "S",
+    "status": "done",
+    "note": "위 항목과 같은 과제 — 이번 회차에 반영했다(커밋 2ef209f). 중복 항목이므로 다음 회차에는 하나로 본다.",
+    "updated": "2026-10-15"
+  },
+  {
+    "title": "scripts/serve-static.mjs 하드닝이 main 에 없다 — 이전 성공 회차의 변경이 유실됨",
+    "value": 4,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "현 HEAD 재확인: serve-static.mjs:42 는 여전히 !full.startsWith(base)(형제 폴더 탈출 가능), :53 은 writeHead 뒤 404.html 무방비 readFile. 유실/미머지 원인은 여전히 미확인 — 같은 변경을 또 올리기 전에 왜 main 에 못 들어갔는지부터 확인해야 한다.",
+    "updated": "2026-10-15"
+  },
+  {
+    "title": "harfbuzzjs·fontverter 선언 + verify-deps.mjs 를 main 에 다시 올리기",
+    "value": 4,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "현 HEAD 재확인: scripts/verify-build.mjs:18-19 가 harfbuzzjs·fontverter 를 직접 import 하는데 package.json devDependencies 에는 둘 다 없다(전이 의존성으로만 설치). verify-deps.mjs 는 없다. 이제 CI 가 npm ci 로 깨끗한 설치를 매번 돌리므로 전이 의존성이 사라지면 CI 가 먼저 빨개져 드러난다 — 다음 회차 1순위로 적합.",
+    "updated": "2026-10-15"
+  },
+  {
+    "title": "worker/index.ts handleInbound 첨부 누적 용량 계산 오류",
+    "value": 3,
+    "risk": 3,
+    "size": "S",
+    "status": "pending",
+    "note": "실제 bytes.length 를 total 에 더한 뒤 초과 continue 하면서 total 을 되돌리지 않아 이후 작은 첨부까지 제외될 수 있다. 운영 수신 메일 경로라 e2e 재현(inbound.spec.ts 흐름)으로 먼저 증명해야 한다.",
+    "updated": "2026-10-15"
+  },
+  {
+    "title": "handleInbound 의 FORWARD_TO 루프 감지가 500 을 돌려 Resend 가 재시도",
+    "value": 3,
+    "risk": 3,
+    "size": "S",
+    "status": "pending",
+    "note": "루프 조건에서 fail(500,loop). 외부 서비스의 재시도 동작은 미확인이고, 2xx 로 바꾸면 설정 수정 후 재처리 기회를 없앤다. 단순 상태 코드 변경은 금지 — 운영 의미를 먼저 정리할 것.",
+    "updated": "2026-10-15"
+  },
+  {
+    "title": "src/lib/inquiry.ts 상속 키가 유형 검증을 통과하는 구멍 + 순수 함수 경계값 단위 테스트",
+    "value": 3,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "현 HEAD 재확인: inquiry.ts:48 이 여전히 !TYPE_LABELS[v.type] 이라 constructor·__proto__ 가 유형 검사를 통과한다(과거 Object.hasOwn 수정이 main 에 없다). 이름·회사·본문 경계와 composeSubject/composeText/mailtoHref 계약 테스트도 비어 있다. node --test + --experimental-strip-types 로 Playwright 설정을 건드리지 않고 돌릴 수 있다.",
+    "updated": "2026-10-15"
+  },
+  {
+    "title": "Playwright 3건이 외부 Turnstile 연결에 의존",
+    "value": 3,
+    "risk": 3,
+    "size": "M",
+    "status": "pending",
+    "note": "이번 회차 실행에서도 외부 연결 실패는 없었다(77 통과·기존 4 건너뜀). 다만 공개 Turnstile 테스트 키를 네트워크로 확인하는 구조는 그대로라 폐쇄망·Cloudflare 장애 시 새로 넣은 CI 가 빨개진다. skip 으로 덮지 말고 의존성 자체를 없애는 별도 과제.",
+    "updated": "2026-10-15"
+  },
+  {
+    "title": "CI 에서 Playwright 브라우저 캐시 캐싱",
+    "value": 3,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "신규. 이번에 넣은 ci.yml 은 매 실행 Chromium 114MB 를 새로 받는다(이번 실측: 설치 단계만 수십 초). actions/cache 로 ~/.cache/ms-playwright 를 playwright 버전 키로 캐시하면 줄어든다. ci.yml 한 파일만 바뀌지만 보호 경로라 또 사람 승인이 필요하므로 다른 CI 개선과 묶어서.",
+    "updated": "2026-10-15"
+  },
+  {
+    "title": "npm run build 와 npm run test:build 가 같은 dist 빌드를 두 번 한다",
+    "value": 2,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "신규. test:build 의 첫 단계가 npm run build(테스트 Turnstile 키)라서 CI·로컬 모두 dist 를 두 번 만든다(이번 실측 35s + 8s — 캐시가 차 있을 때. 콜드 캐시는 더 걸린다). 명세가 스크립트 수정을 금지해 이번엔 그대로 옮겼다. 고치려면 package.json 의 검증 명령 구조를 손대야 하니 러너 검증과 README 문구까지 함께 봐야 한다.",
+    "updated": "2026-10-15"
+  },
+  {
+    "title": "README·배포 문서의 Worker 경로와 메일 관문 설명 정합성",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "README 구성 표와 docs/deploy.md 초반이 '/api 만 Worker' 로 설명하는데 실제로는 serveHtml·run_worker_first 로 HTML 도 Worker 를 거치고 메일은 MAIL 바인딩을 쓴다. 문서만 바뀌는 저위험 과제.",
+    "updated": "2026-10-15"
+  },
+  {
+    "title": "serveHtml 의 gzip;q=0 압축 협상 회귀 검증",
+    "value": 3,
+    "risk": 3,
+    "size": "S",
+    "status": "pending",
+    "note": "serveHtml 의 /\\bgzip\\b/i 검사는 q=0(거부) 도 문자열로 매칭한다. 실제 HTTP 재현·표준 대조는 여전히 미실행이고 운영 HTML·ETag 에 닿는다.",
+    "updated": "2026-10-15"
+  },
+  {
+    "title": "canonical URL 이 실제 HTML 경로와 다른 경우 빌드에서 감지",
+    "value": 3,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "verify-build 의 canonical 검사는 startsWith(SITE) 뿐이라 같은 사이트의 다른 서비스 URL 을 복사한 canonical 을 통과시킨다. 생성 파일 경로와 정확히 대조하는 검사를 더할 수 있다. 실제 산출물 오류는 아직 미확인.",
+    "updated": "2026-10-15"
+  },
+  {
+    "title": "외부 메일·Turnstile 요청에 명시적인 시간 제한과 실패 안내",
+    "value": 3,
+    "risk": 3,
+    "size": "M",
+    "status": "pending",
+    "note": "sendEmail·verifyTurnstile·handleInbound 의 fetch 에 AbortSignal/timeout 이 없다. 장애 재현은 미실행이고 재시도·중복 발송·부분 성공 의미까지 함께 봐야 한다.",
+    "updated": "2026-10-15"
+  }
+]
