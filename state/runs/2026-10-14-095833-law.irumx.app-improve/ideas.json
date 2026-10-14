@@ -1,0 +1,74 @@
+[
+  {
+    "title": "redactSecrets 계약을 표 테스트로 고정",
+    "value": 4,
+    "risk": 1,
+    "size": "S",
+    "status": "done",
+    "note": "구현 완료 (commit 19bf148). packages/core/src/__tests__/redact-secrets.test.ts 신규 65건 — 규칙 5개를 규칙별 redacted/unchanged 표로 고정. 프로덕션 0파일, 정규식 확대 없음. 돌연변이 검증: 규칙 5줄을 하나씩 지우면 각각 20/6/10/5/7건 실패 → 테스트가 프로덕션 경로를 실제로 지난다. vitest 7 files 168 tests 통과. 기록된 현재 계약 중 눈에 띄는 것: 주민번호 패턴이 7번째 자리가 1-8 인 임의의 13자리 숫자까지 지운다(과잉 차단, 그대로 고정했다).",
+    "updated": "2026-10-14"
+  },
+  {
+    "title": "env.dev 일 때 console.error(err.stack) 가 redact 를 거치지 않는 경로 점검",
+    "value": 3,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "다음 회차 1순위. pipeline.ts:489 (이번 회차에 줄 번호 확인) — logFailure 는 message 만 redactSecrets 를 통과시키고, env.dev 이면 원본 스택을 그대로 stderr 로 찍는다. 스택의 메시지 줄에 토큰·DSN 이 들어있으면 개발/스테이징 로그에 원문이 남는다. redactSecrets(err.stack) 1줄 수정으로 끝나고, 이번 회차에 표 테스트가 들어갔으므로 이제 안전하게 손댈 수 있다. 개발 전용 경로라 가치는 중간.",
+    "updated": "2026-10-14"
+  },
+  {
+    "title": "util/validate.ts 경계 테스트",
+    "value": 3,
+    "risk": 1,
+    "size": "M",
+    "status": "pending",
+    "note": "모든 라우트 입력이 지나가는 검증기인데 테스트 0건. optional 의 '' 취급, text 의 min:0, array 의 인덱스별 오류 경로, int 의 문자열 강제변환, koreanParticle 조사 메시지를 고정. 프로덕션 0파일. validate.ts 내부는 이번 회차에도 열지 않았음 — 함수 목록은 이전 회차 기록 기준, 미확인.",
+    "updated": "2026-10-14"
+  },
+  {
+    "title": "env.ts loadEnv 전반 단위 테스트 집합",
+    "value": 3,
+    "risk": 1,
+    "size": "M",
+    "status": "pending",
+    "note": "env-mock-providers.test.ts 의 prodRaw() 헬퍼(LAW_DATABASE_URL + 64자 hex 키 3종 + LAW_SIGNING_KEY)를 재사용. 남은 것: LAW_DATABASE_URL 없음, LAW_SIGNING_KEY 없음, 32바이트 아닌 키, dev 키 사용, publicUrl 파싱(platformHost·opsHost·siteSuffix 소문자화, devPort). 줄 번호는 이전 회차 기록 기준 — 이번 회차 미확인.",
+    "updated": "2026-10-14"
+  },
+  {
+    "title": "isSafeLink 를 실제 링크 렌더 경로에 배선할지 조사",
+    "value": 3,
+    "risk": 3,
+    "size": "M",
+    "status": "pending",
+    "note": "여전히 호출자가 테스트뿐인지 이번 회차에도 재확인하지 못함(미확인). 켜는 순간 저장된 링크 표시가 바뀌어 위험. site/render.ts·site/blocks.ts 의 링크 렌더 경로 조사만으로 한 회차 — 별도 회차로.",
+    "updated": "2026-10-14"
+  },
+  {
+    "title": "모듈 계층(forms·workflow·engagements) 순수 함수 테스트 공백",
+    "value": 3,
+    "risk": 2,
+    "size": "L",
+    "status": "pending",
+    "note": "packages/core/src 가 16,790줄인데 __tests__ 는 7개(env-mock-providers·gateway-role·retryable·shared-db-guard·text·vendor-postgres·redact-secrets). 검증 무게가 e2e/acceptance/ui-flows(전부 DB·브라우저 필요)에 쏠려 CI 가 무겁다. 한 회차로는 못 끝나므로 모듈 하나씩 — 다음 후보는 modules/forms.ts 의 단계·조건 평가.",
+    "updated": "2026-10-14"
+  },
+  {
+    "title": "토스 결제 어댑터 실거래 미검증 구간의 계약 테스트",
+    "value": 3,
+    "risk": 3,
+    "size": "L",
+    "status": "pending",
+    "note": "modules/payments.ts + routes/console/payments.ts 는 금액·수취인·주문번호를 서버가 정하고 공급자 응답만 상태를 바꾸는 계약(PAY-06)이지만 토스 어댑터는 실거래 미검증. 결제는 위험 구역이고 L 이므로 자율 회차에 맞지 않는다 — 사람이 붙는 회차로 미룬다.",
+    "updated": "2026-10-14"
+  },
+  {
+    "title": "주민번호 패턴의 과잉 차단(7번째 자리가 1-8 인 임의의 13자리)을 좁힐지 판단",
+    "value": 2,
+    "risk": 3,
+    "size": "S",
+    "status": "pending",
+    "note": "신규 — 이번 회차에 표 테스트를 쓰면서 발견해 현재 동작으로 고정했다. pipeline.ts:503 의 \\b\\d{6}-?[1-8]\\d{6}\\b 는 13자리 주문번호·식별자도 [주민번호 숨김] 으로 지워 오류 진단을 어렵게 한다. 다만 SEC-07/AT-26 쪽에서는 과잉 차단이 안전한 방향의 실패이고, 생년월일 유효성까지 보도록 좁히면 실제 주민번호를 놓칠 위험이 생긴다 — 운영자의 '넓히지 말고 좁히는 방향만' 지시와도 방향이 반대다. 손대려면 사람의 판단이 필요하다고 보고 가치를 낮게 뒀다.",
+    "updated": "2026-10-14"
+  }
+]

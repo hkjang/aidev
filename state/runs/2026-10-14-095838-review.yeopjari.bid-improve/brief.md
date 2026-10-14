@@ -1,0 +1,17 @@
+- 과제: 하루 한도 429 의 Retry-After 가 최대 9시간 과장되는 것 — 재시도 시점을 KST 실제 경계로 계산 (가치 3 / 위험 1 / 작업량 S)
+- 왜: `packages/core/src/quota.ts` 의 `windowStart('day', at)` 이 KST 날짜 문자열을 UTC 자정(`${kstDateKey(at)}T00:00:00.000Z`)으로 라벨링하는데, `retryAfterSeconds` 가 그 라벨을 실제 창 경계로 믿고 다음 창 시작까지를 계산한다. 카운팅 키는 KST 날짜마다 유일하므로 한도 집계 자체는 맞지만, 429 의 `retry-after` 헤더가 실제 재설정 시점(KST 자정)보다 최대 9시간 길게 나간다 — 하루 한도는 `review.submit`·`review.edit`·`mail.send` 등 거의 모든 쓰기 경로가 쓰므로 틀린 값이 늘 나가는 경로다. (범위 정직하게: 이 헤더는 `apps/web/src/api/client.ts:181` 이 `ApiError.retryAfter` 로 받아 두기만 하고 지금 어떤 화면도 표시하지 않는다(grep 확인). 따라서 이번 수정의 효과는 API 응답 헤더의 정확성이고, 화면 문구 변화는 없다.)
+- 수용 기준: 1) 2026-10-14 10:00 KST(=`2026-10-14T01:00:00Z`) 에 일 한도에 걸리면 Retry-After 가 약 14시간(50400초)이고, 지금처럼 23시간(82800초)이 아니다 — 이 두 숫자는 손으로 계산한 값이다(샌드박스에서 `node -e` 실행이 거부돼 실행 확인은 못 했다. 구현자는 테스트로 확정할 것) 2) `window_start` 로 저장되는 값은 바뀌지 않아 배포 시점에 진행 중인 카운터가 초기화되지 않는다 3) 단위 테스트가 day/month/minute 세 창의 Retry-After 를 고정 시각으로 검증한다: KST 오전(=UTC 전날 오후 아님에 주의)·KST 자정 1분 전·12월 말(월 롤오버).
+- 건드릴 파일:
+  - `packages/core/src/quota.ts:33 retryAfterSeconds` — 라벨(`windowStart`)이 아니라 실제 KST 경계로 다음 창 시작을 구한다. `util/time.ts` 의 `kstDayStart`/`kstParts` 를 써서 day 는 `kstDayStart(at) + 24h`(= 다음 KST 자정), month 는 다음 KST 월 1일 자정(`Date.UTC(y, m, 1) - 9h`, 12월→다음 해 1월 롤오버)으로 계산. minute 분기는 그대로. 테스트에서 부를 수 있게 `export` 로 바꾼다(또는 동일 계산을 하는 작은 `export function nextWindowReset(window, at)` 를 두고 `retryAfterSeconds` 가 그것을 쓰게 한다).
+  - `packages/core/src/quota.ts:24 windowStart` — **바꾸지 말 것**(저장 키). 주석에 "라벨은 KST 날짜의 UTC 자정이고 실제 경계가 아니다"를 한 줄 남긴다.
+  - `packages/core/src/__tests__/quota.test.ts` (신규) — `retryAfterSeconds`(또는 `nextWindowReset`) 단위 테스트. DB 불필요.
+- 검증 명령:
+  - `npm run check` (= `eslint .` + typecheck 3개 워크스페이스 + `vitest run`) — 이 저장소에서 실제로 도는 1차 관문.
+  - `npx vitest run packages/core/src/__tests__/quota.test.ts` — 새 테스트만.
+  - `node scripts/e2e.mjs` — PostgreSQL(`127.0.0.1:55443`) + 서버 `:8796` 필요. `bash scripts/dev-reset.sh` 직후에 돌리면 218 passed / 0 failed 가 기준선(2026-10-14 관측). 한도 관련 회귀(`review.submit` 일 한도)가 여기에 있으니 반드시 통과시킬 것.
+- 위험과 피할 것:
+  - `windowStart` 의 반환값을 고치면 `quota_counters.window_start` 키가 바뀌어 배포 순간 진행 중인 모든 일·월 창이 0 으로 리셋된다(한도 완화 방향). 이번 과제는 **Retry-After 계산만** 고치고 저장 키는 손대지 않는다.
+  - `purgeOldCounters` 의 `interval '3 days'` 는 건드리지 말 것 — 월 창에 대해서는 이론상 조기 삭제지만 지금 `window: 'month'` 를 쓰는 호출자가 저장소에 하나도 없다(grep 확인). 범위를 넓히면 파일·위험이 늘어난다.
+  - `routes/auth.ts:265` 의 별도 `retryAfter` 경로(로그인 지연)는 쿼터와 무관하니 그대로 둔다.
+  - 보호 경로(`auth/`, `db/migrations/`, `.github/workflows/`)는 건드리지 않는다.
+- 차선 후보: util/text.ts 의 나머지 순수 함수 단위 테스트 보강(`mailboxKey`·`maskEmail`·`koreanParticle`·`excerpt`·`tidyBody`·`clientIpFrom`) — 프로덕션 파일 0개, `packages/core/src/__tests__/text.test.ts` 에 describe 블록 추가만. (가치 3 / 위험 1 / 작업량 S)

@@ -1,32 +1,33 @@
-# 옆자리 툴리뷰 (review.yeopjari.bid) 프로필 (2026-10-06)
+# 옆자리 툴리뷰 (review.yeopjari.bid) 프로필 (2026-10-14, v0.7.4)
 
 - 목적: 기업용 IT 제품·서비스(설치형·SaaS·IaaS·PaaS·DBaaS·AI API 등)를 제품 단위로 모아, 회사 이메일 확인 이력이 있는 실무자의 구조화된 리뷰로 "우리 회사 환경에 맞는가"에 답하는 리뷰 플랫폼.
-- 스택: TypeScript(ESM, Node ≥22), npm workspaces 모노레포. 백엔드는 런타임 무관 `packages/core` + Node 어댑터/Cloudflare Pages Functions. DB는 PostgreSQL 16(운영은 Supabase 서울, `review`/`review_priv` 스키마, 역할 `review_app`, 전면 RLS). 프런트는 React 19 + Mantine 9 + Vite. 테스트는 vitest, 브라우저 검사는 playwright + axe-core. 의존성 매우 적고 `packages/core/vendor/postgres` 는 벤더 복사본.
+- 스택: TypeScript(ESM, Node ≥22), npm workspaces 모노레포. 런타임 무관 `packages/core` + Node 어댑터 + Cloudflare Pages Functions. PostgreSQL 16(운영은 Supabase 서울, `review`/`review_priv` 스키마, 전면 RLS). 프런트는 React 19 + Mantine 9 + Vite. 테스트는 vitest, 브라우저 검사는 playwright + axe-core. 런타임 의존성 극소, `packages/core/vendor/postgres` 는 벤더 복사본.
 - 구조:
-  - `packages/core/src` — 앱 본체(~10.7k줄). `http/`(router·pipeline·respond), `routes/`(auth·catalog·reviews·vendor·consults·me·sso·internal·`admin/`), `domain/`(products·reviews·taxonomy·vendors·work), `auth/`(session·cookies·password·scopes·principal·captcha), `settings/`(registry·service), `util/`(validate·text·crypto·time), `mail/`, `media/`, `quota.ts`, `audit.ts`, `db.ts`.
+  - `packages/core/src` — 앱 본체. `http/`(router·pipeline·respond), `routes/`(auth·catalog·reviews·vendor·consults·me·sso·internal·client-errors·helpers·`admin/`), `domain/`, `auth/`, `settings/`(registry·service), `util/`(validate·text·time·crypto), `mail/`, `media/`, `quota.ts`, `errors.ts`, `audit.ts`, `db.ts`.
   - `apps/server` — Node 어댑터 `:8796`(로컬·CI), `bootstrap`/`set-password` 명령.
-  - `apps/web` — 공개 화면·리뷰 작성·내 정보·공급사 콘솔·관리자 콘솔(지연 로드). `routes/`, `components/`, `state/`, `api/`, `lib/`.
-  - `functions/[[path]].ts` — Pages Function(Hyperdrive, 공개 카탈로그 60초 엣지 캐시, 스크립트 없는 제품 요약).
-  - `workers/scheduler` — 10분마다 `/api/v1/internal/cron`(보존 기간 정리·탈퇴 처리).
-  - `db/migrations/0001~0006`, `scripts/*.mjs`(migrate·e2e·a11y·ui-flows·screenshots·seed-demo·smoke-prod), `engineering/{architecture,security}.md`.
+  - `apps/web` — 공개 화면·리뷰 작성·내 정보·공급사 콘솔·관리자 콘솔(지연 로드). `routes/`, `components/`, `state/`, `api/`(client.ts 가 에러·retry-after 를 `ApiError` 로 감싼다), `lib/`.
+  - `functions/[[path]].ts` — Pages Function(Hyperdrive, 공개 카탈로그 엣지 캐시).
+  - `workers/scheduler` — 10분마다 `/api/v1/internal/cron`(`routes/internal.ts` 의 작업 표: 보존 정리·탈퇴·쿼터 카운터 정리·메일 알림).
+  - `db/migrations/0001~`, `scripts/*.mjs|sh`, `engineering/{architecture,security}.md`.
 - 빌드·테스트:
-  - `npm run check` = `lint` + `typecheck` + `test`(vitest). 빠름. CI 1단계와 동일.
-  - `npm run test` = `vitest run`, include `packages/**/*.test.ts` + `apps/**/*.test.ts`, `testTimeout: 20s`(crypto 헬퍼가 의도적으로 느림). **단위 테스트 파일은 두 개뿐**: `packages/core/src/__tests__/domain.test.ts`, `.../vendor-postgres.test.ts`.
-  - `node scripts/e2e.mjs` — 실제 PostgreSQL(`127.0.0.1:55443`) + 서버 `:8796` + 가짜 옆자리 OAuth `:18996` 대상 139항목. **검증의 무게 중심이 여기 있음.**
-  - `node scripts/a11y.mjs`(axe WCAG 2.1 AA, 라이트/다크, 심각 위반 0건), `node scripts/ui-flows.mjs`, `node scripts/screenshots.mjs` — 브라우저 필요, 느림.
-  - 로컬 준비: docker postgres:16-alpine → `npm ci` → `node scripts/ci-env.mjs`(`.env.dev`) → `npm run build -w @review/server` → `bash scripts/dev-reset.sh`.
-- 관례: 커밋 메시지는 **한국어 서술형 한 줄**("쿠키 없는 요청은 세션 수명 설정도 읽지 않음"), 접두어·이슈 번호 없음. 코드 주석은 영어, 사용자 노출 문자열은 한국어. 검증 라이브러리를 쓰지 않고 `util/validate.ts` 의 손으로 만든 `v.*` 로 하며 에러 메시지에 한국어 조사 처리(`koreanParticle`)를 붙임. 마이그레이션은 번호순 SQL 파일 + 원장 `public.review_schema_migrations`, `scripts/migrate.mjs`. 설정값은 `settings/registry.ts` 에 선언. 문서는 `README.md` + `engineering/`. 원칙은 README 표에 "어디서 지켜지나"로 코드 위치까지 적는 방식.
+  - `npm run check` = `eslint .` + typecheck(core·server·web) + `vitest run`. 빠름. CI 1단계와 동일.
+  - 단위 테스트는 `packages/core/src/__tests__/` 5파일(domain·gateway-role·shared-db-guard·text·vendor-postgres, 합 440줄) — 전부 순수 함수·문자열 수준. `vitest.config.ts` include 는 `packages/**`·`apps/**/*.test.ts`, `testTimeout: 20s`(crypto 헬퍼가 의도적으로 느림).
+  - `node scripts/e2e.mjs` — 실 PostgreSQL(`127.0.0.1:55443`) + 서버 `:8796` + 가짜 옆자리 OAuth. **검증의 무게 중심.** `bash scripts/dev-reset.sh` 직후 218 passed / 0 failed(2026-10-14 관측). 깨끗한 DB 가 암묵적 전제.
+  - `node scripts/a11y.mjs`(axe WCAG 2.1 AA, 심각 위반 0건), `node scripts/ui-flows.mjs`(실제 크로미움으로 화면 동작 검사 — 2026-10-14 회차가 여기에 검사를 추가해 UI 버그를 증명했다), `node scripts/perf.mjs`(첫 방문 JS 예산, CI 단계), `node scripts/screenshots.mjs`.
+  - 로컬 준비: docker postgres:16-alpine → `npm ci` → `node scripts/ci-env.mjs` → `npm run build -w @review/server` → `bash scripts/dev-reset.sh`.
+- 관례: 커밋 메시지는 **한국어 서술형 한 줄**(접두어·이슈 번호 없음), 릴리즈 커밋만 `vX.Y.Z: …`. 코드 주석은 영어, 사용자 노출 문자열은 한국어. 검증 라이브러리 없이 `util/validate.ts` 의 `v.*` + `koreanParticle` 조사 처리. 마이그레이션은 번호순 SQL + 원장 `public.review_schema_migrations`(`scripts/migrate.mjs`). 설정값은 `settings/registry.ts` 선언. 문서는 `README.md` + `engineering/`, README 표에 "어디서 지켜지나"로 코드 위치까지 적는다.
 - 위험 구역:
-  - `db/migrations/` — RLS 정책·트리거(`reviews_guard`, `responses_guard`)·`review_priv.refresh_product_stats` 가 제품 규칙 자체. 되돌리기 어려움.
-  - `packages/core/src/auth/*` + `http/pipeline.ts` — 모든 요청이 트랜잭션 안에서 `review.account_id`/`review.roles` GUC 를 세우고 RLS 가 행 단위로 판단. 여기를 잘못 건드리면 권한 경계가 무너짐.
-  - `routes/sso.ts` — 옆자리 OAuth(PKCE), 회사 이메일 원문 미저장·도메인 HMAC 만 저장. 개인정보 원칙이 코드에 걸려 있음.
-  - `routes/admin/*` — 광고 데스크와 검수 데스크 권한 분리(`is_ad_admin`/`is_moderator`), 감사 기록 접두어.
-  - `media/storage.ts` — 사용 자료는 비공개 R2 버킷, 열람 시 감사 기록, 보존 기간 후 삭제.
+  - `db/migrations/` — RLS 정책·트리거(`reviews_guard`, `responses_guard`)·`review_priv.refresh_product_stats` 가 제품 규칙 자체. 되돌리기 어렵다.
+  - `packages/core/src/auth/*` + `http/pipeline.ts` — 모든 요청이 트랜잭션 안에서 `review.account_id`/`review.roles` GUC 를 세우고 RLS 가 행 단위로 판단.
+  - 공유 DB 접속(v0.7.2~): `irumx_gateway` 로 로그인하고 트랜잭션마다 `review_app` 으로 전환, 서비스 역할은 NOLOGIN. `gateway-role.test.ts`·`shared-db-guard.test.ts` 가 이 계약을 지킨다 — 접속·마이그레이션 코드를 건드리면 여기서 걸린다.
+  - `routes/sso.ts` — 옆자리 OAuth(PKCE), 회사 이메일 원문 미저장·도메인 HMAC 만 저장.
+  - `routes/admin/*` — 광고 데스크/검수 데스크 권한 분리, 감사 기록 접두어. 감사 `details` 에 검출 대상 원문을 넣지 말 것(식별자만).
+  - `media/storage.ts` — 비공개 R2, 열람 시 감사 기록, 보존 기간 후 삭제.
   - `scripts/deploy-pages.sh`, `wrangler.toml`, `.github/workflows/check.yml` — 릴리즈 경로.
-- 자주 깨지는 곳: (회차 기록 없음 — 이번이 첫 정찰) 최근 커밋이 모두 "쿠키 없는 요청", "리뷰 5개 미만은 순위 제외" 같은 **조건 분기의 엣지케이스**를 고치는 모양이라, 같은 종류(없는 입력·비어 있는 입력·'모름' 값)가 반복 지점일 것으로 보임 — 미확인.
+- 자주 깨지는 곳: 조건 분기의 엣지케이스(없는 입력·빈 문자열·'모름' 값)가 반복 지점이다. 실제 사례: 쿠키 없는 요청, 리뷰 5개 미만 순위 제외, `/api/v1/track` 이 끝나지 않던 것, 파트너 이름 입력란이 `trim()` 때문에 공백을 삼키던 것(v0.7.4). 화면 상태를 값에서 파생시키는 패턴(`form.x ? …`)이 특히 자주 틀린다.
 - 검증 함정:
-  - 단위 테스트가 거의 없어 `npm run test` 통과는 보증이 약함. 실제 회귀는 `scripts/e2e.mjs` 가 잡고, 그건 **PostgreSQL 이 떠 있어야만** 돈다. 로컬에 DB 없이 "테스트 통과"로 끝내면 CI 에서 처음 깨짐.
-  - `vendor-postgres.test.ts` 는 벤더 복사본 대상이므로 `packages/core/vendor/` 를 건드리면 여기서 걸림.
+  - 단위 테스트가 얇아 `npm run test` 통과는 보증이 약하다. 권한·배선 회귀는 `scripts/e2e.mjs` 만 잡고, 그건 PostgreSQL 이 떠 있어야 돈다. DB 없이 "테스트 통과"로 끝내면 CI 에서 처음 깨진다.
+  - UI 회귀는 `scripts/ui-flows.mjs` 로 증명한다(실 브라우저·실 컴포넌트). 소스 문자열 검사나 손으로 주입한 대역은 근거로 쓰지 않는다(운영자 지시).
+  - a11y·screenshots·ui-flows 는 `npx playwright install --with-deps chromium` 이 필요해 로컬에서 자주 생략되고 CI 에서 처음 터진다.
   - `scripts/seed-demo.mjs` 는 호스트가 `127.0.0.1`/`localhost` 가 아니면 거부(운영 보호).
-  - a11y·screenshots 는 `npx playwright install --with-deps chromium` 이 필요해 로컬에서 자주 생략됨 — CI 에서만 처음 터질 수 있음.
-  - 샌드박스에서 `npm`/`npx`/`node -e` 실행이 승인 거부될 수 있음(이 정찰 회차에서 발생). 그 경우 검증은 구현자 쪽에서 반드시 실제로 돌려야 함.
+  - 정찰 샌드박스에서 `npm`/`npx`/`node -e` 실행이 승인 거부된다(2026-10-06·10-14 두 회차 모두). 정찰 단계의 수치는 손계산일 수 있으니 구현자가 반드시 실행해 확정할 것.

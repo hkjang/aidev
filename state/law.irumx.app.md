@@ -11,3 +11,11 @@
 - 과제서: 채택 — 과제서의 근거가 현재 코드와 정확히 일치했고(env.ts:163, dns.ts:10, wrangler.toml:46/57), 지정한 수용 기준·파일 범위·금지 사항을 그대로 구현했다.
 
 - 릴리즈: 0.1.4 (2026-10-14, run 2026-10-14-081822-law.irumx.app-improve)
+## 2026-10-14
+- 선택: redactSecrets 계약을 표 테스트로 고정 (가치 4 / 위험 1 / 작업량 S)
+- 결과: 성공
+- 요약: `pipeline.ts:496` 의 `redactSecrets` 는 서버 오류 메시지가 stderr 로그(`logFailure`)·`law_priv.record_error_alert` DB 저장·운영자 메일(`alertOperator`, :145-162)로 나가기 전의 유일한 차단기인데 테스트가 0건이었다. 신규 `packages/core/src/__tests__/redact-secrets.test.ts` 가 `redactSecrets` 를 실제로 import 해 호출하며, 치환 규칙 5개(쿼리 파라미터·Bearer/Basic·접두사 키 7종·postgres DSN·주민번호)를 규칙별 `redacted`/`unchanged` 표로 고정했다. 프로덕션 파일 0개 — `pipeline.ts` 는 읽기만 했고 정규식을 넓히지 않았다. `npm run check` 통과(lint 0 errors / 646 warnings — 기준선과 동일, 신규 파일은 경고 0 / typecheck 3개 워크스페이스 / vitest 7 files 168 tests, 기준선 6 files 103 tests + 신규 65건).
+- 실패 재현: 못 함 — 성격상 결함 수정이 아니라 현재 동작을 기록하는 특성화(characterization) 테스트라 65건이 첫 실행에 모두 통과했다(정규식을 읽고 예상값을 먼저 적었고, 함수를 탐침해 맞춘 것이 아니며 예상과 실제가 전부 일치했다). 대신 테스트가 프로덕션 경로를 실제로 지나는지를 돌연변이로 증명했다 — 규칙 5줄을 하나씩 지우면 각각 20 / 6 / 10 / 5 / 7건이 실패하고(`Tests 20 failed | 45 passed (65)` 등) 복원 후 `git diff` 가 비었다. 예: 503행(주민번호) 제거 시 `AssertionError: expected '900101-1234567' to be '[주민번호 숨김]' // Object.is equality`.
+- 보류 아이디어: ① env.dev 일 때 `console.error(err.stack)` 가 redact 를 거치지 않는 경로(pipeline.ts:489 — 이번에 줄 번호 확인) 1줄 수정(3/1/S, 이제 표 테스트가 있어 안전) ② util/validate.ts 경계 테스트(3/1/M) ③ loadEnv 전반 단위 테스트 집합(3/1/M) ④ isSafeLink 를 실제 링크 렌더 경로에 배선할지 조사(3/3/M) ⑤ modules/forms.ts 단계·조건 평가 순수 함수 테스트(3/2/L)
+- 과제서: 채택 — 과제서의 근거가 현재 코드와 정확히 일치했고(pipeline.ts:496 규칙 5개, 호출자 2곳 :487/:145, 테스트 0건), 수용 기준 4개와 "프로덕션 0파일·정규식 확대 금지" 를 그대로 지켰다.
+

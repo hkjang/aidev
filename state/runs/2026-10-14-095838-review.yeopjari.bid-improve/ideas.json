@@ -1,0 +1,83 @@
+[
+  {
+    "title": "하루·한 달 한도 429 의 Retry-After 를 KST 실제 경계로 계산 (quota.ts)",
+    "value": 3,
+    "risk": 1,
+    "size": "S",
+    "status": "done",
+    "note": "nextWindowReset(window, at) 을 새로 두고 retryAfterSeconds 가 그것만 쓰게 했다. windowStart(저장 키)는 손대지 않았다. 오차는 시각 무관 상수 +9시간이었음을 확인. 단위 8건 + e2e 에 실제 429 헤더 검사 2건 추가, e2e 220 passed / 0 failed. 커밋 fe4eaba.",
+    "updated": "2026-10-14"
+  },
+  {
+    "title": "util/text.ts 나머지 순수 함수 단위 테스트 보강",
+    "value": 3,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "text.test.ts(108줄)는 여전히 isSafeLink 중심. 미덮인 것: mailboxKey('+' 시작 local-part 폴백), maskEmail(점 없는 도메인·한 글자 local·null), koreanParticle(종성·숫자·괄호 끝), excerpt(코드포인트 자르기), tidyBody(\\r\\n·빈 줄 4개 이상), emailDomain/normalizeEmail, clientIpFrom. 프로덕션 파일 0개.",
+    "updated": "2026-10-14"
+  },
+  {
+    "title": "429 안내에 재시도 가능 시각을 보여 주기",
+    "value": 2,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "apps/web/src/api/client.ts:181 이 retry-after 를 ApiError.retryAfter 로 받아 두는데 어떤 화면도 쓰지 않는다. 선행 조건이던 Retry-After 계산 수정이 이번 회차에 들어갔으므로 이제 표시해도 틀린 시각이 아니다. 검증은 scripts/ui-flows.mjs 로.",
+    "updated": "2026-10-14"
+  },
+  {
+    "title": "purgeOldCounters 가 월 창 카운터를 3일 뒤 지움 (지금은 잠복)",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "quota.ts 의 purge 는 window_start < now() - interval '3 days' 로 일괄 삭제한다. 월 창의 저장 라벨은 그 달 1일이라 매달 4일째부터 진행 중인 월 카운터가 지워진다(= 월 한도 무력화). 저장소에 window: 'month' 호출자가 하나도 없어(grep, 2026-10-14 재확인) 현재 영향 0. 월 한도를 처음 쓰는 순간 터지는 함정 — 창 종류별 보존 기간으로 고치는 것이 맞다.",
+    "updated": "2026-10-14"
+  },
+  {
+    "title": "e2e 가 깨끗한 DB 를 암묵적 전제로 하는 것 (상태 의존 검사 멱등성)",
+    "value": 3,
+    "risk": 2,
+    "size": "M",
+    "status": "pending",
+    "note": "dev-reset.sh 직후에는 220 passed / 0 failed(이번 회차 관측, 신규 2건 포함). 개수·빈 목록을 단정하는 검사를 run-id 로 격리하거나 전제를 README/스크립트 헤더에 명시. 이번에 추가한 '하루 한도' 검사는 resetQuotas() 로 스스로 격리한다.",
+    "updated": "2026-10-14"
+  },
+  {
+    "title": "clientIpFrom 이 cf-connecting-ip 빈 문자열에서 폴백하지 않음",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "text.ts:240 의 ?? 연쇄라 cf-connecting-ip 가 '' 면 x-real-ip/x-forwarded-for 로 넘어가지 않는다. Cloudflare 는 이 헤더를 늘 채우므로 실제 발생 여부는 미확인. 반환값이 ipSubject 주체라 바꾸면 쿼터 묶음이 달라진다.",
+    "updated": "2026-10-14"
+  },
+  {
+    "title": "isSafeLink 차단 범위를 CGNAT(100.64/10)·.internal 류 내부 TLD 까지 넓히기",
+    "value": 2,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "text.ts:71 isInternalIpv4 그대로. 100.64/10·192.0.0/24·198.18/15 와 metadata.google.internal 이외의 .internal/.local 은 통과. 과차단이 유일한 실패 모드이고 공급사가 실수로 넣을 확률이 낮아 가치 낮음.",
+    "updated": "2026-10-14"
+  },
+  {
+    "title": "domain/products.ts 의 slugify 가 죽은 코드 (한글 이름은 빈 슬러그)",
+    "value": 1,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "정의 외 참조 없음. 쓰이기 시작할 때 터질 함정이지만 지금 영향 0.",
+    "updated": "2026-10-14"
+  },
+  {
+    "title": "라우트·pipeline 통합 테스트가 없어 회귀 검증이 실 PostgreSQL e2e 에만 의존",
+    "value": 3,
+    "risk": 2,
+    "size": "L",
+    "status": "pending",
+    "note": "단위 테스트는 6파일(domain·gateway-role·shared-db-guard·text·vendor-postgres·quota, 126건)로 전부 순수 함수·문자열 검사. 권한·배선 회귀는 scripts/e2e.mjs 가 잡는다. 손으로 만든 대역으로 라우트를 흉내내면 배선 결함을 못 본다(운영자 지시) — 실 DB 를 쓰는 통합 테스트 설계부터 필요. 한 회차에 들어가지 않는다.",
+    "updated": "2026-10-14"
+  }
+]
