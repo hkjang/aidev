@@ -1,0 +1,216 @@
+{
+  "run_id": "2026-10-14-203508-biz.irumx.app-improve",
+  "generated": "2026-10-14T20:49:24+09:00",
+  "run": {
+    "run_id": "2026-10-14-203508-biz.irumx.app-improve",
+    "project": "biz.irumx.app",
+    "kind": "improve",
+    "started": "2026-10-14T20:35:09+09:00",
+    "model": "claude-opus-5",
+    "policy_version": "4a9e91ac72",
+    "prompts_hash": "ce085c79e18002e2",
+    "runner_version": "1bd5f0cd4d",
+    "arm": "no-scout",
+    "experiment": "roles-2026-09",
+    "finished": "2026-10-14T20:49:23+09:00",
+    "outcome": "verify-failed"
+  },
+  "record": {
+    "ts": "2026-10-14T20:49:23+09:00",
+    "date": "2026-10-14",
+    "project": "biz.irumx.app",
+    "result": "fix-round: CI failed, PR open https://github.com/hkjang/biz.irumx.app/pull/7",
+    "outcome": "verify-failed",
+    "run_id": "2026-10-14-203508-biz.irumx.app-improve",
+    "base_sha": "714a6606978423ad6d0f5c5e1d4cf3a4918d8305",
+    "head_sha": "3a84b166d7e9ac7a8d9cadad7c4dfa9ae3db4e30",
+    "pr": "https://github.com/hkjang/biz.irumx.app/pull/7",
+    "stages": {
+      "base": {
+        "state": "pinned",
+        "reason": "main@714a660",
+        "at": "2026-10-14T20:35:13+09:00"
+      },
+      "autonomy": {
+        "state": "release",
+        "reason": "",
+        "at": "2026-10-14T20:35:14+09:00"
+      },
+      "verify": {
+        "state": "passed",
+        "reason": "검증 6개 통과 (auto)",
+        "at": "2026-10-14T20:45:09+09:00"
+      },
+      "review": {
+        "state": "approved",
+        "reason": "리뷰 승인 (risk=low)",
+        "at": "2026-10-14T20:48:41+09:00"
+      },
+      "pr": {
+        "state": "created",
+        "reason": "https://github.com/hkjang/biz.irumx.app/pull/7",
+        "at": "2026-10-14T20:48:48+09:00"
+      },
+      "ci": {
+        "state": "failed",
+        "reason": "성공이 아닌 검사: check=failure · 실패한 검사: ? 잡: check ",
+        "at": "2026-10-14T20:49:22+09:00"
+      }
+    },
+    "campaign": "",
+    "autonomy": "release",
+    "arm": "no-scout",
+    "experiment": "roles-2026-09",
+    "engine": "claude",
+    "files": 1,
+    "additions": 63,
+    "deletions": 0,
+    "tests": 1,
+    "title": "시험: 쿼터 창의 한국 하루 경계(UTC 15:00)와 1분 절삭 계약을 고정"
+  },
+  "stages": {
+    "base": {
+      "state": "pinned",
+      "reason": "main@714a660",
+      "at": "2026-10-14T20:35:13+09:00"
+    },
+    "autonomy": {
+      "state": "release",
+      "reason": "",
+      "at": "2026-10-14T20:35:14+09:00"
+    },
+    "verify": {
+      "state": "passed",
+      "reason": "검증 6개 통과 (auto)",
+      "at": "2026-10-14T20:45:09+09:00"
+    },
+    "review": {
+      "state": "approved",
+      "reason": "리뷰 승인 (risk=low)",
+      "at": "2026-10-14T20:48:41+09:00"
+    },
+    "pr": {
+      "state": "created",
+      "reason": "https://github.com/hkjang/biz.irumx.app/pull/7",
+      "at": "2026-10-14T20:48:48+09:00"
+    },
+    "ci": {
+      "state": "failed",
+      "reason": "성공이 아닌 검사: check=failure · 실패한 검사: ? 잡: check ",
+      "at": "2026-10-14T20:49:22+09:00"
+    }
+  },
+  "provenance": {
+    "model": "claude-opus-5",
+    "policy_version": "4a9e91ac72",
+    "prompts_hash": "ce085c79e18002e2",
+    "runner_version": "1bd5f0cd4d",
+    "base_sha": "714a6606978423ad6d0f5c5e1d4cf3a4918d8305",
+    "head_sha": "3a84b166d7e9ac7a8d9cadad7c4dfa9ae3db4e30",
+    "pr": "https://github.com/hkjang/biz.irumx.app/pull/7"
+  },
+  "verification": {
+    "runner": {
+      "source": "auto",
+      "commands": [
+        {
+          "cmd": "[ -d node_modules ] || npm ci --no-audit --no-fund",
+          "exit": 0,
+          "seconds": 0
+        },
+        {
+          "cmd": "npm test --silent",
+          "exit": 0,
+          "seconds": 0
+        },
+        {
+          "cmd": "[ -d node_modules ] || npm ci --no-audit --no-fund",
+          "exit": 0,
+          "seconds": 0
+        },
+        {
+          "cmd": "npm run typecheck --silent",
+          "exit": 0,
+          "seconds": 7
+        },
+        {
+          "cmd": "[ -d node_modules ] || npm ci --no-audit --no-fund",
+          "exit": 0,
+          "seconds": 0
+        },
+        {
+          "cmd": "npm run build --silent",
+          "exit": 0,
+          "seconds": 1
+        }
+      ]
+    },
+    "runner_gate": {
+      "ok": true,
+      "state": "verified",
+      "reason": "검증 6개 통과 (auto)"
+    },
+    "after_rebase": null,
+    "review": {
+      "verdict": "approve",
+      "reasons": [],
+      "notes": [
+        "packages/core/src/__tests__/time.test.ts:1-63 이 diff 전부다(프로덕션 0파일). 15개 단언이 모두 실제 `../util/time.js` 의 kstDateKey·minuteStart 를 호출하고 구체 문자열을 비교한다 — 14:59:59.999Z/15:00:00.000Z 피벗이 KST_OFFSET_MINUTES 에 민감해서 오프셋이나 padStart 가 바뀌면 깨진다. 날짜 산술도 직접 확인했다: 2028-02-28T15:00Z→2028-02-29(윤년), 2026-02-28T15:00Z→2026-03-01(평년), 2026-09-30T15:00Z→2026-10-01, 2025-12-31T15:00Z→2026-01-01 모두 맞다. KST 는 DST 가 없어 고정 +9h 가정도 안전하다. 커밋 메시지와 코드가 일치하고 범위 이탈·위험 구역 변경·되돌리기 문제 없다.",
+        "로컬 게이트 실행 결과: `npm run check` = eslint + 세 워크스페이스 tsc + vitest 153 passed (9 files, 기존 138 + 신규 15). 신규 파일 단독 `npx vitest run packages/core/src/__tests__/time.test.ts` = 15 passed. CI 의 브라우저 구간(playwright/seed-demo/a11y)과 e2e 는 돌리지 않았다.",
+        "구현자가 '확신 없다'고 적은 자리 중 하나는 실제로 과소평가였다 — quota.ts:33 retryAfterSeconds 의 day 창은 실제 초기화 시각보다 **정확히 9시간(32,400초)** 긴 Retry-After 를 낸다(스크래치 스크립트로 네 시각 전부 diff 9.00h 확인; 예: at=2026-03-15T14:59Z 실제 60초 남았는데 32,460초를 응답). 구현 노트는 'day/month 429 를 노출하는 경로가 거의 없다'고 했지만, http/respond.ts:68-69 이 retryAfter 를 가진 모든 AppError 에 retry-after 헤더를 붙이고 apps/web/src/api/client.ts:181 이 그걸 읽는다. day 창 상한은 routes/mcp.ts:64(mcp.call 5000), routes/auth.ts:45(auth.mfa 60), routes/auth.ts:241(auth.login 200), routes/helpers.ts:135(일반 perDay) 에서 평범한 HTTP 경로로 도달한다. main 에 이미 있던 결함이라 이번 PR 의 거절 사유는 아니고, 신규 시험이 이 수정을 막지도 않는다(kstDateKey·minuteStart 를 바꿀 필요가 없다) — 다음 회차 1순위로 권한다.",
+        "약한 우려 하나: 월 창 시험(time.test.ts:38-43)은 quota.ts:29 의 `kstDateKey(at).slice(0, 7)` 표현식을 손으로 베껴 쓴다. windowStart 가 비공개라 불가피하지만, quota.ts:29 의 월 산출이 바뀌어도 이 시험은 계속 통과한다 — 배선을 지나는 시험이 아니라 사본을 고정한 시험이다. 나머지 14개는 실제 함수를 지난다. 파일 머리 주석이 '두 개의 창 열쇠'라고 쓴 것도 실제 창은 셋(minute/day/month)이라 살짝 부정확하지만 월 시험이 보완한다.",
+        "못 본 것: PR #5·#6 의 CI 가 3초·0단계로 죽는 원인. 이 세션도 gh 미인증(`gh auth status`: not logged in)이라 원문 annotation 을 읽지 못했다 — 즉 이 PR 의 green 은 로컬 검증뿐이고, 원인이 계정·쿼터 쪽이면 이 PR 도 같은 방식으로 막힐 수 있다. 릴리즈 단계는 VERSION 미변경(0.1.4 유지)인 점도 확인할 것 — 직전 시험 전용 커밋 9b864f8 은 v0.1.3 으로 올려 나갔다."
+      ],
+      "risk": "low",
+      "blocking": []
+    },
+    "ci_gate": {
+      "ok": false,
+      "state": "failed",
+      "reason": "성공이 아닌 검사: check=failure",
+      "checks": 1,
+      "bad": 1
+    }
+  },
+  "release": {
+    "result": null,
+    "assets_sha256": []
+  },
+  "approval": null,
+  "usage": [
+    {
+      "ts": "2026-10-14T20:44:59+09:00",
+      "date": "2026-10-14",
+      "project": "biz.irumx.app",
+      "phase": "improve",
+      "run_id": "2026-10-14-203508-biz.irumx.app-improve",
+      "campaign": "",
+      "subtype": "success",
+      "engine": "claude",
+      "duration_ms": 609551,
+      "num_turns": 48,
+      "cost_usd": 4.013132499999999,
+      "input_tokens": 90,
+      "output_tokens": 37364,
+      "cache_read": 3958385,
+      "cache_create": 109939
+    },
+    {
+      "ts": "2026-10-14T20:48:41+09:00",
+      "date": "2026-10-14",
+      "project": "biz.irumx.app",
+      "phase": "review",
+      "run_id": "2026-10-14-203508-biz.irumx.app-improve",
+      "campaign": "",
+      "subtype": "success",
+      "engine": "claude",
+      "duration_ms": 216941,
+      "num_turns": 22,
+      "cost_usd": 1.3264259999999999,
+      "input_tokens": 38,
+      "output_tokens": 12911,
+      "cache_read": 976862,
+      "cache_create": 51503
+    }
+  ]
+}

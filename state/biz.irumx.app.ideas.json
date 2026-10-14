@@ -4,8 +4,8 @@
     "value": 4,
     "risk": 2,
     "size": "S",
-    "status": "pending",
-    "note": "이번 회차 1순위. PR #6 은 domain.test.ts +58행 한 파일뿐인데(git diff --stat main a65df42) CI 는 3초·annotation 2건으로 저장소 단계 0개 실행 후 죽는다. 잡 시작 전 구간은 services: 컨테이너 초기화가 유일하고 그 구간은 로그가 없다. 이미지·포트·자격증명·대기시간을 동일하게 유지한 채 명시적 run 단계로 내려 출력이 남게 한다. 게이트는 하나도 약화하지 않는다. 원인은 미확정 — gh 가 이번 세션에서도 Bash 권한에 막혀 annotation 을 못 읽었다.",
+    "status": "rejected",
+    "note": "기각 — 가설이 저장소 안의 증거로 반박됐다. `git log --all -- .github/workflows/check.yml` 의 마지막 변경은 13d52c5(v0.1.1)로, PR #2·#3·#4 가 머지되고 v0.1.2~v0.1.4 가 릴리즈된 구간 전체에서 파일은 **한 글자도 바뀌지 않았다**. 같은 services: 블록으로 통과했던 파일이 PR #5·#6 에서 3초·0단계로 죽으므로 원인은 워크플로 파일이 아니다(같은 주기에 biz/law/yeopjari 세 저장소가 같은 모양으로 죽은 기록과도 일치 → 계정·러너·쿼터 쪽). 통과하던 CI 파일을 미확인 가설로 재구성하는 것은 이득 없이 게이트만 흔든다.",
     "updated": "2026-10-14"
   },
   {
@@ -14,16 +14,16 @@
     "risk": 1,
     "size": "S",
     "status": "pending",
-    "note": "두 회차 연속 막혔다. 2026-10-14 회차: gh auth status = 'not logged into any GitHub hosts', 비공개 저장소라 토큰 없는 공개 API 는 404. 이번 정찰 세션에서는 gh 가 Bash 권한에 아예 막혔다. 저장소 안에서 확정할 방법이 없으므로 같은 방식의 재시도를 1순위로 올리지 말 것 — 대신 1순위 과제가 그 구간에 로그를 남긴다. 같은 모양의 실패가 biz/law/yeopjari 세 저장소에서 같은 주기에 났다는 점은 계정·러너 쪽 원인 가능성을 시사한다.",
+    "note": "세 회차 연속 막혔다. 2026-10-14 20:35 회차도 `gh auth status` = 'You are not logged into any GitHub hosts', GH_TOKEN/GITHUB_TOKEN 환경변수 0건, 비공개 저장소라 토큰 없는 공개 API 는 404. 저장소 안에서는 더 확정할 수 없고, 워크플로 파일이 무죄라는 것만 이번에 증명됐다(위 항목). 다음에 해야 할 것은 코드 변경이 아니라 **운영자 쪽 확인**: GitHub Actions 사용량/결제 한도와 Actions 활성화 여부. 코드로 다시 시도하지 말 것.",
     "updated": "2026-10-14"
   },
   {
-    "title": "KST 일 경계 kstDateKey·minuteStart 의 쿼터 창 계약 시험",
+    "title": "쿼터 하루·한 달 창의 Retry-After 가 실제 초기화 시각보다 9시간 길다",
     "value": 3,
-    "risk": 1,
+    "risk": 2,
     "size": "S",
     "status": "pending",
-    "note": "이번 회차 차선 후보. util/time.ts 시험 0건, quota.ts 가 유일한 소비처. UTC 15:00 경계(2026-03-14T14:59:59.999Z→'2026-03-14', 15:00:00Z→'2026-03-15')와 minuteStart 의 초·밀리초 절삭만 고정. 순수 함수·프로덕션 0파일. 미사용 표면(kstWindowOn·overlaps·isoDay·formatKst·backoffMs)은 늘리지 말 것.",
+    "note": "새 항목. quota.ts 의 하루 창 열쇠는 kstDateKey(at) 라 카운터는 UTC 15:00 에 바뀌는데, retryAfterSeconds 의 day 분기는 `windowStart('day', at+24h)` = 다음 KST 날짜키의 **UTC 자정**까지를 센다 → 항상 정확히 32400초(9시간) 과대. month 분기도 같은 이유로 +9시간. 과소가 아니라 과대라 한도 우회는 아니고, 429 의 retry-after 헤더(respond.ts:69 → apps/web/src/api/client.ts:181)가 '13시간 뒤' 대신 '22시간 뒤' 를 말한다. 고치려면 이미 있고 아무도 쓰지 않는 kstDayStart() 를 쓰면 된다. **이번 회차에 일부러 안 고쳤다**: retryAfterSeconds 는 비공개이고 consume() 은 Sql 을 요구해 DOM 없는 vitest 로는 프로덕션 배선을 지나는 증거를 만들 수 없다. 게다가 day/month 429 를 실제로 노출하는 경로가 거의 없다 — agent.ts:97 과 client-errors.ts:49 는 rate_limited 를 잡아 각각 quotaExceeded·{ok:true} 로 바꿔 retryAfter 를 버리고, 남은 day 한도는 auth.login 200·auth.mfa 60·mcp.call 5000 처럼 커서 minute 한도가 먼저 걸린다. DB e2e(scripts/e2e.mjs)로 login 200회를 돌려 헤더를 확인하는 것이 유일한 실증 경로.",
     "updated": "2026-10-14"
   },
   {
@@ -32,7 +32,16 @@
     "risk": 2,
     "size": "M",
     "status": "pending",
-    "note": "csvCell 이 비공개라 ctx.sql·권한·감사를 지나는 e2e 가 필요하다. 2026-10-14 회차가 docker postgres:16-alpine + migrate + seed-local + fakes + e2e(300 passed) 를 로컬에서 실제로 돌릴 수 있음을 확인했으므로 '한 세션에 안 끝난다' 는 전제는 재평가 여지가 있다. 원장 fixture 위치(scripts/seed-local.mjs vs e2e.mjs)는 미조사.",
+    "note": "csvCell 이 비공개라 ctx.sql·권한·감사를 지나는 e2e 가 필요하다. 이 환경에서 docker postgres:16-alpine + migrate(10개) + seed-local + fakes + e2e(300 passed) 를 실제로 돌릴 수 있음을 이번 회차에도 재확인했으므로 '한 세션에 안 끝난다' 는 전제는 깨졌다. 원장 fixture 위치(scripts/seed-local.mjs vs e2e.mjs)는 여전히 미조사.",
+    "updated": "2026-10-14"
+  },
+  {
+    "title": "KST 일 경계 kstDateKey·minuteStart 의 쿼터 창 계약 시험",
+    "value": 3,
+    "risk": 1,
+    "size": "S",
+    "status": "done",
+    "note": "이번 회차 구현. packages/core/src/__tests__/time.test.ts (새 파일, 시험 15개). UTC 15:00 경계·달/해 넘김·평년과 윤년 2월 말·0 채움, minuteStart 의 절삭(반올림 아님)과 분 경계가 하루 경계와 겹치는 것, month 창이 열쇠 앞 일곱 자리라는 것을 고정. 변이 3건(KST 오프셋 제거 8실패, floor→round 2실패, padStart 제거 8실패)으로 시험이 실제 함수를 보고 있음을 증명. 미사용 표면(kstWindowOn·overlaps·isoDay·formatKst·backoffMs·kstDayStart)은 지시대로 늘리지 않았다.",
     "updated": "2026-10-14"
   },
   {
@@ -41,7 +50,7 @@
     "risk": 2,
     "size": "S",
     "status": "pending",
-    "note": "routes/finance.ts:734-735 는 from/to 가 비면 '1900-01-01'·'9999-12-31' 을 v.day 를 지나지 않고 쿼리에 넣는다 — 고정된 2000~2100 계약이 그 경로에만 비어 있다. 역순(to<from)도 period() 를 지나지 않아 0원 손익을 정상 응답으로 낸다. period() 로 교체하면 기본값 의미가 달라져 API e2e(DB) 필요 — 이 환경에서 DB e2e 가 가능함은 확인됐다.",
+    "note": "routes/finance.ts:734-735 는 from/to 가 비면 '1900-01-01'·'9999-12-31' 을 v.day 를 지나지 않고 쿼리에 넣는다 — 2000~2100 계약이 그 경로에만 비어 있다. 역순(to<from)도 period() 를 지나지 않아 0원 손익을 정상 응답으로 낸다. period() 로 교체하면 기본값 의미가 달라져 API e2e(DB) 필요 — 이 환경에서 DB e2e 가 가능함은 확인됐다.",
     "updated": "2026-10-14"
   },
   {
@@ -105,60 +114,6 @@
     "size": "S",
     "status": "pending",
     "note": "man>=10000 분기의 (man/10000).toFixed(1). 조·십억 단위 표기 정책이 제품에 정의돼 있는지 미확인.",
-    "updated": "2026-10-14"
-  },
-  {
-    "title": "safeNext 가 탭·제어문자를 포함한 경로를 통과시키는 것의 실제 영향 확인",
-    "value": 2,
-    "risk": 3,
-    "size": "M",
-    "status": "pending",
-    "note": "서버 최종 복귀는 sso.ts 에서 new URL(flow.next_path, publicUrl) 뒤 pathname+search 만 쓰므로 외부로 나가지 않는 것으로 읽히나 브라우저 확인 안 됨. 가드 좁히기는 로그인 경로 변경이라 위험 3 — e2e 로 영향 확인 후에만. 통과·거절 표 15건은 두 사본에 고정됨.",
-    "updated": "2026-10-14"
-  },
-  {
-    "title": "달력 날짜 검증 v.day 의 윤년·월말·범위 계약을 회귀 시험으로 고정",
-    "value": 3,
-    "risk": 1,
-    "size": "S",
-    "status": "done",
-    "note": "구현·비평 통과. PR #6 브랜치 auto/2026-10-14-1208(a65df42) 에 domain.test.ts +58행으로 들어가 있고 로컬 npm run check 164 passed. 남은 것은 CI 통과뿐이며 CI 실패는 이 내용과 무관하다(저장소 단계 0개 실행).",
-    "updated": "2026-10-14"
-  },
-  {
-    "title": "금액·정수·소수 입력이 '0x10'·'1e3' 같은 비십진 리터럴을 조용히 받는 것 차단",
-    "value": 4,
-    "risk": 2,
-    "size": "S",
-    "status": "done",
-    "note": "v0.1.4 로 릴리즈됨(714a660). DECIMAL_RE + asNumber 로 좁혔고 기존 거절 문구 재사용.",
-    "updated": "2026-10-14"
-  },
-  {
-    "title": "로그인 복귀 경로 가드 safeNext 의 회귀 시험과 두 사본 일치 고정",
-    "value": 4,
-    "risk": 1,
-    "size": "S",
-    "status": "done",
-    "note": "v0.1.3 으로 릴리즈됨. 케이스 15건을 sso.ts·nav.ts 두 사본에 복제, 변이 3건으로 유효성 증명.",
-    "updated": "2026-10-14"
-  },
-  {
-    "title": "짧은 금액 표기 krwShort 의 1억 경계 오표기 수정",
-    "value": 3,
-    "risk": 1,
-    "size": "S",
-    "status": "done",
-    "note": "v0.1.2 로 릴리즈됨. 반올림된 만 값 기준 판정 + 크기 반올림 후 부호 재부착.",
-    "updated": "2026-10-14"
-  },
-  {
-    "title": "Markdown 내부 링크의 역슬래시 우회 차단",
-    "value": 4,
-    "risk": 1,
-    "size": "S",
-    "status": "done",
-    "note": "2026-10-07 c1f9a2b 로 머지됨. safeHref 내부 경로 분기에서 원문 역슬래시 거절.",
     "updated": "2026-10-14"
   }
 ]
