@@ -1,0 +1,74 @@
+[
+  {
+    "title": "CSV 구분자 자동 감지가 제목 줄에 끌려간다 (detectDelimiter 가 첫 줄 기준으로 점수)",
+    "value": 4,
+    "risk": 2,
+    "size": "S",
+    "status": "done",
+    "note": "csv.ts:35. score = consistent*1000 + counts[0] 이라 제목 줄의 쉼표 하나가 본문의 세미콜론/탭을 이겼다. 최빈 개수 기준(score = hits*1000 + modal)으로 바꿨고, 빈도 동점이면 더 큰 개수를 쓴다. 커밋 9b35b5f. 시험: compare.test.ts 에 감지 단위 2건 + 제목 줄 end-to-end(parseCsv→toTable) 1건 + 구분자 없는 한 열 1건.",
+    "updated": "2026-10-14"
+  },
+  {
+    "title": "빈 줄만 있는 CSV 가 행 한도를 우회해 브라우저를 멈춘다",
+    "value": 3,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "csv.ts end() 에서 LIMITS.rows/cells 검사가 '내용 있는 레코드' 분기 안에만 있다. 개행만 가득한 10MB 파일이 수백만 빈 행 객체를 만든 뒤에야 empty 로 끝난다. 빈 줄 분기에도 행 한도 검사를 넣고 넘으면 too_many_rows. 파일 1개 + 시험 1개. 다음 회차 1순위.",
+    "updated": "2026-10-14"
+  },
+  {
+    "title": "detectDelimiter 가 10MB 텍스트 전체를 split 한 뒤 30줄만 쓴다",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "csv.ts:36. 앞부분만 잘라서(예: 처음 64KB) 쪼개면 큰 파일에서 불필요한 할당이 사라진다. 2026-10-14 회차에서 같은 함수의 점수 기준을 고쳤지만 split 범위는 일부러 그대로 뒀다 — 별건으로 남는다. 마지막 잘린 줄을 버리는 처리가 필요.",
+    "updated": "2026-10-14"
+  },
+  {
+    "title": "serialToIso 가 Excel 1900 윤년 버그를 반영하지 않는다 (serial <= 60 이 하루 어긋남)",
+    "value": 2,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "xlsx-read.ts:228. (n-25569)*86400000 은 1900-03-01 이후만 맞다. 1900년대 초 날짜는 업무 파일에 거의 없어 가치가 낮다. 고치면 compare 의 날짜 비교와 함께 움직이니 시험 필수.",
+    "updated": "2026-10-14"
+  },
+  {
+    "title": "writeXlsx/writeDocx 의 Math.max(0, ...rows.map(r=>r.length)) 가 큰 내보내기에서 인자 한도에 가깝다",
+    "value": 2,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "xlsx-write.ts:61, doc/docx.ts:41. LIMITS.rows 가 50,000 이라 대조 결과 시트가 5만 행을 넘길 수 있고 spread 인자 수가 엔진 한도에 근접한다. 미확인 — 실제로 터지는지 먼저 재현할 것.",
+    "updated": "2026-10-14"
+  },
+  {
+    "title": "docx runs() 가 '\\n' 만 쪼개 CRLF 텍스트에 \\r 가 남는다",
+    "value": 1,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "doc/docx.ts:27. 윈도우에서 붙여넣은 여러 줄 텍스트가 Word 에서 줄 끝에 군더더기를 남긴다. weekly/model.ts:168 은 /\\r?\\n/ 로 이미 정규화하므로 경로에 따라 안 보일 수 있다. 미확인.",
+    "updated": "2026-10-14"
+  },
+  {
+    "title": "제목 줄이 있는 XLSX 에도 같은 '본문 기준' 판정이 필요한지 확인",
+    "value": 2,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "CSV 는 구분자 감지가 제목 줄에 끌려가는 문제가 있었지만(2026-10-14 수정), XLSX 는 구분자가 없어 guessHeaderLine 만 쓴다. 제목 줄이 셀 병합으로 여러 열을 차지하는 시트에서 guessHeaderLine(types.ts:82)의 60% 기준이 제목 줄을 헤더로 잡는지 아직 아무도 확인하지 않았다. 먼저 재현 시험부터. 파서 통합은 금지 — readSheet 쪽만 좁게.",
+    "updated": "2026-10-14"
+  },
+  {
+    "title": "구분자 감지 결과를 화면에 보여주고 사용자가 바꿀 수 있게",
+    "value": 3,
+    "risk": 3,
+    "size": "M",
+    "status": "pending",
+    "note": "compare.worker.ts:88 은 req.delimiter ?? detectDelimiter(text) 로 이미 덮어쓸 수 있는 배선이 있지만 apps/web 의 대조기 화면에는 구분자 선택 UI 가 없다. 자동 감지가 틀린 파일에서 사용자가 손으로 고칠 길이 없다. UI 변경이라 Playwright(npm run tools) 가 필요 — 단위 시험만으로 끝나지 않는다.",
+    "updated": "2026-10-14"
+  }
+]

@@ -7,3 +7,12 @@
 - 과제서: 채택 — 근거(code 가 늘 'internal', 서명 PK upsert 가 창 안에서 send=false)가 지금 코드와 정확히 맞고 e2e 로 재현됐다.
 
 - 릴리즈: 0.1.1 (2026-10-06, run 2026-10-06-225811-yeopjari-your-improve)
+## 2026-10-14
+- 선택: 프로필의 비워 둘 수 있는 항목이 실제로 비워지지 않는다 — `v.optional` 이 빈 문자열을 "안 보낸 것"으로 삼킨다 (가치 4 / 위험 2 / 작업량 S)
+- 결과: 성공
+- 요약: `v.optional` 이 `''` 를 fallback(undefined)으로 끊고 `parse` 가 그 키를 빼면, `PUT /api/v1/profile` 의 부분 갱신이 현재 행을 그대로 두어 회원이 지운 항목이 성공 응답과 함께 예전 값으로 되돌아왔다. `''` 를 안쪽 검증기에 그대로 넘기는 `v.clearable` 래퍼를 더하고(`util/validate.ts`) 흡연·음주·종교·MBTI·하는 일·소개 여섯 개만 옮겼다(`routes/profile.ts:209-215`) — `v.optional` 은 호출부 30여 곳이 `''` 를 "안 보낸 것"으로 쓰므로 손대지 않았고 `region`·`job_family`·`height_cm` 도 그대로 뒀다. 검증: `npm run check`(lint+타입+단위 50개 통과), `npm run build`, 그리고 Docker PostgreSQL 16 위 실제 배선 e2e — 고치기 전 **161 passed / 1 failed**(새 검사만), 고친 뒤 **163 passed / 0 failed**(검사 셋 다 추가한 상태).
+- 실패 재현: `FAIL  비워 둘 수 있는 항목은 빈 문자열로 보내면 실제로 지워진다 :: 채움=no 지움="no" db="no"` — `{ smoking: '' }` 를 보내도 응답 본문과 `your.profiles.smoking` 둘 다 예전 값 `no` 로 남았다. 같은 회차의 단위 검사는 고치기 전 `TypeError: v.clearable is not a function` 으로 에러가 났을 뿐이라(새 export 가 없어서) 결함을 증명한 것은 위의 e2e 쪽이다.
+- 보류 아이디어: util/validate.ts·util/text.ts 단위 테스트 공백 메우기(3/1/S, `v.clearable` 만 덮었고 `v.int('0x10')`·`v.string` 의 UTF-16 길이 등은 그대로 공백) / 지울 수 있는 필드 목록을 한곳에 모아 같은 결함의 재발을 막기(2/1/S) / `scripts/e2e.mjs` 의 가짜 서버 포트 18998·18997 하드코딩을 환경변수로(2/1/S — 이번 회차에도 다른 프로젝트의 고아 프로세스가 18998 을 쥐고 있어 실제로 막혔다) / `v.instant` 가 ISO-8601 이 아닌 `'2026'`·`'Dec 25'` 도 통과시킨다(2/1/S) / `util/text.ts` 의 `isSafeLink`·`tidyBody`·`excerpt` 는 호출부 0개인 죽은 코드이고 주석이 과장된 보호를 주장한다(2/1/S)
+- 과제서: 채택 — 지목한 줄(`validate.ts:225`, `parse:29`, `profile.ts:252-255`)이 지금 코드와 정확히 맞고 e2e 로 재현·수정·재검증까지 됐다. 정찰이 "추측으로 적은 것"으로 남긴 수용 기준 3(공개 중 프로필에서 `intro` 비우기 거부)도 `checklist()` 의 `intro ≥ 20자` 요구를 확인하고 e2e 검사로 못 박았다.
+
+- 릴리즈: 0.1.4 (2026-10-14, run 2026-10-14-090824-yeopjari-your-improve)

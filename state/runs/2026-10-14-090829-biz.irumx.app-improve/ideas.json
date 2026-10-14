@@ -1,0 +1,110 @@
+[
+  {
+    "title": "금액·정수·소수 입력이 '0x10'·'1e3' 같은 비십진 리터럴을 조용히 받는 것 차단",
+    "value": 4,
+    "risk": 2,
+    "size": "S",
+    "status": "done",
+    "note": "구현 완료(커밋 04601ff). validate.ts 에 DECIMAL_RE + asNumber(value, stripSeparators) 를 두고 v.money/v.int/v.decimal 의 변환 한 줄씩만 바꿨다. 리터럴이 아니면 원래 문자열을 돌려줘 기존 분기가 기존 한국어 문구로 거절 — 새 메시지 없음. 사전 실패로 '0x10'→16 재현 확인(money/int/decimal 각 4건 + 모양 확인 3건 = 15건 실패), 가드 정규식 제거 변이로 15건 재실패·복원 후 59건 통과. npm run check(138개 시험)·npm run build 통과.",
+    "updated": "2026-10-14"
+  },
+  {
+    "title": "달력 날짜 검증 v.day 의 윤년·월말·범위 회귀 시험 보강",
+    "value": 3,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "차선 후보로 두 회차 연속 남았고 다음 회차 유력. validate.ts:216 의 v.day 는 형식 정규식 + ISO 왕복 + 2000~2100 범위로 올바르게 동작한다(결함 아님, 계약 고정 가치). domain.test.ts 에 parseOne(v.day(...)) 통과(2024-02-29, 2000-01-01, 2100-12-31)·거절(2023-02-29, 2026-04-31, 2026-02-30, 2026-1-1, 20260101, 1999-12-31, 2101-01-01, 숫자·null) 표를 넣고 d.toISOString().slice(0,10) !== value 조건 제거 변이로 시험 유효성을 보이면 끝. 프로덕션 변경 0파일. 이번 회차에 같은 파일(validate.ts)을 건드렸으므로 v.day 는 일부러 손대지 않았다.",
+    "updated": "2026-10-14"
+  },
+  {
+    "title": "원장 CSV 수식 중립화와 인용 처리의 API 회귀 시험",
+    "value": 3,
+    "risk": 2,
+    "size": "M",
+    "status": "pending",
+    "note": "유지. csvCell 이 비공개 함수라 ctx.sql·권한·감사를 지나는 e2e 가 필요하고 DB·원장 fixture 비용이 커 한 세션에 안 끝난다.",
+    "updated": "2026-10-14"
+  },
+  {
+    "title": "v.string 은 UTF-16 단위, v.text 는 코드포인트로 길이를 세어 같은 '자' 가 필드마다 다름",
+    "value": 2,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "유지. validate.ts:60-62 의 v.string 은 text.length(UTF-16), :89 의 v.text 는 [...text].length(코드포인트)로 max 를 센다. 이모지가 든 입력에서 같은 글자수가 필드 종류에 따라 다르게 판정된다. 한글·영문만이면 차이가 없고 어느 쪽이 제품의 '자' 인지 미확인 — 먼저 docs/requirements 에서 길이 규정을 찾아야 한다. 이번 회차에 같은 파일을 읽었으나 범위를 금액 검증기 세 개로 한정했다.",
+    "updated": "2026-10-14"
+  },
+  {
+    "title": "프로젝트 손익 조회의 from/to 역순 검증 누락",
+    "value": 2,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "유지. finance.ts 의 period() 는 to < from 을 막지만 프로젝트 손익 라우트는 parseOne(v.day) 로만 받아 역순에서 0원 손익을 정상 응답으로 낸다. period() 로 바꾸면 기본값 의미가 달라지고 증명에 API e2e(DB) 가 필요.",
+    "updated": "2026-10-14"
+  },
+  {
+    "title": "클립보드 복사 폴백 예외 시 textarea 정리",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "유지. download.ts:15 copyText 의 execCommand('copy') 가 throw 하면 area.remove() 에 도달하지 못한다. vitest environment 가 node 라 DOM 증거를 만들 수 없고(jsdom 추가는 의존성 변경), 손으로 만든 document 대역은 운영자 지시에 어긋난다.",
+    "updated": "2026-10-14"
+  },
+  {
+    "title": "상대 시간 표기 relative 의 분·시·일 경계와 미래 시각 처리",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "유지. format.ts:46 은 단계마다 Math.round 라 59분30초가 '1시간 전' 이 되고 미래 시각은 모두 '방금'. 제품이 원한 반올림인지 미확인이라 단정해 고치지 말 것 — 먼저 계약을 시험으로 고정하는 쪽이 안전하다.",
+    "updated": "2026-10-14"
+  },
+  {
+    "title": "krwShort 의 10억 이상 표기가 '10.0억' 으로 소수점을 남기는 문제",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "유지. format.ts:16 의 man>=10000 분기에서 (man/10000).toFixed(1). 조·십억 단위 표기 정책이 제품에 정의돼 있는지 미확인.",
+    "updated": "2026-10-14"
+  },
+  {
+    "title": "safeNext 가 탭·제어문자를 포함한 경로를 통과시키는 것의 실제 영향 확인",
+    "value": 2,
+    "risk": 3,
+    "size": "M",
+    "status": "pending",
+    "note": "유지. 서버 최종 복귀는 sso.ts:302 에서 new URL(flow.next_path, publicUrl) 뒤 pathname+search 만 쓰므로 외부로 나가지 않는 것으로 읽히나 브라우저 확인 안 됨. 가드를 좁히는 것은 로그인 경로 변경이라 위험 3 — e2e 로 영향 확인 후에만. 2026-10-14 회차에서 통과·거절 표 15건은 두 사본에 고정됐다.",
+    "updated": "2026-10-14"
+  },
+  {
+    "title": "clientIpFrom 이 빈 x-forwarded-for 헤더에서 빈 지문을 돌려주는 것",
+    "value": 1,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "유지(낮음). text.ts 의 clientIpFrom 은 x-real-ip/x-forwarded-for 가 빈 문자열이어도 ?? 가 걸리지 않아 '' 를 돌려주고, 그 지문을 쓰는 쪽에서 여러 클라이언트가 한 통에 묶일 수 있다. 운영은 Cloudflare 라 cf-connecting-ip 가 항상 있어 실제 영향이 거의 없고, 지문 소비처(쿼터·레이트리밋)를 읽어 확인하지 않았다.",
+    "updated": "2026-10-14"
+  },
+  {
+    "title": "v.instant 가 '2026-13-45' 같은 비날짜 문자열을 Date 로 받는지 확인",
+    "value": 2,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "신규. validate.ts:153 의 v.instant 는 new Date(value) 의 NaN 여부만 본다. new Date 는 '2026-01-15' 같은 날짜만 문자열이나 비ISO 형식도 받아들여 시각 필드에 날짜만 들어오면 KST 경계 해석이 어긋날 수 있다. 다만 어느 라우트가 어떤 형식을 보내는지(화면 input type) 확인하지 않았고, v.day 와 달리 범위 제약이 제품에 정의돼 있는지 미확인 — 좁히기 전에 호출부를 먼저 읽어야 한다.",
+    "updated": "2026-10-14"
+  },
+  {
+    "title": "v.bool 이 'TRUE'·'on' 같은 폼 값을 거절하는 것이 의도인지 확인",
+    "value": 1,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "신규(낮음). validate.ts:115 의 v.bool 은 'true'/'1'/'false'/'0' 만 받는다. HTML 체크박스는 기본적으로 'on' 을 보내므로 폼 경로가 있다면 어긋나지만, 이 저장소는 JSON API 중심으로 보여 실제 폼 전송 경로를 확인하지 않았다. 넓히는 변경이라 운영자 지시(좁히기만)와 긴장 관계 — 호출부 확인 없이는 손대지 말 것.",
+    "updated": "2026-10-14"
+  }
+]
