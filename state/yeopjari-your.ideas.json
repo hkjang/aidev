@@ -1,29 +1,11 @@
 [
   {
-    "title": "프로필의 비워 둘 수 있는 항목이 실제로 비워지지 않는다 — v.optional 이 빈 문자열을 '안 보낸 것'으로 삼킨다",
-    "value": 4,
-    "risk": 2,
-    "size": "S",
-    "status": "done",
-    "note": "2026-10-14 구현. v.clearable(inner) 래퍼를 util/validate.ts 에 더하고(undefined·null 만 '안 보낸 것', '' 는 inner 로 그대로) routes/profile.ts 의 job_title·intro·smoking·drinking·religion·mbti 여섯 개만 v.optional → v.clearable. v.optional 자체는 손대지 않음(호출부 30여 곳이 '' 를 '안 보낸 것'으로 씀). region·job_family·height_cm 은 그대로. e2e 검사 3개 추가(지움·안 보냄·공개 중 거부), 고치기 전 161/1 → 고친 뒤 163/0.",
-    "updated": "2026-10-14"
-  },
-  {
-    "title": "util/validate.ts·util/text.ts 단위 테스트 공백 메우기",
+    "title": "하루·한 달 한도의 Retry-After 가 실제 초기화 시각보다 9시간 늦게 안내된다",
     "value": 3,
     "risk": 1,
     "size": "S",
-    "status": "pending",
-    "note": "2026-10-14 갱신: 이번 회차가 v.clearable/v.optional 의 '' 처리만 rules.test.ts 에 고정했다. 남은 공백은 그대로 — v.string 은 UTF-16 길이 / v.text 는 코드포인트([...text].length) · v.int('0x10')→16, v.int('1e3')→1000 (Number() 강제변환) · v.array 는 항목 실패 시 짧은 배열을 반환하나 errors 가 채워져 parse 는 throw. 전용 validate.test.ts 로 떼어내도 좋다.",
-    "updated": "2026-10-14"
-  },
-  {
-    "title": "지울 수 있는 프로필 필드 목록을 한곳에 모아 같은 결함의 재발을 막는다",
-    "value": 2,
-    "risk": 1,
-    "size": "S",
-    "status": "pending",
-    "note": "2026-10-14 갱신: 이번 회차가 여섯 필드를 v.clearable 로 옮겼지만 '지울 수 있음/없음' 판단이 parse 스키마의 호출마다 흩어져 있다. 새 필드를 더하는 사람이 v.optional 을 고르면 같은 결함이 조용히 재발한다(PUT 응답이 병합 결과를 그대로 돌려주므로 웹은 성공으로 표시). 다만 테이블화는 간접 참조를 늘리니 가치는 낮다 — 모듈 머리 주석 한 줄로 끝낼 수도 있다.",
+    "status": "done",
+    "note": "quota.ts 의 windowStart 는 카운터 행의 PK(한국 날짜를 UTC 자정에 박은 값)이고 창이 실제 넘어가는 한국 자정보다 9시간 뒤다. retryAfterSeconds 가 그 키로 다음 창 시작을 계산해 429 의 retry-after 가 항상 +32400초였다. 키는 그대로 두고(옮기면 운영 DB 카운터가 전부 끊긴다) 회원에게 주는 답만 kstDayStart/kstParts 로 계산. 단위 3검사 + e2e 1검사(실제 HTTP 헤더), 되돌려 재실패까지 확인.",
     "updated": "2026-10-14"
   },
   {
@@ -32,16 +14,25 @@
     "risk": 1,
     "size": "S",
     "status": "pending",
-    "note": "2026-10-14 재확인: 이번 회차에도 실제로 막혔다 — 다른 프로젝트(workkit.irumx.app)의 고아 프로세스(PPID 1, node scripts/fake-toss.mjs 18998)가 18998 을 쥐고 있어, 임시로 18996/18995 로 바꾸고 서버에 YOUR_YEOPJARI_URL 을 덮어써서 돌린 뒤 되돌렸다. 환경변수(기본 18998/18997)로 읽게 하고 scripts/ci-env.mjs 의 YOUR_YEOPJARI_URL 과 맞출 것. CI 는 단독 러너라 기본값으로 그대로 돈다.",
+    "note": "2026-10-14 세 번째 재확인: 또 막혔다 — 다른 프로젝트(workkit.irumx.app)의 고아 프로세스(PPID 1, node scripts/fake-toss.mjs 18998)가 18998 을 쥐고 있어 임시로 18996/18995 로 바꾸고 .env.dev 의 YOUR_YEOPJARI_URL 을 맞춘 뒤 돌리고 되돌렸다. 환경변수(기본 18998/18997)로 읽게 하고 scripts/ci-env.mjs 의 YOUR_YEOPJARI_URL 과 같은 값을 쓰게 할 것. CI 는 단독 러너라 기본값으로 그대로 돈다. 세 회차 연속 같은 벽이라 이제 값어치가 올라간다.",
     "updated": "2026-10-14"
   },
   {
-    "title": "v.instant 가 ISO-8601 이 아닌 문자열도 받아들인다",
+    "title": "util/validate.ts·util/text.ts 단위 테스트 공백 메우기",
+    "value": 3,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "2026-10-14 유지: v.clearable/v.optional 의 '' 처리만 rules.test.ts 에 고정돼 있다. 남은 공백 — v.string 은 UTF-16 길이 / v.text 는 코드포인트([...text].length) · v.int('0x10')→16, v.int('1e3')→1000 (Number() 강제변환) · v.array 는 항목 실패 시 짧은 배열을 반환하나 errors 가 채워져 parse 는 throw. 전용 validate.test.ts 로 떼어내도 좋다. 단순 테스트 추가는 '결함을 먼저 드러내라' 규칙과 어긋나니, v.int 의 0x/1e 수용처럼 실제로 틀린 동작 하나를 골라 좁혀 고치는 형태로 가져갈 것.",
+    "updated": "2026-10-14"
+  },
+  {
+    "title": "v.instant 가 ISO-8601 이 아닌 문자열도 받아들인다 (validate.ts:153-162)",
     "value": 2,
     "risk": 1,
     "size": "S",
     "status": "pending",
-    "note": "validate.ts:153-162 — new Date(value) 로 NaN 만 거른다. 주석은 'ISO-8601 instant' 라고 하지만 '2026'·'Dec 25' 도 통과하고 엔진·시간대에 따라 다른 Date 가 된다. 호출부가 사용자 입력인지는 여전히 미확인 — 좁히려면 호출부부터 확인할 것.",
+    "note": "new Date(value) 로 NaN 만 거른다. 주석은 'ISO-8601 instant' 라고 하지만 '2026'·'Dec 25' 도 통과하고 엔진·시간대에 따라 다른 Date 가 된다. 호출부가 사용자 입력인지는 여전히 미확인 — 좁히려면 호출부부터 확인할 것(safety-plans 의 meet_at 이 유력).",
     "updated": "2026-10-14"
   },
   {
@@ -50,7 +41,16 @@
     "risk": 1,
     "size": "S",
     "status": "pending",
-    "note": "지난 회차 기록 유지(이번 회차에 재확인하지 않음 — 미확인). 주석은 '명백한 사설 범위'를 막는다고 하지만 코드는 169.254.169.254 와 metadata.google.internal 만 막는다. 지우거나(권장) 주석을 사실에 맞추거나.",
+    "note": "2026-10-14 코드로 재확인: 세 함수 모두 text.ts 안에만 있고 저장소 어디서도 부르지 않는다. 주석은 '명백한 사설 범위'를 막는다고 하지만 코드는 169.254.169.254 와 metadata.google.internal 두 개만 막는다. 지우거나(권장) 주석을 사실에 맞추거나.",
+    "updated": "2026-10-14"
+  },
+  {
+    "title": "e2e 가 서버 자신의 실패(500) 서명을 한 번도 만들지 않아 alertOperator 의 서버 경로가 배선 수준으로 검증되지 않는다",
+    "value": 3,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "지난 회차 확인 유지: 완주 후 your_priv.error_alerts 에 CLIENT 행만 남는다. 개발 전용으로 일부러 500 을 내는 경로가 있으면 e2e 검사 한 줄을 더할 가치가 있다(없으면 만들지 말 것 — 프로덕션에 고장 경로를 새로 내는 것은 금지).",
     "updated": "2026-10-14"
   },
   {
@@ -63,12 +63,21 @@
     "updated": "2026-10-14"
   },
   {
-    "title": "e2e 가 서버 자신의 실패(500) 서명을 한 번도 만들지 않아 alertOperator 의 서버 경로가 배선 수준으로 검증되지 않는다",
+    "title": "launch.ts 의 waitingFor 가 published_at IS NULL 인 회원에게 전원 '1번'을 줄 수 있다",
     "value": 3,
     "risk": 2,
+    "size": "M",
+    "status": "pending",
+    "note": "2026-10-14 코드로 재확인(동작은 미확인): launch.ts:54 의 ahead 는 p.published_at <= (SELECT published_at FROM your.profiles WHERE account_id = $3) 인데 본인 published_at 이 NULL 이면 비교가 NULL 이라 ahead=0 → position 1. WAITING 조건의 p.state='active' 가 published_at NOT NULL 을 함의하는지 스키마에서 확인하는 것이 첫 단계. 함의한다면 rejected 로 닫을 것.",
+    "updated": "2026-10-14"
+  },
+  {
+    "title": "지울 수 있는 프로필 필드 목록을 한곳에 모아 같은 결함의 재발을 막는다",
+    "value": 2,
+    "risk": 1,
     "size": "S",
     "status": "pending",
-    "note": "지난 회차 확인 유지: 완주 후 your_priv.error_alerts 에 CLIENT 행만 남는다. 개발 전용으로 일부러 500 을 내는 경로가 있으면 e2e 검사 한 줄을 더할 가치가 있다(없으면 만들지 말 것).",
+    "note": "2026-10-14 유지: 여섯 필드가 v.clearable 로 옮겨졌지만 '지울 수 있음/없음' 판단이 profile.ts 의 parse 스키마 호출마다 흩어져 있다. 새 필드에 v.optional 을 고르면 같은 결함이 조용히 재발한다. 테이블화는 간접 참조를 늘리니 가치가 낮다 — 모듈 머리 주석 한 줄로 끝낼 수도 있다.",
     "updated": "2026-10-14"
   },
   {
@@ -77,16 +86,7 @@
     "risk": 1,
     "size": "S",
     "status": "pending",
-    "note": "2026-10-14 재확인: validate.ts:16 의 readonly optional?: boolean 을 v.optional 과 새 v.clearable 이 세우기만 하고 저장소 어디에서도 읽지 않는다. 이번 회차에 새 래퍼에도 같은 표시를 붙여 두었다(일관성). 지우면 타입이 한 줄 줄지만 가치가 거의 없다.",
-    "updated": "2026-10-14"
-  },
-  {
-    "title": "launch.ts 의 waitingFor/published_at 가설",
-    "value": 3,
-    "risk": 3,
-    "size": "M",
-    "status": "rejected",
-    "note": "정찰이 2026-10-14 에 확인하고 기각 — active 로 가는 세 경로가 모두 published_at 을 채운다(profile.ts:334 coalesce, admin.ts:498 WHERE state='review', profile.ts:358 WHERE state='paused').",
+    "note": "2026-10-14 유지: validate.ts:16 의 readonly optional?: boolean 을 v.optional 과 v.clearable 이 세우기만 하고 저장소 어디에서도 읽지 않는다. 지우면 타입이 한 줄 줄지만 가치가 거의 없다.",
     "updated": "2026-10-14"
   }
 ]

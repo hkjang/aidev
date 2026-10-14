@@ -42,3 +42,11 @@
 - 과제서: 채택 — 지정된 수용 기준 (1) 의 사전 실패로 결함이 실제 `parse` 반환값/예외로 재현됐고, 권장 형태(`DECIMAL_RE` + `asNumber`)와 호출 규칙(money·decimal `true`, int `false`)을 그대로 따랐다.
 
 - 릴리즈: 0.1.4 (2026-10-14, run 2026-10-14-090829-biz.irumx.app-improve)
+## 2026-10-14
+- 선택: 달력 날짜 검증 v.day 의 윤년·월말·범위 계약을 회귀 시험으로 고정 (가치 3 / 위험 1 / 작업량 S)
+- 결과: 성공
+- 요약: `packages/core/src/util/validate.ts:233` 의 `v.day` 는 결재·근태·재무가 날짜를 받는 유일한 관문인데 시험이 0건이었다. `packages/core/src/__tests__/domain.test.ts` 끝에 `describe('입력 검증: 달력 날짜 v.day', …)` 를 덧붙여 통과 7건(윤년 4년·100년·400년 세 갈래와 월말·범위 양 끝)·거절 18건을 `parseOne(v.day(...), raw, 'issued_on')` 로 못 박고, 세 가드가 서로 다른 문구(`YYYY-MM-DD` / `날짜가 올바르지 않습니다` / `범위를 벗어났습니다`)를 `AppError.code === 'validation_failed'` 와 함께 낸다는 것도 한 건으로 고정했다. 프로덕션 변경 0파일이며 `npm run check`(ESLint + 세 workspace tsc + 전체 164개 시험)와 `npm run build` 가 통과했다.
+- 실패 재현: 결함 수정이 아니라 계약 고정이라 사전 실패가 없다 — 대신 가드 변이 3건으로 시험이 실제로 세 겹을 보고 있음을 증명했다. ① `validate.ts:240` 의 `|| d.toISOString().slice(0, 10) !== value` 제거 → `FAIL … > v.day 가 "2023-02-29" 를 거절한다` / `"2100-02-29"` / `"2026-02-30"` / `"2026-04-31"` / `세 겹의 가드가 서로 다른 문구로 거절한다` · `Tests  5 failed | 80 passed (85)`. ② `:244` 의 연도 범위 줄 제거 → `FAIL … > v.day 가 "1999-12-31" 를 거절한다` / `"2101-01-01"` / 문구 시험 · `Tests  3 failed | 82 passed (85)`. ③ (추가) 형식 정규식 제거 → `Tests  1 failed | 84 passed (85)` — 형식 위반 입력은 `new Date('2026-1-1T00:00:00Z')` 등이 NaN 이라 ISO 가드로 흘러 거절은 유지되고, 정규식 층은 문구 시험 한 건으로만 걸린다. 세 변이 모두 `git checkout -- packages/core/src/util/validate.ts` 로 되돌린 뒤 `Tests  85 passed (85)` 재확인.
+- 보류 아이디어: KST 일 경계 kstDateKey·minuteStart 의 쿼터 창 계약 시험 (3/1/S — time.ts 는 시험 0건, quota.ts 가 유일한 소비처, 다음 회차 유력); 원장 CSV 수식 중립화와 인용 처리의 API 회귀 시험 (3/2/M — csvCell 이 비공개라 DB·원장 fixture e2e 필요); v.string 은 UTF-16·v.text 는 코드포인트로 길이를 세어 같은 '자' 가 필드마다 다름 (2/2/S — docs/requirements 의 길이 규정 확인이 먼저); v.int 에 안전 정수 상한이 없어 '99999999999999999999' 가 통과 (2/2/S — max 없는 호출부 조사가 선행); 프로젝트 손익 조회의 from/to 역순 검증 누락 (2/2/S — period() 로 바꾸면 기본값 의미가 달라져 API e2e 필요).
+- 과제서: 채택 — 지정된 케이스 표를 값 그대로 쓰고 지정된 두 변이로 유효성을 증명했다. 과제서가 미확인으로 남긴 칸은 실행으로 확인했고 기대값 조정은 필요하지 않았다(`'2026-13-01'`·`'2026-00-10'`·`'2026-01-00'`·`'2026-01-32'` 는 `new Date` 가 NaN 을 주어 ISO 가드의 `Number.isNaN` 쪽에서, `'2100-02-29'` 는 `2100-03-01` 로 넘어가 왕복 조건에서 걸린다).
+

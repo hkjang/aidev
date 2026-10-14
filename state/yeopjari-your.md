@@ -16,3 +16,10 @@
 - 과제서: 채택 — 지목한 줄(`validate.ts:225`, `parse:29`, `profile.ts:252-255`)이 지금 코드와 정확히 맞고 e2e 로 재현·수정·재검증까지 됐다. 정찰이 "추측으로 적은 것"으로 남긴 수용 기준 3(공개 중 프로필에서 `intro` 비우기 거부)도 `checklist()` 의 `intro ≥ 20자` 요구를 확인하고 e2e 검사로 못 박았다.
 
 - 릴리즈: 0.1.4 (2026-10-14, run 2026-10-14-090824-yeopjari-your-improve)
+## 2026-10-14
+- 선택: 하루·한 달 한도의 `Retry-After` 가 실제 초기화 시각보다 9시간 늦게 안내된다 (가치 3 / 위험 1 / 작업량 S)
+- 결과: 성공
+- 요약: `quota.ts` 의 `windowStart` 는 카운터 행의 **키**(한국 날짜를 UTC 자정에 박아 둔 값)이고 창이 실제로 넘어가는 시각(한국 자정)보다 9시간 뒤다. `retryAfterSeconds` 가 그 키로 다음 창의 시작을 계산해 429 의 `retry-after` 헤더가 항상 정확히 32400초 과대였다 — 한국 23시에 막힌 회원에게 "1시간" 대신 "10시간"을 돌려줬다. 키는 `your_priv.quota_counters` 의 PK 라 그대로 두고(옮기면 운영 DB 의 모든 카운터가 한 번에 끊긴다) 회원에게 주는 답만 `kstDayStart`/`kstParts` 로 한국 벽시계에서 계산하도록 좁혀 고쳤다. 프로덕션 파일은 `packages/core/src/quota.ts` 하나. 검증: `npm run check`(lint+타입+단위 53개), `npm run build`, Docker PostgreSQL 16 위 실제 배선 e2e **164 passed / 0 failed**(새 검사 포함, exit 0).
+- 실패 재현: 단위 — `AssertionError: expected 36000 to be 3600 // Object.is equality` (`retryAfterSeconds('day', 2026-10-14T14:00:00Z)`, 즉 한국 23시). e2e(실제 HTTP 헤더) — `FAIL  하루 한도 429의 Retry-After 는 다음 한국 자정까지 (UTC 자정이 아니라) :: status=429 retry_after=80625 한국자정까지=48225` (차이가 정확히 32400초). 고친 뒤 둘 다 통과하고, 고친 코드를 **되돌려 넣자 e2e 가 다시 163 passed / 1 failed** 로 떨어지는 것까지 확인했다(인과 확인).
+- 보류 아이디어: `scripts/e2e.mjs` 의 가짜 서버 포트 18998·18997 하드코딩을 환경변수로(2/1/S — 이번 회차에도 다른 프로젝트의 고아 프로세스(PPID 1, node scripts/fake-toss.mjs 18998)가 18998 을 쥐고 있어 임시로 18996/18995 로 바꿔 돌린 뒤 되돌렸다. 세 회차 연속 같은 벽) / `util/validate.ts`·`util/text.ts` 단위 테스트 공백 메우기(3/1/S — `v.int('0x10')→16`, `v.string` 은 UTF-16 길이인데 `v.text` 는 코드포인트) / `v.instant` 가 `'2026'`·`'Dec 25'` 같은 비 ISO-8601 문자열도 통과시킨다(2/1/S) / `util/text.ts` 의 `isSafeLink`·`tidyBody`·`excerpt` 는 호출부 0개인 죽은 코드이고 주석이 과장된 보호를 주장한다(2/1/S) / e2e 가 서버 자신의 500 서명을 한 번도 만들지 않아 `alertOperator` 의 서버 경로가 배선 수준으로 검증되지 않는다(3/2/S)
+

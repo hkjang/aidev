@@ -1,0 +1,110 @@
+[
+  {
+    "title": "달력 날짜 검증 v.day 의 윤년·월말·범위 회귀 시험 보강",
+    "value": 3,
+    "risk": 1,
+    "size": "S",
+    "status": "done",
+    "note": "2026-10-14 구현. domain.test.ts 에 통과 7건·거절 18건 표와 세 가드 문구 시험 1건을 추가(+57행). 프로덕션 변경 0파일. 변이 3건(ISO 왕복 조건 / 연도 범위 줄 / 형식 정규식)으로 시험이 세 겹을 본다는 것을 증명했다 — 정규식 층은 문구 시험 한 건으로만 걸린다(형식 위반 입력은 new Date 가 NaN 을 주어 ISO 가드가 받는다).",
+    "updated": "2026-10-14"
+  },
+  {
+    "title": "KST 일 경계 kstDateKey·minuteStart 의 쿼터 창 계약 시험",
+    "value": 3,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "packages/core/src/util/time.ts 는 시험이 0건이고 quota.ts 가 일일 쿼터 리셋 키로 kstDateKey, 분당 창으로 minuteStart 를 쓴다(유일한 소비처). UTC 15:00 = KST 자정 경계(2026-03-14T14:59:59.999Z -> '2026-03-14', 15:00:00Z -> '2026-03-15')와 minuteStart 의 초·밀리초 절삭을 못 박으면 끝. 순수 함수라 node environment 로 충분. 같은 파일의 kstWindowOn·overlaps·isoDay·formatKst·backoffMs 는 quota.ts 도 쓰지 않는 미사용 표면이라 표를 늘리지 말 것. 이번 회차 차선 → 다음 회차 1순위.",
+    "updated": "2026-10-14"
+  },
+  {
+    "title": "원장 CSV 수식 중립화와 인용 처리의 API 회귀 시험",
+    "value": 3,
+    "risk": 2,
+    "size": "M",
+    "status": "pending",
+    "note": "csvCell 이 비공개 함수라 ctx.sql·권한·감사를 지나는 e2e 가 필요하고 DB·원장 fixture 비용이 커 한 세션에 안 끝난다. 이번 회차에도 읽지 않았다.",
+    "updated": "2026-10-14"
+  },
+  {
+    "title": "v.string 은 UTF-16 단위, v.text 는 코드포인트로 길이를 세어 같은 '자' 가 필드마다 다름",
+    "value": 2,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "validate.ts:79 의 v.string 은 text.length(UTF-16), :106 의 v.text 는 [...text].length(코드포인트)로 max 를 센다. 이모지가 든 입력에서 같은 글자수가 필드 종류에 따라 다르게 판정된다. 한글·영문만이면 차이가 없고 어느 쪽이 제품의 '자' 인지 미확인 — docs/requirements 의 길이 규정을 먼저 찾아야 한다.",
+    "updated": "2026-10-14"
+  },
+  {
+    "title": "v.email 의 지역부가 '.'·'..' 만으로도 통과하는 것",
+    "value": 2,
+    "risk": 3,
+    "size": "S",
+    "status": "pending",
+    "note": "validate.ts:50 의 EMAIL_RE 는 지역부에 '.' 를 자유롭게 허용해 '.@example.com', '..@example.com', 'a.@example.com' 이 통과하고 도메인 마지막 라벨에 알파벳 요구가 없어 'a@b.1' 도 통과한다. 좁히는 방향이라 운영자 지시와는 맞지만 이메일은 초대·로그인 식별자 경로라 이미 저장된 주소를 거절하면 로그인 차단으로 번질 수 있다. 소비처(초대·SSO·알림)와 기존 데이터 영향 확인 뒤에만.",
+    "updated": "2026-10-14"
+  },
+  {
+    "title": "v.int 에 안전 정수 상한이 없어 '99999999999999999999' 가 통과하는 것",
+    "value": 2,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "validate.ts 의 v.int 는 Number.isFinite + Number.isInteger 만 보므로(Number.isSafeInteger 가 아님) opts.max 가 없는 호출부에서는 1e20 이 정수로 통과한다. v.money 는 max 기본값 999,999,999,999 로 막혀 있다. 영향은 max 없는 v.int 호출부(페이지네이션·수량)에 달려 있고 호출부를 세어 보지 않았다 — 그것이 선행 작업.",
+    "updated": "2026-10-14"
+  },
+  {
+    "title": "프로젝트 손익 조회의 from/to 역순 검증 누락",
+    "value": 2,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "finance.ts 의 period() 는 to < from 을 막지만 프로젝트 손익 라우트는 parseOne(v.day) 로만 받아 역순에서 0원 손익을 정상 응답으로 낸다. period() 로 바꾸면 기본값 의미가 달라지고 증명에 API e2e(DB) 가 필요. 이번 회차에 v.day 쪽만 보고 라우트는 열지 않았다.",
+    "updated": "2026-10-14"
+  },
+  {
+    "title": "클립보드 복사 폴백 예외 시 textarea 정리",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "download.ts:15 copyText 의 execCommand('copy') 가 throw 하면 area.remove() 에 도달하지 못한다. vitest environment 가 node 라 DOM 증거를 만들 수 없고(jsdom 추가는 의존성 변경), 손으로 만든 document 대역은 운영자 지시에 어긋난다.",
+    "updated": "2026-10-14"
+  },
+  {
+    "title": "상대 시간 표기 relative 의 분·시·일 경계와 미래 시각 처리",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "format.ts:46 은 단계마다 Math.round 라 59분30초가 '1시간 전' 이 되고 미래 시각은 모두 '방금'. 제품이 원한 반올림인지 미확인이라 단정해 고치지 말 것 — 계약을 시험으로 고정하는 쪽이 안전하다.",
+    "updated": "2026-10-14"
+  },
+  {
+    "title": "krwShort 의 10억 이상 표기가 '10.0억' 으로 소수점을 남기는 문제",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "format.ts 의 man>=10000 분기에서 (man/10000).toFixed(1). 조·십억 단위 표기 정책이 제품에 정의돼 있는지 미확인.",
+    "updated": "2026-10-14"
+  },
+  {
+    "title": "safeNext 가 탭·제어문자를 포함한 경로를 통과시키는 것의 실제 영향 확인",
+    "value": 2,
+    "risk": 3,
+    "size": "M",
+    "status": "pending",
+    "note": "서버 최종 복귀는 sso.ts 에서 new URL(flow.next_path, publicUrl) 뒤 pathname+search 만 쓰므로 외부로 나가지 않는 것으로 읽히나 브라우저 확인 안 됨. 가드를 좁히는 것은 로그인 경로 변경이라 위험 3 — e2e 로 영향 확인 후에만. 통과·거절 표 15건은 두 사본에 고정돼 있다.",
+    "updated": "2026-10-14"
+  },
+  {
+    "title": "v.instant 가 날짜만 있는 문자열·비ISO 형식을 시각으로 받는 것",
+    "value": 2,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "validate.ts:174 의 v.instant 는 new Date(value) 의 NaN 여부만 본다. '2026-13-45' 류는 new Date 가 Invalid Date 를 주어 거절된다(이번 회차에 v.day 쪽에서 new Date('2026-13-01T00:00:00Z') -> NaN 을 실행으로 확인했으니 같은 전제가 맞다). 남는 문제는 '2026-01-15' 같은 날짜만 문자열과 'Jan 15 2026' 류 비ISO 형식이 통과해 KST 경계 해석이 어긋날 수 있다는 것 — 어느 라우트가 어떤 형식을 보내는지 확인 전에는 손대지 말 것.",
+    "updated": "2026-10-14"
+  }
+]
