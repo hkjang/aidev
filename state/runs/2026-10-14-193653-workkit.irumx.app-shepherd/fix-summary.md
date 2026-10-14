@@ -1,0 +1,7 @@
+# 수리 요약 — 고칠 결함이 없어 커밋 없이 종료
+
+- **지적(CI check=failure)은 이 브랜치의 결함이 아니다.** 러너가 남긴 `ci-248df8249286.json`(183828 회차 폴더)이 잡 자체를 말한다: `started_at 10:04:28Z` → `completed_at 10:04:31Z`(**3초**), `output.title/summary/text` **전부 null**, `annotations_count: 2`, 러너의 `ci-failure-*.txt` 의 `실패 단계:` **빈 칸**. checkout·`npm ci`(혼자서도 수십 초) 조차 돌지 않은 모양새다. 같은 서명의 잡 주석을 10:52 수리 회차가 인증된 API 로 읽어 기록해 뒀다: *"The job was not started because recent account payments have failed or your spending limit needs to be increased."* (이 세션은 `gh` 미인증 + 사설 저장소라 check-run·annotations·jobs 전부 404 로 재확인 못 함 — 미확인으로 남긴다.)
+- **브랜치 쪽은 로컬에서 전부 green**(이 체크아웃, `npm ci` 후): `npm run check` lint+typecheck 4패키지+**123 passed (10 files)**, `npm run build`, `npm run kits` ×2 + `cmp` → **MANIFEST IDENTICAL**, `npm run kits:test` 키트 3개 OK, `node scripts/ci-env.mjs` OK. CI 가 도달하지도 못한 build·kits 단계까지 돌렸다.
+- **시험이 대상을 정말 잡는다**: `csv.ts` 만 `origin/main` 판으로 되돌리니 새 시험이 red(`robustness.test.ts:63`, 1 failed | 4 passed), 되돌리기 복구 후 green. 트리 clean(`git status --porcelain` 무출력).
+- **못 돌린 것**: `e2e`·`tools`·`ui`·`a11y` — Docker PostgreSQL(:55447 이 상주 dev 컨테이너와 충돌)·Playwright·가짜 서버가 필요해 미검증. 다만 변경은 `packages/tools` 순수 브라우저 로직이고 core·server·scripts 는 `@workkit/tools` 를 import 하지 않는다.
+- **남은 조치는 저장소 밖**: GitHub Billing & plans 에서 결제 수단·지출 한도를 풀고 run `38546984514` 재실행. 워크플로 완화는 금지 규칙이고 애초에 잡이 시작조차 안 되므로 `.github/workflows/check.yml` 은 한 줄도 건드리지 않았다.
