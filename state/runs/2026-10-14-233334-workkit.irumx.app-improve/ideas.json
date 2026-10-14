@@ -1,0 +1,110 @@
+[
+  {
+    "title": "PR #4 CI 실패 분기 판정 후 db-breaker.test.ts 의 벽시계·연결횟수 단언만 좁게 고치기",
+    "value": 4,
+    "risk": 2,
+    "size": "S",
+    "status": "rejected",
+    "note": "측정으로 기각. dropped 는 러너 속도와 무관하게 항상 12 — db.ts:258,275 의 루프가 시도 횟수(4)로 묶이고 outOfTime(2500ms)은 안전 밸브일 뿐이며, 로컬 드롭 소켓이라 12회 연결 + 백오프가 131~142ms 에 끝난다(2코어 핀 + 5배 과구독). dropped=3 이 되려면 약 18배 추가 지연이 필요. 벽시계 여유도 큼: firstMs 68~142ms(한도 5,000), secondMs 0ms(한도 50, 차단기 경로는 I/O 0). 2코어에서 전체 11파일 135 passed, db-breaker 단독 10/10 무실패. 느슨하게 할 이유가 없으므로 한 줄도 바꾸지 않았다. 남는 설명은 Actions 결제·지출 한도(저장소 밖).",
+    "updated": "2026-10-14"
+  },
+  {
+    "title": "writeXlsx/writeDocx 의 Math.max(0, ...rows.map(...)) spread 인자 한도",
+    "value": 2,
+    "risk": 2,
+    "size": "S",
+    "status": "rejected",
+    "note": "측정으로 기각. 이 저장소의 LIMITS.rows 는 50,000 이고 V8 은 그 네 배까지 견딘다 — 50k OK / 100k OK / 200k RangeError. 한도 안에서는 절대 터지지 않으므로 고칠 결함이 없다.",
+    "updated": "2026-10-14"
+  },
+  {
+    "title": "vendor/postgres PATCH 5 가 errored() 뒤에도 reconnect() 로 떨어진다",
+    "value": 3,
+    "risk": 3,
+    "size": "S",
+    "status": "pending",
+    "note": "src/connection.js:470 부근 PATCH 블록이 errored(CONNECTION_CLOSED) 를 부른 뒤 아래 if (initial) return reconnect() 가 그대로 실행된다. errored() 가 initial 을 비우지 않으면 오류를 올리면서 재연결 루프도 계속한다(소켓 누수). cf/src 사본도 같다. errored 구현을 읽어 확인한 뒤에만 착수 — vendor-postgres.test.ts 가 upstream 과 줄 단위로 비교하므로 PATCH 블록 안에서만 고쳐야 한다.",
+    "updated": "2026-10-14"
+  },
+  {
+    "title": "detectDelimiter 가 10MB 텍스트 전체를 split 한 뒤 30줄만 쓴다",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "csv.ts:41. 앞 64KB 만 잘라 쪼개면 큰 파일 할당이 사라진다(마지막 잘린 줄 버리기). 브라우저 메인 스레드라 할당이 실제로 아프다. 주의: 동작이 바뀌는 입력은 '첫 30줄이 64KB 를 넘는 파일' 뿐이라 빨간 테스트가 나오지 않는다 — 버그 수정이 아니라 순수 리팩터로 보고할 것. compare.test.ts 의 구분자 감지 단언 3개가 그대로 통과해야 한다.",
+    "updated": "2026-10-14"
+  },
+  {
+    "title": "끝 빈 줄 때문에 정상 50,000행 CSV 가 행 한도에서 거부될 수 있다",
+    "value": 2,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "행 한도 검사가 push() 직후로 올라온 변경이 main 에 들어왔으므로 이제 성립한다(미재확인). 파일 끝 빈 레코드만 한도에서 예외 처리, CRLF 에서 i 증가 주의.",
+    "updated": "2026-10-14"
+  },
+  {
+    "title": "공유 dev Postgres(:55447) 를 쓰는 워크트리에서 e2e 7개가 파일 바이트 없음으로 실패",
+    "value": 2,
+    "risk": 2,
+    "size": "M",
+    "status": "pending",
+    "note": "개선 세션의 검증 신뢰도를 깎는다. seed-local 이 DB 행과 미디어를 함께 맞추게 하거나 워크트리 전용 DB 포트를 쓰는 방향. 메모리에 절차 기록됨.",
+    "updated": "2026-10-14"
+  },
+  {
+    "title": "사설 저장소 CI 가 PR 마다 Playwright 설치 + e2e + a11y 를 돌려 청구 분을 크게 쓴다",
+    "value": 2,
+    "risk": 3,
+    "size": "M",
+    "status": "pending",
+    "note": "지출 한도 차단의 배경. 잡이 시작조차 못 하는 동안에는 효과 없음 — 결제가 풀린 뒤의 일. 검사 항목은 하나도 빼지 말고 actions/cache 로 Playwright·npm 캐시만. .github/workflows 는 보호 경로.",
+    "updated": "2026-10-14"
+  },
+  {
+    "title": "serialToIso 가 Excel 1900 윤년 버그를 반영하지 않는다",
+    "value": 1,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "xlsx-read.ts:228 의 (n - 25569) 는 serial >= 61 에서만 맞다. Excel 은 serial 1 = 1900-01-01 인데 이 식은 1899-12-31 로 읽어 serial <= 59 가 하루 이르다. 영향 범위가 1900년 1~2월뿐이라 실무 파일에는 사실상 없음 — 가치 2 → 1 로 내렸다. 분기를 늘리는 위험이 이득보다 클 수 있다.",
+    "updated": "2026-10-14"
+  },
+  {
+    "title": "병합 셀 제목 줄에서 guessHeaderLine 이 제목 줄을 헤더로 잡는지 확인",
+    "value": 2,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "types.ts:82~89 의 60% 기준. 재현 fixture 부터 필요. readSheet 쪽만 좁게, 파서 통합 금지.",
+    "updated": "2026-10-14"
+  },
+  {
+    "title": "CI 와 같은 순서를 로컬에서 한 번에 돌리는 명령(npm run gate)",
+    "value": 2,
+    "risk": 2,
+    "size": "M",
+    "status": "pending",
+    "note": "게이트 정본이 둘로 갈리는 위험이 가치보다 커 보류 유지. 다만 Actions 결제 차단이 길어지는 동안에는 '로컬로 green 을 증명' 이 유일한 관문이어서 회차마다 손으로 6단계를 재현하는 비용이 계속 든다 — 차단이 더 이어지면 가치가 올라간다.",
+    "updated": "2026-10-14"
+  },
+  {
+    "title": "db-breaker.test.ts 의 dropped=12 가 결정적인 이유를 테스트에 주석으로 남긴다",
+    "value": 1,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "신규. 정찰 회차가 dropped>3 / <50ms / <200ms 를 '노트북 상수' 로 의심해 한 회차를 썼다. 실제로는 시도 횟수(4×3)로 묶여 결정적이다. :109 주석에 '4 attempts × 3 connects = 12, 예산 2.5s 는 안전 밸브' 를 한 줄 더하면 다음 정찰이 같은 길을 되밟지 않는다. 테스트 계약은 건드리지 않는 주석 전용 변경.",
+    "updated": "2026-10-14"
+  },
+  {
+    "title": "docx runs() 가 '\\n' 만 쪼개 CRLF 텍스트에 \\r 가 남는다",
+    "value": 1,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "doc/docx.ts:27. weekly/model.ts:168 이 /\\r?\\n/ 으로 이미 정규화해 경로에 따라 안 보일 수 있다. 미확인.",
+    "updated": "2026-10-14"
+  }
+]
