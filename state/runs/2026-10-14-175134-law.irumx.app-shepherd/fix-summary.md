@@ -1,0 +1,6 @@
+# 수리 결과 — 고칠 결함 없음 (커밋 없음, PR #6 / 6d6f810)
+
+- **지적("check=failure")은 사실이나 저장소 안에 원인이 없다.** 잡이 **3초**에 끝났고 과제서의 "실패 로그(끝부분)" 가 **비어 있다** — 이 워크플로는 `apt-get install postgresql-client-17` + `npm ci` 만으로도 3초를 넘기므로 어떤 step 도 실행되지 않았다. 게다가 이 PR 의 diff 는 테스트 파일 1개(459줄)뿐이고 그 파일은 `npm run check` 단계에서만 실행된다. 같은 신호가 이 저장소에서 네 회차 연속이며, 110037 회차가 인증된 `gh api .../check-runs/115634810274/annotations` 로 받은 원문은 `The job was not started because recent account payments have failed or your spending limit needs to be increased…` 였다. 이번 세션도 `gh` 미인증 + 비공개 저장소(익명 API 404)라 주석 **직접 재조회는 못 했다** — 결제 차단은 신호 일치에 의한 판단이다.
+- **코드 결백은 CI 순서를 그대로 로컬에서 끝까지 돌려 증명**했다(docker `law-irumx-dev`, postgres:17-alpine, 55460 = CI 와 동일 포트·비밀번호): `npm ci`(239 packages, lock 무변동) → `npm run check` 통과(eslint **0 errors**/646 warnings = 기준선, tsc 3 워크스페이스, vitest **7 files / 193 tests**) → `npm run build` → migrate 13건 → **rls-probe exit 0** → `npm run e2e` **27/27** → 빈 DB 재생성 후 `node scripts/acceptance.mjs` **26/26**(AT-26 포함). CI 와 다른 점은 로컬에 psql 바이너리가 없어 `docker exec psql` 로 돌린 것 하나뿐이고, 이 diff 는 그 경로를 건드리지 않는다.
+- 따라서 **아무것도 고치지 않았고 커밋도 남기지 않았다**(워킹트리는 6d6f810 과 동일, `git status` 비어 있음). 워크플로·검증 명령을 느슨하게 고쳐 초록을 만드는 길은 금지돼 있고, 그 외에 저장소 쪽에서 할 일이 없다.
+- 필요한 조치는 저장소 소유자의 **GitHub Actions 결제/지출한도 복구 후 같은 커밋 재실행**뿐이다.
