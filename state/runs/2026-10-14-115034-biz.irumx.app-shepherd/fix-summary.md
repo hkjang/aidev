@@ -1,0 +1,7 @@
+# 수리 요약 — 고칠 코드 결함이 없다 (커밋 없음)
+
+- 지적("CI check=failure")은 사실이나 **원인이 코드가 아니다**. 잡은 3초에 끝났고 실패한 단계가 식별되지 않았다(`실패한 검사: ?`) — 즉 **잡이 시작조차 못 했다**. 이 워크플로의 첫 저장소 관련 단계 `npm ci` 만으로도 로컬에서 13초가 걸린다. 비공개 저장소라 이 세션에는 `gh` 자격증명이 없어(`gh auth login` 요구, API 404) 주석 원문을 직접 재조회하지 못했지만, 같은 날 10:09~10:46 사이 다른 저장소 5개의 `check` 가 전부 동일하게 3초/`실패한 검사: ?` 로 죽었고, 자격증명이 있던 직전 회차(110037)가 `gh api .../check-runs/115634810274/annotations` 로 받은 원문이 "The job was not started because recent account payments have failed or your spending limit needs to be increased" 였다. GitHub Actions 결제·지출한도 차단이며 사람이 Billing & plans 에서 풀어야 한다.
+- 로컬에서 CI 와 같은 검증을 처음부터 돌려 전부 통과했다 (Node v22.23.1): `npm ci --no-audit --fund=false`(232 packages, lock 무변동) → `npm run check` **EXIT 0** = eslint + 3개 워크스페이스 tsc + vitest **8 files / 164 tests 통과** → `npm run build` EXIT 0 → `node scripts/ci-env.mjs` EXIT 0. 새 시험은 UTC(`TZ=UTC`)에서도 85/85 통과한다 — `v.day` 는 `new Date(...T00:00:00Z)`·`getUTCFullYear` 만 쓰므로 CI 의 UTC 와 로컬 KST 차이에 걸리지 않음을 확인했다.
+- 시험이 대상을 실제로 실행·단언하는지 변이로 재확인했다: ISO 왕복 가드(`validate.ts:240`)를 `if (false)` 로 → **9개 실패**(`2026-02-30`·`2100-02-29`·`2026-13-01` 등이 통과해 버림), 연도 범위 가드(`:244`)를 제거 → **3개 실패**(`1999-12-31`·`2101-01-01`·문구 시험). 두 변이 모두 `cp` 백업으로 즉시 복구했고 `git status` 깨끗·85/85 복귀를 확인했다. 빈 껍데기 시험이 아니다.
+- **미검증(명시)**: CI 후반 단계 `migrate`/`seed`/`e2e` 는 PostgreSQL·브라우저가 필요해 돌리지 않았다. 이번 변경은 `domain.test.ts` +57행(프로덕션 0파일)이라 그 경로에 닿을 수 없지만 통과를 주장하지 않는다.
+- 따라서 **커밋하지 않았다**. 워크플로·검증 명령을 손대 통과시키는 것은 금지이고, 그 외에 수리 쪽에서 할 일이 없다. 결제 차단이 풀린 뒤 같은 커밋 `116f32d` 로 CI 를 재실행하면 된다.
