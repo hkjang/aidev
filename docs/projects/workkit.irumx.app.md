@@ -1,7 +1,7 @@
 ---
 title: "workkit.irumx.app — 자율 개선 이력"
 description: "workkit.irumx.app: 자율 개선 회차 3회, 릴리즈 1건. 최근 릴리즈 없음."
-last_modified_at: 2026-10-14 15:44:03 +0900
+last_modified_at: 2026-10-14 16:24:47 +0900
 ---
 {% raw %}
 <script type="application/ld+json">
@@ -18,7 +18,7 @@ last_modified_at: 2026-10-14 15:44:03 +0900
   "name": "hkjang",
   "url": "https://github.com/hkjang"
  },
- "dateModified": "2026-10-14T15:44:03+09:00"
+ "dateModified": "2026-10-14T16:24:47+09:00"
 }
 </script>
 
@@ -34,6 +34,7 @@ last_modified_at: 2026-10-14 15:44:03 +0900
 <dt>저장소</dt><dd><a href="https://github.com/hkjang/workkit.irumx.app">https://github.com/hkjang/workkit.irumx.app</a></dd>
 <dt>마지막 회차</dt><dd>2026-10-14 15:27 KST — <span class="pill pill-failed">❌ 실패</span> fix-round: <strong>CI failed</strong>, PR open <a href="https://github.com/hkjang/workkit.irumx.app/pull/3">PR #3</a></dd>
 <dt>최근 릴리즈</dt><dd>released — released</dd>
+<dt>수정 과제</dt><dd>⚠️ 오류 대응(자동 적재): 마지막 회차가 &#x27;verify-failed&#x27; 로 끝났습니다. fix-round: CI failed, PR open https://github.com/hkjang/workkit.irumx.app/pull/3</dd>
 </dl>
 
 ## 회차 이력
