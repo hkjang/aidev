@@ -1,38 +1,29 @@
 [
   {
-    "title": "PR #2 check 잡의 2초 조기 실패(잡 셋업/서비스 컨테이너) 원인 특정과 수정",
-    "value": 5,
-    "risk": 3,
-    "size": "M",
-    "status": "rejected",
-    "note": "원인이 저장소 밖이라 기각. 10:52 수리 회차가 인증된 API 로 읽은 잡 주석: \"The job was not started because recent account payments have failed or your spending limit needs to be increased.\" + steps 는 빈 배열. 2초·output 전부 null·annotations_count 2·러너의 '실패 단계:' 빈 칸이 전부 이것으로 설명된다. PR #1 통과(00:27Z) 뒤 01:09Z 에 막힌 것도 그 사이 한도에 닿은 것과 맞는다. 워크플로(서비스 컨테이너 다이제스트 고정, docker run 이관)로는 고칠 수 없다 — 잡이 시작조차 안 된다. 조치는 GitHub Billing & plans 에서 결제·지출 한도를 풀고 run 38494124742 재실행.",
-    "updated": "2026-10-14"
-  },
-  {
-    "title": "PR #2 의 행 한도 검사가 파일 끝 빈 줄 때문에 정상 50,000행 CSV 를 거부",
-    "value": 3,
+    "title": "PR #3 의 check 잡 실패 원인을 잡 주석으로 판정하고 저장소 안의 원인만 좁게 고치기",
+    "value": 4,
     "risk": 2,
     "size": "S",
     "status": "pending",
-    "note": "이 워크트리(main@53ea324)에는 **없다** — PR #2 가 미머지라 csv.ts 의 한도 검사가 아직 내용 분기 안에 있는 것을 직접 확인했다. PR #2 가 머지된 뒤에만 성립한다. 그때 end(last) 플래그로 파일 끝 빈 레코드만 한도에서 예외 처리할 것(CRLF 에서 i 가 이미 증가한 것 주의).",
+    "note": "이 세션에서는 판정 자체가 불가능했다: gh auth status = not logged into any GitHub hosts, GH_TOKEN 없음, 익명 GET /repos/hkjang/workkit.irumx.app = 404(사설). 직전 회차가 인증 API 로 읽은 주석은 결제·지출 한도 차단(steps: [])이었고 그 전제로 workflow 는 한 줄도 건드리지 않았다. 다음 회차에 토큰이 있으면 먼저 주석을 읽고 분기할 것 — 토큰이 없으면 이 과제는 러너 쪽(결제)에서만 풀린다.",
     "updated": "2026-10-14"
   },
   {
-    "title": "셀 한도를 패딩 뒤 표 크기로 세어 넓은 줄 하나의 우회를 막기",
+    "title": "개행 없이 구분자만 든 CSV 가 한 레코드를 1,000만 항목까지 키운 뒤에야 한도를 본다",
     "value": 3,
     "risk": 2,
     "size": "S",
     "status": "done",
-    "note": "이번 회차 구현(46b7130). LIMITS.cells 를 패딩 전 레코드 길이 합으로 검사해, 넓은 줄 하나 + 좁은 줄 수천 개면 실제 할당(행 x 폭)이 한도를 수십 배 넘었다 — 직전 회차 비평가가 본 힙 OOM 의 실제 원인. 검사를 (rows.length + 1) * width 로 바꾸고 중복이 된 cells 누산기 삭제. 새 검사는 항상 옛 것보다 같거나 엄격하고 직사각형 파일은 두 식이 같다. 124 passed.",
+    "note": "248df82: push() 안 record.push(field) 직전에 record.length >= LIMITS.cells 가드를 같은 too_many_cells 코드로 추가. 회귀 시험은 robustness.test.ts 의 '한도를 넘긴 뒤에 오는 너무 긴 값까지 읽으면 cell_too_long 이 먼저 나온다' 로 red 를 확인. probe 로 경계(정확히 LIMITS.cells 개 필드)·정상 파일 무영향을 확인했다.",
     "updated": "2026-10-14"
   },
   {
-    "title": "개행 없이 구분자만 든 파일이 end() 전에 record 를 1,000만 항목까지 키운다",
+    "title": "열린 PR #2·#3 과 이번 커밋이 csv.ts 의 같은 한도 검사 블록을 세 갈래로 고쳐 머지 충돌이 예정돼 있다",
     "value": 3,
     "risk": 2,
     "size": "S",
     "status": "pending",
-    "note": "직전 회차 비평 노트 우려 ②. 10MB 쉼표는 end() 가 한 번도 안 불려 record 배열이 1,000만 항목까지 자란 뒤에야 한도를 본다(끝내 too_many_cells 로 던지긴 한다 — 오류 코드는 맞고 자원이 문제). push() 안에서 record.length 를 보는 방향. 이번 회차의 패딩 검사는 end() 안에 있어 이 경로를 못 막는다. csv.ts 만 좁게.",
+    "note": "origin/auto/2026-10-14-0958(행 한도를 push() 직후로 올림)·origin/auto/2026-10-14-1508(셀 한도를 (rows+1)*width 로)·248df82(push() 안 폭 가드)가 csv.ts:84~96 의 인접 줄을 각각 건드린다. CI 가 막혀 둘 다 머지 대기 중인 것이 배경. 하나를 main 에 올린 뒤 나머지를 리베이스해 한 번에 정리하는 과제.",
     "updated": "2026-10-14"
   },
   {
@@ -41,7 +32,25 @@
     "risk": 1,
     "size": "S",
     "status": "pending",
-    "note": "csv.ts:41. 앞 64KB 만 잘라 쪼개면 큰 파일에서 불필요한 할당이 사라진다(마지막 잘린 줄 버리기 필요). 53ea324 는 점수 기준만 고치고 split 범위는 남겼다 — 지금 코드에서 그대로 확인함.",
+    "note": "csv.ts:41. 앞 64KB 만 잘라 쪼개면 큰 파일에서 불필요한 할당이 사라진다(마지막 잘린 줄 버리기 필요). compare.test.ts 의 구분자 감지 단언 3개가 그대로 통과해야 한다.",
+    "updated": "2026-10-14"
+  },
+  {
+    "title": "끝 빈 줄 때문에 정상 50,000행 CSV 가 행 한도에서 거부될 수 있다",
+    "value": 2,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "여전히 이 워크트리(main@53ea324+248df82)에는 없다 — PR #2 가 미머지라 행 한도 검사가 아직 내용 분기 안에 있다. PR #2 머지 뒤에만 성립. 그때 파일 끝 빈 레코드만 한도에서 예외 처리할 것(CRLF 에서 i 가 이미 증가한 것 주의).",
+    "updated": "2026-10-14"
+  },
+  {
+    "title": "공유 dev Postgres(:55447) 를 쓰는 워크트리에서 scripts/e2e.mjs 가 파일 바이트 없음으로 7개 실패한다",
+    "value": 2,
+    "risk": 2,
+    "size": "M",
+    "status": "pending",
+    "note": "신규. 이 세션에서 직접 확인: :55447 은 본 체크아웃의 상주 컨테이너 workkit-irumx-dev 가 쓰고 migrate 는 'already up to date' 를 찍는다. seed-local 뒤에도 DB 의 files.object_key 가 가리키는 zip 이 워크트리 data/media 에 없어(exists=NO) files.ts:93 의 file integrity 가 500 을 던지고 e2e 7개·ui-flows 2개가 깨진다. 변경을 되돌려도 같다 — 코드 결함이 아니라 체크아웃 간 상태 충돌. 개선 세션의 검증 신뢰도를 깎으므로 seed-local 이 DB 행과 미디어를 함께 맞추게 하거나 워크트리 전용 DB 를 쓰는 방향.",
     "updated": "2026-10-14"
   },
   {
@@ -50,7 +59,16 @@
     "risk": 3,
     "size": "M",
     "status": "pending",
-    "note": "신규 — 이번 회차 2초 실패(지출 한도 차단)의 배경. 검사 항목은 하나도 빼지 말 것(운영자 반복 지시). 허용되는 방향은 Playwright 브라우저 캐시(actions/cache)와 npm 캐시 정도. 워크플로는 보호 경로라 위험 3.",
+    "note": "지출 한도 차단의 배경. 잡이 시작조차 못 하는 동안에는 효과가 없으므로 결제가 풀린 뒤에 할 일이다. 검사 항목은 하나도 빼지 말 것(운영자 반복 지시) — 허용되는 방향은 actions/cache 로 Playwright 브라우저·npm 캐시 정도. .github/workflows 는 보호 경로라 위험 3.",
+    "updated": "2026-10-14"
+  },
+  {
+    "title": "CI 와 같은 순서를 로컬에서 한 번에 돌리는 명령(npm run gate)이 없다",
+    "value": 2,
+    "risk": 2,
+    "size": "M",
+    "status": "pending",
+    "note": "게이트 정본이 둘로 갈리는 위험(운영자가 경고한 '같은 계약을 두 곳에서')이 있어 가치보다 위험을 먼저 따질 것. 이번 회차도 손으로 6단계를 재현했다.",
     "updated": "2026-10-14"
   },
   {
@@ -59,7 +77,7 @@
     "risk": 2,
     "size": "S",
     "status": "pending",
-    "note": "xlsx-read.ts:228. (n-25569)*86400000 은 1900-03-01 이후만 맞고 serial<=60 이 하루 어긋남. 업무 파일에 1900년대 초 날짜가 거의 없어 가치 낮음. compare 날짜 비교와 함께 움직이니 시험 필수.",
+    "note": "xlsx-read.ts:228. (n-25569)*86400000 은 1900-03-01 이후만 맞고 serial<=60 이 하루 어긋남. 업무 파일에 1900년대 초 날짜가 드물어 가치 낮음. compare 날짜 비교와 함께 움직이니 시험 필수.",
     "updated": "2026-10-14"
   },
   {
@@ -94,8 +112,8 @@
     "value": 1,
     "risk": 1,
     "size": "S",
-    "status": "pending",
-    "note": "깨져도 사용자 영향은 에러 문구뿐이라 가치가 낮다.",
+    "status": "rejected",
+    "note": "248df82 가 넓은 줄에서 cell_too_long 대신 too_many_cells 가 나는 경우를 이미 시험으로 고정했다. 남은 순서 조합은 깨져도 사용자 영향이 에러 문구뿐이어서 가치가 없다.",
     "updated": "2026-10-14"
   }
 ]
