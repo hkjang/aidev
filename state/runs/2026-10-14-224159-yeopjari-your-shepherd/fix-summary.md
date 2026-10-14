@@ -1,0 +1,6 @@
+# 수리 요약 — PR #5 (HEAD d195645 → 5547bbe)
+
+- **CI `check` 실패는 이 변경의 결함이 아니다.** 체크런 주석(annotations)이 원인을 그대로 적고 있다: "The job was not started because recent account payments have failed or your spending limit needs to be increased." 잡은 시작조차 못 했다(12:48:18Z→12:48:21Z, 3초). 근거: `gh api repos/hkjang/yeopjari-your/check-runs/115860836446/annotations`. 같은 주석이 **손대지 않은 main `735609c`** 의 푸시 런에도 붙어 있고, 2026-10-14 00:33Z 이후 다섯 런이 모두 4~5초 실패다(00:29Z 런까지는 success). 결제 문제라 저장소 안에서 고칠 수 없고, `check.yml` 완화는 금지이므로 **CI 를 위한 코드 변경은 하지 않았다.**
+- **로컬에서 CI 와 같은 순서로 전부 재현해 통과**: `npm run check` 53 passed → `npm run build` → `node scripts/ci-env.mjs` → 마이그레이션 10 → :8788 → `node scripts/e2e.mjs` **164 passed / 0 failed / exit 0**.
+- **실제로 고친 것 하나**(비평 노트 "남는 우려 1"): `scripts/e2e.mjs` 머리 주석이 `YOUR_YEOPJARI_URL`/`E2E_PUSH_ORIGIN` 을 "둘 다 환경변수로 우회 가능"이라 적었는데 틀렸다. `dev-reset.sh`·CI 의 `set -a; . ./.env.dev` 가 export 를 덮어써서 서버는 `ci-env.mjs` 가 쓴 18998 을 읽는다(실측: 서버 18998 / e2e 19998). 주석을 "ci-env.mjs 도 같이 바꿔야 한다, push 쪽은 그럴 필요 없다"로 바로잡았다(주석만, 동작 무변경 — 고친 뒤 게이트 전체 재실행해 위 수치 동일).
+- 안 고친 것: `fakeOrigin` 의 `[::1]` 허용(루프백 가드의 목적은 지켜지고 시끄럽게 실패한다), e2e 상한의 자정 끼임 flake·`retryAfter > 0` 하한 — 둘 다 비평가가 "결함 아님/다음에 조일 자리"로 분류했고 이번 지적은 CI 뿐이었다.
