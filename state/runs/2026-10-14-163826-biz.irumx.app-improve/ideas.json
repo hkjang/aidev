@@ -1,0 +1,164 @@
+[
+  {
+    "title": "PR #6 CI 가 저장소 단계 이전에 죽는 것 — services: 의 postgres 를 명시적 단계로 바꿔 실패를 로그에 남게 하기",
+    "value": 4,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "이번 회차 1순위. PR #6 은 domain.test.ts +58행 한 파일뿐인데(git diff --stat main a65df42) CI 는 3초·annotation 2건으로 저장소 단계 0개 실행 후 죽는다. 잡 시작 전 구간은 services: 컨테이너 초기화가 유일하고 그 구간은 로그가 없다. 이미지·포트·자격증명·대기시간을 동일하게 유지한 채 명시적 run 단계로 내려 출력이 남게 한다. 게이트는 하나도 약화하지 않는다. 원인은 미확정 — gh 가 이번 세션에서도 Bash 권한에 막혀 annotation 을 못 읽었다.",
+    "updated": "2026-10-14"
+  },
+  {
+    "title": "CI check 잡의 3초·annotations 2 즉시 실패 원인 확정(토큰 필요)",
+    "value": 3,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "두 회차 연속 막혔다. 2026-10-14 회차: gh auth status = 'not logged into any GitHub hosts', 비공개 저장소라 토큰 없는 공개 API 는 404. 이번 정찰 세션에서는 gh 가 Bash 권한에 아예 막혔다. 저장소 안에서 확정할 방법이 없으므로 같은 방식의 재시도를 1순위로 올리지 말 것 — 대신 1순위 과제가 그 구간에 로그를 남긴다. 같은 모양의 실패가 biz/law/yeopjari 세 저장소에서 같은 주기에 났다는 점은 계정·러너 쪽 원인 가능성을 시사한다.",
+    "updated": "2026-10-14"
+  },
+  {
+    "title": "KST 일 경계 kstDateKey·minuteStart 의 쿼터 창 계약 시험",
+    "value": 3,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "이번 회차 차선 후보. util/time.ts 시험 0건, quota.ts 가 유일한 소비처. UTC 15:00 경계(2026-03-14T14:59:59.999Z→'2026-03-14', 15:00:00Z→'2026-03-15')와 minuteStart 의 초·밀리초 절삭만 고정. 순수 함수·프로덕션 0파일. 미사용 표면(kstWindowOn·overlaps·isoDay·formatKst·backoffMs)은 늘리지 말 것.",
+    "updated": "2026-10-14"
+  },
+  {
+    "title": "원장 CSV 수식 중립화와 인용 처리의 API 회귀 시험",
+    "value": 3,
+    "risk": 2,
+    "size": "M",
+    "status": "pending",
+    "note": "csvCell 이 비공개라 ctx.sql·권한·감사를 지나는 e2e 가 필요하다. 2026-10-14 회차가 docker postgres:16-alpine + migrate + seed-local + fakes + e2e(300 passed) 를 로컬에서 실제로 돌릴 수 있음을 확인했으므로 '한 세션에 안 끝난다' 는 전제는 재평가 여지가 있다. 원장 fixture 위치(scripts/seed-local.mjs vs e2e.mjs)는 미조사.",
+    "updated": "2026-10-14"
+  },
+  {
+    "title": "프로젝트 손익 조회의 from/to 역순·범위 밖 기본값",
+    "value": 3,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "routes/finance.ts:734-735 는 from/to 가 비면 '1900-01-01'·'9999-12-31' 을 v.day 를 지나지 않고 쿼리에 넣는다 — 고정된 2000~2100 계약이 그 경로에만 비어 있다. 역순(to<from)도 period() 를 지나지 않아 0원 손익을 정상 응답으로 낸다. period() 로 교체하면 기본값 의미가 달라져 API e2e(DB) 필요 — 이 환경에서 DB e2e 가 가능함은 확인됐다.",
+    "updated": "2026-10-14"
+  },
+  {
+    "title": "v.string 은 UTF-16, v.text 는 코드포인트로 길이를 세어 같은 '자' 가 필드마다 다름",
+    "value": 2,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "validate.ts:79(text.length) vs :106([...text].length). 어느 쪽이 제품의 '자' 인지 미확인 — docs/requirements 의 길이 규정 확인이 선행.",
+    "updated": "2026-10-14"
+  },
+  {
+    "title": "v.int 에 안전 정수 상한이 없어 '99999999999999999999' 가 통과",
+    "value": 2,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "Number.isSafeInteger 가 아니라 isFinite+isInteger 만 본다. v.money 는 max 기본값으로 막혀 있다. max 없는 v.int 호출부(페이지네이션·수량) 조사가 선행.",
+    "updated": "2026-10-14"
+  },
+  {
+    "title": "v.email 의 지역부가 '.'·'..' 만으로도 통과",
+    "value": 2,
+    "risk": 3,
+    "size": "S",
+    "status": "pending",
+    "note": "좁히기 방향이지만 초대·로그인 식별자 경로라 기존 저장 주소를 거절하면 로그인 차단으로 번진다. 소비처와 기존 데이터 영향 확인 뒤에만.",
+    "updated": "2026-10-14"
+  },
+  {
+    "title": "v.instant 가 날짜만 있는 문자열·비ISO 형식을 시각으로 받는 것",
+    "value": 2,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "new Date(value) 의 NaN 여부만 본다. '2026-01-15'·'Jan 15 2026' 이 통과해 KST 경계 해석이 어긋날 수 있다. 어느 라우트가 어떤 형식을 보내는지 확인 전에는 손대지 말 것. v.day 와 달리 ISO 왕복·범위 가드가 없다.",
+    "updated": "2026-10-14"
+  },
+  {
+    "title": "클립보드 복사 폴백 예외 시 textarea 정리",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "download.ts:15 copyText 의 execCommand 가 throw 하면 area.remove() 에 도달하지 못한다. vitest environment 가 node 라 DOM 증거를 만들 수 없고 jsdom 추가는 의존성 변경(범위 밖), 손으로 만든 document 대역은 운영자 지시 위반.",
+    "updated": "2026-10-14"
+  },
+  {
+    "title": "상대 시간 표기 relative 의 분·시·일 경계와 미래 시각 처리",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "format.ts:46 은 단계마다 Math.round 라 59분30초가 '1시간 전', 미래 시각은 모두 '방금'. 제품이 원한 반올림인지 미확인 — 계약을 시험으로 고정하는 쪽만 안전.",
+    "updated": "2026-10-14"
+  },
+  {
+    "title": "krwShort 의 10억 이상 표기가 '10.0억' 으로 소수점을 남기는 문제",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "man>=10000 분기의 (man/10000).toFixed(1). 조·십억 단위 표기 정책이 제품에 정의돼 있는지 미확인.",
+    "updated": "2026-10-14"
+  },
+  {
+    "title": "safeNext 가 탭·제어문자를 포함한 경로를 통과시키는 것의 실제 영향 확인",
+    "value": 2,
+    "risk": 3,
+    "size": "M",
+    "status": "pending",
+    "note": "서버 최종 복귀는 sso.ts 에서 new URL(flow.next_path, publicUrl) 뒤 pathname+search 만 쓰므로 외부로 나가지 않는 것으로 읽히나 브라우저 확인 안 됨. 가드 좁히기는 로그인 경로 변경이라 위험 3 — e2e 로 영향 확인 후에만. 통과·거절 표 15건은 두 사본에 고정됨.",
+    "updated": "2026-10-14"
+  },
+  {
+    "title": "달력 날짜 검증 v.day 의 윤년·월말·범위 계약을 회귀 시험으로 고정",
+    "value": 3,
+    "risk": 1,
+    "size": "S",
+    "status": "done",
+    "note": "구현·비평 통과. PR #6 브랜치 auto/2026-10-14-1208(a65df42) 에 domain.test.ts +58행으로 들어가 있고 로컬 npm run check 164 passed. 남은 것은 CI 통과뿐이며 CI 실패는 이 내용과 무관하다(저장소 단계 0개 실행).",
+    "updated": "2026-10-14"
+  },
+  {
+    "title": "금액·정수·소수 입력이 '0x10'·'1e3' 같은 비십진 리터럴을 조용히 받는 것 차단",
+    "value": 4,
+    "risk": 2,
+    "size": "S",
+    "status": "done",
+    "note": "v0.1.4 로 릴리즈됨(714a660). DECIMAL_RE + asNumber 로 좁혔고 기존 거절 문구 재사용.",
+    "updated": "2026-10-14"
+  },
+  {
+    "title": "로그인 복귀 경로 가드 safeNext 의 회귀 시험과 두 사본 일치 고정",
+    "value": 4,
+    "risk": 1,
+    "size": "S",
+    "status": "done",
+    "note": "v0.1.3 으로 릴리즈됨. 케이스 15건을 sso.ts·nav.ts 두 사본에 복제, 변이 3건으로 유효성 증명.",
+    "updated": "2026-10-14"
+  },
+  {
+    "title": "짧은 금액 표기 krwShort 의 1억 경계 오표기 수정",
+    "value": 3,
+    "risk": 1,
+    "size": "S",
+    "status": "done",
+    "note": "v0.1.2 로 릴리즈됨. 반올림된 만 값 기준 판정 + 크기 반올림 후 부호 재부착.",
+    "updated": "2026-10-14"
+  },
+  {
+    "title": "Markdown 내부 링크의 역슬래시 우회 차단",
+    "value": 4,
+    "risk": 1,
+    "size": "S",
+    "status": "done",
+    "note": "2026-10-07 c1f9a2b 로 머지됨. safeHref 내부 경로 분기에서 원문 역슬래시 거절.",
+    "updated": "2026-10-14"
+  }
+]
