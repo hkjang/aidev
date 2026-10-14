@@ -1,0 +1,7 @@
+# 수리 요약 — 고칠 결함 없음, 커밋 없이 끝냄 (PR #4, 62b3471)
+
+- **재현 안 됨.** CI 워크플로의 모든 단계를 로컬에서 그대로 돌려 전부 통과했다: `npm ci` → `npm run check`(eslint + core·server·web 타입체크 + **126/126 단위**) → `npm run build` → `scripts/perf.mjs`(초기 JS 223.7 KB / 예산 230 KB) → `scripts/ci-env.mjs` → `scripts/migrate.mjs` → 서버 기동 → `scripts/e2e.mjs` **220 passed / 0 failed**(실 PostgreSQL `127.0.0.1:55443`, `dev-reset.sh` 직후). 새 '하루 한도' 2건도 PASS. 변경을 되돌리면(`git checkout origin/main -- packages/core/src/quota.ts`) `quota.test.ts` 8건이 전부 실패하므로 테스트가 대상을 실제로 실행한다.
+- **CI 적색의 원인은 코드가 아니라 계정 차원의 GitHub Actions 장애다.** 저장된 check-run 기록(`state/runs/*/ci-*.json`)을 시각순으로 보면 서로 무관한 5개 저장소(review.yeopjari.bid·workkit.irumx.app·law.irumx.app·biz.irumx.app·yeopjari-your)의 `check` 가 2026-10-14T00:28Z 까지 전부 success 였다가, **01:09Z 이후 9회 전부 2~3초 만에 failure**(`annotations_count: 2`, `output.title/summary/text` 모두 null)로 바뀐다. 우리 PR 의 것(05:34:27→05:34:30Z)도 그 줄의 하나다. 3초는 `actions/checkout` 도 끝나지 않는 시간이라 단계가 실행된 적이 없고, 이 커밋은 5개 중 1개 저장소에만 존재하므로 원인일 수 없다.
+- **고치지 않은 이유.** 남은 선택지는 `.github/workflows/check.yml` 을 느슨하게 고치는 것뿐인데 절대 규칙이 금지한다. 코드에는 지적된 결함이 없다(비평가도 승인했고 우려 ①~⑤ 는 전부 범위 밖·ideas 항목이었다).
+- **확정 못 한 것.** 주석 2건의 본문은 못 읽었다 — 이 샌드박스도 GitHub 미인증(`gh auth status`: "You are not logged into any GitHub hosts"). 지출 한도인지 러너 확보 실패인지는 미확정이나, 둘 다 이 브랜치의 코드로 고칠 수 없다.
+- **다음 할 일(러너·사람).** 계정의 Actions 청구/지출 한도를 확인하고 재실행(re-run)하라. 코드 변경 없이 녹색이 될 것으로 본다.
