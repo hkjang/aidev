@@ -1,10 +1,10 @@
 {
- "generated": "2026-10-14T13:59:19+09:00",
+ "generated": "2026-10-14T14:08:19+09:00",
  "site": "https://hkjang.github.io/aidev",
- "description": "Claude Code 자율 개선 에이전트가 hkjang 의 프로젝트를 개선·테스트·머지·릴리즈한 일일 보고. 오늘 40회차·릴리즈 7건, 누적 2549회차·릴리즈 788건, 주의 필요 13건.",
+ "description": "Claude Code 자율 개선 에이전트가 hkjang 의 프로젝트를 개선·테스트·머지·릴리즈한 일일 보고. 오늘 41회차·릴리즈 7건, 누적 2550회차·릴리즈 788건, 주의 필요 13건.",
  "today": {
   "date": "2026-10-14",
-  "total": 40,
+  "total": 41,
   "projects": 10,
   "released": 7,
   "merged": 0,
@@ -15,7 +15,7 @@
   "sessions": 60
  },
  "totals": {
-  "runs": 2549,
+  "runs": 2550,
   "released": 788,
   "days": 43,
   "cost_usd": 8819.04,
@@ -978,6 +978,23 @@
   },
   {
    "kind": "PR",
+   "project": "yeopjari-your",
+   "title": "auto-improve: 한도 초과 응답의 Retry-After 는 다음 한국 자정까지를 알린다",
+   "url": "https://github.com/hkjang/yeopjari-your/pull/3",
+   "sha": "9865101",
+   "summary": "3파일 +79/−14 · approved https://github.com/hkjang/yeopjari-your/pull/3",
+   "why": "ci: failed — 성공이 아닌 검사: check=failure · 실패한 검사: ? 잡: check ",
+   "evidence": "https://github.com/hkjang/aidev/tree/main/state/runs/2026-10-14-140811-yeopjari-your-approve",
+   "labels": "aidev-approved",
+   "action": "PR 처리기가 승인함 — 승인 스윕이 CI 확인 뒤 머지·릴리즈 (아직 열려 있으면 CI 를 기다리는 중)",
+   "date": "2026-10-14",
+   "shepherd": "CI 실패 · 승인 → 스윕이 CI 확인 후 머지 (10-14 11:20) — risk=low — 리뷰 승인 (risk=low)",
+   "shepherd_action": "approve",
+   "shepherd_detail": "risk=low — 리뷰 승인 (risk=low)",
+   "needs_human": false
+  },
+  {
+   "kind": "PR",
    "project": "qurio",
    "title": "auto-improve: fix(web): clean up SSE readers on stream termination",
    "url": "https://github.com/hkjang/qurio/pull/36",
@@ -1144,23 +1161,6 @@
    "shepherd": "CI 실패 · 수정 실패 → 다음 시간에 재시도 (10-14 13:10) — 수정 세션이 커밋을 만들지 않음: # 수리 요약 — 고치지 않았다 (지적이 이 diff 의 결함을 가리키지 않는다)  - 재현 결과: diff 는 `packages/core/src/__tests__/domain.test.ts` +58행뿐(프로덕션·워크플로·설정·lockfile 무접촉)이",
    "shepherd_action": "fix-failed",
    "shepherd_detail": "수정 세션이 커밋을 만들지 않음: # 수리 요약 — 고치지 않았다 (지적이 이 diff 의 결함을 가리키지 않는다)  - 재현 결과: diff 는 `packages/core/src/__tests__/domain.test.ts` +58행뿐(프로덕션·워크플로·설정·lockfile 무접촉)이고, 로컬에서 CI 와 같은 게이트가 전부 green 이다 — `npm ci`(exit 0), `npm run check`(eslint + 3×tsc + **vitest 164 passed**), `npm run build`(exit 0), `node scripts/ci-env.mjs`(exit 0). - CI 는 `3s`·failure 로 끝났다. 이 머신에서 캐시된 `npm ci` 만 13초다 — checkout→setup-node→npm ci 중 어느 것도 3초 안에 끝�",
-   "needs_human": false
-  },
-  {
-   "kind": "PR",
-   "project": "yeopjari-your",
-   "title": "auto-improve: 한도 초과 응답의 Retry-After 는 다음 한국 자정까지를 알린다",
-   "url": "https://github.com/hkjang/yeopjari-your/pull/3",
-   "sha": "9865101",
-   "summary": "3파일 +79/−14 · approved https://github.com/hkjang/yeopjari-your/pull/3",
-   "why": "ci: failed — 성공이 아닌 검사: check=failure · 실패한 검사: ? 잡: check ",
-   "evidence": "https://github.com/hkjang/aidev/tree/main/state/runs/2026-10-14-112657-yeopjari-your-approve",
-   "labels": "aidev-approved",
-   "action": "PR 처리기가 승인함 — 승인 스윕이 CI 확인 뒤 머지·릴리즈 (아직 열려 있으면 CI 를 기다리는 중)",
-   "date": "2026-10-14",
-   "shepherd": "CI 실패 · 승인 → 스윕이 CI 확인 후 머지 (10-14 11:20) — risk=low — 리뷰 승인 (risk=low)",
-   "shepherd_action": "approve",
-   "shepherd_detail": "risk=low — 리뷰 승인 (risk=low)",
    "needs_human": false
   },
   {
@@ -1698,9 +1698,9 @@
    },
    {
     "role": "실패 분류 (MAST)",
-    "calls": 423,
+    "calls": 424,
     "cost": null,
-    "metric": "시스템 설계·인프라 0 · 에이전트 간 불일치(비평 거절·과제서 기각·수리 실패) 19 · 검증·종료(러너 검증·CI·중재 거절) 404"
+    "metric": "시스템 설계·인프라 0 · 에이전트 간 불일치(비평 거절·과제서 기각·수리 실패) 19 · 검증·종료(러너 검증·CI·중재 거절) 405"
    }
   ],
   "advice": [
@@ -2144,7 +2144,7 @@
   }
  ],
  "outcomes_today": {
-  "review-pending": 26,
+  "review-pending": 27,
   "releasing": 7,
   "verify-failed": 7,
   "release-ready": 0,
@@ -2155,7 +2155,7 @@
  "days": [
   {
    "date": "2026-10-14",
-   "total": 40,
+   "total": 41,
    "released": 7,
    "merged": 0,
    "nochange": 0,
@@ -2429,7 +2429,7 @@
    "key": "2026-W42",
    "url": "https://hkjang.github.io/aidev/weekly/2026-W42/",
    "days": 3,
-   "total": 128,
+   "total": 129,
    "released": 7,
    "merged": 0,
    "nochange": 8,
@@ -2515,7 +2515,7 @@
    "key": "2026-10",
    "url": "https://hkjang.github.io/aidev/monthly/2026-10/",
    "days": 14,
-   "total": 814,
+   "total": 815,
    "released": 188,
    "merged": 38,
    "nochange": 135,
@@ -4084,9 +4084,9 @@
    "name": "yeopjari-your",
    "repo": "https://github.com/hkjang/yeopjari-your",
    "page": "https://hkjang.github.io/aidev/projects/yeopjari-your/",
-   "runs": 4,
+   "runs": 5,
    "released": 2,
-   "last_ts": "2026-10-14T11:27:03+09:00",
+   "last_ts": "2026-10-14T14:08:17+09:00",
    "last_status": "other",
    "last_result": "approved https://github.com/hkjang/yeopjari-your/pull/3",
    "cost": 30.53,
