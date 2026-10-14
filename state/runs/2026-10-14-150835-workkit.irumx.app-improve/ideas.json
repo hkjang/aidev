@@ -1,0 +1,101 @@
+[
+  {
+    "title": "PR #2 check 잡의 2초 조기 실패(잡 셋업/서비스 컨테이너) 원인 특정과 수정",
+    "value": 5,
+    "risk": 3,
+    "size": "M",
+    "status": "rejected",
+    "note": "원인이 저장소 밖이라 기각. 10:52 수리 회차가 인증된 API 로 읽은 잡 주석: \"The job was not started because recent account payments have failed or your spending limit needs to be increased.\" + steps 는 빈 배열. 2초·output 전부 null·annotations_count 2·러너의 '실패 단계:' 빈 칸이 전부 이것으로 설명된다. PR #1 통과(00:27Z) 뒤 01:09Z 에 막힌 것도 그 사이 한도에 닿은 것과 맞는다. 워크플로(서비스 컨테이너 다이제스트 고정, docker run 이관)로는 고칠 수 없다 — 잡이 시작조차 안 된다. 조치는 GitHub Billing & plans 에서 결제·지출 한도를 풀고 run 38494124742 재실행.",
+    "updated": "2026-10-14"
+  },
+  {
+    "title": "PR #2 의 행 한도 검사가 파일 끝 빈 줄 때문에 정상 50,000행 CSV 를 거부",
+    "value": 3,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "이 워크트리(main@53ea324)에는 **없다** — PR #2 가 미머지라 csv.ts 의 한도 검사가 아직 내용 분기 안에 있는 것을 직접 확인했다. PR #2 가 머지된 뒤에만 성립한다. 그때 end(last) 플래그로 파일 끝 빈 레코드만 한도에서 예외 처리할 것(CRLF 에서 i 가 이미 증가한 것 주의).",
+    "updated": "2026-10-14"
+  },
+  {
+    "title": "셀 한도를 패딩 뒤 표 크기로 세어 넓은 줄 하나의 우회를 막기",
+    "value": 3,
+    "risk": 2,
+    "size": "S",
+    "status": "done",
+    "note": "이번 회차 구현(46b7130). LIMITS.cells 를 패딩 전 레코드 길이 합으로 검사해, 넓은 줄 하나 + 좁은 줄 수천 개면 실제 할당(행 x 폭)이 한도를 수십 배 넘었다 — 직전 회차 비평가가 본 힙 OOM 의 실제 원인. 검사를 (rows.length + 1) * width 로 바꾸고 중복이 된 cells 누산기 삭제. 새 검사는 항상 옛 것보다 같거나 엄격하고 직사각형 파일은 두 식이 같다. 124 passed.",
+    "updated": "2026-10-14"
+  },
+  {
+    "title": "개행 없이 구분자만 든 파일이 end() 전에 record 를 1,000만 항목까지 키운다",
+    "value": 3,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "직전 회차 비평 노트 우려 ②. 10MB 쉼표는 end() 가 한 번도 안 불려 record 배열이 1,000만 항목까지 자란 뒤에야 한도를 본다(끝내 too_many_cells 로 던지긴 한다 — 오류 코드는 맞고 자원이 문제). push() 안에서 record.length 를 보는 방향. 이번 회차의 패딩 검사는 end() 안에 있어 이 경로를 못 막는다. csv.ts 만 좁게.",
+    "updated": "2026-10-14"
+  },
+  {
+    "title": "detectDelimiter 가 10MB 텍스트 전체를 split 한 뒤 30줄만 쓴다",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "csv.ts:41. 앞 64KB 만 잘라 쪼개면 큰 파일에서 불필요한 할당이 사라진다(마지막 잘린 줄 버리기 필요). 53ea324 는 점수 기준만 고치고 split 범위는 남겼다 — 지금 코드에서 그대로 확인함.",
+    "updated": "2026-10-14"
+  },
+  {
+    "title": "사설 저장소 CI 가 PR 마다 Playwright 설치 + e2e + a11y 를 돌려 청구 분을 크게 쓴다",
+    "value": 2,
+    "risk": 3,
+    "size": "M",
+    "status": "pending",
+    "note": "신규 — 이번 회차 2초 실패(지출 한도 차단)의 배경. 검사 항목은 하나도 빼지 말 것(운영자 반복 지시). 허용되는 방향은 Playwright 브라우저 캐시(actions/cache)와 npm 캐시 정도. 워크플로는 보호 경로라 위험 3.",
+    "updated": "2026-10-14"
+  },
+  {
+    "title": "serialToIso 가 Excel 1900 윤년 버그를 반영하지 않는다",
+    "value": 2,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "xlsx-read.ts:228. (n-25569)*86400000 은 1900-03-01 이후만 맞고 serial<=60 이 하루 어긋남. 업무 파일에 1900년대 초 날짜가 거의 없어 가치 낮음. compare 날짜 비교와 함께 움직이니 시험 필수.",
+    "updated": "2026-10-14"
+  },
+  {
+    "title": "writeXlsx/writeDocx 의 Math.max(0, ...rows.map(...)) spread 인자 한도",
+    "value": 2,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "xlsx-write.ts:61, doc/docx.ts:41. LIMITS.rows 50,000 이면 터질 수 있으나 미확인 — 먼저 재현할 것. V8 spread 한도가 더 높아 안 터질 수도 있다.",
+    "updated": "2026-10-14"
+  },
+  {
+    "title": "병합 셀 제목 줄에서 guessHeaderLine 이 제목 줄을 헤더로 잡는지 확인",
+    "value": 2,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "types.ts:82~89 의 60% 기준. 재현 fixture 부터 필요. readSheet 쪽만 좁게, 파서 통합 금지.",
+    "updated": "2026-10-14"
+  },
+  {
+    "title": "docx runs() 가 '\\n' 만 쪼개 CRLF 텍스트에 \\r 가 남는다",
+    "value": 1,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "doc/docx.ts:27. weekly/model.ts:168 이 /\\r?\\n/ 으로 이미 정규화해 경로에 따라 안 보일 수 있다. 미확인.",
+    "updated": "2026-10-14"
+  },
+  {
+    "title": "cell_too_long 과 too_many_rows 의 발생 순서를 고정하는 시험",
+    "value": 1,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "깨져도 사용자 영향은 에러 문구뿐이라 가치가 낮다.",
+    "updated": "2026-10-14"
+  }
+]
