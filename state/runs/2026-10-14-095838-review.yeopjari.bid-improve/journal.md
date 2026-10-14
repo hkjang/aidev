@@ -20,3 +20,13 @@
 - 돌린 것: `npm run check` → eslint + 타입 3개 + 126 tests 통과. `npx vitest run packages/core/src/__tests__/quota.test.ts` → 8 passed(고치기 전 7 failed). `node scripts/e2e.mjs` → 220 passed / 0 failed. a11y·ui-flows 는 화면 변화가 없어 돌리지 않았다.
 - [러너 10:09] brief accepted — 채택 — 근거·수용 기준·손계산 수치(50400/82800)가 모두 코드와 일치했고 범위도 과제서대로 프로덕션 파일 1개로 끝났다
 - [러너 10:09] verify passed — 검증 6개 통과 (auto)
+
+## 비평 노트
+- 판정 approve(위험 low, 차단 없음). 전부 직접 돌렸다: `eslint` 통과, `npm run check` 126 tests, 새 테스트 단독 8 passed, `dev-reset.sh` 후 `node scripts/e2e.mjs` 220/0 — 원장 수치와 일치. 구현자가 지목한 `minute` 분기는 `ceil((60000-r)/1000) == 60-floor(r/1000)` 로 동등함을 대수로 확인했다.
+- 실패 재현을 믿지 않고 다시 했다: 고치기 전 `retryAfterSeconds` 를 독립 스크립트로 재구현해 새 단언 10개를 돌려 day·month 7개가 전부 **정확히 32400초(9시간)** 오차로 실패함을 확인(원장의 82800/50400·32460/60 과 동일). 테스트는 바뀐 경로를 실제로 지난다.
+- 승인이어도 남는 것 ① `quota.test.ts:11`·`e2e.mjs:1125` 주석이 '최대 9시간'이라 적었지만 실제는 시각 무관 '정확히 9시간'(커밋 본문은 맞다) — 주석만 정정 ② 새 e2e 검사는 벽시계 ±5초라 15:00Z(한국 자정)를 걸친 실행에서 플레이크 ③ `nextWindowReset` 은 모듈 밖 호출자 0건 — 아이디어 ② 를 집지 않으면 노출 표면만 남는다.
+- 범위 밖 추적(구현자 ideas ③ 과 동일): `purgeOldCounters` 의 `interval '3 days'` 가 month 창 카운터를 매달 4일째 지운다. `window:'month'` 호출자 0건을 grep 으로 확인 — 월 한도를 처음 쓰는 사람이 조용히 당한다.
+- 보안·법무 소견 모두 없음: 인가·세션·비밀값·저장 키(`windowStart`)·개인정보·의존성에 변화 없고 마이그레이션도 없어 revert 로 완전히 돌아온다. 못 본 것은 a11y·ui-flows·perf(화면 변화 없어 생략, 구현자와 동일 판단).
+- [러너 10:14] review approved — 리뷰 승인 (risk=low)
+- [러너 10:14] pr created — https://github.com/hkjang/review.yeopjari.bid/pull/3
+- [러너 10:15] ci failed — 성공이 아닌 검사: check=failure · 실패한 검사: ? 잡: check 
