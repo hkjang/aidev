@@ -1,0 +1,7 @@
+# 수리 요약 — 고칠 결함이 없음 (커밋 없이 종료)
+
+- 지적(CI `check` 실패)은 이 변경의 결함이 아니다. 러너가 준 실패 로그는 **빈 칸**이고(`실패 단계:` 공백), 이 커밋의 체크런 기록(`…150835-improve/ci-46b71302ad0e.json`)은 `started 06:26:46Z → completed 06:26:49Z` **3초**, `output.title/summary/text` 전부 `null`, `annotations_count: 2` 다 — 단계가 하나도 돌지 않았다는 뜻. 같은 저장소의 앞선 잡(115625901789)은 10:52 수리 회차가 **인증된 API** 로 주석을 읽어 그대로 남겼다: `"The job was not started because recent account payments have failed or your spending limit needs to be increased."`, `steps` 빈 배열. 오늘 law·biz·yeopjari 저장소도 같은 증상이라 계정 단위 GitHub Actions 과금 차단이다. (이 세션은 `gh` 미인증 + 사설 저장소로 익명 API 가 404 라 주석을 직접 재조회하지는 못했다.)
+- 로컬에서 같은 관문을 돌려 전부 통과: `npm ci` → `npm run check` **lint + 4패키지 typecheck + vitest 124 passed (10 files)**. CI 가 도달조차 못 한 뒷단계도 돌렸다 — `npm run build` 성공, `npm run kits` 2회 후 `cmp` manifest 동일(결정성), `npm run kits:test` 키트 3개 통과, `node scripts/ci-env.mjs` 정상. 3초는 `npm ci`(로컬 12초) 한 단계에도 못 미쳐 어떤 단계 실패로도 설명되지 않는다.
+- 변경 자체가 대상을 잡는지도 재현했다: `csv.ts` 만 `origin/main` 으로 되돌리면 새 시험이 red(`expected function to throw an error, but it didn't` — 5,000×200 패딩 격자 100만 셀이 안 막힘), 복구하면 green(6 passed). 되돌린 뒤 트리는 clean 으로 복원했다.
+- 그래서 규칙대로 소스를 고치지 않고 커밋도 남기지 않았다. 워크플로(`.github/workflows/check.yml`)를 손대 통과시키는 것은 금지이고, 잡이 시작조차 안 하므로 워크플로 내용과 무관하다. 브랜치는 커밋 1개·파일 2개이며 `.github/` 무수정임을 확인했다.
+- 남은 조치는 코드가 아니라 계정 쪽: GitHub Billing & plans 에서 결제 수단·지출 한도를 풀고 run 38522244510 재실행. 미검증으로 남는 것: `e2e`·`tools`·`ui`·`a11y`(Docker PostgreSQL 16 + Playwright + 가짜 서버 필요, 이 순수 파싱 변경과 무관 판단).
