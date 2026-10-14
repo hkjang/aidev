@@ -41,3 +41,4 @@
 - 보류 아이디어: 달력 날짜 검증 v.day 의 윤년·월말·범위 회귀 시험 보강 (3/1/S — 차선 후보 그대로, 프로덕션 변경 0파일, 다음 회차 유력); 원장 CSV 수식 중립화와 인용 처리의 API 회귀 시험 (3/2/M — csvCell 이 비공개라 DB·원장 fixture e2e 필요); v.string 은 UTF-16 단위·v.text 는 코드포인트로 길이를 세어 같은 '자' 가 필드마다 다름 (2/2/S — 어느 쪽이 제품의 '자' 인지 docs/requirements 확인이 먼저); 프로젝트 손익 조회의 from/to 역순 검증 누락 (2/2/S — period() 로 바꾸면 기본값 의미가 달라져 API e2e 필요); 클립보드 복사 폴백 예외 시 textarea 정리 (2/1/S — vitest environment 가 node 라 DOM 증거를 만들 수 없음).
 - 과제서: 채택 — 지정된 수용 기준 (1) 의 사전 실패로 결함이 실제 `parse` 반환값/예외로 재현됐고, 권장 형태(`DECIMAL_RE` + `asNumber`)와 호출 규칙(money·decimal `true`, int `false`)을 그대로 따랐다.
 
+- 릴리즈: 0.1.4 (2026-10-14, run 2026-10-14-090829-biz.irumx.app-improve)
