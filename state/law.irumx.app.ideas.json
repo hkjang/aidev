@@ -1,83 +1,12 @@
 [
-  {
-    "title": "오류 stderr 로그 세 경로를 redactSecrets 로 통과시키기 (Background.run 은 운영 경로)",
-    "value": 4,
-    "risk": 1,
-    "size": "S",
-    "status": "done",
-    "note": "구현 완료 (commit 0804a58). pipeline.ts:54 Background.run 의 catch 는 env.dev 게이트가 없어 운영에서 String(err) 를 원문으로 찍었다 — redactSecrets(String(err)).slice(0,300) 로 바꿨다(순서가 핵심: 먼저 자르면 300자에 걸친 DSN 이 @ 를 잃어 치환을 빠져나가는 것을 테스트로 실증). :111 dev 한 줄과 :489 원본 스택도 같이 닫았다. 신규 background-redact.test.ts 3건이 new Background() 실제 객체 + console.error spy 로 증명. redactSecrets 정규식은 손대지 않음.",
-    "updated": "2026-10-14"
-  },
-  {
-    "title": "env.dev 일 때 console.error(err.stack) 가 redact 를 거치지 않는 경로 점검",
-    "value": 3,
-    "risk": 1,
-    "size": "S",
-    "status": "done",
-    "note": "위 1순위 과제에 흡수되어 함께 머지됐다 — pipeline.ts:489 가 redactSecrets(err.stack) 로 바뀌었다. 별도 회차 불필요.",
-    "updated": "2026-10-14"
-  },
-  {
-    "title": "util/validate.ts 경계 테스트",
-    "value": 3,
-    "risk": 1,
-    "size": "M",
-    "status": "pending",
-    "note": "다음 회차 1순위 후보. 모든 라우트 입력이 지나가는 검증기인데 테스트 0건. optional 의 '' 취급, text 의 min:0, array 의 인덱스별 오류 경로, int 의 문자열 강제변환, koreanParticle 조사 메시지를 현재 동작 그대로 고정. 프로덕션 0파일. 주의: validate.ts 내부는 이번 회차에도 열지 않았다 — 함수 목록은 이전 회차 기록 기준이며 미확인. 구현자가 먼저 실제 export 를 확인하고 시작할 것.",
-    "updated": "2026-10-14"
-  },
-  {
-    "title": "Background.run 실패가 운영에서 조용히 사라지는 문제 — 라벨만 있고 추적 수단이 없다",
-    "value": 3,
-    "risk": 2,
-    "size": "M",
-    "status": "pending",
-    "note": "이번 회차에 로그 누출은 닫았지만 추적 문제는 남았다. after-commit 작업이 실패하면 stderr 한 줄이 전부고 request_id 가 없어 어느 요청의 후속 작업이 깨졌는지 알 수 없다. alertOperator 경보 경로도 타지 않는다(요청 경로의 오류만 경보). run() 에 requestId 를 넘기는 것은 호출자 2곳(:208/:411) 수정으로 끝나 S 에 가깝지만, 경보까지 붙이면 중복 메일 억제(record_error_alert 창) 설계를 건드려야 해 M. 이제 background-redact.test.ts 가 출력 형식(JSON 필드 이름·순서)을 고정하고 있으니 필드를 더할 때 그 시험을 같이 갱신할 것.",
-    "updated": "2026-10-14"
-  },
-  {
-    "title": "env.ts loadEnv 전반 단위 테스트 집합",
-    "value": 3,
-    "risk": 1,
-    "size": "M",
-    "status": "pending",
-    "note": "env-mock-providers.test.ts 의 prodRaw() 헬퍼(LAW_DATABASE_URL + 64자 hex 키 3종 + LAW_SIGNING_KEY)를 재사용. 남은 것: LAW_DATABASE_URL 없음, LAW_SIGNING_KEY 없음, 32바이트 아닌 키, dev 키 사용, publicUrl 파싱(platformHost·opsHost·siteSuffix 소문자화, devPort). loadEnv 는 여기서 던지면 워커가 기동하지 못하는 곳이라 조건을 넓히지 말고 현재 동작만 고정할 것.",
-    "updated": "2026-10-14"
-  },
-  {
-    "title": "isSafeLink 를 실제 링크 렌더 경로에 배선할지 조사",
-    "value": 3,
-    "risk": 3,
-    "size": "M",
-    "status": "pending",
-    "note": "여전히 호출자가 테스트뿐인지 이번 회차에도 재확인하지 못함(미확인). 켜는 순간 저장된 링크 표시가 바뀌어 위험. site/render.ts·site/blocks.ts 의 링크 렌더 경로 조사만으로 한 회차 — 코드 변경 없는 조사 회차로 두는 것이 안전하다.",
-    "updated": "2026-10-14"
-  },
-  {
-    "title": "모듈 계층(forms·workflow·engagements) 순수 함수 테스트 공백",
-    "value": 3,
-    "risk": 2,
-    "size": "L",
-    "status": "pending",
-    "note": "packages/core/src 가 16,790줄인데 __tests__ 는 이번 회차 뒤 7개. 검증 무게가 e2e/acceptance/ui-flows(전부 DB·브라우저 필요)에 쏠려 CI 가 무겁다. 한 회차로는 못 끝나므로 모듈 하나씩 — 다음 후보는 modules/forms.ts 의 단계·조건 평가.",
-    "updated": "2026-10-14"
-  },
-  {
-    "title": "토스 결제 어댑터 실거래 미검증 구간의 계약 테스트",
-    "value": 3,
-    "risk": 3,
-    "size": "L",
-    "status": "pending",
-    "note": "modules/payments.ts + routes/console/payments.ts 는 금액·수취인·주문번호를 서버가 정하고 공급자 응답만 상태를 바꾸는 계약(PAY-06)이지만 토스 어댑터는 실거래 미검증. 결제는 위험 구역이고 L 이므로 자율 회차에 맞지 않는다 — 사람이 붙는 회차로 미룬다.",
-    "updated": "2026-10-14"
-  },
-  {
-    "title": "주민번호 패턴의 과잉 차단을 좁힐지 판단",
-    "value": 2,
-    "risk": 3,
-    "size": "S",
-    "status": "pending",
-    "note": "사람 판단 대기. pipeline.ts:503 의 \\b\\d{6}-?[1-8]\\d{6}\\b 는 13자리 주문번호·식별자도 [주민번호 숨김] 으로 지워 오류 진단을 어렵게 한다. 이번 회차에 redact 호출 지점이 세 곳 늘어 과잉 차단의 영향 범위도 그만큼 넓어졌다(after-commit 실패 로그의 주문번호도 이제 지워진다). 다만 SEC-07/AT-26 쪽에서는 과잉 차단이 안전한 방향의 실패이고, 생년월일 유효성까지 보도록 좁히면 실제 주민번호를 놓칠 위험이 생긴다 — 운영자의 '넓히지 말고 좁히는 방향만' 지시와도 방향이 반대다.",
-    "updated": "2026-10-14"
-  }
+ {"title":"AT-26 서버 로그 검사의 빈 통과를 막는 양성 대조 — 빈 파일·없는 경로에도 통과했다","value":4,"risk":2,"size":"S","status":"done","note":"이번 회차 구현. scripts/acceptance.mjs 1파일 7줄, 프로덕션 0파일. 내용 검사 앞에 이 실행의 가려진 메일 기록(\"channel\":\"mail\" … ***@example.test) 확인을 넣고 existsSync 로 ENOENT 중단을 막았다. 재현: 빈 로그 26/26 통과 → 고친 뒤 25/26. 콘솔 메일 드라이버는 이미 acceptance 전체의 전제(mails() 가 dev 메일함을 읽는다)라 새 환경 의존은 없다.","updated":"2026-10-14"},
+ {"title":"util/validate.ts 경계 테스트","value":3,"risk":1,"size":"M","status":"pending","note":"다음 회차 1순위. 모든 라우트 입력이 지나가는 검증기인데 테스트 0건. optional 의 '' 취급, text 의 min:0, array 의 인덱스별 오류 경로, int 의 문자열 강제변환, koreanParticle 조사 메시지를 현재 동작 그대로 고정. 프로덕션 0파일. 주의: validate.ts 내부는 이번 회차에도 열지 않았다 — 함수 목록은 이전 회차 기록 기준이며 미확인. 구현자가 먼저 실제 export 를 확인하고 시작할 것.","updated":"2026-10-14"},
+ {"title":"Background.run 실패에 requestId 를 실어 추적 가능하게","value":3,"risk":2,"size":"M","status":"pending","note":"after-commit 작업이 실패하면 stderr 한 줄이 전부고 request_id 가 없어 어느 요청의 후속 작업이 깨졌는지 알 수 없다. alertOperator 경보 경로도 타지 않는다. run() 에 requestId 를 넘기는 것은 호출자 2곳(:208/:411) 수정으로 끝나 S 에 가깝지만 경보까지 붙이면 중복 메일 억제(record_error_alert 창)를 건드려 M. background-redact.test.ts(PR #4, 미머지)가 출력 형식을 고정하므로 필드를 더할 때 같이 갱신할 것.","updated":"2026-10-14"},
+ {"title":"env.ts loadEnv 전반 단위 테스트 집합","value":3,"risk":1,"size":"M","status":"pending","note":"env-mock-providers.test.ts 의 prodRaw() 헬퍼를 재사용. 남은 것: LAW_DATABASE_URL 없음, LAW_SIGNING_KEY 없음, 32바이트 아닌 키, dev 키 사용, publicUrl 파싱(platformHost·opsHost·siteSuffix 소문자화, devPort). loadEnv 는 여기서 던지면 워커가 기동하지 못하는 곳이라 조건을 넓히지 말고 현재 동작만 고정할 것.","updated":"2026-10-14"},
+ {"title":"e2e·acceptance 의 다른 양성 대조 공백 점검","value":3,"risk":2,"size":"M","status":"pending","note":"이번 회차의 AT-26 처럼 '없음' 을 단언하는 검사가 대상 자체를 못 읽어도 통과하는 자리가 더 있는지 찾기. 후보: 메일함이 비었을 때 통과하는 mails() 기반 검사(AT-19/AT-26), 파일이 없을 때 통과하는 증빙·내보내기 검사(AT-11/AT-20/AT-24), count=0 이 곧 '없음' 인 adminSql 검사. 조이는 방향 전용 — 한 회차에 전부는 무리이므로 먼저 조사만 하고 1~2곳만 고칠 것. DB·서버가 필요하다.","updated":"2026-10-14"},
+ {"title":"isSafeLink 를 실제 링크 렌더 경로에 배선할지 조사","value":3,"risk":3,"size":"M","status":"pending","note":"여전히 호출자가 테스트뿐인지 이번 회차에도 재확인하지 못함(미확인). 켜는 순간 저장된 링크 표시가 바뀌어 위험. site/render.ts·site/blocks.ts 의 링크 렌더 경로 조사만으로 한 회차 — 코드 변경 없는 조사 회차로 두는 것이 안전하다.","updated":"2026-10-14"},
+ {"title":"모듈 계층(forms·workflow·engagements) 순수 함수 테스트 공백","value":3,"risk":2,"size":"L","status":"pending","note":"packages/core/src 가 16,790줄인데 __tests__ 는 main 기준 6개. 검증 무게가 e2e/acceptance/ui-flows(전부 DB·브라우저 필요)에 쏠려 CI 가 무겁다. 한 회차로는 못 끝나므로 모듈 하나씩 — 다음 후보는 modules/forms.ts 의 단계·조건 평가.","updated":"2026-10-14"},
+ {"title":"토스 결제 어댑터 실거래 미검증 구간의 계약 테스트","value":3,"risk":3,"size":"L","status":"pending","note":"modules/payments.ts + routes/console/payments.ts 는 금액·수취인·주문번호를 서버가 정하고 공급자 응답만 상태를 바꾸는 계약(PAY-06)이지만 토스 어댑터는 실거래 미검증. 결제는 위험 구역이고 L 이므로 자율 회차에 맞지 않는다 — 사람이 붙는 회차로 미룬다.","updated":"2026-10-14"},
+ {"title":"주민번호 패턴의 과잉 차단을 좁힐지 판단","value":2,"risk":3,"size":"S","status":"pending","note":"사람 판단 대기. pipeline.ts 의 \\b\\d{6}-?[1-8]\\d{6}\\b 는 13자리 주문번호·식별자도 [주민번호 숨김] 으로 지워 오류 진단을 어렵게 한다. 다만 SEC-07/AT-26 쪽에서는 과잉 차단이 안전한 방향의 실패이고, 생년월일 유효성까지 보도록 좁히면 실제 주민번호를 놓칠 위험이 생긴다 — 운영자의 '넓히지 말고 좁히는 방향만' 지시와도 방향이 반대다. 참고로 acceptance 쪽 RRN 정규식은 (^|[^0-9A-Za-z])\\d{6}-?[1-4]\\d{6}([^0-9A-Za-z]|$) 로 이미 더 좁다 — 두 파서를 통합하려 들지 말 것.","updated":"2026-10-14"},
+ {"title":"GitHub Actions 결제 차단으로 CI 가 돌지 않는 상태 — 사람만 풀 수 있다","value":5,"risk":1,"size":"S","status":"rejected","note":"저장소 밖 문제라 자율 회차의 과제가 될 수 없다(rejected = 코드로 할 일이 없음). 근거: 체크런 주석 \"The job was not started because recent account payments have failed or your spending limit needs to be increased.\" (직전 회차가 gh api 로 받아 둠) + 잡 소요 3초. 이번 회차에 main@c62b3a0 와 PR #4 내용을 로컬에서 CI 전 단계(단위·빌드·migrate·RLS·e2e·acceptance 26/26)로 돌려 코드 무결을 확인했다. 사람이 Billing & plans 를 푼 뒤 같은 커밋으로 재실행하면 된다.","updated":"2026-10-14"}
 ]

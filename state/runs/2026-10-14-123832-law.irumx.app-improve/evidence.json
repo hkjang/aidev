@@ -1,0 +1,219 @@
+{
+  "run_id": "2026-10-14-123832-law.irumx.app-improve",
+  "generated": "2026-10-14T13:01:30+09:00",
+  "run": {
+    "run_id": "2026-10-14-123832-law.irumx.app-improve",
+    "project": "law.irumx.app",
+    "kind": "improve",
+    "started": "2026-10-14T12:38:32+09:00",
+    "model": "claude-opus-5",
+    "policy_version": "4a9e91ac72",
+    "prompts_hash": "ce085c79e18002e2",
+    "runner_version": "1bd5f0cd4d",
+    "arm": "no-scout",
+    "experiment": "roles-2026-09",
+    "finished": "2026-10-14T13:01:30+09:00",
+    "outcome": "verify-failed"
+  },
+  "record": {
+    "ts": "2026-10-14T13:01:30+09:00",
+    "date": "2026-10-14",
+    "project": "law.irumx.app",
+    "result": "fix-round: CI failed, PR open https://github.com/hkjang/law.irumx.app/pull/5",
+    "outcome": "verify-failed",
+    "run_id": "2026-10-14-123832-law.irumx.app-improve",
+    "base_sha": "c62b3a00454fec7d98fca07acad496768751f43e",
+    "head_sha": "ffd2bf600a6a11cab6c54fc33f9e962e4e856d25",
+    "pr": "https://github.com/hkjang/law.irumx.app/pull/5",
+    "stages": {
+      "base": {
+        "state": "pinned",
+        "reason": "main@c62b3a0",
+        "at": "2026-10-14T12:38:37+09:00"
+      },
+      "autonomy": {
+        "state": "release",
+        "reason": "",
+        "at": "2026-10-14T12:38:37+09:00"
+      },
+      "verify": {
+        "state": "passed",
+        "reason": "검증 6개 통과 (auto)",
+        "at": "2026-10-14T12:57:11+09:00"
+      },
+      "review": {
+        "state": "approved",
+        "reason": "리뷰 승인 (risk=low)",
+        "at": "2026-10-14T13:00:47+09:00"
+      },
+      "pr": {
+        "state": "created",
+        "reason": "https://github.com/hkjang/law.irumx.app/pull/5",
+        "at": "2026-10-14T13:00:53+09:00"
+      },
+      "ci": {
+        "state": "failed",
+        "reason": "성공이 아닌 검사: check=failure · 실패한 검사: ? 잡: check ",
+        "at": "2026-10-14T13:01:29+09:00"
+      }
+    },
+    "campaign": "",
+    "autonomy": "release",
+    "arm": "no-scout",
+    "experiment": "roles-2026-09",
+    "engine": "claude",
+    "files": 1,
+    "additions": 7,
+    "deletions": 1,
+    "tests": 0,
+    "title": "AT-26 서버 로그 검사: 빈 파일·없는 경로에도 통과하던 구멍을 막는다"
+  },
+  "stages": {
+    "base": {
+      "state": "pinned",
+      "reason": "main@c62b3a0",
+      "at": "2026-10-14T12:38:37+09:00"
+    },
+    "autonomy": {
+      "state": "release",
+      "reason": "",
+      "at": "2026-10-14T12:38:37+09:00"
+    },
+    "verify": {
+      "state": "passed",
+      "reason": "검증 6개 통과 (auto)",
+      "at": "2026-10-14T12:57:11+09:00"
+    },
+    "review": {
+      "state": "approved",
+      "reason": "리뷰 승인 (risk=low)",
+      "at": "2026-10-14T13:00:47+09:00"
+    },
+    "pr": {
+      "state": "created",
+      "reason": "https://github.com/hkjang/law.irumx.app/pull/5",
+      "at": "2026-10-14T13:00:53+09:00"
+    },
+    "ci": {
+      "state": "failed",
+      "reason": "성공이 아닌 검사: check=failure · 실패한 검사: ? 잡: check ",
+      "at": "2026-10-14T13:01:29+09:00"
+    }
+  },
+  "provenance": {
+    "model": "claude-opus-5",
+    "policy_version": "4a9e91ac72",
+    "prompts_hash": "ce085c79e18002e2",
+    "runner_version": "1bd5f0cd4d",
+    "base_sha": "c62b3a00454fec7d98fca07acad496768751f43e",
+    "head_sha": "ffd2bf600a6a11cab6c54fc33f9e962e4e856d25",
+    "pr": "https://github.com/hkjang/law.irumx.app/pull/5"
+  },
+  "verification": {
+    "runner": {
+      "source": "auto",
+      "commands": [
+        {
+          "cmd": "[ -d node_modules ] || npm ci --no-audit --no-fund",
+          "exit": 0,
+          "seconds": 0
+        },
+        {
+          "cmd": "npm test --silent",
+          "exit": 0,
+          "seconds": 1
+        },
+        {
+          "cmd": "[ -d node_modules ] || npm ci --no-audit --no-fund",
+          "exit": 0,
+          "seconds": 0
+        },
+        {
+          "cmd": "npm run typecheck --silent",
+          "exit": 0,
+          "seconds": 7
+        },
+        {
+          "cmd": "[ -d node_modules ] || npm ci --no-audit --no-fund",
+          "exit": 0,
+          "seconds": 0
+        },
+        {
+          "cmd": "npm run build --silent",
+          "exit": 0,
+          "seconds": 2
+        }
+      ]
+    },
+    "runner_gate": {
+      "ok": true,
+      "state": "verified",
+      "reason": "검증 6개 통과 (auto)"
+    },
+    "after_rebase": null,
+    "review": {
+      "verdict": "approve",
+      "reasons": [],
+      "notes": [
+        "scripts/acceptance.mjs:962-968 새 단언이 실제로 변경된 경로를 지난다고 확인했다. mailer.ts:71 의 console 드라이버 로그는 JSON 리터럴 순서(level,channel,driver,to,subject)라 `\"channel\":\"mail\"` 뒤 같은 줄에 `to` 가 오고, maskAddress(mailer.ts:146)는 `rr***@example.test` 를 만든다 — 양성 대조 정규식은 이 줄에 매치되고 빈 문자열에는 매치되지 않음을 노드로 직접 확인했다(빈 로그·없는 경로 = 실패). 고치기 전 구멍(빈 로그 26/26 통과, 없는 경로 ENOENT 로 뒤 4검사 건너뜀)과 커밋 메시지의 재현 기록이 증상과 일치한다.",
+        "두 검사가 서로 충돌하지 않는지 확인했다: 아래 `email: /[a-z0-9]+@(example|firm-[ab])\\.test/` 는 `*@` 앞에 영숫자가 없어 가려진 주소에 매치되지 않는다(실측). 즉 양성 대조를 만족시키는 줄이 음성 검사를 깨뜨려 AT-26 을 영구 실패로 만드는 일은 없다.",
+        "양성 대조의 재료는 AT-26 자신이 만든다 — `S.newClient(A,'rrn@example.test')` → platformLogin → 로그인 코드 메일 → sendConsole. 그 sendConsole 이 dev 메일함(`mails()`/`mailCode`)과 로그 한 줄을 같은 호출에서 만들므로, 새 환경 의존이 아니라는 구현자의 판단이 맞다. `node scripts/acceptance.mjs AT-26` 단독 실행에서도 성립한다. 직원 주소(@firm-a.test)로는 매치되지 않지만 의뢰인 주소가 항상 먼저 쓰인다.",
+        "기본 경로 `../data/server.log` 는 dev-reset.sh:17 이 실제로 쓰는 경로와 일치하고, CI 는 job env 로 `LAW_SERVER_LOG=server.log`(check.yml:36, 상대경로 — existsSync/readFileSync 모두 cwd 기준이라 일관). existsSync 가 URL 객체를 받는 것도 Node 22.23 에서 확인했다. `npx eslint scripts/acceptance.mjs` 통과.",
+        "주석의 작은 과장: CI 의 server.log 는 e2e 단계부터 누적되므로 양성 대조는 '이 실행의 것'이 아니라 '살아 있는 서버의 것'까지만 증명한다(같은 서버 프로세스라 결과적으로 참). 결함은 아니지만 다음 회차가 '최신성 보장'으로 오해하지 않도록 남긴다.",
+        "LAW_LIVE=1 로 acceptance 를 돌리면 로컬 로그가 없어 양성 대조가 실패하고 뒤 4검사가 빈 문자열을 훑어 공허하게 통과한다 — 다만 AT-26 자체는 전과 같이 실패(전에는 ENOENT 예외)하므로 판정 회귀는 없다. 개선 여지로만 기록.",
+        "보안·법무 관점에서 새로 열리는 경로·식별자·비밀값 노출 없음. 프로덕션 코드 0파일, 마이그레이션·워크플로·인증·결제 무변경, revert 로 완전 복구. 실패 시 기록되는 detail 은 경로와 바이트 수뿐이어서 로그 원문이 data/acceptance.json(CI 아티팩트)로 새지 않는다 — 개인정보 신규 수집·전송 없음.",
+        "검증 못 한 것: 이 세션에서 DB·서버를 띄워 acceptance 를 실제로 돌리지는 않았다(정적 검증 + 정규식 실측까지). 커밋 메시지의 25/26·26/26 수치는 구현자 보고를 신뢰했다."
+      ],
+      "risk": "low",
+      "blocking": []
+    },
+    "ci_gate": {
+      "ok": false,
+      "state": "failed",
+      "reason": "성공이 아닌 검사: check=failure",
+      "checks": 1,
+      "bad": 1
+    }
+  },
+  "release": {
+    "result": null,
+    "assets_sha256": []
+  },
+  "approval": null,
+  "usage": [
+    {
+      "ts": "2026-10-14T12:57:01+09:00",
+      "date": "2026-10-14",
+      "project": "law.irumx.app",
+      "phase": "improve",
+      "run_id": "2026-10-14-123832-law.irumx.app-improve",
+      "campaign": "",
+      "subtype": "success",
+      "engine": "claude",
+      "duration_ms": 1103343,
+      "num_turns": 58,
+      "cost_usd": 3.891465000000001,
+      "input_tokens": 100,
+      "output_tokens": 34813,
+      "cache_read": 4063300,
+      "cache_create": 98899
+    },
+    {
+      "ts": "2026-10-14T13:00:47+09:00",
+      "date": "2026-10-14",
+      "project": "law.irumx.app",
+      "phase": "review",
+      "run_id": "2026-10-14-123832-law.irumx.app-improve",
+      "campaign": "",
+      "subtype": "success",
+      "engine": "claude",
+      "duration_ms": 212096,
+      "num_turns": 25,
+      "cost_usd": 1.6090589999999998,
+      "input_tokens": 44,
+      "output_tokens": 14226,
+      "cache_read": 1254278,
+      "cache_create": 62605
+    }
+  ]
+}

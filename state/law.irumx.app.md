@@ -27,3 +27,11 @@
 - 보류 아이디어: ① util/validate.ts 경계 테스트 — 모든 라우트 입력이 지나가는데 테스트 0건(3/1/M, 프로덕션 0파일) ② Background.run 실패에 requestId 를 실어 어느 요청의 후속 작업이 깨졌는지 추적 가능하게(3/2/M) ③ loadEnv 전반 단위 테스트 집합 — LAW_DATABASE_URL 없음·32바이트 아닌 키·publicUrl 파싱(3/1/M) ④ isSafeLink 를 실제 링크 렌더 경로에 배선할지 조사(3/3/M) ⑤ modules/forms.ts 단계·조건 평가 순수 함수 테스트(3/2/L)
 - 과제서: 채택 — 과제서의 근거가 현재 코드와 정확히 일치했고(`:54` 에 `env.dev` 게이트 없음, `:111`/`:489`, `:487` 만 redact 통과), 수용 기준 5개와 금지 사항(정규식 확대 금지·`alertOperator` 손대지 않기·파일명 `background-redact.test.ts`)을 그대로 지켰다.
 
+## 2026-10-14
+- 선택: AT-26 서버 로그 검사가 빈 파일·없는 경로에도 통과하던 구멍 (가치 4 / 위험 2 / 작업량 S)
+- 결과: 성공
+- 요약: 우선 과제(PR #4 의 CI 실패)는 **코드 결함이 아님을 재확인**했다 — 직전 두 회차가 `gh api` 로 받아 둔 체크런 주석("The job was not started because recent account payments have failed or your spending limit needs to be increased.", 잡 소요 3초)이 원인이고 사람이 Billing 에서 풀어야 한다. 이번 회차는 그 두 회차가 **미검증으로 남긴 CI 후반 단계를 로컬 docker(postgres:17-alpine, law-irumx-dev:55460)에서 처음으로 끝까지 재현**해 코드 무결을 증명했다: main@c62b3a0 와 PR #4 내용(0804a58 + 미머지 19bf148) 모두 lint·types·단위(171)·빌드·migrate·RLS 프로브·e2e 27건·acceptance 26/26 통과. 재현 중 **acceptance 자체의 결함**을 찾아 그것을 고쳤다 — `scripts/acceptance.mjs` AT-26 의 로그 검사 5개가 빈 문자열을 훑으면 전부 통과하므로 로그 파일이 비어 있거나 경로가 틀리면 SEC-07 의 마지막 관문이 증명 없이 초록이 되고, 없는 경로는 `readFileSync` 가 던져 AT-26 의 뒤 네 검사(감사 기록·타인 메일·대량 알림·분석 스크립트)가 아예 실행되지 않았다. 내용 검사 앞에 양성 대조 한 줄(이 실행의 가려진 메일 기록 `"channel":"mail" … ***@example.test` 이 로그에 있어야 통과)을 넣고 `existsSync` 로 중단을 막았다. **워크플로·검증을 느슨하게 한 것이 아니라 조이는 방향**이며 프로덕션 코드 0파일(scripts 1파일, 7줄).
+- 실패 재현: 고치기 전 — 빈 로그로 CI 와 같은 순서로 돌리면 `✓ 서버 로그에 주민번호·이메일·인증코드·증빙 원문·답변 없음` 과 `26/26 통과`(구멍 그대로 재현), 없는 경로면 `✗ AT-26 실행 - ENOENT: no such file or directory, open '…/data/server.log'` 로 뒤 네 검사가 실행되지 않음. 고친 뒤 — 두 경우 모두 `✗ 서버 로그가 이 실행의 것임(가려진 메일 기록 존재) - /tmp/empty-server.log 0B` + `25/26 통과`(뒤 네 검사는 실행됨), CI 설정(`LAW_SERVER_LOG=server.log`)에서는 `26/26 통과`.
+- 보류 아이디어: ① util/validate.ts 경계 테스트 — 모든 라우트 입력이 지나가는데 테스트 0건(3/1/M, 프로덕션 0파일) ② Background.run 실패에 requestId 를 실어 어느 요청의 후속 작업이 깨졌는지 추적(3/2/M) ③ loadEnv 전반 단위 테스트 집합 — LAW_DATABASE_URL 없음·32바이트 아닌 키·publicUrl 파싱(3/1/M) ④ e2e·acceptance 의 다른 양성 대조 공백 점검 — AT-26 처럼 "없음" 을 단언하는 검사가 대상 자체를 못 읽어도 통과하는 자리 찾기(3/2/M) ⑤ modules/forms.ts 단계·조건 평가 순수 함수 테스트(3/2/L)
+- 과제서: 차선 — 과제서의 지시("워크플로와 실패 단계의 스크립트·테스트를 읽고 원인을 고쳐라")대로 전 단계를 로컬 재현했지만 CI 실패 원인은 저장소 밖(Actions 결제 차단)이어서 고칠 코드가 없었고, 대신 재현 과정에서 드러난 검증 단계 자체의 빈 통과를 조이는 방향으로 고쳤다.
+
