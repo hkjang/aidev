@@ -1,0 +1,101 @@
+[
+  {
+    "title": "PR #3 의 쿼터 Retry-After 수정을 main 위에 다시 올리고 새 e2e '하루 한도' 검사의 벽시계 의존을 제거",
+    "value": 4,
+    "risk": 1,
+    "size": "S",
+    "status": "done",
+    "note": "이번 회차 구현. quota.ts 에 nextWindowReset(window, at) 을 두고 retryAfterSeconds 가 그것만 쓰게 했다(windowStart 는 저장 키라 불변). quota.test.ts 8건 신규. e2e 의 refusedAt 을 Date.now() 에서 응답 date 헤더로 교체해 한국 자정 걸침에서 expected 가 86400초 튀던 것을 없앴다(±5초 허용 오차는 그대로). libfaketime 으로 서버 14:59:38Z / 테스트 +29초를 만들어 고치기 전 FAIL(retry-after=16 expected≈86387), 고친 뒤 PASS 를 실제로 보였다. 커밋 62b3471.",
+    "updated": "2026-10-14"
+  },
+  {
+    "title": "CI 'check' 3초 실패의 annotations 2건을 읽어 원인을 확정",
+    "value": 4,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "여전히 미확정. 이번 회차에서도 읽지 못했다 — gh 가 미인증이다(gh auth status: 'You are not logged into any GitHub hosts', 토큰 없음). 로컬 ci-fe4eaba9edd2.json 에는 annotations_url 과 annotations_count: 2 만 있고 본문은 없으며, ci-failure-fe4eaba9edd2.txt 는 '실패 단계:' 가 비어 있다. 단계가 하나도 실행되지 않은 모양(started 01:14:38Z → completed 01:14:41Z)이라 diff 가 원인일 가능성은 낮다. 읽으려면 GH_TOKEN 이 있는 세션이 필요하다: gh api repos/hkjang/review.yeopjari.bid/check-runs/115627512290/annotations",
+    "updated": "2026-10-14"
+  },
+  {
+    "title": "util/text.ts 나머지 순수 함수 단위 테스트 보강",
+    "value": 3,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "text.test.ts(108줄)는 여전히 isSafeLink 중심. 미덮인 것: mailboxKey('+' 시작 local-part 폴백), maskEmail(점 없는 도메인·한 글자 local·null), koreanParticle(종성·숫자·괄호 끝), excerpt(코드포인트 자르기), tidyBody(\\r\\n·빈 줄 4개 이상), emailDomain/normalizeEmail, clientIpFrom. 프로덕션 파일 0개.",
+    "updated": "2026-10-14"
+  },
+  {
+    "title": "429 안내에 재시도 가능 시각을 보여 주기",
+    "value": 2,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "apps/web/src/api/client.ts 가 retry-after 를 ApiError.retryAfter 로 받아 두는데 어떤 화면도 쓰지 않는다. 선행 조건이던 Retry-After 계산 수정이 이번 회차로 main 에 올라갔으므로 이제 적기. 검증은 scripts/ui-flows.mjs.",
+    "updated": "2026-10-14"
+  },
+  {
+    "title": "purgeOldCounters 가 월 창 카운터를 3일 뒤 지움 (지금은 잠복)",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "quota.ts 의 purge 는 window_start < now() - interval '3 days' 로 일괄 삭제. 월 창의 저장 라벨은 그 달 1일이라 매달 4일째부터 진행 중인 월 카운터가 지워진다(= 월 한도 무력화). window: 'month' 호출자가 0건이라 현재 영향 0. 창 종류별 보존 기간으로 고치는 것이 맞다. 이번 회차가 quota.ts 를 건드렸지만 범위를 넘지 않으려 손대지 않았다.",
+    "updated": "2026-10-14"
+  },
+  {
+    "title": "e2e 가 깨끗한 DB 를 암묵적 전제로 하는 것 (상태 의존 검사 멱등성)",
+    "value": 3,
+    "risk": 2,
+    "size": "M",
+    "status": "pending",
+    "note": "dev-reset.sh 직후에는 220 passed / 0 failed. 개수·빈 목록을 단정하는 검사를 run-id 로 격리하거나 전제를 README/스크립트 헤더에 명시. 이번 회차의 '하루 한도' 검사는 resetQuotas() 로 스스로 격리하고 시각 의존도 없앴다.",
+    "updated": "2026-10-14"
+  },
+  {
+    "title": "e2e 가 서버 시각과 DB now() 의 어긋남에 취약 ('입금 확인 → 오늘부터 3개월 적용')",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "신규(이번 회차 관측). libfaketime 으로 서버만 앞선 시각을 주면 이 검사 1건이 깨진다 — 기간 계산을 서버의 Date 로 하고 DB 쪽은 now() 로 해서 둘이 다른 시계를 본다는 뜻일 수 있다. 실제 운영에서는 같은 호스트라 드러나지 않지만, 어느 쪽 시계가 정본인지 확인할 가치는 있다. 조사만 S, 고치면 M.",
+    "updated": "2026-10-14"
+  },
+  {
+    "title": "clientIpFrom 이 cf-connecting-ip 빈 문자열에서 폴백하지 않음",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "text.ts:240 의 ?? 연쇄라 cf-connecting-ip 가 '' 면 x-real-ip/x-forwarded-for 로 넘어가지 않는다. Cloudflare 는 이 헤더를 늘 채우므로 실제 발생 여부는 미확인. 반환값이 ipSubject 주체라 바꾸면 쿼터 묶음이 달라진다.",
+    "updated": "2026-10-14"
+  },
+  {
+    "title": "isSafeLink 차단 범위를 CGNAT(100.64/10)·.internal 류 내부 TLD 까지 넓히기",
+    "value": 2,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "text.ts:71 isInternalIpv4 그대로. 100.64/10·192.0.0/24·198.18/15 와 metadata.google.internal 이외의 .internal/.local 은 통과. 과차단이 유일한 실패 모드이고 공급사가 실수로 넣을 확률이 낮아 가치 낮음.",
+    "updated": "2026-10-14"
+  },
+  {
+    "title": "domain/products.ts 의 slugify 가 죽은 코드 (한글 이름은 빈 슬러그)",
+    "value": 1,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "정의 외 참조 없음. 쓰이기 시작할 때 터질 함정이지만 지금 영향 0.",
+    "updated": "2026-10-14"
+  },
+  {
+    "title": "라우트·pipeline 통합 테스트가 없어 회귀 검증이 실 PostgreSQL e2e 에만 의존",
+    "value": 3,
+    "risk": 2,
+    "size": "L",
+    "status": "pending",
+    "note": "단위 테스트는 순수 함수·문자열 검사뿐(이번 회차로 quota 계산이 추가됐으나 여전히 순수 함수). 권한·배선 회귀는 scripts/e2e.mjs 가 잡는다. 손으로 만든 대역으로 라우트를 흉내내면 배선 결함을 못 본다(운영자 지시) — 실 DB 를 쓰는 통합 테스트 설계부터 필요. 한 회차에 들어가지 않는다.",
+    "updated": "2026-10-14"
+  }
+]
