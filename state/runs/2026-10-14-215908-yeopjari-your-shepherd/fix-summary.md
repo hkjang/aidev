@@ -1,0 +1,6 @@
+# 수리 요약 — 커밋 없음 (지적이 이 변경의 결함을 가리키지 않는다)
+
+- **지적**: `check` 가 커밋 d195645 에서 failure. **판정: 이 변경의 결함이 아니다 — 저장소 단계에 도달조차 못 한 잡 기동 실패다.** 근거 셋: (1) 잡이 **3초**에 죽었고 `실패 단계:` 가 **빈 칸**이다 — `npm ci` 만 로컬에서 14초, checkout+setup-node 를 더하면 3초 안에 `npm run check` 에 닿을 수 없다. (2) 같은 날 **다섯 저장소**(biz.irumx.app `3a84b16`, workkit.irumx.app `248df82`, law.irumx.app `6d6f810`, review.yeopjari.bid `62b3471`, yeopjari-your `9865101`·`d195645`)의 `check` 가 **똑같은 "실패한 검사: ? / 잡: check / 실패 단계: 빈 칸"** 서명으로 실패했다 — 계정 수준 Actions 장애의 모양이다. (3) 이 diff 는 `packages/core/src/quota.ts`·`rules.test.ts`·`scripts/e2e.mjs` 3개뿐이고 `.github/workflows/check.yml` 은 무변경이라 CI 를 악화시킬 경로가 없다.
+- **독립 재현(CI 와 같은 순서, 전부 로컬)**: `npm ci` → `npm run check` **53 passed** (lint·typecheck 3종 포함) → `npm run build` 성공 → `node scripts/ci-env.mjs` → 마이그레이션 10개 적용 → `:8788` health `{"ok":true,"db":true}` → `TZ=UTC node scripts/e2e.mjs` **164 passed / 0 failed / exit 0**, 새 검사가 84행에서 PASS(`하루 한도 429의 Retry-After 는 다음 한국 자정까지`). DB 를 drop/create 해 처음부터 두 번 돌려 같은 결과였다.
+- **못 한 것**: CI 로그 원문은 읽지 못했다 — repo 가 private 이고 `gh` 미인증·토큰 없음(API 404). 그래서 위 진단은 러너가 남긴 서명·소요시간과 다섯 저장소의 동시 실패에 의존한다.
+- **고치지 않은 이유**: 고칠 결함이 없다. 남은 선택지는 `check.yml`·검증 명령을 손대는 것뿐이고 그것은 금지이므로 **커밋 없이** 끝낸다 (작업 트리 `git status` 비어 있음). CI 재실행(Actions 복구 후)이 필요한 조치다.
