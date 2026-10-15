@@ -28,3 +28,4 @@
 - 다음 회차 후보: `cidrRule.ts:104-107`·`adminErrors.ts:300-307` 주석이 아직 "Postgres cidr 컬럼 거동 미확인" 이라고 적고 있는데 이번에 실측됐다. 또 이제 서버가 조용히 대역 시작 주소로 바꿔 저장하므로, 폼이 hint 대신 바뀔 값을 미리 보여 주는 쪽이 사용자에게 정직하다.
 - [러너 02:45] review approved — 리뷰 승인 (risk=low)
 - [러너 02:45] pr created — https://github.com/hkjang/Momento/pull/32
+- [러너 02:49] ci failed — 성공이 아닌 검사: test=failure · 실패한 검사: ? 잡: test 
