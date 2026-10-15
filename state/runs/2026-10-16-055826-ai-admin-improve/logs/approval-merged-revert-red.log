@@ -1,0 +1,41 @@
+=== RUN   TestApprovalCommentContract
+=== RUN   TestApprovalCommentContract/title_with_a_trailing_NUL
+    approval_comment_integration_test.go:297: status=500 want=400 body={"error":{"code":"approval_create_failed","message":"승인 요청을 만들지 못했습니다."}}
+=== RUN   TestApprovalCommentContract/title_with_a_leading_NUL
+    approval_comment_integration_test.go:297: status=500 want=400 body={"error":{"code":"approval_create_failed","message":"승인 요청을 만들지 못했습니다."}}
+=== RUN   TestApprovalCommentContract/title_with_a_only_NUL
+    approval_comment_integration_test.go:297: status=500 want=400 body={"error":{"code":"approval_create_failed","message":"승인 요청을 만들지 못했습니다."}}
+=== RUN   TestApprovalCommentContract/reject_comment_with_a_trailing_NUL
+    approval_comment_integration_test.go:317: status=500 want=400 body={"error":{"code":"approval_failed","message":"승인 이력을 저장하지 못했습니다."}}
+=== RUN   TestApprovalCommentContract/reject_comment_with_a_embedded_NUL
+    approval_comment_integration_test.go:317: status=500 want=400 body={"error":{"code":"approval_failed","message":"승인 이력을 저장하지 못했습니다."}}
+=== RUN   TestApprovalCommentContract/reject_comment_with_a_only_NUL
+    approval_comment_integration_test.go:317: status=500 want=400 body={"error":{"code":"approval_failed","message":"승인 이력을 저장하지 못했습니다."}}
+=== RUN   TestApprovalCommentContract/approve_comment_with_a_trailing_NUL
+    approval_comment_integration_test.go:317: status=500 want=400 body={"error":{"code":"approval_failed","message":"승인 이력을 저장하지 못했습니다."}}
+=== RUN   TestApprovalCommentContract/approve_comment_with_a_embedded_NUL
+    approval_comment_integration_test.go:317: status=500 want=400 body={"error":{"code":"approval_failed","message":"승인 이력을 저장하지 못했습니다."}}
+=== RUN   TestApprovalCommentContract/approve_comment_with_a_only_NUL
+    approval_comment_integration_test.go:317: status=500 want=400 body={"error":{"code":"approval_failed","message":"승인 이력을 저장하지 못했습니다."}}
+=== RUN   TestApprovalCommentContract/a_NUL_title_is_refused_ahead_of_the_bypass
+    approval_comment_integration_test.go:336: status=200 want=400 body={"data":{"status":"bypassed","workflowApplied":false}}
+=== RUN   TestApprovalCommentContract/the_literal_escape_is_stored_unchanged
+=== RUN   TestApprovalCommentContract/the_existing_title_limits_still_hold
+=== RUN   TestApprovalCommentContract/the_existing_comment_rules_still_hold
+--- FAIL: TestApprovalCommentContract (8.27s)
+    --- FAIL: TestApprovalCommentContract/title_with_a_trailing_NUL (0.00s)
+    --- FAIL: TestApprovalCommentContract/title_with_a_leading_NUL (0.00s)
+    --- FAIL: TestApprovalCommentContract/title_with_a_only_NUL (0.00s)
+    --- FAIL: TestApprovalCommentContract/reject_comment_with_a_trailing_NUL (0.01s)
+    --- FAIL: TestApprovalCommentContract/reject_comment_with_a_embedded_NUL (0.01s)
+    --- FAIL: TestApprovalCommentContract/reject_comment_with_a_only_NUL (0.01s)
+    --- FAIL: TestApprovalCommentContract/approve_comment_with_a_trailing_NUL (0.01s)
+    --- FAIL: TestApprovalCommentContract/approve_comment_with_a_embedded_NUL (0.01s)
+    --- FAIL: TestApprovalCommentContract/approve_comment_with_a_only_NUL (0.01s)
+    --- FAIL: TestApprovalCommentContract/a_NUL_title_is_refused_ahead_of_the_bypass (0.01s)
+    --- PASS: TestApprovalCommentContract/the_literal_escape_is_stored_unchanged (0.02s)
+    --- PASS: TestApprovalCommentContract/the_existing_title_limits_still_hold (0.01s)
+    --- PASS: TestApprovalCommentContract/the_existing_comment_rules_still_hold (0.02s)
+FAIL
+FAIL	github.com/hkjang/ai-admin/internal/server	8.284s
+FAIL

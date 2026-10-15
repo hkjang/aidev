@@ -1,0 +1,119 @@
+[
+  {
+    "title": "PR #44 CI 실패를 CI 와 같은 조건(TEST_KEYCLOAK_ISSUER + 기본 10분 타임아웃)으로 재현해 원인 확정 후 승인 NUL 테스트를 기존 fixture 에 합치기",
+    "value": 4,
+    "risk": 2,
+    "size": "M",
+    "status": "done",
+    "note": "이번 회차 구현(ae64738). 재현은 실패를 내지 못했다: 전용 postgres:16-alpine(55591) + keycloak:26.7.2(18080) 위에서 TEST_POSTGRES_DSN+TEST_KEYCLOAK_ISSUER 둘 다 주고 -count=1·-timeout 없이 go test -race -v ./... 가 exit 0, SKIP 0건(Keycloak E2E 실제 실행), internal/server 161.782s / 전체 2분 35초로 10분 타임아웃과 여유. lint 세 명령도 전부 exit 0. 그래서 가설 (A)(B) 를 고치지 않고 차선 후보만 했다 — 13 서브테스트를 단정 하나도 줄이지 않고 TestApprovalCommentContract 로 옮기고 approval_nul_integration_test.go 삭제, internal/server 161.782s -> 154.461s. CI 의 lint=failure 는 두 job 이 공유하는 setup-go(cache:true)/checkout 단계 외에 설명할 자리가 없고 저장소가 private 이라 로그 확인 불가 — 미확인으로 남는다.",
+    "updated": "2026-10-16"
+  },
+  {
+    "title": "internal/server 통합 테스트의 중복 셋업(DROP SCHEMA+Migrate+Seed) 줄이기",
+    "value": 3,
+    "risk": 3,
+    "size": "L",
+    "status": "pending",
+    "note": "이번에 승인 쌍 하나를 합쳐 28회 -> 27회가 됐고 패키지는 161.8s -> 154.5s(한 번의 셋업이 대략 7~8초). 남은 26파일 전부를 합치는 것은 대규모 리팩터라 금지 — 같은 경로를 쓰는 쌍만 회차당 하나씩. 다만 CI 가 2코어라 로컬 154초가 CI 에서 수 배가 되는 것은 여전하고, 이번 재현으로는 10분 초과를 증명하지 못했다.",
+    "updated": "2026-10-16"
+  },
+  {
+    "title": "chat stream 타입 및 두 토큰 한도 동시 지정의 HTTP 거부 계약 테스트",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "providers.go:611-634 의 stream_invalid/max_tokens_conflict/max_tokens_invalid 세 코드가 internal/server 테스트에 문자열로 없음(이번 회차 재확인 안 함). 프로덕션 0파일. 전제: 새 셋업을 만들지 말고 기존 chat fixture(chat_request_json_integration_test.go)를 재사용할 것 — 이번 회차가 보여준 것처럼 새 통합 테스트 파일 하나가 패키지에 7~8초를 더한다.",
+    "updated": "2026-10-16"
+  },
+  {
+    "title": "승인 요청 payload(jsonb)의 NUL 을 저장 전 400 으로 막기",
+    "value": 2,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "83f264c 가 같은 파일의 제목·코멘트만 닫았고 payload 는 의도적 제외. createApprovalRecordIn:197-209 가 json.Marshal 결과를 $5::jsonb 로 넣어 NUL 이면 22P05 500(미재현). 새 헬퍼 필요, 미머지 f66d25c 의 jsonObjectHasNUL·storablePreferenceObject 이름은 쓰지 말 것. PR #44/이번 PR 이 머지되기 전에는 손대지 말 것(같은 파일 충돌). 테스트는 이제 TestApprovalCommentContract fixture 를 재사용할 수 있다.",
+    "updated": "2026-10-16"
+  },
+  {
+    "title": "MCP create_approval_request 제목의 NUL 을 -32602 로 거부",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "mcp.go:299 의 제목 검사는 여전히 trim + rune 300 만 보며 REST 경로만 83f264c 로 고쳐졌다. toolFailure 로 감싸므로 HTTP 500 은 아님. JSON-RPC error 코드 실제 형태 미확인. 이번 회차 재확인 안 함.",
+    "updated": "2026-10-16"
+  },
+  {
+    "title": "MCP query_legacy_table 의 search NUL 이 tool error 로 떨어지는 경로",
+    "value": 1,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "mcp.go:223-237 이 trim+200자만 검사하고 text 파라미터로 ILIKE 비교 -> 22P05 를 toolFailure 로 감쌈. HTTP 500 은 아니어서 가치 낮음. 이번 회차 미확인.",
+    "updated": "2026-10-16"
+  },
+  {
+    "title": "updatePreferences 의 sidebarState·aiDefaults jsonb 검증이 main 에 없음",
+    "value": 3,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "f66d25c 외 3커밋(0daad74·ff9ee06·169de71)이 auto/2026-10-04-1142 에만 있다. 기존 브랜치 처리 결정 전 재구현 금지, jsonObjectHasNUL·storablePreferenceObject 이름 재사용 금지. 이번 회차 users.go 미열람.",
+    "updated": "2026-10-16"
+  },
+  {
+    "title": "updateKeyScope 의 name 을 varchar(160)·trim 계약에 맞춰 400 으로 막기",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "b5146f2 가 auto/2026-10-01-1412 에만 있고 verify-failed — 그 실패 원인 확인 전 동일 접근 재시도 금지. 이번 회차가 verify-failed 추적 절차(CI 와 같은 두 환경변수·전용 PG+Keycloak 컨테이너로 재현)를 실제로 돌려 봤으니 그 절차를 이 항목에도 쓸 수 있다 — 다만 이번 사례처럼 로컬에서 재현되지 않을 수 있다.",
+    "updated": "2026-10-16"
+  },
+  {
+    "title": "감사 CSV 문서의 '성공 다운로드=전체 이벤트' 문구를 50,000건 상한과 맞추기",
+    "value": 1,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "docs/api.md:353 vs audit_events.go LIMIT 50000 (이전 기록 계승, 이번 재확인 안 함). 주의: docs/api.md 는 verify-version.sh 의 expect_current_v_tokens 대상이라 vX.Y.Z 토큰을 새로 넣으면 lint 가 깨진다(이번에 스크립트를 읽고 확인).",
+    "updated": "2026-10-16"
+  },
+  {
+    "title": "updateProfile 의 email 빈 문자열이 'NULL 로 삭제' 인 계약을 문서·테스트로 고정",
+    "value": 1,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "이전 정찰 기록 계승, 이번 재확인 안 함. 400 으로 동작을 바꾸지 않는 범위에서만.",
+    "updated": "2026-10-16"
+  },
+  {
+    "title": "웹 폼의 서버 상한 동기화 묶음(RolesPage 120자·key-scope 160자·CurrentUser.department 제거)",
+    "value": 1,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "internal/ui/dist 재빌드와 UTF-16/rune 차이 때문에 계속 보류. 이번 미확인.",
+    "updated": "2026-10-16"
+  },
+  {
+    "title": "회전 승인 실행의 errKeyStale 반환 지점을 details 필드명으로 구별",
+    "value": 2,
+    "risk": 2,
+    "size": "M",
+    "status": "pending",
+    "note": "workflow.go 보호 구역. PR #44 가 같은 파일의 검증 지점 두 곳을 건드린 상태라 머지 전에는 충돌 — 머지 후 단독으로. 이번 회차도 workflow.go 는 읽기만 했다(역검증 때 임시 변경 후 복원, 최종 diff 0).",
+    "updated": "2026-10-16"
+  },
+  {
+    "title": "CI 의 lint/test job 이 함께 결정적으로 실패할 때 원인을 드러내는 진단(워크플로 완화 아님)",
+    "value": 2,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "신규. 이번 회차에 lint 세 명령과 test job 을 CI 와 같은 조건으로 돌려 둘 다 통과시켰으므로, PR #44 의 lint=failure + test=failure 는 두 job 이 공유하는 actions/checkout·actions/setup-go(go-version 1.26.6, cache:true) 단계에 남는다. go 1.26.6 은 actions/go-versions 매니페스트에 아직 존재함을 확인했으므로 '버전 없음' 은 아니다. 다음에 같은 모양이 또 나오면 setup-go 의 cache 를 끄는 것이 아니라 (사람이) Actions 로그를 읽어 단계 이름을 확정해야 한다 — 저장소가 private 이라 이 세션에서는 체크런 API 가 404 였다. 워크플로 완화(-timeout 상향·continue-on-error·단계 제거)는 금지.",
+    "updated": "2026-10-16"
+  }
+]
