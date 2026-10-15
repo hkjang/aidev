@@ -35,3 +35,12 @@
 - 회귀 시험 `TestFindingAssigneeToleratesUncomparableStoredValues` 11 케이스 추가. 고치기 전 비교로 되돌리면 같은 panic 으로 FAIL 하는 것을 확인하고 복원했다(트리 clean).
 - 여전히 확신 없는 곳: 실 HTTP·DB 를 지나는 PUT 의 500→200 회복은 코드 수준 증명이다(`HUNTER_TEST_DSN` 없음 → `./internal/app` 175개 중 128 SKIP 전부 DSN 게이트, 0 FAIL). `go test -race ./...`·CI·Docker 미실행. `sameJSONValue` 는 `domain.go` 의 인라인 비교와 중복이지만 범위를 넘지 않으려 통합하지 않았다.
 - [러너 07:23] repair done — # 수리 요약 (시도 1 → 커밋 df4aef6)  - 비평 1·2 맞음: `finding_ops.go:106` 의 `value == previous` 는 `any` 동등 비교라 저장된 assignee 가 JSON 객체/배열인 행에서 `com
+
+## 비평 노트
+- (머지 전 심사, 2차) 확인한 것: diff 5파일 전부, saveDomain 의 cloneMap→병합→validateResource(old=pre-merge) 순서, validateResource 호출자 4곳(integrations.go:377 은 services, agents_tools.go:223 은 findings create), ITSM(automation_workflows_tickets.go:50-62 — workflowText 200바이트+제어문자+**TrimSpace** 까지 동일), 웹 제출 경로(resource-form-state.ts 는 텍스트 필드를 trim 하지 않아 legacy 행이 수정 불가로 잠기지 않는다), openapi 4개 스키마. red 재현 2회 직접 성공: domain.go 훅 제거 → 배선 시험 FAIL, `sameJSONValue`→`==` 되돌림 → `comparing uncomparable type` panic. 둘 다 복원 후 트리 clean. gofmt/vet/build/`go test -v ./internal/app`(47 PASS·128 SKIP·0 FAIL)/verify-pentagi(312)/check-docs 통과.
+- 승인. 거절할 행위 결함을 찾지 못했다: 회귀 없음, 데이터 마이그레이션 없음(저장값은 바뀔 때만 trim), revert 1커밋, 인가·비밀값·개인정보 신규 수집 변경 없음. 보안·법무 차단 사유 없음.
+- 남는 우려 1 (다음 회차): `finding_ops.go:82` 의 "Three paths" 와 커밋 1e2cd22 의 "every path" 는 틀렸다. **imports.go:102 generic 수입**이 네 번째 기록자이고 `ingestFindings`(imports.go:249)가 validateResource 를 안 거쳐 직접 INSERT 한다. 기존 결함이지만 새 "같으면 skip" 면제와 겹쳐 수입된 규칙 밖 담당자는 영구 면제가 된다 — 주석이 동기로 든 조치함/상세 불일치가 그 경로로 계속 도달한다.
+- 남는 우려 2: `finding_ops.go:90-93` 의 "recipient match ... read it as assigned" 는 부정확하다. `notification_automation_recipients.go:78` 은 raw 문자열을 u.ID/u.Username 과 비교하므로 공백만 담당자는 **미할당**으로 읽힌다(세 번째 다른 결과). 릴리즈 노트에 그대로 옮기지 말 것. 또한 openapi `maxLength:200` 은 코드 포인트, 서버는 바이트라 한글 100자는 스키마 통과·서버 400(x-max-bytes 로 명시, 기존 FindingBulkPatch 와 일관).
+- 못 본 것: HUNTER_TEST_DSN 없음 → 실 HTTP·DB POST/PUT(400 본문, 객체 assignee 행의 500→200)은 코드 수준 증명에 머문다. `go test -race ./...`·웹 테스트(web/node_modules 없음; 웹 변경 0)·원격 CI·Docker 미실행.
+- [러너 07:29] review approved — 리뷰 승인 (risk=low)
+- [러너 07:29] pr created — https://github.com/hkjang/hunter/pull/23

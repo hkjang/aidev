@@ -392,3 +392,4 @@
 - 검증 한계: 프런트 표시 변경이므로 Go race/build, DB·Keycloak·SecCheck 통합, Docker smoke, 전체 E2E 는 실행하지 않았다. E2E 는 실제 번들·Chromium 이지만 HTTP mock 이라 실제 서버 오류 경로의 증거는 아니다. 운영 QueryClient 는 `retry:1`(providers.tsx:149) 이라 실제 화면의 안내는 2회 실패 후 뜬다 — 테스트 client(`retry:false`)의 즉시 표시와 다르다.
 - 범위: 서버·API 계약(`internal/httpapi`, `api.ts` `appDocuments`)·`types.ts`·공용 `ErrorState`/`StatePanel`·같은 파일의 `useGuideDocumentDraft`/`GuideDocumentsField`·기존 E2E 500 테스트는 건드리지 않았다. 제품 변경은 분기 1개(11줄). 버전·릴리즈·원격 변경 없음. 산출물(`web/dist`·`web/test-results`)은 기존 ignore 대상이며 커밋에 없다.
 
+- 릴리즈: v2.11.17 (2026-10-16, run 2026-10-16-065823-appstore-improve)
