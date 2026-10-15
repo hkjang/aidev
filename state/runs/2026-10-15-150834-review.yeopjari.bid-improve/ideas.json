@@ -1,0 +1,128 @@
+[
+  {
+    "title": "첫 방문 JS 가 perf 예산의 97% (223.7/230 KB) — 95% 초과를 경고로 드러내기",
+    "value": 3,
+    "risk": 1,
+    "size": "S",
+    "status": "done",
+    "note": "2026-10-15 구현. scripts/perf.mjs 한 파일. WARN_AT_PCT=95 추가, 95% 이상이면 현재/예산/백분율/남은 KB 한 줄 + exit 0 유지. 실패 기준(let failed = total > BUDGET_KB, 기본 230)은 숫자 불변 — git diff 에 그 줄의 - 가 없음. 예산은 리터럴이 아니라 Number(process.env.INITIAL_JS_BUDGET_KB ?? 230) 이라 env 로 실패 경로 증명 가능. 경계 확인: budget 235 -> 95.2% 경고, 236 -> 94.8% 침묵. 초과 시 메시지도 함께 붙였다(그전엔 exit 1 만 하고 아무 말이 없었다).",
+    "updated": "2026-10-15"
+  },
+  {
+    "title": "PR #7 의 CI 실패 — 저장소 쪽 원인 배제",
+    "value": 4,
+    "risk": 1,
+    "size": "S",
+    "status": "done",
+    "note": "2026-10-15 배제 완료. PR #7 내용(__tests__/text.test.ts 237+/1-)을 main 위에 올려 npm ci -> npm run check -> TZ=UTC npm run check 두 번 모두 6 files / 187 tests 통과, build + perf.mjs 223.7KB exit 0. 환경 의존 0 줄이므로 repo 쪽 원인 없음 — 2026-10-14 가 증명한 계정 수준 Actions startup_failure 와 같은 그림. 중복 PR 금지라 파일은 되돌렸다(118 passed = main 기준선 재확인). 워크플로 무수정.",
+    "updated": "2026-10-15"
+  },
+  {
+    "title": "Actions 복구 후 PR #4·#5·#6·#7 을 그대로 머지 (저장소 변경 불필요)",
+    "value": 5,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "사람 조치. 이번 회차에도 gh 미인증·git fetch 불가(fatal: could not read Username for https://github.com)로 CI 주석을 읽지 못했다. 네 브랜치의 파일 범위는 이번에 git diff --name-only main origin/<브랜치> 로 직접 재확인했다: #4=quota.ts·quota.test.ts·e2e.mjs, #5=client-address.test.ts·pipeline.ts·util/text.ts, #6=check.yml·README.md·ci-local.sh, #7=__tests__/text.test.ts. main@6ea982c 에 Retry-After 9시간 과장이 그대로 있다. 중복 PR 금지.",
+    "updated": "2026-10-15"
+  },
+  {
+    "title": "mailboxKey 가 참조 0건의 죽은 코드 — '한 메일함 한 번 인증' 이 코드로 지켜지는지 조사",
+    "value": 4,
+    "risk": 4,
+    "size": "M",
+    "status": "pending",
+    "note": "PR #7 의 새 테스트가 키 계약(name+tag@c.com -> name@c.com, '+tag@' 는 폴백)을 문서화해 뒀으므로 배선해야 한다면 기대 동작이 이미 적혀 있다. 확인 경로가 auth/*·routes/sso.ts·db/migrations 전부 보호 구역이라 위험 4. 조사만 별 회차로. PR #7 머지 후에.",
+    "updated": "2026-10-15"
+  },
+  {
+    "title": "e2e 가 깨끗한 DB 를 암묵적 전제로 하는 것 (상태 의존 검사 멱등성)",
+    "value": 3,
+    "risk": 2,
+    "size": "M",
+    "status": "pending",
+    "note": "전제 명시는 PR #6 의 ci-local.sh·README 로 해소(미머지). 남은 것은 개수·빈 목록을 단정하는 검사를 run-id 로 격리하는 쪽. dev-reset 직후 218 passed / 0 failed 가 다섯 회차 연속 같은 기준선(이번 회차에도 실행 확인). scripts/e2e.mjs 는 PR #4 와 겹치므로 머지 전 금지.",
+    "updated": "2026-10-15"
+  },
+  {
+    "title": "domain/products.ts 의 slugify 가 죽은 코드 (한글 이름은 빈 슬러그)",
+    "value": 1,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "이번 회차 차선 후보였고 본 과제가 성립해서 쓰지 않았다. 정의 외 참조 없음. 어느 열린 PR 과도 겹치지 않는 드문 파일이라 작업 가능. 지우려면 삭제 전·후 전역 grep 0건 확인(clientIpFrom 때 쓴 방법).",
+    "updated": "2026-10-15"
+  },
+  {
+    "title": "첫 방문 JS 의 여유 자체를 늘리기 (react 77.1KB · index 125.6KB)",
+    "value": 3,
+    "risk": 2,
+    "size": "M",
+    "status": "pending",
+    "note": "신규. 이번 회차에 경고는 붙였으나(97.3%, 여유 6.3KB) 여유는 그대로다. 관측된 구성: index 125.6 / react 77.1 / mantine 20.6 / rolldown-runtime 0.4 KB. index 청크가 가장 크므로 라우트 단위 지연 로드 확대가 후보. 번들 구성을 바꾸는 변경이라 perf 수치·화면 회귀를 ui-flows 로 함께 봐야 한다.",
+    "updated": "2026-10-15"
+  },
+  {
+    "title": "429 안내에 재시도 가능 시각을 보여 주기",
+    "value": 2,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "유지, 선행 조건 미충족. apps/web/src/api/client.ts 가 retry-after 를 ApiError.retryAfter 로 받아 두는데 쓰는 화면이 없다. main 의 retry-after 는 아직 9시간 과장된 옛 판이라(PR #4 미머지) 지금 노출하면 틀린 시각을 보여 준다.",
+    "updated": "2026-10-15"
+  },
+  {
+    "title": "purgeOldCounters 가 월 창 카운터를 3일 뒤 지움 (지금은 잠복)",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "quota.ts:142 WHERE window_start < now() - interval '3 days'. 월 창의 저장 라벨은 그 달 1일이라 매달 4일째부터 진행 중인 월 카운터가 지워진다. window:'month' 호출자 0건이라 현재 영향 0. PR #4 가 같은 파일이므로 머지 전 금지.",
+    "updated": "2026-10-15"
+  },
+  {
+    "title": "clientAddress 가 IPv6·포트 붙은 x-forwarded-for 원소를 정규화하지 않음",
+    "value": 2,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "PR #5 는 '빈 값을 건너뛴다' 까지만 고쳤다. 같은 방문자가 '1.2.3.4' 와 '1.2.3.4:51234' 로 서로 다른 쿼터 주체가 된다. ipHash 주체가 바뀌는 변경이라 배포 시점 진행 중인 카운터 주체가 갈린다. PR #5 머지 전에는 같은 파일(pipeline.ts)이라 금지.",
+    "updated": "2026-10-15"
+  },
+  {
+    "title": "ci-local.sh 를 워크플로와 어긋나지 않게 묶어 두기 (드리프트 감시)",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "유지, 선행 조건 미충족 — ci-local.sh 가 아직 main 에 없다(PR #6 미머지, 이번 회차에도 .github/workflows/ 에 check.yml 하나뿐임을 ls 로 재확인). 통합하지 말고 '어긋남을 알려 주는' 쪽으로만.",
+    "updated": "2026-10-15"
+  },
+  {
+    "title": "e2e 가 서버 시각과 DB now() 의 어긋남에 취약",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "유지. libfaketime 으로 서버만 앞선 시각을 주면 '입금 확인 -> 오늘부터 3개월 적용' 1건이 깨진다 — 기간 계산을 서버 Date 로, DB 쪽은 now() 로 한다는 뜻일 수 있다. 조사만 S, 고치면 M.",
+    "updated": "2026-10-15"
+  },
+  {
+    "title": "isSafeLink 차단 범위를 CGNAT(100.64/10)·.internal 류 내부 TLD 까지 넓히기",
+    "value": 2,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "유지. text.ts 의 isInternalIpv4 는 0/10/127/169.254/172.16-31/192.168 만. 100.64/10·192.0.0/24·198.18/15 와 metadata.google.internal 이외의 .internal/.local 은 통과. 과차단이 유일한 실패 모드라 가치 낮음. util/text.ts 는 PR #5 가 건드리므로 머지 전 금지.",
+    "updated": "2026-10-15"
+  },
+  {
+    "title": "util/text.ts 나머지 순수 함수 단위 테스트 보강",
+    "value": 3,
+    "risk": 1,
+    "size": "S",
+    "status": "done",
+    "note": "2026-10-15 앞 회차에서 PR #7 로 완료(koreanParticle·maskEmail·tidyBody·excerpt·mailboxKey·emailDomain·normalizeEmail·charCount, 237+/1-). 이번 회차에 그 내용으로 187 tests / 6 files 통과를 재확인했다. 머지 대기.",
+    "updated": "2026-10-15"
+  }
+]
