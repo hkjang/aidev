@@ -1,11 +1,11 @@
 [
   {
-    "title": "OpenBao Transit 단건 encrypt·decrypt 가 plaintext·ciphertext 필드 누락을 빈 문자열로 처리",
+    "title": "OpenBao Transit 단건 encrypt·decrypt 가 미지원 파라미터(context·nonce·associated_data·key_version)를 조용히 무시",
     "value": 3,
-    "risk": 1,
+    "risk": 2,
     "size": "S",
     "status": "done",
-    "note": "이번 회차 구현(커밋 cd36fff). 두 익명 구조체를 *string 으로 바꾸고 batch 분기 뒤에 nil 검사를 넣어 batch 와 같은 missing plaintext/ciphertext 400 을 돌려준다. 명시된 \"\" 는 유효 입력으로 유지. compatibility.md Transit 절에 누락 판정을 기록했다.",
+    "note": "2026-10-15 구현 완료(커밋 2d909f1). 두 단건 입력 구조체에 baoTransitBatchItem 을 익명 임베딩해 네 필드를 평평하게 디코드하고, batch 와 같은 문자열 'unsupported transit parameter: <이름>' 을 400 으로 돌려주는 검사를 batch 분기 뒤·누락 검사 앞에 넣었다. 수정 전 200+ciphertext 를 실행 재현했고(서브테스트 10개 실패) 빈 문자열·key_version 0·batch_input 우선 계약은 처음부터 통과했다. compatibility.md 에 단건 판정을 문서화했다.",
     "updated": "2026-10-15"
   },
   {
@@ -14,16 +14,16 @@
     "risk": 1,
     "size": "M",
     "status": "pending",
-    "note": "store/transit.go:47 strconv.Atoi(TrimPrefix(parts[1],\"v\")) 라 부호·선행 0 통과, AAD 를 파싱된 정수로 재조립해 AEAD 도 통과 → 200+평문(OpenBao 는 거절). Store 에 seam 이 없어 200→400 을 정직하게 보려면 JIKIM_TEST_POSTGRES_DSN 통합 테스트 필요(docker 사용 가능, 전례 store/secrets_openbao_test.go). nil pool panic 을 재현 근거로 쓰지 말 것. httpapi 의 transitCiphertextVersion 은 서버 산출물만 파싱해 범위 밖.",
+    "note": "store/transit.go:47 strconv.Atoi(TrimPrefix(parts[1],\"v\")) 가 부호·선행 0 을 통과시키고 AAD 를 파싱된 정수로 재조립해 AEAD 도 통과 → 200+평문(OpenBao 는 거절). Store 에 seam 이 없어 200→400 을 정직하게 보려면 JIKIM_TEST_POSTGRES_DSN 통합 테스트 필요(docker 사용 가능, 전례 store/secrets_openbao_test.go). &store.Store{}(nil pool) 은 panic 하므로 재현 근거로 쓰지 말 것. httpapi 의 transitCiphertextVersion 은 서버 산출물만 파싱해 범위 밖. 이번 회차 차선이었고 다음 1순위 후보로 가장 유력하다.",
     "updated": "2026-10-15"
   },
   {
-    "title": "OpenBao Transit 단건 경로가 미지원 파라미터(context·nonce·associated_data·key_version)를 조용히 무시",
-    "value": 3,
+    "title": "baoKVMutateVersions 가 0·음수 버전 번호를 그대로 store 로 내려보냄",
+    "value": 2,
     "risk": 2,
-    "size": "M",
+    "size": "S",
     "status": "pending",
-    "note": "batch 는 baoTransitBatchItem.unsupportedParameter() 로 per-item error 를 내지만 단건 익명 구조체에는 그 필드가 아예 없어 요청자가 지정한 파생 컨텍스트가 조용히 버려진다. 단건에 같은 거절을 넣으려면 응답 형태(단건 400 vs batch per-item)와 compatibility.md 표를 함께 정해야 한다. 이번 누락 수정으로 단건 구조체가 이미 *string 관례를 따르게 되어 착수 비용은 줄었다.",
+    "note": "openbao.go:400-440 의 baoKVMutateVersions 는 len(versions)==0 만 거르고 {\"versions\":[0,-1]} 은 SoftDeleteOpenBaoVersions/DestroySecretVersions 로 그대로 내려가 204 를 돌려준다(store 쪽 거절 여부는 미확인). 실제 OpenBao 판정과 비교 근거가 없고 store 동작을 PostgreSQL 없이 볼 수 없다. 착수하려면 store 쪽 동작 확인이 선행.",
     "updated": "2026-10-15"
   },
   {
@@ -32,7 +32,16 @@
     "risk": 3,
     "size": "M",
     "status": "pending",
-    "note": "httpapi 의 decodeJSON 은 DisallowUnknownFields 를 쓰는데 openbao.go 의 decodeBaoJSON 은 쓰지 않는다. 다만 OpenBao 자체가 미지의 필드를 허용하므로 좁히면 호환성 계약을 바꾼다 — compatibility.md 개정이 선행되어야 한다. 위 '미지원 파라미터' 과제와 같은 결정에 묶인다.",
+    "note": "httpapi 의 decodeJSON 은 DisallowUnknownFields 를 쓰는데 openbao.go 의 decodeBaoJSON 은 쓰지 않는다. OpenBao 자체가 미지의 필드를 허용하므로 좁히면 호환성 계약을 바꾼다 — compatibility.md 개정이 선행되어야 한다. 2026-10-15 의 미지원 파라미터 명시 거절이 머지되어 '위험한 조용한 무시' 중 실질적인 것은 닫혔으므로 가치가 더 내려갔다.",
+    "updated": "2026-10-15"
+  },
+  {
+    "title": "requestedOpenBaoVersion 이 ?version 의 비정규 표기(+2·007)를 받아들임",
+    "value": 1,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "openbao.go:514-526 은 TrimSpace 로 공백만 보고 Atoi(raw) 로 파싱하므로 '+2'·'007' 이 2·7 로 통과하고 ' 2 ' 는 400 이 된다. 관찰 가능한 피해가 없고(결과 버전은 같다) OpenBao 자체도 관대할 가능성이 높아 가치가 낮다. 1순위로 고르지 말 것.",
     "updated": "2026-10-15"
   },
   {
@@ -50,16 +59,7 @@
     "risk": 3,
     "size": "M",
     "status": "pending",
-    "note": "SecretExistsByPath → CanAccess → PutOpenBaoSecret 분리 유지. 트랜잭션·동시성 검증이 필요한 별도 범위.",
-    "updated": "2026-10-15"
-  },
-  {
-    "title": "OpenBao 호환 표면의 baoError 500 이 ERROR 로그를 남기지 않음",
-    "value": 3,
-    "risk": 2,
-    "size": "S",
-    "status": "rejected",
-    "note": "baoError 는 envelope 만 쓴다. 관찰 가능한 응답 변화가 없는 새 로깅 계약이고 '로그만 추가하는 과제' 는 재선택 금지 광맥이라 기각으로 내린다.",
+    "note": "openbao.go:324-345 에서 SecretExistsByPath → CanAccess → PutOpenBaoSecret 가 분리되어 있다. 트랜잭션·동시성 검증이 필요한 별도 범위.",
     "updated": "2026-10-15"
   },
   {
@@ -90,21 +90,30 @@
     "updated": "2026-10-15"
   },
   {
-    "title": "oidcLogout 이 OIDCConfig 읽기 실패를 조용히 /login 리다이렉트로 접음",
-    "value": 2,
-    "risk": 2,
-    "size": "S",
-    "status": "rejected",
-    "note": "성공·실패 모두 302 라 '로그만 추가' 형태가 된다. 교훈상 재선택 금지 광맥이라 기각으로 내린다.",
-    "updated": "2026-10-15"
-  },
-  {
     "title": "docs/guides/api-guide.md 에 AI 엔드포인트 error code 표 추가",
     "value": 2,
     "risk": 1,
     "size": "S",
     "status": "pending",
-    "note": "문서 단독 후보로 12회 연속 차선. 관찰 가능한 동작 변화가 없다.",
+    "note": "문서 단독 후보로 14회 연속 차선. 관찰 가능한 동작 변화가 없다.",
+    "updated": "2026-10-15"
+  },
+  {
+    "title": "단건 transit 과 batch 의 계약 동등성을 한 테이블로 고정하는 회귀 테스트",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "신규. 지금은 단건·batch 의 같은 판정(미지원 파라미터·필드 누락·빈 문자열)이 서로 다른 테스트 파일에 흩어져 있어 한쪽만 바뀌어도 통과할 수 있다. 같은 본문을 단건 형태와 batch_input 형태로 각각 보내 '메시지 문자열이 같다' 를 직접 단정하는 표 하나로 묶으면 두 경로가 다시 갈라지는 것을 막는다. 프로덕션 변경이 없는 테스트 전용 과제이므로 1순위로는 약하다.",
+    "updated": "2026-10-15"
+  },
+  {
+    "title": "transit encrypt 가 비base64 평문을 store 까지 내려보냄 (입력 검증 위치)",
+    "value": 2,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "신규. 단건·batch 모두 plaintext 의 base64 유효성을 핸들러에서 보지 않고 store 의 ErrInvalid 메시지('plaintext는 base64여야 합니다')에 의존한다 — decrypt 는 출력 쪽에서 base64.StdEncoding.DecodeString 으로 확인하는데 입력 쪽은 비대칭이다. 실제로 400 이 나오므로 관찰 가능한 결함은 아니고 검증 위치 일관성 문제이며, 핸들러로 올리면 store 테스트가 기대하는 메시지와 갈라질 수 있다. 가치가 낮아 1순위로 고르지 말 것.",
     "updated": "2026-10-15"
   }
 ]
