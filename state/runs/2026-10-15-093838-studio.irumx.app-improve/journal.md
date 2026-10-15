@@ -19,3 +19,4 @@
 - 나머지는 참고 수준: `|a| < |b|` 가 주석 `(a≈0, b≈±1)` 보다 넓다(임의 회전도 교환), `docs/acceptance.md:25` AT-19 행에 `api-files` 가 빠졌다. 판정 approve · risk low · blocking 없음.
 - [러너 09:58] review approved — 리뷰 승인 (risk=low)
 - [러너 09:58] pr created — https://github.com/hkjang/studio.irumx.app/pull/1
+- [러너 10:03] ci no-ci — 이 커밋에 검사가 없음 (정책 allow_merge_without_ci 가 없으면 차단)
