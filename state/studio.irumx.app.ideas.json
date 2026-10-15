@@ -1,11 +1,11 @@
 [
   {
-    "title": "Cron 보관 만료 안내가 이미 만료된 프로젝트에 영구히 막힌다 — 안내 조회에 하한(retentionUntil > now) 추가",
+    "title": "보관 만료 삭제 창이 '이미 다 지운 프로젝트'에 막힌다 — expired 조회에 '지울 파일 남음'(EXISTS) 추가",
     "value": 4,
     "risk": 1,
     "size": "S",
     "status": "done",
-    "note": "이번 회차 구현. cron.ts:110 soon 조회에 gt(retentionUntil, now) 를 더해 이미 만료된 찌꺼기가 limit(20) 창을 영구히 막는 기아를 없앴다. cron.ts:113 가드는 이중 방어로 남겼다. 재현 시험: tests/api-retention.spec.ts 에 찌꺼기 21건 + starved 1건.",
+    "note": "cron.ts retention() 의 purge 단계. 다 지운 프로젝트도 조건에 계속 걸려 limit(10) 창을 영구히 막았다. 루프의 files·keep·del 판정은 그대로 두고 조회만 좁혔다. 신규 api 시험으로 재현·확인(77개 통과).",
     "updated": "2026-10-15"
   },
   {
@@ -14,7 +14,7 @@
     "risk": 1,
     "size": "S",
     "status": "pending",
-    "note": "차선 후보였다. shell.html 에 메타 자리가 전부 있고 seo.ts apply() 는 setAttribute 로 채운다. /app·/admin·/login·/invite 의 noindex, 색인 가능한 쪽만 자기 canonical, /work/없는-슬러그 404, noscript#seo 의 esc() 를 HTTP 로 고정. 시험 전용.",
+    "note": "shell.html 에 메타 자리가 전부 있고 seo.ts apply() 는 setAttribute 로 채운다. /app·/admin·/login·/invite 의 noindex, 색인 가능한 쪽만 자기 canonical, /work/없는-슬러그 404, noscript#seo 의 esc() 를 HTTP 로 고정. 시험 전용.",
     "updated": "2026-10-15"
   },
   {
@@ -24,6 +24,15 @@
     "size": "M",
     "status": "pending",
     "note": "작품 올리기 스크립트는 수동 확인만. R2·D1 호출 없는 --dry-run 으로 메타 검증·MP4 판독·SQL 생성을 단위 시험으로 덮을 수 있다. 스크립트 본문 미확인.",
+    "updated": "2026-10-15"
+  },
+  {
+    "title": "retention() 의 soon·expired 조회에 orderBy(asc(retentionUntil))",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "신규. 창(20·10건)이 꽉 찼을 때 어느 프로젝트가 먼저 처리되는지 지금은 SQLite 스캔 순서에 달려 있다. 오래 만료된 것부터로 정하면 동작이 결정적이 된다. 이번 회차의 EXISTS 로 영구 정체는 사라졌으므로 우선순위는 낮다.",
     "updated": "2026-10-15"
   },
   {
@@ -99,6 +108,15 @@
     "updated": "2026-10-15"
   },
   {
+    "title": "Cron 보관 만료 안내가 이미 만료된 프로젝트에 막힌다 — soon 조회에 gt(retentionUntil, now) 하한",
+    "value": 4,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "앞선 회차에서 구현·검증됐으나 base b00d53c 에는 아직 없다(cron.ts:110 에 하한이 없다). 이번 회차의 purge 창 수정과 같은 함수의 다른 줄이라 충돌하지 않는다. 머지되면 done.",
+    "updated": "2026-10-15"
+  },
+  {
     "title": "브리프 MOV(video/quicktime)가 미리보기에서 첨부로 내려간다 — INLINE_OK 누락",
     "value": 2,
     "risk": 1,
@@ -113,16 +131,7 @@
     "risk": 1,
     "size": "S",
     "status": "pending",
-    "note": "신규. 운영에서는 둘이 같으므로 영향 없고, 시험 서버(TEST_DAY_MS=200)에서만 운영 화면의 '보관 만료 임박' 목록이 Cron 과 다른 창을 본다. 두 조회의 계약이 달라 공통 함수로 묶지는 말 것 — 운영 화면은 status='delivered' 만, Cron 은 delivered|closed + legalHold 제외.",
-    "updated": "2026-10-15"
-  },
-  {
-    "title": "retention 의 안내·삭제 조회에 orderBy(만료가 가까운 것 먼저) 추가",
-    "value": 2,
-    "risk": 1,
-    "size": "S",
-    "status": "pending",
-    "note": "신규. soon·expired 조회에 orderBy 가 없어 limit(20)/limit(10) 창에 어느 행이 들어오는지 SQLite 구현(대개 rowid 순)에 달려 있다. 만료가 임박한 것부터 처리하도록 orderBy(asc(retentionUntil)) 를 두면 창이 꽉 찼을 때의 우선순위가 정해진다. 이번 하한 추가로 기아는 사라졌으므로 급하지는 않다.",
+    "note": "운영에서는 둘이 같으므로 영향 없고, 시험 서버(TEST_DAY_MS=200)에서만 운영 화면의 '보관 만료 임박' 목록이 Cron 과 다른 창을 본다. 두 조회의 계약이 달라 공통 함수로 묶지는 말 것 — 운영 화면은 status='delivered' 만, Cron 은 delivered|closed + legalHold 제외.",
     "updated": "2026-10-15"
   }
 ]

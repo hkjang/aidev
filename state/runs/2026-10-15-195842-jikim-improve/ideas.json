@@ -1,0 +1,119 @@
+[
+  {
+    "title": "CSP 리포트 page 512바이트 절단이 다중 바이트 문자를 쪼개 관리자 목록에 U+FFFD 를 남김",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "done",
+    "note": "이번 회차 구현(커밋 ce49f97). internal/tracking/violations.go:Record 가 page[:512] 로 바이트 절단하던 것을, 512바이트 상한을 유지한 채 꼬리의 불완전한 UTF-8 시퀀스만 utf8.DecodeLastRuneInString 의 size<=1 조건으로 떼어내도록 고쳤다(진짜 U+FFFD 는 size==3 이라 보존). 실제 POST /api/v1/tracking/report → 인증된 GET /api/v1/tracking/violations 왕복 서브테스트 5개로 재현·검증. 수정 전 실패: listed page is 516 bytes ending \"가가\\ufffd\\ufffd\", want 510 bytes.",
+    "updated": "2026-10-15"
+  },
+  {
+    "title": "Transit ciphertext 버전 토큰이 비정규 표기(vault:v+1:·vault:v01:)를 받아들임",
+    "value": 3,
+    "risk": 1,
+    "size": "M",
+    "status": "pending",
+    "note": "이번 회차 과제서의 차선 — 선택하지 않았다(1순위를 완료했으므로). internal/store/transit.go:47 이 strconv.Atoi(TrimPrefix(parts[1],\"v\")) 를 쓰므로 부호·선행 0 이 통과하고, AAD 를 파싱된 정수로 재조립하므로 AEAD 도 통과해 200+평문이 나온다. OpenBao 는 이런 토큰을 거절한다. internal/httpapi/openbao.go:842 의 쌍둥이는 호출처 678·709 둘 다 서버 산출물에만 쓰여 범위 밖. Store 에 seam 이 없어 200→400 을 보려면 JIKIM_TEST_POSTGRES_DSN 통합 테스트가 필요하다(전례: internal/store/secrets_openbao_test.go, 2026-10-08 회차의 임시 PostgreSQL 17). 다음 회차 1순위 후보.",
+    "updated": "2026-10-15"
+  },
+  {
+    "title": "추적이 켜진 동안의 CSP 리포트 속도 제한 또는 동일 출처 검증",
+    "value": 3,
+    "risk": 3,
+    "size": "M",
+    "status": "pending",
+    "note": "무인증 route + MaxViolations=100 유지. 본문 상한은 v0.2.32, 절단 품질은 이번 회차가 다뤘지만 속도·신뢰 계약은 여전히 별개이고 새 계약 도입이라 한 세션 범위를 넘는다.",
+    "updated": "2026-10-15"
+  },
+  {
+    "title": "retryWebhookDelivery 왕복 테스트 공백",
+    "value": 2,
+    "risk": 1,
+    "size": "M",
+    "status": "pending",
+    "note": "JIKIM_TEST_POSTGRES_DSN 기반 통합 검증이 선행되어야 한다. 2026-10-08 회차에서 임시 PostgreSQL 17 로 통합 테스트를 돌린 전례가 있어 불가능하지는 않다.",
+    "updated": "2026-10-15"
+  },
+  {
+    "title": "baoKVWrite 의 create/update 판정 TOCTOU",
+    "value": 3,
+    "risk": 3,
+    "size": "M",
+    "status": "pending",
+    "note": "SecretExistsByPath → CanAccess → PutOpenBaoSecret 분리 유지. 트랜잭션·동시성 검증이 필요한 별도 범위로 한 세션에 맞지 않는다.",
+    "updated": "2026-10-15"
+  },
+  {
+    "title": "Dependabot group 계약을 CONTRIBUTING 에 문서화",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "v0.2.34 의 scripts/verify-dependabot-groups.mjs 계약이 스크립트 주석에만 있다. 관찰 가능한 동작 변화가 없는 문서 단독 과제라 계속 차선.",
+    "updated": "2026-10-15"
+  },
+  {
+    "title": "gomod·github-actions·docker 생태계에도 묶음 업데이트 검사 확장",
+    "value": 2,
+    "risk": 2,
+    "size": "M",
+    "status": "pending",
+    "note": "현재 검사는 web/package-lock.json 의 peerDependencies 를 근거로 쓴다. 락파일이 없는 생태계에는 같은 근거가 없어 결합 추출 방식부터 새로 정해야 한다.",
+    "updated": "2026-10-15"
+  },
+  {
+    "title": "oidcLogout 이 OIDCConfig 읽기 실패를 조용히 /login 리다이렉트로 접음",
+    "value": 2,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "성공·실패 모두 302 라 '로그만 추가' 형태가 되고, 교훈에 로그 추가만 하는 과제를 재선택하지 말라고 적혀 있다. 보류 유지.",
+    "updated": "2026-10-15"
+  },
+  {
+    "title": "OpenBao 호환 표면의 baoError 500 이 ERROR 로그를 남기지 않음",
+    "value": 3,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "openbao.go 의 baoError 는 envelope 만 쓴다. 새로운 로깅 계약 도입이라 관찰 가능한 응답 변화가 없어 선택 제외 중.",
+    "updated": "2026-10-15"
+  },
+  {
+    "title": "docs/guides/api-guide.md 에 AI 엔드포인트 error code 표 추가",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "문서 단독 후보로 10회 연속 차선. 관찰 가능한 동작 변화가 없다.",
+    "updated": "2026-10-15"
+  },
+  {
+    "title": "스니펫 nonce 속성 파싱 경계 검증",
+    "value": 2,
+    "risk": 2,
+    "size": "M",
+    "status": "pending",
+    "note": "withNonce 의 nonce= 부분 문자열 검사 유지. HTML 파서 계약과 브라우저 실행 검증이 필요하고, 교훈상 파서를 넓히는 방향은 피한다.",
+    "updated": "2026-10-15"
+  },
+  {
+    "title": "리버스 프록시 뒤에서 remoteIP 가 접혀 로그인 잠금 key 의 IP 부분이 같아짐",
+    "value": 2,
+    "risk": 3,
+    "size": "M",
+    "status": "pending",
+    "note": "remoteIP 는 RemoteAddr 만 쓴다. 신뢰 프록시 계약을 새로 만드는 인증 경계라 보류.",
+    "updated": "2026-10-15"
+  },
+  {
+    "title": "tracking.Violation.Origin·Directive 에는 같은 절단 문제가 없음을 확인",
+    "value": 1,
+    "risk": 1,
+    "size": "S",
+    "status": "rejected",
+    "note": "이번 회차에서 violations.go 를 읽으며 확인했다 — originOf 가 url.Parse 로 scheme+host 만 재조립하고 directive 는 공백까지만 자르므로 바이트 절단이 없다. 결함이 없어 과제가 아니다.",
+    "updated": "2026-10-15"
+  }
+]

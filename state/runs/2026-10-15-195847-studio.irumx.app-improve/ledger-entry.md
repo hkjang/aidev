@@ -1,0 +1,7 @@
+## 2026-10-15
+- 선택: 보관 만료 삭제가 '이미 다 지운 프로젝트'에 영구히 막힌다 — 삭제 창 조회에 '지울 파일이 남았는가' 추가 (가치 4 / 위험 1 / 작업량 S)
+- 결과: 성공
+- 요약: `src/worker/services/cron.ts` 의 `retention()` 두 번째 단계(납품 파일 삭제)가 만료 프로젝트를 `status in (delivered, closed) + retentionUntil < now + legalHold=false` 로만 골라 `limit(10)` 을 채우는데, 파일을 다 지운 프로젝트도 이 조건에 계속 걸린다(삭제 완료 표시가 없다). 그래서 다 지운 프로젝트가 10건만 쌓이면 창이 영구히 막혀 그 뒤에 만료된 프로젝트의 납품 파일이 하나도 삭제되지 않는다 — 운영 90일 보관이면 열 번째 프로젝트의 보관 기간이 지난 시점부터 "기간이 지나면 파일을 삭제합니다"(처리방침·납품 메일 고지)가 지켜지지 않는다. 조회에 루프와 같은 조건의 `EXISTS`(지울 자산이 남았는가, 공개 중인 작품의 원본은 제외)를 더해 창을 실제로 할 일이 있는 프로젝트로만 좁혔고, 루프 안의 `files`·`keep`·`del` 판정은 그대로 둬 삭제 결정 자체는 바꾸지 않았다(프로덕션 파일 1개 + 시험 1개). 검증은 `npm run build`("빌드 점검 통과")와 `npm test` **77개 전부 통과(1.1m)** — 종전 기준선 76 + 신규 1.
+- 실패 재현: `✘ 1 [api] › tests/api-retention.spec.ts:59:1 › 이미 다 지운 만료 프로젝트가 삭제 창(10건)을 메워도 새로 만료된 프로젝트의 파일을 지운다(AT-24) (12.7s)` — `expect(received).toBe(expected) Expected: true / Received: false` (Cron 8번을 돌려도 대상 프로젝트에 `retention.purge` 감사 기록이 생기지 않는다). 고친 뒤 같은 시험이 11.7s 로 통과한다.
+- 보류 아이디어: ① `seo.ts`·`shell.html` 짝 고정 시험(private 경로 noindex·canonical·`noscript#seo` 의 `esc()`) ② `scripts/portfolio-import.mjs` 드라이런 + 자동 시험 ③ `retention()` 의 `soon`·`expired` 조회에 `orderBy(asc(retentionUntil))` — 창이 꽉 찼을 때 오래 만료된 것부터 처리 ④ 길이 판정을 mvhd 외에 트랙 mdhd 와 교차 확인 ⑤ `serveObject` 의 조건부 요청(ETag·If-Range) 미지원
+- 과제서: 기각 — 정찰 과제서가 없어(회차 노트에 base 고정만 있었다) 구현자가 프로필의 위험 구역(cron 보관 만료)을 직접 읽어 골랐다.
