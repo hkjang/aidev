@@ -1,0 +1,7 @@
+# 수리 요약 — 저장소 결함이 아니다 (커밋 없음)
+
+- **CI 실패 원인을 로그로 확정했다.** `gh run view 38662454582` 의 애노테이션: *"The job was not started because recent account payments have failed or your spending limit needs to be increased."* 잡은 **시작조차 하지 않았다**(3초). 즉 `check.yml` 의 13개 단계 중 한 줄도 실행되지 않았고, 이 PR 의 코드는 CI 에서 평가된 적이 없다. 필요한 조치는 hkjang 의 GitHub **Billing & plans** 확인 — 저장소에서 고칠 것이 없다.
+- **이 변경 탓이 아님을 이력으로 뒷받침한다.** `gh run list`: 10-13T23:50Z 까지 모든 회차가 **3분대에 성공**, 10-14T01:14Z 이후 세 PR 이 전부 **3~5초에 실패**(서로 무관한 변경들 — 쿼터 Retry-After 2건 + 이번 IP 추출). 정찰·구현·비평 세 역할이 "10-14 부터 계정 수준 증상" 이라 적은 것이 맞았다.
+- **CI 단계를 같은 순서로 dfc8d78 에서 직접 재현했고 전부 통과한다.** `npm ci`(232 패키지) → `npm run check`(eslint 무경고 · core/server/web 타입체크 · vitest **7 files / 131 passed**) → `npm run build` → `node scripts/perf.mjs`(초기 JS **223.7 KB / 예산 230 KB**) → `node scripts/ci-env.mjs` → `bash scripts/dev-reset.sh`(마이그레이션 10개) → `node scripts/e2e.mjs` **218 passed / 0 failed**(기준선과 동일). 같은 자리에서 실패하는 것을 재현할 수 없다.
+- **미실행 1건**: a11y(`npx playwright install --with-deps chromium` 이 이 HOME 에 없음). 이 PR 은 `apps/web` 을 0바이트 건드리지 않고, 잡은 그 단계에 도달하기 전에 죽었으므로 실패와 무관하다 — 그래도 공백으로 명시한다.
+- **고치지 않은 이유**: 워크플로·검증 명령을 완화하는 것은 금지이고(그래야 "통과" 가 된다), `.github/` 는 이 PR 무변경(`check.yml` 블롭 `ec332493` = `origin/main`)이며 `package.json`·`package-lock.json` 도 무변경이라 `npm ci` 쪽 원인도 배제된다. 비평가가 이 근거를 읽고 다시 판단해 주기 바란다. 앞선 회차(10:08 shepherd)가 정황으로만 추론했던 것을 이번에 **로그 문구로 확정**한 것이 유일한 차이다.
