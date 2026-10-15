@@ -1,0 +1,128 @@
+[
+  {
+    "title": "CI test job 의 미실행 단계(web npm 3단계·docker build)를 로컬에서 돌려 PR #45 실패 원인을 좁히고 make ci-test 로 재현 수단을 남기기",
+    "value": 4,
+    "risk": 1,
+    "size": "M",
+    "status": "done",
+    "note": "이번 회차 구현. ci.yml:60-64 의 네 단계를 모두 실제로 돌렸고 ①②③④ 전부 exit 0 — web npm(ci 8.8s/test 10.4s/build 4.1s)·docker build(18.6s) 둘 다 이 저장소에서 처음 실행됐고 통과했다. 따라서 CI 실패는 test job 의 어떤 단계로도 설명되지 않는다. Makefile 에 ci-test 타깃 추가(TEST_POSTGRES_DSN 없으면 첫 단계 전에 중단, TEST_KEYCLOAK_ISSUER 는 경고만). 워크플로 파일은 건드리지 않았다.",
+    "updated": "2026-10-16"
+  },
+  {
+    "title": "PR #44·#45 의 lint+test 동시 CI 실패 원인을 GitHub 체크런 로그로 확인",
+    "value": 4,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "이제 in-repo 재현 후보가 전부 소진됐다: lint 세 명령(직전 회차), go test -race(두 회차), web npm 3단계·docker build(이번 회차) 모두 로컬 통과. go.mod 의 go 1.26.0/toolchain go1.26.6 가 CI 의 setup-go 1.26.6 핀과 정확히 맞으므로 툴체인 불일치도 이번에 배제했다. 남는 자리는 두 job 이 공유하는 actions/checkout·actions/setup-go(cache: true) 뿐이고 저장소가 private·gh 미인증이라 로그를 읽을 수 없다. 코드로는 더 좁힐 수 없으니 다음 회차가 추측으로 워크플로를 고치지 말고 이 항목을 사람에게 올릴 것.",
+    "updated": "2026-10-16"
+  },
+  {
+    "title": "internal/server 통합 테스트의 중복 셋업(DROP SCHEMA+Migrate+Seed) 줄이기",
+    "value": 3,
+    "risk": 3,
+    "size": "L",
+    "status": "pending",
+    "note": "직전 회차가 승인 쌍 하나를 합쳐 161.8s -> 154.5s. 이번 회차 재측정도 154.417s(같은 조건)로 일치. 남은 26파일 전부는 대규모 리팩터라 금지, 같은 경로 쌍만 회차당 하나. CI 2 vCPU 타임아웃 초과는 여전히 미증명 — 이번 회차 전체 벽시계 2m29.9s 로 10분 한도에 큰 여유가 있고, 32코어 머신에서 internal/server 가 단일 패키지로 154s 인 것은 순차 DB 작업이 지배적이라는 뜻이므로 코어 수에 비례해 늘지 않을 가능성이 크다.",
+    "updated": "2026-10-16"
+  },
+  {
+    "title": "chat stream 타입 및 두 토큰 한도 동시 지정의 400 거부 계약을 통합 테스트로 고정",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "이번 회차의 차선 후보였고 쓰지 않았다(과제서 본안을 끝까지 했으므로). providers.go:611-634 의 stream_invalid/max_tokens_conflict/max_tokens_invalid 가 internal/server 테스트에 문자열로 없는지는 이번에도 재확인하지 않았다 — 먼저 `grep -rn max_tokens_conflict internal/server` 로 확인할 것. 프로덕션 0파일. 기존 chat_request_json_integration_test.go fixture 재사용이 전제(새 통합 테스트 파일 하나가 패키지에 7~8초를 더한다).",
+    "updated": "2026-10-16"
+  },
+  {
+    "title": "승인 요청 payload(jsonb)의 NUL 을 저장 전 400 으로 막기",
+    "value": 2,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "PR #45(ae64738)가 같은 workflow.go 의 검증 지점 두 곳을 건드린 상태라 머지 전에는 충돌. 머지 후 단독으로. 새 헬퍼 필요하고 미머지 f66d25c 의 jsonObjectHasNUL·storablePreferenceObject 이름 금지. createApprovalRecordIn:197-209 가 $5::jsonb 로 넣어 22P05 500 추정(미재현).",
+    "updated": "2026-10-16"
+  },
+  {
+    "title": "MCP create_approval_request 제목의 NUL 을 -32602 로 거부",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "REST 경로만 83f264c 로 닫혔고 mcp.go:299 는 trim+rune 300 만 본다. toolFailure 로 감싸므로 HTTP 500 은 아님. JSON-RPC error 코드 실제 형태 미확인. 이번 회차 mcp.go 미열람.",
+    "updated": "2026-10-16"
+  },
+  {
+    "title": "updatePreferences 의 sidebarState·aiDefaults jsonb 검증이 main 에 없음",
+    "value": 3,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "f66d25c 외 3커밋이 auto/2026-10-04-1142 에만 있다. 기존 브랜치 처리 결정 전 재구현 금지, jsonObjectHasNUL·storablePreferenceObject 이름 재사용 금지. 이번 회차 users.go 미열람.",
+    "updated": "2026-10-16"
+  },
+  {
+    "title": "updateKeyScope 의 name 을 varchar(160)·trim 계약에 맞춰 400 으로 막기",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "b5146f2 가 auto/2026-10-01-1412 에만 있고 verify-failed — 실패 원인 확인 전 동일 접근 재시도 금지. 이번 회차 keys.go 미열람.",
+    "updated": "2026-10-16"
+  },
+  {
+    "title": "MCP query_legacy_table 의 search NUL 이 tool error 로 떨어지는 경로",
+    "value": 1,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "mcp.go:223-237 이 trim+200자만 검사. HTTP 500 은 아니어서 가치 낮음. 이번 회차 미확인.",
+    "updated": "2026-10-16"
+  },
+  {
+    "title": "감사 CSV 문서의 '성공 다운로드=전체 이벤트' 문구를 50,000건 상한과 맞추기",
+    "value": 1,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "docs/api.md:353 vs audit_events.go LIMIT 50000(이전 기록 계승, 이번 재확인 안 함). 주의: verify-version.sh 가 docs/*.md 의 모든 vX.Y.Z 토큰을 현재 버전 하나로 제한하므로 버전 토큰을 새로 넣으면 lint 가 깨진다(이번 회차 docs/operations.md 를 고치며 재확인 — 새 토큰 없이 작성해 통과).",
+    "updated": "2026-10-16"
+  },
+  {
+    "title": "updateProfile 의 email 빈 문자열이 'NULL 로 삭제' 인 계약을 문서·테스트로 고정",
+    "value": 1,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "이전 기록 계승, 이번 재확인 안 함. 400 으로 동작을 바꾸지 않는 범위에서만.",
+    "updated": "2026-10-16"
+  },
+  {
+    "title": "웹 폼의 서버 상한 동기화 묶음(RolesPage 120자·key-scope 160자)",
+    "value": 1,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "internal/ui/dist 재빌드와 UTF-16/rune 차이 때문에 계속 보류. 이번 미확인.",
+    "updated": "2026-10-16"
+  },
+  {
+    "title": "회전 승인 실행의 errKeyStale 반환 지점을 details 필드명으로 구별",
+    "value": 2,
+    "risk": 2,
+    "size": "M",
+    "status": "pending",
+    "note": "workflow.go 보호 구역이고 PR #45 가 같은 파일을 건드린 상태라 머지 전에는 충돌. 머지 후 단독으로.",
+    "updated": "2026-10-16"
+  },
+  {
+    "title": "web 로컬 node 버전이 CI(node 26)와 다른 것을 문서나 engines 로 드러내기",
+    "value": 2,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "이번 회차 새 항목. 이 머신의 node 는 v22.23.1 인데 ci.yml:56 은 node-version 26, Dockerfile:2 는 node:26-alpine 이다. web/package.json 에 engines 필드가 없어 로컬이 조용히 다른 메이저로 돌아간다. 이번엔 ②(node 22)와 ③(docker 안 node 26) 둘 다 통과해 실제 차이가 드러나지 않았으므로 가치가 낮고, engines 를 넣으면 로컬 npm ci 가 막혀 역효과일 수 있다(risk 2). 문서 한 줄이 더 안전한 선택.",
+    "updated": "2026-10-16"
+  }
+]
