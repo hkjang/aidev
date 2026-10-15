@@ -1,11 +1,11 @@
 [
   {
-    "title": "해석 불가 Range 헤더에 416 대신 200 전체 응답(parseRange 분류 정정)",
-    "value": 3,
+    "title": "Cron 보관 만료 안내가 이미 만료된 프로젝트에 영구히 막힌다 — 안내 조회에 하한(retentionUntil > now) 추가",
+    "value": 4,
     "risk": 1,
     "size": "S",
     "status": "done",
-    "note": "구현 완료. files.ts parseRange 의 `if (!m || (!m[1] && !m[2]))` 를 'invalid' → null 로. 416 은 문법이 맞는데 만족 불가(start>end · start>=size)만. 시험: unit-media.spec.ts 의 '범위 요청 해석' 에 해석 불가·범위 초과·정상 경계, api-portfolio.spec.ts(AT-03) 에 공개 영상 URL 로 200(Content-Range 없음, 전체 Content-Length)·416(bytes */) 확인. 여러 구간 multipart/byteranges 는 일부러 구현하지 않았다.",
+    "note": "이번 회차 구현. cron.ts:110 soon 조회에 gt(retentionUntil, now) 를 더해 이미 만료된 찌꺼기가 limit(20) 창을 영구히 막는 기아를 없앴다. cron.ts:113 가드는 이중 방어로 남겼다. 재현 시험: tests/api-retention.spec.ts 에 찌꺼기 21건 + starved 1건.",
     "updated": "2026-10-15"
   },
   {
@@ -14,7 +14,7 @@
     "risk": 1,
     "size": "S",
     "status": "pending",
-    "note": "이번 회차의 차선 후보였다. shell.html 에 title·description·robots·og:*·canonical·noscript#seo 자리가 모두 있고 seo.ts 는 전부 setAttribute 로 채운다 — '해당 없는 메타 element.remove()' 경로는 현재 코드에 없다. 실제로 고정할 것은 ① /app·/admin·/login·/invite 의 noindex ② 색인 가능한 쪽만 자기 canonical ③ noscript#seo 의 esc(). 프로덕션 코드는 건드리지 않는 시험 전용 회차.",
+    "note": "차선 후보였다. shell.html 에 메타 자리가 전부 있고 seo.ts apply() 는 setAttribute 로 채운다. /app·/admin·/login·/invite 의 noindex, 색인 가능한 쪽만 자기 canonical, /work/없는-슬러그 404, noscript#seo 의 esc() 를 HTTP 로 고정. 시험 전용.",
     "updated": "2026-10-15"
   },
   {
@@ -23,7 +23,7 @@
     "risk": 2,
     "size": "M",
     "status": "pending",
-    "note": "작품 올리기 스크립트는 수동 확인만 있다. R2·D1 호출을 하지 않는 --dry-run 으로 메타 검증·MP4 판독·SQL 생성까지를 단위 시험으로 덮을 수 있다. CI 가 있으니 덮개가 그대로 관문에 붙는다. 스크립트 본문은 아직 열어 보지 않았다(미확인) — 작업량이 S 로 끝날지 확신 없음.",
+    "note": "작품 올리기 스크립트는 수동 확인만. R2·D1 호출 없는 --dry-run 으로 메타 검증·MP4 판독·SQL 생성을 단위 시험으로 덮을 수 있다. 스크립트 본문 미확인.",
     "updated": "2026-10-15"
   },
   {
@@ -32,7 +32,7 @@
     "risk": 2,
     "size": "M",
     "status": "pending",
-    "note": "지금은 mvhd 길이만 본다. edts(편집 목록)·트랙 길이가 다른 파일에서 계약 길이 판정(spec.ts)이 어긋날 수 있다. 판정 기준을 바꾸는 변경이라 위험이 더 높고, 합성 MP4 시험으로만 검증된다.",
+    "note": "mp4.ts 는 mvhd 길이만 본다. edts·트랙 길이가 다른 파일에서 spec.ts 의 길이 판정이 어긋날 수 있다. 판정 기준을 바꾸는 변경이라 위험이 더 높고 합성 MP4 로만 검증된다.",
     "updated": "2026-10-15"
   },
   {
@@ -41,7 +41,7 @@
     "risk": 1,
     "size": "S",
     "status": "pending",
-    "note": "최상위 상자가 64개를 넘으면 조용히 끊고 '영상 정보(moov)가 없습니다' 로 거절한다. 실제로 그런 파일이 오는지 모르므로 가치는 낮다.",
+    "note": "상자가 64개를 넘으면 조용히 끊고 '영상 정보(moov)가 없습니다' 로 거절. 실제로 그런 파일이 오는지 모르므로 가치 낮음.",
     "updated": "2026-10-15"
   },
   {
@@ -50,7 +50,7 @@
     "risk": 1,
     "size": "S",
     "status": "pending",
-    "note": "shell.html 에 twitter:card(summary_large_image)·og:image:alt 자리가 없다. 마케팅 사이트라 공유 미리보기는 값이 있지만, 자리를 shell.html 에 먼저 만들고 seo.ts 에서 채워야 하고(HTMLRewriter 는 있는 요소만 고친다) verify-build 의 메타 자리 목록과도 짝을 맞춰야 해 파일 3개가 함께 걸린다.",
+    "note": "shell.html 에 자리가 없다. HTMLRewriter 는 있는 요소만 고치므로 shell.html·seo.ts·verify-build 의 메타 자리 목록 3파일이 함께 걸린다.",
     "updated": "2026-10-15"
   },
   {
@@ -59,7 +59,7 @@
     "risk": 1,
     "size": "S",
     "status": "pending",
-    "note": "npm run build 안에 이미 check(tsc 3종)가 들어 있어 지금은 중복이다. 단계가 나뉘면 실패 원인(타입 vs 번들 vs 공개 번들 점검)이 Actions 요약에서 바로 보인다. 글꼴 서브셋 비용(수 초)만 더 든다. .github/workflows/ 는 보호 경로.",
+    "note": "npm run build 안에 이미 check(tsc 3종)가 있어 지금은 중복. 단계가 나뉘면 실패 원인이 Actions 요약에서 바로 보인다. .github/workflows/ 는 보호 경로.",
     "updated": "2026-10-15"
   },
   {
@@ -68,7 +68,7 @@
     "risk": 1,
     "size": "S",
     "status": "pending",
-    "note": "결제·인증을 다루는 저장소라 값이 있다. 이번 회차의 npm ci 에서 audit 경고가 실제로 떴다(내용은 확인하지 않음). 관문을 막지 않도록 continue-on-error 로 시작할 것. .github/workflows/ 는 보호 경로라 다른 과제와 섞지 말 것.",
+    "note": "결제·인증을 다루는 저장소라 값이 있다. 관문을 막지 않도록 continue-on-error 로 시작. .github/workflows/ 는 보호 경로라 다른 과제와 섞지 말 것.",
     "updated": "2026-10-15"
   },
   {
@@ -77,16 +77,52 @@
     "risk": 2,
     "size": "M",
     "status": "pending",
-    "note": "신규(이번 회차에 files.ts 를 읽으며 확인). serveObject 는 ETag·Last-Modified 를 내보내지 않아 조건부 GET·If-Range 재개가 전부 전체 재전송이 된다. R2 객체의 etag 를 쓰면 되지만 공개 사본 교체·철회와 캐시 수명(opts.cache)의 상호작용을 봐야 하므로 위험이 더 높다.",
+    "note": "files.ts serveObject 는 ETag·Last-Modified 를 내보내지 않아 조건부 GET·If-Range 재개가 전부 전체 재전송. R2 etag 를 쓰면 되지만 공개 사본 교체·철회와 캐시 수명의 상호작용을 봐야 해 위험이 높다.",
     "updated": "2026-10-15"
   },
   {
-    "title": "GitHub Actions CI 워크플로 추가 — 러너가 돌리는 검증 명령을 그대로 CI 로",
-    "value": 5,
+    "title": "parseRange 경계 — 해석 불가 Range 를 416 대신 전체(200)로",
+    "value": 3,
     "risk": 1,
     "size": "S",
     "status": "pending",
-    "updated": "2026-10-15",
-    "note": "이 저장소에는 워크플로 파일이 없어 러너 PR 이 전부 \"CI 검사 없음\" 으로 막힌다. 러너가 이미 돌리는 검증 명령(build·vet·test)을 그대로 .github/workflows/ci.yml 로 옮겨라. 이 파일은 보호 경로라 사람 승인을 받는다."
+    "note": "앞선 회차에서 구현·검증됐으나 base b00d53c 에는 아직 들어오지 않았다(files.ts 가 여전히 'invalid' 를 돌려준다). 머지되면 done. 다시 고르지 말 것.",
+    "updated": "2026-10-15"
+  },
+  {
+    "title": "MP4 판독에 회전 행렬 반영(세로 영상 표시 해상도)",
+    "value": 4,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "앞선 회차에서 구현·검증됐으나 base b00d53c 에는 아직 없다. 머지되면 done. 다시 고르지 말 것.",
+    "updated": "2026-10-15"
+  },
+  {
+    "title": "브리프 MOV(video/quicktime)가 미리보기에서 첨부로 내려간다 — INLINE_OK 누락",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "files.ts INLINE_OK 에 video/quicktime 이 없고 FILE_RULES.brief 는 MOV 를 허용한다. 다만 브라우저의 MOV 재생 지원이 제한적이어서 첨부가 더 안전하다는 해석도 가능 — 가치 낮음.",
+    "updated": "2026-10-15"
+  },
+  {
+    "title": "admin.ts 의 보관 만료 임박 조회가 실제 하루(7 * DAY)를 쓰고 Cron 은 dayMs(env) 를 쓴다",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "신규. 운영에서는 둘이 같으므로 영향 없고, 시험 서버(TEST_DAY_MS=200)에서만 운영 화면의 '보관 만료 임박' 목록이 Cron 과 다른 창을 본다. 두 조회의 계약이 달라 공통 함수로 묶지는 말 것 — 운영 화면은 status='delivered' 만, Cron 은 delivered|closed + legalHold 제외.",
+    "updated": "2026-10-15"
+  },
+  {
+    "title": "retention 의 안내·삭제 조회에 orderBy(만료가 가까운 것 먼저) 추가",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "신규. soon·expired 조회에 orderBy 가 없어 limit(20)/limit(10) 창에 어느 행이 들어오는지 SQLite 구현(대개 rowid 순)에 달려 있다. 만료가 임박한 것부터 처리하도록 orderBy(asc(retentionUntil)) 를 두면 창이 꽉 찼을 때의 우선순위가 정해진다. 이번 하한 추가로 기아는 사라졌으므로 급하지는 않다.",
+    "updated": "2026-10-15"
   }
 ]

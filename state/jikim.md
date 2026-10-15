@@ -306,3 +306,4 @@
 - 보류 아이디어: CSP 진단/스니펫 경로의 UTF-8 절단 방지 (2/1/S — 최종 관리자 응답까지 관찰 가능한 차이 증명이 선행) / 추적 활성 중 CSP 리포트 속도 제한·동일 출처 검증 (3/3/M — 새 신뢰 계약 필요) / retryWebhookDelivery 왕복 테스트 공백 (2/1/M — PostgreSQL 통합 검증 선행) / baoKVWrite create·update 판정 TOCTOU (3/3/M — 트랜잭션·동시성 검증 필요) / Dependabot group 계약을 CONTRIBUTING 에 문서화 (2/1/S — 관찰 가능한 동작 변화 없음)
 - 과제서: 채택 — 근거·배선·재현 방법(`r.RequestURI` 로 단정, `httptest.NewRequest` target 공백 금지, `url` 이미 import)이 모두 코드와 맞았고 지정한 프로덕션 1파일·테스트 1파일만 고쳤다. 제시된 수정 형태 중 `url.PathUnescape` 분기만 생략했다(위 요약의 이유).
 
+- 릴리즈: v0.2.35 (2026-10-15, run 2026-10-15-185850-jikim-improve)

@@ -22,3 +22,11 @@
 - 보류 아이디어: ① `seo.ts`·`shell.html` 짝 고정 시험(private 경로 noindex · canonical · `noscript#seo` 의 `esc()`) ② `scripts/portfolio-import.mjs` 드라이런 + 자동 시험 ③ 길이 판정을 mvhd 외에 트랙 mdhd 와 교차 확인 ④ `topLevel` 의 최상위 상자 64개 제한 ⑤ 공유 미리보기용 `twitter:card`·`og:image:alt`(shell.html·seo.ts·verify-build 3파일이 함께 걸린다)
 - 과제서: 채택 — 과제서의 근거가 지금 코드와 정확히 맞았고(파일·행 번호 포함), 수용 기준 1~4 를 그대로 구현·검증했다. 다만 종전 통과 수는 78 이 아니라 **76** 이었다(이 base `b00d53c` 에 MP4 회전 회차가 들어 있지 않다).
 
+## 2026-10-15
+- 선택: Cron 보관 만료 안내가 이미 만료된 프로젝트에 영구히 막힌다 — 안내 조회에 하한(retentionUntil > now) 추가 (가치 4 / 위험 1 / 작업량 S)
+- 결과: 성공
+- 요약: `src/worker/services/cron.ts` 의 `retention()` 이 안내 대상을 상한(`retentionUntil < now + 7일`)만으로 골라 이미 만료된 프로젝트까지 담고, 루프에서 건너뛴 그 프로젝트들은 `retentionNoticeAt` 이 NULL 로 남아 다음 Cron 에서도 같은 조회에 다시 잡혔다 — 그런 찌꺼기가 20건 쌓이면 `limit(20)` 창이 전부 막혀 7일 뒤 만료될 프로젝트가 안내를 못 받고 파일이 삭제됐다. 조회에 `gt(retentionUntil, now)` 하한을 더해(운영 화면의 같은 조회 `routes/admin.ts:50` 이 이미 쓰는 형태) 창을 되찾았고, 루프의 `p.retentionUntil < now` 가드는 이중 방어로 남겼다. 삭제 시점·보관 정책은 건드리지 않았다(프로덕션 파일 1개 + 시험 1개). 검증은 `npm run build`("빌드 점검 통과")와 `npm test` **77개 전부 통과(1.2m)** — 종전 기준선 76 + 신규 1.
+- 실패 재현: `✘ 2 [api] › tests/api-retention.spec.ts:59:1 › 이미 만료된 프로젝트가 안내 창(20건)을 넘겨도 7일 안에 만료될 프로젝트는 안내를 받는다(AT-24) (36.7s)` — `Error: 메일 없음: starved-mv9e1zr0f9a0@customer.test /보관 만료 안내/ (at api.ts:43)`. 같은 시험이 고친 뒤 21.7s 로 통과한다.
+- 보류 아이디어: ① `seo.ts`·`shell.html` 짝 고정 시험(private 경로 noindex·canonical·`noscript#seo` 의 `esc()`) ② `scripts/portfolio-import.mjs` 드라이런 + 자동 시험 ③ `admin.ts:50` 이 실제 하루(`7 * DAY`)를 쓰고 Cron 은 `dayMs(env)` 를 쓰는 단위 불일치(운영에서는 같아 영향 없음, 시험 서버에서만 창이 다르다) ④ `retention()` 의 `soon`·`expired` 조회에 `orderBy(asc(retentionUntil))` — 창이 꽉 찼을 때의 우선순위를 정한다 ⑤ 길이 판정을 mvhd 외에 트랙 mdhd 와 교차 확인
+- 과제서: 채택 — 과제서의 근거(파일·행 번호·수용 기준)가 지금 코드와 정확히 맞았고, 지시한 변경(하한 추가, 가드 유지, `admin.ts` 미수정)과 시험을 그대로 구현·검증했다. 다만 `cron()` 헬퍼는 `POST /__cron` 이 아니라 `GET /cdn-cgi/handler/scheduled` 이고, 찌꺼기 21건은 고객 1명으로 만들어(로그인 1회) 신규 시험 1개가 21.7s 로 끝난다.
+
