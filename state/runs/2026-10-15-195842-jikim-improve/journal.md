@@ -17,3 +17,14 @@
 - 다음 역할이 조심할 것: 새 테스트는 `TestRecordedPageIsTruncatedOnACharacterBoundary`(internal/httpapi/tracking_test.go) 하나이고 DB 없이 돈다. 서브테스트 5개 중 4개는 **기존 계약**이라 수정 전부터 통과했다 — 실패하는 것은 `multi-byte_character_split_by_the_cap` 뿐이다. 수정 재현 시 루프만 되돌리면 `"unicode/utf8" imported and not used` 로 빌드가 깨지므로 import 도 함께 되돌려야 한다. 재현값(21바이트 접두사·163개 `가`·510바이트)은 접두사 길이에 민감해 접두사를 바꾸면 기대값도 다시 계산해야 한다.
 - [러너 20:10] brief accepted — 채택 — 근거·배선·재현값(21바이트 접두사 + `strings.Repeat("가", 200)`, 기대값 510바이트)·권장 수정 형태·`unicode/utf8` 미impo
 - [러너 20:10] verify passed — 검증 7개 통과 (auto)
+
+## 비평 노트
+- 판정 approve(risk low, blocking 없음). 테스트 유효성을 독립 확인: `internal/tracking/violations.go` 만 main 판으로 되돌려 `tracking_test.go:451: listed page is 516 bytes ending "가가??" ... want 510 bytes ending "가가가가"` 로 1개만 실패 — ledger 의 `- 실패 재현:` 줄과 일치, 이후 워크트리 복원해 `git status` 깨끗.
+- 절단 루프는 난수 혼합 문자열 50만 건으로 불변식(유효 UTF-8·512바이트 이하·3바이트 이하만 제거·원본 접두사·들어갈 수 있던 rune 보존)을 확인했다. 512바이트 메모리 예산은 줄기만 하고 늘지 않으며 무인증 report 경로·admin 게이트(server.go:151)·204 빈 본문은 그대로다.
+- 구현자가 미검증으로 남긴 프런트를 대신 확인: `SettingsPage.tsx:1497` 이 `{item.page}` 를 텍스트로만 쓰고 길이 가정이 없어 프런트 무수정이 맞다. docs/README 에 `512` 언급 없어 문서 불일치도 없다.
+- 승인이어도 남는 것: (a) `tracking_test.go:451` 의 `!utf8.ValidString(got)` 는 HTTP 경로에서 죽은 가지다(json.Marshal 이 먼저 유효 U+FFFD 로 바꾼다) — 실제 탐지는 RuneError 차등 + 전체 일치이니 가드로 오독하지 말 것. (b) `Record` 의 `origin` 은 길이 상한이 없다(선재·범위 밖). (c) tracking 영역 5연속이 되므로 다음 회차는 다른 영역으로.
+- 못 본 것: 실제 브라우저 CSP 리포트, 이미지·Playwright E2E, PostgreSQL 연동(DSN 미설정 skip), `scripts/verify.sh` 재실행(구현자 exit 0 보고를 신뢰). 릴리즈 노트에는 "관리자 추적 목록의 긴 비ASCII 주소 끝 글자가 깨져 보이던 문제 수정"으로 적으면 된다.
+- [러너 20:13] review approved — 리뷰 승인 (risk=low)
+- [러너 20:14] pr created — https://github.com/hkjang/jikim/pull/61
+- [러너 20:17] ci passed — 검사 2개 모두 success
+- [러너 20:17] merge done — ce49f97
