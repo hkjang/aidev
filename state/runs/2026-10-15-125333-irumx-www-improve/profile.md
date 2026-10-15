@@ -1,0 +1,23 @@
+# irumx-www 프로필 (2026-10-15)
+- 목적: 이룸엑스 기업 홈페이지 — 회사·공개 서비스 11개·협업 분야 소개와 문의 접수(www.irumx.app).
+- 기준: base main@94eb01f, 작업 트리 `/home/hkjang/.cache/auto-improve-wt/irumx-www`. 이번에 직접 확인: 작업 트리 최상위에 `node_modules/`·`.github/` **없음**, `package.json` 에 `pretest` **없음**. 원장에 '성공' 으로 적힌 pretest·serve-static 하드닝·ci.yml·inquiry 수정·사이트맵 검사는 **베이스에 반영돼 있지 않다**.
+- 스택: Astro 7 + TypeScript 정적 생성, CSS 변수, Pretendard 자체 호스팅, Cloudflare Workers Static Assets + Worker(API·HTML gzip). DB·CMS 없음. `engines.node >= 22.12.0`.
+- 구조:
+  - src/config/ — 회사·연락처·메뉴·SEO 상수. src/styles/ — 디자인 토큰·공통 스타일.
+  - src/content/services.ts — 서비스 11개·공개 여부·FAQ 단일 출처(PUBLISHED_SERVICES 로 필터). company.ts/collaboration.ts 는 문구.
+  - src/pages/ — 정적 페이지와 robots/llms; services/[slug].astro:getStaticPaths 가 공개 서비스를 경로로 만든다.
+  - src/components/, src/layouts/ — UI·공통 문서. src/scripts/contact.ts — 문의 폼·지연 Turnstile 로딩.
+  - src/lib/inquiry.ts — 브라우저/Worker 공유 입력 검증·메일 문장 구성.
+  - worker/index.ts — 문의·수신 웹훅·serveHtml(gzip); sendEmail 은 MAIL 서비스 바인딩(mail-gateway), 실패 시 직접 Resend. worker/svix.ts — 웹훅 서명 검증. wrangler.jsonc — MAIL·ASSETS 바인딩과 Worker 우선 경로.
+  - scripts/ — subset-font, make-images, verify-build, serve-static, screenshots, deploy. tests/ — Playwright 5 spec + mock-resend. docs/ — content·deploy·launch-checklist·qa-report.
+  - CLAUDE.md/AGENTS.md/.nvmrc/.npmrc/CHANGELOG 없음.
+- 빌드·테스트(package.json:10-21, 이번 Read 로 확인):
+  - `npm ci` → `npm run build` = subset-font → astro check → astro build → verify-build.
+  - `npm run test:build` = 테스트 키로 `npm run build` 재호출 + dist-draft + dist-email (dist 3벌; 이미지 411장을 세 번 최적화해 약 90초).
+  - `npm test` = `playwright test` **뿐**. pretest 없음 → `npm run test:build` 와 `npx playwright install chromium` 을 먼저 사람이 해야 한다. 전체 2분 안팎(테스트 자체 28초, 이전 회차 실측).
+  - playwright.config.ts — 8820 Worker / 8821 draft / 8822 mock-resend / 8823 email, 전부 `reuseExistingServer:false`, workers:1. 기준 통과값 **77 passed · 4 skipped**(건너뜀은 site.spec.ts 의 폭 조건부).
+- 관례: 커밋·주석·문서 전부 한국어. 환경변수 CONTACT_MODE/SITE_ENV/PUBLIC_TURNSTILE_SITE_KEY/ASTRO_OUT_DIR. 마이그레이션 없음. Astro `build.format:file`, `trailingSlash:never`.
+- 위험 구역: worker/index.ts·worker/svix.ts·src/lib/inquiry.ts(운영 문의·수신 메일과 검증 — 개인정보·키를 로그에 더하지 말 것), public/_headers(CSP·no-transform), scripts/deploy.mjs(실제 배포). Worker 가 /api/* 뿐 아니라 HTML 도 받으므로 새 최상위 정적 파일은 run_worker_first 예외 목록 확인.
+- 자주 깨지는 곳: **구현 성공 ≠ main 반영**이 이 저장소의 1번 패턴 — 과거 커밋을 근거로 "이미 고쳐졌다" 고 쓰지 말고 매번 베이스에서 직접 확인할 것. 옛 커밋 무조건 체리픽 금지.
+- 검증 함정 (가장 중요): **npm 은 cwd 에서 루트까지 모든 상위 `node_modules/.bin` 을 원래 PATH 보다 앞에 붙이고, node 실행 파일의 디렉터리는 넣지 않는다**(`/usr/lib/node_modules/npm/node_modules/@npmcli/run-script/lib/set-path.js:27-37`, 이번에 소스로 확정). `/home/hkjang/node_modules/node/package.json` = **20.19.2** 이므로 `/home/hkjang` 아래 작업 트리의 모든 npm 스크립트에서 astro·wrangler·playwright 가 v20 으로 돌아 `Node.js v20.19.2 is not supported by Astro!` / `Wrangler requires at least Node.js v22.0.0` 로 exit 1 이다. 셸 `node -v` 는 v22.23.1, `/tmp` 클론은 정상 통과 — **`/tmp` 결과를 작업 트리의 증거로 쓰면 안 된다.** 저장소 쪽 해법 후보는 npm 이 주는 `npm_node_execpath`(= `NODE`, `@npmcli/config/lib/set-envs.js:110`)의 디렉터리를 각 스크립트에서 PATH 맨 앞에 두는 것.
+- 검증 함정(그 외): dist·dist-draft·dist-email 이 모두 gitignore 라 깨끗한 체크아웃에서 webServer 3개가 기동 실패한다. harfbuzzjs·fontverter 를 verify-build 가 직접 import 하는데 devDependencies 에 선언이 없다(선언 8개 확인). 8820~8823 포트 점유 시 즉시 실패(`npm run preview` 도 8820). Turnstile 발송 테스트에 외부 통신 의존이 남아 폐쇄망에서 빨개질 수 있다. CI 없음. SITE_ENV 에 따라 robots 단정이 달라진다.
