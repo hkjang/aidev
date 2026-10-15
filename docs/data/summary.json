@@ -1,5 +1,5 @@
 {
- "generated": "2026-10-15T12:30:24+09:00",
+ "generated": "2026-10-15T12:40:24+09:00",
  "site": "https://hkjang.github.io/aidev",
  "description": "Claude Code 자율 개선 에이전트가 hkjang 의 프로젝트를 개선·테스트·머지·릴리즈한 일일 보고. 오늘 11회차·릴리즈 0건, 누적 2583회차·릴리즈 788건, 주의 필요 22건.",
  "today": {
@@ -10,18 +10,18 @@
   "merged": 0,
   "nochange": 0,
   "failed": 4,
-  "cost_usd": 60.61,
-  "minutes": 144,
-  "sessions": 29
+  "cost_usd": 62.01,
+  "minutes": 147,
+  "sessions": 30
  },
  "totals": {
   "runs": 2583,
   "released": 788,
   "days": 44,
-  "cost_usd": 8975.06,
-  "minutes": 24930,
-  "tokens_in": 9764674681,
-  "tokens_out": 78554903
+  "cost_usd": 8976.47,
+  "minutes": 24933,
+  "tokens_in": 9765964677,
+  "tokens_out": 78566190
  },
  "alerts": [
   {
@@ -1351,9 +1351,9 @@
    "labels": "",
    "action": "PR 처리기가 다음 시간에 다시 시도 · 승인: PR 라벨 aidev-approved / 반려: aidev-rejected — 다음 회차에 러너가 승인 당시 커밋에만 CI 확인 후 머지·닫기",
    "date": "2026-10-15",
-   "shepherd": "CI 실패 · 수정 실패 → 다음 시간에 재시도 (10-15 12:30) — 수정 세션이 커밋을 만들지 않음: # 수리 요약 — PR #6 (커밋 없음, 지적이 코드 결함이 아님)  - **재현 실패 = 결론**: CI `check` 는 3초 만에 실패했고 로그가 비어 있다. 이 워크플로의 첫 실질 단계 `npm ci` 만으로도 분 단위라, 3초·무로그는 **잡",
+   "shepherd": "CI 실패 · 수정 실패 → 다음 시간에 재시도 (10-15 12:40) — 수정 세션이 커밋을 만들지 않음: # 수리 결과: 고칠 결함 없음 — 커밋 없이 끝냄  - 지적은 CI 검사 'check' 실패(커밋 6a2ddab) 하나뿐인데 **3초·로그 끝부분 비어 있음·잡 output 없음** 이다. 저장소의 `check` 는 `npm ci`→check→buil",
    "shepherd_action": "fix-failed",
-   "shepherd_detail": "수정 세션이 커밋을 만들지 않음: # 수리 요약 — PR #6 (커밋 없음, 지적이 코드 결함이 아님)  - **재현 실패 = 결론**: CI `check` 는 3초 만에 실패했고 로그가 비어 있다. 이 워크플로의 첫 실질 단계 `npm ci` 만으로도 분 단위라, 3초·무로그는 **잡이 시작조차 못 했다**는 뜻이다(2026-10-14 수리 회차가 기록한 Actions 결제 차단과 같은 신호). `.github/workflows/check.yml` 은 YAML 유효하고 v0.2.1(bb4fd76) 이후 손댄 적이 없으며 이 PR 의 diff 도 아니다(`scripts/ci-env.mjs`, `packages/core/src/__tests__/ci-env.test.ts` 2파일뿐",
+   "shepherd_detail": "수정 세션이 커밋을 만들지 않음: # 수리 결과: 고칠 결함 없음 — 커밋 없이 끝냄  - 지적은 CI 검사 'check' 실패(커밋 6a2ddab) 하나뿐인데 **3초·로그 끝부분 비어 있음·잡 output 없음** 이다. 저장소의 `check` 는 `npm ci`→check→build→kits→DB→e2e 를 한 잡에서 도는 30분짜리라 어떤 단계든 실패하면 3초로 끝날 수 없다. 즉 잡이 시작조차 못 했다(Actions 결제·실행 차단, 2026-10-14 수리 회차와 같은 증상). `gh` 미인증 + 사설 저장소 API 404 로 잡 주석은 이 세션에서도 확인 불가. - 이 변경(`scripts/ci-env.",
    "needs_human": false
   },
   {
@@ -1803,13 +1803,13 @@
   }
  ],
  "shepherd": {
-  "last_pass": "2026-10-15T12:05:03+09:00",
+  "last_pass": "2026-10-15T12:35:30+09:00",
   "enabled": true,
   "today": {
    "needs-human": 6,
-   "fix-failed": 7
+   "fix-failed": 8
   },
-  "total": 670,
+  "total": 671,
   "pending_human": 192
  },
  "agents": {
@@ -1824,7 +1824,7 @@
     "role": "구현 builder",
     "calls": 502,
     "metric": "러너 검증 통과 86% · 변경 없음 137",
-    "cost": 1209.8
+    "cost": 1211.2
    },
    {
     "role": "비평 critic",
@@ -1854,11 +1854,11 @@
     "role": "PR 심사 shepherd-reviewer",
     "calls": 121,
     "metric": "승인 40 · 거절 4 · 사람 필요 77 · 승인 뒤 회귀 1",
-    "cost": 205.76
+    "cost": 207.17
    },
    {
     "role": "PR 수리 shepherd-fixer",
-    "calls": 79,
+    "calls": 80,
     "metric": "고쳐서 푸시 32%",
     "cost": null
    },
@@ -2338,7 +2338,7 @@
   },
   {
    "metric": "유효 개선당 비용",
-   "value": "$13.16",
+   "value": "$13.17",
    "detail": "비용 확인된 유효 개선 199건, 미확인 세션 243"
   },
   {
@@ -2369,7 +2369,7 @@
    "merged": 0,
    "nochange": 0,
    "failed": 4,
-   "cost_usd": 60.61
+   "cost_usd": 62.01
   },
   {
    "date": "2026-10-14",
@@ -2643,8 +2643,8 @@
    "merged": 0,
    "nochange": 10,
    "failed": 19,
-   "cost": 272.54,
-   "minutes": 748
+   "cost": 273.95,
+   "minutes": 752
   },
   {
    "key": "2026-W41",
@@ -2729,8 +2729,8 @@
    "merged": 38,
    "nochange": 137,
    "failed": 44,
-   "cost": 2619.52,
-   "minutes": 7776
+   "cost": 2620.92,
+   "minutes": 7779
   },
   {
    "key": "2026-09",
@@ -4276,8 +4276,8 @@
    "last_ts": "2026-10-15T12:00:54+09:00",
    "last_status": "failed",
    "last_result": "fix-round: CI failed, PR open https://github.com/hkjang/workkit.irumx.app/pull/6",
-   "cost": 56.41,
-   "minutes": 159,
+   "cost": 57.81,
+   "minutes": 162,
    "grade": "D",
    "grade_why": "14일: 릴리즈 1, 실패 5, 경고 5, 회귀 0",
    "lessons": 0,
