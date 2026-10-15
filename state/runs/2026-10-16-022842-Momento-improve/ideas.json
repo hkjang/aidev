@@ -1,0 +1,128 @@
+[
+  {
+    "title": "createNetwork 가 ParseCIDR 결과를 버려 호스트 비트 CIDR 이 Postgres cidr 컬럼에서 500 이 된다 — 정규화된 대역을 INSERT 한다",
+    "value": 3,
+    "risk": 2,
+    "size": "S",
+    "status": "done",
+    "note": "구현 완료(커밋 107eeca). admin.go 안의 normalizeCIDR 헬퍼 하나 + 신규 network_cidr_test.go. 전제를 실제 postgres:17-alpine 으로 확인했다 — 원문 10.20.30.1/24 INSERT 는 SQLSTATE 22P02 'Value has bits set to right of mask' 로 막히고 정규화한 10.20.30.0/24 는 들어간다. 항등 스텁으로 red(핸들러가 500 + pgx 원문) 를 먼저 찍은 뒤 고쳐 7/7 green, 회귀 go test -race 전 패키지 ok. listNetworks 반환값까지 단언했다. 400 INVALID_CIDR 범위·코드·메시지와 cidrRule.ts·migrations 는 그대로.",
+    "updated": "2026-10-16"
+  },
+  {
+    "title": "비울 수 없는 보존 정책 네 칸을 지우면 Number(\"\") 가 0 을 만들어 controlled value 가 \"0\" 으로 되돌아온다",
+    "value": 2,
+    "risk": 2,
+    "size": "M",
+    "status": "pending",
+    "note": "이번 회차의 차선이었으나 1순위 전제가 실행으로 참임이 확인돼 선택하지 않았다. AdminPage.tsx RetentionAdmin 의 네 Number(event.target.value). 2026-10-07 회차가 실제 브라우저로 되돌아옴을 관측해 기록했고 retentionRule.ts 가 이미 저장을 막는다. 남은 일은 빈 문자열 상태와 PUT payload 분리. 검증은 cd web && npm ci && npm run lint && npm test && npm run build + retentionRule.test.mjs 전례.",
+    "updated": "2026-10-16"
+  },
+  {
+    "title": "Custom Dimension 이름·Property key 의 허용 규칙을 입력 칸 아래에 미리 안내한다",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "머지 대기 PR(2026-10-08 회차, review-pending)이 같은 카드의 Alert(AdminPage.tsx:3122)과 adminErrors.ts 를 이미 고쳤으므로 그 PR 이 머지된 뒤에 고를 것. 서버 규칙 정본은 segment/segment.go:56 `^[A-Za-z_][A-Za-z0-9_.-]{0,127}$` 와 segments.go:243-247. 서버는 name 만 ToLower+TrimSpace 하고 property_key 는 트림하지 않는다.",
+    "updated": "2026-10-16"
+  },
+  {
+    "title": "남은 create/update 오류 Alert 네 곳(rekey·설치 코드·삭제 확인·그 외)을 핸들러 단위로 한 조각씩 한국어로 안내한다",
+    "value": 2,
+    "risk": 1,
+    "size": "M",
+    "status": "pending",
+    "note": "묶지 말 것. adminErrors.ts 의 describe* 는 pinned main 에서 User·Site·Network·EventDefinition·Retention 다섯 개. dimensions 는 머지 대기이므로 제외하고 남은 자리의 행 번호는 그때 열어서 재확인할 것.",
+    "updated": "2026-10-16"
+  },
+  {
+    "title": "설정 저장(SettingsAdmin) 실패를 한국어로 안내한다",
+    "value": 2,
+    "risk": 2,
+    "size": "M",
+    "status": "pending",
+    "note": "한 Alert 이 여러 설정 그룹을 덮고 validateAdminSetting 의 영문 문장을 전부 읽어야 해 단일 조각보다 범위가 크다. 이번 미재확인(행 번호 미확인).",
+    "updated": "2026-10-16"
+  },
+  {
+    "title": "SettingsAdmin.save 가 그룹마다 순차 PUT 을 돌려 중간 실패 시 일부만 저장된다",
+    "value": 3,
+    "risk": 3,
+    "size": "M",
+    "status": "pending",
+    "note": "원자성 요구와 장애 재현이 미확인이고 API 변경으로 커질 수 있다. 이번 미재확인.",
+    "updated": "2026-10-16"
+  },
+  {
+    "title": "「JSON Schema」 에 '객체가 아님' 을 error·blocking 없는 hint 로만 알린다",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "schemaTextRule.ts 는 구문만 판정한다(v0.34.61 에 머지됨). 서버는 Schema map[string]any 로 받아 배열·원시값을 400 으로 거절하지만 null 은 통과하므로 막아서는 안 된다. hint 로만 가능. 이번 미재확인.",
+    "updated": "2026-10-16"
+  },
+  {
+    "title": "DataTable 기본 rowKey 가 falsy 값·동명이인에서 중복될 수 있다",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "DataTable.tsx 의 `||` fallback. 실제 행 충돌 fixture 가 여전히 미확인이고 여러 분석 화면이 함께 쓰는 공용 테이블이라 추측으로 손대지 않는다. 이번 미재확인.",
+    "updated": "2026-10-16"
+  },
+  {
+    "title": "관리자 가이드의 API 키 '1회 표시·해시만 저장' 설명을 현재 복구 기능과 맞춘다",
+    "value": 3,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "docs/ADMIN_GUIDE.md 문구와 README 암호화 설명, listMyKeys 의 recoverable 계약이 어긋난다. 암호화 미설정 조건과 PDF 동기화가 미확인. 이번 미재확인.",
+    "updated": "2026-10-16"
+  },
+  {
+    "title": "중장기 로드맵의 v0.5 진행 표기를 제공 범위 문서와 맞춘다",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "ROADMAP_PLAN.md 와 ROADMAP.md 가 어긋난다. 과거 계획을 역사 문서로 보존하려는 의도일 수 있어 날짜·설명 추가 대안부터 검토. 이번 미재확인.",
+    "updated": "2026-10-16"
+  },
+  {
+    "title": "README 개발 검증 예시에 SDK npm test 를 포함한다",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "README 의 같은 블록이 2026-10-09 회차(review-pending)에서 수정 중이므로 지금 건드리면 충돌한다. 그 PR 이 머지된 뒤 선정할 것.",
+    "updated": "2026-10-16"
+  },
+  {
+    "title": "로컬에 make verify/security-check 진입점을 만들어 Makefile:test 가 빠뜨리는 보안 검사를 묶는다",
+    "value": 4,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "Makefile:test 에는 npm audit·govulncheck·race 가 없어 반복 verify-failed 의 원인이었다. Makefile 은 러너·CI 가 함께 보는 자리이고 2026-10-08 의 수정 과제가 no-change 로 끝났으므로, 고르기 전에 그 회차가 왜 no-change 였는지부터 확인할 것.",
+    "updated": "2026-10-16"
+  },
+  {
+    "title": "cidrRule.ts 의 호스트 비트 hint 문장을 '저장하면 …로 바뀝니다' 로 다듬는다",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "신규. 2026-10-16 회차가 서버를 정규화 저장으로 바꿨으므로 지금의 「대역의 시작 주소는 10.20.30.0/24 입니다.」 는 틀리지는 않지만 '그 값으로 저장된다' 는 결과를 말하지 않는다. 과제서가 이번 회차에서는 명시적으로 금지했고 별 회차로 미뤘다. 고칠 때 web/test 의 cidrRule 단언이 문장을 글자 그대로 보는지 먼저 확인할 것.",
+    "updated": "2026-10-16"
+  },
+  {
+    "title": "이 환경에 docker 가 있어 postgres:17-alpine 으로 DB 통합 테스트를 실제로 돌릴 수 있다 — 다음 회차의 전제로 쓸 것",
+    "value": 3,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "신규(사실 기록, 과제는 아님). 여러 회차의 프로필이 'DB 통합은 DSN 없으면 skip' 만 적어 왔지만 2026-10-16 회차가 `docker run -d -e POSTGRES_PASSWORD=ci -e POSTGRES_DB=momento -p 55432:5432 postgres:17-alpine` 로 띄워 `go test -race ./cmd/... ./internal/...` 전체를 실제 DB 로 통과시켰다(httpapi 76.5s). 앞으로 DB 가 필요한 과제는 skip 으로 넘기지 말고 띄울 것. 정찰이 프로필을 갱신할 때 ci.yml:17-30 의 postgres 서비스·DSN 과 함께 적을 것.",
+    "updated": "2026-10-16"
+  }
+]

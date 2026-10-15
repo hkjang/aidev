@@ -1,30 +1,30 @@
 [
   {
+    "title": "쿠폰 미리보기가 선택한 추가 옵션 금액을 빼먹어 주문 화면이 실제 결제 금액보다 싼 값을 보여준다",
+    "value": 4,
+    "risk": 2,
+    "size": "M",
+    "status": "done",
+    "note": "f16ee73. coupons.go 에 addSelectedOptions 헬퍼를 두어 talent_options 등록 가격으로 합산하고 invalid_option·order_amount_too_large 를 주문과 같은 코드·문구로 거절한다. TalentPage.applyCoupon 이 options 를 함께 보낸다. 실제 라우터·실제 PostgreSQL 왕복 통합 테스트 3건으로 red→green 과 가드 변이 2건을 확인. orders.go 는 과제서 지시대로 읽기만 했고 15줄 중복을 커밋 메시지에 명시.",
+    "updated": "2026-10-16"
+  },
+  {
+    "title": "추적 중인 internal/ui/dist 가 web/src 보다 낡아 있다",
+    "value": 2,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "신규. 이번 회차에 npm run build 를 Node 22 에서 돌려 확인: index·AdminPage·ProfilePage·OrderWorkspacePage·NotificationSettings 청크가 모두 재해시되어 이전 회차(1783d3e 등)의 web/src 변경이 번들에 반영돼 있지 않음을 실측했다. Dockerfile 이 이미지 빌드에서 web/src 로 npm run build 를 돌리므로 릴리스에는 영향이 없지만, 커밋된 dist 를 믿고 읽으면 틀린다. 재생성 시점·책임을 정하거나 추적에서 빼는 결정이 필요(제품/운영 판단 선행).",
+    "updated": "2026-10-16"
+  },
+  {
     "title": "옵션 조회 루프가 rows.Err() 와 Scan 실패를 조용히 삼킨다",
     "value": 2,
     "risk": 2,
     "size": "S",
     "status": "pending",
-    "note": "createOrder의 Scan 실패 continue 및 rows.Err 미검사를 재확인. 자연 HTTP→실제 DB 오류 재현은 미확인이라 pending 유지. 합산 가드 수정과 중복 선택하지 않는다.",
-    "updated": "2026-10-09"
-  },
-  {
-    "title": "REQUIREMENT_PENDING 이 어떤 HTTP 경로로도 도달하지 않는 死상태",
-    "value": 3,
-    "risk": 4,
-    "size": "M",
-    "status": "pending",
-    "note": "payOrder의 PAID→READY 전이와 commit, mcpSubmitRequirement의 REQUIREMENT_PENDING 분기 재확인. 전체 HTTP 도달 불가는 이전 조사 결론이며 이번 재증명은 안 함. 제품 결정 선행.",
-    "updated": "2026-10-09"
-  },
-  {
-    "title": "README 환경변수 계약을 필수 4개 + 선택 SHUTDOWN_DRAIN_SECONDS 로 정리",
-    "value": 2,
-    "risk": 1,
-    "size": "S",
-    "status": "done",
-    "note": "10/08의 28d274f 구현 완료 기록에 따라 done 유지. 현재 pinned main@01e6b8b의 README/config.go에는 이전 문구가 남아 있어 미반영 상태로 판단하며 같은 작업을 다시 선택하지 않음. 원격 머지 상태는 미확인.",
-    "updated": "2026-10-09"
+    "note": "createOrder(orders.go:95-112) 에 더해 이번에 추가한 addSelectedOptions(coupons.go) 도 같은 패턴을 의도적으로 본떴으므로, 고칠 때는 두 곳을 함께 봐야 한다. 실제 결과는 개수 불일치로 400 invalid_option 이라 금액 오염은 아니고 오류 문구만 부정확. 자연 HTTP→DB 실패 재현 경로는 여전히 미확인.",
+    "updated": "2026-10-16"
   },
   {
     "title": "가이드 문서·openapi 의 API 메서드·응답 코드를 실제 라우터와 대조",
@@ -32,26 +32,8 @@
     "risk": 2,
     "size": "M",
     "status": "pending",
-    "note": "TestOpenAPIDocumentsEveryRoute가 경로 집합만 비교하고 routePattern이 HTTP 메서드를 버리는 것을 직접 확인. 응답 코드까지 확장하려면 실제 Handler 호출 검증을 좁게 설계해야 하므로 보류.",
-    "updated": "2026-10-09"
-  },
-  {
-    "title": "통합 테스트를 같은 DB 에 두 번 돌리면 메일 릴레이·Agent 조사 테스트가 실패",
-    "value": 2,
-    "risk": 2,
-    "size": "M",
-    "status": "pending",
-    "note": "mail_integration_test.go의 실제 결제/수정 후 40초 eventually 및 3초 sleep, digest 한 건 단언 재확인. 이번 DB 실행 없음. 반복 DB와 깨끗한 DB 간헐 실패는 이전 기록이며 원인은 미확인.",
-    "updated": "2026-10-09"
-  },
-  {
-    "title": "감사 기록이 요청 본문 구조체를 그대로 넘기는 10곳",
-    "value": 2,
-    "risk": 2,
-    "size": "M",
-    "status": "pending",
-    "note": "감사 호출 검색에서 요청 in 전체를 넘기는 기존 10곳 재확인. 현재 비밀 유출 피해는 미확인. 검출 원문을 details에 추가하지 말고 보존 정책부터 정할 것.",
-    "updated": "2026-10-09"
+    "note": "openapi_test.go 는 경로 집합만 비교한다(메서드·응답 코드 미검사). 이번에도 /coupons/preview 의 404·429 누락을 사람 눈으로 찾아 채웠다. OpenAPI 3.0 에서 $ref 형제 키는 무시되므로 응답 코드 설명은 operation description 에 적어야 한다는 것도 이번에 확인.",
+    "updated": "2026-10-16"
   },
   {
     "title": "알 수 없는 승인 조건을 편집할 때 유실 안내/보존",
@@ -59,8 +41,35 @@
     "risk": 2,
     "size": "M",
     "status": "pending",
-    "note": "ApprovalAdmin.save는 알려진 조건 5개로 재구성하고 toggle은 원본 conditions를 보존하는 것을 재확인. 가치가 높아도 브라우저 재현과 모르는 조건의 처리 정책이 필요하여 별도 M 유지.",
-    "updated": "2026-10-09"
+    "note": "ApprovalAdmin.save 가 알려진 조건 5개로 재구성해 모르는 조건을 잃을 수 있다. 브라우저 재현과 제품 정책 판단이 선행. 이번 회차 재조사 없음.",
+    "updated": "2026-10-16"
+  },
+  {
+    "title": "REQUIREMENT_PENDING 이 어떤 HTTP 경로로도 도달하지 않는 死상태",
+    "value": 3,
+    "risk": 4,
+    "size": "M",
+    "status": "pending",
+    "note": "payOrder 가 PAID→READY 를 한 트랜잭션에 커밋한다는 2026-10-06 조사 결론 이후 재검증하지 않았다. 결제 경로와 상태표를 동시에 건드려야 해 위험이 높고 제품 결정이 선행.",
+    "updated": "2026-10-16"
+  },
+  {
+    "title": "통합 테스트를 같은 DB 에 두 번 돌리면 메일 릴레이·Agent 조사 테스트가 실패",
+    "value": 2,
+    "risk": 2,
+    "size": "M",
+    "status": "pending",
+    "note": "원인 미확인(outbox 적체가 eventually 기한을 넘기는 것으로 보임). 이번 회차는 매번 DROP/CREATE 한 깨끗한 DB 로 전체 통과를 확인했을 뿐 재사용 상황을 재현하지 않았다.",
+    "updated": "2026-10-16"
+  },
+  {
+    "title": "감사 기록이 요청 본문 구조체를 그대로 넘기는 10곳",
+    "value": 2,
+    "risk": 2,
+    "size": "M",
+    "status": "pending",
+    "note": "보존 정책 결정이 선행. 이번 회차 재조사 없음.",
+    "updated": "2026-10-16"
   },
   {
     "title": "주문 추가 옵션의 additional_days 합산과 due_at 시간 범위 검증",
@@ -68,35 +77,17 @@
     "risk": 2,
     "size": "S",
     "status": "pending",
-    "note": "createOrder의 days += extraDays/AddDate 및 validateTalent의 옵션 AdditionalDays 0~365 재확인. 현실적 피해가 작고 기본 기간 상한 문제와 분리하므로 낮은 우선순위 유지.",
-    "updated": "2026-10-09"
+    "note": "createOrder 의 days += extraDays → AddDate 에 상한이 없고 옵션 개수 제한도 없다. 미리보기는 금액만 다루므로 이번 변경과 무관. 현실적 피해가 작아 낮은 우선순위 유지.",
+    "updated": "2026-10-16"
   },
   {
-    "title": "Config.Load의 선택 종료 대기 환경변수 경계 회귀 테스트",
-    "value": 2,
-    "risk": 1,
-    "size": "S",
-    "status": "done",
-    "note": "947ce35로 구현. config_test.go 한 파일에 실제 Load 호출 13개 표 기반 서브테스트 추가: 실제 미지정·빈 값·공백·범위 밖·파싱 실패는 5, 0/1/5/120 및 앞뒤 공백 정수는 그대로 반환. t.Setenv 후 Unsetenv로 미지정/원상 복구를 처리하고 병렬화하지 않음. 단독 테스트 및 외부 SHUTDOWN_DRAIN_SECONDS=99의 config 전체 테스트 PASS, 전체 Go 테스트(일부 캐시)·config vet·Go build·포맷·diff 검사 통과. 프로덕션 변경 0개. 기존 로직이 계약을 충족하여 최초 테스트부터 PASS; DB 통합·실제 SIGTERM 종료는 검증하지 않음.",
-    "updated": "2026-10-09"
-  },
-  {
-    "title": "기본 상품 delivery_days의 상한 부재와 주문 due_at 이상값 검증",
+    "title": "기본 상품 delivery_days 의 상한 부재와 주문 due_at 이상값 검증",
     "value": 2,
     "risk": 2,
     "size": "M",
     "status": "pending",
-    "note": "validateTalent의 DeliveryDays < 1 검사와 createOrder의 AddDate 사용 재확인. DB 허용 범위·자연 HTTP 피해는 미확인. 임의의 365일 상한을 제품 결정 없이 넣지 않음.",
-    "updated": "2026-10-09"
-  },
-  {
-    "title": "주문 추가 옵션 가격 합산의 int64 오버플로 방지",
-    "value": 3,
-    "risk": 2,
-    "size": "S",
-    "status": "done",
-    "note": "현재 createOrder에 math.MaxInt64-price 가드 존재. 10/07 완료 기록에 따라 done 유지. 기존 테스트 단독 -v는 DSN 미설정으로 SKIP, 이번 실제 DB 검증은 아님.",
-    "updated": "2026-10-09"
+    "note": "임의 상한을 제품 결정 없이 넣지 않음. 이번 회차 재조사 없음.",
+    "updated": "2026-10-16"
   },
   {
     "title": "Config.Load 암호화 키의 Base64/hex 입력 계약 회귀 테스트",
@@ -104,8 +95,8 @@
     "risk": 1,
     "size": "S",
     "status": "pending",
-    "note": "신규/차선. parseEncryptionKey는 Base64와 hex 두 경로 및 TrimSpace를 제공한다. 기존 성공 테스트는 Base64의 길이만 검사하고 hex 입력은 약한 비밀번호 거절 테스트에만 있어 디코딩 성공/바이트 동일성을 보장하지 않음. 실제 Load 호출로 성공 바이트·양 인코딩·잘못된 길이/인코딩 거절을 고정. 알고리즘 변경 없음.",
-    "updated": "2026-10-09"
+    "note": "설정 테스트가 10/08·10/09 두 회차 연속이었으므로 이번에도 제쳤다. 금액·사용자 체감 결함이 남아 있는 동안은 우선순위가 낮다.",
+    "updated": "2026-10-16"
   },
   {
     "title": "Config.Load 필수 환경변수 누락·공백 및 비밀번호 원문 유지 계약 테스트",
@@ -113,7 +104,7 @@
     "risk": 1,
     "size": "S",
     "status": "pending",
-    "note": "신규. Load는 DSN/Admin을 TrimSpace하고 비밀번호는 원문을 유지한 채 12바이트 하한을 검사한다. 기존 3개 테스트에는 누락 필수값별 거절, DSN/Admin 공백만 입력, 정상값 trimming/비밀번호 보존 단언이 없음. 실제 Load로 고정하되 암호 정책을 새로 만들거나 공백 비밀번호 허용 여부를 변경하지 않는다. 이번 선택과 합치지 않음.",
-    "updated": "2026-10-09"
+    "note": "이번 회차의 차선 후보였으나 1순위가 docker + PostgreSQL 16 으로 완전히 증명되어 쓰지 않았다. 다음에 DB 를 못 쓰는 환경이면 이쪽.",
+    "updated": "2026-10-16"
   }
 ]

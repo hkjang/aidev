@@ -1,0 +1,43 @@
+# Kkiit 프로필 (2026-10-16)
+- 목적: 사람·기업·AI Agent 의 전문 서비스를 주문·납품·구매확정·정산으로 연결하는, 오프라인 운영 가능한 마켓플레이스.
+- 기준: pinned main@26c912f (v0.4.16 태그 이후 947ce35 머지 포함). 10/08 문서 과제(28d274f)와 10/09 config 테스트(947ce35)가 이번 체크아웃에 반영되어 있다. 작업 트리 깨끗함.
+- 스택: Go 1.26, net/http, pgx/v5, PostgreSQL 16+; React 19 + TypeScript 5.9 + MUI 7 + Vite 8; 웹 번들은 Go embed(internal/ui/dist).
+- 구조:
+  - cmd/kkiit: 프로세스·HTTP 서버·워커 시작과 종료(drain→HTTP Shutdown→dispatcher 대기). main.go 의 Server 타임아웃·MaxHeaderBytes 는 여기서 설정.
+  - internal/httpapi: 도메인 핸들러. router.go 가 라우트 정본, types.go 에 decodeJSON(2MB 상한·DisallowUnknownFields)·writeError·권한 헬퍼. integration_test.go·mail_integration_test.go 는 실제 DB 통합 테스트.
+  - internal/httpapi/orders.go: createOrder 가 상품/패키지/옵션 가격을 합산해 쿠폰·예산·원장까지 한 트랜잭션에 쓴다. 가장 위험한 파일.
+  - internal/httpapi/coupons.go: computeDiscount(순수 산식)·resolveCoupon·previewCoupon·orderAmount. previewCoupon 은 옵션 금액을 집계하지 않아 주문과 어긋난다(이번 과제).
+  - internal/database/migrations: 번호 SQL, 시작 시 advisory lock 안에서 자동 적용.
+  - internal/worker: Outbox·알림·웹훅·위험·정산·신뢰 점수 배경 처리.
+  - internal/config·cryptox·password, internal/analytics·mail·netguard: 설정·비밀·비밀번호, 방문 추적·SMTP·웹훅 주소 정책.
+  - web/src: React UI. pages/TalentPage.tsx 가 주문 구성·옵션 선택·쿠폰 적용 화면, pages/AdminPage.tsx 가 관리자 기능.
+  - docs: USER_GUIDE/ADMIN_GUIDE(md·pdf), architecture.md, mcp.md, openapi.yaml.
+- 빌드·테스트:
+  - `go test ./cmd/... ./internal/...` — DSN 없으면 통합 테스트 SKIP. 통합 포함 시 httpapi 82~93초.
+  - `make test-integration KKIIT_TEST_DSN=postgres://…` — 폐기 전용 DB 필수, timeout 300s(오래 걸림).
+  - `go vet ./cmd/... ./internal/...`, `gofmt -l cmd internal`, `git diff --check`.
+  - `npm --prefix web test` / `run lint` / `run build` — README 는 Node 24+ 요구.
+  - `make check`(Go 포맷/test/vet + npm ci/lint/test/build), `make build`(웹 빌드 후 bin/kkiit). 둘 다 추적 중인 dist 를 바꿀 수 있다.
+- 관례: 커밋은 `fix:`/`feat:`/`chore:`/`docs:` + 한국어 설명, 릴리스는 `Kkiit vX.Y.Z — 한국어 요약`. 코드 주석은 "왜" 를 서술형 영어로 길게 적는 스타일.
+  - 오류는 `writeError(status, code, 한국어 메시지)`; 프런트가 `error.message` 를 그대로 띄운다.
+  - 필수 환경변수 POSTGRES_DSN/BOOTSTRAP_ADMIN/BOOTSTRAP_ADMIN_PASSWORD/ENCRYPTION_KEY, 선택 SHUTDOWN_DRAIN_SECONDS(기본 5, 0~120 포함). 가변 운영 정책은 PostgreSQL system_settings JSONB. compose 는 .env 를 env_file 로 받는다.
+  - web/src 변경은 보통 internal/ui/dist 재생성을 같은 커밋에 담지만(c8be99b, 71fb0b9) 그러지 않은 커밋도 있다(1783d3e) — 즉 dist 는 web/src 보다 낡아 있을 수 있다.
+- 위험 구역: httpapi/auth.go·middleware.go·identity.go(인증/RBAC), orders.go·finance.go(원장 금액·정산), coupons.go 의 computeDiscount/resolveCoupon(금액 산식), database/migrations(번호 충돌), .github/workflows/release.yml(배포).
+- 자주 깨지는 곳:
+  - 금액 int64 오버플로: computeDiscount 퍼센트(10/05)·createOrder 옵션 합산(10/07) 모두 수정 완료. 같은 과제를 다시 고르지 말 것.
+  - createOrder 옵션 루프는 Scan 실패를 continue 하고 rows.Err 를 보지 않지만, 결과는 개수 불일치로 400 invalid_option 이라 금액 오염은 아니다(오류 문구만 부정확).
+  - createOrder 의 `days += extraDays` → `AddDate` 에는 상한이 없고 옵션 개수 제한도 없다(피해는 작음).
+  - 미리보기/주문처럼 "같은 규칙" 을 주장하는 두 경로가 실제로 어긋나는 패턴이 반복된다 — 주석의 약속을 믿지 말고 양쪽 집계를 직접 비교할 것.
+  - openapi_test.go 는 경로 집합만 비교한다(메서드·응답 코드 미검사). 응답 코드 누락은 사람이 찾아야 한다.
+  - ApprovalAdmin.save 는 알려진 조건 5개로 재구성해 모르는 조건을 잃을 수 있다(미해결).
+  - 요청 구조체 전체를 audit 에 넘기는 10곳(미해결, 보존 정책 선행).
+- 검증 함정:
+  - integrationServer 는 실제 Handler·DB·Worker 와 `apiUnderTest` 전역을 공유 — `t.Parallel()` 금지.
+  - `/coupons/preview` 에는 요청 제한이 있다(TestIntegrationCouponPreviewIsThrottled) — 테스트에서 반복 호출하면 429 로 흔들린다.
+  - config 테스트는 환경변수를 다루므로 t.Parallel 금지. 실제 미지정과 빈 문자열을 구분하고 환경을 복구할 것.
+  - client.do 의 map[string]any 숫자는 float64 — 큰 정수는 pool 로 int64 Scan 하거나 정확히 표현되는 값을 쓸 것. sellTalent 는 옵션을 등록하지 않으므로 옵션 id 는 DB 조회로 얻는다.
+  - 메일 digest 통합 테스트는 깨끗한 DB 에서도 간헐 실패 이력(원인 미확인). 같은 DB 재사용 시 더 자주 실패.
+  - Node 20 이 npm PATH 에 끼어 테스트 0건이 되는 환경 문제를 저장소 결함으로 고치지 말 것.
+  - release.yml 은 v* 태그에서 Docker build/archive/Release 만 — make check 나 DB 통합 단계 없음.
+  - 스크린샷 스크립트는 시드·설정을 쓰므로 폐기 루프백 인스턴스에서만 실행.
+- 문서/로드맵: CLAUDE.md·AGENTS.md·roadmap/TODO 파일 없음. 코드에 TODO/FIXME 검색 결과 없음.

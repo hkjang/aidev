@@ -1,38 +1,31 @@
-# ai-admin 프로필 (2026-10-08)
-- 목적: 폐쇄망에서 AI 공급자·사용자/RBAC·API 키·승인·레거시 AI Portal 데이터를 운영하는 단일 컨테이너 콘솔. 기준 main@dc0f868, VERSION 1.2.36.
-- 스택: Go 1.26.0/toolchain 1.26.6, chi·pgx v5·OIDC, PostgreSQL 16+, React 19·TypeScript·Vite·antd 6·TanStack Query, Vitest/jsdom. CI Go 1.26.6·Node 26, 이번 로컬 실제 Go 1.26.7.
+# ai-admin 프로필 (2026-10-16)
+- 목적: 폐쇄망에서 AI 공급자·사용자/RBAC·API 키·승인(워크플로)·레거시 AI Portal 데이터를 운영하는 단일 컨테이너 콘솔. 기준 main@2b2ef67, VERSION 1.2.37.
+- 스택: Go(go.mod 1.26 계열), chi·pgx v5·OIDC, PostgreSQL 16+, React 19·TypeScript·Vite·antd 6·TanStack Query, Vitest/jsdom. CI 는 PostgreSQL·Keycloak 을 띄워 -race 전체와 웹·Docker 빌드까지 돌린다(이번 회차 CI 설정 재확인 안 함, 이전 프로필 계승).
 - 구조:
   - cmd/ai-admin·internal/config: 시작·migration/seed·종료, 고정 :8080. 런타임 env 네 개: POSTGRES_DSN·BOOTSTRAP_ADMIN·BOOTSTRAP_ADMIN_PASSWORD·ENCRYPTION_KEY.
-  - internal/server: REST·AI 프록시·MCP·감사·레거시·승인·OIDC와 통합 테스트. DB 테스트 헬퍼는 테스트 파일 사이에 공유됨.
-  - providers.go: 공급자 CRUD·validateProviderRequest·chatCompletions·relayChatBody. /v1/chat/completions는 /api/v1 밖.
-  - users.go: 사용자·역할·프로필·개인 설정; keys.go: API 키/scope; workflow.go: 승인 실행; legacy.go: 대시보드 집계.
-  - internal/auth·keyscope·secrets·settingscatalog·tracking: 인증·scope·암호화·설정·추적. resource_mutation.go allowlist 쓰기는 이전 프로필 계승, 이번 상세 미확인.
-  - internal/database: pool·Migrate·Seed, 내장 migration 001~005 목록 확인. 레거시 schema는 migration 대상 아님.
-  - web/src/pages: React 화면. internal/ui/dist: 커밋되는 내장 SPA. UI 변경은 make build로 산출물 갱신, 테스트/백엔드 전용 변경에는 불필요.
-  - docs: architecture/api/security/operations 및 가이드; .github/workflows: CI·Pages·릴리즈; scripts: 버전·오프라인 패키지·캡처 도구.
+  - internal/server: REST·AI 프록시·MCP·감사·레거시·승인·OIDC + 통합 테스트. DB 테스트 헬퍼는 테스트 파일 사이에 공유된다(`signIn`=db_error_integration_test.go:100, `signInReviewer`=key_target_integration_test.go:134).
+  - providers.go: 공급자 CRUD·validateProviderRequest·chatCompletions(:558~)·relayChatBody. /v1/chat/completions 는 /api/v1 밖. 요청 본문은 4 MiB 상한 + 단일 JSON 객체(후행 JSON·최상위 null 거부, :569-580).
+  - users.go: 사용자·역할·프로필·개인 설정. 공용 헬퍼 `storableInVarchar`(:421, NUL 거부)가 여기 있고 다른 파일이 같은 패키지에서 호출한다.
+  - keys.go: API 키/scope. workflow.go: 승인 생성(createApproval:151)·결정(decideApproval:220)·승인 실행·키 회전·`executableWorkflowPolicy`(:838). legacy.go: 대시보드 집계. mcp.go: MCP tool 라우팅.
+  - internal/database: pool·Migrate·Seed(내장 migration 001~005, 워크플로 정책 5종 시드 — `general_review` 만 비실행 정책). 레거시 schema 는 migration 대상 아님.
+  - web/src/pages: React 화면. internal/ui/dist: 커밋되는 내장 SPA(UI 변경 시 make build 로 갱신). docs: architecture/api/security/operations. .github/workflows: CI·Pages·릴리즈.
 - 빌드·테스트:
-  - go test -count=1 ./...; TEST_POSTGRES_DSN 없으면 DB 통합 SKIP. 실제 전용 DB와 -v에서 PASS/SKIP 구별 필수.
-  - TEST_POSTGRES_DSN=... go test -race -count=1 ./... — 최근 기록 서버 약 140~160초, 이번 전체 미실행.
-  - 이번 실행: TEST_POSTGRES_DSN='postgres://ai_admin:test-password@127.0.0.1:55571/ai_admin_test?sslmode=disable' go test -count=1 -run '^TestChatRequestJSONContract$' -v ./internal/server — 기존 8사례 PASS, SKIP 없음, 0.661초.
-  - make lint(gofmt·go vet·verify-version), go build ./... — 이번 미실행. git diff --check 통과.
-  - cd web && npm ci && npm test && npm run build; make build는 웹 설치/빌드→dist 교체→Go 바이너리. 이번 웹 미실행.
-  - Vitest testTimeout=15초, Testing Library asyncUtilTimeout=5초 직접 확인.
-- 관례: fix:/feat:/docs:/chore: 접두 + 한국어 커밋. API 오류 writeError(status, code, 한국어 메시지). 계약 문서 docs/api.md. 문자열 상한은 rune. VERSION/CHANGELOG 동기화는 릴리즈 단계.
-- 위험 구역: internal/auth·auth_handlers.go·oidc.go(세션/인증), workflow.go(승인/키 회전), internal/database/migrations, .github/workflows, internal/ui/dist.
-- 자주 깨지는 곳: 여러 쓰기/읽기 경로의 계약 차이, DB 제약보다 느슨한 검증, 오류를 빈 배열/0으로 숨기는 집계. 부차적인 trim 통일로 기존 계약을 바꾸지 않는다.
-- 최근 해결: 프로필 unknown-field, 프로필/사용자·역할·키·공급자 NUL, 감사 resource_id 500 rune, 비스트리밍 Content-Type 검증, chat 후행 JSON/쓰레기·4 MiB 초과 공백 거부(424a42e).
-- 미머지 주의: f66d25c preferences 객체 검증은 auto/2026-10-04-1142에만 있음. updatePreferences RawMessage 검증 공백은 남지만 재구현하지 말고 기존 브랜치 처리부터 결정.
-- 실패 접근: b5146f2는 auto/2026-10-01-1412에만 있음. updateKeyScope 이름 무검증 잔존, verify-failed 원인 미확인으로 같은 접근 금지.
-- 테스트 미머지: 8e65c33 비스트리밍 절단 감사 통합 테스트는 auto/2026-10-07-1217에만 포함, 현재 main의 통과/포함으로 오인 금지.
+  - `go test -count=1 ./...` — TEST_POSTGRES_DSN 없으면 DB 통합은 SKIP. `-v` 로 PASS/SKIP 구별 필수.
+  - `TEST_POSTGRES_DSN=… go test -race -count=1 ./...` — internal/server 약 140~160초(기록값).
+  - `make lint`(gofmt·go vet·verify-version), `go build ./...`, `git diff --check`.
+  - `cd web && npm ci && npm test && npm run build`; `make build` 는 웹 빌드→dist 교체→Go 바이너리. Vitest testTimeout 15초.
+  - 이번 회차는 읽기만 했고 어떤 테스트·빌드도 실행하지 않았다.
+- 관례: fix:/feat:/docs:/chore: 접두 + 한국어 커밋. API 오류는 `writeError(status, code, 한국어 메시지)`. 계약 문서는 docs/api.md. 문자열 상한은 rune 기준이며 상한 리터럴 옆에 근거 주석을 남긴다. VERSION/CHANGELOG 동기화는 릴리즈 단계에서만.
+- 위험 구역: internal/auth·auth_handlers.go·oidc.go(세션/인증), workflow.go(승인 실행·키 회전 — 검증 지점만 조심해서 손댈 것), internal/database/migrations, .github/workflows, internal/ui/dist.
+- 자주 깨지는 곳: 여러 쓰기 경로의 계약 차이, DB 제약(varchar/text/jsonb 가 NUL 불가, 22P05)보다 느슨한 요청 검증 → 400 대신 500, 오류를 빈 배열/0 으로 숨기는 집계(legacy.go). 부차적인 trim/코드 통일로 기존 계약을 바꾸지 말 것.
+- 해결된 것: 프로필 unknown-field, 프로필/사용자·역할·키·공급자 varchar NUL(addbbf7·3dce1a1), 감사 resource_id 500 rune, 비스트리밍 Content-Type, chat 후행 JSON·4 MiB(424a42e), chat 최상위 null(e12916a).
+- 남은 결함(확인): workflow.go 승인 제목(varchar(300))·코멘트(text)·payload(jsonb) NUL 무검증, users.go updatePreferences 의 sidebarState/aiDefaults jsonb 무검증(main 에 심볼 없음), keys.go updateKeyScope 이름 무검증.
+- 미머지 주의: f66d25c(preferences 객체 검증)는 auto/2026-10-04-1142 에만, b5146f2(updateKeyScope 이름)는 auto/2026-10-01-1412 에만 있고 verify-failed 였다. 두 접근은 기존 브랜치 처리/실패 원인 확인 전 재구현 금지이며 `jsonObjectHasNUL`·`storablePreferenceObject` 이름을 새로 만들지 말 것.
 - 검증 함정:
-  - DB 통합은 ai_admin·aiportal schema DROP CASCADE. 공유/운영 DB와 동일 DB 병렬 프로세스 금지.
-  - 이번 postgres:16-alpine 전용 Docker 생성 성공(55571); 남아 있는 타 회차 컨테이너는 재사용하지 않는다.
-  - TEST_KEYCLOAK_ISSUER 없으면 실제 OIDC E2E SKIP. CI는 PostgreSQL·Keycloak을 띄워 -race 전체 및 웹·Docker build 검증.
-  - stream 생략 시 공급자 StreamDefault와 ai.stream_default 영향. 비스트리밍 회귀에는 false 명시.
-  - Handler는 JSON 압축·panic recoverer를 사용. 절단 fixture는 실제 HTTP/identity 인코딩 권장(이전 기록); 일반 panic은 500 internal_error, http.ErrAbortHandler는 재전파.
-  - 감사 상세에 요청/검출 원문을 넣지 않는다. chat 감사 검증은 고유 X-Request-Id+provider ID로 특정한다(이전 기록).
-  - Pages CI는 index·스크린샷 디렉터리·README·캡처 스크립트의 WebP 목록 44개 일치 요구.
-- 라우트: preferences GET/PATCH는 /api/v1/preferences와 /api/v1/profile/preferences alias(이전 프로필). 프로필 PATCH /api/v1/profile, 공급자 PATCH /api/v1/ai/providers/{id}, 설정 PATCH /api/v1/settings.
-- 이번 선택: chat 최상위 null 거부. 실제 cmd/ai-admin 서버+전용 DB+로그인·공급자 생성/기본 지정 API로 미설정 null→503, 정상 설정 null→500 및 nil map panic을 재현. 일반 객체→200/upstream 전달 정상. 프로덕션 1파일 예정, 정찰은 코드 변경 없음.
-- 정찰 범위: 최신 프로필 위에서 git log -30·README·architecture/api·Makefile·CI/Pages·Go/웹 설정과 후보 경로만 확인. 저장소 CLAUDE.md/AGENTS.md·독립 roadmap 파일 없음, README/docs/internal/web/src TODO/FIXME/roadmap 검색 일치 없음. 전체 품질 통과 주장 아님.
-- 스킬: 전용 Skill 도구 미노출. 설치 headcount의 pmo:estimating-and-contingency(+sources)·technology:implementation-planning·technology:solution-exploration SKILL.md 직접 읽고 적용.
+  - DB 통합 테스트는 `ai_admin`·`aiportal` 스키마를 DROP CASCADE 한다. 공유·운영 DB 금지, 회차마다 전용 `postgres:16-alpine` 컨테이너를 새 포트로 띄우고 끝나면 제거(다른 회차 컨테이너 재사용 금지).
+  - TEST_KEYCLOAK_ISSUER 없으면 실제 OIDC E2E 1건 SKIP(정상).
+  - `workflow_policy.enabled` 기본값은 false(001_ai_admin.sql:149) + `system_setting workflow.enabled` 도 꺼져 있어, 승인 경로 테스트는 둘 다 켜야 DB 까지 내려간다.
+  - chat 에서 stream 생략 시 공급자 StreamDefault·ai.stream_default 가 적용된다. 비스트리밍 회귀는 stream:false 를 명시할 것.
+  - Handler 는 JSON 압축·panic recoverer 사용. 절단 fixture 는 실제 HTTP/identity 인코딩 권장. 감사 상세에 요청 원문을 넣지 말고, chat 감사 검증은 고유 X-Request-Id+provider ID 로 특정한다.
+  - Pages CI 는 WebP 44개 목록 일치를 요구한다(index·스크린샷 디렉터리·README·캡처 스크립트).
+- 스킬: 전용 Skill 도구로 pmo:estimating-and-contingency·technology:implementation-planning·technology:solution-exploration 사용 가능(이번 회차 적용).

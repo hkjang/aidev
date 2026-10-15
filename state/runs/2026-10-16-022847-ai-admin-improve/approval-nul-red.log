@@ -1,0 +1,41 @@
+=== RUN   TestApprovalNULWrites
+=== RUN   TestApprovalNULWrites/title_with_a_trailing_NUL
+    approval_nul_integration_test.go:143: status=500 want=400 body={"error":{"code":"approval_create_failed","message":"승인 요청을 만들지 못했습니다."}}
+=== RUN   TestApprovalNULWrites/title_with_a_leading_NUL
+    approval_nul_integration_test.go:143: status=500 want=400 body={"error":{"code":"approval_create_failed","message":"승인 요청을 만들지 못했습니다."}}
+=== RUN   TestApprovalNULWrites/title_with_a_only_NUL
+    approval_nul_integration_test.go:143: status=500 want=400 body={"error":{"code":"approval_create_failed","message":"승인 요청을 만들지 못했습니다."}}
+=== RUN   TestApprovalNULWrites/reject_comment_with_a_trailing_NUL
+    approval_nul_integration_test.go:163: status=500 want=400 body={"error":{"code":"approval_failed","message":"승인 이력을 저장하지 못했습니다."}}
+=== RUN   TestApprovalNULWrites/reject_comment_with_a_embedded_NUL
+    approval_nul_integration_test.go:163: status=500 want=400 body={"error":{"code":"approval_failed","message":"승인 이력을 저장하지 못했습니다."}}
+=== RUN   TestApprovalNULWrites/reject_comment_with_a_only_NUL
+    approval_nul_integration_test.go:163: status=500 want=400 body={"error":{"code":"approval_failed","message":"승인 이력을 저장하지 못했습니다."}}
+=== RUN   TestApprovalNULWrites/approve_comment_with_a_trailing_NUL
+    approval_nul_integration_test.go:163: status=500 want=400 body={"error":{"code":"approval_failed","message":"승인 이력을 저장하지 못했습니다."}}
+=== RUN   TestApprovalNULWrites/approve_comment_with_a_embedded_NUL
+    approval_nul_integration_test.go:163: status=500 want=400 body={"error":{"code":"approval_failed","message":"승인 이력을 저장하지 못했습니다."}}
+=== RUN   TestApprovalNULWrites/approve_comment_with_a_only_NUL
+    approval_nul_integration_test.go:163: status=500 want=400 body={"error":{"code":"approval_failed","message":"승인 이력을 저장하지 못했습니다."}}
+=== RUN   TestApprovalNULWrites/a_NUL_title_is_refused_ahead_of_the_bypass
+    approval_nul_integration_test.go:181: status=200 want=400 body={"data":{"status":"bypassed","workflowApplied":false}}
+=== RUN   TestApprovalNULWrites/the_literal_escape_is_stored_unchanged
+=== RUN   TestApprovalNULWrites/the_existing_title_limits_still_hold
+=== RUN   TestApprovalNULWrites/the_existing_comment_rules_still_hold
+--- FAIL: TestApprovalNULWrites (1.06s)
+    --- FAIL: TestApprovalNULWrites/title_with_a_trailing_NUL (0.01s)
+    --- FAIL: TestApprovalNULWrites/title_with_a_leading_NUL (0.00s)
+    --- FAIL: TestApprovalNULWrites/title_with_a_only_NUL (0.00s)
+    --- FAIL: TestApprovalNULWrites/reject_comment_with_a_trailing_NUL (0.01s)
+    --- FAIL: TestApprovalNULWrites/reject_comment_with_a_embedded_NUL (0.01s)
+    --- FAIL: TestApprovalNULWrites/reject_comment_with_a_only_NUL (0.01s)
+    --- FAIL: TestApprovalNULWrites/approve_comment_with_a_trailing_NUL (0.01s)
+    --- FAIL: TestApprovalNULWrites/approve_comment_with_a_embedded_NUL (0.01s)
+    --- FAIL: TestApprovalNULWrites/approve_comment_with_a_only_NUL (0.01s)
+    --- FAIL: TestApprovalNULWrites/a_NUL_title_is_refused_ahead_of_the_bypass (0.00s)
+    --- PASS: TestApprovalNULWrites/the_literal_escape_is_stored_unchanged (0.02s)
+    --- PASS: TestApprovalNULWrites/the_existing_title_limits_still_hold (0.01s)
+    --- PASS: TestApprovalNULWrites/the_existing_comment_rules_still_hold (0.01s)
+FAIL
+FAIL	github.com/hkjang/ai-admin/internal/server	1.066s
+FAIL
