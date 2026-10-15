@@ -1,11 +1,38 @@
 [
   {
-    "title": "보관 만료 삭제 창이 '이미 다 지운 프로젝트'에 막힌다 — expired 조회에 '지울 파일 남음'(EXISTS) 추가",
-    "value": 4,
-    "risk": 1,
+    "title": "시험 하네스를 저장소 밖 node_modules/.bin 으로부터 격리 — playwright webServer 의 PATH 고정 + npx 홉 제거 + Node 버전 가드",
+    "value": 5,
+    "risk": 2,
     "size": "S",
     "status": "done",
-    "note": "cron.ts retention() 의 purge 단계. 다 지운 프로젝트도 조건에 계속 걸려 limit(10) 창을 영구히 막았다. 루프의 files·keep·del 판정은 그대로 두고 조회만 좁혔다. 신규 api 시험으로 재현·확인(77개 통과).",
+    "note": "이번 회차 구현. 재현: 조상 디렉터리(/home/hkjang/.cache/auto-improve-wt/node_modules/.bin)에 Node 20.19.2 를 놓으면 `npm test --silent` 가 'Wrangler requires at least Node.js v22.0.0' 로 exit 1. 과제서의 처방(PATH 걸러내기만)으로는 부족함을 실증했다 — `npm exec` 가 조상의 node_modules/.bin 을 PATH 앞에 다시 붙이므로 `npx wrangler` 홉에서 다시 오염된다(PATH 에 스텁이 전혀 없어도 재현). 그래서 시험 경로의 npx 홉 2개(playwright.config.ts, db-local.mjs→admin.mjs)를 지금 돌고 있는 node 로 로컬 설치본을 직접 부르도록 바꿨다.",
+    "updated": "2026-10-15"
+  },
+  {
+    "title": "reuseExistingServer 가 씨 뿌리지 않은 서버를 조용히 재사용 — 재사용 전 시험 표식 확인",
+    "value": 4,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "playwright.config.ts:36,38. 앞 회차의 wrangler dev 가 8848 에 살아 있으면 db-local.mjs 가 그 DB 를 못 비운 채 재사용돼 보관·안내 시험이 찌꺼기 위에서 비결정적으로 실패한다(1858 journal:16,20). 이번 회차의 차선 후보였으나 1순위를 고쳤으므로 그대로 남긴다 — 원인 분리를 위해 같이 바꾸지 않았다.",
+    "updated": "2026-10-15"
+  },
+  {
+    "title": "scripts/deploy.mjs·portfolio-import.mjs 에 남은 npx 홉 — 같은 PATH 오염에 노출",
+    "value": 3,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "신규. deploy.mjs:35,38 과 portfolio-import.mjs:67,74 가 여전히 spawnSync('npx', ['wrangler', ...]) 를 쓴다 — 조상 디렉터리에 낡은 node 가 있으면 운영 배포·작품 올리기가 같은 이유로 죽는다. 이번 회차는 시험 경로(db-local.mjs·admin.mjs)만 좁게 고쳤다. 다만 이 둘은 자동 시험이 없어(운영 토큰 필요) 재현·검증 방법을 먼저 정해야 한다.",
+    "updated": "2026-10-15"
+  },
+  {
+    "title": "npm run build 도 조상의 낡은 node 로 뜨면 알 수 없는 오류로 죽는다 — 빌드 앞단 Node 버전 가드",
+    "value": 3,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "신규. 이번 회차에서 실증: 조상 node_modules/.bin 에 못 쓰는 node 를 놓으면 `npm run build` 가 'node scripts/subset-font.mjs' 단계에서 바로 죽는다. PATH 는 npm 이 정하므로 저장소 안에서 막을 수는 없지만, scripts/subset-font.mjs·verify-build.mjs 앞단에 db-local.mjs 와 같은 가드를 두면 원인을 한국어 한 줄로 말할 수 있다. 가드 비교 로직이 세 곳에 생기므로 공용 모듈로 뺄지 함께 판단할 것.",
     "updated": "2026-10-15"
   },
   {
@@ -23,7 +50,7 @@
     "risk": 2,
     "size": "M",
     "status": "pending",
-    "note": "작품 올리기 스크립트는 수동 확인만. R2·D1 호출 없는 --dry-run 으로 메타 검증·MP4 판독·SQL 생성을 단위 시험으로 덮을 수 있다. 스크립트 본문 미확인.",
+    "note": "작품 올리기 스크립트는 수동 확인만. R2·D1 호출 없는 --dry-run 으로 메타 검증·MP4 판독·SQL 생성을 단위 시험으로 덮을 수 있다.",
     "updated": "2026-10-15"
   },
   {
@@ -32,7 +59,7 @@
     "risk": 1,
     "size": "S",
     "status": "pending",
-    "note": "신규. 창(20·10건)이 꽉 찼을 때 어느 프로젝트가 먼저 처리되는지 지금은 SQLite 스캔 순서에 달려 있다. 오래 만료된 것부터로 정하면 동작이 결정적이 된다. 이번 회차의 EXISTS 로 영구 정체는 사라졌으므로 우선순위는 낮다.",
+    "note": "창(20·10건)이 꽉 찼을 때의 처리 순서가 SQLite 스캔 순서에 달려 있다. 머지 대기 중인 브랜치가 cron.ts 를 들고 있어 지금 건드리면 충돌한다.",
     "updated": "2026-10-15"
   },
   {
@@ -41,7 +68,7 @@
     "risk": 2,
     "size": "M",
     "status": "pending",
-    "note": "mp4.ts 는 mvhd 길이만 본다. edts·트랙 길이가 다른 파일에서 spec.ts 의 길이 판정이 어긋날 수 있다. 판정 기준을 바꾸는 변경이라 위험이 더 높고 합성 MP4 로만 검증된다.",
+    "note": "mp4.ts 는 mvhd 길이만 본다. edts·트랙 길이가 다른 파일에서 spec.ts 의 길이 판정이 어긋날 수 있다. 판정 기준을 바꾸는 변경이라 위험이 높고 합성 MP4 로만 검증된다. 머지 대기 브랜치가 mp4.ts 를 들고 있다.",
     "updated": "2026-10-15"
   },
   {
@@ -63,30 +90,12 @@
     "updated": "2026-10-15"
   },
   {
-    "title": "CI 에 npm run check 를 별도 단계로",
-    "value": 2,
-    "risk": 1,
-    "size": "S",
-    "status": "pending",
-    "note": "npm run build 안에 이미 check(tsc 3종)가 있어 지금은 중복. 단계가 나뉘면 실패 원인이 Actions 요약에서 바로 보인다. .github/workflows/ 는 보호 경로.",
-    "updated": "2026-10-15"
-  },
-  {
-    "title": "CI 에 의존성 감사(npm audit --omit=dev) 경고 단계 추가",
-    "value": 2,
-    "risk": 1,
-    "size": "S",
-    "status": "pending",
-    "note": "결제·인증을 다루는 저장소라 값이 있다. 관문을 막지 않도록 continue-on-error 로 시작. .github/workflows/ 는 보호 경로라 다른 과제와 섞지 말 것.",
-    "updated": "2026-10-15"
-  },
-  {
     "title": "serveObject 의 조건부 요청(If-Range·If-None-Match) 미지원",
     "value": 2,
     "risk": 2,
     "size": "M",
     "status": "pending",
-    "note": "files.ts serveObject 는 ETag·Last-Modified 를 내보내지 않아 조건부 GET·If-Range 재개가 전부 전체 재전송. R2 etag 를 쓰면 되지만 공개 사본 교체·철회와 캐시 수명의 상호작용을 봐야 해 위험이 높다.",
+    "note": "files.ts serveObject 는 ETag·Last-Modified 를 내보내지 않아 조건부 GET·If-Range 재개가 전부 전체 재전송. R2 etag 를 쓰면 되지만 공개 사본 교체·철회와 캐시 수명의 상호작용을 봐야 해 위험이 높다. 머지 대기 브랜치가 files.ts 를 들고 있다.",
     "updated": "2026-10-15"
   },
   {
@@ -95,7 +104,7 @@
     "risk": 1,
     "size": "S",
     "status": "pending",
-    "note": "앞선 회차에서 구현·검증됐으나 base b00d53c 에는 아직 들어오지 않았다(files.ts 가 여전히 'invalid' 를 돌려준다). 머지되면 done. 다시 고르지 말 것.",
+    "note": "브랜치 59dcf62 에 구현·검증됐으나 main@b00d53c 에는 아직 없다(files.ts 가 여전히 'invalid' 를 돌려준다). 머지되면 done. 다시 고르지 말 것.",
     "updated": "2026-10-15"
   },
   {
@@ -104,7 +113,7 @@
     "risk": 1,
     "size": "S",
     "status": "pending",
-    "note": "앞선 회차에서 구현·검증됐으나 base b00d53c 에는 아직 없다. 머지되면 done. 다시 고르지 말 것.",
+    "note": "브랜치 2eb0c70 에 구현·검증됐으나 main@b00d53c 에는 아직 없다. 머지되면 done. 다시 고르지 말 것.",
     "updated": "2026-10-15"
   },
   {
@@ -113,34 +122,7 @@
     "risk": 1,
     "size": "S",
     "status": "pending",
-    "note": "앞선 회차에서 구현·검증됐으나 base b00d53c 에는 아직 없다(cron.ts:110 에 하한이 없다). 이번 회차의 purge 창 수정과 같은 함수의 다른 줄이라 충돌하지 않는다. 머지되면 done.",
+    "note": "브랜치 36bddb5 에 구현됐으나 그 회차는 verify-failed 로 끝났다 — 원인은 코드가 아니라 하네스의 Node 였고(이번 회차에서 고쳤다) 이제 그 브랜치를 다시 검증하면 통과할 것이다. main@b00d53c 에는 아직 없다.",
     "updated": "2026-10-15"
-  },
-  {
-    "title": "브리프 MOV(video/quicktime)가 미리보기에서 첨부로 내려간다 — INLINE_OK 누락",
-    "value": 2,
-    "risk": 1,
-    "size": "S",
-    "status": "pending",
-    "note": "files.ts INLINE_OK 에 video/quicktime 이 없고 FILE_RULES.brief 는 MOV 를 허용한다. 다만 브라우저의 MOV 재생 지원이 제한적이어서 첨부가 더 안전하다는 해석도 가능 — 가치 낮음.",
-    "updated": "2026-10-15"
-  },
-  {
-    "title": "admin.ts 의 보관 만료 임박 조회가 실제 하루(7 * DAY)를 쓰고 Cron 은 dayMs(env) 를 쓴다",
-    "value": 2,
-    "risk": 1,
-    "size": "S",
-    "status": "pending",
-    "note": "운영에서는 둘이 같으므로 영향 없고, 시험 서버(TEST_DAY_MS=200)에서만 운영 화면의 '보관 만료 임박' 목록이 Cron 과 다른 창을 본다. 두 조회의 계약이 달라 공통 함수로 묶지는 말 것 — 운영 화면은 status='delivered' 만, Cron 은 delivered|closed + legalHold 제외.",
-    "updated": "2026-10-15"
-  },
-  {
-    "title": "GitHub Actions CI 워크플로 추가 — 러너가 돌리는 검증 명령을 그대로 CI 로",
-    "value": 5,
-    "risk": 1,
-    "size": "S",
-    "status": "pending",
-    "updated": "2026-10-15",
-    "note": "이 저장소에는 워크플로 파일이 없어 러너 PR 이 전부 \"CI 검사 없음\" 으로 막힌다. 러너가 이미 돌리는 검증 명령(build·vet·test)을 그대로 .github/workflows/ci.yml 로 옮겨라. 이 파일은 보호 경로라 사람 승인을 받는다."
   }
 ]
