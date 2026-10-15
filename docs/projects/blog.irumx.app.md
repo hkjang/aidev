@@ -1,7 +1,7 @@
 ---
 title: "blog.irumx.app — 자율 개선 이력"
 description: "blog.irumx.app: 자율 개선 회차 3회, 릴리즈 0건. 최근 릴리즈 없음."
-last_modified_at: 2026-10-15 15:35:13 +0900
+last_modified_at: 2026-10-15 15:40:22 +0900
 ---
 {% raw %}
 <script type="application/ld+json">
@@ -18,7 +18,7 @@ last_modified_at: 2026-10-15 15:35:13 +0900
   "name": "hkjang",
   "url": "https://github.com/hkjang"
  },
- "dateModified": "2026-10-15T15:35:13+09:00"
+ "dateModified": "2026-10-15T15:40:22+09:00"
 }
 </script>
 
