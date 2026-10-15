@@ -1,128 +1,17 @@
 [
-  {
-    "title": "buildinfo 의 과거 커밋 재생 테스트를 t.Parallel 서브테스트로 나눈다",
-    "value": 2,
-    "risk": 1,
-    "size": "S",
-    "status": "pending",
-    "note": "workflows_test.go:187–210 재확인: 두 커밋을 순차 실행한다. 읽기 전용 스크립트의 병행 안전성과 효과는 미측정. 9p 환경 비용을 저장소 성능 결함으로 단정하지 말 것.",
-    "updated": "2026-10-09"
-  },
-  {
-    "title": "복원 실패가 guide-shots 의 problems 요약 출력을 건너뛰게 하는 것을 고친다",
-    "value": 2,
-    "risk": 1,
-    "size": "S",
-    "status": "pending",
-    "note": "guide-shots:130 await가 throw하면 :138 요약을 건너뛰는 것을 재확인. 테스트 boundary의 종료 앵커도 :138이다. 이번 차선.",
-    "updated": "2026-10-09"
-  },
-  {
-    "title": "guide-shots 추적 캡처가 기존 CSP 위반 기록 전체를 지우지 않게 함",
-    "value": 3,
-    "risk": 2,
-    "size": "M",
-    "status": "pending",
-    "note": "captureTracking finally의 전체 DELETE 재확인. api/catalog.go는 GET/DELETE/allow만 등록하고 clearTrackingViolations는 Forget 전체 삭제. 개별 삭제 API 없이 서버 계약까지 넓히기보다 캡처의 무삭제 방안을 별도 검토.",
-    "updated": "2026-10-09"
-  },
-  {
-    "title": "web/scripts 의 Node 회귀 테스트를 CI 기본 검증에 포함",
-    "value": 3,
-    "risk": 2,
-    "size": "S",
-    "status": "pending",
-    "note": "ci.yaml은 여전히 test:sso 하나만 실행한다. 이번 전체 다섯 파일 154건(기존147+신규7) pass, fail/skip 0. 보호 workflow 변경이므로 별도 회차.",
-    "updated": "2026-10-09"
-  },
-  {
-    "title": "게이트웨이 reporter.send 가 non-2xx 응답을 로그로 남김",
-    "value": 2,
-    "risk": 2,
-    "size": "S",
-    "status": "pending",
-    "note": "cmd/runtime-proxy/dlp.go:send는 여전히 StatusCode를 확인하지 않는다. runtime-images base sourcePaths에 포함돼 버전 연동 위험이 있음.",
-    "updated": "2026-10-09"
-  },
-  {
-    "title": "dlp.tool 보고의 direction 을 아는 값으로만 받는다",
-    "value": 2,
-    "risk": 2,
-    "size": "S",
-    "status": "pending",
-    "note": "api/dlp.go:243은 clampReported만 적용. enum 및 구버전 호환 계약은 미확인. 제한값을 추측해 적용하지 말 것.",
-    "updated": "2026-10-09"
-  },
-  {
-    "title": "mcp.tool_call 감사 키 경로에 API 키 이름/ID 도 남김",
-    "value": 2,
-    "risk": 1,
-    "size": "S",
-    "status": "pending",
-    "note": "api/mcp.go:mcpCallDetails는 tool/auth/선택적 client만 기록. 인증 인접 경로라 제외, 비밀/검출 원문을 details에 넣지 말 것.",
-    "updated": "2026-10-09"
-  },
-  {
-    "title": "설정을 바꾸지 않은 쓰기가 settings.update 감사 행을 남기는 것을 구분",
-    "value": 2,
-    "risk": 2,
-    "size": "M",
-    "status": "pending",
-    "note": "store.go:PutSetting의 무조건 UPSERT 및 error 반환 계약 재확인. 감사 호출의 전체 경로는 이번 미확인, 저장 계층 반환형 변경을 포함할 수 있음.",
-    "updated": "2026-10-09"
-  },
-  {
-    "title": "이벤트 전달 실패(dead letter)를 메일 이벤트로",
-    "value": 2,
-    "risk": 2,
-    "size": "M",
-    "status": "pending",
-    "note": "execution/dispatcher.go:retry는 DeadLetterEvent+CreateNotification 후 반환. 직접 메일 enqueue 없음, 알림 이후의 간접 메일 배선/중복 방지는 미확인.",
-    "updated": "2026-10-09"
-  },
-  {
-    "title": "가이드 추적 캡처의 CSP 보고에 제한 시간을 적용해 전역 설정 복원 경계로 빠져나오게 한다",
-    "value": 3,
-    "risk": 1,
-    "size": "S",
-    "status": "done",
-    "note": "실제 호출부→captureTracking→withGuideSettings 실행 회귀로 완료. 동일 timeout(설정 75ms/미설정 30000ms), 실제 AbortSignal의 50ms 중단, 네 원본 복원 전체 시도·원래 보고 오류 우선·204/본문/촬영 순서·skip을 검증했다. signal/호출부/직렬화 인자 제거 시 각각 실패. 프로덕션 1파일+테스트 1파일; 실제 브라우저/DB는 미검증.",
-    "updated": "2026-10-09"
-  },
-  {
-    "title": "가이드 요청 제한 시간 환경변수의 유효 범위를 시작 시 검사한다",
-    "value": 2,
-    "risk": 1,
-    "size": "S",
-    "status": "pending",
-    "note": "신규. guide-shots:95 Number(env)||30000은 음수/소수/Infinity를 통과시킨다. AbortSignal.timeout 허용 범위와 브라우저 에러 메시지는 미확인. 이번 요청 누락 수정과 분리.",
-    "updated": "2026-10-09"
-  },
-  {
-    "title": "콘솔 설정 화면이 추적 설정의 상한을 미리 알려 준다",
-    "value": 2,
-    "risk": 1,
-    "size": "S",
-    "status": "done",
-    "note": "이전 기록의 후보 완료 재확인: AdminSettings.TrackingForm의 maxLength/hint, trackingLimits.ts 9상수/문자 경계 보정 존재. 전체 Node 회귀147건 통과. 브라우저 DOM은 미검증.",
-    "updated": "2026-10-09"
-  },
-  {
-    "title": "catalog_entry 의 jq 재호출을 메모이즈해 check-versions 를 빠르게 한다",
-    "value": 2,
-    "risk": 2,
-    "size": "S",
-    "status": "rejected",
-    "note": "2026-10-07 측정에서 비용 원인이 Windows 9p gitdir이며 jq 캐시는 실효 없음으로 기각. 같은 접근을 반복하지 않는다.",
-    "updated": "2026-10-09"
-  },
-  {
-    "title": "웹 잠금 의존성의 npm 보안 경고를 검토하고 최소 패치로 해소한다",
-    "value": 3,
-    "risk": 2,
-    "size": "S",
-    "status": "pending",
-    "note": "이번 npm ci에서 high severity 2건 경고를 관측했다. lint/SSO/build는 통과했고 잠금 파일은 변경하지 않았다. 영향 패키지·실제 도달성·패치 호환성은 미확인; 다음 회차에서 확인하며 메이저 업그레이드나 무조건 audit fix는 피한다.",
-    "updated": "2026-10-09"
-  }
+  {"title":"게이트웨이 reporter.send 가 non-2xx 응답을 로그로 남김","value":3,"risk":2,"size":"S","status":"done","note":"이번 회차 구현. dlp.go send() 에 200..299 범위 밖이면 `agenthub-dlp report rejected: <status>` 한 줄. body·token 은 로그에 넣지 않고 Status 문자열만. BASE_VERSION 0.26.0 → 0.27.0 (check-versions 가 실제로 base 를 지목하는 것을 커밋 뒤 확인). 신규 dlpreport_test.go 4건.","updated":"2026-10-16"},
+  {"title":"복원 실패가 guide-shots 의 problems 요약 출력을 건너뛰게 하는 것을 고친다","value":2,"risk":1,"size":"S","status":"pending","note":"이번 차선이었으나 미구현. guide-shots.mjs:129 await 가 throw 하면 :138-143 요약과 exitCode=1 이 건너뛰어진다. guide-settings-check.test.mjs 의 source 슬라이스 종료 앵커가 바로 이 줄이라 테스트 경계도 같이 움직인다.","updated":"2026-10-16"},
+  {"title":"cmd/runtime-proxy 에 공용 로그 캡처 헬퍼를 둔다","value":2,"risk":1,"size":"S","status":"pending","note":"이번 회차에 새로 확인한 사실: 정찰 과제서는 approval_test.go·main_test.go·mcp_test.go·encoding_test.go 가 이미 log.SetOutput 을 쓴다고 적었지만 **저장소 전체에 log.SetOutput 테스트 헬퍼가 없다**(grep 으로 확인, 해당 네 파일에도 없음). 이번에 dlpreport_test.go 가 capturePodLog 를 처음 만들었다 — 다음에 Pod 로그를 읽는 테스트가 생기면 그것을 공용 파일로 옮길 것. 지금 옮기는 것은 쓰는 곳이 하나뿐이라 이득이 없다.","updated":"2026-10-16"},
+  {"title":"guide-shots 추적 캡처가 기존 CSP 위반 기록 전체를 지우지 않게 함","value":3,"risk":2,"size":"M","status":"pending","note":"captureTracking finally 의 전체 DELETE. 서버 clearTrackingViolations 는 전체 Forget 이고 개별 삭제 라우트가 없어 서버 계약까지 넓혀야 한다 — 캡처 쪽 무삭제 방안을 별도로 검토. 이번 회차 재확인 안 함.","updated":"2026-10-16"},
+  {"title":"web/scripts 의 Node 회귀 테스트를 CI 기본 검증에 포함","value":3,"risk":2,"size":"S","status":"pending","note":"ci.yaml 은 test:sso 하나만 돈다(이전 확인). 보호 경로 .github/workflows 변경이라 자율 개선 회차에서는 피한다.","updated":"2026-10-16"},
+  {"title":"dlp.tool 보고의 direction 을 아는 값으로만 받는다","value":2,"risk":2,"size":"S","status":"pending","note":"internal/api/dlp.go 는 여전히 clampReported(input.Event.Direction) 만 적용한다. 허용 enum 과 구버전 게이트웨이 호환 계약은 미확인 — 제한값을 추측해 적용하지 말 것. 이번 회차 재확인 안 함.","updated":"2026-10-16"},
+  {"title":"게이트웨이가 거절된 DLP 보고를 세어 요약한다","value":2,"risk":3,"size":"M","status":"pending","note":"이번 회차의 자연스러운 다음 단계이지만 일부러 뺐다. 보고 한 건마다 한 줄이면 관제면이 전면 장애일 때 Pod 로그가 거절 줄로 넘친다. 다만 카운터·주기 요약은 reporter 에 상태와 시계를 들이는 일이고 send 의 best-effort·무상태 계약(dlp.go:139-143)을 건드린다 — S 로 끝나지 않는다. 먼저 실제로 로그가 넘치는지 관측이 필요하다.","updated":"2026-10-16"},
+  {"title":"웹 잠금 의존성의 npm 보안 경고를 최소 패치로 해소","value":3,"risk":2,"size":"S","status":"pending","note":"이전 회차 npm ci 에서 high 2건 관측. 이번 회차도 npm 을 돌리지 않아 재확인 못 함(미확인). 메이저 업그레이드·무조건 audit fix 금지.","updated":"2026-10-16"},
+  {"title":"가이드 요청 제한 시간 환경변수의 유효 범위를 시작 시 검사한다","value":2,"risk":1,"size":"S","status":"pending","note":"guide-shots.mjs 의 Number(env)||30000 이 음수·소수·Infinity 를 통과시킨다(이전 확인). AbortSignal.timeout 허용 범위는 미확인.","updated":"2026-10-16"},
+  {"title":"buildinfo 의 과거 커밋 재생 테스트를 t.Parallel 서브테스트로 나눈다","value":2,"risk":1,"size":"S","status":"pending","note":"느린 원인은 Windows 9p gitdir 로 측정돼 저장소 결함이 아니다. 효과도 측정되지 않았으니 성능 가설을 측정 없이 다시 제안하지 말 것.","updated":"2026-10-16"},
+  {"title":"mcp.tool_call 감사 키 경로에 API 키 이름/ID 도 남김","value":2,"risk":1,"size":"S","status":"rejected","note":"인증 인접 경로(api/mcp.go)이고 details 에 비밀이 샐 위험이 있어 자율 개선 대상에서 제외한다.","updated":"2026-10-16"},
+  {"title":"설정을 바꾸지 않은 쓰기가 settings.update 감사 행을 남기는 것을 구분","value":2,"risk":2,"size":"M","status":"pending","note":"store.go:PutSetting 의 무조건 UPSERT. 저장 계층 반환형 변경을 포함할 수 있어 S 로 끝나지 않는다(이전 확인).","updated":"2026-10-16"},
+  {"title":"이벤트 전달 실패(dead letter)를 메일 이벤트로","value":2,"risk":2,"size":"M","status":"pending","note":"execution/dispatcher.go:retry 는 DeadLetterEvent+CreateNotification 후 반환. 알림 이후 간접 메일 배선과 중복 방지가 미확인(이전 확인).","updated":"2026-10-16"},
+  {"title":"콘솔 설정 화면이 추적 설정의 상한을 미리 알려 준다","value":2,"risk":1,"size":"S","status":"done","note":"e68673c + 3097118 로 완료. trackingLimits.ts 가 상한 아홉 개를 들고 tracking-limits-check.test.mjs 가 Go 상수와 맞춘다.","updated":"2026-10-16"},
+  {"title":"catalog_entry 의 jq 재호출을 메모이즈해 check-versions 를 빠르게 한다","value":2,"risk":1,"size":"S","status":"rejected","note":"측정으로 기각: jq 7.0ms/회 vs git show 115ms/회, 느린 원인은 9p gitdir. 프로토타입에서 벽시계 변화 없었다.","updated":"2026-10-16"}
 ]

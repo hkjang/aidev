@@ -1,75 +1,21 @@
 [
   {
+    "title": "ParseRetryAfter 가 상한 없는 재시도 힌트를 무인 워커의 수면 시간으로 넘긴다",
+    "value": 3,
+    "risk": 1,
+    "size": "S",
+    "status": "done",
+    "note": "2026-10-16 구현. maxRetryAfter = time.Hour 를 두고 헤더 경로(int, 곱하기 전)와 구문 경로(float64, 변환 전) 양쪽에서 거절. 상한 초과는 nil 이 되어 DecideRetry 가 기존 Backoff 사다리(최대 10분)로 떨어진다. 새 RetryAction/사유 문자열 없음. amd64·arm64 양쪽에서 RED→GREEN 확인, arm64 에서는 가드 없이 292년 수면이 실제로 결정된다.",
+    "updated": "2026-10-16"
+  },
+  {
     "title": "AutoApproveMerges 가 DailyLimit 을 전혀 보지 않는다",
     "value": 4,
     "risk": 3,
     "size": "M",
     "status": "pending",
-    "note": "automerge.go 승인 루프와 autonomy.go DailyLimit/AutoApprovalsSince 참조 재확인. 승인 집계·감사 설계가 먼저이며 권한 봉투 변경이라 이번 제외.",
-    "updated": "2026-10-09"
-  },
-  {
-    "title": "테스트용 git 저장소 부트스트랩 헬퍼를 공유 패키지로 정리",
-    "value": 3,
-    "risk": 2,
-    "size": "M",
-    "status": "pending",
-    "note": "requirePushable 정의가 gitops/commit_test.go, app/effects_test.go, cmd/goalforge/main_e2e_test.go에 남음. remote.origin.pushurl=DISABLED 실측. 각 본문 상세는 이번 미확인; remote 이름 단위 프로브와 기존 skip 계약 유지.",
-    "updated": "2026-10-09"
-  },
-  {
-    "title": "커밋이 옮겨간 뒤 남은 옛 커밋의 자동 병합 승인 철회",
-    "value": 3,
-    "risk": 3,
-    "size": "M",
-    "status": "pending",
-    "note": "approval.go:ConsumeScopedApproval은 일치 소비 실패 시 APPROVED 조회 후 StaleApprovalError 반환. 상태 철회는 하지 않음. ScopedApprovalExists의 상태 무관 중복 차단은 의도적이며 변경 금지.",
-    "updated": "2026-10-09"
-  },
-  {
-    "title": "internal/procctl·internal/testscript 테스트 공백",
-    "value": 2,
-    "risk": 1,
-    "size": "M",
-    "status": "pending",
-    "note": "파일 목록에 직접 테스트 없음, 전체 go test에서도 두 패키지 no test files 재확인. OS별 신호 안정성 및 Windows 실행은 미확인. 테스트 flake 우려로 보류.",
-    "updated": "2026-10-09"
-  },
-  {
-    "title": "증거 종류 불일치를 완료 판정 이전에 무인 경로에서도 띄우기",
-    "value": 3,
-    "risk": 2,
-    "size": "M",
-    "status": "pending",
-    "note": "main.go:sweepReport는 Acted=false이면 Note 출력 전에 반환함을 읽음. 무인 알림 정책부터 정해야 하며 Note만 추가하는 접근은 무효.",
-    "updated": "2026-10-09"
-  },
-  {
-    "title": "kindChecks 가 종류를 요구하는 조건을 doctor 출력에서 이름까지 말하게",
-    "value": 2,
-    "risk": 1,
-    "size": "S",
-    "status": "pending",
-    "note": "readiness.go:kindChecks는 covered 확인 후 measured 증가, OK는 개수이고 FAIL만 이름 목록. 기존 집계 버그는 해결됨; 별도 출력 개선 필요성은 아직 약함.",
-    "updated": "2026-10-09"
-  },
-  {
-    "title": "MCP activity_report의 since 설명을 실제 지원 문법과 맞추기",
-    "value": 2,
-    "risk": 1,
-    "size": "S",
-    "status": "pending",
-    "note": "이번 선택. CLI 실제 MCP tools/list는 7d 광고, tools/call 7d는 isError=true 재현. 168h·24h·빈 문자열 정상, 0h·-1h 거절. toolDescriptors 예시 교정+Serve 계약 테스트, 파서 확장 금지.",
-    "updated": "2026-10-09"
-  },
-  {
-    "title": "HTTP doctor와 MCP project_readiness의 완료 가능성 판정만 같은 설정으로 고정",
-    "value": 2,
-    "risk": 1,
-    "size": "M",
-    "status": "pending",
-    "note": "setup.go:doctor와 tools.go:projectReadiness를 직접 읽어 둘 다 FAIL만 차단 집계함을 확인. 관련 테스트 검색에서는 MCP 도구 존재 검사만 찾음. 동일 설정의 실제 HTTP/MCP 계약 테스트 추가가 차선이며 환경 진단·plan runnable과 합치지 않는다.",
-    "updated": "2026-10-09"
+    "note": "병합 승인이 auto_approvals 에 기록되지 않아 셀 수단 자체가 없고 집계·감사 기록 경로 설계가 선행. 권한 봉투 변경이라 단독 회차. 이번에도 열지 않음(미확인).",
+    "updated": "2026-10-16"
   },
   {
     "title": "영문 정적 페이지의 손상된 제목·메타데이터를 정상 영문으로 복구",
@@ -77,8 +23,71 @@
     "risk": 2,
     "size": "M",
     "status": "pending",
-    "note": "신규. docs/index_en.html title/로드맵에 Enterprise Telemetry & System Platform 반복, description/og:locale은 한국어로 남음. script.js에 영문 번역이 있으나 실제 브라우저 초기화·크롤러 동작은 미확인. 페이지 전체 번역까지 확대하지 말고 head 한 조각부터 설계.",
-    "updated": "2026-10-09"
+    "note": "2026-10-16 차선 후보였으나 본 과제가 채택되어 docs/index_en.html 을 열지 않았다. 현재 상태는 여전히 미확인 — 재선정 전에 head 를 직접 읽어 og:locale/description/title 손상이 지금도 있는지 확인할 것. head 한 조각으로 범위를 한정하고 페이지 전체 번역으로 번지지 말 것.",
+    "updated": "2026-10-16"
+  },
+  {
+    "title": "테스트용 git 저장소 부트스트랩 헬퍼를 공유 패키지로 정리",
+    "value": 3,
+    "risk": 2,
+    "size": "M",
+    "status": "pending",
+    "note": "requirePushable 3중 복제(gitops/commit_test.go, app/effects_test.go, cmd/goalforge/main_e2e_test.go). remote 이름 단위 프로브와 기존 skip 계약 유지 필요. 이번 미확인.",
+    "updated": "2026-10-16"
+  },
+  {
+    "title": "커밋이 옮겨간 뒤 남은 옛 커밋의 자동 병합 승인 철회",
+    "value": 3,
+    "risk": 3,
+    "size": "M",
+    "status": "pending",
+    "note": "ConsumeScopedApproval 은 StaleApprovalError 로 소비만 막고 APPROVED 상태는 남긴다. 철회 시점·감사 설계 필요. 이번 미확인.",
+    "updated": "2026-10-16"
+  },
+  {
+    "title": "internal/procctl·internal/testscript 테스트 공백",
+    "value": 2,
+    "risk": 1,
+    "size": "M",
+    "status": "pending",
+    "note": "두 패키지 모두 no test files(2026-10-16 전체 테스트 출력에서 재확인). OS별 신호 안정성 flake 우려로 계속 보류. 다만 이 환경에서 GOARCH=arm64 교차 컴파일 + binfmt 실행이 된다는 것을 이번에도 재확인했으므로 arch 분기는 실제로 돌려 볼 수 있다.",
+    "updated": "2026-10-16"
+  },
+  {
+    "title": "증거 종류 불일치를 완료 판정 이전에 무인 경로에서도 띄우기",
+    "value": 3,
+    "risk": 2,
+    "size": "M",
+    "status": "pending",
+    "note": "sweepReport 는 Acted=false 면 Note 를 출력하지 않는다. 무인 알림 정책 결정이 선행이며 Note 만 추가하는 접근은 무효.",
+    "updated": "2026-10-16"
+  },
+  {
+    "title": "kindChecks 가 종류를 요구하는 조건을 doctor 출력에서 이름까지 말하게",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "rejected",
+    "note": "집계 버그는 2026-10-06 에 해결됐고 남은 것은 OK 줄에 이름을 넣는 출력 개선뿐. 사용자 가치가 약하고 출력 문자열을 고정한 기존 테스트를 흔들 뿐이라 기각.",
+    "updated": "2026-10-16"
+  },
+  {
+    "title": "MCP activity_report 의 since 설명을 실제 지원 문법과 맞추기",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "2026-10-09 과제서로 올랐으나 회차 결과가 no-change 라 반영 여부 불명. 이번 세션에서도 toolDescriptors 를 열지 않았다(미확인). 재선정 전에 현재 문자열부터 확인할 것.",
+    "updated": "2026-10-16"
+  },
+  {
+    "title": "HTTP doctor 와 MCP project_readiness 의 완료 가능성 판정을 같은 설정으로 고정",
+    "value": 2,
+    "risk": 1,
+    "size": "M",
+    "status": "pending",
+    "note": "둘 다 FAIL 만 차단 집계함은 이전 회차에 확인. 동일 설정의 실제 HTTP/MCP 계약 테스트 추가가 내용. 이번 미확인.",
+    "updated": "2026-10-16"
   },
   {
     "title": "문서 터미널의 MCP 도구 예시를 실제 공개 목록과 맞추기",
@@ -86,16 +95,25 @@
     "risk": 2,
     "size": "S",
     "status": "pending",
-    "note": "신규. docs/script.js:terminalTabsData.mcp가 status/backlog_list/verify_gate_add/replay_run과 15개를 광고하지만 tools.go:toolDescriptors 공개 이름과 다름. 동적 데모의 양 언어를 함께 고치고 실제 목록과 대조해야 함; 브라우저 실행은 미확인.",
-    "updated": "2026-10-09"
+    "note": "docs/script.js terminalTabsData.mcp 가 광고하는 도구명이 toolDescriptors 와 다름(이전 회차 관찰). 이번 미확인.",
+    "updated": "2026-10-16"
   },
   {
-    "title": "실패한 웹훅 전송이 반복 억제 창을 소비하지 않게 한다",
-    "value": 4,
-    "risk": 2,
+    "title": "retryAfterDuration 정규식이 지수 표기를 매치하지 않는 것을 문서화",
+    "value": 1,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "2026-10-16 신규. 정규식이 (\\d+(?:\\.\\d+)?) 이라 \"retry in 1e300 hours\" 는 애초에 nil 을 돌려준다는 것을 측정으로 확인했다 — 과제서가 상정한 지수 입력은 도달 불가 경로다. 넓힐 이유는 없고(공급자가 그런 형식을 쓰지 않는다) 주석 한 줄 값어치뿐이므로 우선순위 최하.",
+    "updated": "2026-10-16"
+  },
+  {
+    "title": "DecideRetry 의 FailureRateLimit 분기에 maxAttempts 검사가 없어 영원히 재시도한다",
+    "value": 3,
+    "risk": 3,
     "size": "M",
-    "status": "done",
-    "note": "이전 회차 선정분 상태 반영. 8f8a0f3 머지 및 notify.Post의 defer release, suppressor.release의 예약 identity 검사 직접 확인. 이번 전체 테스트 notify 통과. 같은 접근 재선정 안 함.",
-    "updated": "2026-10-09"
+    "status": "pending",
+    "note": "2026-10-16 신규(과제서가 명시적으로 범위 밖이라 한 설계 선택). 다른 모든 재시도 가능 분기(Overload/Network/default)는 attempt >= maxAttempts 에서 BlockForUser 로 가지만 FailureRateLimit 만 무한히 사다리를 돈다. 상한을 1시간으로 둔 이번 변경 덕에 한 번의 수면은 짧아졌지만 총 재시도 횟수는 여전히 무제한이다. 의도적 선택일 수 있으므로 먼저 설계 판단이 필요하고, 바꾸면 무인 워커의 중단 조건이 달라지므로 단독 회차로 다룰 것.",
+    "updated": "2026-10-16"
   }
 ]

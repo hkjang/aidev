@@ -1,0 +1,37 @@
+# AgentHub 프로필 (2026-10-16)
+- 목적: 사용자별 격리 AI 런타임과 자동 작업을 정책·승인·DLP·감사로 통제하는 사내 플랫폼.
+- 스택: Go 1.25(chi, pgx, OIDC, OpenTelemetry), PostgreSQL, React/TypeScript/Vite, Kubernetes, Node/Playwright. CI Node 22.
+- 구조:
+  - cmd/: control-plane·worker·runtime-proxy·offline 진입점. `cmd/runtime-proxy` 는 MCP 도구 정책 + DLP 게이트웨이(dlp.go, mcp.go, approval.go)이며 테스트가 10개 파일로 많다.
+  - internal/api/: REST·관리자·런타임 게이트웨이. catalog.go 라우트 선언, tracking.go CSP/보고/주입, dlp.go 가 게이트웨이 보고를 받아 `dlp.tool` 감사 행을 쓴다.
+  - internal/store/: PostgreSQL 저장·마이그레이션·감사·알림·메일 큐.
+  - internal/execution/, internal/mail/: 작업/이벤트 전달과 SMTP 큐.
+  - internal/runtimecfg/, internal/operator/: 런타임 설정과 Kubernetes 리소스.
+  - internal/dlp/, internal/tracking/: 내용 검사, 추적 스니펫/CSP/위반 기록.
+  - web/src/: 콘솔. AdminSettings.tsx + pages/trackingLimits.ts 가 추적 상한 안내.
+  - web/scripts/: 브라우저 e2e·Node 단위 회귀·가이드 촬영(guide-shots.mjs, guide-settings-check.mjs).
+  - runtime-images.json + `*_VERSION` 파일: 14개 이미지의 sourcePaths/버전 계약. base 만 `buildDependencies` 가 비어 있지 않은 이미지(jupyter)를 갖는다.
+  - docs/: 관리자/사용자 가이드 md/PDF·architecture.md·decisions/. 저장소 CLAUDE.md·AGENTS.md·roadmap/TODO 파일은 없다.
+- 빌드·테스트: 이번 실제 실행 — `go test ./cmd/runtime-proxy` → `ok … 0.384s`.
+- 빌드·테스트: CI `go test -race ./cmd/... ./internal/...`; web `npm ci && npm run lint && npm run test:sso && npm run build`; 이미지 `bash scripts/release-catalog-images.sh check-versions`/`validate`; kustomize/compose 검사.
+- 빌드·테스트: 과거 병렬 오염 때문에 `go test -race -p 1 ./cmd/... ./internal/...` 권장. `internal/buildinfo` 는 9p gitdir 때문에 로컬에서만 17~18초 걸린다(CI 에는 없는 비용, 측정으로 확인됨).
+- 빌드·테스트: `cd web && node --test scripts/*.test.mjs` 가 Node 회귀 전체(이전 회차 154건). DB live 테스트는 AGENTHUB_TEST_DSN + 암호화 키 없으면 skip.
+- 관례: HEAD 938fb1d, v0.262.0. 영어 conventional prefix + 한국어 설명 커밋, 트레일러 없음. 설정은 system_settings JSON + 별도 secret.
+- 관례: 마이그레이션은 internal/store/migrations. auth·세션·마이그레이션·workflow 는 작은 자율 개선 대상에서 제외.
+- 관례: 주석이 산문으로 길고 "왜 이 자리인가" 를 적는다 — 새 코드도 그 밀도를 맞출 것. 테스트 이름·실패 메시지도 완전한 한/영 문장이다.
+- 관례: 추적 과대 입력은 잘라 저장하지 않고 거절, 룬과 바이트 구분. 상한은 Settings.Validate 의 비활성 early return 앞에서 적용한다.
+- 위험 구역: auth.go·mcpoauth.go·세션 게이트웨이·internal/store/migrations·.github/workflows.
+- 위험 구역: `cmd/runtime-proxy`·`internal/dlp`·`internal/policy`·`Dockerfile.base`·`go.mod/go.sum`·`deploy/runtime/*.sh` 는 base 이미지 sourcePaths 다 — 한 줄만 바꿔도 `BASE_VERSION`(현재 0.26.0) 상향이 필요하고 check-versions 가 막는다.
+- 위험 구역: 가이드 촬영은 전역 policy/dlp/sessionGateway/tracking 을 임시 덮어쓴다. withGuideSettings 는 백업 완료 후 작업하고 네 복원을 모두 시도하며 원래 작업 오류를 우선한다. captureTracking finally 는 추적 위반 전체 DELETE(개별 삭제 API 없음).
+- 위험 구역: 감사 details 는 원문 그대로 저장/출력된다. DLP 검출 원문 금지, 식별자만. 정책 actor=task.OwnerID; 자격증명 조회만 agent.OwnerID. DLP 보고 감사 actor 는 runtime.OwnerID(internal/api/dlp.go).
+- 위험 구역: `reporter.send` 는 명시적으로 best-effort 다(dlp.go:139-143) — 재시도·blocking·에러 반환으로 바꾸면 도구 호출이 보고 때문에 실패한다.
+- 자주 깨지는 곳: runtime 이미지 버전 누락, 전역 설정 백업/복원, API 응답 래퍼, 촬영 스크립트 배선.
+- 자주 깨지는 곳: trackingLimits.ts 는 서버 splitHosts 의 다섯 구분자와 Go TrimSpace 문자 집합을 맞춘다(3097118). 일반 whitespace/trim 으로 바꾸면 어긋난다. 입력 maxLength 는 UTF-16 단위라 4바이트 문자에서 서버 룬 계산보다 엄격하다. 스니펫 출처 파서를 프런트에 복제하지 않는다.
+- 자주 깨지는 곳: 추적 상한 작업은 일단락됐다 — 허용 출처 300룬/64개/4096룬, 스니펫 8192바이트·출처32개/1024룬, 제공자 출처300룬·URL1024룬·ID200룬.
+- 검증 함정: CI `test:sso` 는 silent-sso.test.mjs 하나만 실행한다. 나머지 Node 회귀는 명시 실행 필요.
+- 검증 함정: guide-settings-check.test.mjs 는 guide-shots.mjs 의 실제 source 를 `requestTimeoutMs` 부터 `if (problems.length)` 전까지 **잘라서** 실행한다 — 그 두 앵커 줄을 건드리면 테스트가 같이 깨진다.
+- 검증 함정: Node AbortSignal.timeout 자체는 이벤트 루프를 붙잡지 않는다. 지연 회귀는 별도 interval 또는 열린 서버와 finally 정리가 필요하다.
+- 검증 함정: cmd/runtime-proxy 테스트는 httptest 관제면과 `log.SetOutput` 로 Pod 로그를 캡처하는 방식이 이미 자리잡았다(scanlimit_test.go:21-78 이 모범). 손으로 분기 함수를 부르지 말고 `scanner.inspect` 를 통과시킬 것.
+- 검증 함정: 관리자 HTTP/DB 저장 증명에는 관리자 세션+CSRF+live DB 필요. 직접 함수 호출만으로 저장 성공/거절을 증명하지 말 것.
+- 검증 함정: 성능 최적화 가설은 측정 없이 제안하지 말 것(jq 메모이즈가 이 이유로 기각됐다).
+- 미확인(이번 회차): `scripts/release-catalog-images.sh check-versions` 는 실행 권한이 없어 돌리지 못했다. npm 계열·전체 race 스위트·브라우저·DB·배포도 미실행. 코드와 커밋은 변경하지 않았다.

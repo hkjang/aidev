@@ -1,0 +1,173 @@
+{
+  "run_id": "2026-10-16-001841-AgentHub-improve",
+  "generated": "2026-10-16T00:32:59+09:00",
+  "run": {
+    "run_id": "2026-10-16-001841-AgentHub-improve",
+    "project": "AgentHub",
+    "kind": "improve",
+    "started": "2026-10-16T00:18:41+09:00",
+    "model": "claude-opus-5",
+    "policy_version": "4a9e91ac72",
+    "prompts_hash": "ce085c79e18002e2",
+    "runner_version": "1bd5f0cd4d",
+    "arm": "baseline",
+    "experiment": "roles-2026-09",
+    "finished": "2026-10-16T00:32:59+09:00",
+    "outcome": "verify-failed"
+  },
+  "record": {
+    "ts": "2026-10-16T00:32:59+09:00",
+    "date": "2026-10-16",
+    "project": "AgentHub",
+    "result": "verify failed: 실패한 검증: go test ./... (exit 1)",
+    "outcome": "verify-failed",
+    "run_id": "2026-10-16-001841-AgentHub-improve",
+    "base_sha": "938fb1daf79041592a71780452151441314ed442",
+    "head_sha": "605949690fefa0d6f044383496e6b02e513bde61",
+    "pr": "",
+    "stages": {
+      "base": {
+        "state": "pinned",
+        "reason": "main@938fb1d",
+        "at": "2026-10-16T00:18:45+09:00"
+      },
+      "autonomy": {
+        "state": "release",
+        "reason": "",
+        "at": "2026-10-16T00:18:45+09:00"
+      },
+      "scout": {
+        "state": "done",
+        "reason": "런타임 게이트웨이가 DLP 보고를 거절당한 것을 로그로 남긴다 (가치 3 / 위험 2 / 작업량 S)",
+        "at": "2026-10-16T00:23:27+09:00"
+      },
+      "brief": {
+        "state": "accepted",
+        "reason": "채택 — 결함·수용 기준·건드릴 파일이 현재 코드와 정확히 일치했다(`send` 가 StatusCode 를 보지 않고 Body 만 닫는 것, base ",
+        "at": "2026-10-16T00:32:31+09:00"
+      },
+      "verify": {
+        "state": "failed",
+        "reason": "실패한 검증: go test ./... (exit 1)",
+        "at": "2026-10-16T00:32:59+09:00"
+      }
+    },
+    "campaign": "",
+    "autonomy": "release",
+    "arm": "baseline",
+    "experiment": "roles-2026-09",
+    "engine": "claude",
+    "files": 3,
+    "additions": 174,
+    "deletions": 1,
+    "tests": 1,
+    "title": "fix: 관제면이 거절한 DLP 보고가 Pod 로그에 아무것도 남기지 않았다"
+  },
+  "stages": {
+    "base": {
+      "state": "pinned",
+      "reason": "main@938fb1d",
+      "at": "2026-10-16T00:18:45+09:00"
+    },
+    "autonomy": {
+      "state": "release",
+      "reason": "",
+      "at": "2026-10-16T00:18:45+09:00"
+    },
+    "scout": {
+      "state": "done",
+      "reason": "런타임 게이트웨이가 DLP 보고를 거절당한 것을 로그로 남긴다 (가치 3 / 위험 2 / 작업량 S)",
+      "at": "2026-10-16T00:23:27+09:00"
+    },
+    "brief": {
+      "state": "accepted",
+      "reason": "채택 — 결함·수용 기준·건드릴 파일이 현재 코드와 정확히 일치했다(`send` 가 StatusCode 를 보지 않고 Body 만 닫는 것, base ",
+      "at": "2026-10-16T00:32:31+09:00"
+    },
+    "verify": {
+      "state": "failed",
+      "reason": "실패한 검증: go test ./... (exit 1)",
+      "at": "2026-10-16T00:32:59+09:00"
+    }
+  },
+  "provenance": {
+    "model": "claude-opus-5",
+    "policy_version": "4a9e91ac72",
+    "prompts_hash": "ce085c79e18002e2",
+    "runner_version": "1bd5f0cd4d",
+    "base_sha": "938fb1daf79041592a71780452151441314ed442",
+    "head_sha": "605949690fefa0d6f044383496e6b02e513bde61",
+    "pr": ""
+  },
+  "verification": {
+    "runner": {
+      "source": "auto",
+      "commands": [
+        {
+          "cmd": "go build ./...",
+          "exit": 0,
+          "seconds": 2
+        },
+        {
+          "cmd": "go vet ./...",
+          "exit": 0,
+          "seconds": 3
+        },
+        {
+          "cmd": "go test ./...",
+          "exit": 1,
+          "seconds": 22
+        }
+      ]
+    },
+    "runner_gate": {
+      "ok": false,
+      "state": "verify-failed",
+      "reason": "실패한 검증: go test ./... (exit 1)"
+    },
+    "after_rebase": null,
+    "review": null,
+    "ci_gate": null
+  },
+  "release": {
+    "result": null,
+    "assets_sha256": []
+  },
+  "approval": null,
+  "usage": [
+    {
+      "ts": "2026-10-16T00:23:27+09:00",
+      "date": "2026-10-16",
+      "project": "AgentHub",
+      "phase": "scout",
+      "run_id": "2026-10-16-001841-AgentHub-improve",
+      "campaign": "",
+      "subtype": "success",
+      "engine": "claude",
+      "duration_ms": 284161,
+      "num_turns": 30,
+      "cost_usd": 1.9887125,
+      "input_tokens": 44,
+      "output_tokens": 18279,
+      "cache_read": 1531535,
+      "cache_create": 76575
+    },
+    {
+      "ts": "2026-10-16T00:32:31+09:00",
+      "date": "2026-10-16",
+      "project": "AgentHub",
+      "phase": "improve",
+      "run_id": "2026-10-16-001841-AgentHub-improve",
+      "campaign": "",
+      "subtype": "success",
+      "engine": "claude",
+      "duration_ms": 554405,
+      "num_turns": 50,
+      "cost_usd": 3.6015645000000007,
+      "input_tokens": 90,
+      "output_tokens": 25642,
+      "cache_read": 3938489,
+      "cache_create": 99082
+    }
+  ]
+}

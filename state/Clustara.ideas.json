@@ -1,110 +1,15 @@
 [
-  {
-    "title": "quiet 경로가 감사 기록(auditAdmin)을 전혀 남기지 않는다",
-    "value": 2,
-    "risk": 2,
-    "size": "S",
-    "status": "pending",
-    "note": "k8s_notify.go quiet 분기의 writeJSON/return 뒤에만 auditAdmin이 있다. registry 테스트의 ListAdminAudit 배선을 확인했다. 유효한 차선이나 최근 알림 경로 연속 수정 때문에 주 과제로 선택하지 않음.",
-    "updated": "2026-10-09"
-  },
-  {
-    "title": "/admin/k8s/inventory 의 실효 조회 상한·창 포화 미표시",
-    "value": 2,
-    "risk": 1,
-    "size": "S",
-    "status": "pending",
-    "note": "admin_k8s.go:handleK8sInventory는 여전히 items만 반환하고 store/k8s.go는 기본200/max10000. events GET 패턴은 구현돼 있다. 반복 차선 유형이라 이번에도 1순위로 재선정하지 않음.",
-    "updated": "2026-10-09"
-  },
-  {
-    "title": "팬아웃 스캔에서 한 클러스터의 인벤토리 조회 오류가 500 으로 전 함대 스캔을 중단시킨다",
-    "value": 3,
-    "risk": 2,
-    "size": "M",
-    "status": "pending",
-    "note": "k8s_notify.go:275 부근 조회 오류 시 500/return을 확인. 부분 성공과 sent 의미 정의가 필요하고 연속 동일 경로 변경이므로 보류.",
-    "updated": "2026-10-09"
-  },
-  {
-    "title": "events·revisions 스토어 상한이 나머지 호출자 요청을 조용히 깎는 계약 불일치",
-    "value": 4,
-    "risk": 3,
-    "size": "L",
-    "status": "pending",
-    "note": "store/k8s.go events는 K8sEventQueryLimit max500, revisions는 boundedLimit max1000 유지. events GET의 완료를 전체 해결로 간주하지 않음. 나머지 호출자 전수 재검토는 미실행; 엔드포인트 하나씩 분할 필요.",
-    "updated": "2026-10-09"
-  },
-  {
-    "title": "PSS Baseline/Restricted 의 volume 타입 화이트리스트 미검사",
-    "value": 2,
-    "risk": 3,
-    "size": "M",
-    "status": "pending",
-    "note": "security.go:classifyPodSecurity volumes 루프가 hostPath만 검사하는 것을 확인. 표준과 각 등급별 허용 타입은 이번 미확인; 정책 Deny 파급 때문에 선택하지 않음.",
-    "updated": "2026-10-09"
-  },
-  {
-    "title": "ScorePodSecurity 와 classifyPodSecurity 가 같은 파드의 프로파일을 다르게 표시",
-    "value": 2,
-    "risk": 2,
-    "size": "S",
-    "status": "pending",
-    "note": "runtimesecurity.go:ScorePodSecurity는 hostPath를 baseline, security.go:classifyPodSecurity는 Baseline 위반으로 분류. 서로 다른 계약임을 확인; 분류기 통합 금지. 사용자 안내의 충분성은 미확인.",
-    "updated": "2026-10-09"
-  },
-  {
-    "title": "취약점 import 가 파싱 못 한 아티팩트를 '취약점 0건 완료' 로 저장",
-    "value": 2,
-    "risk": 3,
-    "size": "S",
-    "status": "pending",
-    "note": "vulnerability.go는 fallback/parse_notice를 보존하나 admin_k8s_security_vuln.go는 Status 기본 completed 후 ReplaceK8sImageVulnerabilitiesForDigest 호출. 덮어쓰기 파급이 있어 이번 작업 제외; 저장소 삭제 범위는 미확인.",
-    "updated": "2026-10-09"
-  },
-  {
-    "title": "SEC-02 rbac-secret-access 가 resourceNames 한정 Role 도 high 로 센다",
-    "value": 2,
-    "risk": 2,
-    "size": "S",
-    "status": "pending",
-    "note": "security.go:rbacFindings는 resourceNames를 읽지 않고 rbacGrants는 읽는다. 특정 Secret 접근의 high 하향은 정당성이 미확인이라 자동 하향 금지, 별도 증거/문구 개선만 검토 가능.",
-    "updated": "2026-10-09"
-  },
-  {
-    "title": "capacity GPU 집계는 nvidia 만, node_monitoring 은 amd·intel 도 센다",
-    "value": 3,
-    "risk": 2,
-    "size": "M",
-    "status": "done",
-    "note": "08cfc7f로 완료. nodePackingAndGPU 내부의 로컬 세 키로 allocatable과 컨테이너 requests를 합산하며 비용 공유 podRequestGPU는 보존했다. 실제 SQLStore→Server.Routes HTTP에서 AMD/Intel 행 누락을 수정 전 재현했고, 단위 15케이스·HTTP 6범위(전 함대/공급자/노드 없는 클러스터/알 수 없는 클러스터), 노드 모니터링과 수량 비교, NVIDIA-only 복원 재실패, 전체 build/vet/test를 확인했다. 총 4파일(프로덕션 1파일).",
-    "updated": "2026-10-09"
-  },
-  {
-    "title": "notify scan 의 podsec·rbac dedup 키에 Kind 가 없다",
-    "value": 2,
-    "risk": 1,
-    "size": "S",
-    "status": "pending",
-    "note": "k8s_notify.go podsec/rbac dedup 문자열에 Kind 없음 확인. 반복 차선 유형이므로 운영자 지시대로 1순위 선정 금지.",
-    "updated": "2026-10-09"
-  },
-  {
-    "title": "용량 API 메트릭 조회 오류를 정상 무표본 응답과 구별해 표시",
-    "value": 3,
-    "risk": 2,
-    "size": "S",
-    "status": "pending",
-    "note": "신규. admin_k8s.go:handleK8sCapacity는 metrics, _ := ListK8sMetricSamples로 오류를 폐기한다. inventory 오류는 500인 반면 메트릭 오류는 report를 정상 반환. 오류 진단 키/안내를 한 엔드포인트에 추가하고 실제 SQLite 테이블 장애+Routes 테스트로 검증할 후보. 이번 선택과 합치지 않음.",
-    "updated": "2026-10-09"
-  },
-  {
-    "title": "용량 API의 인벤토리 조회를 분석 대상 Kind로 한정",
-    "value": 3,
-    "risk": 2,
-    "size": "M",
-    "status": "pending",
-    "note": "신규. handleK8sCapacity는 Kinds 없이 Limit4000, ListK8sInventory는 updated_at DESC. AnalyzeCapacity/ProjectNodeCapacity/nodePackingAndGPU는 Node·Pod·HorizontalPodAutoscaler만 사용하므로 ConfigMap 등 비대상이 창을 채울 수 있다. 실제 포화 HTTP 재현은 미실행. 상한 확대 없이 Kinds 필터 하나로 좁히는 별도 과제.",
-    "updated": "2026-10-09"
-  }
+  {"title": "용량 API의 인벤토리 조회를 분석 대상 Kind로 한정하고 창 포화를 보고", "value": 3, "risk": 2, "size": "M", "status": "done", "note": "de54f71. analyzer.CapacityRelevantKinds() 신규 + handleK8sCapacity 가 Kinds 와 capacityScanBudget+1 로 조회, 초과 시 scan{status,resources,reason} 보고. report/note 키와 집계 로직은 불변. 신규 테스트 3개(proxy 2, analyzer 1), 수정 전 node_packing/gpu 빈 배열로 빨강 확인.", "updated": "2026-10-16"},
+  {"title": "용량 API 메트릭 조회 오류를 정상 무표본 응답과 구별해 표시", "value": 3, "risk": 2, "size": "S", "status": "pending", "note": "admin_k8s.go 의 metrics, _ := ListK8sMetricSamples 가 오류를 버려 DB 고장이 '표본 없음' 과 같은 200 을 낸다. 이번 과제가 명시적으로 범위 밖에 둔 같은 함수의 자연스러운 후속 — scan 블록이 이미 생겼으니 metrics_error 를 실을 자리가 마련된 상태.", "updated": "2026-10-16"},
+  {"title": "/admin/k8s/rca 핸들러가 RCARelevantKinds 로 조회 범위를 좁히는지 확인", "value": 2, "risk": 2, "size": "S", "status": "pending", "note": "RCARelevantKinds() 는 analyzer/rca.go:52 에 있고 k8s_notify.go 가 쓰지만 /admin/k8s/rca 핸들러가 쓰는지는 이번에도 미확인. 용량과 동일 결함 유형이므로 조사 후 성립하면 같은 패턴으로 처리 가능.", "updated": "2026-10-16"},
+  {"title": "/admin/k8s/connectivity 등 나머지 인벤토리 조회 핸들러의 Kind 미필터 창", "value": 2, "risk": 2, "size": "M", "status": "pending", "note": "신규. handleK8sConnectivity(admin_k8s.go:672)가 Kinds 없이 Limit 2000 으로 조회. 용량·보안과 같은 유형이지만 해당 분석이 읽는 Kind 목록을 먼저 확정해야 하고, 좁히기가 과도하면 findings 가 조용히 사라지는 쪽으로 틀어진다. 엔드포인트 하나씩만.", "updated": "2026-10-16"},
+  {"title": "/admin/k8s/inventory 의 실효 조회 상한·창 포화 미표시", "value": 2, "risk": 1, "size": "S", "status": "pending", "note": "store/k8s.go:583 boundedLimit(f.Limit, 200, 10000). events GET 패턴(v0.9.296)은 구현됨. 6회 연속 차선으로 밀린 유형이라 1순위 금지(운영자 지시).", "updated": "2026-10-16"},
+  {"title": "quiet 경로가 감사 기록(auditAdmin)을 전혀 남기지 않는다", "value": 2, "risk": 2, "size": "S", "status": "pending", "note": "이번 미재확인(알림 경로 연속 변경 후 냉각 유지). v0.9.298 로 window 가 quiet 판정 위로 올라가 감사 맵 조립은 쉬워진 상태.", "updated": "2026-10-16"},
+  {"title": "팬아웃 notify 스캔에서 한 클러스터의 인벤토리 조회 오류가 500으로 전 함대 스캔을 중단", "value": 3, "risk": 2, "size": "M", "status": "pending", "note": "이번 미재확인. 부분 성공과 sent 의미 정의가 선행 필요. events/revisions 는 기록하고 계속 도는 반면 인벤토리만 500 인 계약 불일치.", "updated": "2026-10-16"},
+  {"title": "events·revisions 스토어 상한이 나머지 호출자 요청을 조용히 깎는 계약 불일치", "value": 4, "risk": 3, "size": "L", "status": "pending", "note": "store/k8s.go boundedLimit(f.Limit, 100, 500). events GET 만 v0.9.296 에서 완료. L 이므로 엔드포인트 하나씩 슬라이스로만.", "updated": "2026-10-16"},
+  {"title": "PSS Baseline/Restricted 의 volume 타입 화이트리스트 미검사", "value": 2, "risk": 3, "size": "M", "status": "pending", "note": "이번 미재확인. security.go:classifyPodSecurity volumes 루프가 hostPath 만 검사. 정책 Deny 파급으로 위험 3 유지.", "updated": "2026-10-16"},
+  {"title": "ScorePodSecurity 와 classifyPodSecurity 가 같은 파드의 프로파일을 다르게 표시", "value": 2, "risk": 2, "size": "S", "status": "rejected", "note": "서로 다른 계약임이 확정되어 분류기 통합은 운영자 지시로 금지. 남는 여지는 화면 문구로 어느 계약인지 알리는 정도여서 독립 과제로서는 성립하지 않는다.", "updated": "2026-10-16"},
+  {"title": "취약점 import 가 파싱 못 한 아티팩트를 '취약점 0건 완료' 로 저장", "value": 2, "risk": 2, "size": "S", "status": "pending", "note": "이번 미재확인. ReplaceK8sImageVulnerabilitiesForDigest 덮어쓰기 파급과 삭제 범위가 미확인이라 보류 유지.", "updated": "2026-10-16"},
+  {"title": "SEC-02 rbac-secret-access 가 resourceNames 한정 Role 도 high 로 센다", "value": 2, "risk": 2, "size": "S", "status": "pending", "note": "자동 하향 금지(정당성 미확인). 증거 문구 개선만 검토 가능.", "updated": "2026-10-16"},
+  {"title": "notify podsec/rbac dedup 키에 Kind 없음", "value": 2, "risk": 1, "size": "S", "status": "rejected", "note": "12회 연속 차선으로 밀린 반복 유형. 운영자 지시대로 1순위로 재선정하지 않으며, 후보 목록에서도 내린다.", "updated": "2026-10-16"}
 ]
