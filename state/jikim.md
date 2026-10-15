@@ -315,3 +315,4 @@
 - 보류 아이디어: Transit ciphertext 버전 토큰이 비정규 표기(`vault:v+1:`·`vault:v01:`)를 받아들임 (3/1/M — 과제서의 차선, `Store` 에 seam 이 없어 200→400 을 보려면 PostgreSQL 통합 테스트 필요) / 추적 활성 중 CSP 리포트 속도 제한·동일 출처 검증 (3/3/M — 새 신뢰 계약 필요) / retryWebhookDelivery 왕복 테스트 공백 (2/1/M — PostgreSQL 통합 검증 선행) / baoKVWrite create·update 판정 TOCTOU (3/3/M — 트랜잭션·동시성 검증 필요) / Dependabot group 계약을 CONTRIBUTING 에 문서화 (2/1/S — 관찰 가능한 동작 변화 없음)
 - 과제서: 채택 — 근거·배선·재현값(21바이트 접두사 + `strings.Repeat("가", 200)`, 기대값 510바이트)·권장 수정 형태·`unicode/utf8` 미import 지적이 모두 코드와 정확히 맞았고 지정한 프로덕션 1파일·테스트 1파일만 고쳤다. 추측으로 적힌 "U+FFFD 2개"도 실제로 2개였다(단정은 과제서 지시대로 개수가 아니라 전체 문자열 비교로 했다).
 
+- 릴리즈: v0.2.36 (2026-10-15, run 2026-10-15-195842-jikim-improve)
