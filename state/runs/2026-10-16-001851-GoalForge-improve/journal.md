@@ -28,3 +28,5 @@
 - [러너 00:35] pr created — https://github.com/hkjang/goalforge/pull/84
 - [러너 00:42] ci passed — 검사 5개 모두 success
 - [러너 00:42] merge done — 7f22990
+- [러너 00:55] release published — v0.56.0
+- [러너 01:03] assets verified — v0.56.0 자산 7개 (이전 v0.55.0: 7)
