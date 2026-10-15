@@ -53,3 +53,4 @@
 - 검증: `bash scripts/verify.sh` 최종 트리에서 exit 0(`검증 완료: jikim v0.2.35`, 프런트 59/59), `go test ./... -count=1` exit 0(7 패키지 ok), `go test ./internal/httpapi/ -run Momento -count=1 -v` 서브테스트 6개 + 기존 `TestMomentoProxyForwardsWithoutCredentials` 통과, release.yml 의 태그↔소스 버전·태그커밋↔HEAD 일치 게이트를 로컬에서 재현해 통과. DSN 미설정으로 PostgreSQL 통합 테스트는 건너뛰었고 기존 500kB 청크 경고는 남는다.
 - 자산은 만들지 않았다(`assets: []`). `release.yml` 이 태그 푸시로 이미지 빌드·스모크·브라우저 E2E·`package-offline.sh` 번들·`.sha256` 생성과 `gh release create --generate-notes --title "jikim v0.2.35"` 까지 전부 수행하므로 `github_release` 도 false 다. 이 세션은 원격에 아무것도 보내지 않았고 브랜치를 만들거나 옮기지 않았다(detached HEAD 유지).
 - [러너 19:34] release published — v0.2.35
+- [러너 19:37] assets verified — v0.2.35 자산 2개 (이전 v0.2.34: 2)
