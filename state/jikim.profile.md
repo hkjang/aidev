@@ -1,42 +1,45 @@
-# jikim 프로필 (2026-10-08)
-- 목적: 폐쇄망에서 Secret·개인 키·정책·승인·감사를 운영하는 Go 서버와 한국어 React 관리 화면. 제한 OpenBao API와 MCP 제공.
-- 스택: Go 1.26.6, pgx v5/PostgreSQL, go-oidc·go-jose/v4; React 19·Vite 8.2.2·TypeScript·Mantine·React Query, Vitest·Playwright.
-- 기준: HEAD aac28af, scripts/version.sh 정본 v0.2.31. 이전 프로필 이후 OIDC 코드 교환 장애 분리(18a822d), MCP SSO 저장 전 OIDC 설정 장애 분리(90b82b1)가 반영됐다.
+# jikim 프로필 (2026-10-15)
+- 목적: 폐쇄망에서 Secret·개인 키·정책·승인·감사를 운영하는 Go 서버와 한국어 React 관리 화면. 제한된 OpenBao 호환 API 와 MCP 를 제공한다.
+- 스택: Go 1.26 (로컬 툴체인 go1.26.7), pgx v5/PostgreSQL, go-oidc·go-jose/v4; React 19·Vite·TypeScript·Mantine 8.3.18·React Query, Vitest·Playwright. 모듈 경로는 `github.com/hkjang/jikim` (테스트 import 에 `jikim/internal/...` 로 쓰면 빌드 실패).
+- 기준: base main@84b8fd2, `scripts/version.sh` 정본 v0.2.34. 이전 프로필(2026-10-08, v0.2.31) 이후 CSP 리포트 본문 상한(v0.2.32), 페이지네이션 overflow 기본값(v0.2.33), Dependabot peer 묶음 그룹화(v0.2.34)가 반영됐다.
 - 구조:
-  - cmd/server: 설정·DB·마이그레이션·bootstrap·HTTP 시작/종료. HTTP Shutdown은 webhook 별도 goroutine을 기다리는 장치가 아니다.
-  - internal/httpapi: REST/OpenBao/MCP/OIDC/AI/tracking. server.go:routes에 라우트 집중, 최종 SPA fallback.
-  - 전역 미들웨어는 requestID→recoverer→securityHeaders→audit. 인증/역할은 라우트별 withAuth/requireRoles로 적용한다.
-  - internal/store: PostgreSQL 저장소·정책·설정. mapError로 저장소 sentinel을 매핑하고 httpapi.storeError가 500 메시지를 가린다.
+  - cmd/server: 설정·DB·마이그레이션·bootstrap·HTTP 시작/종료.
+  - internal/httpapi: REST/OpenBao/MCP/OIDC/AI/tracking. `server.go:routes` 에 라우트가 집중되고 마지막이 SPA fallback.
+  - 전역 미들웨어는 requestID→recoverer→securityHeaders→audit. 인증/역할은 라우트별 `withAuth`/`requireRoles`.
+  - internal/store: PostgreSQL 저장소·정책·설정. `mapError` 가 sentinel 을 매핑하고 `httpapi.storeError` 가 500 메시지를 가린다.
   - internal/cryptox·password·ids·config·model·version: 암호화·인증 기초·모델·버전.
-  - internal/tracking: 추적 snippet/CSP와 메모리 Recorder(최대 100건). httpapi/tracking.go는 CSP report와 Momento 프록시.
+  - internal/tracking: 추적 snippet/CSP 와 메모리 Recorder(최대 100건). httpapi/tracking.go 는 CSP report 수신과 Momento 역프록시.
   - migrations: embed SQL 순방향 마이그레이션. web/src: 관리 SPA. web/e2e: 이미지 기반 Playwright.
-  - docs/guides: API·호환성·보안·오프라인 가이드; docs/ADMIN_GUIDE·USER_GUIDE는 md/pdf.
+  - scripts: version.sh·verify.sh·verify-docs.mjs·verify-dependabot-groups.mjs(v0.2.34 신규, 락파일 peer 결합을 Dependabot group 과 대조).
+  - docs/guides: API·호환성·보안·오프라인 가이드; docs/ADMIN_GUIDE·USER_GUIDE 는 md/pdf. CLAUDE.md·AGENTS.md·독립 로드맵 파일은 없다.
 - 빌드·테스트:
-  - go test ./... -count=1: 2026-10-08 exit 0, httpapi 0.610초. PostgreSQL lifecycle은 JIKIM_TEST_POSTGRES_DSN 없으면 skip.
-  - go vet ./... / gofmt -l .: 표준 검사 명령, 이번 정찰에서는 미실행.
-  - npm --prefix web ci --no-audit --no-fund → npm --prefix web test -- --maxWorkers=1 → npm --prefix web run lint → npm --prefix web run build.
-  - bash scripts/verify.sh: Go test/vet·포맷·Node 하한·npm ci/test/lint/build·문서·Compose(시간 소요). 이번 미실행.
-  - make release-check: 이미지·스모크·E2E·패키징 포함, 오래 걸리고 스크린샷을 덮어쓴다. 정찰에서는 실행 금지.
+  - `go test ./... -count=1`: 통과. PostgreSQL lifecycle 테스트는 `JIKIM_TEST_POSTGRES_DSN` 없으면 skip.
+  - `go test ./internal/httpapi/ -run <패턴> -count=1 -v`: 패키지 전체가 1초 안쪽. `-race -count=5` 도 빠르다.
+  - `go vet ./...` / `gofmt -l <파일>`: 표준 검사.
+  - `npm --prefix web ci --no-audit --no-fund` → `npm --prefix web test -- --maxWorkers=1` → `lint` → `build`. 프런트 59/59 가 현재 기준.
+  - `bash scripts/verify.sh`: Go test/vet·포맷·Node 하한·npm ci/test/lint/build·문서·Dependabot group·Compose. 시간 소요.
+  - `make release-check`: 이미지·스모크·E2E·패키징. 오래 걸리고 스크린샷을 덮어쓴다 — 정찰에서는 실행 금지.
 - 관례:
   - 영어 conventional commits, 한국어 UI/오류/문서. 릴리즈 버전·CHANGELOG 변경은 별도 작업.
-  - 기능 설정은 저장소 JSON 설정; 앱 bootstrap 환경변수는 README의 네 개만 유지.
-  - quietServer와 함수 필드 seam, nil이면 실제 store 호출하는 관례. 실제 routes/미들웨어를 통과하는 동작 테스트를 쓴다.
-  - trackingServer는 실제 routes·securityHeaders·Recorder와 임시 SPA를 구성하고 설정 loader를 주입한다.
-  - decodeJSON은 UseNumber/DisallowUnknownFields 및 단일 JSON 확인. 에러 envelope는 error.code/message/request_id.
+  - 기능 설정은 저장소 JSON 설정; 앱 bootstrap 환경변수는 README 의 네 개만 유지.
+  - `quietServer` 와 함수 필드 seam 관례(nil 이면 실제 store 호출). 실제 `routes`·미들웨어를 통과하는 동작 테스트를 쓴다.
+  - `trackingServer`(tracking_test.go:31)는 실제 routes·securityHeaders·Recorder·임시 SPA 를 구성하고 설정 loader 를 주입한다. Momento 테스트는 `httptest` 수집기 + `server.httpClient = http.DefaultClient`.
+  - `decodeJSON` 은 UseNumber/DisallowUnknownFields 및 단일 JSON 확인. 에러 envelope 는 error.code/message/request_id.
 - 위험 구역:
-  - auth_handlers.go·oidc*.go·mcp_oauth.go·store/users.go·migrations/·release workflow는 인증/배포 계약.
-  - updateSettings·store/settings.go·SettingsPage, webhook.go는 최근 수정이 잦다. 인접 변경을 섞지 않는다.
-  - tracking CSP는 추적 off 시 shippedPolicy와 바이트 단위 동일해야 한다. report는 언제나 204/빈 응답.
-  - AI Secret 매처·262144 한도·max_tokens는 보안 경계. 감사 details에 검출 원문을 넣지 않는다.
-  - OpenBao version 빈 값·0 이하를 latest로 처리하는 것은 compatibility.md에 명시된 현재 계약이다.
+  - auth_handlers.go·oidc*.go·mcp_oauth.go·store/users.go·migrations/·release workflow 는 인증/배포 계약.
+  - updateSettings·store/settings.go·SettingsPage·webhook.go 는 수정이 잦다. 인접 변경을 섞지 않는다.
+  - tracking CSP 는 추적 off 시 `shippedPolicy` 와 바이트 단위로 같아야 한다. CSP report 응답은 언제나 204/빈 본문.
+  - momentoProxy 의 gate(`ProxyActive()` 404)·메서드 허용 목록·헤더 제거(Cookie/Authorization/X-Vault-Token)·64KiB·10초는 보안 경계.
+  - AI Secret 매처·262144 한도·max_tokens 는 보안 경계. 감사 details 에 검출 원문을 넣지 않고 식별자만 넘긴다.
+  - OpenBao version 빈 값·0 이하를 latest 로 처리하는 것은 compatibility.md 에 명시된 현재 계약이다.
 - 자주 깨지는 곳:
-  - 저장소 오류를 인증/설정 거절로 오분류하는 문제가 반복됐으나 OIDC exchange와 MCP SSO 설정 저장 문제는 이제 해결됐다.
-  - 로그 추가만 하는 반복 과제·반환값 무시 광맥·관찰 가능한 결과가 없는 seam 변경을 재선택하지 않는다.
-  - 중간 값/소스 문자열만 검사하지 말고 실제 HTTP 최종 응답 또는 관리자 목록까지 확인한다.
-  - npm lifecycle PATH가 홈의 Node 20을 택한 이력. package scripts는 npm_node_execpath로 vitest를 직접 실행한다.
+  - 저장소 오류를 인증/설정 거절로 오분류하는 문제가 반복됐으나 OIDC exchange·MCP SSO·AI 입력 검증은 모두 닫혔다. 같은 광맥을 다시 고르지 않는다.
+  - 로그 추가만 하는 과제·반환값 무시 광맥·관찰 가능한 결과가 없는 seam 변경은 재선택 금지.
+  - 중간 값이나 소스 문자열만 검사하지 말고 실제 HTTP 최종 응답(또는 수집기가 본 `r.RequestURI`)까지 확인한다.
+  - npm lifecycle PATH 가 홈의 Node 20 을 택한 이력이 있어 package scripts 는 `npm_node_execpath` 로 vitest 를 직접 실행한다.
 - 검증 함정:
   - CI Node 24, engines 하한 22.22.2. package.json·vitest.config.ts·verify.sh·.nvmrc 계약을 한쪽만 바꾸지 않는다.
-  - 신규 CSP 상한 회귀는 이번 정찰에서 소스상 확인만 했고 실행 재현은 구현자가 먼저 해야 한다.
-  - 실제 PostgreSQL 장애·Keycloak·브라우저 CSP·프런트·CI 실행은 이번 정찰에서 미검증이다.
-  - 이전 프로필의 Skill 도구 사용 가능 주장은 이번 도구 목록과 다르다. 세 headcount 스킬은 ~/.claude/plugins/marketplaces/headcount/plugins 아래 원본을 직접 읽었다.
-  - 저장소 목록에서 CLAUDE.md/AGENTS.md 및 독립 로드맵 파일은 발견하지 못했다. README 기능 표/FeaturePage에 후속 범위가 있다.
+  - `httptest.NewRequest` 의 target 에 공백이 있으면 `malformed HTTP version` 으로 panic 한다.
+  - 역프록시 경로 검증은 수집기 쪽 `r.URL.Path` 가 Go 에 의해 다시 디코드되므로 `r.RequestURI` 로 단정해야 한다.
+  - 실제 PostgreSQL 장애·Keycloak·브라우저 CSP·프런트·CI 실행은 정찰 단계에서 보통 미검증이다.
+  - Dependabot 잡 로그는 gh 미인증으로 BlobNotFound 가 되어 열 수 없다. 묶음 문제는 `npm install … --package-lock-only` 로 로컬 재현한다.

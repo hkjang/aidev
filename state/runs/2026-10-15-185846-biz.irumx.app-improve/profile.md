@@ -1,0 +1,31 @@
+# 이룸비즈 (biz.irumx.app) 프로필 (2026-10-15)
+- 목적: 중소기업의 조직·전자결재·업무·영업·재무·보조원장을 연결하고 화면·AI·MCP 에서 같은 권한으로 처리하는 그룹웨어·ERP.
+- 스택: Node 22+, TypeScript ESM/npm workspaces, React 19·Mantine 9·Vite, PostgreSQL 16; 운영은 Supabase PostgreSQL·Cloudflare Pages/Functions·Hyperdrive(irumx_gateway → 트랜잭션마다 biz_app 전환)·R2·Workers AI. 버전은 `VERSION` — **현재 0.1.6**(v0.1.5·0.1.6 에서 "DB 에 못 닿을 때 빨리 실패·차단기·503·점검 안내" 가 들어갔다. 이전 프로필의 0.1.2 는 낡은 값이었다).
+- 구조:
+  - `packages/core/src`: 공통 HTTP 파이프라인(`http/respond.ts` — `redirect`·오류 응답·`retry-after` 헤더)·라우터·도메인·API. Node/Workers 공유.
+  - `packages/core/src/auth`, `routes/sso.ts`: OAuth(옆자리)·세션·테넌트·콘솔 인증. 복귀 경로 가드 `safeNext`, 봉인된 flow 쿠키.
+  - `packages/core/src/util`: `validate.ts`(v.day/money/int/decimal — `DECIMAL_RE`+`asNumber`), `text.ts`, `time.ts`(KST 경계·백오프), `crypto.ts`. `quota.ts`(`windowStart`=카운터 열쇠, `windowOpensAt`=창이 열리는 순간).
+  - `apps/web/src`: React 화면. `lib/format.ts`(krw/krwShort/relative), `lib/nav.ts`(safeNext 사본), `components/Markdown.ts`(safeHref).
+  - `apps/server`: 로컬 Node 서버·정적 파일. `db/migrations`: SQL 10개(조직/RLS·결재 엔진·불변 원장·업무·메일 알림).
+  - `functions`, `workers/scheduler`: Pages 진입·5분 주기 작업. `scripts`: 개발 DB·가짜 OAuth/AI·e2e·브라우저 흐름·배포. `docs`: requirements/architecture/security/auth-integration/deployment/operations/생성 API 목록.
+- 빌드·테스트:
+  - 체크아웃에 node_modules 가 없다 → `npm ci --no-audit --fund=false` 먼저(ESLint 지원 종료 경고 1건은 정상).
+  - `npm run check` = `eslint .` + 세 워크스페이스 tsc + `vitest run`(시험 수는 회차마다 늘어난다 — 2026-10-15 에 173 passed 기록. 정확한 수는 실행으로 확인할 것).
+  - 파일 지정: `npm test -- packages/core/src/__tests__/domain.test.ts`. vitest include 는 `packages/**/*.test.ts`·`apps/**/*.test.ts`, environment 는 **node**(DOM 없음), testTimeout 20s.
+  - `npm run build`(웹 Vite + 서버), `npm run routes`(API 문서 재생성 — route-catalogue 시험이 docs/api-routes.md·openapi.yaml 과 실제 라우터 일치를 검사).
+  - 브라우저·DB 단계는 `npm run e2e`/`ui`(=`node scripts/ui-flows.mjs`)/`screens`/`a11y`. 이 환경에서 전부 실제로 돈다(두 회차 연속 확인): docker `postgres:16-alpine` 55451 → `scripts/migrate.mjs`(applied 10 migrations) → `seed-local.mjs` → fake-yeopjari 18911·fake-ai 18912 + `apps/server/dist/index.js` → `e2e.mjs`(300 passed) → `npx playwright install chromium` → `seed-demo.mjs` → `ui-flows.mjs`(16 passed) → `screenshots.mjs`(152장) → `a11y.mjs`. 10분 이상 걸린다.
+- 관례: 커밋 메시지는 한국어 설명형(`영역: 무엇을 왜`), 릴리즈는 `vX.Y.Z …` 머리말. 시험은 `packages/core/src/__tests__/*.test.ts` 와 소스 옆(`apps/web/src/lib/format.test.ts`). core 내부 import 는 `.js` 확장자. 설정은 `.env.example`/`.env.dev`(`node scripts/ci-env.mjs` 가 생성)·런타임 바인딩. SQL 적용은 `npm run migrate`. 저장소 내 CLAUDE.md/AGENTS.md/로드맵 없음.
+- 위험 구역: `routes/sso.ts`·`auth/*`(세션·테넌트·RLS), `db/migrations`(결재 엔진·불변 원장), finance 쓰기 경로, 공유 운영 DB·Hyperdrive, `.github/workflows`(게이트). 운영 배포는 수동 승인.
+- 자주 깨지는 곳:
+  - 같은 역할의 작은 파서·가드가 여러 경로에 중복돼 있다(`safeNext` 2곳, 금액·날짜 포맷 2곳). 운영자 지시: 통합하지 말고 좁히는 방향으로만 고친다.
+  - 경계 반올림·창 경계가 반복 결함원이다(`krwShort` 억/만 분기, `relative` 단계별 Math.round, 쿼터 창의 KST 라벨 vs 실제 열림 시각 9시간 차). 음수는 `Math.round` 동점 처리 때문에 비대칭 — 크기 반올림 후 부호 재부착이 통한 형태.
+  - 링크·경로 가드는 역슬래시·제어문자 변형에서 샌다(Markdown safeHref).
+  - `scripts/ui-flows.mjs` 는 모든 기다림을 `.catch(() => undefined)` 로 삼킨 뒤 무조건 클릭한다 → 한 단계가 느려지면 30초 타임아웃 예외로 죽어 problems 목록·뒤 블록·정리 코드가 생략된다(2026-10-15 회차 과제).
+- 검증 함정:
+  - **CI 는 저장소 밖 이유로 빨갛다**: GitHub Actions 계정 결제·지출한도 차단으로 job 이 `steps=0` 3초에 죽는다(annotation: `The job was not started because recent account payments have failed or your spending limit needs to be increased`). job 로그 API 의 `BlobNotFound` 는 단계가 0개라 아카이브가 없는 결과이지 빌드 오류가 아니다. `gh` 는 `GH_CONFIG_DIR=/home/hkjang/.config/gh` 를 줘야 hkjang 으로 인증된다(세션 HOME 이 임시).
+  - 결제 차단 직전 마지막 실제 main run 38490598257 은 `ui-flows.mjs` 14단계에서 exit 1 이었다 — 결제 복구 시 main 은 다시 빨개질 수 있다.
+  - `npx playwright install --with-deps` 는 sudo 비밀번호를 요구해 실패한다 — deps 없이 `npx playwright install chromium`.
+  - `check.yml` 의 `cancel-in-progress: true` 가 main 머지 커밋 run 을 매번 취소한다(실측 3건) — 기본 브랜치의 일부 커밋은 검증을 끝까지 못 받는다.
+  - vitest environment 가 node 라 DOM 필요 코드(`lib/download.ts` 의 copyText/saveBytes)는 시험할 수 없다. jsdom 추가는 의존성 변경(범위 밖).
+  - 워크스페이스 경계를 넘는 import 는 tsc 가 워크스페이스별로 돌아 깨진다 — 시험 케이스 표는 공용 모듈로 빼지 말고 각 워크스페이스에 복제.
+  - 운영자 지시: 손으로 만든 대역·소스 문자열 검사를 증거로 삼지 말고 프로덕션 배선을 지나는 실행 시험으로 증명하고, 최종 출력까지 효과가 남는지 확인할 것.

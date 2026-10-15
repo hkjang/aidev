@@ -1,0 +1,119 @@
+[
+  {
+    "title": "ui-flows.mjs 가 waitFor 타임아웃을 삼켜 CI 로그가 진짜 원인을 못 알려준다",
+    "value": 4,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "2026-10-15 이번 회차 선택. 파일을 직접 읽어 확인: 85·87·95·98·103·117·131·136·141·199·205·208행이 전부 `.catch(() => undefined)` 로 기다림을 삼킨 뒤 그 요소를 무조건 클릭한다. 그래서 한 단계가 느려지면 check() 가 FAIL 한 줄만 남기고 다음 줄에서 30초 기본 타임아웃 예외로 프로세스가 죽어 problems 목록 출력·뒤 블록(수금·콘솔)·browser.close()/db.end() 가 전부 생략된다. 고치는 방향은 타임아웃 연장이 아니라 flow(name, body) 로 다섯 블록을 감싸 중단 이유를 남기고 다음 블록을 계속 돌리는 것. brief.md 참조.",
+    "updated": "2026-10-15"
+  },
+  {
+    "title": "ui-flows.mjs '쓰기는 제안 카드로 옴' 이 CI 에서 실패 — 결제 차단에 가려진 main 의 진짜 red",
+    "value": 5,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "run 38490598257(7ae6b03) 14단계에서 exit 1: `locator.click: Timeout 30000ms exceeded … getByRole(group,{name:/제안: 업무 만들기/}) … ui-flows.mjs:140:50`. 로컬 4/4 통과라 원인 미확정이어서 이번에도 추측으로 고치지 않았다. 위 진단 과제가 먼저다 — 그것이 들어가면 '15초 안에 제안 카드가 왜 안 떴는지' 가 한 번의 실행으로 problems 에 남는다. 타임아웃 연장은 게이트 완화라 금지.",
+    "updated": "2026-10-15"
+  },
+  {
+    "title": "main 푸시의 concurrency cancel-in-progress 가 머지 커밋 run 을 취소한다",
+    "value": 3,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "check.yml:13-15 의 group=check-${{ github.ref }} + cancel-in-progress: true. 릴리즈 흐름이 머지 5~6분 뒤 버전 범프를 main 에 또 푸시하고 CI 는 9~11분 걸려 머지 커밋 run 이 매번 취소된다(38485737971·38480667322·37559006278 cancelled 실측). 형태는 cancel-in-progress: ${{ github.ref != 'refs/heads/main' }} — 완화가 아니라 강화. 보호 경로 단독 변경이므로 한 줄만 바꾸는 회차로.",
+    "updated": "2026-10-15"
+  },
+  {
+    "title": "프로젝트 손익 조회의 from/to 역순·범위 밖 기본값",
+    "value": 3,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "routes/finance.ts:734-735 가 from/to 가 비면 '1900-01-01'·'9999-12-31' 을 v.day 를 지나지 않고 쿼리에 넣고, to<from 도 period() 를 지나지 않아 0원 손익을 정상 응답으로 낸다. period() 로 바꾸면 기본값 의미가 달라져 DB e2e 가 필요하고 finance 쓰기 경로에 가깝다. docker postgres + migrate + seed + e2e(300 passed) 가 이 환경에서 돌아감은 두 회차 연속 확인됐다. 차선 후보.",
+    "updated": "2026-10-15"
+  },
+  {
+    "title": "원장 CSV 수식 중립화와 인용 처리의 API 회귀 시험",
+    "value": 3,
+    "risk": 2,
+    "size": "M",
+    "status": "pending",
+    "note": "csvCell 이 비공개라 ctx.sql·권한·감사를 지나는 e2e 가 필요하다. 비용 전제는 깨졌다(e2e 300 passed + playwright chromium + ui-flows 16 passed 가 로컬에서 돌아감). playwright 는 --with-deps 가 sudo 비밀번호를 요구하므로 `npx playwright install chromium` 으로 받을 것. 원장 fixture 위치(seed-local.mjs vs e2e.mjs)는 여전히 미조사.",
+    "updated": "2026-10-15"
+  },
+  {
+    "title": "ui-flows 의 person() 로그인 3건이 flow 밖이라 로그인 실패 시 아무 보고 없이 죽는다",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "2026-10-15 신규(파일 73~75행). signInMember 가 실패하면 세 사람 준비 단계에서 바로 예외가 나 problems 출력 없이 끝난다. 이번 과제(블록 감싸기)의 자연스러운 다음 조각이지만 범위 확장 금지 원칙상 분리해 둔다 — 같은 파일이라 이번 과제와 동시에 하지는 말 것.",
+    "updated": "2026-10-15"
+  },
+  {
+    "title": "agent.ts 가 rate_limited 를 quotaExceeded 로 바꾸며 retryAfter 를 버린다",
+    "value": 2,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "agent.ts:97 과 client-errors.ts:49 가 rate_limited 를 다시 싸며 retryAfter 를 떨어뜨려 AI·MCP 경로의 429 에 retry-after 헤더가 붙지 않는다. 2026-10-15 에 헤더 산술(windowOpensAt)을 맞췄으니 그 값을 버리는 것이 더 아깝다. 오류 코드 매핑 변경은 화면 문구·client-errors 계약으로 번지므로 소비처 조사 선행.",
+    "updated": "2026-10-15"
+  },
+  {
+    "title": "v.int 에 안전 정수 상한이 없어 '99999999999999999999' 가 통과",
+    "value": 2,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "Number.isSafeInteger 가 아니라 isFinite+isInteger 만 본다. v.money 는 max 기본값으로 막혀 있다. max 없는 v.int 호출부(페이지네이션·수량) 조사가 선행.",
+    "updated": "2026-10-15"
+  },
+  {
+    "title": "v.string 은 UTF-16, v.text 는 코드포인트로 길이를 세어 같은 '자' 가 필드마다 다름",
+    "value": 2,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "validate.ts:79(text.length) vs :106([...text].length). 어느 쪽이 제품의 '자' 인지 미확인 — docs/requirements 의 길이 규정 확인이 선행. 기존 저장 데이터 영향이 있어 단독으로 고르기 어렵다.",
+    "updated": "2026-10-15"
+  },
+  {
+    "title": "v.instant 가 날짜만 있는 문자열·비ISO 형식을 시각으로 받는 것",
+    "value": 2,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "new Date(value) 의 NaN 여부만 본다. '2026-01-15'·'Jan 15 2026' 이 통과해 KST 경계 해석이 어긋날 수 있다. v.day 와 달리 ISO 왕복·범위 가드가 없다. 어느 라우트가 어떤 형식을 보내는지 확인 전에는 손대지 말 것.",
+    "updated": "2026-10-15"
+  },
+  {
+    "title": "v.email 의 지역부가 '.'·'..' 만으로도 통과",
+    "value": 2,
+    "risk": 3,
+    "size": "S",
+    "status": "pending",
+    "note": "좁히기 방향이지만 초대·로그인 식별자 경로라 기존 저장 주소를 거절하면 로그인 차단으로 번진다. 소비처와 기존 데이터 영향 확인 뒤에만.",
+    "updated": "2026-10-15"
+  },
+  {
+    "title": "클립보드 복사 폴백 예외 시 textarea 정리",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "download.ts:15 copyText 의 execCommand 가 throw 하면 area.remove() 에 도달하지 못한다. vitest environment 가 node 라 DOM 증거를 만들 수 없고 jsdom 추가는 의존성 변경(범위 밖), 손으로 만든 document 대역은 운영자 지시 위반. playwright 로 실제 브라우저를 돌릴 수 있음이 확인됐으니 ui-flows 쪽에서 증거를 만드는 길은 열려 있다.",
+    "updated": "2026-10-15"
+  },
+  {
+    "title": "상대 시간 표기 relative 의 분·시·일 경계와 미래 시각 처리",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "format.ts:46 은 단계마다 Math.round 라 59분30초가 '1시간 전', 미래 시각은 모두 '방금'. 제품이 원한 반올림인지 미확인 — 계약을 시험으로 고정하는 쪽만 안전.",
+    "updated": "2026-10-15"
+  }
+]
