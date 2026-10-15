@@ -1,0 +1,110 @@
+[
+  {
+    "title": "OpenBao Transit 단건 encrypt·decrypt 가 plaintext·ciphertext 필드 누락을 빈 문자열로 처리",
+    "value": 3,
+    "risk": 1,
+    "size": "S",
+    "status": "done",
+    "note": "이번 회차 구현(커밋 cd36fff). 두 익명 구조체를 *string 으로 바꾸고 batch 분기 뒤에 nil 검사를 넣어 batch 와 같은 missing plaintext/ciphertext 400 을 돌려준다. 명시된 \"\" 는 유효 입력으로 유지. compatibility.md Transit 절에 누락 판정을 기록했다.",
+    "updated": "2026-10-15"
+  },
+  {
+    "title": "Transit ciphertext 버전 토큰이 비정규 표기(vault:v+1:·vault:v01:)를 받아들임",
+    "value": 3,
+    "risk": 1,
+    "size": "M",
+    "status": "pending",
+    "note": "store/transit.go:47 strconv.Atoi(TrimPrefix(parts[1],\"v\")) 라 부호·선행 0 통과, AAD 를 파싱된 정수로 재조립해 AEAD 도 통과 → 200+평문(OpenBao 는 거절). Store 에 seam 이 없어 200→400 을 정직하게 보려면 JIKIM_TEST_POSTGRES_DSN 통합 테스트 필요(docker 사용 가능, 전례 store/secrets_openbao_test.go). nil pool panic 을 재현 근거로 쓰지 말 것. httpapi 의 transitCiphertextVersion 은 서버 산출물만 파싱해 범위 밖.",
+    "updated": "2026-10-15"
+  },
+  {
+    "title": "OpenBao Transit 단건 경로가 미지원 파라미터(context·nonce·associated_data·key_version)를 조용히 무시",
+    "value": 3,
+    "risk": 2,
+    "size": "M",
+    "status": "pending",
+    "note": "batch 는 baoTransitBatchItem.unsupportedParameter() 로 per-item error 를 내지만 단건 익명 구조체에는 그 필드가 아예 없어 요청자가 지정한 파생 컨텍스트가 조용히 버려진다. 단건에 같은 거절을 넣으려면 응답 형태(단건 400 vs batch per-item)와 compatibility.md 표를 함께 정해야 한다. 이번 누락 수정으로 단건 구조체가 이미 *string 관례를 따르게 되어 착수 비용은 줄었다.",
+    "updated": "2026-10-15"
+  },
+  {
+    "title": "decodeBaoJSON 이 DisallowUnknownFields 를 쓰지 않아 OpenBao 표면이 오타 필드를 무시",
+    "value": 2,
+    "risk": 3,
+    "size": "M",
+    "status": "pending",
+    "note": "httpapi 의 decodeJSON 은 DisallowUnknownFields 를 쓰는데 openbao.go 의 decodeBaoJSON 은 쓰지 않는다. 다만 OpenBao 자체가 미지의 필드를 허용하므로 좁히면 호환성 계약을 바꾼다 — compatibility.md 개정이 선행되어야 한다. 위 '미지원 파라미터' 과제와 같은 결정에 묶인다.",
+    "updated": "2026-10-15"
+  },
+  {
+    "title": "추적이 켜진 동안의 CSP 리포트 속도 제한 또는 동일 출처 검증",
+    "value": 3,
+    "risk": 3,
+    "size": "M",
+    "status": "pending",
+    "note": "무인증 route + MaxViolations=100 유지. 본문 상한(v0.2.32)·절단 품질(v0.2.36)은 닫혔지만 속도·신뢰 계약은 새 계약 도입이라 한 세션 범위를 넘는다.",
+    "updated": "2026-10-15"
+  },
+  {
+    "title": "baoKVWrite 의 create/update 판정 TOCTOU",
+    "value": 3,
+    "risk": 3,
+    "size": "M",
+    "status": "pending",
+    "note": "SecretExistsByPath → CanAccess → PutOpenBaoSecret 분리 유지. 트랜잭션·동시성 검증이 필요한 별도 범위.",
+    "updated": "2026-10-15"
+  },
+  {
+    "title": "OpenBao 호환 표면의 baoError 500 이 ERROR 로그를 남기지 않음",
+    "value": 3,
+    "risk": 2,
+    "size": "S",
+    "status": "rejected",
+    "note": "baoError 는 envelope 만 쓴다. 관찰 가능한 응답 변화가 없는 새 로깅 계약이고 '로그만 추가하는 과제' 는 재선택 금지 광맥이라 기각으로 내린다.",
+    "updated": "2026-10-15"
+  },
+  {
+    "title": "retryWebhookDelivery 왕복 테스트 공백",
+    "value": 2,
+    "risk": 1,
+    "size": "M",
+    "status": "pending",
+    "note": "JIKIM_TEST_POSTGRES_DSN 통합 검증이 선행되어야 한다. 2026-10-08 회차에 임시 PostgreSQL 17 전례가 있다.",
+    "updated": "2026-10-15"
+  },
+  {
+    "title": "Dependabot group 계약을 CONTRIBUTING 에 문서화",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "v0.2.34 의 scripts/verify-dependabot-groups.mjs 계약이 스크립트 주석에만 있다. 관찰 가능한 동작 변화가 없어 계속 차선.",
+    "updated": "2026-10-15"
+  },
+  {
+    "title": "gomod·github-actions·docker 생태계에도 묶음 업데이트 검사 확장",
+    "value": 2,
+    "risk": 2,
+    "size": "M",
+    "status": "pending",
+    "note": "현재 검사는 web/package-lock.json 의 peerDependencies 를 근거로 쓴다. 락파일이 없는 생태계는 결합 추출 방식부터 새로 정해야 한다.",
+    "updated": "2026-10-15"
+  },
+  {
+    "title": "oidcLogout 이 OIDCConfig 읽기 실패를 조용히 /login 리다이렉트로 접음",
+    "value": 2,
+    "risk": 2,
+    "size": "S",
+    "status": "rejected",
+    "note": "성공·실패 모두 302 라 '로그만 추가' 형태가 된다. 교훈상 재선택 금지 광맥이라 기각으로 내린다.",
+    "updated": "2026-10-15"
+  },
+  {
+    "title": "docs/guides/api-guide.md 에 AI 엔드포인트 error code 표 추가",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "문서 단독 후보로 12회 연속 차선. 관찰 가능한 동작 변화가 없다.",
+    "updated": "2026-10-15"
+  }
+]

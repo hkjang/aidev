@@ -1,0 +1,44 @@
+fix: release the transit single-item missing field fix for v0.2.37
+
+OpenBao Transit 단건 encrypt·decrypt 가 `plaintext`·`ciphertext` 필드 누락을
+명시된 빈 문자열과 같게 처리하던 문제를 고친 PR #62 를 릴리즈합니다.
+`baoTransitEncrypt`·`baoTransitDecrypt` 의 입력 구조체가 단건 필드를 `string`
+으로 받아 필드가 **아예 없는** 본문(`{}`·`{"reference":"a"}`)과 값이 `""` 인
+본문을 구분하지 못했습니다. 그래서 encrypt 는 호출자가 주지 않은 빈 평문을
+실제로 암호화해 `200` 과 `ciphertext` 를 돌려주었고, decrypt 는 `""` 를
+저장소로 내려보내 batch 경로와 다른 메시지로 실패했습니다. 두 필드를 `*string`
+으로 받고 nil 이면 batch 항목과 같은 판정으로 `400` 과 `missing plaintext to
+encrypt`·`missing ciphertext to decrypt` 를 돌려주며 저장소를 호출하지
+않습니다. 누락 검사는 `input.BatchInput != nil` 분기 **뒤** 에 두었으므로,
+`batch_input` 이 있으면 단건 필드를 무시하는 기존 계약(상단 필드 없이 보내는
+batch 요청)은 그대로 동작합니다. 값이 명시된 빈 문자열(`{"plaintext":""}`)은
+OpenBao 와 같이 유효한 입력으로 남겼습니다. batch 경로의 per-item 판정,
+Transit mount·key 이름 제약, 권한 확인과 감사 기록, `vault:vN:` ciphertext
+형식 해석은 변경하지 않았습니다. 단건 경로가 미지원 파라미터(`context`·
+`nonce`·`associated_data`·`key_version`)를 조용히 무시하는 동작은 응답 형태를
+새로 정해야 하므로 이번 범위가 아닙니다.
+
+기존 패치 릴리즈와 같은 방식으로 버전 파일, 문서 프로파일과 CHANGELOG 를
+v0.2.37 로 갱신했습니다. 호환성 프로파일의 Transit 제한 계약에는 단건 필드
+누락 판정을 기록했습니다. 화면 캡처의 v0.2.9 출처와 두 가이드 PDF 의 v0.2.18
+표지는 유지합니다. 기존 PDF 변환기가 저장소에 없어 같은 판형으로 재생성하지
+않았으며 Markdown 본문은 갱신했습니다.
+
+./scripts/verify.sh 전체(Go test·vet·gofmt, 웹 테스트 59개·lint·build, 문서·
+Dependabot 묶음·Compose), go test ./... -count=1 과 소스 버전 일치 검사가
+통과했습니다. 주입한 `transitEncryptor`·`transitDecryptor` seam 과 기존
+하네스로 핸들러를 직접 부르는 서브테스트 7개(결함 3개와 기존 계약 4개)도
+통과했습니다. 이번 로컬 실행은 DSN 미설정으로 PostgreSQL 통합 테스트를
+건너뛰었습니다. 구현 단계의 수정 전 실패 재현(`status=200
+body={"data":{"ciphertext":"vault:v1:",…}}` 와 `status=200
+body={"data":{"plaintext":"aGk="},…}`)과 비평·머지 전 CI 통과 기록을
+확인했습니다. 과제서가 예상한 decrypt 쪽 수정 전 증상은 `ciphertext` 형식
+오류였지만 실제로는 `200` 입니다 — seam 을 주입하면 저장소의 파서를 타지 않기
+때문이며, 누락 요청이 복호화기까지 내려가던 결함이 응답에 그대로 드러납니다.
+테스트는 핸들러를 직접 부르므로 `withBaoAuth` 토큰 미들웨어와 실제 `routes`
+배선, 실제 PostgreSQL 저장소 경로는 지나지 않습니다. 업스트림 OpenBao 가 필드
+누락에 정확히 이 문자열로 400 을 주는지는 확인하지 않았으며, 근거는 이 저장소
+batch 경로가 이미 쓰는 문자열과 "같은 엔드포인트가 단건·batch 에서 같게
+답한다" 입니다. 기존 500kB 청크 경고는 남습니다. 이미지 빌드, PostgreSQL
+스모크, 브라우저 E2E, 번들 생성과 GitHub Release 게이트는 기존대로 태그 푸시
+후 release.yml 이 수행합니다. 이번 세션은 원격 푸시나 게시를 하지 않습니다.
