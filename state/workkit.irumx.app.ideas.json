@@ -1,11 +1,20 @@
 [
   {
-    "title": "저장한 비교 조건이 두 열을 가리키는 이름에 조용히 붙는다 (applyPreset find 가 처음 일치만 본다)",
-    "value": 2,
+    "title": "ci-env.mjs 가 DB 주소 재지정을 무시해 검증 도구와 서버가 다른 DB 를 본다",
+    "value": 4,
     "risk": 1,
     "size": "S",
     "status": "done",
-    "note": "구현 완료(커밋 eb20989). 과제서의 동기 사례('비고' 두 번 → 첫 열)는 toTable 이 헤더를 고유화해 성립하지 않았다. 실제로 닿는 경로는 고유화 접미사 'X (2)' 가 시트의 실제 열 이름과 충돌하는 경우 — 그때 applyPreset 이 두 열을 같은 인덱스로 접어 저장한 비교 열 하나를 비교에서 떨어뜨렸다. find 를 flatMap 으로 바꿔 개수를 세고 2개 이상이면 problems 로 막는다. 가치는 과제서의 3 보다 좁아 2.",
+    "note": "2026-10-15 구현. WORKKIT_DEV_DB_HOSTPORT 하나로 17·19줄의 두 URL 을 끌어오게 했다. 환경변수 없으면 .env.dev 바이트 동일(cmp, sha256 60be5f56…)이라 CI 동작 불변. 전용 DB(:55448)로 CI 순서 완주: e2e 155 passed 0 failed(직전 148/7), ui-flows 25/0(직전 9/2), tools 55/0, a11y 위반 없음.",
+    "updated": "2026-10-15"
+  },
+  {
+    "title": "e2e.mjs 의 APP_DATABASE_URL 이 세 번째 DB 기본값이라 격리 절차를 모르면 RLS·트리거 8개가 깨진다",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "신규. e2e.mjs:28 의 APP_DB(workkit_app 역할) 기본값이 :55447 이고 재지정은 APP_DATABASE_URL 로 이미 가능하다 — 결함은 아니다. 전용 DB 로 돌릴 때 이것을 빼먹어 처음 완주에서 RLS 3개 + 트리거 5개가 실패했다(직접 겪음). ci-env.mjs 와 통합하려 하지 말 것(운영자 규칙) — README '검증' 에 격리 절차 한 단락을 적는 쪽. 프로덕션 코드 변경 0.",
     "updated": "2026-10-15"
   },
   {
@@ -14,7 +23,16 @@
     "risk": 2,
     "size": "S",
     "status": "pending",
-    "note": "신규. types.ts:97~105 이 중복 이름에 ' (n)' 을 붙이는데 그 결과가 시트에 이미 있는 열 이름과 같을 수 있다('X','X','X (2)' → ['X','X (2)','X (2)']). 2026-10-15 수정은 '모호하면 멈춘다' 로 사용자를 보호했을 뿐 이름 자체는 여전히 겹치고, 수동 열 선택·keyMap 경로는 그대로다. 비어 있는 이름을 찾아 올리는 방향(X (2) 가 이미 있으면 X (3)). 열 이름이 바뀌면 저장한 조건과 보고서 라벨에 파급이 있어 위험 2.",
+    "note": "2026-10-15 회차의 차선 후보였다. types.ts:97~105. '자산번호,자산번호,자산번호 (2)' → ['자산번호','자산번호 (2)','자산번호 (2)'] (probe 확인). 비어 있는 이름까지 번호를 올리는 방향('X (2)' 가 있으면 'X (3)'). 단위 시험만으로 끝나고 프로덕션 1파일. 열 이름이 바뀌면 저장한 조건·보고서 라벨에 파급이 있어 위험 2. Docker 없이 돌 수 있어 다음 회차 1순위로 적합.",
+    "updated": "2026-10-15"
+  },
+  {
+    "title": "공유 dev Postgres(:55447) 를 쓰는 워크트리에서 e2e 7개가 파일 바이트 없음으로 실패",
+    "value": 2,
+    "risk": 2,
+    "size": "M",
+    "status": "done",
+    "note": "코드 쪽 절반(ci-env.mjs 재지정)이 2026-10-15 에 들어가 해소됐다. 전용 DB :55448 로 migrate+seed 뒤 e2e 155 passed 0 failed — 키트 다운로드 7개 실패가 사라졌다. 남은 것은 격리 절차를 문서에 적는 일뿐이라 위 'APP_DATABASE_URL' 항목으로 좁혀 넘긴다.",
     "updated": "2026-10-15"
   },
   {
@@ -23,16 +41,7 @@
     "risk": 2,
     "size": "M",
     "status": "pending",
-    "note": "CompareTool.tsx:336 의 map[newInfo.headers[n]!] = oldKeys[i]! 가 같은 이름 두 열에서 충돌한다. 2026-10-15 수정이 저장 조건 적용 경로는 막았지만 사용자가 손으로 고르는 경로는 남아 있다. UI 상태 모델을 건드려야 해 M. 통합 금지 원칙상 preset.ts 와 같은 회차에 넣지 말 것.",
-    "updated": "2026-10-15"
-  },
-  {
-    "title": "sanitizePreset 이 범위를 벗어난 헤더 줄 번호를 통과시킨다",
-    "value": 1,
-    "risk": 1,
-    "size": "S",
-    "status": "pending",
-    "note": "project/sanitize.ts:136~137 이 Number.isInteger 만 보고 0·음수·1e9 를 그대로 둔다. 다만 preset.oldHeaderLine/newHeaderLine 을 읽는 코드가 하나도 없다(2026-10-15 grep: 저장·보고서 메타 출력만, applyPreset·CompareTool 둘 다 안 본다). 사용자 영향이 사실상 0 이라 가치 2→1. project/sanitize 전용 테스트가 없다는 테스트 공백 보강 쪽 가치만 남는다.",
+    "note": "CompareTool.tsx:336 의 map[newInfo.headers[n]!] = oldKeys[i]! 가 같은 이름 두 열에서 충돌한다. 2026-10-15 수정이 저장 조건 적용 경로는 막았지만 수동 선택 경로는 남아 있다. UI 상태 모델을 건드려야 해 M. 통합 금지 원칙상 preset.ts 와 같은 회차에 넣지 말 것.",
     "updated": "2026-10-15"
   },
   {
@@ -41,7 +50,7 @@
     "risk": 1,
     "size": "S",
     "status": "pending",
-    "note": "csv.ts:41. 앞 64KB 만 잘라 쪼개면 큰 파일 할당이 사라진다(마지막 잘린 줄 버리기). 빨간 테스트가 안 나오는 순수 리팩터 — 운영자의 '실행 테스트로 증명' 요구와 잘 맞지 않아 후순위. csv.ts 는 PR 충돌 구역이지만 충돌 줄은 end()/push() 라 detectDelimiter 는 비켜 있다.",
+    "note": "csv.ts:41. 앞 64KB 만 잘라 쪼개면 큰 파일 할당이 사라진다(마지막 잘린 줄 버리기). 빨간 테스트가 안 나오는 순수 리팩터 — 운영자의 '실행 테스트로 증명' 요구와 맞지 않아 계속 후순위.",
     "updated": "2026-10-15"
   },
   {
@@ -50,7 +59,7 @@
     "risk": 1,
     "size": "S",
     "status": "pending",
-    "note": "doc/docx.ts:27 runs() 가 split('\\n') 만 하고, esc()(:22)가 지우는 제어문자 집합에 \\u000d 는 없다. 다만 weekly/model.ts 가 /\\r?\\n/ 으로 미리 정규화하고 브라우저 textarea.value 도 LF 라, CRLF 가 실제로 runs() 까지 닿는 경로는 미확인. 경로를 먼저 찾아야 가치가 선다.",
+    "note": "doc/docx.ts:27 runs() 가 split('\\n') 만 하고 esc()(:22) 가 지우는 제어문자에 \\u000d 가 없다. weekly/model.ts 가 /\\r?\\n/ 으로 미리 정규화하고 textarea.value 도 LF 라, CRLF 가 runs() 까지 닿는 경로는 여전히 미확인. 경로를 먼저 찾아야 가치가 선다.",
     "updated": "2026-10-15"
   },
   {
@@ -59,34 +68,7 @@
     "risk": 2,
     "size": "S",
     "status": "pending",
-    "note": "rows.length+1 > LIMITS.rows 가 빈 줄까지 센다(csv.ts:93). 끝 빈 줄은 행을 더하지 않지만 앞/중간 빈 줄은 더한다. csv.ts PR 충돌 구역이라 보류 유지.",
-    "updated": "2026-10-15"
-  },
-  {
-    "title": "공유 dev Postgres(:55447) 를 쓰는 워크트리에서 e2e 7개가 파일 바이트 없음으로 실패",
-    "value": 2,
-    "risk": 2,
-    "size": "M",
-    "status": "pending",
-    "note": "개선 세션의 검증 신뢰도를 깎는다. 워크트리 전용 DB 포트로 격리하는 방향. 절차는 메모리에 기록됨. 이번 회차는 단위 시험만으로 끝나 건드리지 않았다.",
-    "updated": "2026-10-15"
-  },
-  {
-    "title": "사설 저장소 CI 가 PR 마다 Playwright 설치 + e2e + a11y 를 돌려 청구 분을 크게 쓴다",
-    "value": 2,
-    "risk": 3,
-    "size": "M",
-    "status": "pending",
-    "note": "지출 한도 차단의 배경. 잡이 시작조차 못 하는 동안에는 효과 없음 — 결제가 풀린 뒤의 일. 검사 항목은 하나도 빼지 말고 actions/cache 로만. .github/workflows 는 보호 경로.",
-    "updated": "2026-10-15"
-  },
-  {
-    "title": "serialToIso 가 Excel 1900 윤년 버그를 반영하지 않는다",
-    "value": 1,
-    "risk": 2,
-    "size": "S",
-    "status": "pending",
-    "note": "xlsx-read.ts:228. serial <= 59 가 하루 이르게 읽힌다. 1900년 1~2월뿐이라 실무 가치 거의 없음 — 분기를 늘리는 위험이 이득보다 클 수 있다.",
+    "note": "rows.length+1 > LIMITS.rows 가 빈 줄까지 센다(csv.ts:93). 끝 빈 줄은 행을 더하지 않지만 앞/중간 빈 줄은 더한다. csv.ts 는 열린 PR 충돌 구역이라 보류 유지.",
     "updated": "2026-10-15"
   },
   {
@@ -99,12 +81,30 @@
     "updated": "2026-10-15"
   },
   {
-    "title": "CI 와 같은 순서를 로컬에서 한 번에 돌리는 명령(npm run gate)",
+    "title": "사설 저장소 CI 가 PR 마다 Playwright 설치 + e2e + a11y 를 돌려 청구 분을 크게 쓴다",
     "value": 2,
-    "risk": 2,
+    "risk": 3,
     "size": "M",
     "status": "pending",
-    "note": "게이트 정본이 둘로 갈리는 위험이 가치보다 커 보류 유지. Actions 결제 차단이 길어지면 가치가 올라간다.",
+    "note": "지출 한도 차단의 배경. 잡이 시작조차 못 하는 동안에는 효과 없음 — 결제가 풀린 뒤의 일. 검사 항목은 하나도 빼지 말고 actions/cache 로만. .github/workflows 는 보호 경로.",
+    "updated": "2026-10-15"
+  },
+  {
+    "title": "sanitizePreset 이 범위를 벗어난 헤더 줄 번호를 통과시킨다",
+    "value": 1,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "project/sanitize.ts:136~137 이 Number.isInteger 만 보고 0·음수·1e9 를 통과시킨다. 다만 preset.oldHeaderLine/newHeaderLine 을 읽는 코드가 없어(2026-10-15 grep) 사용자 영향 0. project/sanitize 전용 테스트가 없다는 테스트 공백 가치만 남는다.",
+    "updated": "2026-10-15"
+  },
+  {
+    "title": "serialToIso 가 Excel 1900 윤년 버그를 반영하지 않는다",
+    "value": 1,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "xlsx-read.ts:228. serial <= 59 가 하루 이르게 읽힌다. 1900년 1~2월뿐이라 실무 가치 거의 없음 — 분기를 늘리는 위험이 이득보다 클 수 있다.",
     "updated": "2026-10-15"
   },
   {
@@ -113,16 +113,7 @@
     "risk": 1,
     "size": "S",
     "status": "pending",
-    "note": "정찰이 이미 한 회차를 여기서 썼다(4 attempts × 3 connects = 12, 2.5s 예산은 안전 밸브). 메모리에 기록돼 있어 급하지 않다. 테스트 계약을 건드리지 않는 주석 전용 변경.",
-    "updated": "2026-10-15"
-  },
-  {
-    "title": "vendor/postgres PATCH 5 가 errored() 뒤에도 reconnect() 로 떨어진다",
-    "value": 3,
-    "risk": 3,
-    "size": "S",
-    "status": "pending",
-    "note": "오류를 올리며 재연결도 계속할 수 있다(소켓 누수). errored 구현 확인 후 PATCH 블록 안에서만. vendor 사본은 vendor-postgres.test.ts 가 upstream 과 줄 단위로 비교하므로 위험 3.",
+    "note": "4 attempts × 3 connects = 12, 2.5s 예산은 안전 밸브. 메모리(db-breaker-test-is-not-flaky)에 기록돼 있지만 세 회차가 같은 가설을 다시 세웠으므로 코드 옆에 적어 두는 값이 있다. 테스트 계약을 건드리지 않는 주석 전용 변경.",
     "updated": "2026-10-15"
   }
 ]
