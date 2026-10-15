@@ -44,3 +44,4 @@
 - 못 본 것: HUNTER_TEST_DSN 없음 → 실 HTTP·DB POST/PUT(400 본문, 객체 assignee 행의 500→200)은 코드 수준 증명에 머문다. `go test -race ./...`·웹 테스트(web/node_modules 없음; 웹 변경 0)·원격 CI·Docker 미실행.
 - [러너 07:29] review approved — 리뷰 승인 (risk=low)
 - [러너 07:29] pr created — https://github.com/hkjang/hunter/pull/23
+- [러너 07:48] ci timeout — 제한 시간 안에 CI 완료를 확인하지 못함
