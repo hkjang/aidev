@@ -1,0 +1,7 @@
+# 수리 요약 — PR #44 (83f264c): 고치지 않음, CI 실패는 이 변경 탓이 아님
+
+- 지적은 "lint·test 둘 다 fail". 재현 실패 — CI 와 같은 검증을 이 커밋 그대로 로컬에서 전부 돌려 모두 통과: `gofmt -l .` 무출력, `go vet ./...` ok, `scripts/verify-version.sh` ok(1.2.37), `TEST_POSTGRES_DSN=… go test -race -count=1 ./...` **EXIT=0 / FAIL 0건**(internal/server 160.3s), `web: npm ci`(0)·`npm test`(18파일 81테스트 통과)·`npm run build`(0), `docker build --build-arg VERSION=v1.2.37`(0).
+- 원인은 CI 인프라/계정 레벨의 **스텝 실행 전 실패**다. 근거(`ci-83f264c22b11.json`): lint·test 두 잡이 똑같이 `started_at 17:44:36Z → completed_at 17:44:38Z`(2초), `output.title/summary/text` 전부 `null`, 각 잡 `annotations_count: 2`. checkout + setup-go 만으로도 2초를 넘기므로 **어느 잡도 단 하나의 스텝을 실행하지 못했다**. 워크플로 YAML 은 이 diff(3파일: `docs/api.md`·`internal/server/approval_nul_integration_test.go`·`internal/server/workflow.go`)에 포함되지도 않는다.
+- 변경 자체도 검증했다: `storableInVarchar`(users.go:421) 주석이 varchar/text 양쪽의 NUL 불가를 명시하므로 `text` 컬럼인 결정 코멘트에 쓰는 것이 맞고, `updateProfile` 의 기존 선례와 동일한 형태다. 전 회차 red 로그는 수정 전 500(`approval_create_failed`/`approval_failed`)·bypass 200, green 로그는 전부 400 PASS — 테스트가 실제로 대상 경로를 지난다.
+- 못 한 것: 저장소가 private 이고 이 환경에 GitHub 인증이 없어(`gh auth` 미설정, API 가 404) 잡 annotation 2건의 원문을 읽지 못했다. 따라서 인프라 원인의 "정확한 문구"는 미확인이고, 위 결론은 타이밍·빈 스텝 출력·로컬 전체 통과에 근거한 추론이다. `TEST_KEYCLOAK_ISSUER` 를 띄우지 않아 OIDC E2E 1건은 로컬에서 SKIP(정상).
+- 조치: 코드가 이미 맞으므로 **커밋 없음**(HEAD 는 83f264c 그대로, 트리 clean). 러너가 CI 를 재실행(re-run)하면 통과할 것으로 본다. 재실행해도 2초 만에 같은 모양으로 죽으면 Actions 결제/지출 한도 또는 러너 가용성을 확인할 것 — 코드 수정 대상이 아니다.
