@@ -26,3 +26,5 @@
 - 사소: 헤더가 상한으로 거절되면 같은 메시지의 구문 정규식으로 폴스루한다('Retry-After: 86400, but retry in 30 seconds' → 30s) — 무해하나 주석에 없다. README.md:404 / docs/acceptance-audit.md:72 는 1시간 상한을 명시하지 않는다.
 - [러너 00:34] review approved — 리뷰 승인 (risk=low)
 - [러너 00:35] pr created — https://github.com/hkjang/goalforge/pull/84
+- [러너 00:42] ci passed — 검사 5개 모두 success
+- [러너 00:42] merge done — 7f22990

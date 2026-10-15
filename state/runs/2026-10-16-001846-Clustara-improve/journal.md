@@ -28,3 +28,8 @@
 - [러너 00:34] pr created — https://github.com/hkjang/clustara/pull/40
 - [러너 00:35] ci passed — 검사 없음 — 정책으로 허용
 - [러너 00:35] merge done — de54f71
+- [러너 00:43] release published — v0.9.300
+- [러너 00:43] gh-release created — GitHub Release v0.9.300
+- [러너 00:43] manifest ok — clustara-v0.9.300.tar.gz clustara-v0.9.300.tar.gz.sha256 README-offline-v0.9.300.md 
+- [러너 00:43] assets uploaded — 3개
+- [러너 00:43] assets verified — v0.9.300 자산 3개 (이전 v0.9.299: 3)

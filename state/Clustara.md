@@ -328,3 +328,4 @@
 - 보류 아이디어: 용량 API 메트릭 조회 오류(`admin_k8s.go:metrics, _ :=`)를 정상 무표본 응답과 구별해 표시 — 이번 과제가 명시적으로 범위 밖에 둔 같은 함수의 후속 (3/2/S) / `/admin/k8s/rca` 핸들러가 `RCARelevantKinds()` 로 조회를 좁히는지 확인 — 용량과 동일 결함 유형, 이번에 미확인 (2/2/S) / `/admin/k8s/connectivity`·기타 인벤토리 조회 핸들러도 Kind 미필터 `Limit: 2000` — `admin_k8s.go:672` 에서 확인, 분석 대상 Kind 목록 선행 필요 (2/2/M) / `/admin/k8s/inventory` 의 실효 조회 상한·창 포화 미표시 — 6회 연속 차선, 1순위 금지 (2/1/S) / quiet 경로가 감사 기록(auditAdmin)을 남기지 않음 — 알림 경로 냉각 유지 (2/2/S)
 - 과제서: 채택 — 과제서의 근거(Kind 미필터 `Limit: 4000`, `updated_at DESC`, `AnalyzeCapacity` 의 세 Kind, `UpsertK8sInventory` 가 `item.UpdatedAt` 을 존중, security 선례)가 현 코드와 정확히 맞았고 지정한 4파일 범위를 그대로 지켰다. 다만 과제서가 `securityScanBudget` 을 4000 이라 적은 것은 실제로 8000 이었다(용량 쪽 기본값은 과제서대로 4000 유지).
 
+- 릴리즈: v0.9.300 (2026-10-16, run 2026-10-16-001846-Clustara-improve)
