@@ -1,0 +1,128 @@
+[
+  {
+    "title": "ui-flows.mjs '쓰기는 제안 카드로 옴' 이 CI 에서 실패 — 결제 차단에 가려진 main 의 진짜 red",
+    "value": 5,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "2026-10-15 신규. 결제 차단 직전 마지막으로 실제 실행된 main run 38490598257(7ae6b03, 167초, steps=22)이 14단계 'Work flows through the screens' 에서 exit 1 로 죽었다. 로그 원문: 'FAIL 쓰기는 제안 카드로 옴' → 'locator.click: Timeout 30000ms exceeded. waiting for getByRole(group, {name: /제안: 업무 만들기/}).last().getByRole(button, {name: 실행})' at scripts/ui-flows.mjs:140:50. 즉 결제가 복구되는 순간 main 은 다시 빨개질 가능성이 높다. 이번 회차에 로컬에서 4회 연속 돌려 4/4 통과(16 passed, 0 problem)라 재현하지 못했고, CI server.log·fake-ai.log 에도 대응 오류가 없어 원인 미확정 — 그래서 손대지 않았다. 다음 회차는 (a) 15초 안에 제안 카드가 왜 안 떴는지(에이전트 첫 턴 지연? 새 대화 네비게이션 미완료?) 를 먼저 증명할 것. 타임아웃을 늘리는 것은 게이트 완화라 금지.",
+    "updated": "2026-10-15"
+  },
+  {
+    "title": "ui-flows.mjs 가 waitFor 타임아웃을 삼켜 CI 로그가 진짜 원인을 못 알려준다",
+    "value": 4,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "2026-10-15 신규. scripts/ui-flows.mjs 는 waitForURL/waitFor 를 전부 `.catch(() => undefined)` 로 삼킨 뒤 그 요소를 무조건 클릭한다(130·133·141행 등). 그래서 한 단계가 느려지면 check() 가 FAIL 한 줄만 남기고 다음 줄에서 30초 타임아웃 + 스택트레이스로 죽어, 실패 원인이 '어느 기다림이 깨졌는지' 가 아니라 '클릭이 안 됐다' 로만 남는다. 위 항목의 진단을 막고 있는 것이 이 구조다. 고치는 방향은 타임아웃 연장이 아니라 check() 가 실패하면 그 블록의 남은 단계를 건너뛰고 이유를 출력하게 하는 것(게이트는 그대로 빨갛게 유지).",
+    "updated": "2026-10-15"
+  },
+  {
+    "title": "main 푸시의 concurrency cancel-in-progress 가 머지 커밋 run 을 취소한다",
+    "value": 3,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "2026-10-15 신규, API 로 확인. check.yml:13-15 의 group 은 check-${{ github.ref }} 이고 cancel-in-progress 는 true 다. 릴리즈 흐름이 PR 머지 5~6분 뒤 버전 범프를 main 에 또 푸시하는데 CI 는 9~11분 걸리므로 머지 커밋의 run 이 매번 취소된다 — 38485737971(d868a23, 396초 cancelled)·38480667322(b5e1334, 473초 cancelled)·37559006278(471초 cancelled) 로 실측됐다. 기본 브랜치의 어떤 커밋은 검증을 끝까지 받지 못한 채 지나간다. 고치는 형태는 cancel-in-progress: ${{ github.ref != 'refs/heads/main' }} — 게이트를 느슨하게 하는 게 아니라 main 에서만 취소를 끄는 강화다. 다만 이번 회차 과제(결제 차단)와는 무관해 범위 밖으로 뒀고, .github/workflows 는 위험 구역이라 단독 회차로 다룰 것.",
+    "updated": "2026-10-15"
+  },
+  {
+    "title": "CI 3~5초 즉시 실패 원인 확정",
+    "value": 3,
+    "risk": 1,
+    "size": "S",
+    "status": "done",
+    "note": "2026-10-15 확정. GH_CONFIG_DIR=/home/hkjang/.config/gh 를 주면 gh 가 hkjang 으로 인증된다(scopes: gist, read:org, repo, workflow) — 네 회차 동안 막혔던 것은 이 세션의 HOME 이 임시라 기본 경로에서 hosts.yml 을 못 찾았기 때문이다. 확정된 원인: GitHub Actions 결제·지출한도 차단. main HEAD(714a660)의 run 38491249147 / job 115616695487 은 steps=0 · 3초이고 annotation 원문이 'The job was not started because recent account payments have failed or your spending limit needs to be increased'. 저장소 밖 문제라 코드로는 고칠 수 없다.",
+    "updated": "2026-10-15"
+  },
+  {
+    "title": "프로젝트 손익 조회의 from/to 역순·범위 밖 기본값",
+    "value": 3,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "routes/finance.ts:734-735 가 from/to 가 비면 '1900-01-01'·'9999-12-31' 을 v.day 를 지나지 않고 쿼리에 넣고, to<from 도 period() 를 지나지 않아 0원 손익을 정상 응답으로 낸다. period() 로 바꾸면 기본값 의미가 달라져 DB e2e 가 필요하고 finance 쓰기 경로에 가깝다. 2026-10-15: 이 환경에서 docker postgres + migrate + seed + e2e(300 passed) 가 실제로 돌아감을 또 확인했으므로 'e2e 가 비싸다' 는 전제는 더 약해졌다. 다음 회차 유력.",
+    "updated": "2026-10-15"
+  },
+  {
+    "title": "원장 CSV 수식 중립화와 인용 처리의 API 회귀 시험",
+    "value": 3,
+    "risk": 2,
+    "size": "M",
+    "status": "pending",
+    "note": "csvCell 이 비공개라 ctx.sql·권한·감사를 지나는 e2e 가 필요하다. 2026-10-15 에 이 환경에서 docker postgres:16-alpine + migrate(10 migrations) + seed-local + e2e(300 passed, 0 failed) + playwright chromium + ui-flows(16 passed) 까지 전부 돌아감을 확인했으니 비용 전제는 깨졌다. 다만 playwright 는 --with-deps 가 sudo 비밀번호를 요구해 실패하므로 `npx playwright install chromium`(deps 없이)로 받아야 한다. 원장 fixture 위치(scripts/seed-local.mjs vs e2e.mjs)는 여전히 미조사.",
+    "updated": "2026-10-15"
+  },
+  {
+    "title": "agent.ts 가 rate_limited 를 quotaExceeded 로 바꾸며 retryAfter 를 버린다",
+    "value": 2,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "agent.ts:97 과 client-errors.ts:49 가 rate_limited 오류를 다시 싸면서 retryAfter 를 떨어뜨려 AI·MCP 경로의 429 에는 retry-after 헤더가 붙지 않는다. 2026-10-15 에 헤더 산술 자체를 맞췄으니 그 값을 버리는 것이 이제 더 아깝다. 오류 코드 매핑을 바꾸면 화면 문구·client-errors 계약에 번지므로 소비처 조사가 선행.",
+    "updated": "2026-10-15"
+  },
+  {
+    "title": "v.int 에 안전 정수 상한이 없어 '99999999999999999999' 가 통과",
+    "value": 2,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "Number.isSafeInteger 가 아니라 isFinite+isInteger 만 본다. v.money 는 max 기본값으로 막혀 있다. max 없는 v.int 호출부(페이지네이션·수량) 조사가 선행. 2026-10-14 의 DECIMAL_RE 수정과 같은 파일이라 그 변경과 함께 보면 자연스럽다.",
+    "updated": "2026-10-15"
+  },
+  {
+    "title": "v.string 은 UTF-16, v.text 는 코드포인트로 길이를 세어 같은 '자' 가 필드마다 다름",
+    "value": 2,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "validate.ts:79(text.length) vs :106([...text].length). 어느 쪽이 제품의 '자' 인지 미확인 — docs/requirements 의 길이 규정 확인이 선행. 좁히는 쪽이든 넓히는 쪽이든 기존 저장 데이터 영향이 있어 단독으로 고르기 어렵다.",
+    "updated": "2026-10-15"
+  },
+  {
+    "title": "v.instant 가 날짜만 있는 문자열·비ISO 형식을 시각으로 받는 것",
+    "value": 2,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "new Date(value) 의 NaN 여부만 본다. '2026-01-15'·'Jan 15 2026' 이 통과해 KST 경계 해석이 어긋날 수 있다. v.day 와 달리 ISO 왕복·범위 가드가 없다. 어느 라우트가 어떤 형식을 보내는지 확인 전에는 손대지 말 것.",
+    "updated": "2026-10-15"
+  },
+  {
+    "title": "v.email 의 지역부가 '.'·'..' 만으로도 통과",
+    "value": 2,
+    "risk": 3,
+    "size": "S",
+    "status": "pending",
+    "note": "좁히기 방향이지만 초대·로그인 식별자 경로라 기존 저장 주소를 거절하면 로그인 차단으로 번진다. 소비처와 기존 데이터 영향 확인 뒤에만.",
+    "updated": "2026-10-15"
+  },
+  {
+    "title": "클립보드 복사 폴백 예외 시 textarea 정리",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "download.ts:15 copyText 의 execCommand 가 throw 하면 area.remove() 에 도달하지 못한다. vitest environment 가 node 라 DOM 증거를 만들 수 없고 jsdom 추가는 의존성 변경(범위 밖), 손으로 만든 document 대역은 운영자 지시 위반. 다만 2026-10-15 에 playwright 로 실제 브라우저를 돌릴 수 있음을 확인했으니 ui-flows 쪽에서 증거를 만드는 길은 열려 있다.",
+    "updated": "2026-10-15"
+  },
+  {
+    "title": "상대 시간 표기 relative 의 분·시·일 경계와 미래 시각 처리",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "format.ts:46 은 단계마다 Math.round 라 59분30초가 '1시간 전', 미래 시각은 모두 '방금'. 제품이 원한 반올림인지 미확인 — 계약을 시험으로 고정하는 쪽만 안전.",
+    "updated": "2026-10-15"
+  },
+  {
+    "title": "krwShort 의 10억 이상 표기가 '10.0억' 으로 소수점을 남기는 문제",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "man>=10000 분기의 (man/10000).toFixed(1). 조·십억 단위 표기 정책이 제품에 정의돼 있는지 미확인.",
+    "updated": "2026-10-15"
+  }
+]
