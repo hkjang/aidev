@@ -28,3 +28,4 @@
 - 보안·법무 차단 없음: 인가 경계·비밀값·개인정보·결제·마이그레이션 무변경, 새 의존성 없음, `bytes=abc` 로 전체 본문을 끄는 것은 헤더 생략과 비용이 같아 증폭 경로가 아니다.
 - [러너 14:35] review approved — 리뷰 승인 (risk=low)
 - [러너 14:35] pr created — https://github.com/hkjang/studio.irumx.app/pull/3
+- [러너 14:40] ci no-ci — 이 커밋에 검사가 없음 (정책 allow_merge_without_ci 가 없으면 차단)
