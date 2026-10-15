@@ -1,5 +1,5 @@
 {
- "generated": "2026-10-16T07:48:42+09:00",
+ "generated": "2026-10-16T08:06:45+09:00",
  "site": "https://hkjang.github.io/aidev",
  "description": "Claude Code 자율 개선 에이전트가 hkjang 의 프로젝트를 개선·테스트·머지·릴리즈한 일일 보고. 오늘 13회차·릴리즈 8건, 누적 2634회차·릴리즈 801건, 주의 필요 13건.",
  "today": {
@@ -10,18 +10,18 @@
   "merged": 0,
   "nochange": 0,
   "failed": 3,
-  "cost_usd": 124.28,
-  "minutes": 334,
-  "sessions": 51
+  "cost_usd": 128.75,
+  "minutes": 347,
+  "sessions": 53
  },
  "totals": {
   "runs": 2634,
   "released": 801,
   "days": 45,
-  "cost_usd": 9227.56,
-  "minutes": 25592,
-  "tokens_in": 9996972601,
-  "tokens_out": 80627609
+  "cost_usd": 9232.03,
+  "minutes": 25605,
+  "tokens_in": 10001043793,
+  "tokens_out": 80663955
  },
  "alerts": [
   {
@@ -1505,11 +1505,11 @@
    "why": "review: approved — 리뷰 승인 (risk=low); ci: timeout — 제한 시간 안에 CI 완료를 확인하지 못함",
    "evidence": "https://github.com/hkjang/aidev/tree/main/state/runs/2026-10-16-065833-hunter-improve",
    "labels": "",
-   "action": "PR 처리기가 매시간 살핀다 (아직 순서가 오지 않음) · 승인: PR 라벨 aidev-approved / 반려: aidev-rejected — 다음 회차에 러너가 승인 당시 커밋에만 CI 확인 후 머지·닫기",
+   "action": "PR 처리기가 다음 시간에 다시 시도 · 승인: PR 라벨 aidev-approved / 반려: aidev-rejected — 다음 회차에 러너가 승인 당시 커밋에만 CI 확인 후 머지·닫기",
    "date": "2026-10-16",
-   "shepherd": "",
-   "shepherd_action": "",
-   "shepherd_detail": "",
+   "shepherd": "리뷰 없음 · 심사 거절 → 다음 시간에 수정 (10-16 08:06) — - internal/app/finding_ops.go:83 \"Three paths write data->>'assignee' and only two used to check it\" is false, and it is the premise the whole rule is documente",
+   "shepherd_action": "review-reject",
+   "shepherd_detail": "- internal/app/finding_ops.go:83 \"Three paths write data->>'assignee' and only two used to check it\" is false, and it is the premise the whole rule is documented on. There are four writers: saveDomain/validateResource (domain.go:468), validateFindingBulk (finding_bulk.go:60), the ITSM sync (automation_workflows_tickets.go:50-62, workflowText(s,200)+TrimSpace), and the generic scanner import at imports.go:102, which puts `assignee` through str() and is written straight to the row by ingestFindings (imports.go:304/INSERT, imports.go:297/UPDATE) without ever calling validateResource. I read all four. Fix the count and name the import path explicitly, and state in the comment whether it is deliberately left out of the rule or is a follow-up — do not silently leave it as \"two of three checked\".\n- internal/app/finding_ops.go:83 and commit 1e2cd22 (\"apply one assignee rule to every path that stores a finding assignee\") overclaim coverage, and the uncovered fourth path interacts with the new carve-out: the \"equal to old -> skip\" exemption at finding_ops.go:112 is justified in the comment as an accommodation for values that \"predate the rule\", but imports.go:102 keeps minting out-of-rule assignees after this ships (no byte limit, no control-character check), and every one of those is then permanently exempt on each later PUT. So the rule is not closed and the comment/commit say it is. Reword the commit message (or add a corrective commit) to the coverage actually delivered, and record the import gap.\n- internal/app/finding_ops.go:91-92 \"the detail view and the recipient match in notification_automation_recipients.go read it as assigned\" is wrong about the recipient match. notification_automation_recipients.go:78 compares the raw string against u.ID and u.Username, so a whitespace-only assignee matches no user and behaves as unassigned - the same direction as the queue SQL, not the opposite. Only the detail view disagrees (web/src/triage.tsx:425, `item.assignee || \"미지정\"`, and \"   \" is truthy). The conclusion (\"two different findings to two counters\") survives on the detail view alone; drop the recipient-match clause so the justification is not restated in release notes as a three-way split.",
    "needs_human": false
   },
   {
@@ -1524,9 +1524,9 @@
    "labels": "",
    "action": "PR 처리기가 다음 시간에 다시 시도 · 승인: PR 라벨 aidev-approved / 반려: aidev-rejected — 다음 회차에 러너가 승인 당시 커밋에만 CI 확인 후 머지·닫기",
    "date": "2026-10-16",
-   "shepherd": "CI 실패 · 수정 실패 → 다음 시간에 재시도 (10-16 06:42) — 수정 세션이 커밋을 만들지 않음: # 수리 요약 — PR #45 (ae64738) · 커밋 없음  - 고치지 않았다: CI 의 lint·test 실패를 트리에서 재현하지 못했고, 지적된 결함이 트리에 없다고 판단했다. 두 job 모두 3~4초에 실패하고 넘어온 \"실패 로그(끝부분)\" 는",
+   "shepherd": "CI 실패 · 수정 실패 → 다음 시간에 재시도 (10-16 08:01) — 수정 세션이 커밋을 만들지 않음: # 수리 요약 — PR #45 (ae64738) · 커밋 없음 (지적이 트리 밖의 원인)  - 고치지 않았다: 지적된 결함이 이 트리에 없다. `git diff origin/main...HEAD` 는 `docs/api.md`·`internal/serve",
    "shepherd_action": "fix-failed",
-   "shepherd_detail": "수정 세션이 커밋을 만들지 않음: # 수리 요약 — PR #45 (ae64738) · 커밋 없음  - 고치지 않았다: CI 의 lint·test 실패를 트리에서 재현하지 못했고, 지적된 결함이 트리에 없다고 판단했다. 두 job 모두 3~4초에 실패하고 넘어온 \"실패 로그(끝부분)\" 는 비어 있는데, test job 은 postgres 서비스 health-check 만으로도 4초를 넘기므로 두 job 다 **첫 명령 이전**(러너 할당 / `actions/checkout` / `actions/setup-go`)에서 끝난 것이다. 트리 내용으로는 설명되지 않는다. - 로컬 재현(전용 `postgres:16-alpine` 127.0.0.1:55841, 끝�",
+   "shepherd_detail": "수정 세션이 커밋을 만들지 않음: # 수리 요약 — PR #45 (ae64738) · 커밋 없음 (지적이 트리 밖의 원인)  - 고치지 않았다: 지적된 결함이 이 트리에 없다. `git diff origin/main...HEAD` 는 `docs/api.md`·`internal/server/workflow.go`·`internal/server/approval_comment_integration_test.go` 3파일뿐이고 `.github/workflows/ci.yml`·`go.mod`·`Dockerfile` 은 origin/main 과 **동일**하므로, 이 PR 이 CI 거동을 바꿀 경로가 없다. 게다가 lint 3s / test 4s 는 첫 저장소 명령 이전이다 — lint 의 `go vet ./...` 는 콜드 캐시 컴파일만으로 3s 를 넘고, test 는",
    "needs_human": false
   },
   {
@@ -1908,16 +1908,16 @@
   }
  ],
  "shepherd": {
-  "last_pass": "2026-10-16T06:35:31+09:00",
+  "last_pass": "2026-10-16T07:52:35+09:00",
   "enabled": true,
   "today": {
-   "fix-failed": 3,
+   "fix-failed": 4,
    "fix-pushed": 2,
-   "review-reject": 1,
+   "review-reject": 2,
    "approve": 1,
    "needs-human": 1
   },
-  "total": 697,
+  "total": 699,
   "pending_human": 203
  },
  "agents": {
@@ -1932,13 +1932,13 @@
     "role": "구현 builder",
     "calls": 498,
     "metric": "러너 검증 통과 88% · 변경 없음 138",
-    "cost": 1184.73
+    "cost": 1186.51
    },
    {
     "role": "비평 critic",
     "calls": 271,
     "metric": "최종 승인 98% · 한 번이라도 거절 18 · 승인·머지 뒤 회귀 0/196",
-    "cost": 506.15
+    "cost": 508.84
    },
    {
     "role": "수리 repairer",
@@ -1960,14 +1960,14 @@
    },
    {
     "role": "PR 심사 shepherd-reviewer",
-    "calls": 121,
-    "metric": "승인 39 · 거절 5 · 사람 필요 77 · 승인 뒤 회귀 1",
-    "cost": 200.26
+    "calls": 122,
+    "metric": "승인 39 · 거절 6 · 사람 필요 77 · 승인 뒤 회귀 1",
+    "cost": 204.73
    },
    {
     "role": "PR 수리 shepherd-fixer",
-    "calls": 73,
-    "metric": "고쳐서 푸시 34%",
+    "calls": 74,
+    "metric": "고쳐서 푸시 33%",
     "cost": null
    },
    {
@@ -2446,7 +2446,7 @@
   },
   {
    "metric": "유효 개선당 비용",
-   "value": "$14.01",
+   "value": "$14.03",
    "detail": "비용 확인된 유효 개선 186건, 미확인 세션 245"
   },
   {
@@ -2477,7 +2477,7 @@
    "merged": 0,
    "nochange": 0,
    "failed": 3,
-   "cost_usd": 124.28
+   "cost_usd": 128.75
   },
   {
    "date": "2026-10-15",
@@ -2751,8 +2751,8 @@
    "merged": 0,
    "nochange": 11,
    "failed": 26,
-   "cost": 525.04,
-   "minutes": 1410
+   "cost": 529.51,
+   "minutes": 1423
   },
   {
    "key": "2026-W41",
@@ -2837,8 +2837,8 @@
    "merged": 38,
    "nochange": 138,
    "failed": 51,
-   "cost": 2872.01,
-   "minutes": 8438
+   "cost": 2876.48,
+   "minutes": 8451
   },
   {
    "key": "2026-09",
@@ -2906,8 +2906,8 @@
    "last_ts": "2026-10-16T06:27:07+09:00",
    "last_status": "failed",
    "last_result": "fix-round: CI failed, PR open https://github.com/hkjang/ai-admin/pull/45",
-   "cost": 270.06,
-   "minutes": 657,
+   "cost": 271.84,
+   "minutes": 665,
    "grade": "C",
    "grade_why": "14일: 릴리즈 5, 실패 2, 경고 2, 회귀 0",
    "lessons": 0,
@@ -3403,8 +3403,8 @@
    "last_ts": "2026-10-16T07:48:40+09:00",
    "last_status": "other",
    "last_result": "CI timeout, PR open https://github.com/hkjang/hunter/pull/23",
-   "cost": 284.05,
-   "minutes": 759,
+   "cost": 286.74,
+   "minutes": 765,
    "grade": "A",
    "grade_why": "14일: 릴리즈 1, 실패 0, 경고 0, 회귀 0",
    "lessons": 0,
