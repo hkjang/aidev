@@ -1,5 +1,5 @@
 {
- "generated": "2026-10-16T06:27:09+09:00",
+ "generated": "2026-10-16T06:42:56+09:00",
  "site": "https://hkjang.github.io/aidev",
  "description": "Claude Code 자율 개선 에이전트가 hkjang 의 프로젝트를 개선·테스트·머지·릴리즈한 일일 보고. 오늘 10회차·릴리즈 6건, 누적 2631회차·릴리즈 799건, 주의 필요 12건.",
  "today": {
@@ -10,18 +10,18 @@
   "merged": 0,
   "nochange": 0,
   "failed": 3,
-  "cost_usd": 90.68,
-  "minutes": 257,
-  "sessions": 37
+  "cost_usd": 92.12,
+  "minutes": 263,
+  "sessions": 38
  },
  "totals": {
   "runs": 2631,
   "released": 799,
   "days": 45,
-  "cost_usd": 9193.96,
-  "minutes": 25515,
-  "tokens_in": 9963982643,
-  "tokens_out": 80369362
+  "cost_usd": 9195.4,
+  "minutes": 25521,
+  "tokens_in": 9965262034,
+  "tokens_out": 80380858
  },
  "alerts": [
   {
@@ -1478,11 +1478,11 @@
    "why": "review: approved — 리뷰 승인 (risk=low); ci: failed — 성공이 아닌 검사: test=failure, lint=failure · 실패한 검사: ? 잡: lint ",
    "evidence": "https://github.com/hkjang/aidev/tree/main/state/runs/2026-10-16-055826-ai-admin-improve",
    "labels": "",
-   "action": "PR 처리기가 매시간 살핀다 (아직 순서가 오지 않음) · 승인: PR 라벨 aidev-approved / 반려: aidev-rejected — 다음 회차에 러너가 승인 당시 커밋에만 CI 확인 후 머지·닫기",
+   "action": "PR 처리기가 다음 시간에 다시 시도 · 승인: PR 라벨 aidev-approved / 반려: aidev-rejected — 다음 회차에 러너가 승인 당시 커밋에만 CI 확인 후 머지·닫기",
    "date": "2026-10-16",
-   "shepherd": "",
-   "shepherd_action": "",
-   "shepherd_detail": "",
+   "shepherd": "CI 실패 · 수정 실패 → 다음 시간에 재시도 (10-16 06:42) — 수정 세션이 커밋을 만들지 않음: # 수리 요약 — PR #45 (ae64738) · 커밋 없음  - 고치지 않았다: CI 의 lint·test 실패를 트리에서 재현하지 못했고, 지적된 결함이 트리에 없다고 판단했다. 두 job 모두 3~4초에 실패하고 넘어온 \"실패 로그(끝부분)\" 는",
+   "shepherd_action": "fix-failed",
+   "shepherd_detail": "수정 세션이 커밋을 만들지 않음: # 수리 요약 — PR #45 (ae64738) · 커밋 없음  - 고치지 않았다: CI 의 lint·test 실패를 트리에서 재현하지 못했고, 지적된 결함이 트리에 없다고 판단했다. 두 job 모두 3~4초에 실패하고 넘어온 \"실패 로그(끝부분)\" 는 비어 있는데, test job 은 postgres 서비스 health-check 만으로도 4초를 넘기므로 두 job 다 **첫 명령 이전**(러너 할당 / `actions/checkout` / `actions/setup-go`)에서 끝난 것이다. 트리 내용으로는 설명되지 않는다. - 로컬 재현(전용 `postgres:16-alpine` 127.0.0.1:55841, 끝�",
    "needs_human": false
   },
   {
@@ -1864,16 +1864,16 @@
   }
  ],
  "shepherd": {
-  "last_pass": "2026-10-16T05:35:30+09:00",
+  "last_pass": "2026-10-16T06:35:31+09:00",
   "enabled": true,
   "today": {
-   "fix-failed": 2,
+   "fix-failed": 3,
    "fix-pushed": 2,
    "review-reject": 1,
    "approve": 1,
    "needs-human": 1
   },
-  "total": 696,
+  "total": 697,
   "pending_human": 203
  },
  "agents": {
@@ -1888,7 +1888,7 @@
     "role": "구현 builder",
     "calls": 495,
     "metric": "러너 검증 통과 87% · 변경 없음 138",
-    "cost": 1173.79
+    "cost": 1175.23
    },
    {
     "role": "비평 critic",
@@ -1918,11 +1918,11 @@
     "role": "PR 심사 shepherd-reviewer",
     "calls": 121,
     "metric": "승인 39 · 거절 5 · 사람 필요 77 · 승인 뒤 회귀 1",
-    "cost": 198.81
+    "cost": 200.26
    },
    {
     "role": "PR 수리 shepherd-fixer",
-    "calls": 72,
+    "calls": 73,
     "metric": "고쳐서 푸시 34%",
     "cost": null
    },
@@ -2402,13 +2402,13 @@
   },
   {
    "metric": "유효 개선당 비용",
-   "value": "$13.82",
+   "value": "$13.83",
    "detail": "비용 확인된 유효 개선 186건, 미확인 세션 245"
   },
   {
    "metric": "예외 처리 소요 시간(중앙값)",
-   "value": "1.9시간",
-   "detail": "해결된 경고 399건"
+   "value": "2.0시간",
+   "detail": "해결된 경고 400건"
   },
   {
    "metric": "실행 오류",
@@ -2433,7 +2433,7 @@
    "merged": 0,
    "nochange": 0,
    "failed": 3,
-   "cost_usd": 90.68
+   "cost_usd": 92.12
   },
   {
    "date": "2026-10-15",
@@ -2707,8 +2707,8 @@
    "merged": 0,
    "nochange": 11,
    "failed": 26,
-   "cost": 491.43,
-   "minutes": 1333
+   "cost": 492.88,
+   "minutes": 1340
   },
   {
    "key": "2026-W41",
@@ -2793,8 +2793,8 @@
    "merged": 38,
    "nochange": 138,
    "failed": 51,
-   "cost": 2838.41,
-   "minutes": 8361
+   "cost": 2839.86,
+   "minutes": 8367
   },
   {
    "key": "2026-09",
@@ -2862,8 +2862,8 @@
    "last_ts": "2026-10-16T06:27:07+09:00",
    "last_status": "failed",
    "last_result": "fix-round: CI failed, PR open https://github.com/hkjang/ai-admin/pull/45",
-   "cost": 268.62,
-   "minutes": 651,
+   "cost": 270.06,
+   "minutes": 657,
    "grade": "C",
    "grade_why": "14일: 릴리즈 5, 실패 2, 경고 2, 회귀 0",
    "lessons": 0,
