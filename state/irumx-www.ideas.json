@@ -1,65 +1,74 @@
 [
   {
-    "title": "GitHub Actions CI 워크플로 추가 — 러너가 돌리는 검증 명령을 그대로 CI 로",
+    "title": "npm test --silent 가 깨끗한 체크아웃에서 혼자 통과하게 고침(pretest + serve-static 기동 점검)",
+    "value": 5,
+    "risk": 2,
+    "size": "M",
+    "status": "done",
+    "note": "이번 회차 구현. package.json 에 pretest(test:build + chromium) 한 줄, serve-static.mjs 에 기동 점검·404 선읽기·핸들러 catch, README 28행 한 구절. 깨끗한 클론(/tmp/irumx-red, dist 세 벌 삭제)에서 npm test --silent → 77 통과·4 건너뜀·exit 0(1분59초), npm run build --silent → ✓ 모두 통과.",
+    "updated": "2026-10-15"
+  },
+  {
+    "title": "러너 작업 트리에서 npm 스크립트가 /home/hkjang/node_modules/.bin/node(v20.19.2)를 집어 wrangler 가 거부한다",
     "value": 5,
     "risk": 1,
     "size": "S",
-    "status": "done",
-    "note": "이번 회차 구현. .github/workflows/ci.yml 한 파일로 npm ci → npm run build → npx playwright install --with-deps chromium → npm run test:build → npm test. push(main)·pull_request. 깨끗한 클론에서 같은 단계를 실행해 전부 exit 0(npm test 77 통과·4 건너뜀), actionlint 1.7.7 exit 0. --with-deps 단계만 샌드박스 sudo 제약으로 미실행. 보호 경로라 사람 승인 필요.",
-    "updated": "2026-10-15"
-  },
-  {
-    "title": "GitHub Actions CI 워크플로(ci.yml) 를 main 에 다시 올리기",
-    "value": 5,
-    "risk": 2,
-    "size": "S",
-    "status": "done",
-    "note": "위 항목과 같은 과제 — 이번 회차에 반영했다(커밋 2ef209f). 중복 항목이므로 다음 회차에는 하나로 본다.",
-    "updated": "2026-10-15"
-  },
-  {
-    "title": "scripts/serve-static.mjs 하드닝이 main 에 없다 — 이전 성공 회차의 변경이 유실됨",
-    "value": 4,
-    "risk": 1,
-    "size": "S",
     "status": "pending",
-    "note": "현 HEAD 재확인: serve-static.mjs:42 는 여전히 !full.startsWith(base)(형제 폴더 탈출 가능), :53 은 writeHead 뒤 404.html 무방비 readFile. 유실/미머지 원인은 여전히 미확인 — 같은 변경을 또 올리기 전에 왜 main 에 못 들어갔는지부터 확인해야 한다.",
+    "note": "저장소 결함이 아니라 환경 오염. npm 은 cwd 의 모든 상위 node_modules/.bin 을 PATH 앞에 붙이는데, /home/hkjang/node_modules 에 node@20.19.2 패키지(2026-10-12 설치, @hkjang/openpro 또는 playwright 의 전이 의존)가 있다. 작업 트리가 /home/hkjang/.cache/... 아래라 npm run 전부가 v20 로 돈다 → wrangler(>=22 요구)가 즉시 exit 1. 같은 커밋을 /tmp 로 클론하면 v22.23.1 로 돌고 통과한다. 조치는 저장소가 아니라 환경 쪽: /home/hkjang 에서 node 패키지를 지우거나, 러너 작업 트리를 /home/hkjang 밖에 두는 것. 저장소에 우회 코드를 넣는 것은 하드코딩이라 하지 않았다.",
     "updated": "2026-10-15"
   },
   {
-    "title": "harfbuzzjs·fontverter 선언 + verify-deps.mjs 를 main 에 다시 올리기",
-    "value": 4,
-    "risk": 2,
-    "size": "S",
-    "status": "pending",
-    "note": "현 HEAD 재확인: scripts/verify-build.mjs:18-19 가 harfbuzzjs·fontverter 를 직접 import 하는데 package.json devDependencies 에는 둘 다 없다(전이 의존성으로만 설치). verify-deps.mjs 는 없다. 이제 CI 가 npm ci 로 깨끗한 설치를 매번 돌리므로 전이 의존성이 사라지면 CI 가 먼저 빨개져 드러난다 — 다음 회차 1순위로 적합.",
-    "updated": "2026-10-15"
-  },
-  {
-    "title": "worker/index.ts handleInbound 첨부 누적 용량 계산 오류",
-    "value": 3,
-    "risk": 3,
-    "size": "S",
-    "status": "pending",
-    "note": "실제 bytes.length 를 total 에 더한 뒤 초과 continue 하면서 total 을 되돌리지 않아 이후 작은 첨부까지 제외될 수 있다. 운영 수신 메일 경로라 e2e 재현(inbound.spec.ts 흐름)으로 먼저 증명해야 한다.",
-    "updated": "2026-10-15"
-  },
-  {
-    "title": "handleInbound 의 FORWARD_TO 루프 감지가 500 을 돌려 Resend 가 재시도",
-    "value": 3,
-    "risk": 3,
-    "size": "S",
-    "status": "pending",
-    "note": "루프 조건에서 fail(500,loop). 외부 서비스의 재시도 동작은 미확인이고, 2xx 로 바꾸면 설정 수정 후 재처리 기회를 없앤다. 단순 상태 코드 변경은 금지 — 운영 의미를 먼저 정리할 것.",
-    "updated": "2026-10-15"
-  },
-  {
-    "title": "src/lib/inquiry.ts 상속 키가 유형 검증을 통과하는 구멍 + 순수 함수 경계값 단위 테스트",
+    "title": "scripts/serve-static.mjs 경로 가드(:42 의 !full.startsWith(base) → base + sep)",
     "value": 3,
     "risk": 1,
     "size": "S",
     "status": "pending",
-    "note": "현 HEAD 재확인: inquiry.ts:48 이 여전히 !TYPE_LABELS[v.type] 이라 constructor·__proto__ 가 유형 검사를 통과한다(과거 Object.hasOwn 수정이 main 에 없다). 이름·회사·본문 경계와 composeSubject/composeText/mailtoHref 계약 테스트도 비어 있다. node --test + --experimental-strip-types 로 Playwright 설정을 건드리지 않고 돌릴 수 있다.",
+    "note": "이번 회차에 기동 점검·404 분기·핸들러 catch 는 넣었다. 남은 조각은 형제 폴더 탈출 가드 하나뿐(..%2f 벡터로 재현 가능 — 2026-10-07 원장 참고). 파일 1개짜리 소과제.",
+    "updated": "2026-10-15"
+  },
+  {
+    "title": "harfbuzzjs·fontverter 직접 의존성 선언(+ 미선언 import 검사)",
+    "value": 4,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "이번 회차 차선 후보였다(1순위가 성립해 쓰지 않음). verify-build.mjs:18-19 가 직접 import 하는데 package.json devDependencies 에 둘 다 없다 — 전이 의존성 호이스팅에 기대고 있다. 검증은 npm ci → npm run build.",
+    "updated": "2026-10-15"
+  },
+  {
+    "title": ".github/workflows/ci.yml 재투입(러너 검증 명령을 CI 로)",
+    "value": 4,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "현 HEAD 94eb01f 에 .github 없음(이번 회차에도 확인). 이번 pretest 가 들어가면 CI 는 npm ci → npm run build → npm test 세 줄로 줄어든다(브라우저·빌드 세 벌은 pretest 가 처리). 이 과제가 main 에 들어간 뒤에 할 일.",
+    "updated": "2026-10-15"
+  },
+  {
+    "title": "src/lib/inquiry.ts 상속 키 유형 검증 구멍 + 순수 함수 경계값 단위 테스트",
+    "value": 3,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "원장에 '성공' 기록이 있으나 main 미반영. 이번 회차에도 inquiry.ts 는 열지 않았으므로 현 HEAD 상태는 여전히 미확인 — 구현 전 해당 줄을 직접 확인할 것.",
+    "updated": "2026-10-15"
+  },
+  {
+    "title": "npm run build 와 npm run test:build 가 같은 dist 를 두 번 빌드",
+    "value": 3,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "pretest 가 들어가 눈에 더 띈다 — 이번 실측에서 pretest(빌드 세 벌) 포함 npm test 전체가 1분59초(캐시 있음)였다. 조건부 건너뛰기는 금물(평범한 build 의 dist 는 테스트 Turnstile 키가 없다). 스크립트 구조 변경이라 별도 회차.",
+    "updated": "2026-10-15"
+  },
+  {
+    "title": "테스트 포트 동적 할당(8820~8823 고정 제거)",
+    "value": 2,
+    "risk": 3,
+    "size": "M",
+    "status": "pending",
+    "note": "현 main 은 reuseExistingServer:false 라 남의 서버 오인 위험은 없다. 이번 회차 실행에서도 포트 충돌은 없었다. npm run preview 도 8820 을 쓰므로 동시 실행 때만 문제 — 우선순위 낮음.",
     "updated": "2026-10-15"
   },
   {
@@ -68,25 +77,25 @@
     "risk": 3,
     "size": "M",
     "status": "pending",
-    "note": "이번 회차 실행에서도 외부 연결 실패는 없었다(77 통과·기존 4 건너뜀). 다만 공개 Turnstile 테스트 키를 네트워크로 확인하는 구조는 그대로라 폐쇄망·Cloudflare 장애 시 새로 넣은 CI 가 빨개진다. skip 으로 덮지 말고 의존성 자체를 없애는 별도 과제.",
+    "note": "이번 실행 환경은 외부 연결이 있어 77건 전부 통과했다(과거 폐쇄망 회차에서는 같은 3건이 net::ERR_INTERNET_DISCONNECTED 로 실패). 폐쇄망·Cloudflare 장애 시 검증이 빨개지는 구조는 그대로 — skip 으로 덮지 말고 의존성 자체를 없애는 별도 과제.",
     "updated": "2026-10-15"
   },
   {
-    "title": "CI 에서 Playwright 브라우저 캐시 캐싱",
+    "title": "worker/index.ts handleInbound 첨부 누적 용량 계산 오류",
     "value": 3,
-    "risk": 1,
+    "risk": 3,
     "size": "S",
     "status": "pending",
-    "note": "신규. 이번에 넣은 ci.yml 은 매 실행 Chromium 114MB 를 새로 받는다(이번 실측: 설치 단계만 수십 초). actions/cache 로 ~/.cache/ms-playwright 를 playwright 버전 키로 캐시하면 줄어든다. ci.yml 한 파일만 바뀌지만 보호 경로라 또 사람 승인이 필요하므로 다른 CI 개선과 묶어서.",
+    "note": "이번 회차에도 worker/ 는 읽지 않았다 — 원장 기록 그대로 보류. 운영 수신 메일 경로라 e2e(inbound.spec.ts) 재현으로 먼저 증명해야 한다.",
     "updated": "2026-10-15"
   },
   {
-    "title": "npm run build 와 npm run test:build 가 같은 dist 빌드를 두 번 한다",
-    "value": 2,
-    "risk": 2,
+    "title": "handleInbound FORWARD_TO 루프 감지가 500 을 돌려 Resend 가 재시도",
+    "value": 3,
+    "risk": 3,
     "size": "S",
     "status": "pending",
-    "note": "신규. test:build 의 첫 단계가 npm run build(테스트 Turnstile 키)라서 CI·로컬 모두 dist 를 두 번 만든다(이번 실측 35s + 8s — 캐시가 차 있을 때. 콜드 캐시는 더 걸린다). 명세가 스크립트 수정을 금지해 이번엔 그대로 옮겼다. 고치려면 package.json 의 검증 명령 구조를 손대야 하니 러너 검증과 README 문구까지 함께 봐야 한다.",
+    "note": "운영 의미 정리가 먼저. 단순 상태 코드 변경 금지. 이번 회차 미확인.",
     "updated": "2026-10-15"
   },
   {
@@ -95,7 +104,7 @@
     "risk": 1,
     "size": "S",
     "status": "pending",
-    "note": "README 구성 표와 docs/deploy.md 초반이 '/api 만 Worker' 로 설명하는데 실제로는 serveHtml·run_worker_first 로 HTML 도 Worker 를 거치고 메일은 MAIL 바인딩을 쓴다. 문서만 바뀌는 저위험 과제.",
+    "note": "문서만 바뀌는 저위험 과제. 이번 회차가 README '명령' 절 28행을 건드렸으므로 그 줄과 충돌하지 않게.",
     "updated": "2026-10-15"
   },
   {
@@ -104,7 +113,7 @@
     "risk": 3,
     "size": "S",
     "status": "pending",
-    "note": "serveHtml 의 /\\bgzip\\b/i 검사는 q=0(거부) 도 문자열로 매칭한다. 실제 HTTP 재현·표준 대조는 여전히 미실행이고 운영 HTML·ETag 에 닿는다.",
+    "note": "이번 회차 미확인(worker/ 미열람). 운영 HTML·ETag 에 닿는다.",
     "updated": "2026-10-15"
   },
   {
@@ -113,16 +122,25 @@
     "risk": 1,
     "size": "S",
     "status": "pending",
-    "note": "verify-build 의 canonical 검사는 startsWith(SITE) 뿐이라 같은 사이트의 다른 서비스 URL 을 복사한 canonical 을 통과시킨다. 생성 파일 경로와 정확히 대조하는 검사를 더할 수 있다. 실제 산출물 오류는 아직 미확인.",
+    "note": "verify-build 의 canonical 검사가 startsWith(SITE) 뿐이라는 원장 기록 유지. 실제 산출물 오류는 여전히 미확인.",
     "updated": "2026-10-15"
   },
   {
-    "title": "외부 메일·Turnstile 요청에 명시적인 시간 제한과 실패 안내",
+    "title": "외부 메일·Turnstile 요청에 명시적 시간 제한과 실패 안내",
     "value": 3,
     "risk": 3,
     "size": "M",
     "status": "pending",
-    "note": "sendEmail·verifyTurnstile·handleInbound 의 fetch 에 AbortSignal/timeout 이 없다. 장애 재현은 미실행이고 재시도·중복 발송·부분 성공 의미까지 함께 봐야 한다.",
+    "note": "원장 기록 유지. 재시도·중복 발송 의미를 먼저 정리해야 한다. 이번 회차 미확인.",
+    "updated": "2026-10-15"
+  },
+  {
+    "title": "CI 에서 Playwright 브라우저 캐시 캐싱",
+    "value": 3,
+    "risk": 1,
+    "size": "S",
+    "status": "rejected",
+    "note": "전제가 사라졌다 — 현 HEAD 에 .github/workflows/ci.yml 자체가 없다. CI 가 main 에 들어간 뒤 다시 제안할 일.",
     "updated": "2026-10-15"
   }
 ]
