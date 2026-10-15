@@ -1,20 +1,11 @@
 [
   {
-    "title": "빈 헤더에서 폴백하지 않는 방문자 IP 추출 — pipeline.ts clientAddress 를 고치고 죽은 쌍둥이 clientIpFrom 삭제",
-    "value": 3,
-    "risk": 2,
-    "size": "S",
-    "status": "done",
-    "note": "2026-10-15 구현(dfc8d78). ?? 연쇄를 '후보 헤더를 순서대로 보며 trim() 후 비어 있지 않은 첫 값' 으로 교체, x-forwarded-for 는 첫 번째 선택 정책 유지하고 빈 원소만 건너뜀. 체인 확정: hashClient('')=''(principal.ts:106) → ipSubject('')='ip:unknown'(quota.ts:152). 신규 테스트 13건(client-address.test.ts), 고치기 전 5 failed / 8 passed. npm run check 131/7, e2e 218/0(기준선 유지).",
-    "updated": "2026-10-15"
-  },
-  {
-    "title": "util/text.ts 의 clientIpFrom 은 죽은 코드 — pipeline.ts 가 자기 복사본(clientAddress)을 쓴다",
-    "value": 2,
+    "title": "CI 게이트를 로컬에서 한 줄로 재현하는 scripts/ci-local.sh + README 검증 절 정합",
+    "value": 4,
     "risk": 1,
     "size": "S",
     "status": "done",
-    "note": "2026-10-15 위 과제에 포함해 삭제(dfc8d78). 삭제 전·후 grep -rn clientIpFrom --include=*.ts 로 0건 확인. 파서는 pipeline.ts 쪽 하나만 남았다. 같은 종류의 남은 사례는 domain/products.ts 의 slugify.",
+    "note": "구현 완료(015c264). check.yml 의 9단계를 같은 순서·같은 환경변수로 밟는 scripts/ci-local.sh 신규 + README 「검증」 절 맨 앞에 한 줄 + check.yml 머리말 주석 한 줄(단계 변경 없음). 실제로 돌려 전 단계 통과 확인: 118 tests, 223.7/230 KB, migrate 10건, e2e 218 passed/0 failed, a11y 심각 위반 0건. 과제서에 없던 8796 포트 선행 확인을 추가했다 — 고아 서버가 듣고 있으면 가짜 통과가 난다(이 샌드박스에서 실제로 마주쳤다).",
     "updated": "2026-10-15"
   },
   {
@@ -23,16 +14,16 @@
     "risk": 1,
     "size": "S",
     "status": "pending",
-    "note": "이번 회차 차선 후보였다. text.test.ts(108줄)는 isSafeLink 중심. 미덮인 것: mailboxKey(+tag 제거·local-part 가 '+tag' 뿐일 때 폴백·a@b@c.com), maskEmail(null/undefined·점 없는 도메인·한 글자 local·'@' 로 시작), koreanParticle(종성 있음/없음·끝이 숫자 1·2·끝이 ')'·'」'·한글 없는 단어), excerpt(코드포인트 경계·공백 접기·max 경계 정확히 120), tidyBody(\\r\\n→\\n·빈 줄 4개 이상 접기·trimEnd), emailDomain/normalizeEmail/charCount. mailboxKey 는 '한 메일함 한 번 인증' 제품 규칙을 지탱한다. 프로덕션 파일 0개, npm run check 하나로 검증(DB·브라우저 불필요). 4회차 연속 보류.",
+    "note": "6회차 연속 보류. text.test.ts(108줄)는 isSafeLink 중심. 미덮인 것: mailboxKey(+tag 제거·local-part 가 '+tag' 뿐일 때 폴백·a@b@c.com), maskEmail(점 없는 도메인·한 글자 local·'@' 로 시작), koreanParticle(종성 유무·끝이 숫자·끝이 ')'·한글 없는 단어), excerpt(코드포인트 경계·공백 접기·max 경계 120), tidyBody(\\r\\n→\\n·빈 줄 4개 이상 접기·trimEnd), emailDomain/normalizeEmail/charCount. mailboxKey 는 '한 메일함 한 번 인증' 제품 규칙을 지탱한다. 프로덕션 파일 0개, npm run check 하나로 검증(DB·브라우저 불필요). 이제 bash scripts/ci-local.sh 로 전체 게이트까지 한 줄로 확인할 수 있다.",
     "updated": "2026-10-15"
   },
   {
-    "title": "Actions 복구 후 PR #4 를 그대로 머지 (저장소 변경 불필요)",
+    "title": "Actions 복구 후 PR #4·#5 를 그대로 머지 (저장소 변경 불필요)",
     "value": 5,
     "risk": 1,
     "size": "S",
     "status": "pending",
-    "note": "유지. 2026-10-15 에도 main@6ea982c 기준으로 quota.test.ts 가 없고 Retry-After 9시간 과장이 그대로다. 내용은 2026-10-14 회차가 check.yml 9단계를 로컬 전부 통과시켜 증명했다. 중복 PR 을 만들지 말고 PR #4 를 재실행·머지할 것. 저장소 쪽 할 일 없음(사람 조치 — Actions 결제/쿼터).",
+    "note": "사람 조치. main@6ea982c 에 quota.test.ts 가 없고 Retry-After 9시간 과장이 그대로다. PR #4·#5 둘 다 열린 채. 저장소 쪽 할 일 없음 — GitHub 계정의 Actions 결제/쿼터 확인이 유일한 조치. 중복 PR 금지. 참고: 2026-10-15 이 회차에서 scripts/ci-local.sh 로 main 기준 전체 게이트가 로컬에서 통과하는 것을 다시 확인했다(저장소는 결백하다는 2026-10-14 결론을 재확인).",
     "updated": "2026-10-15"
   },
   {
@@ -40,8 +31,8 @@
     "value": 3,
     "risk": 1,
     "size": "S",
-    "status": "pending",
-    "note": "유지. npx playwright install --with-deps chromium 은 로컬에서 'sudo: a password is required' 로 죽고, --with-deps 를 빼면 설치돼 a11y·ui-flows·screenshots 가 돈다. 워크플로는 건드리지 않는다(CI 에서는 --with-deps 가 맞다). 문서 1파일.",
+    "status": "done",
+    "note": "해소됨. scripts/ci-local.sh 가 'npx playwright install chromium'(--with-deps 없이)을 쓰고 README 「검증」 절이 그 이유('--with-deps 는 sudo 를 요구합니다')를 한 줄로 밝힌다. 워크플로의 --with-deps 는 CI 에서 맞으므로 그대로 뒀다.",
     "updated": "2026-10-15"
   },
   {
@@ -50,7 +41,7 @@
     "risk": 1,
     "size": "S",
     "status": "pending",
-    "note": "유지. 여유 6.3KB. 큰 덩어리는 react 77.1KB·index 125.6KB·mantine 20.6KB. 지연 로드 경계 한 곳 추가, 또는 최소한 예산 근접을 경고로 드러내기. 2026-10-15 회차도 perf.mjs 를 실행하지 않았다(수치는 2026-10-14 관측).",
+    "note": "유지. 2026-10-15 이 회차에서 perf.mjs 를 실제로 돌려 '223.7 KB initial JS (gzip), budget 230 KB' 재확인(이전 두 회차는 재실행 못 했다). 여유 6.3KB — 의존성 하나만 늘어도 CI perf 단계가 터진다. 큰 덩어리는 react 77.1KB·index 125.6KB·mantine 20.6KB. 지연 로드 경계 한 곳 추가, 또는 최소한 예산 근접을 경고로 드러내기.",
     "updated": "2026-10-15"
   },
   {
@@ -77,7 +68,7 @@
     "risk": 2,
     "size": "M",
     "status": "pending",
-    "note": "유지. 2026-10-15 에도 dev-reset.sh 직후 218 passed / 0 failed 를 재확인했다. 개수·빈 목록을 단정하는 검사를 run-id 로 격리하거나 전제를 README/스크립트 헤더에 명시.",
+    "note": "전제 명시는 해소, 멱등성 자체는 유지. scripts/ci-local.sh 헤더와 README 「검증」 절이 '깨끗한 DB 전제 — dev-reset.sh 먼저' 를 명시한다. 남은 것은 개수·빈 목록을 단정하는 검사를 run-id 로 격리하는 쪽. 2026-10-15 이 회차에서도 DB 를 drop/create 한 직후 218 passed / 0 failed 로 세 회차 연속 같은 기준선.",
     "updated": "2026-10-15"
   },
   {
@@ -104,7 +95,7 @@
     "risk": 1,
     "size": "S",
     "status": "pending",
-    "note": "유지. 정의 외 참조 없음. 쓰이기 시작할 때 터질 함정이지만 지금 영향 0. clientIpFrom 을 지운 지금 저장소에 남은 같은 종류의 마지막 사례다 — 지우거나 쓰거나 결정할 것.",
+    "note": "유지. 정의 외 참조 없음. 쓰이기 시작할 때 터질 함정이지만 지금 영향 0. clientIpFrom 을 지운 지금(PR #5) 저장소에 남은 같은 종류의 마지막 사례다 — 지우거나 쓰거나 결정할 것.",
     "updated": "2026-10-15"
   },
   {
@@ -113,7 +104,16 @@
     "risk": 2,
     "size": "S",
     "status": "pending",
-    "note": "2026-10-15 신규 관측. 이번 회차는 '빈 값을 건너뛴다' 까지만 고쳤다. 남은 것: 같은 방문자가 '1.2.3.4' 와 '1.2.3.4:51234'(일부 프록시가 포트를 붙인다), 또는 '2001:db8::1' 과 '[2001:db8::1]:443' 으로 서로 다른 쿼터 주체가 된다 — 양동이가 합쳐지는 게 아니라 갈라지는 방향이라 한도를 우회할 수 있다. 다만 ipHash 주체가 바뀌는 변경이므로 배포 시점에 진행 중인 카운터의 주체가 갈린다는 점을 감안할 것(과제서가 경고한 그 위험).",
+    "note": "유지. PR #5 는 '빈 값을 건너뛴다' 까지만 고쳤다. 남은 것: 같은 방문자가 '1.2.3.4' 와 '1.2.3.4:51234', 또는 '2001:db8::1' 과 '[2001:db8::1]:443' 으로 서로 다른 쿼터 주체가 된다 — 양동이가 갈라지는 방향이라 한도를 우회할 수 있다. ipHash 주체가 바뀌는 변경이라 배포 시점에 진행 중인 카운터의 주체가 갈린다. PR #5 머지 전에는 같은 파일(pipeline.ts)이라 고르지 말 것.",
+    "updated": "2026-10-15"
+  },
+  {
+    "title": "ci-local.sh 를 워크플로와 어긋나지 않게 묶어 두기 (드리프트 감시)",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "신규 관측. scripts/ci-local.sh 와 .github/workflows/check.yml 은 손으로 맞춘 두 목록이라 한쪽만 고치면 다시 어긋난다 — 이번 회차가 고친 바로 그 문제가 재발하는 경로다. 생각해 볼 것: check.yml 의 run 문자열을 읽어 ci-local.sh 의 단계와 대조하는 작은 단위 테스트(의존성 없이 정규식 수준), 또는 양쪽이 같은 셸 스니펫 파일을 참조하게 하기. 후자는 워크플로 수정이 필요해 위험이 올라간다 — 전자부터. 통합하지 말고 '어긋남을 알려 주는' 쪽으로만.",
     "updated": "2026-10-15"
   }
 ]
