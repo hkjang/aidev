@@ -1,48 +1,12 @@
 [
   {
-    "title": "PR #6 CI 가 저장소 단계 이전에 죽는 것 — services: 의 postgres 를 명시적 단계로 바꿔 실패를 로그에 남게 하기",
+    "title": "쿼터 429 의 Retry-After 가 하루·한 달 창에서 실제 초기화 시각보다 9시간 길다",
     "value": 4,
     "risk": 2,
     "size": "S",
-    "status": "rejected",
-    "note": "기각 — 가설이 저장소 안의 증거로 반박됐다. `git log --all -- .github/workflows/check.yml` 의 마지막 변경은 13d52c5(v0.1.1)로, PR #2·#3·#4 가 머지되고 v0.1.2~v0.1.4 가 릴리즈된 구간 전체에서 파일은 **한 글자도 바뀌지 않았다**. 같은 services: 블록으로 통과했던 파일이 PR #5·#6 에서 3초·0단계로 죽으므로 원인은 워크플로 파일이 아니다(같은 주기에 biz/law/yeopjari 세 저장소가 같은 모양으로 죽은 기록과도 일치 → 계정·러너·쿼터 쪽). 통과하던 CI 파일을 미확인 가설로 재구성하는 것은 이득 없이 게이트만 흔든다.",
-    "updated": "2026-10-14"
-  },
-  {
-    "title": "CI check 잡의 3초·annotations 2 즉시 실패 원인 확정(토큰 필요)",
-    "value": 3,
-    "risk": 1,
-    "size": "S",
-    "status": "pending",
-    "note": "세 회차 연속 막혔다. 2026-10-14 20:35 회차도 `gh auth status` = 'You are not logged into any GitHub hosts', GH_TOKEN/GITHUB_TOKEN 환경변수 0건, 비공개 저장소라 토큰 없는 공개 API 는 404. 저장소 안에서는 더 확정할 수 없고, 워크플로 파일이 무죄라는 것만 이번에 증명됐다(위 항목). 다음에 해야 할 것은 코드 변경이 아니라 **운영자 쪽 확인**: GitHub Actions 사용량/결제 한도와 Actions 활성화 여부. 코드로 다시 시도하지 말 것.",
-    "updated": "2026-10-14"
-  },
-  {
-    "title": "쿼터 하루·한 달 창의 Retry-After 가 실제 초기화 시각보다 9시간 길다",
-    "value": 3,
-    "risk": 2,
-    "size": "S",
-    "status": "pending",
-    "note": "새 항목. quota.ts 의 하루 창 열쇠는 kstDateKey(at) 라 카운터는 UTC 15:00 에 바뀌는데, retryAfterSeconds 의 day 분기는 `windowStart('day', at+24h)` = 다음 KST 날짜키의 **UTC 자정**까지를 센다 → 항상 정확히 32400초(9시간) 과대. month 분기도 같은 이유로 +9시간. 과소가 아니라 과대라 한도 우회는 아니고, 429 의 retry-after 헤더(respond.ts:69 → apps/web/src/api/client.ts:181)가 '13시간 뒤' 대신 '22시간 뒤' 를 말한다. 고치려면 이미 있고 아무도 쓰지 않는 kstDayStart() 를 쓰면 된다. **이번 회차에 일부러 안 고쳤다**: retryAfterSeconds 는 비공개이고 consume() 은 Sql 을 요구해 DOM 없는 vitest 로는 프로덕션 배선을 지나는 증거를 만들 수 없다. 게다가 day/month 429 를 실제로 노출하는 경로가 거의 없다 — agent.ts:97 과 client-errors.ts:49 는 rate_limited 를 잡아 각각 quotaExceeded·{ok:true} 로 바꿔 retryAfter 를 버리고, 남은 day 한도는 auth.login 200·auth.mfa 60·mcp.call 5000 처럼 커서 minute 한도가 먼저 걸린다. DB e2e(scripts/e2e.mjs)로 login 200회를 돌려 헤더를 확인하는 것이 유일한 실증 경로.",
-    "updated": "2026-10-14"
-  },
-  {
-    "title": "원장 CSV 수식 중립화와 인용 처리의 API 회귀 시험",
-    "value": 3,
-    "risk": 2,
-    "size": "M",
-    "status": "pending",
-    "note": "csvCell 이 비공개라 ctx.sql·권한·감사를 지나는 e2e 가 필요하다. 이 환경에서 docker postgres:16-alpine + migrate(10개) + seed-local + fakes + e2e(300 passed) 를 실제로 돌릴 수 있음을 이번 회차에도 재확인했으므로 '한 세션에 안 끝난다' 는 전제는 깨졌다. 원장 fixture 위치(scripts/seed-local.mjs vs e2e.mjs)는 여전히 미조사.",
-    "updated": "2026-10-14"
-  },
-  {
-    "title": "KST 일 경계 kstDateKey·minuteStart 의 쿼터 창 계약 시험",
-    "value": 3,
-    "risk": 1,
-    "size": "S",
     "status": "done",
-    "note": "이번 회차 구현. packages/core/src/__tests__/time.test.ts (새 파일, 시험 15개). UTC 15:00 경계·달/해 넘김·평년과 윤년 2월 말·0 채움, minuteStart 의 절삭(반올림 아님)과 분 경계가 하루 경계와 겹치는 것, month 창이 열쇠 앞 일곱 자리라는 것을 고정. 변이 3건(KST 오프셋 제거 8실패, floor→round 2실패, padStart 제거 8실패)으로 시험이 실제 함수를 보고 있음을 증명. 미사용 표면(kstWindowOn·overlaps·isoDay·formatKst·backoffMs·kstDayStart)은 지시대로 늘리지 않았다.",
-    "updated": "2026-10-14"
+    "note": "2026-10-15 수정. quota.ts 에 windowOpensAt 을 추가해 day·month 분기가 라벨이 아니라 창이 실제로 열리는 UTC 15:00 까지를 세도록 바꿨다. minute 분기와 DB 기본키인 windowStart 는 무변경. 새 파일 __tests__/quota.test.ts 35개(값 표 14 + 불변식 21)가 수정 전 23개 실패 → 수정 후 전원 통과, 두 줄 되돌리면 같은 23개 재실패. 과제서의 손계산 기대값 9개는 독립 스크립트 실행으로 먼저 검증했고 전부 일치했다.",
+    "updated": "2026-10-15"
   },
   {
     "title": "프로젝트 손익 조회의 from/to 역순·범위 밖 기본값",
@@ -50,17 +14,26 @@
     "risk": 2,
     "size": "S",
     "status": "pending",
-    "note": "routes/finance.ts:734-735 는 from/to 가 비면 '1900-01-01'·'9999-12-31' 을 v.day 를 지나지 않고 쿼리에 넣는다 — 2000~2100 계약이 그 경로에만 비어 있다. 역순(to<from)도 period() 를 지나지 않아 0원 손익을 정상 응답으로 낸다. period() 로 교체하면 기본값 의미가 달라져 API e2e(DB) 필요 — 이 환경에서 DB e2e 가 가능함은 확인됐다.",
-    "updated": "2026-10-14"
+    "note": "routes/finance.ts:734-735 가 from/to 가 비면 '1900-01-01'·'9999-12-31' 을 v.day 를 지나지 않고 쿼리에 넣고, to<from 도 period() 를 지나지 않아 0원 손익을 정상 응답으로 낸다. 이번 회차 차선 후보였다. period() 로 바꾸면 기본값 의미가 달라져 DB e2e 가 필요하고 finance 쓰기 경로에 가깝다. 다음 회차 유력.",
+    "updated": "2026-10-15"
   },
   {
-    "title": "v.string 은 UTF-16, v.text 는 코드포인트로 길이를 세어 같은 '자' 가 필드마다 다름",
+    "title": "원장 CSV 수식 중립화와 인용 처리의 API 회귀 시험",
+    "value": 3,
+    "risk": 2,
+    "size": "M",
+    "status": "pending",
+    "note": "csvCell 이 비공개라 ctx.sql·권한·감사를 지나는 e2e 가 필요하다. 2026-10-14 에 docker postgres + migrate + seed + e2e(300 passed) 가 이 환경에서 돌아감을 두 번 확인했으나 세션마다 보장되지는 않는다. 원장 fixture 위치(scripts/seed-local.mjs vs e2e.mjs)는 여전히 미조사.",
+    "updated": "2026-10-15"
+  },
+  {
+    "title": "agent.ts 가 rate_limited 를 quotaExceeded 로 바꾸며 retryAfter 를 버린다",
     "value": 2,
     "risk": 2,
     "size": "S",
     "status": "pending",
-    "note": "validate.ts:79(text.length) vs :106([...text].length). 어느 쪽이 제품의 '자' 인지 미확인 — docs/requirements 의 길이 규정 확인이 선행.",
-    "updated": "2026-10-14"
+    "note": "새 항목. agent.ts:97 과 client-errors.ts:49 가 rate_limited 오류를 다시 싸면서 retryAfter 를 떨어뜨려 AI·MCP 경로의 429 에는 retry-after 헤더가 붙지 않는다. 2026-10-15 에 헤더 산술 자체를 맞췄으니 그 값을 버리는 것이 이제 더 아깝다. 이번 과제서가 범위 밖으로 못 박아 손대지 않았다. 오류 코드 매핑을 바꾸면 화면 문구·client-errors 계약에 번지므로 소비처 조사가 선행.",
+    "updated": "2026-10-15"
   },
   {
     "title": "v.int 에 안전 정수 상한이 없어 '99999999999999999999' 가 통과",
@@ -68,8 +41,26 @@
     "risk": 2,
     "size": "S",
     "status": "pending",
-    "note": "Number.isSafeInteger 가 아니라 isFinite+isInteger 만 본다. v.money 는 max 기본값으로 막혀 있다. max 없는 v.int 호출부(페이지네이션·수량) 조사가 선행.",
-    "updated": "2026-10-14"
+    "note": "Number.isSafeInteger 가 아니라 isFinite+isInteger 만 본다. v.money 는 max 기본값으로 막혀 있다. max 없는 v.int 호출부(페이지네이션·수량) 조사가 선행. 2026-10-14 의 DECIMAL_RE 수정과 같은 파일이라 그 변경과 함께 보면 자연스럽다.",
+    "updated": "2026-10-15"
+  },
+  {
+    "title": "v.string 은 UTF-16, v.text 는 코드포인트로 길이를 세어 같은 '자' 가 필드마다 다름",
+    "value": 2,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "validate.ts:79(text.length) vs :106([...text].length). 어느 쪽이 제품의 '자' 인지 미확인 — docs/requirements 의 길이 규정 확인이 선행. 좁히는 쪽이든 넓히는 쪽이든 기존 저장 데이터 영향이 있어 단독으로 고르기 어렵다.",
+    "updated": "2026-10-15"
+  },
+  {
+    "title": "v.instant 가 날짜만 있는 문자열·비ISO 형식을 시각으로 받는 것",
+    "value": 2,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "new Date(value) 의 NaN 여부만 본다. '2026-01-15'·'Jan 15 2026' 이 통과해 KST 경계 해석이 어긋날 수 있다. v.day 와 달리 ISO 왕복·범위 가드가 없다. 어느 라우트가 어떤 형식을 보내는지 확인 전에는 손대지 말 것.",
+    "updated": "2026-10-15"
   },
   {
     "title": "v.email 의 지역부가 '.'·'..' 만으로도 통과",
@@ -78,16 +69,7 @@
     "size": "S",
     "status": "pending",
     "note": "좁히기 방향이지만 초대·로그인 식별자 경로라 기존 저장 주소를 거절하면 로그인 차단으로 번진다. 소비처와 기존 데이터 영향 확인 뒤에만.",
-    "updated": "2026-10-14"
-  },
-  {
-    "title": "v.instant 가 날짜만 있는 문자열·비ISO 형식을 시각으로 받는 것",
-    "value": 2,
-    "risk": 2,
-    "size": "S",
-    "status": "pending",
-    "note": "new Date(value) 의 NaN 여부만 본다. '2026-01-15'·'Jan 15 2026' 이 통과해 KST 경계 해석이 어긋날 수 있다. 어느 라우트가 어떤 형식을 보내는지 확인 전에는 손대지 말 것. v.day 와 달리 ISO 왕복·범위 가드가 없다.",
-    "updated": "2026-10-14"
+    "updated": "2026-10-15"
   },
   {
     "title": "클립보드 복사 폴백 예외 시 textarea 정리",
@@ -95,8 +77,8 @@
     "risk": 1,
     "size": "S",
     "status": "pending",
-    "note": "download.ts:15 copyText 의 execCommand 가 throw 하면 area.remove() 에 도달하지 못한다. vitest environment 가 node 라 DOM 증거를 만들 수 없고 jsdom 추가는 의존성 변경(범위 밖), 손으로 만든 document 대역은 운영자 지시 위반.",
-    "updated": "2026-10-14"
+    "note": "download.ts:15 copyText 의 execCommand 가 throw 하면 area.remove() 에 도달하지 못한다. vitest environment 가 node 라 DOM 증거를 만들 수 없고 jsdom 추가는 의존성 변경(범위 밖), 손으로 만든 document 대역은 운영자 지시 위반. 환경이 바뀌지 않으면 영구 보류에 가깝다.",
+    "updated": "2026-10-15"
   },
   {
     "title": "상대 시간 표기 relative 의 분·시·일 경계와 미래 시각 처리",
@@ -105,7 +87,7 @@
     "size": "S",
     "status": "pending",
     "note": "format.ts:46 은 단계마다 Math.round 라 59분30초가 '1시간 전', 미래 시각은 모두 '방금'. 제품이 원한 반올림인지 미확인 — 계약을 시험으로 고정하는 쪽만 안전.",
-    "updated": "2026-10-14"
+    "updated": "2026-10-15"
   },
   {
     "title": "krwShort 의 10억 이상 표기가 '10.0억' 으로 소수점을 남기는 문제",
@@ -114,6 +96,15 @@
     "size": "S",
     "status": "pending",
     "note": "man>=10000 분기의 (man/10000).toFixed(1). 조·십억 단위 표기 정책이 제품에 정의돼 있는지 미확인.",
-    "updated": "2026-10-14"
+    "updated": "2026-10-15"
+  },
+  {
+    "title": "CI 가 2026-10-14 부터 3초·0단계로 죽는 원인 확정",
+    "value": 3,
+    "risk": 1,
+    "size": "S",
+    "status": "rejected",
+    "note": "네 회차 연속 저장소 안에서 막혔다. gh 미인증 + 비공개 저장소라 annotation 을 읽을 수 없고, .github/workflows/check.yml 은 통과 구간 내내 무변경이라 워크플로 가설은 증거로 기각됐다. 계정·러너·쿼터 쪽 원인이며 저장소 밖 조치가 필요하다 — 코드 회차의 과제로 다시 올리지 말 것.",
+    "updated": "2026-10-15"
   }
 ]

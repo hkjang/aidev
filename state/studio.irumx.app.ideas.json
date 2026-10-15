@@ -1,20 +1,20 @@
 [
   {
-    "title": "GitHub Actions CI 워크플로 추가 — 러너가 돌리는 검증 명령을 그대로 CI 로",
-    "value": 5,
+    "title": "해석 불가 Range 헤더에 416 대신 200 전체 응답(parseRange 분류 정정)",
+    "value": 3,
     "risk": 1,
     "size": "S",
     "status": "done",
-    "note": "워크플로 파일이 없어 러너 PR 이 전부 'CI 검사 없음' 으로 막혔다. .github/workflows/ci.yml 한 파일로 npm ci → npm run build → npx playwright install --with-deps chromium → npm test 를 push(main)·pull_request 에서 돌린다. Node 22, npm 캐시, 비밀 값 없음, 실패 시 test-results/ 업로드. 보호 경로라 사람 승인을 받는다.",
+    "note": "구현 완료. files.ts parseRange 의 `if (!m || (!m[1] && !m[2]))` 를 'invalid' → null 로. 416 은 문법이 맞는데 만족 불가(start>end · start>=size)만. 시험: unit-media.spec.ts 의 '범위 요청 해석' 에 해석 불가·범위 초과·정상 경계, api-portfolio.spec.ts(AT-03) 에 공개 영상 URL 로 200(Content-Range 없음, 전체 Content-Length)·416(bytes */) 확인. 여러 구간 multipart/byteranges 는 일부러 구현하지 않았다.",
     "updated": "2026-10-15"
   },
   {
-    "title": "MP4 판독에 tkhd 회전 행렬 반영 — 세로 촬영 영상의 표시 해상도",
-    "value": 4,
+    "title": "seo.ts·shell.html 짝 고정 시험 — private 경로 noindex·canonical·noscript 이스케이프",
+    "value": 2,
     "risk": 1,
     "size": "S",
-    "status": "done",
-    "note": "90°·270° 회전이 붙은 영상을 1920×1080 으로 읽어 16:9 규격 검사(AT-19)를 통과시키고 화면·작품 스크립트에도 틀린 해상도를 보였다. 행렬 a·b 로 4분 회전을 판정해 너비·높이를 바꿔 읽는다. 단위 + 업로드 HTTP 경로 시험 추가.",
+    "status": "pending",
+    "note": "이번 회차의 차선 후보였다. shell.html 에 title·description·robots·og:*·canonical·noscript#seo 자리가 모두 있고 seo.ts 는 전부 setAttribute 로 채운다 — '해당 없는 메타 element.remove()' 경로는 현재 코드에 없다. 실제로 고정할 것은 ① /app·/admin·/login·/invite 의 noindex ② 색인 가능한 쪽만 자기 canonical ③ noscript#seo 의 esc(). 프로덕션 코드는 건드리지 않는 시험 전용 회차.",
     "updated": "2026-10-15"
   },
   {
@@ -23,25 +23,7 @@
     "risk": 2,
     "size": "M",
     "status": "pending",
-    "note": "작품 올리기 스크립트는 수동 확인만 있다. R2·D1 호출을 하지 않는 --dry-run 으로 메타 검증·판독·SQL 생성까지를 단위 시험으로 덮을 수 있다. CI 가 생겼으니 덮개가 그대로 관문에 붙는다.",
-    "updated": "2026-10-15"
-  },
-  {
-    "title": "seo.ts·shell.html 짝 고정 시험 — 빈 메타 제거와 noscript 이스케이프",
-    "value": 2,
-    "risk": 1,
-    "size": "S",
-    "status": "pending",
-    "note": "해당 없는 쪽의 element.remove() 와 noscript#seo 의 esc() 경로는 한쪽만 고치면 효과가 없거나 새는 자리다. 쪽마다 돌려받은 셸을 검사하는 시험.",
-    "updated": "2026-10-15"
-  },
-  {
-    "title": "parseRange 경계 시험 보강",
-    "value": 2,
-    "risk": 1,
-    "size": "S",
-    "status": "pending",
-    "note": "bytes=0-0, 끝 초과, 여러 범위(bytes=0-1,5-6), 음수. 현재 시험은 네 가지만 본다.",
+    "note": "작품 올리기 스크립트는 수동 확인만 있다. R2·D1 호출을 하지 않는 --dry-run 으로 메타 검증·MP4 판독·SQL 생성까지를 단위 시험으로 덮을 수 있다. CI 가 있으니 덮개가 그대로 관문에 붙는다. 스크립트 본문은 아직 열어 보지 않았다(미확인) — 작업량이 S 로 끝날지 확신 없음.",
     "updated": "2026-10-15"
   },
   {
@@ -50,7 +32,7 @@
     "risk": 2,
     "size": "M",
     "status": "pending",
-    "note": "지금은 mvhd 길이만 본다. edts(편집 목록)·트랙 길이가 다른 파일에서 계약 길이 판정이 어긋날 수 있다. 판정 기준을 바꾸는 변경이라 위험이 더 높다.",
+    "note": "지금은 mvhd 길이만 본다. edts(편집 목록)·트랙 길이가 다른 파일에서 계약 길이 판정(spec.ts)이 어긋날 수 있다. 판정 기준을 바꾸는 변경이라 위험이 더 높고, 합성 MP4 시험으로만 검증된다.",
     "updated": "2026-10-15"
   },
   {
@@ -63,21 +45,39 @@
     "updated": "2026-10-15"
   },
   {
-    "title": "CI 에 npm run check 를 별도 단계로 — 타입 오류를 빌드 전에 빠르게",
+    "title": "공유 미리보기용 twitter:card·og:image:alt 메타 추가",
     "value": 2,
     "risk": 1,
     "size": "S",
     "status": "pending",
-    "note": "npm run build 안에 이미 tsc 3종이 들어 있어 지금은 중복이다. 다만 단계가 나뉘면 실패 원인(타입 vs 번들 vs 공개 번들 점검)이 Actions 요약에서 바로 보인다. 글꼴 서브셋이 먼저 도는 비용(수 초)만 더 든다.",
+    "note": "shell.html 에 twitter:card(summary_large_image)·og:image:alt 자리가 없다. 마케팅 사이트라 공유 미리보기는 값이 있지만, 자리를 shell.html 에 먼저 만들고 seo.ts 에서 채워야 하고(HTMLRewriter 는 있는 요소만 고친다) verify-build 의 메타 자리 목록과도 짝을 맞춰야 해 파일 3개가 함께 걸린다.",
     "updated": "2026-10-15"
   },
   {
-    "title": "CI 에 의존성 감사 단계(npm audit --omit=dev) 추가",
+    "title": "CI 에 npm run check 를 별도 단계로",
     "value": 2,
     "risk": 1,
     "size": "S",
     "status": "pending",
-    "note": "지금 CI 는 빌드·시험만 본다. 운영 의존성의 알려진 취약점을 경고 단계(continue-on-error)로 붙이면 결제·인증을 다루는 저장소에서 값이 있다. 관문을 막지 않도록 경고로 시작할 것.",
+    "note": "npm run build 안에 이미 check(tsc 3종)가 들어 있어 지금은 중복이다. 단계가 나뉘면 실패 원인(타입 vs 번들 vs 공개 번들 점검)이 Actions 요약에서 바로 보인다. 글꼴 서브셋 비용(수 초)만 더 든다. .github/workflows/ 는 보호 경로.",
+    "updated": "2026-10-15"
+  },
+  {
+    "title": "CI 에 의존성 감사(npm audit --omit=dev) 경고 단계 추가",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "결제·인증을 다루는 저장소라 값이 있다. 이번 회차의 npm ci 에서 audit 경고가 실제로 떴다(내용은 확인하지 않음). 관문을 막지 않도록 continue-on-error 로 시작할 것. .github/workflows/ 는 보호 경로라 다른 과제와 섞지 말 것.",
+    "updated": "2026-10-15"
+  },
+  {
+    "title": "serveObject 의 조건부 요청(If-Range·If-None-Match) 미지원",
+    "value": 2,
+    "risk": 2,
+    "size": "M",
+    "status": "pending",
+    "note": "신규(이번 회차에 files.ts 를 읽으며 확인). serveObject 는 ETag·Last-Modified 를 내보내지 않아 조건부 GET·If-Range 재개가 전부 전체 재전송이 된다. R2 객체의 etag 를 쓰면 되지만 공개 사본 교체·철회와 캐시 수명(opts.cache)의 상호작용을 봐야 하므로 위험이 더 높다.",
     "updated": "2026-10-15"
   }
 ]
