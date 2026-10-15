@@ -1,0 +1,83 @@
+[
+  {
+    "title": "GitHub Actions CI 워크플로 추가 — 러너가 돌리는 검증 명령을 그대로 CI 로",
+    "value": 5,
+    "risk": 1,
+    "size": "S",
+    "status": "done",
+    "note": "워크플로 파일이 없어 러너 PR 이 전부 'CI 검사 없음' 으로 막혔다. .github/workflows/ci.yml 한 파일로 npm ci → npm run build → npx playwright install --with-deps chromium → npm test 를 push(main)·pull_request 에서 돌린다. Node 22, npm 캐시, 비밀 값 없음, 실패 시 test-results/ 업로드. 보호 경로라 사람 승인을 받는다.",
+    "updated": "2026-10-15"
+  },
+  {
+    "title": "MP4 판독에 tkhd 회전 행렬 반영 — 세로 촬영 영상의 표시 해상도",
+    "value": 4,
+    "risk": 1,
+    "size": "S",
+    "status": "done",
+    "note": "90°·270° 회전이 붙은 영상을 1920×1080 으로 읽어 16:9 규격 검사(AT-19)를 통과시키고 화면·작품 스크립트에도 틀린 해상도를 보였다. 행렬 a·b 로 4분 회전을 판정해 너비·높이를 바꿔 읽는다. 단위 + 업로드 HTTP 경로 시험 추가.",
+    "updated": "2026-10-15"
+  },
+  {
+    "title": "scripts/portfolio-import.mjs 드라이런 + 자동 시험",
+    "value": 3,
+    "risk": 2,
+    "size": "M",
+    "status": "pending",
+    "note": "작품 올리기 스크립트는 수동 확인만 있다. R2·D1 호출을 하지 않는 --dry-run 으로 메타 검증·판독·SQL 생성까지를 단위 시험으로 덮을 수 있다. CI 가 생겼으니 덮개가 그대로 관문에 붙는다.",
+    "updated": "2026-10-15"
+  },
+  {
+    "title": "seo.ts·shell.html 짝 고정 시험 — 빈 메타 제거와 noscript 이스케이프",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "해당 없는 쪽의 element.remove() 와 noscript#seo 의 esc() 경로는 한쪽만 고치면 효과가 없거나 새는 자리다. 쪽마다 돌려받은 셸을 검사하는 시험.",
+    "updated": "2026-10-15"
+  },
+  {
+    "title": "parseRange 경계 시험 보강",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "bytes=0-0, 끝 초과, 여러 범위(bytes=0-1,5-6), 음수. 현재 시험은 네 가지만 본다.",
+    "updated": "2026-10-15"
+  },
+  {
+    "title": "길이 판정을 mvhd 외에 트랙 mdhd 와 교차 확인",
+    "value": 2,
+    "risk": 2,
+    "size": "M",
+    "status": "pending",
+    "note": "지금은 mvhd 길이만 본다. edts(편집 목록)·트랙 길이가 다른 파일에서 계약 길이 판정이 어긋날 수 있다. 판정 기준을 바꾸는 변경이라 위험이 더 높다.",
+    "updated": "2026-10-15"
+  },
+  {
+    "title": "topLevel 의 최상위 상자 64개 제한 — moov 를 못 찾는 파일",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "최상위 상자가 64개를 넘으면 조용히 끊고 '영상 정보(moov)가 없습니다' 로 거절한다. 실제로 그런 파일이 오는지 모르므로 가치는 낮다.",
+    "updated": "2026-10-15"
+  },
+  {
+    "title": "CI 에 npm run check 를 별도 단계로 — 타입 오류를 빌드 전에 빠르게",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "npm run build 안에 이미 tsc 3종이 들어 있어 지금은 중복이다. 다만 단계가 나뉘면 실패 원인(타입 vs 번들 vs 공개 번들 점검)이 Actions 요약에서 바로 보인다. 글꼴 서브셋이 먼저 도는 비용(수 초)만 더 든다.",
+    "updated": "2026-10-15"
+  },
+  {
+    "title": "CI 에 의존성 감사 단계(npm audit --omit=dev) 추가",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "지금 CI 는 빌드·시험만 본다. 운영 의존성의 알려진 취약점을 경고 단계(continue-on-error)로 붙이면 결제·인증을 다루는 저장소에서 값이 있다. 관문을 막지 않도록 경고로 시작할 것.",
+    "updated": "2026-10-15"
+  }
+]
