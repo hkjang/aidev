@@ -1,7 +1,7 @@
 ---
 title: "review.yeopjari.bid — 자율 개선 이력"
 description: "review.yeopjari.bid: 자율 개선 회차 9회, 릴리즈 2건. 최근 릴리즈 없음."
-last_modified_at: 2026-10-15 15:59:28 +0900
+last_modified_at: 2026-10-15 16:08:33 +0900
 ---
 {% raw %}
 <script type="application/ld+json">
@@ -18,7 +18,7 @@ last_modified_at: 2026-10-15 15:59:28 +0900
   "name": "hkjang",
   "url": "https://github.com/hkjang"
  },
- "dateModified": "2026-10-15T15:59:28+09:00"
+ "dateModified": "2026-10-15T16:08:33+09:00"
 }
 </script>
 
@@ -34,6 +34,7 @@ last_modified_at: 2026-10-15 15:59:28 +0900
 <dt>저장소</dt><dd><a href="https://github.com/hkjang/review.yeopjari.bid">https://github.com/hkjang/review.yeopjari.bid</a></dd>
 <dt>마지막 회차</dt><dd>2026-10-15 15:23 KST — <span class="pill pill-failed">❌ 실패</span> fix-round: <strong>CI failed</strong>, PR open <a href="https://github.com/hkjang/review.yeopjari.bid/pull/8">PR #8</a></dd>
 <dt>최근 릴리즈</dt><dd>released — released</dd>
+<dt>수정 과제</dt><dd>⚠️ 오류 대응(자동 적재): 마지막 회차가 &#x27;verify-failed&#x27; 로 끝났습니다. fix-round: CI failed, PR open https://github.com/hkjang/review.yeopjari.bid/pull/8</dd>
 </dl>
 
 ## 회차 이력
