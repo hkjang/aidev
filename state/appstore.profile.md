@@ -1,42 +1,29 @@
-# appstore 프로필 (2026-10-08)
+# appstore 프로필 (2026-10-16)
 - 목적: 사내 앱 탐색·등록·보안 심의·검토·게시와 개인 API/MCP 키를 제공하는 오프라인 배포형 카탈로그.
 - 스택: Go 1.25·chi·PostgreSQL; React 19·TypeScript·Vite·TanStack Query·react-router; Vitest/jsdom·Playwright.
-- 기준: HEAD bb1ca54, README/package.json v2.11.16. edc94a7 완료 상태 표시가 병합돼 이전 755d25b 프로필을 갱신.
+- 기준: HEAD main@15f6892(2026-10-16 확인). 469e89a·edc94a7 은 HEAD 조상으로 실제 병합 확인됨. 버전은 직전 기록 기준 v2.11.16(이번 미재확인).
 - 구조:
-  - cmd/server: 서버 기동; internal/webui/dist: Go embed 프런트 산출물(직접 수정 금지).
-  - internal/httpapi: REST·검증·rate limit·SPA; internal/auth: OIDC·세션·비밀번호.
+  - cmd/server: 기동. internal/webui/dist: Go embed 프런트 산출물(직접 수정 금지).
+  - internal/httpapi: REST·검증·rate limit·SPA. internal/auth: OIDC·세션·비밀번호.
   - internal/store·model·database·migrations: 데이터 접근·모델·DB·자동 마이그레이션.
   - internal/seccheck·workflow·keymanager·mcp·analytics·audit·ai: 심의·승인·키·서비스 로직.
   - web/src/pages: public/personal/admin/review/auth/app-form 화면.
-  - web/src/features: apps·security-check·navigation·auth·home; app/components/lib: 라우터·공용 UI·API.
-  - web/e2e: core.spec.ts·visual.spec.ts·mock-api.ts; docs: 가이드/정적 사이트; guides: 내장 가이드.
-- 빌드·테스트: 현재 node_modules 없음. 구현 시 `npm --prefix web ci --no-audit --no-fund` 후 `npm --prefix web test`, `npm --prefix web run lint`, `npm --prefix web run build`.
-- 빌드·테스트: 이번 `npm --prefix web test -- src/features/apps/guide-documents.test.tsx`는 vitest 미설치로 exit 127. 이전 회차 전체 React 126 passed는 전달 기록, 이번 실측 아님.
-- 빌드·테스트: 이번 `./scripts/check-env-contract.sh`, `./scripts/check-docs.sh` 성공. build 후 `./scripts/check-offline-assets.sh web/dist` 실행.
-- 빌드·테스트: CI는 `go test -race . ./cmd/... ./internal/... ./migrations/... ./openapi/...`, `go build -trimpath -buildvcs=false -o /tmp/appstore-ci ./cmd/server`(이번 미실행).
-- 빌드·테스트: `(cd web && npx playwright install chromium)` 준비 및 build 후 `CI=true npm --prefix web run test:e2e`(전체 오래 걸림). desktop/mobile 둘 다 확인.
-- 관례: 영어 feat:/fix:/test:/docs:/chore(release): 커밋, 사용자 문구 한국어, 테스트는 소스 옆 *.test.tsx.
-- 관례: 환경변수는 POSTGRES_DSN·BOOTSTRAP_ADMIN·BOOTSTRAP_ADMIN_PASSWORD·ENCRYPTION_KEY, 운영 설정은 DB/Admin UI.
-- 관례: APP_STATUSES·appStatusLabel·AppStatusBadge가 앱 상태 한국어 정본. SecCheck finalResult는 owner-page 로컬 FINAL_RESULT의 별도 계약(이전 기록).
-- 관례: docs/USER_GUIDE.md·ADMIN_GUIDE.md와 PDF가 가이드 정본. guides/appstore와 통째 동기화 금지(이전 교훈).
-- 관례: 이번 파일 검색에서 CLAUDE.md/AGENTS.md/별도 roadmap·TODO 파일 없음; README/docs MD/web/src/internal TODO/FIXME 검색 결과 없음.
-- 위험 구역: internal/auth·session/CSRF·ratelimit·암호화·migrations·.github/workflows·internal/webui/dist.
-- 위험 구역: 보안/승인 판정과 표시 변경을 분리. createApp의 draft→submitOrHold와 ErrSecurityCheckRequired 정상 응답은 이전 정찰 기록, 이번 서버 저장 경로 미재검증.
-- 위험 구역: AppFormPage 완료는 documents.apply 성공 후 saved StoreApp 표시. 저장 실패/첨부 실패 때 완료되지 않는 흐름 보존.
-- 자주 깨지는 곳: 성공 원장과 main 포함은 다름. 즐겨찾기 관련 0898f7a는 현재 HEAD 조상이 아님(exit 1), 원격 PR 상태 미확인.
-- 자주 깨지는 곳: 입력 하드닝·출력 변화 없는 순수 테스트는 반려 기록; 프로덕션 배선의 실제 DOM/브라우저 출력으로 증명.
-- 자주 깨지는 곳: 모바일 sidebar는 메뉴를 연 뒤 클릭; desktop만 통과하고 전체 성공으로 쓰지 말 것(이전 기록).
-- 검증 함정: CI Node 22/npm ci와 의존성 없는 로컬은 다름. CI는 Go race·React·build/offline/embed·docs/env·E2E·Docker smoke까지 수행.
-- 검증 함정: Go 통합은 APPSTORE_TEST_POSTGRES_DSN 없으면 skip(이전 기록, 이번 미실행). HTTP fixture 통과와 실제 DB/Keycloak/SecCheck 성공을 구분.
-- 검증 함정: E2E는 Vite preview 번들+HTTP mock이라 build 선행. mock-api public config의 ...options.config가 후속 기본값에 덮임.
-- 검증 함정: mock-api /api/v1/apps method 분기 없는 목록 응답은 이전 기록. 등록 성공 E2E는 현재 core.spec.ts처럼 scoped POST route로 StoreApp을 반환.
-- 검증 함정: app-form-page.test.tsx는 조회 4건 외 완료 상태/저장·업로드 실패/문서 대기 테스트가 추가됨. 이전 프로필의 “4건뿐”은 폐기.
-- 검증 함정: AppFormPage는 createApp 후 documents.apply 실패 시 saved id를 유지하지 않는다. 재등록 POST 중복/slug 충돌은 정적 우려, 실행 미확인.
-- 검증 함정: myApps 서버 기본 50개, api.myApps 단일 GET, 수정 폼은 목록에서 id 탐색. 50개 초과 앱 수정 사례 실행 미확인.
-- 검증 함정: /favorites는 공개 목록 한 페이지 최대 100개를 slug 필터. 목록 페이지 이동 UI가 있으므로 영구 누락으로 단정하지 말 것. storage 이벤트 미구독·검색 빈 안내 미해결.
-- 검증 함정: PageSize는 설정 검증/기본값에는 쓰지만 publicConfig 응답에 없고 공개 목록 기본 24 고정.
-- 검증 함정: useGuideDocumentDraft.add는 마지막 실패만 pickError에 남긴다. 이번 과제는 첫 사유+총 거부 수로 좁힘; 업로드/삭제 재시도는 별도.
-- 검증 함정: guide-documents.test.tsx의 DraftHarness는 실제 hook+field 사용. GuideDocumentsField 파일 input은 multiple/accept, onChange 후 value 초기화.
-- 검증 함정: 기존 E2E “소유자는 앱 수정 화면…”은 실제 /admin/apps/...를 연다. 신규 /submit E2E로 소유자 배선도 검증할 것.
-- 검증 함정: AppGuideDocuments 초기 조회 실패가 if(!items.length)return null로 숨겨짐. 삭제 취소의 개수/중복 재검증 부재도 정적 확인, 실행 미확인.
-- 검증 함정: check-docs는 링크·캡처 계약 검사이며 PDF 본문 검사가 아니다. server·web/dist·test-results 산출물은 개선 커밋 제외.
+  - web/src/features: apps(guide-documents 포함)·security-check·navigation·auth·home. app/components/lib: 라우터·providers·공용 UI·API 클라이언트.
+  - web/e2e: core.spec.ts·visual.spec.ts·mock-api.ts. docs: 가이드/정적 사이트. guides: 내장 가이드.
+- 빌드·테스트: worktree 에 node_modules 없음. `npm --prefix web ci --no-audit --no-fund` → `npm --prefix web test` / `run lint`(--max-warnings 0) / `run build`.
+- 빌드·테스트: build 후 `./scripts/check-offline-assets.sh web/dist`, 그리고 `./scripts/check-env-contract.sh`·`./scripts/check-docs.sh`·`git diff --check`.
+- 빌드·테스트: E2E 는 `(cd web && npx playwright install chromium)` + build 선행 후 `CI=true npm --prefix web run test:e2e`(전체는 오래 걸림, --grep 권장). desktop/mobile 두 프로젝트 모두 확인.
+- 빌드·테스트: CI 는 `go test -race . ./cmd/... ./internal/... ./migrations/... ./openapi/...` 와 `go build -trimpath -buildvcs=false ./cmd/server` 까지 수행.
+- 관례: 영어 `feat:/fix:/test:/docs:/chore(release):` 커밋, 사용자 문구는 한국어, 테스트는 소스 옆 `*.test.tsx`.
+- 관례: 환경변수는 POSTGRES_DSN·BOOTSTRAP_ADMIN·BOOTSTRAP_ADMIN_PASSWORD·ENCRYPTION_KEY. 운영 설정은 DB/Admin UI.
+- 관례: 앱 상태 한국어 정본은 `app-status.tsx`(APP_STATUSES·appStatusLabel·AppStatusBadge). SecCheck finalResult 는 owner-page 로컬 표(별도 계약). 화면 한정 문구는 로컬 표로 두는 것이 이 저장소 선례.
+- 관례: docs/USER_GUIDE.md·ADMIN_GUIDE.md 와 PDF 가 가이드 정본. guides/appstore 와 통째 동기화 금지. CLAUDE.md/AGENTS.md·roadmap·TODO 파일 없음.
+- 위험 구역: internal/auth·session/CSRF·ratelimit·암호화·migrations·.github/workflows·internal/webui/dist. 보안/승인 판정 변경과 표시 변경을 한 회차에 섞지 말 것.
+- 위험 구역: 공용 ui.tsx(ErrorState/StatePanel/Field) 문구·계약 변경은 다른 화면 회귀를 부른다. 한 화면 문제면 화면 로컬로 좁힐 것.
+- 자주 깨지는 곳: 원장의 "성공" 과 main 포함은 다르다 — 병합 주장은 `git merge-base --is-ancestor` 로 확인할 것. 즐겨찾기 0898f7a 는 15f6892 에서도 미포함.
+- 자주 깨지는 곳: 출력이 변하지 않는 순수 테스트 추가·입력 하드닝은 사람이 반려한 이력이 있다. 프로덕션 배선의 실제 DOM 으로 증명할 것.
+- 자주 깨지는 곳: 모바일 sidebar 는 메뉴를 연 뒤 클릭. desktop 만 통과하고 전체 성공으로 쓰지 말 것.
+- 검증 함정: 테스트 QueryClient 는 `retry:false`, 운영은 `web/src/app/providers.tsx:149` 의 `retry:1`. 오류 표시 타이밍이 다르다.
+- 검증 함정: E2E 는 Vite preview 번들 + HTTP mock 이라 build 선행 필수이며, 실제 DB/Keycloak/SecCheck 연동 성공의 증거가 아니다. Go 통합은 APPSTORE_TEST_POSTGRES_DSN 없으면 skip.
+- 검증 함정: mock-api.ts:314 public config 의 `...options.config` 는 뒤따르는 기본값에 덮인다. 나중에 등록한 page.route 가 mock 보다 우선한다(오류 주입에 사용 가능).
+- 검증 함정: `check-docs.sh` 는 링크·캡처 계약 검사이며 PDF 본문 검사가 아니다. `server`·`web/dist`·`web/test-results` 는 .gitignore 대상이며 커밋 금지.

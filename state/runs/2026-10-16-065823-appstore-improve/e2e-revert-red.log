@@ -1,0 +1,88 @@
+
+> appstore-web@2.11.16 test:e2e
+> playwright test --grep 조회가 실패하면 --workers=2 --retries=0 --reporter=list
+
+
+Running 2 tests using 2 workers
+
+  ✘  2 [desktop] › e2e/core.spec.ts:516:1 › 가이드 문서 조회가 실패하면 안내와 다시 시도를 보여 준다 (5.6s)
+  ✘  1 [mobile] › e2e/core.spec.ts:516:1 › 가이드 문서 조회가 실패하면 안내와 다시 시도를 보여 준다 (5.7s)
+
+
+  1) [desktop] › e2e/core.spec.ts:516:1 › 가이드 문서 조회가 실패하면 안내와 다시 시도를 보여 준다 ─────────────────────────
+
+    Error: expect(locator).toBeVisible() failed
+
+    Locator: getByText('가이드 문서를 불러오지 못했습니다.')
+    Expected: visible
+    Timeout: 5000ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toBeVisible" with timeout 5000ms
+      - waiting for getByText('가이드 문서를 불러오지 못했습니다.')
+
+
+      539 |   await expect(
+      540 |     page.getByText("가이드 문서를 불러오지 못했습니다."),
+    > 541 |   ).toBeVisible();
+          |     ^
+      542 |   await expect(page.getByRole("link", { name: /내려받기/ })).toHaveCount(0);
+      543 |
+      544 |   await page.getByRole("button", { name: "다시 시도" }).click();
+        at /home/hkjang/.cache/auto-improve-wt/appstore/web/e2e/core.spec.ts:541:5
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/core-가이드-문서-조회가-실패하면-안내와-다시-시도를-보여-준다-desktop/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/core-가이드-문서-조회가-실패하면-안내와-다시-시도를-보여-준다-desktop/error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/core-가이드-문서-조회가-실패하면-안내와-다시-시도를-보여-준다-desktop/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/core-가이드-문서-조회가-실패하면-안내와-다시-시도를-보여-준다-desktop/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  2) [mobile] › e2e/core.spec.ts:516:1 › 가이드 문서 조회가 실패하면 안내와 다시 시도를 보여 준다 ──────────────────────────
+
+    Error: expect(locator).toBeVisible() failed
+
+    Locator: getByText('가이드 문서를 불러오지 못했습니다.')
+    Expected: visible
+    Timeout: 5000ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toBeVisible" with timeout 5000ms
+      - waiting for getByText('가이드 문서를 불러오지 못했습니다.')
+
+
+      539 |   await expect(
+      540 |     page.getByText("가이드 문서를 불러오지 못했습니다."),
+    > 541 |   ).toBeVisible();
+          |     ^
+      542 |   await expect(page.getByRole("link", { name: /내려받기/ })).toHaveCount(0);
+      543 |
+      544 |   await page.getByRole("button", { name: "다시 시도" }).click();
+        at /home/hkjang/.cache/auto-improve-wt/appstore/web/e2e/core.spec.ts:541:5
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/core-가이드-문서-조회가-실패하면-안내와-다시-시도를-보여-준다-mobile/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/core-가이드-문서-조회가-실패하면-안내와-다시-시도를-보여-준다-mobile/error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/core-가이드-문서-조회가-실패하면-안내와-다시-시도를-보여-준다-mobile/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/core-가이드-문서-조회가-실패하면-안내와-다시-시도를-보여-준다-mobile/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  2 failed
+    [desktop] › e2e/core.spec.ts:516:1 › 가이드 문서 조회가 실패하면 안내와 다시 시도를 보여 준다 ──────────────────────────
+    [mobile] › e2e/core.spec.ts:516:1 › 가이드 문서 조회가 실패하면 안내와 다시 시도를 보여 준다 ───────────────────────────

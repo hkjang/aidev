@@ -1,0 +1,65 @@
+
+> appstore-web@2.11.16 test
+> vitest run src/features/apps/guide-documents.test.tsx
+
+
+ RUN  v3.2.7 /home/hkjang/.cache/auto-improve-wt/appstore/web
+
+ ❯ src/features/apps/guide-documents.test.tsx (13 tests | 1 failed) 1305ms
+   ✓ guide document rules > refuses an extension, an empty file, an oversized file and a full app 2ms
+   ✓ guide documents on an app form > summarizes rejected files with the first reason in one alert 60ms
+   ✓ guide documents on an app form > keeps stored and pending files and stages mixed picks in selection order 52ms
+   ✓ guide documents on an app form > clears the summary on a valid pick and keeps later single failures unchanged 32ms
+   ✓ guide documents on an app form > counts duplicate names once per rejected file across stored, pending and current picks 30ms
+   ✓ guide documents on an app form > counts each file over the attachment limit without dropping accepted files 32ms
+   ✓ guide documents on an app form > stages a picked file and a removal until the form is saved 47ms
+   ✓ guide documents on an app form > refuses a name the app already carries 18ms
+   ✓ guide documents on an app form > keeps an oversized pick off the wire and explains why 12ms
+   ✓ guide documents on the app detail page > offers every attachment as a download without a session 8ms
+   ✓ guide documents on the app detail page > stays away when an app has nothing attached 2ms
+   × guide documents on the app detail page > tells a visitor the lookup failed instead of looking empty, and reloads on demand 1006ms
+     → Unable to find an element with the text: 가이드 문서를 불러오지 못했습니다.. This could be because the text is broken up by multiple elements. In this case, you can provide a function for your text matcher to make your matcher more flexible.
+
+Ignored nodes: comments, script, style
+[36m<body>[39m
+  [36m<div />[39m
+[36m</body>[39m
+
+Ignored nodes: comments, script, style
+[36m<body>[39m
+  [36m<div />[39m
+[36m</body>[39m
+   ✓ guide documents on the app detail page > waits for the first lookup instead of warning while it is still pending 3ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/features/apps/guide-documents.test.tsx > guide documents on the app detail page > tells a visitor the lookup failed instead of looking empty, and reloads on demand
+TestingLibraryElementError: Unable to find an element with the text: 가이드 문서를 불러오지 못했습니다.. This could be because the text is broken up by multiple elements. In this case, you can provide a function for your text matcher to make your matcher more flexible.
+
+Ignored nodes: comments, script, style
+[36m<body>[39m
+  [36m<div />[39m
+[36m</body>[39m
+
+Ignored nodes: comments, script, style
+[36m<body>[39m
+  [36m<div />[39m
+[36m</body>[39m
+ ❯ waitForWrapper node_modules/@testing-library/dom/dist/wait-for.js:163:27
+ ❯ node_modules/@testing-library/dom/dist/query-helpers.js:86:33
+ ❯ src/features/apps/guide-documents.test.tsx:321:20
+    319| 
+    320|     expect(
+    321|       await screen.findByText("가이드 문서를 불러오지 못했습니다."),
+       |                    ^
+    322|     ).toBeVisible();
+    323|     expect(screen.getByRole("heading", { name: "가이드 문서" })).toBeVisibl…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 12 passed (13)
+   Start at  07:03:39
+   Duration  1.94s (transform 77ms, setup 67ms, collect 147ms, tests 1.30s, environment 190ms, prepare 39ms)
+

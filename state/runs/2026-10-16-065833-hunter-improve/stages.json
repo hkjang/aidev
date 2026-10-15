@@ -1,0 +1,37 @@
+{
+  "base": {
+    "state": "pinned",
+    "reason": "main@9069bcf",
+    "at": "2026-10-16T06:58:38+09:00"
+  },
+  "autonomy": {
+    "state": "release",
+    "reason": "",
+    "at": "2026-10-16T06:58:38+09:00"
+  },
+  "scout": {
+    "state": "done",
+    "reason": "발견 건 하나를 저장할 때도 조치 담당자에 일괄 변경·ITSM 동기화가 이미 강제하는 같은 규칙(UTF-8 200바이",
+    "at": "2026-10-16T07:04:44+09:00"
+  },
+  "brief": {
+    "state": "accepted",
+    "reason": "채택 — 지목한 파일·행(`domain.go:464` 가 `assignee` 미독, `finding_bulk.go:61-66` 인라인 조건, `saveDomain` 의 old 병합)과 수정 방식�",
+    "at": "2026-10-16T07:12:04+09:00"
+  },
+  "verify": {
+    "state": "passed",
+    "reason": "검증 9개 통과 (auto)",
+    "at": "2026-10-16T07:12:25+09:00"
+  },
+  "review": {
+    "state": "rejected",
+    "reason": "리뷰 거절: internal/app/finding_ops.go:106 `value == previous` compares two `any` values. Go panics (\"comparing uncomparable type\") when both sides hold the same uncomparable dynamic type, which is exactly what a finding whose stored `data->>'assignee'` is a JSON object or array produces: `saveDomain` (domain.go:338-342) passes the merged data plus `cloneMap(oldData)`, so a PUT that does not touch the field arrives with `map[string]any` on both sides. Reproduced directly against the new helper and against `(&App{}).validateResource(..., update=true)`: `runtime error: comparing uncomparable type map[string]interface {}` and `[]interface {}`. server.go:239 recovers it into a 500, so every later edit of that row (title, status, due_date) now fails where it returned 200 before this commit. Such rows are creatable on main: domain.go:279 type-checks only name/title/description/evidence/remediation, and the findings branch never read `assignee`, so any findings:write client could POST `{\"assignee\":{...}}`. Fix: compare the string forms (`prev, pok := previous.(string); s, sok := value.(string); pok && sok && prev == s`) or guard the comparison with a comparability check. / internal/app/finding_ops.go:96-99 the comment claims a legacy value is \"skipped here rather than turning every later edit of that row into a 400\", and the implementation note claims such rows are \"'변경'으로 보고 거절된다\". For object/array values the actual outcome is neither: a 500 panic. This is precisely the case the implementer flagged as unverified, so description and behavior diverge in the riskiest spot. / internal/app/openapi.json FindingUpdate.properties.assignee is still `{\"type\":\"string\"}` while the sibling FindingBulkPatch.properties.assignee already documents the exact rule this commit now enforces on POST /api/findings and PUT /api/findings/{id} (maxLength 200, x-max-bytes 200, 제어문자 금지, 양끝 공백 제거, 빈 문자열이면 해제). AGENTS.md §1 makes openapi.json part of the API contract; as merged, a client cannot predict the new 400.",
+    "at": "2026-10-16T07:17:36+09:00"
+  },
+  "repair": {
+    "state": "done",
+    "reason": "# 수리 요약 (시도 1 → 커밋 df4aef6)  - 비평 1·2 맞음: `finding_ops.go:106` 의 `value == previous` 는 `any` 동등 비교라 저장된 assignee 가 JSON 객체/배열인 행에서 `com",
+    "at": "2026-10-16T07:23:14+09:00"
+  }
+}

@@ -1,0 +1,119 @@
+[
+  {
+    "title": "PR 버전 조회 실패 시 버전 고정 없는 승인 요청 생성 차단 (executor.prVersion/newApprovalRequest fail-closed)",
+    "value": 4,
+    "risk": 2,
+    "size": "S",
+    "status": "done",
+    "note": "구현 완료(커밋 fe56220). prVersion 을 (*int, error) 로 바꿔 세 오류 경로를 전달하고, checkApproval 이 raw 분기 전에 한 번 조회해 생성 경로에서만 PERMISSION_UNKNOWN 으로 거부한다. 소비 경로는 currentVersion=nil 로 두어 approval.Check 의 기존 fail-closed 를 유지. 정찰이 추론만 했던 'pr_version = NULL 행 1개 생성' 을 런타임으로 확정했고, executor.go 원복 시 재실패를 확인했다.",
+    "updated": "2026-10-16"
+  },
+  {
+    "title": "approval.redactArgs 의 중첩 map/slice 미스크럽",
+    "value": 3,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "차선 후보였으나 이번엔 미착수. redactArgs(approval.go:271)는 최상위 키와 string 만 검사하므로 {\"body\":{\"password\":…}} 가 arguments_redacted 에 원문 저장되어 GET /api/admin/approvals 로 노출된다(2026-10-04 에 최상위 키만 닫았다). 재귀 깊이 상한 계약을 먼저 정할 것. 아래 바이트 절단 항목과 같은 함수라 한 회차에 묶을 수 있다.",
+    "updated": "2026-10-16"
+  },
+  {
+    "title": "redactArgs 의 s[:2000] 바이트 절단이 한국어 인자 마지막 글자를 깨뜨림",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "mcp/server.go 의 trimToRune 으로 닫은 것과 같은 결함이 approval.go:279 에 남아 있다. json.Marshal 이 U+FFFD 로 치환하므로 JSON 자체는 깨지지 않아 영향은 표시상 손상에 그친다. 위 중첩 스크럽 과제와 같은 함수이므로 묶어서 처리 가능.",
+    "updated": "2026-10-16"
+  },
+  {
+    "title": "permission/resolver.go 캐시·fail-closed 경로 테스트 (TTL=60 + 권한 회수 + Reset 한 흐름)",
+    "value": 4,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "resolver.go 는 TTL<=0 이면 저장하지 않고 오류+FailClosed 는 캐시하지 않는다(올바름). newFixture 가 여전히 CacheTTLSec=0 이라 캐시 경로는 미검증. fixture 전역 TTL 을 바꾸면 다른 테스트의 권한 변경 시나리오가 깨지므로 전용 fixture 옵션으로 좁힐 것.",
+    "updated": "2026-10-16"
+  },
+  {
+    "title": "Resolver 캐시 키가 permission 설정(mode/failClosed)을 포함하지 않음",
+    "value": 2,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "key 는 username|project|slug 만 포함해 plugin↔rest 모드 전환 시 이전 모드의 결정이 TTL 동안 남는다. 다만 api/admin.go:505-506,541 이 설정 변경 시 Resolver.Reset() 을 호출하므로 실무 노출은 좁다. 관리 API 밖에서 설정이 바뀌는 경로는 미확인.",
+    "updated": "2026-10-16"
+  },
+  {
+    "title": "checkApproval 이 approvalId 형식 검증 전에 PR 버전을 조회한다",
+    "value": 1,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "신규(이번 변경의 부수 효과). 버전 조회를 raw 분기 전으로 올렸으므로 approvalId 가 형식 오류인 호출도 업스트림 PR 읽기 1회를 낭비한다. 반환 코드(APPROVAL_DENIED)는 그대로이고 보호에도 영향이 없어 순수 효율 문제다. 고치려면 uuid.Parse 를 조회보다 앞으로 당기면 되지만, 과제서가 지정한 '한 번만 조회' 구조를 흐리지 않는 선에서만.",
+    "updated": "2026-10-16"
+  },
+  {
+    "title": "MCP 세션 id 검증 — 모르거나 없는 Mcp-Session-Id 에 404",
+    "value": 2,
+    "risk": 4,
+    "size": "S",
+    "status": "pending",
+    "note": "외부 규격·클라이언트 호환성 미확인으로 계속 보류.",
+    "updated": "2026-10-16"
+  },
+  {
+    "title": "handlePost 의 401 판정이 한국어 메시지 substring 에 의존",
+    "value": 2,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "실제 오분류 사례 미확인. 인증 계약 변경이라 단독 회차 필요.",
+    "updated": "2026-10-16"
+  },
+  {
+    "title": "internal/aiproxy/proxy.go 테스트 공백",
+    "value": 3,
+    "risk": 3,
+    "size": "M",
+    "status": "pending",
+    "note": "자체 테스트 없음. relaySSE 의 다중 data 행/[DONE] 처리는 제공자 계약 미확인으로 보류 유지.",
+    "updated": "2026-10-16"
+  },
+  {
+    "title": "internal/settings · internal/config 테스트 공백 보강",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "결함 증거 없음. 낮은 우선순위 유지.",
+    "updated": "2026-10-16"
+  },
+  {
+    "title": "internal/mcp 패키지 자체 테스트 0건",
+    "value": 3,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "API e2e 가 세션·UTF-8·인증을 간접 검증. 파일 부재를 기능 부재로 보지 않는다.",
+    "updated": "2026-10-16"
+  },
+  {
+    "title": "절단된 tools/call 응답이 StructuredContent 를 통째로 버린다",
+    "value": 3,
+    "risk": 3,
+    "size": "M",
+    "status": "pending",
+    "note": "클라이언트 기대 계약 미확인; 보류.",
+    "updated": "2026-10-16"
+  },
+  {
+    "title": "MCP 8MiB 초과 본문의 잘린 접두사 처리 거부",
+    "value": 3,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "코드 추론만 있고 런타임 재현 미실행 상태 그대로.",
+    "updated": "2026-10-16"
+  }
+]

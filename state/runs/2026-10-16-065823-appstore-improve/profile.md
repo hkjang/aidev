@@ -1,0 +1,29 @@
+# appstore 프로필 (2026-10-16)
+- 목적: 사내 앱 탐색·등록·보안 심의·검토·게시와 개인 API/MCP 키를 제공하는 오프라인 배포형 카탈로그.
+- 스택: Go 1.25·chi·PostgreSQL; React 19·TypeScript·Vite·TanStack Query·react-router; Vitest/jsdom·Playwright.
+- 기준: HEAD main@15f6892(2026-10-16 확인). 469e89a·edc94a7 은 HEAD 조상으로 실제 병합 확인됨. 버전은 직전 기록 기준 v2.11.16(이번 미재확인).
+- 구조:
+  - cmd/server: 기동. internal/webui/dist: Go embed 프런트 산출물(직접 수정 금지).
+  - internal/httpapi: REST·검증·rate limit·SPA. internal/auth: OIDC·세션·비밀번호.
+  - internal/store·model·database·migrations: 데이터 접근·모델·DB·자동 마이그레이션.
+  - internal/seccheck·workflow·keymanager·mcp·analytics·audit·ai: 심의·승인·키·서비스 로직.
+  - web/src/pages: public/personal/admin/review/auth/app-form 화면.
+  - web/src/features: apps(guide-documents 포함)·security-check·navigation·auth·home. app/components/lib: 라우터·providers·공용 UI·API 클라이언트.
+  - web/e2e: core.spec.ts·visual.spec.ts·mock-api.ts. docs: 가이드/정적 사이트. guides: 내장 가이드.
+- 빌드·테스트: worktree 에 node_modules 없음. `npm --prefix web ci --no-audit --no-fund` → `npm --prefix web test` / `run lint`(--max-warnings 0) / `run build`.
+- 빌드·테스트: build 후 `./scripts/check-offline-assets.sh web/dist`, 그리고 `./scripts/check-env-contract.sh`·`./scripts/check-docs.sh`·`git diff --check`.
+- 빌드·테스트: E2E 는 `(cd web && npx playwright install chromium)` + build 선행 후 `CI=true npm --prefix web run test:e2e`(전체는 오래 걸림, --grep 권장). desktop/mobile 두 프로젝트 모두 확인.
+- 빌드·테스트: CI 는 `go test -race . ./cmd/... ./internal/... ./migrations/... ./openapi/...` 와 `go build -trimpath -buildvcs=false ./cmd/server` 까지 수행.
+- 관례: 영어 `feat:/fix:/test:/docs:/chore(release):` 커밋, 사용자 문구는 한국어, 테스트는 소스 옆 `*.test.tsx`.
+- 관례: 환경변수는 POSTGRES_DSN·BOOTSTRAP_ADMIN·BOOTSTRAP_ADMIN_PASSWORD·ENCRYPTION_KEY. 운영 설정은 DB/Admin UI.
+- 관례: 앱 상태 한국어 정본은 `app-status.tsx`(APP_STATUSES·appStatusLabel·AppStatusBadge). SecCheck finalResult 는 owner-page 로컬 표(별도 계약). 화면 한정 문구는 로컬 표로 두는 것이 이 저장소 선례.
+- 관례: docs/USER_GUIDE.md·ADMIN_GUIDE.md 와 PDF 가 가이드 정본. guides/appstore 와 통째 동기화 금지. CLAUDE.md/AGENTS.md·roadmap·TODO 파일 없음.
+- 위험 구역: internal/auth·session/CSRF·ratelimit·암호화·migrations·.github/workflows·internal/webui/dist. 보안/승인 판정 변경과 표시 변경을 한 회차에 섞지 말 것.
+- 위험 구역: 공용 ui.tsx(ErrorState/StatePanel/Field) 문구·계약 변경은 다른 화면 회귀를 부른다. 한 화면 문제면 화면 로컬로 좁힐 것.
+- 자주 깨지는 곳: 원장의 "성공" 과 main 포함은 다르다 — 병합 주장은 `git merge-base --is-ancestor` 로 확인할 것. 즐겨찾기 0898f7a 는 15f6892 에서도 미포함.
+- 자주 깨지는 곳: 출력이 변하지 않는 순수 테스트 추가·입력 하드닝은 사람이 반려한 이력이 있다. 프로덕션 배선의 실제 DOM 으로 증명할 것.
+- 자주 깨지는 곳: 모바일 sidebar 는 메뉴를 연 뒤 클릭. desktop 만 통과하고 전체 성공으로 쓰지 말 것.
+- 검증 함정: 테스트 QueryClient 는 `retry:false`, 운영은 `web/src/app/providers.tsx:149` 의 `retry:1`. 오류 표시 타이밍이 다르다.
+- 검증 함정: E2E 는 Vite preview 번들 + HTTP mock 이라 build 선행 필수이며, 실제 DB/Keycloak/SecCheck 연동 성공의 증거가 아니다. Go 통합은 APPSTORE_TEST_POSTGRES_DSN 없으면 skip.
+- 검증 함정: mock-api.ts:314 public config 의 `...options.config` 는 뒤따르는 기본값에 덮인다. 나중에 등록한 page.route 가 mock 보다 우선한다(오류 주입에 사용 가능).
+- 검증 함정: `check-docs.sh` 는 링크·캡처 계약 검사이며 PDF 본문 검사가 아니다. `server`·`web/dist`·`web/test-results` 는 .gitignore 대상이며 커밋 금지.

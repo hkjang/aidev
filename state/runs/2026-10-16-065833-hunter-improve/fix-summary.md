@@ -1,0 +1,7 @@
+# 수리 요약 (시도 1 → 커밋 df4aef6)
+
+- 비평 1·2 맞음: `finding_ops.go:106` 의 `value == previous` 는 `any` 동등 비교라 저장된 assignee 가 JSON 객체/배열인 행에서 `comparing uncomparable type` 으로 panic 했다. 임시 시험으로 helper 와 `(&App{}).validateResource(update=true)` 양쪽에서 직접 재현했고, 주석이 약속한 "legacy 는 skip" 도 그 경우 400 도 skip 도 아닌 500 이었다.
+- 고친 방법: 비교를 `sameJSONValue(previous, value)` (json.Marshal 바이트 비교, `domain.go:456` 의 targets 비교와 같은 기존 관용구)로 바꿨다. 문자열·숫자에서는 기존 `==` 와 결과가 같고, 객체/배열 legacy 값은 이제 주석대로 **skip** 되어 그 행의 다른 필드 수정이 다시 200 이 된다. 실제로 바뀐 값만 규칙을 받으므로 새 객체/배열 제출은 그대로 400 이다. 주석도 이 동작으로 고쳤다.
+- 비평 3 맞음: `openapi.json` 의 `Finding`(POST 본문)과 `FindingUpdate`(PUT 본문) 의 `assignee` 에 `maxLength 200`·`x-max-bytes 200`·규칙 설명을 넣었다(`FindingBulkPatch` 와 같은 문구, FindingUpdate 에는 "이전 저장값은 유지" 한 문장 추가). 응답 전용 `FindingQueueItem` 은 건드리지 않았다 — 같은 파일이 `evidence`·`contribution_points` 를 쓰기 규칙으로만 기술하는 관례를 따랐다.
+- 회귀 시험: `TestFindingAssigneeToleratesUncomparableStoredValues` 11 케이스(미제출 PUT·동일 재제출·새 객체 거절·`validateResource` 경로). 고치기 전 코드로 되돌리면 같은 panic 으로 FAIL 함을 확인한 뒤 복원했다.
+- 검증: `gofmt -l`(해당 4파일 0건), `go vet ./...`, `go build ./cmd/hunter`, `go test -count=1 ./internal/app` = 175개 중 47 PASS / 128 SKIP / **0 FAIL**, `npm --prefix web test` = 113 PASS / 0 FAIL, `node scripts/verify-pentagi.mjs` = 312파일 일치. **미검증**: 128 SKIP 은 전부 `HUNTER_TEST_DSN` 없는 PostgreSQL 통합시험이므로 실 HTTP·DB 를 지나는 POST/PUT 과 500→200 회복은 여전히 코드 수준 증명이다. `go test -race ./...`·CI·Docker 도 실행하지 않았다.

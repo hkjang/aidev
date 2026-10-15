@@ -1,42 +1,32 @@
-# bbmcp 프로필 (2026-10-08)
-- 목적: Bitbucket Server 6.9.1 앞의 MCP 게이트웨이로 AI 호출을 요청자 본인의 권한·정책·승인 범위로 제한한다.
-- 스택: Go 모듈 github.com/hkjang/bbmcp(go.mod 1.24), PostgreSQL/pgx v5, Keycloak OIDC, chi. React 18·TypeScript·Vite 5·Mantine 7은 이전 동일일 프로필 기준이며 이번 웹 의존성 전문 재확인은 생략.
-- 기준: main@8a7c6e0(v0.2.9), 최근 git log -30은 실제 27개 커밋. 저장소 코드 무변경.
+# bbmcp 프로필 (2026-10-16)
+- 목적: Bitbucket Server 6.9.1 앞의 MCP 게이트웨이로, AI 도구 호출을 요청자 본인의 권한·정책·승인 범위로 제한한다.
+- 기준 커밋: main@410645f (v0.2.10). 2026-10-08 프로필 작성 시점 이후 코드 변경 없음(`git log --oneline -12`, `git status` clean 으로 확인).
+- 스택: Go 모듈 github.com/hkjang/bbmcp (go.mod 1.24, 로컬 go1.26.7), PostgreSQL/pgx v5, Keycloak OIDC, chi. 프런트는 web/ 의 React 18·TypeScript·Vite 5·Mantine 7 (이번 회차 재확인 생략).
 - 구조:
-  - cmd/: 실행 진입점. internal/api/: HTTP/관리/개인 API, OAuth 메타데이터·등록 점검.
-  - internal/mcp/: Streamable HTTP·JSON-RPC, initialize 세션 헤더, 응답 상한·UTF-8 절단.
-  - internal/tools/: 도구 정의·Registry·Executor; 정책→사용자 권한→브랜치 제한→승인→실행.
-  - internal/identity/: sub↔Bitbucket ID 최초 매핑, 비활성 매핑 거부·오류 집계.
-  - internal/permission/, internal/policy/: 권한 REST/플러그인·캐시·브랜치 제한, 프로젝트/저장소/브랜치 정책.
-  - internal/approval/, internal/audit/: 인자 해시·버전 고정·1회 승인, 감사 기록.
-  - internal/auth/, internal/apikey/, internal/crypto/: OIDC·로컬 로그인·세션·개인 키·암호화.
-  - internal/settings/, internal/config/, internal/database/: DB 설정, 기동 환경변수, 자동 마이그레이션.
-  - internal/bitbucket/, internal/aiproxy/: 업스트림 클라이언트, AI 스트리밍 프록시.
-  - web/: 프런트; internal/webui/dist 임베드. docs/: 정적 사이트·사용자/관리자 가이드.
-- 빌드·테스트:
-  - 정찰 실제 PASS: `go build ./...`, `go vet ./...`.
-  - 정찰 실제 PASS: `TEST_DATABASE_URL='postgres://bbmcp:bbmcp@127.0.0.1:15532/bbmcp_test?sslmode=disable' go test ./... -count=1 -p 1 -v` (9개 테스트 패키지, SKIP/FAIL 없음).
-  - 2026-10-08 정찰 시 bbmcp-test-pg가 포트 15532에서 기동 중. 컨테이너는 후속 회차에서 다시 확인할 것.
-  - 로컬 `go version`: go1.26.7 linux/amd64; CI는 Go 1.24 + postgres:16-alpine, TEST_DATABASE_URL 포트 5432.
-  - 웹 CI: `cd web && npm ci --no-audit --no-fund && npm run check && npm run build` (Node 22). 이번 미실행.
-  - .github/workflows/ci.yml은 Go/web/image 3잡; 도커 빌드·/healthz·/api/config 점검 포함. 이미지 잡은 상대적으로 오래 걸림, 이번 미실행.
-- 관례: 한국어 Conventional Commits. 영문 코드 식별자와 한국어 사용자 메시지. README/docs가 사용자 정본.
-- 저장소 파일 검색에서 CLAUDE.md·AGENTS.md·별도 로드맵은 발견하지 못함. internal/docs/README 범위 TODO/FIXME 없음.
-- 설정: 필수 환경변수 DATABASE_URL/BOOTSTRAP_ADMIN/BOOTSTRAP_ADMIN_PASSWORD/ENCRYPTION_KEY, POSTGRES_DSN 별칭·BBMCP_ADDR 지원. 나머지는 DB settings.
-- settings.Store는 30초 캐시, Put은 로컬 캐시 갱신, raw는 DB 재조회 실패 시 기존 값 유지.
-- 마이그레이션: 이전 동일일 프로필 기준 0001 기본, 0002 사용자 설정, 0003 매핑 오류 집계. 이번 migration 전문은 재열람하지 않음.
+  - cmd/: 진입점. internal/api/: HTTP·관리·개인 API, OAuth 메타데이터·등록 점검.
+  - internal/mcp/: Streamable HTTP·JSON-RPC, `initialize` 세션 헤더, 응답 상한과 `trimToRune` UTF-8 절단.
+  - internal/tools/: 도구 정의·Registry·Executor. Invoke 순서 = 정책 → 사용자 유효권한 → 브랜치 제한 → 승인 → 실행 → 감사.
+  - internal/permission/: `Resolver`(plugin/rest 모드, TTL 캐시, FailClosed), 브랜치 제한. internal/policy/: 프로젝트·저장소·브랜치 정책.
+  - internal/approval/: 인자 해시·PR 버전 고정·1회 소비(`Check` 의 조건부 UPDATE), `redactArgs` 민감 키 스크럽. internal/audit/: 감사 기록.
+  - internal/identity/: sub↔Bitbucket 사용자 최초 매핑·재바인딩 거부. internal/auth/, apikey/, crypto/: OIDC·로컬 로그인·세션·개인 키·암호화.
+  - internal/settings/(DB 설정, 30초 캐시), config/(기동 환경변수), database/(자동 마이그레이션), bitbucket/(업스트림), aiproxy/(AI 스트리밍), webui/(dist 임베드). docs/: 사용자·관리자 정본.
+- 빌드·테스트(명령 자체는 이전 회차에서 PASS 확인, **이번 회차에는 실행 불가 — 샌드박스 승인 거부**):
+  - `go build ./...`, `go vet ./...`
+  - `docker start bbmcp-test-pg` (postgres:16-alpine, 127.0.0.1:15532 — 2026-10-16 현재 Exited(255))
+  - `export TEST_DATABASE_URL='postgres://bbmcp:bbmcp@127.0.0.1:15532/bbmcp_test?sslmode=disable'`
+  - `go test ./... -count=1 -p 1 -v` (테스트 패키지 9개; 직전 기록 131 PASS / SKIP 0 / FAIL 0)
+  - 웹: `cd web && npm ci --no-audit --no-fund && npm run check && npm run build` (Node 22). CI 는 .github/workflows/ci.yml 의 Go/web/image 3잡이며 image 잡이 가장 느리다.
+- 관례: 한국어 Conventional Commits, 영문 식별자 + 한국어 사용자 메시지. CLAUDE.md·AGENTS.md·로드맵 없음. 설정은 환경변수 최소(DATABASE_URL/BOOTSTRAP_ADMIN/BOOTSTRAP_ADMIN_PASSWORD/ENCRYPTION_KEY) + 나머지는 DB settings. 마이그레이션은 기동 시 자동 적용(0001 기본, 0002 사용자 설정, 0003 매핑 오류 집계).
 - 위험 구역:
-  - internal/auth/*, internal/api/oauth.go: 최근 v0.2.6~0.2.9의 Keycloak 등록·redirect URI·10 호환 집중 변경. 이번 과제에서 제외.
-  - approval.Check: 현재 버전 nil/변경 시 승인 거부, 조건부 UPDATE로 단일 소비. 이 방어와 감사 민감값 스크럽 보존.
-  - permission/resolver.go: TTL 캐시·fail-closed. tools fixture는 CacheTTLSec=0이라 캐시 경로 미검증.
-  - executor.go: prTargetBranch 오류/빈 ref 시 브랜치 검사 생략이 이번 과제. prVersion/승인 생성의 nil 처리 전체 개편은 제외.
-  - migrations와 Dockerfile/.github/workflows: 기존 데이터/배포 영향. 과거 alpine rollup 누락 교훈.
-- 자주 깨지는 곳: Keycloak OAuth 등록·redirect URI·구버전 호환, alpine 웹 빌드. 이전 정찰 무산 방지용 brief 초안 우선 기록.
+  - internal/auth/*, internal/api/oauth.go — v0.2.6~0.2.9 Keycloak 등록·redirect URI·10 호환 집중 변경 구역. 다른 과제와 섞지 말 것.
+  - internal/approval/approval.go:Check — 만료·인자 해시·PR 버전(nil 현재버전 거부)·조건부 UPDATE 단일 소비가 전부 회귀 금지선.
+  - internal/tools/executor.go — 검사 순서 자체가 계약이다. 브랜치 검사가 승인보다 먼저 온다는 사실(13b44b9)이 merge 경로 테스트 기대값을 좌우한다.
+  - migrations·Dockerfile·.github/workflows — 기존 데이터·배포 영향(과거 alpine rollup 누락 교훈).
+- 자주 깨지는 곳: Keycloak OAuth 동적 등록·redirect URI·구버전 호환, alpine 웹 빌드. 업스트림 오류를 삼켜 보호를 건너뛰는 fail-open 패턴이 executor/approval 계열에서 반복 발견됨(2026-10-03, 10-08, 10-16 과제).
 - 검증 함정:
-  - DB 통합 테스트는 TEST_DATABASE_URL 없으면 t.Skip. exit 0만으로 전체 통과를 판단하지 말 것.
-  - fixture들이 공유 테이블 TRUNCATE. 전용 테스트 DB, 패키지 `-p 1`, t.Parallel 금지.
-  - tools/integration_test.go:newFixture는 실제 프로덕션 타입·PostgreSQL·HTTP Bitbucket 대역을 배선한다. 가짜 Executor/Resolver를 새로 주입하지 않는다.
-  - api/mcpoauth_e2e_test.go의 기존 HTTP 테스트는 baseline 통과. 이번 신규 결함은 아직 정찰에서 동적으로 재현하지 않았음.
-  - identity 자체 테스트 없음과 기능 미검증은 다름. 기존 tools 테스트가 최초 매핑/재사용/재바인딩 거부·미매핑 권한 거부를 검증.
-  - TestMergeApprovalDeniedWhenPullRequestVersionUnknown은 merge 경로다. 대상 조회 fail-closed 추가 후에는 승인 검사 전 PERMISSION_UNKNOWN으로 막히므로, nil-version 승인 방어를 comment 경로 테스트로 옮겨 유지할 것.
-  - mcp/identity/approval/audit/aiproxy/settings/config 자체 테스트 없음. 일부는 API/tools에서 간접 검증.
+  - TEST_DATABASE_URL 없으면 통합 테스트가 `t.Skip` 으로 조용히 넘어간다 — exit 0 을 통과로 읽지 말고 `-v` 로 `--- SKIP` 0건을 확인할 것.
+  - fixture 들이 공유 테이블을 TRUNCATE 한다: 전용 테스트 DB, `-p 1`, `t.Parallel()` 금지.
+  - internal/tools/integration_test.go:newFixture 는 실제 Registry→Executor→Resolver→PostgreSQL→HTTP Bitbucket 대역을 배선한다. 가짜 Executor/Resolver 를 새로 주입하지 말 것. `fakeBitbucket.prFetchFails`·`prVersion`·`prTargetRef` 로 업스트림 장애를 흉내낼 수 있다.
+  - newFixture 의 `CacheTTLSec=0` 때문에 Resolver 캐시 경로는 여전히 미검증이다.
+  - 자체 테스트 없는 패키지: mcp, identity, approval, audit, aiproxy, settings, config (대부분 api/tools 통합에서 간접 검증).
+  - 환경에 따라 `go`·`docker` 실행이 승인에 막힐 수 있다(2026-10-16 정찰). 그런 회차의 과제서 근거는 코드 판독이므로 구현자가 red 로그를 먼저 만들 것.
