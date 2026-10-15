@@ -10,3 +10,12 @@
 - 일부러 하지 않은 것: `VideoProbe` 에 `rotationDegrees` 같은 필드를 넣지 않았다(스키마·serialize·화면까지 번져 파일 수가 늘어난다). 길이 판정(mvhd 단독)·상자 64개 제한은 그대로 뒀다 — ideas.json 에 남겼다.
 - 다음 역할이 조심할 것: `npm test` 는 먼저 `npm run build` 가 필요하고, `npm run build` 를 파이프로 받으면 종료 코드가 가려진다(tsc 실패를 EXIT=0 으로 봤다). 이 환경의 `npx` 는 `/home/hkjang/node_modules/.bin/node`(v20)를 먼저 집어 wrangler 가 거절하므로, `node_modules/.bin/node` 를 v22 로 심링크해 두었다(저장소 밖, 커밋 아님) — 새 세션에서 `npm ci` 하면 다시 해야 한다.
 - [러너 09:54] verify passed — 검증 4개 통과 (auto)
+
+## 비평 노트
+- 확인한 것: ISO/IEC 14496-12 명세만 보고 직접 만든 tkhd 바이트로 v0·v1 을 따로 세워 `probeMp4` 를 돌렸다(저장소 시험 보조를 믿지 않았다). 행렬 위치 `body+40`/`body+52` 가 맞고, 구현자가 "시험 못 했다" 던 **v1 경로도 바르게** 90° 를 1080×1920 으로 읽는다. 회전 없는 입력(항등·180°·행렬 전부 0·2배 확대)은 main 과 같은 값 → 기존 파일 회귀 없음.
+- 시험 진위: 원장의 `- 실패 재현:` 이 증상과 맞고, verify.txt 에 신규 2개가 실제 실행·통과(78/78). 수정 전 코드로는 둘 다 실패한다 — 빈 시험 아님.
+- 못 본 것: 실제 휴대전화·카메라 MP4 표본. **남는 우려** — tkhd 너비·높이를 이미 바꿔 적고 90° 행렬도 남기는 기록기가 있으면 이중 교환으로 다시 틀린다. 운영에서 "세로인데 가로로 판독" 신고가 오면 `mp4.ts:132` 를 먼저 보라.
+- 릴리즈 노트에 넣을 것: 이미 올라간 세로 영상의 `assets.probe`·저장된 `spec_check` 는 백필되지 않는다(재업로드해야 고쳐진다). 되돌리기는 코드만이라 깨끗하다.
+- 나머지는 참고 수준: `|a| < |b|` 가 주석 `(a≈0, b≈±1)` 보다 넓다(임의 회전도 교환), `docs/acceptance.md:25` AT-19 행에 `api-files` 가 빠졌다. 판정 approve · risk low · blocking 없음.
+- [러너 09:58] review approved — 리뷰 승인 (risk=low)
+- [러너 09:58] pr created — https://github.com/hkjang/studio.irumx.app/pull/1
