@@ -289,3 +289,12 @@
   - retryWebhookDelivery 왕복 테스트 공백 (2/1/M): 실제 PostgreSQL 기반 이력/재시도 검증을 별도 범위로 진행.
 
 - 릴리즈: v0.2.33 (2026-10-08, run 2026-10-08-231836-jikim-improve)
+## 2026-10-15
+- 선택: Dependabot 의 @mantine/core 업데이트 잡 실패 원인 수정 — peer 로 묶인 npm 묶음을 함께 올리게 하기 (가치 4 / 위험 1 / 작업량 S)
+- 결과: 성공
+- 요약: 실패한 것은 저장소 CI 워크플로가 아니라 Dependabot 업데이터 잡이고, 로그는 BlobNotFound 로 받을 수 없어(gh 미인증) 원인을 로컬에서 직접 재현했다. `web/package-lock.json` 에서 `@mantine/core` 는 `@mantine/hooks` 를 정확히 `8.3.18` 로, `@mantine/notifications` 는 `@mantine/core`·`@mantine/hooks` 를 둘 다 정확히 `8.3.18` 로 peer 요구하므로 Dependabot 이 `@mantine/core` 만 최신(9.7.2)으로 올리면 npm 이 의존성을 해석하지 못한다(ERESOLVE). 같은 결합이 `react`/`react-dom`(peer `^19.2.8`), `@types/react`/`@types/react-dom`(peer `^19.2.0`)에도 있어 셋 다 지금 재현된다. `.github/dependabot.yml` 의 npm `/web` 항목에 세 묶음의 `groups` 를 추가해 한 PR 에서 함께 올라가게 했고(버전 고정·검사 완화 없음), 락파일에서 peer 로 묶인 묶음을 스스로 뽑아 group 누락을 거절하는 `scripts/verify-dependabot-groups.mjs` 를 기존 `verify-docs.mjs` 관례대로 추가해 `scripts/verify.sh` 에 연결했다. 검증: 수정 전 체크 exit 1(세 묶음 모두 지적) → 수정 후 exit 0; `npm install <묶음 전체> --package-lock-only` 가 세 묶음 모두 exit 0 으로 해석되는 것을 실제 레지스트리로 확인(단건 bump 는 exit 1); CI 가 돌리는 `bash scripts/verify.sh` 는 수정 트리에서 exit 0(프런트 59/59, Go test/vet/gofmt·문서·Compose 포함)이고 mantine group 만 지운 트리에서 exit 1 로 떨어진다. 프로덕션 파일 3개(`.github/dependabot.yml`·`scripts/verify-dependabot-groups.mjs`·`scripts/verify.sh`), 커밋 `a206485`.
+- 실패 재현: `npm error code ERESOLVE` / `npm error Found: @mantine/hooks@8.3.18` / `npm error peer @mantine/hooks@"9.7.2" from @mantine/core@9.7.2` (exit 1, `npm install @mantine/core@9.7.2 --package-lock-only`). 새 게이트 쪽 재현은 `- peerDependencies 로 버전이 묶인 묶음을 Dependabot 이 따로 올립니다: @mantine/core, @mantine/hooks, @mantine/notifications …` 외 2줄, exit 1. 같은 방식으로 `react-dom@19.3.1` 단건(`peer react@"^19.3.1" from react-dom@19.3.1`)과 `@types/react-dom@19.3.0` 단건(`peer @types/react@"^19.3.0"`)도 exit 1 로 재현했다. 다만 Dependabot 잡 자체의 로그는 BlobNotFound 로 열 수 없어 잡이 정확히 이 ERESOLVE 메시지로 죽었다는 것까지는 확인하지 못했다.
+- 보류 아이디어: Momento 프록시가 인코딩된 URL 경로를 보존하도록 수정 (3/2/S — 실제 collector RequestURI 재현 선행) / CSP 진단 페이지의 UTF-8 절단 방지 (2/1/S — 최종 관리자 응답 검증 필요) / 추적 활성 중 CSP 리포트 속도 제한·동일 출처 검증 (3/3/M — 새 신뢰 계약 필요) / retryWebhookDelivery 왕복 테스트 공백 (2/1/M — PostgreSQL 통합 검증 선행) / gomod·github-actions·docker 생태계에도 같은 묶음 검사 확장 (2/2/M — 락파일 없는 생태계라 결합 추출 근거가 다르다)
+- 과제서: 채택 — 지정된 실패를 로컬에서 재현해 원인(peer 로 묶인 패키지의 단건 업데이트)을 증명하고 그 원인만 고쳤다. 단, 과제서의 로그 줄(BlobNotFound)은 Dependabot 로그를 받지 못한 것이지 실패 원인이 아니어서 재현 대상이 아니었다.
+
+- 릴리즈: v0.2.34 (2026-10-15, run 2026-10-15-180839-jikim-improve)

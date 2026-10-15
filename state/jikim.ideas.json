@@ -1,111 +1,30 @@
 [
   {
-    "title": "oidcLogout 이 OIDCConfig 읽기 실패를 조용히 /login 리다이렉트로 접음",
-    "value": 2,
-    "risk": 2,
-    "size": "S",
-    "status": "pending",
-    "note": "oidc.go 직접 조회와 오류/빈 issuer 통합 302가 남아 있음. 반복된 로그만 추가하는 접근이라 선택 제외.",
-    "updated": "2026-10-08"
-  },
-  {
-    "title": "OpenBao 호환 표면의 baoError 500 이 ERROR 로그를 남기지 않음",
-    "value": 3,
-    "risk": 2,
-    "size": "S",
-    "status": "pending",
-    "note": "openbao.go의 baoError는 envelope만 쓴다. 새로운 로깅 계약만 도입하므로 선택 제외.",
-    "updated": "2026-10-08"
-  },
-  {
-    "title": "momentoProxy 가 tracking 설정 읽기 실패를 404 로 접음",
-    "value": 2,
-    "risk": 2,
-    "size": "S",
-    "status": "pending",
-    "note": "trackingConfig의 WARN 및 추적 off fallback과 ProxyActive의 404 유지. 페이지 가용성 및 fail-closed 계약을 유지한다.",
-    "updated": "2026-10-08"
-  },
-  {
-    "title": "추적이 켜진 동안의 CSP 리포트 폭주에 속도 제한 또는 동일 출처 검증",
-    "value": 3,
-    "risk": 3,
-    "size": "M",
-    "status": "pending",
-    "note": "무인증 route와 MaxViolations=100 유지. 본문 상한은 수정됐지만 속도/신뢰 계약은 별개이며 새 계약이 필요하다.",
-    "updated": "2026-10-08"
-  },
-  {
-    "title": "revealSecret 의 감사 기록이 auditRecorder seam 을 우회함",
-    "value": 2,
-    "risk": 1,
-    "size": "S",
-    "status": "pending",
-    "note": "secret_handlers.go:132 직접 RecordAudit 및 실패 시 disclosure 차단 유지. seam 교체만 하는 작업 제외.",
-    "updated": "2026-10-08"
-  },
-  {
-    "title": "docs/guides/api-guide.md 에 AI 엔드포인트 error code 표 추가",
-    "value": 2,
-    "risk": 1,
-    "size": "S",
-    "status": "pending",
-    "note": "AI SSE 설명은 있으나 code 표 없음. 문서 단독 반복 후보라 선택 제외.",
-    "updated": "2026-10-08"
-  },
-  {
-    "title": "스니펫 nonce 속성 파싱 경계 검증",
-    "value": 2,
-    "risk": 2,
-    "size": "M",
-    "status": "pending",
-    "note": "withNonce의 nonce= 부분 문자열 검사 유지. HTML 파서 계약과 브라우저 실행 검증이 필요하며 파서 확대를 피한다.",
-    "updated": "2026-10-08"
-  },
-  {
-    "title": "retryWebhookDelivery 왕복 테스트 공백",
-    "value": 2,
-    "risk": 1,
-    "size": "M",
-    "status": "pending",
-    "note": "WebhookDelivery 직접 조회 2회 유지. PostgreSQL 통합 검증이 필요하며 이번 페이지 파서 수정과 독립이다.",
-    "updated": "2026-10-08"
-  },
-  {
-    "title": "baoKVWrite 의 create/update 판정 TOCTOU",
-    "value": 3,
-    "risk": 3,
-    "size": "M",
-    "status": "pending",
-    "note": "SecretExistsByPath → CanAccess → PutOpenBaoSecret 분리 유지. CAS와 다른 권한 경쟁이며 트랜잭션/동시성 검증 필요.",
-    "updated": "2026-10-08"
-  },
-  {
-    "title": "리버스 프록시 뒤에서 remoteIP 가 접혀 로그인 잠금 key 의 IP 부분이 같아짐",
-    "value": 2,
-    "risk": 3,
-    "size": "M",
-    "status": "pending",
-    "note": "remoteIP는 RemoteAddr만 사용한다. 신뢰 프록시 계약을 바꾸는 인증 경계라 보류.",
-    "updated": "2026-10-08"
-  },
-  {
-    "title": "queueWebhook 의 비동기 전송 goroutine 이 서버 종료를 기다리지 않음",
-    "value": 2,
-    "risk": 2,
-    "size": "M",
-    "status": "pending",
-    "note": "Background timeout goroutine 및 HTTP Shutdown 구조 유지. 서비스 생명주기 변경을 요구하므로 보류.",
-    "updated": "2026-10-08"
-  },
-  {
-    "title": "페이지 숫자 파서의 정수 overflow를 기본값으로 처리",
-    "value": 3,
+    "title": "Dependabot 이 peer 로 묶인 npm 묶음을 함께 올리게 하고 게이트로 고정",
+    "value": 4,
     "risk": 1,
     "size": "S",
     "status": "done",
-    "note": "fb7ecd8: 십진 누적 전 int 범위를 검사하여 limit=50/offset=0 기본값 유지. 실제 New의 인증·미들웨어·라우트·PostgreSQL 조회를 거친 목록에서 양수 wrap을 수정 전 재현. 단위 12개 및 HTTP/DB 6개 통과, 검사 제거 시 같은 7개 실패 재현 후 복원. 프로덕션 1파일.",
-    "updated": "2026-10-08"
+    "note": "@mantine/core 단건 업데이트가 ERESOLVE 로 실패하던 원인. .github/dependabot.yml 에 mantine·react·react-types group 추가, scripts/verify-dependabot-groups.mjs 를 verify.sh 에 연결. 커밋 a206485.",
+    "updated": "2026-10-15"
+  },
+  {
+    "title": "gomod·github-actions·docker 생태계에도 묶음 업데이트 검사 확장",
+    "value": 2,
+    "risk": 2,
+    "size": "M",
+    "status": "pending",
+    "note": "신규: 이번 검사는 web/package-lock.json 의 peerDependencies 를 근거로 쓴다. 다른 생태계에는 같은 근거가 없어 결합 추출 방식부터 달라야 한다.",
+    "updated": "2026-10-15"
+  },
+  {
+    "title": "Dependabot group 이름·개수가 늘 때 검사가 요구하는 최소 묶음을 문서화",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "신규: CONTRIBUTING 에 '락파일이 peer 로 묶은 묶음은 group 으로 함께 올린다' 계약을 적을 자리가 있다. 이번에는 파일 수를 줄이려 스크립트 주석에만 남겼다.",
+    "updated": "2026-10-15"
   },
   {
     "title": "Momento 프록시가 인코딩된 URL 경로를 보존하도록 수정",
@@ -113,16 +32,124 @@
     "risk": 2,
     "size": "S",
     "status": "pending",
-    "note": "신규: momentoProxy가 SetURL 뒤 RawPath를 비워 %2F 등의 의미를 바꿀 가능성. 실제 collector RequestURI로 먼저 재현해야 하며 이번에는 수정하지 않음.",
-    "updated": "2026-10-08"
+    "note": "momentoProxy 가 SetURL 뒤 RawPath 를 비워 %2F 등의 의미를 바꿀 가능성. 실제 collector RequestURI 로 먼저 재현해야 한다.",
+    "updated": "2026-10-15"
   },
   {
-    "title": "CSP 진단 페이지 길이 제한이 UTF-8 문자를 절단하지 않도록 수정",
+    "title": "CSP 진단 페이지의 UTF-8 절단 방지",
     "value": 2,
     "risk": 1,
     "size": "S",
     "status": "pending",
-    "note": "신규: Recorder.Record는 page[:512]로 잘라 다중 바이트 문자 중간에서 끝날 수 있다. 관리자 HTTP 목록의 대체 문자 여부를 먼저 재현해야 함.",
-    "updated": "2026-10-08"
+    "note": "page[:512] 경계가 다중 바이트 문자를 자를 수 있다. 최종 관리자 응답까지 검증이 선행 조건.",
+    "updated": "2026-10-15"
+  },
+  {
+    "title": "추적이 켜진 동안의 CSP 리포트 속도 제한 또는 동일 출처 검증",
+    "value": 3,
+    "risk": 3,
+    "size": "M",
+    "status": "pending",
+    "note": "무인증 route 와 MaxViolations=100 유지. 본문 상한은 v0.2.32 에서 수정됐지만 속도·신뢰 계약은 별개이며 새 계약이 필요하다.",
+    "updated": "2026-10-15"
+  },
+  {
+    "title": "retryWebhookDelivery 왕복 테스트 공백",
+    "value": 2,
+    "risk": 1,
+    "size": "M",
+    "status": "pending",
+    "note": "WebhookDelivery 직접 조회 2회 유지. JIKIM_TEST_POSTGRES_DSN 기반 통합 검증이 선행되어야 한다.",
+    "updated": "2026-10-15"
+  },
+  {
+    "title": "baoKVWrite 의 create/update 판정 TOCTOU",
+    "value": 3,
+    "risk": 3,
+    "size": "M",
+    "status": "pending",
+    "note": "SecretExistsByPath → CanAccess → PutOpenBaoSecret 분리 유지. 트랜잭션·동시성 검증이 필요한 별도 범위.",
+    "updated": "2026-10-15"
+  },
+  {
+    "title": "oidcLogout 이 OIDCConfig 읽기 실패를 조용히 /login 리다이렉트로 접음",
+    "value": 2,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "성공·실패 모두 302 라 WARN 로그라는 새 계약이 필요하다. 로그만 추가하는 접근이라 반복 선택 제외 중.",
+    "updated": "2026-10-15"
+  },
+  {
+    "title": "OpenBao 호환 표면의 baoError 500 이 ERROR 로그를 남기지 않음",
+    "value": 3,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "openbao.go 의 baoError 는 envelope 만 쓴다. 새로운 로깅 계약 도입이라 선택 제외 중.",
+    "updated": "2026-10-15"
+  },
+  {
+    "title": "momentoProxy 가 tracking 설정 읽기 실패를 404 로 접음",
+    "value": 2,
+    "risk": 2,
+    "size": "S",
+    "status": "rejected",
+    "note": "trackingConfig 의 WARN 과 추적 off fallback, ProxyActive 의 404 는 fail-closed 계약으로 유지하는 것이 맞다.",
+    "updated": "2026-10-15"
+  },
+  {
+    "title": "revealSecret 의 감사 기록이 auditRecorder seam 을 우회함",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "rejected",
+    "note": "secret_handlers.go:132 의 직접 RecordAudit 과 실패 시 disclosure 차단은 현재 계약. seam 교체만으로는 관찰 가능한 변화가 없다.",
+    "updated": "2026-10-15"
+  },
+  {
+    "title": "docs/guides/api-guide.md 에 AI 엔드포인트 error code 표 추가",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "AI SSE 설명은 있으나 code 표가 없다. 문서 단독 반복 후보로 6회 연속 차선.",
+    "updated": "2026-10-15"
+  },
+  {
+    "title": "스니펫 nonce 속성 파싱 경계 검증",
+    "value": 2,
+    "risk": 2,
+    "size": "M",
+    "status": "pending",
+    "note": "withNonce 의 nonce= 부분 문자열 검사 유지. HTML 파서 계약과 브라우저 실행 검증이 필요하며 파서 확대는 피한다.",
+    "updated": "2026-10-15"
+  },
+  {
+    "title": "리버스 프록시 뒤에서 remoteIP 가 접혀 로그인 잠금 key 의 IP 부분이 같아짐",
+    "value": 2,
+    "risk": 3,
+    "size": "M",
+    "status": "pending",
+    "note": "remoteIP 는 RemoteAddr 만 쓴다. 신뢰 프록시 계약을 바꾸는 인증 경계라 보류.",
+    "updated": "2026-10-15"
+  },
+  {
+    "title": "queueWebhook 의 비동기 전송 goroutine 이 서버 종료를 기다리지 않음",
+    "value": 2,
+    "risk": 2,
+    "size": "M",
+    "status": "pending",
+    "note": "Background timeout goroutine 과 HTTP Shutdown 구조 유지. 서비스 생명주기 변경을 요구하므로 보류.",
+    "updated": "2026-10-15"
+  },
+  {
+    "title": "AIConfig 의 temperature 범위 클램프 누락",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "rejected",
+    "note": "쓰기 경로 validateSetting 이 0~2 를 강제해 관찰 가능한 변화를 만들 수 없다. 7회 연속 미선택이라 기각한다.",
+    "updated": "2026-10-15"
   }
 ]

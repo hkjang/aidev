@@ -1,0 +1,26 @@
+fix: release the peer-locked npm update grouping fix for v0.2.34
+
+Dependabot 이 peer 로 묶인 npm 패키지를 단건으로 올려 업데이트 잡이 실패하던
+문제를 고친 PR #56 을 릴리즈합니다. `web/package-lock.json` 에서 `@mantine/core`·
+`@mantine/hooks`·`@mantine/notifications` 는 서로를 정확한 버전으로 peer 요구하므로
+한 패키지만 올리면 npm 이 의존성을 해석하지 못합니다(ERESOLVE). `.github/dependabot.yml`
+의 npm `/web` 항목에 `mantine`·`react`·`react-types` 묶음을 추가해 세 묶음이 한 PR 에서
+함께 올라가게 했습니다. 버전 고정 해제나 `--legacy-peer-deps` 같은 검사 완화는 없으며
+의존성을 실제로 올리는 변경도 포함하지 않습니다. 같은 PR 은 락파일에서 peer 로 묶인
+묶음을 직접 뽑아 group 누락을 거절하는 `scripts/verify-dependabot-groups.mjs` 를
+기존 `verify-docs.mjs` 관례대로 추가하고 `scripts/verify.sh` 에 연결했습니다.
+
+기존 패치 릴리즈와 같은 방식으로 버전 파일, 문서 프로파일과 CHANGELOG 를 v0.2.34 로
+갱신했습니다. 화면 캡처의 v0.2.9 출처와 두 가이드 PDF 의 v0.2.18 표지는 유지합니다.
+기존 PDF 변환기가 저장소에 없어 같은 판형으로 재생성하지 않았으며 Markdown 본문은
+갱신했습니다.
+
+./scripts/verify.sh 전체(Go test·vet·gofmt, 웹 테스트 59개·lint·build, 문서·Dependabot
+묶음·Compose), go test ./... -count=1 과 소스 버전 일치 검사가 통과했습니다. 이번 로컬
+실행은 DSN 미설정으로 PostgreSQL 통합 테스트를 건너뛰었습니다. 구현 단계의 ERESOLVE
+로컬 재현과 비평·머지 전 CI 통과 기록을 확인했습니다. 기존 500kB 청크 경고는 남습니다.
+group 설정이 실제 Dependabot 러너에서 의도대로 동작하는지는 다음 업데이터 실행으로만
+확인되며, 잡 로그는 BlobNotFound 로 받을 수 없어 잡이 정확히 이 ERESOLVE 로 죽었다는
+직접 증거는 없습니다. 이미지 빌드, PostgreSQL 스모크, 브라우저 E2E, 번들 생성과
+GitHub Release 게이트는 기존대로 태그 푸시 후 release.yml 이 수행합니다. 이번 세션은
+원격 푸시나 게시를 하지 않습니다.
