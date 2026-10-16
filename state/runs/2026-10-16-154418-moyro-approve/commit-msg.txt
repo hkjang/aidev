@@ -1,0 +1,92 @@
+release: carry release markers to v0.2.50
+
+v0.2.50 ships two fixes already merged to main. Channel bookmark reorder now
+rewrites a channel's positions densely instead of writing only the row it was
+asked to move, and the Go toolchain and `golang.org/x/net` are raised to
+versions `govulncheck` accepts. There is no schema change, no migration, no new
+route, no new error id and no web source change in either fix. One production
+Go file changes, by 82 added and 12 removed lines including comments, alongside
+the build and module pins and the `bookmarks` package's first test file.
+
+`Reorder` in `bookmarks/service.go` carried a doc comment promising a dense,
+conflict-free re-shuffle of the channel's bookmarks and a body that was a
+single `UPDATE` of the target row's `sort_order`. The comment described a
+"simple two-shot update"; the second shot was never written. Two or more
+bookmarks in one channel were therefore left sharing a `sort_order`, and `List`
+orders by `sort_order ASC, create_at ASC`, so the tie fell to the older row:
+a drag landed one slot away from its target, or produced no visible movement at
+all. Nothing read a corrupted value — the rows simply never stopped colliding,
+and the old comment's own excuse for the shortcut, that a race only means two
+clients "see slightly different orders for ~100ms", described a transient
+disagreement the code could not actually produce. The duplicates persisted.
+
+`Reorder` now opens a transaction, reads the channel's active rows in `List`'s
+own order, moves the target inside that slice, and rewrites `0..n-1` in a
+single `unnest` `UPDATE` scoped to the channel's non-deleted rows, which is the
+idiom `sidebar.UpdateOrder` already uses. The read that decides the sequence
+and the write that applies it share the transaction, so two concurrent reorders
+cannot interleave back into the duplicate positions the change exists to
+remove. Positions are 0-based to match Mattermost's endpoint, while `Create`
+still appends with `COALESCE(MAX(sort_order),0)+1`; a channel that has never
+been reordered therefore starts at 1 and a reordered one starts at 0. `List`
+exposes only relative order, so that asymmetry is invisible to clients, and it
+is recorded in the doc comment rather than smoothed over. An out-of-range
+position still clamps to either end instead of erroring, keeping the response
+contract callers already have. The handler, `Create`, `List` and `Patch` are
+untouched, and the channel and `delete_at` filters on the rewrite keep another
+channel's rows and soft-deleted rows out of it.
+
+That fix also brings the `bookmarks` package its first tests, 371 lines on the
+`sidebar` package's isolated-schema PostgreSQL harness. They are database-backed
+and skip when `MOYRO_TEST_POSTGRES_DSN` is unset, so the run recorded below was
+pointed at a real PostgreSQL instance to make them execute.
+
+The toolchain half clears a release gate rather than changing any product
+behavior. `govulncheck`, which `release.yml` runs against `server`, reported
+reachable advisories while Go was pinned at 1.27.0 and `golang.org/x/net` at
+v0.58.0. `Dockerfile`'s `server-build` stage moves to `golang:1.27.2-alpine` at
+its matching digest, `server/go.mod`'s `go` directive to 1.27.2, and the module
+graph to `x/crypto` v0.57.0, `x/net` v0.60.0 and the indirect `x/mod` v0.41.0,
+`x/sync` v0.23.0, `x/sys` v0.48.0 and `x/text` v0.42.0. All of these are
+patch and minor bumps within one module family; no direct dependency is added,
+removed or re-ranged, and `GOTOOLCHAIN=local` in that stage means the image is
+built by the pinned toolchain rather than by one downloaded at build time.
+
+This commit carries nothing beyond the version markers.
+
+Verified on this release tree in the order `release.yml` runs it, against a real
+PostgreSQL instance: `go test -race -p 1 ./...` at 51 packages ok, 10 without
+test files and 0 failures, nothing served from the test cache, with `httpapi` at
+65.787s rather than the fraction of a second it takes when the database is
+absent, and the new `bookmarks` tests at 4.550s, which together confirm the
+database-backed tests — the reorder regression among them — executed instead of
+skipping. Unlike the previous three tags, the checksum-pinned Mattermost plugin
+fixtures were fetched on this machine, so a second `pluginhost` run with all
+four `MOYRO_TEST_*_PLUGIN_ARCHIVE` variables set took
+`TestMattermostArchivesInstallRunAndSurviveRestart` to a pass at 36.64s inside a
+64.120s package; that subtest skipped in the suite run above, where the package
+passed at 27.899s, and the release job is no longer the first place it runs.
+`go build ./...` and `go vet ./...` clean, `plugin-sdk/go`
+tests and vet clean, and `govulncheck` v1.7.0 reporting this code affected by 0
+vulnerabilities, which is the gate the toolchain bump was made for. In `webapp`,
+a clean `npm ci`, then `npm audit --omit=dev --audit-level=high` and `npm audit
+--audit-level=high` both at 0 vulnerabilities as of 2026-10-16, then `npm test`
+at 49 files and 224 tests on Node v22.23.1, then `npm run typecheck` and `npm
+run build`. `node scripts/verify-pages.mjs` passes against the bumped markers at
+5 HTML pages, 47 screenshots, 16 routes and 7 brand PNGs, and `bash
+scripts/check-source-sizes.sh` passes. `git diff --check` is clean and this
+commit touches no Go file.
+
+The version markers move to 0.2.50 across the same 21 files as every recent
+release, 130 occurrences of which 122 carry the `v` prefix, and no stale
+`0.2.49` marker remains anywhere in the tree. The historical references that
+name older versions on purpose — `v0.2.4` in `docs/offline-deployment.md`,
+`v0.2.27` in the two Korean guides' screenshot provenance lines and `v0.2.22` in
+`docs/roadmap.md` — are left alone, as are the dependency versions in
+`webapp/package-lock.json` that happen to look like release numbers.
+
+The three remaining gates belong to the release job and depend on this commit's
+own hash, so they run against the tag rather than against this commit in
+isolation: the `linux/amd64` image build, `scripts/verify-release.sh` against
+the exported archive, and the Playwright product-UI pass. Their results are
+recorded in the annotation of the tag that points here.

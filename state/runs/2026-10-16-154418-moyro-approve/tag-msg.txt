@@ -1,0 +1,124 @@
+moyro v0.2.50
+
+Channel bookmark reorder rewrites a channel's positions densely instead of
+writing only the row it was asked to move, and the Go toolchain and
+`golang.org/x/net` are raised to versions `govulncheck` accepts. The first is a
+server behavior fix; the second changes no product behavior and exists to clear
+a release gate. There is no schema change, no migration, no new route, no new
+error id and no web source change. One production file changes, and the
+`bookmarks` package gains its first tests.
+
+`Reorder` in `bookmarks/service.go` carried a doc comment promising a dense,
+conflict-free re-shuffle of the channel's bookmarks and a body that was a single
+`UPDATE` of the target row's `sort_order`. The comment described a "simple
+two-shot update"; the second shot was never written. Two or more bookmarks in
+one channel were therefore left sharing a `sort_order`, and `List` orders by
+`sort_order ASC, create_at ASC`, so the tie fell to the older row: a drag landed
+one slot away from its target, or produced no visible movement at all. Nothing
+read a corrupted value — the rows simply never stopped colliding, and the old
+comment's own excuse for the shortcut, that a race only means two clients "see
+slightly different orders for ~100ms", described a transient disagreement this
+code could not actually produce. The duplicates persisted until something else
+rewrote them.
+
+`Reorder` now opens a transaction, reads the channel's active rows in `List`'s
+own order, moves the target inside that slice, and rewrites `0..n-1` in a single
+`unnest` `UPDATE` scoped to the channel's non-deleted rows, which is the idiom
+`sidebar.UpdateOrder` already uses. The read that decides the sequence and the
+write that applies it share the transaction, so two concurrent reorders cannot
+interleave back into the duplicate positions the change exists to remove.
+Positions are 0-based to match Mattermost's endpoint, while `Create` still
+appends with `COALESCE(MAX(sort_order),0)+1`; a channel that has never been
+reordered therefore starts at 1 and a reordered one starts at 0. `List` exposes
+only relative order, so that asymmetry is invisible to clients, and it is
+recorded in the doc comment rather than smoothed over. An out-of-range position
+still clamps to either end instead of erroring, keeping the response contract
+callers already have. The handler, `Create`, `List` and `Patch` are untouched,
+and the channel and `delete_at` filters on the rewrite keep another channel's
+rows and soft-deleted rows out of it.
+
+What an operator should expect is a correction, not a contract change. A channel
+whose bookmarks already share positions keeps that order until something
+reorders it; the first reorder after this upgrade rewrites the whole channel
+densely and may therefore move more rows than the one the client dragged. That
+is the backlog of duplicates being cleared, not a new fault.
+
+The toolchain half raises `Dockerfile`'s `server-build` stage to
+`golang:1.27.2-alpine` at its matching digest, `server/go.mod`'s `go` directive
+to 1.27.2, and the module graph to `x/crypto` v0.57.0, `x/net` v0.60.0 and the
+indirect `x/mod` v0.41.0, `x/sync` v0.23.0, `x/sys` v0.48.0 and `x/text`
+v0.42.0. `govulncheck` had begun reporting reachable advisories against the
+previous Go 1.27.0 and `x/net` v0.58.0 pins, which fails the release job's own
+scan step. All of these are patch and minor bumps within one module family; no
+direct dependency is added, removed or re-ranged. `GOTOOLCHAIN=local` in that
+stage means the published image is built by the pinned toolchain rather than one
+downloaded at build time, so the `Dockerfile` and `go.mod` pins have to move
+together, and they do.
+
+Verified on this release tree in the order `release.yml` runs it, against a real
+PostgreSQL instance: `go test -race -p 1 ./...` at 51 packages ok, 10 without
+test files and 0 failures, nothing served from the test cache, with `httpapi` at
+65.787s and the new `bookmarks` tests at 4.550s, which together confirm the
+database-backed tests — the reorder regression among them — executed instead of
+skipping. `go build ./...` and `go vet ./...` clean, `plugin-sdk/go` tests and
+vet clean, and `govulncheck` v1.7.0 reporting this code affected by 0
+vulnerabilities, which is the gate the toolchain bump was made for. In `webapp`,
+a clean `npm ci`, then `npm audit --omit=dev --audit-level=high` and `npm audit
+--audit-level=high` both at 0 vulnerabilities as of 2026-10-16, then `npm test`
+at 49 files and 224 tests on Node v22.23.1, then `npm run typecheck` and `npm
+run build`. `node scripts/verify-pages.mjs` passes at 5 HTML pages, 47 product
+screenshots, 16 navigable settings/admin routes and 7 brand PNGs, and `bash
+scripts/check-source-sizes.sh` passes. `git diff --check` is clean and the commit
+this tag points at touches no Go file.
+
+The three gates the release job owns were run on this machine against this tag's
+commit rather than deferred to the tag push. The `linux/amd64` image build
+succeeded with `VERSION`, `COMMIT`, `BUILD_DATE` and `SOURCE_DATE_EPOCH` derived
+from commit c0ab918d7e67a4ea61d62039ce1f117465dbb73a exactly as the workflow
+derives them, and the built image carries `linux/amd64` with the
+`org.opencontainers.image.version` label at `v0.2.50` and the revision label at
+that commit. `scripts/verify-product-ui.sh` passed its REST contract checks —
+ping, bootstrap admin login, single-use invite, register, login, me, team and
+channel creation and listing, the Flow summary read model, post create, list,
+edit and delete, reaction add, list and remove, file upload, attachment,
+download, channel members, post search and logout — and then 77 Playwright tests
+in 3.9 minutes against the built image, including the six visual-regression
+snapshots, capturing 47 screens, with the four checksum-pinned plugin fixtures
+supplied so the plugin-compatibility spec ran rather than refusing to start. The
+image was exported with `docker save` and `gzip -n -9` to `moyro-v0.2.50.tar.gz`
+at 20525272 bytes, and `scripts/verify-release.sh` with `EXPECTED_COMMIT` set to
+that commit passed the exported archive at "offline startup, web UI, version,
+bootstrap login, and restart". That archive was built only to exercise the gate
+and is not attached here; the release job builds the artifact it publishes.
+
+Two machine-specific adjustments, neither of them a change to the tree. The
+Playwright browser install still needs the one the previous two tags recorded:
+`npx playwright install --with-deps chromium` fails here because `--with-deps`
+escalates to `sudo` with no terminal available, while `npx playwright install
+chromium` without that flag succeeds and the browser gate then runs clean. New
+this time, `HOME` on this machine points inside the release run directory rather
+than at the user's home, so both that install and `verify-product-ui.sh` were
+run with `HOME` set back to the user's home to reach the existing
+`~/.cache/ms-playwright` store; nothing in the repository reads `HOME`. The
+checksum-pinned `postgres:16-alpine` digest the two verify scripts default to
+was pulled before they ran, because the copy already on this machine was a
+different digest of the same tag.
+
+Unlike the previous three tags, the checksum-pinned Mattermost plugin fixtures
+were fetched on this machine, so a second `pluginhost` run with all four
+`MOYRO_TEST_*_PLUGIN_ARCHIVE` variables set took
+`TestMattermostArchivesInstallRunAndSurviveRestart` to a pass at 36.64s inside a
+64.120s package. That subtest skipped in the suite run above, where the package
+passed at 27.899s, so for the first time in several releases no check is left
+being exercised first by the release job.
+
+The version markers move to 0.2.50 across the same 21 files as every recent
+release, 130 occurrences of which 122 carry the `v` prefix, and no stale
+`0.2.49` marker remains anywhere in the tree. The references that name older
+versions on purpose are left alone: `v0.2.4` in `docs/offline-deployment.md`,
+`v0.2.27` in the two Korean guides' screenshot provenance lines, and `v0.2.22`
+in `docs/roadmap.md`.
+
+Release assets are not attached by hand. `release.yml` builds the image, exports
+`moyro-v0.2.50.tar.gz`, verifies it and creates the GitHub release with the
+SHA-256 in the notes when this tag is pushed.
