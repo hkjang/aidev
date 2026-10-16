@@ -351,3 +351,4 @@
   - settings PG fixture 의 `preserve` 가 `updated_by=NULL` 로 복원 — 여섯 회차 연속 보류, 증상이 없어 가치 2 를 못 넘긴다, 다음 회차에 올라가지 않으면 rejected 로 내릴 것 (가치 2 / 위험 1 / S)
 - 과제서: 채택 — 근거가 지금 코드와 정확히 일치했고(catalog.go:990 의 보조 키 없는 ORDER BY, `items` 만 돌려주는 응답, `insertTestPlaySession` 의 id 미반환, `game_sessions` 스키마와 FK CASCADE) 지정한 파일 3개·레시피·금지사항을 그대로 지켰다. 예측한 Red 순서(`[1..6]` vs `[6..1]`)도 실측과 일치해 기대값 변경 없이 진행했다. 차선 후보로 넘어갈 조건은 성립하지 않았다.
 
+- 릴리즈: v0.7.33 (2026-10-16, run 2026-10-16-122033-igame-approve)
