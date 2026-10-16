@@ -1,15 +1,119 @@
 [
-  {"title":"본인 플레이 기록(GET /api/v1/me/history)의 페이지 정렬에 gs.id 보조 키 추가","value":3,"risk":2,"size":"S","status":"done","note":"catalog.go:990 에 ,gs.id DESC 추가(커밋 73dfb09). 실제 PG17 + Router + 세션 쿠키로 Red(삽입 순서 [1..6] vs 계약 [6..1]) → Green → 보조 키 제거 변이 재Red 확인. docs/api.md:10 보증 문장에 한 구절 추가. 신규 인덱스 없음(game_sessions_user_idx 재사용).","updated":"2026-10-16"},
-  {"title":"관리자 점수 심사 목록(extended.go:581 adminRankings)의 s.id 보조 키 추가","value":3,"risk":2,"size":"S","status":"pending","note":"ORDER BY s.created_at DESC LIMIT $3 OFFSET $4 그대로. playHistory 가 착지한 지금 보조 키가 없는 페이지 목록은 이 한 곳만 남았다. scores.id 는 uuid PK, scores.session_id 는 UNIQUE 라 fixture 를 세션 1:1 로 만들어야 해 설치 비용이 history 보다 크다. 관리자 세션 + 명시적 scores.id 순서로 같은 수법을 쓸 것.","updated":"2026-10-16"},
-  {"title":"공개 카탈로그 q 의 리터럴 특수문자 검색을 실제 PG/Router 로 고정","value":2,"risk":1,"size":"M","status":"pending","note":"likeEscaper(api.go:842)는 \\ % _ 를 escape 하지만 tags=ANY 는 원문 $2 를 쓴다 — 계약이 둘이다. api_test.go 의 기존 테스트는 헬퍼 출력만 본다. endpoint 수준 회귀는 여전히 없음.","updated":"2026-10-16"},
-  {"title":"공개 카탈로그 favorite 필터의 사용자별 격리 회귀","value":2,"risk":1,"size":"M","status":"pending","note":"catalog.go:130 의 favorite EXISTS 와 gameSelect 의 favorite 표현이 서로 다른 EXISTS 로 둘 다 $1=principal UserID 를 쓴다. 이번 회차 history_order_pg_test.go 의 타 사용자 격리 단정은 /api/v1/me/history 만 덮으므로 이 항목을 대체하지 않는다. 누출 결함은 확인되지 않았다.","updated":"2026-10-16"},
-  {"title":"README RealmGuard 서버 재현 설명 정합성 개선","value":2,"risk":1,"size":"S","status":"pending","note":"README 42행 server replay 와 44행 telemetry-only 설명이 공존. docs/security.md 44-46행이 구분을 이미 설명한다. 코드 계약 과제를 우선해 보류.","updated":"2026-10-16"},
-  {"title":"settings PG fixture 의 preserve 가 updated_by=NULL 로 복원","value":2,"risk":1,"size":"S","status":"pending","note":"여섯 회차 연속 보류. 제품 결함이 아니라 테스트 fixture 의 복원 충실도 문제로 증상이 없다. 다음 회차에도 가치가 올라가지 않으면 rejected 로 내릴 것.","updated":"2026-10-16"},
-  {"title":"키 외 필수 환경변수 누락 집계·비밀 비노출을 Load 에서 회귀로 고정","value":2,"risk":1,"size":"S","status":"pending","note":"config_test.go 에 ENCRYPTION_KEY 계약(9003e19)은 착지했으나 DSN/admin trim·동시 누락 집계 회귀는 남아 있다. 사용자에게 보이는 결함보다 우선순위 낮음.","updated":"2026-10-16"},
-  {"title":"CI 에서 실제 PostgreSQL 회귀(make test-db)를 돌리는 전용 검사 추가","value":3,"risk":3,"size":"M","status":"pending","note":"보호 경로(.github/workflows)와 확장 스키마 준비를 건드린다. npm audit 게이트 완화와 섞지 말 것. 자율 회차 범위 밖으로 유지. 이번 회차에도 PG 회귀는 로컬에서만 돌았다.","updated":"2026-10-16"},
-  {"title":"이미 비-오브젝트로 저장된 jsonb 설정 행의 복구 경로","value":2,"risk":2,"size":"S","status":"pending","note":"putSetting 은 jsonObjectBody 로 신규 입력을 거부하고 UPSERT 한다. 오염 행의 실제 존재는 여전히 미확인 — 실데이터 근거 없이는 선정하지 않는다.","updated":"2026-10-16"},
-  {"title":"PUT /api/v1/admin/settings/{key} 의 알 수 없는 field 거부","value":2,"risk":3,"size":"M","status":"pending","note":"validateSetting 은 json.Unmarshal 이라 여분 필드를 거부하지 않는다. 기존 설정 호환성 영향이 미확인이라 위험이 가치보다 크다.","updated":"2026-10-16"},
-  {"title":"serviceLocation 이 설정 읽기 실패를 삼켜 시간대가 조용히 Asia/Seoul 이 됨","value":3,"risk":3,"size":"M","status":"rejected","note":"호출처 6곳으로 파일 상한에 걸리고 playAllowed 와 계약이 갈라져 아홉 회차에 걸쳐 쪼갤 모양을 찾지 못했다. 재선정 금지.","updated":"2026-10-16"},
-  {"title":"playWindowsAllow 가 파싱 안 되는 window 를 조용히 건너뛰어 그 window 만 fail-open","value":2,"risk":2,"size":"S","status":"rejected","note":"가설 오류로 판정됨(이전 회차 프로필). 신규 쓰기는 validateSetting 이 막으므로 legacy 행만 남고 도달성 미확인. 재선정 금지.","updated":"2026-10-16"},
-  {"title":"loadAPIKeyPolicyContext 가 api_keys 설정 부재에 ErrNoRows 를 올려 전 키 401","value":2,"risk":2,"size":"S","status":"rejected","note":"도달 경로를 5회 이상 증명하지 못했다. 재선정 금지.","updated":"2026-10-16"}
+  {
+    "title": "관리자 점수 심사 목록(extended.go:581 adminRankings)의 페이지 정렬에 s.id 보조 키 추가",
+    "value": 3,
+    "risk": 2,
+    "size": "S",
+    "status": "done",
+    "note": "이번 회차에 구현(커밋 539c244). ORDER BY s.created_at DESC → s.created_at DESC, s.id DESC. 실제 PG17/Router/관리자 쿠키로 Red→Green→변이 Red→복원 확인. 이로써 pageParams(r) 를 offset 과 함께 쓰는 목록 6곳 전부가 유일 보조 키를 갖는다 — 나머지 3곳(catalog.go:912, defense.go:1750, realmguard.go:1792)은 limit 만 쓰는 상위 N 질의로 페이지 경계가 없고 그 정렬도 이미 전순서다. docs/api.md:10 의 보증 범위도 함께 갱신했다.",
+    "updated": "2026-10-16"
+  },
+  {
+    "title": "공개 카탈로그 q 의 리터럴 특수문자(\\ % _) 검색을 실제 PG/Router 로 고정",
+    "value": 2,
+    "risk": 1,
+    "size": "M",
+    "status": "pending",
+    "note": "이번 회차 차선 후보였고 1순위가 성립해 하지 않았다. likeEscaper(api.go:842)는 \\ % _ 를 escape 하지만 같은 핸들러의 tags=ANY 는 원문 $2 를 쓴다 — 계약이 둘이다. 기존 api_test.go 는 헬퍼 출력만 보고 endpoint 회귀가 없다. 운영자 지침('같은 종류의 파서가 여러 경로에 있으면 통합하지 말고 좁히는 방향으로만')에 따라 두 경로를 합치려 하지 말고 현재 동작을 테스트로 고정하는 데까지만. 정렬 계약 과제가 모두 끝났으므로 다음 회차 1순위 후보다.",
+    "updated": "2026-10-16"
+  },
+  {
+    "title": "공개 카탈로그 favorite 필터의 두 사용자 격리 회귀",
+    "value": 2,
+    "risk": 1,
+    "size": "M",
+    "status": "pending",
+    "note": "catalog.go:130 의 favorite EXISTS 와 gameSelect 의 favorite 표현이 서로 다른 EXISTS 로 둘 다 $1=principal UserID 를 쓴다. 누출 결함은 여전히 확인되지 않았고 history_order_pg_test.go 의 타 사용자 격리 단정은 /api/v1/me/history 만 덮는다. 결함 근거가 없어 가치 2 를 못 넘긴다 — 세 회차 연속 보류.",
+    "updated": "2026-10-16"
+  },
+  {
+    "title": "README RealmGuard 서버 재현 설명 정합성 개선",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "README 42행 server replay 와 44행 telemetry-only 설명이 공존한다. docs/security.md 44-46행이 이미 구분을 설명하므로 README 를 그쪽에 맞추면 된다. 코드 계약 과제를 우선해 세 회차 연속 보류. 작업량이 가장 작아 다른 후보가 막힐 때 쓸 수 있다.",
+    "updated": "2026-10-16"
+  },
+  {
+    "title": "키 외 필수 환경변수(DSN/BOOTSTRAP_ADMIN) 누락 집계·비밀 비노출을 Load 에서 회귀로 고정",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "config_test.go 에 ENCRYPTION_KEY 계약(9003e19)은 착지했으나 DSN/admin trim·동시 누락 집계 회귀는 남아 있다. 사용자에게 보이는 결함보다 우선순위 낮지만 S 이고 위험이 1 이다.",
+    "updated": "2026-10-16"
+  },
+  {
+    "title": "CI 에서 실제 PostgreSQL 회귀(make test-db)를 돌리는 전용 검사 추가",
+    "value": 3,
+    "risk": 3,
+    "size": "M",
+    "status": "pending",
+    "note": "보호 경로(.github/workflows)와 확장 스키마 준비를 건드린다. 2026-10-16 의 govulncheck 실패가 보여준 대로 워크플로 변경은 릴리즈를 직접 막는다 — 자율 회차 범위 밖으로 유지한다. PG 회귀는 여전히 로컬에서만 돈다(DSN 없이 돌리면 api 54개·database 4개가 skip 되고 그 PASS 는 증거가 아니다). 이 공백이 실제로 회귀를 놓치는 것을 한 번이라도 관측하면 가치를 올릴 것.",
+    "updated": "2026-10-16"
+  },
+  {
+    "title": "이미 비-오브젝트로 저장된 jsonb 설정 행의 복구 경로",
+    "value": 2,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "putSetting 은 jsonObjectBody 로 신규 입력을 거부하고 UPSERT 한다. 오염 행의 실제 존재는 여전히 미확인 — 실데이터 근거 없이는 선정하지 않는다.",
+    "updated": "2026-10-16"
+  },
+  {
+    "title": "PUT /api/v1/admin/settings/{key} 의 알 수 없는 field 거부",
+    "value": 2,
+    "risk": 3,
+    "size": "M",
+    "status": "pending",
+    "note": "validateSetting 은 json.Unmarshal 이라 여분 필드를 거부하지 않는다. docs/api.md 는 '알 수 없는 필드'를 400 으로 거부한다고 적고 있어 문서와 코드가 어긋나지만, 기존 설정 호환성 영향이 미확인이라 위험이 가치보다 크다.",
+    "updated": "2026-10-16"
+  },
+  {
+    "title": "settings PG fixture 의 preserve 가 updated_by=NULL 로 복원",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "rejected",
+    "note": "일곱 회차 연속 보류했고 사용자에게 보이는 증상이 끝까지 나오지 않았다. 직전 원장에 '다음 회차에 올라가지 않으면 rejected 로 내릴 것' 이라고 적어 둔 조건이 성립해 이번에 기각한다. 테스트 픽스처 내부 문제이고 프로덕션 동작과 무관하다.",
+    "updated": "2026-10-16"
+  },
+  {
+    "title": "serviceLocation 이 설정 읽기 실패를 삼켜 시간대가 조용히 Asia/Seoul 이 됨",
+    "value": 3,
+    "risk": 3,
+    "size": "M",
+    "status": "rejected",
+    "note": "호출처 6곳이고 playWindowsAllow 와 계약이 갈라져 한 세션에 들어가는 모양을 여덟 회차 내내 찾지 못했다. 정찰 프로필의 기각 목록에 올라 있다 — 재선정 금지.",
+    "updated": "2026-10-16"
+  },
+  {
+    "title": "playWindowsAllow 가 파싱 안 되는 window 를 조용히 건너뛰어 그 window 만 fail-open",
+    "value": 2,
+    "risk": 2,
+    "size": "S",
+    "status": "rejected",
+    "note": "가설 자체가 오류였다(정찰 프로필의 기각 목록). validateSetting 도입 이후 그런 행이 들어올 경로가 없고 legacy 행의 존재도 미확인이다.",
+    "updated": "2026-10-16"
+  },
+  {
+    "title": "loadAPIKeyPolicyContext 가 api_keys 설정 부재 시 ErrNoRows 를 올림",
+    "value": 2,
+    "risk": 2,
+    "size": "S",
+    "status": "rejected",
+    "note": "다섯 회차 연속 도달성을 증명하지 못해 정찰 프로필의 기각 목록에 올랐다 — 재선정 금지. bootstrap 이 설정 행을 항상 넣으므로 부재 상태에 도달하는 경로를 아무도 찾지 못했다.",
+    "updated": "2026-10-16"
+  },
+  {
+    "title": "Go 핀을 한 곳으로 단일화",
+    "value": 2,
+    "risk": 4,
+    "size": "S",
+    "status": "rejected",
+    "note": "1.26.9 가 8곳(go.mod, Dockerfile x2, ci.yml x2, release.yml x2, check-release-contract.sh x4)에 흩어져 있고 그 중복이 곧 릴리즈 게이트다. 단일화는 계약 검사를 약화시킨다 — 정찰 프로필의 기각 목록. 상향할 때는 전부 함께 올린다(a1341ce 가 그렇게 했다).",
+    "updated": "2026-10-16"
+  }
 ]
