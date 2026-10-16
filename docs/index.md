@@ -1,7 +1,7 @@
 ---
 title: "aidev 자율 개선 대시보드"
 description: "Claude Code 자율 개선 에이전트가 hkjang 의 프로젝트를 개선·테스트·머지·릴리즈한 일일 보고. 오늘 15회차·릴리즈 8건, 누적 2636회차·릴리즈 801건, 주의 필요 14건."
-last_modified_at: 2026-10-16 09:49:05 +0900
+last_modified_at: 2026-10-16 09:58:50 +0900
 ---
 {% raw %}
 <script type="application/ld+json">
@@ -17,7 +17,7 @@ last_modified_at: 2026-10-16 09:49:05 +0900
   "name": "hkjang",
   "url": "https://github.com/hkjang"
  },
- "dateModified": "2026-10-16T09:49:05+09:00"
+ "dateModified": "2026-10-16T09:58:50+09:00"
 }
 </script>
 
@@ -369,7 +369,7 @@ last_modified_at: 2026-10-16 09:49:05 +0900
 
 # aidev 자율 개선 대시보드
 
-<p class="tldr"><strong>한 줄 요약.</strong> Claude Code 자율 개선 에이전트가 hkjang 의 프로젝트를 개선·테스트·머지·릴리즈한 일일 보고. 오늘 15회차·릴리즈 8건, 누적 2636회차·릴리즈 801건, 주의 필요 14건. 회차가 끝날 때마다 자동 갱신됩니다 (마지막 갱신 <time datetime="2026-10-16T09:49:05+09:00" data-rel>2026-10-16 09:49</time> KST).</p>
+<p class="tldr"><strong>한 줄 요약.</strong> Claude Code 자율 개선 에이전트가 hkjang 의 프로젝트를 개선·테스트·머지·릴리즈한 일일 보고. 오늘 15회차·릴리즈 8건, 누적 2636회차·릴리즈 801건, 주의 필요 14건. 회차가 끝날 때마다 자동 갱신됩니다 (마지막 갱신 <time datetime="2026-10-16T09:58:50+09:00" data-rel>2026-10-16 09:58</time> KST).</p>
 
 <div class="alerts" role="alert"><strong>⚠️ 주의 필요 14건</strong> <span class="meta">— 새 경고는 GitHub Issue·Slack·이메일·Windows 알림으로도 보냅니다</span><ul><li><a href="https://hkjang.github.io/aidev/projects/ai-admin/">ai-admin</a> — CI 실패로 PR 미머지 <span class=meta>(2026-10-16 02:45)</span></li><li><a href="https://hkjang.github.io/aidev/projects/ai-admin/">ai-admin</a> — CI 실패로 PR 미머지 <span class=meta>(2026-10-16 06:27)</span></li><li><a href="https://hkjang.github.io/aidev/projects/ai-admin/">ai-admin</a> — CI 실패로 PR 미머지 <span class=meta>(2026-10-16 08:50)</span></li><li><a href="https://hkjang.github.io/aidev/projects/yeopjari-your/">yeopjari-your</a> — CI 실패로 PR 미머지 <span class=meta>(2026-10-15 00:30)</span></li><li><a href="https://hkjang.github.io/aidev/projects/review.yeopjari.bid/">review.yeopjari.bid</a> — CI 실패로 PR 미머지 <span class=meta>(2026-10-15 09:52)</span></li><li><a href="https://hkjang.github.io/aidev/projects/workkit.irumx.app/">workkit.irumx.app</a> — CI 실패로 PR 미머지 <span class=meta>(2026-10-15 09:55)</span></li><li><a href="https://hkjang.github.io/aidev/projects/review.yeopjari.bid/">review.yeopjari.bid</a> — 보호 파일 변경 — 자동 머지 안 함, 사람 검토 필요 <span class=meta>(2026-10-15 11:21)</span></li><li><a href="https://hkjang.github.io/aidev/projects/workkit.irumx.app/">workkit.irumx.app</a> — CI 실패로 PR 미머지 <span class=meta>(2026-10-15 12:00)</span></li><li><a href="https://hkjang.github.io/aidev/projects/studio.irumx.app/">studio.irumx.app</a> — 보호 파일 변경 — 자동 머지 안 함, 사람 검토 필요 <span class=meta>(2026-10-15 13:56)</span></li><li><a href="https://hkjang.github.io/aidev/projects/review.yeopjari.bid/">review.yeopjari.bid</a> — CI 실패로 PR 미머지 <span class=meta>(2026-10-15 14:33)</span></li><li><a href="https://hkjang.github.io/aidev/projects/biz.irumx.app/">biz.irumx.app</a> — CI 실패로 PR 미머지 <span class=meta>(2026-10-15 14:33)</span></li><li><a href="https://hkjang.github.io/aidev/projects/review.yeopjari.bid/">review.yeopjari.bid</a> — CI 실패로 PR 미머지 <span class=meta>(2026-10-15 15:23)</span></li><li><a href="https://hkjang.github.io/aidev/projects/review.yeopjari.bid/">review.yeopjari.bid</a> — CI 실패로 PR 미머지 <span class=meta>(2026-10-15 16:37)</span></li><li><a href="https://hkjang.github.io/aidev/projects/ai-admin/">ai-admin</a> — 수정 과제 대기 중 — 오류 대응(자동 적재): 마지막 회차가 &#x27;verify-failed&#x27; 로 끝났습니다. fix-round: CI failed, PR open https://github.com/hkjang/ai-admin/pull/46</li></ul></div>
 
