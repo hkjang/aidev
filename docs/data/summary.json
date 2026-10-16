@@ -1,5 +1,5 @@
 {
- "generated": "2026-10-17T06:30:52+09:00",
+ "generated": "2026-10-17T06:42:43+09:00",
  "site": "https://hkjang.github.io/aidev",
  "description": "Claude Code 자율 개선 에이전트가 hkjang 의 프로젝트를 개선·테스트·머지·릴리즈한 일일 보고. 오늘 28회차·릴리즈 6건, 누적 2688회차·릴리즈 820건, 주의 필요 8건.",
  "today": {
@@ -10,18 +10,18 @@
   "merged": 0,
   "nochange": 0,
   "failed": 2,
-  "cost_usd": 87.94,
-  "minutes": 244,
-  "sessions": 32
+  "cost_usd": 90.55,
+  "minutes": 245,
+  "sessions": 33
  },
  "totals": {
   "runs": 2688,
   "released": 820,
   "days": 46,
-  "cost_usd": 9530.59,
-  "minutes": 26411,
-  "tokens_in": 10281964370,
-  "tokens_out": 82987689
+  "cost_usd": 9533.19,
+  "minutes": 26412,
+  "tokens_in": 10282470791,
+  "tokens_out": 82991348
  },
  "alerts": [
   {
@@ -1401,9 +1401,9 @@
    "labels": "",
    "action": "PR 처리기가 다음 시간에 다시 시도 · 승인: PR 라벨 aidev-approved / 반려: aidev-rejected — 다음 회차에 러너가 승인 당시 커밋에만 CI 확인 후 머지·닫기",
    "date": "2026-10-17",
-   "shepherd": "CI 실패 · 수정 실패 → 다음 시간에 재시도 (10-17 04:31) — 수정 세션이 커밋을 만들지 않음: # 수리 요약 — 고칠 결함이 없어 커밋하지 않음  - 지적이 틀렸다(코드는 이미 맞다). CI `lint`·`test` 가 3초 만에 실패한 것은 코드 결함이 아니라 GitHub Actions 과금 차단이다. `gh run view 3895193825",
+   "shepherd": "CI 실패 · 수정 실패 → 다음 시간에 재시도 (10-17 06:42) — 수정 세션이 커밋을 만들지 않음: # 수리 요약 — 고칠 결함 없음 (커밋 없이 종료)  - 지적이 틀렸다. CI 의 lint·test 실패는 코드가 아니라 **계정 빌링 차단**이다: `gh run view 38951938252` 의 ANNOTATIONS 가 두 잡 모두 \"The jo",
    "shepherd_action": "fix-failed",
-   "shepherd_detail": "수정 세션이 커밋을 만들지 않음: # 수리 요약 — 고칠 결함이 없어 커밋하지 않음  - 지적이 틀렸다(코드는 이미 맞다). CI `lint`·`test` 가 3초 만에 실패한 것은 코드 결함이 아니라 GitHub Actions 과금 차단이다. `gh run view 38951938252` 의 ANNOTATIONS 가 두 잡 모두 \"The job was not started because recent account payments have failed or your spending limit needs to be increased\" 이고, 잡 API 의 `.steps` 는 `[]`, `--log-failed` 는 빈 출력이다 — 단 한 스텝도 실행되지 않았으므로 9e8284d 가 유발한 실패일 수 없다. PR #44·#45·#46 에서도 ",
+   "shepherd_detail": "수정 세션이 커밋을 만들지 않음: # 수리 요약 — 고칠 결함 없음 (커밋 없이 종료)  - 지적이 틀렸다. CI 의 lint·test 실패는 코드가 아니라 **계정 빌링 차단**이다: `gh run view 38951938252` 의 ANNOTATIONS 가 두 잡 모두 \"The job was not started because recent account payments have failed or your spending limit needs to be increased\" 이고, 어떤 step 도 실행되지 않았다(그래서 둘 다 3초, `--log-failed` 는 빈 출력). - HEAD(9e8284d)에서 CI 와 같은 검사를 전부 로컬 재현해 통과: lint 잡 = `gofmt -l .` 무출력·`go vet ./...` 무출력·`verify-versio",
    "needs_human": false
   },
   {
@@ -1938,15 +1938,15 @@
   }
  ],
  "shepherd": {
-  "last_pass": "2026-10-17T04:07:22+09:00",
+  "last_pass": "2026-10-17T06:35:42+09:00",
   "enabled": true,
   "today": {
    "needs-human": 3,
-   "fix-failed": 2,
+   "fix-failed": 3,
    "fix-pushed": 1,
    "approve": 1
   },
-  "total": 728,
+  "total": 729,
   "pending_human": 211
  },
  "agents": {
@@ -1961,7 +1961,7 @@
     "role": "구현 builder",
     "calls": 490,
     "metric": "러너 검증 통과 91% · 변경 없음 138",
-    "cost": 1179.17
+    "cost": 1181.77
    },
    {
     "role": "비평 critic",
@@ -1991,11 +1991,11 @@
     "role": "PR 심사 shepherd-reviewer",
     "calls": 132,
     "metric": "승인 42 · 거절 7 · 사람 필요 83 · 승인 뒤 회귀 1",
-    "cost": 238.6
+    "cost": 241.21
    },
    {
     "role": "PR 수리 shepherd-fixer",
-    "calls": 88,
+    "calls": 89,
     "metric": "고쳐서 푸시 32%",
     "cost": null
    },
@@ -2019,9 +2019,9 @@
    },
    {
     "role": "실제 게시 릴리즈 (원격 태그 기준)",
-    "calls": 872,
+    "calls": 873,
     "cost": null,
-    "metric": "저장소 42개 · 게시 872건 (사람 340건) · 태그만 만들고 미게시 1건 — CI 가 릴리즈 커밋을 막은 저장소 · 누적 회차 기록에는 810건 — 62건이 기록에서 빠졌다"
+    "metric": "저장소 42개 · 게시 873건 (사람 340건) · 태그만 만들고 미게시 1건 — CI 가 릴리즈 커밋을 막은 저장소 · 누적 회차 기록에는 810건 — 63건이 기록에서 빠졌다"
    },
    {
     "role": "머지 뒤 30일 (postmerge)",
@@ -2050,7 +2050,7 @@
   ],
   "advice": [
    "측정이 어긋났다 — 원격에 없는 릴리즈 태그 1건 — 그 저장소의 다음 릴리즈를 막는다 (release_project 의 describe 검사가 로컬 태그를 보므로, 보류된 태그가 base 끝을 가리키면 릴리즈가 영구히 멈춘다.)",
-   "실제 릴리즈 태그(872건)가 누적 회차 기록(810건)보다 62건 많다 — 기록 경로에 빠지는 자리가 남아 있다 (bin/released.py 가 태그로 센 값)",
+   "실제 릴리즈 태그(873건)가 누적 회차 기록(810건)보다 63건 많다 — 기록 경로에 빠지는 자리가 남아 있다 (bin/released.py 가 태그로 센 값)",
    "jikim 은 머지한 변경의 93% 를 사람이 다시 고쳤다 — 자율화 단계를 낮추거나(state/jikim.policy.json 의 autonomy) 검증 명령을 늘릴 것"
   ]
  },
@@ -2475,13 +2475,13 @@
   },
   {
    "metric": "유효 개선당 비용",
-   "value": "$14.95",
+   "value": "$14.96",
    "detail": "비용 확인된 유효 개선 177건, 미확인 세션 242"
   },
   {
    "metric": "예외 처리 소요 시간(중앙값)",
    "value": "2.0시간",
-   "detail": "해결된 경고 414건"
+   "detail": "해결된 경고 415건"
   },
   {
    "metric": "실행 오류",
@@ -2506,7 +2506,7 @@
    "merged": 0,
    "nochange": 0,
    "failed": 2,
-   "cost_usd": 87.94
+   "cost_usd": 90.55
   },
   {
    "date": "2026-10-16",
@@ -2780,8 +2780,8 @@
    "merged": 2,
    "nochange": 11,
    "failed": 34,
-   "cost": 828.07,
-   "minutes": 2230
+   "cost": 830.67,
+   "minutes": 2231
   },
   {
    "key": "2026-W41",
@@ -2866,8 +2866,8 @@
    "merged": 40,
    "nochange": 138,
    "failed": 59,
-   "cost": 3175.05,
-   "minutes": 9257
+   "cost": 3177.65,
+   "minutes": 9258
   },
   {
    "key": "2026-09",
@@ -2935,8 +2935,8 @@
    "last_ts": "2026-10-17T04:03:05+09:00",
    "last_status": "failed",
    "last_result": "CI failed, PR open https://github.com/hkjang/ai-admin/pull/48",
-   "cost": 309.78,
-   "minutes": 770,
+   "cost": 312.38,
+   "minutes": 771,
    "grade": "D",
    "grade_why": "14일: 릴리즈 5, 실패 5, 경고 5, 회귀 0",
    "lessons": 0,
