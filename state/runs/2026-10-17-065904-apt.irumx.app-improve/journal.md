@@ -28,3 +28,12 @@
 - 수리가 가장 먼저 볼 파일: server/db.ts 의 `trip`(열린 창 안에서 끝난 실패를 같은 strike 로 접기) 과 tests/db-breaker.ts:212-230(N>2 묶음 결과를 못 박는 단언 추가).
 - 승인했어도 남았을 우려: server/db.ts:87 의 `closedAt > startedAt` 는 workerd 에서 Date.now 가 I/O 사이 멈추므로 같은 밀리초가 보통이고, 그때는 늦은 실패가 그대로 트립한다 — AC2 보호가 workerd 에서는 생각보다 약하다. 보안·법무 차단 사유는 없다.
 - [러너 07:25] review rejected — 리뷰 거절: server/db.ts:86-91 `trip` 이 실패 1건마다 strike 를 1 더하므로, 한 번의 동시 실패 묶음이 대기를 2배가 아니라 2^N 배로 올린다. 실측: 같은 주소로 
+
+## 수리 노트
+- 비평 둘 다 맞았다. 실측으로 재현했다: 동시 10건 실패 → `strikes 10 / 120초`. 커밋 메시지가 약속한 램프가 정작 동시성 상황에서 없었다.
+- 고친 방법: `Breaker.openedAt` 을 더해 "차단기가 열린 순간 이미 돌고 있던 호출" 을 같은 라운드로 접는다(strike 는 라운드당 1). 접힌 실패도 `openUntil` 은 늦은 쪽으로 늘려, 대기가 끝난 뒤 늦게 착지한 실패가 차단기를 닫힌 채 두지 않게 했다. 비평가가 제안한 `openUntil` 기준 대신 `openedAt` 기준을 쓴 이유: 묶음의 일부가 대기(10초)보다 늦게 끝나면 `openUntil` 기준은 같은 묶음을 두 라운드로 세기 때문이다.
+- 비평가가 걱정한 workerd 의 멈춘 `Date.now` 는 이 비교에서는 유리하다 — 같은 밀리초면 접히도록 `<=` 로 뒀다. `closedAt > startedAt` 쪽은 `>` 를 유지했다: `>=` 로 바꾸면 성공 직후 같은 밀리초에 시작한 첫 실패가 차단기를 아예 못 열게 된다.
+- 테스트: N=10 묶음이 `strikes 1 / 10초` 임을 못 박고, "늦게 끝난 같은 라운드 실패가 쌓인 strikes 를 되돌리지 않는다" 를 더했다. 둘 다 `server/db.ts` 를 b14cc46 으로 되돌리면 실패해 원래 배선 결함도 계속 지킨다(확인함).
+- 아직 확신 없는 곳: 전체 묶음의 간헐 실패 2종(`bill-analysis.ts:237` 감사행 선택, 역할 회수 테스트)의 뿌리는 못 찾았다. base `server/db.ts` 로도 재현되고 `bill-analysis` 는 `db-breaker` 보다 먼저 돌아 이 변경과 무관하다고 봤지만, 원인 자체는 미해결로 남겼다(범위 밖).
+- [러너 07:54] repair failed — 고친 뒤 검증 실패 — 수리 커밋을 버림
+- [러너 07:54] pr created — https://github.com/hkjang/apt.irumx.app/pull/1
