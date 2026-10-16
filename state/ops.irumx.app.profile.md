@@ -1,0 +1,23 @@
+# ops.irumx.app(이룸옵스) 프로필 (2026-10-16)
+- 목적: 월 예산을 정하면 서비스별 Cloudflare 비용을 나눠 보고 기간 말 비용을 예측하며, 예산에 맞춰 AI 호출·파일 업로드·배치 작업을 조절하는 운영 콘솔.
+- 스택: TypeScript 전부. Cloudflare Workers(Hono) + D1(drizzle-orm/drizzle-kit) + KV·Queues·Durable Objects·Cron, 프런트는 React 19 + react-router 8 + @tanstack/react-query, Vite 8 + @cloudflare/vite-plugin. 인증은 better-auth(옆자리 OAuth). 시험은 Playwright 하나로 단위·API·브라우저를 다 돌린다.
+- 구조:
+  - `src/shared/` — 순수 로직, 부작용 없음. `engine.ts`(비용·예측, 860줄), `policy.ts`(정책 평가·알림), `anomaly.ts`(이상 탐지), `pricing.ts`(가격표), `controls.ts`, `simulate.ts`, `settings.ts`, `dates.ts`(UTC 날짜·청구 주기). 여기가 단위 시험의 대상이다.
+  - `src/worker/` — `app.ts`·`index.ts`(배선), `routes/*`(overview·services·governance·guard·connection·admin·state·test), `collect/*`(Cloudflare GraphQL·공식 청구·환율·자원 발견), `engine/*`(run·load·publish — `evaluateOrg` 가 한 주기의 중심), `ledger.ts`(예산 예약·정산), `auth.ts`, `db/schema.ts`.
+  - `src/client/` — `pages/*` 14개 화면(costs·services·budgets·policies·controls·actions·anomalies·efficiency·integrations·settings·platform·org·overview·notifications), `components/{ui,charts,icons}.tsx`, `styles/*.css`.
+  - `packages/guard/` — 고객 서비스에 넣는 제어 모듈 SDK(의존성 없는 단일 파일, `/api/guard/...` 로 간다).
+  - `tests/` — `unit-*.spec.ts`(engine·policy·collect), `api-a~e-*.spec.ts`, 가짜 외부 서버 `fake-cloudflare.mjs`·`fake-yeopjari.mjs`·`mock-resend.mjs`.
+  - `migrations/` drizzle 생성 SQL, `scripts/` 배포·관리·빌드 검증·폰트 서브셋.
+- 빌드·테스트:
+  - `npm run check` — tsc 4번(app·worker·node·guard) `--noEmit`. 빠르다.
+  - `npm run test:unit` — `UNIT_ONLY=1 playwright test --project=unit`. 외부 서버 없이 돈다. 로직 변경은 보통 이것만으로 충분.
+  - `npm test` — **느리다**. `npm run build`(폰트 서브셋 + check + vite build + verify-build) 가 선행돼야 하고 가짜 서버 3개(:8941 Resend, :8942 Cloudflare API, :8943 옆자리 OAuth)와 `wrangler dev --local --port 8940` 를 띄운다. timeout 180초, workers 1.
+  - `npm run db:migrate`(drizzle-kit generate), `npm run db:local`, `npm run deploy`(scripts/deploy.mjs).
+- 관례: 커밋 메시지는 **한국어**, `영역: 무엇을 왜` 형식(예: "이상 탐지: 처음 본 지 하루가 안 된 자원의 첫 사용은 급증으로 잡지 않음"). 코드 주석·시험 제목·화면 문구도 한국어. 주석에 과거 오탐 사례를 날짜·자원명으로 남긴다(`anomaly.ts:70`, `unit-policy.spec.ts:178`) — 같은 식으로 이어 쓸 것. CLAUDE.md·docs/ 는 **없다**(이 프로필이 유일한 요약). 설정은 `wrangler.jsonc` + `tests/worker-test.env`. 마이그레이션은 drizzle-kit 생성물.
+- 위험 구역: `src/worker/auth.ts`·better-auth 배선(옆자리 OAuth, 토큰 즉시 회수·메일 확인 여부 검사), `migrations/`(되돌린 열 정리 이력이 있다 — a47c108), `src/worker/ledger.ts`(동시 예약·정산 멱등), `routes/guard.ts`·`packages/guard`(고객 서비스가 쓰는 공개 계약 — 깨면 외부가 깨진다), 조직 격리(`api-e-isolation.spec.ts` 가 "존재도 알리지 않음 404" 까지 본다).
+- 자주 깨지는 곳: 계측·대사(Cloudflare 공식 청구와 GraphQL 추정의 차이). 최근 3회차가 전부 이 자리다 — DO 요청 집계 공식을 넣었다 되돌리고(a6eb4ea → d30940e → a47c108), `__unknown__` 스크립트가 이중 계상을 일으키고(8b905f9), 새 자원의 첫 사용이 급증으로 오탐(e85afae). **계측 공식을 바꿀 때는 되돌릴 준비를 하고, 대사 시험(`api-b-connect.spec.ts` 의 "대사 —" 시험)을 같이 볼 것.**
+- 검증 함정:
+  - `playwright.config.ts` 는 `desktop`·`mobile`(`/ui-.*\.spec/`)·`shots` 프로젝트를 선언하지만 **`ui-*.spec.ts`·`shots.spec.ts` 파일이 하나도 없다**. `@axe-core/playwright` 도 설치돼 있으나 쓰이지 않는다 — 브라우저·접근성 회귀는 지금 아무도 막지 않는다.
+  - 단위 시험의 "이상 탐지"·"정책"·"모의 실행" 은 `tests/unit-policy.spec.ts` 안에 있다(파일 이름이 policy 라 engine 쪽을 먼저 열면 못 찾는다).
+  - 시험은 `locale: ko-KR`, `timezoneId: Asia/Seoul` 로 돈다. 로직은 UTC 날짜 기준이므로(`src/shared/dates.ts`) 날짜 경계 시험은 UTC 로 짤 것.
+  - 2026-10-16 정찰 세션에서는 샌드박스 권한 때문에 `npm run test:unit` 을 직접 돌려 보지 못했다 — 명령 자체는 `package.json` 의 스크립트다.

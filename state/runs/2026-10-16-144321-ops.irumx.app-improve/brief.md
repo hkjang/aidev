@@ -1,0 +1,20 @@
+- 과제: 저장공간 증가 이상 탐지도 ‘처음 본 지 하루가 안 된 자원’은 건너뛴다 (가치 4 / 위험 2 / 작업량 S)
+- 왜: 직전 회차(e85afae)가 시간별 급증 탐지에만 `firstSeen` 가드를 넣었고 `detectStorage` 는 그대로다 — 어제 처음 생긴 R2 버킷·D1 DB 가 초기 적재되는 동안(예: 어제 50MB → 오늘 400MB) 증가 350MB·8배로 `storage_growth` **high** 가 뜬다. 같은 가드를 저장공간 쪽에도 넣으면 새 자원의 첫날 적재가 가짜 이상 사용(그리고 그에 딸린 긴급 제한·알림)으로 이어지지 않는다.
+- 수용 기준: 1) 어제 처음 본 자원(`first_seen` 이 오늘 00:00 UTC 기준 24시간 안)의 저장공간 증가는 Finding 이 생기지 않는다 2) 하루보다 오래된 자원의 **같은 입력**은 그대로 잡힌다 3) `firstSeen` 인수를 넘기지 않는 기존 호출의 동작은 그대로다(기존 시험 `저장공간 하루 25% 이상·200MB 이상 증가` 가 수정 없이 통과) 4) `tests/unit-policy.spec.ts` 의 `이상 탐지` describe 에 1·2를 증명하는 시험이 추가된다
+- 건드릴 파일 (프로덕션 2개 + 시험 1개):
+  - `src/shared/anomaly.ts:detectStorage` (130줄) — 네 번째 매개변수 `firstSeen?: Map<string, number>` 추가(`detectHourly` 와 같은 순서: rows, today, cfg, firstSeen). 루프 안에서 `const seen = firstSeen?.get(resource); if (seen !== undefined && seen > dateMs(today) - 24 * HOUR_MS) continue;`. `dateMs`·`HOUR_MS` 는 이미 같은 파일이 `./dates` 에서 `HOUR_MS, utcHour` 를 가져오고 있으니 `dateMs` 만 import 에 더하면 된다(`src/shared/dates.ts:9` 에 있다). 함수 윗 주석(67~71줄과 같은 식)에 왜 건너뛰는지 한 줄.
+  - `src/worker/engine/run.ts:evaluateOrg` (161~169줄) — 162~167줄에서 `detectHourly` 인수로 인라인 생성하는 `new Map((resRows.results as …).map((r) => [r.key, r.first_seen]))` 을 `const firstSeen = …` 로 한 번만 만들어 `detectHourly` 와 `detectStorage` 양쪽에 넘긴다. (`resRows` 는 149~154줄 batch 의 3번째 결과이고 183줄에서 `resourceSvc` 로 한 번 더 쓰이니 그 줄은 그대로 둔다.)
+  - `tests/unit-policy.spec.ts` — 192~204줄의 `저장공간 하루 25% 이상·200MB 이상 증가` 바로 뒤에 새 시험. 기존 `detectHourly` 가드 시험(177~182줄)이 그대로 본뜨기 좋은 틀이다: 같은 rows 로 `firstSeen` 만 바꿔 `toHaveLength(0)` / `toHaveLength(1)` 두 줄.
+    예: rows = `r2:new` 어제 5e7 / 오늘 4e8 → `detectStorage(rows, '2026-10-13', undefined, new Map([['r2:new', dateMs('2026-10-13') - 2*3600_000]]))` 는 길이 0, `new Map([['r2:new', dateMs('2026-10-01')]])` 는 길이 1.
+- 검증 명령:
+  - `npm run test:unit` (= `UNIT_ONLY=1 playwright test --project=unit` — 외부 서버·wrangler 없이 돈다. 이상 탐지 시험은 `tests/unit-policy.spec.ts` 안에 있다.) **미확인**: 이 세션에서는 명령 실행 권한이 없어 직접 돌려 보지 못했다. 처음 한 번은 전체 출력을 보고 기존 시험이 모두 통과하는지 확인할 것.
+  - `npx tsc -p tsconfig.worker.json --noEmit` (shared/ 는 worker tsconfig 에 들어간다). 여유 있으면 `npm run check`(앱·worker·node·guard 네 개를 모두 돈다).
+  - API 시험(`npm test`)은 `npm run build` + `wrangler dev` + 가짜 서버 3개(:8941~:8943)가 필요하다 — 이 변경은 단위 시험으로 충분하다.
+- 위험과 피할 것:
+  - `firstSeen` 맵의 키는 **`resources.key`** 다. `usage_daily.resource` 와 같은 문자열일 때만 가드가 걸리고, 다르면 **조용히 아무것도 하지 않는다**(실패가 아니라 무동작). 그래서 수용 기준 1·2를 "같은 rows, firstSeen 만 다름" 으로 짝지어 확인할 것 — 한쪽만 보면 가드가 걸린 게 아니라 다른 이유로 0 이 나온 것을 못 걸러낸다. `detectHourly` 가 이미 같은 맵으로 `r.resource` 를 찾고 있으니(114줄) 전제는 같다.
+  - 매개변수는 **선택(optional)** 으로 두고 기본 동작을 바꾸지 말 것. 기존 시험 192~204줄을 수정해야 한다면 설계가 틀린 것이다.
+  - `queues.reads` 재시도 탐지와 `workers.errors` 오류 비율은 **일부러** 가드 대상이 아니다(`src/shared/anomaly.ts:70` 주석: "오류 비율·재시도는 평소와 무관하니 그대로 본다"). 건드리지 말 것.
+  - 임계값(`storageGrowthPct`, `storageGrowthMinBytes`, severity 경계)을 같이 조정하지 말 것 — 이번 과제는 "새 자원 제외" 하나뿐이다. 차선 후보(아래)를 같이 담고 싶으면 severity 쪽만, 임계값은 그대로.
+  - `migrations/`, `src/worker/auth.ts`, better-auth 배선, `.github`/배포 스크립트는 건드리지 않는다. 마이그레이션이 필요한 변경이 아니다(`resources.first_seen` 은 `src/worker/db/schema.ts:190` 에 이미 있고 149~154줄 질의가 이미 읽고 있다).
+  - 운영자 지시: 감사·알림 `details` 에 검출 대상 원문을 더 넣지 말 것. 지금 `detail` 문장은 바이트 수만 쓰므로 그대로 둘 것.
+- 차선 후보: `detectStorage` 의 기준값 0 보호 — 어제 행의 qty 가 0 이면 `ratio = b / Math.max(1, a)` 가 수억 배가 되어 `detail` 은 "0.00GB → 0.30GB" 인데 `severity` 는 `ratio >= 3` 으로 **high** 가 된다(146~156줄). 어제 값이 `storageGrowthMinBytes` 미만일 때는 ratio 기반 severity 를 쓰지 말고 증가량(`grow`)만으로 판정. 1순위와 같은 함수·같은 시험 블록이라 한 회차에 같이 담아도 되고, 1순위가 성립하지 않을 때 단독으로도 가치가 있다.

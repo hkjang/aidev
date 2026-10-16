@@ -1,0 +1,155 @@
+[
+  {
+    "title": "북마크 Reorder가 dense 재배열 주석과 달리 단일행 UPDATE만 해 sort_order가 충돌하는 것 수정",
+    "value": 3,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "이번 회차 선택. bookmarks/service.go:181-196 재확인 — 주석은 'two-shot update ... dense and conflict-free'인데 본문은 대상 1행만 UPDATE한다. List(:43-62)의 ORDER BY sort_order, create_at 타이브레이크 때문에 요청 위치가 무시된다. 저장소 안 선례 sidebar/service.go:573-591 UpdateOrder의 unnest 한 문장 관용구를 따르면 된다. 웹 호출자 없음(compat.ts에 bookmark sort_order 없음) — API 전용 경로라 회귀 범위가 좁다. 설계 판단은 인덱스 base(0 vs 1) 하나뿐.",
+    "updated": "2026-10-16"
+  },
+  {
+    "title": "bookmarks 패키지에 첫 단위/통합 테스트 추가 (sidebar의 postgres 하네스 복사)",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "go test ./internal/bookmarks는 여전히 [no test files]. 1순위 과제가 이 테스트 파일을 만들면서 함께 해소된다 — 1순위가 끝나면 done으로 바꿀 것. 하네스 선례는 sidebar/service_postgres_test.go:661-701(newSidebarTestDB, 고유 스키마 + search_path + DROP SCHEMA CASCADE).",
+    "updated": "2026-10-16"
+  },
+  {
+    "title": "postsByIDsReactions가 DB 장애를 200 {} (반응 없음)으로 보고하는 것 차단",
+    "value": 3,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "late.go:304-356. ChannelForPost 오류 continue, IsMember 오류 무시, ListForPost 오류 continue가 그대로. 이번 차선 후보. 10-04/10-05/10-08과 같은 '장애를 정상 응답으로 접는 httpapi' 계열이 네 회차 연속이 되므로 이번에는 선택하지 않았다.",
+    "updated": "2026-10-16"
+  },
+  {
+    "title": "postsByIDsReactions의 io.LimitReader 64 KiB 조용한 절단",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "late.go:311. 같은 줄을 두 번 건드리지 않도록 위 항목과 묶어서만 진행. 단독 가치 낮음.",
+    "updated": "2026-10-16"
+  },
+  {
+    "title": "listReactions가 ChannelForPost 장애를 404, IsMember 장애를 403으로 접는 것 분리",
+    "value": 2,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "handlers.go:listReactions. 동일 계열 반복 방지를 위해 보류 유지.",
+    "updated": "2026-10-16"
+  },
+  {
+    "title": "격리 스키마 장애 주입 관용구를 newOperationsTestDB 주석에 문서화",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "프로덕션 0파일. RENAME+VIEW(0으로 나누기), ALTER TYPE으로 Scan 실패, DROP TABLE 세 가지 관용구가 세 테스트 파일에 흩어져 있고 헬퍼 주석은 아직 설명이 없다. 이번 2순위 차선.",
+    "updated": "2026-10-16"
+  },
+  {
+    "title": "bookmarks Patch의 sort_order 직접 설정도 충돌을 만들 수 있는 것 검토",
+    "value": 2,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "신규. service.go:Patch가 p.SortOrder를 검증 없이 그대로 쓴다 — Reorder를 고쳐도 이 경로로 중복 sort_order가 다시 생긴다. 다만 Mattermost PATCH 계약이 '값 그대로 저장'인지 미확인이고, 1순위와 같은 파일이므로 같은 PR에 넣지 말 것.",
+    "updated": "2026-10-16"
+  },
+  {
+    "title": "북마크 4개 핸들러(late.go)의 ok, _ := IsMember 403 위장 분리",
+    "value": 2,
+    "risk": 2,
+    "size": "M",
+    "status": "pending",
+    "note": "late.go 1058/1090/1150/1247. list의 system-admin 예외 때문에 장애 정책부터 정해야 한다. reorder 핸들러(:1248)도 같은 모양 — 1순위가 건드리는 핸들러이므로 혼입 금지.",
+    "updated": "2026-10-16"
+  },
+  {
+    "title": "createCustomProfileField / patchCustomProfileField의 _ = decodeCappedBody",
+    "value": 2,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "final.go. 단건 쓰기라 빈 본문 {} 계약부터 정해야 하고, 10-04/10-05 연속 decodeCappedBody 계열이라 당분간 쉰다.",
+    "updated": "2026-10-16"
+  },
+  {
+    "title": "searchFiles/searchTeamFiles의 감사 details에 검색어(terms)가 원문으로 들어가는 것",
+    "value": 2,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "final.go:816/882. 운영자 규칙('검출 대상 문자열을 details로 넘기지 말 것')과 맞닿아 있으나, 검색어가 보호 대상인지 정책 미확인. 감사 계약 변경은 단독 회차로.",
+    "updated": "2026-10-16"
+  },
+  {
+    "title": "digest.loadMentions가 멘션 대신 mention_count>0 채널의 미열람 글 20건을 보내는 근사",
+    "value": 2,
+    "risk": 2,
+    "size": "M",
+    "status": "pending",
+    "note": "digest/worker.go. 주석이 스스로 근사임을 인정. 멘션 판정 SQL과 알림 정책 결정이 선행되어야 해 한 세션에 안 끝난다.",
+    "updated": "2026-10-16"
+  },
+  {
+    "title": "userstatus.Get의 DB 장애 → 정상 offline 합성 계약 검토",
+    "value": 2,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "presence lifecycle 테스트에 오류 정책 변경을 섞지 않기로 해 보류 중. 장애를 '오프라인'으로 보고하는 모양이라 가치는 있으나 계약 결정 필요.",
+    "updated": "2026-10-16"
+  },
+  {
+    "title": "프로덕션 NewRouter를 띄우는 라우팅 계약 테스트를 더 넓히기",
+    "value": 3,
+    "risk": 1,
+    "size": "M",
+    "status": "pending",
+    "note": "invite 이메일 경로와 presence lifecycle 2곳까지 확대됨. 남은 경로용으로 pending 유지. 719 무인증 경로 감사는 이미 1회 수행했고 구멍 없었다 — 재실행 금지.",
+    "updated": "2026-10-16"
+  },
+  {
+    "title": "customprofile 패키지 단위 테스트: 빈 맵 no-op / null DELETE 계약",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "10-05 httpapi 회귀가 간접 고정했으므로 중복되지 않는 범위만 남는다. 우선순위 낮음.",
+    "updated": "2026-10-16"
+  },
+  {
+    "title": "러너에 릴리즈 실패 로그 접근 수단(gh 인증 또는 로그 스냅샷) 주기",
+    "value": 5,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "저장소 밖 러너 과제. 이번 회차도 gh 미사용. 정찰/구현이 선택할 수 없는 항목이지만 기록으로 유지.",
+    "updated": "2026-10-16"
+  },
+  {
+    "title": "jsdom 30.0.1 + undici 8.10.0 조합 다운그레이드로 webapp 테스트 복구",
+    "value": 5,
+    "risk": 2,
+    "size": "M",
+    "status": "rejected",
+    "note": "현재 npm test는 scripts/run-vitest.mjs로 npm 자신의 Node를 쓴다. 다운그레이드 접근 재시도 금지(프로필 '검증 함정'에 명시).",
+    "updated": "2026-10-16"
+  },
+  {
+    "title": "createIncomingWebhook의 channels.Get 오류를 404 channel_missing에서 500으로 분리",
+    "value": 3,
+    "risk": 1,
+    "size": "S",
+    "status": "rejected",
+    "note": "같은 접근의 커밋 0b2d41c가 머지되지 않고 남아 있다. 운영자 규칙상 반려된 접근 재제출 금지.",
+    "updated": "2026-10-16"
+  }
+]

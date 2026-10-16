@@ -1,84 +1,12 @@
 [
   {
-    "title": "maskPDFFileInternal의 pdfcpu 실패(watermark create error / recover 패닉)가 processing_failed·400으로 분류됨",
-    "value": 2,
-    "risk": 2,
-    "size": "S",
-    "status": "pending",
-    "note": "MaskPDFFile recover(:550) 및 maskPDFFileInternal watermark 에러(:590)에서 일반 fmt.Errorf를 유지한다. 실제 라이브러리 자체 결함과 업로드 잘못의 경계를 구분할 입력은 미확인. 추측만으로 500 분류를 만들지 않는다.",
-    "updated": "2026-10-09"
-  },
-  {
-    "title": "integration 테스트 헬퍼 buildMultipartBody가 contentType 인자를 무시",
-    "value": 3,
-    "risk": 2,
-    "size": "S",
-    "status": "pending",
-    "note": "integration_test.go:1942 CreateFormFile 사용을 재확인했다. 명시 MIME은 buildMultipartBodyWithFilenameParam(:1969)으로 가능하다. 공유 헬퍼 변경이 기존 회귀 입력 의미를 바꾸므로 이번에는 우회하며 범위를 분리한다.",
-    "updated": "2026-10-09"
-  },
-  {
-    "title": "GOARCH=386에서 TestValidateImageDimensionsRejectsPixelBomb 실패",
-    "value": 2,
-    "risk": 1,
-    "size": "S",
-    "status": "pending",
-    "note": "이번에도 GOARCH=386 go test -count=1 ./internal/document를 실행하여 image_test.go:35의 dimension overflow/예상 exceeds the maximum 불일치를 확인했다. 40000×40000을 8000×8000 같은 50MP 초과 픽스처로 줄이는 것이 차선. 8000 대체값 실행은 미확인이고 프로덕션은 현행에서도 거절한다.",
-    "updated": "2026-10-09"
-  },
-  {
-    "title": "cloneJob이 Metadata.Error·Engine.Debug·Confidence 포인터를 저장본과 공유",
-    "value": 2,
-    "risk": 2,
-    "size": "S",
-    "status": "pending",
-    "note": "store.go:265는 구조체 얕은 복사 후 슬라이스 3개만 복사한다. service는 에러 포인터를 대체하는 경로가 보이나 공유 포인터 내부를 변경하는 실제 경로는 이번에도 미확인. 실제 mutation/race 증거 없이 방어적 복사만 선택하지 않는다.",
-    "updated": "2026-10-09"
-  },
-  {
-    "title": "이력 조회에서 전체 job 복제 전 상위 limit 선별",
-    "value": 2,
-    "risk": 2,
-    "size": "M",
-    "status": "pending",
-    "note": "Store.List(:72)의 전체 clone/정렬 후 limit 절단은 그대로다. historyLimit 최대 100은 응답 수만 제한한다. 동률 정렬 계약과 실제 대량 job 메모리 측정이 미확인이라 보류.",
-    "updated": "2026-10-09"
-  },
-  {
-    "title": "동기 슬롯 대기열의 메모리 상한",
-    "value": 3,
-    "risk": 3,
-    "size": "L",
-    "status": "pending",
-    "note": "server.readProcessInput(:314)의 io.ReadAll이 ProcessSync/acquireSyncSlot 전에 실행되는 배선을 재확인했다. admission 위치·본문 파싱·해제 설계가 필요하여 45분 회차 범위를 넘는다. 부하 메모리 수치는 미확인.",
-    "updated": "2026-10-09"
-  },
-  {
-    "title": "internal/config 나머지 정규화 함수의 Load() 경유 테이블 테스트",
-    "value": 2,
-    "risk": 1,
-    "size": "S",
-    "status": "pending",
-    "note": "normalizeAllowHosts·normalizePIILang·normalizePIISchema·normalizeAuthMode·envBool 본문과 config_test.go 테스트 목록을 확인했다. 전용 Load 경유 표 테스트는 여전히 공백이다. 알려진 사용자 결함은 미확인; t.Setenv 비병렬 유지.",
-    "updated": "2026-10-09"
-  },
-  {
-    "title": "정규화 bbox에서 부분 마스킹 폭을 1로 늘려 좌표 단위 판정을 깨뜨리는지 검증",
+    "title": "정규화 bbox의 부분 마스킹에서 좌표 단위를 보존하기 (buildSubRegionsFromBBox의 +1 폭 보정)",
     "value": 4,
     "risk": 2,
     "size": "M",
-    "status": "pending",
-    "note": "이번 선택. 실제 cmd 서버→HTTP upstream→PNG 최종 출력으로 확정: bbox (.1,.1)~(.7,.3)은 502, 높이를 .7까지 늘리면 200/completed지만 좌상단 4픽셀만 검정이고 목적지 (160,80)은 흰색. 픽셀 bbox 대조군은 정상. assets/probe-results.json 참조. buildSubRegionsFromBBox의 정규화일 때만 폭 보정 생략으로 프로덕션 1파일로 좁혀 위험 3→2. PDF 시각 출력과 수정 후 green은 미확인.",
-    "updated": "2026-10-09"
-  },
-  {
-    "title": "업스트림 소수 페이지 번호가 정수로 절삭되어 정상 페이지로 받아들여지는지 검증",
-    "value": 3,
-    "risk": 3,
-    "size": "M",
-    "status": "pending",
-    "note": "engine.go:intValue float64→int 무검사 변환 및 extractPageNumberFromMap 양수 확인을 재확인했다. page 1.9의 실제 HTTP 재현은 미확인. page 별칭·page sizes와 생략/0 호환성 때문에 이번 좌표 보정과 분리한다.",
-    "updated": "2026-10-09"
+    "status": "done",
+    "note": "원본 바운즈가 isNormalizedBox이면 폭 보정을 건너뛰도록 engine.go:174 한 줄 수정. 수정 전 재현: 정규화 (0.1,0.1)-(0.7,0.3)은 502 masking_failed, (0.1,0.1)-(0.7,0.7)은 200 completed인데 마스크가 (0,0)-(1,1)에만 찍힘. 수정 후 둘 다 (120,20)-(199,*)에 정확히 찍힘. 픽셀 대조군과 하이라인 보정은 불변. 커밋 8f2d71f.",
+    "updated": "2026-10-16"
   },
   {
     "title": "일부 PII 필드에만 bbox가 없는 응답의 fail-closed 보장",
@@ -86,8 +14,44 @@
     "risk": 3,
     "size": "M",
     "status": "pending",
-    "note": "신규. service.process(:585)는 summary>0 && regions==0만 거절하므로, bbox가 있는 필드와 없는 필드가 섞이면 전체 조건을 피할 가능성이 있다. CollectMaskRegions는 bbox 없는 필드에 region을 만들지 않는다. 실제 HTTP 혼합 응답 재현과 필드별 대응 계약은 미확인. 구조 통합 대신 누락 필드를 좁혀 검증할 후속 후보.",
-    "updated": "2026-10-09"
+    "note": "service.process(:585)의 거절 조건이 summary>0 && regions==0 뿐이라 bbox 있는 필드와 없는 필드가 섞이면 가려지지 않은 필드가 있는데도 completed로 나갈 가능성. 실제 HTTP 혼합 응답 재현은 이번에도 하지 않았다 — 구현 전에 재현부터. 이번 회차의 차선 후보였다.",
+    "updated": "2026-10-16"
+  },
+  {
+    "title": "업스트림 소수 페이지 번호가 정수로 절삭되어 정상 페이지로 받아들여지는지 검증",
+    "value": 3,
+    "risk": 3,
+    "size": "M",
+    "status": "pending",
+    "note": "engine.go intValue의 float64→int 무검사 변환. page 1.9 실제 HTTP 재현 미확인. page 별칭·생략/0 호환성 때문에 좌표 보정 과제와는 분리 유지.",
+    "updated": "2026-10-16"
+  },
+  {
+    "title": "integration 테스트 헬퍼 buildMultipartBody가 contentType 인자를 무시",
+    "value": 3,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "integration_test.go:1943. 이번 회차의 새 HTTP 회귀도 이 헬퍼(octet-stream)로 충분했고 PNG 스니핑이 정상 동작함을 재확인했다. 명시 MIME이 필요하면 buildMultipartBodyWithFilenameParam(:1970)으로 우회 가능. 공유 헬퍼를 바꾸면 20여 개 기존 회귀 입력의 의미가 함께 바뀌므로 보류 유지.",
+    "updated": "2026-10-16"
+  },
+  {
+    "title": "cloneJob이 Metadata.Error·Engine.Debug·Confidence 포인터를 저장본과 공유",
+    "value": 2,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "store.go:265. 실제 mutation/race 경로의 증거가 여전히 없다. 증거 없이 방어적 복사만 넣지 않는다.",
+    "updated": "2026-10-16"
+  },
+  {
+    "title": "이력 조회에서 전체 job 복제 전 상위 limit 선별",
+    "value": 2,
+    "risk": 2,
+    "size": "M",
+    "status": "pending",
+    "note": "Store.List(:72)의 전체 clone/정렬 후 절단. historyLimit 최대 100은 응답 개수만 제한하고 비용은 제한하지 않는다. 동률 정렬 계약과 대량 job 메모리 측정이 미확인이라 보류.",
+    "updated": "2026-10-16"
   },
   {
     "title": "디버그 비활성 요청의 전체 응답 pretty-print 비용 줄이기",
@@ -95,25 +59,43 @@
     "risk": 2,
     "size": "M",
     "status": "pending",
-    "note": "신규. client.performParseRequest는 성공 시 buildResponseDebug를 항상 실행하고 formatDebugBody는 최대 8MiB JSON을 파싱·pretty-print한 뒤 16KiB로 자른다. service의 EnableDebug 분기는 그 이후다. 현행 비용·할당 벤치마크 및 TestConnection/오류 진단 계약을 먼저 확인해야 하며 인증·진단 출력 의미를 함께 바꾸지 않는다.",
-    "updated": "2026-10-09"
+    "note": "client.performParseRequest가 EnableDebug와 무관하게 최대 8MiB JSON을 pretty-print 후 16KiB 절단. 벤치마크 미확인이고 TestConnection 진단 계약과 얽힌다.",
+    "updated": "2026-10-16"
   },
   {
-    "title": "이미지에 존재하지 않는 페이지의 마스킹 영역을 성공으로 처리하지 않기",
-    "value": 3,
+    "title": "maskPDFFileInternal의 pdfcpu 실패(watermark error / recover 패닉) 분류",
+    "value": 2,
     "risk": 2,
     "size": "S",
-    "status": "done",
-    "note": "제공된 2026-10-08 구현 기록에서 88e8ace 성공/전체 검증 완료. 현재 고정 HEAD 19b4426의 MaskImageFile에는 아직 guard가 없으나 이미 시도하여 성공한 과제이므로 이번에 재선정하지 않는다. done은 제공된 완료 기록 기준이며 현재 HEAD 반영을 뜻하지 않는다.",
-    "updated": "2026-10-09"
+    "status": "pending",
+    "note": "라이브러리 자체 실패와 업로드 잘못의 경계를 가를 입력이 미확인. 추측으로 500 분류를 만들지 않는다.",
+    "updated": "2026-10-16"
   },
   {
-    "title": "auto-improve: Reject mask regions on pages an image does not have",
-    "value": 3,
-    "risk": 2,
-    "size": "M",
+    "title": "GOARCH=386에서 TestValidateImageDimensionsRejectsPixelBomb 실패",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
     "status": "pending",
-    "updated": "2026-10-11",
-    "note": "https://github.com/hkjang/pii-masker/pull/36 (PR 처리기가 3일 전에 더 진행할 수 없다고 판정했고(수정·심사를 2번 시도했지만 통과하지 못함) 그 뒤 사람 손이 닿지 않았습니다) 로 닫힘 — 다시 하려면 처음부터"
+    "note": "386 재실행은 이번에도 하지 않음(다섯 회차 연속 미확인). 프로덕션은 현행에서도 거절하므로 사용자 영향 없음. 40000x40000 픽스처를 8000x8000으로 줄이는 것이 후보.",
+    "updated": "2026-10-16"
+  },
+  {
+    "title": "internal/config 나머지 정규화 함수의 Load() 경유 테이블 테스트",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "normalizeAllowHosts·normalizePIILang·normalizePIISchema·normalizeAuthMode·envBool. 알려진 사용자 결함은 없음. t.Setenv 비병렬 유지.",
+    "updated": "2026-10-16"
+  },
+  {
+    "title": "폭이 0인 정규화 bbox의 부분 마스킹 거절 메시지가 단위를 알려주지 않음",
+    "value": 1,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "신규. 이번 수정으로 minX == maxX인 정규화 bbox는 폭 0 서브리전이 되어 placeRegion의 \"does not land on the page\"로 502가 된다(fail-closed로 올바른 답이고, 수정 전에도 단위가 깨진 채 같은 경로로 거절됐다). 그런 응답이 실제로 오는지 미확인이고 에러 문구는 기존 테스트가 전문 일치로 단언하므로 손대지 않았다.",
+    "updated": "2026-10-16"
   }
 ]

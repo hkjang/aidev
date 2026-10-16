@@ -1,7 +1,7 @@
 ---
 title: "GoalForge — 자율 개선 이력"
 description: "GoalForge: 자율 개선 회차 17회, 릴리즈 9건. 최근 릴리즈 v0.56.0 (자산 7개)."
-last_modified_at: 2026-10-16 14:38:31 +0900
+last_modified_at: 2026-10-16 14:52:36 +0900
 ---
 {% raw %}
 <script type="application/ld+json">
@@ -18,7 +18,7 @@ last_modified_at: 2026-10-16 14:38:31 +0900
   "name": "hkjang",
   "url": "https://github.com/hkjang"
  },
- "dateModified": "2026-10-16T14:38:31+09:00",
+ "dateModified": "2026-10-16T14:52:36+09:00",
  "version": "0.56.0"
 }
 </script>

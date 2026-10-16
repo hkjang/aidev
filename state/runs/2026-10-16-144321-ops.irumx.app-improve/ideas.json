@@ -1,0 +1,56 @@
+[
+  {
+    "title": "detectStorage 에도 '처음 본 지 하루가 안 된 자원' 가드 (firstSeen)",
+    "value": 4,
+    "risk": 2,
+    "size": "S",
+    "status": "done",
+    "note": "6e54d5e. detectStorage 에 선택 매개변수 firstSeen?: Map<string,number> 를 detectHourly 와 같은 순서로 추가하고, run.ts:evaluateOrg 가 인라인으로 만들던 맵을 const firstSeen 으로 한 번만 만들어 양쪽에 넘긴다. 시험은 같은 rows 에 firstSeen 만 바꿔 0/1 짝으로 확인 — 가드가 실제로 걸린 것임을 증명한다. 키 전제도 확인했다: usage_daily.resource 와 resources.key 는 d1:<uuid>·r2:<name>·kv:<id> 모두 같은 문자열.",
+    "updated": "2026-10-16"
+  },
+  {
+    "title": "detectStorage: 어제 값 0 일 때 ratio 폭주 → severity 오판",
+    "value": 3,
+    "risk": 1,
+    "size": "S",
+    "status": "done",
+    "note": "6f117c3. a < storageGrowthMinBytes 이면 ratio 기반 severity 를 쓰지 않고 grow 만으로 판정(byRatio 플래그). 임계값(5e9·1e9·3·1.8)은 손대지 않았고 severity 유도만 바꿨다. 0 → 0.30GB 가 high 에서 low 로. 기준값이 큰 경우(1GB → 4GB = high)도 같은 시험에서 함께 고정했다.",
+    "updated": "2026-10-16"
+  },
+  {
+    "title": "브라우저·접근성 시험이 0개 — ui-*.spec.ts 첫 한 개(로그인→개요 스모크 + axe)",
+    "value": 4,
+    "risk": 2,
+    "size": "M",
+    "status": "pending",
+    "note": "playwright.config.ts 가 desktop/mobile(/ui-.*\\.spec/)·shots 프로젝트를 선언하는데 해당 파일이 없고 @axe-core/playwright 도 미사용. 화면 14개가 회귀 그물 밖이다. npm run build + wrangler dev + 가짜 서버 3개(:8941~:8943)가 필요해 한 세션에 아슬아슬하고 첫 시험은 플래키 위험이 있다 — 개요 화면 하나로 좁혀서 담을 것. 이번 회차에서 npm install 이 필요했음도 참고(워크트리에 node_modules 가 없다, 설치 5초).",
+    "updated": "2026-10-16"
+  },
+  {
+    "title": "do:* 집계 가짜 자원은 resources.key 와 영원히 안 맞아 서비스 귀속·알림 제목이 깨진다",
+    "value": 3,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "collect/analytics.ts:185 가 DO 저장공간을 resource 'do:*' 로 넣는데 resources.key 는 do:<namespaceId> 다. 따라서 run.ts:179 의 resourceSvc.get('do:*') 는 항상 undefined → anomalies.service_id 가 null 이고, run.ts:322 의 알림 제목이 서비스 이름 대신 문자열 'do:*' 를 그대로 보여 준다. firstSeen 가드도 이 자원에는 무동작(이번 회차에 확인). 고치려면 do:* 를 집계로 인정하고 라벨만 '전체 Durable Objects' 로 바꾸는 쪽이 안전 — 계측 공식은 건드리지 말 것(a6eb4ea → d30940e → a47c108 되돌림 이력).",
+    "updated": "2026-10-16"
+  },
+  {
+    "title": "playwright.config.ts 의 mobile·shots 프로젝트는 대응 파일이 없는 죽은 설정",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "ui-*.spec.ts·shots.spec.ts 가 하나도 없어 두 프로젝트는 매 실행에서 0개를 돌린다 — npm test 가 실제보다 넓어 보인다. 위 'ui-*.spec.ts 첫 한 개' 를 하면 mobile 은 살아나므로 그 회차에 함께 정리하는 것이 맞다. 단독으로 설정만 지우면 다음에 시험을 넣을 자리를 잃는다 — 순서상 뒤에 둘 것.",
+    "updated": "2026-10-16"
+  },
+  {
+    "title": "CLAUDE.md 로 저장소 관례 고정(한국어 커밋, 시험 명령, 위험 구역)",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "CLAUDE.md·docs/ 가 없어 매 회차가 저장소를 처음부터 읽는다. profile.md 가 외부 기록으로 대체하고 있으므로 가치는 낮다. 프로덕션 코드 변화 없음. 담을 만한 사실: 커밋 메시지 '영역: 무엇을 왜' 한국어, npm run test:unit 이 기본 그물, 단위 시험의 이상 탐지는 tests/unit-policy.spec.ts, 워크트리에 node_modules 가 없으면 npm install 선행.",
+    "updated": "2026-10-16"
+  }
+]
