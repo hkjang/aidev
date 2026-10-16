@@ -70,5 +70,14 @@
     "status": "pending",
     "note": "새 항목. 이번 회차에 확인한 구조적 사실: wrangler.jsonc 의 assets 에 directory 가 없는 것은 의도된 것이고(배포는 @cloudflare/vite-plugin 이, 시험은 dist/irumx_ops/wrangler.json 이 채운다) scripts/verify-build.mjs 가 이 설정을 검사하므로 손대면 안 된다. 다만 '생 wrangler dev 는 빌드 없이는 못 뜬다' 는 전제를 아는 곳이 지금 playwright.config.ts 주석 하나뿐이다 — 앞으로 wrangler dev 를 직접 쓰는 스크립트(예: 수동 디버깅 안내)를 누가 더하면 같은 함정을 다시 밟는다. wrangler.jsonc 에 주석 한 줄로 이유를 남기는 정도가 적절(설정 값은 건드리지 않음).",
     "updated": "2026-10-16"
+  },
+  {
+    "title": "GitHub Actions CI 워크플로 추가 — 러너가 돌리는 검증 명령을 그대로 CI 로",
+    "value": 5,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "updated": "2026-10-16",
+    "note": "이 저장소에는 워크플로 파일이 없어 러너 PR 이 전부 \"CI 검사 없음\" 으로 막힌다. 러너가 이미 돌리는 검증 명령(build·vet·test)을 그대로 .github/workflows/ci.yml 로 옮겨라. 이 파일은 보호 경로라 사람 승인을 받는다."
   }
 ]

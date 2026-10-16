@@ -1,45 +1,40 @@
-# relio 프로필 (2026-10-05)
-- 목적: 에어갭 사내 B2B CRM을 Go 단일 바이너리의 REST·MCP·React 웹과 오프라인 Docker 이미지로 제공한다.
-- 스택: Go 1.24, net/http, pgx v5.7.5, PostgreSQL, React 19.1.1·TypeScript 5.9.2·Vite 7.3.6, Keycloak OIDC.
+# relio 프로필 (2026-10-16)
+- 목적: 에어갭 사내 B2B CRM 을 Go 단일 바이너리의 REST·MCP·React 웹과 오프라인 Docker 이미지로 제공한다.
+- 스택: Go 1.24, net/http, pgx v5, PostgreSQL, React 19.1.1 · TypeScript 5.9.2 · Vite 7.3.6, Keycloak OIDC.
 - 구조:
-  - cmd/relio: 실행 진입점. internal/server: REST·관리자·메일·VOC 핸들러.
+  - cmd/relio: 진입점. internal/server: REST·관리자·메일·VOC 핸들러(server.go·admin_operations.go·public.go 등).
   - internal/auth·oidc·apikey: 인증·SSO·개인 키. internal/audit: 감사 기록.
   - internal/crm·intelligence·relationship·voice·approval: 업무 서비스·분석·승인.
   - internal/mail·job·personal·admin·analytics: 메일·잡·개인·관리·분석.
-  - internal/mcp: 도구 스키마·dispatch·오류 정제. internal/api: OpenAPI 및 enum 계약 테스트.
+  - internal/mcp: 도구 스키마·dispatch·오류 정제. internal/api: OpenAPI(parameters.go)와 enum·정수 계약 테스트.
   - internal/platform: httpx·database·secrets·timezone. internal/webui: SPA embed.
   - migrations: SQL embed, 마지막 017_mail_notifications.sql, 다음 번호 018.
-  - web/src/pages: React 화면. web/test: Node 내장 테스트, Login 실제 번들/서버 렌더링 포함.
+  - web/src: api.ts(공통 fetch 클라이언트 + 포매터), pages/, components/. web/test: Node 내장 러너 테스트 5파일.
   - scripts: 환경·정적 자산·오프라인 설치·재시작·업그레이드 검증. docs: 가이드·설계·릴리즈·로드맵.
-- 빌드·테스트: go build ./... ; go test ./... ; go test -race ./... ; go vet ./... .
-  - make test: Go test/vet → web npm ci/typecheck/test/build. 네트워크 설치가 포함된다.
-  - npm --prefix web ci ; npm --prefix web run typecheck ; npm --prefix web test ; npm --prefix web run build .
-  - 루트 npm run typecheck && npm run build도 package.json 위임으로 지원. 루트 npm test는 없다.
-  - ./scripts/check-env-contract.sh ; ./scripts/check-static-assets.sh ; ./scripts/previous-release-tag-test.sh .
-  - docker build -t relio:<검증태그> . ; ./scripts/run-offline-container-test.sh relio:<검증태그> .
-  - ./scripts/run-upgrade-container-test.sh relio:<이전공개태그> relio:<검증태그> (Docker·실제 PostgreSQL·Python 이미지, 장시간).
-  - README 요구 Go 1.24+, Node 24+, Docker. CI·Docker 프런트는 Node 24.
-- 관례: type(scope): 한국어/영어 요약. 환경 변수 필수 3개+선택 ENCRYPTION_KEY, 런타임 설정 system_settings.
-  - 새 스키마는 새 번호 SQL. 기능 문서는 docs/ADMIN_GUIDE.md 등과 함께 유지한다.
-  - Go AST 계약 테스트는 개수 가드와 path:line 실패 메시지 사용. 소스 불변식은 SQL 런타임 증명이 아니다.
+- 빌드·테스트: `go build ./...` · `go test ./...` · `go test -race ./...` · `go vet ./...`.
+  - `make test` = `go test ./...` → `go vet ./...` → `cd web && npm ci && npm audit --audit-level=high && npm run typecheck && npm test && npm run build` (Makefile:13-16). audit 게이트는 2026-10-06 에 CI 와 같은 문구로 복제됐다. npm ci·audit 는 네트워크를 탄다.
+  - 프런트 단독: `npm --prefix web ci` → `npm --prefix web test`(`"$npm_node_execpath" --test 'test/**/*.test.ts'`) · `run typecheck` · `run build`.
+  - 루트 package.json 은 typecheck/build 를 web 으로 위임한다. 루트 `npm test` 는 없다.
+  - `./scripts/check-env-contract.sh` · `./scripts/check-static-assets.sh` · `./scripts/previous-release-tag-test.sh`.
+  - `docker build -t relio:<태그> .` · `./scripts/run-offline-container-test.sh` · `./scripts/run-upgrade-container-test.sh <이전공개태그> <새태그>`(Docker·실 PostgreSQL, 장시간).
+  - README 요구: Go 1.24+, Node 24+, Docker. CI·Docker 프런트는 Node 24(npm 11.x).
+- 관례: 커밋은 `type(scope): 한국어 요약`. 새 스키마는 새 번호 SQL 파일. 환경변수 필수 3개 + 선택 ENCRYPTION_KEY, 런타임 설정은 system_settings.
+  - Go 계약 테스트(internal/api)는 개수 가드 상수(knownEnumQueries=26 · knownCheckConstraints=42 · knownMappedEnums=13)와 `path:line` 실패 메시지를 쓴다.
+  - web/test 는 src 밖에 두어 tsc·vite 가 보지 못하게 하고, 시간 의존 테스트는 파일 맨 위에서 `process.env.TZ` 를 고정한다.
+  - 페이지 TSX 는 한 줄이 매우 긴 밀집 스타일이다. 일괄 포매팅 금지.
 - 위험 구역: internal/auth·oidc, internal/server/public.go, migrations/, .github/workflows/release.yml.
-  - 감사에 원문 비밀을 넣지 말 것. AdminPages.tsx·mcp/server.go의 긴 줄 일괄 포매팅 금지.
-  - admin_operations.go의 ILIKE는 실행 계획까지 확인하기 전 lower LIKE로 통일하지 말 것.
-- 자주 깨지는 곳: internal/webui/dist/README와 web/public/README embed 앵커 보존.
-  - npm run의 PATH가 조상 node_modules/.bin/node를 고를 수 있다. web test는 npm_node_execpath로 고정돼 있다.
-  - 중첩 npm/셸 Node 버전은 같다고 가정하지 말 것. 루트 위임·make build 보강은 efe5d01에 반영됨.
-  - 과거 이전 태그≠이전 공개 릴리즈 문제가 3e85fcf에서 수정됨. 실패 태그의 자산을 다운로드하면 연쇄 실패한다.
+  - 감사 details 에 원문 비밀·검출 대상 문자열을 넣지 말 것(식별자만).
+  - admin_operations.go 의 ILIKE 를 실행 계획 확인 없이 lower LIKE 로 통일하지 말 것.
+  - web/package-lock.json: 로컬 npm 10.9.8 로 재생성하면 rollup 선택적 바이너리의 libc 메타데이터 42줄이 사라진다.
+- 자주 깨지는 곳: internal/webui/dist/README 와 web/public/README 의 embed 앵커(빌드 뒤 cmp 로 확인).
+  - npm run 의 PATH 가 조상 node_modules/.bin/node 를 고를 수 있어 web test 는 `$npm_node_execpath` 로 고정돼 있다.
+  - 릴리즈 업그레이드 검증은 과거 2회 실패해 롤백·자율화 강등(release → low-risk)을 불렀다. 같은 접근을 반복하지 말 것.
+  - 섭동 테스트를 `git checkout -- <파일>` 로 되돌리면 같은 파일의 커밋되지 않은 본 변경까지 날아간다. 역-편집으로 되돌릴 것.
 - 검증 함정:
-  - release.yml Test source에는 여전히 npm test가 없다. ci.yml과 Makefile에는 있다.
-  - CI만 previous-release-tag-test.sh를 실행한다. 해당 8개 테스트의 gh 대역은 실이미지 업그레이드를 증명하지 않는다.
-  - secrets DB 통합 테스트는 DSN 없으면 skip. 폐기용 DB로만 실행한다.
-  - docs/ROADMAP_PLAN.md의 현재 v1.6.0·VOC 예정 표기는 최신 코드와 어긋난다. 최신 공개 릴리즈는 v1.14.0.
-  - 기록의 ESCAPE 비교 단위 개선은 HEAD deaf151에 없다: search_test.go:48-63은 아직 줄 단위 검사.
-  - net.OpError·EOF 분류는 실제 DB 연결 단절 오류 타입 확인이 먼저다. 기존 REST/MCP 계약을 합치지 않는다.
-- 이번 확인(main@deaf151, 코드 변경 없음):
-  - GitHub 공개 API: 9월 실패 34025552120·33927624115는 upgrade 단계 실패, 뒤의 5개 릴리즈 run은 성공.
-  - 최신 성공 run 35823956251(v1.14.0, 2026-09-23). 원본 실패 로그는 인증 없어 HTTP 403, 본문 미확인.
-  - gh CLI는 미인증, 공개 API/릴리즈 자산은 curl·urllib로 읽을 수 있다. Docker 서버 사용 가능.
-  - previous-release-tag-test.sh 8건, 환경·정적 자산 계약 PASS. 현재 HEAD Docker build 및 이미지 빌드 중 Go 테스트 PASS.
-  - 전체 make test·호스트 go test·race·npm audit는 이번 정찰 미실행. 실제 공개 v1.14.0→HEAD 이미지 업그레이드 exit 0(schema 017→017); brief.md 참조.
-- 스킬: 요청된 3개 headcount SKILL.md를 로컬에서 읽어 적용. Skill 도구는 이번 세션에 노출되지 않았다.
+  - release.yml 의 Test source 에는 아직 `npm test` 가 없다. ci.yml 과 Makefile 에는 있다.
+  - previous-release-tag-test.sh 는 CI 만 실행하고, 그 8건의 gh 대역은 실이미지 업그레이드를 증명하지 않는다.
+  - secrets DB 통합 테스트 3건은 RELIO_TEST_POSTGRES_DSN 없으면 skip. non-verbose 로그는 skip 을 보여 주지 않는다.
+  - 워크트리(/home/hkjang/.cache/auto-improve-wt/relio)에는 web/node_modules 가 없다. 프런트 검증 전 `npm --prefix web ci` 필요.
+  - 이 정찰 세션에서는 `node`·`npm` 실행이 승인되지 않아 프런트 베이스라인을 돌리지 못했다(명령 승인 정책에 따라 달라질 수 있음).
+  - docs/ROADMAP_PLAN.md 의 v1.6.0·VOC 예정 표기는 코드와 어긋난다. 최신 공개 릴리즈는 v1.14.0.
+  - Vite 빌드에는 analytics.js module 속성 경고와 500 kB 초과 번들 경고가 상시로 남는다.

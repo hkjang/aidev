@@ -1,30 +1,39 @@
 [
   {
-    "title": "mcp.go 의 좌석·직원 조회가 `_ = rows.Scan(...)` 으로 오류를 아예 버린다",
+    "title": "건물·층·도면 목록(maps.go)이 행 읽기 실패를 삼키고 부분 목록을 200 으로 돌려준다",
+    "value": 3,
+    "risk": 2,
+    "size": "S",
+    "status": "done",
+    "note": "커밋 3a191ad. 세 루프를 scanBuildings·scanFloors·scanFloorMaps 순수 함수로 뽑고 notFoundOrServer 로 500 database_error 를 돌려준다. rowScanner 는 employees.go 것을 참조만 했다. fakeRows 에 *int·**int·*bool·*[]byte case 를 더했다. 단위테스트 9건 + 실서버 변경 전/후 대조(listFloors·listBuildings)로 증명.",
+    "updated": "2026-10-16"
+  },
+  {
+    "title": "mcp.go 의 좌석·직원 조회가 `_ = rows.Scan(...)` 으로 오류를 아예 버려 빈 구조체가 목록에 들어간다",
     "value": 3,
     "risk": 2,
     "size": "S",
     "status": "pending",
-    "note": "mcp.go:113·127·153에 여전히 존재. 2026-10-08 동일 과제가 no-change였고 원인은 미확인이므로 이번에 재선택하지 않는다. 인증/MCP 오류 응답 경로까지 증명할 수단을 별도로 확인해야 한다.",
-    "updated": "2026-10-09"
+    "note": "mcp.go:113·127·153. 다른 곳은 실패한 행을 건너뛰기라도 하는데 여기는 빈 좌석번호가 MCP 응답에 섞인다. 2026-10-08 회차가 같은 과제를 골랐으나 no-change 로 끝났고 원인이 기록되지 않았다 — 증명 수단이 원인이었다면 이번 회차에 깔아 둔 'CGO_ENABLED=0 정적 바이너리를 alpine:3 에 마운트' 수법으로 풀렸다(풀 Docker 이미지 빌드 불필요, 이 셸에 sudo 가 없어도 돈다). 다음 회차의 유력 후보.",
+    "updated": "2026-10-16"
   },
   {
-    "title": "maps.go·keys.go·detection.go·dashboard.go 등 남은 스캔 루프도 rowScanner 로 옮기기",
-    "value": 3,
-    "risk": 2,
-    "size": "M",
-    "status": "pending",
-    "note": "현행 재평가: maps.go 세 목록, keys.go:28, detection.go:468, dashboard.go:317, settings.go:35 등 미처리 남음. 과거 메모의 dashboard.go:172·194·213·233은 dashboardIssues.appendRows가 Scan 오류 및 rows.Err를 이미 반환하므로 대상에서 제외. grid.go:150은 이전 기록과 달리 Scan 실패를 continue하며 rows.Err만 검사한다. mcpoauth는 보호 경로이므로 자동 회차에서 제외. 전체 통합 대신 한 파일의 실제 결함만 선택할 것.",
-    "updated": "2026-10-09"
-  },
-  {
-    "title": "가져오기 실패 행 사유에 어느 열이 비었는지 적기",
+    "title": "직원 가져오기 실패 행 사유에 어느 열이 비었는지 적기",
     "value": 2,
     "risk": 1,
     "size": "S",
     "status": "pending",
-    "note": "employees.go:importEmployees의 fail(\"사번/이름 누락\") 유지 확인. 이번 차선. 새 XLSX 누락 행은 아예 집계되지 않는 반면 이 후보는 이미 실패를 알려주므로 우선순위가 낮다.",
-    "updated": "2026-10-09"
+    "note": "internal/app/employees.go 의 fail(\"사번/이름 누락\") 이 사번·이름 중 무엇이 빈지 가리지 않는다. 프로덕션 1파일, 순수 함수 단위테스트로 증명 가능. 일곱 회차 연속 차선으로 밀렸다.",
+    "updated": "2026-10-16"
+  },
+  {
+    "title": "keys.go·detection.go·settings.go·grid.go·dashboard.go:317 의 남은 스캔 루프도 rowScanner 로 옮기기",
+    "value": 2,
+    "risk": 2,
+    "size": "M",
+    "status": "pending",
+    "note": "현행: keys.go:28, detection.go:468, settings.go:35, grid.go:150(rows.Err() 는 보지만 Scan 실패는 continue), dashboard.go:317. dashboard.go:172·194·213·233 은 이미 올바르므로 제외. tracking.go:68·mcpoauth.go:82 는 설정 로더로 성격이 다르고 mcpoauth 는 보호 경로. maps.go 를 떼어 내 남은 자리는 사용자 노출이 낮다. 한 회차에 한 파일씩.",
+    "updated": "2026-10-16"
   },
   {
     "title": "listEmployees 가 알 수 없는 status·assignment 값을 조용히 빈 목록으로 돌려준다",
@@ -32,8 +41,8 @@
     "risk": 1,
     "size": "S",
     "status": "pending",
-    "note": "listEmployees에서 SQL 비교에 직접 전달하는 코드 확인. web/src/lib/employeeQuery.ts의 normalize는 모르는 값을 빈 필터로 정규화하므로 정상 UI 경로에서는 방지됨. REST의 400 또는 기본값 정책 선택이 필요하므로 이번 제외.",
-    "updated": "2026-10-09"
+    "note": "서버가 미검증 값을 SQL 비교에 직접 넘긴다. web/src/lib/employeeQuery.ts 의 normalize 가 정상 UI 경로를 막아 주므로 영향이 작다. 400 이냐 기본값 하향이냐는 REST 계약 판단이 필요해 자동 회차에서 보류. URL 복원 경로에는 기본값 하향이 안전하다.",
+    "updated": "2026-10-16"
   },
   {
     "title": "importEmployees 가 올린 파일의 행 수에 상한이 없다",
@@ -41,17 +50,8 @@
     "risk": 2,
     "size": "S",
     "status": "pending",
-    "note": "미확인 사항 해소: readSpreadsheet에 http.MaxBytesReader 15 MiB 제한이 실제 존재하나 행 개수 제한은 없고 importEmployees가 전부 처리한다. XLSX는 압축 후 크기이므로 행 수/압축 해제 정책은 별도 검토 필요. 정찰에서 메모리 부하·대규모 업로드 미실험.",
-    "updated": "2026-10-09"
-  },
-  {
-    "title": "내보낸 직원목록 CSV 에 조직코드 열 추가",
-    "value": 3,
-    "risk": 3,
-    "size": "M",
-    "status": "pending",
-    "note": "employeeExport.ts는 여전히 조직명 위주이고 listEmployees의 SELECT/응답에는 external_id 없음. 96c911e 왕복 안내 철회와 관련된 정책 판단이므로 자동 회차에서 고르지 않는다.",
-    "updated": "2026-10-09"
+    "note": "readSpreadsheet 에 http.MaxBytesReader 15 MiB 가 있으나 행 개수 제한은 없다. XLSX 는 압축 후 크기라 압축 해제 폭을 막지 못한다. 메모리 부하 실측을 해 본 적이 없어 상한 값의 근거가 없다 — 실측 회차가 선행이다.",
+    "updated": "2026-10-16"
   },
   {
     "title": "직원 목록 500건 상한에 total·더 보기 붙이기",
@@ -59,8 +59,8 @@
     "risk": 2,
     "size": "M",
     "status": "pending",
-    "note": "listEmployees limit 기본100/최대500 및 items만 반환 유지. UI는 employeeQuery의 500 사용. 501명 규모 증명과 서버/UI 계약 변경이 필요하므로 제외.",
-    "updated": "2026-10-09"
+    "note": "listEmployees 는 limit 기본100/최대500 에 items 만 돌려준다. seat-history 의 total/totalCapped 가 서버 쪽 본보기다. 501명 시드와 서버·UI 계약 동시 변경이 필요해 S 로 못 쪼갠다.",
+    "updated": "2026-10-16"
   },
   {
     "title": "이력 화면의 조회 파라미터를 load 와 exportCsv 가 한 함수로 짓게 하기",
@@ -68,8 +68,8 @@
     "risk": 1,
     "size": "S",
     "status": "pending",
-    "note": "HistoryPage.tsx의 두 쿼리 구성은 q/source/from/to가 여전히 일치한다. 조회/내보내기 limit 차이를 지켜야 하며 관찰된 결함 없는 예방 과제라 보류.",
-    "updated": "2026-10-09"
+    "note": "HistoryPage.tsx 의 두 쿼리 구성은 q/source/from/to 가 여전히 일치한다. 관찰된 결함이 없는 예방 과제이고 limit 차이는 유지해야 한다.",
+    "updated": "2026-10-16"
   },
   {
     "title": "요청 순번 규칙을 lib 헬퍼로 뽑아 여러 화면이 공유",
@@ -77,8 +77,8 @@
     "risk": 2,
     "size": "S",
     "status": "pending",
-    "note": "EmployeesPage와 HistoryPage에 요청 순번 보호가 존재. 공통화의 새 이득은 확인하지 못했고 헬퍼 테스트가 배선을 증명하지 못하므로 세 번째 실제 수요 전에는 보류.",
-    "updated": "2026-10-09"
+    "note": "EmployeesPage·HistoryPage 두 곳에 있다. 순수 헬퍼 단위테스트는 배선 결함을 증명하지 못한다(운영자 지침). 세 번째 실제 수요가 생길 때까지 보류.",
+    "updated": "2026-10-16"
   },
   {
     "title": "가져오기 실패 배너가 다음 조회까지 남는 것이 맞는지 판단",
@@ -86,8 +86,8 @@
     "risk": 1,
     "size": "S",
     "status": "pending",
-    "note": "EmployeesPage.upload/assignFromFile은 failures를 비우지만 catch에서 error만 갱신하며 load를 부르지 않는다. 성공 메시지 수명 정책을 결정해야 하므로 자동 변경 제외.",
-    "updated": "2026-10-09"
+    "note": "EmployeesPage 의 upload/assignFromFile 은 catch 에서 error 만 갱신하고 load 를 부르지 않는다. 성공 메시지 수명 정책 결정이 선행이라 자동 변경 제외.",
+    "updated": "2026-10-16"
   },
   {
     "title": "좌석맵 필터·색상 모드·조직 강조도 주소에 반영",
@@ -95,43 +95,34 @@
     "risk": 2,
     "size": "M",
     "status": "pending",
-    "note": "seatMapLink.ts는 q/map 탐색용이며 추가 상태 직렬화는 이번 확인 범위에서 구현되지 않았다. SeatMapPage의 모든 상태 흐름은 이번 미확인으로 남김. 다중 상태 계약 설계가 필요하므로 자동 회차 우선순위 낮음.",
-    "updated": "2026-10-09"
+    "note": "seatMapLink.ts 는 q/map 탐색용. 다중 상태 직렬화 계약 설계가 필요하고 SeatMapPage 의 상태 흐름은 아직 미확인.",
+    "updated": "2026-10-16"
   },
   {
-    "title": "E2E 환경 의존 spec 2건(mcp-oauth·tracking) 준비 절차를 web/e2e/README.md 로 고정",
-    "value": 1,
-    "risk": 1,
-    "size": "S",
-    "status": "pending",
-    "note": "현재 README/CI/Playwright 설정은 읽었으나 두 환경 의존 spec은 이번 재실행 안 함. 과거 기록의 bridge→호스트 수집기·PLAYWRIGHT_BROWSERS_PATH·포트 충돌·기존 시드 repair 함정은 유효한 인수인계 항목. 이번에는 사용자 입력 손실을 우선.",
-    "updated": "2026-10-09"
-  },
-  {
-    "title": "좌석 일괄 배정에서 좌석번호가 빠진 XLSX 행을 실패 목록에 집계",
+    "title": "좌석 일괄 배정에서 좌석번호가 빠진 XLSX 행을 실패 행으로 알린다",
     "value": 3,
     "risk": 1,
     "size": "S",
     "status": "pending",
-    "note": "신규·이번 선택. seats.go:bulkAssignments의 len(row)<2 continue가 사번만 있는 행을 버림. 실제 excelize 생성→직렬화→재읽기에서 row2 len1/중간 공백 len0 확인(assets/xlsx_probe.go). 기존 실패 UI 재사용 가능, 프로덕션1파일. 실서버 실패 응답 재현은 구현 단계 수용 기준.",
-    "updated": "2026-10-09"
+    "note": "2026-10-09 회차가 이것을 골랐으나 no-change 로 끝났고 원인이 기록되지 않았다. bulkAssignments 가 len(row)<2 행을 조용히 누락하는 것은 유효한 결함이며 실제 XLSX 가 필요하다(readSpreadsheet CSV 는 열 수 다른 행을 먼저 invalid_csv 로 거절). 과거 회차가 왜 비었는지 모르는 채 재선택하지 않는다.",
+    "updated": "2026-10-16"
   },
   {
-    "title": "직원 가져오기 필수 머리글 누락을 파일 단위로 미리 안내",
+    "title": "프로필의 '캐시된 plan 깨기' 명령 꼴을 고친다 — 같은 타입으로의 ALTER 는 듣지 않는다",
     "value": 2,
     "risk": 1,
     "size": "S",
     "status": "pending",
-    "note": "신규. importEmployees는 머리글 사전을 만들지만 사번/이름 열 존재를 먼저 검사하지 않아 열 이름 오타를 모든 행의 사번/이름 누락으로 보고한다. 임의 순서·한/영 별칭 계약을 보존하는 파일 오류 검증을 고려할 수 있으나 현재 행별 실패 API에서 파일 오류로 바뀌는 영향 확인 필요.",
-    "updated": "2026-10-09"
+    "note": "새 후보(문서/정찰 지식). 프로필과 과제서가 적어 둔 `ALTER TABLE <t> ALTER COLUMN <int열> TYPE integer` 는 열이 이미 integer 면 결과 타입을 바꾸지 않아 cached plan 이 깨지지 않는다 — 이번 회차에 floors.sort_order 로 실제로 확인했고 양쪽 앱이 12회 모두 200 을 돌려줬다. 필요한 것은 결과 타입이 바뀌는 변경(integer→bigint, text→varchar(n) 등)이다. 앞선 두 회차가 통한 것은 organizations.color(text→integer)·seats.rotation(double→integer)이 진짜 타입 변경이었기 때문. 다음 정찰이 프로필의 이 줄을 고쳐 둘 것.",
+    "updated": "2026-10-16"
   },
   {
-    "title": "좌석 격자 정렬에서 Scan 실패 행을 빼고 부분 적용하지 않기",
-    "value": 3,
-    "risk": 3,
-    "size": "M",
+    "title": "실서버 대조를 풀 Docker 이미지 빌드 없이 돌리는 수법을 e2e 문서에 적는다",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
     "status": "pending",
-    "note": "신규로 분리. grid.go:150은 Scan 실패면 continue하며 루프 뒤 rows.Err만 확인한다. 이전 프로필의 이미 올바른 꼴이라는 설명은 부정확. 이후 쓰기 작업 대상이 누락될 수 있어 조회만 고치는 것보다 위험 높음. 실제 pgx 실패와 좌석 업데이트 여부까지 증명해야 하므로 이번 제외.",
-    "updated": "2026-10-09"
+    "note": "새 후보. 이번 회차에 확인: 이 셸에는 sudo 가 없어 네이티브 바이너리가 /var/lib/seaton 키링 디렉터리를 못 만들어 기동에 실패한다(main.go:53 하드코딩). 대신 `CGO_ENABLED=0 go build` 로 정적 바이너리를 만들어 `alpine:3` 컨테이너에 ro 마운트하면 npm ci + vite build 없이 수십 초 만에 변경 전/후 두 앱을 같은 DB 에 띄울 수 있다(webdist/index.html 이 git 에 있어 embed 가 통한다). 또한 POST API 는 CSRF 토큰을 요구하므로 시드는 psql 직접 INSERT 가 빠르다. E2E 환경 준비 문서 과제와 합칠 수 있다.",
+    "updated": "2026-10-16"
   }
 ]

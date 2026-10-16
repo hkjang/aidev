@@ -1,0 +1,128 @@
+[
+  {
+    "title": "단순 실행 상세를 실행 ID 로 키를 준 내부 컴포넌트로 감싸 로그·커서·지연 응답을 격리하기",
+    "value": 4,
+    "risk": 1,
+    "size": "S",
+    "status": "done",
+    "note": "구현 완료. SimpleRunDetailPage 본문을 RunDetail({id}) 로 옮기고 래퍼가 <RunDetail key={id} id={id} /> 만 반환한다. 프로덕션 1 파일 +13줄, 신규 테스트 4건. 실패 재현의 핵심은 B 의 스트림이 A 의 커서로 열린 'after=5' 였다. 반증 실험으로 네 테스트 모두 key 한 곳에 고정됨을 확인했다.",
+    "updated": "2026-10-16"
+  },
+  {
+    "title": "docs/architecture.md:72 의 'Harbor 미사용' 단정을 선택적 Harbor 복제 서술과 맞추기",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "차선 후보였다. README·docs/simple-mode.md 후반에는 선택적 복제가 설명돼 있고 SimpleRunDetailPage 는 replicationStatus/replicationExecutionId 를 실제로 렌더한다(이번 회차에 :371-383 을 눈으로 확인). architecture.md:72 문장 자체는 이번에도 열지 않았으므로 구현자가 먼저 확인하고, executeSimpleRun/runReplication 의 활성 조건을 본 뒤 문서만 고칠 것.",
+    "updated": "2026-10-16"
+  },
+  {
+    "title": "로그 스트림 한도(3/user·64/global) 거절·해제의 HTTP 통합 테스트",
+    "value": 2,
+    "risk": 2,
+    "size": "M",
+    "status": "pending",
+    "note": "열여섯 회차 연속 밀렸다. 동시 연결 해제 동기화가 남은 위험이고 TEST_POSTGRES_DSN 이 필요하므로 SKIP 을 통과로 보고하면 안 된다. 이번 회차도 server.go 는 열지 않았다.",
+    "updated": "2026-10-16"
+  },
+  {
+    "title": "릴리즈 로그 엔드포인트의 DB 픽스처 테스트(권한 문자열·커서 end-to-end)",
+    "value": 2,
+    "risk": 1,
+    "size": "M",
+    "status": "pending",
+    "note": "v0.5.30 이 releases.read 권한 문자열을 테스트로 고정하지 못했다고 스스로 기록했다. DB 필요라 한 세션에 끝날지 불확실. 이번 회차 미확인.",
+    "updated": "2026-10-16"
+  },
+  {
+    "title": "RELEASE_LOG_TRUNCATED_NOTICE 복사 안내에도 '로그 내려받기' 언급",
+    "value": 1,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "v0.5.31 이 화면 버튼과 Alert 문구는 고쳤지만 클립보드에 붙는 상수(ReleaseDetailPage.tsx:67)는 그대로다. 클립보드 테스트가 문자열을 정확히 비교하므로 테스트도 함께 고쳐야 한다. 이번 회차 미확인.",
+    "updated": "2026-10-16"
+  },
+  {
+    "title": "SSE 프레임을 rAF 마다 모아 배치당 한 번만 setLogs",
+    "value": 2,
+    "risk": 2,
+    "size": "M",
+    "status": "pending",
+    "note": "세 페이지에 프레임별 setter 가 남아 있다. 측정 방법 확정이 선행이고 배칭이 커서·종료 처리를 지연시킬 위험이 있어 이번에도 미선택.",
+    "updated": "2026-10-16"
+  },
+  {
+    "title": "전체 모드 SSE 의 빈 message 를 JSON 원문으로 바꾸지 않기",
+    "value": 3,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "ReleaseDetailPage:receiveLog 의 message: value.message || event.data. 단순 모드에는 빈 줄 높이 보존 계약(LOG_LINE_HEIGHT, SimpleRunDetailPage.tsx:53-57)이 실제로 있다(이번 회차에 다시 확인). runner 가 빈 payload 를 만드는 실경로는 여전히 미확인이므로 구현 전에 그것부터 확인할 것.",
+    "updated": "2026-10-16"
+  },
+  {
+    "title": "make vet(gofmt/go vet)·웹 tsc -b --noEmit 를 make test 에 포함",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "미머지 브랜치 auto/2026-09-17-0853 의 f700e87 이 같은 일을 이미 시도한 상태로 남아 있어 중복 위험. 선행 작업은 그 브랜치가 main 에 들어갔는지 확인하는 것.",
+    "updated": "2026-10-16"
+  },
+  {
+    "title": "배포 화면 로그 잘림 안내가 simple.read 없는 계정에도 실행 기록을 가리킴",
+    "value": 1,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "deploy 전용 계정의 실제 사용 빈도 미확인. 저우선 유지.",
+    "updated": "2026-10-16"
+  },
+  {
+    "title": "uploadHasFailedPackages 를 actor 로 좁히기",
+    "value": 2,
+    "risk": 3,
+    "size": "M",
+    "status": "pending",
+    "note": "소유권 계약 미확인이고 actor 조건 추가가 실패 방어를 느슨하게 만들 수 있어 보류 유지.",
+    "updated": "2026-10-16"
+  },
+  {
+    "title": "web/dist vendor 청크 분할로 폐쇄망 초기 로딩 개선",
+    "value": 1,
+    "risk": 3,
+    "size": "S",
+    "status": "rejected",
+    "note": "이번 회차의 npm run build 출력으로 확인: vendor 청크는 이미 분리돼 있다(dist/assets/vendor-*.js 617.30 kB gzip 191.72 kB, index-*.js 194.80 kB). 과제의 전제가 이미 충족돼 있어 기각한다. 번들 크기 자체를 더 줄이자는 것은 별개의 과제이고 측정 없이는 위험만 진다.",
+    "updated": "2026-10-16"
+  },
+  {
+    "title": "simple.go 의 writeSimpleRunLog·runLogDisposition·logRowScanner·simpleRunLogTruncatedNotice 를 두 모드 공용 이름으로 옮기기",
+    "value": 1,
+    "risk": 1,
+    "size": "S",
+    "status": "rejected",
+    "note": "v0.5.30 에서 전체 모드가 그대로 호출해 이름의 'simple' 이 거짓이 됐지만 동작 변화는 0 이고, 운영자가 '같은 종류의 파서·헬퍼가 여러 경로에 있으면 통합하려 하지 말고 좁히는 방향으로만 고칠 것' 을 되풀이해 지시했다. 개명은 호출 경로를 넓히는 쪽이고 되돌릴 가치가 없으므로 기각하고, 대신 프로필에 '이름에 simple 이 있어도 공용 동작' 이라는 기록을 유지한다.",
+    "updated": "2026-10-16"
+  },
+  {
+    "title": "SimpleRunDetailPage 형제 링크의 encodeURIComponent 누락",
+    "value": 1,
+    "risk": 1,
+    "size": "S",
+    "status": "rejected",
+    "note": "이전 정찰이 기각한 그대로 유지한다. 실행 생성 id 는 simple.go→secure.NewID() 의 UUID 형 hex+하이픈이라 인코딩이 필요한 문자가 나오지 않아 재현 가능한 결함이 아니다. 이번 회차에 :435 를 RunDetail 안으로 옮겼으나 링크 자체는 한 글자도 바꾸지 않았다.",
+    "updated": "2026-10-16"
+  },
+  {
+    "title": "단순 실행 상세에서 형제 패키지로 이동할 때의 PageLoading 순간 노출을 줄이기",
+    "value": 1,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "이번 회차가 만든 의도한 동작 변화. key={id} 재마운트로 이동 직후 '실행 기록을 불러오는 중입니다' 가 잠깐 보인다(이전에는 run.loading && !run.data 가드 덕에 A 의 상세가 계속 보였다). 기존 149건 중 이것에 걸리는 테스트는 없음을 확인했고, 올바른 격리의 대가이므로 되돌리면 안 된다. 사람이 깜빡임을 불편해한다는 보고가 실제로 오기 전에는 손대지 말 것 — 고치려면 공유 상태가 아니라 PageLoading 의 지연 표시(예: 150ms 후 표시)로 해야 한다.",
+    "updated": "2026-10-16"
+  }
+]

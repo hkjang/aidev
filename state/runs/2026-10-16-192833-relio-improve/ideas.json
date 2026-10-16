@@ -1,0 +1,137 @@
+[
+  {
+    "title": "relative() 의 오늘/어제/N일 전을 달력 날짜 기준으로 계산",
+    "value": 4,
+    "risk": 1,
+    "size": "S",
+    "status": "done",
+    "note": "2026-10-16 구현·커밋 0ccf619. api.ts:34 의 Math.floor(경과 ms/86400000) 를 로컬 자정 사이의 달력 일수(Math.round)로 바꿨고, 파싱 불가 값은 date() 로 떨어져 RangeError 를 던지던 것을 '기록 없음' 으로 접었다. 수정 전 2건 red(어제 23:59 → '오늘', 'not-a-date' → Invalid time value), 수정 후 45/45. 호출 자리 14개 확인. date/dateTime/money 와 서버 OpenDays 는 0줄.",
+    "updated": "2026-10-16"
+  },
+  {
+    "title": "date()·dateTime() 의 잘못된 날짜 입력에 RangeError 대신 '—' 폴백",
+    "value": 3,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "api.ts:30-31 이 Invalid Date 를 Intl.DateTimeFormat.format 에 그대로 넘긴다. 이번 회차에 RangeError('Invalid time value') 를 실제로 실행해 확인했다(정찰은 ECMA-402 근거로만 추측했다). web/src 에 ErrorBoundary 가 없어 렌더 중 throw 는 화면 전체를 날린다. relative() 는 이번에 가드했으나 date/dateTime 직접 호출 자리 45곳은 그대로다. 1순위와 같은 2파일이라 red 판독이 겹치지 않도록 이번 회차에 섞지 않았다 — 다음 회차 최우선.",
+    "updated": "2026-10-16"
+  },
+  {
+    "title": "internal/voice/service.go:272 의 OpenDays 경과 시간 셈법",
+    "value": 3,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "신규. int(end.Sub(x.OccurredAt).Hours()/24) 는 relative() 가 이번에 벗어난 것과 같은 경과 시간 셈법이다. VoicePages.tsx:178 이 'relative(occurredAt) 접수 · {openDays}일 경과' 로 둘을 나란히 보여 주므로 수치가 어긋나 보일 수 있다. 다만 SLA 경과 시간과 사람이 읽는 날짜 라벨은 서로 다른 계약이고 운영자 지침이 '통합하지 말고 좁히는 방향으로만' 이므로 이번엔 서버를 0줄로 남겼다. 고치려면 OpenDays 가 SLA 판정에 쓰이는지부터 확인할 것.",
+    "updated": "2026-10-16"
+  },
+  {
+    "title": "web/package.json 에 esbuild 를 devDependency 로 선언",
+    "value": 3,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "login.test.ts 가 선언되지 않은 vite 전이 의존성에 얹혀 있다. 2026-10-06 회차에서 로컬 npm 10.9.8 의 lockfile 재생성이 rollup 선택적 바이너리의 libc 메타데이터 42줄을 지우는 것이 확인됐다. 이번 세션도 로컬 npm 은 10.9.8 이었다 — lockfile 변동 없이 선언만 추가할 수 있는지가 관건.",
+    "updated": "2026-10-16"
+  },
+  {
+    "title": "Makefile test 에 previous-release-tag-test.sh 연결",
+    "value": 3,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "여전히 Makefile:16 레시피에 없고 ci.yml 에서만 돈다. 2026-10-08 회차가 바로 이 과제로 no-change 로 끝났으므로 다시 고르려면 그때 왜 안 됐는지부터 확인할 것.",
+    "updated": "2026-10-16"
+  },
+  {
+    "title": "release.yml 의 Test source 단계에 npm --prefix web test 추가",
+    "value": 3,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "ci.yml 과 Makefile 은 프런트 테스트(이번 회차 기준 45건)를 돌리는데 release.yml 만 생략한다. 2026-09-06 롤백·자율화 강등이 이 워크플로 경로였으므로 보호 경로 단독 회차로만.",
+    "updated": "2026-10-16"
+  },
+  {
+    "title": "감사 목록 기간 필터(from/to) 서버·OpenAPI 쪽만",
+    "value": 3,
+    "risk": 1,
+    "size": "M",
+    "status": "pending",
+    "note": "admin_operations.go adminAudit 의 SQL 과 parameters.go GET /admin/audit 모두 기간 필터가 없다. 날짜 파라미터는 정수·enum 계약 그물 어디에도 안 걸려 새 계약 테스트가 필요하고 실제 DB 실행 증명이 따라와야 한다.",
+    "updated": "2026-10-16"
+  },
+  {
+    "title": "연결 성립 후 끊긴 질의(net.OpError·EOF)도 원문 없이 500 으로 접기",
+    "value": 3,
+    "risk": 2,
+    "size": "M",
+    "status": "pending",
+    "note": "REST serviceError 와 MCP sanitizeToolError 는 Unreachable/Interrupted 만 별도 판정한다. 폐기용 PostgreSQL 로 실제 단절 오류 타입을 먼저 확인해야 하고 두 계약을 합치지 않는다. 25회차 연속 보류.",
+    "updated": "2026-10-16"
+  },
+  {
+    "title": "httpx.ClientIP 가 X-Forwarded-For/Forwarded 를 읽지 않음",
+    "value": 4,
+    "risk": 3,
+    "size": "M",
+    "status": "pending",
+    "note": "RemoteAddr 만 정규화하므로 리버스 프록시 뒤 감사 IP 가 프록시 주소다. 신뢰 프록시 설정축 없이 헤더를 받아들이면 감사 IP 위조가 되므로 설정 축과 묶어야 한다. 24회차 연속 보류.",
+    "updated": "2026-10-16"
+  },
+  {
+    "title": "serviceError 의 영어 substring 분류를 센티널 오류(errors.Is)로",
+    "value": 3,
+    "risk": 3,
+    "size": "M",
+    "status": "pending",
+    "note": "server.go 가 여전히 not found/permission/already 등 substring 으로 HTTP 코드를 고른다. 2026-10-06 회차에서 'invalid eventType' 문장이 이 분류에 걸려 있는 것을 확인했다 — 호출부와 MCP 의 다른 계약 때문에 패키지 단위로 끊어 가야 한다.",
+    "updated": "2026-10-16"
+  },
+  {
+    "title": "업그레이드 검증 실패 시 cleanup 전에 단계명과 컨테이너 진단 보존",
+    "value": 3,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "run-upgrade-container-test.sh 는 EXIT cleanup 에서 컨테이너를 지우고 healthcheck 시간 초과에만 로그를 남긴다. 실패를 재현하지 못한 상태라 비밀 없는 진단 설계가 먼저다.",
+    "updated": "2026-10-16"
+  },
+  {
+    "title": "로컬 npm(10.9.8)과 CI npm(Node 24 → 11.x) 버전 불일치를 저장소에서 못박기",
+    "value": 3,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "web/package.json 에 engines/packageManager 가 여전히 없다. 이번 세션의 node 는 v22.23.1 / npm 10.9.8 로 README 요구(Node 24+)와도 어긋났으나 타입 스트리핑과 전체 게이트는 통과했다. 도구 버전 정책은 운영자 결정 사항.",
+    "updated": "2026-10-16"
+  },
+  {
+    "title": "enum 그물을 CHECK 가 없는 공표 enum 쪽으로 넓히기 (forecastCategory)",
+    "value": 2,
+    "risk": 2,
+    "size": "M",
+    "status": "pending",
+    "note": "parameters.go 가 COMMIT/BEST_CASE/PIPELINE/CLOSED 를 공표하는데 migrations 에 forecast_category CHECK 가 없다. CRM 은 pipeline_stages 에서 값을 읽으므로 DB·설정 중 어느 쪽이 정본인지부터 정해야 한다.",
+    "updated": "2026-10-16"
+  },
+  {
+    "title": "MCP record_voice_response 의 eventType enum 집행 삼중 비교 계약 테스트",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "done",
+    "note": "2026-10-06 회차(커밋 e00f244)에서 voice.CommentEventTypes 공유 var 와 TestCommentEventTypesAreAllowedByTheCheckConstraint 부분집합 테스트로 해결됐다.",
+    "updated": "2026-10-16"
+  },
+  {
+    "title": "프런트 API 클라이언트가 읽을 수 없는 성공 응답을 성공으로 반환",
+    "value": 4,
+    "risk": 1,
+    "size": "S",
+    "status": "done",
+    "note": "2026-10-09 회차(커밋 30c957b)에서 invalid_response APIError 로 해결됐다. 이번 회차에 api.ts:16-19 로 그대로 남아 있는 것과 관련 테스트 11건 통과를 재확인했다.",
+    "updated": "2026-10-16"
+  }
+]

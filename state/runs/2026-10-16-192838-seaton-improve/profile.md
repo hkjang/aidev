@@ -1,0 +1,39 @@
+# seaton 프로필 (2026-10-16)
+- 목적: 사무실 도면에 좌석을 편집하고 직원을 배정·검색하는 오프라인 우선 서비스.
+- 기준: main@026d7a7, v1.4.17 문서. 2026-10-09 프로필에서 회차별 "이번 선정" 메모를 걷어내고 확인한 사실만 남겼다.
+- 스택: Go 모듈 1.24.0, chi v5·pgx v5·go-oidc v3·excelize v2.9.1, PostgreSQL 14+(CI 16-alpine), React 19·TS·MUI 7·Vite 7·Vitest 3·React Router 7·Playwright.
+- 구조:
+  - cmd/seaton/: 서버 진입점, 프런트 임베드. Dockerfile 이 web/dist 를 cmd/seaton/webdist 로 복사한다.
+  - internal/app/: HTTP 핸들러·라우팅·인증·좌석/직원/지도·인사 동기화·MCP·대시보드. 파일 24개로 거의 모든 변경이 여기서 끝난다.
+  - internal/database/: pgx 및 시작 시 스키마 적용(migrations.sql).
+  - internal/platform/: 환경·키. internal/tracking/: nonce·스니펫·CSP.
+  - web/src/pages/: React 화면. web/src/lib/: 값 규칙과 Vitest 짝 테스트.
+  - web/e2e/: 실행 중인 실서버 대상 Playwright. helpers.ts·seed.mjs.
+  - docs/: Markdown 정본 + 생성 HTML/PDF. scripts/build-docs.py 로 생성.
+- 빌드·테스트: `go build ./...` / `go vet ./...` / `go test ./...` / `gofmt -l .`(출력 없음). internal/app 테스트는 ~11.5초 (2026-10-16 통과 확인).
+- 빌드·테스트: `cd web && npm ci && npm test && npm run lint && npm run build`. lint 는 tsc -b. 체크아웃에 node_modules 없음 — npm ci 가 선행이고 수 분 걸린다.
+- 빌드·테스트(무거움): `docker build --build-arg VERSION=e2e -t seaton:e2e .` 후 PostgreSQL+앱 실서버를 따로 띄우고 `cd web && E2E_BASE_URL=... E2E_USERNAME=admin E2E_PASSWORD=... npx playwright test`. Playwright 는 서버를 기동하지 않는다.
+- 관례: 한국어 feat/fix/docs/test/chore 커밋. 저장소 안에 CLAUDE.md/AGENTS.md 없음. internal·web/src·scripts 에 TODO/FIXME 없음.
+- 관례: 환경은 POSTGRES_DSN·BOOTSTRAP_ADMIN·BOOTSTRAP_ADMIN_PASSWORD, 기능 설정은 DB(settings 테이블).
+- 관례: 같은 값 규칙은 공용 함수 한 곳에서. 저장 경로가 둘이면 공통 지점(saveEmployee)에 둔다 — 같은 값을 두 입력 경로가 다르게 읽는 것이 이 저장소의 반복 결함이다.
+- 관례: 사용자에게 보일 오류는 inputError/userMessage 로 가르고 DB 원문은 노출하지 않는다.
+- 관례: 목록 핸들러의 스캔 루프는 `rowScanner`(employees.go:20-24) + 순수 함수 `scanX(rows) ([]T, error)` 꼴. 규약 주석이 employees.go:26-33 에 있다. 테스트는 `fakeRows`(employees_test.go:186-253) + seats_test.go:24-96 의 세 테스트 꼴. **fakeRows 의 타입 스위치는 *string·**string·*float64·**float64·*any 다섯 case 뿐이라 새 열 타입을 쓰면 case 를 더해야 한다.**
+- 적용 완료: listOrganizations·listEmployees·listHistory(a3cc4a5), listSeats(2b81dec). 미적용: maps.go(3자리)·mcp.go(3자리)·keys.go:28·detection.go:468·settings.go:35·grid.go:150·dashboard.go:317. dashboard.go:172·194·213·233 은 이미 올바르다(결함 아님).
+- 계약: 직원 API q·organizationId·status·assignment·limit<=500(기본100), total 없음. 이력 API total/totalCapped, 집계 상한 5000.
+- 계약: saveEmployee(source) 는 퇴직이면 releaseRetiredSeatForRequest→releaseRetiredSeat 로 좌석을 해제하고 이력을 남긴다. 직원 저장과 좌석 해제가 별도 트랜잭션인 현행 정책을 임의로 바꾸지 않는다.
+- 계약: seat_history.source 에 DB CHECK 없음. 새 source 를 넣으면 프런트 format.ts 의 SOURCE_LABELS 와 짝을 맞춰야 한다(employee_import 선례).
+- 계약: readSpreadsheet 는 요청 15 MiB 제한, CSV ReadAll + 첫 셀 BOM 제거, XLSX 첫 시트 GetRows. CSV 필드 수 제약을 임의로 풀지 않는다.
+- 계약: importEmployees 는 머리글/별칭 기반, bulkAssignments 는 앞 두 열 위치 기반. **두 파서의 서로 다른 계약을 합치지 말고 각각 좁히는 방향으로만 고친다.**
+- 위험 구역: auth.go·mcpoauth.go(인증/권한), internal/database/migrations.sql(시작 시 DB 변경), internal/tracking(CSP), .github/workflows(빌드/릴리즈). 자동 회차는 모두 피한다.
+- 위험 구역: tracking.go:68·mcpoauth.go:82 의 `err == nil` 은 설정 키/값 로더로 목록 스캔과 성격이 다르다 — 같은 결함으로 묶지 말 것.
+- 자주 깨지는 곳: 같은 입력을 두 경로가 다르게 읽음(BOM·조직코드·재직상태·퇴직 전이). 루프를 함수로 옮길 때 열 순서가 조용히 어긋남. E2E 가 바꾼 좌석/직원을 복구하지 않음.
+- 검증 함정: 직접 만든 rows·순수 함수 테스트만으로 프로덕션 배선을 증명하지 않는다. 가능하면 실제 multipart→핸들러, 실서버→화면까지 간다.
+- 검증 함정: 새 E2E 는 변경 전 HEAD 를 `git archive` 로 **새로** 구운 이미지에서 먼저 붉어야 한다(동명 이미지가 낡아 있던 교훈).
+- 검증 함정: 목록 스캔 결함을 실서버에서 일으키는 수법 — 변경 전/후 두 앱을 같은 DB 에 붙이고 연결을 데운 뒤 `ALTER TABLE <t> ALTER COLUMN <int열> TYPE integer` 로 캐시된 plan 을 깨면 `cached plan must not change result type (SQLSTATE 0A000)` 가 난다. 그때 pgx 는 Next() 를 false 로 돌리고 사유를 Err() 에만 둔다.
+- 검증 함정: /readyz 로 준비 확인. Playwright 기본 URL 18781, CI 8080, workers=1. 이 셸에는 다른 프로젝트 컨테이너가 많아 전용 bridge 와 빈 published port 를 골라야 한다.
+- 검증 함정: seed.mjs 는 도면이 있으면 repair 로 빠져 직원을 다시 POST 하지 않는다. 데이터를 바꾼 뒤 재시드만 믿지 말고 새 DB 를 쓴다.
+- 검증 함정: helpers.restoreSeat 는 좌표용, keepingSeats 는 배정 복구용, keepingEmployee 는 직원 열 복구용. 하나로 다 복구된다고 가정하지 않는다.
+- 검증 함정: E2E 전체에서 mcp-oauth·tracking 두 건은 bridge 앱이 호스트의 가짜 IdP·수집기에 닿지 못해 실패한다(E2E_COLLECTOR_HOST 기본 127.0.0.1). 환경 문제로 자동 정상 처리하지 말고 변경 전 이미지로 같은 2건을 대조한다.
+- 검증 함정: PLAYWRIGHT_BROWSERS_PATH=/home/hkjang/.cache/ms-playwright 가 없으면 전 spec 이 "Executable doesn't exist" 로 떨어진다.
+- 환경: 로컬 Go 1.26.7·Node 22.23.1. CI/Docker Node 24, Docker Go 1.24. CI 의 일반 test job 에는 DB 서비스가 없고 e2e job 만 PostgreSQL 16 을 쓴다 — DB 붙은 Go 테스트는 그대로면 CI 영구 skip 이다.
+- 문서: docs 의 Markdown 이 정본. PDF 이진 재생성은 자동 개선에서 피하고 필요한 md/html 만 갱신한다.
