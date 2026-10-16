@@ -1150,3 +1150,81 @@ branch 'auto/2026-10-16-0830' set up to track 'origin/auto/2026-10-16-0830'.
 evidence: /mnt/c/Users/USER/projects/aidev/state/runs/2026-10-16-083035-ai-admin-improve/evidence.json
 reports: 45 day(s), 7 week(s), 2 month(s), 2635 run(s), 5167 usage row(s), 72 project page(s), 13 alert(s)
 notify: no new alerts
+[08:54:18] aidev synced: run(2026-10-16): ai-admin — fix-round: CI failed, PR open https://github.com/hkjang/ai-admin/pull/46
+[08:54:18] done
+[08:54:47] shepherd: 후보 93건 (한 번에 최대 6건, 오늘 $18.7186865/$150)
+[08:56:09] ai-admin: [shepherd] PR #45 ci → needs-human — 수정·심사를 2번 시도했지만 통과하지 못함 — 사람이 봐야 한다 
+https://github.com/hkjang/ai-admin/pull/45#issuecomment-6204771229
+[08:56:13] === shepherd hunter PR #23 (원인 review, run 2026-10-16-085612-hunter-shepherd)
+Preparing worktree (detached HEAD df4aef6)
+HEAD is now at df4aef6 fix: compare a stored assignee by its JSON form so an object or array value cannot panic the save path
+[09:00:06] hunter: improve — 33 turns, 4m, $2.07, success
+[09:00:08] hunter: verify `go build ./...` → exit 0 (2s)
+[09:00:09] hunter: verify `go vet ./...` → exit 0 (1s)
+[09:00:12] hunter: verify `go test ./...` → exit 0 (3s)
+[09:00:25] hunter: verify `cd web && [ -d node_modules ] || npm ci --no-audit --no-fund` → exit 0 (13s)
+[09:00:25] hunter: verify `cd web && npm test --silent` → exit 0 (0s)
+[09:00:25] hunter: verify `cd web && [ -d node_modules ] || npm ci --no-audit --no-fund` → exit 0 (0s)
+[09:00:26] hunter: verify `cd web && npm run typecheck --silent` → exit 0 (1s)
+[09:00:26] hunter: verify `cd web && [ -d node_modules ] || npm ci --no-audit --no-fund` → exit 0 (0s)
+[09:00:25] hunter: verify `cd web && npm run build --silent` → exit 0 (-1s)
+[09:00:28] hunter: [shepherd] PR #23 review → fix-pushed — # 수리 요약 (시도 1 → 커밋 e43fe34)  - 비평 3건 모두 맞았고 코드를 읽어 직접 확인했다: `assignee` 기록자는 **네 곳**(domain.g
+https://github.com/hkjang/hunter/pull/23#issuecomment-6204824346
+Preparing worktree (detached HEAD e43fe34)
+HEAD is now at e43fe34 docs: correct the assignee rule's writer count and name the scanner import as the path it does not cover
+[09:05:50] hunter: review — 28 turns, 5m, $2.51, success
+https://github.com/hkjang/hunter/pull/23#issuecomment-6204901161
+[09:05:54] hunter: [shepherd] PR #23 review → approve — risk=medium — 리뷰 승인 (risk=medium) 
+[09:05:58] === shepherd ai-admin PR #46 (원인 ci, run 2026-10-16-090557-ai-admin-shepherd)
+Preparing worktree (detached HEAD 1e7d704)
+HEAD is now at 1e7d704 chore: CI test job 네 단계를 재현하는 make ci-test 추가
+[09:11:42] ai-admin: improve — 28 turns, 5m, $1.39, success
+[09:11:42] ai-admin: [shepherd] PR #46 ci → fix-failed — 수정 세션이 커밋을 만들지 않음: # 수리 요약 — 커밋 없음 (코드 결함이 아님)  - **원인 확정**: CI 실패는 코드가 아니라 
+[09:11:43] shepherd: 처리 2건 — 승인 1 · 수정 푸시 1 · 사람 필요 1 (오늘 $24.681953/$150)
+[09:12:30] git-ctx: [ci] cancelled — 성공이 아닌 검사: Build, vet and unit tests=cancelled · 실패한 검사: ? 
+[09:12:30] git-ctx: 승인 대기 유지 (https://github.com/hkjang/git-ctx/pull/47, CI cancelled) — 회차로 기록하지 않음
+[09:12:37] hunter: waiting for CI on e43fe34 (pending)
+[09:20:03] 다른 러너(pid 2234412)가 실행 중 — 겹쳐 돌리지 않는다 (flock 뒤에서 실행하세요)
+[09:20:50] hunter: [merge] done — e43fe345c1177cb50878ceda92597e082c3174b8 (사람 승인)
+Preparing worktree (detached HEAD cf1caa9)
+HEAD is now at cf1caa9 Merge pull request #23 from hkjang/auto/2026-10-16-0658
+[09:29:33] hunter: release — 53 turns, 9m, $4.47, success
+[09:29:40] hunter: waiting for CI on 46c8b16 (no-ci)
+[09:30:03] 다른 러너(pid 2234412)가 실행 중 — 겹쳐 돌리지 않는다 (flock 뒤에서 실행하세요)
+[09:40:03] 다른 러너(pid 2234412)가 실행 중 — 겹쳐 돌리지 않는다 (flock 뒤에서 실행하세요)
+[09:45:05] 다른 러너(pid 2234412)가 실행 중 — 겹쳐 돌리지 않는다 (flock 뒤에서 실행하세요)
+[09:48:51] hunter: [release] ci-blocked — 릴리즈 커밋 CI: timeout — 제한 시간 안에 CI 완료를 확인하지 못함 (태그 보류)
+Deleted tag 'v1.25.0' (was 5ef16bf)
+From https://github.com/hkjang/hunter
+ * branch            main       -> FETCH_HEAD
+Updating cf1caa9..46c8b16
+Fast-forward
+ README.md                    |  12 +++++++-----
+ VERSION                      |   2 +-
+ cmd/hunter/main.go           |   2 +-
+ compose.yaml                 |   2 +-
+ docs/guides/admin-guide.html |  26 +++++++++++++-------------
+ docs/guides/admin-guide.md   |  22 +++++++++++-----------
+ docs/guides/admin-guide.pdf  | Bin 9957735 -> 9957779 bytes
+ docs/guides/user-guide.html  |   6 +++---
+ docs/guides/user-guide.md    |   2 +-
+ docs/guides/user-guide.pdf   | Bin 8868568 -> 8868556 bytes
+ docs/index.html              |   8 ++++----
+ docs/llms.txt                |   4 ++--
+ docs/package-lock.json       |   4 ++--
+ docs/package.json            |   2 +-
+ docs/release-v1.25.0.md      |  37 +++++++++++++++++++++++++++++++++++++
+ docs/validation.md           |  21 +++++++++++++++++++++
+ internal/app/openapi.json    |   2 +-
+ scripts/release-notes.py     |  21 ++++++++++++++++++++-
+ web/package-lock.json        |   4 ++--
+ web/package.json             |   2 +-
+ web/src/App.tsx              |   8 ++++----
+ 21 files changed, 133 insertions(+), 54 deletions(-)
+ create mode 100644 docs/release-v1.25.0.md
+evidence: /mnt/c/Users/USER/projects/aidev/state/runs/2026-10-16-091235-hunter-approve/evidence.json
+[09:50:03] 다른 러너(pid 2234412)가 실행 중 — 겹쳐 돌리지 않는다 (flock 뒤에서 실행하세요)
+reports: 45 day(s), 7 week(s), 2 month(s), 2636 run(s), 5171 usage row(s), 72 project page(s), 14 alert(s)
+notify: 1 new alert(s)
+notify: commented on issue #1
+notify: toast shown

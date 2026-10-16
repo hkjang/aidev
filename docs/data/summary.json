@@ -1,27 +1,27 @@
 {
- "generated": "2026-10-16T08:50:41+09:00",
+ "generated": "2026-10-16T09:49:05+09:00",
  "site": "https://hkjang.github.io/aidev",
- "description": "Claude Code 자율 개선 에이전트가 hkjang 의 프로젝트를 개선·테스트·머지·릴리즈한 일일 보고. 오늘 14회차·릴리즈 8건, 누적 2635회차·릴리즈 801건, 주의 필요 13건.",
+ "description": "Claude Code 자율 개선 에이전트가 hkjang 의 프로젝트를 개선·테스트·머지·릴리즈한 일일 보고. 오늘 15회차·릴리즈 8건, 누적 2636회차·릴리즈 801건, 주의 필요 14건.",
  "today": {
   "date": "2026-10-16",
-  "total": 14,
+  "total": 15,
   "projects": 9,
   "released": 8,
-  "merged": 0,
+  "merged": 1,
   "nochange": 0,
   "failed": 4,
-  "cost_usd": 135.5,
-  "minutes": 367,
-  "sessions": 56
+  "cost_usd": 145.94,
+  "minutes": 391,
+  "sessions": 60
  },
  "totals": {
-  "runs": 2635,
+  "runs": 2636,
   "released": 801,
   "days": 45,
-  "cost_usd": 9238.78,
-  "minutes": 25625,
-  "tokens_in": 10006880770,
-  "tokens_out": 80728058
+  "cost_usd": 9249.22,
+  "minutes": 25649,
+  "tokens_in": 10017884689,
+  "tokens_out": 80797703
  },
  "alerts": [
   {
@@ -114,25 +114,38 @@
    "project": "review.yeopjari.bid",
    "why": "CI 실패로 PR 미머지",
    "result": "fix-round: CI failed, PR open https://github.com/hkjang/review.yeopjari.bid/pull/9"
+  },
+  {
+   "date": "",
+   "time": "",
+   "project": "ai-admin",
+   "why": "수정 과제 대기 중 — 오류 대응(자동 적재): 마지막 회차가 'verify-failed' 로 끝났습니다. fix-round: CI failed, PR open https://github.com/hkjang/ai-admin/pull/46",
+   "result": ""
   }
  ],
- "fix_queue": [],
+ "fix_queue": [
+  {
+   "project": "ai-admin",
+   "note": "오류 대응(자동 적재): 마지막 회차가 'verify-failed' 로 끝났습니다. fix-round: CI failed, PR open https://github.com/hkjang/ai-admin/pull/46",
+   "merge_sha": ""
+  }
+ ],
  "health": {
-  "checked": "2026-10-16T08:15:11+09:00",
-  "last_run": "2026-10-16T07:48:40+09:00",
-  "seconds_since_last": 1581,
+  "checked": "2026-10-16T09:45:05+09:00",
+  "last_run": "2026-10-16T08:50:38+09:00",
+  "seconds_since_last": 3264,
   "runner_pid": "",
   "runner_age_seconds": 0,
   "scheduler_status": "준비",
-  "scheduler_next_run": "2026-10-16 오전 8:20:00",
-  "disk_percent": 94,
+  "scheduler_next_run": "2026-10-16 오전 9:50:00",
+  "disk_percent": 95,
   "ok": false,
   "problems": [
-   "측정 감사: 원격에 없는 릴리즈 태그 1건 — 그 저장소의 다음 릴리즈를 막는다",
-   "디스크 94% 사용"
+   "측정 감사: 원격에 없는 릴리즈 태그 2건 — 그 저장소의 다음 릴리즈를 막는다",
+   "디스크 95% 사용"
   ],
   "actions": [
-   "소유 프로세스 없는 잠금 파일을 제거했다"
+   "회차가 54분째 없어 AutoImprove 를 직접 실행했다"
   ]
  },
  "lessons": [
@@ -917,6 +930,20 @@
    "needs_human": true
   },
   {
+   "kind": "수정 과제",
+   "project": "ai-admin",
+   "title": "오류 대응(자동 적재): 마지막 회차가 'verify-failed' 로 끝났습니다. fix-round: CI failed, PR open https://github.com/hkja",
+   "url": "https://hkjang.github.io/aidev/projects/ai-admin/",
+   "sha": "",
+   "summary": "릴리즈 워크플로 2회 실패 — 다음 회차 자동 배정",
+   "why": "오류 대응(자동 적재): 마지막 회차가 'verify-failed' 로 끝났습니다. fix-round: CI failed, PR open https://github.com/hkjang/ai-admin/pull/46",
+   "evidence": "",
+   "labels": "",
+   "action": "두면 러너가 수정 회차를 돌림. 급하면 run: 이슈, 멈추려면 stop",
+   "date": "",
+   "needs_human": false
+  },
+  {
    "kind": "PR",
    "project": "yeopjari",
    "title": "auto-improve: fix(http): 클라이언트가 보낸 퍼센트 인코딩으로 500 이 나지 않게 한다",
@@ -1487,28 +1514,11 @@
    "why": "review: approved — 리뷰 승인 (risk=low); ci: failed — 성공이 아닌 검사: lint=failure, test=failure · 실패한 검사: ? 잡: test ",
    "evidence": "https://github.com/hkjang/aidev/tree/main/state/runs/2026-10-16-083035-ai-admin-improve",
    "labels": "",
-   "action": "PR 처리기가 매시간 살핀다 (아직 순서가 오지 않음) · 승인: PR 라벨 aidev-approved / 반려: aidev-rejected — 다음 회차에 러너가 승인 당시 커밋에만 CI 확인 후 머지·닫기",
-   "date": "2026-10-16",
-   "shepherd": "",
-   "shepherd_action": "",
-   "shepherd_detail": "",
-   "needs_human": false
-  },
-  {
-   "kind": "PR",
-   "project": "hunter",
-   "title": "auto-improve: fix: compare a stored assignee by its JSON form so an object or array value cannot panic the save path",
-   "url": "https://github.com/hkjang/hunter/pull/23",
-   "sha": "df4aef6",
-   "summary": "5파일 +382/−7 · CI timeout, PR open https://github.com/hkjang/hunter/pull/23",
-   "why": "review: approved — 리뷰 승인 (risk=low); ci: timeout — 제한 시간 안에 CI 완료를 확인하지 못함",
-   "evidence": "https://github.com/hkjang/aidev/tree/main/state/runs/2026-10-16-065833-hunter-improve",
-   "labels": "",
    "action": "PR 처리기가 다음 시간에 다시 시도 · 승인: PR 라벨 aidev-approved / 반려: aidev-rejected — 다음 회차에 러너가 승인 당시 커밋에만 CI 확인 후 머지·닫기",
    "date": "2026-10-16",
-   "shepherd": "리뷰 없음 · 심사 거절 → 다음 시간에 수정 (10-16 08:06) — - internal/app/finding_ops.go:83 \"Three paths write data->>'assignee' and only two used to check it\" is false, and it is the premise the whole rule is documente",
-   "shepherd_action": "review-reject",
-   "shepherd_detail": "- internal/app/finding_ops.go:83 \"Three paths write data->>'assignee' and only two used to check it\" is false, and it is the premise the whole rule is documented on. There are four writers: saveDomain/validateResource (domain.go:468), validateFindingBulk (finding_bulk.go:60), the ITSM sync (automation_workflows_tickets.go:50-62, workflowText(s,200)+TrimSpace), and the generic scanner import at imports.go:102, which puts `assignee` through str() and is written straight to the row by ingestFindings (imports.go:304/INSERT, imports.go:297/UPDATE) without ever calling validateResource. I read all four. Fix the count and name the import path explicitly, and state in the comment whether it is deliberately left out of the rule or is a follow-up — do not silently leave it as \"two of three checked\".\n- internal/app/finding_ops.go:83 and commit 1e2cd22 (\"apply one assignee rule to every path that stores a finding assignee\") overclaim coverage, and the uncovered fourth path interacts with the new carve-out: the \"equal to old -> skip\" exemption at finding_ops.go:112 is justified in the comment as an accommodation for values that \"predate the rule\", but imports.go:102 keeps minting out-of-rule assignees after this ships (no byte limit, no control-character check), and every one of those is then permanently exempt on each later PUT. So the rule is not closed and the comment/commit say it is. Reword the commit message (or add a corrective commit) to the coverage actually delivered, and record the import gap.\n- internal/app/finding_ops.go:91-92 \"the detail view and the recipient match in notification_automation_recipients.go read it as assigned\" is wrong about the recipient match. notification_automation_recipients.go:78 compares the raw string against u.ID and u.Username, so a whitespace-only assignee matches no user and behaves as unassigned - the same direction as the queue SQL, not the opposite. Only the detail view disagrees (web/src/triage.tsx:425, `item.assignee || \"미지정\"`, and \"   \" is truthy). The conclusion (\"two different findings to two counters\") survives on the detail view alone; drop the recipient-match clause so the justification is not restated in release notes as a three-way split.",
+   "shepherd": "CI 실패 · 수정 실패 → 다음 시간에 재시도 (10-16 09:11) — 수정 세션이 커밋을 만들지 않음: # 수리 요약 — 커밋 없음 (코드 결함이 아님)  - **원인 확정**: CI 실패는 코드가 아니라 **GitHub Actions 과금**이다. run 38825920638 의 양쪽 job 주석이 `The job was not started becau",
+   "shepherd_action": "fix-failed",
+   "shepherd_detail": "수정 세션이 커밋을 만들지 않음: # 수리 요약 — 커밋 없음 (코드 결함이 아님)  - **원인 확정**: CI 실패는 코드가 아니라 **GitHub Actions 과금**이다. run 38825920638 의 양쪽 job 주석이 `The job was not started because recent account payments have failed or your spending limit needs to be increased.` — 러너가 아예 시작되지 않아 lint·test 가 3초에 `failure` 로 끝났다. PR #44(run 38779853854, 2s/2s)·#45(run 38809887099, 3s/4s)도 **같은 주석**이며, 마지막 성공은 과금 문제 이전인 2026-10-08 이다. 즉 두 회차가 못 찾던 원인은 저장소 안에",
    "needs_human": false
   },
   {
@@ -1521,11 +1531,11 @@
    "why": "review: approved — 리뷰 승인 (risk=low); ci: failed — 성공이 아닌 검사: test=failure, lint=failure · 실패한 검사: ? 잡: lint ",
    "evidence": "https://github.com/hkjang/aidev/tree/main/state/runs/2026-10-16-055826-ai-admin-improve",
    "labels": "",
-   "action": "PR 처리기가 다음 시간에 다시 시도 · 승인: PR 라벨 aidev-approved / 반려: aidev-rejected — 다음 회차에 러너가 승인 당시 커밋에만 CI 확인 후 머지·닫기",
+   "action": "PR 처리기가 사람에게 넘김 — 수정·심사를 2번 시도했지만 통과하지 못함 — 사람이 봐야 한다 · 승인: PR 라벨 aidev-approved / 반려: aidev-rejected — 다음 회차에 러너가 승인 당시 커밋에만 CI 확인 후 머지·닫기",
    "date": "2026-10-16",
-   "shepherd": "CI 실패 · 수정 실패 → 다음 시간에 재시도 (10-16 08:01) — 수정 세션이 커밋을 만들지 않음: # 수리 요약 — PR #45 (ae64738) · 커밋 없음 (지적이 트리 밖의 원인)  - 고치지 않았다: 지적된 결함이 이 트리에 없다. `git diff origin/main...HEAD` 는 `docs/api.md`·`internal/serve",
-   "shepherd_action": "fix-failed",
-   "shepherd_detail": "수정 세션이 커밋을 만들지 않음: # 수리 요약 — PR #45 (ae64738) · 커밋 없음 (지적이 트리 밖의 원인)  - 고치지 않았다: 지적된 결함이 이 트리에 없다. `git diff origin/main...HEAD` 는 `docs/api.md`·`internal/server/workflow.go`·`internal/server/approval_comment_integration_test.go` 3파일뿐이고 `.github/workflows/ci.yml`·`go.mod`·`Dockerfile` 은 origin/main 과 **동일**하므로, 이 PR 이 CI 거동을 바꿀 경로가 없다. 게다가 lint 3s / test 4s 는 첫 저장소 명령 이전이다 — lint 의 `go vet ./...` 는 콜드 캐시 컴파일만으로 3s 를 넘고, test 는",
+   "shepherd": "CI 실패 · 사람 필요 (10-16 08:56) — 수정·심사를 2번 시도했지만 통과하지 못함 — 사람이 봐야 한다",
+   "shepherd_action": "needs-human",
+   "shepherd_detail": "수정·심사를 2번 시도했지만 통과하지 못함 — 사람이 봐야 한다",
    "needs_human": false
   },
   {
@@ -1907,17 +1917,17 @@
   }
  ],
  "shepherd": {
-  "last_pass": "2026-10-16T07:52:35+09:00",
+  "last_pass": "2026-10-16T08:54:47+09:00",
   "enabled": true,
   "today": {
-   "fix-failed": 4,
-   "fix-pushed": 2,
+   "fix-failed": 5,
+   "fix-pushed": 3,
    "review-reject": 2,
-   "approve": 1,
-   "needs-human": 1
+   "approve": 2,
+   "needs-human": 2
   },
-  "total": 699,
-  "pending_human": 203
+  "total": 703,
+  "pending_human": 204
  },
  "agents": {
   "rows": [
@@ -1931,13 +1941,13 @@
     "role": "구현 builder",
     "calls": 499,
     "metric": "러너 검증 통과 88% · 변경 없음 138",
-    "cost": 1189.26
+    "cost": 1192.71
    },
    {
     "role": "비평 critic",
     "calls": 272,
     "metric": "최종 승인 98% · 한 번이라도 거절 18 · 승인·머지 뒤 회귀 0/196",
-    "cost": 510.49
+    "cost": 513.0
    },
    {
     "role": "수리 repairer",
@@ -1953,20 +1963,20 @@
    },
    {
     "role": "릴리즈 releaser",
-    "calls": 228,
+    "calls": 229,
     "metric": "완전한 릴리즈 77%",
-    "cost": 405.97
+    "cost": 410.44
    },
    {
     "role": "PR 심사 shepherd-reviewer",
-    "calls": 122,
-    "metric": "승인 39 · 거절 6 · 사람 필요 77 · 승인 뒤 회귀 1",
-    "cost": 204.73
+    "calls": 124,
+    "metric": "승인 40 · 거절 6 · 사람 필요 78 · 승인 뒤 회귀 1",
+    "cost": 210.69
    },
    {
     "role": "PR 수리 shepherd-fixer",
-    "calls": 74,
-    "metric": "고쳐서 푸시 33%",
+    "calls": 76,
+    "metric": "고쳐서 푸시 34%",
     "cost": null
    },
    {
@@ -1985,13 +1995,13 @@
     "role": "측정 자기 감사",
     "calls": 4,
     "cost": null,
-    "metric": "[high] 원격에 없는 릴리즈 태그 1건 — 그 저장소의 다음 릴리즈를 막는다 · [medium] 실험 arm no-repair 의 처치 노출이 3% — 그 arm 의 null 결과는 '효과 없음' 이 아니다 · [medium] 실험 arm no-arbiter 의 처치 노출이 0% — 그 arm 의 null 결과는 '효과 없음' 이 아니다"
+    "metric": "[high] 원격에 없는 릴리즈 태그 2건 — 그 저장소의 다음 릴리즈를 막는다 · [medium] 실험 arm no-repair 의 처치 노출이 3% — 그 arm 의 null 결과는 '효과 없음' 이 아니다 · [medium] 실험 arm no-arbiter 의 처치 노출이 0% — 그 arm 의 null 결과는 '효과 없음' 이 아니다"
    },
    {
     "role": "실제 게시 릴리즈 (원격 태그 기준)",
     "calls": 854,
     "cost": null,
-    "metric": "저장소 42개 · 게시 854건 (사람 340건) · 태그만 만들고 미게시 1건 — CI 가 릴리즈 커밋을 막은 저장소 · 누적 회차 기록에는 791건 — 63건이 기록에서 빠졌다"
+    "metric": "저장소 42개 · 게시 854건 (사람 340건) · 태그만 만들고 미게시 2건 — CI 가 릴리즈 커밋을 막은 저장소 · 누적 회차 기록에는 791건 — 63건이 기록에서 빠졌다"
    },
    {
     "role": "머지 뒤 30일 (postmerge)",
@@ -2019,7 +2029,7 @@
    }
   ],
   "advice": [
-   "측정이 어긋났다 — 원격에 없는 릴리즈 태그 1건 — 그 저장소의 다음 릴리즈를 막는다 (release_project 의 describe 검사가 로컬 태그를 보므로, 보류된 태그가 base 끝을 가리키면 릴리즈가 영구히 멈춘다.)",
+   "측정이 어긋났다 — 원격에 없는 릴리즈 태그 2건 — 그 저장소의 다음 릴리즈를 막는다 (release_project 의 describe 검사가 로컬 태그를 보므로, 보류된 태그가 base 끝을 가리키면 릴리즈가 영구히 멈춘다.)",
    "실제 릴리즈 태그(854건)가 누적 회차 기록(791건)보다 63건 많다 — 기록 경로에 빠지는 자리가 남아 있다 (bin/released.py 가 태그로 센 값)",
    "jikim 은 머지한 변경의 93% 를 사람이 다시 고쳤다 — 자율화 단계를 낮추거나(state/jikim.policy.json 의 autonomy) 검증 명령을 늘릴 것"
   ]
@@ -2430,8 +2440,8 @@
   },
   {
    "metric": "완전한 릴리즈 비율",
-   "value": "88%",
-   "detail": "릴리즈 시도 202건 중 자산 검증까지 177건"
+   "value": "87%",
+   "detail": "릴리즈 시도 203건 중 자산 검증까지 177건"
   },
   {
    "metric": "사람의 재작업률",
@@ -2445,13 +2455,13 @@
   },
   {
    "metric": "유효 개선당 비용",
-   "value": "$14.07",
+   "value": "$14.12",
    "detail": "비용 확인된 유효 개선 186건, 미확인 세션 245"
   },
   {
    "metric": "예외 처리 소요 시간(중앙값)",
-   "value": "2.0시간",
-   "detail": "해결된 경고 400건"
+   "value": "1.9시간",
+   "detail": "해결된 경고 401건"
   },
   {
    "metric": "실행 오류",
@@ -2463,7 +2473,7 @@
   "verify-failed": 5,
   "release-ready": 8,
   "review-pending": 1,
-  "releasing": 0,
+  "releasing": 1,
   "merged": 0,
   "no-change": 0,
   "error": 0
@@ -2471,12 +2481,12 @@
  "days": [
   {
    "date": "2026-10-16",
-   "total": 14,
+   "total": 15,
    "released": 8,
-   "merged": 0,
+   "merged": 1,
    "nochange": 0,
    "failed": 4,
-   "cost_usd": 135.5
+   "cost_usd": 145.94
   },
   {
    "date": "2026-10-15",
@@ -2745,13 +2755,13 @@
    "key": "2026-W42",
    "url": "https://hkjang.github.io/aidev/weekly/2026-W42/",
    "days": 5,
-   "total": 214,
+   "total": 215,
    "released": 20,
-   "merged": 0,
+   "merged": 1,
    "nochange": 11,
    "failed": 27,
-   "cost": 536.26,
-   "minutes": 1443
+   "cost": 546.69,
+   "minutes": 1468
   },
   {
    "key": "2026-W41",
@@ -2831,13 +2841,13 @@
    "key": "2026-10",
    "url": "https://hkjang.github.io/aidev/monthly/2026-10/",
    "days": 16,
-   "total": 900,
+   "total": 901,
    "released": 201,
-   "merged": 38,
+   "merged": 39,
    "nochange": 138,
    "failed": 52,
-   "cost": 2883.23,
-   "minutes": 8471
+   "cost": 2893.67,
+   "minutes": 8495
   },
   {
    "key": "2026-09",
@@ -2905,8 +2915,8 @@
    "last_ts": "2026-10-16T08:50:38+09:00",
    "last_status": "failed",
    "last_result": "fix-round: CI failed, PR open https://github.com/hkjang/ai-admin/pull/46",
-   "cost": 278.6,
-   "minutes": 685,
+   "cost": 279.98,
+   "minutes": 691,
    "grade": "D",
    "grade_why": "14일: 릴리즈 5, 실패 3, 경고 3, 회귀 0",
    "lessons": 0,
@@ -3397,13 +3407,13 @@
    "name": "hunter",
    "repo": "https://github.com/hkjang/hunter",
    "page": "https://hkjang.github.io/aidev/projects/hunter/",
-   "runs": 44,
+   "runs": 45,
    "released": 3,
-   "last_ts": "2026-10-16T07:48:40+09:00",
-   "last_status": "other",
-   "last_result": "CI timeout, PR open https://github.com/hkjang/hunter/pull/23",
-   "cost": 286.74,
-   "minutes": 765,
+   "last_ts": "2026-10-16T09:49:00+09:00",
+   "last_status": "merged",
+   "last_result": "merged https://github.com/hkjang/hunter/pull/23 (approved), release tag held (timeout)",
+   "cost": 295.79,
+   "minutes": 783,
    "grade": "A",
    "grade_why": "14일: 릴리즈 1, 실패 0, 경고 0, 회귀 0",
    "lessons": 0,
@@ -3411,8 +3421,8 @@
    "ideas_total": 15,
    "release": {
     "status": "released",
-    "version": "1.24.0",
-    "tag": "v1.24.0"
+    "version": "1.25.0",
+    "tag": "v1.25.0"
    }
   },
   {
