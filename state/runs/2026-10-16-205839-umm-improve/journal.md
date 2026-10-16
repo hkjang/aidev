@@ -28,3 +28,4 @@
 - 보안·법무 차단 없음: 프로덕션 0파일, 신규 의존성·엔드포인트·개인정보·비밀값 없음. revert 는 파일 1개 삭제. 커밋 트레일러 없음, VERSION 미변경 — 관례 일치.
 - [러너 21:14] review approved — 리뷰 승인 (risk=low)
 - [러너 21:14] pr created — https://github.com/hkjang/umm/pull/172
+- [러너 21:18] ci failed — 성공이 아닌 검사: verify=failure · 실패한 검사: ? 잡: verify 

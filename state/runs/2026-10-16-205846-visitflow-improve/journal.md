@@ -26,3 +26,6 @@
 - 남는 우려(릴리즈 노트용): ① 정상 경로에서 info Alert(role=alert, assertive) 가 매번 깜빡여 스크린리더가 「불러오는 중」을 읽는다 ② 실패 스펙이 Dashboard role=alert 를 정확히 1개로 단정 — Alert 추가 시 이 스펙이 먼저 깨진다 ③ `adminMetrics.test.ts:26` 의 숫자 없음 단정은 cause 가 빈 경우만 — 403 이면 안내문에 「요청 실패 (403)」 의 숫자가 들어간다(무해).
 - 다음 회차: 상단 네 MetricCard·「운영 준비도」의 `counts.x ?? 0` 가 같은 유형으로 남아 있다(상단 error Alert 로 완화됨, ideas.json 후보).
 - [러너 21:15] review approved — 리뷰 승인 (risk=low)
+- [러너 21:15] pr created — https://github.com/hkjang/visitflow/pull/40
+- [러너 21:19] ci passed — 검사 2개 모두 success
+- [러너 21:19] merge done — 1910bb3
