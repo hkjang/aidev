@@ -804,3 +804,43 @@ reports: 46 day(s), 7 week(s), 2 month(s), 2689 run(s), 5298 usage row(s), 72 pr
 notify: 1 new alert(s)
 notify: commented on issue #1
 notify: toast shown
+[07:19:01] apt.irumx.app: improve — 67 turns, 15m, $4.31, success
+[07:19:01] apt.irumx.app: [brief] accepted — 채택 — 과제서의 근거(`trip(key, breaker)` 가 캡처한 값을 쓰는 것)가 코드와 정확히 일치했고 제안한 수용 기준 4개를 그대
+[07:19:02] apt.irumx.app: verify `[ -d node_modules ] || npm ci --no-audit --no-fund` → exit 0 (0s)
+[07:19:14] aidev synced: run(2026-10-17): bamcp — CI failed, PR open https://github.com/hkjang/bamcp/pull/1
+[07:19:51] apt.irumx.app: verify `npm test --silent` → exit 0 (49s)
+[07:19:51] apt.irumx.app: verify `[ -d node_modules ] || npm ci --no-audit --no-fund` → exit 0 (0s)
+[07:19:55] apt.irumx.app: verify `npm run typecheck --silent` → exit 0 (4s)
+[07:19:55] apt.irumx.app: verify `[ -d node_modules ] || npm ci --no-audit --no-fund` → exit 0 (0s)
+[07:20:01] apt.irumx.app: verify `npm run build --silent` → exit 0 (6s)
+[07:20:01] apt.irumx.app: [verify] passed — 검증 6개 통과 (auto)
+[07:21:55] bbmcp: release — 38 turns, 5m, $2.16, success
+[07:21:59] bbmcp: waiting for CI on d71db92 (no-ci)
+[07:24:00] bbmcp: [release] published — v0.2.12
+From https://github.com/hkjang/bbmcp
+ * branch            main       -> FETCH_HEAD
+Updating 79a3e12..d71db92
+Fast-forward
+ README.md                 | 2 +-
+ VERSION                   | 2 +-
+ deploy/.env.example       | 2 +-
+ deploy/docker-compose.yml | 4 ++--
+ deploy/upgrade.sh         | 2 +-
+ docs/guide-admin.html     | 6 +++---
+ docs/index.html           | 8 ++++----
+ 7 files changed, 13 insertions(+), 13 deletions(-)
+https://github.com/hkjang/bbmcp/releases/tag/v0.2.12
+[07:24:04] bbmcp: [gh-release] created — GitHub Release v0.2.12
+[07:24:05] bbmcp: [manifest] ok — bbmcp-v0.2.12.tar.gz bbmcp-v0.2.12.tar.gz.sha256 bbmcp-deploy-v0.2.12.tar.gz bbmcp-deploy-v0.2.12.tar.gz.sha256 
+[07:24:09] bbmcp: uploaded bbmcp-v0.2.12.tar.gz (42283110380f2e040134167c56a2c5e57c8ea015246ac925121ecaf931d7dd5f)
+[07:24:11] bbmcp: uploaded bbmcp-v0.2.12.tar.gz.sha256 (dc40d30c4797b8ad5db25e3e4e6701b40806bb86890d959a9fd416357659f181)
+[07:24:12] bbmcp: uploaded bbmcp-deploy-v0.2.12.tar.gz (99210113737d3e5ee05d5c6ab24c0d2ddbe1e00d438165d5e4d4cc9f9de1e56e)
+[07:24:13] bbmcp: uploaded bbmcp-deploy-v0.2.12.tar.gz.sha256 (79a4639b269fa086109a60d997fba084e76b798dbd2e71bdadac6bf3aa6cbe9a)
+[07:24:13] bbmcp: [assets] uploaded — 4개
+[07:24:15] bbmcp: [assets] verified — v0.2.12 자산 4개 (이전 v0.2.11: 4)
+fatal: '/home/hkjang/.cache/auto-improve-wt/bbmcp' is not a working tree
+evidence: /mnt/c/Users/USER/projects/aidev/state/runs/2026-10-17-065913-bbmcp-improve/evidence.json
+[07:25:37] apt.irumx.app: review — 18 turns, 5m, $1.58, success
+[07:25:37] apt.irumx.app: [review] rejected — 리뷰 거절: server/db.ts:86-91 `trip` 이 실패 1건마다 strike 를 1 더하므로, 한 번의 동시 실패 묶음이 대기를 2배가 아니라 2^N 배로 올린다. 실측: 같은 주소로 동시 10건을 실패시키면 첫 라운드에서 바로 `{open:true, retryAfterSeconds:120, strikes:10}` 이 된다(tests/db-breaker.ts 에 임시 테스트를 붙여 확인, 되돌림). 즉 커밋 메시지와 server/db.ts:69 주석이 약속한 10초→20초→…→120초 램프는 이 변경이 고치려는 바로 그 조건(한 isolate 가 요청을 동시에 처리하는 상황)에서는 존재하지 않고 항상 상한으로 점프한다. 피해가 실제로 나는 쪽은 짧은 블립이다 — server/db.ts:138 의 unreachable 집합에는 `53300`(no free connection slot)·`ECONNRESET`·`CONNECTION_CLOSED` 가 들어 있고, 이것들은 DB 가 살아 있는데도 in-flight 요청 여러 건을 동시에 때리는 과부하·풀러 재시작 형태다. 그 한 번의 묶음이 이제 해당 isolate 를 120초 동안 전부 503 '데이터베이스 점검 중' 으로 만든다(base b14cc46 에서는 10초). 고치는 방향: strike 를 요청 수가 아니라 '실패한 라운드' 에 묶을 것 — 예컨대 기존 항목의 openUntil 이 이미 지난 경우에만 증가시키고 열린 창 안에서 끝난 실패들은 같은 strike 로 접기. / tests/db-breaker.ts:212-230 새 테스트가 N=2(strikes 2 / 20초)만 고정한다. N=2 는 올바른 '라운드당 1 strike' 의미와 구분되지 않으므로, 위 증폭이 테스트로는 전혀 보이지 않는다. 라운드 의미를 고치든 현재 의미를 의도로 확정하든, N>2 묶음의 결과를 못 박는 단언이 필요하다.
+reports: 46 day(s), 7 week(s), 2 month(s), 2690 run(s), 5300 usage row(s), 72 project page(s), 9 alert(s)
+notify: no new alerts

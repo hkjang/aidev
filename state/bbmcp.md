@@ -63,3 +63,4 @@
 - 보류 아이디어: `permission/resolver.go` 캐시·fail-closed 경로 통합 테스트(4/1/S — 차선 후보였음, `newFixture` 가 `CacheTTLSec=0` 이라 전용 fixture 옵션으로 좁혀야 함) / Resolver 캐시 키가 permission 설정(mode/failClosed)을 포함하지 않음(2/2/S) / `approval.Create` 의 `json.Marshal` 오류 삼킴(2/1/S — 범위 확장 금지로 이번에 제외) / `internal/aiproxy/proxy.go` 테스트 공백(3/3/M, 제공자 계약 미확인) / `handlePost` 의 401 판정이 한국어 메시지 substring 에 의존(2/2/S, 단독 회차 필요)
 - 과제서: 채택 — 과제서의 근거 6건(`redactArgs` 의 `out[k]=v` 중첩 무검사 통과, `s[:2000]` 바이트 절단, `Create` 의 `redactArgs`/`Hash` 가 같은 map 을 보는 것, `scan()` → `GET /api/admin/approvals` 노출 경로, 필터 없는 `tools.Args` 전달, `mcp.trimToRune` 참조 구현)이 현재 코드와 정확히 일치했고 수용 기준 4개를 지정된 범위 그대로 충족했다.
 
+- 릴리즈: v0.2.12 (2026-10-17, run 2026-10-17-065913-bbmcp-improve)

@@ -18,3 +18,13 @@
 - 일부러 안 한 것: 차선 후보(재개 순간 단일 프로브)는 Promise 공유가 들어가 범위 밖으로 뺐다. 대기 상수·`connect_timeout`·"재시도 없음" 설계·`isDatabaseUnreachable` 정규식·`set_config` 줄은 손대지 않았다. b14cc46 이 남긴 prettier 미정렬 한 줄은 과제와 무관해 되돌렸다.
 - 다음 역할이 조심할 것: 이 테스트들은 **로컬 127.0.0.1:55462 PostgreSQL 이 있어야 돈다**(README 의 `irumx-apt-test` 컨테이너). 그리고 **같은 DB 에 `npm test` 를 두 번 이상 돌리면 integration·예약·bill-analysis 에서 403/404·403/409 불일치로 6건쯤 깨진다** — 내 변경과 무관하고 누적 데이터 탓이다(새 컨테이너 + `db:migrate` 에서 216/216 통과, 베이스라인 214/214 도 같은 조건에서 통과 확인). 검증은 매번 DB 를 새로 만들어서 하라. ideas.json 에 후보로 적어 두었다.
 - 확인: `node --test artifacts/db-breaker.mjs` 12/12(3회), `npm test` 216/216, `npm run typecheck`, `npm run build`, `npm run test:runtime` 2/2. e2e·test:assets 는 돌리지 않았다(이 과제와 무관, 각각 dev 서버·miniflare 필요).
+- [러너 07:19] brief accepted — 채택 — 과제서의 근거(`trip(key, breaker)` 가 캡처한 값을 쓰는 것)가 코드와 정확히 일치했고 제안한 수용 기준 4개를 그대�
+- [러너 07:20] verify passed — 검증 6개 통과 (auto)
+
+## 비평 노트
+- 확인한 것: 새 테스트 2개를 b14cc46 의 server/db.ts 로 되돌려 실제로 실패시켜 봤다(`not ok 6`·`not ok 7`, 10/2) — 배선 결함을 정말 지나간다. 수정본은 db-breaker 12/12, typecheck 통과, 나머지 테스트 회귀 없음. 못 본 것: `npm test` 전체·test:runtime·e2e (같은 DB 재실행이 무의미하다는 구현 노트 경고를 따랐다).
+- 거절 사유 1건: server/db.ts:86-91 — strike 가 '실패 라운드' 가 아니라 '동시 실패 건수' 에 붙어, 동시 10건을 실패시키면 첫 라운드에서 바로 strikes 10 / 120초가 된다(임시 테스트로 실측 후 되돌림). 커밋 메시지·server/db.ts:69 주석이 약속한 10→20→…→120 램프가 정작 동시성 상황에서 사라진다.
+- 실제 피해: isDatabaseUnreachable(server/db.ts:138)에 53300·ECONNRESET·CONNECTION_CLOSED 가 들어 있어, DB 가 살아 있는 과부하·풀러 재시작 블립 한 번이 isolate 를 120초 전부 503 으로 만든다(base 는 10초). 이 파일의 목적이 장애 중 가용성이라 그냥 넘기지 못했다.
+- 수리가 가장 먼저 볼 파일: server/db.ts 의 `trip`(열린 창 안에서 끝난 실패를 같은 strike 로 접기) 과 tests/db-breaker.ts:212-230(N>2 묶음 결과를 못 박는 단언 추가).
+- 승인했어도 남았을 우려: server/db.ts:87 의 `closedAt > startedAt` 는 workerd 에서 Date.now 가 I/O 사이 멈추므로 같은 밀리초가 보통이고, 그때는 늦은 실패가 그대로 트립한다 — AC2 보호가 workerd 에서는 생각보다 약하다. 보안·법무 차단 사유는 없다.
+- [러너 07:25] review rejected — 리뷰 거절: server/db.ts:86-91 `trip` 이 실패 1건마다 strike 를 1 더하므로, 한 번의 동시 실패 묶음이 대기를 2배가 아니라 2^N 배로 올린다. 실측: 같은 주소로 
