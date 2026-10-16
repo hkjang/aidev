@@ -225,7 +225,7 @@ Issuer의 표준 Discovery 문서에서 Authorization/Token/JWKS Endpoint가 자
 
 ![관리 Dashboard — 오늘 방문자·현재 체류·승인 대기·알림 실패 타일, 운영 준비도, Prometheus와 같은 운영 지표](assets/guide/admin-dashboard.png)
 
-운영 지표 카드는 알림 대기열, 대기열 최장 지연, 잠긴 계정·주소, 활성 세션·API 키, 스키마 버전을 보여 준다. 같은 값을 Prometheus로 수집하려면 보안 · 키 탭에서 `Prometheus /metrics 토큰`을 설정한 뒤 `Authorization: Bearer <토큰>`으로 `GET /metrics`를 호출한다. 토큰을 설정하기 전까지 이 엔드포인트는 404를 반환한다.
+운영 지표 카드는 알림 대기열, 대기열 최장 지연, 잠긴 계정·주소, 활성 세션·API 키, 스키마 버전을 보여 준다. 같은 값을 Prometheus로 수집하려면 보안 · 키 탭에서 `Prometheus /metrics 토큰`을 설정한 뒤 `Authorization: Bearer <토큰>`으로 `GET /metrics`를 호출한다. 토큰을 설정하기 전까지 이 엔드포인트는 404를 반환한다. 지표 조회 자체가 실패하면 카드는 숫자를 지우고 「운영 지표를 불러오지 못했습니다」라고 알린다 — 대기열이나 활성 세션이 0으로 보이는 것은 실제로 0이라는 뜻이다.
 
 ![통계 · 알림 — 기간별 방문 추이, 사업장·방문 유형·입실 시간대·신청 경로 분포, 알림 큐](assets/guide/admin-statistics.png)
 
