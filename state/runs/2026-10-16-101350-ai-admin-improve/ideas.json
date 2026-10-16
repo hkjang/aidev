@@ -1,0 +1,137 @@
+[
+  {
+    "title": "콜드 Go 모듈 캐시 조건으로 CI 두 job 의 첫 Go 명령(go vet / go test -race)을 재현",
+    "value": 4,
+    "risk": 1,
+    "size": "S",
+    "status": "done",
+    "note": "이번 회차에 실제로 돌렸고 아무 실패도 나오지 않았다. GOMODCACHE=$(mktemp -d) 로 go mod download(1.7s, exit 0) / go mod verify('all modules verified', exit 0) / GOFLAGS=-mod=readonly go vet ./...(5.3s, 13개 모듈 다운로드 후 exit 0) / 같은 조건의 go test -race ./...(2m39.7s, internal/server 158.7s, exit 0) 전부 통과. missing go.sum entry·모듈 다운로드 실패·toolchain 다운로드 실패 중 어느 것도 발생하지 않았다. 가설 기각. 로그 logs/03-cold-cache.log, 04-cold-vet.log, 05-cold-test-race.log.",
+    "updated": "2026-10-16"
+  },
+  {
+    "title": "PR #44·#45·#46 의 실제 체크런 로그 확보(gh 자격증명 재탐색)",
+    "value": 4,
+    "risk": 1,
+    "size": "S",
+    "status": "rejected",
+    "note": "이번 회차에 네 가지를 전부 실제로 돌려 소진했다: gh auth status = 'You are not logged into any GitHub hosts'(exit 1); remote.origin.url = https://github.com/hkjang/ai-admin.git (토큰 없음, push 원격은 문자열 'DISABLED'); env 에 GH_TOKEN·GITHUB_TOKEN 없음; ~/.config/gh 와 ~/.git-credentials 없음, credential.helper 미설정. 추가로 익명 API 도 확인 — api.github.com/repos/hkjang/ai-admin 가 HTTP 404 이므로 저장소는 private 이고 익명으로는 체크런을 읽을 수 없다. 이 세션에서 로그를 얻는 길은 없다. 로그 logs/01-credential-discovery.log, 02-github-api-anon.log.",
+    "updated": "2026-10-16"
+  },
+  {
+    "title": "CI 실패 원인을 사람에게 올리기(계정/러너 수준: Actions 쿼터·빌링 가능성)",
+    "value": 4,
+    "risk": 1,
+    "size": "S",
+    "status": "done",
+    "note": "이번 회차가 in-repo 후보를 전부 소진하고 외부 후보 두 개를 날짜로 기각해 '외부 원인·사람 확인 필요'로 결론지었다. 사람이 할 일: gh run view --log-failed 로 #44~#46 의 실패 단계를 보고, Settings > Billing 에서 Actions 분(private 저장소 included minutes) 소진 여부를 확인하고, setup-go 의 cache 엔트리를 지워 볼 것. 셋 다 저장소 안에서는 확인도 수정도 불가능하다.",
+    "updated": "2026-10-16"
+  },
+  {
+    "title": "GitHub Actions 핀을 최신 메이저로 올리기(checkout v4.4.0·setup-go v5.6.0·setup-node v4.4.0)",
+    "value": 2,
+    "risk": 3,
+    "size": "S",
+    "status": "pending",
+    "note": "이번 회차에 근거를 실제로 확인했고 '이번 실패의 원인은 아니다'로 좁혀졌다 — raw.githubusercontent 에서 runs.using 을 뽑으니 현재 핀 셋은 모두 node20(checkout v4.4.0=node20, setup-go v5.6.0='node20', setup-node v4.4.0='node20')이고 v5/v6/v5 는 node24 다. 그러나 GitHub 의 node20 제거는 2026-09-23 에 끝났고 마지막 green 런(PR #43, 2026-10-08)은 그 뒤였으므로 10-08 green → 10-16 fail 의 변화를 설명하지 못한다. 게다가 러너는 node20 선언 액션을 거부하지 않고 node24 로 강제 실행하며 경고만 남긴다. 따라서 수용 기준 4 의 전제가 성립하지 않아 워크플로를 한 줄도 바꾸지 않았다. 위생 차원의 업그레이드로는 여전히 유효하지만 CI 수리 목적으로는 금지. 로그 logs/06-action-runtimes.log.",
+    "updated": "2026-10-16"
+  },
+  {
+    "title": "chat stream 타입·두 토큰 한도 동시 지정의 400 계약을 기존 fixture 안에 서브테스트로 고정",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "done",
+    "note": "이번 회차 구현. grep 으로 stream_invalid·max_tokens_conflict·max_tokens_invalid 가 providers.go 에만 있고 internal/server 테스트에 전혀 없음을 먼저 확인한 뒤, chat_request_json_integration_test.go 의 기존 fixture 안에 거부 14사례 + 통과 3사례를 추가했다(프로덕션 0파일, 새 파일 0개). 네 번의 변이 검증으로 네 검증 지점을 각각 짚는 것을 증명했다.",
+    "updated": "2026-10-16"
+  },
+  {
+    "title": "internal/server 통합 테스트의 중복 셋업(DROP SCHEMA+Migrate+Seed) 줄이기",
+    "value": 3,
+    "risk": 3,
+    "size": "L",
+    "status": "pending",
+    "note": "161.8s -> 154.5s(승인 쌍 1건 병합). 이번 회차 실측은 internal/server 158.7s(콜드 캐시)·약 155s(워밍). 남은 26파일 전부는 대규모 리팩터라 금지, 같은 경로 쌍만 회차당 하나. CI 타임아웃 초과는 여전히 미증명이고 전체 벽시계 2분 30~40초라 10분 한도에 여유가 크다.",
+    "updated": "2026-10-16"
+  },
+  {
+    "title": "updatePreferences 의 sidebarState·aiDefaults jsonb 검증이 main 에 없음",
+    "value": 3,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "f66d25c 외 3커밋이 auto/2026-10-04-1142 에만 있다. 기존 브랜치 처리 결정 전 재구현 금지, jsonObjectHasNUL·storablePreferenceObject 이름 재사용 금지. 이번 회차 users.go 미열람.",
+    "updated": "2026-10-16"
+  },
+  {
+    "title": "승인 요청 payload(jsonb)의 NUL 을 저장 전 400 으로 막기",
+    "value": 2,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "PR #45(ae64738)·#44 가 같은 workflow.go 검증 지점을 건드린 상태라 머지 전에는 충돌. 머지 후 단독으로. 새 헬퍼 필요하고 미머지 f66d25c 의 jsonObjectHasNUL 이름 금지. createApprovalRecordIn:197-209 의 $5::jsonb 22P05 500 추정(미재현).",
+    "updated": "2026-10-16"
+  },
+  {
+    "title": "MCP create_approval_request 제목의 NUL 을 -32602 로 거부",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "REST 경로만 83f264c 로 닫혔고 mcp.go:299 는 trim+rune 300 만 본다. toolFailure 로 감싸 HTTP 500 은 아님. 이번 회차 mcp.go 미열람.",
+    "updated": "2026-10-16"
+  },
+  {
+    "title": "updateKeyScope 의 name 을 varchar(160)·trim 계약에 맞춰 400 으로 막기",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "b5146f2 가 auto/2026-10-01-1412 에만 있고 verify-failed — 실패 원인 확인 전 동일 접근 재시도 금지. 이번 회차 keys.go 미열람.",
+    "updated": "2026-10-16"
+  },
+  {
+    "title": "MCP query_legacy_table 의 search NUL 이 tool error 로 떨어지는 경로",
+    "value": 1,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "mcp.go:223-237 이 trim+200자만 검사. HTTP 500 은 아니어서 가치 낮음. 이번 회차 미확인.",
+    "updated": "2026-10-16"
+  },
+  {
+    "title": "감사 CSV 문서의 '성공 다운로드=전체 이벤트' 문구를 50,000건 상한과 맞추기",
+    "value": 1,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "docs/api.md:353 vs audit_events.go LIMIT 50000(이전 기록 계승, 이번 재확인 안 함). verify-version.sh 의 expect_current_v_tokens 때문에 docs 에 새 vX.Y.Z 토큰을 넣으면 lint 가 깨진다.",
+    "updated": "2026-10-16"
+  },
+  {
+    "title": "go.mod/go.sum 이 untidy — go mod tidy -diff 가 exit 1",
+    "value": 2,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "이번 회차 콜드 캐시 재현에서 발견. tidy 를 돌리면 go.mod 에 github.com/kr/text·github.com/rogpeppe/go-internal 이 indirect 로 추가되고, go.sum 에서 golang.org/x/sync v0.19.0·golang.org/x/text v0.33.0 항목이 빠지며 테스트 의존성 h1 해시 6줄이 추가된다. CI 는 tidy 를 검사하지 않고 go mod download·verify·vet·test 는 콜드에서도 전부 통과하므로 이번 CI 실패의 원인이 아니다 — 그래서 손대지 않았다. 다만 누군가 tidy 를 돌리는 순간 무관한 diff 가 섞이므로 독립 회차에 go.sum/go.mod 만 커밋해 정리할 가치는 있다(프로덕션 0파일). 단 setup-go 의 cache 키가 go.sum 해시라서 캐시가 무효화되는 부작용을 기억할 것. 로그 logs/03-cold-cache.log.",
+    "updated": "2026-10-16"
+  },
+  {
+    "title": "ubuntu-latest 가 2026-10-19~11-19 에 Ubuntu 26.04 로 이행 — 다음 회차부터 러너 이미지가 바뀐다",
+    "value": 3,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "GitHub 창고 공지(2026-09-17): ubuntu-latest 가 24.04 -> 26.04 로 10-19 부터 11-19 까지 점진 이행. 이번 실패(10-16)보다 뒤라 원인은 아니지만, 점진 이행이라 같은 커밋이 런마다 다른 이미지에 떨어져 '간헐적' 실패처럼 보일 수 있다. 실제로 깨지면 GitHub 권고대로 runs-on 을 ubuntu-24.04 로 임시 고정하는 것이 정석이며, 그때는 '느슨하게 만들기'가 아니라 이미지 고정이다. 미리 바꾸지 말 것.",
+    "updated": "2026-10-16"
+  },
+  {
+    "title": "make ci-test 타깃이 main 에 없다 — PR #46 미머지",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "정찰 과제서는 'Makefile:ci-test 가 이미 존재한다'고 적었으나, 이 브랜치(main@2b2ef67 기준)에서 make ci-test 는 'No rule to make target' 로 exit 2 였다. 해당 타깃은 미머지 PR #46(1e7d704, auto/2026-10-16-0830)에만 있다. #46 이 머지되기 전까지 CI 재현은 go test -race ./... 와 web/docker 명령을 손으로 돌려야 한다 — 다음 정찰은 이 전제를 고쳐 적을 것.",
+    "updated": "2026-10-16"
+  }
+]
