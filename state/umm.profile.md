@@ -1,46 +1,36 @@
-# umm 프로필 (2026-10-09)
-- 기준: main@e54875c, VERSION 0.76.8. PR #170 및 로컬 수리 8e877bf는 이 베이스에 미반영.
+# umm 프로필 (2026-10-16)
+- 기준: main@745dcf3, VERSION 0.76.8. PR #170(설치 가드 3개)·#171(x/text)이 이번에 베이스에 **반영됨**.
 - 목적: 생각을 공간 캔버스에 붙이고 연결·협업하며 Markdown·문서 차례·발표로 내보내는 도구.
-- 스택: Go 1.26, PostgreSQL 17, React 19 / TypeScript / Vite / Mantine 9 / React Flow, Vitest·Playwright.
+- 스택: Go 1.26.0, PostgreSQL 17, React 19 / TypeScript / Vite / Mantine 9 / React Flow, Vitest·Playwright.
 - 구조:
-  - cmd/umm: 서버 진입점. internal/httpapi: REST·정적 웹·외부 연동.
-  - internal/store: PostgreSQL 접근. migrations: 순차 SQL와 down/ 롤백.
-  - internal/presentation: Compile·WriteSource·WriteOutline 등 발표 컴파일/작성.
-  - internal/auth: 세션·OIDC. internal/analytics: 선택 추적. internal/mail 디렉터리 없음.
-  - web/src/pages/CanvasPage.tsx: 캔버스·공간 전환·내보내기·뷰포트 기억. web/src/api.ts: 실제 API 타입.
-  - web/src/i18n: 한국어 원문 키, en.ts 사전, translate.ts의 전역 로케일. 사용자 이름 자체를 번역하지 않는다.
-  - web/src/lib: 순수 모듈·인접 테스트. edge-vocabulary.ts의 인접 테스트는 아직 없음.
-  - web/scripts: Node 버전 래퍼·설치 가드·PWA·오프라인 큐·i18n 검사. web/e2e: 실제 브라우저 시험.
-  - docs: 사용자·관리자 가이드와 OpenAPI·릴리즈 문서. docs/features.md는 두 정본 가이드로 안내하는 대체 문서.
+  - cmd/umm 서버 진입점. internal/httpapi REST·정적 웹·외부 연동. internal/store PostgreSQL. migrations/ 순차 SQL + down/.
+  - internal/presentation 발표 컴파일(headings.go 의 usableHeading, sections.go, outline.go). internal/auth 세션·OIDC. internal/intelligence 임베딩·품질(CI 가 race·리포트로 따로 검사).
+  - web/src/pages/CanvasPage.tsx 캔버스·내보내기. web/src/components/AppLayout.tsx 내비·모바일 라벨. web/src/api.ts 실제 API 타입(EdgeRelation :86, EdgeOrigin :89).
+  - web/src/i18n: 한국어 원문 키, en.ts 사전, translate.ts 의 전역 activeLocale(:34)·translate(:65)·msg(:78). en 사전은 translate.ts:32 에서 자동 등록되므로 시험에서 따로 등록할 필요 없음.
+  - web/src/lib: 순수 모듈 + 인접 .test.ts 8쌍. edge-vocabulary.ts 만 테스트 없음.
+  - web/scripts: run-on-supported-node.mjs(Node 버전 래퍼, test* 가 사용), require-installed.mjs(설치 가드, 나머지 7개 훅), check-i18n.mjs, verify-pwa.mjs, verify-offline-queue.mjs. web/e2e Playwright.
+  - docs: USER_GUIDE.md·ADMIN_GUIDE.md 가 정본, OpenAPI·릴리즈 문서 동거.
 - 빌드·테스트:
-  - npm ci --prefix web 선행 필수. 이번 정찰의 web/node_modules는 없음; npm test --silent는 설치 안내/exit 1.
-  - npm --prefix web test: Vitest가 src/**/*.test.{ts,tsx}, scripts/**/*.test.mjs를 jsdom 환경에서 실행. 최신 전체 통과 수는 정찰 미측정.
-  - npm --prefix web run typecheck / run lint / run build. lint는 src만 보므로 scripts/*.test.mjs는 prettier --check로 별도 검사.
-  - make test-web: offline-queue → audit(high) → typecheck → lint → i18n → test → build → verify:pwa. 설치는 자동 수행하지 않음; audit은 네트워크 필요.
-  - make test-go: 현재 go vet ./... + go test ./... 두 줄뿐. CI는 -p 1 직렬·race·govulncheck·임베딩 리포트까지 실행.
-  - POSTGRES_DSN=<격리 DSN> go test -p 1 ./... -count=1: 전체 Go 검증(수 분). DSN 없으면 통합 시험 SKIP, 통과로 포장 금지.
-  - ./scripts/check-version.sh, node web/scripts/check-i18n.mjs: 이번 정찰 exit 0, 버전 0.76.8/1060키.
-  - make build: 웹 설치·빌드 후 dist/umm 생성. docker build --build-arg VERSION=0.76.8 .: 릴리즈 경로(이번 미실행).
-  - npm --prefix web run e2e: Playwright, 실제 서버·번들·DB·브라우저 필요. UMM_BASE_URL / UMM_E2E_COMMAND, workers=1.
-- 관례: 커밋은 영어 동작 설명, 릴리즈는 Release vX.Y.Z. 일반 개선은 VERSION 미변경. 트레일러 금지는 이전 프로필의 관례를 유지한다.
-- 설정: DB app_settings + 관리자 UI + internal/config. 가이드 정본 docs/USER_GUIDE.md·ADMIN_GUIDE.md.
-- 위험 구역: internal/auth, migrations, .github/workflows, Dockerfile, 비밀 설정 암호화·감사 details·CSP nonce. 릴리즈 경로 변경은 실제 이미지 검증 필요.
-- 자주 깨지는 곳: Markdown 파서들의 서로 다른 계약을 통합하지 않는다. 다운로드 파일명 통합 #167은 운영자 회귀 기록이 있어 같은 접근 재제출 금지.
-- 현재 트리와 기록 차이:
-  - download-name.ts와 CanvasPage의 네 호출은 현재 존재한다. 이것을 근거로 운영자의 회귀 기록을 무시하지 않는다.
-  - 과거 성공 기록의 fa91965(test-go 확장)는 현재 Makefile에 없고, aa936ce(outline 여러 줄)도 현재 outline.go에 없다. 완료됐다고 가정하지 말고 재제출도 피한다.
-  - usableHeading의 최신 상태는 이번 재확인하지 않음. 이전 성공 요약만으로 반영 여부를 확정하지 않는다.
+  - `npm ci --prefix web` 선행 필수. 이번 정찰 시점 web/node_modules 없음. 루트 npm ci 는 web 의존성을 설치하지 않는다.
+  - `npm --prefix web test --silent` (vitest; vitest.config.ts include=src/**/*.test.{ts,tsx} + scripts/**/*.test.mjs, jsdom, globals, testTimeout 20s — Windows 마운트가 느려 타임아웃을 늘려 둠).
+  - `npm --prefix web run typecheck|lint|build|verify:pwa|test:offline-queue`. tsconfig.app.json include=["src"] → **시험 파일도 typecheck 대상**. lint = `oxlint src && prettier --check src` 라 src 안의 시험 파일은 lint 에 포함되지만 scripts/*.test.mjs 는 아니다.
+  - `make test-web`(Makefile:22-30): offline-queue → audit(high) → typecheck → lint → check-i18n → test → build → verify:pwa. 설치는 하지 않는다. audit 은 네트워크 필요.
+  - `make test-go`(Makefile:7-9): **여전히 go vet ./... + go test ./... 두 줄**. CI 의 Go 절(-p 1·race·govulncheck·임베딩 리포트)과 다르다.
+  - `POSTGRES_DSN=<격리 DSN> go test -p 1 ./... -count=1` 가 전체 Go 검증(수 분). DSN 없으면 통합 SKIP — 통과로 포장 금지.
+  - `node web/scripts/check-i18n.mjs`(1060키), `./scripts/check-version.sh`. `make build`, `docker build --build-arg VERSION=<VERSION> .` 가 릴리즈 경로.
+  - `npm --prefix web run e2e`: 실제 서버·번들·DB·브라우저 필요(UMM_E2E_COMMAND / UMM_BASE_URL, workers=1). `make e2e` 는 build 선행.
+- 관례: 커밋 메시지는 영어 동작 설명, 릴리즈만 `Release vX.Y.Z`. 일반 개선은 VERSION 미변경. **커밋 트레일러(Co-Authored-By 등) 금지.** 설정은 DB app_settings + 관리자 UI + internal/config.
+- 위험 구역: internal/auth, migrations/, .github/workflows/, Dockerfile, VERSION, 락파일, 비밀 설정 암호화·감사 details(식별자만 넘길 것)·CSP nonce. 릴리즈 경로 변경은 실제 docker build 로 확인해야 한다.
+- 자주 깨지는 곳:
+  - Markdown 파서가 docs 분류기·deck 렌더러·compile 에 따로 있다. **통합하지 말고 좁히는 방향으로만** 고친다(운영자 규칙 3번).
+  - 다운로드 파일 이름 통합(PR #167)은 머지 뒤 되돌려졌고(29149e5) 자율화가 release→low-risk 로 강등됐다. 같은 접근 재제출 금지.
+  - make 타깃과 CI 게이트의 드리프트가 반복 주제였다. test-web 은 닫혔고 test-go·Database 절은 열려 있다.
+  - 설치 누락을 제품 버그로 오진하는 사고가 세 회차 있었다. `ls -d web/node_modules` 를 먼저 보라.
 - 검증 함정:
-  - CI는 설치 후 프런트 검증, 로컬 새 checkout은 미설치. 설치 누락을 제품 버그/Node 버전 문제로 오진하지 않는다.
-  - pretypecheck/prelint/prebuild 가드는 현재 존재. dev/preview/e2e에는 아직 없음(PR #170에서 구현, 재구현 금지).
-  - 미설치 dev/preview는 vite not found/127. e2e는 상위 /home/hkjang/node_modules/playwright를 찾아 @playwright/test 누락/1로 끝남.
-  - fixture 시험의 npm_* 환경과 node_modules PATH 제거를 보존해야 실제 checkout 의존성이 섞이지 않는다.
-  - CI의 E2E는 npx playwright test 직접 호출: 로컬 npm pree2e 훅과 별개다.
-  - CLI --help/--list 통과는 실제 E2E 통과가 아니다. page.goto 재로드는 SPA 상태 전환 회귀 증거가 아니다.
-  - README 배지/소개 버전·docs 문서 기준은 VERSION과 다르다. PDF·외부 Ptium/AI/Keycloak 검증은 이번 수행하지 않았다.
-- 정찰 범위: 저장소 CLAUDE.md/AGENTS.md 및 독립 ROADMAP/TODO 파일은 파일명 검색에서 발견되지 않음. 지정 소스/문서의 TODO/FIXME 검색에는 실행 과제 표시가 없었다.
-
-- 2026-10-09 이번 수정: x/text v0.40.0의 GO-2026-6629가 CI Go vulnerability scan을 실패시킴. store.go:221 pgx.ConnectConfig→precis.Profile.String 경로를 로컬 재현; v0.41.0 대상.
-- 직전 수리 8e877bf는 go.mod/go.sum만 고쳐 통과했으나 push 없음. 현재 main에 완료됐다고 가정하지 않는다.
-- 실패 구분: release.yml에는 govulncheck 없음. 저장된 PR 실패는 ci.yml, 후속 로컬 러너 실패는 web 설치 누락이다. 원격 두 번 실패 주장은 이번 미확인.
-- 설치 함정: 루트 npm ci는 web 의존성을 설치하지 않음. npm ci --prefix web를 먼저 실행; 이 이유로 가드/워크플로를 다시 수정하지 않는다.
+  - CI 는 설치 후 검증, 새 worktree 는 미설치. 미설치 상태의 exit 127/`not found` 는 저장소 결함이 아니다.
+  - 기존 src 파일의 oxlint 경고 약 50건은 상시 남는다 — 새 파일을 가리키는 경고만 보라.
+  - govulncheck 은 `go run ...@latest` 라 네트워크가 필요하고 커밋이 아니라 취약점 DB 가 판정을 바꾼다.
+  - setLocale 은 모듈 전역 상태다. i18n 시험은 afterEach 로 'ko' 로 되돌리지 않으면 뒤 시험이 영어로 돈다.
+  - en.ts 는 한글 키만 필요하다. msg('Dream') 처럼 한글이 없는 키는 check-i18n 대상이 아니며 폴백이 정답이다.
+  - CLI `--help`/`--list` 통과는 E2E 통과가 아니다. 소스 문자열 grep 은 동작의 증거가 아니다(운영자 규칙 5번).
+  - 저장소 CLAUDE.md/AGENTS.md 와 독립 ROADMAP/TODO 파일은 없다.

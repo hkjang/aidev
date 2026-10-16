@@ -1,0 +1,45 @@
+  [
+-   "pytest pkg/test_util.py",
++   "pytest",
+    "npm run check",
+  ]
+
+ ❯ tests/unit/verification.test.ts:94:81
+     92| 
+     93|  it("runs a changed 하위 디렉터리 파이썬 테스트 directly instead of the whole suit…
+     94|   expect(suggestTestCommands(["pkg/test_util.py"], info).map((x) => x.…
+       |                                                                                 ^
+     95|  });
+     96| 
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+ FAIL  tests/unit/verification.test.ts > suggestTestCommands > normalizes the 저장소 루트 Go 테스트 package path
+AssertionError: expected [ 'go test ././...', …(2) ] to deeply equal [ 'go test ./...', 'npm run check' ]
+
+- Expected
++ Received
+
+  [
++   "go test ././...",
++   "npm run check",
+    "go test ./...",
+-   "npm run check",
+  ]
+
+ ❯ tests/unit/verification.test.ts:103:74
+    101| 
+    102|  it("normalizes the 저장소 루트 Go 테스트 package path", () => {
+    103|   expect(suggestTestCommands(["a_test.go"], info).map((x) => x.command…
+       |                                                                          ^
+    104|   expect(suggestTestCommands(["internal/proxy/server_test.go"], info).…
+    105|  });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  2 failed | 11 passed (13)
+   Start at  21:05:14
+   Duration  430ms (transform 151ms, setup 0ms, collect 196ms, tests 13ms, environment 0ms, prepare 56ms)
+

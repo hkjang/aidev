@@ -1,0 +1,15 @@
+[
+  {"title":"관리 Dashboard 「운영 지표」가 조회 실패를 0건·0개·v- 로 단정한다","value":3,"risk":1,"size":"S","status":"done","note":"metrics 를 loading|failed|ready 판별 값으로 바꾸고 신규 순수 모듈 adminMetrics.ts 의 metricsPanel() 이 숫자 없는 notice 또는 여섯 행으로 변환하게 했다. 실패 시 숫자 목록을 warning Alert 로 치환. 커밋 1910bb3, vitest 98→103, local-e2e 수정 전 1 failed/27 passed → 수정 후 28 passed.","updated":"2026-10-16"},
+  {"title":"만료된 API 키의 수정·회전 버튼이 계속 활성으로 보인다","value":2,"risk":2,"size":"S","status":"pending","note":"KeysPage.tsx:195/200 disabled 는 revokedAt 만 보나 서버 update/rotate 는 expires_at>now() 요구. 이번 회차의 차선 후보였고 실제 만료 시각을 만드는 e2e 설계가 여전히 미확인이라 그대로 보류.","updated":"2026-10-16"},
+  {"title":"폐기된 API 키 행이 목록에 영구히 남아 활성 키를 찾기 어렵다","value":2,"risk":1,"size":"S","status":"pending","note":"화면 필터 과제로 유지. 회전 유예(graceUntil) 중인 키를 숨기면 안 된다는 제약 그대로. 이번 회차 미확인.","updated":"2026-10-16"},
+  {"title":"web/e2e 가 tsc -b(npm lint) 로 타입 검사되지 않는다","value":2,"risk":2,"size":"S","status":"pending","note":"이번에도 스펙을 55줄 늘렸고 별도 ./node_modules/.bin/tsc --noEmit 로만 확인했다(통과). tsconfig.app.json include 는 여전히 src 뿐. 정규 배선은 빌드 설정 변경이라 국소 수정과 섞지 않는다.","updated":"2026-10-16"},
+  {"title":"Dashboard 상단 네 MetricCard 도 counts.?? 0 으로 실패 시 0 을 말한다","value":2,"risk":1,"size":"S","status":"pending","note":"신규. AdminPage.tsx:30 의 오늘 방문자·현재 체류·승인 대기·알림 실패는 counts.x ?? 0 을 읽는다. /api/v1/admin/dashboard 실패는 상단 error Alert 로 보고되므로 이번 결함보다 약하지만 같은 유형이며, 운영 지표와 같은 판별 값 접근을 쓸 수 있다.","updated":"2026-10-16"},
+  {"title":"VisitsPage 검색이 키 입력마다 limit=100 조회를 보낸다 (디바운스 없음)","value":2,"risk":2,"size":"S","status":"pending","note":"AdminPage 의 VisitAdmin 검색은 Enter 에서만 load() 하므로 같은 문제가 아니다. 기각된 요청 티켓 머지 접근은 재제안하지 않는다.","updated":"2026-10-16"},
+  {"title":"emergencyRoster·exportAuditLogsCSV·listAPIKeys 가 행별 Scan 오류를 삼킨다","value":2,"risk":1,"size":"S","status":"pending","note":"열이 NOT NULL 이어서 재현 가능한 실패 테스트를 쓸 수 없다. 이번 회차 미재확인.","updated":"2026-10-16"},
+  {"title":"apiKeyPolicy 와 validScopes 가 같은 설정을 다르게 읽는다","value":2,"risk":2,"size":"S","status":"pending","note":"시드(0005_baseline.sql:450)와 settings 저장의 빈 값 차단 때문에 도달 경로가 없다. 근거 없는 서버 수정 보류 유지.","updated":"2026-10-16"},
+  {"title":"local-e2e.sh PostgreSQL 임시 서버 준비 확인 경합","value":2,"risk":2,"size":"S","status":"pending","note":"제품 결함이 아니라 스크립트 경합. 이번 회차 2회 실행에서는 재현되지 않았다.","updated":"2026-10-16"},
+  {"title":"csvCell 이 첫 바이트만 보고 수식 주입을 판정한다","value":2,"risk":2,"size":"S","status":"pending","note":"실제 Excel/LibreOffice 우회 해석 미확인. 취약점으로 확정하지 않는다.","updated":"2026-10-16"},
+  {"title":"TestSelfRegistrationRecordsVisitorConsent 의 consented_at DESC LIMIT 1 타이브레이크","value":2,"risk":1,"size":"S","status":"pending","note":"DB 통합이 DSN 없이는 SKIP 이라 재현 미확인. 테스트만 고쳐 제품 계약과 벌어지게 하지 않는다.","updated":"2026-10-16"},
+  {"title":"visitBody 를 사이트 달력 인식형으로 바꿔 today 기반 테스트 보호","value":2,"risk":2,"size":"M","status":"pending","note":"전역 helper 변경 영향이 크고 새 재현 없음.","updated":"2026-10-16"},
+  {"title":"제출 차단 사유를 원인 필드에도 helperText 로 표시","value":2,"risk":1,"size":"S","status":"pending","note":"전체 제출 사유는 이미 있어 추가 가치만 평가.","updated":"2026-10-16"}
+]

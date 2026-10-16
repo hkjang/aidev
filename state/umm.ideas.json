@@ -1,39 +1,93 @@
 [
   {
-    "title": "e2e·dev·preview 도 설치 없이는 같은 이름 없는 exit 127 로 죽는다",
+    "title": "edge-vocabulary.ts 의 라벨 12개와 relationOptions 를 실제 타입·translate·en.ts 로 못 박기",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "done",
+    "note": "a5959a5 — web/src/lib/edge-vocabulary.test.ts 한 파일만 추가(프로덕션 0파일), 24파일/260시험(기준선 23/252). 드리프트 망은 추측이 아니라 드릴로 확인: api.ts:86 에 'echoes' 를 임시로 더하면 typecheck 가 TS2741 로 시험 파일(20,7)을 가리켜 EXIT=1, 두 Record 를 채워 typecheck 를 만족시킨 뒤에도 Set 비교 시험이 relationOptions 를 가리켜 실패. relationOptions 를 읽는 자리는 피커(CanvasPage.tsx:2392) 외에 저장값 검증(:353)도 있어 새 관계는 related 로 되쓰여진다. 재구현 금지.",
+    "updated": "2026-10-16"
+  },
+  {
+    "title": "isInferred 는 web/src 어디서도 호출되지 않는 export 다",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "note": "이번 회차에 grep -rn 'isInferred' web/src web/e2e 로 확인 — edge-vocabulary.ts:34 의 정의 1건뿐이고 호출부 0건. 추천 연결(origin='auto')을 캔버스에서 다르게 보여 주는 자리에 배선하거나 지우는 두 방향이 있는데, 어느 쪽인지는 PostItNode/CanvasPage 의 추천 표시 경로를 먼저 읽어야 한다. 이번에는 프로덕션 0파일 제약 때문에 여섯 origin 전수 계약만 고정했다.",
+    "status": "pending",
+    "updated": "2026-10-16"
+  },
+  {
+    "title": "oxlint 가 권하는 toSorted 를 tsconfig lib 가 거부해 새 파일마다 걸린다",
+    "value": 2,
+    "risk": 2,
+    "size": "S",
+    "note": "이번 회차에 실제로 부딪힘: 집합 비교를 [...a].sort() 로 쓰면 oxlint 가 unicorn(no-array-sort) 경고 2건을 내고, 그 권고대로 toSorted() 를 쓰면 tsc 가 'error TS2550 … Try changing the lib compiler option to es2023 or later' 로 거부한다. 지금은 new Set(...) 비교로 피했다. lib 를 올리는 것은 빌드 설정 변경이라 S 지만 위험 2 — 올리기 전에 Dockerfile/engines 의 Node 하한이 그 내장 메서드를 실제로 갖는지(Node 20+ 는 가짐) 확인하고 build 까지 돌릴 것. 대안은 oxlint 에서 그 규칙만 끄는 것인데 그건 느슨하게 만드는 방향이라 선호하지 않는다.",
+    "status": "pending",
+    "updated": "2026-10-16"
+  },
+  {
+    "title": "e2e·dev·preview 도 설치 없이는 이름 없는 exit 127 로 죽는다",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "done",
+    "note": "c719700 이 main@745dcf3 에 머지됨. web/package.json:10,26,27 에 predev·pree2e·prepreview 가 실제로 존재함을 읽어 확인. 재구현 금지.",
+    "updated": "2026-10-16"
+  },
+  {
+    "title": "CI Go vulnerability scan 을 막는 x/text GO-2026-6629 해소",
+    "value": 5,
+    "risk": 1,
+    "size": "S",
+    "status": "done",
+    "note": "go.mod:42 가 golang.org/x/text v0.41.0 (indirect). c53a678/81a8b5e 로 main 에 반영됨.",
+    "updated": "2026-10-16"
+  },
+  {
+    "title": "설치 누락 문장이 두 파일(run-on-supported-node / require-installed)에 있고 둘이 어긋나도 아무 시험이 잡지 못한다",
     "value": 2,
     "risk": 1,
     "size": "S",
     "status": "pending",
-    "note": "현재 main@e54875c에는 세 훅이 없지만 c719700/PR #170에 구현 완료. pending은 통합 대기를 뜻하며 동일 구현을 다시 만들지 않는다.",
-    "updated": "2026-10-09"
+    "note": "두 파일 존재는 package.json 의 호출로 재확인(run-on-supported-node.mjs 는 test*, require-installed.mjs 는 나머지 7개). 통합하지 말고 실제 두 프로세스를 띄워 문장 일치만 단언하는 시험이어야 함(운영자 규칙 3번). 이번 범위 밖.",
+    "updated": "2026-10-16"
   },
   {
-    "title": "설치 누락 문장이 두 파일에 있고 둘이 어긋나도 아무 시험이 잡지 못한다",
+    "title": "format 명령도 설치 누락을 기존 가드로 안내하기 (preformat 한 줄)",
     "value": 2,
     "risk": 1,
     "size": "S",
     "status": "pending",
-    "note": "두 진입점의 메시지를 재확인. 기존 시험은 가드만 직접 검증하며 두 프로세스 비교는 없음. 통합 없이 실제 실행 비교만 보류.",
-    "updated": "2026-10-09"
+    "note": "이번 회차 차선 후보. web/package.json:20 format=prettier --write src, preformat 없음을 읽어 확인. 미설치 실패 문구/종료코드는 실행 미확인. 소스를 쓰는 명령이므로 fixture 로만 재현할 것.",
+    "updated": "2026-10-16"
   },
   {
-    "title": "edge-vocabulary.ts 의 알려진 라벨 12개를 실제 타입·실제 translate 로 못 박기",
-    "value": 2,
+    "title": "AppLayout 의 My Space·Dreams 가 한국어 UI 에서도 영어로 뜨고 같은 화면을 CanvasPage 는 내 공간 이라 부른다",
+    "value": 3,
+    "risk": 3,
+    "size": "M",
+    "status": "pending",
+    "note": "AppLayout.tsx:61-62 의 영어 리터럴 키와 en.ts:14-15 의 동일 매핑, en.ts:34 '내 공간'→'My space' 를 읽어 재확인. 막는 것은 :273 의 t(label).split(' ')[0] — 모바일은 첫 단어만 쓰므로 '내 공간' 은 '내' 한 글자가 된다. 단순 키 교체는 하지 말 것. Dreams 는 제품 기능명이라 번역 대상이 아닐 수 있음(en.ts 전반이 'Dream' 을 그대로 씀). 짧은 라벨 설계가 선행되어야 해 M.",
+    "updated": "2026-10-16"
+  },
+  {
+    "title": "make test-go 가 CI 의 Go 게이트 다섯 개 중 두 개만 돌린다",
+    "value": 3,
     "risk": 1,
     "size": "S",
     "status": "pending",
-    "note": "현재 모듈의 6 relation/6 origin 및 인접 테스트 부재 재확인. 실제 translate/타입 계약 시험 후보 유지; 폴백 버그로 주장하지 않는다.",
-    "updated": "2026-10-09"
+    "note": "Makefile:7-9 는 여전히 go vet ./... + go test ./... 두 줄임을 읽어 재확인 — fa91965 는 main 에 들어오지 않았다. 다만 이 과제서는 2026-10-06 에 verify-failed 로 끝났으므로 같은 방식의 재제출을 피한다.",
+    "updated": "2026-10-16"
   },
   {
-    "title": "Node 하한이 web/package.json engines·ci.yml·Dockerfile 세 곳에 따로 적혀 있고 드리프트 검사가 없다",
+    "title": "Node 하한이 engines·ci.yml·Dockerfile 세 곳에 따로 적혀 있고 드리프트 검사가 없다",
     "value": 2,
     "risk": 2,
     "size": "S",
     "status": "pending",
-    "note": "engines ^22.22.2 || ^24.15.0, CI 24, Docker node:24-alpine 재확인. 실제 불일치 증거 없음; 보호 경로 확장 부담으로 보류.",
-    "updated": "2026-10-09"
+    "note": "web/package.json:6 engines ^22.22.2 || ^24.15.0 재확인. ci.yml·Dockerfile 은 이번 미열람. 실제 불일치 증거 없고 보호 경로(workflows·Dockerfile) 확장이라 보류.",
+    "updated": "2026-10-16"
   },
   {
     "title": "CI 의 Database 절 11단계에 로컬 타깃이 없다",
@@ -41,53 +95,26 @@
     "risk": 2,
     "size": "M",
     "status": "pending",
-    "note": "CI DB 절·Makefile에 통합 로컬 타깃 부재 재확인. 격리 DB 준비가 필요해 이번 수정 범위 제외; test-go 재제출 금지.",
-    "updated": "2026-10-09"
-  },
-  {
-    "title": "파일 이름 새니타이즈가 개행·제어문자를 다루지 않는다 (download-name.ts)",
-    "value": 2,
-    "risk": 2,
-    "size": "S",
-    "status": "rejected",
-    "note": "현재 helper의 제한 문자 집합은 확인했으나 운영자가 #167 회귀로 재접근을 금지한 파일명 경로다. 서버 개행 허용도 미확인. 이번 자동 개선 후보에서는 제외; 기존 구현이 사라졌다는 뜻은 아님.",
-    "updated": "2026-10-09"
-  },
-  {
-    "title": "AppLayout.tsx 의 My Space·Dreams 영어 리터럴 키와 모바일 첫 단어 탭",
-    "value": 2,
-    "risk": 2,
-    "size": "S",
-    "status": "pending",
-    "note": "실제 경로 web/src/components/AppLayout.tsx:61-62,273 재확인. 모바일 첫 단어 문제 때문에 단순 한국어 키 교체는 피한다.",
-    "updated": "2026-10-09"
-  },
-  {
-    "title": "들여쓴 뒤에도 '  - ---'·'  - # x' 는 목록 항목 안의 블록으로 읽힌다",
-    "value": 2,
-    "risk": 2,
-    "size": "S",
-    "status": "pending",
-    "note": "outline.go:74의 원문 단일 쓰기 유지 확인. 렌더러의 실제 결과는 미확인; 이전 verify-failed 접근 재선택 금지.",
-    "updated": "2026-10-09"
+    "note": "격리 DB 컨테이너와 스크립트 환경이 필요해 S 가 아니다. Makefile 에 migrate-dry-run 타깃은 있음(:1 의 .PHONY). 이번 범위 밖.",
+    "updated": "2026-10-16"
   },
   {
     "title": "파일 이름 새니타이즈 네 곳(Go)의 계약 차이가 content_disposition.go 주석과 어긋난다",
     "value": 2,
-    "risk": 1,
+    "risk": 2,
     "size": "S",
     "status": "pending",
-    "note": "content_disposition.go:30-32 주석 존재 확인. 네 구현 비교는 미실행; filename 회귀 접근과 분리하고 보류.",
-    "updated": "2026-10-09"
+    "note": "이번 정찰에서 Go 다운로드 경로는 열지 않았음. PR #167 되돌림 이력이 있는 영역과 인접하므로 통합 방향 접근은 금지.",
+    "updated": "2026-10-16"
   },
   {
-    "title": "verify-offline-queue.mjs 가 TypeScript 직접 import 로 Node 타입 스트리핑에 의존",
+    "title": "들여쓴 '  - ---' / '  - # x' 가 목록 항목 안의 블록으로 읽힌다 (outline)",
     "value": 2,
-    "risk": 1,
+    "risk": 2,
     "size": "S",
-    "status": "rejected",
-    "note": "직접 import는 확인했으나 package.json이 지원 Node 래퍼를 통해 실행하고 Makefile도 해당 npm script를 호출한다. 현재 수정 필요성이 없어 독립 개선 후보로 제외; 통합 금지.",
-    "updated": "2026-10-09"
+    "status": "pending",
+    "note": "이번 정찰에서 outline.go 는 열지 않았음(headings.go 의 usableHeading 은 존재 확인). 이전 verify-failed 접근이므로 같은 방식 재선택 금지.",
+    "updated": "2026-10-16"
   },
   {
     "title": "빈 공간에 실시간 노트가 들어오면 첫 몇 개에 맞춘 fit 이 기억된다",
@@ -95,26 +122,17 @@
     "risk": 2,
     "size": "M",
     "status": "pending",
-    "note": "CanvasPage rememberedView/fitView 호출은 재확인. 실시간 입력 시 문제 재현은 미확인; 서버·브라우저 준비가 필요하여 보류.",
-    "updated": "2026-10-09"
+    "note": "서버·브라우저 준비가 필요해 재현 비용이 크다. 이번 미확인, 보류 유지.",
+    "updated": "2026-10-16"
   },
   {
-    "title": "ADMIN_GUIDE.pdf 가 부록 11·12 를 담지 못한 채 남아 있다",
+    "title": "ADMIN_GUIDE.pdf 가 최신 부록을 담지 못한 채 남아 있다",
     "value": 2,
     "risk": 1,
     "size": "S",
     "status": "pending",
-    "note": "현재 MD는 부록 11까지 있고 부록 12/SMTP는 검색되지 않음. PDF 미열람이라 낙후 단정 불가; 근거 불충분으로 보류.",
-    "updated": "2026-10-09"
-  },
-  {
-    "title": "format 명령도 설치 누락을 기존 가드로 안내하기",
-    "value": 2,
-    "risk": 1,
-    "size": "S",
-    "status": "pending",
-    "note": "현재 format=prettier --write src, preformat 없음 확인. 소스 쓰기 명령 미실행. 이번 CI 실패와 무관하여 보류.",
-    "updated": "2026-10-09"
+    "note": "PDF 미열람으로 낙후를 단정할 수 없음. 근거 불충분으로 계속 보류.",
+    "updated": "2026-10-16"
   },
   {
     "title": "문서 허브의 중복 사용자 가이드 링크 제거",
@@ -122,43 +140,7 @@
     "risk": 1,
     "size": "S",
     "status": "pending",
-    "note": "docs/README.md 사용자 가이드 PDF/MD 중복 링크 재확인. 유효하나 이번 지정 실패보다 가치 낮음.",
-    "updated": "2026-10-09"
-  },
-  {
-    "title": "README 릴리즈 배지와 현행 VERSION의 차이를 줄이기",
-    "value": 2,
-    "risk": 1,
-    "size": "S",
-    "status": "pending",
-    "note": "README 배지 0.22.0/소개 0.44.0, check-version 실제 0.76.8 재확인. 원격 최신 릴리즈는 미확인; 보류.",
-    "updated": "2026-10-09"
-  },
-  {
-    "title": "수정 과제 — CI Go vulnerability scan의 x/text GO-2026-6629 해소",
-    "value": 5,
-    "risk": 1,
-    "size": "S",
-    "status": "done",
-    "note": "수정 과제 완료, 커밋 81a8b5e. go.mod/go.sum의 x/text v0.40.0→v0.41.0만 변경. 실제 CI 스캔 실패→통과→원복 실패→복구 통과, Go 전체·vet·race·build·모듈 검증 통과. PostgreSQL 17.11 store 156 PASS/3 SKIP. npm ci --prefix web 후 240 웹 시험 및 make test-web 8게이트 통과. 원격 CI·Docker 이미지·제품 E2E는 미실행.",
-    "updated": "2026-10-09"
-  },
-  {
-    "title": "require-installed의 인자 없음·MODULE_NOT_FOUND 아닌 오류 계약을 실제 프로세스로 검증",
-    "value": 2,
-    "risk": 1,
-    "size": "S",
-    "status": "pending",
-    "note": "새 후보. require-installed.mjs의 usage exit 1 및 비 MODULE_NOT_FOUND rethrow 분기를 읽었으나 현재 require-installed.test.mjs는 설치 없음/정상 설치만 검증. 실제 fixture 패키지 exports로 확인할 수 있음. 이번 지정 실패와 무관하여 보류.",
-    "updated": "2026-10-09"
-  },
-  {
-    "title": "새 checkout 검증 안내에서 루트 npm ci와 web 설치를 구별하기",
-    "value": 3,
-    "risk": 1,
-    "size": "S",
-    "status": "pending",
-    "note": "새 후보. 직전 shepherd verify.json은 루트 node_modules 확인/설치 뒤 npm test 실패. 루트 package.json은 웹 위임만 하므로 npm ci --prefix web 선행이 필요. 러너 영구 수정은 저장소 밖; 문서/과제서 진입 안내로 한정할 수 있으나 현재 가드 안내와 중복하여 보류.",
-    "updated": "2026-10-09"
+    "note": "가치가 가장 낮아 계속 밀림. 이번 정찰에서 docs/README.md 재확인하지 않았음.",
+    "updated": "2026-10-16"
   }
 ]
