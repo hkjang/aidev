@@ -1,5 +1,5 @@
 {
- "generated": "2026-10-16T22:29:43+09:00",
+ "generated": "2026-10-16T22:47:51+09:00",
  "site": "https://hkjang.github.io/aidev",
  "description": "Claude Code 자율 개선 에이전트가 hkjang 의 프로젝트를 개선·테스트·머지·릴리즈한 일일 보고. 오늘 36회차·릴리즈 18건, 누적 2657회차·릴리즈 811건, 주의 필요 17건.",
  "today": {
@@ -10,18 +10,18 @@
   "merged": 2,
   "nochange": 0,
   "failed": 9,
-  "cost_usd": 307.12,
-  "minutes": 822,
-  "sessions": 132
+  "cost_usd": 311.04,
+  "minutes": 833,
+  "sessions": 135
  },
  "totals": {
   "runs": 2657,
   "released": 811,
   "days": 45,
-  "cost_usd": 9410.39,
-  "minutes": 26081,
-  "tokens_in": 10166241442,
-  "tokens_out": 82064787
+  "cost_usd": 9414.32,
+  "minutes": 26091,
+  "tokens_in": 10169136128,
+  "tokens_out": 82098803
  },
  "alerts": [
   {
@@ -146,20 +146,22 @@
  ],
  "fix_queue": [],
  "health": {
-  "checked": "2026-10-16T22:15:05+09:00",
-  "last_run": "2026-10-16T21:32:07+09:00",
-  "seconds_since_last": 2574,
-  "runner_pid": "3786606",
-  "runner_age_seconds": 988,
-  "scheduler_status": "실행 중",
-  "scheduler_next_run": "2026-10-16 오후 10:20:00",
+  "checked": "2026-10-16T22:45:04+09:00",
+  "last_run": "2026-10-16T22:29:38+09:00",
+  "seconds_since_last": 923,
+  "runner_pid": "",
+  "runner_age_seconds": 0,
+  "scheduler_status": "준비",
+  "scheduler_next_run": "2026-10-16 오후 10:50:00",
   "disk_percent": 95,
   "ok": false,
   "problems": [
    "측정 감사: 원격에 없는 릴리즈 태그 1건 — 그 저장소의 다음 릴리즈를 막는다",
    "디스크 95% 사용"
   ],
-  "actions": []
+  "actions": [
+   "소유 프로세스 없는 잠금 파일을 제거했다"
+  ]
  },
  "lessons": [
   {
@@ -1547,11 +1549,11 @@
    "why": "autonomy: held — low-risk 단계 — 위험도 medium, 파일 2: 사람 승인 필요; review: approved — 리뷰 승인 (risk=medium)",
    "evidence": "https://github.com/hkjang/aidev/tree/main/state/runs/2026-10-16-220900-umm-improve",
    "labels": "",
-   "action": "PR 처리기가 매시간 살핀다 (아직 순서가 오지 않음) · 승인: PR 라벨 aidev-approved / 반려: aidev-rejected — 다음 회차에 러너가 승인 당시 커밋에만 CI 확인 후 머지·닫기",
+   "action": "PR 처리기가 다음 시간에 다시 시도 · 승인: PR 라벨 aidev-approved / 반려: aidev-rejected — 다음 회차에 러너가 승인 당시 커밋에만 CI 확인 후 머지·닫기",
    "date": "2026-10-16",
-   "shepherd": "",
-   "shepherd_action": "",
-   "shepherd_detail": "",
+   "shepherd": "자율화 보류 · 심사 거절 → 다음 시간에 수정 (10-16 22:47) — - Dockerfile:9 + go.mod:8 — 릴리즈 경로가 toolchain 상향을 삼킨다. 빌더 베이스가 `golang:1.26.7-alpine` 이고 공식 golang 이미지는 GOTOOLCHAIN=local 이라(제가 직접 확인: `docker run --rm golang:1",
+   "shepherd_action": "review-reject",
+   "shepherd_detail": "- Dockerfile:9 + go.mod:8 — 릴리즈 경로가 toolchain 상향을 삼킨다. 빌더 베이스가 `golang:1.26.7-alpine` 이고 공식 golang 이미지는 GOTOOLCHAIN=local 이라(제가 직접 확인: `docker run --rm golang:1.26.7-alpine sh -c 'go env GOTOOLCHAIN; go version'` -> `local` / `go1.26.7`) go.mod:8 의 `toolchain go1.26.9` 가 무시된다. end-to-end 로 증명함: 이 브랜치에서 `docker build --target go-build` (EXIT=0) 뒤 산출 바이너리의 `go version -m /out/umm` -> **go1.26.7**. 즉 릴리즈 이미지는 impl-vuln-base.log 의 호출 경로 있는 표준 라이브러리 12건(GO-2026-6599/6600/6603/6605/6607/6608/6609/6610/6611/6612/6613/6617 — net/http·html/template·crypto/tls·mime/multipart, 전부 cmd/umm/main.go:94 ListenAndServe 에서 도달)을 **그대로 담은 채 배포된다**. 그런데 ci.yml:66 govulncheck 은 이제 초록이다(제가 재실행: `No vulnerabilities found`, EXIT=0) — 머지 전에는 이 12건을 알려 주던 유일한 탐지기가, 산출물은 하나도 고치지 않은 상태로 꺼진다. 고치는 법: 이 PR 안에서 Dockerfile:9 을 `golang:1.26.9-alpine` 로 올리고, 실제 `docker build` 후 산출 바이너리에 `go version -m` 을 돌려 `go1.26.9` 임을 확인한 로그를 남길 것(소스 문자열 검사나 docker build EXIT=0 만으로는 근거가 되지 않는다 — 지금 트리도 EXIT=0 이면서 1.26.7 이 나온다).\n- go.mod:5 — 주석 `Pinned for CI and release builds` 가 이 변경으로 거짓이 됐다. 변경 전에는 Dockerfile:9 의 1.26.7 핀과 `toolchain go1.26.7` 이 우연히 일치해 양쪽이 같은 툴체인을 썼다. 이 PR 이 toolchain 만 올려 드리프트를 **새로 만들었다** — 이제 이 줄은 CI 만 고정하고 릴리즈는 고정하지 못한다. Dockerfile:9 을 함께 올려 주석을 참으로 되돌리거나, 어느 경로만 고정하는지로 주석을 고칠 것.",
    "needs_human": false
   },
   {
@@ -1566,9 +1568,9 @@
    "labels": "",
    "action": "PR 처리기가 다음 시간에 다시 시도 · 승인: PR 라벨 aidev-approved / 반려: aidev-rejected — 다음 회차에 러너가 승인 당시 커밋에만 CI 확인 후 머지·닫기",
    "date": "2026-10-16",
-   "shepherd": "CI 실패 · 수정 실패 → 다음 시간에 재시도 (10-16 21:54) — 수정 세션이 커밋을 만들지 않음: # 수리 요약 — PR #172 (커밋 없음)  - **재현**: HEAD(a5959a5)에서 CI 와 같은 명령 `go run golang.org/x/vuln/cmd/govulncheck@latest ./...` 를 돌려 같은 자리에서 같은 실패를 봤",
+   "shepherd": "CI 실패 · 수정 실패 → 다음 시간에 재시도 (10-16 22:43) — 수정 세션이 커밋을 만들지 않음: # fix-summary — umm PR #172 (수리: 커밋 없음)  - **지적은 이 변경의 결함이 아니다.** CI `verify` 는 `Go vulnerability scan`(ci.yml:66) 에서 죽었고, 이 PR 의 diff 는 `web",
    "shepherd_action": "fix-failed",
-   "shepherd_detail": "수정 세션이 커밋을 만들지 않음: # 수리 요약 — PR #172 (커밋 없음)  - **재현**: HEAD(a5959a5)에서 CI 와 같은 명령 `go run golang.org/x/vuln/cmd/govulncheck@latest ./...` 를 돌려 같은 자리에서 같은 실패를 봤다 — stdlib 12건(GO-2026-6599/6600/6603/6605/6607/6608/6609/6610/6611/6612/6613/6617), `exit status 3` → 종료코드 1. 로컬 Go 는 CI 와 동일한 go1.26.7. - **원인은 이 변경이 아니라 베이스**: `origin/main`(745dcf3)을 별도 worktree 로 꺼내 같은 명령을 돌려도 **똑같이 12건·exit 1**. 이 PR 의 diff 는 `web/src/lib/edge-vocabulary.test.ts` 한 파",
+   "shepherd_detail": "수정 세션이 커밋을 만들지 않음: # fix-summary — umm PR #172 (수리: 커밋 없음)  - **지적은 이 변경의 결함이 아니다.** CI `verify` 는 `Go vulnerability scan`(ci.yml:66) 에서 죽었고, 이 PR 의 diff 는 `web/src/lib/edge-vocabulary.test.ts` **1파일 뿐**(`git diff origin/main...HEAD --stat`)이라 govulncheck 의 입력(Go 소스·go.mod)은 base 와 바이트 단위로 동일하다. - **측정으로 귀속 확인:** HEAD(a5959a5)에서 `go run golang.org/x/vuln/cmd/govulncheck@latest ./...` → exit 3, stdlib 취약점 12건. `origin/main`(745dcf3) 을 임시 worktree 로 떼어 **같은 명령** �",
    "needs_human": false
   },
   {
@@ -1583,9 +1585,9 @@
    "labels": "",
    "action": "PR 처리기가 다음 시간에 다시 시도 · 승인: PR 라벨 aidev-approved / 반려: aidev-rejected — 다음 회차에 러너가 승인 당시 커밋에만 CI 확인 후 머지·닫기",
    "date": "2026-10-16",
-   "shepherd": "CI 실패 · 수정 실패 → 다음 시간에 재시도 (10-16 21:41) — 수정 세션이 커밋을 만들지 않음: # 수리 요약 — 커밋 없음 (고칠 결함을 찾지 못함)  - **재현 실패**: 워크트리에 `npm ci` 후 CI 의 `check` 잡 명령을 그대로 돌렸다 — `npm run check` 는 typecheck exit 0, **19 files / 1",
+   "shepherd": "CI 실패 · 수정 실패 → 다음 시간에 재시도 (10-16 22:40) — 수정 세션이 커밋을 만들지 않음: # 수리 요약 — 고칠 결함이 없다 (커밋 없음)  - **원격 실패 원인 확증**: `gh run view 38898814913 / 38898814906` 의 ANNOTATIONS 가 두 잡 모두 `The job was not started becau",
    "shepherd_action": "fix-failed",
-   "shepherd_detail": "수정 세션이 커밋을 만들지 않음: # 수리 요약 — 커밋 없음 (고칠 결함을 찾지 못함)  - **재현 실패**: 워크트리에 `npm ci` 후 CI 의 `check` 잡 명령을 그대로 돌렸다 — `npm run check` 는 typecheck exit 0, **19 files / 155 tests 전부 통과**, build 성공(자산 경고는 main 에도 있는 기존 것)이고, 이어지는 `node --check dist/extension.js && node --check dist/extension.core.js` 도 통과했다. CI 가 실패했다는 그 자리에서 로컬은 녹색이다. - **테스트는 대상을 실제로 검증한다**: 프로덕션 파일만 `origin/main` 으로 되돌리니 새 �",
+   "shepherd_detail": "수정 세션이 커밋을 만들지 않음: # 수리 요약 — 고칠 결함이 없다 (커밋 없음)  - **원격 실패 원인 확증**: `gh run view 38898814913 / 38898814906` 의 ANNOTATIONS 가 두 잡 모두 `The job was not started because recent account payments have failed or your spending limit needs to be increased.` 다. 잡이 **시작조차 안 됐다**(각 3~4초). 앞 회차(2026-10-16-213811)가 추론으로 남긴 \"인프라 실패\" 를 이번에 원문으로 확인했다 — `gh` 는 `GH_CONFIG_DIR=/home/hkjang/.config/gh` 로 인증돼 있었다(샌드박스 `HOME` 때문에 앞 회차가 미인증으로 봤다). - ",
    "needs_human": false
   },
   {
@@ -2018,16 +2020,16 @@
   }
  ],
  "shepherd": {
-  "last_pass": "2026-10-16T21:36:39+09:00",
+  "last_pass": "2026-10-16T22:35:43+09:00",
   "enabled": true,
   "today": {
-   "fix-failed": 10,
+   "fix-failed": 12,
    "fix-pushed": 6,
-   "review-reject": 2,
+   "review-reject": 3,
    "approve": 5,
    "needs-human": 6
   },
-  "total": 718,
+  "total": 721,
   "pending_human": 208
  },
  "agents": {
@@ -2042,13 +2044,13 @@
     "role": "구현 builder",
     "calls": 517,
     "metric": "러너 검증 통과 88% · 변경 없음 138",
-    "cost": 1261.84
+    "cost": 1264.38
    },
    {
     "role": "비평 critic",
     "calls": 288,
     "metric": "최종 승인 97% · 한 번이라도 거절 19 · 승인·머지 뒤 회귀 0/204",
-    "cost": 544.58
+    "cost": 545.96
    },
    {
     "role": "수리 repairer",
@@ -2070,14 +2072,14 @@
    },
    {
     "role": "PR 심사 shepherd-reviewer",
-    "calls": 131,
-    "metric": "승인 43 · 거절 6 · 사람 필요 82 · 승인 뒤 회귀 1",
-    "cost": 230.16
+    "calls": 132,
+    "metric": "승인 43 · 거절 7 · 사람 필요 82 · 승인 뒤 회귀 1",
+    "cost": 234.09
    },
    {
     "role": "PR 수리 shepherd-fixer",
-    "calls": 84,
-    "metric": "고쳐서 푸시 34%",
+    "calls": 86,
+    "metric": "고쳐서 푸시 33%",
     "cost": null
    },
    {
@@ -2556,7 +2558,7 @@
   },
   {
    "metric": "유효 개선당 비용",
-   "value": "$14.75",
+   "value": "$14.77",
    "detail": "비용 확인된 유효 개선 189건, 미확인 세션 245"
   },
   {
@@ -2587,7 +2589,7 @@
    "merged": 2,
    "nochange": 0,
    "failed": 9,
-   "cost_usd": 307.12
+   "cost_usd": 311.04
   },
   {
    "date": "2026-10-15",
@@ -2861,8 +2863,8 @@
    "merged": 2,
    "nochange": 11,
    "failed": 32,
-   "cost": 707.87,
-   "minutes": 1899
+   "cost": 711.8,
+   "minutes": 1909
   },
   {
    "key": "2026-W41",
@@ -2947,8 +2949,8 @@
    "merged": 40,
    "nochange": 138,
    "failed": 57,
-   "cost": 3054.85,
-   "minutes": 8926
+   "cost": 3058.77,
+   "minutes": 8937
   },
   {
    "key": "2026-09",
@@ -4367,8 +4369,8 @@
    "last_ts": "2026-10-16T22:29:38+09:00",
    "last_status": "other",
    "last_result": "fix-round: needs approval (risk=medium, files=2), PR open https://github.com/hkjang/umm/pull/173",
-   "cost": 208.13,
-   "minutes": 605,
+   "cost": 210.65,
+   "minutes": 613,
    "grade": "D",
    "grade_why": "14일: 릴리즈 5, 실패 3, 경고 3, 회귀 2",
    "lessons": 2,
@@ -4412,8 +4414,8 @@
    "last_ts": "2026-10-16T21:12:11+09:00",
    "last_status": "failed",
    "last_result": "CI failed, PR open https://github.com/hkjang/vibe-code/pull/21",
-   "cost": 150.99,
-   "minutes": 385,
+   "cost": 152.39,
+   "minutes": 388,
    "grade": "C",
    "grade_why": "14일: 릴리즈 2, 실패 1, 경고 2, 회귀 0",
    "lessons": 0,
