@@ -291,3 +291,4 @@
 - 보류 아이디어: 일부 PII 필드에만 bbox가 없는 응답의 fail-closed 보장 (4/3/M — `service.process`의 거절 조건이 `summary>0 && regions==0`뿐, HTTP 혼합 응답 재현 여전히 미확인) / 업스트림 소수 페이지 번호가 정수로 절삭되는지 검증 (3/3/M — `page 1.9` 재현 미확인) / `buildMultipartBody`가 `contentType` 인자를 무시 (3/2/S — 공유 헬퍼라 20여 호출부 의미가 함께 바뀜, 보류 유지) / `cloneJob`이 `Metadata.Error`·`Engine.Debug`·`Confidence` 포인터를 저장본과 공유 (2/2/S — mutation/race 경로 증거 없음) / `GOARCH=386`에서 `TestValidateImageDimensionsRejectsPixelBomb` 실패 (2/1/S — 이번에도 386 재실행 안 함, 미확인 유지)
 - 과제서: 채택 — `endX = startX + 1`이 고정 HEAD 19b4426에 그대로 있었고, 지목된 구현 방식(원본 바운즈가 `isNormalizedBox`이면 보정 생략, 프로덕션 1파일, `placeRegion`·에러 문구 무수정)과 수용 기준 4개를 모두 재현·검증했다. 산정이 미확인으로 남긴 "빈 스팬" 전제는 `ComputeMaskedRuneSpans`를 읽어 구조적으로 불가능함을 확인해 방어 코드를 넣지 않았다.
 
+- 릴리즈: v1.0.38 (2026-10-16, run 2026-10-16-144326-pii-masker-improve)

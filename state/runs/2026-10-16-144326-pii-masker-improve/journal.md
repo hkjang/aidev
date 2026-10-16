@@ -28,3 +28,10 @@
 - 다음 회차 후보(이번 diff 책임 아님): 실패 응답의 `engine.debug`에 업스트림 원문 JSON이 실려 원문 PII(`"value":"홍길동"`)가 응답과 job.json에 남는다. 재현 중 눈으로 확인했다.
 - [러너 14:55] review approved — 리뷰 승인 (risk=low)
 - [러너 14:55] pr created — https://github.com/hkjang/pii-masker/pull/37
+- [러너 14:56] ci passed — 검사 없음 — 정책으로 허용
+- [러너 14:56] merge done — 8f2d71f
+- [러너 14:59] release published — v1.0.38
+- [러너 14:59] gh-release created — GitHub Release v1.0.38
+- [러너 14:59] manifest ok — pii-masker-image.tar.gz 
+- [러너 14:59] assets uploaded — 1개
+- [러너 14:59] assets verified — v1.0.38 자산 1개 (이전 v1.0.37: 1)

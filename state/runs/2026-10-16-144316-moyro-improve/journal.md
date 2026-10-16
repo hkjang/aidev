@@ -9,3 +9,13 @@
 - 구현자가 조심할 것: 범위가 `Reorder` 한 함수 + 신규 테스트 1파일이다. 같은 파일의 `Patch`/`Create`, 같은 핸들러의 `ok, _ := IsMember` 403 위장을 끌어들이지 말 것. 테스트 DB 컨테이너 `moyro-pg-improve`(55433) 는 지금 `Exited (255)` 이므로 `docker start` 가 선행되어야 하고, DSN 없는 `go test` 의 빠른 ok 는 skip 이지 통과가 아니다.
 - 프로필은 다시 쓰지 않았다: base 가 프로필 작성 시점과 같은 main@879082e 이고 내용이 현재 소스와 어긋나지 않았다(bookmarks/userstatus 무테스트 기술도 이번에 `[no test files]` 로 재확인).
 - [러너 14:47] scout done — 채널 북마크 `Reorder` 가 주석이 약속한 dense 재배열을 하지 않고 한 행만 UPDATE 해, `sort_order` 가 중복되고 북
+
+## 구현 노트
+- 무엇/왜: `bookmarks.Reorder` 의 단일행 UPDATE 를 트랜잭션 기반 dense 재배열로 교체했다(`Pool.Begin` → `List` 와 같은 정렬로 활성 id 읽기 + `rows.Err()` → 없으면 쓰기 전 `ErrNotFound` → 슬라이스 재삽입 + 클램프 → `sidebar.UpdateOrder` 의 `unnest` 한 문장으로 `0..n-1` → commit). 거짓이던 주석도 구현과 일치시켰다. 커밋 `1f19668`, 프로덕션 1파일(+82/-12) + 신규 테스트 1파일.
+- **정찰 예측의 교정(비평가가 먼저 볼 곳)**: 과제서가 든 "C 를 `sort_order=0` 으로 맨 앞에 보내기" 는 **수정 전에도 통과한다** — C=0, A=1, B=2 가 우연히 이미 dense 하고 충돌이 없다. 결함이 실제로 드러나는 것은 **뒤로 보내기**(`List order = [a b c], want [b c a]`)와 중간 삽입(중복 `1,1,2`)이다. 테스트는 여섯 방향을 다 고정하므로 이 교정이 커버리지를 줄이지는 않는다.
+- 확신 없는 곳: ① **0-based 선택의 외부 근거는 과제서뿐이다** — Mattermost 원본 스펙을 이 세션에서도 열어 확인하지 못했다(네트워크로 스펙을 가져오지 않았다). 웹에 이 엔드포인트 호출자가 없고 `List` 가 상대 순서만 노출하므로 관찰 가능한 회귀는 없다고 보지만, 1-based 가 옳다면 `positions[i] = i` 한 줄이 바꿀 자리다. ② 트랜잭션의 **동시성** 주장은 코드와 주석으로만 근거를 댔다 — 두 재배열을 실제로 경쟁시키는 테스트는 쓰지 않았다(격리 수준이 기본 read committed 이므로 두 트랜잭션이 같은 행을 쓰면 뒤가 블록되지만, 읽기-쓰기 사이에 끼어든 `Create` 는 여전히 재배열 밖의 1-based 값을 남길 수 있다). ③ `update_at` 은 이제 재배열에 포함된 **모든** 행이 bump 된다(위치가 안 바뀐 행도). 과제서가 의도된 변화로 지정했고 테스트는 다른 채널·소프트삭제 행만 unchanged 로 고정한다.
+- 일부러 하지 않은 것: `Patch` 의 `sort_order` 직접 설정 경로(여전히 중복을 만들 수 있다 — ideas.json 에 pending), `Create` 의 `MAX+1` 1-based 채번, 핸들러(`late.go:1239-1276`)와 그 `ok, _ := IsMember` 403 위장, 차선 후보였던 `postsByIDsReactions`. 전부 범위 확대 금지 지시대로 뺐다.
+- 다음 역할이 조심할 것: **새 테스트는 DB 가 있어야 돈다.** `MOYRO_TEST_POSTGRES_DSN` 없이는 `t.Skipf` 이므로 빠른 `ok` 를 통과로 읽지 말고 `-v` 로 skip 0 을 확인할 것. 컨테이너 `moyro-pg-improve`(55433)는 `Exited (255)` 였어서 `docker start` + `pg_isready` 폴링이 필요했다(기동에 ~9초). 같은 포트를 쓰는 `moyro-pg-55433`(Created) 와 동시에 띄우지 말 것. DSN 은 자식 프로세스 환경에만 줬고 출력·커밋·문서에 남기지 않았다.
+- 검증: `go test -race -p 1 -count=1 ./...` exit 0 / 51 패키지 ok / FAIL 0(httpapi 63.364s, bookmarks 4.078s — 둘 다 실제 DB), `go build ./...`·`go vet ./...` exit 0, `gofmt -l internal/bookmarks` 무출력, `git diff --check` clean, `check-source-sizes.sh` exit 0. 웹 검증은 webapp 미변경으로 미실행.
+- [러너 15:00] brief accepted — 채택 — 근거가 현재 코드와 정확히 일치했다(`:186-199` 의 단일 UPDATE 와 거짓 주석, `List` 의 `create_at` 타이브레이크, `sidebar
+- [러너 15:01] verify passed — 검증 2개 통과 (policy)
