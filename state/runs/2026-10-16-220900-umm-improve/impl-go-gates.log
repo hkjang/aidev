@@ -1,0 +1,43 @@
+### go test -p 1 ./... -count=1 (POSTGRES_DSN set)
+ok  	github.com/hkjang/umm/cmd/umm	0.005s
+ok  	github.com/hkjang/umm/internal/analytics	0.003s
+ok  	github.com/hkjang/umm/internal/auth	0.452s
+ok  	github.com/hkjang/umm/internal/config	0.003s
+ok  	github.com/hkjang/umm/internal/cryptoutil	0.002s
+ok  	github.com/hkjang/umm/internal/dream	4.774s
+ok  	github.com/hkjang/umm/internal/httpapi	32.259s
+ok  	github.com/hkjang/umm/internal/intelligence	0.280s
+ok  	github.com/hkjang/umm/internal/mcp	0.696s
+ok  	github.com/hkjang/umm/internal/observability	0.004s
+ok  	github.com/hkjang/umm/internal/presentation	0.037s
+ok  	github.com/hkjang/umm/internal/realtime	1.057s
+ok  	github.com/hkjang/umm/internal/store	50.150s
+ok  	github.com/hkjang/umm/internal/textutil	0.002s
+ok  	github.com/hkjang/umm/internal/webhook	0.835s
+?   	github.com/hkjang/umm/migrations	[no test files]
+GO_TEST_EXIT=0
+### go test -race -count=1 ./internal/intelligence
+ok  	github.com/hkjang/umm/internal/intelligence	5.757s
+RACE_EXIT=0
+### embedding quality report
+=== RUN   TestOfflineDefaultRanksVocabularyAboveMeaning
+    quality_test.go:111: offline default scores vocabulary 0.443 above meaning 0.193 (gap 0.250)
+--- PASS: TestOfflineDefaultRanksVocabularyAboveMeaning (0.00s)
+=== RUN   TestRelatedThoughtThresholdMissesParaphrases
+    quality_test.go:144: of 8 paraphrases: 2 reach the related bar (0.22), 1 reach the cluster bar (0.34)
+    quality_test.go:146: of 6 lexical decoys: 5 reach the cluster bar and would be grouped as one topic
+--- PASS: TestRelatedThoughtThresholdMissesParaphrases (0.00s)
+=== RUN   TestGatewayEmbeddingQuality
+    quality_test.go:169: set UMM_EMBEDDING_TEST_URL and UMM_EMBEDDING_TEST_MODEL to compare a candidate model
+--- SKIP: TestGatewayEmbeddingQuality (0.00s)
+=== RUN   TestSemanticPairsAreWellFormed
+    quality_test.go:242: dataset: 22 pairs (lexical-decoy=6, paraphrase=8, related=4, unrelated=4)
+--- PASS: TestSemanticPairsAreWellFormed (0.00s)
+=== RUN   TestQualityTopicsAreWellFormed
+    quality_test.go:270: dataset: 4 topics, 16 sentences
+--- PASS: TestQualityTopicsAreWellFormed (0.00s)
+=== RUN   TestQualityBarsNormalize
+--- PASS: TestQualityBarsNormalize (0.00s)
+PASS
+ok  	github.com/hkjang/umm/internal/intelligence	0.005s
+REPORT_EXIT=0

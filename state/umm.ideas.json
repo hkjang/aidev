@@ -1,11 +1,38 @@
 [
   {
-    "title": "edge-vocabulary.ts 의 라벨 12개와 relationOptions 를 실제 타입·translate·en.ts 로 못 박기",
-    "value": 2,
+    "title": "수정 과제 — PR #172 의 CI 를 두 번 떨어뜨린 게이트를 특정해 고치기 (govulncheck)",
+    "value": 5,
     "risk": 1,
     "size": "S",
     "status": "done",
-    "note": "a5959a5 — web/src/lib/edge-vocabulary.test.ts 한 파일만 추가(프로덕션 0파일), 24파일/260시험(기준선 23/252). 드리프트 망은 추측이 아니라 드릴로 확인: api.ts:86 에 'echoes' 를 임시로 더하면 typecheck 가 TS2741 로 시험 파일(20,7)을 가리켜 EXIT=1, 두 Record 를 채워 typecheck 를 만족시킨 뒤에도 Set 비교 시험이 relationOptions 를 가리켜 실패. relationOptions 를 읽는 자리는 피커(CanvasPage.tsx:2392) 외에 저장값 검증(:353)도 있어 새 관계는 related 로 되쓰여진다. 재구현 금지.",
+    "note": "1단계에서 멈췄다. 실패 게이트는 ci.yml:68 govulncheck 이고 main@745dcf3 에서 exit status 3 / EXIT=1 로 재현. 원인은 두 갈래 — x/net@v0.57.0 의 HTTP/2 묶음(GO-2026-6617·-6612·-6611·-6610·-6603, 호출 경로 internal/presentation·internal/dream·internal/observability)과 go.mod:8 toolchain go1.26.7 이 고르는 표준 라이브러리 12건. 고침 go.mod+go.sum 두 파일(x/net v0.60.0 + toolchain go1.26.9, 둘 다 최소 패치). 되돌리면 같은 12개 ID 재실패. 커밋 13b7e00. npm audit 는 found 0 vulnerabilities 로 원인 아님을 실행으로 배제.",
+    "updated": "2026-10-16"
+  },
+  {
+    "title": "Dockerfile 이 golang:1.26.7-alpine 를 고정해 릴리즈 이미지에 표준 라이브러리 권고 12건이 남는다",
+    "value": 5,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "이번 회차가 실행으로 발견. go.mod 의 toolchain go1.26.9 는 CI 게이트를 초록으로 만들지만 릴리즈 이미지에는 도달하지 않는다 — 공식 golang 이미지가 GOTOOLCHAIN=local 을 설정하기 때문(docker run --rm golang:1.26.7-alpine go env GOTOOLCHAIN -> local 로 확인). 추측이 아니라 이미지에서 바이너리를 꺼내 go version /app/umm -> go1.26.7 로 확인했다(x/net v0.60.0 은 바이너리에 실제로 들어갔다). 고침은 Dockerfile:9 를 golang:1.26.9-alpine 로 한 줄 — 이번 회차에는 보호 경로라 못 건드렸다. 착수하면 docker build 로 끝까지 확인하고 꺼낸 바이너리의 go version 을 증거로 붙일 것. go.mod toolchain 과 Dockerfile 이 지금 드리프트 상태라는 점도 함께 적을 것.",
+    "updated": "2026-10-16"
+  },
+  {
+    "title": "format 에도 설치 가드 한 줄 (preformat)",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "이번 차선 후보였고 쓰지 않았다. web/package.json:20 format=prettier --write src 에 preformat 이 없어 미설치 체크아웃에서 이름 없는 exit 127 로 죽는다(typecheck/lint/build/dev/preview/e2e 는 이미 node scripts/require-installed.mjs 로 닫혀 있음). 소스를 쓰는 명령이므로 실제 src 에 돌리지 말고 web/scripts/require-installed.test.mjs 의 기존 fixture 방식으로만 재현할 것. 미설치 실패 문구·종료코드는 이번에도 실행 미확인.",
+    "updated": "2026-10-16"
+  },
+  {
+    "title": "설치 누락 문장이 run-on-supported-node.mjs 와 require-installed.mjs 두 파일에 있고 둘이 어긋나도 아무 시험이 잡지 못한다",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "통합하지 말고(운영자 규칙 3번) 실제 두 프로세스를 띄워 문장 일치만 단언. 소스 문자열 검사는 근거로 쓰지 말 것(운영자 규칙 5번). 이번 범위 밖.",
     "updated": "2026-10-16"
   },
   {
@@ -13,8 +40,8 @@
     "value": 2,
     "risk": 1,
     "size": "S",
-    "note": "이번 회차에 grep -rn 'isInferred' web/src web/e2e 로 확인 — edge-vocabulary.ts:34 의 정의 1건뿐이고 호출부 0건. 추천 연결(origin='auto')을 캔버스에서 다르게 보여 주는 자리에 배선하거나 지우는 두 방향이 있는데, 어느 쪽인지는 PostItNode/CanvasPage 의 추천 표시 경로를 먼저 읽어야 한다. 이번에는 프로덕션 0파일 제약 때문에 여섯 origin 전수 계약만 고정했다.",
     "status": "pending",
+    "note": "2026-10-16 회차에 grep 으로 정의 1건·호출 0건 확인. a5959a5 의 새 시험이 여섯 origin 전수 계약을 고정해 두었으므로 배선/삭제 어느 쪽이든 그 시험이 망이 된다. PostItNode/CanvasPage 의 추천 표시 경로를 먼저 읽어야 방향이 정해짐.",
     "updated": "2026-10-16"
   },
   {
@@ -22,71 +49,17 @@
     "value": 2,
     "risk": 2,
     "size": "S",
-    "note": "이번 회차에 실제로 부딪힘: 집합 비교를 [...a].sort() 로 쓰면 oxlint 가 unicorn(no-array-sort) 경고 2건을 내고, 그 권고대로 toSorted() 를 쓰면 tsc 가 'error TS2550 … Try changing the lib compiler option to es2023 or later' 로 거부한다. 지금은 new Set(...) 비교로 피했다. lib 를 올리는 것은 빌드 설정 변경이라 S 지만 위험 2 — 올리기 전에 Dockerfile/engines 의 Node 하한이 그 내장 메서드를 실제로 갖는지(Node 20+ 는 가짐) 확인하고 build 까지 돌릴 것. 대안은 oxlint 에서 그 규칙만 끄는 것인데 그건 느슨하게 만드는 방향이라 선호하지 않는다.",
     "status": "pending",
+    "note": "2026-10-16 회차에 실제로 부딪힘(unicorn/no-array-sort 경고 2건 vs error TS2550). 지금은 new Set(...) 비교로 회피. lib 를 es2023 으로 올리기 전에 Dockerfile/engines 의 Node 하한 확인 + build 까지 돌릴 것. oxlint 규칙 끄기는 느슨하게 만드는 방향이라 비선호.",
     "updated": "2026-10-16"
   },
   {
-    "title": "e2e·dev·preview 도 설치 없이는 이름 없는 exit 127 로 죽는다",
-    "value": 2,
-    "risk": 1,
-    "size": "S",
-    "status": "done",
-    "note": "c719700 이 main@745dcf3 에 머지됨. web/package.json:10,26,27 에 predev·pree2e·prepreview 가 실제로 존재함을 읽어 확인. 재구현 금지.",
-    "updated": "2026-10-16"
-  },
-  {
-    "title": "CI Go vulnerability scan 을 막는 x/text GO-2026-6629 해소",
-    "value": 5,
-    "risk": 1,
-    "size": "S",
-    "status": "done",
-    "note": "go.mod:42 가 golang.org/x/text v0.41.0 (indirect). c53a678/81a8b5e 로 main 에 반영됨.",
-    "updated": "2026-10-16"
-  },
-  {
-    "title": "설치 누락 문장이 두 파일(run-on-supported-node / require-installed)에 있고 둘이 어긋나도 아무 시험이 잡지 못한다",
-    "value": 2,
-    "risk": 1,
-    "size": "S",
-    "status": "pending",
-    "note": "두 파일 존재는 package.json 의 호출로 재확인(run-on-supported-node.mjs 는 test*, require-installed.mjs 는 나머지 7개). 통합하지 말고 실제 두 프로세스를 띄워 문장 일치만 단언하는 시험이어야 함(운영자 규칙 3번). 이번 범위 밖.",
-    "updated": "2026-10-16"
-  },
-  {
-    "title": "format 명령도 설치 누락을 기존 가드로 안내하기 (preformat 한 줄)",
-    "value": 2,
-    "risk": 1,
-    "size": "S",
-    "status": "pending",
-    "note": "이번 회차 차선 후보. web/package.json:20 format=prettier --write src, preformat 없음을 읽어 확인. 미설치 실패 문구/종료코드는 실행 미확인. 소스를 쓰는 명령이므로 fixture 로만 재현할 것.",
-    "updated": "2026-10-16"
-  },
-  {
-    "title": "AppLayout 의 My Space·Dreams 가 한국어 UI 에서도 영어로 뜨고 같은 화면을 CanvasPage 는 내 공간 이라 부른다",
+    "title": "AppLayout 의 My Space·Dreams 가 한국어 UI 에서도 영어로 뜬다",
     "value": 3,
     "risk": 3,
     "size": "M",
     "status": "pending",
-    "note": "AppLayout.tsx:61-62 의 영어 리터럴 키와 en.ts:14-15 의 동일 매핑, en.ts:34 '내 공간'→'My space' 를 읽어 재확인. 막는 것은 :273 의 t(label).split(' ')[0] — 모바일은 첫 단어만 쓰므로 '내 공간' 은 '내' 한 글자가 된다. 단순 키 교체는 하지 말 것. Dreams 는 제품 기능명이라 번역 대상이 아닐 수 있음(en.ts 전반이 'Dream' 을 그대로 씀). 짧은 라벨 설계가 선행되어야 해 M.",
-    "updated": "2026-10-16"
-  },
-  {
-    "title": "make test-go 가 CI 의 Go 게이트 다섯 개 중 두 개만 돌린다",
-    "value": 3,
-    "risk": 1,
-    "size": "S",
-    "status": "pending",
-    "note": "Makefile:7-9 는 여전히 go vet ./... + go test ./... 두 줄임을 읽어 재확인 — fa91965 는 main 에 들어오지 않았다. 다만 이 과제서는 2026-10-06 에 verify-failed 로 끝났으므로 같은 방식의 재제출을 피한다.",
-    "updated": "2026-10-16"
-  },
-  {
-    "title": "Node 하한이 engines·ci.yml·Dockerfile 세 곳에 따로 적혀 있고 드리프트 검사가 없다",
-    "value": 2,
-    "risk": 2,
-    "size": "S",
-    "status": "pending",
-    "note": "web/package.json:6 engines ^22.22.2 || ^24.15.0 재확인. ci.yml·Dockerfile 은 이번 미열람. 실제 불일치 증거 없고 보호 경로(workflows·Dockerfile) 확장이라 보류.",
+    "note": "AppLayout.tsx:273 의 t(label).split(' ')[0] 때문에 '내 공간'->'내' 가 됨. 짧은 라벨 설계가 선행돼야 해 M. Dreams 는 제품명이라 번역 대상이 아닐 수 있음(a5959a5 가 dream origin 의 미번역을 의도된 계약으로 고정).",
     "updated": "2026-10-16"
   },
   {
@@ -95,16 +68,25 @@
     "risk": 2,
     "size": "M",
     "status": "pending",
-    "note": "격리 DB 컨테이너와 스크립트 환경이 필요해 S 가 아니다. Makefile 에 migrate-dry-run 타깃은 있음(:1 의 .PHONY). 이번 범위 밖.",
+    "note": "ci.yml:72-110 에 migrate-dry-run·graph-migration-drill·integration-smoke·multi-instance-smoke·restore-smoke 등 11단계. 격리 DB 컨테이너 ID·스크립트 환경이 필요해 S 가 아니다. test-go 쪽 같은 논거가 2026-10-06 에 verify-failed 한 전력이 있어 당장은 보류.",
     "updated": "2026-10-16"
   },
   {
-    "title": "파일 이름 새니타이즈 네 곳(Go)의 계약 차이가 content_disposition.go 주석과 어긋난다",
+    "title": "make test-go 가 CI 의 Go 게이트 다섯 개 중 두 개만 돌린다",
+    "value": 3,
+    "risk": 1,
+    "size": "S",
+    "status": "rejected",
+    "note": "Makefile:7-9 는 여전히 두 줄이지만 2026-10-06 에 같은 방식으로 verify-failed 했고 운영자 규칙 1번(반려·회귀된 접근 재제출 금지)에 걸린다. 같은 방식 재제출 금지. 이번 회차 과제서도 Makefile 을 손대지 말라고 명시했다.",
+    "updated": "2026-10-16"
+  },
+  {
+    "title": "Node 하한이 engines·ci.yml·Dockerfile 세 곳에 따로 적혀 있고 드리프트 검사가 없다",
     "value": 2,
     "risk": 2,
     "size": "S",
     "status": "pending",
-    "note": "이번 정찰에서 Go 다운로드 경로는 열지 않았음. PR #167 되돌림 이력이 있는 영역과 인접하므로 통합 방향 접근은 금지.",
+    "note": "ci.yml:41 node-version: 24, web/package.json:6 engines ^22.22.2 || ^24.15.0, Dockerfile:2 node:24-alpine(이번에 직접 확인). 실제 불일치 증거는 아직 없다. 다만 이번 회차에서 go.mod toolchain 과 Dockerfile 의 Go 핀이 실제로 드리프트를 냈으므로 같은 계열 위험이 가설이 아님이 확인됐다 — 위 Dockerfile 항목과 함께 다루면 근거가 생긴다.",
     "updated": "2026-10-16"
   },
   {
@@ -113,7 +95,7 @@
     "risk": 2,
     "size": "S",
     "status": "pending",
-    "note": "이번 정찰에서 outline.go 는 열지 않았음(headings.go 의 usableHeading 은 존재 확인). 이전 verify-failed 접근이므로 같은 방식 재선택 금지.",
+    "note": "outline.go 는 이번에도 열지 않았음. 2026-10-06 verify-failed 접근이라 같은 방식 재선택 금지. 마크다운 파서 통합 금지(운영자 규칙 3번) — 좁히는 방향으로만.",
     "updated": "2026-10-16"
   },
   {
@@ -122,7 +104,7 @@
     "risk": 2,
     "size": "M",
     "status": "pending",
-    "note": "서버·브라우저 준비가 필요해 재현 비용이 크다. 이번 미확인, 보류 유지.",
+    "note": "서버·브라우저 준비가 필요해 재현 비용이 크다. 이번 미확인.",
     "updated": "2026-10-16"
   },
   {
@@ -140,7 +122,7 @@
     "risk": 1,
     "size": "S",
     "status": "pending",
-    "note": "가치가 가장 낮아 계속 밀림. 이번 정찰에서 docs/README.md 재확인하지 않았음.",
+    "note": "2026-10-09 정찰이 남긴 후보. 이번 미확인.",
     "updated": "2026-10-16"
   }
 ]

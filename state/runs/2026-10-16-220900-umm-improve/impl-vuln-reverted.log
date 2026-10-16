@@ -1,0 +1,980 @@
+### COMMAND: go run golang.org/x/vuln/cmd/govulncheck@latest ./...
+### TREE: fix diff reverted (git checkout -- go.mod go.sum)
+### go version in use:
+go version go1.26.7 linux/amd64
+### DATE: 2026-10-16T22:16:42+09:00
+=== Symbol Results ===
+
+Vulnerability #1: GO-2026-6617
+    HTTP/2 server crash due to HPACK encoder race in net/http
+  More info: https://pkg.go.dev/vuln/GO-2026-6617
+  Module: golang.org/x/net
+    Found in: golang.org/x/net@v0.57.0
+    Fixed in: golang.org/x/net@v0.60.0
+    Example traces found:
+      #1: internal/presentation/service.go:548:86: presentation.Service.Retry calls http2.ConnectionError.Error
+      #2: internal/observability/observability.go:112:14: observability.Registry.Prometheus calls fmt.Fprintln, which eventually calls http2.ErrCode.String
+      #3: internal/observability/observability.go:112:14: observability.Registry.Prometheus calls fmt.Fprintln, which eventually calls http2.FrameHeader.String
+      #4: internal/observability/observability.go:112:14: observability.Registry.Prometheus calls fmt.Fprintln, which eventually calls http2.FrameType.String
+      #5: internal/dream/service.go:135:11: dream.Service.Start calls sync.Once.Do, which eventually calls http2.Framer.ReadFrame
+      #6: internal/dream/service.go:135:11: dream.Service.Start calls sync.Once.Do, which eventually calls http2.Framer.ReadFrameForHeader
+      #7: internal/dream/service.go:135:11: dream.Service.Start calls sync.Once.Do, which eventually calls http2.Framer.ReadFrameHeader
+      #8: internal/dream/service.go:135:11: dream.Service.Start calls sync.Once.Do, which eventually calls http2.Framer.WriteContinuation
+      #9: internal/dream/service.go:135:11: dream.Service.Start calls sync.Once.Do, which eventually calls http2.Framer.WriteGoAway
+      #10: internal/dream/service.go:135:11: dream.Service.Start calls sync.Once.Do, which eventually calls http2.Framer.WriteHeaders
+      #11: internal/dream/service.go:135:11: dream.Service.Start calls sync.Once.Do, which eventually calls http2.Framer.WritePing
+      #12: internal/dream/service.go:135:11: dream.Service.Start calls sync.Once.Do, which eventually calls http2.Framer.WriteRSTStream
+      #13: internal/dream/service.go:135:11: dream.Service.Start calls sync.Once.Do, which eventually calls http2.Framer.WriteSettings
+      #14: internal/dream/service.go:135:11: dream.Service.Start calls sync.Once.Do, which eventually calls http2.Framer.WriteSettingsAck
+      #15: internal/dream/service.go:135:11: dream.Service.Start calls sync.Once.Do, which eventually calls http2.Framer.WriteWindowUpdate
+      #16: internal/presentation/service.go:548:86: presentation.Service.Retry calls http2.GoAwayError.Error
+      #17: internal/observability/observability.go:112:14: observability.Registry.Prometheus calls fmt.Fprintln, which eventually calls http2.Setting.String
+      #18: internal/observability/observability.go:112:14: observability.Registry.Prometheus calls fmt.Fprintln, which eventually calls http2.SettingID.String
+      #19: internal/dream/service.go:135:11: dream.Service.Start calls sync.Once.Do, which eventually calls http2.SettingsFrame.ForeachSetting
+      #20: internal/presentation/service.go:548:86: presentation.Service.Retry calls http2.StreamError.Error
+      #21: internal/dream/service.go:963:14: dream.Service.Assist calls fmt.Fprintf, which eventually calls http2.bufferedWriterTimeoutWriter.Write
+      #22: internal/dream/service.go:963:14: dream.Service.Assist calls fmt.Fprintf, which eventually calls http2.chunkWriter.Write
+      #23: internal/presentation/service.go:548:86: presentation.Service.Retry calls http2.connError.Error
+      #24: internal/presentation/service.go:548:86: presentation.Service.Retry calls pgconn.ConnectError.Error, which eventually calls http2.duplicatePseudoHeaderError.Error
+      #25: internal/dream/agent.go:316:2: dream.Service.callAgentTurn calls http2.gzipReader.Close
+      #26: internal/presentation/ptium.go:211:28: presentation.Client.do calls io.ReadAll, which calls http2.gzipReader.Read
+      #27: internal/presentation/service.go:548:86: presentation.Service.Retry calls pgconn.ConnectError.Error, which eventually calls http2.headerFieldNameError.Error
+      #28: internal/presentation/service.go:548:86: presentation.Service.Retry calls pgconn.ConnectError.Error, which eventually calls http2.headerFieldValueError.Error
+      #29: internal/presentation/service.go:548:86: presentation.Service.Retry calls pgconn.ConnectError.Error, which eventually calls http2.pseudoHeaderError.Error
+      #30: internal/dream/service.go:963:14: dream.Service.Assist calls fmt.Fprintf, which eventually calls http2.stickyErrWriter.Write
+      #31: internal/dream/agent.go:316:2: dream.Service.callAgentTurn calls http2.transportResponseBody.Close
+      #32: internal/presentation/ptium.go:211:28: presentation.Client.do calls io.ReadAll, which calls http2.transportResponseBody.Read
+      #33: internal/observability/observability.go:112:14: observability.Registry.Prometheus calls fmt.Fprintln, which eventually calls http2.writeData.String
+
+  Standard library
+    Found in: net/http@go1.26.7
+    Fixed in: net/http@go1.26.9
+    Example traces found:
+      #1: internal/httpapi/reliability_middleware.go:21:2: httpapi.init calls middleware.init, which calls http.CanonicalHeaderKey
+      #2: internal/httpapi/reliability_middleware.go:21:2: httpapi.init calls middleware.init, which calls http.CanonicalHeaderKey
+      #3: internal/dream/agent.go:312:28: dream.Service.callAgentTurn calls http.Client.Do
+      #4: internal/dream/agent.go:312:28: dream.Service.callAgentTurn calls http.Client.Do
+      #5: internal/httpapi/reliability_middleware.go:21:2: httpapi.init calls middleware.init, which eventually calls http.HandleFunc
+      #6: internal/httpapi/reliability_middleware.go:21:2: httpapi.init calls middleware.init, which eventually calls http.HandleFunc
+      #7: internal/mcp/handler.go:151:16: mcp.Handler.ServeHTTP calls middleware.compressResponseWriter.WriteHeader, which calls http.Header.Add
+      #8: internal/mcp/handler.go:151:16: mcp.Handler.ServeHTTP calls middleware.compressResponseWriter.WriteHeader, which calls http.Header.Add
+      #9: internal/mcp/handler.go:151:16: mcp.Handler.ServeHTTP calls middleware.compressResponseWriter.WriteHeader, which calls http.Header.Del
+      #10: internal/mcp/handler.go:151:16: mcp.Handler.ServeHTTP calls middleware.compressResponseWriter.WriteHeader, which calls http.Header.Del
+      #11: internal/auth/oidc.go:340:58: auth.ClearSessionCookie calls http.Header.Get
+      #12: internal/auth/oidc.go:340:58: auth.ClearSessionCookie calls http.Header.Get
+      #13: internal/mcp/handler.go:137:16: mcp.Handler.ServeHTTP calls http.Header.Set
+      #14: internal/mcp/handler.go:137:16: mcp.Handler.ServeHTTP calls http.Header.Set
+      #15: internal/auth/oidc.go:85:35: auth.OIDCService.discovery calls oidc.NewProvider, which calls http.NewRequest
+      #16: internal/auth/oidc.go:85:35: auth.OIDCService.discovery calls oidc.NewProvider, which calls http.NewRequest
+      #17: internal/dream/agent.go:303:44: dream.Service.callAgentTurn calls http.NewRequestWithContext
+      #18: internal/dream/agent.go:303:44: dream.Service.callAgentTurn calls http.NewRequestWithContext
+      #19: internal/mcp/handler.go:64:16: mcp.Handler.ServeResourceMetadata calls http.NotFound
+      #20: internal/mcp/handler.go:64:16: mcp.Handler.ServeResourceMetadata calls http.NotFound
+      #21: internal/observability/observability.go:181:61: observability.Init calls trace.WithBatcher, which eventually calls http.ParseTime
+      #22: internal/observability/observability.go:181:61: observability.Init calls trace.WithBatcher, which eventually calls http.ParseTime
+      #23: internal/dream/service.go:135:11: dream.Service.Start calls sync.Once.Do, which eventually calls http.ReadResponse
+      #24: internal/dream/service.go:135:11: dream.Service.Start calls sync.Once.Do, which eventually calls http.ReadResponse
+      #25: internal/auth/oidc.go:255:17: auth.OIDCService.Callback calls http.Redirect
+      #26: internal/auth/oidc.go:255:17: auth.OIDCService.Callback calls http.Redirect
+      #27: internal/auth/auth.go:226:25: auth.Service.Authenticate calls http.Request.Cookie
+      #28: internal/auth/auth.go:226:25: auth.Service.Authenticate calls http.Request.Cookie
+      #29: internal/auth/oidc.go:277:28: auth.OIDCService.Callback calls oauth2.Config.Exchange, which eventually calls http.Request.SetBasicAuth
+      #30: internal/auth/oidc.go:277:28: auth.OIDCService.Callback calls oauth2.Config.Exchange, which eventually calls http.Request.SetBasicAuth
+      #31: internal/auth/auth.go:91:39: auth.OriginOf calls http.Request.UserAgent
+      #32: internal/auth/auth.go:91:39: auth.OriginOf calls http.Request.UserAgent
+      #33: internal/dream/service.go:135:11: dream.Service.Start calls sync.Once.Do, which eventually calls http.Request.Write
+      #34: internal/dream/service.go:135:11: dream.Service.Start calls sync.Once.Do, which eventually calls http.Request.Write
+      #35: internal/dream/service.go:135:11: dream.Service.Start calls sync.Once.Do, which eventually calls http.Response.Write
+      #36: internal/dream/service.go:135:11: dream.Service.Start calls sync.Once.Do, which eventually calls http.Response.Write
+      #37: cmd/umm/main.go:94:38: umm.main calls http.Server.ListenAndServe
+      #38: cmd/umm/main.go:94:38: umm.main calls http.Server.ListenAndServe
+      #39: cmd/umm/main.go:102:31: umm.main calls http.Server.Shutdown
+      #40: cmd/umm/main.go:102:31: umm.main calls http.Server.Shutdown
+      #41: internal/auth/oidc.go:341:16: auth.ClearSessionCookie calls http.SetCookie
+      #42: internal/auth/oidc.go:341:16: auth.ClearSessionCookie calls http.SetCookie
+      #43: internal/observability/observability.go:168:36: observability.Init calls otlptracehttp.New, which eventually calls http.Transport.Clone
+      #44: internal/observability/observability.go:168:36: observability.Init calls otlptracehttp.New, which eventually calls http.Transport.Clone
+      #45: internal/dream/agent.go:316:2: dream.Service.callAgentTurn calls http.body.Close
+      #46: internal/dream/agent.go:316:2: dream.Service.callAgentTurn calls http.body.Close
+      #47: internal/presentation/ptium.go:211:28: presentation.Client.do calls io.ReadAll, which calls http.body.Read
+      #48: internal/presentation/ptium.go:211:28: presentation.Client.do calls io.ReadAll, which calls http.body.Read
+      #49: internal/dream/agent.go:316:2: dream.Service.callAgentTurn calls http.bodyEOFSignal.Close
+      #50: internal/dream/agent.go:316:2: dream.Service.callAgentTurn calls http.bodyEOFSignal.Close
+      #51: internal/presentation/ptium.go:211:28: presentation.Client.do calls io.ReadAll, which calls http.bodyEOFSignal.Read
+      #52: internal/presentation/ptium.go:211:28: presentation.Client.do calls io.ReadAll, which calls http.bodyEOFSignal.Read
+      #53: internal/webhook/service.go:366:18: webhook.Service.deliverClaimedWithSlot calls io.Copy, which eventually calls http.bodyLocked.Read
+      #54: internal/webhook/service.go:366:18: webhook.Service.deliverClaimedWithSlot calls io.Copy, which eventually calls http.bodyLocked.Read
+      #55: internal/webhook/service.go:366:18: webhook.Service.deliverClaimedWithSlot calls io.Copy, which eventually calls http.bufioFlushWriter.Write
+      #56: internal/webhook/service.go:366:18: webhook.Service.deliverClaimedWithSlot calls io.Copy, which eventually calls http.bufioFlushWriter.Write
+      #57: internal/dream/agent.go:316:2: dream.Service.callAgentTurn calls http.cancelTimerBody.Close
+      #58: internal/dream/agent.go:316:2: dream.Service.callAgentTurn calls http.cancelTimerBody.Close
+      #59: internal/presentation/ptium.go:211:28: presentation.Client.do calls io.ReadAll, which calls http.cancelTimerBody.Read
+      #60: internal/presentation/ptium.go:211:28: presentation.Client.do calls io.ReadAll, which calls http.cancelTimerBody.Read
+      #61: internal/dream/service.go:963:14: dream.Service.Assist calls fmt.Fprintf, which eventually calls http.checkConnErrorWriter.Write
+      #62: internal/dream/service.go:963:14: dream.Service.Assist calls fmt.Fprintf, which eventually calls http.checkConnErrorWriter.Write
+      #63: internal/dream/service.go:963:14: dream.Service.Assist calls fmt.Fprintf, which eventually calls http.chunkWriter.Write
+      #64: internal/dream/service.go:963:14: dream.Service.Assist calls fmt.Fprintf, which eventually calls http.chunkWriter.Write
+      #65: internal/webhook/service.go:366:18: webhook.Service.deliverClaimedWithSlot calls io.Copy, which eventually calls http.connReader.Read
+      #66: internal/webhook/service.go:366:18: webhook.Service.deliverClaimedWithSlot calls io.Copy, which eventually calls http.connReader.Read
+      #67: internal/dream/agent.go:316:2: dream.Service.callAgentTurn calls http2.transportResponseBody.Close, which eventually calls http.expectContinueReader.Close
+      #68: internal/dream/agent.go:316:2: dream.Service.callAgentTurn calls http2.transportResponseBody.Close, which eventually calls http.expectContinueReader.Close
+      #69: internal/presentation/ptium.go:211:28: presentation.Client.do calls io.ReadAll, which calls http.expectContinueReader.Read
+      #70: internal/presentation/ptium.go:211:28: presentation.Client.do calls io.ReadAll, which calls http.expectContinueReader.Read
+      #71: internal/dream/agent.go:316:2: dream.Service.callAgentTurn calls http.gzipReader.Close
+      #72: internal/dream/agent.go:316:2: dream.Service.callAgentTurn calls http.gzipReader.Close
+      #73: internal/presentation/ptium.go:211:28: presentation.Client.do calls io.ReadAll, which calls http.gzipReader.Read
+      #74: internal/presentation/ptium.go:211:28: presentation.Client.do calls io.ReadAll, which calls http.gzipReader.Read
+      #75: internal/presentation/service.go:548:86: presentation.Service.Retry calls http.http2ConnectionError.Error
+      #76: internal/presentation/service.go:548:86: presentation.Service.Retry calls http.http2ConnectionError.Error
+      #77: internal/observability/observability.go:112:14: observability.Registry.Prometheus calls fmt.Fprintln, which eventually calls http.http2ErrCode.String
+      #78: internal/observability/observability.go:112:14: observability.Registry.Prometheus calls fmt.Fprintln, which eventually calls http.http2ErrCode.String
+      #79: internal/observability/observability.go:112:14: observability.Registry.Prometheus calls fmt.Fprintln, which eventually calls http.http2FrameHeader.String
+      #80: internal/observability/observability.go:112:14: observability.Registry.Prometheus calls fmt.Fprintln, which eventually calls http.http2FrameHeader.String
+      #81: internal/observability/observability.go:112:14: observability.Registry.Prometheus calls fmt.Fprintln, which eventually calls http.http2FrameType.String
+      #82: internal/observability/observability.go:112:14: observability.Registry.Prometheus calls fmt.Fprintln, which eventually calls http.http2FrameType.String
+      #83: internal/observability/observability.go:112:14: observability.Registry.Prometheus calls fmt.Fprintln, which eventually calls http.http2FrameWriteRequest.String
+      #84: internal/observability/observability.go:112:14: observability.Registry.Prometheus calls fmt.Fprintln, which eventually calls http.http2FrameWriteRequest.String
+      #85: internal/presentation/service.go:548:86: presentation.Service.Retry calls http.http2GoAwayError.Error
+      #86: internal/presentation/service.go:548:86: presentation.Service.Retry calls http.http2GoAwayError.Error
+      #87: internal/observability/observability.go:112:14: observability.Registry.Prometheus calls fmt.Fprintln, which eventually calls http.http2Setting.String
+      #88: internal/observability/observability.go:112:14: observability.Registry.Prometheus calls fmt.Fprintln, which eventually calls http.http2Setting.String
+      #89: internal/observability/observability.go:112:14: observability.Registry.Prometheus calls fmt.Fprintln, which eventually calls http.http2SettingID.String
+      #90: internal/observability/observability.go:112:14: observability.Registry.Prometheus calls fmt.Fprintln, which eventually calls http.http2SettingID.String
+      #91: internal/presentation/service.go:548:86: presentation.Service.Retry calls http.http2StreamError.Error
+      #92: internal/presentation/service.go:548:86: presentation.Service.Retry calls http.http2StreamError.Error
+      #93: internal/dream/service.go:963:14: dream.Service.Assist calls fmt.Fprintf, which eventually calls http.http2bufferedWriterTimeoutWriter.Write
+      #94: internal/dream/service.go:963:14: dream.Service.Assist calls fmt.Fprintf, which eventually calls http.http2bufferedWriterTimeoutWriter.Write
+      #95: internal/dream/service.go:963:14: dream.Service.Assist calls fmt.Fprintf, which eventually calls http.http2chunkWriter.Write
+      #96: internal/dream/service.go:963:14: dream.Service.Assist calls fmt.Fprintf, which eventually calls http.http2chunkWriter.Write
+      #97: internal/presentation/service.go:548:86: presentation.Service.Retry calls http.http2connError.Error
+      #98: internal/presentation/service.go:548:86: presentation.Service.Retry calls http.http2connError.Error
+      #99: internal/presentation/service.go:548:86: presentation.Service.Retry calls http.http2duplicatePseudoHeaderError.Error
+      #100: internal/presentation/service.go:548:86: presentation.Service.Retry calls http.http2duplicatePseudoHeaderError.Error
+      #101: internal/dream/agent.go:316:2: dream.Service.callAgentTurn calls http.http2gzipReader.Close
+      #102: internal/dream/agent.go:316:2: dream.Service.callAgentTurn calls http.http2gzipReader.Close
+      #103: internal/presentation/ptium.go:211:28: presentation.Client.do calls io.ReadAll, which calls http.http2gzipReader.Read
+      #104: internal/presentation/ptium.go:211:28: presentation.Client.do calls io.ReadAll, which calls http.http2gzipReader.Read
+      #105: internal/presentation/service.go:548:86: presentation.Service.Retry calls http.http2headerFieldNameError.Error
+      #106: internal/presentation/service.go:548:86: presentation.Service.Retry calls http.http2headerFieldNameError.Error
+      #107: internal/presentation/service.go:548:86: presentation.Service.Retry calls http.http2headerFieldValueError.Error
+      #108: internal/presentation/service.go:548:86: presentation.Service.Retry calls http.http2headerFieldValueError.Error
+      #109: internal/presentation/service.go:548:86: presentation.Service.Retry calls http.http2pseudoHeaderError.Error
+      #110: internal/presentation/service.go:548:86: presentation.Service.Retry calls http.http2pseudoHeaderError.Error
+      #111: internal/dream/agent.go:316:2: dream.Service.callAgentTurn calls http2.transportResponseBody.Close, which eventually calls http.http2requestBody.Close
+      #112: internal/dream/agent.go:316:2: dream.Service.callAgentTurn calls http2.transportResponseBody.Close, which eventually calls http.http2requestBody.Close
+      #113: internal/presentation/ptium.go:211:28: presentation.Client.do calls io.ReadAll, which calls http.http2requestBody.Read
+      #114: internal/presentation/ptium.go:211:28: presentation.Client.do calls io.ReadAll, which calls http.http2requestBody.Read
+      #115: internal/observability/observability.go:112:14: observability.Registry.Prometheus calls fmt.Fprintln, which calls http.http2responseWriter.Write
+      #116: internal/observability/observability.go:112:14: observability.Registry.Prometheus calls fmt.Fprintln, which calls http.http2responseWriter.Write
+      #117: internal/mcp/handler.go:151:16: mcp.Handler.ServeHTTP calls http.http2responseWriter.WriteHeader
+      #118: internal/mcp/handler.go:151:16: mcp.Handler.ServeHTTP calls http.http2responseWriter.WriteHeader
+      #119: internal/webhook/service.go:366:18: webhook.Service.deliverClaimedWithSlot calls io.Copy, which eventually calls http.http2responseWriter.WriteString
+      #120: internal/webhook/service.go:366:18: webhook.Service.deliverClaimedWithSlot calls io.Copy, which eventually calls http.http2responseWriter.WriteString
+      #121: internal/dream/service.go:963:14: dream.Service.Assist calls fmt.Fprintf, which eventually calls http.http2stickyErrWriter.Write
+      #122: internal/dream/service.go:963:14: dream.Service.Assist calls fmt.Fprintf, which eventually calls http.http2stickyErrWriter.Write
+      #123: internal/dream/agent.go:316:2: dream.Service.callAgentTurn calls http.http2transportResponseBody.Close
+      #124: internal/dream/agent.go:316:2: dream.Service.callAgentTurn calls http.http2transportResponseBody.Close
+      #125: internal/presentation/ptium.go:211:28: presentation.Client.do calls io.ReadAll, which calls http.http2transportResponseBody.Read
+      #126: internal/presentation/ptium.go:211:28: presentation.Client.do calls io.ReadAll, which calls http.http2transportResponseBody.Read
+      #127: internal/observability/observability.go:112:14: observability.Registry.Prometheus calls fmt.Fprintln, which eventually calls http.http2writeData.String
+      #128: internal/observability/observability.go:112:14: observability.Registry.Prometheus calls fmt.Fprintln, which eventually calls http.http2writeData.String
+      #129: internal/cryptoutil/cipher.go:58:26: cryptoutil.Cipher.Encrypt calls io.ReadFull, which eventually calls http.loggingConn.Read
+      #130: internal/cryptoutil/cipher.go:58:26: cryptoutil.Cipher.Encrypt calls io.ReadFull, which eventually calls http.loggingConn.Read
+      #131: internal/dream/service.go:963:14: dream.Service.Assist calls fmt.Fprintf, which calls http.loggingConn.Write
+      #132: internal/dream/service.go:963:14: dream.Service.Assist calls fmt.Fprintf, which calls http.loggingConn.Write
+      #133: internal/dream/agent.go:316:2: dream.Service.callAgentTurn calls http2.transportResponseBody.Close, which eventually calls http.maxBytesReader.Close
+      #134: internal/dream/agent.go:316:2: dream.Service.callAgentTurn calls http2.transportResponseBody.Close, which eventually calls http.maxBytesReader.Close
+      #135: internal/presentation/ptium.go:211:28: presentation.Client.do calls io.ReadAll, which calls http.maxBytesReader.Read
+      #136: internal/presentation/ptium.go:211:28: presentation.Client.do calls io.ReadAll, which calls http.maxBytesReader.Read
+      #137: internal/dream/service.go:135:11: dream.Service.Start calls sync.Once.Do, which eventually calls http.onceCloseListener.Close
+      #138: internal/dream/service.go:135:11: dream.Service.Start calls sync.Once.Do, which eventually calls http.onceCloseListener.Close
+      #139: internal/webhook/service.go:366:18: webhook.Service.deliverClaimedWithSlot calls io.Copy, which eventually calls http.persistConn.Read
+      #140: internal/webhook/service.go:366:18: webhook.Service.deliverClaimedWithSlot calls io.Copy, which eventually calls http.persistConn.Read
+      #141: internal/webhook/service.go:366:18: webhook.Service.deliverClaimedWithSlot calls io.Copy, which eventually calls http.persistConnWriter.ReadFrom
+      #142: internal/webhook/service.go:366:18: webhook.Service.deliverClaimedWithSlot calls io.Copy, which eventually calls http.persistConnWriter.ReadFrom
+      #143: internal/dream/service.go:963:14: dream.Service.Assist calls fmt.Fprintf, which eventually calls http.persistConnWriter.Write
+      #144: internal/dream/service.go:963:14: dream.Service.Assist calls fmt.Fprintf, which eventually calls http.persistConnWriter.Write
+      #145: internal/dream/agent.go:316:2: dream.Service.callAgentTurn calls http2.transportResponseBody.Close, which eventually calls http.readTrackingBody.Close
+      #146: internal/dream/agent.go:316:2: dream.Service.callAgentTurn calls http2.transportResponseBody.Close, which eventually calls http.readTrackingBody.Close
+      #147: internal/presentation/ptium.go:211:28: presentation.Client.do calls io.ReadAll, which calls http.readTrackingBody.Read
+      #148: internal/presentation/ptium.go:211:28: presentation.Client.do calls io.ReadAll, which calls http.readTrackingBody.Read
+      #149: internal/presentation/ptium.go:211:28: presentation.Client.do calls io.ReadAll, which calls http.readWriteCloserBody.Read
+      #150: internal/presentation/ptium.go:211:28: presentation.Client.do calls io.ReadAll, which calls http.readWriteCloserBody.Read
+      #151: internal/webhook/service.go:366:18: webhook.Service.deliverClaimedWithSlot calls io.Copy, which eventually calls http.response.ReadFrom
+      #152: internal/webhook/service.go:366:18: webhook.Service.deliverClaimedWithSlot calls io.Copy, which eventually calls http.response.ReadFrom
+      #153: internal/observability/observability.go:112:14: observability.Registry.Prometheus calls fmt.Fprintln, which calls http.response.Write
+      #154: internal/observability/observability.go:112:14: observability.Registry.Prometheus calls fmt.Fprintln, which calls http.response.Write
+      #155: internal/mcp/handler.go:151:16: mcp.Handler.ServeHTTP calls http.response.WriteHeader
+      #156: internal/mcp/handler.go:151:16: mcp.Handler.ServeHTTP calls http.response.WriteHeader
+      #157: internal/webhook/service.go:366:18: webhook.Service.deliverClaimedWithSlot calls io.Copy, which eventually calls http.response.WriteString
+      #158: internal/webhook/service.go:366:18: webhook.Service.deliverClaimedWithSlot calls io.Copy, which eventually calls http.response.WriteString
+      #159: internal/presentation/service.go:548:86: presentation.Service.Retry calls http.transportReadFromServerError.Error
+      #160: internal/presentation/service.go:548:86: presentation.Service.Retry calls http.transportReadFromServerError.Error
+
+Vulnerability #2: GO-2026-6613
+    HTTP/1 server connection desynchronization after 2xx CONNECT response in
+    net/http
+  More info: https://pkg.go.dev/vuln/GO-2026-6613
+  Standard library
+    Found in: net/http@go1.26.7
+    Fixed in: net/http@go1.26.9
+    Example traces found:
+      #1: internal/httpapi/reliability_middleware.go:21:2: httpapi.init calls middleware.init, which calls http.CanonicalHeaderKey
+      #2: internal/dream/agent.go:312:28: dream.Service.callAgentTurn calls http.Client.Do
+      #3: internal/httpapi/reliability_middleware.go:21:2: httpapi.init calls middleware.init, which eventually calls http.HandleFunc
+      #4: internal/mcp/handler.go:151:16: mcp.Handler.ServeHTTP calls middleware.compressResponseWriter.WriteHeader, which calls http.Header.Add
+      #5: internal/mcp/handler.go:151:16: mcp.Handler.ServeHTTP calls middleware.compressResponseWriter.WriteHeader, which calls http.Header.Del
+      #6: internal/auth/oidc.go:340:58: auth.ClearSessionCookie calls http.Header.Get
+      #7: internal/mcp/handler.go:137:16: mcp.Handler.ServeHTTP calls http.Header.Set
+      #8: internal/auth/oidc.go:85:35: auth.OIDCService.discovery calls oidc.NewProvider, which calls http.NewRequest
+      #9: internal/dream/agent.go:303:44: dream.Service.callAgentTurn calls http.NewRequestWithContext
+      #10: internal/mcp/handler.go:64:16: mcp.Handler.ServeResourceMetadata calls http.NotFound
+      #11: internal/observability/observability.go:181:61: observability.Init calls trace.WithBatcher, which eventually calls http.ParseTime
+      #12: internal/dream/service.go:135:11: dream.Service.Start calls sync.Once.Do, which eventually calls http.ReadResponse
+      #13: internal/auth/oidc.go:255:17: auth.OIDCService.Callback calls http.Redirect
+      #14: internal/auth/auth.go:226:25: auth.Service.Authenticate calls http.Request.Cookie
+      #15: internal/auth/oidc.go:277:28: auth.OIDCService.Callback calls oauth2.Config.Exchange, which eventually calls http.Request.SetBasicAuth
+      #16: internal/auth/auth.go:91:39: auth.OriginOf calls http.Request.UserAgent
+      #17: internal/dream/service.go:135:11: dream.Service.Start calls sync.Once.Do, which eventually calls http.Request.Write
+      #18: internal/dream/service.go:135:11: dream.Service.Start calls sync.Once.Do, which eventually calls http.Response.Write
+      #19: cmd/umm/main.go:94:38: umm.main calls http.Server.ListenAndServe
+      #20: cmd/umm/main.go:102:31: umm.main calls http.Server.Shutdown
+      #21: internal/auth/oidc.go:341:16: auth.ClearSessionCookie calls http.SetCookie
+      #22: internal/observability/observability.go:168:36: observability.Init calls otlptracehttp.New, which eventually calls http.Transport.Clone
+      #23: internal/dream/agent.go:316:2: dream.Service.callAgentTurn calls http.body.Close
+      #24: internal/presentation/ptium.go:211:28: presentation.Client.do calls io.ReadAll, which calls http.body.Read
+      #25: internal/dream/agent.go:316:2: dream.Service.callAgentTurn calls http.bodyEOFSignal.Close
+      #26: internal/presentation/ptium.go:211:28: presentation.Client.do calls io.ReadAll, which calls http.bodyEOFSignal.Read
+      #27: internal/webhook/service.go:366:18: webhook.Service.deliverClaimedWithSlot calls io.Copy, which eventually calls http.bodyLocked.Read
+      #28: internal/webhook/service.go:366:18: webhook.Service.deliverClaimedWithSlot calls io.Copy, which eventually calls http.bufioFlushWriter.Write
+      #29: internal/dream/agent.go:316:2: dream.Service.callAgentTurn calls http.cancelTimerBody.Close
+      #30: internal/presentation/ptium.go:211:28: presentation.Client.do calls io.ReadAll, which calls http.cancelTimerBody.Read
+      #31: internal/dream/service.go:963:14: dream.Service.Assist calls fmt.Fprintf, which eventually calls http.checkConnErrorWriter.Write
+      #32: internal/dream/service.go:963:14: dream.Service.Assist calls fmt.Fprintf, which eventually calls http.chunkWriter.Write
+      #33: internal/webhook/service.go:366:18: webhook.Service.deliverClaimedWithSlot calls io.Copy, which eventually calls http.connReader.Read
+      #34: internal/dream/agent.go:316:2: dream.Service.callAgentTurn calls http2.transportResponseBody.Close, which eventually calls http.expectContinueReader.Close
+      #35: internal/presentation/ptium.go:211:28: presentation.Client.do calls io.ReadAll, which calls http.expectContinueReader.Read
+      #36: internal/dream/agent.go:316:2: dream.Service.callAgentTurn calls http.gzipReader.Close
+      #37: internal/presentation/ptium.go:211:28: presentation.Client.do calls io.ReadAll, which calls http.gzipReader.Read
+      #38: internal/cryptoutil/cipher.go:58:26: cryptoutil.Cipher.Encrypt calls io.ReadFull, which eventually calls http.loggingConn.Read
+      #39: internal/dream/service.go:963:14: dream.Service.Assist calls fmt.Fprintf, which calls http.loggingConn.Write
+      #40: internal/dream/agent.go:316:2: dream.Service.callAgentTurn calls http2.transportResponseBody.Close, which eventually calls http.maxBytesReader.Close
+      #41: internal/presentation/ptium.go:211:28: presentation.Client.do calls io.ReadAll, which calls http.maxBytesReader.Read
+      #42: internal/dream/service.go:135:11: dream.Service.Start calls sync.Once.Do, which eventually calls http.onceCloseListener.Close
+      #43: internal/webhook/service.go:366:18: webhook.Service.deliverClaimedWithSlot calls io.Copy, which eventually calls http.persistConn.Read
+      #44: internal/webhook/service.go:366:18: webhook.Service.deliverClaimedWithSlot calls io.Copy, which eventually calls http.persistConnWriter.ReadFrom
+      #45: internal/dream/service.go:963:14: dream.Service.Assist calls fmt.Fprintf, which eventually calls http.persistConnWriter.Write
+      #46: internal/dream/agent.go:316:2: dream.Service.callAgentTurn calls http2.transportResponseBody.Close, which eventually calls http.readTrackingBody.Close
+      #47: internal/presentation/ptium.go:211:28: presentation.Client.do calls io.ReadAll, which calls http.readTrackingBody.Read
+      #48: internal/presentation/ptium.go:211:28: presentation.Client.do calls io.ReadAll, which calls http.readWriteCloserBody.Read
+      #49: internal/webhook/service.go:366:18: webhook.Service.deliverClaimedWithSlot calls io.Copy, which eventually calls http.response.ReadFrom
+      #50: internal/observability/observability.go:112:14: observability.Registry.Prometheus calls fmt.Fprintln, which calls http.response.Write
+      #51: internal/mcp/handler.go:151:16: mcp.Handler.ServeHTTP calls http.response.WriteHeader
+      #52: internal/observability/observability.go:112:14: observability.Registry.Prometheus calls fmt.Fprintln, which eventually calls http.response.WriteString
+      #53: internal/presentation/service.go:548:86: presentation.Service.Retry calls http.transportReadFromServerError.Error
+
+Vulnerability #3: GO-2026-6612
+    Double flow control refund on HTTP/2 server streams in net/http
+  More info: https://pkg.go.dev/vuln/GO-2026-6612
+  Module: golang.org/x/net
+    Found in: golang.org/x/net@v0.57.0
+    Fixed in: golang.org/x/net@v0.60.0
+    Example traces found:
+      #1: internal/presentation/service.go:548:86: presentation.Service.Retry calls http2.ConnectionError.Error
+      #2: internal/observability/observability.go:112:14: observability.Registry.Prometheus calls fmt.Fprintln, which eventually calls http2.ErrCode.String
+      #3: internal/observability/observability.go:112:14: observability.Registry.Prometheus calls fmt.Fprintln, which eventually calls http2.FrameHeader.String
+      #4: internal/observability/observability.go:112:14: observability.Registry.Prometheus calls fmt.Fprintln, which eventually calls http2.FrameType.String
+      #5: internal/dream/service.go:135:11: dream.Service.Start calls sync.Once.Do, which eventually calls http2.Framer.ReadFrame
+      #6: internal/dream/service.go:135:11: dream.Service.Start calls sync.Once.Do, which eventually calls http2.Framer.ReadFrameForHeader
+      #7: internal/dream/service.go:135:11: dream.Service.Start calls sync.Once.Do, which eventually calls http2.Framer.ReadFrameHeader
+      #8: internal/dream/service.go:135:11: dream.Service.Start calls sync.Once.Do, which eventually calls http2.Framer.WriteContinuation
+      #9: internal/dream/service.go:135:11: dream.Service.Start calls sync.Once.Do, which eventually calls http2.Framer.WriteGoAway
+      #10: internal/dream/service.go:135:11: dream.Service.Start calls sync.Once.Do, which eventually calls http2.Framer.WriteHeaders
+      #11: internal/dream/service.go:135:11: dream.Service.Start calls sync.Once.Do, which eventually calls http2.Framer.WritePing
+      #12: internal/dream/service.go:135:11: dream.Service.Start calls sync.Once.Do, which eventually calls http2.Framer.WriteRSTStream
+      #13: internal/dream/service.go:135:11: dream.Service.Start calls sync.Once.Do, which eventually calls http2.Framer.WriteSettings
+      #14: internal/dream/service.go:135:11: dream.Service.Start calls sync.Once.Do, which eventually calls http2.Framer.WriteSettingsAck
+      #15: internal/dream/service.go:135:11: dream.Service.Start calls sync.Once.Do, which eventually calls http2.Framer.WriteWindowUpdate
+      #16: internal/presentation/service.go:548:86: presentation.Service.Retry calls http2.GoAwayError.Error
+      #17: internal/observability/observability.go:112:14: observability.Registry.Prometheus calls fmt.Fprintln, which eventually calls http2.Setting.String
+      #18: internal/observability/observability.go:112:14: observability.Registry.Prometheus calls fmt.Fprintln, which eventually calls http2.SettingID.String
+      #19: internal/dream/service.go:135:11: dream.Service.Start calls sync.Once.Do, which eventually calls http2.SettingsFrame.ForeachSetting
+      #20: internal/presentation/service.go:548:86: presentation.Service.Retry calls http2.StreamError.Error
+      #21: internal/dream/service.go:963:14: dream.Service.Assist calls fmt.Fprintf, which eventually calls http2.bufferedWriterTimeoutWriter.Write
+      #22: internal/dream/service.go:963:14: dream.Service.Assist calls fmt.Fprintf, which eventually calls http2.chunkWriter.Write
+      #23: internal/presentation/service.go:548:86: presentation.Service.Retry calls http2.connError.Error
+      #24: internal/presentation/service.go:548:86: presentation.Service.Retry calls pgconn.ConnectError.Error, which eventually calls http2.duplicatePseudoHeaderError.Error
+      #25: internal/dream/agent.go:316:2: dream.Service.callAgentTurn calls http2.gzipReader.Close
+      #26: internal/presentation/ptium.go:211:28: presentation.Client.do calls io.ReadAll, which calls http2.gzipReader.Read
+      #27: internal/presentation/service.go:548:86: presentation.Service.Retry calls pgconn.ConnectError.Error, which eventually calls http2.headerFieldNameError.Error
+      #28: internal/presentation/service.go:548:86: presentation.Service.Retry calls pgconn.ConnectError.Error, which eventually calls http2.headerFieldValueError.Error
+      #29: internal/presentation/service.go:548:86: presentation.Service.Retry calls pgconn.ConnectError.Error, which eventually calls http2.pseudoHeaderError.Error
+      #30: internal/dream/service.go:963:14: dream.Service.Assist calls fmt.Fprintf, which eventually calls http2.stickyErrWriter.Write
+      #31: internal/dream/agent.go:316:2: dream.Service.callAgentTurn calls http2.transportResponseBody.Close
+      #32: internal/presentation/ptium.go:211:28: presentation.Client.do calls io.ReadAll, which calls http2.transportResponseBody.Read
+      #33: internal/observability/observability.go:112:14: observability.Registry.Prometheus calls fmt.Fprintln, which eventually calls http2.writeData.String
+
+  Standard library
+    Found in: net/http@go1.26.7
+    Fixed in: net/http@go1.26.9
+    Example traces found:
+      #1: internal/httpapi/reliability_middleware.go:21:2: httpapi.init calls middleware.init, which calls http.CanonicalHeaderKey
+      #2: internal/httpapi/reliability_middleware.go:21:2: httpapi.init calls middleware.init, which calls http.CanonicalHeaderKey
+      #3: internal/dream/agent.go:312:28: dream.Service.callAgentTurn calls http.Client.Do
+      #4: internal/dream/agent.go:312:28: dream.Service.callAgentTurn calls http.Client.Do
+      #5: internal/httpapi/reliability_middleware.go:21:2: httpapi.init calls middleware.init, which eventually calls http.HandleFunc
+      #6: internal/httpapi/reliability_middleware.go:21:2: httpapi.init calls middleware.init, which eventually calls http.HandleFunc
+      #7: internal/mcp/handler.go:151:16: mcp.Handler.ServeHTTP calls middleware.compressResponseWriter.WriteHeader, which calls http.Header.Add
+      #8: internal/mcp/handler.go:151:16: mcp.Handler.ServeHTTP calls middleware.compressResponseWriter.WriteHeader, which calls http.Header.Add
+      #9: internal/mcp/handler.go:151:16: mcp.Handler.ServeHTTP calls middleware.compressResponseWriter.WriteHeader, which calls http.Header.Del
+      #10: internal/mcp/handler.go:151:16: mcp.Handler.ServeHTTP calls middleware.compressResponseWriter.WriteHeader, which calls http.Header.Del
+      #11: internal/auth/oidc.go:340:58: auth.ClearSessionCookie calls http.Header.Get
+      #12: internal/auth/oidc.go:340:58: auth.ClearSessionCookie calls http.Header.Get
+      #13: internal/mcp/handler.go:137:16: mcp.Handler.ServeHTTP calls http.Header.Set
+      #14: internal/mcp/handler.go:137:16: mcp.Handler.ServeHTTP calls http.Header.Set
+      #15: internal/auth/oidc.go:85:35: auth.OIDCService.discovery calls oidc.NewProvider, which calls http.NewRequest
+      #16: internal/auth/oidc.go:85:35: auth.OIDCService.discovery calls oidc.NewProvider, which calls http.NewRequest
+      #17: internal/dream/agent.go:303:44: dream.Service.callAgentTurn calls http.NewRequestWithContext
+      #18: internal/dream/agent.go:303:44: dream.Service.callAgentTurn calls http.NewRequestWithContext
+      #19: internal/mcp/handler.go:64:16: mcp.Handler.ServeResourceMetadata calls http.NotFound
+      #20: internal/mcp/handler.go:64:16: mcp.Handler.ServeResourceMetadata calls http.NotFound
+      #21: internal/observability/observability.go:181:61: observability.Init calls trace.WithBatcher, which eventually calls http.ParseTime
+      #22: internal/observability/observability.go:181:61: observability.Init calls trace.WithBatcher, which eventually calls http.ParseTime
+      #23: internal/dream/service.go:135:11: dream.Service.Start calls sync.Once.Do, which eventually calls http.ReadResponse
+      #24: internal/dream/service.go:135:11: dream.Service.Start calls sync.Once.Do, which eventually calls http.ReadResponse
+      #25: internal/auth/oidc.go:255:17: auth.OIDCService.Callback calls http.Redirect
+      #26: internal/auth/oidc.go:255:17: auth.OIDCService.Callback calls http.Redirect
+      #27: internal/auth/auth.go:226:25: auth.Service.Authenticate calls http.Request.Cookie
+      #28: internal/auth/auth.go:226:25: auth.Service.Authenticate calls http.Request.Cookie
+      #29: internal/auth/oidc.go:277:28: auth.OIDCService.Callback calls oauth2.Config.Exchange, which eventually calls http.Request.SetBasicAuth
+      #30: internal/auth/oidc.go:277:28: auth.OIDCService.Callback calls oauth2.Config.Exchange, which eventually calls http.Request.SetBasicAuth
+      #31: internal/auth/auth.go:91:39: auth.OriginOf calls http.Request.UserAgent
+      #32: internal/auth/auth.go:91:39: auth.OriginOf calls http.Request.UserAgent
+      #33: internal/dream/service.go:135:11: dream.Service.Start calls sync.Once.Do, which eventually calls http.Request.Write
+      #34: internal/dream/service.go:135:11: dream.Service.Start calls sync.Once.Do, which eventually calls http.Request.Write
+      #35: internal/dream/service.go:135:11: dream.Service.Start calls sync.Once.Do, which eventually calls http.Response.Write
+      #36: internal/dream/service.go:135:11: dream.Service.Start calls sync.Once.Do, which eventually calls http.Response.Write
+      #37: cmd/umm/main.go:94:38: umm.main calls http.Server.ListenAndServe
+      #38: cmd/umm/main.go:94:38: umm.main calls http.Server.ListenAndServe
+      #39: cmd/umm/main.go:102:31: umm.main calls http.Server.Shutdown
+      #40: cmd/umm/main.go:102:31: umm.main calls http.Server.Shutdown
+      #41: internal/auth/oidc.go:341:16: auth.ClearSessionCookie calls http.SetCookie
+      #42: internal/auth/oidc.go:341:16: auth.ClearSessionCookie calls http.SetCookie
+      #43: internal/observability/observability.go:168:36: observability.Init calls otlptracehttp.New, which eventually calls http.Transport.Clone
+      #44: internal/observability/observability.go:168:36: observability.Init calls otlptracehttp.New, which eventually calls http.Transport.Clone
+      #45: internal/dream/agent.go:316:2: dream.Service.callAgentTurn calls http.body.Close
+      #46: internal/dream/agent.go:316:2: dream.Service.callAgentTurn calls http.body.Close
+      #47: internal/presentation/ptium.go:211:28: presentation.Client.do calls io.ReadAll, which calls http.body.Read
+      #48: internal/presentation/ptium.go:211:28: presentation.Client.do calls io.ReadAll, which calls http.body.Read
+      #49: internal/dream/agent.go:316:2: dream.Service.callAgentTurn calls http.bodyEOFSignal.Close
+      #50: internal/dream/agent.go:316:2: dream.Service.callAgentTurn calls http.bodyEOFSignal.Close
+      #51: internal/presentation/ptium.go:211:28: presentation.Client.do calls io.ReadAll, which calls http.bodyEOFSignal.Read
+      #52: internal/presentation/ptium.go:211:28: presentation.Client.do calls io.ReadAll, which calls http.bodyEOFSignal.Read
+      #53: internal/webhook/service.go:366:18: webhook.Service.deliverClaimedWithSlot calls io.Copy, which eventually calls http.bodyLocked.Read
+      #54: internal/webhook/service.go:366:18: webhook.Service.deliverClaimedWithSlot calls io.Copy, which eventually calls http.bodyLocked.Read
+      #55: internal/webhook/service.go:366:18: webhook.Service.deliverClaimedWithSlot calls io.Copy, which eventually calls http.bufioFlushWriter.Write
+      #56: internal/webhook/service.go:366:18: webhook.Service.deliverClaimedWithSlot calls io.Copy, which eventually calls http.bufioFlushWriter.Write
+      #57: internal/dream/agent.go:316:2: dream.Service.callAgentTurn calls http.cancelTimerBody.Close
+      #58: internal/dream/agent.go:316:2: dream.Service.callAgentTurn calls http.cancelTimerBody.Close
+      #59: internal/presentation/ptium.go:211:28: presentation.Client.do calls io.ReadAll, which calls http.cancelTimerBody.Read
+      #60: internal/presentation/ptium.go:211:28: presentation.Client.do calls io.ReadAll, which calls http.cancelTimerBody.Read
+      #61: internal/dream/service.go:963:14: dream.Service.Assist calls fmt.Fprintf, which eventually calls http.checkConnErrorWriter.Write
+      #62: internal/dream/service.go:963:14: dream.Service.Assist calls fmt.Fprintf, which eventually calls http.checkConnErrorWriter.Write
+      #63: internal/dream/service.go:963:14: dream.Service.Assist calls fmt.Fprintf, which eventually calls http.chunkWriter.Write
+      #64: internal/dream/service.go:963:14: dream.Service.Assist calls fmt.Fprintf, which eventually calls http.chunkWriter.Write
+      #65: internal/webhook/service.go:366:18: webhook.Service.deliverClaimedWithSlot calls io.Copy, which eventually calls http.connReader.Read
+      #66: internal/webhook/service.go:366:18: webhook.Service.deliverClaimedWithSlot calls io.Copy, which eventually calls http.connReader.Read
+      #67: internal/dream/agent.go:316:2: dream.Service.callAgentTurn calls http2.transportResponseBody.Close, which eventually calls http.expectContinueReader.Close
+      #68: internal/dream/agent.go:316:2: dream.Service.callAgentTurn calls http2.transportResponseBody.Close, which eventually calls http.expectContinueReader.Close
+      #69: internal/presentation/ptium.go:211:28: presentation.Client.do calls io.ReadAll, which calls http.expectContinueReader.Read
+      #70: internal/presentation/ptium.go:211:28: presentation.Client.do calls io.ReadAll, which calls http.expectContinueReader.Read
+      #71: internal/dream/agent.go:316:2: dream.Service.callAgentTurn calls http.gzipReader.Close
+      #72: internal/dream/agent.go:316:2: dream.Service.callAgentTurn calls http.gzipReader.Close
+      #73: internal/presentation/ptium.go:211:28: presentation.Client.do calls io.ReadAll, which calls http.gzipReader.Read
+      #74: internal/presentation/ptium.go:211:28: presentation.Client.do calls io.ReadAll, which calls http.gzipReader.Read
+      #75: internal/presentation/service.go:548:86: presentation.Service.Retry calls http.http2ConnectionError.Error
+      #76: internal/presentation/service.go:548:86: presentation.Service.Retry calls http.http2ConnectionError.Error
+      #77: internal/observability/observability.go:112:14: observability.Registry.Prometheus calls fmt.Fprintln, which eventually calls http.http2ErrCode.String
+      #78: internal/observability/observability.go:112:14: observability.Registry.Prometheus calls fmt.Fprintln, which eventually calls http.http2ErrCode.String
+      #79: internal/observability/observability.go:112:14: observability.Registry.Prometheus calls fmt.Fprintln, which eventually calls http.http2FrameHeader.String
+      #80: internal/observability/observability.go:112:14: observability.Registry.Prometheus calls fmt.Fprintln, which eventually calls http.http2FrameHeader.String
+      #81: internal/observability/observability.go:112:14: observability.Registry.Prometheus calls fmt.Fprintln, which eventually calls http.http2FrameType.String
+      #82: internal/observability/observability.go:112:14: observability.Registry.Prometheus calls fmt.Fprintln, which eventually calls http.http2FrameType.String
+      #83: internal/observability/observability.go:112:14: observability.Registry.Prometheus calls fmt.Fprintln, which eventually calls http.http2FrameWriteRequest.String
+      #84: internal/observability/observability.go:112:14: observability.Registry.Prometheus calls fmt.Fprintln, which eventually calls http.http2FrameWriteRequest.String
+      #85: internal/presentation/service.go:548:86: presentation.Service.Retry calls http.http2GoAwayError.Error
+      #86: internal/presentation/service.go:548:86: presentation.Service.Retry calls http.http2GoAwayError.Error
+      #87: internal/observability/observability.go:112:14: observability.Registry.Prometheus calls fmt.Fprintln, which eventually calls http.http2Setting.String
+      #88: internal/observability/observability.go:112:14: observability.Registry.Prometheus calls fmt.Fprintln, which eventually calls http.http2Setting.String
+      #89: internal/observability/observability.go:112:14: observability.Registry.Prometheus calls fmt.Fprintln, which eventually calls http.http2SettingID.String
+      #90: internal/observability/observability.go:112:14: observability.Registry.Prometheus calls fmt.Fprintln, which eventually calls http.http2SettingID.String
+      #91: internal/presentation/service.go:548:86: presentation.Service.Retry calls http.http2StreamError.Error
+      #92: internal/presentation/service.go:548:86: presentation.Service.Retry calls http.http2StreamError.Error
+      #93: internal/dream/service.go:963:14: dream.Service.Assist calls fmt.Fprintf, which eventually calls http.http2bufferedWriterTimeoutWriter.Write
+      #94: internal/dream/service.go:963:14: dream.Service.Assist calls fmt.Fprintf, which eventually calls http.http2bufferedWriterTimeoutWriter.Write
+      #95: internal/dream/service.go:963:14: dream.Service.Assist calls fmt.Fprintf, which eventually calls http.http2chunkWriter.Write
+      #96: internal/dream/service.go:963:14: dream.Service.Assist calls fmt.Fprintf, which eventually calls http.http2chunkWriter.Write
+      #97: internal/presentation/service.go:548:86: presentation.Service.Retry calls http.http2connError.Error
+      #98: internal/presentation/service.go:548:86: presentation.Service.Retry calls http.http2connError.Error
+      #99: internal/presentation/service.go:548:86: presentation.Service.Retry calls http.http2duplicatePseudoHeaderError.Error
+      #100: internal/presentation/service.go:548:86: presentation.Service.Retry calls http.http2duplicatePseudoHeaderError.Error
+      #101: internal/dream/agent.go:316:2: dream.Service.callAgentTurn calls http.http2gzipReader.Close
+      #102: internal/dream/agent.go:316:2: dream.Service.callAgentTurn calls http.http2gzipReader.Close
+      #103: internal/presentation/ptium.go:211:28: presentation.Client.do calls io.ReadAll, which calls http.http2gzipReader.Read
+      #104: internal/presentation/ptium.go:211:28: presentation.Client.do calls io.ReadAll, which calls http.http2gzipReader.Read
+      #105: internal/presentation/service.go:548:86: presentation.Service.Retry calls http.http2headerFieldNameError.Error
+      #106: internal/presentation/service.go:548:86: presentation.Service.Retry calls http.http2headerFieldNameError.Error
+      #107: internal/presentation/service.go:548:86: presentation.Service.Retry calls http.http2headerFieldValueError.Error
+      #108: internal/presentation/service.go:548:86: presentation.Service.Retry calls http.http2headerFieldValueError.Error
+      #109: internal/presentation/service.go:548:86: presentation.Service.Retry calls http.http2pseudoHeaderError.Error
+      #110: internal/presentation/service.go:548:86: presentation.Service.Retry calls http.http2pseudoHeaderError.Error
+      #111: internal/dream/agent.go:316:2: dream.Service.callAgentTurn calls http2.transportResponseBody.Close, which eventually calls http.http2requestBody.Close
+      #112: internal/dream/agent.go:316:2: dream.Service.callAgentTurn calls http2.transportResponseBody.Close, which eventually calls http.http2requestBody.Close
+      #113: internal/presentation/ptium.go:211:28: presentation.Client.do calls io.ReadAll, which calls http.http2requestBody.Read
+      #114: internal/presentation/ptium.go:211:28: presentation.Client.do calls io.ReadAll, which calls http.http2requestBody.Read
+      #115: internal/observability/observability.go:112:14: observability.Registry.Prometheus calls fmt.Fprintln, which calls http.http2responseWriter.Write
+      #116: internal/observability/observability.go:112:14: observability.Registry.Prometheus calls fmt.Fprintln, which calls http.http2responseWriter.Write
+      #117: internal/mcp/handler.go:151:16: mcp.Handler.ServeHTTP calls http.http2responseWriter.WriteHeader
+      #118: internal/mcp/handler.go:151:16: mcp.Handler.ServeHTTP calls http.http2responseWriter.WriteHeader
+      #119: internal/webhook/service.go:366:18: webhook.Service.deliverClaimedWithSlot calls io.Copy, which eventually calls http.http2responseWriter.WriteString
+      #120: internal/webhook/service.go:366:18: webhook.Service.deliverClaimedWithSlot calls io.Copy, which eventually calls http.http2responseWriter.WriteString
+      #121: internal/dream/service.go:963:14: dream.Service.Assist calls fmt.Fprintf, which eventually calls http.http2stickyErrWriter.Write
+      #122: internal/dream/service.go:963:14: dream.Service.Assist calls fmt.Fprintf, which eventually calls http.http2stickyErrWriter.Write
+      #123: internal/dream/agent.go:316:2: dream.Service.callAgentTurn calls http.http2transportResponseBody.Close
+      #124: internal/dream/agent.go:316:2: dream.Service.callAgentTurn calls http.http2transportResponseBody.Close
+      #125: internal/presentation/ptium.go:211:28: presentation.Client.do calls io.ReadAll, which calls http.http2transportResponseBody.Read
+      #126: internal/presentation/ptium.go:211:28: presentation.Client.do calls io.ReadAll, which calls http.http2transportResponseBody.Read
+      #127: internal/observability/observability.go:112:14: observability.Registry.Prometheus calls fmt.Fprintln, which eventually calls http.http2writeData.String
+      #128: internal/observability/observability.go:112:14: observability.Registry.Prometheus calls fmt.Fprintln, which eventually calls http.http2writeData.String
+      #129: internal/cryptoutil/cipher.go:58:26: cryptoutil.Cipher.Encrypt calls io.ReadFull, which eventually calls http.loggingConn.Read
+      #130: internal/cryptoutil/cipher.go:58:26: cryptoutil.Cipher.Encrypt calls io.ReadFull, which eventually calls http.loggingConn.Read
+      #131: internal/dream/service.go:963:14: dream.Service.Assist calls fmt.Fprintf, which calls http.loggingConn.Write
+      #132: internal/dream/service.go:963:14: dream.Service.Assist calls fmt.Fprintf, which calls http.loggingConn.Write
+      #133: internal/dream/agent.go:316:2: dream.Service.callAgentTurn calls http2.transportResponseBody.Close, which eventually calls http.maxBytesReader.Close
+      #134: internal/dream/agent.go:316:2: dream.Service.callAgentTurn calls http2.transportResponseBody.Close, which eventually calls http.maxBytesReader.Close
+      #135: internal/presentation/ptium.go:211:28: presentation.Client.do calls io.ReadAll, which calls http.maxBytesReader.Read
+      #136: internal/presentation/ptium.go:211:28: presentation.Client.do calls io.ReadAll, which calls http.maxBytesReader.Read
+      #137: internal/dream/service.go:135:11: dream.Service.Start calls sync.Once.Do, which eventually calls http.onceCloseListener.Close
+      #138: internal/dream/service.go:135:11: dream.Service.Start calls sync.Once.Do, which eventually calls http.onceCloseListener.Close
+      #139: internal/webhook/service.go:366:18: webhook.Service.deliverClaimedWithSlot calls io.Copy, which eventually calls http.persistConn.Read
+      #140: internal/webhook/service.go:366:18: webhook.Service.deliverClaimedWithSlot calls io.Copy, which eventually calls http.persistConn.Read
+      #141: internal/webhook/service.go:366:18: webhook.Service.deliverClaimedWithSlot calls io.Copy, which eventually calls http.persistConnWriter.ReadFrom
+      #142: internal/webhook/service.go:366:18: webhook.Service.deliverClaimedWithSlot calls io.Copy, which eventually calls http.persistConnWriter.ReadFrom
+      #143: internal/dream/service.go:963:14: dream.Service.Assist calls fmt.Fprintf, which eventually calls http.persistConnWriter.Write
+      #144: internal/dream/service.go:963:14: dream.Service.Assist calls fmt.Fprintf, which eventually calls http.persistConnWriter.Write
+      #145: internal/dream/agent.go:316:2: dream.Service.callAgentTurn calls http2.transportResponseBody.Close, which eventually calls http.readTrackingBody.Close
+      #146: internal/dream/agent.go:316:2: dream.Service.callAgentTurn calls http2.transportResponseBody.Close, which eventually calls http.readTrackingBody.Close
+      #147: internal/presentation/ptium.go:211:28: presentation.Client.do calls io.ReadAll, which calls http.readTrackingBody.Read
+      #148: internal/presentation/ptium.go:211:28: presentation.Client.do calls io.ReadAll, which calls http.readTrackingBody.Read
+      #149: internal/presentation/ptium.go:211:28: presentation.Client.do calls io.ReadAll, which calls http.readWriteCloserBody.Read
+      #150: internal/presentation/ptium.go:211:28: presentation.Client.do calls io.ReadAll, which calls http.readWriteCloserBody.Read
+      #151: internal/webhook/service.go:366:18: webhook.Service.deliverClaimedWithSlot calls io.Copy, which eventually calls http.response.ReadFrom
+      #152: internal/webhook/service.go:366:18: webhook.Service.deliverClaimedWithSlot calls io.Copy, which eventually calls http.response.ReadFrom
+      #153: internal/observability/observability.go:112:14: observability.Registry.Prometheus calls fmt.Fprintln, which calls http.response.Write
+      #154: internal/observability/observability.go:112:14: observability.Registry.Prometheus calls fmt.Fprintln, which calls http.response.Write
+      #155: internal/mcp/handler.go:151:16: mcp.Handler.ServeHTTP calls http.response.WriteHeader
+      #156: internal/mcp/handler.go:151:16: mcp.Handler.ServeHTTP calls http.response.WriteHeader
+      #157: internal/webhook/service.go:366:18: webhook.Service.deliverClaimedWithSlot calls io.Copy, which eventually calls http.response.WriteString
+      #158: internal/webhook/service.go:366:18: webhook.Service.deliverClaimedWithSlot calls io.Copy, which eventually calls http.response.WriteString
+      #159: internal/presentation/service.go:548:86: presentation.Service.Retry calls http.transportReadFromServerError.Error
+      #160: internal/presentation/service.go:548:86: presentation.Service.Retry calls http.transportReadFromServerError.Error
+
+Vulnerability #4: GO-2026-6611
+    Excessive CPU consumption from repeated initial window changes in net/http
+  More info: https://pkg.go.dev/vuln/GO-2026-6611
+  Module: golang.org/x/net
+    Found in: golang.org/x/net@v0.57.0
+    Fixed in: golang.org/x/net@v0.60.0
+    Example traces found:
+      #1: internal/presentation/service.go:548:86: presentation.Service.Retry calls http2.ConnectionError.Error
+      #2: internal/observability/observability.go:112:14: observability.Registry.Prometheus calls fmt.Fprintln, which eventually calls http2.ErrCode.String
+      #3: internal/observability/observability.go:112:14: observability.Registry.Prometheus calls fmt.Fprintln, which eventually calls http2.FrameHeader.String
+      #4: internal/observability/observability.go:112:14: observability.Registry.Prometheus calls fmt.Fprintln, which eventually calls http2.FrameType.String
+      #5: internal/dream/service.go:135:11: dream.Service.Start calls sync.Once.Do, which eventually calls http2.Framer.ReadFrame
+      #6: internal/dream/service.go:135:11: dream.Service.Start calls sync.Once.Do, which eventually calls http2.Framer.ReadFrameForHeader
+      #7: internal/dream/service.go:135:11: dream.Service.Start calls sync.Once.Do, which eventually calls http2.Framer.ReadFrameHeader
+      #8: internal/dream/service.go:135:11: dream.Service.Start calls sync.Once.Do, which eventually calls http2.Framer.WriteContinuation
+      #9: internal/dream/service.go:135:11: dream.Service.Start calls sync.Once.Do, which eventually calls http2.Framer.WriteGoAway
+      #10: internal/dream/service.go:135:11: dream.Service.Start calls sync.Once.Do, which eventually calls http2.Framer.WriteHeaders
+      #11: internal/dream/service.go:135:11: dream.Service.Start calls sync.Once.Do, which eventually calls http2.Framer.WritePing
+      #12: internal/dream/service.go:135:11: dream.Service.Start calls sync.Once.Do, which eventually calls http2.Framer.WriteRSTStream
+      #13: internal/dream/service.go:135:11: dream.Service.Start calls sync.Once.Do, which eventually calls http2.Framer.WriteSettings
+      #14: internal/dream/service.go:135:11: dream.Service.Start calls sync.Once.Do, which eventually calls http2.Framer.WriteSettingsAck
+      #15: internal/dream/service.go:135:11: dream.Service.Start calls sync.Once.Do, which eventually calls http2.Framer.WriteWindowUpdate
+      #16: internal/presentation/service.go:548:86: presentation.Service.Retry calls http2.GoAwayError.Error
+      #17: internal/observability/observability.go:112:14: observability.Registry.Prometheus calls fmt.Fprintln, which eventually calls http2.Setting.String
+      #18: internal/observability/observability.go:112:14: observability.Registry.Prometheus calls fmt.Fprintln, which eventually calls http2.SettingID.String
+      #19: internal/dream/service.go:135:11: dream.Service.Start calls sync.Once.Do, which eventually calls http2.SettingsFrame.ForeachSetting
+      #20: internal/presentation/service.go:548:86: presentation.Service.Retry calls http2.StreamError.Error
+      #21: internal/dream/service.go:963:14: dream.Service.Assist calls fmt.Fprintf, which eventually calls http2.bufferedWriterTimeoutWriter.Write
+      #22: internal/dream/service.go:963:14: dream.Service.Assist calls fmt.Fprintf, which eventually calls http2.chunkWriter.Write
+      #23: internal/presentation/service.go:548:86: presentation.Service.Retry calls http2.connError.Error
+      #24: internal/presentation/service.go:548:86: presentation.Service.Retry calls pgconn.ConnectError.Error, which eventually calls http2.duplicatePseudoHeaderError.Error
+      #25: internal/dream/agent.go:316:2: dream.Service.callAgentTurn calls http2.gzipReader.Close
+      #26: internal/presentation/ptium.go:211:28: presentation.Client.do calls io.ReadAll, which calls http2.gzipReader.Read
+      #27: internal/presentation/service.go:548:86: presentation.Service.Retry calls pgconn.ConnectError.Error, which eventually calls http2.headerFieldNameError.Error
+      #28: internal/presentation/service.go:548:86: presentation.Service.Retry calls pgconn.ConnectError.Error, which eventually calls http2.headerFieldValueError.Error
+      #29: internal/presentation/service.go:548:86: presentation.Service.Retry calls pgconn.ConnectError.Error, which eventually calls http2.pseudoHeaderError.Error
+      #30: internal/dream/service.go:963:14: dream.Service.Assist calls fmt.Fprintf, which eventually calls http2.stickyErrWriter.Write
+      #31: internal/dream/agent.go:316:2: dream.Service.callAgentTurn calls http2.transportResponseBody.Close
+      #32: internal/presentation/ptium.go:211:28: presentation.Client.do calls io.ReadAll, which calls http2.transportResponseBody.Read
+      #33: internal/observability/observability.go:112:14: observability.Registry.Prometheus calls fmt.Fprintln, which eventually calls http2.writeData.String
+
+  Standard library
+    Found in: net/http@go1.26.7
+    Fixed in: net/http@go1.26.9
+    Example traces found:
+      #1: internal/httpapi/reliability_middleware.go:21:2: httpapi.init calls middleware.init, which calls http.CanonicalHeaderKey
+      #2: internal/httpapi/reliability_middleware.go:21:2: httpapi.init calls middleware.init, which calls http.CanonicalHeaderKey
+      #3: internal/dream/agent.go:312:28: dream.Service.callAgentTurn calls http.Client.Do
+      #4: internal/dream/agent.go:312:28: dream.Service.callAgentTurn calls http.Client.Do
+      #5: internal/httpapi/reliability_middleware.go:21:2: httpapi.init calls middleware.init, which eventually calls http.HandleFunc
+      #6: internal/httpapi/reliability_middleware.go:21:2: httpapi.init calls middleware.init, which eventually calls http.HandleFunc
+      #7: internal/mcp/handler.go:151:16: mcp.Handler.ServeHTTP calls middleware.compressResponseWriter.WriteHeader, which calls http.Header.Add
+      #8: internal/mcp/handler.go:151:16: mcp.Handler.ServeHTTP calls middleware.compressResponseWriter.WriteHeader, which calls http.Header.Add
+      #9: internal/mcp/handler.go:151:16: mcp.Handler.ServeHTTP calls middleware.compressResponseWriter.WriteHeader, which calls http.Header.Del
+      #10: internal/mcp/handler.go:151:16: mcp.Handler.ServeHTTP calls middleware.compressResponseWriter.WriteHeader, which calls http.Header.Del
+      #11: internal/auth/oidc.go:340:58: auth.ClearSessionCookie calls http.Header.Get
+      #12: internal/auth/oidc.go:340:58: auth.ClearSessionCookie calls http.Header.Get
+      #13: internal/mcp/handler.go:137:16: mcp.Handler.ServeHTTP calls http.Header.Set
+      #14: internal/mcp/handler.go:137:16: mcp.Handler.ServeHTTP calls http.Header.Set
+      #15: internal/auth/oidc.go:85:35: auth.OIDCService.discovery calls oidc.NewProvider, which calls http.NewRequest
+      #16: internal/auth/oidc.go:85:35: auth.OIDCService.discovery calls oidc.NewProvider, which calls http.NewRequest
+      #17: internal/dream/agent.go:303:44: dream.Service.callAgentTurn calls http.NewRequestWithContext
+      #18: internal/dream/agent.go:303:44: dream.Service.callAgentTurn calls http.NewRequestWithContext
+      #19: internal/mcp/handler.go:64:16: mcp.Handler.ServeResourceMetadata calls http.NotFound
+      #20: internal/mcp/handler.go:64:16: mcp.Handler.ServeResourceMetadata calls http.NotFound
+      #21: internal/observability/observability.go:181:61: observability.Init calls trace.WithBatcher, which eventually calls http.ParseTime
+      #22: internal/observability/observability.go:181:61: observability.Init calls trace.WithBatcher, which eventually calls http.ParseTime
+      #23: internal/dream/service.go:135:11: dream.Service.Start calls sync.Once.Do, which eventually calls http.ReadResponse
+      #24: internal/dream/service.go:135:11: dream.Service.Start calls sync.Once.Do, which eventually calls http.ReadResponse
+      #25: internal/auth/oidc.go:255:17: auth.OIDCService.Callback calls http.Redirect
+      #26: internal/auth/oidc.go:255:17: auth.OIDCService.Callback calls http.Redirect
+      #27: internal/auth/auth.go:226:25: auth.Service.Authenticate calls http.Request.Cookie
+      #28: internal/auth/auth.go:226:25: auth.Service.Authenticate calls http.Request.Cookie
+      #29: internal/auth/oidc.go:277:28: auth.OIDCService.Callback calls oauth2.Config.Exchange, which eventually calls http.Request.SetBasicAuth
+      #30: internal/auth/oidc.go:277:28: auth.OIDCService.Callback calls oauth2.Config.Exchange, which eventually calls http.Request.SetBasicAuth
+      #31: internal/auth/auth.go:91:39: auth.OriginOf calls http.Request.UserAgent
+      #32: internal/auth/auth.go:91:39: auth.OriginOf calls http.Request.UserAgent
+      #33: internal/dream/service.go:135:11: dream.Service.Start calls sync.Once.Do, which eventually calls http.Request.Write
+      #34: internal/dream/service.go:135:11: dream.Service.Start calls sync.Once.Do, which eventually calls http.Request.Write
+      #35: internal/dream/service.go:135:11: dream.Service.Start calls sync.Once.Do, which eventually calls http.Response.Write
+      #36: internal/dream/service.go:135:11: dream.Service.Start calls sync.Once.Do, which eventually calls http.Response.Write
+      #37: cmd/umm/main.go:94:38: umm.main calls http.Server.ListenAndServe
+      #38: cmd/umm/main.go:94:38: umm.main calls http.Server.ListenAndServe
+      #39: cmd/umm/main.go:102:31: umm.main calls http.Server.Shutdown
+      #40: cmd/umm/main.go:102:31: umm.main calls http.Server.Shutdown
+      #41: internal/auth/oidc.go:341:16: auth.ClearSessionCookie calls http.SetCookie
+      #42: internal/auth/oidc.go:341:16: auth.ClearSessionCookie calls http.SetCookie
+      #43: internal/observability/observability.go:168:36: observability.Init calls otlptracehttp.New, which eventually calls http.Transport.Clone
+      #44: internal/observability/observability.go:168:36: observability.Init calls otlptracehttp.New, which eventually calls http.Transport.Clone
+      #45: internal/dream/agent.go:316:2: dream.Service.callAgentTurn calls http.body.Close
+      #46: internal/dream/agent.go:316:2: dream.Service.callAgentTurn calls http.body.Close
+      #47: internal/presentation/ptium.go:211:28: presentation.Client.do calls io.ReadAll, which calls http.body.Read
+      #48: internal/presentation/ptium.go:211:28: presentation.Client.do calls io.ReadAll, which calls http.body.Read
+      #49: internal/dream/agent.go:316:2: dream.Service.callAgentTurn calls http.bodyEOFSignal.Close
+      #50: internal/dream/agent.go:316:2: dream.Service.callAgentTurn calls http.bodyEOFSignal.Close
+      #51: internal/presentation/ptium.go:211:28: presentation.Client.do calls io.ReadAll, which calls http.bodyEOFSignal.Read
+      #52: internal/presentation/ptium.go:211:28: presentation.Client.do calls io.ReadAll, which calls http.bodyEOFSignal.Read
+      #53: internal/webhook/service.go:366:18: webhook.Service.deliverClaimedWithSlot calls io.Copy, which eventually calls http.bodyLocked.Read
+      #54: internal/webhook/service.go:366:18: webhook.Service.deliverClaimedWithSlot calls io.Copy, which eventually calls http.bodyLocked.Read
+      #55: internal/webhook/service.go:366:18: webhook.Service.deliverClaimedWithSlot calls io.Copy, which eventually calls http.bufioFlushWriter.Write
+      #56: internal/webhook/service.go:366:18: webhook.Service.deliverClaimedWithSlot calls io.Copy, which eventually calls http.bufioFlushWriter.Write
+      #57: internal/dream/agent.go:316:2: dream.Service.callAgentTurn calls http.cancelTimerBody.Close
+      #58: internal/dream/agent.go:316:2: dream.Service.callAgentTurn calls http.cancelTimerBody.Close
+      #59: internal/presentation/ptium.go:211:28: presentation.Client.do calls io.ReadAll, which calls http.cancelTimerBody.Read
+      #60: internal/presentation/ptium.go:211:28: presentation.Client.do calls io.ReadAll, which calls http.cancelTimerBody.Read
+      #61: internal/dream/service.go:963:14: dream.Service.Assist calls fmt.Fprintf, which eventually calls http.checkConnErrorWriter.Write
+      #62: internal/dream/service.go:963:14: dream.Service.Assist calls fmt.Fprintf, which eventually calls http.checkConnErrorWriter.Write
+      #63: internal/dream/service.go:963:14: dream.Service.Assist calls fmt.Fprintf, which eventually calls http.chunkWriter.Write
+      #64: internal/dream/service.go:963:14: dream.Service.Assist calls fmt.Fprintf, which eventually calls http.chunkWriter.Write
+      #65: internal/webhook/service.go:366:18: webhook.Service.deliverClaimedWithSlot calls io.Copy, which eventually calls http.connReader.Read
+      #66: internal/webhook/service.go:366:18: webhook.Service.deliverClaimedWithSlot calls io.Copy, which eventually calls http.connReader.Read
+      #67: internal/dream/agent.go:316:2: dream.Service.callAgentTurn calls http2.transportResponseBody.Close, which eventually calls http.expectContinueReader.Close
+      #68: internal/dream/agent.go:316:2: dream.Service.callAgentTurn calls http2.transportResponseBody.Close, which eventually calls http.expectContinueReader.Close
+      #69: internal/presentation/ptium.go:211:28: presentation.Client.do calls io.ReadAll, which calls http.expectContinueReader.Read
+      #70: internal/presentation/ptium.go:211:28: presentation.Client.do calls io.ReadAll, which calls http.expectContinueReader.Read
+      #71: internal/dream/agent.go:316:2: dream.Service.callAgentTurn calls http.gzipReader.Close
+      #72: internal/dream/agent.go:316:2: dream.Service.callAgentTurn calls http.gzipReader.Close
+      #73: internal/presentation/ptium.go:211:28: presentation.Client.do calls io.ReadAll, which calls http.gzipReader.Read
+      #74: internal/presentation/ptium.go:211:28: presentation.Client.do calls io.ReadAll, which calls http.gzipReader.Read
+      #75: internal/presentation/service.go:548:86: presentation.Service.Retry calls http.http2ConnectionError.Error
+      #76: internal/presentation/service.go:548:86: presentation.Service.Retry calls http.http2ConnectionError.Error
+      #77: internal/observability/observability.go:112:14: observability.Registry.Prometheus calls fmt.Fprintln, which eventually calls http.http2ErrCode.String
+      #78: internal/observability/observability.go:112:14: observability.Registry.Prometheus calls fmt.Fprintln, which eventually calls http.http2ErrCode.String
+      #79: internal/observability/observability.go:112:14: observability.Registry.Prometheus calls fmt.Fprintln, which eventually calls http.http2FrameHeader.String
+      #80: internal/observability/observability.go:112:14: observability.Registry.Prometheus calls fmt.Fprintln, which eventually calls http.http2FrameHeader.String
+      #81: internal/observability/observability.go:112:14: observability.Registry.Prometheus calls fmt.Fprintln, which eventually calls http.http2FrameType.String
+      #82: internal/observability/observability.go:112:14: observability.Registry.Prometheus calls fmt.Fprintln, which eventually calls http.http2FrameType.String
+      #83: internal/observability/observability.go:112:14: observability.Registry.Prometheus calls fmt.Fprintln, which eventually calls http.http2FrameWriteRequest.String
+      #84: internal/observability/observability.go:112:14: observability.Registry.Prometheus calls fmt.Fprintln, which eventually calls http.http2FrameWriteRequest.String
+      #85: internal/presentation/service.go:548:86: presentation.Service.Retry calls http.http2GoAwayError.Error
+      #86: internal/presentation/service.go:548:86: presentation.Service.Retry calls http.http2GoAwayError.Error
+      #87: internal/observability/observability.go:112:14: observability.Registry.Prometheus calls fmt.Fprintln, which eventually calls http.http2Setting.String
+      #88: internal/observability/observability.go:112:14: observability.Registry.Prometheus calls fmt.Fprintln, which eventually calls http.http2Setting.String
+      #89: internal/observability/observability.go:112:14: observability.Registry.Prometheus calls fmt.Fprintln, which eventually calls http.http2SettingID.String
+      #90: internal/observability/observability.go:112:14: observability.Registry.Prometheus calls fmt.Fprintln, which eventually calls http.http2SettingID.String
+      #91: internal/presentation/service.go:548:86: presentation.Service.Retry calls http.http2StreamError.Error
+      #92: internal/presentation/service.go:548:86: presentation.Service.Retry calls http.http2StreamError.Error
+      #93: internal/dream/service.go:963:14: dream.Service.Assist calls fmt.Fprintf, which eventually calls http.http2bufferedWriterTimeoutWriter.Write
+      #94: internal/dream/service.go:963:14: dream.Service.Assist calls fmt.Fprintf, which eventually calls http.http2bufferedWriterTimeoutWriter.Write
+      #95: internal/dream/service.go:963:14: dream.Service.Assist calls fmt.Fprintf, which eventually calls http.http2chunkWriter.Write
+      #96: internal/dream/service.go:963:14: dream.Service.Assist calls fmt.Fprintf, which eventually calls http.http2chunkWriter.Write
+      #97: internal/presentation/service.go:548:86: presentation.Service.Retry calls http.http2connError.Error
+      #98: internal/presentation/service.go:548:86: presentation.Service.Retry calls http.http2connError.Error
+      #99: internal/presentation/service.go:548:86: presentation.Service.Retry calls http.http2duplicatePseudoHeaderError.Error
+      #100: internal/presentation/service.go:548:86: presentation.Service.Retry calls http.http2duplicatePseudoHeaderError.Error
+      #101: internal/dream/agent.go:316:2: dream.Service.callAgentTurn calls http.http2gzipReader.Close
+      #102: internal/dream/agent.go:316:2: dream.Service.callAgentTurn calls http.http2gzipReader.Close
+      #103: internal/presentation/ptium.go:211:28: presentation.Client.do calls io.ReadAll, which calls http.http2gzipReader.Read
+      #104: internal/presentation/ptium.go:211:28: presentation.Client.do calls io.ReadAll, which calls http.http2gzipReader.Read
+      #105: internal/presentation/service.go:548:86: presentation.Service.Retry calls http.http2headerFieldNameError.Error
+      #106: internal/presentation/service.go:548:86: presentation.Service.Retry calls http.http2headerFieldNameError.Error
+      #107: internal/presentation/service.go:548:86: presentation.Service.Retry calls http.http2headerFieldValueError.Error
+      #108: internal/presentation/service.go:548:86: presentation.Service.Retry calls http.http2headerFieldValueError.Error
+      #109: internal/presentation/service.go:548:86: presentation.Service.Retry calls http.http2pseudoHeaderError.Error
+      #110: internal/presentation/service.go:548:86: presentation.Service.Retry calls http.http2pseudoHeaderError.Error
+      #111: internal/dream/agent.go:316:2: dream.Service.callAgentTurn calls http2.transportResponseBody.Close, which eventually calls http.http2requestBody.Close
+      #112: internal/dream/agent.go:316:2: dream.Service.callAgentTurn calls http2.transportResponseBody.Close, which eventually calls http.http2requestBody.Close
+      #113: internal/presentation/ptium.go:211:28: presentation.Client.do calls io.ReadAll, which calls http.http2requestBody.Read
+      #114: internal/presentation/ptium.go:211:28: presentation.Client.do calls io.ReadAll, which calls http.http2requestBody.Read
+      #115: internal/observability/observability.go:112:14: observability.Registry.Prometheus calls fmt.Fprintln, which calls http.http2responseWriter.Write
+      #116: internal/observability/observability.go:112:14: observability.Registry.Prometheus calls fmt.Fprintln, which calls http.http2responseWriter.Write
+      #117: internal/mcp/handler.go:151:16: mcp.Handler.ServeHTTP calls http.http2responseWriter.WriteHeader
+      #118: internal/mcp/handler.go:151:16: mcp.Handler.ServeHTTP calls http.http2responseWriter.WriteHeader
+      #119: internal/webhook/service.go:366:18: webhook.Service.deliverClaimedWithSlot calls io.Copy, which eventually calls http.http2responseWriter.WriteString
+      #120: internal/webhook/service.go:366:18: webhook.Service.deliverClaimedWithSlot calls io.Copy, which eventually calls http.http2responseWriter.WriteString
+      #121: internal/dream/service.go:963:14: dream.Service.Assist calls fmt.Fprintf, which eventually calls http.http2stickyErrWriter.Write
+      #122: internal/dream/service.go:963:14: dream.Service.Assist calls fmt.Fprintf, which eventually calls http.http2stickyErrWriter.Write
+      #123: internal/dream/agent.go:316:2: dream.Service.callAgentTurn calls http.http2transportResponseBody.Close
+      #124: internal/dream/agent.go:316:2: dream.Service.callAgentTurn calls http.http2transportResponseBody.Close
+      #125: internal/presentation/ptium.go:211:28: presentation.Client.do calls io.ReadAll, which calls http.http2transportResponseBody.Read
+      #126: internal/presentation/ptium.go:211:28: presentation.Client.do calls io.ReadAll, which calls http.http2transportResponseBody.Read
+      #127: internal/observability/observability.go:112:14: observability.Registry.Prometheus calls fmt.Fprintln, which eventually calls http.http2writeData.String
+      #128: internal/observability/observability.go:112:14: observability.Registry.Prometheus calls fmt.Fprintln, which eventually calls http.http2writeData.String
+      #129: internal/cryptoutil/cipher.go:58:26: cryptoutil.Cipher.Encrypt calls io.ReadFull, which eventually calls http.loggingConn.Read
+      #130: internal/cryptoutil/cipher.go:58:26: cryptoutil.Cipher.Encrypt calls io.ReadFull, which eventually calls http.loggingConn.Read
+      #131: internal/dream/service.go:963:14: dream.Service.Assist calls fmt.Fprintf, which calls http.loggingConn.Write
+      #132: internal/dream/service.go:963:14: dream.Service.Assist calls fmt.Fprintf, which calls http.loggingConn.Write
+      #133: internal/dream/agent.go:316:2: dream.Service.callAgentTurn calls http2.transportResponseBody.Close, which eventually calls http.maxBytesReader.Close
+      #134: internal/dream/agent.go:316:2: dream.Service.callAgentTurn calls http2.transportResponseBody.Close, which eventually calls http.maxBytesReader.Close
+      #135: internal/presentation/ptium.go:211:28: presentation.Client.do calls io.ReadAll, which calls http.maxBytesReader.Read
+      #136: internal/presentation/ptium.go:211:28: presentation.Client.do calls io.ReadAll, which calls http.maxBytesReader.Read
+      #137: internal/dream/service.go:135:11: dream.Service.Start calls sync.Once.Do, which eventually calls http.onceCloseListener.Close
+      #138: internal/dream/service.go:135:11: dream.Service.Start calls sync.Once.Do, which eventually calls http.onceCloseListener.Close
+      #139: internal/webhook/service.go:366:18: webhook.Service.deliverClaimedWithSlot calls io.Copy, which eventually calls http.persistConn.Read
+      #140: internal/webhook/service.go:366:18: webhook.Service.deliverClaimedWithSlot calls io.Copy, which eventually calls http.persistConn.Read
+      #141: internal/webhook/service.go:366:18: webhook.Service.deliverClaimedWithSlot calls io.Copy, which eventually calls http.persistConnWriter.ReadFrom
+      #142: internal/webhook/service.go:366:18: webhook.Service.deliverClaimedWithSlot calls io.Copy, which eventually calls http.persistConnWriter.ReadFrom
+      #143: internal/dream/service.go:963:14: dream.Service.Assist calls fmt.Fprintf, which eventually calls http.persistConnWriter.Write
+      #144: internal/dream/service.go:963:14: dream.Service.Assist calls fmt.Fprintf, which eventually calls http.persistConnWriter.Write
+      #145: internal/dream/agent.go:316:2: dream.Service.callAgentTurn calls http2.transportResponseBody.Close, which eventually calls http.readTrackingBody.Close
+      #146: internal/dream/agent.go:316:2: dream.Service.callAgentTurn calls http2.transportResponseBody.Close, which eventually calls http.readTrackingBody.Close
+      #147: internal/presentation/ptium.go:211:28: presentation.Client.do calls io.ReadAll, which calls http.readTrackingBody.Read
+      #148: internal/presentation/ptium.go:211:28: presentation.Client.do calls io.ReadAll, which calls http.readTrackingBody.Read
+      #149: internal/presentation/ptium.go:211:28: presentation.Client.do calls io.ReadAll, which calls http.readWriteCloserBody.Read
+      #150: internal/presentation/ptium.go:211:28: presentation.Client.do calls io.ReadAll, which calls http.readWriteCloserBody.Read
+      #151: internal/webhook/service.go:366:18: webhook.Service.deliverClaimedWithSlot calls io.Copy, which eventually calls http.response.ReadFrom
+      #152: internal/webhook/service.go:366:18: webhook.Service.deliverClaimedWithSlot calls io.Copy, which eventually calls http.response.ReadFrom
+      #153: internal/observability/observability.go:112:14: observability.Registry.Prometheus calls fmt.Fprintln, which calls http.response.Write
+      #154: internal/observability/observability.go:112:14: observability.Registry.Prometheus calls fmt.Fprintln, which calls http.response.Write
+      #155: internal/mcp/handler.go:151:16: mcp.Handler.ServeHTTP calls http.response.WriteHeader
+      #156: internal/mcp/handler.go:151:16: mcp.Handler.ServeHTTP calls http.response.WriteHeader
+      #157: internal/webhook/service.go:366:18: webhook.Service.deliverClaimedWithSlot calls io.Copy, which eventually calls http.response.WriteString
+      #158: internal/webhook/service.go:366:18: webhook.Service.deliverClaimedWithSlot calls io.Copy, which eventually calls http.response.WriteString
+      #159: internal/presentation/service.go:548:86: presentation.Service.Retry calls http.transportReadFromServerError.Error
+      #160: internal/presentation/service.go:548:86: presentation.Service.Retry calls http.transportReadFromServerError.Error
+
+Vulnerability #5: GO-2026-6610
+    HTTP/2 transport accepts malformed framing-related headers in net/http
+  More info: https://pkg.go.dev/vuln/GO-2026-6610
+  Module: golang.org/x/net
+    Found in: golang.org/x/net@v0.57.0
+    Fixed in: golang.org/x/net@v0.60.0
+
+  Standard library
+    Found in: net/http@go1.26.7
+    Fixed in: net/http@go1.26.9
+    Example traces found:
+      #1: internal/dream/agent.go:312:28: dream.Service.callAgentTurn calls http.Client.Do
+      #2: internal/dream/agent.go:312:28: dream.Service.callAgentTurn calls http.Client.Do
+      #3: internal/httpapi/tracking.go:271:17: httpapi.Server.momentoProxy calls httputil.ReverseProxy.ServeHTTP, which calls http.Transport.RoundTrip
+      #4: internal/httpapi/tracking.go:271:17: httpapi.Server.momentoProxy calls httputil.ReverseProxy.ServeHTTP, which calls http.Transport.RoundTrip
+
+Vulnerability #6: GO-2026-6609
+    Lack of limit on size of parsed Range headers in net/http
+  More info: https://pkg.go.dev/vuln/GO-2026-6609
+  Standard library
+    Found in: net/http@go1.26.7
+    Fixed in: net/http@go1.26.9
+    Example traces found:
+      #1: internal/httpapi/server.go:440:24: httpapi.spa calls http.fileHandler.ServeHTTP
+
+Vulnerability #7: GO-2026-6608
+    Memory limit bypass when parsing MIME headers in net/textproto,
+    mime/multipart
+  More info: https://pkg.go.dev/vuln/GO-2026-6608
+  Standard library
+    Found in: net/textproto@go1.26.7
+    Fixed in: net/textproto@go1.26.9
+    Example traces found:
+      #1: cmd/umm/main.go:94:38: umm.main calls http.Server.ListenAndServe, which eventually calls multipart.Reader.ReadForm
+      #2: internal/presentation/ptium.go:211:28: presentation.Client.do calls io.ReadAll, which eventually calls textproto.Reader.ReadMIMEHeader
+
+Vulnerability #8: GO-2026-6607
+    Reject malformed ECH outer extension references in crypto/tls
+  More info: https://pkg.go.dev/vuln/GO-2026-6607
+  Standard library
+    Found in: crypto/tls@go1.26.7
+    Fixed in: crypto/tls@go1.26.9
+    Example traces found:
+      #1: cmd/umm/main.go:94:38: umm.main calls http.Server.ListenAndServe, which eventually calls tls.Conn.HandshakeContext
+      #2: internal/cryptoutil/cipher.go:58:26: cryptoutil.Cipher.Encrypt calls io.ReadFull, which eventually calls tls.Conn.Read
+      #3: internal/dream/service.go:963:14: dream.Service.Assist calls fmt.Fprintf, which calls tls.Conn.Write
+      #4: internal/dream/agent.go:312:28: dream.Service.callAgentTurn calls http.Client.Do, which eventually calls tls.Dialer.DialContext
+
+Vulnerability #9: GO-2026-6605
+    HTTP/1 client connection desynchronization after CONNECT rejection in
+    net/http
+  More info: https://pkg.go.dev/vuln/GO-2026-6605
+  Standard library
+    Found in: net/http@go1.26.7
+    Fixed in: net/http@go1.26.9
+    Example traces found:
+      #1: internal/dream/agent.go:312:28: dream.Service.callAgentTurn calls http.Client.Do
+      #2: internal/httpapi/tracking.go:271:17: httpapi.Server.momentoProxy calls httputil.ReverseProxy.ServeHTTP, which calls http.Transport.RoundTrip
+      #3: internal/httpapi/tracking.go:271:17: httpapi.Server.momentoProxy calls httputil.ReverseProxy.ServeHTTP
+
+Vulnerability #10: GO-2026-6603
+    HTTP/2 server memory exhaustion due to Trailer headers in net/http
+  More info: https://pkg.go.dev/vuln/GO-2026-6603
+  Module: golang.org/x/net
+    Found in: golang.org/x/net@v0.57.0
+    Fixed in: golang.org/x/net@v0.60.0
+    Example traces found:
+      #1: internal/presentation/service.go:548:86: presentation.Service.Retry calls http2.ConnectionError.Error
+      #2: internal/observability/observability.go:112:14: observability.Registry.Prometheus calls fmt.Fprintln, which eventually calls http2.ErrCode.String
+      #3: internal/observability/observability.go:112:14: observability.Registry.Prometheus calls fmt.Fprintln, which eventually calls http2.FrameHeader.String
+      #4: internal/observability/observability.go:112:14: observability.Registry.Prometheus calls fmt.Fprintln, which eventually calls http2.FrameType.String
+      #5: internal/dream/service.go:135:11: dream.Service.Start calls sync.Once.Do, which eventually calls http2.Framer.ReadFrame
+      #6: internal/dream/service.go:135:11: dream.Service.Start calls sync.Once.Do, which eventually calls http2.Framer.ReadFrameForHeader
+      #7: internal/dream/service.go:135:11: dream.Service.Start calls sync.Once.Do, which eventually calls http2.Framer.ReadFrameHeader
+      #8: internal/dream/service.go:135:11: dream.Service.Start calls sync.Once.Do, which eventually calls http2.Framer.WriteContinuation
+      #9: internal/dream/service.go:135:11: dream.Service.Start calls sync.Once.Do, which eventually calls http2.Framer.WriteGoAway
+      #10: internal/dream/service.go:135:11: dream.Service.Start calls sync.Once.Do, which eventually calls http2.Framer.WriteHeaders
+      #11: internal/dream/service.go:135:11: dream.Service.Start calls sync.Once.Do, which eventually calls http2.Framer.WritePing
+      #12: internal/dream/service.go:135:11: dream.Service.Start calls sync.Once.Do, which eventually calls http2.Framer.WriteRSTStream
+      #13: internal/dream/service.go:135:11: dream.Service.Start calls sync.Once.Do, which eventually calls http2.Framer.WriteSettings
+      #14: internal/dream/service.go:135:11: dream.Service.Start calls sync.Once.Do, which eventually calls http2.Framer.WriteSettingsAck
+      #15: internal/dream/service.go:135:11: dream.Service.Start calls sync.Once.Do, which eventually calls http2.Framer.WriteWindowUpdate
+      #16: internal/presentation/service.go:548:86: presentation.Service.Retry calls http2.GoAwayError.Error
+      #17: internal/observability/observability.go:112:14: observability.Registry.Prometheus calls fmt.Fprintln, which eventually calls http2.Setting.String
+      #18: internal/observability/observability.go:112:14: observability.Registry.Prometheus calls fmt.Fprintln, which eventually calls http2.SettingID.String
+      #19: internal/dream/service.go:135:11: dream.Service.Start calls sync.Once.Do, which eventually calls http2.SettingsFrame.ForeachSetting
+      #20: internal/presentation/service.go:548:86: presentation.Service.Retry calls http2.StreamError.Error
+      #21: internal/dream/service.go:963:14: dream.Service.Assist calls fmt.Fprintf, which eventually calls http2.bufferedWriterTimeoutWriter.Write
+      #22: internal/dream/service.go:963:14: dream.Service.Assist calls fmt.Fprintf, which eventually calls http2.chunkWriter.Write
+      #23: internal/presentation/service.go:548:86: presentation.Service.Retry calls http2.connError.Error
+      #24: internal/presentation/service.go:548:86: presentation.Service.Retry calls pgconn.ConnectError.Error, which eventually calls http2.duplicatePseudoHeaderError.Error
+      #25: internal/dream/agent.go:316:2: dream.Service.callAgentTurn calls http2.gzipReader.Close
+      #26: internal/presentation/ptium.go:211:28: presentation.Client.do calls io.ReadAll, which calls http2.gzipReader.Read
+      #27: internal/presentation/service.go:548:86: presentation.Service.Retry calls pgconn.ConnectError.Error, which eventually calls http2.headerFieldNameError.Error
+      #28: internal/presentation/service.go:548:86: presentation.Service.Retry calls pgconn.ConnectError.Error, which eventually calls http2.headerFieldValueError.Error
+      #29: internal/presentation/service.go:548:86: presentation.Service.Retry calls pgconn.ConnectError.Error, which eventually calls http2.pseudoHeaderError.Error
+      #30: internal/dream/service.go:963:14: dream.Service.Assist calls fmt.Fprintf, which eventually calls http2.stickyErrWriter.Write
+      #31: internal/dream/agent.go:316:2: dream.Service.callAgentTurn calls http2.transportResponseBody.Close
+      #32: internal/presentation/ptium.go:211:28: presentation.Client.do calls io.ReadAll, which calls http2.transportResponseBody.Read
+      #33: internal/observability/observability.go:112:14: observability.Registry.Prometheus calls fmt.Fprintln, which eventually calls http2.writeData.String
+
+  Standard library
+    Found in: net/http@go1.26.7
+    Fixed in: net/http@go1.26.9
+    Example traces found:
+      #1: internal/httpapi/reliability_middleware.go:21:2: httpapi.init calls middleware.init, which calls http.CanonicalHeaderKey
+      #2: internal/httpapi/reliability_middleware.go:21:2: httpapi.init calls middleware.init, which calls http.CanonicalHeaderKey
+      #3: internal/dream/agent.go:312:28: dream.Service.callAgentTurn calls http.Client.Do
+      #4: internal/dream/agent.go:312:28: dream.Service.callAgentTurn calls http.Client.Do
+      #5: internal/httpapi/reliability_middleware.go:21:2: httpapi.init calls middleware.init, which eventually calls http.HandleFunc
+      #6: internal/httpapi/reliability_middleware.go:21:2: httpapi.init calls middleware.init, which eventually calls http.HandleFunc
+      #7: internal/mcp/handler.go:151:16: mcp.Handler.ServeHTTP calls middleware.compressResponseWriter.WriteHeader, which calls http.Header.Add
+      #8: internal/mcp/handler.go:151:16: mcp.Handler.ServeHTTP calls middleware.compressResponseWriter.WriteHeader, which calls http.Header.Add
+      #9: internal/mcp/handler.go:151:16: mcp.Handler.ServeHTTP calls middleware.compressResponseWriter.WriteHeader, which calls http.Header.Del
+      #10: internal/mcp/handler.go:151:16: mcp.Handler.ServeHTTP calls middleware.compressResponseWriter.WriteHeader, which calls http.Header.Del
+      #11: internal/auth/oidc.go:340:58: auth.ClearSessionCookie calls http.Header.Get
+      #12: internal/auth/oidc.go:340:58: auth.ClearSessionCookie calls http.Header.Get
+      #13: internal/mcp/handler.go:137:16: mcp.Handler.ServeHTTP calls http.Header.Set
+      #14: internal/mcp/handler.go:137:16: mcp.Handler.ServeHTTP calls http.Header.Set
+      #15: internal/auth/oidc.go:85:35: auth.OIDCService.discovery calls oidc.NewProvider, which calls http.NewRequest
+      #16: internal/auth/oidc.go:85:35: auth.OIDCService.discovery calls oidc.NewProvider, which calls http.NewRequest
+      #17: internal/dream/agent.go:303:44: dream.Service.callAgentTurn calls http.NewRequestWithContext
+      #18: internal/dream/agent.go:303:44: dream.Service.callAgentTurn calls http.NewRequestWithContext
+      #19: internal/mcp/handler.go:64:16: mcp.Handler.ServeResourceMetadata calls http.NotFound
+      #20: internal/mcp/handler.go:64:16: mcp.Handler.ServeResourceMetadata calls http.NotFound
+      #21: internal/observability/observability.go:181:61: observability.Init calls trace.WithBatcher, which eventually calls http.ParseTime
+      #22: internal/observability/observability.go:181:61: observability.Init calls trace.WithBatcher, which eventually calls http.ParseTime
+      #23: internal/dream/service.go:135:11: dream.Service.Start calls sync.Once.Do, which eventually calls http.ReadResponse
+      #24: internal/dream/service.go:135:11: dream.Service.Start calls sync.Once.Do, which eventually calls http.ReadResponse
+      #25: internal/auth/oidc.go:255:17: auth.OIDCService.Callback calls http.Redirect
+      #26: internal/auth/oidc.go:255:17: auth.OIDCService.Callback calls http.Redirect
+      #27: internal/auth/auth.go:226:25: auth.Service.Authenticate calls http.Request.Cookie
+      #28: internal/auth/auth.go:226:25: auth.Service.Authenticate calls http.Request.Cookie
+      #29: internal/auth/oidc.go:277:28: auth.OIDCService.Callback calls oauth2.Config.Exchange, which eventually calls http.Request.SetBasicAuth
+      #30: internal/auth/oidc.go:277:28: auth.OIDCService.Callback calls oauth2.Config.Exchange, which eventually calls http.Request.SetBasicAuth
+      #31: internal/auth/auth.go:91:39: auth.OriginOf calls http.Request.UserAgent
+      #32: internal/auth/auth.go:91:39: auth.OriginOf calls http.Request.UserAgent
+      #33: internal/dream/service.go:135:11: dream.Service.Start calls sync.Once.Do, which eventually calls http.Request.Write
+      #34: internal/dream/service.go:135:11: dream.Service.Start calls sync.Once.Do, which eventually calls http.Request.Write
+      #35: internal/dream/service.go:135:11: dream.Service.Start calls sync.Once.Do, which eventually calls http.Response.Write
+      #36: internal/dream/service.go:135:11: dream.Service.Start calls sync.Once.Do, which eventually calls http.Response.Write
+      #37: cmd/umm/main.go:94:38: umm.main calls http.Server.ListenAndServe
+      #38: cmd/umm/main.go:94:38: umm.main calls http.Server.ListenAndServe
+      #39: cmd/umm/main.go:102:31: umm.main calls http.Server.Shutdown
+      #40: cmd/umm/main.go:102:31: umm.main calls http.Server.Shutdown
+      #41: internal/auth/oidc.go:341:16: auth.ClearSessionCookie calls http.SetCookie
+      #42: internal/auth/oidc.go:341:16: auth.ClearSessionCookie calls http.SetCookie
+      #43: internal/observability/observability.go:168:36: observability.Init calls otlptracehttp.New, which eventually calls http.Transport.Clone
+      #44: internal/observability/observability.go:168:36: observability.Init calls otlptracehttp.New, which eventually calls http.Transport.Clone
+      #45: internal/dream/agent.go:316:2: dream.Service.callAgentTurn calls http.body.Close
+      #46: internal/dream/agent.go:316:2: dream.Service.callAgentTurn calls http.body.Close
+      #47: internal/presentation/ptium.go:211:28: presentation.Client.do calls io.ReadAll, which calls http.body.Read
+      #48: internal/presentation/ptium.go:211:28: presentation.Client.do calls io.ReadAll, which calls http.body.Read
+      #49: internal/dream/agent.go:316:2: dream.Service.callAgentTurn calls http.bodyEOFSignal.Close
+      #50: internal/dream/agent.go:316:2: dream.Service.callAgentTurn calls http.bodyEOFSignal.Close
+      #51: internal/presentation/ptium.go:211:28: presentation.Client.do calls io.ReadAll, which calls http.bodyEOFSignal.Read
+      #52: internal/presentation/ptium.go:211:28: presentation.Client.do calls io.ReadAll, which calls http.bodyEOFSignal.Read
+      #53: internal/webhook/service.go:366:18: webhook.Service.deliverClaimedWithSlot calls io.Copy, which eventually calls http.bodyLocked.Read
+      #54: internal/webhook/service.go:366:18: webhook.Service.deliverClaimedWithSlot calls io.Copy, which eventually calls http.bodyLocked.Read
+      #55: internal/webhook/service.go:366:18: webhook.Service.deliverClaimedWithSlot calls io.Copy, which eventually calls http.bufioFlushWriter.Write
+      #56: internal/webhook/service.go:366:18: webhook.Service.deliverClaimedWithSlot calls io.Copy, which eventually calls http.bufioFlushWriter.Write
+      #57: internal/dream/agent.go:316:2: dream.Service.callAgentTurn calls http.cancelTimerBody.Close
+      #58: internal/dream/agent.go:316:2: dream.Service.callAgentTurn calls http.cancelTimerBody.Close
+      #59: internal/presentation/ptium.go:211:28: presentation.Client.do calls io.ReadAll, which calls http.cancelTimerBody.Read
+      #60: internal/presentation/ptium.go:211:28: presentation.Client.do calls io.ReadAll, which calls http.cancelTimerBody.Read
+      #61: internal/dream/service.go:963:14: dream.Service.Assist calls fmt.Fprintf, which eventually calls http.checkConnErrorWriter.Write
+      #62: internal/dream/service.go:963:14: dream.Service.Assist calls fmt.Fprintf, which eventually calls http.checkConnErrorWriter.Write
+      #63: internal/dream/service.go:963:14: dream.Service.Assist calls fmt.Fprintf, which eventually calls http.chunkWriter.Write
+      #64: internal/dream/service.go:963:14: dream.Service.Assist calls fmt.Fprintf, which eventually calls http.chunkWriter.Write
+      #65: internal/webhook/service.go:366:18: webhook.Service.deliverClaimedWithSlot calls io.Copy, which eventually calls http.connReader.Read
+      #66: internal/webhook/service.go:366:18: webhook.Service.deliverClaimedWithSlot calls io.Copy, which eventually calls http.connReader.Read
+      #67: internal/dream/agent.go:316:2: dream.Service.callAgentTurn calls http2.transportResponseBody.Close, which eventually calls http.expectContinueReader.Close
+      #68: internal/dream/agent.go:316:2: dream.Service.callAgentTurn calls http2.transportResponseBody.Close, which eventually calls http.expectContinueReader.Close
+      #69: internal/presentation/ptium.go:211:28: presentation.Client.do calls io.ReadAll, which calls http.expectContinueReader.Read
+      #70: internal/presentation/ptium.go:211:28: presentation.Client.do calls io.ReadAll, which calls http.expectContinueReader.Read
+      #71: internal/dream/agent.go:316:2: dream.Service.callAgentTurn calls http.gzipReader.Close
+      #72: internal/dream/agent.go:316:2: dream.Service.callAgentTurn calls http.gzipReader.Close
+      #73: internal/presentation/ptium.go:211:28: presentation.Client.do calls io.ReadAll, which calls http.gzipReader.Read
+      #74: internal/presentation/ptium.go:211:28: presentation.Client.do calls io.ReadAll, which calls http.gzipReader.Read
+      #75: internal/presentation/service.go:548:86: presentation.Service.Retry calls http.http2ConnectionError.Error
+      #76: internal/presentation/service.go:548:86: presentation.Service.Retry calls http.http2ConnectionError.Error
+      #77: internal/observability/observability.go:112:14: observability.Registry.Prometheus calls fmt.Fprintln, which eventually calls http.http2ErrCode.String
+      #78: internal/observability/observability.go:112:14: observability.Registry.Prometheus calls fmt.Fprintln, which eventually calls http.http2ErrCode.String
+      #79: internal/observability/observability.go:112:14: observability.Registry.Prometheus calls fmt.Fprintln, which eventually calls http.http2FrameHeader.String
+      #80: internal/observability/observability.go:112:14: observability.Registry.Prometheus calls fmt.Fprintln, which eventually calls http.http2FrameHeader.String
+      #81: internal/observability/observability.go:112:14: observability.Registry.Prometheus calls fmt.Fprintln, which eventually calls http.http2FrameType.String
+      #82: internal/observability/observability.go:112:14: observability.Registry.Prometheus calls fmt.Fprintln, which eventually calls http.http2FrameType.String
+      #83: internal/observability/observability.go:112:14: observability.Registry.Prometheus calls fmt.Fprintln, which eventually calls http.http2FrameWriteRequest.String
+      #84: internal/observability/observability.go:112:14: observability.Registry.Prometheus calls fmt.Fprintln, which eventually calls http.http2FrameWriteRequest.String
+      #85: internal/presentation/service.go:548:86: presentation.Service.Retry calls http.http2GoAwayError.Error
+      #86: internal/presentation/service.go:548:86: presentation.Service.Retry calls http.http2GoAwayError.Error
+      #87: internal/observability/observability.go:112:14: observability.Registry.Prometheus calls fmt.Fprintln, which eventually calls http.http2Setting.String
+      #88: internal/observability/observability.go:112:14: observability.Registry.Prometheus calls fmt.Fprintln, which eventually calls http.http2Setting.String
+      #89: internal/observability/observability.go:112:14: observability.Registry.Prometheus calls fmt.Fprintln, which eventually calls http.http2SettingID.String
+      #90: internal/observability/observability.go:112:14: observability.Registry.Prometheus calls fmt.Fprintln, which eventually calls http.http2SettingID.String
+      #91: internal/presentation/service.go:548:86: presentation.Service.Retry calls http.http2StreamError.Error
+      #92: internal/presentation/service.go:548:86: presentation.Service.Retry calls http.http2StreamError.Error
+      #93: internal/dream/service.go:963:14: dream.Service.Assist calls fmt.Fprintf, which eventually calls http.http2bufferedWriterTimeoutWriter.Write
+      #94: internal/dream/service.go:963:14: dream.Service.Assist calls fmt.Fprintf, which eventually calls http.http2bufferedWriterTimeoutWriter.Write
+      #95: internal/dream/service.go:963:14: dream.Service.Assist calls fmt.Fprintf, which eventually calls http.http2chunkWriter.Write
+      #96: internal/dream/service.go:963:14: dream.Service.Assist calls fmt.Fprintf, which eventually calls http.http2chunkWriter.Write
+      #97: internal/presentation/service.go:548:86: presentation.Service.Retry calls http.http2connError.Error
+      #98: internal/presentation/service.go:548:86: presentation.Service.Retry calls http.http2connError.Error
+      #99: internal/presentation/service.go:548:86: presentation.Service.Retry calls http.http2duplicatePseudoHeaderError.Error
+      #100: internal/presentation/service.go:548:86: presentation.Service.Retry calls http.http2duplicatePseudoHeaderError.Error
+      #101: internal/dream/agent.go:316:2: dream.Service.callAgentTurn calls http.http2gzipReader.Close
+      #102: internal/dream/agent.go:316:2: dream.Service.callAgentTurn calls http.http2gzipReader.Close
+      #103: internal/presentation/ptium.go:211:28: presentation.Client.do calls io.ReadAll, which calls http.http2gzipReader.Read
+      #104: internal/presentation/ptium.go:211:28: presentation.Client.do calls io.ReadAll, which calls http.http2gzipReader.Read
+      #105: internal/presentation/service.go:548:86: presentation.Service.Retry calls http.http2headerFieldNameError.Error
+      #106: internal/presentation/service.go:548:86: presentation.Service.Retry calls http.http2headerFieldNameError.Error
+      #107: internal/presentation/service.go:548:86: presentation.Service.Retry calls http.http2headerFieldValueError.Error
+      #108: internal/presentation/service.go:548:86: presentation.Service.Retry calls http.http2headerFieldValueError.Error
+      #109: internal/presentation/service.go:548:86: presentation.Service.Retry calls http.http2pseudoHeaderError.Error
+      #110: internal/presentation/service.go:548:86: presentation.Service.Retry calls http.http2pseudoHeaderError.Error
+      #111: internal/dream/agent.go:316:2: dream.Service.callAgentTurn calls http2.transportResponseBody.Close, which eventually calls http.http2requestBody.Close
+      #112: internal/dream/agent.go:316:2: dream.Service.callAgentTurn calls http2.transportResponseBody.Close, which eventually calls http.http2requestBody.Close
+      #113: internal/presentation/ptium.go:211:28: presentation.Client.do calls io.ReadAll, which calls http.http2requestBody.Read
+      #114: internal/presentation/ptium.go:211:28: presentation.Client.do calls io.ReadAll, which calls http.http2requestBody.Read
+      #115: internal/observability/observability.go:112:14: observability.Registry.Prometheus calls fmt.Fprintln, which calls http.http2responseWriter.Write
+      #116: internal/observability/observability.go:112:14: observability.Registry.Prometheus calls fmt.Fprintln, which calls http.http2responseWriter.Write
+      #117: internal/mcp/handler.go:151:16: mcp.Handler.ServeHTTP calls http.http2responseWriter.WriteHeader
+      #118: internal/mcp/handler.go:151:16: mcp.Handler.ServeHTTP calls http.http2responseWriter.WriteHeader
+      #119: internal/webhook/service.go:366:18: webhook.Service.deliverClaimedWithSlot calls io.Copy, which eventually calls http.http2responseWriter.WriteString
+      #120: internal/webhook/service.go:366:18: webhook.Service.deliverClaimedWithSlot calls io.Copy, which eventually calls http.http2responseWriter.WriteString
+      #121: internal/dream/service.go:963:14: dream.Service.Assist calls fmt.Fprintf, which eventually calls http.http2stickyErrWriter.Write
+      #122: internal/dream/service.go:963:14: dream.Service.Assist calls fmt.Fprintf, which eventually calls http.http2stickyErrWriter.Write
+      #123: internal/dream/agent.go:316:2: dream.Service.callAgentTurn calls http.http2transportResponseBody.Close
+      #124: internal/dream/agent.go:316:2: dream.Service.callAgentTurn calls http.http2transportResponseBody.Close
+      #125: internal/presentation/ptium.go:211:28: presentation.Client.do calls io.ReadAll, which calls http.http2transportResponseBody.Read
+      #126: internal/presentation/ptium.go:211:28: presentation.Client.do calls io.ReadAll, which calls http.http2transportResponseBody.Read
+      #127: internal/observability/observability.go:112:14: observability.Registry.Prometheus calls fmt.Fprintln, which eventually calls http.http2writeData.String
+      #128: internal/observability/observability.go:112:14: observability.Registry.Prometheus calls fmt.Fprintln, which eventually calls http.http2writeData.String
+      #129: internal/cryptoutil/cipher.go:58:26: cryptoutil.Cipher.Encrypt calls io.ReadFull, which eventually calls http.loggingConn.Read
+      #130: internal/cryptoutil/cipher.go:58:26: cryptoutil.Cipher.Encrypt calls io.ReadFull, which eventually calls http.loggingConn.Read
+      #131: internal/dream/service.go:963:14: dream.Service.Assist calls fmt.Fprintf, which calls http.loggingConn.Write
+      #132: internal/dream/service.go:963:14: dream.Service.Assist calls fmt.Fprintf, which calls http.loggingConn.Write
+      #133: internal/dream/agent.go:316:2: dream.Service.callAgentTurn calls http2.transportResponseBody.Close, which eventually calls http.maxBytesReader.Close
+      #134: internal/dream/agent.go:316:2: dream.Service.callAgentTurn calls http2.transportResponseBody.Close, which eventually calls http.maxBytesReader.Close
+      #135: internal/presentation/ptium.go:211:28: presentation.Client.do calls io.ReadAll, which calls http.maxBytesReader.Read
+      #136: internal/presentation/ptium.go:211:28: presentation.Client.do calls io.ReadAll, which calls http.maxBytesReader.Read
+      #137: internal/dream/service.go:135:11: dream.Service.Start calls sync.Once.Do, which eventually calls http.onceCloseListener.Close
+      #138: internal/dream/service.go:135:11: dream.Service.Start calls sync.Once.Do, which eventually calls http.onceCloseListener.Close
+      #139: internal/webhook/service.go:366:18: webhook.Service.deliverClaimedWithSlot calls io.Copy, which eventually calls http.persistConn.Read
+      #140: internal/webhook/service.go:366:18: webhook.Service.deliverClaimedWithSlot calls io.Copy, which eventually calls http.persistConn.Read
+      #141: internal/webhook/service.go:366:18: webhook.Service.deliverClaimedWithSlot calls io.Copy, which eventually calls http.persistConnWriter.ReadFrom
+      #142: internal/webhook/service.go:366:18: webhook.Service.deliverClaimedWithSlot calls io.Copy, which eventually calls http.persistConnWriter.ReadFrom
+      #143: internal/dream/service.go:963:14: dream.Service.Assist calls fmt.Fprintf, which eventually calls http.persistConnWriter.Write
+      #144: internal/dream/service.go:963:14: dream.Service.Assist calls fmt.Fprintf, which eventually calls http.persistConnWriter.Write
+      #145: internal/dream/agent.go:316:2: dream.Service.callAgentTurn calls http2.transportResponseBody.Close, which eventually calls http.readTrackingBody.Close
+      #146: internal/dream/agent.go:316:2: dream.Service.callAgentTurn calls http2.transportResponseBody.Close, which eventually calls http.readTrackingBody.Close
+      #147: internal/presentation/ptium.go:211:28: presentation.Client.do calls io.ReadAll, which calls http.readTrackingBody.Read
+      #148: internal/presentation/ptium.go:211:28: presentation.Client.do calls io.ReadAll, which calls http.readTrackingBody.Read
+      #149: internal/presentation/ptium.go:211:28: presentation.Client.do calls io.ReadAll, which calls http.readWriteCloserBody.Read
+      #150: internal/presentation/ptium.go:211:28: presentation.Client.do calls io.ReadAll, which calls http.readWriteCloserBody.Read
+      #151: internal/webhook/service.go:366:18: webhook.Service.deliverClaimedWithSlot calls io.Copy, which eventually calls http.response.ReadFrom
+      #152: internal/webhook/service.go:366:18: webhook.Service.deliverClaimedWithSlot calls io.Copy, which eventually calls http.response.ReadFrom
+      #153: internal/observability/observability.go:112:14: observability.Registry.Prometheus calls fmt.Fprintln, which calls http.response.Write
+      #154: internal/observability/observability.go:112:14: observability.Registry.Prometheus calls fmt.Fprintln, which calls http.response.Write
+      #155: internal/mcp/handler.go:151:16: mcp.Handler.ServeHTTP calls http.response.WriteHeader
+      #156: internal/mcp/handler.go:151:16: mcp.Handler.ServeHTTP calls http.response.WriteHeader
+      #157: internal/webhook/service.go:366:18: webhook.Service.deliverClaimedWithSlot calls io.Copy, which eventually calls http.response.WriteString
+      #158: internal/webhook/service.go:366:18: webhook.Service.deliverClaimedWithSlot calls io.Copy, which eventually calls http.response.WriteString
+      #159: internal/presentation/service.go:548:86: presentation.Service.Retry calls http.transportReadFromServerError.Error
+      #160: internal/presentation/service.go:548:86: presentation.Service.Retry calls http.transportReadFromServerError.Error
+
+Vulnerability #11: GO-2026-6600
+    Recognize yield as regexp preceder keyword in html/template
+  More info: https://pkg.go.dev/vuln/GO-2026-6600
+  Standard library
+    Found in: html/template@go1.26.7
+    Fixed in: html/template@go1.26.9
+    Example traces found:
+      #1: cmd/umm/main.go:94:38: umm.main calls http.Server.ListenAndServe, which eventually calls template.Template.Execute
+      #2: cmd/umm/main.go:94:38: umm.main calls http.Server.ListenAndServe, which eventually calls template.Template.ExecuteTemplate
+
+Vulnerability #12: GO-2026-6599
+    Reset context tracking on consecutive template expressions in html/template
+  More info: https://pkg.go.dev/vuln/GO-2026-6599
+  Standard library
+    Found in: html/template@go1.26.7
+    Fixed in: html/template@go1.26.9
+    Example traces found:
+      #1: cmd/umm/main.go:94:38: umm.main calls http.Server.ListenAndServe, which eventually calls template.Template.Execute
+      #2: cmd/umm/main.go:94:38: umm.main calls http.Server.ListenAndServe, which eventually calls template.Template.ExecuteTemplate
+
+Your code is affected by 12 vulnerabilities from the Go standard library.
+This scan also found 2 vulnerabilities in packages you import and 4
+vulnerabilities in modules you require, but your code doesn't appear to call
+these vulnerabilities.
+Use '-show verbose' for more details.
+exit status 3
+GOVULNCHECK_EXIT=1
