@@ -1,0 +1,32 @@
+# apt.irumx.app 프로필 (2026-10-17)
+
+- 목적: 한국 아파트(공동주택) 관리 업무를 단지별로 돌리는 다중 테넌트 웹앱 — 점검·시설·민원(cases)·문서/공고·관리비(billing) 와 입주민/관리사무소 권한. package.json 의 `/api/health` 가 `stage: 'pilot'` 를 보고한다.
+- 스택: TypeScript · React 19 + Mantine 9 + react-router 7 (Vite 8) / Hono 4 API / PostgreSQL (RLS 기반, Supabase + Cloudflare Hyperdrive) / Cloudflare Workers 배포(wrangler, R2 `FILES`, `ASSETS`). zod 4 로 요청·응답 검증, jose 로 세션. 패키지 매니저 npm, Node >= 22.
+- 구조:
+  - `server/` — Hono 라우트 묶음. `index.ts`(미들웨어·헬스·정적 폴백), `db.ts`(connect/baseTx/tenantTx/audit/notify + DB 차단기), `domain.ts`(Role·AppError·requireRole), `auth.ts`·`social-auth.ts`·`login-providers.ts`(보호 경로), 기능별 `inspections.ts`·`inspection-schedules.ts`·`inspection-reminders.ts`·`inspection-photos.ts`·`cases.ts`·`records.ts`·`notices.ts`·`billing.ts`·`bill-analysis.ts`·`platform.ts`·`tenants.ts`·`operations.ts`.
+  - `server/vendor/postgres/` — postgres 3.4.9 의 **패치 사본**(Node 용 `src/`, workerd 용 `cf/`). `#postgres` import 맵으로 쓴다. 계약은 `PATCHED.md`. 직접 수정 금지.
+  - `shared/` — 서버·프런트가 같이 쓰는 zod 스키마와 권한 규칙(`records.ts:recordAssigneeRoles`, `inspection-attention.ts`, `catalog.ts`, `photos.ts` 등).
+  - `src/` — SPA. `App.tsx`·`Workspace.tsx`·`context.tsx`·`api.ts`(fetch 래퍼 + `onServiceDegraded`)·`DegradedNotice.tsx`·`LogoutControl.tsx`·`pages/`·`admin/`·`lib/`.
+  - `tests/` — TS 로 쓴 node:test 묶음(esbuild 로 `artifacts/*.mjs` 로 번들해 실행). `tests/workerd-*.mjs` 는 miniflare 런타임 테스트.
+  - `scripts/` — `test.mjs`(단위·통합 러너), `e2e-*.mjs`(playwright 13개), `smoke-*.mjs`(실 배포 점검), `migrate.mjs`, `deploy.mjs`, `restore-drill.mjs`.
+  - `docs/` — `architecture.md`·`api.md`·`operations.md`·`requirements.md`·`verification.md`·`evidence/`(회차별 확인 증거).
+- 빌드·테스트:
+  - `npm run typecheck` / `npm run build`(typecheck 포함)
+  - `npm test` — `node scripts/test.mjs`: esbuild 번들 후 15개 묶음을 `--test-concurrency=1` 로 순차 실행. **로컬 PostgreSQL 이 127.0.0.1:55462 에 떠 있어야 한다**(기본 `postgres://postgres:aptlocal@…`). 묶음 하나만 돌리려면 `node scripts/test.mjs --build-only` → `node --test artifacts/<name>.mjs`.
+  - `npm run test:runtime`(workerd auth) · `npm run test:assets`(workerd assets) — miniflare, 느림.
+  - `npm run test:e2e` — playwright 13개 스크립트. `npm run dev` 가 5173 에 떠 있어야 하고 오래 걸린다.
+  - `npm run db:migrate` — `supabase/` 의 SQL 적용.
+- 관례: 커밋 메시지는 **한국어**, Conventional Commit 접두사(`feat:`·`fix:`·`docs:`·`test:`). 본문에 사고 날짜·원인·고친 것·확인한 것을 길게 적는다. 기능 회차마다 `docs/evidence/` 와 `docs/verification.md` 에 확인 증거를 남기고 `[skip ci]` docs 커밋으로 기록한다. 코드 주석은 영어, 사용자 문구는 한국어. prettier(설정 `.prettierrc.json`), 들여쓰기 2칸, 세미콜론 없음. 시간대는 전부 `Asia/Seoul` 로 SQL 안에서 계산한다.
+- 위험 구역:
+  - `server/auth.ts`·`social-auth.ts`·`login-providers.ts` — 세션/OAuth. 로그아웃은 DB 연결 없이도 되게 `index.ts` 에서 따로 예외 처리돼 있다(과거 회귀 다수).
+  - `server/db.ts:baseTx`/`tenantTx` 의 `set_config(role·apt.actor·apt.tenant·apt.*_worker)` — RLS 계약 그 자체. 권한 판정이 여기에 걸려 있다.
+  - `supabase/` 마이그레이션, `.github/workflows/` — 되돌리기 어렵다.
+  - `server/vendor/postgres/**` — 패치 사본. 상류와 다르다는 것이 의도다.
+  - 감사 기록 `audit(…, detail)` 은 원문 그대로 저장되고 감사 출력으로 다시 나간다 — 보호 대상 값을 넣지 말 것(식별자만).
+- 자주 깨지는 곳: 로그아웃 경로(93fd8b2·3468586·7abec45 등 반복 수정). DB 에 못 닿을 때의 503 처리(266bfce 직후 b14cc46 로 ECIRCUITBREAKER 추가 — 못 잡은 오류 모양이 계속 나온다). `recordDate`/KST 날짜 경계. 점검 일정·알림 잡의 멱등 키.
+- 검증 함정:
+  - 테스트가 로컬 DB(포트 55462 고정)를 요구한다. `tests/db-breaker.ts` 는 호스트·포트가 다르면 즉시 throw 한다.
+  - `tests/db-breaker.ts` 는 `Date.now` 를 모킹하고 경과 시간은 `performance.now()` 로 잰다 — WSL 벽시계가 초 단위로 튄 전례가 있다. 두 시계를 섞으면 불안정해진다.
+  - CI 는 playwright chromium + axe 접근성 검사까지 돌고 `npm audit --omit=dev` 가 실패하면 멈춘다.
+  - workerd(`cf/`)와 Node(`src/`)가 서로 다른 드라이버 사본을 쓴다 — 한쪽만 고치면 런타임이 갈린다.
+  - `smoke-*.mjs` 는 실제 배포를 때린다. 로컬 검증 수단이 아니다.

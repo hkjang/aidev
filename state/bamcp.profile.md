@@ -1,0 +1,36 @@
+# bamcp 프로필 (2026-10-17)
+
+- **목적**: Atlassian Bamboo Server 6.10.4 앞에 두는 MCP 게이트웨이. AI 가 Bamboo 를 보더라도 **요청자 본인의 Bamboo 유효 권한**으로만 조회하고, 빌드 실행·배포는 일회용 승인이 있을 때만 실행한다(fail-closed).
+- **스택**: Go 1.24(의존성 최소: pgx/v5, golang.org/x/crypto, go-chi, go-oidc/v3, golang-jwt/v5) / PostgreSQL / React + TypeScript + Vite(`web/`) / Java 8 + Maven Bamboo 플러그인(`plugin/`). 웹 빌드 결과는 `internal/webui/dist` 로 임베드, 플러그인 JAR 은 `internal/pluginjar/bamcp-permission.jar` 로 동봉. 단일 도커 이미지 배포(오프라인망 전제).
+- **구조**:
+  - `cmd/server/main.go` — 진입점.
+  - `internal/api/` — HTTP 라우팅. `admin.go`(1670줄, 가장 큼), `personal.go`, `oauth.go`(MCP OAuth: RFC 9728, PKCE, aud 검증), `auth_handlers.go`, `server.go`.
+  - `internal/tools/` — MCP 도구 29종. `read.go`(P0 조회), `write.go`(P1/P2 실행), `analysis.go`, `executor.go`(권한→정책→승인 파이프라인), `registry.go`, `schema.go`, `args.go`, `tracker.go`(요청 키로 중복 실행 방지).
+  - `internal/permission/` — 유효 권한 판정. `resolver.go`(캐시 ≤30초, fail-closed), `plugin.go`(동봉 Java 플러그인 질의, 권장), `rest.go`(REST 폴백), `capability.go`(capability↔target kind 매핑).
+  - `internal/auth/`, `internal/identity/` — Keycloak OIDC 세션과 (issuer+sub ↔ Bamboo 사용자) 영속 바인딩.
+  - `internal/bamboo/` — Bamboo REST 클라이언트(`client.go` 1221줄), 서비스 계정/실행 계정 분리.
+  - `internal/approval/`, `internal/policy/`, `internal/audit/`, `internal/operation/` — 승인·접근 정책·감사·작업 추적.
+  - `internal/settings/` — 설정은 거의 전부 DB 저장(AES-256-GCM 암호화), 환경변수는 4개뿐.
+  - `internal/mockbamboo/` — 테스트용 Bamboo 모의 서버(1334줄). `internal/logmask/` — PAT·비밀번호 마스킹.
+- **빌드·테스트**:
+  - `go build ./...` / `go vet ./...`
+  - `go test ./... -count=1 -p 1` — **DB 의존 테스트는 `TEST_DATABASE_URL` 이 없으면 skip**. 없이 돌려도 "ok" 로 보이니 주의.
+  - DB 없이 의미 있게 도는 패키지: `internal/permission`, `internal/crypto`, `internal/httpx`, `internal/logmask`, `internal/bamboo`(flextime), `internal/apikey`(일부), `internal/api`(oauth 계열), `internal/policy`.
+  - 웹: `cd web && npm ci && npm run check && npm run build`
+  - 플러그인: `cd plugin && mvn -B -ntp package` (Java 8, 느림)
+  - 도커: `docker build --build-arg VERSION=$(cat VERSION) ...` + 기동 점검(CI `image` 잡). **느림**.
+- **관례**: 커밋 메시지·주석·에러 문구·UI 문구·CI 잡 이름 모두 **한국어**(`feat:`/`fix:`/`docs:` 접두는 영어). 사용자에게 보이는 에러는 한국어 문장. 설정은 환경변수 4개(`DATABASE_URL`, `BOOTSTRAP_ADMIN`, `BOOTSTRAP_ADMIN_PASSWORD`, `ENCRYPTION_KEY`) 외에는 모두 관리자 콘솔 → DB. 마이그레이션은 `internal/database/migrations/NNNN_*.sql` 번호순 단방향(현재 `0001_init.sql` 하나). 문서는 `docs/`(GitHub Pages 용 정적 HTML + `docs/screenshots/`), 버전은 `VERSION` 파일(현재 0.1.2). `CLAUDE.md` 는 **없음**.
+- **위험 구역**:
+  - `internal/api/oauth.go`, `oauth_hardening_test.go`, `mcpoauth_e2e_test.go` — MCP OAuth 사양 준수(PKCE·aud·스코프). 테스트가 2000줄 넘게 붙어 있다. 건드리면 전부 다시 봐야 한다.
+  - `internal/auth/` — Keycloak 토큰 역할 반영이 v0.1.1 에서 이미 한 번 버그를 냈다(커밋 3290aa3).
+  - `internal/permission/resolver.go` — `FailClosed` 기본값과 캐시 TTL(최대 30초 강제). 여기서 fail-open 으로 새면 권한 우회다.
+  - `internal/identity/mapper.go` — Bamboo 사용자 키 변경 감지(계정 재생성)로 **자동 재매핑을 일부러 막아 둔다**. 편의성 개선으로 보이는 변경이 보안 결정을 되돌릴 수 있다.
+  - `internal/crypto/crypto.go` + `ENCRYPTION_KEY` — 키를 잃으면 저장 비밀값 복구 불가.
+  - `internal/database/migrations/` — 단방향. 되돌릴 수 없다.
+- **자주 깨지는 곳**: (회차 기록이 아직 없음 — 커밋 이력 기준) 실서버 검증에서 걸린 것들이 반복: Keycloak 액세스 토큰의 realm 역할 반영(3290aa3), 도커 이미지 내 배포 파일 **권한**과 기본 UI 색상(4119c0b), Bamboo 6.10.4 실서버 호출 차이(70ee0f6). 즉 **로컬 모의 서버로는 안 잡히고 실서버에서 잡히는 부류**가 이 저장소의 상습 실패 지점이다.
+- **검증 함정**:
+  - `TEST_DATABASE_URL` 없이 `go test ./...` 는 통과처럼 보인다. DB 의존 테스트(`internal/api`, `internal/tools`, `internal/apikey`)의 실제 커버리지를 확인했다고 착각하지 말 것.
+  - CI 는 `-p 1`(패키지 병렬 1)로 돈다. 공유 테스트 DB 때문이다. 로컬에서 병렬로 돌리면 깨질 수 있다.
+  - `internal/webui/dist/index.html` 은 커밋되어 있다. 웹을 고치면 임베드 산출물을 다시 만들어야 `go build` 결과에 반영된다.
+  - `internal/pluginjar/bamcp-permission.jar` 은 바이너리가 커밋되어 있다. Java 쪽 수정은 JAR 재생성이 필요하다(`scripts/build-plugin.sh`).
+  - `go.mod` 의 직접 의존성(chi, go-oidc, golang-jwt, uuid)이 `// indirect` 로 잘못 표기되어 있다. `go mod tidy` 를 무심히 돌리면 diff 가 커진다.

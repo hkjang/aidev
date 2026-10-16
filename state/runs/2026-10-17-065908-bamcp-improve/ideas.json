@@ -1,0 +1,56 @@
+[
+  {
+    "title": "MCP 정수 인자의 조용한 절삭·오해석 차단 (toInt 엄격화)",
+    "value": 4,
+    "risk": 2,
+    "size": "S",
+    "status": "done",
+    "note": "float64 소수부 절삭과 fmt.Sscanf 의 뒤따르는 문자 허용으로 buildNumber 가 조용히 다른 빌드로 해석됐다. 실수는 정수 표현 가능할 때만, 문자열은 strconv.Atoi 전체 일치일 때만 허용. 단위 테스트(args_test.go)와 실행기 통합 테스트 추가. 커밋 30928ef.",
+    "updated": "2026-10-17"
+  },
+  {
+    "title": "read.go 의 raw start/limit 을 Bamboo 전달 전 클램프",
+    "value": 3,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "read.go:190,482 는 OptInt(\"start\"/\"limit\") 를 clamp 없이 Bamboo REST 로 그대로 넘긴다. 음수나 거대값이 Bamboo 측 오류/과다 응답을 유발할 수 있다. 다른 호출부는 모두 clamp() 로 감싸져 있어 여기만 예외다.",
+    "updated": "2026-10-17"
+  },
+  {
+    "title": "internal/approval·internal/operation 테스트 공백 보강",
+    "value": 4,
+    "risk": 2,
+    "size": "M",
+    "status": "pending",
+    "note": "두 패키지 모두 [no test files]. 승인 상태 전이(셀프 승인 거부, 만료, 일회용 소진)는 통합 테스트로만 간접 확인된다. DB 의존이라 TEST_DATABASE_URL 필요. 도커로 임시 Postgres 를 띄우면 실제로 돌릴 수 있음이 이번 회차에 확인됐다.",
+    "updated": "2026-10-17"
+  },
+  {
+    "title": "go.mod 의 직접 의존성 // indirect 오표기 정정",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "chi, go-oidc, golang-jwt, uuid 가 직접 import 되는데 // indirect 로 표기돼 있다. go mod tidy 를 무심히 돌리면 diff 가 커지므로 의도적으로 한 회차를 써서 정리할 가치가 있다.",
+    "updated": "2026-10-17"
+  },
+  {
+    "title": "Args.OptBool 의 문자열 불리언 처리",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "OptBool 은 bool 타입만 받고 \"true\"/\"1\" 같은 문자열은 조용히 기본값으로 빠진다. Int 를 엄격화한 것과 대칭으로, 받아들일 범위를 명시하거나 최소한 스키마 설명에 적어야 한다. 다만 조용히 기본값으로 빠지는 것이 승인 플래그에서 fail-closed 쪽인지 먼저 확인할 것.",
+    "updated": "2026-10-17"
+  },
+  {
+    "title": "logmask 를 MCP 도구 인자 로깅 경로에도 적용했는지 점검",
+    "value": 3,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "approval.Arguments 가 DB 에 평문 JSON 으로 저장된다(approval.go:48-49, 114). 변수 allowlist 가 있어 비밀값은 막히지만, 감사 로그/승인 스냅샷 경로에 logmask 가 걸려 있는지 확인되지 않았다. 이번 회차에서는 범위 밖이라 보지 않았다.",
+    "updated": "2026-10-17"
+  }
+]
