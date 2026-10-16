@@ -37,3 +37,5 @@
 - 검증(모두 통과): `gofmt -l .`(출력 없음) · `go build ./...` · `go vet ./...` · `go test ./...`(internal/app 11.589s) · `web` 에서 `npm ci && npm test && npm run build` — CI 의 `test` 잡과 같은 순서다. 그 뒤 README 가 적어 둔 로컬 릴리즈 검증 `scripts/release-image.sh 1.4.18`(스크립트에 실행 권한이 없어 `bash` 로 호출) → `seaton:v1.4.18` 빌드 성공, `gzip -t SeatOn-v1.4.18.tar.gz` 통과(47,646,130바이트). 버전 일치는 추측하지 않고 확인했다 — 빌드된 이미지에서 바이너리를 꺼내 박힌 버전 문자열이 `1.4.18` 하나임을 봤다. `/api/v1/version` 호출은 DB 없이 기동이 안 되어 생략했다.
 - GitHub Release 는 만들지 않았다. `release.yml` 이 `v*.*.*` 태그 푸시에 반응해 이미지를 빌드하고 `SeatOn-v1.4.18.tar.gz` 를 `--generate-notes --title "SeatOn v1.4.18"` 로 첨부한다 — 그래서 `release.json` 의 `github_release` 는 false, `assets` 는 빈 배열이다. 로컬 검증용으로 만든 tar.gz 는 지웠다(러너가 올릴 자산이 아니다). 원격에는 아무것도 보내지 않았다: 커밋·태그 푸시는 러너의 일이다.
 - 다음 회차가 알아 둘 것: 릴리즈 노트 본문은 PR 제목에서 자동 생성되므로, 이번처럼 "오류 시 200 대신 500 database_error" 같은 동작 변경을 사람에게 알리려면 PR 제목이나 문서 커밋 본문이 유일한 자리다. 이번에는 문서 커밋 본문에 적었다.
+- [러너 20:02] release published — v1.4.18
+- [러너 20:04] assets verified — v1.4.18 자산 1개 (이전 v1.4.17: 1)
