@@ -1,36 +1,24 @@
-# weekly 프로필 (2026-10-09)
+# weekly 프로필 (2026-10-16)
 - 목적: 사내 주간보고 작성·검토·PPTX/메일 내보내기와 업무 상황판·MCP·Confluence 수집을 제공하는 단일 바이너리 웹 서비스.
-- 스택: Go 1.24 선언(net/http·pgx/pgxpool), PostgreSQL(pg_trgm/pgvector 선택), React 19.2.8·TypeScript 7.0.2·Vite 8.2.1·vitest 4. 로컬 Go go1.26.7.
-- 기준: main@f291f8c, v0.318.0. 최근 30개 git log와 README·로드맵·CI 확인, 작업 트리 변경 없음.
+- 스택: Go(net/http·pgx/pgxpool), PostgreSQL(pg_trgm/pgvector 선택), React·TypeScript·Vite·vitest. (언어 버전은 이번 회차 재확인 안 함 — 10-09 프로필의 Go 1.24 선언/로컬 go1.26.7 를 그대로 믿을 것.)
+- 기준: main@37efe44, v0.319.0. 작업 트리 깨끗. 최근 12개 git log 확인.
 - 구조:
-  - internal/app/ — 서버·HTTP 핸들러·worker와 Go 시험. httpharness_test.go:newTestServer는 실제 New/Handler 및 scratch DB 사용.
-  - internal/app/attachments.go — 이미지 선검증·디스크 쓰기·행 트랜잭션; uploadAttachments의 nextOrder Scan 오류 무시가 이번 선택.
-  - internal/app/attachments.go:cleanupAttachmentFiles — 현재는 부모 weekly_reports 부재일 때만 디렉터리 삭제. 10-05 프로필의 첨부 0건 기준 설명은 폐기.
-  - internal/app/attachments.go:updateAttachment — placement만 변경하면 목적지 max+1, 명시 sortOrder는 그대로 저장. 직렬화/전역 유일성 보장은 아님.
-  - internal/app/semantic.go — 집계 실패는 countsUnread, pendingEmbeddingCount는 (int,error), rebuild 잔여 조회 실패는 remainingUnread. 오류 무시가 남았다는 옛 설명 폐기.
-  - internal/app/admin.go·mail.go·confluence_handlers.go — 계정 필터/페이징, 3종 메일 큐 운영 조회, 수동 동기화·상태/진단 조회.
-  - internal/app/mcpwrite.go — session 또는 mcp:write 권한으로 쓰기 도구 제공. 문서의 MCP 전체 읽기 전용 설명과 차이 남음.
-  - internal/app/migrations/ — 001~030 SQL, 기존 SQL 변경 금지(이전 프로필의 체크섬 보호 관례). 008_attachments.sql의 sort_order는 integer/FK는 cascade.
-  - frontend/src/pages/ — React 화면. AdminPage SettingsTab은 임베딩 실패 플래그 소비, UsersTab은 사용자 페이지·reviewer 목록 조회.
-  - cmd/weekly/web·docs/·scripts/·.github/workflows/ — 내장 정적 자산·가이드/계약/로드맵·검사 도구·CI/릴리스. cmd 내장 배선은 이전 프로필 기준, 이번 재독 안 함.
-- 빌드·테스트: go build ./..., go vet ./..., go test ./... -count=1. 이번 전체/build/vet 미실행; 과거 전체 DB 시험 149~182초.
-- 빌드·테스트: npm --prefix frontend ci / run lint / test / run build. package.json test는 서울·뉴욕 TZ 두 번 실행. 이번 프런트 미실행, node_modules 없음.
-- 빌드·테스트: python3 scripts/openapi-check.py(119경로)·python3 scripts/paging-check.py(10목록) 이번 PASS. 변경 후 python3 scripts/guard-check.py --changed f291f8c (DB DSN 필수).
-- 정찰 증거: 저장소 밖 Go overlay로 실제 HTTP에서 a=0,b=2147483647 PATCH 후 c 업로드 201/c=0, GET 목록에 중복 0과 새 행 3개를 확인.
-- 정찰 증거: TestASentSortOrderIsStoredAsSent PASS, 새 진단 TestScoutUploadOrderQueryOverflow 기대 FAIL, 패키지 3.190초. probe-result.txt 보관. 프로덕션 변경 없음.
-- 정찰 검증: 실제 DB의 관련 Go 시험(Attachment|Capture|SortOrder|Placement) PASS 7.360초. 최초 /mnt/c TMPDIR 권한 실패는 기본 Linux 임시 경로 재실행으로 해소; git diff --check PASS.
-- 관례: 한국어 feat:/fix:/test:/docs:/chore: 커밋. app_settings 설정. 동작 시험은 // guards:로 실제 실행하는 보호 함수 표시.
-- 관례: 문서와 대응 HTML 렌더는 scripts/render-docs.py(이전 프로필 기준); 이번 문서 수정 과제 아님. README/MCP 및 CHECKS 설명 일부는 코드와 불일치.
-- 위험 구역: auth/session/OIDC/MCP OAuth 권한, crypto 비밀, migrations 출하 SQL, .github/workflows 릴리스. 이번 과제는 모두 제외.
-- 자주 깨지는 곳: newTestServer가 전역 상태 디렉터리를 바꾸므로 t.Parallel 금지. 서비스 기동 worker가 존재하므로 경합 시험은 잠금·종료를 보장(이전 회차 교훈).
-- 자주 깨지는 곳: 별도 주입한 대역/소스 문자열 검사를 최종 동작 증거로 삼지 않는다. 같은 테이블 rename은 순서 조회와 INSERT를 모두 깨므로 이번에는 공개 PATCH 경계값으로 재현.
-- 검증 함정: DSN 없으면 DB 시험은 SKIP. weekly-test-pg는 현재 15434에서 실행 중이며 docker inspect 자격은 자식 환경에만 전달, 출력/파일 저장 금지.
-- 검증 함정: run-db-check.py는 위 컨테이너의 DSN을 자식 실행에 전달하는 정찰 보조 도구. 다른 환경에서는 자체 시험용 DSN 사용; 운영 DB 금지.
-- 검증 함정: TMPDIR를 /mnt/c의 정찰 폴더로 지정하면 attachmentwrite_test.go:TestAttachmentWriteIsAllOrNothing이 mode 0777/want 0600으로 실패했다. 기본 Linux 임시 경로 사용.
-- 검증 함정: CI는 pgvector/pgvector:pg16을 제공하지만 release.yaml은 DB 서비스 없이 Go/프런트 검증. 릴리스 초록만으로 DB 시험 실행을 단정하지 말 것.
-- 검증 함정: mutation/authz 도구는 소스 제자리 변경. 다른 빌드와 병행 금지. mutation run_test subprocess에 timeout 없어 --budget은 진행 중 시험을 끊지 못함.
-- 검증 함정: AdminPage/DashboardPage 이름을 참조하는 frontend/src/*test* 검색 결과 없음. 기존 일부 화면 시험은 react-dom/server 사용; DOM 의존성/행동 시험 기반은 별도 확인 필요.
-- 검증 함정: 이번 관찰은 API 응답·목록 저장 결과까지이며 UI 클릭·PPTX 출력은 미확인. 새 시험의 파일 바이트 보존·실패 뒤 재시도는 구현 단계에서 추가.
-- 로드맵: ROADMAP_PLAN 머리말 v0.318.0, 본문에는 과거 WorkItem 미도입 설명이 남아 있음. 현재 코드·최근 커밋 우선. 제한한 internal/frontend/src/docs/scripts TODO/FIXME 검색 결과 없음.
-- 로컬 지침: 저장소 및 조사한 상위 경로에 AGENTS.md/CLAUDE.md 없음. Skill 도구는 없으며 headcount/plugins 아래 요청한 3종 SKILL.md와 산정 references/sources.md를 읽음.
-- 이번 선택: uploadAttachments의 nextOrder 조회 실패 시 저장 전 500 QUERY_FAILED로 거절. 프로덕션 1파일+시험 1파일; PATCH 상한/자동 재번호/동시성은 별도.
+  - internal/app/ — 서버·HTTP 핸들러·worker와 Go 시험. `httpharness_test.go:newTestServer` 가 실제 `New`/`Handler` 와 scratch DB 를 쓴다.
+  - internal/app/attachments.go — 업로드(선검증 후 일괄 저장, 경로는 `reportID/sha256.ext` 내용 주소, 255-259행), `nextOrder` 조회 실패는 500 으로 거절(10-09 수정 완료), `updateAttachment` 는 placement 변경 시 목적지 그룹 max+1(a844817), `cleanupAttachmentFiles` 는 부모 보고서 부재만 기준(6dbab0b), `deleteAttachment`(477-506) 의 참조 수 Scan 오류 무시는 **아직 남아 있음**(498행 — 이번 과제).
+  - internal/app/admin.go — `adminUsers`(471) 검색·역할 필터·페이징. `userPageMaximum=500`, 알 수 없는 역할은 조용히 버려지고 `roles` 가 비면 WHERE 가 사라진다(481-486, 496-499). 조직 수정은 `updateOrganization`(555).
+  - internal/app/semantic.go — 집계 실패는 `countsUnread`/`remainingUnread` 로 드러냄(7a366e7). mail.go(3종 큐 운영 조회), confluence_handlers.go(수동 동기화·진단), mcpwrite.go(session 또는 mcp:write 로 쓰기 — 문서의 "읽기 전용" 서술과 불일치).
+  - internal/app/migrations/ — 번호순 SQL, 출하된 파일 변경 금지(체크섬 보호).
+  - frontend/src/pages/ — React 화면. `AdminPage.tsx:205-208` 가 사용자 페이지·조직·검토 책임자 목록을 한 번에 읽고, 207행은 `role=TEAM_LEADER,ORG_MANAGER,ADMIN&limit=500` 한 페이지만 읽어 `leads.total` 을 쓰지 않는다(501명부터 조용히 잘림).
+  - cmd/weekly/web·docs/·scripts/·.github/workflows/ — 내장 정적 자산·가이드/계약/로드맵·검사 도구·CI/릴리스.
+- 빌드·테스트: `gofmt -l internal/app`, `go build ./...`, `go vet ./...`, `go test ./... -count=1`(internal/app 160~180초, DSN 필요 — 없으면 SKIP). 프런트는 `npm --prefix frontend ci / run lint / test / run build`(test 는 서울·뉴욕 TZ 두 번). 계약 검사 `python3 scripts/openapi-check.py`(119경로)·`python3 scripts/paging-check.py`(10목록)·`python3 scripts/guard-check.py --changed <base>`(DSN 필요).
+- 관례: 한국어 `feat:/fix:/test:/docs:/chore:` 커밋. 설정은 app_settings. 동작 시험은 `// guards:` 로 실제 지나는 보호 함수를 표시. 수정은 "넓히지 말고 좁히는" 방향. 감사 `details` 에는 식별자만.
+- 위험 구역: auth/session/OIDC/MCP OAuth, crypto 비밀, migrations 출하 SQL, .github/workflows 릴리스 — 회차 과제에서는 가능하면 제외.
+- 자주 깨지는 곳: `newTestServer` 가 전역 상태 디렉터리를 바꾸므로 `t.Parallel()` 금지. 기동 worker 때문에 경합 시험은 잠금·종료 보장 필요. 같은 모양의 "질의 오류를 버리는 Scan" 결함이 5회차 연속 과제였다 — 개별 수정은 되지만 반복으로 읽힐 수 있다.
+- 검증 함정:
+  - 시험 DB 컨테이너 `weekly-test-pg`(pgvector/pgvector:pg16, 15434)가 **2026-10-13 경부터 Exited(255)** 다. `docker start weekly-test-pg` 가 선행돼야 하며, 비대화형 세션에서는 승인이 막혀 DB 시험을 아예 못 돈다(이번 정찰이 그랬다). DSN 없으면 전부 SKIP 되니 초록을 통과로 읽지 말 것.
+  - TMPDIR 을 `/mnt/c` 아래로 지정하면 `attachmentwrite_test.go:TestAttachmentWriteIsAllOrNothing` 이 파일 모드(0777/0600)로 실패한다. 기본 리눅스 임시 경로를 쓸 것.
+  - 시험이 만든 DDL(테이블 rename·트리거)은 반드시 `t.Cleanup` 으로 되돌릴 것 — 공유 DB 에 남으면 다른 시험이 통째로 깨진다. 마이그레이션 수 시험과 메일 큐 시험은 공유 DB 잔여 상태로 환경적 실패를 낸다(일회용 DB 권장).
+  - CI 는 pgvector/pgvector:pg16 서비스를 주지만 release.yaml 은 DB 서비스 없이 Go/프런트만 검증한다. 릴리스 초록으로 DB 시험 실행을 단정하지 말 것.
+  - `scripts/mutation-check.py`·`scripts/authz-check.py` 는 소스를 제자리 변경한다. 다른 빌드/시험과 병행 금지, 커밋 직전 금지.
+  - 프런트에 `AdminPage`/`DashboardPage` 를 렌더하는 시험이 없다. 화면 문구 변경은 `tsc -b`·`vite build`·기존 vitest 까지만 증명된다.
+- 로드맵·문서: ROADMAP_PLAN 머리말은 과거 버전에 머물러 있고 README/docs/MCP.md 의 MCP "읽기 전용" 서술과 CHECKS.md 의 authz-check 소요 시간은 코드와 불일치. 저장소에 AGENTS.md/CLAUDE.md 없음.

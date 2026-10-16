@@ -1,34 +1,24 @@
-# Clustara 프로필 (2026-10-09)
+# Clustara 프로필 (2026-10-16)
 - 목적: 폐쇄망 Kubernetes 운영 허브 — 멀티 클러스터 수집·장애/보안/용량/비용 분석·승인 액션·LLM/MCP 프록시·Mattermost 알림.
-- 스택: Go 모듈 clustara(go 1.25), net/http, SQLite(modernc) 기본·PostgreSQL 지원, 선택 ClickHouse, 인라인 바닐라 JS 한국어 SPA.
+- 스택: Go 모듈 clustara(go 1.25), net/http, SQLite(modernc) 기본·PostgreSQL 지원, 선택 ClickHouse, 인라인 바닐라 JS 한국어 SPA(admin_ui.go).
 - 구조:
   - cmd/ — clustara 서버·clustara-cli·clustara-agent·api-surface-audit.
-  - internal/proxy/ — server.go:Routes HTTP mux, admin_k8s.go 등 핸들러, admin_ui.go SPA, 알림·MCP/SSO·DW 조립.
-  - internal/analyzer/ — capacity/security/rca/cost/node_monitoring 등 분석과 단위 테스트.
-  - internal/store/ — SQLStore, sqlstore.go DDL, k8s.go 인벤토리·이벤트·메트릭·리비전.
-  - internal/kube/·internal/collector/ — K8s 변환·수집·실행; internal/action/ — 승인 영향도.
-  - docs/ — ADMIN_GUIDE·USER_GUIDE·K8S_OPERATIONS_HUB 등 운영 문서. K8S_PHASE2_PLAN은 과거 구조와 완료 상태 혼재, 코드 우선.
-- 빌드·테스트: go test ./internal/analyzer ./internal/proxy -run 'Capacity|NodeMonitoring' -count=1 → 이번 성공(analyzer 0.006s, proxy 0.014s).
-- 추가 기준선: go test ./internal/analyzer ./internal/proxy -run 'Capacity|NodePacking|GPU|Cost' -count=1 → 성공(analyzer 0.007s, proxy 1.567s), 실제 Node/GPU 엔드포인트·비용 기존 테스트 포함.
-- 구현 후 게이트: gofmt -l <수정 Go 파일>, go build ./..., go vet ./..., go test ./... -count=1. 정찰 전체 게이트 미실행; 10-07 기록 proxy 전체 65.9s, store 16.8s.
-- CI: .github/FUNDING.yml만 발견, workflows 없음. scripts/golden-regression.sh는 실행 중 서버·모델·토큰이 필요한 별도 선택 게이트.
-- 관례: 영어 fix(scope)/feat(scope), chore: release vX. 환경변수·DB RuntimeFlag 설정, SQL bind와 CREATE TABLE IF NOT EXISTS 사용(DDL 구조는 이전 프로필). UI 문구 한국어.
-- 위험 구역: proxy/server.go 인증·mcp_oauth.go·keycloak*.go, analyzer/policy.go Deny, store/sqlstore.go DDL, DW 스키마. 이번 내부 구현 재검토 안 함.
-- 자주 깨지는 곳: 멀티 클러스터 join/dedup의 ClusterID 누락; 실제 동일 이름 교차 클러스터 fixture로 검증해야 한다.
-- 새로 확인한 결합: capacity.go:podRequestGPU는 cost.go:BuildCostForecast/EstimateCost가 공유한다. GPU 키 확장은 비용 금액까지 바꾸므로 용량 과제는 nodePackingAndGPU 안으로 제한.
-- 현재 GPU: 용량은 nvidia.com/gpu만, 노드 모니터링은 nvidia.com/gpu·amd.com/gpu·intel.com/gpu. podContainers는 일반+init 컨테이너를 합쳐 반환한다.
-- 잔여 GPU: 용량 Idle는 allocatable-requested(음수 가능), 노드 모니터링 Available은 0으로 clamp. 계약 통합 금지.
-- 용량 API: GET /admin/k8s/capacity는 인벤토리 Limit4000, 메트릭2000, cluster_id 선택. 메트릭 오류는 현재 폐기. report.gpu를 UI가 직접 렌더하며 빈 배열이면 GPU 카드가 없다.
-- 조회 창: ListK8sInventory 기본200/max10000, ListK8sEvents 기본100/max500(K8sEventQueryLimit), ListK8sRevisions 기본100/max1000.
-- 이벤트 GET은 limit/window_full/포화 window_notice 제공. inventory GET은 items만 제공. 상한과 같은 행 수는 누락 확정이 아닌 포화 가능성이다.
-- 최신 알림: 등록 클러스터마다 별도 예산. 레지스트리가 비면 공유 창 폴백, 조회 오류 폴백은 clusters_error/clusters_notice 보고(v0.9.297).
-- quiet hours는 조회 뒤 판정하며 이제 window·truncated·notice를 응답에 보존(v0.9.298). quiet 경로는 auditAdmin 없이 return. 인벤토리 오류는 여전히 전 스캔 500.
-- notify podsec/rbac dedup 키에는 Kind 없음. 반복 차선 유형이므로 1순위로 재선정하지 않는다.
-- PSS classifyPodSecurity와 ScorePodSecurity는 서로 다른 계약. hostPath 등급 차이를 이유로 통합하지 않는다.
-- 테스트 배선: openTestStore(t)는 실제 SQLite Open+Migrate, NewAsyncLogger+NewServer(testConfig)+httptest.NewServer(server.Routes()). testConfig는 백그라운드 스케줄러 비활성화.
-- K8s 변환: kube.InventoryFromObject(kind, apiVersion, map[string]any); ClusterID/고유 ID를 fixture에 명시하고 UpsertK8sInventory로 적재.
-- 검증 함정: admin_ui_capacity_home_test.go는 문자열 계약 테스트여서 동작 증거가 아니다. HTTP 회귀 테스트로 최종 JSON을 확인한다.
-- 외부 환경: 실제 PostgreSQL·Kubernetes·Keycloak·ClickHouse·브라우저 이번 미확인. 기존 테스트 성공은 새 결함 재현을 뜻하지 않는다.
-- 기존 주의(이번 재검증 안 함): docs_reference_test.go/release_gate_test.go는 문서 API·설정·버전 마커 검사. Mattermost 플래그 변경 후 invalidateMattermostCache 필요.
-- 정찰: main@ef9081b(v0.9.298), git log -30 확인, 저장소 파일 목록에 CLAUDE.md/AGENTS.md 없음. 코드 변경·커밋 없음.
-- 스킬: 전용 Skill 도구 없음. ~/.claude/plugins/marketplaces/headcount/plugins/{pmo,technology}/skills/에서 요청한 3개 SKILL.md 직접 읽음.
+  - internal/proxy/ — server.go:Routes HTTP mux, admin_k8s*.go 핸들러군, admin_ui.go SPA, k8s_notify.go 알림, mcp/sso/dw 조립.
+  - internal/analyzer/ — capacity.go·security.go·rca.go·workload.go·cost.go·node_monitoring.go 등 순수 분석 + 단위 테스트.
+  - internal/store/ — SQLStore, sqlstore.go DDL, k8s.go 인벤토리·이벤트·메트릭·리비전 조회.
+  - internal/kube/·internal/collector/ — K8s 객체 변환·수집·실행; internal/action/ — 승인 영향도.
+  - docs/ — ADMIN_GUIDE·USER_GUIDE·K8S_OPERATIONS_HUB·Clustara_Detailed_Manual. K8S_PHASE2_PLAN 은 과거 구조 혼재, 코드 우선.
+- 빌드·테스트: 이번 회차 실행 확인 → `go test ./internal/proxy ./internal/analyzer -run 'RCA|Rollout|NodeCondition' -count=1` 성공(proxy 2.988s, analyzer 0.006s). 구현 후 게이트: `gofmt -l <수정 파일>` → `go build ./...` → `go vet ./...` → `go test ./... -count=1`(과거 기록 proxy 66~101s, store 17~27s; 전체 게이트는 이번 미실행).
+- CI: .github/FUNDING.yml 만 있고 workflows 없음. scripts/golden-regression.sh 는 실행 중 서버·모델·토큰이 필요한 선택 게이트.
+- 관례: 영어 `fix(scope)`/`feat(scope)`, 릴리즈는 `chore: release vX.Y.Z`(현재 v0.9.300). 설정은 환경변수 + DB RuntimeFlag. SQL 은 bind + `CREATE TABLE IF NOT EXISTS`. UI·운영자 안내 문구는 한국어, 코드 주석은 영어.
+- 위험 구역: proxy/server.go 인증(authorizeAdmin)·mcp_oauth.go·keycloak*.go, analyzer/policy.go Deny 판정, store/sqlstore.go DDL, DW 스키마. 이번 회차 재검토 안 함.
+- 자주 깨지는 곳: 멀티 클러스터 join/dedup 의 ClusterID 누락(동일 이름 교차 클러스터 fixture 로 검증). analyzer.*RelevantKinds 목록에서 빠진 Kind 는 "미조회" 로 보고되지 않고 findings 가 조용히 사라진다.
+- 인벤토리 조회 창(현재 상태): capacity 는 `CapacityRelevantKinds()`+`capacityScanBudget(4000)+1`+`scan{status,resources,reason}`(v0.9.300), security 는 `SecurityRelevantKinds()`+`securityScanBudget(8000)+1`+같은 `scan`. **rca(`admin_k8s.go:525`)는 아직 Kinds 없이 `Limit 1000`**, connectivity(`:692` 부근)도 미필터. `K8sInventoryFilter.Kinds` 가 좁히기 수단이고 쿼리는 `updated_at DESC`.
+- 조회 상한: ListK8sInventory 기본200/max10000, ListK8sEvents 기본100/max500(K8sEventQueryLimit), ListK8sRevisions 기본100/max1000. events GET 만 limit/window_full/window_notice 를 노출(v0.9.296); inventory GET 은 items 만.
+- 메트릭 오류 처리: `metrics, _ := s.db.ListK8sMetricSamples(...)` 가 capacity·cost·finops·pods·dw 등 10곳 이상에서 오류를 버린다 → DB 고장이 '표본 없음' 과 같은 200. 미해결.
+- 알림: 등록 클러스터마다 별도 예산, 레지스트리 비면 공유 창 폴백 + clusters_error/clusters_notice(v0.9.297). quiet hours 는 조회 뒤 판정하며 window·truncated·notice 를 보존(v0.9.298)하되 auditAdmin 없이 return. 인벤토리 오류는 여전히 전 스캔 500.
+- 통합 금지 계약: capacity Idle(allocatable-requested, 음수 가능) vs node monitoring Available(0 clamp); classifyPodSecurity vs ScorePodSecurity 등급; capacity.podRequestGPU 는 cost.BuildCostForecast/EstimateCost 와 공유되어 GPU 키 확장이 금액까지 바꾼다.
+- 테스트 배선: `openTestStore(t)` 실 SQLite Open+Migrate, `newPolicyStatusServer(t)`(policy_check_status_test.go:119) = store + AsyncLogger + NewServer(testConfig) + httptest.NewServer(server.Routes()). testConfig 는 백그라운드 스케줄러 비활성화. 인벤토리는 `kube.InventoryFromObject(kind, apiVersion, map[string]any)` + `item.ClusterID`/`item.UpdatedAt` 직접 지정 + UpsertK8sInventory. `*ScanBudget` 은 var 라 테스트에서 낮춰 포화 경로를 돌릴 수 있다.
+- 검증 함정: admin_ui_*_test.go 는 문자열 계약 테스트여서 동작 증거가 아니다 — HTTP JSON 회귀로 증명. 기존 `/admin/k8s/rca` 테스트(admin_k8s_test.go:167, :2967)는 struct 디코드라 응답 키 추가에 안전. 실제 PostgreSQL·Kubernetes·Keycloak·ClickHouse·브라우저는 미확인. docs_reference_test.go/release_gate_test.go 가 문서 API·설정·버전 마커를 검사(이번 재검증 안 함). Mattermost 플래그 변경 후 invalidateMattermostCache 필요.
+- 정찰: main@afe75fe(v0.9.300), git log -12 확인, CLAUDE.md/AGENTS.md 없음. 코드 변경·커밋 없음.
+- 스킬: 전용 Skill 도구로 pmo:estimating-and-contingency, technology:implementation-planning, technology:solution-exploration 호출 가능(이번 회차 3개 모두 로드).

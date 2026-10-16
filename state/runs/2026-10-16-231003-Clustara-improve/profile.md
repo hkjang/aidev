@@ -1,0 +1,24 @@
+# Clustara 프로필 (2026-10-16)
+- 목적: 폐쇄망 Kubernetes 운영 허브 — 멀티 클러스터 수집·장애/보안/용량/비용 분석·승인 액션·LLM/MCP 프록시·Mattermost 알림.
+- 스택: Go 모듈 clustara(go 1.25), net/http, SQLite(modernc) 기본·PostgreSQL 지원, 선택 ClickHouse, 인라인 바닐라 JS 한국어 SPA(admin_ui.go).
+- 구조:
+  - cmd/ — clustara 서버·clustara-cli·clustara-agent·api-surface-audit.
+  - internal/proxy/ — server.go:Routes HTTP mux, admin_k8s*.go 핸들러군, admin_ui.go SPA, k8s_notify.go 알림, mcp/sso/dw 조립.
+  - internal/analyzer/ — capacity.go·security.go·rca.go·workload.go·cost.go·node_monitoring.go 등 순수 분석 + 단위 테스트.
+  - internal/store/ — SQLStore, sqlstore.go DDL, k8s.go 인벤토리·이벤트·메트릭·리비전 조회.
+  - internal/kube/·internal/collector/ — K8s 객체 변환·수집·실행; internal/action/ — 승인 영향도.
+  - docs/ — ADMIN_GUIDE·USER_GUIDE·K8S_OPERATIONS_HUB·Clustara_Detailed_Manual. K8S_PHASE2_PLAN 은 과거 구조 혼재, 코드 우선.
+- 빌드·테스트: 이번 회차 실행 확인 → `go test ./internal/proxy ./internal/analyzer -run 'RCA|Rollout|NodeCondition' -count=1` 성공(proxy 2.988s, analyzer 0.006s). 구현 후 게이트: `gofmt -l <수정 파일>` → `go build ./...` → `go vet ./...` → `go test ./... -count=1`(과거 기록 proxy 66~101s, store 17~27s; 전체 게이트는 이번 미실행).
+- CI: .github/FUNDING.yml 만 있고 workflows 없음. scripts/golden-regression.sh 는 실행 중 서버·모델·토큰이 필요한 선택 게이트.
+- 관례: 영어 `fix(scope)`/`feat(scope)`, 릴리즈는 `chore: release vX.Y.Z`(현재 v0.9.300). 설정은 환경변수 + DB RuntimeFlag. SQL 은 bind + `CREATE TABLE IF NOT EXISTS`. UI·운영자 안내 문구는 한국어, 코드 주석은 영어.
+- 위험 구역: proxy/server.go 인증(authorizeAdmin)·mcp_oauth.go·keycloak*.go, analyzer/policy.go Deny 판정, store/sqlstore.go DDL, DW 스키마. 이번 회차 재검토 안 함.
+- 자주 깨지는 곳: 멀티 클러스터 join/dedup 의 ClusterID 누락(동일 이름 교차 클러스터 fixture 로 검증). analyzer.*RelevantKinds 목록에서 빠진 Kind 는 "미조회" 로 보고되지 않고 findings 가 조용히 사라진다.
+- 인벤토리 조회 창(현재 상태): capacity 는 `CapacityRelevantKinds()`+`capacityScanBudget(4000)+1`+`scan{status,resources,reason}`(v0.9.300), security 는 `SecurityRelevantKinds()`+`securityScanBudget(8000)+1`+같은 `scan`. **rca(`admin_k8s.go:525`)는 아직 Kinds 없이 `Limit 1000`**, connectivity(`:692` 부근)도 미필터. `K8sInventoryFilter.Kinds` 가 좁히기 수단이고 쿼리는 `updated_at DESC`.
+- 조회 상한: ListK8sInventory 기본200/max10000, ListK8sEvents 기본100/max500(K8sEventQueryLimit), ListK8sRevisions 기본100/max1000. events GET 만 limit/window_full/window_notice 를 노출(v0.9.296); inventory GET 은 items 만.
+- 메트릭 오류 처리: `metrics, _ := s.db.ListK8sMetricSamples(...)` 가 capacity·cost·finops·pods·dw 등 10곳 이상에서 오류를 버린다 → DB 고장이 '표본 없음' 과 같은 200. 미해결.
+- 알림: 등록 클러스터마다 별도 예산, 레지스트리 비면 공유 창 폴백 + clusters_error/clusters_notice(v0.9.297). quiet hours 는 조회 뒤 판정하며 window·truncated·notice 를 보존(v0.9.298)하되 auditAdmin 없이 return. 인벤토리 오류는 여전히 전 스캔 500.
+- 통합 금지 계약: capacity Idle(allocatable-requested, 음수 가능) vs node monitoring Available(0 clamp); classifyPodSecurity vs ScorePodSecurity 등급; capacity.podRequestGPU 는 cost.BuildCostForecast/EstimateCost 와 공유되어 GPU 키 확장이 금액까지 바꾼다.
+- 테스트 배선: `openTestStore(t)` 실 SQLite Open+Migrate, `newPolicyStatusServer(t)`(policy_check_status_test.go:119) = store + AsyncLogger + NewServer(testConfig) + httptest.NewServer(server.Routes()). testConfig 는 백그라운드 스케줄러 비활성화. 인벤토리는 `kube.InventoryFromObject(kind, apiVersion, map[string]any)` + `item.ClusterID`/`item.UpdatedAt` 직접 지정 + UpsertK8sInventory. `*ScanBudget` 은 var 라 테스트에서 낮춰 포화 경로를 돌릴 수 있다.
+- 검증 함정: admin_ui_*_test.go 는 문자열 계약 테스트여서 동작 증거가 아니다 — HTTP JSON 회귀로 증명. 기존 `/admin/k8s/rca` 테스트(admin_k8s_test.go:167, :2967)는 struct 디코드라 응답 키 추가에 안전. 실제 PostgreSQL·Kubernetes·Keycloak·ClickHouse·브라우저는 미확인. docs_reference_test.go/release_gate_test.go 가 문서 API·설정·버전 마커를 검사(이번 재검증 안 함). Mattermost 플래그 변경 후 invalidateMattermostCache 필요.
+- 정찰: main@afe75fe(v0.9.300), git log -12 확인, CLAUDE.md/AGENTS.md 없음. 코드 변경·커밋 없음.
+- 스킬: 전용 Skill 도구로 pmo:estimating-and-contingency, technology:implementation-planning, technology:solution-exploration 호출 가능(이번 회차 3개 모두 로드).

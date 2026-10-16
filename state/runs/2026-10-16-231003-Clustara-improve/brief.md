@@ -1,0 +1,21 @@
+- 과제: RCA API의 인벤토리 조회를 분석 대상 Kind로 한정하고 창 포화를 보고하기 (가치 3 / 위험 2 / 작업량 S)
+- 왜: `handleK8sRCA`(`internal/proxy/admin_k8s.go:525`)가 Kind 필터 없이 `Limit: 1000` 으로 인벤토리를 읽는데(쿼리는 `updated_at DESC`), `analyzer.AnalyzeRCA` 가 보는 Kind 는 `RCARelevantKinds()`(`internal/analyzer/rca.go:52`)의 7개(CronJob·DaemonSet·Deployment·Job·Node·Pod·StatefulSet)뿐이다 — 그 함수의 주석이 "row budget 있는 호출자는 이 목록에 예산을 쓰라"고 적어 두었는데도 이 호출자는 쓰지 않는다. 그래서 분석 대상이 아니면서 자주 갱신되는 ConfigMap·Secret·Endpoints 가 1000행 창을 채우면 CrashLoopBackOff·OOMKilled Pod 가 창 밖으로 밀려 `candidates: []`·`count: 0` 이 되고, 응답에 포화 사실이 전혀 없어 "장애 없음" 인 건강한 클러스터와 한 글자도 다르지 않다. 바로 옆 `/admin/k8s/capacity`(v0.9.300)·`/admin/k8s/security` 는 이미 같은 결함을 `Kinds` + `budget+1` + `scan{status,resources,reason}` 로 고쳐 두었으므로 이번 과제는 그 선례를 같은 엔드포인트 유형 하나에 적용하는 것이다.
+- 수용 기준:
+  1) `GET /admin/k8s/rca` 의 인벤토리 조회가 `analyzer.RCARelevantKinds()` 로 좁혀져, 분석 대상이 아닌 Kind 가 아무리 많이 갱신되어도 CrashLoopBackOff Pod 의 후보가 응답에 남는다.
+  2) 조회가 예산을 초과하면 응답에 `scan` 이 `{"status":"partial","resources":N,"reason":"<한국어 운영자 안내>"}` 로 실리고, 초과하지 않으면 `{"status":"checked","resources":N}` 가 실린다(`capacity`·`security` 와 같은 키·같은 결).
+  3) 신규 테스트가 (a) churn 행이 분석 대상 Pod 를 밀어내지 못함 (b) 포화 시 `scan.status=="partial"` (c) 정상 시 `"checked"` 를 **HTTP JSON 응답**으로 증명한다. 수정 전에는 (a)(b) 가 실패해야 한다.
+- 건드릴 파일 (프로덕션 1개):
+  - `internal/proxy/admin_k8s.go:handleK8sRCA` — `ListK8sInventory` 호출(`:525`)에 `Kinds: analyzer.RCARelevantKinds()` 를 더하고 `Limit: rcaScanBudget + 1` 로 바꾼 뒤 초과분을 `items = items[:rcaScanBudget]` 로 잘라 `truncated` 를 계산, 응답 맵에 `scan` 키 추가. 주석은 `handleK8sCapacity`(`:592-600`)·`handleK8sSecurity`(`:640-648`) 와 같은 형식으로 왜 좁혔는지 남길 것.
+  - `internal/proxy/admin_k8s.go` 하단 — `var rcaScanBudget = 1000` 을 `capacityScanBudget`(`:685`)·`securityScanBudget`(`:690`) 옆에 추가. **값은 현재 Limit 과 같은 1000 으로 두어 조회량을 늘리지 말 것**(테스트가 수천 행을 심지 않고 포화 경로를 돌 수 있게 `var`).
+  - `internal/proxy/admin_k8s_rca_scope_test.go` (신규) — 아래 "배선" 대로.
+- 배선(그대로 따라 하면 됨): `newPolicyStatusServer(t)`(`internal/proxy/policy_check_status_test.go:119`)가 실 SQLite `openTestStore` + `store.NewAsyncLogger` + `NewServer(testConfig(...))` + `httptest.NewServer(server.Routes())` 를 한 번에 준다 — 직전 회차의 `admin_k8s_capacity_scope_test.go` 가 쓴 바로 그 헬퍼다. 인벤토리는 `kube.InventoryFromObject(kind, apiVersion, map[string]any{...})` 로 만들고 `item.ClusterID`/`item.UpdatedAt` 을 직접 지정해(시간 동률 없이) `UpsertK8sInventory` 로 적재한다. 포화 재현은 `rcaScanBudget` 을 2 로 낮추고(`t.Cleanup` 으로 복원) ConfigMap 2~3개를 Pod 보다 **나중 `UpdatedAt`** 으로 넣는 방식 — `admin_k8s_capacity_scope_test.go:37-39` 와 동일. CrashLoopBackOff 후보는 Pod 의 `item.Status` 에 `CrashLoopBackOff` 가 들어가야 잡힌다(`rca.go:63-74` 가 `strings.ToLower(item.Status)` 를 `Contains` 로 본다) — `AnalyzeRCA` 는 이벤트 없이도 status 만으로 후보를 만든다.
+- 검증 명령 (이 저장소에서 실제로 돌려 확인한 것):
+  - `go test ./internal/proxy ./internal/analyzer -run 'RCA|Rollout|NodeCondition' -count=1` → 수정 전 기준선 **통과**(proxy 2.988s, analyzer 0.006s). 신규 테스트를 먼저 붙이면 여기서 빨강이 나와야 한다.
+  - 게이트: `gofmt -l internal/proxy/admin_k8s.go internal/proxy/admin_k8s_rca_scope_test.go`(출력 없음) → `go build ./...` → `go vet ./...` → `go test ./... -count=1`(과거 회차 기준 proxy 약 100s, store 약 19s).
+- 위험과 피할 것:
+  - `RCARelevantKinds()` 목록에서 빠진 Kind 는 "조회 못 했다"고 보고되지 않고 findings 가 **조용히 사라진다**. 이번에 읽어 확인한 Kind 분기는 `rca.go:65`(Pod·Deployment·StatefulSet·DaemonSet), `workload.go:20`(Deployment·StatefulSet·Job·CronJob), `workload.go:41-46`(Node, 그리고 노드별 pod 목록을 위한 Pod)로 7개 목록과 정확히 일치한다. **목록 자체를 고칠 필요는 없다** — 고치려면 그건 다른 과제다.
+  - 같은 핸들러의 `ListK8sEvents(..., 500)`·`ListK8sRevisions(..., 1000)`·`ListK8sMetricSamples(..., 4000)` 는 건드리지 말 것(이벤트 상한은 별도 보류 아이디어이고, `lerr == nil` 가드도 그대로 둔다).
+  - `/admin/k8s/home` 의 `failure_candidates`(`internal/proxy/admin_k8s_home.go:161`)도 같은 결함일 가능성이 있으나 **이번 범위 밖**. 한 회차에 엔드포인트 하나만.
+  - 기존 `/admin/k8s/rca` 테스트 2곳(`admin_k8s_test.go:167`, `:2967`)은 응답을 struct 로 디코드하므로 `scan` 키 추가는 깨지 않는다(열어서 확인). `candidates`·`count`·`note` 키와 UI(`admin_ui.go` 가 `candidates` 를 직접 렌더)는 한 줄도 바꾸지 말 것.
+  - 보호 경로(`server.go` 인증·`mcp_oauth.go`·`store/sqlstore.go` DDL·마이그레이션)는 건드리지 않는다. 문자열 계약 테스트(`admin_ui_*_test.go`)를 동작 증거로 쓰지 말 것 — HTTP JSON 으로 증명한다.
+- 차선 후보: 용량 API 메트릭 조회 오류를 정상 무표본 응답과 구별해 표시 (`admin_k8s.go:614` 의 `metrics, _ := s.db.ListK8sMetricSamples(...)` 가 오류를 버려 DB 고장이 '표본 없음' 과 같은 200 을 낸다; v0.9.300 이 만든 `scan` 블록에 `metrics_error` 를 실을 자리가 이미 있다 — 가치 3 / 위험 2 / 작업량 S).
