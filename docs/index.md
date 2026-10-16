@@ -1,7 +1,7 @@
 ---
 title: "aidev 자율 개선 대시보드"
 description: "Claude Code 자율 개선 에이전트가 hkjang 의 프로젝트를 개선·테스트·머지·릴리즈한 일일 보고. 오늘 21회차·릴리즈 11건, 누적 2642회차·릴리즈 804건, 주의 필요 15건."
-last_modified_at: 2026-10-16 13:05:19 +0900
+last_modified_at: 2026-10-16 13:14:11 +0900
 ---
 {% raw %}
 <script type="application/ld+json">
@@ -17,7 +17,7 @@ last_modified_at: 2026-10-16 13:05:19 +0900
   "name": "hkjang",
   "url": "https://github.com/hkjang"
  },
- "dateModified": "2026-10-16T13:05:19+09:00"
+ "dateModified": "2026-10-16T13:14:11+09:00"
 }
 </script>
 
@@ -369,11 +369,11 @@ last_modified_at: 2026-10-16 13:05:19 +0900
 
 # aidev 자율 개선 대시보드
 
-<p class="tldr"><strong>한 줄 요약.</strong> Claude Code 자율 개선 에이전트가 hkjang 의 프로젝트를 개선·테스트·머지·릴리즈한 일일 보고. 오늘 21회차·릴리즈 11건, 누적 2642회차·릴리즈 804건, 주의 필요 15건. 회차가 끝날 때마다 자동 갱신됩니다 (마지막 갱신 <time datetime="2026-10-16T13:05:19+09:00" data-rel>2026-10-16 13:05</time> KST).</p>
+<p class="tldr"><strong>한 줄 요약.</strong> Claude Code 자율 개선 에이전트가 hkjang 의 프로젝트를 개선·테스트·머지·릴리즈한 일일 보고. 오늘 21회차·릴리즈 11건, 누적 2642회차·릴리즈 804건, 주의 필요 15건. 회차가 끝날 때마다 자동 갱신됩니다 (마지막 갱신 <time datetime="2026-10-16T13:14:11+09:00" data-rel>2026-10-16 13:14</time> KST).</p>
 
 <div class="alerts" role="alert"><strong>⚠️ 주의 필요 15건</strong> <span class="meta">— 새 경고는 GitHub Issue·Slack·이메일·Windows 알림으로도 보냅니다</span><ul><li><a href="https://hkjang.github.io/aidev/projects/ai-admin/">ai-admin</a> — CI 실패로 PR 미머지 <span class=meta>(2026-10-16 02:45)</span></li><li><a href="https://hkjang.github.io/aidev/projects/ai-admin/">ai-admin</a> — CI 실패로 PR 미머지 <span class=meta>(2026-10-16 06:27)</span></li><li><a href="https://hkjang.github.io/aidev/projects/ai-admin/">ai-admin</a> — CI 실패로 PR 미머지 <span class=meta>(2026-10-16 08:50)</span></li><li><a href="https://hkjang.github.io/aidev/projects/ai-admin/">ai-admin</a> — CI 실패로 PR 미머지 <span class=meta>(2026-10-16 10:37)</span></li><li><a href="https://hkjang.github.io/aidev/projects/yeopjari-your/">yeopjari-your</a> — CI 실패로 PR 미머지 <span class=meta>(2026-10-15 00:30)</span></li><li><a href="https://hkjang.github.io/aidev/projects/review.yeopjari.bid/">review.yeopjari.bid</a> — CI 실패로 PR 미머지 <span class=meta>(2026-10-15 09:52)</span></li><li><a href="https://hkjang.github.io/aidev/projects/workkit.irumx.app/">workkit.irumx.app</a> — CI 실패로 PR 미머지 <span class=meta>(2026-10-15 09:55)</span></li><li><a href="https://hkjang.github.io/aidev/projects/review.yeopjari.bid/">review.yeopjari.bid</a> — 보호 파일 변경 — 자동 머지 안 함, 사람 검토 필요 <span class=meta>(2026-10-15 11:21)</span></li><li><a href="https://hkjang.github.io/aidev/projects/workkit.irumx.app/">workkit.irumx.app</a> — CI 실패로 PR 미머지 <span class=meta>(2026-10-15 12:00)</span></li><li><a href="https://hkjang.github.io/aidev/projects/studio.irumx.app/">studio.irumx.app</a> — 보호 파일 변경 — 자동 머지 안 함, 사람 검토 필요 <span class=meta>(2026-10-15 13:56)</span></li><li><a href="https://hkjang.github.io/aidev/projects/review.yeopjari.bid/">review.yeopjari.bid</a> — CI 실패로 PR 미머지 <span class=meta>(2026-10-15 14:33)</span></li><li><a href="https://hkjang.github.io/aidev/projects/biz.irumx.app/">biz.irumx.app</a> — CI 실패로 PR 미머지 <span class=meta>(2026-10-15 14:33)</span></li><li><a href="https://hkjang.github.io/aidev/projects/review.yeopjari.bid/">review.yeopjari.bid</a> — CI 실패로 PR 미머지 <span class=meta>(2026-10-15 15:23)</span></li><li><a href="https://hkjang.github.io/aidev/projects/review.yeopjari.bid/">review.yeopjari.bid</a> — CI 실패로 PR 미머지 <span class=meta>(2026-10-15 16:37)</span></li><li><a href="https://hkjang.github.io/aidev/projects/igame/">igame</a> — 수정 과제 대기 중 — 오류 대응(자동 적재): 마지막 회차가 &#x27;verify-failed&#x27; 로 끝났습니다. CI failed, PR open https://github.com/hkjang/igame/pull/40</li></ul></div>
 
-<div class="alerts" role="status"><strong>🩺 러너 점검 필요</strong> <span class="meta">— 마지막 회차 53분 전 · 스케줄러 준비 · 다음 실행 2026-10-16 오후 12:50:00 · 디스크 94% · 최근 7일 회귀 0건 · 점검 12:45</span><ul><li>측정 감사: 원격에 없는 릴리즈 태그 1건 — 그 저장소의 다음 릴리즈를 막는다</li><li>디스크 94% 사용</li><li>조치: 회차가 53분째 없어 AutoImprove 를 직접 실행했다</li></ul></div>
+<div class="alerts" role="status"><strong>🩺 러너 점검 필요</strong> <span class="meta">— 마지막 회차 9분 전 · 스케줄러 준비 · 다음 실행 2026-10-16 오후 1:20:00 · 디스크 94% · 최근 7일 회귀 0건 · 점검 13:15</span><ul><li>측정 감사: 원격에 없는 릴리즈 태그 1건 — 그 저장소의 다음 릴리즈를 막는다</li><li>디스크 94% 사용</li></ul></div>
 
 
 <p><a href="https://hkjang.github.io/aidev/inbox/"><strong>📥 작업함</strong></a> — 열린 러너 PR·복구·수정 과제 71건 (그중 사람 필요 57건)</p>
