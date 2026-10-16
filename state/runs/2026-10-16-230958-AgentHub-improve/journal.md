@@ -31,3 +31,5 @@
 - [러너 23:29] pr created — https://github.com/hkjang/AgentHub/pull/47
 - [러너 23:32] ci passed — 검사 1개 모두 success
 - [러너 23:32] merge done — bb0c720
+- [러너 23:41] release published — v0.264.0
+- [러너 00:03] assets verified — v0.264.0 자산 9개 (이전 v0.263.0: 8)

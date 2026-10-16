@@ -28,3 +28,5 @@
 - 판정 approve / risk low / blocking 없음(인가·개인정보·비밀값 변화 없음, 질의 파라미터 바인딩 유지).
 - [러너 23:36] review approved — 리뷰 승인 (risk=low)
 - [러너 23:36] pr created — https://github.com/hkjang/weekly/pull/34
+- [러너 00:00] ci passed — 검사 1개 모두 success
+- [러너 00:00] merge done — c9feef4
