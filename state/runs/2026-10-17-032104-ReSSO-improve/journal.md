@@ -29,3 +29,4 @@
 - 다음 회차: 원장 보류의 `toolchain go1.26.7 → go1.26.9` 가 실제로 `make lint` 를 막는 유일한 원인이다. 워크트리의 미커밋 `webui/dist/index.html` 도 이 변경과 무관하게 남아 있다.
 - [러너 03:50] review approved — 리뷰 승인 (risk=low)
 - [러너 03:50] pr created — https://github.com/hkjang/ReSSO/pull/43
+- [러너 03:57] ci failed — 성공이 아닌 검사: verify=failure, lint=failure · 실패한 검사: ? 잡: lint 
