@@ -342,3 +342,4 @@
 - 보류 아이디어: 단건 transit 과 batch 의 계약 동등성을 한 테이블로 고정하는 회귀 테스트 (2/1/S — 프로덕션 변경 없음) / `baoKVMutateVersions` 가 0·음수 버전 번호를 그대로 store 로 내려보냄 (2/2/S — store 동작과 실제 OpenBao 판정 확인이 선행) / `requestedOpenBaoVersion` 이 `?version` 의 비정규 표기(`+2`·`007`)를 받아들임 (1/1/S — 이번 수정과 같은 모양의 laxness 이나 결과 버전이 같아 관찰 가능한 피해가 없다) / 추적 활성 중 CSP 리포트 속도 제한·동일 출처 검증 (3/3/M — 새 신뢰 계약 필요) / `baoKVWrite` create·update 판정 TOCTOU (3/3/M — 트랜잭션·동시성 검증 필요)
 - 과제서: 채택 — 행 번호(transit.go:42-54·47·66, compatibility.md:120·136)·권장 헬퍼 형태·재현 골격(lazy pool, 0.14초)·`strconv.Atoi` 의 실제 통과 목록(`+1`·`01`·`001`·`+01`)이 모두 코드·실행과 정확히 맞았고 지정한 프로덕션 1파일·테스트 1파일(+문서 1문장)만 고쳤다.
 
+- 릴리즈: v0.2.39 (2026-10-16, run 2026-10-16-125418-jikim-approve)
