@@ -1,5 +1,5 @@
 {
- "generated": "2026-10-17T00:26:02+09:00",
+ "generated": "2026-10-17T00:42:57+09:00",
  "site": "https://hkjang.github.io/aidev",
  "description": "Claude Code 자율 개선 에이전트가 hkjang 의 프로젝트를 개선·테스트·머지·릴리즈한 일일 보고. 오늘 0회차·릴리즈 0건, 누적 2660회차·릴리즈 814건, 주의 필요 17건.",
  "today": {
@@ -10,18 +10,18 @@
   "merged": 0,
   "nochange": 0,
   "failed": 0,
-  "cost_usd": 0.0,
-  "minutes": 0,
-  "sessions": 0
+  "cost_usd": 1.69,
+  "minutes": 5,
+  "sessions": 1
  },
  "totals": {
   "runs": 2660,
   "released": 814,
   "days": 45,
-  "cost_usd": 9442.65,
-  "minutes": 26167,
-  "tokens_in": 10196300849,
-  "tokens_out": 82324721
+  "cost_usd": 9444.34,
+  "minutes": 26172,
+  "tokens_in": 10197908014,
+  "tokens_out": 82338585
  },
  "alerts": [
   {
@@ -1515,9 +1515,9 @@
    "labels": "",
    "action": "PR 처리기가 다음 시간에 다시 시도 · 승인: PR 라벨 aidev-approved / 반려: aidev-rejected — 다음 회차에 러너가 승인 당시 커밋에만 CI 확인 후 머지·닫기",
    "date": "2026-10-16",
-   "shepherd": "자율화 보류 · 심사 거절 → 다음 시간에 수정 (10-16 22:47) — - Dockerfile:9 + go.mod:8 — 릴리즈 경로가 toolchain 상향을 삼킨다. 빌더 베이스가 `golang:1.26.7-alpine` 이고 공식 golang 이미지는 GOTOOLCHAIN=local 이라(제가 직접 확인: `docker run --rm golang:1",
-   "shepherd_action": "review-reject",
-   "shepherd_detail": "- Dockerfile:9 + go.mod:8 — 릴리즈 경로가 toolchain 상향을 삼킨다. 빌더 베이스가 `golang:1.26.7-alpine` 이고 공식 golang 이미지는 GOTOOLCHAIN=local 이라(제가 직접 확인: `docker run --rm golang:1.26.7-alpine sh -c 'go env GOTOOLCHAIN; go version'` -> `local` / `go1.26.7`) go.mod:8 의 `toolchain go1.26.9` 가 무시된다. end-to-end 로 증명함: 이 브랜치에서 `docker build --target go-build` (EXIT=0) 뒤 산출 바이너리의 `go version -m /out/umm` -> **go1.26.7**. 즉 릴리즈 이미지는 impl-vuln-base.log 의 호출 경로 있는 표준 라이브러리 12건(GO-2026-6599/6600/6603/6605/6607/6608/6609/6610/6611/6612/6613/6617 — net/http·html/template·crypto/tls·mime/multipart, 전부 cmd/umm/main.go:94 ListenAndServe 에서 도달)을 **그대로 담은 채 배포된다**. 그런데 ci.yml:66 govulncheck 은 이제 초록이다(제가 재실행: `No vulnerabilities found`, EXIT=0) — 머지 전에는 이 12건을 알려 주던 유일한 탐지기가, 산출물은 하나도 고치지 않은 상태로 꺼진다. 고치는 법: 이 PR 안에서 Dockerfile:9 을 `golang:1.26.9-alpine` 로 올리고, 실제 `docker build` 후 산출 바이너리에 `go version -m` 을 돌려 `go1.26.9` 임을 확인한 로그를 남길 것(소스 문자열 검사나 docker build EXIT=0 만으로는 근거가 되지 않는다 — 지금 트리도 EXIT=0 이면서 1.26.7 이 나온다).\n- go.mod:5 — 주석 `Pinned for CI and release builds` 가 이 변경으로 거짓이 됐다. 변경 전에는 Dockerfile:9 의 1.26.7 핀과 `toolchain go1.26.7` 이 우연히 일치해 양쪽이 같은 툴체인을 썼다. 이 PR 이 toolchain 만 올려 드리프트를 **새로 만들었다** — 이제 이 줄은 CI 만 고정하고 릴리즈는 고정하지 못한다. Dockerfile:9 을 함께 올려 주석을 참으로 되돌리거나, 어느 경로만 고정하는지로 주석을 고칠 것.",
+   "shepherd": "리뷰 거절 · 수정 실패 → 다음 시간에 재시도 (10-17 00:42) — 고친 뒤 러너 검증 실패: 실패한 검증: npm test --silent (exit 1)",
+   "shepherd_action": "fix-failed",
+   "shepherd_detail": "고친 뒤 러너 검증 실패: 실패한 검증: npm test --silent (exit 1)",
    "needs_human": false
   },
   {
@@ -1530,11 +1530,11 @@
    "why": "review: approved — 리뷰 승인 (risk=low); ci: failed — 성공이 아닌 검사: verify=failure · 실패한 검사: ? 잡: verify ",
    "evidence": "https://github.com/hkjang/aidev/tree/main/state/runs/2026-10-16-205839-umm-improve",
    "labels": "",
-   "action": "PR 처리기가 다음 시간에 다시 시도 · 승인: PR 라벨 aidev-approved / 반려: aidev-rejected — 다음 회차에 러너가 승인 당시 커밋에만 CI 확인 후 머지·닫기",
+   "action": "PR 처리기가 사람에게 넘김 — 수정·심사를 2번 시도했지만 통과하지 못함 — 사람이 봐야 한다 · 승인: PR 라벨 aidev-approved / 반려: aidev-rejected — 다음 회차에 러너가 승인 당시 커밋에만 CI 확인 후 머지·닫기",
    "date": "2026-10-16",
-   "shepherd": "CI 실패 · 수정 실패 → 다음 시간에 재시도 (10-16 22:43) — 수정 세션이 커밋을 만들지 않음: # fix-summary — umm PR #172 (수리: 커밋 없음)  - **지적은 이 변경의 결함이 아니다.** CI `verify` 는 `Go vulnerability scan`(ci.yml:66) 에서 죽었고, 이 PR 의 diff 는 `web",
-   "shepherd_action": "fix-failed",
-   "shepherd_detail": "수정 세션이 커밋을 만들지 않음: # fix-summary — umm PR #172 (수리: 커밋 없음)  - **지적은 이 변경의 결함이 아니다.** CI `verify` 는 `Go vulnerability scan`(ci.yml:66) 에서 죽었고, 이 PR 의 diff 는 `web/src/lib/edge-vocabulary.test.ts` **1파일 뿐**(`git diff origin/main...HEAD --stat`)이라 govulncheck 의 입력(Go 소스·go.mod)은 base 와 바이트 단위로 동일하다. - **측정으로 귀속 확인:** HEAD(a5959a5)에서 `go run golang.org/x/vuln/cmd/govulncheck@latest ./...` → exit 3, stdlib 취약점 12건. `origin/main`(745dcf3) 을 임시 worktree 로 떼어 **같은 명령** �",
+   "shepherd": "CI 실패 · 사람 필요 (10-17 00:37) — 수정·심사를 2번 시도했지만 통과하지 못함 — 사람이 봐야 한다",
+   "shepherd_action": "needs-human",
+   "shepherd_detail": "수정·심사를 2번 시도했지만 통과하지 못함 — 사람이 봐야 한다",
    "needs_human": false
   },
   {
@@ -1547,11 +1547,11 @@
    "why": "review: approved — 리뷰 승인 (risk=low); ci: failed — 성공이 아닌 검사: typecheck + unit tests + build=failure, UI snapshots=failure · 실패한 검사",
    "evidence": "https://github.com/hkjang/aidev/tree/main/state/runs/2026-10-16-205844-vibe-code-improve",
    "labels": "",
-   "action": "PR 처리기가 다음 시간에 다시 시도 · 승인: PR 라벨 aidev-approved / 반려: aidev-rejected — 다음 회차에 러너가 승인 당시 커밋에만 CI 확인 후 머지·닫기",
+   "action": "PR 처리기가 사람에게 넘김 — 수정·심사를 2번 시도했지만 통과하지 못함 — 사람이 봐야 한다 · 승인: PR 라벨 aidev-approved / 반려: aidev-rejected — 다음 회차에 러너가 승인 당시 커밋에만 CI 확인 후 머지·닫기",
    "date": "2026-10-16",
-   "shepherd": "CI 실패 · 수정 실패 → 다음 시간에 재시도 (10-16 22:40) — 수정 세션이 커밋을 만들지 않음: # 수리 요약 — 고칠 결함이 없다 (커밋 없음)  - **원격 실패 원인 확증**: `gh run view 38898814913 / 38898814906` 의 ANNOTATIONS 가 두 잡 모두 `The job was not started becau",
-   "shepherd_action": "fix-failed",
-   "shepherd_detail": "수정 세션이 커밋을 만들지 않음: # 수리 요약 — 고칠 결함이 없다 (커밋 없음)  - **원격 실패 원인 확증**: `gh run view 38898814913 / 38898814906` 의 ANNOTATIONS 가 두 잡 모두 `The job was not started because recent account payments have failed or your spending limit needs to be increased.` 다. 잡이 **시작조차 안 됐다**(각 3~4초). 앞 회차(2026-10-16-213811)가 추론으로 남긴 \"인프라 실패\" 를 이번에 원문으로 확인했다 — `gh` 는 `GH_CONFIG_DIR=/home/hkjang/.config/gh` 로 인증돼 있었다(샌드박스 `HOME` 때문에 앞 회차가 미인증으로 봤다). - ",
+   "shepherd": "CI 실패 · 사람 필요 (10-17 00:37) — 수정·심사를 2번 시도했지만 통과하지 못함 — 사람이 봐야 한다",
+   "shepherd_action": "needs-human",
+   "shepherd_detail": "수정·심사를 2번 시도했지만 통과하지 못함 — 사람이 봐야 한다",
    "needs_human": false
   },
   {
@@ -1984,11 +1984,14 @@
   }
  ],
  "shepherd": {
-  "last_pass": "2026-10-16T22:35:43+09:00",
+  "last_pass": "2026-10-17T00:35:43+09:00",
   "enabled": true,
-  "today": {},
-  "total": 721,
-  "pending_human": 208
+  "today": {
+   "needs-human": 2,
+   "fix-failed": 1
+  },
+  "total": 724,
+  "pending_human": 210
  },
  "agents": {
   "rows": [
@@ -2002,7 +2005,7 @@
     "role": "구현 builder",
     "calls": 483,
     "metric": "러너 검증 통과 91% · 변경 없음 138",
-    "cost": 1140.47
+    "cost": 1142.16
    },
    {
     "role": "비평 critic",
@@ -2030,13 +2033,13 @@
    },
    {
     "role": "PR 심사 shepherd-reviewer",
-    "calls": 128,
-    "metric": "승인 41 · 거절 7 · 사람 필요 80 · 승인 뒤 회귀 1",
-    "cost": 229.74
+    "calls": 130,
+    "metric": "승인 41 · 거절 7 · 사람 필요 82 · 승인 뒤 회귀 1",
+    "cost": 231.43
    },
    {
     "role": "PR 수리 shepherd-fixer",
-    "calls": 85,
+    "calls": 86,
     "metric": "고쳐서 푸시 32%",
     "cost": null
    },
@@ -2056,13 +2059,13 @@
     "role": "측정 자기 감사",
     "calls": 4,
     "cost": null,
-    "metric": "[high] 원격에 없는 릴리즈 태그 2건 — 그 저장소의 다음 릴리즈를 막는다 · [medium] 실험 arm no-repair 의 처치 노출이 3% — 그 arm 의 null 결과는 '효과 없음' 이 아니다 · [medium] 실험 arm no-arbiter 의 처치 노출이 0% — 그 arm 의 null 결과는 '효과 없음' 이 아니다"
+    "metric": "[high] 원격에 없는 릴리즈 태그 1건 — 그 저장소의 다음 릴리즈를 막는다 · [medium] 실험 arm no-repair 의 처치 노출이 3% — 그 arm 의 null 결과는 '효과 없음' 이 아니다 · [medium] 실험 arm no-arbiter 의 처치 노출이 0% — 그 arm 의 null 결과는 '효과 없음' 이 아니다"
    },
    {
     "role": "실제 게시 릴리즈 (원격 태그 기준)",
-    "calls": 866,
+    "calls": 867,
     "cost": null,
-    "metric": "저장소 42개 · 게시 866건 (사람 340건) · 태그만 만들고 미게시 2건 — CI 가 릴리즈 커밋을 막은 저장소 · 누적 회차 기록에는 804건 — 62건이 기록에서 빠졌다"
+    "metric": "저장소 42개 · 게시 867건 (사람 340건) · 태그만 만들고 미게시 1건 — CI 가 릴리즈 커밋을 막은 저장소 · 누적 회차 기록에는 804건 — 63건이 기록에서 빠졌다"
    },
    {
     "role": "머지 뒤 30일 (postmerge)",
@@ -2090,8 +2093,8 @@
    }
   ],
   "advice": [
-   "측정이 어긋났다 — 원격에 없는 릴리즈 태그 2건 — 그 저장소의 다음 릴리즈를 막는다 (release_project 의 describe 검사가 로컬 태그를 보므로, 보류된 태그가 base 끝을 가리키면 릴리즈가 영구히 멈춘다.)",
-   "실제 릴리즈 태그(866건)가 누적 회차 기록(804건)보다 62건 많다 — 기록 경로에 빠지는 자리가 남아 있다 (bin/released.py 가 태그로 센 값)",
+   "측정이 어긋났다 — 원격에 없는 릴리즈 태그 1건 — 그 저장소의 다음 릴리즈를 막는다 (release_project 의 describe 검사가 로컬 태그를 보므로, 보류된 태그가 base 끝을 가리키면 릴리즈가 영구히 멈춘다.)",
+   "실제 릴리즈 태그(867건)가 누적 회차 기록(804건)보다 63건 많다 — 기록 경로에 빠지는 자리가 남아 있다 (bin/released.py 가 태그로 센 값)",
    "jikim 은 머지한 변경의 93% 를 사람이 다시 고쳤다 — 자율화 단계를 낮추거나(state/jikim.policy.json 의 autonomy) 검증 명령을 늘릴 것"
   ]
  },
@@ -2516,7 +2519,7 @@
   },
   {
    "metric": "유효 개선당 비용",
-   "value": "$14.96",
+   "value": "$14.97",
    "detail": "비용 확인된 유효 개선 171건, 미확인 세션 242"
   },
   {
@@ -2813,8 +2816,8 @@
    "merged": 2,
    "nochange": 11,
    "failed": 32,
-   "cost": 740.13,
-   "minutes": 1985
+   "cost": 741.82,
+   "minutes": 1990
   },
   {
    "key": "2026-W41",
@@ -2899,8 +2902,8 @@
    "merged": 40,
    "nochange": 138,
    "failed": 57,
-   "cost": 3087.1,
-   "minutes": 9013
+   "cost": 3088.79,
+   "minutes": 9018
   },
   {
    "key": "2026-09",
@@ -4319,8 +4322,8 @@
    "last_ts": "2026-10-16T22:29:38+09:00",
    "last_status": "other",
    "last_result": "fix-round: needs approval (risk=medium, files=2), PR open https://github.com/hkjang/umm/pull/173",
-   "cost": 210.65,
-   "minutes": 613,
+   "cost": 212.34,
+   "minutes": 618,
    "grade": "D",
    "grade_why": "14일: 릴리즈 5, 실패 3, 경고 3, 회귀 2",
    "lessons": 2,
