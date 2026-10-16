@@ -1,11 +1,11 @@
 [
   {
-    "title": "npm test(전체 = unit + api) 가 두 회차 연속 exit 1 — 빌드 전제를 명령에 못박아 api 묶음 복구",
+    "title": "GitHub Actions CI 워크플로 추가 — 러너가 돌리는 검증 명령을 그대로 CI 로",
     "value": 5,
-    "risk": 2,
-    "size": "M",
+    "risk": 1,
+    "size": "S",
     "status": "done",
-    "note": "원인 확정: 시험 코드가 아니라 빌드 전제가 어느 스크립트에도 없던 것. wrangler.jsonc 의 assets 에 directory 가 없고 그 값을 채운 dist/irumx_ops/wrangler.json 은 vite build 산출물인데, webServer 는 플러그인 없이 생 npx wrangler dev 를 띄운다 → dist 없으면 'assets ... missing the required directory property' 로 webServer 가 못 뜨고 api 41개 전멸. package.json 에 pretest: npm run build 한 줄로 해결. 정찰의 1순위 가설 A 가 맞았고 가설 B(api-c-policy.spec.ts:171)는 무죄 — 통과한다. --assets dist/client 는 불필요했다(필요한 건 dist/client 가 아니라 생성된 설정). 검증: dist 없는 트리에서 npm test --silent → 90 passed, exit 0.",
+    "note": "이번 회차에 구현. .github/workflows/ci.yml 한 파일 — push·pull_request 에서 npm ci → npm run build → npm test, node 22 + cache:npm, concurrency 취소, permissions contents:read, timeout 20분. 정적분석은 npm run build 안의 npm run check(tsc 4개)·verify-build.mjs 가 이미 포함하므로 단계를 쪼개지 않았다. 깨끗한 트리(node_modules·dist·.wrangler 삭제)에서 CI=true 로 세 명령 실측 — 90 passed, exit 0. GitHub 러너에서의 실제 실행은 push 권한이 없어 미확인. 보호 경로라 사람 승인 대기.",
     "updated": "2026-10-16"
   },
   {
@@ -14,7 +14,16 @@
     "risk": 2,
     "size": "M",
     "status": "pending",
-    "note": "playwright.config.ts 가 desktop/mobile(/ui-.*\\.spec/)·shots 를 선언하는데 해당 파일이 없고 @axe-core/playwright 도 미사용 — 브라우저·접근성 회귀를 아무도 막지 않는다. 지난 회차에는 'npm test 가 깨져 있으니 먼저 고치라' 고 미뤘는데 이번 회차에 그물이 초록이 됐으므로(90 passed) 이제 얹을 수 있다. 다음 회차 1순위 후보. pretest 가 빌드를 선행하므로 dist 전제는 자동으로 충족된다.",
+    "note": "playwright.config.ts 가 desktop/mobile(/ui-.*\\.spec/)·shots 를 선언하는데 해당 파일이 없고 @axe-core/playwright 도 미사용 — 브라우저·접근성 회귀를 아무도 막지 않는다. 다음 회차 1순위. 이번 회차에 추가된 ci.yml 전제를 같이 봐야 한다: 1.63 의 playwright 패키지는 install 스크립트가 없어 npm ci 로 브라우저가 깔리지 않는다(~/.cache/ms-playwright 가 비어 있음을 확인했다). 따라서 ui 시험을 넣는 회차에는 ci.yml 에 'npx playwright install --with-deps chromium' 한 단계를 같이 더해야 하고, 그 PR 도 보호 경로가 섞이니 ci.yml 변경을 별 커밋으로 분리할 것. 로컬에서는 build 가 선행돼야 dist 가 있다.",
+    "updated": "2026-10-16"
+  },
+  {
+    "title": "pretest(= npm run build) 가 main 의 package.json 에 없다 — 로컬 npm test 는 여전히 빌드 없이 못 뜬다",
+    "value": 4,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "새 항목. base e85afae 의 package.json 에 pretest 가 없다 — 직전 회차의 그 변경이 아직 머지되지 않은 것으로 보인다. 이번 회차의 ci.yml 은 npm run build 를 명시 단계로 두었으므로 CI 는 영향을 받지 않지만, 사람이 손으로 npm test 를 돌리면 여전히 'assets 속성에 directory 가 없다' 로 webServer 가 죽는다. 다음 회차에서 머지 상태를 먼저 확인할 것 — 이미 열린 PR 이 있으면 같은 변경을 다시 올리지 말 것(운영자 규칙: 반려/되돌린 접근 반복 금지가 아니라, 중복 PR 을 피하라는 뜻).",
     "updated": "2026-10-16"
   },
   {
@@ -23,16 +32,16 @@
     "risk": 2,
     "size": "S",
     "status": "pending",
-    "note": "collect/analytics.ts:185 가 DO 저장공간을 resource 'do:*' 로 넣는데 resources.key 는 do:<namespaceId>. run.ts:179 의 resourceSvc.get('do:*') 는 항상 undefined → anomalies.service_id null, run.ts:322 알림 제목에 'do:*' 가 그대로 나온다. firstSeen 가드도 이 자원에는 무동작. 라벨만 '전체 Durable Objects' 로 바꾸는 쪽이 안전 — 계측 공식은 건드리지 말 것(a6eb4ea → d30940e → a47c108 되돌림 이력). 이번 회차 차선 후보였으나 1순위가 끝나 손대지 않았다.",
+    "note": "collect/analytics.ts:185 가 DO 저장공간을 resource 'do:*' 로 넣는데 resources.key 는 do:<namespaceId>. run.ts:179 의 resourceSvc.get('do:*') 는 항상 undefined → anomalies.service_id null, run.ts:322 알림 제목에 'do:*' 가 그대로 나온다. firstSeen 가드도 이 자원에는 무동작. 라벨만 '전체 Durable Objects' 로 바꾸는 쪽이 안전 — 계측 공식은 건드리지 말 것(a6eb4ea → d30940e → a47c108 되돌림 이력).",
     "updated": "2026-10-16"
   },
   {
-    "title": "playwright.config.ts 의 mobile·shots 프로젝트는 대응 파일이 없는 죽은 설정",
-    "value": 2,
-    "risk": 1,
+    "title": "npm ci 가 보고하는 devDependencies 취약점 8건(moderate 4 · high 4) 선별",
+    "value": 3,
+    "risk": 2,
     "size": "S",
     "status": "pending",
-    "note": "ui-*.spec.ts·shots.spec.ts 가 없어 두 프로젝트는 0개를 돌린다 — npm test 가 실제보다 넓어 보인다(이번 회차 실측: 90개 전부 unit 49 + api 41). 위 'ui-*.spec.ts 첫 한 개' 와 같은 회차에 정리할 것. 단독으로 설정만 지우면 다음에 시험을 넣을 자리를 잃는다.",
+    "note": "새 항목. 이번 회차의 npm ci 출력: '8 vulnerabilities (4 moderate, 4 high)'. 전부 devDependencies 경로일 가능성이 높다(런타임 의존성은 7개뿐). npm audit 로 어떤 패키지·경로인지 먼저 적고, 메이저 업그레이드 없이 패치 범위에서 올라가는 것만 손댈 것(메이저 업그레이드는 이 러너에서 금지). CI 에 audit 단계를 넣는 것은 권하지 않는다 — 새 CVE 가 뜨면 무관한 PR 이 전부 빨개진다.",
     "updated": "2026-10-16"
   },
   {
@@ -41,43 +50,34 @@
     "risk": 3,
     "size": "S",
     "status": "pending",
-    "note": "migrations/meta 에 0000·0001 스냅샷과 _journal.json 만 있고 0002·0003·0004 는 손으로 쓴 .sql 이다. wrangler d1 migrations apply 는 폴더만 보므로 지금은 돌지만(이번 회차 api 41개가 로컬 D1 위에서 통과한 것이 증거), 다음에 drizzle-kit generate 를 돌리면 스냅샷이 현실과 달라 엉뚱한 디프가 나온다. 위험 구역(migrations)이라 단독 회차로 신중히.",
+    "note": "migrations/meta 에 0000·0001 스냅샷과 _journal.json 만 있고 0002·0003·0004 는 손으로 쓴 .sql 이다. wrangler d1 migrations apply 는 폴더만 보므로 지금은 돌지만(이번 회차에도 api 41개가 로컬 D1 위에서 통과), 다음에 drizzle-kit generate 를 돌리면 스냅샷이 현실과 달라 엉뚱한 디프가 나온다. 위험 구역(migrations)이라 단독 회차로 신중히.",
     "updated": "2026-10-16"
   },
   {
-    "title": "구현자 검증 전제를 스크립트로 못박기 — test 가 스스로 build 를 선행하게(pretest)",
-    "value": 4,
-    "risk": 2,
-    "size": "S",
-    "status": "done",
-    "note": "위 1순위 과제의 해법 그 자체였다 — package.json 에 pretest: npm run build 한 줄. npm 은 pretest 를 test 에만 붙이므로 test:unit 은 빌드 없이 그대로 돈다(실측 확인: 49 passed, 빌드 출력 없음). 별도 항목으로 남길 필요가 없어 done 으로 닫는다.",
-    "updated": "2026-10-16"
-  },
-  {
-    "title": "CLAUDE.md 로 저장소 관례 고정(한국어 커밋, 시험 명령, 위험 구역)",
+    "title": "playwright.config.ts 의 mobile·shots 프로젝트는 대응 파일이 없는 죽은 설정",
     "value": 2,
     "risk": 1,
     "size": "S",
     "status": "pending",
-    "note": "profile.md 가 외부 기록으로 대체하고 있어 가치는 낮다. 이번 회차에 '전체 검증은 npm test 이고 build 가 선행돼야 한다' 를 pretest 가 강제하게 만들었으므로 그 항목은 문서로 적을 필요가 없어졌다 — 남는 가치는 '한국어 커밋 형식'·'위험 구역'·'test:unit 만 돌리고 통과를 주장하지 말 것' 정도로 더 내려갔다.",
+    "note": "ui-*.spec.ts·shots.spec.ts 가 없어 두 프로젝트는 0개를 돌린다 — npm test 가 실제보다 넓어 보인다(이번 회차 실측도 90개 = unit 49 + api 41). 위 'ui-*.spec.ts 첫 한 개' 와 같은 회차에 정리할 것. 단독으로 설정만 지우면 다음에 시험을 넣을 자리를 잃는다.",
     "updated": "2026-10-16"
   },
   {
-    "title": "wrangler.jsonc 의 assets.directory 부재가 생 wrangler dev 를 쓰는 다른 경로도 막는다 — 전제를 한 곳에 적기",
+    "title": "wrangler.jsonc 의 assets.directory 부재 전제를 설정 파일에 주석으로 남기기",
     "value": 2,
     "risk": 2,
     "size": "S",
     "status": "pending",
-    "note": "새 항목. 이번 회차에 확인한 구조적 사실: wrangler.jsonc 의 assets 에 directory 가 없는 것은 의도된 것이고(배포는 @cloudflare/vite-plugin 이, 시험은 dist/irumx_ops/wrangler.json 이 채운다) scripts/verify-build.mjs 가 이 설정을 검사하므로 손대면 안 된다. 다만 '생 wrangler dev 는 빌드 없이는 못 뜬다' 는 전제를 아는 곳이 지금 playwright.config.ts 주석 하나뿐이다 — 앞으로 wrangler dev 를 직접 쓰는 스크립트(예: 수동 디버깅 안내)를 누가 더하면 같은 함정을 다시 밟는다. wrangler.jsonc 에 주석 한 줄로 이유를 남기는 정도가 적절(설정 값은 건드리지 않음).",
+    "note": "wrangler.jsonc 의 assets 에 directory 가 없는 것은 의도된 것이고(배포는 @cloudflare/vite-plugin, 시험은 dist/irumx_ops/wrangler.json 이 채운다) scripts/verify-build.mjs 가 이 설정을 검사하므로 값은 손대면 안 된다. '생 wrangler dev 는 빌드 없이는 못 뜬다' 는 전제를 아는 곳이 playwright.config.ts 주석뿐이었는데, 이번 회차에 .github/workflows/ci.yml 머리 주석에도 같은 이유를 적었다 — 가치가 조금 더 내려갔다.",
     "updated": "2026-10-16"
   },
   {
-    "title": "GitHub Actions CI 워크플로 추가 — 러너가 돌리는 검증 명령을 그대로 CI 로",
-    "value": 5,
+    "title": "CLAUDE.md 로 저장소 관례 고정(한국어 커밋 형식·위험 구역·시험 명령)",
+    "value": 2,
     "risk": 1,
     "size": "S",
     "status": "pending",
-    "updated": "2026-10-16",
-    "note": "이 저장소에는 워크플로 파일이 없어 러너 PR 이 전부 \"CI 검사 없음\" 으로 막힌다. 러너가 이미 돌리는 검증 명령(build·vet·test)을 그대로 .github/workflows/ci.yml 로 옮겨라. 이 파일은 보호 경로라 사람 승인을 받는다."
+    "note": "profile.md 가 외부 기록으로 대체하고 있어 가치는 낮다. 남는 가치는 '한국어 커밋 형식'·'위험 구역'·'test:unit 만 돌리고 전체 통과를 주장하지 말 것' 정도. 전체 검증 명령은 이제 ci.yml 이 저장소 안에 기록하므로 또 한 번 내려갔다.",
+    "updated": "2026-10-16"
   }
 ]
