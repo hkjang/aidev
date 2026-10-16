@@ -357,3 +357,4 @@
 - 보류 아이디어: 대사 범위 파서 `splitSheetRange` 가 `'O''Brien'!A1:B2` 의 이중 작은따옴표를 풀지 않아 EditorPage 가 실제 시트명과 못 맞춘다(차선 후보, TS 1파일 + vitest, web/node_modules 설치 필요) / IMPORTDATA 는 `LazyQuotes=true`, 업로드·사용자 명단은 false — 계약 재결정이 먼저이고 파서 통합 금지 / `persistentHandler.WithAttrs`/`WithGroup` 가 handler 수준 속성을 DB 행에서 떨어뜨린다 — 프로덕션에 `logger.With(` 호출자가 없어 관찰되는 결함이 아니다 / `SendNow` 의 `record` 만 요청 컨텍스트를 쓴다(`Notify` 와 달리 `WithoutCancel` 아님) — 실제 유실 재현에 Postgres 필요 / 관리자 가이드 `ADMIN_GUIDE.md:785` 의 외부 호출 오류 코드를 실제 정책(`#N/A` 쪽)과 맞춘다 — 스물한 회차 연속 보류, PDF 재생성 동반
 - 과제서: 채택 — 과제서의 코드 분석이 지금 코드와 정확히 맞았고(step 분기만 `Atoi` 직행, `cronValue` 만 `isDecimalDigits`), 건드릴 파일 2개(프로덕션 1)·기존 문구 유지·새 오류 타입 금지·`Next`/DST/`cronAliases`/`service.go`/docs 손대지 않기를 그대로 따랐다. 과제서가 미확인으로 남긴 `ParseSchedule("*/+2 0 * * *")` 의 실제 수용은 빨강 테스트로 재현했고, 과제서가 적지 않은 `0-30/+2`(범위 + 부호 step)도 같은 결함임을 확인해 표에 더했다.
 
+- 릴리즈: v0.265.0 (2026-10-16, run 2026-10-16-111610-kanpic-improve)

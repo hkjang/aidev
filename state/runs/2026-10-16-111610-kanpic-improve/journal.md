@@ -28,3 +28,7 @@
 - 다음 회차 주의: `TestScheduleKeepsUnsignedStepExpressions` 가 `0 0 * * */8`=일요일(2026-10-18)을 시각까지 잠근다 — step 상한을 좁히는 과제를 하면 이 표가 먼저 빨강이 된다(의도된 잠금). 보안·법무 차단 사유 없음(받는 입력을 좁히기만 하고, 새 오류 문구는 거절된 토큰을 반사하지 않는다).
 - [러너 11:27] review approved — 리뷰 승인 (risk=low)
 - [러너 11:27] pr created — https://github.com/hkjang/kanpic/pull/45
+- [러너 11:36] ci passed — 검사 2개 모두 success
+- [러너 11:36] merge done — 15781be
+- [러너 11:50] release published — v0.265.0
+- [러너 11:51] assets verified — v0.265.0 자산 2개 (이전 v0.264.0: 2)
