@@ -1,0 +1,37 @@
+{
+  "base": {
+    "state": "pinned",
+    "reason": "main@2b2ef67",
+    "at": "2026-10-17T03:21:19+09:00"
+  },
+  "autonomy": {
+    "state": "release",
+    "reason": "",
+    "at": "2026-10-17T03:21:19+09:00"
+  },
+  "scout": {
+    "state": "done",
+    "reason": "레거시 리소스 변경(`/api/v1/admin/resources/...`)의 문자열 필드·행 식별자에 든 NUL(U+0000)을 트랜잭션 시작 전�",
+    "at": "2026-10-17T03:25:59+09:00"
+  },
+  "brief": {
+    "state": "accepted",
+    "reason": "채택 — 결함 위치(한도 루프 :418-441·rowID switch :344-361)·헬퍼(`storableInVarchar`)·부모 테스트(`TestEndToEndAPI`)·기존 fixture 재사",
+    "at": "2026-10-17T03:35:34+09:00"
+  },
+  "verify": {
+    "state": "passed",
+    "reason": "검증 7개 통과 (auto)",
+    "at": "2026-10-17T03:36:03+09:00"
+  },
+  "review": {
+    "state": "rejected",
+    "reason": "리뷰 거절: docs/api.md:371 추가된 계약 문장 \"모든 문자열 필드와 문자열 행 식별자는 NUL(U+0000)을 담을 수 없고 포함되면 400 resource_invalid를 반환합니다\" 가 14개 resource 중 legacy-admins 의 menu_info 에서 사실이 아니다. 실행으로 확인: validateLegacyMutation(\"legacy-admins\",\"create\",\"\",{menu_info:[{menuId:\"root\",menuNm:\"a\\u0000b\",authYn:\"Y\"}]}) 는 err=nil 을 돌려주고 values[\"menu_info\"] 에 `[{\"authYn\":\"Y\",\"menuId\":\"root\",\"menuNm\":\"a\\u0000b\"}]` 를 남긴다(같은 호출을 banned-words.word 로 하면 대조군은 정상적으로 400 메시지를 돌려준다). / internal/server/resource_mutation.go:447 의 storableInVarchar 검사는 raw NUL byte(0x00)만 본다. legacy-admins 는 limits 루프에서 문자열 캐스팅이 실패해 normalizeLegacyAdminMenuInfo(:593) 로 가고, 그 안의 json.Marshal 이 실제 NUL 을 6글자 escape `\\u0000` 으로 바꿔 놓기 때문에 검사를 그대로 통과한다. menu_info 를 처음부터 문자열 형태(`[{\"menuNm\":\"a\\u0000b\"}]`)로 보내도 같다. normalizeLegacyAdminMenuInfo 는 menuId(TrimSpace+rune 50)·menuNm(rune 100)에 NUL·escape 검사가 없다. / internal/server/resource_mutation.go:1343·1389 이 그 문자열을 $2::jsonb / $4::jsonb 로 바인딩한다. postgres:16-alpine 폐기 컨테이너에서 확인: SELECT '[{\"menuNm\":\"a\\u0000b\"}]'::jsonb → ERROR 22P05 \"unsupported Unicode escape sequence / \\u0000 cannot be converted to text\". 핸들러의 applyLegacyMutation 오류 분기(:181-198)에는 23505 만 있고 22P05 분기가 없어 else 로 떨어져 500 resource_update_failed 가 된다 — 이번 변경이 없앴다고 선언한 바로 그 증상이 POST/PATCH /api/v1/admin/resources/legacy-admins 에 그대로 남아 있다.",
+    "at": "2026-10-17T03:41:26+09:00"
+  },
+  "repair": {
+    "state": "done",
+    "reason": "# 수리 요약  - 비평 거절은 전부 맞았다. `legacy-admins.menu_info` 가 구멍이었다: `normalizeLegacyAdminMenuInfo` 의 `json.Marshal` 이 실제 NUL 을 6글자 `\\u0000` escape 으로",
+    "at": "2026-10-17T03:54:43+09:00"
+  }
+}

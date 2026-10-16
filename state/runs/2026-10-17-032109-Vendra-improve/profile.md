@@ -1,0 +1,30 @@
+# Vendra 프로필 (2026-10-17)
+- 목적: 오프라인 대응 공급업체·구매 수명주기·평가·계약·결재 관리와 조회 전용 MCP 제공.
+- 스택: Go 1.24, net/http, pgx/PostgreSQL(README 15+, CI 16-alpine), React 19.2·TypeScript 6·Vite 8·Vitest 4/jsdom 30. Node >=22.
+- 구조:
+  - cmd/vendra: 진입점. internal/httpapi: REST·MCP·업무·인증·DB 통합 테스트(파일 수가 많고 login_integration_test.go 가 6272줄).
+  - internal/httpapi/integrations.go(1016줄): `mcpTools` 11개 카탈로그(:425-437), `mcpCall` 권한 map(:493 부근), `runMCPTool`(:524) 의 큰 switch, `supplierSummaryRows`(:701, MCP 전용·호출처 :547/:596), `mcpObjects`(:723, LIMIT 100 하드코딩), 인수 헬퍼 `supplierArg`/`supplierIDArg`/`stringArg`/`intArg`.
+  - 금액 가림의 두 문: `<type>.amount.read`(business_objects.amount — objects.go:93/:378, integrations.go:729) 와 `canReadSupplierSpend`(suppliers.annual_spend — suppliers.go:362, analytics.go:42, integrations.go:160/:531). **두 문은 일부러 둘이다. 합치지 말 것.**
+  - 가림의 두 모양: `ELSE 0`(integrations.go:542/:591, redactSupplier suppliers.go:368) 과 `END`→null(integrations.go:194/:695). annual_spend 는 `001_initial.sql:63` 에서 NOT NULL DEFAULT 0 이라 NULL 은 가림만 뜻한다.
+  - internal/httpapi/objects.go: 공용 업무 CRUD·redaction·정렬. `objectOrderApplied`(:93) 가 "무엇이 적용됐나" 의 유일한 출처, 응답에 `order` 키.
+  - internal/db/migrations: embed SQL + advisory lock. 기존 마이그레이션 재작성 금지.
+  - web/src/pages/Objects.tsx: ObjectList(≈:183)·NewObject(≈:721) 공용 업무 화면. `load` 는 시퀀스+requestKey 로 result/failure 를 담아 배너·재시도를 낸다(28572eb). `loadViews`(≈:267)는 실패를 setViews([]) 로 삼키고 공급업체 effect 는 빈 catch(미해결).
+  - web/src/api.ts: `api` 가 APIError(status/message/code) throw. post/put/del 은 모듈 내부 api 를 호출하므로 export api 만 mock 하면 쓰기 경로는 대체되지 않는다.
+  - docs: USER_GUIDE(4.6 에 MCP 도구 표 — 도구 설명과 동기화를 테스트가 강제한다)/ADMIN_GUIDE, architecture/security/operations. ROADMAP_PLAN 은 2026-08-13 비전 문서.
+- 빌드·테스트:
+  - Go: `go test ./internal/... ./cmd/... -count=1`(httpapi 약 30초), `go vet ./internal/... ./cmd/...`, `gofmt -l internal cmd`. 이번 정찰 미실행.
+  - 웹: `npm ci --ignore-scripts --prefix web` → `npm test --prefix web`. web 안에서 `npx tsc -b --noEmit`, `npx eslint src --max-warnings 0`, `npm run build`. test/test:watch 는 `node scripts/run-vitest.mjs` 래퍼(engines.node 를 읽어 인터프리터를 고른다).
+  - 최근 실측 기준선: 25파일/116개 통과(2026-10-09 구현 회차). 이번 정찰은 웹·Go 어느 것도 실행하지 않았다(읽기만).
+  - 이 워크트리에 web/node_modules 없음. /mnt/c 에서는 Vitest 가 돌지 않는다(리눅스 파일시스템 사본 필요).
+- 관례: 커밋은 영어 `fix:`/`test:`/`docs:` 행동형 한 줄, 사용자 문구는 한국어. 릴리즈는 **맨 태그**(릴리즈 커밋·버전 범프·CHANGELOG 수정 없음). CLAUDE.md/AGENTS.md 없음. TODO/FIXME 없음. 테스트 파일은 **추가만** 하고 기존 파일은 고치지 않는다 — 기존 테스트가 대조군 역할을 한다. 주석에 "왜 이렇게 되어 있었나" 를 문장으로 길게 남기는 문화가 있다(결함 근거가 테스트 헤더 주석에 적혀 있는 경우가 많다).
+- 위험 구역: 인증/OIDC/세션, 데이터 스코프, 승인·권한, internal/db/migrations, .github/workflows, 금액·통화, 감사 details 원문 노출(integrations.go:513 이 arguments 를 그대로 넘긴다), 공용 web/src/components.tsx.
+- 자주 깨지는 곳: 통화 변경의 사람 반려 접근 반복 금지(2026-09-10). npm PATH 오염을 lockfile 탓으로 돌리지 말 것. 미병합 변경과의 충돌 — 현재 **011c5a3(web Objects.tsx NewObject 중복 제출 가드)과 fcce3d7(MCP 인수 헬퍼)이 HEAD 조상이 아니다**.
+- 검증 함정:
+  - DSN 없는 Go 통과는 DB 검증이 아니다. `VENDRA_TEST_DSN`/`VENDRA_TEST_MIGRATE_DSN`/`VENDRA_TEST_UPGRADE_DSN` 세 개(뒤 둘은 각각 빈 DB), 전용 postgres:16-alpine 컨테이너·전용 DB. 정리는 `docker rm -f <name>` — 패턴 pkill 금지.
+  - 기존 SKIP 5건은 환경성이다(VENDRA_PERF 2, failclosed_test.go 2, TestFirstSupplierInAnEmptyRegisterIsAccepted 1). 그 이상이면 조사.
+  - 로그인 잠금 테스트의 IPv6 세션 IP 단정은 10회 중 2회쯤 플래키하다 — 재실행 전에 빨강이라 부르지 말 것.
+  - 통합 테스트 하네스: `newScopeWorld`, `grantOnly`(테이블 **각 행 안에서** 호출 — 밖에서 부르면 첫 행이 엉뚱한 403 으로 실패), `seedAnnualSpend`, `seedSecondOwnSupplier`, `callMCPTool`, `toolRows`(structuredContent 만 읽음), `toolObject`, `toolFailure`, `spendByName`(`.(float64)` 로 null 을 0 으로 읽으므로 null/0 구분을 증명하지 못한다).
+  - 웹: setup.ts 가 afterEach(cleanup), vitest.config 는 restoreMocks:true. 저장 검증은 실제 Objects·DOM 이벤트·HTMLFormElement/FormData·원본 api 를 쓰고 fetch 만 대체한다. FormData 는 첫 await 전에 캡처해야 한다. 소스 문자열 검사는 실행 증거가 아니다.
+  - CI 는 Node 22, `npm ci --ignore-scripts`, tsc·`eslint src`·test·build. `npm run lint`(eslint .)는 CI 와 범위가 다르다.
+  - 커밋 전 `gate.py secrets` 를 diff 에 돌릴 것(password/secret/token 옆 12자 이상 리터럴이 전체 실행을 떨어뜨린다).
+- 현재 기준: HEAD e030b63(PR #144 병합), `git describe` = v0.7.72-2-ge030b63, 작업 트리 깨끗.

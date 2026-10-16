@@ -1,0 +1,14 @@
+=== RUN   TestEndToEndAPI
+=== RUN   TestEndToEndAPI/legacyCreateRejectsNULInStringField
+    legacy_http_integration_test.go:397: legacy POST http://127.0.0.1:40763/api/v1/admin/resources/banned-words status=500 want=400 body={"error":{"code":"resource_reference_unavailable","message":"레거시 참조 관계를 안전하게 확인하지 못했습니다."}}
+=== RUN   TestEndToEndAPI/legacyPatchRejectsNULInStringField
+    legacy_http_integration_test.go:446: legacy PATCH http://127.0.0.1:40763/api/v1/admin/resources/notices/2 status=500 want=400 body={"error":{"code":"resource_update_failed","message":"레거시 데이터를 변경하지 못했습니다."}}
+=== RUN   TestEndToEndAPI/legacyPatchRejectsNULInRowIdentifier
+    legacy_http_integration_test.go:477: legacy PATCH http://127.0.0.1:40763/api/v1/admin/resources/app-defaults/synthetic%00default status=500 want=400 body={"error":{"code":"resource_update_failed","message":"행 버전을 확인하지 못했습니다."}}
+--- FAIL: TestEndToEndAPI (14.98s)
+    --- FAIL: TestEndToEndAPI/legacyCreateRejectsNULInStringField (0.01s)
+    --- FAIL: TestEndToEndAPI/legacyPatchRejectsNULInStringField (0.02s)
+    --- FAIL: TestEndToEndAPI/legacyPatchRejectsNULInRowIdentifier (0.00s)
+FAIL
+FAIL	github.com/hkjang/ai-admin/internal/server	14.991s
+FAIL
