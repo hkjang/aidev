@@ -24,3 +24,4 @@
 - [러너 02:00] ci passed — 검사 5개 모두 success
 - [러너 02:00] merge done — ac7967b
 - [러너 02:14] release published — v0.57.0
+- [러너 02:24] assets verified — v0.57.0 자산 7개 (이전 v0.56.0: 7)
