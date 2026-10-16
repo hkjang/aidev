@@ -19,3 +19,13 @@
 - 검증: `go test -race -p 1 -count=1 ./...` exit 0 / 51 패키지 ok / FAIL 0(httpapi 63.364s, bookmarks 4.078s — 둘 다 실제 DB), `go build ./...`·`go vet ./...` exit 0, `gofmt -l internal/bookmarks` 무출력, `git diff --check` clean, `check-source-sizes.sh` exit 0. 웹 검증은 webapp 미변경으로 미실행.
 - [러너 15:00] brief accepted — 채택 — 근거가 현재 코드와 정확히 일치했다(`:186-199` 의 단일 UPDATE 와 거짓 주석, `List` 의 `create_at` 타이브레이크, `sidebar
 - [러너 15:01] verify passed — 검증 2개 통과 (policy)
+
+## 비평 노트
+- 판정 approve / risk low / blocking 없음. 직접 확인: service.go 전문, 테스트 전문, 핸들러 `compat_wave_handlers_late.go:1239-1276`, baseline 마이그레이션의 `channel_bookmarks`(id TEXT, sort_order INTEGER, `(channel_id, sort_order)` 인덱스는 **UNIQUE 아님** → 순열 UPDATE 중 일시 충돌 없음), `sidebar/service.go:573-591` unnest 선례, `defer tx.Rollback(ctx)` 가 posts/documents 관용구와 동일, webapp 에 이 엔드포인트·WS 이벤트 소비자 없음(grep).
+- 테스트가 변경 경로를 정말 지난다: 수정 전 코드를 손으로 돌려 5개 RED 를 **독립 연역**했고 값이 원장의 `실패 재현`(`[2 2 3] / [1 1 2] / [1 1 3] / [-5 1 2] / [2 3 99]`, `List order = [a b c], want [b c a]`)과 그대로 일치했다. 실제 PG16(`moyro-pg-improve`/55433)에서 `-v -count=1 -run TestReorder` 를 직접 돌려 **12/12 PASS, skip 0**(2.97s), `go build ./...`·`go vet`·`gofmt -l` 클린을 재확인했다. 코드는 고치지 않았다.
+- 승인이어도 남는 우려 3개(review.json notes 에 상세): ① `service.go:195-197` 주석의 트랜잭션 동시성 주장은 **거짓**이다(FOR UPDATE 없음 + read committed → 격리 이득 0). 결론인 '중복 없음' 은 단일 UPDATE 가 서로 다른 id 에 서로 다른 위치를 주기 때문에 트랜잭션과 무관하게 성립하므로 동작 영향이 없어 거절하지 않았다 — 다음 회차는 이 주석을 보장으로 신뢰하지 말 것. ② 채널 전체를 덮어쓰므로 동시 재배열은 이제 **last-writer-wins 로 한쪽 이동이 통째로 사라진다**(수정 전엔 중복 대신 양쪽 반영) — 릴리즈 노트 후보. ③ WS `channel_bookmark_sort_changed` 는 클램프된 요청값을 그대로 브로드캐스트하고(저장값과 불일치) 바뀐 나머지 행을 알리지 않는다 — 범위 밖 핸들러, 저장소 내 소비자 없음.
+- 못 본 것: 전체 `./...` 재실행(패키지 1개만 돌렸다), 웹·e2e(webapp 미변경), 동시성 경쟁 테스트(존재하지 않음 — ① 은 코드 독해로만 판단), 그리고 **0-based 의 외부 근거**(이 세션도 WebSearch 권한 없음 → Mattermost 원본 스펙 미확인. 1-based 가 옳다면 `service.go:256` 한 줄).
+- 검토 부서 소견: security — 새 엔드포인트·권한 변경 없음, 모든 입력이 파라미터 바인딩(배열도 `$2/$3`), 채널 스코프 `ErrNotFound` 가 쓰기 전에 유지돼 cross-channel IDOR 없음(테스트로 고정), 비밀값·의존성 변경 없음 → 차단 없음. legal — 개인정보 신규 수집·전송 없음, 테스트는 합성 계정(`bookmark-owner@example.test`)과 환경변수 DSN 만 쓰고 프로덕션 데이터를 쓰지 않음, 라이선스 영향 없음 → 차단 없음.
+- [러너 15:07] review approved — 리뷰 승인 (risk=low)
+- [러너 15:07] pr created — https://github.com/hkjang/moyro/pull/39
+- [러너 15:15] ci failed — 성공이 아닌 검사: verify=failure · 실패한 검사: ? 잡: verify 
