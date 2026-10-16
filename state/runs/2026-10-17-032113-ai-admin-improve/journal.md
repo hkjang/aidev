@@ -34,3 +34,13 @@
 - 검증: 전용 postgres:16-alpine(포트 55723, 제거 완료)로 `go test -race -count=1 ./...` 전체 통과(SKIP 은 OIDC E2E 1건), `make lint`·`go build`·`git diff --check` 통과. 프로덕션 변경만 임시로 빼면 두 테스트가 다시 red(역검증).
 - 여전히 확신 없는 곳: 승인 경로(workflow.enabled 켠 jsonb payload)와 DELETE 문자열 rowID 의 실제 HTTP 실행은 이번에도 안 했다 — validate 앞단에서 같은 자리로 막히지만 미실측. 22P05 분기는 일부러 추가하지 않았다(이 경로로 도달 불가, 범위 밖). workflow.go 의 제목/코멘트/payload NUL 은 다음 회차 몫으로 남아 있다.
 - [러너 03:54] repair done — # 수리 요약  - 비평 거절은 전부 맞았다. `legacy-admins.menu_info` 가 구멍이었다: `normalizeLegacyAdminMenuInfo` 의 `json.Marshal` 이 실제 NUL 을 6글자 `\u0000` escape 으로
+
+## 비평 노트
+- 확인한 것(실행): main worktree에 HEAD 테스트만 얹어 역검증 — 유닛 5건·HTTP 4건 전부 red이고 증상이 주장과 일치(create 500 `resource_reference_unavailable`, notices PATCH 500 `resource_update_failed`, menu_info 500 `resource_update_failed`, `app-defaults/synthetic%00default` PATCH 500 '행 버전을 확인하지 못했습니다'). HEAD 에서 4건 모두 SKIP 아닌 RUN·PASS, `go test -race ./...` 전체 통과(internal/server 146.7s), gofmt·vet·build·diff --check 통과. 전용 컨테이너 `ai-admin-review-pg`(55817)·역검증 worktree 모두 제거, worktree clean.
+- 확인한 것(독해): 14개 resource 의 `allowed`↔`limits` 문자열 필드 완전 일치(빠진 셋은 int 경로)이므로 docs/api.md:371 문장이 사실이고, `::jsonb` 바인드는 menu_info(:1368·:1414)뿐이며 중첩 키가 menuId·menuNm·authYn 로 제한(:622-626)되어 중첩 문자열 커버리지가 완전하다.
+- 구현자의 '미실측' 두 자리는 배치로 해소: rowID 가드(:346)가 delete 조기 반환(:371)보다 앞, validate(:96)가 승인 생성(:167)보다 앞이며 `executeApproval`(workflow.go:547)이 같은 검증을 재실행 → jsonb 승인 payload 에도 NUL 불가. 단 workflow.enabled=true 의 실제 HTTP 왕복은 이번에도 미측정.
+- 승인이어도 남는 우려: 릴리즈 노트에 '레거시 리소스 변경'만이 아니라 'legacy-admins menu_info 중첩 문자열'까지 적을 것. 다음 회차 몫은 workflow.go 제목/코멘트/payload·users.go updatePreferences·keys.go updateKeyScope 이며 미머지 브랜치가 점유 중이다.
+- 차단 없음: security — 입력을 좁히기만 하고 오류가 요청 값을 반사하지 않으며 권한·세션·마이그레이션·비밀값 무변경. legal — 개인정보·의존성·라이선스 변경 없음.
+- [러너 04:02] review approved — 리뷰 승인 (risk=low)
+- [러너 04:02] pr created — https://github.com/hkjang/ai-admin/pull/48
+- [러너 04:03] ci failed — 성공이 아닌 검사: test=failure, lint=failure · 실패한 검사: ? 잡: lint 
