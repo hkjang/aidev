@@ -1,0 +1,110 @@
+[
+  {
+    "title": "릴리즈 워크플로가 v0.9.104 태그에서 두 번 실패하는 것을 재현해 고치기",
+    "value": 5,
+    "risk": 2,
+    "size": "M",
+    "status": "rejected",
+    "note": "전제가 관찰과 어긋나 기각. 인증 없는 GitHub REST API 로 확인: workflows/release.yaml 의 런 133건 중 v0.9.104(38958145291)는 success, run_attempt 1, 재실행 0건이고 non-success 는 전부 v0.9.80 이전이다. Release 415331003 에 release-sha256.txt(88B)·resso-v0.9.104.tar.gz(5500057B)가 2026-10-16T19:57:32Z 에 붙어 있다. 실제 실패 런은 CI 38950481314(8d3b77a) 하나뿐이고 실패 단계는 govulncheck 두 곳(lint:5 Check for known vulnerabilities, verify:10 Scan image for known vulnerabilities) — 같은 PR 의 dcfd26f 가 고쳐 38953981509 가 통과하고 PR #43 은 머지되었다. 후보 1~4 전부 로컬 재현에서 통과. 자세한 출력은 release-run-evidence.md.",
+    "updated": "2026-10-17"
+  },
+  {
+    "title": "Makefile:77 과 scripts/test-services.sh 머리말의 단독 eval 예제 정정",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "done",
+    "note": "이번 회차 구현(차선 후보). 두 곳을 assignment && eval 형태로 바꾸고, 네 곳(README·docs/user-federation.md·스크립트 머리말·Makefile)의 예제를 실제로 실행해 실패/정상 양쪽을 고정하는 TestEveryShownPreparationStopsWhenPreparationFails 를 cmd/resso/testservices_test.go 에 더했다. 프로덕션 코드 0개.",
+    "updated": "2026-10-17"
+  },
+  {
+    "title": "make lint 이 GOPATH/bin 을 PATH 앞에 붙여 goX.Y.Z 심을 툴체인으로 선택하게 만드는 것",
+    "value": 3,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "새 항목 — 이번 회차에 실제로 재현했다. Makefile:63-64 의 PATH=\"$(go env GOPATH)/bin:$PATH\" 때문에 golang.org/dl 의 go1.26.9 심이 PATH 에 올라오고, golangci-lint 가 띄우는 go 가 모듈 캐시의 toolchain 대신 그 심을 고른다 → `go1.26.9: not downloaded. Run 'go1.26.9 download' to install to $HOME/sdk/go1.26.9` 로 context loading failed, exit 3. PATH 를 붙이지 않고 절대 경로로 golangci-lint 를 돌리면 0 issues, govulncheck 도 호출 취약점 0. CI 는 setup-go 를 쓰고 심이 없어 드러나지 않는다. 고치는 방향: 도구 탐색용 PATH 와 go 가 보는 PATH 를 분리하거나 GOTOOLCHAIN 을 명시. 이번 회차 범위 밖으로 뺐다(파일 수·위험).",
+    "updated": "2026-10-17"
+  },
+  {
+    "title": "README:191 지표 표 resso_client_auth_errors_total 행의 오래된 401 설명 정정",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "열 회차 넘게 보류. 실제는 token 500 / revoke 503 / introspection 200 active=false 이고 docs/operations.md:90 은 이미 맞다. 이번 회차에도 README 의 그 행을 열어 확인하지 않았다. 다음 회차에도 선택되지 않으면 기각 권고.",
+    "updated": "2026-10-17"
+  },
+  {
+    "title": "release.yaml:171-172 의 자산 목록 완전일치 단언을 부분집합 검사로 바로잡기",
+    "value": 2,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "가치를 3 에서 2 로 낮춤. 이번 회차에 v0.9.104 Release 의 자산이 정확히 두 개(release-sha256.txt, resso-v0.9.104.tar.gz)이고 단언이 통과한 것을 API 로 확인했다 — 즉 아직 한 번도 이 줄이 실패한 적이 없다. 사람이 자산을 손으로 붙이는 일이 실제로 생겼을 때만 가치가 생긴다. 추측으로 선제 수정하지 말 것.",
+    "updated": "2026-10-17"
+  },
+  {
+    "title": "web devDependencies 의 npm audit 취약점 정리 (undici / brace-expansion / @vitest/mocker)",
+    "value": 3,
+    "risk": 2,
+    "size": "M",
+    "status": "pending",
+    "note": "lockfile 을 바꾸므로 vitest 기준선 재확인이 필요한 별도 회차. 이번 회차의 make test 안 npm ci 가 보고한 현재 건수: 5건(moderate 2 · high 3), 313 패키지 감사. 개별 경로·영향은 여전히 미분석.",
+    "updated": "2026-10-17"
+  },
+  {
+    "title": "RollbackRefreshRotation·revoke 실패 감사의 detail 에 오류 원문을 넣는 것이 운영자 규칙과 충돌하는지 조사",
+    "value": 2,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "httpserver/oidc.go:753-767 이 rollbackErr 를 로그와 감사 detail 양쪽에 넣는다. 8d3b77a 의 새 로그는 오류를 로그에만 넣었으므로 선례가 갈린 상태다. 일괄 치환 금지 — 어느 쪽이 규칙인지 먼저 정할 것. 이번 회차 재확인하지 않음.",
+    "updated": "2026-10-17"
+  },
+  {
+    "title": "scripts/test-services.sh 가 포트를 다른 프로젝트 컨테이너에 빼앗긴 상태를 안내하지 못하는 것",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "안내가 '--stop 하고 다시 실행' 뿐인데 --stop 후에도 포트는 남의 것이라 같은 실패가 반복된다. RESSO_TEST_POSTGRES_PORT 로 우회할 수 있다는 사실을 exit 1 직전 log 한 줄로 덧붙이면 끝난다. 이번 회차에 머리말만 손댔고 이 분기(:68·:88·:356)는 건드리지 않았다.",
+    "updated": "2026-10-17"
+  },
+  {
+    "title": "id_token_hint 의 aud 를 요청한 Client 와 대조하기",
+    "value": 2,
+    "risk": 2,
+    "size": "M",
+    "status": "pending",
+    "note": "tokens.go:233 IDTokenHint 에 aud 검사 없음. 인가·로그아웃별 규범/정책 미확인으로 자동 선택 제외. 이번 회차 재확인하지 않음.",
+    "updated": "2026-10-17"
+  },
+  {
+    "title": "introspect 가 token 안의 sid·sub 를 파싱하지 못했을 때 아무 신호도 남기지 않는 것",
+    "value": 2,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "정상 발급 배선으로 그 분기에 닿는 근거가 없어 보류 유지. 임의 토큰 대역으로 정당화 금지. 이번 회차 재확인하지 않음.",
+    "updated": "2026-10-17"
+  },
+  {
+    "title": "api_key.expiring 을 Realm 관리자에게도 보내기",
+    "value": 2,
+    "risk": 2,
+    "size": "M",
+    "status": "pending",
+    "note": "정책 확대이므로 자동 선택 제외. 이번 회차 재확인하지 않음.",
+    "updated": "2026-10-17"
+  },
+  {
+    "title": "federation.sync_failed 의 회복 메일",
+    "value": 1,
+    "risk": 2,
+    "size": "M",
+    "status": "pending",
+    "note": "중복 억제 설계와 정책이 필요해 보류 유지. 이번 회차 재확인하지 않음.",
+    "updated": "2026-10-17"
+  }
+]

@@ -1,0 +1,29 @@
+release: ReSSO v0.9.105
+
+The form eval "$(scripts/test-services.sh)" evaluates the empty output of a run
+that exited nonzero, so eval "" succeeds and the failure the script had just
+reported is thrown away by the line that was supposed to act on it. A reader
+who follows it goes on to run sixty integration tests against services that
+were never brought up - green locally, failed by CI, which is the one outcome
+this script exists to prevent.
+
+c1b71bb fixed the directory guide for v0.9.103 and the README was already
+right, but two places still showed the form that hides the failure: the
+script's own header, and the summary make test prints when it finds tests that
+did not run - the line a reader copies right after being told something went
+wrong. Both now assign the environment first and evaluate it second, and the
+header says in five lines why the two steps are separate, so the next person
+shortening it does not put the defect back. The make test notice becomes two
+lines with the command alone on the second, because prose and command shared
+one line there and could not be run as given.
+
+TestEveryShownPreparationStopsWhenPreparationFails lifts the shown command out
+of all four places that carry it - a fenced block in the two documents, a
+header comment in the script, an escaped echo in the Makefile recipe - and runs
+each one under bash, once with a preparation that exits 1 and once with one
+that works. The first run has to stop before the command's second half and the
+second has to reach it, so a form that never gets anywhere cannot pass either.
+
+Includes the single merged change since v0.9.104, with no production code.
+Stamps the version in the Makefile, console package metadata, .env.example and
+both compose files, with no schema or configuration changes.
