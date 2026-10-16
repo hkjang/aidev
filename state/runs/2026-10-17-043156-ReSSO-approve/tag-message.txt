@@ -1,0 +1,37 @@
+release: ReSSO v0.9.104
+
+RotateRefreshToken folded two different answers into ErrNotFound: a session that
+has ended, which is a real verdict about the token, and a session-liveness query
+that could not run, which is no verdict at all. The refresh grant answered
+everything that was not ErrTokenReuse with 400 invalid_grant, so a store fault
+in the rotation - a Begin, Scan, Exec or Commit, or that liveness query - told
+the relying party its refresh token was dead. Nothing had been written at that
+point: rotated_at is marked further down the same transaction and the
+transaction is rolled back by its deferred Rollback, so the token in the
+caller's hand was still the live one. The ordinary response to invalid_grant is
+to discard it and send the person through login again, which turned a few
+seconds of trouble reading sso_sessions into every session that renewed during
+it, gone for good.
+
+The store now returns the query's error unchanged and keeps ErrNotFound for the
+session actually being over. The grant answers the remainder - neither
+ErrNotFound nor ErrTokenReuse, the latter excluded by name because the
+ErrFamilyNotRevoked errors wrap it too - with 500 server_error, counts it in
+resso_token_errors_total{grant_type="refresh_token"} and logs "the refresh token
+could not be rotated", which is what the two neighbouring faults in the same
+handler already do. Ordinary rejections do not move: an unknown, expired or
+mismatched token and an ended session stay 400 with their wording, and a replay
+stays 400 with its REFRESH_TOKEN_REUSE entry. The authorization code exchange is
+deliberately left alone - by the time it fails the code has been spent, so there
+is nothing for the caller to retry. The operations guide's
+resso_token_errors_total bullet gained the rotation stage, and tells a reader to
+separate the grant's two 500s by their log wording: could not be looked up is
+the lookup, could not be rotated is the rotation.
+
+Also raises the Go toolchain to 1.26.9 for the patched net/http and crypto/tls,
+in go.mod and the Dockerfile's builder base image together, which is what
+TestToolchainPinsAgreeAcrossTheBuild keeps comparing.
+
+Includes both merged changes since v0.9.103. Stamps the version in the Makefile,
+console package metadata, .env.example and both compose files, with no schema or
+configuration changes.

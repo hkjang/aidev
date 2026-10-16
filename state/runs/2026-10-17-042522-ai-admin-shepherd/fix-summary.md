@@ -1,0 +1,7 @@
+# 수리 요약 — 고칠 결함이 없어 커밋하지 않음
+
+- 지적이 틀렸다(코드는 이미 맞다). CI `lint`·`test` 가 3초 만에 실패한 것은 코드 결함이 아니라 GitHub Actions 과금 차단이다. `gh run view 38951938252` 의 ANNOTATIONS 가 두 잡 모두 "The job was not started because recent account payments have failed or your spending limit needs to be increased" 이고, 잡 API 의 `.steps` 는 `[]`, `--log-failed` 는 빈 출력이다 — 단 한 스텝도 실행되지 않았으므로 9e8284d 가 유발한 실패일 수 없다. PR #44·#45·#46 에서도 같은 차단이 기록돼 있고 저장소 소유자만 Billing & plans 에서 풀 수 있다.
+- CI 가 돌렸어야 할 검증을 HEAD(9e8284d)에서 전부 로컬 재현해 통과를 확인했다. lint 잡: `gofmt -l .` 무출력, `go vet ./...`, `./scripts/verify-version.sh`(1.2.37) 통과. test 잡: `go test -race -count=1 ./...` exit 0(internal/server 142.1s, FAIL·DATA RACE 없음), `cd web && npm ci && npm test`(81 passed) `&& npm run build` exit 0. `git diff --check` 도 깨끗하다.
+- 비평가가 남긴 "DSN 없이 SKIP 된 채 게이트 통과" 우려는 실측으로 닫았다. `-v` 타깃 실행에서 새 단언 9건이 전부 RUN·PASS 다(SKIP 0): `TestEndToEndAPI` 의 legacyCreate/legacyPatch/legacyMenuInfo/legacyPatchRowIdentifier RejectsNUL 4건 + `TestValidateLegacyAdminMenuInfoRejectsNUL` 서브테스트 5건.
+- 검증 환경 주의: Docker Desktop 이 새 `-p` 발행을 전부 500(`/forwards/expose`)으로 거절하고 브리지(172.17.0.0/16)도 WSL 호스트에서 닿지 않아, 포트 미발행 `postgres:16-alpine` 에 `--link` 한 `golang:1.26` 컨테이너 안에서 테스트를 돌렸다(소스 read-only 마운트, 호스트 모듈 캐시 재사용). 전용 컨테이너 `ai-admin-repair-pg` 는 제거했고 다른 세션 컨테이너는 건드리지 않았다. 워크트리 clean.
+- 결론: 고칠 것이 없어 새 커밋을 만들지 않았다. 이 PR 은 CI 과금이 복구되면 그대로 통과한다. 워크플로나 테스트를 손대 초록을 만드는 것은 금지된 우회라 하지 않았다.
