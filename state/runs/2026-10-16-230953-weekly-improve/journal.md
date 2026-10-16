@@ -30,3 +30,15 @@
 - [러너 23:36] pr created — https://github.com/hkjang/weekly/pull/34
 - [러너 00:00] ci passed — 검사 1개 모두 success
 - [러너 00:00] merge done — c9feef4
+
+## 릴리즈 노트
+- v0.320.0 을 냈습니다 — 커밋 848f6b9(`chore: v0.320.0 을 냅니다`), 주석 태그 `v0.320.0`. detached HEAD 에서 커밋·태그했고 **원격에 아무것도 보내지 않았습니다**. 증가 패턴(0.317→0.318→0.319)을 따라 마이너만 올렸습니다.
+- 버전 아홉 곳(VERSION, frontend/package.json+lock, docs/openapi.yaml, deploy 3개, README, 두 안내서) + `.github/release-notes/v0.320.0.md` 신규 + 로드맵 본문/HTML/PDF + 두 안내서 HTML. 파일 집합이 v0.319.0 릴리즈 커밋과 정확히 같은 16개입니다.
+- **비평 노트의 지시를 반영했습니다**: "덱에서 캡처 누락" 을 측정된 사실로 쓰지 않고 코드 유추로 명시했습니다(릴리즈 본문·로드맵·커밋 메시지 세 곳). 또 처음 초안에 "남은 파일은 cleanupAttachmentFiles 가 정리할 수 있습니다" 라고 잘못 적었던 것을 비평 노트 ①(637-664행은 보고서 행이 사라진 디렉터리만 회수)에 맞춰 "영구 고아로 남는다, 회수 보강은 범위 밖" 으로 고쳤습니다. `serveAttachment` 의 `storedPath` 로그 별건도 범위 밖으로 적었습니다.
+- 검증 실측: 이 릴리즈만을 위해 만든 별도 DB(`weekly_rel320`, weekly-test-pg:15434)에서 전체 `go test ./... -count=1` → `ok internal/app 170.386s` EXIT=0. 새 시험 3개를 `-v` 로 다시 돌려 SKIP 아닌 PASS 확인(0.93s/0.36s/0.33s). go vet·build, gofmt, `git diff --check`, version-check(아홉 곳), openapi-check(119경로), paging-check(10목록), modal-close-check, `guard-check.py --changed 37efe44`(23개 도달), 프런트 npm ci·lint·두 시간대 각 173개·prod build·`scripts/build.sh` 통과. backup-check 는 호스트에 psql 이 없어 `docker cp` 로 시험 컨테이너에서 돌려 통과(7/7).
+- 함정 하나: `scripts/build.sh` 가 **추적되는** `cmd/weekly/web/index.html` 의 자산 해시를 고칩니다(assets/ 는 ignore). 이전 릴리즈 커밋들에 없는 파일이라 되돌려 제외했습니다 — 그대로 커밋하면 저장소에 없는 자산을 가리킵니다. 끝나고 dist·release·frontend/dist·web/assets 를 지워 트리는 깨끗합니다.
+- 실행하지 않은 것: mutation/authz(제자리 소스 변경), `release-check.sh`(gh 없음, advisory), install-check·로컬 docker build(이전 릴리즈도 안 함 — 태그 워크플로가 이미지와 자산을 만듭니다).
+- **assets 는 빈 배열, github_release 는 false** 입니다. `.github/workflows/release.yaml` 이 태그 푸시로 돌아 VERSION·본문 존재를 검증하고, buildx 로 이미지를 만들어 `weekly-v0.320.0.tar.gz` 를 `gh release create` 로 올립니다. 사람/러너가 할 일은 커밋과 태그 푸시뿐입니다.
+- 임시 DB(`weekly_rel320`)와 컨테이너의 `/tmp/relcheck` 는 지웠습니다. `weekly-test-pg` 는 Up 그대로 둡니다.
+- [러너 00:24] release published — v0.320.0
+- [러너 00:25] assets verified — v0.320.0 자산 1개 (이전 v0.319.0: 1)
