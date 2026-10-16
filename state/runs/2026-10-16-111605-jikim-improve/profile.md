@@ -1,0 +1,51 @@
+# jikim 프로필 (2026-10-16)
+- 목적: 폐쇄망에서 Secret·개인 키·정책·승인·감사를 운영하는 Go 서버와 한국어 React 관리 화면. 제한된 OpenBao 호환 API 와 MCP 를 제공한다.
+- 스택: Go 1.26, pgx v5/PostgreSQL, go-oidc·go-jose/v4; React 19·Vite·TypeScript·Mantine 8.3.18·React Query, Vitest·Playwright. 모듈 경로는 `github.com/hkjang/jikim`(테스트 import 에 `jikim/internal/...` 로 쓰면 빌드 실패).
+- 기준: base main@306196e, `scripts/version.sh` 정본 **v0.2.38**. 이전 프로필(v0.2.37) 이후 Transit 단건 미지원 파라미터 거절(v0.2.38, 2d909f1)이 반영됐다.
+- 구조:
+  - cmd/server: 설정·DB·마이그레이션·bootstrap·HTTP 시작/종료.
+  - internal/httpapi: REST/OpenBao/MCP/OIDC/AI/tracking. `server.go:routes` 에 라우트가 집중되고 마지막이 SPA fallback. OpenBao 라우트는 `openbao.go:20-47`(41-46행이 transit)에서 별도 mux 에 등록되고 `withBaoAuth` 로 감싼다.
+  - 전역 미들웨어는 requestID→recoverer→securityHeaders→audit. 인증/역할은 라우트별 `withAuth`/`requireRoles`.
+  - internal/store: PostgreSQL 저장소·정책·설정. `Store{pool *pgxpool.Pool; master *cryptox.Cipher}`(store.go:31-34), `New` 는 생성 시 `Ping` 한다(store.go:50). `mapError` 가 sentinel 을 매핑하고 `httpapi.storeError`·`baoTransitFailure`(openbao.go:643-652)가 500 메시지를 가린다.
+  - internal/cryptox·password·ids·config·model·version: 암호화·인증 기초·모델·버전.
+  - internal/tracking: 추적 snippet/CSP 와 메모리 Recorder(최대 100건, `Record` 가 page 를 512바이트 + 문자 경계로 절단).
+  - internal/httpapi/tracking.go: CSP report 수신(8KiB 상한)과 Momento 역프록시.
+  - migrations: embed SQL 순방향 마이그레이션. web/src: 관리 SPA. web/e2e: 이미지 기반 Playwright.
+  - scripts: version.sh·verify.sh·verify-docs.mjs·verify-dependabot-groups.mjs(락파일 peer 결합을 Dependabot group 과 대조).
+  - docs/guides: API·호환성(compatibility.md)·보안·오프라인 가이드; docs/ADMIN_GUIDE·USER_GUIDE 는 md/pdf. CLAUDE.md·AGENTS.md·독립 로드맵 파일은 없다.
+- 빌드·테스트:
+  - `go test ./... -count=1`: 통과. PostgreSQL lifecycle 테스트는 `JIKIM_TEST_POSTGRES_DSN` 없으면 skip(`internal/store/secrets_openbao_test.go:93-98`, `internal/httpapi/response_test.go:60-62`). `docker` 는 이 환경에 있다.
+  - `go test ./internal/httpapi/ -run <패턴> -count=1 -v`: 패키지 전체가 1초 안쪽(`-run Transit` 는 0.14초). `./internal/store/` 도 0.2초 안쪽. `-race -count=5` 도 빠르다.
+  - `go vet ./...` / `gofmt -l <파일>`: 표준 검사.
+  - `npm --prefix web ci --no-audit --no-fund` → `npm --prefix web test -- --maxWorkers=1` → `lint` → `build`. 프런트 59/59 가 현재 기준.
+  - `bash scripts/verify.sh`: Go test/vet·포맷·Node 하한·npm ci/test/lint/build·문서·Dependabot group·Compose. 시간 소요.
+  - `make release-check`: 이미지·스모크·E2E·패키징. 오래 걸리고 스크린샷을 덮어쓴다 — 정찰에서는 실행 금지.
+- 관례:
+  - 영어 conventional commits, 한국어 UI/오류/문서. 릴리즈 버전·CHANGELOG 변경은 별도 작업(`scripts/version.sh` 를 회차에서 올리지 않는다).
+  - 기능 설정은 저장소 JSON 설정; 앱 bootstrap 환경변수는 README 의 네 개만 유지.
+  - `quietServer` 와 함수 필드 seam 관례(nil 이면 실제 store 호출). 실제 `routes`·미들웨어를 통과하는 동작 테스트를 쓴다.
+  - 예외: OpenBao transit 테스트는 `&Server{transitAuthorizer: allowAllTransit(), auditRecorder: …, transitEncryptor/transitDecryptor: …}` 를 만들어 `server.baoTransitEncrypt(rec, transitBatchRequest(target,key,body))` 로 **핸들러를 직접** 부른다(`withBaoAuth` 는 store 필요). 하네스: `transitBatchRequest` openbao_transit_batch_test.go:18, `decodeBatchResults` :25, `allowAllTransit` :37, `decodeBaoData` openbao_transit_missing_field_test.go:14.
+  - 순수 store 헬퍼는 `internal/store/logic_test.go`(`package store` 내부 테스트)에서 단위 검증한다.
+  - `trackingServer`(tracking_test.go:31)는 실제 routes·securityHeaders·Recorder·임시 SPA 를 구성하고 설정 loader 를 주입한다. Momento 테스트는 `httptest` 수집기 + `server.httpClient = http.DefaultClient`.
+  - `decodeJSON` 은 UseNumber/DisallowUnknownFields 및 단일 JSON 확인. `decodeBaoJSON`(openbao.go:883-896)은 UseNumber + 단일 JSON 만(미지의 필드 허용). 에러 envelope 는 error.code/message/request_id, OpenBao 쪽은 `baoError`.
+- 위험 구역:
+  - auth_handlers.go·oidc*.go·mcp_oauth.go·store/users.go·migrations/·release workflow 는 인증/배포 계약.
+  - updateSettings·store/settings.go·SettingsPage·webhook.go 는 수정이 잦다. 인접 변경을 섞지 않는다.
+  - tracking CSP 는 추적 off 시 `shippedPolicy` 와 바이트 단위로 같아야 한다. CSP report 응답은 언제나 204/빈 본문.
+  - momentoProxy 의 gate(`ProxyActive()` 404)·메서드 허용 목록·헤더 제거(Cookie/Authorization/X-Vault-Token)·64KiB·10초는 보안 경계.
+  - transit: `batch_input` 이 있으면 단건 필드를 무시하는 것이 compatibility.md:125 의 계약이다. 단건 미지원 파라미터는 400 `unsupported transit parameter: <이름>`(필드 누락 판정보다 **앞**), 단건 `plaintext`·`ciphertext` 누락은 400, 명시된 `""` 는 유효 입력이다. decrypt 성공은 `recordSensitiveDisclosure` 실패 시 503 으로 평문을 withhold 한다 — 순서를 바꾸지 말 것. `TransitEncrypt` 의 출력 형식(`vault:v%d:`)과 AAD(`transit:%s:v%d`)를 바꾸면 기존 암호문이 복호화 불가가 된다.
+  - AI Secret 매처·262144 한도·max_tokens 는 보안 경계. 감사 details 에 검출 원문을 넣지 않고 식별자만 넘긴다.
+  - OpenBao version 빈 값·0 이하를 latest 로 처리하는 것(openbao.go:514-526)은 compatibility.md 에 명시된 현재 계약이다.
+- 자주 깨지는 곳:
+  - 저장소 오류를 인증/설정 거절로 오분류하는 광맥은 OIDC exchange·MCP SSO·AI 입력 검증에서 모두 닫혔다. 다시 고르지 않는다.
+  - 로그 추가만 하는 과제·반환값 무시 광맥·관찰 가능한 결과가 없는 seam 변경은 재선택 금지.
+  - 중간 값이나 소스 문자열만 검사하지 말고 실제 HTTP 최종 응답(또는 수집기가 본 `r.RequestURI`)까지 확인한다.
+  - npm lifecycle PATH 가 홈의 Node 20 을 택한 이력이 있어 package scripts 는 `npm_node_execpath` 로 vitest 를 직접 실행한다.
+- 검증 함정:
+  - CI Node 24, engines 하한 22.22.2. package.json·vitest.config.ts·verify.sh·.nvmrc 계약을 한쪽만 바꾸지 않는다.
+  - `httptest.NewRequest` 의 target 에 공백이 있으면 `malformed HTTP version` 으로 panic 한다.
+  - 역프록시 경로 검증은 수집기 쪽 `r.URL.Path` 가 Go 에 의해 다시 디코드되므로 `r.RequestURI` 로 단정해야 한다.
+  - transit 테스트에서 `transitEncryptor`/`transitDecryptor` seam 을 주입하면 store 의 파서를 타지 않는다 — "잘못된 입력이 거절되는가" 를 보려면 상태·본문뿐 아니라 **seam 호출 카운터**까지 단정해야 한다.
+  - `&store.Store{}`(nil pool)로 store 함수를 부르면 DB 접근 지점에서 panic 한다. **대안(2026-10-16 실행 확인)**: `package store` 내부 테스트에서 `pgxpool.ParseConfig("postgres://u:p@127.0.0.1:1/none")` + `cfg.MinConns = 0` + `pgxpool.NewWithConfig` 의 lazy pool 로 `&Store{pool: p}` 를 만들면 쿼리가 즉시 `connection refused` 로 실패한다(0.139s, 매달리지 않음). 이것으로 "입력이 DB 에 닿기 전에 거절되는가"(`errors.Is(err, ErrInvalid)`)를 DSN 없이 정직하게 분리할 수 있다. 왕복(쓰고 다시 읽기) 검증에는 쓸 수 없고, 그때는 `JIKIM_TEST_POSTGRES_DSN` 통합 테스트를 쓴다.
+  - 실제 PostgreSQL 장애·Keycloak·브라우저 CSP·프런트·CI 실행은 정찰 단계에서 보통 미검증이다.
+  - Dependabot 잡 로그는 gh 미인증으로 BlobNotFound 가 되어 열 수 없다. 묶음 문제는 `npm install … --package-lock-only` 로 로컬 재현한다.

@@ -1,0 +1,15 @@
+- 과제: 자동화 일정 cron step 자리도 `*/+2` 같은 부호 붙은 토큰을 거절한다 (가치 2 / 위험 1 / 작업량 S)
+- 왜: `internal/automation/schedule.go:214` 의 `cronValue` 는 2026-10-06 회차(a77cce4)에서 `isDecimalDigits` 로 부호를 막았지만, 같은 파일 `parseCronField`(148행) 의 step 분기는 여전히 `strconv.Atoi(stepRaw)` 직행이다 — `Atoi` 가 부호를 받으므로 cron 문법에 없는 `*/+2` 가 받아들여져 `Schedule.Expression` 에 영구 저장된다. 값 자리와 step 자리가 같은 규칙을 쓰게 하면 다른 cron 구현·사람의 눈에 읽히지 않는 식이 DB 에 남지 않는다.
+- 확인한 것(실행): `go test` 로 `strconv.Atoi` 의 부호 처리를 재서 `Atoi("+2")=2`·`Atoi("+3")=3`(err=nil) 이 step 조건 `err==nil && 1<=value<=max-min+1` 을 **통과**하고, `Atoi("-2")=-2`·`Atoi("+0")=0` 은 기존 범위 검사에서 이미 걸리는 것을 확인했다(로그: `probe/atoi_test.go`). 즉 새로 거절되는 것은 `*/+N`(N>=1) 뿐이다. `internal` 패키지는 외부 모듈에서 import 할 수 없어 `ParseSchedule("*/+2 0 * * *")` 자체의 실행 재현은 **미확인** — 구현자는 먼저 그 한 줄을 빨강 테스트로 재현하고 시작할 것(2026-10-06 회차에서 과제서가 올린 `-0` 사례가 이미 거절되던 것처럼, 받아들여지지 않는 사례를 표에 섞어 두면 수용 기준이 흐려진다).
+- 수용 기준: 1) `ParseSchedule("*/+2 0 * * *", "UTC")` 와 `ParseSchedule("0 0 * * */+2", "UTC")` 가 `errors.Is(err, automation.ErrInvalid)` 로 거절되고 메시지는 기존 `step must be between 1 and %d` 문구를 그대로 쓴다 2) `*/2`·`0-30/5`·`@daily`·`*/8`(요일) 등 기존에 받아들여지던 식은 반환 `Next` 시각까지 그대로다 3) 테스트가 대역 없이 프로덕션 `ParseSchedule`(받아들여진 경우만 `Next`)만 불러 step 자리의 `+2`·`+3`(새로 거절)과 `-2`·`+0`·`0`(이미 거절, 회귀 방지로 PASS 표시) 사례를 표로 못 박고, 넣은 검사만 지우면 **새 사례만** 다시 빨강이 되는 것을 확인한다
+- 건드릴 파일:
+  - `internal/automation/schedule.go:156-167` `parseCronField` — `strconv.Atoi(stepRaw)` **앞에** 이미 같은 파일에 있는 `isDecimalDigits(stepRaw)` 검사를 넣고, 실패 시 기존 `fmt.Errorf("step must be between 1 and %d", maximum-minimum+1)` 를 그대로 반환(새 문구·새 오류 타입 금지, `ErrInvalid` 래핑은 `ParseSchedule` 이 이미 한다).
+  - `internal/automation/schedule_test.go` — 기존 `TestSchedule…` 표 테스트 옆에 step 부호 표 하나 추가.
+- 검증 명령:
+  - `go test ./internal/automation -run TestSchedule -v -count=1 -timeout=30s`
+  - `go test ./internal/automation -count=1`
+  - `go test ./...`
+  - `go vet ./...` · `go build ./...` · `gofmt -l ./cmd ./internal ./pkg`(출력 없어야 함)
+  - `./scripts/check-release-docs.sh` · `./scripts/check-commit-identities.sh HEAD`
+- 위험과 피할 것: 이미 저장된 일정 중 `*/+N` 이 있으면 이번 변경 뒤 재파싱이 실패한다 — 그래도 값 자리에서 같은 결정을 이미 내렸으므로 같게 맞추는 것이 맞다(새 호환성 경로를 만들지 말 것). `Next` 의 DST·날짜 순회는 **절대 손대지 말 것**(PR #44 가 그 접근으로 두 번 실패하고 닫혔다). `cronAliases`·`matchesDay`·`sundaySeven`·범위 분해·`service.go`·migrations·httpapi·docs/PDF 도 손대지 않는다. 프로덕션 1파일로 끝낼 것.
+- 차선 후보: 대사 범위 파서 `web/src/lib/compareLists.ts` 의 `splitSheetRange` 가 `'O''Brien'!A1:B2` 의 이중 작은따옴표를 풀지 않아 `EditorPage.tsx` 가 실제 시트 이름과 못 맞춘다 — TS 1파일 + vitest(`cd web && npm ci && npx vitest run compareLists`), 파서 통합 금지.

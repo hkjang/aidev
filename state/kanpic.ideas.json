@@ -2,101 +2,11 @@
   {
     "title": "cron step 자리도 부호를 받아들인다 (*/+2) — 값 자리와 같은 규칙으로 맞춘다",
     "value": 2,
-    "risk": 2,
-    "size": "S",
-    "status": "pending",
-    "note": "parseCronField의 stepRaw는 여전히 strconv.Atoi 직행. 이번 실행 재현 미실행. 저장된 +step 호환성 및 진행 중 DST 과제와 파일 충돌 때문에 차선.",
-    "updated": "2026-10-08"
-  },
-  {
-    "title": "IMPORTDATA 는 LazyQuotes=true, 업로드·사용자 명단은 false — 같은 파일이 한쪽에서만 읽힌다",
-    "value": 2,
-    "risk": 3,
-    "size": "M",
-    "status": "pending",
-    "note": "fetcher.go parseCSV의 true, importexport/service.go parseDelimited와 httpapi/user_import.go의 기본 false 재확인. 계약 재결정 필요; 통합 금지.",
-    "updated": "2026-10-08"
-  },
-  {
-    "title": "persistentHandler.WithAttrs/WithGroup 가 handler 수준 속성을 DB 행에서 떨어뜨린다",
-    "value": 2,
-    "risk": 2,
-    "size": "S",
-    "status": "pending",
-    "note": "logs.go:212-216은 console만 속성 적용. internal/cmd의 .With/.WithGroup 검색에 실제 logger 호출자 없음. 실제 사용처 추가 때 검토.",
-    "updated": "2026-10-08"
-  },
-  {
-    "title": "관리자 가이드의 외부 호출 오류 코드 안내를 실제 코드와 맞춘다 (ADMIN_GUIDE.md:785)",
-    "value": 2,
     "risk": 1,
     "size": "S",
-    "status": "pending",
-    "note": "785행은 여전히 #VALUE! 안내, fetcher.go는 정책/fetch 거절 #N/A·CSV 파싱 #VALUE!. PDF 동반 재생성이 필요. 이번 코드 결함보다 가치 낮음.",
-    "updated": "2026-10-08"
-  },
-  {
-    "title": "SendNow 의 record 만 요청 컨텍스트를 쓴다 — Notify 와 달리 WithoutCancel 이 아니다",
-    "value": 2,
-    "risk": 2,
-    "size": "S",
-    "status": "pending",
-    "note": "mail/service.go:115 record(ctx)와 116 WithoutCancel 순서 재확인. 실제 DB 유실 재현은 미확인; 최근 메일 작업과 겹침.",
-    "updated": "2026-10-08"
-  },
-  {
-    "title": "compareLists.looksLikeIdentifier 는 007.5 까지 번호로 보아 파일·클립보드 두 문과 갈린다",
-    "value": 2,
-    "risk": 2,
-    "size": "S",
-    "status": "pending",
-    "note": "looksLikeIdentifier의 /^0\\d/와 spreadsheetNumber LEADING_ZERO_NUMBER의 정수 한정 차이 유지. 대사와 입력 계약 차이를 이유 없이 통합하지 않음.",
-    "updated": "2026-10-08"
-  },
-  {
-    "title": "붙여넣기·정리는 1e3 을 글자로 두는데 셈하는 자와 타이핑 문은 1000 으로 읽는다",
-    "value": 2,
-    "risk": 2,
-    "size": "M",
-    "status": "pending",
-    "note": "spreadsheetNumber의 DECIMAL_TEXT 지수 허용과 decomposeNumberText의 정수/소수만 허용을 재확인. 입력 계약 차이 유지; 이번 대사 수정에서 지수 허용 보존.",
-    "updated": "2026-10-08"
-  },
-  {
-    "title": "깨진 UTF-16 복구 계약을 원격·업로드의 실제 입구에서 고정한다",
-    "value": 1,
-    "risk": 2,
-    "size": "S",
-    "status": "pending",
-    "note": "encoding.go fromUTF16은 홀수 바이트 버림/utf16.Decode 복구 유지. 실제 입구 추가 테스트는 미실행. 기존 UTF-8 거절과 별개.",
-    "updated": "2026-10-08"
-  },
-  {
-    "title": "bestFraction 의 선형 탐색을 Stern–Brocot/연분수로 바꿔 자리 기호 상한을 되돌린다",
-    "value": 2,
-    "risk": 4,
-    "size": "L",
-    "status": "rejected",
-    "note": "format_fraction.go 및 cellFormat.ts의 여섯 자리 상한 유지 재확인. 최근 의도적 제한을 되돌릴 요구/근거 없고 45분 범위 초과. 같은 접근 재제안 금지.",
-    "updated": "2026-10-08"
-  },
-  {
-    "title": "compareKey의 Number(text)가 0x10·0b10 식별자를 십진수 키와 합친다",
-    "value": 3,
-    "risk": 2,
-    "size": "S",
-    "status": "pending",
-    "note": "이번 선택. compareKey→compareLists→CompareDialog의 실제 경로와 USER_GUIDE 번호 보호 계약 확인. 프로덕션 1파일에서 기존 spreadsheetNumber(text)로 숫자 인식만 좁히고 identifier/textToNumber/boolean 분기는 유지. 실행 결과는 brief 및 compare-probe.log 참조. 실제 비교 3쌍 모두 both=1, 혼합 목록은 가짜 중복 count=2, 실제 화면은 완전 일치 문구를 표시함을 실행 확인.",
-    "updated": "2026-10-08"
-  },
-  {
-    "title": "대사에서 boolean true와 문자열 TRUE의 키 대소문자가 달라 불일치한다",
-    "value": 2,
-    "risk": 2,
-    "size": "S",
-    "status": "pending",
-    "note": "신규. compareKey(true)는 TRUE, compareKey(\"TRUE\")는 true. 출력은 같은데 서로 다름. 문자열/boolean 동등성을 어디까지 보장할지 계약 검토 후 별도 수정; 이번 과제에 묶지 않음. 프로덕션 compareLists에서 both=0 실행 확인.",
-    "updated": "2026-10-08"
+    "status": "done",
+    "note": "2026-10-16 구현(15781be). isDecimalDigits 검사를 Atoi 앞에 넣어 */+2·*/+3·0-30/+2·요일 */+2 를 기존 step 문구로 거절. */-2·*/+0·*/0 은 이미 거절되던 것이라 회귀 방지로 표에 남김. 받아들여지던 식은 Next 시각까지 불변임을 표로 고정.",
+    "updated": "2026-10-16"
   },
   {
     "title": "대사 범위의 작은따옴표가 들어간 시트 이름에서 이중 따옴표 이스케이프를 푼다",
@@ -104,16 +14,97 @@
     "risk": 2,
     "size": "S",
     "status": "pending",
-    "note": "신규. splitSheetRange(\"'O''Brien'!A1:B2\")는 O''Brien을 반환. EditorPage parseSheetRange는 실제 시트 이름과 직접 비교하므로 O'Brien 시트를 못 찾는 경로. 실제 서버에서 그 시트 생성 및 전체 UI 왕복은 미확인; 파서 통합 금지. splitSheetRange 반환값까지 실행 확인.",
-    "updated": "2026-10-08"
+    "note": "이번 회차 차선 후보였고 1순위가 성립해 미실행. splitSheetRange(\"'O''Brien'!A1:B2\") 가 O''Brien 을 돌려주어 EditorPage.parseSheetRange 가 실제 시트명과 못 맞춘다(이전 회차 실행 확인). TS 1파일 + vitest 이지만 web/node_modules 설치가 필요.",
+    "updated": "2026-10-16"
   },
   {
-    "title": "auto-improve: fix(automation): 자정 DST 전환에서도 일정 날짜 순회를 전진시킨다",
-    "value": 3,
+    "title": "IMPORTDATA 는 LazyQuotes=true, 업로드·사용자 명단은 false — 같은 파일이 한쪽에서만 읽힌다",
+    "value": 2,
+    "risk": 3,
+    "size": "M",
+    "status": "pending",
+    "note": "계약 재결정이 먼저이고 파서 통합은 금지. 이번 회차 재확인 미실행.",
+    "updated": "2026-10-16"
+  },
+  {
+    "title": "persistentHandler.WithAttrs/WithGroup 가 handler 수준 속성을 DB 행에서 떨어뜨린다",
+    "value": 2,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "프로덕션에 logger.With( 호출자가 없어 관찰되는 결함이 아니다. 실제 사용처가 생길 때 재검토. 이번 회차 재확인 미실행.",
+    "updated": "2026-10-16"
+  },
+  {
+    "title": "관리자 가이드의 외부 호출 오류 코드 안내를 실제 코드와 맞춘다 (ADMIN_GUIDE.md:785)",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "스물한 회차 연속 보류. PDF 재생성 동반이라 작업량이 S 치고 무겁고, 코드 결함보다 가치 낮음. 이번 회차 재확인 미실행.",
+    "updated": "2026-10-16"
+  },
+  {
+    "title": "SendNow 의 record 만 요청 컨텍스트를 쓴다 — Notify 와 달리 WithoutCancel 이 아니다",
+    "value": 2,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "mail/service.go:115-116. 실제 DB 유실 재현에 Postgres 필요. 이번 회차 재확인 미실행.",
+    "updated": "2026-10-16"
+  },
+  {
+    "title": "compareLists.looksLikeIdentifier 는 007.5 까지 번호로 보아 파일·클립보드 두 문과 갈린다",
+    "value": 2,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "대사 키와 입력 계약의 의도된 차이일 수 있어 통합 금지. 이번 회차 재확인 미실행.",
+    "updated": "2026-10-16"
+  },
+  {
+    "title": "붙여넣기·정리는 1e3 을 글자로 두는데 셈하는 자와 타이핑 문은 1000 으로 읽는다",
+    "value": 2,
     "risk": 2,
     "size": "M",
     "status": "pending",
-    "updated": "2026-10-11",
-    "note": "https://github.com/hkjang/kanpic/pull/44 (PR 처리기가 3일 전에 더 진행할 수 없다고 판정했고(수정·심사를 2번 시도했지만 통과하지 못함) 그 뒤 사람 손이 닿지 않았습니다) 로 닫힘 — 다시 하려면 처음부터"
+    "note": "입력 계약 차이 유지가 기본. 이번 회차 재확인 미실행.",
+    "updated": "2026-10-16"
+  },
+  {
+    "title": "깨진 UTF-16 복구 계약을 원격·업로드의 실제 입구에서 고정한다",
+    "value": 1,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "2026-10-05 회차에 두 입구 비교 테스트가 하나 생겨 남은 공백이 줄었다. 가치 낮음.",
+    "updated": "2026-10-16"
+  },
+  {
+    "title": "compareKey의 Number(text)가 0x10·0b10 식별자를 십진수 키와 합친다",
+    "value": 3,
+    "risk": 3,
+    "size": "S",
+    "status": "rejected",
+    "note": "2026-10-08 회차가 골랐으나 no-change 로 끝났다. 같은 접근으로 다시 올리지 않는다 — 다시 하려면 대사 키 계약부터 사람과 정해야 한다.",
+    "updated": "2026-10-16"
+  },
+  {
+    "title": "대사에서 boolean true 와 문자열 TRUE 의 키 대소문자가 달라 불일치한다",
+    "value": 2,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "compareKey(true)=TRUE, compareKey(\"TRUE\")=true 로 출력은 같은데 키가 다름(이전 회차 실행 확인). 문자열/boolean 동등성 계약 결정이 먼저.",
+    "updated": "2026-10-16"
+  },
+  {
+    "title": "step 상한이 요일 필드에서 */8 까지 허용된다 (maximum-minimum+1 계산)",
+    "value": 1,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "2026-10-16 회차에 실행으로 확인: weekday 는 min0/max7 이라 상한 8 이고 `0 0 * * */8` 은 일요일만 고르는 유효한 일정으로 받아들여진다(Next=2026-10-18). 해롭지 않은 허용이라 가치 낮고, 이번 회차 테스트가 이 동작을 Next 시각까지 고정해 두었다 — 좁히려면 그 표를 함께 고쳐야 한다.",
+    "updated": "2026-10-16"
   }
 ]

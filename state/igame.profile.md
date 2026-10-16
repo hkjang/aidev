@@ -1,37 +1,23 @@
-# igame 프로필 (2026-10-08)
-- 기준: main@a84073a, VERSION 0.7.31. 이전 같은 날짜 프로필의 버전·키 테스트 착지 상태를 갱신했다.
+# igame 프로필 (2026-10-16)
+- 기준: main@5969bec, VERSION 0.7.32. 이전 프로필(2026-10-08, 0.7.31)에서 착지 상태와 남은 정렬 경로만 갱신했다. 이번 회차는 읽기만 했고 테스트는 실행하지 않았다(아래 명령은 이전 회차 실측치).
 - 목적: 사내 폐쇄망의 게임 카탈로그·세션·랭킹·업적 및 RealmGuard/Defense를 단일 오프라인 이미지로 제공한다.
-- 스택: Go 1.26.6, chi v5, pgx v5, go-oidc, PostgreSQL 17; React 19/TypeScript/Vite 7/MUI 7/Phaser 3.90, vitest, JS SDK. go.mod/web/package.json/CI 직접 확인.
+- 스택: Go 1.26.x, chi v5, pgx v5, go-oidc, PostgreSQL 17; React 19/TypeScript/Vite 7/MUI 7/Phaser 3.90, vitest, JS SDK.
 - 구조:
-  - cmd/igame — config.Load → DB 연결·migration·bootstrap → secretbox.New → HTTP :8080. 잘못된 설치키는 DB 연결 전에 거부한다.
-  - internal/config — 네 필수 환경변수만 로드하며 키 plain/hex:/base64:를 정확히 32바이트로 검증. DSN/admin/키는 바깥 공백 제거, 암호는 보존.
-  - internal/api — REST/SSE/MCP와 catalog/admin/extended/auth/apikeys 등. games 목록도 requireAuth 그룹이므로 공개 카탈로그가 익명 endpoint는 아니다.
-  - internal/api/*_pg_test.go — migratedPool마다 UUID 전용 스키마, 종료 시 자기 스키마만 제거. newAdminListFixture는 실제 Router/PG/세션 쿠키 구성.
-  - internal/database · migrations — embedded migration·체크섬/트랜잭션. 적용된 SQL 체크섬 불변은 이전 프로필 관례.
-  - internal/secretbox — AES-GCM 설치 비밀 저장. v1:/AAD 포맷은 이전 프로필 근거이며 이번 소스 재검토 안 함.
-  - internal/battle/realmguard · web/src/games — 결정론 전투의 Go/TS 쌍. realmguard.go의 replayRealmGuardBattle→applyRealmGuardReplay와 server_replay_v1을 이번 확인.
-  - web · sdk/gamehub-js — 포털과 SDK. docs · scripts · .github/workflows — 운영 문서/검증/빌드/릴리스.
-- 빌드·테스트: make deps(네트워크 필요); make lint(Go format/vet+SDK/web eslint); make test(Go/SDK/web); make test-race; make web-build; make build. make docker-build/release는 느림. Makefile 직접 확인.
-- 이번 실측: go test ./internal/config -count=1 PASS(0.003s); go test ./cmd/... ./internal/... ./migrations/... -count=1 PASS. 이 일반 Go 실행에는 DSN이 없어 PG 테스트를 검증하지 않는다.
-- 이번 DB 실측: make test-db DSN='postgres://igame:igame@127.0.0.1:15432/igame?sslmode=disable&search_path=public,igame_test_extensions' PASS(api 31.407s/database 1.828s), PG17 일회용 Docker 사용. test 종료 후 api_test_/migrate_ 스키마 0개, pgcrypto 전용 확장 스키마 유지 확인.
-- DB 준비: README의 postgres:17-alpine 컨테이너를 띄우고 readiness 확인 뒤 CREATE SCHEMA igame_test_extensions; CREATE EXTENSION pgcrypto WITH SCHEMA igame_test_extensions 실행. public 확장은 migratedPool이 거부한다. DSN 설정 뒤 연결/SQL 오류는 실패다.
-- 실제 HTTP probe: go run ./cmd/igame의 임시 서버에 로그인한 뒤 관리자 POST/PUT/DELETE 및 GET /api/v1/games를 호출했다. 정렬 결함 관측만 했고 수정 후 Green은 미확인이다. web/npm/race/vet/이미지 빌드는 이번 실행하지 않았다.
-- 관례: 영어 feat:/fix:/test:/docs: 커밋. VERSION/web/SDK 버전 정렬, 게임 콘텐츠 버전 별도. 설정은 네 환경변수+DB system_settings, 새 환경변수 금지는 이전 프로필 관례.
-- 오류 코드 계약: 영어 코드/메시지 유지, 한국어 표시 web/src/api/errorMessages.ts는 이전 회차 교훈. 감사 detail에 보호 대상 원문을 넣지 않는다.
-- 설정 계약: putSetting의 value는 오브젝트만 허용하며 validateSetting은 json.Unmarshal이라 내부 미지 필드를 거부하지 않는다. timezone은 time.LoadLocation 검증. OIDC·AI UPSERT는 최근 log와 이전 회차 근거.
-- fixture 주의: settingFixture.preserve/row는 여전히 value/updated_at만 기억하고 updated_by=NULL로 복원한다. 과거 동명 작업의 PR 상태 미확인이므로 중복 구현 금지. 부모 fixture 공유 시 설정 복원·고유 tag·행 수 델타 필요.
-- 키 테스트: 9003e19가 config_test.go에 TestLoadEncryptionKeyContract 등 parser/Load 회귀를 추가했고 0.7.31에 착지했다. 이번 재선정 금지.
-- secretbox 테스트: 제공 기록은 성공/review-pending이나 현재 파일 목록에는 secretbox_test.go만 있고 reject_test.go는 없다. 이전 미착지 상태를 해결됐다고 쓰거나 재구현하지 않는다.
-- 페이지 정렬: admin.go users/audit/games의 id 보조 정렬은 착지했다. listGames는 g.name만, playHistory는 gs.started_at DESC만, adminRankings는 s.created_at DESC만이다.
-- 이번 과제: listGames만 ORDER BY g.name,g.id로 좁힘(제품 1파일+새 PG 테스트+docs/api.md). 나머지 두 목록·공유 gameSelect·응답 계약은 그대로 둔다.
-- 새 정찰 실측: 동일 이름 게임 6개, limit=2 순회 중 이미 본 게임의 description만 PUT → 중복1/누락1은 5회 중 1회. 힙 이동 Red를 항상 재현한다고 쓰면 안 된다.
-- 더 안정적인 회귀: 고정 UUID 끝자리 6..1 역순 INSERT 후 실제 HTTP의 0/2/4 offset을 수집하면 5회 모두 [5,6,4,3,2,1]; 새 계약 기대 [1,2,3,4,5,6]과 다르다. 명시적 순서를 주 단정으로 사용. fixture에서는 같은 name, 고유 slug, active를 유지하고 이름 우선 대조군도 둔다.
-- 과거 페이지 함정: limit=1/top-N 단독 재현은 플래키했고 미조회 행 수정은 Red가 안 났다. 이번에도 실행 계획/물리 힙 순서를 계약으로 단정하지 않는다. OFFSET은 새 행·삭제·정렬/필터 변경 사이 snapshot 보증이 아니다.
-- playWindowsAllow fail-open 가설은 이전 확인에서 틀려 rejected. serviceLocation 기본 Asia/Seoul fallback은 6파일 일관된 수정 범위를 찾지 못해 rejected(해결됐다는 뜻 아님). API-key 정책 행 부재 가설도 도달성 미증명, 반복 선정하지 않는다.
-- 위험 구역: auth/session/개인 키, migrations 체크섬, .github/workflows 게이트, RealmGuard Go/TS 동치성, secretbox 포맷/AAD.
-- 자주 깨지는 곳: release의 dev 포함 npm audit와 CI production-only audit 차이. 2026-09-10 실패와 최신 f508458(source-map-js advisory 수정)을 기억하고 게이트 완화로 해결하지 않는다.
-- 검증 함정: CI에는 PG 서비스/IGAME_TEST_DSN/make test-db가 없다. release PG는 smoke용이며 API/database PG 회귀 실행은 별도다. DSN 없는 PASS와 새 테스트 0개 매칭은 증거가 아니다.
-- 문서: README 42행 server replay와 44행 telemetry-only/완전한 서버 시뮬레이션 아님 설명이 충돌. docs/security.md 44–46행은 RealmGuard replay와 추가 telemetry, Defense telemetry를 구분한다. README 한 단락 수정이 이번 차선.
-- 문서 PDF: DOCS_PDF_DATE=YYYY-MM-DD make docs-pdf는 이전 프로필의 생성 경로. 이번 PDF 생성 안 함.
-- 로컬 지침: git tracked CLAUDE.md/AGENTS.md/로드맵 파일 없음. internal/cmd/web/src/sdk/docs의 TODO/FIXME 검색 결과 없음. 상위 외부 지침 파일은 미확인.
-- 조직 스킬: 전용 Skill/skills.list 도구는 없었다. /home/hkjang/.claude/plugins/marketplaces/headcount/plugins 아래 요청한 PMO/technology SKILL.md 3개와 PMO references/sources.md를 직접 읽었다. brief에 대안·작업분해·contingency/관리 예비 구분·자율 검증 체크포인트를 반영했다.
+  - cmd/igame — config.Load → DB 연결·migration·bootstrap → secretbox.New → HTTP :8080.
+  - internal/config — 네 필수 환경변수만 로드, ENCRYPTION_KEY는 plain/hex:/base64:로 정확히 32바이트 검증.
+  - internal/api — REST/SSE/MCP. catalog.go(공개 카탈로그·세션·랭킹·기록), admin.go, extended.go(토너먼트·공지·배너·점수 심사), auth.go, apikeys.go, realmguard*.go, defense*.go, auditexport.go.
+  - internal/api/*_pg_test.go — migratedPool(admin_pg_test.go:29)이 DSN마다 UUID 전용 스키마를 만들고 자기 스키마만 제거한다. 공용 헬퍼: insertTestUser(:81), insertTestSession(:94), insertTestGame(catalog_pg_test.go:27), insertTestPlaySession(:38, id 미반환), newAdminListFixture, newFinishFixture(session_finish_pg_test.go:33).
+  - migrations/001..004_*.sql — embedded, 체크섬·트랜잭션 적용. 적용된 SQL은 불변으로 취급한다.
+  - internal/secretbox — AES-GCM(v1: 접두사 + AAD "igame:v1"), secretbox_reject_test.go 로 거부 경로 고정.
+  - internal/battle/realmguard · web/src/games — 결정론 전투의 Go/TS 쌍.
+  - web · sdk/gamehub-js · docs · scripts · .github/workflows.
+- 빌드·테스트: make deps(네트워크); make lint; make test; make test-race; make web-build; make build; make test-db DSN=…(PG 필요, api 약 31–34s / database 약 2s). docker-build/release는 느리다.
+  - PG 준비: postgres:17-alpine 컨테이너(README) + `CREATE SCHEMA igame_test_extensions; CREATE EXTENSION pgcrypto WITH SCHEMA igame_test_extensions;`. public 확장은 migratedPool이 거부한다. DSN 없이 돌리면 api 54개·database 4개가 skip된다 — 그 PASS는 PG 회귀의 증거가 아니다.
+- 관례: 영어 `feat:/fix:/test:/docs:` 커밋. VERSION/web/SDK 버전 정렬. 설정은 네 환경변수 + DB system_settings(새 환경변수 금지). 오류 코드·메시지는 영어, 한국어 표시는 web/src/api/errorMessages.ts. 감사 detail에 보호 대상 원문을 넣지 않는다. 문서는 docs/(api.md·security.md), 목록 계약은 docs/api.md:7-12.
+- 페이지네이션 계약(현 상태): pageParams(api.go:824)는 limit 기본 50·최대 200, offset 음수는 0. 유일 키 보조 정렬이 **있는** 곳 — admin.go:580 users / :718 audit / :755 games(모두 `created_at DESC,id DESC`), catalog.go:130 공개 목록(`g.name,g.id`), realmguard.go:1879 랭킹(`score DESC,created_at,id`). **없는** 곳 — catalog.go:990 playHistory(`gs.started_at DESC`, 이번 과제), extended.go:581 adminRankings(`s.created_at DESC`, 차선). docs/api.md:10이 이 보증 범위를 글로 적어 두므로 코드와 함께 갱신한다.
+- 위험 구역: auth/session 발급·개인 키, migrations 체크섬, .github/workflows 게이트, RealmGuard Go/TS 동치성, secretbox 포맷/AAD, 결제 성격의 보상·점수 심사.
+- 자주 깨지는 곳: release 워크플로의 dev 포함 npm audit vs CI production-only audit 차이(2026-09-10 2회 실패, f508458로 source-map-js 해결) — 게이트 완화로 해결하지 않는다. 페이지 정렬 테스트는 limit=1 단독 순회·미조회 행 UPDATE 방식에서 플래키했다.
+- 검증 함정: CI에는 PG 서비스·IGAME_TEST_DSN·make test-db 배선이 없다(release.yml의 PG는 smoke용). 새 테스트가 0개 매칭인데 PASS 하는 것은 증거가 아니므로 `-run` 패턴과 -v 출력을 확인한다. 실행 뒤 잔여 `api_test_`/`migrate_` 스키마 0개와 전용 확장 스키마 보존을 확인한다.
+- 기각된 가설(재선정 금지): serviceLocation Asia/Seoul fallback(호출처 6곳, 쪼갤 모양 없음), playWindowsAllow fail-open(가설 오류), loadAPIKeyPolicyContext ErrNoRows(도달성 5회 미증명).
+- 로컬 지침: git tracked CLAUDE.md/AGENTS.md/로드맵 없음. internal/cmd/web/sdk/docs에 TODO/FIXME 없음(이전 회차 확인, 이번 미재확인).
+- 조직 스킬: 이 세션에는 Skill 도구로 pmo:estimating-and-contingency, technology:implementation-planning, technology:solution-exploration 이 실렸다. brief에 작업분해·범위 추정·contingency/관리 예비 분리를 반영한다.

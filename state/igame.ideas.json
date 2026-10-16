@@ -1,101 +1,15 @@
 [
-  {
-    "title": "extended.go:581(점수 심사)·catalog.go:130(게임 목록)·catalog.go:990(내 세션 기록)의 페이지 tiebreak",
-    "value": 3,
-    "risk": 2,
-    "size": "M",
-    "status": "pending",
-    "note": "공개 listGames의 name/id 정렬은 이번 커밋 f357db0으로 완료했다. 실제 PG/Router/세션 쿠키에서 명시적 UUID 순서 Red→Green 및 보조 키 제거 재실패를 확인했다. extended.go의 adminRankings와 catalog.go의 playHistory는 이번 범위 밖으로 그대로 보류하며 이 복합 항목은 pending을 유지한다.",
-    "updated": "2026-10-08"
-  },
-  {
-    "title": "settings PG fixture 의 preserve 가 updated_by=NULL 로 복원",
-    "value": 2,
-    "risk": 1,
-    "size": "S",
-    "status": "pending",
-    "note": "settings_put_pg_test.go:preserve/row는 여전히 value·updated_at만 기억하고 updated_by=NULL로 복원한다. 동명 과거 작업의 PR 상태는 미확인이라 재선정하지 않는다. 제품 결함 해결로 표시하지 않는다.",
-    "updated": "2026-10-08"
-  },
-  {
-    "title": "이미 비-오브젝트로 저장된 jsonb 행의 복구 경로가 없음",
-    "value": 2,
-    "risk": 2,
-    "size": "S",
-    "status": "pending",
-    "note": "putSetting은 현재 jsonObjectBody로 신규 비오브젝트 입력을 거부하고 UPSERT한다. 기존 오염 행 존재 및 별도 복구 요구는 여전히 미확인. 이미 적용된 migration 수정 금지, 실데이터 근거 전 우선하지 않는다.",
-    "updated": "2026-10-08"
-  },
-  {
-    "title": "PUT /api/v1/admin/settings/{key} 에 알 수 없는 field 거부 적용",
-    "value": 2,
-    "risk": 3,
-    "size": "M",
-    "status": "pending",
-    "note": "validateSetting의 json.Unmarshal과 docs/api.md의 unknown field 거부 문구를 재확인. 일반 설정 내부 여분 필드의 호환성은 미확인이라 작은 정렬 변경보다 위험하다.",
-    "updated": "2026-10-08"
-  },
-  {
-    "title": "README RealmGuard 서버 재현 설명 정합성 개선",
-    "value": 2,
-    "risk": 1,
-    "size": "S",
-    "status": "pending",
-    "note": "README 42행 서버 재현과 44행 telemetry-only/완전한 시뮬레이션 아님 설명이 공존한다. realmguard.go의 replayRealmGuardBattle→applyRealmGuardReplay, realmguard_replay.go의 server_replay_v1, docs/security.md 44–46행을 직접 확인. 이번 차선이며 README 한 단락으로 제한.",
-    "updated": "2026-10-08"
-  },
-  {
-    "title": "CI에서 실제 PostgreSQL 회귀를 실행하는 전용 검사 추가",
-    "value": 3,
-    "risk": 3,
-    "size": "M",
-    "status": "pending",
-    "note": "ci.yml의 make test/test-race에는 PG 서비스·IGAME_TEST_DSN·make test-db 배선이 없고 release.yml은 PG를 smoke에 사용한다. 이번 실제 make test-db는 통과했다. 보호 경로와 확장 스키마 준비를 건드리므로 제외하며 audit 게이트 완화와 섞지 않는다.",
-    "updated": "2026-10-08"
-  },
-  {
-    "title": "필수 환경변수 누락 집계와 비밀 비노출을 Load에서 검증",
-    "value": 2,
-    "risk": 1,
-    "size": "S",
-    "status": "pending",
-    "note": "config.Load의 누락 이름 집계·DSN/admin trim을 재확인했다. config_test.go에는 새 키 계약과 bootstrap 암호 경계가 있지만 키 외 동시 누락 집계·DSN/admin 공백 계약 회귀는 여전히 남는다. 이번은 사용자 출력 오류를 우선한다.",
-    "updated": "2026-10-08"
-  },
-  {
-    "title": "공개 카탈로그 q의 리터럴 특수문자 검색을 실제 PG/Router로 고정",
-    "value": 2,
-    "risk": 1,
-    "size": "M",
-    "status": "pending",
-    "note": "신규. api_test.go:TestSearchPatternMatchesTheTermAndNotEveryRow는 헬퍼 출력만 검사한다. listGames의 name/description ILIKE는 escaped $3, tags=ANY는 원문 $2라는 서로 다른 계약이다. PG 테스트 검색에서 이 특수문자 조합의 endpoint 회귀는 찾지 못했다(전체 의미적 커버리지는 미확인). %, _, 역슬래시 이름과 정확히 같은 tag를 real HTTP로 검증하는 테스트 한 파일 후보. 기존 검색 결함을 재수정하지 않는다.",
-    "updated": "2026-10-08"
-  },
-  {
-    "title": "공개 카탈로그 favorite 필터의 사용자별 격리 회귀",
-    "value": 2,
-    "risk": 1,
-    "size": "M",
-    "status": "pending",
-    "note": "신규. listGames와 gameSelect의 favorite 표현은 모두 principal UserID를 $1로 전달하지만 서로 다른 EXISTS이다. 별도 두 사용자 세션으로 동일 active 카탈로그를 조회해 favorite=true의 집합과 응답 favorite 값이 각각 자기 즐겨찾기를 반영하는지 검증할 후보. favorites 스키마의 (user_id,game_id) PK도 확인했다. 현재 누출 결함은 확인하지 않았고 기존 테스트의 완전한 커버리지는 미확인이다.",
-    "updated": "2026-10-08"
-  },
-  {
-    "title": "ENCRYPTION_KEY의 32바이트·인코딩 거부 계약을 실제 config.Load 경로에서 회귀로 고정",
-    "value": 2,
-    "risk": 1,
-    "size": "S",
-    "status": "done",
-    "note": "기록 대조용. git log에서 9003e19와 v0.7.31 릴리스를 확인했고 config_test.go의 TestLoadEncryptionKeyContract를 직접 읽었다. go test ./internal/config -count=1 통과. 이미 완료한 작업이므로 재선정 금지.",
-    "updated": "2026-10-08"
-  },
-  {
-    "title": "공개 게임 목록의 동명 게임을 ID로 보조 정렬하여 페이지 순서를 고정하기",
-    "value": 3,
-    "risk": 2,
-    "size": "M",
-    "status": "done",
-    "note": "f357db0. 제품 catalog.go 한 줄, PG HTTP 회귀 2개, docs/api.md 공통 규칙만 변경. 역순 UUID 6개와 이름 우선 대조군, active/q/category/favorite 및 items/limit/offset, 이미 본 게임의 description-only 관리자 PUT 후 순서·유일성 검증. 수정 전 명시적 순서 실패, 수정 후 통과, 원복 변이 재실패, 최종 race 5회 및 전체 DB/Go/vet/build 통과. 행 추가·삭제/정렬·필터 값 변경의 OFFSET snapshot은 보장하지 않는다.",
-    "updated": "2026-10-08"
-  }
+  {"title":"본인 플레이 기록(GET /api/v1/me/history)의 페이지 정렬에 gs.id 보조 키 추가","value":3,"risk":2,"size":"S","status":"done","note":"catalog.go:990 에 ,gs.id DESC 추가(커밋 73dfb09). 실제 PG17 + Router + 세션 쿠키로 Red(삽입 순서 [1..6] vs 계약 [6..1]) → Green → 보조 키 제거 변이 재Red 확인. docs/api.md:10 보증 문장에 한 구절 추가. 신규 인덱스 없음(game_sessions_user_idx 재사용).","updated":"2026-10-16"},
+  {"title":"관리자 점수 심사 목록(extended.go:581 adminRankings)의 s.id 보조 키 추가","value":3,"risk":2,"size":"S","status":"pending","note":"ORDER BY s.created_at DESC LIMIT $3 OFFSET $4 그대로. playHistory 가 착지한 지금 보조 키가 없는 페이지 목록은 이 한 곳만 남았다. scores.id 는 uuid PK, scores.session_id 는 UNIQUE 라 fixture 를 세션 1:1 로 만들어야 해 설치 비용이 history 보다 크다. 관리자 세션 + 명시적 scores.id 순서로 같은 수법을 쓸 것.","updated":"2026-10-16"},
+  {"title":"공개 카탈로그 q 의 리터럴 특수문자 검색을 실제 PG/Router 로 고정","value":2,"risk":1,"size":"M","status":"pending","note":"likeEscaper(api.go:842)는 \\ % _ 를 escape 하지만 tags=ANY 는 원문 $2 를 쓴다 — 계약이 둘이다. api_test.go 의 기존 테스트는 헬퍼 출력만 본다. endpoint 수준 회귀는 여전히 없음.","updated":"2026-10-16"},
+  {"title":"공개 카탈로그 favorite 필터의 사용자별 격리 회귀","value":2,"risk":1,"size":"M","status":"pending","note":"catalog.go:130 의 favorite EXISTS 와 gameSelect 의 favorite 표현이 서로 다른 EXISTS 로 둘 다 $1=principal UserID 를 쓴다. 이번 회차 history_order_pg_test.go 의 타 사용자 격리 단정은 /api/v1/me/history 만 덮으므로 이 항목을 대체하지 않는다. 누출 결함은 확인되지 않았다.","updated":"2026-10-16"},
+  {"title":"README RealmGuard 서버 재현 설명 정합성 개선","value":2,"risk":1,"size":"S","status":"pending","note":"README 42행 server replay 와 44행 telemetry-only 설명이 공존. docs/security.md 44-46행이 구분을 이미 설명한다. 코드 계약 과제를 우선해 보류.","updated":"2026-10-16"},
+  {"title":"settings PG fixture 의 preserve 가 updated_by=NULL 로 복원","value":2,"risk":1,"size":"S","status":"pending","note":"여섯 회차 연속 보류. 제품 결함이 아니라 테스트 fixture 의 복원 충실도 문제로 증상이 없다. 다음 회차에도 가치가 올라가지 않으면 rejected 로 내릴 것.","updated":"2026-10-16"},
+  {"title":"키 외 필수 환경변수 누락 집계·비밀 비노출을 Load 에서 회귀로 고정","value":2,"risk":1,"size":"S","status":"pending","note":"config_test.go 에 ENCRYPTION_KEY 계약(9003e19)은 착지했으나 DSN/admin trim·동시 누락 집계 회귀는 남아 있다. 사용자에게 보이는 결함보다 우선순위 낮음.","updated":"2026-10-16"},
+  {"title":"CI 에서 실제 PostgreSQL 회귀(make test-db)를 돌리는 전용 검사 추가","value":3,"risk":3,"size":"M","status":"pending","note":"보호 경로(.github/workflows)와 확장 스키마 준비를 건드린다. npm audit 게이트 완화와 섞지 말 것. 자율 회차 범위 밖으로 유지. 이번 회차에도 PG 회귀는 로컬에서만 돌았다.","updated":"2026-10-16"},
+  {"title":"이미 비-오브젝트로 저장된 jsonb 설정 행의 복구 경로","value":2,"risk":2,"size":"S","status":"pending","note":"putSetting 은 jsonObjectBody 로 신규 입력을 거부하고 UPSERT 한다. 오염 행의 실제 존재는 여전히 미확인 — 실데이터 근거 없이는 선정하지 않는다.","updated":"2026-10-16"},
+  {"title":"PUT /api/v1/admin/settings/{key} 의 알 수 없는 field 거부","value":2,"risk":3,"size":"M","status":"pending","note":"validateSetting 은 json.Unmarshal 이라 여분 필드를 거부하지 않는다. 기존 설정 호환성 영향이 미확인이라 위험이 가치보다 크다.","updated":"2026-10-16"},
+  {"title":"serviceLocation 이 설정 읽기 실패를 삼켜 시간대가 조용히 Asia/Seoul 이 됨","value":3,"risk":3,"size":"M","status":"rejected","note":"호출처 6곳으로 파일 상한에 걸리고 playAllowed 와 계약이 갈라져 아홉 회차에 걸쳐 쪼갤 모양을 찾지 못했다. 재선정 금지.","updated":"2026-10-16"},
+  {"title":"playWindowsAllow 가 파싱 안 되는 window 를 조용히 건너뛰어 그 window 만 fail-open","value":2,"risk":2,"size":"S","status":"rejected","note":"가설 오류로 판정됨(이전 회차 프로필). 신규 쓰기는 validateSetting 이 막으므로 legacy 행만 남고 도달성 미확인. 재선정 금지.","updated":"2026-10-16"},
+  {"title":"loadAPIKeyPolicyContext 가 api_keys 설정 부재에 ErrNoRows 를 올려 전 키 401","value":2,"risk":2,"size":"S","status":"rejected","note":"도달 경로를 5회 이상 증명하지 못했다. 재선정 금지.","updated":"2026-10-16"}
 ]

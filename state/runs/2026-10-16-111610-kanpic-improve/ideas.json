@@ -1,0 +1,110 @@
+[
+  {
+    "title": "cron step 자리도 부호를 받아들인다 (*/+2) — 값 자리와 같은 규칙으로 맞춘다",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "done",
+    "note": "2026-10-16 구현(15781be). isDecimalDigits 검사를 Atoi 앞에 넣어 */+2·*/+3·0-30/+2·요일 */+2 를 기존 step 문구로 거절. */-2·*/+0·*/0 은 이미 거절되던 것이라 회귀 방지로 표에 남김. 받아들여지던 식은 Next 시각까지 불변임을 표로 고정.",
+    "updated": "2026-10-16"
+  },
+  {
+    "title": "대사 범위의 작은따옴표가 들어간 시트 이름에서 이중 따옴표 이스케이프를 푼다",
+    "value": 2,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "이번 회차 차선 후보였고 1순위가 성립해 미실행. splitSheetRange(\"'O''Brien'!A1:B2\") 가 O''Brien 을 돌려주어 EditorPage.parseSheetRange 가 실제 시트명과 못 맞춘다(이전 회차 실행 확인). TS 1파일 + vitest 이지만 web/node_modules 설치가 필요.",
+    "updated": "2026-10-16"
+  },
+  {
+    "title": "IMPORTDATA 는 LazyQuotes=true, 업로드·사용자 명단은 false — 같은 파일이 한쪽에서만 읽힌다",
+    "value": 2,
+    "risk": 3,
+    "size": "M",
+    "status": "pending",
+    "note": "계약 재결정이 먼저이고 파서 통합은 금지. 이번 회차 재확인 미실행.",
+    "updated": "2026-10-16"
+  },
+  {
+    "title": "persistentHandler.WithAttrs/WithGroup 가 handler 수준 속성을 DB 행에서 떨어뜨린다",
+    "value": 2,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "프로덕션에 logger.With( 호출자가 없어 관찰되는 결함이 아니다. 실제 사용처가 생길 때 재검토. 이번 회차 재확인 미실행.",
+    "updated": "2026-10-16"
+  },
+  {
+    "title": "관리자 가이드의 외부 호출 오류 코드 안내를 실제 코드와 맞춘다 (ADMIN_GUIDE.md:785)",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "스물한 회차 연속 보류. PDF 재생성 동반이라 작업량이 S 치고 무겁고, 코드 결함보다 가치 낮음. 이번 회차 재확인 미실행.",
+    "updated": "2026-10-16"
+  },
+  {
+    "title": "SendNow 의 record 만 요청 컨텍스트를 쓴다 — Notify 와 달리 WithoutCancel 이 아니다",
+    "value": 2,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "mail/service.go:115-116. 실제 DB 유실 재현에 Postgres 필요. 이번 회차 재확인 미실행.",
+    "updated": "2026-10-16"
+  },
+  {
+    "title": "compareLists.looksLikeIdentifier 는 007.5 까지 번호로 보아 파일·클립보드 두 문과 갈린다",
+    "value": 2,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "대사 키와 입력 계약의 의도된 차이일 수 있어 통합 금지. 이번 회차 재확인 미실행.",
+    "updated": "2026-10-16"
+  },
+  {
+    "title": "붙여넣기·정리는 1e3 을 글자로 두는데 셈하는 자와 타이핑 문은 1000 으로 읽는다",
+    "value": 2,
+    "risk": 2,
+    "size": "M",
+    "status": "pending",
+    "note": "입력 계약 차이 유지가 기본. 이번 회차 재확인 미실행.",
+    "updated": "2026-10-16"
+  },
+  {
+    "title": "깨진 UTF-16 복구 계약을 원격·업로드의 실제 입구에서 고정한다",
+    "value": 1,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "2026-10-05 회차에 두 입구 비교 테스트가 하나 생겨 남은 공백이 줄었다. 가치 낮음.",
+    "updated": "2026-10-16"
+  },
+  {
+    "title": "compareKey의 Number(text)가 0x10·0b10 식별자를 십진수 키와 합친다",
+    "value": 3,
+    "risk": 3,
+    "size": "S",
+    "status": "rejected",
+    "note": "2026-10-08 회차가 골랐으나 no-change 로 끝났다. 같은 접근으로 다시 올리지 않는다 — 다시 하려면 대사 키 계약부터 사람과 정해야 한다.",
+    "updated": "2026-10-16"
+  },
+  {
+    "title": "대사에서 boolean true 와 문자열 TRUE 의 키 대소문자가 달라 불일치한다",
+    "value": 2,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "compareKey(true)=TRUE, compareKey(\"TRUE\")=true 로 출력은 같은데 키가 다름(이전 회차 실행 확인). 문자열/boolean 동등성 계약 결정이 먼저.",
+    "updated": "2026-10-16"
+  },
+  {
+    "title": "step 상한이 요일 필드에서 */8 까지 허용된다 (maximum-minimum+1 계산)",
+    "value": 1,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "2026-10-16 회차에 실행으로 확인: weekday 는 min0/max7 이라 상한 8 이고 `0 0 * * */8` 은 일요일만 고르는 유효한 일정으로 받아들여진다(Next=2026-10-18). 해롭지 않은 허용이라 가치 낮고, 이번 회차 테스트가 이 동작을 Next 시각까지 고정해 두었다 — 좁히려면 그 표를 함께 고쳐야 한다.",
+    "updated": "2026-10-16"
+  }
+]
