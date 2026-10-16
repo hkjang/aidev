@@ -1,7 +1,7 @@
 ---
 title: "aidev 자율 개선 대시보드"
 description: "Claude Code 자율 개선 에이전트가 hkjang 의 프로젝트를 개선·테스트·머지·릴리즈한 일일 보고. 오늘 32회차·릴리즈 7건, 누적 2692회차·릴리즈 821건, 주의 필요 10건."
-last_modified_at: 2026-10-17 08:31:42 +0900
+last_modified_at: 2026-10-17 08:41:53 +0900
 ---
 {% raw %}
 <script type="application/ld+json">
@@ -17,7 +17,7 @@ last_modified_at: 2026-10-17 08:31:42 +0900
   "name": "hkjang",
   "url": "https://github.com/hkjang"
  },
- "dateModified": "2026-10-17T08:31:42+09:00"
+ "dateModified": "2026-10-17T08:41:53+09:00"
 }
 </script>
 
@@ -369,7 +369,7 @@ last_modified_at: 2026-10-17 08:31:42 +0900
 
 # aidev 자율 개선 대시보드
 
-<p class="tldr"><strong>한 줄 요약.</strong> Claude Code 자율 개선 에이전트가 hkjang 의 프로젝트를 개선·테스트·머지·릴리즈한 일일 보고. 오늘 32회차·릴리즈 7건, 누적 2692회차·릴리즈 821건, 주의 필요 10건. 회차가 끝날 때마다 자동 갱신됩니다 (마지막 갱신 <time datetime="2026-10-17T08:31:42+09:00" data-rel>2026-10-17 08:31</time> KST).</p>
+<p class="tldr"><strong>한 줄 요약.</strong> Claude Code 자율 개선 에이전트가 hkjang 의 프로젝트를 개선·테스트·머지·릴리즈한 일일 보고. 오늘 32회차·릴리즈 7건, 누적 2692회차·릴리즈 821건, 주의 필요 10건. 회차가 끝날 때마다 자동 갱신됩니다 (마지막 갱신 <time datetime="2026-10-17T08:41:53+09:00" data-rel>2026-10-17 08:41</time> KST).</p>
 
 <div class="alerts" role="alert"><strong>⚠️ 주의 필요 10건</strong> <span class="meta">— 새 경고는 GitHub Issue·Slack·이메일·Windows 알림으로도 보냅니다</span><ul><li><a href="https://hkjang.github.io/aidev/projects/ai-admin/">ai-admin</a> — CI 실패로 PR 미머지 <span class=meta>(2026-10-17 04:03)</span></li><li><a href="https://hkjang.github.io/aidev/projects/bamcp/">bamcp</a> — CI 실패로 PR 미머지 <span class=meta>(2026-10-17 07:15)</span></li><li><a href="https://hkjang.github.io/aidev/projects/ai-admin/">ai-admin</a> — CI 실패로 PR 미머지 <span class=meta>(2026-10-16 02:45)</span></li><li><a href="https://hkjang.github.io/aidev/projects/ai-admin/">ai-admin</a> — CI 실패로 PR 미머지 <span class=meta>(2026-10-16 06:27)</span></li><li><a href="https://hkjang.github.io/aidev/projects/ai-admin/">ai-admin</a> — CI 실패로 PR 미머지 <span class=meta>(2026-10-16 08:50)</span></li><li><a href="https://hkjang.github.io/aidev/projects/ai-admin/">ai-admin</a> — CI 실패로 PR 미머지 <span class=meta>(2026-10-16 10:37)</span></li><li><a href="https://hkjang.github.io/aidev/projects/ops.irumx.app/">ops.irumx.app</a> — 보호 파일 변경 — 자동 머지 안 함, 사람 검토 필요 <span class=meta>(2026-10-16 20:35)</span></li><li><a href="https://hkjang.github.io/aidev/projects/vibe-code/">vibe-code</a> — CI 실패로 PR 미머지 <span class=meta>(2026-10-16 21:12)</span></li><li><a href="https://hkjang.github.io/aidev/projects/umm/">umm</a> — CI 실패로 PR 미머지 <span class=meta>(2026-10-16 21:18)</span></li><li><a href="https://hkjang.github.io/aidev/projects/bamcp/">bamcp</a> — 수정 과제 대기 중 — 오류 대응(자동 적재): 마지막 회차가 &#x27;verify-failed&#x27; 로 끝났습니다. CI failed, PR open https://github.com/hkjang/bamcp/pull/1</li></ul></div>
 
