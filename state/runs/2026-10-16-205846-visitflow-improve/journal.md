@@ -29,3 +29,5 @@
 - [러너 21:15] pr created — https://github.com/hkjang/visitflow/pull/40
 - [러너 21:19] ci passed — 검사 2개 모두 success
 - [러너 21:19] merge done — 1910bb3
+- [러너 21:30] release published — v2.8.19
+- [러너 21:32] assets verified — v2.8.19 자산 1개 (이전 v2.8.18: 1)
