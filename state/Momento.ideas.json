@@ -1,66 +1,39 @@
 [
   {
-    "title": "[수정 과제] PR #32 의 CI 실패를 재현해 근본 원인을 고친다 — 고정 Go toolchain·빌더 이미지를 1.26.9 로 올려 표준 라이브러리 권고 10건을 없앤다",
-    "value": 5,
-    "risk": 2,
-    "size": "M",
-    "status": "done",
-    "note": "구현 완료(fda38b5). 과제서의 1순위 H1·H2(공유 Postgres 의 0.0.0.0/0 교차 오염)는 증거로 기각 — 공개 GitHub API 로 읽은 실패 job 116577538347 의 단계별 결과가 6번 go test -race 와 7번 go vet 을 success, 8번 govulncheck 를 failure 로 적고 있었고, CI 와 같은 postgres:17-alpine 을 띄운 로컬 전체 재현도 exit 0 이었다. 실제 원인은 H3 이지만 모양이 달랐다: 서드파티가 아니라 표준 라이브러리 권고 10건(GO-2026-6603·6605·6607·6608·6609·6610·6611·6612·6613·6617, net/http·net/textproto·crypto/tls)이 go1.26.7 에서 발견돼 go1.26.9 에서 고쳐졌으므로 올릴 자리가 toolchain 이었다. 범위 정정: pristine main@0beff4c 도 같은 10건으로 빨간불이어서 PR 과 무관한 main 전체의 실패다. 같은 두 줄 수정이 이미 상류 6cef4b3b 에 있고 그 CI 는 success 이므로 107eeca 체리픽은 버렸다. 고유 기여는 원인 확정·범위 정정·상류에 없는 드리프트 가드 테스트.",
-    "updated": "2026-10-16"
-  },
-  {
-    "title": "로컬에 make verify 진입점을 만들어 Makefile:test 가 빠뜨리는 govulncheck·npm audit·race·DB 를 묶는다",
+    "title": "make verify 진입점 + ci.yml↔Makefile 게이트 드리프트 가드 테스트",
     "value": 4,
     "risk": 1,
     "size": "S",
-    "status": "pending",
-    "note": "이번 회차가 이 아이디어의 가치를 실증했으므로 가치 4 로 승격. 이번 CI 실패가 정확히 이 구멍에서 나왔다 — Makefile:test 에 govulncheck 가 없어서 로컬 녹색을 보고 CI 에서 빨간불을 만나는 구조다. 이 저장소가 반복한 verify-failed 의 구조적 원인이기도 하다. 고르기 전에 2026-10-08 의 같은 수정 과제가 no-change 로 끝난 이유를 먼저 확인할 것. 주의: govulncheck 는 네트워크와 살아 있는 권고 DB 에 의존하므로 make verify 에 넣으면 오프라인에서 실패한다 — 별 타깃으로 분리하거나 실패를 분명히 말하게 할 것.",
-    "updated": "2026-10-16"
+    "status": "done",
+    "note": "구현 완료. Makefile 에 verify 타깃(ci.yml test job 의 다섯 명령, 같은 글자·같은 순서) 신설 + internal/version/buildgates_test.go 가드. 가드는 (a) ci.yml 의 run: 단계 수 6 ↔ 표 항목 수, (b) 비면제 항목의 로컬 문자열이 verify 레시피 안에 있는지, (c) 그 순서, (d) 면제 항목(docker build)은 Makefile 존재만 본다. 세 가지 red 경로를 실제로 재현해 확인(개수/누락/순서). make verify 를 끝까지 돌려 exit 0 확인. 2026-10-08 의 no-change 는 재발하지 않았다 — 막는 것이 없었다.",
+    "updated": "2026-10-17"
   },
   {
-    "title": "공유 Postgres 를 쓰는 네 패키지의 테스트 격리를 구조로 세운다 (패키지별 스키마 또는 DB)",
+    "title": "cidrRule.ts 의 호스트 비트 hint 를 서버의 정규화 저장 결과로 고친다",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "이번 회차 차선 후보였고 1순위가 막히지 않아 미착수. 전제는 여전히 유효 — admin.go:820 normalizeCIDR 이 ParseCIDR 의 대역을 그대로 저장하고 cidrRule.ts 의 주석은 아직 '확인하지 못했다' 로 남아 있다. web/test/cidrRule.test.mjs 는 주소 정규식만 보므로 문장 교체가 안전하다. 다음 회차 1순위 후보.",
+    "updated": "2026-10-17"
+  },
+  {
+    "title": "공유 Postgres 를 쓰는 패키지들의 테스트 격리를 패키지별 스키마로 세운다",
     "value": 3,
     "risk": 3,
     "size": "L",
     "status": "pending",
-    "note": "가치 4→3 으로 내림. 이번 회차가 교차 오염이 현재 CI 실패의 원인이 아님을 증명했다 — CI 와 같은 DB·같은 명령으로 go test -race ./cmd/... ./internal/... 을 연속 2회 돌려 exit 0 이고, network_cidr_test.go 가 0.0.0.0/0 을 넣는 상태로도 녹색이었다. 다만 구조적 함정 자체는 남아 있다: MOMENTO_TEST_POSTGRES_DSN 하나를 internal/httpapi·internal/service·internal/database 가 공유하고 go test 는 패키지를 동시에 돌리며, collector.go:431 의 `$1::inet <<= cidr ORDER BY masklen(cidr) DESC LIMIT 1` 처럼 전역 룩업 테이블을 읽는 코드가 있다. 긴급도가 낮아졌으니 서둘러 고르지 말 것. 고르기 전에 database.Migrate 의 advisory lock 계약(migrate_parallel_test.go)을 먼저 읽을 것.",
-    "updated": "2026-10-16"
+    "note": "2026-10-16 회차가 교차 오염이 CI 실패 원인이 아님을 증명해 긴급도는 낮다. 구조적 함정(MOMENTO_TEST_POSTGRES_DSN 하나를 여러 패키지가 공유)은 남음. L 이라 여전히 범위 밖. 이번 회차에 make verify 를 돌리며 DSN 없이 DB 테스트가 skip 되는 것을 다시 확인했다.",
+    "updated": "2026-10-17"
   },
   {
-    "title": "cidrRule.ts 의 호스트 비트 hint 문장을 '저장하면 …로 바뀝니다' 로 다듬는다",
-    "value": 2,
-    "risk": 1,
-    "size": "S",
-    "status": "pending",
-    "note": "PR #32(107eeca)가 서버를 정규화 저장으로 바꾸므로 화면 안내가 결과를 말하지 않는다. PR #32 는 이제 녹색이므로(상류 6cef4b3b 로 CI success) 머지 뒤에 할 일이다. web/test/cidrRule.test.mjs 가 문장을 글자 그대로 보는지 먼저 확인할 것.",
-    "updated": "2026-10-16"
-  },
-  {
-    "title": "남은 create/update 오류 Alert 네 곳(rekey·설치 코드·삭제 확인·그 외)을 핸들러 단위로 한 조각씩 한국어로 안내한다",
-    "value": 2,
-    "risk": 1,
-    "size": "M",
-    "status": "pending",
-    "note": "adminErrors.ts 의 describe* 는 User·Site·Network·EventDefinition·Retention·Dimension 까지 왔다. 묶지 말 것 — 한 회차에 한 핸들러. 행 번호는 그때 열어서 재확인. 이번 미재확인.",
-    "updated": "2026-10-16"
-  },
-  {
-    "title": "「JSON Schema」 에 '객체가 아님' 을 error·blocking 없는 hint 로만 알린다",
-    "value": 2,
-    "risk": 1,
-    "size": "S",
-    "status": "pending",
-    "note": "schemaTextRule.ts 는 구문만 판정한다. 서버는 배열·원시값을 400 으로 거절하지만 null 은 통과하므로(nil map → json.Marshal 이 null) 막아서는 안 된다 — hint 로만 가능. 이번 미재확인.",
-    "updated": "2026-10-16"
-  },
-  {
-    "title": "설정 저장(SettingsAdmin) 실패를 한국어로 안내한다",
-    "value": 2,
+    "title": "관리자 가이드의 API 키 '1회 표시·해시만 저장' 설명을 현재 복구 기능과 맞춘다",
+    "value": 3,
     "risk": 2,
-    "size": "M",
+    "size": "S",
     "status": "pending",
-    "note": "한 Alert 이 여러 설정 그룹을 덮고 validateAdminSetting 의 영문 문장을 전부 읽어야 해 단일 조각보다 범위가 크다. 이번 미재확인.",
-    "updated": "2026-10-16"
+    "note": "docs/ADMIN_GUIDE.md 문구와 listMyKeys 의 recoverable 계약이 어긋난다는 이전 기록. 이번 회차에 재확인하지 않음 — 미확인 상태 유지. 문서 수정 시 internal/version/docs_test.go(가이드 버전 자기일관성)를 함께 볼 것.",
+    "updated": "2026-10-17"
   },
   {
     "title": "SettingsAdmin.save 가 그룹마다 순차 PUT 을 돌려 중간 실패 시 일부만 저장된다",
@@ -69,7 +42,34 @@
     "size": "M",
     "status": "pending",
     "note": "원자성 요구와 장애 재현이 미확인이고 API 변경으로 커질 수 있다. 결함을 관측한 적이 없다. 이번 미재확인.",
-    "updated": "2026-10-16"
+    "updated": "2026-10-17"
+  },
+  {
+    "title": "남은 create/update 오류 Alert 네 곳(rekey·설치 코드·삭제 확인·그 외)을 핸들러 단위로 한 조각씩 한국어로 안내한다",
+    "value": 2,
+    "risk": 1,
+    "size": "M",
+    "status": "pending",
+    "note": "adminErrors.ts 의 describe* 는 User·Site·Network·EventDefinition·Retention·Dimension 까지 왔다. 묶지 말 것 — 한 회차에 한 핸들러. 행 번호는 그때 열어 재확인. 이번 미재확인.",
+    "updated": "2026-10-17"
+  },
+  {
+    "title": "「JSON Schema」 에 '객체가 아님' 을 error·blocking 없는 hint 로만 알린다",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "schemaTextRule.ts 는 구문만 판정한다. 서버는 배열·원시값을 400 으로 거절하지만 null 은 통과하므로 막아서는 안 된다 — hint 로만. 이번 미재확인.",
+    "updated": "2026-10-17"
+  },
+  {
+    "title": "설정 저장(SettingsAdmin) 실패를 한국어로 안내한다",
+    "value": 2,
+    "risk": 2,
+    "size": "M",
+    "status": "pending",
+    "note": "한 Alert 이 여러 설정 그룹을 덮고 validateAdminSetting 의 영문 문장을 전부 읽어야 해 단일 조각보다 범위가 크다. 이번 미재확인.",
+    "updated": "2026-10-17"
   },
   {
     "title": "비울 수 없는 보존 정책 네 칸을 지우면 Number(\"\") 가 0 을 만들어 controlled value 가 \"0\" 으로 되돌아온다",
@@ -78,7 +78,7 @@
     "size": "M",
     "status": "pending",
     "note": "retentionRule.ts 가 이미 저장을 막는다. 남은 일은 빈 문자열 상태와 PUT payload 분리. 이번 미재확인.",
-    "updated": "2026-10-16"
+    "updated": "2026-10-17"
   },
   {
     "title": "Custom Dimension 이름·Property key 의 허용 규칙을 입력 칸 아래에 미리 안내한다",
@@ -86,8 +86,8 @@
     "risk": 1,
     "size": "S",
     "status": "pending",
-    "note": "서버 규칙 정본은 segment/segment.go:56 과 segments.go:243-247. 이번 미재확인.",
-    "updated": "2026-10-16"
+    "note": "서버 규칙 정본은 segment/segment.go:56 과 segments.go:243-247 로 기록돼 있다. 이번 미재확인.",
+    "updated": "2026-10-17"
   },
   {
     "title": "DataTable 기본 rowKey 가 falsy 값·동명이인에서 중복될 수 있다",
@@ -95,17 +95,35 @@
     "risk": 2,
     "size": "S",
     "status": "pending",
-    "note": "DataTable.tsx 의 `||` fallback. 실제 행 충돌 fixture 가 여전히 미확인이고 여러 분석 화면이 함께 쓰는 공용 테이블이라 추측으로 손대지 않는다. 이번 미재확인.",
-    "updated": "2026-10-16"
+    "note": "DataTable.tsx 의 || fallback. 실제 행 충돌 fixture 가 미확인이고 여러 분석 화면이 함께 쓰는 공용 테이블이라 추측으로 손대지 않는다. 이번 미재확인.",
+    "updated": "2026-10-17"
   },
   {
-    "title": "관리자 가이드의 API 키 '1회 표시·해시만 저장' 설명을 현재 복구 기능과 맞춘다",
-    "value": 3,
+    "title": "createNetwork 이 빈 이름·공백 이름을 거절하지 않고 저장한다 (API 직접 호출 경로)",
+    "value": 2,
     "risk": 2,
     "size": "S",
     "status": "pending",
-    "note": "docs/ADMIN_GUIDE.md 문구와 README 암호화 설명, listMyKeys 의 recoverable 계약이 어긋난다. 암호화 미설정 조건과 PDF 동기화가 미확인. 이번 미재확인.",
-    "updated": "2026-10-16"
+    "note": "admin.go:837-870 createNetwork 은 in.Name 을 검사 없이 INSERT 한다(이전 회차 코드 확인). 화면은 「추가」 를 !form.name 으로 닫지만 API 직접 호출은 통과한다. network_ranges.name 의 DB 제약과 빈 이름이 실제로 목록 화면을 깨뜨리는지는 여전히 미확인 — 고르기 전에 001_initial.sql:64-70 과 목록 화면을 먼저 볼 것.",
+    "updated": "2026-10-17"
+  },
+  {
+    "title": "release.yml·release-reconcile.yml 의 게이트도 Makefile 과 짝지어 드리프트 가드에 넣는다",
+    "value": 3,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "신규. 이번 회차의 buildgates_test.go 는 ci.yml 의 test job 만 덮는다. 릴리즈 워크플로는 오프라인 아카이브 재적재·기동 smoke 까지 하는데 그 중 로컬에서 돌릴 수 있는 것(make release-image 등)이 Makefile 과 일치하는지는 아무것도 확인하지 않는다. 다만 릴리즈 워크플로는 '위험 구역' 이고 이 회차 과제서가 범위 밖으로 둔 영역이라, 읽기 전용 가드로만 접근할 것.",
+    "updated": "2026-10-17"
+  },
+  {
+    "title": "make verify 에 MOMENTO_TEST_POSTGRES_DSN 이 없을 때 skip 되는 DB 테스트 수를 알려 주는 한 줄을 붙인다",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "신규. 이번 회차가 주석으로 '녹색이 CI 녹색을 보장하지 않는다' 고 적었지만, 실제로 돌린 사람은 몇 건이 skip 됐는지 출력에서 보지 못한다(go test 는 skip 을 -v 없이 숨긴다). docker compose 로 postgres:17-alpine 를 띄우는 선택적 타깃(verify-db?)이 더 나은 답일 수 있어 설계가 먼저다. 이번 범위 밖 — 과제서가 Makefile 한 타깃으로 제한했다.",
+    "updated": "2026-10-17"
   },
   {
     "title": "표 검색이 숨긴 열의 값까지 뒤진다",
@@ -113,7 +131,7 @@
     "risk": 2,
     "size": "S",
     "status": "rejected",
-    "note": "열일곱 회차 연속 미선정. 이전 회차가 '한 번 더 이어지면 rejected 로 내릴 것' 이라고 적어 뒀고 이번에도 선정되지 않았으므로 그대로 내린다. docs 검색 절이 의도를 명시하지 않아 결함인지조차 확정되지 않았다 — 다시 올리려면 먼저 그 의도를 문서로 확인할 것.",
-    "updated": "2026-10-16"
+    "note": "열일곱 회차 연속 미선정. 이전 회차가 '한 번 더 이어지면 rejected 로 내릴 것' 이라고 적었고 그 조건이 충족됐다. docs 에 검색 의도를 적은 절이 없어 '숨긴 열을 뒤지는 것' 이 결함인지 의도인지 판정할 근거가 없다 — 사용자 불만 보고가 생기면 되살릴 것.",
+    "updated": "2026-10-17"
   }
 ]

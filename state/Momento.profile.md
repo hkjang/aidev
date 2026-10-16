@@ -1,47 +1,38 @@
-# Momento 프로필 (2026-10-09)
-- 기준: pinned main@0beff4c, v0.34.61. 정찰은 코드·커밋을 변경하지 않는다.
+# Momento 프로필 (2026-10-17)
+- 기준: worktree `2734aff` = v0.34.63 (main 과 동일, 작업 트리 clean). 정찰은 코드·커밋을 변경하지 않았다.
 - 목적: 사내 이벤트를 온프레미스로 수집·보존하고 제품·직원·경험·AI 사용을 분석한다.
-- 스택: Go 1.26.0/toolchain 1.26.7, chi·pgx·OIDC, PostgreSQL 17; React 19.1.1·TypeScript 5.9.2·MUI 7.3.1·Vite 7.3.6·React Query 5.85.5·echarts 6.1.0; TypeScript SDK.
+- 스택: Go(`go 1.26.0` 언어 지시자 + `toolchain go1.26.9`), chi·pgx·OIDC, PostgreSQL 17; React 19·TypeScript·MUI·Vite·React Query·echarts; TypeScript SDK(브라우저 수집기).
 - 구조:
-  - cmd/momento — 서버 진입점; internal/httpapi — 관리·분석·수집 API.
+  - cmd/momento — 서버 진입점; internal/httpapi — 관리·분석·수집 API(admin.go 가 가장 크고 권한·유효성 정본).
   - internal/service — Worker·자동화·Maintenance; internal/auth — 인증·역할 정본.
-  - internal/database/migrations — embedded SQL 정본(루트 migrations와 혼동 금지).
+  - internal/database/migrations — embedded SQL 정본(루트 migrations 와 혼동 금지).
   - internal/privacy·secret·segment·insight — 개인정보·암호화·세그먼트·인사이트.
-  - web/src/pages/AdminPage.tsx — 관리 화면, section=users|sites|retention|dimensions|networks|schemas 등.
-  - web/src/pages/*Rule.ts — 순수 입력 판정; adminErrors.ts — 실패 안내 mapper.
-  - web/src/components — 공용 UI; DataTable.tsx는 여러 분석 화면에 영향.
-  - web/test·sdk/test — node:test가 TypeScript 원본을 직접 읽는다.
-  - sdk — 브라우저 수집기; docs — 가이드·설계·로드맵; scripts/guide — 화면 캡처.
-  - .github/workflows — ci.yml, release.yml, release-reconcile.yml. CI 전체·나머지 관련 구간 확인.
+  - internal/version — 버전 상수 + **저장소 수준 메타 테스트의 집**: `docs_test.go`(가이드 버전 자기일관성), `toolchain_test.go`(go.mod ↔ Dockerfile 드리프트), `version_test.go:148 repoRoot(t)` 헬퍼.
+  - web/src/pages/AdminPage.tsx — 관리 화면(section=users|sites|retention|dimensions|networks|schemas…).
+  - web/src/pages/*Rule.ts — 순수 입력 판정(`cidrRule`·`retentionRule`·`schemaTextRule`·`passwordRule`); adminErrors.ts — 실패 안내 mapper.
+  - web/test·sdk/test — node:test 가 TypeScript 원본을 직접 읽는다(`.mjs` 테스트, `.ts` 확장자 import).
+  - docs — 가이드·설계·로드맵; .github/workflows — ci.yml, release.yml, release-reconcile.yml.
 - 빌드·테스트:
-  - make test: Go test/vet, SDK typecheck/test, web lint/test/build. 보안 검사·race·Docker 미포함.
-  - CI Go: go test -race ./cmd/... ./internal/...; go vet ./cmd/... ./internal/...; go run golang.org/x/vuln/cmd/govulncheck@latest ./cmd/... ./internal/...
-  - SDK: (cd sdk && npm ci && npm audit && npm run typecheck && npm test && npm run build).
-  - web: (cd web && npm ci && npm audit && npm run lint && npm test && npm run build).
-  - make build는 SDK/web/Go 산출물을 쓴다. Docker·DB 통합 race는 수 분 이상일 수 있다.
-  - 정찰 실측: (cd web && npm test) 259/259, exit 0. Go·SDK·audit·lint/build·Docker·DB는 미실행.
-  - make -n docker는 루트 exit 0, make -C web -n docker는 exit 2. make verify/security-check 없음.
-- 관례: 한국어 conventional commit, release: vX.Y.Z; 환경변수와 DB settings로 설정; 문서는 docs/.
-- 위험 구역: internal/auth·admin.go/server.go·internal/database/migrations·.github/workflows·docs/openapi.yaml. 서버가 권한·유효성 정본.
+  - `make test`: `go test ./cmd/... ./internal/...`, `go vet`, `cd sdk && npm run typecheck && npm test`, `cd web && npm run lint && npm test && npm run build`.
+    **`-race`·`govulncheck`·`npm ci`·`npm audit` 가 없다**(grep 0건). 로컬 녹색 ≠ CI 녹색.
+  - CI(ci.yml `test` job, `run:` 단계 **6개**, 50-58행): `go test -race ./cmd/... ./internal/...` → `go vet` → `go run golang.org/x/vuln/cmd/govulncheck@latest ./cmd/... ./internal/...` → (sdk) `npm ci && npm audit && npm run typecheck && npm test && npm run build` → (web) `npm ci && npm audit && npm run lint && npm test && npm run build` → `docker build`.
+  - CI 는 `postgres:17-alpine` 서비스를 띄우고 `MOMENTO_TEST_POSTGRES_DSN` 을 env 로 준다. `make verify` 는 **아직 없다**.
+  - 정찰 실측: `go test ./internal/version/` → `ok … 0.004s`. 그 외(Go 전체·race·npm·audit·govulncheck·Docker)는 이번 미실행.
+- 관례: 한국어 conventional commit(`fix(httpapi): …`), 릴리즈는 `release: vX.Y.Z`; 환경변수와 DB settings 로 설정; 문서는 docs/. 긴 "왜" 주석을 코드에 남기는 문화 — 새 모듈·가드 테스트도 그 형식을 따른다.
+- 위험 구역: internal/auth, internal/httpapi/admin.go·server.go, internal/database/migrations, .github/workflows, docs/openapi.yaml. 서버가 권한·유효성 정본이고 화면은 거울이다 — 화면 판정을 서버보다 좁게 만들지 않는다.
 - 자주 깨지는 곳:
-  - 이전 verify-failed의 x/text/source-map-js 문제는 fcf17ce·97e3063으로 수정됨. 현재 audit 통과 여부는 이번 미확인.
-  - Makefile:test에는 보안 검사가 없다. 전체 검증 시 CI의 Go 취약점·SDK/web audit를 생략하지 않는다.
-  - npm lifecycle PATH 가림 때문에 두 package.json:test는 npm_node_execpath를 사용한다. lint/build는 재현 없이 수정 금지.
-  - node가 읽는 순수 .ts 값 import에는 .ts 확장자; TSX에서는 주변 확장자 없는 Vite 관례를 따른다.
-  - AdminNoticeAlert는 본문/detail 구분. 모르는 코드 원문 fallback, 500의 원인을 추측하지 않는다.
-  - RetentionAdmin 네 칸은 Number(빈 문자열)→0. helperText 오류가 나도 저장은 !local || save.isPending만 본다.
-  - judgeRetention은 정수도 검사한다. 소수 허용 결함으로 오인하지 않는다.
-  - 이전 회차 기록의 describeDimensionError 완료·270개 테스트와 pinned 기준이 다르다. 현재는 함수 없음·원문 Alert·259개다. 재구현하지 말고 병합 상태를 구분한다.
+  - **verify-failed 의 단골은 `govulncheck`**: 2026-10-08 `x/text` GO-2026-6629, 2026-10-16 표준 라이브러리 권고 10건(toolchain 1.26.7→1.26.9 로 해소). `make test` 에 그 단계가 없는 것이 구조적 원인.
+  - toolchain 은 `go.mod` 와 `Dockerfile` 두 곳에 선언된다. 한쪽만 올리면 CI 는 녹색이고 출하 바이너리는 옛 toolchain — `toolchain_test.go` 가 이것을 막는다.
+  - npm lifecycle PATH 가림 때문에 web·sdk 의 `package.json:test` 는 `npm_node_execpath` 를 쓴다. lint/build 는 재현 없이 수정 금지.
+  - node 가 읽는 순수 `.ts` 값 import 에는 `.ts` 확장자; TSX 안에서는 확장자 없는 Vite 관례.
+  - AdminNoticeAlert 는 본문/detail 구분. 모르는 코드는 서버 원문 fallback, 500 의 원인을 추측하지 않는다.
+  - `useUnsavedWarning` 이 `beforeunload` 를 걸어 브라우저 하네스의 같은 탭 재이동이 막힌다 — 사례마다 새 탭을 쓸 것.
+  - 기존 문장을 글자 그대로 단언하는 web 테스트가 많다. 공통 안내 문구 변경은 피하고, 새 문장은 모듈 상수로 한 곳에서만 적는다.
 - 검증 함정:
-  - MOMENTO_TEST_POSTGRES_DSN 없으면 DB 통합 skip. 실제 DB 실행·장애 재현은 이번 미확인.
-  - CI Node 24, 로컬 Node 22.23.1/npm 10.9.8. 순수 테스트 통과만으로 lint/build 통과를 주장하지 않는다.
-  - npm audit/govulncheck는 네트워크·현재 advisory에 의존. 과거 성공을 이번 성공으로 적지 않는다.
-  - CI는 Docker build, release는 오프라인 아카이브 재적재·기동 smoke도 수행한다. dry-run은 대체 검증이 아니다.
-  - README 개발 블록의 sdk→../web 뒤 make docker가 실패한다. 이번 선택은 두 npm 줄의 서브셸 격리이며 아직 구현 전.
-  - shell 경로 검증은 cd/서브셸/pwd와 진짜 make -n을 실행했다. npm·Go·Docker 전체 블록 실행은 미확인.
-  - prettier는 CI 게이트가 아니다. 기존 문장을 그대로 단언하는 테스트가 많아 공통 안내 문구 변경을 피한다.
-  - 브라우저 하네스는 beforeunload에 막힐 수 있어 사례별 새 탭을 쓴다(이전 기록). 이번 브라우저는 미실행.
-  - docs/ADMIN_GUIDE.md의 키 1회 표시/해시만 저장 설명은 README·listMyKeys의 recoverable 계약과 충돌한다. 조건·PDF 동기화 미확인.
-  - ROADMAP_PLAN.md는 v0.5 진행으로 쓰지만 ROADMAP.md는 implemented다. 역사 문서 의도는 미확인.
-  - 루트와 상위 경로에서 AGENTS.md·CLAUDE.md를 발견하지 못했다. TODO/FIXME 검색도 검사한 소스·docs 범위에 결과 없음.
-  - 민감 원문을 audit details에 추가하지 않는다. 산출물·잠금 파일·환경 설정을 무관하게 변경하지 않는다.
+  - `MOMENTO_TEST_POSTGRES_DSN` 이 없으면 DB 통합 테스트는 **skip** 된다. 로컬 녹색이 DB 경로를 증명하지 않는다.
+  - `govulncheck`·`npm audit` 은 네트워크와 살아 있는 권고 DB 에 의존한다. 과거 성공을 이번 성공으로 적지 않는다. 오프라인에서는 실패한다.
+  - CI Node 24. 순수 테스트 통과만으로 lint/build 통과를 주장하지 않는다.
+  - CI 는 Docker build 까지, release 는 오프라인 아카이브 재적재·기동 smoke 도 한다. `make -n`·dry-run 은 대체 검증이 아니다.
+  - `npx prettier --check` 는 CI 게이트가 **아니다**.
+  - 루트·상위에 AGENTS.md·CLAUDE.md 는 없다(이전 회차 확인).
+  - 민감 원문을 audit details 로 넘기지 않는다 — 식별자만.

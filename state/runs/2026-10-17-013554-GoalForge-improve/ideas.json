@@ -1,0 +1,119 @@
+[
+  {
+    "title": "영문 랜딩 페이지 head(메타·canonical·JSON-LD)를 영문으로 복구",
+    "value": 3,
+    "risk": 1,
+    "size": "S",
+    "status": "done",
+    "note": "2026-10-17 구현(커밋 ac7967b). docs/index_en.html 한 파일 17 insert/17 delete, 모든 hunk 6~93행. title·description·keywords·og:title·og:description·canonical·og:url·twitter:url·og:locale 과 JSON-LD FAQPage 4문4답 복구. 영문은 지어내지 않고 twitter:title·JSON-LD SoftwareApplication.description·script.js en 사전 faq_1~faq_4 에서 옮겼다. 과제서 전제 두 건을 실측으로 정정: JSON-LD Q3(프로바이더)의 영문 원문은 저장소에 없어 화면에 보이는 faq_3(Verification Gates)으로 맞췄고, script.js:420-427 은 site_title 로 document.title 을 실제로 덮어쓴다(단 meta_desc 키는 없어 description 은 복구 안 됨). 127행 죽은 비교는 손대지 않음 — '한' 복원이 head 한글 금지 기준과 충돌.",
+    "updated": "2026-10-17"
+  },
+  {
+    "title": "영문 페이지 본문(135-874행)의 손상 문자열 전면 복구",
+    "value": 2,
+    "risk": 3,
+    "size": "L",
+    "status": "pending",
+    "note": "2026-10-17 head 복구 후 남은 손상은 145곳 → 136곳으로 전부 본문. 대부분 data-i18n 이 있어 script.js:413-417 이 런타임에 덮어쓰므로 JS 켜진 브라우저에서는 보이지 않는다. 다만 data-i18n 이 없는 자리는 실제로 보인다: lang-btn 라벨 166행(현재 버튼에 'Enterprise Telemetry...' 가 그대로 노출 — 원본은 index.html:166 의 '한'), pre.cli-code 안 주석(553,556,568,...), FAQ 답변 본문(749~809). script.js en 사전으로 기계적 치환은 가능하나 한 회차에 담기엔 크다. 보이는 자리(166행 + cli-code 주석)만 먼저 떼어 S 로 쪼개 가져오는 것을 권한다.",
+    "updated": "2026-10-17"
+  },
+  {
+    "title": "docs/index.html 과 index_en.html 에 hreflang alternate 쌍 추가",
+    "value": 3,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "2026-10-17 신규. 이번에 index_en.html 의 canonical/og:url/twitter:url 을 self-referential 로 바로잡았으므로 그 자연스러운 후속이다. 두 페이지가 서로를 rel=\"alternate\" hreflang=\"ko\"/\"en\" 과 x-default 로 가리키면 검색엔진이 언어 쌍을 올바르게 묶는다. index.html 도 함께 건드려야 해서 이번 범위 밖으로 뒀다. 파일 2개, 각 2~3줄. index.html 의 canonical 은 이미 한국어 루트를 올바르게 가리키므로 그쪽은 추가만 하면 된다.",
+    "updated": "2026-10-17"
+  },
+  {
+    "title": "MCP activity_report 의 since 설명을 실제 지원 문법과 맞추기",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "이번 차선 후보였고 열지 않았다(코드 미확인 — 직전 회차 실측 기록만 있음). internal/mcp/tools.go:73 이 'Duration such as 24h or 7d' 라고 광고하지만 tools.go:657 activityReport 는 time.ParseDuration 이라 '7d' 가 거부된다. 설명 쪽만 7d→168h 로 좁힐 것 — main.go:4400 의 d/w 파서를 끌어오지 말 것(main 패키지라 import 불가이기도 하다). 2026-10-09 에 같은 과제가 no-change 로 끝난 전력이 있으니 tools/list→tools/call 계약 테스트(internal/mcp/server_test.go:fixture 재사용)를 반드시 붙일 것.",
+    "updated": "2026-10-17"
+  },
+  {
+    "title": "AutoApproveMerges 가 DailyLimit 을 전혀 보지 않는다",
+    "value": 4,
+    "risk": 3,
+    "size": "M",
+    "status": "pending",
+    "note": "병합 승인이 auto_approvals 에 기록되지 않아 셀 수단 자체가 없고 집계·감사 기록 경로 설계가 선행. 권한 봉투 변경이라 단독 회차. 2026-10-17 에도 열지 않음(미확인). 7회 연속 보류 중 — 다음에 고르려면 설계 판단부터 할 것. 가치는 높으니 '설계 문서만 쓰는 회차' 로 한 번 떼어내는 것도 방법이다.",
+    "updated": "2026-10-17"
+  },
+  {
+    "title": "테스트용 git 저장소 부트스트랩 헬퍼를 공유 패키지로 정리",
+    "value": 3,
+    "risk": 2,
+    "size": "M",
+    "status": "pending",
+    "note": "requirePushable 3중 복제(gitops/commit_test.go, app/effects_test.go, cmd/goalforge/main_e2e_test.go). remote 이름 단위 프로브와 기존 skip 계약 유지 필요. 2026-10-17 미확인.",
+    "updated": "2026-10-17"
+  },
+  {
+    "title": "커밋이 옮겨간 뒤 남은 옛 커밋의 자동 병합 승인 철회",
+    "value": 3,
+    "risk": 3,
+    "size": "M",
+    "status": "pending",
+    "note": "ConsumeScopedApproval 은 StaleApprovalError 로 소비만 막고 APPROVED 상태는 남긴다. 철회 시점·감사 설계 필요. 2026-10-17 미확인.",
+    "updated": "2026-10-17"
+  },
+  {
+    "title": "internal/procctl·internal/testscript 테스트 공백",
+    "value": 2,
+    "risk": 1,
+    "size": "M",
+    "status": "pending",
+    "note": "두 패키지 모두 no test files. OS별 신호 안정성 flake 우려로 계속 보류. GOARCH=arm64 교차 컴파일 + binfmt 실행이 이 환경에서 된다는 것은 앞선 회차들이 확인했다. 2026-10-17 미확인.",
+    "updated": "2026-10-17"
+  },
+  {
+    "title": "증거 종류 불일치를 완료 판정 이전에 무인 경로에서도 띄우기",
+    "value": 3,
+    "risk": 2,
+    "size": "M",
+    "status": "pending",
+    "note": "sweepReport 는 Acted=false 면 Note 를 출력하지 않는다. 무인 알림 정책 결정이 선행이며 Note 만 추가하는 접근은 무효. 2026-10-17 미확인.",
+    "updated": "2026-10-17"
+  },
+  {
+    "title": "HTTP doctor 와 MCP project_readiness 의 완료 가능성 판정을 같은 설정으로 고정",
+    "value": 2,
+    "risk": 1,
+    "size": "M",
+    "status": "pending",
+    "note": "둘 다 FAIL 만 차단 집계함은 이전 회차에 확인. 동일 설정의 실제 HTTP/MCP 계약 테스트 추가가 내용. 2026-10-17 미확인.",
+    "updated": "2026-10-17"
+  },
+  {
+    "title": "문서 터미널의 MCP 도구 예시를 실제 공개 목록과 맞추기",
+    "value": 2,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "docs/script.js terminalTabsData.mcp 가 광고하는 도구명이 toolDescriptors 와 다름(이전 회차 관찰, 2026-10-17 미확인). script.js 는 영문 페이지 본문 복구의 '정본' 이므로 그 과제가 끝난 뒤에 건드릴 것. 이번 회차에 script.js 는 읽기만 했다.",
+    "updated": "2026-10-17"
+  },
+  {
+    "title": "retryAfterDuration 정규식이 지수 표기를 매치하지 않는 것을 문서화",
+    "value": 1,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "정규식이 (\\d+(?:\\.\\d+)?) 이라 'retry in 1e300 hours' 는 애초에 nil 을 돌려준다(측정 완료). 넓힐 이유 없고 주석 한 줄 값어치. 우선순위 최하.",
+    "updated": "2026-10-17"
+  },
+  {
+    "title": "DecideRetry 의 FailureRateLimit 분기에 maxAttempts 검사가 없어 영원히 재시도한다",
+    "value": 3,
+    "risk": 3,
+    "size": "M",
+    "status": "pending",
+    "note": "다른 재시도 가능 분기(Overload/Network/default)는 attempt >= maxAttempts 에서 BlockForUser 로 가지만 FailureRateLimit 만 무한히 사다리를 돈다. 1시간 상한(2026-10-16 머지) 덕에 한 번의 수면은 짧아졌으나 총 횟수는 무제한. 의도적 선택일 수 있어 설계 판단이 선행. 무인 워커 중단 조건이 바뀌므로 단독 회차. 2026-10-17 미확인.",
+    "updated": "2026-10-17"
+  }
+]

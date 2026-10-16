@@ -1,0 +1,43 @@
+Kkiit v0.4.18 — 상품 상세의 패키지·추가 옵션 노출 범위 수정
+
+v0.4.17 이후 들어온 수정 하나를 담는다.
+
+- `getTalent`(`talents.go`)의 패키지·추가 옵션 하위 질의가 서로 반대
+  방향으로 틀려 있던 것을 고친다. `packages` 에는 `active` 조건이 아예
+  없어 판매 중단된 패키지가 구매자의 선택 목록에 남고 주문 양식의 결제
+  금액까지 그 가격으로 계산했지만, `createOrder` 는 `p.active` 를 요구해
+  400 `package_not_available` 로 거절하고 쿠폰 미리보기는 `orderAmount`
+  가 행을 찾지 못해 공개·판매 중인 상품을 404 `talent_not_found` 로
+  답했다 — 구매자는 고를 수는 있으나 살 수 없는 패키지를 본 것이다.
+  반대로 `options` 에는 `active` 가 걸려 있어, 판매자 편집 화면
+  (`ProfilePage.saveEdit`)이 이 응답의 options 를 그대로 PUT 으로
+  돌려보내고 `saveTalent` 가 `talent_options` 를 통째로 DELETE 후
+  재삽입하므로 응답에서 빠진 중단 옵션은 판매자가 제목만 바꿔도
+  삭제됐다. 두 하위 질의를 `(active OR t.seller_id=$2 OR $3)` 로 통일해
+  소유자와 `orders.manage` 권한자는 전부 받고 그 밖의 뷰어는 주문이
+  실제로 받아 주는 항목만 받게 했다. 상품 가시성 판정이 이미 쓰고 있던
+  두 인자를 그대로 재사용했고 가시성 WHERE 절 자체는 손대지 않았다.
+  `openapi.yaml` 의 `GET /talents/{id}` 에 보는 사람에 따라 갈리는 노출
+  설명과 핸들러가 실제로 내는 `404` 를 더해 실제 동작과 맞췄다. 폐기
+  PostgreSQL 16 과 실제 라우터·실제 DB 왕복으로 중단 패키지가 구매자
+  목록에 남는 것을 먼저 실패로 재현하고, 패키지 쪽만 고친 뒤 판매자
+  응답이 중단 옵션을 떨어뜨리는 두 번째 단언이 다시 실패하는 것까지
+  두 단계로 확인한 뒤 통과시켰다. 프런트(`web/`)는 건드리지 않았다 —
+  구매자 응답의 패키지가 빈 배열이 되는 상품이 생길 수 있으나
+  `TalentPage` 가 `talent.packages.length > 0` 로 막고 기본가로 주문하는
+  경로가 있어 코드상 문제는 없다. 다만 브라우저로 띄워 확인한 것은
+  아니고, 운영자가 남의 미공개 상품을 보는 조합도 테스트하지 않았다.
+
+버전 표기(VERSION·compose·web/package·openapi·README)를 0.4.18 으로 올린다.
+
+gofmt · go build · go vet · go test, web lint · test · build 전부 통과.
+전체 `go test ./cmd/... ./internal/...` 통과. 버릴 PostgreSQL 16(16.15,
+docker 29.7.2)에 새로 만든 DB 로 `make test-integration` 도 통과(87.2초).
+이번 수정의 새 통합 테스트도 같은 DB 에서 단독으로 통과했다. 웹 검사
+3종은 선언·CI 버전인 node:24.18.0 컨테이너에서 돌려 lint 무결, 테스트
+10건 통과, build 성공을 확인했다 — 이 기계의 Node 는 22.23.1 이다.
+build 가 다시 쓴 `internal/ui/dist` 는 청크 해시가 달라졌고, 기존 릴리즈
+관례대로 HEAD 로 되돌려 이번 커밋에서 제외했다.
+
+태그 푸시 후 기존 release.yml 이 이미지 빌드·압축·재로드 검증 및 GitHub
+Release 생성을 수행한다. 이 단계에서는 원격에 보내지 않는다.
