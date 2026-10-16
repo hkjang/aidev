@@ -1,44 +1,44 @@
-# moyro 프로필 (2026-10-08)
+# moyro 프로필 (2026-10-16)
 - 목적: Mattermost v4 호환 채팅에 작업·승인·자동화·지식·MCP를 결합한 자체 호스팅 협업 앱.
-- 기준: main@879082e / v0.2.49. 9일 된 프로필을 현재 소스·CI와 대조해 갱신했다.
-- 스택: Go 1.27.0, chi v5, pgx v5.9.2, PostgreSQL / React 18, TypeScript, Vite 8, Redux, MUI / Vitest 4, Playwright / Docker.
+- 기준: main@c0ab918 / v0.2.50. 2026-10-08 프로필을 현재 소스와 대조해 갱신했다(아래 ★ 가 이번에 바뀐 사실).
+- 스택: ★Go 1.27.2(`server/go.mod:3`, `toolchain` 줄 없음), chi v5, pgx v5.9.2, ★golang.org/x/net v0.60.0, PostgreSQL / React 18, TypeScript, Vite 8, Redux, MUI / Vitest 4, Playwright / Docker(★빌더 `Dockerfile:14` = `golang:1.27.2-alpine@sha256:f92b6ef8…`, 런타임 distroless static-debian12).
 - 구조:
-  - server/cmd/moyro: 서버 진입점. server/internal/httpapi: /api/v4 compat 및 native API, router.go의 실제 서비스·라우터 배선.
+  - server/cmd/moyro: 서버 진입점. server/internal/httpapi: /api/v4 compat 및 native API, router.go 의 실제 서비스·라우터 배선.
   - server/internal/{auth,teams,channels,posts,userstatus,bookmarks,customprofile}: DB 기반 도메인 서비스.
   - server/internal/{digest,reminders,automations,ws,audit}: 워커, WebSocket, 비동기 감사.
   - server/internal/store/migrations: 번호형 checksummed DB 마이그레이션; 기존 baseline 변경 금지.
   - server/internal/pluginhost → rpcbridge: 서버 플러그인; webapp/src/plugins/runtime.ts → registry.ts: 웹 플러그인.
   - webapp/src/{api,features,components}: React 앱; webapp/e2e: 브라우저 계약 테스트.
+  - plugin-sdk/go: 별도 모듈, `go 1.22` (서버 go.mod 와 따로 올라간다).
   - docs/: 가이드·OpenAPI·로드맵·제품 사이트, scripts/: 검증·릴리즈·캡처, deploy/: 개발 서비스.
-- 빌드·테스트:
-  - server/: go test -count=1 ./internal/httpapi ./internal/userstatus ./internal/bookmarks ./internal/ws — 이번 exit 0; httpapi 0.167s/ws 0.033s, 두 서비스는 [no test files].
-  - server/: go test -count=1 -v ./internal/httpapi -run 'TestInviteByEmailRouteKeepsTeamAdminGate|TestPresenceAndCustomStatusWebSocketAudiencePostgres' — 실제 DB로 이번 3.161s, skip 0, exit 0.
-  - 전체 DB/race: MOYRO_TEST_POSTGRES_DSN 설정 후 server/에서 go test -race -p 1 -count=1 ./... (수 분). 이번 전체 실행은 하지 않았다.
-  - server/: go build ./..., go vet ./...; webapp/: npm ci, npm test, npm run typecheck, npm run build. 이번 빌드·vet·웹 미실행.
-  - 루트: bash scripts/check-source-sizes.sh 이번 통과. node scripts/verify-pages.mjs는 이번 미실행.
-  - CI DB job은 PostgreSQL 15/16에서 모든 서버 패키지를 실행; PG16에는 checksum 고정 플러그인 아카이브 4개를 제공.
-  - 실제 테스트 DB moyro-pg-improve / 55433 실행·접속 확인. DSN은 컨테이너 환경에서 자식 프로세스에만 전달하고 출력/문서에 남기지 않는다.
+- 빌드·테스트 (실제 명령):
+  - server/: `go build ./...`, `go vet ./...`, `go test -race -p 1 -count=1 ./...`(MOYRO_TEST_POSTGRES_DSN 필요, 수 분; httpapi 60초 내외), `go run golang.org/x/vuln/cmd/govulncheck@v1.7.0 ./...`
+  - plugin-sdk/go/: `go test -race ./...`, `go vet ./...`
+  - webapp/: `npm ci`, `npm audit --omit=dev --audit-level=high`, `npm audit --audit-level=high`, `npm test`, `npm run typecheck`, `npm run build`
+  - 루트: `bash scripts/check-source-sizes.sh`, `node scripts/verify-pages.mjs`, `bash scripts/verify-product-ui.sh <image> <outdir>`(Playwright 77 테스트, 오래 걸림), `EXPECTED_COMMIT=<sha> bash scripts/verify-release.sh <image> <archive>`
+  - CI(.github/workflows/ci.yml): migration-tests 잡이 PG 15/16 매트릭스로 모든 서버 패키지, verify 잡이 size ratchet → npm audit ×2 → web test/typecheck/build → go test/vet/govulncheck → plugin-sdk → `docker build` → Playwright → verify-pages 순. release.yml 은 거기에 linux/amd64 이미지·`verify-release.sh`·GitHub Release 업로드를 더한다. 두 워크플로 모두 `go-version-file: server/go.mod` 로 Go 를 고른다.
 - 관례:
-  - 영어 feat:/fix:/test:/docs:/release: 커밋. /api/v4 경로·응답 모양 보존. errors.Is/pgx.ErrNoRows 및 도메인 센티널로 오류 구분.
-  - 설정은 관리자 설정과 bootstrap 환경변수. docs/USER_GUIDE.md·ADMIN_GUIDE.md 및 사이트에 사용자 문서, UTF-8 유지.
-  - CLAUDE.md: generated/legacy .js보다 TS/TSX 소스 우선; 플러그인 훅 결정성·WebSocket reconnect 단일 소유 보존.
+  - 영어 `feat:`/`fix:`/`test:`/`docs:`/`release:` 커밋. /api/v4 경로·응답 모양 보존. errors.Is/pgx.ErrNoRows 및 도메인 센티널로 오류 구분.
+  - 설정은 관리자 설정 + bootstrap 환경변수. 사용자 문서는 docs/USER_GUIDE.md·ADMIN_GUIDE.md 및 제품 사이트, UTF-8 유지.
+  - CLAUDE.md: generated/legacy .js 보다 TS/TSX 소스 우선; 플러그인 훅 결정성·WebSocket reconnect 단일 소유 보존.
+  - 외부 이미지는 전부 `@sha256:` 다이제스트 핀(postgres, node, golang, distroless, actions). 핀을 떠 있는 태그로 바꾸는 것은 게이트 완화로 취급된다.
 - 위험 구역:
-  - auth/session/principal/oidcauth/native_mcp_oauth, store/migrations, .github/workflows는 별도 근거 없이 수정하지 않는다.
-  - native 플러그인은 신뢰된 실행 주체; pluginhost.UpdatePost 직접 호출을 무조건 우회 결함으로 보지 않는다(과거 기록).
-  - dist/node_modules/tsbuildinfo/data/files는 직접 편집하지 않는다.
+  - `server/internal/{auth,session,principal,oidcauth,native_mcp_oauth}`, `server/internal/store/migrations`, `.github/workflows/` 는 별도 근거 없이 수정하지 않는다.
+  - native 플러그인은 신뢰된 실행 주체; `pluginhost.UpdatePost` 직접 호출을 무조건 우회 결함으로 보지 않는다.
+  - `webapp/dist`, `node_modules`, `tsconfig.tsbuildinfo`, `data/files` 는 직접 편집하지 않는다.
 - 자주 깨지는 곳:
+  - ★외부 핀을 확인 없이 올리는 것 — `fddc0b8`(Go 1.27.2 + Dockerfile 다이제스트)이 CI·릴리즈를 두 번 같은 이유로 깨뜨린 것으로 의심된다(2026-10-16 오류 대응 회차의 주제). 버전·다이제스트는 반드시 레지스트리/릴리즈 목록에서 확인하고 커밋할 것.
   - DB 장애를 400/401/403/404 또는 정상 빈 결과로 접는 핸들러, 되읽기 오류 무시, 응답·WS 불일치.
-  - 10-04/10-05 본문 오류 거부, 10-08 파일 검색 rows.Err 누락은 이미 머지됐다. 같은 수정 반복 금지.
-  - patchPost 되읽기 장애 주입은 과거 여러 회차 미해결; 결정론적 증명 수단 없이 재선택 금지.
-  - metrics/commands는 앞선 정찰에서 정독 완료; 재감사하지 않는다. bookmarks/userstatus는 이번 정독, 패키지 자체 테스트 없음.
+  - 이미 머지되어 **반복 금지**: 10-04 본문 상한(`bulkDeleteUsers`), 10-05 custom profile PATCH 본문, 10-06 digest excerpt 룬 절단, 10-08 파일 검색 `rows.Err()`, 10-16 bookmarks `Reorder` dense 재배열.
+  - `patchPost` 되읽기 장애 주입은 여러 회차 미해결; 결정론적 증명 수단 없이 재선택 금지.
+  - metrics·commands 는 정독 완료 — 재감사하지 않는다.
 - 검증 함정:
-  - MOYRO_TEST_POSTGRES_DSN 없으면 DB 테스트 skip. 빠른 ok를 실제 DB 통과로 오인하지 않는다.
-  - newOperationsTestDB는 고유 schema/search_path, MaxConns=4, cleanup DROP SCHEMA. 장애 주입은 그 스키마 안에 한정한다.
-  - 실제 NewRouter를 띄우는 기존 httpapi 테스트는 invite_email_route_postgres_test.go 1곳. 다른 테스트의 패턴 복사는 등록 순서·배선 회귀를 못 본다.
-  - presence_scope_postgres_test.go는 직접 handlers와 hub.Register로 audience를 검증; NewRouter 연결·해제 콜백을 통과하지 않는다.
-  - Hub.Run의 OnConnect/OnDisconnect는 goroutine. ClientCount는 콜백 완료 신호가 아니다. 수동 상태 테스트에는 자동 상태 양성 대조와 실제 이벤트 관찰이 필요하다.
-  - audit.LogAsync는 비동기+3초 timeout. 실제 audit 서비스·양성 대조 없이 감사 미기록 단언을 믿지 않는다.
-  - npm 상위 node_modules/.bin/node가 Node 20을 선점했던 이력이 있다. 현재 npm test는 scripts/run-vitest.mjs로 npm 자신의 Node를 사용한다. jsdom/undici 다운그레이드 접근 재시도 금지.
-  - CI/release는 npm audit 2개를 npm test 앞에서 실행하며 govulncheck도 수행. 라이브 취약점 DB 결과는 시점에 따라 달라진다.
-  - 과거 @types/node/useDraft TS2345와 기존 미포맷 9파일은 이번 미재검증; 관련 없는 포맷/tsconfig 변경을 섞지 않는다.
-  - 요청된 회사 스킬 3개는 이번 callable Skill 도구·리소스·로컬 검색에서 미발견. 로드했다고 가정하지 않는다.
+  - `MOYRO_TEST_POSTGRES_DSN` 없으면 DB 테스트 skip. httpapi 가 0.2초로 끝나면 DB 테스트가 안 돈 것이다 — 빠른 ok 를 통과로 오인하지 말 것. 테스트 DB 는 컨테이너 `moyro-pg-improve`/55433(멈춰 있으면 `docker start` 선행), DSN 은 자식 프로세스 환경에만 준다.
+  - `newOperationsTestDB` 는 고유 schema/search_path, MaxConns=4, cleanup `DROP SCHEMA`. 장애 주입은 그 스키마 안에 한정한다(RENAME+VIEW 로 0 나누기, `ALTER TYPE` 으로 Scan 실패, `DROP TABLE`).
+  - 실제 `NewRouter` 를 띄우는 httpapi 테스트는 `invite_email_route_postgres_test.go` 와 `presence_lifecycle_postgres_test.go` 두 곳. 다른 테스트는 `r.Group` 패턴을 손으로 복사하므로 `router.go` 의 배선 회귀를 구조적으로 못 본다.
+  - `h.audit` 를 nil 로 두면 `LogAsync` 가 아예 안 불려 감사 단언이 거짓 통과한다 — 실제 audit 서비스를 주입할 것. `LogAsync` 는 비동기 + 3초 timeout.
+  - `Hub.Run` 의 OnConnect/OnDisconnect 는 goroutine. `ClientCount` 는 콜백 완료 신호가 아니다.
+  - `npm audit`·`govulncheck` 는 라이브 취약점 DB — 시점에 따라 결과가 달라진다. 플러그인 아카이브 4개(`MOYRO_TEST_*_PLUGIN_ARCHIVE`)가 없으면 `TestMattermostArchivesInstallRunAndSurviveRestart` 는 skip 된다.
+  - `webapp/tsconfig.json` 에 `types` 가 없어 `@types/node` 가 끼면 `useDraft.test.tsx:196` 이 TS2345 로 깨진다(2026-09-09). 웹을 안 건드린 회차에서 이 오류가 보이면 자기 변경 탓이 아니다. jsdom/undici 다운그레이드 접근 재시도 금지.
+  - `gh` 는 이 러너에서 과거 다섯 회차 내내 미인증이다 — CI/릴리즈 실패 로그를 읽을 수 없으므로 실패 단계는 로컬 재현으로 특정해야 한다. ★이번 정찰 세션에는 `curl`·WebFetch·`go version` 실행 권한조차 없었다(권한 모드에 따라 달라진다).
+  - 요청된 회사 스킬은 `Skill` 도구로 `technology:*`/`pmo:*` 이름으로 호출된다(2026-10-08 의 "로컬 미발견" 기록은 정정됨).

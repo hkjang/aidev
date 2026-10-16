@@ -1,0 +1,128 @@
+[
+  {
+    "title": "fddc0b8 이 넣은 Go 1.27.2 핀 + Dockerfile:14 다이제스트가 CI·릴리즈를 결정론적으로 깨뜨리는 것 수정",
+    "value": 5,
+    "risk": 2,
+    "size": "S",
+    "status": "rejected",
+    "note": "전제가 틀렸음을 출력으로 확정했다. 공개 Actions API(인증 불필요)로 확인: 실패한 런은 38859433565(PR #39, verify 잡, step 9 'Test server') 단 1건이고, fddc0b8 이 그것을 고쳐 다음 런 38861887137 이 통과, PR #39 는 머지됨(merged:True, da0f01b), v0.2.50 릴리즈 런 38865940583 은 success. 즉 fddc0b8 은 원인이 아니라 수리였고 '두 번 실패' 는 사실이 아니다. 로컬에서도 전부 초록: go1.27.2 실존(toolchain 모듈 다운로드됨), docker pull 다이제스트 OK(이미지 내부 go1.27.2), docker build exit 0, govulncheck 0, npm audit x2 0, npm test 224, typecheck/build OK, 픽스처 4개 체크섬 일치. 이 아이디어는 다시 꺼내지 말 것.",
+    "updated": "2026-10-16"
+  },
+  {
+    "title": "postsByIDsReactions 가 ListForPost DB 장애를 200 '반응 없음' 으로 보고하는 것 차단",
+    "value": 3,
+    "risk": 2,
+    "size": "S",
+    "status": "done",
+    "note": "이번 회차 구현. late.go 의 ListForPost `continue` 를 기존 500 api.reaction.list.app_error(handlers.go:2503, 동일 호출) 로 분리. 새 오류 id·새 상태코드 없음. ChannelForPost/IsMember 두 continue 는 가시성 필터이므로 손대지 않고 보존 단언으로 고정했다. 격리 스키마에서 reactions 를 post_id 기반 0 나누기 뷰로 바꿔 RED 2건 관찰, 수정 후 9/9 PASS, 되돌리면 바이트 동일 RED 복귀.",
+    "updated": "2026-10-16"
+  },
+  {
+    "title": "릴리즈/CI 실패 로그 접근 수단을 러너에 주기 (gh 인증 또는 실패 로그 스냅샷)",
+    "value": 4,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "저장소 밖 러너 과제. 다만 이번 회차에 **부분 해법을 발견했다**: 공개 저장소라면 인증 없이 `curl https://api.github.com/repos/hkjang/moyro/actions/runs` 와 `.../runs/<id>/jobs` 로 런·잡·**실패 스텝 이름**까지 읽을 수 있다(스텝 로그 본문만 인증 필요). 10-04·10-16 두 회차가 'gh 미인증이라 실패 단계를 특정 못 함' 으로 차선으로 끝난 것이 이것만으로 해결된다. 가치를 5→4 로 내린 이유: 급한 부분은 자체 해결됨. 정찰·오류대응 프롬프트에 이 curl 절차를 적어 두는 것이 다음 액션.",
+    "updated": "2026-10-16"
+  },
+  {
+    "title": "오류 대응 회차에 넘기는 실패 전제를 적재 시점에 재확인하게 하기",
+    "value": 4,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "신규. 이번 회차는 '릴리즈가 같은 이유로 두 번 실패' 라는 전제를 받았으나 실제로는 실패 1건 + 이미 수리 + 릴리즈 성공이었다. 정찰이 그 전제 위에 과제서를 썼고(fddc0b8 을 범인으로 지목), 세션 예산의 절반이 반증에 들어갔다. 러너가 과제를 적재할 때 공개 Actions API 로 '그 런이 아직 빨간불인가' 를 한 번 확인하면 이 낭비가 사라진다. 저장소 밖 과제.",
+    "updated": "2026-10-16"
+  },
+  {
+    "title": "외부 핀(도커 다이제스트·Go 패치 버전) 존재 증명 사전 점검 스크립트",
+    "value": 3,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "가치 4→3 으로 내림. fddc0b8 류 사고를 막자는 취지였으나, 이번 검증으로 fddc0b8 의 핀 두 개는 **둘 다 올바랐다**(다이제스트 실존 + 이미지 내부 go1.27.2 + docker build 통과). 즉 막아야 할 실제 사고가 이 저장소에 아직 없다. 네트워크 의존 점검이라 오프라인 실패 정책도 먼저 정해야 한다. 실제 오핀 사고가 한 번이라도 나면 다시 올릴 것.",
+    "updated": "2026-10-16"
+  },
+  {
+    "title": "postsByIDsReactions 의 io.LimitReader 64 KiB 조용한 절단 (413 대신 400)",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "late.go:311. 이번 회차가 같은 함수의 아래쪽(ListForPost)을 건드렸으므로 같은 줄을 연달아 손대지 않도록 다음 회차로 미뤘다. 이제 이 함수에 실제 DB 하네스 테스트 파일(posts_ids_reactions_fault_postgres_test.go)이 있으니 본문 상한 서브테스트를 그 파일에 얹기만 하면 되어 작업량이 줄었다. 단독 가치는 여전히 낮다.",
+    "updated": "2026-10-16"
+  },
+  {
+    "title": "bookmarks Patch 의 sort_order 직접 설정이 중복 sort_order 를 만들 수 있는 것 검토",
+    "value": 2,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "service.go:Patch 가 p.SortOrder 를 검증 없이 저장한다. 10-16 에 Reorder 가 0-based dense 로 고쳐져 Patch 가 넣는 값과 섞이는 모양이 더 분명해졌다. Mattermost PATCH 가 '값 그대로 저장' 계약인지 미확인 — 그 계약 확인이 선행 과제다.",
+    "updated": "2026-10-16"
+  },
+  {
+    "title": "테스트 없는 서버 패키지(userstatus, preferences, postacks, tos, savedposts) 중 한 곳에 첫 테스트",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "digest(10-06)와 bookmarks(10-16) 모두 '첫 테스트를 쓰는 과정' 에서 실제 결함을 찾아냈으므로 생산적인 경로. metrics·commands 는 정독 완료라 재감사 금지. httpapi 상태코드 계열이 10-04/10-05/10-08/10-16 네 회차를 먹었으므로 방향 전환용으로도 좋다.",
+    "updated": "2026-10-16"
+  },
+  {
+    "title": "격리 스키마 장애 주입 관용구를 newOperationsTestDB 주석에 문서화",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "프로덕션 0파일. RENAME+VIEW(0 나누기), ALTER TYPE(Scan 실패), DROP TABLE 세 관용구가 이제 네 테스트 파일에 흩어져 있다(이번 회차가 reactions 로 한 곳 더 늘렸다) — 헬퍼 주석에는 설명이 없다. 10-08·10-16 두 회차의 차선이었으나 계속 미구현.",
+    "updated": "2026-10-16"
+  },
+  {
+    "title": "북마크 4개 핸들러(late.go)의 ok, _ := IsMember 403 위장 분리",
+    "value": 2,
+    "risk": 2,
+    "size": "M",
+    "status": "pending",
+    "note": "late.go 1058/1090/1150/1247. list 의 system-admin 예외 때문에 장애 정책부터 정해야 한다. 이번 회차가 같은 파일의 IsMember continue 를 '가시성 필터이므로 보존' 으로 판정했으므로, 이 항목도 같은 질문(배치/단건 엔드포인트가 멤버십 조회 실패에 무엇을 빚지는가)에 답해야 진행된다.",
+    "updated": "2026-10-16"
+  },
+  {
+    "title": "listReactions 가 ChannelForPost 장애를 404, IsMember 장애를 403 으로 접는 것 분리",
+    "value": 2,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "handlers.go:2491-2499. 이번 회차가 바로 이 함수의 500(api.reaction.list.app_error)을 재사용했으므로 함수를 읽어 두었다: ChannelForPost 오류는 pgx.ErrNoRows 와 진짜 장애를 구분하지 않고 둘 다 404 다. errors.Is(err, pgx.ErrNoRows) 분기만 넣으면 S 로 끝난다. 다만 httpapi 상태코드 재분류 계열 연속을 피해 다음 회차 이후로.",
+    "updated": "2026-10-16"
+  },
+  {
+    "title": "createCustomProfileField / patchCustomProfileField 의 _ = decodeCappedBody",
+    "value": 2,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "final.go. 단건 쓰기라 빈 본문 {} 계약부터 정해야 하고, 10-04/10-05 연속 decodeCappedBody 계열이라 당분간 쉰다.",
+    "updated": "2026-10-16"
+  },
+  {
+    "title": "searchFiles/searchTeamFiles 의 감사 details 에 검색어(terms)가 원문으로 들어가는 것",
+    "value": 2,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "final.go:816/882. 운영자 규칙('검출 대상 문자열을 details 로 넘기지 말 것')과 맞닿아 있으나 검색어가 보호 대상인지 정책 미확인. 감사 계약 변경은 단독 회차로.",
+    "updated": "2026-10-16"
+  },
+  {
+    "title": "프로덕션 NewRouter 를 띄우는 라우팅 계약 테스트를 더 넓히기",
+    "value": 3,
+    "risk": 1,
+    "size": "M",
+    "status": "pending",
+    "note": "이번 테스트도 router.go:773 패턴을 손으로 복사했으므로 router.go 의 배선 회귀는 여전히 구조적으로 안 보인다. 실제 NewRouter 를 띄우는 테스트는 invite_email_route_postgres_test.go 와 presence_lifecycle_postgres_test.go 두 곳뿐. 여러 회차에서 반복 지적되었으나 미구현 — 다음 회차 유력 후보.",
+    "updated": "2026-10-16"
+  }
+]
