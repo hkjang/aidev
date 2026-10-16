@@ -1,5 +1,5 @@
 {
- "generated": "2026-10-16T10:37:59+09:00",
+ "generated": "2026-10-16T11:11:09+09:00",
  "site": "https://hkjang.github.io/aidev",
  "description": "Claude Code 자율 개선 에이전트가 hkjang 의 프로젝트를 개선·테스트·머지·릴리즈한 일일 보고. 오늘 16회차·릴리즈 8건, 누적 2637회차·릴리즈 801건, 주의 필요 14건.",
  "today": {
@@ -10,18 +10,18 @@
   "merged": 1,
   "nochange": 0,
   "failed": 5,
-  "cost_usd": 154.69,
-  "minutes": 415,
-  "sessions": 63
+  "cost_usd": 158.08,
+  "minutes": 424,
+  "sessions": 65
  },
  "totals": {
   "runs": 2637,
   "released": 801,
   "days": 45,
-  "cost_usd": 9257.97,
-  "minutes": 25673,
-  "tokens_in": 10025863458,
-  "tokens_out": 80878221
+  "cost_usd": 9261.36,
+  "minutes": 25682,
+  "tokens_in": 10028208185,
+  "tokens_out": 80896463
  },
  "alerts": [
   {
@@ -1494,11 +1494,11 @@
    "why": "review: approved — 리뷰 승인 (risk=low); ci: failed — 성공이 아닌 검사: lint=failure, test=failure · 실패한 검사: ? 잡: test ",
    "evidence": "https://github.com/hkjang/aidev/tree/main/state/runs/2026-10-16-101350-ai-admin-improve",
    "labels": "",
-   "action": "PR 처리기가 매시간 살핀다 (아직 순서가 오지 않음) · 승인: PR 라벨 aidev-approved / 반려: aidev-rejected — 다음 회차에 러너가 승인 당시 커밋에만 CI 확인 후 머지·닫기",
+   "action": "PR 처리기가 다음 시간에 다시 시도 · 승인: PR 라벨 aidev-approved / 반려: aidev-rejected — 다음 회차에 러너가 승인 당시 커밋에만 CI 확인 후 머지·닫기",
    "date": "2026-10-16",
-   "shepherd": "",
-   "shepherd_action": "",
-   "shepherd_detail": "",
+   "shepherd": "CI 실패 · 수정 실패 → 다음 시간에 재시도 (10-16 11:11) — 수정 세션이 커밋을 만들지 않음: # 수리 요약 — 커밋 없음 (지적이 코드 결함이 아님)  - 지적된 CI 실패는 이 브랜치의 결함이 아니다. 런 38836134510 의 두 잡(lint·test)은 스텝을 하나도 실행하지 않고 3~4초에 끝나며 주석이 원인을 그대로 말한다: \"The",
+   "shepherd_action": "fix-failed",
+   "shepherd_detail": "수정 세션이 커밋을 만들지 않음: # 수리 요약 — 커밋 없음 (지적이 코드 결함이 아님)  - 지적된 CI 실패는 이 브랜치의 결함이 아니다. 런 38836134510 의 두 잡(lint·test)은 스텝을 하나도 실행하지 않고 3~4초에 끝나며 주석이 원인을 그대로 말한다: \"The job was not started because recent account payments have failed or your spending limit needs to be increased. Please check the 'Billing & plans' section in your settings\" — `gh run view 38836134510` 로 직접 확인(이전 회차들은 private 404 로 못 봤던 로그다). - PR 과 무관함의 근거: 2026-10-1",
    "needs_human": false
   },
   {
@@ -1513,9 +1513,9 @@
    "labels": "",
    "action": "PR 처리기가 다음 시간에 다시 시도 · 승인: PR 라벨 aidev-approved / 반려: aidev-rejected — 다음 회차에 러너가 승인 당시 커밋에만 CI 확인 후 머지·닫기",
    "date": "2026-10-16",
-   "shepherd": "CI 실패 · 수정 실패 → 다음 시간에 재시도 (10-16 09:11) — 수정 세션이 커밋을 만들지 않음: # 수리 요약 — 커밋 없음 (코드 결함이 아님)  - **원인 확정**: CI 실패는 코드가 아니라 **GitHub Actions 과금**이다. run 38825920638 의 양쪽 job 주석이 `The job was not started becau",
+   "shepherd": "CI 실패 · 수정 실패 → 다음 시간에 재시도 (10-16 11:06) — 수정 세션이 커밋을 만들지 않음: # 수리 요약 — ai-admin PR #46 (커밋 없음)  - 원인 확정: CI lint/test 실패는 코드 결함이 아니라 **GitHub Actions 과금 차단**이다. 런 38825920638 두 잡 모두 annotation 이 `The jo",
    "shepherd_action": "fix-failed",
-   "shepherd_detail": "수정 세션이 커밋을 만들지 않음: # 수리 요약 — 커밋 없음 (코드 결함이 아님)  - **원인 확정**: CI 실패는 코드가 아니라 **GitHub Actions 과금**이다. run 38825920638 의 양쪽 job 주석이 `The job was not started because recent account payments have failed or your spending limit needs to be increased.` — 러너가 아예 시작되지 않아 lint·test 가 3초에 `failure` 로 끝났다. PR #44(run 38779853854, 2s/2s)·#45(run 38809887099, 3s/4s)도 **같은 주석**이며, 마지막 성공은 과금 문제 이전인 2026-10-08 이다. 즉 두 회차가 못 찾던 원인은 저장소 안에",
+   "shepherd_detail": "수정 세션이 커밋을 만들지 않음: # 수리 요약 — ai-admin PR #46 (커밋 없음)  - 원인 확정: CI lint/test 실패는 코드 결함이 아니라 **GitHub Actions 과금 차단**이다. 런 38825920638 두 잡 모두 annotation 이 `The job was not started because recent account payments have failed or your spending limit needs to be increased` 이고 소요 3s — 어떤 step 도 실행되지 않았다. 같은 annotation 이 38779853854(#44)·38809887099(#45)·38836134510 에도 있고, 2026-10-08 이전 런은 전부 success → PR 내용과 무관한 계정 레벨 차단이다(`gh run view` 로 직접 확인, 세 �",
    "needs_human": false
   },
   {
@@ -1914,16 +1914,16 @@
   }
  ],
  "shepherd": {
-  "last_pass": "2026-10-16T08:54:47+09:00",
+  "last_pass": "2026-10-16T10:58:16+09:00",
   "enabled": true,
   "today": {
-   "fix-failed": 5,
+   "fix-failed": 7,
    "fix-pushed": 3,
    "review-reject": 2,
    "approve": 2,
    "needs-human": 2
   },
-  "total": 703,
+  "total": 705,
   "pending_human": 204
  },
  "agents": {
@@ -1938,7 +1938,7 @@
     "role": "구현 builder",
     "calls": 500,
     "metric": "러너 검증 통과 88% · 변경 없음 138",
-    "cost": 1197.44
+    "cost": 1200.82
    },
    {
     "role": "비평 critic",
@@ -1968,12 +1968,12 @@
     "role": "PR 심사 shepherd-reviewer",
     "calls": 124,
     "metric": "승인 40 · 거절 6 · 사람 필요 78 · 승인 뒤 회귀 1",
-    "cost": 210.69
+    "cost": 214.08
    },
    {
     "role": "PR 수리 shepherd-fixer",
-    "calls": 76,
-    "metric": "고쳐서 푸시 34%",
+    "calls": 78,
+    "metric": "고쳐서 푸시 33%",
     "cost": null
    },
    {
@@ -2452,13 +2452,13 @@
   },
   {
    "metric": "유효 개선당 비용",
-   "value": "$14.17",
+   "value": "$14.19",
    "detail": "비용 확인된 유효 개선 186건, 미확인 세션 245"
   },
   {
    "metric": "예외 처리 소요 시간(중앙값)",
    "value": "1.9시간",
-   "detail": "해결된 경고 401건"
+   "detail": "해결된 경고 402건"
   },
   {
    "metric": "실행 오류",
@@ -2483,7 +2483,7 @@
    "merged": 1,
    "nochange": 0,
    "failed": 5,
-   "cost_usd": 154.69
+   "cost_usd": 158.08
   },
   {
    "date": "2026-10-15",
@@ -2757,8 +2757,8 @@
    "merged": 1,
    "nochange": 11,
    "failed": 28,
-   "cost": 555.45,
-   "minutes": 1492
+   "cost": 558.83,
+   "minutes": 1500
   },
   {
    "key": "2026-W41",
@@ -2843,8 +2843,8 @@
    "merged": 39,
    "nochange": 138,
    "failed": 53,
-   "cost": 2902.42,
-   "minutes": 8519
+   "cost": 2905.81,
+   "minutes": 8528
   },
   {
    "key": "2026-09",
@@ -2912,8 +2912,8 @@
    "last_ts": "2026-10-16T10:37:54+09:00",
    "last_status": "failed",
    "last_result": "fix-round: CI failed, PR open https://github.com/hkjang/ai-admin/pull/47",
-   "cost": 288.73,
-   "minutes": 715,
+   "cost": 292.12,
+   "minutes": 723,
    "grade": "D",
    "grade_why": "14일: 릴리즈 5, 실패 4, 경고 4, 회귀 0",
    "lessons": 0,
