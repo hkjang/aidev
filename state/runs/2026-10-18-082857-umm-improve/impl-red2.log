@@ -1,0 +1,39 @@
+
+ RUN  v4.1.11 /home/hkjang/.cache/auto-improve-wt/umm/web
+
+ ❯ scripts/ensure-install.test.mjs (3 tests | 2 failed) 79ms
+     × installs into its own package, by absolute path, when the dependency is missing 26ms
+     × refuses, and names the install to run by hand, when the install fails 25ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  scripts/ensure-install.test.mjs > the install step the repository root runs before npm test > installs into its own package, by absolute path, when the dependency is missing
+Error: ENOENT: no such file or directory, open '/tmp/umm-npm-shim-KtwZX9/calls.txt'
+ ❯ scripts/ensure-install.test.mjs:100:12
+     98|     const run = runEnsureInstall(root, shimDirectory);
+     99|
+    100|     expect(readFileSync(log, 'utf8')).toBe(`ci\n--prefix\n${root}\n`);
+       |            ^
+    101|     expect(run.status).toBe(0);
+    102|   }, 30_000);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+ FAIL  scripts/ensure-install.test.mjs > the install step the repository root runs before npm test > refuses, and names the install to run by hand, when the install fails
+AssertionError: expected +0 not to be +0 // Object.is equality
+ ❯ scripts/ensure-install.test.mjs:110:28
+    108|     const run = runEnsureInstall(root, shimDirectory);
+    109|
+    110|     expect(run.status).not.toBe(0);
+       |                            ^
+    111|     expect(run.stderr).toContain(`npm ci --prefix ${root}`);
+    112|   }, 30_000);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  2 failed | 1 passed (3)
+   Start at  08:35:28
+   Duration  568ms (transform 20ms, setup 53ms, import 12ms, tests 79ms, environment 347ms)
+
