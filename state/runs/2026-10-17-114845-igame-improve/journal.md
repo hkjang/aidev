@@ -29,3 +29,4 @@
 - 못 본 것: web/SDK·다른 패키지는 diff 가 없어 보지 않았다. 보안/법무 차단 사유 없음(새 엔드포인트·외부 입력·암호·의존성·개인정보 전무, 테스트 SQL 전부 바인드 파라미터).
 - [러너 12:05] review approved — 리뷰 승인 (risk=low)
 - [러너 12:05] pr created — https://github.com/hkjang/igame/pull/42
+- [러너 12:34] resume held — 리뷰 결과 없음/무효 — 사람 판단
