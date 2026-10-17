@@ -1,0 +1,229 @@
+{
+  "run_id": "2026-10-18-051849-workkit.irumx.app-improve",
+  "generated": "2026-10-18T05:39:48+09:00",
+  "run": {
+    "run_id": "2026-10-18-051849-workkit.irumx.app-improve",
+    "project": "workkit.irumx.app",
+    "kind": "improve",
+    "started": "2026-10-18T05:18:50+09:00",
+    "model": "claude-opus-5",
+    "policy_version": "4a9e91ac72",
+    "prompts_hash": "ce085c79e18002e2",
+    "runner_version": "1bd5f0cd4d",
+    "arm": "no-repair",
+    "experiment": "roles-2026-09",
+    "finished": "2026-10-18T05:39:48+09:00",
+    "outcome": "verify-failed"
+  },
+  "record": {
+    "ts": "2026-10-18T05:39:48+09:00",
+    "date": "2026-10-18",
+    "project": "workkit.irumx.app",
+    "result": "manual: CI failed, PR open https://github.com/hkjang/workkit.irumx.app/pull/7",
+    "outcome": "verify-failed",
+    "run_id": "2026-10-18-051849-workkit.irumx.app-improve",
+    "base_sha": "aed4f5dcd0001a1e779ba324f3fb3629bd486272",
+    "head_sha": "c3ef3d327bc7f976a7499d725caf387f0ad615bc",
+    "pr": "https://github.com/hkjang/workkit.irumx.app/pull/7",
+    "stages": {
+      "base": {
+        "state": "pinned",
+        "reason": "main@aed4f5d",
+        "at": "2026-10-18T05:18:55+09:00"
+      },
+      "autonomy": {
+        "state": "release",
+        "reason": "",
+        "at": "2026-10-18T05:18:55+09:00"
+      },
+      "scout": {
+        "state": "skipped",
+        "reason": "요청된 작업이 있어 정찰을 건너뛴다 (과제는 이미 정해져 있다)",
+        "at": "2026-10-18T05:18:55+09:00"
+      },
+      "verify": {
+        "state": "passed",
+        "reason": "검증 6개 통과 (auto)",
+        "at": "2026-10-18T05:36:05+09:00"
+      },
+      "review": {
+        "state": "approved",
+        "reason": "리뷰 승인 (risk=low)",
+        "at": "2026-10-18T05:39:05+09:00"
+      },
+      "pr": {
+        "state": "created",
+        "reason": "https://github.com/hkjang/workkit.irumx.app/pull/7",
+        "at": "2026-10-18T05:39:11+09:00"
+      },
+      "ci": {
+        "state": "failed",
+        "reason": "성공이 아닌 검사: check=failure · 실패한 검사: ? 잡: check ",
+        "at": "2026-10-18T05:39:47+09:00"
+      }
+    },
+    "campaign": "",
+    "autonomy": "release",
+    "arm": "no-repair",
+    "experiment": "roles-2026-09",
+    "engine": "claude",
+    "files": 2,
+    "additions": 26,
+    "deletions": 4,
+    "tests": 1,
+    "title": "파일 대조: 열 이름 고유화 접미사가 실제 열 이름과 겹치지 않게"
+  },
+  "stages": {
+    "base": {
+      "state": "pinned",
+      "reason": "main@aed4f5d",
+      "at": "2026-10-18T05:18:55+09:00"
+    },
+    "autonomy": {
+      "state": "release",
+      "reason": "",
+      "at": "2026-10-18T05:18:55+09:00"
+    },
+    "scout": {
+      "state": "skipped",
+      "reason": "요청된 작업이 있어 정찰을 건너뛴다 (과제는 이미 정해져 있다)",
+      "at": "2026-10-18T05:18:55+09:00"
+    },
+    "verify": {
+      "state": "passed",
+      "reason": "검증 6개 통과 (auto)",
+      "at": "2026-10-18T05:36:05+09:00"
+    },
+    "review": {
+      "state": "approved",
+      "reason": "리뷰 승인 (risk=low)",
+      "at": "2026-10-18T05:39:05+09:00"
+    },
+    "pr": {
+      "state": "created",
+      "reason": "https://github.com/hkjang/workkit.irumx.app/pull/7",
+      "at": "2026-10-18T05:39:11+09:00"
+    },
+    "ci": {
+      "state": "failed",
+      "reason": "성공이 아닌 검사: check=failure · 실패한 검사: ? 잡: check ",
+      "at": "2026-10-18T05:39:47+09:00"
+    }
+  },
+  "provenance": {
+    "model": "claude-opus-5",
+    "policy_version": "4a9e91ac72",
+    "prompts_hash": "ce085c79e18002e2",
+    "runner_version": "1bd5f0cd4d",
+    "base_sha": "aed4f5dcd0001a1e779ba324f3fb3629bd486272",
+    "head_sha": "c3ef3d327bc7f976a7499d725caf387f0ad615bc",
+    "pr": "https://github.com/hkjang/workkit.irumx.app/pull/7"
+  },
+  "verification": {
+    "runner": {
+      "source": "auto",
+      "commands": [
+        {
+          "cmd": "[ -d node_modules ] || npm ci --no-audit --no-fund",
+          "exit": 0,
+          "seconds": 0
+        },
+        {
+          "cmd": "npm test --silent",
+          "exit": 0,
+          "seconds": 2
+        },
+        {
+          "cmd": "[ -d node_modules ] || npm ci --no-audit --no-fund",
+          "exit": 0,
+          "seconds": 0
+        },
+        {
+          "cmd": "npm run typecheck --silent",
+          "exit": 0,
+          "seconds": 6
+        },
+        {
+          "cmd": "[ -d node_modules ] || npm ci --no-audit --no-fund",
+          "exit": 0,
+          "seconds": 0
+        },
+        {
+          "cmd": "npm run build --silent",
+          "exit": 0,
+          "seconds": 1
+        }
+      ]
+    },
+    "runner_gate": {
+      "ok": true,
+      "state": "verified",
+      "reason": "검증 6개 통과 (auto)"
+    },
+    "after_rebase": null,
+    "review": {
+      "verdict": "approve",
+      "reasons": [],
+      "notes": [
+        "범위 확인: 고정된 base 는 origin/main@aed4f5d 이고 이번 회차의 실제 변경은 c3ef3d3 한 커밋뿐이다(packages/tools/src/table/types.ts 7줄 + compare.test.ts 테스트 2개). 로컬 main ref 가 53ea324 로 뒤처져 있어 `git diff main...HEAD` 는 이미 머지된 v0.3.2·v0.3.3(DB 차단기·503) 까지 섞어 보여 준다 — 그쪽은 이번 심사 대상이 아니다. .github/workflows/check.yml 은 한 줄도 안 바뀐 것을 확인했다.",
+        "테스트가 실제로 변경 경로를 지난다(직접 검증): types.ts 만 origin/main 판으로 되돌려 `npx vitest run packages/tools/src/__tests__/compare.test.ts` 를 돌리니 새 테스트 2개가 정확히 실패했고(pairByName 이 [1,1] 대신 [2,1] 을 내놓음) 되돌리니 29/29 통과. 구현 노트의 증상과 실패 출력이 일치한다. 작업 트리는 원상 복구했다.",
+        "types.ts:98-110 알고리즘 검토: `used` 집합에 넣기 직전까지 while 로 빈 번호를 찾으므로 헤더 쌍별 유일성이 불변식으로 보장되고, n 이 단조 증가하며 used 가 유한(columnCount)이라 무한 루프가 없다. 이름 충돌이 없는 시트에서는 n 이 항상 1 이라 기존 출력과 완전히 동일 — 폭발 반경이 '원래 깨져 있던 입력' 으로 한정된다. 역순 입력('자산번호 (2)' 가 먼저, '자산번호' 가 두 번)도 손으로 따라가 유일함을 확인했다.",
+        "구현 노트의 보류 ②(pairByName 의 Map 덮어쓰기)는 이번 변경 뒤로는 도달 불가로 보인다: Table.headers 를 만드는 경로가 toTable 하나뿐이고(apps/web/src/tools/compare/compare.worker.ts:92, CompareTool.tsx:97 의 shell 은 워커가 돌려준 headers 를 그대로 재사용) engine.ts:116 의 `h.trim()` 도 toTable 이 이미 trim 한 base 를 쓰므로 trim 이 항등이다. 사용자가 헤더 이름을 손수 입력하는 경로는 찾지 못했다. 다만 engine.ts:116 자체는 여전히 방어가 없으니 앞으로 Table 을 다른 곳에서 조립하면 되살아난다.",
+        "보안·법무: 차단 소견 없음. 인증·권한·결제·마이그레이션·비밀값·의존성에 손대지 않았고, 신뢰할 수 없는 입력이 쿼리·명령·SSR 템플릿에 닿는 새 경로도 없다. 헤더 이름은 전부 브라우저 안에 머무는 사용자 파일 내용이라 개인정보를 새로 수집·저장·전송하지 않는다 — 목적·보존·접근 통제 질문이 새로 생기지 않는다.",
+        "작은 우려(차단 아님): packages/tools/src/project/sanitize.ts:130 이 저장 조건의 열 이름을 200자로 자른다. 196자 넘는 헤더에 ' (2)' 가 붙으면 applyPreset 의 이름 대조가 빗나갈 수 있는데, 이는 변경 전에도 긴 헤더에 똑같이 있던 성질이라 이번 회귀는 아니다.",
+        "작은 우려(차단 아님): 충돌 시트에서 이번 변경 이전에 저장해 둔 비교 조건은 '자산번호 (2)' 가 가리키던 열이 바뀔 수 있다. 다만 변경 전 그 이름은 두 열에 중복으로 붙어 애초에 어느 쪽을 가리키는지 정해져 있지 않았으므로, 깨진 동작이 결정적 동작으로 바뀐 것에 가깝다.",
+        "CI 는 이 세션에서도 1차 증거로 확인하지 못했다(GitHub 권한 없음). 대신 워크트리에서 `npm run check` 를 완주시켰다 — lint·typecheck 3개 패키지·vitest 11파일 137테스트 전부 통과. e2e/tools/ui/a11y 는 Docker·Playwright 의존이라 돌리지 않았고, 이 변경은 단위 시험으로 전부 덮인다."
+      ],
+      "risk": "low",
+      "blocking": []
+    },
+    "ci_gate": {
+      "ok": false,
+      "state": "failed",
+      "reason": "성공이 아닌 검사: check=failure",
+      "checks": 1,
+      "bad": 1
+    }
+  },
+  "release": {
+    "result": null,
+    "assets_sha256": []
+  },
+  "approval": null,
+  "usage": [
+    {
+      "ts": "2026-10-18T05:35:54+09:00",
+      "date": "2026-10-18",
+      "project": "workkit.irumx.app",
+      "phase": "improve",
+      "run_id": "2026-10-18-051849-workkit.irumx.app-improve",
+      "campaign": "",
+      "subtype": "success",
+      "engine": "claude",
+      "duration_ms": 1040228,
+      "num_turns": 60,
+      "cost_usd": 4.1131829999999985,
+      "input_tokens": 114,
+      "output_tokens": 29441,
+      "cache_read": 4767576,
+      "cache_create": 99280
+    },
+    {
+      "ts": "2026-10-18T05:39:05+09:00",
+      "date": "2026-10-18",
+      "project": "workkit.irumx.app",
+      "phase": "review",
+      "run_id": "2026-10-18-051849-workkit.irumx.app-improve",
+      "campaign": "",
+      "subtype": "success",
+      "engine": "claude",
+      "duration_ms": 179745,
+      "num_turns": 23,
+      "cost_usd": 1.1124939999999999,
+      "input_tokens": 26,
+      "output_tokens": 11116,
+      "cache_read": 661168,
+      "cache_create": 50388
+    }
+  ]
+}
