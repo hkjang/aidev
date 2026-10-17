@@ -1,11 +1,11 @@
 [
   {
-    "title": "MCP 정수 인자의 조용한 절삭·오해석 차단 (toInt 엄격화)",
+    "title": "bamboo_release_context: splitResultKey 해석 실패를 권한 제외(filteredCount)와 분리",
     "value": 4,
-    "risk": 2,
+    "risk": 1,
     "size": "S",
     "status": "done",
-    "note": "float64 소수부 절삭과 fmt.Sscanf 의 뒤따르는 문자 허용으로 buildNumber 가 조용히 다른 빌드로 해석됐다. 실수는 정수 표현 가능할 때만, 문자열은 strconv.Atoi 전체 일치일 때만 허용. 단위 테스트(args_test.go)와 실행기 통합 테스트 추가. 커밋 30928ef.",
+    "note": "analysis.go:257 이 planKey==\"\" 와 권한 불가를 같은 분기에서 c.Filtered++ 로 집계했다. filteredCount 계약(types.go:131)은 '요청자가 볼 수 없어 제외' 이므로 파싱 실패가 '권한 부족' 으로 오보고됐다. 경고로 분리하고 제외는 유지(fail-closed). 실패 재현 → 수정 → 되돌려 재실패까지 확인.",
     "updated": "2026-10-17"
   },
   {
@@ -13,8 +13,8 @@
     "value": 3,
     "risk": 2,
     "size": "S",
-    "status": "pending",
-    "note": "read.go:190,482 는 OptInt(\"start\"/\"limit\") 를 clamp 없이 Bamboo REST 로 그대로 넘긴다. 음수나 거대값이 Bamboo 측 오류/과다 응답을 유발할 수 있다. 다른 호출부는 모두 clamp() 로 감싸져 있어 여기만 예외다.",
+    "status": "rejected",
+    "note": "기각. read.go:190,482 가 OptInt 를 그대로 넘기지만 프로덕션 배선의 하위 계층이 이미 막는다: client.max() 가 0 이하를 PageSize 로, 500 초과를 500 으로 잘라내고 pageQuery() 는 start<=0 이면 start-index 를 아예 보내지 않는다. 실패하는 테스트를 만들 수 없어 가치 없음. Adapter 를 다른 구현으로 바꿀 때만 다시 볼 것.",
     "updated": "2026-10-17"
   },
   {
@@ -23,7 +23,7 @@
     "risk": 2,
     "size": "M",
     "status": "pending",
-    "note": "두 패키지 모두 [no test files]. 승인 상태 전이(셀프 승인 거부, 만료, 일회용 소진)는 통합 테스트로만 간접 확인된다. DB 의존이라 TEST_DATABASE_URL 필요. 도커로 임시 Postgres 를 띄우면 실제로 돌릴 수 있음이 이번 회차에 확인됐다.",
+    "note": "두 패키지 모두 [no test files]. 승인 상태 전이(셀프 승인 거부, 만료, 일회용 소진)가 통합 테스트로만 간접 확인된다. DB 의존이라 TEST_DATABASE_URL 필요 — 도커로 postgres:16-alpine 를 띄우면 실제로 돈다(이번 회차에서도 그렇게 돌렸다).",
     "updated": "2026-10-17"
   },
   {
@@ -32,25 +32,34 @@
     "risk": 1,
     "size": "S",
     "status": "pending",
-    "note": "chi, go-oidc, golang-jwt, uuid 가 직접 import 되는데 // indirect 로 표기돼 있다. go mod tidy 를 무심히 돌리면 diff 가 커지므로 의도적으로 한 회차를 써서 정리할 가치가 있다.",
+    "note": "chi, go-oidc, golang-jwt, uuid 가 직접 import 되는데 // indirect 로 표기돼 있다. -mod=mod 가 붙은 go 명령을 돌리면 자동 정리되며 diff 가 튀어 다른 회차의 작업 트리를 오염시킨다. 한 회차를 써서 정리할 가치가 있다.",
     "updated": "2026-10-17"
   },
   {
-    "title": "Args.OptBool 의 문자열 불리언 처리",
+    "title": "Args.OptBool 의 문자열 불리언 처리 명시",
     "value": 2,
     "risk": 1,
     "size": "S",
     "status": "pending",
-    "note": "OptBool 은 bool 타입만 받고 \"true\"/\"1\" 같은 문자열은 조용히 기본값으로 빠진다. Int 를 엄격화한 것과 대칭으로, 받아들일 범위를 명시하거나 최소한 스키마 설명에 적어야 한다. 다만 조용히 기본값으로 빠지는 것이 승인 플래그에서 fail-closed 쪽인지 먼저 확인할 것.",
+    "note": "OptBool 은 bool 타입만 받고 \"true\"/\"1\" 은 조용히 기본값으로 빠진다. 받아들일 범위를 명시하거나 최소한 스키마 설명에 적어야 한다. 승인 플래그에서 기본값으로 빠지는 것이 fail-closed 쪽인지 먼저 확인할 것.",
     "updated": "2026-10-17"
   },
   {
-    "title": "logmask 를 MCP 도구 인자 로깅 경로에도 적용했는지 점검",
+    "title": "approval.Arguments 평문 JSON 저장 경로에 logmask 적용 여부 점검",
     "value": 3,
     "risk": 2,
     "size": "S",
     "status": "pending",
-    "note": "approval.Arguments 가 DB 에 평문 JSON 으로 저장된다(approval.go:48-49, 114). 변수 allowlist 가 있어 비밀값은 막히지만, 감사 로그/승인 스냅샷 경로에 logmask 가 걸려 있는지 확인되지 않았다. 이번 회차에서는 범위 밖이라 보지 않았다.",
+    "note": "approval.go:48-49,114 에서 도구 인자가 평문 JSON 으로 DB 에 저장된다. 변수 allowlist 가 비밀값을 막지만 감사 로그·승인 스냅샷 경로에 logmask 가 걸려 있는지 확인되지 않았다.",
+    "updated": "2026-10-17"
+  },
+  {
+    "title": "CI 가 비공개 저장소에서 startup 실패하는 문제 — 저장소 밖 조치 필요",
+    "value": 5,
+    "risk": 1,
+    "size": "S",
+    "status": "rejected",
+    "note": "코드로 고칠 수 없어 기각(저장소 밖). 증거: 체크런 4개가 2~3초 만에 스텝 실행 전 실패(실패 단계 공란, 잡당 주석 2개), 로컬에서 4개 잡 전부 통과, 이 환경 저장소 28개의 공개/비공개와 CI 결과가 28/28 일치(비공개 10개 전부 startup 실패, 공개 18개 전부 스텝 실행), 쌍둥이 bbmcp 는 같은 분에 같은 액션 버전으로 통과. 즉 계정 Actions 분 소진/지출 한도 문제다. 사람이 결제 한도를 올리거나 저장소를 공개로 바꾸거나 self-hosted 러너를 붙여야 한다. **액션 버전 상향(checkout@v6/v7 등)은 반증됐으니 시도하지 말 것.**",
     "updated": "2026-10-17"
   }
 ]

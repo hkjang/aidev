@@ -1,7 +1,7 @@
 ---
 title: "review.yeopjari.bid — 자율 개선 이력"
 description: "review.yeopjari.bid: 자율 개선 회차 10회, 릴리즈 2건. 최근 릴리즈 없음."
-last_modified_at: 2026-10-17 08:51:24 +0900
+last_modified_at: 2026-10-17 09:27:17 +0900
 ---
 {% raw %}
 <script type="application/ld+json">
@@ -18,7 +18,7 @@ last_modified_at: 2026-10-17 08:51:24 +0900
   "name": "hkjang",
   "url": "https://github.com/hkjang"
  },
- "dateModified": "2026-10-17T08:51:24+09:00"
+ "dateModified": "2026-10-17T09:27:17+09:00"
 }
 </script>
 

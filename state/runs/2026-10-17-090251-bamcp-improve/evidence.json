@@ -1,0 +1,227 @@
+{
+  "run_id": "2026-10-17-090251-bamcp-improve",
+  "generated": "2026-10-17T09:27:14+09:00",
+  "run": {
+    "run_id": "2026-10-17-090251-bamcp-improve",
+    "project": "bamcp",
+    "kind": "improve",
+    "started": "2026-10-17T09:02:52+09:00",
+    "model": "claude-opus-5",
+    "policy_version": "4a9e91ac72",
+    "prompts_hash": "ce085c79e18002e2",
+    "runner_version": "1bd5f0cd4d",
+    "arm": "no-repair",
+    "experiment": "roles-2026-09",
+    "finished": "2026-10-17T09:27:13+09:00",
+    "outcome": "review-pending"
+  },
+  "record": {
+    "ts": "2026-10-17T09:27:14+09:00",
+    "date": "2026-10-17",
+    "project": "bamcp",
+    "result": "fix-round: review held, PR open https://github.com/hkjang/bamcp/pull/2",
+    "outcome": "review-pending",
+    "run_id": "2026-10-17-090251-bamcp-improve",
+    "base_sha": "70ee0f61f8e37a444aaeb6f84764244b68e0751c",
+    "head_sha": "77ccee71bc294d4c53a52ef83579d4bb2d91e1d2",
+    "pr": "https://github.com/hkjang/bamcp/pull/2",
+    "stages": {
+      "base": {
+        "state": "pinned",
+        "reason": "main@70ee0f6",
+        "at": "2026-10-17T09:02:56+09:00"
+      },
+      "autonomy": {
+        "state": "release",
+        "reason": "",
+        "at": "2026-10-17T09:02:57+09:00"
+      },
+      "scout": {
+        "state": "failed",
+        "reason": "과제서 없음 — 구현자가 직접 고른다",
+        "at": "2026-10-17T09:07:58+09:00"
+      },
+      "verify": {
+        "state": "passed",
+        "reason": "검증 5개 통과 (auto)",
+        "at": "2026-10-17T09:22:00+09:00"
+      },
+      "review": {
+        "state": "rejected",
+        "reason": "리뷰 거절: internal/tools/integration_test.go:637 `sources, _ := dataOf(res)[\"sources\"].([]any)` 는 존재하지 않는 필드를 읽는다. 핸들러가 내보내는 이름은 `sourceBuilds` 다(internal/tools/analysis.go:307; `\"sources\"` 는 다른 도구인 write.go:403 의 이름이다). 따라서 이 단언은 항상 nil/len 0 이고 영원히 실패할 수 없다 — 하필 이번 변경의 fail-closed 절반, 즉 '해석 못한 키는 여전히 결과에서 제외된다' 를 고정하는 유일한 단언이다. 실측 확인: (a) 원장의 `- 실패 재현:` 줄이 642·652 두 줄만 적고 637 은 없는 것이 이미 증거이고, (b) 637 을 `sourceBuilds` 로 한 단어만 바꿔도 테스트는 그대로 통과한다(DB 붙여 실행, 0.09s PASS) — 즉 가드가 틀린 것이 아니라 아예 없다. 지금은 숨은 버그가 없지만, 나중에 누가 경고 분기를 '잡 키를 플랜으로 해석해 넣어 주자' 로 바꾸면서 권한 검사를 빠뜨려도 이 테스트는 통과한다. 수정은 637 의 `\"sources\"` → `\"sourceBuilds\"` 한 단어.",
+        "at": "2026-10-17T09:27:05+09:00"
+      },
+      "pr": {
+        "state": "created",
+        "reason": "https://github.com/hkjang/bamcp/pull/2",
+        "at": "2026-10-17T09:27:11+09:00"
+      }
+    },
+    "campaign": "",
+    "autonomy": "release",
+    "arm": "no-repair",
+    "experiment": "roles-2026-09",
+    "engine": "claude",
+    "files": 2,
+    "additions": 68,
+    "deletions": 2,
+    "tests": 1,
+    "title": "fix: 해석 못한 원천 빌드 키를 권한 제외로 집계하지 않음"
+  },
+  "stages": {
+    "base": {
+      "state": "pinned",
+      "reason": "main@70ee0f6",
+      "at": "2026-10-17T09:02:56+09:00"
+    },
+    "autonomy": {
+      "state": "release",
+      "reason": "",
+      "at": "2026-10-17T09:02:57+09:00"
+    },
+    "scout": {
+      "state": "failed",
+      "reason": "과제서 없음 — 구현자가 직접 고른다",
+      "at": "2026-10-17T09:07:58+09:00"
+    },
+    "verify": {
+      "state": "passed",
+      "reason": "검증 5개 통과 (auto)",
+      "at": "2026-10-17T09:22:00+09:00"
+    },
+    "review": {
+      "state": "rejected",
+      "reason": "리뷰 거절: internal/tools/integration_test.go:637 `sources, _ := dataOf(res)[\"sources\"].([]any)` 는 존재하지 않는 필드를 읽는다. 핸들러가 내보내는 이름은 `sourceBuilds` 다(internal/tools/analysis.go:307; `\"sources\"` 는 다른 도구인 write.go:403 의 이름이다). 따라서 이 단언은 항상 nil/len 0 이고 영원히 실패할 수 없다 — 하필 이번 변경의 fail-closed 절반, 즉 '해석 못한 키는 여전히 결과에서 제외된다' 를 고정하는 유일한 단언이다. 실측 확인: (a) 원장의 `- 실패 재현:` 줄이 642·652 두 줄만 적고 637 은 없는 것이 이미 증거이고, (b) 637 을 `sourceBuilds` 로 한 단어만 바꿔도 테스트는 그대로 통과한다(DB 붙여 실행, 0.09s PASS) — 즉 가드가 틀린 것이 아니라 아예 없다. 지금은 숨은 버그가 없지만, 나중에 누가 경고 분기를 '잡 키를 플랜으로 해석해 넣어 주자' 로 바꾸면서 권한 검사를 빠뜨려도 이 테스트는 통과한다. 수정은 637 의 `\"sources\"` → `\"sourceBuilds\"` 한 단어.",
+      "at": "2026-10-17T09:27:05+09:00"
+    },
+    "pr": {
+      "state": "created",
+      "reason": "https://github.com/hkjang/bamcp/pull/2",
+      "at": "2026-10-17T09:27:11+09:00"
+    }
+  },
+  "provenance": {
+    "model": "claude-opus-5",
+    "policy_version": "4a9e91ac72",
+    "prompts_hash": "ce085c79e18002e2",
+    "runner_version": "1bd5f0cd4d",
+    "base_sha": "70ee0f61f8e37a444aaeb6f84764244b68e0751c",
+    "head_sha": "77ccee71bc294d4c53a52ef83579d4bb2d91e1d2",
+    "pr": "https://github.com/hkjang/bamcp/pull/2"
+  },
+  "verification": {
+    "runner": {
+      "source": "auto",
+      "commands": [
+        {
+          "cmd": "go build ./...",
+          "exit": 0,
+          "seconds": 1
+        },
+        {
+          "cmd": "go vet ./...",
+          "exit": 0,
+          "seconds": 1
+        },
+        {
+          "cmd": "go test ./...",
+          "exit": 0,
+          "seconds": 1
+        },
+        {
+          "cmd": "cd web && [ -d node_modules ] || npm ci --no-audit --no-fund",
+          "exit": 0,
+          "seconds": 0
+        },
+        {
+          "cmd": "cd web && npm run build --silent",
+          "exit": 0,
+          "seconds": 8
+        }
+      ]
+    },
+    "runner_gate": {
+      "ok": true,
+      "state": "verified",
+      "reason": "검증 5개 통과 (auto)"
+    },
+    "after_rebase": null,
+    "review": {
+      "verdict": "reject",
+      "reasons": [
+        "internal/tools/integration_test.go:637 `sources, _ := dataOf(res)[\"sources\"].([]any)` 는 존재하지 않는 필드를 읽는다. 핸들러가 내보내는 이름은 `sourceBuilds` 다(internal/tools/analysis.go:307; `\"sources\"` 는 다른 도구인 write.go:403 의 이름이다). 따라서 이 단언은 항상 nil/len 0 이고 영원히 실패할 수 없다 — 하필 이번 변경의 fail-closed 절반, 즉 '해석 못한 키는 여전히 결과에서 제외된다' 를 고정하는 유일한 단언이다. 실측 확인: (a) 원장의 `- 실패 재현:` 줄이 642·652 두 줄만 적고 637 은 없는 것이 이미 증거이고, (b) 637 을 `sourceBuilds` 로 한 단어만 바꿔도 테스트는 그대로 통과한다(DB 붙여 실행, 0.09s PASS) — 즉 가드가 틀린 것이 아니라 아예 없다. 지금은 숨은 버그가 없지만, 나중에 누가 경고 분기를 '잡 키를 플랜으로 해석해 넣어 주자' 로 바꾸면서 권한 검사를 빠뜨려도 이 테스트는 통과한다. 수정은 637 의 `\"sources\"` → `\"sourceBuilds\"` 한 단어."
+      ],
+      "notes": [
+        "프로덕션 변경(analysis.go:256-266) 자체는 건전하다. 직접 검증: `go build ./...`·`go vet ./internal/tools` 클린, 던져 쓰는 postgres 17 컨테이너를 띄워 `TEST_DATABASE_URL` 로 `go test ./... -count=1 -p 1` 전 패키지 통과(internal/tools 4.3s, skip 아님), 새 테스트는 0.17s PASS. analysis.go 만 main 버전으로 되돌리면 원장이 적은 것과 똑같은 두 줄(`filteredCount=1`, `경고가 없습니다: []`)로 FAIL — 인과 확인됨. `fmt` 는 이미 import 되어 있었고 제외 동작(fail-closed)은 유지된다.",
+        "security: 차단 아님. 새 경고가 원본 키 문자열을 요청자에게 노출하지만 같은 응답의 `\"release\": version` 이 이미 `planResultKeys` 전체를 그대로 직렬화해 돌려준다(internal/bamboo/adapter.go:220, analysis.go:306). 즉 신규 정보 노출 증가분이 없다. 권한 판정 경로·캐시·fail-closed 기본값은 건드리지 않았다.",
+        "security(참고, 공격 이득 미미): `planResultKey` 는 Bamboo 에서 `release.create` 권한만 있으면 임의 문자열로 정할 수 있다(이번 테스트의 seedVersion 이 바로 그렇게 한다). 그 문자열이 이제 데이터 필드가 아니라 게이트웨이가 쓴 한국어 문장 안에 끼어 모델에게 간다 — 채널 혼동(프롬프트 인젝션) 표면이 아주 조금 넓어진다. 결과 전체에 `trust: \"untrusted\"` 가 붙고 같은 값이 이미 `release.planResultKeys` 로도 가므로 증분은 작다. 다음 회차에서 경고에 들어가는 외부 문자열 길이 제한/정규화를 한 번 보면 좋다.",
+        "legal/privacy: 해당 없음. 새로 수집·저장·전송되는 개인정보가 없다(경고 본문은 빌드 키 문자열뿐, 생성자 사용자명 등은 추가되지 않음). 라이선스·의존성 변동도 없다(go.mod 무변경).",
+        "범위는 깨끗하다. 프로덕션 1파일 11줄, 나머지는 테스트. `env.mockURL` 추가는 테스트 전용이고 리팩터·포맷·의존성 갱신 섞임 없음. 되돌리기도 쉽다 — 마이그레이션·외부 상태·워크플로 변경 없음(워크플로는 한 줄도 안 건드렸다, 구현 노트대로).",
+        "적용 범위가 설명보다 좁다(코드 결함은 아님). 커밋 메시지는 '해석 못한 키' 라고 정확히 말하지만, 테스트 주석은 이를 '실제 Bamboo 가 주는 잡 단위 키' 로 일반화한다. 실제 Bamboo 의 잡 결과 키는 `PROJ-PLAN-JOB-5` 처럼 `-<번호>` 로 끝나므로 `splitResultKey`(analysis.go:401, `LastIndex(\"-\")` + 숫자 파싱)가 planKey=`PROJ-PLAN-JOB` 로 **파싱에 성공**하고, 새 경고 분기가 아니라 기존 `planVisible` → `Filtered++` 경로로 간다. 즉 구현자가 근거로 든 실세계 증상(원천 빌드가 조용히 빠지고 '권한 부족' 으로 오보고)은 이 변경으로 고쳐지지 않는다. 구현 노트도 실 Bamboo 키 형태는 확인 못 했다고 스스로 적었다 — 릴리즈 노트에 '해석 불가 키' 로만 좁혀 쓰고, 잡 단위 키 처리는 다음 회차 과제로 남길 것.",
+        "작업 트리의 `internal/webui/dist/index.html` 미커밋 수정(스크립트 해시 1줄)은 세션 시작 시점부터 있던 것으로 `main...HEAD` 에 포함되지 않는다. 이 PR 의 일부가 아니지만 커밋된 임베드 산출물이라 다른 세션이 흘린 것인지 확인해 두는 게 좋다.",
+        "CI 는 이 변경과 무관하게 실패할 것이라는 구현 노트의 예고를 검증하지 못했다(이 세션에 GitHub 권한 없음). 28/28 공개/비공개 상관 논증은 읽었을 뿐 재현하지 않았다."
+      ],
+      "risk": "low",
+      "blocking": []
+    },
+    "ci_gate": null
+  },
+  "release": {
+    "result": null,
+    "assets_sha256": []
+  },
+  "approval": null,
+  "usage": [
+    {
+      "ts": "2026-10-17T09:07:58+09:00",
+      "date": "2026-10-17",
+      "project": "bamcp",
+      "phase": "scout",
+      "run_id": "2026-10-17-090251-bamcp-improve",
+      "campaign": "",
+      "subtype": "success",
+      "engine": "claude",
+      "duration_ms": 308798,
+      "num_turns": 31,
+      "cost_usd": 1.8105985,
+      "input_tokens": 50,
+      "output_tokens": 19171,
+      "cache_read": 1428367,
+      "cache_create": 61689
+    },
+    {
+      "ts": "2026-10-17T09:21:49+09:00",
+      "date": "2026-10-17",
+      "project": "bamcp",
+      "phase": "improve",
+      "run_id": "2026-10-17-090251-bamcp-improve",
+      "campaign": "",
+      "subtype": "success",
+      "engine": "claude",
+      "duration_ms": 861985,
+      "num_turns": 79,
+      "cost_usd": 6.583190500000001,
+      "input_tokens": 152,
+      "output_tokens": 44254,
+      "cache_read": 8051301,
+      "cache_create": 145043
+    },
+    {
+      "ts": "2026-10-17T09:27:05+09:00",
+      "date": "2026-10-17",
+      "project": "bamcp",
+      "phase": "review",
+      "run_id": "2026-10-17-090251-bamcp-improve",
+      "campaign": "",
+      "subtype": "success",
+      "engine": "claude",
+      "duration_ms": 313454,
+      "num_turns": 32,
+      "cost_usd": 2.017787,
+      "input_tokens": 58,
+      "output_tokens": 19150,
+      "cache_read": 1753254,
+      "cache_create": 66212
+    }
+  ]
+}
