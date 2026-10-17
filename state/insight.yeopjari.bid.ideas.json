@@ -1,20 +1,20 @@
 [
   {
-    "title": "db-breaker 테스트의 벽시계 단정을 시도 횟수·드라이버 오류·차단기 상태로 바꾸기",
-    "value": 4,
+    "title": "main CI 복구: npm 내려받기 캐시(BlobNotFound)가 검사 잡을 깨지 않게 — setup-node cache: npm 을 continue-on-error 인 actions/cache restore+save 로 분리하고 키 이름공간 교체",
+    "value": 5,
     "risk": 2,
-    "size": "M",
+    "size": "S",
     "status": "done",
-    "note": "137520a. :127 의 50ms 는 삭제(차단기가 열린 뒤 I/O 없는 경로라 순수 CPU 시간이었고, 바로 위 dropped===tried 가 같은 것을 이미 증명), 나머지 3곳은 RETRY_BUDGET_MS=2500 을 이름으로 적은 BUDGET_CEILING_MS(=4×2500) 한 상수로 통일하고 주석에 '무엇의 상한인가' 를 명시. 같은 의도는 MOST_CONNECTS(4×3), held.size 증가, AppError.cause 의 CONNECTION_CLOSED/CONNECT_TIMEOUT, 차단기 거절은 cause 없음, retryAfter<=10 으로 옮겼다. 변이 3건(maxAttempts 4→8, retryAfter 단위 /1000→/100, isConnectionLost 에 CONNECT_TIMEOUT 추가)을 옛 파일은 전부 통과시키고 새 파일은 전부 잡는다 — 게이트가 조여졌다.",
+    "note": "ca7594b. 증거: 로그의 BOM+BlobNotFound+Time:...9857639Z = Azure Blob = Actions 캐시 서비스, 실패 step 이름 ''(이름 없는 step 은 checkout/setup-node/npm ci 뿐), lockfile resolved 278개 전부 registry.npmjs.org 라 이 잡에서 Azure Blob 경로는 캐시뿐, 키가 lockfile 해시라 같은 죽은 블롭을 매 실행 재요청(하루째 같은 실패). 검사는 하나도 끄지 않았다. 남은 미확인: 실제 GitHub 실행이 녹색이 되는지(푸시 권한 없음). 다음 회차에 CI 가 여전히 깨져 있으면 캐시 가설은 닫고 '잡 시작 전'(서비스 컨테이너 postgres:16-alpine 초기화·러너 할당)으로 넘어갈 것.",
     "updated": "2026-10-18"
   },
   {
-    "title": "CI 실패 원인 추적: 저장소 내용은 실행으로 배제됨 — 다음은 로그 접근부터",
+    "title": "CI 실패 원인 추적: 저장소 내용은 로컬 실행으로 배제됨 — 다음은 로그 접근부터",
     "value": 4,
     "risk": 1,
     "size": "S",
-    "status": "pending",
-    "note": "이번 회차에 601659d 에서 CI 의 모든 step 을 로컬 재현해 전부 통과시켰다(npm ci / check 109 / build / migrate / 서버 기동 / e2e 180-0 / screenshots 85), PR #5 머지 트리(cb269c5)도 별도 npm ci 후 check 121 통과. 따라서 저장소 내용 가설은 닫혔다. 남은 것은 저장소 밖: GitHub Actions 의 '작업 시작 전' 실패(서비스 컨테이너 postgres:16-alpine 초기화, 러너 할당, setup-node 의 npm 캐시). 세 번째로 같은 정적 분석을 올리지 말고, gh 인증이나 운영자에게 받은 로그 한 조각 없이는 코드를 고치지 말 것.",
+    "status": "done",
+    "note": "10-18 회차에 601659d 의 모든 step(npm ci/check/build/migrate/서버/e2e 180/screens 85)과 PR #5 트리(cb269c5, check 121)를 로컬에서 통과시켜 저장소 내용 가설을 닫았고, 이번 회차에 운영자가 준 로그 한 줄로 캐시 원인까지 좁혀 고쳤다. 같은 정적 분석을 다시 올리지 말 것.",
     "updated": "2026-10-18"
   },
   {
@@ -23,7 +23,7 @@
     "risk": 1,
     "size": "S",
     "status": "pending",
-    "note": "이번 회차 미재확인(10-17 회차에 grep 으로 호출처 0 확인). 지우는 쪽이 S: 라우트 응답 형태를 바꾸면 e2e 180개의 기대값이 걸린다. 클라이언트 쪽 204 캐시 무효화는 cb269c5 에서 이미 고쳐졌으니, 서버에서 안 쓸 것이면 지워 죽은 길을 없앤다.",
+    "note": "이번 회차 미재확인(10-17 에 grep 으로 호출처 0). 지우는 쪽이 S. 라우트 응답 형태를 바꾸면 e2e 180개 기대값이 걸리니 서버 쪽 죽은 길 제거까지만. 클라이언트 204 캐시 무효화는 cb269c5 에서 이미 고쳐졌다.",
     "updated": "2026-10-18"
   },
   {
@@ -32,7 +32,7 @@
     "risk": 2,
     "size": "S",
     "status": "pending",
-    "note": "PR #4(b55ab2d)가 download() 의 fetch 분기를 이미 고쳐 두었으니 머지 뒤에 할 것 — 지금 하면 같은 줄에서 충돌한다. 남은 차이: RequestOptions 를 받지 않아 signal·idempotency-key·accept 가 없고 성공 응답의 x-insight-stale 도 보지 않는다. request() 와 한 함수로 통합 금지(성공 경로가 blob 저장 vs JSON 파싱).",
+    "note": "PR #4(b55ab2d) 머지 뒤에 할 것 — 같은 줄을 건드린다. 남은 차이: RequestOptions 를 받지 않아 signal·idempotency-key·accept 가 없고 성공 응답의 x-insight-stale 도 보지 않는다. request() 와 한 함수로 통합 금지(성공 경로가 blob 저장 vs JSON 파싱).",
     "updated": "2026-10-18"
   },
   {
@@ -50,7 +50,7 @@
     "risk": 1,
     "size": "S",
     "status": "pending",
-    "note": "core 단위 테스트는 이 브랜치에서 여전히 6파일 109개(rules/vendor-postgres/totp/gateway-role/shared-db-guard/db-breaker). maskEmail 중심으로 좁히고 catalog 와 묶지 않는다.",
+    "note": "core 단위 테스트는 이 브랜치에서 7파일 111개(rules/vendor-postgres/totp/gateway-role/shared-db-guard/db-breaker/ci-gate). maskEmail 중심으로 좁히고 catalog 와 묶지 않는다.",
     "updated": "2026-10-18"
   },
   {
@@ -68,7 +68,7 @@
     "risk": 1,
     "size": "S",
     "status": "pending",
-    "note": "CI(check.yml)와 이번 회차 모두 npm ci --no-audit --fund=false 를 쓴다. README 본문은 이번에도 미확인.",
+    "note": "CI(check.yml)와 최근 회차 모두 npm ci --no-audit --fund=false 를 쓴다. README 본문은 이번에도 미확인.",
     "updated": "2026-10-18"
   },
   {
@@ -77,7 +77,7 @@
     "risk": 1,
     "size": "S",
     "status": "pending",
-    "note": "실측: main(601659d) 은 vitest 6파일 109개, PR #5(cb269c5) 는 7파일 121개. 고정 개수는 PR 이 머지될 때마다 낡으므로 개수 대신 검증 범위(린트·3 workspace 타입·단위·e2e 180·화면 85)를 기술하는 쪽이 오래 간다.",
+    "note": "실측: 이번 커밋에서 vitest 7파일 111개(직전 109개). 고정 개수는 머지마다 낡으므로 개수 대신 검증 범위(린트·3 workspace 타입·단위·e2e 180·화면 85)를 기술하는 쪽이 오래 간다.",
     "updated": "2026-10-18"
   },
   {
@@ -87,6 +87,24 @@
     "size": "M",
     "status": "pending",
     "note": "이번 회차 미확인. 월 제한 활성화 전 후순위. windowStart 라벨 변경 금지(DB 유일 키).",
+    "updated": "2026-10-18"
+  },
+  {
+    "title": "CI 의 Chromium·playwright 내려받기도 재시도 없이 한 번에 실패하는지 확인",
+    "value": 2,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "새 아이디어. `npx playwright install --with-deps chromium` 은 CDN·apt 를 동시에 쓰는 가장 긴 네트워크 step 인데 재시도가 없다. 다만 이번 BlobNotFound 와는 호스트가 다르고(cdn.playwright.dev) 어제 로컬 설치는 성공했다. 게이트(screenshots)는 그대로 두고 내려받기만 재시도하는 범위로 좁힐 것.",
+    "updated": "2026-10-18"
+  },
+  {
+    "title": "cache 키에 Node 메이저와 워크스페이스 lockfile 범위를 넣어 되살린 캐시의 오염 가능성 줄이기",
+    "value": 1,
+    "risk": 1,
+    "size": "S",
+    "status": "rejected",
+    "note": "새 아이디어였으나 기각: ~/.npm 은 내려받기 캐시라 Node 메이저와 무관하고, 지금 키(npm-1-<os>-<lockfile 해시>)로 충분하다. 키를 더 쪼개면 적중률만 떨어진다.",
     "updated": "2026-10-18"
   }
 ]
