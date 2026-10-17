@@ -271,3 +271,4 @@
 - 보류 아이디어: greeting 실패에 "첫 응답이 IMAP 환영 메시지가 아니다" 운영 힌트를 `syncHint` 에 추가(stage=greeting·protocol=imap·class=other 조합은 과대 길이 greeting에도 걸려 문구 정확도 재검토 필요, 가치 3/위험 2/S); POP3 retrBody 프레이밍 상한(PR #22/04b15be 반려 여부 미확인으로 동일 접근 착수 금지, 가치 4/위험 3/M); POP3/IMAP 명령 대기 중 context 취소 전파(다수 경로, 가치 3/위험 3/M); POP3 greeting 단일 행 수신량 상한(IMAP `readBoundedLine` 대비 상한 없음, 메모리 재현 미확인, 가치 3/위험 3/M); IMAP ListMailboxes 리터럴 폴더명(실제 wire 재현 미확인, 파서 통합 금지, 가치 2/위험 2/S).
 - 과제서: 차선 — 과제서의 "이번 선택"(greeting 예산/Timeout 메타데이터)은 PR #39로 닫힌 접근이라 재제출을 피하고, 같은 과제서가 pending으로 남긴 "알 수 없는 greeting 거부"를 택해 그 미확인 항목(유효 greeting 판정·대소문자 계약·실제 TCP 재현)을 모두 실행으로 닫았다.
 
+- 릴리즈: v0.25.9 (2026-10-17, run 2026-10-17-143844-postra-approve)
