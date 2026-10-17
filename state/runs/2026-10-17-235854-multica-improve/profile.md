@@ -1,0 +1,24 @@
+# multica 프로필 (2026-10-18)
+
+- 목적: 사람과 에이전트가 이슈 위에서 협업하는 작업 관리 플랫폼.
+- 스택: Go 백엔드(Chi, sqlc, WebSocket, PostgreSQL) + pnpm/turbo 모노레포의 TypeScript 프런트(Next.js 웹, Electron 데스크톱, Expo 모바일, Fumadocs 문서), 테스트는 vitest / go test / Playwright.
+- 구조:
+  - `server/` Go 백엔드. 핸들러는 `server/internal/handler/`, 요금·메트릭은 `server/internal/metrics/`, DB 픽스처는 `server/internal/testutil/`.
+  - `packages/core/` 헤드리스 로직·API 클라이언트·Query 훅·공유 Zustand 스토어(UI 라이브러리 금지).
+  - `packages/ui/` UI 프리미티브와 토큰(비즈니스 로직·core import 금지).
+  - `packages/views/` 웹/데스크톱 공유 페이지·컴포넌트(스토어 정의·next/*·react-router-dom 금지).
+  - `apps/web` Next.js, `apps/desktop` Electron, `apps/mobile` 독립 Expo 클라이언트, `apps/docs` Fumadocs, `apps/ui-lab` 디자인 워크벤치.
+  - 의존 방향은 `views -> core + ui`.
+- 빌드·테스트(저장소 루트):
+  - 프런트(모바일 제외): `pnpm typecheck`, `pnpm lint`, `pnpm test` — 모두 `turbo <task> --filter=!@multica/mobile`.
+  - Go: `make test`. 웹+백엔드 합산: `make check`. E2E: `pnpm exec playwright test`(느림, 환경 필요).
+  - 환경: `make up` / `make status` / `make down`(데이터 보존), `make destroy`(삭제). SQL 변경 후 `make sqlc`.
+  - 클린 체크아웃의 `pnpm install --frozen-lockfile` 은 1분+ 걸린다(1932 패키지).
+- 관례: 커밋은 영문 conventional commit + 이슈 키(`MUL-####`) 접두. 코드 주석은 영어이며 "왜"만 적는다. 마이그레이션은 외래키·캐스케이드 금지, 인덱스는 파일 하나당 `CREATE INDEX CONCURRENTLY` 한 문장. 지침 문서는 `AGENTS.md`(루트·모바일)와 `apps/docs/content/docs/developers/`.
+- 위험 구역: `server/internal/handler/`(UUID 출처별 파싱 규칙, 워크스페이스 스코프·멤버십 게이트), 마이그레이션, `.github/workflows/ci.yml`(turbo 글로벌 해시에 포함되어 바꾸면 전 태스크 캐시 무효), 요금표(`server/internal/metrics/pricing.go` ↔ `packages/views/runtimes/utils.ts` 가 서로 미러링이나 자동 검사 없음), 실제 에이전트 CLI 를 호출하는 테스트(기본 실행 금지).
+- 자주 깨지는 곳: 백엔드/프런트 요금표 단가 불일치(캐시 쓰기 단가 10배, deepseek 4배), 종결자 없는 모델 별칭 부분 문자열 매칭.
+- 검증 함정:
+  - **`pnpm test --silent` 는 현재 실패한다.** pnpm 이 스크립트 이름 뒤 인자를 그대로 turbo 에 넘기고 turbo 2.9.5 가 `unexpected argument '--silent'` 로 종료한다(테스트 0개 실행, exit 1). 자동 검증 러너가 이 형태를 쓴다.
+  - turbo 가 `test`/`typecheck` 결과를 캐시한다. 캐시 적중만 보고 "통과"로 판단하지 말 것(`--force` 로 확인).
+  - 루트 프런트 명령과 `make check` 는 모바일을 검증하지 않는다(모바일은 `apps/mobile/AGENTS.md` 의 별도 명령).
+  - 샌드박스에 따라 `pnpm` 실행 자체가 차단될 수 있다(2026-10-18 정찰 세션이 그랬다). 그럴 땐 이전 회차의 `verify.txt` 를 1차 증거로 쓸 것.

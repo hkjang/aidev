@@ -1,0 +1,25 @@
+{
+  "source": "auto",
+  "commands": [
+    {
+      "cmd": "[ -d node_modules ] || pnpm install --frozen-lockfile",
+      "exit": 0,
+      "seconds": 0
+    },
+    {
+      "cmd": "pnpm test --silent",
+      "exit": 0,
+      "seconds": 1
+    },
+    {
+      "cmd": "[ -d node_modules ] || pnpm install --frozen-lockfile",
+      "exit": 0,
+      "seconds": 0
+    },
+    {
+      "cmd": "pnpm run typecheck --silent",
+      "exit": 1,
+      "seconds": 0
+    }
+  ]
+}
