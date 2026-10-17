@@ -1,0 +1,81 @@
+release: moina v0.1.44
+
+v0.1.44 releases the admin.go storage_error observability fix merged after
+v0.1.43. admin.go held 25 `storage_error` 500 exits and every one called
+`writeError(w, 500, "storage_error", message)` while discarding the err it
+was holding. adminPutRoles is the worst case: five of its exits answer with
+the same "역할 정책을 저장할 수 없습니다", so an operator looking at that 500
+could not tell which of the five queries had been refused, let alone whether
+the cause was an exhausted connection pool, a constraint violation or a full
+disk.
+
+All 25 exits now go through the writeStorageError helper that v0.1.42
+introduced, so each leaves one line with error_code=storage_error, handler,
+cause_type and pg_code=<SQLSTATE or empty> alongside the existing request_id.
+The response is unchanged, and that was proven mechanically rather than by
+reading: the multiset of Korean string literals in
+`git show origin/main:admin.go` was compared against the current file and no
+literal present at origin/main is missing or altered. Unlike posts.go this
+file adds no literal either - none of these 25 exits folds two failures into
+one condition, so no message is written a second time by a branch split.
+tx.Commit was already separate at each of its three sites.
+
+The handler argument is the one error the compiler cannot catch, so it was
+not typed by hand. The enclosing function name was derived mechanically from
+the `^func ` boundaries and substituted, then the same derivation was re-run
+over all 30 calls in the file and reported zero mismatches - the 25 moved
+here plus the five resolveReport and adminResetPassword calls that earlier
+releases had already moved.
+
+Four exits could not be moved as they stood. adminListPosts, adminListReports,
+adminListRoles and adminListAudit discarded a `rows.Scan` error inline, and
+inside that if body err is the nil left by a successful Query, so passing it
+on would log cause_type="<nil>" and an empty pg_code - exactly the causeless
+500 this release exists to remove. Each now captures the error as
+`if scanErr := rows.Scan(...); scanErr != nil` and passes scanErr.
+adminListUsers passes the scanErr already in its scope rather than err, which
+the derivation determined rather than a reader. The cursor_error exits, the
+RowsAffected() == 0 404 not_found branches, the store.IsNotFound and
+store.IsConflict branches, the 409 super_admin_required branch and
+storage_error.go itself are untouched.
+
+Red was observed before the fix. With admin.go reverted to origin/main, the
+log assertion was added first to a storage-failure case in
+admin_roles_put_postgres_integration_test.go, which drives the real
+adminPutRoles path through a session cookie, CSRF and pgx, and four
+assertions failed on the missing "error_code":"storage_error",
+"handler":"adminPutRoles", "cause_type":"*pgconn.PgError" and
+"pg_code":"P0001" keys. The response assertions - 500, storage_error, the
+preserved "역할 정책을 저장할 수 없습니다" and the rollback that leaves no
+refused role row - passed in that same red run, and the 200 and 409
+super_admin_required subtests were green throughout, which separates the
+cause in the output: it is the absent observability, not the response. All
+three subtests pass after the move. The SQLSTATE P0001 that reconnaissance
+had left as an unverified guess is confirmed by the literal assertion
+passing, so the sentinel trigger does reach the innermost
+role_permissions INSERT. That trigger is keyed on the sentinel role name
+rather than on a permission value, because a permission has to clear
+permissionCatalog validation and rejecting a real permission globally would
+break the other packages that share one CI database. The 409
+super_admin_required contract had no test anywhere in the repository and is
+now fixed in the same file. Because the responses are unchanged,
+api/openapi.yaml keeps its 120 route contracts and the frontend, its
+readableError path and the browser E2E were not touched. The remaining 70
+storage_error exits - social (29), workflow (9), settings (9), auth (7),
+preferences (6), analytics (4), smtp (3), outbox (2) and oidc (1) - are left
+as a file-by-file follow-up.
+
+This commit carries the version bump across the existing 24 release files
+and updates the Korean README release paragraph. Existing PDF guides and
+screenshot binaries are unchanged, following the previous releases.
+
+Verified with make fmt, make check (runtime contract, 31 app pages,
+120 OpenAPI routes, brand contrast, Pages QA), strict screenshot Pages QA,
+go build, go test -race -count=1 with a throwaway PostgreSQL 16 and no
+skipped tests (45 top-level TestPostgreSQL cases and 3 TestStorageError
+cases), go vet, staticcheck, 250 frontend tests across 36 files, ESLint
+within its 40 warning budget (39 pre-existing warnings) and a v0.1.44
+production build. make image, make package and make verify-package were
+also run locally and the offline archive verified for tag, platform and
+labels. The tag workflow builds and verifies the image, runs runtime/browser
+smoke and publishes the single offline image asset.

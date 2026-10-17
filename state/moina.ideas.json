@@ -1,21 +1,12 @@
 [
   {
-    "title": "머지되지 못한 두 회차 커밋을 한 브랜치로 복원 — 7b0f70d(AuthContext.test.tsx 경합) + 238eff1(social.go storage_error 29곳 이관)",
-    "value": 5,
-    "risk": 1,
-    "size": "S",
-    "status": "done",
-    "note": "2026-10-08 구현 완료. cherry-pick 7b0f70d(블로커 먼저) → 프런트 검증 → cherry-pick 238eff1 순서로 담았고 네 파일이 원본과 byte-identical. origin/main..HEAD 가 정확히 두 커밋 4파일, 보호 경로 0건, 프로덕션 파일 1개(social.go). make image exit 0(Node 24 컨테이너 안 npm test 250/250 — 두 번 죽었던 그 단계), 호스트 npm test 연속 2회 통과, DSN 걸고 go test -race -v ./... 에서 --- FAIL 0줄 · --- SKIP 0줄 · TestPostgreSQL* PASS 45건, make check 120 route, make lint exit 0(39 warnings), make fmt 무변경. 응답 불변은 한글 리터럴 multiset(origin/main-only 0개, 분할로 늘어난 2개)과 ^func 경계 유도로 32개 호출 mismatch 0 으로 증명.",
-    "updated": "2026-10-08"
-  },
-  {
     "title": "admin.go 의 남은 storage_error 500 출구 25곳을 writeStorageError 로 이관",
     "value": 3,
     "risk": 1,
     "size": "M",
-    "status": "pending",
-    "note": "2026-10-08 다음 회차 1순위로 승격 추천. 이번 회차가 프런트 경합 블로커를 같은 머지 경로에 담았으므로 더는 image 잡에서 같은 이유로 죽지 않는다. 현재 트리 grep -c 로 25곳 확인되어 있고 admin_report_resolve_postgres_integration_test.go 에 로그 단언 배선이 이미 있어 red→green 수단이 갖춰져 있다. 이관 시 grep -n 'Commit(r.Context()) != nil' 로 합친 조건을 먼저 찾아 반드시 분할할 것(Commit 거절 시 err==nil 이라 cause_type \"<nil>\" 이 찍힌다).",
-    "updated": "2026-10-08"
+    "status": "done",
+    "note": "이번 회차 구현. 25곳 전부 이관(grep -c 0), 응답 불변을 한글 리터럴 multiset 비교로 증명(사라진 0·늘어난 0 — admin.go 는 tx.Commit 이 이미 분리돼 합친 조건 분할이 없었다), handler 는 ^func 경계에서 기계적으로 유도해 30개 호출 mismatch 0. rows.Scan 오류를 인라인에서 버리던 4곳은 scanErr 로 캡처했다(그대로 err 를 넘기면 cause_type:\"<nil>\"). adminPutRoles 용 sentinel 트리거 integration 테스트를 새로 넣어 red(로그 4단언만 FAIL, 응답 단언 PASS)→green 을 관측했다. 커밋 cd70245 + 08e782c.",
+    "updated": "2026-10-17"
   },
   {
     "title": "프런트 테스트 전반의 findBy 직후 비-DOM 단언 패턴 점검",
@@ -23,53 +14,35 @@
     "risk": 1,
     "size": "M",
     "status": "pending",
-    "note": "2026-10-08 가치 유지. 원인이 RTL asyncWrapper 의 단일 drain tick(setTimeout(0))과 React Scheduler setImmediate(check phase) 사이의 순서 미보장이라는 일반적 성질이므로 남은 35개 파일에도 같은 한 틱 의존이 있을 수 있다. 이번 회차가 알려진 사례 하나(AuthContext.test.tsx)를 머지 경로에 담았으니 그 다음이 나머지를 훑는 순서다. 조사 도구는 2026-10-06 회차가 만들었다: 테스트 전용 setup 파일에서 globalThis.setImmediate 를 5ms 늦추고 vitest.probe.config.ts 로 mergeConfig 해 setupFiles 에 추가(vitest CLI 에 --setupFiles 옵션은 없다). probe 는 커밋하지 말 것.",
-    "updated": "2026-10-08"
+    "note": "가치 유지, 이번 회차 미착수. 원인이 RTL asyncWrapper 의 단일 drain tick(setTimeout(0))과 React Scheduler setImmediate 사이의 순서 미보장이라는 일반적 성질이라 남은 35개 파일에 같은 한 틱 의존이 있을 수 있다. 증명에 make image 가 필요해 중단 위험이 가장 큰 과제다. 조사 도구는 2026-10-06 회차의 setImmediate 5ms probe(커밋 금지). 알려진 한 건의 고침은 origin/auto/2026-10-08-0138 에서 머지를 기다린다. 참고: 이 워크트리에는 frontend/node_modules 가 없어 npm ci 가 선행이다.",
+    "updated": "2026-10-17"
   },
   {
-    "title": "settings.go(9)+preferences.go(6)+analytics.go(4) 19곳 storage_error 이관",
+    "title": "settings.go(9)+preferences.go(6) 15곳 storage_error 이관",
     "value": 2,
     "risk": 2,
     "size": "M",
     "status": "pending",
-    "note": "2026-10-08 유지. 세 파일 모두 저장 실패 integration 테스트가 없어 새 테스트 파일과 새 sentinel BEFORE 트리거 설계가 필요해 admin.go 보다 위험이 높다. admin.go 다음에 고를 것.",
-    "updated": "2026-10-08"
+    "note": "admin.go 가 끝났으므로 이제 1순위 후보. 두 파일 모두 저장 실패 integration 테스트가 0개라 새 테스트 파일과 sentinel BEFORE 트리거 설계가 선행이어서 위험이 한 단계 높다. 이번 회차의 교훈: 트리거 키는 핸들러 검증을 통과해야 하는 값(권한 문자열 등)이 아니라 테스트가 자유롭게 고를 수 있는 식별자 컬럼에 걸어야 공유 DB 에서 안전하다. analytics.go(4)는 범위에서 빼 15곳으로 좁히는 것이 맞다.",
+    "updated": "2026-10-17"
   },
   {
-    "title": "blockUser 의 분할된 Commit 출구와 block/mute 라우트 전체가 integration 미커버",
+    "title": "workflow.go:202 의 합친 조건 'Exec 실패 || Commit 실패' 분리",
     "value": 2,
     "risk": 1,
     "size": "S",
     "status": "pending",
-    "note": "2026-10-08 전제가 이제 성립한다 — blockUser 의 합친 조건 분할이 238eff1 안에 있었고 이번 회차가 그것을 머지 경로에 담았다(이 브랜치의 social.go 에 분할 코드가 들어 있음을 리터럴 multiset +1 로 확인). blocks 테이블 BEFORE INSERT/DELETE sentinel 트리거로 follows DELETE 실패와 Commit 실패를 재현하면 끝. 이 브랜치가 머지된 뒤에 착수할 것.",
-    "updated": "2026-10-08"
+    "note": "남은 알려진 마지막 한 곳. Commit 거절 시 err==nil 이라 이관하면 cause_type:\"<nil>\" 이 찍힌다. 별도 회차로 뗄 가치는 낮고 workflow.go 의 storage_error 9곳 이관 과제에 흡수하는 것이 맞다. admin.go 에 대해서는 2026-10-17 에 해소 확인(:320·:408·:505 가 이미 분리돼 있었다).",
+    "updated": "2026-10-17"
   },
   {
-    "title": "main 에 반영되지 않은 과거 회차 커밋이 더 있는지 전수 확인",
-    "value": 3,
-    "risk": 1,
-    "size": "S",
-    "status": "pending",
-    "note": "2026-10-08 가치 유지(3). 최근 두 브랜치의 미반영 커밋(238eff1·7b0f70d)은 이번 회차가 복원해 소진했다. 남은 것은 2026-09-25 이전 auto/* 24개 브랜치의 전수 조사(git cherry origin/main <auto/*>)인데 그 시기 브랜치들은 이미 릴리즈를 거쳤으므로 수확이 적을 가능성이 높다. 주의: 이 워크트리의 로컬 main ref 는 낡았다(95255f3 = v0.1.28) — 판정은 반드시 origin/main 과 git merge-base --is-ancestor 로 할 것.",
-    "updated": "2026-10-08"
-  },
-  {
-    "title": "'Exec 실패 || Commit 실패' 한 조건으로 합친 500 출구를 나머지 파일에서도 분리",
+    "title": "admin 계열 integration 테스트의 라우트 커버리지 공백",
     "value": 2,
-    "risk": 1,
-    "size": "S",
+    "risk": 2,
+    "size": "M",
     "status": "pending",
-    "note": "2026-10-08 posts.go 2곳은 v0.1.43 으로 해결, social.go 2곳(blockUser·createMoim)은 이번 회차가 복원해 머지 경로에 담겼다. admin/settings/workflow/auth 등 나머지는 여전히 미조사. 별도 회차로 뗄 가치는 낮고 파일별 이관 과제에 흡수하는 것이 맞다.",
-    "updated": "2026-10-08"
-  },
-  {
-    "title": "adminResetPassword·changePassword·followTopic 출구의 로그를 integration 으로도 확인",
-    "value": 2,
-    "risk": 1,
-    "size": "S",
-    "status": "pending",
-    "note": "2026-10-08 유지. 실제 핸들러 경로 로그가 integration 으로 확인된 것은 resolveReport·updatePost·joinMoim·createMoim 넷이다(뒤 둘은 이번 회차가 복원). 같은 기법(Handler() 앞 slog.SetDefault + lockedBuffer, 배선 원본 posts_update_postgres_integration_test.go:108~112)을 password_session_revoke_… · topic_follow_… 에 넣으면 끝. 테스트 파일만 바뀌어 위험은 거의 없지만 세 출구가 한 줄 호출이라 가치가 낮다.",
-    "updated": "2026-10-08"
+    "note": "전제가 한 단계 좋아졌다 — 이번 회차가 admin_roles_put_postgres_integration_test.go 를 만들어 PUT /admin/roles 의 세션 row + 쿠키 + CSRF + roles:manage 셋업과 role_permissions sentinel 트리거 한 벌이 생겼다. 남은 미커버는 키 폐기(DELETE /admin/keys/{keyID})·사용자 추가/변경·감사 로그 조회다. 그 셋업을 복사해 라우트별로 쪼개는 후속으로 진행할 것.",
+    "updated": "2026-10-17"
   },
   {
     "title": "joinMoim·createReport·getMedia 의 Scan 오류 무시가 조회 실패를 404 로 감추는 것",
@@ -77,8 +50,8 @@
     "risk": 2,
     "size": "S",
     "status": "pending",
-    "note": "2026-10-08 유지. joinMoim 의 _ = Scan(&exists), createReport 의 세 _ = Scan(&exists), getMedia 의 err != nil || !owned. SELECT 실패는 sentinel BEFORE 트리거로 재현 불가라 전용 스키마 헬퍼가 선행. 대역 테스트로 때우지 않는다(운영자가 반복해 요구).",
-    "updated": "2026-10-08"
+    "note": "유지. admin.go 쪽 같은 종류 4곳(if rows.Scan(...) != nil)은 이번 회차에 scanErr 캡처로 해결됐다 — 그쪽은 500 으로 떨어지고 있어 404 로 감추지는 않았다. 이 항목의 나머지(SELECT 실패를 404 로 감추는 경로)는 전용 스키마 헬퍼가 선행이고, 대역 테스트로 때우지 않는다.",
+    "updated": "2026-10-17"
   },
   {
     "title": "전용 스키마를 쓰는 integration 테스트 헬퍼(SELECT 실패 재현 가능하게)",
@@ -86,17 +59,8 @@
     "risk": 3,
     "size": "M",
     "status": "pending",
-    "note": "2026-10-08 유지. 위 Scan 후보의 선행 조건. CI source 는 PostgreSQL 한 DB 를 네 패키지가 공유하므로 전역 스키마 변경이 위험하다. 설계 과제라 짧은 세션에 위험.",
-    "updated": "2026-10-08"
-  },
-  {
-    "title": "CI Go 테스트 실패 요약을 $GITHUB_STEP_SUMMARY 에 적기",
-    "value": 2,
-    "risk": 3,
-    "size": "S",
-    "status": "pending",
-    "note": "2026-10-08 가치 2·위험 3 유지. 최근 세 회차 모두 CI 로그 없이(또는 러너가 적재한 ci-failure-*.txt 만으로) 원인에 도달했다 — 이번 회차도 git 조회만으로 원인(미머지 커밋)을 특정했다. 즉 해결하려는 통증이 실제로는 작다. 반면 ci.yml 은 보호 경로에 가깝고 운영자가 '릴리즈·빌드 경로는 릴리즈까지 통과 확인'을 반복 요구해 비용이 크다. ci.yml:59 단계가 여전히 annotation 만 남기는지는 이번에도 미재독(미확인).",
-    "updated": "2026-10-08"
+    "note": "유지. 위 Scan 후보의 선행 조건. CI source 는 PostgreSQL 한 DB 를 네 패키지가 공유하므로 전역 스키마 변경이 위험하다 — 이번 회차도 그 제약 때문에 트리거 키를 role_name 으로 옮겼다. 설계 과제라 짧은 세션에 부적합.",
+    "updated": "2026-10-17"
   },
   {
     "title": "접근성 실패 catch 가 blocking 목록 없는 JSON 으로 덮어쓰는 문제",
@@ -104,8 +68,8 @@
     "risk": 2,
     "size": "S",
     "status": "pending",
-    "note": "2026-10-08 유지. 실제 Axe 실패 재현(make image + Playwright)이 선행이라 짧은 세션에 위험. 이번 회차 미조사.",
-    "updated": "2026-10-08"
+    "note": "유지, 이번 회차 미조사. 실제 Axe 실패 재현(make image + Playwright)이 선행이라 짧은 세션에 위험하다.",
+    "updated": "2026-10-17"
   },
   {
     "title": "e2e README 의 테스트 실행 순서 설명 정정 — package.json 이 정본",
@@ -113,25 +77,52 @@
     "risk": 1,
     "size": "S",
     "status": "pending",
-    "note": "2026-10-08 유지. 문서 한 곳 수정이라 위험은 거의 없지만 가치가 낮아 다른 과제의 끼워 넣기로 처리하는 것이 맞다.",
-    "updated": "2026-10-08"
+    "note": "유지. 문서 한 곳 수정이라 위험은 거의 없지만 가치가 낮아 다른 과제의 끼워 넣기로 처리하는 것이 맞다.",
+    "updated": "2026-10-17"
   },
   {
-    "title": "auto-improve: test: silent SSO 해제 단언이 passive effect 완료를 기다리게 합니다",
+    "title": "회차가 PR 전에 끊기는 것을 막는 '조기 커밋' 관례를 과제서 형식에 못박기",
     "value": 3,
-    "risk": 2,
-    "size": "M",
-    "status": "pending",
-    "updated": "2026-10-09",
-    "note": "https://github.com/hkjang/moina/pull/43 (PR 처리기가 3일 전에 더 진행할 수 없다고 판정했고(수정·심사를 2번 시도했지만 통과하지 못함) 그 뒤 사람 손이 닿지 않았습니다) 로 닫힘 — 다시 하려면 처음부터"
+    "risk": 1,
+    "size": "S",
+    "status": "done",
+    "note": "효과 확인됨. 이번 과제서가 '실행 순서 1단계가 끝나면 무조건 커밋' 을 처음 넣었고, 구현자가 그대로 따라 25곳 치환 직후 cd70245 를 커밋한 뒤 red 재현·전체 검증으로 넘어갔다. 결과적으로 중단에 대비한 PR 거리가 전 단계에서 확보됐고 회차가 완주했다(직전 회차는 같은 과제로 PR 전 중단). 저장소 코드 변경 0 — 과제서 형식 쪽 관례로 유지할 것.",
+    "updated": "2026-10-17"
   },
   {
-    "title": "auto-improve: fix: social.go의 storage_error 500 29곳이 버리던 pg 오류 원인을 운영자 로그에 남깁니다",
+    "title": "blockUser 의 분할된 Commit 출구와 block/mute 라우트 전체가 integration 미커버",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "전제가 아직 성립하지 않는다 — blockUser 의 합친 조건 분할은 origin/auto/2026-10-08-0138 안에 있고 그 브랜치는 여전히 미머지다(origin/main = c9bfca2, 2026-10-17 재확인). 그 브랜치가 머지된 뒤에 착수할 것. 지금 손대면 social.go 에서 충돌한다.",
+    "updated": "2026-10-17"
+  },
+  {
+    "title": "adminResetPassword·changePassword·followTopic 출구의 로그를 integration 으로도 확인",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "범위가 더 좁아졌다 — 이번 회차가 adminPutRoles 를 실제 핸들러 경로 로그 확인 목록에 더했다(기존: resolveReport·updatePost, 대기 브랜치: joinMoim·createMoim). 남은 세 출구는 한 줄 호출이라 가치가 낮다.",
+    "updated": "2026-10-17"
+  },
+  {
+    "title": "CI Go 테스트 실패 요약을 $GITHUB_STEP_SUMMARY 에 적기",
     "value": 3,
     "risk": 2,
-    "size": "M",
-    "status": "pending",
-    "updated": "2026-10-09",
-    "note": "https://github.com/hkjang/moina/pull/42 (PR 처리기가 3일 전에 더 진행할 수 없다고 판정했고(수정·심사를 2번 시도했지만 통과하지 못함) 그 뒤 사람 손이 닿지 않았습니다) 로 닫힘 — 다시 하려면 처음부터"
+    "size": "S",
+    "status": "rejected",
+    "note": "기각 유지. .github/workflows/* 는 운영자가 명시한 보호 경로이고, 실제 실패 출력으로 tee/pipefail 을 확인할 수단도 이 세션 환경에는 없다(gh 미인증).",
+    "updated": "2026-10-17"
+  },
+  {
+    "title": "과거 auto/* 브랜치의 미반영 커밋 전수 조사(git cherry origin/main)",
+    "value": 3,
+    "risk": 1,
+    "size": "S",
+    "status": "rejected",
+    "note": "기각 유지. 2026-10-08 회차가 알려진 미머지 두 커밋을 한 브랜치로 모아 제출했고, 운영자가 반복 재제출을 금지했다. 지금 필요한 것은 조사가 아니라 origin/auto/2026-10-08-0138 의 사람 머지다.",
+    "updated": "2026-10-17"
   }
 ]
