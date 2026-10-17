@@ -1,0 +1,8 @@
+## 2026-10-17
+- 선택: report 패키지 내보내기 안전성 — CSV 수식 주입 차단 + 파일명 UTF-8 절단 버그 + 첫 테스트 (가치 4 / 위험 2 / 작업량 S)
+- 결과: 성공
+- 요약: `report/findings.go` 의 `FindingsCSV` 가 Excel 용 BOM 을 붙여 내보내면서 점검 대상·LLM 이 좌우하는 이름·분류·개요·작업 설명을 중성화 없이 셀에 넣던 수식 주입 구멍을 `csvSafe`(아포스트로피 접두사)로 막고, `FindingFilename` 의 `name[:120]` 바이트 절단을 룬 경계 절단으로 고쳤다(120바이트 한도와 `.md` 를 절단 뒤에 붙이는 구조는 유지). 프로덕션 파일 1개 + 신규 테스트 1개 + 릴리스 워크플로 한 줄. 검증: `go test ./report` 통과, `go vet ./report` 무출력, `go build ./...` 성공, 릴리스 워크플로의 백엔드 테스트 목록 전체(`./cmd/bitex … ./report … ./traffic`) 13개 패키지 통과. `server`/`db`/`agent`/`identity` 는 PostgreSQL 이 없어 **미실행**(이번 변경은 `server` 를 건드리지 않음).
+- 실패 재현: `열 1 이 수식 문자로 시작한다: "=cmd|' /C calc'!A0"` / `severity="": 파일명이 유효한 UTF-8 이 아니다: "info_취약점발견제목…취약점\xeb.md"`, `severity="low": … "low_…취약점\xeb\xb0.md"` — 2바이트 깨진 꼬리 사례가 같이 나와서 `utf8.DecodeLastRuneInString` 한 번만으로는 부족하다는 것이 드러나 루프로 걷어내는 구현을 골랐다.
+- 보류 아이디어: ① enrich 패키지 순수 헬퍼 첫 테스트(3/2/S) ② `sevRank` 미등록 심각도가 0(critical)으로 정렬되는 문제 — 알 수 없는 값이 최상단에 오른다(3/2/S, 새로 발견) ③ `FindingFilename` 의 `name == ""` 대체 경로가 사실상 도달 불가(sev 기본값 `info` 와 ID 숫자가 항상 남는다) — 죽은 분기 정리 또는 의도 명시(1/1/S, 새로 발견) ④ FindingsMarkdown 의 LLM 생성 `f.Report` 본문 삽입 검토(2/3/M) ⑤ ZIP 엔트리 중복 이름 처리의 절단 상호작용 — 절단 시 ID 접미사가 먼저 사라져 서로 다른 발견 사항이 같은 base 로 수렴(2/2/S)
+- 과제서: 채택 — 두 결함 모두 코드에서 그대로 재현됐고 수용 기준대로 고쳤다. 단 수용 기준 3의 "빈 발견 사항에서 `FindingFilename` 이 `finding_<ID>.md` 를 낸다"는 현재 코드와 맞지 않다(`findingTitle` 기본값 `미분류` 와 `info_` 접두사가 남아 `info_미분류__42.md` 가 나오고, 그 대체 분기는 도달 불가) — 테스트는 실제 기본값을 고정하고 그 사실을 주석에 남겼다.
+

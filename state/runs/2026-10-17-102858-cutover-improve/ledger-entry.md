@@ -1,0 +1,10 @@
+## 2026-10-17
+- 선택: 직접 넣은 activity.json 의 부모 없는 행이 모든 상황판에서 조용히 사라지는 것 (가치 4 / 위험 2 / 작업량 S)
+- 결과: 성공
+- 요약: 복구 절차(ADMIN_GUIDE 5.4 `docker cp`)로 들어온 파일은 업로드 검증을 지나지 않는데, `lib/treeUtils.ts` `buildTree` 가 부모 행을 못 찾은 행을 버려 그 작업이 표준·전광판·관리자 어디에도 안 나왔다(콘솔에 없으니 지울 수도 없었다). 부모를 못 찾은 행과 순환으로 어느 최상위에서도 닿지 않는 행을 최상위로 올리고 `id` 없는 행만 건너뛰되, `placed` 로 같은 id 를 두 번 그리지 않게 했다. 프로덕션 1파일 + 단위 5건 + E2E 2건 + 가이드 1문단으로, 단위 113건·전체 E2E 50건·tsc/lint/build/diff 검사를 통과했고 수정을 되돌려 두 E2E 가 다시 실패하는 것으로 인과를 확인했다(커밋 1639123).
+- 실패 재현: 수정 전 `node --test lib/treeUtils.test.ts` → `# pass 14 / # fail 4`, `not ok 2 - 부모 행이 없는 행을 버리지 않고 최상위로 올린다` / `Expected values to be strictly deep-equal: - 'orphan',`. 같은 데이터를 실제 파일에 넣은 E2E 도 red: `waiting for getByText('부모 행이 빠진 세부 작업')` — 같은 파일의 상황판 제목과 형제 행은 보였으므로 화면까지 온 데이터에서 그 행만 빠진 것이다.
+- 보류 아이디어: level 50 부모 아래 추가 정책 정리(2/1/S) / 상태 전파를 treeUtils 로 옮겨 API 분기와 통일(3/2/M, ADMIN_GUIDE 4.3 의 "지연은 위로 전파되지 않는다" 가 의도된 계약임을 이번에 확인) / 중복 id 행을 조용히 한 줄로 합치지 않고 알리기(2/2/S, 신규) / fetchActivityData 비JSON·네트워크 실패 단위 보강(2/1/S) / README 화면별 갱신 주기 정정(2/1/S)
+- 과제서: 없음 — 이번 회차에는 정찰 과제서가 없어 절차 1~4를 직접 수행했다(프로필의 "이번 선택" 은 직전 회차 c20c037 로 이미 완료된 항목).
+- 검증: `npm run test:unit` 113 pass / 0 fail / 0 skipped(기준선 108 + 신규 5), `npx tsc --noEmit` exit 0, 산출물 정리 후 `npm run lint` exit 0, `PLAYWRIGHT_CHROMIUM_PATH=/usr/bin/google-chrome npm run test:e2e` 50 passed(1.4m, 재시도·skip 없음, 기준선 48 + 신규 2), `npm run build` exit 0, `git diff --check` exit 0. 전체 출력은 unit-red.log·unit-final.log·tsc-final.log·lint-final.log·e2e-red.log·e2e-revert-red.log·e2e-final.log·build-final.log 에 보존했다.
+- 인과 확인: 수정만 `git checkout -- lib/treeUtils.ts` 로 잠시 되돌려 같은 E2E 2건이 모두 `toBeVisible() failed` 로 재실패하는 것을 확인한 뒤 수정본을 복원했다(e2e-revert-red.log). 두 번째 E2E(콘솔에서 🗑로 지워 복구)는 행이 보이지 않으면 클릭할 수 없으므로 바뀐 경로를 지난다.
+- 범위·검증 한계: 저장·API·검증 상한·인증·메일·추적·배포는 건드리지 않았다. `readActivityData` 에 읽기 검증을 넣는 방향은 살아 있는 훈련을 전면 읽기 실패로 바꿀 수 있어 일부러 하지 않았고, 클라이언트 렌더 단계에서만 막았다. 중복 id 는 이전에 같은 행이 두 번 그려졌는데 이제 한 번만 그려진다(단위 1건으로 고정); 순환 데이터의 React 무한 재귀는 트리 단계에서 끊긴 것만 확인했고 브라우저에서 순환 파일을 따로 재현하지는 않았다. 이번 신규 E2E 는 격리된 `test-results/e2e-data/activity.json` 을 직접 쓰고 `afterAll` 에서 원본을 되돌리므로 운영 데이터와 무관하다.

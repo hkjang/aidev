@@ -1,0 +1,74 @@
+[
+  {
+    "title": "report 패키지 내보내기 안전성 — CSV 수식 주입 차단 + 파일명 UTF-8 절단 버그 + 첫 테스트",
+    "value": 4,
+    "risk": 2,
+    "size": "S",
+    "status": "done",
+    "note": "2026-10-17 구현. FindingsCSV 의 모든 셀을 csvSafe(아포스트로피 접두사)로 통과시켜 =/+/-/@/탭/CR 시작 값을 중성화. FindingFilename 의 name[:120] 바이트 절단을 룬 경계 절단으로 교체(120바이트 한도와 .md 후행 부착 구조 유지). report/findings_test.go 신규 6개 테스트. 릴리스 워크플로 백엔드 테스트 목록에 ./report 한 줄 추가. 커밋 a256112.",
+    "updated": "2026-10-17"
+  },
+  {
+    "title": "enrich 패키지 순수 헬퍼 첫 테스트",
+    "value": 3,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "enrich/enrich.go 의 extractTitle(248)/hostOf(256)/isBlank(264)/uniq(278)/Engine.onCooldown(162) 에 테스트가 전혀 없다. doDNS·doHTTP 는 네트워크·DB 의존이라 범위 밖. report 가 done 이 된 지금 테스트 공백이 남은 유일한 패키지. 주의: release.yml 의 go test 목록에 ./enrich 도 함께 추가해야 CI 에서 돈다(report 선례 참고).",
+    "updated": "2026-10-17"
+  },
+  {
+    "title": "report·enrich 를 CI 테스트 대상에 포함",
+    "value": 3,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "release.yml:59 에 ./report 는 2026-10-17 에 추가됐다. 남은 것은 ./enrich 뿐이고 그 패키지에 테스트가 생길 때 같이 넣으면 된다. scripts/test-integration.go 기본값(agent,db,server,identity)은 PG 필요 패키지 전용이므로 손댈 필요 없음. 사실상 위 enrich 항목에 흡수됨.",
+    "updated": "2026-10-17"
+  },
+  {
+    "title": "sevRank 미등록 심각도가 critical 로 정렬되는 문제",
+    "value": 3,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "새로 발견. report/report.go:46 의 sevRank 는 critical/high/medium/low/\"\" 만 담고, 맵 미스는 0 을 돌려주므로 'unknown'·'INFO'·'Critical' 같은 미등록·대문자 값이 critical 보다 앞(또는 동급)으로 정렬된다. sortFindingsForExport 와 Markdown 양쪽에 영향. 고치려면 sevRank 조회를 헬퍼로 감싸 미등록 값을 최하위로 보내고 소문자 정규화를 넣으면 되지만, sevRank/nz 는 findings.go·report.go 공유라 시그니처 변경 대신 새 헬퍼 추가 권장. DB 가 severity 를 제약하는지 먼저 확인할 것.",
+    "updated": "2026-10-17"
+  },
+  {
+    "title": "FindingFilename 의 빈 이름 대체 경로가 도달 불가",
+    "value": 1,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "새로 발견. report/findings.go 의 `if name == \"\" { name = finding_<ID> }` 는 실행되지 않는다 — sev 기본값 `info` 와 ID 숫자가 정규식·Trim 을 항상 통과하기 때문. 방어 코드로 남겨둘지, 주석으로 의도를 명시할지 결정 필요. 가치 낮음.",
+    "updated": "2026-10-17"
+  },
+  {
+    "title": "FindingsMarkdown 의 Report 본문 Markdown 삽입 검토",
+    "value": 2,
+    "risk": 3,
+    "size": "M",
+    "status": "pending",
+    "note": "report/findings.go 의 FindingsMarkdown·SingleFindingMarkdown 이 LLM 이 생성한 f.Report 를 Markdown 보고서에 그대로 이어 붙인다. 코드펜스 탈출이나 heading 깨짐이 가능하지만 Markdown 은 설계상 신뢰 텍스트를 담는 필드이고 올바른 중성화 방침을 정하려면 제품 판단이 필요하다. CSV 와 달리 실행 경로가 아니라 후순위.",
+    "updated": "2026-10-17"
+  },
+  {
+    "title": "ZIP 엔트리 중복 이름 처리의 절단 상호작용 점검",
+    "value": 2,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "server/finding_traffic_export.go:31-37 은 FindingFilename 결과를 used[base] 로 세어 중복 시 -2.md 를 붙인다. 파일명이 120바이트에서 잘리면 ID 접미사가 먼저 사라져 서로 다른 발견 사항이 같은 base 로 수렴한다. 2026-10-17 의 룬 경계 수정은 깨진 UTF-8 만 고쳤고 이 수렴 자체는 그대로다. ID 를 절단보다 뒤에 붙이는 설계로 바꾸면 해결되지만 파일명 형식이 바뀌므로 별 과제. 주의: server 테스트는 PostgreSQL 필요.",
+    "updated": "2026-10-17"
+  },
+  {
+    "title": "push/PR CI 신설",
+    "value": 5,
+    "risk": 4,
+    "size": "M",
+    "status": "rejected",
+    "note": "정찰이 기각. .github/workflows 에는 pages.yml 과 release.yml 뿐이라 일상 커밋이 아무 테스트도 거치지 않는다. 가치는 가장 크지만 PostgreSQL 서비스를 새로 엮고 보호 경로를 통째로 건드려야 해 자율 회차 범위를 넘는다 — 사람 판단에 남긴다.",
+    "updated": "2026-10-17"
+  }
+]

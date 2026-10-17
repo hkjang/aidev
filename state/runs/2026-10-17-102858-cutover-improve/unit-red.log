@@ -1,0 +1,258 @@
+TAP version 13
+# (node:1419151) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///home/hkjang/.cache/auto-improve-wt/cutover/lib/treeUtils.test.ts is not specified and it doesn't parse as CommonJS.
+# Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+# To eliminate this warning, add "type": "module" to /home/hkjang/.cache/auto-improve-wt/cutover/package.json.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: addActivity
+    # Subtest: 120자 ID 부모 아래 자식과 그 아래 손자를 추가해도 업로드 검증을 통과한다
+    ok 1 - 120자 ID 부모 아래 자식과 그 아래 손자를 추가해도 업로드 검증을 통과한다
+      ---
+      duration_ms: 1.305253
+      type: 'test'
+      ...
+    # Subtest: 입력과 기존 ID·순서를 유지하고 기본값의 자식을 배열 끝에 추가한다
+    ok 2 - 입력과 기존 ID·순서를 유지하고 기본값의 자식을 배열 끝에 추가한다
+      ---
+      duration_ms: 0.29099
+      type: 'test'
+      ...
+    # Subtest: 빈 배열에 최상위 작업을 추가하면 level 1과 기본값을 유지한다
+    ok 3 - 빈 배열에 최상위 작업을 추가하면 level 1과 기본값을 유지한다
+      ---
+      duration_ms: 0.099487
+      type: 'test'
+      ...
+    # Subtest: 기존 트리에 최상위 작업을 추가하면 level 1과 기본값을 유지한다
+    ok 4 - 기존 트리에 최상위 작업을 추가하면 level 1과 기본값을 유지한다
+      ---
+      duration_ms: 0.103578
+      type: 'test'
+      ...
+    # Subtest: 같은 시각에 최상위 작업을 연속 추가해도 ID가 다르다
+    ok 5 - 같은 시각에 최상위 작업을 연속 추가해도 ID가 다르다
+      ---
+      duration_ms: 0.240706
+      type: 'test'
+      ...
+    # Subtest: 같은 시각에 같은 부모 아래 작업을 연속 추가해도 ID가 다르다
+    ok 6 - 같은 시각에 같은 부모 아래 작업을 연속 추가해도 ID가 다르다
+      ---
+      duration_ms: 0.139951
+      type: 'test'
+      ...
+    1..6
+ok 1 - addActivity
+  ---
+  duration_ms: 2.755367
+  type: 'suite'
+  ...
+# Subtest: buildTree
+    # Subtest: 정상 트리의 부모-자식과 배열 순서를 유지하고 입력을 바꾸지 않는다
+    ok 1 - 정상 트리의 부모-자식과 배열 순서를 유지하고 입력을 바꾸지 않는다
+      ---
+      duration_ms: 0.296739
+      type: 'test'
+      ...
+    # Subtest: 부모 행이 없는 행을 버리지 않고 최상위로 올린다
+    not ok 2 - 부모 행이 없는 행을 버리지 않고 최상위로 올린다
+      ---
+      duration_ms: 0.781688
+      type: 'test'
+      location: '/home/hkjang/.cache/auto-improve-wt/cutover/lib/treeUtils.test.ts:113:3'
+      failureType: 'testCodeFailure'
+      error: |-
+        Expected values to be strictly deep-equal:
+        + actual - expected
+        
+          [
+            'net',
+        -   'orphan',
+            'vlan'
+          ]
+        
+      code: 'ERR_ASSERTION'
+      name: 'AssertionError'
+      expected:
+        0: 'net'
+        1: 'orphan'
+        2: 'vlan'
+      actual:
+        0: 'net'
+        1: 'vlan'
+      operator: 'deepStrictEqual'
+      stack: |-
+        TestContext.<anonymous> (file:///home/hkjang/.cache/auto-improve-wt/cutover/lib/treeUtils.test.ts:118:12)
+        Test.runInAsyncScope (node:async_hooks:214:14)
+        Test.run (node:internal/test_runner/test:1047:25)
+        Suite.processPendingSubtests (node:internal/test_runner/test:744:18)
+        Test.postRun (node:internal/test_runner/test:1173:19)
+        Test.run (node:internal/test_runner/test:1101:12)
+        async Promise.all (index 0)
+        async Suite.run (node:internal/test_runner/test:1442:7)
+        async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+      ...
+    # Subtest: parentId 가 순환하는 행도 트리에 한 번씩 남는다
+    not ok 3 - parentId 가 순환하는 행도 트리에 한 번씩 남는다
+      ---
+      duration_ms: 0.291326
+      type: 'test'
+      location: '/home/hkjang/.cache/auto-improve-wt/cutover/lib/treeUtils.test.ts:126:3'
+      failureType: 'testCodeFailure'
+      error: |-
+        Expected values to be strictly deep-equal:
+        + actual - expected
+        
+          [
+        -   'a',
+        -   'b',
+            'ok'
+          ]
+        
+      code: 'ERR_ASSERTION'
+      name: 'AssertionError'
+      expected:
+        0: 'a'
+        1: 'b'
+        2: 'ok'
+      actual:
+        0: 'ok'
+      operator: 'deepStrictEqual'
+      stack: |-
+        TestContext.<anonymous> (file:///home/hkjang/.cache/auto-improve-wt/cutover/lib/treeUtils.test.ts:131:12)
+        Test.runInAsyncScope (node:async_hooks:214:14)
+        Test.run (node:internal/test_runner/test:1047:25)
+        Suite.processPendingSubtests (node:internal/test_runner/test:744:18)
+        Test.postRun (node:internal/test_runner/test:1173:19)
+        Test.run (node:internal/test_runner/test:1101:12)
+        async Suite.processPendingSubtests (node:internal/test_runner/test:744:7)
+      ...
+    # Subtest: 중복 id 는 한 번만 그린다
+    not ok 4 - 중복 id 는 한 번만 그린다
+      ---
+      duration_ms: 0.368225
+      type: 'test'
+      location: '/home/hkjang/.cache/auto-improve-wt/cutover/lib/treeUtils.test.ts:134:3'
+      failureType: 'testCodeFailure'
+      error: |-
+        Expected values to be strictly deep-equal:
+        + actual - expected
+        
+          [
+            'x',
+        +   'x'
+          ]
+        
+      code: 'ERR_ASSERTION'
+      name: 'AssertionError'
+      expected:
+        0: 'x'
+      actual:
+        0: 'x'
+        1: 'x'
+      operator: 'deepStrictEqual'
+      stack: |-
+        TestContext.<anonymous> (file:///home/hkjang/.cache/auto-improve-wt/cutover/lib/treeUtils.test.ts:137:12)
+        Test.runInAsyncScope (node:async_hooks:214:14)
+        Test.run (node:internal/test_runner/test:1047:25)
+        Suite.processPendingSubtests (node:internal/test_runner/test:744:18)
+        Test.postRun (node:internal/test_runner/test:1173:19)
+        Test.run (node:internal/test_runner/test:1101:12)
+        async Suite.processPendingSubtests (node:internal/test_runner/test:744:7)
+      ...
+    # Subtest: 행 하나가 객체가 아니어도 나머지 행으로 트리를 만든다
+    not ok 5 - 행 하나가 객체가 아니어도 나머지 행으로 트리를 만든다
+      ---
+      duration_ms: 0.110565
+      type: 'test'
+      location: '/home/hkjang/.cache/auto-improve-wt/cutover/lib/treeUtils.test.ts:140:3'
+      failureType: 'testCodeFailure'
+      error: "Cannot read properties of null (reading 'id')"
+      code: 'ERR_TEST_FAILURE'
+      name: 'TypeError'
+      stack: |-
+        file:///home/hkjang/.cache/auto-improve-wt/cutover/lib/treeUtils.ts:8:17
+        Array.forEach (<anonymous>)
+        buildTree (file:///home/hkjang/.cache/auto-improve-wt/cutover/lib/treeUtils.ts:7:14)
+        TestContext.<anonymous> (file:///home/hkjang/.cache/auto-improve-wt/cutover/lib/treeUtils.test.ts:148:34)
+        Test.runInAsyncScope (node:async_hooks:214:14)
+        Test.run (node:internal/test_runner/test:1047:25)
+        Suite.processPendingSubtests (node:internal/test_runner/test:744:18)
+        Test.postRun (node:internal/test_runner/test:1173:19)
+        Test.run (node:internal/test_runner/test:1101:12)
+        async Suite.processPendingSubtests (node:internal/test_runner/test:744:7)
+      ...
+    1..5
+not ok 2 - buildTree
+  ---
+  duration_ms: 2.036415
+  type: 'suite'
+  location: '/home/hkjang/.cache/auto-improve-wt/cutover/lib/treeUtils.test.ts:98:1'
+  failureType: 'subtestsFailed'
+  error: '4 subtests failed'
+  code: 'ERR_TEST_FAILURE'
+  ...
+# Subtest: collectDescendantIds
+    # Subtest: parentId 관계를 따라 대상과 모든 하위를 모은다
+    ok 1 - parentId 관계를 따라 대상과 모든 하위를 모은다
+      ---
+      duration_ms: 0.122389
+      type: 'test'
+      ...
+    # Subtest: 없는 id 는 자기 자신만 돌려준다
+    ok 2 - 없는 id 는 자기 자신만 돌려준다
+      ---
+      duration_ms: 0.031505
+      type: 'test'
+      ...
+    # Subtest: parentId 가 순환해도 무한루프 없이 끝난다
+    ok 3 - parentId 가 순환해도 무한루프 없이 끝난다
+      ---
+      duration_ms: 0.032732
+      type: 'test'
+      ...
+    1..3
+ok 3 - collectDescendantIds
+  ---
+  duration_ms: 0.237601
+  type: 'suite'
+  ...
+# Subtest: deleteActivity
+    # Subtest: 초기 데이터에서 "2" 를 지우면 2 와 2-1~2-4 만 빠지고 나머지 15개는 남는다
+    ok 1 - 초기 데이터에서 "2" 를 지우면 2 와 2-1~2-4 만 빠지고 나머지 15개는 남는다
+      ---
+      duration_ms: 0.748389
+      type: 'test'
+      ...
+    # Subtest: id 접두사가 다른 임의 id 트리에서도 parentId 관계로 3단 하위까지 지운다
+    ok 2 - id 접두사가 다른 임의 id 트리에서도 parentId 관계로 3단 하위까지 지운다
+      ---
+      duration_ms: 0.104082
+      type: 'test'
+      ...
+    # Subtest: id 가 "1-" 로 시작해도 parentId 가 다르면 "1" 삭제 때 남는다
+    ok 3 - id 가 "1-" 로 시작해도 parentId 가 다르면 "1" 삭제 때 남는다
+      ---
+      duration_ms: 0.061782
+      type: 'test'
+      ...
+    # Subtest: 없는 id 를 지우면 아무것도 바뀌지 않는다
+    ok 4 - 없는 id 를 지우면 아무것도 바뀌지 않는다
+      ---
+      duration_ms: 0.027508
+      type: 'test'
+      ...
+    1..4
+ok 4 - deleteActivity
+  ---
+  duration_ms: 1.005042
+  type: 'suite'
+  ...
+1..4
+# tests 18
+# suites 4
+# pass 14
+# fail 4
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 84.660318

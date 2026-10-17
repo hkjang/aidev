@@ -1,0 +1,22 @@
+# confmcp 프로필 (2026-10-17)
+- 목적: Confluence 7.2.0 앞에 두는 MCP 게이트웨이. 사용자 신원·권한·정책·승인을 거쳐서만 문서를 읽고 쓰게 한다.
+- 스택: Go 1.24(net/http + chi + pgx/v5), PostgreSQL 16, 프런트는 web/ (Node 22 + Vite, npm run check/build), 배포는 Dockerfile + deploy/.
+- 구조:
+  - `cmd/server` — 시작과 구성.
+  - `internal/mcp` — /mcp Streamable HTTP 전송(server.go 397줄, jsonrpc.go). GET=SSE 킵얼라이브, POST=JSON-RPC(단건·배치), DELETE=세션 종료. 단위 테스트 없음.
+  - `internal/tools` — MCP 도구 표면과 파이프라인(identity → requester permission → policy → approval → idempotent write → verification). args.go 가 인자 강제 변환을 담당.
+  - `internal/auth`·`apikey`·`identity`·`oauthserver` — 세션 로그인, API 키, Confluence 사용자 매핑, MCP OAuth 인가 서버. `Identity.Principal` 이 tools.Principal 을 만들고 UserID 를 항상 채운다.
+  - `internal/api` — 콘솔·관리자 REST(`/api`, `/api/admin`). 관리자 세션 목록은 admin.go:79 → admin_users.go:276.
+  - `internal/confluence` — Adapter 인터페이스와 7.2.0 REST 클라이언트, 기능 탐지.
+  - `internal/policy`·`permission`·`approval`·`audit` — 공간·트리·유형 정책, 플러그인/위임 권한, 쓰기 승인, 감사 로그.
+  - `internal/database/migrations` — 번호 붙은 단일 방향 SQL(`0001_init.sql`).
+  - `hack/` — mockconfluence(모의 Confluence), e2e/e2e_test.go(`-tags e2e`), seed.sh, 스크린샷 도구. `docs/` 는 GitHub Pages 정적 HTML.
+- 빌드·테스트 (CI 와 동일: .github/workflows/ci.yml):
+  - `go build ./...`, `go vet ./...`
+  - `TEST_DATABASE_URL=postgres://confmcp:confmcp@localhost:5432/confmcp_test?sslmode=disable go test ./... -count=1 -p 1` (DB 필요, `-p 1` 필수)
+  - `scripts/dev.sh up` → `CONFMCP_URL=http://127.0.0.1:18088 MOCK_CONFLUENCE=http://127.0.0.1:18090/confluence go test -tags e2e -count=1 -v ./hack/e2e` (전체 약 34초, 스택 기동 포함하면 수 분)
+  - `cd web && npm ci && npm run check && npm run build`; 로컬에 Go 가 없으면 `scripts/go.sh test ./...`
+- 관례: 커밋 메시지는 한국어(`fix:`/`feat:`/`docs:`/`chore:` 접두사). 코드 주석은 영어, 사용자용 문자열·에러 메시지는 한국어. 설정은 DB 의 settings.Store 를 통해 읽는다. 마이그레이션은 `internal/database/migrations/NNNN_*.sql` 추가(기존 파일 수정 금지). 문서는 README.md + docs/*.html(Pages).
+- 위험 구역: `internal/auth`·`apikey`·`oauthserver`(인증·토큰), `internal/approval`(쓰기 승인 해시 — 인자 정규화를 바꾸면 승인 바인딩이 깨진다), `internal/database/migrations`(일방향), `internal/policy`·`permission`(권한 판정), `.github/workflows`.
+- 자주 깨지는 곳: 텍스트 치환의 공백 정규화(2026-10-08 회차: TrimSpace 가 검색 문자열을 바꿔 다른 위치를 치환, 승인 해시에도 미반영). 인자 강제 변환(args.go)이 여러 도구의 서로 다른 계약을 한 함수로 처리한다 — 넓히면 다른 도구가 같은 값을 다르게 읽는다.
+- 검증 함정: DB 없는 환경에서는 다수 테스트가 건너뛰어 녹색으로 보인다 — `TEST_DATABASE_URL` 을 반드시 세팅. e2e 는 `-tags e2e` 가 없으면 컴파일조차 되지 않고, 기동된 confmcp + mockconfluence(포트 18088/18090)와 샘플 데이터(seed)에 의존한다. MCP 는 기본 분당 120 요청 제한이 있어 e2e 헬퍼가 호출 사이 500ms 를 잔다 — 새 테스트도 같은 간격을 지켜야 한다. README.md:165 와 docs/guide-admin.html:758 이 안내하는 `hack/e2e.sh` 는 존재하지 않는다.

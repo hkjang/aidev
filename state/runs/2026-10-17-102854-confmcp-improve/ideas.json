@@ -1,0 +1,65 @@
+[
+  {
+    "title": "MCP 세션 종료의 인증과 소유자 검증",
+    "value": 4,
+    "risk": 2,
+    "size": "M",
+    "status": "done",
+    "note": "904b775. DELETE /mcp 가 PrincipalFor 를 호출하도록 하고 closeSession 의 UPDATE 를 WHERE id=$1 AND (user_id=$2 OR (user_id IS NULL AND username=$3)) 로 좁혔다. 열거 오라클 방지로 없는/타인 세션 모두 204. e2e TestMCPSessionCloseRequiresOwner 가 미인증·타인·본인 세 경우를 관리자 API 의 closed_at 로 검증한다.",
+    "updated": "2026-10-17"
+  },
+  {
+    "title": "GET /mcp 스트림의 last_seen_at 갱신 누락",
+    "value": 3,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "handleGet(server.go:72- 현재 기준)은 touchSession 을 호출하지 않아 장기 SSE 연결만 유지하는 세션의 last_seen_at 이 멈춘다. admin.go:99 의 '1시간 내 활성 세션' 집계와 confmcp_mcp_sessions_active 지표가 실제보다 작게 나온다. 이번 회차 차선 후보였다. 다음 회차 1순위 추천 — 이번 변경으로 e2e 에 mcpInitialize 헬퍼가 생겨 세션 수명 검증이 쉬워졌다.",
+    "updated": "2026-10-17"
+  },
+  {
+    "title": "MCP 정수 인자의 소수·접미 문자열 거부",
+    "value": 3,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "args.go:105-124 toInt 가 float64 를 절삭하고 Sscanf(\"%d\") 가 '12abc' 를 12 로 받는다. 호출처가 expectedVersion·pagination 등 서로 다른 계약으로 갈려 있어 toInt 한 곳을 넓게 조이면 다른 계약이 깨진다 — 운영자 지침(파서는 통합 말고 좁히기)대로 호출별로 나눠야 해서 S 로는 안 끝날 소지가 있다.",
+    "updated": "2026-10-17"
+  },
+  {
+    "title": "MCP 요청 본문 크기 초과의 명시적 거부",
+    "value": 3,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "handlePost(server.go:103 현재 기준)의 io.LimitReader(r.Body, 8<<20) 는 8MiB 뒤를 읽지 않아 잘린 JSON 을 파싱 오류로만 알린다. 유효 JSON 접두사 + 초과 데이터는 조용히 수용될 수 있다. 1바이트 더 읽어 초과를 구분하고 413 으로 답하는 것이 최소 변경.",
+    "updated": "2026-10-17"
+  },
+  {
+    "title": "문서의 존재하지 않는 e2e 실행 명령 수정",
+    "value": 3,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "README.md:165 와 docs/guide-admin.html:758 이 hack/e2e.sh 를 안내하지만 hack/ 에는 e2e/e2e_test.go 만 있다. 실제 명령은 CONFMCP_URL=... MOCK_CONFLUENCE=... go test -tags e2e -count=1 -v ./hack/e2e (이번 회차에 이 명령으로 실제 실행 확인). 문서만 바꾸면 테스트로 증명할 것이 없어 단독 회차로는 약하다 — 다른 과제에 묶어 처리 권장.",
+    "updated": "2026-10-17"
+  },
+  {
+    "title": "internal/mcp 패키지의 단위 테스트 부재",
+    "value": 3,
+    "risk": 1,
+    "size": "M",
+    "status": "pending",
+    "note": "internal/mcp 에 *_test.go 가 하나도 없고 jsonrpc 파싱·배치 처리·메서드 라우팅이 e2e 로만 덮인다. Server 가 pgxpool 과 settings.Store 를 직접 들고 있어 직접 주입 테스트는 운영자 지침(프로덕션 배선 통과 증명)과 어긋날 소지가 있다 — jsonrpc.go 의 순수 파싱 부분으로 좁히는 것이 현실적.",
+    "updated": "2026-10-17"
+  },
+  {
+    "title": "로컬 gofmt(go1.26)와 저장소 포맷 불일치",
+    "value": 2,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "신규. 이번 회차 환경의 go1.26.7 gofmt 가 기존 파일 19개를 재포맷 대상으로 보고한다(internal/api/*, internal/tools/*, internal/confluence/* 등). CI 는 go-version 1.24 이고 gofmt 검사 단계가 없어 지금은 깨지지 않는다. 손대면 무관한 파일 19개가 diff 에 들어와 파일 수 규칙과 충돌하므로 이번엔 건드리지 않았다. CI 의 Go 를 올릴 때 한 번에 처리할 사안.",
+    "updated": "2026-10-17"
+  }
+]
