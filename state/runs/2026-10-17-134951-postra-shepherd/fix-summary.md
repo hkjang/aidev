@@ -1,0 +1,6 @@
+# fix-summary — PR #40 govulncheck 실패
+
+- 문제: CI govulncheck 가 12개 권고로 exit 3. 전부 stdlib go1.26.6/go1.26.7(net/http·html/template·crypto/tls·mime/multipart, GO-2026-6599/6600/6603/6605/6607/6608/6610~6613/6617)와 golang.org/x/net v0.57.0·x/text v0.40.0 이며, PR 의 IMAP greeting 변경과 무관하다 — `origin/main` 스냅샷에서 govulncheck 를 돌려 **동일한 12개**가 나오는 것을 확인했다(기존 실패).
+- 고친 방법: 저장소가 README 302줄·ci.yml 주석에 적어 둔 정책대로 고정 버전 네 곳을 함께 올렸다 — go.mod `toolchain go1.26.9`, Dockerfile `golang:1.26.9`, ci.yml·release.yml `GO_VERSION: 1.26.9`, contracts.yml `go-version: 1.26.9`. 더해 `go get golang.org/x/net@v0.60.0`(권고 최소 수정판)이 x/crypto v0.57.0·x/text v0.42.0·x/sync·x/sys·x/term 과 go 지시어 1.25.0→1.26.0 을 함께 끌어올렸다. 검증 명령·테스트·단언은 손대지 않았고 IMAP 변경도 그대로다.
+- 재검증(로컬, go1.26.9): `govulncheck ./...` exit 0(호출 경로 0건) · `go build ./...` · `go vet ./...` · `go test -race -count=1 -timeout=900s ./...` 전체 PASS(imap 4.8s, application 86.1s) · `go run ./cmd/postra-contracts -check` · `make lint-format` · `make lint-security`(gosec 0건) · `actionlint` 3개 워크플로 · `git diff --check` 모두 통과.
+- 남은 확인 필요: x/net v0.60.0 은 mailrender·mailhtml·receivedhtml·mailparse 가 쓰는 html 토크나이저를 포함하지만 전체 테스트(골든 포함)가 통과했다. 프런트·PG·브라우저 e2e·SBOM 잡은 로컬 미실행(환경 없음). 릴리즈 노트에 툴체인 상향을 적는 것은 릴리즈 역할에 남긴다.
