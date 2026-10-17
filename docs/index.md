@@ -1,7 +1,7 @@
 ---
 title: "aidev 자율 개선 대시보드"
 description: "Claude Code 자율 개선 에이전트가 hkjang 의 프로젝트를 개선·테스트·머지·릴리즈한 일일 보고. 오늘 63회차·릴리즈 12건, 누적 2723회차·릴리즈 826건, 주의 필요 19건."
-last_modified_at: 2026-10-17 15:14:25 +0900
+last_modified_at: 2026-10-17 15:18:05 +0900
 ---
 {% raw %}
 <script type="application/ld+json">
@@ -17,7 +17,7 @@ last_modified_at: 2026-10-17 15:14:25 +0900
   "name": "hkjang",
   "url": "https://github.com/hkjang"
  },
- "dateModified": "2026-10-17T15:14:25+09:00"
+ "dateModified": "2026-10-17T15:18:05+09:00"
 }
 </script>
 
@@ -369,7 +369,7 @@ last_modified_at: 2026-10-17 15:14:25 +0900
 
 # aidev 자율 개선 대시보드
 
-<p class="tldr"><strong>한 줄 요약.</strong> Claude Code 자율 개선 에이전트가 hkjang 의 프로젝트를 개선·테스트·머지·릴리즈한 일일 보고. 오늘 63회차·릴리즈 12건, 누적 2723회차·릴리즈 826건, 주의 필요 19건. 회차가 끝날 때마다 자동 갱신됩니다 (마지막 갱신 <time datetime="2026-10-17T15:14:25+09:00" data-rel>2026-10-17 15:14</time> KST).</p>
+<p class="tldr"><strong>한 줄 요약.</strong> Claude Code 자율 개선 에이전트가 hkjang 의 프로젝트를 개선·테스트·머지·릴리즈한 일일 보고. 오늘 63회차·릴리즈 12건, 누적 2723회차·릴리즈 826건, 주의 필요 19건. 회차가 끝날 때마다 자동 갱신됩니다 (마지막 갱신 <time datetime="2026-10-17T15:18:05+09:00" data-rel>2026-10-17 15:18</time> KST).</p>
 
 <div class="alerts" role="alert"><strong>⚠️ 주의 필요 19건</strong> <span class="meta">— 새 경고는 GitHub Issue·Slack·이메일·Windows 알림으로도 보냅니다</span><ul><li><a href="https://hkjang.github.io/aidev/projects/ai-admin/">ai-admin</a> — CI 실패로 PR 미머지 <span class=meta>(2026-10-17 04:03)</span></li><li><a href="https://hkjang.github.io/aidev/projects/bamcp/">bamcp</a> — CI 실패로 PR 미머지 <span class=meta>(2026-10-17 07:15)</span></li><li><a href="https://hkjang.github.io/aidev/projects/sqlon/">sqlon</a> — 보호 파일 변경 — 자동 머지 안 함, 사람 검토 필요 <span class=meta>(2026-10-17 10:06)</span></li><li><a href="https://hkjang.github.io/aidev/projects/bitex/">bitex</a> — 보호 파일 변경 — 자동 머지 안 함, 사람 검토 필요 <span class=meta>(2026-10-17 11:22)</span></li><li><a href="https://hkjang.github.io/aidev/projects/ai-admin/">ai-admin</a> — CI 실패로 PR 미머지 <span class=meta>(2026-10-16 02:45)</span></li><li><a href="https://hkjang.github.io/aidev/projects/ai-admin/">ai-admin</a> — CI 실패로 PR 미머지 <span class=meta>(2026-10-16 06:27)</span></li><li><a href="https://hkjang.github.io/aidev/projects/ai-admin/">ai-admin</a> — CI 실패로 PR 미머지 <span class=meta>(2026-10-16 08:50)</span></li><li><a href="https://hkjang.github.io/aidev/projects/ai-admin/">ai-admin</a> — CI 실패로 PR 미머지 <span class=meta>(2026-10-16 10:37)</span></li><li><a href="https://hkjang.github.io/aidev/projects/ops.irumx.app/">ops.irumx.app</a> — 보호 파일 변경 — 자동 머지 안 함, 사람 검토 필요 <span class=meta>(2026-10-16 20:35)</span></li><li><a href="https://hkjang.github.io/aidev/projects/vibe-code/">vibe-code</a> — CI 실패로 PR 미머지 <span class=meta>(2026-10-16 21:12)</span></li><li><a href="https://hkjang.github.io/aidev/projects/umm/">umm</a> — CI 실패로 PR 미머지 <span class=meta>(2026-10-16 21:18)</span></li><li><a href="https://hkjang.github.io/aidev/projects/insight.yeopjari.bid/">insight.yeopjari.bid</a> — 수정 과제 대기 중 — 오류 대응(자동 적재): 마지막 회차가 &#x27;error&#x27; 로 끝났습니다. error: interrupted before PR</li><li><a href="https://hkjang.github.io/aidev/projects/jikim/">jikim</a> — 수정 과제 대기 중 — 오류 대응(자동 적재): 마지막 회차가 &#x27;error&#x27; 로 끝났습니다. error: interrupted before PR</li><li><a href="https://hkjang.github.io/aidev/projects/kanpic/">kanpic</a> — 수정 과제 대기 중 — 오류 대응(자동 적재): 마지막 회차가 &#x27;error&#x27; 로 끝났습니다. error: interrupted before PR</li><li><a href="https://hkjang.github.io/aidev/projects/moina/">moina</a> — 수정 과제 대기 중 — 오류 대응(자동 적재): 마지막 회차가 &#x27;error&#x27; 로 끝났습니다. error: interrupted before PR</li><li><a href="https://hkjang.github.io/aidev/projects/moyro/">moyro</a> — 수정 과제 대기 중 — 오류 대응(자동 적재): 마지막 회차가 &#x27;error&#x27; 로 끝났습니다. error: interrupted before PR</li><li><a href="https://hkjang.github.io/aidev/projects/multica/">multica</a> — 수정 과제 대기 중 — 오류 대응(자동 적재): 마지막 회차가 &#x27;error&#x27; 로 끝났습니다. error: interrupted before PR</li><li><a href="https://hkjang.github.io/aidev/projects/ops.irumx.app/">ops.irumx.app</a> — 수정 과제 대기 중 — 오류 대응(자동 적재): 마지막 회차가 &#x27;error&#x27; 로 끝났습니다. error: interrupted before PR</li><li><a href="https://hkjang.github.io/aidev/projects/postra/">postra</a> — 수정 과제 대기 중 — 오류 대응(자동 적재): 마지막 회차가 &#x27;verify-failed&#x27; 로 끝났습니다. CI failed, PR open https://github.com/hkjang/postra/pull/40</li></ul></div>
 
