@@ -19,3 +19,14 @@
 - 검증 결과: `go build ./...` OK, `go vet ./...` OK, DB 포함 전체 단위 테스트 OK, 전체 e2e 19건 통과(36.240s, 베이스라인 34.734s). 커밋 904b775.
 - [러너 10:39] brief accepted — 채택 — 과제서의 근거(server.go:45 DELETE 분기에 PrincipalFor 없음, server.go:382-391 의 UPDATE 가 소유자 미확인)가 현재 코드와 정�
 - [러너 10:40] verify passed — 검증 5개 통과 (auto)
+
+## 비평 노트
+- 판정 approve (risk low, 차단 없음). 신규 e2e 가 변경을 실제로 검증하는지 직접 재현했다: main 바이너리로 기동한 같은 DB·seed 에서 `e2e_test.go:198: unauthenticated DELETE: status 204 challenge ""` 로 FAIL, HEAD 바이너리로 PASS. 전체 e2e·단위 테스트(테스트 DB 23테이블 생성 확인 — 건너뛴 녹색 아님)·vet·gofmt 모두 재실행해 통과. diff 는 프로덕션 1파일 + e2e 1파일, 범위 이탈·포맷 혼입 없음.
+- 구현자가 의심했던 두 자리를 확인했다. (1) username 폴백은 도달 불가 코드다 — Principal() 이 UserID 를 항상 채워 openSession 이 NULL 을 쓰는 경로가 없고(e2e 후 user_id IS NULL 0건), users.username 은 UNIQUE 이므로 타인 행을 잡을 위험도 없다. 방어 코드로 무해. (2) 타인 세션 204 는 MCP 사양 원문을 나도 확인하지 않았으나, 변경 전에도 DELETE 는 항상 204 였으므로 퇴행은 아니다.
+- 못 본 것: oauth 경로의 DELETE 는 실제로 통과시키지 못했다(e2e 는 apikey 만). 코드상 PrincipalFor 가 동일하므로 분기 차이는 없다고 판단했다.
+- 다음 회차 후보(이번 변경 책임 아님): internal/mcp/server.go:378 touchSession 은 여전히 `WHERE id=$1` 뿐이라 인증된 아무 사용자가 타인 세션의 last_seen_at 을 갱신해 admin.go:99 활성 세션 집계를 왜곡할 수 있다. closeSession 주석이 바로 그 집계 왜곡을 근거로 드는 만큼 같은 구멍이 남아 있다. 코드 독해로만 확인.
+- 릴리즈 노트에는 "소유자가 아닌 DELETE /mcp 는 조용히 204, 세션은 닫히지 않음" 과 "미인증 DELETE 는 이제 401 + WWW-Authenticate" 를 명시할 것.
+- [러너 10:46] review approved — 리뷰 승인 (risk=low)
+- [러너 10:46] pr created — https://github.com/hkjang/confmcp/pull/2
+- [러너 10:48] ci passed — 검사 3개 모두 success
+- [러너 10:48] merge done — 904b775
