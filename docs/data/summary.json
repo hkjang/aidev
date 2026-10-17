@@ -1,5 +1,5 @@
 {
- "generated": "2026-10-18T05:39:50+09:00",
+ "generated": "2026-10-18T05:53:37+09:00",
  "site": "https://hkjang.github.io/aidev",
  "description": "Claude Code 자율 개선 에이전트가 hkjang 의 프로젝트를 개선·테스트·머지·릴리즈한 일일 보고. 오늘 7회차·릴리즈 0건, 누적 2740회차·릴리즈 831건, 주의 필요 11건.",
  "today": {
@@ -10,18 +10,18 @@
   "merged": 0,
   "nochange": 1,
   "failed": 3,
-  "cost_usd": 44.14,
-  "minutes": 143,
-  "sessions": 19
+  "cost_usd": 46.63,
+  "minutes": 151,
+  "sessions": 21
  },
  "totals": {
   "runs": 2740,
   "released": 831,
   "days": 47,
-  "cost_usd": 9792.46,
-  "minutes": 27127,
-  "tokens_in": 10526742113,
-  "tokens_out": 85154928
+  "cost_usd": 9794.95,
+  "minutes": 27135,
+  "tokens_in": 10529008466,
+  "tokens_out": 85173234
  },
  "alerts": [
   {
@@ -104,20 +104,22 @@
  ],
  "fix_queue": [],
  "health": {
-  "checked": "2026-10-18T05:15:04+09:00",
-  "last_run": "2026-10-18T04:51:01+09:00",
-  "seconds_since_last": 1440,
-  "runner_pid": "3165017",
-  "runner_age_seconds": 305,
-  "scheduler_status": "실행 중",
-  "scheduler_next_run": "2026-10-18 오전 5:20:00",
+  "checked": "2026-10-18T05:45:04+09:00",
+  "last_run": "2026-10-18T05:39:48+09:00",
+  "seconds_since_last": 313,
+  "runner_pid": "",
+  "runner_age_seconds": 0,
+  "scheduler_status": "준비",
+  "scheduler_next_run": "2026-10-18 오전 5:50:00",
   "disk_percent": 97,
   "ok": false,
   "problems": [
    "측정 감사: 원격에 없는 릴리즈 태그 1건 — 그 저장소의 다음 릴리즈를 막는다",
    "디스크 97% 사용"
   ],
-  "actions": []
+  "actions": [
+   "소유 프로세스 없는 잠금 파일을 제거했다"
+  ]
  },
  "lessons": [
   {
@@ -1505,11 +1507,11 @@
    "why": "review: approved — 리뷰 승인 (risk=low); ci: failed — 성공이 아닌 검사: check=failure · 실패한 검사: ? 잡: check ",
    "evidence": "https://github.com/hkjang/aidev/tree/main/state/runs/2026-10-18-051849-workkit.irumx.app-improve",
    "labels": "",
-   "action": "PR 처리기가 매시간 살핀다 (아직 순서가 오지 않음) · 승인: PR 라벨 aidev-approved / 반려: aidev-rejected — 다음 회차에 러너가 승인 당시 커밋에만 CI 확인 후 머지·닫기",
+   "action": "PR 처리기가 다음 시간에 다시 시도 · 승인: PR 라벨 aidev-approved / 반려: aidev-rejected — 다음 회차에 러너가 승인 당시 커밋에만 CI 확인 후 머지·닫기",
    "date": "2026-10-18",
-   "shepherd": "",
-   "shepherd_action": "",
-   "shepherd_detail": "",
+   "shepherd": "CI 실패 · 수정 실패 → 다음 시간에 재시도 (10-18 05:53) — 수정 세션이 커밋을 만들지 않음: # 수리 요약 — PR #7 (커밋 없음)  - 고칠 결함이 없어 **커밋하지 않았다**. CI 'check' 는 3초에 실패했고 실패 단계명도 로그도 비어 있다(러너도 `실패한 검사: ?`) — 잡이 단계를 하나도 실행하지 못한 것이지 이 변경이 깨뜨",
+   "shepherd_action": "fix-failed",
+   "shepherd_detail": "수정 세션이 커밋을 만들지 않음: # 수리 요약 — PR #7 (커밋 없음)  - 고칠 결함이 없어 **커밋하지 않았다**. CI 'check' 는 3초에 실패했고 실패 단계명도 로그도 비어 있다(러너도 `실패한 검사: ?`) — 잡이 단계를 하나도 실행하지 못한 것이지 이 변경이 깨뜨린 게 아니다. PR 의 diff 는 `packages/tools/src/table/types.ts` 7줄 + 테스트 2개뿐이고 `.github/` 는 0 파일, check.yml 은 js-yaml 로 파싱해 15단계 정상이라 워크플로 구문 오류도 아니다(잡 주석은 gh 미인증으로 이번에도 못 읽음). - 같은 게이트를 로",
    "needs_human": false
   },
   {
@@ -1524,9 +1526,9 @@
    "labels": "",
    "action": "PR 처리기가 다음 시간에 다시 시도 · 승인: PR 라벨 aidev-approved / 반려: aidev-rejected — 다음 회차에 러너가 승인 당시 커밋에만 CI 확인 후 머지·닫기",
    "date": "2026-10-18",
-   "shepherd": "CI 실패 · 수정 실패 → 다음 시간에 재시도 (10-18 04:58) — 수정 세션이 커밋을 만들지 않음: # 수리 요약 — 커밋 없음 (저장소 결함 아님)  - 문제로 지목된 것: PR #10 의 CI 검사 `check` 가 2초 만에 failure. 그러나 잡은 **시작조차 안 했다** — `gh api .../jobs` 가 `{\"name\":\"check\"",
+   "shepherd": "CI 실패 · 수정 실패 → 다음 시간에 재시도 (10-18 05:50) — 수정 세션이 커밋을 만들지 않음: # 수리 요약 (커밋 없음 — 고칠 결함이 없음)  - 지적된 것: PR #10 의 CI `check` 가 177ec51 에서 2초 만에 실패. 재현해 보니 **저장소 결함이 아니다.** 잡 `steps: 0`(한 단계도 실행 안 됨), check-ru",
    "shepherd_action": "fix-failed",
-   "shepherd_detail": "수정 세션이 커밋을 만들지 않음: # 수리 요약 — 커밋 없음 (저장소 결함 아님)  - 문제로 지목된 것: PR #10 의 CI 검사 `check` 가 2초 만에 failure. 그러나 잡은 **시작조차 안 했다** — `gh api .../jobs` 가 `{\"name\":\"check\",\"conclusion\":\"failure\",\"started_at\":\"2026-10-17T19:50:26Z\",\"completed_at\":...:28Z\",\"steps\":0}`, check-run annotation 이 `failure: The job was not started because recent account payments have failed or your spending limit needs to be increased`. 단계 0개라 저장소 코드가 실행된 적이 없고, 따라서 이 PR 이 깨뜨린 것도 없다. - 이 PR 의 전�",
+   "shepherd_detail": "수정 세션이 커밋을 만들지 않음: # 수리 요약 (커밋 없음 — 고칠 결함이 없음)  - 지적된 것: PR #10 의 CI `check` 가 177ec51 에서 2초 만에 실패. 재현해 보니 **저장소 결함이 아니다.** 잡 `steps: 0`(한 단계도 실행 안 됨), check-run annotation 원문이 `The job was not started because recent account payments have failed or your spending limit needs to be increased`. 즉 이 PR 이 README 에 새로 적어 둔 바로 그 증상이고, 조치는 GitHub Billing & plans 확인뿐이다. - 이 변경의 diff 는 `README.md` +24 줄 하나뿐(`git diff origin/main...HEAD --stat`). 프",
    "needs_human": false
   },
   {
@@ -1908,13 +1910,13 @@
   }
  ],
  "shepherd": {
-  "last_pass": "2026-10-18T04:55:12+09:00",
+  "last_pass": "2026-10-18T05:43:52+09:00",
   "enabled": true,
   "today": {
-   "fix-failed": 4,
+   "fix-failed": 6,
    "needs-human": 4
   },
-  "total": 758,
+  "total": 760,
   "pending_human": 221
  },
  "agents": {
@@ -1929,7 +1931,7 @@
     "role": "구현 builder",
     "calls": 486,
     "metric": "러너 검증 통과 92% · 변경 없음 139",
-    "cost": 1172.56
+    "cost": 1175.05
    },
    {
     "role": "비평 critic",
@@ -1959,12 +1961,12 @@
     "role": "PR 심사 shepherd-reviewer",
     "calls": 139,
     "metric": "승인 44 · 거절 6 · 사람 필요 89 · 승인 뒤 회귀 1",
-    "cost": 253.46
+    "cost": 255.95
    },
    {
     "role": "PR 수리 shepherd-fixer",
-    "calls": 98,
-    "metric": "고쳐서 푸시 29%",
+    "calls": 100,
+    "metric": "고쳐서 푸시 28%",
     "cost": null
    },
    {
@@ -2443,7 +2445,7 @@
   },
   {
    "metric": "유효 개선당 비용",
-   "value": "$14.97",
+   "value": "$14.98",
    "detail": "비용 확인된 유효 개선 173건, 미확인 세션 239"
   },
   {
@@ -2474,7 +2476,7 @@
    "merged": 0,
    "nochange": 1,
    "failed": 3,
-   "cost_usd": 44.14
+   "cost_usd": 46.63
   },
   {
    "date": "2026-10-17",
@@ -2748,8 +2750,8 @@
    "merged": 2,
    "nochange": 12,
    "failed": 41,
-   "cost": 1089.94,
-   "minutes": 2945
+   "cost": 1092.43,
+   "minutes": 2953
   },
   {
    "key": "2026-W41",
@@ -2834,8 +2836,8 @@
    "merged": 40,
    "nochange": 139,
    "failed": 66,
-   "cost": 3436.91,
-   "minutes": 9972
+   "cost": 3439.4,
+   "minutes": 9981
   },
   {
    "key": "2026-09",
@@ -4126,8 +4128,8 @@
    "last_ts": "2026-10-18T04:51:01+09:00",
    "last_status": "failed",
    "last_result": "manual: CI failed, PR open https://github.com/hkjang/review.yeopjari.bid/pull/10",
-   "cost": 89.24,
-   "minutes": 248,
+   "cost": 90.4,
+   "minutes": 253,
    "grade": "D",
    "grade_why": "14일: 릴리즈 2, 실패 7, 경고 8, 회귀 0",
    "lessons": 0,
@@ -4406,8 +4408,8 @@
    "last_ts": "2026-10-18T05:39:48+09:00",
    "last_status": "failed",
    "last_result": "manual: CI failed, PR open https://github.com/hkjang/workkit.irumx.app/pull/7",
-   "cost": 63.04,
-   "minutes": 182,
+   "cost": 64.37,
+   "minutes": 185,
    "grade": "D",
    "grade_why": "14일: 릴리즈 1, 실패 6, 경고 6, 회귀 0",
    "lessons": 0,
