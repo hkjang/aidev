@@ -1,0 +1,128 @@
+[
+  {
+    "title": "Re-land the CI workflow that adds .github/workflows/ci.yml",
+    "value": 4,
+    "risk": 1,
+    "size": "S",
+    "status": "done",
+    "note": "구현함(이번 회차의 요청 과제). main@0de9aba 에는 .github 디렉터리 자체가 없었다. v0.17.0 기준으로 내용을 갱신했다: npm run check 는 이제 진입점 4개를 검사하고 npm test 는 6스위트를 엮는다. check 는 게이트, test 는 continue-on-error 로 보고 전용. actionlint 1.7.12 깨끗, act 0.2.89 플래너로 두 이벤트 모두 두 잡을 고르는 것 확인.",
+    "updated": "2026-10-18"
+  },
+  {
+    "title": "Clamp the negative Playwright step duration the API passes straight through",
+    "value": 5,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "이번 회차에 재현됨 — 유휴 상태 3회 중 1회: 'negative step duration: durationMs:-203' (Fixture \"page\" / Create page 구간), 149 passed, 1 failed. 같은 값을 읽는 패스스루가 네 곳이다: server.js:1210(생성되는 리포터 템플릿 문자열), 1266(flattenReportSteps 폴백), 2435(테스트 레벨 last?.duration), 4996(run.summary.stats.duration). 하나만 고치면 다른 쪽이 다른 값을 낸다. 이제 CI 가 붙어 있으므로 이 결함을 고치는 것이 test 잡을 게이트로 승격시키는(continue-on-error 한 줄 삭제) 유일한 선행조건이다. 브라우저 없이 도는 재현 경로를 먼저 만들 것 — 전체 스위트는 195s 로 짧아졌지만 재현율이 1/3 이다.",
+    "updated": "2026-10-18"
+  },
+  {
+    "title": "npm audit now reports a critical proxy-addr advisory alongside qs and body-parser",
+    "value": 4,
+    "risk": 3,
+    "size": "S",
+    "status": "pending",
+    "note": "이번 회차에 node_modules 를 깔아 실측했다: 3 vulnerabilities (1 low body-parser <1.20.6, 1 moderate qs 2.2.5-6.15.3, 1 CRITICAL proxy-addr 1.1.0-2.0.7). 셋 다 fixAvailable=true(express 4 전이 의존성, 패치 수준). lockfile 변경이므로 npm ci 재현성과 docker build 까지 확인해야 하고, 변경 뒤 전체 스위트를 돌려야 한다.",
+    "updated": "2026-10-18"
+  },
+  {
+    "title": "Recording dedupe swallows distinct selectOption steps, so the wrong option is recorded",
+    "value": 4,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "HEAD(0de9aba)에 여전히 있다 — server.js:7477 의 비교가 previous.value === step.value 뿐이고 selectOption 은 step.values 만 설정한다. 600ms 안의 서로 다른 옵션 두 건이 undefined===undefined 로 합쳐진다. 수정은 values 를 JSON.stringify 로 비교. 재현 경로: /demo/test-page 의 data-testid=role-select(observer/operator/admin 3옵션). press 주장은 과장 — 레코더가 Enter 만 보낸다.",
+    "updated": "2026-10-18"
+  },
+  {
+    "title": "Split the six test suites into a CI job matrix so one failure stops masking the rest",
+    "value": 3,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "NEW. npm test 는 6스위트를 && 로 엮으므로(package.json:11) 스모크가 실패하면 mcp-compat·mcp-resilience·session-capacity·diagnostics·ui-offline 의 결과를 아무도 보지 못한다 — 실제로 이번 3회차 실행이 스모크 실패로 멈춰 뒤 5개를 돌리지 않았다. 각 스위트는 전용 npm 스크립트가 이미 있고(test:mcp/test:ui-offline/test:diagnostics/test:capacity) 서로 독립적인 스크래치 포트·디렉터리를 쓴다. 다만 '러너가 돌리는 명령을 그대로 옮길 것' 이라는 이번 지시 범위 밖이어서 하지 않았다. 올릴 때는 ci.yml 한 파일만 건드릴 것.",
+    "updated": "2026-10-18"
+  },
+  {
+    "title": "Cache the Playwright chromium download in CI with actions/cache",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "NEW(이전 회차 보류 ⑤를 구조화). test 잡은 매번 chromium 363MB + headless-shell 253MB 를 내려받는다(이 환경 실측 ~30-60s, 호스티드 러너에서는 수 분). ~/.cache/ms-playwright 를 playwright 버전(현재 1.58.2, package.json 에 고정)으로 키를 잡아 캐시하면 된다. 캐시 미스 시 동작이 같아야 하므로 install 단계는 항상 실행할 것.",
+    "updated": "2026-10-18"
+  },
+  {
+    "title": "Automate the Dockerfile build (and a minimal container check) in CI",
+    "value": 4,
+    "risk": 3,
+    "size": "M",
+    "status": "pending",
+    "note": "이제 선행조건이 풀렸다 — CI 워크플로가 트리에 있다(이번 회차). 릴리즈가 v0.3.0/v0.4.0/v0.5.1/v0.6.0 네 번 entrypoint·마운트에서 깨졌는데 docs/RELEASE_CHECKLIST.md 2-3절 검증이 전부 수동이다. 이 환경에 docker 29.7.2 가 있어 docker build 통과를 먼저 로컬에서 확인할 수 있다. 최소한 '마운트한 볼륨으로 띄워 /health + POST /api/sessions' 까지 가야 의미가 있다(마운트 없이 띄우면 통과하는 부류가 두 번 유출됐다).",
+    "updated": "2026-10-18"
+  },
+  {
+    "title": "Promote the CI smoke job from reporting to gating",
+    "value": 4,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "선행조건 둘 중 하나가 해결됐다 — CI 워크플로가 트리에 있다. 남은 조건은 음수 step duration 결함 하나뿐이다(녹화 패널 쪽은 이번 3회 모두 통과했다). 그 뒤 .github/workflows/ci.yml 의 continue-on-error 한 줄 삭제. 승격 조건은 파일 주석에 적혀 있다.",
+    "updated": "2026-10-18"
+  },
+  {
+    "title": "Re-land the harness fix that never reached main: stop() awaits an already-exited child",
+    "value": 4,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "HEAD 에 여전히 없다 — tools/smoke-test.mjs:2386 의 stop() 은 child.on('exit') 를 기다리고 escalation 타이머가 .unref() 라 이미 끝난 자식에서는 settle 되지 않는다. tools/ 에 harness-selftest.mjs 도 없다(이번 회차 ls 확인). 커밋 254a099 로 로컬 보존. 4파일이라 단독 회차로 올릴 것.",
+    "updated": "2026-10-18"
+  },
+  {
+    "title": "Re-land the verified recording-panel sync fix (d2f428d)",
+    "value": 3,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "수정 자체는 여전히 미머지다 — tools/smoke-test.mjs:4098/4115 가 아직 고정 sleepMs(1500/1200) 를 쓴다. 다만 이번 회차의 유휴 3회 실행에서는 이 검사가 3/3 통과했으므로 'npm test 가 main 에서 실패한다' 는 근거는 더 이상 성립하지 않는다 — 이제는 부하가 걸린 머신에서만 터지는 잠재 플레이크다. 가치를 5에서 3으로 내렸다.",
+    "updated": "2026-10-18"
+  },
+  {
+    "title": "Give the smoke suite a way to run one check by name (SMOKE_ONLY filter)",
+    "value": 2,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "전제가 약해졌다 — 이번 회차 실측으로 전체 6스위트가 195s/193s/168s 다(이전 프로필의 '6분' 은 더 이상 맞지 않는다). 필터의 반복 검증 이득이 줄었고, 필터가 조용히 스위트를 축소해 릴리즈 게이트를 무력화할 위험은 그대로다. 여전히 필터 수단은 없다(argv/env 게이트 없음). 가치 4→2.",
+    "updated": "2026-10-18"
+  },
+  {
+    "title": "Give the generated step reporter a browser-free regression check",
+    "value": 3,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "음수 duration 수정과 함께 가면 의미가 있다 — 재현율이 1/3 인 브라우저 검사만으로는 수정을 증명하기 어렵다. 단 '손으로 만든 대역으로 결함을 증명하지 말 것' 규칙과 부딪히므로 스모크를 대체하지 말고 보강으로만.",
+    "updated": "2026-10-18"
+  },
+  {
+    "title": "The other 11 waitForHealth call sites can still burn the full 60s budget on a dead server",
+    "value": 4,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "254a099 가 먼저 들어가야 성립한다(superviseServer 가 main 에 없다). 변동 없음.",
+    "updated": "2026-10-18"
+  },
+  {
+    "title": "Audit the remaining smoke checks for fixed sleeps standing in for observable post-conditions",
+    "value": 3,
+    "risk": 1,
+    "size": "M",
+    "status": "pending",
+    "note": "tools/smoke-test.mjs 의 단독 wait-for { sleepMs } 지점들(4098/4115 등). 유휴 상태에서는 전부 통과하므로 반드시 부하를 걸어 실패를 먼저 볼 것 — 이번 회차 유휴 3회에서는 하나도 터지지 않았다.",
+    "updated": "2026-10-18"
+  }
+]
