@@ -1,0 +1,37 @@
+=== RUN   TestEmbeddingQualityIsMeasured
+    quality_test.go:74: 
+        offline default (character n-gram hashing)
+          class            mean    min    max     n
+          paraphrase      0.193  0.062  0.341     8
+          related         0.155  0.049  0.366     4
+          lexical-decoy   0.443  0.287  0.615     6
+          unrelated       0.177  0.032  0.447     4
+          discrimination (paraphrase - lexical-decoy): -0.250
+          pairwise accuracy (paraphrase > decoy):         4.2%
+          topic separation (same - different):        -0.023
+          nearest neighbour shares its topic:           18.8% (16 sentences)
+          usable as a semantic layer:                 false
+        
+--- PASS: TestEmbeddingQualityIsMeasured (0.00s)
+=== RUN   TestOfflineDefaultIsNotASemanticBackend
+--- PASS: TestOfflineDefaultIsNotASemanticBackend (0.00s)
+=== RUN   TestOfflineDefaultRanksVocabularyAboveMeaning
+    quality_test.go:111: offline default scores vocabulary 0.443 above meaning 0.193 (gap 0.250)
+--- PASS: TestOfflineDefaultRanksVocabularyAboveMeaning (0.00s)
+=== RUN   TestRelatedThoughtThresholdMissesParaphrases
+    quality_test.go:144: of 8 paraphrases: 2 reach the related bar (0.22), 1 reach the cluster bar (0.34)
+    quality_test.go:146: of 6 lexical decoys: 5 reach the cluster bar and would be grouped as one topic
+--- PASS: TestRelatedThoughtThresholdMissesParaphrases (0.00s)
+=== RUN   TestGatewayEmbeddingQuality
+    quality_test.go:169: set UMM_EMBEDDING_TEST_URL and UMM_EMBEDDING_TEST_MODEL to compare a candidate model
+--- SKIP: TestGatewayEmbeddingQuality (0.00s)
+=== RUN   TestSemanticPairsAreWellFormed
+    quality_test.go:242: dataset: 22 pairs (lexical-decoy=6, paraphrase=8, related=4, unrelated=4)
+--- PASS: TestSemanticPairsAreWellFormed (0.00s)
+=== RUN   TestQualityTopicsAreWellFormed
+    quality_test.go:270: dataset: 4 topics, 16 sentences
+--- PASS: TestQualityTopicsAreWellFormed (0.00s)
+=== RUN   TestQualityBarsNormalize
+--- PASS: TestQualityBarsNormalize (0.00s)
+PASS
+ok  	github.com/hkjang/umm/internal/intelligence	(cached)

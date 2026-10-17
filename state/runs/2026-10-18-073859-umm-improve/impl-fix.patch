@@ -1,0 +1,81 @@
+diff --git a/Dockerfile b/Dockerfile
+index 7a7e564..39d000c 100644
+--- a/Dockerfile
++++ b/Dockerfile
+@@ -6,7 +6,7 @@ RUN npm ci --ignore-scripts
+ COPY web/ ./
+ RUN npm run build
+ 
+-FROM golang:1.26.7-alpine AS go-build
++FROM golang:1.26.9-alpine AS go-build
+ ARG VERSION=dev
+ WORKDIR /src
+ RUN apk add --no-cache ca-certificates
+diff --git a/go.mod b/go.mod
+index 3ff18b8..3f009e4 100644
+--- a/go.mod
++++ b/go.mod
+@@ -5,7 +5,7 @@ go 1.26.0
+ // Pinned for CI and release builds. The `go` directive stays at 1.26.0 so a
+ // developer on any Go 1.26 patch release can build and test with
+ // GOTOOLCHAIN=local instead of being forced to download a toolchain.
+-toolchain go1.26.7
++toolchain go1.26.9
+ 
+ require (
+ 	github.com/coreos/go-oidc/v3 v3.16.0
+@@ -16,7 +16,7 @@ require (
+ 	go.opentelemetry.io/otel v1.45.0
+ 	go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracehttp v1.45.0
+ 	go.opentelemetry.io/otel/sdk v1.45.0
+-	golang.org/x/crypto v0.54.0
++	golang.org/x/crypto v0.57.0
+ 	golang.org/x/oauth2 v0.36.0
+ )
+ 
+@@ -36,10 +36,10 @@ require (
+ 	go.opentelemetry.io/otel/metric v1.45.0 // indirect
+ 	go.opentelemetry.io/otel/trace v1.45.0 // indirect
+ 	go.opentelemetry.io/proto/otlp v1.11.0 // indirect
+-	golang.org/x/net v0.57.0 // indirect
+-	golang.org/x/sync v0.22.0 // indirect
+-	golang.org/x/sys v0.47.0 // indirect
+-	golang.org/x/text v0.41.0 // indirect
++	golang.org/x/net v0.60.0 // indirect
++	golang.org/x/sync v0.23.0 // indirect
++	golang.org/x/sys v0.48.0 // indirect
++	golang.org/x/text v0.42.0 // indirect
+ 	google.golang.org/genproto/googleapis/api v0.0.0-20260803160001-6ac0973c030d // indirect
+ 	google.golang.org/genproto/googleapis/rpc v0.0.0-20260803160001-6ac0973c030d // indirect
+ 	google.golang.org/grpc v1.83.1 // indirect
+diff --git a/go.sum b/go.sum
+index f81b2c4..a2bf977 100644
+--- a/go.sum
++++ b/go.sum
+@@ -65,16 +65,26 @@ go.uber.org/goleak v1.3.0 h1:2K3zAYmnTNqV73imy9J1T3WC+gmCePx2hEGkimedGto=
+ go.uber.org/goleak v1.3.0/go.mod h1:CoHD4mav9JJNrW/WLlf7HGZPjdw8EucARQHekz1X6bE=
+ golang.org/x/crypto v0.54.0 h1:YLIA59K4fiNzHzjnZt2tUJQjQtUWfWbeHBqKtk3eScw=
+ golang.org/x/crypto v0.54.0/go.mod h1:KWL8ny2AZdGR2cWmzeHrp2azQPGogOv+HeQaVEXC2dk=
++golang.org/x/crypto v0.57.0 h1:3ZVCjf8Ggz7zneR/EHRVx68Ctf+2pmIMP2UFhh9cC6M=
++golang.org/x/crypto v0.57.0/go.mod h1:Fdz0i5U6CoizGwLda9DttjSk6qlZo25zYNtR+ycvuZA=
+ golang.org/x/net v0.57.0 h1:K5+3DljvIuDG9/Jv9rvyMywYNFCQ9RSUY6OOTTkT+tE=
+ golang.org/x/net v0.57.0/go.mod h1:KpXc8iv+r3XplLAG/f7Jsf9RPszJzdR0f58q9vGOuEU=
++golang.org/x/net v0.60.0 h1:79p50tfZlm0J9YfoDsSi639qSXNGVwEzOPLCxM2FsYU=
++golang.org/x/net v0.60.0/go.mod h1:2DA/G1UfVbCpQPeWTmMPGY7Cs2PkBkwu743bVX5PIVg=
+ golang.org/x/oauth2 v0.36.0 h1:peZ/1z27fi9hUOFCAZaHyrpWG5lwe0RJEEEeH0ThlIs=
+ golang.org/x/oauth2 v0.36.0/go.mod h1:YDBUJMTkDnJS+A4BP4eZBjCqtokkg1hODuPjwiGPO7Q=
+ golang.org/x/sync v0.22.0 h1:SZjpbeLmrCk4xhRSZFNZW5gFUeCeFgjekvI/+gfScek=
+ golang.org/x/sync v0.22.0/go.mod h1:9xrNwdLfx4jkKbNva9FpL6vEN7evnE43NNNJQ2LF3+0=
++golang.org/x/sync v0.23.0 h1:KameEIfc1IkluZyXWLn39Wd4tURc6GbCiISGiZm2bQk=
++golang.org/x/sync v0.23.0/go.mod h1:sUUOizhqBxiL6pEWpqNLUiaJn1ShEbZ6BBqskPbjZm0=
+ golang.org/x/sys v0.47.0 h1:o7XGOvZQCADBQQ4Y7VNq2dRWQR7JmOUW8Kxx4ZsNgWs=
+ golang.org/x/sys v0.47.0/go.mod h1:4GL1E5IUh+htKOUEOaiffhrAeqysfVGipDYzABqnCmw=
++golang.org/x/sys v0.48.0 h1:bbX/i/6MgT9BVLM9RT1thmxL04yeTAhbEz4SyadbXoo=
++golang.org/x/sys v0.48.0/go.mod h1:hNLxWAXmnKAxqDtdwIYC4bM9oQPEecfsnNMuSxOs3og=
+ golang.org/x/text v0.41.0 h1:vz/seA0lnX87Othu2f/0L24RcgrXD9/YFTSuGjj3rH8=
+ golang.org/x/text v0.41.0/go.mod h1:jvf1O8ajNzZqhSrQBPbutR/EB83Cc0CFrezNQIwbb5M=
++golang.org/x/text v0.42.0 h1:JbOZXgfeCPU9gacVtYliJqOhD+zhrEqK4LfdpmlUZqI=
++golang.org/x/text v0.42.0/go.mod h1:ojzP1Z+2QtioaF8DTtO8K5q7JWVVYwZKenzujK0Zd0E=
+ gonum.org/v1/gonum v0.17.0 h1:VbpOemQlsSMrYmn7T2OUvQ4dqxQXU+ouZFQsZOx50z4=
+ gonum.org/v1/gonum v0.17.0/go.mod h1:El3tOrEuMpv2UdMrbNlKEh9vd86bmQ6vqIcDwxEOc1E=
+ google.golang.org/genproto/googleapis/api v0.0.0-20260803160001-6ac0973c030d h1:FarXi840EJWSHYTN3ERkADbPWjl307+FGrA22KAVjjc=
