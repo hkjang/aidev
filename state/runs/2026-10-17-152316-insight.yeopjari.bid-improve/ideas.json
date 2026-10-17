@@ -1,0 +1,101 @@
+[
+  {
+    "title": "지급 목록 CSV 내려받기의 DB 장애·네트워크 실패를 공통 점검 안내로 전달하기",
+    "value": 3,
+    "risk": 1,
+    "size": "M",
+    "status": "done",
+    "note": "client.ts:234 download() 에 fetch try/catch → network ApiError(status 0) 와 503 db_unavailable → reportDegraded() 를 추가했다. 새 테스트 apps/web/src/__tests__/client-download.test.ts 가 실제 node http 서버로 네 경우를 증명한다(수정 전 2실패/2통과 → 수정 후 4통과 → 되돌림 2실패). 커밋 b55ab2d. 브라우저에서 .in-degraded 배너가 실제로 뜨는지는 미확인.",
+    "updated": "2026-10-17"
+  },
+  {
+    "title": "download() 에 요청 취소(signal)와 x-insight-stale 처리까지 request() 와 맞추기",
+    "value": 2,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "이번 회차로 오류 변환(network·db_unavailable)은 맞췄다. 남은 차이: download() 는 RequestOptions 를 받지 않아 signal·idempotency-key·accept 헤더가 없고 성공 응답의 x-insight-stale 도 보지 않는다. request() 와 한 함수로 통합하려 하지 말 것 — 성공 경로 계약(blob 저장 vs JSON 파싱)이 다르다.",
+    "updated": "2026-10-17"
+  },
+  {
+    "title": "apps/web client 의 나머지 가드 테스트 보강 (defaultMessage·CSRF/세션 헤더 선택)",
+    "value": 3,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "이번 회차에 apps/web 첫 테스트 파일과 node 환경 브라우저 전역 부트스트랩(window.location/document.cookie/URL.createObjectURL 세우고 afterEach 복원)이 생겨 후속 비용이 싸졌다. 같은 방식으로 isAdminSurface 에 따른 yi_acsrf/yi_csrf 선택과 status 별 defaultMessage 를 실제 HTTP 로 고정할 수 있다. jsdom 추가 금지.",
+    "updated": "2026-10-17"
+  },
+  {
+    "title": "util/text.ts:isSafeLink() 의 죽은 코드와 사설망 차단 주석 정리",
+    "value": 3,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "이번 회차 미재확인(지난 두 회차에서 정의 외 호출처 0으로 확인됨). 삭제 또는 주석 축소만. URL 파서 통합·정책 확대 금지.",
+    "updated": "2026-10-17"
+  },
+  {
+    "title": "domain/catalog.ts 와 maskEmail·mailboxKey 엣지케이스 테스트",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "core 단위 테스트는 여전히 6파일(rules/vendor-postgres/totp/gateway-role/shared-db-guard/db-breaker). maskEmail 중심으로 좁히고 catalog 와 묶지 않는다.",
+    "updated": "2026-10-17"
+  },
+  {
+    "title": "quota.ts:usage() 의 one round trip 주석 정확성 확인",
+    "value": 2,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "이번 회차 미확인. 측정 없는 성능 결함 단정·쿼리 변경 금지, 주석 문구 조정까지만.",
+    "updated": "2026-10-17"
+  },
+  {
+    "title": "README 로컬 설치 안내를 npm ci 로 맞추기",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "CI(check.yml)와 이번 회차 모두 npm ci --no-audit --fund=false 를 쓴다. README 본문은 이번에도 미확인.",
+    "updated": "2026-10-17"
+  },
+  {
+    "title": "API client 의 204 성공 쓰기 캐시 무효화 누락",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "client.ts:174 `if (response.status === 204) return undefined as T` 가 invalidateAll() 앞에 있다(이번에도 소스로 확인). api.cached/prefetch 화면 호출처가 여전히 검색되지 않아 사용자 피해 미확인 — 차선 후보로만 둔다.",
+    "updated": "2026-10-17"
+  },
+  {
+    "title": "README·architecture 검증 개수 안내를 현재 테스트 구성과 맞추기",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "이번 회차에 실제 수를 셌다: vitest 7파일 113개(web 1파일 4개 포함). 고정 개수 대신 검증 범위를 기술하는 쪽이 낡지 않는다.",
+    "updated": "2026-10-17"
+  },
+  {
+    "title": "quota purge 가 진행 중인 월 카운터를 삭제하는지 실제 DB 회귀 확인",
+    "value": 2,
+    "risk": 3,
+    "size": "M",
+    "status": "pending",
+    "note": "이번 회차 미확인. 월 제한 활성화 전 후순위. windowStart 라벨 변경 금지.",
+    "updated": "2026-10-17"
+  },
+  {
+    "title": "apps/web 에 단위 테스트가 한 개도 없다 — client.ts 오류 변환 가드부터",
+    "value": 3,
+    "risk": 2,
+    "size": "M",
+    "status": "done",
+    "note": "이번 회차에 apps/web 첫 테스트 파일(client-download.test.ts, node 환경 + 실제 http 서버, jsdom 없음)이 생겼다. 나머지 가드는 위 '나머지 가드 테스트 보강' 항목으로 이어진다.",
+    "updated": "2026-10-17"
+  }
+]
