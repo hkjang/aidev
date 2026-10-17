@@ -1,0 +1,110 @@
+[
+  {
+    "title": "OpenBao auth/token/create 가 chunked(ContentLength=-1) 요청 본문을 조용히 버려 ttl·display_name 이 무시되고 잘못된 JSON 도 통과",
+    "value": 3,
+    "risk": 2,
+    "size": "S",
+    "status": "done",
+    "note": "openbao.go:241 의 게이트를 decodeOptionalBaoJSON 호출로 교체하고 decodeBaoJSON 을 decodeBaoJSONBody(allowEmpty) 공용 코어로 뽑아 빈 본문(io.EOF)만 기본값으로 통과시켰다. server.go 에 sessionCreator seam 추가. 수정 전 chunked 6개(ttl 거절 3·깨진 JSON·두 JSON 값·1h 적용)가 200 + lease_duration 43200 으로 실패, 수정 후 18/18 PASS. 게이트 한 줄만 되돌려 같은 6개 재실패 확인. 커밋 ebd6c59.",
+    "updated": "2026-10-17"
+  },
+  {
+    "title": "단건 transit 과 batch 의 계약 동등성을 한 테이블로 고정하는 회귀 테스트",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "openbao_transit_missing_field_test.go·openbao_transit_unsupported_param_test.go·openbao_transit_batch_test.go 에 같은 판정이 흩어져 한쪽만 바뀌어도 통과한다. 같은 본문을 단건/batch_input 두 형태로 보내 메시지가 글자까지 같은지 단정하는 표로 묶는다. 프로덕션 변경이 없어 1순위로는 약하다. 이번 회차 차선 후보였다.",
+    "updated": "2026-10-17"
+  },
+  {
+    "title": "baoKVMutateVersions 가 0·음수 버전 번호를 그대로 store 로 내려보냄",
+    "value": 2,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "openbao.go:416-450 은 len(input.Versions)==0 만 거른다. store 쪽 거절 여부와 실제 OpenBao 판정 비교 근거가 여전히 미확인. internal/store 의 lazy pool 기법으로 'DB 에 닿기 전 거절' 은 DSN 없이 확인 가능해 선행 조사 비용은 낮다.",
+    "updated": "2026-10-17"
+  },
+  {
+    "title": "requestedOpenBaoVersion 이 ?version 의 비정규 표기(+2·007)를 받아들임",
+    "value": 1,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "openbao.go:514-526. 결과 버전이 같아 관찰 가능한 피해가 없어 1순위 금지. 2026-10-16 ciphertext 버전 토큰 수정과 같은 모양의 laxness 라 후속으로만 고려. 빈 값·0 이하를 latest 로 보는 것은 compatibility.md 의 현재 계약이라 유지.",
+    "updated": "2026-10-17"
+  },
+  {
+    "title": "추적이 켜진 동안의 CSP 리포트 속도 제한 또는 동일 출처 검증",
+    "value": 3,
+    "risk": 3,
+    "size": "M",
+    "status": "pending",
+    "note": "무인증 route + MaxViolations=100 유지. 본문 상한(v0.2.32)·절단 품질(v0.2.36)은 닫혔지만 속도·신뢰 계약은 새 계약 도입이라 한 세션 범위를 넘는다.",
+    "updated": "2026-10-17"
+  },
+  {
+    "title": "baoKVWrite 의 create/update 판정 TOCTOU",
+    "value": 3,
+    "risk": 3,
+    "size": "M",
+    "status": "pending",
+    "note": "openbao.go:328-380 의 SecretExistsByPath(:345) → CanAccess(:353) → PutOpenBaoSecret(:357) 분리. 트랜잭션·동시성 검증이 필요한 별도 범위이고 권한 판정 경로라 위험이 높다.",
+    "updated": "2026-10-17"
+  },
+  {
+    "title": "retryWebhookDelivery 왕복 테스트 공백",
+    "value": 2,
+    "risk": 1,
+    "size": "M",
+    "status": "pending",
+    "note": "JIKIM_TEST_POSTGRES_DSN 통합 검증이 선행. lazy pool 기법은 'DB 에 닿기 전 거절' 만 증명할 수 있어 왕복 테스트에는 쓸 수 없다.",
+    "updated": "2026-10-17"
+  },
+  {
+    "title": "Dependabot group 계약을 CONTRIBUTING 에 문서화",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "scripts/verify-dependabot-groups.mjs 계약이 스크립트 주석에만 있다. 관찰 가능한 동작 변화가 없어 계속 차선.",
+    "updated": "2026-10-17"
+  },
+  {
+    "title": "gomod·github-actions·docker 생태계에도 묶음 업데이트 검사 확장",
+    "value": 2,
+    "risk": 2,
+    "size": "M",
+    "status": "pending",
+    "note": "현재 검사는 web/package-lock.json 의 peerDependencies 를 근거로 쓴다. 락파일이 없는 생태계는 결합 추출 방식부터 새로 정해야 한다.",
+    "updated": "2026-10-17"
+  },
+  {
+    "title": "docs/guides/api-guide.md 에 AI 엔드포인트 error code 표 추가",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "문서 단독 후보로 18회 연속 차선. 관찰 가능한 동작 변화가 없다.",
+    "updated": "2026-10-17"
+  },
+  {
+    "title": "decodeOptionalBaoJSON 을 본문이 선택적인 다른 OpenBao 핸들러에도 적용할지 조사",
+    "value": 2,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "이번 회차에 추가한 헬퍼는 현재 baoTokenCreate 한 곳만 쓴다. baoRevokeSelf·baoKVDeleteLatest 등 본문을 아예 읽지 않는 핸들러가 본문 있는 요청을 어떻게 다뤄야 하는지는 OpenBao 판정 근거가 없어 미확인. 근거 없이 계약을 넓히지 말 것.",
+    "updated": "2026-10-17"
+  },
+  {
+    "title": "baoUserpassLogin 의 본문 디코드 경로가 chunked 요청을 어떻게 다루는지 확인",
+    "value": 2,
+    "risk": 4,
+    "size": "S",
+    "status": "pending",
+    "note": "이번 회차의 ContentLength 광맥에서 유일하게 확인하지 않은 OpenBao 인증 경로. 인증 계약·로그인 실패 제한에 닿아 위험이 높고 결함 근거가 아직 없다. 조사만 하고 수정은 근거가 선 뒤에.",
+    "updated": "2026-10-17"
+  }
+]

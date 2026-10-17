@@ -1,0 +1,48 @@
+fix: release the auth/token/create chunked body fix for v0.2.40
+
+OpenBao `auth/token/create` 가 길이를 알 수 없는(chunked) 요청 본문을 조용히
+버리던 문제를 고친 PR #65 를 릴리즈합니다. `openbao.go` 의 게이트가
+`r.ContentLength > 0 && !decodeBaoJSON(...)` 였으므로 `Transfer-Encoding:
+chunked` 요청(Go 가 `ContentLength` 를 `-1` 로 채움)은 본문을 한 바이트도 읽지
+않고 기본값으로 진행했습니다. 그래서 `{"ttl":"1h"}` 를 chunked 로 보낸 호출자가
+12시간 토큰을 `200` 으로 받아 수명이 12배가 되고, `{"ttl":"99999h"}`·
+`{"ttl":"0s"}`·`{"ttl":"soon"}` 처럼 서버가 거절하는 값도 `400` 이 아니라 기본
+TTL 로 성공했으며, 깨진 JSON(`{"ttl":`)과 두 개의 JSON 값(`{} {}`)도 `400` 없이
+통과했습니다. 같은 저장소의 다른 세 호출부(`resource_handlers.go`·`oidc.go`·
+`ai.go`)는 모두 `r.ContentLength != 0` 이라 이 한 줄만 다른 판정을 하고
+있었습니다. 게이트를 `decodeOptionalBaoJSON` 호출로 바꾸고 `decodeBaoJSON` 을
+공용 코어 `decodeBaoJSONBody(…, allowEmpty bool)` 로 뽑아 빈 본문(`io.EOF`)만
+기본값으로 통과시키는 변형을 추가했습니다. `r.ContentLength != 0` 로만 바꾸면 빈
+chunked 본문이 `400` 이 되므로, 본문 없는 요청이 기본 12시간으로 성공하는 기존
+계약을 지키기 위해 길이를 보지 않고 디코드합니다. 기존 두 오류 메시지·
+`maxJSONBody`·`UseNumber`·단일 JSON 값 검사는 그대로이고
+`DisallowUnknownFields` 는 넣지 않았으므로 미지의 필드를 보내던 호출자는 영향을
+받지 않습니다. 권한 거절(admin·manager)은 디코드 전에 그대로 남아 reader 는
+여전히 `403` 입니다. 기존 `resolveSession`·`revokeSessionToken` 과 같은 모양의
+`sessionCreator` seam 을 `server.go` 에 추가해, 거절 케이스가 nil store panic
+대신 "`200` + 생성 카운터 1회" 로 관찰되게 했습니다. KV·Transit 경로의 판정,
+권한 확인과 감사 기록은 변경하지 않았습니다.
+
+기존 패치 릴리즈와 같은 방식으로 버전 파일, 문서 프로파일과 CHANGELOG 를
+v0.2.40 으로 갱신했습니다. 호환성 프로파일의 인증 계약에는 `auth/token/create`
+본문이 `Content-Length` 없는 요청에서도 읽히며 본문이 아예 없는 요청만 기본
+TTL(12시간)로 통과한다는 것을 한 줄로 기록했습니다. 화면 캡처의 v0.2.9 출처와 두
+가이드 PDF 의 v0.2.18 표지는 유지합니다. 기존 PDF 변환기가 저장소에 없어 같은
+판형으로 재생성하지 않았으며 Markdown 본문은 갱신했습니다.
+
+./scripts/verify.sh 전체(Go test·vet·gofmt, 웹 테스트 59개·lint·build, 문서·
+Dependabot 묶음·Compose), go test ./... -count=1, go vet ./..., gofmt -l 과 소스
+버전 일치 검사가 통과했습니다(`검증 완료: jikim v0.2.40`). 추가된
+`internal/httpapi/openbao_token_create_body_test.go` 의 서브테스트 18개는
+`quietServer` 에 `sessionResolver`·`sessionCreator` 를 주입하고
+`http.NewServeMux()` + `openBaoRoutes` 로 실제 라우트와 `withBaoAuth` 를
+통과시키므로, 거절 케이스마다 생성기 0회 호출과 수락 케이스의
+`lease_duration == 3600`·생성기가 받은 `name == "ci"`·`ttl == 1h` 가 저장소 없이
+단정됩니다. 같은 본문을 `Content-Length` 와 chunked 양쪽으로 보내 두 경로가 같은
+판정을 받는 것도 함께 고정합니다. 이번 로컬 실행은 DSN 미설정으로 PostgreSQL
+통합 테스트를 건너뛰었습니다. 업스트림 OpenBao 가 chunked 본문에 정확히 같은
+판정을 내리는지는 확인하지 않았으며, 근거는 같은 저장소의 다른 세 호출부가 이미
+`!= 0` 으로 적혀 있다는 점과 compatibility.md 가 문서화한 인증 계약입니다. 기존
+500kB 청크 경고는 남습니다. 이미지 빌드, PostgreSQL 스모크, 브라우저 E2E, 번들
+생성과 GitHub Release 게이트는 기존대로 태그 푸시 후 release.yml 이 수행합니다.
+이번 세션은 원격 푸시나 게시를 하지 않습니다.
