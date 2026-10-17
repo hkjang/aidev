@@ -1,0 +1,74 @@
+[
+  {
+    "title": "PostgreSQL 없는 환경에서 go test ./... 가 실패하던 server 픽스처 수정 (trafficEvidenceServer 의 t.Fatal → t.Skipf)",
+    "value": 5,
+    "risk": 1,
+    "size": "S",
+    "status": "done",
+    "note": "server/finding_traffic_test.go 의 공용 픽스처만 NewManager 실패를 t.Fatal 로 처리해 DB 없는 환경에서 22건이 실패했다. 패키지 규약(t.Skipf)으로 맞추고 회귀 시험 TestTrafficEvidenceServerSkipsWithoutDatabaseConfig 추가. release.yml 백엔드 검증은 수동 패키지 목록 대신 go test ./... 로 교체. 커밋 1f116cf.",
+    "updated": "2026-10-17"
+  },
+  {
+    "title": "enrich 패키지 순수 헬퍼 첫 테스트",
+    "value": 3,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "enrich/enrich.go 의 extractTitle(248)/hostOf(256)/isBlank(264)/uniq(278)/Engine.onCooldown(162) 에 테스트가 전혀 없다. doDNS·doHTTP 는 네트워크·DB 의존이라 범위 밖. 2026-10-17 에 release.yml 이 go test ./... 로 바뀌어 이제는 테스트만 추가하면 CI 에서 바로 돈다(워크플로 수정 불필요).",
+    "updated": "2026-10-17"
+  },
+  {
+    "title": "report·enrich 를 CI 테스트 대상에 포함",
+    "value": 3,
+    "risk": 2,
+    "size": "S",
+    "status": "done",
+    "note": "2026-10-17 에 release.yml:59 의 수동 패키지 목록을 go test ./... 로 교체해 두 패키지가 자동 포함된다. scripts/test-integration.go 기본값(agent,db,server,identity)은 PG 필요 패키지 전용이라 손대지 않았다.",
+    "updated": "2026-10-17"
+  },
+  {
+    "title": "sevRank 미등록·대문자 심각도가 critical 로 정렬되는 문제",
+    "value": 3,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "report/report.go:46 의 sevRank 는 critical/high/medium/low/\"\" 만 담고 맵 미스는 0 을 돌려주므로 'unknown'·'INFO'·'Critical' 같은 값이 critical 보다 앞(또는 동급)으로 정렬된다. sortFindingsForExport 와 Markdown 양쪽에 영향. sevRank/nz 는 findings.go·report.go 공유라 시그니처 변경 대신 조회 헬퍼 추가 권장. DB 가 severity 를 제약하는지 먼저 확인할 것.",
+    "updated": "2026-10-17"
+  },
+  {
+    "title": "PG 필요 픽스처의 건너뜀을 CI 에서만 강제하는 플래그(BITEX_REQUIRE_PG)",
+    "value": 3,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "새로 발견. 2026-10-17 수정으로 server 픽스처가 DSN 없으면 건너뛴다 — 지금은 scripts/test-integration.go 가 BITEX_TEST_PG_DSN 을 먼저 하드 검증하고 테스트별로 BITEX_PG_DSN 을 넣어 주므로 CI 가 조용히 건너뛸 수는 없다. 다만 SKIP 이 fail 로 집계되지 않으므로, 러너가 자식 환경에 BITEX_REQUIRE_PG=1 을 넣고 픽스처들이 그 플래그에서는 Skipf 대신 Fatal 하도록 하면 보호가 명시적으로 된다. 16+곳의 픽스처에 공통 헬퍼를 넣는 작업이라 범위가 커지는 점만 주의.",
+    "updated": "2026-10-17"
+  },
+  {
+    "title": "ZIP 엔트리 중복 이름 처리의 절단 상호작용 점검",
+    "value": 2,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "server/finding_traffic_export.go:31-37 은 FindingFilename 결과를 used[base] 로 세어 중복 시 -2.md 를 붙인다. 파일명이 120바이트에서 잘리면 ID 접미사가 먼저 사라져 서로 다른 발견 사항이 같은 base 로 수렴한다. ID 를 절단보다 뒤에 붙이는 설계로 바꾸면 해결되지만 파일명 형식이 바뀐다. 주의: server 테스트는 PostgreSQL 필요(격리 DSN + scripts/test-integration.go).",
+    "updated": "2026-10-17"
+  },
+  {
+    "title": "FindingsMarkdown 의 Report 본문 Markdown 삽입 검토",
+    "value": 2,
+    "risk": 3,
+    "size": "M",
+    "status": "pending",
+    "note": "report/findings.go 의 FindingsMarkdown·SingleFindingMarkdown 이 LLM 이 생성한 f.Report 를 보고서에 그대로 이어 붙인다. 코드펜스 탈출·heading 깨짐이 가능하지만 Markdown 은 설계상 신뢰 텍스트 필드이고 중성화 방침은 제품 판단이 필요하다. CSV 와 달리 실행 경로가 아니라 후순위.",
+    "updated": "2026-10-17"
+  },
+  {
+    "title": "FindingFilename 의 빈 이름 대체 경로가 도달 불가",
+    "value": 1,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "report/findings.go 의 `if name == \"\" { name = finding_<ID> }` 는 실행되지 않는다 — sev 기본값 info 와 ID 숫자가 정규식·Trim 을 항상 통과한다. 방어 코드로 남길지 주석으로 의도를 명시할지 결정 필요. 가치 낮음.",
+    "updated": "2026-10-17"
+  }
+]
