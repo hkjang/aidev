@@ -1,5 +1,5 @@
 {
- "generated": "2026-10-18T00:35:19+09:00",
+ "generated": "2026-10-18T00:44:21+09:00",
  "site": "https://hkjang.github.io/aidev",
  "description": "Claude Code 자율 개선 에이전트가 hkjang 의 프로젝트를 개선·테스트·머지·릴리즈한 일일 보고. 오늘 0회차·릴리즈 0건, 누적 2733회차·릴리즈 831건, 주의 필요 14건.",
  "today": {
@@ -10,18 +10,18 @@
   "merged": 0,
   "nochange": 0,
   "failed": 0,
-  "cost_usd": 0.0,
-  "minutes": 0,
-  "sessions": 0
+  "cost_usd": 1.21,
+  "minutes": 3,
+  "sessions": 1
  },
  "totals": {
   "runs": 2733,
   "released": 831,
   "days": 46,
-  "cost_usd": 9748.32,
-  "minutes": 26984,
-  "tokens_in": 10484420091,
-  "tokens_out": 84762219
+  "cost_usd": 9749.53,
+  "minutes": 26986,
+  "tokens_in": 10485540475,
+  "tokens_out": 84770753
  },
  "alerts": [
   {
@@ -131,20 +131,22 @@
   }
  ],
  "health": {
-  "checked": "2026-10-18T00:15:04+09:00",
-  "last_run": "2026-10-17T23:30:11+09:00",
-  "seconds_since_last": 2690,
-  "runner_pid": "2697976",
-  "runner_age_seconds": 1499,
-  "scheduler_status": "실행 중",
-  "scheduler_next_run": "2026-10-18 오전 12:20:00",
+  "checked": "2026-10-18T00:45:04+09:00",
+  "last_run": "2026-10-18T00:35:17+09:00",
+  "seconds_since_last": 584,
+  "runner_pid": "",
+  "runner_age_seconds": 0,
+  "scheduler_status": "준비",
+  "scheduler_next_run": "2026-10-18 오전 12:50:00",
   "disk_percent": 97,
   "ok": false,
   "problems": [
    "측정 감사: 원격에 없는 릴리즈 태그 1건 — 그 저장소의 다음 릴리즈를 막는다",
    "디스크 97% 사용"
   ],
-  "actions": []
+  "actions": [
+   "소유 프로세스 없는 잠금 파일을 제거했다"
+  ]
  },
  "lessons": [
   {
@@ -1276,9 +1278,9 @@
    "labels": "",
    "action": "PR 처리기가 다음 시간에 다시 시도 · 승인: PR 라벨 aidev-approved / 반려: aidev-rejected — 다음 회차에 러너가 승인 당시 커밋에만 CI 확인 후 머지·닫기",
    "date": "2026-10-17",
-   "shepherd": "CI 실패 · 수정 실패 → 다음 시간에 재시도 (10-17 23:40) — 수정 세션이 커밋을 만들지 않음: # 수리 결과: 커밋 없음 — 지적된 결함이 이 브랜치 안에 없다  - 재현 시도: 이 워크트리(cb269c5)에서 CI 가 3초 안에 닿는 범위와 그 다음 두 단계를 그대로 돌렸다 — `npm ci --no-audit --fund=false` 성공(2",
+   "shepherd": "CI 실패 · 수정 실패 → 다음 시간에 재시도 (10-18 00:44) — 수정 세션이 커밋을 만들지 않음: # 수리 요약 — 커밋 없음 (코드 결함 아님)  CI 'check' 3초 실패의 원인을 **확정**했다: GitHub Actions 잡이 **과금 차단으로 시작조차 못 했다**. check_run 117420253640 의 failure 주석 원문 —",
    "shepherd_action": "fix-failed",
-   "shepherd_detail": "수정 세션이 커밋을 만들지 않음: # 수리 결과: 커밋 없음 — 지적된 결함이 이 브랜치 안에 없다  - 재현 시도: 이 워크트리(cb269c5)에서 CI 가 3초 안에 닿는 범위와 그 다음 두 단계를 그대로 돌렸다 — `npm ci --no-audit --fund=false` 성공(231 packages, 12s), `npm run check` 전부 통과(eslint + core/server/web typecheck + vitest 7파일 121개), `npm run build` 통과(web + server). 같은 자리에서 실패하지 않는다. - 실패 로그는 못 받았다: 과제서의 로그 칸이 비어 있고, 이 환경에 GitHub 자격증명이 없어(`gh auth` 미설정, 익명 A",
+   "shepherd_detail": "수정 세션이 커밋을 만들지 않음: # 수리 요약 — 커밋 없음 (코드 결함 아님)  CI 'check' 3초 실패의 원인을 **확정**했다: GitHub Actions 잡이 **과금 차단으로 시작조차 못 했다**. check_run 117420253640 의 failure 주석 원문 — \"The job was not started because recent account payments have failed or your spending limit needs to be increased.\" 잡 steps 배열은 빈 `[]` 이고, 같은 주석이 cb269c5·b55ab2d 뿐 아니라 **main 푸시 601659d·f3f2836 에도** 똑같이 붙어 있다. 즉 이 PR 과 무관하며 2026-10-15 부터 저장소 전체가 같은 이유로 막혀 있다(�",
    "needs_human": false
   },
   {
@@ -1915,10 +1917,12 @@
   }
  ],
  "shepherd": {
-  "last_pass": "2026-10-17T23:35:32+09:00",
+  "last_pass": "2026-10-18T00:40:03+09:00",
   "enabled": true,
-  "today": {},
-  "total": 750,
+  "today": {
+   "fix-failed": 1
+  },
+  "total": 751,
   "pending_human": 217
  },
  "agents": {
@@ -1933,7 +1937,7 @@
     "role": "구현 builder",
     "calls": 479,
     "metric": "러너 검증 통과 92% · 변경 없음 138",
-    "cost": 1140.03
+    "cost": 1141.24
    },
    {
     "role": "비평 critic",
@@ -1963,11 +1967,11 @@
     "role": "PR 심사 shepherd-reviewer",
     "calls": 135,
     "metric": "승인 44 · 거절 6 · 사람 필요 85 · 승인 뒤 회귀 1",
-    "cost": 248.43
+    "cost": 249.64
    },
    {
     "role": "PR 수리 shepherd-fixer",
-    "calls": 94,
+    "calls": 95,
     "metric": "고쳐서 푸시 30%",
     "cost": null
    },
@@ -2447,13 +2451,13 @@
   },
   {
    "metric": "유효 개선당 비용",
-   "value": "$15.15",
+   "value": "$15.16",
    "detail": "비용 확인된 유효 개선 168건, 미확인 세션 239"
   },
   {
    "metric": "예외 처리 소요 시간(중앙값)",
    "value": "2.1시간",
-   "detail": "해결된 경고 426건"
+   "detail": "해결된 경고 427건"
   },
   {
    "metric": "실행 오류",
@@ -2744,8 +2748,8 @@
    "merged": 2,
    "nochange": 11,
    "failed": 38,
-   "cost": 1045.79,
-   "minutes": 2802
+   "cost": 1047.01,
+   "minutes": 2805
   },
   {
    "key": "2026-W41",
@@ -2830,8 +2834,8 @@
    "merged": 40,
    "nochange": 138,
    "failed": 63,
-   "cost": 3392.77,
-   "minutes": 9829
+   "cost": 3393.98,
+   "minutes": 9832
   },
   {
    "key": "2026-09",
@@ -3448,8 +3452,8 @@
    "last_ts": "2026-10-17T23:30:11+09:00",
    "last_status": "failed",
    "last_result": "fix-round: CI failed, PR open https://github.com/hkjang/insight.yeopjari.bid/pull/5",
-   "cost": 26.38,
-   "minutes": 72,
+   "cost": 27.6,
+   "minutes": 75,
    "grade": "C",
    "grade_why": "14일: 릴리즈 2, 실패 2, 경고 3, 회귀 0",
    "lessons": 0,
