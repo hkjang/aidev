@@ -1,0 +1,119 @@
+[
+  {
+    "title": "지급 목록 다운로드의 DB 장애도 공통 점검 안내로 전달하기",
+    "value": 3,
+    "risk": 1,
+    "size": "M",
+    "status": "done",
+    "note": "client.ts:download 의 실패 분기에서 code==='db_unavailable' 일 때 기존 reportDegraded() 를 호출하도록 한 곳만 고쳤다. 실제 api.download 를 부르는 단위 회귀 10건(양성 1·ApiError 계약 1·구독 해제 1·음성 5·성공 2)과 screenshots.mjs 의 실제 버튼→배너 브라우저 회귀를 남겼다.",
+    "updated": "2026-10-17"
+  },
+  {
+    "title": "차단기 프로브(1회 시도)가 평범한 연결 끊김 한 번에 strikes 를 올려 멀쩡한 DB 에서도 대기를 20~120초로 키우는 것",
+    "value": 2,
+    "risk": 4,
+    "size": "M",
+    "status": "pending",
+    "note": "의도된 outage 복구 정책이므로 정상 DB에서 실제 피해가 확인되기 전 결함으로 단정하거나 재시도 수를 늘리지 않는다. 이번 회차에서 재평가하지 않았다.",
+    "updated": "2026-10-17"
+  },
+  {
+    "title": "util/time.ts 의 backoffMs·kstWindowOn 이 외부 호출처 0인 죽은 코드",
+    "value": 1,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "parseClock 은 kstWindowOn 내부에서 쓰이므로 '호출처 0' 설명은 부정확하다. 사용자 가치가 낮아 계속 보류.",
+    "updated": "2026-10-17"
+  },
+  {
+    "title": "util/text.ts:isSafeLink() 의 죽은 코드와 사설망 차단 주석 정리",
+    "value": 3,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "정의 외 사용 없음. 삭제/주석 축소 범위만, 실제 URL 파서와 통합하지 않는다.",
+    "updated": "2026-10-17"
+  },
+  {
+    "title": "README·engineering/architecture 의 낡은 테스트 개수 안내를 검증 범위 설명으로 교체",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "차선 후보였으나 1순위를 끝까지 수행해 이번에는 손대지 않았다. 이번 회차 실측치(단위 6파일 108 테스트)는 기록해 두되 문서에 고정 숫자를 다시 박지 말 것.",
+    "updated": "2026-10-17"
+  },
+  {
+    "title": "domain/catalog.ts 와 maskEmail·mailboxKey 엣지케이스 테스트",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "직접 단위 검사 없음. 진행할 때 실제 사용처가 있는 maskEmail 만 좁힐 것.",
+    "updated": "2026-10-17"
+  },
+  {
+    "title": "quota.ts:usage() 의 'one round trip' 주석 정확성 확인",
+    "value": 2,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "측정 없는 성능 변경 금지. 주석이 틀렸다고 단정할 근거 아직 없음.",
+    "updated": "2026-10-17"
+  },
+  {
+    "title": "API client 의 204 성공 쓰기에서 캐시 무효화가 누락되는 것",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "request 의 204 조기 반환이 invalidateAll 보다 앞선다. api.cached/prefetch 의 실제 화면 소비가 검색되지 않아 사용자 영향은 여전히 미확인. 이번 download 작업과 묶지 않았다.",
+    "updated": "2026-10-17"
+  },
+  {
+    "title": "worktree 의존성 설치에서 npm ci 사용으로 lockfile 흔들림 방지 (README 로컬 안내 포함)",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "README 는 여전히 npm install, CI 는 npm ci --no-audit --fund=false.",
+    "updated": "2026-10-17"
+  },
+  {
+    "title": "quota purge 가 진행 중인 월 카운터를 삭제하는지 실제 DB 회귀 확인",
+    "value": 2,
+    "risk": 3,
+    "size": "M",
+    "status": "pending",
+    "note": "운영 month 제한 호출처가 검색되지 않아 현재 피해 미확인. windowStart 라벨 변경 금지.",
+    "updated": "2026-10-17"
+  },
+  {
+    "title": "API 캐시 무효화 전의 요청 완료가 새 세대의 같은 키 캐시를 삭제하는 경쟁 검증",
+    "value": 2,
+    "risk": 2,
+    "size": "M",
+    "status": "pending",
+    "note": "cache.ts:remember 의 이전 generation 분기가 entries.delete(key) 로 이후 remember 가 만든 같은 키 항목까지 지울 수 있는 구조. 동시 요청 재현 미확인.",
+    "updated": "2026-10-17"
+  },
+  {
+    "title": "download 의 401 이 invalidateAll·onUnauthenticated 를 거치지 않는 것",
+    "value": 3,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "신규. request() 는 401 에서 캐시를 비우고 로그인 화면으로 보내지만 download() 는 ApiError 만 던진다. 세션이 끊긴 운영자가 '내려받지 못했어요' 토스트만 보고 왜인지 모른다. 이번 과제서가 '인접 개선을 묶지 말 것'이라 분리했다. 고칠 때 캐시 무효화가 다른 화면에 주는 영향을 먼저 확인할 것.",
+    "updated": "2026-10-17"
+  },
+  {
+    "title": "download 응답의 retry-after·request-id 가 ApiError 에 실리지 않는 것",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "신규. request() 는 requestId/retryAfter 를 채우지만 download() 는 비운 채로 던져, 429 를 만난 운영자에게 '언제 다시' 를 말해 줄 수 없고 문의 때 request id 도 없다. 위 401 항목과 함께 묶어 download 의 오류 계약을 한 번에 좁히는 편이 낫다.",
+    "updated": "2026-10-17"
+  }
+]

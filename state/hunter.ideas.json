@@ -1,75 +1,75 @@
 [
   {
-    "title": "발견 건 하나를 저장할 때도 조치 담당자에 일괄 변경·ITSM 과 같은 200바이트·제어문자·trim 규칙 적용",
+    "title": "설정 ai·agents·security 의 정수 한도를 저장값=집행값 하나로 정규화 (validateSettings 되쓰기)",
     "value": 4,
     "risk": 2,
     "size": "S",
     "status": "done",
-    "note": "2026-10-16 구현. finding_ops.go 에 자유 함수 validateFindingAssignee(m, old) 를 두고 domain.go findings 분기와 finding_bulk.go case assignee 가 함께 호출한다. 인라인 조건·문구 삭제, unicode import 이동. 제출값이 old 와 같으면 건너뛰어 기존 행을 잠그지 않는다. 구현 중 발견: 헬퍼가 nil 을 통과시키면 일괄의 기존 null 400 이 사라지므로 일괄에만 nil 전용 거절을 남겼다. 69 PASS/13 SKIP, vet·build·verify-pentagi 통과. trim 되쓰기는 finding_ops_activity.go:154 에 변경 1건을 남긴다(의도).",
-    "updated": "2026-10-16"
+    "note": "2026-10-17 구현·커밋(50aab02). 세 case 에서 asInt 로 한 번 읽고 통과 시 v[k]=n 되쓰기. 새 거절 없음(기존 소수 행 grandfathering), 범위·한국어 문구 무변경을 테스트로 고정. 보고서 경로(reportDocument→reportText)까지 실행 테스트로 증명. 422 PASS/128 SKIP/0 FAIL.",
+    "updated": "2026-10-17"
   },
   {
-    "title": "발견 건 등록·수정 폼의 담당자 입력에 서버가 실제로 받는 길이 선언",
+    "title": "inventory SBOM 갱신 검토 기준 입력을 정수로 제한 (settings.tsx integer 선언)",
+    "value": 3,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "서버는 이미 정수만 수락(operations.go:16). web/src/settings.tsx 는 2026-10-08 미머지 PR 과 같은 파일이라 충돌 위험 — 그 PR 처리 후에만.",
+    "updated": "2026-10-17"
+  },
+  {
+    "title": "settings.tsx 의 SLA·risk 정수 옵션 9필드 연결",
+    "value": 3,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "2026-10-08 회차가 구현했으나 main 에 머지되지 않음(review-pending). 같은 변경을 같은 방식으로 다시 올리지 않는다 — 운영자 규칙. 그 PR 의 처리를 기다릴 것.",
+    "updated": "2026-10-17"
+  },
+  {
+    "title": "설정 ai 그룹 max_tokens <= context_window 교차 제약을 저장 전에 안내",
     "value": 2,
-    "risk": 1,
+    "risk": 2,
     "size": "S",
     "status": "pending",
-    "note": "web/src/resources.tsx:257 의 { key: 'assignee', label: '조치 담당자' } 에 maxLength 선언이 없다. 2026-10-16 회차로 서버가 200바이트 규칙을 갖게 되었으므로 10-06 이 거절한 'UI 만 먼저 좁히는' 반례가 더는 아니다. 단 서버는 바이트를, HTML maxLength 는 UTF-16 코드 단위를 세므로 한글 이름에서 두 경계가 어긋난다 — 단순 maxLength 로는 서버 수락을 보장할 수 없고 바이트 기준 안내가 필요하다. 이 불일치를 먼저 설계할 것.",
-    "updated": "2026-10-16"
+    "note": "서버 교차 제약은 settings.go 의 ai case 에 있고 이번 정규화로 저장값 기준이 분명해졌다. 다만 settings.tsx 를 건드려야 해 미머지 PR 과 충돌.",
+    "updated": "2026-10-17"
   },
   {
-    "title": "일괄 변경 담당자 200바이트 경계를 공유 벡터로 고정해 TS TextEncoder 검사와 Go len() 검사 교차 검증",
+    "title": "발견 건 폼 담당자 입력에 서버 200바이트 규칙 반영",
+    "value": 2,
+    "risk": 3,
+    "size": "S",
+    "status": "pending",
+    "note": "v1.25.0 의 validateFindingAssignee 는 제출값이 old 와 같으면 검사를 건너뛴다. 폼은 old 를 모르므로 단순 바이트 가드는 기존 긴 담당자 행의 저장을 클라이언트에서 막아 서버보다 엄격해진다(회귀). 설계 선행 필요.",
+    "updated": "2026-10-17"
+  },
+  {
+    "title": "일괄 변경 담당자 200바이트 경계를 공유 벡터로 TS/Go 교차 검증",
     "value": 3,
     "risk": 1,
     "size": "S",
     "status": "pending",
-    "note": "finding-bulk-state.ts:30 은 trim 후 TextEncoder 바이트, Go 는 수신 문자열의 len(). 보내는 값이 trim 된 값(ts:32)이라는 전제가 두 쪽을 묶지만 코드에 기록이 없다. 2026-10-16 이 Go 쪽 규칙을 validateFindingAssignee 한 곳으로 모았으므로 벡터가 겨눌 과녁이 하나가 되어 더 쉬워졌다. 프로덕션 0~1파일.",
-    "updated": "2026-10-16"
+    "note": "v1.25.0 로 Go 규칙이 한 곳이라 과녁이 하나. 다만 프로덕션 0파일(테스트만 늘리는 과제)이라 우선순위 낮음.",
+    "updated": "2026-10-17"
   },
   {
-    "title": "inventory SBOM 갱신 검토 기준 입력을 정수로 제한",
-    "value": 3,
-    "risk": 1,
-    "size": "S",
-    "status": "pending",
-    "note": "settings.tsx:188 inventory.stale_after_days 에 integer 선언 없음, operations.go validateInventorySettings 는 정수 1~3650 만 수락. 2026-10-08 의 SLA·risk integer 변경이 main@9069bcf 에 아직 없어 같은 파일을 만지면 충돌한다. 그 PR 이 머지된 뒤에 할 것.",
-    "updated": "2026-10-16"
-  },
-  {
-    "title": "due_date 의 두 번째 파서(hunter_finding_timestamp plpgsql 정규식)와 Go RFC3339 수락 범위 차이 확인",
+    "title": "due_date 두 번째 파서(plpgsql hunter_finding_timestamp 정규식) 와 Go RFC3339 수락 범위 차이 확인",
     "value": 3,
     "risk": 2,
     "size": "M",
     "status": "pending",
-    "note": "finding_ops.go 의 plpgsql 정규식은 '^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(\\.\\d+)?(Z|[+-]\\d{2}:\\d{2})$' 로 Go time.Parse(RFC3339) 보다 좁다. HUNTER_TEST_DSN 없어 DB 해석 미검증. 파서 통합 금지, 좁히는 방향만.",
-    "updated": "2026-10-16"
+    "note": "HUNTER_TEST_DSN 필요. 파서 통합 금지, 좁히는 방향만(운영자 규칙).",
+    "updated": "2026-10-17"
   },
   {
-    "title": "web 테스트 러너의 Node 하한을 engines 로 선언해 툴체인 드리프트를 경고로 만들기",
-    "value": 3,
-    "risk": 1,
-    "size": "S",
-    "status": "pending",
-    "note": "package.json 루트에 engines 없음(유지). 2026-10-08 회차에서 no-change 판정을 받은 이력이 있어 같은 방식으로 다시 올리지 않는다. 여섯 회차 연속 밀렸고 릴리즈 경로 인접.",
-    "updated": "2026-10-16"
-  },
-  {
-    "title": "설정 ai 그룹의 max_tokens <= context_window 교차 제약을 저장 전에 알리기",
-    "value": 2,
-    "risk": 2,
-    "size": "S",
-    "status": "pending",
-    "note": "settings.tsx 를 건드리므로 2026-10-08 미머지 PR 과 충돌 위험. 서버 교차 제약과 실행 독자 조사 필요.",
-    "updated": "2026-10-16"
-  },
-  {
-    "title": "oidcReturnTo 와 safeReturnPath 의 return_to 규칙 공유 벡터 교차 검증",
+    "title": "oidcReturnTo(Go)·safeReturnPath(TS) return_to 규칙 공유 벡터 교차 검증",
     "value": 3,
     "risk": 2,
     "size": "M",
     "status": "pending",
     "note": "auth 보호 경로라 후순위 유지. 의도된 fallback 차이(/dashboard 대 null) 보존 필요.",
-    "updated": "2026-10-16"
+    "updated": "2026-10-17"
   },
   {
     "title": "서버 CSV 내보내기 개인 키 권한 교집합 HTTP 회귀",
@@ -77,8 +77,8 @@
     "risk": 1,
     "size": "S",
     "status": "pending",
-    "note": "report_csv_test.go 의 TestReportCSVFormulaSafety 는 쿠키 로그인으로 팀격리·401·수식 방어만 확인. 개인 키 교집합 회귀는 이 파일에 없음. HUNTER_TEST_DSN 필요하고 테스트만 늘리는 과제라 우선순위 낮음.",
-    "updated": "2026-10-16"
+    "note": "report_csv_test.go 는 쿠키 로그인 팀격리·수식 방어만 확인. DSN 필요 + 테스트만 늘리는 과제.",
+    "updated": "2026-10-17"
   },
   {
     "title": "공통 폼 datetime-local 컨트롤에 max·step 선언",
@@ -86,52 +86,34 @@
     "risk": 2,
     "size": "S",
     "status": "pending",
-    "note": "resources.tsx TextInput 에 max/step 없음(유지). resourceDateTimeWire 가드가 이미 wire 를 막으므로 남은 가치는 입력 단계 안내뿐. 시간대에 따라 wire 경계가 달라 단순 max 로는 서버 수락 보장 불가.",
-    "updated": "2026-10-16"
+    "note": "resourceDateTimeWire 가드가 이미 wire 를 막으므로 남은 가치는 입력 단계 안내뿐. 시간대에 따라 wire 경계가 달라 단순 max 로는 서버 수락 보장 불가.",
+    "updated": "2026-10-17"
   },
   {
-    "title": "세션 시간·개인 키 최대 유효기간 숫자 입력의 정수 계약 확인",
-    "value": 2,
-    "risk": 3,
-    "size": "M",
-    "status": "pending",
-    "note": "settings.tsx security 두 필드 integer 없음. auth 인접 + 미머지 PR 과 같은 파일이라 제외 유지.",
-    "updated": "2026-10-16"
-  },
-  {
-    "title": "finding-bulk 새 담당자 입력에 바이트 잔량 안내",
+    "title": "에이전트 설정 설명의 'Hunter 도구 7종' 과 실제 도구 수 불일치 정정",
     "value": 2,
     "risk": 1,
     "size": "S",
     "status": "pending",
-    "note": "finding-bulk.tsx:234 새 담당자 입력은 해제 설명만 표시. trim 후 UTF-8 바이트 기준이어야 함. 문구만 늘리는 변경이 될 위험이 있어 후순위.",
-    "updated": "2026-10-16"
+    "note": "settings.tsx:333 은 7종, AGENTS.md 는 8종(search_reference 포함). agents_tools.go 의 실제 등록 수를 먼저 셀 것 — 아직 미확인. settings.tsx 라 미머지 PR 과 충돌.",
+    "updated": "2026-10-17"
   },
   {
-    "title": "목록 CSV 내보내기의 범위 밖 숫자 타임스탬프 RangeError 방어",
-    "value": 2,
+    "title": "설정 폼 ai.max_tokens 기본값 4096 과 서버 기본 8192 불일치",
+    "value": 1,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "관찰만. GET 이 저장/기본값을 돌려주므로 화면에는 8192 가 보이고 폼 default 는 값 부재 시에만 쓰여 실질 영향이 작다.",
+    "updated": "2026-10-17"
+  },
+  {
+    "title": "web 테스트 러너 Node 하한을 engines 로 선언",
+    "value": 3,
     "risk": 1,
     "size": "S",
     "status": "rejected",
-    "note": "2026-10-16 정찰이 도달 경로 없음으로 확정: 모든 _at 컬럼이 Date.parse 를 지나 범위 밖은 NaN 이 되고 Number.isFinite 에서 걸린다.",
-    "updated": "2026-10-16"
-  },
-  {
-    "title": "resourceSubmitBody 에 number 분기를 더해 비운 숫자 입력의 타입 오염 정리",
-    "value": 2,
-    "risk": 1,
-    "size": "S",
-    "status": "rejected",
-    "note": "2026-10-16 정찰이 rejected: 서버 number() fallback + 검증기 되쓰기가 흡수한다.",
-    "updated": "2026-10-16"
-  },
-  {
-    "title": "required JSON 빈 객체 거절",
-    "value": 2,
-    "risk": 1,
-    "size": "S",
-    "status": "rejected",
-    "note": "실제 도달 근거 없어 rejected 유지.",
-    "updated": "2026-10-16"
+    "note": "반복 no-change 판정 이력. 운영자 규칙상 같은 접근을 다시 올리지 않는다.",
+    "updated": "2026-10-17"
   }
 ]

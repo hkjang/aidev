@@ -1,0 +1,33 @@
+# hunter 프로필 (2026-10-17)
+- 목적: 폐쇄망 사내 서비스의 발견·검증·개선·재검증을 연결하는 단일 이미지 보안 검증 플랫폼.
+- 스택: main@46c8b16, VERSION=1.25.0. Go 1.26.5+ 선언(실측 1.26.7), React 19·Mantine 8·TypeScript·Vite, PostgreSQL, Node 26 기준.
+- 구조:
+  - cmd/hunter: API·웹 8080 및 워커 진입. 런타임 환경변수는 POSTGRES_DSN/BOOTSTRAP_ADMIN/BOOTSTRAP_ADMIN_PASSWORD/ENCRYPTION_KEY 네 개뿐.
+  - internal/app: API·권한·발견·진단·설정. openapi.json 과 실제 라우트·검증기가 계약.
+  - internal/app/settings.go: `defaultSettings()`(:16) 12그룹, `asInt`(:72) 는 `int(x)` 절삭, `validateSettings`(:233) 가 그룹별 분기. PUT 핸들러(:150-200)는 기존 설정 맵에 입력을 덮어쓰고 **검증기가 받은 그 맵을** json.Marshal 로 저장하므로 검증기의 되쓰기가 곧 저장값이다.
+  - 숫자 계약의 현재 상태: sla·risk(`finding_ops.go:59`)·inventory(`operations.go:16`)는 소수를 **거절**, ai·agents·security(`settings.go:262-288`)는 `asInt` 로 검사만 하고 **원값을 저장**(= 2026-10-17 정찰이 고른 결함).
+  - internal/app/agents.go:293-296: 실행 생성 시 `cloneMap(cfg)` + ai 키로 **불변 한도 스냅샷**(agent_runs.limits jsonb)을 만든다. 집행 독자는 전부 asInt(agents_tools.go:42·45·89, agents_llm.go:34, agents_runner.go:112·233, agents_control.go:167), 원값 독자는 agent_reports.go:115-122(오프라인 한글 보고서)와 GET /api/settings.
+  - internal/app/domain.go: 공통 자원 쓰기. `number()`(:115) 절삭, findings 분기(:464 부근)가 발견 건 검증. 담당자 규칙은 `finding_ops.go` 의 `validateFindingAssignee` 한 곳(v1.25.0).
+  - web/src/resources.tsx + resource-form-state.ts: 공통 폼. `resourceSubmitBody` 가 wire 가드(날짜 4자리 연도·JSON 컨테이너)와 `resourceNumberBounds` 공유 테이블을 가진다. 렌더러는 `allowDecimal={f.integer !== true}`.
+  - web/src/settings.tsx: 설정 화면. 숫자 bounds 는 서버 테이블과 **전부 일치**(2026-10-17 대조 확인). `integer` 선언은 **아직 하나도 없다**(2026-10-08 PR 미머지, 그 파일 마지막 커밋 daff3bc).
+  - internal/pentagicore·third_party/pentagi: 고정 원본 312파일 바이트 보존, 연결은 Hunter bridge.
+  - internal/webassets/dist: Go 임베드 빌드. docs 는 가이드·검증기록·홍보, scripts 는 빌드·원본·라이선스·캡처.
+- 빌드·테스트:
+  - `go test -run '^TestSettingsLimits$' -count=1 -v ./internal/app` — DB 불필요 순수 검증(2026-10-17 PASS 0.023s). `validateSettings` 는 테스트에서 직접 호출 가능(core_test.go:43, handoff_test.go:13, mcp_oauth_test.go:189).
+  - `go test -count=1 ./internal/app`(DSN 없으면 testApp 통합시험 SKIP), `go vet ./...`, `go build ./cmd/hunter`, `node scripts/verify-pentagi.mjs`.
+  - 웹 변경 시: `npm --prefix web ci && npm --prefix web test && npm --prefix web run typecheck && npm --prefix web run build` → `cp -a web/dist/. internal/webassets/dist/`. 기준선 113 PASS/0 FAIL/0 SKIP(2026-10-08 실측).
+  - `go test -race -count=1 ./...` 는 HUNTER_TEST_DSN 필요·오래 걸림.
+- 관례: 영어 conventional commit. 설정은 관리자 화면·DB(런타임 환경변수 추가 금지). 문구·오류는 한국어 Mantine. VERSION·web·docs 버전 동기화, 이미지 hunter:v버전, 첨부 tar.gz 하나.
+- 위험 구역: auth/OIDC/MCP(키·역할 교집합), 캠페인·일괄 원자성, 알림 암호화·불명 재발송, 에이전트 누적 한도, third_party/pentagi 312파일, CI·릴리즈 스크립트.
+- 자주 깨지는 곳:
+  - 폼 선언·서버 검사·실제 wire 가 어긋나면 저장 후 400 또는 조용한 절삭이 생긴다(2026-10-03~07 회차 전부 이 계열).
+  - 새 거절을 추가하면 기존 행이 저장 불가가 된다 — grandfathering 을 먼저 설계할 것(2026-10-16 교훈).
+  - npm test 의 `${npm_node_execpath:-node}` 를 맨 `node` 로 되돌리면 테스트 0건 실행된다.
+  - settings.tsx 는 2026-10-08 미머지 PR 과 충돌한다. 그 파일을 고르기 전에 `grep -n integer web/src/settings.tsx` 로 머지 여부를 확인할 것.
+  - 테스트만 늘리는 과제, tracking/CSP 변경, engines 선언(no-change 이력)은 반복 반려·미채택이다.
+- 검증 함정:
+  - DSN 없는 SKIP 을 DB 검증 통과로 보고하지 않는다. core_test.go:testApp 은 hunter_test_UUID 격리 스키마를 쓰며 public 삭제 금지.
+  - `.tsx` 직접 import 는 현 순수 Node 테스트에서 지원되지 않는다. 소스 문자열 검사를 동작 증거로 삼지 않는다(운영자 규칙).
+  - DOM 하네스가 없어 Mantine 입력 동작(allowDecimal·clampBehavior)은 구현 독해로만 확인된다. 실제 앱 확인은 docs 의 Playwright 로 가능하지만 캡처 스크립트는 업무 자료를 생성하므로 무작정 실행 금지.
+  - CI: 웹 ci/test/build→임베드→원본 해시→vet→PostgreSQL race→Go build→라이선스→스크립트/docs→Docker. Pages 는 docs 변경 시, Release 는 v* 태그. 실행 시작을 완료로 보고하지 않는다.
+- 미확인(2026-10-17): `settingsGroupValues` 본문, agents_tools.go 의 실제 도구 수(화면 문구는 7종, AGENTS.md 는 8종), 실브라우저 입력, 실제 API/DB, 원격 CI.

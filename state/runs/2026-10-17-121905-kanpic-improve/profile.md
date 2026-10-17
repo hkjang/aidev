@@ -1,0 +1,30 @@
+# kanpic 프로필 (2026-10-17)
+- 목적: 온프레미스·폐쇄망용 웹 AI 스프레드시트와 데이터 협업을 제공한다.
+- 스택: Go 1.26(module kanpic), PostgreSQL/pgx, excelize; React19·TypeScript·Vite·zustand·React Query; Vitest/jsdom·Playwright; Docker.
+- 구조:
+  - cmd/api·internal/httpapi: 진입점, REST/MCP. auth·apikey: 인증·인가.
+  - internal/workbook·collaboration: 저장과 협업; migrations: 번호별 SQL.
+  - internal/formula: 계산. 시트 이름 따옴표 계약이 여기 모여 있다 — reference.go(쓰기 `'`→`''`, 읽기), structure.go `quotedQualifier`, evaluator.go, excel_names.go, query.go.
+  - internal/delimited·importexport·external: 인코딩·파일 입출력·원격 수식(IMPORTDATA).
+  - internal/automation: schedule.go ParseSchedule/Next/parseCronField/cronValue, service.go DB 예약 실행.
+  - internal/mail·observability: SMTP·알림 기록과 콘솔/DB 로그(persistentHandler).
+  - internal/handoff·ai·analytics·presentation·settings: 문서 전달·AI·분석·슬라이드·설정.
+  - web/src/pages/EditorPage.tsx: 편집기. parseSheetRange(962행)·openCompare 가 대사 입력을 받는다.
+  - web/src/lib/compareLists.ts: 대사 키(compareKey·looksLikeIdentifier)와 범위 파서(splitSheetRange); spreadsheetNumber.ts: 숫자 인식; cellFormat.ts: Go 서식 엔진의 TS 거울.
+  - internal/integration: 실제 DB 테스트; testdata: Go/TS 공용 픽스처; docs: 가이드·PDF·릴리즈·ROADMAP_PLAN.md.
+- 빌드·테스트: `go test ./...`(21 패키지, 빠름), `go vet ./...`, `go build ./...`. 웹: `cd web && npm ci`(느림) → `npm test` / `npx vitest run <패턴>` / `npm run lint`(= tsc -b) / `npm run build`.
+- 검사: `gofmt -l ./cmd ./internal ./pkg`; `./scripts/check-release-docs.sh`; `./scripts/check-commit-identities.sh HEAD`.
+- 통합: `POSTGRES_DSN=postgres://... go test -tags=integration ./internal/...`; E2E 는 서버 기동 후 `cd web && npm run test:e2e`.
+- 관례: 한국어 `fix/feat/docs(scope)` 커밋. 필수 환경변수는 POSTGRES_DSN, 나머지는 관리자 설정. 가이드 문서를 고치면 PDF 를 같이 재생성한다. 커밋에 Claude/Anthropic 공동작성자 표기 금지.
+- 거울 관례: Go 와 TS 에 같은 규칙이 두 벌 있는 자리(cellFormat, 시트 이름 따옴표, 숫자 인식)는 **통합하지 않고 각각 맞춘다**. 한쪽만 넓히면 같은 값을 다르게 읽어 출력이 망가진다.
+- 위험 구역: auth·apikey·handoff·migrations·.github/workflows; external 의 SSRF/허용목록, mail 의 TLS/AUTH. 저장된 cron 식 재파싱 호환성(ParseSchedule 을 좁힐 때마다 기존 행이 깨질 수 있다).
+- 자주 깨지는 곳: 목적이 다른 파서의 무리한 통합, Go/TS 거울 출력 차이, 테스트 전용 변경(no-change 판정).
+- 검증 함정:
+  - 이 워크트리에 `web/node_modules` 가 **없다**(2026-10-17 확인). 웹 테스트를 쓰는 과제는 `npm ci` 시간을 예산에 넣을 것.
+  - CI 는 Go1.26·Node24·Postgres17 과 서버+Playwright 를 쓴다. 로컬은 Node22.23.1·Go1.26.7(이전 회차 측정).
+  - integration 태그 테스트와 스크립트 실행 비트는 CI 에서만 깨지고 로컬에서는 안 깨진다.
+  - `gh run watch` 는 API 한도를 소진한다 — 한 번 늦게 `gh run list` 로 볼 것.
+  - 다른 봇이 main 에 태그를 끊는다 — VERSION 올리기 전에 태그를 확인할 것.
+  - `release-preflight.sh` 는 detached HEAD 에서 통과할 수 없다 — 나머지 네 조건은 손으로 볼 것.
+- 기준: main@b0481a9, v0.265.0. 최근 5회차는 모두 프로덕션 1~2파일짜리 좁은 수정으로 release-ready/성공했다 — 이 크기를 유지하는 것이 이 저장소의 성공 패턴이다.
+- 문서 메모: 저장소 내 AGENTS.md/CLAUDE.md 없음. internal·web/src·docs 에 TODO/FIXME 없음. ROADMAP_PLAN.md(2026-07-31)는 전략 문서이며 미구현 기능 목록으로 쓰지 않는다.

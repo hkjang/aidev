@@ -1,0 +1,40 @@
+# moina 프로필 (2026-10-17)
+- 목적: Moin·Echo·Remoin·Moim·Flow를 제공하는 한국어 소셜 지식 네트워크를 외부 PostgreSQL과 단일 오프라인 서비스 이미지로 운영한다.
+- 스택: Go 1.26.6·chi·pgx/v5·go-oidc·go-jose, PostgreSQL, React 19·TypeScript·Vite·Tailwind·Radix, Vitest·ESLint, Playwright 1.62.1, Docker.
+- 기준: `origin/main` = `c9bfca2`(v0.1.43), 2026-10-05 이후 **머지 없음**.
+- **머지 대기 중인 작업 (2026-10-17 실행 확인)**: `origin/auto/2026-10-08-0138` 가 두 회차 분량(`7b0f70d` AuthContext.test.tsx 경합 수정 = `98529c0` 재복원, `238eff1` social.go 29곳 이관)을 담고 사람의 머지를 기다린다. `git merge-base --is-ancestor 98529c0 origin/main` → NOT. **같은 복원을 또 올리지 말 것**(이미 두 번 올렸다). 그 브랜치가 건드리는 파일은 `backend/internal/httpapi/social.go` 1개 + 테스트 3개(+ `frontend/src/auth/AuthContext.test.tsx`)이므로 **다음 과제는 이 파일들을 피해서** 고를 것.
+- 구조:
+  - backend/cmd/moina — 서버 진입점; backend/internal/httpapi — REST/MCP·인증·미디어·알림·관리 API, 경로 `/api/v1/...`.
+  - httpapi/server.go — 공용 `writeError(w,status,code,message)`(:694)·`writeErrorDetails`·`decodeJSON`, 미들웨어 체인에 `observability.HTTPMiddleware`. admin 라우트는 `:247~287`(`requireBrowserSession` + `requirePermission("admin:access")` + 라우트별 권한).
+  - httpapi/storage_error.go — **저장 실패 500의 정본 출구**. `writeStorageError(w,r,handler,err,message)`(:22)가 `error_code`/`handler`/`cause_type`/`pg_code` 를 `request_id` 와 함께 남기고 `writeError(w,500,"storage_error",message)` 와 **바이트 동일한 응답**을 낸다. pg 메시지 전문·Detail·Hint는 찍지 않는다(의도된 계약).
+  - httpapi/admin.go — 관리 API. `resolveReport`(:375)·`adminResetPassword`(:191) 는 이미 이관됨. `softDeletePost`(:303)는 `(RowsAffected, err)` 로 500/404 를 호출자가 가르게 한다.
+  - httpapi/social.go·posts.go — 이관 완료(posts), social 은 위 대기 브랜치에서 완료.
+  - backend/internal/store — pgx 저장소·migration(`migrations/001_initial.sql:56~60` 이 역할·권한 시드: `admin` 은 `admin:access`·`users:manage`·`posts:manage`·`roles:manage`·`keys:manage`·`audit:read`·`moderation:manage`·`settings:manage` 등). migration 수정 금지.
+  - frontend/src — React UI·단위 테스트(36파일 250테스트), 대부분 `readableError` 로 서버 message 를 그대로 표시. api/openapi.yaml 이 API 정본(route 120개, `scripts/check-openapi-routes.mjs` 가 검증).
+- 빌드·테스트:
+  - backend: `cd backend && go build ./... && go vet ./... && gofmt -l .`; `go test -race -count=1 ./...`. `make check`·`make fmt`·`make lint`(staticcheck@2025.1.1+ESLint)·`make audit`.
+  - frontend: `npm ci && npm run lint && npm test && npm run build`; lint 경고 상한 40(최근 39).
+  - 느림: `make image`(Dockerfile:13 안에서 `npm test && npm run build`), 앱+DB 기동 후 `npm test --prefix e2e`, `make package && make verify-package`.
+  - CI(`.github/workflows/ci.yml`): `Source tests`(:18) = `make check`→Go→프런트 lint/test→staticcheck→audit; `Image and browser smoke`(:95) = `make image`→PostgreSQL+앱→e2e→`verify-package`.
+- 관례: 한국어 `feat:`/`fix:`/`test:`/`docs:`/`release:` 커밋. 런타임 환경변수는 DSN·bootstrap ID/비밀번호·암호화 키 4개, 나머지는 DB 설정.
+  - 오류 계약: 저장 실패 500 `storage_error` · 대상 없음 404 `not_found` · 상태 충돌 409. OpenAPI 오류는 `description` 에만 적고 성공 `responses` 확대 금지.
+  - 로깅: `observability.Logger(r.Context())`(request_id 포함). `slog.Default()` 는 요청 밖에서만.
+  - integration 은 실제 `store.Open→New→Handler`, sessions row+cookie+CSRF. 저장 오류는 sentinel id 만 거절하는 **테스트 전용 BEFORE 트리거**(`RAISE EXCEPTION` → SQLSTATE `P0001`·`*pgconn.PgError`)로 재현한다.
+  - **핸들러 경로 로그 되읽기**: `Handler()` 가 `slog.Default()` 를 캡처하므로 `New(...)` **앞**에 `logs := &lockedBuffer{}` + `slog.SetDefault(slog.New(slog.NewJSONHandler(logs, nil)))` + `t.Cleanup` 복원. 배선 원본 `admin_report_resolve_postgres_integration_test.go:125~128` 과 `posts_update_postgres_integration_test.go:108~112`, `lockedBuffer` 타입은 `storage_error_test.go:22`.
+- 위험 구역: auth.go·oidc.go·mcp_oauth.go(인증/세션), store/migrations(checksum·영구 데이터), media(LO/quota), server.go 공유 JSON/페이지네이션/CSP, `.github/workflows/*`·`Dockerfile`·`Makefile` 의 `image` 타깃(테스트 gate·임계값 변경 금지), `VERSION`.
+- 자주 깨지는 곳:
+  - **프런트 테스트의 `findBy` 직후 비-DOM 단언** — RTL `asyncWrapper` 의 단일 drain tick(`setTimeout(0)`)과 React Scheduler `setImmediate` 사이에 순서 보장이 없어 부하가 걸리면 깨진다. `AuthContext.test.tsx` 가 image 잡을 두 번 죽였다. 고침은 대기 브랜치에 있다. 같은 패턴이 남은 35개 파일에 있을 수 있다.
+  - 합친 조건 `if err != nil || tx.Commit(...) != nil` 은 Commit 거절 시 `err==nil` 이라 `cause_type:"<nil>"` 이 찍힌다. **남은 곳은 `workflow.go:202` 한 곳뿐**(2026-10-17 grep 확인).
+  - `if rows.Scan(...) != nil` 형태로 오류를 인라인에서 버리는 곳이 `admin.go` 에 4곳(:250·:342·:429·:534). 이관 시 `scanErr` 로 캡처해야 한다. 같은 루프의 Query `err` 는 그 지점에서 nil 이다.
+  - 시각 회귀는 한글 폰트·origin 영향(playwright:v1.62.1-noble, 127.0.0.1:18080). 로그인 5분/동일 IP 5회 제한 — 검증 반복 시 인증 단계에서 실패한다.
+  - SELECT 실패는 sentinel 트리거로 재현 불가. 전용 스키마 헬퍼 없이 대역 테스트로 때우지 않는다.
+  - 회차 TIMEOUT 2건: 검증 과잉 반복으로 작업이 유실됐다.
+- 검증 함정:
+  - DSN 미지정 DB integration 은 `t.Skip`. `MOINA_TEST_POSTGRES_DSN` + `-count=1` 에 `-v` 로 **`--- SKIP` 0줄**을 확인해야 실제로 돌았다는 증거다. v0.1.43 기준 최상위 `TestPostgreSQL*` PASS **44건**.
+  - **`Source tests` 가 통과해도 image 잡이 같은 프런트 테스트로 깨질 수 있다** — docker 빌드 레이어 동시 실행으로 부하가 다르다. 프런트 경합은 `make image` 까지 볼 것.
+  - CI source PostgreSQL 16(한 DB를 네 패키지가 공유 → 전역 트리거는 sentinel 한 행만 거절할 것), image PostgreSQL 17. CI Node 24, 호스트 Node 22.23.1.
+  - `make check` 의 Pages QA 는 기본 스크린샷 필수 아님(release/Pages 는 `MOINA_REQUIRE_SCREENSHOTS=1`). e2e README 의 실행 순서 설명은 `package.json` 이 정본.
+  - 실제 Keycloak/SMTP/Momento 연동은 미확인. release workflow 는 해당 commit 의 성공 CI 를 요구.
+  - 자율 세션에서 `gh`·`npm ci`(네트워크)는 승인되지 않을 수 있다 — CI 로그는 러너가 적재한 `state/runs/<run>/ci-failure-*.txt` 로 읽을 것.
+- 탐색: CLAUDE.md·AGENTS.md·ROADMAP/TODO 파일 없음. TODO·FIXME 일치 없음.
+- `storage_error` 이관 현황(`origin/main` = `c9bfca2` 기준, 2026-10-17 grep): posts.go 0(완료) · **admin.go 25** · social.go 29(대기 브랜치가 처리) · settings.go 9 · workflow.go 9 · auth.go 7 · preferences.go 6 · analytics.go 4 · smtp.go 3 · outbox.go 2 · oidc.go 1.

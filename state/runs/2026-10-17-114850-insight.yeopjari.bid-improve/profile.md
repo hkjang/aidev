@@ -1,0 +1,36 @@
+# 옆자리 인사이트 (insight.yeopjari.bid) 프로필 (2026-10-17)
+- 목적: 회사 인증된 직장인과 기업을 연결하는 유료 리서치·제품 테스트 서비스이며 참여자 신원·회사 비공개가 핵심이다.
+- 스택: TypeScript ESM, Node >=22, npm workspaces, React 19/Mantine 9/Vite, Postgres(Supabase 서울), Cloudflare Pages/Hyperdrive, cron Worker. 기준 main@601659d, v0.1.6.
+- 구조:
+  - packages/core/src: HTTP pipeline, auth, routes, domain, settings, quota/audit, db/errors, util, mail.
+  - apps/server: 로컬 Node 어댑터·bootstrap; apps/web: React routes/components/api/state.
+  - functions/[[path]].ts: Pages 어댑터. architecture와 최근 커밋상 meta/config·meta/pool 사본(엣지/R2)과 x-insight-stale 제공; 이번 본문 미검토.
+  - workers/scheduler: cron 진입점. db/migrations: 번호 SQL 0001~0004(목록 확인, 본문 미검토).
+  - packages/core/vendor/postgres: Node/CF 패치 사본, 임의 업그레이드·통합 금지.
+  - scripts: migrate/e2e/screenshots/harness/dev-reset/seed-demo/deploy-pages/smoke-prod/grant-admin.
+  - engineering: architecture/security/design/performance. 추적 파일 목록에서 docs/·CLAUDE.md·AGENTS.md·별도 로드맵 없음; TODO/FIXME 검색 결과 없음.
+- 빌드·테스트:
+  - 준비 npm ci --no-audit --fund=false. npm run check = eslint + core/server/web typecheck + vitest run. npm run build = web + server.
+  - 단일: npm run test -- packages/core/src/__tests__/rules.test.ts. vitest Node 환경, timeout20초, packages/apps/**/*.test.ts.
+  - 현재 core 단위6파일(rules/vendor-postgres/totp/gateway-role/shared-db-guard/db-breaker). 정찰 Node22.23.1, node_modules 없음, 단일 실행 vitest: not found(127). check/build 통과 미확인.
+  - 37ed04f 커밋 기록은 단위109/e2e180/화면85, 이번 재실행 수 아님. README56/172, architecture40/151 숫자는 낡음.
+  - node scripts/e2e.mjs: 실 Postgres16·정식 서버·fake OAuth:18999 필요(느림). BASE/DATABASE_URL/APP_DATABASE_URL로 격리.
+  - node scripts/screenshots.mjs [dir]: 실제 Chromium과 seedDemo·fake OAuth 필요(느림), 모든 5xx/console/pageerror를 실패 처리.
+  - CI check.yml: npm ci→check→build→ci-env→migration→server→e2e→Chromium 설치→screens.
+- 관례: 한국어 한 줄 커밋, 릴리즈 v0.1.x 머리말. 설정 registry.ts/env.ts, 마이그레이션 번호 SQL 추가, 문서 engineering/.
+- 최근 변경: URL 링크·제출 답변 500자 초과 절단 문제 수정 완료. v0.1.5~6 DB 연결 장애 분류·차단기·공개 사본·점검 안내 추가.
+- DB 장애: db.ts:retrying은 재시도 후 DB 연결 실패 시 isolate 차단기를 열고 이후 프로브1회. 설정은 10초부터 최대120초로 커밋에 기록. 포화를 무조건 제외하는 변경은 근거 없이 추진하지 않는다.
+- 프런트 장애: client.ts:request는 db_unavailable/x-insight-stale를 onServiceDegraded로 알림. AppProvider가30초 health 확인, App이 .in-degraded 배너 표시.
+- 이번 과제: client.ts:download에는 동일 DB 장애 알림이 없다. AdminRewards/exportList 실제 호출, 실제 HTTP 재현 download 알림0/post1 확인. 브라우저 배너 검증 미실행.
+- 위험 구역:
+  - auth/*, routes/sso.ts, http/pipeline.ts: session/CSRF/MFA/OAuth PKCE. 회사 이름을 받아오지 않는 계약.
+  - db.ts·migrations·배포: 공유 DB/RLS. 로그인 irumx_gateway→트랜잭션 insight_app(이전 기록), 운영 역할 변경 금지. Hyperdrive 쿼리 캐시 OFF(architecture).
+  - errors.ts:isConnectionLost/isDatabaseUnreachable는 재시도·차단기·HTTP503·오류 기록 정책에 걸침. 포화 오류를 전부 빼는 제안은 보류가 아닌 해당 접근 기각.
+  - util/crypto.ts·payout_profiles·routes/admin.ts: 수령 정보 봉인·감사. 보호 대상 원문을 audit details에 넣지 않는다.
+  - quota.ts:windowStart는 DB 유일 키 라벨. KST Retry-After 수정 완료, 라벨 변경 금지.
+- 자주 깨지는 곳: insight_gateway로 잘못 추측한 역할명(실제 irumx_gateway), JSONB 키 순서 문자열 비교(구조 비교 사용), e2e 변수 재선언, npm install lockfile 변동.
+- 검증 함정:
+  - 기존 개발 환경에 dev-reset.sh·ci-env.mjs 실행 금지(초기화/설정 덮어쓰기). fake OAuth는:18999 고정. 격리 인스턴스를 쓰고 기존 서비스 종료 금지.
+  - API 테스트는 Node 환경이므로 Response를 실제 객체로 사용하고 브라우저 global은 복원. 새 DOM 테스트 프레임워크/의존성 추가 없이 기존 Playwright 활용.
+  - screenshots의 예상 장애 테스트가 기존 모든5xx 실패 게이트를 무력화하지 않게 분리. 기존 seed에 활성화 가능한 ready 보상이 있는지는 이번 미확인.
+  - api.cached/prefetch 화면 소비 없음, 월 quota 운영 호출 없음(검색 범위). 각각204 무효화·월 purge 후보의 실제 사용자 피해는 미확인.

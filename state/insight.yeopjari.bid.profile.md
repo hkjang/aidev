@@ -1,41 +1,36 @@
-# 옆자리 인사이트 (insight.yeopjari.bid) 프로필 (2026-10-08)
+# 옆자리 인사이트 (insight.yeopjari.bid) 프로필 (2026-10-17)
 - 목적: 회사 인증된 직장인과 기업을 연결하는 유료 리서치·제품 테스트 서비스이며 참여자 신원·회사 비공개가 핵심이다.
-- 스택: TypeScript ESM, Node >=22, npm workspaces; React 19/Mantine 9/Vite; Postgres(Supabase 서울), Cloudflare Pages/Hyperdrive, cron Worker.
+- 스택: TypeScript ESM, Node >=22, npm workspaces, React 19/Mantine 9/Vite, Postgres(Supabase 서울), Cloudflare Pages/Hyperdrive, cron Worker. 기준 main@601659d, v0.1.6.
 - 구조:
-  - packages/core/src: HTTP pipeline/router, auth, routes, domain, settings, quota/audit, util, mail 공용 코어.
-  - apps/server: 로컬 Node 서버와 bootstrap/set-password; apps/web: SPA routes/components/api/state.
-  - functions/[[path]].ts: 운영 Pages 어댑터; workers/scheduler: 주기 작업 호출.
-  - db/migrations: 이전 프로필 기준 0001_schema~0004_totp_replay, 이번 SQL 본문 재검토는 하지 않았다.
-  - packages/core/vendor/postgres: 패치된 postgres.js의 Node/CF 사본; 임의 업그레이드·통합 금지.
-  - scripts: migrate/e2e/screenshots/harness/dev-reset/seed-demo/deploy-pages/smoke-prod/grant-admin 등.
-  - engineering: architecture/security/design/performance. docs/, CLAUDE.md, 별도 로드맵·추적된 AGENTS.md는 검색에서 발견되지 않았다.
+  - packages/core/src: HTTP pipeline, auth, routes, domain, settings, quota/audit, db/errors, util, mail.
+  - apps/server: 로컬 Node 어댑터·bootstrap; apps/web: React routes/components/api/state.
+  - functions/[[path]].ts: Pages 어댑터. architecture와 최근 커밋상 meta/config·meta/pool 사본(엣지/R2)과 x-insight-stale 제공; 이번 본문 미검토.
+  - workers/scheduler: cron 진입점. db/migrations: 번호 SQL 0001~0004(목록 확인, 본문 미검토).
+  - packages/core/vendor/postgres: Node/CF 패치 사본, 임의 업그레이드·통합 금지.
+  - scripts: migrate/e2e/screenshots/harness/dev-reset/seed-demo/deploy-pages/smoke-prod/grant-admin.
+  - engineering: architecture/security/design/performance. 추적 파일 목록에서 docs/·CLAUDE.md·AGENTS.md·별도 로드맵 없음; TODO/FIXME 검색 결과 없음.
 - 빌드·테스트:
-  - 준비 npm ci --no-audit --fund=false; npm run check = eslint + 3 workspace typecheck + vitest run.
-  - npm run test -- packages/core/src/__tests__/rules.test.ts 로 단일 실행; npm run build = web + server.
-  - 단위 파일 rules/vendor-postgres/totp/gateway-role/shared-db-guard 5개. vitest는 packages/**/*.test.ts·apps/**/*.test.ts, Node, timeout 20초.
-  - 이번 환경 Node 22.23.1, node_modules 없음. 단위 명령 실행은 vitest: not found(127); 전체 통과 수 미확인. 정찰 쓰기 제한으로 설치하지 않았다.
-  - 이전 구현 기록은 단위63/e2e176 통과. README 56/172, architecture 40/151 고정 숫자는 현재 기록과 불일치.
-  - node scripts/e2e.mjs: 실제 Postgres 16·정식 서버·fake OAuth :18999 필요(느림). BASE/DATABASE_URL/APP_DATABASE_URL로 격리 지정 가능.
-  - node scripts/screenshots.mjs [dir]: 실제 Chromium 필요(느림), README 기준 85장. CI는 브라우저 설치 후 실행.
-  - .github/workflows/check.yml은 npm ci→check→build→개발 설정→migration→server→e2e→screens를 실행한다.
-- 관례: 최근 커밋은 한국어 산문 한 줄/버전 머리말. 설정 registry.ts/env.ts, 번호 SQL 추가, 설계 문서 engineering/.
-- 최근 변경: 현재 c6a3399/package 0.1.4. quota KST Retry-After 및 parseLinks의 500자 초과 절단 수정이 병합됐다. 공유 DB gateway/TOTP 보강/메일 관문은 이전 프로필 기록과 최근 로그에 존재한다.
-- 메일: 운영 Pages MAIL 바인딩으로 공용 관문 경유, 부재/네트워크 예외 시 Resend 직접(architecture 확인). SMTP/console도 이전 프로필에 기록돼 있다.
+  - 준비 npm ci --no-audit --fund=false. npm run check = eslint + core/server/web typecheck + vitest run. npm run build = web + server.
+  - 단일: npm run test -- packages/core/src/__tests__/rules.test.ts. vitest Node 환경, timeout20초, packages/apps/**/*.test.ts.
+  - 현재 core 단위6파일(rules/vendor-postgres/totp/gateway-role/shared-db-guard/db-breaker). 정찰 Node22.23.1, node_modules 없음, 단일 실행 vitest: not found(127). check/build 통과 미확인.
+  - 37ed04f 커밋 기록은 단위109/e2e180/화면85, 이번 재실행 수 아님. README56/172, architecture40/151 숫자는 낡음.
+  - node scripts/e2e.mjs: 실 Postgres16·정식 서버·fake OAuth:18999 필요(느림). BASE/DATABASE_URL/APP_DATABASE_URL로 격리.
+  - node scripts/screenshots.mjs [dir]: 실제 Chromium과 seedDemo·fake OAuth 필요(느림), 모든 5xx/console/pageerror를 실패 처리.
+  - CI check.yml: npm ci→check→build→ci-env→migration→server→e2e→Chromium 설치→screens.
+- 관례: 한국어 한 줄 커밋, 릴리즈 v0.1.x 머리말. 설정 registry.ts/env.ts, 마이그레이션 번호 SQL 추가, 문서 engineering/.
+- 최근 변경: URL 링크·제출 답변 500자 초과 절단 문제 수정 완료. v0.1.5~6 DB 연결 장애 분류·차단기·공개 사본·점검 안내 추가.
+- DB 장애: db.ts:retrying은 재시도 후 DB 연결 실패 시 isolate 차단기를 열고 이후 프로브1회. 설정은 10초부터 최대120초로 커밋에 기록. 포화를 무조건 제외하는 변경은 근거 없이 추진하지 않는다.
+- 프런트 장애: client.ts:request는 db_unavailable/x-insight-stale를 onServiceDegraded로 알림. AppProvider가30초 health 확인, App이 .in-degraded 배너 표시.
+- 이번 과제: client.ts:download에는 동일 DB 장애 알림이 없다. AdminRewards/exportList 실제 호출, 실제 HTTP 재현 download 알림0/post1 확인. 브라우저 배너 검증 미실행.
 - 위험 구역:
   - auth/*, routes/sso.ts, http/pipeline.ts: session/CSRF/MFA/OAuth PKCE. 회사 이름을 받아오지 않는 계약.
-  - db.ts, db/migrations, 배포·migration: 공유 DB 역할/RLS 격리. 서버 로그인은 irumx_gateway, 트랜잭션 역할 insight_app. 운영 로그인 역할 변경 금지.
-  - util/crypto.ts, payout_profiles, routes/admin.ts: 보상 수령 정보 봉인·감사. 보호 대상 원문을 audit details에 넣지 않는다.
-  - quota.ts: windowStart는 DB 유일 키 라벨이므로 변경 금지. KST Retry-After 수정은 완료.
-  - Hyperdrive 쿼리 캐시는 RLS 신원 혼선 방지를 위해 OFF(architecture 확인).
-- 자주 깨지는 곳:
-  - 반복 회귀 기록은 없음. npm install 대신 ci 사용으로 lockfile peer 표시 변동을 피한다.
-  - 이전 e2e에서 insight_gateway라고 잘못 추측해 실패; 실제 이름 irumx_gateway.
-  - JSONB 키 순서 때문에 JSON.stringify 비교가 실패한 이력. isDeepStrictEqual로 값·구조 비교.
+  - db.ts·migrations·배포: 공유 DB/RLS. 로그인 irumx_gateway→트랜잭션 insight_app(이전 기록), 운영 역할 변경 금지. Hyperdrive 쿼리 캐시 OFF(architecture).
+  - errors.ts:isConnectionLost/isDatabaseUnreachable는 재시도·차단기·HTTP503·오류 기록 정책에 걸침. 포화 오류를 전부 빼는 제안은 보류가 아닌 해당 접근 기각.
+  - util/crypto.ts·payout_profiles·routes/admin.ts: 수령 정보 봉인·감사. 보호 대상 원문을 audit details에 넣지 않는다.
+  - quota.ts:windowStart는 DB 유일 키 라벨. KST Retry-After 수정 완료, 라벨 변경 금지.
+- 자주 깨지는 곳: insight_gateway로 잘못 추측한 역할명(실제 irumx_gateway), JSONB 키 순서 문자열 비교(구조 비교 사용), e2e 변수 재선언, npm install lockfile 변동.
 - 검증 함정:
-  - e2e/브라우저/운영 검증은 이번 정찰에서 미실행. 운영 배포는 외부 자격 증명 필요.
-  - dev-reset.sh는 개발 DB 초기화; 기존 환경 보존 시 실행 금지. ci-env.mjs도 .env.dev를 덮어쓰므로 기존 설정 보존 필요.
-  - harness fake OAuth는 :18999 고정 listen. 기존 서비스 종료 금지. envKey는 환경변수→.env.dev→개발 키 순서여서 서버 설정과 일치 필요.
-  - api.cached/prefetch는 운영 화면 호출처 검색되지 않음. 204 캐시 무효화 결함의 현재 사용자 영향 미확인.
-  - parseLinks는 이제 정규화 후 500자 초과를 거절한다. judgeSubmission URL은 여전히 먼저 절단하며 이번 선택 과제다.
-  - judgeSubmission 원본 실행: 500자는 보존, 501/700자는 500자로 잘려 성공. 실제 submit 라우트 연결 확인; HTTP/DB 회귀는 구현자가 검증해야 한다.
-  - 월 카운터 purge 의심은 있으나 월 제한 운영 호출처·DB 재현 미확인. 실제 장애로 단정하지 않는다.
+  - 기존 개발 환경에 dev-reset.sh·ci-env.mjs 실행 금지(초기화/설정 덮어쓰기). fake OAuth는:18999 고정. 격리 인스턴스를 쓰고 기존 서비스 종료 금지.
+  - API 테스트는 Node 환경이므로 Response를 실제 객체로 사용하고 브라우저 global은 복원. 새 DOM 테스트 프레임워크/의존성 추가 없이 기존 Playwright 활용.
+  - screenshots의 예상 장애 테스트가 기존 모든5xx 실패 게이트를 무력화하지 않게 분리. 기존 seed에 활성화 가능한 ready 보상이 있는지는 이번 미확인.
+  - api.cached/prefetch 화면 소비 없음, 월 quota 운영 호출 없음(검색 범위). 각각204 무효화·월 purge 후보의 실제 사용자 피해는 미확인.
