@@ -1,11 +1,29 @@
 [
   {
-    "title": "지급 목록 CSV 내려받기의 DB 장애·네트워크 실패를 공통 점검 안내로 전달하기",
+    "title": "PR #4 의 check 워크플로가 3초 만에 실패하는 원인을 확정해 고치기",
+    "value": 4,
+    "risk": 2,
+    "size": "M",
+    "status": "rejected",
+    "note": "저장소 쪽 원인이 전부 배제돼 코드 미수정(분기 B)으로 끝냈다. 반증한 것: (1) annotations_count 2 는 실패 신호가 아니다 — 같은 워크플로의 성공 체크런 5건(10-07~08, 219~236초)도 모두 2건이고, 2 는 쓰는 마켓플레이스 액션 수(checkout@v4·setup-node@v4)와 같다. (2) .github/ 는 마지막 녹색 CI(739ea33)부터 b55ab2d 까지 바이트 동일. (3) 같은 날 같은 계정 다른 저장소 잡들이 06:36 전후 정상(jikim 07:29 48s/156s, kanpic 08:19 444s, moyro 10:28 639s, postra 13:32) → 과금·리밋·러너 전면 장애 아님. (4) b55ab2d 부모가 정확히 origin/main 이라 머지 레퍼런스 경합 근거 약함. 또 check-runs API 응답에는 애초에 steps 필드가 없으므로 '단계 정보 미기록' 은 증거가 아니다. 남은 미확인: 3초 failure 의 실제 이유 — 비공개 저장소라 자격증명 없이는 로그·주석을 못 읽는다. 다음 회차는 주석을 더 쫓지 말고, 자격증명이 있는 역할이 `gh run view --log-failed` 를 한 번 받아오는 것만 하면 된다.",
+    "updated": "2026-10-17"
+  },
+  {
+    "title": "apps/web client 의 나머지 가드 테스트 보강 (defaultMessage·CSRF/세션 헤더 선택)",
     "value": 3,
     "risk": 1,
-    "size": "M",
+    "size": "S",
     "status": "done",
-    "note": "client.ts:234 download() 에 fetch try/catch → network ApiError(status 0) 와 503 db_unavailable → reportDegraded() 를 추가했다. 새 테스트 apps/web/src/__tests__/client-download.test.ts 가 실제 node http 서버로 네 경우를 증명한다(수정 전 2실패/2통과 → 수정 후 4통과 → 되돌림 2실패). 커밋 b55ab2d. 브라우저에서 .in-degraded 배너가 실제로 뜨는지는 미확인.",
+    "note": "새 파일 apps/web/src/__tests__/client-guards.test.ts (12개). PR #4 의 client-download.test.ts 와 충돌하지 않게 별도 파일로 만들었다(그 파일은 이 기준 커밋에 없다). 실제 node http 서버(포트 0)에 프로덕션 api.get/post/put/del 을 호출해 회원/운영별 yi_csrf·yi_acsrf 선택, x-insight-session, 읽기에는 CSRF 없음, 이름 접미사 쿠키 혼동 방지, 상태 8개의 defaultMessage, 서버 메시지 우선, retry-after, 401 알림을 못 박았다. 변이 검증으로 테스트가 무는 것을 확인했다. jsdom 없음.",
+    "updated": "2026-10-17"
+  },
+  {
+    "title": "API client 의 204 성공 쓰기 캐시 무효화 누락",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "done",
+    "note": "client.ts 의 204 조기 반환이 invalidateAll() 앞에 있어 cache.ts 문서의 첫 규칙(성공한 모든 쓰기는 캐시를 비운다)을 어겼다. `if (unsafe) invalidateAll()` 을 204 분기에 넣어 고쳤고 실제 204 DELETE 테스트로 먼저 실패를 봤다(expected 'old list' to be undefined). 지금 서버는 어떤 라우트도 204 를 쓰지 않고(respond.ts:noContent 호출처 0) api.cached 화면 소비도 0 이라 현재 사용자 피해는 없는 잠복 결함이었다.",
     "updated": "2026-10-17"
   },
   {
@@ -14,16 +32,16 @@
     "risk": 2,
     "size": "S",
     "status": "pending",
-    "note": "이번 회차로 오류 변환(network·db_unavailable)은 맞췄다. 남은 차이: download() 는 RequestOptions 를 받지 않아 signal·idempotency-key·accept 헤더가 없고 성공 응답의 x-insight-stale 도 보지 않는다. request() 와 한 함수로 통합하려 하지 말 것 — 성공 경로 계약(blob 저장 vs JSON 파싱)이 다르다.",
+    "note": "PR #4 가 download() 의 fetch 분기를 이미 고쳐 두었으니 그 PR 이 머지된 뒤에 할 것 — 지금 하면 같은 줄에서 충돌한다. 남은 차이: download() 는 RequestOptions 를 받지 않아 signal·idempotency-key·accept 가 없고 성공 응답의 x-insight-stale 도 보지 않는다. request() 와 한 함수로 통합 금지(성공 경로 계약이 blob 저장 vs JSON 파싱).",
     "updated": "2026-10-17"
   },
   {
-    "title": "apps/web client 의 나머지 가드 테스트 보강 (defaultMessage·CSRF/세션 헤더 선택)",
-    "value": 3,
+    "title": "respond.ts:noContent() 가 호출처 0 — 204 계약을 쓸지 지울지 결정",
+    "value": 2,
     "risk": 1,
     "size": "S",
     "status": "pending",
-    "note": "이번 회차에 apps/web 첫 테스트 파일과 node 환경 브라우저 전역 부트스트랩(window.location/document.cookie/URL.createObjectURL 세우고 afterEach 복원)이 생겨 후속 비용이 싸졌다. 같은 방식으로 isAdminSurface 에 따른 yi_acsrf/yi_csrf 선택과 status 별 defaultMessage 를 실제 HTTP 로 고정할 수 있다. jsdom 추가 금지.",
+    "note": "이번 회차에 grep 으로 확인: noContent 는 정의만 있고 호출처가 없다(204 는 pipeline 의 OPTIONS 응답에서만 난다). DELETE 라우트들이 json(...) 으로 답한다는 뜻이다. 지우거나 쓰거나 한쪽으로 정리하면 client 의 204 분기가 죽은 길인지 산 길인지가 분명해진다. 라우트 응답 형태를 바꾸는 쪽은 e2e 기대값을 건드리므로 위험을 다시 재지 말고 보류.",
     "updated": "2026-10-17"
   },
   {
@@ -63,21 +81,12 @@
     "updated": "2026-10-17"
   },
   {
-    "title": "API client 의 204 성공 쓰기 캐시 무효화 누락",
-    "value": 2,
-    "risk": 1,
-    "size": "S",
-    "status": "pending",
-    "note": "client.ts:174 `if (response.status === 204) return undefined as T` 가 invalidateAll() 앞에 있다(이번에도 소스로 확인). api.cached/prefetch 화면 호출처가 여전히 검색되지 않아 사용자 피해 미확인 — 차선 후보로만 둔다.",
-    "updated": "2026-10-17"
-  },
-  {
     "title": "README·architecture 검증 개수 안내를 현재 테스트 구성과 맞추기",
     "value": 2,
     "risk": 1,
     "size": "S",
     "status": "pending",
-    "note": "이번 회차에 실제 수를 셌다: vitest 7파일 113개(web 1파일 4개 포함). 고정 개수 대신 검증 범위를 기술하는 쪽이 낡지 않는다.",
+    "note": "이번 회차 실측: 이 브랜치는 vitest 7파일 121개(core 6파일 109개 + client-guards 12개). PR #4 가 머지되면 또 달라진다 — 고정 개수 대신 검증 범위를 기술하는 쪽이 낡지 않는다.",
     "updated": "2026-10-17"
   },
   {
@@ -90,12 +99,21 @@
     "updated": "2026-10-17"
   },
   {
+    "title": "지급 목록 CSV 내려받기의 DB 장애·네트워크 실패를 공통 점검 안내로 전달하기",
+    "value": 3,
+    "risk": 1,
+    "size": "M",
+    "status": "done",
+    "note": "직전 회차 커밋 b55ab2d(PR #4). 이 기준 커밋(601659d)에는 아직 들어 있지 않다.",
+    "updated": "2026-10-17"
+  },
+  {
     "title": "apps/web 에 단위 테스트가 한 개도 없다 — client.ts 오류 변환 가드부터",
     "value": 3,
     "risk": 2,
     "size": "M",
     "status": "done",
-    "note": "이번 회차에 apps/web 첫 테스트 파일(client-download.test.ts, node 환경 + 실제 http 서버, jsdom 없음)이 생겼다. 나머지 가드는 위 '나머지 가드 테스트 보강' 항목으로 이어진다.",
+    "note": "PR #4 의 client-download.test.ts 와 이번 회차의 client-guards.test.ts 로 web client 에 테스트가 생겼다. 둘 다 node 환경 + 실제 http 서버, jsdom 없음.",
     "updated": "2026-10-17"
   }
 ]
