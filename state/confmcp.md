@@ -18,3 +18,4 @@
 - 보류 아이디어: GET /mcp 스트림이 touchSession 을 호출하지 않아 장기 SSE 세션의 last_seen_at 이 멈추고 관리 콘솔 활성 세션 집계가 작게 나온다 (3/1/S) · MCP 정수 인자의 소수·접미 문자열 거부 — args.go toInt 를 호출별 계약으로 나눠 조여야 한다 (3/2/S) · MCP 요청 본문 8MiB 초과의 명시적 거부 (3/2/S) · README.md:165·docs/guide-admin.html:758 의 존재하지 않는 hack/e2e.sh 안내 수정 (3/1/S) · internal/mcp 단위 테스트 부재 — 배선을 바꾸지 않는 범위로 좁혀야 한다 (3/1/M).
 - 과제서: 채택 — 과제서의 근거(server.go:45 DELETE 분기에 PrincipalFor 없음, server.go:382-391 의 UPDATE 가 소유자 미확인)가 현재 코드와 정확히 일치했고 수용 기준 3건을 그대로 증명했다.
 
+- 릴리즈: v0.1.2 (2026-10-17, run 2026-10-17-102854-confmcp-improve)

@@ -30,3 +30,8 @@
 - [러너 10:46] pr created — https://github.com/hkjang/confmcp/pull/2
 - [러너 10:48] ci passed — 검사 3개 모두 success
 - [러너 10:48] merge done — 904b775
+- [러너 10:55] release published — v0.1.2
+- [러너 10:55] gh-release created — GitHub Release v0.1.2
+- [러너 10:55] manifest ok — confmcp-v0.1.2.tar.gz confmcp-v0.1.2.tar.gz.sha256 
+- [러너 10:55] assets uploaded — 2개
+- [러너 10:55] assets verified — v0.1.2 자산 2개 (이전 v0.1.1: 2)
