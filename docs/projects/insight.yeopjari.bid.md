@@ -1,7 +1,7 @@
 ---
 title: "insight.yeopjari.bid — 자율 개선 이력"
-description: "insight.yeopjari.bid: 자율 개선 회차 6회, 릴리즈 2건. 최근 릴리즈 없음."
-last_modified_at: 2026-10-17 12:34:05 +0900
+description: "insight.yeopjari.bid: 자율 개선 회차 7회, 릴리즈 2건. 최근 릴리즈 없음."
+last_modified_at: 2026-10-17 13:21:48 +0900
 ---
 {% raw %}
 <script type="application/ld+json">
@@ -11,34 +11,35 @@ last_modified_at: 2026-10-17 12:34:05 +0900
  "name": "insight.yeopjari.bid",
  "codeRepository": "https://github.com/hkjang/insight.yeopjari.bid",
  "url": "https://hkjang.github.io/aidev/projects/insight.yeopjari.bid/",
- "description": "insight.yeopjari.bid: 자율 개선 회차 6회, 릴리즈 2건. 최근 릴리즈 없음.",
+ "description": "insight.yeopjari.bid: 자율 개선 회차 7회, 릴리즈 2건. 최근 릴리즈 없음.",
  "inLanguage": "ko",
  "maintainer": {
   "@type": "Person",
   "name": "hkjang",
   "url": "https://github.com/hkjang"
  },
- "dateModified": "2026-10-17T12:34:05+09:00"
+ "dateModified": "2026-10-17T13:21:48+09:00"
 }
 </script>
 
 # insight.yeopjari.bid
 
-<p class="tldr"><strong>요약.</strong> insight.yeopjari.bid: 자율 개선 회차 6회, 릴리즈 2건. 최근 릴리즈 없음. <span class="pill pill-merged" title="14일: 릴리즈 2, 실패 0, 경고 1, 회귀 0">건강 B</span> <span class="meta">14일: 릴리즈 2, 실패 0, 경고 1, 회귀 0</span></p>
+<p class="tldr"><strong>요약.</strong> insight.yeopjari.bid: 자율 개선 회차 7회, 릴리즈 2건. 최근 릴리즈 없음. <span class="pill pill-merged" title="14일: 릴리즈 2, 실패 0, 경고 1, 회귀 0">건강 B</span> <span class="meta">14일: 릴리즈 2, 실패 0, 경고 1, 회귀 0</span></p>
 
-<ul class="stats"><li><b>6</b><span>회차</span></li><li><b>1</b><span>프로젝트</span></li><li><b>2</b><span>배포 준비 완료</span></li><li><b>0</b><span>릴리즈 진행 중</span></li><li><b>1</b><span>병합 완료</span></li><li><b>0</b><span>검토 대기</span></li><li><b>0</b><span>검증 실패</span></li><li><b>3</b><span>변경 없음</span></li><li><b>0</b><span>실행 오류</span></li><li><b>$6.94</b><span>비용</span></li><li><b>19분</b><span>에이전트 시간</span></li></ul>
+<ul class="stats"><li><b>7</b><span>회차</span></li><li><b>1</b><span>프로젝트</span></li><li><b>2</b><span>배포 준비 완료</span></li><li><b>0</b><span>릴리즈 진행 중</span></li><li><b>1</b><span>병합 완료</span></li><li><b>0</b><span>검토 대기</span></li><li><b>0</b><span>검증 실패</span></li><li><b>3</b><span>변경 없음</span></li><li><b>1</b><span>실행 오류</span></li><li><b>$6.94</b><span>비용</span></li><li><b>19분</b><span>에이전트 시간</span></li></ul>
 
 ## 현황
 
 <dl class="kv">
 <dt>저장소</dt><dd><a href="https://github.com/hkjang/insight.yeopjari.bid">https://github.com/hkjang/insight.yeopjari.bid</a></dd>
-<dt>마지막 회차</dt><dd>2026-10-10 00:19 KST — <span class="pill pill-nochange">➖ 변경 없음</span> no change</dd>
+<dt>마지막 회차</dt><dd>2026-10-17 12:37 KST — <span class="pill pill-other">• 기타</span> error: interrupted before PR</dd>
 <dt>최근 릴리즈</dt><dd>missing — missing</dd>
+<dt>수정 과제</dt><dd>⚠️ 오류 대응(자동 적재): 마지막 회차가 &#x27;error&#x27; 로 끝났습니다. error: interrupted before PR</dd>
 </dl>
 
 ## 회차 이력
 
-<div class="table-wrap"><table class="rt"><thead><tr><th>일시</th><th class="primary">프로젝트</th><th>결과</th></tr></thead><tbody><tr data-status="nochange"><td data-label="일시">2026-10-10 00:19</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/insight.yeopjari.bid/">insight.yeopjari.bid</a></td><td data-label="결과"><span class="pill pill-nochange" title="outcome=no-change">변경 없음</span> no change</td></tr><tr data-status="nochange"><td data-label="일시">2026-10-09 15:59</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/insight.yeopjari.bid/">insight.yeopjari.bid</a></td><td data-label="결과"><span class="pill pill-nochange" title="outcome=no-change">변경 없음</span> no change</td></tr><tr data-status="nochange"><td data-label="일시">2026-10-09 08:59</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/insight.yeopjari.bid/">insight.yeopjari.bid</a></td><td data-label="결과"><span class="pill pill-nochange" title="outcome=no-change">변경 없음</span> no change</td></tr><tr data-status="merged"><td data-label="일시">2026-10-08 22:19</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/insight.yeopjari.bid/">insight.yeopjari.bid</a></td><td data-label="결과"><span class="pill pill-merged" title="outcome=merged">병합 완료</span> merged <a href="https://github.com/hkjang/insight.yeopjari.bid/pull/3">PR #3</a>, <strong>release missing</strong><div class="meta">3파일 <span style="color:var(--good)">+114</span>/<span style="color:var(--bad)">−3</span> · 테스트 1 — 제출 답변: 500자 초과 URL을 자르지 않고 입력 오류로 거절</div></td></tr><tr data-status="released"><td data-label="일시">2026-10-08 14:04</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/insight.yeopjari.bid/">insight.yeopjari.bid</a></td><td data-label="결과"><span class="pill pill-released" title="outcome=release-ready">배포 준비 완료</span> merged <a href="https://github.com/hkjang/insight.yeopjari.bid/pull/2">PR #2</a>, released <a href="https://github.com/hkjang/insight.yeopjari.bid/releases/tag/v0.1.4">v0.1.4</a><div class="meta">3파일 <span style="color:var(--good)">+69</span>/<span style="color:var(--bad)">−1</span> · 테스트 1 — 과제 링크: 500자 초과 주소를 자르지 않고 입력 오류로 거절</div></td></tr><tr data-status="released"><td data-label="일시">2026-10-07 18:26</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/insight.yeopjari.bid/">insight.yeopjari.bid</a></td><td data-label="결과"><span class="pill pill-released" title="outcome=release-ready">배포 준비 완료</span> merged <a href="https://github.com/hkjang/insight.yeopjari.bid/pull/1">PR #1</a>, released <a href="https://github.com/hkjang/insight.yeopjari.bid/releases/tag/v0.1.1">v0.1.1</a><div class="meta">2파일 <span style="color:var(--good)">+61</span>/<span style="color:var(--bad)">−13</span> · 테스트 1 — 일·월 쓰기 제한이 알려 주는 재시도 시각을 한국 자정에 맞춘다</div></td></tr></tbody></table></div>
+<div class="table-wrap"><table class="rt"><thead><tr><th>일시</th><th class="primary">프로젝트</th><th>결과</th></tr></thead><tbody><tr data-status="other"><td data-label="일시">2026-10-17 12:37</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/insight.yeopjari.bid/">insight.yeopjari.bid</a></td><td data-label="결과"><span class="pill pill-failed" title="outcome=error">실행 오류</span> error: interrupted before PR</td></tr><tr data-status="nochange"><td data-label="일시">2026-10-10 00:19</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/insight.yeopjari.bid/">insight.yeopjari.bid</a></td><td data-label="결과"><span class="pill pill-nochange" title="outcome=no-change">변경 없음</span> no change</td></tr><tr data-status="nochange"><td data-label="일시">2026-10-09 15:59</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/insight.yeopjari.bid/">insight.yeopjari.bid</a></td><td data-label="결과"><span class="pill pill-nochange" title="outcome=no-change">변경 없음</span> no change</td></tr><tr data-status="nochange"><td data-label="일시">2026-10-09 08:59</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/insight.yeopjari.bid/">insight.yeopjari.bid</a></td><td data-label="결과"><span class="pill pill-nochange" title="outcome=no-change">변경 없음</span> no change</td></tr><tr data-status="merged"><td data-label="일시">2026-10-08 22:19</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/insight.yeopjari.bid/">insight.yeopjari.bid</a></td><td data-label="결과"><span class="pill pill-merged" title="outcome=merged">병합 완료</span> merged <a href="https://github.com/hkjang/insight.yeopjari.bid/pull/3">PR #3</a>, <strong>release missing</strong><div class="meta">3파일 <span style="color:var(--good)">+114</span>/<span style="color:var(--bad)">−3</span> · 테스트 1 — 제출 답변: 500자 초과 URL을 자르지 않고 입력 오류로 거절</div></td></tr><tr data-status="released"><td data-label="일시">2026-10-08 14:04</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/insight.yeopjari.bid/">insight.yeopjari.bid</a></td><td data-label="결과"><span class="pill pill-released" title="outcome=release-ready">배포 준비 완료</span> merged <a href="https://github.com/hkjang/insight.yeopjari.bid/pull/2">PR #2</a>, released <a href="https://github.com/hkjang/insight.yeopjari.bid/releases/tag/v0.1.4">v0.1.4</a><div class="meta">3파일 <span style="color:var(--good)">+69</span>/<span style="color:var(--bad)">−1</span> · 테스트 1 — 과제 링크: 500자 초과 주소를 자르지 않고 입력 오류로 거절</div></td></tr><tr data-status="released"><td data-label="일시">2026-10-07 18:26</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/insight.yeopjari.bid/">insight.yeopjari.bid</a></td><td data-label="결과"><span class="pill pill-released" title="outcome=release-ready">배포 준비 완료</span> merged <a href="https://github.com/hkjang/insight.yeopjari.bid/pull/1">PR #1</a>, released <a href="https://github.com/hkjang/insight.yeopjari.bid/releases/tag/v0.1.1">v0.1.1</a><div class="meta">2파일 <span style="color:var(--good)">+61</span>/<span style="color:var(--bad)">−13</span> · 테스트 1 — 일·월 쓰기 제한이 알려 주는 재시도 시각을 한국 자정에 맞춘다</div></td></tr></tbody></table></div>
 
 ## 비용·사용량
 

@@ -1,0 +1,38 @@
+# pii-masker 프로필 (2026-10-17)
+- 목적: PDF/PNG/JPG의 PII를 Upstage 호환 추론으로 찾아 가린 파일을 반환하는 동기·비동기 HTTP API와 Playground UI.
+- 스택: Go 1.25.0(go.mod·Dockerfile), gorilla/mux, pdfcpu v0.11.1, x/image, vendor 고정. DB 없이 입력·출력·job.json 디스크 저장, 단일 HTML UI, Docker/Compose.
+- 구조:
+  - cmd/pii-masker/main.go — config.Load→app.New→실제 HTTP 서버, 시그널 종료.
+  - internal/app/app.go — HTTP·서비스·업스트림·store 배선, 보존 스위퍼 및 drain.
+  - internal/config/config.go — PII_MASKER_* 환경설정, 시간/MiB 오버플로 방어, MIME 목록.
+  - internal/httpapi/server.go — mask/jobs/history/config/test-connection; static/index.html — UI; integration_test.go — 실제 리스너 통합 테스트.
+  - internal/service/service.go(793줄) — 동기 슬롯, 비동기 runner, process의 fail-closed 사슬(:576~:622), summarizeFields(:675), mapError(:734).
+  - internal/jobs/store.go — job.json 영속/복구·메모리 맵; List(:72)는 전체 복제·정렬 후 limit 적용.
+  - internal/upstage/client.go — 인증·allow-host·리다이렉트 검사, 내용 기준 PNG 사본 변환, 응답 8MiB 상한; mock/upstage.go — 내장 mock.
+  - internal/document — attachment MIME/파일명; image.go — DecodeImage·DetectImageFormat·50MP 해상도 제한.
+  - internal/masking/engine.go(854줄) — BuildFieldEntries(:48)/CollectMaskRegions(:101)/buildSubRegionsFromBBox(:159)/placeRegion/ParsePayload(:634); policy.go — MaskValue(:29)·maskTrimmedValue(:56)·SupportedRuleNames(:88)·ComputeMaskedRuneSpans.
+  - internal/core/types.go — JSON 계약; scripts — Docker 이미지 배포/실행·PowerShell smoke test.
+- 빌드·테스트: `go test -count=1 ./...`(테스트 있는 8패키지 — app/config/document/httpapi/jobs/masking/service/upstage, 2026-10-17 038dd3a에서 전부 ok, 0.01~0.63초), `go vet ./...`, `go build ./...`, `gofmt -l ./cmd ./internal`(무출력), `git diff --check`.
+  - `go test -race -count=1 ./internal/masking ./internal/httpapi`(과거 회차 기준 1.0초/2.0초). 외부 Upstage 없이 전부 로컬 실행 가능.
+  - Docker/Windows 실환경, PDF 최종 시각 출력, GOARCH=386 재실행은 이번에도 미확인.
+- 관례: 영어 명령문 커밋 + PR merge, 한국어 README가 동작 정본. 환경변수 설정, DB 마이그레이션 없음.
+  - tracked 파일에 CLAUDE.md·AGENTS.md·docs/·로드맵·.github CI 없음. vendor 제외 TODO/FIXME 없음.
+  - 회차 관례: 프로덕션 파일만 되돌려 같은 실패가 재현되는 것까지 확인한 뒤 복원한다.
+- 위험 구역: upstage 인증/호스트 검사, service drain/WaitGroup, jobs 복구 삭제, 업로드 제한. PDF는 검은 사각형 덧그리기라 원문 텍스트 레이어가 남는다고 README에 명시.
+- 자주 깨지는 곳:
+  - 에러 분류 계약: 업로드 문제 = 400 `processing_failed`/`retryable:false`, 업스트림 좌표·fail-closed = 502 `masking_failed`/`retryable:true`. `RegionPlacementError`(placementError)와 service.mapError의 `errors.As` 분기로 갈린다. `server.go`의 기본값이 이미 502다.
+  - 업로드 PDF에 페이지 크기가 없는 오류는 업로드 탓이므로 일반 에러로 유지(TestMaskPDFFileBlamesTheDocumentForAPageWithoutDimensions).
+  - 출력 인코딩은 선언 MIME, 업스트림 전송 사본은 실제 내용 기준 PNG. 두 계약을 함께 바꾸지 않는다.
+  - MaskValue는 룬 수를 보존해야 한다(ComputeMaskedRuneSpans 정렬). 규칙 결과가 원문과 같으면 maskAllVisible 폴백.
+  - buildSubRegionsFromBBox의 하이라인 보정은 `repairHairlines`(:176, 원본 바운즈가 정규화면 생략)로 고정됐다 — 다시 건드리지 말 것.
+  - config 오버플로는 envInt 전면 변경 대신 호출 지점별 전용 헬퍼를 유지한다.
+- 검증 함정:
+  - startAppServerWithUpstream(integration_test.go:2021)은 config 직접 조립이지만 app.New와 실제 httptest 리스너를 통과한다. config.Load 회귀는 Load 결과를 써야 한다.
+  - buildMultipartBody(:2070)는 contentType을 무시하고 application/octet-stream으로 보낸다(스니핑은 정상 동작). 선언 MIME 테스트는 buildMultipartBodyWithFilenameParam 사용.
+  - 내장 mock(mock/upstage.go:117)은 5개 필드 **전부에 boundingBoxes**를 붙이고 임의 field/page/bbox를 돌려줄 수 없다. 좌표·에러·부분 응답 회귀는 직접 만든 업스트림 핸들러를 쓴다 — 본뜰 것: singleBoxUpstream(:1677), missingPageUpstream(:1820). 픽셀 검증은 blackPixelBounds(:1690)로 경계 상자 전수 스캔.
+  - ParsePayload 결과는 payload 전체가 재귀 순회된다. extractEntityKey는 key/name/label/fieldName/fieldType/type/category/class를, extractEntityValue는 value/rawValue/text/ocrText/content/normalizedValue/refinedValue/chips/label을 받으므로 **비엔티티 맵도 FieldEntry가 될 수 있다**. 엔티티 판정을 넓히는 변경은 정상 요청을 깨뜨릴 수 있다.
+  - collectFieldEntriesRecursive는 key+value signature로 중복 제거(첫 등장만 유지)하지만 collectMaskRegionsRecursive는 중복 제거하지 않는다. 두 수집기의 개수를 대응시킨다고 가정하지 말 것.
+  - collectMaskRegionsRecursive는 미지정/0 page를 1로 바꾸며 extractPageNumberFromMap은 음수도 0으로 반환한다. 직접 렌더러 page 0 테스트를 HTTP 거절로 해석하지 않는다.
+  - t.Setenv 테스트 병렬화 금지. PDF 픽스처 createBlankPDF와 masking.blankPDF는 별도 패키지. Windows Rename 동작은 계속 미확인.
+- 현재 기준: main@038dd3a (8f2d71f 머지, 릴리즈 v1.0.38).
+- 재선정 금지: UTF-8, created_at, download_url, mock 주소/HTTPS 강등, MAX_PAGES=0, duration/MiB 오버플로, 출력 MIME, 업스트림 PNG, 원문 masked_value, placeRegion 에러 분류, PDF 없는 페이지 에러 분류, 이미지 없는 페이지 검사, 정규화 bbox 폭 보정(8f2d71f로 완료).

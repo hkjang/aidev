@@ -10,3 +10,4 @@
 - **추측(미실행)**: 테스트를 실제로 돌리지 않았다 — `TestPostgreSQL*` 44건, `adminUpdatePost` 의 트리거 거절이 `P0001`/`*pgconn.PgError` 로 오는 것, `posts` 테이블에 새 BEFORE UPDATE 트리거를 달아도 공유 DB 의 다른 패키지 테스트가 깨지지 않는 것은 모두 과거 회차 기록에서 유도한 기대값이다. 구현자가 red 에서 리터럴 단언으로 확정할 것.
 - 구현자가 조심할 것: loop 안 네 곳에서 **nil 인 Query `err` 를 넘기지 말 것**(`cause_type:"<nil>"` 이 되면 이 회차의 목적이 무너진다). `admin.go` 에서는 제어 흐름을 분할할 필요가 없으므로 리터럴 multiset 비교에서 **증감 모두 0** 이 기대값이다.
 - [러너 12:24] scout done — `admin.go` 의 `storage_error` 500 출구 25곳을 `writeStorageError` 로 이관한다 (가치 3 / 위험 1 / 작업량 M)
+- [러너 12:37] resume closed — PR 이전 단계에서 중단 — 에이전트 단계는 재실행하지 않음

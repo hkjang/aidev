@@ -1,0 +1,128 @@
+[
+  {
+    "title": "revokeAPIKey 가 uuid 모양 아닌 keyID 를 uuid 컬럼에 넘겨 호출자 실수를 500 으로 만든다 — looksLikeUUID 가드로 404",
+    "value": 3,
+    "risk": 1,
+    "size": "S",
+    "status": "done",
+    "note": "2026-10-17 구현(57aaa97). personal.go:341 의 chi.URLParam(keyID) 뒤, Exec 앞에 deletePersonLink(data.go:758) 선례 그대로 가드를 넣었다. 404 리터럴은 기존 RowsAffected==0 분기와 바이트로 같고 SQL·audit·시그니처는 불변. 신규 personal_test.go 는 DB 불필요(callWithoutStore + nil store)로 CI 에서 실제로 돈다. 실 postgres 22P02 재현은 여전히 미확인(DSN 없음).",
+    "updated": "2026-10-17"
+  },
+  {
+    "title": "updatePreferences 가 locale 만 검증하지 않고 0행 UPDATE 도 ok:true 를 돌려준다",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "차선 후보 유지. personal.go:35~59 — theme·font_scale·rediscover_frequency 는 400 으로 거르지만 locale 은 무검사(컬럼 text, CHECK 없음). UPDATE 0행에도 ok:true 로, 형제 관례(personal.go:347·408, settings.go:341 의 RowsAffected==0 → 404)와 어긋난다. 0행 도달 경로는 미확인(bootstrap/auth/settings 세 곳이 행을 심는다). locale 수용 범위 축소는 입력 계약 변경이라 반드시 분리할 것 — 0행 분기 하나만 고르는 쪽이 안전하다.",
+    "updated": "2026-10-17"
+  },
+  {
+    "title": "updateKeyPermission·updateUser 의 경로 uuid 무검사(관리자 경로)",
+    "value": 2,
+    "risk": 3,
+    "size": "S",
+    "status": "pending",
+    "note": "personal.go:384(permissionID)·settings.go:303(userID) 가 가드 없이 uuid 컬럼에 내려간다. 2026-10-17 에 revokeAPIKey 가 머지되어 personal.go 안에 같은 모양의 선례가 생겼으므로 복사 대상이 더 가까워졌다. 다만 관리자 키 권한·사용자 관리(위험 구역)라 별도 회차로 유지.",
+    "updated": "2026-10-17"
+  },
+  {
+    "title": "AI 제공자 비-2xx 및 scanner 길이 초과 오류의 DB 없는 HTTP 회귀 시험",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "유지. 주의 — 같은 파일을 건드리는 8ac45f8(AI SSE 프레임 시험)이 다른 브랜치에 있고 pinned main 에는 없다. 지금 고르면 ai_test.go 충돌 위험.",
+    "updated": "2026-10-17"
+  },
+  {
+    "title": "AI 제공자 endpoint 정규화와 요청 헤더·본문 전달 계약 회귀 시험",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "유지. 위와 같은 ai_test.go 충돌 주의. 실행 미확인.",
+    "updated": "2026-10-17"
+  },
+  {
+    "title": "orbit_list_memories 가 limit 을 DB 에 내리지 않고 500건을 복호화한 뒤 메모리에서 자름",
+    "value": 2,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "유지. 성능 실측 없고 queryMemories 는 REST·MCP·AI 공유. 호출자 범위에서만 검토.",
+    "updated": "2026-10-17"
+  },
+  {
+    "title": "decodeJSON 이 첫 JSON 뒤의 추가 JSON·쓰레기를 거부하지 않는다",
+    "value": 2,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "유지. respond.go:decodeJSON 은 첫 Decode 만 실행. 전 엔드포인트 입력 수용 계약을 동시에 좁히므로 보류.",
+    "updated": "2026-10-17"
+  },
+  {
+    "title": "auth.go:155 userByAPIKey 의 rows.Err() 누락",
+    "value": 2,
+    "risk": 3,
+    "size": "S",
+    "status": "pending",
+    "note": "유지. internal/server·internal/store 의 rows.Next 26곳 중 rows.Err 가 없는 유일한 자리. fail-closed 이고 인증 보호 경로라 고르지 않는다.",
+    "updated": "2026-10-17"
+  },
+  {
+    "title": "proxyAIStream 이 제공자 비-2xx 본문 8KiB 를 오류 메시지·slog 로 내보내는 범위 점검",
+    "value": 2,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "유지. 실제 비밀 반사 사례 미확인; 추측 기반 정책 변경은 하지 않는다.",
+    "updated": "2026-10-17"
+  },
+  {
+    "title": "orbitAt 의 사람별 memories count 상관 서브쿼리를 GROUP BY 집계로",
+    "value": 2,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "유지. 성능 실측 없고 과거 memory_count 시험 verify 실패 전력.",
+    "updated": "2026-10-17"
+  },
+  {
+    "title": "orbitAt 의 first_met<=$2::date 가 DB 세션 TimeZone 에 따라 하루 어긋남",
+    "value": 2,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "유지. 의도된 계약 미확인; 과거 포함 규칙 실패를 반복하지 않는다.",
+    "updated": "2026-10-17"
+  },
+  {
+    "title": "parseOrbitAt 이 미래 시각 ?at= 을 그대로 받아 과거라고 표시",
+    "value": 2,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "유지. 미래 거부는 공개 계약 변경이라 보류.",
+    "updated": "2026-10-17"
+  },
+  {
+    "title": "personal.go 전용 시험이 revokeAPIKey 두 가지뿐 — createAPIKey 의 scopes·expires_at 검증과 preferences 400 분기가 미고정",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "신규(2026-10-17). 이번에 personal_test.go 가 생겼지만 다루는 것은 revokeAPIKey 의 경로 가드뿐이다. createAPIKey(personal.go:300~337)의 scope 허용 목록·빈 scopes 의 key_policy 기본값 대체, updatePreferences 의 theme·font_scale·rediscover_frequency 400 분기는 모두 DB 없이 고정할 수 있다(nil store 로 400 이 먼저 나는 자리만 고를 것 — scopes 검증은 readSetting 앞에 있는지 먼저 확인해야 한다). 프로덕션 0파일.",
+    "updated": "2026-10-17"
+  },
+  {
+    "title": "web/src/pages 테스트 0개 — 페이지 통합 시험 기반 만들기",
+    "value": 2,
+    "risk": 2,
+    "size": "M",
+    "status": "pending",
+    "note": "유지. MUI Slider pointer·OrbitCanvas ResizeObserver 스텁 필요. 과거 기록이며 이번 재현 미확인.",
+    "updated": "2026-10-17"
+  }
+]

@@ -10,3 +10,4 @@
 - 기준 1)을 증명하려면 `sessionCreator` seam 추가가 필요하다(server.go:220-232 의 nil-이면-store 패턴 그대로). seam 주입 테스트는 배선 결함을 못 보므로 "불리지 않았다" 를 카운터로, 전달된 ttl 을 인자로 단정하게 했다.
 - 프로필은 1일 전 것이 그대로 유효해 새로 쓰지 않았다. 어긋난 한 줄: 기준이 이제 main@69b62df / `scripts/version.sh` 정본 **v0.2.39** 다(v0.2.38 아님).
 - [러너 12:25] scout done — OpenBao `auth/token/create` 가 길이를 알 수 없는(chunked) 요청 본문을 조용히 버려 `ttl`·`display_name` 을 무시하고 �
+- [러너 12:37] resume closed — PR 이전 단계에서 중단 — 에이전트 단계는 재실행하지 않음

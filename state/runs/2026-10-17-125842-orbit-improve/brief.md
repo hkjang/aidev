@@ -1,0 +1,22 @@
+- 과제: 개인 API 키 폐기(`revokeAPIKey`)가 uuid 모양 아닌 `keyID` 를 uuid 컬럼에 그대로 넘겨 호출자 실수를 500 internal_error 로 만드는 것을, 형제 핸들러와 같은 `looksLikeUUID` 가드로 DB 앞에서 404 로 끝내기 (가치 3 / 위험 1 / 작업량 S)
+- 왜: `internal/server/personal.go:341` 의 `revokeAPIKey` 는 `chi.URLParam(r,"keyID")` 를 검사 없이 `UPDATE api_keys ... WHERE id=$1`(`api_keys.id` 는 `uuid` 컬럼 — `internal/store/migrations/001_init.sql:171`)로 넘기므로, 모양이 어긋난 경로 값은 postgres 22P02 가 되고 `internalError(w,r,err)` 가 그것을 **500 `internal_error` + `slog.Error`** 로 바꾼다 — 호출자가 잘못 보낸 요청이 서버 고장으로 보이고 사용자가 만든 문자열마다 서버 로그에 에러가 쌓인다. `data.go` 의 형제 핸들러 여덟 곳과 `workflow.go:150`·`ai.go:48` 에는 이미 같은 가드가 깔려 있고(`looksLikeUUID` 호출자 9곳) `personal.go` 에만 0곳이다. 가드를 깔면 같은 입력이 기존 "없는 키" 와 똑같은 404 `not_found` 로 끝나고 로그가 조용해진다.
+- 수용 기준:
+  1) `DELETE /api/v1/personal/api-keys/{keyID}` 에 모양이 어긋난 `keyID`(`not-a-uuid`, 빈 값 대신 공백 `" "`, 중괄호형 `{...}`, 하이픈 없는 32자 16진수)를 주면 DB 질의에 닿기 전에 **404 / `not_found` / `"활성 API 키를 찾을 수 없습니다."`** 로 끝난다 — 상태·코드·메시지가 지금 `tag.RowsAffected()==0` 분기(personal.go:347~350)의 리터럴과 **바이트로 같다**.
+  2) 소문자·대문자 uuid 모양(`id.New()` 와 그 `strings.ToUpper`)은 가드에 걸리지 않고 지금처럼 DB 까지 내려간다 — `store: nil` 서버에서는 패닉으로 "내려갔다" 를 증명한다(기존 `TestPersonHandlersRejectMalformedPathIDBeforeDB` 의 회귀 기준과 같은 방식).
+  3) 정상 경로의 응답(204, `s.audit(..., "api_key.revoke", "api_key", keyID, ...)`)·SQL·인자·`u.ID` 조건은 한 글자도 바뀌지 않는다. 시험은 (1) 가드가 DB 앞에서 끝남 (2) 정상 모양을 삼키지 않음 두 가지를 증명해야 하고, 가드 블록만 지우면 (1) 만 빨개지고 (2) 는 초록이어야 한다.
+- 건드릴 파일 (프로덕션 1개):
+  - `internal/server/personal.go:revokeAPIKey` — `keyID := chi.URLParam(...)` 직후, `s.store.DB.Exec` **앞**에 `if !looksLikeUUID(keyID) { writeError(w, 404, "not_found", "활성 API 키를 찾을 수 없습니다."); return }` 를 넣는다. 형태·주석 밀도는 `data.go:758~762`(`deletePersonLink`)의 선례를 그대로 따른다 — 그 자리의 주석("person_links.id도 uuid 컬럼이라 같은 가드가 필요하다") 처럼 `api_keys.id` 가 uuid 컬럼이라는 한국어 한 줄만 남긴다. `looksLikeUUID`(data.go:73)는 **시그니처·본문 그대로 재사용**한다.
+  - `internal/server/personal_test.go` — **신규 파일**(현재 `personal.go` 전용 시험 파일 없음). 같은 패키지의 기존 헬퍼 `personRequest`(data_test.go:105 — `chi.RouteCtxKey` 에 URLParam 을 심고 `userContextKey` 에 `User{ID:"u1"}` 을 넣는다)·`assertAPIErrorMessage`(data_test.go:235 — 상태·코드·메시지 리터럴까지 검사)·`callWithoutStore`(가드 시험용 nil store 패닉 포획 헬퍼, mcp_test.go/data_test.go 에서 쓰임 — 실제 시그니처를 열어 확인하고 그대로 쓸 것)를 **새로 만들지 말고 재사용**한다. `&Server{store: nil}` 로 `s.revokeAPIKey` 를 직접 불러 DB 불필요 시험으로 만든다.
+- 검증 명령 (이 저장소에서 실제로 도는 것):
+  - `cd /home/hkjang/.cache/auto-improve-wt/orbit && go test -race -count=1 ./internal/server -run 'RevokeAPIKey|PersonHandlersRejectMalformedPathIDBeforeDB' -v`
+  - `go test -race -count=1 ./...` (ORBIT_TEST_DATABASE_URL 미설정이면 DB 시험은 SKIP — 이번 신규 시험은 DB 불필요이므로 CI 에서 실제로 돈다)
+  - `gofmt -l internal/server` (무출력), `go vet ./...`, `go build ./...`
+- 위험과 피할 것:
+  - **같이 건드리지 말 것**: `personal.go:384 updateKeyPermission`(관리자 키 권한 — 프로필의 위험 구역), `settings.go:303 updateUser`(관리자 사용자 관리/인증 인접), `workflow.go:332 reviewApproval`(승인 보호 경로, 과거 회차가 보호 경로로 기각). 같은 결함이 있지만 이번 회차 범위 밖이다. `auth.go`·`throttle.go`·`internal/secure`·`internal/store/migrations`·`.github/workflows` 는 열지 않는다.
+  - `looksLikeUUID` 의 판정(대문자 허용, 중괄호·하이픈 없는 형태 거부)을 **바꾸지 말 것** — 9개 호출자가 공유한다. 2026-10-08 교훈대로 공유 함수·SQL·시그니처를 같이 바꾸지 않는다.
+  - 메시지를 새로 지어내지 말 것. 수용 기준 1 은 기존 404 리터럴과 **같아야** 하므로 `assertAPIError`(코드만 검사)로는 증명되지 않는다 — `assertAPIErrorMessage` 를 쓴다(2026-10-08 회차가 이 이유로 그 헬퍼를 만들었다).
+  - 경로에 공백·중괄호가 든 입력은 `httptest.NewRequest` 의 경로 파싱에서 터질 수 있다 — 2026-10-08 선례대로 경로는 `url.PathEscape` 하고 라우트 파라미터에는 날값을 넣는다(핸들러가 읽는 것은 후자다).
+  - **미확인**: 모양 어긋난 `keyID` 가 실제 postgres 에서 22P02 → 500 이 되는 것은 코드 경로(uuid 컬럼 + `internalError`)와 2026-10-05/10-08 회차의 동일 패턴 실측 기록으로 판단했고, 이번 정찰에서 실 DB 로 재현하지는 않았다(DSN 없음). 가치의 근거는 이 추론이다.
+  - 확인함: `callWithoutStore` 는 `workflow_test.go:18` 에 `func callWithoutStore(h func(http.ResponseWriter, *http.Request), req *http.Request) (rec *httptest.ResponseRecorder, panicked bool)` 로 있고 같은 패키지에서 바로 쓸 수 있다. 기존 `go test -count=1 ./internal/server -run 'TestPersonHandlersRejectMalformedPathIDBeforeDB' -v` 를 이번 정찰에서 실제로 돌려 하위 시험 6개 PASS(0.007s)를 확인했다 — 새 시험의 본보기로 그 함수(data_test.go:138~)를 그대로 보고 쓸 것.
+  - 참고: `a5de472`(export 문서)·`8ac45f8`(AI SSE 프레임 시험)은 다른 브랜치에 있고 pinned `main@5c97a1a` 에는 **없다**. `openapi.go` 의 export 보안·`ai_test.go` 의 프레임 시험을 다시 만들지 말 것.
+- 차선 후보: `updatePreferences`(personal.go:35~59)가 `locale` 만 검증하지 않고(theme·font_scale·rediscover_frequency 는 400 으로 거름) `UPDATE` 가 0행이어도 `{"ok":true}` 를 돌려주는 것 — 형제 핸들러의 `tag.RowsAffected()==0 → 404` 관례(personal.go:347·408, settings.go:341)와 어긋난다. 1순위가 성립하지 않을 때 **둘 중 0행 분기 하나만** 고를 것(locale 수용 범위 축소는 입력 계약 변경이라 별도 회차).

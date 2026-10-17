@@ -1,0 +1,231 @@
+{
+  "run_id": "2026-10-17-125852-postra-improve",
+  "generated": "2026-10-17T13:21:46+09:00",
+  "run": {
+    "run_id": "2026-10-17-125852-postra-improve",
+    "project": "postra",
+    "kind": "improve",
+    "started": "2026-10-17T12:58:51+09:00",
+    "model": "claude-opus-5",
+    "policy_version": "4a9e91ac72",
+    "prompts_hash": "ce085c79e18002e2",
+    "runner_version": "1bd5f0cd4d",
+    "arm": "no-scout",
+    "experiment": "roles-2026-09",
+    "finished": "2026-10-17T13:21:45+09:00",
+    "outcome": "verify-failed"
+  },
+  "record": {
+    "ts": "2026-10-17T13:21:45+09:00",
+    "date": "2026-10-17",
+    "project": "postra",
+    "result": "CI failed, PR open https://github.com/hkjang/postra/pull/40",
+    "outcome": "verify-failed",
+    "run_id": "2026-10-17-125852-postra-improve",
+    "base_sha": "c40b91d2259a2279d15d211c8365839dd1c4df4e",
+    "head_sha": "623dee176217738cc3fca3f81bf06e8cb12fd72e",
+    "pr": "https://github.com/hkjang/postra/pull/40",
+    "stages": {
+      "base": {
+        "state": "pinned",
+        "reason": "main@c40b91d",
+        "at": "2026-10-17T12:59:02+09:00"
+      },
+      "autonomy": {
+        "state": "release",
+        "reason": "",
+        "at": "2026-10-17T12:59:02+09:00"
+      },
+      "verify": {
+        "state": "passed",
+        "reason": "검증 9개 통과 (auto)",
+        "at": "2026-10-17T13:12:33+09:00"
+      },
+      "review": {
+        "state": "approved",
+        "reason": "리뷰 승인 (risk=low)",
+        "at": "2026-10-17T13:16:08+09:00"
+      },
+      "pr": {
+        "state": "created",
+        "reason": "https://github.com/hkjang/postra/pull/40",
+        "at": "2026-10-17T13:16:17+09:00"
+      },
+      "ci": {
+        "state": "failed",
+        "reason": "성공이 아닌 검사: govulncheck=failure · 실패한 검사: ? 잡: govulncheck ",
+        "at": "2026-10-17T13:21:45+09:00"
+      }
+    },
+    "campaign": "",
+    "autonomy": "release",
+    "arm": "no-scout",
+    "experiment": "roles-2026-09",
+    "engine": "claude",
+    "files": 3,
+    "additions": 337,
+    "deletions": 0,
+    "tests": 2,
+    "title": "fix(imap): require an IMAP greeting before starting a session"
+  },
+  "stages": {
+    "base": {
+      "state": "pinned",
+      "reason": "main@c40b91d",
+      "at": "2026-10-17T12:59:02+09:00"
+    },
+    "autonomy": {
+      "state": "release",
+      "reason": "",
+      "at": "2026-10-17T12:59:02+09:00"
+    },
+    "verify": {
+      "state": "passed",
+      "reason": "검증 9개 통과 (auto)",
+      "at": "2026-10-17T13:12:33+09:00"
+    },
+    "review": {
+      "state": "approved",
+      "reason": "리뷰 승인 (risk=low)",
+      "at": "2026-10-17T13:16:08+09:00"
+    },
+    "pr": {
+      "state": "created",
+      "reason": "https://github.com/hkjang/postra/pull/40",
+      "at": "2026-10-17T13:16:17+09:00"
+    },
+    "ci": {
+      "state": "failed",
+      "reason": "성공이 아닌 검사: govulncheck=failure · 실패한 검사: ? 잡: govulncheck ",
+      "at": "2026-10-17T13:21:45+09:00"
+    }
+  },
+  "provenance": {
+    "model": "claude-opus-5",
+    "policy_version": "4a9e91ac72",
+    "prompts_hash": "ce085c79e18002e2",
+    "runner_version": "1bd5f0cd4d",
+    "base_sha": "c40b91d2259a2279d15d211c8365839dd1c4df4e",
+    "head_sha": "623dee176217738cc3fca3f81bf06e8cb12fd72e",
+    "pr": "https://github.com/hkjang/postra/pull/40"
+  },
+  "verification": {
+    "runner": {
+      "source": "auto",
+      "commands": [
+        {
+          "cmd": "go build ./...",
+          "exit": 0,
+          "seconds": -1
+        },
+        {
+          "cmd": "go vet ./...",
+          "exit": 0,
+          "seconds": 1
+        },
+        {
+          "cmd": "go test ./...",
+          "exit": 0,
+          "seconds": 54
+        },
+        {
+          "cmd": "cd web && [ -d node_modules ] || npm ci --no-audit --no-fund",
+          "exit": 0,
+          "seconds": 7
+        },
+        {
+          "cmd": "cd web && npm test --silent",
+          "exit": 0,
+          "seconds": 8
+        },
+        {
+          "cmd": "cd web && [ -d node_modules ] || npm ci --no-audit --no-fund",
+          "exit": 0,
+          "seconds": 0
+        },
+        {
+          "cmd": "cd web && npm run typecheck --silent",
+          "exit": 0,
+          "seconds": 5
+        },
+        {
+          "cmd": "cd web && [ -d node_modules ] || npm ci --no-audit --no-fund",
+          "exit": 0,
+          "seconds": 0
+        },
+        {
+          "cmd": "cd web && npm run build --silent",
+          "exit": 0,
+          "seconds": 9
+        }
+      ]
+    },
+    "runner_gate": {
+      "ok": true,
+      "state": "verified",
+      "reason": "검증 9개 통과 (auto)"
+    },
+    "after_rebase": null,
+    "review": {
+      "verdict": "approve",
+      "reasons": [],
+      "notes": [
+        "internal/adapters/imap/client.go:101-105 가드는 내가 재실행해 확인했다: go vet 깨끗, ./internal/adapters/imap 전체 PASS(4.583s), TestIMAPDialRequiresAnIMAPGreeting 8종 PASS, ./internal/application 의 TestSyncOfANonIMAPServerFailsAtTheGreeting·TestSyncViaIMAP·TestSyncFailureNamesTheStepAndKeepsNoServerText PASS. 원장 '실패 재현' 줄의 출력(`Dial accepted \"+OK POP3 ready\" ... asked for [\"LOGIN\" \"SELECT\"]`, 앱 단 `sync status = succeeded, want failed`)은 이번 변경이 고치는 증상과 정확히 일치하고, 어댑터 테스트가 rec.seen() 공백을 단언하므로 가드 없이는 통과할 수 없다.",
+        "isGreeting 경계는 손으로 확인했다: readBoundedLine 이 CRLF 를 TrimRight 하므로 bare `* OK` 는 rest==cond 분기로 통과하고, `* OKAY` 는 rest[2]!=' ' 로 거부되며 `* PREAUTH`/`* BYE` 는 len 검사로 조기 continue 된다. off-by-one 없음. 오류 문구에는 len(greeting) 만 들어가고 BYE 경로의 Code 는 inboundCodes 허용목록 토큰이라 서버 원문이 진단·감사로 새지 않는다(privacy: 새로 수집·저장하는 개인정보 없음; security: 공격 경로 없음, 가드는 좁히는 방향이며 STARTTLS Buffered() 판정보다 앞서 실행된다).",
+        "남는 우려 1(릴리즈 노트용): 운영자에게 보이는 동작 변경이다. 비표준 greeting(`*  OK` 공백 2개, 탭 구분, `*OK`)을 보내던 서버는 이제 greeting 단계에서 거부된다. 실측 사례는 없고 RFC 3501 §7.1.1 에 맞추는 좁히기라 수용하지만, 릴리즈 노트에 '비표준 greeting 서버는 이제 동기화가 실패한다'를 명시하는 편이 낫다.",
+        "남는 우려 2(기존 정책, 이번 변경 아님): class=other 는 retryableInbound 에서 재시도 대상이라 포트 오설정에 연결 시도 3회가 붙는다. 또 syncHint 의 `connecting && d.AccountSessions > 1` 분기가 먼저 걸리면 포트 오설정에도 '동시 접속 제한·IDLE 을 끄세요' 힌트가 나올 수 있다(변경 전 greeting+timeout 에서도 동일). 원장의 보류 아이디어(greeting 전용 힌트)가 이 자리를 가리킨다.",
+        "못 본 것: 전체 go test ./...(application 전체는 지정 3개만 실행), PostgreSQL·브라우저 e2e·프런트(변경 없음, spa/assets 무변경), make lint-security·contracts -check(원장 기록만 신뢰). 범위 이탈 없음 — 프로덕션 변경은 가드 1곳 + 헬퍼 1개뿐이고 나머지는 신규 테스트 2파일, 마이그레이션·워크플로·비밀값·인증 경로 미접촉이라 revert 로 완전히 되돌아온다."
+      ],
+      "risk": "low",
+      "blocking": []
+    },
+    "ci_gate": {
+      "ok": false,
+      "state": "failed",
+      "reason": "성공이 아닌 검사: govulncheck=failure",
+      "checks": 10,
+      "bad": 1
+    }
+  },
+  "release": {
+    "result": null,
+    "assets_sha256": []
+  },
+  "approval": null,
+  "usage": [
+    {
+      "ts": "2026-10-17T13:11:07+09:00",
+      "date": "2026-10-17",
+      "project": "postra",
+      "phase": "improve",
+      "run_id": "2026-10-17-125852-postra-improve",
+      "campaign": "",
+      "subtype": "success",
+      "engine": "claude",
+      "duration_ms": 762498,
+      "num_turns": 50,
+      "cost_usd": 4.657267999999999,
+      "input_tokens": 94,
+      "output_tokens": 39869,
+      "cache_read": 4764066,
+      "cache_create": 127804
+    },
+    {
+      "ts": "2026-10-17T13:16:08+09:00",
+      "date": "2026-10-17",
+      "project": "postra",
+      "phase": "review",
+      "run_id": "2026-10-17-125852-postra-improve",
+      "campaign": "",
+      "subtype": "success",
+      "engine": "claude",
+      "duration_ms": 222436,
+      "num_turns": 23,
+      "cost_usd": 1.5233474999999996,
+      "input_tokens": 32,
+      "output_tokens": 12700,
+      "cache_read": 1039055,
+      "cache_create": 68616
+    }
+  ]
+}
