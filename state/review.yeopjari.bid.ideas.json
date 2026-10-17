@@ -1,21 +1,48 @@
 [
   {
+    "title": "main CI 'check' 실패 원인을 annotation 으로 확정하고 진단 절차를 README 에 남기기",
+    "value": 4,
+    "risk": 1,
+    "size": "S",
+    "status": "done",
+    "note": "gh 가 처음으로 인증돼 있어 원문 주석을 읽었다 — 'The job was not started because recent account payments have failed or your spending limit needs to be increased'. main 실패 두 건 모두 steps 0 / 3~4초. 6ea982c..b4874e8 의 .github/ 변경 0줄. 저장소 결함 아님이 확정이라 프로덕션 코드 0줄, README 1파일 21줄만 추가. 조치는 사람의 Billing & plans 확인.",
+    "updated": "2026-10-18"
+  },
+  {
+    "title": "ubuntu-latest 가 2026-10-19 부터 Ubuntu 26 으로 이전 — check.yml 러너 라벨 고정 검토",
+    "value": 4,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "신규. 이번 회차에 읽은 같은 check-run annotation 의 notice: 'The ubuntu-latest label will migrate to Ubuntu 26 beginning October 19, 2026' (actions/runner-images#14748). Actions 결제가 풀리는 즉시 러너 OS 가 바뀌어 playwright install --with-deps·postgres 서비스가 CI 에서 처음 터질 수 있다. ubuntu-24.04 로 고정하면 막히지만 릴리즈 경로 파일(.github/workflows/check.yml)을 건드리는 판단이라 이번 회차 범위(요청: '이것만 고치세요')에서 뺐다. 고정은 게이트를 느슨하게 하는 것이 아니라 조이는 쪽이므로 제약과 충돌하지 않는다.",
+    "updated": "2026-10-18"
+  },
+  {
     "title": "Actions 복구 후 PR #4·#5·#6·#7·#8 을 그대로 머지 (저장소 변경 불필요)",
     "value": 5,
     "risk": 1,
     "size": "S",
     "status": "pending",
-    "note": "사람 조치. 이번 회차에도 gh 가 승인 거부되어 CI 주석을 읽지 못했다. PR #8 = origin/auto/2026-10-15-1508, 커밋 49334c4, scripts/perf.mjs 한 파일 +10/-1 — 이번에 그 내용으로 check.yml 9단계를 로컬에서 전부 통과시켜(118 tests, 223.7KB exit 0, e2e 218/0, a11y 0건) repo 쪽 결백을 세 회차 연속 증명했다. main@6ea982c 에 Retry-After 9시간 과장이 그대로 있다. 중복 PR 금지.",
-    "updated": "2026-10-15"
+    "note": "사람 조치. 이번 회차에 차단 원인이 계정 결제임이 주석 원문으로 확정됐다(가설 → 증거). main@b4874e8 에서 check.yml 9단계가 전부 로컬 통과하므로 저장소 쪽 선행 조건은 없다. 중복 PR 금지.",
+    "updated": "2026-10-18"
   },
   {
-    "title": "util/validate.ts 의 v.* 검증기에 단위 테스트를 입히기",
+    "title": "첫 방문 JS 예산 여유 자체를 늘리기 (224.1/230 KB = 97.4%, 여유 5.9 KB)",
     "value": 3,
-    "risk": 1,
-    "size": "S",
-    "status": "done",
-    "note": "이번 회차에 구현. packages/core/src/__tests__/validate.test.ts 신규 641줄 / 170 tests, 프로덕션 0줄. v.string·text·int·bool·uuid·email·instant·oneOf·array·object·optional·json + parse·parseOne·fail 을 함수별 describe 로 덮고 필드 메시지 전문까지 단정했다. 변이 3건(string max >=, optional '' 제거, fail 중복 방지 제거)으로 실효를 증명. npm run check = 7 files / 288 tests.",
-    "updated": "2026-10-15"
+    "risk": 2,
+    "size": "M",
+    "status": "pending",
+    "note": "이번 회차에 실행으로 재확인: index 126.0 KB · react 77.1 KB · mantine 20.6 KB · runtime 0.4 KB = 224.1 KB. v0.7.5/0.7.6 이 들어오며 223.7 → 224.1 KB 로 여유가 더 줄었다. 95% 경고(PR #8)는 아직 main 에 없어 CI 로그에 이 사실이 안 보인다. 번들 구성을 바꾸는 변경이라 perf 수치와 화면 회귀를 ui-flows.mjs 로 함께 봐야 한다. scripts/perf.mjs 는 PR #8 과 겹치므로 그 파일은 건드리지 말 것.",
+    "updated": "2026-10-18"
+  },
+  {
+    "title": "e2e 가 깨끗한 DB 를 암묵적 전제로 하는 것 (상태 의존 검사 멱등성)",
+    "value": 3,
+    "risk": 2,
+    "size": "M",
+    "status": "pending",
+    "note": "개수·빈 목록을 단정하는 검사를 run-id 로 격리하는 쪽만 남았다. dev-reset 직후 218 passed / 0 failed 가 여덟 회차 연속 같은 기준선(이번에도 재확인). scripts/e2e.mjs 는 PR #4 와 겹치므로 머지 전 금지.",
+    "updated": "2026-10-18"
   },
   {
     "title": "v.string 의 max 가 UTF-16 단위로 세어 v.text 와 한도가 어긋남",
@@ -23,8 +50,8 @@
     "risk": 2,
     "size": "S",
     "status": "pending",
-    "note": "validate.ts:62 text.length > opts.max vs :89 [...text].length > opts.max. 이번 회차에 실행으로 확정했다 — 같은 max:4 에 '🙂🙂🙂' 를 주면 string 은 6 으로 세어 거부하고 text 는 3 으로 세어 통과한다. 현재 동작은 validate.test.ts 가 주석과 함께 고정해 두었다. 사용자 노출 한도가 바뀌는 변경이므로 e2e 의 길이 경계 검사와 함께 별 회차로.",
-    "updated": "2026-10-15"
+    "note": "validate.ts:62 text.length > opts.max vs :89 [...text].length > opts.max. 같은 max:4 에 '🙂🙂🙂' 를 주면 string 은 6 으로 세어 거부하고 text 는 3 으로 세어 통과한다. 현재 동작은 validate.test.ts 가 주석과 함께 고정해 두었다. 사용자 노출 한도가 바뀌는 변경이므로 e2e 의 길이 경계 검사와 함께 별 회차로.",
+    "updated": "2026-10-18"
   },
   {
     "title": "v.instant 가 ISO-8601 이라고 적어 두고 new Date() 로 무엇이든 받음",
@@ -32,8 +59,8 @@
     "risk": 2,
     "size": "S",
     "status": "pending",
-    "note": "validate.ts:152-162. 이번 회차에 확정 — '2026' → 2026-01-01T00:00:00.000Z, '2026-10' → 2026-10-01T00:00:00.000Z 가 모두 통과한다('nope'·''·'2026-13-40T00:00:00Z' 는 거부). 현재 동작은 테스트로 고정했다. 좁히면 광고 기간·상담 희망 시각을 보내는 기존 클라이언트 형식을 깨뜨릴 수 있어 위험 2.",
-    "updated": "2026-10-15"
+    "note": "validate.ts:152-162. '2026' → 2026-01-01T00:00:00.000Z, '2026-10' → 2026-10-01T00:00:00.000Z 가 모두 통과한다('nope'·''·'2026-13-40T00:00:00Z' 는 거부). 현재 동작은 테스트로 고정했다. 좁히면 광고 기간·상담 희망 시각을 보내는 기존 클라이언트 형식을 깨뜨릴 수 있어 위험 2.",
+    "updated": "2026-10-18"
   },
   {
     "title": "v.email 이 local part 의 선·후행 점을 통과시킴",
@@ -41,8 +68,8 @@
     "risk": 2,
     "size": "S",
     "status": "pending",
-    "note": "신규. validate.ts:50 의 EMAIL_RE local 문자 클래스에 '.' 가 들어 있어 '.a@b.com'·'a.@b.com' 이 통과한다(이번 회차에 실행으로 확정, 테스트로 고정). RFC 상 유효하지 않은 주소지만 실제 수신 가능성은 메일 서버가 판정하고, 이 플랫폼은 회사 이메일 확인 메일을 실제로 보내므로 영향이 작다. 좁히면 기존 계정의 재인증을 막을 수 있어 조사가 먼저.",
-    "updated": "2026-10-15"
+    "note": "validate.ts:50 의 EMAIL_RE local 문자 클래스에 '.' 가 들어 있어 '.a@b.com'·'a.@b.com' 이 통과한다(실행으로 확정, 테스트로 고정). RFC 상 유효하지 않지만 실제 수신 가능성은 메일 서버가 판정하고 이 플랫폼은 확인 메일을 실제로 보내므로 영향이 작다. 좁히면 기존 계정의 재인증을 막을 수 있어 조사가 먼저.",
+    "updated": "2026-10-18"
   },
   {
     "title": "mailboxKey 가 참조 0건의 죽은 코드 — '한 메일함 한 번 인증' 이 코드로 지켜지는지 조사",
@@ -51,34 +78,7 @@
     "size": "M",
     "status": "pending",
     "note": "PR #7 의 새 테스트가 키 계약(name+tag@c.com -> name@c.com)을 문서화해 뒀다. 확인 경로가 auth/*·routes/sso.ts·db/migrations 전부 보호 구역이라 위험 4. 조사만 별 회차로, PR #7 머지 후에.",
-    "updated": "2026-10-15"
-  },
-  {
-    "title": "첫 방문 JS 의 여유 자체를 늘리기 (index 125.6KB · react 77.1KB, 여유 6.3KB)",
-    "value": 3,
-    "risk": 2,
-    "size": "M",
-    "status": "pending",
-    "note": "이번 회차에 재확인: 223.7 KB / 230 KB = 97.3%. 경고는 PR #8 이 붙였으나 여유는 그대로다. index 청크가 가장 커서 라우트 단위 지연 로드 확대가 후보. 번들 구성을 바꾸는 변경이라 perf 수치와 화면 회귀를 ui-flows.mjs 로 함께 봐야 한다. scripts/perf.mjs 는 PR #8 과 겹치므로 그 파일은 건드리지 말 것.",
-    "updated": "2026-10-15"
-  },
-  {
-    "title": "e2e 가 깨끗한 DB 를 암묵적 전제로 하는 것 (상태 의존 검사 멱등성)",
-    "value": 3,
-    "risk": 2,
-    "size": "M",
-    "status": "pending",
-    "note": "개수·빈 목록을 단정하는 검사를 run-id 로 격리하는 쪽만 남았다. dev-reset 직후 218 passed / 0 failed 가 일곱 회차 연속 같은 기준선(이번에도 재확인). scripts/e2e.mjs 는 PR #4 와 겹치므로 머지 전 금지.",
-    "updated": "2026-10-15"
-  },
-  {
-    "title": "domain/products.ts 의 slugify 가 죽은 코드 (한글 이름은 빈 슬러그)",
-    "value": 1,
-    "risk": 1,
-    "size": "S",
-    "status": "pending",
-    "note": "이번 회차 차선 후보였고 쓰지 않았다. products.ts:95 의 정의 1건뿐, 참조 0건. 어느 열린 PR 과도 겹치지 않는다. 지우려면 삭제 전·후 grep 0건 확인(clientIpFrom 제거 때 쓴 방법).",
-    "updated": "2026-10-15"
+    "updated": "2026-10-18"
   },
   {
     "title": "429 안내에 재시도 가능 시각을 보여 주기",
@@ -87,7 +87,7 @@
     "size": "S",
     "status": "pending",
     "note": "선행 조건 미충족 유지. apps/web/src/api/client.ts 가 retry-after 를 ApiError.retryAfter 로 받아 두는데 쓰는 화면이 없고, main 의 retry-after 는 아직 9시간 과장된 옛 판이다(PR #4 미머지) — 지금 노출하면 틀린 시각을 보여 준다.",
-    "updated": "2026-10-15"
+    "updated": "2026-10-18"
   },
   {
     "title": "purgeOldCounters 가 월 창 카운터를 3일 뒤 지움 (지금은 잠복)",
@@ -96,7 +96,7 @@
     "size": "S",
     "status": "pending",
     "note": "quota.ts:142 WHERE window_start < now() - interval '3 days'. 월 창의 저장 라벨은 그 달 1일이라 매달 4일째부터 진행 중인 월 카운터가 지워진다. window:'month' 호출자 0건이라 현재 영향 0. PR #4 가 같은 파일이므로 머지 전 금지.",
-    "updated": "2026-10-15"
+    "updated": "2026-10-18"
   },
   {
     "title": "clientAddress 가 IPv6·포트 붙은 x-forwarded-for 원소를 정규화하지 않음",
@@ -105,7 +105,7 @@
     "size": "S",
     "status": "pending",
     "note": "PR #5 는 '빈 값을 건너뛴다' 까지만 고쳤다. 같은 방문자가 '1.2.3.4' 와 '1.2.3.4:51234' 로 서로 다른 쿼터 주체가 된다. ipHash 주체가 바뀌는 변경이라 배포 시점 진행 중인 카운터가 갈린다. PR #5 와 같은 파일(pipeline.ts)이라 머지 전 금지.",
-    "updated": "2026-10-15"
+    "updated": "2026-10-18"
   },
   {
     "title": "ci-local.sh 를 워크플로와 어긋나지 않게 묶어 두기 (드리프트 감시)",
@@ -113,25 +113,16 @@
     "risk": 1,
     "size": "S",
     "status": "pending",
-    "note": "선행 조건 미충족 유지 — ci-local.sh 가 아직 main 에 없다(PR #6 미머지, 이번 회차에도 .github/workflows/ 에 check.yml 하나뿐이고 scripts/ 에 ci-local.sh 가 없음을 재확인). 통합하지 말고 '어긋남을 알려 주는' 쪽으로만.",
-    "updated": "2026-10-15"
+    "note": "선행 조건 미충족 유지 — ci-local.sh 가 아직 main 에 없다(PR #6 미머지, 이번 회차에도 .github/workflows/ 에 check.yml 하나뿐이고 scripts/ 에 ci-local.sh 가 없음을 재확인). 다만 이번 회차에 README 「검증」 아래에 check.yml 이 같은 목록을 밟는다는 한 줄과 CI 미시작 진단 절차를 적어 두었다. 통합하지 말고 '어긋남을 알려 주는' 쪽으로만.",
+    "updated": "2026-10-18"
   },
   {
-    "title": "auto-improve: 하루·한 달 한도의 429 가 알려 주는 재시도 시각 — 저장 키 라벨이 아니라 한국 자정 기준으로",
-    "value": 3,
-    "risk": 2,
-    "size": "M",
+    "title": "domain/products.ts 의 slugify 가 죽은 코드 (한글 이름은 빈 슬러그)",
+    "value": 1,
+    "risk": 1,
+    "size": "S",
     "status": "pending",
-    "updated": "2026-10-17",
-    "note": "https://github.com/hkjang/review.yeopjari.bid/pull/3 (PR 처리기가 3일 전에 더 진행할 수 없다고 판정했고(수정·심사를 2번 시도했지만 통과하지 못함) 그 뒤 사람 손이 닿지 않았습니다) 로 닫힘 — 다시 하려면 처음부터"
-  },
-  {
-    "title": "auto-improve: 하루 한도 429 의 Retry-After 를 한국 자정 실제 경계로 — 저장 키를 경계로 믿어 언제나 9시간 길던 것",
-    "value": 3,
-    "risk": 2,
-    "size": "M",
-    "status": "pending",
-    "updated": "2026-10-17",
-    "note": "https://github.com/hkjang/review.yeopjari.bid/pull/4 (PR 처리기가 3일 전에 더 진행할 수 없다고 판정했고(수정·심사를 2번 시도했지만 통과하지 못함) 그 뒤 사람 손이 닿지 않았습니다) 로 닫힘 — 다시 하려면 처음부터"
+    "note": "products.ts:95 의 정의 1건뿐, 참조 0건. 어느 열린 PR 과도 겹치지 않는다. 지우려면 삭제 전·후 grep 0건 확인(clientIpFrom 제거 때 쓴 방법).",
+    "updated": "2026-10-18"
   }
 ]
