@@ -1,0 +1,230 @@
+{
+  "run_id": "2026-10-17-211326-ops.irumx.app-improve",
+  "generated": "2026-10-17T21:28:39+09:00",
+  "run": {
+    "run_id": "2026-10-17-211326-ops.irumx.app-improve",
+    "project": "ops.irumx.app",
+    "kind": "improve",
+    "started": "2026-10-17T21:13:27+09:00",
+    "model": "claude-opus-5",
+    "policy_version": "4a9e91ac72",
+    "prompts_hash": "ce085c79e18002e2",
+    "runner_version": "1bd5f0cd4d",
+    "arm": "no-repair",
+    "experiment": "roles-2026-09",
+    "finished": "2026-10-17T21:28:39+09:00",
+    "outcome": "review-pending"
+  },
+  "record": {
+    "ts": "2026-10-17T21:28:39+09:00",
+    "date": "2026-10-17",
+    "project": "ops.irumx.app",
+    "result": "fix-round: review held, PR open https://github.com/hkjang/ops.irumx.app/pull/3",
+    "outcome": "review-pending",
+    "run_id": "2026-10-17-211326-ops.irumx.app-improve",
+    "base_sha": "e85afae4167c4c055a780564a32af5bc0fedf09e",
+    "head_sha": "7a29bfa66e7df3469759caec8197af9444301c69",
+    "pr": "https://github.com/hkjang/ops.irumx.app/pull/3",
+    "stages": {
+      "base": {
+        "state": "pinned",
+        "reason": "main@e85afae",
+        "at": "2026-10-17T21:13:32+09:00"
+      },
+      "autonomy": {
+        "state": "release",
+        "reason": "",
+        "at": "2026-10-17T21:13:32+09:00"
+      },
+      "scout": {
+        "state": "done",
+        "reason": "이상 탐지의 `do:*` 집계 가짜 자원을 사람이 읽는 라벨로 보여 준다 — 알림 제목·화면에 `do:*` 노출 제거 (",
+        "at": "2026-10-17T21:18:09+09:00"
+      },
+      "brief": {
+        "state": "accepted",
+        "reason": "채택 — 근거 세 자리(`analytics.ts:184-185` 의 `'do:*'`, `run.ts:326` 폴백, `anomalies.tsx:299`)를 모두 코드로 확인했고 지정한 파일 4�",
+        "at": "2026-10-17T21:23:39+09:00"
+      },
+      "verify": {
+        "state": "passed",
+        "reason": "검증 4개 통과 (auto)",
+        "at": "2026-10-17T21:24:08+09:00"
+      },
+      "review": {
+        "state": "rejected",
+        "reason": "리뷰 거절: src/shared/policy.ts:362 `resourceLabel` 은 주석에 '알려진 집계용 가짜 키만 바꾼다' 고 적었는데 `'account'` 를 빠뜨렸다. `src/worker/engine/run.ts:174` 가 cost_jump 소견을 `resource: 'account'` 로 직접 만든다 — 이 키는 `resources.key`(worker:·d1:·r2: … 접두사)와 절대 안 맞아 `resourceSvc.get('account')` 가 undefined 이고, 고친 바로 그 폴백(run.ts:326·327)과 화면(anomalies.tsx:299)을 그대로 지나간다. 결과: 한국어 알림 제목이 `[이룸옵스] 예상 비용 급등 — account`, 본문이 `자원: account`, 카드가 `자원 account` 로 나간다. 커밋 메시지가 말한 증상('내부 키가 알림 제목에 그대로 나갔다')이 **가장 자주 터지는 경로에서 그대로 남는다**. cost_jump 은 severity 가 medium|high 뿐이라(run.ts:180) `fresh = findings.filter(f => f.severity !== 'low')` 를 언제나 통과하고, 기간 말 예상이 하루 사이 1.5배·$1 이상 뛰면(run.ts:171) 발생한다 — 비용 콘솔에서 흔한 사건이다. 반면 이번에 고친 `do:*` 는 구현자 스스로 '지나가는 실행 시험이 없다'(`fake-cloudflare.mjs:183` 이 `durableObjectsStorageGroups: []`)고 적은, 실제로는 더 드문 경로다. 저장소에 이미 쓰는 표현이 있다 — '계정 전체'(services.tsx:721·budgets.tsx:289·pricing.ts:44·engine.ts:8). 수리: `resourceLabel` 에 `'account'` → `'계정 전체'` 분기 한 줄과 단위 시험 한 줄. 구현 노트의 '일부러 안 한 것' 에도 없다(거기 적힌 것은 `anomalies.service_id` null 과 `collect/analytics.ts` 자원 키이고, 이것은 run.ts 가 만드는 표시 키다).",
+        "at": "2026-10-17T21:28:31+09:00"
+      },
+      "pr": {
+        "state": "created",
+        "reason": "https://github.com/hkjang/ops.irumx.app/pull/3",
+        "at": "2026-10-17T21:28:37+09:00"
+      }
+    },
+    "campaign": "",
+    "autonomy": "release",
+    "arm": "no-repair",
+    "experiment": "roles-2026-09",
+    "engine": "claude",
+    "files": 4,
+    "additions": 23,
+    "deletions": 6,
+    "tests": 1,
+    "title": "이상 탐지: 집계 자원 do:* 를 '전체 Durable Objects' 로 표시 — 내부 키가 알림 제목에 그대로 나갔다"
+  },
+  "stages": {
+    "base": {
+      "state": "pinned",
+      "reason": "main@e85afae",
+      "at": "2026-10-17T21:13:32+09:00"
+    },
+    "autonomy": {
+      "state": "release",
+      "reason": "",
+      "at": "2026-10-17T21:13:32+09:00"
+    },
+    "scout": {
+      "state": "done",
+      "reason": "이상 탐지의 `do:*` 집계 가짜 자원을 사람이 읽는 라벨로 보여 준다 — 알림 제목·화면에 `do:*` 노출 제거 (",
+      "at": "2026-10-17T21:18:09+09:00"
+    },
+    "brief": {
+      "state": "accepted",
+      "reason": "채택 — 근거 세 자리(`analytics.ts:184-185` 의 `'do:*'`, `run.ts:326` 폴백, `anomalies.tsx:299`)를 모두 코드로 확인했고 지정한 파일 4�",
+      "at": "2026-10-17T21:23:39+09:00"
+    },
+    "verify": {
+      "state": "passed",
+      "reason": "검증 4개 통과 (auto)",
+      "at": "2026-10-17T21:24:08+09:00"
+    },
+    "review": {
+      "state": "rejected",
+      "reason": "리뷰 거절: src/shared/policy.ts:362 `resourceLabel` 은 주석에 '알려진 집계용 가짜 키만 바꾼다' 고 적었는데 `'account'` 를 빠뜨렸다. `src/worker/engine/run.ts:174` 가 cost_jump 소견을 `resource: 'account'` 로 직접 만든다 — 이 키는 `resources.key`(worker:·d1:·r2: … 접두사)와 절대 안 맞아 `resourceSvc.get('account')` 가 undefined 이고, 고친 바로 그 폴백(run.ts:326·327)과 화면(anomalies.tsx:299)을 그대로 지나간다. 결과: 한국어 알림 제목이 `[이룸옵스] 예상 비용 급등 — account`, 본문이 `자원: account`, 카드가 `자원 account` 로 나간다. 커밋 메시지가 말한 증상('내부 키가 알림 제목에 그대로 나갔다')이 **가장 자주 터지는 경로에서 그대로 남는다**. cost_jump 은 severity 가 medium|high 뿐이라(run.ts:180) `fresh = findings.filter(f => f.severity !== 'low')` 를 언제나 통과하고, 기간 말 예상이 하루 사이 1.5배·$1 이상 뛰면(run.ts:171) 발생한다 — 비용 콘솔에서 흔한 사건이다. 반면 이번에 고친 `do:*` 는 구현자 스스로 '지나가는 실행 시험이 없다'(`fake-cloudflare.mjs:183` 이 `durableObjectsStorageGroups: []`)고 적은, 실제로는 더 드문 경로다. 저장소에 이미 쓰는 표현이 있다 — '계정 전체'(services.tsx:721·budgets.tsx:289·pricing.ts:44·engine.ts:8). 수리: `resourceLabel` 에 `'account'` → `'계정 전체'` 분기 한 줄과 단위 시험 한 줄. 구현 노트의 '일부러 안 한 것' 에도 없다(거기 적힌 것은 `anomalies.service_id` null 과 `collect/analytics.ts` 자원 키이고, 이것은 run.ts 가 만드는 표시 키다).",
+      "at": "2026-10-17T21:28:31+09:00"
+    },
+    "pr": {
+      "state": "created",
+      "reason": "https://github.com/hkjang/ops.irumx.app/pull/3",
+      "at": "2026-10-17T21:28:37+09:00"
+    }
+  },
+  "provenance": {
+    "model": "claude-opus-5",
+    "policy_version": "4a9e91ac72",
+    "prompts_hash": "ce085c79e18002e2",
+    "runner_version": "1bd5f0cd4d",
+    "base_sha": "e85afae4167c4c055a780564a32af5bc0fedf09e",
+    "head_sha": "7a29bfa66e7df3469759caec8197af9444301c69",
+    "pr": "https://github.com/hkjang/ops.irumx.app/pull/3"
+  },
+  "verification": {
+    "runner": {
+      "source": "auto",
+      "commands": [
+        {
+          "cmd": "[ -d node_modules ] || npm ci --no-audit --no-fund",
+          "exit": 0,
+          "seconds": 0
+        },
+        {
+          "cmd": "npm test --silent",
+          "exit": 0,
+          "seconds": 12
+        },
+        {
+          "cmd": "[ -d node_modules ] || npm ci --no-audit --no-fund",
+          "exit": 0,
+          "seconds": 0
+        },
+        {
+          "cmd": "npm run build --silent",
+          "exit": 0,
+          "seconds": 15
+        }
+      ]
+    },
+    "runner_gate": {
+      "ok": true,
+      "state": "verified",
+      "reason": "검증 4개 통과 (auto)"
+    },
+    "after_rebase": null,
+    "review": {
+      "verdict": "reject",
+      "reasons": [
+        "src/shared/policy.ts:362 `resourceLabel` 은 주석에 '알려진 집계용 가짜 키만 바꾼다' 고 적었는데 `'account'` 를 빠뜨렸다. `src/worker/engine/run.ts:174` 가 cost_jump 소견을 `resource: 'account'` 로 직접 만든다 — 이 키는 `resources.key`(worker:·d1:·r2: … 접두사)와 절대 안 맞아 `resourceSvc.get('account')` 가 undefined 이고, 고친 바로 그 폴백(run.ts:326·327)과 화면(anomalies.tsx:299)을 그대로 지나간다. 결과: 한국어 알림 제목이 `[이룸옵스] 예상 비용 급등 — account`, 본문이 `자원: account`, 카드가 `자원 account` 로 나간다. 커밋 메시지가 말한 증상('내부 키가 알림 제목에 그대로 나갔다')이 **가장 자주 터지는 경로에서 그대로 남는다**. cost_jump 은 severity 가 medium|high 뿐이라(run.ts:180) `fresh = findings.filter(f => f.severity !== 'low')` 를 언제나 통과하고, 기간 말 예상이 하루 사이 1.5배·$1 이상 뛰면(run.ts:171) 발생한다 — 비용 콘솔에서 흔한 사건이다. 반면 이번에 고친 `do:*` 는 구현자 스스로 '지나가는 실행 시험이 없다'(`fake-cloudflare.mjs:183` 이 `durableObjectsStorageGroups: []`)고 적은, 실제로는 더 드문 경로다. 저장소에 이미 쓰는 표현이 있다 — '계정 전체'(services.tsx:721·budgets.tsx:289·pricing.ts:44·engine.ts:8). 수리: `resourceLabel` 에 `'account'` → `'계정 전체'` 분기 한 줄과 단위 시험 한 줄. 구현 노트의 '일부러 안 한 것' 에도 없다(거기 적힌 것은 `anomalies.service_id` null 과 `collect/analytics.ts` 자원 키이고, 이것은 run.ts 가 만드는 표시 키다)."
+      ],
+      "notes": [
+        "확인하고 통과한 것: `git diff main...HEAD` 전체(프로덕션 3 + 시험 1 파일), `npm run check` exit 0, `npm run test:unit` **50 passed** — 새 시험 `unit-policy.spec.ts:254` 가 실제로 돈다(49번). 시험은 수정 전 코드에서 통과할 수 없다 — `resourceLabel` 이 main 에 없고, 단언이 항등 함수를 배제한다(구현 노트의 red `Expected: \"전체 Durable Objects\" / Received: \"do:*\"` 와 일치).",
+        "조회 키는 제대로 보존했다 — `dedupe_key`(run.ts:328), `upsertAnomalies` 의 `byKey`(run.ts:112), 스파크라인 조회(anomalies.tsx:102·154), `governance.ts:420·426` 의 `usage_hourly` IN 절은 모두 `f.resource`/`a.resource` 원문을 쓴다. 라벨은 렌더 지점에서만 적용된다(올바른 계층). API 는 여전히 원문 키를 돌려준다.",
+        "`do:*` 의 다른 노출 지점은 없다고 확인했다 — `grep -rn 'do:\\*'` 는 `collect/analytics.ts:184-185`(생산)·`policy.ts`·시험만 잡고, 클라이언트의 `r.key` 렌더(services.tsx:792·882·1228, settings.tsx:485)는 모두 `resources` 표 행이라 `do:*` 가 들어올 수 없다. `csvCell`(worker/lib/util.ts:83)은 호출부가 없는 죽은 코드다(이번 변경과 무관).",
+        "같은 종류의 집계 가짜 키가 하나 더 있다 — `collect/analytics.ts:135` 의 `'r2:*'`(bucketName 이 없을 때). 지금은 표시 경로에 닿지 않는다고 확인했다: 일별 class_a/class_b 지표만 달고(저장공간 지표가 없어 `detectStorage` 밖), 시간별 행은 bucketName 이 있을 때만 만들어진다(analytics.ts:296) — `detectHourly` 에도 안 들어온다. 차단 사유는 아니지만 `resourceLabel` 을 손댈 때 같이 넣을 자리다.",
+        "보안·법무: 차단 없음. 인증·권한·결제·마이그레이션·비밀값·삭제 로직을 건드리지 않았고, 새 의존성·새 개인정보 수집·외부 전송·외부 약속 문구가 없다. 순수 표시 변경이라 방향도 반대다 — 내부 식별자(namespace 집계 키)가 알림 메일로 나가던 것을 줄인다. revert 한 줄로 완전히 되돌아온다(스키마·데이터 변경 없음; 이미 보낸 알림의 제목·본문은 DB 에 저장된 값이라 과거 건은 그대로 남는다 — 이것도 정상).",
+        "못 본 것: 실제 브라우저 렌더와 실제 알림 메일을 띄워 보지 못했다(`npm test` 미실행 — 구현 노트가 91 passed 로 적었고 폰트 추적 파일을 다시 쓰는 문제가 있어 피했다). `anomalies.tsx:299` 의 `className=\"mono\"` 가 이제 한국어 '전체 Durable Objects' 에 등폭 글꼴을 입힌다 — 서브셋 폰트에 한글 등폭이 없으면 시스템 글꼴로 떨어져 주변과 어긋날 수 있다. 취향 문제이고 `ui-*.spec.ts` 가 없어 아무도 막지 못한다(프로필의 검증 함정)."
+      ],
+      "risk": "low",
+      "blocking": []
+    },
+    "ci_gate": null
+  },
+  "release": {
+    "result": null,
+    "assets_sha256": []
+  },
+  "approval": null,
+  "usage": [
+    {
+      "ts": "2026-10-17T21:18:09+09:00",
+      "date": "2026-10-17",
+      "project": "ops.irumx.app",
+      "phase": "scout",
+      "run_id": "2026-10-17-211326-ops.irumx.app-improve",
+      "campaign": "",
+      "subtype": "success",
+      "engine": "claude",
+      "duration_ms": 295780,
+      "num_turns": 22,
+      "cost_usd": 1.7358974999999999,
+      "input_tokens": 44,
+      "output_tokens": 17764,
+      "cache_read": 1291335,
+      "cache_create": 64591
+    },
+    {
+      "ts": "2026-10-17T21:23:39+09:00",
+      "date": "2026-10-17",
+      "project": "ops.irumx.app",
+      "phase": "improve",
+      "run_id": "2026-10-17-211326-ops.irumx.app-improve",
+      "campaign": "",
+      "subtype": "success",
+      "engine": "claude",
+      "duration_ms": 353469,
+      "num_turns": 44,
+      "cost_usd": 2.757125,
+      "input_tokens": 82,
+      "output_tokens": 19253,
+      "cache_read": 2950040,
+      "cache_create": 80037
+    },
+    {
+      "ts": "2026-10-17T21:28:31+09:00",
+      "date": "2026-10-17",
+      "project": "ops.irumx.app",
+      "phase": "review",
+      "run_id": "2026-10-17-211326-ops.irumx.app-improve",
+      "campaign": "",
+      "subtype": "success",
+      "engine": "claude",
+      "duration_ms": 281709,
+      "num_turns": 27,
+      "cost_usd": 1.9244554999999999,
+      "input_tokens": 48,
+      "output_tokens": 16499,
+      "cache_read": 1547301,
+      "cache_create": 73809
+    }
+  ]
+}

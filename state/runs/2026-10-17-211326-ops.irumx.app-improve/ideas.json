@@ -1,0 +1,74 @@
+[
+  {
+    "title": "이상 탐지의 do:* 집계 가짜 자원을 사람이 읽는 라벨로 — 알림 제목·본문·화면에 내부 키 노출 제거",
+    "value": 3,
+    "risk": 1,
+    "size": "S",
+    "status": "done",
+    "note": "shared/policy.ts 에 순수 함수 resourceLabel 추가('do:*' → '전체 Durable Objects', 그 밖은 입력 그대로) + 표시 지점 3곳(run.ts:326 제목 폴백·327 본문, anomalies.tsx:299) 교체 + unit-policy.spec.ts 시험 1개. 조회/dedupe 키(anomalies.tsx:102·154, run.ts:112·116·328)와 collect/analytics.ts 계측 공식은 손대지 않았다. test:unit 50 passed(기준선 49), check exit 0, build+test 91 passed exit 0. 커밋 7a29bfa.",
+    "updated": "2026-10-17"
+  },
+  {
+    "title": "브라우저·접근성 시험이 0개 — ui-*.spec.ts 첫 한 개(로그인→개요 스모크 + axe)",
+    "value": 4,
+    "risk": 3,
+    "size": "M",
+    "status": "pending",
+    "note": "playwright.config.ts 가 desktop/mobile(/ui-.*\\.spec/)·shots 를 선언하는데 대응 파일이 없고 @axe-core/playwright 도 미사용. 전제 둘: (1) 브라우저가 npm ci 로 깔리지 않아 ci.yml 에 'npx playwright install --with-deps chromium' 단계가 필요한데 ci.yml 은 아직 미머지 브랜치(origin/auto/2026-10-16-2028)에 있어 지금 손대면 중복/충돌, (2) ui 시험은 dist 가 필요해 build 선행. ci.yml 이 main 에 들어온 뒤로 미룬다. 참고로 이번 회차에서 build(~0.3s vite, 폰트 서브셋 포함 전체도 빠름) + npm test 가 15초에 끝나는 것을 실측했으니 시간 위험은 당초 추정보다 작다.",
+    "updated": "2026-10-17"
+  },
+  {
+    "title": "npm 이 보고하는 devDependencies 취약점 8건(moderate 4 · high 4) 선별",
+    "value": 3,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "이번 회차 차선 후보였으나 1순위가 성립해 하지 않았다. npm audit 출력으로 패키지·경로를 먼저 적고 패치/마이너 범위만 올릴 것(메이저 금지). CI 에 audit 단계 추가는 비권장(새 CVE 로 무관한 PR 이 전부 빨개진다). 미확인: 이번 세션에서도 npm audit 를 돌리지 않았다(npm ci --no-audit 로 설치).",
+    "updated": "2026-10-17"
+  },
+  {
+    "title": "가짜 Cloudflare 서버가 durableObjectsStorageGroups: [] 를 돌려줘 do:* 가 지나가는 api 경로가 없다",
+    "value": 3,
+    "risk": 3,
+    "size": "M",
+    "status": "pending",
+    "note": "이번 회차에 새로 확인(tests/fake-cloudflare.mjs:183). 그래서 do.storage/do:* 는 단위 시험으로만 덮이고 프로덕션 배선(수집 → detectStorage → 알림 제목)을 지나는 실행 시험이 없다. 가짜 서버에 DO 저장공간 행을 넣으면 비용 합계가 바뀌어 api-b-connect.spec.ts 의 '대사 —' 시험 수치를 흔들 위험이 있어 이번엔 하지 않았다. 대사 시험과 같이 보며 별도 회차로.",
+    "updated": "2026-10-17"
+  },
+  {
+    "title": "migrations/meta 가 0001 까지만 있어 drizzle 스냅샷과 실제 마이그레이션(0002~0004)이 어긋난다",
+    "value": 3,
+    "risk": 3,
+    "size": "S",
+    "status": "pending",
+    "note": "위험 구역(migrations). 지금은 wrangler d1 migrations apply 가 폴더만 보므로 동작하지만, 다음 drizzle-kit generate 에서 엉뚱한 디프가 난다. 단독 회차로, 사람이 보는 PR 로만.",
+    "updated": "2026-10-17"
+  },
+  {
+    "title": "playwright.config.ts 의 mobile·shots 프로젝트는 대응 파일이 없는 죽은 설정",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "ui-*.spec.ts·shots.spec.ts 가 없어 두 프로젝트는 0개를 돌린다 — npm test 가 실제보다 넓어 보인다(이번 회차 실측 91 = unit 50 + api 41). 단독으로 설정만 지우면 시험을 넣을 자리를 잃으므로 위 ui 시험과 같은 회차에.",
+    "updated": "2026-10-17"
+  },
+  {
+    "title": "CLAUDE.md 로 저장소 관례 고정(한국어 커밋 형식·위험 구역·시험 명령)",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "profile.md 가 외부에서 같은 역할을 하고 있어 가치가 낮다. 남는 가치는 '한국어 커밋 형식'·'위험 구역'·'test:unit 만 돌리고 전체 통과를 주장하지 말 것' 정도. 여기에 더할 만한 새 사실: 워크트리에는 node_modules 가 없어 npm ci 가 먼저 필요하고, npm run build 가 추적 파일 public/fonts/*.woff2·src/client/styles/fonts.css 를 다시 쓰므로 커밋 전에 되돌려야 한다(이번 회차에 실제로 바이트가 달라졌다).",
+    "updated": "2026-10-17"
+  },
+  {
+    "title": "anomalies.service_id 가 do:* 행에서 영구히 null — 서비스 귀속 없이 알림만 간다",
+    "value": 2,
+    "risk": 4,
+    "size": "M",
+    "status": "pending",
+    "note": "이번 회차는 표시 라벨만 고쳤고 귀속은 그대로 뒀다. 제대로 고치려면 스키마/마이그레이션이나 계측 자원 키를 건드려야 하는데, do:* 를 do:<namespaceId> 로 쪼개려는 시도는 최근 3회차가 되돌린 자리다(a6eb4ea → d30940e → a47c108). GraphQL 이 namespace 별 저장공간을 주지 않는 한 근본 해결이 없으므로 당분간 하지 않는 쪽을 권한다.",
+    "updated": "2026-10-17"
+  }
+]
