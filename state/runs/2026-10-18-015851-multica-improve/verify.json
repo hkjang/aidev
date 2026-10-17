@@ -1,0 +1,50 @@
+{
+  "source": "auto",
+  "commands": [
+    {
+      "cmd": "[ -d node_modules ] || pnpm install --frozen-lockfile",
+      "exit": 0,
+      "seconds": 0
+    },
+    {
+      "cmd": "pnpm test --silent",
+      "exit": 0,
+      "seconds": 0
+    },
+    {
+      "cmd": "[ -d node_modules ] || pnpm install --frozen-lockfile",
+      "exit": 0,
+      "seconds": 0
+    },
+    {
+      "cmd": "pnpm run typecheck --silent",
+      "exit": 0,
+      "seconds": 1
+    },
+    {
+      "cmd": "[ -d node_modules ] || pnpm install --frozen-lockfile",
+      "exit": 0,
+      "seconds": 0
+    },
+    {
+      "cmd": "pnpm run build --silent",
+      "exit": 0,
+      "seconds": 105
+    },
+    {
+      "cmd": "cd server && go build ./...",
+      "exit": 0,
+      "seconds": 7
+    },
+    {
+      "cmd": "cd server && go vet ./...",
+      "exit": 0,
+      "seconds": 4
+    },
+    {
+      "cmd": "cd server && go test ./...",
+      "exit": 1,
+      "seconds": 33
+    }
+  ]
+}

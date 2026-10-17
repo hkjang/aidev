@@ -1,0 +1,92 @@
+[
+  {
+    "title": "루트 turbo 집계 스크립트가 pnpm 이 덧붙이는 플래그를 삼키게 한다 (scripts/turbo-run.mjs)",
+    "value": 4,
+    "risk": 2,
+    "size": "S",
+    "status": "done",
+    "note": "build/typecheck/test/lint 네 스크립트가 trailing `--silent` 로 turbo 옵션 파서에서 죽었다. turbo 에 없는 verbosity 플래그만 --output-logs=errors-only 로 번역하고 나머지(--force/--filter/`--` 뒤 태스크 인자)는 그대로 전달. 지난 회차의 `--` 패스스루 접근은 main 에 없었고 tsc/eslint 에는 쓸 수 없어 다른 방식으로 고쳤다. node --test scripts/turbo-run.test.mjs 가 frontend-quality 복합 액션에서 돈다(ci.yml 을 건드리지 않으므로 turbo 글로벌 해시 불변).",
+    "updated": "2026-10-18"
+  },
+  {
+    "title": "백엔드 Opus/Sonnet/Haiku 4.x 규칙에 claudeVersionEnd 종결자가 없음",
+    "value": 3,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "pricing.go 에서 Opus 4.8/4.7/4.6/4.5, Sonnet 4.6/4.5, Haiku 4.5 일곱 행만 종결자가 없다(5.x/Fable 행은 모두 있음). 종결자 없는 부분 문자열 매칭이 후속 SKU(claude-opus-4-5-1)를 같은 등급으로 삼킨다. 4.x 단가가 동일해 금액 회귀로는 실패를 못 보이므로 규칙 매칭 수준 테이블 테스트(가짜 미래 SKU 가 매칭되지 않을 것)가 필요. 날짜 변이(-20260101)는 계속 매칭되어야 한다. 검증 `(cd server && go test ./internal/metrics -count=1)`.",
+    "updated": "2026-10-18"
+  },
+  {
+    "title": "deepseek v4-flash 단가가 백엔드와 프런트엔드에서 4배 어긋남",
+    "value": 4,
+    "risk": 4,
+    "size": "S",
+    "status": "pending",
+    "note": "backend 0.56/1.12/0.0112 vs frontend 0.14/0.28/0.0028. 어느 쪽이 공식가인지 DeepSeek 가격표 확인 없이는 데이터 추측이라 보류 유지.",
+    "updated": "2026-10-18"
+  },
+  {
+    "title": "백엔드 k3 별칭 규칙의 ^ 분기가 공급자 없는 일반 id 를 Kimi 단가로 매김",
+    "value": 3,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "pricing.go 의 `(^|/|:)k3$`. 실제로 bare k3 를 보고하는 공급자를 확인하지 못해 가설 단계. 보류 유지.",
+    "updated": "2026-10-18"
+  },
+  {
+    "title": "프런트 cursorBaseModel 의 -max/-high 변이 접미사가 실제 SKU 이름 끝을 깎음",
+    "value": 2,
+    "risk": 3,
+    "size": "M",
+    "status": "pending",
+    "note": "지금은 raw 후보가 남아 결과가 맞지만 cursor/<base> 행이 추가되는 순간 오해석. 파서 통합이 아니라 좁히는 방향으로만.",
+    "updated": "2026-10-18"
+  },
+  {
+    "title": "프런트/백엔드 요금표의 공통 SKU 단가 일치를 CI 에서 검사",
+    "value": 3,
+    "risk": 3,
+    "size": "M",
+    "status": "pending",
+    "note": "두 표는 계약이 다르므로 통합 금지. 양쪽에 공통으로 존재하는 SKU 에 한정한 좁은 동등성 검사만.",
+    "updated": "2026-10-18"
+  },
+  {
+    "title": "ci.yml 의 mobile 제외 필터와 루트 package.json 필터의 드리프트 검사",
+    "value": 3,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "ci.yml 143-149 줄 주석이 '루트 package.json 스크립트와 필터를 동기화 유지' 라고만 적어 두고 검사가 없다. scripts/turbo-run.test.mjs 가 이미 루트 스크립트 계획을 JSON 으로 읽으므로, 같은 테스트에서 ci.yml 의 turbo 호출 필터를 비교하는 단계를 붙일 수 있다. 다만 ci.yml 을 읽기만 해야 한다(수정하면 turbo 글로벌 해시가 무효화됨).",
+    "updated": "2026-10-18"
+  },
+  {
+    "title": "AGENTS.md 검증 표에 turbo 플래그 전달 방법을 한 줄 남길지 검토",
+    "value": 1,
+    "risk": 1,
+    "size": "S",
+    "status": "rejected",
+    "note": "이번 회차의 wrapper 가 알 수 없는 인자를 turbo 로 그대로 넘기므로 `pnpm typecheck --force` 가 그대로 동작한다(이번 회차에 실제로 --force 로 검증). 문서로 설명할 예외가 더는 없다.",
+    "updated": "2026-10-18"
+  },
+  {
+    "title": "루트 clean 스크립트도 trailing 플래그에 깨짐",
+    "value": 1,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "`clean` 은 `turbo clean && rm -rf node_modules` 라서 pnpm 이 덧붙인 인자가 rm 에 떨어진다(`rm: unrecognized option`). 자동 러너는 clean 을 호출하지 않으므로 가치가 낮다.",
+    "updated": "2026-10-18"
+  },
+  {
+    "title": "knip 의 기존 지적 정리 (unused files 12건 / unused deps 3건)",
+    "value": 2,
+    "risk": 2,
+    "size": "M",
+    "status": "pending",
+    "note": "CI 에서 continue-on-error 로 조언만 하고 있어 신호가 죽어 있다. packages/views/labels/index.ts, workflows/index.ts 같은 미사용 배럴부터 좁게 지우면 지적을 줄일 수 있지만, 실제 소비처가 있는지(exports 맵 경유) 확인이 필요하다.",
+    "updated": "2026-10-18"
+  }
+]
