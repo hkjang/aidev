@@ -1,0 +1,56 @@
+[
+  {
+    "title": "pre-5.6 OpenAI 행의 CacheWritePerM 을 입력 단가로 교정 (캐시 읽기 단가 오용, 10배 과소 집계)",
+    "value": 4,
+    "risk": 2,
+    "size": "S",
+    "status": "done",
+    "note": "server/internal/metrics/pricing.go 의 gpt-5.5/5.4/5.4-mini/5.3-codex/5.2-codex 다섯 행. RecordLLMUsage 를 통과하는 테스트와 표 불변식 테스트 추가. go test ./internal/metrics (+-race), vet, build, gofmt 통과.",
+    "updated": "2026-10-17"
+  },
+  {
+    "title": "deepseek v4-flash 단가가 백엔드와 프런트엔드에서 4배 어긋남",
+    "value": 4,
+    "risk": 4,
+    "size": "S",
+    "status": "pending",
+    "note": "backend 0.56/1.12/0.0112 vs frontend 0.14/0.28/0.0028. v4-pro 는 양쪽이 1.74/3.48 로 일치. 프런트 주석은 '프로모 이후 표준가' 를 쓴다고 명시하므로 flash 쪽이 프로모가로 남아 있을 가능성이 큼. 어느 쪽이 공식가인지 DeepSeek 가격표 확인 없이는 데이터 추측이 되므로 보류. deepseek-chat / deepseek-reasoner 가 flash 로 라우팅되어 영향 범위가 넓다.",
+    "updated": "2026-10-17"
+  },
+  {
+    "title": "백엔드 k3 별칭 규칙의 ^ 분기가 공급자 없는 일반 id 를 Kimi 단가로 매김",
+    "value": 3,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "pricing.go 의 `(^|/|:)k3$`. 문서화된 사례는 `kimi-code/k3` 뿐이고 그것은 `/` 분기로 해결된다. 프런트엔드는 `k3` 가 공급자 간 충돌 가능한 일반 id 라 `kimi/k3` 로만 키를 두므로, 다른 공급자가 bare `k3` 를 보고하면 서버는 Kimi 단가로, 대시보드는 미매핑으로 처리해 한 행에 두 가격이 생긴다. 다만 실제로 bare k3 를 보고하는 공급자를 확인하지 못해 가설 단계.",
+    "updated": "2026-10-17"
+  },
+  {
+    "title": "백엔드 Opus/Sonnet/Haiku 4.x 규칙에 claudeVersionEnd 종결자가 없음",
+    "value": 3,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "claudeVersionEnd 상수의 주석 자체가 종결자 없는 부분 문자열 매칭이 후속 SKU 를 삼킨다고 설명하는데(claude-fable-5 ↔ 5-1 사례), Opus 4.8/4.7/4.6/4.5 와 Sonnet 4.6/4.5, Haiku 4.5 규칙에는 종결자가 없다. 현재는 4.x 가 동일 단가라 금액 차이가 없어 회귀 테스트만으로는 실패를 보일 수 없고, 다음 4.x SKU 가 다른 단가로 나오는 순간 조용히 등급을 물려받는다.",
+    "updated": "2026-10-17"
+  },
+  {
+    "title": "프런트 cursorBaseModel 의 -max/-high 변이 접미사가 실제 SKU 이름 끝을 깎음",
+    "value": 2,
+    "risk": 3,
+    "size": "M",
+    "status": "pending",
+    "note": "CURSOR_VARIANT_SUFFIX 에 max/high/low 등이 있어 `qwen3.8-max` 가 base `qwen3.8` 로 깎인다. 지금은 canonical 후보에 raw 가 남아 결과적으로 올바른 행을 찾지만, 후보 순서상 `cursor/qwen3.8` 와 bare `qwen3.8` 가 raw 보다 먼저 조회되므로 그런 행이 추가되는 순간 오해석된다. 운영자 지침대로 파서 통합이 아니라 좁히는 방향(변이 접미사를 Cursor 카탈로그가 실제로 쓰는 형태로 제한)으로만 고칠 것.",
+    "updated": "2026-10-17"
+  },
+  {
+    "title": "프런트/백엔드 요금표의 동일 SKU 단가 일치를 CI 에서 검사",
+    "value": 3,
+    "risk": 3,
+    "size": "M",
+    "status": "pending",
+    "note": "두 표가 '서로 미러링한다' 고 주석에 적혀 있을 뿐 자동 검사가 없어 이번 결함과 deepseek 4배 차이가 오래 남았다. 단, 두 표는 계약이 다르다(백엔드는 공급자별 정규식 별칭, 프런트는 공급자 한정 키 + 커스텀 단가). 표를 통합하지 말고, 양쪽에 공통으로 존재하는 SKU 에 대해서만 단가 동등성을 검사하는 좁은 검사로 만들 것.",
+    "updated": "2026-10-17"
+  }
+]
