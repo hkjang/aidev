@@ -20,3 +20,5 @@
 - [러너 07:49] pr created — https://github.com/hkjang/seaton/pull/47
 - [러너 07:54] ci passed — 검사 2개 모두 success
 - [러너 07:54] merge done — c1d2e66
+- [러너 08:03] release published — v1.4.19
+- [러너 08:05] assets verified — v1.4.19 자산 1개 (이전 v1.4.18: 1)
