@@ -446,3 +446,4 @@
 - 보류 아이디어: README:191 지표 표 `resso_client_auth_errors_total` 행의 오래된 401 설명 정정 — 이번 정찰이 "오래된" 이 아니라 **틀린** 설명이라 보고 가치를 3 으로 올렸다(3/1/S) / `web` devDependencies 의 npm audit 취약점 정리 — 이번 `npm ci` 도 5건(moderate 2·high 3)/313 패키지를 보고했다, lockfile 회차(3/2/M) / `RollbackRefreshRotation`·revoke 실패 감사의 detail 에 오류 원문을 넣는 것이 운영자 규칙과 충돌하는지 조사(2/2/S) / `scripts/test-services.sh` 의 포트 선점 분기(:68·:88·:356)에 `RESSO_TEST_POSTGRES_PORT` 안내 한 줄 덧붙이기(2/1/S) / `release.yaml:171-172` 자산 목록 완전일치 단언 — 실패 이력이 없어 추측으로 선제 수정 금지(2/2/S)
 - 과제서: 기각 — 러너가 15:44 에 scout failed(과제서 없음)로 판정해 과제서가 없었다. 정찰 노트가 남긴 선택(README:191)은 보류로 돌렸다: 정찰이 이번에 명령을 하나도 실행하지 못했다고 스스로 적었고, 같은 노트의 `make lint` PATH 항목은 지난 회차가 실제로 재현해 둔 것이어서 이번에 먼저 확인했더니 그대로 재현됐다 — 저장소의 검증 게이트 자체가 돌지 않는 쪽이 문서 한 행보다 값이 크다.
 
+- 릴리즈: v0.9.106 (2026-10-18, run 2026-10-18-153946-ReSSO-improve)
