@@ -1,12 +1,12 @@
 [
   {
-    "title": "하위 디렉터리 Python test_*.py 를 변경 테스트로 인식 + 루트 _test.go 의 go test 경로 정규화",
+    "title": "auditNetwork 가 offlineMode=offline 에서도 외부 호스트 6곳을 프로브한다",
     "value": 3,
-    "risk": 1,
+    "risk": 2,
     "size": "S",
     "status": "done",
-    "note": "커밋 85121d7. TEST_FILE_RE 의 ^test_.*\\.py$ 를 (^|/)test_[^/]*\\.py$ 로 좁히고, :160 의 go test ./${dir}/... 를 바로 아래 :169 와 같은 ./${dir === \".\" ? \"\" : dir + \"/\"}... 형태로 맞췄다. 실측 교정: 루트 Go 의 잘못된 값은 과제서가 적은 .//... 가 아니라 ././... 였다. 프로덕션 1파일 2줄 + 테스트 3개. Node 20.19.2 에서 npm run check 통과(19 files / 155 tests). gitChangedFiles 와 readProjectInfo 의 probe 목록은 손대지 않았다.",
-    "updated": "2026-10-16"
+    "note": "커밋 3453f1e. diagnostics.ts 에 순수 export auditHosts(offlineMode) 추가 — offline 이면 빈 목록, online/auto 는 그대로 프로브. 목록이 비면 withProgress 미호출 + probes=[]. reports.ts 는 빈 프로브에서 '모두 연결됩니다'(0===0) 대신 폐쇄망 안내를 내고, 호스트 표 자리를 '## MCP 서버' 와 같은 꼴의 안내문으로, :227 을 n.probes.length > 0 && reached === 0 으로 좁혔다. Node 20.19.2 에서 npm run check 통과(19 files/155 tests = 152+3). 증명 범위는 프로브 목록과 보고서 문자열까지 — 실제 VS Code UI 알림/소켓 0건은 미확인.",
+    "updated": "2026-10-18"
   },
   {
     "title": "로드맵의 릴리즈 자동화 현황을 현재 workflow 와 맞추기",
@@ -14,8 +14,8 @@
     "risk": 1,
     "size": "S",
     "status": "pending",
-    "note": "이번 차선 후보였고 쓰지 않았다. docs/improvement-roadmap.md:9 가 VSIX 검증 자동화의 '다음 단계' 만 적는데 release-vsix.yml / ui-snapshots.yml 이 이미 존재한다. 구현된 단계와 남은 단계(태그 push 로 release 생성은 미구현)를 분리하는 문서 정정. docs/maintenance-guide.md 와 중복 정본을 만들지 말고 워크플로 파일 자체는 읽기만 할 것.",
-    "updated": "2026-10-16"
+    "note": "이번 차선 후보였고 1순위가 성립해 쓰지 않았다. docs/improvement-roadmap.md:9 가 VSIX 검증 자동화를 '다음 단계' 로만 적는데 release-vsix.yml/ui-snapshots.yml 이 이미 존재한다. 구현된 단계와 남은 단계(태그 push 자체로 release 생성은 미구현)를 분리하고 maintenance-guide.md 와 정본을 둘로 만들지 말 것. 워크플로 파일은 읽기만.",
+    "updated": "2026-10-18"
   },
   {
     "title": "추천 명령의 공백·셸 메타문자 경로 quoting",
@@ -23,62 +23,71 @@
     "risk": 3,
     "size": "M",
     "status": "pending",
-    "note": "verification.ts suggestTestCommands 가 경로를 명령 문자열에 그대로 삽입하는 상태는 이번 회차에도 그대로다(이번 수정은 세그먼트 경계와 dir 표현만 바꿨다). Windows/POSIX 실행 계약 결정과 실제 실행 테스트가 필요해 risk 3 유지. 이번 과제와 같은 함수라 과제서 지시대로 섞지 않았다.",
-    "updated": "2026-10-16"
+    "note": "verification.ts suggestTestCommands 가 경로를 명령 문자열에 그대로 넣는다. Windows/POSIX 실행 계약 결정과 실제 실행 테스트가 필요해 risk 3 유지. 이 파일은 미머지 제출이 물고 있는 금지 경로이므로 운영자 판정 전에는 고르지 않는다.",
+    "updated": "2026-10-18"
   },
   {
-    "title": "listGoals 정렬이 '마지막 갱신' 문자열 사전순이라 형식이 섞이면 어긋난다",
+    "title": "listMarkdown 이 `*.md` 이름의 디렉터리도 목록에 넣는다",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "workspace.ts:91 이 이름만 보고 걸러 statSync().isFile() 검사가 없다. 2026-10-09 회차의 latestVsixVersion 수정(ccfeaf2)과 완전히 같은 접근이고 그 커밋이 main 에 없다 — 같은 접근 재제출 금지 규칙에 걸려 선정하지 않는다.",
+    "updated": "2026-10-18"
+  },
+  {
+    "title": "importTeamConfig 의 ZIP 경로 탈출(zip slip)",
+    "value": 3,
+    "risk": 4,
+    "size": "M",
+    "status": "pending",
+    "note": "team-config.ts:82 의 new AdmZip(src).extractAllTo(ws, true) 가 워크스페이스 밖으로 쓰는 항목을 막지 않는다(adm-zip 버전별 자체 방어 여부 미확인). PowerShell fallback 까지 두 경로를 검증해야 하고 외부 의존성 동작 확인이 필요해 한 세션에 끝나지 않는다.",
+    "updated": "2026-10-18"
+  },
+  {
+    "title": "splitStampedLine 이 시각만 있는 줄에서 시각을 본문에 중복 표시한다",
+    "value": 1,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "vocab.ts:70 의 `m[6].trim() || body` 가 본문이 비면 시각 포함 전체를 text 로 돌려준다. 순수 함수지만 가치가 낮은 표시 문제.",
+    "updated": "2026-10-18"
+  },
+  {
+    "title": "goal-lint / journal / workspace / team-config 의 단위 테스트 공백",
+    "value": 2,
+    "risk": 1,
+    "size": "M",
+    "status": "pending",
+    "note": "tests/unit 19개 파일에 lintGoal/lintPlan, initJournal, writeAudit, team-config 테스트가 없다. lintGoal 은 순수라 가장 싸다. 버그 수정이 아니라 보강 항목.",
+    "updated": "2026-10-18"
+  },
+  {
+    "title": "listGoals 정렬이 '마지막 갱신' 문자열 사전순",
     "value": 2,
     "risk": 2,
     "size": "S",
     "status": "pending",
-    "note": "goal-catalog.ts:93 의 b.updated.localeCompare(a.updated). matchLine 기본값이 \"\" 라 크래시는 없다. 혼합 시각 형식의 정렬 계약 결정이 먼저라 범위 밖.",
-    "updated": "2026-10-16"
+    "note": "goal-catalog.ts:93 b.updated.localeCompare(a.updated). 혼합 시각 형식의 정렬 계약 결정이 먼저라 범위 밖. 이번 회차도 재확인하지 않았다.",
+    "updated": "2026-10-18"
   },
   {
-    "title": "날짜만 있는 '마지막 갱신' 값이 Infinity 가 되어 정체 경고와 자동재개가 둘 다 침묵한다",
+    "title": "날짜만 있는 '마지막 갱신' 이 Infinity 가 되어 정체 경고·자동재개가 침묵",
     "value": 3,
     "risk": 3,
     "size": "S",
     "status": "pending",
-    "note": "goal-age.test.ts 가 Infinity 를 명시적으로 고정하므로 계약 재협상이 먼저. 자정 해석 도입은 없던 경고를 새로 만드는 변경이라 여전히 범위 밖.",
-    "updated": "2026-10-16"
+    "note": "goal-age.test.ts 가 Infinity 를 명시적으로 고정하므로 계약 재협상이 먼저. 자정 해석 도입은 없던 경고를 새로 만든다.",
+    "updated": "2026-10-18"
   },
   {
-    "title": "compareVersions 가 프리릴리즈·비수치 조각에서 NaN 비교로 조용히 0 을 낸다",
+    "title": "compareVersions 가 프리릴리즈·비수치 조각에서 NaN 비교로 0 을 낸다",
     "value": 2,
     "risk": 1,
     "size": "S",
-    "status": "pending",
-    "note": "util/semver.ts 는 숫자 dotted-version 비교를 계약으로 명시하고 호출부가 [0-9.]+ 로 걸러 사용자에게 보이는 결함이 아니다. 테스트 경계 보강 정도로 보류.",
-    "updated": "2026-10-16"
-  },
-  {
-    "title": "변경 파일 테스트 추천의 Git 경로 파싱을 NUL 구분 출력으로 고치기",
-    "value": 4,
-    "risk": 1,
-    "size": "M",
-    "status": "pending",
-    "note": "verification.ts:186-197 이 여전히 줄 단위 porcelain 파싱 + ' -> ' 분할이다(이번 회차에서 직접 읽어 확인, 손대지 않았다). 2026-10-05 회차가 이 수정을 제출했고 main 에 없다 — 같은 접근 재제출 금지. 운영자 판정 전까지 선정 금지.",
-    "updated": "2026-10-16"
-  },
-  {
-    "title": "readRecentAudit / readCommandHistory 가 '최근 N일' 을 '최근 N개 파일' 로 읽는다",
-    "value": 4,
-    "risk": 1,
-    "size": "S",
-    "status": "pending",
-    "note": "goal-metrics.ts slice(-days) 와 command-audit.ts slice(-7). 과거 두 회차가 정확히 이 수정을 제출했고 둘 다 머지되지 않았다 — 재제출 금지 유지.",
-    "updated": "2026-10-16"
-  },
-  {
-    "title": "감사 exitCode 누락을 journal-summary 와 goal-metrics 가 서로 반대로 센다",
-    "value": 3,
-    "risk": 1,
-    "size": "S",
-    "status": "pending",
-    "note": "journal-summary.ts Number(undefined) 와 goal-metrics.ts num(undefined) 의 집계 불일치. 기존 제출 접근이라 재선정 금지.",
-    "updated": "2026-10-16"
+    "status": "rejected",
+    "note": "util/semver.ts 는 숫자 dotted-version 비교를 계약으로 명시하고 호출부가 [0-9.]+ 로 걸러 사용자에게 보이는 결함이 아니다. 여러 회차에 걸쳐 같은 판정이 반복됐으므로 pending 에서 내린다 — 테스트 보강으로 다루고 싶으면 '테스트 공백' 항목에 합칠 것.",
+    "updated": "2026-10-18"
   },
   {
     "title": "테스트 기준선·실행 환경 기록을 회차마다 실측으로 갱신",
@@ -86,8 +95,8 @@
     "risk": 1,
     "size": "S",
     "status": "pending",
-    "note": "이번에 프로필/과제서의 '20 files / 162 tests' 가 base main@6eaede8 과 어긋남을 발견했다(해당 커밋 ccfeaf2 가 이력에 없어 실제는 19 files / 152 tests). 워크트리에 node_modules 가 없고 node 20.19.2 도 없어 nvm install + npm ci 가 매 회차 필요하다. 정찰 프로필의 숫자는 커밋 해시와 함께 적어야 다음 회차가 오판하지 않는다. 코드 변경이 아니라 운영/기록 항목.",
-    "updated": "2026-10-16"
+    "note": "운영 항목. 이번 회차가 main@6eaede8 에서 실측해 19 files / 152 tests 를 확인했다(과제서 인용치와 일치). 워크트리에 node_modules 가 없어 npm ci 가 필요했고, Node 20.19.2 는 저장소 밖(/tmp)에 두어 npm ci 가 지우지 못하게 했다. 숫자에는 항상 커밋 해시를 붙인다.",
+    "updated": "2026-10-18"
   },
   {
     "title": "구현 세션의 GitHub 원격 상태 조회 수단",
@@ -95,7 +104,16 @@
     "risk": 1,
     "size": "S",
     "status": "pending",
-    "note": "운영 항목이며 코드 과제가 아니다. 이번 회차도 인증·실제 PR 상태 조회는 하지 않아 작동 여부 미확인. '수단 없음' 이라고 단정하지 않는다.",
-    "updated": "2026-10-16"
+    "note": "운영 항목. 이번에도 인증·실제 PR 상태 조회 미확인. '수단 없음' 이라고 단정하지 않는다. 미머지 제출이 계속 쌓여 고를 수 있는 면이 줄어드는 것이 이 항목의 비용이다(이번에도 verification.ts·goal-metrics.ts·command-audit.ts·journal-summary.ts·update-check.ts 가 금지 목록에 묶여 있었다).",
+    "updated": "2026-10-18"
+  },
+  {
+    "title": "auditNetwork 외 offlineMode 를 읽지 않는 경로가 더 있는지 한 번 훑기",
+    "value": 3,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "이번 회차의 후속으로 새로 추가. 이번에는 범위를 넓히지 않기로 해 auditNetwork 만 고쳤다. usage.ts:111·status-bar.ts:74-79·auditNetwork 는 이제 설정을 지키지만 웹 가져오기·공개 URL git·업데이트 확인(update-check.ts)·MCP npx 실행이 offline 에서 실제로 막히는지는 확인하지 않았다 — nls:145 가 그 넷을 모두 이름으로 약속한다. 먼저 grep 으로 네트워크 호출 지점을 세고, 고칠 것이 있으면 경로 하나씩 별도 회차로 나눌 것(update-check.ts 는 현재 금지 경로).",
+    "updated": "2026-10-18"
   }
 ]

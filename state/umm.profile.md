@@ -1,36 +1,40 @@
-# umm 프로필 (2026-10-16)
-- 기준: main@745dcf3, VERSION 0.76.8. PR #170(설치 가드 3개)·#171(x/text)이 이번에 베이스에 **반영됨**.
+# umm 프로필 (2026-10-18)
+- 기준: main@c00a54b (PR #174 머지), VERSION 0.76.8. 이전 프로필(2026-10-16)은 main@745dcf3 기준이어서 갱신. 이 베이스에 **새로 들어온 것**: 760ccfc(toolchain go1.26.9 + x/net v0.60.0 + Dockerfile golang:1.26.9-alpine), 72e131a(루트 `pretest` → `web/scripts/ensure-install.mjs`). **아직 안 들어온 것**: a5959a5(`web/src/lib/edge-vocabulary.test.ts`) — 이 망에 의존하는 과제는 머지 여부를 먼저 확인할 것.
 - 목적: 생각을 공간 캔버스에 붙이고 연결·협업하며 Markdown·문서 차례·발표로 내보내는 도구.
-- 스택: Go 1.26.0, PostgreSQL 17, React 19 / TypeScript / Vite / Mantine 9 / React Flow, Vitest·Playwright.
+- 스택: Go(`go 1.26.0` 디렉티브 / `toolchain go1.26.9`), PostgreSQL 17, React 19 / TypeScript / Vite / Mantine 9 / React Flow, Vitest·Playwright.
 - 구조:
-  - cmd/umm 서버 진입점. internal/httpapi REST·정적 웹·외부 연동. internal/store PostgreSQL. migrations/ 순차 SQL + down/.
-  - internal/presentation 발표 컴파일(headings.go 의 usableHeading, sections.go, outline.go). internal/auth 세션·OIDC. internal/intelligence 임베딩·품질(CI 가 race·리포트로 따로 검사).
-  - web/src/pages/CanvasPage.tsx 캔버스·내보내기. web/src/components/AppLayout.tsx 내비·모바일 라벨. web/src/api.ts 실제 API 타입(EdgeRelation :86, EdgeOrigin :89).
-  - web/src/i18n: 한국어 원문 키, en.ts 사전, translate.ts 의 전역 activeLocale(:34)·translate(:65)·msg(:78). en 사전은 translate.ts:32 에서 자동 등록되므로 시험에서 따로 등록할 필요 없음.
-  - web/src/lib: 순수 모듈 + 인접 .test.ts 8쌍. edge-vocabulary.ts 만 테스트 없음.
-  - web/scripts: run-on-supported-node.mjs(Node 버전 래퍼, test* 가 사용), require-installed.mjs(설치 가드, 나머지 7개 훅), check-i18n.mjs, verify-pwa.mjs, verify-offline-queue.mjs. web/e2e Playwright.
-  - docs: USER_GUIDE.md·ADMIN_GUIDE.md 가 정본, OpenAPI·릴리즈 문서 동거.
+  - `cmd/umm` 서버 진입점. `internal/httpapi` REST·정적 웹·외부 연동. `internal/store` PostgreSQL. `migrations/` 순차 SQL + down/.
+  - `internal/presentation` 발표 컴파일(headings.go 의 usableHeading, sections.go, outline.go). `internal/auth` 세션·OIDC. `internal/intelligence` 임베딩·품질(CI 가 race·리포트로 따로 검사).
+  - `web/src/pages/CanvasPage.tsx` 캔버스·내보내기. `web/src/components/AppLayout.tsx` 내비·모바일 라벨(`:273` 의 `t(label).split(' ')[0]`). `web/src/api.ts` 실제 API 타입(EdgeRelation :86, EdgeOrigin :89).
+  - `web/src/i18n`: 한국어 원문 키, en.ts 사전, translate.ts 의 전역 activeLocale(:34)·translate(:65)·msg(:78). en 사전은 translate.ts:32 에서 자동 등록.
+  - `web/src/lib`: 순수 모듈 + 인접 .test.ts 8쌍. `edge-vocabulary.ts` 만 테스트 없음(a5959a5 미머지).
+  - `web/scripts` (11파일): `run-on-supported-node.mjs`(Node 버전 래퍼, test* 가 사용) / `require-installed.mjs`(설치 가드, 나머지 6개 `pre*` 훅) / `ensure-install.mjs`(**루트 `pretest` 전용 — 없으면 스스로 `npm ci --prefix web`**) / `node-range.mjs`(engines 의 두 밴드 semver 파서) / `check-i18n.mjs` / `verify-pwa.mjs` / `verify-offline-queue.mjs` + 각 `.test.mjs` 4개. `web/e2e` Playwright.
+  - `scripts/` (쉘·노드, **테스트 파일 0개**): `check-version.sh`(CI 가 돌림), `migrate-dry-run.sh`, `graph-migration-drill.sh`, `integration-smoke.sh`, `multi-instance-smoke.sh`, `restore-smoke.sh`, `load-offline.sh`, `release-image.sh`, 영상·PDF 캡처 유틸.
+  - `docs`: USER_GUIDE.md·ADMIN_GUIDE.md 가 정본, `docs/releases/vX.Y.Z.md`(check-version.sh 가 존재를 요구), OpenAPI 동거.
 - 빌드·테스트:
-  - `npm ci --prefix web` 선행 필수. 이번 정찰 시점 web/node_modules 없음. 루트 npm ci 는 web 의존성을 설치하지 않는다.
-  - `npm --prefix web test --silent` (vitest; vitest.config.ts include=src/**/*.test.{ts,tsx} + scripts/**/*.test.mjs, jsdom, globals, testTimeout 20s — Windows 마운트가 느려 타임아웃을 늘려 둠).
-  - `npm --prefix web run typecheck|lint|build|verify:pwa|test:offline-queue`. tsconfig.app.json include=["src"] → **시험 파일도 typecheck 대상**. lint = `oxlint src && prettier --check src` 라 src 안의 시험 파일은 lint 에 포함되지만 scripts/*.test.mjs 는 아니다.
-  - `make test-web`(Makefile:22-30): offline-queue → audit(high) → typecheck → lint → check-i18n → test → build → verify:pwa. 설치는 하지 않는다. audit 은 네트워크 필요.
-  - `make test-go`(Makefile:7-9): **여전히 go vet ./... + go test ./... 두 줄**. CI 의 Go 절(-p 1·race·govulncheck·임베딩 리포트)과 다르다.
-  - `POSTGRES_DSN=<격리 DSN> go test -p 1 ./... -count=1` 가 전체 Go 검증(수 분). DSN 없으면 통합 SKIP — 통과로 포장 금지.
-  - `node web/scripts/check-i18n.mjs`(1060키), `./scripts/check-version.sh`. `make build`, `docker build --build-arg VERSION=<VERSION> .` 가 릴리즈 경로.
-  - `npm --prefix web run e2e`: 실제 서버·번들·DB·브라우저 필요(UMM_E2E_COMMAND / UMM_BASE_URL, workers=1). `make e2e` 는 build 선행.
-- 관례: 커밋 메시지는 영어 동작 설명, 릴리즈만 `Release vX.Y.Z`. 일반 개선은 VERSION 미변경. **커밋 트레일러(Co-Authored-By 등) 금지.** 설정은 DB app_settings + 관리자 UI + internal/config.
-- 위험 구역: internal/auth, migrations/, .github/workflows/, Dockerfile, VERSION, 락파일, 비밀 설정 암호화·감사 details(식별자만 넘길 것)·CSP nonce. 릴리즈 경로 변경은 실제 docker build 로 확인해야 한다.
+  - **루트 `npm test` 는 이제 스스로 설치한다**(`pretest` → ensure-install.mjs). 그 밖의 web 명령은 여전히 `npm ci --prefix web` 선행 필수 — 새 worktree 에 `web/node_modules` 없음(이번에도 없었다).
+  - `npm --prefix web test --silent` (vitest; include=`src/**/*.test.{ts,tsx}` + `scripts/**/*.test.mjs`, jsdom, testTimeout 20s). 이 베이스의 기준선은 **24파일 / 255시험**(72e131a 기준; 숫자는 믿지 말고 재측정).
+  - `npm --prefix web run typecheck|lint|build|verify:pwa|test:offline-queue|format`. tsconfig.app.json include=["src"] → **시험 파일도 typecheck 대상**. lint = `oxlint src && prettier --check src`.
+  - `make test-web`(Makefile:28-36): offline-queue → audit(high) → typecheck → lint → check-i18n → test → build → verify:pwa. **설치는 하지 않는다.** audit 은 네트워크 필요.
+  - `make test-go`(Makefile:7-9): **여전히 `go vet ./...` + `go test ./...` 두 줄.** CI 의 Go 절(`-p 1`·race·govulncheck·임베딩 리포트)과 다르다.
+  - `POSTGRES_DSN=<격리 DSN> go test -p 1 ./... -count=1` 가 전체 Go 검증(수 분, store 가 ~26-45s). DSN 없으면 통합 SKIP — 통과로 포장 금지.
+  - `./scripts/check-version.sh`: VERSION ↔ web/package.json ↔ web/package-lock.json ↔ compose.yaml(build arg·image tag) + 릴리즈 노트 존재. **`ci.yml:49` 가 이 명령을 그대로 돌린다** — `scripts/` 에 넣은 핀 검사는 추가 배선 없이 게이트가 된다.
+  - `node web/scripts/check-i18n.mjs`(1060키). `make build`, `docker build --build-arg VERSION=<VERSION> .` 가 릴리즈 경로. `npm --prefix web run e2e` 는 실제 서버·번들·DB·브라우저 필요.
+- 관례: 커밋 메시지는 영어 동작 설명, 릴리즈만 `Release vX.Y.Z`. 일반 개선은 VERSION 미변경. **커밋 트레일러(Co-Authored-By 등) 금지.** 설정은 DB app_settings + 관리자 UI + internal/config. 스크립트는 `set -euo pipefail` + 상단에 "왜 이 검사가 있는지" 긴 주석을 남기는 관례(check-version.sh, Makefile:9-27 참고).
+- 위험 구역: `internal/auth`, `migrations/`, `.github/workflows/`, `Dockerfile`, `VERSION`, 락파일, 비밀 설정 암호화·감사 details(**식별자만** 넘길 것)·CSP nonce. 릴리즈 경로 변경은 실제 `docker build` + 이미지에서 바이너리를 꺼내 확인해야 한다.
 - 자주 깨지는 곳:
+  - **버전 핀 드리프트가 이 저장소의 1번 재발 주제다**: go.mod↔Dockerfile(1.26.9, 검사 없음), Node 하한 3곳(engines `^22.22.2 || ^24.15.0` / ci.yml:41 `node-version: 24` / Dockerfile:2 `node:24-alpine`, 검사 없음), VERSION 5곳(검사 있음).
   - Markdown 파서가 docs 분류기·deck 렌더러·compile 에 따로 있다. **통합하지 말고 좁히는 방향으로만** 고친다(운영자 규칙 3번).
   - 다운로드 파일 이름 통합(PR #167)은 머지 뒤 되돌려졌고(29149e5) 자율화가 release→low-risk 로 강등됐다. 같은 접근 재제출 금지.
-  - make 타깃과 CI 게이트의 드리프트가 반복 주제였다. test-web 은 닫혔고 test-go·Database 절은 열려 있다.
+  - make 타깃과 CI 게이트의 드리프트: `test-web` 은 닫혔고 `test-go`·Database 절은 열려 있다(후자는 2026-10-06 verify-failed 전력).
   - 설치 누락을 제품 버그로 오진하는 사고가 세 회차 있었다. `ls -d web/node_modules` 를 먼저 보라.
 - 검증 함정:
-  - CI 는 설치 후 검증, 새 worktree 는 미설치. 미설치 상태의 exit 127/`not found` 는 저장소 결함이 아니다.
-  - 기존 src 파일의 oxlint 경고 약 50건은 상시 남는다 — 새 파일을 가리키는 경고만 보라.
-  - govulncheck 은 `go run ...@latest` 라 네트워크가 필요하고 커밋이 아니라 취약점 DB 가 판정을 바꾼다.
-  - setLocale 은 모듈 전역 상태다. i18n 시험은 afterEach 로 'ko' 로 되돌리지 않으면 뒤 시험이 영어로 돈다.
-  - en.ts 는 한글 키만 필요하다. msg('Dream') 처럼 한글이 없는 키는 check-i18n 대상이 아니며 폴백이 정답이다.
+  - 새 worktree 는 미설치. 미설치 상태의 exit 127 / `not found` 는 저장소 결함이 아니다.
+  - **공식 golang 이미지는 `GOTOOLCHAIN=local` 이라 `go.mod` 의 `toolchain` 줄을 무시한다** — go.mod 만 올리면 govulncheck 은 초록이 되고 릴리즈 이미지는 옛 표준 라이브러리를 담는다(2026-10-16 에 실제로 일어남). 릴리즈 변경은 이미지에서 `go version /app/umm` 으로 끝까지 확인.
+  - 기존 `src` 파일의 oxlint 경고 약 50건은 상시 남는다 — 새 파일을 가리키는 경고만 보라.
+  - `govulncheck` 은 `go run ...@latest` 라 네트워크가 필요하고 커밋이 아니라 취약점 DB 가 판정을 바꾼다.
+  - `setLocale` 은 모듈 전역 상태다. i18n 시험은 `afterEach` 로 'ko' 로 되돌릴 것. en.ts 는 한글 키만 필요하다.
+  - `oxlint` 의 `toSorted` 권고와 tsconfig lib 의 TS2550 이 충돌한다 — `new Set(...)` 비교로 회피.
+  - Prettier 검사는 **web 디렉터리에서** `npm exec -- prettier --check <상대경로>` 로 돌릴 것(루트에서 `--prefix web exec` 는 상대경로를 못 찾아 exit 2).
   - CLI `--help`/`--list` 통과는 E2E 통과가 아니다. 소스 문자열 grep 은 동작의 증거가 아니다(운영자 규칙 5번).
-  - 저장소 CLAUDE.md/AGENTS.md 와 독립 ROADMAP/TODO 파일은 없다.
+  - 저장소 CLAUDE.md/AGENTS.md 와 독립 ROADMAP/TODO 파일은 없다. 샌드박스가 `./scripts/*.sh` 직접 실행을 막을 수 있다(이번 정찰에서 걸렸다).

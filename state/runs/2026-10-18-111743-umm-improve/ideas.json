@@ -1,0 +1,119 @@
+[
+  {
+    "title": "go.mod 의 toolchain 과 Dockerfile:9 빌더 태그가 같은 Go 패치라는 계약을 기존 CI 게이트(scripts/check-version.sh)에서 닫기",
+    "value": 4,
+    "risk": 2,
+    "size": "S",
+    "status": "done",
+    "note": "2026-10-18 구현(커밋 0857189). scripts/check-version.sh 한 파일에 Go 핀 블록 추가 — 두 값을 각 파일에서 sed 로 읽어 서로 비교(상수 하드코딩 없음), 한쪽이 비면 실패. 증거는 red/green 드릴 4건: 고치기 전 Dockerfile 만 1.26.8 로 바꿔도 게이트가 EXIT 0 으로 초록(구멍 재현), 고친 뒤 양방향 드리프트와 빈 값 둘 다 EXIT 1 로 두 값을 이름 붙여 말함, 매번 git checkout -- Dockerfile go.mod 로 원복 확인. 통제: 일치하면 stdout 이 기존 한 줄과 바이트 일치하고 stderr 가 빔. ci.yml:49 가 이미 돌리므로 추가 배선 0건.",
+    "updated": "2026-10-18"
+  },
+  {
+    "title": "Node 하한이 engines·ci.yml:41·Dockerfile:2 세 곳에 따로 적혀 있고 드리프트 검사가 없다",
+    "value": 3,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "Go 핀 블록이 들어간 지금은 같은 스크립트에 같은 모양으로 얹는 것이 자연스러운 후속이고 1순위 후보. 다만 engines.node 가 '^22.22.2 || ^24.15.0' 두 밴드 범위라 단순 문자열 비교가 안 되고 web/scripts/node-range.mjs 의 파서가 필요해 Go 쪽보다 까다롭다(쉘에서 그 파서를 쓰려면 node 호출이 생긴다 — check-version.sh 는 지금 순수 쉘이므로 그 경계를 넘을지부터 판단할 것). 지금 실제 불일치는 없다(engines 두 밴드 / node-version: 24 / node:24-alpine).",
+    "updated": "2026-10-18"
+  },
+  {
+    "title": "format 에도 설치 가드 한 줄 (preformat)",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "이번 회차 차선 후보였으나 1순위가 실제로 성립해 쓰지 않았다. web/package.json:20 'format': 'prettier --write src' 가 scripts 중 유일하게 pre* 가 없는 자리(predev·prebuild·pretypecheck·prelint·pree2e·prepreview 는 있음). 'preformat': 'node scripts/require-installed.mjs prettier' 한 줄. 소스를 쓰는 명령이므로 실제 src/ 에 prettier 를 돌리는 드릴은 금지 — web/scripts/require-installed.test.mjs 의 기존 fixture(실제 web/package.json 복사 + 실제 npm 자식 프로세스) 안에서만 재현할 것.",
+    "updated": "2026-10-18"
+  },
+  {
+    "title": "설치 누락 문장이 세 파일(run-on-supported-node.mjs·require-installed.mjs·ensure-install.mjs)에 있고 드리프트를 아무 시험도 잡지 못한다",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "세 파일 모두 베이스에 실재하고 각각 .test.mjs 를 동반한다. 통합 금지(운영자 규칙 3번) — 각 진입점의 계약이 다르다. 실제 세 프로세스를 띄워 공유 조각 'npm ci --prefix <packageRoot>' 만 단언하는 시험이어야 하고 소스 문자열 grep 은 증거가 아니다(운영자 규칙 5번). web/node_modules 선행 설치 필요.",
+    "updated": "2026-10-18"
+  },
+  {
+    "title": "make test-go 가 CI 의 Go 게이트와 어긋난다 (vet+test 두 줄 뿐)",
+    "value": 3,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "Makefile:7-9 는 이번 회차에도 여전히 두 줄이고(make test-go 를 실제로 돌려 확인: go vet ./... + go test ./... 만 실행, ok 15패키지) CI 의 -p 1·race·govulncheck·임베딩 리포트가 없다. test-web 쪽은 CI 와 맞춰져 있어 비대칭이 두드러진다. 그러나 2026-10-06 에 같은 논거가 verify-failed 했고 Makefile 은 보호 경로 성격이라 같은 방식 재제출 금지(운영자 규칙 1번) — 다시 고르려면 다른 접근이 필요하다.",
+    "updated": "2026-10-18"
+  },
+  {
+    "title": "govulncheck 이 호출되지 않는 경로의 권고 2건을 계속 보고한다 — -show verbose 로 기록",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "지금 게이트는 초록이라 버그가 아니고 산출물이 문서뿐이라 가치가 낮다. 이번 회차에도 Go 취약점 스캔을 돌리지 않아(쉘 한 파일 변경으로 범위 밖) 어느 권고인지 여전히 미확인. 돌리려면 네트워크 필요(go run ...@latest)하고 판정이 커밋이 아니라 취약점 DB 로 바뀐다는 점을 기록할 것.",
+    "updated": "2026-10-18"
+  },
+  {
+    "title": "isInferred 가 web/src 어디서도 호출되지 않는 export 다",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "주의: 망이라고 적혀 있던 a5959a5(edge-vocabulary.test.ts)는 이 베이스 c00a54b 에도 들어오지 않았다 — 즉 전수 계약 시험이 없고 망 없이 export 를 지우거나 배선하면 회귀 위험. 다시 고르기 전에 a5959a5 머지 여부를 git log 로 먼저 확인할 것. 이번 회차 미열람.",
+    "updated": "2026-10-18"
+  },
+  {
+    "title": "edge-vocabulary.ts 의 연결 어휘 12개와 relationOptions 를 실제 타입·translate·en.ts 로 못 박기",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "a5959a5 로 한 번 커밋됐으나 그 커밋은 이 베이스(c00a54b)에 없다 — 아직 머지되지 않았으므로 done 으로 올리지 않는다. 다시 고르기 전에 머지 여부를 git log 로 확인할 것. 이번 회차 미열람.",
+    "updated": "2026-10-18"
+  },
+  {
+    "title": "AppLayout 의 My Space·Dreams 가 한국어 UI 에서도 영어로 뜬다 (t(label).split(' ')[0])",
+    "value": 3,
+    "risk": 3,
+    "size": "M",
+    "status": "pending",
+    "note": "짧은 라벨 설계가 선행돼야 M. Dreams 는 제품명이라 번역 대상이 아닐 수 있어 판단이 필요하고 사용자 눈에 보이는 변경이라 위험 3. 한 세션에 안전하게 끝낼 자신이 없어 이번에도 제침. 미열람.",
+    "updated": "2026-10-18"
+  },
+  {
+    "title": "CI 의 Database 절 단계들에 대응하는 로컬 make 타깃이 없다",
+    "value": 3,
+    "risk": 3,
+    "size": "M",
+    "status": "pending",
+    "note": "scripts/ 에 migrate-dry-run.sh·graph-migration-drill.sh·integration-smoke.sh·multi-instance-smoke.sh·restore-smoke.sh 가 실재하나 Makefile 에는 migrate-dry-run 만 타깃이 있다. 격리 DB 컨테이너·환경이 필요해 S 가 아니고 같은 논거가 2026-10-06 에 verify-failed 한 전력이 있어 계속 보류.",
+    "updated": "2026-10-18"
+  },
+  {
+    "title": "oxlint 의 toSorted 권고와 tsconfig lib 의 TS2550 이 새 파일마다 충돌한다",
+    "value": 2,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "지금은 new Set(...) 비교로 회피 가능. lib 를 올리면 Dockerfile/engines 의 Node 하한 확인 + build 까지 돌려야 해 릴리즈 경로에 닿는다. 규칙 끄기는 느슨하게 만드는 방향이라 비선호. 이번 회차 변경은 쉘 한 파일이라 lint 범위 밖이었다.",
+    "updated": "2026-10-18"
+  },
+  {
+    "title": "빈 공간에 실시간 노트가 들어오면 첫 몇 개에 맞춘 fit 이 기억된다",
+    "value": 2,
+    "risk": 2,
+    "size": "M",
+    "status": "pending",
+    "note": "서버·브라우저·DB 준비가 필요해 재현 비용이 크고 한 세션에 맞지 않는다. 이번에도 미확인.",
+    "updated": "2026-10-18"
+  },
+  {
+    "title": "check-version.sh 의 마지막 성공 메시지가 VERSION 만 말해, 이제 검사하는 Go 핀은 통과해도 보이지 않는다",
+    "value": 1,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "2026-10-18 에 Go 핀 블록을 넣으면서 새로 생긴 자리. 통제 기준(일치할 때 아무 것도 출력하지 않음)을 지키려고 성공 문구를 일부러 바꾸지 않았고, 과거 회차 로그가 'version <X> is consistent' 조각을 통과 신호로 읽으므로 그 조각은 반드시 남겨야 한다. 손대면 가치보다 위험이 커 보이는 자리라 일부러 보류로 남긴다 — 다음 회차가 같은 스크립트에 Node 하한까지 얹는다면 그때 한 번에 판단하는 것이 낫다.",
+    "updated": "2026-10-18"
+  }
+]
