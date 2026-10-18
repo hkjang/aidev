@@ -19,3 +19,13 @@
 - 다음 역할이 조심할 것: 새 시험 3개는 **실제 PostgreSQL 이 있어야 돕니다**(DSN 없으면 SKIP). `weekly-test-pg` 는 이번 회차에 이미 Up(37시간) 이었습니다. 적재 실패 재현은 `report_comments` rename 인데 `newTestServer` 가 **시험마다 scratch DB** 를 만들므로 공유 DB 오염 위험은 없고(과제서의 걱정은 불필요했습니다), 그래도 `t.Cleanup` 으로 되돌립니다. 기준 3 은 `report_mail_deliveries_report_id_fkey` 를 떼고 보고서를 지웁니다 — FK 이름이 바뀌면 그 시험이 `t.Fatalf` 로 바로 말합니다.
 - 검증: gofmt(빈 출력)·`go build ./...`·`go vet ./...`, `-run 'Mail|Delivery|Relay|Retry'`(5.738s), 전체 `go test ./... -count=1`(internal/app 162.092s, EXIT=0), openapi-check 119경로·paging-check 10목록·guard-check --changed 848f6b9(18개 도달, 새 시험 `deferMailRetry` 40%/60%)·`git diff --check`. 고친 조건 한 줄을 `if false` 로 되돌려 같은 실패 재발까지 확인하고 원복했습니다.
 - [러너 12:45] brief accepted — 채택 — 근거(686-690행의 묶인 분기, `errNotFound` 와 전달 오류의 구분, 재큐잉 수단 없음)가 현재 코드와 실제 동작에 그대�
+- [러너 12:48] verify passed — 검증 7개 통과 (auto)
+
+## 비평 노트
+- 판정 approve(위험 low, 차단 없음). 실패 재현을 직접 되돌려 확인: mail.go:700 을 `if false` 로 바꾸면 원장과 같은 출력으로 실패하고 원복하면 통과 — 신규 3개 `-count=8`·Mail|Delivery|Relay|Retry|Reminder·gofmt/build/vet 통과, 트리 복원 확인. `spent` 통합도 줄 대조로 이전 동작과 동일(Warn 로그 위치만 이동).
+- 남는 우려 ①: mailreloadretry_test.go:188 이 `configureRelay` 뒤에 max_attempts=1 을 넣어, 좁지만 배경 워커가 기본 예산 5로 claim 하면 QUEUED 로 남아 Fatalf 가 날 창이 있습니다. 다음에 이 파일을 열면 설정을 configureRelay 앞으로 옮길 것.
+- 남는 우려 ②: 전달 오류 분기가 `return true` 라 defer UPDATE 까지 실패하는 부분 장애에서 워커 내부 루프가 조일 수 있으나 수정 전도 동일한 모양이므로 회귀 아님. 전달 오류로 예산을 소진해 포기할 때 'gave up' 로그가 없는 것은 관측 공백.
+- 릴리즈 노트: 사용자 문구·응답 스키마 불변, 마이그레이션·프런트 무관, revert 안전. 같은 계열의 weekly_automation.go:820·schedulereminder.go:289 는 테이블이 달라 이번 헬퍼로 못 덮었고 읽히지도 않았습니다 — 다음 회차 후보로 유지.
+- 못 본 것: `loadReport` 의 `includedMaterialsFor`(워커 컨텍스트에 principal 없음) 와 프런트 카드 렌더는 보지 않았습니다(이번 변경이 건드리지 않음).
+- [러너 12:53] review approved — 리뷰 승인 (risk=low)
+- [러너 12:53] pr created — https://github.com/hkjang/weekly/pull/35
