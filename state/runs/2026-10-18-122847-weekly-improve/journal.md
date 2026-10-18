@@ -29,3 +29,7 @@
 - 못 본 것: `loadReport` 의 `includedMaterialsFor`(워커 컨텍스트에 principal 없음) 와 프런트 카드 렌더는 보지 않았습니다(이번 변경이 건드리지 않음).
 - [러너 12:53] review approved — 리뷰 승인 (risk=low)
 - [러너 12:53] pr created — https://github.com/hkjang/weekly/pull/35
+- [러너 13:18] ci passed — 검사 1개 모두 success
+- [러너 13:18] merge done — cd468ed
+- [러너 13:47] release published — v0.321.0
+- [러너 13:48] assets verified — v0.321.0 자산 1개 (이전 v0.320.0: 1)
