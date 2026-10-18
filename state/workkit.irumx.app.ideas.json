@@ -1,38 +1,38 @@
 [
   {
-    "title": "toTable 의 고유화 접미사가 시트의 실제 열 이름과 충돌한다",
+    "title": "주간보고 간단 입력이 '진행 70%' 의 진척률·상태를 못 읽는다",
     "value": 3,
     "risk": 2,
     "size": "S",
     "status": "done",
-    "note": "2026-10-18 구현. types.ts:97~105 가 기준 이름의 등장 횟수만 세고 자기가 만든 'X (n)' 이 이미 쓰인 이름인지 보지 않았다. '자산번호,자산번호,자산번호 (2)' → ['자산번호','자산번호 (2)','자산번호 (2)'] 로 서고, pairByName 의 Map 이 같은 이름을 뒤 인덱스로 덮어써 구조가 똑같은 두 파일에서도 한 열이 비교에서 사라졌다. used Set 으로 비어 있는 번호까지 올린다. 충돌 없는 입력은 출력 바이트 동일(probe diff 확인).",
+    "note": "parseSimpleLines 에 앵커된 퍼센트 분기(PROGRESS_PART)를 상태 단어 분기 바로 뒤에 넣었다. 접두사 '진행' 이면 status='doing' 까지, 접두사 없으면 진척률만. 120%/7.5%/%/70% 이상은 그대로 thisWeek. 커밋 1760243, 프로덕션 1파일. npm run check 11파일 138 passed.",
     "updated": "2026-10-18"
   },
   {
-    "title": "main CI 'check' 실패는 Actions 결제·지출 한도 차단이라 저장소 안에 고칠 것이 없다",
-    "value": 4,
-    "risk": 1,
+    "title": "guessHeaderLine 이 빈칸 많은 헤더 줄을 건너뛰고 데이터 줄을 헤더로 잡는다",
+    "value": 2,
+    "risk": 3,
     "size": "S",
-    "status": "rejected",
-    "note": "2026-10-18 재확인. 뽑힌 로그 줄이 Azure 의 BlobNotFound XML 인데 이것은 잡 로그 아카이브가 없을 때 리다이렉트 대상이 돌려주는 오류 본문이고, 실패 단계도 빈 칸('')이라 단계가 0개다 = 잡 미시작. check.yml 전 단계를 로컬에서 완주시켜 main@aed4f5d green 증명(check 135, e2e 155/0, tools 55/0, ui 25/0, a11y OK). 워크플로 수정은 이미 기각된 접근 — 결제가 풀릴 때까지 저장소 쪽 할 일 없음.",
+    "status": "pending",
+    "note": "types.ts:82~89 의 need=max(2,ceil(most*0.6)). 5열 중 2열만 이름이 있는 헤더 줄은 기준에 못 미쳐 건너뛰어진다(정적 확인). '희소한 진짜 헤더' 와 '여러 칸에 걸친 제목 줄' 은 채움 비율만으로 구별 불가 — Cell.kind 같은 다른 신호가 필요해 규칙 설계가 따라온다. 그래서 위험 3.",
     "updated": "2026-10-18"
   },
   {
-    "title": "applyPreset/CompareTool 이 헤더 이름을 키로 keyMap 을 만든다",
+    "title": "CompareTool/applyPreset 가 헤더 이름을 키로 keyMap 을 만든다",
     "value": 2,
     "risk": 2,
     "size": "M",
     "status": "pending",
-    "note": "CompareTool.tsx:336 의 map[newInfo.headers[n]!] = oldKeys[i]! 가 같은 이름 두 열에서 충돌한다. 2026-10-18 의 toTable 고유화로 헤더 이름이 이제 항상 서로 다르므로 노출 경로가 더 좁아졌다 — 실제로 닿는 입력이 남아 있는지 먼저 확인할 것. UI 상태 모델을 건드려야 해 M. 통합 금지 원칙상 preset.ts 와 같은 회차에 넣지 말 것.",
+    "note": "CompareTool.tsx:336 map[newInfo.headers[n]!] = oldKeys[i]!. toTable 고유화 수정(미머지)으로 노출 경로가 더 좁아졌다. UI 상태 모델을 건드려야 해 M. preset.ts 와 같은 회차에 넣지 말 것(파서/계약 통합 금지).",
     "updated": "2026-10-18"
   },
   {
-    "title": "e2e.mjs 의 APP_DATABASE_URL 이 세 번째 DB 기본값이라 격리 절차를 모르면 RLS·트리거 8개가 깨진다",
+    "title": "e2e 의 APP_DATABASE_URL 격리 절차를 README '검증' 에 적는다",
     "value": 2,
     "risk": 1,
     "size": "S",
     "status": "pending",
-    "note": "e2e.mjs:28 의 APP_DB(workkit_app 역할) 기본값이 :55447 이고 재지정은 APP_DATABASE_URL 로 이미 가능하다 — 결함은 아니다. README '검증' 에 격리 절차 한 단락. ci-env.mjs 와 통합하려 하지 말 것(운영자 규칙). 프로덕션 코드 변경 0. 참고: 2026-10-18 회차는 상주 dev 컨테이너가 떠 있지 않아 CI 와 같은 :55447 에 전용 컨테이너를 띄워 e2e 155/0 로 완주했다 — 포트가 비어 있으면 격리 절차 자체가 필요 없다.",
+    "note": "e2e.mjs:28 의 기본값이 :55447 이고 재지정은 이미 가능 — 결함이 아니라 문서 공백. 프로덕션 코드 0. ci-env.mjs 와 통합하려 하지 말 것. 포트가 비어 있으면 격리 자체가 불필요하니 먼저 ss 로 확인.",
     "updated": "2026-10-18"
   },
   {
@@ -41,43 +41,16 @@
     "risk": 1,
     "size": "S",
     "status": "pending",
-    "note": "csv.ts:41. 앞 64KB 만 잘라 쪼개면 큰 파일 할당이 사라진다(마지막 잘린 줄 버리기). 빨간 테스트가 안 나오는 순수 리팩터 — 운영자의 '실행 테스트로 증명' 요구와 맞지 않아 계속 후순위.",
+    "note": "csv.ts:41. 앞 64KB 만 잘라 쪼개면 큰 할당이 사라진다. 빨간 테스트가 안 나오는 순수 리팩터라 '실행 테스트로 증명' 요구와 맞지 않아 계속 후순위. csv.ts 는 미머지 PR 충돌 구역.",
     "updated": "2026-10-18"
   },
   {
-    "title": "병합 셀 제목 줄에서 guessHeaderLine 이 제목 줄을 헤더로 잡는지 확인",
+    "title": "앞·중간 빈 줄이 행 한도에 세어져 정상 50,000행 CSV 가 거부된다",
     "value": 2,
     "risk": 2,
     "size": "S",
     "status": "pending",
-    "note": "types.ts:82~89 의 60% 기준. 재현 fixture 부터 필요. readSheet 쪽만 좁게, 파서 통합 금지. 2026-10-18 probe 에서 'A,,A' (4열 중 2열만 찬 헤더 줄)가 데이터 줄을 헤더로 잡는 것을 우연히 봤다 — 같은 60% 기준이 원인이라 재현 입력으로 쓸 수 있다.",
-    "updated": "2026-10-18"
-  },
-  {
-    "title": "db-breaker.test.ts 의 dropped=12 가 결정적인 이유를 주석으로 남긴다",
-    "value": 1,
-    "risk": 1,
-    "size": "S",
-    "status": "pending",
-    "note": "4 attempts × 3 connects = 12, 2.5s 예산은 안전 밸브. 메모리(db-breaker-test-is-not-flaky)에 기록돼 있지만 세 회차가 같은 가설을 다시 세웠으므로 코드 옆에 적어 두는 값이 있다. 테스트 계약을 건드리지 않는 주석 전용 변경.",
-    "updated": "2026-10-18"
-  },
-  {
-    "title": "끝/중간 빈 줄 때문에 정상 50,000행 CSV 가 행 한도에서 거부될 수 있다",
-    "value": 2,
-    "risk": 2,
-    "size": "S",
-    "status": "pending",
-    "note": "rows.length+1 > LIMITS.rows 가 빈 줄까지 센다(csv.ts:93). 끝 빈 줄은 행을 더하지 않지만 앞/중간 빈 줄은 더한다. csv.ts 는 열린 PR 충돌 구역이라 보류 유지.",
-    "updated": "2026-10-18"
-  },
-  {
-    "title": "사설 저장소 CI 가 PR 마다 Playwright 설치 + e2e + a11y 를 돌려 청구 분을 크게 쓴다",
-    "value": 2,
-    "risk": 3,
-    "size": "M",
-    "status": "pending",
-    "note": "지출 한도 차단의 배경. 잡이 시작조차 못 하는 동안에는 효과 없음 — 결제가 풀린 뒤의 일. 검사 항목은 하나도 빼지 말고 actions/cache 로만. .github/workflows 는 보호 경로이고 워크플로 수정은 이미 기각된 접근이라 사람이 먼저 승인해야 한다.",
+    "note": "csv.ts:93 의 rows.length+1 > LIMITS.rows 가 빈 행까지 센다(toTable 은 나중에 그 행들을 버린다). 올바른 동작은 명확하지만 csv.ts 는 최근 일곱 회차가 건드린 미머지 PR 충돌 구역이라 보류 유지.",
     "updated": "2026-10-18"
   },
   {
@@ -86,16 +59,16 @@
     "risk": 1,
     "size": "S",
     "status": "pending",
-    "note": "project/sanitize.ts:136~137 이 Number.isInteger 만 보고 0·음수·1e9 를 통과시킨다. 다만 preset.oldHeaderLine/newHeaderLine 을 읽는 코드가 없어 사용자 영향 0. project/sanitize 전용 테스트가 없다는 테스트 공백 가치만 남는다.",
+    "note": "project/sanitize.ts:136~137 이 Number.isInteger 만 본다. oldHeaderLine/newHeaderLine 을 읽는 코드가 없어 사용자 영향 0 — 테스트 공백 보강 가치만. 이번 회차 차선 후보였고 쓰이지 않았다.",
     "updated": "2026-10-18"
   },
   {
-    "title": "serialToIso 가 Excel 1900 윤년 버그를 반영하지 않는다",
+    "title": "db-breaker.test.ts 의 dropped=12 가 결정적인 이유를 코드 옆 주석으로",
     "value": 1,
-    "risk": 2,
+    "risk": 1,
     "size": "S",
     "status": "pending",
-    "note": "xlsx-read.ts:228. serial <= 59 가 하루 이르게 읽힌다. 1900년 1~2월뿐이라 실무 가치 거의 없음 — 분기를 늘리는 위험이 이득보다 클 수 있다.",
+    "note": "4 시도 × 3 연결 = 12, 2.5s 예산은 안전 밸브. 메모리에 적혀 있는데도 세 회차가 같은 '느린 러너' 가설을 다시 세웠다. 테스트 계약 무변경, 주석 전용.",
     "updated": "2026-10-18"
   },
   {
@@ -104,16 +77,34 @@
     "risk": 1,
     "size": "S",
     "status": "pending",
-    "note": "doc/docx.ts:27 runs() 가 split('\\n') 만 하고 esc()(:22) 가 지우는 제어문자에 \\u000d 가 없다. weekly/model.ts 가 /\\r?\\n/ 으로 미리 정규화하고 textarea.value 도 LF 라, CRLF 가 runs() 까지 닿는 경로는 여전히 미확인. 경로를 먼저 찾아야 가치가 선다.",
+    "note": "doc/docx.ts:27 runs() + esc()(:22) 에 \\u000d 가 없다. weekly/model.ts 가 /\\r?\\n/ 으로 미리 정규화하고 textarea.value 도 LF 라 CRLF 가 runs() 까지 닿는 경로는 여전히 미확인. 경로를 먼저 찾아야 가치가 선다.",
     "updated": "2026-10-18"
   },
   {
-    "title": "auto-improve: 파일 대조: 빈 줄만 가득한 CSV 도 행 한도에서 멈추게 (PR #2)",
-    "value": 3,
+    "title": "renderTable 이 빈 업무명 행까지, 정렬 없이 표에 담아 요약·메신저와 어긋난다",
+    "value": 1,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "model.ts 의 renderTable 은 report.tasks 를 그대로 쓰고, summarySections·renderMessenger 는 sorted() + 빈 업무명 제외다. finalize 가 빈 업무명을 오류로 막으므로 초안 미리보기에서만 보인다 — 가치 낮음.",
+    "updated": "2026-10-18"
+  },
+  {
+    "title": "진척률 표 열이 기본 꺼져 있어 파싱한 진척률이 표에 안 보인다",
+    "value": 2,
     "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "신규. DEFAULT_TEMPLATE 의 progress 열은 enabled:false(model.ts:88) — 이제 간단 입력이 진척률을 채우므로 '적어 준 값이 표에 없다' 가 남는다. 다만 표 열 기본 구성 변경은 사용자가 보는 출력을 모두 바꾸고 docx/xlsx 단언에 닿는다. 값이 있는 업무가 하나라도 있으면 켜는 쪽(동적)이 더 안전한지 먼저 판단할 것.",
+    "updated": "2026-10-18"
+  },
+  {
+    "title": "사설 저장소 CI 가 PR 마다 Playwright 설치 + e2e + a11y 를 돌려 청구 분을 크게 쓴다",
+    "value": 2,
+    "risk": 3,
     "size": "M",
-    "status": "rejected",
-    "note": "https://github.com/hkjang/workkit.irumx.app/pull/2 가 닫혔다(PR 처리기가 수정·심사 2회 실패 후 중단, 그 뒤 사람 손 없음). 다시 하려면 처음부터.",
+    "status": "pending",
+    "note": "결제 차단이 풀린 뒤의 일. 검사 항목은 하나도 빼지 말고 actions/cache 로만. .github/workflows 는 보호 경로이고 워크플로 수정은 이미 기각된 접근이라 사람이 먼저 승인해야 한다.",
     "updated": "2026-10-18"
   }
 ]

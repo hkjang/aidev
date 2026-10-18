@@ -1,0 +1,128 @@
+[
+  {
+    "title": "릴리즈 일관성 검사가 배포 산출물의 agenthub-base:v<BASE_VERSION> 태그도 지킨다",
+    "value": 3,
+    "risk": 1,
+    "size": "S",
+    "status": "done",
+    "note": "이번 회차 구현. internal/buildinfo/release_version_test.go 한 파일(테스트 전용, 프로덕션 0개). BASE_VERSION 을 VERSION 과 같은 방식으로 읽고 같은 semver 정규식(지역 변수 stable 로 한 번만 컴파일)으로 검사한 뒤, checks 에 deploy/kubernetes/ollama-bridge.yaml 항목을 더하고 README.md 의 기존 want 슬라이스에 base 태그 문자열을 덧붙였다. 보초 없음을 먼저 증명했다 — 두 태그를 v0.26.0 으로 되돌려도 기존 테스트가 ok 였다. 돌연변이 4건으로 보초가 일함을 확인(파일별 지목, BASE_VERSION 상향 시 두 파일 동시 지목, -dev 접미사 거절).",
+    "updated": "2026-10-18"
+  },
+  {
+    "title": "릴리즈 일관성 검사가 아직 보지 않는 배포 표면을 메운다 (ADMIN_GUIDE.md / offline-install.md / deploy/offline/compose.yaml)",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "릴리즈 커밋 42b592c 는 12개 파일의 버전 문자열을 고치는데 checks 는 8개만 본다(이번 회차에 7→8). docs/ADMIN_GUIDE.md, docs/offline-install.md, deploy/offline/compose.yaml 이 아직 목록에 없다. internal/offlinebundle 의 compose_test.go·manifest_test.go 가 일부를 이미 지킬 수 있어 중복 가능성 — 그 테스트들을 먼저 읽고 진짜 공백만 더할 것(미확인). 이번 회차와 같은 파일을 건드리므로 분리했다.",
+    "updated": "2026-10-18"
+  },
+  {
+    "title": "checks 루프의 실패 메시지가 base 태그 항목에서 엉뚱한 릴리즈 번호를 댄다",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "새 아이디어 — 이번 회차에 관측했으나 일부러 고치지 않았다. 루프의 `%s does not reference release %s through %q` 가 중간 %s 에 언제나 VERSION 을 넣으므로 base 항목은 'does not reference release 0.264.0 through \"image: agenthub-base:v0.27.0\"' 로 찍힌다 — 파일과 빠진 문자열은 정확하지만 번호 0.264.0 은 이 줄과 무관하다. 고치려면 checks 구조체에 기대 릴리즈 필드를 더해야 하고 그러면 기존 7개 항목을 모두 손대게 된다(과제서가 금지한 재배열). 다음 회차가 독립적으로 판단할 것.",
+    "updated": "2026-10-18"
+  },
+  {
+    "title": "복원 실패가 guide-shots.mjs 의 problems 요약 출력을 건너뛰게 하는 것을 고친다",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "이번 회차 차선 후보였다(선택하지 않음). web/scripts/guide-shots.mjs:129 의 await 가 throw 하면 :138-143 의 요약과 exitCode=1 이 건너뛰어진다. guide-settings-check.test.mjs 가 guide-shots.mjs 의 source 를 requestTimeoutMs 부터 if (problems.length) 까지 잘라서 실행하므로 그 두 앵커 줄을 옮기면 테스트 경계가 같이 움직인다. 이번 회차에도 재확인하지 않음(미확인) — 구현자가 먼저 두 파일을 열어 볼 것.",
+    "updated": "2026-10-18"
+  },
+  {
+    "title": "guide-shots 추적 캡처가 기존 CSP 위반 기록 전체를 지우지 않게 함",
+    "value": 3,
+    "risk": 2,
+    "size": "M",
+    "status": "pending",
+    "note": "captureTracking finally 의 전체 DELETE. 서버 clearTrackingViolations 는 전체 Forget 이고 개별 삭제 라우트가 없어 서버 계약까지 넓혀야 한다 — M. 이번 회차 재확인 안 함(미확인).",
+    "updated": "2026-10-18"
+  },
+  {
+    "title": "dlp.tool 보고의 direction 을 아는 값으로만 받는다",
+    "value": 2,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "internal/api/dlp.go 는 clampReported(input.Event.Direction) 만 적용한다. 허용 enum 과 구버전 게이트웨이 호환 계약은 미확인 — 제한값을 추측해 적용하지 말 것. 이번 회차 재확인 안 함.",
+    "updated": "2026-10-18"
+  },
+  {
+    "title": "cmd/runtime-proxy 에 공용 로그 캡처 헬퍼를 둔다",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "capturePodLog 가 bb0c720 의 dlpreport_test.go 안에 있다(저장소 유일의 log.SetOutput 테스트). 사용자가 아직 한 명이라 공용 파일로 옮기는 것은 이르다 — 두 번째 사용자가 생긴 뒤에 할 일.",
+    "updated": "2026-10-18"
+  },
+  {
+    "title": "게이트웨이가 거절된 DLP 보고를 세어 요약한다",
+    "value": 2,
+    "risk": 3,
+    "size": "M",
+    "status": "pending",
+    "note": "bb0c720 으로 '보고 한 건마다 한 줄' 이 실제 동작이 됐다 — 관제면 전면 장애 때 Pod 로그가 넘칠 수 있다. 다만 카운터·주기 요약은 reporter 에 상태와 시계를 들이는 일이고 send 의 best-effort·무상태 계약을 건드린다. 넘치는 것을 실제로 관측한 뒤에 할 일.",
+    "updated": "2026-10-18"
+  },
+  {
+    "title": "웹 잠금 의존성의 npm 보안 경고를 최소 패치로 해소",
+    "value": 3,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "이전 회차 npm ci 에서 high 2건 관측. 이번 회차도 npm 을 돌리지 않아 재확인 못 함(미확인). 메이저 업그레이드·무조건 audit fix 금지.",
+    "updated": "2026-10-18"
+  },
+  {
+    "title": "가이드 요청 제한 시간 환경변수의 유효 범위를 시작 시 검사한다",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "guide-shots.mjs 의 Number(env)||30000 이 음수·소수·Infinity 를 통과시킨다. AbortSignal.timeout 허용 범위는 미확인. 이번 회차 재확인 안 함.",
+    "updated": "2026-10-18"
+  },
+  {
+    "title": "설정을 바꾸지 않은 쓰기가 settings.update 감사 행을 남기는 것을 구분",
+    "value": 2,
+    "risk": 2,
+    "size": "M",
+    "status": "pending",
+    "note": "store.go:PutSetting 의 무조건 UPSERT. 저장 계층 반환형 변경을 포함할 수 있어 S 로 끝나지 않는다. 이번 회차 재확인 안 함.",
+    "updated": "2026-10-18"
+  },
+  {
+    "title": "이벤트 전달 실패(dead letter)를 메일 이벤트로",
+    "value": 2,
+    "risk": 2,
+    "size": "M",
+    "status": "pending",
+    "note": "execution/dispatcher.go:retry 는 DeadLetterEvent+CreateNotification 후 반환. 알림 이후 간접 메일 배선과 중복 방지가 미확인. 이번 회차 재확인 안 함.",
+    "updated": "2026-10-18"
+  },
+  {
+    "title": "check-versions 가 커밋 전 작업 트리에서는 거절을 재현하지 못하는 것을 알려 준다",
+    "value": 2,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "image_inputs_changed 가 ${GITHUB_SHA:-HEAD} 와 지난 태그를 비교하므로(스크립트 665-698행) 커밋되지 않은 변경은 보이지 않는다. 의도된 설계지만 손으로 돌리는 사람에게는 통과가 거짓으로 보인다. 고칠 방향은 동작 변경이 아니라 안내 — git status --porcelain 한 번, exit 코드는 그대로.",
+    "updated": "2026-10-18"
+  },
+  {
+    "title": "buildinfo 의 과거 커밋 재생 테스트를 t.Parallel 서브테스트로 나눈다",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "패키지 전체가 로컬에서 30초(이번 회차 실측 30.6s). 원인은 9p gitdir 의 git show 로 측정 확정됐고 CI 에는 없는 비용이라 가치가 낮다 — 환경 비용을 가리는 변경이 저장소에 값어치가 있는지 먼저 따질 것.",
+    "updated": "2026-10-18"
+  }
+]

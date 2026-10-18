@@ -1,15 +1,119 @@
 [
-  {"title": "deleteAttachment 의 참조 수 질의 오류 시 아직 쓰는 파일을 보존한다", "value": 3, "risk": 1, "size": "S", "status": "done", "note": "c9feef4. 498행 `_ = ...Scan(&remaining)` 를 명시적 오류 검사로 바꿔 집계 실패 시 os.Remove 를 건너뛰고 attachmentId·error·trace 만 Warn 으로 남긴다(204 유지). 과제서가 미확인으로 남긴 재현법을 실측: BEFORE DELETE FOR EACH ROW 트리거 안의 ALTER TABLE ... RENAME 은 PG16 에서 허용되며 DELETE ... RETURNING 은 성공하고 뒤따르는 count 만 relation does not exist 로 실패한다 — 대체안 ①② 불필요. 새 시험 3개 모두 guard-check 에서 deleteAttachment 에 도달(62/67/67%).", "updated": "2026-10-16"},
-  {"title": "adminUsers 의 알 수 없는 역할 필터를 조용히 버리지 않는다", "value": 2, "risk": 1, "size": "S", "status": "pending", "note": "admin.go:481-486 의 validRole 실패 무시와 roles 가 비면 WHERE 생략. 호출자가 AdminPage.tsx:207 의 검토 책임자 picker 라서 역할 이름이 한 번 어긋나면 일반 사용자가 후보로 올라온다. 좁은 수정은 '알 수 없는 역할이 하나라도 있으면 400 INVALID_ROLE' 하나이고 빈 role= 는 지금 동작 유지. HTTP 재현 미실행 — 다음 회차 최우선 차선.", "updated": "2026-10-16"},
-  {"title": "검토 책임자 선택기가 500명 이후 후보를 조용히 누락하지 않게 한다", "value": 3, "risk": 2, "size": "M", "status": "pending", "note": "AdminPage.tsx:205-208 이 limit=500 한 페이지만 읽고 leads.total 을 쓰지 않는다. admin.go:userPageMaximum=500. 프런트에 AdminPage 렌더 시험이 없어 '프로덕션 배선을 지나는 실행 테스트' 요구를 만족시킬 수단이 없다 — 아래 프런트 시험 기반 항목이 선행돼야 한다.", "updated": "2026-10-16"},
-  {"title": "AdminPage·DashboardPage 를 렌더하는 프런트 시험 보강", "value": 3, "risk": 2, "size": "M", "status": "pending", "note": "두 컴포넌트를 렌더하는 시험이 없다는 관찰 유지(이번 회차 재검색 안 함 — 미확인). 검토 책임자 선택기·임베딩 카드 분기·Confluence queued=false 알림이 모두 이 공백에 걸려 있다. AdminPage 한 흐름으로 좁힐 것, Dashboard 전체 확장 금지.", "updated": "2026-10-16"},
-  {"title": "동시 첨부 업로드가 보고서당 개수 상한을 넘지 않게 한다", "value": 3, "risk": 3, "size": "M", "status": "pending", "note": "attachments.go:214 count/218 상한 검사가 278행 tx.Begin 보다 앞인 구조를 이번 회차에 재확인. 동시 초과 HTTP 재현 미실행이고 부모 잠금 도입은 다른 쓰기 경로 영향 평가가 필요해 한 세션에 들어가지 않는다.", "updated": "2026-10-16"},
-  {"title": "본문이 잘린 이미지 첨부를 거절한다 (헤더만 검사하는 DecodeConfig)", "value": 2, "risk": 3, "size": "M", "status": "pending", "note": "attachments.go:243 이 image.DecodeConfig 만 호출함을 이번 회차에 재확인. 전체 Decode 는 10MB×20장에서 픽셀 메모리 폭탄이라 제한 설계가 선행돼야 한다.", "updated": "2026-10-16"},
-  {"title": "관리자 카드에서 실패한 발송을 다시 시도로 큐에 되돌리기", "value": 3, "risk": 3, "size": "M", "status": "pending", "note": "이번 회차 mail.go 재독 안 함(미확인). 3개 큐의 재큐잉 쓰기 계약·중복 발송 방지 결정이 선행돼야 해 45분 과제가 아니다.", "updated": "2026-10-16"},
-  {"title": "README·docs/MCP.md·AdminPage 의 MCP 읽기 전용 서술 정정", "value": 2, "risk": 1, "size": "S", "status": "pending", "note": "mcpwrite.go 의 쓰기 허용과 문서 불일치(이전 회차 관찰 유지, 이번 재확인 안 함). CHECKS.md authz-check 시간 모순과 묶어 문서 회차로. AdminPage 문구는 토큰별 계약이 달라 일괄 치환 금지.", "updated": "2026-10-16"},
-  {"title": "CHECKS.md authz-check 실행 시간과 병행 금지 정정", "value": 2, "risk": 1, "size": "S", "status": "pending", "note": "위 문서 회차와 함께. 실제 소요 시간 측정은 안 했고, authz-check 는 제자리 변경 도구라 측정 목적으로 돌리지 말 것.", "updated": "2026-10-16"},
-  {"title": "mutation-check 가 budget 을 지키고 진행 상태를 출력하게 한다", "value": 2, "risk": 2, "size": "M", "status": "pending", "note": "scripts/mutation-check.py:run_test 의 subprocess 에 timeout 이 없어 --budget 이 진행 중 시험을 끊지 못한다는 관찰 유지(이번 재확인 안 함). 제자리 변경 도구라 검증 자체가 비싸다.", "updated": "2026-10-16"},
-  {"title": "Confluence 수동 요청의 queued=false 를 화면 알림에 반영", "value": 2, "risk": 1, "size": "S", "status": "pending", "note": "AdminPage.tsx 의 sync 가 post 반환값을 무시한다는 관찰 유지(이번 재확인 안 함). 프런트 행동 시험 기반이 없어 증명 비용이 불확실 — 위 프런트 시험 항목 뒤에.", "updated": "2026-10-16"},
-  {"title": "질의 오류를 버리는 Scan 을 세는 계약 가드 (새것만 차단)", "value": 2, "risk": 2, "size": "M", "status": "pending", "note": "이번 회차로 같은 계열을 여섯 번째 고쳤다(remoteHost·embeddingStatus·nextOrder·cleanup·deleteAttachment). 다만 정적 검사를 행동 시험의 대체로 삼지 말라는 지시가 있어 가드는 '새로 생기는 것만 차단' 으로 한정해야 한다. 저장소 전체 개수는 여전히 미조사 — 다음 정찰이 `grep -rn '_ = .*\\.Scan(' internal/app` 로 세어 두면 이 항목의 가치를 확정할 수 있다.", "updated": "2026-10-16"},
-  {"title": "weekly-test-pg 가 멈춰 있으면 회차가 DB 시험을 못 돈다", "value": 3, "risk": 1, "size": "S", "status": "pending", "note": "[신규] 이번 정찰이 DB 시험을 한 번도 돌리지 못한 원인이 컨테이너 Exited(255) 하나였고, 구현 세션에서는 `docker start weekly-test-pg` 한 번으로 해결됐다(3초). DSN 이 없으면 전부 SKIP 되고 초록으로 읽히는 것이 실제 위험이므로, 러너·정찰 절차에 '컨테이너 기동 확인 → DSN 없으면 통과로 읽지 말 것' 을 고정하는 쪽이 저장소 코드 변경보다 싸다. 저장소 변경이 아니라 운영 절차 항목.", "updated": "2026-10-16"}
+  {
+    "title": "보고서를 일시적으로 읽지 못한 메일 발송을 영구 실패로 처리하지 않는다",
+    "value": 3,
+    "risk": 1,
+    "size": "S",
+    "status": "done",
+    "note": "2026-10-18 구현(cd468ed). mail.go:686 의 `if err != nil || report == nil` 을 쪼개 errNotFound 만 즉시 FAILED 로 보내고, 그 밖의 오류는 새 deferMailRetry 헬퍼로 발송 실패와 같은 defer 경로를 타게 했다. 주의: 조건 순서가 중요하다 — loadReport 는 모든 오류 경로에서 report==nil 을 돌려주므로 report==nil 을 먼저 보면 수정이 되지 않는다. 적재만 실패시키는 재현법은 report_comments rename(loadReport 만 읽는 테이블; scratch DB 라 격리된다).",
+    "updated": "2026-10-18"
+  },
+  {
+    "title": "adminUsers 의 알 수 없는 역할 필터를 조용히 버리지 않는다",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "admin.go:481-486 에서 validRole 실패를 건너뛰므로 role= 에 적힌 이름이 하나라도 어긋나면 그 역할 후보가 말없이 빠지고, 전부 어긋나면 roles 가 비어 496-499 의 role=ANY 조건 자체가 사라져 검토 책임자 picker(AdminPage.tsx:207)에 전체 디렉터리가 올라온다. 좁은 수정은 '알 수 없는 역할이 하나라도 있으면 400 INVALID_ROLE' 하나뿐. 빈 role= 의 현재 동작(필터 없음)은 일반 사용자 표가 쓰므로 바꾸지 말 것. HTTP 재현 미실행.",
+    "updated": "2026-10-18"
+  },
+  {
+    "title": "목록 질의가 중간에 끊겨도 rows.Err() 를 보지 않아 조용히 잘리는 곳들",
+    "value": 2,
+    "risk": 2,
+    "size": "M",
+    "status": "pending",
+    "note": "keys.go:31(listKeys — API 키 목록이 잘리면 살아 있는 키가 안 보인다), handover.go:531(teamMembers picker), admin_analytics.go:245·401·460, mail.go:849(myMailSettings deliveries). 이번 회차에 mail.go:849 를 읽으며 Err() 누락을 재확인했다(이 과제의 수정 범위 밖이라 손대지 않음). 행 중간 오류의 결정적 재현은 '테이블을 raise 하는 함수가 든 뷰로 바꾸기' 가 필요해 비용이 있고, 여러 핸들러를 한 번에 고치면 파일이 6개를 넘는다 — 한 함수(keys.go 권장)로 좁힐 것.",
+    "updated": "2026-10-18"
+  },
+  {
+    "title": "imports.go 의 report_items 순서 조회 실패를 0번으로 저장하지 않는다",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "imports.go:691 `_ = tx.QueryRow(SELECT coalesce(max(sort_order),-1)+1 ...).Scan(&sortOrder)` — attachments 쪽에서 고친 nextOrder(cdc51f0)와 같은 모양이 import 경로에 남아 있다. 다만 '질의 오류를 버리는 Scan' 계열 수정이 이미 6회차 연속이라 7번째로 올리면 반복으로 읽힌다 — 당분간 보류.",
+    "updated": "2026-10-18"
+  },
+  {
+    "title": "질의 오류를 버리는 Scan 을 세는 계약 가드 (새것만 차단)",
+    "value": 2,
+    "risk": 2,
+    "size": "M",
+    "status": "pending",
+    "note": "저장소 전체 개수는 10-16 회차에 측정됐다: `_ = ....Scan(` 가 internal/app 비시험 코드에 10곳. 대부분은 '없으면 기본값' 이 맞는 조회라 일괄 금지는 과하고, 가드는 '새로 생기는 것만 차단' 으로 한정해야 한다. 정적 검사를 행동 시험의 대체로 삼지 말라는 지시도 있어 가치가 당초 예상보다 낮다.",
+    "updated": "2026-10-18"
+  },
+  {
+    "title": "검토 책임자 선택기가 500명 이후 후보를 조용히 누락하지 않게 한다",
+    "value": 3,
+    "risk": 2,
+    "size": "M",
+    "status": "pending",
+    "note": "AdminPage.tsx:205-208 이 limit=500 한 페이지만 읽고 leads.total 을 쓰지 않는다(admin.go userPageMaximum=500). 이번 회차 프런트 재확인 안 함 — 미확인. 프런트 렌더 시험 기반이 선행돼야 함.",
+    "updated": "2026-10-18"
+  },
+  {
+    "title": "AdminPage·DashboardPage 를 렌더하는 프런트 시험 보강",
+    "value": 3,
+    "risk": 2,
+    "size": "M",
+    "status": "pending",
+    "note": "두 컴포넌트를 렌더하는 시험이 없다는 관찰 유지(이번 회차 재검색 안 함 — 미확인). AdminPage 한 흐름으로 좁힐 것. 위 두 프런트 항목이 모두 이 공백에 걸려 있다.",
+    "updated": "2026-10-18"
+  },
+  {
+    "title": "동시 첨부 업로드가 보고서당 개수 상한을 넘지 않게 한다",
+    "value": 3,
+    "risk": 3,
+    "size": "M",
+    "status": "pending",
+    "note": "attachments.go:213-219 의 count/상한 검사가 tx.Begin 보다 앞인 구조. 부모 잠금 도입은 다른 쓰기 경로 영향 평가가 필요해 한 세션에 안 들어간다. 이번 회차 재확인 안 함.",
+    "updated": "2026-10-18"
+  },
+  {
+    "title": "본문이 잘린 이미지 첨부를 거절한다 (헤더만 검사하는 DecodeConfig)",
+    "value": 2,
+    "risk": 3,
+    "size": "M",
+    "status": "pending",
+    "note": "attachments.go:243 부근이 image.DecodeConfig 만 호출한다(format 은 imageFormats 로 좁혀져 있어 형식 위장은 막혀 있다). 전체 Decode 는 10MB×20장에서 픽셀 메모리 폭탄이라 제한 설계가 선행돼야 한다. 이번 회차 재확인 안 함.",
+    "updated": "2026-10-18"
+  },
+  {
+    "title": "관리자 카드에서 실패한 발송을 다시 시도로 큐에 되돌리기",
+    "value": 2,
+    "risk": 3,
+    "size": "M",
+    "status": "pending",
+    "note": "markMailFailed 뒤에는 되돌릴 입구가 없다. 이번 회차가 '영구 FAILED 로 가는 입구' 중 일시 장애 쪽을 막았으므로 급함이 3→2 로 내려간다 — 남은 FAILED 경로는 예산을 실제로 다 쓴 것과 보고서가 사라진 것뿐이고 둘 다 재시도가 답이 아니다. 3개 큐의 쓰기 계약·중복 발송 방지 결정이 선행돼야 해 45분 과제가 아니다.",
+    "updated": "2026-10-18"
+  },
+  {
+    "title": "README·docs/MCP.md·AdminPage 의 MCP 읽기 전용 서술 정정",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "mcpwrite.go 의 쓰기 허용과 문서 불일치(이전 회차 관찰 유지, 이번 재확인 안 함 — 미확인). CHECKS.md authz-check 시간 모순과 묶어 문서 회차로. AdminPage 문구는 토큰별 계약이 달라 일괄 치환 금지.",
+    "updated": "2026-10-18"
+  },
+  {
+    "title": "CHECKS.md authz-check 실행 시간과 병행 금지 정정",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "위 문서 회차와 함께. authz-check 는 제자리 변경 도구라 측정 목적으로 돌리지 말 것.",
+    "updated": "2026-10-18"
+  },
+  {
+    "title": "두 예약 발송 큐(sendNextQueuedReminder·sendNextQueuedScheduleReminder)의 적재 실패 처리를 확인한다",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "[신규] 이번 회차는 sendNextQueuedMail 만 고쳤다. mail.go 의 나머지 두 큐 발송 함수가 같은 '적재 실패를 영구 실패로' 모양을 갖고 있는지 읽지 않았다 — 같은 파일 안이라 확인은 싸고, 있으면 deferMailRetry 를 그대로 재사용할 수 있다. 다만 두 큐의 행 스키마와 재시도 계약이 report_mail_deliveries 와 같은지 먼저 봐야 한다.",
+    "updated": "2026-10-18"
+  }
 ]

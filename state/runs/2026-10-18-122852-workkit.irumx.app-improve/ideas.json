@@ -1,0 +1,110 @@
+[
+  {
+    "title": "주간보고 간단 입력이 '진행 70%' 의 진척률·상태를 못 읽는다",
+    "value": 3,
+    "risk": 2,
+    "size": "S",
+    "status": "done",
+    "note": "parseSimpleLines 에 앵커된 퍼센트 분기(PROGRESS_PART)를 상태 단어 분기 바로 뒤에 넣었다. 접두사 '진행' 이면 status='doing' 까지, 접두사 없으면 진척률만. 120%/7.5%/%/70% 이상은 그대로 thisWeek. 커밋 1760243, 프로덕션 1파일. npm run check 11파일 138 passed.",
+    "updated": "2026-10-18"
+  },
+  {
+    "title": "guessHeaderLine 이 빈칸 많은 헤더 줄을 건너뛰고 데이터 줄을 헤더로 잡는다",
+    "value": 2,
+    "risk": 3,
+    "size": "S",
+    "status": "pending",
+    "note": "types.ts:82~89 의 need=max(2,ceil(most*0.6)). 5열 중 2열만 이름이 있는 헤더 줄은 기준에 못 미쳐 건너뛰어진다(정적 확인). '희소한 진짜 헤더' 와 '여러 칸에 걸친 제목 줄' 은 채움 비율만으로 구별 불가 — Cell.kind 같은 다른 신호가 필요해 규칙 설계가 따라온다. 그래서 위험 3.",
+    "updated": "2026-10-18"
+  },
+  {
+    "title": "CompareTool/applyPreset 가 헤더 이름을 키로 keyMap 을 만든다",
+    "value": 2,
+    "risk": 2,
+    "size": "M",
+    "status": "pending",
+    "note": "CompareTool.tsx:336 map[newInfo.headers[n]!] = oldKeys[i]!. toTable 고유화 수정(미머지)으로 노출 경로가 더 좁아졌다. UI 상태 모델을 건드려야 해 M. preset.ts 와 같은 회차에 넣지 말 것(파서/계약 통합 금지).",
+    "updated": "2026-10-18"
+  },
+  {
+    "title": "e2e 의 APP_DATABASE_URL 격리 절차를 README '검증' 에 적는다",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "e2e.mjs:28 의 기본값이 :55447 이고 재지정은 이미 가능 — 결함이 아니라 문서 공백. 프로덕션 코드 0. ci-env.mjs 와 통합하려 하지 말 것. 포트가 비어 있으면 격리 자체가 불필요하니 먼저 ss 로 확인.",
+    "updated": "2026-10-18"
+  },
+  {
+    "title": "detectDelimiter 가 10MB 텍스트 전체를 split 한 뒤 30줄만 쓴다",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "csv.ts:41. 앞 64KB 만 잘라 쪼개면 큰 할당이 사라진다. 빨간 테스트가 안 나오는 순수 리팩터라 '실행 테스트로 증명' 요구와 맞지 않아 계속 후순위. csv.ts 는 미머지 PR 충돌 구역.",
+    "updated": "2026-10-18"
+  },
+  {
+    "title": "앞·중간 빈 줄이 행 한도에 세어져 정상 50,000행 CSV 가 거부된다",
+    "value": 2,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "csv.ts:93 의 rows.length+1 > LIMITS.rows 가 빈 행까지 센다(toTable 은 나중에 그 행들을 버린다). 올바른 동작은 명확하지만 csv.ts 는 최근 일곱 회차가 건드린 미머지 PR 충돌 구역이라 보류 유지.",
+    "updated": "2026-10-18"
+  },
+  {
+    "title": "sanitizePreset 이 범위를 벗어난 헤더 줄 번호를 통과시킨다",
+    "value": 1,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "project/sanitize.ts:136~137 이 Number.isInteger 만 본다. oldHeaderLine/newHeaderLine 을 읽는 코드가 없어 사용자 영향 0 — 테스트 공백 보강 가치만. 이번 회차 차선 후보였고 쓰이지 않았다.",
+    "updated": "2026-10-18"
+  },
+  {
+    "title": "db-breaker.test.ts 의 dropped=12 가 결정적인 이유를 코드 옆 주석으로",
+    "value": 1,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "4 시도 × 3 연결 = 12, 2.5s 예산은 안전 밸브. 메모리에 적혀 있는데도 세 회차가 같은 '느린 러너' 가설을 다시 세웠다. 테스트 계약 무변경, 주석 전용.",
+    "updated": "2026-10-18"
+  },
+  {
+    "title": "docx runs() 가 '\\n' 만 쪼개 CRLF 텍스트에 \\r 가 남는다",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "doc/docx.ts:27 runs() + esc()(:22) 에 \\u000d 가 없다. weekly/model.ts 가 /\\r?\\n/ 으로 미리 정규화하고 textarea.value 도 LF 라 CRLF 가 runs() 까지 닿는 경로는 여전히 미확인. 경로를 먼저 찾아야 가치가 선다.",
+    "updated": "2026-10-18"
+  },
+  {
+    "title": "renderTable 이 빈 업무명 행까지, 정렬 없이 표에 담아 요약·메신저와 어긋난다",
+    "value": 1,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "model.ts 의 renderTable 은 report.tasks 를 그대로 쓰고, summarySections·renderMessenger 는 sorted() + 빈 업무명 제외다. finalize 가 빈 업무명을 오류로 막으므로 초안 미리보기에서만 보인다 — 가치 낮음.",
+    "updated": "2026-10-18"
+  },
+  {
+    "title": "진척률 표 열이 기본 꺼져 있어 파싱한 진척률이 표에 안 보인다",
+    "value": 2,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "신규. DEFAULT_TEMPLATE 의 progress 열은 enabled:false(model.ts:88) — 이제 간단 입력이 진척률을 채우므로 '적어 준 값이 표에 없다' 가 남는다. 다만 표 열 기본 구성 변경은 사용자가 보는 출력을 모두 바꾸고 docx/xlsx 단언에 닿는다. 값이 있는 업무가 하나라도 있으면 켜는 쪽(동적)이 더 안전한지 먼저 판단할 것.",
+    "updated": "2026-10-18"
+  },
+  {
+    "title": "사설 저장소 CI 가 PR 마다 Playwright 설치 + e2e + a11y 를 돌려 청구 분을 크게 쓴다",
+    "value": 2,
+    "risk": 3,
+    "size": "M",
+    "status": "pending",
+    "note": "결제 차단이 풀린 뒤의 일. 검사 항목은 하나도 빼지 말고 actions/cache 로만. .github/workflows 는 보호 경로이고 워크플로 수정은 이미 기각된 접근이라 사람이 먼저 승인해야 한다.",
+    "updated": "2026-10-18"
+  }
+]
