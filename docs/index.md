@@ -1,7 +1,7 @@
 ---
 title: "aidev 자율 개선 대시보드"
 description: "Claude Code 자율 개선 에이전트가 hkjang 의 프로젝트를 개선·테스트·머지·릴리즈한 일일 보고. 오늘 25회차·릴리즈 1건, 누적 2758회차·릴리즈 832건, 주의 필요 12건."
-last_modified_at: 2026-10-18 10:11:37 +0900
+last_modified_at: 2026-10-18 10:15:25 +0900
 ---
 {% raw %}
 <script type="application/ld+json">
@@ -17,7 +17,7 @@ last_modified_at: 2026-10-18 10:11:37 +0900
   "name": "hkjang",
   "url": "https://github.com/hkjang"
  },
- "dateModified": "2026-10-18T10:11:37+09:00"
+ "dateModified": "2026-10-18T10:15:25+09:00"
 }
 </script>
 
@@ -369,11 +369,11 @@ last_modified_at: 2026-10-18 10:11:37 +0900
 
 # aidev 자율 개선 대시보드
 
-<p class="tldr"><strong>한 줄 요약.</strong> Claude Code 자율 개선 에이전트가 hkjang 의 프로젝트를 개선·테스트·머지·릴리즈한 일일 보고. 오늘 25회차·릴리즈 1건, 누적 2758회차·릴리즈 832건, 주의 필요 12건. 회차가 끝날 때마다 자동 갱신됩니다 (마지막 갱신 <time datetime="2026-10-18T10:11:37+09:00" data-rel>2026-10-18 10:11</time> KST).</p>
+<p class="tldr"><strong>한 줄 요약.</strong> Claude Code 자율 개선 에이전트가 hkjang 의 프로젝트를 개선·테스트·머지·릴리즈한 일일 보고. 오늘 25회차·릴리즈 1건, 누적 2758회차·릴리즈 832건, 주의 필요 12건. 회차가 끝날 때마다 자동 갱신됩니다 (마지막 갱신 <time datetime="2026-10-18T10:15:25+09:00" data-rel>2026-10-18 10:15</time> KST).</p>
 
 <div class="alerts" role="alert"><strong>⚠️ 주의 필요 12건</strong> <span class="meta">— 새 경고는 GitHub Issue·Slack·이메일·Windows 알림으로도 보냅니다</span><ul><li><a href="https://hkjang.github.io/aidev/projects/insight.yeopjari.bid/">insight.yeopjari.bid</a> — CI 실패로 PR 미머지 <span class=meta>(2026-10-18 01:30)</span></li><li><a href="https://hkjang.github.io/aidev/projects/apt.irumx.app/">apt.irumx.app</a> — 보호 파일 변경 — 자동 머지 안 함, 사람 검토 필요 <span class=meta>(2026-10-18 02:54)</span></li><li><a href="https://hkjang.github.io/aidev/projects/insight.yeopjari.bid/">insight.yeopjari.bid</a> — 보호 파일 변경 — 자동 머지 안 함, 사람 검토 필요 <span class=meta>(2026-10-18 03:26)</span></li><li><a href="https://hkjang.github.io/aidev/projects/review.yeopjari.bid/">review.yeopjari.bid</a> — CI 실패로 PR 미머지 <span class=meta>(2026-10-18 04:51)</span></li><li><a href="https://hkjang.github.io/aidev/projects/workkit.irumx.app/">workkit.irumx.app</a> — CI 실패로 PR 미머지 <span class=meta>(2026-10-18 05:39)</span></li><li><a href="https://hkjang.github.io/aidev/projects/playwright-player/">playwright-player</a> — 보호 파일 변경 — 자동 머지 안 함, 사람 검토 필요 <span class=meta>(2026-10-18 07:17)</span></li><li><a href="https://hkjang.github.io/aidev/projects/ai-admin/">ai-admin</a> — CI 실패로 PR 미머지 <span class=meta>(2026-10-17 04:03)</span></li><li><a href="https://hkjang.github.io/aidev/projects/bamcp/">bamcp</a> — CI 실패로 PR 미머지 <span class=meta>(2026-10-17 07:15)</span></li><li><a href="https://hkjang.github.io/aidev/projects/sqlon/">sqlon</a> — 보호 파일 변경 — 자동 머지 안 함, 사람 검토 필요 <span class=meta>(2026-10-17 10:06)</span></li><li><a href="https://hkjang.github.io/aidev/projects/bitex/">bitex</a> — 보호 파일 변경 — 자동 머지 안 함, 사람 검토 필요 <span class=meta>(2026-10-17 11:22)</span></li><li><a href="https://hkjang.github.io/aidev/projects/insight.yeopjari.bid/">insight.yeopjari.bid</a> — CI 실패로 PR 미머지 <span class=meta>(2026-10-17 15:37)</span></li><li><a href="https://hkjang.github.io/aidev/projects/insight.yeopjari.bid/">insight.yeopjari.bid</a> — CI 실패로 PR 미머지 <span class=meta>(2026-10-17 23:30)</span></li></ul></div>
 
-<div class="alerts" role="status"><strong>🩺 러너 점검 필요</strong> <span class="meta">— 마지막 회차 0분 전 · 스케줄러 준비 · 다음 실행 2026-10-18 오전 9:50:00 · 디스크 98% · 최근 7일 회귀 0건 · 점검 09:45</span><ul><li>측정 감사: 원격에 없는 릴리즈 태그 1건 — 그 저장소의 다음 릴리즈를 막는다</li><li>디스크 98% 사용</li></ul></div>
+<div class="alerts" role="status"><strong>🩺 러너 점검 필요</strong> <span class="meta">— 마지막 회차 3분 전 · 스케줄러 준비 · 다음 실행 2026-10-18 오전 10:20:00 · 디스크 99% · 최근 7일 회귀 0건 · 점검 10:15</span><ul><li>측정 감사: 원격에 없는 릴리즈 태그 1건 — 그 저장소의 다음 릴리즈를 막는다</li><li>디스크 99% 사용</li></ul></div>
 
 
 <p><a href="https://hkjang.github.io/aidev/inbox/"><strong>📥 작업함</strong></a> — 열린 러너 PR·복구·수정 과제 72건 (그중 사람 필요 57건)</p>
