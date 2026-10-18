@@ -1,0 +1,119 @@
+[
+  {
+    "title": "영문 랜딩 페이지에서 JS 가 덮어쓰지 않는 9 줄(lang-btn 166행 + pre.cli-code 주석 8줄)을 영문으로 복구",
+    "value": 3,
+    "risk": 1,
+    "size": "S",
+    "status": "done",
+    "note": "구현 완료. docs/index_en.html 1 파일 9 insert / 9 delete. 손상 줄 136 → 127 (정확히 9 감소), docs/index.html 은 0 유지. 166 행은 docs/index.html:166 과 바이트 동일('한'), 8 줄은 같은 행 한국어 원문의 직역이며 명령줄·들여쓰기·태그 구조 무변경. script.js:391-398 이 lang-btn 에 click 리스너만 붙이고 textContent 를 쓰지 않음을, script.js 가 .cli-code/.cli-card 를 전혀 참조하지 않음을 실측 확인 — 두 자리는 JS 가 끝까지 덮지 않는다. 저장소 밖 check_visible_en.py 로 9 FAIL → 0 FAIL 인과 고정.",
+    "updated": "2026-10-18"
+  },
+  {
+    "title": "영문 페이지의 data-i18n 이 붙은 나머지 127 줄 손상 문자열 복구",
+    "value": 2,
+    "risk": 3,
+    "size": "L",
+    "status": "pending",
+    "note": "이번에 136 → 127 로 줄었다. 실측(2026-10-18): 남은 127 줄 중 같은 줄에 data-i18n 이 없는 것은 11 줄(127·195·209·233·749·759·769·779·789·799·809)이고, 그중 195·209·749~809 은 직전 정찰이 부모 요소의 data-i18n 을 확인했으며 127 은 도달 불가 사문, 233 은 #terminal-body 별도 아이디어. 즉 127 줄 전체가 script.js 가 책임지는 범위이고 JS 켜진 브라우저에서는 보이지 않는다 — 크롤러·JS 끔 한정 문제다. script.js en 사전으로 기계적 치환이 가능하나 한 회차에 담기엔 크다. 통합 파서/치환 스크립트를 만들려 하지 말고 섹션 단위로 쪼갤 것.",
+    "updated": "2026-10-18"
+  },
+  {
+    "title": "docs/index.html 과 index_en.html 에 hreflang alternate 짝 추가",
+    "value": 3,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "이번 회차 차선 후보였고 손대지 않았다. 양쪽 모두 rel=canonical 만 있고 rel=alternate/hreflang 은 0 건(직전 정찰 실측). 각 head 에 ko/en/x-default 3 줄씩, 파일 2 개 6 줄. 2026-10-17 의 self-referential canonical 수정의 자연스러운 후속으로 다음 회차 1 순위 후보.",
+    "updated": "2026-10-18"
+  },
+  {
+    "title": "#terminal-body 안 term-comment(233행)가 런타임에 교체되는지 확인하고, 교체되지 않으면 영문 복구",
+    "value": 2,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "이번에 부분 확인: script.js:437-514 의 terminalTabsData 가 ko/en 양쪽에 term-comment 를 가진 전체 HTML 문자열을 들고 있고 script.js:526 이 getElementById('terminal-body') 를 잡는다. 즉 터미널 탭 전환·언어 전환 시 내용이 통째로 교체되는 구조로 보이지만, 초기 로드 시점에 교체되는지(= 정적 233 행이 사용자에게 보이는 순간이 있는지)는 끝까지 추적하지 않았다(미확인). script.js terminalTabsData 의 도구명 불일치 아이디어와 같은 자리이므로 묶어서 볼 것.",
+    "updated": "2026-10-18"
+  },
+  {
+    "title": "영문 페이지에 남은 이스케이프되지 않은 생 & 로 인한 xmllint htmlParseEntityRef 오류 정리",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "2026-10-18 신규. 이번에 584 행의 생 & 를 &amp; 로 쓰면서 xmllint 오류가 61 → 60 건으로 줄었다. 남은 60 건 중 htmlParseEntityRef 계열은 23 건이고 그 대부분이 data-i18n 줄의 생 & (154·226·227·366·511·515·523·531·542·737 행 등)와 fonts.googleapis.com 쿼리스트링(34 행)이다. data-i18n 줄은 127 줄 복구 과제와 겹치므로 겹치지 않는 자리(34 행 폰트 URL, 226·227 tab-btn, 511~531 mcp-tool-name)만 좁혀서 고칠 것. docs/index.html 에도 같은 패턴이 있는지는 미확인.",
+    "updated": "2026-10-18"
+  },
+  {
+    "title": "MCP activity_report 의 since 설명을 실제 지원 문법(7d→168h)과 맞추기",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "코드 미확인 상태 유지(이번에도 열지 않았다). tools.go:73 광고와 tools.go:657 time.ParseDuration 불일치는 직전 회차들의 실측 기록. 2026-10-09 에 같은 과제가 no-change 로 끝난 전력이 있다 — 다시 고르려면 tools/list→tools/call 계약 테스트를 반드시 붙일 것.",
+    "updated": "2026-10-18"
+  },
+  {
+    "title": "AutoApproveMerges 가 DailyLimit 을 전혀 보지 않는다",
+    "value": 4,
+    "risk": 3,
+    "size": "M",
+    "status": "pending",
+    "note": "9회 연속 보류. 병합 승인이 auto_approvals 에 기록되지 않아 셀 수단 자체가 없고 집계·감사 경로 설계가 선행. 권한 봉투 변경이라 단독 회차. 2026-10-18 에도 열지 않음(미확인). 가치가 높으니 '설계 문서만 쓰는 회차' 로 한 번 떼어내는 것을 권한다.",
+    "updated": "2026-10-18"
+  },
+  {
+    "title": "테스트용 git 저장소 부트스트랩 헬퍼를 공유 패키지로 정리",
+    "value": 3,
+    "risk": 2,
+    "size": "M",
+    "status": "pending",
+    "note": "requirePushable 3중 복제(gitops/commit_test.go, app/effects_test.go, cmd/goalforge/main_e2e_test.go). remote 이름 단위 프로브와 기존 skip 계약 유지 필요. 2026-10-18 미확인.",
+    "updated": "2026-10-18"
+  },
+  {
+    "title": "커밋이 옮겨간 뒤 남은 옛 커밋의 자동 병합 승인 철회",
+    "value": 3,
+    "risk": 3,
+    "size": "M",
+    "status": "pending",
+    "note": "ConsumeScopedApproval 은 StaleApprovalError 로 소비만 막고 APPROVED 상태는 남긴다. 철회 시점·감사 설계 필요. 2026-10-18 미확인.",
+    "updated": "2026-10-18"
+  },
+  {
+    "title": "DecideRetry 의 FailureRateLimit 분기에 maxAttempts 검사가 없어 영원히 재시도",
+    "value": 3,
+    "risk": 3,
+    "size": "M",
+    "status": "pending",
+    "note": "다른 재시도 가능 분기는 attempt >= maxAttempts 에서 BlockForUser 로 가지만 FailureRateLimit 만 무한. 2026-10-16 의 1시간 상한 덕에 한 번의 수면은 짧아졌으나 총 횟수는 무제한. 의도적 선택일 수 있어 설계 판단 선행, 무인 워커 중단 조건이 바뀌므로 단독 회차. 2026-10-18 미확인.",
+    "updated": "2026-10-18"
+  },
+  {
+    "title": "internal/procctl·internal/testscript 테스트 공백",
+    "value": 2,
+    "risk": 1,
+    "size": "M",
+    "status": "pending",
+    "note": "두 패키지 모두 no test files. OS별 신호 안정성 flake 우려로 계속 보류. GOARCH=arm64 교차 컴파일 + binfmt 실행이 이 환경에서 된다는 것은 앞선 회차들이 확인. 2026-10-18 미확인.",
+    "updated": "2026-10-18"
+  },
+  {
+    "title": "증거 종류 불일치를 완료 판정 이전에 무인 경로에서도 띄우기",
+    "value": 3,
+    "risk": 2,
+    "size": "M",
+    "status": "pending",
+    "note": "sweepReport 는 Acted=false 면 Note 를 출력하지 않는다. 무인 알림 정책 결정이 선행이며 Note 만 추가하는 접근은 무효. 2026-10-18 미확인.",
+    "updated": "2026-10-18"
+  },
+  {
+    "title": "HTTP doctor 와 MCP project_readiness 의 완료 가능성 판정을 같은 설정으로 고정",
+    "value": 2,
+    "risk": 1,
+    "size": "M",
+    "status": "pending",
+    "note": "둘 다 FAIL 만 차단 집계함은 이전 회차에 확인. 동일 설정의 실제 HTTP/MCP 계약 테스트 추가가 내용. 2026-10-18 미확인.",
+    "updated": "2026-10-18"
+  }
+]

@@ -1,0 +1,47 @@
+Kkiit v0.4.19 — 패키지를 바꾸면 적용된 쿠폰이 화면에서 사라지도록 수정
+
+v0.4.18 이후 들어온 수정 하나를 담는다.
+
+- 주문 구성 카드(`TalentPage.tsx`)의 패키지 `TextField select` 가
+  `onChange` 에서 `setSelectedPackage` 만 불러, 같은 카드의 추가 옵션
+  체크박스·쿠폰 코드 입력과 달리 적용된 쿠폰을 지우지 않던 것을 고친다.
+  쿠폰을 적용한 뒤 패키지를 바꾸면 정가(`listPrice`)는 갱신되는데 큰 글씨
+  "결제 금액" 은 옛 패키지로 미리보기한 `payable_amount` 를 계속 보여
+  주었고, `order` 가 그 코드를 그대로 실어 보내 `min_order_amount` 에
+  못 미치면 마지막 클릭에서야 서버가 거절했다. 실제 청구액은
+  `resolveCoupon` 재검증이 막아 틀리지 않았다 — 어긋난 것은 화면과 결제
+  경험이다. 리셋 호출을 한 군데 빠뜨려 생긴 결함이므로 무효화를 호출
+  책임에서 파생 계산으로 옮겼다. 새 순수 모듈
+  `web/src/pages/couponSelection.ts` 가 미리보기와 함께 그것을 만든
+  선택(`package_id`·`option_ids`)을 들고 다니고, 렌더 세 곳과 `order` 는
+  `activeCoupon()` 결과만 읽는다. 옵션은 순서 무관 비교다. 패키지
+  select 의 `onChange` 자체는 손대지 않았다 — 리셋을 빠뜨릴 수 있는 구조
+  자체를 없앴기 때문이다. 판정 규칙을 `.ts` 로 빼 둔 덕에 새 테스트 11건을
+  먼저 red 로 확인한 뒤 통과시켰고, `package_id` 비교와 `option_ids` 길이
+  비교를 각각 지우는 변이 2건이 서로 다른 단언에서 다시 실패하는 것까지
+  확인했다. 다만 렌더가 실제로 그 파생값을 읽는다는 배선은 `tsc -b` 통과와
+  diff 독해로만 보증된다 — `.tsx` 는 Node 타입 스트리핑이 돌리지 못해
+  컴포넌트 렌더 테스트로 증명하지 않았다. Go 는 전혀 건드리지 않았다.
+
+버전 표기(VERSION·compose·web/package·openapi·README)를 0.4.19 으로 올린다.
+
+gofmt · go build · go vet · go test, web lint · test · build 전부 통과.
+전체 `go test ./cmd/... ./internal/...` 통과, web 테스트 21건 통과(이번
+회차 신규 11건 포함). 이 기계의 Node 는 22.23.1 이고 타입 스트리핑이 기본
+켜져 `node --test` 가 `.ts` 를 그대로 돌렸다. build 가 다시 쓴
+`internal/ui/dist` 는 청크 다섯 개의 해시가 달라졌고, 기존 릴리즈
+관례대로 HEAD 로 되돌려 이번 커밋에서 제외했다.
+
+버릴 PostgreSQL 16 으로 `make test-integration` 을 돌렸더니
+`TestIntegrationMailNotificationsLeaveThroughTheRelay` 가 전체 suite 에서
+두 번 연속 실패했다(`digest subject="[Kkiit] 수정 요청 …"` — 판매자에게
+묶음 메일 "알림 2건" 이 아니라 수정 요청 한 건만 도착). 같은 테스트를
+단독으로, 또 알림 관련 테스트 둘과 묶어 돌리면 통과하므로 suite 순서·부하에
+좌우되는 기존 결함으로 본다. 이번 릴리즈가 담는 변경은 `web/src` 파일
+3개뿐이고 `.go`·`go.mod`·`internal/ui/dist` 가 v0.4.18 과 동일해, 통합
+테스트가 컴파일하는 코드는 지난 릴리즈와 한 바이트도 다르지 않다 — 이
+실패는 이번 변경이 만든 퇴행이 아니다. 릴리즈 절차만 수행하는 단계이므로
+테스트는 고치지 않고 다음 회차 과제로 남긴다.
+
+태그 푸시 후 기존 release.yml 이 이미지 빌드·압축·재로드 검증 및 GitHub
+Release 생성을 수행한다. 이 단계에서는 원격에 보내지 않는다.

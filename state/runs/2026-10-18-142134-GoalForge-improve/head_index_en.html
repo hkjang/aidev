@@ -1,0 +1,874 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GoalForge | Goal-First AI Development Orchestrator</title>
+  <meta name="description" content="Goal-first software development orchestrator managing AI sessions (Codex, Claude Code, Qwen, OpenCode) with deterministic verification gates and Git worktree isolation.">
+  <meta name="keywords" content="GoalForge, AI Orchestrator, AI Coding Agent, Claude Code, OpenAI Codex, Qwen Code, OpenCode, Model Context Protocol, MCP, Deterministic Verification, Go Developer Tools">
+  <meta name="author" content="hkjang">
+  <meta name="robots" content="index, follow">
+  <link rel="canonical" href="https://hkjang.github.io/goalforge/index_en.html">
+
+  <!-- Open Graph / Facebook / Kakao -->
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://hkjang.github.io/goalforge/index_en.html">
+  <meta property="og:site_name" content="GoalForge">
+  <meta property="og:title" content="GoalForge | Goal-First AI Development Orchestrator">
+  <meta property="og:description" content="Goal-first software development orchestrator managing AI sessions (Codex, Claude Code, Qwen, OpenCode) with deterministic verification gates and Git worktree isolation.">
+  <meta property="og:image" content="https://hkjang.github.io/goalforge/assets/og-image.jpg">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:locale" content="en_US">
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:url" content="https://hkjang.github.io/goalforge/index_en.html">
+  <meta name="twitter:title" content="GoalForge | Goal-First AI Development Orchestrator">
+  <meta name="twitter:description" content="Goal-first software orchestrator for Codex, Claude Code, Qwen Code, and OpenCode. Deterministic verification gates & Git worktrees.">
+  <meta name="twitter:image" content="https://hkjang.github.io/goalforge/assets/og-image.jpg">
+
+  <!-- Web Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
+
+  <!-- CSS Stylesheet -->
+  <link rel="stylesheet" href="styles.css">
+
+  <!-- AEO & SEO Structured Data (JSON-LD) -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "SoftwareApplication",
+        "@id": "https://hkjang.github.io/goalforge/#software",
+        "name": "GoalForge",
+        "url": "https://hkjang.github.io/goalforge/",
+        "operatingSystem": "Linux, macOS, Windows",
+        "applicationCategory": "DeveloperApplication",
+        "description": "Goal-first software development orchestrator managing AI sessions (Codex, Claude Code, Qwen, OpenCode) with deterministic verification gates and Git worktree isolation.",
+        "softwareVersion": "1.0.0",
+        "author": {
+          "@type": "Organization",
+          "name": "GoalForge",
+          "url": "https://github.com/hkjang/goalforge"
+        }
+      },
+      {
+        "@type": "FAQPage",
+        "@id": "https://hkjang.github.io/goalforge/#faq",
+        "mainEntity": [
+          {
+            "@type": "Question",
+            "name": "What is GoalForge?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "GoalForge is a goal-first development orchestrator designed to manage AI coding CLI tools (Codex, Claude Code, Qwen Code, OpenCode). Rather than letting AI sessions maintain state, a Go process deterministically owns project goals, work items, verification gates, and token budgets."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "How is GoalForge different from raw AI coding agents?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Standard AI agents operate with unconstrained freedom, which risks main branch corruption, unverified code commits, and hallucinations. GoalForge treats AI as an isolated execution tool: code changes are verified by automated gates (`go test`, build checks) and require explicit developer approval before merging."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "How do Verification Gates work?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Gates are registered via CLI, e.g., `goalforge verify gate add --type build_passed --command-json '[\"go\",\"test\",\"./...\"]'`. When an AI finishes a work item, GoalForge executes the gate. Only if it returns 100% success is the work marked APPROVED/DONE and signed with Git trailers."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "How do I use the GoalForge MCP Server?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Run `goalforge mcp` (stdio) or `goalforge mcp --addr 127.0.0.1:8799` (HTTP). 15 MCP tools allow AI clients like Claude Code or editors to query project status, edit backlogs, request approvals, and inspect quota usage conversationally."
+            }
+          }
+        ]
+      }
+    ]
+  }
+  </script>
+<script id="auto-lang-detector">
+(function() {
+  var SAVED_KEY = 'user_lang_pref';
+  var userPref = localStorage.getItem(SAVED_KEY);
+  if (!userPref) {
+    var navLang = (navigator.language || (navigator.languages && navigator.languages[0]) || '').toLowerCase();
+    var isKoBrowser = navLang.indexOf('ko') === 0;
+    var isEnPage = window.location.pathname.indexOf('index_en.html') !== -1;
+    if (!isKoBrowser && !isEnPage) {
+      var target = window.location.href.replace(/index\.html$/, 'index_en.html');
+      if (target === window.location.href) target = 'index_en.html';
+      window.location.replace(target);
+    } else if (isKoBrowser && isEnPage) {
+      var target = window.location.href.replace(/index_en\.html$/, 'index.html');
+      if (target === window.location.href) target = 'index.html';
+      window.location.replace(target);
+    }
+  }
+
+  document.addEventListener('DOMContentLoaded', function() {
+    var langBtns = document.querySelectorAll('.lang-btn, [data-lang], #btn-ko, #btn-en, #localeToggle, #btn-lang-toggle');
+    langBtns.forEach(function(btn) {
+      btn.addEventListener('click', function() {
+        var lang = btn.getAttribute('data-lang') || (btn.textContent || '').trim().toLowerCase();
+        if (lang.indexOf('en') !== -1) {
+          localStorage.setItem(SAVED_KEY, 'en');
+        } else if (lang.indexOf('ko') !== -1 || lang.indexOf('Enterprise Telemetry &amp; System Platform') !== -1) {
+          localStorage.setItem(SAVED_KEY, 'ko');
+        }
+      });
+    });
+  });
+})();
+</script>
+</head>
+<body>
+
+  <!-- Sticky Header Nav -->
+  <header class="site-header">
+    <div class="container nav-wrapper">
+      <a href="#" class="brand-logo" aria-label="GoalForge Home">
+        <div class="logo-icon">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
+          </svg>
+        </div>
+        <div class="logo-text">Goal<span>Forge</span></div>
+      </a>
+
+      <nav aria-label="Main Navigation">
+        <ul class="nav-links">
+          <li><a href="#features" class="nav-link" data-i18n="nav_features">Features</a></li>
+          <li><a href="#architecture" class="nav-link" data-i18n="nav_arch">Architecture</a></li>
+          <li><a href="#mcp" class="nav-link" data-i18n="nav_mcp">MCP & CLI</a></li>
+          <li><a href="#roadmap" class="nav-link" data-i18n="nav_roadmap">Roadmap</a></li>
+          <li><a href="#faq" class="nav-link" data-i18n="nav_faq">FAQ</a></li>
+        </ul>
+      </nav>
+
+      <button id="mobile-menu-btn" class="mobile-menu-btn" aria-label="메뉴 열기/닫기">
+          <svg width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
+        </button>
+      <div class="nav-actions">
+        <!-- Language Switcher -->
+        <div class="lang-switch" role="group" aria-label="Language selection">
+          <button class="lang-btn active" data-lang="ko">Enterprise Telemetry &amp; System Platform</button>
+          <button class="lang-btn" data-lang="en">EN</button>
+        </div>
+
+        <!-- GitHub Repo Link -->
+        <a href="https://github.com/hkjang/goalforge" target="_blank" rel="noopener noreferrer" class="btn-github" id="github-link">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/>
+          </svg>
+          <span>GitHub</span>
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <!-- Hero Section -->
+    <section class="hero">
+      <div class="container">
+        <div class="hero-badge">
+          <span data-i18n="badge_hero">✨ Go Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform AI Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform</span>
+        </div>
+
+        <h1 class="hero-title">
+          <span data-i18n="hero_title_1">AIEnterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform,</span><br>
+          <span class="gradient-text" data-i18n="hero_title_2">Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform</span>
+        </h1>
+
+        <p class="hero-subtitle" data-i18n="hero_subtitle">
+          Codex, Claude Code, Qwen, OpenCodeEnterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform. Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform.
+        </p>
+
+        <div class="hero-cta-group">
+          <!-- One-click Install Copy -->
+          <div class="code-pill js-copy-code" data-copy-text="go install github.com/hkjang/goalforge/cmd/goalforge@latest" title="Copy install command">
+            <span>$ go install github.com/hkjang/goalforge/cmd/goalforge@latest</span>
+            <svg class="copy-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+              <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+            </svg>
+          </div>
+
+          <a href="https://github.com/hkjang/goalforge" target="_blank" rel="noopener noreferrer" class="btn-primary" data-i18n="btn_github">
+            GitHub Enterprise Telemetry &amp; System Platform
+          </a>
+        </div>
+
+        <!-- Terminal Interactive Simulator -->
+        <div class="terminal-window">
+          <div class="terminal-header">
+            <div class="terminal-dots">
+              <span class="dot red"></span>
+              <span class="dot yellow"></span>
+              <span class="dot green"></span>
+            </div>
+            <div class="terminal-title">goalforge-cli — bash (80x24)</div>
+            <div></div>
+          </div>
+
+          <div class="terminal-tabs">
+            <button class="tab-btn active" data-tab="init">1. Doctor & Init</button>
+            <button class="tab-btn" data-tab="goal">2. Goal & Gate</button>
+            <button class="tab-btn" data-tab="run">3. Autonomous Run</button>
+            <button class="tab-btn" data-tab="mcp">4. MCP Server</button>
+          </div>
+
+          <div class="terminal-body" id="terminal-body">
+            <span class="term-comment"># 1. Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform</span>
+            <br><span class="term-cmd">$ goalforge doctor</span>
+            <br><span class="term-success">[OK] Git 2.42.0 detected</span>
+            <br><span class="term-success">[OK] Claude CLI (claude-code 1.2.0) verified</span>
+            <br><span class="term-success">[OK] Codex CLI (codex v0.8) verified</span>
+            <br><span class="term-info">[INF] All authentication and permissions passed</span>
+            <br>
+            <br><span class="term-cmd">$ goalforge project init --name demo --provider claude --model haiku --worktrees --auto-commit --fallback-model sonnet</span>
+            <br><span class="term-success">[OK] Initialized GoalForge project in .goalforge/goalforge.db</span>
+            <br><span class="term-info">[INF] Worktree isolation enabled, auto-commit trailer active</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Key Metrics Stats Bar -->
+    <section class="stats-bar">
+      <div class="container">
+        <div class="stats-grid">
+          <div>
+            <div class="stat-number">4 AI Models</div>
+            <div class="stat-label" data-i18n="stat_providers">4Enterprise Telemetry &amp; System Platform AI CLI Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform</div>
+          </div>
+          <div>
+            <div class="stat-number">100%</div>
+            <div class="stat-label" data-i18n="stat_gates">100% Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform</div>
+          </div>
+          <div>
+            <div class="stat-number">0 Direct Merges</div>
+            <div class="stat-label" data-i18n="stat_isolation">0Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform</div>
+          </div>
+          <div>
+            <div class="stat-number">15 Tools</div>
+            <div class="stat-label" data-i18n="stat_mcp">15Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform MCP Enterprise Telemetry &amp; System Platform</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Core Features Grid -->
+    <section id="features" class="section">
+      <div class="container">
+        <div class="section-header">
+          <span class="section-tag" data-i18n="sec_features_tag">CORE ADVANTAGES</span>
+          <h2 class="section-title" data-i18n="sec_features_title">GoalForgeEnterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform</h2>
+          <p class="section-desc" data-i18n="sec_features_desc">Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform. GoalForgeEnterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform.</p>
+        </div>
+
+        <div class="features-grid">
+          <!-- Feature 1 -->
+          <article class="feature-card">
+            <div class="feature-icon">🎯</div>
+            <h3 class="feature-title" data-i18n="feat_1_title">Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform</h3>
+            <p class="feature-text" data-i18n="feat_1_desc">AI Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Go Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform, Enterprise Telemetry &amp; System Platform, Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform(Single Source of Truth)Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform.</p>
+          </article>
+
+          <!-- Feature 2 -->
+          <article class="feature-card">
+            <div class="feature-icon">🤖</div>
+            <h3 class="feature-title" data-i18n="feat_2_title">Enterprise Telemetry &amp; System Platform AI Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform</h3>
+            <p class="feature-text" data-i18n="feat_2_desc">Codex, Claude Code, Qwen Code, OpenCodeEnterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform CLI Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform.</p>
+          </article>
+
+          <!-- Feature 3 -->
+          <article class="feature-card">
+            <div class="feature-icon">🛡️</div>
+            <h3 class="feature-title" data-i18n="feat_3_title">Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform</h3>
+            <p class="feature-text" data-i18n="feat_3_desc">`go test`, `go build` Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform. Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform.</p>
+          </article>
+
+          <!-- Feature 4 -->
+          <article class="feature-card">
+            <div class="feature-icon">🌴</div>
+            <h3 class="feature-title" data-i18n="feat_4_title">Git Worktree Enterprise Telemetry &amp; System Platform</h3>
+            <p class="feature-text" data-i18n="feat_4_desc">AI Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Git Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform. Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform.</p>
+          </article>
+
+          <!-- Feature 5 -->
+          <article class="feature-card">
+            <div class="feature-icon">🔌</div>
+            <h3 class="feature-title" data-i18n="feat_5_title">Enterprise Telemetry &amp; System Platform MCP Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform</h3>
+            <p class="feature-text" data-i18n="feat_5_desc">stdio Enterprise Telemetry &amp; System Platform Streamable HTTP(POST /mcp)Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Claude Code Enterprise Telemetry &amp; System Platform AI Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform 15Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform.</p>
+          </article>
+
+          <!-- Feature 6 -->
+          <article class="feature-card">
+            <div class="feature-icon">⚡</div>
+            <h3 class="feature-title" data-i18n="feat_6_title">Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform API Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform</h3>
+            <p class="feature-text" data-i18n="feat_6_desc">Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform/Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform. Quota Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform(WAITING_QUOTA) Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- Traditional Agent vs GoalForge Comparison -->
+    <section id="comparison" class="section">
+      <div class="container">
+        <div class="section-header">
+          <span class="section-tag" data-i18n="sec_comp_tag">PARADIGM SHIFT</span>
+          <h2 class="section-title" data-i18n="sec_comp_title">Enterprise Telemetry &amp; System Platform AI Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform vs GoalForge Enterprise Telemetry &amp; System Platform</h2>
+          <p class="section-desc" data-i18n="sec_comp_desc">Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform.</p>
+        </div>
+
+        <div class="comparison-grid">
+          <div class="comparison-card card-raw">
+            <div class="comp-badge bad" data-i18n="comp_raw_badge">TRADITIONAL AI AGENTS</div>
+            <h3 data-i18n="comp_raw_title">Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform</h3>
+            <ul class="comp-list">
+              <li><span class="cross">✕</span> <span data-i18n="comp_raw_1">Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform</span></li>
+              <li><span class="cross">✕</span> <span data-i18n="comp_raw_2">Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform</span></li>
+              <li><span class="cross">✕</span> <span data-i18n="comp_raw_3">API Quota Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform</span></li>
+              <li><span class="cross">✕</span> <span data-i18n="comp_raw_4">.env, Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform</span></li>
+            </ul>
+          </div>
+
+          <div class="comparison-card card-gf">
+            <div class="comp-badge good" data-i18n="comp_gf_badge">GOALFORGE ORCHESTRATOR</div>
+            <h3 data-i18n="comp_gf_title">GoalForge Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform</h3>
+            <ul class="comp-list">
+              <li><span class="check">✓</span> <span data-i18n="comp_gf_1">Enterprise Telemetry &amp; System Platform Git Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform</span></li>
+              <li><span class="check">✓</span> <span data-i18n="comp_gf_2">go test, Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform 100% Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform</span></li>
+              <li><span class="check">✓</span> <span data-i18n="comp_gf_3">Quota Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform WAITING_QUOTA Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform</span></li>
+              <li><span class="check">✓</span> <span data-i18n="comp_gf_4">SHA-256 Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform</span></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Technical Deep-Dive & Security Mechanisms -->
+    <section id="deepdive" class="section">
+      <div class="container">
+        <div class="section-header">
+          <span class="section-tag" data-i18n="sec_deepdive_tag">DEEP DIVE & SECURITY</span>
+          <h2 class="section-title" data-i18n="sec_deepdive_title">Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform</h2>
+          <p class="section-desc" data-i18n="sec_deepdive_desc">Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform 4Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform</p>
+        </div>
+
+        <div class="features-grid">
+          <article class="feature-card">
+            <div class="feature-icon">🔒</div>
+            <h3 class="feature-title" data-i18n="deep_1_title">Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform & Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform</h3>
+            <p class="feature-text" data-i18n="deep_1_desc">`.env`, SSH Enterprise Telemetry &amp; System Platform, Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform SHA-256 Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform. AIEnterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform/Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform.</p>
+          </article>
+
+          <article class="feature-card">
+            <div class="feature-icon">🔄</div>
+            <h3 class="feature-title" data-i18n="deep_2_title">Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform & Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform</h3>
+            <p class="feature-text" data-i18n="deep_2_desc">`same_work`, `same_change`, `no_change`, `same_error` Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform. Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform.</p>
+          </article>
+
+          <article class="feature-card">
+            <div class="feature-icon">⏳</div>
+            <h3 class="feature-title" data-i18n="deep_3_title">Quota Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform</h3>
+            <p class="feature-text" data-i18n="deep_3_desc">API Rate Limit Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform `continuity/<project>.md` Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform `WAITING_QUOTA` Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform.</p>
+          </article>
+
+          <article class="feature-card">
+            <div class="feature-icon">🔐</div>
+            <h3 class="feature-title" data-i18n="deep_4_title">AES-GCM Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform</h3>
+            <p class="feature-text" data-i18n="deep_4_desc">`GOALFORGE_AUDIT_KEY` Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform AI Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform AES Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform, Slack/Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Redact Enterprise Telemetry &amp; System Platform.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- Architecture Visualizer -->
+    <section id="architecture" class="section">
+      <div class="container">
+        <div class="section-header">
+          <span class="section-tag" data-i18n="sec_arch_tag">SYSTEM ARCHITECTURE</span>
+          <h2 class="section-title" data-i18n="sec_arch_title">Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform</h2>
+          <p class="section-desc" data-i18n="sec_arch_desc">Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform 4Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform</p>
+        </div>
+
+        <div class="arch-card">
+          <div class="arch-flow">
+            <div class="arch-node">
+              <div class="arch-node-title" data-i18n="arch_step_1_title">1. Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform</div>
+              <div class="arch-node-sub" data-i18n="arch_step_1_sub">Enterprise Telemetry &amp; System Platform Goal, Gate, Work Scope Enterprise Telemetry &amp; System Platform</div>
+            </div>
+
+            <div class="arch-arrow">➔</div>
+
+            <div class="arch-node">
+              <div class="arch-node-title" data-i18n="arch_step_2_title">2. Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform</div>
+              <div class="arch-node-sub" data-i18n="arch_step_2_sub">Codex / Claude / Qwen / OpenCode Enterprise Telemetry &amp; System Platform</div>
+            </div>
+
+            <div class="arch-arrow">➔</div>
+
+            <div class="arch-node">
+              <div class="arch-node-title" data-i18n="arch_step_3_title">3. Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform</div>
+              <div class="arch-node-sub" data-i18n="arch_step_3_sub">Enterprise Telemetry &amp; System Platform, Enterprise Telemetry &amp; System Platform, Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform</div>
+            </div>
+
+            <div class="arch-arrow">➔</div>
+
+            <div class="arch-node">
+              <div class="arch-node-title" data-i18n="arch_step_4_title">4. Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform & Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform</div>
+              <div class="arch-node-sub" data-i18n="arch_step_4_sub">Goal-ID Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Provider Compatibility Table -->
+    <section id="providers" class="section">
+      <div class="container">
+        <div class="section-header">
+          <span class="section-tag" data-i18n="sec_prov_tag">COMPATIBILITY</span>
+          <h2 class="section-title" data-i18n="sec_prov_title">Enterprise Telemetry &amp; System Platform AI Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform</h2>
+          <p class="section-desc" data-i18n="sec_prov_desc">Enterprise Telemetry &amp; System Platform AI Enterprise Telemetry &amp; System Platform CLIEnterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform.</p>
+        </div>
+
+        <div class="table-container">
+          <table class="provider-table" aria-label="Provider Compatibility Table">
+            <thead>
+              <tr>
+                <th data-i18n="th_provider">Enterprise Telemetry &amp; System Platform</th>
+                <th data-i18n="th_binary">CLI Enterprise Telemetry &amp; System Platform</th>
+                <th data-i18n="th_transport">Enterprise Telemetry &amp; System Platform</th>
+                <th data-i18n="th_readonly">Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform</th>
+                <th data-i18n="th_writable">Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform</th>
+                <th data-i18n="th_resume">Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>Codex</strong></td>
+                <td><code>codex</code></td>
+                <td><code>exec --json</code> (or App Server)</td>
+                <td><code>--sandbox read-only</code></td>
+                <td><code>--sandbox workspace-write</code></td>
+                <td><span class="badge-tag badge-green">exec resume ID</span></td>
+              </tr>
+              <tr>
+                <td><strong>Claude Code</strong></td>
+                <td><code>claude</code></td>
+                <td><code>-p --output-format stream-json</code></td>
+                <td><code>--permission-mode plan</code></td>
+                <td><code>--permission-mode acceptEdits</code></td>
+                <td><span class="badge-tag badge-green">--resume ID</span></td>
+              </tr>
+              <tr>
+                <td><strong>Qwen Code</strong></td>
+                <td><code>qwen</code></td>
+                <td><code>--output-format stream-json</code></td>
+                <td><code>--approval-mode plan</code></td>
+                <td><code>--approval-mode auto-edit</code></td>
+                <td><span class="badge-tag badge-green">--resume ID</span></td>
+              </tr>
+              <tr>
+                <td><strong>OpenCode</strong></td>
+                <td><code>opencode</code></td>
+                <td><code>run --format json</code></td>
+                <td><code>--agent plan</code></td>
+                <td><code>--auto</code> (permissions held)</td>
+                <td><span class="badge-tag badge-green">--session ID</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- Built-in MCP Tools Showcase -->
+    <section id="mcp" class="section">
+      <div class="container">
+        <div class="section-header">
+          <span class="section-tag" data-i18n="sec_mcp_tag">MODEL CONTEXT PROTOCOL</span>
+          <h2 class="section-title" data-i18n="sec_mcp_title">15Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform MCP Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform</h2>
+          <p class="section-desc" data-i18n="sec_mcp_desc">Claude Code, Cursor, AI Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform.</p>
+        </div>
+
+        <div class="mcp-grid">
+          <div class="mcp-tool-card">
+            <div class="mcp-tool-name">status & goal_show</div>
+            <p data-i18n="mcp_tool_1">Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform, Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform</p>
+          </div>
+          <div class="mcp-tool-card">
+            <div class="mcp-tool-name">backlog_list & edit</div>
+            <p data-i18n="mcp_tool_2">Enterprise Telemetry &amp; System Platform(0~100), Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform(APPROVED/BLOCKED) Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform</p>
+          </div>
+          <div class="mcp-tool-card">
+            <div class="mcp-tool-name">verify_gate_add</div>
+            <p data-i18n="mcp_tool_3">CLI Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform</p>
+          </div>
+          <div class="mcp-tool-card">
+            <div class="mcp-tool-name">approval_request & approve</div>
+            <p data-i18n="mcp_tool_4">Protected-files, merge-branch, publish-branchEnterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform</p>
+          </div>
+          <div class="mcp-tool-card">
+            <div class="mcp-tool-name">usage_report</div>
+            <p data-i18n="mcp_tool_5">Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform, Enterprise Telemetry &amp; System Platform ledger Enterprise Telemetry &amp; System Platform Quota Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform</p>
+          </div>
+          <div class="mcp-tool-card">
+            <div class="mcp-tool-name">continue_enqueue & replay</div>
+            <p data-i18n="mcp_tool_6">Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platforming Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- CLI & Workflow Reference -->
+    <section id="cli" class="section">
+      <div class="container">
+        <div class="section-header">
+          <span class="section-tag" data-i18n="sec_cli_tag">CLI COMMANDS & WORKFLOW</span>
+          <h2 class="section-title" data-i18n="sec_cli_title">Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform</h2>
+          <p class="section-desc" data-i18n="sec_cli_desc">GoalForge CLIEnterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform, Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform</p>
+        </div>
+
+        <div class="cli-grid">
+          <div class="cli-card">
+            <div class="cli-card-header">
+              <span class="cli-step-badge">STEP 1</span>
+              <h3 data-i18n="cli_1_title">1. Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform</h3>
+            </div>
+            <pre class="cli-code"><code><span class="term-comment"># Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform (Git, CLI, Enterprise Telemetry &amp; System Platform)</span>
+goalforge doctor
+
+<span class="term-comment"># Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform (Enterprise Telemetry &amp; System Platform, Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform)</span>
+goalforge project init --name demo \
+  --provider claude --model haiku \
+  --worktrees --auto-commit \
+  --fallback-model sonnet</code></pre>
+          </div>
+
+          <div class="cli-card">
+            <div class="cli-card-header">
+              <span class="cli-step-badge">STEP 2</span>
+              <h3 data-i18n="cli_2_title">2. Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform</h3>
+            </div>
+            <pre class="cli-code"><code><span class="term-comment"># Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform</span>
+goalforge goal set --title "Ship API" \
+  --objective "Implement REST endpoint" \
+  --criterion build_passed=true
+
+<span class="term-comment"># Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform</span>
+goalforge verify gate add \
+  --type build_passed \
+  --command-json '["go","test","./..."]'</code></pre>
+          </div>
+
+          <div class="cli-card">
+            <div class="cli-card-header">
+              <span class="cli-step-badge">STEP 3</span>
+              <h3 data-i18n="cli_3_title">3. Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Discovery & Enterprise Telemetry &amp; System Platform</h3>
+            </div>
+            <pre class="cli-code"><code><span class="term-comment"># Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform & Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform</span>
+goalforge audit
+goalforge ideas
+
+<span class="term-comment"># Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform (QuotaEnterprise Telemetry &amp; System Platform)</span>
+goalforge run --until-quota --max-runs 50
+goalforge worker --once</code></pre>
+          </div>
+
+          <div class="cli-card">
+            <div class="cli-card-header">
+              <span class="cli-step-badge">STEP 4</span>
+              <h3 data-i18n="cli_4_title">4. Enterprise Telemetry &amp; System Platform, Enterprise Telemetry &amp; System Platform & Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform</h3>
+            </div>
+            <pre class="cli-code"><code><span class="term-comment"># Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform</span>
+goalforge approval request \
+  --action merge-branch --reason "Gate passed"
+
+<span class="term-comment"># Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform</span>
+goalforge merge --work-item WORK-101
+goalforge rollback --work-item WORK-101</code></pre>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Product Roadmap Section (Short-Term & Mid-Term Plans) -->
+    <section id="roadmap" class="section">
+      <div class="container">
+        <div class="section-header">
+          <span class="section-tag" data-i18n="sec_roadmap_tag">DEVELOPMENT ROADMAP</span>
+          <h2 class="section-title" data-i18n="sec_roadmap_title">GoalForge Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform (Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform)</h2>
+          <p class="section-desc" data-i18n="sec_roadmap_desc">Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform</p>
+        </div>
+
+        <div class="roadmap-grid">
+          <!-- Short-Term Roadmap Card -->
+          <div class="roadmap-card short-term">
+            <div class="roadmap-badge-header">
+              <span class="roadmap-pill badge-short" data-i18n="roadmap_short_tag">Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform (Short-Term Plan) — 2026 Q3~Q4</span>
+            </div>
+            <h3 class="roadmap-card-title" data-i18n="roadmap_short_title">Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform & Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform</h3>
+            <p class="roadmap-card-desc" data-i18n="roadmap_short_desc">Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform</p>
+
+            <ul class="roadmap-milestones">
+              <li class="milestone-item">
+                <div class="milestone-icon">🐘</div>
+                <div>
+                  <div class="milestone-header-row">
+                    <h4 data-i18n="m_short_1_t">PostgreSQL Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform</h4>
+                    <span class="milestone-status status-active">IN PROGRESS</span>
+                  </div>
+                  <p data-i18n="m_short_1_d">SQLite Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform PostgreSQL <code>SKIP LOCKED</code> Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform.</p>
+                </div>
+              </li>
+
+              <li class="milestone-item">
+                <div class="milestone-icon">📈</div>
+                <div>
+                  <div class="milestone-header-row">
+                    <h4 data-i18n="m_short_2_t">Enterprise Telemetry &amp; System Platform UI Enterprise Telemetry &amp; System Platform & Enterprise Telemetry &amp; System Platform SSE Enterprise Telemetry &amp; System Platform</h4>
+                    <span class="milestone-status status-done">SHIPPED v0.2.0</span>
+                  </div>
+                  <p data-i18n="m_short_2_d">Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform, Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform(Flamegraph), Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Prometheus <code>/metrics</code> Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform.</p>
+                </div>
+              </li>
+
+              <li class="milestone-item">
+                <div class="milestone-icon">🤖</div>
+                <div>
+                  <div class="milestone-header-row">
+                    <h4 data-i18n="m_short_3_t">Gemini CLI / DeepSeek / Ollama Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform</h4>
+                    <span class="milestone-status status-active">IN PROGRESS</span>
+                  </div>
+                  <p data-i18n="m_short_3_d">Google Gemini CLI, DeepSeek Coder, Enterprise Telemetry &amp; System Platform Ollama/vLLM Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform.</p>
+                </div>
+              </li>
+
+              <li class="milestone-item">
+                <div class="milestone-icon">⚙️</div>
+                <div>
+                  <div class="milestone-header-row">
+                    <h4 data-i18n="m_short_4_t">GitHub Actions & CI/CD Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform</h4>
+                    <span class="milestone-status status-active">IN PROGRESS</span>
+                  </div>
+                  <p data-i18n="m_short_4_d">CI/CD Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform GoalForgeEnterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform GitHub Action Enterprise Telemetry &amp; System Platform.</p>
+                </div>
+              </li>
+            </ul>
+          </div>
+
+          <!-- Mid-Term Roadmap Card -->
+          <div class="roadmap-card mid-term">
+            <div class="roadmap-badge-header">
+              <span class="roadmap-pill badge-mid" data-i18n="roadmap_mid_tag">Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform (Mid-Term Plan) — 2027 H1~H2</span>
+            </div>
+            <h3 class="roadmap-card-title" data-i18n="roadmap_mid_title">Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform & Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform</h3>
+            <p class="roadmap-card-desc" data-i18n="roadmap_mid_desc">Enterprise Telemetry &amp; System Platform AI Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform(Swarm) Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform/SaaS Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform</p>
+
+            <ul class="roadmap-milestones">
+              <li class="milestone-item">
+                <div class="milestone-icon">🐝</div>
+                <div>
+                  <div class="milestone-header-row">
+                    <h4 data-i18n="m_mid_1_t">Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform (Multi-Agent Swarm)</h4>
+                    <span class="milestone-status status-planned">PLANNED</span>
+                  </div>
+                  <p data-i18n="m_mid_1_d">Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform, QA Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform, Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform.</p>
+                </div>
+              </li>
+
+              <li class="milestone-item">
+                <div class="milestone-icon">🩹</div>
+                <div>
+                  <div class="milestone-header-row">
+                    <h4 data-i18n="m_mid_2_t">Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform (Self-Healing Gate)</h4>
+                    <span class="milestone-status status-planned">PLANNED</span>
+                  </div>
+                  <p data-i18n="m_mid_2_d">Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform(go test, Enterprise Telemetry &amp; System Platform) Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform 1Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform.</p>
+                </div>
+              </li>
+
+              <li class="milestone-item">
+                <div class="milestone-icon">🛡️</div>
+                <div>
+                  <div class="milestone-header-row">
+                    <h4 data-i18n="m_mid_3_t">Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform & Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform</h4>
+                    <span class="milestone-status status-planned">PLANNED</span>
+                  </div>
+                  <p data-i18n="m_mid_3_d">RBAC Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform, SAML/SSO Enterprise Telemetry &amp; System Platform, Enterprise Telemetry &amp; System Platform(Air-gapped) LLM Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform SOC2/ISO Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform.</p>
+                </div>
+              </li>
+
+              <li class="milestone-item">
+                <div class="milestone-icon">☁️</div>
+                <div>
+                  <div class="milestone-header-row">
+                    <h4 data-i18n="m_mid_4_t">GoalForge Cloud SaaS Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform</h4>
+                    <span class="milestone-status status-planned">PLANNED</span>
+                  </div>
+                  <p data-i18n="m_mid_4_d">Enterprise Telemetry &amp; System Platform/Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform, Enterprise Telemetry &amp; System Platformized Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform.</p>
+                </div>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- FAQ & AEO Accordion Section -->
+    <section id="faq" class="section">
+      <div class="container">
+        <div class="section-header">
+          <span class="section-tag" data-i18n="sec_faq_tag">FAQ & AEO</span>
+          <h2 class="section-title" data-i18n="sec_faq_title">Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform</h2>
+          <p class="section-desc" data-i18n="sec_faq_desc">GoalForgeEnterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform</p>
+        </div>
+
+        <div class="faq-list">
+          <div class="faq-item active">
+            <button class="faq-question">
+              <span data-i18n="faq_1_q">Q1. GoalForgeEnterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform?</span>
+              <span class="faq-icon">+</span>
+            </button>
+            <div class="faq-answer" data-i18n="faq_1_a">
+              GoalForgeEnterprise Telemetry &amp; System Platform AI Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform(Codex, Claude Code, Qwen Code, OpenCode)Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform(Goal-First) Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform. AI Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform, Go Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform, Enterprise Telemetry &amp; System Platform, Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform, Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform.
+            </div>
+          </div>
+
+          <div class="faq-item">
+            <button class="faq-question">
+              <span data-i18n="faq_2_q">Q2. Enterprise Telemetry &amp; System Platform AI Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform(Claude Code, Cursor Enterprise Telemetry &amp; System Platform)Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform?</span>
+              <span class="faq-icon">+</span>
+            </button>
+            <div class="faq-answer" data-i18n="faq_2_a">
+              Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform. Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform, Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform, Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform. GoalForgeEnterprise Telemetry &amp; System Platform AIEnterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform 'Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform'Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform, Go Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform(`go test`, Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform)Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform.
+            </div>
+          </div>
+
+          <div class="faq-item">
+            <button class="faq-question">
+              <span data-i18n="faq_3_q">Q3. Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform(Verification Gate)Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform?</span>
+              <span class="faq-icon">+</span>
+            </button>
+            <div class="faq-answer" data-i18n="faq_3_a">
+              GoalForge CLIEnterprise Telemetry &amp; System Platform `goalforge verify gate add --type build_passed --command-json '["go","test","./..."]'`Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform. AI Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform, Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform 100% Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform(DONE)Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Git Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform.
+            </div>
+          </div>
+
+          <div class="faq-item">
+            <button class="faq-question">
+              <span data-i18n="faq_4_q">Q4. GoalForge MCP Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform?</span>
+              <span class="faq-icon">+</span>
+            </button>
+            <div class="faq-answer" data-i18n="faq_4_a">
+              GoalForgeEnterprise Telemetry &amp; System Platform `goalforge mcp` Enterprise Telemetry &amp; System Platform stdio Enterprise Telemetry &amp; System Platform Streamable HTTP(POST /mcp) Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform. 15Enterprise Telemetry &amp; System Platform MCP Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Claude Code, Cursor Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform MCP Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform, Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform, Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform, Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform.
+            </div>
+          </div>
+
+          <div class="faq-item">
+            <button class="faq-question">
+              <span data-i18n="faq_5_q">Q5. API Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform?</span>
+              <span class="faq-icon">+</span>
+            </button>
+            <div class="faq-answer" data-i18n="faq_5_a">
+              GoalForgeEnterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform ledgerEnterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Quota Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform. Quota Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Git/Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform `WAITING_QUOTA` Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform, Quota Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform `worker`Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform.
+            </div>
+          </div>
+
+          <div class="faq-item">
+            <button class="faq-question">
+              <span data-i18n="faq_6_q">Q6. GoalForgeEnterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform?</span>
+              <span class="faq-icon">+</span>
+            </button>
+            <div class="faq-answer" data-i18n="faq_6_a">
+              GoalForgeEnterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform(2026 Q3~Q4) PostgreSQL Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform, Enterprise Telemetry &amp; System Platform UI Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform, Gemini/DeepSeek/Ollama Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform GitHub Actions Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform, Enterprise Telemetry &amp; System Platform(2027 H1~H2) Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform, Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform, Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Managed Cloud SaaS Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform.
+            </div>
+          </div>
+
+          <div class="faq-item">
+            <button class="faq-question">
+              <span data-i18n="faq_7_q">Q7. Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform(Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform)Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform?</span>
+              <span class="faq-icon">+</span>
+            </button>
+            <div class="faq-answer" data-i18n="faq_7_a">
+              GoalForgeEnterprise Telemetry &amp; System Platform execution Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform `.env`, SSH Enterprise Telemetry &amp; System Platform, Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform SHA-256 Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform. AI Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform/Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform runEnterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform, `GOALFORGE_AUDIT_KEY`Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform AES-GCMEnterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform.
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Footer -->
+  <footer class="site-footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <div class="brand-logo">
+            <div class="logo-icon">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
+              </svg>
+            </div>
+            <div class="logo-text">Goal<span>Forge</span></div>
+          </div>
+          <p data-i18n="footer_desc">GoalForgeEnterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform AIEnterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform.</p>
+        </div>
+
+        <div>
+          <h4 class="footer-title" data-i18n="footer_links_title">Enterprise Telemetry &amp; System Platform</h4>
+          <ul class="footer-links">
+            <li><a href="#features" data-i18n="nav_features">Features</a></li>
+            <li><a href="#deepdive" data-i18n="nav_deepdive">Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform</a></li>
+            <li><a href="#architecture" data-i18n="nav_arch">Architecture</a></li>
+            <li><a href="#providers" data-i18n="nav_providers">Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform</a></li>
+            <li><a href="#cli" data-i18n="nav_cli">CLI Enterprise Telemetry &amp; System Platform</a></li>
+            <li><a href="#roadmap" data-i18n="nav_roadmap">Enterprise Telemetry &amp; System Platform</a></li>
+            <li><a href="#faq" data-i18n="nav_faq">FAQ</a></li>
+          </ul>
+        </div>
+
+        <div>
+          <h4 class="footer-title" data-i18n="footer_legal_title">Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform</h4>
+          <ul class="footer-links">
+            <li><a href="https://github.com/hkjang/goalforge" target="_blank" rel="noopener noreferrer">GitHub Open Source</a></li>
+            <li><a href="https://github.com/hkjang/goalforge/blob/main/README.md" target="_blank" rel="noopener noreferrer">Command Reference</a></li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        <div>© 2026 GoalForge. All rights reserved.</div>
+        
+        <!-- User Requested Small Email Inquiry Contact Box -->
+        <div class="email-contact-box">
+          <span data-i18n="email_contact_text">Enterprise Telemetry &amp; System Platform Enterprise Telemetry &amp; System Platform:</span>
+          <a href="mailto:gagagiga@naver.com">gagagiga@naver.com</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Toast Notification -->
+  <div id="toast" class="toast" role="alert" aria-live="polite">✓ Copied to clipboard!</div>
+
+  <!-- JavaScript -->
+  <script src="script.js"></script>
+<script>document.addEventListener("DOMContentLoaded", function() { if(typeof setLanguage === "function") setLanguage("en"); });</script>
+</body>
+</html>

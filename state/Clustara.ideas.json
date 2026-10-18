@@ -1,101 +1,13 @@
 [
-  {
-    "title": "RCA API의 인벤토리 조회를 분석 대상 Kind로 한정하고 창 포화를 보고",
-    "value": 3,
-    "risk": 2,
-    "size": "S",
-    "status": "done",
-    "note": "구현 완료 (20a0165). handleK8sRCA 의 조회를 analyzer.RCARelevantKinds() + Limit rcaScanBudget+1 로 좁히고 capacity·security 와 같은 키의 scan{status,resources,reason} 을 응답에 추가. 예산은 기존 상한 그대로 1000. candidates·count·note 키와 UI, events 500·revisions 1000·metrics 4000 가드는 불변. 신규 HTTP JSON 테스트 2개(admin_k8s_rca_scope_test.go)로 빨강→초록 확인, Kinds 한 줄 제거로 인과 재확인.",
-    "updated": "2026-10-16"
-  },
-  {
-    "title": "용량 API 메트릭 조회 오류를 정상 무표본 응답과 구별해 표시",
-    "value": 3,
-    "risk": 2,
-    "size": "S",
-    "status": "pending",
-    "note": "이번 차선. admin_k8s.go 의 metrics, _ := ListK8sMetricSamples 가 오류를 버려 DB 고장이 '표본 없음'과 같은 200. v0.9.300 이 만든 scan 블록에 metrics_error 자리가 이미 있다. 같은 패턴의 metrics, _ := 가 cost/finops/pods/dw 등 10곳 이상 — 용량 하나만. 오류 주입은 두 번째 커넥션에서 해당 테이블 DROP 하는 기존 레시피 사용 가능.",
-    "updated": "2026-10-16"
-  },
-  {
-    "title": "/admin/k8s/connectivity 의 Kind 미필터 인벤토리 창",
-    "value": 2,
-    "risk": 2,
-    "size": "M",
-    "status": "pending",
-    "note": "handleK8sConnectivity(admin_k8s.go:702) 가 Kinds 없이 Limit 2000 으로 조회 — 이번 회차에 코드로 재확인. capacity·security·rca 가 같은 패턴으로 처리됐으니 남은 미필터 핸들러. 해당 분석(연결성)이 읽는 Kind 목록 확정이 선행이고, 좁히기가 과도하면 findings 가 조용히 사라진다. 엔드포인트 하나씩.",
-    "updated": "2026-10-16"
-  },
-  {
-    "title": "/admin/k8s/home 의 failure_candidates 도 Kind 미필터 인벤토리 조회인지 확인",
-    "value": 2,
-    "risk": 2,
-    "size": "M",
-    "status": "pending",
-    "note": "admin_k8s_home.go:161 이 failure_candidates 를 내보내고 UI 가 KPI로 렌더(admin_ui.go:10401). 조회 범위는 이번에도 미확인. RCA 와 같은 결함 유형이면 같은 패턴으로 처리 가능하되 home 은 여러 분석을 합치므로 Kind 합집합 확정이 선행.",
-    "updated": "2026-10-16"
-  },
-  {
-    "title": "/admin/k8s/inventory 의 실효 조회 상한·창 포화 미표시",
-    "value": 2,
-    "risk": 1,
-    "size": "S",
-    "status": "pending",
-    "note": "store/k8s.go boundedLimit(f.Limit, 200, 10000). events GET 패턴(v0.9.296)은 구현됨. 7회 연속 차선으로 밀림 — 운영자 지시에 따라 1순위 금지.",
-    "updated": "2026-10-16"
-  },
-  {
-    "title": "quiet 경로가 감사 기록(auditAdmin)을 남기지 않음",
-    "value": 2,
-    "risk": 2,
-    "size": "S",
-    "status": "pending",
-    "note": "이번 미재확인(알림 경로 연속 변경 후 냉각 유지). v0.9.298 로 window 가 quiet 판정 위로 올라가 감사 맵 조립은 쉬워진 상태.",
-    "updated": "2026-10-16"
-  },
-  {
-    "title": "팬아웃 notify 스캔에서 한 클러스터의 인벤토리 조회 오류가 500으로 전 함대 스캔을 중단",
-    "value": 3,
-    "risk": 2,
-    "size": "M",
-    "status": "pending",
-    "note": "이번 미재확인. events/revisions 는 기록하고 계속 도는데 인벤토리만 500 인 계약 불일치. 부분 성공과 sent 의미 정의가 선행.",
-    "updated": "2026-10-16"
-  },
-  {
-    "title": "events·revisions 스토어 상한이 나머지 호출자 요청을 조용히 깎는 계약 불일치",
-    "value": 4,
-    "risk": 3,
-    "size": "L",
-    "status": "pending",
-    "note": "store/k8s.go boundedLimit(f.Limit, 100, 500). events GET 만 v0.9.296 에서 완료. L 이므로 엔드포인트 하나씩 슬라이스로만. RCA 핸들러의 ListK8sEvents(..., 500) 도 여기 포함 — 이번 회차는 명시적으로 범위 밖에 뒀다.",
-    "updated": "2026-10-16"
-  },
-  {
-    "title": "PSS Baseline/Restricted 의 volume 타입 화이트리스트 미검사",
-    "value": 2,
-    "risk": 3,
-    "size": "M",
-    "status": "pending",
-    "note": "이번 미재확인. security.go:classifyPodSecurity volumes 루프가 hostPath 만 검사. 정책 Deny 파급으로 위험 3 유지. ScorePodSecurity 와 계약 통합 금지.",
-    "updated": "2026-10-16"
-  },
-  {
-    "title": "취약점 import 가 파싱 못 한 아티팩트를 '취약점 0건 완료' 로 저장",
-    "value": 2,
-    "risk": 2,
-    "size": "S",
-    "status": "pending",
-    "note": "이번 미재확인. ReplaceK8sImageVulnerabilitiesForDigest 덮어쓰기 파급과 삭제 범위 미확인이라 보류 유지.",
-    "updated": "2026-10-16"
-  },
-  {
-    "title": "SEC-02 rbac-secret-access 가 resourceNames 한정 Role 도 high 로 센다",
-    "value": 2,
-    "risk": 2,
-    "size": "S",
-    "status": "pending",
-    "note": "자동 하향 금지(정당성 미확인). 증거 문구 개선만 검토 가능.",
-    "updated": "2026-10-16"
-  }
+  {"title": "용량 API 메트릭 조회 오류를 정상 무표본 응답과 구별해 표시", "value": 3, "risk": 2, "size": "S", "status": "done", "note": "구현 완료(195f2c4). scan.metrics_error + reason 추가, 창 포화 reason 과 이어붙임, 용량 화면에 공유 scanNotice 배선. 실패 재현은 두 번째 커넥션에서 DROP TABLE k8s_metrics_samples.", "updated": "2026-10-18"},
+  {"title": "나머지 metrics, _ := 오류 폐기 (cost·finops·pods·dw·graph·incident 등 10곳)", "value": 3, "risk": 2, "size": "M", "status": "pending", "note": "용량과 같은 결함 유형이지만 엔드포인트마다 메트릭이 어떤 출력에 기여하는지가 달라 공통 처리 금지 — 하나씩. 용량이 만든 scan.metrics_error 키 이름을 선례로 쓸 수 있다. admin_k8s_cost.go:201/266, admin_finops.go:141, admin_k8s_pods.go:385/479/1127, admin_k8s_dw.go:297, admin_k8s_graph.go:37, admin_k8s_incident.go:84, admin_k8s_resource_advisor.go:42, admin_k8s_service_reconcile.go:116.", "updated": "2026-10-18"},
+  {"title": "/admin/k8s/connectivity 의 Kind 미필터 인벤토리 창", "value": 2, "risk": 2, "size": "M", "status": "pending", "note": "handleK8sConnectivity(admin_k8s.go:720 부근)가 Kinds 없이 조회 — capacity·security·rca 가 같은 패턴으로 처리됐으니 남은 미필터 핸들러. 연결성 분석이 읽는 Kind 목록 확정이 선행이고, 좁히기가 과도하면 findings 가 조용히 사라진다.", "updated": "2026-10-18"},
+  {"title": "/admin/k8s/home 의 failure_candidates 도 Kind 미필터 조회인지 확인", "value": 2, "risk": 2, "size": "M", "status": "pending", "note": "admin_k8s_home.go:161 이 failure_candidates 를 내보내고 UI 가 KPI로 렌더(admin_ui.go). 조회 범위는 이번에도 미확인. home 은 여러 분석을 합치므로 Kind 합집합 확정이 선행.", "updated": "2026-10-18"},
+  {"title": "/admin/k8s/inventory 의 실효 조회 상한·창 포화 미표시", "value": 2, "risk": 1, "size": "S", "status": "pending", "note": "store/k8s.go boundedLimit(f.Limit, 200, 10000). events GET 패턴(v0.9.296)은 구현됨. 8회 연속 차선으로 밀림 — 운영자 지시에 따라 1순위 금지.", "updated": "2026-10-18"},
+  {"title": "quiet 경로가 감사 기록(auditAdmin)을 남기지 않음", "value": 2, "risk": 2, "size": "S", "status": "pending", "note": "이번 미재확인(알림 경로 연속 변경 후 냉각 유지). v0.9.298 로 window 가 quiet 판정 위로 올라가 감사 맵 조립은 쉬워진 상태.", "updated": "2026-10-18"},
+  {"title": "팬아웃 notify 스캔에서 한 클러스터의 인벤토리 조회 오류가 500으로 전 함대 스캔을 중단", "value": 3, "risk": 2, "size": "M", "status": "pending", "note": "이번 미재확인. events/revisions 는 기록하고 계속 도는데 인벤토리만 500 인 계약 불일치. 부분 성공과 sent 의미 정의가 선행.", "updated": "2026-10-18"},
+  {"title": "events·revisions 스토어 상한이 나머지 호출자 요청을 조용히 깎는 계약 불일치", "value": 4, "risk": 3, "size": "L", "status": "pending", "note": "store/k8s.go boundedLimit(f.Limit, 100, 500). events GET 만 v0.9.296 에서 완료. L 이므로 엔드포인트 하나씩 슬라이스로만. RCA 핸들러의 ListK8sEvents(..., 500) 도 여기 포함.", "updated": "2026-10-18"},
+  {"title": "PSS Baseline/Restricted 의 volume 타입 화이트리스트 미검사", "value": 2, "risk": 3, "size": "M", "status": "pending", "note": "이번 미재확인. security.go:classifyPodSecurity volumes 루프가 hostPath 만 검사. 정책 Deny 파급으로 위험 3 유지. ScorePodSecurity 와 계약 통합 금지.", "updated": "2026-10-18"},
+  {"title": "취약점 import 가 파싱 못 한 아티팩트를 '취약점 0건 완료' 로 저장", "value": 2, "risk": 2, "size": "S", "status": "pending", "note": "이번 미재확인. ReplaceK8sImageVulnerabilitiesForDigest 덮어쓰기 파급과 삭제 범위 미확인이라 보류 유지.", "updated": "2026-10-18"},
+  {"title": "SEC-02 rbac-secret-access 가 resourceNames 한정 Role 도 high 로 센다", "value": 2, "risk": 2, "size": "S", "status": "pending", "note": "자동 하향 금지(정당성 미확인). 증거 문구 개선만 검토 가능.", "updated": "2026-10-18"}
 ]

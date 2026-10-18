@@ -1,0 +1,44 @@
+# Kkiit 프로필 (2026-10-18)
+- 목적: 사람·기업·AI Agent 의 전문 서비스를 주문·납품·구매확정·정산으로 연결하는, 오프라인 운영 가능한 마켓플레이스.
+- 기준: pinned main@b224162 (v0.4.18). 작업 트리 깨끗함. `web/node_modules` 는 **없음** — npm 명령 전에 `npm --prefix web ci` 가 필요하다. 이 워크트리의 `node --version` 은 v22.23.1 (README 는 24+ 요구).
+- 스택: Go 1.26, net/http, pgx/v5, PostgreSQL 16+; React 19 + TypeScript 5.9 + MUI 7 + Vite 8; 웹 번들은 Go embed(internal/ui/dist).
+- 구조:
+  - cmd/kkiit: 프로세스·HTTP 서버·워커 시작과 종료(drain→HTTP Shutdown→dispatcher 대기). Server 타임아웃·MaxHeaderBytes 가 여기 있다.
+  - internal/httpapi: 도메인 핸들러. router.go 가 라우트 정본, types.go 에 decodeJSON(2MB·DisallowUnknownFields)·writeError·권한 헬퍼. integration_test.go·mail_integration_test.go 가 실제 DB 통합 테스트.
+  - internal/httpapi/orders.go: createOrder 가 상품/패키지/옵션 가격을 합산해 쿠폰·예산·원장까지 한 트랜잭션에 쓴다. 가장 위험한 파일.
+  - internal/httpapi/coupons.go: computeDiscount(순수 산식)·resolveCoupon·previewCoupon·orderAmount·addSelectedOptions. v0.4.17 에서 미리보기가 옵션 금액을 합산하도록 고쳐 주문과 맞춰 두었다.
+  - internal/httpapi/talents.go: getTalent 이 v0.4.18 에서 패키지·옵션 노출을 `(active OR 소유자 OR orders.manage)` 로 가른다. saveTalent 는 talent_options 를 통째로 DELETE 후 재삽입한다.
+  - internal/database/migrations: 번호 SQL, 시작 시 advisory lock 안에서 자동 적용.
+  - internal/worker: Outbox·알림·웹훅·위험·정산·신뢰 점수 배경 처리.
+  - internal/config·cryptox·password, internal/analytics·mail·netguard: 설정·비밀·비밀번호, 방문 추적·SMTP·웹훅 주소 정책.
+  - web/src: React UI. pages/TalentPage.tsx 가 주문 구성·옵션 선택·쿠폰 적용 화면(한 줄에 여러 문장을 몰아 쓰는 조밀한 스타일), pages/AdminPage.tsx 가 관리자 기능. 순수 로직은 `silentSso.ts` + `silentSso.test.ts` 처럼 `.ts` 모듈로 떼어 낸다.
+  - docs: USER_GUIDE/ADMIN_GUIDE(md·pdf), architecture.md, mcp.md, openapi.yaml.
+- 빌드·테스트:
+  - `go test ./cmd/... ./internal/...` — DSN 없으면 통합 테스트 SKIP. 통합 포함 시 httpapi 82~93초.
+  - `make test-integration KKIIT_TEST_DSN=postgres://…` — 폐기 전용 DB 필수, timeout 300s(오래 걸림).
+  - `go vet ./cmd/... ./internal/...`, `gofmt -l cmd internal`, `git diff --check`.
+  - `npm --prefix web test` — **`node --test "src/**/*.test.ts"` 뿐이다. 프레임워크·jsdom 없음**; Node 의 타입 스트리핑으로 `.ts` 만 돌고 `.tsx`(JSX)는 못 돈다 → React 컴포넌트 테스트 수단이 아예 없다. 테스트는 `./module.ts` 처럼 확장자를 붙여 import 한다.
+  - `npm --prefix web run lint`(eslint . --max-warnings=0) / `run build`(tsc -b && vite build).
+  - `make check`(Go 포맷/test/vet + npm ci/lint/test/build), `make build`. 둘 다 추적 중인 dist 를 바꿀 수 있다.
+- 관례: 커밋은 `fix:`/`feat:`/`chore:`/`docs:` + 한국어 설명, 릴리스는 `Kkiit vX.Y.Z — 한국어 요약`. 코드 주석은 "왜" 를 서술형 영어로 길게 적는다.
+  - 오류는 `writeError(status, code, 한국어 메시지)`; 프런트가 `error.message` 를 그대로 띄우므로 서버 문구 변경만으로 UI 가 바뀐다.
+  - 필수 환경변수 POSTGRES_DSN/BOOTSTRAP_ADMIN/BOOTSTRAP_ADMIN_PASSWORD/ENCRYPTION_KEY, 선택 SHUTDOWN_DRAIN_SECONDS(기본 5, 0~120 포함). 가변 운영 정책은 PostgreSQL system_settings JSONB. compose 는 .env 를 env_file 로 받는다.
+  - CLAUDE.md·AGENTS.md·roadmap/TODO 파일 없음. 코드에 TODO/FIXME 없음.
+- 위험 구역: httpapi/auth.go·middleware.go·identity.go(인증/RBAC), orders.go·finance.go(원장 금액·정산), coupons.go 의 computeDiscount/resolveCoupon(금액 산식), database/migrations(번호 충돌), .github/workflows/release.yml(배포).
+- 자주 깨지는 곳:
+  - **"같은 규칙" 을 주장하는 두 경로가 실제로 어긋난다** — 이 저장소의 지배적 결함 유형이다. 미리보기 vs 주문(v0.4.17), 구매자 vs 판매자 시야(v0.4.18), 그리고 리셋 호출을 한 군데 빼먹는 프런트 state(현재 TalentPage 패키지 select). 주석의 약속을 믿지 말고 양쪽을 직접 대조할 것.
+  - 금액 int64 오버플로: computeDiscount 퍼센트(v0.4.14)·createOrder 옵션 합산(v0.4.16)·addSelectedOptions(v0.4.17) 모두 가드 완료. 같은 과제를 다시 고르지 말 것.
+  - 옵션 조회 루프가 Scan 실패를 continue 하고 rows.Err 를 안 본다(orders.go:95-112, coupons.go:240-252 두 곳). 결과는 개수 불일치로 400 invalid_option 이라 금액 오염은 아니고 오류 문구만 부정확. 미해결.
+  - createOrder 의 `days += extraDays` → `AddDate` 에 상한 없음, 옵션 개수 제한도 없음(피해 작음).
+  - openapi_test.go 는 경로 집합만 비교한다(메서드·응답 코드 미검사) — 응답 코드 누락은 매 회차 사람 눈으로 찾고 있다. OpenAPI 3.0 에서 $ref 형제 키는 무시되므로 설명은 operation description 에 적을 것.
+  - ApprovalAdmin.save 가 알려진 조건 5개로 재구성해 모르는 조건을 잃는다(미해결). saveTalent 와 같은 "통째로 교체하는 저장" 유형.
+  - 요청 구조체 전체를 audit details 로 넘기는 10곳(미해결, 보존 정책 선행).
+- 검증 함정:
+  - integrationServer 는 실제 Handler·DB·Worker 와 `apiUnderTest` 전역을 공유 — `t.Parallel()` 금지. config 테스트도 환경변수를 다루므로 금지.
+  - `/coupons/preview` 에는 요청 제한이 있다(TestIntegrationCouponPreviewIsThrottled) — 반복 호출하면 429 로 흔들린다.
+  - client.do 의 map[string]any 숫자는 float64 — 큰 정수는 pool 로 int64 Scan 할 것. sellTalent 는 옵션을 등록하지 않으므로 옵션 id 는 DB 조회로 얻는다. `POST /talents` 응답은 `{id,status}` 뿐이다.
+  - 메일 digest 통합 테스트는 깨끗한 DB 에서도 간헐 실패 이력(원인 미확인, digest 창과 dispatcher 경합으로 보임). 같은 DB 재사용 시 더 자주 실패.
+  - **추적 중인 `internal/ui/dist` 가 `web/src` 보다 낡아 있다** — Dockerfile 이 이미지 빌드에서 소스로 다시 번들하므로 릴리스에는 영향 없지만, 커밋된 dist 를 믿고 읽으면 틀린다. 재생성하면 이전 회차들의 web/src 변경까지 끌고 들어오므로 선례(1783d3e, v0.4.17)대로 TypeScript 원본만 커밋한다.
+  - Node 20/22 가 npm PATH 에 끼어 테스트 0건이 되는 환경 문제를 저장소 결함으로 고치지 말 것.
+  - release.yml 은 v* 태그에서 Docker build/archive/Release 만 — make check 나 DB 통합 단계 없음.
+  - 스크린샷 스크립트는 시드·설정을 쓰므로 폐기 루프백 인스턴스에서만 실행.

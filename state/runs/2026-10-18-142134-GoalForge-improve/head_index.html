@@ -1,0 +1,873 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GoalForge | 개발자 주도 AI 개발 오케스트레이터</title>
+  <meta name="description" content="GoalForge는 Codex, Claude Code, Qwen, OpenCode 등 다양한 AI 모델을 관리하는 목표 중심 개발 오케스트레이터입니다. 결정론적 검증 게이트와 격리된 워크트리 환경에서 안전한 자동화를 실현하세요.">
+  <meta name="keywords" content="GoalForge, AI Orchestrator, AI Coding Agent, Claude Code, OpenAI Codex, Qwen Code, OpenCode, Model Context Protocol, MCP, Deterministic Verification, Go Developer Tools, AI 에이전트 오케스트레이터">
+  <meta name="author" content="hkjang">
+  <meta name="robots" content="index, follow">
+  <link rel="canonical" href="https://hkjang.github.io/goalforge/">
+
+  <!-- Open Graph / Facebook / Kakao -->
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://hkjang.github.io/goalforge/">
+  <meta property="og:site_name" content="GoalForge">
+  <meta property="og:title" content="GoalForge | 개발자 주도 AI 개발 오케스트레이터">
+  <meta property="og:description" content="AI는 실행 도구일 뿐, 프로젝트 주도권은 개발자가 쥔다. Codex, Claude Code, Qwen, OpenCode 통합 제어 및 결정론적 검증 오케스트레이션.">
+  <meta property="og:image" content="https://hkjang.github.io/goalforge/assets/og-image.jpg">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:locale" content="ko_KR">
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:url" content="https://hkjang.github.io/goalforge/">
+  <meta name="twitter:title" content="GoalForge | Goal-First AI Development Orchestrator">
+  <meta name="twitter:description" content="Goal-first software orchestrator for Codex, Claude Code, Qwen Code, and OpenCode. Deterministic verification gates & Git worktrees.">
+  <meta name="twitter:image" content="https://hkjang.github.io/goalforge/assets/og-image.jpg">
+
+  <!-- Web Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
+
+  <!-- CSS Stylesheet -->
+  <link rel="stylesheet" href="styles.css">
+
+  <!-- AEO & SEO Structured Data (JSON-LD) -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "SoftwareApplication",
+        "@id": "https://hkjang.github.io/goalforge/#software",
+        "name": "GoalForge",
+        "url": "https://hkjang.github.io/goalforge/",
+        "operatingSystem": "Linux, macOS, Windows",
+        "applicationCategory": "DeveloperApplication",
+        "description": "Goal-first software development orchestrator managing AI sessions (Codex, Claude Code, Qwen, OpenCode) with deterministic verification gates and Git worktree isolation.",
+        "softwareVersion": "1.0.0",
+        "author": {
+          "@type": "Organization",
+          "name": "GoalForge",
+          "url": "https://github.com/hkjang/goalforge"
+        }
+      },
+      {
+        "@type": "FAQPage",
+        "@id": "https://hkjang.github.io/goalforge/#faq",
+        "mainEntity": [
+          {
+            "@type": "Question",
+            "name": "GoalForge란 무엇인가요?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "GoalForge는 AI 코딩 에이전트(Codex, Claude Code, Qwen Code, OpenCode)를 통합 관리하는 목표 중심(Goal-First) 개발 오케스트레이터입니다. Go 기반 프로세스가 프로젝트 목표, 마일스톤, 검증 게이트, 토큰 예산을 결정론적으로 소유합니다."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "기존 AI 코딩 에이전트와 무엇이 다른가요?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "기존 AI 에이전트는 프롬프트 기반으로 메인 브랜치에 직접 개입하여 코드 오염 위험이 있습니다. GoalForge는 AI를 격리된 워크트리의 실행 도구로 활용하고, go test, 빌드 게이트를 통과한 검증 결과만 개발자의 승인을 거쳐 반영합니다."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "GoalForge가 지원하는 AI CLI 프로바이더는 무엇인가요?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "GoalForge는 OpenAI Codex (codex CLI), Anthropic Claude Code (claude CLI), Qwen Code (qwen CLI), OpenCode (opencode CLI)를 지원하며, 읽기 전용/쓰기 권한 매핑 및 자동 세션 복구(Resume) 기능을 제공합니다."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "GoalForge MCP 서버란 무엇인가요?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "GoalForge MCP 서버는 Model Context Protocol을 통해 Claude Code 및 AI 에디터와 대화형으로 연동되는 15가지 관리 및 제어 도구(상태 조회, 목표/백로그 수정, 승인 요청, 쿼터 리포트)를 제공합니다."
+            }
+          }
+        ]
+      }
+    ]
+  }
+  </script>
+<script id="auto-lang-detector">
+(function() {
+  var SAVED_KEY = 'user_lang_pref';
+  var userPref = localStorage.getItem(SAVED_KEY);
+  if (!userPref) {
+    var navLang = (navigator.language || (navigator.languages && navigator.languages[0]) || '').toLowerCase();
+    var isKoBrowser = navLang.indexOf('ko') === 0;
+    var isEnPage = window.location.pathname.indexOf('index_en.html') !== -1;
+    if (!isKoBrowser && !isEnPage) {
+      var target = window.location.href.replace(/index\.html$/, 'index_en.html');
+      if (target === window.location.href) target = 'index_en.html';
+      window.location.replace(target);
+    } else if (isKoBrowser && isEnPage) {
+      var target = window.location.href.replace(/index_en\.html$/, 'index.html');
+      if (target === window.location.href) target = 'index.html';
+      window.location.replace(target);
+    }
+  }
+
+  document.addEventListener('DOMContentLoaded', function() {
+    var langBtns = document.querySelectorAll('.lang-btn, [data-lang], #btn-ko, #btn-en, #localeToggle, #btn-lang-toggle');
+    langBtns.forEach(function(btn) {
+      btn.addEventListener('click', function() {
+        var lang = btn.getAttribute('data-lang') || (btn.textContent || '').trim().toLowerCase();
+        if (lang.indexOf('en') !== -1) {
+          localStorage.setItem(SAVED_KEY, 'en');
+        } else if (lang.indexOf('ko') !== -1 || lang.indexOf('한') !== -1) {
+          localStorage.setItem(SAVED_KEY, 'ko');
+        }
+      });
+    });
+  });
+})();
+</script>
+</head>
+<body>
+
+  <!-- Sticky Header Nav -->
+  <header class="site-header">
+    <div class="container nav-wrapper">
+      <a href="#" class="brand-logo" aria-label="GoalForge Home">
+        <div class="logo-icon">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
+          </svg>
+        </div>
+        <div class="logo-text">Goal<span>Forge</span></div>
+      </a>
+
+      <nav aria-label="Main Navigation">
+        <ul class="nav-links">
+          <li><a href="#features" class="nav-link" data-i18n="nav_features">주요 기능</a></li>
+          <li><a href="#architecture" class="nav-link" data-i18n="nav_arch">아키텍처</a></li>
+          <li><a href="#mcp" class="nav-link" data-i18n="nav_mcp">MCP & CLI</a></li>
+          <li><a href="#roadmap" class="nav-link" data-i18n="nav_roadmap">로드맵</a></li>
+          <li><a href="#faq" class="nav-link" data-i18n="nav_faq">FAQ</a></li>
+        </ul>
+      </nav>
+
+      <button id="mobile-menu-btn" class="mobile-menu-btn" aria-label="메뉴 열기/닫기">
+          <svg width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
+        </button>
+      <div class="nav-actions">
+        <!-- Language Switcher -->
+        <div class="lang-switch" role="group" aria-label="Language selection">
+          <button class="lang-btn active" data-lang="ko">한</button>
+          <button class="lang-btn" data-lang="en">EN</button>
+        </div>
+
+        <!-- GitHub Repo Link -->
+        <a href="https://github.com/hkjang/goalforge" target="_blank" rel="noopener noreferrer" class="btn-github" id="github-link">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/>
+          </svg>
+          <span>GitHub</span>
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <!-- Hero Section -->
+    <section class="hero">
+      <div class="container">
+        <div class="hero-badge">
+          <span data-i18n="badge_hero">✨ Go 기반 결정론적 AI 개발 오케스트레이터</span>
+        </div>
+
+        <h1 class="hero-title">
+          <span data-i18n="hero_title_1">AI는 실행 도구일 뿐,</span><br>
+          <span class="gradient-text" data-i18n="hero_title_2">프로젝트 주도권은 개발자가 쥔다</span>
+        </h1>
+
+        <p class="hero-subtitle" data-i18n="hero_subtitle">
+          Codex, Claude Code, Qwen, OpenCode를 개발자의 승인과 검증 게이트 아래 통합 통제. 멈추지 않는 목표 달성을 위한 최적의 오케스트레이션 엔진.
+        </p>
+
+        <div class="hero-cta-group">
+          <!-- One-click Install Copy -->
+          <div class="code-pill js-copy-code" data-copy-text="go install github.com/hkjang/goalforge/cmd/goalforge@latest" title="Copy install command">
+            <span>$ go install github.com/hkjang/goalforge/cmd/goalforge@latest</span>
+            <svg class="copy-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+              <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+            </svg>
+          </div>
+
+          <a href="https://github.com/hkjang/goalforge" target="_blank" rel="noopener noreferrer" class="btn-primary" data-i18n="btn_github">
+            GitHub 저장소
+          </a>
+        </div>
+
+        <!-- Terminal Interactive Simulator -->
+        <div class="terminal-window">
+          <div class="terminal-header">
+            <div class="terminal-dots">
+              <span class="dot red"></span>
+              <span class="dot yellow"></span>
+              <span class="dot green"></span>
+            </div>
+            <div class="terminal-title">goalforge-cli — bash (80x24)</div>
+            <div></div>
+          </div>
+
+          <div class="terminal-tabs">
+            <button class="tab-btn active" data-tab="init">1. Doctor & Init</button>
+            <button class="tab-btn" data-tab="goal">2. Goal & Gate</button>
+            <button class="tab-btn" data-tab="run">3. Autonomous Run</button>
+            <button class="tab-btn" data-tab="mcp">4. MCP Server</button>
+          </div>
+
+          <div class="terminal-body" id="terminal-body">
+            <span class="term-comment"># 1. 환경 진단 및 프로젝트 초기화</span>
+            <br><span class="term-cmd">$ goalforge doctor</span>
+            <br><span class="term-success">[OK] Git 2.42.0 detected</span>
+            <br><span class="term-success">[OK] Claude CLI (claude-code 1.2.0) verified</span>
+            <br><span class="term-success">[OK] Codex CLI (codex v0.8) verified</span>
+            <br><span class="term-info">[INF] All authentication and permissions passed</span>
+            <br>
+            <br><span class="term-cmd">$ goalforge project init --name demo --provider claude --model haiku --worktrees --auto-commit --fallback-model sonnet</span>
+            <br><span class="term-success">[OK] Initialized GoalForge project in .goalforge/goalforge.db</span>
+            <br><span class="term-info">[INF] Worktree isolation enabled, auto-commit trailer active</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Key Metrics Stats Bar -->
+    <section class="stats-bar">
+      <div class="container">
+        <div class="stats-grid">
+          <div>
+            <div class="stat-number">4 AI Models</div>
+            <div class="stat-label" data-i18n="stat_providers">4종 AI CLI 통합 지원</div>
+          </div>
+          <div>
+            <div class="stat-number">100%</div>
+            <div class="stat-label" data-i18n="stat_gates">100% 결정론적 검증</div>
+          </div>
+          <div>
+            <div class="stat-number">0 Direct Merges</div>
+            <div class="stat-label" data-i18n="stat_isolation">0건의 무단 메인 병합</div>
+          </div>
+          <div>
+            <div class="stat-number">15 Tools</div>
+            <div class="stat-label" data-i18n="stat_mcp">15개 빌트인 MCP 툴</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Core Features Grid -->
+    <section id="features" class="section">
+      <div class="container">
+        <div class="section-header">
+          <span class="section-tag" data-i18n="sec_features_tag">CORE ADVANTAGES</span>
+          <h2 class="section-title" data-i18n="sec_features_title">GoalForge를 선택해야 하는 이유</h2>
+          <p class="section-desc" data-i18n="sec_features_desc">환각과 통제 불능 코딩 에이전트의 시대는 끝났습니다. GoalForge가 개발자 중심 시스템 통제를 재정의합니다.</p>
+        </div>
+
+        <div class="features-grid">
+          <!-- Feature 1 -->
+          <article class="feature-card">
+            <div class="feature-icon">🎯</div>
+            <h3 class="feature-title" data-i18n="feat_1_title">목표 중심 오케스트레이션</h3>
+            <p class="feature-text" data-i18n="feat_1_desc">AI 세션이 아닌 Go 프로세스가 버전 관리되는 목표, 마일스톤, 작업 순서 및 검증 증거의 단일 진실 출처(Single Source of Truth)를 소유합니다.</p>
+          </article>
+
+          <!-- Feature 2 -->
+          <article class="feature-card">
+            <div class="feature-icon">🤖</div>
+            <h3 class="feature-title" data-i18n="feat_2_title">이종 AI 모델 통합 통제</h3>
+            <p class="feature-text" data-i18n="feat_2_desc">Codex, Claude Code, Qwen Code, OpenCode를 동일한 CLI 규격과 권한 매핑 정책 아래 유연하게 교체하고 실행할 수 있습니다.</p>
+          </article>
+
+          <!-- Feature 3 -->
+          <article class="feature-card">
+            <div class="feature-icon">🛡️</div>
+            <h3 class="feature-title" data-i18n="feat_3_title">결정론적 자동 검증 게이트</h3>
+            <p class="feature-text" data-i18n="feat_3_desc">`go test`, `go build` 및 사용자 정의 검증을 통과해야만 병합 및 발행 승인 요청을 생성합니다. 환각된 코드의 자동 릴리즈를 차단합니다.</p>
+          </article>
+
+          <!-- Feature 4 -->
+          <article class="feature-card">
+            <div class="feature-icon">🌴</div>
+            <h3 class="feature-title" data-i18n="feat_4_title">Git Worktree 안전격리</h3>
+            <p class="feature-text" data-i18n="feat_4_desc">AI 실행은 기본 브랜치가 아닌 격리된 Git 워크트리에서 일어납니다. 실패 시 메인 브랜치 오염 없이 즉시 롤백 및 작업 재시도가 가능합니다.</p>
+          </article>
+
+          <!-- Feature 5 -->
+          <article class="feature-card">
+            <div class="feature-icon">🔌</div>
+            <h3 class="feature-title" data-i18n="feat_5_title">빌트인 MCP 서버 지원</h3>
+            <p class="feature-text" data-i18n="feat_5_desc">stdio 및 Streamable HTTP(POST /mcp)를 통해 Claude Code 및 AI 에디터와 대화형으로 연동되는 15가지 관리 및 제어 도구를 제공합니다.</p>
+          </article>
+
+          <!-- Feature 6 -->
+          <article class="feature-card">
+            <div class="feature-icon">⚡</div>
+            <h3 class="feature-title" data-i18n="feat_6_title">예산 및 API 쿼터 자동 관리</h3>
+            <p class="feature-text" data-i18n="feat_6_desc">프로젝트 토큰/비용 예산과 프로바이더 쿼터를 독립 평가합니다. Quota 초과 시 자동 대기(WAITING_QUOTA) 및 복구 체크포인트를 기록합니다.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- Traditional Agent vs GoalForge Comparison -->
+    <section id="comparison" class="section">
+      <div class="container">
+        <div class="section-header">
+          <span class="section-tag" data-i18n="sec_comp_tag">PARADIGM SHIFT</span>
+          <h2 class="section-title" data-i18n="sec_comp_title">기존 AI 코딩 도구 vs GoalForge 오케스트레이터</h2>
+          <p class="section-desc" data-i18n="sec_comp_desc">자유도라는 이름 아래 발생하던 리스크를 완벽하게 통제된 엔지니어링 프로세스로 전환하세요.</p>
+        </div>
+
+        <div class="comparison-grid">
+          <div class="comparison-card card-raw">
+            <div class="comp-badge bad" data-i18n="comp_raw_badge">TRADITIONAL AI AGENTS</div>
+            <h3 data-i18n="comp_raw_title">기존 프롬프트 기반 코딩 에이전트</h3>
+            <ul class="comp-list">
+              <li><span class="cross">✕</span> <span data-i18n="comp_raw_1">메인 브랜치 직연결 수정으로 코드베이스 오염 리스크</span></li>
+              <li><span class="cross">✕</span> <span data-i18n="comp_raw_2">검증 없는 환각 커밋 및 반복 실패 시 무한 루프 비용 발생</span></li>
+              <li><span class="cross">✕</span> <span data-i18n="comp_raw_3">API Quota 초과 시 무한 폴링으로 계정 잠금 또는 오류 종료</span></li>
+              <li><span class="cross">✕</span> <span data-i18n="comp_raw_4">.env, 개인키 등 보안 파일 무단 변경을 사전 차단할 메커니즘 부재</span></li>
+            </ul>
+          </div>
+
+          <div class="comparison-card card-gf">
+            <div class="comp-badge good" data-i18n="comp_gf_badge">GOALFORGE ORCHESTRATOR</div>
+            <h3 data-i18n="comp_gf_title">GoalForge 통제형 오케스트레이터</h3>
+            <ul class="comp-list">
+              <li><span class="check">✓</span> <span data-i18n="comp_gf_1">격리된 Git 워크트리에서 일어나는 단일 임대 실행으로 메인 보호</span></li>
+              <li><span class="check">✓</span> <span data-i18n="comp_gf_2">go test, 빌드 게이트 100% 성공 시에만 승인 및 커밋 트레일러 기록</span></li>
+              <li><span class="check">✓</span> <span data-i18n="comp_gf_3">Quota 초과 시 무한 폴링 대신 체크포인트 보관 후 WAITING_QUOTA 자동 대기</span></li>
+              <li><span class="check">✓</span> <span data-i18n="comp_gf_4">SHA-256 핑거프린트 검증으로 비승인 보안 파일 변경 시 자동 롤백</span></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Technical Deep-Dive & Security Mechanisms -->
+    <section id="deepdive" class="section">
+      <div class="container">
+        <div class="section-header">
+          <span class="section-tag" data-i18n="sec_deepdive_tag">DEEP DIVE & SECURITY</span>
+          <h2 class="section-title" data-i18n="sec_deepdive_title">핵심 보안 및 제어 메커니즘</h2>
+          <p class="section-desc" data-i18n="sec_deepdive_desc">단순한 에이전트 호출을 넘어 코드베이스 오염 차단과 결정론적 안정을 보장하는 4대 차별화 기술</p>
+        </div>
+
+        <div class="features-grid">
+          <article class="feature-card">
+            <div class="feature-icon">🔒</div>
+            <h3 class="feature-title" data-i18n="deep_1_title">보호 파일 핑거프린팅 & 단일 임대</h3>
+            <p class="feature-text" data-i18n="deep_1_desc">`.env`, SSH 키, 보안 세팅 파일의 SHA-256 해시 기준선을 사전 기록합니다. AI의 무단 변경/삭제 시 변경사항을 즉시 롤백하고 실행을 차단합니다.</p>
+          </article>
+
+          <article class="feature-card">
+            <div class="feature-icon">🔄</div>
+            <h3 class="feature-title" data-i18n="deep_2_title">무한 루프 차단 & 중복 필터링</h3>
+            <p class="feature-text" data-i18n="deep_2_desc">`same_work`, `same_change`, `no_change`, `same_error` 신호를 실시간 추적합니다. 동일 오류 반복 시 자동으로 세션을 교체하거나 리뷰용으로 멈춥니다.</p>
+          </article>
+
+          <article class="feature-card">
+            <div class="feature-icon">⏳</div>
+            <h3 class="feature-title" data-i18n="deep_3_title">Quota 회복 및 체크포인트 복구</h3>
+            <p class="feature-text" data-i18n="deep_3_desc">API Rate Limit 초과 시 무한 폴링 대신 `continuity/<project>.md` 체크포인트를 남기고 `WAITING_QUOTA` 대기 후 리셋 시각에 자동 복구됩니다.</p>
+          </article>
+
+          <article class="feature-card">
+            <div class="feature-icon">🔐</div>
+            <h3 class="feature-title" data-i18n="deep_4_title">AES-GCM 암호화 감사 트레일</h3>
+            <p class="feature-text" data-i18n="deep_4_desc">`GOALFORGE_AUDIT_KEY` 설정 시 모든 AI 전송 프롬프트 원본을 AES 암호화하여 저장하며, Slack/웹훅 알림 시 민감 데이터를 자동 Redact 처리합니다.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- Architecture Visualizer -->
+    <section id="architecture" class="section">
+      <div class="container">
+        <div class="section-header">
+          <span class="section-tag" data-i18n="sec_arch_tag">SYSTEM ARCHITECTURE</span>
+          <h2 class="section-title" data-i18n="sec_arch_title">통제된 실행 파이프라인</h2>
+          <p class="section-desc" data-i18n="sec_arch_desc">개발자의 승인과 검증 정책을 통과하는 완벽한 4단계 라이프사이클</p>
+        </div>
+
+        <div class="arch-card">
+          <div class="arch-flow">
+            <div class="arch-node">
+              <div class="arch-node-title" data-i18n="arch_step_1_title">1. 목표 및 작업 등록</div>
+              <div class="arch-node-sub" data-i18n="arch_step_1_sub">개발자가 Goal, Gate, Work Scope 지정</div>
+            </div>
+
+            <div class="arch-arrow">➔</div>
+
+            <div class="arch-node">
+              <div class="arch-node-title" data-i18n="arch_step_2_title">2. 격리된 워크트리 세션</div>
+              <div class="arch-node-sub" data-i18n="arch_step_2_sub">Codex / Claude / Qwen / OpenCode 실행</div>
+            </div>
+
+            <div class="arch-arrow">➔</div>
+
+            <div class="arch-node">
+              <div class="arch-node-title" data-i18n="arch_step_3_title">3. 검증 게이트 자동 수행</div>
+              <div class="arch-node-sub" data-i18n="arch_step_3_sub">테스트, 빌드, 보안 검사 검증 완료</div>
+            </div>
+
+            <div class="arch-arrow">➔</div>
+
+            <div class="arch-node">
+              <div class="arch-node-title" data-i18n="arch_step_4_title">4. 승인 요청 & 최종 병합</div>
+              <div class="arch-node-sub" data-i18n="arch_step_4_sub">Goal-ID 트레일러 기록 후 메인 병합</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Provider Compatibility Table -->
+    <section id="providers" class="section">
+      <div class="container">
+        <div class="section-header">
+          <span class="section-tag" data-i18n="sec_prov_tag">COMPATIBILITY</span>
+          <h2 class="section-title" data-i18n="sec_prov_title">지원 AI 프로바이더 매핑</h2>
+          <p class="section-desc" data-i18n="sec_prov_desc">각 AI 에이전트 CLI의 최적 바이너리 트랜스포트와 권한 매핑을 지원합니다.</p>
+        </div>
+
+        <div class="table-container">
+          <table class="provider-table" aria-label="Provider Compatibility Table">
+            <thead>
+              <tr>
+                <th data-i18n="th_provider">프로바이더</th>
+                <th data-i18n="th_binary">CLI 바이너리</th>
+                <th data-i18n="th_transport">트랜스포트</th>
+                <th data-i18n="th_readonly">읽기 전용 매핑</th>
+                <th data-i18n="th_writable">쓰기 권한 매핑</th>
+                <th data-i18n="th_resume">세션 복구</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>Codex</strong></td>
+                <td><code>codex</code></td>
+                <td><code>exec --json</code> (or App Server)</td>
+                <td><code>--sandbox read-only</code></td>
+                <td><code>--sandbox workspace-write</code></td>
+                <td><span class="badge-tag badge-green">exec resume ID</span></td>
+              </tr>
+              <tr>
+                <td><strong>Claude Code</strong></td>
+                <td><code>claude</code></td>
+                <td><code>-p --output-format stream-json</code></td>
+                <td><code>--permission-mode plan</code></td>
+                <td><code>--permission-mode acceptEdits</code></td>
+                <td><span class="badge-tag badge-green">--resume ID</span></td>
+              </tr>
+              <tr>
+                <td><strong>Qwen Code</strong></td>
+                <td><code>qwen</code></td>
+                <td><code>--output-format stream-json</code></td>
+                <td><code>--approval-mode plan</code></td>
+                <td><code>--approval-mode auto-edit</code></td>
+                <td><span class="badge-tag badge-green">--resume ID</span></td>
+              </tr>
+              <tr>
+                <td><strong>OpenCode</strong></td>
+                <td><code>opencode</code></td>
+                <td><code>run --format json</code></td>
+                <td><code>--agent plan</code></td>
+                <td><code>--auto</code> (permissions held)</td>
+                <td><span class="badge-tag badge-green">--session ID</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- Built-in MCP Tools Showcase -->
+    <section id="mcp" class="section">
+      <div class="container">
+        <div class="section-header">
+          <span class="section-tag" data-i18n="sec_mcp_tag">MODEL CONTEXT PROTOCOL</span>
+          <h2 class="section-title" data-i18n="sec_mcp_title">15가지 빌트인 MCP 서버 제어 도구</h2>
+          <p class="section-desc" data-i18n="sec_mcp_desc">Claude Code, Cursor, AI 에디터와 대화형으로 연동되어 오케스트레이터를 실시간 통제합니다.</p>
+        </div>
+
+        <div class="mcp-grid">
+          <div class="mcp-tool-card">
+            <div class="mcp-tool-name">status & goal_show</div>
+            <p data-i18n="mcp_tool_1">프로젝트 상태, 가중 마일스톤 완료율 및 검증 게이트 통과율 실시간 리포팅</p>
+          </div>
+          <div class="mcp-tool-card">
+            <div class="mcp-tool-name">backlog_list & edit</div>
+            <p data-i18n="mcp_tool_2">우선순위(0~100), 가치 점수 및 작업 상태(APPROVED/BLOCKED) 대화형 관리</p>
+          </div>
+          <div class="mcp-tool-card">
+            <div class="mcp-tool-name">verify_gate_add</div>
+            <p data-i18n="mcp_tool_3">CLI 테스트 명령어를 결정론적 검증 게이트로 대화 중 즉시 등록</p>
+          </div>
+          <div class="mcp-tool-card">
+            <div class="mcp-tool-name">approval_request & approve</div>
+            <p data-i18n="mcp_tool_4">Protected-files, merge-branch, publish-branch에 대한 개발자 승인 처리</p>
+          </div>
+          <div class="mcp-tool-card">
+            <div class="mcp-tool-name">usage_report</div>
+            <p data-i18n="mcp_tool_5">프로바이더별 토큰 소비량, 비용 ledger 및 Quota 리셋 시각 정밀 조회</p>
+          </div>
+          <div class="mcp-tool-card">
+            <div class="mcp-tool-name">continue_enqueue & replay</div>
+            <p data-i18n="mcp_tool_6">자율 백그라운드 워커 작업 인큐ing 및 과거 실행 세션 타임라인 재생</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- CLI & Workflow Reference -->
+    <section id="cli" class="section">
+      <div class="container">
+        <div class="section-header">
+          <span class="section-tag" data-i18n="sec_cli_tag">CLI COMMANDS & WORKFLOW</span>
+          <h2 class="section-title" data-i18n="sec_cli_title">실전 개발자 명령어 가이드</h2>
+          <p class="section-desc" data-i18n="sec_cli_desc">GoalForge CLI를 통한 초기화부터 검증 게이트 등록, 자율 실행 및 안전 병합까지</p>
+        </div>
+
+        <div class="cli-grid">
+          <div class="cli-card">
+            <div class="cli-card-header">
+              <span class="cli-step-badge">STEP 1</span>
+              <h3 data-i18n="cli_1_title">1. 진단 및 프로젝트 초기화</h3>
+            </div>
+            <pre class="cli-code"><code><span class="term-comment"># 환경 검증 (Git, CLI, 권한)</span>
+goalforge doctor
+
+<span class="term-comment"># 프로젝트 초기화 (워크트리, 자동 커밋)</span>
+goalforge project init --name demo \
+  --provider claude --model haiku \
+  --worktrees --auto-commit \
+  --fallback-model sonnet</code></pre>
+          </div>
+
+          <div class="cli-card">
+            <div class="cli-card-header">
+              <span class="cli-step-badge">STEP 2</span>
+              <h3 data-i18n="cli_2_title">2. 목표 및 검증 게이트 설정</h3>
+            </div>
+            <pre class="cli-code"><code><span class="term-comment"># 버전에 맞는 목표 생성</span>
+goalforge goal set --title "Ship API" \
+  --objective "Implement REST endpoint" \
+  --criterion build_passed=true
+
+<span class="term-comment"># 결정론적 검증 게이트 추가</span>
+goalforge verify gate add \
+  --type build_passed \
+  --command-json '["go","test","./..."]'</code></pre>
+          </div>
+
+          <div class="cli-card">
+            <div class="cli-card-header">
+              <span class="cli-step-badge">STEP 3</span>
+              <h3 data-i18n="cli_3_title">3. 자율 작업 Discovery & 실행</h3>
+            </div>
+            <pre class="cli-code"><code><span class="term-comment"># 작업 탐색 & 가치 점수 측정</span>
+goalforge audit
+goalforge ideas
+
+<span class="term-comment"># 연속 자율 실행 (Quota까지)</span>
+goalforge run --until-quota --max-runs 50
+goalforge worker --once</code></pre>
+          </div>
+
+          <div class="cli-card">
+            <div class="cli-card-header">
+              <span class="cli-step-badge">STEP 4</span>
+              <h3 data-i18n="cli_4_title">4. 승인, 병합 & 안전 롤백</h3>
+            </div>
+            <pre class="cli-code"><code><span class="term-comment"># 병합 승인 요청</span>
+goalforge approval request \
+  --action merge-branch --reason "Gate passed"
+
+<span class="term-comment"># 메인 브랜치 병합 또는 롤백</span>
+goalforge merge --work-item WORK-101
+goalforge rollback --work-item WORK-101</code></pre>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Product Roadmap Section (Short-Term & Mid-Term Plans) -->
+    <section id="roadmap" class="section">
+      <div class="container">
+        <div class="section-header">
+          <span class="section-tag" data-i18n="sec_roadmap_tag">DEVELOPMENT ROADMAP</span>
+          <h2 class="section-title" data-i18n="sec_roadmap_title">GoalForge 개발 로드맵 (단기 및 중기 계획)</h2>
+          <p class="section-desc" data-i18n="sec_roadmap_desc">개발자 주도 오케스트레이션 혁신을 향한 단계별 마일스톤과 차세대 확장 로드맵</p>
+        </div>
+
+        <div class="roadmap-grid">
+          <!-- Short-Term Roadmap Card -->
+          <div class="roadmap-card short-term">
+            <div class="roadmap-badge-header">
+              <span class="roadmap-pill badge-short" data-i18n="roadmap_short_tag">단기 계획 (Short-Term Plan) — 2026 Q3~Q4</span>
+            </div>
+            <h3 class="roadmap-card-title" data-i18n="roadmap_short_title">분산 스토리지 완성 & 관측 가능성 강화</h3>
+            <p class="roadmap-card-desc" data-i18n="roadmap_short_desc">멀티 워커 스케일아웃 지원과 대규모 프로덕션 환경에서의 실시간 시각화 기반 마련</p>
+
+            <ul class="roadmap-milestones">
+              <li class="milestone-item">
+                <div class="milestone-icon">🐘</div>
+                <div>
+                  <div class="milestone-header-row">
+                    <h4 data-i18n="m_short_1_t">PostgreSQL 분산 스토리지 전면 이중화</h4>
+                    <span class="milestone-status status-active">IN PROGRESS</span>
+                  </div>
+                  <p data-i18n="m_short_1_d">SQLite 기반 단일 스토리지에서 PostgreSQL <code>SKIP LOCKED</code> 기반 고성능 분산 작업 큐 및 마이그레이션 도구 완결.</p>
+                </div>
+              </li>
+
+              <li class="milestone-item">
+                <div class="milestone-icon">📈</div>
+                <div>
+                  <div class="milestone-header-row">
+                    <h4 data-i18n="m_short_2_t">웹 UI 대시보드 & 실시간 SSE 모니터링</h4>
+                    <span class="milestone-status status-done">SHIPPED v0.2.0</span>
+                  </div>
+                  <p data-i18n="m_short_2_d">활성 세션 추적, 에이전트 실행 플레임그래프(Flamegraph), 토큰 비용 분석 및 Prometheus <code>/metrics</code> 실시간 대시보드 구축.</p>
+                </div>
+              </li>
+
+              <li class="milestone-item">
+                <div class="milestone-icon">🤖</div>
+                <div>
+                  <div class="milestone-header-row">
+                    <h4 data-i18n="m_short_3_t">Gemini CLI / DeepSeek / Ollama 어댑터 추가</h4>
+                    <span class="milestone-status status-active">IN PROGRESS</span>
+                  </div>
+                  <p data-i18n="m_short_3_d">Google Gemini CLI, DeepSeek Coder, 로컬 Ollama/vLLM 지원으로 프로바이더 선택의 폭 대폭 확장.</p>
+                </div>
+              </li>
+
+              <li class="milestone-item">
+                <div class="milestone-icon">⚙️</div>
+                <div>
+                  <div class="milestone-header-row">
+                    <h4 data-i18n="m_short_4_t">GitHub Actions & CI/CD 네이티브 플러그인</h4>
+                    <span class="milestone-status status-active">IN PROGRESS</span>
+                  </div>
+                  <p data-i18n="m_short_4_d">CI/CD 파이프라인 상에서 GoalForge의 결정론적 검증 게이트를 원클릭으로 실행하는 공식 GitHub Action 릴리즈.</p>
+                </div>
+              </li>
+            </ul>
+          </div>
+
+          <!-- Mid-Term Roadmap Card -->
+          <div class="roadmap-card mid-term">
+            <div class="roadmap-badge-header">
+              <span class="roadmap-pill badge-mid" data-i18n="roadmap_mid_tag">중기 계획 (Mid-Term Plan) — 2027 H1~H2</span>
+            </div>
+            <h3 class="roadmap-card-title" data-i18n="roadmap_mid_title">멀티 에이전트 자율 협업 & 엔터프라이즈 플랫폼</h3>
+            <p class="roadmap-card-desc" data-i18n="roadmap_mid_desc">특화된 AI 에이전트 간의 자율 스웜(Swarm) 협업과 엔터프라이즈 레벨 보안/SaaS 관리 체계 완성</p>
+
+            <ul class="roadmap-milestones">
+              <li class="milestone-item">
+                <div class="milestone-icon">🐝</div>
+                <div>
+                  <div class="milestone-header-row">
+                    <h4 data-i18n="m_mid_1_t">멀티 에이전트 자율 스웜 (Multi-Agent Swarm)</h4>
+                    <span class="milestone-status status-planned">PLANNED</span>
+                  </div>
+                  <p data-i18n="m_mid_1_d">구현 에이전트, QA 테스트 에이전트, 보안 검사 에이전트가 격리된 워크트리에서 합의 정책 아래 병렬 협업하는 엔진 구현.</p>
+                </div>
+              </li>
+
+              <li class="milestone-item">
+                <div class="milestone-icon">🩹</div>
+                <div>
+                  <div class="milestone-header-row">
+                    <h4 data-i18n="m_mid_2_t">자가 치유 검증 게이트 (Self-Healing Gate)</h4>
+                    <span class="milestone-status status-planned">PLANNED</span>
+                  </div>
+                  <p data-i18n="m_mid_2_d">검증 게이트(go test, 빌드) 실패 시 실패 지점을 정밀 진단하여 1차 자가 코드 수정을 수행하는 자동 복구 정책 탑재.</p>
+                </div>
+              </li>
+
+              <li class="milestone-item">
+                <div class="milestone-icon">🛡️</div>
+                <div>
+                  <div class="milestone-header-row">
+                    <h4 data-i18n="m_mid_3_t">엔터프라이즈 보안 & 컴플라이언스 팩</h4>
+                    <span class="milestone-status status-planned">PLANNED</span>
+                  </div>
+                  <p data-i18n="m_mid_3_d">RBAC 권한 제어, SAML/SSO 연동, 폐쇄망(Air-gapped) LLM 매핑 및 SOC2/ISO 감사 내보내기 스펙 확충.</p>
+                </div>
+              </li>
+
+              <li class="milestone-item">
+                <div class="milestone-icon">☁️</div>
+                <div>
+                  <div class="milestone-header-row">
+                    <h4 data-i18n="m_mid_4_t">GoalForge Cloud SaaS 관리형 플랫폼</h4>
+                    <span class="milestone-status status-planned">PLANNED</span>
+                  </div>
+                  <p data-i18n="m_mid_4_d">기업/팀 단위 토큰 예산 풀링, 중앙ized 승인 관리 콘솔 및 관리형 인프라 제공 서비스 런칭.</p>
+                </div>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- FAQ & AEO Accordion Section -->
+    <section id="faq" class="section">
+      <div class="container">
+        <div class="section-header">
+          <span class="section-tag" data-i18n="sec_faq_tag">FAQ & AEO</span>
+          <h2 class="section-title" data-i18n="sec_faq_title">자주 묻는 질문</h2>
+          <p class="section-desc" data-i18n="sec_faq_desc">GoalForge의 핵심 개념 및 동작 방식에 대한 완벽한 가이드</p>
+        </div>
+
+        <div class="faq-list">
+          <div class="faq-item active">
+            <button class="faq-question">
+              <span data-i18n="faq_1_q">Q1. GoalForge란 무엇인가요?</span>
+              <span class="faq-icon">+</span>
+            </button>
+            <div class="faq-answer" data-i18n="faq_1_a">
+              GoalForge는 AI 코딩 에이전트(Codex, Claude Code, Qwen Code, OpenCode)를 통합 관리하는 목표 중심(Goal-First) 개발 오케스트레이터입니다. AI 세션에 프로젝트 상태 관리를 의존하는 대신, Go 기반 고성능 프로세스가 프로젝트 목표, 마일스톤, 검증 게이트, 토큰 예산을 결정론적으로 관리합니다.
+            </div>
+          </div>
+
+          <div class="faq-item">
+            <button class="faq-question">
+              <span data-i18n="faq_2_q">Q2. 기존 AI 코딩 에이전트(Claude Code, Cursor 등)와 무엇이 다른가요?</span>
+              <span class="faq-icon">+</span>
+            </button>
+            <div class="faq-answer" data-i18n="faq_2_a">
+              기존 에이전트는 프롬프트 기반으로 무제한 자유도를 가집니다. 이로 인해 메인 브랜치 훼손, 검증되지 않은 코드 커밋, 환각 현상 등의 리스크가 있습니다. GoalForge는 AI를 단순 '실행 도구'로 격리하고, Go 프로세스가 검증 게이트(`go test`, 빌드 등)를 통과한 결과만 승인 절차를 거쳐 반영하도록 통제합니다.
+            </div>
+          </div>
+
+          <div class="faq-item">
+            <button class="faq-question">
+              <span data-i18n="faq_3_q">Q3. 검증 게이트(Verification Gate)는 어떻게 동작하나요?</span>
+              <span class="faq-icon">+</span>
+            </button>
+            <div class="faq-answer" data-i18n="faq_3_a">
+              GoalForge CLI로 `goalforge verify gate add --type build_passed --command-json '["go","test","./..."]'`과 같이 등록합니다. AI 에이전트가 작업을 수행한 후, 해당 검증 게이트가 100% 성공을 반환해야만 작업이 완료(DONE)로 승인되며 Git 커밋 트레일러가 작성됩니다.
+            </div>
+          </div>
+
+          <div class="faq-item">
+            <button class="faq-question">
+              <span data-i18n="faq_4_q">Q4. GoalForge MCP 서버 기능은 어떻게 활용하나요?</span>
+              <span class="faq-icon">+</span>
+            </button>
+            <div class="faq-answer" data-i18n="faq_4_a">
+              GoalForge는 `goalforge mcp` 명령어로 stdio 또는 Streamable HTTP(POST /mcp) 서버를 시작할 수 있습니다. 15가지 MCP 도구를 통해 Claude Code, Cursor 등 외부 MCP 클라이언트에서 프로젝트 상태 조회, 목표 및 작업 수정, 쿼터 리포트 확인, 승인 요청 등을 대화형으로 처리할 수 있습니다.
+            </div>
+          </div>
+
+          <div class="faq-item">
+            <button class="faq-question">
+              <span data-i18n="faq_5_q">Q5. API 쿼터나 비용 한도 초과 시 어떻게 처리되나요?</span>
+              <span class="faq-icon">+</span>
+            </button>
+            <div class="faq-answer" data-i18n="faq_5_a">
+              GoalForge는 프롬프트 호출 전 프로젝트 비용 ledger와 프로바이더 Quota 리셋 시각을 사전 평가합니다. Quota 부족 시 무한 폴링 대신 Git/세션 체크포인트를 저장하고 `WAITING_QUOTA` 상태로 대기하며, Quota 리셋 후 `worker`가 안전하게 작업을 복구합니다.
+            </div>
+          </div>
+
+          <div class="faq-item">
+            <button class="faq-question">
+              <span data-i18n="faq_6_q">Q6. GoalForge의 단기 및 중기 로드맵 계획은 무엇인가요?</span>
+              <span class="faq-icon">+</span>
+            </button>
+            <div class="faq-answer" data-i18n="faq_6_a">
+              GoalForge는 단기적으로(2026 Q3~Q4) PostgreSQL 분산 스토리지 완결, 웹 UI 모니터링 대시보드, Gemini/DeepSeek/Ollama 어댑터 추가 및 GitHub Actions 플러그인을 제공하며, 중기적으로(2027 H1~H2) 멀티 에이전트 자율 스웜 오케스트레이션, 자가 치유 검증 게이트, 엔터프라이즈 보안 팩 및 Managed Cloud SaaS 서비스를 런칭할 계획입니다.
+            </div>
+          </div>
+
+          <div class="faq-item">
+            <button class="faq-question">
+              <span data-i18n="faq_7_q">Q7. 소스코드 및 보안 민감 파일(보호 파일)은 어떻게 안전하게 통제되나요?</span>
+              <span class="faq-icon">+</span>
+            </button>
+            <div class="faq-answer" data-i18n="faq_7_a">
+              GoalForge는 execution 시작 전 `.env`, SSH 키, 개인키 등 프로젝트 내 모든 보호 파일의 SHA-256 해시 핑거프린트를 생성합니다. AI 실행 중 비승인된 변경/삭제가 발생하면 해당 run을 즉시 취소하고 원래 상태로 롤백하며, `GOALFORGE_AUDIT_KEY`를 통해 원본 프롬프트 또한 AES-GCM으로 암호화 보관합니다.
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Footer -->
+  <footer class="site-footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <div class="brand-logo">
+            <div class="logo-icon">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
+              </svg>
+            </div>
+            <div class="logo-text">Goal<span>Forge</span></div>
+          </div>
+          <p data-i18n="footer_desc">GoalForge는 개발자 중심의 통제력과 AI의 생산성을 결합한 목표 중심 오케스트레이터입니다.</p>
+        </div>
+
+        <div>
+          <h4 class="footer-title" data-i18n="footer_links_title">바로가기</h4>
+          <ul class="footer-links">
+            <li><a href="#features" data-i18n="nav_features">주요 기능</a></li>
+            <li><a href="#deepdive" data-i18n="nav_deepdive">심층 메커니즘</a></li>
+            <li><a href="#architecture" data-i18n="nav_arch">아키텍처</a></li>
+            <li><a href="#providers" data-i18n="nav_providers">지원 프로바이더</a></li>
+            <li><a href="#cli" data-i18n="nav_cli">CLI 가이드</a></li>
+            <li><a href="#roadmap" data-i18n="nav_roadmap">로드맵</a></li>
+            <li><a href="#faq" data-i18n="nav_faq">자주 묻는 질문</a></li>
+          </ul>
+        </div>
+
+        <div>
+          <h4 class="footer-title" data-i18n="footer_legal_title">프로젝트 정보</h4>
+          <ul class="footer-links">
+            <li><a href="https://github.com/hkjang/goalforge" target="_blank" rel="noopener noreferrer">GitHub Open Source</a></li>
+            <li><a href="https://github.com/hkjang/goalforge/blob/main/README.md" target="_blank" rel="noopener noreferrer">Command Reference</a></li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        <div>© 2026 GoalForge. All rights reserved.</div>
+        
+        <!-- User Requested Small Email Inquiry Contact Box -->
+        <div class="email-contact-box">
+          <span data-i18n="email_contact_text">메일 문의:</span>
+          <a href="mailto:gagagiga@naver.com">gagagiga@naver.com</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Toast Notification -->
+  <div id="toast" class="toast" role="alert" aria-live="polite">✓ Copied to clipboard!</div>
+
+  <!-- JavaScript -->
+  <script src="script.js"></script>
+</body>
+</html>

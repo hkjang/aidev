@@ -1,16 +1,200 @@
 [
-  {"title": "상품 상세의 패키지·추가 옵션 노출을 보는 사람에 따라 가른다", "value": 4, "risk": 2, "size": "S", "status": "done", "note": "getTalent 의 packages 에는 active 조건이 없어 구매자가 살 수 없는 패키지를 고르게 되고(주문 400 package_not_available, 쿠폰 미리보기 404), options 에는 걸려 있어 판매자 편집 round-trip 이 중단 옵션을 삭제했다. 두 하위 질의를 (active OR t.seller_id=$2 OR $3) 로 통일. 실제 DB 통합 테스트 1건으로 두 결함을 각각 red 재현 후 고정.", "updated": "2026-10-17"},
-  {"title": "패키지를 바꿔도 적용된 쿠폰이 지워지지 않아 화면 결제 금액이 실제 청구액과 어긋난다", "value": 4, "risk": 1, "size": "S", "status": "pending", "note": "신규. TalentPage.tsx:118 의 패키지 select onChange 는 selectedPackage 만 바꾸고, 옵션 체크박스·쿠폰 코드 입력과 달리 setCoupon(null) 을 하지 않는다. 그래서 쿠폰 적용 후 비싼 패키지로 바꾸면 listPrice 는 갱신되지만 결제 금액은 옛 패키지 기준 payable_amount 를 계속 보여 준다(v0.4.17 과 같은 유형의 피해). 고치는 쪽은 한 줄이지만 web 테스트가 node --test 순수 로직 1개뿐이라 컴포넌트 실행 증명 수단이 없다 — 증명 설계가 선행.", "updated": "2026-10-17"},
-  {"title": "추적 중인 internal/ui/dist 가 web/src 보다 낡아 있다", "value": 2, "risk": 2, "size": "S", "status": "pending", "note": "2026-10-16 회차에 Node 22 로 npm run build 를 돌려 index·AdminPage·ProfilePage·OrderWorkspacePage·NotificationSettings 청크가 모두 재해시되는 것을 실측했다. Dockerfile 이 이미지 빌드에서 web/src 로 다시 빌드하므로 릴리스에는 영향이 없지만, 커밋된 dist 를 믿고 읽으면 틀린다. 재생성 시점·책임을 정하거나 추적에서 빼는 제품/운영 판단이 선행. 이번 회차 재조사 없음.", "updated": "2026-10-17"},
-  {"title": "옵션 조회 루프가 rows.Err() 와 Scan 실패를 조용히 삼킨다", "value": 2, "risk": 2, "size": "S", "status": "pending", "note": "createOrder(orders.go:95-112) 와 addSelectedOptions(coupons.go:240-252) 가 같은 패턴을 공유하므로 고칠 때 두 곳을 함께 봐야 한다. 실제 결과는 개수 불일치로 400 invalid_option 이라 금액 오염은 아니고 오류 문구만 부정확. 자연 HTTP→DB 실패 재현 경로는 여전히 미확인. 이번 회차 재조사 없음.", "updated": "2026-10-17"},
-  {"title": "가이드 문서·openapi 의 API 메서드·응답 코드를 실제 라우터와 대조", "value": 2, "risk": 2, "size": "M", "status": "pending", "note": "openapi_test.go 는 경로 집합만 비교한다(메서드·응답 코드 미검사). 이번에도 GET /talents/{id} 의 404 누락을 사람 눈으로 찾아 채웠다. OpenAPI 3.0 에서 $ref 형제 키는 무시되므로 응답 코드 설명은 operation description 에 적어야 한다.", "updated": "2026-10-17"},
-  {"title": "알 수 없는 승인 조건을 편집할 때 유실 안내/보존", "value": 3, "risk": 2, "size": "M", "status": "pending", "note": "ApprovalAdmin.save 가 알려진 조건 5개로 재구성해 모르는 조건을 잃을 수 있다. 이번 회차의 getTalent 결함과 같은 '통째로 교체하는 저장' 유형이므로, 서버가 편집자에게 전부 돌려주는지부터 보면 된다. 브라우저 재현과 제품 정책 판단이 선행.", "updated": "2026-10-17"},
-  {"title": "REQUIREMENT_PENDING 이 어떤 HTTP 경로로도 도달하지 않는 死상태", "value": 3, "risk": 4, "size": "M", "status": "pending", "note": "payOrder 가 PAID→READY 를 한 트랜잭션에 커밋한다는 2026-10-06 조사 결론 이후 재검증하지 않았다. 결제 경로와 상태표를 동시에 건드려야 해 위험이 높고 제품 결정이 선행.", "updated": "2026-10-17"},
-  {"title": "통합 테스트를 같은 DB 에 두 번 돌리면 메일 릴레이·Agent 조사 테스트가 실패", "value": 2, "risk": 2, "size": "M", "status": "pending", "note": "이번 회차에도 TestIntegrationMailNotificationsLeaveThroughTheRelay 가 한 번 실패했다(digest subject=\"[Kkiit] 수정 요청 …\" — 두 알림이 한 통으로 묶이지 않음). 같은 변경으로 깨끗한 DB 전체 재실행 2회(baseline·patched)는 모두 통과해 간헐 결함으로 확인했고 원인은 여전히 미확인(digest 창과 dispatcher 타이밍 경쟁으로 보임).", "updated": "2026-10-17"},
-  {"title": "감사 기록이 요청 본문 구조체를 그대로 넘기는 10곳", "value": 2, "risk": 2, "size": "M", "status": "pending", "note": "보존 정책 결정이 선행. settlementAction 은 보류 사유 원문까지 details 로 넘긴다. 이번 회차 재조사 없음.", "updated": "2026-10-17"},
-  {"title": "주문 추가 옵션의 additional_days 합산과 due_at 시간 범위 검증", "value": 1, "risk": 2, "size": "S", "status": "pending", "note": "createOrder 의 days += extraDays → AddDate 에 상한이 없고 옵션 개수 제한도 없다. 옵션당 365일 상한 때문에 현실적 피해가 작아 낮은 우선순위 유지.", "updated": "2026-10-17"},
-  {"title": "기본 상품 delivery_days 의 상한 부재와 주문 due_at 이상값 검증", "value": 2, "risk": 2, "size": "M", "status": "pending", "note": "임의 상한을 제품 결정 없이 넣지 않음. 이번 회차 재조사 없음.", "updated": "2026-10-17"},
-  {"title": "Config.Load 암호화 키의 Base64/hex 입력 계약 회귀 테스트", "value": 2, "risk": 1, "size": "S", "status": "pending", "note": "설정 테스트가 10/08·10/09 두 회차 연속이었으므로 계속 제쳤다. 금액·사용자 체감 결함이 남아 있는 동안은 우선순위가 낮다.", "updated": "2026-10-17"},
-  {"title": "Config.Load 필수 환경변수 누락·공백 및 비밀번호 원문 유지 계약 테스트", "value": 2, "risk": 1, "size": "S", "status": "pending", "note": "DB 를 못 쓰는 환경에서의 차선 후보. 이번 회차는 docker + PostgreSQL 16 이 떠서 쓰지 않았다.", "updated": "2026-10-17"},
-  {"title": "reserveBudget 의 consumed+payable 가 int64 를 넘길 때의 판정", "value": 1, "risk": 2, "size": "S", "status": "pending", "note": "신규. organizations.go:461 의 consumed+payable > amount 는 합이 감싸면 통과하고, 이어지는 UPDATE 가 PG bigint 범위 오류를 내 409 budget_exceeded 에 '예산을 차감하지 못했습니다' 라는 엉뚱한 문구가 실린다. base_price 에 상한이 없어 도달은 가능하지만 피해는 오류 문구뿐이라 우선순위가 낮다.", "updated": "2026-10-17"}
+  {
+    "title": "패키지를 바꿔도 적용된 쿠폰이 지워지지 않아 화면 결제 금액이 실제 청구액과 어긋난다",
+    "value": 4,
+    "risk": 1,
+    "size": "S",
+    "status": "done",
+    "note": "7a6b801 에서 해결. 무효화를 호출 책임에서 파생 계산으로 옮겼다 — 새 순수 모듈 web/src/pages/couponSelection.ts 가 미리보기와 함께 그것을 만든 선택(package_id·option_ids)을 들고 다니고, TalentPage 의 렌더·order 가 activeCoupon() 결과(shownCoupon)만 읽는다. 쿠폰 state 타입을 PreviewedCoupon 으로 바꿔 applyCoupon 의 저장 누락은 tsc -b 가 TS2345 로 잡는다(변이로 확인). 새 테스트 11건은 판정 규칙(같은 패키지·같은 옵션 집합=유효, 패키지 변경·옵션 추가/제거/교체=무효, 옵션 순서만 다르면 유효)을 node --test 로 실행 고정한다. 렌더가 shownCoupon 을 읽는다는 배선은 tsc -b 통과와 diff 독해로만 보증된다.",
+    "updated": "2026-10-18"
+  },
+  {
+    "title": "옵션 조회 루프가 rows.Err() 와 Scan 실패를 조용히 삼킨다",
+    "value": 2,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "다음 회차 차선 후보로 유지. createOrder(orders.go:95-112) 와 addSelectedOptions(coupons.go:240-252) 가 같은 패턴을 공유하므로 두 곳을 함께 봐야 한다. 실제 결과는 개수 불일치로 400 invalid_option 이라 금액 오염은 아니고 오류 문구만 부정확. 자연 HTTP→실제 DB 실패를 결정적으로 재현하는 경로가 여전히 미확인이라 증거가 약하다. 2026-10-18 회차는 web 전용이어서 이 Go 경로를 재조사하지 않았다.",
+    "updated": "2026-10-18"
+  },
+  {
+    "title": "추적 중인 internal/ui/dist 가 web/src 보다 낡아 있다",
+    "value": 2,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "2026-10-18 회차에 Node 22.23.1 로 npm run build 를 돌려 index·AdminPage·ProfilePage·OrderWorkspacePage·NotificationSettings 다섯 청크가 모두 재해시되는 것을 다시 실측했다(index-DhBMgSLs→index-RkeeUrUT 등, CSS 해시는 그대로). Dockerfile 이 이미지 빌드에서 web/src 로 다시 번들하므로 릴리스에는 영향이 없지만 커밋된 dist 를 믿고 읽으면 틀린다. 선례(1783d3e)대로 TypeScript 원본만 커밋하고 dist 는 git checkout 으로 되돌렸다. 검증 명령이 run build 를 포함하는 한 매 회차 같은 되돌리기가 필요하므로, 재생성 시점·책임을 정하거나 추적에서 빼는 제품/운영 판단이 선행이다.",
+    "updated": "2026-10-18"
+  },
+  {
+    "title": "가이드 문서·openapi 의 API 메서드·응답 코드를 실제 라우터와 대조",
+    "value": 2,
+    "risk": 2,
+    "size": "M",
+    "status": "pending",
+    "note": "openapi_test.go 는 경로 집합만 비교한다(메서드·응답 코드 미검사). v0.4.17 의 /coupons/preview 404·429, v0.4.18 의 GET /talents/{id} 404 누락을 매번 사람 눈으로 찾아 채웠다. OpenAPI 3.0 에서 $ref 형제 키는 무시되므로 응답 코드 설명은 operation description 에 적어야 한다. 좁은 계약과 실제 호출 검증 설계가 필요한 별도 범위. 이번 회차 재조사 없음.",
+    "updated": "2026-10-18"
+  },
+  {
+    "title": "알 수 없는 승인 조건을 편집할 때 유실 안내/보존",
+    "value": 3,
+    "risk": 2,
+    "size": "M",
+    "status": "pending",
+    "note": "ApprovalAdmin.save 가 알려진 조건 5개로 재구성해 모르는 조건을 잃을 수 있다. v0.4.18 의 getTalent/saveTalent 결함과 같은 '통째로 교체하는 저장' 유형이므로, 서버가 편집자에게 전부 돌려주는지부터 보면 된다. 브라우저 재현과 제품 정책 판단이 선행. 이번 회차 재조사 없음.",
+    "updated": "2026-10-18"
+  },
+  {
+    "title": "REQUIREMENT_PENDING 이 어떤 HTTP 경로로도 도달하지 않는 死상태",
+    "value": 3,
+    "risk": 4,
+    "size": "M",
+    "status": "pending",
+    "note": "payOrder 가 PAID→READY 를 한 트랜잭션에 커밋한다는 2026-10-06 조사 결론 이후 재검증하지 않았다. 결제 경로와 상태표를 동시에 건드려야 해 위험이 높고 제품 결정이 선행. 자율 회차에서 고르기에 적합하지 않다.",
+    "updated": "2026-10-18"
+  },
+  {
+    "title": "통합 테스트를 같은 DB 에 두 번 돌리면 메일 릴레이·Agent 조사 테스트가 실패",
+    "value": 2,
+    "risk": 2,
+    "size": "M",
+    "status": "pending",
+    "note": "깨끗한 DB 에서도 간헐 실패 이력이 있고(digest 가 두 알림을 한 통으로 묶지 못함) 원인은 여전히 미확인 — digest 창과 dispatcher 타이밍 경쟁으로 보인다. 재현이 확률적이라 한 세션에 끝낼 수 있다는 보장이 없다. 이번 회차 재조사 없음.",
+    "updated": "2026-10-18"
+  },
+  {
+    "title": "감사 기록이 요청 본문 구조체를 그대로 넘기는 10곳",
+    "value": 2,
+    "risk": 2,
+    "size": "M",
+    "status": "pending",
+    "note": "보존 정책 결정이 선행. settlementAction 은 보류 사유 원문까지 details 로 넘긴다. 운영자 지침(검출/스캔 대상 문자열을 details 로 넘기지 말고 식별자만 넘길 것)과 같은 방향의 과제이지만 10곳을 한 번에 건드리면 파일 수 상한을 넘는다 — 쪼갤 것. 이번 회차 재조사 없음.",
+    "updated": "2026-10-18"
+  },
+  {
+    "title": "주문 추가 옵션의 additional_days 합산과 due_at 시간 범위 검증",
+    "value": 1,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "createOrder 의 days += extraDays → AddDate 에 상한이 없고 옵션 개수 제한도 없다. 옵션당 365일 상한 때문에 현실적 피해가 작아 낮은 우선순위 유지.",
+    "updated": "2026-10-18"
+  },
+  {
+    "title": "기본 상품 delivery_days 의 상한 부재와 주문 due_at 이상값 검증",
+    "value": 2,
+    "risk": 2,
+    "size": "M",
+    "status": "pending",
+    "note": "임의 상한을 제품 결정 없이 넣지 않는다. 이번 회차 재조사 없음.",
+    "updated": "2026-10-18"
+  },
+  {
+    "title": "Config.Load 암호화 키의 Base64/hex 입력 계약 회귀 테스트",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "DB 를 못 쓰는 환경에서의 안전한 차선. 다만 설정 테스트가 10/08·10/09 두 회차 연속이었고 사용자 체감 결함이 남아 있는 동안은 우선순위가 낮다.",
+    "updated": "2026-10-18"
+  },
+  {
+    "title": "Config.Load 필수 환경변수 누락·공백 및 비밀번호 원문 유지 계약 테스트",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "DB 를 못 쓰는 환경에서의 차선 후보. 이번 회차 1순위는 Go·DB 를 전혀 쓰지 않으므로 대체재로서의 가치도 낮다.",
+    "updated": "2026-10-18"
+  },
+  {
+    "title": "쿠폰 미리보기가 선택한 추가 옵션 금액을 빼먹어 주문 화면이 실제보다 싼 값을 보여준다",
+    "value": 4,
+    "risk": 2,
+    "size": "M",
+    "status": "done",
+    "note": "v0.4.17(f16ee73) 에서 addSelectedOptions 헬퍼로 해결. previewCoupon 이 talent_options 등록 가격으로 합산하고 invalid_option·order_amount_too_large 를 createOrder 와 같은 코드·문구로 거절한다.",
+    "updated": "2026-10-18"
+  },
+  {
+    "title": "상품 상세의 패키지·추가 옵션 노출이 보는 사람과 어긋난다",
+    "value": 4,
+    "risk": 2,
+    "size": "S",
+    "status": "done",
+    "note": "v0.4.18(d9cd7fe) 에서 getTalent 의 두 하위 질의를 (active OR t.seller_id=$2 OR $3) 으로 통일해 해결.",
+    "updated": "2026-10-18"
+  },
+  {
+    "title": "퍼센트 쿠폰 할인 계산의 int64 중간 곱셈 오버플로 방지",
+    "value": 3,
+    "risk": 2,
+    "size": "S",
+    "status": "done",
+    "note": "v0.4.14 에서 computeDiscount 에 가드 추가. 같은 과제를 다시 고르지 말 것.",
+    "updated": "2026-10-18"
+  },
+  {
+    "title": "MCP submit_requirement 가 주문 양식 검증을 건너뛴다",
+    "value": 3,
+    "risk": 2,
+    "size": "S",
+    "status": "done",
+    "note": "v0.4.15 에서 uuid.Parse → tx → normalizeRequirements(requireAll=true) → commit 으로 해결.",
+    "updated": "2026-10-18"
+  },
+  {
+    "title": "주문 생성의 추가 옵션 가격 합산 int64 오버플로를 400 으로 거절",
+    "value": 3,
+    "risk": 2,
+    "size": "S",
+    "status": "done",
+    "note": "v0.4.16 에서 rows.Close() 뒤 writeError 하는 플래그 방식으로 해결.",
+    "updated": "2026-10-18"
+  },
+  {
+    "title": "README 환경변수 계약을 필수 4개 + 선택 SHUTDOWN_DRAIN_SECONDS 로 정리",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "done",
+    "note": "28d274f 에서 README·.env.example·Config 주석을 Load 의 실제 동작과 맞췄다.",
+    "updated": "2026-10-18"
+  },
+  {
+    "title": "Config.Load 의 선택 종료 대기 환경변수 경계 회귀 테스트",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "done",
+    "note": "947ce35 에서 TestLoadShutdownDrainSeconds 13개 입력으로 고정.",
+    "updated": "2026-10-18"
+  },
+  {
+    "title": "web 의 dev 전용 전이 의존성 2건이 high 등급 DoS 권고에 걸려 있다",
+    "value": 2,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "2026-10-18 회차에 npm ci 후 npm audit 으로 처음 실측했다: eslint@10.8.1→minimatch@10.2.6→brace-expansion@5.0.9 (GHSA-q2hr-2g5m-vwhr 등 3건)과 vite@8.2.1→postcss@8.5.26→source-map-js@1.2.1(GHSA-68fv-2mgg-jv7q). 둘 다 dev 전용 전이 의존성이고 피해는 신뢰할 수 없는 입력을 먹였을 때의 빌드 머신 CPU/스택 소진이라 런타임 번들 노출은 없다 — 그래서 가치가 낮다. npm audit fix 는 package-lock.json 만 바꾸지만, lockfile 변경만으로도 lint/build 가 깨질 수 있으므로 ci→test→lint→build 를 전부 돌려 확인해야 한다. 메이저 업그레이드는 금지 범위이므로 audit fix 가 minor/patch 안에서 해결하는지부터 확인할 것.",
+    "updated": "2026-10-18"
+  },
+  {
+    "title": "web 툴체인이 Node 22.23.1 에서 완전히 도는데 README 는 Node 24+ 를 요구한다",
+    "value": 1,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "2026-10-18 회차에 v22.23.1 에서 npm ci·test(21건)·lint·tsc -b·vite build 가 모두 종료 0 임을 실측했다. `node --test` 의 .ts 타입 스트리핑은 22.18+ 면 기본 켜짐이므로 실제 하한은 24 가 아니다. 다만 README 의 24+ 가 다른 이유(미확인 — 예: 다른 스크립트나 운영 기준)로 의도된 것일 수 있어, 문서를 낮추기 전에 왜 24 를 적었는지부터 확인해야 한다. 2026-10-09·10-08 두 회차가 이미 문서/설정 과제였으므로 우선순위는 낮다.",
+    "updated": "2026-10-18"
+  },
+  {
+    "title": "주문 구성 카드에 남은 redundant 한 setCoupon(null) 리셋 정리",
+    "value": 1,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "7a6b801 이 쿠폰 무효화를 파생 계산(activeCoupon)으로 옮긴 뒤, 추가 옵션 체크박스의 setCoupon(null) 은 같은 결과를 두 번 내는 중복이 됐다(변경 표면을 좁히려고 일부러 남겼다). 지우면 '옵션을 토글하면 쿠폰이 사라진다' 가 파생 계산만으로 성립하는지를 눈으로 확인해야 하는데, .tsx 컴포넌트 렌더 테스트 수단이 없어 실행 증명이 안 된다. 쿠폰 코드 TextField 의 리셋은 코드 문자열이 판정에 들어 있지 않으므로 중복이 아니다 — 지우지 말 것. 컴포넌트 테스트 인프라가 생기기 전에는 가치가 거의 없다.",
+    "updated": "2026-10-18"
+  }
 ]
