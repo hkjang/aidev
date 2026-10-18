@@ -27,3 +27,5 @@
 - [러너 14:37] pr created — https://github.com/hkjang/Kkiit/pull/26
 - [러너 14:38] ci passed — 검사 없음 — 정책으로 허용
 - [러너 14:38] merge done — 7a6b801
+- [러너 14:48] release published — v0.4.19
+- [러너 14:49] assets verified — v0.4.19 자산 1개 (이전 v0.4.18: 1)
