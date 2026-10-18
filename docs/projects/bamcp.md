@@ -1,7 +1,7 @@
 ---
 title: "bamcp — 자율 개선 이력"
-description: "bamcp: 자율 개선 회차 5회, 릴리즈 0건. 최근 릴리즈 없음."
-last_modified_at: 2026-10-18 16:45:26 +0900
+description: "bamcp: 자율 개선 회차 6회, 릴리즈 0건. 최근 릴리즈 없음."
+last_modified_at: 2026-10-18 17:22:18 +0900
 ---
 {% raw %}
 <script type="application/ld+json">
@@ -11,33 +11,34 @@ last_modified_at: 2026-10-18 16:45:26 +0900
  "name": "bamcp",
  "codeRepository": "https://github.com/hkjang/bamcp",
  "url": "https://hkjang.github.io/aidev/projects/bamcp/",
- "description": "bamcp: 자율 개선 회차 5회, 릴리즈 0건. 최근 릴리즈 없음.",
+ "description": "bamcp: 자율 개선 회차 6회, 릴리즈 0건. 최근 릴리즈 없음.",
  "inLanguage": "ko",
  "maintainer": {
   "@type": "Person",
   "name": "hkjang",
   "url": "https://github.com/hkjang"
  },
- "dateModified": "2026-10-18T16:45:26+09:00"
+ "dateModified": "2026-10-18T17:22:18+09:00"
 }
 </script>
 
 # bamcp
 
-<p class="tldr"><strong>요약.</strong> bamcp: 자율 개선 회차 5회, 릴리즈 0건. 최근 릴리즈 없음. <span class="pill pill-merged" title="14일: 릴리즈 0, 실패 1, 경고 1, 회귀 0">건강 C</span> <span class="meta">14일: 릴리즈 0, 실패 1, 경고 1, 회귀 0</span></p>
+<p class="tldr"><strong>요약.</strong> bamcp: 자율 개선 회차 6회, 릴리즈 0건. 최근 릴리즈 없음. <span class="pill pill-merged" title="14일: 릴리즈 0, 실패 1, 경고 1, 회귀 0">건강 C</span> <span class="meta">14일: 릴리즈 0, 실패 1, 경고 1, 회귀 0</span></p>
 
-<ul class="stats"><li><b>5</b><span>회차</span></li><li><b>1</b><span>프로젝트</span></li><li><b>0</b><span>배포 준비 완료</span></li><li><b>0</b><span>릴리즈 진행 중</span></li><li><b>0</b><span>병합 완료</span></li><li><b>1</b><span>검토 대기</span></li><li><b>1</b><span>검증 실패</span></li><li><b>3</b><span>변경 없음</span></li><li><b>0</b><span>실행 오류</span></li><li><b>$18.51</b><span>비용</span></li><li><b>46분</b><span>에이전트 시간</span></li></ul>
+<ul class="stats"><li><b>6</b><span>회차</span></li><li><b>1</b><span>프로젝트</span></li><li><b>0</b><span>배포 준비 완료</span></li><li><b>0</b><span>릴리즈 진행 중</span></li><li><b>0</b><span>병합 완료</span></li><li><b>1</b><span>검토 대기</span></li><li><b>1</b><span>검증 실패</span></li><li><b>3</b><span>변경 없음</span></li><li><b>1</b><span>실행 오류</span></li><li><b>$18.51</b><span>비용</span></li><li><b>46분</b><span>에이전트 시간</span></li></ul>
 
 ## 현황
 
 <dl class="kv">
 <dt>저장소</dt><dd><a href="https://github.com/hkjang/bamcp">https://github.com/hkjang/bamcp</a></dd>
-<dt>마지막 회차</dt><dd>2026-10-17 09:27 KST — <span class="pill pill-other">• 기타</span> fix-round: review held, PR open <a href="https://github.com/hkjang/bamcp/pull/2">PR #2</a></dd>
+<dt>마지막 회차</dt><dd>2026-10-18 16:59 KST — <span class="pill pill-other">• 기타</span> infra-error: worktree add 실패 (/home/hkjang/.cache/auto-improve-wt/bamcp)</dd>
+<dt>수정 과제</dt><dd>⚠️ 오류 대응(자동 적재): 마지막 회차가 &#x27;infra-error&#x27; 로 끝났습니다. infra-error: worktree add 실패 (/home/hkjang/.cache/auto-improve-wt/bamcp)</dd>
 </dl>
 
 ## 회차 이력
 
-<div class="table-wrap"><table class="rt"><thead><tr><th>일시</th><th class="primary">프로젝트</th><th>결과</th></tr></thead><tbody><tr data-status="other"><td data-label="일시">2026-10-17 09:27</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/bamcp/">bamcp</a></td><td data-label="결과"><span class="pill pill-merged" title="outcome=review-pending">검토 대기</span> fix-round: review held, PR open <a href="https://github.com/hkjang/bamcp/pull/2">PR #2</a><div class="meta">2파일 <span style="color:var(--good)">+68</span>/<span style="color:var(--bad)">−2</span> · 테스트 1 — fix: 해석 못한 원천 빌드 키를 권한 제외로 집계하지 않음</div></td></tr><tr data-status="failed"><td data-label="일시">2026-10-17 07:15</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/bamcp/">bamcp</a></td><td data-label="결과"><span class="pill pill-failed" title="outcome=verify-failed">검증 실패</span> <strong>CI failed</strong>, PR open <a href="https://github.com/hkjang/bamcp/pull/1">PR #1</a><div class="meta">3파일 <span style="color:var(--good)">+144</span>/<span style="color:var(--bad)">−6</span> · 테스트 2 — fix: 어설픈 정수 인자를 조용히 절삭하지 않고 거부</div></td></tr><tr data-status="nochange"><td data-label="일시">2026-10-10 03:10</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/bamcp/">bamcp</a></td><td data-label="결과"><span class="pill pill-nochange" title="outcome=no-change">변경 없음</span> no change</td></tr><tr data-status="nochange"><td data-label="일시">2026-10-10 02:48</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/bamcp/">bamcp</a></td><td data-label="결과"><span class="pill pill-nochange" title="outcome=no-change">변경 없음</span> no change</td></tr><tr data-status="nochange"><td data-label="일시">2026-10-10 02:29</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/bamcp/">bamcp</a></td><td data-label="결과"><span class="pill pill-nochange" title="outcome=no-change">변경 없음</span> no change</td></tr></tbody></table></div>
+<div class="table-wrap"><table class="rt"><thead><tr><th>일시</th><th class="primary">프로젝트</th><th>결과</th></tr></thead><tbody><tr data-status="other"><td data-label="일시">2026-10-18 16:59</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/bamcp/">bamcp</a></td><td data-label="결과"><span class="pill pill-failed" title="outcome=error">실행 오류</span> infra-error: worktree add 실패 (/home/hkjang/.cache/auto-improve-wt/bamcp)</td></tr><tr data-status="other"><td data-label="일시">2026-10-17 09:27</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/bamcp/">bamcp</a></td><td data-label="결과"><span class="pill pill-merged" title="outcome=review-pending">검토 대기</span> fix-round: review held, PR open <a href="https://github.com/hkjang/bamcp/pull/2">PR #2</a><div class="meta">2파일 <span style="color:var(--good)">+68</span>/<span style="color:var(--bad)">−2</span> · 테스트 1 — fix: 해석 못한 원천 빌드 키를 권한 제외로 집계하지 않음</div></td></tr><tr data-status="failed"><td data-label="일시">2026-10-17 07:15</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/bamcp/">bamcp</a></td><td data-label="결과"><span class="pill pill-failed" title="outcome=verify-failed">검증 실패</span> <strong>CI failed</strong>, PR open <a href="https://github.com/hkjang/bamcp/pull/1">PR #1</a><div class="meta">3파일 <span style="color:var(--good)">+144</span>/<span style="color:var(--bad)">−6</span> · 테스트 2 — fix: 어설픈 정수 인자를 조용히 절삭하지 않고 거부</div></td></tr><tr data-status="nochange"><td data-label="일시">2026-10-10 03:10</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/bamcp/">bamcp</a></td><td data-label="결과"><span class="pill pill-nochange" title="outcome=no-change">변경 없음</span> no change</td></tr><tr data-status="nochange"><td data-label="일시">2026-10-10 02:48</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/bamcp/">bamcp</a></td><td data-label="결과"><span class="pill pill-nochange" title="outcome=no-change">변경 없음</span> no change</td></tr><tr data-status="nochange"><td data-label="일시">2026-10-10 02:29</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/bamcp/">bamcp</a></td><td data-label="결과"><span class="pill pill-nochange" title="outcome=no-change">변경 없음</span> no change</td></tr></tbody></table></div>
 
 ## 비용·사용량
 

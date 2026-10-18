@@ -1,0 +1,128 @@
+[
+  {
+    "title": "/favorites 에서 검색해 0건이면 '즐겨찾기한 앱이 없습니다' 대신 검색 조건 때문임을 알린다",
+    "value": 3,
+    "risk": 1,
+    "size": "S",
+    "status": "done",
+    "note": "d8f7966 — public-pages.tsx 의 EmptyState 에 narrowed=!!q||mcp||featured 분기와 '검색 조건 지우기' 버튼을 추가했다. Vitest 4건 + desktop/mobile E2E 1건으로 증명했고 제품 파일만 원복해 양쪽 재실패를 확인했다. 개수·페이지 범위(미병합 0898f7a)는 건드리지 않았다.",
+    "updated": "2026-10-18"
+  },
+  {
+    "title": "앱 상세·홈의 다른 비필수 섹션도 조회 실패를 '없음' 으로 숨기는지 확인해 한 화면만 좁혀 고친다",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "이번 회차 차선이었고 착수하지 않았다. 2026-10-16 의 isError 분기와 같은 패턴(data ?? [] 후 return null)이 남아 있는지 여전히 미확인. 공용 컴포넌트로 묶지 말고 발견한 화면별로.",
+    "updated": "2026-10-18"
+  },
+  {
+    "title": "첨부 삭제 취소가 개수·중복 제한을 넘길 가능성",
+    "value": 3,
+    "risk": 2,
+    "size": "M",
+    "status": "pending",
+    "note": "guide-documents.tsx undo 경로의 MAX_GUIDE_DOCUMENTS/중복 재검증 부재는 정적 확인만. 실행 재현과 UX 정책 결정 선행. 469e89a 가 고친 add 와 계약이 얽힌다.",
+    "updated": "2026-10-18"
+  },
+  {
+    "title": "app-form-page 의 입력 검증 실패와 첨부 삭제·재시도 경로가 무검증",
+    "value": 3,
+    "risk": 1,
+    "size": "M",
+    "status": "pending",
+    "note": "edc94a7 로 완료 상태·저장/업로드 실패는 보강됨. 출력이 변하지 않는 순수 테스트 단독 제출은 반려 이력이 있어 사용자 결함과 묶을 때만.",
+    "updated": "2026-10-18"
+  },
+  {
+    "title": "Field 가 error 를 렌더하면서 aria-invalid/aria-describedby 를 컨트롤에 연결하지 않는다",
+    "value": 2,
+    "risk": 2,
+    "size": "M",
+    "status": "pending",
+    "note": "ui.tsx:Field 의 ReactNode/render-function 두 children 계약 때문에 공용 영향. 설계 선행 필요로 계속 보류.",
+    "updated": "2026-10-18"
+  },
+  {
+    "title": "E2E mock API 의 public config override 가 기본값에 덮여 무효",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "mock-api.ts:314 의 ...options.config 뒤에 siteName 등 기본값이 온다. 테스트 하네스만의 결함이라 실제 설정 시나리오를 쓰는 과제와 묶을 때만.",
+    "updated": "2026-10-18"
+  },
+  {
+    "title": "상위 100개 밖의 즐겨찾기 앱이 /favorites 에 안 나온다",
+    "value": 3,
+    "risk": 3,
+    "size": "M",
+    "status": "pending",
+    "note": "public-pages.tsx:238 pageSize=100 후 slug 필터, 서버 maximum=100. 미병합 0898f7a 가 개수·페이지 이동을 숨기는 쪽으로 손댔다가 병합되지 않았으므로 이 영역은 당분간 피한다. 이번 빈 상태 문구 변경과는 줄이 겹치지 않았다.",
+    "updated": "2026-10-18"
+  },
+  {
+    "title": "관리자 시스템 설정의 Page Size 가 공개 목록에 연결되지 않는다",
+    "value": 3,
+    "risk": 3,
+    "size": "M",
+    "status": "pending",
+    "note": "store/settings.go 검증과 public_handlers 기본값에는 쓰이지만 publicConfig 응답에 없고 프런트는 24 고정. 서버 응답 계약 추가가 필요해 S 로 쪼개지지 않음.",
+    "updated": "2026-10-18"
+  },
+  {
+    "title": "여러 탭에서 즐겨찾기 변경이 다른 탭에 반영되지 않는다",
+    "value": 2,
+    "risk": 2,
+    "size": "M",
+    "status": "pending",
+    "note": "favorites.tsx 가 storage 이벤트를 구독하지 않는다(:18-34). 동시 탭 재현이 E2E 로 가능하나 가치가 낮다.",
+    "updated": "2026-10-18"
+  },
+  {
+    "title": "팔레트가 삭제·비공개된 앱을 최근 항목으로 계속 제시한다",
+    "value": 2,
+    "risk": 2,
+    "size": "M",
+    "status": "pending",
+    "note": "command-palette.tsx:177-180 의 recent 필터가 menu/app-admin 외에는 true 를 반환. 삭제/비공개 실제 재현 미확인.",
+    "updated": "2026-10-18"
+  },
+  {
+    "title": "소유자가 볼 수 있는 검토 이력이 마지막 한 건뿐",
+    "value": 2,
+    "risk": 2,
+    "size": "M",
+    "status": "pending",
+    "note": "personal_handlers.go:myApps 가 LatestReviewsByApp 만 넣는다. 의도된 소유자 정책일 수 있어 사람 판단 필요.",
+    "updated": "2026-10-18"
+  },
+  {
+    "title": "문서 업로드 실패 뒤 신규 등록 재시도가 앱 생성부터 다시 요청한다",
+    "value": 3,
+    "risk": 3,
+    "size": "M",
+    "status": "pending",
+    "note": "app-form-page.tsx mutationFn 의 createApp→documents.apply. 부분 성공/재시도 계약 설계가 선행이라 한 회차에 안 끝난다.",
+    "updated": "2026-10-18"
+  },
+  {
+    "title": "카탈로그 '필터 초기화' 가 view·sort 까지 날린다",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "신규. /apps 의 빈 상태 버튼은 setParams({}) 라 사용자가 고른 목록 보기·정렬까지 함께 사라진다. 이번 회차에 /favorites 쪽은 q/mcp/featured/page 만 지우는 clearNarrowing 으로 좁혔는데 카탈로그는 그대로 남겼다 — 과제서가 '/apps 문구와 버튼은 한 글자도 바꾸지 말 것' 이라 범위에서 뺐다. 문구는 그대로 두고 동작만 좁히는 별도 회차로.",
+    "updated": "2026-10-18"
+  },
+  {
+    "title": "헤더 전역 검색과 카탈로그 검색이 같은 라벨 '앱 검색' 을 쓴다",
+    "value": 2,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "신규. 이번 E2E 작성 중 getByLabel('앱 검색') 이 global-search 와 catalog-search 둘에 걸려 strict mode violation 이 났다(테스트는 form.toolbar 로 좁혀 해결). 접근성 측면에서도 한 화면에 동명 라벨 둘은 스크린리더 사용자가 구분하기 어렵다. 라벨 문구 변경은 기존 E2E·테스트 다수가 단정하므로 영향 범위 확인 선행.",
+    "updated": "2026-10-18"
+  }
+]

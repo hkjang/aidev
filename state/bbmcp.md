@@ -64,3 +64,12 @@
 - 과제서: 채택 — 과제서의 근거 6건(`redactArgs` 의 `out[k]=v` 중첩 무검사 통과, `s[:2000]` 바이트 절단, `Create` 의 `redactArgs`/`Hash` 가 같은 map 을 보는 것, `scan()` → `GET /api/admin/approvals` 노출 경로, 필터 없는 `tools.Args` 전달, `mcp.trimToRune` 참조 구현)이 현재 코드와 정확히 일치했고 수용 기준 4개를 지정된 범위 그대로 충족했다.
 
 - 릴리즈: v0.2.12 (2026-10-17, run 2026-10-17-065913-bbmcp-improve)
+## 2026-10-18
+- 선택: Resolver 권한 캐시의 무제한 증가를 막고 TTL 캐시 경로에 첫 테스트를 붙인다 (가치 3 / 위험 1 / 작업량 S)
+- 결과: 성공
+- 요약: `internal/permission/resolver.go:store_` 가 기존 `mu` 락 아래에서 상한(`maxCacheEntries = 10000`)에 닿았을 때만 `evictLocked` 로 만료 항목을 쓸어내고, 전부 유효하면 만료가 가장 이른 항목 하나를 비운 뒤 삽입한다 — 회수는 어떤 항목의 만료 시각도 늘리지 않고 만료된 결정을 되살리지도 않으므로 유일한 결과는 "다음 호출에서 다시 조회" 이고 캐시 때문에 허용이 늘어나는 변화는 없다. `cached()`·`Reset()`·`Repository()`·`Project()` 와 `store_` 호출 지점·인자는 그대로이며 백그라운드 janitor 고루틴은 만들지 않았다. 같은 변경으로 세 회차째 공백이던 permission TTL 캐시 경로에 첫 테스트 6건(`internal/permission/resolver_test.go`, `package permission`, DB·HTTP·목 없이 `NewResolver(nil, nil)` 로 돈다)을 붙였다: 상한 유지 / `ttl<=0` 미캐시 / 만료 미적중·맵 삭제 / 회수의 만료 시각 불변·만료 결정 미부활 / `Reset()` 후 전체 미적중 / 동시 삽입 상한. 프로덕션 1개 + 테스트 1개. 검증: `go test ./internal/permission -count=1 -v` 12건 전부 PASS, `-count=5 -race` 통과(`ok … 16.342s`), `go build ./... && go vet ./...` 통과, `docker start bbmcp-test-pg` + `TEST_DATABASE_URL=… go test ./... -count=1 -p 1 -v` 에서 9개 패키지 ok / `--- PASS` 142건(직전 136 + 신규 6) / `--- SKIP` 0건 / `--- FAIL` 0건.
+- 실패 재현: `resolver_test.go:30: len(cache) = 10100, want <= 10000 (삽입 10100건)` / `resolver_test.go:135: 동시 삽입 후 len(cache) = 12000, want <= 10000` — red 는 `maxCacheEntries` 상수만 선언(미사용)하고 회수 로직 없는 상태에서 돌렸고, 상한 테스트 2건이 넣은 수만큼 그대로 커져 실패했다. 나머지 4건(ttl<=0 미캐시·만료 삭제·만료 시각 불변·Reset)은 수정 전에도 PASS 였다 — 결함이 아니라 이번 변경이 기존 캐시 의미를 바꾸지 않았음을 고정하는 회귀 가드다. 이 사실을 숨기지 않고 적는다.
+- 보류 아이디어: Repository()/Project() 의 fail-closed 분기 + 'TTL 동안 캐시된 허용 유지' 통합 테스트(4/1/S, newFixture 의 CacheTTLSec=0 을 건드리지 말고 전용 fixture 옵션으로) / Resolver 캐시 키가 permission 설정(mode/failClosed)을 포함하지 않음(2/2/S) / `approval.Create` 의 `json.Marshal`·`scan()` 의 `json.Unmarshal` 오류 삼킴(2/1/S, 이번 차선 후보) / `internal/aiproxy/proxy.go` 테스트 공백(3/3/M, 제공자 계약 미확인) / 정책 테이블이 비면 모든 project/repository 가 정책을 통과(2/5/M, 의도된 기본값인지 docs 확인 전에는 손대지 말 것)
+- 과제서: 채택 — 과제서의 근거(`cached()` 의 `delete` 가 유일한 회수 지점, `Reset()` 외 회수 경로 없음, `restRepository` 가 미존재 저장소에도 오류 없이 None 을 캐시)가 현재 코드와 정확히 일치했고 수용 기준 4개를 지정된 범위 그대로 충족했다.
+
+- 릴리즈: v0.2.13 (2026-10-18, run 2026-10-18-165932-bbmcp-improve)
