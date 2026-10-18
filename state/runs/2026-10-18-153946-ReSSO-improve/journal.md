@@ -24,3 +24,6 @@
 - 승인이어도 남는 우려(릴리즈 노트에 쓸 것은 아님, 다음 회차용): (가) `command -v` 우선으로 바뀌어 PATH 에 먼저 있는 다른 버전 golangci-lint 가 GOPATH/bin 의 것을 이긴다 — Makefile:22-25 핀 의도와 어긋나고 잡는 테스트가 없다. (나) 고침은 Makefile 이 붙이던 GOBIN 만 뗀다 — GOPATH/bin 을 평소 PATH 에 두는 개발자는 여전히 같은 자리에서 죽고 안내문은 `go1.26.9 download` 를 말하지 않는다. (다) lint_test.go:144 는 make 부재에 skip 이 아니라 Fatal 이고, :125 의 PATH 구성이 release.yaml:58 에서 툴체인 다운로드를 유발할 수 있다.
 - 작업 트리에 커밋 안 된 webui/dist/index.html 자산 해시 변경이 있다(PR diff 밖, assets/* 는 비추적). 릴리즈 단계가 같이 커밋하지 않게 할 것.
 - [러너 16:05] review approved — 리뷰 승인 (risk=low)
+- [러너 16:06] pr created — https://github.com/hkjang/ReSSO/pull/45
+- [러너 16:13] ci passed — 검사 2개 모두 success
+- [러너 16:13] merge done — 90811dd

@@ -1,0 +1,50 @@
+release: v0.34.65
+
+Count the login rate limit per client rather than per installation. The login
+handler keyed newRateLimiter(10)'s ten attempts a minute on clientIP(r), the
+raw RemoteAddr reader, and behind the reverse proxy this product's admin guide
+tells an operator to run — the nginx block in that guide sets X-Forwarded-For —
+that value is always the one proxy address. The per-minute budget was therefore
+the whole installation's, which is wrong in both directions: one person's ten
+mistyped passwords locked every other employee out with 429 RATE_LIMITED for a
+minute, and no single source was ever actually limited, because it shared its
+budget with everyone. The handler now computes ip := s.clientIP(r) once, the
+same trusted-proxy reader the collector keys its limiter on and requestSecure
+already uses. The admin guide's troubleshooting answer for that 429 — set
+trusted_proxy_cidrs when everyone looks like one IP behind a proxy — becomes
+true for the first time with this release, so it needed no edit.
+
+Record the person in the login audit trail rather than the proxy. The same
+reader put the proxy address in the client_ip of both the login and
+login.failed rows, which is the one field those rows exist for. One ip now
+feeds the limiter key and both audit calls, so the three cannot drift apart
+again. The two readers are left unmerged and unrenamed because the raw one is
+the step s.clientIP and requestSecure take themselves. Rows already stored are
+not rewritten: the value recorded then is what the server saw, and there is no
+way to recover the real client afterwards.
+
+With trusted_proxy_cidrs empty — the default — nothing changes at all, because
+s.clientIP ignores X-Forwarded-For and returns the raw RemoteAddr. Where the
+list is wider than the real proxy, a request from inside the trusted range can
+vary X-Forwarded-For to spread itself across limiter buckets. That property is
+not new and no new policy for over-broad ranges was invented here: it is what
+the setting already meant for the collector's limiter and the Secure cookie
+decision, and login joining that contract widens its reach. The release notes
+tell an operator to check the setting before upgrading. The remaining 55 audit
+calls across ten files still use the raw reader and are left for later rounds
+rather than turned into a twelve-file release.
+
+Align the declared service, console, SDK and Compose versions and document the
+release. Verified PostgreSQL-backed Go race tests, vet, version checks,
+govulncheck, SDK audit/typecheck/29 tests/build, console audit/lint/259 tests/
+build, and the production Docker image build. The built image was started
+against PostgreSQL 17 and measured rather than reasoned about: with no trusted
+range the login audit row recorded the caller unchanged; with the bridge range
+trusted, a failed login forwarded from 198.51.100.7 and a successful one from
+203.0.113.9 recorded those addresses, twelve attempts from the first client
+started answering 429 at the tenth, and the second client got 401 immediately
+after — the case that used to be 429. Narrowing the trusted range so the caller
+was no longer trusted put twelve varying headers back into one bucket. The
+successful login's audit row is covered by that measurement and not by any
+automated test: the fixture's password_hash is the literal 'hash', so no test
+can produce a successful login.

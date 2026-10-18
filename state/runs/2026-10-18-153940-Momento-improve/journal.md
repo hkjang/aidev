@@ -26,3 +26,7 @@
 - 개인정보(차단 아님): `audit_logs.client_ip` 가 프록시가 아닌 실제 직원 주소를 담게 된다. 새 수집이 아니라(같은 열·같은 행·같은 쓰기) 값이 목적에 맞아진 것이고 읽기는 admin 전용(server.go:121)이지만, ADMIN_GUIDE:324 가 보존을 DB 운영자에게 위임해 둔 그 정책이 이제 실질적 의미를 가진다 — 다음 회차가 감사 로그 보존을 볼 가치가 있다. 429 분기 무기록과 나머지 ~55곳 `clientIP(r)` 는 ideas.json 에 남아 있고 모두 기존 성질이다.
 - [러너 16:00] review approved — 리뷰 승인 (risk=low)
 - [러너 16:00] pr created — https://github.com/hkjang/Momento/pull/35
+- [러너 16:06] ci passed — 검사 1개 모두 success
+- [러너 16:06] merge done — 9d47ad1
+- [러너 16:21] release published — v0.34.65
+- [러너 16:23] assets verified — v0.34.65 자산 2개 (이전 v0.34.64: 2)

@@ -1,0 +1,40 @@
+release: ReSSO v0.9.106
+
+`make lint` prepended the whole of GOBIN to the PATH it ran golangci-lint and
+govulncheck under. `go install golang.org/dl/go1.26.9@latest` - the ordinary way
+to have the toolchain go.mod asks for - installs a program of that name into
+that directory, and a `go` that has to switch toolchains prefers a goX.Y.Z
+program it finds on PATH over the copy in the module cache. That program does
+nothing until an SDK is unpacked into $HOME/sdk, so every `go` call the two
+tools made answered
+
+  go1.26.9: not downloaded. Run 'go1.26.9 download' to install
+
+and the target died in context loading, naming no rule, on a tree that was
+clean. The command the README gives as the way to check Go work before pushing
+could not be run at all, and said nothing about why. The v0.9.105 changelog
+recorded this as an environment problem unrelated to that release; it is the
+recipe, and this release fixes it.
+
+Where the tools are looked up and what PATH they are handed are separate
+questions. A TOOL function now resolves each to a path with the same precedence
+the installed check above it uses - PATH first, GOBIN otherwise - and the PATH
+`go` sees is left alone, so `go install` remains all a fresh clone needs. The
+missing-tool notice loses its `export PATH="$(go env GOPATH)/bin:$PATH"` line,
+which told a reader to break their own `go build` and `go test` the same way and
+is not needed by a recipe that reads GOBIN directly.
+
+TestLintDoesNotHandItsToolsTheToolchainProgramOnPath fixes this by execution
+rather than by matching strings. It reads the toolchain directive from go.mod,
+installs under a temporary GOPATH/bin a program of that name that fails exactly
+as golang.org/dl does without an SDK, and two tool stubs that record the PATH
+they were handed and run `go env -json GOMOD`; it then has real make render the
+recipe lines through `make -n lint` and runs the two carrying the package list
+under the Makefile's own shell. A tool has to be able to run `go`, and the PATH
+it was handed must not contain GOBIN. Before the fix both subtests failed on the
+real error, and reverting either recipe line afterwards fails only its own
+subtest.
+
+Includes the single merged change since v0.9.105, with no production code.
+Stamps the version in the Makefile, console package metadata, .env.example and
+both compose files, with no schema or configuration changes.
