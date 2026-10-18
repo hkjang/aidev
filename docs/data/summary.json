@@ -1,5 +1,5 @@
 {
- "generated": "2026-10-18T15:09:59+09:00",
+ "generated": "2026-10-18T15:18:39+09:00",
  "site": "https://hkjang.github.io/aidev",
  "description": "Claude Code 자율 개선 에이전트가 hkjang 의 프로젝트를 개선·테스트·머지·릴리즈한 일일 보고. 오늘 45회차·릴리즈 7건, 누적 2778회차·릴리즈 838건, 주의 필요 14건.",
  "today": {
@@ -10,18 +10,18 @@
   "merged": 3,
   "nochange": 2,
   "failed": 6,
-  "cost_usd": 168.38,
-  "minutes": 466,
-  "sessions": 72
+  "cost_usd": 169.27,
+  "minutes": 468,
+  "sessions": 73
  },
  "totals": {
   "runs": 2778,
   "released": 838,
   "days": 47,
-  "cost_usd": 9916.7,
-  "minutes": 27449,
-  "tokens_in": 10637772973,
-  "tokens_out": 86154175
+  "cost_usd": 9917.59,
+  "minutes": 27452,
+  "tokens_in": 10638408491,
+  "tokens_out": 86161010
  },
  "alerts": [
   {
@@ -125,19 +125,22 @@
  ],
  "fix_queue": [],
  "health": {
-  "checked": "2026-10-18T14:45:04+09:00",
-  "last_run": "2026-10-18T14:44:14+09:00",
-  "seconds_since_last": 47,
-  "runner_pid": "4703",
-  "runner_age_seconds": 2858,
-  "scheduler_status": "실행 중",
-  "scheduler_next_run": "2026-10-18 오후 2:50:00",
+  "checked": "2026-10-18T15:15:04+09:00",
+  "last_run": "2026-10-18T15:09:55+09:00",
+  "seconds_since_last": 306,
+  "runner_pid": "",
+  "runner_age_seconds": 0,
+  "scheduler_status": "준비",
+  "scheduler_next_run": "2026-10-18 오후 3:20:00",
   "disk_percent": 86,
   "ok": false,
   "problems": [
-   "측정 감사: 원격에 없는 릴리즈 태그 1건 — 그 저장소의 다음 릴리즈를 막는다"
+   "측정 감사: 원격에 없는 릴리즈 태그 1건 — 그 저장소의 다음 릴리즈를 막는다",
+   "docker 를 쓸 수 없음 — 자산 빌드 실패 예상"
   ],
-  "actions": []
+  "actions": [
+   "소유 프로세스 없는 잠금 파일을 제거했다"
+  ]
  },
  "lessons": [
   {
@@ -1357,9 +1360,9 @@
    "labels": "",
    "action": "PR 처리기가 다음 시간에 다시 시도 · 승인: PR 라벨 aidev-approved / 반려: aidev-rejected — 다음 회차에 러너가 승인 당시 커밋에만 CI 확인 후 머지·닫기",
    "date": "2026-10-18",
-   "shepherd": "CI 실패 · 수정 실패 → 다음 시간에 재시도 (10-18 14:15) — 수정 세션이 커밋을 만들지 않음: # 수리 요약 — 고칠 결함이 없음 (커밋 없음)  - 지적은 CI 검사 `check=failure` 하나뿐인데 **3초 만에 실패하고 로그 본문이 비어 있다**. 워크플로는 `timeout-minutes: 30` 에 첫 단계가 `actions/chec",
+   "shepherd": "CI 실패 · 수정 실패 → 다음 시간에 재시도 (10-18 15:18) — 수정 세션이 커밋을 만들지 않음: # 수리 요약 — PR #8 (커밋 없음)  - 'check' 실패는 코드 결함이 아니다: 잡이 **3초**에 죽고 실패 로그가 비어 있다. 이 워크플로의 첫 실질 단계(`npm ci`)만 30초가 넘으므로 diff 는 한 줄도 실행된 적이 없다 — A",
    "shepherd_action": "fix-failed",
-   "shepherd_detail": "수정 세션이 커밋을 만들지 않음: # 수리 요약 — 고칠 결함이 없음 (커밋 없음)  - 지적은 CI 검사 `check=failure` 하나뿐인데 **3초 만에 실패하고 로그 본문이 비어 있다**. 워크플로는 `timeout-minutes: 30` 에 첫 단계가 `actions/checkout` 이라, 3초·무로그는 잡이 시작조차 못 한 것(Actions 결제/한도 차단 징후)이며 diff 와 무관하다. `gh` 는 이 환경에서 미인증이라 잡 로그를 직접 못 받았다. - 로컬에서 같은 게이트를 전부 돌려 녹색을 증명했다: `npm ci` → `npm run check`(lint+typecheck+vitest) = **11파일 138 pass",
+   "shepherd_detail": "수정 세션이 커밋을 만들지 않음: # 수리 요약 — PR #8 (커밋 없음)  - 'check' 실패는 코드 결함이 아니다: 잡이 **3초**에 죽고 실패 로그가 비어 있다. 이 워크플로의 첫 실질 단계(`npm ci`)만 30초가 넘으므로 diff 는 한 줄도 실행된 적이 없다 — Actions 결제/시작 차단 신호다. PR 은 `.github/**` 를 건드리지 않았고(`git diff --name-only origin/main...HEAD -- .github` → 0), `check.yml` 은 YAML 로 정상 파싱돼 워크플로 문법도 원인이 아니다. - 로컬에서 같은 게이트로 green 을 증명: `npm ci` → `npm run check` **exit 0** (li",
    "needs_human": false
   },
   {
@@ -1372,11 +1375,11 @@
    "why": "review: approved — 리뷰 승인 (risk=low); ci: failed — 성공이 아닌 검사: UI snapshots=failure, typecheck + unit tests + build=failure · 실패한 검사",
    "evidence": "https://github.com/hkjang/aidev/tree/main/state/runs/2026-10-18-111749-vibe-code-improve",
    "labels": "",
-   "action": "PR 처리기가 다음 시간에 다시 시도 · 승인: PR 라벨 aidev-approved / 반려: aidev-rejected — 다음 회차에 러너가 승인 당시 커밋에만 CI 확인 후 머지·닫기",
+   "action": "PR 처리기가 사람에게 넘김 — 수정·심사를 2번 시도했지만 통과하지 못함 — 사람이 봐야 한다 · 승인: PR 라벨 aidev-approved / 반려: aidev-rejected — 다음 회차에 러너가 승인 당시 커밋에만 CI 확인 후 머지·닫기",
    "date": "2026-10-18",
-   "shepherd": "CI 실패 · 수정 실패 → 다음 시간에 재시도 (10-18 14:13) — 수정 세션이 커밋을 만들지 않음: # 수리 결과: 고칠 결함 없음 — 커밋하지 않았다 (3453f1e 그대로)  - 지적(CI 2건 실패)은 **재현되지 않는다**. 3453f1e 에서 CI 게이트 전체가 로컬 통과: `npm run check` exit 0 (`tsc --noEmit`",
-   "shepherd_action": "fix-failed",
-   "shepherd_detail": "수정 세션이 커밋을 만들지 않음: # 수리 결과: 고칠 결함 없음 — 커밋하지 않았다 (3453f1e 그대로)  - 지적(CI 2건 실패)은 **재현되지 않는다**. 3453f1e 에서 CI 게이트 전체가 로컬 통과: `npm run check` exit 0 (`tsc --noEmit` 0 / vitest **19 files · 155 tests passed**, 3.66s / `build` 0), 이어서 `node --check dist/extension.js && node --check dist/extension.core.js` 도 통과. 원 checkout 의 node_modules 를 심볼릭 링크로 빌려 Node 22.23.1·Vitest 3.2.7 로 실행했고, 끝나고 링크를 지워 워크트리는 clean 이다. - 두 워크플로 모두 **2초**에 죽었",
+   "shepherd": "CI 실패 · 사람 필요 (10-18 15:15) — 수정·심사를 2번 시도했지만 통과하지 못함 — 사람이 봐야 한다",
+   "shepherd_action": "needs-human",
+   "shepherd_detail": "수정·심사를 2번 시도했지만 통과하지 못함 — 사람이 봐야 한다",
    "needs_human": false
   },
   {
@@ -1979,16 +1982,16 @@
   }
  ],
  "shepherd": {
-  "last_pass": "2026-10-18T14:07:34+09:00",
+  "last_pass": "2026-10-18T15:14:23+09:00",
   "enabled": true,
   "today": {
-   "fix-failed": 10,
-   "needs-human": 7,
+   "fix-failed": 11,
+   "needs-human": 8,
    "fix-pushed": 1,
    "approve": 1
   },
-  "total": 769,
-  "pending_human": 224
+  "total": 771,
+  "pending_human": 225
  },
  "agents": {
   "rows": [
@@ -2002,7 +2005,7 @@
     "role": "구현 builder",
     "calls": 501,
     "metric": "러너 검증 통과 92% · 변경 없음 140",
-    "cost": 1236.38
+    "cost": 1237.28
    },
    {
     "role": "비평 critic",
@@ -2030,13 +2033,13 @@
    },
    {
     "role": "PR 심사 shepherd-reviewer",
-    "calls": 143,
-    "metric": "승인 45 · 거절 6 · 사람 필요 92 · 승인 뒤 회귀 1",
-    "cost": 266.32
+    "calls": 144,
+    "metric": "승인 45 · 거절 6 · 사람 필요 93 · 승인 뒤 회귀 1",
+    "cost": 267.21
    },
    {
     "role": "PR 수리 shepherd-fixer",
-    "calls": 105,
+    "calls": 106,
     "metric": "고쳐서 푸시 28%",
     "cost": null
    },
@@ -2516,7 +2519,7 @@
   },
   {
    "metric": "유효 개선당 비용",
-   "value": "$15.07",
+   "value": "$15.08",
    "detail": "비용 확인된 유효 개선 180건, 미확인 세션 239"
   },
   {
@@ -2547,7 +2550,7 @@
    "merged": 3,
    "nochange": 2,
    "failed": 6,
-   "cost_usd": 168.38
+   "cost_usd": 169.27
   },
   {
    "date": "2026-10-17",
@@ -2821,8 +2824,8 @@
    "merged": 5,
    "nochange": 13,
    "failed": 44,
-   "cost": 1214.18,
-   "minutes": 3268
+   "cost": 1215.07,
+   "minutes": 3270
   },
   {
    "key": "2026-W41",
@@ -2907,8 +2910,8 @@
    "merged": 43,
    "nochange": 140,
    "failed": 69,
-   "cost": 3561.15,
-   "minutes": 10295
+   "cost": 3562.04,
+   "minutes": 10298
   },
   {
    "key": "2026-09",
@@ -4479,8 +4482,8 @@
    "last_ts": "2026-10-18T12:43:57+09:00",
    "last_status": "failed",
    "last_result": "CI failed, PR open https://github.com/hkjang/workkit.irumx.app/pull/8",
-   "cost": 71.99,
-   "minutes": 205,
+   "cost": 72.88,
+   "minutes": 207,
    "grade": "D",
    "grade_why": "14일: 릴리즈 1, 실패 7, 경고 7, 회귀 0",
    "lessons": 0,
