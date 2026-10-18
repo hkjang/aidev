@@ -26,3 +26,6 @@
 - 범위·되돌리기: scripts/check-version.sh 18줄 추가뿐, 마이그레이션·외부 상태·의존성·인증 변경 0. 보안·법무 소진 없음. VERSION 0.76.8 미변경이 관례와 맞아 신규 릴리즈 노트 불필요.
 - [러너 11:31] review approved — 리뷰 승인 (risk=low)
 - [러너 11:32] pr created — https://github.com/hkjang/umm/pull/175
+- [러너 11:43] ci passed — 검사 1개 모두 success
+- [러너 11:43] merge done — 0857189
+- [러너 11:44] release skipped — 자율화 단계 low-risk — 릴리즈는 사람이
