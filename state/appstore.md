@@ -406,3 +406,4 @@
 - 검증 한계: 프런트 표시 변경이라 Go race/build, DB·Keycloak·SecCheck 통합, Docker smoke, 전체 E2E 는 실행하지 않았다. E2E 는 실제 번들·Chromium 이지만 HTTP mock 이므로 실제 서버 `q` 필터 동작의 증거는 아니다(`mock-api.ts:352-361` 이 같은 규칙으로 걸러 준다). 운영 QueryClient 는 `retry:1` 이라 오류 타이밍은 테스트와 다르지만 이번 변경은 성공 응답의 0건 경로만 건드린다.
 - 범위: 개수 표시(`:360-363`)·페이지 이동(`:411-429`)·`pageSize: 100` 후 slug 필터·쿼리 키, 공용 `ui.tsx` 의 `EmptyState`/`StatePanel`, `/apps` 카탈로그 문구 3종, 기존 즐겨찾기 E2E 2건, 서버·API 계약은 건드리지 않았다(미병합 `0898f7a` 와 줄이 겹치지 않는다). 제품 변경은 분기 1개 + 헬퍼 1개(21줄). 버전·릴리즈·원격 변경 없음. `web/dist`·`web/test-results` 는 기존 ignore 대상이며 커밋에 없다.
 
+- 릴리즈: v2.11.18 (2026-10-18, run 2026-10-18-165924-appstore-improve)

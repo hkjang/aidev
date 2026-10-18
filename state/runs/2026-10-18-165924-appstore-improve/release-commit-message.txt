@@ -1,0 +1,39 @@
+chore(release): AppStore v2.11.18
+
+v2.11.17 이후 main에 머지된 사용자 화면 수정 1건을 실은 patch 릴리스입니다.
+즐겨찾기 화면이 검색으로 좁혀진 0건에도 "즐겨찾기한 앱이 없습니다" 를 보여 주어
+담아 둔 앱이 사라진 것처럼 읽히던 문제를 고쳤습니다. 검색어나 MCP·추천 조건으로
+좁혀진 상태의 0건은 "검색 조건에 맞는 즐겨찾기 앱이 없습니다" 와 검색 조건 지우기
+버튼으로 구분합니다. 서버·API 계약과 즐겨찾기 저장 방식은 그대로입니다.
+
+Version
+
+web/package.json·package-lock.json, docker-compose.yml, README, GitHub Pages
+문서와 docs/USER_GUIDE.md·docs/ADMIN_GUIDE.md의 버전 표기를 v2.11.18로
+올렸습니다. 관리자 가이드의 롤백 예시는 appstore-v2.11.17-stopped를 가리킵니다.
+사용자 가이드 즐겨찾기 절에는 검색 0건 안내와 검색 조건 지우기 동작을
+반영했습니다.
+
+Screenshots and guide PDFs
+
+실제 번들에서 desktop/mobile 캡처 90개를 다시 생성했습니다. 90개 모두 v2.11.17과
+byte 단위로 동일하며, manifest는 버전 표기만 바뀌었습니다. 이번 수정은 즐겨찾기의
+0건 경로만 닿고 캡처 fixture는 즐겨찾기에 앱이 담긴 정상 경로를 지나므로 화면이
+같습니다. 새 빈 상태 문구와 검색 조건 지우기는 HTTP 경계 DOM 테스트와
+desktop·mobile E2E가 단정합니다.
+기존 PDF 스크립트는 실행 비트가 없어 sh로 실행했습니다. 사용자·관리자 가이드
+PDF를 재생성하고 표지 버전과 file:// 링크 부재를 확인했습니다. Playwright
+캡처 변환에는 설치된 브라우저 경로를 명시했습니다.
+
+Migration
+
+서버·schema 변경은 없습니다. 기존 설치는 image만 교체하면 됩니다.
+internal/webui/dist는 기존 관례대로 유지하며 Dockerfile이 번들을 새로 빌드합니다.
+
+검증: Go race 전체 패키지·vet·gofmt, 새 React 번들을 embed한 Go build,
+React 137건, lint(--max-warnings 0)·Prettier·build, 오프라인·환경·문서 검사 통과.
+Playwright --workers=2 --retries=2는 retry 없이 89 passed/1 skipped입니다.
+Skip 1건은 desktop 프로젝트의 모바일 전용 테스트입니다. DB DSN 미설정으로
+DB 통합 검증은 skip이며 실제 DB·Keycloak·SecCheck는 검증하지 않았습니다.
+Docker build/load/smoke, SHA-256 및 GitHub Release 게시는 태그 워크플로가
+수행합니다. 이 세션에서는 원격 전송을 수행하지 않았습니다.
