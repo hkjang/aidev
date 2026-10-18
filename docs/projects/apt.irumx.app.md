@@ -1,7 +1,7 @@
 ---
 title: "apt.irumx.app — 자율 개선 이력"
-description: "apt.irumx.app: 자율 개선 회차 8회, 릴리즈 0건. 최근 릴리즈 없음."
-last_modified_at: 2026-10-18 09:24:55 +0900
+description: "apt.irumx.app: 자율 개선 회차 9회, 릴리즈 0건. 최근 릴리즈 없음."
+last_modified_at: 2026-10-18 09:28:58 +0900
 ---
 {% raw %}
 <script type="application/ld+json">
@@ -11,33 +11,33 @@ last_modified_at: 2026-10-18 09:24:55 +0900
  "name": "apt.irumx.app",
  "codeRepository": "https://github.com/hkjang/apt.irumx.app",
  "url": "https://hkjang.github.io/aidev/projects/apt.irumx.app/",
- "description": "apt.irumx.app: 자율 개선 회차 8회, 릴리즈 0건. 최근 릴리즈 없음.",
+ "description": "apt.irumx.app: 자율 개선 회차 9회, 릴리즈 0건. 최근 릴리즈 없음.",
  "inLanguage": "ko",
  "maintainer": {
   "@type": "Person",
   "name": "hkjang",
   "url": "https://github.com/hkjang"
  },
- "dateModified": "2026-10-18T09:24:55+09:00"
+ "dateModified": "2026-10-18T09:28:58+09:00"
 }
 </script>
 
 # apt.irumx.app
 
-<p class="tldr"><strong>요약.</strong> apt.irumx.app: 자율 개선 회차 8회, 릴리즈 0건. 최근 릴리즈 없음. <span class="pill pill-merged" title="14일: 릴리즈 0, 실패 0, 경고 1, 회귀 0">건강 B</span> <span class="meta">14일: 릴리즈 0, 실패 0, 경고 1, 회귀 0</span></p>
+<p class="tldr"><strong>요약.</strong> apt.irumx.app: 자율 개선 회차 9회, 릴리즈 0건. 최근 릴리즈 없음. <span class="pill pill-merged" title="14일: 릴리즈 0, 실패 0, 경고 1, 회귀 0">건강 B</span> <span class="meta">14일: 릴리즈 0, 실패 0, 경고 1, 회귀 0</span></p>
 
-<ul class="stats"><li><b>8</b><span>회차</span></li><li><b>1</b><span>프로젝트</span></li><li><b>0</b><span>배포 준비 완료</span></li><li><b>0</b><span>릴리즈 진행 중</span></li><li><b>0</b><span>병합 완료</span></li><li><b>5</b><span>검토 대기</span></li><li><b>0</b><span>검증 실패</span></li><li><b>3</b><span>변경 없음</span></li><li><b>0</b><span>실행 오류</span></li><li><b>$23.01</b><span>비용</span></li><li><b>1시간 43분</b><span>에이전트 시간</span></li></ul>
+<ul class="stats"><li><b>9</b><span>회차</span></li><li><b>1</b><span>프로젝트</span></li><li><b>0</b><span>배포 준비 완료</span></li><li><b>0</b><span>릴리즈 진행 중</span></li><li><b>0</b><span>병합 완료</span></li><li><b>6</b><span>검토 대기</span></li><li><b>0</b><span>검증 실패</span></li><li><b>3</b><span>변경 없음</span></li><li><b>0</b><span>실행 오류</span></li><li><b>$23.01</b><span>비용</span></li><li><b>1시간 43분</b><span>에이전트 시간</span></li></ul>
 
 ## 현황
 
 <dl class="kv">
 <dt>저장소</dt><dd><a href="https://github.com/hkjang/apt.irumx.app">https://github.com/hkjang/apt.irumx.app</a></dd>
-<dt>마지막 회차</dt><dd>2026-10-18 02:54 KST — <span class="pill pill-other">• 기타</span> manual: <strong>guarded files</strong>, PR open <a href="https://github.com/hkjang/apt.irumx.app/pull/2">PR #2</a></dd>
+<dt>마지막 회차</dt><dd>2026-10-18 09:28 KST — <span class="pill pill-other">• 기타</span> approved <a href="https://github.com/hkjang/apt.irumx.app/pull/1">PR #1</a></dd>
 </dl>
 
 ## 회차 이력
 
-<div class="table-wrap"><table class="rt"><thead><tr><th>일시</th><th class="primary">프로젝트</th><th>결과</th></tr></thead><tbody><tr data-status="other"><td data-label="일시">2026-10-18 02:54</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/apt.irumx.app/">apt.irumx.app</a></td><td data-label="결과"><span class="pill pill-merged" title="outcome=review-pending">검토 대기</span> manual: <strong>guarded files</strong>, PR open <a href="https://github.com/hkjang/apt.irumx.app/pull/2">PR #2</a><div class="meta">3파일 <span style="color:var(--good)">+133</span>/<span style="color:var(--bad)">−1</span> · 테스트 1 — fix: npm 캐시 블롭이 사라져도 main 검수가 실패하지 않게</div></td></tr><tr data-status="other"><td data-label="일시">2026-10-17 14:14</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/apt.irumx.app/">apt.irumx.app</a></td><td data-label="결과"><span class="pill pill-merged" title="outcome=review-pending">검토 대기</span> approved <a href="https://github.com/hkjang/apt.irumx.app/pull/1">PR #1</a></td></tr><tr data-status="other"><td data-label="일시">2026-10-17 08:51</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/apt.irumx.app/">apt.irumx.app</a></td><td data-label="결과"><span class="pill pill-merged" title="outcome=review-pending">검토 대기</span> approved <a href="https://github.com/hkjang/apt.irumx.app/pull/1">PR #1</a></td></tr><tr data-status="other"><td data-label="일시">2026-10-17 08:31</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/apt.irumx.app/">apt.irumx.app</a></td><td data-label="결과"><span class="pill pill-merged" title="outcome=review-pending">검토 대기</span> approved <a href="https://github.com/hkjang/apt.irumx.app/pull/1">PR #1</a></td></tr><tr data-status="other"><td data-label="일시">2026-10-17 07:54</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/apt.irumx.app/">apt.irumx.app</a></td><td data-label="결과"><span class="pill pill-merged" title="outcome=review-pending">검토 대기</span> review held, PR open <a href="https://github.com/hkjang/apt.irumx.app/pull/1">PR #1</a><div class="meta">2파일 <span style="color:var(--good)">+70</span>/<span style="color:var(--bad)">−8</span> · 테스트 1 — fix: 동시에 실패한 호출들이 DB 차단기 백오프를 함께 누적한다</div></td></tr><tr data-status="nochange"><td data-label="일시">2026-10-10 02:08</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/apt.irumx.app/">apt.irumx.app</a></td><td data-label="결과"><span class="pill pill-nochange" title="outcome=no-change">변경 없음</span> no change</td></tr><tr data-status="nochange"><td data-label="일시">2026-10-09 15:39</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/apt.irumx.app/">apt.irumx.app</a></td><td data-label="결과"><span class="pill pill-nochange" title="outcome=no-change">변경 없음</span> no change</td></tr><tr data-status="nochange"><td data-label="일시">2026-10-09 13:08</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/apt.irumx.app/">apt.irumx.app</a></td><td data-label="결과"><span class="pill pill-nochange" title="outcome=no-change">변경 없음</span> no change</td></tr></tbody></table></div>
+<div class="table-wrap"><table class="rt" data-filter="1"><thead><tr><th>일시</th><th class="primary">프로젝트</th><th>결과</th></tr></thead><tbody><tr data-status="other"><td data-label="일시">2026-10-18 09:28</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/apt.irumx.app/">apt.irumx.app</a></td><td data-label="결과"><span class="pill pill-merged" title="outcome=review-pending">검토 대기</span> approved <a href="https://github.com/hkjang/apt.irumx.app/pull/1">PR #1</a></td></tr><tr data-status="other"><td data-label="일시">2026-10-18 02:54</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/apt.irumx.app/">apt.irumx.app</a></td><td data-label="결과"><span class="pill pill-merged" title="outcome=review-pending">검토 대기</span> manual: <strong>guarded files</strong>, PR open <a href="https://github.com/hkjang/apt.irumx.app/pull/2">PR #2</a><div class="meta">3파일 <span style="color:var(--good)">+133</span>/<span style="color:var(--bad)">−1</span> · 테스트 1 — fix: npm 캐시 블롭이 사라져도 main 검수가 실패하지 않게</div></td></tr><tr data-status="other"><td data-label="일시">2026-10-17 14:14</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/apt.irumx.app/">apt.irumx.app</a></td><td data-label="결과"><span class="pill pill-merged" title="outcome=review-pending">검토 대기</span> approved <a href="https://github.com/hkjang/apt.irumx.app/pull/1">PR #1</a></td></tr><tr data-status="other"><td data-label="일시">2026-10-17 08:51</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/apt.irumx.app/">apt.irumx.app</a></td><td data-label="결과"><span class="pill pill-merged" title="outcome=review-pending">검토 대기</span> approved <a href="https://github.com/hkjang/apt.irumx.app/pull/1">PR #1</a></td></tr><tr data-status="other"><td data-label="일시">2026-10-17 08:31</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/apt.irumx.app/">apt.irumx.app</a></td><td data-label="결과"><span class="pill pill-merged" title="outcome=review-pending">검토 대기</span> approved <a href="https://github.com/hkjang/apt.irumx.app/pull/1">PR #1</a></td></tr><tr data-status="other"><td data-label="일시">2026-10-17 07:54</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/apt.irumx.app/">apt.irumx.app</a></td><td data-label="결과"><span class="pill pill-merged" title="outcome=review-pending">검토 대기</span> review held, PR open <a href="https://github.com/hkjang/apt.irumx.app/pull/1">PR #1</a><div class="meta">2파일 <span style="color:var(--good)">+70</span>/<span style="color:var(--bad)">−8</span> · 테스트 1 — fix: 동시에 실패한 호출들이 DB 차단기 백오프를 함께 누적한다</div></td></tr><tr data-status="nochange"><td data-label="일시">2026-10-10 02:08</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/apt.irumx.app/">apt.irumx.app</a></td><td data-label="결과"><span class="pill pill-nochange" title="outcome=no-change">변경 없음</span> no change</td></tr><tr data-status="nochange"><td data-label="일시">2026-10-09 15:39</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/apt.irumx.app/">apt.irumx.app</a></td><td data-label="결과"><span class="pill pill-nochange" title="outcome=no-change">변경 없음</span> no change</td></tr><tr data-status="nochange"><td data-label="일시">2026-10-09 13:08</td><td data-label="프로젝트" class="primary"><a href="https://hkjang.github.io/aidev/projects/apt.irumx.app/">apt.irumx.app</a></td><td data-label="결과"><span class="pill pill-nochange" title="outcome=no-change">변경 없음</span> no change</td></tr></tbody></table></div>
 
 ## 비용·사용량
 
