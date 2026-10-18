@@ -1,0 +1,110 @@
+[
+  {
+    "title": "저장된 보기 조회 실패 표시와 전용 재시도 — loadViews 가 .catch(() => setViews([])) 로 삼킨다",
+    "value": 3,
+    "risk": 2,
+    "size": "S",
+    "status": "done",
+    "note": "2026-10-18 구현(76e7154). 새 viewsFailure state + saved-views-load-failed 배너 + loadViews() 재호출. setViews 는 실패 시 호출하지 않으므로 저장 성공 뒤 거부된 새로고침이 목록을 비우지 않는다. 신규 objects-saved-views.test.tsx 4개가 fetch 경계에서 실제 post/api 를 통과해 고정한다.",
+    "updated": "2026-10-18"
+  },
+  {
+    "title": "공급업체 드롭다운 조회 실패를 .catch(() => {}) 로 삼키는 것",
+    "value": 3,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "Objects.tsx:261-265(이번 변경 뒤에도 좌표 동일). 빈 catch 라 드롭다운이 비고 새 레코드를 만들 수 없는데 화면이 이유를 말하지 않는다. 이번 회차의 viewsFailure 와 같은 모양으로 끝낼 수 있고 본보기가 이제 같은 함수 바로 위에 둘(load, loadViews) 있다. 다음 회차 1순위 후보. 단 suppliers 는 NewObject 모달이 소비하므로 배너를 어디에 둘지(목록 상단 vs 모달 안) 한 번 결정해야 한다.",
+    "updated": "2026-10-18"
+  },
+  {
+    "title": "가려진 지출의 남은 절반 — REST redactSupplier 와 대시보드 KPI 의 0",
+    "value": 3,
+    "risk": 3,
+    "size": "M",
+    "status": "pending",
+    "note": "MCP 두 도구는 375797d 로 끝났다. 남은 것은 suppliers.go:368 의 s.AnnualSpend=0 과 analytics.go 의 KPI. web/src/types.ts 가 annualSpend: number 라 응답 모양 결정이 선행돼야 하고 웹까지 번져 파일 수가 늘어난다. 운영자 지시대로 MCP 와 통합하지 말 것. 이번 회차 미재확인.",
+    "updated": "2026-10-18"
+  },
+  {
+    "title": "search_contracts·search_purchase_orders 가 LIMIT 100 을 말없이 건다",
+    "value": 3,
+    "risk": 3,
+    "size": "M",
+    "status": "pending",
+    "note": "mcpObjects 가 LIMIT 100 하드코딩이고 응답이 맨 배열이라 절단 신호가 없다. get_supplier_risk 주석이 '조용히 자른다' 를 의도로 명시해 저장소 입장과 부딪히고, 배열→객체는 structuredContent 계약 변경이다. 정책 결정 선행. 이번 회차 미재확인.",
+    "updated": "2026-10-18"
+  },
+  {
+    "title": "analyze_spend 가 supplier.financial.read 역할에게 도구 자체를 거부한다",
+    "value": 2,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "integrations.go 의 required map 은 spend.read 만 받는데 canReadSupplierSpend 는 셋을 받는다. 필드 읽기 권한과 도구 접근 권한을 같다고 단정할 수 없고, 운영자 지시가 '두 문은 둘로 둔다' 이므로 보류 유지. 이번 회차 미재확인.",
+    "updated": "2026-10-18"
+  },
+  {
+    "title": "저장된 보기가 요청한 order 를 그대로 보관해 적용되지 않는 정렬을 되살린다",
+    "value": 2,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "saveView 의 filters:{q,status,order} 가 URL 요청값을 담는다(appliedOrder 가 아니다). 요청 의도와 적용값 중 무엇을 저장할지 정책 결정이 선행돼야 해 보류. 이번 회차에 같은 함수를 읽었으나 섞지 않았다 — 리뷰 면적을 키우지 않기 위해.",
+    "updated": "2026-10-18"
+  },
+  {
+    "title": "저장된 보기 삭제 성공 뒤 거부된 새로고침의 실행 테스트 공백",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "새 viewsFailure 로 removeView 경로도 함께 고쳐졌지만(같은 loadViews), 신규 테스트는 saveView 경로만 덮는다. del → GET 거부에서 목록이 남고 배너가 뜨는지는 같은 하네스에 한 케이스 추가로 끝난다. 동작 변경 없는 순수 테스트 공백.",
+    "updated": "2026-10-18"
+  },
+  {
+    "title": "numberArg·riskCeilingArg 오류 문구에 도구 이름이 없다",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "미병합 fcce3d7(integrations.go 인수 헬퍼)과 충돌 위험이 남아 보류 유지. 이번 회차 미재확인.",
+    "updated": "2026-10-18"
+  },
+  {
+    "title": "CI 의 node-version: 22 를 .nvmrc + node-version-file 로 patch 까지 고정",
+    "value": 2,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "보호 경로(.github/workflows)이고 현재 장애 근거 없음. 일곱 회차 동안 이 때문에 깨진 적이 없다. 이번 회차 미재확인.",
+    "updated": "2026-10-18"
+  },
+  {
+    "title": "eslint.config.js 의 ignores 에 coverage 추가",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "CI 는 eslint src 라 현재 실패 근거 없음. 가치 낮음. 이번 회차 미재확인.",
+    "updated": "2026-10-18"
+  },
+  {
+    "title": "행이 떠 있는 상태에서 새로고침만 실패한 배너 경로 테스트 공백",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "28572eb 로 동작은 구현됐고(Objects.tsx 의 list-load-failed) objects-error.test.tsx 가 그 케이스를 덮지 않는다. 테스트 공백으로 유지.",
+    "updated": "2026-10-18"
+  },
+  {
+    "title": "늦은 초안 복원 응답이 입력을 덮어쓰지 않는 실행 테스트",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "NewObject 영역은 미병합 011c5a3 과 같은 함수다. 011c5a3 이 여전히 HEAD(dfbe947) 조상이 아님은 정찰이 확인했다 — 병합될 때까지 계속 피한다. 이 워크트리의 웹 테스트 기준선이 113개(011c5a3 의 3개 없음)인 것이 그 증거다.",
+    "updated": "2026-10-18"
+  }
+]
