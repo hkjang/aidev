@@ -1,15 +1,137 @@
 [
-  {"title": "레거시 리소스 변경의 문자열 필드·행 식별자 NUL(U+0000)을 tx 전에 400 resource_invalid 로 거부", "value": 3, "risk": 2, "size": "S", "status": "done", "note": "2026-10-17 구현(커밋 0301301). validateLegacyMutation 의 한도 루프에서 storableInVarchar(text), 그리고 legacyResourceKeyColumn != \"id\" 인 rowID(policies·app-defaults·menus)에 같은 검사. red 로 확정한 사실: create 의 500 코드는 resource_reference_unavailable(과제서 예상과 다름), patch 는 resource_update_failed, SQLSTATE 는 text·jsonb 모두 22021(22P05 아님), URL 의 %00 은 chi 핸들러까지 도달한다.", "updated": "2026-10-17"},
-  {"title": "MCP create_approval_request 제목의 NUL 을 -32602 로 거부", "value": 2, "risk": 1, "size": "S", "status": "pending", "note": "mcp.go:299 가 trim+rune 300 만 본다(프로필 기록 계승, 2026-10-17 회차도 mcp.go 미열람 — 구현자가 먼저 열어 확인). toolFailure 로 감싸므로 HTTP 500 은 아니어서 가치 낮음.", "updated": "2026-10-17"},
-  {"title": "승인 요청 payload(jsonb)의 NUL 을 저장 전 400 으로 막기", "value": 2, "risk": 2, "size": "S", "status": "pending", "note": "workflow.go 의 createApprovalRecordIn $5::jsonb. 2026-10-17 회차가 레거시 변경 경로는 호출자 입력 단계에서 선차단했으므로 남는 것은 MCP·다른 operation 경로. PR #44·#45 가 같은 검증 지점을 점유 중이라 머지 후 단독으로. jsonObjectHasNUL 이름 금지. 참고: jsonb 파라미터의 실제 SQLSTATE 도 22021 이다(2026-10-17 실측).", "updated": "2026-10-17"},
-  {"title": "updatePreferences 의 sidebarState·aiDefaults jsonb 검증이 main 에 없음", "value": 3, "risk": 1, "size": "S", "status": "pending", "note": "f66d525 외 3커밋이 auto/2026-10-04-1142 에만 있다. 기존 브랜치 처리 결정 전 재구현 금지, jsonObjectHasNUL·storablePreferenceObject 이름 재사용 금지.", "updated": "2026-10-17"},
-  {"title": "updateKeyScope 의 name 을 varchar(160)·trim 계약에 맞춰 400 으로 막기", "value": 2, "risk": 1, "size": "S", "status": "pending", "note": "b5146f2 가 auto/2026-10-01-1412 에만 있고 verify-failed — 실패 원인 확인 전 동일 접근 재시도 금지. keys.go:121 의 createKey 는 이미 storableInVarchar 를 호출한다.", "updated": "2026-10-17"},
-  {"title": "go.mod/go.sum 이 untidy — go mod tidy -diff 가 exit 1", "value": 2, "risk": 2, "size": "S", "status": "pending", "note": "CI 는 tidy 를 검사하지 않아 급하지 않지만, 누군가 tidy 를 돌리면 무관한 diff 가 섞인다. 독립 회차에 go.mod/go.sum 만 커밋(프로덕션 0파일). setup-go 캐시 키가 go.sum 해시라 캐시가 무효화되는 부작용 기억. 2026-10-16 실측 계승, 2026-10-17 재확인 안 함.", "updated": "2026-10-17"},
-  {"title": "ubuntu-latest 의 Ubuntu 26.04 점진 이행(2026-10-19~11-19)", "value": 3, "risk": 2, "size": "S", "status": "pending", "note": "이틀 뒤 시작. 점진 이행이라 같은 커밋이 런마다 다른 이미지에 떨어져 '간헐적' 실패처럼 보일 수 있다. 미리 바꾸지 말고, 실제로 깨지면 runs-on 을 ubuntu-24.04 로 고정.", "updated": "2026-10-17"},
-  {"title": "internal/server 통합 테스트의 중복 셋업(DROP SCHEMA+Migrate+Seed) 줄이기", "value": 3, "risk": 3, "size": "L", "status": "pending", "note": "26파일이 각각 DROP+Migrate+Seed, 패키지 151~164초(2026-10-17 실측 151.882s). 전부는 대규모 리팩터라 금지 — 같은 경로를 쓰는 쌍만 회차당 하나. 전체 벽시계 2분 30초대라 급하지 않다.", "updated": "2026-10-17"},
-  {"title": "make ci-test 타깃이 main 에 없다", "value": 2, "risk": 1, "size": "S", "status": "pending", "note": "전제 교정용 메모 — 미머지 PR #46(1e7d704)에만 있다. 2026-10-17 회차도 쓰지 않고 손으로 검증했다. #46 이 머지되면 done 으로.", "updated": "2026-10-17"},
-  {"title": "감사 CSV 문서의 '성공 다운로드=전체 이벤트' 문구를 50,000건 상한과 맞추기", "value": 1, "risk": 1, "size": "S", "status": "pending", "note": "docs/api.md:353 vs audit_events.go LIMIT 50000(이전 기록 계승, 재확인 안 함). verify-version.sh 의 expect_current_v_tokens 때문에 docs 에 새 vX.Y.Z 토큰을 넣으면 lint 가 깨진다.", "updated": "2026-10-17"},
-  {"title": "MCP query_legacy_table 의 search NUL 이 tool error 로 떨어지는 경로", "value": 1, "risk": 1, "size": "S", "status": "pending", "note": "mcp.go:223-237 이 trim+200자만 검사(프로필 기록, 미확인). HTTP 500 은 아니어서 가치 낮음.", "updated": "2026-10-17"},
-  {"title": "로컬 node(v22)와 CI·Dockerfile node(26)의 메이저 차이를 드러내기", "value": 2, "risk": 2, "size": "S", "status": "pending", "note": "web/package.json 에 engines 가 없어 조용히 갈린다. engines 추가는 로컬 npm ci 를 막을 수 있어 문서 한 줄이 안전. 2026-10-16 회차가 node:26-alpine 안에서 web 빌드를 통과시켜 CI 실패 원인은 아님.", "updated": "2026-10-17"},
-  {"title": "레거시 변경 경로의 NUL 거부를 delete·승인(workflow legacy_data_change) 켠 상태까지 확장 검증", "value": 2, "risk": 1, "size": "S", "status": "pending", "note": "2026-10-17 회차는 create·patch(본문 필드)와 문자열 rowID(app-defaults PATCH)만 실제 HTTP 로 덮었다. DELETE 의 문자열 rowID NUL 과 workflow.enabled=true 에서 같은 요청이 approval_create_failed 500 대신 400 인지는 코드 경로상 같은 자리에서 막히지만 실행으로 확인하지 않았다. 프로덕션 0파일, 기존 fixture 재사용 전제.", "updated": "2026-10-17"}
+  {
+    "title": "레거시 리소스 변경의 문자열 필드·행 식별자 NUL(U+0000)을 tx 전에 400 resource_invalid 로 거부",
+    "value": 3,
+    "risk": 2,
+    "size": "S",
+    "status": "done",
+    "note": "2026-10-17 구현(커밋 0301301). validateLegacyMutation 의 한도 루프에서 storableInVarchar(text), 그리고 legacyResourceKeyColumn != \"id\" 인 rowID(policies·app-defaults·menus)에 같은 검사. red 로 확정한 사실: create 의 500 코드는 resource_reference_unavailable(과제서 예상과 다름), patch 는 resource_update_failed, SQLSTATE 는 text·jsonb 모두 22021(22P05 아님), URL 의 %00 은 chi 핸들러까지 도달한다.",
+    "updated": "2026-10-17"
+  },
+  {
+    "title": "MCP create_approval_request 제목의 NUL 을 -32602 로 거부",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "mcp.go:299 가 trim+rune 300 만 본다(프로필 기록 계승, 2026-10-17 회차도 mcp.go 미열람 — 구현자가 먼저 열어 확인). toolFailure 로 감싸므로 HTTP 500 은 아니어서 가치 낮음.",
+    "updated": "2026-10-17"
+  },
+  {
+    "title": "승인 요청 payload(jsonb)의 NUL 을 저장 전 400 으로 막기",
+    "value": 2,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "workflow.go 의 createApprovalRecordIn $5::jsonb. 2026-10-17 회차가 레거시 변경 경로는 호출자 입력 단계에서 선차단했으므로 남는 것은 MCP·다른 operation 경로. PR #44·#45 가 같은 검증 지점을 점유 중이라 머지 후 단독으로. jsonObjectHasNUL 이름 금지. 참고: jsonb 파라미터의 실제 SQLSTATE 도 22021 이다(2026-10-17 실측).",
+    "updated": "2026-10-17"
+  },
+  {
+    "title": "updatePreferences 의 sidebarState·aiDefaults jsonb 검증이 main 에 없음",
+    "value": 3,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "f66d525 외 3커밋이 auto/2026-10-04-1142 에만 있다. 기존 브랜치 처리 결정 전 재구현 금지, jsonObjectHasNUL·storablePreferenceObject 이름 재사용 금지.",
+    "updated": "2026-10-17"
+  },
+  {
+    "title": "updateKeyScope 의 name 을 varchar(160)·trim 계약에 맞춰 400 으로 막기",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "b5146f2 가 auto/2026-10-01-1412 에만 있고 verify-failed — 실패 원인 확인 전 동일 접근 재시도 금지. keys.go:121 의 createKey 는 이미 storableInVarchar 를 호출한다.",
+    "updated": "2026-10-17"
+  },
+  {
+    "title": "go.mod/go.sum 이 untidy — go mod tidy -diff 가 exit 1",
+    "value": 2,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "CI 는 tidy 를 검사하지 않아 급하지 않지만, 누군가 tidy 를 돌리면 무관한 diff 가 섞인다. 독립 회차에 go.mod/go.sum 만 커밋(프로덕션 0파일). setup-go 캐시 키가 go.sum 해시라 캐시가 무효화되는 부작용 기억. 2026-10-16 실측 계승, 2026-10-17 재확인 안 함.",
+    "updated": "2026-10-17"
+  },
+  {
+    "title": "ubuntu-latest 의 Ubuntu 26.04 점진 이행(2026-10-19~11-19)",
+    "value": 3,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "이틀 뒤 시작. 점진 이행이라 같은 커밋이 런마다 다른 이미지에 떨어져 '간헐적' 실패처럼 보일 수 있다. 미리 바꾸지 말고, 실제로 깨지면 runs-on 을 ubuntu-24.04 로 고정.",
+    "updated": "2026-10-17"
+  },
+  {
+    "title": "internal/server 통합 테스트의 중복 셋업(DROP SCHEMA+Migrate+Seed) 줄이기",
+    "value": 3,
+    "risk": 3,
+    "size": "L",
+    "status": "pending",
+    "note": "26파일이 각각 DROP+Migrate+Seed, 패키지 151~164초(2026-10-17 실측 151.882s). 전부는 대규모 리팩터라 금지 — 같은 경로를 쓰는 쌍만 회차당 하나. 전체 벽시계 2분 30초대라 급하지 않다.",
+    "updated": "2026-10-17"
+  },
+  {
+    "title": "make ci-test 타깃이 main 에 없다",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "전제 교정용 메모 — 미머지 PR #46(1e7d704)에만 있다. 2026-10-17 회차도 쓰지 않고 손으로 검증했다. #46 이 머지되면 done 으로.",
+    "updated": "2026-10-17"
+  },
+  {
+    "title": "감사 CSV 문서의 '성공 다운로드=전체 이벤트' 문구를 50,000건 상한과 맞추기",
+    "value": 1,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "docs/api.md:353 vs audit_events.go LIMIT 50000(이전 기록 계승, 재확인 안 함). verify-version.sh 의 expect_current_v_tokens 때문에 docs 에 새 vX.Y.Z 토큰을 넣으면 lint 가 깨진다.",
+    "updated": "2026-10-17"
+  },
+  {
+    "title": "MCP query_legacy_table 의 search NUL 이 tool error 로 떨어지는 경로",
+    "value": 1,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "mcp.go:223-237 이 trim+200자만 검사(프로필 기록, 미확인). HTTP 500 은 아니어서 가치 낮음.",
+    "updated": "2026-10-17"
+  },
+  {
+    "title": "로컬 node(v22)와 CI·Dockerfile node(26)의 메이저 차이를 드러내기",
+    "value": 2,
+    "risk": 2,
+    "size": "S",
+    "status": "pending",
+    "note": "web/package.json 에 engines 가 없어 조용히 갈린다. engines 추가는 로컬 npm ci 를 막을 수 있어 문서 한 줄이 안전. 2026-10-16 회차가 node:26-alpine 안에서 web 빌드를 통과시켜 CI 실패 원인은 아님.",
+    "updated": "2026-10-17"
+  },
+  {
+    "title": "레거시 변경 경로의 NUL 거부를 delete·승인(workflow legacy_data_change) 켠 상태까지 확장 검증",
+    "value": 2,
+    "risk": 1,
+    "size": "S",
+    "status": "pending",
+    "note": "2026-10-17 회차는 create·patch(본문 필드)와 문자열 rowID(app-defaults PATCH)만 실제 HTTP 로 덮었다. DELETE 의 문자열 rowID NUL 과 workflow.enabled=true 에서 같은 요청이 approval_create_failed 500 대신 400 인지는 코드 경로상 같은 자리에서 막히지만 실행으로 확인하지 않았다. 프로덕션 0파일, 기존 fixture 재사용 전제.",
+    "updated": "2026-10-17"
+  },
+  {
+    "title": "auto-improve: test: 승인 NUL 계약을 기존 승인 fixture 안으로 합쳐 셋업 중복 제거",
+    "value": 3,
+    "risk": 2,
+    "size": "M",
+    "status": "pending",
+    "updated": "2026-10-19",
+    "note": "https://github.com/hkjang/ai-admin/pull/45 (PR 처리기가 3일 전에 더 진행할 수 없다고 판정했고(수정·심사를 2번 시도했지만 통과하지 못함) 그 뒤 사람 손이 닿지 않았습니다) 로 닫힘 — 다시 하려면 처음부터"
+  },
+  {
+    "title": "auto-improve: fix: 승인 제목·결정 코멘트의 NUL 을 저장 전 400 으로 거부",
+    "value": 3,
+    "risk": 2,
+    "size": "M",
+    "status": "pending",
+    "updated": "2026-10-19",
+    "note": "https://github.com/hkjang/ai-admin/pull/44 (PR 처리기가 3일 전에 더 진행할 수 없다고 판정했고(수정·심사를 2번 시도했지만 통과하지 못함) 그 뒤 사람 손이 닿지 않았습니다) 로 닫힘 — 다시 하려면 처음부터"
+  }
 ]
