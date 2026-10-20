@@ -1,7 +1,7 @@
 ---
 title: "ox-arena — 자율 개선 이력"
 description: "ox-arena: 자율 개선 회차 5회, 릴리즈 0건. 최근 릴리즈 없음."
-last_modified_at: 2026-10-20 14:45:03 +0900
+last_modified_at: 2026-10-20 20:20:51 +0900
 ---
 {% raw %}
 <script type="application/ld+json">
@@ -18,7 +18,7 @@ last_modified_at: 2026-10-20 14:45:03 +0900
   "name": "hkjang",
   "url": "https://github.com/hkjang"
  },
- "dateModified": "2026-10-20T14:45:03+09:00"
+ "dateModified": "2026-10-20T20:20:51+09:00"
 }
 </script>
 
