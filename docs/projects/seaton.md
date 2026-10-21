@@ -1,7 +1,7 @@
 ---
 title: "seaton — 자율 개선 이력"
 description: "seaton: 자율 개선 회차 34회, 릴리즈 16건. 최근 릴리즈 v1.4.19 (자산 1개)."
-last_modified_at: 2026-10-22 08:51:04 +0900
+last_modified_at: 2026-10-22 08:54:45 +0900
 ---
 {% raw %}
 <script type="application/ld+json">
@@ -18,7 +18,7 @@ last_modified_at: 2026-10-22 08:51:04 +0900
   "name": "hkjang",
   "url": "https://github.com/hkjang"
  },
- "dateModified": "2026-10-22T08:51:04+09:00",
+ "dateModified": "2026-10-22T08:54:45+09:00",
  "version": "1.4.19"
 }
 </script>
