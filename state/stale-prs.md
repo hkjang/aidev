@@ -1,20 +1,21 @@
-# 열린 러너 PR (2026-10-26 11:47 기준)
+# 열린 러너 PR (2026-10-26 18:15 기준)
 
+- [오래됨] ops.irumx.app #1 (10일) https://github.com/hkjang/ops.irumx.app/pull/1 — auto-improve: 시험: npm test 가 빌드를 스스로 선행한다 — dist 없이는 webServer 가 못 떠 api 전부가 죽었다
 - [오래됨] studio.irumx.app #5 (10일) https://github.com/hkjang/studio.irumx.app/pull/5 — auto-improve: 시험 하네스를 저장소 밖 node_modules/.bin 으로부터 격리
 - [오래됨] studio.irumx.app #4 (10일) https://github.com/hkjang/studio.irumx.app/pull/4 — auto-improve: 보관 만료 삭제: 이미 다 지운 프로젝트가 삭제 창을 막지 않게
-- [오래됨] studio.irumx.app #3 (10일) https://github.com/hkjang/studio.irumx.app/pull/3 — auto-improve: 범위 요청: 해석 못 하는 Range 헤더는 무시하고 전체 응답
-- [오래됨] studio.irumx.app #2 (10일) https://github.com/hkjang/studio.irumx.app/pull/2 — auto-improve: CI: 밀어넣기·당겨오기 요청마다 빌드와 시험
-- [오래됨] irumx-www #6 (10일) https://github.com/hkjang/irumx-www/pull/6 — auto-improve: npm test 가 혼자 통과하게: 준비물 자동 생성 + engines 가 요구하는 node 로 도구 실행
+- [오래됨] studio.irumx.app #3 (11일) https://github.com/hkjang/studio.irumx.app/pull/3 — auto-improve: 범위 요청: 해석 못 하는 Range 헤더는 무시하고 전체 응답
+- [오래됨] studio.irumx.app #2 (11일) https://github.com/hkjang/studio.irumx.app/pull/2 — auto-improve: CI: 밀어넣기·당겨오기 요청마다 빌드와 시험
+- [오래됨] irumx-www #6 (11일) https://github.com/hkjang/irumx-www/pull/6 — auto-improve: npm test 가 혼자 통과하게: 준비물 자동 생성 + engines 가 요구하는 node 로 도구 실행
 - [오래됨] review.yeopjari.bid #6 (11일) https://github.com/hkjang/review.yeopjari.bid/pull/6 — auto-improve: CI 게이트를 로컬에서 한 줄로 — 워크플로 9단계를 그대로 밟는 scripts/ci-local.sh
 - [오래됨] studio.irumx.app #1 (11일) https://github.com/hkjang/studio.irumx.app/pull/1 — auto-improve: MP4 판독: 회전 행렬을 반영한 표시 해상도
-- [오래됨] yeopjari-your #4 (11일) https://github.com/hkjang/yeopjari-your/pull/4 — auto-improve: e2e: 가짜 서버 주소를 서버에 알려 준 값에서 읽어 같은 기계의 다른 검사와 부딪히지 않는다
-- [오래됨] vibe-coders #128 (11일) https://github.com/hkjang/vibe-coders/pull/128 — fix(app): 업무 앱 조회·변경의 계정 및 권한 경계 보호
-- [오래됨] vibe-coders #127 (11일) https://github.com/hkjang/vibe-coders/pull/127 — 검색어·URL 기록의 인증정보 유출 차단
-- [오래됨] vibe-coders #126 (11일) https://github.com/hkjang/vibe-coders/pull/126 — 업무 앱 검증·계획 결과의 대상 보호와 한글 안내 개선
-- [오래됨] vibe-coders #125 (11일) https://github.com/hkjang/vibe-coders/pull/125 — feat(app): MCP 계약 스키마 보존과 변경 검토
-- [오래됨] vibe-coders #124 (11일) https://github.com/hkjang/vibe-coders/pull/124 — MCP 실제 호출 검토·인수 입력·응답 수명 보호
-- [오래됨] vibe-coders #123 (11일) https://github.com/hkjang/vibe-coders/pull/123 — feat: 한글 MCP 연결 구조 탐색과 상세 패널
-- [오래됨] vibe-coders #122 (11일) https://github.com/hkjang/vibe-coders/pull/122 — feat: MCP 정책 변경 비교와 안전한 적용 흐름
+- [오래됨] yeopjari-your #4 (12일) https://github.com/hkjang/yeopjari-your/pull/4 — auto-improve: e2e: 가짜 서버 주소를 서버에 알려 준 값에서 읽어 같은 기계의 다른 검사와 부딪히지 않는다
+- [오래됨] vibe-coders #128 (12일) https://github.com/hkjang/vibe-coders/pull/128 — fix(app): 업무 앱 조회·변경의 계정 및 권한 경계 보호
+- [오래됨] vibe-coders #127 (12일) https://github.com/hkjang/vibe-coders/pull/127 — 검색어·URL 기록의 인증정보 유출 차단
+- [오래됨] vibe-coders #126 (12일) https://github.com/hkjang/vibe-coders/pull/126 — 업무 앱 검증·계획 결과의 대상 보호와 한글 안내 개선
+- [오래됨] vibe-coders #125 (12일) https://github.com/hkjang/vibe-coders/pull/125 — feat(app): MCP 계약 스키마 보존과 변경 검토
+- [오래됨] vibe-coders #124 (12일) https://github.com/hkjang/vibe-coders/pull/124 — MCP 실제 호출 검토·인수 입력·응답 수명 보호
+- [오래됨] vibe-coders #123 (12일) https://github.com/hkjang/vibe-coders/pull/123 — feat: 한글 MCP 연결 구조 탐색과 상세 패널
+- [오래됨] vibe-coders #122 (12일) https://github.com/hkjang/vibe-coders/pull/122 — feat: MCP 정책 변경 비교와 안전한 적용 흐름
 - [오래됨] vibe-coders #121 (12일) https://github.com/hkjang/vibe-coders/pull/121 — fix: isolate MCP request reads and clarify flow status
 - [오래됨] vibe-coders #120 (12일) https://github.com/hkjang/vibe-coders/pull/120 — feat: review and guard MCP tool risk changes
 - [오래됨] vibe-coders #119 (12일) https://github.com/hkjang/vibe-coders/pull/119 — fix: correct FinOps totals and isolate dashboard read failures
@@ -53,8 +54,8 @@
 - [오래됨] irumx-www #2 (18일) https://github.com/hkjang/irumx-www/pull/2 — auto-improve: qa 기록의 참고 방향 고침 — 새 절이 위에 있다
 - [오래됨] eval.irumx.app #2 (18일) https://github.com/hkjang/eval.irumx.app/pull/2 — auto-improve: 시험 세션 캐시는 D1 에 세션이 있을 때만 재사용 · 업체 공간 없으면 한국어 안내 · 캐시 되살리기 시험
 - [오래됨] irumx-www #1 (18일) https://github.com/hkjang/irumx-www/pull/1 — auto-improve: npm test 가 혼자서 돌게 고침 — 준비물 자동 생성, 테스트 포트 고정 제거
-- [오래됨] eval.irumx.app #1 (18일) https://github.com/hkjang/eval.irumx.app/pull/1 — auto-improve: 로컬 D1 을 비울 때 시험 세션 캐시도 함께 · 남은 쿠키로 로그인한 척하는 캐시는 버리고 재로그인
-- [오래됨] igame #36 (18일) https://github.com/hkjang/igame/pull/36 — auto-improve: test: pin down secretbox reject paths and AAD binding
+- [오래됨] eval.irumx.app #1 (19일) https://github.com/hkjang/eval.irumx.app/pull/1 — auto-improve: 로컬 D1 을 비울 때 시험 세션 캐시도 함께 · 남은 쿠키로 로그인한 척하는 캐시는 버리고 재로그인
+- [오래됨] igame #36 (19일) https://github.com/hkjang/igame/pull/36 — auto-improve: test: pin down secretbox reject paths and AAD binding
 - [오래됨] invenqor #34 (19일) https://github.com/hkjang/invenqor/pull/34 — auto-improve: build: 문서 사이트 배포를 깨뜨린 Liquid 태그 여는 괄호를 막는다
 - [오래됨] yeopjari #4 (19일) https://github.com/hkjang/yeopjari/pull/4 — auto-improve: 입력 가드 회귀 테스트: queryInt·isRealDay·isUuid (b576143 보강)
 - [오래됨] ox-arena #4 (20일) https://github.com/hkjang/ox-arena/pull/4 — auto-improve: perf: stop the 20Hz timer loop while no question is in progress
@@ -64,8 +65,8 @@
 - [오래됨] mmcp #4 (21일) https://github.com/hkjang/mmcp/pull/4 — auto-improve: fix: make `npm test` work in a clean checkout and pin the vitest interpreter
 - [오래됨] playwright-player #1 (22일) https://github.com/hkjang/playwright-player/pull/1 — auto-improve: Read the recording panel only once the refresh has landed
 - [오래됨] ox-arena #2 (22일) https://github.com/hkjang/ox-arena/pull/2 — auto-improve: ci: verify PRs with npm ci / test / build in a separate workflow
-- [오래됨] mmcp #3 (22일) https://github.com/hkjang/mmcp/pull/3 — auto-improve: fix: make `npm test` work in a clean checkout
-- [오래됨] mmcp #2 (22일) https://github.com/hkjang/mmcp/pull/2 — auto-improve: fix: make `npm test` work in a clean checkout (re-apply)
+- [오래됨] mmcp #3 (23일) https://github.com/hkjang/mmcp/pull/3 — auto-improve: fix: make `npm test` work in a clean checkout
+- [오래됨] mmcp #2 (23일) https://github.com/hkjang/mmcp/pull/2 — auto-improve: fix: make `npm test` work in a clean checkout (re-apply)
 - [오래됨] sqlon #16 (23일) https://github.com/hkjang/sqlon/pull/16 — auto-improve: ci: 러너가 돌리는 build·vet·test·크로스빌드를 GitHub Actions 로 옮깁니다
 - [오래됨] ox-arena #1 (24일) https://github.com/hkjang/ox-arena/pull/1 — auto-improve: test: add Vitest and regression tests for pure game logic
 - [오래됨] mmcp #1 (24일) https://github.com/hkjang/mmcp/pull/1 — auto-improve: fix: make `npm test` work from a clean checkout and pin the Node that runs vitest
@@ -79,28 +80,28 @@
 - [오래됨] qurio #22 (30일) https://github.com/hkjang/qurio/pull/22 — auto-improve: fix(test): close integration pools via t.Cleanup so fixture deletes still run
 - [오래됨] sqlon #14 (30일) https://github.com/hkjang/sqlon/pull/14 — auto-improve: fix(mcp): GET /api/metrics 에 인증을 요구해 DB 프로파일 인벤토리 노출을 막습니다
 - [오래됨] moina #32 (30일) https://github.com/hkjang/moina/pull/32 — auto-improve: fix: CI image 잡이 실패하면 깨진 e2e 화면·route를 job summary에 적습니다
-- [오래됨] hunter #11 (30일) https://github.com/hkjang/hunter/pull/11 — auto-improve: fix: select release notes by minor series instead of an open-ended comparison
-- [오래됨] sqlon #12 (31일) https://github.com/hkjang/sqlon/pull/12 — auto-improve: fix(mcp): 결과 캐시 키에 바인드 변수를 포함합니다
+- [오래됨] hunter #11 (31일) https://github.com/hkjang/hunter/pull/11 — auto-improve: fix: select release notes by minor series instead of an open-ended comparison
+- [오래됨] sqlon #12 (32일) https://github.com/hkjang/sqlon/pull/12 — auto-improve: fix(mcp): 결과 캐시 키에 바인드 변수를 포함합니다
 - [오래됨] jasql #5 (32일) https://github.com/hkjang/jasql/pull/5 — auto-improve: emit reporting-unit time ranges in question order
 - [오래됨] appstore #30 (32일) https://github.com/hkjang/appstore/pull/30 — auto-improve: fix: count and page the favorites view by what it shows
-- [오래됨] vibe-coders #23 (32일) https://github.com/hkjang/vibe-coders/pull/23 — auto-improve: build(web): accept a forwarded quiet flag in the tsc and vite scripts
-- [오래됨] jasql #4 (33일) https://github.com/hkjang/jasql/pull/4 — auto-improve: fix eval verbose status for cases with missing diagnostics
+- [오래됨] vibe-coders #23 (33일) https://github.com/hkjang/vibe-coders/pull/23 — auto-improve: build(web): accept a forwarded quiet flag in the tsc and vite scripts
+- [오래됨] jasql #4 (34일) https://github.com/hkjang/jasql/pull/4 — auto-improve: fix eval verbose status for cases with missing diagnostics
 - [오래됨] SecCheck #15 (34일) https://github.com/hkjang/SecCheck/pull/15 — auto-improve: Reject non-string MCP review report filters
 - [오래됨] muni #22 (34일) https://github.com/hkjang/muni/pull/22 — auto-improve: fix: DOCX 신규 가져오기에서 제목과 같은 첫 H1 제거
-- [오래됨] git-ctx #35 (34일) https://github.com/hkjang/git-ctx/pull/35 — auto-improve: fix(contentsecurity): preserve YAML list siblings when masking block scalars
+- [오래됨] git-ctx #35 (35일) https://github.com/hkjang/git-ctx/pull/35 — auto-improve: fix(contentsecurity): preserve YAML list siblings when masking block scalars
 - [오래됨] visitflow #21 (35일) https://github.com/hkjang/visitflow/pull/21 — auto-improve: fix(import): warn about duplicate headers and selected columns
 - [오래됨] sqlon #10 (35일) https://github.com/hkjang/sqlon/pull/10 — auto-improve: fix(mcp): 비동기 잡 조회·취소에도 결과 만료를 적용합니다
 - [오래됨] muni #21 (35일) https://github.com/hkjang/muni/pull/21 — auto-improve: fix: 워크스페이스 ZIP에서 목록 파일과 동명 문서의 충돌을 막습니다
 - [오래됨] jasql #2 (35일) https://github.com/hkjang/jasql/pull/2 — auto-improve: Reject invalid calendar dates in time expressions
 - [오래됨] git-ctx #33 (35일) https://github.com/hkjang/git-ctx/pull/33 — auto-improve: fix(contentsecurity): preserve curl command when masking credentials
-- [오래됨] sqlon #9 (35일) https://github.com/hkjang/sqlon/pull/9 — auto-improve: fix(mcp): 프로파일 카탈로그 조회 인증과 사용자 권한을 연결합니다
-- [오래됨] muni #20 (35일) https://github.com/hkjang/muni/pull/20 — auto-improve: fix: HTML 파일을 가져올 때도 제목과 같은 첫 H1 은 본문에서 뺍니다
+- [오래됨] sqlon #9 (36일) https://github.com/hkjang/sqlon/pull/9 — auto-improve: fix(mcp): 프로파일 카탈로그 조회 인증과 사용자 권한을 연결합니다
+- [오래됨] muni #20 (36일) https://github.com/hkjang/muni/pull/20 — auto-improve: fix: HTML 파일을 가져올 때도 제목과 같은 첫 H1 은 본문에서 뺍니다
 - [오래됨] git-ctx #32 (36일) https://github.com/hkjang/git-ctx/pull/32 — auto-improve: fix(contentsecurity): leave a variable reference in a credential's place alone
 - [오래됨] sqlon #8 (36일) https://github.com/hkjang/sqlon/pull/8 — auto-improve: feat(mcp): REST 감사 항목에 인증 사용자를 actor 로 기록합니다
-- [오래됨] AgentHub #29 (37일) https://github.com/hkjang/AgentHub/pull/29 — auto-improve: fix: the trail filed whatever sample the Pod put in a DLP report
+- [오래됨] AgentHub #29 (38일) https://github.com/hkjang/AgentHub/pull/29 — auto-improve: fix: the trail filed whatever sample the Pod put in a DLP report
 - [오래됨] orbit #6 (38일) https://github.com/hkjang/orbit/pull/6 — auto-improve: feat(mcp): 개인 키 없이 Keycloak 액세스 토큰으로 /mcp 에 들어올 수 있게 한다
 - [오래됨] jupiq #18 (38일) https://github.com/hkjang/jupiq/pull/18 — auto-improve: docs: 관리자·사용자 가이드에 MCP SSO(OAuth) 설정과 연결 방법을 더한다
-- [오래됨] Kkiit #6 (38일) https://github.com/hkjang/Kkiit/pull/6 — auto-improve: feat: /mcp 를 Keycloak 액세스 토큰(OAuth 2.1)으로도 열다 — 키 체계는 그대로
+- [오래됨] Kkiit #6 (39일) https://github.com/hkjang/Kkiit/pull/6 — auto-improve: feat: /mcp 를 Keycloak 액세스 토큰(OAuth 2.1)으로도 열다 — 키 체계는 그대로
 - [오래됨] sqlon #6 (39일) https://github.com/hkjang/sqlon/pull/6 — auto-improve: fix(mcp): REST 변경 관리 승인·감사 행위자를 인증 사용자로 기록합니다
 - [오래됨] releasedock #17 (39일) https://github.com/hkjang/releasedock/pull/17 — auto-improve: chore: run gofmt and go vet before the tests in CI and make test
 - [오래됨] git-ctx #29 (39일) https://github.com/hkjang/git-ctx/pull/29 — auto-improve: fix(contentsecurity): keep the line break an Authorization header folds on
