@@ -1,0 +1,93 @@
+{
+  "week": "2026-W44",
+  "generated": "2026-10-27T18:18:51+09:00",
+  "cost_usd": 1.2719174999999998,
+  "constraint": "이사회 결정이 러너 상태로 집행되지 않아(stops 비어 있음) 같은 인프라·측정 오류가 회차 1,075건과 $1,400+ 를 더 소모했다.",
+  "proposals": [
+    {
+      "cmd": [
+        "stop",
+        "bamcp",
+        "worktree add 반복 실패(infra-error) — 러너 워크트리 정리 전까지"
+      ],
+      "why": "오늘 15:08·16:08·17:08·18:08 네 회차가 같은 infra-error 로 종료, 산출 0",
+      "gives_up": "없음(이미 산출 0)",
+      "revert": "resume bamcp",
+      "n": 1,
+      "applied": null
+    },
+    {
+      "cmd": [
+        "run",
+        "aidev",
+        "worktree add 실패를 러너가 스스로 복구하게 할 것 — 디렉터리는 없고 등록만 잠긴 워크트리를 prune/remove --force 후 재시도. postra(2026-09-15)와 bamcp 가 같은 자리에서 멈췄고 MAST 인프라 실패가 853/1326, 14일 실행 오류 863 이다"
+      ],
+      "why": "MAST 실패의 64%가 시스템 설계·인프라, 같은 오류가 두 저장소에서 반복",
+      "gives_up": "aidev 회차 1건($8)",
+      "revert": "해당 PR 반려",
+      "n": 2,
+      "applied": null
+    },
+    {
+      "cmd": [
+        "run",
+        "aidev",
+        "release_project 의 describe 검사가 원격에 없는 로컬 태그에 걸려 한 저장소의 다음 릴리즈를 영구히 막는 문제를 고치고, 원격 태그 897 vs 회차 기록 833 의 64건 누락 경로를 메울 것"
+      ],
+      "why": "지난주 제안 미집행, 장부 누락 63→64건으로 증가, health.ok=false 의 유일한 원인",
+      "gives_up": "aidev 회차 1건($8)",
+      "revert": "해당 PR 반려",
+      "n": 3,
+      "applied": null
+    },
+    {
+      "cmd": [
+        "stop",
+        "ai-admin",
+        "머지 22건 중 20건을 사람이 재수정(91%) — 자율화 하향·검증 명령 보강 전까지"
+      ],
+      "why": "사람 재수정 143건의 14%를 단일 저장소가 생성",
+      "gives_up": "ai-admin 자동 개선 주 ~2건",
+      "revert": "resume ai-admin",
+      "n": 4,
+      "applied": null
+    },
+    {
+      "cmd": [
+        "stop",
+        "jikim",
+        "머지 14건 중 13건 사람 재수정(93%) — 성적표 권고대로 자율화 하향 후 재개"
+      ],
+      "why": "성적표 advice 가 직접 지목한 저장소, 재수정률 최고",
+      "gives_up": "jikim 회차",
+      "revert": "resume jikim",
+      "n": 5,
+      "applied": null
+    },
+    {
+      "cmd": [
+        "draft-campaign",
+        "사람 재수정률 상위 저장소(jikim·ai-admin·Quantoss·relio·Vendra)의 검증 명령을 보강해 머지 뒤 사람 손이 가는 비율을 낮춘다"
+      ],
+      "why": "캠페인 6개 전부 done, 승인 예산 $4,300 중 $1,926만 집행 — 포트폴리오가 빈 동안 탐색 회차가 예산을 먹는다",
+      "gives_up": "탐색 회차 예산 일부",
+      "revert": "discard-draft <slug>",
+      "n": 6,
+      "applied": null
+    }
+  ],
+  "not_doing": [
+    "shepherd off — 14일 승인 14건으로 적체를 줄이는 유일한 경로",
+    "검토 대기 226건 일괄 승인 — 사람 승인 머지도 사람 재수정 31%(자동 26%)",
+    "codex-critic 재개 — 검토 대기 58%, 머지당 $20.63",
+    "자율화 상향·새 저장소 추가",
+    "정책 파일 직접 수정(사람 몫)"
+  ],
+  "role_advice": [
+    "중재 끄기(agents.arbiter false) + 실험 arm no-arbiter(노출 0%)·no-repair(노출 2%) 제거 — 회차 27%를 쓰고 결론 0",
+    "PR 수리 재시도 축소 — 87회 중 푸시 성공 16%, 실패 73회가 비용만",
+    "PR 심사 '사람 필요' 53/70(76%) 사유 분류 후 권한 확대 또는 호출 축소",
+    "비평 risk 라벨을 머지 뒤 사람 수정률(low 17%)로 캘리브레이션",
+    "정찰 유지·판정 보류 — 클로드 회차만 보면 no-scout 이 PR 도달 40% vs 34%, 머지당 $10.89 vs $12.28 (p=0.073, 노출 48%)"
+  ]
+}
