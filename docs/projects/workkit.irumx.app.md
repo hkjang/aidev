@@ -1,7 +1,7 @@
 ---
 title: "workkit.irumx.app — 자율 개선 이력"
 description: "workkit.irumx.app: 자율 개선 회차 9회, 릴리즈 1건. 최근 릴리즈 없음."
-last_modified_at: 2026-10-28 04:18:09 +0900
+last_modified_at: 2026-10-28 04:21:49 +0900
 ---
 {% raw %}
 <script type="application/ld+json">
@@ -18,7 +18,7 @@ last_modified_at: 2026-10-28 04:18:09 +0900
   "name": "hkjang",
   "url": "https://github.com/hkjang"
  },
- "dateModified": "2026-10-28T04:18:09+09:00"
+ "dateModified": "2026-10-28T04:21:49+09:00"
 }
 </script>
 
