@@ -3208,3 +3208,24 @@ notify: no new alerts
 evidence: /mnt/c/Users/USER/projects/aidev/state/runs/2026-10-29-195456-Invenqor-approve/evidence.json
 reports: 58 day(s), 9 week(s), 2 month(s), 4109 run(s), 5477 usage row(s), 72 project page(s), 1 alert(s)
 notify: no new alerts
+[19:58:31] aidev synced: run(2026-10-29): Invenqor — approved https://github.com/hkjang/invenqor/pull/35
+[19:58:42] apt.irumx.app: [ci] failed — 성공이 아닌 검사: verify=failure · 실패한 검사: ? 잡: verify 
+evidence: /mnt/c/Users/USER/projects/aidev/state/runs/2026-10-29-195836-apt.irumx.app-approve/evidence.json
+Traceback (most recent call last):
+  File "/mnt/c/Users/USER/projects/aidev/bin/report.py", line 1485, in <module>
+    main()
+    ~~~~^^
+  File "/mnt/c/Users/USER/projects/aidev/bin/report.py", line 1440, in main
+    descs[d] = write_report(d, by_day[d], by_day_usage.get(d, []))
+               ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/mnt/c/Users/USER/projects/aidev/bin/report.py", line 991, in write_report
+    entry = ledger_entry(p, day)
+  File "/mnt/c/Users/USER/projects/aidev/bin/report.py", line 192, in ledger_entry
+    m = re.search(rf"^## {re.escape(day)}\s*$(.*?)(?=^## |\Z)", ledger_text(project), re.M | re.S)
+                                                                ~~~~~~~~~~~^^^^^^^^^
+  File "/mnt/c/Users/USER/projects/aidev/bin/report.py", line 188, in ledger_text
+    return open(path, encoding="utf-8").read() if os.path.exists(path) else ""
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^
+OSError: [Errno 12] Cannot allocate memory
+[20:01:51] report.py FAILED
+notify: no new alerts
