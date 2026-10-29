@@ -1,7 +1,7 @@
 ---
 title: "hunter — 자율 개선 이력"
 description: "hunter: 자율 개선 회차 46회, 릴리즈 3건. 최근 릴리즈 v1.25.0."
-last_modified_at: 2026-10-29 07:26:05 +0900
+last_modified_at: 2026-10-29 13:21:08 +0900
 ---
 {% raw %}
 <script type="application/ld+json">
@@ -18,7 +18,7 @@ last_modified_at: 2026-10-29 07:26:05 +0900
   "name": "hkjang",
   "url": "https://github.com/hkjang"
  },
- "dateModified": "2026-10-29T07:26:05+09:00",
+ "dateModified": "2026-10-29T13:21:08+09:00",
  "version": "1.25.0"
 }
 </script>
